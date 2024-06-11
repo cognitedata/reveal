@@ -374,18 +374,26 @@ Undo dragging is missing from the architecture. It is not hard to implement with
 ## Playing with the color and the render style
 
 If the mouse is below the selected domain object, you can try to use the mouse wheel to do some changes.
-You must override the onWheel. Here is the implementation:
+First you have to add this convenience property to the PointDomainObject:
 
 ```typescript
-  public override async onWheel(event: WheelEvent): Promise<void> {
+  public get renderStyle(): PointRenderStyle {
+    return super.getRenderStyle() as PointRenderStyle;
+  }
+```
+
+Then you must override the onWheel. Here is the implementation:
+
+```typescript
+  public override async onWheel(event: WheelEvent, delta: number): Promise<void> {
     const intersection = await this.getIntersection(event);
     const domainObject = this.getIntersectedSelectableDomainObject(intersection) as PointDomainObject;
     if (domainObject === undefined || !domainObject.isSelected) {
-      await super.onWheel(event);
+      await super.onWheel(event, number);
       return;
     }
     // Change radius
-    const factor = 1 - Math.sign(event.deltaY) * 0.1;
+    const factor = 1 - Math.sign(delta) * 0.1;
     domainObject.renderStyle.radius *= factor;
     domainObject.notify(new DomainObjectChange(Changes.renderStyle, 'radius'));
   }
@@ -397,15 +405,15 @@ And you can even to some more playing by using this code:
 // Change color
 let hsl: HSL = { h: 0, s: 0, l: 0 };
 hsl = domainObject.color.getHSL(hsl);
-hsl.h = (hsl.h + Math.sign(event.deltaY) * 0.02) % 1;
+hsl.h = (hsl.h + Math.sign(delta) * 0.02) % 1;
 domainObject.color.setHSL(hsl.h, hsl.s, hsl.l);
 domainObject.notify(Changes.color);
 ```
 
 ```typescript
 // Change opacity
-const delta = Math.sign(event.deltaY) * 0.05;
-domainObject.renderStyle.opacity = clamp(domainObject.renderStyle.opacity + delta, 0.2, 1);
+const opacity = domainObject.renderStyle.opacity + Math.sign(delta) * 0.05;
+domainObject.renderStyle.opacity = clamp(opacity, 0.2, 1);
 domainObject.notify(new DomainObjectChange(Changes.renderStyle, 'opacity'));
 ```
 
@@ -466,10 +474,10 @@ Please implement `get isEnabled()` so the button is not enable if you don't have
 Make a similar `DeleteAllPointsCommand`. When deleting object by a collection, remember to iterate in reverse order. I have done it in this way (maybe it can be done simpler?)
 
 ```typescript
-    const array = Array.from(.....)
-    array.reverse();
+  const array = Array.from(.....)
+  array.reverse();
     for (const domainObject of array)
-       // Remove the domainObject here
+      // Remove the domainObject here
 ```
 
 Also, this button must be of type `'ghost-destructive'` so you have to override `get buttonType()`. Use the `'Delete'` icon.
