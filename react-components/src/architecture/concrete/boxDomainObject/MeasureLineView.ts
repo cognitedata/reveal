@@ -34,7 +34,6 @@ import { MeasureType } from './MeasureType';
 import { createSpriteWithText } from '../../base/utilities/sprites/createSprite';
 import { mergeGeometries } from 'three/examples/jsm/utils/BufferGeometryUtils.js';
 import { FocusType } from '../../base/domainObjectsHelpers/FocusType';
-import { MeasureRenderStyle } from './MeasureRenderStyle';
 import { DomainObjectIntersection } from '../../base/domainObjectsHelpers/DomainObjectIntersection';
 import { ClosestGeometryFinder } from '../../base/utilities/geometry/ClosestGeometryFinder';
 import { square } from '../../base/utilities/extensions/mathExtensions';
@@ -313,7 +312,11 @@ function createVertices(domainObject: MeasureLineDomainObject): number[] | undef
   return vertices;
 }
 
-function createSprite(text: string, style: MeasureRenderStyle, height: number): Sprite | undefined {
+function createSprite(
+  text: string,
+  style: MeasureLineRenderStyle,
+  height: number
+): Sprite | undefined {
   const result = createSpriteWithText(text, height, style.textColor, style.textBgColor);
   if (result === undefined) {
     return undefined;

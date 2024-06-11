@@ -105,7 +105,7 @@ export class MeasureBoxCreator extends BaseCreator {
     if (measureType === MeasureType.VerticalArea) {
       return point;
     }
-    // Recalculate the point anywhy for >= 1 points
+    // Recalculate the point anyway for >= 1 points
     // This makes it more natural and you can pick in empty space
     if (this.notPendingPointCount === 1 || this.notPendingPointCount === 2) {
       const plane = new Plane().setFromNormalAndCoplanarPoint(UP_VECTOR, this.firstPoint);

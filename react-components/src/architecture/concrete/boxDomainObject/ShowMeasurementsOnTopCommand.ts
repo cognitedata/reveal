@@ -5,7 +5,8 @@
 import { RenderTargetCommand } from '../../base/commands/RenderTargetCommand';
 import { Changes } from '../../base/domainObjectsHelpers/Changes';
 import { type TranslateKey } from '../../base/utilities/TranslateKey';
-import { MeasureDomainObject } from './MeasureDomainObject';
+import { MeasureBoxDomainObject } from './MeasureBoxDomainObject';
+import { MeasureLineDomainObject } from './MeasureLineDomainObject';
 
 export class ShowMeasurementsOnTopCommand extends RenderTargetCommand {
   // ==================================================
@@ -30,10 +31,16 @@ export class ShowMeasurementsOnTopCommand extends RenderTargetCommand {
 
   protected override invokeCore(): boolean {
     const depthTest = this.getDepthTest();
-    for (const domainObject of this.rootDomainObject.getDescendantsByType(MeasureDomainObject)) {
-      const style = domainObject.renderStyle;
-      style.depthTest = !depthTest;
-      domainObject.notify(Changes.renderStyle);
+    for (const domainObject of this.rootDomainObject.getDescendants()) {
+      if (domainObject instanceof MeasureBoxDomainObject) {
+        const style = domainObject.renderStyle;
+        style.depthTest = !depthTest;
+        domainObject.notify(Changes.renderStyle);
+      } else if (domainObject instanceof MeasureLineDomainObject) {
+        const style = domainObject.renderStyle;
+        style.depthTest = !depthTest;
+        domainObject.notify(Changes.renderStyle);
+      }
     }
     return true;
   }
@@ -51,7 +58,15 @@ export class ShowMeasurementsOnTopCommand extends RenderTargetCommand {
     return style.depthTest;
   }
 
-  private getFirst(): MeasureDomainObject | undefined {
-    return this.rootDomainObject.getDescendantByType(MeasureDomainObject);
+  private getFirst(): MeasureBoxDomainObject | MeasureLineDomainObject | undefined {
+    for (const domainObject of this.rootDomainObject.getDescendants()) {
+      if (domainObject instanceof MeasureBoxDomainObject) {
+        return domainObject;
+      }
+      if (domainObject instanceof MeasureLineDomainObject) {
+        return domainObject;
+      }
+    }
+    return undefined;
   }
 }

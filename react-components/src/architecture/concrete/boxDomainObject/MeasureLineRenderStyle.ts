@@ -3,10 +3,10 @@
  */
 
 import { cloneDeep } from 'lodash';
-import { MeasureRenderStyle } from './MeasureRenderStyle';
+import { TextRenderStyle } from './TextRenderStyle';
 import { type RenderStyle } from '../../base/domainObjectsHelpers/RenderStyle';
 
-export class MeasureLineRenderStyle extends MeasureRenderStyle {
+export class MeasureLineRenderStyle extends TextRenderStyle {
   // ==================================================
   // INSTANCE FIELDS
   // ==================================================

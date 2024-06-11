@@ -15,9 +15,7 @@ import { type BaseCreator } from '../../base/domainObjectsHelpers/BaseCreator';
 import { MeasureLineCreator } from './MeasureLineCreator';
 import { BaseEditTool } from '../../base/commands/BaseEditTool';
 import { MeasureLineDomainObject } from './MeasureLineDomainObject';
-import { MeasureRenderStyle } from './MeasureRenderStyle';
 import { type DomainObject } from '../../base/domainObjects/DomainObject';
-import { MeasureDomainObject } from './MeasureDomainObject';
 import { ShowMeasurementsOnTopCommand } from './ShowMeasurementsOnTopCommand';
 import { SetMeasurementTypeCommand } from './SetMeasurementTypeCommand';
 import { PopupStyle } from '../../base/domainObjectsHelpers/PopupStyle';
@@ -25,6 +23,8 @@ import { type RootDomainObject } from '../../base/domainObjects/RootDomainObject
 import { CommandsUpdater } from '../../base/reactUpdaters/CommandsUpdater';
 import { type TranslateKey } from '../../base/utilities/TranslateKey';
 import { ToggleMetricUnitsCommand } from '../../base/concreteCommands/ToggleMetricUnitsCommand';
+import { MeasureBoxRenderStyle } from './MeasureBoxRenderStyle';
+import { type VisualDomainObject } from '../../base/domainObjects/VisualDomainObject';
 
 export class MeasurementTool extends BaseEditTool {
   // ==================================================
@@ -229,7 +229,10 @@ export class MeasurementTool extends BaseEditTool {
   // ==================================================
 
   protected override canBeSelected(domainObject: DomainObject): boolean {
-    return domainObject instanceof MeasureDomainObject;
+    return (
+      domainObject instanceof MeasureBoxDomainObject ||
+      domainObject instanceof MeasureLineDomainObject
+    );
   }
 
   // ==================================================
@@ -249,22 +252,23 @@ export class MeasurementTool extends BaseEditTool {
   }
 
   private setAllMeasurementsVisible(visible: boolean): void {
-    for (const domainObject of this.rootDomainObject.getDescendantsByType(MeasureDomainObject)) {
-      domainObject.setVisibleInteractive(visible, this.renderTarget);
+    for (const domainObject of this.rootDomainObject.getDescendants()) {
+      if (this.canBeSelected(domainObject)) {
+        domainObject.setVisibleInteractive(visible, this.renderTarget);
+      }
     }
   }
 
   private getMeasurement(
     intersection: AnyIntersection | undefined
-  ): MeasureDomainObject | undefined {
+  ): VisualDomainObject | undefined {
     if (!isDomainObjectIntersection(intersection)) {
       return undefined;
     }
-    if (intersection.domainObject instanceof MeasureDomainObject) {
-      return intersection.domainObject;
-    } else {
+    if (!this.canBeSelected(intersection.domainObject)) {
       return undefined;
     }
+    return intersection.domainObject as VisualDomainObject;
   }
 
   private setCursor(
@@ -306,7 +310,7 @@ export class MeasurementTool extends BaseEditTool {
   }
 
   protected defocusAll(except?: DomainObject | undefined): void {
-    for (const domainObject of this.rootDomainObject.getDescendantsByType(MeasureDomainObject)) {
+    for (const domainObject of this.rootDomainObject.getDescendants()) {
       if (except !== undefined && domainObject === except) {
         continue;
       }
@@ -325,17 +329,22 @@ export class MeasurementTool extends BaseEditTool {
 // ==================================================
 
 function initializeStyle(domainObject: DomainObject, rootDomainObject: RootDomainObject): void {
-  // Just copy the style the depthTest field from any other MeasureDomainObject
-  const otherDomainObject = rootDomainObject.getDescendantByType(MeasureDomainObject);
-  if (otherDomainObject === undefined) {
-    return;
-  }
-  const otherStyle = otherDomainObject.renderStyle;
+  // Just copy the style the depthTest field from any other measure DomainObject
   const style = domainObject.getRenderStyle();
-  if (!(style instanceof MeasureRenderStyle)) {
+  if (!(style instanceof MeasureBoxRenderStyle)) {
     return;
   }
-  style.depthTest = otherStyle.depthTest;
+  const otherBoxDomainObject = rootDomainObject.getDescendantByType(MeasureBoxDomainObject);
+  if (otherBoxDomainObject !== undefined) {
+    const otherStyle = otherBoxDomainObject.renderStyle;
+    style.depthTest = otherStyle.depthTest;
+    return;
+  }
+  const otherLineDomainObject = rootDomainObject.getDescendantByType(MeasureLineDomainObject);
+  if (otherLineDomainObject !== undefined) {
+    const otherStyle = otherLineDomainObject.renderStyle;
+    style.depthTest = otherStyle.depthTest;
+  }
 }
 
 function createCreator(measureType: MeasureType): BaseCreator | undefined {

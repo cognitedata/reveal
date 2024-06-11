@@ -28,7 +28,7 @@ import { PopupStyle } from '../../base/domainObjectsHelpers/PopupStyle';
 
 export const MIN_BOX_SIZE = 0.01;
 
-export class MeasureBoxDomainObject extends VisualDomainObject {
+export class BoxDomainObject extends VisualDomainObject {
   // ==================================================
   // INSTANCE FIELDS
   // ==================================================

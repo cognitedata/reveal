@@ -45,7 +45,6 @@ import { BoxPickInfo } from '../../base/utilities/box/BoxPickInfo';
 import { radToDeg } from 'three/src/math/MathUtils.js';
 import { Range1 } from '../../base/utilities/geometry/Range1';
 import { MeasureType } from './MeasureType';
-import { type MeasureRenderStyle } from './MeasureRenderStyle';
 import { Quantity } from '../../base/domainObjectsHelpers/Quantity';
 
 const RELATIVE_RESIZE_RADIUS = 0.15;
@@ -623,7 +622,11 @@ function updateMarkerMaterial(
 // PRIVATE FUNCTIONS: Create object3D's
 // ==================================================
 
-function createSprite(text: string, style: MeasureRenderStyle, height: number): Sprite | undefined {
+function createSprite(
+  text: string,
+  style: MeasureBoxRenderStyle,
+  height: number
+): Sprite | undefined {
   const result = createSpriteWithText(text, height, style.textColor, style.textBgColor);
   if (result === undefined) {
     return undefined;

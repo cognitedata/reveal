@@ -20,7 +20,7 @@ import { Quantity } from '../../base/domainObjectsHelpers/Quantity';
 import { PopupStyle } from '../../base/domainObjectsHelpers/PopupStyle';
 import { VisualDomainObject } from '../../base/domainObjects/VisualDomainObject';
 
-export class MeasureLineDomainObject extends VisualDomainObject {
+export class LineDomainObject extends VisualDomainObject {
   // ==================================================
   // INSTANCE FIELDS
   // ==================================================
