@@ -641,6 +641,6 @@ Focus is when you mark the object behind the mouse when hover. You can easily cr
 
 ## Multi selection
 
-Normally in other application you can expand or turn off selection with the control key. This should also work well in this framework. You will need to do som minor adjustments in the `PointTool` code, for instance check the `event.ctrlKey` in the `onClick` method . The panel is implemented so it shows the last selected regardless of how many object you have selected.
+Normally in other application you can expand or turn off selection with the control key. This should also work well in this framework. You will need to do some minor adjustments in the `PointTool` code, for instance check the `event.ctrlKey` in the `onClick` method . The panel is implemented so it shows the last selected regardless of how many object you have selected.
 
 You must also use the `BaseEditTool.getAllSelected` instead of the `BaseEditTool.getSelected`.
