@@ -40,7 +40,7 @@ export class RevealRenderTarget {
   private _ambientLight: AmbientLight | undefined;
   private _directionalLight: DirectionalLight | undefined;
   private _cropBoxBoundingBox: Box3 | undefined;
-  private _cropBoxName: string | undefined = undefined;
+  private _cropBoxUniqueId: number | undefined = undefined;
   private _axisGizmoTool: AxisGizmoTool | undefined;
   private _config: BaseRevealConfig | undefined = undefined;
 
@@ -225,17 +225,17 @@ export class RevealRenderTarget {
     // Input in Viewer coordinates
     this.viewer.setGlobalClippingPlanes(clippingPlanes);
     this._cropBoxBoundingBox = boundingBox;
-    this._cropBoxName = domainObject.name;
+    this._cropBoxUniqueId = domainObject.uniqueId;
   }
 
   public clearGlobalCropBox(): void {
     this.viewer.setGlobalClippingPlanes([]);
     this._cropBoxBoundingBox = undefined;
-    this._cropBoxName = undefined;
+    this._cropBoxUniqueId = undefined;
   }
 
   public isGlobalCropBox(domainObject: DomainObject): boolean {
-    return this._cropBoxName !== undefined && domainObject.hasEqualName(this._cropBoxName);
+    return this._cropBoxUniqueId !== undefined && domainObject.uniqueId === this._cropBoxUniqueId;
   }
 
   public get isGlobalCropBoxActive(): boolean {

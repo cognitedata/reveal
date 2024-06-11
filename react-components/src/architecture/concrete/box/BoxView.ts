@@ -21,10 +21,10 @@ import {
   FrontSide,
   type PerspectiveCamera
 } from 'three';
-import { type MeasureBoxDomainObject, isValidSize } from './MeasureBoxDomainObject';
+import { type BoxDomainObject, isValidSize } from './BoxDomainObject';
 import { type DomainObjectChange } from '../../base/domainObjectsHelpers/DomainObjectChange';
 import { Changes } from '../../base/domainObjectsHelpers/Changes';
-import { type MeasureBoxRenderStyle } from './MeasureBoxRenderStyle';
+import { type BoxRenderStyle } from './BoxRenderStyle';
 import { GroupThreeView } from '../../base/views/GroupThreeView';
 import {
   CDF_TO_VIEWER_TRANSFORMATION,
@@ -44,7 +44,7 @@ import {
 import { BoxPickInfo } from '../../base/utilities/box/BoxPickInfo';
 import { radToDeg } from 'three/src/math/MathUtils.js';
 import { Range1 } from '../../base/utilities/geometry/Range1';
-import { MeasureType } from './MeasureType';
+import { PrimitiveType } from './PrimitiveType';
 import { Quantity } from '../../base/domainObjectsHelpers/Quantity';
 
 const RELATIVE_RESIZE_RADIUS = 0.15;
@@ -54,7 +54,7 @@ const TOP_FACE = new BoxFace(2);
 const CIRCULAR_SEGMENTS = 32;
 const RENDER_ORDER = 100;
 
-export class MeasureBoxView extends GroupThreeView {
+export class BoxView extends GroupThreeView {
   // ==================================================
   // INSTANCE FIELDS
   // ==================================================
@@ -66,12 +66,12 @@ export class MeasureBoxView extends GroupThreeView {
   // INSTANCE PROPERTIES
   // ==================================================
 
-  public override get domainObject(): MeasureBoxDomainObject {
-    return super.domainObject as MeasureBoxDomainObject;
+  public override get domainObject(): BoxDomainObject {
+    return super.domainObject as BoxDomainObject;
   }
 
-  protected override get style(): MeasureBoxRenderStyle {
-    return super.style as MeasureBoxRenderStyle;
+  protected override get style(): BoxRenderStyle {
+    return super.style as BoxRenderStyle;
   }
 
   // ==================================================
@@ -525,11 +525,11 @@ export class MeasureBoxView extends GroupThreeView {
 
   private isFaceVisible(boxFace: BoxFace): boolean {
     const { domainObject } = this;
-    switch (domainObject.measureType) {
-      case MeasureType.VerticalArea:
+    switch (domainObject.primitiveType) {
+      case PrimitiveType.VerticalArea:
         return boxFace.index === 1; // Y Face visible
 
-      case MeasureType.HorizontalArea:
+      case PrimitiveType.HorizontalArea:
         return boxFace.index === 2; // Z face visible
     }
     return true;
@@ -567,8 +567,8 @@ function showMarkers(focusType: FocusType): boolean {
 
 function updateSolidMaterial(
   material: MeshPhongMaterial,
-  domainObject: MeasureBoxDomainObject,
-  style: MeasureBoxRenderStyle
+  domainObject: BoxDomainObject,
+  style: BoxRenderStyle
 ): void {
   const color = domainObject.getColorByColorType(style.colorType);
   const isSelected = domainObject.isSelected;
@@ -589,8 +589,8 @@ function updateSolidMaterial(
 
 function updateLineSegmentsMaterial(
   material: LineBasicMaterial,
-  domainObject: MeasureBoxDomainObject,
-  style: MeasureBoxRenderStyle
+  domainObject: BoxDomainObject,
+  style: BoxRenderStyle
 ): void {
   const color = domainObject.getColorByColorType(style.colorType);
   material.color = color;
@@ -601,8 +601,8 @@ function updateLineSegmentsMaterial(
 
 function updateMarkerMaterial(
   material: MeshPhongMaterial,
-  domainObject: MeasureBoxDomainObject,
-  style: MeasureBoxRenderStyle,
+  domainObject: BoxDomainObject,
+  style: BoxRenderStyle,
   hasFocus: boolean
 ): void {
   material.color = ARROW_AND_RING_COLOR;
@@ -622,11 +622,7 @@ function updateMarkerMaterial(
 // PRIVATE FUNCTIONS: Create object3D's
 // ==================================================
 
-function createSprite(
-  text: string,
-  style: MeasureBoxRenderStyle,
-  height: number
-): Sprite | undefined {
+function createSprite(text: string, style: BoxRenderStyle, height: number): Sprite | undefined {
   const result = createSpriteWithText(text, height, style.textColor, style.textBgColor);
   if (result === undefined) {
     return undefined;
@@ -638,12 +634,8 @@ function createSprite(
   return result;
 }
 
-function adjustLabel(
-  point: Vector3,
-  domainObject: MeasureBoxDomainObject,
-  spriteHeight: number
-): void {
-  if (domainObject.measureType !== MeasureType.VerticalArea) {
+function adjustLabel(point: Vector3, domainObject: BoxDomainObject, spriteHeight: number): void {
+  if (domainObject.primitiveType !== PrimitiveType.VerticalArea) {
     point.y += (1.1 * spriteHeight) / 2;
   }
 }

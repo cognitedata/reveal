@@ -2,80 +2,45 @@
  * Copyright 2024 Cognite AS
  */
 
-import { MeasureBoxDomainObject } from './MeasureBoxDomainObject';
-import { type AnyIntersection, CDF_TO_VIEWER_TRANSFORMATION } from '@cognite/reveal';
-import { type BaseCommand } from '../../base/commands/BaseCommand';
+import { CDF_TO_VIEWER_TRANSFORMATION } from '@cognite/reveal';
 import { isDomainObjectIntersection } from '../../base/domainObjectsHelpers/DomainObjectIntersection';
 import { FocusType } from '../../base/domainObjectsHelpers/FocusType';
 import { type BoxPickInfo } from '../../base/utilities/box/BoxPickInfo';
 import { type Vector3 } from 'three';
-import { MeasureBoxCreator } from './MeasureBoxCreator';
-import { MeasureType } from './MeasureType';
+import { PrimitiveType } from './PrimitiveType';
 import { type BaseCreator } from '../../base/domainObjectsHelpers/BaseCreator';
-import { MeasureLineCreator } from './MeasureLineCreator';
 import { BaseEditTool } from '../../base/commands/BaseEditTool';
-import { MeasureLineDomainObject } from './MeasureLineDomainObject';
 import { type DomainObject } from '../../base/domainObjects/DomainObject';
-import { ShowMeasurementsOnTopCommand } from './ShowMeasurementsOnTopCommand';
-import { SetMeasurementTypeCommand } from './SetMeasurementTypeCommand';
-import { PopupStyle } from '../../base/domainObjectsHelpers/PopupStyle';
-import { type RootDomainObject } from '../../base/domainObjects/RootDomainObject';
 import { CommandsUpdater } from '../../base/reactUpdaters/CommandsUpdater';
-import { type TranslateKey } from '../../base/utilities/TranslateKey';
-import { ToggleMetricUnitsCommand } from '../../base/concreteCommands/ToggleMetricUnitsCommand';
-import { MeasureBoxRenderStyle } from './MeasureBoxRenderStyle';
-import { type VisualDomainObject } from '../../base/domainObjects/VisualDomainObject';
+import { BoxDomainObject } from './BoxDomainObject';
+import { LineDomainObject } from './LineDomainObject';
+import { TextRenderStyle } from './TextRenderStyle';
 
-export class MeasurementTool extends BaseEditTool {
+export abstract class BoxOrLineEditTool extends BaseEditTool {
   // ==================================================
   // INSTANCE FIELDS
   // ==================================================
 
   private _creator: BaseCreator | undefined = undefined;
-  public measureType: MeasureType = MeasureType.None; // Default none, let the user decide
+  public primitiveType: PrimitiveType;
+  public defaultPrimitiveType: PrimitiveType;
 
   // ==================================================
-  // OVERRIDES of BaseCommand
+  // CONSTRUCTOR
   // ==================================================
 
-  public override get icon(): string {
-    return 'Ruler';
-  }
-
-  public override get tooltip(): TranslateKey {
-    return { key: 'MEASUREMENTS', fallback: 'Measurements' };
-  }
-
-  public override getToolbar(): Array<BaseCommand | undefined> {
-    return [
-      new SetMeasurementTypeCommand(MeasureType.Line),
-      new SetMeasurementTypeCommand(MeasureType.Polyline),
-      new SetMeasurementTypeCommand(MeasureType.Polygon),
-      new SetMeasurementTypeCommand(MeasureType.HorizontalArea),
-      new SetMeasurementTypeCommand(MeasureType.VerticalArea),
-      new SetMeasurementTypeCommand(MeasureType.Volume),
-      undefined, // Separator
-      new ToggleMetricUnitsCommand(),
-      new ShowMeasurementsOnTopCommand()
-    ];
-  }
-
-  public override getToolbarStyle(): PopupStyle {
-    return new PopupStyle({ bottom: 0, left: 0 });
+  protected constructor(primitiveType: PrimitiveType = PrimitiveType.Box) {
+    super();
+    this.defaultPrimitiveType = primitiveType;
+    this.primitiveType = this.defaultPrimitiveType;
   }
 
   // ==================================================
   // OVERRIDES of BaseTool
   // ==================================================
 
-  public override onActivate(): void {
-    super.onActivate();
-    this.setAllMeasurementsVisible(true);
-  }
-
   public override onDeactivate(): void {
     this.handleEscape();
-    this.setAllMeasurementsVisible(false);
     super.onDeactivate();
   }
 
@@ -101,7 +66,7 @@ export class MeasurementTool extends BaseEditTool {
 
   public override async onHover(event: PointerEvent): Promise<void> {
     // Handle when creator is set first
-    if (this.measureType !== MeasureType.None && this._creator !== undefined) {
+    if (this.primitiveType !== PrimitiveType.None && this._creator !== undefined) {
       const { _creator: creator } = this;
       if (!creator.preferIntersection) {
         // Hover in the "air"
@@ -124,7 +89,7 @@ export class MeasurementTool extends BaseEditTool {
         this.renderTarget.setNavigateCursor();
         return;
       }
-      if (this.getMeasurement(intersection) !== undefined) {
+      if (this.getIntersectedSelectableDomainObject(intersection) !== undefined) {
         this.renderTarget.setNavigateCursor();
         return;
       }
@@ -137,10 +102,10 @@ export class MeasurementTool extends BaseEditTool {
       return;
     }
     const intersection = await this.getIntersection(event);
-    const domainObject = this.getMeasurement(intersection);
+    const domainObject = this.getIntersectedSelectableDomainObject(intersection);
     if (!isDomainObjectIntersection(intersection) || domainObject === undefined) {
       this.defocusAll();
-      if (this.measureType === MeasureType.None || intersection === undefined) {
+      if (this.primitiveType === PrimitiveType.None || intersection === undefined) {
         this.renderTarget.setNavigateCursor();
       } else {
         this.setDefaultCursor();
@@ -148,11 +113,11 @@ export class MeasurementTool extends BaseEditTool {
       return;
     }
     // Set focus on the hovered object
-    if (domainObject instanceof MeasureLineDomainObject) {
+    if (domainObject instanceof LineDomainObject) {
       this.defocusAll(domainObject);
       domainObject.setFocusInteractive(FocusType.Focus);
       this.renderTarget.setDefaultCursor();
-    } else if (domainObject instanceof MeasureBoxDomainObject) {
+    } else if (domainObject instanceof BoxDomainObject) {
       const pickInfo = intersection.userData as BoxPickInfo;
       if (pickInfo === undefined) {
         this.defocusAll();
@@ -175,7 +140,7 @@ export class MeasurementTool extends BaseEditTool {
       if (creator.addPoint(ray, undefined)) {
         if (creator.isFinished) {
           this._creator = undefined;
-          this.measureType = MeasureType.None;
+          this.primitiveType = this.defaultPrimitiveType;
           CommandsUpdater.update(renderTarget);
         }
         return;
@@ -186,21 +151,21 @@ export class MeasurementTool extends BaseEditTool {
       // Click in the "air"
       return;
     }
-    const measurement = this.getMeasurement(intersection);
-    if (measurement !== undefined) {
-      this.deselectAll(measurement);
-      measurement.setSelectedInteractive(true);
+    const domainObject = this.getIntersectedSelectableDomainObject(intersection);
+    if (domainObject !== undefined) {
+      this.deselectAll(domainObject);
+      domainObject.setSelectedInteractive(true);
       return;
     }
     const ray = this.getRay(event);
     if (creator === undefined) {
-      const creator = (this._creator = createCreator(this.measureType));
+      const creator = (this._creator = this.createCreator(this.primitiveType));
       if (creator === undefined) {
         return;
       }
       if (creator.addPoint(ray, intersection)) {
         const { domainObject } = creator;
-        initializeStyle(domainObject, this.rootDomainObject);
+        this.initializeStyle(domainObject);
         this.deselectAll();
         rootDomainObject.addChildInteractive(domainObject);
         domainObject.setSelectedInteractive(true);
@@ -209,7 +174,7 @@ export class MeasurementTool extends BaseEditTool {
     } else {
       if (creator.addPoint(ray, intersection)) {
         if (creator.isFinished) {
-          this.measureType = MeasureType.None;
+          this.primitiveType = this.defaultPrimitiveType;
           CommandsUpdater.update(renderTarget);
           this._creator = undefined;
         }
@@ -225,16 +190,12 @@ export class MeasurementTool extends BaseEditTool {
   }
 
   // ==================================================
-  // OVERRIDES of BaseEditTool
+  // VIRTUAL METHODS
   // ==================================================
 
-  protected override canBeSelected(domainObject: DomainObject): boolean {
-    return (
-      domainObject instanceof MeasureBoxDomainObject ||
-      domainObject instanceof MeasureLineDomainObject
-    );
+  protected createCreator(_primitiveType: PrimitiveType): BaseCreator | undefined {
+    return undefined;
   }
-
   // ==================================================
   // INSTANCE METHODS
   // ==================================================
@@ -244,38 +205,14 @@ export class MeasurementTool extends BaseEditTool {
       return;
     }
     if (this._creator.handleEscape()) {
-      // Successfully created, set it back to none
-      this.measureType = MeasureType.None;
+      // Successfully created, set it back to default
+      this.primitiveType = this.defaultPrimitiveType;
       CommandsUpdater.update(this.renderTarget);
     }
     this._creator = undefined;
   }
 
-  private setAllMeasurementsVisible(visible: boolean): void {
-    for (const domainObject of this.rootDomainObject.getDescendants()) {
-      if (this.canBeSelected(domainObject)) {
-        domainObject.setVisibleInteractive(visible, this.renderTarget);
-      }
-    }
-  }
-
-  private getMeasurement(
-    intersection: AnyIntersection | undefined
-  ): VisualDomainObject | undefined {
-    if (!isDomainObjectIntersection(intersection)) {
-      return undefined;
-    }
-    if (!this.canBeSelected(intersection.domainObject)) {
-      return undefined;
-    }
-    return intersection.domainObject as VisualDomainObject;
-  }
-
-  private setCursor(
-    boxDomainObject: MeasureBoxDomainObject,
-    point: Vector3,
-    pickInfo: BoxPickInfo
-  ): void {
+  private setCursor(boxDomainObject: BoxDomainObject, point: Vector3, pickInfo: BoxPickInfo): void {
     if (pickInfo.focusType === FocusType.Body) {
       this.renderTarget.setMoveCursor();
     } else if (pickInfo.focusType === FocusType.Face) {
@@ -310,55 +247,35 @@ export class MeasurementTool extends BaseEditTool {
   }
 
   protected defocusAll(except?: DomainObject | undefined): void {
-    for (const domainObject of this.rootDomainObject.getDescendants()) {
+    for (const domainObject of this.getSelectable()) {
       if (except !== undefined && domainObject === except) {
         continue;
       }
-      if (domainObject instanceof MeasureLineDomainObject) {
+      if (domainObject instanceof LineDomainObject) {
         domainObject.setFocusInteractive(FocusType.None);
       }
-      if (domainObject instanceof MeasureBoxDomainObject) {
+      if (domainObject instanceof BoxDomainObject) {
         domainObject.setFocusInteractive(FocusType.None);
       }
     }
   }
-}
 
-// ==================================================
-// PRIVATE FUNCTIONS
-// ==================================================
+  // ==================================================
+  // PRIVATE FUNCTIONS
+  // ==================================================
 
-function initializeStyle(domainObject: DomainObject, rootDomainObject: RootDomainObject): void {
-  // Just copy the style the depthTest field from any other measure DomainObject
-  const style = domainObject.getRenderStyle();
-  if (!(style instanceof MeasureBoxRenderStyle)) {
-    return;
-  }
-  const otherBoxDomainObject = rootDomainObject.getDescendantByType(MeasureBoxDomainObject);
-  if (otherBoxDomainObject !== undefined) {
-    const otherStyle = otherBoxDomainObject.renderStyle;
-    style.depthTest = otherStyle.depthTest;
-    return;
-  }
-  const otherLineDomainObject = rootDomainObject.getDescendantByType(MeasureLineDomainObject);
-  if (otherLineDomainObject !== undefined) {
-    const otherStyle = otherLineDomainObject.renderStyle;
-    style.depthTest = otherStyle.depthTest;
-  }
-}
-
-function createCreator(measureType: MeasureType): BaseCreator | undefined {
-  switch (measureType) {
-    case MeasureType.Line:
-    case MeasureType.Polyline:
-    case MeasureType.Polygon:
-      return new MeasureLineCreator(measureType);
-
-    case MeasureType.HorizontalArea:
-    case MeasureType.VerticalArea:
-    case MeasureType.Volume:
-      return new MeasureBoxCreator(measureType);
-    default:
-      return undefined;
+  initializeStyle(domainObject: DomainObject): void {
+    // Just copy the style the depthTest field from any other measure DomainObject
+    const style = domainObject.getRenderStyle();
+    if (!(style instanceof TextRenderStyle)) {
+      return;
+    }
+    for (const otherDomainObject of this.getSelectable()) {
+      const otherStyle = otherDomainObject.getRenderStyle();
+      if (otherStyle instanceof TextRenderStyle) {
+        style.depthTest = otherStyle.depthTest;
+        return;
+      }
+    }
   }
 }

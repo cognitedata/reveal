@@ -55,6 +55,23 @@ export abstract class DomainObject {
   // Views and listeners
   public readonly views: Views = new Views();
 
+  // Unique index for the domain object, used as soft reference
+  private readonly _uniqueId: number;
+  private static _counter: number = 0; // Counter for the unique index
+
+  public get uniqueId(): number {
+    return this._uniqueId;
+  }
+
+  // ==================================================
+  // CONSTRUCTOR
+  // ==================================================
+
+  public constructor() {
+    DomainObject._counter++;
+    this._uniqueId = DomainObject._counter;
+  }
+
   // ==================================================
   // INSTANCE/VIRTUAL PROPERTIES
   // ==================================================

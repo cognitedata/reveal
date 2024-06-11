@@ -111,35 +111,9 @@ export abstract class BaseEditTool extends NavigationTool {
   // INSTANCE METHODS
   // ==================================================
 
-  /**
-   * Deselects all visual domain objects except for the specified object.
-   * If no object is specified, all visual domain objects will be deselected.
-   * @param except - The visual domain object to exclude from deselection.
-   */
-  protected deselectAll(except?: VisualDomainObject | undefined): void {
+  protected *getSelectable(): Generator<VisualDomainObject> {
     const { rootDomainObject } = this;
     for (const domainObject of rootDomainObject.getDescendantsByType(VisualDomainObject)) {
-      if (!this.canBeSelected(domainObject)) {
-        continue;
-      }
-      if (except !== undefined && domainObject === except) {
-        continue;
-      }
-      domainObject.setSelectedInteractive(false);
-    }
-  }
-
-  /**
-   * Retrieves all selected domain objects.
-   * Use only if multi selection is expected.
-   * @returns A generator that yields each selected domain object.
-   */
-  protected *getAllSelected(): Generator<VisualDomainObject> {
-    const { rootDomainObject } = this;
-    for (const domainObject of rootDomainObject.getDescendantsByType(VisualDomainObject)) {
-      if (!domainObject.isSelected) {
-        continue;
-      }
       if (!this.canBeSelected(domainObject)) {
         continue;
       }
@@ -153,17 +127,51 @@ export abstract class BaseEditTool extends NavigationTool {
    * @returns The selected DomainObject, or undefined if no object is selected.
    */
   protected getSelected(): VisualDomainObject | undefined {
-    const { rootDomainObject } = this;
-    for (const domainObject of rootDomainObject.getDescendantsByType(VisualDomainObject)) {
+    for (const domainObject of this.getSelectable()) {
       if (!domainObject.isSelected) {
-        continue;
-      }
-      if (!this.canBeSelected(domainObject)) {
         continue;
       }
       return domainObject;
     }
     return undefined;
+  }
+
+  /**
+   * Retrieves all selected domain objects.
+   * Use only if multi selection is expected.
+   * @returns A generator that yields each selected domain object.
+   */
+  protected *getAllSelected(): Generator<VisualDomainObject> {
+    for (const domainObject of this.getSelectable()) {
+      if (!domainObject.isSelected) {
+        continue;
+      }
+      yield domainObject;
+    }
+  }
+
+  /**
+   * Deselects all selectable objects except for the specified object.
+   * If no object is specified, all visual domain objects will be deselected.
+   * @param except - The visual domain object to exclude from deselection.
+   */
+  protected deselectAll(except?: VisualDomainObject | undefined): void {
+    for (const domainObject of this.getSelectable()) {
+      if (except !== undefined && domainObject === except) {
+        continue;
+      }
+      domainObject.setSelectedInteractive(false);
+    }
+  }
+
+  /**
+   * Sets the visibility of all selectable objects.
+   * @param visible - A boolean indicating whether the objects should be visible or not.
+   */
+  protected setAllVisible(visible: boolean): void {
+    for (const domainObject of this.getSelectable()) {
+      domainObject.setVisibleInteractive(visible, this.renderTarget);
+    }
   }
 
   /**

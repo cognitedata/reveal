@@ -17,5 +17,5 @@ export abstract class TextRenderStyle extends RenderStyle {
   public textColor = WHITE_COLOR.clone();
   public textBgColor = new Color('#232323');
   public textOpacity = 0.9;
-  public relativeTextSize = 0.05; // Relative to diagonal of the measurement object for box and average of lenght of line segments for line
+  public relativeTextSize = 0.05; // Relative to diagonal of the object for box and average of length of line segments for line
 }

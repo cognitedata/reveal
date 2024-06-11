@@ -6,19 +6,21 @@ import { cloneDeep } from 'lodash';
 import { TextRenderStyle } from './TextRenderStyle';
 import { type RenderStyle } from '../../base/domainObjectsHelpers/RenderStyle';
 
-export class MeasureBoxRenderStyle extends TextRenderStyle {
+export class LineRenderStyle extends TextRenderStyle {
   // ==================================================
   // INSTANCE FIELDS
   // ==================================================
 
-  public opacity = 0.5;
-  public opacityUse = true;
+  public pipeRadius = 0.02;
+  public selectedPipeRadius = this.pipeRadius * 2;
+  public lineWidth = 1;
+  public selectedLineWidth = this.lineWidth * 2;
 
   // ==================================================
   // OVERRIDES of BaseStyle
   // ==================================================
 
   public override clone(): RenderStyle {
-    return cloneDeep<MeasureBoxRenderStyle>(this);
+    return cloneDeep<LineRenderStyle>(this);
   }
 }

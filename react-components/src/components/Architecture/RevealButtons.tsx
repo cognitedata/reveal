@@ -5,11 +5,11 @@
 import { type ReactElement } from 'react';
 import { NavigationTool } from '../../architecture/base/commands/NavigationTool';
 import { CreateCommandButton } from './CommandButton';
-import { MeasurementTool } from '../../architecture/concrete/boxDomainObject/MeasurementTool';
 import { FitViewCommand } from '../../architecture/base/concreteCommands/FitViewCommand';
 import { FlexibleControlsType } from '@cognite/reveal';
 import { SetFlexibleControlsTypeCommand } from '../../architecture/base/concreteCommands/SetFlexibleControlsTypeCommand';
 import { SetAxisVisibleCommand } from '../../architecture/concrete/axis/SetAxisVisibleCommand';
+import { MeasurementTool } from '../../architecture/concrete/measurments/MeasurementTool';
 
 export class RevealButtons {
   static FitView = (): ReactElement => CreateCommandButton(new FitViewCommand());

@@ -11,13 +11,14 @@ import { UpdateTerrainCommand } from '../terrainDomainObject/UpdateTerrainComman
 import { FitViewCommand } from '../../base/concreteCommands/FitViewCommand';
 import { SetAxisVisibleCommand } from '../axis/SetAxisVisibleCommand';
 import { ExampleTool } from '../exampleDomainObject/ExampleTool';
-import { MeasurementTool } from '../boxDomainObject/MeasurementTool';
 import { AxisGizmoTool } from '@cognite/reveal/tools';
 import { BaseRevealConfig } from '../../base/renderTarget/BaseRevealConfig';
 import { type RevealRenderTarget } from '../../base/renderTarget/RevealRenderTarget';
 import { NavigationTool } from '../../base/commands/NavigationTool';
 import { type BaseTool } from '../../base/commands/BaseTool';
 import { ToggleMetricUnitsCommand } from '../../base/concreteCommands/ToggleMetricUnitsCommand';
+import { MeasurementTool } from '../measurments/MeasurementTool';
+import { CropBoxTool } from '../cropping/CropBoxTool';
 
 export class StoryBookConfig extends BaseRevealConfig {
   // ==================================================
@@ -39,6 +40,7 @@ export class StoryBookConfig extends BaseRevealConfig {
       undefined,
       new ExampleTool(),
       new MeasurementTool(),
+      new CropBoxTool(),
       undefined,
       new SetTerrainVisibleCommand(),
       new UpdateTerrainCommand()

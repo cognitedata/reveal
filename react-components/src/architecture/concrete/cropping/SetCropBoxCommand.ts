@@ -4,10 +4,7 @@
 
 import { RenderTargetCommand } from '../../base/commands/RenderTargetCommand';
 import { type TranslateKey } from '../../base/utilities/TranslateKey';
-import { MeasureBoxDomainObject } from './MeasureBoxDomainObject';
-import { MeasureType } from './MeasureType';
-
-// Experimental code for crop box
+import { CropBoxDomainObject } from './CropBoxDomainObject';
 
 export class SetCropBoxCommand extends RenderTargetCommand {
   // ==================================================
@@ -26,7 +23,7 @@ export class SetCropBoxCommand extends RenderTargetCommand {
     if (this.renderTarget.isGlobalCropBoxActive) {
       return true;
     }
-    return this.getMeasureBoxDomainObject() !== undefined;
+    return this.getCropBoxDomainObject() !== undefined;
   }
 
   public override get isChecked(): boolean {
@@ -35,7 +32,7 @@ export class SetCropBoxCommand extends RenderTargetCommand {
 
   protected override invokeCore(): boolean {
     const { renderTarget } = this;
-    const domainObject = this.getMeasureBoxDomainObject();
+    const domainObject = this.getCropBoxDomainObject();
     if (domainObject === undefined || this.renderTarget.isGlobalCropBoxActive) {
       renderTarget.clearGlobalCropBox();
       return false;
@@ -53,14 +50,7 @@ export class SetCropBoxCommand extends RenderTargetCommand {
   // INSTANCE METHODS
   // ==================================================
 
-  private getMeasureBoxDomainObject(): MeasureBoxDomainObject | undefined {
-    const domainObject = this.rootDomainObject.getSelectedDescendantByType(MeasureBoxDomainObject);
-    if (domainObject === undefined) {
-      return undefined;
-    }
-    if (domainObject.measureType !== MeasureType.Volume) {
-      return undefined;
-    }
-    return domainObject;
+  private getCropBoxDomainObject(): CropBoxDomainObject | undefined {
+    return this.rootDomainObject.getSelectedDescendantByType(CropBoxDomainObject);
   }
 }

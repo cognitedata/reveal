@@ -22,22 +22,26 @@ export abstract class BaseCommand {
 
   private readonly _listeners: UpdateDelegate[] = [];
 
-  // Unique index for the command, used by in React to force rerender
+  // Unique id for the command, used by in React to force rerender
   // when the command changes for a button.
-  public readonly _uniqueIndex: number;
+  private readonly _uniqueId: number;
 
-  public get uniqueIndex(): number {
-    return this._uniqueIndex;
+  public get uniqueId(): number {
+    return this._uniqueId;
+  }
+
+  // ==================================================
+  // CONSTRUCTOR
+  // ==================================================
+
+  constructor() {
+    BaseCommand._counter++;
+    this._uniqueId = BaseCommand._counter;
   }
 
   // ==================================================
   // VIRTUAL METHODS (To be override)
   // =================================================
-
-  constructor() {
-    BaseCommand._counter++;
-    this._uniqueIndex = BaseCommand._counter;
-  }
 
   public get name(): string {
     return this.tooltip.fallback ?? this.tooltip.key;

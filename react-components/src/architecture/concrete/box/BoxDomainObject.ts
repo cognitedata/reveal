@@ -2,18 +2,18 @@
  * Copyright 2024 Cognite AS
  */
 
-import { MeasureBoxRenderStyle } from './MeasureBoxRenderStyle';
+import { BoxRenderStyle } from './BoxRenderStyle';
 import { type RenderStyle } from '../../base/domainObjectsHelpers/RenderStyle';
 import { type ThreeView } from '../../base/views/ThreeView';
-import { MeasureBoxView } from './MeasureBoxView';
-import { Box3, Color, Matrix4, Vector3 } from 'three';
+import { BoxView } from './BoxView';
+import { Box3, Matrix4, Vector3 } from 'three';
 import { Changes } from '../../base/domainObjectsHelpers/Changes';
 import { BoxFace } from '../../base/utilities/box/BoxFace';
 import { FocusType } from '../../base/domainObjectsHelpers/FocusType';
-import { MeasureType, getIconByMeasureType, getNameByMeasureType } from './MeasureType';
+import { PrimitiveType } from './PrimitiveType';
 import { type BoxPickInfo } from '../../base/utilities/box/BoxPickInfo';
 import { type BaseDragger } from '../../base/domainObjectsHelpers/BaseDragger';
-import { MeasureBoxDragger } from './MeasureBoxDragger';
+import { BoxDragger } from './BoxDragger';
 import { PanelInfo } from '../../base/domainObjectsHelpers/PanelInfo';
 import { radToDeg } from 'three/src/math/MathUtils.js';
 import {
@@ -21,14 +21,12 @@ import {
   type CreateDraggerProps
 } from '../../base/domainObjects/VisualDomainObject';
 import { Range3 } from '../../base/utilities/geometry/Range3';
-import { CDF_TO_VIEWER_TRANSFORMATION } from '@cognite/reveal';
-import { type DomainObjectChange } from '../../base/domainObjectsHelpers/DomainObjectChange';
 import { Quantity } from '../../base/domainObjectsHelpers/Quantity';
 import { PopupStyle } from '../../base/domainObjectsHelpers/PopupStyle';
 
 export const MIN_BOX_SIZE = 0.01;
 
-export class BoxDomainObject extends VisualDomainObject {
+export abstract class BoxDomainObject extends VisualDomainObject {
   // ==================================================
   // INSTANCE FIELDS
   // ==================================================
@@ -40,44 +38,35 @@ export class BoxDomainObject extends VisualDomainObject {
   // For focus when edit in 3D (Used when isSelected is true only)
   public focusType: FocusType = FocusType.None;
   public focusFace: BoxFace | undefined = undefined;
-  private readonly _measureType: MeasureType;
+  private readonly _primitiveType: PrimitiveType;
 
   // ==================================================
   // INSTANCE PROPERTIES
   // ==================================================
 
-  public get renderStyle(): MeasureBoxRenderStyle {
-    return this.getRenderStyle() as MeasureBoxRenderStyle;
+  public get renderStyle(): BoxRenderStyle {
+    return this.getRenderStyle() as BoxRenderStyle;
   }
 
-  public get measureType(): MeasureType {
-    return this._measureType;
+  public get primitiveType(): PrimitiveType {
+    return this._primitiveType;
   }
 
   // ==================================================
   // CONSTRUCTOR
   // ==================================================
 
-  public constructor(measureType: MeasureType) {
+  protected constructor(primitiveType: PrimitiveType = PrimitiveType.Box) {
     super();
-    this._measureType = measureType;
-    this.color = new Color(Color.NAMES.magenta);
+    this._primitiveType = primitiveType;
   }
 
   // ==================================================
   // OVERRIDES of DomainObject
   // ==================================================
 
-  public override get icon(): string {
-    return getIconByMeasureType(this.measureType);
-  }
-
-  public override get typeName(): string {
-    return getNameByMeasureType(this.measureType);
-  }
-
   public override createRenderStyle(): RenderStyle | undefined {
-    return new MeasureBoxRenderStyle();
+    return new BoxRenderStyle();
   }
 
   public override createDragger(props: CreateDraggerProps): BaseDragger | undefined {
@@ -85,26 +74,7 @@ export class BoxDomainObject extends VisualDomainObject {
     if (pickInfo === undefined) {
       return undefined; // If the BoxPickInfo isn't specified, no dragger is created
     }
-    return new MeasureBoxDragger(props, this);
-  }
-
-  protected override notifyCore(change: DomainObjectChange): void {
-    super.notifyCore(change);
-
-    // Experimental code for crop box (let it stay here)
-    // if (this.isUseAsCropBox) {
-    //   if (change.isChanged(Changes.deleted)) {
-    //     this.setUseAsCropBox(false);
-    //   }
-    //   if (change.isChanged(Changes.geometry)) {
-    //     this.setUseAsCropBox(true);
-    //   }
-    // } else if (change.isChanged(Changes.selected) && this.isSelected) {
-    //   const root = this.root as RootDomainObject;
-    //   if (root instanceof RootDomainObject && root.renderTarget.isGlobalCropBoxActive) {
-    //     this.setUseAsCropBox(true);
-    //   }
-    // }
+    return new BoxDragger(props, this);
   }
 
   public override get hasPanelInfo(): boolean {
@@ -118,36 +88,36 @@ export class BoxDomainObject extends VisualDomainObject {
 
   public override getPanelInfo(): PanelInfo | undefined {
     const info = new PanelInfo();
-    const { measureType } = this;
+    const { primitiveType: type } = this;
     const isFinished = this.focusType !== FocusType.Pending;
 
-    switch (measureType) {
-      case MeasureType.HorizontalArea:
+    switch (type) {
+      case PrimitiveType.HorizontalArea:
         info.setHeader('MEASUREMENTS_HORIZONTAL_AREA', 'Horizontal area');
         break;
-      case MeasureType.VerticalArea:
+      case PrimitiveType.VerticalArea:
         info.setHeader('MEASUREMENTS_VERTICAL_AREA', 'Vertical area');
         break;
-      case MeasureType.Volume:
+      case PrimitiveType.Box:
         info.setHeader('MEASUREMENTS_VOLUME', 'Volume');
         break;
     }
     if (isFinished || isValidSize(this.size.x)) {
       add('MEASUREMENTS_LENGTH', 'Length', this.size.x, Quantity.Length);
     }
-    if (measureType !== MeasureType.VerticalArea && (isFinished || isValidSize(this.size.y))) {
+    if (type !== PrimitiveType.VerticalArea && (isFinished || isValidSize(this.size.y))) {
       add('MEASUREMENTS_DEPTH', 'Depth', this.size.y, Quantity.Length);
     }
-    if (measureType !== MeasureType.HorizontalArea && (isFinished || isValidSize(this.size.z))) {
+    if (type !== PrimitiveType.HorizontalArea && (isFinished || isValidSize(this.size.z))) {
       add('MEASUREMENTS_HEIGHT', 'Height', this.size.z, Quantity.Length);
     }
-    if (measureType !== MeasureType.Volume && (isFinished || this.hasArea)) {
+    if (type !== PrimitiveType.Box && (isFinished || this.hasArea)) {
       add('MEASUREMENTS_AREA', 'Area', this.area, Quantity.Area);
     }
-    if (measureType === MeasureType.Volume && (isFinished || this.hasHorizontalArea)) {
+    if (type === PrimitiveType.Box && (isFinished || this.hasHorizontalArea)) {
       add('MEASUREMENTS_HORIZONTAL_AREA', 'Horizontal area', this.horizontalArea, Quantity.Area);
     }
-    if (measureType === MeasureType.Volume && (isFinished || this.hasVolume)) {
+    if (type === PrimitiveType.Box && (isFinished || this.hasVolume)) {
       add('MEASUREMENTS_VOLUME', 'Volume', this.volume, Quantity.Volume);
     }
     // I forgot to add text for rotation angle before the deadline, so I used a icon instead.
@@ -171,7 +141,7 @@ export class BoxDomainObject extends VisualDomainObject {
   // ==================================================
 
   protected override createThreeView(): ThreeView | undefined {
-    return new MeasureBoxView();
+    return new BoxView();
   }
 
   // ==================================================
@@ -191,12 +161,12 @@ export class BoxDomainObject extends VisualDomainObject {
   }
 
   public get area(): number {
-    switch (this.measureType) {
-      case MeasureType.HorizontalArea:
+    switch (this.primitiveType) {
+      case PrimitiveType.HorizontalArea:
         return this.size.x * this.size.y;
-      case MeasureType.VerticalArea:
+      case PrimitiveType.VerticalArea:
         return this.size.x * this.size.z;
-      case MeasureType.Volume: {
+      case PrimitiveType.Box: {
         const a = this.size.x * this.size.y + this.size.y * this.size.z + this.size.z * this.size.x;
         return a * 2;
       }
@@ -277,31 +247,6 @@ export class BoxDomainObject extends VisualDomainObject {
     }
     this.notify(Changes.focus);
     return true;
-  }
-
-  public get isUseAsCropBox(): boolean {
-    const root = this.rootDomainObject;
-    if (root === undefined) {
-      return false;
-    }
-    return root.renderTarget.isGlobalCropBox(this);
-  }
-
-  public setUseAsCropBox(use: boolean): void {
-    const root = this.rootDomainObject;
-    if (root === undefined) {
-      return;
-    }
-    if (!use) {
-      root.renderTarget.clearGlobalCropBox();
-    } else {
-      const boundingBox = this.getBoundingBox();
-      boundingBox.applyMatrix4(CDF_TO_VIEWER_TRANSFORMATION);
-      const matrix = this.getMatrix();
-      matrix.premultiply(CDF_TO_VIEWER_TRANSFORMATION);
-      const planes = BoxFace.createClippingPlanes(matrix);
-      root.renderTarget.setGlobalCropBox(planes, boundingBox, this);
-    }
   }
 }
 

@@ -18,10 +18,10 @@ import {
   Vector3
 } from 'three';
 import { Wireframe } from 'three/examples/jsm/lines/Wireframe.js';
-import { MeasureLineDomainObject } from './MeasureLineDomainObject';
+import { LineDomainObject } from './LineDomainObject';
 import { DomainObjectChange } from '../../base/domainObjectsHelpers/DomainObjectChange';
 import { Changes } from '../../base/domainObjectsHelpers/Changes';
-import { MeasureLineRenderStyle } from './MeasureLineRenderStyle';
+import { LineRenderStyle } from './LineRenderStyle';
 import { GroupThreeView } from '../../base/views/GroupThreeView';
 import {
   CDF_TO_VIEWER_TRANSFORMATION,
@@ -30,7 +30,7 @@ import {
 } from '@cognite/reveal';
 import { LineSegmentsGeometry } from 'three/examples/jsm/lines/LineSegmentsGeometry.js';
 import { LineMaterial } from 'three/examples/jsm/lines/LineMaterial.js';
-import { MeasureType } from './MeasureType';
+import { PrimitiveType } from './PrimitiveType';
 import { createSpriteWithText } from '../../base/utilities/sprites/createSprite';
 import { mergeGeometries } from 'three/examples/jsm/utils/BufferGeometryUtils.js';
 import { FocusType } from '../../base/domainObjectsHelpers/FocusType';
@@ -42,17 +42,17 @@ import { Quantity } from '../../base/domainObjectsHelpers/Quantity';
 const CYLINDER_DEFAULT_AXIS = new Vector3(0, 1, 0);
 const RENDER_ORDER = 100;
 
-export class MeasureLineView extends GroupThreeView {
+export class LineView extends GroupThreeView {
   // ==================================================
   // INSTANCE PROPERTIES
   // ==================================================
 
-  public override get domainObject(): MeasureLineDomainObject {
-    return super.domainObject as MeasureLineDomainObject;
+  public override get domainObject(): LineDomainObject {
+    return super.domainObject as LineDomainObject;
   }
 
-  protected override get style(): MeasureLineRenderStyle {
-    return super.style as MeasureLineRenderStyle;
+  protected override get style(): LineRenderStyle {
+    return super.style as LineRenderStyle;
   }
 
   // ==================================================
@@ -120,7 +120,7 @@ export class MeasureLineView extends GroupThreeView {
     if (closestDistance !== undefined) {
       closestFinder.minDistance = closestDistance;
     }
-    const loopLength = domainObject.measureType === MeasureType.Polygon ? length + 1 : length;
+    const loopLength = domainObject.primitiveType === PrimitiveType.Polygon ? length + 1 : length;
     for (let i = 0; i < loopLength; i++) {
       thisPoint.copy(points[i % length]);
       thisPoint.applyMatrix4(CDF_TO_VIEWER_TRANSFORMATION);
@@ -163,7 +163,7 @@ export class MeasureLineView extends GroupThreeView {
       return undefined;
     }
     const geometries: CylinderGeometry[] = [];
-    const loopLength = domainObject.measureType === MeasureType.Polygon ? length + 1 : length;
+    const loopLength = domainObject.primitiveType === PrimitiveType.Polygon ? length + 1 : length;
 
     // Just allocate all needed objects once
     const prevPoint = new Vector3();
@@ -262,7 +262,7 @@ export class MeasureLineView extends GroupThreeView {
     if (spriteHeight <= 0) {
       return;
     }
-    const loopLength = domainObject.measureType === MeasureType.Polygon ? length : length - 1;
+    const loopLength = domainObject.primitiveType === PrimitiveType.Polygon ? length : length - 1;
     const center = new Vector3();
     for (let i = 0; i < loopLength; i++) {
       const point1 = points[i % length];
@@ -292,14 +292,14 @@ export class MeasureLineView extends GroupThreeView {
 // PRIVATE FUNCTIONS: Create object3D's
 // ==================================================
 
-function createVertices(domainObject: MeasureLineDomainObject): number[] | undefined {
+function createVertices(domainObject: LineDomainObject): number[] | undefined {
   const { points } = domainObject;
   const { length } = points;
   if (length < 2) {
     return undefined;
   }
   const vertices: number[] = [];
-  const loopLength = domainObject.measureType === MeasureType.Polygon ? length + 1 : length;
+  const loopLength = domainObject.primitiveType === PrimitiveType.Polygon ? length + 1 : length;
 
   for (let i = 0; i < loopLength; i++) {
     const point = points[i % length].clone();
@@ -312,11 +312,7 @@ function createVertices(domainObject: MeasureLineDomainObject): number[] | undef
   return vertices;
 }
 
-function createSprite(
-  text: string,
-  style: MeasureLineRenderStyle,
-  height: number
-): Sprite | undefined {
+function createSprite(text: string, style: LineRenderStyle, height: number): Sprite | undefined {
   const result = createSpriteWithText(text, height, style.textColor, style.textBgColor);
   if (result === undefined) {
     return undefined;
@@ -330,8 +326,8 @@ function createSprite(
 
 function updateSolidMaterial(
   material: MeshPhongMaterial,
-  boxDomainObject: MeasureLineDomainObject,
-  style: MeasureLineRenderStyle
+  boxDomainObject: LineDomainObject,
+  style: LineRenderStyle
 ): void {
   const color = boxDomainObject.getColorByColorType(style.colorType);
   material.color = color;
@@ -347,15 +343,15 @@ function updateSolidMaterial(
 
 function adjustLabel(
   point: Vector3,
-  domainObject: MeasureLineDomainObject,
-  style: MeasureLineRenderStyle,
+  domainObject: LineDomainObject,
+  style: LineRenderStyle,
   spriteHeight: number
 ): void {
-  if (domainObject.measureType !== MeasureType.VerticalArea) {
+  if (domainObject.primitiveType !== PrimitiveType.VerticalArea) {
     point.y += (1.1 * spriteHeight) / 2 + style.pipeRadius;
   }
 }
 
-function getRadius(domainObject: MeasureLineDomainObject, style: MeasureLineRenderStyle): number {
+function getRadius(domainObject: LineDomainObject, style: LineRenderStyle): number {
   return domainObject.isSelected ? style.selectedPipeRadius : style.pipeRadius;
 }

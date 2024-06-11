@@ -9,9 +9,9 @@ import { FocusType } from '../../base/domainObjectsHelpers/FocusType';
 import { type BoxPickInfo } from '../../base/utilities/box/BoxPickInfo';
 import { forceBetween0AndPi } from '../../base/utilities/extensions/mathExtensions';
 import { horizontalAngle } from '../../base/utilities/extensions/vectorExtensions';
-import { MeasureType } from './MeasureType';
+import { PrimitiveType } from './PrimitiveType';
 import { getClosestPointOnLine } from '../../base/utilities/extensions/rayExtensions';
-import { type MeasureBoxDomainObject } from './MeasureBoxDomainObject';
+import { type BoxDomainObject } from './BoxDomainObject';
 import { BaseDragger } from '../../base/domainObjectsHelpers/BaseDragger';
 import {
   type VisualDomainObject,
@@ -24,12 +24,12 @@ import { Vector3Pool } from '@cognite/reveal';
  * It provides methods for scaling, translating, and rotating the box based on user interactions.
  * All geometry in this class assume Z-axis is up
  */
-export class MeasureBoxDragger extends BaseDragger {
+export class BoxDragger extends BaseDragger {
   // ==================================================
   // INSTANCE FIELDS
   // ==================================================
 
-  private readonly _domainObject: MeasureBoxDomainObject;
+  private readonly _domainObject: BoxDomainObject;
 
   private readonly _face;
   private readonly _focusType: FocusType;
@@ -59,7 +59,7 @@ export class MeasureBoxDragger extends BaseDragger {
   // CONSTRUCTOR
   // ==================================================
 
-  public constructor(props: CreateDraggerProps, domainObject: MeasureBoxDomainObject) {
+  public constructor(props: CreateDraggerProps, domainObject: BoxDomainObject) {
     super(props);
 
     const pickInfo = props.intersection.userData as BoxPickInfo;
@@ -156,7 +156,7 @@ export class MeasureBoxDragger extends BaseDragger {
 
     const index = this._face.index;
     let deltaCenter: number;
-    if (this._domainObject.measureType !== MeasureType.Volume) {
+    if (this._domainObject.primitiveType !== PrimitiveType.Box) {
       deltaCenter = this._face.sign * deltaSize;
     } else {
       // Set new size
