@@ -17,6 +17,7 @@ import { type RevealRenderTarget } from '../../base/renderTarget/RevealRenderTar
 import { NavigationTool } from '../../base/commands/NavigationTool';
 import { type BaseTool } from '../../base/commands/BaseTool';
 import { ToggleMetricUnitsCommand } from '../../base/concreteCommands/ToggleMetricUnitsCommand';
+import { PointTool } from '../pointDomainObject/PointTool';
 
 export class StoryBookConfig extends BaseRevealConfig {
   // ==================================================
@@ -39,7 +40,8 @@ export class StoryBookConfig extends BaseRevealConfig {
       new MeasurementTool(),
       undefined,
       new SetTerrainVisibleCommand(),
-      new UpdateTerrainCommand()
+      new UpdateTerrainCommand(),
+      new PointTool()
     ];
   }
 
