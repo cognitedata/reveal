@@ -9,7 +9,6 @@ import { FocusType } from '../../base/domainObjectsHelpers/FocusType';
 import { type BoxPickInfo } from '../../base/utilities/box/BoxPickInfo';
 import { forceBetween0AndPi } from '../../base/utilities/extensions/mathExtensions';
 import { horizontalAngle } from '../../base/utilities/extensions/vectorExtensions';
-import { Vector3Pool } from '../../base/utilities/geometry/Vector3Pool';
 import { MeasureType } from './MeasureType';
 import { getClosestPointOnLine } from '../../base/utilities/extensions/rayExtensions';
 import { type MeasureBoxDomainObject } from './MeasureBoxDomainObject';
@@ -18,6 +17,7 @@ import {
   type VisualDomainObject,
   type CreateDraggerProps
 } from '../../base/domainObjects/VisualDomainObject';
+import { Vector3Pool } from '@cognite/reveal';
 
 /**
  * The `BoxDragger` class represents a utility for dragging and manipulating a box in a 3D space.
@@ -56,7 +56,7 @@ export class MeasureBoxDragger extends BaseDragger {
   }
 
   // ==================================================
-  // CONTRUCTOR
+  // CONSTRUCTOR
   // ==================================================
 
   public constructor(props: CreateDraggerProps, domainObject: MeasureBoxDomainObject) {

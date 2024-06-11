@@ -1,10 +1,9 @@
 /*!
  * Copyright 2024 Cognite AS
- * BaseTool: Base class for the tool are used to interact with the render target.
  */
 
 import { RenderTargetCommand } from '../../../base/commands/RenderTargetCommand';
-import { type Tooltip } from '../../../base/commands/BaseCommand';
+import { type TranslateKey } from '../../../base/utilities/TranslateKey';
 import { ExampleDomainObject } from '../ExampleDomainObject';
 
 export class DeleteAllExamplesCommand extends RenderTargetCommand {
@@ -12,12 +11,16 @@ export class DeleteAllExamplesCommand extends RenderTargetCommand {
   // OVERRIDES
   // ==================================================
 
-  public override get tooltip(): Tooltip {
+  public override get tooltip(): TranslateKey {
     return { key: 'EXAMPLES_DELETE', fallback: 'Remove all examples' };
   }
 
   public override get icon(): string {
     return 'Delete';
+  }
+
+  public override get buttonType(): string {
+    return 'ghost-destructive';
   }
 
   public override get isEnabled(): boolean {
@@ -33,6 +36,10 @@ export class DeleteAllExamplesCommand extends RenderTargetCommand {
     }
     return true;
   }
+
+  // ==================================================
+  // INSTANCE METHODS
+  // ==================================================
 
   private getFirst(): ExampleDomainObject | undefined {
     return this.rootDomainObject.getDescendantByType(ExampleDomainObject);

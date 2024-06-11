@@ -4,7 +4,7 @@
 
 import { MeasureBoxDomainObject } from './MeasureBoxDomainObject';
 import { type AnyIntersection, CDF_TO_VIEWER_TRANSFORMATION } from '@cognite/reveal';
-import { type BaseCommand, type Tooltip } from '../../base/commands/BaseCommand';
+import { type BaseCommand } from '../../base/commands/BaseCommand';
 import { isDomainObjectIntersection } from '../../base/domainObjectsHelpers/DomainObjectIntersection';
 import { FocusType } from '../../base/domainObjectsHelpers/FocusType';
 import { type BoxPickInfo } from '../../base/utilities/box/BoxPickInfo';
@@ -18,11 +18,13 @@ import { MeasureLineDomainObject } from './MeasureLineDomainObject';
 import { MeasureRenderStyle } from './MeasureRenderStyle';
 import { type DomainObject } from '../../base/domainObjects/DomainObject';
 import { MeasureDomainObject } from './MeasureDomainObject';
-import { ShowMeasurmentsOnTopCommand } from './ShowMeasurmentsOnTopCommand';
-import { SetMeasurmentTypeCommand } from './SetMeasurmentTypeCommand';
+import { ShowMeasurementsOnTopCommand } from './ShowMeasurementsOnTopCommand';
+import { SetMeasurementTypeCommand } from './SetMeasurementTypeCommand';
 import { PopupStyle } from '../../base/domainObjectsHelpers/PopupStyle';
 import { type RootDomainObject } from '../../base/domainObjects/RootDomainObject';
 import { CommandsUpdater } from '../../base/reactUpdaters/CommandsUpdater';
+import { type TranslateKey } from '../../base/utilities/TranslateKey';
+import { ToggleMetricUnitsCommand } from '../../base/concreteCommands/ToggleMetricUnitsCommand';
 
 export class MeasurementTool extends BaseEditTool {
   // ==================================================
@@ -40,20 +42,21 @@ export class MeasurementTool extends BaseEditTool {
     return 'Ruler';
   }
 
-  public override get tooltip(): Tooltip {
+  public override get tooltip(): TranslateKey {
     return { key: 'MEASUREMENTS', fallback: 'Measurements' };
   }
 
   public override getToolbar(): Array<BaseCommand | undefined> {
     return [
-      new SetMeasurmentTypeCommand(MeasureType.Line),
-      new SetMeasurmentTypeCommand(MeasureType.Polyline),
-      new SetMeasurmentTypeCommand(MeasureType.Polygon),
-      new SetMeasurmentTypeCommand(MeasureType.HorizontalArea),
-      new SetMeasurmentTypeCommand(MeasureType.VerticalArea),
-      new SetMeasurmentTypeCommand(MeasureType.Volume),
+      new SetMeasurementTypeCommand(MeasureType.Line),
+      new SetMeasurementTypeCommand(MeasureType.Polyline),
+      new SetMeasurementTypeCommand(MeasureType.Polygon),
+      new SetMeasurementTypeCommand(MeasureType.HorizontalArea),
+      new SetMeasurementTypeCommand(MeasureType.VerticalArea),
+      new SetMeasurementTypeCommand(MeasureType.Volume),
       undefined, // Separator
-      new ShowMeasurmentsOnTopCommand()
+      new ToggleMetricUnitsCommand(),
+      new ShowMeasurementsOnTopCommand()
     ];
   }
 
@@ -83,7 +86,7 @@ export class MeasurementTool extends BaseEditTool {
 
   public override onKey(event: KeyboardEvent, down: boolean): void {
     if (down && event.key === 'Delete') {
-      const domainObject = this.rootDomainObject.getSelectedDescendantByType(MeasureDomainObject);
+      const domainObject = this.getSelected();
       if (domainObject !== undefined) {
         domainObject.removeInteractive();
       }
@@ -181,20 +184,18 @@ export class MeasurementTool extends BaseEditTool {
     const intersection = await this.getIntersection(event);
     if (intersection === undefined) {
       // Click in the "air"
-      await super.onClick(event);
       return;
     }
-    const measurment = this.getMeasurement(intersection);
-    if (measurment !== undefined) {
-      this.deselectAll(measurment);
-      measurment.setSelectedInteractive(true);
+    const measurement = this.getMeasurement(intersection);
+    if (measurement !== undefined) {
+      this.deselectAll(measurement);
+      measurement.setSelectedInteractive(true);
       return;
     }
     const ray = this.getRay(event);
     if (creator === undefined) {
       const creator = (this._creator = createCreator(this.measureType));
       if (creator === undefined) {
-        await super.onClick(event);
         return;
       }
       if (creator.addPoint(ray, intersection)) {
@@ -218,7 +219,7 @@ export class MeasurementTool extends BaseEditTool {
 
   public override async onPointerDown(event: PointerEvent, leftButton: boolean): Promise<void> {
     if (this._creator !== undefined) {
-      return; // Prevent draggin while creating the new
+      return; // Prevent dragging while creating the new
     }
     await super.onPointerDown(event, leftButton);
   }
@@ -240,7 +241,7 @@ export class MeasurementTool extends BaseEditTool {
       return;
     }
     if (this._creator.handleEscape()) {
-      // Sucessfully created, set it back to none
+      // Successfully created, set it back to none
       this.measureType = MeasureType.None;
       CommandsUpdater.update(this.renderTarget);
     }

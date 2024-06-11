@@ -440,6 +440,7 @@ export class Cognite3DViewer {
     // @beta
     getAnyIntersectionFromPixel(pixelCoords: THREE.Vector2, options?: {
         stopOnHitting360Icon?: boolean;
+        predicate?: (customObject: ICustomObject) => boolean;
     }): Promise<AnyIntersection | undefined>;
     // @deprecated
     getClippingPlanes(): THREE.Plane[];
@@ -756,6 +757,7 @@ export enum Corner {
 // @beta
 export class CustomObject implements ICustomObject {
     constructor(object: Object3D);
+    beforeRender(_camera: PerspectiveCamera): void;
     getBoundingBox(target: Box3): Box3;
     intersectIfCloser(intersectInput: CustomObjectIntersectInput, closestDistance: number | undefined): undefined | CustomObjectIntersection;
     get isPartOfBoundingBox(): boolean;
@@ -765,6 +767,8 @@ export class CustomObject implements ICustomObject {
     set shouldPick(value: boolean);
     get shouldPickBoundingBox(): boolean;
     set shouldPickBoundingBox(value: boolean);
+    get useDepthTest(): boolean;
+    set useDepthTest(value: boolean);
 }
 
 // @beta
@@ -1052,6 +1056,9 @@ export function getNormalizedPixelCoordinates(domElement: HTMLElement, pixelX: n
 // @public
 export function getNormalizedPixelCoordinatesBySize(pixelX: number, pixelY: number, width: number, height: number): THREE.Vector2;
 
+// @beta
+export function getWheelEventDelta(event: WheelEvent): number;
+
 // @public
 export type HtmlOverlayCreateClusterDelegate = (overlayElements: {
     htmlElement: HTMLElement;
@@ -1096,12 +1103,14 @@ export type HtmlOverlayToolOptions = {
 
 // @beta
 export interface ICustomObject {
+    beforeRender(camera: PerspectiveCamera): void;
     getBoundingBox(target: Box3): Box3;
     intersectIfCloser(intersectInput: CustomObjectIntersectInput, closestDistance: number | undefined): undefined | CustomObjectIntersection;
     get isPartOfBoundingBox(): boolean;
     get object(): Object3D;
     get shouldPick(): boolean;
     get shouldPickBoundingBox(): boolean;
+    get useDepthTest(): boolean;
 }
 
 // @beta
@@ -1116,7 +1125,7 @@ export interface IFlexibleCameraManager extends CameraManager {
     onPointerDown(event: PointerEvent, leftButton: boolean): Promise<void>;
     onPointerDrag(event: PointerEvent, leftButton: boolean): Promise<void>;
     onPointerUp(event: PointerEvent, leftButton: boolean): Promise<void>;
-    onWheel(event: WheelEvent): Promise<void>;
+    onWheel(event: WheelEvent, delta: number): Promise<void>;
     removeControlsTypeChangeListener(callback: FlexibleControlsTypeChangeDelegate): void;
     rotateCameraTo(direction: Vector3, animationDuration: number): void;
 }
@@ -1904,6 +1913,12 @@ export class UnionNodeCollection extends CombineNodeCollectionBase {
     getAreas(): AreaCollection;
     // (undocumented)
     serialize(): SerializedNodeCollection;
+}
+
+// @beta
+export class Vector3Pool {
+    constructor(size?: number);
+    getNext(copyFrom?: Vector3): Vector3;
 }
 
 // @public (undocumented)

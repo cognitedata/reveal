@@ -14,13 +14,12 @@ import {
 
 import { useTranslation } from '../i18n/I18n';
 import styled from 'styled-components';
+import { type TranslateDelegate } from '../../architecture/base/utilities/TranslateKey';
 
 type CustomSettingsProps = {
   includeOrbitInCenter?: boolean;
   orientation?: 'horizontal' | 'vertical';
 };
-
-type TranslateDelegate = (key: string, fallback?: string) => string;
 
 type ControlTypeSelectionProps = {
   selectedControlsType: FlexibleControlsType;

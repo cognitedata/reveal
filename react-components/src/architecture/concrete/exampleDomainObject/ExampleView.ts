@@ -21,7 +21,7 @@ export class ExampleView extends GroupThreeView {
   // INSTANCE PROPERTIES
   // ==================================================
 
-  protected override get domainObject(): ExampleDomainObject {
+  public override get domainObject(): ExampleDomainObject {
     return super.domainObject as ExampleDomainObject;
   }
 
@@ -36,8 +36,7 @@ export class ExampleView extends GroupThreeView {
   public override update(change: DomainObjectChange): void {
     super.update(change);
     if (change.isChanged(Changes.selected, Changes.renderStyle, Changes.color)) {
-      this.removeChildren();
-      this.invalidateBoundingBox();
+      this.clearMemory();
       this.invalidateRenderTarget();
     }
   }
@@ -46,18 +45,22 @@ export class ExampleView extends GroupThreeView {
   // OVERRIDES of GroupThreeView
   // ==================================================
 
+  public override get useDepthTest(): boolean {
+    return this.style.depthTest;
+  }
+
   protected override addChildren(): void {
     const { domainObject, style } = this;
 
-    const color = domainObject.color;
     const geometry = new SphereGeometry(style.radius, 32, 16);
     const material = new MeshPhongMaterial({
-      color,
+      color: domainObject.color,
       emissive: WHITE_COLOR,
       emissiveIntensity: domainObject.isSelected ? 0.4 : 0.0,
       shininess: 5,
       opacity: style.opacity,
-      transparent: true
+      transparent: true,
+      depthTest: style.depthTest
     });
     const sphere = new Mesh(geometry, material);
     const center = domainObject.center.clone();

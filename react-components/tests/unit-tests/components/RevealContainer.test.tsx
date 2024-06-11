@@ -1,7 +1,7 @@
 import { describe, expect, test } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import { RevealCanvas, RevealContext } from '../../../src';
-import { It, Mock } from 'moq.ts';
+import { Mock } from 'moq.ts';
 import { type CogniteClient } from '@cognite/sdk';
 import { RevealKeepAliveContext } from '../../../src/components/RevealKeepAlive/RevealKeepAliveContext';
 import { type FC, useRef } from 'react';
@@ -11,7 +11,7 @@ import { type PointCloudAnnotationCache } from '../../../src/components/CachePro
 import { type Image360AnnotationCache } from '../../../src/components/CacheProvider/Image360AnnotationCache';
 import { type SceneIdentifiers } from '../../../src/components/SceneContainer/sceneTypes';
 import { type RevealRenderTarget } from '../../../src/architecture/base/renderTarget/RevealRenderTarget';
-import { Cognite3DViewer } from '@cognite/reveal';
+import { viewerMock } from '../fixtures/viewer';
 
 describe(RevealCanvas.name, () => {
   test('Mounting reveal container will mount a canvas to the DOM', () => {
@@ -22,19 +22,10 @@ describe(RevealCanvas.name, () => {
         .setup((p) => p.project)
         .returns('test');
 
-      const domElement = document
-        .createElement('div')
-        .appendChild(document.createElement('canvas'));
-
       // This object is not created as a Mock because it seems to interact badly with
       const renderTargetRef = useRef<RevealRenderTarget>({
         get viewer() {
-          return new Mock<Cognite3DViewer>()
-            .setup((viewer) => viewer.setBackgroundColor(It.IsAny()))
-            .returns()
-            .setup((viewer) => viewer.domElement)
-            .returns(domElement)
-            .object();
+          return viewerMock;
         },
         initialize(): void {}
       } as unknown as RevealRenderTarget);

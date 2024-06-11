@@ -15,15 +15,12 @@ import {
   DirectionalLight,
   type PerspectiveCamera,
   type Box3,
-  type WebGLRenderer,
   type Plane
 } from 'three';
 import { CommandsController } from './CommandsController';
 import { RootDomainObject } from '../domainObjects/RootDomainObject';
 import { getOctDir } from '../utilities/extensions/vectorExtensions';
 import { getResizeCursor } from '../utilities/geometry/getResizeCursor';
-import { VisualDomainObject } from '../domainObjects/VisualDomainObject';
-import { ThreeView } from '../views/ThreeView';
 import { type DomainObject } from '../domainObjects/DomainObject';
 import { type AxisGizmoTool } from '@cognite/reveal/tools';
 import { type BaseRevealConfig } from './BaseRevealConfig';
@@ -48,7 +45,7 @@ export class RevealRenderTarget {
   private _config: BaseRevealConfig | undefined = undefined;
 
   // ==================================================
-  // CONTRUCTORS
+  // CONSTRUCTOR
   // ==================================================
 
   constructor(viewer: Cognite3DViewer) {
@@ -64,7 +61,6 @@ export class RevealRenderTarget {
 
     this.initializeLights();
     this._viewer.on('cameraChange', this.cameraChangeHandler);
-    this._viewer.on('beforeSceneRendered', this.beforeSceneRenderedHandler);
 
     this.setConfig(new DefaultRevealConfig());
   }
@@ -148,6 +144,10 @@ export class RevealRenderTarget {
     }
   }
 
+  public onStartup(): void {
+    this._config?.onStartup(this);
+  }
+
   public dispose(): void {
     this._viewer.dispose();
     if (this._ambientLight !== undefined) {
@@ -198,22 +198,6 @@ export class RevealRenderTarget {
 
     cameraDirection.negate();
     light.position.copy(cameraDirection);
-  };
-
-  beforeSceneRenderedHandler = (event: {
-    frameNumber: number;
-    renderer: WebGLRenderer;
-    camera: PerspectiveCamera;
-  }): void => {
-    // TODO: Add beforeRender to the customObject in Reveal, so this can be general made.
-    // This way is a little bit time consuming since we have to iterate over all domainObjects and all views.
-    for (const domainObject of this._rootDomainObject.getDescendantsByType(VisualDomainObject)) {
-      for (const view of domainObject.views.getByType(ThreeView)) {
-        if (view.renderTarget === this) {
-          view.beforeRender(event.camera);
-        }
-      }
-    }
   };
 
   // ==================================================

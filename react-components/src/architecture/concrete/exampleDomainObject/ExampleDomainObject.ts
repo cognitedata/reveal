@@ -6,7 +6,7 @@ import { ExampleRenderStyle } from './ExampleRenderStyle';
 import { type RenderStyle } from '../../base/domainObjectsHelpers/RenderStyle';
 import { type ThreeView } from '../../base/views/ThreeView';
 import { ExampleView } from './ExampleView';
-import { NumberType, PanelInfo } from '../../base/domainObjectsHelpers/PanelInfo';
+import { PanelInfo } from '../../base/domainObjectsHelpers/PanelInfo';
 import {
   type CreateDraggerProps,
   VisualDomainObject
@@ -15,6 +15,7 @@ import { Vector3 } from 'three';
 import { PopupStyle } from '../../base/domainObjectsHelpers/PopupStyle';
 import { type BaseDragger } from '../../base/domainObjectsHelpers/BaseDragger';
 import { ExampleDragger } from './ExampleDragger';
+import { Quantity } from '../../base/domainObjectsHelpers/Quantity';
 
 export class ExampleDomainObject extends VisualDomainObject {
   // ==================================================
@@ -62,13 +63,13 @@ export class ExampleDomainObject extends VisualDomainObject {
   public override getPanelInfo(): PanelInfo | undefined {
     const info = new PanelInfo();
     info.setHeader('NAME', this.name);
-    add('XCORDINATE', 'X coordinate', this.center.x, NumberType.Length);
-    add('YCORDINATE', 'Y coordinate', this.center.y, NumberType.Length);
-    add('ZCORDINATE', 'Z coordinate', this.center.z, NumberType.Length);
+    add('XCOORDINATE', 'X coordinate', this.center.x, Quantity.Length);
+    add('YCOORDINATE', 'Y coordinate', this.center.y, Quantity.Length);
+    add('ZCOORDINATE', 'Z coordinate', this.center.z, Quantity.Length);
     return info;
 
-    function add(key: string, fallback: string, value: number, numberType: NumberType): void {
-      info.add({ key, fallback, value, numberType });
+    function add(key: string, fallback: string, value: number, quantity: Quantity): void {
+      info.add({ key, fallback, value, quantity });
     }
   }
 

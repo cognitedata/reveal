@@ -3,7 +3,7 @@
  * CommandsController: Holds the tools, the active tool and the previous tool
  */
 
-import { PointerEvents, PointerEventsTarget } from '@cognite/reveal';
+import { PointerEvents, PointerEventsTarget, getWheelEventDelta } from '@cognite/reveal';
 import { type BaseTool } from '../commands/BaseTool';
 import { type BaseCommand } from '../commands/BaseCommand';
 
@@ -20,7 +20,7 @@ export class CommandsController extends PointerEvents {
   private readonly _pointerEventsTarget: PointerEventsTarget;
 
   // ==================================================
-  // CONTRUCTORS
+  // CONSTRUCTOR
   // ==================================================
 
   constructor(domElement: HTMLElement) {
@@ -215,7 +215,8 @@ export class CommandsController extends PointerEvents {
   };
 
   private readonly _onWheel = async (event: WheelEvent): Promise<void> => {
-    await this.activeTool?.onWheel(event);
+    const delta = getWheelEventDelta(event);
+    await this.activeTool?.onWheel(event, delta);
     event.stopPropagation();
     event.preventDefault();
   };

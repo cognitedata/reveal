@@ -8,7 +8,7 @@ import { Color } from 'three';
 import { ColorMapType } from './ColorMapType';
 import { getColorFromBytes as getFromBytes } from './colorExtensions';
 
-let colorMaps: Map<ColorMapType, ColorMap> | undefined; // Act as a sigleton
+let colorMaps: Map<ColorMapType, ColorMap> | undefined; // Act as a singleton
 
 // ==================================================
 // PUBLIC FUNCTIONS:

@@ -12,6 +12,7 @@ export class ExampleRenderStyle extends RenderStyle {
 
   public radius = 1;
   public opacity = 0.75;
+  public depthTest = true;
 
   // ==================================================
   // OVERRIDES of BaseStyle

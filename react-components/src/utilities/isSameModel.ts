@@ -3,8 +3,8 @@
  */
 import { type GeometryFilter } from '@cognite/reveal';
 import {
-  type PointCloudModelOptions,
-  type CadModelOptions
+  type CadModelOptions,
+  type AddReveal3DModelOptions
 } from '../components/Reveal3DResources/types';
 import { Matrix4 } from 'three';
 
@@ -43,9 +43,9 @@ function isSameGeometryFilter(
   );
 }
 
-export function isSamePointCloudModel(
-  model0: PointCloudModelOptions,
-  model1: PointCloudModelOptions
+export function isSame3dModel(
+  model0: AddReveal3DModelOptions,
+  model1: AddReveal3DModelOptions
 ): boolean {
   return (
     model0.modelId === model1.modelId &&

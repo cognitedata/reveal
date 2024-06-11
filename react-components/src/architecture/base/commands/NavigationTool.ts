@@ -1,11 +1,10 @@
 /*!
  * Copyright 2024 Cognite AS
- * BaseTool: Base class for the tool are used to interact with the render target.
  */
 
 import { BaseTool } from './BaseTool';
-import { type Tooltip } from './BaseCommand';
 import { type IFlexibleCameraManager } from '@cognite/reveal';
+import { type TranslateKey } from '../utilities/TranslateKey';
 
 /**
  * Represents a tool navigation tool used for camera manipulation.
@@ -13,7 +12,7 @@ import { type IFlexibleCameraManager } from '@cognite/reveal';
  */
 export class NavigationTool extends BaseTool {
   // ==================================================
-  // INSTANVE PROPERTIES
+  // INSTANCE PROPERTIES
   // ==================================================
 
   private get cameraManager(): IFlexibleCameraManager {
@@ -32,7 +31,7 @@ export class NavigationTool extends BaseTool {
     return 'Grab';
   }
 
-  public override get tooltip(): Tooltip {
+  public override get tooltip(): TranslateKey {
     return { key: 'NAVIGATION', fallback: 'Navigation' };
   }
 
@@ -56,8 +55,8 @@ export class NavigationTool extends BaseTool {
     await this.cameraManager.onPointerUp(event, leftButton);
   }
 
-  public override async onWheel(event: WheelEvent): Promise<void> {
-    await this.cameraManager.onWheel(event);
+  public override async onWheel(event: WheelEvent, delta: number): Promise<void> {
+    await this.cameraManager.onWheel(event, delta);
   }
 
   public override onKey(event: KeyboardEvent, down: boolean): void {

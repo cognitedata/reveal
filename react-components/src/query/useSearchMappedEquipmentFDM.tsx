@@ -11,7 +11,8 @@ import {
   type Query,
   type DmsUniqueIdentifier,
   type Space,
-  type ExternalId
+  type ExternalId,
+  type InstanceFilter
 } from '../utilities/FdmSDK';
 import { useSDK } from '../components/RevealCanvas/SDKProvider';
 import { type UseQueryResult, useQuery } from '@tanstack/react-query';
@@ -28,7 +29,7 @@ export const useSearchMappedEquipmentFDM = (
   query: string,
   viewsToSearch: DmsUniqueIdentifier[],
   models: AddModelOptions[],
-  instancesFilter: any,
+  instancesFilter: InstanceFilter | undefined,
   limit: number = 100,
   userSdk?: CogniteClient
 ): UseQueryResult<SearchResultsWithView[]> => {
@@ -80,7 +81,7 @@ const searchNodesWithViewsAndModels = async (
   spacesToSearch: string[],
   sourcesToSearch: Source[],
   models: AddModelOptions[],
-  instancesFilter: any,
+  instancesFilter: InstanceFilter | undefined,
   fdmSdk: FdmSDK,
   limit: number = 100
 ): Promise<SearchResultsWithView[]> => {
@@ -248,6 +249,8 @@ async function createMappedEquipmentMaps(
   const mappedEquipmentFirstLevelMap: Record<string, EdgeItem[]> = {};
   const equipmentSecondLevelMap: Record<string, EdgeItem[]> = {};
 
+  const modelsMap = await createModelsMap(models, fdmSdk);
+
   for (const edge of allEdges) {
     const { space: endSpace, externalId: endExternalId } = edge.endNode;
     const { space, externalId } = edge.startNode;
@@ -258,9 +261,9 @@ async function createMappedEquipmentMaps(
         revisionId.toString() === getRevisionIdFromEdge(edge)
     );
 
-    const modelInstances = await getDMSModels(parseInt(endExternalId), fdmSdk);
+    const modelInstances = modelsMap.get(endExternalId);
 
-    if (modelInstances.find((model) => model.space === endSpace) !== undefined && isModelsMapped) {
+    if (modelInstances?.find((model) => model.space === endSpace) !== undefined && isModelsMapped) {
       const key = `${space}/${externalId}`;
 
       const keyEdges = mappedEquipmentFirstLevelMap[key];
@@ -279,6 +282,18 @@ async function createMappedEquipmentMaps(
   }
 
   return { mappedEquipmentFirstLevelMap, equipmentSecondLevelMap };
+}
+
+async function createModelsMap(
+  models: AddModelOptions[],
+  fdmSdk: FdmSDK
+): Promise<Map<ExternalId, DmsUniqueIdentifier[]>> {
+  const modelInstances = await Promise.all(
+    models.map(async (model) => await getDMSModels(model.modelId, fdmSdk))
+  );
+  return new Map(
+    modelInstances.map((modelInstanceList, ind) => [`${models[ind].modelId}`, modelInstanceList])
+  );
 }
 
 function createCheckMappedEquipmentQuery(
@@ -307,7 +322,7 @@ function createCheckMappedEquipmentQuery(
         edges: {
           from: 'mapped_nodes',
           direction: 'outwards',
-          terminationFilter: {
+          nodeFilter: {
             in: {
               property: ['node', 'externalId'],
               values: models.map((model) => model.modelId.toString())
