@@ -38,17 +38,17 @@ export class CropBoxDomainObject extends BoxDomainObject {
   protected override notifyCore(change: DomainObjectChange): void {
     super.notifyCore(change);
 
-    if (this.isUseAsCropBox) {
+    if (this.isGlobalCropBox) {
       if (change.isChanged(Changes.deleted)) {
-        this.setUseAsCropBox(false);
+        this.isGlobalCropBox = false;
       }
       if (change.isChanged(Changes.geometry)) {
-        this.setUseAsCropBox(true);
+        this.isGlobalCropBox = true;
       }
     } else if (change.isChanged(Changes.selected) && this.isSelected) {
       const root = this.rootDomainObject;
       if (root !== undefined && root.renderTarget.isGlobalCropBoxActive) {
-        this.setUseAsCropBox(true);
+        this.isGlobalCropBox = true;
       }
     }
   }
@@ -71,7 +71,7 @@ export class CropBoxDomainObject extends BoxDomainObject {
   // INSTANCE METHODS: Others
   // ==================================================
 
-  public get isUseAsCropBox(): boolean {
+  public get isGlobalCropBox(): boolean {
     const root = this.rootDomainObject;
     if (root === undefined) {
       return false;
@@ -79,12 +79,12 @@ export class CropBoxDomainObject extends BoxDomainObject {
     return root.renderTarget.isGlobalCropBox(this);
   }
 
-  public setUseAsCropBox(use: boolean): void {
+  public set isGlobalCropBox(value: boolean) {
     const root = this.rootDomainObject;
     if (root === undefined) {
       return;
     }
-    if (!use) {
+    if (!value) {
       root.renderTarget.clearGlobalCropBox();
     } else {
       const boundingBox = this.getBoundingBox();

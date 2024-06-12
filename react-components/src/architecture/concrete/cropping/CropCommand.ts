@@ -37,11 +37,11 @@ export class CropCommand extends RenderTargetCommand {
       renderTarget.clearGlobalCropBox();
       return false;
     }
-    if (domainObject.isUseAsCropBox) {
+    if (domainObject.isGlobalCropBox) {
       renderTarget.clearGlobalCropBox();
       return true;
     }
-    domainObject.setUseAsCropBox(true);
+    domainObject.isGlobalCropBox = true;
     renderTarget.fitView();
     return true;
   }
