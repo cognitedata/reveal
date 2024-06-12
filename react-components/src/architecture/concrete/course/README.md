@@ -32,7 +32,7 @@ The architecture I will introduce has been developed since the 1990s and has evo
 - The Reveal objects, like CAD, Point clouds etc. still live somewhere inside Reveal and cannot be used as domain objects yet.
 - Reveal is not a multi viewer system. This architecture support multi viewer, but cannot use it.
 - I have not implemented any save and load data from CDF. This will come later.
-- I have dropped several more advanced features in the architecture (for instance factories), because of the code review system we have.
+- I have dropped several more advanced features in the architecture (for instance factories).
 
 Instead of sliders you will during the course (hopefully) be able to make functionality to create, manipulate and delete your own domain objects. I have build up the same object in the code myself and made it as good as possible. This is called `ExampleDomainObject` and should be used as a good and simple start point for similar and hopefully more advanced functionality. I will maintain and develop this further along with new concepts.
 
