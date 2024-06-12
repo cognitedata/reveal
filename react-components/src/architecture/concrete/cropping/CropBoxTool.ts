@@ -7,7 +7,7 @@ import { type BaseCreator } from '../../base/domainObjectsHelpers/BaseCreator';
 import { type TranslateKey } from '../../base/utilities/TranslateKey';
 import { PrimitiveEditTool } from '../primitives/PrimitiveEditTool';
 import { type PrimitiveType } from '../primitives/PrimitiveType';
-import { BoxCreator } from '../primitives/BoxCreator';
+import { BoxCreator } from '../primitives/box/BoxCreator';
 import { CropBoxDomainObject } from './CropBoxDomainObject';
 import { CropCommand } from './CropCommand';
 import { ShowCropBoxOnTopCommand } from './commands/ShowCropBoxOnTopCommand';

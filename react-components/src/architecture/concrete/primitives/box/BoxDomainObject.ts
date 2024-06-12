@@ -3,22 +3,22 @@
  */
 
 import { BoxRenderStyle } from './BoxRenderStyle';
-import { type RenderStyle } from '../../base/domainObjectsHelpers/RenderStyle';
-import { type ThreeView } from '../../base/views/ThreeView';
+import { type RenderStyle } from '../../../base/domainObjectsHelpers/RenderStyle';
+import { type ThreeView } from '../../../base/views/ThreeView';
 import { BoxView } from './BoxView';
 import { Box3, Matrix4, Vector3 } from 'three';
-import { Changes } from '../../base/domainObjectsHelpers/Changes';
-import { BoxFace } from '../../base/utilities/box/BoxFace';
-import { FocusType } from '../../base/domainObjectsHelpers/FocusType';
-import { PrimitiveType } from './PrimitiveType';
-import { type BoxPickInfo } from '../../base/utilities/box/BoxPickInfo';
-import { type BaseDragger } from '../../base/domainObjectsHelpers/BaseDragger';
+import { Changes } from '../../../base/domainObjectsHelpers/Changes';
+import { BoxFace } from '../../../base/utilities/box/BoxFace';
+import { FocusType } from '../../../base/domainObjectsHelpers/FocusType';
+import { PrimitiveType } from '../PrimitiveType';
+import { type BoxPickInfo } from '../../../base/utilities/box/BoxPickInfo';
+import { type BaseDragger } from '../../../base/domainObjectsHelpers/BaseDragger';
 import { BoxDragger } from './BoxDragger';
 import {
   VisualDomainObject,
   type CreateDraggerProps
-} from '../../base/domainObjects/VisualDomainObject';
-import { Range3 } from '../../base/utilities/geometry/Range3';
+} from '../../../base/domainObjects/VisualDomainObject';
+import { Range3 } from '../../../base/utilities/geometry/Range3';
 
 export const MIN_BOX_SIZE = 0.01;
 

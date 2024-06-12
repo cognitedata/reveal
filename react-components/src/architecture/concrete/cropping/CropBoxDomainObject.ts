@@ -6,9 +6,9 @@ import { CDF_TO_VIEWER_TRANSFORMATION } from '@cognite/reveal';
 import { Changes } from '../../base/domainObjectsHelpers/Changes';
 import { type DomainObjectChange } from '../../base/domainObjectsHelpers/DomainObjectChange';
 import { BoxFace } from '../../base/utilities/box/BoxFace';
-import { BoxDomainObject } from '../primitives/BoxDomainObject';
+import { BoxDomainObject } from '../primitives/box/BoxDomainObject';
 import { Color } from 'three';
-import { BoxRenderStyle } from '../primitives/BoxRenderStyle';
+import { BoxRenderStyle } from '../primitives/box/BoxRenderStyle';
 import { type RenderStyle } from '../../base/domainObjectsHelpers/RenderStyle';
 
 export const MIN_BOX_SIZE = 0.01;

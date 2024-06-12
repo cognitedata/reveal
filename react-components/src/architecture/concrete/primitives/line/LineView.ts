@@ -19,10 +19,10 @@ import {
 } from 'three';
 import { Wireframe } from 'three/examples/jsm/lines/Wireframe.js';
 import { LineDomainObject } from './LineDomainObject';
-import { DomainObjectChange } from '../../base/domainObjectsHelpers/DomainObjectChange';
-import { Changes } from '../../base/domainObjectsHelpers/Changes';
+import { DomainObjectChange } from '../../../base/domainObjectsHelpers/DomainObjectChange';
+import { Changes } from '../../../base/domainObjectsHelpers/Changes';
 import { LineRenderStyle } from './LineRenderStyle';
-import { GroupThreeView } from '../../base/views/GroupThreeView';
+import { GroupThreeView } from '../../../base/views/GroupThreeView';
 import {
   CDF_TO_VIEWER_TRANSFORMATION,
   CustomObjectIntersectInput,
@@ -30,14 +30,14 @@ import {
 } from '@cognite/reveal';
 import { LineSegmentsGeometry } from 'three/examples/jsm/lines/LineSegmentsGeometry.js';
 import { LineMaterial } from 'three/examples/jsm/lines/LineMaterial.js';
-import { PrimitiveType } from './PrimitiveType';
-import { createSpriteWithText } from '../../base/utilities/sprites/createSprite';
+import { PrimitiveType } from '../PrimitiveType';
+import { createSpriteWithText } from '../../../base/utilities/sprites/createSprite';
 import { mergeGeometries } from 'three/examples/jsm/utils/BufferGeometryUtils.js';
-import { FocusType } from '../../base/domainObjectsHelpers/FocusType';
-import { DomainObjectIntersection } from '../../base/domainObjectsHelpers/DomainObjectIntersection';
-import { ClosestGeometryFinder } from '../../base/utilities/geometry/ClosestGeometryFinder';
-import { square } from '../../base/utilities/extensions/mathExtensions';
-import { Quantity } from '../../base/domainObjectsHelpers/Quantity';
+import { FocusType } from '../../../base/domainObjectsHelpers/FocusType';
+import { DomainObjectIntersection } from '../../../base/domainObjectsHelpers/DomainObjectIntersection';
+import { ClosestGeometryFinder } from '../../../base/utilities/geometry/ClosestGeometryFinder';
+import { square } from '../../../base/utilities/extensions/mathExtensions';
+import { Quantity } from '../../../base/domainObjectsHelpers/Quantity';
 
 const CYLINDER_DEFAULT_AXIS = new Vector3(0, 1, 0);
 const RENDER_ORDER = 100;

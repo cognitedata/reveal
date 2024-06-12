@@ -12,8 +12,8 @@ import { PrimitiveEditTool } from '../primitives/PrimitiveEditTool';
 import { MeasureLineDomainObject } from './MeasureLineDomainObject';
 import { MeasureBoxDomainObject } from './MeasureBoxDomainObject';
 import { PrimitiveType } from '../primitives/PrimitiveType';
-import { BoxCreator } from '../primitives/BoxCreator';
-import { LineCreator } from '../primitives/LineCreator';
+import { BoxCreator } from '../primitives/box/BoxCreator';
+import { LineCreator } from '../primitives/line/LineCreator';
 import { type VisualDomainObject } from '../../base/domainObjects/VisualDomainObject';
 
 export class MeasurementTool extends PrimitiveEditTool {

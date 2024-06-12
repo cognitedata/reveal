@@ -6,15 +6,15 @@ import { Matrix4, Plane, type Ray, Vector3 } from 'three';
 import {
   horizontalAngle,
   verticalDistanceTo
-} from '../../base/utilities/extensions/vectorExtensions';
-import { Range3 } from '../../base/utilities/geometry/Range3';
-import { forceBetween0AndPi } from '../../base/utilities/extensions/mathExtensions';
-import { PrimitiveType } from './PrimitiveType';
-import { getClosestPointOnLine } from '../../base/utilities/extensions/rayExtensions';
-import { BaseCreator } from '../../base/domainObjectsHelpers/BaseCreator';
-import { FocusType } from '../../base/domainObjectsHelpers/FocusType';
-import { Changes } from '../../base/domainObjectsHelpers/Changes';
-import { type DomainObject } from '../../base/domainObjects/DomainObject';
+} from '../../../base/utilities/extensions/vectorExtensions';
+import { Range3 } from '../../../base/utilities/geometry/Range3';
+import { forceBetween0AndPi } from '../../../base/utilities/extensions/mathExtensions';
+import { PrimitiveType } from '../PrimitiveType';
+import { getClosestPointOnLine } from '../../../base/utilities/extensions/rayExtensions';
+import { BaseCreator } from '../../../base/domainObjectsHelpers/BaseCreator';
+import { FocusType } from '../../../base/domainObjectsHelpers/FocusType';
+import { Changes } from '../../../base/domainObjectsHelpers/Changes';
+import { type DomainObject } from '../../../base/domainObjects/DomainObject';
 import { type BoxDomainObject } from './BoxDomainObject';
 
 const UP_VECTOR = new Vector3(0, 0, 1);

@@ -3,7 +3,7 @@
  */
 
 import { PrimitiveType } from '../primitives/PrimitiveType';
-import { LineDomainObject } from '../primitives/LineDomainObject';
+import { LineDomainObject } from '../primitives/line/LineDomainObject';
 import { getIconByPrimitiveType } from './getIconByPrimitiveType';
 import { Color } from 'three';
 

@@ -12,8 +12,8 @@ import { type BaseCreator } from '../../base/domainObjectsHelpers/BaseCreator';
 import { BaseEditTool } from '../../base/commands/BaseEditTool';
 import { type DomainObject } from '../../base/domainObjects/DomainObject';
 import { CommandsUpdater } from '../../base/reactUpdaters/CommandsUpdater';
-import { BoxDomainObject } from './BoxDomainObject';
-import { LineDomainObject } from './LineDomainObject';
+import { BoxDomainObject } from './box/BoxDomainObject';
+import { LineDomainObject } from './line/LineDomainObject';
 import { PrimitiveRenderStyle } from './PrimitiveRenderStyle';
 import { type VisualDomainObject } from '../../base/domainObjects/VisualDomainObject';
 

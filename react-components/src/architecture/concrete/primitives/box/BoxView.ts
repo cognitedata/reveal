@@ -22,30 +22,30 @@ import {
   type PerspectiveCamera
 } from 'three';
 import { BoxDomainObject } from './BoxDomainObject';
-import { type DomainObjectChange } from '../../base/domainObjectsHelpers/DomainObjectChange';
-import { Changes } from '../../base/domainObjectsHelpers/Changes';
+import { type DomainObjectChange } from '../../../base/domainObjectsHelpers/DomainObjectChange';
+import { Changes } from '../../../base/domainObjectsHelpers/Changes';
 import { type BoxRenderStyle } from './BoxRenderStyle';
-import { GroupThreeView } from '../../base/views/GroupThreeView';
+import { GroupThreeView } from '../../../base/views/GroupThreeView';
 import {
   CDF_TO_VIEWER_TRANSFORMATION,
   type CustomObjectIntersectInput,
   type CustomObjectIntersection,
   Vector3Pool
 } from '@cognite/reveal';
-import { type DomainObjectIntersection } from '../../base/domainObjectsHelpers/DomainObjectIntersection';
-import { BoxFace } from '../../base/utilities/box/BoxFace';
-import { FocusType } from '../../base/domainObjectsHelpers/FocusType';
-import { clear } from '../../base/utilities/extensions/arrayExtensions';
-import { createSpriteWithText } from '../../base/utilities/sprites/createSprite';
+import { type DomainObjectIntersection } from '../../../base/domainObjectsHelpers/DomainObjectIntersection';
+import { BoxFace } from '../../../base/utilities/box/BoxFace';
+import { FocusType } from '../../../base/domainObjectsHelpers/FocusType';
+import { clear } from '../../../base/utilities/extensions/arrayExtensions';
+import { createSpriteWithText } from '../../../base/utilities/sprites/createSprite';
 import {
   createLineSegmentsBufferGeometryForBox,
   createOrientedBox
-} from '../../base/utilities/box/createLineSegmentsBufferGeometryForBox';
-import { BoxPickInfo } from '../../base/utilities/box/BoxPickInfo';
+} from '../../../base/utilities/box/createLineSegmentsBufferGeometryForBox';
+import { BoxPickInfo } from '../../../base/utilities/box/BoxPickInfo';
 import { radToDeg } from 'three/src/math/MathUtils.js';
-import { Range1 } from '../../base/utilities/geometry/Range1';
-import { PrimitiveType } from './PrimitiveType';
-import { Quantity } from '../../base/domainObjectsHelpers/Quantity';
+import { Range1 } from '../../../base/utilities/geometry/Range1';
+import { PrimitiveType } from '../PrimitiveType';
+import { Quantity } from '../../../base/domainObjectsHelpers/Quantity';
 
 const RELATIVE_RESIZE_RADIUS = 0.15;
 const RELATIVE_ROTATION_RADIUS = new Range1(0.6, 0.75);

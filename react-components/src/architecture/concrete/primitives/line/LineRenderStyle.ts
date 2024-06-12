@@ -3,8 +3,8 @@
  */
 
 import { cloneDeep } from 'lodash';
-import { PrimitiveRenderStyle } from './PrimitiveRenderStyle';
-import { type RenderStyle } from '../../base/domainObjectsHelpers/RenderStyle';
+import { PrimitiveRenderStyle } from '../PrimitiveRenderStyle';
+import { type RenderStyle } from '../../../base/domainObjectsHelpers/RenderStyle';
 
 export class LineRenderStyle extends PrimitiveRenderStyle {
   // ==================================================

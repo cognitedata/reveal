@@ -3,20 +3,20 @@
  */
 
 import { type Ray, Vector3, Plane, Matrix4 } from 'three';
-import { Changes } from '../../base/domainObjectsHelpers/Changes';
-import { type BoxFace } from '../../base/utilities/box/BoxFace';
-import { FocusType } from '../../base/domainObjectsHelpers/FocusType';
-import { type BoxPickInfo } from '../../base/utilities/box/BoxPickInfo';
-import { forceBetween0AndPi } from '../../base/utilities/extensions/mathExtensions';
-import { horizontalAngle } from '../../base/utilities/extensions/vectorExtensions';
-import { PrimitiveType } from './PrimitiveType';
-import { getClosestPointOnLine } from '../../base/utilities/extensions/rayExtensions';
+import { Changes } from '../../../base/domainObjectsHelpers/Changes';
+import { type BoxFace } from '../../../base/utilities/box/BoxFace';
+import { FocusType } from '../../../base/domainObjectsHelpers/FocusType';
+import { type BoxPickInfo } from '../../../base/utilities/box/BoxPickInfo';
+import { forceBetween0AndPi } from '../../../base/utilities/extensions/mathExtensions';
+import { horizontalAngle } from '../../../base/utilities/extensions/vectorExtensions';
+import { PrimitiveType } from '../PrimitiveType';
+import { getClosestPointOnLine } from '../../../base/utilities/extensions/rayExtensions';
 import { type BoxDomainObject } from './BoxDomainObject';
-import { BaseDragger } from '../../base/domainObjectsHelpers/BaseDragger';
+import { BaseDragger } from '../../../base/domainObjectsHelpers/BaseDragger';
 import {
   type VisualDomainObject,
   type CreateDraggerProps
-} from '../../base/domainObjects/VisualDomainObject';
+} from '../../../base/domainObjects/VisualDomainObject';
 import { Vector3Pool } from '@cognite/reveal';
 
 /**

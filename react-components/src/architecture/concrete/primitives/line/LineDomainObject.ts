@@ -2,23 +2,23 @@
  * Copyright 2024 Cognite AS
  */
 
-import { type RenderStyle } from '../../base/domainObjectsHelpers/RenderStyle';
-import { type ThreeView } from '../../base/views/ThreeView';
+import { type RenderStyle } from '../../../base/domainObjectsHelpers/RenderStyle';
+import { type ThreeView } from '../../../base/views/ThreeView';
 import { LineView } from './LineView';
 import { Vector3 } from 'three';
-import { PrimitiveType } from './PrimitiveType';
+import { PrimitiveType } from '../PrimitiveType';
 import { LineRenderStyle } from './LineRenderStyle';
 import {
   getHorizontalCrossProduct,
   horizontalDistanceTo,
   verticalDistanceTo
-} from '../../base/utilities/extensions/vectorExtensions';
-import { PanelInfo } from '../../base/domainObjectsHelpers/PanelInfo';
-import { Changes } from '../../base/domainObjectsHelpers/Changes';
-import { FocusType } from '../../base/domainObjectsHelpers/FocusType';
-import { Quantity } from '../../base/domainObjectsHelpers/Quantity';
-import { PopupStyle } from '../../base/domainObjectsHelpers/PopupStyle';
-import { VisualDomainObject } from '../../base/domainObjects/VisualDomainObject';
+} from '../../../base/utilities/extensions/vectorExtensions';
+import { PanelInfo } from '../../../base/domainObjectsHelpers/PanelInfo';
+import { Changes } from '../../../base/domainObjectsHelpers/Changes';
+import { FocusType } from '../../../base/domainObjectsHelpers/FocusType';
+import { Quantity } from '../../../base/domainObjectsHelpers/Quantity';
+import { PopupStyle } from '../../../base/domainObjectsHelpers/PopupStyle';
+import { VisualDomainObject } from '../../../base/domainObjects/VisualDomainObject';
 
 export abstract class LineDomainObject extends VisualDomainObject {
   // ==================================================

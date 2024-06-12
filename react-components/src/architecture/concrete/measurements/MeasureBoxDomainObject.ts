@@ -3,7 +3,7 @@
  */
 
 import { PrimitiveType } from '../primitives/PrimitiveType';
-import { BoxDomainObject } from '../primitives/BoxDomainObject';
+import { BoxDomainObject } from '../primitives/box/BoxDomainObject';
 import { Color } from 'three';
 import { getIconByPrimitiveType } from './getIconByPrimitiveType';
 import { PanelInfo } from '../../base/domainObjectsHelpers/PanelInfo';
