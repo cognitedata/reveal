@@ -196,6 +196,7 @@ export abstract class BoxOrLineEditTool extends BaseEditTool {
   protected createCreator(_primitiveType: PrimitiveType): BaseCreator | undefined {
     return undefined;
   }
+
   // ==================================================
   // INSTANCE METHODS
   // ==================================================
@@ -260,22 +261,26 @@ export abstract class BoxOrLineEditTool extends BaseEditTool {
     }
   }
 
-  // ==================================================
-  // PRIVATE FUNCTIONS
-  // ==================================================
-
-  initializeStyle(domainObject: DomainObject): void {
-    // Just copy the style the depthTest field from any other measure DomainObject
+  private initializeStyle(domainObject: DomainObject): void {
+    // Just copy the style the depthTest field from any other selectable
+    const depthTest = this.getDepthTestOnOtherSelectable();
+    if (depthTest === undefined) {
+      return;
+    }
     const style = domainObject.getRenderStyle();
     if (!(style instanceof TextRenderStyle)) {
       return;
     }
+    style.depthTest = depthTest;
+  }
+
+  private getDepthTestOnOtherSelectable(): boolean | undefined {
     for (const otherDomainObject of this.getSelectable()) {
       const otherStyle = otherDomainObject.getRenderStyle();
       if (otherStyle instanceof TextRenderStyle) {
-        style.depthTest = otherStyle.depthTest;
-        return;
+        return otherStyle.depthTest;
       }
     }
+    return undefined;
   }
 }

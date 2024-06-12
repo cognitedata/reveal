@@ -9,13 +9,15 @@ import { FitViewCommand } from '../../architecture/base/concreteCommands/FitView
 import { FlexibleControlsType } from '@cognite/reveal';
 import { SetFlexibleControlsTypeCommand } from '../../architecture/base/concreteCommands/SetFlexibleControlsTypeCommand';
 import { SetAxisVisibleCommand } from '../../architecture/concrete/axis/SetAxisVisibleCommand';
-import { MeasurementTool } from '../../architecture/concrete/measurments/MeasurementTool';
+import { MeasurementTool } from '../../architecture/concrete/measurements/MeasurementTool';
+import { CropBoxTool } from '../../architecture/concrete/cropping/CropBoxTool';
 
 export class RevealButtons {
   static FitView = (): ReactElement => CreateCommandButton(new FitViewCommand());
   static NavigationTool = (): ReactElement => CreateCommandButton(new NavigationTool());
   static SetAxisVisible = (): ReactElement => CreateCommandButton(new SetAxisVisibleCommand());
   static Measurement = (): ReactElement => CreateCommandButton(new MeasurementTool());
+  static CropBox = (): ReactElement => CreateCommandButton(new CropBoxTool());
 
   static SetFlexibleControlsTypeOrbit = (): ReactElement =>
     CreateCommandButton(new SetFlexibleControlsTypeCommand(FlexibleControlsType.Orbit));

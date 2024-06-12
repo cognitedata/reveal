@@ -21,7 +21,7 @@ import {
   FrontSide,
   type PerspectiveCamera
 } from 'three';
-import { type BoxDomainObject, isValidSize } from './BoxDomainObject';
+import { BoxDomainObject } from './BoxDomainObject';
 import { type DomainObjectChange } from '../../base/domainObjectsHelpers/DomainObjectChange';
 import { Changes } from '../../base/domainObjectsHelpers/Changes';
 import { type BoxRenderStyle } from './BoxRenderStyle';
@@ -304,12 +304,12 @@ export class BoxView extends GroupThreeView {
 
   private createEdgeCircle(matrix: Matrix4, material: Material, face: BoxFace): Mesh | undefined {
     const { domainObject } = this;
-    const adjecentSize1 = domainObject.size.getComponent(face.tangentIndex1);
-    if (!isValidSize(adjecentSize1)) {
+    const adjacentSize1 = domainObject.size.getComponent(face.tangentIndex1);
+    if (!BoxDomainObject.isValidSize(adjacentSize1)) {
       return undefined;
     }
-    const adjecentSize2 = domainObject.size.getComponent(face.tangentIndex2);
-    if (!isValidSize(adjecentSize2)) {
+    const adjacentSize2 = domainObject.size.getComponent(face.tangentIndex2);
+    if (!BoxDomainObject.isValidSize(adjacentSize2)) {
       return undefined;
     }
     const radius = RELATIVE_RESIZE_RADIUS * this.getFaceRadius(face);
@@ -323,7 +323,7 @@ export class BoxView extends GroupThreeView {
     center.applyMatrix4(matrix);
     result.position.copy(center);
 
-    // Must be roteted correctly because of sideness
+    // Must be rotated correctly because of sideness
     if (face.face === 2) {
       result.rotateX(-Math.PI / 2);
     } else if (face.face === 5) {
@@ -346,6 +346,9 @@ export class BoxView extends GroupThreeView {
 
   private addLabels(matrix: Matrix4): void {
     const { domainObject, style } = this;
+    if (!style.showText) {
+      return;
+    }
     const { rootDomainObject } = domainObject;
     if (rootDomainObject === undefined) {
       return undefined;
@@ -354,7 +357,7 @@ export class BoxView extends GroupThreeView {
     clear(this._sprites);
     for (let index = 0; index < 3; index++) {
       const size = domainObject.size.getComponent(index);
-      if (!isValidSize(size)) {
+      if (!BoxDomainObject.isValidSize(size)) {
         this._sprites.push(undefined);
         continue;
       }
@@ -396,7 +399,7 @@ export class BoxView extends GroupThreeView {
     }
     const spriteHeight = this.getTextHeight(style.relativeTextSize);
 
-    // If the 2 adjecent faces are visible, show the sprite along the edge
+    // If the 2 adjacent faces are visible, show the sprite along the edge
     for (let index = 0; index < this._sprites.length; index++) {
       const sprite = this._sprites[index];
       if (sprite === undefined) {

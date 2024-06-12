@@ -14,15 +14,11 @@ import { PrimitiveType } from './PrimitiveType';
 import { type BoxPickInfo } from '../../base/utilities/box/BoxPickInfo';
 import { type BaseDragger } from '../../base/domainObjectsHelpers/BaseDragger';
 import { BoxDragger } from './BoxDragger';
-import { PanelInfo } from '../../base/domainObjectsHelpers/PanelInfo';
-import { radToDeg } from 'three/src/math/MathUtils.js';
 import {
   VisualDomainObject,
   type CreateDraggerProps
 } from '../../base/domainObjects/VisualDomainObject';
 import { Range3 } from '../../base/utilities/geometry/Range3';
-import { Quantity } from '../../base/domainObjectsHelpers/Quantity';
-import { PopupStyle } from '../../base/domainObjectsHelpers/PopupStyle';
 
 export const MIN_BOX_SIZE = 0.01;
 
@@ -77,65 +73,6 @@ export abstract class BoxDomainObject extends VisualDomainObject {
     return new BoxDragger(props, this);
   }
 
-  public override get hasPanelInfo(): boolean {
-    return true;
-  }
-
-  public override getPanelInfoStyle(): PopupStyle {
-    // bottom = 66 because the toolbar is below
-    return new PopupStyle({ bottom: 66, left: 0 });
-  }
-
-  public override getPanelInfo(): PanelInfo | undefined {
-    const info = new PanelInfo();
-    const { primitiveType: type } = this;
-    const isFinished = this.focusType !== FocusType.Pending;
-
-    switch (type) {
-      case PrimitiveType.HorizontalArea:
-        info.setHeader('MEASUREMENTS_HORIZONTAL_AREA', 'Horizontal area');
-        break;
-      case PrimitiveType.VerticalArea:
-        info.setHeader('MEASUREMENTS_VERTICAL_AREA', 'Vertical area');
-        break;
-      case PrimitiveType.Box:
-        info.setHeader('MEASUREMENTS_VOLUME', 'Volume');
-        break;
-    }
-    if (isFinished || isValidSize(this.size.x)) {
-      add('MEASUREMENTS_LENGTH', 'Length', this.size.x, Quantity.Length);
-    }
-    if (type !== PrimitiveType.VerticalArea && (isFinished || isValidSize(this.size.y))) {
-      add('MEASUREMENTS_DEPTH', 'Depth', this.size.y, Quantity.Length);
-    }
-    if (type !== PrimitiveType.HorizontalArea && (isFinished || isValidSize(this.size.z))) {
-      add('MEASUREMENTS_HEIGHT', 'Height', this.size.z, Quantity.Length);
-    }
-    if (type !== PrimitiveType.Box && (isFinished || this.hasArea)) {
-      add('MEASUREMENTS_AREA', 'Area', this.area, Quantity.Area);
-    }
-    if (type === PrimitiveType.Box && (isFinished || this.hasHorizontalArea)) {
-      add('MEASUREMENTS_HORIZONTAL_AREA', 'Horizontal area', this.horizontalArea, Quantity.Area);
-    }
-    if (type === PrimitiveType.Box && (isFinished || this.hasVolume)) {
-      add('MEASUREMENTS_VOLUME', 'Volume', this.volume, Quantity.Volume);
-    }
-    // I forgot to add text for rotation angle before the deadline, so I used a icon instead.
-    if (this.zRotation !== 0 && isFinished) {
-      info.add({
-        key: '',
-        icon: 'Angle',
-        value: radToDeg(this.zRotation),
-        quantity: Quantity.Degrees
-      });
-    }
-    return info;
-
-    function add(key: string, fallback: string, value: number, quantity: Quantity): void {
-      info.add({ key, fallback, value, quantity });
-    }
-  }
-
   // ==================================================
   // OVERRIDES of VisualDomainObject
   // ==================================================
@@ -154,9 +91,9 @@ export abstract class BoxDomainObject extends VisualDomainObject {
 
   public get hasArea(): boolean {
     let count = 0;
-    if (isValidSize(this.size.x)) count++;
-    if (isValidSize(this.size.y)) count++;
-    if (isValidSize(this.size.z)) count++;
+    if (BoxDomainObject.isValidSize(this.size.x)) count++;
+    if (BoxDomainObject.isValidSize(this.size.y)) count++;
+    if (BoxDomainObject.isValidSize(this.size.z)) count++;
     return count >= 2;
   }
 
@@ -176,7 +113,7 @@ export abstract class BoxDomainObject extends VisualDomainObject {
   }
 
   public get hasHorizontalArea(): boolean {
-    return isValidSize(this.size.x) && isValidSize(this.size.y);
+    return BoxDomainObject.isValidSize(this.size.x) && BoxDomainObject.isValidSize(this.size.y);
   }
 
   public get horizontalArea(): number {
@@ -184,7 +121,11 @@ export abstract class BoxDomainObject extends VisualDomainObject {
   }
 
   public get hasVolume(): boolean {
-    return isValidSize(this.size.x) && isValidSize(this.size.y) && isValidSize(this.size.z);
+    return (
+      BoxDomainObject.isValidSize(this.size.x) &&
+      BoxDomainObject.isValidSize(this.size.y) &&
+      BoxDomainObject.isValidSize(this.size.z)
+    );
   }
 
   public get volume(): number {
@@ -248,12 +189,8 @@ export abstract class BoxDomainObject extends VisualDomainObject {
     this.notify(Changes.focus);
     return true;
   }
-}
 
-// ==================================================
-// PUBLIC FUNCTIONS
-// ==================================================
-
-export function isValidSize(value: number): boolean {
-  return value > MIN_BOX_SIZE;
+  public static isValidSize(value: number): boolean {
+    return value > MIN_BOX_SIZE;
+  }
 }

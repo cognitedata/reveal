@@ -12,8 +12,12 @@ export abstract class TextRenderStyle extends RenderStyle {
   // INSTANCE FIELDS
   // ==================================================
 
+  // For the object itself
   public depthTest = true;
   public colorType = ColorType.Specified;
+
+  // For text only
+  public showText = true;
   public textColor = WHITE_COLOR.clone();
   public textBgColor = new Color('#232323');
   public textOpacity = 0.9;

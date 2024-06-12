@@ -3,19 +3,14 @@
  */
 
 import { RenderTargetCommand } from '../../base/commands/RenderTargetCommand';
+import { type DomainObject } from '../../base/domainObjects/DomainObject';
 import { Changes } from '../../base/domainObjectsHelpers/Changes';
-import { type TranslateKey } from '../../base/utilities/TranslateKey';
-import { MeasureBoxDomainObject } from './MeasureBoxDomainObject';
-import { MeasureLineDomainObject } from './MeasureLineDomainObject';
+import { TextRenderStyle } from './TextRenderStyle';
 
-export class ShowMeasurementsOnTopCommand extends RenderTargetCommand {
+export abstract class ShowOnTopCommand extends RenderTargetCommand {
   // ==================================================
   // OVERRIDES
   // ==================================================
-
-  public override get tooltip(): TranslateKey {
-    return { key: 'MEASUREMENTS_SHOW_ON_TOP', fallback: 'Show all measurements on top' };
-  }
 
   public override get icon(): string {
     return 'EyeShow';
@@ -32,18 +27,24 @@ export class ShowMeasurementsOnTopCommand extends RenderTargetCommand {
   protected override invokeCore(): boolean {
     const depthTest = this.getDepthTest();
     for (const domainObject of this.rootDomainObject.getDescendants()) {
-      if (domainObject instanceof MeasureBoxDomainObject) {
-        const style = domainObject.renderStyle;
-        style.depthTest = !depthTest;
-        domainObject.notify(Changes.renderStyle);
-      } else if (domainObject instanceof MeasureLineDomainObject) {
-        const style = domainObject.renderStyle;
-        style.depthTest = !depthTest;
-        domainObject.notify(Changes.renderStyle);
+      if (!this.canBeSelected(domainObject)) {
+        continue;
       }
+      const renderStyle = domainObject.getRenderStyle();
+      if (!(renderStyle instanceof TextRenderStyle)) {
+        continue;
+      }
+      renderStyle.depthTest = !depthTest;
+      domainObject.notify(Changes.renderStyle);
     }
     return true;
   }
+
+  // ==================================================
+  // VIRTUAL METHODS
+  // ==================================================
+
+  protected abstract canBeSelected(domainObject: DomainObject): boolean;
 
   // ==================================================
   // INSTANCE METHODS
@@ -54,16 +55,16 @@ export class ShowMeasurementsOnTopCommand extends RenderTargetCommand {
     if (domainObject === undefined) {
       return false;
     }
-    const style = domainObject.renderStyle;
-    return style.depthTest;
+    const renderStyle = domainObject.getRenderStyle();
+    if (renderStyle instanceof TextRenderStyle) {
+      return renderStyle.depthTest;
+    }
+    return false;
   }
 
-  private getFirst(): MeasureBoxDomainObject | MeasureLineDomainObject | undefined {
+  private getFirst(): DomainObject | undefined {
     for (const domainObject of this.rootDomainObject.getDescendants()) {
-      if (domainObject instanceof MeasureBoxDomainObject) {
-        return domainObject;
-      }
-      if (domainObject instanceof MeasureLineDomainObject) {
+      if (this.canBeSelected(domainObject)) {
         return domainObject;
       }
     }

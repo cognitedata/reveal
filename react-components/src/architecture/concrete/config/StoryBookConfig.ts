@@ -17,7 +17,7 @@ import { type RevealRenderTarget } from '../../base/renderTarget/RevealRenderTar
 import { NavigationTool } from '../../base/commands/NavigationTool';
 import { type BaseTool } from '../../base/commands/BaseTool';
 import { ToggleMetricUnitsCommand } from '../../base/concreteCommands/ToggleMetricUnitsCommand';
-import { MeasurementTool } from '../measurments/MeasurementTool';
+import { MeasurementTool } from '../measurements/MeasurementTool';
 import { CropBoxTool } from '../cropping/CropBoxTool';
 
 export class StoryBookConfig extends BaseRevealConfig {

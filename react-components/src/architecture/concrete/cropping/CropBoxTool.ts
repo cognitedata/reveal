@@ -11,6 +11,7 @@ import { type PrimitiveType } from '../box/PrimitiveType';
 import { BoxCreator } from '../box/BoxCreator';
 import { CropBoxDomainObject } from './CropBoxDomainObject';
 import { SetCropBoxCommand } from './SetCropBoxCommand';
+import { ShowCropBoxOnTopCommand } from './ShowCropBoxOnTopCommand';
 
 export class CropBoxTool extends BoxOrLineEditTool {
   // ==================================================
@@ -34,7 +35,7 @@ export class CropBoxTool extends BoxOrLineEditTool {
   }
 
   public override getToolbar(): Array<BaseCommand | undefined> {
-    return [new SetCropBoxCommand()];
+    return [new SetCropBoxCommand(), new ShowCropBoxOnTopCommand()];
   }
 
   // ==================================================
@@ -56,10 +57,7 @@ export class CropBoxTool extends BoxOrLineEditTool {
   // ==================================================
 
   protected override canBeSelected(domainObject: DomainObject): boolean {
-    if (domainObject instanceof CropBoxDomainObject) {
-      return true;
-    }
-    return false;
+    return domainObject instanceof CropBoxDomainObject;
   }
 
   // ==================================================

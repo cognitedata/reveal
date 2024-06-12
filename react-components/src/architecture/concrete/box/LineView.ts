@@ -181,7 +181,7 @@ export class LineView extends GroupThreeView {
         const distance = prevPoint.distanceTo(thisPoint);
         const cylinder = new CylinderGeometry(radius, radius, distance, 6, 1);
 
-        // use quaterion to orient cylinder to align along the vector formed between
+        // use quaternion to orient cylinder to align along the vector formed between
         // the pair of vertices
         direction.copy(thisPoint).sub(prevPoint).normalize();
         quaternion.setFromUnitVectors(CYLINDER_DEFAULT_AXIS, direction);
@@ -250,6 +250,9 @@ export class LineView extends GroupThreeView {
 
   private addLabels(): void {
     const { domainObject, style } = this;
+    if (!style.showText) {
+      return;
+    }
     const { points, rootDomainObject } = domainObject;
     if (rootDomainObject === undefined) {
       return;

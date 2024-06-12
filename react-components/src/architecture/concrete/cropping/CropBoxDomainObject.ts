@@ -8,6 +8,8 @@ import { type DomainObjectChange } from '../../base/domainObjectsHelpers/DomainO
 import { BoxFace } from '../../base/utilities/box/BoxFace';
 import { BoxDomainObject } from '../box/BoxDomainObject';
 import { Color } from 'three';
+import { BoxRenderStyle } from '../box/BoxRenderStyle';
+import { type RenderStyle } from '../../base/domainObjectsHelpers/RenderStyle';
 
 export const MIN_BOX_SIZE = 0.01;
 
@@ -18,7 +20,7 @@ export class CropBoxDomainObject extends BoxDomainObject {
 
   public constructor() {
     super();
-    this.color = new Color(Color.NAMES.blue);
+    this.color = new Color(Color.NAMES.orange);
   }
 
   // ==================================================
@@ -50,6 +52,13 @@ export class CropBoxDomainObject extends BoxDomainObject {
       }
     }
   }
+
+  public override createRenderStyle(): RenderStyle | undefined {
+    const style = new BoxRenderStyle();
+    style.showText = false;
+    return style;
+  }
+
   // ==================================================
   // INSTANCE METHODS: Others
   // ==================================================
