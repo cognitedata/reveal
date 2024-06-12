@@ -2,7 +2,7 @@
  * Copyright 2024 Cognite AS
  */
 
-import { CDF_TO_VIEWER_TRANSFORMATION } from '@cognite/reveal';
+import { CDF_TO_VIEWER_TRANSFORMATION, type CustomObjectIntersection } from '@cognite/reveal';
 import { isDomainObjectIntersection } from '../../base/domainObjectsHelpers/DomainObjectIntersection';
 import { FocusType } from '../../base/domainObjectsHelpers/FocusType';
 import { type BoxPickInfo } from '../../base/utilities/box/BoxPickInfo';
@@ -15,8 +15,9 @@ import { CommandsUpdater } from '../../base/reactUpdaters/CommandsUpdater';
 import { BoxDomainObject } from './BoxDomainObject';
 import { LineDomainObject } from './LineDomainObject';
 import { TextRenderStyle } from './TextRenderStyle';
+import { type VisualDomainObject } from '../../base/domainObjects/VisualDomainObject';
 
-export abstract class BoxOrLineEditTool extends BaseEditTool {
+export abstract class PrimitiveEditTool extends BaseEditTool {
   // ==================================================
   // INSTANCE FIELDS
   // ==================================================
@@ -112,36 +113,18 @@ export abstract class BoxOrLineEditTool extends BaseEditTool {
       }
       return;
     }
-    // Set focus on the hovered object
-    if (domainObject instanceof LineDomainObject) {
-      this.defocusAll(domainObject);
-      domainObject.setFocusInteractive(FocusType.Focus);
-      this.renderTarget.setDefaultCursor();
-    } else if (domainObject instanceof BoxDomainObject) {
-      const pickInfo = intersection.userData as BoxPickInfo;
-      if (pickInfo === undefined) {
-        this.defocusAll();
-        this.renderTarget.setDefaultCursor();
-        return;
-      }
-      this.setCursor(domainObject, intersection.point, pickInfo);
-      this.defocusAll(domainObject);
-      domainObject.setFocusInteractive(pickInfo.focusType, pickInfo.face);
-    }
+    this.setFocus(domainObject, intersection);
   }
 
   public override async onClick(event: PointerEvent): Promise<void> {
-    const { renderTarget, rootDomainObject } = this;
-
-    const { _creator: creator } = this;
+    const { _creator: creator, renderTarget } = this;
     // Click in the "air"
     if (creator !== undefined && !creator.preferIntersection) {
       const ray = this.getRay(event);
       if (creator.addPoint(ray, undefined)) {
         if (creator.isFinished) {
           this._creator = undefined;
-          this.primitiveType = this.defaultPrimitiveType;
-          CommandsUpdater.update(renderTarget);
+          this.setDefaultPrimitiveType();
         }
         return;
       }
@@ -167,15 +150,16 @@ export abstract class BoxOrLineEditTool extends BaseEditTool {
         const { domainObject } = creator;
         this.initializeStyle(domainObject);
         this.deselectAll();
-        rootDomainObject.addChildInteractive(domainObject);
+
+        const parent = this.getOrCreateParent();
+        parent.addChildInteractive(domainObject);
         domainObject.setSelectedInteractive(true);
         domainObject.setVisibleInteractive(true, renderTarget);
       }
     } else {
       if (creator.addPoint(ray, intersection)) {
         if (creator.isFinished) {
-          this.primitiveType = this.defaultPrimitiveType;
-          CommandsUpdater.update(renderTarget);
+          this.setDefaultPrimitiveType();
           this._creator = undefined;
         }
       }
@@ -197,6 +181,10 @@ export abstract class BoxOrLineEditTool extends BaseEditTool {
     return undefined;
   }
 
+  protected getOrCreateParent(): DomainObject {
+    return this.rootDomainObject;
+  }
+
   // ==================================================
   // INSTANCE METHODS
   // ==================================================
@@ -207,8 +195,7 @@ export abstract class BoxOrLineEditTool extends BaseEditTool {
     }
     if (this._creator.handleEscape()) {
       // Successfully created, set it back to default
-      this.primitiveType = this.defaultPrimitiveType;
-      CommandsUpdater.update(this.renderTarget);
+      this.setDefaultPrimitiveType();
     }
     this._creator = undefined;
   }
@@ -247,6 +234,24 @@ export abstract class BoxOrLineEditTool extends BaseEditTool {
     }
   }
 
+  private setFocus(domainObject: VisualDomainObject, intersection: CustomObjectIntersection): void {
+    if (domainObject instanceof LineDomainObject) {
+      this.defocusAll(domainObject);
+      domainObject.setFocusInteractive(FocusType.Focus);
+      this.renderTarget.setDefaultCursor();
+    } else if (domainObject instanceof BoxDomainObject) {
+      const pickInfo = intersection.userData as BoxPickInfo;
+      if (pickInfo === undefined) {
+        this.defocusAll();
+        this.renderTarget.setDefaultCursor();
+        return;
+      }
+      this.setCursor(domainObject, intersection.point, pickInfo);
+      this.defocusAll(domainObject);
+      domainObject.setFocusInteractive(pickInfo.focusType, pickInfo.face);
+    }
+  }
+
   protected defocusAll(except?: DomainObject | undefined): void {
     for (const domainObject of this.getSelectable()) {
       if (except !== undefined && domainObject === except) {
@@ -263,7 +268,7 @@ export abstract class BoxOrLineEditTool extends BaseEditTool {
 
   private initializeStyle(domainObject: DomainObject): void {
     // Just copy the style the depthTest field from any other selectable
-    const depthTest = this.getDepthTestOnOtherSelectable();
+    const depthTest = this.getDepthTestOnFirstSelectable();
     if (depthTest === undefined) {
       return;
     }
@@ -274,7 +279,7 @@ export abstract class BoxOrLineEditTool extends BaseEditTool {
     style.depthTest = depthTest;
   }
 
-  private getDepthTestOnOtherSelectable(): boolean | undefined {
+  private getDepthTestOnFirstSelectable(): boolean | undefined {
     for (const otherDomainObject of this.getSelectable()) {
       const otherStyle = otherDomainObject.getRenderStyle();
       if (otherStyle instanceof TextRenderStyle) {
@@ -282,5 +287,13 @@ export abstract class BoxOrLineEditTool extends BaseEditTool {
       }
     }
     return undefined;
+  }
+
+  private setDefaultPrimitiveType(): void {
+    if (this.primitiveType === this.defaultPrimitiveType) {
+      return;
+    }
+    this.primitiveType = this.defaultPrimitiveType;
+    CommandsUpdater.update(this.renderTarget);
   }
 }

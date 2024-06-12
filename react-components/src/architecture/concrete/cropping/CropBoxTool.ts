@@ -5,7 +5,7 @@
 import { type BaseCommand } from '../../base/commands/BaseCommand';
 import { type BaseCreator } from '../../base/domainObjectsHelpers/BaseCreator';
 import { type TranslateKey } from '../../base/utilities/TranslateKey';
-import { BoxOrLineEditTool } from '../boxAndLines/BoxOrLineEditTool';
+import { PrimitiveEditTool } from '../boxAndLines/PrimitiveEditTool';
 import { type PrimitiveType } from '../boxAndLines/PrimitiveType';
 import { BoxCreator } from '../boxAndLines/BoxCreator';
 import { CropBoxDomainObject } from './CropBoxDomainObject';
@@ -14,7 +14,7 @@ import { ShowCropBoxOnTopCommand } from './commands/ShowCropBoxOnTopCommand';
 import { ShowAllCropBoxesCommand } from './commands/ShowAllCropBoxesCommand';
 import { type VisualDomainObject } from '../../base/domainObjects/VisualDomainObject';
 
-export class CropBoxTool extends BoxOrLineEditTool {
+export class CropBoxTool extends PrimitiveEditTool {
   // ==================================================
   // CONSTRUCTOR
   // ==================================================

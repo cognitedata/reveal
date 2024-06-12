@@ -8,7 +8,7 @@ import { ShowMeasurementsOnTopCommand } from './commands/ShowMeasurementsOnTopCo
 import { SetMeasurementTypeCommand } from './commands/SetMeasurementTypeCommand';
 import { type TranslateKey } from '../../base/utilities/TranslateKey';
 import { ToggleMetricUnitsCommand } from '../../base/concreteCommands/ToggleMetricUnitsCommand';
-import { BoxOrLineEditTool } from '../boxAndLines/BoxOrLineEditTool';
+import { PrimitiveEditTool } from '../boxAndLines/PrimitiveEditTool';
 import { MeasureLineDomainObject } from './MeasureLineDomainObject';
 import { MeasureBoxDomainObject } from './MeasureBoxDomainObject';
 import { PrimitiveType } from '../boxAndLines/PrimitiveType';
@@ -16,7 +16,7 @@ import { BoxCreator } from '../boxAndLines/BoxCreator';
 import { LineCreator } from '../boxAndLines/LineCreator';
 import { type VisualDomainObject } from '../../base/domainObjects/VisualDomainObject';
 
-export class MeasurementTool extends BoxOrLineEditTool {
+export class MeasurementTool extends PrimitiveEditTool {
   // ==================================================
   // CONSTRUCTOR
   // ==================================================
