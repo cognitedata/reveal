@@ -4,14 +4,15 @@
 
 import { type BaseCommand } from '../../base/commands/BaseCommand';
 import { type BaseCreator } from '../../base/domainObjectsHelpers/BaseCreator';
-import { type DomainObject } from '../../base/domainObjects/DomainObject';
 import { type TranslateKey } from '../../base/utilities/TranslateKey';
-import { BoxOrLineEditTool } from '../box/BoxOrLineEditTool';
-import { type PrimitiveType } from '../box/PrimitiveType';
-import { BoxCreator } from '../box/BoxCreator';
+import { BoxOrLineEditTool } from '../boxAndLines/BoxOrLineEditTool';
+import { type PrimitiveType } from '../boxAndLines/PrimitiveType';
+import { BoxCreator } from '../boxAndLines/BoxCreator';
 import { CropBoxDomainObject } from './CropBoxDomainObject';
-import { SetCropBoxCommand } from './SetCropBoxCommand';
-import { ShowCropBoxOnTopCommand } from './ShowCropBoxOnTopCommand';
+import { CropCommand } from './CropCommand';
+import { ShowCropBoxOnTopCommand } from './commands/ShowCropBoxOnTopCommand';
+import { ShowAllCropBoxesCommand } from './commands/ShowAllCropBoxesCommand';
+import { type VisualDomainObject } from '../../base/domainObjects/VisualDomainObject';
 
 export class CropBoxTool extends BoxOrLineEditTool {
   // ==================================================
@@ -35,7 +36,7 @@ export class CropBoxTool extends BoxOrLineEditTool {
   }
 
   public override getToolbar(): Array<BaseCommand | undefined> {
-    return [new SetCropBoxCommand(), new ShowCropBoxOnTopCommand()];
+    return [new CropCommand(), new ShowCropBoxOnTopCommand(), new ShowAllCropBoxesCommand()];
   }
 
   // ==================================================
@@ -56,7 +57,7 @@ export class CropBoxTool extends BoxOrLineEditTool {
   // OVERRIDES of BaseEditTool
   // ==================================================
 
-  protected override canBeSelected(domainObject: DomainObject): boolean {
+  protected override canBeSelected(domainObject: VisualDomainObject): boolean {
     return domainObject instanceof CropBoxDomainObject;
   }
 

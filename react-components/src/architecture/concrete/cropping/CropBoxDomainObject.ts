@@ -6,9 +6,9 @@ import { CDF_TO_VIEWER_TRANSFORMATION } from '@cognite/reveal';
 import { Changes } from '../../base/domainObjectsHelpers/Changes';
 import { type DomainObjectChange } from '../../base/domainObjectsHelpers/DomainObjectChange';
 import { BoxFace } from '../../base/utilities/box/BoxFace';
-import { BoxDomainObject } from '../box/BoxDomainObject';
+import { BoxDomainObject } from '../boxAndLines/BoxDomainObject';
 import { Color } from 'three';
-import { BoxRenderStyle } from '../box/BoxRenderStyle';
+import { BoxRenderStyle } from '../boxAndLines/BoxRenderStyle';
 import { type RenderStyle } from '../../base/domainObjectsHelpers/RenderStyle';
 
 export const MIN_BOX_SIZE = 0.01;
@@ -57,6 +57,14 @@ export class CropBoxDomainObject extends BoxDomainObject {
     const style = new BoxRenderStyle();
     style.showText = false;
     return style;
+  }
+
+  // ==================================================
+  // OVERRIDES of BoxDomainObject
+  // ==================================================
+
+  public override get useClippingInIntersection(): boolean {
+    return false;
   }
 
   // ==================================================

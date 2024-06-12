@@ -6,7 +6,7 @@ import { RenderTargetCommand } from '../../base/commands/RenderTargetCommand';
 import { type TranslateKey } from '../../base/utilities/TranslateKey';
 import { CropBoxDomainObject } from './CropBoxDomainObject';
 
-export class SetCropBoxCommand extends RenderTargetCommand {
+export class CropCommand extends RenderTargetCommand {
   // ==================================================
   // OVERRIDES
   // ==================================================

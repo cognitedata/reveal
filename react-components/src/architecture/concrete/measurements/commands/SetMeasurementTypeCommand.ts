@@ -2,12 +2,12 @@
  * Copyright 2024 Cognite AS
  */
 
-import { RenderTargetCommand } from '../../base/commands/RenderTargetCommand';
-import { type BaseCommand } from '../../base/commands/BaseCommand';
-import { PrimitiveType } from '../box/PrimitiveType';
-import { getIconByPrimitiveType } from './getIconByPrimitiveType';
-import { type TranslateKey } from '../../base/utilities/TranslateKey';
-import { MeasurementTool } from './MeasurementTool';
+import { RenderTargetCommand } from '../../../base/commands/RenderTargetCommand';
+import { type BaseCommand } from '../../../base/commands/BaseCommand';
+import { PrimitiveType } from '../../boxAndLines/PrimitiveType';
+import { getIconByPrimitiveType } from '../getIconByPrimitiveType';
+import { type TranslateKey } from '../../../base/utilities/TranslateKey';
+import { MeasurementTool } from '../MeasurementTool';
 
 export class SetMeasurementTypeCommand extends RenderTargetCommand {
   private readonly _measureType: PrimitiveType;

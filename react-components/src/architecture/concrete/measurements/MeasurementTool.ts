@@ -4,17 +4,17 @@
 
 import { type BaseCommand } from '../../base/commands/BaseCommand';
 import { type BaseCreator } from '../../base/domainObjectsHelpers/BaseCreator';
-import { type DomainObject } from '../../base/domainObjects/DomainObject';
-import { ShowMeasurementsOnTopCommand } from './ShowMeasurementsOnTopCommand';
-import { SetMeasurementTypeCommand } from './SetMeasurementTypeCommand';
+import { ShowMeasurementsOnTopCommand } from './commands/ShowMeasurementsOnTopCommand';
+import { SetMeasurementTypeCommand } from './commands/SetMeasurementTypeCommand';
 import { type TranslateKey } from '../../base/utilities/TranslateKey';
 import { ToggleMetricUnitsCommand } from '../../base/concreteCommands/ToggleMetricUnitsCommand';
-import { BoxOrLineEditTool } from '../box/BoxOrLineEditTool';
+import { BoxOrLineEditTool } from '../boxAndLines/BoxOrLineEditTool';
 import { MeasureLineDomainObject } from './MeasureLineDomainObject';
 import { MeasureBoxDomainObject } from './MeasureBoxDomainObject';
-import { PrimitiveType } from '../box/PrimitiveType';
-import { BoxCreator } from '../box/BoxCreator';
-import { LineCreator } from '../box/LineCreator';
+import { PrimitiveType } from '../boxAndLines/PrimitiveType';
+import { BoxCreator } from '../boxAndLines/BoxCreator';
+import { LineCreator } from '../boxAndLines/LineCreator';
+import { type VisualDomainObject } from '../../base/domainObjects/VisualDomainObject';
 
 export class MeasurementTool extends BoxOrLineEditTool {
   // ==================================================
@@ -69,7 +69,7 @@ export class MeasurementTool extends BoxOrLineEditTool {
   // OVERRIDES of BaseEditTool
   // ==================================================
 
-  protected override canBeSelected(domainObject: DomainObject): boolean {
+  protected override canBeSelected(domainObject: VisualDomainObject): boolean {
     return (
       domainObject instanceof MeasureBoxDomainObject ||
       domainObject instanceof MeasureLineDomainObject

@@ -150,7 +150,7 @@ export class BoxView extends GroupThreeView {
     if (closestDistance !== undefined && closestDistance < distanceToCamera) {
       return undefined;
     }
-    if (!intersectInput.isVisible(point)) {
+    if (domainObject.useClippingInIntersection && !intersectInput.isVisible(point)) {
       return undefined;
     }
     const positionAtFace = newVector3(point).applyMatrix4(matrix.invert());

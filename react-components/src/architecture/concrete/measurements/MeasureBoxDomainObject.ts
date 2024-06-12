@@ -2,8 +2,8 @@
  * Copyright 2024 Cognite AS
  */
 
-import { PrimitiveType } from '../box/PrimitiveType';
-import { BoxDomainObject } from '../box/BoxDomainObject';
+import { PrimitiveType } from '../boxAndLines/PrimitiveType';
+import { BoxDomainObject } from '../boxAndLines/BoxDomainObject';
 import { Color } from 'three';
 import { getIconByPrimitiveType } from './getIconByPrimitiveType';
 import { PanelInfo } from '../../base/domainObjectsHelpers/PanelInfo';
