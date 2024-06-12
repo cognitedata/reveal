@@ -17,7 +17,7 @@ export abstract class ShowPrimitivesOnTopCommand extends RenderTargetCommand {
   }
 
   public override get isEnabled(): boolean {
-    return this.getFirst() !== undefined;
+    return this.getFirstSelectable() !== undefined;
   }
 
   public override get isChecked(): boolean {
@@ -51,7 +51,7 @@ export abstract class ShowPrimitivesOnTopCommand extends RenderTargetCommand {
   // ==================================================
 
   private getDepthTest(): boolean {
-    const domainObject = this.getFirst();
+    const domainObject = this.getFirstSelectable();
     if (domainObject === undefined) {
       return false;
     }
@@ -62,7 +62,7 @@ export abstract class ShowPrimitivesOnTopCommand extends RenderTargetCommand {
     return false;
   }
 
-  private getFirst(): DomainObject | undefined {
+  private getFirstSelectable(): DomainObject | undefined {
     for (const domainObject of this.rootDomainObject.getDescendants()) {
       if (this.canBeSelected(domainObject)) {
         return domainObject;

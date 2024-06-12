@@ -46,6 +46,7 @@ import { radToDeg } from 'three/src/math/MathUtils.js';
 import { Range1 } from '../../../base/utilities/geometry/Range1';
 import { PrimitiveType } from '../PrimitiveType';
 import { Quantity } from '../../../base/domainObjectsHelpers/Quantity';
+import { type PrimitiveRenderStyle } from '../PrimitiveRenderStyle';
 
 const RELATIVE_RESIZE_RADIUS = 0.15;
 const RELATIVE_ROTATION_RADIUS = new Range1(0.6, 0.75);
@@ -251,7 +252,7 @@ export class BoxView extends GroupThreeView {
       return undefined; // Not show when about 0
     }
     const text = rootDomainObject.unitSystem.toStringWithUnit(degrees, Quantity.Degrees);
-    const sprite = createSprite(text, this.style, spriteHeight);
+    const sprite = BoxView.createSprite(text, this.style, spriteHeight);
     if (sprite === undefined) {
       return undefined;
     }
@@ -266,7 +267,7 @@ export class BoxView extends GroupThreeView {
     if (!this.isFaceVisible(TOP_FACE)) {
       return undefined;
     }
-    const sprite = createSprite('Pending', this.style, spriteHeight);
+    const sprite = BoxView.createSprite('Pending', this.style, spriteHeight);
     if (sprite === undefined) {
       return undefined;
     }
@@ -362,7 +363,7 @@ export class BoxView extends GroupThreeView {
         continue;
       }
       const text = rootDomainObject.unitSystem.toStringWithUnit(size, Quantity.Length);
-      const sprite = createSprite(text, style, spriteHeight);
+      const sprite = BoxView.createSprite(text, style, spriteHeight);
       if (sprite === undefined) {
         this._sprites.push(undefined);
         continue;
@@ -537,6 +538,26 @@ export class BoxView extends GroupThreeView {
     }
     return true;
   }
+
+  // ==================================================
+  // STATIC METHODS
+  // ==================================================
+
+  public static createSprite(
+    text: string,
+    style: PrimitiveRenderStyle,
+    height: number
+  ): Sprite | undefined {
+    const result = createSpriteWithText(text, height, style.textColor, style.textBgColor);
+    if (result === undefined) {
+      return undefined;
+    }
+    result.material.transparent = true;
+    result.material.opacity = style.textOpacity;
+    result.material.depthTest = style.depthTest;
+    result.renderOrder = RENDER_ORDER;
+    return result;
+  }
 }
 
 // ==================================================
@@ -624,18 +645,6 @@ function updateMarkerMaterial(
 // ==================================================
 // PRIVATE FUNCTIONS: Create object3D's
 // ==================================================
-
-function createSprite(text: string, style: BoxRenderStyle, height: number): Sprite | undefined {
-  const result = createSpriteWithText(text, height, style.textColor, style.textBgColor);
-  if (result === undefined) {
-    return undefined;
-  }
-  result.material.transparent = true;
-  result.material.opacity = style.textOpacity;
-  result.material.depthTest = style.depthTest;
-  result.renderOrder = RENDER_ORDER;
-  return result;
-}
 
 function adjustLabel(point: Vector3, domainObject: BoxDomainObject, spriteHeight: number): void {
   if (domainObject.primitiveType !== PrimitiveType.VerticalArea) {

@@ -13,7 +13,6 @@ import {
   Mesh,
   MeshPhongMaterial,
   Quaternion,
-  Sprite,
   Vector2,
   Vector3
 } from 'three';
@@ -31,13 +30,13 @@ import {
 import { LineSegmentsGeometry } from 'three/examples/jsm/lines/LineSegmentsGeometry.js';
 import { LineMaterial } from 'three/examples/jsm/lines/LineMaterial.js';
 import { PrimitiveType } from '../PrimitiveType';
-import { createSpriteWithText } from '../../../base/utilities/sprites/createSprite';
 import { mergeGeometries } from 'three/examples/jsm/utils/BufferGeometryUtils.js';
 import { FocusType } from '../../../base/domainObjectsHelpers/FocusType';
 import { DomainObjectIntersection } from '../../../base/domainObjectsHelpers/DomainObjectIntersection';
 import { ClosestGeometryFinder } from '../../../base/utilities/geometry/ClosestGeometryFinder';
 import { square } from '../../../base/utilities/extensions/mathExtensions';
 import { Quantity } from '../../../base/domainObjectsHelpers/Quantity';
+import { BoxView } from '../box/BoxView';
 
 const CYLINDER_DEFAULT_AXIS = new Vector3(0, 1, 0);
 const RENDER_ORDER = 100;
@@ -276,7 +275,7 @@ export class LineView extends GroupThreeView {
       center.applyMatrix4(CDF_TO_VIEWER_TRANSFORMATION);
 
       const text = rootDomainObject.unitSystem.toStringWithUnit(distance, Quantity.Length);
-      const sprite = createSprite(text, style, spriteHeight);
+      const sprite = BoxView.createSprite(text, style, spriteHeight);
       if (sprite === undefined) {
         continue;
       }
@@ -313,18 +312,6 @@ function createVertices(domainObject: LineDomainObject): number[] | undefined {
     }
   }
   return vertices;
-}
-
-function createSprite(text: string, style: LineRenderStyle, height: number): Sprite | undefined {
-  const result = createSpriteWithText(text, height, style.textColor, style.textBgColor);
-  if (result === undefined) {
-    return undefined;
-  }
-  result.material.transparent = true;
-  result.material.opacity = style.textOpacity;
-  result.material.depthTest = style.depthTest;
-  result.renderOrder = RENDER_ORDER;
-  return result;
 }
 
 function updateSolidMaterial(
