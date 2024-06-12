@@ -14,7 +14,7 @@ import { type DomainObject } from '../../base/domainObjects/DomainObject';
 import { CommandsUpdater } from '../../base/reactUpdaters/CommandsUpdater';
 import { BoxDomainObject } from './BoxDomainObject';
 import { LineDomainObject } from './LineDomainObject';
-import { TextRenderStyle } from './TextRenderStyle';
+import { PrimitiveRenderStyle } from './PrimitiveRenderStyle';
 import { type VisualDomainObject } from '../../base/domainObjects/VisualDomainObject';
 
 export abstract class PrimitiveEditTool extends BaseEditTool {
@@ -273,7 +273,7 @@ export abstract class PrimitiveEditTool extends BaseEditTool {
       return;
     }
     const style = domainObject.getRenderStyle();
-    if (!(style instanceof TextRenderStyle)) {
+    if (!(style instanceof PrimitiveRenderStyle)) {
       return;
     }
     style.depthTest = depthTest;
@@ -282,7 +282,7 @@ export abstract class PrimitiveEditTool extends BaseEditTool {
   private getDepthTestOnFirstSelectable(): boolean | undefined {
     for (const otherDomainObject of this.getSelectable()) {
       const otherStyle = otherDomainObject.getRenderStyle();
-      if (otherStyle instanceof TextRenderStyle) {
+      if (otherStyle instanceof PrimitiveRenderStyle) {
         return otherStyle.depthTest;
       }
     }

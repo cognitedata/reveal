@@ -2,9 +2,9 @@
  * Copyright 2024 Cognite AS
  */
 
-import { BoxDomainObject } from '../boxAndLines/BoxDomainObject';
+import { BoxDomainObject } from '../primitives/BoxDomainObject';
 import { Color, type Vector3 } from 'three';
-import { BoxRenderStyle } from '../boxAndLines/BoxRenderStyle';
+import { BoxRenderStyle } from '../primitives/BoxRenderStyle';
 import { type RenderStyle } from '../../base/domainObjectsHelpers/RenderStyle';
 
 export const MIN_BOX_SIZE = 0.01;

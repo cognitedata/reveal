@@ -4,11 +4,11 @@
 
 import { type DomainObject } from '../../../base/domainObjects/DomainObject';
 import { type TranslateKey } from '../../../base/utilities/TranslateKey';
-import { ShowOnTopCommand } from '../../boxAndLines/ShowOnTopCommand';
+import { ShowPrimitivesOnTopCommand } from '../../primitives/ShowPrimitivesOnTopCommand';
 import { MeasureBoxDomainObject } from '../MeasureBoxDomainObject';
 import { MeasureLineDomainObject } from '../MeasureLineDomainObject';
 
-export class ShowMeasurementsOnTopCommand extends ShowOnTopCommand {
+export class ShowMeasurementsOnTopCommand extends ShowPrimitivesOnTopCommand {
   // ==================================================
   // OVERRIDES
   // ==================================================

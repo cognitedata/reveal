@@ -3,10 +3,10 @@
  */
 
 import { cloneDeep } from 'lodash';
-import { TextRenderStyle } from './TextRenderStyle';
+import { PrimitiveRenderStyle } from './PrimitiveRenderStyle';
 import { type RenderStyle } from '../../base/domainObjectsHelpers/RenderStyle';
 
-export class LineRenderStyle extends TextRenderStyle {
+export class LineRenderStyle extends PrimitiveRenderStyle {
   // ==================================================
   // INSTANCE FIELDS
   // ==================================================

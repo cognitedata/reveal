@@ -5,9 +5,9 @@
 import { RenderTargetCommand } from '../../base/commands/RenderTargetCommand';
 import { type DomainObject } from '../../base/domainObjects/DomainObject';
 import { Changes } from '../../base/domainObjectsHelpers/Changes';
-import { TextRenderStyle } from './TextRenderStyle';
+import { PrimitiveRenderStyle } from './PrimitiveRenderStyle';
 
-export abstract class ShowOnTopCommand extends RenderTargetCommand {
+export abstract class ShowPrimitivesOnTopCommand extends RenderTargetCommand {
   // ==================================================
   // OVERRIDES
   // ==================================================
@@ -31,7 +31,7 @@ export abstract class ShowOnTopCommand extends RenderTargetCommand {
         continue;
       }
       const renderStyle = domainObject.getRenderStyle();
-      if (!(renderStyle instanceof TextRenderStyle)) {
+      if (!(renderStyle instanceof PrimitiveRenderStyle)) {
         continue;
       }
       renderStyle.depthTest = !depthTest;
@@ -56,7 +56,7 @@ export abstract class ShowOnTopCommand extends RenderTargetCommand {
       return false;
     }
     const renderStyle = domainObject.getRenderStyle();
-    if (renderStyle instanceof TextRenderStyle) {
+    if (renderStyle instanceof PrimitiveRenderStyle) {
       return renderStyle.depthTest;
     }
     return false;

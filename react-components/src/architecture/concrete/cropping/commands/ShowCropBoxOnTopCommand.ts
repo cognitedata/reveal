@@ -4,10 +4,10 @@
 
 import { type DomainObject } from '../../../base/domainObjects/DomainObject';
 import { type TranslateKey } from '../../../base/utilities/TranslateKey';
-import { ShowOnTopCommand } from '../../boxAndLines/ShowOnTopCommand';
+import { ShowPrimitivesOnTopCommand } from '../../primitives/ShowPrimitivesOnTopCommand';
 import { CropBoxDomainObject } from '../CropBoxDomainObject';
 
-export class ShowCropBoxOnTopCommand extends ShowOnTopCommand {
+export class ShowCropBoxOnTopCommand extends ShowPrimitivesOnTopCommand {
   // ==================================================
   // OVERRIDES
   // ==================================================

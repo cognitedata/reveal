@@ -7,7 +7,7 @@ import { RenderStyle } from '../../base/domainObjectsHelpers/RenderStyle';
 import { Color } from 'three';
 import { WHITE_COLOR } from '../../base/utilities/colors/colorExtensions';
 
-export abstract class TextRenderStyle extends RenderStyle {
+export abstract class PrimitiveRenderStyle extends RenderStyle {
   // ==================================================
   // INSTANCE FIELDS
   // ==================================================
