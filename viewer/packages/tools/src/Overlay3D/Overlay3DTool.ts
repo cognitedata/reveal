@@ -306,7 +306,7 @@ export class Overlay3DTool<ContentType = DefaultOverlay3DContentType> extends Co
     const camera = _viewer.cameraManager.getCamera();
     const cameraDirection = camera.getWorldDirection(new THREE.Vector3());
 
-    const intersections: [Overlay3DIcon<ContentType>, THREE.Vector3][] = [];
+    const intersections: [Overlay3D<ContentType>, THREE.Vector3][] = [];
 
     for (const points of this._overlayCollections) {
       const intersection = points.intersectOverlays(normalizedCoordinates);

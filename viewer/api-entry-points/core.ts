@@ -119,6 +119,7 @@ export {
 export {
   OverlayCollection,
   Overlay3DCollection,
+  Overlay3DCollectionOptions,
   OverlayInfo,
   Overlay3D,
   DefaultOverlay3DContentType

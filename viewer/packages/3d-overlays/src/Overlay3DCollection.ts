@@ -2,13 +2,13 @@
  * Copyright 2023 Cognite AS
  */
 
-import { CanvasTexture, Color, Texture, Object3D, Camera, WebGLRenderer, Scene, Vector2, Raycaster } from 'three';
+import { CanvasTexture, Color, Texture, Object3D, Camera, Vector2, Raycaster } from 'three';
 import { Overlay3DIcon } from './Overlay3DIcon';
 import { Overlay3D } from './Overlay3D';
 import { OverlayPointsObject } from './OverlayPointsObject';
 import { IconOctree } from './IconOctree';
 import { DefaultOverlay3DContentType, OverlayCollection, OverlayInfo } from './OverlayCollection';
-import { minBy } from 'lodash';
+import minBy from 'lodash/minBy';
 import { CameraManager } from '@reveal/camera-manager';
 
 export type Overlay3DCollectionOptions = {
@@ -35,11 +35,11 @@ export class Overlay3DCollection<MetadataType = DefaultOverlay3DContentType>
   private readonly _iconRadius = 0.4;
   private _overlays: Overlay3DIcon<MetadataType>[];
   //@ts-ignore Will be removed when clustering is added.
-  private _octree: IconOctree;
+  private _octree: IconOctree<MetadataType>;
   private _previousRenderCamera: Camera | undefined;
   private readonly _rayCaster = new Raycaster();
 
-  private _cameraManager: CameraManager;
+  private readonly _cameraManager: CameraManager;
 
   constructor(
     overlayInfos: OverlayInfo<MetadataType>[],
@@ -130,7 +130,7 @@ export class Overlay3DCollection<MetadataType = DefaultOverlay3DContentType>
     this._octree = this.rebuildOctree();
   }
 
-  public intersectOverlays(normalizedCoordinates: Vector2): Overlay3DIcon<MetadataType> | undefined {
+  public intersectOverlays(normalizedCoordinates: Vector2): Overlay3D<MetadataType> | undefined {
     const camera = this._previousRenderCamera;
     if (camera === undefined) {
       return undefined;
@@ -145,11 +145,11 @@ export class Overlay3DCollection<MetadataType = DefaultOverlay3DContentType>
     return minBy(intersections, a => a.getPosition().clone().sub(this._rayCaster.ray.origin).length());
   }
 
-  private rebuildOctree(): IconOctree {
-    const icons = this._overlays as Overlay3DIcon[];
+  private rebuildOctree(): IconOctree<MetadataType> {
+    const icons = this._overlays;
     const octreeBounds = IconOctree.getMinimalOctreeBoundsFromIcons(icons);
 
-    return new IconOctree(icons, octreeBounds, 2);
+    return new IconOctree<MetadataType>(icons, octreeBounds, 2);
   }
 
   private updatePointsObject(): void {
