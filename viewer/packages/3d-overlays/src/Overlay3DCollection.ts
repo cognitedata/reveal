@@ -18,6 +18,9 @@ export type Overlay3DCollectionOptions = {
   defaultOverlayColor?: Color;
 };
 
+/**
+ * A collection of overlay icons with associated data
+ */
 export class Overlay3DCollection<MetadataType = DefaultOverlay3DContentType>
   extends Object3D
   implements OverlayCollection<MetadataType>
@@ -66,7 +69,7 @@ export class Overlay3DCollection<MetadataType = DefaultOverlay3DContentType>
 
     this._overlays = this.initializeOverlay3DIcons(overlayInfos ?? []);
     this._cameraManager = cameraManager;
-    cameraManager.on('cameraChange', () => this.onCameraChange(this._cameraManager.getCamera()));
+    cameraManager.on('cameraChange', () => this._onCameraChange(this._cameraManager.getCamera()));
     this.add(this._overlayPoints);
 
     this.updatePointsObject();
@@ -74,7 +77,7 @@ export class Overlay3DCollection<MetadataType = DefaultOverlay3DContentType>
     this._octree = this.rebuildOctree();
   }
 
-  onCameraChange = (camera: Camera): void => {
+  private _onCameraChange = (camera: Camera): void => {
     if (this._previousRenderCamera !== undefined && camera.matrix.equals(this._previousRenderCamera.matrix)) {
       return;
     }
@@ -88,14 +91,23 @@ export class Overlay3DCollection<MetadataType = DefaultOverlay3DContentType>
     this._previousRenderCamera.copy(camera);
   };
 
+  /**
+   * Set whether this collection is visible or not
+   */
   setVisibility(visibility: boolean): void {
     this._overlayPoints.visible = visibility;
   }
 
+  /**
+   * Get the overlay icons contained in this collection
+   */
   getOverlays(): Overlay3D<MetadataType>[] {
     return this._overlays;
   }
 
+  /**
+   * Add more overlays into this collection
+   */
   public addOverlays(overlayInfos: OverlayInfo<MetadataType>[]): Overlay3D<MetadataType>[] {
     if (overlayInfos.length + this._overlays.length > this.DefaultMaxPoints)
       throw new Error('Cannot add more than ' + this.DefaultMaxPoints + ' points');
@@ -116,6 +128,9 @@ export class Overlay3DCollection<MetadataType = DefaultOverlay3DContentType>
     this.updatePointsObject();
   }
 
+  /**
+   * Remove the listed overlays from this collection
+   */
   public removeOverlays(overlays: Overlay3D<MetadataType>[]): void {
     this._overlays = this._overlays.filter(overlay => !overlays.includes(overlay));
 
@@ -123,6 +138,9 @@ export class Overlay3DCollection<MetadataType = DefaultOverlay3DContentType>
     this._octree = this.rebuildOctree();
   }
 
+  /**
+   * Clean up all icons in this collection
+   */
   public removeAllOverlays(): void {
     this._overlays = [];
 
@@ -130,6 +148,9 @@ export class Overlay3DCollection<MetadataType = DefaultOverlay3DContentType>
     this._octree = this.rebuildOctree();
   }
 
+  /**
+   * Run intersection on icons in this collection. Returns the closest hit
+   */
   public intersectOverlays(normalizedCoordinates: Vector2): Overlay3D<MetadataType> | undefined {
     const camera = this._previousRenderCamera;
     if (camera === undefined) {
@@ -182,6 +203,9 @@ export class Overlay3DCollection<MetadataType = DefaultOverlay3DContentType>
     });
   }
 
+  /**
+   * @obvious
+   */
   public dispose(): void {
     this._overlays.forEach(overlay => overlay.dispose());
 
