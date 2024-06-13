@@ -11,10 +11,25 @@ import { DefaultOverlay3DContentType, OverlayCollection, OverlayInfo } from './O
 import minBy from 'lodash/minBy';
 import { CameraManager } from '@reveal/camera-manager';
 
+/**
+ * Constructor options for the Overlay3DCollection
+ */
 export type Overlay3DCollectionOptions = {
+  /**
+   * The texture to display as icons in this collection
+   */
   overlayTexture?: Texture;
+  /**
+   * A texture mask for marking what pixels are transparent in the supplied overlayTexture
+   */
   overlayTextureMask?: Texture;
+  /**
+   * The maximum display size of each icon in pixels
+   */
   maxPointSize?: number;
+  /**
+   * The default color to apply to overlay icons without a color on their own
+   */
   defaultOverlayColor?: Color;
 };
 
@@ -77,7 +92,7 @@ export class Overlay3DCollection<MetadataType = DefaultOverlay3DContentType>
     this._octree = this.rebuildOctree();
   }
 
-  private _onCameraChange = (camera: Camera): void => {
+  private readonly _onCameraChange = (camera: Camera): void => {
     if (this._previousRenderCamera !== undefined && camera.matrix.equals(this._previousRenderCamera.matrix)) {
       return;
     }

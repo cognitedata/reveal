@@ -9,7 +9,6 @@ import { AnnotationsAssetRef } from '@cognite/sdk';
 import { AnnotationsCogniteAnnotationTypesImagesAssetLink } from '@cognite/sdk';
 import { AnnotationStatus } from '@cognite/sdk';
 import { Box3 } from 'three';
-import { Camera } from 'three';
 import { CogniteClient } from '@cognite/sdk';
 import { CogniteInternalId } from '@cognite/sdk';
 import { Color } from 'three';
@@ -1572,28 +1571,20 @@ export interface Overlay3D<ContentType> {
     setVisible(visible: boolean): void;
 }
 
-// @public (undocumented)
+// @public
 export class Overlay3DCollection<MetadataType = DefaultOverlay3DContentType> extends Object3D implements OverlayCollection<MetadataType> {
     constructor(overlayInfos: OverlayInfo<MetadataType>[], cameraManager: CameraManager, options?: Overlay3DCollectionOptions);
-    // (undocumented)
     addOverlays(overlayInfos: OverlayInfo<MetadataType>[]): Overlay3D<MetadataType>[];
     // (undocumented)
     dispose(): void;
-    // (undocumented)
     getOverlays(): Overlay3D<MetadataType>[];
-    // (undocumented)
     intersectOverlays(normalizedCoordinates: Vector2): Overlay3D<MetadataType> | undefined;
-    // (undocumented)
-    onCameraChange: (camera: Camera) => void;
-    // (undocumented)
     removeAllOverlays(): void;
-    // (undocumented)
     removeOverlays(overlays: Overlay3D<MetadataType>[]): void;
-    // (undocumented)
     setVisibility(visibility: boolean): void;
 }
 
-// @public (undocumented)
+// @public
 export type Overlay3DCollectionOptions = {
     overlayTexture?: Texture;
     overlayTextureMask?: Texture;
