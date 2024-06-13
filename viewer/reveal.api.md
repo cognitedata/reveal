@@ -1575,7 +1575,6 @@ export interface Overlay3D<ContentType> {
 export class Overlay3DCollection<MetadataType = DefaultOverlay3DContentType> extends Object3D implements OverlayCollection<MetadataType> {
     constructor(overlayInfos: OverlayInfo<MetadataType>[], cameraManager: CameraManager, options?: Overlay3DCollectionOptions);
     addOverlays(overlayInfos: OverlayInfo<MetadataType>[]): Overlay3D<MetadataType>[];
-    // (undocumented)
     dispose(): void;
     getOverlays(): Overlay3D<MetadataType>[];
     intersectOverlays(normalizedCoordinates: Vector2): Overlay3D<MetadataType> | undefined;
