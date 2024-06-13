@@ -63,14 +63,16 @@ export type QueryResult<
       InstanceType<T, K> & {
         properties: {
           [P in T['select'][K]['sources'][number] as P['source']['space']]: {
-            [Q in P as `${Q['source']['externalId']}/${Q['source']['version']}`]: {
-              [R in Q['properties'][number]]: Extract<
-                L[number],
-                Pick<Q, 'source'>
-              >['properties'][R] extends never
-                ? unknown
-                : Extract<L[number], Pick<Q, 'source'>>['properties'][R];
-            };
+            [Q in P as `${Q['source']['externalId']}/${Q['source']['version']}`]: Q['properties'][0] extends '*'
+              ? Record<string, unknown>
+              : {
+                  [R in Q['properties'][number]]: Extract<
+                    L[number],
+                    Pick<Q, 'source'>
+                  >['properties'][R] extends never
+                    ? unknown
+                    : Extract<L[number], Pick<Q, 'source'>>['properties'][R];
+                };
           };
         };
       }

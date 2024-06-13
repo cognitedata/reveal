@@ -89,7 +89,7 @@ describe('queryNodesEdges type tests', () => {
   });
 
   test('passing * as property should type properties as Record', () => {
-    type ResultSourceSpaces = keyof ReturnType<
+    type ResultSourceSpaces = ReturnType<
       typeof testFunction<typeof testQuery>
     >['items']['resultExpressionB'][number]['properties']['spaceD']['externalIdD/v1'];
 
