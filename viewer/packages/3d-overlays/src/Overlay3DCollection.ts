@@ -219,7 +219,7 @@ export class Overlay3DCollection<MetadataType = DefaultOverlay3DContentType>
   }
 
   /**
-   * @obvious
+   * Dispose this collection and icons with all associated resources
    */
   public dispose(): void {
     this._overlays.forEach(overlay => overlay.dispose());
