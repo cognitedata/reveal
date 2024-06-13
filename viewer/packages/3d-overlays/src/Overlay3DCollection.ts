@@ -84,7 +84,7 @@ export class Overlay3DCollection<MetadataType = DefaultOverlay3DContentType>
 
     this._overlays = this.initializeOverlay3DIcons(overlayInfos ?? []);
     this._cameraManager = cameraManager;
-    cameraManager.on('cameraChange', () => this._onCameraChange(this._cameraManager.getCamera()));
+    cameraManager.on('cameraChange', this._onCameraChange);
     this.add(this._overlayPoints);
 
     this.updatePointsObject();
@@ -92,7 +92,8 @@ export class Overlay3DCollection<MetadataType = DefaultOverlay3DContentType>
     this._octree = this.rebuildOctree();
   }
 
-  private readonly _onCameraChange = (camera: Camera): void => {
+  private readonly _onCameraChange = (): void => {
+    const camera = this._cameraManager.getCamera();
     if (this._previousRenderCamera !== undefined && camera.matrix.equals(this._previousRenderCamera.matrix)) {
       return;
     }
@@ -222,6 +223,7 @@ export class Overlay3DCollection<MetadataType = DefaultOverlay3DContentType>
    * Dispose this collection and icons with all associated resources
    */
   public dispose(): void {
+    this._cameraManager.off('cameraChange', this._onCameraChange);
     this._overlays.forEach(overlay => overlay.dispose());
 
     this._overlayPoints.dispose();
