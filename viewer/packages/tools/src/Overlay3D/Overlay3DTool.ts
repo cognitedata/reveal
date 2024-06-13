@@ -84,8 +84,6 @@ export class Overlay3DTool<ContentType = DefaultOverlay3DContentType> extends Co
 
   private readonly _defaultOverlayColor: THREE.Color = new THREE.Color('#fbe50b');
   private readonly _defaultTextOverlayToCursorOffset = 20;
-  private readonly _temporaryVec = new THREE.Vector2();
-  private readonly _raycaster = new THREE.Raycaster();
 
   private _overlayCollections: Overlay3DCollection<ContentType>[] = [];
   private _isVisible = true;
@@ -122,14 +120,9 @@ export class Overlay3DTool<ContentType = DefaultOverlay3DContentType> extends Co
   ): OverlayCollection<ContentType> {
     const { _viewer: viewer } = this;
 
-    const points = new Overlay3DCollection<ContentType>(overlays, {
-      defaultOverlayColor: options?.defaultOverlayColor ?? this._defaultOverlayColor,
-      overlayTexture: options?.overlayTexture,
-      overlayTextureMask: options?.overlayTextureMask
-    });
-
-    viewer.on('cameraChange', () => {
-      points.sortOverlaysRelativeToCamera(viewer.cameraManager.getCamera());
+    const points = new Overlay3DCollection<ContentType>(overlays ?? [], viewer.cameraManager, {
+      ...options,
+      defaultOverlayColor: options?.defaultOverlayColor ?? this._defaultOverlayColor
     });
 
     this._overlayCollections.push(points);
@@ -303,43 +296,35 @@ export class Overlay3DTool<ContentType = DefaultOverlay3DContentType> extends Co
   }
 
   private intersectPointsMarkers(mouseCoords: { offsetX: number; offsetY: number }): Overlay3DIcon<ContentType> | null {
-    const { _viewer, _raycaster, _temporaryVec } = this;
+    const { _viewer } = this;
 
-    const pixelCoords = getNormalizedPixelCoordinates(_viewer.domElement, mouseCoords.offsetX, mouseCoords.offsetY);
+    const normalizedCoordinates = getNormalizedPixelCoordinates(
+      _viewer.domElement,
+      mouseCoords.offsetX,
+      mouseCoords.offsetY
+    );
     const camera = _viewer.cameraManager.getCamera();
     const cameraDirection = camera.getWorldDirection(new THREE.Vector3());
-    _raycaster.setFromCamera(_temporaryVec.copy(pixelCoords), camera);
 
-    let intersection: [Overlay3DIcon<ContentType>, THREE.Vector3][] = [];
+    const intersections: [Overlay3DIcon<ContentType>, THREE.Vector3][] = [];
 
     for (const points of this._overlayCollections) {
-      for (const icon of points.getOverlays() as Overlay3DIcon<ContentType>[]) {
-        if (icon.getVisible()) {
-          const inter = icon.intersect(_raycaster.ray);
-          if (inter) {
-            intersection.push([icon, inter]);
-            icon.updateAdaptiveScale({
-              camera,
-              renderSize: _viewer.renderParameters.renderSize,
-              domElement: _viewer.canvas
-            });
-          }
-        }
+      const intersection = points.intersectOverlays(normalizedCoordinates);
+      if (intersection !== undefined) {
+        intersections.push([intersection, intersection.getPosition().clone()]);
       }
     }
 
-    intersection = intersection.filter(([icon, _]) => icon.intersect(_raycaster.ray) !== null);
-
-    intersection = intersection
+    const sortedIntersections = intersections
       .map(
         ([icon, intersection]) =>
-          [icon, intersection.sub(_raycaster.ray.origin)] as [Overlay3DIcon<ContentType>, THREE.Vector3]
+          [icon, intersection.sub(camera.position)] as [Overlay3DIcon<ContentType>, THREE.Vector3]
       )
       .filter(([, intersection]) => intersection.dot(cameraDirection) > 0)
       .sort((a, b) => a[1].length() - b[1].length());
 
-    if (intersection.length > 0) {
-      const intersectedOverlay = intersection[0][0];
+    if (sortedIntersections.length > 0) {
+      const intersectedOverlay = sortedIntersections[0][0];
 
       return intersectedOverlay;
     }

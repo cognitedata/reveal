@@ -2,12 +2,14 @@
  * Copyright 2023 Cognite AS
  */
 
-import { CanvasTexture, Color, Texture, Object3D, type Camera } from 'three';
+import { CanvasTexture, Color, Texture, Object3D, Camera, WebGLRenderer, Scene, Vector2, Raycaster } from 'three';
 import { Overlay3DIcon } from './Overlay3DIcon';
 import { Overlay3D } from './Overlay3D';
 import { OverlayPointsObject } from './OverlayPointsObject';
 import { IconOctree } from './IconOctree';
 import { DefaultOverlay3DContentType, OverlayCollection, OverlayInfo } from './OverlayCollection';
+import { minBy } from 'lodash';
+import { CameraManager } from '@reveal/camera-manager';
 
 export type Overlay3DCollectionOptions = {
   overlayTexture?: Texture;
@@ -34,8 +36,16 @@ export class Overlay3DCollection<MetadataType = DefaultOverlay3DContentType>
   private _overlays: Overlay3DIcon<MetadataType>[];
   //@ts-ignore Will be removed when clustering is added.
   private _octree: IconOctree;
+  private _previousRenderCamera: Camera | undefined;
+  private readonly _rayCaster = new Raycaster();
 
-  constructor(overlayInfos?: OverlayInfo<MetadataType>[], options?: Overlay3DCollectionOptions) {
+  private _cameraManager: CameraManager;
+
+  constructor(
+    overlayInfos: OverlayInfo<MetadataType>[],
+    cameraManager: CameraManager,
+    options?: Overlay3DCollectionOptions
+  ) {
     super();
 
     this.defaultOverlayColor = options?.defaultOverlayColor ?? this.defaultOverlayColor;
@@ -55,12 +65,28 @@ export class Overlay3DCollection<MetadataType = DefaultOverlay3DContentType>
     });
 
     this._overlays = this.initializeOverlay3DIcons(overlayInfos ?? []);
+    this._cameraManager = cameraManager;
+    cameraManager.on('cameraChange', () => this.onCameraChange(this._cameraManager.getCamera()));
     this.add(this._overlayPoints);
 
     this.updatePointsObject();
 
     this._octree = this.rebuildOctree();
   }
+
+  onCameraChange = (camera: Camera): void => {
+    if (this._previousRenderCamera !== undefined && camera.matrix.equals(this._previousRenderCamera.matrix)) {
+      return;
+    }
+
+    this.sortOverlaysRelativeToCamera(camera);
+
+    if (this._previousRenderCamera === undefined) {
+      this._previousRenderCamera = camera.clone();
+    }
+
+    this._previousRenderCamera.copy(camera);
+  };
 
   setVisibility(visibility: boolean): void {
     this._overlayPoints.visible = visibility;
@@ -83,11 +109,10 @@ export class Overlay3DCollection<MetadataType = DefaultOverlay3DContentType>
     return newIcons;
   }
 
-  sortOverlaysRelativeToCamera(camera: Camera): void {
+  private sortOverlaysRelativeToCamera(camera: Camera): void {
     this._overlays = this._overlays.sort((a, b) => {
       return b.getPosition().distanceToSquared(camera.position) - a.getPosition().distanceToSquared(camera.position);
     });
-
     this.updatePointsObject();
   }
 
@@ -103,6 +128,21 @@ export class Overlay3DCollection<MetadataType = DefaultOverlay3DContentType>
 
     this.updatePointsObject();
     this._octree = this.rebuildOctree();
+  }
+
+  public intersectOverlays(normalizedCoordinates: Vector2): Overlay3DIcon<MetadataType> | undefined {
+    const camera = this._previousRenderCamera;
+    if (camera === undefined) {
+      return undefined;
+    }
+
+    this._rayCaster.setFromCamera(normalizedCoordinates.clone(), camera);
+
+    const intersections = this._overlays.filter(icon => {
+      return icon.getVisible() && icon.intersect(this._rayCaster.ray) !== null;
+    });
+
+    return minBy(intersections, a => a.getPosition().clone().sub(this._rayCaster.ray.origin).length());
   }
 
   private rebuildOctree(): IconOctree {
