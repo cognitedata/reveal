@@ -32,7 +32,7 @@ export class GizmoBoxDomainObject extends BoxDomainObject {
 
   public override createRenderStyle(): RenderStyle | undefined {
     const style = new BoxRenderStyle();
-    style.showText = false;
+    style.showLabel = false;
     return style;
   }
 }

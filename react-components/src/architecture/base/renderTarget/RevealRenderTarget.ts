@@ -228,20 +228,22 @@ export class RevealRenderTarget {
     this._cropBoxUniqueId = domainObject.uniqueId;
   }
 
-  public clearGlobalCropBox(): void {
+  public isGlobalCropBox(domainObject: DomainObject): boolean {
+    return this._cropBoxUniqueId !== undefined && domainObject.uniqueId === this._cropBoxUniqueId;
+  }
+
+  public clearGlobalClipping(): void {
     this.viewer.setGlobalClippingPlanes([]);
     this._cropBoxBoundingBox = undefined;
     this._cropBoxUniqueId = undefined;
   }
 
-  public isGlobalCropBox(domainObject: DomainObject): boolean {
-    return this._cropBoxUniqueId !== undefined && domainObject.uniqueId === this._cropBoxUniqueId;
+  public get isGlobalCropBoxActive(): boolean {
+    return this.isGlobalClippingActive && this._cropBoxBoundingBox !== undefined;
   }
 
-  public get isGlobalCropBoxActive(): boolean {
-    return (
-      this.viewer.getGlobalClippingPlanes().length > 0 && this._cropBoxBoundingBox !== undefined
-    );
+  public get isGlobalClippingActive(): boolean {
+    return this.viewer.getGlobalClippingPlanes().length > 0;
   }
 
   // ==================================================

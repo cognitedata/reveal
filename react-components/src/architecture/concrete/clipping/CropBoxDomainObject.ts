@@ -7,7 +7,7 @@ import { Changes } from '../../base/domainObjectsHelpers/Changes';
 import { type DomainObjectChange } from '../../base/domainObjectsHelpers/DomainObjectChange';
 import { BoxFace } from '../../base/utilities/box/BoxFace';
 import { BoxDomainObject } from '../primitives/box/BoxDomainObject';
-import { Color } from 'three';
+import { Color, type Plane } from 'three';
 import { BoxRenderStyle } from '../primitives/box/BoxRenderStyle';
 import { type RenderStyle } from '../../base/domainObjectsHelpers/RenderStyle';
 
@@ -55,7 +55,7 @@ export class CropBoxDomainObject extends BoxDomainObject {
 
   public override createRenderStyle(): RenderStyle | undefined {
     const style = new BoxRenderStyle();
-    style.showText = false;
+    style.showLabel = false;
     return style;
   }
 
@@ -85,14 +85,23 @@ export class CropBoxDomainObject extends BoxDomainObject {
       return;
     }
     if (!value) {
-      root.renderTarget.clearGlobalCropBox();
+      root.renderTarget.clearGlobalClipping();
     } else {
+      const planes = this.getPlanes();
       const boundingBox = this.getBoundingBox();
       boundingBox.applyMatrix4(CDF_TO_VIEWER_TRANSFORMATION);
-      const matrix = this.getMatrix();
-      matrix.premultiply(CDF_TO_VIEWER_TRANSFORMATION);
-      const planes = BoxFace.createClippingPlanes(matrix);
+
       root.renderTarget.setGlobalCropBox(planes, boundingBox, this);
     }
+  }
+
+  public getPlanes(): Plane[] {
+    const root = this.rootDomainObject;
+    if (root === undefined) {
+      return [];
+    }
+    const matrix = this.getMatrix();
+    matrix.premultiply(CDF_TO_VIEWER_TRANSFORMATION);
+    return BoxFace.createClippingPlanes(matrix);
   }
 }

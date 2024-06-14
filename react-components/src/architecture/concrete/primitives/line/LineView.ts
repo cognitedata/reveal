@@ -79,25 +79,25 @@ export class LineView extends GroupThreeView {
   // OVERRIDES of GroupThreeView
   // ==================================================
 
+  public override get useDepthTest(): boolean {
+    return this.style.depthTest;
+  }
+
   protected override addChildren(): void {
     this.addChild(this.createPipe());
     this.addChild(this.createLines()); // Create a line so it can be seen from long distance
     this.addLabels();
   }
 
-  public override get useDepthTest(): boolean {
-    return this.style.depthTest;
-  }
-
   public override intersectIfCloser(
     intersectInput: CustomObjectIntersectInput,
     closestDistance: number | undefined
   ): undefined | CustomObjectIntersection {
-    if (this.domainObject.focusType === FocusType.Pending) {
+    const { domainObject, style } = this;
+    if (domainObject.focusType === FocusType.Pending) {
       return undefined; // Should never be picked
     }
     // Implement the intersection logic here, because of bug in tree.js
-    const { domainObject, style } = this;
     const radius = getRadius(domainObject, style);
     if (radius <= 0) {
       return;
@@ -249,7 +249,7 @@ export class LineView extends GroupThreeView {
 
   private addLabels(): void {
     const { domainObject, style } = this;
-    if (!style.showText) {
+    if (!style.showLabel) {
       return;
     }
     const { points, rootDomainObject } = domainObject;

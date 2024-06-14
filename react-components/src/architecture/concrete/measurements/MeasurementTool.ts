@@ -80,17 +80,17 @@ export class MeasurementTool extends PrimitiveEditTool {
   // OVERRIDES of BoxOrLineEditTool
   // ==================================================
 
-  protected override createCreator(primitiveType: PrimitiveType): BaseCreator | undefined {
-    switch (primitiveType) {
+  protected override createCreator(): BaseCreator | undefined {
+    switch (this.primitiveType) {
       case PrimitiveType.Line:
       case PrimitiveType.Polyline:
       case PrimitiveType.Polygon:
-        return new LineCreator(new MeasureLineDomainObject(primitiveType));
+        return new LineCreator(new MeasureLineDomainObject(this.primitiveType));
 
       case PrimitiveType.HorizontalArea:
       case PrimitiveType.VerticalArea:
       case PrimitiveType.Box:
-        return new BoxCreator(new MeasureBoxDomainObject(primitiveType));
+        return new BoxCreator(new MeasureBoxDomainObject(this.primitiveType));
       default:
         return undefined;
     }

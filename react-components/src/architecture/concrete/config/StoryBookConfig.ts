@@ -18,7 +18,7 @@ import { NavigationTool } from '../../base/commands/NavigationTool';
 import { type BaseTool } from '../../base/commands/BaseTool';
 import { ToggleMetricUnitsCommand } from '../../base/concreteCommands/ToggleMetricUnitsCommand';
 import { MeasurementTool } from '../measurements/MeasurementTool';
-import { CropBoxTool } from '../cropping/CropBoxTool';
+import { ClipTool } from '../clipping/ClipTool';
 
 export class StoryBookConfig extends BaseRevealConfig {
   // ==================================================
@@ -40,7 +40,7 @@ export class StoryBookConfig extends BaseRevealConfig {
       undefined,
       new ExampleTool(),
       new MeasurementTool(),
-      new CropBoxTool(),
+      new ClipTool(),
       undefined,
       new SetTerrainVisibleCommand(),
       new UpdateTerrainCommand()

@@ -3,17 +3,16 @@
  */
 
 import { cloneDeep } from 'lodash';
-import { PrimitiveRenderStyle } from '../PrimitiveRenderStyle';
 import { type RenderStyle } from '../../../base/domainObjectsHelpers/RenderStyle';
+import { DepthTestRenderStyle } from '../DepthTestRenderStyle';
 
-export class BoxRenderStyle extends PrimitiveRenderStyle {
+export class PlaneRenderStyle extends DepthTestRenderStyle {
   // ==================================================
   // INSTANCE FIELDS
   // ==================================================
 
-  public showLines = true;
-  public showSolid = true;
   public opacity = 0.5;
+  public selectedOpacity = 0.8;
   public opacityUse = true;
 
   // ==================================================
@@ -21,6 +20,6 @@ export class BoxRenderStyle extends PrimitiveRenderStyle {
   // ==================================================
 
   public override clone(): RenderStyle {
-    return cloneDeep<BoxRenderStyle>(this);
+    return cloneDeep<PlaneRenderStyle>(this);
   }
 }

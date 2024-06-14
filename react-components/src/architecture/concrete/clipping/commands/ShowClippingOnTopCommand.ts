@@ -6,8 +6,9 @@ import { type DomainObject } from '../../../base/domainObjects/DomainObject';
 import { type TranslateKey } from '../../../base/utilities/TranslateKey';
 import { ShowPrimitivesOnTopCommand } from '../../primitives/ShowPrimitivesOnTopCommand';
 import { CropBoxDomainObject } from '../CropBoxDomainObject';
+import { SliceDomainObject } from '../SliceDomainObject';
 
-export class ShowCropBoxOnTopCommand extends ShowPrimitivesOnTopCommand {
+export class ShowClippingOnTopCommand extends ShowPrimitivesOnTopCommand {
   // ==================================================
   // OVERRIDES
   // ==================================================
@@ -17,10 +18,10 @@ export class ShowCropBoxOnTopCommand extends ShowPrimitivesOnTopCommand {
   }
 
   public override get tooltip(): TranslateKey {
-    return { key: 'MEASUREMENTS_SHOW_ON_TOP', fallback: 'Show all measurements on top' };
+    return { key: 'CROP_SHOW_ON_TOP', fallback: 'Show all crop boxes and slices on top' };
   }
 
   protected override canBeSelected(domainObject: DomainObject): boolean {
-    return domainObject instanceof CropBoxDomainObject;
+    return domainObject instanceof CropBoxDomainObject || domainObject instanceof SliceDomainObject;
   }
 }

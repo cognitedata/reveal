@@ -90,6 +90,10 @@ export class Range3 {
     return this.x.equals(other.x) && this.y.equals(other.y) && this.z.equals(other.z);
   }
 
+  public isInside(point: Vector3): boolean {
+    return this.x.isInside(point.x) && this.y.isInside(point.y) && this.z.isInside(point.z);
+  }
+
   // ==================================================
   // INSTANCE METHODS: Getters
   // ==================================================

@@ -7,14 +7,15 @@ import { type DomainObject } from '../../../base/domainObjects/DomainObject';
 import { VisualDomainObject } from '../../../base/domainObjects/VisualDomainObject';
 import { type TranslateKey } from '../../../base/utilities/TranslateKey';
 import { CropBoxDomainObject } from '../CropBoxDomainObject';
+import { SliceDomainObject } from '../SliceDomainObject';
 
-export class ShowAllCropBoxesCommand extends RenderTargetCommand {
+export class ShowAllClippingCommand extends RenderTargetCommand {
   // ==================================================
   // OVERRIDES
   // ==================================================
 
   public override get tooltip(): TranslateKey {
-    return { key: 'CROPBOX_SHOW', fallback: 'Show or hide all other crop boxes than selected' };
+    return { key: 'CROP_BOX_SHOW', fallback: 'Show or hide all other crop boxes than selected' };
   }
 
   public override get icon(): string {
@@ -45,7 +46,7 @@ export class ShowAllCropBoxesCommand extends RenderTargetCommand {
   // ==================================================
 
   private canBeSelected(domainObject: DomainObject): boolean {
-    return domainObject instanceof CropBoxDomainObject;
+    return domainObject instanceof CropBoxDomainObject || domainObject instanceof SliceDomainObject;
   }
 
   private *getSelectable(): Generator<VisualDomainObject> {

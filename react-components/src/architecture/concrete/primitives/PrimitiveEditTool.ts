@@ -14,8 +14,9 @@ import { type DomainObject } from '../../base/domainObjects/DomainObject';
 import { CommandsUpdater } from '../../base/reactUpdaters/CommandsUpdater';
 import { BoxDomainObject } from './box/BoxDomainObject';
 import { LineDomainObject } from './line/LineDomainObject';
-import { PrimitiveRenderStyle } from './PrimitiveRenderStyle';
+import { DepthTestRenderStyle } from './DepthTestRenderStyle';
 import { type VisualDomainObject } from '../../base/domainObjects/VisualDomainObject';
+import { PlaneDomainObject } from './plane/PlaneDomainObject';
 
 export abstract class PrimitiveEditTool extends BaseEditTool {
   // ==================================================
@@ -30,7 +31,7 @@ export abstract class PrimitiveEditTool extends BaseEditTool {
   // CONSTRUCTOR
   // ==================================================
 
-  protected constructor(primitiveType: PrimitiveType = PrimitiveType.Box) {
+  protected constructor(primitiveType: PrimitiveType = PrimitiveType.None) {
     super();
     this.defaultPrimitiveType = primitiveType;
     this.primitiveType = this.defaultPrimitiveType;
@@ -117,7 +118,9 @@ export abstract class PrimitiveEditTool extends BaseEditTool {
   }
 
   public override async onClick(event: PointerEvent): Promise<void> {
-    const { _creator: creator, renderTarget } = this;
+    const { renderTarget } = this;
+    let creator = this._creator;
+
     // Click in the "air"
     if (creator !== undefined && !creator.preferIntersection) {
       const ray = this.getRay(event);
@@ -134,6 +137,16 @@ export abstract class PrimitiveEditTool extends BaseEditTool {
       // Click in the "air"
       return;
     }
+    if (creator !== undefined) {
+      const ray = this.getRay(event);
+      if (creator.addPoint(ray, intersection)) {
+        if (creator.isFinished) {
+          this._creator = undefined;
+          this.setDefaultPrimitiveType();
+        }
+      }
+      return;
+    }
     const domainObject = this.getIntersectedSelectableDomainObject(intersection);
     if (domainObject !== undefined) {
       this.deselectAll(domainObject);
@@ -142,7 +155,7 @@ export abstract class PrimitiveEditTool extends BaseEditTool {
     }
     const ray = this.getRay(event);
     if (creator === undefined) {
-      const creator = (this._creator = this.createCreator(this.primitiveType));
+      creator = this._creator = this.createCreator();
       if (creator === undefined) {
         return;
       }
@@ -156,13 +169,10 @@ export abstract class PrimitiveEditTool extends BaseEditTool {
         domainObject.setSelectedInteractive(true);
         domainObject.setVisibleInteractive(true, renderTarget);
       }
-    } else {
-      if (creator.addPoint(ray, intersection)) {
-        if (creator.isFinished) {
-          this.setDefaultPrimitiveType();
-          this._creator = undefined;
-        }
-      }
+    }
+    if (creator !== undefined && creator.isFinished) {
+      this.setDefaultPrimitiveType();
+      this._creator = undefined;
     }
   }
 
@@ -177,7 +187,7 @@ export abstract class PrimitiveEditTool extends BaseEditTool {
   // VIRTUAL METHODS
   // ==================================================
 
-  protected createCreator(_primitiveType: PrimitiveType): BaseCreator | undefined {
+  protected createCreator(): BaseCreator | undefined {
     return undefined;
   }
 
@@ -239,6 +249,10 @@ export abstract class PrimitiveEditTool extends BaseEditTool {
       this.defocusAll(domainObject);
       domainObject.setFocusInteractive(FocusType.Focus);
       this.renderTarget.setDefaultCursor();
+    } else if (domainObject instanceof PlaneDomainObject) {
+      this.defocusAll(domainObject);
+      domainObject.setFocusInteractive(FocusType.Focus);
+      this.renderTarget.setMoveCursor();
     } else if (domainObject instanceof BoxDomainObject) {
       const pickInfo = intersection.userData as BoxPickInfo;
       if (pickInfo === undefined) {
@@ -259,8 +273,9 @@ export abstract class PrimitiveEditTool extends BaseEditTool {
       }
       if (domainObject instanceof LineDomainObject) {
         domainObject.setFocusInteractive(FocusType.None);
-      }
-      if (domainObject instanceof BoxDomainObject) {
+      } else if (domainObject instanceof PlaneDomainObject) {
+        domainObject.setFocusInteractive(FocusType.None);
+      } else if (domainObject instanceof BoxDomainObject) {
         domainObject.setFocusInteractive(FocusType.None);
       }
     }
@@ -273,7 +288,7 @@ export abstract class PrimitiveEditTool extends BaseEditTool {
       return;
     }
     const style = domainObject.getRenderStyle();
-    if (!(style instanceof PrimitiveRenderStyle)) {
+    if (!(style instanceof DepthTestRenderStyle)) {
       return;
     }
     style.depthTest = depthTest;
@@ -282,7 +297,7 @@ export abstract class PrimitiveEditTool extends BaseEditTool {
   private getDepthTestOnFirstSelectable(): boolean | undefined {
     for (const otherDomainObject of this.getSelectable()) {
       const otherStyle = otherDomainObject.getRenderStyle();
-      if (otherStyle instanceof PrimitiveRenderStyle) {
+      if (otherStyle instanceof DepthTestRenderStyle) {
         return otherStyle.depthTest;
       }
     }

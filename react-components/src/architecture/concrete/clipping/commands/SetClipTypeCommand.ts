@@ -5,11 +5,11 @@
 import { RenderTargetCommand } from '../../../base/commands/RenderTargetCommand';
 import { type BaseCommand } from '../../../base/commands/BaseCommand';
 import { PrimitiveType } from '../../primitives/PrimitiveType';
-import { getIconByPrimitiveType } from '../getIconByPrimitiveType';
 import { type TranslateKey } from '../../../base/utilities/TranslateKey';
-import { MeasurementTool } from '../MeasurementTool';
+import { ClipTool } from '../ClipTool';
+import { getIconByPrimitiveType } from '../../measurements/getIconByPrimitiveType';
 
-export class SetMeasurementTypeCommand extends RenderTargetCommand {
+export class SetClipTypeCommand extends RenderTargetCommand {
   private readonly _primitiveType: PrimitiveType;
 
   // ==================================================
@@ -61,7 +61,7 @@ export class SetMeasurementTypeCommand extends RenderTargetCommand {
   }
 
   public override equals(other: BaseCommand): boolean {
-    if (!(other instanceof SetMeasurementTypeCommand)) {
+    if (!(other instanceof SetClipTypeCommand)) {
       return false;
     }
     return this._primitiveType === other._primitiveType;
@@ -71,9 +71,9 @@ export class SetMeasurementTypeCommand extends RenderTargetCommand {
   // INSTANCE METHODS
   // ==================================================
 
-  private get tool(): MeasurementTool | undefined {
+  private get tool(): ClipTool | undefined {
     const activeTool = this.renderTarget.commandsController.activeTool;
-    if (!(activeTool instanceof MeasurementTool)) {
+    if (!(activeTool instanceof ClipTool)) {
       return undefined;
     }
     return activeTool;
@@ -86,37 +86,31 @@ export class SetMeasurementTypeCommand extends RenderTargetCommand {
 
 function getTooltipByPrimitiveType(primitiveType: PrimitiveType): TranslateKey {
   switch (primitiveType) {
-    case PrimitiveType.Line:
+    case PrimitiveType.XPlane:
       return {
-        key: 'MEASUREMENTS_ADD_LINE',
-        fallback: 'Measure distance between two points. Click at the start point and the end point.'
+        key: 'PLANE_X_ADD',
+        fallback: 'Add X plane. Click at one point.'
       };
-    case PrimitiveType.Polyline:
+    case PrimitiveType.YPlane:
       return {
-        key: 'MEASUREMENTS_ADD_POLYLINE',
-        fallback:
-          'Measure the length of a continuous polyline. Click at any number of points and end with Esc.'
+        key: 'PLANE_Y_ADD',
+        fallback: 'Add Y plane. Click at one point.'
       };
-    case PrimitiveType.Polygon:
+    case PrimitiveType.ZPlane:
       return {
-        key: 'MEASUREMENTS_ADD_POLYGON',
-        fallback: 'Measure an area of a polygon. Click at least 3 points and end with Esc.'
+        key: 'PLANE_Z_ADD',
+        fallback: 'Add Z plane. Click at one point.'
       };
-    case PrimitiveType.VerticalArea:
+    case PrimitiveType.XYPlane:
       return {
-        key: 'MEASUREMENTS_ADD_VERTICAL_AREA',
-        fallback: 'Measure rectangular vertical Area. Click at two points in a vertical plan.'
-      };
-    case PrimitiveType.HorizontalArea:
-      return {
-        key: 'MEASUREMENTS_ADD_HORIZONTAL_AREA',
-        fallback: 'Measure rectangular horizontal Area. Click at three points in a horizontal plan.'
+        key: 'PLANE_XY_ADD',
+        fallback: 'Add XY plane. Click at two points.'
       };
     case PrimitiveType.Box:
       return {
-        key: 'MEASUREMENTS_ADD_VOLUME',
+        key: 'CROP_BOX_ADD',
         fallback:
-          'Measure volume of a box. Click at three points in a horizontal plan and the fourth to give it height.'
+          'Create crop box. Click at three points in a horizontal plan and the fourth to give it height.'
       };
     default:
       throw new Error('Unknown PrimitiveType');

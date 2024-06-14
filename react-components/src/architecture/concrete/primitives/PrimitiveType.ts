@@ -9,5 +9,9 @@ export enum PrimitiveType {
   Polygon,
   HorizontalArea,
   VerticalArea,
-  Box
+  Box,
+  XPlane,
+  YPlane,
+  ZPlane,
+  XYPlane
 }

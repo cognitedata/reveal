@@ -112,22 +112,31 @@ export class BoxView extends GroupThreeView {
   // OVERRIDES of GroupThreeView
   // ==================================================
 
+  public override get useDepthTest(): boolean {
+    return this.style.depthTest;
+  }
+
   protected override addChildren(): void {
     const { domainObject } = this;
     const matrix = this.getMatrix();
 
     const { focusType } = domainObject;
-    this.addChild(this.createSolid(matrix));
-    this.addChild(this.createLines(matrix));
+    if (this.style.showSolid) {
+      this.addChild(this.createSolid(matrix));
+    }
+    if (this.style.showLines) {
+      this.addChild(this.createLines(matrix));
+    }
     if (showMarkers(focusType)) {
       this.addChild(this.createRotationRing(matrix));
       this.addEdgeCircles(matrix);
     }
-    this.addLabels(matrix);
-  }
-
-  public override get useDepthTest(): boolean {
-    return this.style.depthTest;
+    if (this.style.showLabel) {
+      this.addLabels(matrix);
+    } else if (focusType === FocusType.Rotation) {
+      const spriteHeight = this.getTextHeight(this.style.relativeTextSize);
+      this.addChild(this.createRotationLabel(matrix, spriteHeight));
+    }
   }
 
   public override intersectIfCloser(
@@ -347,9 +356,6 @@ export class BoxView extends GroupThreeView {
 
   private addLabels(matrix: Matrix4): void {
     const { domainObject, style } = this;
-    if (!style.showText) {
-      return;
-    }
     const { rootDomainObject } = domainObject;
     if (rootDomainObject === undefined) {
       return undefined;
@@ -548,12 +554,12 @@ export class BoxView extends GroupThreeView {
     style: PrimitiveRenderStyle,
     height: number
   ): Sprite | undefined {
-    const result = createSpriteWithText(text, height, style.textColor, style.textBgColor);
+    const result = createSpriteWithText(text, height, style.labelColor, style.labelBgColor);
     if (result === undefined) {
       return undefined;
     }
     result.material.transparent = true;
-    result.material.opacity = style.textOpacity;
+    result.material.opacity = style.labelOpacity;
     result.material.depthTest = style.depthTest;
     result.renderOrder = RENDER_ORDER;
     return result;

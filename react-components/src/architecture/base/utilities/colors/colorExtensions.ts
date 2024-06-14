@@ -6,6 +6,7 @@ import { Color, type HSL } from 'three';
 
 export const WHITE_COLOR = new Color(1, 1, 1);
 export const BLACK_COLOR = new Color(0, 0, 0);
+export const GREY_COLOR = new Color(0.67, 0.67, 0.67);
 export const MAX_BYTE = 255;
 
 export function getMixedColor(color: Color, other: Color, fraction = 0.5): Color {
@@ -47,6 +48,16 @@ export function getGammaCorrectedColor(color: Color, gamma = 2.2): Color {
   const g = color.g ** gamma;
   const b = color.b ** gamma;
   return new Color(r, g, b);
+}
+
+export function convertToComplementary(color: Color): void {
+  color.r = 1 - color.r;
+  color.g = 1 - color.g;
+  color.b = 1 - color.b;
+}
+
+export function getComplementary(color: Color): Color {
+  return new Color(1 - color.r, 1 - color.g, 1 - color.b);
 }
 
 export function fractionToByte(fraction: number): number {
