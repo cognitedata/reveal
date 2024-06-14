@@ -31,6 +31,8 @@ import {
 import { type ImageCollectionModelStyling } from '../Image360CollectionContainer/useApply360AnnotationStyling';
 import { is360ImageAddOptions } from './typeGuards';
 import { useRemoveNonReferencedModels } from './useRemoveNonReferencedModels';
+import { useAllMappedEquipmentAssetMappings } from '../../query/useSearchMappedEquipmentAssetMappings';
+import { useSDK } from '../RevealCanvas/SDKProvider';
 
 export const Reveal3DResources = ({
   resources,
@@ -41,6 +43,8 @@ export const Reveal3DResources = ({
   image360Settings
 }: Reveal3DResourcesProps): ReactElement => {
   const viewer = useReveal();
+  const sdk = useSDK();
+
   const [reveal3DModels, setReveal3DModels] = useState<TypedReveal3DModel[]>([]);
 
   const numModelsLoaded = useRef(0);
@@ -56,6 +60,8 @@ export const Reveal3DResources = ({
   }, [resources, image360Settings]);
 
   useRemoveNonReferencedModels(reveal3DModels, image360CollectionAddOptions, viewer);
+
+  useAllMappedEquipmentAssetMappings(viewer.models, sdk);
 
   const cadModelOptions = useMemo(
     () => reveal3DModels.filter((model): model is CadModelOptions => model.type === 'cad'),

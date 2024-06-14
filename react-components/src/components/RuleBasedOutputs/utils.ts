@@ -6,7 +6,6 @@ import { Color } from 'three';
 import {
   type StringExpression,
   type ColorRuleOutput,
-  type NodeAndRange,
   type RuleOutput,
   type NumericExpression,
   type MetadataRuleTrigger,
@@ -21,11 +20,7 @@ import {
   type TriggerTypeData,
   type TimeseriesAndDatapoints
 } from './types';
-import {
-  type CogniteCadModel,
-  TreeIndexNodeCollection,
-  type NodeAppearance
-} from '@cognite/reveal';
+import { TreeIndexNodeCollection, type NodeAppearance } from '@cognite/reveal';
 import { type AssetMapping3D, type Asset, type Datapoints } from '@cognite/sdk';
 import { type AssetStylingGroup } from '../Reveal3DResources/types';
 import { isDefined } from '../../utilities/isDefined';
@@ -270,14 +265,12 @@ function getExpressionTriggerTypes(expression: Expression): TriggerType[] {
 }
 
 export const generateRuleBasedOutputs = async ({
-  model,
   contextualizedAssetNodes,
   assetMappings,
   ruleSet,
   assetIdsAndTimeseries,
   timeseriesDatapoints
 }: {
-  model: CogniteCadModel;
   contextualizedAssetNodes: Asset[];
   assetMappings: AssetMapping3D[];
   ruleSet: RuleOutputSet;
@@ -307,7 +300,6 @@ export const generateRuleBasedOutputs = async ({
         if (outputSelected === undefined) return;
 
         return await analyzeNodesAgainstExpression({
-          model,
           contextualizedAssetNodes,
           assetIdsAndTimeseries,
           timeseriesDatapoints,
@@ -339,7 +331,6 @@ const getRuleOutputFromTypeSelected = (
 };
 
 const analyzeNodesAgainstExpression = async ({
-  model,
   contextualizedAssetNodes,
   assetIdsAndTimeseries,
   timeseriesDatapoints,
@@ -347,7 +338,6 @@ const analyzeNodesAgainstExpression = async ({
   expression,
   outputSelected
 }: {
-  model: CogniteCadModel;
   contextualizedAssetNodes: Asset[];
   assetIdsAndTimeseries: AssetIdsAndTimeseries[];
   timeseriesDatapoints: Datapoints[] | undefined;
@@ -366,38 +356,38 @@ const analyzeNodesAgainstExpression = async ({
 
       triggerData.push(metadataTriggerData);
 
-      const timeseriesDataForThisAsset = generateTimeseriesAndDatapointsFromTheAsset({
-        contextualizedAssetNode,
-        assetIdsAndTimeseries,
-        timeseriesDatapoints
-      });
+      if (
+        timeseriesDatapoints !== undefined &&
+        timeseriesDatapoints.length > 0 &&
+        assetIdsAndTimeseries !== undefined &&
+        assetIdsAndTimeseries.length > 0
+      ) {
+        const timeseriesDataForThisAsset = generateTimeseriesAndDatapointsFromTheAsset({
+          contextualizedAssetNode,
+          assetIdsAndTimeseries,
+          timeseriesDatapoints
+        });
 
-      if (timeseriesDataForThisAsset.length > 0) {
-        const timeseriesTriggerData: TriggerTypeData = {
-          type: 'timeseries',
-          timeseries: {
-            timeseriesWithDatapoints: timeseriesDataForThisAsset,
-            linkedAssets: contextualizedAssetNode
-          }
-        };
+        if (timeseriesDataForThisAsset.length > 0) {
+          const timeseriesTriggerData: TriggerTypeData = {
+            type: 'timeseries',
+            timeseries: {
+              timeseriesWithDatapoints: timeseriesDataForThisAsset,
+              linkedAssets: contextualizedAssetNode
+            }
+          };
 
-        triggerData.push(timeseriesTriggerData);
+          triggerData.push(timeseriesTriggerData);
+        }
       }
 
       const finalGlobalOutputResult = traverseExpression(triggerData, [expression]);
 
       if (finalGlobalOutputResult[0] ?? false) {
         const nodesFromThisAsset = assetMappings.filter(
-          (mapping) => mapping.assetId === contextualizedAssetNode.id
+          (item) => item.assetId === contextualizedAssetNode.id
         );
-
-        // get the 3d nodes linked to the asset and with treeindex and subtreeRange
-        const nodesAndRange: NodeAndRange[] = await getThreeDNodesFromAsset(
-          nodesFromThisAsset,
-          model
-        );
-
-        return nodesAndRange;
+        return nodesFromThisAsset;
       }
     })
   );
@@ -466,26 +456,8 @@ export const traverseExpressionToGetTimeseries = (
   return timeseriesExternalIdResults;
 };
 
-const getThreeDNodesFromAsset = async (
-  nodesFromThisAsset: AssetMapping3D[],
-  model: CogniteCadModel
-): Promise<NodeAndRange[]> => {
-  return await Promise.all(
-    nodesFromThisAsset.map(async (nodeFromAsset) => {
-      const subtreeRange = await model.getSubtreeTreeIndices(nodeFromAsset.treeIndex);
-      const node: NodeAndRange = {
-        nodeId: nodeFromAsset.nodeId,
-        treeIndex: nodeFromAsset.treeIndex,
-        subtreeRange,
-        assetId: nodeFromAsset.assetId
-      };
-      return node;
-    })
-  );
-};
-
 const applyNodeStyles = (
-  treeNodes: NodeAndRange[],
+  treeNodes: AssetMapping3D[],
   outputSelected: ColorRuleOutput
 ): AssetStylingGroupAndStyleIndex => {
   const ruleOutputAndStyleIndex: RuleAndStyleIndex = {
@@ -494,9 +466,11 @@ const applyNodeStyles = (
   };
 
   const nodeIndexSet = ruleOutputAndStyleIndex.styleIndex.getIndexSet();
-  treeNodes.forEach((node) => {
-    nodeIndexSet.addRange(node.subtreeRange);
+  nodeIndexSet.clear();
+  treeNodes?.forEach((node) => {
+    nodeIndexSet.add(node.treeIndex);
   });
+  ruleOutputAndStyleIndex.styleIndex.updateSet(nodeIndexSet);
 
   const nodeAppearance: NodeAppearance = {
     color: new Color(outputSelected.fill)
@@ -526,3 +500,6 @@ const convertExpressionStringMetadataKeyToLowerCase = (expression: Expression): 
 
   expression.trigger.key = expression.trigger.key.toLowerCase();
 };
+
+export const delayMs = async (delayTimeMs: number) =>
+  await new Promise((r) => setTimeout(r, delayTimeMs));

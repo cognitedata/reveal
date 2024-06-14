@@ -19,6 +19,7 @@ import { chunk, maxBy } from 'lodash';
 import assert from 'assert';
 import { fetchNodesForNodeIds } from './requests';
 import { modelRevisionNodesAssetsToKey, modelRevisionToKey } from './utils';
+import { delayMs } from '../RuleBasedOutputs/utils';
 
 export type NodeAssetMappingResult = { node?: Node3D; mappings: AssetMapping[] };
 
@@ -81,7 +82,17 @@ export class AssetMappingCache {
     revisionId: RevisionId,
     assetIds: CogniteInternalId[]
   ): Promise<Map<AssetId, Node3D[]>> {
-    const assetMappings = await this.getAssetMappingsForAssetIds(modelId, revisionId, assetIds);
+    const listChunks = chunk(assetIds, 1000);
+
+    const allAssetMappingsReturned = listChunks.map(async (itemChunk, index) => {
+      await delayMs(1000 * index);
+      const assetMappings = await this.getAssetMappingsForAssetIds(modelId, revisionId, itemChunk);
+      return assetMappings;
+    });
+
+    const allAssetMappings = await Promise.all(allAssetMappingsReturned);
+    const assetMappings = allAssetMappings.flat();
+
     const relevantAssetIds = new Set(assetIds);
 
     const relevantAssetMappings = assetMappings.filter((mapping) =>
@@ -131,7 +142,8 @@ export class AssetMappingCache {
   ): Promise<AssetMapping[]> {
     const key: ModelNodeIdKey = modelRevisionNodesAssetsToKey(modelId, revisionId, ids);
     const idChunks = chunk(ids, 100);
-    const assetMappingsPromises = idChunks.map(async (idChunk) => {
+    const assetMappingsPromises = idChunks.map(async (idChunk, index) => {
+      await delayMs(200 * index);
       const filter = filterType === 'nodeIds' ? { nodeIds: idChunk } : { assetIds: idChunk };
       return await this._sdk.assetMappings3D
         .filter(modelId, revisionId, {
