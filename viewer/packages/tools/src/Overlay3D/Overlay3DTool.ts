@@ -16,7 +16,8 @@ import {
   OverlayInfo,
   DefaultOverlay3DContentType,
   OverlayCollection,
-  Overlay3D
+  Overlay3D,
+  TextOverlay
 } from '@reveal/3d-overlays';
 import { Cognite3DViewerToolBase } from '../Cognite3DViewerToolBase';
 
@@ -80,14 +81,12 @@ export type OverlayCollectionOptions = {
  */
 export class Overlay3DTool<ContentType = DefaultOverlay3DContentType> extends Cognite3DViewerToolBase {
   private readonly _viewer: Cognite3DViewer;
-  private readonly _textOverlay: HTMLElement;
 
   private readonly _defaultOverlayColor: THREE.Color = new THREE.Color('#fbe50b');
-  private readonly _defaultTextOverlayToCursorOffset = 20;
 
   private _overlayCollections: Overlay3DCollection<ContentType>[] = [];
   private _isVisible = true;
-  private _textOverlayVisible = false;
+  private _textOverlay: TextOverlay;
 
   private readonly _events = {
     hover: new EventTrigger<OverlayEventHandler<ContentType>>(),
@@ -100,9 +99,7 @@ export class Overlay3DTool<ContentType = DefaultOverlay3DContentType> extends Co
 
     this._viewer = viewer;
     this._defaultOverlayColor = toolParameters?.defaultOverlayColor ?? this._defaultOverlayColor;
-
-    this._textOverlay = this.createTextOverlay('', this._defaultTextOverlayToCursorOffset);
-    viewer.domElement.appendChild(this._textOverlay);
+    this._textOverlay = new TextOverlay(viewer.domElement);
 
     viewer.canvas.addEventListener('mousemove', this.onMouseMove);
 
@@ -120,7 +117,7 @@ export class Overlay3DTool<ContentType = DefaultOverlay3DContentType> extends Co
   ): OverlayCollection<ContentType> {
     const { _viewer: viewer } = this;
 
-    const points = new Overlay3DCollection<ContentType>(overlays ?? [], viewer.cameraManager, {
+    const points = new Overlay3DCollection<ContentType>(overlays ?? [], {
       ...options,
       defaultOverlayColor: options?.defaultOverlayColor ?? this._defaultOverlayColor
     });
@@ -172,22 +169,6 @@ export class Overlay3DTool<ContentType = DefaultOverlay3DContentType> extends Co
    */
   getVisible(): boolean {
     return this._isVisible;
-  }
-
-  /**
-   * Sets whether text overlay is visible.
-   * Default is false.
-   */
-  setTextOverlayVisible(visible: boolean): void {
-    this._textOverlayVisible = visible;
-    this._textOverlay.style.opacity = visible ? '1' : '0';
-  }
-
-  /**
-   * Gets whether text overlay is visible.
-   */
-  getTextOverlayVisible(): boolean {
-    return this._textOverlayVisible;
   }
 
   /**
@@ -265,15 +246,16 @@ export class Overlay3DTool<ContentType = DefaultOverlay3DContentType> extends Co
     const { _textOverlay: textOverlay } = this;
 
     const intersectedOverlay = this.intersectPointsMarkers({ offsetX: event.offsetX, offsetY: event.offsetY });
+
+    this._textOverlay.reset();
+
     if (intersectedOverlay) {
-      this.positionTextOverlay(event);
+      this._textOverlay.positionTextOverlay(event);
       this._events.hover.fire({
         targetOverlay: intersectedOverlay,
         mousePosition: event,
-        htmlTextOverlay: textOverlay
+        htmlTextOverlay: textOverlay.textOverlay
       });
-    } else {
-      textOverlay.style.opacity = '0';
     }
   };
 
@@ -282,18 +264,11 @@ export class Overlay3DTool<ContentType = DefaultOverlay3DContentType> extends Co
     if (intersectedOverlay) {
       this._events.click.fire({
         targetOverlay: intersectedOverlay,
-        htmlTextOverlay: this._textOverlay,
+        htmlTextOverlay: this._textOverlay.textOverlay,
         mousePosition: { offsetX: event.offsetX, offsetY: event.offsetY }
       });
     }
   };
-
-  private positionTextOverlay(event: MouseEvent): void {
-    const { _textOverlay, _textOverlayVisible } = this;
-    _textOverlay.style.left = `${event.offsetX}px`;
-    _textOverlay.style.top = `${event.offsetY}px`;
-    _textOverlay.style.opacity = _textOverlayVisible ? '1' : '0';
-  }
 
   private intersectPointsMarkers(mouseCoords: { offsetX: number; offsetY: number }): Overlay3DIcon<ContentType> | null {
     const { _viewer } = this;
@@ -330,32 +305,5 @@ export class Overlay3DTool<ContentType = DefaultOverlay3DContentType> extends Co
     }
 
     return null;
-  }
-
-  private createTextOverlay(text: string, horizontalOffset: number): HTMLElement {
-    const textOverlay = document.createElement('div');
-    textOverlay.innerText = text;
-    textOverlay.setAttribute('class', 'text-overlay');
-    textOverlay.style.cssText = `
-            position: absolute;
-
-            /* Anchor to the center of the element and ignore events */
-            transform: translate(${horizontalOffset}px, -50%);
-            touch-action: none;
-            user-select: none;
-
-            padding: 7px;
-            max-width: 200px;
-            color: #fff;
-            background: #232323da;
-            border-radius: 5px;
-            border: '#ffffff22 solid 2px;
-            opacity: 0;
-            transition: opacity 0.3s;
-            opacity: 0;
-            z-index: 10;
-            `;
-
-    return textOverlay;
   }
 }

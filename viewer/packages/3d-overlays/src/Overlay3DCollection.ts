@@ -9,7 +9,6 @@ import { OverlayPointsObject } from './OverlayPointsObject';
 import { IconOctree } from './IconOctree';
 import { DefaultOverlay3DContentType, OverlayCollection, OverlayInfo } from './OverlayCollection';
 import minBy from 'lodash/minBy';
-import { CameraManager } from '@reveal/camera-manager';
 
 /**
  * Constructor options for the Overlay3DCollection
@@ -54,16 +53,9 @@ export class Overlay3DCollection<MetadataType = DefaultOverlay3DContentType>
   private _overlays: Overlay3DIcon<MetadataType>[];
   //@ts-ignore Will be removed when clustering is added.
   private _octree: IconOctree<MetadataType>;
-  private _previousRenderCamera: Camera | undefined;
   private readonly _rayCaster = new Raycaster();
 
-  private readonly _cameraManager: CameraManager;
-
-  constructor(
-    overlayInfos: OverlayInfo<MetadataType>[],
-    cameraManager: CameraManager,
-    options?: Overlay3DCollectionOptions
-  ) {
+  constructor(overlayInfos: OverlayInfo<MetadataType>[], options?: Overlay3DCollectionOptions) {
     super();
 
     this.defaultOverlayColor = options?.defaultOverlayColor ?? this.defaultOverlayColor;
@@ -83,29 +75,12 @@ export class Overlay3DCollection<MetadataType = DefaultOverlay3DContentType>
     });
 
     this._overlays = this.initializeOverlay3DIcons(overlayInfos ?? []);
-    this._cameraManager = cameraManager;
-    cameraManager.on('cameraChange', this._onCameraChange);
     this.add(this._overlayPoints);
 
     this.updatePointsObject();
 
     this._octree = this.rebuildOctree();
   }
-
-  private readonly _onCameraChange = (): void => {
-    const camera = this._cameraManager.getCamera();
-    if (this._previousRenderCamera !== undefined && camera.matrix.equals(this._previousRenderCamera.matrix)) {
-      return;
-    }
-
-    this.sortOverlaysRelativeToCamera(camera);
-
-    if (this._previousRenderCamera === undefined) {
-      this._previousRenderCamera = camera.clone();
-    }
-
-    this._previousRenderCamera.copy(camera);
-  };
 
   /**
    * Set whether this collection is visible or not
@@ -167,12 +142,7 @@ export class Overlay3DCollection<MetadataType = DefaultOverlay3DContentType>
   /**
    * Run intersection on icons in this collection. Returns the closest hit
    */
-  public intersectOverlays(normalizedCoordinates: Vector2): Overlay3D<MetadataType> | undefined {
-    const camera = this._previousRenderCamera;
-    if (camera === undefined) {
-      return undefined;
-    }
-
+  public intersectOverlays(normalizedCoordinates: Vector2, camera: Camera): Overlay3D<MetadataType> | undefined {
     this._rayCaster.setFromCamera(normalizedCoordinates.clone(), camera);
 
     const intersections = this._overlays.filter(icon => {
@@ -223,7 +193,6 @@ export class Overlay3DCollection<MetadataType = DefaultOverlay3DContentType>
    * Dispose this collection and icons with all associated resources
    */
   public dispose(): void {
-    this._cameraManager.off('cameraChange', this._onCameraChange);
     this._overlays.forEach(overlay => overlay.dispose());
 
     this._overlayPoints.dispose();
