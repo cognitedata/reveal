@@ -33,7 +33,6 @@ import {
 import { FocusType } from '../../../base/domainObjectsHelpers/FocusType';
 import { type DomainObjectIntersection } from '../../../base/domainObjectsHelpers/DomainObjectIntersection';
 import { PrimitiveType } from '../PrimitiveType';
-import { BLACK_COLOR, WHITE_COLOR } from '../../../base/utilities/colors/colorExtensions';
 
 export class PlaneView extends GroupThreeView {
   // ==================================================
@@ -110,7 +109,7 @@ export class PlaneView extends GroupThreeView {
   }
 
   protected override addChildren(): void {
-    const { domainObject } = this;
+    const { domainObject, style } = this;
     const plane = domainObject.plane;
 
     const sceneBoundingBox = this._sceneBoundingBox.clone();
@@ -161,11 +160,11 @@ export class PlaneView extends GroupThreeView {
     if (p0 === undefined || p1 === undefined || p2 === undefined || p3 === undefined) {
       return;
     }
+    // Layout of the points
     //     2------3
     //     |      |
     //     0------1
-
-    const buffer = new TrianglesBuffers(4);
+    // Make sure it is right handed
     const normal = Triangle.getNormal(p0, p1, p2, new Vector3()).normalize();
     const angle = normal.angleTo(plane.normal);
     if (Math.abs(angle) > Math.PI / 2) {
@@ -177,21 +176,25 @@ export class PlaneView extends GroupThreeView {
     p2.applyMatrix4(CDF_TO_VIEWER_TRANSFORMATION);
     p3.applyMatrix4(CDF_TO_VIEWER_TRANSFORMATION);
 
-    buffer.addPairWithNormal(p0, p1, plane.normal);
-    buffer.addPairWithNormal(p2, p3, plane.normal);
+    if (style.showSolid) {
+      const buffer = new TrianglesBuffers(4);
+      buffer.addPairWithNormal(p0, p1, plane.normal);
+      buffer.addPairWithNormal(p2, p3, plane.normal);
+      this.addSolid(buffer);
+    }
+    if (style.showLines) {
+      const material = new LineBasicMaterial({});
 
-    this.addBuffer(buffer);
+      const hasFocus = domainObject.focusType !== FocusType.None;
+      material.color =
+        domainObject.isSelected || hasFocus ? style.selectedLinesColor : style.linesColor;
 
-    const material = new LineBasicMaterial({});
+      const points = [p0, p1, p3, p2, p0];
+      const geometry = new BufferGeometry().setFromPoints(points);
 
-    const hasFocus = domainObject.focusType !== FocusType.None;
-    material.color = domainObject.isSelected || hasFocus ? WHITE_COLOR : BLACK_COLOR;
-
-    const points = [p0, p1, p3, p2, p0];
-    const geometry = new BufferGeometry().setFromPoints(points);
-
-    const line = new Line(geometry, material);
-    this.addChild(line);
+      const line = new Line(geometry, material);
+      this.addChild(line);
+    }
   }
 
   public override intersectIfCloser(
@@ -247,7 +250,7 @@ export class PlaneView extends GroupThreeView {
   // INSTANCE METHODS
   // ==================================================
 
-  private addBuffer(buffer: TrianglesBuffers): void {
+  private addSolid(buffer: TrianglesBuffers): void {
     if (!buffer.isFilled) {
       return;
     }

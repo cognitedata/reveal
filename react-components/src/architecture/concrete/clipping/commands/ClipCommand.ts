@@ -2,10 +2,12 @@
  * Copyright 2024 Cognite AS
  */
 
+import { Plane } from 'three';
 import { RenderTargetCommand } from '../../../base/commands/RenderTargetCommand';
 import { type TranslateKey } from '../../../base/utilities/TranslateKey';
 import { CropBoxDomainObject } from '../CropBoxDomainObject';
 import { SliceDomainObject } from '../SliceDomainObject';
+import { CDF_TO_VIEWER_TRANSFORMATION } from '@cognite/reveal';
 
 export class ClipCommand extends RenderTargetCommand {
   // ==================================================
@@ -21,7 +23,7 @@ export class ClipCommand extends RenderTargetCommand {
   }
 
   public override get isEnabled(): boolean {
-    if (this.getCropBoxDomainObject() !== undefined) {
+    if (this.getSelectedCropBoxDomainObject() !== undefined) {
       return true;
     }
     if (this.rootDomainObject.getDescendantByType(SliceDomainObject) !== undefined) {
@@ -38,14 +40,22 @@ export class ClipCommand extends RenderTargetCommand {
     const { renderTarget } = this;
     if (this.renderTarget.isGlobalClippingActive) {
       renderTarget.clearGlobalClipping();
-      return false;
+      return true;
     }
-    const domainObject = this.getCropBoxDomainObject();
-    if (domainObject === undefined) {
-      return false;
+    const domainObject = this.getSelectedCropBoxDomainObject();
+    if (domainObject !== undefined) {
+      domainObject.isGlobalCropBox = true;
+      renderTarget.fitView();
+      return true;
     }
-    domainObject.isGlobalCropBox = true;
-    renderTarget.fitView();
+
+    const planes: Plane[] = [];
+    for (const slice of this.rootDomainObject.getDescendantsByType(SliceDomainObject)) {
+      const plane = slice.plane.clone();
+      plane.applyMatrix4(CDF_TO_VIEWER_TRANSFORMATION);
+      planes.push(plane);
+    }
+    this.rootDomainObject.renderTarget.setGlobalClipping(planes);
     return true;
   }
 
@@ -53,7 +63,7 @@ export class ClipCommand extends RenderTargetCommand {
   // INSTANCE METHODS
   // ==================================================
 
-  private getCropBoxDomainObject(): CropBoxDomainObject | undefined {
+  private getSelectedCropBoxDomainObject(): CropBoxDomainObject | undefined {
     return this.rootDomainObject.getSelectedDescendantByType(CropBoxDomainObject);
   }
 }

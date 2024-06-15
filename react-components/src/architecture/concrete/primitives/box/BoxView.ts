@@ -117,21 +117,21 @@ export class BoxView extends GroupThreeView {
   }
 
   protected override addChildren(): void {
-    const { domainObject } = this;
+    const { domainObject, style } = this;
     const matrix = this.getMatrix();
 
     const { focusType } = domainObject;
-    if (this.style.showSolid) {
+    if (style.showSolid) {
       this.addChild(this.createSolid(matrix));
     }
-    if (this.style.showLines) {
+    if (style.showLines) {
       this.addChild(this.createLines(matrix));
     }
     if (showMarkers(focusType)) {
       this.addChild(this.createRotationRing(matrix));
       this.addEdgeCircles(matrix);
     }
-    if (this.style.showLabel) {
+    if (style.showLabel) {
       this.addLabels(matrix);
     } else if (focusType === FocusType.Rotation) {
       const spriteHeight = this.getTextHeight(this.style.relativeTextSize);

@@ -13,6 +13,7 @@ export class BoxRenderStyle extends PrimitiveRenderStyle {
 
   public showLines = true;
   public showSolid = true;
+
   public opacity = 0.5;
   public opacityUse = true;
 

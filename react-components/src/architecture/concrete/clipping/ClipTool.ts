@@ -58,12 +58,12 @@ export class ClipTool extends PrimitiveEditTool {
 
   public override onActivate(): void {
     super.onActivate();
-    //  this.setAllVisible(true);
+    this.setAllVisible(true);
   }
 
   public override onDeactivate(): void {
     super.onDeactivate();
-    //    this.setAllVisible(false);
+    this.setAllVisible(false);
   }
 
   // ==================================================

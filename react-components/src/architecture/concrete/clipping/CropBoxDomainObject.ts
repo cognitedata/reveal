@@ -91,7 +91,7 @@ export class CropBoxDomainObject extends BoxDomainObject {
       const boundingBox = this.getBoundingBox();
       boundingBox.applyMatrix4(CDF_TO_VIEWER_TRANSFORMATION);
 
-      root.renderTarget.setGlobalCropBox(planes, boundingBox, this);
+      root.renderTarget.setGlobalClipping(planes, boundingBox, this);
     }
   }
 

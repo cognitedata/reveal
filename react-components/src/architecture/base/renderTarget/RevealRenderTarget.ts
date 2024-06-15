@@ -217,15 +217,15 @@ export class RevealRenderTarget {
   // INSTANCE METHODS: Crop box operations (Experimental code)
   // ==================================================
 
-  public setGlobalCropBox(
+  public setGlobalClipping(
     clippingPlanes: Plane[],
-    boundingBox: Box3,
-    domainObject: DomainObject
+    boundingBox: Box3 | undefined,
+    domainObject: DomainObject | undefined
   ): void {
     // Input in Viewer coordinates
     this.viewer.setGlobalClippingPlanes(clippingPlanes);
     this._cropBoxBoundingBox = boundingBox;
-    this._cropBoxUniqueId = domainObject.uniqueId;
+    this._cropBoxUniqueId = domainObject?.uniqueId;
   }
 
   public isGlobalCropBox(domainObject: DomainObject): boolean {
@@ -239,7 +239,7 @@ export class RevealRenderTarget {
   }
 
   public get isGlobalCropBoxActive(): boolean {
-    return this.isGlobalClippingActive && this._cropBoxBoundingBox !== undefined;
+    return this.isGlobalClippingActive && this._cropBoxUniqueId !== undefined;
   }
 
   public get isGlobalClippingActive(): boolean {

@@ -9,8 +9,8 @@ import { FitViewCommand } from '../../architecture/base/concreteCommands/FitView
 import { FlexibleControlsType } from '@cognite/reveal';
 import { SetFlexibleControlsTypeCommand } from '../../architecture/base/concreteCommands/SetFlexibleControlsTypeCommand';
 import { SetAxisVisibleCommand } from '../../architecture/concrete/axis/SetAxisVisibleCommand';
-import { MeasurementTool } from '../../architecture/concrete/measurements/MeasurementTool';
 import { ClipTool } from '../../architecture/concrete/clipping/ClipTool';
+import { MeasurementTool } from '../../architecture/concrete/measurements/MeasurementTool';
 
 export class RevealButtons {
   static FitView = (): ReactElement => CreateCommandButton(new FitViewCommand());

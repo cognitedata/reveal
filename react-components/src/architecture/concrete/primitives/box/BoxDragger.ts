@@ -24,11 +24,13 @@ import {
 import { Vector3Pool } from '@cognite/reveal';
 import { degToRad, radToDeg } from 'three/src/math/MathUtils.js';
 
+const ANGLE_INCREMENT = 15;
 /**
  * The `BoxDragger` class represents a utility for dragging and manipulating a box in a 3D space.
  * It provides methods for scaling, translating, and rotating the box based on user interactions.
  * All geometry in this class assume Z-axis is up
  */
+
 export class BoxDragger extends BaseDragger {
   // ==================================================
   // INSTANCE FIELDS
@@ -248,7 +250,7 @@ export class BoxDragger extends BaseDragger {
     let zRotation = forceBetween0AndPi(deltaAngle + this._zRotationOfBox);
     if (shift) {
       let degrees = radToDeg(zRotation);
-      degrees = round(degrees, 15);
+      degrees = round(degrees, ANGLE_INCREMENT);
       zRotation = degToRad(degrees);
     }
     this._domainObject.zRotation = zRotation;

@@ -15,7 +15,7 @@ export abstract class PrimitiveRenderStyle extends DepthTestRenderStyle {
   // For the object itself
   public colorType = ColorType.Specified;
 
-  // For text only
+  // For labels only
   public showLabel = true;
   public labelColor = WHITE_COLOR.clone();
   public labelBgColor = new Color('#232323');

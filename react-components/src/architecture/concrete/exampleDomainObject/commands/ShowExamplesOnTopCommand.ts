@@ -2,12 +2,12 @@
  * Copyright 2024 Cognite AS
  */
 
-import { RenderTargetCommand } from '../../../base/commands/RenderTargetCommand';
-import { Changes } from '../../../base/domainObjectsHelpers/Changes';
+import { type DomainObject } from '../../../base/domainObjects/DomainObject';
 import { type TranslateKey } from '../../../base/utilities/TranslateKey';
+import { ShowPrimitivesOnTopCommand } from '../../primitives/ShowPrimitivesOnTopCommand';
 import { ExampleDomainObject } from '../ExampleDomainObject';
 
-export class ShowExamplesOnTopCommand extends RenderTargetCommand {
+export class ShowExamplesOnTopCommand extends ShowPrimitivesOnTopCommand {
   // ==================================================
   // OVERRIDES
   // ==================================================
@@ -20,42 +20,7 @@ export class ShowExamplesOnTopCommand extends RenderTargetCommand {
     return 'Flag';
   }
 
-  public override get isEnabled(): boolean {
-    return this.getFirstVisible() !== undefined;
-  }
-
-  public override get isChecked(): boolean {
-    return !this.getDepthTest();
-  }
-
-  protected override invokeCore(): boolean {
-    const depthTest = this.getDepthTest();
-    for (const domainObject of this.rootDomainObject.getDescendantsByType(ExampleDomainObject)) {
-      const style = domainObject.renderStyle;
-      style.depthTest = !depthTest;
-      domainObject.notify(Changes.renderStyle);
-    }
-    return true;
-  }
-
-  // ==================================================
-  // INSTANCE METHODS
-  // ==================================================
-
-  private getDepthTest(): boolean {
-    const domainObject = this.getFirstVisible();
-    if (domainObject === undefined) {
-      return false;
-    }
-    return domainObject.renderStyle.depthTest;
-  }
-
-  private getFirstVisible(): ExampleDomainObject | undefined {
-    for (const descendant of this.rootDomainObject.getDescendantsByType(ExampleDomainObject)) {
-      if (descendant.isVisible(this.renderTarget)) {
-        return descendant;
-      }
-    }
-    return undefined;
+  protected override canBeSelected(domainObject: DomainObject): boolean {
+    return domainObject instanceof ExampleDomainObject;
   }
 }
