@@ -117,12 +117,16 @@ export class RevealRenderTarget {
     return this.cameraManager.getCamera();
   }
 
-  public get sceneBoundingBox(): Box3 {
-    const boundingBox = this.viewer.getSceneBoundingBox();
+  public get sceneClippedBoundingBox(): Box3 {
+    const boundingBox = this.sceneBoundingBox;
     if (this._cropBoxBoundingBox !== undefined) {
       boundingBox.intersect(this._cropBoxBoundingBox);
     }
     return boundingBox;
+  }
+
+  public get sceneBoundingBox(): Box3 {
+    return this.viewer.getSceneBoundingBox();
   }
 
   // ==================================================
@@ -205,11 +209,11 @@ export class RevealRenderTarget {
   // ==================================================
 
   public fitView(): boolean {
-    const boundingBox = this.sceneBoundingBox;
+    const boundingBox = this.sceneClippedBoundingBox;
     if (boundingBox.isEmpty()) {
       return false;
     }
-    this.viewer.fitCameraToBoundingBox(this.sceneBoundingBox);
+    this.viewer.fitCameraToBoundingBox(this.sceneClippedBoundingBox);
     return true;
   }
 

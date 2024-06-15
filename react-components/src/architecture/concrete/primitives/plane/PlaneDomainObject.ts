@@ -5,7 +5,7 @@
 import { type RenderStyle } from '../../../base/domainObjectsHelpers/RenderStyle';
 import { type ThreeView } from '../../../base/views/ThreeView';
 import { PlaneView } from './PlaneView';
-import { type Color, Plane } from 'three';
+import { type Color, Plane, Vector3 } from 'three';
 import { Changes } from '../../../base/domainObjectsHelpers/Changes';
 import { FocusType } from '../../../base/domainObjectsHelpers/FocusType';
 import { PrimitiveType } from '../PrimitiveType';
@@ -111,9 +111,7 @@ export abstract class PlaneDomainObject extends VisualDomainObject {
     const info = new PanelInfo();
     info.setTypeName(this.typeName);
 
-    const { primitiveType } = this;
-
-    switch (primitiveType) {
+    switch (this.primitiveType) {
       case PrimitiveType.PlaneX:
         add('XCOORDINATE', 'X coordinate', this.coordinate, Quantity.Length);
         break;
@@ -124,6 +122,7 @@ export abstract class PlaneDomainObject extends VisualDomainObject {
         add('ZCOORDINATE', 'Z coordinate', this.coordinate, Quantity.Length);
         break;
       case PrimitiveType.PlaneXY:
+        add('DISTANCE_TO_ORIGIN', 'Distance to origin', this.coordinate, Quantity.Length);
         add('ANGLE', 'Angle', radToDeg(this.angle), Quantity.Angle);
         break;
     }
@@ -155,7 +154,20 @@ export abstract class PlaneDomainObject extends VisualDomainObject {
   // ==================================================
 
   public get coordinate(): number {
-    return -this.plane.constant;
+    const pointOnPlane = this.plane.projectPoint(new Vector3(), new Vector3());
+
+    switch (this.primitiveType) {
+      case PrimitiveType.PlaneX:
+        return pointOnPlane.x;
+      case PrimitiveType.PlaneY:
+        return pointOnPlane.y;
+      case PrimitiveType.PlaneZ:
+        return pointOnPlane.z;
+      case PrimitiveType.PlaneXY:
+        return pointOnPlane.length();
+      default:
+        throw new Error('Unknown PrimitiveType');
+    }
   }
 
   public get angle(): number {
@@ -176,5 +188,11 @@ export abstract class PlaneDomainObject extends VisualDomainObject {
     this.focusType = focusType;
     this.notify(Changes.focus);
     return true;
+  }
+
+  public flip(): void {
+    const { plane } = this;
+    plane.normal.negate();
+    plane.constant = -plane.constant;
   }
 }

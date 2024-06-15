@@ -88,23 +88,23 @@ function getTooltipByPrimitiveType(primitiveType: PrimitiveType): TranslateKey {
   switch (primitiveType) {
     case PrimitiveType.PlaneX:
       return {
-        key: 'PLANE_X_ADD',
-        fallback: 'Add X plane. Click at one point.'
+        key: 'SLICE_X_ADD',
+        fallback: 'Add X slice. Click at one point.'
       };
     case PrimitiveType.PlaneY:
       return {
-        key: 'PLANE_Y_ADD',
-        fallback: 'Add Y plane. Click at one point.'
+        key: 'SLICE_Y_ADD',
+        fallback: 'Add Y slice. Click at one point.'
       };
     case PrimitiveType.PlaneZ:
       return {
-        key: 'PLANE_Z_ADD',
-        fallback: 'Add Z plane. Click at one point.'
+        key: 'SLICE_Z_ADD',
+        fallback: 'Add Z slice. Click at one point.'
       };
     case PrimitiveType.PlaneXY:
       return {
-        key: 'PLANE_XY_ADD',
-        fallback: 'Add XY plane. Click at two points.'
+        key: 'SLICE_XY_ADD',
+        fallback: 'Add XY slice. Click at two points.'
       };
     case PrimitiveType.Box:
       return {

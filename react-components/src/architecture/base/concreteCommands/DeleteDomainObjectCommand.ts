@@ -7,7 +7,16 @@ import { type TranslateKey } from '../utilities/TranslateKey';
 import { type DomainObject } from '../domainObjects/DomainObject';
 
 export class DeleteDomainObjectCommand extends BaseCommand {
-  private readonly _domainObject: DomainObject | undefined = undefined;
+  // ==================================================
+  // INSTANCE FIELDS
+  // ==================================================
+
+  private readonly _domainObject: DomainObject;
+
+  // ==================================================
+  // CONSTRUCTOR
+  // ==================================================
+
   public constructor(domainObject: DomainObject) {
     super();
     this._domainObject = domainObject;
@@ -29,7 +38,7 @@ export class DeleteDomainObjectCommand extends BaseCommand {
   }
 
   public override get isEnabled(): boolean {
-    return this._domainObject !== undefined && this._domainObject.canBeRemoved;
+    return this._domainObject.canBeRemoved;
   }
 
   public override get hasData(): boolean {
@@ -37,9 +46,6 @@ export class DeleteDomainObjectCommand extends BaseCommand {
   }
 
   protected override invokeCore(): boolean {
-    if (this._domainObject === undefined) {
-      return false;
-    }
     return this._domainObject.removeInteractive();
   }
 }

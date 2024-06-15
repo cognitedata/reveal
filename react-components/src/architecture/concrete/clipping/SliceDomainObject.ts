@@ -6,6 +6,8 @@ import { Color } from 'three';
 import { PlaneDomainObject } from '../primitives/plane/PlaneDomainObject';
 import { PrimitiveType } from '../primitives/PrimitiveType';
 import { type TranslateKey } from '../../base/utilities/TranslateKey';
+import { type BaseCommand } from '../../base/commands/BaseCommand';
+import { FlipSliceCommand } from './commands/FlipSliceCommand';
 
 export class SliceDomainObject extends PlaneDomainObject {
   // ==================================================
@@ -35,5 +37,11 @@ export class SliceDomainObject extends PlaneDomainObject {
       default:
         throw new Error('Unknown PrimitiveType');
     }
+  }
+
+  public override getPanelToolbar(): BaseCommand[] {
+    const commands = super.getPanelToolbar();
+    commands.push(new FlipSliceCommand(this));
+    return commands;
   }
 }

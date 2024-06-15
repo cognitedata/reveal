@@ -99,7 +99,7 @@ export class PlaneView extends GroupThreeView {
     const target = this.renderTarget;
 
     // Check if bounding box is different
-    const sceneBoundingBox = target.sceneBoundingBox;
+    const sceneBoundingBox = target.sceneClippedBoundingBox;
     if (sceneBoundingBox.equals(this._sceneBoundingBox)) {
       return false;
     }
