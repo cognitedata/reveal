@@ -8,8 +8,9 @@ import { type TranslateKey } from '../../../base/utilities/TranslateKey';
 import { CropBoxDomainObject } from '../CropBoxDomainObject';
 import { SliceDomainObject } from '../SliceDomainObject';
 import { CDF_TO_VIEWER_TRANSFORMATION } from '@cognite/reveal';
+import { type RootDomainObject } from '../../../base/domainObjects/RootDomainObject';
 
-export class ClipCommand extends RenderTargetCommand {
+export class ApplyClipCommand extends RenderTargetCommand {
   // ==================================================
   // OVERRIDES
   // ==================================================
@@ -52,13 +53,7 @@ export class ClipCommand extends RenderTargetCommand {
       return true;
     }
 
-    const planes: Plane[] = [];
-    for (const slice of this.rootDomainObject.getDescendantsByType(SliceDomainObject)) {
-      const plane = slice.plane.clone();
-      plane.applyMatrix4(CDF_TO_VIEWER_TRANSFORMATION);
-      planes.push(plane);
-    }
-    this.rootDomainObject.renderTarget.setGlobalClipping(planes);
+    ApplyClipCommand.setClippingPlanes(this.rootDomainObject);
     return true;
   }
 
@@ -68,5 +63,20 @@ export class ClipCommand extends RenderTargetCommand {
 
   private getSelectedCropBoxDomainObject(): CropBoxDomainObject | undefined {
     return this.rootDomainObject.getSelectedDescendantByType(CropBoxDomainObject);
+  }
+
+  // ==================================================
+  // INSTANCE METHODS
+  // ==================================================
+
+  public static setClippingPlanes(root: RootDomainObject): boolean {
+    const planes: Plane[] = [];
+    for (const slice of root.getDescendantsByType(SliceDomainObject)) {
+      const plane = slice.plane.clone();
+      plane.applyMatrix4(CDF_TO_VIEWER_TRANSFORMATION);
+      planes.push(plane);
+    }
+    root.renderTarget.setGlobalClipping(planes);
+    return true;
   }
 }

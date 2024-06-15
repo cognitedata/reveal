@@ -34,6 +34,12 @@ export class CropBoxDomainObject extends BoxDomainObject {
     return { key: 'CROP_BOX', fallback: 'Crop box' };
   }
 
+  public override createRenderStyle(): RenderStyle | undefined {
+    const style = new BoxRenderStyle();
+    style.showLabel = false;
+    return style;
+  }
+
   protected override notifyCore(change: DomainObjectChange): void {
     super.notifyCore(change);
 
@@ -50,12 +56,6 @@ export class CropBoxDomainObject extends BoxDomainObject {
         this.isGlobalCropBox = true;
       }
     }
-  }
-
-  public override createRenderStyle(): RenderStyle | undefined {
-    const style = new BoxRenderStyle();
-    style.showLabel = false;
-    return style;
   }
 
   // ==================================================

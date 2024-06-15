@@ -8,6 +8,9 @@ import { PrimitiveType } from '../primitives/PrimitiveType';
 import { type TranslateKey } from '../../base/utilities/TranslateKey';
 import { type BaseCommand } from '../../base/commands/BaseCommand';
 import { FlipSliceCommand } from './commands/FlipSliceCommand';
+import { ApplyClipCommand } from './commands/ApplyClipCommand';
+import { type DomainObjectChange } from '../../base/domainObjectsHelpers/DomainObjectChange';
+import { Changes } from '../../base/domainObjectsHelpers/Changes';
 
 export class SliceDomainObject extends PlaneDomainObject {
   // ==================================================
@@ -43,5 +46,25 @@ export class SliceDomainObject extends PlaneDomainObject {
     const commands = super.getPanelToolbar();
     commands.push(new FlipSliceCommand(this));
     return commands;
+  }
+
+  protected override notifyCore(change: DomainObjectChange): void {
+    super.notifyCore(change);
+
+    // Update the clipping planes if necessary
+    if (change.isChanged(Changes.deleted, Changes.added, Changes.geometry)) {
+      const root = this.rootDomainObject;
+      if (root === undefined) {
+        return;
+      }
+      const renderTarget = root.renderTarget;
+      if (!renderTarget.isGlobalClippingActive) {
+        return;
+      }
+      if (renderTarget.isGlobalCropBoxActive) {
+        return;
+      }
+      ApplyClipCommand.setClippingPlanes(root);
+    }
   }
 }

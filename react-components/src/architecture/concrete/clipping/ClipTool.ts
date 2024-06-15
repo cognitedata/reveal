@@ -9,7 +9,7 @@ import { PrimitiveEditTool } from '../primitives/PrimitiveEditTool';
 import { PrimitiveType } from '../primitives/PrimitiveType';
 import { BoxCreator } from '../primitives/box/BoxCreator';
 import { CropBoxDomainObject } from './CropBoxDomainObject';
-import { ClipCommand } from './commands/ClipCommand';
+import { ApplyClipCommand } from './commands/ApplyClipCommand';
 import { ShowClippingOnTopCommand } from './commands/ShowClippingOnTopCommand';
 import { ShowAllClippingCommand } from './commands/ShowAllClippingCommand';
 import { type VisualDomainObject } from '../../base/domainObjects/VisualDomainObject';
@@ -46,7 +46,7 @@ export class ClipTool extends PrimitiveEditTool {
       new SetClipTypeCommand(PrimitiveType.PlaneXY),
       new SetClipTypeCommand(PrimitiveType.Box),
       undefined, // Separator
-      new ClipCommand(),
+      new ApplyClipCommand(),
       new ShowClippingOnTopCommand(),
       new ShowAllClippingCommand()
     ];
