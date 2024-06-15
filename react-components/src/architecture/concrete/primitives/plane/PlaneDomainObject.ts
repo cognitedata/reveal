@@ -28,6 +28,8 @@ import { PanelInfo } from '../../../base/domainObjectsHelpers/PanelInfo';
 import { Quantity } from '../../../base/domainObjectsHelpers/Quantity';
 import { radToDeg } from 'three/src/math/MathUtils.js';
 
+const ORIGIN = new Vector3(0, 0, 0);
+
 export abstract class PlaneDomainObject extends VisualDomainObject {
   // ==================================================
   // INSTANCE FIELDS
@@ -154,8 +156,7 @@ export abstract class PlaneDomainObject extends VisualDomainObject {
   // ==================================================
 
   public get coordinate(): number {
-    const pointOnPlane = this.plane.projectPoint(new Vector3(), new Vector3());
-
+    const pointOnPlane = this.plane.projectPoint(ORIGIN, new Vector3());
     switch (this.primitiveType) {
       case PrimitiveType.PlaneX:
         return pointOnPlane.x;
@@ -164,7 +165,7 @@ export abstract class PlaneDomainObject extends VisualDomainObject {
       case PrimitiveType.PlaneZ:
         return pointOnPlane.z;
       case PrimitiveType.PlaneXY:
-        return pointOnPlane.length();
+        return pointOnPlane.distanceTo(ORIGIN);
       default:
         throw new Error('Unknown PrimitiveType');
     }
