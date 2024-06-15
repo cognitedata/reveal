@@ -2,7 +2,7 @@
  * Copyright 2024 Cognite AS
  */
 
-import { Plane } from 'three';
+import { type Plane } from 'three';
 import { RenderTargetCommand } from '../../../base/commands/RenderTargetCommand';
 import { type TranslateKey } from '../../../base/utilities/TranslateKey';
 import { CropBoxDomainObject } from '../CropBoxDomainObject';
@@ -15,7 +15,10 @@ export class ClipCommand extends RenderTargetCommand {
   // ==================================================
 
   public override get tooltip(): TranslateKey {
-    return { key: 'CROP_BOX', fallback: 'Apply slicing and selected crop box to the model' };
+    return {
+      key: 'CLIP_APPLY',
+      fallback: 'Apply selected crop box to the model if any., otherwise apply all slice planes'
+    };
   }
 
   public override get icon(): string {

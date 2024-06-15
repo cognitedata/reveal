@@ -18,6 +18,15 @@ import { PlaneRenderStyle } from './PlaneRenderStyle';
 import { PlaneDragger } from './PlaneDragger';
 import { getIconByPrimitiveType } from '../../measurements/getIconByPrimitiveType';
 import { getComplementary } from '../../../base/utilities/colors/colorExtensions';
+import {
+  horizontalAngle,
+  rotateHorizontal
+} from '../../../base/utilities/extensions/vectorExtensions';
+import { forceBetween0AndPi } from '../../../base/utilities/extensions/mathExtensions';
+import { type TranslateKey } from '../../../base/utilities/TranslateKey';
+import { PanelInfo } from '../../../base/domainObjectsHelpers/PanelInfo';
+import { Quantity } from '../../../base/domainObjectsHelpers/Quantity';
+import { radToDeg } from 'three/src/math/MathUtils.js';
 
 export abstract class PlaneDomainObject extends VisualDomainObject {
   // ==================================================
@@ -71,16 +80,16 @@ export abstract class PlaneDomainObject extends VisualDomainObject {
     return getIconByPrimitiveType(this.primitiveType);
   }
 
-  public override get typeName(): string {
+  public override get typeName(): TranslateKey {
     switch (this.primitiveType) {
-      case PrimitiveType.XPlane:
-        return 'Vertical plane along Y-axis';
-      case PrimitiveType.YPlane:
-        return 'Vertical plane along X-axis';
-      case PrimitiveType.ZPlane:
-        return 'Horizontal plane';
-      case PrimitiveType.XYPlane:
-        return 'Vertical plane';
+      case PrimitiveType.PlaneX:
+        return { key: 'PLANE_X', fallback: 'Vertical plane along Y-axis' };
+      case PrimitiveType.PlaneY:
+        return { key: 'PLANE_Y', fallback: 'Vertical plane along X-axis' };
+      case PrimitiveType.PlaneZ:
+        return { key: 'PLANE_Z', fallback: 'Horizontal plane' };
+      case PrimitiveType.PlaneXY:
+        return { key: 'PLANE_XY', fallback: 'Vertical plane' };
       default:
         throw new Error('Unknown PrimitiveType');
     }
@@ -92,6 +101,37 @@ export abstract class PlaneDomainObject extends VisualDomainObject {
 
   public override createDragger(props: CreateDraggerProps): BaseDragger | undefined {
     return new PlaneDragger(props, this);
+  }
+
+  public override get hasPanelInfo(): boolean {
+    return true;
+  }
+
+  public override getPanelInfo(): PanelInfo | undefined {
+    const info = new PanelInfo();
+    info.setTypeName(this.typeName);
+
+    const { primitiveType } = this;
+
+    switch (primitiveType) {
+      case PrimitiveType.PlaneX:
+        add('XCOORDINATE', 'X coordinate', this.coordinate, Quantity.Length);
+        break;
+      case PrimitiveType.PlaneY:
+        add('YCOORDINATE', 'Y coordinate', this.coordinate, Quantity.Length);
+        break;
+      case PrimitiveType.PlaneZ:
+        add('ZCOORDINATE', 'Z coordinate', this.coordinate, Quantity.Length);
+        break;
+      case PrimitiveType.PlaneXY:
+        add('ANGLE', 'Angle', radToDeg(this.angle), Quantity.Angle);
+        break;
+    }
+    return info;
+
+    function add(key: string, fallback: string, value: number, quantity: Quantity): void {
+      info.add({ key, fallback, value, quantity });
+    }
   }
 
   // ==================================================
@@ -108,6 +148,21 @@ export abstract class PlaneDomainObject extends VisualDomainObject {
 
   public get useClippingInIntersection(): boolean {
     return false;
+  }
+
+  // ==================================================
+  // INSTANCE METHODS / PROPERTIES: Geometrical getters
+  // ==================================================
+
+  public get coordinate(): number {
+    return -this.plane.constant;
+  }
+
+  public get angle(): number {
+    const vector = this.plane.normal.clone();
+    rotateHorizontal(vector, Math.PI / 2);
+    const angle = horizontalAngle(vector);
+    return forceBetween0AndPi(angle);
   }
 
   // ==================================================

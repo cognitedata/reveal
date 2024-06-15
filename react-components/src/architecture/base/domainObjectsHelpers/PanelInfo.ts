@@ -7,7 +7,7 @@ import { Quantity } from './Quantity';
 
 type PanelItemProps = {
   key: string;
-  fallback?: string;
+  fallback: string;
   icon?: string;
   value?: number;
   quantity?: Quantity;
@@ -18,6 +18,11 @@ export class PanelInfo {
   public readonly items: NumberPanelItem[] = [];
 
   public setHeader(key: string, fallback: string): void {
+    this.header = new PanelItem({ key, fallback });
+  }
+
+  public setTypeName(translateKey: TranslateKey): void {
+    const { key, fallback } = translateKey;
     this.header = new PanelItem({ key, fallback });
   }
 

@@ -13,9 +13,7 @@ import {
   type NumberPanelItem
 } from '../../architecture/base/domainObjectsHelpers/PanelInfo';
 import { useTranslation } from '../i18n/I18n';
-import { DeleteDomainObjectCommand } from '../../architecture/base/concreteCommands/DeleteDomainObjectCommand';
 import { CopyToClipboardCommand } from '../../architecture/base/concreteCommands/CopyToClipboardCommand';
-import { type BaseCommand } from '../../architecture/base/commands/BaseCommand';
 import { CommandButtons } from './Toolbar';
 import { withSuppressRevealEvents } from '../../higher-order-components/withSuppressRevealEvents';
 import { type TranslateDelegate } from '../../architecture/base/utilities/TranslateKey';
@@ -53,10 +51,13 @@ export const DomainObjectPanel = (): ReactElement => {
   const icon = domainObject.icon as IconType;
   const header = info.header;
 
-  const commands: BaseCommand[] = [
-    new DeleteDomainObjectCommand(domainObject),
-    new CopyToClipboardCommand(() => toString(info, t, unitSystem))
-  ];
+  const commands = domainObject.getPanelToolbar();
+
+  // Set in the get string on the copy command if any
+  for (const command of commands) {
+    if (command instanceof CopyToClipboardCommand)
+      command.getString = () => toString(info, t, unitSystem);
+  }
 
   return (
     <Container

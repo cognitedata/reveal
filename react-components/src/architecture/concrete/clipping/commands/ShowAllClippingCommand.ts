@@ -15,7 +15,10 @@ export class ShowAllClippingCommand extends RenderTargetCommand {
   // ==================================================
 
   public override get tooltip(): TranslateKey {
-    return { key: 'CROP_BOX_SHOW', fallback: 'Show or hide all other crop boxes than selected' };
+    return {
+      key: 'CLIP_SHOW_SELECTED_ONLY',
+      fallback: 'Show or hide all other slicing planes and crop boxes than selected'
+    };
   }
 
   public override get icon(): string {

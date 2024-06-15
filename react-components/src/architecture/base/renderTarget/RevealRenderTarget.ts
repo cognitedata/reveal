@@ -214,13 +214,13 @@ export class RevealRenderTarget {
   }
 
   // ==================================================
-  // INSTANCE METHODS: Crop box operations (Experimental code)
+  // INSTANCE METHODS: Clipping operations (Experimental code)
   // ==================================================
 
   public setGlobalClipping(
     clippingPlanes: Plane[],
-    boundingBox: Box3 | undefined,
-    domainObject: DomainObject | undefined
+    boundingBox: Box3 | undefined = undefined,
+    domainObject: DomainObject | undefined = undefined
   ): void {
     // Input in Viewer coordinates
     this.viewer.setGlobalClippingPlanes(clippingPlanes);

@@ -35,15 +35,15 @@ export class ClipTool extends PrimitiveEditTool {
   }
 
   public override get tooltip(): TranslateKey {
-    return { key: 'CROP_BOX', fallback: 'Create or edit crop box' };
+    return { key: 'CLIP_TOOL', fallback: 'Create or edit crop box and slice planes' };
   }
 
   public override getToolbar(): Array<BaseCommand | undefined> {
     return [
-      new SetClipTypeCommand(PrimitiveType.XPlane),
-      new SetClipTypeCommand(PrimitiveType.YPlane),
-      new SetClipTypeCommand(PrimitiveType.ZPlane),
-      new SetClipTypeCommand(PrimitiveType.XYPlane),
+      new SetClipTypeCommand(PrimitiveType.PlaneX),
+      new SetClipTypeCommand(PrimitiveType.PlaneY),
+      new SetClipTypeCommand(PrimitiveType.PlaneZ),
+      new SetClipTypeCommand(PrimitiveType.PlaneXY),
       new SetClipTypeCommand(PrimitiveType.Box),
       undefined, // Separator
       new ClipCommand(),
@@ -80,10 +80,10 @@ export class ClipTool extends PrimitiveEditTool {
 
   protected override createCreator(): BaseCreator | undefined {
     switch (this.primitiveType) {
-      case PrimitiveType.XPlane:
-      case PrimitiveType.YPlane:
-      case PrimitiveType.ZPlane:
-      case PrimitiveType.XYPlane:
+      case PrimitiveType.PlaneX:
+      case PrimitiveType.PlaneY:
+      case PrimitiveType.PlaneZ:
+      case PrimitiveType.PlaneXY:
         return new PlaneCreator(new SliceDomainObject(this.primitiveType));
 
       case PrimitiveType.Box:

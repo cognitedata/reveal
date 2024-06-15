@@ -16,6 +16,7 @@ import { PopupStyle } from '../../base/domainObjectsHelpers/PopupStyle';
 import { type BaseDragger } from '../../base/domainObjectsHelpers/BaseDragger';
 import { ExampleDragger } from './ExampleDragger';
 import { Quantity } from '../../base/domainObjectsHelpers/Quantity';
+import { type TranslateKey } from '../../base/utilities/TranslateKey';
 
 export class ExampleDomainObject extends VisualDomainObject {
   // ==================================================
@@ -40,8 +41,8 @@ export class ExampleDomainObject extends VisualDomainObject {
     return 'Circle';
   }
 
-  public override get typeName(): string {
-    return 'Example';
+  public override get typeName(): TranslateKey {
+    return { key: 'EXAMPLE', fallback: 'Example' };
   }
 
   public override get canBeRemoved(): boolean {
@@ -62,7 +63,7 @@ export class ExampleDomainObject extends VisualDomainObject {
 
   public override getPanelInfo(): PanelInfo | undefined {
     const info = new PanelInfo();
-    info.setHeader('NAME', this.name);
+    info.setTypeName(this.typeName);
     add('XCOORDINATE', 'X coordinate', this.center.x, Quantity.Length);
     add('YCOORDINATE', 'Y coordinate', this.center.y, Quantity.Length);
     add('ZCOORDINATE', 'Z coordinate', this.center.z, Quantity.Length);
@@ -75,7 +76,7 @@ export class ExampleDomainObject extends VisualDomainObject {
 
   public override getPanelInfoStyle(): PopupStyle {
     // bottom = 66 because the toolbar is below
-    return new PopupStyle({ bottom: 66, left: 0 });
+    return new PopupStyle({ bottom: 50, left: 0 });
   }
 
   // ==================================================

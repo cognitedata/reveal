@@ -83,7 +83,6 @@ export class LineCreator extends BaseCreator {
 
     domainObject.notify(Changes.geometry);
     if (this.isFinished) {
-      domainObject.setSelectedInteractive(true);
       domainObject.setFocusInteractive(FocusType.Focus);
     }
     return true;

@@ -17,8 +17,9 @@ import { PanelInfo } from '../../../base/domainObjectsHelpers/PanelInfo';
 import { Changes } from '../../../base/domainObjectsHelpers/Changes';
 import { FocusType } from '../../../base/domainObjectsHelpers/FocusType';
 import { Quantity } from '../../../base/domainObjectsHelpers/Quantity';
-import { PopupStyle } from '../../../base/domainObjectsHelpers/PopupStyle';
 import { VisualDomainObject } from '../../../base/domainObjects/VisualDomainObject';
+import { getIconByPrimitiveType } from '../../measurements/getIconByPrimitiveType';
+import { type TranslateKey } from '../../../base/utilities/TranslateKey';
 
 export abstract class LineDomainObject extends VisualDomainObject {
   // ==================================================
@@ -54,6 +55,23 @@ export abstract class LineDomainObject extends VisualDomainObject {
   // OVERRIDES of DomainObject
   // ==================================================
 
+  public override get icon(): string {
+    return getIconByPrimitiveType(this.primitiveType);
+  }
+
+  public override get typeName(): TranslateKey {
+    switch (this.primitiveType) {
+      case PrimitiveType.Line:
+        return { key: 'MEASUREMENTS_LINE', fallback: 'Line' };
+      case PrimitiveType.Polyline:
+        return { key: 'MEASUREMENTS_POLYLINE', fallback: 'Polyline' };
+      case PrimitiveType.Polygon:
+        return { key: 'MEASUREMENTS_POLYGON', fallback: 'Polygon' };
+      default:
+        throw new Error('Unknown PrimitiveType');
+    }
+  }
+
   public override createRenderStyle(): RenderStyle | undefined {
     return new LineRenderStyle();
   }
@@ -62,30 +80,24 @@ export abstract class LineDomainObject extends VisualDomainObject {
     return true;
   }
 
-  public override getPanelInfoStyle(): PopupStyle {
-    // bottom = 66 because the toolbar is below
-    return new PopupStyle({ bottom: 66, left: 0 });
-  }
-
   public override getPanelInfo(): PanelInfo | undefined {
     if (this.focusType === FocusType.Pending && this.points.length <= 1) {
       return undefined;
     }
     const info = new PanelInfo();
+    info.setTypeName(this.typeName);
+
     switch (this.primitiveType) {
       case PrimitiveType.Line:
-        info.setHeader('MEASUREMENTS_LINE', 'Line');
         add('MEASUREMENTS_LENGTH', 'Length', this.getTotalLength());
         add('MEASUREMENTS_HORIZONTAL_LENGTH', 'Horizontal length', this.getHorizontalLength());
         add('MEASUREMENTS_VERTICAL_LENGTH', 'Vertical length', this.getVerticalLength());
         break;
 
       case PrimitiveType.Polyline:
-        info.setHeader('MEASUREMENTS_POLYLINE', 'Polyline');
         add('MEASUREMENTS_TOTAL_LENGTH', 'Total length', this.getTotalLength());
         break;
       case PrimitiveType.Polygon:
-        info.setHeader('MEASUREMENTS_POLYGON', 'Polygon');
         add('MEASUREMENTS_TOTAL_LENGTH', 'Total length', this.getTotalLength());
         if (this.points.length > 2) {
           add(

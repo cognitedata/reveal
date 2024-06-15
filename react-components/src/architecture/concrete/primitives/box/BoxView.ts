@@ -260,7 +260,7 @@ export class BoxView extends GroupThreeView {
     if (degrees === 0) {
       return undefined; // Not show when about 0
     }
-    const text = rootDomainObject.unitSystem.toStringWithUnit(degrees, Quantity.Degrees);
+    const text = rootDomainObject.unitSystem.toStringWithUnit(degrees, Quantity.Angle);
     const sprite = BoxView.createSprite(text, this.style, spriteHeight);
     if (sprite === undefined) {
       return undefined;

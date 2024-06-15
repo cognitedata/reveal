@@ -12,13 +12,13 @@ export function getIconByPrimitiveType(primitiveType: PrimitiveType): string {
       return 'VectorZigzag';
     case PrimitiveType.Polygon:
       return 'Polygon';
-    case PrimitiveType.XPlane:
+    case PrimitiveType.PlaneX:
       return 'CubeFrontLeft';
-    case PrimitiveType.YPlane:
+    case PrimitiveType.PlaneY:
       return 'CubeFrontRight';
-    case PrimitiveType.ZPlane:
+    case PrimitiveType.PlaneZ:
       return 'CubeTop';
-    case PrimitiveType.XYPlane:
+    case PrimitiveType.PlaneXY:
       return 'Perspective';
     case PrimitiveType.HorizontalArea:
       return 'FrameTool';

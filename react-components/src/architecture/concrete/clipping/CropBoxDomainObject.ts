@@ -10,8 +10,7 @@ import { BoxDomainObject } from '../primitives/box/BoxDomainObject';
 import { Color, type Plane } from 'three';
 import { BoxRenderStyle } from '../primitives/box/BoxRenderStyle';
 import { type RenderStyle } from '../../base/domainObjectsHelpers/RenderStyle';
-
-export const MIN_BOX_SIZE = 0.01;
+import { type TranslateKey } from '../../base/utilities/TranslateKey';
 
 export class CropBoxDomainObject extends BoxDomainObject {
   // ==================================================
@@ -31,8 +30,8 @@ export class CropBoxDomainObject extends BoxDomainObject {
     return 'Crop';
   }
 
-  public override get typeName(): string {
-    return 'Crop box';
+  public override get typeName(): TranslateKey {
+    return { key: 'CROP_BOX', fallback: 'Crop box' };
   }
 
   protected override notifyCore(change: DomainObjectChange): void {
@@ -90,7 +89,6 @@ export class CropBoxDomainObject extends BoxDomainObject {
       const planes = this.getPlanes();
       const boundingBox = this.getBoundingBox();
       boundingBox.applyMatrix4(CDF_TO_VIEWER_TRANSFORMATION);
-
       root.renderTarget.setGlobalClipping(planes, boundingBox, this);
     }
   }

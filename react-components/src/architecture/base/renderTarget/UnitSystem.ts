@@ -64,14 +64,14 @@ export class UnitSystem {
         return this.isMetric ? 'm²' : 'ft²';
       case Quantity.Volume:
         return this.isMetric ? 'm³' : 'ft³';
-      case Quantity.Degrees:
+      case Quantity.Angle:
         return '°';
     }
   }
 
   private getFractionDigits(quantity: Quantity): number {
     switch (quantity) {
-      case Quantity.Degrees:
+      case Quantity.Angle:
         return 1;
       default:
         return 2;

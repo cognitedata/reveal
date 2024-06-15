@@ -4,6 +4,7 @@
 
 import { VisualDomainObject } from '../../base/domainObjects/VisualDomainObject';
 import { type RenderStyle } from '../../base/domainObjectsHelpers/RenderStyle';
+import { type TranslateKey } from '../../base/utilities/TranslateKey';
 import { type ThreeView } from '../../base/views/ThreeView';
 import { AxisRenderStyle } from './AxisRenderStyle';
 import { AxisThreeView } from './AxisThreeView';
@@ -13,8 +14,8 @@ export class AxisDomainObject extends VisualDomainObject {
   // OVERRIDES of DomainObject
   // ==================================================
 
-  public override get typeName(): string {
-    return 'Axis3D';
+  public override get typeName(): TranslateKey {
+    return { key: 'AXIS3D', fallback: 'Axis3D' };
   }
 
   public override createRenderStyle(): RenderStyle | undefined {

@@ -19,6 +19,11 @@ import {
   type CreateDraggerProps
 } from '../../../base/domainObjects/VisualDomainObject';
 import { Range3 } from '../../../base/utilities/geometry/Range3';
+import { getIconByPrimitiveType } from '../../measurements/getIconByPrimitiveType';
+import { type TranslateKey } from '../../../base/utilities/TranslateKey';
+import { Quantity } from '../../../base/domainObjectsHelpers/Quantity';
+import { PanelInfo } from '../../../base/domainObjectsHelpers/PanelInfo';
+import { radToDeg } from 'three/src/math/MathUtils.js';
 
 export const MIN_BOX_SIZE = 0.01;
 
@@ -61,6 +66,23 @@ export abstract class BoxDomainObject extends VisualDomainObject {
   // OVERRIDES of DomainObject
   // ==================================================
 
+  public override get icon(): string {
+    return getIconByPrimitiveType(this.primitiveType);
+  }
+
+  public override get typeName(): TranslateKey {
+    switch (this.primitiveType) {
+      case PrimitiveType.HorizontalArea:
+        return { key: 'MEASUREMENTS_HORIZONTAL_AREA', fallback: 'Horizontal area' };
+      case PrimitiveType.VerticalArea:
+        return { key: 'MEASUREMENTS_VERTICAL_AREA', fallback: 'Vertical area' };
+      case PrimitiveType.Box:
+        return { key: 'MEASUREMENTS_VOLUME', fallback: 'Volume' };
+      default:
+        throw new Error('Unknown PrimitiveType');
+    }
+  }
+
   public override createRenderStyle(): RenderStyle | undefined {
     return new BoxRenderStyle();
   }
@@ -73,6 +95,55 @@ export abstract class BoxDomainObject extends VisualDomainObject {
     return new BoxDragger(props, this);
   }
 
+  public override get hasPanelInfo(): boolean {
+    return true;
+  }
+
+  public override getPanelInfo(): PanelInfo | undefined {
+    const info = new PanelInfo();
+    info.setTypeName(this.typeName);
+
+    const { primitiveType } = this;
+    const isFinished = this.focusType !== FocusType.Pending;
+
+    const hasX = BoxDomainObject.isValidSize(this.size.x);
+    const hasY = BoxDomainObject.isValidSize(this.size.y);
+    const hasZ = BoxDomainObject.isValidSize(this.size.z);
+
+    if (isFinished || hasX) {
+      add('MEASUREMENTS_LENGTH', 'Length', this.size.x, Quantity.Length);
+    }
+    if (primitiveType !== PrimitiveType.VerticalArea && (isFinished || hasY)) {
+      add('MEASUREMENTS_DEPTH', 'Depth', this.size.y, Quantity.Length);
+    }
+    if (primitiveType !== PrimitiveType.HorizontalArea && (isFinished || hasZ)) {
+      add('MEASUREMENTS_HEIGHT', 'Height', this.size.z, Quantity.Length);
+    }
+    if (primitiveType !== PrimitiveType.Box && (isFinished || this.hasArea)) {
+      add('MEASUREMENTS_AREA', 'Area', this.area, Quantity.Area);
+    }
+    if (primitiveType === PrimitiveType.Box && (isFinished || this.hasHorizontalArea)) {
+      add('MEASUREMENTS_HORIZONTAL_AREA', 'Horizontal area', this.horizontalArea, Quantity.Area);
+    }
+    if (primitiveType === PrimitiveType.Box && (isFinished || this.hasVolume)) {
+      add('MEASUREMENTS_VOLUME', 'Volume', this.volume, Quantity.Volume);
+    }
+    // I forgot to add text for rotation angle before the deadline, so I used a icon instead.
+    if (this.zRotation !== 0 && isFinished) {
+      info.add({
+        key: '',
+        fallback: '',
+        icon: 'Angle',
+        value: radToDeg(this.zRotation),
+        quantity: Quantity.Angle
+      });
+    }
+    return info;
+
+    function add(key: string, fallback: string, value: number, quantity: Quantity): void {
+      info.add({ key, fallback, value, quantity });
+    }
+  }
   // ==================================================
   // OVERRIDES of VisualDomainObject
   // ==================================================
@@ -90,7 +161,7 @@ export abstract class BoxDomainObject extends VisualDomainObject {
   }
 
   // ==================================================
-  // INSTANCE METHODS: Getters/Properties
+  // INSTANCE METHODS / PROPERTIES: Geometrical getters
   // ==================================================
 
   public get diagonal(): number {
@@ -152,6 +223,10 @@ export abstract class BoxDomainObject extends VisualDomainObject {
     }
     return boundingBox;
   }
+
+  // ==================================================
+  // INSTANCE METHODS: Matrix getters
+  // ==================================================
 
   public getRotationMatrix(matrix: Matrix4 = new Matrix4()): Matrix4 {
     matrix.makeRotationZ(this.zRotation);

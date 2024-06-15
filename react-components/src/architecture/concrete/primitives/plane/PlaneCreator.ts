@@ -49,11 +49,11 @@ export class PlaneCreator extends BaseCreator {
 
   public override get maximumPointCount(): number {
     switch (this._domainObject.primitiveType) {
-      case PrimitiveType.XPlane:
-      case PrimitiveType.YPlane:
-      case PrimitiveType.ZPlane:
+      case PrimitiveType.PlaneX:
+      case PrimitiveType.PlaneY:
+      case PrimitiveType.PlaneZ:
         return 1;
-      case PrimitiveType.XYPlane:
+      case PrimitiveType.PlaneXY:
         return 2;
       default:
         throw new Error('Unknown primitiveType');
@@ -75,7 +75,6 @@ export class PlaneCreator extends BaseCreator {
     }
     domainObject.notify(Changes.geometry);
     if (this.isFinished) {
-      domainObject.setSelectedInteractive(true);
       domainObject.setFocusInteractive(FocusType.Focus);
     }
     return true;
@@ -91,19 +90,19 @@ export class PlaneCreator extends BaseCreator {
     }
     const domainObject = this._domainObject;
     switch (domainObject.primitiveType) {
-      case PrimitiveType.XPlane:
+      case PrimitiveType.PlaneX:
         domainObject.plane.setFromNormalAndCoplanarPoint(new Vector3(1, 0, 0), this.firstPoint);
         break;
 
-      case PrimitiveType.YPlane:
+      case PrimitiveType.PlaneY:
         domainObject.plane.setFromNormalAndCoplanarPoint(new Vector3(0, 1, 0), this.firstPoint);
         break;
 
-      case PrimitiveType.ZPlane:
+      case PrimitiveType.PlaneZ:
         domainObject.plane.setFromNormalAndCoplanarPoint(new Vector3(0, 0, 1), this.firstPoint);
         break;
 
-      case PrimitiveType.XYPlane:
+      case PrimitiveType.PlaneXY:
         if (this.pointCount === 1) {
           const normal = ray.direction.clone().normalize();
           domainObject.plane.setFromNormalAndCoplanarPoint(normal, this.firstPoint);

@@ -86,22 +86,22 @@ export class SetClipTypeCommand extends RenderTargetCommand {
 
 function getTooltipByPrimitiveType(primitiveType: PrimitiveType): TranslateKey {
   switch (primitiveType) {
-    case PrimitiveType.XPlane:
+    case PrimitiveType.PlaneX:
       return {
         key: 'PLANE_X_ADD',
         fallback: 'Add X plane. Click at one point.'
       };
-    case PrimitiveType.YPlane:
+    case PrimitiveType.PlaneY:
       return {
         key: 'PLANE_Y_ADD',
         fallback: 'Add Y plane. Click at one point.'
       };
-    case PrimitiveType.ZPlane:
+    case PrimitiveType.PlaneZ:
       return {
         key: 'PLANE_Z_ADD',
         fallback: 'Add Z plane. Click at one point.'
       };
-    case PrimitiveType.XYPlane:
+    case PrimitiveType.PlaneXY:
       return {
         key: 'PLANE_XY_ADD',
         fallback: 'Add XY plane. Click at two points.'

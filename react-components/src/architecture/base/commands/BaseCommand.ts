@@ -52,7 +52,7 @@ export abstract class BaseCommand {
   }
 
   public get tooltip(): TranslateKey {
-    return { key: '' };
+    return { key: '', fallback: '' };
   }
 
   public get icon(): string {

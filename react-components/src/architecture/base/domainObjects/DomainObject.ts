@@ -20,6 +20,10 @@ import { PopupStyle } from '../domainObjectsHelpers/PopupStyle';
 import { RootDomainObject } from './RootDomainObject';
 import { CommandsUpdater } from '../reactUpdaters/CommandsUpdater';
 import { DomainObjectPanelUpdater } from '../reactUpdaters/DomainObjectPanelUpdater';
+import { type TranslateKey } from '../utilities/TranslateKey';
+import { DeleteDomainObjectCommand } from '../concreteCommands/DeleteDomainObjectCommand';
+import { CopyToClipboardCommand } from '../concreteCommands/CopyToClipboardCommand';
+import { type BaseCommand } from '../commands/BaseCommand';
 
 /**
  * Represents an abstract base class for domain objects.
@@ -76,7 +80,7 @@ export abstract class DomainObject {
   // INSTANCE/VIRTUAL PROPERTIES
   // ==================================================
 
-  public abstract get typeName(): string; // to be overridden
+  public abstract get typeName(): TranslateKey; // to be overridden
 
   public get path(): string {
     return `${this.parent !== undefined ? this.parent.path : ''}\\${this.name}`;
@@ -308,7 +312,12 @@ export abstract class DomainObject {
   public getPanelInfoStyle(): PopupStyle {
     // to be overridden
     // Default lower left corner
-    return new PopupStyle({ bottom: 0, left: 0 });
+    // bottom = 66 because the toolbar is below
+    return new PopupStyle({ bottom: 50, left: 0 });
+  }
+
+  public getPanelToolbar(): BaseCommand[] {
+    return [new DeleteDomainObjectCommand(this), new CopyToClipboardCommand()];
   }
 
   // ==================================================
@@ -704,10 +713,10 @@ export abstract class DomainObject {
 
   public addChild(child: DomainObject, insertFirst = false): void {
     if (child.hasParent) {
-      throw Error(`The child ${child.typeName} already has a parent`);
+      throw Error(`The child ${child.typeName.fallback} already has a parent`);
     }
     if (child === this) {
-      throw Error(`Trying to add illegal child ${child.typeName}`);
+      throw Error(`Trying to add illegal child ${child.typeName.fallback}`);
     }
     if (insertFirst) {
       this._children.unshift(child);
@@ -726,7 +735,7 @@ export abstract class DomainObject {
   private remove(): boolean {
     const { childIndex } = this;
     if (childIndex === undefined) {
-      throw Error(`The child ${this.typeName} is not child of it's parent`);
+      throw Error(`The child ${this.typeName.fallback} is not child of it's parent`);
     }
     clear(this._children);
     this.removeCore();
@@ -790,7 +799,7 @@ export abstract class DomainObject {
   }
 
   private generateNewName(): string {
-    let result = this.typeName;
+    let result = this.typeName.fallback;
     if (!this.canChangeName) {
       return result;
     }

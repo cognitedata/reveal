@@ -122,7 +122,7 @@ export class PlaneView extends GroupThreeView {
     let p2: Vector3 | undefined;
     let p3: Vector3 | undefined;
 
-    if (domainObject.primitiveType === PrimitiveType.ZPlane) {
+    if (domainObject.primitiveType === PrimitiveType.PlaneZ) {
       p0 = getHorizontalIntersection(range, plane, 0);
       p1 = getHorizontalIntersection(range, plane, 1);
       p2 = getHorizontalIntersection(range, plane, 3);
@@ -214,7 +214,7 @@ export class PlaneView extends GroupThreeView {
     if (point === null) {
       return undefined;
     }
-    if (domainObject.primitiveType === PrimitiveType.ZPlane) {
+    if (domainObject.primitiveType === PrimitiveType.PlaneZ) {
       if (!this._sceneRange.x.isInside(point.x)) {
         return undefined;
       }

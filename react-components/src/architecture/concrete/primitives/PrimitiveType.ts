@@ -10,8 +10,8 @@ export enum PrimitiveType {
   HorizontalArea,
   VerticalArea,
   Box,
-  XPlane,
-  YPlane,
-  ZPlane,
-  XYPlane
+  PlaneX,
+  PlaneY,
+  PlaneZ,
+  PlaneXY
 }

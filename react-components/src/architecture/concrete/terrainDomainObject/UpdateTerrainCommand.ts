@@ -6,7 +6,7 @@ import { RenderTargetCommand } from '../../base/commands/RenderTargetCommand';
 import { Vector3 } from 'three';
 import { Range3 } from '../../base/utilities/geometry/Range3';
 import { createFractalRegularGrid2 } from './geometry/createFractalRegularGrid2';
-import { DEFAULT_TERRAIN_NAME, TerrainDomainObject } from './TerrainDomainObject';
+import { TerrainDomainObject } from './TerrainDomainObject';
 import { Changes } from '../../base/domainObjectsHelpers/Changes';
 import { type TranslateKey } from '../../base/utilities/TranslateKey';
 
@@ -25,10 +25,7 @@ export class UpdateTerrainCommand extends RenderTargetCommand {
 
   public override get isEnabled(): boolean {
     const { renderTarget, rootDomainObject } = this;
-    const terrainDomainObject = rootDomainObject.getDescendantByTypeAndName(
-      TerrainDomainObject,
-      DEFAULT_TERRAIN_NAME
-    );
+    const terrainDomainObject = rootDomainObject.getDescendantByType(TerrainDomainObject);
     if (terrainDomainObject === undefined) {
       return false;
     }
@@ -37,10 +34,7 @@ export class UpdateTerrainCommand extends RenderTargetCommand {
 
   protected override invokeCore(): boolean {
     const { renderTarget, rootDomainObject } = this;
-    const terrainDomainObject = rootDomainObject.getDescendantByTypeAndName(
-      TerrainDomainObject,
-      DEFAULT_TERRAIN_NAME
-    );
+    const terrainDomainObject = rootDomainObject.getDescendantByType(TerrainDomainObject);
     if (terrainDomainObject === undefined) {
       return false;
     }

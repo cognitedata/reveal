@@ -8,15 +8,15 @@ import { type TranslateKey } from '../utilities/TranslateKey';
 type GetStringDelegate = () => string;
 
 export class CopyToClipboardCommand extends BaseCommand {
-  private readonly _getString: GetStringDelegate;
+  public getString?: GetStringDelegate;
 
   // ==================================================
   // CONSTRUCTOR
   // ==================================================
 
-  public constructor(getString: GetStringDelegate) {
+  public constructor(getString?: GetStringDelegate) {
     super();
-    this._getString = getString;
+    this.getString = getString;
   }
 
   // ==================================================
@@ -32,7 +32,7 @@ export class CopyToClipboardCommand extends BaseCommand {
   }
 
   public override get isEnabled(): boolean {
-    return this._getString !== undefined;
+    return this.getString !== undefined;
   }
 
   public override get hasData(): boolean {
@@ -40,11 +40,11 @@ export class CopyToClipboardCommand extends BaseCommand {
   }
 
   protected override invokeCore(): boolean {
-    if (this._getString === undefined) {
+    if (this.getString === undefined) {
       return false;
     }
     navigator.clipboard
-      .writeText(this._getString())
+      .writeText(this.getString())
       .then((_result) => {
         return true;
       })
