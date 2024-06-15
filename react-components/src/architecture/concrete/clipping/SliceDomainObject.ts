@@ -51,27 +51,36 @@ export class SliceDomainObject extends PlaneDomainObject {
   protected override notifyCore(change: DomainObjectChange): void {
     super.notifyCore(change);
 
-    // Update the clipping planes if necessary
     if (change.isChanged(Changes.deleted, Changes.added, Changes.geometry)) {
-      const root = this.rootDomainObject;
-      if (root === undefined) {
-        return;
-      }
-      const renderTarget = root.renderTarget;
-      if (!renderTarget.isGlobalClippingActive) {
-        return;
-      }
-      if (renderTarget.isGlobalCropBoxActive) {
-        return;
-      }
-      ApplyClipCommand.setClippingPlanes(root);
+      this.updateClippingPlanes();
     }
   }
+
   // ==================================================
   // OVERRIDES of PlaneDomainObject
   // ==================================================
 
   public override get useClippingInIntersection(): boolean {
     return false;
+  }
+
+  // ==================================================
+  // INSTANCE METHODS
+  // ==================================================
+
+  private updateClippingPlanes(): void {
+    // Update the clipping planes if necessary
+    const root = this.rootDomainObject;
+    if (root === undefined) {
+      return;
+    }
+    const renderTarget = root.renderTarget;
+    if (!renderTarget.isGlobalClippingActive) {
+      return;
+    }
+    if (renderTarget.isGlobalCropBoxActive) {
+      return;
+    }
+    ApplyClipCommand.setClippingPlanes(root);
   }
 }

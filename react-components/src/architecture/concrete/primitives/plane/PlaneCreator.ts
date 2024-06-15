@@ -74,9 +74,10 @@ export class PlaneCreator extends BaseCreator {
       return false;
     }
     domainObject.notify(Changes.geometry);
-    if (this.isFinished) {
-      domainObject.setFocusInteractive(FocusType.Focus);
+    if (!this.isFinished) {
+      return true;
     }
+    domainObject.setFocusInteractive(FocusType.Focus);
     return true;
   }
 

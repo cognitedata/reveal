@@ -8,6 +8,7 @@ import { PrimitiveType } from '../../primitives/PrimitiveType';
 import { type TranslateKey } from '../../../base/utilities/TranslateKey';
 import { ClipTool } from '../ClipTool';
 import { getIconByPrimitiveType } from '../../measurements/getIconByPrimitiveType';
+import { SliceDomainObject } from '../SliceDomainObject';
 
 export class SetClipTypeCommand extends RenderTargetCommand {
   private readonly _primitiveType: PrimitiveType;
@@ -34,7 +35,27 @@ export class SetClipTypeCommand extends RenderTargetCommand {
   }
 
   public override get isEnabled(): boolean {
-    return this.tool !== undefined;
+    if (this.tool === undefined) {
+      return false;
+    }
+    if (
+      this._primitiveType === PrimitiveType.Box ||
+      this._primitiveType === PrimitiveType.PlaneXY
+    ) {
+      return true;
+    }
+    // Allow maximum 2 slices of each type
+    let count = 0;
+    for (const domainObject of this.rootDomainObject.getDescendantsByType(SliceDomainObject)) {
+      if (domainObject.primitiveType !== this._primitiveType) {
+        continue;
+      }
+      count++;
+      if (count >= 2) {
+        return false;
+      }
+    }
+    return true;
   }
 
   public override get isChecked(): boolean {

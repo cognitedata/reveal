@@ -27,6 +27,7 @@ import { type TranslateKey } from '../../../base/utilities/TranslateKey';
 import { PanelInfo } from '../../../base/domainObjectsHelpers/PanelInfo';
 import { Quantity } from '../../../base/domainObjectsHelpers/Quantity';
 import { radToDeg } from 'three/src/math/MathUtils.js';
+import { type DomainObjectChange } from '../../../base/domainObjectsHelpers/DomainObjectChange';
 
 const ORIGIN = new Vector3(0, 0, 0);
 
@@ -135,6 +136,13 @@ export abstract class PlaneDomainObject extends VisualDomainObject {
     }
   }
 
+  protected override notifyCore(change: DomainObjectChange): void {
+    super.notifyCore(change);
+
+    if (change.isChanged(Changes.added)) {
+      this.makeFlippingConsistent();
+    }
+  }
   // ==================================================
   // OVERRIDES of VisualDomainObject
   // ==================================================
@@ -195,5 +203,32 @@ export abstract class PlaneDomainObject extends VisualDomainObject {
     const { plane } = this;
     plane.normal.negate();
     plane.constant = -plane.constant;
+  }
+
+  public makeFlippingConsistent(): void {
+    const root = this.rootDomainObject;
+    if (root === undefined) {
+      return;
+    }
+    for (const other of root.getDescendantsByType(PlaneDomainObject)) {
+      if (this.primitiveType !== other.primitiveType) {
+        continue;
+      }
+      if (this === other) {
+        continue;
+      }
+      const origin = new Vector3(0, 0, 0);
+      const pointOnThisPlane = this.plane.projectPoint(origin, new Vector3());
+      if (other.plane.distanceToPoint(pointOnThisPlane) < 0) {
+        other.flip();
+        other.notify(Changes.geometry);
+      }
+      const pointOnOtherPlane = other.plane.projectPoint(origin, new Vector3());
+      if (this.plane.distanceToPoint(pointOnOtherPlane) < 0) {
+        this.flip();
+        this.notify(Changes.geometry);
+      }
+      break;
+    }
   }
 }
