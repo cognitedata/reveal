@@ -2,9 +2,10 @@
  * Copyright 2024 Cognite AS
  */
 
-import { type Vector2, Vector3, type Box3 } from 'three';
+import { type Vector2, Vector3, type Box3, type Plane, Line3 } from 'three';
 import { Range1 } from './Range1';
 import { square } from '../extensions/mathExtensions';
+import { Vector3Pool } from '@cognite/reveal';
 
 export class Range3 {
   // ==================================================
@@ -163,6 +164,28 @@ export class Range3 {
   }
 
   // ==================================================
+  // INSTANCE METHODS: Plane intersection
+  // ==================================================
+
+  public getHorizontalIntersection(plane: Plane, cornerIndex: number): Vector3 {
+    const corner = this.getCornerPoint(cornerIndex, newVector3());
+    return plane.projectPoint(corner, corner);
+  }
+
+  public getIntersectionOfEdge(
+    plane: Plane,
+    cornerIndex1: number,
+    cornerIndex2: number
+  ): Vector3 | undefined {
+    // Finds 2 corners and make a line between them, then intersect the line
+    const corner1 = this.getCornerPoint(cornerIndex1, newVector3());
+    const corner2 = this.getCornerPoint(cornerIndex2, newVector3());
+    TEMPORARY_LINE.set(corner1, corner2);
+    const point = plane.intersectLine(TEMPORARY_LINE, newVector3());
+    return point ?? undefined;
+  }
+
+  // ==================================================
   // INSTANCE METHODS: Operations
   // ==================================================
 
@@ -235,4 +258,47 @@ export class Range3 {
     range.z.set(-halfSize, halfSize);
     return range;
   }
+
+  public static getRangeFromPlanes(planes: Plane[], originalBoundingBox: Range3): Range3 {
+    let boundingBox = originalBoundingBox.clone();
+    for (const plane of planes) {
+      const smallerBoundingBox = new Range3();
+      // Add in visible corners
+      for (let corner = 0; corner < 8; corner++) {
+        const cornerPoint = boundingBox.getCornerPoint(corner, newVector3());
+        if (plane.distanceToPoint(cornerPoint) >= 0) {
+          smallerBoundingBox.add(cornerPoint);
+        }
+      }
+      // Add in edge intersections
+      for (let startIndex = 0; startIndex < 8; startIndex += 4) {
+        for (let corner = 0; corner < 4; corner++) {
+          const corner1 = startIndex + corner;
+          const corner2 = startIndex + ((corner + 1) % 4);
+          const intersection = boundingBox.getIntersectionOfEdge(plane, corner1, corner2);
+          if (intersection !== undefined) {
+            smallerBoundingBox.add(intersection);
+          }
+        }
+      }
+      for (let corner = 0; corner < 4; corner++) {
+        const intersection = boundingBox.getIntersectionOfEdge(plane, corner, corner + 4);
+        if (intersection !== undefined) {
+          smallerBoundingBox.add(intersection);
+        }
+      }
+      boundingBox = smallerBoundingBox;
+    }
+    return boundingBox;
+  }
+}
+
+// ==================================================
+// PRIVATE FUNCTIONS: Vector pool
+// ==================================================
+
+const TEMPORARY_LINE = new Line3(); // Temporary, used in getIntersection() only
+const VECTOR_POOL = new Vector3Pool();
+function newVector3(copyFrom?: Vector3): Vector3 {
+  return VECTOR_POOL.getNext(copyFrom);
 }

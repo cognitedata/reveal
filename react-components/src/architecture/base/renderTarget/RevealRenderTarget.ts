@@ -7,14 +7,15 @@ import {
   CustomObject,
   isFlexibleCameraManager,
   type Cognite3DViewer,
-  type IFlexibleCameraManager
+  type IFlexibleCameraManager,
+  CDF_TO_VIEWER_TRANSFORMATION
 } from '@cognite/reveal';
 import {
   Vector3,
   AmbientLight,
   DirectionalLight,
   type PerspectiveCamera,
-  type Box3,
+  Box3,
   type Plane
 } from 'three';
 import { CommandsController } from './CommandsController';
@@ -26,6 +27,7 @@ import { type AxisGizmoTool } from '@cognite/reveal/tools';
 import { type BaseRevealConfig } from './BaseRevealConfig';
 import { DefaultRevealConfig } from './DefaultRevealConfig';
 import { CommandsUpdater } from '../reactUpdaters/CommandsUpdater';
+import { Range3 } from '../utilities/geometry/Range3';
 
 const DIRECTIONAL_LIGHT_NAME = 'DirectionalLight';
 
@@ -39,7 +41,7 @@ export class RevealRenderTarget {
   private readonly _rootDomainObject: RootDomainObject;
   private _ambientLight: AmbientLight | undefined;
   private _directionalLight: DirectionalLight | undefined;
-  private _clippedBoxBoundingBox: Box3 | undefined;
+  private _clippedBoundingBox: Box3 | undefined;
   private _cropBoxUniqueId: number | undefined = undefined;
   private _axisGizmoTool: AxisGizmoTool | undefined;
   private _config: BaseRevealConfig | undefined = undefined;
@@ -118,10 +120,11 @@ export class RevealRenderTarget {
   }
 
   public get clippedSceneBoundingBox(): Box3 {
-    const boundingBox = this.sceneBoundingBox;
-    if (this._clippedBoxBoundingBox !== undefined) {
-      boundingBox.intersect(this._clippedBoxBoundingBox);
+    if (this._clippedBoundingBox === undefined) {
+      return this.sceneBoundingBox;
     }
+    const boundingBox = this.sceneBoundingBox.clone();
+    boundingBox.intersect(this._clippedBoundingBox);
     return boundingBox;
   }
 
@@ -223,12 +226,23 @@ export class RevealRenderTarget {
 
   public setGlobalClipping(
     clippingPlanes: Plane[],
-    boundingBox: Box3 | undefined = undefined,
     domainObject: DomainObject | undefined = undefined
   ): void {
     // Input in Viewer coordinates
+    const sceneBoundingBox = this.sceneBoundingBox.clone();
+    sceneBoundingBox.applyMatrix4(CDF_TO_VIEWER_TRANSFORMATION.clone().invert());
+    const range = new Range3();
+    range.copy(sceneBoundingBox);
+    const clippedRange = Range3.getRangeFromPlanes(clippingPlanes, range);
+    const clippedBoundingBox = clippedRange.getBox(new Box3());
+
+    // Apply viewer transformation
+    for (const plane of clippingPlanes) {
+      plane.applyMatrix4(CDF_TO_VIEWER_TRANSFORMATION);
+    }
+    clippedBoundingBox.applyMatrix4(CDF_TO_VIEWER_TRANSFORMATION);
     this.viewer.setGlobalClippingPlanes(clippingPlanes);
-    this._clippedBoxBoundingBox = boundingBox;
+    this._clippedBoundingBox = clippedBoundingBox;
     this._cropBoxUniqueId = domainObject?.uniqueId;
   }
 
@@ -238,7 +252,7 @@ export class RevealRenderTarget {
 
   public clearGlobalClipping(): void {
     this.viewer.setGlobalClippingPlanes([]);
-    this._clippedBoxBoundingBox = undefined;
+    this._clippedBoundingBox = undefined;
     this._cropBoxUniqueId = undefined;
   }
 

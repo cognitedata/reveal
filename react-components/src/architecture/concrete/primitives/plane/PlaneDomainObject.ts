@@ -148,7 +148,7 @@ export abstract class PlaneDomainObject extends VisualDomainObject {
   // ==================================================
 
   public get useClippingInIntersection(): boolean {
-    return false;
+    return true;
   }
 
   // ==================================================

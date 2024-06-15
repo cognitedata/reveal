@@ -2,7 +2,6 @@
  * Copyright 2024 Cognite AS
  */
 
-import { CDF_TO_VIEWER_TRANSFORMATION } from '@cognite/reveal';
 import { Changes } from '../../base/domainObjectsHelpers/Changes';
 import { type DomainObjectChange } from '../../base/domainObjectsHelpers/DomainObjectChange';
 import { BoxFace } from '../../base/utilities/box/BoxFace';
@@ -53,14 +52,15 @@ export class CropBoxDomainObject extends BoxDomainObject {
       if (!renderTarget.isGlobalClippingActive) {
         return;
       }
+      const isGlobalCropBox = renderTarget.isGlobalCropBox(this);
 
-      if (this.isGlobalCropBox && change.isChanged(Changes.deleted)) {
+      if (isGlobalCropBox && change.isChanged(Changes.deleted)) {
         ApplyClipCommand.setClippingPlanes(root);
-      } else if (this.isGlobalCropBox && change.isChanged(Changes.geometry)) {
+      } else if (isGlobalCropBox && change.isChanged(Changes.geometry)) {
         this.setGlobalCropBox();
       } else if (change.isChanged(Changes.selected) && this.isSelected) {
         this.setGlobalCropBox();
-      } else if (this.isGlobalCropBox && change.isChanged(Changes.selected) && !this.isSelected) {
+      } else if (isGlobalCropBox && change.isChanged(Changes.selected) && !this.isSelected) {
         ApplyClipCommand.setClippingPlanes(root);
       }
     }
@@ -78,32 +78,21 @@ export class CropBoxDomainObject extends BoxDomainObject {
   // INSTANCE METHODS: Others
   // ==================================================
 
-  public get isGlobalCropBox(): boolean {
-    const root = this.rootDomainObject;
-    if (root === undefined) {
-      return false;
-    }
-    return root.renderTarget.isGlobalCropBox(this);
-  }
-
   public setGlobalCropBox(): void {
     const root = this.rootDomainObject;
     if (root === undefined) {
       return;
     }
-    const planes = this.getPlanes();
-    const boundingBox = this.getBoundingBox();
-    boundingBox.applyMatrix4(CDF_TO_VIEWER_TRANSFORMATION);
-    root.renderTarget.setGlobalClipping(planes, boundingBox, this);
+    const planes = this.createClippingPlanes();
+    root.renderTarget.setGlobalClipping(planes, this);
   }
 
-  public getPlanes(): Plane[] {
+  private createClippingPlanes(): Plane[] {
     const root = this.rootDomainObject;
     if (root === undefined) {
       return [];
     }
     const matrix = this.getMatrix();
-    matrix.premultiply(CDF_TO_VIEWER_TRANSFORMATION);
     return BoxFace.createClippingPlanes(matrix);
   }
 }

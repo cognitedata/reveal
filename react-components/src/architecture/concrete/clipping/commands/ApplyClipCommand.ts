@@ -7,7 +7,6 @@ import { RenderTargetCommand } from '../../../base/commands/RenderTargetCommand'
 import { type TranslateKey } from '../../../base/utilities/TranslateKey';
 import { CropBoxDomainObject } from '../CropBoxDomainObject';
 import { SliceDomainObject } from '../SliceDomainObject';
-import { CDF_TO_VIEWER_TRANSFORMATION } from '@cognite/reveal';
 import { type RootDomainObject } from '../../../base/domainObjects/RootDomainObject';
 
 export class ApplyClipCommand extends RenderTargetCommand {
@@ -73,7 +72,6 @@ export class ApplyClipCommand extends RenderTargetCommand {
     const planes: Plane[] = [];
     for (const sliceDomainObject of root.getDescendantsByType(SliceDomainObject)) {
       const plane = sliceDomainObject.plane.clone();
-      plane.applyMatrix4(CDF_TO_VIEWER_TRANSFORMATION);
       planes.push(plane);
     }
     root.renderTarget.setGlobalClipping(planes);

@@ -11,8 +11,6 @@ import {
   FrontSide,
   BackSide,
   type Side,
-  Line3,
-  type Plane,
   Triangle,
   LineBasicMaterial,
   BufferGeometry,
@@ -123,16 +121,18 @@ export class PlaneView extends GroupThreeView {
     let p3: Vector3 | undefined;
 
     if (domainObject.primitiveType === PrimitiveType.PlaneZ) {
-      p0 = getHorizontalIntersection(range, plane, 0);
-      p1 = getHorizontalIntersection(range, plane, 1);
-      p2 = getHorizontalIntersection(range, plane, 3);
-      p3 = getHorizontalIntersection(range, plane, 2);
+      p0 = range.getHorizontalIntersection(plane, 0);
+      p1 = range.getHorizontalIntersection(plane, 1);
+      p2 = range.getHorizontalIntersection(plane, 3);
+      p3 = range.getHorizontalIntersection(plane, 2);
     } else {
       for (let startIndex = 0; startIndex < 8; startIndex += 4) {
         let start: Vector3 | undefined;
         let end: Vector3 | undefined;
-        for (let cornerIndex = 0; cornerIndex < 4; cornerIndex++) {
-          const intersection = getVerticalIntersection(range, plane, cornerIndex + startIndex);
+        for (let corner = 0; corner < 4; corner++) {
+          const corner1 = startIndex + corner;
+          const corner2 = startIndex + ((corner + 1) % 4);
+          const intersection = range.getIntersectionOfEdge(plane, corner1, corner2);
           if (intersection === undefined) {
             continue;
           }
@@ -297,34 +297,4 @@ function updateSolidMaterial(
   material.flatShading = true;
   material.depthWrite = false;
   material.depthTest = style.depthTest;
-}
-
-// ==================================================
-// PRIVATE FUNCTIONS: Intersections
-// ==================================================
-
-function getHorizontalIntersection(range: Range3, plane: Plane, cornerIndex: number): Vector3 {
-  const corner = range.getCornerPoint(cornerIndex, new Vector3());
-  return plane.projectPoint(corner, corner);
-}
-
-function getVerticalIntersection(
-  range: Range3,
-  plane: Plane,
-  cornerIndex: number
-): Vector3 | undefined {
-  // Finds 2 corners and make a line between them, then intersect the line
-  const corner = range.getCornerPoint(cornerIndex, new Vector3());
-  let nextCornerIndex: number;
-  if (cornerIndex === 3) {
-    nextCornerIndex = 0;
-  } else if (cornerIndex === 7) {
-    nextCornerIndex = 4;
-  } else {
-    nextCornerIndex = cornerIndex + 1;
-  }
-  const nextCorner = range.getCornerPoint(nextCornerIndex, new Vector3());
-  const line = new Line3(corner, nextCorner);
-  const point = plane.intersectLine(line, new Vector3());
-  return point ?? undefined;
 }

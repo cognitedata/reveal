@@ -67,4 +67,11 @@ export class SliceDomainObject extends PlaneDomainObject {
       ApplyClipCommand.setClippingPlanes(root);
     }
   }
+  // ==================================================
+  // OVERRIDES of PlaneDomainObject
+  // ==================================================
+
+  public override get useClippingInIntersection(): boolean {
+    return false;
+  }
 }
