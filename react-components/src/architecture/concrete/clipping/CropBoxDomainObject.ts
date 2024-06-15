@@ -11,6 +11,7 @@ import { Color, type Plane } from 'three';
 import { BoxRenderStyle } from '../primitives/box/BoxRenderStyle';
 import { type RenderStyle } from '../../base/domainObjectsHelpers/RenderStyle';
 import { type TranslateKey } from '../../base/utilities/TranslateKey';
+import { ApplyClipCommand } from './commands/ApplyClipCommand';
 
 export class CropBoxDomainObject extends BoxDomainObject {
   // ==================================================
@@ -43,17 +44,24 @@ export class CropBoxDomainObject extends BoxDomainObject {
   protected override notifyCore(change: DomainObjectChange): void {
     super.notifyCore(change);
 
-    if (this.isGlobalCropBox) {
-      if (change.isChanged(Changes.deleted)) {
-        this.isGlobalCropBox = false;
-      }
-      if (change.isChanged(Changes.geometry)) {
-        this.isGlobalCropBox = true;
-      }
-    } else if (change.isChanged(Changes.selected) && this.isSelected) {
+    if (change.isChanged(Changes.deleted, Changes.added, Changes.geometry, Changes.selected)) {
       const root = this.rootDomainObject;
-      if (root !== undefined && root.renderTarget.isGlobalCropBoxActive) {
-        this.isGlobalCropBox = true;
+      if (root === undefined) {
+        return;
+      }
+      const renderTarget = root.renderTarget;
+      if (!renderTarget.isGlobalClippingActive) {
+        return;
+      }
+
+      if (this.isGlobalCropBox && change.isChanged(Changes.deleted)) {
+        ApplyClipCommand.setClippingPlanes(root);
+      } else if (this.isGlobalCropBox && change.isChanged(Changes.geometry)) {
+        this.setGlobalCropBox();
+      } else if (change.isChanged(Changes.selected) && this.isSelected) {
+        this.setGlobalCropBox();
+      } else if (this.isGlobalCropBox && change.isChanged(Changes.selected) && !this.isSelected) {
+        ApplyClipCommand.setClippingPlanes(root);
       }
     }
   }
@@ -78,19 +86,15 @@ export class CropBoxDomainObject extends BoxDomainObject {
     return root.renderTarget.isGlobalCropBox(this);
   }
 
-  public set isGlobalCropBox(value: boolean) {
+  public setGlobalCropBox(): void {
     const root = this.rootDomainObject;
     if (root === undefined) {
       return;
     }
-    if (!value) {
-      root.renderTarget.clearGlobalClipping();
-    } else {
-      const planes = this.getPlanes();
-      const boundingBox = this.getBoundingBox();
-      boundingBox.applyMatrix4(CDF_TO_VIEWER_TRANSFORMATION);
-      root.renderTarget.setGlobalClipping(planes, boundingBox, this);
-    }
+    const planes = this.getPlanes();
+    const boundingBox = this.getBoundingBox();
+    boundingBox.applyMatrix4(CDF_TO_VIEWER_TRANSFORMATION);
+    root.renderTarget.setGlobalClipping(planes, boundingBox, this);
   }
 
   public getPlanes(): Plane[] {

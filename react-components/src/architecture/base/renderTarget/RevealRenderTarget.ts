@@ -39,7 +39,7 @@ export class RevealRenderTarget {
   private readonly _rootDomainObject: RootDomainObject;
   private _ambientLight: AmbientLight | undefined;
   private _directionalLight: DirectionalLight | undefined;
-  private _cropBoxBoundingBox: Box3 | undefined;
+  private _clippedBoxBoundingBox: Box3 | undefined;
   private _cropBoxUniqueId: number | undefined = undefined;
   private _axisGizmoTool: AxisGizmoTool | undefined;
   private _config: BaseRevealConfig | undefined = undefined;
@@ -117,10 +117,10 @@ export class RevealRenderTarget {
     return this.cameraManager.getCamera();
   }
 
-  public get sceneClippedBoundingBox(): Box3 {
+  public get clippedSceneBoundingBox(): Box3 {
     const boundingBox = this.sceneBoundingBox;
-    if (this._cropBoxBoundingBox !== undefined) {
-      boundingBox.intersect(this._cropBoxBoundingBox);
+    if (this._clippedBoxBoundingBox !== undefined) {
+      boundingBox.intersect(this._clippedBoxBoundingBox);
     }
     return boundingBox;
   }
@@ -209,11 +209,11 @@ export class RevealRenderTarget {
   // ==================================================
 
   public fitView(): boolean {
-    const boundingBox = this.sceneClippedBoundingBox;
+    const boundingBox = this.clippedSceneBoundingBox;
     if (boundingBox.isEmpty()) {
       return false;
     }
-    this.viewer.fitCameraToBoundingBox(this.sceneClippedBoundingBox);
+    this.viewer.fitCameraToBoundingBox(this.clippedSceneBoundingBox);
     return true;
   }
 
@@ -228,7 +228,7 @@ export class RevealRenderTarget {
   ): void {
     // Input in Viewer coordinates
     this.viewer.setGlobalClippingPlanes(clippingPlanes);
-    this._cropBoxBoundingBox = boundingBox;
+    this._clippedBoxBoundingBox = boundingBox;
     this._cropBoxUniqueId = domainObject?.uniqueId;
   }
 
@@ -238,7 +238,7 @@ export class RevealRenderTarget {
 
   public clearGlobalClipping(): void {
     this.viewer.setGlobalClippingPlanes([]);
-    this._cropBoxBoundingBox = undefined;
+    this._clippedBoxBoundingBox = undefined;
     this._cropBoxUniqueId = undefined;
   }
 

@@ -48,7 +48,7 @@ export class ApplyClipCommand extends RenderTargetCommand {
     }
     const domainObject = this.getSelectedCropBoxDomainObject();
     if (domainObject !== undefined) {
-      domainObject.isGlobalCropBox = true;
+      domainObject.setGlobalCropBox();
       renderTarget.fitView();
       return true;
     }
@@ -71,8 +71,8 @@ export class ApplyClipCommand extends RenderTargetCommand {
 
   public static setClippingPlanes(root: RootDomainObject): boolean {
     const planes: Plane[] = [];
-    for (const slice of root.getDescendantsByType(SliceDomainObject)) {
-      const plane = slice.plane.clone();
+    for (const sliceDomainObject of root.getDescendantsByType(SliceDomainObject)) {
+      const plane = sliceDomainObject.plane.clone();
       plane.applyMatrix4(CDF_TO_VIEWER_TRANSFORMATION);
       planes.push(plane);
     }
