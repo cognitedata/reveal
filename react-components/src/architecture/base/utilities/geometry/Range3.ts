@@ -2,7 +2,7 @@
  * Copyright 2024 Cognite AS
  */
 
-import { type Vector2, Vector3, type Box3, type Plane, Line3 } from 'three';
+import { type Vector2, Vector3, Box3, type Plane, Line3 } from 'three';
 import { Range1 } from './Range1';
 import { square } from '../extensions/mathExtensions';
 import { Vector3Pool } from '@cognite/reveal';
@@ -119,7 +119,10 @@ export class Range3 {
     return target.set(this.x.center, this.y.center, this.z.center);
   }
 
-  public getBox(target: Box3): Box3 {
+  public getBox(target?: Box3): Box3 {
+    if (target === undefined) {
+      target = new Box3();
+    }
     target.min.set(this.x.min, this.y.min, this.z.min);
     target.max.set(this.x.max, this.y.max, this.z.max);
     return target;

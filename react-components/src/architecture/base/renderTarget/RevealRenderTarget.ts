@@ -15,7 +15,7 @@ import {
   AmbientLight,
   DirectionalLight,
   type PerspectiveCamera,
-  Box3,
+  type Box3,
   type Plane
 } from 'three';
 import { CommandsController } from './CommandsController';
@@ -228,19 +228,24 @@ export class RevealRenderTarget {
     clippingPlanes: Plane[],
     domainObject: DomainObject | undefined = undefined
   ): void {
-    // Input in Viewer coordinates
+    if (clippingPlanes.length === 0) {
+      this.clearGlobalClipping();
+      return;
+    }
     const sceneBoundingBox = this.sceneBoundingBox.clone();
     sceneBoundingBox.applyMatrix4(CDF_TO_VIEWER_TRANSFORMATION.clone().invert());
-    const range = new Range3();
-    range.copy(sceneBoundingBox);
-    const clippedRange = Range3.getRangeFromPlanes(clippingPlanes, range);
-    const clippedBoundingBox = clippedRange.getBox(new Box3());
+    const sceneRange = new Range3();
+    sceneRange.copy(sceneBoundingBox);
+    const clippedRange = Range3.getRangeFromPlanes(clippingPlanes, sceneRange);
+    const clippedBoundingBox = clippedRange.getBox();
 
     // Apply viewer transformation
     for (const plane of clippingPlanes) {
       plane.applyMatrix4(CDF_TO_VIEWER_TRANSFORMATION);
     }
     clippedBoundingBox.applyMatrix4(CDF_TO_VIEWER_TRANSFORMATION);
+
+    // Set the values
     this.viewer.setGlobalClippingPlanes(clippingPlanes);
     this._clippedBoundingBox = clippedBoundingBox;
     this._cropBoxUniqueId = domainObject?.uniqueId;
