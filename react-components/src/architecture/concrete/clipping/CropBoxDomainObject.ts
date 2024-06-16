@@ -57,9 +57,9 @@ export class CropBoxDomainObject extends BoxDomainObject {
       if (isGlobalCropBox && change.isChanged(Changes.deleted)) {
         ApplyClipCommand.setClippingPlanes(root);
       } else if (isGlobalCropBox && change.isChanged(Changes.geometry)) {
-        this.setGlobalCropBox();
+        this.setThisAsGlobalCropBox();
       } else if (change.isChanged(Changes.selected) && this.isSelected) {
-        this.setGlobalCropBox();
+        this.setThisAsGlobalCropBox();
       } else if (isGlobalCropBox && change.isChanged(Changes.selected) && !this.isSelected) {
         ApplyClipCommand.setClippingPlanes(root);
       }
@@ -74,7 +74,7 @@ export class CropBoxDomainObject extends BoxDomainObject {
   // INSTANCE METHODS: Others
   // ==================================================
 
-  public setGlobalCropBox(): void {
+  public setThisAsGlobalCropBox(): void {
     const root = this.rootDomainObject;
     if (root === undefined) {
       return;

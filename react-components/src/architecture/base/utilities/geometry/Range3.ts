@@ -6,6 +6,7 @@ import { type Vector2, Vector3, Box3, type Plane, Line3 } from 'three';
 import { Range1 } from './Range1';
 import { square } from '../extensions/mathExtensions';
 import { Vector3Pool } from '@cognite/reveal';
+import { clear } from '../extensions/arrayExtensions';
 
 export class Range3 {
   // ==================================================
@@ -262,7 +263,7 @@ export class Range3 {
     return range;
   }
 
-  public static getRangeFromPlanes(planes: Plane[], originalBoundingBox: Range3): Range3 {
+  public static getRangeFromPlanes0(planes: Plane[], originalBoundingBox: Range3): Range3 {
     let boundingBox = originalBoundingBox.clone();
     for (const plane of planes) {
       const smallerBoundingBox = new Range3();
@@ -293,6 +294,100 @@ export class Range3 {
       boundingBox = smallerBoundingBox;
     }
     return boundingBox;
+  }
+
+  public static getRangeFromPlanes(planes: Plane[], originalBoundingBox: Range3): Range3 {
+    const isHorizontal = (plane: Plane): boolean => {
+      return plane.normal.x === 0 && plane.normal.y === 0;
+    };
+
+    const result = new Range3();
+
+    // Add in visible corners
+    for (let corner = 0; corner < 8; corner++) {
+      let visible = true;
+      const cornerPoint = originalBoundingBox.getCornerPoint(corner, newVector3());
+      for (const plane of planes) {
+        if (plane.distanceToPoint(cornerPoint) >= 0) {
+          continue;
+        }
+        visible = false;
+        break;
+      }
+      if (!visible) {
+        continue;
+      }
+      result.add(cornerPoint);
+    }
+
+    for (const plane of planes) {
+      let start: Vector3 | undefined;
+      let end: Vector3 | undefined;
+      for (let corner = 0; corner < 4; corner++) {
+        const corner1 = corner;
+        const corner2 = isHorizontal(plane) ? corner + 4 : (corner + 1) % 4;
+        const intersection = originalBoundingBox.getIntersectionOfEdge(plane, corner1, corner2);
+        if (intersection === undefined) {
+          continue;
+        }
+        if (start === undefined) {
+          start = intersection.clone();
+          continue;
+        }
+        if (end === undefined) {
+          end = intersection.clone();
+          break;
+        }
+      }
+      if (start === undefined || end === undefined) {
+        continue;
+      }
+      const lines = new Array<Line3>();
+      lines.push(new Line3(start, end));
+
+      for (const otherPlane of planes) {
+        if (otherPlane === plane || isHorizontal(plane) !== isHorizontal(otherPlane)) {
+          continue;
+        }
+        const length = lines.length;
+        for (let i = 0; i < length; i++) {
+          const line = lines[i];
+          const intersection = otherPlane.intersectLine(line, new Vector3());
+          if (intersection === null) {
+            continue;
+          }
+          line.set(line.start, intersection);
+          lines.push(new Line3(intersection, line.start));
+        }
+      }
+      for (const line of lines) {
+        const center = line.getCenter(newVector3());
+        let visible = true;
+        for (const otherPlane of planes) {
+          if (otherPlane === plane || isHorizontal(plane) !== isHorizontal(otherPlane)) {
+            continue;
+          }
+          if (otherPlane.distanceToPoint(center) >= 0) {
+            continue;
+          }
+          visible = false;
+          break;
+        }
+        if (!visible) {
+          continue;
+        }
+        if (!isHorizontal(plane)) {
+          result.x.add(line.start.x);
+          result.y.add(line.start.y);
+          result.x.add(line.end.x);
+          result.y.add(line.end.y);
+        } else {
+          result.z.add(line.start.z);
+          result.z.add(line.end.z);
+        }
+      }
+    }
+    return result;
   }
 }
 

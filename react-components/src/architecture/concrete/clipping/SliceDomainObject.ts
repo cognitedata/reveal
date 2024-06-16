@@ -50,7 +50,9 @@ export class SliceDomainObject extends PlaneDomainObject {
   protected override notifyCore(change: DomainObjectChange): void {
     super.notifyCore(change);
 
-    if (change.isChanged(Changes.deleted, Changes.added, Changes.geometry)) {
+    if (change.isChanged(Changes.deleted)) {
+      this.updateClippingPlanes(true);
+    } else if (change.isChanged(Changes.added, Changes.geometry)) {
       this.updateClippingPlanes();
     }
   }
@@ -63,7 +65,7 @@ export class SliceDomainObject extends PlaneDomainObject {
   // INSTANCE METHODS
   // ==================================================
 
-  private updateClippingPlanes(): void {
+  private updateClippingPlanes(exceptThis: boolean = false): void {
     // Update the clipping planes if necessary
     const root = this.rootDomainObject;
     if (root === undefined) {
@@ -76,6 +78,6 @@ export class SliceDomainObject extends PlaneDomainObject {
     if (renderTarget.isGlobalCropBoxActive) {
       return;
     }
-    ApplyClipCommand.setClippingPlanes(root);
+    ApplyClipCommand.setClippingPlanes(root, exceptThis ? this : undefined);
   }
 }

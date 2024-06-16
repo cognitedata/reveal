@@ -7,6 +7,7 @@ import { isDomainObjectIntersection } from '../domainObjectsHelpers/DomainObject
 import { type BaseDragger } from '../domainObjectsHelpers/BaseDragger';
 import { VisualDomainObject } from '../domainObjects/VisualDomainObject';
 import { type AnyIntersection, CDF_TO_VIEWER_TRANSFORMATION } from '@cognite/reveal';
+import { DomainObjectPanelUpdater } from '../reactUpdaters/DomainObjectPanelUpdater';
 
 /**
  * The `BaseEditTool` class is an abstract class that extends the `NavigationTool` class.
@@ -66,7 +67,7 @@ export abstract class BaseEditTool extends NavigationTool {
 
   public override onDeactivate(): void {
     super.onDeactivate();
-    this.deselectAll();
+    DomainObjectPanelUpdater.hide();
   }
 
   // ==================================================

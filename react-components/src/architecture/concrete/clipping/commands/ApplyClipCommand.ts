@@ -8,6 +8,7 @@ import { type TranslateKey } from '../../../base/utilities/TranslateKey';
 import { CropBoxDomainObject } from '../CropBoxDomainObject';
 import { SliceDomainObject } from '../SliceDomainObject';
 import { type RootDomainObject } from '../../../base/domainObjects/RootDomainObject';
+import { FocusType } from '../../../base/domainObjectsHelpers/FocusType';
 
 export class ApplyClipCommand extends RenderTargetCommand {
   // ==================================================
@@ -45,14 +46,13 @@ export class ApplyClipCommand extends RenderTargetCommand {
       renderTarget.clearGlobalClipping();
       return true;
     }
-    const domainObject = this.getSelectedCropBoxDomainObject();
-    if (domainObject !== undefined) {
-      domainObject.setGlobalCropBox();
-      renderTarget.fitView();
-      return true;
+    const cropBox = this.getSelectedCropBoxDomainObject();
+    if (cropBox !== undefined) {
+      cropBox.setThisAsGlobalCropBox();
+    } else {
+      ApplyClipCommand.setClippingPlanes(this.rootDomainObject);
     }
-
-    ApplyClipCommand.setClippingPlanes(this.rootDomainObject);
+    renderTarget.fitView();
     return true;
   }
 
@@ -68,10 +68,16 @@ export class ApplyClipCommand extends RenderTargetCommand {
   // INSTANCE METHODS
   // ==================================================
 
-  public static setClippingPlanes(root: RootDomainObject): boolean {
+  public static setClippingPlanes(root: RootDomainObject, except?: SliceDomainObject): boolean {
     const planes: Plane[] = [];
     for (const sliceDomainObject of root.getDescendantsByType(SliceDomainObject)) {
       const plane = sliceDomainObject.plane.clone();
+      if (except !== undefined && sliceDomainObject === except) {
+        continue;
+      }
+      if (sliceDomainObject.focusType === FocusType.Pending) {
+        continue; // Do not use pending any objects
+      }
       planes.push(plane);
     }
     root.renderTarget.setGlobalClipping(planes);
