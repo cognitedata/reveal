@@ -16,10 +16,6 @@ export class ShowExamplesOnTopCommand extends ShowDomainObjectsOnTopCommand {
     return { key: 'EXAMPLES_SHOW_ON_TOP', fallback: 'Show all examples on top' };
   }
 
-  public override get icon(): string {
-    return 'Flag';
-  }
-
   protected override isInstance(domainObject: DomainObject): boolean {
     return domainObject instanceof ExampleDomainObject;
   }

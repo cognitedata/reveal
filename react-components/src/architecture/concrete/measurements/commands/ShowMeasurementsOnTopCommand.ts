@@ -13,6 +13,10 @@ export class ShowMeasurementsOnTopCommand extends ShowDomainObjectsOnTopCommand 
   // OVERRIDES
   // ==================================================
 
+  public override get icon(): string {
+    return 'EyeShow';
+  }
+
   public override get tooltip(): TranslateKey {
     return { key: 'MEASUREMENTS_SHOW_ON_TOP', fallback: 'Show all measurements on top' };
   }

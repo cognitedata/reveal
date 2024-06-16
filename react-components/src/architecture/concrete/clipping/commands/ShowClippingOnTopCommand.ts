@@ -13,10 +13,6 @@ export class ShowClippingOnTopCommand extends ShowDomainObjectsOnTopCommand {
   // OVERRIDES
   // ==================================================
 
-  public override get icon(): string {
-    return 'Flag';
-  }
-
   public override get tooltip(): TranslateKey {
     return { key: 'CLIP_SHOW_ON_TOP', fallback: 'Show all crop boxes and slices on top' };
   }

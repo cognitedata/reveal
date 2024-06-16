@@ -12,7 +12,7 @@ export abstract class ShowDomainObjectsOnTopCommand extends InstanceCommand {
   // ==================================================
 
   public override get icon(): string {
-    return 'EyeShow';
+    return 'Flag';
   }
 
   public override get isChecked(): boolean {
