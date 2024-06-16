@@ -2,9 +2,10 @@
  * Copyright 2024 Cognite AS
  */
 
+import { type DomainObject } from '../domainObjects/DomainObject';
 import { BaseCommand } from './BaseCommand';
 
-export abstract class DomainObjectCommand<Type> extends BaseCommand {
+export abstract class DomainObjectCommand<Type extends DomainObject> extends BaseCommand {
   // ==================================================
   // INSTANCE FIELDS
   // ==================================================

@@ -24,10 +24,6 @@ export class FlipSliceCommand extends DomainObjectCommand<SliceDomainObject> {
     return 'FlipVertical'; // Maybe 'Exchange'; instead
   }
 
-  public override get hasData(): boolean {
-    return true;
-  }
-
   protected override invokeCore(): boolean {
     this._domainObject.flip();
     this._domainObject.notify(Changes.geometry);
