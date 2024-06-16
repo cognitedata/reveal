@@ -2,11 +2,10 @@
  * Copyright 2024 Cognite AS
  */
 
-import { type Vector2, Vector3, Box3, type Plane, Line3 } from 'three';
+import { type Vector2, Vector3, Box3, type Plane, Line3, Vector3Like } from 'three';
 import { Range1 } from './Range1';
 import { square } from '../extensions/mathExtensions';
 import { Vector3Pool } from '@cognite/reveal';
-import { clear } from '../extensions/arrayExtensions';
 
 export class Range3 {
   // ==================================================
@@ -189,6 +188,34 @@ export class Range3 {
     return point ?? undefined;
   }
 
+  public getVerticalPlaneIntersection(
+    plane: Plane,
+    isTop: boolean, // Give top or bottom of the range here
+    start: Vector3,
+    end: Vector3
+  ): boolean {
+    const startIndex = isTop ? 4 : 0;
+    let count = 0;
+    for (let corner = 0; corner < 4; corner++) {
+      const corner1 = startIndex + corner;
+      const corner2 = startIndex + ((corner + 1) % 4);
+      const intersection = this.getIntersectionOfEdge(plane, corner1, corner2);
+      if (intersection === undefined) {
+        continue;
+      }
+      if (count === 0) {
+        start.copy(intersection);
+        count++;
+        continue;
+      }
+      if (count === 1) {
+        end.copy(intersection);
+        count++;
+        break;
+      }
+    }
+    return count >= 2;
+  }
   // ==================================================
   // INSTANCE METHODS: Operations
   // ==================================================
@@ -222,6 +249,11 @@ export class Range3 {
   }
 
   public add2(value: Vector2): void {
+    this.x.add(value.x);
+    this.y.add(value.y);
+  }
+
+  public addHorizontal(value: Vector3): void {
     this.x.add(value.x);
     this.y.add(value.y);
   }
@@ -263,93 +295,57 @@ export class Range3 {
     return range;
   }
 
-  public static getRangeFromPlanes0(planes: Plane[], originalBoundingBox: Range3): Range3 {
-    let boundingBox = originalBoundingBox.clone();
-    for (const plane of planes) {
-      const smallerBoundingBox = new Range3();
-      // Add in visible corners
-      for (let corner = 0; corner < 8; corner++) {
-        const cornerPoint = boundingBox.getCornerPoint(corner, newVector3());
-        if (plane.distanceToPoint(cornerPoint) >= 0) {
-          smallerBoundingBox.add(cornerPoint);
-        }
-      }
-      // Add in edge intersections
-      for (let startIndex = 0; startIndex < 8; startIndex += 4) {
-        for (let corner = 0; corner < 4; corner++) {
-          const corner1 = startIndex + corner;
-          const corner2 = startIndex + ((corner + 1) % 4);
-          const intersection = boundingBox.getIntersectionOfEdge(plane, corner1, corner2);
-          if (intersection !== undefined) {
-            smallerBoundingBox.add(intersection);
-          }
-        }
-      }
-      for (let corner = 0; corner < 4; corner++) {
-        const intersection = boundingBox.getIntersectionOfEdge(plane, corner, corner + 4);
-        if (intersection !== undefined) {
-          smallerBoundingBox.add(intersection);
-        }
-      }
-      boundingBox = smallerBoundingBox;
-    }
-    return boundingBox;
-  }
-
   public static getRangeFromPlanes(planes: Plane[], originalBoundingBox: Range3): Range3 {
-    const isHorizontal = (plane: Plane): boolean => {
-      return plane.normal.x === 0 && plane.normal.y === 0;
-    };
-
     const result = new Range3();
 
-    // Add in visible corners
-    for (let corner = 0; corner < 8; corner++) {
-      let visible = true;
+    // Calculate the z range based on visible corners
+    for (let corner = 0; corner < 8; corner += 4) {
       const cornerPoint = originalBoundingBox.getCornerPoint(corner, newVector3());
-      for (const plane of planes) {
-        if (plane.distanceToPoint(cornerPoint) >= 0) {
-          continue;
-        }
-        visible = false;
-        break;
-      }
-      if (!visible) {
+      if (!isVisible(planes, cornerPoint, true)) {
         continue;
       }
-      result.add(cornerPoint);
+      result.z.add(cornerPoint.z);
+    }
+    // Calculate the z range  based on the horizontal planes
+    const origin = new Vector3(0, 0, 0);
+    for (const plane of planes) {
+      if (!isHorizontalPlane(plane)) {
+        continue;
+      }
+      const pointOnPlane = plane.projectPoint(origin, newVector3());
+      if (!isVisible(planes, pointOnPlane, isHorizontalPlane(plane), plane)) {
+        continue;
+      }
+      result.z.add(pointOnPlane.z);
+    }
+    // Calculate the x and y range based on visible corners
+    for (let corner = 0; corner < 8; corner++) {
+      const cornerPoint = originalBoundingBox.getCornerPoint(corner, newVector3());
+      if (!isVisible(planes, cornerPoint, false)) {
+        continue;
+      }
+      result.addHorizontal(cornerPoint);
     }
 
+    // Calculate the x and y range based on the vertical planes
     for (const plane of planes) {
-      let start: Vector3 | undefined;
-      let end: Vector3 | undefined;
-      for (let corner = 0; corner < 4; corner++) {
-        const corner1 = corner;
-        const corner2 = isHorizontal(plane) ? corner + 4 : (corner + 1) % 4;
-        const intersection = originalBoundingBox.getIntersectionOfEdge(plane, corner1, corner2);
-        if (intersection === undefined) {
-          continue;
-        }
-        if (start === undefined) {
-          start = intersection.clone();
-          continue;
-        }
-        if (end === undefined) {
-          end = intersection.clone();
-          break;
-        }
-      }
-      if (start === undefined || end === undefined) {
+      if (isHorizontalPlane(plane)) {
         continue;
       }
+      const start = new Vector3();
+      const end = new Vector3();
+      if (!originalBoundingBox.getVerticalPlaneIntersection(plane, false, start, end)) {
+        continue;
+      }
+      // Cut the line into smaller lines by the other planes
       const lines = new Array<Line3>();
       lines.push(new Line3(start, end));
 
       for (const otherPlane of planes) {
-        if (otherPlane === plane || isHorizontal(plane) !== isHorizontal(otherPlane)) {
+        if (otherPlane === plane || isHorizontalPlane(plane) !== isHorizontalPlane(otherPlane)) {
           continue;
         }
-        const length = lines.length;
+        const length = lines.length; // MNote the lines array is growing
         for (let i = 0; i < length; i++) {
           const line = lines[i];
           const intersection = otherPlane.intersectLine(line, new Vector3());
@@ -360,34 +356,41 @@ export class Range3 {
           lines.push(new Line3(intersection, line.start));
         }
       }
+      // Check if the line segments is visible, if so add to result range
       for (const line of lines) {
         const center = line.getCenter(newVector3());
-        let visible = true;
-        for (const otherPlane of planes) {
-          if (otherPlane === plane || isHorizontal(plane) !== isHorizontal(otherPlane)) {
-            continue;
-          }
-          if (otherPlane.distanceToPoint(center) >= 0) {
-            continue;
-          }
-          visible = false;
-          break;
-        }
-        if (!visible) {
+        if (!isVisible(planes, center, !isHorizontalPlane(plane))) {
           continue;
         }
-        if (!isHorizontal(plane)) {
-          result.x.add(line.start.x);
-          result.y.add(line.start.y);
-          result.x.add(line.end.x);
-          result.y.add(line.end.y);
-        } else {
-          result.z.add(line.start.z);
-          result.z.add(line.end.z);
-        }
+        result.addHorizontal(line.start);
+        result.addHorizontal(line.end);
       }
     }
     return result;
+
+    function isHorizontalPlane(plane: Plane): boolean {
+      return plane.normal.x === 0 && plane.normal.y === 0;
+    }
+
+    function isVisible(
+      planes: Plane[],
+      point: Vector3,
+      isHorizontal?: boolean,
+      except?: Plane
+    ): boolean {
+      for (const plane of planes) {
+        if (except == undefined && plane === except) {
+          continue;
+        }
+        if (isHorizontal !== undefined && isHorizontal !== isHorizontalPlane(plane)) {
+          continue;
+        }
+        if (plane.distanceToPoint(point) < 0) {
+          return false;
+        }
+      }
+      return true;
+    }
   }
 }
 

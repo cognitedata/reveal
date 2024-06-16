@@ -226,19 +226,21 @@ export class RevealRenderTarget {
 
   public setGlobalClipping(
     clippingPlanes: Plane[],
-    domainObject: DomainObject | undefined = undefined
+    domainObject?: DomainObject,
+    clippedBoundingBox?: Box3
   ): void {
     if (clippingPlanes.length === 0) {
       this.clearGlobalClipping();
       return;
     }
-    const sceneBoundingBox = this.sceneBoundingBox.clone();
-    sceneBoundingBox.applyMatrix4(CDF_TO_VIEWER_TRANSFORMATION.clone().invert());
-    const sceneRange = new Range3();
-    sceneRange.copy(sceneBoundingBox);
-    const clippedRange = Range3.getRangeFromPlanes(clippingPlanes, sceneRange);
-    const clippedBoundingBox = clippedRange.getBox();
-
+    if (clippedBoundingBox === undefined) {
+      const sceneBoundingBox = this.sceneBoundingBox.clone();
+      sceneBoundingBox.applyMatrix4(CDF_TO_VIEWER_TRANSFORMATION.clone().invert());
+      const sceneRange = new Range3();
+      sceneRange.copy(sceneBoundingBox);
+      const clippedRange = Range3.getRangeFromPlanes(clippingPlanes, sceneRange);
+      clippedBoundingBox = clippedRange.getBox();
+    }
     // Apply viewer transformation
     for (const plane of clippingPlanes) {
       plane.applyMatrix4(CDF_TO_VIEWER_TRANSFORMATION);

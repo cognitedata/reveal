@@ -65,6 +65,12 @@ export abstract class BaseEditTool extends NavigationTool {
     }
   }
 
+  public override onActivate(): void {
+    super.onActivate();
+    const selected = this.getSelected();
+    DomainObjectPanelUpdater.show(selected);
+  }
+
   public override onDeactivate(): void {
     super.onDeactivate();
     DomainObjectPanelUpdater.hide();

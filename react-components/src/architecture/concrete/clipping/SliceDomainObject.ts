@@ -11,6 +11,7 @@ import { FlipSliceCommand } from './commands/FlipSliceCommand';
 import { ApplyClipCommand } from './commands/ApplyClipCommand';
 import { type DomainObjectChange } from '../../base/domainObjectsHelpers/DomainObjectChange';
 import { Changes } from '../../base/domainObjectsHelpers/Changes';
+import { FocusType } from '../../base/domainObjectsHelpers/FocusType';
 export class SliceDomainObject extends PlaneDomainObject {
   // ==================================================
   // CONSTRUCTOR
@@ -51,7 +52,8 @@ export class SliceDomainObject extends PlaneDomainObject {
     super.notifyCore(change);
 
     if (change.isChanged(Changes.deleted)) {
-      this.updateClippingPlanes(true);
+      this.focusType = FocusType.Pending; // Make sure that the slice is not used in clipping anymore
+      this.updateClippingPlanes();
     } else if (change.isChanged(Changes.added, Changes.geometry)) {
       this.updateClippingPlanes();
     }
@@ -65,7 +67,7 @@ export class SliceDomainObject extends PlaneDomainObject {
   // INSTANCE METHODS
   // ==================================================
 
-  private updateClippingPlanes(exceptThis: boolean = false): void {
+  private updateClippingPlanes(): void {
     // Update the clipping planes if necessary
     const root = this.rootDomainObject;
     if (root === undefined) {
@@ -78,6 +80,6 @@ export class SliceDomainObject extends PlaneDomainObject {
     if (renderTarget.isGlobalCropBoxActive) {
       return;
     }
-    ApplyClipCommand.setClippingPlanes(root, exceptThis ? this : undefined);
+    ApplyClipCommand.setClippingPlanes(root);
   }
 }

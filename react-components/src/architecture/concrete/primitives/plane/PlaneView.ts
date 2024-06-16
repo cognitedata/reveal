@@ -126,26 +126,10 @@ export class PlaneView extends GroupThreeView {
       p2 = range.getHorizontalIntersection(plane, 3);
       p3 = range.getHorizontalIntersection(plane, 2);
     } else {
-      for (let startIndex = 0; startIndex < 8; startIndex += 4) {
-        let start: Vector3 | undefined;
-        let end: Vector3 | undefined;
-        for (let corner = 0; corner < 4; corner++) {
-          const corner1 = startIndex + corner;
-          const corner2 = startIndex + ((corner + 1) % 4);
-          const intersection = range.getIntersectionOfEdge(plane, corner1, corner2);
-          if (intersection === undefined) {
-            continue;
-          }
-          if (start === undefined) {
-            start = intersection;
-            continue;
-          }
-          if (end === undefined) {
-            end = intersection;
-            break;
-          }
-        }
-        if (start === undefined || end === undefined) {
+      for (let startIndex = 0; startIndex < 2; startIndex++) {
+        const start = new Vector3();
+        const end = new Vector3();
+        if (!range.getVerticalPlaneIntersection(plane, startIndex > 0, start, end)) {
           continue;
         }
         if (startIndex === 0) {

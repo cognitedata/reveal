@@ -68,13 +68,10 @@ export class ApplyClipCommand extends RenderTargetCommand {
   // INSTANCE METHODS
   // ==================================================
 
-  public static setClippingPlanes(root: RootDomainObject, except?: SliceDomainObject): boolean {
+  public static setClippingPlanes(root: RootDomainObject): boolean {
     const planes: Plane[] = [];
     for (const sliceDomainObject of root.getDescendantsByType(SliceDomainObject)) {
       const plane = sliceDomainObject.plane.clone();
-      if (except !== undefined && sliceDomainObject === except) {
-        continue;
-      }
       if (sliceDomainObject.focusType === FocusType.Pending) {
         continue; // Do not use pending any objects
       }

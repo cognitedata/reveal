@@ -57,7 +57,7 @@ export abstract class BaseTool extends RenderTargetCommand {
   }
 
   public getToolbarStyle(): PopupStyle {
-    // Override this to place the the toolbar
+    // Override this to place the toolbar
     // Default lower left corner
     return new PopupStyle({ bottom: 0, left: 0 });
   }

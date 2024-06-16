@@ -24,6 +24,17 @@ export class DomainObjectPanelUpdater {
     this._setDomainObject = value;
   }
 
+  public static show(domainObject: DomainObject | undefined): void {
+    if (this._setDomainObject === undefined) {
+      return;
+    }
+    if (domainObject !== undefined) {
+      this._setDomainObject({ domainObject });
+    } else {
+      this.hide();
+    }
+  }
+
   public static hide(): void {
     if (this._setDomainObject === undefined) {
       return;
@@ -40,7 +51,7 @@ export class DomainObjectPanelUpdater {
         this.hide();
       }
       if (change.isChanged(Changes.selected, Changes.geometry, Changes.naming, Changes.unit)) {
-        this._setDomainObject({ domainObject });
+        this.show(domainObject);
       }
     } else {
       if (change.isChanged(Changes.selected)) {

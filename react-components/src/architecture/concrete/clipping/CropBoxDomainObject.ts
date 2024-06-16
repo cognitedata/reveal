@@ -80,7 +80,7 @@ export class CropBoxDomainObject extends BoxDomainObject {
       return;
     }
     const planes = this.createClippingPlanes();
-    root.renderTarget.setGlobalClipping(planes, this);
+    root.renderTarget.setGlobalClipping(planes, this, this.getBoundingBox());
   }
 
   private createClippingPlanes(): Plane[] {
