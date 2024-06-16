@@ -11,7 +11,6 @@ import { FlipSliceCommand } from './commands/FlipSliceCommand';
 import { ApplyClipCommand } from './commands/ApplyClipCommand';
 import { type DomainObjectChange } from '../../base/domainObjectsHelpers/DomainObjectChange';
 import { Changes } from '../../base/domainObjectsHelpers/Changes';
-
 export class SliceDomainObject extends PlaneDomainObject {
   // ==================================================
   // CONSTRUCTOR
@@ -55,10 +54,6 @@ export class SliceDomainObject extends PlaneDomainObject {
       this.updateClippingPlanes();
     }
   }
-
-  // ==================================================
-  // OVERRIDES of PlaneDomainObject
-  // ==================================================
 
   public override get useClippingInIntersection(): boolean {
     return false;

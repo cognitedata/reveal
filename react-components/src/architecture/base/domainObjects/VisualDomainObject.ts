@@ -79,6 +79,10 @@ export abstract class VisualDomainObject extends DomainObject {
     return undefined;
   }
 
+  public get useClippingInIntersection(): boolean {
+    return true;
+  }
+
   // ==================================================
   // INSTANCE METHODS
   // ==================================================

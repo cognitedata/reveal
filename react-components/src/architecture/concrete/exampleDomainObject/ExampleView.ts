@@ -88,7 +88,7 @@ export class ExampleView extends GroupThreeView {
     if (closestDistance !== undefined && closestDistance < distanceToCamera) {
       return undefined;
     }
-    if (!intersectInput.isVisible(point)) {
+    if (domainObject.useClippingInIntersection && !intersectInput.isVisible(point)) {
       return undefined;
     }
     const customObjectIntersection: DomainObjectIntersection = {

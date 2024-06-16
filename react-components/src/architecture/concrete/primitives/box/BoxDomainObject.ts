@@ -153,14 +153,6 @@ export abstract class BoxDomainObject extends VisualDomainObject {
   }
 
   // ==================================================
-  // VIRTUAL METHODS
-  // ==================================================
-
-  public get useClippingInIntersection(): boolean {
-    return true;
-  }
-
-  // ==================================================
   // INSTANCE METHODS / PROPERTIES: Geometrical getters
   // ==================================================
 

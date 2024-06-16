@@ -76,7 +76,7 @@ export abstract class PlaneDomainObject extends VisualDomainObject {
   }
 
   // ==================================================
-  // OVERRIDES of DomainObject
+  // OVERRIDES
   // ==================================================
 
   public override get icon(): string {
@@ -143,20 +143,9 @@ export abstract class PlaneDomainObject extends VisualDomainObject {
       this.makeFlippingConsistent();
     }
   }
-  // ==================================================
-  // OVERRIDES of VisualDomainObject
-  // ==================================================
 
   protected override createThreeView(): ThreeView | undefined {
     return new PlaneView();
-  }
-
-  // ==================================================
-  // VIRTUAL METHODS
-  // ==================================================
-
-  public get useClippingInIntersection(): boolean {
-    return true;
   }
 
   // ==================================================

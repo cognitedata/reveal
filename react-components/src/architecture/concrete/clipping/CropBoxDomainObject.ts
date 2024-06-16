@@ -23,7 +23,7 @@ export class CropBoxDomainObject extends BoxDomainObject {
   }
 
   // ==================================================
-  // OVERRIDES of DomainObject
+  // OVERRIDES
   // ==================================================
 
   public override get icon(): string {
@@ -65,10 +65,6 @@ export class CropBoxDomainObject extends BoxDomainObject {
       }
     }
   }
-
-  // ==================================================
-  // OVERRIDES of BoxDomainObject
-  // ==================================================
 
   public override get useClippingInIntersection(): boolean {
     return false;
