@@ -112,7 +112,7 @@ export abstract class PlaneDomainObject extends VisualDomainObject {
 
   public override getPanelInfo(): PanelInfo | undefined {
     const info = new PanelInfo();
-    info.setTypeName(this.typeName);
+    info.setHeader(this.typeName);
 
     switch (this.primitiveType) {
       case PrimitiveType.PlaneX:

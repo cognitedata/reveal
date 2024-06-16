@@ -63,7 +63,7 @@ export class ExampleDomainObject extends VisualDomainObject {
 
   public override getPanelInfo(): PanelInfo | undefined {
     const info = new PanelInfo();
-    info.setTypeName(this.typeName);
+    info.setHeader(this.typeName);
     add('XCOORDINATE', 'X coordinate', this.center.x, Quantity.Length);
     add('YCOORDINATE', 'Y coordinate', this.center.y, Quantity.Length);
     add('ZCOORDINATE', 'Z coordinate', this.center.z, Quantity.Length);
@@ -75,7 +75,6 @@ export class ExampleDomainObject extends VisualDomainObject {
   }
 
   public override getPanelInfoStyle(): PopupStyle {
-    // bottom = 66 because the toolbar is below
     return new PopupStyle({ bottom: 50, left: 0 });
   }
 

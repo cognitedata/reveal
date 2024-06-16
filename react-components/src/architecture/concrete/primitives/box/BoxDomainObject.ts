@@ -101,7 +101,7 @@ export abstract class BoxDomainObject extends VisualDomainObject {
 
   public override getPanelInfo(): PanelInfo | undefined {
     const info = new PanelInfo();
-    info.setTypeName(this.typeName);
+    info.setHeader(this.typeName);
 
     const { primitiveType } = this;
     const isFinished = this.focusType !== FocusType.Pending;

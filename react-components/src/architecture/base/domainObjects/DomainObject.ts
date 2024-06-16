@@ -312,7 +312,6 @@ export abstract class DomainObject {
   public getPanelInfoStyle(): PopupStyle {
     // to be overridden
     // Default lower left corner
-    // bottom = 66 because the toolbar is below
     return new PopupStyle({ bottom: 50, left: 0 });
   }
 

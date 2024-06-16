@@ -17,11 +17,7 @@ export class PanelInfo {
   public header?: PanelItem;
   public readonly items: NumberPanelItem[] = [];
 
-  public setHeader(key: string, fallback: string): void {
-    this.header = new PanelItem({ key, fallback });
-  }
-
-  public setTypeName(translateKey: TranslateKey): void {
+  public setHeader(translateKey: TranslateKey): void {
     const { key, fallback } = translateKey;
     this.header = new PanelItem({ key, fallback });
   }

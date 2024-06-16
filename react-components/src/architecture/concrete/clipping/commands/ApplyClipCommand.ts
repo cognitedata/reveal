@@ -17,7 +17,7 @@ export class ApplyClipCommand extends RenderTargetCommand {
   public override get tooltip(): TranslateKey {
     return {
       key: 'CLIP_APPLY',
-      fallback: 'Apply selected crop box to the model if any., otherwise apply all slice planes'
+      fallback: 'Apply selected crop box to the model if any, otherwise apply all slice planes'
     };
   }
 

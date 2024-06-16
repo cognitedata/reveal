@@ -85,7 +85,7 @@ export abstract class LineDomainObject extends VisualDomainObject {
       return undefined;
     }
     const info = new PanelInfo();
-    info.setTypeName(this.typeName);
+    info.setHeader(this.typeName);
 
     switch (this.primitiveType) {
       case PrimitiveType.Line:
