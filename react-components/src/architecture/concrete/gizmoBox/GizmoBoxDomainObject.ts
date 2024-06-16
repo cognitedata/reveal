@@ -5,7 +5,7 @@
 import { BoxDomainObject } from '../primitives/box/BoxDomainObject';
 import { Color, type Vector3 } from 'three';
 import { BoxRenderStyle } from '../primitives/box/BoxRenderStyle';
-import { type RenderStyle } from '../../base/domainObjectsHelpers/RenderStyle';
+import { type RenderStyle } from '../../base/renderStyles/RenderStyle';
 import { type TranslateKey } from '../../base/utilities/TranslateKey';
 
 export class GizmoBoxDomainObject extends BoxDomainObject {

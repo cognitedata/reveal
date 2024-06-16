@@ -14,7 +14,7 @@ import { ExampleTool } from '../exampleDomainObject/ExampleTool';
 import { AxisGizmoTool } from '@cognite/reveal/tools';
 import { BaseRevealConfig } from '../../base/renderTarget/BaseRevealConfig';
 import { type RevealRenderTarget } from '../../base/renderTarget/RevealRenderTarget';
-import { NavigationTool } from '../../base/commands/NavigationTool';
+import { NavigationTool } from '../../base/concreteCommands/NavigationTool';
 import { type BaseTool } from '../../base/commands/BaseTool';
 import { ToggleMetricUnitsCommand } from '../../base/concreteCommands/ToggleMetricUnitsCommand';
 import { MeasurementTool } from '../measurements/MeasurementTool';

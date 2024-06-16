@@ -8,7 +8,7 @@ import { BoxFace } from '../../base/utilities/box/BoxFace';
 import { BoxDomainObject } from '../primitives/box/BoxDomainObject';
 import { Color, type Plane } from 'three';
 import { BoxRenderStyle } from '../primitives/box/BoxRenderStyle';
-import { type RenderStyle } from '../../base/domainObjectsHelpers/RenderStyle';
+import { type RenderStyle } from '../../base/renderStyles/RenderStyle';
 import { type TranslateKey } from '../../base/utilities/TranslateKey';
 import { ApplyClipCommand } from './commands/ApplyClipCommand';
 

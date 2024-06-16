@@ -2,22 +2,16 @@
  * Copyright 2024 Cognite AS
  */
 
-import { InstanceCommand } from '../../../base/commands/InstanceCommand';
-import { type DomainObject } from '../../../base/domainObjects/DomainObject';
-import { type TranslateKey } from '../../../base/utilities/TranslateKey';
-import { CropBoxDomainObject } from '../CropBoxDomainObject';
-import { SliceDomainObject } from '../SliceDomainObject';
+import { type TranslateKey } from '../utilities/TranslateKey';
+import { InstanceCommand } from './InstanceCommand';
 
-export class ShowAllClippingCommand extends InstanceCommand {
+export abstract class ShowAllDomainObjectsCommand extends InstanceCommand {
   // ==================================================
   // OVERRIDES
   // ==================================================
 
   public override get tooltip(): TranslateKey {
-    return {
-      key: 'CLIP_SHOW_SELECTED_ONLY',
-      fallback: 'Show or hide all other slicing planes and crop boxes than selected'
-    };
+    return { key: 'EXAMPLES_SHOW', fallback: 'Show or hide' };
   }
 
   public override get icon(): string {
@@ -31,16 +25,9 @@ export class ShowAllClippingCommand extends InstanceCommand {
   protected override invokeCore(): boolean {
     const isVisible = this.isAnyVisible();
     for (const domainObject of this.getInstances()) {
-      if (domainObject.isSelected) {
-        continue;
-      }
       domainObject.setVisibleInteractive(!isVisible, this.renderTarget);
     }
     return true;
-  }
-
-  protected override isInstance(domainObject: DomainObject): boolean {
-    return domainObject instanceof CropBoxDomainObject || domainObject instanceof SliceDomainObject;
   }
 
   // ==================================================
@@ -49,9 +36,6 @@ export class ShowAllClippingCommand extends InstanceCommand {
 
   private isAnyVisible(): boolean {
     for (const domainObject of this.getInstances()) {
-      if (domainObject.isSelected) {
-        continue;
-      }
       if (domainObject.isVisible(this.renderTarget)) {
         return true;
       }

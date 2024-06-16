@@ -4,7 +4,7 @@
 
 import { cloneDeep } from 'lodash';
 import { ColorType } from '../../base/domainObjectsHelpers/ColorType';
-import { RenderStyle } from '../../base/domainObjectsHelpers/RenderStyle';
+import { RenderStyle } from '../../base/renderStyles/RenderStyle';
 import { ColorMapType } from '../../base/utilities/colors/ColorMapType';
 
 export class TerrainRenderStyle extends RenderStyle {

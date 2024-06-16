@@ -3,7 +3,7 @@
  */
 
 import { cloneDeep } from 'lodash';
-import { RenderStyle } from '../../base/domainObjectsHelpers/RenderStyle';
+import { RenderStyle } from '../../base/renderStyles/RenderStyle';
 import { Color } from 'three';
 import { getMixedColor } from '../../base/utilities/colors/colorExtensions';
 

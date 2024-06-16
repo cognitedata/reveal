@@ -14,7 +14,7 @@ import { type DomainObject } from '../../base/domainObjects/DomainObject';
 import { CommandsUpdater } from '../../base/reactUpdaters/CommandsUpdater';
 import { BoxDomainObject } from './box/BoxDomainObject';
 import { LineDomainObject } from './line/LineDomainObject';
-import { DepthTestRenderStyle } from './DepthTestRenderStyle';
+import { DepthTestRenderStyle } from '../../base/renderStyles/DepthTestRenderStyle';
 import { type VisualDomainObject } from '../../base/domainObjects/VisualDomainObject';
 import { PlaneDomainObject } from './plane/PlaneDomainObject';
 

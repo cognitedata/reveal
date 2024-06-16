@@ -3,8 +3,8 @@
  */
 
 import { cloneDeep } from 'lodash';
-import { DepthTestRenderStyle } from '../primitives/DepthTestRenderStyle';
-import { type RenderStyle } from '../../base/domainObjectsHelpers/RenderStyle';
+import { DepthTestRenderStyle } from '../../base/renderStyles/DepthTestRenderStyle';
+import { type RenderStyle } from '../../base/renderStyles/RenderStyle';
 
 export class ExampleRenderStyle extends DepthTestRenderStyle {
   // ==================================================

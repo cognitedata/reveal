@@ -2,7 +2,7 @@
  * Copyright 2024 Cognite AS
  */
 
-import { NavigationTool } from './NavigationTool';
+import { NavigationTool } from '../concreteCommands/NavigationTool';
 import { isDomainObjectIntersection } from '../domainObjectsHelpers/DomainObjectIntersection';
 import { type BaseDragger } from '../domainObjectsHelpers/BaseDragger';
 import { VisualDomainObject } from '../domainObjects/VisualDomainObject';

@@ -2,7 +2,7 @@
  * Copyright 2024 Cognite AS
  */
 
-import { RenderStyle } from '../../base/domainObjectsHelpers/RenderStyle';
+import { RenderStyle } from './RenderStyle';
 
 export abstract class DepthTestRenderStyle extends RenderStyle {
   // ==================================================

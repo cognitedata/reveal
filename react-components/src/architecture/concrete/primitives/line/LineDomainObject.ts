@@ -2,7 +2,7 @@
  * Copyright 2024 Cognite AS
  */
 
-import { type RenderStyle } from '../../../base/domainObjectsHelpers/RenderStyle';
+import { type RenderStyle } from '../../../base/renderStyles/RenderStyle';
 import { type ThreeView } from '../../../base/views/ThreeView';
 import { LineView } from './LineView';
 import { Vector3 } from 'three';

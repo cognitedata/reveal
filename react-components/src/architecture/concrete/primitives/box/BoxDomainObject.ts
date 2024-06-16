@@ -3,7 +3,7 @@
  */
 
 import { BoxRenderStyle } from './BoxRenderStyle';
-import { type RenderStyle } from '../../../base/domainObjectsHelpers/RenderStyle';
+import { type RenderStyle } from '../../../base/renderStyles/RenderStyle';
 import { type ThreeView } from '../../../base/views/ThreeView';
 import { BoxView } from './BoxView';
 import { Box3, Matrix4, Vector3 } from 'three';

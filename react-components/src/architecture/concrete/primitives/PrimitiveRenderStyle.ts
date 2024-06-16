@@ -5,7 +5,7 @@
 import { ColorType } from '../../base/domainObjectsHelpers/ColorType';
 import { Color } from 'three';
 import { WHITE_COLOR } from '../../base/utilities/colors/colorExtensions';
-import { DepthTestRenderStyle } from './DepthTestRenderStyle';
+import { DepthTestRenderStyle } from '../../base/renderStyles/DepthTestRenderStyle';
 
 export abstract class PrimitiveRenderStyle extends DepthTestRenderStyle {
   // ==================================================

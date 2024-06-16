@@ -2,25 +2,11 @@
  * Copyright 2024 Cognite AS
  */
 
-import { BaseCommand } from '../commands/BaseCommand';
 import { type TranslateKey } from '../utilities/TranslateKey';
 import { type DomainObject } from '../domainObjects/DomainObject';
+import { DomainObjectCommand } from '../commands/DomainObjectCommand';
 
-export class DeleteDomainObjectCommand extends BaseCommand {
-  // ==================================================
-  // INSTANCE FIELDS
-  // ==================================================
-
-  private readonly _domainObject: DomainObject;
-
-  // ==================================================
-  // CONSTRUCTOR
-  // ==================================================
-
-  public constructor(domainObject: DomainObject) {
-    super();
-    this._domainObject = domainObject;
-  }
+export class DeleteDomainObjectCommand extends DomainObjectCommand<DomainObject> {
   // ==================================================
   // OVERRIDES
   // ==================================================
@@ -39,10 +25,6 @@ export class DeleteDomainObjectCommand extends BaseCommand {
 
   public override get isEnabled(): boolean {
     return this._domainObject.canBeRemoved;
-  }
-
-  public override get hasData(): boolean {
-    return true;
   }
 
   protected override invokeCore(): boolean {

@@ -2,12 +2,12 @@
  * Copyright 2024 Cognite AS
  */
 
+import { ShowDomainObjectsOnTopCommand } from '../../../base/commands/ShowDomainObjectsOnTopCommand';
 import { type DomainObject } from '../../../base/domainObjects/DomainObject';
 import { type TranslateKey } from '../../../base/utilities/TranslateKey';
-import { ShowPrimitivesOnTopCommand } from '../../primitives/ShowPrimitivesOnTopCommand';
 import { ExampleDomainObject } from '../ExampleDomainObject';
 
-export class ShowExamplesOnTopCommand extends ShowPrimitivesOnTopCommand {
+export class ShowExamplesOnTopCommand extends ShowDomainObjectsOnTopCommand {
   // ==================================================
   // OVERRIDES
   // ==================================================
@@ -20,7 +20,7 @@ export class ShowExamplesOnTopCommand extends ShowPrimitivesOnTopCommand {
     return 'Flag';
   }
 
-  protected override canBeSelected(domainObject: DomainObject): boolean {
+  protected override isInstance(domainObject: DomainObject): boolean {
     return domainObject instanceof ExampleDomainObject;
   }
 }

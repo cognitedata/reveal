@@ -4,7 +4,7 @@
 
 import { type Color } from 'three';
 import { BLACK_COLOR, WHITE_COLOR } from '../utilities/colors/colorExtensions';
-import { type RenderStyle } from '../domainObjectsHelpers/RenderStyle';
+import { type RenderStyle } from '../renderStyles/RenderStyle';
 import { DomainObjectChange } from '../domainObjectsHelpers/DomainObjectChange';
 import { Changes } from '../domainObjectsHelpers/Changes';
 import { isInstanceOf, type Class } from '../domainObjectsHelpers/Class';
@@ -485,6 +485,16 @@ export abstract class DomainObject {
     } else if (visibleState === VisibleState.Some || visibleState === VisibleState.All) {
       this.setVisibleInteractive(false, renderTarget);
     }
+  }
+
+  /**
+   * Checks if the domain object is visible in the specified render target.
+   * @param renderTarget - The render target to check visibility in.
+   * @returns `true` if the domain object is visible in the target, `false` otherwise.
+   */
+  public isVisible(renderTarget: RevealRenderTarget): boolean {
+    const visibleState = this.getVisibleState(renderTarget);
+    return visibleState === VisibleState.Some || visibleState === VisibleState.All;
   }
 
   // ==================================================

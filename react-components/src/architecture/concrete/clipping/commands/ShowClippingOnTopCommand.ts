@@ -2,13 +2,13 @@
  * Copyright 2024 Cognite AS
  */
 
+import { ShowDomainObjectsOnTopCommand } from '../../../base/commands/ShowDomainObjectsOnTopCommand';
 import { type DomainObject } from '../../../base/domainObjects/DomainObject';
 import { type TranslateKey } from '../../../base/utilities/TranslateKey';
-import { ShowPrimitivesOnTopCommand } from '../../primitives/ShowPrimitivesOnTopCommand';
 import { CropBoxDomainObject } from '../CropBoxDomainObject';
 import { SliceDomainObject } from '../SliceDomainObject';
 
-export class ShowClippingOnTopCommand extends ShowPrimitivesOnTopCommand {
+export class ShowClippingOnTopCommand extends ShowDomainObjectsOnTopCommand {
   // ==================================================
   // OVERRIDES
   // ==================================================
@@ -21,7 +21,7 @@ export class ShowClippingOnTopCommand extends ShowPrimitivesOnTopCommand {
     return { key: 'CLIP_SHOW_ON_TOP', fallback: 'Show all crop boxes and slices on top' };
   }
 
-  protected override canBeSelected(domainObject: DomainObject): boolean {
+  protected override isInstance(domainObject: DomainObject): boolean {
     return domainObject instanceof CropBoxDomainObject || domainObject instanceof SliceDomainObject;
   }
 }

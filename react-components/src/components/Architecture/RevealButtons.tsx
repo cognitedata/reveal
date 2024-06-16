@@ -3,7 +3,7 @@
  */
 
 import { type ReactElement } from 'react';
-import { NavigationTool } from '../../architecture/base/commands/NavigationTool';
+import { NavigationTool } from '../../architecture/base/concreteCommands/NavigationTool';
 import { CreateCommandButton } from './CommandButton';
 import { FitViewCommand } from '../../architecture/base/concreteCommands/FitViewCommand';
 import { FlexibleControlsType } from '@cognite/reveal';

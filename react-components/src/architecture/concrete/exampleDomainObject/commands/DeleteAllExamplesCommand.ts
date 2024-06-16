@@ -2,11 +2,12 @@
  * Copyright 2024 Cognite AS
  */
 
-import { RenderTargetCommand } from '../../../base/commands/RenderTargetCommand';
+import { InstanceCommand } from '../../../base/commands/InstanceCommand';
+import { type DomainObject } from '../../../base/domainObjects/DomainObject';
 import { type TranslateKey } from '../../../base/utilities/TranslateKey';
 import { ExampleDomainObject } from '../ExampleDomainObject';
 
-export class DeleteAllExamplesCommand extends RenderTargetCommand {
+export class DeleteAllExamplesCommand extends InstanceCommand {
   // ==================================================
   // OVERRIDES
   // ==================================================
@@ -24,12 +25,12 @@ export class DeleteAllExamplesCommand extends RenderTargetCommand {
   }
 
   public override get isEnabled(): boolean {
-    const first = this.getFirst();
+    const first = this.getFirstInstance();
     return first !== undefined && first.canBeRemoved;
   }
 
   protected override invokeCore(): boolean {
-    const array = Array.from(this.rootDomainObject.getDescendantsByType(ExampleDomainObject));
+    const array = Array.from(this.getInstances());
     array.reverse();
     for (const domainObject of array) {
       domainObject.removeInteractive();
@@ -37,11 +38,7 @@ export class DeleteAllExamplesCommand extends RenderTargetCommand {
     return true;
   }
 
-  // ==================================================
-  // INSTANCE METHODS
-  // ==================================================
-
-  private getFirst(): ExampleDomainObject | undefined {
-    return this.rootDomainObject.getDescendantByType(ExampleDomainObject);
+  protected override isInstance(domainObject: DomainObject): boolean {
+    return domainObject instanceof ExampleDomainObject;
   }
 }

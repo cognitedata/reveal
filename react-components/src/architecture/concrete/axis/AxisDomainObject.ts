@@ -3,7 +3,7 @@
  */
 
 import { VisualDomainObject } from '../../base/domainObjects/VisualDomainObject';
-import { type RenderStyle } from '../../base/domainObjectsHelpers/RenderStyle';
+import { type RenderStyle } from '../../base/renderStyles/RenderStyle';
 import { type TranslateKey } from '../../base/utilities/TranslateKey';
 import { type ThreeView } from '../../base/views/ThreeView';
 import { AxisRenderStyle } from './AxisRenderStyle';

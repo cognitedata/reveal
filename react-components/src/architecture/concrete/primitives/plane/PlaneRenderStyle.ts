@@ -3,8 +3,8 @@
  */
 
 import { cloneDeep } from 'lodash';
-import { type RenderStyle } from '../../../base/domainObjectsHelpers/RenderStyle';
-import { DepthTestRenderStyle } from '../DepthTestRenderStyle';
+import { type RenderStyle } from '../../../base/renderStyles/RenderStyle';
+import { DepthTestRenderStyle } from '../../../base/renderStyles/DepthTestRenderStyle';
 import { BLACK_COLOR, WHITE_COLOR } from '../../../base/utilities/colors/colorExtensions';
 
 export class PlaneRenderStyle extends DepthTestRenderStyle {

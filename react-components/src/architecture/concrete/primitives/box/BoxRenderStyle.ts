@@ -4,7 +4,7 @@
 
 import { cloneDeep } from 'lodash';
 import { PrimitiveRenderStyle } from '../PrimitiveRenderStyle';
-import { type RenderStyle } from '../../../base/domainObjectsHelpers/RenderStyle';
+import { type RenderStyle } from '../../../base/renderStyles/RenderStyle';
 
 export class BoxRenderStyle extends PrimitiveRenderStyle {
   // ==================================================

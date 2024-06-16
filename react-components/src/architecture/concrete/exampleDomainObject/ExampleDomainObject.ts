@@ -3,7 +3,7 @@
  */
 
 import { ExampleRenderStyle } from './ExampleRenderStyle';
-import { type RenderStyle } from '../../base/domainObjectsHelpers/RenderStyle';
+import { type RenderStyle } from '../../base/renderStyles/RenderStyle';
 import { type ThreeView } from '../../base/views/ThreeView';
 import { ExampleView } from './ExampleView';
 import { PanelInfo } from '../../base/domainObjectsHelpers/PanelInfo';

@@ -2,7 +2,7 @@
  * Copyright 2024 Cognite AS
  */
 
-import { BaseTool } from './BaseTool';
+import { BaseTool } from '../commands/BaseTool';
 import { type IFlexibleCameraManager } from '@cognite/reveal';
 import { type TranslateKey } from '../utilities/TranslateKey';
 
