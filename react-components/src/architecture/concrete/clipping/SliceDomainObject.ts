@@ -51,10 +51,10 @@ export class SliceDomainObject extends PlaneDomainObject {
   protected override notifyCore(change: DomainObjectChange): void {
     super.notifyCore(change);
 
-    if (change.isChanged(Changes.deleted)) {
-      this.focusType = FocusType.Pending; // Make sure that the slice is not used in clipping anymore
-      this.updateClippingPlanes();
-    } else if (change.isChanged(Changes.added, Changes.geometry)) {
+    if (change.isChanged(Changes.added, Changes.deleted, Changes.geometry)) {
+      if (change.isChanged(Changes.deleted)) {
+        this.focusType = FocusType.Pending; // Make sure that the slice is not used in clipping anymore
+      }
       this.updateClippingPlanes();
     }
   }

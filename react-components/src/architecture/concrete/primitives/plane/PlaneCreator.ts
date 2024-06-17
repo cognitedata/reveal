@@ -74,13 +74,8 @@ export class PlaneCreator extends BaseCreator {
       return false;
     }
     domainObject.notify(Changes.geometry);
-    if (!this.isFinished) {
-      return true;
-    }
-    if (domainObject.setFocusInteractive(FocusType.Focus)) {
-      // Notify again because it changed between Pending and Focus
-      // and this event must update the clipping planes again.
-      domainObject.notify(Changes.geometry);
+    if (this.isFinished) {
+      domainObject.setFocusInteractive(FocusType.Focus);
     }
     return true;
   }

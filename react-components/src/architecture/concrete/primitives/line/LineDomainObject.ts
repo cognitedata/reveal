@@ -201,8 +201,13 @@ export abstract class LineDomainObject extends VisualDomainObject {
     if (this.focusType === focusType) {
       return false;
     }
+    const changeFromPending =
+      this.focusType === FocusType.Pending && focusType !== FocusType.Pending;
     this.focusType = focusType;
     this.notify(Changes.focus);
+    if (changeFromPending) {
+      this.notify(Changes.geometry);
+    }
     return true;
   }
 }

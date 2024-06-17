@@ -248,6 +248,8 @@ export abstract class BoxDomainObject extends VisualDomainObject {
   }
 
   public setFocusInteractive(focusType: FocusType, focusFace?: BoxFace): boolean {
+    const changeFromPending =
+      this.focusType === FocusType.Pending && focusType !== FocusType.Pending;
     if (focusType === FocusType.None) {
       if (this.focusType === FocusType.None) {
         return false; // No change
@@ -262,6 +264,9 @@ export abstract class BoxDomainObject extends VisualDomainObject {
       this.focusFace = focusFace;
     }
     this.notify(Changes.focus);
+    if (changeFromPending) {
+      this.notify(Changes.geometry);
+    }
     return true;
   }
 

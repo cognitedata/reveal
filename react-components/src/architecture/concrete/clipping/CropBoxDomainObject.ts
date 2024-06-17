@@ -11,6 +11,7 @@ import { BoxRenderStyle } from '../primitives/box/BoxRenderStyle';
 import { type RenderStyle } from '../../base/renderStyles/RenderStyle';
 import { type TranslateKey } from '../../base/utilities/TranslateKey';
 import { ApplyClipCommand } from './commands/ApplyClipCommand';
+import { FocusType } from '../../base/domainObjectsHelpers/FocusType';
 
 export class CropBoxDomainObject extends BoxDomainObject {
   // ==================================================
@@ -44,25 +45,10 @@ export class CropBoxDomainObject extends BoxDomainObject {
     super.notifyCore(change);
 
     if (change.isChanged(Changes.deleted, Changes.added, Changes.geometry, Changes.selected)) {
-      const root = this.rootDomainObject;
-      if (root === undefined) {
-        return;
+      if (change.isChanged(Changes.deleted)) {
+        this.focusType = FocusType.Pending; // Make sure that the crop box is not used in clipping anymore
       }
-      const renderTarget = root.renderTarget;
-      if (!renderTarget.isGlobalClippingActive) {
-        return;
-      }
-      const isGlobalCropBox = renderTarget.isGlobalCropBox(this);
-
-      if (isGlobalCropBox && change.isChanged(Changes.deleted)) {
-        ApplyClipCommand.setClippingPlanes(root);
-      } else if (isGlobalCropBox && change.isChanged(Changes.geometry)) {
-        this.setThisAsGlobalCropBox();
-      } else if (change.isChanged(Changes.selected) && this.isSelected) {
-        this.setThisAsGlobalCropBox();
-      } else if (isGlobalCropBox && change.isChanged(Changes.selected) && !this.isSelected) {
-        ApplyClipCommand.setClippingPlanes(root);
-      }
+      this.updateClippingPlanes(change);
     }
   }
 
@@ -79,6 +65,11 @@ export class CropBoxDomainObject extends BoxDomainObject {
     if (root === undefined) {
       return;
     }
+    if (this.focusType === FocusType.Pending) {
+      // Fallback to default, because pending crop box should never been used in clipping
+      ApplyClipCommand.setClippingPlanes(root);
+      return;
+    }
     const planes = this.createClippingPlanes();
     root.renderTarget.setGlobalClipping(planes, this);
   }
@@ -90,5 +81,34 @@ export class CropBoxDomainObject extends BoxDomainObject {
     }
     const matrix = this.getMatrix();
     return BoxFace.createClippingPlanes(matrix);
+  }
+
+  // ==================================================
+  // INSTANCE METHODS
+  // ==================================================
+
+  private updateClippingPlanes(change: DomainObjectChange): void {
+    // Update the clipping planes if necessary
+    const root = this.rootDomainObject;
+    if (root === undefined) {
+      return;
+    }
+    const renderTarget = root.renderTarget;
+    if (!renderTarget.isGlobalClippingActive) {
+      return;
+    }
+    const isGlobalCropBox = renderTarget.isGlobalCropBox(this);
+
+    if (isGlobalCropBox && change.isChanged(Changes.deleted)) {
+      ApplyClipCommand.setClippingPlanes(root);
+    } else if (isGlobalCropBox && change.isChanged(Changes.geometry)) {
+      this.setThisAsGlobalCropBox();
+    } else if (!isGlobalCropBox && change.isChanged(Changes.geometry) && this.isSelected) {
+      this.setThisAsGlobalCropBox();
+    } else if (change.isChanged(Changes.selected) && this.isSelected) {
+      this.setThisAsGlobalCropBox();
+    } else if (isGlobalCropBox && change.isChanged(Changes.selected) && !this.isSelected) {
+      ApplyClipCommand.setClippingPlanes(root);
+    }
   }
 }
