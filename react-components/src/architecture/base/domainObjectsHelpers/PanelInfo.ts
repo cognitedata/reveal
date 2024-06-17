@@ -2,7 +2,7 @@
  * Copyright 2024 Cognite AS
  */
 
-import { TranslateDelegate, type TranslateKey } from '../utilities/TranslateKey';
+import { type TranslateDelegate, type TranslateKey } from '../utilities/TranslateKey';
 import { Quantity } from './Quantity';
 
 type PanelItemProps = {
