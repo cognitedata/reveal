@@ -201,8 +201,9 @@ export class BoxDragger extends BaseDragger {
         const newSize = this._unitSystem.convertToUnit(size.getComponent(index), Quantity.Length);
         // Divide the box into abound some parts and use that as the increment
         const increment = roundIncrement(newSize / 25);
-        const roundedNewSize = round(newSize, increment);
-        size.setComponent(index, round(newSize, roundedNewSize));
+        let roundedNewSize = round(newSize, increment);
+        roundedNewSize = this._unitSystem.convertFromUnit(roundedNewSize, Quantity.Length);
+        size.setComponent(index, roundedNewSize);
       }
       if (size.getComponent(index) === this._sizeOfBox.getComponent(index)) {
         return false; // Nothing has changed
