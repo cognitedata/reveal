@@ -2,7 +2,7 @@
  * Copyright 2024 Cognite AS
  */
 
-import { type Vector2, Vector3, Box3, type Plane, Line3, Vector3Like } from 'three';
+import { type Vector2, Vector3, Box3, type Plane, Line3 } from 'three';
 import { Range1 } from './Range1';
 import { square } from '../extensions/mathExtensions';
 import { Vector3Pool } from '@cognite/reveal';
@@ -293,104 +293,6 @@ export class Range3 {
     range.y.set(-halfSize, halfSize);
     range.z.set(-halfSize, halfSize);
     return range;
-  }
-
-  public static getRangeFromPlanes(planes: Plane[], originalBoundingBox: Range3): Range3 {
-    const result = new Range3();
-
-    // Calculate the z range based on visible corners
-    for (let corner = 0; corner < 8; corner += 4) {
-      const cornerPoint = originalBoundingBox.getCornerPoint(corner, newVector3());
-      if (!isVisible(planes, cornerPoint, true)) {
-        continue;
-      }
-      result.z.add(cornerPoint.z);
-    }
-    // Calculate the z range  based on the horizontal planes
-    const origin = new Vector3(0, 0, 0);
-    for (const plane of planes) {
-      if (!isHorizontalPlane(plane)) {
-        continue;
-      }
-      const pointOnPlane = plane.projectPoint(origin, newVector3());
-      if (!isVisible(planes, pointOnPlane, isHorizontalPlane(plane), plane)) {
-        continue;
-      }
-      result.z.add(pointOnPlane.z);
-    }
-    // Calculate the x and y range based on visible corners
-    for (let corner = 0; corner < 8; corner++) {
-      const cornerPoint = originalBoundingBox.getCornerPoint(corner, newVector3());
-      if (!isVisible(planes, cornerPoint, false)) {
-        continue;
-      }
-      result.addHorizontal(cornerPoint);
-    }
-
-    // Calculate the x and y range based on the vertical planes
-    for (const plane of planes) {
-      if (isHorizontalPlane(plane)) {
-        continue;
-      }
-      const start = new Vector3();
-      const end = new Vector3();
-      if (!originalBoundingBox.getVerticalPlaneIntersection(plane, false, start, end)) {
-        continue;
-      }
-      // Cut the line into smaller lines by the other planes
-      const lines = new Array<Line3>();
-      lines.push(new Line3(start, end));
-
-      for (const otherPlane of planes) {
-        if (otherPlane === plane || isHorizontalPlane(plane) !== isHorizontalPlane(otherPlane)) {
-          continue;
-        }
-        const length = lines.length; // MNote the lines array is growing
-        for (let i = 0; i < length; i++) {
-          const line = lines[i];
-          const intersection = otherPlane.intersectLine(line, new Vector3());
-          if (intersection === null) {
-            continue;
-          }
-          line.set(line.start, intersection);
-          lines.push(new Line3(intersection, line.start));
-        }
-      }
-      // Check if the line segments is visible, if so add to result range
-      for (const line of lines) {
-        const center = line.getCenter(newVector3());
-        if (!isVisible(planes, center, !isHorizontalPlane(plane))) {
-          continue;
-        }
-        result.addHorizontal(line.start);
-        result.addHorizontal(line.end);
-      }
-    }
-    return result;
-
-    function isHorizontalPlane(plane: Plane): boolean {
-      return plane.normal.x === 0 && plane.normal.y === 0;
-    }
-
-    function isVisible(
-      planes: Plane[],
-      point: Vector3,
-      isHorizontal?: boolean,
-      except?: Plane
-    ): boolean {
-      for (const plane of planes) {
-        if (except == undefined && plane === except) {
-          continue;
-        }
-        if (isHorizontal !== undefined && isHorizontal !== isHorizontalPlane(plane)) {
-          continue;
-        }
-        if (plane.distanceToPoint(point) < 0) {
-          return false;
-        }
-      }
-      return true;
-    }
   }
 }
 

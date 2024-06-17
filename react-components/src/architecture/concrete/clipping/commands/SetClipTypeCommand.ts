@@ -34,6 +34,10 @@ export class SetClipTypeCommand extends RenderTargetCommand {
     return getTooltipByPrimitiveType(this._primitiveType);
   }
 
+  public override get isVisible(): boolean {
+    return true;
+  }
+
   public override get isEnabled(): boolean {
     if (this.tool === undefined) {
       return false;

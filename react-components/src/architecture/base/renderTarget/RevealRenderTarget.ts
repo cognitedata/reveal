@@ -28,6 +28,7 @@ import { type BaseRevealConfig } from './BaseRevealConfig';
 import { DefaultRevealConfig } from './DefaultRevealConfig';
 import { CommandsUpdater } from '../reactUpdaters/CommandsUpdater';
 import { Range3 } from '../utilities/geometry/Range3';
+import { getBoundingBoxFromPlanes } from '../utilities/geometry/getBoundingBoxFromPlanes';
 
 const DIRECTIONAL_LIGHT_NAME = 'DirectionalLight';
 
@@ -224,24 +225,18 @@ export class RevealRenderTarget {
   // INSTANCE METHODS: Clipping operations (Experimental code)
   // ==================================================
 
-  public setGlobalClipping(
-    clippingPlanes: Plane[],
-    domainObject?: DomainObject,
-    clippedBoundingBox?: Box3
-  ): void {
+  public setGlobalClipping(clippingPlanes: Plane[], domainObject?: DomainObject): void {
     if (clippingPlanes.length === 0) {
       this.clearGlobalClipping();
       return;
     }
-    if (clippedBoundingBox === undefined) {
-      const sceneBoundingBox = this.sceneBoundingBox.clone();
-      sceneBoundingBox.applyMatrix4(CDF_TO_VIEWER_TRANSFORMATION.clone().invert());
-      const sceneRange = new Range3();
-      sceneRange.copy(sceneBoundingBox);
-      const clippedRange = Range3.getRangeFromPlanes(clippingPlanes, sceneRange);
-      clippedBoundingBox = clippedRange.getBox();
-    }
-    // Apply viewer transformation
+    const sceneBoundingBox = this.sceneBoundingBox.clone();
+    sceneBoundingBox.applyMatrix4(CDF_TO_VIEWER_TRANSFORMATION.clone().invert());
+    const sceneRange = new Range3();
+    sceneRange.copy(sceneBoundingBox);
+    const clippedRange = getBoundingBoxFromPlanes(clippingPlanes, sceneRange);
+    const clippedBoundingBox = clippedRange.getBox();
+
     for (const plane of clippingPlanes) {
       plane.applyMatrix4(CDF_TO_VIEWER_TRANSFORMATION);
     }
