@@ -99,16 +99,19 @@ export class CropBoxDomainObject extends BoxDomainObject {
     }
     const isGlobalCropBox = renderTarget.isGlobalCropBox(this);
 
-    if (isGlobalCropBox && change.isChanged(Changes.deleted)) {
-      ApplyClipCommand.setClippingPlanes(root);
-    } else if (isGlobalCropBox && change.isChanged(Changes.geometry)) {
-      this.setThisAsGlobalCropBox();
-    } else if (!isGlobalCropBox && change.isChanged(Changes.geometry) && this.isSelected) {
+    if (isGlobalCropBox) {
+      if (
+        change.isChanged(Changes.deleted) ||
+        (change.isChanged(Changes.selected) && !this.isSelected)
+      ) {
+        ApplyClipCommand.setClippingPlanes(root);
+        return;
+      }
+    }
+    if ((isGlobalCropBox || this.isSelected) && change.isChanged(Changes.geometry)) {
       this.setThisAsGlobalCropBox();
     } else if (change.isChanged(Changes.selected) && this.isSelected) {
       this.setThisAsGlobalCropBox();
-    } else if (isGlobalCropBox && change.isChanged(Changes.selected) && !this.isSelected) {
-      ApplyClipCommand.setClippingPlanes(root);
     }
   }
 }
