@@ -17,7 +17,7 @@ export class RevealButtons {
   static NavigationTool = (): ReactElement => CreateCommandButton(new NavigationTool());
   static SetAxisVisible = (): ReactElement => CreateCommandButton(new SetAxisVisibleCommand());
   static Measurement = (): ReactElement => CreateCommandButton(new MeasurementTool());
-  static CropBox = (): ReactElement => CreateCommandButton(new ClipTool());
+  static Clip = (): ReactElement => CreateCommandButton(new ClipTool());
 
   static SetFlexibleControlsTypeOrbit = (): ReactElement =>
     CreateCommandButton(new SetFlexibleControlsTypeCommand(FlexibleControlsType.Orbit));
