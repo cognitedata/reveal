@@ -2,13 +2,14 @@
  * Copyright 2023 Cognite AS
  */
 
-import { CanvasTexture, Color, Texture, Object3D, Camera, Vector2, Raycaster } from 'three';
+import { CanvasTexture, Color, Texture, Object3D, Camera, Vector2, Raycaster, WebGLRenderer, Scene } from 'three';
 import { Overlay3DIcon } from './Overlay3DIcon';
 import { Overlay3D } from './Overlay3D';
 import { OverlayPointsObject } from './OverlayPointsObject';
 import { IconOctree } from './IconOctree';
 import { DefaultOverlay3DContentType, OverlayCollection, OverlayInfo } from './OverlayCollection';
 import minBy from 'lodash/minBy';
+import { CameraChangeThrottler } from './CameraChangeThrottler';
 
 /**
  * Constructor options for the Overlay3DCollection
@@ -54,6 +55,7 @@ export class Overlay3DCollection<MetadataType = DefaultOverlay3DContentType>
   //@ts-ignore Will be removed when clustering is added.
   private _octree: IconOctree<MetadataType>;
   private readonly _rayCaster = new Raycaster();
+  private readonly _cameraChangeDebouncer = new CameraChangeThrottler();
 
   constructor(overlayInfos: OverlayInfo<MetadataType>[], options?: Overlay3DCollectionOptions) {
     super();
@@ -66,17 +68,20 @@ export class Overlay3DCollection<MetadataType = DefaultOverlay3DContentType>
       mask: options?.overlayTextureMask ?? (options?.overlayTexture ? undefined : defaultOverlayTextures.mask)
     };
 
-    this._overlayPoints = new OverlayPointsObject(overlayInfos ? overlayInfos.length : this.DefaultMaxPoints, {
-      spriteTexture: this._sharedTextures.color,
-      maskTexture: this._sharedTextures.mask,
-      minPixelSize: this.MinPixelSize,
-      maxPixelSize: options?.maxPointSize ?? this.MaxPixelSize,
-      radius: this._iconRadius
-    });
+    this._overlayPoints = new OverlayPointsObject(
+      overlayInfos ? overlayInfos.length : this.DefaultMaxPoints,
+      {
+        spriteTexture: this._sharedTextures.color,
+        maskTexture: this._sharedTextures.mask,
+        minPixelSize: this.MinPixelSize,
+        maxPixelSize: options?.maxPointSize ?? this.MaxPixelSize,
+        radius: this._iconRadius
+      },
+      (...args) => this.onBeforeRenderDelegate(...args)
+    );
 
-    this._overlays = this.initializeOverlay3DIcons(overlayInfos ?? []);
+    this._overlays = this.initializeOverlay3DIcons(overlayInfos);
     this.add(this._overlayPoints);
-
     this.updatePointsObject();
 
     this._octree = this.rebuildOctree();
@@ -111,6 +116,14 @@ export class Overlay3DCollection<MetadataType = DefaultOverlay3DContentType>
 
     return newIcons;
   }
+
+  private readonly onBeforeRenderDelegate: Object3D['onBeforeRender'] = (
+    _renderer: WebGLRenderer,
+    _scene: Scene,
+    camera: Camera
+  ) => {
+    this._cameraChangeDebouncer.call(camera, () => this.sortOverlaysRelativeToCamera(camera));
+  };
 
   private sortOverlaysRelativeToCamera(camera: Camera): void {
     this._overlays = this._overlays.sort((a, b) => {

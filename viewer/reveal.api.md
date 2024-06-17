@@ -9,6 +9,7 @@ import { AnnotationsAssetRef } from '@cognite/sdk';
 import { AnnotationsCogniteAnnotationTypesImagesAssetLink } from '@cognite/sdk';
 import { AnnotationStatus } from '@cognite/sdk';
 import { Box3 } from 'three';
+import { Camera } from 'three';
 import { CogniteClient } from '@cognite/sdk';
 import { CogniteInternalId } from '@cognite/sdk';
 import { Color } from 'three';
@@ -1573,11 +1574,11 @@ export interface Overlay3D<ContentType> {
 
 // @public
 export class Overlay3DCollection<MetadataType = DefaultOverlay3DContentType> extends Object3D implements OverlayCollection<MetadataType> {
-    constructor(overlayInfos: OverlayInfo<MetadataType>[], cameraManager: CameraManager, options?: Overlay3DCollectionOptions);
+    constructor(overlayInfos: OverlayInfo<MetadataType>[], options?: Overlay3DCollectionOptions);
     addOverlays(overlayInfos: OverlayInfo<MetadataType>[]): Overlay3D<MetadataType>[];
     dispose(): void;
     getOverlays(): Overlay3D<MetadataType>[];
-    intersectOverlays(normalizedCoordinates: Vector2): Overlay3D<MetadataType> | undefined;
+    intersectOverlays(normalizedCoordinates: Vector2, camera: Camera): Overlay3D<MetadataType> | undefined;
     removeAllOverlays(): void;
     removeOverlays(overlays: Overlay3D<MetadataType>[]): void;
     setVisibility(visibility: boolean): void;

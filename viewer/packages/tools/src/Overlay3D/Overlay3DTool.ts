@@ -16,9 +16,9 @@ import {
   OverlayInfo,
   DefaultOverlay3DContentType,
   OverlayCollection,
-  Overlay3D,
-  TextOverlay
+  Overlay3D
 } from '@reveal/3d-overlays';
+import { TextOverlay } from './TextOverlay';
 import { Cognite3DViewerToolBase } from '../Cognite3DViewerToolBase';
 
 /**
@@ -86,7 +86,7 @@ export class Overlay3DTool<ContentType = DefaultOverlay3DContentType> extends Co
 
   private _overlayCollections: Overlay3DCollection<ContentType>[] = [];
   private _isVisible = true;
-  private _textOverlay: TextOverlay;
+  private readonly _textOverlay: TextOverlay;
 
   private readonly _events = {
     hover: new EventTrigger<OverlayEventHandler<ContentType>>(),
@@ -118,8 +118,9 @@ export class Overlay3DTool<ContentType = DefaultOverlay3DContentType> extends Co
     const { _viewer: viewer } = this;
 
     const points = new Overlay3DCollection<ContentType>(overlays ?? [], {
-      ...options,
-      defaultOverlayColor: options?.defaultOverlayColor ?? this._defaultOverlayColor
+      defaultOverlayColor: options?.defaultOverlayColor ?? this._defaultOverlayColor,
+      overlayTexture: options?.overlayTexture,
+      overlayTextureMask: options?.overlayTextureMask
     });
 
     this._overlayCollections.push(points);
@@ -169,6 +170,21 @@ export class Overlay3DTool<ContentType = DefaultOverlay3DContentType> extends Co
    */
   getVisible(): boolean {
     return this._isVisible;
+  }
+
+  /**
+   * Sets whether text overlay is visible.
+   * Default is false.
+   */
+  setTextOverlayVisible(visible: boolean): void {
+    this._textOverlay.setTextOverlayEnabled(visible);
+  }
+
+  /**
+   * Gets whether text overlay is visible.
+   */
+  getTextOverlayVisible(): boolean {
+    return this._textOverlay.getTextOverlayEnabled();
   }
 
   /**
@@ -284,7 +300,7 @@ export class Overlay3DTool<ContentType = DefaultOverlay3DContentType> extends Co
     const intersections: [Overlay3D<ContentType>, THREE.Vector3][] = [];
 
     for (const points of this._overlayCollections) {
-      const intersection = points.intersectOverlays(normalizedCoordinates);
+      const intersection = points.intersectOverlays(normalizedCoordinates, camera);
       if (intersection !== undefined) {
         intersections.push([intersection, intersection.getPosition().clone()]);
       }
