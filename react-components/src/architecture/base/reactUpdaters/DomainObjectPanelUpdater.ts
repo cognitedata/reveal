@@ -20,12 +20,19 @@ export class DomainObjectPanelUpdater {
   // STATIC METHODS
   // ==================================================
 
-  public static get isActive(): boolean {
-    return this._setDomainObject !== undefined;
-  }
-
   public static setDomainObjectDelegate(value: SetDomainObjectInfoDelegate | undefined): void {
     this._setDomainObject = value;
+  }
+
+  public static show(domainObject: DomainObject | undefined): void {
+    if (this._setDomainObject === undefined) {
+      return;
+    }
+    if (domainObject !== undefined) {
+      this._setDomainObject({ domainObject });
+    } else {
+      this.hide();
+    }
   }
 
   public static hide(): void {
@@ -36,7 +43,7 @@ export class DomainObjectPanelUpdater {
   }
 
   public static notify(domainObject: DomainObject, change: DomainObjectChange): void {
-    if (!this.isActive) {
+    if (this._setDomainObject === undefined) {
       return;
     }
     if (domainObject.isSelected) {
@@ -44,20 +51,12 @@ export class DomainObjectPanelUpdater {
         this.hide();
       }
       if (change.isChanged(Changes.selected, Changes.geometry, Changes.naming, Changes.unit)) {
-        this.update(domainObject);
+        this.show(domainObject);
       }
     } else {
       if (change.isChanged(Changes.selected)) {
         this.hide(); // Deselected
       }
     }
-  }
-
-  private static update(domainObject: DomainObject): void {
-    if (this._setDomainObject === undefined) {
-      return;
-    }
-    const info = { domainObject };
-    this._setDomainObject(info);
   }
 }

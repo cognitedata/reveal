@@ -3,10 +3,10 @@
  */
 
 import { cloneDeep } from 'lodash';
-import { MeasureRenderStyle } from './MeasureRenderStyle';
-import { type RenderStyle } from '../../base/domainObjectsHelpers/RenderStyle';
+import { PrimitiveRenderStyle } from '../PrimitiveRenderStyle';
+import { type RenderStyle } from '../../../base/renderStyles/RenderStyle';
 
-export class MeasureLineRenderStyle extends MeasureRenderStyle {
+export class LineRenderStyle extends PrimitiveRenderStyle {
   // ==================================================
   // INSTANCE FIELDS
   // ==================================================
@@ -21,6 +21,6 @@ export class MeasureLineRenderStyle extends MeasureRenderStyle {
   // ==================================================
 
   public override clone(): RenderStyle {
-    return cloneDeep<MeasureLineRenderStyle>(this);
+    return cloneDeep<LineRenderStyle>(this);
   }
 }

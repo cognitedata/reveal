@@ -206,7 +206,7 @@ The second thing you have to implement is in the view. You need to override the 
 
 When we already do this, also add `Changes.renderStyle`, `Changes.color` and `Changes.geometry` since we need this changes later. The method `isChanged` takes multiple arguments.
 
-Note that we clear the memory when it change. This is a convenient method to remove all redundant data. The next time some of the data is needed, it will be generated automatically (lazy creation). The method addChildren will automatically be run when needed.
+Note that we clear the memory when it change. This is a convenient method to remove all redundant data. The next time some of the data is needed, it will be generated automatically (lazy creation). The method `addChildren` will automatically be run when needed.
 
 For large objects, where `addChildren` takes more time, you cannot do this. For instance, when the color change, you only need to update the material. If the geometry change, you need to update the geometry only. If the geometry is large, you can specify which part of geometry you need to update. This is not implemented yet, since we haven't seen any use cases for this, but is a part of this architecture.
 

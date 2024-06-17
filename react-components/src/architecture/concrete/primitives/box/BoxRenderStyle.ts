@@ -3,13 +3,16 @@
  */
 
 import { cloneDeep } from 'lodash';
-import { MeasureRenderStyle } from './MeasureRenderStyle';
-import { type RenderStyle } from '../../base/domainObjectsHelpers/RenderStyle';
+import { PrimitiveRenderStyle } from '../PrimitiveRenderStyle';
+import { type RenderStyle } from '../../../base/renderStyles/RenderStyle';
 
-export class MeasureBoxRenderStyle extends MeasureRenderStyle {
+export class BoxRenderStyle extends PrimitiveRenderStyle {
   // ==================================================
   // INSTANCE FIELDS
   // ==================================================
+
+  public showLines = true;
+  public showSolid = true;
 
   public opacity = 0.5;
   public opacityUse = true;
@@ -19,6 +22,6 @@ export class MeasureBoxRenderStyle extends MeasureRenderStyle {
   // ==================================================
 
   public override clone(): RenderStyle {
-    return cloneDeep<MeasureBoxRenderStyle>(this);
+    return cloneDeep<BoxRenderStyle>(this);
   }
 }

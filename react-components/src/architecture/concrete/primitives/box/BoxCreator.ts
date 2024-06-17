@@ -6,35 +6,35 @@ import { Matrix4, Plane, type Ray, Vector3 } from 'three';
 import {
   horizontalAngle,
   verticalDistanceTo
-} from '../../base/utilities/extensions/vectorExtensions';
-import { Range3 } from '../../base/utilities/geometry/Range3';
-import { forceBetween0AndPi } from '../../base/utilities/extensions/mathExtensions';
-import { MeasureBoxDomainObject } from './MeasureBoxDomainObject';
-import { MeasureType } from './MeasureType';
-import { getClosestPointOnLine } from '../../base/utilities/extensions/rayExtensions';
-import { BaseCreator } from '../../base/domainObjectsHelpers/BaseCreator';
-import { FocusType } from '../../base/domainObjectsHelpers/FocusType';
-import { Changes } from '../../base/domainObjectsHelpers/Changes';
-import { type DomainObject } from '../../base/domainObjects/DomainObject';
+} from '../../../base/utilities/extensions/vectorExtensions';
+import { Range3 } from '../../../base/utilities/geometry/Range3';
+import { forceBetween0AndPi } from '../../../base/utilities/extensions/mathExtensions';
+import { PrimitiveType } from '../PrimitiveType';
+import { getClosestPointOnLine } from '../../../base/utilities/extensions/rayExtensions';
+import { BaseCreator } from '../../../base/domainObjectsHelpers/BaseCreator';
+import { FocusType } from '../../../base/domainObjectsHelpers/FocusType';
+import { Changes } from '../../../base/domainObjectsHelpers/Changes';
+import { type DomainObject } from '../../../base/domainObjects/DomainObject';
+import { type BoxDomainObject } from './BoxDomainObject';
 
 const UP_VECTOR = new Vector3(0, 0, 1);
 /**
- * Helper class for generate a MeasureBoxDomainObject by clicking around
+ * Helper class for generate a BoxDomainObject by clicking around
  */
-export class MeasureBoxCreator extends BaseCreator {
+export class BoxCreator extends BaseCreator {
   // ==================================================
   // INSTANCE FIELDS
   // ==================================================
 
-  private readonly _domainObject: MeasureBoxDomainObject;
+  private readonly _domainObject: BoxDomainObject;
 
   // ==================================================
   // CONSTRUCTOR
   // ==================================================
 
-  constructor(measureType: MeasureType) {
+  constructor(domainObject: BoxDomainObject) {
     super();
-    this._domainObject = new MeasureBoxDomainObject(measureType);
+    this._domainObject = domainObject;
     this._domainObject.focusType = FocusType.Pending;
   }
 
@@ -51,15 +51,15 @@ export class MeasureBoxCreator extends BaseCreator {
   }
 
   public override get maximumPointCount(): number {
-    switch (this._domainObject.measureType) {
-      case MeasureType.VerticalArea:
+    switch (this._domainObject.primitiveType) {
+      case PrimitiveType.VerticalArea:
         return 2;
-      case MeasureType.HorizontalArea:
+      case PrimitiveType.HorizontalArea:
         return 3;
-      case MeasureType.Volume:
+      case PrimitiveType.Box:
         return 4;
       default:
-        throw new Error('Unknown measurement type');
+        throw new Error('Unknown primitiveType');
     }
   }
 
@@ -69,7 +69,7 @@ export class MeasureBoxCreator extends BaseCreator {
     isPending: boolean
   ): boolean {
     const domainObject = this._domainObject;
-    point = this.recalculatePoint(point, ray, domainObject.measureType);
+    point = this.recalculatePoint(point, ray, domainObject.primitiveType);
     if (point === undefined) {
       return false;
     }
@@ -79,18 +79,9 @@ export class MeasureBoxCreator extends BaseCreator {
     }
     domainObject.notify(Changes.geometry);
     if (this.isFinished) {
-      domainObject.setSelectedInteractive(true);
       domainObject.setFocusInteractive(FocusType.Focus);
     }
     return true;
-  }
-
-  public override handleEscape(): boolean {
-    if (this.notPendingPointCount >= this.minimumPointCount) {
-      return true; // Successfully
-    }
-    this._domainObject.removeInteractive();
-    return false; // Removed
   }
 
   // ==================================================
@@ -100,18 +91,18 @@ export class MeasureBoxCreator extends BaseCreator {
   private recalculatePoint(
     point: Vector3 | undefined,
     ray: Ray,
-    measureType: MeasureType
+    primitiveType: PrimitiveType
   ): Vector3 | undefined {
-    if (measureType === MeasureType.VerticalArea) {
+    if (primitiveType === PrimitiveType.VerticalArea) {
       return point;
     }
-    // Recalculate the point anywhy for >= 1 points
+    // Recalculate the point anyway for >= 1 points
     // This makes it more natural and you can pick in empty space
     if (this.notPendingPointCount === 1 || this.notPendingPointCount === 2) {
       const plane = new Plane().setFromNormalAndCoplanarPoint(UP_VECTOR, this.firstPoint);
       const newPoint = ray.intersectPlane(plane, new Vector3());
       return newPoint ?? undefined;
-    } else if (this.notPendingPointCount === 3 && measureType === MeasureType.Volume) {
+    } else if (this.notPendingPointCount === 3 && primitiveType === PrimitiveType.Box) {
       return getClosestPointOnLine(ray, UP_VECTOR, this.points[2], point);
     }
     return point;
@@ -132,7 +123,7 @@ export class MeasureBoxCreator extends BaseCreator {
     if (this.pointCount === 1) {
       domainObject.forceMinSize();
       domainObject.center.copy(this.firstPoint);
-      if (domainObject.measureType !== MeasureType.VerticalArea) {
+      if (domainObject.primitiveType !== PrimitiveType.VerticalArea) {
         domainObject.center.z += domainObject.size.z / 2;
       }
       return true;
@@ -142,7 +133,7 @@ export class MeasureBoxCreator extends BaseCreator {
       const vector = new Vector3().subVectors(this.firstPoint, this.lastPoint);
       domainObject.zRotation = forceBetween0AndPi(horizontalAngle(vector));
     }
-    const measureType = domainObject.measureType;
+    const primitiveType = domainObject.primitiveType;
     if (this.pointCount <= 3) {
       // Set the center and the size only in 2D space
       const newCenter = new Vector3();
@@ -152,7 +143,7 @@ export class MeasureBoxCreator extends BaseCreator {
       domainObject.center.x = newCenter.x;
       domainObject.size.x = newSize.x;
 
-      if (measureType === MeasureType.VerticalArea) {
+      if (primitiveType === PrimitiveType.VerticalArea) {
         domainObject.center.z = newCenter.z;
         domainObject.center.y = newCenter.y;
         domainObject.size.z = newSize.z;

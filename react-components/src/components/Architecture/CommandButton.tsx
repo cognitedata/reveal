@@ -44,7 +44,7 @@ export const CommandButton = ({
   const [isChecked, setChecked] = useState<boolean>(false);
   const [isEnabled, setEnabled] = useState<boolean>(true);
   const [isVisible, setVisible] = useState<boolean>(true);
-  const [uniqueIndex, setUniqueIndex] = useState<number>(0);
+  const [uniqueId, setUniqueId] = useState<number>(0);
   const [icon, setIcon] = useState<IconType>('Copy');
 
   useEffect(() => {
@@ -52,7 +52,7 @@ export const CommandButton = ({
       setChecked(command.isChecked);
       setEnabled(command.isEnabled);
       setVisible(command.isVisible);
-      setUniqueIndex(command._uniqueIndex);
+      setUniqueId(command.uniqueId);
       setIcon(command.icon as IconType);
     }
     update(newCommand);
@@ -67,20 +67,21 @@ export const CommandButton = ({
   }
   const placement = isHorizontal ? 'top' : 'right';
   const { key, fallback } = newCommand.tooltip;
-  // This was the only way it went through compiler: (more bytton types will be added in the future)
+  // This was the only way it went through compiler: (more button types will be added in the future)
   const type = newCommand.buttonType;
   if (type !== 'ghost' && type !== 'ghost-destructive') {
     return <></>;
   }
+  const text = key === undefined ? fallback : t(key, fallback);
   return (
-    <CogsTooltip content={t(key, fallback)} placement={placement} appendTo={document.body}>
+    <CogsTooltip content={text} placement={placement} appendTo={document.body}>
       <Button
         type={type}
         icon={icon}
-        key={uniqueIndex}
+        key={uniqueId}
         toggled={isChecked}
         disabled={!isEnabled}
-        aria-label={t(key, fallback)}
+        aria-label={text}
         onClick={() => {
           newCommand.invoke();
         }}
@@ -114,5 +115,5 @@ function addCommandButton(
     const direction = !isHorizontal ? 'horizontal' : 'vertical';
     return <Divider key={index} weight="2px" length="24px" direction={direction} />;
   }
-  return <CommandButton key={command._uniqueIndex} command={command} isHorizontal={isHorizontal} />;
+  return <CommandButton key={command.uniqueId} command={command} isHorizontal={isHorizontal} />;
 }

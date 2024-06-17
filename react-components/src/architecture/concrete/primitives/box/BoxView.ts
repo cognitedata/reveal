@@ -21,32 +21,32 @@ import {
   FrontSide,
   type PerspectiveCamera
 } from 'three';
-import { type MeasureBoxDomainObject, isValidSize } from './MeasureBoxDomainObject';
-import { type DomainObjectChange } from '../../base/domainObjectsHelpers/DomainObjectChange';
-import { Changes } from '../../base/domainObjectsHelpers/Changes';
-import { type MeasureBoxRenderStyle } from './MeasureBoxRenderStyle';
-import { GroupThreeView } from '../../base/views/GroupThreeView';
+import { BoxDomainObject } from './BoxDomainObject';
+import { type DomainObjectChange } from '../../../base/domainObjectsHelpers/DomainObjectChange';
+import { Changes } from '../../../base/domainObjectsHelpers/Changes';
+import { type BoxRenderStyle } from './BoxRenderStyle';
+import { GroupThreeView } from '../../../base/views/GroupThreeView';
 import {
   CDF_TO_VIEWER_TRANSFORMATION,
   type CustomObjectIntersectInput,
   type CustomObjectIntersection,
   Vector3Pool
 } from '@cognite/reveal';
-import { type DomainObjectIntersection } from '../../base/domainObjectsHelpers/DomainObjectIntersection';
-import { BoxFace } from '../../base/utilities/box/BoxFace';
-import { FocusType } from '../../base/domainObjectsHelpers/FocusType';
-import { clear } from '../../base/utilities/extensions/arrayExtensions';
-import { createSpriteWithText } from '../../base/utilities/sprites/createSprite';
+import { type DomainObjectIntersection } from '../../../base/domainObjectsHelpers/DomainObjectIntersection';
+import { BoxFace } from '../../../base/utilities/box/BoxFace';
+import { FocusType } from '../../../base/domainObjectsHelpers/FocusType';
+import { clear } from '../../../base/utilities/extensions/arrayExtensions';
+import { createSpriteWithText } from '../../../base/utilities/sprites/createSprite';
 import {
   createLineSegmentsBufferGeometryForBox,
   createOrientedBox
-} from '../../base/utilities/box/createLineSegmentsBufferGeometryForBox';
-import { BoxPickInfo } from '../../base/utilities/box/BoxPickInfo';
+} from '../../../base/utilities/box/createLineSegmentsBufferGeometryForBox';
+import { BoxPickInfo } from '../../../base/utilities/box/BoxPickInfo';
 import { radToDeg } from 'three/src/math/MathUtils.js';
-import { Range1 } from '../../base/utilities/geometry/Range1';
-import { MeasureType } from './MeasureType';
-import { type MeasureRenderStyle } from './MeasureRenderStyle';
-import { Quantity } from '../../base/domainObjectsHelpers/Quantity';
+import { Range1 } from '../../../base/utilities/geometry/Range1';
+import { PrimitiveType } from '../PrimitiveType';
+import { Quantity } from '../../../base/domainObjectsHelpers/Quantity';
+import { type PrimitiveRenderStyle } from '../PrimitiveRenderStyle';
 
 const RELATIVE_RESIZE_RADIUS = 0.15;
 const RELATIVE_ROTATION_RADIUS = new Range1(0.6, 0.75);
@@ -55,7 +55,7 @@ const TOP_FACE = new BoxFace(2);
 const CIRCULAR_SEGMENTS = 32;
 const RENDER_ORDER = 100;
 
-export class MeasureBoxView extends GroupThreeView {
+export class BoxView extends GroupThreeView {
   // ==================================================
   // INSTANCE FIELDS
   // ==================================================
@@ -67,12 +67,12 @@ export class MeasureBoxView extends GroupThreeView {
   // INSTANCE PROPERTIES
   // ==================================================
 
-  public override get domainObject(): MeasureBoxDomainObject {
-    return super.domainObject as MeasureBoxDomainObject;
+  public override get domainObject(): BoxDomainObject {
+    return super.domainObject as BoxDomainObject;
   }
 
-  protected override get style(): MeasureBoxRenderStyle {
-    return super.style as MeasureBoxRenderStyle;
+  protected override get style(): BoxRenderStyle {
+    return super.style as BoxRenderStyle;
   }
 
   // ==================================================
@@ -112,22 +112,31 @@ export class MeasureBoxView extends GroupThreeView {
   // OVERRIDES of GroupThreeView
   // ==================================================
 
+  public override get useDepthTest(): boolean {
+    return this.style.depthTest;
+  }
+
   protected override addChildren(): void {
-    const { domainObject } = this;
+    const { domainObject, style } = this;
     const matrix = this.getMatrix();
 
     const { focusType } = domainObject;
-    this.addChild(this.createSolid(matrix));
-    this.addChild(this.createLines(matrix));
+    if (style.showSolid) {
+      this.addChild(this.createSolid(matrix));
+    }
+    if (style.showLines) {
+      this.addChild(this.createLines(matrix));
+    }
     if (showMarkers(focusType)) {
       this.addChild(this.createRotationRing(matrix));
       this.addEdgeCircles(matrix);
     }
-    this.addLabels(matrix);
-  }
-
-  public override get useDepthTest(): boolean {
-    return this.style.depthTest;
+    if (style.showLabel) {
+      this.addLabels(matrix);
+    } else if (focusType === FocusType.Rotation) {
+      const spriteHeight = this.getTextHeight(this.style.relativeTextSize);
+      this.addChild(this.createRotationLabel(matrix, spriteHeight));
+    }
   }
 
   public override intersectIfCloser(
@@ -151,7 +160,7 @@ export class MeasureBoxView extends GroupThreeView {
     if (closestDistance !== undefined && closestDistance < distanceToCamera) {
       return undefined;
     }
-    if (!intersectInput.isVisible(point)) {
+    if (domainObject.useClippingInIntersection && !intersectInput.isVisible(point)) {
       return undefined;
     }
     const positionAtFace = newVector3(point).applyMatrix4(matrix.invert());
@@ -251,8 +260,8 @@ export class MeasureBoxView extends GroupThreeView {
     if (degrees === 0) {
       return undefined; // Not show when about 0
     }
-    const text = rootDomainObject.unitSystem.toStringWithUnit(degrees, Quantity.Degrees);
-    const sprite = createSprite(text, this.style, spriteHeight);
+    const text = rootDomainObject.unitSystem.toStringWithUnit(degrees, Quantity.Angle);
+    const sprite = BoxView.createSprite(text, this.style, spriteHeight);
     if (sprite === undefined) {
       return undefined;
     }
@@ -267,7 +276,7 @@ export class MeasureBoxView extends GroupThreeView {
     if (!this.isFaceVisible(TOP_FACE)) {
       return undefined;
     }
-    const sprite = createSprite('Pending', this.style, spriteHeight);
+    const sprite = BoxView.createSprite('Pending', this.style, spriteHeight);
     if (sprite === undefined) {
       return undefined;
     }
@@ -305,12 +314,12 @@ export class MeasureBoxView extends GroupThreeView {
 
   private createEdgeCircle(matrix: Matrix4, material: Material, face: BoxFace): Mesh | undefined {
     const { domainObject } = this;
-    const adjecentSize1 = domainObject.size.getComponent(face.tangentIndex1);
-    if (!isValidSize(adjecentSize1)) {
+    const adjacentSize1 = domainObject.size.getComponent(face.tangentIndex1);
+    if (!BoxDomainObject.isValidSize(adjacentSize1)) {
       return undefined;
     }
-    const adjecentSize2 = domainObject.size.getComponent(face.tangentIndex2);
-    if (!isValidSize(adjecentSize2)) {
+    const adjacentSize2 = domainObject.size.getComponent(face.tangentIndex2);
+    if (!BoxDomainObject.isValidSize(adjacentSize2)) {
       return undefined;
     }
     const radius = RELATIVE_RESIZE_RADIUS * this.getFaceRadius(face);
@@ -324,7 +333,7 @@ export class MeasureBoxView extends GroupThreeView {
     center.applyMatrix4(matrix);
     result.position.copy(center);
 
-    // Must be roteted correctly because of sideness
+    // Must be rotated correctly because of sideness
     if (face.face === 2) {
       result.rotateX(-Math.PI / 2);
     } else if (face.face === 5) {
@@ -355,12 +364,12 @@ export class MeasureBoxView extends GroupThreeView {
     clear(this._sprites);
     for (let index = 0; index < 3; index++) {
       const size = domainObject.size.getComponent(index);
-      if (!isValidSize(size)) {
+      if (!BoxDomainObject.isValidSize(size)) {
         this._sprites.push(undefined);
         continue;
       }
       const text = rootDomainObject.unitSystem.toStringWithUnit(size, Quantity.Length);
-      const sprite = createSprite(text, style, spriteHeight);
+      const sprite = BoxView.createSprite(text, style, spriteHeight);
       if (sprite === undefined) {
         this._sprites.push(undefined);
         continue;
@@ -397,7 +406,7 @@ export class MeasureBoxView extends GroupThreeView {
     }
     const spriteHeight = this.getTextHeight(style.relativeTextSize);
 
-    // If the 2 adjecent faces are visible, show the sprite along the edge
+    // If the 2 adjacent faces are visible, show the sprite along the edge
     for (let index = 0; index < this._sprites.length; index++) {
       const sprite = this._sprites[index];
       if (sprite === undefined) {
@@ -526,14 +535,34 @@ export class MeasureBoxView extends GroupThreeView {
 
   private isFaceVisible(boxFace: BoxFace): boolean {
     const { domainObject } = this;
-    switch (domainObject.measureType) {
-      case MeasureType.VerticalArea:
+    switch (domainObject.primitiveType) {
+      case PrimitiveType.VerticalArea:
         return boxFace.index === 1; // Y Face visible
 
-      case MeasureType.HorizontalArea:
+      case PrimitiveType.HorizontalArea:
         return boxFace.index === 2; // Z face visible
     }
     return true;
+  }
+
+  // ==================================================
+  // STATIC METHODS
+  // ==================================================
+
+  public static createSprite(
+    text: string,
+    style: PrimitiveRenderStyle,
+    height: number
+  ): Sprite | undefined {
+    const result = createSpriteWithText(text, height, style.labelColor, style.labelBgColor);
+    if (result === undefined) {
+      return undefined;
+    }
+    result.material.transparent = true;
+    result.material.opacity = style.labelOpacity;
+    result.material.depthTest = style.depthTest;
+    result.renderOrder = RENDER_ORDER;
+    return result;
   }
 }
 
@@ -568,8 +597,8 @@ function showMarkers(focusType: FocusType): boolean {
 
 function updateSolidMaterial(
   material: MeshPhongMaterial,
-  domainObject: MeasureBoxDomainObject,
-  style: MeasureBoxRenderStyle
+  domainObject: BoxDomainObject,
+  style: BoxRenderStyle
 ): void {
   const color = domainObject.getColorByColorType(style.colorType);
   const isSelected = domainObject.isSelected;
@@ -590,8 +619,8 @@ function updateSolidMaterial(
 
 function updateLineSegmentsMaterial(
   material: LineBasicMaterial,
-  domainObject: MeasureBoxDomainObject,
-  style: MeasureBoxRenderStyle
+  domainObject: BoxDomainObject,
+  style: BoxRenderStyle
 ): void {
   const color = domainObject.getColorByColorType(style.colorType);
   material.color = color;
@@ -602,8 +631,8 @@ function updateLineSegmentsMaterial(
 
 function updateMarkerMaterial(
   material: MeshPhongMaterial,
-  domainObject: MeasureBoxDomainObject,
-  style: MeasureBoxRenderStyle,
+  domainObject: BoxDomainObject,
+  style: BoxRenderStyle,
   hasFocus: boolean
 ): void {
   material.color = ARROW_AND_RING_COLOR;
@@ -623,24 +652,8 @@ function updateMarkerMaterial(
 // PRIVATE FUNCTIONS: Create object3D's
 // ==================================================
 
-function createSprite(text: string, style: MeasureRenderStyle, height: number): Sprite | undefined {
-  const result = createSpriteWithText(text, height, style.textColor, style.textBgColor);
-  if (result === undefined) {
-    return undefined;
-  }
-  result.material.transparent = true;
-  result.material.opacity = style.textOpacity;
-  result.material.depthTest = style.depthTest;
-  result.renderOrder = RENDER_ORDER;
-  return result;
-}
-
-function adjustLabel(
-  point: Vector3,
-  domainObject: MeasureBoxDomainObject,
-  spriteHeight: number
-): void {
-  if (domainObject.measureType !== MeasureType.VerticalArea) {
+function adjustLabel(point: Vector3, domainObject: BoxDomainObject, spriteHeight: number): void {
+  if (domainObject.primitiveType !== PrimitiveType.VerticalArea) {
     point.y += (1.1 * spriteHeight) / 2;
   }
 }

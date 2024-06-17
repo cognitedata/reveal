@@ -3,31 +3,31 @@
  */
 
 import { Plane, type Ray, Vector3 } from 'three';
-import { MeasureType } from './MeasureType';
-import { BaseCreator } from '../../base/domainObjectsHelpers/BaseCreator';
-import { MeasureLineDomainObject } from './MeasureLineDomainObject';
-import { copy } from '../../base/utilities/extensions/arrayExtensions';
-import { Changes } from '../../base/domainObjectsHelpers/Changes';
-import { type DomainObject } from '../../base/domainObjects/DomainObject';
-import { FocusType } from '../../base/domainObjectsHelpers/FocusType';
+import { PrimitiveType } from '../PrimitiveType';
+import { BaseCreator } from '../../../base/domainObjectsHelpers/BaseCreator';
+import { copy } from '../../../base/utilities/extensions/arrayExtensions';
+import { Changes } from '../../../base/domainObjectsHelpers/Changes';
+import { type DomainObject } from '../../../base/domainObjects/DomainObject';
+import { FocusType } from '../../../base/domainObjectsHelpers/FocusType';
+import { type LineDomainObject } from './LineDomainObject';
 
 /**
- * Helper class for generate a MeasureLineDomainObject by clicking around
+ * Helper class for generate a LineDomainObject by clicking around
  */
-export class MeasureLineCreator extends BaseCreator {
+export class LineCreator extends BaseCreator {
   // ==================================================
   // INSTANCE FIELDS
   // ==================================================
 
-  private readonly _domainObject: MeasureLineDomainObject;
+  private readonly _domainObject: LineDomainObject;
 
   // ==================================================
   // CONSTRUCTOR
   // ==================================================
 
-  constructor(measureType: MeasureType) {
+  constructor(domainObject: LineDomainObject) {
     super();
-    this._domainObject = new MeasureLineDomainObject(measureType);
+    this._domainObject = domainObject;
     this._domainObject.focusType = FocusType.Pending;
   }
 
@@ -48,14 +48,14 @@ export class MeasureLineCreator extends BaseCreator {
   }
 
   public override get maximumPointCount(): number {
-    switch (this._domainObject.measureType) {
-      case MeasureType.Line:
+    switch (this._domainObject.primitiveType) {
+      case PrimitiveType.Line:
         return 2;
-      case MeasureType.Polyline:
-      case MeasureType.Polygon:
+      case PrimitiveType.Polyline:
+      case PrimitiveType.Polygon:
         return Number.MAX_SAFE_INTEGER;
       default:
-        throw new Error('Unknown measurement type');
+        throw new Error('Unknown primitiveType');
     }
   }
 
@@ -83,7 +83,6 @@ export class MeasureLineCreator extends BaseCreator {
 
     domainObject.notify(Changes.geometry);
     if (this.isFinished) {
-      domainObject.setSelectedInteractive(true);
       domainObject.setFocusInteractive(FocusType.Focus);
     }
     return true;

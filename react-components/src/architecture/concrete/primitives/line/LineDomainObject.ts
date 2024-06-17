@@ -2,54 +2,82 @@
  * Copyright 2024 Cognite AS
  */
 
-import { type RenderStyle } from '../../base/domainObjectsHelpers/RenderStyle';
-import { type ThreeView } from '../../base/views/ThreeView';
-import { MeasureLineView } from './MeasureLineView';
-import { Color, Vector3 } from 'three';
-import { MeasureType } from './MeasureType';
-import { MeasureLineRenderStyle } from './MeasureLineRenderStyle';
-import { MeasureDomainObject } from './MeasureDomainObject';
+import { type RenderStyle } from '../../../base/renderStyles/RenderStyle';
+import { type ThreeView } from '../../../base/views/ThreeView';
+import { LineView } from './LineView';
+import { Vector3 } from 'three';
+import { PrimitiveType } from '../PrimitiveType';
+import { LineRenderStyle } from './LineRenderStyle';
 import {
   getHorizontalCrossProduct,
   horizontalDistanceTo,
   verticalDistanceTo
-} from '../../base/utilities/extensions/vectorExtensions';
-import { PanelInfo } from '../../base/domainObjectsHelpers/PanelInfo';
-import { Changes } from '../../base/domainObjectsHelpers/Changes';
-import { FocusType } from '../../base/domainObjectsHelpers/FocusType';
-import { Quantity } from '../../base/domainObjectsHelpers/Quantity';
+} from '../../../base/utilities/extensions/vectorExtensions';
+import { PanelInfo } from '../../../base/domainObjectsHelpers/PanelInfo';
+import { Changes } from '../../../base/domainObjectsHelpers/Changes';
+import { FocusType } from '../../../base/domainObjectsHelpers/FocusType';
+import { Quantity } from '../../../base/domainObjectsHelpers/Quantity';
+import { VisualDomainObject } from '../../../base/domainObjects/VisualDomainObject';
+import { getIconByPrimitiveType } from '../../measurements/getIconByPrimitiveType';
+import { type TranslateKey } from '../../../base/utilities/TranslateKey';
 
-export class MeasureLineDomainObject extends MeasureDomainObject {
+export abstract class LineDomainObject extends VisualDomainObject {
   // ==================================================
   // INSTANCE FIELDS
   // ==================================================
 
   public readonly points: Vector3[] = [];
+  private readonly _primitiveType: PrimitiveType;
   public focusType = FocusType.None;
 
   // ==================================================
   // INSTANCE PROPERTIES
   // ==================================================
 
-  public override get renderStyle(): MeasureLineRenderStyle {
-    return this.getRenderStyle() as MeasureLineRenderStyle;
+  public get renderStyle(): LineRenderStyle {
+    return this.getRenderStyle() as LineRenderStyle;
+  }
+
+  public get primitiveType(): PrimitiveType {
+    return this._primitiveType;
   }
 
   // ==================================================
   // CONSTRUCTOR
   // ==================================================
 
-  public constructor(measureType: MeasureType) {
-    super(measureType);
-    this.color = new Color(Color.NAMES.red);
+  protected constructor(primitiveType: PrimitiveType) {
+    super();
+    this._primitiveType = primitiveType;
   }
 
   // ==================================================
   // OVERRIDES of DomainObject
   // ==================================================
 
+  public override get icon(): string {
+    return getIconByPrimitiveType(this.primitiveType);
+  }
+
+  public override get typeName(): TranslateKey {
+    switch (this.primitiveType) {
+      case PrimitiveType.Line:
+        return { key: 'MEASUREMENTS_LINE', fallback: 'Line' };
+      case PrimitiveType.Polyline:
+        return { key: 'MEASUREMENTS_POLYLINE', fallback: 'Polyline' };
+      case PrimitiveType.Polygon:
+        return { key: 'MEASUREMENTS_POLYGON', fallback: 'Polygon' };
+      default:
+        throw new Error('Unknown PrimitiveType');
+    }
+  }
+
   public override createRenderStyle(): RenderStyle | undefined {
-    return new MeasureLineRenderStyle();
+    return new LineRenderStyle();
+  }
+
+  public override get hasPanelInfo(): boolean {
+    return true;
   }
 
   public override getPanelInfo(): PanelInfo | undefined {
@@ -57,20 +85,19 @@ export class MeasureLineDomainObject extends MeasureDomainObject {
       return undefined;
     }
     const info = new PanelInfo();
-    switch (this.measureType) {
-      case MeasureType.Line:
-        info.setHeader('MEASUREMENTS_LINE', 'Line');
+    info.setHeader(this.typeName);
+
+    switch (this.primitiveType) {
+      case PrimitiveType.Line:
         add('MEASUREMENTS_LENGTH', 'Length', this.getTotalLength());
         add('MEASUREMENTS_HORIZONTAL_LENGTH', 'Horizontal length', this.getHorizontalLength());
         add('MEASUREMENTS_VERTICAL_LENGTH', 'Vertical length', this.getVerticalLength());
         break;
 
-      case MeasureType.Polyline:
-        info.setHeader('MEASUREMENTS_POLYLINE', 'Polyline');
+      case PrimitiveType.Polyline:
         add('MEASUREMENTS_TOTAL_LENGTH', 'Total length', this.getTotalLength());
         break;
-      case MeasureType.Polygon:
-        info.setHeader('MEASUREMENTS_POLYGON', 'Polygon');
+      case PrimitiveType.Polygon:
         add('MEASUREMENTS_TOTAL_LENGTH', 'Total length', this.getTotalLength());
         if (this.points.length > 2) {
           add(
@@ -83,7 +110,7 @@ export class MeasureLineDomainObject extends MeasureDomainObject {
         break;
 
       default:
-        throw new Error('Unknown MeasureType type');
+        throw new Error('Unknown PrimitiveType type');
     }
     return info;
 
@@ -97,7 +124,7 @@ export class MeasureLineDomainObject extends MeasureDomainObject {
   // ==================================================
 
   protected override createThreeView(): ThreeView | undefined {
-    return new MeasureLineView();
+    return new LineView();
   }
 
   // ==================================================
@@ -163,7 +190,7 @@ export class MeasureLineDomainObject extends MeasureDomainObject {
 
     for (let index = 1; index <= count; index++) {
       p1.copy(points[index % count]);
-      p1.sub(first); // Translate down to first point, to increase acceracy
+      p1.sub(first); // Translate down to first point, to increase accuracy
       sum += getHorizontalCrossProduct(p0, p1);
       p0.copy(p1);
     }
@@ -174,8 +201,13 @@ export class MeasureLineDomainObject extends MeasureDomainObject {
     if (this.focusType === focusType) {
       return false;
     }
+    const changeFromPending =
+      this.focusType === FocusType.Pending && focusType !== FocusType.Pending;
     this.focusType = focusType;
     this.notify(Changes.focus);
+    if (changeFromPending) {
+      this.notify(Changes.geometry);
+    }
     return true;
   }
 }

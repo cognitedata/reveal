@@ -13,16 +13,15 @@ import {
   Mesh,
   MeshPhongMaterial,
   Quaternion,
-  Sprite,
   Vector2,
   Vector3
 } from 'three';
 import { Wireframe } from 'three/examples/jsm/lines/Wireframe.js';
-import { MeasureLineDomainObject } from './MeasureLineDomainObject';
-import { DomainObjectChange } from '../../base/domainObjectsHelpers/DomainObjectChange';
-import { Changes } from '../../base/domainObjectsHelpers/Changes';
-import { MeasureLineRenderStyle } from './MeasureLineRenderStyle';
-import { GroupThreeView } from '../../base/views/GroupThreeView';
+import { LineDomainObject } from './LineDomainObject';
+import { DomainObjectChange } from '../../../base/domainObjectsHelpers/DomainObjectChange';
+import { Changes } from '../../../base/domainObjectsHelpers/Changes';
+import { LineRenderStyle } from './LineRenderStyle';
+import { GroupThreeView } from '../../../base/views/GroupThreeView';
 import {
   CDF_TO_VIEWER_TRANSFORMATION,
   CustomObjectIntersectInput,
@@ -30,30 +29,29 @@ import {
 } from '@cognite/reveal';
 import { LineSegmentsGeometry } from 'three/examples/jsm/lines/LineSegmentsGeometry.js';
 import { LineMaterial } from 'three/examples/jsm/lines/LineMaterial.js';
-import { MeasureType } from './MeasureType';
-import { createSpriteWithText } from '../../base/utilities/sprites/createSprite';
+import { PrimitiveType } from '../PrimitiveType';
 import { mergeGeometries } from 'three/examples/jsm/utils/BufferGeometryUtils.js';
-import { FocusType } from '../../base/domainObjectsHelpers/FocusType';
-import { MeasureRenderStyle } from './MeasureRenderStyle';
-import { DomainObjectIntersection } from '../../base/domainObjectsHelpers/DomainObjectIntersection';
-import { ClosestGeometryFinder } from '../../base/utilities/geometry/ClosestGeometryFinder';
-import { square } from '../../base/utilities/extensions/mathExtensions';
-import { Quantity } from '../../base/domainObjectsHelpers/Quantity';
+import { FocusType } from '../../../base/domainObjectsHelpers/FocusType';
+import { DomainObjectIntersection } from '../../../base/domainObjectsHelpers/DomainObjectIntersection';
+import { ClosestGeometryFinder } from '../../../base/utilities/geometry/ClosestGeometryFinder';
+import { square } from '../../../base/utilities/extensions/mathExtensions';
+import { Quantity } from '../../../base/domainObjectsHelpers/Quantity';
+import { BoxView } from '../box/BoxView';
 
 const CYLINDER_DEFAULT_AXIS = new Vector3(0, 1, 0);
 const RENDER_ORDER = 100;
 
-export class MeasureLineView extends GroupThreeView {
+export class LineView extends GroupThreeView {
   // ==================================================
   // INSTANCE PROPERTIES
   // ==================================================
 
-  public override get domainObject(): MeasureLineDomainObject {
-    return super.domainObject as MeasureLineDomainObject;
+  public override get domainObject(): LineDomainObject {
+    return super.domainObject as LineDomainObject;
   }
 
-  protected override get style(): MeasureLineRenderStyle {
-    return super.style as MeasureLineRenderStyle;
+  protected override get style(): LineRenderStyle {
+    return super.style as LineRenderStyle;
   }
 
   // ==================================================
@@ -81,25 +79,25 @@ export class MeasureLineView extends GroupThreeView {
   // OVERRIDES of GroupThreeView
   // ==================================================
 
+  public override get useDepthTest(): boolean {
+    return this.style.depthTest;
+  }
+
   protected override addChildren(): void {
     this.addChild(this.createPipe());
     this.addChild(this.createLines()); // Create a line so it can be seen from long distance
     this.addLabels();
   }
 
-  public override get useDepthTest(): boolean {
-    return this.style.depthTest;
-  }
-
   public override intersectIfCloser(
     intersectInput: CustomObjectIntersectInput,
     closestDistance: number | undefined
   ): undefined | CustomObjectIntersection {
-    if (this.domainObject.focusType === FocusType.Pending) {
+    const { domainObject, style } = this;
+    if (domainObject.focusType === FocusType.Pending) {
       return undefined; // Should never be picked
     }
     // Implement the intersection logic here, because of bug in tree.js
-    const { domainObject, style } = this;
     const radius = getRadius(domainObject, style);
     if (radius <= 0) {
       return;
@@ -121,7 +119,7 @@ export class MeasureLineView extends GroupThreeView {
     if (closestDistance !== undefined) {
       closestFinder.minDistance = closestDistance;
     }
-    const loopLength = domainObject.measureType === MeasureType.Polygon ? length + 1 : length;
+    const loopLength = domainObject.primitiveType === PrimitiveType.Polygon ? length + 1 : length;
     for (let i = 0; i < loopLength; i++) {
       thisPoint.copy(points[i % length]);
       thisPoint.applyMatrix4(CDF_TO_VIEWER_TRANSFORMATION);
@@ -164,7 +162,7 @@ export class MeasureLineView extends GroupThreeView {
       return undefined;
     }
     const geometries: CylinderGeometry[] = [];
-    const loopLength = domainObject.measureType === MeasureType.Polygon ? length + 1 : length;
+    const loopLength = domainObject.primitiveType === PrimitiveType.Polygon ? length + 1 : length;
 
     // Just allocate all needed objects once
     const prevPoint = new Vector3();
@@ -182,7 +180,7 @@ export class MeasureLineView extends GroupThreeView {
         const distance = prevPoint.distanceTo(thisPoint);
         const cylinder = new CylinderGeometry(radius, radius, distance, 6, 1);
 
-        // use quaterion to orient cylinder to align along the vector formed between
+        // use quaternion to orient cylinder to align along the vector formed between
         // the pair of vertices
         direction.copy(thisPoint).sub(prevPoint).normalize();
         quaternion.setFromUnitVectors(CYLINDER_DEFAULT_AXIS, direction);
@@ -251,6 +249,9 @@ export class MeasureLineView extends GroupThreeView {
 
   private addLabels(): void {
     const { domainObject, style } = this;
+    if (!style.showLabel) {
+      return;
+    }
     const { points, rootDomainObject } = domainObject;
     if (rootDomainObject === undefined) {
       return;
@@ -263,7 +264,7 @@ export class MeasureLineView extends GroupThreeView {
     if (spriteHeight <= 0) {
       return;
     }
-    const loopLength = domainObject.measureType === MeasureType.Polygon ? length : length - 1;
+    const loopLength = domainObject.primitiveType === PrimitiveType.Polygon ? length : length - 1;
     const center = new Vector3();
     for (let i = 0; i < loopLength; i++) {
       const point1 = points[i % length];
@@ -274,7 +275,7 @@ export class MeasureLineView extends GroupThreeView {
       center.applyMatrix4(CDF_TO_VIEWER_TRANSFORMATION);
 
       const text = rootDomainObject.unitSystem.toStringWithUnit(distance, Quantity.Length);
-      const sprite = createSprite(text, style, spriteHeight);
+      const sprite = BoxView.createSprite(text, style, spriteHeight);
       if (sprite === undefined) {
         continue;
       }
@@ -293,14 +294,14 @@ export class MeasureLineView extends GroupThreeView {
 // PRIVATE FUNCTIONS: Create object3D's
 // ==================================================
 
-function createVertices(domainObject: MeasureLineDomainObject): number[] | undefined {
+function createVertices(domainObject: LineDomainObject): number[] | undefined {
   const { points } = domainObject;
   const { length } = points;
   if (length < 2) {
     return undefined;
   }
   const vertices: number[] = [];
-  const loopLength = domainObject.measureType === MeasureType.Polygon ? length + 1 : length;
+  const loopLength = domainObject.primitiveType === PrimitiveType.Polygon ? length + 1 : length;
 
   for (let i = 0; i < loopLength; i++) {
     const point = points[i % length].clone();
@@ -313,22 +314,10 @@ function createVertices(domainObject: MeasureLineDomainObject): number[] | undef
   return vertices;
 }
 
-function createSprite(text: string, style: MeasureRenderStyle, height: number): Sprite | undefined {
-  const result = createSpriteWithText(text, height, style.textColor, style.textBgColor);
-  if (result === undefined) {
-    return undefined;
-  }
-  result.material.transparent = true;
-  result.material.opacity = style.textOpacity;
-  result.material.depthTest = style.depthTest;
-  result.renderOrder = RENDER_ORDER;
-  return result;
-}
-
 function updateSolidMaterial(
   material: MeshPhongMaterial,
-  boxDomainObject: MeasureLineDomainObject,
-  style: MeasureLineRenderStyle
+  boxDomainObject: LineDomainObject,
+  style: LineRenderStyle
 ): void {
   const color = boxDomainObject.getColorByColorType(style.colorType);
   material.color = color;
@@ -344,15 +333,15 @@ function updateSolidMaterial(
 
 function adjustLabel(
   point: Vector3,
-  domainObject: MeasureLineDomainObject,
-  style: MeasureLineRenderStyle,
+  domainObject: LineDomainObject,
+  style: LineRenderStyle,
   spriteHeight: number
 ): void {
-  if (domainObject.measureType !== MeasureType.VerticalArea) {
+  if (domainObject.primitiveType !== PrimitiveType.VerticalArea) {
     point.y += (1.1 * spriteHeight) / 2 + style.pipeRadius;
   }
 }
 
-function getRadius(domainObject: MeasureLineDomainObject, style: MeasureLineRenderStyle): number {
+function getRadius(domainObject: LineDomainObject, style: LineRenderStyle): number {
   return domainObject.isSelected ? style.selectedPipeRadius : style.pipeRadius;
 }

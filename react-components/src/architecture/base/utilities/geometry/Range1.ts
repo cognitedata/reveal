@@ -82,7 +82,7 @@ export class Range1 {
   // INSTANCE METHODS: Requests
   // ==================================================
 
-  equals(other: Range1): boolean {
+  public equals(other: Range1): boolean {
     if (other === undefined) {
       return false;
     }
@@ -95,7 +95,7 @@ export class Range1 {
     return this.min === other.min && this.max === other.max;
   }
 
-  isInside(value: number): boolean {
+  public isInside(value: number): boolean {
     return this.min <= value && value <= this.max;
   }
 
