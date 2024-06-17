@@ -13,7 +13,7 @@ export class DeleteAllExamplesCommand extends InstanceCommand {
   // ==================================================
 
   public override get tooltip(): TranslateKey {
-    return { key: 'EXAMPLES_DELETE', fallback: 'Remove all examples' };
+    return { fallback: 'Remove all examples' };
   }
 
   public override get icon(): string {

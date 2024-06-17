@@ -4,7 +4,7 @@
 
 import { RenderStyle } from './RenderStyle';
 
-export abstract class DepthTestRenderStyle extends RenderStyle {
+export abstract class CommonRenderStyle extends RenderStyle {
   // ==================================================
   // INSTANCE FIELDS
   // ==================================================

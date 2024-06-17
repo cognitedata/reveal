@@ -19,7 +19,7 @@ export class SetTerrainVisibleCommand extends RenderTargetCommand {
   }
 
   public override get tooltip(): TranslateKey {
-    return { key: 'UNKNOWN', fallback: 'Set terrain visible. Create it if not done' };
+    return { fallback: 'Set terrain visible. Create it if not done' };
   }
 
   protected override invokeCore(): boolean {

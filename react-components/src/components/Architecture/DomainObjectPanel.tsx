@@ -59,6 +59,7 @@ export const DomainObjectPanel = (): ReactElement => {
       command.getString = () => toString(info, t, unitSystem);
   }
 
+  const text = header?.getText(t);
   return (
     <Container
       style={{
@@ -75,9 +76,9 @@ export const DomainObjectPanel = (): ReactElement => {
             <PaddedTh>
               <Icon type={icon} />
             </PaddedTh>
-            {header !== undefined && header.key !== undefined && (
+            {text !== undefined && (
               <PaddedTh>
-                <Body size={HEADER_SIZE}>{t(header.key, header.fallback)}</Body>
+                <Body size={HEADER_SIZE}>{text}</Body>
               </PaddedTh>
             )}
             <CommandButtons commands={commands} isHorizontal={true} />
@@ -92,11 +93,12 @@ export const DomainObjectPanel = (): ReactElement => {
 
   function addTextWithNumber(item: NumberPanelItem, unitSystem: UnitSystem): ReactElement {
     const icon = item.icon as IconType;
-    const { key, fallback, quantity, value } = item;
+    const { quantity, value } = item;
+    const text = item?.getText(t);
     return (
       <tr key={JSON.stringify(item)}>
         <PaddedTh>
-          {key !== undefined && <Body size={TEXT_SIZE}>{t(key, fallback)}</Body>}
+          {text !== undefined && <Body size={TEXT_SIZE}>{text}</Body>}
           {icon !== undefined && <Icon type={icon} />}
         </PaddedTh>
         <></>
@@ -112,24 +114,22 @@ export const DomainObjectPanel = (): ReactElement => {
 };
 
 function toString(info: PanelInfo, translate: TranslateDelegate, unitSystem: UnitSystem): string {
-  let text = '';
+  let result = '';
   {
     const { header } = info;
-    if (header !== undefined) {
-      const { key, fallback } = header;
-      if (key !== undefined) {
-        text += `${translate(key, fallback)}\n`;
-      }
+    const text = header?.getText(translate);
+    if (text !== undefined) {
+      result += `${text}\n`;
     }
   }
   for (const item of info.items) {
-    const { key, fallback, quantity, value } = item;
-    if (key !== undefined) {
-      text += `${translate(key, fallback)}: `;
+    const text = item?.getText(translate);
+    if (text !== undefined) {
+      result += `${text}: `;
     }
-    text += `${unitSystem.toStringWithUnit(value, quantity)}\n`;
+    result += `${unitSystem.toStringWithUnit(item.value, item.quantity)}\n`;
   }
-  return text;
+  return result;
 }
 
 const NumberTh = styled.th`

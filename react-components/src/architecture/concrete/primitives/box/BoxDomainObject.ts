@@ -131,7 +131,7 @@ export abstract class BoxDomainObject extends VisualDomainObject {
     // I forgot to add text for rotation angle before the deadline, so I used a icon instead.
     if (this.zRotation !== 0 && isFinished) {
       info.add({
-        key: '',
+        key: undefined,
         fallback: '',
         icon: 'Angle',
         value: radToDeg(this.zRotation),
@@ -140,7 +140,12 @@ export abstract class BoxDomainObject extends VisualDomainObject {
     }
     return info;
 
-    function add(key: string, fallback: string, value: number, quantity: Quantity): void {
+    function add(
+      key: string | undefined,
+      fallback: string,
+      value: number,
+      quantity: Quantity
+    ): void {
       info.add({ key, fallback, value, quantity });
     }
   }

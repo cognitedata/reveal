@@ -11,6 +11,6 @@ export class FolderDomainObject extends DomainObject {
   // ==================================================
 
   public override get typeName(): TranslateKey {
-    return { key: 'FOLDER', fallback: 'Folder' };
+    return { fallback: 'Folder' };
   }
 }

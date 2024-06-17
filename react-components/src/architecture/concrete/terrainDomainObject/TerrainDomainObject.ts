@@ -38,7 +38,7 @@ export class TerrainDomainObject extends VisualDomainObject {
   // ==================================================
 
   public override get typeName(): TranslateKey {
-    return { key: 'TERRAIN', fallback: 'Terrain' };
+    return { fallback: 'Terrain' };
   }
 
   public override createRenderStyle(): RenderStyle | undefined {

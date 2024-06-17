@@ -14,10 +14,7 @@ export class ResetAllExamplesCommand extends InstanceCommand {
   // ==================================================
 
   public override get tooltip(): TranslateKey {
-    return {
-      key: 'EXAMPLES_RESET',
-      fallback: 'Reset the visual style for all examples to default'
-    };
+    return { fallback: 'Reset the visual style for all examples to default' };
   }
 
   public override get icon(): string {

@@ -26,7 +26,7 @@ export class GizmoBoxDomainObject extends BoxDomainObject {
   // ==================================================
 
   public override get typeName(): TranslateKey {
-    return { key: 'GIZMO_BOX', fallback: 'Gizmo box' };
+    return { fallback: 'Gizmo box' };
   }
 
   public override createRenderStyle(): RenderStyle | undefined {

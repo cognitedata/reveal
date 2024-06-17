@@ -4,10 +4,10 @@
 
 import { cloneDeep } from 'lodash';
 import { type RenderStyle } from '../../../base/renderStyles/RenderStyle';
-import { DepthTestRenderStyle } from '../../../base/renderStyles/DepthTestRenderStyle';
+import { CommonRenderStyle } from '../../../base/renderStyles/CommonRenderStyle';
 import { BLACK_COLOR, WHITE_COLOR } from '../../../base/utilities/colors/colorExtensions';
 
-export class PlaneRenderStyle extends DepthTestRenderStyle {
+export class PlaneRenderStyle extends CommonRenderStyle {
   // ==================================================
   // INSTANCE FIELDS
   // ==================================================

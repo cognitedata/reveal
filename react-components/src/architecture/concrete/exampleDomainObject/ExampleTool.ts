@@ -27,7 +27,7 @@ export class ExampleTool extends BaseEditTool {
   }
 
   public override get tooltip(): TranslateKey {
-    return { key: 'EXAMPLE_EDIT', fallback: 'Create or edit a single point' };
+    return { fallback: 'Create or edit a single point' };
   }
 
   // ==================================================

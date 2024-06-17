@@ -29,11 +29,7 @@ export abstract class InstanceCommand extends RenderTargetCommand {
   }
 
   protected getFirstInstance(): DomainObject | undefined {
-    // eslint-disable-next-line no-unreachable-loop
-    for (const domainObject of this.getInstances()) {
-      return domainObject;
-    }
-    return undefined;
+    return this.getInstances().next().value;
   }
 
   protected *getInstances(): Generator<DomainObject> {

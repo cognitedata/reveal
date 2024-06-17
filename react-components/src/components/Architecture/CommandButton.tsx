@@ -72,15 +72,16 @@ export const CommandButton = ({
   if (type !== 'ghost' && type !== 'ghost-destructive') {
     return <></>;
   }
+  const text = key === undefined ? fallback : t(key, fallback);
   return (
-    <CogsTooltip content={t(key, fallback)} placement={placement} appendTo={document.body}>
+    <CogsTooltip content={text} placement={placement} appendTo={document.body}>
       <Button
         type={type}
         icon={icon}
         key={uniqueId}
         toggled={isChecked}
         disabled={!isEnabled}
-        aria-label={t(key, fallback)}
+        aria-label={text}
         onClick={() => {
           newCommand.invoke();
         }}

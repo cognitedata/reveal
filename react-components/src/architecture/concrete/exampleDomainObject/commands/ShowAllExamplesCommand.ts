@@ -13,7 +13,7 @@ export class ShowAllExamplesCommand extends ShowAllDomainObjectsCommand {
   // ==================================================
 
   public override get tooltip(): TranslateKey {
-    return { key: 'EXAMPLES_SHOW', fallback: 'Show or hide all examples' };
+    return { fallback: 'Show or hide all examples' };
   }
 
   protected override isInstance(domainObject: DomainObject): boolean {

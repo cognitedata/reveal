@@ -15,7 +15,7 @@ export class AxisDomainObject extends VisualDomainObject {
   // ==================================================
 
   public override get typeName(): TranslateKey {
-    return { key: 'AXIS3D', fallback: 'Axis3D' };
+    return { fallback: 'Axis' };
   }
 
   public override createRenderStyle(): RenderStyle | undefined {

@@ -11,7 +11,7 @@ export abstract class ShowAllDomainObjectsCommand extends InstanceCommand {
   // ==================================================
 
   public override get tooltip(): TranslateKey {
-    return { key: 'EXAMPLES_SHOW', fallback: 'Show or hide' };
+    return { fallback: 'Show or hide' };
   }
 
   public override get icon(): string {

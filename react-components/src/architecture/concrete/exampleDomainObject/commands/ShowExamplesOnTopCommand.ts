@@ -13,7 +13,7 @@ export class ShowExamplesOnTopCommand extends ShowDomainObjectsOnTopCommand {
   // ==================================================
 
   public override get tooltip(): TranslateKey {
-    return { key: 'EXAMPLES_SHOW_ON_TOP', fallback: 'Show all examples on top' };
+    return { fallback: 'Show all examples on top' };
   }
 
   protected override isInstance(domainObject: DomainObject): boolean {

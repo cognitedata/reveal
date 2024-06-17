@@ -3,7 +3,7 @@
  */
 
 import { Changes } from '../domainObjectsHelpers/Changes';
-import { DepthTestRenderStyle } from '../renderStyles/DepthTestRenderStyle';
+import { CommonRenderStyle } from '../renderStyles/CommonRenderStyle';
 import { InstanceCommand } from './InstanceCommand';
 
 export abstract class ShowDomainObjectsOnTopCommand extends InstanceCommand {
@@ -23,7 +23,7 @@ export abstract class ShowDomainObjectsOnTopCommand extends InstanceCommand {
     const depthTest = this.getDepthTest();
     for (const domainObject of this.getInstances()) {
       const renderStyle = domainObject.getRenderStyle();
-      if (!(renderStyle instanceof DepthTestRenderStyle)) {
+      if (!(renderStyle instanceof CommonRenderStyle)) {
         continue;
       }
       renderStyle.depthTest = !depthTest;
@@ -42,7 +42,7 @@ export abstract class ShowDomainObjectsOnTopCommand extends InstanceCommand {
       return false;
     }
     const renderStyle = domainObject.getRenderStyle();
-    if (renderStyle instanceof DepthTestRenderStyle) {
+    if (renderStyle instanceof CommonRenderStyle) {
       return renderStyle.depthTest;
     }
     return false;

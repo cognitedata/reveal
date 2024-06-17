@@ -38,6 +38,6 @@ export class RootDomainObject extends DomainObject {
   // ==================================================
 
   public override get typeName(): TranslateKey {
-    return { key: 'ROOT', fallback: 'Root' };
+    return { fallback: 'Root' };
   }
 }

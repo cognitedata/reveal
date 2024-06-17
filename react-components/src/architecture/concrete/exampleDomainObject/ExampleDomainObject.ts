@@ -42,7 +42,7 @@ export class ExampleDomainObject extends VisualDomainObject {
   }
 
   public override get typeName(): TranslateKey {
-    return { key: 'EXAMPLE', fallback: 'Example' };
+    return { fallback: 'Example' };
   }
 
   public override get canBeRemoved(): boolean {
@@ -64,13 +64,14 @@ export class ExampleDomainObject extends VisualDomainObject {
   public override getPanelInfo(): PanelInfo | undefined {
     const info = new PanelInfo();
     info.setHeader(this.typeName);
-    add('XCOORDINATE', 'X coordinate', this.center.x, Quantity.Length);
-    add('YCOORDINATE', 'Y coordinate', this.center.y, Quantity.Length);
-    add('ZCOORDINATE', 'Z coordinate', this.center.z, Quantity.Length);
+    // In production code, you should add a Key also!
+    add('X coordinate', this.center.x, Quantity.Length);
+    add('Y coordinate', this.center.y, Quantity.Length);
+    add('Z coordinate', this.center.z, Quantity.Length);
     return info;
 
-    function add(key: string, fallback: string, value: number, quantity: Quantity): void {
-      info.add({ key, fallback, value, quantity });
+    function add(fallback: string, value: number, quantity: Quantity): void {
+      info.add({ fallback, value, quantity });
     }
   }
 
