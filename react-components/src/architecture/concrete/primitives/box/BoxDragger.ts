@@ -95,7 +95,6 @@ export class BoxDragger extends BaseDragger {
     this._zRotationOfBox = this._domainObject.zRotation;
 
     const root = this._domainObject.rootDomainObject;
-
     if (root !== undefined) {
       this._unitSystem = root.unitSystem;
     }
