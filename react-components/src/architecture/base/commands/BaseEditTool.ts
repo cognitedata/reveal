@@ -36,10 +36,10 @@ export abstract class BaseEditTool extends NavigationTool {
     this._dragger = undefined;
   }
 
-  public override async onPointerDown(event: PointerEvent, leftButton: boolean): Promise<void> {
+  public override async onLeftPointerDown(event: PointerEvent): Promise<void> {
     this._dragger = await this.createDragger(event);
     if (this._dragger === undefined) {
-      await super.onPointerDown(event, leftButton);
+      await super.onLeftPointerDown(event);
       return;
     }
     this._dragger.onPointerDown(event);
@@ -47,18 +47,18 @@ export abstract class BaseEditTool extends NavigationTool {
     this._dragger.domainObject.setSelectedInteractive(true);
   }
 
-  public override async onPointerDrag(event: PointerEvent, leftButton: boolean): Promise<void> {
+  public override async onLeftPointerDrag(event: PointerEvent): Promise<void> {
     if (this._dragger === undefined) {
-      await super.onPointerDrag(event, leftButton);
+      await super.onLeftPointerDrag(event);
       return;
     }
     const ray = this.getRay(event, true);
     this._dragger.onPointerDrag(event, ray);
   }
 
-  public override async onPointerUp(event: PointerEvent, leftButton: boolean): Promise<void> {
+  public override async onLeftPointerUp(event: PointerEvent): Promise<void> {
     if (this._dragger === undefined) {
-      await super.onPointerUp(event, leftButton);
+      await super.onLeftPointerUp(event);
     } else {
       this._dragger.onPointerUp(event);
       this._dragger = undefined;

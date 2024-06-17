@@ -35,7 +35,7 @@ export class ExampleView extends GroupThreeView {
 
   public override update(change: DomainObjectChange): void {
     super.update(change);
-    if (change.isChanged(Changes.selected, Changes.renderStyle, Changes.color)) {
+    if (change.isChanged(Changes.selected, Changes.renderStyle, Changes.color, Changes.clipping)) {
       this.clearMemory();
       this.invalidateRenderTarget();
     }
@@ -50,7 +50,7 @@ export class ExampleView extends GroupThreeView {
   }
 
   protected override addChildren(): void {
-    const { domainObject, style } = this;
+    const { domainObject, style, renderTarget } = this;
 
     const geometry = new SphereGeometry(style.radius, 32, 16);
     const material = new MeshPhongMaterial({
@@ -62,6 +62,7 @@ export class ExampleView extends GroupThreeView {
       transparent: true,
       depthTest: style.depthTest
     });
+    material.clippingPlanes = renderTarget.getGlobalClippingPlanes();
     const sphere = new Mesh(geometry, material);
     const center = domainObject.center.clone();
     center.applyMatrix4(CDF_TO_VIEWER_TRANSFORMATION);

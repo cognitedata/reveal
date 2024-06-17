@@ -7,7 +7,11 @@ import { Changes } from '../../../base/domainObjectsHelpers/Changes';
 import { type BoxFace } from '../../../base/utilities/box/BoxFace';
 import { FocusType } from '../../../base/domainObjectsHelpers/FocusType';
 import { type BoxPickInfo } from '../../../base/utilities/box/BoxPickInfo';
-import { forceBetween0AndPi, round } from '../../../base/utilities/extensions/mathExtensions';
+import {
+  forceBetween0AndPi,
+  round,
+  roundIncrement
+} from '../../../base/utilities/extensions/mathExtensions';
 import {
   getAbsMaxComponentIndex,
   horizontalAngle,
@@ -15,7 +19,7 @@ import {
 } from '../../../base/utilities/extensions/vectorExtensions';
 import { PrimitiveType } from '../PrimitiveType';
 import { getClosestPointOnLine } from '../../../base/utilities/extensions/rayExtensions';
-import { type BoxDomainObject } from './BoxDomainObject';
+import { BoxDomainObject } from './BoxDomainObject';
 import { BaseDragger } from '../../../base/domainObjectsHelpers/BaseDragger';
 import {
   type VisualDomainObject,
@@ -23,6 +27,8 @@ import {
 } from '../../../base/domainObjects/VisualDomainObject';
 import { Vector3Pool } from '@cognite/reveal';
 import { degToRad, radToDeg } from 'three/src/math/MathUtils.js';
+import { Quantity } from '../../../base/domainObjectsHelpers/Quantity';
+import { type UnitSystem } from '../../../base/renderTarget/UnitSystem';
 
 const CONSTRAINED_ANGLE_INCREMENT = 15;
 /**
@@ -49,6 +55,7 @@ export class BoxDragger extends BaseDragger {
   private readonly _zRotationOfBox: number = 0;
 
   private readonly _cornerSign = new Vector3(); // Indicate the corner of the face
+  private readonly _unitSystem: UnitSystem | undefined = undefined;
 
   // ==================================================
   // INSTANCE PROPERTIES
@@ -86,6 +93,12 @@ export class BoxDragger extends BaseDragger {
     this._sizeOfBox.copy(this._domainObject.size);
     this._centerOfBox.copy(this._domainObject.center);
     this._zRotationOfBox = this._domainObject.zRotation;
+
+    const root = this._domainObject.rootDomainObject;
+
+    if (root !== undefined) {
+      this._unitSystem = root.unitSystem;
+    }
   }
 
   // ==================================================
@@ -115,7 +128,7 @@ export class BoxDragger extends BaseDragger {
   private applyByFocusType(focusType: FocusType, ray: Ray, shift: boolean): boolean {
     switch (focusType) {
       case FocusType.Face:
-        return this.moveFace(ray);
+        return this.moveFace(ray, shift);
       case FocusType.Corner:
         return this.resize(ray);
       case FocusType.Body:
@@ -157,7 +170,7 @@ export class BoxDragger extends BaseDragger {
     return true;
   }
 
-  private moveFace(ray: Ray): boolean {
+  private moveFace(ray: Ray, shift: boolean): boolean {
     // Take find closest point between the ray and the line perpendicular to the face of in picked box.
     // The distance from this point to the face of in picked box is the change.
     const pointOnSegment = newVector3();
@@ -181,6 +194,17 @@ export class BoxDragger extends BaseDragger {
       size.setComponent(index, deltaSize + size.getComponent(index));
       this._domainObject.forceMinSize();
 
+      if (
+        shift &&
+        this._unitSystem !== undefined &&
+        BoxDomainObject.isValidSize(size.getComponent(index))
+      ) {
+        const newSize = this._unitSystem.convertToUnit(size.getComponent(index), Quantity.Length);
+        // Divide the box into abound some parts and use that as the increment
+        const increment = roundIncrement(newSize / 25);
+        const roundedNewSize = round(newSize, increment);
+        size.setComponent(index, round(newSize, roundedNewSize));
+      }
       if (size.getComponent(index) === this._sizeOfBox.getComponent(index)) {
         return false; // Nothing has changed
       }

@@ -29,6 +29,7 @@ import { DefaultRevealConfig } from './DefaultRevealConfig';
 import { CommandsUpdater } from '../reactUpdaters/CommandsUpdater';
 import { Range3 } from '../utilities/geometry/Range3';
 import { getBoundingBoxFromPlanes } from '../utilities/geometry/getBoundingBoxFromPlanes';
+import { Changes } from '../domainObjectsHelpers/Changes';
 
 const DIRECTIONAL_LIGHT_NAME = 'DirectionalLight';
 
@@ -225,6 +226,22 @@ export class RevealRenderTarget {
   // INSTANCE METHODS: Clipping operations (Experimental code)
   // ==================================================
 
+  public getGlobalClippingPlanes(): Plane[] {
+    return this.viewer.getGlobalClippingPlanes();
+  }
+
+  public get isGlobalClippingActive(): boolean {
+    return this.getGlobalClippingPlanes().length > 0;
+  }
+
+  public get isGlobalCropBoxActive(): boolean {
+    return this.isGlobalClippingActive && this._cropBoxUniqueId !== undefined;
+  }
+
+  public isGlobalCropBox(domainObject: DomainObject): boolean {
+    return this._cropBoxUniqueId !== undefined && domainObject.uniqueId === this._cropBoxUniqueId;
+  }
+
   public setGlobalClipping(clippingPlanes: Plane[], domainObject?: DomainObject): void {
     if (clippingPlanes.length === 0) {
       this.clearGlobalClipping();
@@ -246,24 +263,14 @@ export class RevealRenderTarget {
     this.viewer.setGlobalClippingPlanes(clippingPlanes);
     this._clippedBoundingBox = clippedBoundingBox;
     this._cropBoxUniqueId = domainObject?.uniqueId;
-  }
-
-  public isGlobalCropBox(domainObject: DomainObject): boolean {
-    return this._cropBoxUniqueId !== undefined && domainObject.uniqueId === this._cropBoxUniqueId;
+    this.rootDomainObject.notifyDescendants(Changes.clipping);
   }
 
   public clearGlobalClipping(): void {
     this.viewer.setGlobalClippingPlanes([]);
     this._clippedBoundingBox = undefined;
     this._cropBoxUniqueId = undefined;
-  }
-
-  public get isGlobalCropBoxActive(): boolean {
-    return this.isGlobalClippingActive && this._cropBoxUniqueId !== undefined;
-  }
-
-  public get isGlobalClippingActive(): boolean {
-    return this.viewer.getGlobalClippingPlanes().length > 0;
+    this.rootDomainObject.notifyDescendants(Changes.clipping);
   }
 
   // ==================================================

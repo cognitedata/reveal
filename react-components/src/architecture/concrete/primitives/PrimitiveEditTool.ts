@@ -176,11 +176,11 @@ export abstract class PrimitiveEditTool extends BaseEditTool {
     }
   }
 
-  public override async onPointerDown(event: PointerEvent, leftButton: boolean): Promise<void> {
+  public override async onLeftPointerDown(event: PointerEvent): Promise<void> {
     if (this._creator !== undefined) {
       return; // Prevent dragging while creating the new
     }
-    await super.onPointerDown(event, leftButton);
+    await super.onLeftPointerDown(event);
   }
 
   // ==================================================

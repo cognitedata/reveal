@@ -43,16 +43,28 @@ export class NavigationTool extends BaseTool {
     await this.cameraManager.onDoubleClick(event);
   }
 
-  public override async onPointerDown(event: PointerEvent, leftButton: boolean): Promise<void> {
-    await this.cameraManager.onPointerDown(event, leftButton);
+  public override async onLeftPointerDown(event: PointerEvent): Promise<void> {
+    await this.cameraManager.onPointerDown(event, true);
   }
 
-  public override async onPointerDrag(event: PointerEvent, leftButton: boolean): Promise<void> {
-    await this.cameraManager.onPointerDrag(event, leftButton);
+  public override async onLeftPointerDrag(event: PointerEvent): Promise<void> {
+    await this.cameraManager.onPointerDrag(event, true);
   }
 
-  public override async onPointerUp(event: PointerEvent, leftButton: boolean): Promise<void> {
-    await this.cameraManager.onPointerUp(event, leftButton);
+  public override async onLeftPointerUp(event: PointerEvent): Promise<void> {
+    await this.cameraManager.onPointerUp(event, true);
+  }
+
+  public override async onRightPointerDown(event: PointerEvent): Promise<void> {
+    await this.cameraManager.onPointerDown(event, false);
+  }
+
+  public override async onRightPointerDrag(event: PointerEvent): Promise<void> {
+    await this.cameraManager.onPointerDrag(event, false);
+  }
+
+  public override async onRightPointerUp(event: PointerEvent): Promise<void> {
+    await this.cameraManager.onPointerUp(event, false);
   }
 
   public override async onWheel(event: WheelEvent, delta: number): Promise<void> {
