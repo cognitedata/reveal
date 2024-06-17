@@ -73,7 +73,7 @@ export class ApplyClipCommand extends RenderTargetCommand {
     for (const sliceDomainObject of root.getDescendantsByType(SliceDomainObject)) {
       const plane = sliceDomainObject.plane.clone();
       if (sliceDomainObject.focusType === FocusType.Pending) {
-        continue; // Do not use pending any objects
+        continue; // Do not use any pending objects in clipping
       }
       planes.push(plane);
     }

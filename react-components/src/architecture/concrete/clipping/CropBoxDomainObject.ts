@@ -66,7 +66,7 @@ export class CropBoxDomainObject extends BoxDomainObject {
       return;
     }
     if (this.focusType === FocusType.Pending) {
-      // Fallback to default, because pending crop box should never been used in clipping
+      // Fallback to default. Do not use any pending objects in clipping
       ApplyClipCommand.setClippingPlanes(root);
       return;
     }
@@ -98,7 +98,6 @@ export class CropBoxDomainObject extends BoxDomainObject {
       return;
     }
     const isGlobalCropBox = renderTarget.isGlobalCropBox(this);
-
     if (isGlobalCropBox) {
       if (
         change.isChanged(Changes.deleted) ||
