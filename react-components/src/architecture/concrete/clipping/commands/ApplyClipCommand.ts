@@ -26,6 +26,10 @@ export class ApplyClipCommand extends RenderTargetCommand {
     return 'Crop';
   }
 
+  public override get buttonType(): string {
+    return 'primary';
+  }
+
   public override get isEnabled(): boolean {
     if (this.getSelectedCropBoxDomainObject() !== undefined) {
       return true;
