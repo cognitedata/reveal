@@ -13,7 +13,7 @@ export class SetSpeedOptionCommand extends BaseOptionCommand {
   // ==================================================
 
   public override get tooltip(): TranslateKey {
-    return { key: 'SPEED', fallback: 'Speed' };
+    return { key: 'FLY_SPEED', fallback: 'Set camera fly speed' };
   }
 
   public override createOptions(): BaseCommand[] {
@@ -31,7 +31,7 @@ class SpeedCommand extends RenderTargetCommand {
   }
 
   public override get tooltip(): TranslateKey {
-    return { fallback: 'x' + this._value.toString() };
+    return { fallback: this._value.toString() + 'x' };
   }
 
   public override get isChecked(): boolean {
