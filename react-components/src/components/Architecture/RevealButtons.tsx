@@ -11,7 +11,7 @@ import { SetFlexibleControlsTypeCommand } from '../../architecture/base/concrete
 import { SetAxisVisibleCommand } from '../../architecture/concrete/axis/SetAxisVisibleCommand';
 import { ClipTool } from '../../architecture/concrete/clipping/ClipTool';
 import { MeasurementTool } from '../../architecture/concrete/measurements/MeasurementTool';
-import { SetKeyboardSpeedCommand } from '../../architecture/base/concreteCommands/SetKeyboardSpeedCommand';
+import { KeyboardSpeedCommand } from '../../architecture/base/concreteCommands/KeyboardSpeedCommand';
 
 export class RevealButtons {
   static FitView = (): ReactElement => CreateCommandButton(new FitViewCommand());
@@ -19,7 +19,7 @@ export class RevealButtons {
   static SetAxisVisible = (): ReactElement => CreateCommandButton(new SetAxisVisibleCommand());
   static Measurement = (): ReactElement => CreateCommandButton(new MeasurementTool());
   static Clip = (): ReactElement => CreateCommandButton(new ClipTool());
-  static SetKeyboardSpeed = (): ReactElement => CreateCommandButton(new SetKeyboardSpeedCommand());
+  static KeyboardSpeed = (): ReactElement => CreateCommandButton(new KeyboardSpeedCommand());
 
   static SetFlexibleControlsTypeOrbit = (): ReactElement =>
     CreateCommandButton(new SetFlexibleControlsTypeCommand(FlexibleControlsType.Orbit));

@@ -10,7 +10,7 @@ import { useRenderTarget } from '../RevealCanvas/ViewerContext';
 import { getDefaultCommand } from './CommandButton';
 import { BaseOptionCommand } from '../../architecture/base/commands/BaseOptionCommand';
 import styled from 'styled-components';
-import { getButtonType, getIcon, getTooltipPlacement } from './Utilities';
+import { getButtonType, getIcon, getPlacement } from './utilities';
 
 export const OptionButton = ({
   command,
@@ -49,7 +49,7 @@ export const OptionButton = ({
   if (!isVisible) {
     return <></>;
   }
-  const placement = getTooltipPlacement(isHorizontal);
+  const placement = getPlacement(isHorizontal);
   const tooltip = newCommand.getLabel(t);
   const commands = newCommand.getOptions(renderTarget);
   const selectedLabel = commands.find((command) => command.isChecked)?.getLabel(t);

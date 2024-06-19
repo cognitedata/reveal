@@ -11,7 +11,7 @@ import { type RevealRenderTarget } from '../../architecture/base/renderTarget/Re
 import { RenderTargetCommand } from '../../architecture/base/commands/RenderTargetCommand';
 import { OptionButton } from './OptionButton';
 import { BaseOptionCommand } from '../../architecture/base/commands/BaseOptionCommand';
-import { getButtonType, getIcon, getTooltipPlacement } from './Utilities';
+import { getButtonType, getIcon, getPlacement } from './utilities';
 
 export const CommandButtons = ({
   commands,
@@ -72,7 +72,7 @@ export const CommandButton = ({
   if (!isVisible) {
     return <></>;
   }
-  const placement = getTooltipPlacement(isHorizontal);
+  const placement = getPlacement(isHorizontal);
   const tooltip = newCommand.getLabel(t);
   return (
     <CogsTooltip content={tooltip} placement={placement} appendTo={document.body}>

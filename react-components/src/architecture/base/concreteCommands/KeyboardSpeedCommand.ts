@@ -9,7 +9,7 @@ import { type TranslateKey } from '../utilities/TranslateKey';
 
 const KEYBOARD_SPEED_VALUES = [0.5, 1, 2, 5, 10, 20];
 
-export class SetKeyboardSpeedCommand extends BaseOptionCommand {
+export class KeyboardSpeedCommand extends BaseOptionCommand {
   // ==================================================
   // OVERRIDES
   // ==================================================
