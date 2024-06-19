@@ -7,17 +7,23 @@ import { BaseOptionCommand } from '../commands/BaseOptionCommand';
 import { RenderTargetCommand } from '../commands/RenderTargetCommand';
 import { type TranslateKey } from '../utilities/TranslateKey';
 
+const KEYBOARD_SPEED_VALUES = [0.5, 1, 2, 5, 10, 20];
+
 export class SetSpeedOptionCommand extends BaseOptionCommand {
   // ==================================================
   // OVERRIDES
   // ==================================================
 
   public override get tooltip(): TranslateKey {
-    return { key: 'FLY_SPEED', fallback: 'Set camera fly speed' };
+    return { key: 'FLY_SPEED', fallback: 'Set fly speed on the camera' };
   }
 
   public override createOptions(): BaseCommand[] {
-    return [new SpeedCommand(1), new SpeedCommand(2), new SpeedCommand(4)];
+    const options: BaseCommand[] = [];
+    for (const value of KEYBOARD_SPEED_VALUES) {
+      options.push(new SpeedCommand(value));
+    }
+    return options;
   }
 }
 
@@ -35,12 +41,11 @@ class SpeedCommand extends RenderTargetCommand {
   }
 
   public override get isChecked(): boolean {
-    return this._value === SpeedCommand.currentSpeed;
+    return this._value === this.renderTarget.flexibleCameraManager.options.keyboardSpeed;
   }
 
   public override invokeCore(): boolean {
-    // this.renderTarget.flexibleCameraManager;
-    SpeedCommand.currentSpeed = this._value;
+    this.renderTarget.flexibleCameraManager.options.keyboardSpeed = this._value;
     return true;
   }
 }
