@@ -18,6 +18,7 @@ import { CommandButtons } from './Toolbar';
 import { withSuppressRevealEvents } from '../../higher-order-components/withSuppressRevealEvents';
 import { type TranslateDelegate } from '../../architecture/base/utilities/TranslateKey';
 import { type UnitSystem } from '../../architecture/base/renderTarget/UnitSystem';
+import { type DomainObject } from '../../architecture/base/domainObjects/DomainObject';
 
 const TEXT_SIZE = 'x-small';
 const HEADER_SIZE = 'small';
@@ -47,10 +48,8 @@ export const DomainObjectPanel = (): ReactElement => {
     return <></>;
   }
   const unitSystem = root.unitSystem;
-
-  const icon = domainObject.icon as IconType;
+  const icon = getIcon(domainObject);
   const header = info.header;
-
   const commands = domainObject.getPanelToolbar();
 
   // Set in the get string on the copy command if any
@@ -73,9 +72,11 @@ export const DomainObjectPanel = (): ReactElement => {
       <table>
         <tbody>
           <tr>
-            <PaddedTh>
-              <Icon type={icon} />
-            </PaddedTh>
+            {icon !== undefined && (
+              <PaddedTh>
+                <Icon type={icon} />
+              </PaddedTh>
+            )}
             {text !== undefined && (
               <PaddedTh>
                 <Body size={HEADER_SIZE}>{text}</Body>
@@ -130,6 +131,13 @@ function toString(info: PanelInfo, translate: TranslateDelegate, unitSystem: Uni
     result += `${unitSystem.toStringWithUnit(item.value, item.quantity)}\n`;
   }
   return result;
+}
+
+export function getIcon(domainObject: DomainObject): IconType | undefined {
+  if (domainObject.icon === undefined) {
+    return undefined;
+  }
+  return domainObject.icon as IconType;
 }
 
 const NumberTh = styled.th`

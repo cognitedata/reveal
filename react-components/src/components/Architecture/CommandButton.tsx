@@ -9,6 +9,9 @@ import { useTranslation } from '../i18n/I18n';
 import { type BaseCommand } from '../../architecture/base/commands/BaseCommand';
 import { type RevealRenderTarget } from '../../architecture/base/renderTarget/RevealRenderTarget';
 import { RenderTargetCommand } from '../../architecture/base/commands/RenderTargetCommand';
+import { OptionButton } from './OptionButton';
+import { BaseOptionCommand } from '../../architecture/base/commands/BaseOptionCommand';
+import { getButtonType, getIcon, getTooltipPlacement } from './Utilities';
 
 export const CommandButtons = ({
   commands,
@@ -27,7 +30,11 @@ export const CommandButtons = ({
 };
 
 export const CreateCommandButton = (command: BaseCommand, isHorizontal = false): ReactElement => {
-  return <CommandButton command={command} isHorizontal={isHorizontal} />;
+  if (command instanceof BaseOptionCommand) {
+    return <OptionButton command={command} isHorizontal={isHorizontal} />;
+  } else {
+    return <CommandButton command={command} isHorizontal={isHorizontal} />;
+  }
 };
 
 export const CommandButton = ({
@@ -45,7 +52,7 @@ export const CommandButton = ({
   const [isEnabled, setEnabled] = useState<boolean>(true);
   const [isVisible, setVisible] = useState<boolean>(true);
   const [uniqueId, setUniqueId] = useState<number>(0);
-  const [icon, setIcon] = useState<IconType>('Copy');
+  const [icon, setIcon] = useState<IconType | undefined>(undefined);
 
   useEffect(() => {
     function update(command: BaseCommand): void {
@@ -53,7 +60,7 @@ export const CommandButton = ({
       setEnabled(command.isEnabled);
       setVisible(command.isVisible);
       setUniqueId(command.uniqueId);
-      setIcon(command.icon as IconType);
+      setIcon(getIcon(command));
     }
     update(newCommand);
     newCommand.addEventListener(update);
@@ -65,23 +72,18 @@ export const CommandButton = ({
   if (!isVisible) {
     return <></>;
   }
-  const placement = isHorizontal ? 'top' : 'right';
-  const { key, fallback } = newCommand.tooltip;
-  // This was the only way it went through compiler: (more button types will be added in the future)
-  const type = newCommand.buttonType;
-  if (type !== 'ghost' && type !== 'ghost-destructive' && type !== 'primary') {
-    return <></>;
-  }
-  const text = key === undefined ? fallback : t(key, fallback);
+  const placement = getTooltipPlacement(isHorizontal);
+  const tooltip = newCommand.getLabel(t);
   return (
-    <CogsTooltip content={text} placement={placement} appendTo={document.body}>
+    <CogsTooltip content={tooltip} placement={placement} appendTo={document.body}>
       <Button
-        type={type}
+        type={getButtonType(newCommand)}
         icon={icon}
         key={uniqueId}
-        toggled={isChecked}
         disabled={!isEnabled}
-        aria-label={text}
+        toggled={isChecked}
+        aria-label={tooltip}
+        iconPlacement="right"
         onClick={() => {
           newCommand.invoke();
         }}
@@ -90,7 +92,10 @@ export const CommandButton = ({
   );
 };
 
-function getDefaultCommand(newCommand: BaseCommand, renderTarget: RevealRenderTarget): BaseCommand {
+export function getDefaultCommand(
+  newCommand: BaseCommand,
+  renderTarget: RevealRenderTarget
+): BaseCommand {
   // If it exists from before, return the existing command
   // Otherwise, add the new command to the controller and attach the renderTarget.
   if (!newCommand.hasData) {
@@ -115,5 +120,8 @@ function addCommandButton(
     const direction = !isHorizontal ? 'horizontal' : 'vertical';
     return <Divider key={index} weight="2px" length="24px" direction={direction} />;
   }
-  return <CommandButton key={command.uniqueId} command={command} isHorizontal={isHorizontal} />;
+  if (command instanceof BaseOptionCommand)
+    return <OptionButton key={command.uniqueId} command={command} isHorizontal={isHorizontal} />;
+  else
+    return <CommandButton key={command.uniqueId} command={command} isHorizontal={isHorizontal} />;
 }
