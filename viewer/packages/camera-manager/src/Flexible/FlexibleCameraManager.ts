@@ -235,6 +235,10 @@ export class FlexibleCameraManager extends PointerEvents implements IFlexibleCam
     this.updateControlsSensitivity(modelBoundingBox);
   }
 
+  public get options(): FlexibleControlsOptions {
+    return this._controls.options;
+  }
+
   //================================================
   // OVERRIDES of PointerEvents
   //================================================
@@ -292,10 +296,6 @@ export class FlexibleCameraManager extends PointerEvents implements IFlexibleCam
   //================================================
   // INSTANCE METHODS: Setters and getters
   //================================================
-
-  public get options(): FlexibleControlsOptions {
-    return this._controls.options;
-  }
 
   public get controls(): FlexibleControls {
     return this._controls;
