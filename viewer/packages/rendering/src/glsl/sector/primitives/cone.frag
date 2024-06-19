@@ -98,6 +98,7 @@ void main()
   vec3 intersectionPoint = E + dist * D;
   float theta = atan(intersectionPoint.y, intersectionPoint.x);
   if (theta < v_angle) theta += 2.0 * PI;
+  if (theta < v_angle) theta += 2.0 * PI;
 
   // Intersection point in camera space
   vec3 p = rayTarget + dist * rayDirection;
@@ -116,7 +117,10 @@ void main()
       intersectionPoint = E + dist * D;
       theta = atan(intersectionPoint.y, intersectionPoint.x);
       p = rayTarget + dist * rayDirection;
+
       if (theta < v_angle) theta += 2.0 * PI;
+      if (theta < v_angle) theta += 2.0 * PI;
+
       if (intersectionPoint.z <= 0.0 ||
         intersectionPoint.z > height ||
         theta > v_angle + v_arcAngle ||
