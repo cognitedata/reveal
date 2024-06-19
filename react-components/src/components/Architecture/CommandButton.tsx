@@ -69,7 +69,7 @@ export const CommandButton = ({
   const { key, fallback } = newCommand.tooltip;
   // This was the only way it went through compiler: (more button types will be added in the future)
   const type = newCommand.buttonType;
-  if (type !== 'ghost' && type !== 'ghost-destructive') {
+  if (type !== 'ghost' && type !== 'ghost-destructive' && type !== 'primary') {
     return <></>;
   }
   const text = key === undefined ? fallback : t(key, fallback);

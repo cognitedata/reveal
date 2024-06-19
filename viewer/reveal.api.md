@@ -920,6 +920,8 @@ export class FlexibleControlsOptions {
     // (undocumented)
     enableKeyboardNavigation: boolean;
     // (undocumented)
+    getKeyboardSpeed(shift: boolean): number;
+    // (undocumented)
     getLegalAzimuthAngle(azimuthAngle: number): number;
     // (undocumented)
     getLegalFov(fov: number): number;
@@ -941,6 +943,8 @@ export class FlexibleControlsOptions {
     keyboardRotationSpeedAzimuth: number;
     // (undocumented)
     keyboardRotationSpeedPolar: number;
+    // (undocumented)
+    keyboardSpeed: number;
     // (undocumented)
     maxAzimuthAngle: number;
     // (undocumented)
@@ -1126,6 +1130,7 @@ export interface IFlexibleCameraManager extends CameraManager {
     onPointerDrag(event: PointerEvent, leftButton: boolean): Promise<void>;
     onPointerUp(event: PointerEvent, leftButton: boolean): Promise<void>;
     onWheel(event: WheelEvent, delta: number): Promise<void>;
+    get options(): FlexibleControlsOptions;
     removeControlsTypeChangeListener(callback: FlexibleControlsTypeChangeDelegate): void;
     rotateCameraTo(direction: Vector3, animationDuration: number): void;
 }

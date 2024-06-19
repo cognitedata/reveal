@@ -15,6 +15,7 @@ import { PrimitiveType } from '../primitives/PrimitiveType';
 import { BoxCreator } from '../primitives/box/BoxCreator';
 import { LineCreator } from '../primitives/line/LineCreator';
 import { type VisualDomainObject } from '../../base/domainObjects/VisualDomainObject';
+import { CDF_TO_VIEWER_TRANSFORMATION } from '@cognite/reveal';
 
 export class MeasurementTool extends PrimitiveEditTool {
   // ==================================================
@@ -57,7 +58,28 @@ export class MeasurementTool extends PrimitiveEditTool {
 
   public override onActivate(): void {
     super.onActivate();
-    this.setAllVisible(true);
+
+    if (!this.renderTarget.isGlobalClippingActive) {
+      this.setAllVisible(true);
+      return;
+    }
+    const sceneBoundingBox = this.renderTarget.clippedSceneBoundingBox;
+    for (const domainObject of this.getSelectable()) {
+      if (domainObject instanceof MeasureBoxDomainObject) {
+        const boundingBox = domainObject.getBoundingBox();
+        boundingBox.applyMatrix4(CDF_TO_VIEWER_TRANSFORMATION);
+        if (!sceneBoundingBox.intersectsBox(boundingBox)) {
+          continue;
+        }
+      } else if (domainObject instanceof MeasureLineDomainObject) {
+        const boundingBox = domainObject.getBoundingBox();
+        boundingBox.applyMatrix4(CDF_TO_VIEWER_TRANSFORMATION);
+        if (!sceneBoundingBox.intersectsBox(boundingBox)) {
+          continue;
+        }
+      }
+      domainObject.setVisibleInteractive(true, this.renderTarget);
+    }
   }
 
   public override onDeactivate(): void {

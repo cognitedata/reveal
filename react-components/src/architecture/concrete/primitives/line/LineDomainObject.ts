@@ -5,7 +5,7 @@
 import { type RenderStyle } from '../../../base/renderStyles/RenderStyle';
 import { type ThreeView } from '../../../base/views/ThreeView';
 import { LineView } from './LineView';
-import { Vector3 } from 'three';
+import { Box3, Vector3 } from 'three';
 import { PrimitiveType } from '../PrimitiveType';
 import { LineRenderStyle } from './LineRenderStyle';
 import {
@@ -195,6 +195,14 @@ export abstract class LineDomainObject extends VisualDomainObject {
       p0.copy(p1);
     }
     return Math.abs(sum) / 2;
+  }
+
+  public getBoundingBox(): Box3 {
+    const boundingBox = new Box3().makeEmpty();
+    for (const point of this.points) {
+      boundingBox.expandByPoint(point);
+    }
+    return boundingBox;
   }
 
   public setFocusInteractive(focusType: FocusType): boolean {
