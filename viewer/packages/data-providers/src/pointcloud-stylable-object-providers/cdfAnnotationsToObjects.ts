@@ -4,12 +4,8 @@
 
 import { CompositeShape } from '@reveal/utilities';
 
-import { applyDefaultModelTransformation } from '../utilities/applyDefaultModelTransformation';
 import { PointCloudObject, CdfPointCloudObjectAnnotation } from './types';
 import { StylableObject } from './StylableObject';
-
-import { Matrix4 } from 'three';
-import { File3dFormat } from '../types';
 
 function cdfAnnotationsToPointCloudObjects(cdfAnnotations: CdfPointCloudObjectAnnotation[]): PointCloudObject[] {
   const resultAnnotations = cdfAnnotations.map((cdfAnnotation, index) => {
@@ -20,9 +16,6 @@ function cdfAnnotationsToPointCloudObjects(cdfAnnotations: CdfPointCloudObjectAn
       shape: compShape,
       objectId: index + 1
     };
-
-    const cadFromCdfToThreeMatrix = new Matrix4();
-    applyDefaultModelTransformation(cadFromCdfToThreeMatrix, File3dFormat.EptPointCloud);
 
     return {
       annotationId: cdfAnnotation.annotationId,
