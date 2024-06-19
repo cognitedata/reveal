@@ -4,7 +4,7 @@
 
 import { type ReactElement } from 'react';
 import { NavigationTool } from '../../architecture/base/concreteCommands/NavigationTool';
-import { CreateCommandButton } from './CommandButton';
+import { CreateButton } from './CommandButton';
 import { FitViewCommand } from '../../architecture/base/concreteCommands/FitViewCommand';
 import { FlexibleControlsType } from '@cognite/reveal';
 import { SetFlexibleControlsTypeCommand } from '../../architecture/base/concreteCommands/SetFlexibleControlsTypeCommand';
@@ -14,16 +14,16 @@ import { MeasurementTool } from '../../architecture/concrete/measurements/Measur
 import { KeyboardSpeedCommand } from '../../architecture/base/concreteCommands/KeyboardSpeedCommand';
 
 export class RevealButtons {
-  static FitView = (): ReactElement => CreateCommandButton(new FitViewCommand());
-  static NavigationTool = (): ReactElement => CreateCommandButton(new NavigationTool());
-  static SetAxisVisible = (): ReactElement => CreateCommandButton(new SetAxisVisibleCommand());
-  static Measurement = (): ReactElement => CreateCommandButton(new MeasurementTool());
-  static Clip = (): ReactElement => CreateCommandButton(new ClipTool());
-  static KeyboardSpeed = (): ReactElement => CreateCommandButton(new KeyboardSpeedCommand());
+  static FitView = (): ReactElement => CreateButton(new FitViewCommand());
+  static NavigationTool = (): ReactElement => CreateButton(new NavigationTool());
+  static SetAxisVisible = (): ReactElement => CreateButton(new SetAxisVisibleCommand());
+  static Measurement = (): ReactElement => CreateButton(new MeasurementTool());
+  static Clip = (): ReactElement => CreateButton(new ClipTool());
+  static KeyboardSpeed = (): ReactElement => CreateButton(new KeyboardSpeedCommand());
 
   static SetFlexibleControlsTypeOrbit = (): ReactElement =>
-    CreateCommandButton(new SetFlexibleControlsTypeCommand(FlexibleControlsType.Orbit));
+    CreateButton(new SetFlexibleControlsTypeCommand(FlexibleControlsType.Orbit));
 
   static SetFlexibleControlsTypeFirstPerson = (): ReactElement =>
-    CreateCommandButton(new SetFlexibleControlsTypeCommand(FlexibleControlsType.FirstPerson));
+    CreateButton(new SetFlexibleControlsTypeCommand(FlexibleControlsType.FirstPerson));
 }

@@ -29,7 +29,7 @@ export const CommandButtons = ({
   );
 };
 
-export const CreateCommandButton = (command: BaseCommand, isHorizontal = false): ReactElement => {
+export const CreateButton = (command: BaseCommand, isHorizontal = false): ReactElement => {
   if (command instanceof BaseOptionCommand) {
     return <OptionButton command={command} isHorizontal={isHorizontal} />;
   } else {
@@ -120,8 +120,5 @@ function addCommandButton(
     const direction = !isHorizontal ? 'horizontal' : 'vertical';
     return <Divider key={index} weight="2px" length="24px" direction={direction} />;
   }
-  if (command instanceof BaseOptionCommand)
-    return <OptionButton key={command.uniqueId} command={command} isHorizontal={isHorizontal} />;
-  else
-    return <CommandButton key={command.uniqueId} command={command} isHorizontal={isHorizontal} />;
+  return CreateButton(command);
 }
