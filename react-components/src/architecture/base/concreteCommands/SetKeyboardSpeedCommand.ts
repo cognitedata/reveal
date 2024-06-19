@@ -9,7 +9,7 @@ import { type TranslateKey } from '../utilities/TranslateKey';
 
 const KEYBOARD_SPEED_VALUES = [0.5, 1, 2, 5, 10, 20];
 
-export class SetSpeedOptionCommand extends BaseOptionCommand {
+export class SetKeyboardSpeedCommand extends BaseOptionCommand {
   // ==================================================
   // OVERRIDES
   // ==================================================
@@ -21,13 +21,14 @@ export class SetSpeedOptionCommand extends BaseOptionCommand {
   public override createOptions(): BaseCommand[] {
     const options: BaseCommand[] = [];
     for (const value of KEYBOARD_SPEED_VALUES) {
-      options.push(new SpeedCommand(value));
+      options.push(new OptionCommand(value));
     }
     return options;
   }
 }
 
-class SpeedCommand extends RenderTargetCommand {
+// Note: This is not exported, as it is only used internally
+class OptionCommand extends RenderTargetCommand {
   static currentSpeed: number = 1;
   private readonly _value;
 

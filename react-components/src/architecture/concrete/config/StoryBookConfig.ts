@@ -19,7 +19,7 @@ import { type BaseTool } from '../../base/commands/BaseTool';
 import { ToggleMetricUnitsCommand } from '../../base/concreteCommands/ToggleMetricUnitsCommand';
 import { MeasurementTool } from '../measurements/MeasurementTool';
 import { ClipTool } from '../clipping/ClipTool';
-import { SetSpeedOptionCommand } from '../../base/concreteCommands/SetSpeedOptionCommand';
+import { SetSpeedOptionCommand } from '../../base/concreteCommands/SetKeyboardSpeedCommand';
 
 export class StoryBookConfig extends BaseRevealConfig {
   // ==================================================
