@@ -9,7 +9,6 @@ import { useTranslation } from '../i18n/I18n';
 import { type BaseCommand } from '../../architecture/base/commands/BaseCommand';
 import { type RevealRenderTarget } from '../../architecture/base/renderTarget/RevealRenderTarget';
 import { RenderTargetCommand } from '../../architecture/base/commands/RenderTargetCommand';
-import { CopyToClipboardCommand } from '../../architecture/base/concreteCommands/CopyToClipboardCommand';
 
 export const CommandButtons = ({
   commands,
@@ -25,7 +24,7 @@ export const CommandButtons = ({
           <CommandButtonWrapper
             command={command}
             isHorizontal={isHorizontal}
-            key={getKey(command, -index)}
+            key={getKey(command, index)}
           />
         )
       )}
@@ -115,7 +114,7 @@ function getDefaultCommand(newCommand: BaseCommand, renderTarget: RevealRenderTa
 
 function getKey(command: BaseCommand | undefined, index: number): number {
   if (command === undefined) {
-    return index;
+    return -index;
   }
 
   return command.uniqueId;
