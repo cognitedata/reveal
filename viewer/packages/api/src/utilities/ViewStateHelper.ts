@@ -53,7 +53,11 @@ export class ViewStateHelper {
   }
 
   public getCurrentState(): ViewerState {
-    const { position: cameraPosition, target: cameraTarget, rotation: cameraRotation } = this._cameraManager.getCameraState();
+    const {
+      position: cameraPosition,
+      target: cameraTarget,
+      rotation: cameraRotation
+    } = this._cameraManager.getCameraState();
     const modelStates = this.getModelsState();
     const clippingPlanesState = this.getClippingPlanesState();
 
@@ -61,7 +65,7 @@ export class ViewStateHelper {
       camera: {
         position: cameraPosition,
         target: cameraTarget,
-        rotation: cameraRotation,
+        rotation: cameraRotation
       },
       models: modelStates,
       clippingPlanes: clippingPlanesState
