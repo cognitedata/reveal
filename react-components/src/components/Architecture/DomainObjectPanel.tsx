@@ -3,7 +3,7 @@
  */
 import { Icon, type IconType, Body } from '@cognite/cogs.js';
 import styled from 'styled-components';
-import { useState, type ReactElement } from 'react';
+import { useEffect, useMemo, useState, type ReactElement } from 'react';
 import {
   DomainObjectPanelUpdater,
   type DomainObjectInfo
@@ -28,36 +28,40 @@ export const DomainObjectPanel = (): ReactElement => {
     DomainObjectInfo | undefined
   >();
 
-  DomainObjectPanelUpdater.setDomainObjectDelegate(setCurrentDomainObjectInfo);
+  const domainObject = currentDomainObjectInfo?.domainObject;
+  const commands = useMemo(() => domainObject?.getPanelToolbar(), [domainObject]);
+  const info = domainObject?.getPanelInfo();
+  const style = domainObject?.getPanelInfoStyle();
+  const root = domainObject?.rootDomainObject;
+
+  useEffect(() => {
+    DomainObjectPanelUpdater.setDomainObjectDelegate(setCurrentDomainObjectInfo);
+
+    if (commands === undefined || info === undefined) {
+      return;
+    }
+
+    // Set in the get string on the copy command if any
+    for (const command of commands) {
+      if (command instanceof CopyToClipboardCommand)
+        command.getString = () => toString(info, t, unitSystem);
+    }
+  }, [setCurrentDomainObjectInfo, commands]);
 
   const { t } = useTranslation();
-  if (currentDomainObjectInfo === undefined) {
-    return <></>;
-  }
-  const domainObject = currentDomainObjectInfo.domainObject;
-  if (domainObject === undefined) {
-    return <></>;
-  }
-  const info = domainObject.getPanelInfo();
-  if (info === undefined) {
-    return <></>;
-  }
-  const style = domainObject.getPanelInfoStyle();
-  const root = domainObject.rootDomainObject;
-  if (root === undefined) {
+
+  if (
+    domainObject === undefined ||
+    root === undefined ||
+    info === undefined ||
+    commands === undefined ||
+    style === undefined
+  ) {
     return <></>;
   }
   const unitSystem = root.unitSystem;
   const icon = getIcon(domainObject);
   const header = info.header;
-  const commands = domainObject.getPanelToolbar();
-
-  // Set in the get string on the copy command if any
-  for (const command of commands) {
-    if (command instanceof CopyToClipboardCommand)
-      command.getString = () => toString(info, t, unitSystem);
-  }
-
   const text = header?.getText(t);
   return (
     <Container
@@ -82,7 +86,9 @@ export const DomainObjectPanel = (): ReactElement => {
                 <Body size={HEADER_SIZE}>{text}</Body>
               </PaddedTh>
             )}
-            <CommandButtons commands={commands} isHorizontal={true} />
+            <th>
+              <CommandButtons commands={commands} isHorizontal={true} />
+            </th>
           </tr>
         </tbody>
       </table>
@@ -116,6 +122,7 @@ export const DomainObjectPanel = (): ReactElement => {
 
 function toString(info: PanelInfo, translate: TranslateDelegate, unitSystem: UnitSystem): string {
   let result = '';
+
   {
     const { header } = info;
     const text = header?.getText(translate);
