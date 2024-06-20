@@ -6,7 +6,8 @@ import {
   type AnnotationModel,
   type AnnotationsBoundingVolume,
   type Node3D,
-  type AnnotationsCogniteAnnotationTypesImagesAssetLink
+  type AnnotationsCogniteAnnotationTypesImagesAssetLink,
+  AssetMapping3D
 } from '@cognite/sdk';
 import { type DmsUniqueIdentifier, type Source, type EdgeItem } from '../../utilities/FdmSDK';
 import { type InModel3dEdgeProperties } from '../../utilities/globalDataModels';
@@ -64,3 +65,9 @@ export type Image360AnnotationAssetInfo = {
 };
 
 export type AnnotationId = number;
+
+export type ChunkInCacheTypes = {
+  chunkInCache: Array<Required<AssetMapping3D>>;
+  chunkNotInCache: number[];
+};
+
