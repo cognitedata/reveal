@@ -20,6 +20,7 @@ export type ViewerState = {
   camera?: {
     position: { x: number; y: number; z: number };
     target: { x: number; y: number; z: number };
+    rotation?: { x: number; y: number; z: number };
   };
   models?: ModelState[];
   clippingPlanes?: ClippingPlanesState[];
@@ -52,14 +53,15 @@ export class ViewStateHelper {
   }
 
   public getCurrentState(): ViewerState {
-    const { position: cameraPosition, target: cameraTarget } = this._cameraManager.getCameraState();
+    const { position: cameraPosition, target: cameraTarget, rotation: cameraRotation } = this._cameraManager.getCameraState();
     const modelStates = this.getModelsState();
     const clippingPlanesState = this.getClippingPlanesState();
 
     return {
       camera: {
         position: cameraPosition,
-        target: cameraTarget
+        target: cameraTarget,
+        rotation: cameraRotation,
       },
       models: modelStates,
       clippingPlanes: clippingPlanesState
