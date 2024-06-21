@@ -9,20 +9,21 @@ import pullAll from 'lodash/pullAll';
 import { Node, PointOctant, PointOctree } from 'sparse-octree';
 import { Box3, Matrix4, Vector3 } from 'three';
 import { Overlay3DIcon } from './Overlay3DIcon';
+import { DefaultOverlay3DContentType } from './OverlayCollection';
 
 type NodeMetadata = {
   icon: Overlay3DIcon;
   level: number;
 };
 
-export class IconOctree extends PointOctree<Overlay3DIcon> {
+export class IconOctree<ContentType = DefaultOverlay3DContentType> extends PointOctree<Overlay3DIcon<ContentType>> {
   private readonly _nodeCenters: Map<Node, NodeMetadata>;
 
-  public static getMinimalOctreeBoundsFromIcons(icons: Overlay3DIcon[]): Box3 {
+  public static getMinimalOctreeBoundsFromIcons<ContentType>(icons: Overlay3DIcon<ContentType>[]): Box3 {
     return new Box3().setFromPoints(icons.map(icon => icon.getPosition()));
   }
 
-  constructor(icons: Overlay3DIcon[], bounds: Box3, maxLeafSize: number) {
+  constructor(icons: Overlay3DIcon<ContentType>[], bounds: Box3, maxLeafSize: number) {
     super(bounds.min, bounds.max, 0, maxLeafSize);
     icons.forEach(icon => this.set(icon.getPosition(), icon));
     this.filterEmptyLeaves();

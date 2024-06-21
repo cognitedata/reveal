@@ -1,7 +1,7 @@
 /*!
  * Copyright 2023 Cognite AS
  */
-export { Overlay3DCollection } from './src/Overlay3DCollection';
+export { Overlay3DCollection, Overlay3DCollectionOptions } from './src/Overlay3DCollection';
 export { OverlayPointsObject, OverlayPointsParameters } from './src/OverlayPointsObject';
 export { Overlay3DIcon } from './src/Overlay3DIcon';
 export { Overlay3D } from './src/Overlay3D';
