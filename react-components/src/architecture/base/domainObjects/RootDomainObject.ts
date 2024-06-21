@@ -34,10 +34,16 @@ export class RootDomainObject extends DomainObject {
   }
 
   // ==================================================
-  // OVERRIDES of DomainObject
+  // OVERRIDES
   // ==================================================
 
   public override get typeName(): TranslateKey {
     return { fallback: 'Root' };
+  }
+
+  public override clone(what?: symbol): DomainObject {
+    const clone = new RootDomainObject(this.renderTarget);
+    clone.copyFrom(this, what);
+    return clone;
   }
 }

@@ -28,6 +28,8 @@ import { PanelInfo } from '../../../base/domainObjectsHelpers/PanelInfo';
 import { Quantity } from '../../../base/domainObjectsHelpers/Quantity';
 import { radToDeg } from 'three/src/math/MathUtils.js';
 import { type DomainObjectChange } from '../../../base/domainObjectsHelpers/DomainObjectChange';
+import { DomainObjectTransaction } from '../../../base/undo/DomainObjectTransaction';
+import { type Transaction } from '../../../base/undo/Transaction';
 
 const ORIGIN = new Vector3(0, 0, 0);
 
@@ -146,6 +148,20 @@ export abstract class PlaneDomainObject extends VisualDomainObject {
 
   protected override createThreeView(): ThreeView | undefined {
     return new PlaneView();
+  }
+
+  public override createTransaction(changed: symbol): Transaction {
+    return new DomainObjectTransaction(this, changed);
+  }
+
+  public override copyFrom(domainObject: PlaneDomainObject, what?: symbol): void {
+    super.copyFrom(domainObject, what);
+    if (what === undefined || what === Changes.geometry) {
+      this.plane.copy(domainObject.plane);
+    }
+    if (what === undefined || what === Changes.color) {
+      this._backSideColor = domainObject._backSideColor?.clone();
+    }
   }
 
   // ==================================================

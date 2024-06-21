@@ -21,12 +21,15 @@ import { type BaseCommand } from './BaseCommand';
 import { ActiveToolUpdater } from '../reactUpdaters/ActiveToolUpdater';
 import { PopupStyle } from '../domainObjectsHelpers/PopupStyle';
 import { ThreeView } from '../views/ThreeView';
+import { UndoManager } from '../undo/UndoManager';
 
 /**
  * Base class for interactions in the 3D viewer
  * Provides common functionality and virtual methods to be overridden by derived classes.
  */
 export abstract class BaseTool extends RenderTargetCommand {
+  public readonly undoManager = new UndoManager();
+
   // ==================================================
   // OVERRIDES
   // =================================================
@@ -125,10 +128,6 @@ export abstract class BaseTool extends RenderTargetCommand {
   // INSTANCE METHODS: Intersections
   // ==================================================
 
-  public setDefaultCursor(): void {
-    this.renderTarget.cursor = this.defaultCursor;
-  }
-
   protected async getIntersection(
     event: PointerEvent | WheelEvent,
     domainObjectPredicate?: (domainObject: DomainObject) => boolean
@@ -212,5 +211,13 @@ export abstract class BaseTool extends RenderTargetCommand {
     const { viewer } = renderTarget;
     const point = viewer.getPixelCoordinatesFromEvent(event);
     return viewer.getNormalizedPixelCoordinates(point);
+  }
+
+  // ==================================================
+  // INSTANCE METHODS: Misc
+  // ==================================================
+
+  public setDefaultCursor(): void {
+    this.renderTarget.cursor = this.defaultCursor;
   }
 }

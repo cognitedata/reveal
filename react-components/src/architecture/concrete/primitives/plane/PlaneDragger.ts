@@ -71,6 +71,11 @@ export class PlaneDragger extends BaseDragger {
     this._domainObject.plane.copy(newPlane);
     this._domainObject.makeFlippingConsistent();
     this.domainObject.notify(Changes.geometry);
+
+    if (this.transaction === undefined) {
+      this.transaction = this._domainObject.createTransaction(Changes.geometry);
+    }
+
     return true;
   }
 }

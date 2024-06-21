@@ -16,6 +16,7 @@ import { type TranslateKey } from '../../base/utilities/TranslateKey';
 import { ShowExamplesOnTopCommand } from './commands/ShowExamplesOnTopCommand';
 import { DomainObjectChange } from '../../base/domainObjectsHelpers/DomainObjectChange';
 import { type VisualDomainObject } from '../../base/domainObjects/VisualDomainObject';
+import { UndoCommand } from '../../base/concreteCommands/UndoCommand';
 
 export class ExampleTool extends BaseEditTool {
   // ==================================================
@@ -37,7 +38,9 @@ export class ExampleTool extends BaseEditTool {
   public override onKey(event: KeyboardEvent, down: boolean): void {
     if (down && event.key === 'Delete') {
       const domainObject = this.getSelected();
-      if (domainObject !== undefined) {
+      if (domainObject instanceof ExampleDomainObject) {
+        const transaction = domainObject.createTransaction(Changes.deleted);
+        this.undoManager.addTransaction(transaction);
         domainObject.removeInteractive();
       }
       return;
@@ -111,11 +114,15 @@ export class ExampleTool extends BaseEditTool {
     this.rootDomainObject.addChildInteractive(domainObject);
     domainObject.setVisibleInteractive(true, this.renderTarget);
     domainObject.setSelectedInteractive(true);
+
+    const transaction = domainObject.createTransaction(Changes.added);
+    this.undoManager.addTransaction(transaction);
     this.renderTarget.setMoveCursor();
   }
 
   public override getToolbar(): Array<BaseCommand | undefined> {
     return [
+      new UndoCommand(),
       new ResetAllExamplesCommand(),
       new ShowAllExamplesCommand(),
       new DeleteAllExamplesCommand(),

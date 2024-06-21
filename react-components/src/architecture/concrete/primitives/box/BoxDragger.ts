@@ -117,6 +117,10 @@ export class BoxDragger extends BaseDragger {
       return false;
     }
     this.domainObject.notify(Changes.geometry);
+
+    if (this.transaction === undefined) {
+      this.transaction = this._domainObject.createTransaction(Changes.geometry);
+    }
     return true;
   }
 

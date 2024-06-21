@@ -30,7 +30,7 @@ export abstract class BaseCreator {
     return this.points.length;
   }
 
-  protected get notPendingPointCount(): number {
+  public get notPendingPointCount(): number {
     return this.lastIsPending ? this.pointCount - 1 : this.pointCount;
   }
 
@@ -70,7 +70,7 @@ export abstract class BaseCreator {
   /**
    * @returns The minimum required points to create the domain object.
    */
-  protected abstract get minimumPointCount(): number;
+  public abstract get minimumPointCount(): number;
 
   /**
    * @returns The maximum required points to create the domain object.

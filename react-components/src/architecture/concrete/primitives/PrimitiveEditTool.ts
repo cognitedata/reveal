@@ -17,6 +17,7 @@ import { LineDomainObject } from './line/LineDomainObject';
 import { CommonRenderStyle } from '../../base/renderStyles/CommonRenderStyle';
 import { type VisualDomainObject } from '../../base/domainObjects/VisualDomainObject';
 import { PlaneDomainObject } from './plane/PlaneDomainObject';
+import { Changes } from '../../base/domainObjectsHelpers/Changes';
 
 export abstract class PrimitiveEditTool extends BaseEditTool {
   // ==================================================
@@ -55,6 +56,8 @@ export abstract class PrimitiveEditTool extends BaseEditTool {
     if (down && event.key === 'Delete') {
       const domainObject = this.getSelected();
       if (domainObject !== undefined) {
+        const transaction = domainObject.createTransaction(Changes.deleted);
+        this.undoManager.addTransaction(transaction);
         domainObject.removeInteractive();
       }
       this._creator = undefined;
@@ -125,10 +128,7 @@ export abstract class PrimitiveEditTool extends BaseEditTool {
     if (creator !== undefined && !creator.preferIntersection) {
       const ray = this.getRay(event);
       if (creator.addPoint(ray, undefined)) {
-        if (creator.isFinished) {
-          this._creator = undefined;
-          this.setDefaultPrimitiveType();
-        }
+        this.endCreatorIfFinished(creator);
         return;
       }
     }
@@ -140,10 +140,7 @@ export abstract class PrimitiveEditTool extends BaseEditTool {
     if (creator !== undefined) {
       const ray = this.getRay(event);
       if (creator.addPoint(ray, intersection)) {
-        if (creator.isFinished) {
-          this._creator = undefined;
-          this.setDefaultPrimitiveType();
-        }
+        this.endCreatorIfFinished(creator);
       }
       return;
     }
@@ -170,10 +167,7 @@ export abstract class PrimitiveEditTool extends BaseEditTool {
         domainObject.setVisibleInteractive(true, renderTarget);
       }
     }
-    if (creator !== undefined && creator.isFinished) {
-      this.setDefaultPrimitiveType();
-      this._creator = undefined;
-    }
+    this.endCreatorIfFinished(creator);
   }
 
   public override async onLeftPointerDown(event: PointerEvent): Promise<void> {
@@ -204,8 +198,7 @@ export abstract class PrimitiveEditTool extends BaseEditTool {
       return;
     }
     if (this._creator.handleEscape()) {
-      // Successfully created, set it back to default
-      this.setDefaultPrimitiveType();
+      this.endCreatorIfFinished(this._creator, true);
     }
     this._creator = undefined;
   }
@@ -310,5 +303,22 @@ export abstract class PrimitiveEditTool extends BaseEditTool {
     }
     this.primitiveType = this.defaultPrimitiveType;
     CommandsUpdater.update(this.renderTarget);
+  }
+
+  private endCreatorIfFinished(creator: BaseCreator, force = false): void {
+    if (force || creator.isFinished) {
+      this.setDefaultPrimitiveType();
+      this._creator = undefined;
+    } else if (creator.notPendingPointCount < creator.minimumPointCount) {
+      return;
+    }
+    const domainObject = creator.domainObject;
+    if (domainObject !== undefined) {
+      const transaction = domainObject.createTransaction(Changes.geometry);
+      if (transaction !== undefined) {
+        this.undoManager.addTransaction(transaction);
+        CommandsUpdater.update(this.renderTarget);
+      }
+    }
   }
 }

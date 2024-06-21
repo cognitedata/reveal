@@ -51,6 +51,14 @@ export abstract class BaseCommand {
     return undefined;
   }
 
+  public get shortCutKeyOnCtrl(): boolean {
+    return false;
+  }
+
+  public get shortCutKeyOnShift(): boolean {
+    return false;
+  }
+
   public get tooltip(): TranslateKey {
     return { fallback: '' };
   }
