@@ -18,15 +18,19 @@ export class RevealButtons {
   static FitView = (): ReactElement => (
     <CommandButtonFromCommand commandConstructor={() => new FitViewCommand()} />
   );
+
   static NavigationTool = (): ReactElement => (
     <CommandButtonFromCommand commandConstructor={() => new NavigationTool()} />
   );
+
   static SetAxisVisible = (): ReactElement => (
     <CommandButtonFromCommand commandConstructor={() => new SetAxisVisibleCommand()} />
   );
+
   static Measurement = (): ReactElement => (
     <CommandButtonFromCommand commandConstructor={() => new MeasurementTool()} />
   );
+
   static Clip = (): ReactElement => (
     <CommandButtonFromCommand commandConstructor={() => new ClipTool()} />
   );

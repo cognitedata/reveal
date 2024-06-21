@@ -1,26 +1,29 @@
-import { IconType } from '@cognite/cogs.js';
-import { TranslateKey } from '../../base/utilities/TranslateKey';
-import { FdmSDK, InstanceFilter } from '../../../utilities/FdmSDK';
-import { OBSERVATION_SOURCE, Observation, ObservationProperties } from './models';
+/*!
+ * Copyright 2024 Cognite AS
+ */
+import { type IconType } from '@cognite/cogs.js';
+import { type TranslateKey } from '../../base/utilities/TranslateKey';
+import { type FdmSDK, type InstanceFilter } from '../../../utilities/FdmSDK';
+import { OBSERVATION_SOURCE, type Observation, type ObservationProperties } from './models';
 import { ObservationsDomainObject } from './ObservationsDomainObject';
-import { Color, Vector2, Vector3 } from 'three';
-import { CDF_TO_VIEWER_TRANSFORMATION, Overlay3D, Overlay3DCollection } from '@cognite/reveal';
+import { Color, Vector3 } from 'three';
+import { CDF_TO_VIEWER_TRANSFORMATION, type Overlay3D, Overlay3DCollection } from '@cognite/reveal';
 import { NavigationTool } from '../../base/concreteCommands/NavigationTool';
-import { RevealRenderTarget } from '../../base/renderTarget/RevealRenderTarget';
+import { type RevealRenderTarget } from '../../base/renderTarget/RevealRenderTarget';
 
 const DEFAULT_OVERLAY_COLOR = new Color('lightblue');
 const SELECTED_OVERLAY_COLOR = new Color('red');
 
 export class ObservationsTool extends NavigationTool {
   // private _domainObjects: ObservationsDomainObject[] = [];
-  private _domainObjectPromise: Promise<ObservationsDomainObject>;
+  private readonly _domainObjectPromise: Promise<ObservationsDomainObject>;
 
   private _selectedOverlay: Overlay3D<Observation> | undefined;
 
   constructor(fdmSdk: FdmSDK) {
     super();
-    this._domainObjectPromise = fetchObservations(fdmSdk).then((observations) =>
-      this.initializeDomainObjects(observations)
+    this._domainObjectPromise = fetchObservations(fdmSdk).then(
+      async (observations) => await this.initializeDomainObjects(observations)
     );
   }
 
@@ -40,8 +43,6 @@ export class ObservationsTool extends NavigationTool {
       };
     });
 
-    console.log('Observation overlays: ', observationOverlays);
-
     const collection = new Overlay3DCollection<Observation>(observationOverlays, {
       defaultOverlayColor: DEFAULT_OVERLAY_COLOR
     });
@@ -59,30 +60,28 @@ export class ObservationsTool extends NavigationTool {
     return { fallback: 'Show observations' };
   }
 
-  public override attach(renderTarget: RevealRenderTarget) {
+  public override attach(renderTarget: RevealRenderTarget): void {
     super.attach(renderTarget);
-    this._domainObjectPromise.then((domainObject) =>
-      renderTarget.rootDomainObject.addChildInteractive(domainObject)
-    );
+    void this._domainObjectPromise.then((domainObject) => {
+      renderTarget.rootDomainObject.addChildInteractive(domainObject);
+    });
   }
 
-  public override onActivate() {
-    this._domainObjectPromise.then((domainObject) =>
+  public override onActivate(): void {
+    void this._domainObjectPromise.then((domainObject) =>
       domainObject.setVisibleInteractive(true, this.renderTarget)
     );
   }
 
-  public override onDeactivate() {
-    this._domainObjectPromise.then((domainObject) => {
+  public override onDeactivate(): void {
+    void this._domainObjectPromise.then((domainObject) => {
       domainObject.setVisibleInteractive(false, this.renderTarget);
     });
   }
 
-  public override async onClick(event: PointerEvent) {
+  public override async onClick(event: PointerEvent): Promise<void> {
     const domainObject = await this._domainObjectPromise;
-    domainObject.overlayCollection
-      .getOverlays()
-      .forEach((overlay) => overlay.setColor(DEFAULT_OVERLAY_COLOR));
+    this._selectedOverlay?.setColor(DEFAULT_OVERLAY_COLOR);
 
     const normalizedCoord = this.getNormalizedPixelCoordinates(event);
     const intersection = domainObject.overlayCollection.intersectOverlays(
@@ -92,10 +91,14 @@ export class ObservationsTool extends NavigationTool {
 
     if (intersection !== undefined) {
       this.handleIntersectedOverlay(intersection);
+    } else {
+      this._selectedOverlay = undefined;
     }
+
+    this.renderTarget.viewer.requestRedraw();
   }
 
-  private handleIntersectedOverlay(overlay: Overlay3D<Observation>) {
+  private handleIntersectedOverlay(overlay: Overlay3D<Observation>): void {
     overlay.setColor(SELECTED_OVERLAY_COLOR);
     this.renderTarget.viewer.requestRedraw();
     this._selectedOverlay = overlay;

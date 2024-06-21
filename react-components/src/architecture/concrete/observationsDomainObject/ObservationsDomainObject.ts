@@ -1,12 +1,15 @@
-import { Overlay3DCollection } from '@cognite/reveal';
-import { Observation } from './models';
+/*!
+ * Copyright 2024 Cognite AS
+ */
+import { type Overlay3DCollection } from '@cognite/reveal';
+import { type Observation } from './models';
 import { VisualDomainObject } from '../../base/domainObjects/VisualDomainObject';
-import { ThreeView } from '../../base/views/ThreeView';
+import { type ThreeView } from '../../base/views/ThreeView';
 import { ObservationsView } from './ObservationsView';
-import { TranslateKey } from '../../base/utilities/TranslateKey';
+import { type TranslateKey } from '../../base/utilities/TranslateKey';
 
 export class ObservationsDomainObject extends VisualDomainObject {
-  private _collection: Overlay3DCollection<Observation>;
+  private readonly _collection: Overlay3DCollection<Observation>;
 
   public override get typeName(): TranslateKey {
     return { fallback: ObservationsDomainObject.name };

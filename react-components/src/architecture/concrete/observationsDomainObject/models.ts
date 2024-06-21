@@ -1,4 +1,7 @@
-import { DmsUniqueIdentifier, FdmNode, Source } from '../../../utilities/FdmSDK';
+/*!
+ * Copyright 2024 Cognite AS
+ */
+import { type DmsUniqueIdentifier, type FdmNode, type Source } from '../../../utilities/FdmSDK';
 
 export type ObservationProperties = {
   // "ID as the node appears in the Source system"
@@ -12,13 +15,13 @@ export type ObservationProperties = {
   // "Text based labels for generic use"
   labels: string[];
   // "Visibility of node (PUBLIC, PRIVATE, PROTECTED)"
-  visibility: String;
+  visibility: string;
   // "Who created this node?"
-  createdBy: String;
+  createdBy: string;
   // "Who was the last person to update this node?"
-  updatedBy: String;
+  updatedBy: string;
   // "Is this item archived, and therefore hidden from most UIs?"
-  isArchived: Boolean;
+  isArchived: boolean;
   // "The status of the observation (draft, completed, sent)"
   status: string;
   // "External ID of the associated CDF Asset"

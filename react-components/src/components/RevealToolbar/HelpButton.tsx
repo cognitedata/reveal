@@ -23,7 +23,9 @@ export const HelpButton = ({ fallbackLanguage }: HelpButtonProps): ReactElement 
     <CogsTooltip content={t('HELP_TOOLTIP', 'Help')} placement="right" appendTo={document.body}>
       <Dropdown
         appendTo={document.body}
-        onHide={() => setHelpActive(false)}
+        onHide={() => {
+          setHelpActive(false);
+        }}
         hideOnSelect={{ hideOnContentClick: true, hideOnOutsideClick: true }}
         /* onClickOutside={() => {
           setHelpActive(false);

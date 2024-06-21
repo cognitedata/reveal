@@ -13,7 +13,7 @@ import {
 } from '@cognite/reveal';
 import { type DomainObjectIntersection } from '../domainObjectsHelpers/DomainObjectIntersection';
 import { VisualDomainObject } from '../domainObjects/VisualDomainObject';
-import { DomainObject } from '../domainObjects/DomainObject';
+import { type DomainObject } from '../domainObjects/DomainObject';
 
 /**
  * Represents an abstract class for a Three.js view that renders an Object3D.
