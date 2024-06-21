@@ -50,6 +50,10 @@ export abstract class BaseCreator {
     return this._lastIsPending;
   }
 
+  protected set lastIsPending(value: boolean) {
+    this._lastIsPending = value;
+  }
+
   // ==================================================
   // VIRTUAL METHODS
   // ==================================================

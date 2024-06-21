@@ -199,8 +199,10 @@ export abstract class PrimitiveEditTool extends BaseEditTool {
     }
     if (this._creator.handleEscape()) {
       this.endCreatorIfFinished(this._creator, true);
+    } else {
+      this.setDefaultPrimitiveType();
+      this._creator = undefined;
     }
-    this._creator = undefined;
   }
 
   private setCursor(boxDomainObject: BoxDomainObject, point: Vector3, pickInfo: BoxPickInfo): void {
@@ -314,7 +316,8 @@ export abstract class PrimitiveEditTool extends BaseEditTool {
     }
     const domainObject = creator.domainObject;
     if (domainObject !== undefined) {
-      const transaction = domainObject.createTransaction(Changes.geometry);
+      const exists = this.undoManager.hasUniqueId(domainObject.uniqueId);
+      const transaction = domainObject.createTransaction(exists ? Changes.geometry : Changes.added);
       if (transaction !== undefined) {
         this.undoManager.addTransaction(transaction);
         CommandsUpdater.update(this.renderTarget);

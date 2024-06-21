@@ -11,9 +11,9 @@ export abstract class Transaction {
   // INSTANCE METHODS
   // ==================================================
 
-  protected readonly uniqueId: number;
-  protected readonly parentUniqueId: number;
+  public readonly uniqueId: number;
   public readonly changed: symbol;
+  protected readonly parentUniqueId: number;
 
   // ==================================================
   // CONSTRUCTOR

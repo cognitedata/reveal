@@ -32,4 +32,8 @@ export class UndoManager {
   public get canUndo(): boolean {
     return this._transactions.length > 0;
   }
+
+  public hasUniqueId(uniqueId: number): boolean {
+    return this._transactions.find((a) => a.uniqueId === uniqueId) !== undefined;
+  }
 }

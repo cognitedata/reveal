@@ -65,6 +65,7 @@ export class LineCreator extends BaseCreator {
     isPending: boolean
   ): boolean {
     // Figure out where the point should be if no intersection
+
     if (isPending && this.notPendingPointCount >= 1 && point === undefined) {
       const lastPoint = this.lastNotPendingPoint;
       const plane = new Plane().setFromNormalAndCoplanarPoint(ray.direction, lastPoint);
@@ -77,8 +78,13 @@ export class LineCreator extends BaseCreator {
     if (point === undefined) {
       return false;
     }
-    this.addRawPoint(point, isPending);
     const domainObject = this._domainObject;
+    if (this.pointCount !== domainObject.points.length) {
+      // In case of undo is done
+      copy(this.points, domainObject.points);
+      this.lastIsPending = false;
+    }
+    this.addRawPoint(point, isPending);
     copy(domainObject.points, this.points);
 
     domainObject.notify(Changes.geometry);
