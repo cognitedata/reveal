@@ -150,7 +150,7 @@ export abstract class BaseTool extends RenderTargetCommand {
       if (!(customObject instanceof ThreeView)) {
         return false;
       }
-      return domainObjectPredicate(customObject.domainObject);
+      return domainObjectPredicate(customObject.domainObject as DomainObject);
     };
     return await viewer.getAnyIntersectionFromPixel(point, { predicate });
   }
