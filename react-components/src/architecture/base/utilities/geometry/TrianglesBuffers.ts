@@ -14,6 +14,10 @@ export class TrianglesBuffers {
   protected triangleIndexes: number[] = [];
   protected uniqueIndex = 0;
 
+  public get isFilled(): boolean {
+    return this.uniqueIndex === this.positions.length / 3;
+  }
+
   // ==================================================
   // CONSTRUCTOR
   // ==================================================
@@ -46,10 +50,10 @@ export class TrianglesBuffers {
   }
 
   // ==================================================
-  // INSTANCE METHODS: Add operation
+  // INSTANCE METHODS: Add to triangle strip
   // ==================================================
 
-  public addPair(p1: Vector3, p2: Vector3, n1: Vector3, n2: Vector3, u = 0): void {
+  public addPairWithNormals(p1: Vector3, p2: Vector3, n1: Vector3, n2: Vector3, u = 0): void {
     if (this.uniqueIndex >= 2) {
       //     2------3
       //     |      |
@@ -59,15 +63,14 @@ export class TrianglesBuffers {
       const unique2 = this.uniqueIndex;
       const unique3 = this.uniqueIndex + 1;
 
-      this.addTriangle(unique0, unique2, unique3);
-      this.addTriangle(unique0, unique3, unique1);
+      this.addTriangle(unique0, unique3, unique2);
+      this.addTriangle(unique0, unique1, unique3);
     }
-
     this.add(p1, n1, u);
     this.add(p2, n2, u);
   }
 
-  public addPair2(p1: Vector3, p2: Vector3, normal: Vector3, u: number): void {
+  public addPairWithNormal(p1: Vector3, p2: Vector3, normal: Vector3, u: number = 0): void {
     if (this.uniqueIndex >= 2) {
       //     2------3
       //     |      |
@@ -77,13 +80,11 @@ export class TrianglesBuffers {
       const unique2 = this.uniqueIndex;
       const unique3 = this.uniqueIndex + 1;
 
-      this.addTriangle(unique0, unique2, unique3);
-      this.addTriangle(unique0, unique3, unique1);
+      this.addTriangle(unique0, unique3, unique2);
+      this.addTriangle(unique0, unique1, unique3);
     }
-    if (this.uvs !== undefined) {
-      this.add(p1, normal, u);
-      this.add(p2, normal, u);
-    }
+    this.add(p1, normal, u);
+    this.add(p2, normal, u);
   }
 
   public addTriangle(index0: number, index1: number, index2: number): void {

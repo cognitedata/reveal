@@ -57,7 +57,7 @@ export abstract class BaseTool extends RenderTargetCommand {
   }
 
   public getToolbarStyle(): PopupStyle {
-    // Override this to place the the toolbar
+    // Override this to place the toolbar
     // Default lower left corner
     return new PopupStyle({ bottom: 0, left: 0 });
   }
@@ -89,15 +89,27 @@ export abstract class BaseTool extends RenderTargetCommand {
     await Promise.resolve();
   }
 
-  public async onPointerDown(_event: PointerEvent, _leftButton: boolean): Promise<void> {
+  public async onLeftPointerDown(_event: PointerEvent): Promise<void> {
     await Promise.resolve();
   }
 
-  public async onPointerDrag(_event: PointerEvent, _leftButton: boolean): Promise<void> {
+  public async onLeftPointerDrag(_event: PointerEvent): Promise<void> {
     await Promise.resolve();
   }
 
-  public async onPointerUp(_event: PointerEvent, _leftButton: boolean): Promise<void> {
+  public async onLeftPointerUp(_event: PointerEvent): Promise<void> {
+    await Promise.resolve();
+  }
+
+  public async onRightPointerDown(_event: PointerEvent): Promise<void> {
+    await Promise.resolve();
+  }
+
+  public async onRightPointerDrag(_event: PointerEvent): Promise<void> {
+    await Promise.resolve();
+  }
+
+  public async onRightPointerUp(_event: PointerEvent): Promise<void> {
     await Promise.resolve();
   }
 

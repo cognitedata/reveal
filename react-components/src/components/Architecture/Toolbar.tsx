@@ -3,7 +3,7 @@
  */
 import { ToolBar } from '@cognite/cogs.js';
 import styled from 'styled-components';
-import { useState, type ReactElement } from 'react';
+import { useMemo, useState, type ReactElement } from 'react';
 import { withSuppressRevealEvents } from '../../higher-order-components/withSuppressRevealEvents';
 import { CommandButtons } from './CommandButton';
 import { type BaseCommand } from '../../architecture/base/commands/BaseCommand';
@@ -20,12 +20,12 @@ export const MainToolbar = (): ReactElement => {
   if (config === undefined) {
     return <></>;
   }
-  const commands = config.createMainToolbar();
+  const commands = useMemo(() => config.createMainToolbar(), [config]);
   if (commands.length === 0) {
     return <></>;
   }
   const style = config.createMainToolbarStyle();
-  return CreateToolToolbar(commands, style);
+  return <ToolbarContent commands={commands} style={style} />;
 };
 
 export const ActiveToolToolbar = (): ReactElement => {
@@ -41,15 +41,18 @@ export const ActiveToolToolbar = (): ReactElement => {
   if (activeTool === undefined) {
     return <></>;
   }
-  const commands = activeTool.getToolbar();
+  const commands = useMemo(() => activeTool.getToolbar(), [activeTool]);
   const style = activeTool.getToolbarStyle();
-  return CreateToolToolbar(commands, style);
+  return <ToolbarContent commands={commands} style={style} />;
 };
 
-const CreateToolToolbar = (
-  commands: Array<BaseCommand | undefined>,
-  style: PopupStyle
-): ReactElement => {
+const ToolbarContent = ({
+  commands,
+  style
+}: {
+  commands: Array<BaseCommand | undefined>;
+  style: PopupStyle;
+}): ReactElement => {
   //
   if (commands.length === 0) {
     return <></>;
@@ -66,8 +69,8 @@ const CreateToolToolbar = (
       }}>
       <MyCustomToolbar
         style={{
-          flexFlow: style.flexFlow
-          // Padding is not used here
+          flexFlow: style.flexFlow,
+          padding: 2
         }}>
         <CommandButtons commands={commands} isHorizontal={style.isHorizontal} />
       </MyCustomToolbar>

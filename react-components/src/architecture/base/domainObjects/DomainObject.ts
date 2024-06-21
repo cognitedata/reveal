@@ -4,7 +4,7 @@
 
 import { type Color } from 'three';
 import { BLACK_COLOR, WHITE_COLOR } from '../utilities/colors/colorExtensions';
-import { type RenderStyle } from '../domainObjectsHelpers/RenderStyle';
+import { type RenderStyle } from '../renderStyles/RenderStyle';
 import { DomainObjectChange } from '../domainObjectsHelpers/DomainObjectChange';
 import { Changes } from '../domainObjectsHelpers/Changes';
 import { isInstanceOf, type Class } from '../domainObjectsHelpers/Class';
@@ -20,6 +20,10 @@ import { PopupStyle } from '../domainObjectsHelpers/PopupStyle';
 import { RootDomainObject } from './RootDomainObject';
 import { CommandsUpdater } from '../reactUpdaters/CommandsUpdater';
 import { DomainObjectPanelUpdater } from '../reactUpdaters/DomainObjectPanelUpdater';
+import { type TranslateKey } from '../utilities/TranslateKey';
+import { DeleteDomainObjectCommand } from '../concreteCommands/DeleteDomainObjectCommand';
+import { CopyToClipboardCommand } from '../concreteCommands/CopyToClipboardCommand';
+import { type BaseCommand } from '../commands/BaseCommand';
 
 /**
  * Represents an abstract base class for domain objects.
@@ -55,11 +59,28 @@ export abstract class DomainObject {
   // Views and listeners
   public readonly views: Views = new Views();
 
+  // Unique index for the domain object, used as soft reference
+  private readonly _uniqueId: number;
+  private static _counter: number = 0; // Counter for the unique index
+
+  public get uniqueId(): number {
+    return this._uniqueId;
+  }
+
+  // ==================================================
+  // CONSTRUCTOR
+  // ==================================================
+
+  public constructor() {
+    DomainObject._counter++;
+    this._uniqueId = DomainObject._counter;
+  }
+
   // ==================================================
   // INSTANCE/VIRTUAL PROPERTIES
   // ==================================================
 
-  public abstract get typeName(): string; // to be overridden
+  public abstract get typeName(): TranslateKey; // to be overridden
 
   public get path(): string {
     return `${this.parent !== undefined ? this.parent.path : ''}\\${this.name}`;
@@ -291,7 +312,11 @@ export abstract class DomainObject {
   public getPanelInfoStyle(): PopupStyle {
     // to be overridden
     // Default lower left corner
-    return new PopupStyle({ bottom: 0, left: 0 });
+    return new PopupStyle({ bottom: 50, left: 0 });
+  }
+
+  public getPanelToolbar(): BaseCommand[] {
+    return [new DeleteDomainObjectCommand(this), new CopyToClipboardCommand()];
   }
 
   // ==================================================
@@ -460,6 +485,16 @@ export abstract class DomainObject {
     } else if (visibleState === VisibleState.Some || visibleState === VisibleState.All) {
       this.setVisibleInteractive(false, renderTarget);
     }
+  }
+
+  /**
+   * Checks if the domain object is visible in the specified render target.
+   * @param renderTarget - The render target to check visibility in.
+   * @returns `true` if the domain object is visible in the target, `false` otherwise.
+   */
+  public isVisible(renderTarget: RevealRenderTarget): boolean {
+    const visibleState = this.getVisibleState(renderTarget);
+    return visibleState === VisibleState.Some || visibleState === VisibleState.All;
   }
 
   // ==================================================
@@ -687,10 +722,10 @@ export abstract class DomainObject {
 
   public addChild(child: DomainObject, insertFirst = false): void {
     if (child.hasParent) {
-      throw Error(`The child ${child.typeName} already has a parent`);
+      throw Error(`The child ${child.typeName.fallback} already has a parent`);
     }
     if (child === this) {
-      throw Error(`Trying to add illegal child ${child.typeName}`);
+      throw Error(`Trying to add illegal child ${child.typeName.fallback}`);
     }
     if (insertFirst) {
       this._children.unshift(child);
@@ -709,7 +744,7 @@ export abstract class DomainObject {
   private remove(): boolean {
     const { childIndex } = this;
     if (childIndex === undefined) {
-      throw Error(`The child ${this.typeName} is not child of it's parent`);
+      throw Error(`The child ${this.typeName.fallback} is not child of it's parent`);
     }
     clear(this._children);
     this.removeCore();
@@ -773,7 +808,7 @@ export abstract class DomainObject {
   }
 
   private generateNewName(): string {
-    let result = this.typeName;
+    let result = this.typeName.fallback;
     if (!this.canChangeName) {
       return result;
     }

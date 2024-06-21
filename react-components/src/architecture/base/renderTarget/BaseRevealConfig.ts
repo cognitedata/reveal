@@ -5,7 +5,7 @@
 import { type AxisGizmoTool } from '@cognite/reveal/tools';
 import { type BaseCommand } from '../commands/BaseCommand';
 import { PopupStyle } from '../domainObjectsHelpers/PopupStyle';
-import { NavigationTool } from '../commands/NavigationTool';
+import { NavigationTool } from '../concreteCommands/NavigationTool';
 import { type BaseTool } from '../commands/BaseTool';
 import { type RevealRenderTarget } from './RevealRenderTarget';
 

@@ -5,11 +5,10 @@
 import { VisualDomainObject } from '../../base/domainObjects/VisualDomainObject';
 import { TerrainRenderStyle } from './TerrainRenderStyle';
 import { type RegularGrid2 } from './geometry/RegularGrid2';
-import { type RenderStyle } from '../../base/domainObjectsHelpers/RenderStyle';
+import { type RenderStyle } from '../../base/renderStyles/RenderStyle';
 import { type ThreeView } from '../../base/views/ThreeView';
 import { TerrainThreeView } from './TerrainThreeView';
-
-export const DEFAULT_TERRAIN_NAME = 'Terrain';
+import { type TranslateKey } from '../../base/utilities/TranslateKey';
 
 export class TerrainDomainObject extends VisualDomainObject {
   // ==================================================
@@ -38,8 +37,8 @@ export class TerrainDomainObject extends VisualDomainObject {
   // OVERRIDES of DomainObject
   // ==================================================
 
-  public override get typeName(): string {
-    return DEFAULT_TERRAIN_NAME;
+  public override get typeName(): TranslateKey {
+    return { fallback: 'Terrain' };
   }
 
   public override createRenderStyle(): RenderStyle | undefined {

@@ -177,7 +177,7 @@ export function getRandomGaussian(mean = 0, stdDev = 1): number {
     if (b <= Number.EPSILON) {
       continue;
     }
-    const gausian = Math.sqrt(-2 * Math.log(a)) * Math.cos(2 * Math.PI * b);
-    return gausian * stdDev + mean;
+    const gaussian = Math.sqrt(-2 * Math.log(a)) * Math.cos(2 * Math.PI * b);
+    return gaussian * stdDev + mean;
   }
 }

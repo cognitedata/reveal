@@ -975,9 +975,9 @@ export class FlexibleControls {
     if (!this.isStationary) {
       this.setControlsType(FlexibleControlsType.FirstPerson);
     }
-    const speedFactor = this._keyboard.isShiftPressed() ? this._options.keyboardFastMoveFactor : 1;
-    const speedXY = timeScale * speedFactor * this._options.keyboardPanSpeed;
-    const speedZ = timeScale * speedFactor * this._options.keyboardDollySpeed;
+    const keyboardSpeed = this._options.getKeyboardSpeed(this._keyboard.isShiftPressed());
+    const speedXY = timeScale * keyboardSpeed * this._options.keyboardPanSpeed;
+    const speedZ = timeScale * keyboardSpeed * this._options.keyboardDollySpeed;
 
     this.pan(speedXY * deltaX, speedXY * deltaY, speedZ * deltaZ, true);
     return true;

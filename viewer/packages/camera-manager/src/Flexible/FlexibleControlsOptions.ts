@@ -19,10 +19,10 @@ export class FlexibleControlsOptions {
   // INSTANCE FIELDS
   //================================================
 
-  // Main behaivor
+  // Main behavior
   public controlsType = FlexibleControlsType.Orbit;
 
-  // Mouse click, double click and wheel behaivor
+  // Mouse click, double click and wheel behavior
   public mouseWheelAction = FlexibleWheelZoomType.Auto;
   public mouseClickType = FlexibleMouseActionType.SetTarget;
   public mouseDoubleClickType = FlexibleMouseActionType.SetTargetAndCameraPosition;
@@ -41,7 +41,7 @@ export class FlexibleControlsOptions {
   public minAzimuthAngle = -Infinity;
   public maxAzimuthAngle = Infinity;
 
-  // Dampning
+  // Damping
   public enableDamping = true;
   public dampingFactor = 0.25;
 
@@ -72,6 +72,7 @@ export class FlexibleControlsOptions {
   public mouseDollySpeed = 100;
 
   // Keyboard speed for dolly and pan
+  public keyboardSpeed = 1;
   public keyboardPanSpeed = 100;
   public keyboardDollySpeed = 200;
   public keyboardFastMoveFactor = 5;
@@ -115,6 +116,13 @@ export class FlexibleControlsOptions {
       default:
         return false;
     }
+  }
+
+  public getKeyboardSpeed(shift: boolean): number {
+    if (!shift) {
+      return this.keyboardSpeed;
+    }
+    return this.keyboardFastMoveFactor * this.keyboardSpeed;
   }
 
   //================================================

@@ -69,15 +69,27 @@ export class CommandsController extends PointerEvents {
 
   public override async onPointerDown(event: PointerEvent, leftButton: boolean): Promise<void> {
     this._domElement.focus();
-    await this.activeTool?.onPointerDown(event, leftButton);
-  }
-
-  public override async onPointerUp(event: PointerEvent, leftButton: boolean): Promise<void> {
-    await this.activeTool?.onPointerUp(event, leftButton);
+    if (leftButton) {
+      await this.activeTool?.onLeftPointerDown(event);
+    } else {
+      await this.defaultTool?.onRightPointerDown(event);
+    }
   }
 
   public override async onPointerDrag(event: PointerEvent, leftButton: boolean): Promise<void> {
-    await this.activeTool?.onPointerDrag(event, leftButton);
+    if (leftButton) {
+      await this.activeTool?.onLeftPointerDrag(event);
+    } else {
+      await this.defaultTool?.onRightPointerDrag(event);
+    }
+  }
+
+  public override async onPointerUp(event: PointerEvent, leftButton: boolean): Promise<void> {
+    if (leftButton) {
+      await this.activeTool?.onLeftPointerUp(event);
+    } else {
+      await this.defaultTool?.onRightPointerUp(event);
+    }
   }
 
   // ==================================================

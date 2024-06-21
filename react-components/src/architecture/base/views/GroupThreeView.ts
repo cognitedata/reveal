@@ -12,6 +12,7 @@ import {
   type ICustomObject
 } from '@cognite/reveal';
 import { type DomainObjectIntersection } from '../domainObjectsHelpers/DomainObjectIntersection';
+import { VisualDomainObject } from '../domainObjects/VisualDomainObject';
 
 /**
  * Represents an abstract class for a Three.js view that renders an Object3D.
@@ -83,8 +84,16 @@ export abstract class GroupThreeView extends ThreeView implements ICustomObject 
     if (closestDistance !== undefined && closestDistance < distance) {
       return undefined;
     }
-    if (!intersectInput.isVisible(point)) {
-      return undefined;
+    const { domainObject } = this;
+
+    if (domainObject instanceof VisualDomainObject) {
+      if (domainObject.useClippingInIntersection && !intersectInput.isVisible(point)) {
+        return undefined;
+      }
+    } else {
+      if (!intersectInput.isVisible(point)) {
+        return undefined;
+      }
     }
     const customObjectIntersection: DomainObjectIntersection = {
       type: 'customObject',
@@ -92,7 +101,7 @@ export abstract class GroupThreeView extends ThreeView implements ICustomObject 
       distanceToCamera: distance,
       userData: intersection[0],
       customObject: this,
-      domainObject: this.domainObject
+      domainObject
     };
     if (this.shouldPickBoundingBox) {
       const boundingBox = this.boundingBox;

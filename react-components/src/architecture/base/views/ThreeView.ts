@@ -5,7 +5,7 @@
 import { type DomainObjectChange } from '../domainObjectsHelpers/DomainObjectChange';
 import { BaseView } from './BaseView';
 import { Changes } from '../domainObjectsHelpers/Changes';
-import { type RenderStyle } from '../domainObjectsHelpers/RenderStyle';
+import { type RenderStyle } from '../renderStyles/RenderStyle';
 import { type RevealRenderTarget } from '../renderTarget/RevealRenderTarget';
 import { type DomainObject } from '../domainObjects/DomainObject';
 import { type PerspectiveCamera, type Box3 } from 'three';

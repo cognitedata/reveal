@@ -97,7 +97,11 @@ export abstract class BaseCreator {
    * @returns {boolean} Returns true if the pending object is created successfully, false if it is removed
    */
   public handleEscape(): boolean {
-    return false;
+    if (this.notPendingPointCount >= this.minimumPointCount) {
+      return true; // Successfully
+    }
+    this.domainObject.removeInteractive();
+    return false; // Removed
   }
 
   // ==================================================

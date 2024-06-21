@@ -11,11 +11,11 @@ import { ResetAllExamplesCommand } from './commands/ResetAllExamplesCommand';
 import { DeleteAllExamplesCommand } from './commands/DeleteAllExamplesCommand';
 import { ShowAllExamplesCommand } from './commands/ShowAllExamplesCommand';
 import { clamp } from 'lodash';
-import { type DomainObject } from '../../base/domainObjects/DomainObject';
 import { type HSL } from 'three';
 import { type TranslateKey } from '../../base/utilities/TranslateKey';
 import { ShowExamplesOnTopCommand } from './commands/ShowExamplesOnTopCommand';
 import { DomainObjectChange } from '../../base/domainObjectsHelpers/DomainObjectChange';
+import { type VisualDomainObject } from '../../base/domainObjects/VisualDomainObject';
 
 export class ExampleTool extends BaseEditTool {
   // ==================================================
@@ -27,7 +27,7 @@ export class ExampleTool extends BaseEditTool {
   }
 
   public override get tooltip(): TranslateKey {
-    return { key: 'EXAMPLE_EDIT', fallback: 'Create or edit a single point' };
+    return { fallback: 'Create or edit a single point' };
   }
 
   // ==================================================
@@ -127,7 +127,7 @@ export class ExampleTool extends BaseEditTool {
   // OVERRIDES of BaseEditTool
   // ==================================================
 
-  protected override canBeSelected(domainObject: DomainObject): boolean {
+  protected override canBeSelected(domainObject: VisualDomainObject): boolean {
     return domainObject instanceof ExampleDomainObject;
   }
 }

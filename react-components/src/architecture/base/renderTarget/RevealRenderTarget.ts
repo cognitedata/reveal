@@ -7,7 +7,8 @@ import {
   CustomObject,
   isFlexibleCameraManager,
   type Cognite3DViewer,
-  type IFlexibleCameraManager
+  type IFlexibleCameraManager,
+  CDF_TO_VIEWER_TRANSFORMATION
 } from '@cognite/reveal';
 import {
   Vector3,
@@ -26,6 +27,9 @@ import { type AxisGizmoTool } from '@cognite/reveal/tools';
 import { type BaseRevealConfig } from './BaseRevealConfig';
 import { DefaultRevealConfig } from './DefaultRevealConfig';
 import { CommandsUpdater } from '../reactUpdaters/CommandsUpdater';
+import { Range3 } from '../utilities/geometry/Range3';
+import { getBoundingBoxFromPlanes } from '../utilities/geometry/getBoundingBoxFromPlanes';
+import { Changes } from '../domainObjectsHelpers/Changes';
 
 const DIRECTIONAL_LIGHT_NAME = 'DirectionalLight';
 
@@ -39,8 +43,8 @@ export class RevealRenderTarget {
   private readonly _rootDomainObject: RootDomainObject;
   private _ambientLight: AmbientLight | undefined;
   private _directionalLight: DirectionalLight | undefined;
-  private _cropBoxBoundingBox: Box3 | undefined;
-  private _cropBoxName: string | undefined = undefined;
+  private _clippedBoundingBox: Box3 | undefined;
+  private _cropBoxUniqueId: number | undefined = undefined;
   private _axisGizmoTool: AxisGizmoTool | undefined;
   private _config: BaseRevealConfig | undefined = undefined;
 
@@ -117,12 +121,17 @@ export class RevealRenderTarget {
     return this.cameraManager.getCamera();
   }
 
-  public get sceneBoundingBox(): Box3 {
-    const boundingBox = this.viewer.getSceneBoundingBox();
-    if (this._cropBoxBoundingBox !== undefined) {
-      boundingBox.intersect(this._cropBoxBoundingBox);
+  public get clippedSceneBoundingBox(): Box3 {
+    if (this._clippedBoundingBox === undefined) {
+      return this.sceneBoundingBox;
     }
+    const boundingBox = this.sceneBoundingBox.clone();
+    boundingBox.intersect(this._clippedBoundingBox);
     return boundingBox;
+  }
+
+  public get sceneBoundingBox(): Box3 {
+    return this.viewer.getSceneBoundingBox();
   }
 
   // ==================================================
@@ -205,43 +214,63 @@ export class RevealRenderTarget {
   // ==================================================
 
   public fitView(): boolean {
-    const boundingBox = this.sceneBoundingBox;
+    const boundingBox = this.clippedSceneBoundingBox;
     if (boundingBox.isEmpty()) {
       return false;
     }
-    this.viewer.fitCameraToBoundingBox(this.sceneBoundingBox);
+    this.viewer.fitCameraToBoundingBox(this.clippedSceneBoundingBox);
     return true;
   }
 
   // ==================================================
-  // INSTANCE METHODS: Crop box operations (Experimental code)
+  // INSTANCE METHODS: Clipping operations (Experimental code)
   // ==================================================
 
-  public setGlobalCropBox(
-    clippingPlanes: Plane[],
-    boundingBox: Box3,
-    domainObject: DomainObject
-  ): void {
-    // Input in Viewer coordinates
-    this.viewer.setGlobalClippingPlanes(clippingPlanes);
-    this._cropBoxBoundingBox = boundingBox;
-    this._cropBoxName = domainObject.name;
+  public getGlobalClippingPlanes(): Plane[] {
+    return this.viewer.getGlobalClippingPlanes();
   }
 
-  public clearGlobalCropBox(): void {
-    this.viewer.setGlobalClippingPlanes([]);
-    this._cropBoxBoundingBox = undefined;
-    this._cropBoxName = undefined;
-  }
-
-  public isGlobalCropBox(domainObject: DomainObject): boolean {
-    return this._cropBoxName !== undefined && domainObject.hasEqualName(this._cropBoxName);
+  public get isGlobalClippingActive(): boolean {
+    return this.getGlobalClippingPlanes().length > 0;
   }
 
   public get isGlobalCropBoxActive(): boolean {
-    return (
-      this.viewer.getGlobalClippingPlanes().length > 0 && this._cropBoxBoundingBox !== undefined
-    );
+    return this.isGlobalClippingActive && this._cropBoxUniqueId !== undefined;
+  }
+
+  public isGlobalCropBox(domainObject: DomainObject): boolean {
+    return this._cropBoxUniqueId !== undefined && domainObject.uniqueId === this._cropBoxUniqueId;
+  }
+
+  public setGlobalClipping(clippingPlanes: Plane[], domainObject?: DomainObject): void {
+    if (clippingPlanes.length === 0) {
+      this.clearGlobalClipping();
+      return;
+    }
+    const sceneBoundingBox = this.sceneBoundingBox.clone();
+    sceneBoundingBox.applyMatrix4(CDF_TO_VIEWER_TRANSFORMATION.clone().invert());
+    const sceneRange = new Range3();
+    sceneRange.copy(sceneBoundingBox);
+    const clippedRange = getBoundingBoxFromPlanes(clippingPlanes, sceneRange);
+    const clippedBoundingBox = clippedRange.getBox();
+
+    for (const plane of clippingPlanes) {
+      plane.applyMatrix4(CDF_TO_VIEWER_TRANSFORMATION);
+    }
+    clippedBoundingBox.applyMatrix4(CDF_TO_VIEWER_TRANSFORMATION);
+
+    // Set the values
+    this.viewer.setGlobalClippingPlanes(clippingPlanes);
+    this._clippedBoundingBox = clippedBoundingBox;
+    this._cropBoxUniqueId = domainObject?.uniqueId;
+    this.rootDomainObject.notifyDescendants(Changes.clipping);
+  }
+
+  public clearGlobalClipping(): void {
+    this.viewer.setGlobalClippingPlanes([]);
+    this._clippedBoundingBox = undefined;
+    this._cropBoxUniqueId = undefined;
+    this.rootDomainObject.notifyDescendants(Changes.clipping);
   }
 
   // ==================================================
