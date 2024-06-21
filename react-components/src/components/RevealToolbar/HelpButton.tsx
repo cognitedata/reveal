@@ -23,9 +23,11 @@ export const HelpButton = ({ fallbackLanguage }: HelpButtonProps): ReactElement 
     <CogsTooltip content={t('HELP_TOOLTIP', 'Help')} placement="right" appendTo={document.body}>
       <Dropdown
         appendTo={document.body}
-        onClickOutside={() => {
+        onHide={() => setHelpActive(false)}
+        hideOnSelect={{ hideOnContentClick: true, hideOnOutsideClick: true }}
+        /* onClickOutside={() => {
           setHelpActive(false);
-        }}
+        }} */
         content={
           <StyledMenu>
             <MouseNavigation fallbackLanguage={fallbackLanguage} />

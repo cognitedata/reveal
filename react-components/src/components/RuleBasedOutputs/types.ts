@@ -3,7 +3,7 @@
  */
 
 import { type TreeIndexNodeCollection, type NumericRange } from '@cognite/reveal';
-import { type FdmNode, type EdgeItem } from '../../utilities/FdmSDK';
+import { type FdmNode, type EdgeItem, DmsUniqueIdentifier } from '../../utilities/FdmSDK';
 import { type AssetStylingGroup, type FdmPropertyType } from '../Reveal3DResources/types';
 import { type Datapoints, type Asset, type Timeseries, type ExternalId } from '@cognite/sdk';
 
@@ -219,11 +219,6 @@ export type Source = {
 export type SimpleSource = {
   version: string;
 } & DmsUniqueIdentifier;
-
-export type DmsUniqueIdentifier = {
-  space: Space;
-  externalId: ExternalId;
-};
 
 export type ViewQueryFilter = {
   view: Source;
