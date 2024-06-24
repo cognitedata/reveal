@@ -73,7 +73,7 @@ export class PlaneDragger extends BaseDragger {
     const newPlane = new Plane().setFromNormalAndCoplanarPoint(this._plane.normal, newPoint);
     this._domainObject.plane.copy(newPlane);
     this._domainObject.makeFlippingConsistent();
-
+    this.domainObject.notify(Changes.geometry);
     return true;
   }
 }

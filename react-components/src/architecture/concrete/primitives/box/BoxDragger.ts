@@ -113,14 +113,13 @@ export class BoxDragger extends BaseDragger {
   }
 
   public override onPointerDrag(event: PointerEvent, ray: Ray): boolean {
+    if (this.transaction === undefined) {
+      this.transaction = this._domainObject.createTransaction(Changes.geometry);
+    }
     if (!this.applyByFocusType(this.focusType, ray, event.shiftKey)) {
       return false;
     }
     this.domainObject.notify(Changes.geometry);
-
-    if (this.transaction === undefined) {
-      this.transaction = this._domainObject.createTransaction(Changes.geometry);
-    }
     return true;
   }
 

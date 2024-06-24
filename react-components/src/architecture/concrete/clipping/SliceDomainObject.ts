@@ -13,6 +13,7 @@ import { type DomainObjectChange } from '../../base/domainObjectsHelpers/DomainO
 import { Changes } from '../../base/domainObjectsHelpers/Changes';
 import { FocusType } from '../../base/domainObjectsHelpers/FocusType';
 import { type DomainObject } from '../../base/domainObjects/DomainObject';
+
 export class SliceDomainObject extends PlaneDomainObject {
   // ==================================================
   // CONSTRUCTOR
