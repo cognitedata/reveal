@@ -321,7 +321,6 @@ export abstract class PrimitiveEditTool extends BaseEditTool {
       return;
     }
     const exists = this.undoManager.hasUniqueId(domainObject.uniqueId);
-    const transaction = domainObject.createTransaction(exists ? Changes.geometry : Changes.added);
-    this.undoManager.addTransaction(transaction);
+    this.addTransaction(domainObject.createTransaction(exists ? Changes.geometry : Changes.added));
   }
 }
