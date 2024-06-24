@@ -316,7 +316,9 @@ export abstract class DomainObject {
    * @param what - Optional parameter specifying which properties to copy. If not provided, all properties will be copied.
    * @returns A new domain object
    */
-  public abstract clone(what?: symbol): DomainObject;
+  public clone(_what?: symbol): DomainObject {
+    throw new Error('Method not implemented.');
+  }
 
   /**
    * Copies the properties from another `DomainObject` instance to this instance.
