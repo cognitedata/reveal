@@ -20,7 +20,13 @@ export const CommandButtons = ({
   return (
     <>
       {commands.map(
-        (command, index): ReactElement => addCommandButton(command, isHorizontal, index)
+        (command, index): ReactElement => (
+          <CommandButtonWrapper
+            command={command}
+            isHorizontal={isHorizontal}
+            key={getKey(command, index)}
+          />
+        )
       )}
     </>
   );
@@ -60,7 +66,7 @@ export const CommandButton = ({
     return () => {
       newCommand.removeEventListener(update);
     };
-  }, [newCommand]);
+  }, [newCommand.isEnabled, newCommand.isChecked, newCommand.isVisible]);
 
   if (!isVisible) {
     return <></>;
@@ -106,14 +112,24 @@ function getDefaultCommand(newCommand: BaseCommand, renderTarget: RevealRenderTa
   return newCommand;
 }
 
-function addCommandButton(
-  command: BaseCommand | undefined,
-  isHorizontal: boolean,
-  index: number
-): ReactElement {
+function getKey(command: BaseCommand | undefined, index: number): number {
+  if (command === undefined) {
+    return -index;
+  }
+
+  return command.uniqueId;
+}
+
+function CommandButtonWrapper({
+  command,
+  isHorizontal
+}: {
+  command: BaseCommand | undefined;
+  isHorizontal: boolean;
+}): ReactElement {
   if (command === undefined) {
     const direction = !isHorizontal ? 'horizontal' : 'vertical';
-    return <Divider key={index} weight="2px" length="24px" direction={direction} />;
+    return <Divider weight="2px" length="24px" direction={direction} />;
   }
-  return <CommandButton key={command.uniqueId} command={command} isHorizontal={isHorizontal} />;
+  return <CommandButton command={command} isHorizontal={isHorizontal} />;
 }

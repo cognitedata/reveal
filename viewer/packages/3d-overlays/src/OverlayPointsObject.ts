@@ -13,6 +13,7 @@ import {
   Group,
   LessEqualDepth,
   Matrix4,
+  Object3D,
   Points,
   RawShaderMaterial,
   ShaderMaterial,
@@ -43,9 +44,14 @@ export class OverlayPointsObject extends Group {
   private readonly _colorBuffer: Float32Array;
   private readonly _colorAttribute: BufferAttribute;
   private readonly _points: { frontPoints: Points; backPoints: Points };
+  private readonly _onBeforeRender?: Object3D['onBeforeRender'];
   private _modelTransform: Matrix4;
 
-  constructor(maxNumberOfPoints: number, materialParameters: OverlayPointsParameters) {
+  constructor(
+    maxNumberOfPoints: number,
+    materialParameters: OverlayPointsParameters,
+    onBeforeRender?: Object3D['onBeforeRender']
+  ) {
     super();
     const geometry = new BufferGeometry();
     this._positionBuffer = new Float32Array(maxNumberOfPoints * 3);
@@ -101,6 +107,7 @@ export class OverlayPointsObject extends Group {
     this._geometry = geometry;
     this._frontMaterial = frontMaterial;
     this._points = { frontPoints, backPoints };
+    this._onBeforeRender = onBeforeRender;
   }
 
   public setPoints(points: Vector3[], colors?: Color[]): void {
@@ -163,7 +170,8 @@ export class OverlayPointsObject extends Group {
 
   private initializePoints(geometry: BufferGeometry, frontMaterial: ShaderMaterial): Points {
     const frontPoints = createPoints(geometry, frontMaterial);
-    frontPoints.onBeforeRender = renderer => {
+    frontPoints.onBeforeRender = (renderer, ...rest) => {
+      this._onBeforeRender?.(renderer, ...rest);
       setUniforms(renderer, frontMaterial);
     };
 
