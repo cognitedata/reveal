@@ -32,7 +32,7 @@ import { FocusType } from '../../../base/domainObjectsHelpers/FocusType';
 import { type DomainObjectIntersection } from '../../../base/domainObjectsHelpers/DomainObjectIntersection';
 import { PrimitiveType } from '../PrimitiveType';
 
-export class PlaneView extends GroupThreeView {
+export class PlaneView extends GroupThreeView<PlaneDomainObject> {
   // ==================================================
   // INSTANCE FIELDS
   // ==================================================
@@ -45,7 +45,7 @@ export class PlaneView extends GroupThreeView {
   // ==================================================
 
   public override get domainObject(): PlaneDomainObject {
-    return super.domainObject as PlaneDomainObject;
+    return super.domainObject;
   }
 
   protected override get style(): PlaneRenderStyle {

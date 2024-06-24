@@ -16,13 +16,13 @@ import {
 import { type DomainObjectIntersection } from '../../base/domainObjectsHelpers/DomainObjectIntersection';
 import { WHITE_COLOR } from '../../base/utilities/colors/colorExtensions';
 
-export class ExampleView extends GroupThreeView {
+export class ExampleView extends GroupThreeView<ExampleDomainObject> {
   // ==================================================
   // INSTANCE PROPERTIES
   // ==================================================
 
   public override get domainObject(): ExampleDomainObject {
-    return super.domainObject as ExampleDomainObject;
+    return super.domainObject;
   }
 
   protected override get style(): ExampleRenderStyle {
