@@ -366,8 +366,8 @@ export abstract class DomainObject {
   // VIRTUAL METHODS: Others
   // ==================================================
 
-  public get icon(): string {
-    return 'Unknown';
+  public get icon(): string | undefined {
+    return undefined;
   }
 
   /**
