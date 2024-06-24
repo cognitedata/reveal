@@ -18,6 +18,7 @@ import { useSDK } from '../components/RevealCanvas/SDKProvider';
 import { CDF_TO_VIEWER_TRANSFORMATION, CustomObject } from '@cognite/reveal';
 import { useReveal } from '../components/RevealCanvas/ViewerContext';
 import { clear } from '../architecture/base/utilities/extensions/arrayExtensions';
+import { transformation3dToMatrix4 } from '../utilities/transformation3dToMatrix4';
 
 export const useGroundPlaneFromScene = (sceneExternalId: string, sceneSpaceId: string): void => {
   const { data: scene } = useSceneConfig(sceneExternalId, sceneSpaceId);
@@ -88,14 +89,10 @@ export const useGroundPlaneFromScene = (sceneExternalId: string, sceneSpaceId: s
       geometry.name = `CogniteGroundPlane`;
 
       const mesh = new Mesh(geometry, material);
-      mesh.position.set(
-        groundPlane.translationX,
-        groundPlane.translationY,
-        groundPlane.translationZ
-      );
-      mesh.rotation.set(-Math.PI / 2, 0, 0);
 
-      mesh.position.applyMatrix4(CDF_TO_VIEWER_TRANSFORMATION);
+      const matrix4 = transformation3dToMatrix4(groundPlane).multiply(CDF_TO_VIEWER_TRANSFORMATION);
+      mesh.matrix.copy(matrix4);
+      matrix4.decompose(mesh.position, mesh.quaternion, mesh.scale);
 
       const customObject = new CustomObject(mesh);
       customObject.isPartOfBoundingBox = false;
