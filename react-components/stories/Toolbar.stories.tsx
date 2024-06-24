@@ -10,7 +10,8 @@ import {
   withSuppressRevealEvents,
   withCameraStateUrlParam,
   useGetCameraStateFromUrlParam,
-  useCameraNavigation
+  useCameraNavigation,
+  RevealButtons
 } from '../src';
 import { Color } from 'three';
 import styled from 'styled-components';
@@ -20,7 +21,6 @@ import { signalStoryReadyForScreenshot } from './utilities/signalStoryReadyForSc
 import { RevealStoryContainer } from './utilities/RevealStoryContainer';
 import { getAddModelOptionsFromUrl } from './utilities/getAddModelOptionsFromUrl';
 import { SetOrbitOrFirstPersonControlsType } from '../src/components/RevealToolbar/SetFlexibleControlsType';
-import { ObservationsButton } from '../src/components/Observations/ObservationsButton';
 
 const meta = {
   title: 'Example/Toolbar',
@@ -110,7 +110,7 @@ export const Main: Story = {
         <ToolBar.ButtonGroup buttonGroup={exampleToolBarButtons} />
         <SetOrbitOrFirstPersonControlsType />
         <RevealToolbar.SlicerButton />
-        <ObservationsButton />
+        <RevealButtons.Observations />
       </MyCustomToolbar>
     </RevealStoryContainer>
   )
