@@ -67,14 +67,12 @@ export class PlaneDragger extends BaseDragger {
     if (this._boundingBox !== undefined && !this._boundingBox.containsPoint(newPoint)) {
       return false;
     }
-    const newPlane = new Plane().setFromNormalAndCoplanarPoint(this._plane.normal, newPoint);
-    this._domainObject.plane.copy(newPlane);
-    this._domainObject.makeFlippingConsistent();
-    this.domainObject.notify(Changes.geometry);
-
     if (this.transaction === undefined) {
       this.transaction = this._domainObject.createTransaction(Changes.geometry);
     }
+    const newPlane = new Plane().setFromNormalAndCoplanarPoint(this._plane.normal, newPoint);
+    this._domainObject.plane.copy(newPlane);
+    this._domainObject.makeFlippingConsistent();
 
     return true;
   }

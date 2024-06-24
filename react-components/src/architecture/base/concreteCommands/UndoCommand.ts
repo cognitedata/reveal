@@ -4,22 +4,9 @@
 
 import { RenderTargetCommand } from '../commands/RenderTargetCommand';
 import { CommandsUpdater } from '../reactUpdaters/CommandsUpdater';
-import { type UndoManager } from '../undo/UndoManager';
 import { type TranslateKey } from '../utilities/TranslateKey';
 
 export class UndoCommand extends RenderTargetCommand {
-  // ==================================================
-  // INSTANCE PROPERTIES
-  // ==================================================
-
-  private get undoManager(): UndoManager | undefined {
-    const activeTool = this.renderTarget.commandsController.activeTool;
-    if (activeTool === undefined) {
-      return undefined;
-    }
-    return activeTool.undoManager;
-  }
-
   // ==================================================
   // OVERRIDES
   // ==================================================

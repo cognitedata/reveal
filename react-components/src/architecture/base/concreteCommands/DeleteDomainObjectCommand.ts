@@ -5,25 +5,12 @@
 import { type TranslateKey } from '../utilities/TranslateKey';
 import { type DomainObject } from '../domainObjects/DomainObject';
 import { DomainObjectCommand } from '../commands/DomainObjectCommand';
-import { type UndoManager } from '../undo/UndoManager';
 import { Changes } from '../domainObjectsHelpers/Changes';
 
 export class DeleteDomainObjectCommand extends DomainObjectCommand<DomainObject> {
   // ==================================================
   // INSTANCE PROPERTIES
   // ==================================================
-
-  private get undoManager(): UndoManager | undefined {
-    const root = this._domainObject.rootDomainObject;
-    if (root === undefined) {
-      return undefined;
-    }
-    const activeTool = root.renderTarget.commandsController.activeTool;
-    if (activeTool === undefined) {
-      return undefined;
-    }
-    return activeTool.undoManager;
-  }
 
   // ==================================================
   // OVERRIDES
@@ -46,11 +33,7 @@ export class DeleteDomainObjectCommand extends DomainObjectCommand<DomainObject>
   }
 
   protected override invokeCore(): boolean {
-    const undoManager = this.undoManager;
-    if (undoManager !== undefined) {
-      const transaction = this._domainObject.createTransaction(Changes.deleted);
-      undoManager.addTransaction(transaction);
-    }
+    this.addTransaction(this._domainObject.createTransaction(Changes.deleted));
     return this._domainObject.removeInteractive();
   }
 }

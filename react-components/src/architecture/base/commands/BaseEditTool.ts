@@ -8,7 +8,6 @@ import { type BaseDragger } from '../domainObjectsHelpers/BaseDragger';
 import { VisualDomainObject } from '../domainObjects/VisualDomainObject';
 import { type AnyIntersection, CDF_TO_VIEWER_TRANSFORMATION } from '@cognite/reveal';
 import { DomainObjectPanelUpdater } from '../reactUpdaters/DomainObjectPanelUpdater';
-import { CommandsUpdater } from '../reactUpdaters/CommandsUpdater';
 
 /**
  * The `BaseEditTool` class is an abstract class that extends the `NavigationTool` class.
@@ -62,11 +61,7 @@ export abstract class BaseEditTool extends NavigationTool {
       await super.onLeftPointerUp(event);
     } else {
       this._dragger.onPointerUp(event);
-      const transaction = this._dragger.transaction;
-      if (transaction !== undefined) {
-        this.undoManager.addTransaction(transaction);
-        CommandsUpdater.update(this.renderTarget);
-      }
+      this.addTransaction(this._dragger.transaction);
       this._dragger = undefined;
     }
   }

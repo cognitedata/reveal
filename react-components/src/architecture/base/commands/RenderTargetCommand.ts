@@ -6,6 +6,8 @@ import { BaseCommand } from './BaseCommand';
 import { type RevealRenderTarget } from '../renderTarget/RevealRenderTarget';
 import { type RootDomainObject } from '../domainObjects/RootDomainObject';
 import { CommandsUpdater } from '../reactUpdaters/CommandsUpdater';
+import { type UndoManager } from '../undo/UndoManager';
+import { type Transaction } from '../undo/Transaction';
 
 /**
  * Represents a base class where the render target is known.
@@ -25,6 +27,10 @@ export abstract class RenderTargetCommand extends BaseCommand {
     return this.renderTarget.rootDomainObject;
   }
 
+  // ==================================================
+  // OVERRIDES
+  // ==================================================
+
   public override invoke(): boolean {
     const success = this.invokeCore();
     if (success) {
@@ -33,7 +39,39 @@ export abstract class RenderTargetCommand extends BaseCommand {
     return success;
   }
 
+  // ==================================================
+  // VIRTUAL METHODS
+  // ==================================================
+
+  public get undoManager(): UndoManager | undefined {
+    // This method is overridden on BaseTool only!
+    const activeTool = this.renderTarget.commandsController.activeTool;
+    if (activeTool === undefined) {
+      return undefined;
+    }
+    return activeTool.undoManager;
+  }
+
+  // ==================================================
+  // INSTANCE METHODS
+  // ==================================================
+
   public attach(renderTarget: RevealRenderTarget): void {
     this._renderTarget = renderTarget;
+  }
+
+  public addTransaction(transaction: Transaction | undefined): void {
+    if (transaction === undefined) {
+      return;
+    }
+    const undoManager = this.undoManager;
+    if (undoManager === undefined) {
+      return;
+    }
+    const couldUndo = undoManager.canUndo;
+    undoManager.addTransaction(transaction);
+    if (couldUndo !== undoManager.canUndo) {
+      CommandsUpdater.update(this.renderTarget);
+    }
   }
 }

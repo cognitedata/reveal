@@ -28,7 +28,7 @@ import { UndoManager } from '../undo/UndoManager';
  * Provides common functionality and virtual methods to be overridden by derived classes.
  */
 export abstract class BaseTool extends RenderTargetCommand {
-  public readonly undoManager = new UndoManager();
+  private readonly _undoManager = new UndoManager();
 
   // ==================================================
   // OVERRIDES
@@ -45,6 +45,10 @@ export abstract class BaseTool extends RenderTargetCommand {
       this.renderTarget.commandsController.setActiveTool(this);
     }
     return true;
+  }
+
+  public override get undoManager(): UndoManager | undefined {
+    return this._undoManager;
   }
 
   // ==================================================

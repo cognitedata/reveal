@@ -56,8 +56,7 @@ export abstract class PrimitiveEditTool extends BaseEditTool {
     if (down && event.key === 'Delete') {
       const domainObject = this.getSelected();
       if (domainObject !== undefined) {
-        const transaction = domainObject.createTransaction(Changes.deleted);
-        this.undoManager.addTransaction(transaction);
+        this.addTransaction(domainObject.createTransaction(Changes.deleted));
         domainObject.removeInteractive();
       }
       this._creator = undefined;
@@ -315,13 +314,14 @@ export abstract class PrimitiveEditTool extends BaseEditTool {
       return;
     }
     const domainObject = creator.domainObject;
-    if (domainObject !== undefined) {
-      const exists = this.undoManager.hasUniqueId(domainObject.uniqueId);
-      const transaction = domainObject.createTransaction(exists ? Changes.geometry : Changes.added);
-      if (transaction !== undefined) {
-        this.undoManager.addTransaction(transaction);
-        CommandsUpdater.update(this.renderTarget);
-      }
+    if (domainObject === undefined) {
+      return;
     }
+    if (this.undoManager === undefined) {
+      return;
+    }
+    const exists = this.undoManager.hasUniqueId(domainObject.uniqueId);
+    const transaction = domainObject.createTransaction(exists ? Changes.geometry : Changes.added);
+    this.undoManager.addTransaction(transaction);
   }
 }

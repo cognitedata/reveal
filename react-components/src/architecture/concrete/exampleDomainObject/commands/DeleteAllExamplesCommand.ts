@@ -4,6 +4,7 @@
 
 import { InstanceCommand } from '../../../base/commands/InstanceCommand';
 import { type DomainObject } from '../../../base/domainObjects/DomainObject';
+import { Changes } from '../../../base/domainObjectsHelpers/Changes';
 import { type TranslateKey } from '../../../base/utilities/TranslateKey';
 import { ExampleDomainObject } from '../ExampleDomainObject';
 
@@ -33,6 +34,7 @@ export class DeleteAllExamplesCommand extends InstanceCommand {
     const array = Array.from(this.getInstances());
     array.reverse();
     for (const domainObject of array) {
+      this.addTransaction(domainObject.createTransaction(Changes.deleted));
       domainObject.removeInteractive();
     }
     return true;
