@@ -2,7 +2,7 @@
  * Copyright 2023 Cognite AS
  */
 
-import { useEffect, useMemo, useState, type ReactElement } from 'react';
+import { useCallback, useEffect, useMemo, useState, type ReactElement } from 'react';
 import { Button, Dropdown, Menu, Tooltip as CogsTooltip, type IconType } from '@cognite/cogs.js';
 import { useTranslation } from '../i18n/I18n';
 import { type BaseCommand } from '../../architecture/base/commands/BaseCommand';
@@ -33,13 +33,14 @@ export const OptionButton = ({
   const [uniqueId, setUniqueId] = useState<number>(0);
   const [icon, setIcon] = useState<IconType | undefined>(undefined);
 
+  const update = useCallback((command: BaseCommand) => {
+    setEnabled(command.isEnabled);
+    setVisible(command.isVisible);
+    setUniqueId(command.uniqueId);
+    setIcon(getIcon(command));
+  }, []);
+
   useEffect(() => {
-    function update(command: BaseCommand): void {
-      setEnabled(command.isEnabled);
-      setVisible(command.isVisible);
-      setUniqueId(command.uniqueId);
-      setIcon(getIcon(command));
-    }
     update(command);
     command.addEventListener(update);
     return () => {

@@ -4,7 +4,6 @@
 
 import { type ReactElement } from 'react';
 import { NavigationTool } from '../../architecture/base/concreteCommands/NavigationTool';
-import { CreateButton } from './CommandButton';
 import { FitViewCommand } from '../../architecture/base/concreteCommands/FitViewCommand';
 import { FlexibleControlsType } from '@cognite/reveal';
 import { SetFlexibleControlsTypeCommand } from '../../architecture/base/concreteCommands/SetFlexibleControlsTypeCommand';
@@ -12,6 +11,7 @@ import { SetAxisVisibleCommand } from '../../architecture/concrete/axis/SetAxisV
 import { ClipTool } from '../../architecture/concrete/clipping/ClipTool';
 import { MeasurementTool } from '../../architecture/concrete/measurements/MeasurementTool';
 import { KeyboardSpeedCommand } from '../../architecture/base/concreteCommands/KeyboardSpeedCommand';
+import { CreateButton } from './CommandButtons';
 
 export class RevealButtons {
   static FitView = (): ReactElement => CreateButton(new FitViewCommand());
