@@ -8,19 +8,24 @@ import { useTranslation } from '../i18n/I18n';
 import { type BaseCommand } from '../../architecture/base/commands/BaseCommand';
 import { useRenderTarget } from '../RevealCanvas/ViewerContext';
 import { BaseOptionCommand } from '../../architecture/base/commands/BaseOptionCommand';
-import styled from 'styled-components';
-import { getButtonType, getDefaultCommand, getIcon, getPlacement } from './utilities';
+import {
+  getButtonType,
+  getDefaultCommand,
+  getFlexDirection,
+  getIcon,
+  getTooltipPlacement
+} from './utilities';
 
 export const OptionButton = ({
-  command,
+  inputCommand,
   isHorizontal = false
 }: {
-  command: BaseOptionCommand;
+  inputCommand: BaseOptionCommand;
   isHorizontal: boolean;
 }): ReactElement => {
   const renderTarget = useRenderTarget();
   const { t } = useTranslation();
-  const newCommand = useMemo<BaseCommand>(() => getDefaultCommand(command, renderTarget), []);
+  const command = useMemo<BaseCommand>(() => getDefaultCommand(inputCommand, renderTarget), []);
 
   const [isOpen, setOpen] = useState<boolean>(false);
   const [isEnabled, setEnabled] = useState<boolean>(true);
@@ -35,23 +40,24 @@ export const OptionButton = ({
       setUniqueId(command.uniqueId);
       setIcon(getIcon(command));
     }
-    update(newCommand);
-    newCommand.addEventListener(update);
+    update(command);
+    command.addEventListener(update);
     return () => {
-      newCommand.removeEventListener(update);
+      command.removeEventListener(update);
     };
-  }, [newCommand]);
+  }, [command]);
 
-  if (!(newCommand instanceof BaseOptionCommand)) {
+  if (!(command instanceof BaseOptionCommand)) {
     return <></>;
   }
   if (!isVisible) {
     return <></>;
   }
-  const placement = getPlacement(isHorizontal);
-  const tooltip = newCommand.getLabel(t);
-  const commands = newCommand.getOptions(renderTarget);
-  const selectedLabel = commands.find((command) => command.isChecked)?.getLabel(t);
+  const placement = getTooltipPlacement(isHorizontal);
+  const flexDirection = getFlexDirection(isHorizontal);
+  const tooltip = command.getLabel(t);
+  const options = command.getOrCreateOptions(renderTarget);
+  const selectedLabel = command.selectedOption?.getLabel(t);
 
   return (
     <CogsTooltip content={tooltip} placement={placement} appendTo={document.body}>
@@ -62,32 +68,35 @@ export const OptionButton = ({
           setOpen(false);
         }}
         content={
-          <StyledMenu>
-            <>
-              {commands.map((command, _index): ReactElement => {
-                return (
-                  <Menu.Item
-                    icon={icon}
-                    key={command.uniqueId}
-                    toggled={command.isChecked}
-                    disabled={!isEnabled}
-                    aria-label={tooltip}
-                    iconPlacement="right"
-                    onClick={() => {
-                      command.invoke();
-                      setOpen(false);
-                    }}>
-                    {command.getLabel(t)}
-                  </Menu.Item>
-                );
-              })}
-            </>
-          </StyledMenu>
+          <Menu
+            style={{
+              minWidth: '0px',
+              overflow: 'auto',
+              flexDirection
+            }}>
+            {options.map((command, _index): ReactElement => {
+              return (
+                <Menu.Item
+                  icon={icon}
+                  key={command.uniqueId}
+                  toggled={command.isChecked}
+                  disabled={!isEnabled}
+                  aria-label={tooltip}
+                  iconPlacement="right"
+                  onClick={() => {
+                    command.invoke();
+                    setOpen(false);
+                  }}>
+                  {command.getLabel(t)}
+                </Menu.Item>
+              );
+            })}
+          </Menu>
         }
-        placement="right-start">
+        placement="auto-start">
         <Button
           style={{ padding: '8px 4px' }}
-          type={getButtonType(newCommand)}
+          type={getButtonType(command)}
           icon={isOpen ? 'ChevronUp' : 'ChevronDown'}
           key={uniqueId}
           disabled={!isEnabled}
@@ -103,8 +112,3 @@ export const OptionButton = ({
     </CogsTooltip>
   );
 };
-
-const StyledMenu = styled(Menu)`
-  min-width: 0px;
-  overflow: auto;
-`;

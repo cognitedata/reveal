@@ -6,7 +6,7 @@ import { type BaseCommand } from '../../architecture/base/commands/BaseCommand';
 import { type RevealRenderTarget } from '../../architecture/base/renderTarget/RevealRenderTarget';
 import { RenderTargetCommand } from '../../architecture/base/commands/RenderTargetCommand';
 import { type IconType } from '@cognite/cogs.js';
-import { type PlacementType, type ButtonType } from './types';
+import { type PlacementType, type ButtonType, type FlexDirection } from './types';
 
 export function getIcon(command: BaseCommand): IconType | undefined {
   if (command.icon === undefined) {
@@ -15,7 +15,11 @@ export function getIcon(command: BaseCommand): IconType | undefined {
   return command.icon as IconType;
 }
 
-export function getPlacement(isHorizontal: boolean): PlacementType {
+export function getFlexDirection(isHorizontal: boolean): FlexDirection {
+  return isHorizontal ? 'row' : 'column';
+}
+
+export function getTooltipPlacement(isHorizontal: boolean): PlacementType {
   return isHorizontal ? 'top' : 'right';
 }
 

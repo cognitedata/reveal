@@ -5,3 +5,5 @@
 export type ButtonType = 'ghost' | 'ghost-destructive' | 'primary';
 
 export type PlacementType = 'top' | 'right';
+
+export type FlexDirection = 'row' | 'column';

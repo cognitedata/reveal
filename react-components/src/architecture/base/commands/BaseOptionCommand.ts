@@ -27,7 +27,7 @@ export abstract class BaseOptionCommand extends BaseCommand {
   // INSTANCE METHODS
   // ==================================================
 
-  public getOptions(renderTarget: RevealRenderTarget): BaseCommand[] {
+  public getOrCreateOptions(renderTarget: RevealRenderTarget): BaseCommand[] {
     if (this._options === undefined) {
       this._options = this.createOptions();
       for (const option of this._options) {
@@ -37,5 +37,12 @@ export abstract class BaseOptionCommand extends BaseCommand {
       }
     }
     return this._options;
+  }
+
+  public get selectedOption(): BaseCommand | undefined {
+    if (this._options === undefined) {
+      return undefined;
+    }
+    return this._options.find((option) => option.isChecked);
   }
 }

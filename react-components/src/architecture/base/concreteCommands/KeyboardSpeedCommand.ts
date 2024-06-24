@@ -29,7 +29,6 @@ export class KeyboardSpeedCommand extends BaseOptionCommand {
 
 // Note: This is not exported, as it is only used internally
 class OptionCommand extends RenderTargetCommand {
-  static currentSpeed: number = 1;
   private readonly _value;
 
   public constructor(value: number) {
@@ -38,7 +37,7 @@ class OptionCommand extends RenderTargetCommand {
   }
 
   public override get tooltip(): TranslateKey {
-    return { fallback: this._value.toString() + 'x' };
+    return { fallback: `${this._value.toString()}x` };
   }
 
   public override get isChecked(): boolean {

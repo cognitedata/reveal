@@ -9,7 +9,7 @@ import { useTranslation } from '../i18n/I18n';
 import { type BaseCommand } from '../../architecture/base/commands/BaseCommand';
 import { OptionButton } from './OptionButton';
 import { BaseOptionCommand } from '../../architecture/base/commands/BaseOptionCommand';
-import { getButtonType, getDefaultCommand, getIcon, getPlacement } from './utilities';
+import { getButtonType, getDefaultCommand, getIcon, getTooltipPlacement } from './utilities';
 
 export const CommandButtons = ({
   commands,
@@ -35,22 +35,22 @@ export const CommandButtons = ({
 
 export const CreateButton = (command: BaseCommand, isHorizontal = false): ReactElement => {
   if (command instanceof BaseOptionCommand) {
-    return <OptionButton command={command} isHorizontal={isHorizontal} />;
+    return <OptionButton inputCommand={command} isHorizontal={isHorizontal} />;
   } else {
-    return <CommandButton command={command} isHorizontal={isHorizontal} />;
+    return <CommandButton inputCommand={command} isHorizontal={isHorizontal} />;
   }
 };
 
 export const CommandButton = ({
-  command,
+  inputCommand,
   isHorizontal = false
 }: {
-  command: BaseCommand;
+  inputCommand: BaseCommand;
   isHorizontal: boolean;
 }): ReactElement => {
   const renderTarget = useRenderTarget();
   const { t } = useTranslation();
-  const newCommand = useMemo<BaseCommand>(() => getDefaultCommand(command, renderTarget), []);
+  const command = useMemo<BaseCommand>(() => getDefaultCommand(inputCommand, renderTarget), []);
 
   const [isChecked, setChecked] = useState<boolean>(false);
   const [isEnabled, setEnabled] = useState<boolean>(true);
@@ -66,22 +66,22 @@ export const CommandButton = ({
       setUniqueId(command.uniqueId);
       setIcon(getIcon(command));
     }
-    update(newCommand);
-    newCommand.addEventListener(update);
+    update(command);
+    command.addEventListener(update);
     return () => {
-      newCommand.removeEventListener(update);
+      command.removeEventListener(update);
     };
-  }, [newCommand.isEnabled, newCommand.isChecked, newCommand.isVisible]);
+  }, [command.isEnabled, command.isChecked, command.isVisible]);
 
   if (!isVisible) {
     return <></>;
   }
-  const placement = getPlacement(isHorizontal);
-  const tooltip = newCommand.getLabel(t);
+  const placement = getTooltipPlacement(isHorizontal);
+  const tooltip = command.getLabel(t);
   return (
     <CogsTooltip content={tooltip} placement={placement} appendTo={document.body}>
       <Button
-        type={getButtonType(newCommand)}
+        type={getButtonType(command)}
         icon={icon}
         key={uniqueId}
         disabled={!isEnabled}
@@ -89,7 +89,7 @@ export const CommandButton = ({
         aria-label={tooltip}
         iconPlacement="right"
         onClick={() => {
-          newCommand.invoke();
+          command.invoke();
         }}
       />
     </CogsTooltip>
