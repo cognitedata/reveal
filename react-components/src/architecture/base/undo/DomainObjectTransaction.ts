@@ -8,8 +8,9 @@ import { Changes } from '../domainObjectsHelpers/Changes';
 import { type RevealRenderTarget } from '../renderTarget/RevealRenderTarget';
 
 /**
- * Represents an example transaction used for undo.
- * It implements undo transaction for added, deleted and geometry changes.
+ * Represents an generic transaction used for undo.
+ * It implements undo transaction for added, deleted, name, color, geometry
+ * and renderstyle changes.
  */
 export class DomainObjectTransaction extends Transaction {
   // ==================================================
