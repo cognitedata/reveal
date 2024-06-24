@@ -18,6 +18,7 @@ import {
   OverlayCollection,
   Overlay3D
 } from '@reveal/3d-overlays';
+import { TextOverlay } from './TextOverlay';
 import { Cognite3DViewerToolBase } from '../Cognite3DViewerToolBase';
 
 /**
@@ -80,16 +81,12 @@ export type OverlayCollectionOptions = {
  */
 export class Overlay3DTool<ContentType = DefaultOverlay3DContentType> extends Cognite3DViewerToolBase {
   private readonly _viewer: Cognite3DViewer;
-  private readonly _textOverlay: HTMLElement;
 
   private readonly _defaultOverlayColor: THREE.Color = new THREE.Color('#fbe50b');
-  private readonly _defaultTextOverlayToCursorOffset = 20;
-  private readonly _temporaryVec = new THREE.Vector2();
-  private readonly _raycaster = new THREE.Raycaster();
 
   private _overlayCollections: Overlay3DCollection<ContentType>[] = [];
   private _isVisible = true;
-  private _textOverlayVisible = false;
+  private readonly _textOverlay: TextOverlay;
 
   private readonly _events = {
     hover: new EventTrigger<OverlayEventHandler<ContentType>>(),
@@ -102,9 +99,7 @@ export class Overlay3DTool<ContentType = DefaultOverlay3DContentType> extends Co
 
     this._viewer = viewer;
     this._defaultOverlayColor = toolParameters?.defaultOverlayColor ?? this._defaultOverlayColor;
-
-    this._textOverlay = this.createTextOverlay('', this._defaultTextOverlayToCursorOffset);
-    viewer.domElement.appendChild(this._textOverlay);
+    this._textOverlay = new TextOverlay(viewer.domElement);
 
     viewer.canvas.addEventListener('mousemove', this.onMouseMove);
 
@@ -122,14 +117,10 @@ export class Overlay3DTool<ContentType = DefaultOverlay3DContentType> extends Co
   ): OverlayCollection<ContentType> {
     const { _viewer: viewer } = this;
 
-    const points = new Overlay3DCollection<ContentType>(overlays, {
+    const points = new Overlay3DCollection<ContentType>(overlays ?? [], {
       defaultOverlayColor: options?.defaultOverlayColor ?? this._defaultOverlayColor,
       overlayTexture: options?.overlayTexture,
       overlayTextureMask: options?.overlayTextureMask
-    });
-
-    viewer.on('cameraChange', () => {
-      points.sortOverlaysRelativeToCamera(viewer.cameraManager.getCamera());
     });
 
     this._overlayCollections.push(points);
@@ -186,15 +177,14 @@ export class Overlay3DTool<ContentType = DefaultOverlay3DContentType> extends Co
    * Default is false.
    */
   setTextOverlayVisible(visible: boolean): void {
-    this._textOverlayVisible = visible;
-    this._textOverlay.style.opacity = visible ? '1' : '0';
+    this._textOverlay.setTextOverlayEnabled(visible);
   }
 
   /**
    * Gets whether text overlay is visible.
    */
   getTextOverlayVisible(): boolean {
-    return this._textOverlayVisible;
+    return this._textOverlay.getTextOverlayEnabled();
   }
 
   /**
@@ -272,15 +262,16 @@ export class Overlay3DTool<ContentType = DefaultOverlay3DContentType> extends Co
     const { _textOverlay: textOverlay } = this;
 
     const intersectedOverlay = this.intersectPointsMarkers({ offsetX: event.offsetX, offsetY: event.offsetY });
+
+    this._textOverlay.reset();
+
     if (intersectedOverlay) {
-      this.positionTextOverlay(event);
+      this._textOverlay.positionTextOverlay(event);
       this._events.hover.fire({
         targetOverlay: intersectedOverlay,
         mousePosition: event,
-        htmlTextOverlay: textOverlay
+        htmlTextOverlay: textOverlay.textOverlay
       });
-    } else {
-      textOverlay.style.opacity = '0';
     }
   };
 
@@ -289,88 +280,46 @@ export class Overlay3DTool<ContentType = DefaultOverlay3DContentType> extends Co
     if (intersectedOverlay) {
       this._events.click.fire({
         targetOverlay: intersectedOverlay,
-        htmlTextOverlay: this._textOverlay,
+        htmlTextOverlay: this._textOverlay.textOverlay,
         mousePosition: { offsetX: event.offsetX, offsetY: event.offsetY }
       });
     }
   };
 
-  private positionTextOverlay(event: MouseEvent): void {
-    const { _textOverlay, _textOverlayVisible } = this;
-    _textOverlay.style.left = `${event.offsetX}px`;
-    _textOverlay.style.top = `${event.offsetY}px`;
-    _textOverlay.style.opacity = _textOverlayVisible ? '1' : '0';
-  }
-
   private intersectPointsMarkers(mouseCoords: { offsetX: number; offsetY: number }): Overlay3DIcon<ContentType> | null {
-    const { _viewer, _raycaster, _temporaryVec } = this;
+    const { _viewer } = this;
 
-    const pixelCoords = getNormalizedPixelCoordinates(_viewer.domElement, mouseCoords.offsetX, mouseCoords.offsetY);
+    const normalizedCoordinates = getNormalizedPixelCoordinates(
+      _viewer.domElement,
+      mouseCoords.offsetX,
+      mouseCoords.offsetY
+    );
     const camera = _viewer.cameraManager.getCamera();
     const cameraDirection = camera.getWorldDirection(new THREE.Vector3());
-    _raycaster.setFromCamera(_temporaryVec.copy(pixelCoords), camera);
 
-    let intersection: [Overlay3DIcon<ContentType>, THREE.Vector3][] = [];
+    const intersections: [Overlay3D<ContentType>, THREE.Vector3][] = [];
 
     for (const points of this._overlayCollections) {
-      for (const icon of points.getOverlays() as Overlay3DIcon<ContentType>[]) {
-        if (icon.getVisible()) {
-          const inter = icon.intersect(_raycaster.ray);
-          if (inter) {
-            intersection.push([icon, inter]);
-            icon.updateAdaptiveScale({
-              camera,
-              renderSize: _viewer.renderParameters.renderSize,
-              domElement: _viewer.canvas
-            });
-          }
-        }
+      const intersection = points.intersectOverlays(normalizedCoordinates, camera);
+      if (intersection !== undefined) {
+        intersections.push([intersection, intersection.getPosition().clone()]);
       }
     }
 
-    intersection = intersection.filter(([icon, _]) => icon.intersect(_raycaster.ray) !== null);
-
-    intersection = intersection
+    const sortedIntersections = intersections
       .map(
         ([icon, intersection]) =>
-          [icon, intersection.sub(_raycaster.ray.origin)] as [Overlay3DIcon<ContentType>, THREE.Vector3]
+          [icon, intersection.sub(camera.position)] as [Overlay3DIcon<ContentType>, THREE.Vector3]
       )
       .filter(([, intersection]) => intersection.dot(cameraDirection) > 0)
       .sort((a, b) => a[1].length() - b[1].length());
 
-    if (intersection.length > 0) {
-      const intersectedOverlay = intersection[0][0];
+    if (sortedIntersections.length > 0) {
+      const intersectedOverlay = sortedIntersections[0][0];
 
       return intersectedOverlay;
     }
 
     return null;
-  }
-
-  private createTextOverlay(text: string, horizontalOffset: number): HTMLElement {
-    const textOverlay = document.createElement('div');
-    textOverlay.innerText = text;
-    textOverlay.setAttribute('class', 'text-overlay');
-    textOverlay.style.cssText = `
-            position: absolute;
-
-            /* Anchor to the center of the element and ignore events */
-            transform: translate(${horizontalOffset}px, -50%);
-            touch-action: none;
-            user-select: none;
-
-            padding: 7px;
-            max-width: 200px;
-            color: #fff;
-            background: #232323da;
-            border-radius: 5px;
-            border: '#ffffff22 solid 2px;
-            opacity: 0;
-            transition: opacity 0.3s;
-            opacity: 0;
-            z-index: 10;
-            `;
-
-    return textOverlay;
   }
 }
