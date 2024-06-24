@@ -2,134 +2,65 @@
  * Copyright 2023 Cognite AS
  */
 
-import { type ReactElement, useState, useEffect, useMemo } from 'react';
+import { type ReactElement, useState, useEffect, useMemo, useCallback } from 'react';
 import { useRenderTarget } from '../RevealCanvas/ViewerContext';
-import { Button, Tooltip as CogsTooltip, Divider, type IconType } from '@cognite/cogs.js';
+import { Button, Tooltip as CogsTooltip, type IconType } from '@cognite/cogs.js';
 import { useTranslation } from '../i18n/I18n';
 import { type BaseCommand } from '../../architecture/base/commands/BaseCommand';
-import { type RevealRenderTarget } from '../../architecture/base/renderTarget/RevealRenderTarget';
-import { RenderTargetCommand } from '../../architecture/base/commands/RenderTargetCommand';
-
-export const CommandButtons = ({
-  commands,
-  isHorizontal = false
-}: {
-  commands: Array<BaseCommand | undefined>;
-  isHorizontal: boolean;
-}): ReactElement => {
-  return (
-    <>
-      {commands.map(
-        (command, index): ReactElement => (
-          <CommandButtonWrapper
-            command={command}
-            isHorizontal={isHorizontal}
-            key={getKey(command, index)}
-          />
-        )
-      )}
-    </>
-  );
-};
-
-export const CreateCommandButton = (command: BaseCommand, isHorizontal = false): ReactElement => {
-  return <CommandButton command={command} isHorizontal={isHorizontal} />;
-};
+import { getButtonType, getDefaultCommand, getIcon, getTooltipPlacement } from './utilities';
 
 export const CommandButton = ({
-  command,
+  inputCommand,
   isHorizontal = false
 }: {
-  command: BaseCommand;
+  inputCommand: BaseCommand;
   isHorizontal: boolean;
 }): ReactElement => {
   const renderTarget = useRenderTarget();
   const { t } = useTranslation();
-  const newCommand = useMemo<BaseCommand>(() => getDefaultCommand(command, renderTarget), []);
+  const command = useMemo<BaseCommand>(() => getDefaultCommand(inputCommand, renderTarget), []);
 
   const [isChecked, setChecked] = useState<boolean>(false);
   const [isEnabled, setEnabled] = useState<boolean>(true);
   const [isVisible, setVisible] = useState<boolean>(true);
   const [uniqueId, setUniqueId] = useState<number>(0);
-  const [icon, setIcon] = useState<IconType>('Copy');
+  const [icon, setIcon] = useState<IconType | undefined>(undefined);
+
+  const update = useCallback((command: BaseCommand) => {
+    setChecked(command.isChecked);
+    setEnabled(command.isEnabled);
+    setVisible(command.isVisible);
+    setUniqueId(command.uniqueId);
+    setIcon(getIcon(command));
+  }, []);
 
   useEffect(() => {
-    function update(command: BaseCommand): void {
-      setChecked(command.isChecked);
-      setEnabled(command.isEnabled);
-      setVisible(command.isVisible);
-      setUniqueId(command.uniqueId);
-      setIcon(command.icon as IconType);
-    }
-    update(newCommand);
-    newCommand.addEventListener(update);
+    update(command);
+    command.addEventListener(update);
     return () => {
-      newCommand.removeEventListener(update);
+      command.removeEventListener(update);
     };
-  }, [newCommand.isEnabled, newCommand.isChecked, newCommand.isVisible]);
+  }, [command.isEnabled, command.isChecked, command.isVisible]);
 
   if (!isVisible) {
     return <></>;
   }
-  const placement = isHorizontal ? 'top' : 'right';
-  const { key, fallback } = newCommand.tooltip;
-  // This was the only way it went through compiler: (more button types will be added in the future)
-  const type = newCommand.buttonType;
-  if (type !== 'ghost' && type !== 'ghost-destructive' && type !== 'primary') {
-    return <></>;
-  }
-  const text = key === undefined ? fallback : t(key, fallback);
+  const placement = getTooltipPlacement(isHorizontal);
+  const tooltip = command.getLabel(t);
   return (
-    <CogsTooltip content={text} placement={placement} appendTo={document.body}>
+    <CogsTooltip content={tooltip} placement={placement} appendTo={document.body}>
       <Button
-        type={type}
+        type={getButtonType(command)}
         icon={icon}
         key={uniqueId}
-        toggled={isChecked}
         disabled={!isEnabled}
-        aria-label={text}
+        toggled={isChecked}
+        aria-label={tooltip}
+        iconPlacement="right"
         onClick={() => {
-          newCommand.invoke();
+          command.invoke();
         }}
       />
     </CogsTooltip>
   );
 };
-
-function getDefaultCommand(newCommand: BaseCommand, renderTarget: RevealRenderTarget): BaseCommand {
-  // If it exists from before, return the existing command
-  // Otherwise, add the new command to the controller and attach the renderTarget.
-  if (!newCommand.hasData) {
-    const oldCommand = renderTarget.commandsController.getEqual(newCommand);
-    if (oldCommand !== undefined) {
-      return oldCommand;
-    }
-    renderTarget.commandsController.add(newCommand);
-  }
-  if (newCommand instanceof RenderTargetCommand) {
-    newCommand.attach(renderTarget);
-  }
-  return newCommand;
-}
-
-function getKey(command: BaseCommand | undefined, index: number): number {
-  if (command === undefined) {
-    return -index;
-  }
-
-  return command.uniqueId;
-}
-
-function CommandButtonWrapper({
-  command,
-  isHorizontal
-}: {
-  command: BaseCommand | undefined;
-  isHorizontal: boolean;
-}): ReactElement {
-  if (command === undefined) {
-    const direction = !isHorizontal ? 'horizontal' : 'vertical';
-    return <Divider weight="2px" length="24px" direction={direction} />;
-  }
-  return <CommandButton command={command} isHorizontal={isHorizontal} />;
-}

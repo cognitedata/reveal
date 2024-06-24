@@ -5,7 +5,7 @@ import { ToolBar } from '@cognite/cogs.js';
 import styled from 'styled-components';
 import { useMemo, useState, type ReactElement } from 'react';
 import { withSuppressRevealEvents } from '../../higher-order-components/withSuppressRevealEvents';
-import { CommandButtons } from './CommandButton';
+import { CommandButtons } from './CommandButtons';
 import { type BaseCommand } from '../../architecture/base/commands/BaseCommand';
 import { useRenderTarget } from '../RevealCanvas/ViewerContext';
 import { ActiveToolUpdater } from '../../architecture/base/reactUpdaters/ActiveToolUpdater';
