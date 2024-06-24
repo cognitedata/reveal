@@ -49,9 +49,7 @@ export class DeleteDomainObjectCommand extends DomainObjectCommand<DomainObject>
     const undoManager = this.undoManager;
     if (undoManager !== undefined) {
       const transaction = this._domainObject.createTransaction(Changes.deleted);
-      if (transaction !== undefined) {
-        undoManager.addTransaction(transaction);
-      }
+      undoManager.addTransaction(transaction);
     }
     return this._domainObject.removeInteractive();
   }

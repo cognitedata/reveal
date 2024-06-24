@@ -12,7 +12,7 @@ export class UndoManager {
   // INSTANCE METHODS
   // =================================================
 
-  public addTransaction(transaction?: Transaction): void {
+  public addTransaction(transaction: Transaction | undefined): void {
     if (transaction === undefined) {
       return;
     }
@@ -23,10 +23,29 @@ export class UndoManager {
     if (this._transactions.length === 0) {
       return false;
     }
-    const transaction = this._transactions.pop();
-    if (transaction === undefined) throw new Error('Transaction is undefined');
+    let transaction = this._transactions.pop();
+    if (transaction === undefined) {
+      throw new Error('Transaction is undefined');
+    }
+    let isChanged = transaction.undo(renderTarget);
+    let timeStamp = transaction.timeStamp;
 
-    return transaction.undo(renderTarget);
+    // Undo all transactions that happened within 500ms of the last transaction
+    for (let i = this._transactions.length - 1; i >= 0; i--) {
+      const deltaTime = Math.abs(this._transactions[i].timeStamp - timeStamp);
+      if (deltaTime > 500) {
+        break;
+      }
+      transaction = this._transactions.pop();
+      if (transaction === undefined) {
+        throw new Error('Transaction is undefined');
+      }
+      timeStamp = transaction.timeStamp;
+      if (transaction.undo(renderTarget)) {
+        isChanged = true;
+      }
+    }
+    return isChanged;
   }
 
   public get canUndo(): boolean {
