@@ -71,3 +71,7 @@ export type ChunkInCacheTypes = {
   chunkNotInCache: number[];
 };
 
+export type ChunkInCacheTypesNode3D = {
+  chunkInCache: Node3D[];
+  chunkNotInCache: number[];
+};

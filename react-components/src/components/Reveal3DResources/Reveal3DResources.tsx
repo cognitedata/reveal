@@ -33,7 +33,7 @@ import { is360ImageAddOptions } from './typeGuards';
 import { useRemoveNonReferencedModels } from './useRemoveNonReferencedModels';
 import { useAllMappedEquipmentAssetMappings } from '../../query/useSearchMappedEquipmentAssetMappings';
 import { useSDK } from '../RevealCanvas/SDKProvider';
-import { useAssetMappedNodesForRevisions, useGenerateAssetMappingCachePerItemFromModelCache, useNodesForAssets } from '../CacheProvider/AssetMappingCacheProvider';
+import { useAssetMappedNodesForRevisions, useGenerateAssetMappingCachePerItemFromModelCache, useGenerateNode3DCache, useNodesForAssets } from '../CacheProvider/AssetMappingCacheProvider';
 import { InternalId } from '@cognite/sdk';
 import { uniqBy } from 'lodash';
 
@@ -72,6 +72,7 @@ export const Reveal3DResources = ({
   const { data: assetMappings } = useAssetMappedNodesForRevisions(cadModelOptions);
 
   void useGenerateAssetMappingCachePerItemFromModelCache(cadModelOptions, assetMappings);
+  void useGenerateNode3DCache(cadModelOptions, assetMappings);
 
   const pointCloudModelOptions = useMemo(
     () =>
