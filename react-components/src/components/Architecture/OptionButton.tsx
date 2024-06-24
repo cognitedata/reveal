@@ -7,10 +7,9 @@ import { Button, Dropdown, Menu, Tooltip as CogsTooltip, type IconType } from '@
 import { useTranslation } from '../i18n/I18n';
 import { type BaseCommand } from '../../architecture/base/commands/BaseCommand';
 import { useRenderTarget } from '../RevealCanvas/ViewerContext';
-import { getDefaultCommand } from './CommandButton';
 import { BaseOptionCommand } from '../../architecture/base/commands/BaseOptionCommand';
 import styled from 'styled-components';
-import { getButtonType, getIcon, getPlacement } from './utilities';
+import { getButtonType, getDefaultCommand, getIcon, getPlacement } from './utilities';
 
 export const OptionButton = ({
   command,

@@ -7,11 +7,9 @@ import { useRenderTarget } from '../RevealCanvas/ViewerContext';
 import { Button, Tooltip as CogsTooltip, Divider, type IconType } from '@cognite/cogs.js';
 import { useTranslation } from '../i18n/I18n';
 import { type BaseCommand } from '../../architecture/base/commands/BaseCommand';
-import { type RevealRenderTarget } from '../../architecture/base/renderTarget/RevealRenderTarget';
-import { RenderTargetCommand } from '../../architecture/base/commands/RenderTargetCommand';
 import { OptionButton } from './OptionButton';
 import { BaseOptionCommand } from '../../architecture/base/commands/BaseOptionCommand';
-import { getButtonType, getIcon, getPlacement } from './utilities';
+import { getButtonType, getDefaultCommand, getIcon, getPlacement } from './utilities';
 
 export const CommandButtons = ({
   commands,
@@ -97,25 +95,6 @@ export const CommandButton = ({
     </CogsTooltip>
   );
 };
-
-export function getDefaultCommand(
-  newCommand: BaseCommand,
-  renderTarget: RevealRenderTarget
-): BaseCommand {
-  // If it exists from before, return the existing command
-  // Otherwise, add the new command to the controller and attach the renderTarget.
-  if (!newCommand.hasData) {
-    const oldCommand = renderTarget.commandsController.getEqual(newCommand);
-    if (oldCommand !== undefined) {
-      return oldCommand;
-    }
-    renderTarget.commandsController.add(newCommand);
-  }
-  if (newCommand instanceof RenderTargetCommand) {
-    newCommand.attach(renderTarget);
-  }
-  return newCommand;
-}
 
 function getKey(command: BaseCommand | undefined, index: number): number {
   if (command === undefined) {
