@@ -16,7 +16,7 @@ export class NextClippingCommand extends RenderTargetCommand {
 
   public override get tooltip(): TranslateKey {
     return {
-      key: 'CLIP_APPLY',
+      key: 'CLIP_NEXT',
       fallback: 'Set the next crop box or slicing plane as global clipping'
     };
   }
@@ -43,10 +43,9 @@ export class NextClippingCommand extends RenderTargetCommand {
   }
 
   protected override invokeCore(): boolean {
+    // This code treat the slicing planes as one single group, along with all the crop boxes.
+    // The next selected crop box or slicing planes will be used as clipping.
     const { renderTarget } = this;
-
-    const array: DomainObject[] = [];
-    let haveSlice = false;
 
     const selectedSlice = this.rootDomainObject.getSelectedDescendantByType(SliceDomainObject);
     if (selectedSlice !== undefined) {
@@ -61,6 +60,8 @@ export class NextClippingCommand extends RenderTargetCommand {
       }
     }
     // Build the array of crop boxes and at least one slice
+    const array: DomainObject[] = [];
+    let haveSlice = false;
     let selectedIndex: number | undefined;
     for (const domainObject of this.rootDomainObject.getDescendants()) {
       if (domainObject instanceof CropBoxDomainObject) {
@@ -79,7 +80,7 @@ export class NextClippingCommand extends RenderTargetCommand {
     if (array.length <= 1 || selectedIndex === undefined) {
       return false;
     }
-    // Turn all selection of
+    // Turn all selection off
     for (let i = 0; i < array.length; i++) {
       const domainObject = array[i];
       domainObject.setSelectedInteractive(false);
@@ -97,9 +98,9 @@ export class NextClippingCommand extends RenderTargetCommand {
       } else {
         ApplyClipCommand.setClippingPlanes(this.rootDomainObject);
       }
+      renderTarget.fitView();
       break;
     }
-    renderTarget.fitView();
     return true;
   }
 }
