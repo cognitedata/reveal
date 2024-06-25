@@ -133,8 +133,7 @@ export abstract class BaseTool extends RenderTargetCommand {
     event: PointerEvent | WheelEvent,
     domainObjectPredicate?: (domainObject: DomainObject) => boolean
   ): Promise<AnyIntersection | undefined> {
-    const { renderTarget } = this;
-    const { viewer } = renderTarget;
+    const viewer = this.renderTarget.viewer;
 
     const point = viewer.getPixelCoordinatesFromEvent(event);
 

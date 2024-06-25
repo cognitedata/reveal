@@ -11,7 +11,7 @@ import { NodeCacheProvider } from '../CacheProvider/NodeCacheProvider';
 import { AssetMappingCacheProvider } from '../CacheProvider/AssetMappingCacheProvider';
 import { PointCloudAnnotationCacheProvider } from '../CacheProvider/PointCloudAnnotationCacheProvider';
 import { Reveal3DResourcesCountContextProvider } from '../Reveal3DResources/Reveal3DResourcesCountContext';
-import { SDKProvider } from '../RevealCanvas/SDKProvider';
+import { SDKProvider, useFdmSdk } from '../RevealCanvas/SDKProvider';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { useRevealKeepAlive } from '../RevealKeepAlive/RevealKeepAliveContext';
 import { Image360AnnotationCacheProvider } from '../CacheProvider/Image360AnnotationCacheProvider';
@@ -106,7 +106,7 @@ const useRevealFromKeepAlive = ({
         useFlexibleCameraManager: true,
         hasEventListeners: false
       });
-      renderTarget = new RevealRenderTarget(viewer);
+      renderTarget = new RevealRenderTarget(viewer, sdk);
       if (revealKeepAliveData !== undefined) {
         revealKeepAliveData.renderTargetRef.current = renderTarget;
       }

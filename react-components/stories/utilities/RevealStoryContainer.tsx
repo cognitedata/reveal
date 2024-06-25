@@ -18,6 +18,7 @@ import { type Image360AnnotationCache } from '../../src/components/CacheProvider
 import { type SceneIdentifiers } from '../../src/components/SceneContainer/sceneTypes';
 import { RevealRenderTarget } from '../../src/architecture/base/renderTarget/RevealRenderTarget';
 import { StoryBookConfig } from '../../src/architecture/concrete/config/StoryBookConfig';
+import { useFdmSdk } from '../../src/components/RevealCanvas/SDKProvider';
 
 type RevealStoryContainerProps = Omit<RevealContextProps, 'sdk'> & {
   sdk?: CogniteClient;
@@ -41,7 +42,7 @@ export const RevealStoryContext = ({
 
   const renderTarget = useMemo(() => {
     if (viewer !== undefined) {
-      return new RevealRenderTarget(viewer);
+      return new RevealRenderTarget(viewer, sdkInstance);
     } else if (isLocal) {
       const newViewer = new Cognite3DViewer({
         ...rest.viewerOptions,
@@ -51,7 +52,7 @@ export const RevealStoryContext = ({
         hasEventListeners: false,
         useFlexibleCameraManager: true
       });
-      const renderTarget = new RevealRenderTarget(newViewer);
+      const renderTarget = new RevealRenderTarget(newViewer, sdkInstance);
       renderTarget.setConfig(new StoryBookConfig());
       return renderTarget;
     }
