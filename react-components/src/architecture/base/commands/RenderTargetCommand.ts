@@ -8,13 +8,22 @@ import { type RootDomainObject } from '../domainObjects/RootDomainObject';
 import { CommandsUpdater } from '../reactUpdaters/CommandsUpdater';
 import { type UndoManager } from '../undo/UndoManager';
 import { type Transaction } from '../undo/Transaction';
+import { type BaseTool } from './BaseTool';
 
 /**
  * Represents a base class where the render target is known.
  * Subclasses of this class is used to interact with the render target
  */
 export abstract class RenderTargetCommand extends BaseCommand {
+  // ==================================================
+  // INSTANCE FIELDS
+  // ==================================================
+
   public _renderTarget: RevealRenderTarget | undefined = undefined;
+
+  // ==================================================
+  // INSTANCE PROPERTIES
+  // ==================================================
 
   public get renderTarget(): RevealRenderTarget {
     if (this._renderTarget === undefined) {
@@ -23,8 +32,12 @@ export abstract class RenderTargetCommand extends BaseCommand {
     return this._renderTarget;
   }
 
-  public get rootDomainObject(): RootDomainObject {
+  protected get rootDomainObject(): RootDomainObject {
     return this.renderTarget.rootDomainObject;
+  }
+
+  protected get activeTool(): BaseTool | undefined {
+    return this.renderTarget.commandsController.activeTool;
   }
 
   // ==================================================
@@ -45,7 +58,7 @@ export abstract class RenderTargetCommand extends BaseCommand {
 
   public get undoManager(): UndoManager | undefined {
     // This method is overridden on BaseTool only!
-    const activeTool = this.renderTarget.commandsController.activeTool;
+    const activeTool = this.activeTool;
     if (activeTool === undefined) {
       return undefined;
     }

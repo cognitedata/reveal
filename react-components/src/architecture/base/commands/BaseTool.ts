@@ -35,7 +35,7 @@ export abstract class BaseTool extends RenderTargetCommand {
   // =================================================
 
   public override get isChecked(): boolean {
-    return this.renderTarget.commandsController.activeTool === this;
+    return this.activeTool === this;
   }
 
   protected override invokeCore(): boolean {
@@ -127,6 +127,8 @@ export abstract class BaseTool extends RenderTargetCommand {
   public onFocusChanged(_haveFocus: boolean): void {}
 
   public onKey(_event: KeyboardEvent, _down: boolean): void {}
+
+  public onUndo(): void {}
 
   // ==================================================
   // INSTANCE METHODS: Intersections

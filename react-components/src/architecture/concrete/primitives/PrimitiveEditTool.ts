@@ -164,6 +164,9 @@ export abstract class PrimitiveEditTool extends BaseEditTool {
         parent.addChildInteractive(domainObject);
         domainObject.setSelectedInteractive(true);
         domainObject.setVisibleInteractive(true, renderTarget);
+      } else {
+        this._creator = undefined;
+        return;
       }
     }
     this.endCreatorIfFinished(creator);
@@ -174,6 +177,19 @@ export abstract class PrimitiveEditTool extends BaseEditTool {
       return; // Prevent dragging while creating the new
     }
     await super.onLeftPointerDown(event);
+  }
+
+  public override onUndo(): void {
+    if (this._creator === undefined) {
+      return;
+    }
+    // End the creator if the domainObject is removed by undo.
+    // To check, it doesn't have any parent if it is removed.
+    const domainObject = this._creator.domainObject;
+    if (domainObject === undefined || !domainObject.hasParent) {
+      this._creator = undefined;
+      this.setDefaultPrimitiveType();
+    }
   }
 
   // ==================================================
@@ -313,6 +329,7 @@ export abstract class PrimitiveEditTool extends BaseEditTool {
     } else if (creator.notPendingPointCount < creator.minimumPointCount) {
       return;
     }
+    // Add the transaction only when it is legal at the first time.
     const domainObject = creator.domainObject;
     if (domainObject === undefined) {
       return;
@@ -321,6 +338,9 @@ export abstract class PrimitiveEditTool extends BaseEditTool {
       return;
     }
     const exists = this.undoManager.hasUniqueId(domainObject.uniqueId);
-    this.addTransaction(domainObject.createTransaction(exists ? Changes.geometry : Changes.added));
+    if (exists) {
+      return;
+    }
+    this.addTransaction(domainObject.createTransaction(Changes.added));
   }
 }

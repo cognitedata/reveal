@@ -6,6 +6,7 @@ import { type Vector3, type Ray } from 'three';
 import { replaceLast } from '../utilities/extensions/arrayExtensions';
 import { type AnyIntersection, CDF_TO_VIEWER_TRANSFORMATION } from '@cognite/reveal';
 import { type DomainObject } from '../domainObjects/DomainObject';
+import { type BaseTool } from '../commands/BaseTool';
 
 /**
  * Helper class for create a domain object by clicking around
@@ -17,6 +18,15 @@ export abstract class BaseCreator {
 
   private readonly _points: Vector3[] = []; // Clicked points
   private _lastIsPending: boolean = false; // If true, the last point is hover and not confirmed.
+  protected readonly _tool: BaseTool; // The tool that created this creator
+
+  // ==================================================
+  // CONSTRUCTOR
+  // ==================================================
+
+  protected constructor(tool: BaseTool) {
+    this._tool = tool;
+  }
 
   // ==================================================
   // INSTANCE PROPERTIES

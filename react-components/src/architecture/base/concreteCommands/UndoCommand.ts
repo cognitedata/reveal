@@ -44,8 +44,12 @@ export class UndoCommand extends RenderTargetCommand {
     if (undoManager === undefined) {
       return false;
     }
+    const couldUndo = undoManager.canUndo;
     const undone = undoManager.undo(this.renderTarget);
-    CommandsUpdater.update(this.renderTarget);
+    if (couldUndo !== undoManager.canUndo) {
+      CommandsUpdater.update(this.renderTarget);
+    }
+    this.activeTool?.onUndo();
     return undone;
   }
 }
