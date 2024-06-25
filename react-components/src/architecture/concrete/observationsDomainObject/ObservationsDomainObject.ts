@@ -2,23 +2,20 @@
  * Copyright 2024 Cognite AS
  */
 import { CDF_TO_VIEWER_TRANSFORMATION, Overlay3DCollection } from '@cognite/reveal';
-import { OBSERVATION_SOURCE, ObservationProperties, type Observation } from './models';
+import { OBSERVATION_SOURCE, type ObservationProperties, type Observation } from './models';
 import { VisualDomainObject } from '../../base/domainObjects/VisualDomainObject';
 import { type ThreeView } from '../../base/views/ThreeView';
 import { ObservationsView } from './ObservationsView';
 import { type TranslateKey } from '../../base/utilities/TranslateKey';
-import { FdmSDK, InstanceFilter } from '../../../utilities/FdmSDK';
+import { type FdmSDK, type InstanceFilter } from '../../../utilities/FdmSDK';
 import { Vector3 } from 'three';
 import { DEFAULT_OVERLAY_COLOR } from './constants';
 import { Changes } from '../../base/domainObjectsHelpers/Changes';
 
 export class ObservationsDomainObject extends VisualDomainObject {
-  private readonly _collection: Overlay3DCollection<Observation> = new Overlay3DCollection(
-    undefined,
-    {
-      defaultOverlayColor: DEFAULT_OVERLAY_COLOR
-    }
-  );
+  private readonly _collection = new Overlay3DCollection<Observation>(undefined, {
+    defaultOverlayColor: DEFAULT_OVERLAY_COLOR
+  });
 
   public override get typeName(): TranslateKey {
     return { fallback: ObservationsDomainObject.name };
@@ -26,7 +23,7 @@ export class ObservationsDomainObject extends VisualDomainObject {
 
   constructor(fdmSdk: FdmSDK) {
     super();
-    fetchObservations(fdmSdk).then((observations) => {
+    void fetchObservations(fdmSdk).then((observations) => {
       this.initializeCollection(observations);
       this.notify(Changes.geometry);
     });
@@ -46,7 +43,6 @@ export class ObservationsDomainObject extends VisualDomainObject {
       };
     });
 
-    console.log('Observations: ', observationOverlays);
     this._collection.addOverlays(observationOverlays);
   }
 

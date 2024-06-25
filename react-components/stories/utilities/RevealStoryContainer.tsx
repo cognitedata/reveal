@@ -18,7 +18,6 @@ import { type Image360AnnotationCache } from '../../src/components/CacheProvider
 import { type SceneIdentifiers } from '../../src/components/SceneContainer/sceneTypes';
 import { RevealRenderTarget } from '../../src/architecture/base/renderTarget/RevealRenderTarget';
 import { StoryBookConfig } from '../../src/architecture/concrete/config/StoryBookConfig';
-import { useFdmSdk } from '../../src/components/RevealCanvas/SDKProvider';
 
 type RevealStoryContainerProps = Omit<RevealContextProps, 'sdk'> & {
   sdk?: CogniteClient;

@@ -4,15 +4,8 @@
 import { Box3 } from 'three';
 import { type ObservationsDomainObject } from './ObservationsDomainObject';
 import { GroupThreeView } from '../../base/views/GroupThreeView';
-import { DomainObject } from '../../base/domainObjects/DomainObject';
-import {
-  AnyIntersection,
-  CustomObjectIntersectInput,
-  CustomObjectIntersection,
-  ICustomObject
-} from '@cognite/reveal';
-import { ThreeView } from '../../base/views/ThreeView';
-import { DomainObjectIntersection } from '../../base/domainObjectsHelpers/DomainObjectIntersection';
+import { type CustomObjectIntersectInput, type CustomObjectIntersection } from '@cognite/reveal';
+import { type DomainObjectIntersection } from '../../base/domainObjectsHelpers/DomainObjectIntersection';
 
 export class ObservationsView extends GroupThreeView<ObservationsDomainObject> {
   protected override calculateBoundingBox(): Box3 {
@@ -46,9 +39,11 @@ export class ObservationsView extends GroupThreeView<ObservationsDomainObject> {
     if (closestDistance !== undefined && closestDistance < distanceToCamera) {
       return undefined;
     }
+
     if (domainObject.useClippingInIntersection && !intersectInput.isVisible(point)) {
       return undefined;
     }
+
     const customObjectIntersection: DomainObjectIntersection = {
       type: 'customObject',
       point,

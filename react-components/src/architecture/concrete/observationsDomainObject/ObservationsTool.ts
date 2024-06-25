@@ -8,15 +8,11 @@ import { ObservationsDomainObject } from './ObservationsDomainObject';
 import { type Overlay3D } from '@cognite/reveal';
 import { DEFAULT_OVERLAY_COLOR, SELECTED_OVERLAY_COLOR } from './constants';
 import { BaseEditTool } from '../../base/commands/BaseEditTool';
-import { VisualDomainObject } from '../../base/domainObjects/VisualDomainObject';
+import { type VisualDomainObject } from '../../base/domainObjects/VisualDomainObject';
 
 export class ObservationsTool extends BaseEditTool {
   private _selectedOverlay: Overlay3D<Observation> | undefined;
   private _observationsDomainObject: ObservationsDomainObject | undefined;
-
-  constructor() {
-    super();
-  }
 
   public override get icon(): IconType {
     return 'Location';
@@ -62,6 +58,10 @@ export class ObservationsTool extends BaseEditTool {
     this.renderTarget.viewer.requestRedraw();
   }
 
+  protected override canBeSelected(domainObject: VisualDomainObject): boolean {
+    return domainObject instanceof ObservationsDomainObject;
+  }
+
   private handleIntersectedOverlay(overlay: Overlay3D<Observation> | undefined): void {
     this._selectedOverlay?.setColor(DEFAULT_OVERLAY_COLOR);
     this._selectedOverlay = undefined;
@@ -72,9 +72,5 @@ export class ObservationsTool extends BaseEditTool {
     overlay.setColor(SELECTED_OVERLAY_COLOR);
     this.renderTarget.viewer.requestRedraw();
     this._selectedOverlay = overlay;
-  }
-
-  protected override canBeSelected(domainObject: VisualDomainObject): boolean {
-    return domainObject instanceof ObservationsDomainObject;
   }
 }
