@@ -90,7 +90,9 @@ export const useGroundPlaneFromScene = (sceneExternalId: string, sceneSpaceId: s
 
       const mesh = new Mesh(geometry, material);
 
-      const matrix4 = transformation3dToMatrix4(groundPlane).multiply(CDF_TO_VIEWER_TRANSFORMATION);
+      const matrix4 = transformation3dToMatrix4(groundPlane).premultiply(
+        CDF_TO_VIEWER_TRANSFORMATION
+      );
       mesh.matrix.copy(matrix4);
       mesh.matrixAutoUpdate = false;
 
