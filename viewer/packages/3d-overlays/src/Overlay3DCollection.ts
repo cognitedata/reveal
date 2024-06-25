@@ -60,12 +60,12 @@ export class Overlay3DCollection<MetadataType = DefaultOverlay3DContentType>
   /**
    * Construct a collection of 3D overlay icons
    *
-   * @param overlayInfos If provided, initializes the collection with the list of overlays. The length
-   *   of the list will be the maximum allowed number of icons in this collection. If undefined, creates
-   *   a collection with no icons, and a default max overlay count.
+   * @param overlayInfos Initializes the collection with the list of overlays. The length
+   * of the list will be the maximum allowed number of icons in this collection, unless it's empty,
+   * in which case a default maximum limit will be used instead
    * @param options Additional options for this overlay collection
    */
-  constructor(overlayInfos: OverlayInfo<MetadataType>[] | undefined, options?: Overlay3DCollectionOptions) {
+  constructor(overlayInfos: OverlayInfo<MetadataType>[], options?: Overlay3DCollectionOptions) {
     super();
 
     this.defaultOverlayColor = options?.defaultOverlayColor ?? this.defaultOverlayColor;
@@ -77,7 +77,7 @@ export class Overlay3DCollection<MetadataType = DefaultOverlay3DContentType>
     };
 
     this._overlayPoints = new OverlayPointsObject(
-      overlayInfos ? overlayInfos.length : this.DefaultMaxPoints,
+      overlayInfos.length > 0 ? overlayInfos.length : this.DefaultMaxPoints,
       {
         spriteTexture: this._sharedTextures.color,
         maskTexture: this._sharedTextures.mask,
@@ -88,7 +88,7 @@ export class Overlay3DCollection<MetadataType = DefaultOverlay3DContentType>
       (...args) => this.onBeforeRenderDelegate(...args)
     );
 
-    this._overlays = this.initializeOverlay3DIcons(overlayInfos ?? []);
+    this._overlays = this.initializeOverlay3DIcons(overlayInfos);
     this.add(this._overlayPoints);
     this.updatePointsObject();
 
