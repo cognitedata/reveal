@@ -79,7 +79,7 @@ function useCalculateMappedStyling(
   const { data: assetMappingData, isLoading: isAssetMappingLoading } =
     useAssetMappedNodesForRevisions(modelsRevisionsWithMappedEquipment);
 
-    const assetIdsFromMapped = useMemo(() => {
+  const assetIdsFromMapped = useMemo(() => {
     const mappings = assetMappingData?.map((item) => item.assetMappings).flat() ?? [];
     const assetIds: InternalId[] = mappings.flatMap((item) => {
       return {

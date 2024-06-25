@@ -2,7 +2,7 @@
  * Copyright 2023 Cognite AS
  */
 import { useRef, type ReactElement, useState, useEffect, useMemo } from 'react';
-import { CogniteCadModel, type Cognite3DViewer } from '@cognite/reveal';
+import { type Cognite3DViewer } from '@cognite/reveal';
 import { CadModelContainer } from '../CadModelContainer/CadModelContainer';
 import { type CadModelStyling } from '../CadModelContainer/useApplyCadModelStyling';
 import { PointCloudContainer } from '../PointCloudContainer/PointCloudContainer';
@@ -31,11 +31,11 @@ import {
 import { type ImageCollectionModelStyling } from '../Image360CollectionContainer/useApply360AnnotationStyling';
 import { is360ImageAddOptions } from './typeGuards';
 import { useRemoveNonReferencedModels } from './useRemoveNonReferencedModels';
-import { useAllMappedEquipmentAssetMappings } from '../../query/useSearchMappedEquipmentAssetMappings';
-import { useSDK } from '../RevealCanvas/SDKProvider';
-import { useAssetMappedNodesForRevisions, useGenerateAssetMappingCachePerItemFromModelCache, useGenerateNode3DCache, useNodesForAssets } from '../CacheProvider/AssetMappingCacheProvider';
-import { InternalId } from '@cognite/sdk';
-import { uniqBy } from 'lodash';
+import {
+  useAssetMappedNodesForRevisions,
+  useGenerateAssetMappingCachePerItemFromModelCache,
+  useGenerateNode3DCache
+} from '../CacheProvider/AssetMappingCacheProvider';
 
 export const Reveal3DResources = ({
   resources,
@@ -46,7 +46,6 @@ export const Reveal3DResources = ({
   image360Settings
 }: Reveal3DResourcesProps): ReactElement => {
   const viewer = useReveal();
-  const sdk = useSDK();
 
   const [reveal3DModels, setReveal3DModels] = useState<TypedReveal3DModel[]>([]);
 
@@ -81,6 +80,8 @@ export const Reveal3DResources = ({
       ),
     [reveal3DModels]
   );
+
+  console.log('Reveal3DResources instanceStyling', instanceStyling);
 
   const styledCadModelOptions = useCalculateCadStyling(
     cadModelOptions,
