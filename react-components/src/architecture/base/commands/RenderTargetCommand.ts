@@ -58,7 +58,7 @@ export abstract class RenderTargetCommand extends BaseCommand {
 
   public get undoManager(): UndoManager | undefined {
     // This method is overridden on BaseTool only!
-    const activeTool = this.activeTool;
+    const { activeTool } = this;
     if (activeTool === undefined) {
       return undefined;
     }
