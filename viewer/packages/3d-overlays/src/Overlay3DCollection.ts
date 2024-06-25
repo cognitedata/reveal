@@ -88,7 +88,7 @@ export class Overlay3DCollection<MetadataType = DefaultOverlay3DContentType>
       (...args) => this.onBeforeRenderDelegate(...args)
     );
 
-    this._overlays = this.initializeOverlay3DIcons(overlayInfos);
+    this._overlays = this.initializeOverlay3DIcons(overlayInfos ?? []);
     this.add(this._overlayPoints);
     this.updatePointsObject();
 
