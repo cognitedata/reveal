@@ -13,7 +13,6 @@ import {
 } from '@reveal/rendering';
 import { SceneHandler, WebGLRendererStateHelper } from '@reveal/utilities';
 import { CadNode } from '../wrappers/CadNode';
-import { readPixelsFromTargetAsync } from './readPixelsFromTargetAsync';
 import { Mutex } from 'async-mutex';
 
 type PickingInput = {
@@ -21,7 +20,6 @@ type PickingInput = {
     x: number;
     y: number;
   };
-  scene: THREE.Scene;
   camera: THREE.PerspectiveCamera;
   renderer: THREE.WebGLRenderer;
   domElement: HTMLElement;
@@ -91,7 +89,7 @@ export class PickingHandler {
   public async intersectCadNodes(
     cadNodes: CadNode[],
     input: IntersectInput,
-    async = true
+    shouldRunAsync = true
   ): Promise<IntersectCadNodesResult[]> {
     const results: IntersectCadNodesResult[] = [];
 
@@ -120,10 +118,10 @@ export class PickingHandler {
         // Make current CadNode visible & hide others
         visibleCadNodes.forEach(p => (p.visible = false));
         cadNodeData.cadNode.visible = true;
-        const treeIndex = await this.intersectCadNodeTreeIndex(cadNodeData.cadNode, input, async);
+        const treeIndex = await this.intersectCadNodeTreeIndex(cadNodeData.cadNode, input, shouldRunAsync);
         if (treeIndex) {
           // Assuming we have depth anywhere we hit a treeIndex
-          const depthResult = await this.intersectCadNodeDepth(depthInput, async);
+          const depthResult = await this.intersectCadNodeDepth(depthInput, shouldRunAsync);
           const result: IntersectCadNodesResult = {
             distance: depthResult.distance,
             point: depthResult.point,
@@ -189,20 +187,12 @@ export class PickingHandler {
     }
   }
 
-  private async intersectCadNodeDepth(input: PickingInput, async: boolean) {
-    const { camera, normalizedCoords, renderer, domElement, cadNodes, scene } = input;
-    const pickInput = {
-      normalizedCoords,
-      camera,
-      renderer,
-      domElement,
-      scene,
-      cadNodes
-    };
-    const depth = await this.pickDepth(pickInput, async);
+  private async intersectCadNodeDepth(input: PickingInput, shouldRunAsync: boolean) {
+    const { camera } = input;
+    const depth = await this.pickDepth(input, shouldRunAsync);
 
     const viewZ = this.perspectiveDepthToViewZ(depth, camera.near, camera.far);
-    const point = this.getPosition(pickInput, viewZ);
+    const point = this.getPosition(input, viewZ);
     const distance = new THREE.Vector3().subVectors(point, camera.position).length();
     return {
       distance,
@@ -213,7 +203,7 @@ export class PickingHandler {
   private async intersectCadNodeTreeIndex(
     cadNode: CadNode,
     input: IntersectInput,
-    async: boolean
+    shouldRunAsync: boolean
   ): Promise<number | undefined> {
     const { camera, normalizedCoords, renderer, domElement } = input;
     const pickingScene = new THREE.Scene();
@@ -227,14 +217,14 @@ export class PickingHandler {
       cadNodes: [],
       cadNode
     };
-    const treeIndex = await this.pickTreeIndex(pickInput, async);
+    const treeIndex = await this.pickTreeIndex(pickInput, shouldRunAsync);
     if (treeIndex === undefined) {
       return undefined;
     }
     return treeIndex;
   }
 
-  private async pickTreeIndex(input: TreeIndexPickingInput, async: boolean): Promise<number | undefined> {
+  private async pickTreeIndex(input: TreeIndexPickingInput, shouldRunAsync: boolean): Promise<number | undefined> {
     const { cadNode } = input;
     const previousRenderMode = cadNode.renderMode;
     cadNode.renderMode = RenderMode.TreeIndex;
@@ -245,7 +235,7 @@ export class PickingHandler {
         this._treeIndexRenderPipeline,
         this._clearColor,
         this._clearAlpha,
-        async
+        shouldRunAsync
       );
     } finally {
       cadNode.renderMode = previousRenderMode;
@@ -264,7 +254,7 @@ export class PickingHandler {
     return (near * far) / ((far - near) * invClipZ - far);
   }
 
-  private async pickDepth(input: PickingInput, async: boolean): Promise<number> {
+  private async pickDepth(input: PickingInput, shouldRunAsync: boolean): Promise<number> {
     const { cadNodes } = input;
     const previousRenderMode = cadNodes[0].renderMode;
     cadNodes.forEach(cadeNode => (cadeNode.renderMode = RenderMode.Depth));
@@ -273,7 +263,7 @@ export class PickingHandler {
       this._depthRenderPipeline,
       this._clearColor,
       this._clearAlpha,
-      async
+      shouldRunAsync
     );
     cadNodes.forEach(cadeNode => (cadeNode.renderMode = previousRenderMode));
 
@@ -296,7 +286,7 @@ export class PickingHandler {
     renderPipeline: RenderPipelineProvider,
     clearColor: THREE.Color,
     clearAlpha: number,
-    async: boolean
+    shouldRunAsync: boolean
   ) {
     const { renderTarget, pixelBuffer } = this._pickPixelColorStorage;
     const { camera, normalizedCoords, renderer, domElement } = input;
@@ -314,10 +304,12 @@ export class PickingHandler {
     try {
       stateHelper.setClearColor(clearColor, clearAlpha);
       this._pipelineExecutor.render(renderPipeline, pickCamera);
-      readPixelsPromise = readPixelsFromTargetAsync(renderer, renderTarget, 0, 0, 1, 1, pixelBuffer, !async);
+      readPixelsPromise = shouldRunAsync
+        ? renderer.readRenderTargetPixelsAsync(renderTarget, 0, 0, 1, 1, pixelBuffer).then(() => {})
+        : Promise.resolve(renderer.readRenderTargetPixels(renderTarget, 0, 0, 1, 1, pixelBuffer));
     } finally {
       // Note! State is reset before promise is resolved as there might be rendering happening between
-      // "now" and when the result from readPixelsFromTargetAsync is ready
+      // "now" and when the result from readRenderTargetPixelsAsync is ready
       stateHelper.resetState();
     }
     await readPixelsPromise;

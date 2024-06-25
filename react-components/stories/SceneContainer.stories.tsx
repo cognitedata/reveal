@@ -37,7 +37,7 @@ const MyCustomToolbar = styled(withSuppressRevealEvents(ToolBar))`
 
 export const Main: Story = {
   args: {
-    sceneExternalId: 'savelii_scene1',
+    sceneExternalId: 'pramod_scene',
     sceneSpaceId: 'scene'
   },
   render: ({ sceneExternalId, sceneSpaceId }) => {

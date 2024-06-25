@@ -4,9 +4,7 @@
 
 import remove from 'lodash/remove';
 import {
-  EventDispatcher,
   MathUtils,
-  MOUSE,
   OrthographicCamera,
   PerspectiveCamera,
   Quaternion,
@@ -16,19 +14,22 @@ import {
   Vector3
 } from 'three';
 import Keyboard from '../Keyboard';
-import { getNormalizedPixelCoordinates, getClickOrTouchEventPoint } from '@reveal/utilities';
+import {
+  Vector3Pool,
+  getNormalizedPixelCoordinates,
+  getPixelCoordinatesFromEvent,
+  getWheelEventDelta
+} from '@reveal/utilities';
 import { FlexibleControlsType } from './FlexibleControlsType';
 import { FlexibleControlsOptions } from './FlexibleControlsOptions';
 import { FlexibleWheelZoomType } from './FlexibleWheelZoomType';
 import { DampedVector3 } from './DampedVector3';
 import { DampedSpherical } from './DampedSpherical';
-import { ReusableVector3s } from './ReusableVector3s';
-import { FlexibleControlsEvent } from './FlexibleControlsEvent';
 import { GetPickedPointByPixelCoordinates } from './GetPickedPointByPixelCoordinates';
 import { FlexibleControlsTranslator } from './FlexibleControlsTranslator';
 import { FlexibleControlsRotationHelper } from './FlexibleControlsRotationHelper';
+import { FlexibleCameraEventTarget } from './FlexibleCameraEventTarget';
 
-const IS_FIREFOX = navigator.userAgent.toLowerCase().indexOf('firefox') !== -1;
 const TARGET_FPS = 30;
 const XYZ_EPSILON = 0.001; // Used for points
 const RAD_EPSILON = Math.PI / 10000; // Used for angles
@@ -36,13 +37,14 @@ const RAD_EPSILON = Math.PI / 10000; // Used for angles
 /**
  * @beta
  */
-export class FlexibleControls extends EventDispatcher<FlexibleControlsEvent> {
+export class FlexibleControls {
   //================================================
   // INSTANCE FIELDS
   //================================================
 
   private _isEnabled: boolean = true;
   private _isInitialized: boolean = false;
+  private _isStationary = false; // If true the options.controlsType should not be used. Camera cannot change position and zooms by fov
   public temporarlyDisableKeyboard: boolean = false;
 
   private readonly _options: FlexibleControlsOptions;
@@ -59,18 +61,20 @@ export class FlexibleControls extends EventDispatcher<FlexibleControlsEvent> {
   private _scrollDistance = 0; // When using the wheel this is the distance to the picked point
   private _tempTarget: Vector3 | undefined = undefined;
 
+  private readonly _listeners: FlexibleCameraEventTarget = new FlexibleCameraEventTarget();
   private readonly _keyboard: Keyboard;
-  private readonly _pointEventCache: Array<PointerEvent> = [];
+  private readonly _touchEvents: Array<PointerEvent> = [];
   private _getPickedPointByPixelCoordinates: GetPickedPointByPixelCoordinates | undefined;
 
-  // This is a hack for overcome problems with the setting the Quaternion direction.
-  // This is normally done in animation of movements using setCameraState,
-  // which arguments does not fit into this control. (no direction is given for instance)
-  private _rawCameraRotation: Quaternion | undefined = undefined;
-
   // Temporary objects used for calculations to avoid allocations
-  private readonly _reusableVector3s = new ReusableVector3s();
   private readonly _rotationHelper = new FlexibleControlsRotationHelper();
+
+  // Used in mouse move, if not dragging it is undefined
+  private _mouseDragInfo: MouseDragInfo | undefined = undefined;
+
+  // For the wheel event
+  private _prevTime = 0;
+  private readonly _prevCoords = new Vector2();
 
   //        FlexibleControlsType.OrbitInCenter
   //          , - ~ ~ ~ - ,
@@ -115,22 +119,17 @@ export class FlexibleControls extends EventDispatcher<FlexibleControlsEvent> {
   // CONSTRUCTOR
   //================================================
 
-  constructor(
-    camera: PerspectiveCamera | OrthographicCamera,
-    domElement: HTMLElement,
-    options: FlexibleControlsOptions
-  ) {
-    super();
-    this._camera = camera;
+  constructor(camera: PerspectiveCamera | undefined, domElement: HTMLElement, options: FlexibleControlsOptions) {
+    if (camera) {
+      this._camera = camera;
+      options.defaultFov = this.fov;
+    } else {
+      this._camera = new PerspectiveCamera(options.defaultFov, undefined, 0.1, 10000);
+    }
     this._domElement = domElement;
     this._options = options;
-    this._keyboard = new Keyboard(this._domElement);
+    this._keyboard = new Keyboard();
     this._cameraVector.copy(new Vector3(1, 0, 0));
-  }
-
-  public dispose(): void {
-    this.removeEventListeners();
-    this._keyboard.dispose();
   }
 
   //================================================
@@ -143,6 +142,14 @@ export class FlexibleControls extends EventDispatcher<FlexibleControlsEvent> {
 
   get camera(): PerspectiveCamera | OrthographicCamera {
     return this._camera;
+  }
+
+  get domElement(): HTMLElement {
+    return this._domElement;
+  }
+
+  get listeners(): FlexibleCameraEventTarget {
+    return this._listeners;
   }
 
   get target(): DampedVector3 {
@@ -163,6 +170,7 @@ export class FlexibleControls extends EventDispatcher<FlexibleControlsEvent> {
 
   set isEnabled(value: boolean) {
     this._isEnabled = value;
+    this._keyboard.isEnabled = value;
   }
 
   get isInitialized(): boolean {
@@ -177,6 +185,27 @@ export class FlexibleControls extends EventDispatcher<FlexibleControlsEvent> {
     return this.options.controlsType;
   }
 
+  public get isStationary(): boolean {
+    return this._isStationary;
+  }
+
+  public set isStationary(value: boolean) {
+    if (this._isStationary == value) {
+      return;
+    }
+    if (this._isStationary) {
+      this.setFov(this.options.defaultFov);
+    }
+    this._isStationary = value;
+  }
+
+  public get fov(): number {
+    if (!(this._camera instanceof PerspectiveCamera)) {
+      return 0;
+    }
+    return this._camera.fov;
+  }
+
   set getPickedPointByPixelCoordinates(getPickedPointByPixelCoordinates: GetPickedPointByPixelCoordinates | undefined) {
     this._getPickedPointByPixelCoordinates = getPickedPointByPixelCoordinates;
   }
@@ -186,7 +215,7 @@ export class FlexibleControls extends EventDispatcher<FlexibleControlsEvent> {
   }
 
   //================================================
-  // INSTANCE METHODS: Pulic getters and setters
+  // INSTANCE METHODS: Public getters and setters
   //================================================
 
   public getTarget(): Vector3 {
@@ -201,7 +230,7 @@ export class FlexibleControls extends EventDispatcher<FlexibleControlsEvent> {
     if (this._tempTarget) {
       return this._tempTarget;
     }
-    return this.newVector3().addVectors(this._cameraPosition.value, this._cameraVector.getValueVector());
+    return newVector3().addVectors(this._cameraPosition.value, this._cameraVector.getValueVector());
   }
 
   public getState(): { target: Vector3; position: Vector3 } {
@@ -211,12 +240,8 @@ export class FlexibleControls extends EventDispatcher<FlexibleControlsEvent> {
     };
   }
 
-  private getMousePosition(event: PointerEvent): Vector2 {
-    return getMousePosition(this._domElement, event.clientX, event.clientY);
-  }
-
-  public getNormalizedPixelCoordinates(event: PointerEvent): Vector2 {
-    return getNormalizedPixelCoordinates(this._domElement, event.clientX, event.clientY);
+  public getNormalizedPixelCoordinates(position: Vector2): Vector2 {
+    return getNormalizedPixelCoordinates(this._domElement, position.x, position.y);
   }
 
   public setScrollCursor(value: Vector3 | undefined): void {
@@ -243,17 +268,36 @@ export class FlexibleControls extends EventDispatcher<FlexibleControlsEvent> {
     }
   }
 
+  setFov(value: number, triggerCameraChangeEvent: boolean = true): boolean {
+    if (!(this._camera instanceof PerspectiveCamera)) {
+      return false;
+    }
+    const fov = this.options.getLegalFov(value);
+    if (this.fov === fov) {
+      return false;
+    }
+    this._camera.fov = fov;
+    this._camera.updateProjectionMatrix();
+    if (triggerCameraChangeEvent) {
+      this.listeners.dispatchEvent('cameraChange', this);
+    }
+    return true;
+  }
+
   public setPositionAndTarget(position: Vector3, target: Vector3): void {
     this.isInitialized = true;
     this._cameraPosition.copy(position);
     this._target.copy(target);
 
     // CameraVector = Target - Position
-    const vector = this.newVector3().subVectors(target, position);
+    const vector = newVector3().subVectors(target, position);
     vector.normalize();
     this._cameraVector.copy(vector);
-    this._rawCameraRotation = undefined;
+    this.updateCameraAndTriggerCameraChangeEvent();
+  }
 
+  public setPosition(position: Vector3): void {
+    this._cameraPosition.copy(position);
     this.updateCameraAndTriggerCameraChangeEvent();
   }
 
@@ -261,8 +305,6 @@ export class FlexibleControls extends EventDispatcher<FlexibleControlsEvent> {
     this.isInitialized = true;
     this._cameraPosition.copy(position);
     this._cameraVector.copy(direction);
-    this._rawCameraRotation = undefined;
-
     this.updateCameraAndTriggerCameraChangeEvent();
   }
 
@@ -270,14 +312,12 @@ export class FlexibleControls extends EventDispatcher<FlexibleControlsEvent> {
     this.isInitialized = true;
     this._cameraPosition.copy(position);
 
-    const cameraVector = this.newVector3().set(0, 0, -1);
+    const cameraVector = newVector3().set(0, 0, -1);
     cameraVector.applyQuaternion(rotation);
-
-    this._rawCameraRotation = rotation.clone();
 
     if (DampedSpherical.isVertical(cameraVector)) {
       // Looking from top or bottom, the theta must be defined in a proper way
-      const upVector = this.newVector3().set(0, 1, 0);
+      const upVector = newVector3().set(0, 1, 0);
       upVector.applyQuaternion(rotation);
       this._cameraVector.setThetaFromVector(upVector);
     }
@@ -301,12 +341,12 @@ export class FlexibleControls extends EventDispatcher<FlexibleControlsEvent> {
       this._target.synchronize();
       this.updateCameraAndTriggerCameraChangeEvent();
     }
-    this.triggerControlsTypeChangeEvent();
+    this.listeners.dispatchEvent('controlsTypeChange', this);
 
     // This shouldn't be here, but RevealManager listen to this in order to do a redraw
     // Cannot triggerControlsTypeChangeEvent since it is not part of the predefined general events
     // The scene must be redrawn because of the markers
-    this.triggerCameraChangeEvent();
+    this.listeners.dispatchEvent('cameraChange', this);
     return true;
   }
 
@@ -320,7 +360,7 @@ export class FlexibleControls extends EventDispatcher<FlexibleControlsEvent> {
     // So we get y = x * tan (a), where y is parallel to the screen
     // half of the fov is center to top of screen
     if (this._camera instanceof PerspectiveCamera) {
-      const fovFactor = Math.tan(MathUtils.degToRad(this._camera.fov / 2));
+      const fovFactor = Math.tan(MathUtils.degToRad(this.fov / 2));
       speed *= fovFactor; // Typical value is 0.57
     }
     const factor = 2 / this._domElement.clientHeight;
@@ -342,33 +382,12 @@ export class FlexibleControls extends EventDispatcher<FlexibleControlsEvent> {
     return dampingFactor;
   }
 
-  private newVector3(): Vector3 {
-    return this._reusableVector3s.getNext();
-  }
-
   //================================================
   // INSTANCE METHODS: Public operations
   //================================================
 
   public update(deltaTimeS: number, forceUpdate = false): boolean {
     return this.updateCamera(deltaTimeS, forceUpdate);
-  }
-
-  public triggerCameraChangeEvent(): void {
-    this.dispatchEvent({
-      type: 'cameraChange',
-      content: {
-        position: this._camera.position,
-        target: this._target.value
-      }
-    });
-  }
-
-  public triggerControlsTypeChangeEvent(): void {
-    this.dispatchEvent({
-      type: 'controlsTypeChange',
-      controlsType: this.options.controlsType
-    });
   }
 
   public rotateCameraTo(startDirection: Spherical, endDirection: Spherical, factor: number): void {
@@ -388,133 +407,130 @@ export class FlexibleControls extends EventDispatcher<FlexibleControlsEvent> {
   // INSTANCE METHODS: Event
   //================================================
 
-  private readonly onPointerDown = async (event: PointerEvent) => {
-    if (!this.isEnabled) return;
-    switch (event.pointerType) {
-      case 'mouse':
-        await this.onMouseDown(event);
-        break;
-      case 'touch':
-        this._pointEventCache.push(event);
-        this.onTouchStart(event);
-        break;
-      default:
-        break;
+  public async onPointerDown(event: PointerEvent, _leftButton: boolean): Promise<void> {
+    if (!this.isEnabled) {
+      return;
     }
-  };
-  private readonly onMouseDown = async (event: PointerEvent) => {
-    if (!this.isEnabled) return;
     this._cameraVector.synchronizeEnd();
-    switch (event.button) {
-      case MOUSE.LEFT: {
-        await this.startMouse(event, false);
-        break;
-      }
-      case MOUSE.RIGHT: {
-        event.preventDefault();
-        await this.startMouse(event, true);
-        break;
-      }
-      default:
-        break;
+    if (isMouse(event)) {
+      const position = getPixelCoordinatesFromEvent(event, this._domElement);
+      this._mouseDragInfo = new MouseDragInfo(position);
+    } else if (isTouch(event)) {
+      this.updateTouchEvents(event);
+      this.onTouchDown(event);
     }
-  };
-
-  private async startMouse(initialEvent: PointerEvent, isRight: boolean): Promise<void> {
-    let prevPosition = getMousePosition(this._domElement, initialEvent.clientX, initialEvent.clientY);
-    let translator: FlexibleControlsTranslator | undefined;
-
-    const onMouseMove = async (event: PointerEvent) => {
-      const position = this.getMousePosition(event);
-      const deltaPosition = position.clone().sub(prevPosition);
-      if (deltaPosition.x == 0 && deltaPosition.y == 0) {
-        return;
-      }
-      if (this._keyboard.isShiftPressed()) {
-        translator = undefined;
-        // Zooming forward and backward
-        deltaPosition.multiplyScalar(this._options.mouseDollySpeed);
-        this.pan(0, 0, deltaPosition.y);
-      } else if (isRight || this._keyboard.isCtrlPressed()) {
-        // Pan left, right, up or down
-        if (translator == null) {
-          translator = new FlexibleControlsTranslator(this);
-          await translator.initialize(event);
-        }
-        if (!translator.translate(event)) {
-          // If not, translate in a simpler way
-          deltaPosition.multiplyScalar(this._options.mousePanSpeed);
-          this.pan(deltaPosition.x, deltaPosition.y, 0);
-        }
-      } else if (!isRight) {
-        translator = undefined;
-        this.rotate(deltaPosition);
-      }
-      prevPosition = position;
-    };
-    const onMouseUp = () => {
-      window.removeEventListener('pointermove', onMouseMove);
-      window.removeEventListener('pointerup', onMouseUp);
-    };
-    window.addEventListener('pointermove', onMouseMove, { passive: false });
-    window.addEventListener('pointerup', onMouseUp, { passive: false });
   }
 
-  private readonly onPointerUp = (event: PointerEvent) => {
-    if (!this.isEnabled) return;
-    switch (event.pointerType) {
-      case 'touch':
-        remove(this._pointEventCache, ev => ev.pointerId === event.pointerId);
-        break;
-      default:
-        break;
+  public async onPointerDrag(event: PointerEvent, leftButton: boolean): Promise<void> {
+    if (!this._mouseDragInfo || !this.isEnabled || !isMouse(event)) {
+      return;
+    }
+    const position = getPixelCoordinatesFromEvent(event, this._domElement);
+    const deltaPosition = position.clone().sub(this._mouseDragInfo.prevPosition);
+    if (deltaPosition.x == 0 && deltaPosition.y == 0) {
+      return;
+    }
+    let { translator } = this._mouseDragInfo;
+
+    if (!this.isStationary && this._keyboard.isShiftPressedOnly()) {
+      translator = undefined;
+      // Zooming forward and backward
+      deltaPosition.multiplyScalar(this._options.mouseDollySpeed);
+      this.pan(0, 0, deltaPosition.y);
+    } else if (!this.isStationary && (!leftButton || this._keyboard.isCtrlPressedOnly())) {
+      // Pan left, right, up or down
+      if (!translator) {
+        translator = new FlexibleControlsTranslator(this);
+        await translator.initialize(position);
+      }
+      if (!translator.translate(position)) {
+        // If not, translate in a simpler way
+        deltaPosition.multiplyScalar(this._options.mousePanSpeed);
+        this.pan(deltaPosition.x, deltaPosition.y, 0);
+      }
+    } else if (leftButton) {
+      translator = undefined;
+      this.rotate(deltaPosition);
+    }
+    this._mouseDragInfo.update(position, translator);
+  }
+
+  public onPointerUp(event: PointerEvent, _leftButton: boolean): void {
+    this._mouseDragInfo = undefined;
+    if (!isTouch(event)) {
+      return;
+    }
+    this.removeTouchEvent(event);
+  }
+
+  public readonly onKeyDown = (event: KeyboardEvent): void => {
+    if (!this.isEnabled) {
+      return;
+    }
+    if (this.isStationary) {
+      return;
+    }
+    if (!this.options.enableChangeControlsTypeOn123Key) {
+      return;
+    }
+    if (event.code === 'Digit1') {
+      this.setControlsType(FlexibleControlsType.Orbit);
+    } else if (event.code === 'Digit2') {
+      this.setControlsType(FlexibleControlsType.FirstPerson);
+    } else if (event.code === 'Digit3') {
+      this.setControlsType(FlexibleControlsType.OrbitInCenter);
     }
   };
 
-  private readonly onMouseWheel = (event: WheelEvent) => {
-    if (!this.isEnabled) return;
-    event.preventDefault();
+  public onFocusChanged(_haveFocus: boolean): void {
+    this._keyboard.clearPressedKeys();
+  }
 
-    const delta = getWheelDelta(event);
+  public onKey(event: KeyboardEvent, down: boolean): void {
+    if (!this.isEnabled) {
+      return;
+    }
+    if (down) {
+      this.onKeyDown(event);
+    }
+    this._keyboard.onKey(event, down);
+  }
+
+  public readonly onWheelHandler = async (event: WheelEvent): Promise<void> => {
+    if (!this.isEnabled) {
+      return;
+    }
+    this.onWheel(event, getWheelEventDelta(event));
+  };
+
+  public async onWheel(event: WheelEvent, delta: number): Promise<void> {
+    if (!this.isEnabled) {
+      return;
+    }
+    event.preventDefault();
+    const pixelCoords = getPixelCoordinatesFromEvent(event, this._domElement);
+
+    await this.setScrollCursorByWheelEventCoords(pixelCoords);
+
     if (this._camera instanceof PerspectiveCamera) {
-      const deltaDistance = delta * this.getWheelSpeed();
-      const pixelCoords = getClickOrTouchEventPoint(event, this._domElement);
-      const normalizedCoords = getNormalizedPixelCoordinates(this._domElement, pixelCoords.x, pixelCoords.y);
-      this.dollyWithWheelScroll(normalizedCoords, -deltaDistance);
+      const normalizedCoords = this.getNormalizedPixelCoordinates(pixelCoords);
+      if (this.isStationary) {
+        const deltaDistance = delta * this.options.wheelDollySpeed;
+        this.zoomCameraByFov(normalizedCoords, deltaDistance);
+      } else {
+        const deltaDistance = delta * this.getWheelSpeed();
+        this.dollyWithWheelScroll(normalizedCoords, -deltaDistance);
+      }
     } else if (this._camera instanceof OrthographicCamera) {
       const deltaDistance = Math.sign(delta) * this._options.orthographicCameraDollyFactor;
       this.dollyOrthographicCamera(deltaDistance);
     }
-  };
-
-  private readonly onTouchStart = (event: PointerEvent) => {
-    if (!this.isEnabled) return;
-    event.preventDefault();
-    this._cameraVector.synchronizeEnd();
-
-    switch (this._pointEventCache.length) {
-      case 1: {
-        this.startTouchRotation(event);
-        break;
-      }
-      case 2: {
-        this.startTouchPinch(event);
-        break;
-      }
-      default:
-        break;
-    }
-  };
-
-  private readonly onFocusChanged = (event: MouseEvent | TouchEvent | FocusEvent) => {
-    if (!this.isEnabled) return;
-    if (event.type !== 'blur') {
-      this._keyboard.disabled = false;
-    }
-  };
+  }
 
   private readonly onContextMenu = (event: MouseEvent) => {
-    if (!this.isEnabled) return;
+    if (!this.isEnabled) {
+      return;
+    }
     event.preventDefault();
   };
 
@@ -523,28 +539,18 @@ export class FlexibleControls extends EventDispatcher<FlexibleControlsEvent> {
   //================================================
 
   public addEventListeners(): void {
-    this._domElement.addEventListener('pointerdown', this.onPointerDown);
-    this._domElement.addEventListener('wheel', this.onMouseWheel);
+    this._keyboard.addEventListeners(this._domElement);
+    this._domElement.addEventListener('keydown', this.onKeyDown);
+    this._domElement.addEventListener('wheel', this.onWheelHandler);
     this._domElement.addEventListener('contextmenu', this.onContextMenu);
-
-    // canvas has no blur/focus by default, but it's possible to set tabindex on it,
-    // in that case events will be fired (we don't set tabindex here, but still support that case)
-    this._domElement.addEventListener('focus', this.onFocusChanged);
-    this._domElement.addEventListener('blur', this.onFocusChanged);
-
-    window.addEventListener('pointerup', this.onPointerUp);
-    window.addEventListener('pointerdown', this.onFocusChanged);
   }
 
-  private removeEventListeners() {
-    this._domElement.removeEventListener('pointerdown', this.onPointerDown);
-    this._domElement.removeEventListener('wheel', this.onMouseWheel);
+  public removeEventListeners(): void {
+    this._listeners.removeEventListeners();
+    this._keyboard.removeEventListeners(this._domElement);
+    this._domElement.removeEventListener('keydown', this.onKeyDown);
+    this._domElement.removeEventListener('wheel', this.onWheelHandler);
     this._domElement.removeEventListener('contextmenu', this.onContextMenu);
-    this._domElement.removeEventListener('focus', this.onFocusChanged);
-    this._domElement.removeEventListener('blur', this.onFocusChanged);
-
-    window.removeEventListener('pointerup', this.onPointerUp);
-    window.removeEventListener('pointerdown', this.onFocusChanged);
   }
 
   //================================================
@@ -553,9 +559,9 @@ export class FlexibleControls extends EventDispatcher<FlexibleControlsEvent> {
 
   public updateCameraAndTriggerCameraChangeEvent(): void {
     // Call this when manually update the target, cameraVector or cameraPosition
-    // Thios update the camera without damening
+    // This update the camera without damping
     if (!this.updateCamera(1000 / TARGET_FPS, true, true)) {
-      this.triggerCameraChangeEvent(); // Force trigger if not done in updateCamera
+      this.listeners.dispatchEvent('cameraChange', this); // Force trigger if not done in updateCamera
     }
   }
 
@@ -585,17 +591,12 @@ export class FlexibleControls extends EventDispatcher<FlexibleControlsEvent> {
     this._camera.position.copy(this._cameraPosition.value);
     this._camera.updateProjectionMatrix();
 
-    if (this._rawCameraRotation) {
-      this._camera.setRotationFromQuaternion(this._rawCameraRotation);
-      this._camera.updateProjectionMatrix();
-    } else {
-      this._camera.lookAt(this.getLookAt());
-      this._camera.updateProjectionMatrix();
-    }
+    this._camera.lookAt(this.getLookAt());
+    this._camera.updateProjectionMatrix();
     if (!isChange) {
       return false;
     }
-    this.triggerCameraChangeEvent();
+    this.listeners.dispatchEvent('cameraChange', this);
     return true; // Tell caller if camera has changed
   }
 
@@ -603,50 +604,14 @@ export class FlexibleControls extends EventDispatcher<FlexibleControlsEvent> {
   // INSTANCE METHODS: Rotate
   //================================================
 
-  private startTouchRotation(initialEvent: PointerEvent) {
-    let prevPosition = getMousePosition(this._domElement, initialEvent.clientX, initialEvent.clientY);
-
-    const onTouchMove = (event: PointerEvent) => {
-      if (!this.isEnabled) return;
-      if (this._pointEventCache.length !== 1) {
-        return;
-      }
-      const position = this.getMousePosition(event);
-      this.rotate(new Vector2().subVectors(position, prevPosition));
-      prevPosition = position;
-    };
-
-    const onTouchStart = (_event: PointerEvent) => {
-      if (!this.isEnabled) return;
-      // if num fingers used don't equal 1 then we stop touch rotation
-      if (this._pointEventCache.length !== 1) {
-        dispose();
-      }
-    };
-
-    const onTouchEnd = () => {
-      dispose();
-    };
-
-    const dispose = () => {
-      this._domElement.removeEventListener('pointerdown', onTouchStart);
-      this._domElement.removeEventListener('pointerup', onTouchEnd);
-      document.removeEventListener('pointermove', onTouchMove);
-    };
-
-    this._domElement.addEventListener('pointerdown', onTouchStart);
-    this._domElement.addEventListener('pointerup', onTouchEnd, { passive: false });
-    document.addEventListener('pointermove', onTouchMove, { passive: false });
-  }
-
   private rotate(delta: Vector2) {
     if (delta.x === 0 && delta.y === 0) {
       return;
     }
     let deltaAzimuthAngle = this._options.mouseRotationSpeedAzimuth * delta.x;
     let deltaPolarAngle = this._options.mouseRotationSpeedPolar * delta.y;
-    // It is more natural that the first persion rotate slower then the other modes
-    if (this.controlsType == FlexibleControlsType.FirstPerson) {
+    // It is more natural that the first person rotate slower then the other modes
+    if (this.isStationary || this.controlsType == FlexibleControlsType.FirstPerson) {
       deltaAzimuthAngle *= 0.5;
       deltaPolarAngle *= 0.5;
     }
@@ -676,59 +641,128 @@ export class FlexibleControls extends EventDispatcher<FlexibleControlsEvent> {
   }
 
   //================================================
-  // INSTANCE METHODS: Pinch
+  // INSTANCE METHODS: Touch events
   //================================================
 
-  private startTouchPinch(initialEvent: PointerEvent) {
-    const index = this._pointEventCache.findIndex(cachedEvent => cachedEvent.pointerId === initialEvent.pointerId);
-    this._pointEventCache[index] = initialEvent;
-    let previousPinchInfo = getPinchInfo(this._domElement, this._pointEventCache);
-    const initialPinchInfo = getPinchInfo(this._domElement, this._pointEventCache);
-    const initialRadius = this._cameraVector.end.radius;
+  private onTouchDown(event: PointerEvent) {
+    switch (this.touchEventsCount) {
+      case 1:
+        this.startTouchRotation(event);
+        break;
 
-    const onTouchMove = (event: PointerEvent) => {
-      if (this._pointEventCache.length !== 2) {
+      case 2:
+        if (!this.isStationary) {
+          this.startTouchPinch();
+        }
+        break;
+
+      default:
+        break;
+    }
+  }
+
+  private startTouchRotation(initialEvent: PointerEvent) {
+    let prevPosition = getPixelCoordinatesFromEvent(initialEvent, this._domElement);
+
+    const isOk = () => this.touchEventsCount === 1;
+
+    const onMove = (event: PointerEvent) => {
+      this.updateTouchEvents(event);
+      if (!isOk()) {
+        removeEventListeners();
         return;
       }
-      // Find this event in the cache and update its record with this event
-      const index = this._pointEventCache.findIndex(cachedEvent => cachedEvent.pointerId === event.pointerId);
-      this._pointEventCache[index] = event;
-      const pinchInfo = getPinchInfo(this._domElement, this._pointEventCache);
+      const position = getPixelCoordinatesFromEvent(event, this._domElement);
+      this.rotate(new Vector2().subVectors(position, prevPosition));
+      prevPosition = position;
+    };
+
+    const onDown = (_event: PointerEvent) => {
+      // if num fingers used don't equal 1 then we stop touch rotation
+      if (!isOk()) {
+        removeEventListeners();
+      }
+    };
+
+    const onUp = (_event: PointerEvent) => {
+      removeEventListeners();
+    };
+
+    const removeEventListeners = () => {
+      this._domElement.removeEventListener('pointerdown', onDown);
+      this._domElement.removeEventListener('pointerup', onUp);
+      this._domElement.removeEventListener('pointermove', onMove);
+    };
+
+    this._domElement.addEventListener('pointerdown', onDown);
+    this._domElement.addEventListener('pointerup', onUp);
+    this._domElement.addEventListener('pointermove', onMove);
+  }
+
+  private startTouchPinch() {
+    let previousInfo = getPinchInfo(this._domElement, this._touchEvents);
+
+    const isOk = () => this.touchEventsCount === 2;
+
+    const onMove = (event: PointerEvent) => {
+      this.updateTouchEvents(event);
+      if (!isOk()) {
+        removeEventListeners();
+        return;
+      }
+      const info = getPinchInfo(this._domElement, this._touchEvents);
+
       // dolly
-      const distanceFactor = initialPinchInfo.distance / pinchInfo.distance;
-      // Min distance / 5 because on phones it is reasonable to get quite close to the target,
-      // but we don't want to get too close since zooming slows down very close to target.
-      this._cameraVector.end.radius = Math.max(distanceFactor * initialRadius, this._options.sensitivity / 5);
+      const deltaDistance = 0.1 * this._options.sensitivity * (info.distance - previousInfo.distance);
+      const translation = this.getTranslationByDirection(new Vector2(0, 0), deltaDistance);
+      this.translate(translation);
 
       // pan
-      const deltaCenter = pinchInfo.center.clone().sub(previousPinchInfo.center);
-      if (deltaCenter.length() > this._options.pinchEpsilon) {
-        deltaCenter.multiplyScalar(this._options.pinchPanSpeed);
-        this.pan(deltaCenter.x, deltaCenter.y, 0);
+      const deltaPosition = new Vector2().subVectors(info.center, previousInfo.center);
+      if (deltaPosition.length() > this._options.pinchEpsilon) {
+        deltaPosition.multiplyScalar(this._options.pinchPanSpeed);
+        this.pan(deltaPosition.x, deltaPosition.y, 0);
       }
-      previousPinchInfo = pinchInfo;
+      previousInfo = info;
     };
 
-    const onTouchStart = (_event: PointerEvent) => {
-      // if num fingers used don't equal 2 then we stop touch pinch
-      if (this._pointEventCache.length !== 2) {
-        dispose();
+    const onDown = (_event: PointerEvent) => {
+      if (!isOk()) {
+        removeEventListeners();
       }
     };
 
-    const onTouchEnd = () => {
-      dispose();
+    const onUp = (_event: PointerEvent) => {
+      removeEventListeners();
     };
 
-    const dispose = () => {
-      document.removeEventListener('pointerdown', onTouchStart);
-      document.removeEventListener('pointermove', onTouchMove);
-      document.removeEventListener('pointerup', onTouchEnd);
+    const removeEventListeners = () => {
+      this._domElement.removeEventListener('pointerdown', onDown);
+      this._domElement.removeEventListener('pointermove', onMove);
+      this._domElement.removeEventListener('pointerup', onUp);
     };
 
-    document.addEventListener('pointerdown', onTouchStart);
-    document.addEventListener('pointermove', onTouchMove);
-    document.addEventListener('pointerup', onTouchEnd);
+    this._domElement.addEventListener('pointerdown', onDown);
+    this._domElement.addEventListener('pointermove', onMove);
+    this._domElement.addEventListener('pointerup', onUp);
+  }
+
+  private get touchEventsCount(): number {
+    return this._touchEvents.length;
+  }
+
+  private removeTouchEvent(event: PointerEvent) {
+    remove(this._touchEvents, ev => ev.pointerId === event.pointerId);
+  }
+
+  private updateTouchEvents(event: PointerEvent) {
+    // Find this event in the cache and update its record with this event
+    const index = this._touchEvents.findIndex(e => e.pointerId === event.pointerId);
+    if (index >= 0) {
+      this._touchEvents[index] = event;
+    } else {
+      this._touchEvents.push(event);
+    }
   }
 
   //================================================
@@ -738,7 +772,7 @@ export class FlexibleControls extends EventDispatcher<FlexibleControlsEvent> {
   private pan(deltaX: number, deltaY: number, deltaZ: number, keys = false) {
     // Local function:
     const panByDimension = (distance: number, dimension: number, vertical: boolean) => {
-      const delta = this.newVector3();
+      const delta = newVector3();
       delta.setFromMatrixColumn(this._camera.matrix, dimension);
       if (keys) {
         if (vertical) {
@@ -768,7 +802,7 @@ export class FlexibleControls extends EventDispatcher<FlexibleControlsEvent> {
   }
 
   //================================================
-  // INSTANCE METHODS: Dolly
+  // INSTANCE METHODS: Dolly/Zoom
   //================================================
 
   private dollyOrthographicCamera(deltaDistance: number) {
@@ -831,6 +865,58 @@ export class FlexibleControls extends EventDispatcher<FlexibleControlsEvent> {
     return step;
   }
 
+  private zoomCameraByFov(normalizedCoords: Vector2, delta: number) {
+    // Added to prevent browser scrolling when zooming
+    if (!(this._camera instanceof PerspectiveCamera)) {
+      return;
+    }
+    const preCursorRay = getCursorRay(this._camera, normalizedCoords);
+    if (!this.setFov(this.fov + delta, false)) {
+      return;
+    }
+    // When zooming the camera is rotated towards the cursor position
+    const postCursorRay = getCursorRay(this._camera, normalizedCoords);
+    const arcBetweenRays = new Quaternion().setFromUnitVectors(postCursorRay, preCursorRay);
+    const forwardVector = this.cameraVector.getEndVector();
+
+    forwardVector.applyQuaternion(arcBetweenRays);
+    this._cameraVector.copy(forwardVector);
+    this.listeners.dispatchEvent('cameraChange', this);
+
+    function getCursorRay(camera: PerspectiveCamera, normalizedCoords: Vector2) {
+      const ray = new Vector3(normalizedCoords.x, normalizedCoords.y, 1)
+        .unproject(camera)
+        .sub(camera.position)
+        .normalize();
+      return ray;
+    }
+  }
+
+  private async setScrollCursorByWheelEventCoords(currentCoords: Vector2): Promise<void> {
+    if (!this.options.shouldPick || this.isStationary || !this.getPickedPointByPixelCoordinates) {
+      return;
+    }
+    const currentTime = performance.now();
+    const deltaTime = currentTime - this._prevTime;
+    const deltaCoords = currentCoords.distanceTo(this._prevCoords);
+
+    if (deltaTime <= this.options.minimumTimeBetweenRaycasts) {
+      return;
+    }
+    const timeHasChanged = deltaTime >= this.options.maximumTimeBetweenRaycasts;
+    const positionHasChanged = deltaCoords >= this.options.mouseDistanceThresholdBetweenRaycasts;
+    if (!positionHasChanged || !timeHasChanged) {
+      return;
+    }
+    this._prevTime = currentTime;
+    this._prevCoords.copy(currentCoords);
+
+    const scrollCursor = await this.getPickedPointByPixelCoordinates(currentCoords);
+    this.setScrollCursor(scrollCursor);
+    this._prevTime = currentTime;
+    return;
+  }
+
   //================================================
   // INSTANCE METHODS: Keyboard
   //================================================
@@ -847,26 +933,33 @@ export class FlexibleControls extends EventDispatcher<FlexibleControlsEvent> {
     }
     let handled = false;
     const timeScale = getTimeScale(deltaTimeS);
-    if (this.handleRotationFromKeyboard(timeScale)) handled = true;
-    if (this.handleMoveFromKeyboard(timeScale)) handled = true;
+    if (this.handleRotationFromKeyboard(timeScale)) {
+      handled = true;
+    }
+    if (!this.isStationary && this.handleMoveFromKeyboard(timeScale)) {
+      handled = true;
+    }
     return handled;
   }
 
   private handleRotationFromKeyboard(timeScale: number): boolean {
+    const speedFactor = this._keyboard.isShiftPressed() ? this._options.keyboardFastRotationFactor : 1;
+
     const deltaAzimuthAngle =
       this._options.keyboardRotationSpeedAzimuth *
+      speedFactor *
       this._keyboard.getKeyboardMovementValue('ArrowLeft', 'ArrowRight') *
       timeScale;
 
     const deltaPolarAngle =
       this._options.keyboardRotationSpeedPolar *
+      speedFactor *
       this._keyboard.getKeyboardMovementValue('ArrowUp', 'ArrowDown') *
       timeScale;
 
     if (deltaAzimuthAngle === 0 && deltaPolarAngle === 0) {
       return false;
     }
-    this.setControlsType(FlexibleControlsType.FirstPerson);
     this.rotateByAngles(-deltaAzimuthAngle, -deltaPolarAngle);
     return true;
   }
@@ -879,12 +972,12 @@ export class FlexibleControls extends EventDispatcher<FlexibleControlsEvent> {
     if (deltaX === 0 && deltaY === 0 && deltaZ === 0) {
       return false;
     }
-    if (this.controlsType === FlexibleControlsType.Orbit) {
+    if (!this.isStationary) {
       this.setControlsType(FlexibleControlsType.FirstPerson);
     }
-    const speedFactor = this._keyboard.isShiftPressed() ? this._options.keyboardFastMoveFactor : 1;
-    const speedXY = timeScale * speedFactor * this._options.keyboardPanSpeed;
-    const speedZ = timeScale * speedFactor * this._options.keyboardDollySpeed;
+    const keyboardSpeed = this._options.getKeyboardSpeed(this._keyboard.isShiftPressed());
+    const speedXY = timeScale * keyboardSpeed * this._options.keyboardPanSpeed;
+    const speedZ = timeScale * keyboardSpeed * this._options.keyboardDollySpeed;
 
     this.pan(speedXY * deltaX, speedXY * deltaY, speedZ * deltaZ, true);
     return true;
@@ -895,41 +988,14 @@ export class FlexibleControls extends EventDispatcher<FlexibleControlsEvent> {
 // LOCAL FUNCTIONS
 //================================================
 
-function getMousePosition(domElement: HTMLElement, clientX: number, clientY: number): Vector2 {
-  return new Vector2(clientX - domElement.offsetLeft, clientY - domElement.offsetTop);
-}
-
 function getPinchInfo(domElement: HTMLElement, touches: PointerEvent[]) {
   if (touches.length !== 2) {
     throw new Error('getPinchInfo only works if touches.length === 2');
   }
-  const touchList = [touches[0], touches[1]];
-  const offsets = touchList.map(({ clientX, clientY }) => getMousePosition(domElement, clientX, clientY));
-  const center = offsets[0].clone().add(offsets[1]).multiplyScalar(0.5);
-  const distance = offsets[0].distanceTo(offsets[1]);
-  return {
-    center,
-    distance,
-    offsets
-  };
-}
-
-function getWheelDelta(event: WheelEvent): number {
-  // @ts-ignore event.wheelDelta is only part of WebKit / Opera / Explorer 9
-  if (event.wheelDelta) {
-    // @ts-ignore event.wheelDelta is only part of WebKit / Opera / Explorer 9
-    return -event.wheelDelta / 40;
-  }
-  if (event.detail) {
-    // Firefox
-    return event.detail;
-  }
-  if (event.deltaY) {
-    // Firefox / Explorer + event target is SVG.
-    const factor = IS_FIREFOX ? 1 : 40;
-    return event.deltaY / factor;
-  }
-  return 0;
+  const positions = touches.map(event => getPixelCoordinatesFromEvent(event, domElement));
+  const center = new Vector2().addVectors(positions[0], positions[1]).multiplyScalar(0.5);
+  const distance = positions[0].distanceTo(positions[1]);
+  return { center, distance };
 }
 
 /**
@@ -940,4 +1006,35 @@ function getWheelDelta(event: WheelEvent): number {
  */
 function getTimeScale(deltaTimeS: number): number {
   return deltaTimeS * TARGET_FPS;
+}
+
+function isMouse(event: PointerEvent): boolean {
+  return event.pointerType === 'mouse';
+}
+
+function isTouch(event: PointerEvent): boolean {
+  return event.pointerType === 'touch';
+}
+
+// helper class from mouseDown, mouseMove and mouseUp
+// It keeps track of the previous position and how it is translated
+class MouseDragInfo {
+  public constructor(prevPosition: Vector2) {
+    this.prevPosition = prevPosition;
+  }
+  public update(prevPosition: Vector2, translator: FlexibleControlsTranslator | undefined): void {
+    this.prevPosition.copy(prevPosition);
+    this.translator = translator;
+  }
+  public readonly prevPosition: Vector2;
+  public translator: FlexibleControlsTranslator | undefined = undefined;
+}
+
+// ==================================================
+// PRIVATE FUNCTIONS: Vector pool
+// ==================================================
+
+const VECTOR_POOL = new Vector3Pool();
+function newVector3(copyFrom?: Vector3): Vector3 {
+  return VECTOR_POOL.getNext(copyFrom);
 }

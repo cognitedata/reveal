@@ -108,13 +108,25 @@ export class IconCollection {
     sceneHandler.addObject3D(iconsSprites);
   }
 
+  public setTransform(transform: Matrix4): void {
+    this._pointsObject.setTransform(transform);
+    this._icons.forEach(icon => icon.setWorldTransform(transform));
+  }
+
+  public getTransform(out?: Matrix4): Matrix4 {
+    return this._pointsObject.getTransform(out);
+  }
+
   private setIconClustersByLOD(octree: IconOctree, iconSprites: OverlayPointsObject): BeforeSceneRenderedDelegate {
     const projection = new Matrix4();
     const frustum = new Frustum();
     const screenSpaceAreaThreshold = 0.04;
     const minimumLevel = 3;
     return ({ camera }) => {
-      projection.copy(camera.projectionMatrix).multiply(camera.matrixWorldInverse);
+      projection
+        .copy(camera.projectionMatrix)
+        .multiply(camera.matrixWorldInverse)
+        .multiply(this._pointsObject.getTransform());
       const nodesLOD = octree.getLODByScreenArea(screenSpaceAreaThreshold, projection, minimumLevel);
 
       frustum.setFromProjectionMatrix(projection);
@@ -142,12 +154,18 @@ export class IconCollection {
   }
 
   private computeProximityPoints(octree: IconOctree, iconSprites: OverlayPointsObject): BeforeSceneRenderedDelegate {
+    const cameraModelSpacePosition = new Vector3();
+    const worldTransform = new Matrix4();
     return ({ camera }) => {
+      this._pointsObject.getTransform(worldTransform);
+      worldTransform.invert();
+      cameraModelSpacePosition.copy(camera.position).applyMatrix4(worldTransform);
+
       const points =
         this._proximityRadius === Infinity
           ? this._icons
           : octree
-              .findPoints(camera.position, this._proximityRadius)
+              .findPoints(cameraModelSpacePosition, this._proximityRadius)
               .map(pointContainer => {
                 return pointContainer.data;
               })
@@ -156,7 +174,8 @@ export class IconCollection {
       const closestPoints = points
         .sort((a, b) => {
           return (
-            a.getPosition().distanceToSquared(camera.position) - b.getPosition().distanceToSquared(camera.position)
+            a.getPosition().distanceToSquared(cameraModelSpacePosition) -
+            b.getPosition().distanceToSquared(cameraModelSpacePosition)
           );
         })
         .slice(0, this._proximityPointLimit + 1); //Add 1 to account for self.
@@ -204,7 +223,7 @@ export class IconCollection {
 
     icons.forEach(icon =>
       icon.on('selected', () => {
-        this._hoverSprite.position.copy(icon.getPosition());
+        this._hoverSprite.position.copy(icon.getPosition().clone().applyMatrix4(this.getTransform()));
         this._hoverSprite.scale.set(icon.adaptiveScale * 2, icon.adaptiveScale * 2, 1);
       })
     );
@@ -221,7 +240,7 @@ export class IconCollection {
     this._sharedTexture.dispose();
   }
 
-  private createHoverSprite(hoverIconTexture: THREE.CanvasTexture): THREE.Sprite {
+  private createHoverSprite(hoverIconTexture: CanvasTexture): Sprite {
     const spriteMaterial = new SpriteMaterial({ map: hoverIconTexture, depthTest: false });
     const sprite = new Sprite(spriteMaterial);
     sprite.updateMatrixWorld();

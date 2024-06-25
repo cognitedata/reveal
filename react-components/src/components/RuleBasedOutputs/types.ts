@@ -1,16 +1,19 @@
 /*!
- * Copyright 2023 Cognite AS
+ * Copyright 2024 Cognite AS
  */
 
 import { type TreeIndexNodeCollection, type NumericRange } from '@cognite/reveal';
-import { type EdgeItem } from '../../utilities/FdmSDK';
-import { type FdmPropertyType } from '../Reveal3DResources/types';
+import { type FdmNode, type EdgeItem } from '../../utilities/FdmSDK';
+import { type AssetStylingGroup, type FdmPropertyType } from '../Reveal3DResources/types';
+import { type Datapoints, type Asset, type Timeseries, type ExternalId } from '@cognite/sdk';
 
 // =========== RULE BASED OUTPUT DATA MODEL
 
+export type TriggerType = 'timeseries' | 'metadata';
+
 export type TimeseriesRuleTrigger = {
   type: 'timeseries';
-  timeseriesId: number;
+  externalId: string;
 };
 
 export type MetadataRuleTrigger = {
@@ -78,13 +81,15 @@ export type ConcreteExpression = StringExpression | NumericExpression;
 export type Expression = ConcreteExpression | ExpressionOperator;
 
 export type Rule = {
+  type: 'rule';
   id: string; // uuid
   name: string;
-  expression: Expression;
+  expression: Expression | undefined;
 };
 
 export type BaseRuleOutput = {
   externalId: string; // comes from FDM
+  label?: string;
   // ruleId: string | undefined; // Transiently it can be left undefined
 };
 
@@ -149,20 +154,58 @@ export type FdmRuleOutputSet = {
 
 // ======== GENERAL TYPES ==============
 
+export type ExpressionOperatorsTypes = 'and' | 'or' | 'not';
+
+export type StringConditionTypes = 'equals' | 'notEquals' | 'contains' | 'startsWith' | 'endsWith';
+
+export type NumericConditionTypes =
+  | 'equals'
+  | 'notEquals'
+  | 'lessThan'
+  | 'greaterThan'
+  | 'lessThanOrEquals'
+  | 'greaterThanOrEquals'
+  | 'within'
+  | 'outside';
+
+export type NumericWithinConditionType = {
+  type: 'within';
+  lowerBoundInclusive: number;
+  upperBoundInclusive: number;
+};
+
+export type NumericOutsideConditionType = {
+  type: 'outside';
+  lowerBoundExclusive: number;
+  upperBoundExclusive: number;
+};
+
+export type CriteriaTypes =
+  | string
+  | number
+  | NumericWithinConditionType
+  | NumericOutsideConditionType;
+
 export type RuleAndStyleIndex = {
   styleIndex: TreeIndexNodeCollection;
   ruleOutputParams: RuleOutput;
+};
+
+export type AssetStylingGroupAndStyleIndex = {
+  styleIndex: TreeIndexNodeCollection;
+  assetStylingGroup: AssetStylingGroup;
 };
 
 export type NodeAndRange = {
   treeIndex: number;
   nodeId: number;
   subtreeRange: NumericRange;
+  assetId: number;
 };
 
 export type RuleAndEnabled = {
   isEnabled: boolean;
-  rule: EdgeItem<Record<string, any>> | NodeItem<Record<string, any>>;
+  rule: FdmNode<RuleOutputSet>;
 };
 
 export type RuleRecord = EdgeItem<Record<string, any>> | NodeItem<Record<string, any>>;
@@ -186,7 +229,6 @@ export type ViewQueryFilter = {
   view: Source;
 };
 
-export type ExternalId = string;
 export type Space = string;
 
 export type ExternalIdsResultList<PropertyType> = {
@@ -220,3 +262,33 @@ export type NodeItem<PropertyType = Record<string, unknown>> = {
   deletedTime: number;
   properties: FdmPropertyType<PropertyType>;
 };
+
+export type EmptyRuleForSelection = {
+  rule: {
+    properties: EmptyRuleForSelectionProps;
+  };
+  isEnabled: boolean;
+};
+
+export type EmptyRuleForSelectionProps = {
+  id: string | undefined;
+  name: string;
+  isNoSelection: boolean;
+};
+
+export type TriggerTypeData = TriggerMetadataType | TriggerTimeseriesType;
+
+export type TriggerMetadataType = {
+  type: 'metadata';
+  asset: Asset;
+};
+
+export type TriggerTimeseriesType = {
+  type: 'timeseries';
+  timeseries: {
+    timeseriesWithDatapoints: TimeseriesAndDatapoints[];
+    linkedAssets: Asset;
+  };
+};
+
+export type TimeseriesAndDatapoints = Timeseries & Datapoints;

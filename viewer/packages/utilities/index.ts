@@ -7,13 +7,14 @@ export { transformCameraConfiguration } from './src/transformCameraConfiguration
 
 export { RandomColors } from './src/RandomColors';
 export { CameraConfiguration } from './src/CameraConfiguration';
-export {
-  EventTrigger,
-  clickOrTouchEventOffset,
-  getClickOrTouchEventPoint,
-  InputHandler,
-  disposeOfAllEventListeners
-} from './src/events';
+
+export { EventTrigger } from './src/events/EventTrigger';
+export { InputHandler } from './src/events/InputHandler';
+export { PointerEvents } from './src/events/PointerEvents';
+export { PointerEventsTarget } from './src/events/PointerEventsTarget';
+export { disposeOfAllEventListeners } from './src/events/disposeOfAllEventListeners';
+export { getPixelCoordinatesFromEvent } from './src/events/getPixelCoordinatesFromEvent';
+export { getWheelEventDelta } from './src/events/getWheelEventDelta';
 export {
   DisposedDelegate,
   BeforeSceneRenderedDelegate,
@@ -21,6 +22,7 @@ export {
   PointerEventDelegate,
   PointerEventData
 } from './src/events/types';
+
 export { assertNever } from './src/assertNever';
 export { NumericRange } from './src/NumericRange';
 export { determinePowerOfTwoDimensions } from './src/determinePowerOfTwoDimensions';
@@ -70,8 +72,12 @@ export { DeferredPromise } from './src/DeferredPromise';
 export { SceneHandler } from './src/SceneHandler';
 
 export { CustomObject } from './src/customObject/CustomObject';
+export { ICustomObject } from './src/customObject/ICustomObject';
 export { CustomObjectIntersectInput } from './src/customObject/CustomObjectIntersectInput';
 export { CustomObjectIntersection } from './src/customObject/CustomObjectIntersection';
+export { Vector3Pool } from './src/three/Vector3Pool';
+
+export { isPointVisibleByPlanes } from './src/three/isPointVisibleByPlanes';
 
 export { CDF_TO_VIEWER_TRANSFORMATION } from './src/constants';
 

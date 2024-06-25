@@ -34,7 +34,7 @@ cd ../examples
 yarn && yarn run start
 ```
 
-If you now navigate to [localhost:3000](https://localhost:3000), the browser should show a simple 3D model with a UI.
+If you now navigate to [localhost:3549](https://localhost:3549), the browser should show a simple 3D model with a UI.
 
 To show a model from your own CDF project, you must first configure Reveal to use your CDF credentials. Follows the steps in the section [Credentials Environment](#Credentials-Environment).
 

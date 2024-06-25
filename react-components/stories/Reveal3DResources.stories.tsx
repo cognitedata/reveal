@@ -32,7 +32,8 @@ export const Main: Story = {
         transform: new Matrix4().makeTranslation(40, 10, 0)
       },
       {
-        siteId: 'c_RC_2'
+        siteId: 'c_RC_2',
+        transform: new Matrix4()
       },
       {
         modelId: 3865289545346058,

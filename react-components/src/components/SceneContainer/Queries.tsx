@@ -210,7 +210,7 @@ export function createGetSceneQuery(sceneExternalId: string, sceneSpaceId: strin
               externalId: 'TexturedPlane',
               version: 'v1'
             },
-            properties: ['label', 'file', 'wrapping']
+            properties: ['*']
           }
         ]
       }

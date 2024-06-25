@@ -3,18 +3,16 @@
  */
 import { type GeometryFilter } from '@cognite/reveal';
 import {
-  type PointCloudModelOptions,
-  type CadModelOptions
+  type CadModelOptions,
+  type AddReveal3DModelOptions
 } from '../components/Reveal3DResources/types';
+import { Matrix4 } from 'three';
 
 export function isSameCadModel(model0: CadModelOptions, model1: CadModelOptions): boolean {
   return (
     model0.modelId === model1.modelId &&
     model0.revisionId === model1.revisionId &&
-    (model0.transform === model1.transform ||
-      (model0.transform !== undefined &&
-        model1.transform !== undefined &&
-        model0.transform.equals(model1.transform))) &&
+    isSameTransform(model0.transform, model1.transform) &&
     isSameGeometryFilter(model0.geometryFilter, model1.geometryFilter)
   );
 }
@@ -45,16 +43,31 @@ function isSameGeometryFilter(
   );
 }
 
-export function isSamePointCloudModel(
-  model0: PointCloudModelOptions,
-  model1: PointCloudModelOptions
+export function isSame3dModel(
+  model0: AddReveal3DModelOptions,
+  model1: AddReveal3DModelOptions
 ): boolean {
   return (
     model0.modelId === model1.modelId &&
     model0.revisionId === model1.revisionId &&
-    (model0.transform === model1.transform ||
-      (model0.transform !== undefined &&
-        model1.transform !== undefined &&
-        model0.transform.equals(model1.transform)))
+    isSameTransform(model0.transform, model1.transform)
   );
+}
+
+const identity = new Matrix4();
+
+function isSameTransform(m0: Matrix4 | undefined, m1: Matrix4 | undefined): boolean {
+  if ((m0 === undefined || m0.equals(identity)) && (m1 === undefined || m1.equals(identity))) {
+    return true;
+  }
+
+  if (m0 === undefined || m1 === undefined) {
+    return false;
+  }
+
+  return m0.equals(m1);
+}
+
+export function isSameModel(model1: CadModelOptions, model2: CadModelOptions): boolean {
+  return model1.modelId === model2.modelId && model1.revisionId === model2.revisionId;
 }

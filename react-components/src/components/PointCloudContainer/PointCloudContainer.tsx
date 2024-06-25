@@ -8,7 +8,6 @@ import { Matrix4 } from 'three';
 import { useReveal } from '../RevealCanvas/ViewerContext';
 import { useRevealKeepAlive } from '../RevealKeepAlive/RevealKeepAliveContext';
 import { useReveal3DResourcesCount } from '../Reveal3DResources/Reveal3DResourcesCountContext';
-import { useLayersUrlParams } from '../RevealToolbar/hooks/useUrlStateParam';
 import { cloneDeep, isEqual } from 'lodash';
 import {
   useApplyPointCloudStyling,
@@ -36,8 +35,6 @@ export function PointCloudContainer({
   const viewer = useReveal();
   const { modelId, revisionId } = addModelOptions;
   const { setRevealResourcesCount } = useReveal3DResourcesCount();
-  const [layersUrlState] = useLayersUrlParams();
-  const { pointCloudLayers } = layersUrlState;
   const initializingModel = useRef<AddModelOptions | undefined>(undefined);
 
   useEffect(() => {
@@ -51,7 +48,6 @@ export function PointCloudContainer({
       .then((pointCloudModel) => {
         onLoad?.(pointCloudModel);
         setRevealResourcesCount(viewer.models.length);
-        applyLayersState(pointCloudModel);
       })
       .catch((error) => {
         const errorHandler = onLoadError ?? defaultLoadErrorHandler;
@@ -107,18 +103,6 @@ export function PointCloudContainer({
     viewer.removeModel(model);
     setRevealResourcesCount(viewer.models.length);
     setModel(undefined);
-  }
-
-  function applyLayersState(model: CognitePointCloudModel): void {
-    if (pointCloudLayers === undefined) {
-      return;
-    }
-    const index = viewer.models.indexOf(model);
-    const urlLayerState = pointCloudLayers.find(
-      (layer) => layer.revisionId === revisionId && layer.index === index
-    );
-    urlLayerState !== undefined &&
-      model.setDefaultPointCloudAppearance({ visible: urlLayerState.applied });
   }
 }
 

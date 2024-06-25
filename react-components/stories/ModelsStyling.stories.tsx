@@ -2,14 +2,14 @@
  * Copyright 2023 Cognite AS
  */
 import type { Meta, StoryObj } from '@storybook/react';
-import { Reveal3DResources, RevealCanvas, RevealContext } from '../src';
+import { Reveal3DResources, RevealCanvas, RevealContext, RevealToolbar } from '../src';
 import { Color, Matrix4 } from 'three';
 import { createSdkByUrlToken } from './utilities/createSdkByUrlToken';
 import { RevealResourcesFitCameraOnLoad } from './utilities/with3dResoursesFitCameraOnLoad';
 
 const model = {
-  modelId: 2231774635735416,
-  revisionId: 912809199849811,
+  modelId: 7646043527629245,
+  revisionId: 6059566106376463,
   transform: new Matrix4().makeTranslation(-340, -480, 80)
 };
 
@@ -86,6 +86,7 @@ export const Main: Story = {
             resources={resources}
             defaultResourceStyling={defaultResourceStyling}
           />
+          <RevealToolbar />
         </RevealCanvas>
       </RevealContext>
     );

@@ -10,25 +10,44 @@ import {
 
 import { type Matrix4 } from 'three';
 import { type DmsUniqueIdentifier, type Source } from '../../utilities/FdmSDK';
-import { type CogniteInternalId, type Node3D } from '@cognite/sdk/dist/src';
+import { type CogniteInternalId, type Node3D } from '@cognite/sdk';
 
-export type AddImageCollection360Options =
-  | AddImageCollection360EventsOptions
-  | AddImageCollection360DatamodelsOptions;
+export type AddImage360CollectionOptions =
+  | AddImage360CollectionEventsOptions
+  | AddImage360CollectionDatamodelsOptions;
+
+export type CommonImage360CollectionAddOptions = {
+  transform?: Matrix4;
+  iconCullingOptions?: { radius?: number; iconCountLimit?: number };
+};
 
 export type AddImageCollection360EventsOptions = {
   siteId: string;
-};
+} & CommonImage360CollectionAddOptions;
 
-export type AddImageCollection360DatamodelsOptions = {
+export type AddImage360CollectionEventsOptions = {
+  siteId: string;
+} & CommonImage360CollectionAddOptions;
+
+export type AddImage360CollectionDatamodelsOptions = {
   externalId: string;
   space: string;
-  transform?: Matrix4;
-};
+} & CommonImage360CollectionAddOptions;
 
 export type FdmPropertyType<NodeType> = Record<string, Record<string, NodeType>>;
 
-export type AddResourceOptions = AddReveal3DModelOptions | AddImageCollection360Options;
+export type TaggedAddImage360CollectionOptions = {
+  type: 'image360';
+  addOptions: AddImage360CollectionOptions;
+};
+export type TaggedAdd3DModelOptions = {
+  type: 'cad' | 'pointcloud';
+  addOptions: AddReveal3DModelOptions;
+};
+
+export type TaggedAddResourceOptions = TaggedAdd3DModelOptions | TaggedAddImage360CollectionOptions;
+
+export type AddResourceOptions = AddReveal3DModelOptions | AddImage360CollectionOptions;
 
 export type AddReveal3DModelOptions = AddModelOptions & { transform?: Matrix4 } & {
   styling?: { default?: NodeAppearance; mapped?: NodeAppearance };
@@ -77,8 +96,16 @@ export type DefaultResourceStyling = {
 
 export type Reveal3DResourcesProps = {
   resources: AddResourceOptions[];
+} & CommonResourceContainerProps;
+
+export type CommonImage360Settings = {
+  iconCullingOptions: { radius?: number; iconCountLimit?: number };
+};
+
+export type CommonResourceContainerProps = {
   defaultResourceStyling?: DefaultResourceStyling;
   instanceStyling?: Array<FdmAssetStylingGroup | AssetStylingGroup | Image360AssetStylingGroup>;
+  image360Settings?: CommonImage360Settings;
   onResourcesAdded?: () => void;
   onResourceLoadError?: (failedResource: AddResourceOptions, error: any) => void;
 };

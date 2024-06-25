@@ -10,13 +10,13 @@ import {
 import { useMemo } from 'react';
 import { type AnnotationIdStylingGroup } from '../components/PointCloudContainer/useApplyPointCloudStyling';
 import { useQuery } from '@tanstack/react-query';
-import { isSamePointCloudModel } from '../utilities/isSameModel';
+import { isSame3dModel } from '../utilities/isSameModel';
 import {
   usePointCloudAnnotationMappingsForModels,
   usePointCloudAnnotationIdsForModels
-} from '../components/NodeCacheProvider/PointCloudAnnotationCacheProvider';
+} from '../components/CacheProvider/PointCloudAnnotationCacheProvider';
 import { EMPTY_ARRAY } from '../utilities/constants';
-import { type PointCloudAnnotationModel } from '../components/NodeCacheProvider/types';
+import { type PointCloudAnnotationModel } from '../components/CacheProvider/types';
 
 export type StyledPointCloudModel = {
   model: PointCloudModelOptions;
@@ -40,7 +40,7 @@ export const useCalculatePointCloudStyling = (
   const modelInstanceStyleGroups = useCalculateInstanceStyling(models, instanceGroups);
 
   const combinedStyledPointCloudModels = useMemo(() => {
-    return groupStyleGroupByModel([...styledPointCloudModels, ...modelInstanceStyleGroups]);
+    return groupStyleGroupByModel(models, [...styledPointCloudModels, ...modelInstanceStyleGroups]);
   }, [styledPointCloudModels, modelInstanceStyleGroups]);
   return combinedStyledPointCloudModels;
 };
@@ -52,16 +52,14 @@ function useCalculateInstanceStyling(
   const { data: pointCloudAnnotationMappings, isLoading } =
     usePointCloudAnnotationMappingsForModels(models);
 
-  const { data: styledModels } = useQuery(
-    ['styledModels', pointCloudAnnotationMappings, instanceGroups, models],
-    () =>
+  const { data: styledModels } = useQuery({
+    queryKey: ['styledModels', pointCloudAnnotationMappings, instanceGroups, models],
+    queryFn: () =>
       pointCloudAnnotationMappings?.map((annotationMappings) => {
         return calculateAnnotationMappingModelStyling(instanceGroups, annotationMappings);
       }) ?? EMPTY_ARRAY,
-    {
-      enabled: !isLoading
-    }
-  );
+    enabled: !isLoading
+  });
 
   return styledModels ?? EMPTY_ARRAY;
 }
@@ -108,7 +106,10 @@ function useCalculateMappedPointCloudStyling(
   models: PointCloudModelOptions[],
   defaultMappedNodeAppearance?: NodeAppearance
 ): StyledPointCloudModel[] {
-  const modelsWithStyledMapped = useMemo(() => getMappedPointCloudModelsOptions(), [models]);
+  const modelsWithStyledMapped = useMemo(
+    () => getMappedPointCloudModelsOptions(),
+    [models, defaultMappedNodeAppearance]
+  );
 
   const { data: pointCloudStyledModelAnnotationIds } =
     usePointCloudAnnotationIdsForModels(modelsWithStyledMapped);
@@ -159,19 +160,17 @@ function getMappedStyleGroupFromAnnotationIds(
   return { annotationIds, style: nodeAppearance };
 }
 
-function groupStyleGroupByModel(styleGroup: StyledPointCloudModel[]): StyledPointCloudModel[] {
+function groupStyleGroupByModel(
+  models: PointCloudModelOptions[],
+  styleGroup: StyledPointCloudModel[]
+): StyledPointCloudModel[] {
+  const initialStyleGroups = models.map((model) => ({ model, styleGroups: [] }));
+
   return styleGroup.reduce<StyledPointCloudModel[]>((accumulatedGroups, currentGroup) => {
     const existingGroupWithModel = accumulatedGroups.find((group) =>
-      isSamePointCloudModel(group.model, currentGroup.model)
+      isSame3dModel(group.model, currentGroup.model)
     );
-    if (existingGroupWithModel !== undefined) {
-      existingGroupWithModel.styleGroups.push(...currentGroup.styleGroups);
-    } else {
-      accumulatedGroups.push({
-        model: currentGroup.model,
-        styleGroups: [...currentGroup.styleGroups]
-      });
-    }
+    existingGroupWithModel?.styleGroups.push(...currentGroup.styleGroups);
     return accumulatedGroups;
-  }, []);
+  }, initialStyleGroups);
 }

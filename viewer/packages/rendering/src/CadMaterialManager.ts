@@ -13,7 +13,7 @@ import { RenderMode } from './rendering/RenderMode';
 import { NodeAppearance, NodeAppearanceProvider } from '@reveal/cad-styling';
 import { IndexSet, EventTrigger, assertNever } from '@reveal/utilities';
 
-import matCapTextureImage from './rendering/matCapTextureData';
+import { getMatCapTextureData } from './rendering/matCapTextureData';
 
 import throttle from 'lodash/throttle';
 import assert from 'assert';
@@ -97,7 +97,7 @@ export class CadMaterialManager {
     nodeAppearanceProvider.on('changed', updateMaterialsCallback);
     nodeTransformProvider.on('changed', updateTransformsCallback);
 
-    const matCapTexture = new THREE.Texture(matCapTextureImage);
+    const matCapTexture = new THREE.Texture(getMatCapTextureData());
     matCapTexture.needsUpdate = true;
 
     const materials = createMaterials(
@@ -146,7 +146,7 @@ export class CadMaterialManager {
     }
 
     // Refer https://threejs.org/docs/#examples/en/loaders/GLTFLoader under Textures for details on GLTF model texture color information.
-    texture.encoding = THREE.sRGBEncoding;
+    texture.colorSpace = THREE.SRGBColorSpace;
     texture.flipY = false;
 
     const newMaterial = modelData.materials.triangleMesh.clone();

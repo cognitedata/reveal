@@ -15,7 +15,7 @@ import { Color, Matrix4, Vector3 } from 'three';
 import { createSdkByUrlToken } from './utilities/createSdkByUrlToken';
 import { type CogniteCadModel, DefaultNodeAppearance } from '@cognite/reveal';
 import { useEffect, useMemo, useState, type JSX } from 'react';
-import { useMappedEdgesForRevisions } from '../src/components/NodeCacheProvider/NodeCacheProvider';
+import { useMappedEdgesForRevisions } from '../src/components/CacheProvider/NodeCacheProvider';
 
 const meta = {
   title: 'Example/CadStylingCache',

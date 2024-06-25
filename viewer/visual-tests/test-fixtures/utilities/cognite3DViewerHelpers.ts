@@ -5,10 +5,11 @@
 import { getApplicationSDK } from '../../../test-utilities/src/appUtils';
 import { AddModelOptions, CogniteModel, Cognite3DViewer, OnLoadingCallback } from '../../../packages/api';
 import { CogniteClient } from '@cognite/sdk';
+import type { WebGLRenderer } from 'three';
 
 export async function createCognite3DViewer(
   onLoading: OnLoadingCallback = () => {},
-  renderer?: THREE.WebGLRenderer
+  renderer?: WebGLRenderer
 ): Promise<Cognite3DViewer> {
   const queryString = window.location.search;
   const urlParams = new URLSearchParams(queryString);

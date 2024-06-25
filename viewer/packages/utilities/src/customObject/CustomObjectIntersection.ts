@@ -3,7 +3,7 @@
  */
 
 import { Vector3, Box3 } from 'three';
-import { CustomObject } from './CustomObject';
+import { ICustomObject } from './ICustomObject';
 
 /**
  * This class is used as output intersecting custom objects
@@ -23,6 +23,18 @@ export type CustomObjectIntersection = {
    */
   distanceToCamera: number;
 
-  customObject: CustomObject;
+  /**
+   * The CustomObject that was intersected.
+   */
+  customObject: ICustomObject;
+
+  /**
+   * The bounding box of the part of the CustomObject that was intersected.
+   */
   boundingBox?: Box3;
+
+  /**
+   * Additional info, for instance which part of the CustomObject was intersected.
+   */
+  userData?: any;
 };

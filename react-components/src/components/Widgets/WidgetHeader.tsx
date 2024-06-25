@@ -75,7 +75,7 @@ const Actions = styled.div<{ align: 'left' | 'right' }>`
 `;
 
 const Content = styled.div`
-  width: 80%;
+  width: 70%;
 `;
 
 const Cell = styled.div`
@@ -95,6 +95,9 @@ const HeaderText = styled(Body)`
   font-size: 14px;
   font-weight: bold;
   line-height: 20px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 `;
 
 const StyledIcon = styled(Icon)`

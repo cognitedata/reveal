@@ -7,10 +7,10 @@ import { AxisGizmoOptions } from './AxisGizmoOptions';
 import { CDF_TO_VIEWER_TRANSFORMATION } from '@reveal/utilities';
 import { Cognite3DViewer } from '@reveal/api';
 import { OneGizmoAxis } from './OneGizmoAxis';
-import { CameraManager, IFlexibleCameraManager } from '@reveal/camera-manager';
 import { moveCameraTo } from '../utilities/moveCameraTo';
 import { Corner } from '../utilities/Corner';
 import { Cognite3DViewerToolBase } from '../Cognite3DViewerToolBase';
+import { isFlexibleCameraManager } from '@reveal/camera-manager/src/Flexible/IFlexibleCameraManager';
 
 /**
  * Class for axis gizmo like the one in Blender
@@ -112,10 +112,7 @@ export class AxisGizmoTool extends Cognite3DViewerToolBase {
     this._inDragging = true;
   }
 
-  private onPointerUp(event: PointerEvent) {
-    if (this._isMouseOver) {
-      event.stopPropagation();
-    }
+  private onPointerUp(_event: PointerEvent) {
     if (!this._inDragging) {
       return;
     }
@@ -135,9 +132,8 @@ export class AxisGizmoTool extends Cognite3DViewerToolBase {
     upAxis.applyMatrix4(CDF_TO_VIEWER_TRANSFORMATION);
 
     const cameraManager = this._viewer.cameraManager;
-    const flexibleCameraManager = asFlexibleCameraManager(cameraManager);
-    if (flexibleCameraManager) {
-      flexibleCameraManager.rotateCameraTo(forward.negate(), this._options.animationDuration);
+    if (isFlexibleCameraManager(cameraManager)) {
+      cameraManager.rotateCameraTo(forward.negate(), this._options.animationDuration);
     } else {
       moveCameraTo(this._viewer.cameraManager, forward, upAxis, this._options.animationDuration);
     }
@@ -355,24 +351,32 @@ export class AxisGizmoTool extends Cognite3DViewerToolBase {
       this._context.globalAlpha = 1;
     }
     const { bubbleRadius, primaryLineWidth, secondaryLineWidth, bobbleLineWidth } = this._options;
+    const lineEnd = new Vector3();
     for (const axis of this._axes) {
+      this._context.globalAlpha = axis.getColorFraction();
       const lightColor = axis.getLightColorInHex();
+
+      // Calculate the end position of the axis line
+      const lineLength = this._center.distanceTo(axis.bubblePosition) - bubbleRadius;
+      lineEnd.subVectors(axis.bubblePosition, this._center).normalize().multiplyScalar(lineLength);
+      lineEnd.add(this._center);
 
       if (axis.isPrimary) {
         if (primaryLineWidth > 0) {
-          drawAxisLine(this._context, this._center, axis.bubblePosition, primaryLineWidth, lightColor);
+          drawAxisLine(this._context, this._center, lineEnd, primaryLineWidth, lightColor);
         }
         fillCircle(this._context, axis.bubblePosition, bubbleRadius, lightColor);
       } else {
         const darkColor = axis.getDarkColorInHex();
         if (secondaryLineWidth > 0) {
-          drawAxisLine(this._context, this._center, axis.bubblePosition, secondaryLineWidth, lightColor);
+          drawAxisLine(this._context, this._center, lineEnd, secondaryLineWidth, lightColor);
         }
         fillCircle(this._context, axis.bubblePosition, bubbleRadius, darkColor);
         if (bobbleLineWidth > 0) {
           drawCircle(this._context, axis.bubblePosition, bubbleRadius - 1, bobbleLineWidth, lightColor);
         }
       }
+      this._context.globalAlpha = 1;
       if (this._options.useGeoLabels || axis.isPrimary || this._selectedAxis === axis) {
         drawText(this._context, axis.label, axis.bubblePosition, this._options, this.getTextColor(axis));
       }
@@ -460,10 +464,4 @@ function initializeStyle(element: HTMLElement, options: AxisGizmoOptions) {
       style.left = xMargin;
       style.top = yMargin;
   }
-}
-
-function asFlexibleCameraManager(manager: CameraManager): IFlexibleCameraManager | undefined {
-  // instanceof don't work within React, so using safeguarding
-  const flexibleCameraManager = manager as IFlexibleCameraManager;
-  return flexibleCameraManager.controlsType === undefined ? undefined : flexibleCameraManager;
 }

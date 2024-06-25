@@ -3,7 +3,7 @@
  */
 
 import { PerspectiveCamera, Raycaster, Vector2, Vector3 } from 'three';
-import TWEEN from '@tweenjs/tween.js';
+import TWEEN, { type Tween } from '@tweenjs/tween.js';
 
 import { FlexibleCameraManager } from './FlexibleCameraManager';
 import clamp from 'lodash/clamp';
@@ -13,7 +13,7 @@ import { FlexibleWheelZoomType } from './FlexibleWheelZoomType';
 // INSTANCE METHODS: Move camera
 //================================================
 
-export function moveCameraTo(
+export function moveCameraPositionAndTargetTo(
   manager: FlexibleCameraManager,
   position: Vector3,
   target: Vector3,
@@ -46,7 +46,7 @@ export function moveCameraTo(
   const tempPosition = new Vector3();
   manager.controls.temporarlyDisableKeyboard = true;
 
-  const { tween, stopTween } = createTweenAnimation(manager, from, to, duration);
+  const { tween, removeEventListeners } = createTweenAnimationWithStop(manager, from, to, duration);
 
   tween
     .onUpdate(() => {
@@ -59,14 +59,12 @@ export function moveCameraTo(
     })
     .onStop(() => {
       manager.controls.temporarlyDisableKeyboard = false;
-      manager.setPositionAndTarget(tempPosition, tempTarget);
+      removeEventListeners();
     })
     .onComplete(() => {
+      manager.setPositionAndTarget(tempPosition, tempTarget);
       manager.controls.temporarlyDisableKeyboard = false;
-      if (manager.isDisposed) {
-        return;
-      }
-      manager.domElement.removeEventListener('pointerdown', stopTween);
+      removeEventListeners();
     })
     .start(TWEEN.now());
 }
@@ -96,8 +94,7 @@ export function moveCameraTargetTo(manager: FlexibleCameraManager, target: Vecto
   const tempTarget = new Vector3();
   manager.controls.temporarlyDisableKeyboard = true;
 
-  const { tween, stopTween } = createTweenAnimation(manager, from, to, duration);
-
+  const { tween, removeEventListeners } = createTweenAnimationWithStop(manager, from, to, duration);
   tween
     .onStart(() => {
       manager.setPositionAndTarget(manager.camera.position, target);
@@ -120,47 +117,41 @@ export function moveCameraTargetTo(manager: FlexibleCameraManager, target: Vecto
     .onStop(() => {
       manager.controls.setTempTarget(undefined);
       manager.controls.temporarlyDisableKeyboard = false;
-      manager.setPositionAndTarget(manager.camera.position, tempTarget);
+      removeEventListeners();
     })
     .onComplete(() => {
       manager.controls.setTempTarget(undefined);
+      manager.setPositionAndTarget(manager.camera.position, tempTarget);
       manager.controls.temporarlyDisableKeyboard = false;
-      if (manager.isDisposed) {
-        return;
-      }
-      manager.domElement.removeEventListener('pointerdown', stopTween);
+      removeEventListeners();
     })
     .start(TWEEN.now());
 }
 
-function createTweenAnimation<T>(
+function createTweenAnimationWithStop<T extends Record<string, any>>(
   manager: FlexibleCameraManager,
   from: T,
   to: T,
   duration: number
-): { tween: TWEEN.Tween; stopTween: (event: Event) => void } {
+): { tween: Tween<T>; removeEventListeners: () => void } {
   const animation = new TWEEN.Tween(from);
-  const stopTween = (event: Event) => {
-    if (manager.isDisposed) {
-      document.removeEventListener('keydown', stopTween);
-      animation.stop();
-      return;
-    }
+  const stopTween = (_event: Event) => {
+    animation.stop();
+  };
 
-    if (event.type !== 'keydown' || !manager.controls.temporarlyDisableKeyboard) {
-      animation.stop();
-      manager.domElement.removeEventListener('pointerdown', stopTween);
-      manager.domElement.removeEventListener('wheel', stopTween);
-      document.removeEventListener('keydown', stopTween);
-    }
+  const removeEventListeners = () => {
+    manager.domElement.removeEventListener('pointerdown', stopTween);
+    manager.domElement.removeEventListener('wheel', stopTween);
+    document.removeEventListener('keydown', stopTween);
   };
 
   manager.domElement.addEventListener('pointerdown', stopTween);
   manager.domElement.addEventListener('wheel', stopTween);
   document.addEventListener('keydown', stopTween);
 
-  const tween = animation.to(to, duration).easing((x: number) => TWEEN.Easing.Circular.Out(x));
-  return { tween, stopTween };
+  const tween = animation.to(to, duration);
+  tween.easing((x: number) => TWEEN.Easing.Circular.Out(x));
+  return { tween, removeEventListeners };
 }
 
 const MIN_ANIMATION_DURATION = 300;

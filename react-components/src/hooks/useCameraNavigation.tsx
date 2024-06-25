@@ -4,7 +4,7 @@
 
 import { type CameraState, type CogniteCadModel } from '@cognite/reveal';
 import { useReveal } from '../components/RevealCanvas/ViewerContext';
-import { useFdmNodeCache } from '../components/NodeCacheProvider/NodeCacheProvider';
+import { useFdmNodeCache } from '../components/CacheProvider/NodeCacheProvider';
 import { Box3 } from 'three';
 
 export type CameraNavigationActions = {

@@ -8,7 +8,7 @@ import {
   RevealToolbar,
   type AddResourceOptions,
   type AddReveal3DModelOptions,
-  type AddImageCollection360Options,
+  type AddImage360CollectionOptions,
   RevealContext
 } from '../src';
 import { Color } from 'three';
@@ -19,20 +19,20 @@ import { RevealResourcesFitCameraOnLoad } from './utilities/with3dResoursesFitCa
 import {
   useAllMappedEquipmentFDM,
   useSearchMappedEquipmentFDM
-} from '../src/hooks/useSearchMappedEquipmentFDM';
+} from '../src/query/useSearchMappedEquipmentFDM';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import {
   useAllMappedEquipmentAssetMappings,
   useSearchMappedEquipmentAssetMappings
-} from '../src/hooks/useSearchMappedEquipmentAssetMappings';
+} from '../src/query/useSearchMappedEquipmentAssetMappings';
 import {
   useAllAssetsMapped360Annotations,
   useSearchAssetsMapped360Annotations
-} from '../src/hooks/useSearchAssetsMapped360Annotations';
+} from '../src/query/useSearchAssetsMapped360Annotations';
 import {
   useAllAssetsMappedPointCloudAnnotations,
   useSearchAssetsMappedPointCloudAnnotations
-} from '../src/hooks/useSearchAssetsMappedPointCloudAnnotations';
+} from '../src/query/useSearchAssetsMappedPointCloudAnnotations';
 import { isEqual } from 'lodash';
 import { type NodeItem } from '../src/utilities/FdmSDK';
 import { Button, Input } from '@cognite/cogs.js';
@@ -75,7 +75,7 @@ const StoryContent = ({ resources }: { resources: AddResourceOptions[] }): React
   const { data: assetSearchData } = useSearchMappedEquipmentAssetMappings(
     mainSearchQuery,
     filteredResources,
-    100,
+    1000,
     sdk
   );
 
@@ -89,19 +89,22 @@ const StoryContent = ({ resources }: { resources: AddResourceOptions[] }): React
   } = useAllMappedEquipmentAssetMappings(filteredResources, sdk);
 
   const filtered360ImageResources = resources.filter(
-    (resource): resource is AddImageCollection360Options => 'siteId' in resource
+    (resource): resource is AddImage360CollectionOptions => 'siteId' in resource
   );
   const siteIds = filtered360ImageResources.map((filteredResource) => {
     return 'siteId' in filteredResource ? filteredResource.siteId : filteredResource.externalId;
   });
 
-  const { data: asset360ImageSearchData } = useSearchAssetsMapped360Annotations(
+  const { data: assetAnnotationImage360SearchData } = useSearchAssetsMapped360Annotations(
     siteIds,
     sdk,
     mainSearchQuery
   );
 
-  const { data: all360ImageAssets } = useAllAssetsMapped360Annotations(sdk, siteIds);
+  const { data: all360ImageAssetAnnotationMappings } = useAllAssetsMapped360Annotations(
+    sdk,
+    siteIds
+  );
 
   const { data: pointCloudAssetSearchData } = useSearchAssetsMappedPointCloudAnnotations(
     filteredResources,
@@ -117,7 +120,7 @@ const StoryContent = ({ resources }: { resources: AddResourceOptions[] }): React
   useEffect(() => {
     if (searchMethod !== 'allAssets') return;
 
-    if (!isFetching && hasNextPage === true) {
+    if (!isFetching && hasNextPage) {
       void fetchNextPage();
     }
   }, [searchMethod, isFetching, hasNextPage, fetchNextPage]);
@@ -149,6 +152,8 @@ const StoryContent = ({ resources }: { resources: AddResourceOptions[] }): React
           .map((mapping) => mapping.assets)
           .flat() ?? [];
 
+      const all360ImageAssets =
+        all360ImageAssetAnnotationMappings?.map((mapping) => mapping.asset) ?? [];
       const combinedAssets = [
         ...transformedAssets,
         ...(all360ImageAssets ?? []),
@@ -156,9 +161,9 @@ const StoryContent = ({ resources }: { resources: AddResourceOptions[] }): React
       ];
 
       const filteredAssets =
-        combinedAssets.filter((asset) => {
-          const isInName = asset.name.toLowerCase().includes(mainSearchQuery.toLowerCase());
-          const isInDescription = asset.description
+        combinedAssets.filter((assetMappings) => {
+          const isInName = assetMappings.name.toLowerCase().includes(mainSearchQuery.toLowerCase());
+          const isInDescription = assetMappings.description
             ?.toLowerCase()
             .includes(mainSearchQuery.toLowerCase());
 
@@ -183,9 +188,12 @@ const StoryContent = ({ resources }: { resources: AddResourceOptions[] }): React
         return [];
       }
 
+      const assetImage360SearchData =
+        assetAnnotationImage360SearchData?.map((mapping) => mapping.asset) ?? [];
+
       const combinedAssetSearchData = [
         ...assetSearchData,
-        ...(asset360ImageSearchData ?? []),
+        ...(assetImage360SearchData ?? []),
         ...(pointCloudAssetSearchData ?? [])
       ];
 
@@ -229,9 +237,9 @@ const StoryContent = ({ resources }: { resources: AddResourceOptions[] }): React
     allEquipment,
     searchData,
     allAssets,
-    all360ImageAssets,
+    all360ImageAssetAnnotationMappings,
     assetSearchData,
-    asset360ImageSearchData,
+    assetAnnotationImage360SearchData,
     searchMethod
   ]);
 
@@ -239,7 +247,7 @@ const StoryContent = ({ resources }: { resources: AddResourceOptions[] }): React
     <>
       <RevealContext sdk={sdk} color={new Color(0x4a4a4a)}>
         <RevealCanvas>
-          <ReactQueryDevtools position="bottom-right" />
+          <ReactQueryDevtools buttonPosition="bottom-right" />
           <RevealResourcesFitCameraOnLoad
             resources={resources}
             defaultResourceStyling={{

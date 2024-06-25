@@ -13,24 +13,24 @@ import { type Node3D, type CogniteExternalId } from '@cognite/sdk';
 import {
   useFdmAssetMappings,
   useMappedEdgesForRevisions
-} from '../components/NodeCacheProvider/NodeCacheProvider';
+} from '../components/CacheProvider/NodeCacheProvider';
 import { useMemo } from 'react';
 import {
   type NodeId,
   type FdmEdgeWithNode,
   type AssetId,
   type ModelRevisionAssetNodesResult
-} from '../components/NodeCacheProvider/types';
+} from '../components/CacheProvider/types';
 import {
   type NodeStylingGroup,
   type TreeIndexStylingGroup
 } from '../components/CadModelContainer/useApplyCadModelStyling';
-import { type AssetMapping } from '../components/NodeCacheProvider/AssetMappingCache';
+import { type AssetMapping } from '../components/CacheProvider/AssetMappingCache';
 import {
   useAssetMappedNodesForRevisions,
   useNodesForAssets
-} from '../components/NodeCacheProvider/AssetMappingCacheProvider';
-import { isSameCadModel } from '../utilities/isSameModel';
+} from '../components/CacheProvider/AssetMappingCacheProvider';
+import { isSameModel } from '../utilities/isSameModel';
 import { isAssetMappingStylingGroup, isFdmAssetStylingGroup } from '../utilities/StylingGroupUtils';
 
 type ModelStyleGroup = {
@@ -68,21 +68,24 @@ function useCalculateMappedStyling(
   models: CadModelOptions[],
   defaultMappedNodeAppearance?: NodeAppearance
 ): ModelStyleGroup[] {
-  const modelsRevisionsWithMappedEquipment = useMemo(() => getMappedCadModelsOptions(), [models]);
-  const { data: mappedEquipmentEdges } = useMappedEdgesForRevisions(
-    modelsRevisionsWithMappedEquipment
+  const modelsRevisionsWithMappedEquipment = useMemo(
+    () => getMappedCadModelsOptions(),
+    [models, defaultMappedNodeAppearance]
   );
+  const { data: mappedEquipmentEdges, isLoading: isFDMEquipmentMappingLoading } =
+    useMappedEdgesForRevisions(modelsRevisionsWithMappedEquipment);
 
-  const { data: assetMappingData } = useAssetMappedNodesForRevisions(
-    modelsRevisionsWithMappedEquipment
-  );
+  const { data: assetMappingData, isLoading: isAssetMappingLoading } =
+    useAssetMappedNodesForRevisions(modelsRevisionsWithMappedEquipment);
 
   const modelsMappedFdmStyleGroups = useMemo(() => {
-    if (
+    const isFdmMappingUnavailableOrLoading =
       models.length === 0 ||
       mappedEquipmentEdges === undefined ||
-      mappedEquipmentEdges.size === 0
-    ) {
+      mappedEquipmentEdges.size === 0 ||
+      isFDMEquipmentMappingLoading;
+
+    if (isFdmMappingUnavailableOrLoading) {
       return [];
     }
 
@@ -94,10 +97,21 @@ function useCalculateMappedStyling(
         modelStyle !== undefined ? [getMappedStyleGroupFromFdm(fdmData, modelStyle)] : [];
       return { model, styleGroup };
     });
-  }, [modelsRevisionsWithMappedEquipment, mappedEquipmentEdges, defaultMappedNodeAppearance]);
+  }, [
+    modelsRevisionsWithMappedEquipment,
+    mappedEquipmentEdges,
+    defaultMappedNodeAppearance,
+    isFDMEquipmentMappingLoading
+  ]);
 
   const modelsMappedAssetStyleGroups = useMemo(() => {
-    if (models.length === 0 || assetMappingData === undefined || assetMappingData.length === 0) {
+    const isAssetMappingUnavailableOrLoading =
+      models.length === 0 ||
+      assetMappingData === undefined ||
+      assetMappingData.length === 0 ||
+      isAssetMappingLoading;
+
+    if (isAssetMappingUnavailableOrLoading) {
       return [];
     }
 
@@ -110,10 +124,19 @@ function useCalculateMappedStyling(
           : [];
       return { model: assetMappedModel.model, styleGroup };
     });
-  }, [modelsRevisionsWithMappedEquipment, assetMappingData, defaultMappedNodeAppearance]);
+  }, [
+    modelsRevisionsWithMappedEquipment,
+    assetMappingData,
+    defaultMappedNodeAppearance,
+    isAssetMappingLoading
+  ]);
 
   const combinedMappedStyleGroups = useMemo(
-    () => groupStyleGroupByModel([...modelsMappedAssetStyleGroups, ...modelsMappedFdmStyleGroups]),
+    () =>
+      groupStyleGroupByModel(models, [
+        ...modelsMappedAssetStyleGroups,
+        ...modelsMappedFdmStyleGroups
+      ]),
     [modelsMappedAssetStyleGroups, modelsMappedFdmStyleGroups]
   );
 
@@ -160,7 +183,10 @@ function useCalculateInstanceStyling(
 
   const combinedMappedStyleGroups = useMemo(
     () =>
-      groupStyleGroupByModel([...fdmModelInstanceStyleGroups, ...assetMappingInstanceStyleGroups]),
+      groupStyleGroupByModel(models, [
+        ...fdmModelInstanceStyleGroups,
+        ...assetMappingInstanceStyleGroups
+      ]),
     [fdmModelInstanceStyleGroups, assetMappingInstanceStyleGroups]
   );
 
@@ -222,10 +248,10 @@ function useJoinStylingGroups(
     }
     return models.map((model) => {
       const mappedStyleGroup =
-        modelsMappedStyleGroups.find((typedModel) => isSameCadModel(typedModel.model, model))
+        modelsMappedStyleGroups.find((typedModel) => isSameModel(typedModel.model, model))
           ?.styleGroup ?? [];
       const instanceStyleGroups = modelInstanceStyleGroups
-        .filter((typedModel) => isSameCadModel(typedModel.model, model))
+        .filter((typedModel) => isSameModel(typedModel.model, model))
         .flatMap((typedModel) => typedModel.styleGroup);
       return {
         model,
@@ -237,21 +263,18 @@ function useJoinStylingGroups(
   return modelsStyling;
 }
 
-function groupStyleGroupByModel(styleGroup: ModelStyleGroup[]): ModelStyleGroup[] {
+function groupStyleGroupByModel(
+  models: CadModelOptions[],
+  styleGroup: ModelStyleGroup[]
+): ModelStyleGroup[] {
+  const initialStyleGroups = models.map((model) => ({ model, styleGroup: [] }));
   return styleGroup.reduce<ModelStyleGroup[]>((accumulatedGroups, currentGroup) => {
     const existingGroupWithModel = accumulatedGroups.find((group) =>
-      isSameCadModel(group.model, currentGroup.model)
+      isSameModel(group.model, currentGroup.model)
     );
-    if (existingGroupWithModel !== undefined) {
-      existingGroupWithModel.styleGroup.push(...currentGroup.styleGroup);
-    } else {
-      accumulatedGroups.push({
-        model: currentGroup.model,
-        styleGroup: [...currentGroup.styleGroup]
-      });
-    }
+    existingGroupWithModel?.styleGroup.push(...currentGroup.styleGroup);
     return accumulatedGroups;
-  }, []);
+  }, initialStyleGroups);
 }
 
 function extractDefaultStyles(typedModels: CadModelOptions[]): StyledModel[] {

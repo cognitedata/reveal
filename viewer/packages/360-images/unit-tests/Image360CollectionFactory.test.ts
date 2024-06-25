@@ -60,6 +60,7 @@ describe(Image360CollectionFactory.name, () => {
       mock360ImageProvider.object(),
       mockSceneHandler.object(),
       new EventTrigger<BeforeSceneRenderedDelegate>(),
+      () => {},
       desktopDevice,
       { platformMaxPointsSize: 256 }
     );

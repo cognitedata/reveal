@@ -8,7 +8,7 @@ import { FlexibleControlsType } from './FlexibleControlsType';
 
 export class FlexibleCameraMarkers {
   private readonly _scene: Scene;
-  private _targetMarker: Object3D | undefined;
+  private _targetMarker: Sprite | undefined;
 
   //================================================
   // CONSTRUCTOR
@@ -23,7 +23,7 @@ export class FlexibleCameraMarkers {
   //================================================
 
   public update(manager: FlexibleCameraManager): void {
-    if (manager.options.showTarget && manager.options.controlsType !== FlexibleControlsType.FirstPerson) {
+    if (this.isVisible(manager)) {
       if (!this._targetMarker) {
         this._targetMarker = createSprite(manager.options.outerMarkerColor, manager.options.innerMarkerColor);
         this._scene.add(this._targetMarker);
@@ -37,6 +37,32 @@ export class FlexibleCameraMarkers {
         this._targetMarker.visible = false;
       }
     }
+  }
+
+  public dispose(): void {
+    if (this._targetMarker) {
+      this._scene.remove(this._targetMarker);
+      this._targetMarker.material.map?.dispose();
+      this._targetMarker.material.dispose();
+      this._targetMarker.geometry.dispose();
+      this._targetMarker = undefined;
+    }
+  }
+
+  private isVisible(manager: FlexibleCameraManager): boolean {
+    if (!manager.options.showTarget) {
+      return false;
+    }
+    if (!manager.isEnabled) {
+      return false;
+    }
+    if (manager.controls.isStationary) {
+      return false;
+    }
+    if (manager.options.controlsType === FlexibleControlsType.FirstPerson) {
+      return false;
+    }
+    return true;
   }
 }
 

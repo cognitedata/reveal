@@ -14,7 +14,8 @@ export class PointCloudUi {
       enabled: true,
       radius: 2.2,
       strength: 0.5
-    }
+    },
+    visible: true
   };
 
   constructor(viewer: Cognite3DViewer, ui: dat.GUI) {
@@ -58,6 +59,7 @@ export class PointCloudUi {
       urlParams.set('pointBlending', value);
       window.location.href = url.toString();
     });
+    ui.add(this._params, 'visible').onChange(() => this.applyToAllModels());
     const edl = ui.addFolder('EdlOptions');
     edl.open();
     edl.add(this._params.edlOptions, 'enabled').onChange(value => {
@@ -84,6 +86,7 @@ export class PointCloudUi {
       model.pointSizeType = this._params.pointSizeType;
       model.pointColorType = this._params.pointColorType;
       model.pointShape = this._params.pointShape;
+      model.visible = this._params.visible;
     });
   }
 }

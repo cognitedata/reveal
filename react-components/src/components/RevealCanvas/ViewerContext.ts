@@ -3,13 +3,19 @@
  */
 import { type Cognite3DViewer } from '@cognite/reveal';
 import { createContext, useContext } from 'react';
+import { type RevealRenderTarget } from '../../architecture/base/renderTarget/RevealRenderTarget';
 
-export const ViewerContext = createContext<Cognite3DViewer | null>(null);
+export const ViewerContext = createContext<RevealRenderTarget | null>(null);
 
 export const useReveal = (): Cognite3DViewer => {
-  const reveal = useContext(ViewerContext);
-  if (reveal === null) {
-    throw new Error('useReveal must be used within a ViewerProvider');
+  const renderTarget = useRenderTarget();
+  return renderTarget.viewer;
+};
+
+export const useRenderTarget = (): RevealRenderTarget => {
+  const renderTarget = useContext(ViewerContext);
+  if (renderTarget === null) {
+    throw new Error('useRenderTarget must be used within a ViewerProvider');
   }
-  return reveal;
+  return renderTarget;
 };

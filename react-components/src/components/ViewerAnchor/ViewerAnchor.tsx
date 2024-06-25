@@ -190,7 +190,7 @@ function computeCombinedTranslationCss(
   const inherentTranslation = `translateX(calc(${pointPositionOnScreen.x}px + ${stickyCompensation.x}px))
 translateY(calc(${pointPositionOnScreen.y}px + ${stickyCompensation.y}px))`;
 
-  const style = { ...inputStyle } ?? {};
+  const style = { ...inputStyle };
   const userProvidedTranslation = style.transform;
   style.transform = `${userProvidedTranslation ?? ''} ${inherentTranslation}`;
   return style;

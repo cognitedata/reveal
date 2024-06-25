@@ -3,18 +3,20 @@
  */
 import { Cognite3DViewer, type Cognite3DViewerOptions } from '@cognite/reveal';
 import { type CogniteClient } from '@cognite/sdk/dist/src';
-import { type ReactNode, useEffect, useMemo, useRef, useState } from 'react';
+import { type ReactNode, useEffect, useMemo, useState, type ReactElement } from 'react';
 import { type Color } from 'three';
 import { I18nContextProvider } from '../i18n/I18n';
 import { ViewerContext } from '../RevealCanvas/ViewerContext';
-import { NodeCacheProvider } from '../NodeCacheProvider/NodeCacheProvider';
-import { AssetMappingCacheProvider } from '../NodeCacheProvider/AssetMappingCacheProvider';
-import { PointCloudAnnotationCacheProvider } from '../NodeCacheProvider/PointCloudAnnotationCacheProvider';
+import { NodeCacheProvider } from '../CacheProvider/NodeCacheProvider';
+import { AssetMappingCacheProvider } from '../CacheProvider/AssetMappingCacheProvider';
+import { PointCloudAnnotationCacheProvider } from '../CacheProvider/PointCloudAnnotationCacheProvider';
 import { Reveal3DResourcesCountContextProvider } from '../Reveal3DResources/Reveal3DResourcesCountContext';
 import { SDKProvider } from '../RevealCanvas/SDKProvider';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { useRevealKeepAlive } from '../RevealKeepAlive/RevealKeepAliveContext';
-import { Image360AnnotationCacheProvider } from '../NodeCacheProvider/Image360AnnotationCacheProvider';
+import { Image360AnnotationCacheProvider } from '../CacheProvider/Image360AnnotationCacheProvider';
+import { RevealRenderTarget } from '../../architecture/base/renderTarget/RevealRenderTarget';
+import { LoadedSceneProvider } from '../SceneContainer/LoadedSceneContext';
 
 export type RevealContextProps = {
   color?: Color;
@@ -30,11 +32,11 @@ export type RevealContextProps = {
     | 'ssaoQualityHint'
     | 'pointCloudEffects'
     | 'enableEdges'
-    | 'useFlexibleCameraManager'
+    | 'onLoading'
   >;
 };
 
-export const RevealContext = (props: RevealContextProps): ReactNode => {
+export const RevealContext = (props: RevealContextProps): ReactElement => {
   const viewer = useRevealFromKeepAlive(props);
 
   const queryClient = useMemo(() => {
@@ -47,19 +49,21 @@ export const RevealContext = (props: RevealContextProps): ReactNode => {
     <SDKProvider sdk={props.sdk}>
       <QueryClientProvider client={queryClient}>
         <I18nContextProvider appLanguage={props.appLanguage}>
-          <ViewerContext.Provider value={viewer}>
-            <NodeCacheProvider>
-              <AssetMappingCacheProvider>
-                <PointCloudAnnotationCacheProvider>
-                  <Image360AnnotationCacheProvider>
-                    <Reveal3DResourcesCountContextProvider>
-                      {props.children}
-                    </Reveal3DResourcesCountContextProvider>
-                  </Image360AnnotationCacheProvider>
-                </PointCloudAnnotationCacheProvider>
-              </AssetMappingCacheProvider>
-            </NodeCacheProvider>
-          </ViewerContext.Provider>
+          <LoadedSceneProvider>
+            <ViewerContext.Provider value={viewer}>
+              <NodeCacheProvider>
+                <AssetMappingCacheProvider>
+                  <PointCloudAnnotationCacheProvider>
+                    <Image360AnnotationCacheProvider>
+                      <Reveal3DResourcesCountContextProvider>
+                        {props.children}
+                      </Reveal3DResourcesCountContextProvider>
+                    </Image360AnnotationCacheProvider>
+                  </PointCloudAnnotationCacheProvider>
+                </AssetMappingCacheProvider>
+              </NodeCacheProvider>
+            </ViewerContext.Provider>
+          </LoadedSceneProvider>
         </I18nContextProvider>
       </QueryClientProvider>
     </SDKProvider>
@@ -70,42 +74,45 @@ const useRevealFromKeepAlive = ({
   color,
   sdk,
   viewerOptions
-}: RevealContextProps): Cognite3DViewer | null => {
+}: RevealContextProps): RevealRenderTarget | null => {
   const revealKeepAliveData = useRevealKeepAlive();
 
   // Double bookkeeping to satisfy test
-  const viewerRef = useRef<Cognite3DViewer | null>(null);
-  const [, setViewer] = useState<Cognite3DViewer | undefined>(undefined);
-
-  const viewerDomElement = useRef<HTMLElement | null>(null);
+  const [renderTarget, setRenderTarget] = useState<RevealRenderTarget | null>(null);
 
   useEffect(() => {
-    const initializedViewer = getOrInitializeViewer();
+    const renderTarget = getOrInitializeRenderTarget();
     if (revealKeepAliveData === undefined) {
       return;
     }
     revealKeepAliveData.isRevealContainerMountedRef.current = true;
     return () => {
       if (revealKeepAliveData === undefined) {
-        initializedViewer.dispose();
+        renderTarget.dispose();
         return;
       }
       revealKeepAliveData.isRevealContainerMountedRef.current = false;
     };
   }, []);
 
-  return viewerRef.current;
+  return renderTarget;
 
-  function getOrInitializeViewer(): Cognite3DViewer {
-    const viewer =
-      revealKeepAliveData?.viewerRef.current ?? new Cognite3DViewer({ ...viewerOptions, sdk });
-    if (revealKeepAliveData !== undefined) {
-      revealKeepAliveData.viewerRef.current = viewer;
+  function getOrInitializeRenderTarget(): RevealRenderTarget {
+    let renderTarget = revealKeepAliveData?.renderTargetRef.current;
+    if (renderTarget === undefined) {
+      const viewer = new Cognite3DViewer({
+        ...viewerOptions,
+        sdk,
+        useFlexibleCameraManager: true,
+        hasEventListeners: false
+      });
+      renderTarget = new RevealRenderTarget(viewer);
+      if (revealKeepAliveData !== undefined) {
+        revealKeepAliveData.renderTargetRef.current = renderTarget;
+      }
     }
-    viewerDomElement.current = viewer.domElement;
-    viewer.setBackgroundColor({ color, alpha: 1 });
-    setViewer(viewer);
-    viewerRef.current = viewer;
-    return viewer;
+    renderTarget.viewer.setBackgroundColor({ color, alpha: 1 });
+    setRenderTarget(renderTarget);
+    return renderTarget;
   }
 };

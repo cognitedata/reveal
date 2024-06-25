@@ -4,17 +4,20 @@
 import { useRef, type ReactElement, useMemo } from 'react';
 import { RevealKeepAliveContext } from '../../src/components/RevealKeepAlive/RevealKeepAliveContext';
 import { RevealCanvas } from '../../src/components/RevealCanvas/RevealCanvas';
-import { type FdmNodeCache } from '../../src/components/NodeCacheProvider/FdmNodeCache';
-import { type AssetMappingCache } from '../../src/components/NodeCacheProvider/AssetMappingCache';
+import { type FdmNodeCache } from '../../src/components/CacheProvider/FdmNodeCache';
+import { type AssetMappingCache } from '../../src/components/CacheProvider/AssetMappingCache';
 import { type CogniteClient } from '@cognite/sdk';
 import { Cognite3DViewer } from '@cognite/reveal';
 import { createSdkByUrlToken } from './createSdkByUrlToken';
-import { type PointCloudAnnotationCache } from '../../src/components/NodeCacheProvider/PointCloudAnnotationCache';
+import { type PointCloudAnnotationCache } from '../../src/components/CacheProvider/PointCloudAnnotationCache';
 import {
   RevealContext,
   type RevealContextProps
 } from '../../src/components/RevealContext/RevealContext';
-import { type Image360AnnotationCache } from '../../src/components/NodeCacheProvider/Image360AnnotationCache';
+import { type Image360AnnotationCache } from '../../src/components/CacheProvider/Image360AnnotationCache';
+import { type SceneIdentifiers } from '../../src/components/SceneContainer/sceneTypes';
+import { RevealRenderTarget } from '../../src/architecture/base/renderTarget/RevealRenderTarget';
+import { StoryBookConfig } from '../../src/architecture/concrete/config/StoryBookConfig';
 
 type RevealStoryContainerProps = Omit<RevealContextProps, 'sdk'> & {
   sdk?: CogniteClient;
@@ -35,14 +38,28 @@ export const RevealStoryContext = ({
   }, [sdk]);
 
   const isLocal = sdkInstance.project === '';
-  const viewerRef = useRef<Cognite3DViewer | undefined>(
-    viewer ??
-      (isLocal
-        ? // @ts-expect-error use local models
-          new Cognite3DViewer({ ...rest.viewerOptions, sdk: sdkInstance, _localModels: true })
-        : undefined)
-  );
+
+  const renderTarget = useMemo(() => {
+    if (viewer !== undefined) {
+      return new RevealRenderTarget(viewer);
+    } else if (isLocal) {
+      const newViewer = new Cognite3DViewer({
+        ...rest.viewerOptions,
+        sdk: sdkInstance,
+        // @ts-expect-error use local models
+        _localModels: true,
+        hasEventListeners: false,
+        useFlexibleCameraManager: true
+      });
+      const renderTarget = new RevealRenderTarget(newViewer);
+      renderTarget.setConfig(new StoryBookConfig());
+      return renderTarget;
+    }
+  }, [viewer]);
+
+  const renderTargetRef = useRef<RevealRenderTarget | undefined>(renderTarget);
   const isRevealContainerMountedRef = useRef<boolean>(true);
+  const sceneLoadedRef = useRef<SceneIdentifiers>();
   const fdmNodeCache = useRef<FdmNodeCache | undefined>();
   const assetMappingCache = useRef<AssetMappingCache | undefined>();
   const pointCloudAnnotationCache = useRef<PointCloudAnnotationCache | undefined>();
@@ -50,8 +67,9 @@ export const RevealStoryContext = ({
   return (
     <RevealKeepAliveContext.Provider
       value={{
-        viewerRef,
+        renderTargetRef,
         isRevealContainerMountedRef,
+        sceneLoadedRef,
         fdmNodeCache,
         assetMappingCache,
         pointCloudAnnotationCache,

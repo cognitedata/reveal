@@ -8,7 +8,7 @@ import { FlexibleMouseActionType } from './FlexibleMouseActionType';
 import { FlexibleWheelZoomType } from './FlexibleWheelZoomType';
 
 const DEFAULT_POINTER_ROTATION_SPEED = (0.5 * Math.PI) / 360; // half degree per pixel
-const DEFAULT_KEYBOARD_ROTATION_SPEED = DEFAULT_POINTER_ROTATION_SPEED * 2.5;
+const DEFAULT_KEYBOARD_ROTATION_SPEED = DEFAULT_POINTER_ROTATION_SPEED * 5;
 const DEFAULT_MIN_POLAR_ANGLE = 0.0001;
 
 /**
@@ -19,10 +19,10 @@ export class FlexibleControlsOptions {
   // INSTANCE FIELDS
   //================================================
 
-  // Main behaivor
+  // Main behavior
   public controlsType = FlexibleControlsType.Orbit;
 
-  // Mouse click, double click and wheel behaivor
+  // Mouse click, double click and wheel behavior
   public mouseWheelAction = FlexibleWheelZoomType.Auto;
   public mouseClickType = FlexibleMouseActionType.SetTarget;
   public mouseDoubleClickType = FlexibleMouseActionType.SetTargetAndCameraPosition;
@@ -41,7 +41,7 @@ export class FlexibleControlsOptions {
   public minAzimuthAngle = -Infinity;
   public maxAzimuthAngle = Infinity;
 
-  // Dampning
+  // Damping
   public enableDamping = true;
   public dampingFactor = 0.25;
 
@@ -59,6 +59,7 @@ export class FlexibleControlsOptions {
   public mouseRotationSpeedPolar = DEFAULT_POINTER_ROTATION_SPEED;
   public keyboardRotationSpeedAzimuth = DEFAULT_KEYBOARD_ROTATION_SPEED;
   public keyboardRotationSpeedPolar = DEFAULT_KEYBOARD_ROTATION_SPEED * 0.8;
+  public keyboardFastRotationFactor = 2;
 
   // Wheel settings
   public zoomFraction = 0.05;
@@ -71,15 +72,21 @@ export class FlexibleControlsOptions {
   public mouseDollySpeed = 100;
 
   // Keyboard speed for dolly and pan
+  public keyboardSpeed = 1;
   public keyboardPanSpeed = 100;
   public keyboardDollySpeed = 200;
   public keyboardFastMoveFactor = 5;
 
   // Pinch speed
-  public pinchEpsilon = 2;
-  public pinchPanSpeed = 1;
+  public pinchEpsilon = 0.1;
+  public pinchPanSpeed = 50;
 
   public orthographicCameraDollyFactor = 0.3;
+
+  // For when it is isStationary
+  public minimumFov: number = 5;
+  public maximumFov: number = 100;
+  public defaultFov: number = 60;
 
   // Shaw target as a Marker settings
   public showTarget = true;
@@ -111,9 +118,20 @@ export class FlexibleControlsOptions {
     }
   }
 
+  public getKeyboardSpeed(shift: boolean): number {
+    if (!shift) {
+      return this.keyboardSpeed;
+    }
+    return this.keyboardFastMoveFactor * this.keyboardSpeed;
+  }
+
   //================================================
   // INSTANCE METHODS: Getters
   //================================================
+
+  public getLegalFov(fov: number): number {
+    return MathUtils.clamp(fov, this.minimumFov, this.maximumFov);
+  }
 
   public getLegalAzimuthAngle(azimuthAngle: number): number {
     return MathUtils.clamp(azimuthAngle, this.minAzimuthAngle, this.maxAzimuthAngle);

@@ -17,7 +17,7 @@ import {
   CogniteModel,
   AnnotationIdPointCloudObjectCollection
 } from '@cognite/reveal';
-import { DebugCameraTool, Corner, AxisViewTool, AxisGizmoTool } from '@cognite/reveal/tools';
+import { DebugCameraTool, AxisGizmoTool } from '@cognite/reveal/tools';
 import * as reveal from '@cognite/reveal';
 import { ClippingUIs } from '../utils/ClippingUIs';
 import { NodeStylingUI } from '../utils/NodeStylingUI';
@@ -38,7 +38,6 @@ import { LoadGltfUi } from '../utils/LoadGltfUi';
 import { createFunnyButton } from '../utils/PageVariationUtils';
 import { getCogniteClient } from '../utils/example-helpers';
 
-window.THREE = THREE;
 (window as any).reveal = reveal;
 
 export function Viewer() {

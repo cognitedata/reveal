@@ -18,7 +18,7 @@ import {
   CameraStopDelegate
 } from './types';
 import { DebouncedCameraStopEventTrigger } from './utils/DebouncedCameraStopEventTrigger';
-import { assertNever, clickOrTouchEventOffset, getNormalizedPixelCoordinatesBySize } from '@reveal/utilities';
+import { assertNever, getNormalizedPixelCoordinatesBySize, getPixelCoordinatesFromEvent } from '@reveal/utilities';
 
 export class StationaryCameraManager implements CameraManager {
   private readonly _camera: PerspectiveCamera;
@@ -76,7 +76,7 @@ export class StationaryCameraManager implements CameraManager {
     this._camera.aspect = cameraManager.getCamera().aspect;
     this._camera.updateProjectionMatrix();
 
-    window.addEventListener('pointerdown', this.onPointerDown);
+    this._domElement.addEventListener('pointerdown', this.onPointerDown);
     window.addEventListener('pointermove', this.onPointerMove, { passive: false });
     this._domElement.addEventListener('wheel', this.zoomCamera);
     // The handler for pointerup is used for the pointercancel, pointerout
@@ -86,7 +86,7 @@ export class StationaryCameraManager implements CameraManager {
   }
 
   deactivate(): void {
-    window.removeEventListener('pointerdown', this.onPointerDown);
+    this._domElement.removeEventListener('pointerdown', this.onPointerDown);
     window.removeEventListener('pointermove', this.onPointerMove);
     window.removeEventListener('pointerup', this.onPointerUp);
     this._domElement.removeEventListener('pointercancel', this.onPointerUp);
@@ -283,8 +283,8 @@ export class StationaryCameraManager implements CameraManager {
 
   private getCursorRay(event: WheelEvent) {
     const { width, height } = this._domElement.getBoundingClientRect();
-    const { offsetX, offsetY } = clickOrTouchEventOffset(event, this._domElement);
-    const ndcCoordinates = getNormalizedPixelCoordinatesBySize(offsetX, offsetY, width, height);
+    const position = getPixelCoordinatesFromEvent(event, this._domElement);
+    const ndcCoordinates = getNormalizedPixelCoordinatesBySize(position.x, position.y, width, height);
     const ray = new Vector3(ndcCoordinates.x, ndcCoordinates.y, 1).unproject(this._camera).sub(this._camera.position);
     return ray;
   }

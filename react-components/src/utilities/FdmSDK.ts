@@ -8,7 +8,7 @@ import { type FdmPropertyType } from '../components/Reveal3DResources/types';
 type InstanceType = 'node' | 'edge';
 type EdgeDirection = 'source' | 'destination';
 
-type InstanceFilter = any;
+export type InstanceFilter = Record<string, any>;
 type ViewPropertyReference = any;
 
 export type ExternalId = string;
@@ -101,6 +101,17 @@ export type NodeItem<PropertyType = Record<string, unknown>> = {
   lastUpdatedTime: number;
   deletedTime: number;
   properties: FdmPropertyType<PropertyType>;
+};
+
+export type FdmNode<PropertyType = Record<string, unknown>> = {
+  instanceType: 'node';
+  version: number;
+  space: string;
+  externalId: string;
+  createdTime: number;
+  lastUpdatedTime: number;
+  deletedTime: number;
+  properties: PropertyType;
 };
 
 type InspectionOperations =
@@ -272,7 +283,22 @@ export class FdmSDK {
     filter?: InstanceFilter,
     properties?: string[]
   ): Promise<{ instances: Array<EdgeItem<PropertiesType> | NodeItem<PropertiesType>> }> {
-    const data: any = { view: searchedView, query, instanceType, filter, properties, limit };
+    function makeSureNonEmptyFilterForRequest(
+      filter: InstanceFilter | undefined
+    ): InstanceFilter | undefined {
+      return filter !== undefined && Object.keys(filter).length === 0 ? undefined : filter;
+    }
+
+    filter = makeSureNonEmptyFilterForRequest(filter);
+
+    const data: any = {
+      view: searchedView,
+      query,
+      instanceType,
+      filter,
+      properties,
+      limit
+    };
 
     const result = await this._sdk.post(this._searchEndpoint, { data });
 
@@ -294,7 +320,7 @@ export class FdmSDK {
     source?: Source,
     cursor?: string
   ): Promise<{
-    instances: Array<EdgeItem<PropertiesType> | NodeItem<PropertiesType>>;
+    instances: Array<EdgeItem<PropertiesType> | FdmNode<PropertiesType>>;
     nextCursor?: string;
   }>;
 
@@ -304,7 +330,7 @@ export class FdmSDK {
     instanceType: 'node',
     source?: Source,
     cursor?: string
-  ): Promise<{ instances: Array<NodeItem<PropertiesType>>; nextCursor?: string }>;
+  ): Promise<{ instances: Array<FdmNode<PropertiesType>>; nextCursor?: string }>;
 
   // eslint-disable-next-line no-dupe-class-members
   public async filterInstances<PropertiesType = Record<string, any>>(
@@ -321,7 +347,7 @@ export class FdmSDK {
     source: Source,
     cursor?: string
   ): Promise<{
-    instances: Array<EdgeItem<PropertiesType> | NodeItem<PropertiesType>>;
+    instances: Array<EdgeItem<PropertiesType> | FdmNode<PropertiesType>>;
     nextCursor?: string;
   }> {
     const data: any = { filter, instanceType };
@@ -355,7 +381,7 @@ export class FdmSDK {
     filter: InstanceFilter,
     instanceType: InstanceType,
     source?: Source
-  ): Promise<{ instances: Array<EdgeItem<PropertiesType> | NodeItem<PropertiesType>> }>;
+  ): Promise<{ instances: Array<EdgeItem<PropertiesType> | FdmNode<PropertiesType>> }>;
 
   // eslint-disable-next-line no-dupe-class-members
   public async filterAllInstances<PropertiesType = Record<string, any>>(
@@ -367,16 +393,16 @@ export class FdmSDK {
   // eslint-disable-next-line no-dupe-class-members
   public async filterAllInstances<PropertiesType = Record<string, any>>(
     filter: InstanceFilter,
-    instanceType: 'edge',
+    instanceType: 'node',
     source?: Source
-  ): Promise<{ instances: Array<EdgeItem<PropertiesType>> }>;
+  ): Promise<{ instances: Array<FdmNode<PropertiesType>> }>;
 
   // eslint-disable-next-line no-dupe-class-members
   public async filterAllInstances<PropertiesType = Record<string, any>>(
     filter: InstanceFilter,
     instanceType: InstanceType,
     source?: Source
-  ): Promise<{ instances: Array<EdgeItem<PropertiesType> | NodeItem<PropertiesType>> }> {
+  ): Promise<{ instances: Array<EdgeItem<PropertiesType> | FdmNode<PropertiesType>> }> {
     let mappings = await this.filterInstances<PropertiesType>(filter, instanceType, source);
 
     while (mappings.nextCursor !== undefined) {
@@ -433,6 +459,29 @@ export class FdmSDK {
       return result.data;
     }
     throw new Error(`Failed to create instances. Status: ${result.status}`);
+  }
+
+  public async editInstance<PropertyType>(
+    queries: Array<{
+      instanceType: InstanceType;
+      externalId: string;
+      space: string;
+      sources: [{ source: Source; properties: any }];
+    }>
+  ): Promise<ExternalIdsResultList<PropertyType>> {
+    const data: any = {
+      items: queries,
+      autoCreateStartNodes: false,
+      autoCreateEndNodes: false,
+      skipOnVersionConflict: false,
+      replace: false
+    };
+
+    const result = await this._sdk.post(this._createUpdateInstancesEndpoint, { data });
+    if (result.status === 200) {
+      return result.data;
+    }
+    throw new Error(`Failed to edit instances. Status: ${result.status}`);
   }
 
   public async deleteInstance<PropertyType>(

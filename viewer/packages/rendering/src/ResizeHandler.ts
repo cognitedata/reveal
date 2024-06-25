@@ -23,7 +23,7 @@ export class ResizeHandler {
   private readonly _onCameraChangeCallback: () => void;
   private readonly _onCameraStopCallback: () => void;
 
-  private readonly _resizeObserver: ResizeObserver | undefined;
+  private _resizeObserver: ResizeObserver | undefined;
 
   private _shouldResize: boolean = false;
 
@@ -95,7 +95,7 @@ export class ResizeHandler {
     }
   }
 
-  private setupResizeListener(renderer: THREE.WebGLRenderer): ResizeObserver | undefined {
+  private setupResizeListener(renderer: WebGLRenderer): ResizeObserver | undefined {
     const domElement = renderer.domElement.parentElement;
     if (!domElement) {
       throw new Error('Canvas does not have a parent element');
@@ -106,7 +106,7 @@ export class ResizeHandler {
     return resizeObserver;
   }
 
-  private resize(camera: THREE.PerspectiveCamera): void {
+  private resize(camera: PerspectiveCamera): void {
     const canvas = this._renderer.domElement;
     const domElement = canvas.parentElement;
 
@@ -126,8 +126,8 @@ export class ResizeHandler {
 
     const [virtualWidth, virtualHeight] = getVirtualDomElementWidthAndHeight(canvas);
 
-    const newVirtualWidth = Math.round(virtualWidth * downScale);
-    const newVirtualHeight = Math.round(virtualHeight * downScale);
+    const newVirtualWidth = Math.max(1, Math.round(virtualWidth * downScale));
+    const newVirtualHeight = Math.max(1, Math.round(virtualHeight * downScale));
     const newAspectRatio = newVirtualWidth / newVirtualHeight;
 
     if (camera.aspect !== newAspectRatio) {
@@ -141,7 +141,9 @@ export class ResizeHandler {
   }
 
   dispose(): void {
+    this._resizeObserver?.unobserve(this._renderer.domElement.parentElement!);
     this._resizeObserver?.disconnect();
+    this._resizeObserver = undefined;
   }
 }
 

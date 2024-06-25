@@ -29,22 +29,33 @@ import {
   isImage360AssetStylingGroup
 } from '../../utilities/StylingGroupUtils';
 import { type ImageCollectionModelStyling } from '../Image360CollectionContainer/useApply360AnnotationStyling';
+import { is360ImageAddOptions } from './typeGuards';
+import { useRemoveNonReferencedModels } from './useRemoveNonReferencedModels';
 
 export const Reveal3DResources = ({
   resources,
   defaultResourceStyling,
   instanceStyling,
   onResourcesAdded,
-  onResourceLoadError
+  onResourceLoadError,
+  image360Settings
 }: Reveal3DResourcesProps): ReactElement => {
+  const viewer = useReveal();
   const [reveal3DModels, setReveal3DModels] = useState<TypedReveal3DModel[]>([]);
 
-  const viewer = useReveal();
   const numModelsLoaded = useRef(0);
 
   useEffect(() => {
     void getTypedModels(resources, viewer, onResourceLoadError).then(setReveal3DModels);
   }, [resources, viewer]);
+
+  const image360CollectionAddOptions = useMemo(() => {
+    return resources
+      .filter(is360ImageAddOptions)
+      .map((options) => ({ ...image360Settings, ...options }));
+  }, [resources, image360Settings]);
+
+  useRemoveNonReferencedModels(resources, viewer);
 
   const cadModelOptions = useMemo(
     () => reveal3DModels.filter((model): model is CadModelOptions => model.type === 'cad'),
@@ -70,12 +81,6 @@ export const Reveal3DResources = ({
     instanceStyling?.filter(isAssetMappingStylingGroup) ?? EMPTY_ARRAY,
     defaultResourceStyling
   );
-
-  const image360CollectionAddOptions = resources.filter((resource) => {
-    if ('siteId' in resource) return resource.siteId !== undefined;
-    else if ('externalId' in resource) return resource.externalId !== undefined;
-    return false;
-  });
 
   const image360StyledGroup =
     instanceStyling
@@ -159,7 +164,7 @@ export const Reveal3DResources = ({
           return (
             <Image360CollectionContainer
               key={key}
-              collectionId={addModelOption}
+              addImage360CollectionOptions={addModelOption}
               styling={image360Styling}
               onLoad={onModelLoaded}
               onLoadError={onModelLoadedError}

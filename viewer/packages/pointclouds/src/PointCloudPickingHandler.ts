@@ -9,6 +9,7 @@ import { PointCloudNode } from './PointCloudNode';
 
 import { PickPoint, PointCloudOctree, PointCloudOctreePicker } from './potree-three-loader';
 import { AnnotationsAssetRef } from '@cognite/sdk';
+import { isPointVisibleByPlanes } from '@reveal/utilities';
 
 export interface IntersectPointCloudNodeResult {
   /**
@@ -64,7 +65,10 @@ export class PointCloudPickingHandler {
 
     const intersections: PickPoint[] = [];
 
-    nodes.forEach(node => {
+    // Get PointCloudNodes which are visible.
+    const visibleNodes = nodes.filter(node => node.visible);
+
+    visibleNodes.forEach(node => {
       const intersection = this._picker.pick(camera, this._raycaster.ray, [node.octree], {
         pickWindowSize: PointCloudPickingHandler.PickingWindowSize
       });
@@ -75,9 +79,9 @@ export class PointCloudPickingHandler {
 
     return intersections
       .sort((x, y) => x.position.distanceTo(camera.position) - y.position.distanceTo(camera.position))
-      .filter(x => isPointAcceptedByClippingPlanes(x.position, input.clippingPlanes))
+      .filter(x => isPointVisibleByPlanes(input.clippingPlanes, x.position))
       .map(x => {
-        const pointCloudNode = determinePointCloudNode(x.object, nodes);
+        const pointCloudNode = determinePointCloudNode(x.object, visibleNodes);
         if (pointCloudNode === null) {
           throw new Error(`Coulds not find PointCloudNode for intersected point`);
         }
@@ -108,12 +112,4 @@ function determinePointCloudNode(node: THREE.Object3D, candidates: PointCloudNod
     return candidates.find(x => node === x.octree) || null;
   }
   return null;
-}
-
-function isPointAcceptedByClippingPlanes(point: THREE.Vector3, planes: THREE.Plane[]): boolean {
-  let accepted = true;
-  for (let i = 0; accepted && i < planes.length; ++i) {
-    accepted = planes[i].distanceToPoint(point) >= 0.0;
-  }
-  return accepted;
 }

@@ -1,16 +1,18 @@
 /*!
  * Copyright 2023 Cognite AS
  */
-import { type Cognite3DViewer } from '@cognite/reveal';
 import { type MutableRefObject, createContext, useContext } from 'react';
-import { type FdmNodeCache } from '../NodeCacheProvider/FdmNodeCache';
-import { type AssetMappingCache } from '../NodeCacheProvider/AssetMappingCache';
-import { type PointCloudAnnotationCache } from '../NodeCacheProvider/PointCloudAnnotationCache';
-import { type Image360AnnotationCache } from '../NodeCacheProvider/Image360AnnotationCache';
+import { type FdmNodeCache } from '../CacheProvider/FdmNodeCache';
+import { type AssetMappingCache } from '../CacheProvider/AssetMappingCache';
+import { type PointCloudAnnotationCache } from '../CacheProvider/PointCloudAnnotationCache';
+import { type Image360AnnotationCache } from '../CacheProvider/Image360AnnotationCache';
+import { type SceneIdentifiers } from '../SceneContainer/sceneTypes';
+import { type RevealRenderTarget } from '../../architecture/base/renderTarget/RevealRenderTarget';
 
 export type RevealKeepAliveData = {
-  viewerRef: MutableRefObject<Cognite3DViewer | undefined>;
+  renderTargetRef: MutableRefObject<RevealRenderTarget | undefined>;
   isRevealContainerMountedRef: MutableRefObject<boolean>;
+  sceneLoadedRef: MutableRefObject<SceneIdentifiers | undefined>;
   fdmNodeCache: MutableRefObject<FdmNodeCache | undefined>;
   assetMappingCache: MutableRefObject<AssetMappingCache | undefined>;
   pointCloudAnnotationCache: MutableRefObject<PointCloudAnnotationCache | undefined>;

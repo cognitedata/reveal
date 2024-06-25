@@ -3,21 +3,30 @@
  */
 
 import { useEffect } from 'react';
-import { useSceneConfig } from './useSceneConfig';
-import { DoubleSide, Mesh, MeshBasicMaterial, PlaneGeometry, TextureLoader } from 'three';
-import { useReveal } from '..';
+import { useSceneConfig } from '../query/useSceneConfig';
+import {
+  DoubleSide,
+  Mesh,
+  MeshBasicMaterial,
+  PlaneGeometry,
+  RepeatWrapping,
+  type Texture,
+  TextureLoader
+} from 'three';
 import { useQuery } from '@tanstack/react-query';
 import { useSDK } from '../components/RevealCanvas/SDKProvider';
 import { CDF_TO_VIEWER_TRANSFORMATION, CustomObject } from '@cognite/reveal';
+import { useReveal } from '../components/RevealCanvas/ViewerContext';
+import { clear } from '../architecture/base/utilities/extensions/arrayExtensions';
 
 export const useGroundPlaneFromScene = (sceneExternalId: string, sceneSpaceId: string): void => {
   const { data: scene } = useSceneConfig(sceneExternalId, sceneSpaceId);
   const sdk = useSDK();
   const viewer = useReveal();
 
-  const { data: groundPlanesUrls } = useQuery(
-    ['reveal', 'react-components', 'groundplaneUrls', scene ?? 'noSceneData'],
-    async () => {
+  const { data: groundPlaneTextures } = useQuery({
+    queryKey: ['reveal', 'react-components', 'groundplaneUrls', scene ?? 'noSceneData'],
+    queryFn: async () => {
       if (scene?.groundPlanes === undefined || scene.groundPlanes.length === 0) {
         return [];
       }
@@ -28,29 +37,51 @@ export const useGroundPlaneFromScene = (sceneExternalId: string, sceneSpaceId: s
         }))
       );
 
-      return downloadUrls.map((url) => {
-        return new TextureLoader().load(url.downloadUrl);
-      });
+      return await Promise.all(
+        downloadUrls.map(async (url, index) => {
+          let texture: Texture | undefined;
+          const errorMessage = 'Failed to load groundplane texture';
+          try {
+            texture = await new TextureLoader().loadAsync(url.downloadUrl);
+          } catch (error) {
+            console.error(errorMessage);
+            return undefined;
+          }
+          if (texture === null) {
+            console.error(errorMessage);
+            return undefined;
+          }
+          if (scene.groundPlanes[index].wrapping === 'repeat') {
+            const repeatU = scene.groundPlanes[index].repeatU;
+            const repeatV = scene.groundPlanes[index].repeatV;
+            texture.repeat.set(repeatU, repeatV);
+            texture.wrapS = RepeatWrapping;
+            texture.wrapT = RepeatWrapping;
+          }
+
+          return texture;
+        })
+      );
     },
-    { staleTime: Infinity }
-  );
+    staleTime: Infinity
+  });
 
   useEffect(() => {
     if (
       scene === undefined ||
       scene === null ||
-      groundPlanesUrls === undefined ||
-      groundPlanesUrls.length === 0
+      groundPlaneTextures === undefined ||
+      groundPlaneTextures.length === 0
     ) {
       return;
     }
     const groundMeshes: CustomObject[] = [];
 
     scene.groundPlanes.forEach((groundPlane, index) => {
-      if (groundPlanesUrls === undefined) {
+      if (groundPlaneTextures?.[index] === undefined) {
         return;
       }
-      const texture = groundPlanesUrls[index];
+      const texture = groundPlaneTextures[index];
       const material = new MeshBasicMaterial({ map: texture, side: DoubleSide });
       const geometry = new PlaneGeometry(10000 * groundPlane.scaleX, 10000 * groundPlane.scaleY);
 
@@ -87,7 +118,7 @@ export const useGroundPlaneFromScene = (sceneExternalId: string, sceneSpaceId: s
         viewer.removeCustomObject(customObject);
       });
 
-      groundMeshes.splice(0, groundMeshes.length);
+      clear(groundMeshes);
     };
-  }, [groundPlanesUrls]);
+  }, [groundPlaneTextures]);
 };
