@@ -65,7 +65,6 @@ function transformCode(code: string): string {
             }
 
             if (viewer) {
-              resetViewerEventHandlers(viewer);
               if (model instanceof CogniteCadModel) {
                 resetCogniteCadModel(model);
               }
