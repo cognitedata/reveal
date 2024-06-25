@@ -2,7 +2,7 @@
  * Copyright 2024 Cognite AS
  */
 
-import { Euler, MathUtils, Matrix4 } from 'three';
+import { Euler, MathUtils, Matrix4, Quaternion, Vector3 } from 'three';
 import { type Transformation3d } from '../hooks/types';
 
 export const transformation3dToMatrix4 = ({
@@ -16,15 +16,18 @@ export const transformation3dToMatrix4 = ({
   scaleY,
   scaleZ
 }: Transformation3d): Matrix4 => {
-  return new Matrix4()
-    .makeTranslation(translationX, translationY, translationZ)
-    .makeRotationFromEuler(
-      new Euler(
-        MathUtils.degToRad(eulerRotationX),
-        MathUtils.degToRad(eulerRotationY),
-        MathUtils.degToRad(eulerRotationZ),
-        'XYZ'
-      )
+  const quaternion = new Quaternion().setFromEuler(
+    new Euler(
+      MathUtils.degToRad(eulerRotationX),
+      MathUtils.degToRad(eulerRotationY),
+      MathUtils.degToRad(eulerRotationZ),
+      'XYZ'
     )
-    .makeScale(scaleX, scaleY, scaleZ);
+  );
+
+  return new Matrix4().compose(
+    new Vector3(translationX, translationY, translationZ),
+    quaternion,
+    new Vector3(scaleX, scaleY, scaleZ)
+  );
 };
