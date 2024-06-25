@@ -14,30 +14,24 @@ import { MeasurementTool } from '../../architecture/concrete/measurements/Measur
 import { ObservationsTool } from '../../architecture/concrete/observationsDomainObject/ObservationsTool';
 
 export class RevealButtons {
-  static FitView = (): ReactElement => createCommandButton(useMemo(() => new FitViewCommand(), []));
+  static FitView = (): ReactElement => createCommandButton(() => new FitViewCommand());
 
-  static NavigationTool = (): ReactElement =>
-    createCommandButton(useMemo(() => new NavigationTool(), []));
+  static NavigationTool = (): ReactElement => createCommandButton(() => new NavigationTool());
 
   static SetAxisVisible = (): ReactElement =>
-    createCommandButton(useMemo(() => new SetAxisVisibleCommand(), []));
+    createCommandButton(() => new SetAxisVisibleCommand());
 
-  static Measurement = (): ReactElement =>
-    createCommandButton(useMemo(() => new MeasurementTool(), []));
+  static Measurement = (): ReactElement => createCommandButton(() => new MeasurementTool());
 
-  static Clip = (): ReactElement => createCommandButton(useMemo(() => new ClipTool(), []));
+  static Clip = (): ReactElement => createCommandButton(() => new ClipTool());
 
   static SetFlexibleControlsTypeOrbit = (): ReactElement =>
-    createCommandButton(
-      useMemo(() => new SetFlexibleControlsTypeCommand(FlexibleControlsType.Orbit), [])
-    );
+    createCommandButton(() => new SetFlexibleControlsTypeCommand(FlexibleControlsType.Orbit));
 
   static SetFlexibleControlsTypeFirstPerson = (): ReactElement =>
-    createCommandButton(
-      useMemo(() => new SetFlexibleControlsTypeCommand(FlexibleControlsType.FirstPerson), [])
-    );
+    createCommandButton(() => new SetFlexibleControlsTypeCommand(FlexibleControlsType.FirstPerson));
 
   static Observations = (): ReactElement => {
-    return createCommandButton(useMemo(() => new ObservationsTool(), []));
+    return createCommandButton(() => new ObservationsTool());
   };
 }

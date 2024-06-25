@@ -32,7 +32,11 @@ export const CommandButtons = ({
   );
 };
 
-export const createCommandButton = (command: BaseCommand, isHorizontal = false): ReactElement => {
+export const createCommandButton = (
+  commandConstructor: () => BaseCommand,
+  isHorizontal = false
+): ReactElement => {
+  const command = useMemo(commandConstructor, []);
   return <CommandButton command={command} isHorizontal={isHorizontal} />;
 };
 
