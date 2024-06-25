@@ -84,7 +84,7 @@ export const useGroundPlaneFromScene = (sceneExternalId: string, sceneSpaceId: s
       }
       const texture = groundPlaneTextures[index];
       const material = new MeshBasicMaterial({ map: texture, side: DoubleSide });
-      const geometry = new PlaneGeometry(10000 * groundPlane.scaleX, 10000 * groundPlane.scaleY);
+      const geometry = new PlaneGeometry(10000, 10000);
 
       geometry.name = `CogniteGroundPlane`;
 
@@ -92,7 +92,7 @@ export const useGroundPlaneFromScene = (sceneExternalId: string, sceneSpaceId: s
 
       const matrix4 = transformation3dToMatrix4(groundPlane).multiply(CDF_TO_VIEWER_TRANSFORMATION);
       mesh.matrix.copy(matrix4);
-      matrix4.decompose(mesh.position, mesh.quaternion, mesh.scale);
+      mesh.matrixAutoUpdate = false;
 
       const customObject = new CustomObject(mesh);
       customObject.isPartOfBoundingBox = false;
