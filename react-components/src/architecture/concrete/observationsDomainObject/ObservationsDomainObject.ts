@@ -13,7 +13,7 @@ import { DEFAULT_OVERLAY_COLOR } from './constants';
 import { Changes } from '../../base/domainObjectsHelpers/Changes';
 
 export class ObservationsDomainObject extends VisualDomainObject {
-  private readonly _collection = new Overlay3DCollection<Observation>(undefined, {
+  private readonly _collection = new Overlay3DCollection<Observation>([], {
     defaultOverlayColor: DEFAULT_OVERLAY_COLOR
   });
 
