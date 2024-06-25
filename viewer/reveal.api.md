@@ -863,12 +863,12 @@ export const DefaultNodeAppearance: {
     InFront: NodeAppearance;
     Ghosted: NodeAppearance;
     Highlighted: {
-        color?: Color | undefined;
-        visible?: boolean | undefined;
-        renderInFront?: boolean | undefined;
-        renderGhosted?: boolean | undefined;
-        outlineColor?: NodeOutlineColor | undefined;
-        prioritizedForLoadingHint?: number | undefined;
+        color?: Color;
+        visible?: boolean;
+        renderInFront?: boolean;
+        renderGhosted?: boolean;
+        outlineColor?: NodeOutlineColor;
+        prioritizedForLoadingHint?: number;
     };
 };
 

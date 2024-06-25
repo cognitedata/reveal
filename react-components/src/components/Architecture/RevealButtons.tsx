@@ -2,9 +2,8 @@
  * Copyright 2023 Cognite AS
  */
 
-import { useMemo, type ReactElement } from 'react';
+import { type ReactElement } from 'react';
 import { NavigationTool } from '../../architecture/base/concreteCommands/NavigationTool';
-import { createCommandButton } from './CommandButton';
 import { FitViewCommand } from '../../architecture/base/concreteCommands/FitViewCommand';
 import { FlexibleControlsType } from '@cognite/reveal';
 import { SetFlexibleControlsTypeCommand } from '../../architecture/base/concreteCommands/SetFlexibleControlsTypeCommand';
@@ -12,6 +11,8 @@ import { SetAxisVisibleCommand } from '../../architecture/concrete/axis/SetAxisV
 import { ClipTool } from '../../architecture/concrete/clipping/ClipTool';
 import { MeasurementTool } from '../../architecture/concrete/measurements/MeasurementTool';
 import { ObservationsTool } from '../../architecture/concrete/observationsDomainObject/ObservationsTool';
+import { KeyboardSpeedCommand } from '../../architecture/base/concreteCommands/KeyboardSpeedCommand';
+import { createCommandButton } from './CommandButton';
 
 export class RevealButtons {
   static FitView = (): ReactElement => createCommandButton(() => new FitViewCommand());
@@ -34,4 +35,6 @@ export class RevealButtons {
   static Observations = (): ReactElement => {
     return createCommandButton(() => new ObservationsTool());
   };
+
+  static KeyboardSpeed = (): ReactElement => createCommandButton(() => new KeyboardSpeedCommand());
 }

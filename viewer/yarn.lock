@@ -1911,11 +1911,11 @@ __metadata:
   linkType: hard
 
 "@types/node@npm:*, @types/node@npm:^20.12.7":
-  version: 20.14.6
-  resolution: "@types/node@npm:20.14.6"
+  version: 20.14.8
+  resolution: "@types/node@npm:20.14.8"
   dependencies:
     undici-types: "npm:~5.26.4"
-  checksum: 10/1dcfeeb03ce3c3a1d8a537fefee7cd0cffb78f89e9535b74ee12940559566b57c39dad20d1b165b60b5727408dd44e1a52e5c01cf02d0a99d93ef3da8062c86e
+  checksum: 10/73822f66f269ce865df7e2f586787ac7444bd1169fd265cbed1e851b72787f1170517c5b616e0308ec2fbc0934ec6403b0f28d4152acbb0486071aec41167d51
   languageName: node
   linkType: hard
 
@@ -3354,16 +3354,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"chromium-bidi@npm:0.5.23":
-  version: 0.5.23
-  resolution: "chromium-bidi@npm:0.5.23"
+"chromium-bidi@npm:0.5.24":
+  version: 0.5.24
+  resolution: "chromium-bidi@npm:0.5.24"
   dependencies:
     mitt: "npm:3.0.1"
     urlpattern-polyfill: "npm:10.0.0"
     zod: "npm:3.23.8"
   peerDependencies:
     devtools-protocol: "*"
-  checksum: 10/46ce55b3af2affa9fd570b10ac1b1dc96272c13e55c01bea1074c301e7b363039766dfb1f42160921e25a6aa7050b72ebfb38e8f8f38a037119027a6f92141a9
+  checksum: 10/5b99093298911719f5c91a7ffdfa70f4efceb95bcbbde159e758ef2626f8ccb39ccb8a099c094a8294de78beae71c85c3dc0f36f5cb9264b1f28ed24b80054af
   languageName: node
   linkType: hard
 
@@ -4324,10 +4324,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"es-module-lexer@npm:^1.2.1":
-  version: 1.2.1
-  resolution: "es-module-lexer@npm:1.2.1"
-  checksum: 10/4bb92673b94b46e8d2e23ff275696842c83cdabd19eaa84bab60ce37ee036051dedb158746f6d88a58b9d430f881a717c23434e2c8f05d1ba2c69d68e4f05ab4
+"es-module-lexer@npm:^1.2.1, es-module-lexer@npm:^1.5.3":
+  version: 1.5.4
+  resolution: "es-module-lexer@npm:1.5.4"
+  checksum: 10/f29c7c97a58eb17640dcbd71bd6ef754ad4f58f95c3073894573d29dae2cad43ecd2060d97ed5b866dfb7804d5590fb7de1d2c5339a5fceae8bd60b580387fc5
   languageName: node
   linkType: hard
 
@@ -4435,8 +4435,8 @@ __metadata:
   linkType: hard
 
 "eslint-plugin-jsdoc@npm:^48.2.3":
-  version: 48.2.12
-  resolution: "eslint-plugin-jsdoc@npm:48.2.12"
+  version: 48.4.0
+  resolution: "eslint-plugin-jsdoc@npm:48.4.0"
   dependencies:
     "@es-joy/jsdoccomment": "npm:~0.43.1"
     are-docs-informative: "npm:^0.0.2"
@@ -4444,11 +4444,13 @@ __metadata:
     debug: "npm:^4.3.4"
     escape-string-regexp: "npm:^4.0.0"
     esquery: "npm:^1.5.0"
+    parse-imports: "npm:^2.1.0"
     semver: "npm:^7.6.2"
     spdx-expression-parse: "npm:^4.0.0"
+    synckit: "npm:^0.9.0"
   peerDependencies:
     eslint: ^7.0.0 || ^8.0.0 || ^9.0.0
-  checksum: 10/c51a9ad790aae191d7bfa287a7b4af93e2e420b360b7f724b0c8b8fcd39ccd1445af98bf2251bcbc61f21e3a10e360d5e6b6c4e5c606c51afb2763c9911edc75
+  checksum: 10/0f46f9f56ea20ff2f3d16ea81913fbfd43c2572b1f1e4fac1c22f76f79a6da9f00f2dd93df988922d512850507632f334a7069a1ca6711a51b840da386928118
   languageName: node
   linkType: hard
 
@@ -5268,17 +5270,18 @@ __metadata:
   linkType: hard
 
 "glob@npm:^10.3.12, glob@npm:^10.3.7":
-  version: 10.4.1
-  resolution: "glob@npm:10.4.1"
+  version: 10.4.2
+  resolution: "glob@npm:10.4.2"
   dependencies:
     foreground-child: "npm:^3.1.0"
     jackspeak: "npm:^3.1.2"
     minimatch: "npm:^9.0.4"
     minipass: "npm:^7.1.2"
+    package-json-from-dist: "npm:^1.0.0"
     path-scurry: "npm:^1.11.1"
   bin:
     glob: dist/esm/bin.mjs
-  checksum: 10/d7bb49d2b413f77bdd59fea4ca86dcc12450deee221af0ca93e09534b81b9ef68fe341345751d8ff0c5b54bad422307e0e44266ff8ad7fbbd0c200e8ec258b16
+  checksum: 10/e412776b5952a818eba790c830bea161c9a56813fd767d8c4c49f855603b1fb962b3e73f1f627a47298a57d2992b9f0f2fe15cf93e74ecaaa63fb45d63fdd090
   languageName: node
   linkType: hard
 
@@ -7769,11 +7772,11 @@ __metadata:
   linkType: hard
 
 "mixpanel-browser@npm:^2.49.0":
-  version: 2.52.0
-  resolution: "mixpanel-browser@npm:2.52.0"
+  version: 2.53.0
+  resolution: "mixpanel-browser@npm:2.53.0"
   dependencies:
     rrweb: "npm:2.0.0-alpha.13"
-  checksum: 10/c84fc5992f140e282d74e957d790f53eb15e5280b7c5aa777b3930449d060f9553d64aba83d83b4f4d55de66475b04f9c79f3a42edde8edc44a81a6ce6889b82
+  checksum: 10/20068552dee31765a076b4534d4340dd1a6d2b94827cd86aecbf1a5d983f0f67646bbb71ca7f494ec739ce1193082acd176675d2d15f83e6522fd84b0c9ec82f
   languageName: node
   linkType: hard
 
@@ -8283,6 +8286,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"package-json-from-dist@npm:^1.0.0":
+  version: 1.0.0
+  resolution: "package-json-from-dist@npm:1.0.0"
+  checksum: 10/ac706ec856a5a03f5261e4e48fa974f24feb044d51f84f8332e2af0af04fbdbdd5bbbfb9cbbe354190409bc8307c83a9e38c6672c3c8855f709afb0006a009ea
+  languageName: node
+  linkType: hard
+
 "param-case@npm:^3.0.4":
   version: 3.0.4
   resolution: "param-case@npm:3.0.4"
@@ -8299,6 +8309,16 @@ __metadata:
   dependencies:
     callsites: "npm:^3.0.0"
   checksum: 10/6ba8b255145cae9470cf5551eb74be2d22281587af787a2626683a6c20fbb464978784661478dd2a3f1dad74d1e802d403e1b03c1a31fab310259eec8ac560ff
+  languageName: node
+  linkType: hard
+
+"parse-imports@npm:^2.1.0":
+  version: 2.1.0
+  resolution: "parse-imports@npm:2.1.0"
+  dependencies:
+    es-module-lexer: "npm:^1.5.3"
+    slashes: "npm:^3.0.12"
+  checksum: 10/2b4210c6af5309cc8e4f5d7f8eb8c628b2df690e456d4a686d3b618d7ca165e6b13ac9f64dfabc714e0d3bcefff70a0e771cdadc7fd6873e62d70c13d246e7d1
   languageName: node
   linkType: hard
 
@@ -8699,30 +8719,30 @@ __metadata:
   languageName: node
   linkType: hard
 
-"puppeteer-core@npm:22.11.2":
-  version: 22.11.2
-  resolution: "puppeteer-core@npm:22.11.2"
+"puppeteer-core@npm:22.12.0":
+  version: 22.12.0
+  resolution: "puppeteer-core@npm:22.12.0"
   dependencies:
     "@puppeteer/browsers": "npm:2.2.3"
-    chromium-bidi: "npm:0.5.23"
+    chromium-bidi: "npm:0.5.24"
     debug: "npm:4.3.5"
     devtools-protocol: "npm:0.0.1299070"
     ws: "npm:8.17.1"
-  checksum: 10/f346c80215c0de480f20d5d9cccf2aa194ad38208c200624abdade4320e60c15b4583dc3071e80ed494003bdabb5e70f7c22c8a31e173db866388a052bf9035e
+  checksum: 10/a820c338b7541e5d66a5603a356bd8e6b21ad5306cb707c9530a88bd8a6631187d7938816937ad195b0e893a458499547e88955f9ead40c33e1db9eb34f27e0c
   languageName: node
   linkType: hard
 
 "puppeteer@npm:^22.7.1":
-  version: 22.11.2
-  resolution: "puppeteer@npm:22.11.2"
+  version: 22.12.0
+  resolution: "puppeteer@npm:22.12.0"
   dependencies:
     "@puppeteer/browsers": "npm:2.2.3"
     cosmiconfig: "npm:9.0.0"
     devtools-protocol: "npm:0.0.1299070"
-    puppeteer-core: "npm:22.11.2"
+    puppeteer-core: "npm:22.12.0"
   bin:
     puppeteer: lib/esm/puppeteer/node/cli.js
-  checksum: 10/6e4246af43ccd1a08b31db5fc969bfd59d2cd293aacaff998a50bb34cfad6304e25e5a69d761dd179ccdfbd8c365afa1fa9217e950a33731d08aebaa48942b3b
+  checksum: 10/4804fa52ac2266cce07dd892672c1d5a3d43ff023817a2da0fc842cee8b9244dbe62a49ee76ed867cbff058e341b5e0ed4f86a74aeb1fbcf5234ab9ea6309032
   languageName: node
   linkType: hard
 
@@ -9493,6 +9513,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"slashes@npm:^3.0.12":
+  version: 3.0.12
+  resolution: "slashes@npm:3.0.12"
+  checksum: 10/c221d73765013db64f3eaf49dacc6b99a5d5477e63720c1bb71d1af647965dda23ab100ca1eb622e080f11ffe68e1e0a233b7b908073260bed4ec819ff1d3e42
+  languageName: node
+  linkType: hard
+
 "smart-buffer@npm:^4.2.0":
   version: 4.2.0
   resolution: "smart-buffer@npm:4.2.0"
@@ -9945,6 +9972,16 @@ __metadata:
   languageName: node
   linkType: hard
 
+"synckit@npm:^0.9.0":
+  version: 0.9.0
+  resolution: "synckit@npm:0.9.0"
+  dependencies:
+    "@pkgr/core": "npm:^0.1.0"
+    tslib: "npm:^2.6.2"
+  checksum: 10/e93f3f5ee43fa71d3bb2a345049642d9034f34fa9528706b5ef26e825335ca5446143c56c2b041810afe26aa6e343583ff08525f5530618a4707375270f87be1
+  languageName: node
+  linkType: hard
+
 "tapable@npm:^2.0.0, tapable@npm:^2.1.1, tapable@npm:^2.2.0":
   version: 2.2.1
   resolution: "tapable@npm:2.2.1"
@@ -10341,12 +10378,12 @@ __metadata:
   linkType: hard
 
 "typescript@npm:^5.4.5":
-  version: 5.4.5
-  resolution: "typescript@npm:5.4.5"
+  version: 5.5.2
+  resolution: "typescript@npm:5.5.2"
   bin:
     tsc: bin/tsc
     tsserver: bin/tsserver
-  checksum: 10/d04a9e27e6d83861f2126665aa8d84847e8ebabcea9125b9ebc30370b98cb38b5dff2508d74e2326a744938191a83a69aa9fddab41f193ffa43eabfdf3f190a5
+  checksum: 10/9118b20f248e76b0dbff8737fef65dfa89d02668d4e633d2c5ceac99033a0ca5e8a1c1a53bc94da68e8f67677a88f318663dde859c9e9a09c1e116415daec2ba
   languageName: node
   linkType: hard
 
@@ -10361,12 +10398,12 @@ __metadata:
   linkType: hard
 
 "typescript@patch:typescript@npm%3A^5.4.5#optional!builtin<compat/typescript>":
-  version: 5.4.5
-  resolution: "typescript@patch:typescript@npm%3A5.4.5#optional!builtin<compat/typescript>::version=5.4.5&hash=5adc0c"
+  version: 5.5.2
+  resolution: "typescript@patch:typescript@npm%3A5.5.2#optional!builtin<compat/typescript>::version=5.5.2&hash=379a07"
   bin:
     tsc: bin/tsc
     tsserver: bin/tsserver
-  checksum: 10/760f7d92fb383dbf7dee2443bf902f4365db2117f96f875cf809167f6103d55064de973db9f78fe8f31ec08fff52b2c969aee0d310939c0a3798ec75d0bca2e1
+  checksum: 10/ac3145f65cf9e72ab29f2196e05d5816b355dc1a9195b9f010d285182a12457cfacd068be2dd22c877f88ebc966ac6e0e83f51c8586412b16499a27e3670ff4b
   languageName: node
   linkType: hard
 
@@ -10776,8 +10813,8 @@ __metadata:
   linkType: hard
 
 "webpack@npm:^5, webpack@npm:^5.91.0":
-  version: 5.92.0
-  resolution: "webpack@npm:5.92.0"
+  version: 5.92.1
+  resolution: "webpack@npm:5.92.1"
   dependencies:
     "@types/eslint-scope": "npm:^3.7.3"
     "@types/estree": "npm:^1.0.5"
@@ -10808,7 +10845,7 @@ __metadata:
       optional: true
   bin:
     webpack: bin/webpack.js
-  checksum: 10/1d5e7e881615df05af7e58bd7ce872495cf6361f345f2b2a7dcbd8febd8761b68b7567e14f9ebbf1d666b6c78cc90c3f304fb10b8a457ab71aa7015116a7d6d9
+  checksum: 10/76fcfbebcc0719c4734c65a01dcef7a0f18f3f2647484e8a7e8606adbd128ac42756bb3a8b7e2d486fe97f6286ebdc7b937ccdf3cf1d21b4684134bb89bbed89
   languageName: node
   linkType: hard
 
