@@ -299,7 +299,7 @@ export class AssetMappingCache {
 
     const currentAssetMappings = this._nodeAssetIdsToAssetMappings.get(key);
     if (currentAssetMappings !== undefined) {
-      this._nodeAssetIdsToAssetMappings.set(
+      this.setNodeAssetIdsToAssetMappingCacheItem(
         key,
         currentAssetMappings.then((value) => {
           const newNotDuplicatedMappings = uniqBy(value, 'nodeId');
@@ -308,13 +308,13 @@ export class AssetMappingCache {
         })
       );
     } else {
-      this._nodeAssetIdsToAssetMappings.set(key, Promise.resolve([item]));
+      this.setNodeAssetIdsToAssetMappingCacheItem(key, Promise.resolve([item]));
     }
   }
 
   private setNodeAssetIdsToAssetMappingCacheItem(
     key: ModelNodeIdKey,
-    item: Array<Required<AssetMapping3D>>
+    item: Promise<Array<Required<AssetMapping3D>>>
   ): void {
     this._nodeAssetIdsToAssetMappings.set(key, Promise.resolve(item));
   }
