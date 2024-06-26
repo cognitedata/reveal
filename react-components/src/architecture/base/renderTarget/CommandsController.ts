@@ -169,11 +169,14 @@ export class CommandsController extends PointerEvents {
     // key – the character ("A", "a" and so on), for non-character keys, such as Esc, usually has the same value as code.
     if (down) {
       const key = event.key.toUpperCase();
+      const ctrlKey = event.ctrlKey || event.metaKey;
+      const shiftKey = event.shiftKey;
+
       for (const command of this._commands) {
         if (
           command.shortCutKey === key &&
-          command.shortCutKeyOnCtrl === event.ctrlKey &&
-          command.shortCutKeyOnShift === event.shiftKey
+          command.shortCutKeyOnCtrl === ctrlKey &&
+          command.shortCutKeyOnShift === shiftKey
         ) {
           command.invoke();
           return;
