@@ -53,7 +53,7 @@ export abstract class PrimitiveEditTool extends BaseEditTool {
   }
 
   public override onKey(event: KeyboardEvent, down: boolean): void {
-    if (down && event.key === 'Delete') {
+    if (down && (event.key === 'Delete' || event.key === 'Backspace')) {
       const domainObject = this.getSelected();
       if (domainObject !== undefined) {
         this.addTransaction(domainObject.createTransaction(Changes.deleted));

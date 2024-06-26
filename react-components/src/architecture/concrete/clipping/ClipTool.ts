@@ -17,6 +17,7 @@ import { SetClipTypeCommand } from './commands/SetClipTypeCommand';
 import { PlaneCreator } from '../primitives/plane/PlaneCreator';
 import { SliceDomainObject } from './SliceDomainObject';
 import { UndoCommand } from '../../base/concreteCommands/UndoCommand';
+import { NextOrPrevClippingCommand } from './commands/NextClippingCommand';
 
 export class ClipTool extends PrimitiveEditTool {
   // ==================================================
@@ -49,8 +50,10 @@ export class ClipTool extends PrimitiveEditTool {
       undefined, // Separator
       new UndoCommand(),
       new ApplyClipCommand(),
-      new ShowClippingOnTopCommand(),
-      new ShowAllClippingCommand()
+      new NextOrPrevClippingCommand(false),
+      new NextOrPrevClippingCommand(true),
+      new ShowAllClippingCommand(),
+      new ShowClippingOnTopCommand()
     ];
   }
 
