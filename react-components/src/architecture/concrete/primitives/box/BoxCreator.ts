@@ -16,6 +16,7 @@ import { FocusType } from '../../../base/domainObjectsHelpers/FocusType';
 import { Changes } from '../../../base/domainObjectsHelpers/Changes';
 import { type DomainObject } from '../../../base/domainObjects/DomainObject';
 import { type BoxDomainObject } from './BoxDomainObject';
+import { type BaseTool } from '../../../base/commands/BaseTool';
 
 const UP_VECTOR = new Vector3(0, 0, 1);
 /**
@@ -32,8 +33,8 @@ export class BoxCreator extends BaseCreator {
   // CONSTRUCTOR
   // ==================================================
 
-  constructor(domainObject: BoxDomainObject) {
-    super();
+  public constructor(tool: BaseTool, domainObject: BoxDomainObject) {
+    super(tool);
     this._domainObject = domainObject;
     this._domainObject.focusType = FocusType.Pending;
   }
@@ -74,9 +75,8 @@ export class BoxCreator extends BaseCreator {
       return false;
     }
     this.addRawPoint(point, isPending);
-    if (!this.rebuild()) {
-      return false;
-    }
+
+    this.rebuild();
     domainObject.notify(Changes.geometry);
     if (this.isFinished) {
       domainObject.setFocusInteractive(FocusType.Focus);
@@ -115,7 +115,7 @@ export class BoxCreator extends BaseCreator {
    * The third will give the size.z and center.z
    */
 
-  private rebuild(): boolean {
+  private rebuild(): void {
     if (this.pointCount === 0) {
       throw new Error('Cannot create a box without points');
     }
@@ -126,7 +126,7 @@ export class BoxCreator extends BaseCreator {
       if (domainObject.primitiveType !== PrimitiveType.VerticalArea) {
         domainObject.center.z += domainObject.size.z / 2;
       }
-      return true;
+      return;
     }
     if (this.pointCount === 2) {
       // Set the zRotation
@@ -161,7 +161,6 @@ export class BoxCreator extends BaseCreator {
       domainObject.size.z = sizeZ;
       domainObject.center.z = centerZ;
     }
-    return true;
   }
 
   private getCenterAndSizeFromBoundingBox(zRotation: number, center: Vector3, size: Vector3): void {

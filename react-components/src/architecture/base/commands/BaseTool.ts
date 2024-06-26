@@ -21,18 +21,21 @@ import { type BaseCommand } from './BaseCommand';
 import { ActiveToolUpdater } from '../reactUpdaters/ActiveToolUpdater';
 import { PopupStyle } from '../domainObjectsHelpers/PopupStyle';
 import { ThreeView } from '../views/ThreeView';
+import { UndoManager } from '../undo/UndoManager';
 
 /**
  * Base class for interactions in the 3D viewer
  * Provides common functionality and virtual methods to be overridden by derived classes.
  */
 export abstract class BaseTool extends RenderTargetCommand {
+  private readonly _undoManager = new UndoManager();
+
   // ==================================================
   // OVERRIDES
   // =================================================
 
   public override get isChecked(): boolean {
-    return this.renderTarget.commandsController.activeTool === this;
+    return this.activeTool === this;
   }
 
   protected override invokeCore(): boolean {
@@ -42,6 +45,10 @@ export abstract class BaseTool extends RenderTargetCommand {
       this.renderTarget.commandsController.setActiveTool(this);
     }
     return true;
+  }
+
+  public override get undoManager(): UndoManager | undefined {
+    return this._undoManager;
   }
 
   // ==================================================
@@ -121,13 +128,11 @@ export abstract class BaseTool extends RenderTargetCommand {
 
   public onKey(_event: KeyboardEvent, _down: boolean): void {}
 
+  public onUndo(): void {}
+
   // ==================================================
   // INSTANCE METHODS: Intersections
   // ==================================================
-
-  public setDefaultCursor(): void {
-    this.renderTarget.cursor = this.defaultCursor;
-  }
 
   protected async getIntersection(
     event: PointerEvent | WheelEvent,
@@ -211,5 +216,13 @@ export abstract class BaseTool extends RenderTargetCommand {
     const { viewer } = renderTarget;
     const point = viewer.getPixelCoordinatesFromEvent(event);
     return viewer.getNormalizedPixelCoordinates(point);
+  }
+
+  // ==================================================
+  // INSTANCE METHODS: Misc
+  // ==================================================
+
+  public setDefaultCursor(): void {
+    this.renderTarget.cursor = this.defaultCursor;
   }
 }

@@ -12,6 +12,7 @@ import { type RenderStyle } from '../../base/renderStyles/RenderStyle';
 import { type TranslateKey } from '../../base/utilities/TranslateKey';
 import { ApplyClipCommand } from './commands/ApplyClipCommand';
 import { FocusType } from '../../base/domainObjectsHelpers/FocusType';
+import { type DomainObject } from '../../base/domainObjects/DomainObject';
 
 export class CropBoxDomainObject extends BoxDomainObject {
   // ==================================================
@@ -54,6 +55,12 @@ export class CropBoxDomainObject extends BoxDomainObject {
 
   public override get useClippingInIntersection(): boolean {
     return false;
+  }
+
+  public override clone(what?: symbol): DomainObject {
+    const clone = new CropBoxDomainObject();
+    clone.copyFrom(this, what);
+    return clone;
   }
 
   // ==================================================

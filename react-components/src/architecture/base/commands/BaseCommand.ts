@@ -51,6 +51,14 @@ export abstract class BaseCommand {
     return undefined;
   }
 
+  public get shortCutKeyOnCtrl(): boolean {
+    return false;
+  }
+
+  public get shortCutKeyOnShift(): boolean {
+    return false;
+  }
+
   public get tooltip(): TranslateKey {
     return { fallback: '' };
   }
@@ -135,5 +143,20 @@ export abstract class BaseCommand {
       return fallback;
     }
     return translate(key, fallback);
+  }
+
+  public getShortCutKeys(): string | undefined {
+    const key = this.shortCutKey;
+    if (key === undefined) {
+      return undefined;
+    }
+    let result = '';
+    if (this.shortCutKeyOnCtrl) {
+      result += 'Ctrl+';
+    }
+    if (this.shortCutKeyOnShift) {
+      result += 'Shift+';
+    }
+    return result + key;
   }
 }

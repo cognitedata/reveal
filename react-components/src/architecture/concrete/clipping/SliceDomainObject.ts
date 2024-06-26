@@ -12,6 +12,8 @@ import { ApplyClipCommand } from './commands/ApplyClipCommand';
 import { type DomainObjectChange } from '../../base/domainObjectsHelpers/DomainObjectChange';
 import { Changes } from '../../base/domainObjectsHelpers/Changes';
 import { FocusType } from '../../base/domainObjectsHelpers/FocusType';
+import { type DomainObject } from '../../base/domainObjects/DomainObject';
+
 export class SliceDomainObject extends PlaneDomainObject {
   // ==================================================
   // CONSTRUCTOR
@@ -61,6 +63,12 @@ export class SliceDomainObject extends PlaneDomainObject {
 
   public override get useClippingInIntersection(): boolean {
     return false;
+  }
+
+  public override clone(what?: symbol): DomainObject {
+    const clone = new SliceDomainObject(this.primitiveType);
+    clone.copyFrom(this, what);
+    return clone;
   }
 
   // ==================================================

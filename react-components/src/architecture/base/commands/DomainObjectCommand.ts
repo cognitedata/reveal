@@ -3,9 +3,9 @@
  */
 
 import { type DomainObject } from '../domainObjects/DomainObject';
-import { BaseCommand } from './BaseCommand';
+import { RenderTargetCommand } from './RenderTargetCommand';
 
-export abstract class DomainObjectCommand<Type extends DomainObject> extends BaseCommand {
+export abstract class DomainObjectCommand<Type extends DomainObject> extends RenderTargetCommand {
   // ==================================================
   // INSTANCE FIELDS
   // ==================================================

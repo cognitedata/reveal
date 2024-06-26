@@ -15,6 +15,7 @@ import {
   getIcon,
   getTooltipPlacement
 } from './utilities';
+import { LabelWithShortcut } from './LabelWithShortcut';
 
 export const OptionButton = ({
   inputCommand,
@@ -55,13 +56,17 @@ export const OptionButton = ({
     return <></>;
   }
   const placement = getTooltipPlacement(isHorizontal);
-  const flexDirection = getFlexDirection(isHorizontal);
   const tooltip = command.getLabel(t);
+  const shortcut = command.getShortCutKeys();
+  const flexDirection = getFlexDirection(isHorizontal);
   const options = command.getOrCreateOptions(renderTarget);
   const selectedLabel = command.selectedOption?.getLabel(t);
 
   return (
-    <CogsTooltip content={tooltip} placement={placement} appendTo={document.body}>
+    <CogsTooltip
+      content={<LabelWithShortcut label={tooltip} shortcut={shortcut} />}
+      appendTo={document.body}
+      placement={placement}>
       <Dropdown
         hideOnSelect={true}
         appendTo={document.body}

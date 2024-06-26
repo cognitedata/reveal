@@ -23,10 +23,6 @@ export class NavigationTool extends BaseTool {
   // OVERRIDES
   // ==================================================
 
-  public override get shortCutKey(): string | undefined {
-    return 'N';
-  }
-
   public override get icon(): string {
     return 'Grab';
   }

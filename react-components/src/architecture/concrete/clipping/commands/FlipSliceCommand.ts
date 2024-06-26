@@ -25,6 +25,7 @@ export class FlipSliceCommand extends DomainObjectCommand<SliceDomainObject> {
   }
 
   protected override invokeCore(): boolean {
+    this.addTransaction(this._domainObject.createTransaction(Changes.geometry));
     this._domainObject.flip();
     this._domainObject.notify(Changes.geometry);
     return true;
