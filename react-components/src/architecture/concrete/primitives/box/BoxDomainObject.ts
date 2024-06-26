@@ -85,6 +85,10 @@ export abstract class BoxDomainObject extends VisualDomainObject {
     }
   }
 
+  public override get isLegal(): boolean {
+    return this.focusType !== FocusType.Pending;
+  }
+
   public override createRenderStyle(): RenderStyle | undefined {
     return new BoxRenderStyle();
   }

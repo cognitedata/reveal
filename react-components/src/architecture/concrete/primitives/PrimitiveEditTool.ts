@@ -164,6 +164,7 @@ export abstract class PrimitiveEditTool extends BaseEditTool {
         parent.addChildInteractive(domainObject);
         domainObject.setSelectedInteractive(true);
         domainObject.setVisibleInteractive(true, renderTarget);
+        this.addTransaction(domainObject.createTransaction(Changes.added));
       } else {
         this._creator = undefined;
         return;
@@ -180,15 +181,18 @@ export abstract class PrimitiveEditTool extends BaseEditTool {
   }
 
   public override onUndo(): void {
+    // If a undo is coming, the creator should be ended.
     if (this._creator === undefined) {
       return;
     }
     // End the creator if the domainObject is removed by undo.
     // To check, it doesn't have any parent if it is removed.
     const domainObject = this._creator.domainObject;
-    if (domainObject === undefined || !domainObject.hasParent) {
+    if (domainObject !== undefined && !domainObject.isLegal) {
+      if (domainObject.hasParent) {
+        domainObject.removeInteractive();
+      }
       this._creator = undefined;
-      this.setDefaultPrimitiveType();
     }
   }
 
@@ -326,21 +330,6 @@ export abstract class PrimitiveEditTool extends BaseEditTool {
     if (force || creator.isFinished) {
       this.setDefaultPrimitiveType();
       this._creator = undefined;
-    } else if (creator.notPendingPointCount < creator.minimumPointCount) {
-      return;
     }
-    // Add the transaction only when it is legal at the first time.
-    const domainObject = creator.domainObject;
-    if (domainObject === undefined) {
-      return;
-    }
-    if (this.undoManager === undefined) {
-      return;
-    }
-    const exists = this.undoManager.hasUniqueId(domainObject.uniqueId);
-    if (exists) {
-      return;
-    }
-    this.addTransaction(domainObject.createTransaction(Changes.added));
   }
 }

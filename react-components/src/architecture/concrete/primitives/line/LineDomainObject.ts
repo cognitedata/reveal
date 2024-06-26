@@ -75,6 +75,22 @@ export abstract class LineDomainObject extends VisualDomainObject {
     }
   }
 
+  public override get isLegal(): boolean {
+    if (this.focusType !== FocusType.Pending) {
+      return true;
+    }
+    switch (this.primitiveType) {
+      case PrimitiveType.Line:
+        return this.points.length === 2;
+      case PrimitiveType.Polyline:
+        return this.points.length >= 2;
+      case PrimitiveType.Polygon:
+        return this.points.length >= 3;
+      default:
+        throw new Error('Unknown PrimitiveType');
+    }
+  }
+
   public override createRenderStyle(): RenderStyle | undefined {
     return new LineRenderStyle();
   }

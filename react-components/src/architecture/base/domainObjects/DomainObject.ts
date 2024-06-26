@@ -258,6 +258,16 @@ export abstract class DomainObject {
     return true; // to be overridden
   }
 
+  /**
+   * Gets a value indicating whether the domain object is legal.
+   * Normally it is legal, but if the object is pending when creating it, it is not legal.
+   * @returns {boolean} A boolean value indicating whether the domain object is legal.
+   */
+
+  public get isLegal(): boolean {
+    return true;
+  }
+
   // ==================================================
   // VIRTUAL METHODS: Notification
   // ==================================================
