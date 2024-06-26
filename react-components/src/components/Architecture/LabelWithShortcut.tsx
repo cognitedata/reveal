@@ -16,7 +16,7 @@ export const LabelWithShortcut: React.FC<LabelWithShortcutProps> = ({ label, sho
   return (
     <Container key={label}>
       <Label>{label}</Label>
-      {shortcut !== undefined && <Shortcut keys={[shortcut.toUpperCase()]} />}
+      {shortcut !== undefined && <Shortcut keys={[shortcut]} inverted />}
     </Container>
   );
 };
