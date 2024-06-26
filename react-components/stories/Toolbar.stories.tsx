@@ -10,8 +10,7 @@ import {
   withSuppressRevealEvents,
   withCameraStateUrlParam,
   useGetCameraStateFromUrlParam,
-  useCameraNavigation,
-  RevealButtons
+  useCameraNavigation
 } from '../src';
 import { Color } from 'three';
 import styled from 'styled-components';

@@ -1,7 +1,7 @@
 /*!
  * Copyright 2024 Cognite AS
  */
-import { CDF_TO_VIEWER_TRANSFORMATION, Overlay3D, Overlay3DCollection } from '@cognite/reveal';
+import { CDF_TO_VIEWER_TRANSFORMATION, type Overlay3D, Overlay3DCollection } from '@cognite/reveal';
 import { OBSERVATION_SOURCE, type ObservationProperties, type Observation } from './models';
 import { VisualDomainObject } from '../../base/domainObjects/VisualDomainObject';
 import { type ThreeView } from '../../base/views/ThreeView';
@@ -60,7 +60,7 @@ export class ObservationsDomainObject extends VisualDomainObject {
     return this._selectedOverlay;
   }
 
-  public setSelectedOverlay(overlay: Overlay3D<Observation> | undefined) {
+  public setSelectedOverlay(overlay: Overlay3D<Observation> | undefined): void {
     this._selectedOverlay = overlay;
     this.notify(Changes.selected);
   }

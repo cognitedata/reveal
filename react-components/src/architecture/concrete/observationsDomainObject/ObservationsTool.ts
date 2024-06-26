@@ -3,10 +3,7 @@
  */
 import { type IconType } from '@cognite/cogs.js';
 import { type TranslateKey } from '../../base/utilities/TranslateKey';
-import { type Observation } from './models';
 import { ObservationsDomainObject } from './ObservationsDomainObject';
-import { type Overlay3D } from '@cognite/reveal';
-import { DEFAULT_OVERLAY_COLOR, SELECTED_OVERLAY_COLOR } from './constants';
 import { BaseEditTool } from '../../base/commands/BaseEditTool';
 import { type VisualDomainObject } from '../../base/domainObjects/VisualDomainObject';
 
