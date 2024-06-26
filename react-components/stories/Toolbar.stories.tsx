@@ -110,7 +110,6 @@ export const Main: Story = {
         <ToolBar.ButtonGroup buttonGroup={exampleToolBarButtons} />
         <SetOrbitOrFirstPersonControlsType />
         <RevealToolbar.SlicerButton />
-        <RevealButtons.Observations />
       </MyCustomToolbar>
     </RevealStoryContainer>
   )
