@@ -166,16 +166,6 @@ export class AssetMappingCache {
 
       modelMapping.assetMappings.forEach(async (item) => {
         const key = modelRevisionNodesAssetsToKey(modelId, revisionId, [item.assetId]);
-        /* const currentAssetMappings = this._nodeAssetIdsToAssetMappings.get(key);
-            if (currentAssetMappings !== undefined) {
-              this._nodeAssetIdsToAssetMappings.set(
-                key,
-                currentAssetMappings.then((value) => [...value, item])
-              );
-            } else {
-              this._nodeAssetIdsToAssetMappings.set(key, Promise.resolve([item]));
-            } */
-
         await this.setAssetMappingsCacheItem(key, item);
       });
     });
@@ -267,17 +257,6 @@ export class AssetMappingCache {
       const key: ModelNodeIdKey = modelRevisionNodesAssetsToKey(modelId, revisionId, [
         item.assetId
       ]);
-      /* const currentAssetMappings = await this._nodeAssetIdsToAssetMappings.get(key);
-        if (currentAssetMappings !== undefined) {
-          const newNotDuplicatedMappings = currentAssetMappings.filter(
-            (mapping) => mapping.nodeId !== item.nodeId
-          );
-          newNotDuplicatedMappings.push(item);
-          this._nodeAssetIdsToAssetMappings.set(key, Promise.resolve(newNotDuplicatedMappings));
-          return;
-        }
-        this._nodeAssetIdsToAssetMappings.set(key, Promise.resolve([item])); */
-
       await this.setAssetMappingsCacheItem(key, item);
     });
 
@@ -294,15 +273,6 @@ export class AssetMappingCache {
   }
 
   private async setAssetMappingsCacheItem(key: ModelNodeIdKey, item: AssetMapping): Promise<void> {
-    /* const currentAssetMappings = await this.getNodeAssetIdsToAssetMappingCacheItem(key);
-    if (currentAssetMappings !== undefined) {
-      const newNotDuplicatedMappings = uniqBy(currentAssetMappings, 'nodeId');
-      newNotDuplicatedMappings.push(item);
-      this.setNodeAssetIdsToAssetMappingCacheItem(key, newNotDuplicatedMappings);
-    } else {
-      this.setNodeAssetIdsToAssetMappingCacheItem(key, [item]);
-    } */
-
     const currentAssetMappings = this.getNodeAssetIdsToAssetMappingCacheItem(key);
     this.setNodeAssetIdsToAssetMappingCacheItem(
       key,
