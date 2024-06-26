@@ -9,7 +9,7 @@ import {
 } from '../components/Reveal3DResources/types';
 import { NumericRange, type NodeAppearance, IndexSet } from '@cognite/reveal';
 import { type ThreeDModelFdmMappings } from './types';
-import { type Node3D, type CogniteExternalId, InternalId } from '@cognite/sdk';
+import { type Node3D, type CogniteExternalId } from '@cognite/sdk';
 import {
   useFdmAssetMappings,
   useMappedEdgesForRevisions
@@ -32,7 +32,6 @@ import {
 } from '../components/CacheProvider/AssetMappingCacheProvider';
 import { isSameModel } from '../utilities/isSameModel';
 import { isAssetMappingStylingGroup, isFdmAssetStylingGroup } from '../utilities/StylingGroupUtils';
-import { uniqBy } from 'lodash';
 
 type ModelStyleGroup = {
   model: CadModelOptions;
@@ -78,25 +77,6 @@ function useCalculateMappedStyling(
 
   const { data: assetMappingData, isLoading: isAssetMappingLoading } =
     useAssetMappedNodesForRevisions(modelsRevisionsWithMappedEquipment);
-
-  const assetIdsFromMapped = useMemo(() => {
-    const mappings = assetMappingData?.map((item) => item.assetMappings).flat() ?? [];
-    const assetIds: InternalId[] = mappings.flatMap((item) => {
-      return {
-        id: item.assetId
-      };
-    });
-    const uniqueAssetIds = uniqBy(assetIds, 'id');
-    return uniqueAssetIds;
-  }, [assetMappingData]);
-
-  console.log(' chunk useCalculateMappedStyling ', assetIdsFromMapped.map((item) => item.id));
-
-  useNodesForAssets(
-    models,
-    assetIdsFromMapped.map((item) => item.id)
-  );
-
 
   const modelsMappedFdmStyleGroups = useMemo(() => {
     const isFdmMappingUnavailableOrLoading =

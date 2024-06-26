@@ -21,7 +21,6 @@ import { chunk, maxBy, uniqBy } from 'lodash';
 import assert from 'assert';
 import { fetchNodesForNodeIds } from './requests';
 import { modelRevisionNodesAssetsToKey, modelRevisionToKey } from './utils';
-import { delayMs } from '../RuleBasedOutputs/utils';
 import { type ModelWithAssetMappings } from './AssetMappingCacheProvider';
 
 export type NodeAssetMappingResult = { node?: Node3D; mappings: AssetMapping[] };
@@ -31,10 +30,7 @@ export class AssetMappingCache {
   private readonly _sdk: CogniteClient;
 
   private readonly _modelToAssetMappings = new Map<ModelRevisionKey, Promise<AssetMapping[]>>();
-  private readonly _nodeAssetIdsToAssetMappings = new Map<
-    ModelNodeIdKey,
-    Promise<AssetMapping[]>
-  >();
+  public readonly _nodeAssetIdsToAssetMappings = new Map<ModelNodeIdKey, Promise<AssetMapping[]>>();
 
   private readonly _nodeAssetIdsToNode3D = new Map<ModelNodeIdKey, Promise<Node3D>>();
 
@@ -284,6 +280,16 @@ export class AssetMappingCache {
 
       await this.setAssetMappingsCacheItem(key, item);
     });
+
+    currentChunk.forEach(async (id) => {
+      const key = modelRevisionNodesAssetsToKey(modelId, revisionId, [id]);
+      const cachedResult = await this.getNodeAssetIdsToAssetMappingCacheItem(key);
+      if (cachedResult === undefined) {
+        this.setNodeAssetIdsToAssetMappingCacheItem(key, Promise.resolve([]));
+      }
+      console.log('chunk fetchAssetMappingsRequest  key, cachedResult ', key, cachedResult);
+    });
+
     return assetMapping3D.filter(isValidAssetMapping);
   }
 
@@ -297,29 +303,28 @@ export class AssetMappingCache {
       this.setNodeAssetIdsToAssetMappingCacheItem(key, [item]);
     } */
 
-    const currentAssetMappings = this._nodeAssetIdsToAssetMappings.get(key);
-    if (currentAssetMappings !== undefined) {
-      this.setNodeAssetIdsToAssetMappingCacheItem(
-        key,
-        currentAssetMappings.then((value) => {
-          const newNotDuplicatedMappings = uniqBy(value, 'nodeId');
-          newNotDuplicatedMappings.push(item);
-          return newNotDuplicatedMappings;
-        })
-      );
-    } else {
-      this.setNodeAssetIdsToAssetMappingCacheItem(key, Promise.resolve([item]));
-    }
+    const currentAssetMappings = this.getNodeAssetIdsToAssetMappingCacheItem(key);
+    this.setNodeAssetIdsToAssetMappingCacheItem(
+      key,
+      currentAssetMappings.then((value) => {
+        if (value === undefined) {
+          return [item];
+        }
+        const newNotDuplicatedMappings = uniqBy(value, 'nodeId');
+        newNotDuplicatedMappings.push(item);
+        return newNotDuplicatedMappings;
+      })
+    );
   }
 
-  private setNodeAssetIdsToAssetMappingCacheItem(
+  public setNodeAssetIdsToAssetMappingCacheItem(
     key: ModelNodeIdKey,
     item: Promise<Array<Required<AssetMapping3D>>>
   ): void {
     this._nodeAssetIdsToAssetMappings.set(key, Promise.resolve(item));
   }
 
-  private async getNodeAssetIdsToAssetMappingCacheItem(
+  public async getNodeAssetIdsToAssetMappingCacheItem(
     key: ModelNodeIdKey
   ): Promise<AssetMapping[] | undefined> {
     return await this._nodeAssetIdsToAssetMappings.get(key);
@@ -420,9 +425,9 @@ export class AssetMappingCache {
       revisionId
     );
 
-    console.log('chunk assetIds', assetIds);
-    console.log('chunk chunkInCache', chunkInCache);
-    console.log('chunk chunkNotInCache', chunkNotInCache);
+    console.log('chunk assetIds modelId', modelId, assetIds);
+    console.log('chunk chunkInCache modelId ', modelId, chunkInCache);
+    console.log('chunk chunkNotInCache modelId ', modelId, chunkNotInCache);
 
     const notCachedAssetIds: number[] = chunkNotInCache;
 
