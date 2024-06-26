@@ -35,7 +35,7 @@ export class ExampleTool extends BaseEditTool {
   // ==================================================
 
   public override onKey(event: KeyboardEvent, down: boolean): void {
-    if (down && event.key === 'Delete') {
+    if (down && (event.key === 'Delete' || event.key === 'Backspace')) {
       const domainObject = this.getSelected();
       if (domainObject !== undefined) {
         domainObject.removeInteractive();
@@ -61,7 +61,7 @@ export class ExampleTool extends BaseEditTool {
       hsl.h = (hsl.h + Math.sign(delta) * 0.02) % 1;
       domainObject.color.setHSL(hsl.h, hsl.s, hsl.l);
       domainObject.notify(Changes.color);
-    } else if (event.ctrlKey) {
+    } else if (event.ctrlKey || event.metaKey) {
       // Change opacity
       const opacity = domainObject.renderStyle.opacity + Math.sign(delta) * 0.05;
       domainObject.renderStyle.opacity = clamp(opacity, 0.2, 1);

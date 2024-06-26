@@ -16,6 +16,7 @@ import { type VisualDomainObject } from '../../base/domainObjects/VisualDomainOb
 import { SetClipTypeCommand } from './commands/SetClipTypeCommand';
 import { PlaneCreator } from '../primitives/plane/PlaneCreator';
 import { SliceDomainObject } from './SliceDomainObject';
+import { NextOrPrevClippingCommand } from './commands/NextClippingCommand';
 
 export class ClipTool extends PrimitiveEditTool {
   // ==================================================
@@ -47,8 +48,10 @@ export class ClipTool extends PrimitiveEditTool {
       new SetClipTypeCommand(PrimitiveType.Box),
       undefined, // Separator
       new ApplyClipCommand(),
-      new ShowClippingOnTopCommand(),
-      new ShowAllClippingCommand()
+      new NextOrPrevClippingCommand(false),
+      new NextOrPrevClippingCommand(true),
+      new ShowAllClippingCommand(),
+      new ShowClippingOnTopCommand()
     ];
   }
 
