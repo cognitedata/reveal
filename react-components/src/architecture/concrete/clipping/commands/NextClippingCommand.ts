@@ -47,18 +47,22 @@ export class NextOrPrevClippingCommand extends RenderTargetCommand {
     if (!this.renderTarget.isGlobalClippingActive) {
       return false;
     }
+    const minimumCount = this._next ? 2 : 3; // Don't need both buttons if it is less than 3
     const { rootDomainObject } = this;
     // Require at least two crop boxes or one crop box and one slice
     let count = 0;
     for (const domainObject of rootDomainObject.getDescendants()) {
       if (domainObject instanceof CropBoxDomainObject) {
         count++;
+        if (count >= minimumCount) {
+          return true; // Optimization
+        }
       }
     }
     if (rootDomainObject.getDescendantByType(SliceDomainObject) !== undefined) {
       count++;
     }
-    return count >= 2;
+    return count >= minimumCount;
   }
 
   public override equals(other: BaseCommand): boolean {
@@ -146,16 +150,31 @@ export class NextOrPrevClippingCommand extends RenderTargetCommand {
   ): void {
     domainObject.setSelectedInteractive(value);
     if (domainObject instanceof SliceDomainObject) {
-      this.setAllSliceDomainObjectVisible(value);
+      this.setAllSliceDomainObjectsVisible(value);
     } else {
       domainObject.setVisibleInteractive(value, this.renderTarget);
     }
   }
 
-  private setAllSliceDomainObjectVisible(visible: boolean): void {
+  private setAllSliceDomainObjectsVisible(visible: boolean): void {
     const { rootDomainObject } = this;
     for (const sliceDomainObject of rootDomainObject.getDescendantsByType(SliceDomainObject)) {
       sliceDomainObject.setVisibleInteractive(visible, this.renderTarget);
     }
+  }
+
+  public getCropBoxesAndSliceCount(): number {
+    const { rootDomainObject } = this;
+    // Require at least two crop boxes or one crop box and one slice
+    let count = 0;
+    for (const domainObject of rootDomainObject.getDescendants()) {
+      if (domainObject instanceof CropBoxDomainObject) {
+        count++;
+      }
+    }
+    if (rootDomainObject.getDescendantByType(SliceDomainObject) !== undefined) {
+      count++;
+    }
+    return count;
   }
 }
