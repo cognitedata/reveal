@@ -16,6 +16,7 @@ import { type TranslateKey } from '../../base/utilities/TranslateKey';
 import { ShowExamplesOnTopCommand } from './commands/ShowExamplesOnTopCommand';
 import { DomainObjectChange } from '../../base/domainObjectsHelpers/DomainObjectChange';
 import { type VisualDomainObject } from '../../base/domainObjects/VisualDomainObject';
+import { UndoCommand } from '../../base/concreteCommands/UndoCommand';
 
 export class ExampleTool extends BaseEditTool {
   // ==================================================
@@ -37,7 +38,8 @@ export class ExampleTool extends BaseEditTool {
   public override onKey(event: KeyboardEvent, down: boolean): void {
     if (down && (event.key === 'Delete' || event.key === 'Backspace')) {
       const domainObject = this.getSelected();
-      if (domainObject !== undefined) {
+      if (domainObject instanceof ExampleDomainObject) {
+        this.addTransaction(domainObject.createTransaction(Changes.deleted));
         domainObject.removeInteractive();
       }
       return;
@@ -56,6 +58,8 @@ export class ExampleTool extends BaseEditTool {
     }
     if (event.shiftKey) {
       // Change color
+      this.addTransaction(domainObject.createTransaction(Changes.color));
+
       let hsl: HSL = { h: 0, s: 0, l: 0 };
       hsl = domainObject.color.getHSL(hsl);
       hsl.h = (hsl.h + Math.sign(delta) * 0.02) % 1;
@@ -63,11 +67,15 @@ export class ExampleTool extends BaseEditTool {
       domainObject.notify(Changes.color);
     } else if (event.ctrlKey || event.metaKey) {
       // Change opacity
+      this.addTransaction(domainObject.createTransaction(Changes.renderStyle));
+
       const opacity = domainObject.renderStyle.opacity + Math.sign(delta) * 0.05;
       domainObject.renderStyle.opacity = clamp(opacity, 0.2, 1);
       domainObject.notify(new DomainObjectChange(Changes.renderStyle, 'opacity'));
     } else {
       // Change radius
+      this.addTransaction(domainObject.createTransaction(Changes.renderStyle));
+
       const factor = 1 - Math.sign(delta) * 0.1;
       domainObject.renderStyle.radius *= factor;
       domainObject.notify(new DomainObjectChange(Changes.renderStyle, 'radius'));
@@ -111,11 +119,14 @@ export class ExampleTool extends BaseEditTool {
     this.rootDomainObject.addChildInteractive(domainObject);
     domainObject.setVisibleInteractive(true, this.renderTarget);
     domainObject.setSelectedInteractive(true);
+
+    this.addTransaction(domainObject.createTransaction(Changes.added));
     this.renderTarget.setMoveCursor();
   }
 
   public override getToolbar(): Array<BaseCommand | undefined> {
     return [
+      new UndoCommand(),
       new ResetAllExamplesCommand(),
       new ShowAllExamplesCommand(),
       new DeleteAllExamplesCommand(),

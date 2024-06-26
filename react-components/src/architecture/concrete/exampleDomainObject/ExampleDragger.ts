@@ -56,8 +56,12 @@ export class ExampleDragger extends BaseDragger {
     if (planeIntersection.equals(this._center)) {
       return false; // No change
     }
+    if (this.transaction === undefined) {
+      this.transaction = this._domainObject.createTransaction(Changes.geometry);
+    }
     this._domainObject.center.copy(planeIntersection);
     this.domainObject.notify(Changes.geometry);
+
     return true;
   }
 }

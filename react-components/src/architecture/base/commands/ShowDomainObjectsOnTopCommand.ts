@@ -26,6 +26,7 @@ export abstract class ShowDomainObjectsOnTopCommand extends InstanceCommand {
       if (!(renderStyle instanceof CommonRenderStyle)) {
         continue;
       }
+      this.addTransaction(domainObject.createTransaction(Changes.renderStyle));
       renderStyle.depthTest = !depthTest;
       domainObject.notify(Changes.renderStyle);
     }

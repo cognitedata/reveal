@@ -16,6 +16,7 @@ import { BoxCreator } from '../primitives/box/BoxCreator';
 import { LineCreator } from '../primitives/line/LineCreator';
 import { type VisualDomainObject } from '../../base/domainObjects/VisualDomainObject';
 import { CDF_TO_VIEWER_TRANSFORMATION } from '@cognite/reveal';
+import { UndoCommand } from '../../base/concreteCommands/UndoCommand';
 
 export class MeasurementTool extends PrimitiveEditTool {
   // ==================================================
@@ -47,6 +48,7 @@ export class MeasurementTool extends PrimitiveEditTool {
       new SetMeasurementTypeCommand(PrimitiveType.VerticalArea),
       new SetMeasurementTypeCommand(PrimitiveType.Box),
       undefined, // Separator
+      new UndoCommand(),
       new ToggleMetricUnitsCommand(),
       new ShowMeasurementsOnTopCommand()
     ];
@@ -107,12 +109,12 @@ export class MeasurementTool extends PrimitiveEditTool {
       case PrimitiveType.Line:
       case PrimitiveType.Polyline:
       case PrimitiveType.Polygon:
-        return new LineCreator(new MeasureLineDomainObject(this.primitiveType));
+        return new LineCreator(this, new MeasureLineDomainObject(this.primitiveType));
 
       case PrimitiveType.HorizontalArea:
       case PrimitiveType.VerticalArea:
       case PrimitiveType.Box:
-        return new BoxCreator(new MeasureBoxDomainObject(this.primitiveType));
+        return new BoxCreator(this, new MeasureBoxDomainObject(this.primitiveType));
       default:
         return undefined;
     }

@@ -23,6 +23,7 @@ export class ResetAllExamplesCommand extends InstanceCommand {
 
   protected override invokeCore(): boolean {
     for (const domainObject of this.getInstances()) {
+      this.addTransaction(domainObject.createTransaction(Changes.renderStyle));
       domainObject.setRenderStyle(undefined);
       domainObject.notify(Changes.renderStyle);
     }

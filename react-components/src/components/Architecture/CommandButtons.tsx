@@ -57,5 +57,5 @@ function CommandButtonWrapper({
     const direction = !isHorizontal ? 'horizontal' : 'vertical';
     return <Divider weight="2px" length="24px" direction={direction} />;
   }
-  return CreateButton(command);
+  return CreateButton(command, isHorizontal);
 }

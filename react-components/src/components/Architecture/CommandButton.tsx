@@ -8,6 +8,7 @@ import { Button, Tooltip as CogsTooltip, type IconType } from '@cognite/cogs.js'
 import { useTranslation } from '../i18n/I18n';
 import { type BaseCommand } from '../../architecture/base/commands/BaseCommand';
 import { getButtonType, getDefaultCommand, getIcon, getTooltipPlacement } from './utilities';
+import { LabelWithShortcut } from './LabelWithShortcut';
 
 export const CommandButton = ({
   inputCommand,
@@ -47,8 +48,13 @@ export const CommandButton = ({
   }
   const placement = getTooltipPlacement(isHorizontal);
   const tooltip = command.getLabel(t);
+  const shortcut = command.getShortCutKeys();
+
   return (
-    <CogsTooltip content={tooltip} placement={placement} appendTo={document.body}>
+    <CogsTooltip
+      content={<LabelWithShortcut label={tooltip} shortcut={shortcut} />}
+      appendTo={document.body}
+      placement={placement}>
       <Button
         type={getButtonType(command)}
         icon={icon}
