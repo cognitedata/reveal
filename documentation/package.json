@@ -45,7 +45,7 @@
     "replace": "1.2.2",
     "rimraf": "5.0.7",
     "typedoc": "0.25.13",
-    "typedoc-plugin-markdown": "3.17.1",
+    "typedoc-plugin-markdown": "4.0.3",
     "typedoc-plugin-no-inherit": "1.4.0",
     "typescript": "5.5.2"
   },
