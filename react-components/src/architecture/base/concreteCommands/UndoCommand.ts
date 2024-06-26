@@ -16,7 +16,7 @@ export class UndoCommand extends RenderTargetCommand {
   }
 
   public override get tooltip(): TranslateKey {
-    return { key: 'UNDO', fallback: 'Undo [Ctrl+Z]' };
+    return { key: 'UNDO', fallback: 'Undo' };
   }
 
   public override get isEnabled(): boolean {

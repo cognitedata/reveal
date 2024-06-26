@@ -144,4 +144,19 @@ export abstract class BaseCommand {
     }
     return translate(key, fallback);
   }
+
+  public getShortCutKeys(): string | undefined {
+    const key = this.shortCutKey;
+    if (key === undefined) {
+      return undefined;
+    }
+    let result = '';
+    if (this.shortCutKeyOnCtrl) {
+      result += 'Ctrl+';
+    }
+    if (this.shortCutKeyOnShift) {
+      result += 'Shift+';
+    }
+    return result + key;
+  }
 }
