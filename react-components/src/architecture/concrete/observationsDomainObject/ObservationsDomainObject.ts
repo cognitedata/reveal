@@ -19,16 +19,16 @@ export class ObservationsDomainObject extends VisualDomainObject {
     defaultOverlayColor: DEFAULT_OVERLAY_COLOR
   });
 
-  public override get typeName(): TranslateKey {
-    return { fallback: ObservationsDomainObject.name };
-  }
-
   constructor(fdmSdk: FdmSDK) {
     super();
     void fetchObservations(fdmSdk).then((observations) => {
       this.initializeCollection(observations);
       this.notify(Changes.geometry);
     });
+  }
+
+  public override get typeName(): TranslateKey {
+    return { fallback: ObservationsDomainObject.name };
   }
 
   protected override createThreeView(): ThreeView<ObservationsDomainObject> | undefined {
