@@ -57,6 +57,14 @@ export class Overlay3DCollection<MetadataType = DefaultOverlay3DContentType>
   private readonly _rayCaster = new Raycaster();
   private readonly _cameraChangeDebouncer = new CameraChangeThrottler();
 
+  /**
+   * Construct a collection of 3D overlay icons
+   *
+   * @param overlayInfos Initializes the collection with the list of overlays. The length
+   * of the list will be the maximum allowed number of icons in this collection, unless it's empty,
+   * in which case a default maximum limit will be used instead
+   * @param options Additional options for this overlay collection
+   */
   constructor(overlayInfos: OverlayInfo<MetadataType>[], options?: Overlay3DCollectionOptions) {
     super();
 
@@ -69,7 +77,7 @@ export class Overlay3DCollection<MetadataType = DefaultOverlay3DContentType>
     };
 
     this._overlayPoints = new OverlayPointsObject(
-      overlayInfos ? overlayInfos.length : this.DefaultMaxPoints,
+      overlayInfos.length > 0 ? overlayInfos.length : this.DefaultMaxPoints,
       {
         spriteTexture: this._sharedTextures.color,
         maskTexture: this._sharedTextures.mask,
