@@ -46,10 +46,6 @@ export class LineView extends GroupThreeView<LineDomainObject> {
   // INSTANCE PROPERTIES
   // ==================================================
 
-  public override get domainObject(): LineDomainObject {
-    return super.domainObject;
-  }
-
   protected override get style(): LineRenderStyle {
     return super.style as LineRenderStyle;
   }

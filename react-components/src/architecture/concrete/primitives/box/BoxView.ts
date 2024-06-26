@@ -67,10 +67,6 @@ export class BoxView extends GroupThreeView<BoxDomainObject> {
   // INSTANCE PROPERTIES
   // ==================================================
 
-  public override get domainObject(): BoxDomainObject {
-    return super.domainObject;
-  }
-
   protected override get style(): BoxRenderStyle {
     return super.style as BoxRenderStyle;
   }

@@ -44,10 +44,6 @@ export class PlaneView extends GroupThreeView<PlaneDomainObject> {
   // INSTANCE PROPERTIES
   // ==================================================
 
-  public override get domainObject(): PlaneDomainObject {
-    return super.domainObject;
-  }
-
   protected override get style(): PlaneRenderStyle {
     return super.style as PlaneRenderStyle;
   }

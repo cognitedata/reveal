@@ -40,10 +40,6 @@ export class TerrainThreeView extends GroupThreeView<TerrainDomainObject> {
   // INSTANCE PROPERTIES
   // ==================================================
 
-  public override get domainObject(): TerrainDomainObject {
-    return super.domainObject;
-  }
-
   protected override get style(): TerrainRenderStyle {
     return super.style as TerrainRenderStyle;
   }
