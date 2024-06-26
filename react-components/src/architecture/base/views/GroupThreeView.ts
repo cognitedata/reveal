@@ -13,6 +13,7 @@ import {
 } from '@cognite/reveal';
 import { type DomainObjectIntersection } from '../domainObjectsHelpers/DomainObjectIntersection';
 import { VisualDomainObject } from '../domainObjects/VisualDomainObject';
+import { type DomainObject } from '../domainObjects/DomainObject';
 
 /**
  * Represents an abstract class for a Three.js view that renders an Object3D.
@@ -24,7 +25,10 @@ import { VisualDomainObject } from '../domainObjects/VisualDomainObject';
  * - calculateBoundingBox() to calculate the bounding box if you don not relay on three.js.
  */
 
-export abstract class GroupThreeView extends ThreeView implements ICustomObject {
+export abstract class GroupThreeView<DomainObjectType extends DomainObject = DomainObject>
+  extends ThreeView<DomainObjectType>
+  implements ICustomObject
+{
   // ==================================================
   // INSTANCE FIELDS
   // ==================================================

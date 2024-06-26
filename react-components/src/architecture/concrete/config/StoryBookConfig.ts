@@ -20,6 +20,7 @@ import { ToggleMetricUnitsCommand } from '../../base/concreteCommands/ToggleMetr
 import { MeasurementTool } from '../measurements/MeasurementTool';
 import { ClipTool } from '../clipping/ClipTool';
 import { KeyboardSpeedCommand } from '../../base/concreteCommands/KeyboardSpeedCommand';
+import { ObservationsTool } from '../observationsDomainObject/ObservationsTool';
 
 export class StoryBookConfig extends BaseRevealConfig {
   // ==================================================
@@ -43,6 +44,7 @@ export class StoryBookConfig extends BaseRevealConfig {
       new ExampleTool(),
       new MeasurementTool(),
       new ClipTool(),
+      new ObservationsTool(),
       undefined,
       new SetTerrainVisibleCommand(),
       new UpdateTerrainCommand()

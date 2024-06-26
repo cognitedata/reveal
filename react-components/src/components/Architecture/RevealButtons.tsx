@@ -10,20 +10,31 @@ import { SetFlexibleControlsTypeCommand } from '../../architecture/base/concrete
 import { SetAxisVisibleCommand } from '../../architecture/concrete/axis/SetAxisVisibleCommand';
 import { ClipTool } from '../../architecture/concrete/clipping/ClipTool';
 import { MeasurementTool } from '../../architecture/concrete/measurements/MeasurementTool';
+import { ObservationsTool } from '../../architecture/concrete/observationsDomainObject/ObservationsTool';
 import { KeyboardSpeedCommand } from '../../architecture/base/concreteCommands/KeyboardSpeedCommand';
-import { CreateButton } from './CommandButtons';
+import { createCommandButton } from './CommandButton';
 
 export class RevealButtons {
-  static FitView = (): ReactElement => CreateButton(new FitViewCommand());
-  static NavigationTool = (): ReactElement => CreateButton(new NavigationTool());
-  static SetAxisVisible = (): ReactElement => CreateButton(new SetAxisVisibleCommand());
-  static Measurement = (): ReactElement => CreateButton(new MeasurementTool());
-  static Clip = (): ReactElement => CreateButton(new ClipTool());
-  static KeyboardSpeed = (): ReactElement => CreateButton(new KeyboardSpeedCommand());
+  static FitView = (): ReactElement => createCommandButton(() => new FitViewCommand());
+
+  static NavigationTool = (): ReactElement => createCommandButton(() => new NavigationTool());
+
+  static SetAxisVisible = (): ReactElement =>
+    createCommandButton(() => new SetAxisVisibleCommand());
+
+  static Measurement = (): ReactElement => createCommandButton(() => new MeasurementTool());
+
+  static Clip = (): ReactElement => createCommandButton(() => new ClipTool());
 
   static SetFlexibleControlsTypeOrbit = (): ReactElement =>
-    CreateButton(new SetFlexibleControlsTypeCommand(FlexibleControlsType.Orbit));
+    createCommandButton(() => new SetFlexibleControlsTypeCommand(FlexibleControlsType.Orbit));
 
   static SetFlexibleControlsTypeFirstPerson = (): ReactElement =>
-    CreateButton(new SetFlexibleControlsTypeCommand(FlexibleControlsType.FirstPerson));
+    createCommandButton(() => new SetFlexibleControlsTypeCommand(FlexibleControlsType.FirstPerson));
+
+  static Observations = (): ReactElement => {
+    return createCommandButton(() => new ObservationsTool());
+  };
+
+  static KeyboardSpeed = (): ReactElement => createCommandButton(() => new KeyboardSpeedCommand());
 }
