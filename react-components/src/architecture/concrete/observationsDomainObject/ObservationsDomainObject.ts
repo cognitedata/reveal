@@ -1,7 +1,7 @@
 /*!
  * Copyright 2024 Cognite AS
  */
-import { CDF_TO_VIEWER_TRANSFORMATION, Overlay3DCollection } from '@cognite/reveal';
+import { CDF_TO_VIEWER_TRANSFORMATION, Overlay3D, Overlay3DCollection } from '@cognite/reveal';
 import { OBSERVATION_SOURCE, type ObservationProperties, type Observation } from './models';
 import { VisualDomainObject } from '../../base/domainObjects/VisualDomainObject';
 import { type ThreeView } from '../../base/views/ThreeView';
@@ -13,6 +13,8 @@ import { DEFAULT_OVERLAY_COLOR } from './constants';
 import { Changes } from '../../base/domainObjectsHelpers/Changes';
 
 export class ObservationsDomainObject extends VisualDomainObject {
+  private _selectedOverlay: Overlay3D<Observation> | undefined;
+
   private readonly _collection = new Overlay3DCollection<Observation>([], {
     defaultOverlayColor: DEFAULT_OVERLAY_COLOR
   });
@@ -27,6 +29,10 @@ export class ObservationsDomainObject extends VisualDomainObject {
       this.initializeCollection(observations);
       this.notify(Changes.geometry);
     });
+  }
+
+  protected override createThreeView(): ThreeView<ObservationsDomainObject> | undefined {
+    return new ObservationsView();
   }
 
   private initializeCollection(observations: Observation[]): void {
@@ -50,14 +56,19 @@ export class ObservationsDomainObject extends VisualDomainObject {
     return this._collection;
   }
 
-  protected override createThreeView(): ThreeView<ObservationsDomainObject> | undefined {
-    return new ObservationsView();
+  public getSelectedOverlay(): Overlay3D<Observation> | undefined {
+    return this._selectedOverlay;
+  }
+
+  public setSelectedOverlay(overlay: Overlay3D<Observation> | undefined) {
+    this._selectedOverlay = overlay;
+    this.notify(Changes.selected);
   }
 }
 
-const observationsFilter: InstanceFilter = {};
-
 async function fetchObservations(fdmSdk: FdmSDK): Promise<Observation[]> {
+  const observationsFilter: InstanceFilter = {};
+
   const observationResult = await fdmSdk.filterAllInstances<ObservationProperties>(
     observationsFilter,
     'node',
