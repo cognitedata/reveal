@@ -41,14 +41,10 @@ import { BoxView } from '../box/BoxView';
 const CYLINDER_DEFAULT_AXIS = new Vector3(0, 1, 0);
 const RENDER_ORDER = 100;
 
-export class LineView extends GroupThreeView {
+export class LineView extends GroupThreeView<LineDomainObject> {
   // ==================================================
   // INSTANCE PROPERTIES
   // ==================================================
-
-  public override get domainObject(): LineDomainObject {
-    return super.domainObject as LineDomainObject;
-  }
 
   protected override get style(): LineRenderStyle {
     return super.style as LineRenderStyle;

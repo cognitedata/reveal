@@ -9,12 +9,12 @@ import { type DomainObjectChange } from '../domainObjectsHelpers/DomainObjectCha
  * Represents the observer in the Observer pattern
  * It provides common functionality for all types of views.
  */
-export abstract class BaseView {
+export abstract class BaseView<DomainObjectType extends DomainObject = DomainObject> {
   // ==================================================
   // INSTANCE FIELDS
   // ==================================================
 
-  private _domainObject: DomainObject | undefined = undefined;
+  private _domainObject: DomainObjectType | undefined = undefined;
 
   // ==================================================
   // INSTANCE PROPERTIES
@@ -24,7 +24,7 @@ export abstract class BaseView {
     return this._domainObject !== undefined;
   }
 
-  public get domainObject(): DomainObject {
+  public get domainObject(): DomainObjectType {
     if (this._domainObject === undefined) {
       throw Error('The DomainObject is missing in the view');
     }
@@ -92,7 +92,7 @@ export abstract class BaseView {
   // INSTANCE METHODS
   // ==================================================
 
-  public setDomainObject(domainObject: DomainObject): void {
+  public setDomainObject(domainObject: DomainObjectType): void {
     this._domainObject = domainObject;
   }
 }
