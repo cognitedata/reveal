@@ -30,9 +30,9 @@ export class ObservationsView extends GroupThreeView<ObservationsDomainObject> {
 
       const overlay = this.domainObject.getSelectedOverlay();
       overlay?.setColor(SELECTED_OVERLAY_COLOR);
-    }
 
-    this.renderTarget.viewer.requestRedraw();
+      this.renderTarget.invalidate();
+    }
   }
 
   public override intersectIfCloser(
