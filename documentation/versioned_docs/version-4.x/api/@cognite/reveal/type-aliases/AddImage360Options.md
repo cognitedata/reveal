@@ -30,4 +30,4 @@ true
 
 ## Defined in
 
-[packages/api/src/public/migration/types.ts:218](https://github.com/cognitedata/reveal/blob/3aaed3491dba3f4ba9ecd87f495d35383cc73a1d/viewer/packages/api/src/public/migration/types.ts#L218)
+[packages/api/src/public/migration/types.ts:218](https://github.com/cognitedata/reveal/blob/2acd9d17229d2bc8e309653b4d6a39ad941e44f1/viewer/packages/api/src/public/migration/types.ts#L218)

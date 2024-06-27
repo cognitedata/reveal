@@ -24,7 +24,7 @@
 
 #### Defined in
 
-[packages/camera-manager/src/Flexible/FlexibleControlsOptions.ts:33](https://github.com/cognitedata/reveal/blob/3aaed3491dba3f4ba9ecd87f495d35383cc73a1d/viewer/packages/camera-manager/src/Flexible/FlexibleControlsOptions.ts#L33)
+[packages/camera-manager/src/Flexible/FlexibleControlsOptions.ts:33](https://github.com/cognitedata/reveal/blob/2acd9d17229d2bc8e309653b4d6a39ad941e44f1/viewer/packages/camera-manager/src/Flexible/FlexibleControlsOptions.ts#L33)
 
 ***
 
@@ -36,7 +36,7 @@
 
 #### Defined in
 
-[packages/camera-manager/src/Flexible/FlexibleControlsOptions.ts:48](https://github.com/cognitedata/reveal/blob/3aaed3491dba3f4ba9ecd87f495d35383cc73a1d/viewer/packages/camera-manager/src/Flexible/FlexibleControlsOptions.ts#L48)
+[packages/camera-manager/src/Flexible/FlexibleControlsOptions.ts:48](https://github.com/cognitedata/reveal/blob/2acd9d17229d2bc8e309653b4d6a39ad941e44f1/viewer/packages/camera-manager/src/Flexible/FlexibleControlsOptions.ts#L48)
 
 ***
 
@@ -48,7 +48,7 @@
 
 #### Defined in
 
-[packages/camera-manager/src/Flexible/FlexibleControlsOptions.ts:52](https://github.com/cognitedata/reveal/blob/3aaed3491dba3f4ba9ecd87f495d35383cc73a1d/viewer/packages/camera-manager/src/Flexible/FlexibleControlsOptions.ts#L52)
+[packages/camera-manager/src/Flexible/FlexibleControlsOptions.ts:52](https://github.com/cognitedata/reveal/blob/2acd9d17229d2bc8e309653b4d6a39ad941e44f1/viewer/packages/camera-manager/src/Flexible/FlexibleControlsOptions.ts#L52)
 
 ***
 
@@ -60,7 +60,7 @@
 
 #### Defined in
 
-[packages/camera-manager/src/Flexible/FlexibleControlsOptions.ts:23](https://github.com/cognitedata/reveal/blob/3aaed3491dba3f4ba9ecd87f495d35383cc73a1d/viewer/packages/camera-manager/src/Flexible/FlexibleControlsOptions.ts#L23)
+[packages/camera-manager/src/Flexible/FlexibleControlsOptions.ts:23](https://github.com/cognitedata/reveal/blob/2acd9d17229d2bc8e309653b4d6a39ad941e44f1/viewer/packages/camera-manager/src/Flexible/FlexibleControlsOptions.ts#L23)
 
 ***
 
@@ -72,7 +72,7 @@
 
 #### Defined in
 
-[packages/camera-manager/src/Flexible/FlexibleControlsOptions.ts:46](https://github.com/cognitedata/reveal/blob/3aaed3491dba3f4ba9ecd87f495d35383cc73a1d/viewer/packages/camera-manager/src/Flexible/FlexibleControlsOptions.ts#L46)
+[packages/camera-manager/src/Flexible/FlexibleControlsOptions.ts:46](https://github.com/cognitedata/reveal/blob/2acd9d17229d2bc8e309653b4d6a39ad941e44f1/viewer/packages/camera-manager/src/Flexible/FlexibleControlsOptions.ts#L46)
 
 ***
 
@@ -84,7 +84,7 @@
 
 #### Defined in
 
-[packages/camera-manager/src/Flexible/FlexibleControlsOptions.ts:89](https://github.com/cognitedata/reveal/blob/3aaed3491dba3f4ba9ecd87f495d35383cc73a1d/viewer/packages/camera-manager/src/Flexible/FlexibleControlsOptions.ts#L89)
+[packages/camera-manager/src/Flexible/FlexibleControlsOptions.ts:89](https://github.com/cognitedata/reveal/blob/2acd9d17229d2bc8e309653b4d6a39ad941e44f1/viewer/packages/camera-manager/src/Flexible/FlexibleControlsOptions.ts#L89)
 
 ***
 
@@ -96,7 +96,7 @@
 
 #### Defined in
 
-[packages/camera-manager/src/Flexible/FlexibleControlsOptions.ts:29](https://github.com/cognitedata/reveal/blob/3aaed3491dba3f4ba9ecd87f495d35383cc73a1d/viewer/packages/camera-manager/src/Flexible/FlexibleControlsOptions.ts#L29)
+[packages/camera-manager/src/Flexible/FlexibleControlsOptions.ts:29](https://github.com/cognitedata/reveal/blob/2acd9d17229d2bc8e309653b4d6a39ad941e44f1/viewer/packages/camera-manager/src/Flexible/FlexibleControlsOptions.ts#L29)
 
 ***
 
@@ -108,7 +108,7 @@
 
 #### Defined in
 
-[packages/camera-manager/src/Flexible/FlexibleControlsOptions.ts:45](https://github.com/cognitedata/reveal/blob/3aaed3491dba3f4ba9ecd87f495d35383cc73a1d/viewer/packages/camera-manager/src/Flexible/FlexibleControlsOptions.ts#L45)
+[packages/camera-manager/src/Flexible/FlexibleControlsOptions.ts:45](https://github.com/cognitedata/reveal/blob/2acd9d17229d2bc8e309653b4d6a39ad941e44f1/viewer/packages/camera-manager/src/Flexible/FlexibleControlsOptions.ts#L45)
 
 ***
 
@@ -120,7 +120,7 @@
 
 #### Defined in
 
-[packages/camera-manager/src/Flexible/FlexibleControlsOptions.ts:30](https://github.com/cognitedata/reveal/blob/3aaed3491dba3f4ba9ecd87f495d35383cc73a1d/viewer/packages/camera-manager/src/Flexible/FlexibleControlsOptions.ts#L30)
+[packages/camera-manager/src/Flexible/FlexibleControlsOptions.ts:30](https://github.com/cognitedata/reveal/blob/2acd9d17229d2bc8e309653b4d6a39ad941e44f1/viewer/packages/camera-manager/src/Flexible/FlexibleControlsOptions.ts#L30)
 
 ***
 
@@ -132,7 +132,7 @@
 
 #### Defined in
 
-[packages/camera-manager/src/Flexible/FlexibleControlsOptions.ts:95](https://github.com/cognitedata/reveal/blob/3aaed3491dba3f4ba9ecd87f495d35383cc73a1d/viewer/packages/camera-manager/src/Flexible/FlexibleControlsOptions.ts#L95)
+[packages/camera-manager/src/Flexible/FlexibleControlsOptions.ts:95](https://github.com/cognitedata/reveal/blob/2acd9d17229d2bc8e309653b4d6a39ad941e44f1/viewer/packages/camera-manager/src/Flexible/FlexibleControlsOptions.ts#L95)
 
 ***
 
@@ -144,7 +144,7 @@
 
 #### Defined in
 
-[packages/camera-manager/src/Flexible/FlexibleControlsOptions.ts:77](https://github.com/cognitedata/reveal/blob/3aaed3491dba3f4ba9ecd87f495d35383cc73a1d/viewer/packages/camera-manager/src/Flexible/FlexibleControlsOptions.ts#L77)
+[packages/camera-manager/src/Flexible/FlexibleControlsOptions.ts:77](https://github.com/cognitedata/reveal/blob/2acd9d17229d2bc8e309653b4d6a39ad941e44f1/viewer/packages/camera-manager/src/Flexible/FlexibleControlsOptions.ts#L77)
 
 ***
 
@@ -156,7 +156,7 @@
 
 #### Defined in
 
-[packages/camera-manager/src/Flexible/FlexibleControlsOptions.ts:78](https://github.com/cognitedata/reveal/blob/3aaed3491dba3f4ba9ecd87f495d35383cc73a1d/viewer/packages/camera-manager/src/Flexible/FlexibleControlsOptions.ts#L78)
+[packages/camera-manager/src/Flexible/FlexibleControlsOptions.ts:78](https://github.com/cognitedata/reveal/blob/2acd9d17229d2bc8e309653b4d6a39ad941e44f1/viewer/packages/camera-manager/src/Flexible/FlexibleControlsOptions.ts#L78)
 
 ***
 
@@ -168,7 +168,7 @@
 
 #### Defined in
 
-[packages/camera-manager/src/Flexible/FlexibleControlsOptions.ts:62](https://github.com/cognitedata/reveal/blob/3aaed3491dba3f4ba9ecd87f495d35383cc73a1d/viewer/packages/camera-manager/src/Flexible/FlexibleControlsOptions.ts#L62)
+[packages/camera-manager/src/Flexible/FlexibleControlsOptions.ts:62](https://github.com/cognitedata/reveal/blob/2acd9d17229d2bc8e309653b4d6a39ad941e44f1/viewer/packages/camera-manager/src/Flexible/FlexibleControlsOptions.ts#L62)
 
 ***
 
@@ -180,7 +180,7 @@
 
 #### Defined in
 
-[packages/camera-manager/src/Flexible/FlexibleControlsOptions.ts:76](https://github.com/cognitedata/reveal/blob/3aaed3491dba3f4ba9ecd87f495d35383cc73a1d/viewer/packages/camera-manager/src/Flexible/FlexibleControlsOptions.ts#L76)
+[packages/camera-manager/src/Flexible/FlexibleControlsOptions.ts:76](https://github.com/cognitedata/reveal/blob/2acd9d17229d2bc8e309653b4d6a39ad941e44f1/viewer/packages/camera-manager/src/Flexible/FlexibleControlsOptions.ts#L76)
 
 ***
 
@@ -192,7 +192,7 @@
 
 #### Defined in
 
-[packages/camera-manager/src/Flexible/FlexibleControlsOptions.ts:60](https://github.com/cognitedata/reveal/blob/3aaed3491dba3f4ba9ecd87f495d35383cc73a1d/viewer/packages/camera-manager/src/Flexible/FlexibleControlsOptions.ts#L60)
+[packages/camera-manager/src/Flexible/FlexibleControlsOptions.ts:60](https://github.com/cognitedata/reveal/blob/2acd9d17229d2bc8e309653b4d6a39ad941e44f1/viewer/packages/camera-manager/src/Flexible/FlexibleControlsOptions.ts#L60)
 
 ***
 
@@ -204,7 +204,7 @@
 
 #### Defined in
 
-[packages/camera-manager/src/Flexible/FlexibleControlsOptions.ts:61](https://github.com/cognitedata/reveal/blob/3aaed3491dba3f4ba9ecd87f495d35383cc73a1d/viewer/packages/camera-manager/src/Flexible/FlexibleControlsOptions.ts#L61)
+[packages/camera-manager/src/Flexible/FlexibleControlsOptions.ts:61](https://github.com/cognitedata/reveal/blob/2acd9d17229d2bc8e309653b4d6a39ad941e44f1/viewer/packages/camera-manager/src/Flexible/FlexibleControlsOptions.ts#L61)
 
 ***
 
@@ -216,7 +216,7 @@
 
 #### Defined in
 
-[packages/camera-manager/src/Flexible/FlexibleControlsOptions.ts:75](https://github.com/cognitedata/reveal/blob/3aaed3491dba3f4ba9ecd87f495d35383cc73a1d/viewer/packages/camera-manager/src/Flexible/FlexibleControlsOptions.ts#L75)
+[packages/camera-manager/src/Flexible/FlexibleControlsOptions.ts:75](https://github.com/cognitedata/reveal/blob/2acd9d17229d2bc8e309653b4d6a39ad941e44f1/viewer/packages/camera-manager/src/Flexible/FlexibleControlsOptions.ts#L75)
 
 ***
 
@@ -228,7 +228,7 @@
 
 #### Defined in
 
-[packages/camera-manager/src/Flexible/FlexibleControlsOptions.ts:42](https://github.com/cognitedata/reveal/blob/3aaed3491dba3f4ba9ecd87f495d35383cc73a1d/viewer/packages/camera-manager/src/Flexible/FlexibleControlsOptions.ts#L42)
+[packages/camera-manager/src/Flexible/FlexibleControlsOptions.ts:42](https://github.com/cognitedata/reveal/blob/2acd9d17229d2bc8e309653b4d6a39ad941e44f1/viewer/packages/camera-manager/src/Flexible/FlexibleControlsOptions.ts#L42)
 
 ***
 
@@ -240,7 +240,7 @@
 
 #### Defined in
 
-[packages/camera-manager/src/Flexible/FlexibleControlsOptions.ts:67](https://github.com/cognitedata/reveal/blob/3aaed3491dba3f4ba9ecd87f495d35383cc73a1d/viewer/packages/camera-manager/src/Flexible/FlexibleControlsOptions.ts#L67)
+[packages/camera-manager/src/Flexible/FlexibleControlsOptions.ts:67](https://github.com/cognitedata/reveal/blob/2acd9d17229d2bc8e309653b4d6a39ad941e44f1/viewer/packages/camera-manager/src/Flexible/FlexibleControlsOptions.ts#L67)
 
 ***
 
@@ -252,7 +252,7 @@
 
 #### Defined in
 
-[packages/camera-manager/src/Flexible/FlexibleControlsOptions.ts:40](https://github.com/cognitedata/reveal/blob/3aaed3491dba3f4ba9ecd87f495d35383cc73a1d/viewer/packages/camera-manager/src/Flexible/FlexibleControlsOptions.ts#L40)
+[packages/camera-manager/src/Flexible/FlexibleControlsOptions.ts:40](https://github.com/cognitedata/reveal/blob/2acd9d17229d2bc8e309653b4d6a39ad941e44f1/viewer/packages/camera-manager/src/Flexible/FlexibleControlsOptions.ts#L40)
 
 ***
 
@@ -264,7 +264,7 @@
 
 #### Defined in
 
-[packages/camera-manager/src/Flexible/FlexibleControlsOptions.ts:55](https://github.com/cognitedata/reveal/blob/3aaed3491dba3f4ba9ecd87f495d35383cc73a1d/viewer/packages/camera-manager/src/Flexible/FlexibleControlsOptions.ts#L55)
+[packages/camera-manager/src/Flexible/FlexibleControlsOptions.ts:55](https://github.com/cognitedata/reveal/blob/2acd9d17229d2bc8e309653b4d6a39ad941e44f1/viewer/packages/camera-manager/src/Flexible/FlexibleControlsOptions.ts#L55)
 
 ***
 
@@ -276,7 +276,7 @@
 
 #### Defined in
 
-[packages/camera-manager/src/Flexible/FlexibleControlsOptions.ts:88](https://github.com/cognitedata/reveal/blob/3aaed3491dba3f4ba9ecd87f495d35383cc73a1d/viewer/packages/camera-manager/src/Flexible/FlexibleControlsOptions.ts#L88)
+[packages/camera-manager/src/Flexible/FlexibleControlsOptions.ts:88](https://github.com/cognitedata/reveal/blob/2acd9d17229d2bc8e309653b4d6a39ad941e44f1/viewer/packages/camera-manager/src/Flexible/FlexibleControlsOptions.ts#L88)
 
 ***
 
@@ -288,7 +288,7 @@
 
 #### Defined in
 
-[packages/camera-manager/src/Flexible/FlexibleControlsOptions.ts:35](https://github.com/cognitedata/reveal/blob/3aaed3491dba3f4ba9ecd87f495d35383cc73a1d/viewer/packages/camera-manager/src/Flexible/FlexibleControlsOptions.ts#L35)
+[packages/camera-manager/src/Flexible/FlexibleControlsOptions.ts:35](https://github.com/cognitedata/reveal/blob/2acd9d17229d2bc8e309653b4d6a39ad941e44f1/viewer/packages/camera-manager/src/Flexible/FlexibleControlsOptions.ts#L35)
 
 ***
 
@@ -300,7 +300,7 @@
 
 #### Defined in
 
-[packages/camera-manager/src/Flexible/FlexibleControlsOptions.ts:41](https://github.com/cognitedata/reveal/blob/3aaed3491dba3f4ba9ecd87f495d35383cc73a1d/viewer/packages/camera-manager/src/Flexible/FlexibleControlsOptions.ts#L41)
+[packages/camera-manager/src/Flexible/FlexibleControlsOptions.ts:41](https://github.com/cognitedata/reveal/blob/2acd9d17229d2bc8e309653b4d6a39ad941e44f1/viewer/packages/camera-manager/src/Flexible/FlexibleControlsOptions.ts#L41)
 
 ***
 
@@ -312,7 +312,7 @@
 
 #### Defined in
 
-[packages/camera-manager/src/Flexible/FlexibleControlsOptions.ts:66](https://github.com/cognitedata/reveal/blob/3aaed3491dba3f4ba9ecd87f495d35383cc73a1d/viewer/packages/camera-manager/src/Flexible/FlexibleControlsOptions.ts#L66)
+[packages/camera-manager/src/Flexible/FlexibleControlsOptions.ts:66](https://github.com/cognitedata/reveal/blob/2acd9d17229d2bc8e309653b4d6a39ad941e44f1/viewer/packages/camera-manager/src/Flexible/FlexibleControlsOptions.ts#L66)
 
 ***
 
@@ -324,7 +324,7 @@
 
 #### Defined in
 
-[packages/camera-manager/src/Flexible/FlexibleControlsOptions.ts:39](https://github.com/cognitedata/reveal/blob/3aaed3491dba3f4ba9ecd87f495d35383cc73a1d/viewer/packages/camera-manager/src/Flexible/FlexibleControlsOptions.ts#L39)
+[packages/camera-manager/src/Flexible/FlexibleControlsOptions.ts:39](https://github.com/cognitedata/reveal/blob/2acd9d17229d2bc8e309653b4d6a39ad941e44f1/viewer/packages/camera-manager/src/Flexible/FlexibleControlsOptions.ts#L39)
 
 ***
 
@@ -336,7 +336,7 @@
 
 #### Defined in
 
-[packages/camera-manager/src/Flexible/FlexibleControlsOptions.ts:54](https://github.com/cognitedata/reveal/blob/3aaed3491dba3f4ba9ecd87f495d35383cc73a1d/viewer/packages/camera-manager/src/Flexible/FlexibleControlsOptions.ts#L54)
+[packages/camera-manager/src/Flexible/FlexibleControlsOptions.ts:54](https://github.com/cognitedata/reveal/blob/2acd9d17229d2bc8e309653b4d6a39ad941e44f1/viewer/packages/camera-manager/src/Flexible/FlexibleControlsOptions.ts#L54)
 
 ***
 
@@ -348,7 +348,7 @@
 
 #### Defined in
 
-[packages/camera-manager/src/Flexible/FlexibleControlsOptions.ts:87](https://github.com/cognitedata/reveal/blob/3aaed3491dba3f4ba9ecd87f495d35383cc73a1d/viewer/packages/camera-manager/src/Flexible/FlexibleControlsOptions.ts#L87)
+[packages/camera-manager/src/Flexible/FlexibleControlsOptions.ts:87](https://github.com/cognitedata/reveal/blob/2acd9d17229d2bc8e309653b4d6a39ad941e44f1/viewer/packages/camera-manager/src/Flexible/FlexibleControlsOptions.ts#L87)
 
 ***
 
@@ -360,7 +360,7 @@
 
 #### Defined in
 
-[packages/camera-manager/src/Flexible/FlexibleControlsOptions.ts:34](https://github.com/cognitedata/reveal/blob/3aaed3491dba3f4ba9ecd87f495d35383cc73a1d/viewer/packages/camera-manager/src/Flexible/FlexibleControlsOptions.ts#L34)
+[packages/camera-manager/src/Flexible/FlexibleControlsOptions.ts:34](https://github.com/cognitedata/reveal/blob/2acd9d17229d2bc8e309653b4d6a39ad941e44f1/viewer/packages/camera-manager/src/Flexible/FlexibleControlsOptions.ts#L34)
 
 ***
 
@@ -372,7 +372,7 @@
 
 #### Defined in
 
-[packages/camera-manager/src/Flexible/FlexibleControlsOptions.ts:27](https://github.com/cognitedata/reveal/blob/3aaed3491dba3f4ba9ecd87f495d35383cc73a1d/viewer/packages/camera-manager/src/Flexible/FlexibleControlsOptions.ts#L27)
+[packages/camera-manager/src/Flexible/FlexibleControlsOptions.ts:27](https://github.com/cognitedata/reveal/blob/2acd9d17229d2bc8e309653b4d6a39ad941e44f1/viewer/packages/camera-manager/src/Flexible/FlexibleControlsOptions.ts#L27)
 
 ***
 
@@ -384,7 +384,7 @@
 
 #### Defined in
 
-[packages/camera-manager/src/Flexible/FlexibleControlsOptions.ts:36](https://github.com/cognitedata/reveal/blob/3aaed3491dba3f4ba9ecd87f495d35383cc73a1d/viewer/packages/camera-manager/src/Flexible/FlexibleControlsOptions.ts#L36)
+[packages/camera-manager/src/Flexible/FlexibleControlsOptions.ts:36](https://github.com/cognitedata/reveal/blob/2acd9d17229d2bc8e309653b4d6a39ad941e44f1/viewer/packages/camera-manager/src/Flexible/FlexibleControlsOptions.ts#L36)
 
 ***
 
@@ -396,7 +396,7 @@
 
 #### Defined in
 
-[packages/camera-manager/src/Flexible/FlexibleControlsOptions.ts:72](https://github.com/cognitedata/reveal/blob/3aaed3491dba3f4ba9ecd87f495d35383cc73a1d/viewer/packages/camera-manager/src/Flexible/FlexibleControlsOptions.ts#L72)
+[packages/camera-manager/src/Flexible/FlexibleControlsOptions.ts:72](https://github.com/cognitedata/reveal/blob/2acd9d17229d2bc8e309653b4d6a39ad941e44f1/viewer/packages/camera-manager/src/Flexible/FlexibleControlsOptions.ts#L72)
 
 ***
 
@@ -408,7 +408,7 @@
 
 #### Defined in
 
-[packages/camera-manager/src/Flexible/FlexibleControlsOptions.ts:28](https://github.com/cognitedata/reveal/blob/3aaed3491dba3f4ba9ecd87f495d35383cc73a1d/viewer/packages/camera-manager/src/Flexible/FlexibleControlsOptions.ts#L28)
+[packages/camera-manager/src/Flexible/FlexibleControlsOptions.ts:28](https://github.com/cognitedata/reveal/blob/2acd9d17229d2bc8e309653b4d6a39ad941e44f1/viewer/packages/camera-manager/src/Flexible/FlexibleControlsOptions.ts#L28)
 
 ***
 
@@ -420,7 +420,7 @@
 
 #### Defined in
 
-[packages/camera-manager/src/Flexible/FlexibleControlsOptions.ts:71](https://github.com/cognitedata/reveal/blob/3aaed3491dba3f4ba9ecd87f495d35383cc73a1d/viewer/packages/camera-manager/src/Flexible/FlexibleControlsOptions.ts#L71)
+[packages/camera-manager/src/Flexible/FlexibleControlsOptions.ts:71](https://github.com/cognitedata/reveal/blob/2acd9d17229d2bc8e309653b4d6a39ad941e44f1/viewer/packages/camera-manager/src/Flexible/FlexibleControlsOptions.ts#L71)
 
 ***
 
@@ -432,7 +432,7 @@
 
 #### Defined in
 
-[packages/camera-manager/src/Flexible/FlexibleControlsOptions.ts:58](https://github.com/cognitedata/reveal/blob/3aaed3491dba3f4ba9ecd87f495d35383cc73a1d/viewer/packages/camera-manager/src/Flexible/FlexibleControlsOptions.ts#L58)
+[packages/camera-manager/src/Flexible/FlexibleControlsOptions.ts:58](https://github.com/cognitedata/reveal/blob/2acd9d17229d2bc8e309653b4d6a39ad941e44f1/viewer/packages/camera-manager/src/Flexible/FlexibleControlsOptions.ts#L58)
 
 ***
 
@@ -444,7 +444,7 @@
 
 #### Defined in
 
-[packages/camera-manager/src/Flexible/FlexibleControlsOptions.ts:59](https://github.com/cognitedata/reveal/blob/3aaed3491dba3f4ba9ecd87f495d35383cc73a1d/viewer/packages/camera-manager/src/Flexible/FlexibleControlsOptions.ts#L59)
+[packages/camera-manager/src/Flexible/FlexibleControlsOptions.ts:59](https://github.com/cognitedata/reveal/blob/2acd9d17229d2bc8e309653b4d6a39ad941e44f1/viewer/packages/camera-manager/src/Flexible/FlexibleControlsOptions.ts#L59)
 
 ***
 
@@ -456,7 +456,7 @@
 
 #### Defined in
 
-[packages/camera-manager/src/Flexible/FlexibleControlsOptions.ts:26](https://github.com/cognitedata/reveal/blob/3aaed3491dba3f4ba9ecd87f495d35383cc73a1d/viewer/packages/camera-manager/src/Flexible/FlexibleControlsOptions.ts#L26)
+[packages/camera-manager/src/Flexible/FlexibleControlsOptions.ts:26](https://github.com/cognitedata/reveal/blob/2acd9d17229d2bc8e309653b4d6a39ad941e44f1/viewer/packages/camera-manager/src/Flexible/FlexibleControlsOptions.ts#L26)
 
 ***
 
@@ -468,7 +468,7 @@
 
 #### Defined in
 
-[packages/camera-manager/src/Flexible/FlexibleControlsOptions.ts:84](https://github.com/cognitedata/reveal/blob/3aaed3491dba3f4ba9ecd87f495d35383cc73a1d/viewer/packages/camera-manager/src/Flexible/FlexibleControlsOptions.ts#L84)
+[packages/camera-manager/src/Flexible/FlexibleControlsOptions.ts:84](https://github.com/cognitedata/reveal/blob/2acd9d17229d2bc8e309653b4d6a39ad941e44f1/viewer/packages/camera-manager/src/Flexible/FlexibleControlsOptions.ts#L84)
 
 ***
 
@@ -480,7 +480,7 @@
 
 #### Defined in
 
-[packages/camera-manager/src/Flexible/FlexibleControlsOptions.ts:94](https://github.com/cognitedata/reveal/blob/3aaed3491dba3f4ba9ecd87f495d35383cc73a1d/viewer/packages/camera-manager/src/Flexible/FlexibleControlsOptions.ts#L94)
+[packages/camera-manager/src/Flexible/FlexibleControlsOptions.ts:94](https://github.com/cognitedata/reveal/blob/2acd9d17229d2bc8e309653b4d6a39ad941e44f1/viewer/packages/camera-manager/src/Flexible/FlexibleControlsOptions.ts#L94)
 
 ***
 
@@ -492,7 +492,7 @@
 
 #### Defined in
 
-[packages/camera-manager/src/Flexible/FlexibleControlsOptions.ts:81](https://github.com/cognitedata/reveal/blob/3aaed3491dba3f4ba9ecd87f495d35383cc73a1d/viewer/packages/camera-manager/src/Flexible/FlexibleControlsOptions.ts#L81)
+[packages/camera-manager/src/Flexible/FlexibleControlsOptions.ts:81](https://github.com/cognitedata/reveal/blob/2acd9d17229d2bc8e309653b4d6a39ad941e44f1/viewer/packages/camera-manager/src/Flexible/FlexibleControlsOptions.ts#L81)
 
 ***
 
@@ -504,7 +504,7 @@
 
 #### Defined in
 
-[packages/camera-manager/src/Flexible/FlexibleControlsOptions.ts:82](https://github.com/cognitedata/reveal/blob/3aaed3491dba3f4ba9ecd87f495d35383cc73a1d/viewer/packages/camera-manager/src/Flexible/FlexibleControlsOptions.ts#L82)
+[packages/camera-manager/src/Flexible/FlexibleControlsOptions.ts:82](https://github.com/cognitedata/reveal/blob/2acd9d17229d2bc8e309653b4d6a39ad941e44f1/viewer/packages/camera-manager/src/Flexible/FlexibleControlsOptions.ts#L82)
 
 ***
 
@@ -516,7 +516,7 @@
 
 #### Defined in
 
-[packages/camera-manager/src/Flexible/FlexibleControlsOptions.ts:93](https://github.com/cognitedata/reveal/blob/3aaed3491dba3f4ba9ecd87f495d35383cc73a1d/viewer/packages/camera-manager/src/Flexible/FlexibleControlsOptions.ts#L93)
+[packages/camera-manager/src/Flexible/FlexibleControlsOptions.ts:93](https://github.com/cognitedata/reveal/blob/2acd9d17229d2bc8e309653b4d6a39ad941e44f1/viewer/packages/camera-manager/src/Flexible/FlexibleControlsOptions.ts#L93)
 
 ***
 
@@ -528,7 +528,7 @@
 
 #### Defined in
 
-[packages/camera-manager/src/Flexible/FlexibleControlsOptions.ts:51](https://github.com/cognitedata/reveal/blob/3aaed3491dba3f4ba9ecd87f495d35383cc73a1d/viewer/packages/camera-manager/src/Flexible/FlexibleControlsOptions.ts#L51)
+[packages/camera-manager/src/Flexible/FlexibleControlsOptions.ts:51](https://github.com/cognitedata/reveal/blob/2acd9d17229d2bc8e309653b4d6a39ad941e44f1/viewer/packages/camera-manager/src/Flexible/FlexibleControlsOptions.ts#L51)
 
 ***
 
@@ -540,7 +540,7 @@
 
 #### Defined in
 
-[packages/camera-manager/src/Flexible/FlexibleControlsOptions.ts:53](https://github.com/cognitedata/reveal/blob/3aaed3491dba3f4ba9ecd87f495d35383cc73a1d/viewer/packages/camera-manager/src/Flexible/FlexibleControlsOptions.ts#L53)
+[packages/camera-manager/src/Flexible/FlexibleControlsOptions.ts:53](https://github.com/cognitedata/reveal/blob/2acd9d17229d2bc8e309653b4d6a39ad941e44f1/viewer/packages/camera-manager/src/Flexible/FlexibleControlsOptions.ts#L53)
 
 ***
 
@@ -552,7 +552,7 @@
 
 #### Defined in
 
-[packages/camera-manager/src/Flexible/FlexibleControlsOptions.ts:92](https://github.com/cognitedata/reveal/blob/3aaed3491dba3f4ba9ecd87f495d35383cc73a1d/viewer/packages/camera-manager/src/Flexible/FlexibleControlsOptions.ts#L92)
+[packages/camera-manager/src/Flexible/FlexibleControlsOptions.ts:92](https://github.com/cognitedata/reveal/blob/2acd9d17229d2bc8e309653b4d6a39ad941e44f1/viewer/packages/camera-manager/src/Flexible/FlexibleControlsOptions.ts#L92)
 
 ***
 
@@ -564,7 +564,7 @@
 
 #### Defined in
 
-[packages/camera-manager/src/Flexible/FlexibleControlsOptions.ts:70](https://github.com/cognitedata/reveal/blob/3aaed3491dba3f4ba9ecd87f495d35383cc73a1d/viewer/packages/camera-manager/src/Flexible/FlexibleControlsOptions.ts#L70)
+[packages/camera-manager/src/Flexible/FlexibleControlsOptions.ts:70](https://github.com/cognitedata/reveal/blob/2acd9d17229d2bc8e309653b4d6a39ad941e44f1/viewer/packages/camera-manager/src/Flexible/FlexibleControlsOptions.ts#L70)
 
 ***
 
@@ -576,7 +576,7 @@
 
 #### Defined in
 
-[packages/camera-manager/src/Flexible/FlexibleControlsOptions.ts:65](https://github.com/cognitedata/reveal/blob/3aaed3491dba3f4ba9ecd87f495d35383cc73a1d/viewer/packages/camera-manager/src/Flexible/FlexibleControlsOptions.ts#L65)
+[packages/camera-manager/src/Flexible/FlexibleControlsOptions.ts:65](https://github.com/cognitedata/reveal/blob/2acd9d17229d2bc8e309653b4d6a39ad941e44f1/viewer/packages/camera-manager/src/Flexible/FlexibleControlsOptions.ts#L65)
 
 ## Accessors
 
@@ -592,7 +592,7 @@
 
 #### Defined in
 
-[packages/camera-manager/src/Flexible/FlexibleControlsOptions.ts:101](https://github.com/cognitedata/reveal/blob/3aaed3491dba3f4ba9ecd87f495d35383cc73a1d/viewer/packages/camera-manager/src/Flexible/FlexibleControlsOptions.ts#L101)
+[packages/camera-manager/src/Flexible/FlexibleControlsOptions.ts:101](https://github.com/cognitedata/reveal/blob/2acd9d17229d2bc8e309653b4d6a39ad941e44f1/viewer/packages/camera-manager/src/Flexible/FlexibleControlsOptions.ts#L101)
 
 ***
 
@@ -608,7 +608,7 @@
 
 #### Defined in
 
-[packages/camera-manager/src/Flexible/FlexibleControlsOptions.ts:110](https://github.com/cognitedata/reveal/blob/3aaed3491dba3f4ba9ecd87f495d35383cc73a1d/viewer/packages/camera-manager/src/Flexible/FlexibleControlsOptions.ts#L110)
+[packages/camera-manager/src/Flexible/FlexibleControlsOptions.ts:110](https://github.com/cognitedata/reveal/blob/2acd9d17229d2bc8e309653b4d6a39ad941e44f1/viewer/packages/camera-manager/src/Flexible/FlexibleControlsOptions.ts#L110)
 
 ## Methods
 
@@ -628,7 +628,7 @@
 
 #### Defined in
 
-[packages/camera-manager/src/Flexible/FlexibleControlsOptions.ts:121](https://github.com/cognitedata/reveal/blob/3aaed3491dba3f4ba9ecd87f495d35383cc73a1d/viewer/packages/camera-manager/src/Flexible/FlexibleControlsOptions.ts#L121)
+[packages/camera-manager/src/Flexible/FlexibleControlsOptions.ts:121](https://github.com/cognitedata/reveal/blob/2acd9d17229d2bc8e309653b4d6a39ad941e44f1/viewer/packages/camera-manager/src/Flexible/FlexibleControlsOptions.ts#L121)
 
 ***
 
@@ -648,7 +648,7 @@
 
 #### Defined in
 
-[packages/camera-manager/src/Flexible/FlexibleControlsOptions.ts:136](https://github.com/cognitedata/reveal/blob/3aaed3491dba3f4ba9ecd87f495d35383cc73a1d/viewer/packages/camera-manager/src/Flexible/FlexibleControlsOptions.ts#L136)
+[packages/camera-manager/src/Flexible/FlexibleControlsOptions.ts:136](https://github.com/cognitedata/reveal/blob/2acd9d17229d2bc8e309653b4d6a39ad941e44f1/viewer/packages/camera-manager/src/Flexible/FlexibleControlsOptions.ts#L136)
 
 ***
 
@@ -668,7 +668,7 @@
 
 #### Defined in
 
-[packages/camera-manager/src/Flexible/FlexibleControlsOptions.ts:132](https://github.com/cognitedata/reveal/blob/3aaed3491dba3f4ba9ecd87f495d35383cc73a1d/viewer/packages/camera-manager/src/Flexible/FlexibleControlsOptions.ts#L132)
+[packages/camera-manager/src/Flexible/FlexibleControlsOptions.ts:132](https://github.com/cognitedata/reveal/blob/2acd9d17229d2bc8e309653b4d6a39ad941e44f1/viewer/packages/camera-manager/src/Flexible/FlexibleControlsOptions.ts#L132)
 
 ***
 
@@ -688,7 +688,7 @@
 
 #### Defined in
 
-[packages/camera-manager/src/Flexible/FlexibleControlsOptions.ts:140](https://github.com/cognitedata/reveal/blob/3aaed3491dba3f4ba9ecd87f495d35383cc73a1d/viewer/packages/camera-manager/src/Flexible/FlexibleControlsOptions.ts#L140)
+[packages/camera-manager/src/Flexible/FlexibleControlsOptions.ts:140](https://github.com/cognitedata/reveal/blob/2acd9d17229d2bc8e309653b4d6a39ad941e44f1/viewer/packages/camera-manager/src/Flexible/FlexibleControlsOptions.ts#L140)
 
 ***
 
@@ -708,4 +708,4 @@
 
 #### Defined in
 
-[packages/camera-manager/src/Flexible/FlexibleControlsOptions.ts:144](https://github.com/cognitedata/reveal/blob/3aaed3491dba3f4ba9ecd87f495d35383cc73a1d/viewer/packages/camera-manager/src/Flexible/FlexibleControlsOptions.ts#L144)
+[packages/camera-manager/src/Flexible/FlexibleControlsOptions.ts:144](https://github.com/cognitedata/reveal/blob/2acd9d17229d2bc8e309653b4d6a39ad941e44f1/viewer/packages/camera-manager/src/Flexible/FlexibleControlsOptions.ts#L144)

@@ -26,4 +26,4 @@ A value of e.g. 0.25 will approximately divide the number of pixels rendered on 
 
 ## Defined in
 
-[packages/api/src/public/migration/types.ts:263](https://github.com/cognitedata/reveal/blob/3aaed3491dba3f4ba9ecd87f495d35383cc73a1d/viewer/packages/api/src/public/migration/types.ts#L263)
+[packages/api/src/public/migration/types.ts:263](https://github.com/cognitedata/reveal/blob/2acd9d17229d2bc8e309653b4d6a39ad941e44f1/viewer/packages/api/src/public/migration/types.ts#L263)

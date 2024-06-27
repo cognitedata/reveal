@@ -48,7 +48,7 @@ The ratio of the distance from camera to center of box and radius of the box.
 
 #### Defined in
 
-[packages/camera-manager/src/CameraManagerHelper.ts:111](https://github.com/cognitedata/reveal/blob/3aaed3491dba3f4ba9ecd87f495d35383cc73a1d/viewer/packages/camera-manager/src/CameraManagerHelper.ts#L111)
+[packages/camera-manager/src/CameraManagerHelper.ts:111](https://github.com/cognitedata/reveal/blob/2acd9d17229d2bc8e309653b4d6a39ad941e44f1/viewer/packages/camera-manager/src/CameraManagerHelper.ts#L111)
 
 ***
 
@@ -76,7 +76,7 @@ New camera rotationg
 
 #### Defined in
 
-[packages/camera-manager/src/CameraManagerHelper.ts:70](https://github.com/cognitedata/reveal/blob/3aaed3491dba3f4ba9ecd87f495d35383cc73a1d/viewer/packages/camera-manager/src/CameraManagerHelper.ts#L70)
+[packages/camera-manager/src/CameraManagerHelper.ts:70](https://github.com/cognitedata/reveal/blob/2acd9d17229d2bc8e309653b4d6a39ad941e44f1/viewer/packages/camera-manager/src/CameraManagerHelper.ts#L70)
 
 ***
 
@@ -110,7 +110,7 @@ New camera position.
 
 #### Defined in
 
-[packages/camera-manager/src/CameraManagerHelper.ts:43](https://github.com/cognitedata/reveal/blob/3aaed3491dba3f4ba9ecd87f495d35383cc73a1d/viewer/packages/camera-manager/src/CameraManagerHelper.ts#L43)
+[packages/camera-manager/src/CameraManagerHelper.ts:43](https://github.com/cognitedata/reveal/blob/2acd9d17229d2bc8e309653b4d6a39ad941e44f1/viewer/packages/camera-manager/src/CameraManagerHelper.ts#L43)
 
 ***
 
@@ -136,4 +136,4 @@ Bounding box of all objects on the scene.
 
 #### Defined in
 
-[packages/camera-manager/src/CameraManagerHelper.ts:80](https://github.com/cognitedata/reveal/blob/3aaed3491dba3f4ba9ecd87f495d35383cc73a1d/viewer/packages/camera-manager/src/CameraManagerHelper.ts#L80)
+[packages/camera-manager/src/CameraManagerHelper.ts:80](https://github.com/cognitedata/reveal/blob/2acd9d17229d2bc8e309653b4d6a39ad941e44f1/viewer/packages/camera-manager/src/CameraManagerHelper.ts#L80)

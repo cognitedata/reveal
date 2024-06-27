@@ -18,7 +18,7 @@ for models.
 
 #### Defined in
 
-[packages/data-source/src/DataSource.ts:28](https://github.com/cognitedata/reveal/blob/3aaed3491dba3f4ba9ecd87f495d35383cc73a1d/viewer/packages/data-source/src/DataSource.ts#L28)
+[packages/data-source/src/DataSource.ts:28](https://github.com/cognitedata/reveal/blob/2acd9d17229d2bc8e309653b4d6a39ad941e44f1/viewer/packages/data-source/src/DataSource.ts#L28)
 
 ***
 
@@ -34,7 +34,7 @@ Gets a metadata provider for models.
 
 #### Defined in
 
-[packages/data-source/src/DataSource.ts:22](https://github.com/cognitedata/reveal/blob/3aaed3491dba3f4ba9ecd87f495d35383cc73a1d/viewer/packages/data-source/src/DataSource.ts#L22)
+[packages/data-source/src/DataSource.ts:22](https://github.com/cognitedata/reveal/blob/2acd9d17229d2bc8e309653b4d6a39ad941e44f1/viewer/packages/data-source/src/DataSource.ts#L22)
 
 ***
 
@@ -51,4 +51,4 @@ models.
 
 #### Defined in
 
-[packages/data-source/src/DataSource.ts:17](https://github.com/cognitedata/reveal/blob/3aaed3491dba3f4ba9ecd87f495d35383cc73a1d/viewer/packages/data-source/src/DataSource.ts#L17)
+[packages/data-source/src/DataSource.ts:17](https://github.com/cognitedata/reveal/blob/2acd9d17229d2bc8e309653b4d6a39ad941e44f1/viewer/packages/data-source/src/DataSource.ts#L17)

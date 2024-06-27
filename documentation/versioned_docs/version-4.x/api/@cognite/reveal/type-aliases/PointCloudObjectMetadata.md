@@ -36,4 +36,4 @@ The bounding box of this annotation
 
 ## Defined in
 
-[packages/data-providers/src/pointcloud-stylable-object-providers/types.ts:21](https://github.com/cognitedata/reveal/blob/3aaed3491dba3f4ba9ecd87f495d35383cc73a1d/viewer/packages/data-providers/src/pointcloud-stylable-object-providers/types.ts#L21)
+[packages/data-providers/src/pointcloud-stylable-object-providers/types.ts:21](https://github.com/cognitedata/reveal/blob/2acd9d17229d2bc8e309653b4d6a39ad941e44f1/viewer/packages/data-providers/src/pointcloud-stylable-object-providers/types.ts#L21)

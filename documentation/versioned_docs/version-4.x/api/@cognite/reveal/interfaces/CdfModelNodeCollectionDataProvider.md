@@ -12,7 +12,7 @@ Model and revision IDs for the model
 
 #### Defined in
 
-[packages/cad-styling/src/CdfModelNodeCollectionDataProvider.ts:31](https://github.com/cognitedata/reveal/blob/3aaed3491dba3f4ba9ecd87f495d35383cc73a1d/viewer/packages/cad-styling/src/CdfModelNodeCollectionDataProvider.ts#L31)
+[packages/cad-styling/src/CdfModelNodeCollectionDataProvider.ts:31](https://github.com/cognitedata/reveal/blob/2acd9d17229d2bc8e309653b4d6a39ad941e44f1/viewer/packages/cad-styling/src/CdfModelNodeCollectionDataProvider.ts#L31)
 
 ***
 
@@ -24,7 +24,7 @@ Total count of nodes in the model
 
 #### Defined in
 
-[packages/cad-styling/src/CdfModelNodeCollectionDataProvider.ts:26](https://github.com/cognitedata/reveal/blob/3aaed3491dba3f4ba9ecd87f495d35383cc73a1d/viewer/packages/cad-styling/src/CdfModelNodeCollectionDataProvider.ts#L26)
+[packages/cad-styling/src/CdfModelNodeCollectionDataProvider.ts:26](https://github.com/cognitedata/reveal/blob/2acd9d17229d2bc8e309653b4d6a39ad941e44f1/viewer/packages/cad-styling/src/CdfModelNodeCollectionDataProvider.ts#L26)
 
 ***
 
@@ -34,7 +34,7 @@ Total count of nodes in the model
 
 #### Defined in
 
-[packages/cad-styling/src/CdfModelNodeCollectionDataProvider.ts:32](https://github.com/cognitedata/reveal/blob/3aaed3491dba3f4ba9ecd87f495d35383cc73a1d/viewer/packages/cad-styling/src/CdfModelNodeCollectionDataProvider.ts#L32)
+[packages/cad-styling/src/CdfModelNodeCollectionDataProvider.ts:32](https://github.com/cognitedata/reveal/blob/2acd9d17229d2bc8e309653b4d6a39ad941e44f1/viewer/packages/cad-styling/src/CdfModelNodeCollectionDataProvider.ts#L32)
 
 ## Methods
 
@@ -56,7 +56,7 @@ is thus `model.getCdfToDefaultModelTransformation() * model.getModelTransformati
 
 #### Defined in
 
-[packages/cad-styling/src/CdfModelNodeCollectionDataProvider.ts:21](https://github.com/cognitedata/reveal/blob/3aaed3491dba3f4ba9ecd87f495d35383cc73a1d/viewer/packages/cad-styling/src/CdfModelNodeCollectionDataProvider.ts#L21)
+[packages/cad-styling/src/CdfModelNodeCollectionDataProvider.ts:21](https://github.com/cognitedata/reveal/blob/2acd9d17229d2bc8e309653b4d6a39ad941e44f1/viewer/packages/cad-styling/src/CdfModelNodeCollectionDataProvider.ts#L21)
 
 ***
 
@@ -76,4 +76,4 @@ Gets the transformation of the model in ThreeJS space
 
 #### Defined in
 
-[packages/cad-styling/src/CdfModelNodeCollectionDataProvider.ts:14](https://github.com/cognitedata/reveal/blob/3aaed3491dba3f4ba9ecd87f495d35383cc73a1d/viewer/packages/cad-styling/src/CdfModelNodeCollectionDataProvider.ts#L14)
+[packages/cad-styling/src/CdfModelNodeCollectionDataProvider.ts:14](https://github.com/cognitedata/reveal/blob/2acd9d17229d2bc8e309653b4d6a39ad941e44f1/viewer/packages/cad-styling/src/CdfModelNodeCollectionDataProvider.ts#L14)

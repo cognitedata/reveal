@@ -30,7 +30,7 @@ Class for axis gizmo like the one in Blender
 
 #### Defined in
 
-[packages/tools/src/AxisGizmo/AxisGizmoTool.ts:48](https://github.com/cognitedata/reveal/blob/3aaed3491dba3f4ba9ecd87f495d35383cc73a1d/viewer/packages/tools/src/AxisGizmo/AxisGizmoTool.ts#L48)
+[packages/tools/src/AxisGizmo/AxisGizmoTool.ts:48](https://github.com/cognitedata/reveal/blob/2acd9d17229d2bc8e309653b4d6a39ad941e44f1/viewer/packages/tools/src/AxisGizmo/AxisGizmoTool.ts#L48)
 
 ## Accessors
 
@@ -46,7 +46,7 @@ Class for axis gizmo like the one in Blender
 
 #### Defined in
 
-[packages/tools/src/AxisGizmo/AxisGizmoTool.ts:100](https://github.com/cognitedata/reveal/blob/3aaed3491dba3f4ba9ecd87f495d35383cc73a1d/viewer/packages/tools/src/AxisGizmo/AxisGizmoTool.ts#L100)
+[packages/tools/src/AxisGizmo/AxisGizmoTool.ts:100](https://github.com/cognitedata/reveal/blob/2acd9d17229d2bc8e309653b4d6a39ad941e44f1/viewer/packages/tools/src/AxisGizmo/AxisGizmoTool.ts#L100)
 
 ## Methods
 
@@ -73,7 +73,7 @@ in the AxisGizmoOptions
 
 #### Defined in
 
-[packages/tools/src/AxisGizmo/AxisGizmoTool.ts:84](https://github.com/cognitedata/reveal/blob/3aaed3491dba3f4ba9ecd87f495d35383cc73a1d/viewer/packages/tools/src/AxisGizmo/AxisGizmoTool.ts#L84)
+[packages/tools/src/AxisGizmo/AxisGizmoTool.ts:84](https://github.com/cognitedata/reveal/blob/2acd9d17229d2bc8e309653b4d6a39ad941e44f1/viewer/packages/tools/src/AxisGizmo/AxisGizmoTool.ts#L84)
 
 ***
 
@@ -93,7 +93,7 @@ in the AxisGizmoOptions
 
 #### Defined in
 
-[packages/tools/src/AxisGizmo/AxisGizmoTool.ts:60](https://github.com/cognitedata/reveal/blob/3aaed3491dba3f4ba9ecd87f495d35383cc73a1d/viewer/packages/tools/src/AxisGizmo/AxisGizmoTool.ts#L60)
+[packages/tools/src/AxisGizmo/AxisGizmoTool.ts:60](https://github.com/cognitedata/reveal/blob/2acd9d17229d2bc8e309653b4d6a39ad941e44f1/viewer/packages/tools/src/AxisGizmo/AxisGizmoTool.ts#L60)
 
 ***
 
@@ -121,4 +121,4 @@ Unregisters an event handler for the 'disposed'-event.
 
 #### Defined in
 
-[packages/tools/src/Cognite3DViewerToolBase.ts:38](https://github.com/cognitedata/reveal/blob/3aaed3491dba3f4ba9ecd87f495d35383cc73a1d/viewer/packages/tools/src/Cognite3DViewerToolBase.ts#L38)
+[packages/tools/src/Cognite3DViewerToolBase.ts:38](https://github.com/cognitedata/reveal/blob/2acd9d17229d2bc8e309653b4d6a39ad941e44f1/viewer/packages/tools/src/Cognite3DViewerToolBase.ts#L38)

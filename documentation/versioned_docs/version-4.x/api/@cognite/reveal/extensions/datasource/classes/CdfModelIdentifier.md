@@ -25,7 +25,7 @@ and a format.
 
 #### Defined in
 
-[packages/data-providers/src/model-identifiers/CdfModelIdentifier.ts:16](https://github.com/cognitedata/reveal/blob/3aaed3491dba3f4ba9ecd87f495d35383cc73a1d/viewer/packages/data-providers/src/model-identifiers/CdfModelIdentifier.ts#L16)
+[packages/data-providers/src/model-identifiers/CdfModelIdentifier.ts:16](https://github.com/cognitedata/reveal/blob/2acd9d17229d2bc8e309653b4d6a39ad941e44f1/viewer/packages/data-providers/src/model-identifiers/CdfModelIdentifier.ts#L16)
 
 ## Properties
 
@@ -35,7 +35,7 @@ and a format.
 
 #### Defined in
 
-[packages/data-providers/src/model-identifiers/CdfModelIdentifier.ts:13](https://github.com/cognitedata/reveal/blob/3aaed3491dba3f4ba9ecd87f495d35383cc73a1d/viewer/packages/data-providers/src/model-identifiers/CdfModelIdentifier.ts#L13)
+[packages/data-providers/src/model-identifiers/CdfModelIdentifier.ts:13](https://github.com/cognitedata/reveal/blob/2acd9d17229d2bc8e309653b4d6a39ad941e44f1/viewer/packages/data-providers/src/model-identifiers/CdfModelIdentifier.ts#L13)
 
 ***
 
@@ -51,7 +51,7 @@ Unique ID of the model.
 
 #### Defined in
 
-[packages/data-providers/src/model-identifiers/CdfModelIdentifier.ts:11](https://github.com/cognitedata/reveal/blob/3aaed3491dba3f4ba9ecd87f495d35383cc73a1d/viewer/packages/data-providers/src/model-identifiers/CdfModelIdentifier.ts#L11)
+[packages/data-providers/src/model-identifiers/CdfModelIdentifier.ts:11](https://github.com/cognitedata/reveal/blob/2acd9d17229d2bc8e309653b4d6a39ad941e44f1/viewer/packages/data-providers/src/model-identifiers/CdfModelIdentifier.ts#L11)
 
 ***
 
@@ -61,7 +61,7 @@ Unique ID of the model.
 
 #### Defined in
 
-[packages/data-providers/src/model-identifiers/CdfModelIdentifier.ts:14](https://github.com/cognitedata/reveal/blob/3aaed3491dba3f4ba9ecd87f495d35383cc73a1d/viewer/packages/data-providers/src/model-identifiers/CdfModelIdentifier.ts#L14)
+[packages/data-providers/src/model-identifiers/CdfModelIdentifier.ts:14](https://github.com/cognitedata/reveal/blob/2acd9d17229d2bc8e309653b4d6a39ad941e44f1/viewer/packages/data-providers/src/model-identifiers/CdfModelIdentifier.ts#L14)
 
 ## Methods
 
@@ -75,4 +75,4 @@ Unique ID of the model.
 
 #### Defined in
 
-[packages/data-providers/src/model-identifiers/CdfModelIdentifier.ts:22](https://github.com/cognitedata/reveal/blob/3aaed3491dba3f4ba9ecd87f495d35383cc73a1d/viewer/packages/data-providers/src/model-identifiers/CdfModelIdentifier.ts#L22)
+[packages/data-providers/src/model-identifiers/CdfModelIdentifier.ts:22](https://github.com/cognitedata/reveal/blob/2acd9d17229d2bc8e309653b4d6a39ad941e44f1/viewer/packages/data-providers/src/model-identifiers/CdfModelIdentifier.ts#L22)

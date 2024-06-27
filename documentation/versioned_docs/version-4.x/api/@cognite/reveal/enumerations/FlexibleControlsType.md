@@ -12,7 +12,7 @@
 
 #### Defined in
 
-[packages/camera-manager/src/Flexible/FlexibleControlsType.ts:10](https://github.com/cognitedata/reveal/blob/3aaed3491dba3f4ba9ecd87f495d35383cc73a1d/viewer/packages/camera-manager/src/Flexible/FlexibleControlsType.ts#L10)
+[packages/camera-manager/src/Flexible/FlexibleControlsType.ts:10](https://github.com/cognitedata/reveal/blob/2acd9d17229d2bc8e309653b4d6a39ad941e44f1/viewer/packages/camera-manager/src/Flexible/FlexibleControlsType.ts#L10)
 
 ***
 
@@ -24,7 +24,7 @@
 
 #### Defined in
 
-[packages/camera-manager/src/Flexible/FlexibleControlsType.ts:11](https://github.com/cognitedata/reveal/blob/3aaed3491dba3f4ba9ecd87f495d35383cc73a1d/viewer/packages/camera-manager/src/Flexible/FlexibleControlsType.ts#L11)
+[packages/camera-manager/src/Flexible/FlexibleControlsType.ts:11](https://github.com/cognitedata/reveal/blob/2acd9d17229d2bc8e309653b4d6a39ad941e44f1/viewer/packages/camera-manager/src/Flexible/FlexibleControlsType.ts#L11)
 
 ***
 
@@ -36,4 +36,4 @@
 
 #### Defined in
 
-[packages/camera-manager/src/Flexible/FlexibleControlsType.ts:9](https://github.com/cognitedata/reveal/blob/3aaed3491dba3f4ba9ecd87f495d35383cc73a1d/viewer/packages/camera-manager/src/Flexible/FlexibleControlsType.ts#L9)
+[packages/camera-manager/src/Flexible/FlexibleControlsType.ts:9](https://github.com/cognitedata/reveal/blob/2acd9d17229d2bc8e309653b4d6a39ad941e44f1/viewer/packages/camera-manager/src/Flexible/FlexibleControlsType.ts#L9)

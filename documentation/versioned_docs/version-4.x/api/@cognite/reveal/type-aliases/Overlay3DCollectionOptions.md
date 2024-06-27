@@ -32,4 +32,4 @@ A texture mask for marking what pixels are transparent in the supplied overlayTe
 
 ## Defined in
 
-[packages/3d-overlays/src/Overlay3DCollection.ts:17](https://github.com/cognitedata/reveal/blob/3aaed3491dba3f4ba9ecd87f495d35383cc73a1d/viewer/packages/3d-overlays/src/Overlay3DCollection.ts#L17)
+[packages/3d-overlays/src/Overlay3DCollection.ts:17](https://github.com/cognitedata/reveal/blob/2acd9d17229d2bc8e309653b4d6a39ad941e44f1/viewer/packages/3d-overlays/src/Overlay3DCollection.ts#L17)

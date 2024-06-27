@@ -25,4 +25,4 @@ doesn't match this directly.
 
 ## Defined in
 
-[packages/cad-geometry-loaders/src/CadModelBudget.ts:10](https://github.com/cognitedata/reveal/blob/3aaed3491dba3f4ba9ecd87f495d35383cc73a1d/viewer/packages/cad-geometry-loaders/src/CadModelBudget.ts#L10)
+[packages/cad-geometry-loaders/src/CadModelBudget.ts:10](https://github.com/cognitedata/reveal/blob/2acd9d17229d2bc8e309653b4d6a39ad941e44f1/viewer/packages/cad-geometry-loaders/src/CadModelBudget.ts#L10)

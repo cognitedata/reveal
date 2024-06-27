@@ -29,7 +29,7 @@ Constructor
 
 #### Defined in
 
-[packages/utilities/src/customObject/CustomObject.ts:26](https://github.com/cognitedata/reveal/blob/3aaed3491dba3f4ba9ecd87f495d35383cc73a1d/viewer/packages/utilities/src/customObject/CustomObject.ts#L26)
+[packages/utilities/src/customObject/CustomObject.ts:26](https://github.com/cognitedata/reveal/blob/2acd9d17229d2bc8e309653b4d6a39ad941e44f1/viewer/packages/utilities/src/customObject/CustomObject.ts#L26)
 
 ## Accessors
 
@@ -60,7 +60,7 @@ Default is true.
 
 #### Defined in
 
-[packages/utilities/src/customObject/CustomObject.ts:43](https://github.com/cognitedata/reveal/blob/3aaed3491dba3f4ba9ecd87f495d35383cc73a1d/viewer/packages/utilities/src/customObject/CustomObject.ts#L43)
+[packages/utilities/src/customObject/CustomObject.ts:43](https://github.com/cognitedata/reveal/blob/2acd9d17229d2bc8e309653b4d6a39ad941e44f1/viewer/packages/utilities/src/customObject/CustomObject.ts#L43)
 
 ***
 
@@ -82,7 +82,7 @@ Get the Object3D
 
 #### Defined in
 
-[packages/utilities/src/customObject/CustomObject.ts:34](https://github.com/cognitedata/reveal/blob/3aaed3491dba3f4ba9ecd87f495d35383cc73a1d/viewer/packages/utilities/src/customObject/CustomObject.ts#L34)
+[packages/utilities/src/customObject/CustomObject.ts:34](https://github.com/cognitedata/reveal/blob/2acd9d17229d2bc8e309653b4d6a39ad941e44f1/viewer/packages/utilities/src/customObject/CustomObject.ts#L34)
 
 ***
 
@@ -113,7 +113,7 @@ Default is false.
 
 #### Defined in
 
-[packages/utilities/src/customObject/CustomObject.ts:56](https://github.com/cognitedata/reveal/blob/3aaed3491dba3f4ba9ecd87f495d35383cc73a1d/viewer/packages/utilities/src/customObject/CustomObject.ts#L56)
+[packages/utilities/src/customObject/CustomObject.ts:56](https://github.com/cognitedata/reveal/blob/2acd9d17229d2bc8e309653b4d6a39ad941e44f1/viewer/packages/utilities/src/customObject/CustomObject.ts#L56)
 
 ***
 
@@ -144,7 +144,7 @@ Default is false.
 
 #### Defined in
 
-[packages/utilities/src/customObject/CustomObject.ts:69](https://github.com/cognitedata/reveal/blob/3aaed3491dba3f4ba9ecd87f495d35383cc73a1d/viewer/packages/utilities/src/customObject/CustomObject.ts#L69)
+[packages/utilities/src/customObject/CustomObject.ts:69](https://github.com/cognitedata/reveal/blob/2acd9d17229d2bc8e309653b4d6a39ad941e44f1/viewer/packages/utilities/src/customObject/CustomObject.ts#L69)
 
 ***
 
@@ -175,7 +175,7 @@ Default is true.
 
 #### Defined in
 
-[packages/utilities/src/customObject/CustomObject.ts:82](https://github.com/cognitedata/reveal/blob/3aaed3491dba3f4ba9ecd87f495d35383cc73a1d/viewer/packages/utilities/src/customObject/CustomObject.ts#L82)
+[packages/utilities/src/customObject/CustomObject.ts:82](https://github.com/cognitedata/reveal/blob/2acd9d17229d2bc8e309653b4d6a39ad941e44f1/viewer/packages/utilities/src/customObject/CustomObject.ts#L82)
 
 ## Methods
 
@@ -201,7 +201,7 @@ This method is called before rendering of the custom object
 
 #### Defined in
 
-[packages/utilities/src/customObject/CustomObject.ts:139](https://github.com/cognitedata/reveal/blob/3aaed3491dba3f4ba9ecd87f495d35383cc73a1d/viewer/packages/utilities/src/customObject/CustomObject.ts#L139)
+[packages/utilities/src/customObject/CustomObject.ts:139](https://github.com/cognitedata/reveal/blob/2acd9d17229d2bc8e309653b4d6a39ad941e44f1/viewer/packages/utilities/src/customObject/CustomObject.ts#L139)
 
 ***
 
@@ -227,7 +227,7 @@ Get the bounding box from the object
 
 #### Defined in
 
-[packages/utilities/src/customObject/CustomObject.ts:94](https://github.com/cognitedata/reveal/blob/3aaed3491dba3f4ba9ecd87f495d35383cc73a1d/viewer/packages/utilities/src/customObject/CustomObject.ts#L94)
+[packages/utilities/src/customObject/CustomObject.ts:94](https://github.com/cognitedata/reveal/blob/2acd9d17229d2bc8e309653b4d6a39ad941e44f1/viewer/packages/utilities/src/customObject/CustomObject.ts#L94)
 
 ***
 
@@ -256,4 +256,4 @@ This function can be overridden to provide custom intersection logic.
 
 #### Defined in
 
-[packages/utilities/src/customObject/CustomObject.ts:104](https://github.com/cognitedata/reveal/blob/3aaed3491dba3f4ba9ecd87f495d35383cc73a1d/viewer/packages/utilities/src/customObject/CustomObject.ts#L104)
+[packages/utilities/src/customObject/CustomObject.ts:104](https://github.com/cognitedata/reveal/blob/2acd9d17229d2bc8e309653b4d6a39ad941e44f1/viewer/packages/utilities/src/customObject/CustomObject.ts#L104)

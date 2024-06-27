@@ -22,7 +22,7 @@ Default is true.
 
 #### Defined in
 
-[packages/utilities/src/customObject/ICustomObject.ts:26](https://github.com/cognitedata/reveal/blob/3aaed3491dba3f4ba9ecd87f495d35383cc73a1d/viewer/packages/utilities/src/customObject/ICustomObject.ts#L26)
+[packages/utilities/src/customObject/ICustomObject.ts:26](https://github.com/cognitedata/reveal/blob/2acd9d17229d2bc8e309653b4d6a39ad941e44f1/viewer/packages/utilities/src/customObject/ICustomObject.ts#L26)
 
 ***
 
@@ -40,7 +40,7 @@ Get the Object3D
 
 #### Defined in
 
-[packages/utilities/src/customObject/ICustomObject.ts:19](https://github.com/cognitedata/reveal/blob/3aaed3491dba3f4ba9ecd87f495d35383cc73a1d/viewer/packages/utilities/src/customObject/ICustomObject.ts#L19)
+[packages/utilities/src/customObject/ICustomObject.ts:19](https://github.com/cognitedata/reveal/blob/2acd9d17229d2bc8e309653b4d6a39ad941e44f1/viewer/packages/utilities/src/customObject/ICustomObject.ts#L19)
 
 ***
 
@@ -59,7 +59,7 @@ Default is false.
 
 #### Defined in
 
-[packages/utilities/src/customObject/ICustomObject.ts:33](https://github.com/cognitedata/reveal/blob/3aaed3491dba3f4ba9ecd87f495d35383cc73a1d/viewer/packages/utilities/src/customObject/ICustomObject.ts#L33)
+[packages/utilities/src/customObject/ICustomObject.ts:33](https://github.com/cognitedata/reveal/blob/2acd9d17229d2bc8e309653b4d6a39ad941e44f1/viewer/packages/utilities/src/customObject/ICustomObject.ts#L33)
 
 ***
 
@@ -78,7 +78,7 @@ Default is false.
 
 #### Defined in
 
-[packages/utilities/src/customObject/ICustomObject.ts:40](https://github.com/cognitedata/reveal/blob/3aaed3491dba3f4ba9ecd87f495d35383cc73a1d/viewer/packages/utilities/src/customObject/ICustomObject.ts#L40)
+[packages/utilities/src/customObject/ICustomObject.ts:40](https://github.com/cognitedata/reveal/blob/2acd9d17229d2bc8e309653b4d6a39ad941e44f1/viewer/packages/utilities/src/customObject/ICustomObject.ts#L40)
 
 ***
 
@@ -97,7 +97,7 @@ Default is true.
 
 #### Defined in
 
-[packages/utilities/src/customObject/ICustomObject.ts:47](https://github.com/cognitedata/reveal/blob/3aaed3491dba3f4ba9ecd87f495d35383cc73a1d/viewer/packages/utilities/src/customObject/ICustomObject.ts#L47)
+[packages/utilities/src/customObject/ICustomObject.ts:47](https://github.com/cognitedata/reveal/blob/2acd9d17229d2bc8e309653b4d6a39ad941e44f1/viewer/packages/utilities/src/customObject/ICustomObject.ts#L47)
 
 ## Methods
 
@@ -119,7 +119,7 @@ This method is called before rendering of the custom object
 
 #### Defined in
 
-[packages/utilities/src/customObject/ICustomObject.ts:69](https://github.com/cognitedata/reveal/blob/3aaed3491dba3f4ba9ecd87f495d35383cc73a1d/viewer/packages/utilities/src/customObject/ICustomObject.ts#L69)
+[packages/utilities/src/customObject/ICustomObject.ts:69](https://github.com/cognitedata/reveal/blob/2acd9d17229d2bc8e309653b4d6a39ad941e44f1/viewer/packages/utilities/src/customObject/ICustomObject.ts#L69)
 
 ***
 
@@ -141,7 +141,7 @@ Get the bounding box from the object
 
 #### Defined in
 
-[packages/utilities/src/customObject/ICustomObject.ts:53](https://github.com/cognitedata/reveal/blob/3aaed3491dba3f4ba9ecd87f495d35383cc73a1d/viewer/packages/utilities/src/customObject/ICustomObject.ts#L53)
+[packages/utilities/src/customObject/ICustomObject.ts:53](https://github.com/cognitedata/reveal/blob/2acd9d17229d2bc8e309653b4d6a39ad941e44f1/viewer/packages/utilities/src/customObject/ICustomObject.ts#L53)
 
 ***
 
@@ -166,4 +166,4 @@ This function can be overridden to provide custom intersection logic.
 
 #### Defined in
 
-[packages/utilities/src/customObject/ICustomObject.ts:60](https://github.com/cognitedata/reveal/blob/3aaed3491dba3f4ba9ecd87f495d35383cc73a1d/viewer/packages/utilities/src/customObject/ICustomObject.ts#L60)
+[packages/utilities/src/customObject/ICustomObject.ts:60](https://github.com/cognitedata/reveal/blob/2acd9d17229d2bc8e309653b4d6a39ad941e44f1/viewer/packages/utilities/src/customObject/ICustomObject.ts#L60)

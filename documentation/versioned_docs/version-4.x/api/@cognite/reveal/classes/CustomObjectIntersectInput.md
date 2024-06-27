@@ -26,7 +26,7 @@ This class is used as input for intersecting custom objects
 
 #### Defined in
 
-[packages/utilities/src/customObject/CustomObjectIntersectInput.ts:18](https://github.com/cognitedata/reveal/blob/3aaed3491dba3f4ba9ecd87f495d35383cc73a1d/viewer/packages/utilities/src/customObject/CustomObjectIntersectInput.ts#L18)
+[packages/utilities/src/customObject/CustomObjectIntersectInput.ts:18](https://github.com/cognitedata/reveal/blob/2acd9d17229d2bc8e309653b4d6a39ad941e44f1/viewer/packages/utilities/src/customObject/CustomObjectIntersectInput.ts#L18)
 
 ## Properties
 
@@ -38,7 +38,7 @@ This class is used as input for intersecting custom objects
 
 #### Defined in
 
-[packages/utilities/src/customObject/CustomObjectIntersectInput.ts:14](https://github.com/cognitedata/reveal/blob/3aaed3491dba3f4ba9ecd87f495d35383cc73a1d/viewer/packages/utilities/src/customObject/CustomObjectIntersectInput.ts#L14)
+[packages/utilities/src/customObject/CustomObjectIntersectInput.ts:14](https://github.com/cognitedata/reveal/blob/2acd9d17229d2bc8e309653b4d6a39ad941e44f1/viewer/packages/utilities/src/customObject/CustomObjectIntersectInput.ts#L14)
 
 ***
 
@@ -50,7 +50,7 @@ This class is used as input for intersecting custom objects
 
 #### Defined in
 
-[packages/utilities/src/customObject/CustomObjectIntersectInput.ts:15](https://github.com/cognitedata/reveal/blob/3aaed3491dba3f4ba9ecd87f495d35383cc73a1d/viewer/packages/utilities/src/customObject/CustomObjectIntersectInput.ts#L15)
+[packages/utilities/src/customObject/CustomObjectIntersectInput.ts:15](https://github.com/cognitedata/reveal/blob/2acd9d17229d2bc8e309653b4d6a39ad941e44f1/viewer/packages/utilities/src/customObject/CustomObjectIntersectInput.ts#L15)
 
 ***
 
@@ -62,7 +62,7 @@ This class is used as input for intersecting custom objects
 
 #### Defined in
 
-[packages/utilities/src/customObject/CustomObjectIntersectInput.ts:13](https://github.com/cognitedata/reveal/blob/3aaed3491dba3f4ba9ecd87f495d35383cc73a1d/viewer/packages/utilities/src/customObject/CustomObjectIntersectInput.ts#L13)
+[packages/utilities/src/customObject/CustomObjectIntersectInput.ts:13](https://github.com/cognitedata/reveal/blob/2acd9d17229d2bc8e309653b4d6a39ad941e44f1/viewer/packages/utilities/src/customObject/CustomObjectIntersectInput.ts#L13)
 
 ***
 
@@ -74,7 +74,7 @@ This class is used as input for intersecting custom objects
 
 #### Defined in
 
-[packages/utilities/src/customObject/CustomObjectIntersectInput.ts:16](https://github.com/cognitedata/reveal/blob/3aaed3491dba3f4ba9ecd87f495d35383cc73a1d/viewer/packages/utilities/src/customObject/CustomObjectIntersectInput.ts#L16)
+[packages/utilities/src/customObject/CustomObjectIntersectInput.ts:16](https://github.com/cognitedata/reveal/blob/2acd9d17229d2bc8e309653b4d6a39ad941e44f1/viewer/packages/utilities/src/customObject/CustomObjectIntersectInput.ts#L16)
 
 ## Methods
 
@@ -94,4 +94,4 @@ This class is used as input for intersecting custom objects
 
 #### Defined in
 
-[packages/utilities/src/customObject/CustomObjectIntersectInput.ts:25](https://github.com/cognitedata/reveal/blob/3aaed3491dba3f4ba9ecd87f495d35383cc73a1d/viewer/packages/utilities/src/customObject/CustomObjectIntersectInput.ts#L25)
+[packages/utilities/src/customObject/CustomObjectIntersectInput.ts:25](https://github.com/cognitedata/reveal/blob/2acd9d17229d2bc8e309653b4d6a39ad941e44f1/viewer/packages/utilities/src/customObject/CustomObjectIntersectInput.ts#L25)

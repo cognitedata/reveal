@@ -53,7 +53,7 @@ const measurementTool = new MeasurementTool(viewer, {distanceToLabelCallback: (d
 
 #### Defined in
 
-[packages/tools/src/Measurement/MeasurementTool.ts:93](https://github.com/cognitedata/reveal/blob/3aaed3491dba3f4ba9ecd87f495d35383cc73a1d/viewer/packages/tools/src/Measurement/MeasurementTool.ts#L93)
+[packages/tools/src/Measurement/MeasurementTool.ts:93](https://github.com/cognitedata/reveal/blob/2acd9d17229d2bc8e309653b4d6a39ad941e44f1/viewer/packages/tools/src/Measurement/MeasurementTool.ts#L93)
 
 ## Accessors
 
@@ -69,7 +69,7 @@ Returns measurement mode state, is measurement mode started or ended.
 
 #### Defined in
 
-[packages/tools/src/Measurement/MeasurementTool.ts:56](https://github.com/cognitedata/reveal/blob/3aaed3491dba3f4ba9ecd87f495d35383cc73a1d/viewer/packages/tools/src/Measurement/MeasurementTool.ts#L56)
+[packages/tools/src/Measurement/MeasurementTool.ts:56](https://github.com/cognitedata/reveal/blob/2acd9d17229d2bc8e309653b4d6a39ad941e44f1/viewer/packages/tools/src/Measurement/MeasurementTool.ts#L56)
 
 ## Methods
 
@@ -91,7 +91,7 @@ Adds a measurement directly. E.g. to restore a previous state programatically
 
 #### Defined in
 
-[packages/tools/src/Measurement/MeasurementTool.ts:288](https://github.com/cognitedata/reveal/blob/3aaed3491dba3f4ba9ecd87f495d35383cc73a1d/viewer/packages/tools/src/Measurement/MeasurementTool.ts#L288)
+[packages/tools/src/Measurement/MeasurementTool.ts:288](https://github.com/cognitedata/reveal/blob/2acd9d17229d2bc8e309653b4d6a39ad941e44f1/viewer/packages/tools/src/Measurement/MeasurementTool.ts#L288)
 
 ***
 
@@ -111,7 +111,7 @@ Dispose Measurement Tool.
 
 #### Defined in
 
-[packages/tools/src/Measurement/MeasurementTool.ts:396](https://github.com/cognitedata/reveal/blob/3aaed3491dba3f4ba9ecd87f495d35383cc73a1d/viewer/packages/tools/src/Measurement/MeasurementTool.ts#L396)
+[packages/tools/src/Measurement/MeasurementTool.ts:396](https://github.com/cognitedata/reveal/blob/2acd9d17229d2bc8e309653b4d6a39ad941e44f1/viewer/packages/tools/src/Measurement/MeasurementTool.ts#L396)
 
 ***
 
@@ -127,7 +127,7 @@ Enter into point to point measurement mode.
 
 #### Defined in
 
-[packages/tools/src/Measurement/MeasurementTool.ts:237](https://github.com/cognitedata/reveal/blob/3aaed3491dba3f4ba9ecd87f495d35383cc73a1d/viewer/packages/tools/src/Measurement/MeasurementTool.ts#L237)
+[packages/tools/src/Measurement/MeasurementTool.ts:237](https://github.com/cognitedata/reveal/blob/2acd9d17229d2bc8e309653b4d6a39ad941e44f1/viewer/packages/tools/src/Measurement/MeasurementTool.ts#L237)
 
 ***
 
@@ -143,7 +143,7 @@ Exit measurement mode.
 
 #### Defined in
 
-[packages/tools/src/Measurement/MeasurementTool.ts:255](https://github.com/cognitedata/reveal/blob/3aaed3491dba3f4ba9ecd87f495d35383cc73a1d/viewer/packages/tools/src/Measurement/MeasurementTool.ts#L255)
+[packages/tools/src/Measurement/MeasurementTool.ts:255](https://github.com/cognitedata/reveal/blob/2acd9d17229d2bc8e309653b4d6a39ad941e44f1/viewer/packages/tools/src/Measurement/MeasurementTool.ts#L255)
 
 ***
 
@@ -161,7 +161,7 @@ Array of Measurements containing Id, start point, end point & measured distance.
 
 #### Defined in
 
-[packages/tools/src/Measurement/MeasurementTool.ts:375](https://github.com/cognitedata/reveal/blob/3aaed3491dba3f4ba9ecd87f495d35383cc73a1d/viewer/packages/tools/src/Measurement/MeasurementTool.ts#L375)
+[packages/tools/src/Measurement/MeasurementTool.ts:375](https://github.com/cognitedata/reveal/blob/2acd9d17229d2bc8e309653b4d6a39ad941e44f1/viewer/packages/tools/src/Measurement/MeasurementTool.ts#L375)
 
 ***
 
@@ -203,7 +203,7 @@ measurementTool.off('disposed', onMeasurementDispose);
 
 ##### Defined in
 
-[packages/tools/src/Measurement/MeasurementTool.ts:181](https://github.com/cognitedata/reveal/blob/3aaed3491dba3f4ba9ecd87f495d35383cc73a1d/viewer/packages/tools/src/Measurement/MeasurementTool.ts#L181)
+[packages/tools/src/Measurement/MeasurementTool.ts:181](https://github.com/cognitedata/reveal/blob/2acd9d17229d2bc8e309653b4d6a39ad941e44f1/viewer/packages/tools/src/Measurement/MeasurementTool.ts#L181)
 
 #### off(event, callback)
 
@@ -231,7 +231,7 @@ measurementTool.off('added', onMeasurementAdded);
 
 ##### Defined in
 
-[packages/tools/src/Measurement/MeasurementTool.ts:189](https://github.com/cognitedata/reveal/blob/3aaed3491dba3f4ba9ecd87f495d35383cc73a1d/viewer/packages/tools/src/Measurement/MeasurementTool.ts#L189)
+[packages/tools/src/Measurement/MeasurementTool.ts:189](https://github.com/cognitedata/reveal/blob/2acd9d17229d2bc8e309653b4d6a39ad941e44f1/viewer/packages/tools/src/Measurement/MeasurementTool.ts#L189)
 
 #### off(event, callback)
 
@@ -259,7 +259,7 @@ measurementTool.off('started', onMeasurementStarted);
 
 ##### Defined in
 
-[packages/tools/src/Measurement/MeasurementTool.ts:197](https://github.com/cognitedata/reveal/blob/3aaed3491dba3f4ba9ecd87f495d35383cc73a1d/viewer/packages/tools/src/Measurement/MeasurementTool.ts#L197)
+[packages/tools/src/Measurement/MeasurementTool.ts:197](https://github.com/cognitedata/reveal/blob/2acd9d17229d2bc8e309653b4d6a39ad941e44f1/viewer/packages/tools/src/Measurement/MeasurementTool.ts#L197)
 
 #### off(event, callback)
 
@@ -287,7 +287,7 @@ measurementTool.off('ended', onMeasurementEnded);
 
 ##### Defined in
 
-[packages/tools/src/Measurement/MeasurementTool.ts:205](https://github.com/cognitedata/reveal/blob/3aaed3491dba3f4ba9ecd87f495d35383cc73a1d/viewer/packages/tools/src/Measurement/MeasurementTool.ts#L205)
+[packages/tools/src/Measurement/MeasurementTool.ts:205](https://github.com/cognitedata/reveal/blob/2acd9d17229d2bc8e309653b4d6a39ad941e44f1/viewer/packages/tools/src/Measurement/MeasurementTool.ts#L205)
 
 ***
 
@@ -332,7 +332,7 @@ measurementTool.on('disposed', onMeasurementDispose);
 
 ##### Defined in
 
-[packages/tools/src/Measurement/MeasurementTool.ts:119](https://github.com/cognitedata/reveal/blob/3aaed3491dba3f4ba9ecd87f495d35383cc73a1d/viewer/packages/tools/src/Measurement/MeasurementTool.ts#L119)
+[packages/tools/src/Measurement/MeasurementTool.ts:119](https://github.com/cognitedata/reveal/blob/2acd9d17229d2bc8e309653b4d6a39ad941e44f1/viewer/packages/tools/src/Measurement/MeasurementTool.ts#L119)
 
 #### on(event, callback)
 
@@ -362,7 +362,7 @@ measurementTool.on('added', onMeasurementAdded);
 
 ##### Defined in
 
-[packages/tools/src/Measurement/MeasurementTool.ts:128](https://github.com/cognitedata/reveal/blob/3aaed3491dba3f4ba9ecd87f495d35383cc73a1d/viewer/packages/tools/src/Measurement/MeasurementTool.ts#L128)
+[packages/tools/src/Measurement/MeasurementTool.ts:128](https://github.com/cognitedata/reveal/blob/2acd9d17229d2bc8e309653b4d6a39ad941e44f1/viewer/packages/tools/src/Measurement/MeasurementTool.ts#L128)
 
 #### on(event, callback)
 
@@ -392,7 +392,7 @@ measurementTool.on('started', onMeasurementStarted);
 
 ##### Defined in
 
-[packages/tools/src/Measurement/MeasurementTool.ts:137](https://github.com/cognitedata/reveal/blob/3aaed3491dba3f4ba9ecd87f495d35383cc73a1d/viewer/packages/tools/src/Measurement/MeasurementTool.ts#L137)
+[packages/tools/src/Measurement/MeasurementTool.ts:137](https://github.com/cognitedata/reveal/blob/2acd9d17229d2bc8e309653b4d6a39ad941e44f1/viewer/packages/tools/src/Measurement/MeasurementTool.ts#L137)
 
 #### on(event, callback)
 
@@ -422,7 +422,7 @@ measurementTool.on('ended', onMeasurementEnded);
 
 ##### Defined in
 
-[packages/tools/src/Measurement/MeasurementTool.ts:146](https://github.com/cognitedata/reveal/blob/3aaed3491dba3f4ba9ecd87f495d35383cc73a1d/viewer/packages/tools/src/Measurement/MeasurementTool.ts#L146)
+[packages/tools/src/Measurement/MeasurementTool.ts:146](https://github.com/cognitedata/reveal/blob/2acd9d17229d2bc8e309653b4d6a39ad941e44f1/viewer/packages/tools/src/Measurement/MeasurementTool.ts#L146)
 
 ***
 
@@ -438,7 +438,7 @@ Removes all measurements from the Cognite3DViewer.
 
 #### Defined in
 
-[packages/tools/src/Measurement/MeasurementTool.ts:308](https://github.com/cognitedata/reveal/blob/3aaed3491dba3f4ba9ecd87f495d35383cc73a1d/viewer/packages/tools/src/Measurement/MeasurementTool.ts#L308)
+[packages/tools/src/Measurement/MeasurementTool.ts:308](https://github.com/cognitedata/reveal/blob/2acd9d17229d2bc8e309653b4d6a39ad941e44f1/viewer/packages/tools/src/Measurement/MeasurementTool.ts#L308)
 
 ***
 
@@ -460,7 +460,7 @@ Measurement to be removed from Cognite3DViewer.
 
 #### Defined in
 
-[packages/tools/src/Measurement/MeasurementTool.ts:273](https://github.com/cognitedata/reveal/blob/3aaed3491dba3f4ba9ecd87f495d35383cc73a1d/viewer/packages/tools/src/Measurement/MeasurementTool.ts#L273)
+[packages/tools/src/Measurement/MeasurementTool.ts:273](https://github.com/cognitedata/reveal/blob/2acd9d17229d2bc8e309653b4d6a39ad941e44f1/viewer/packages/tools/src/Measurement/MeasurementTool.ts#L273)
 
 ***
 
@@ -482,7 +482,7 @@ MeasurementOptions to set line width, color and callback for custom operation on
 
 #### Defined in
 
-[packages/tools/src/Measurement/MeasurementTool.ts:332](https://github.com/cognitedata/reveal/blob/3aaed3491dba3f4ba9ecd87f495d35383cc73a1d/viewer/packages/tools/src/Measurement/MeasurementTool.ts#L332)
+[packages/tools/src/Measurement/MeasurementTool.ts:332](https://github.com/cognitedata/reveal/blob/2acd9d17229d2bc8e309653b4d6a39ad941e44f1/viewer/packages/tools/src/Measurement/MeasurementTool.ts#L332)
 
 ***
 
@@ -502,7 +502,7 @@ Sets the visiblity of labels in the Measurement.
 
 #### Defined in
 
-[packages/tools/src/Measurement/MeasurementTool.ts:321](https://github.com/cognitedata/reveal/blob/3aaed3491dba3f4ba9ecd87f495d35383cc73a1d/viewer/packages/tools/src/Measurement/MeasurementTool.ts#L321)
+[packages/tools/src/Measurement/MeasurementTool.ts:321](https://github.com/cognitedata/reveal/blob/2acd9d17229d2bc8e309653b4d6a39ad941e44f1/viewer/packages/tools/src/Measurement/MeasurementTool.ts#L321)
 
 ***
 
@@ -528,7 +528,7 @@ Color of the measuring line.
 
 #### Defined in
 
-[packages/tools/src/Measurement/MeasurementTool.ts:360](https://github.com/cognitedata/reveal/blob/3aaed3491dba3f4ba9ecd87f495d35383cc73a1d/viewer/packages/tools/src/Measurement/MeasurementTool.ts#L360)
+[packages/tools/src/Measurement/MeasurementTool.ts:360](https://github.com/cognitedata/reveal/blob/2acd9d17229d2bc8e309653b4d6a39ad941e44f1/viewer/packages/tools/src/Measurement/MeasurementTool.ts#L360)
 
 ***
 
@@ -554,7 +554,7 @@ Width of the measuring line.
 
 #### Defined in
 
-[packages/tools/src/Measurement/MeasurementTool.ts:344](https://github.com/cognitedata/reveal/blob/3aaed3491dba3f4ba9ecd87f495d35383cc73a1d/viewer/packages/tools/src/Measurement/MeasurementTool.ts#L344)
+[packages/tools/src/Measurement/MeasurementTool.ts:344](https://github.com/cognitedata/reveal/blob/2acd9d17229d2bc8e309653b4d6a39ad941e44f1/viewer/packages/tools/src/Measurement/MeasurementTool.ts#L344)
 
 ***
 
@@ -574,4 +574,4 @@ Hide/unhide all measurements
 
 #### Defined in
 
-[packages/tools/src/Measurement/MeasurementTool.ts:383](https://github.com/cognitedata/reveal/blob/3aaed3491dba3f4ba9ecd87f495d35383cc73a1d/viewer/packages/tools/src/Measurement/MeasurementTool.ts#L383)
+[packages/tools/src/Measurement/MeasurementTool.ts:383](https://github.com/cognitedata/reveal/blob/2acd9d17229d2bc8e309653b4d6a39ad941e44f1/viewer/packages/tools/src/Measurement/MeasurementTool.ts#L383)

@@ -7,4 +7,4 @@ Note that this is already applied to Reveal models.
 
 ## Defined in
 
-[packages/utilities/src/constants.ts:14](https://github.com/cognitedata/reveal/blob/3aaed3491dba3f4ba9ecd87f495d35383cc73a1d/viewer/packages/utilities/src/constants.ts#L14)
+[packages/utilities/src/constants.ts:14](https://github.com/cognitedata/reveal/blob/2acd9d17229d2bc8e309653b4d6a39ad941e44f1/viewer/packages/utilities/src/constants.ts#L14)

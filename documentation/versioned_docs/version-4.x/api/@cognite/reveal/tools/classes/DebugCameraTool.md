@@ -26,7 +26,7 @@ Base class for tools attaching to a [Cognite3DViewer](../../classes/Cognite3DVie
 
 #### Defined in
 
-[packages/tools/src/DebugCameraTool.ts:20](https://github.com/cognitedata/reveal/blob/3aaed3491dba3f4ba9ecd87f495d35383cc73a1d/viewer/packages/tools/src/DebugCameraTool.ts#L20)
+[packages/tools/src/DebugCameraTool.ts:20](https://github.com/cognitedata/reveal/blob/2acd9d17229d2bc8e309653b4d6a39ad941e44f1/viewer/packages/tools/src/DebugCameraTool.ts#L20)
 
 ## Methods
 
@@ -48,7 +48,7 @@ Removes all elements and detaches from the viewer.
 
 #### Defined in
 
-[packages/tools/src/DebugCameraTool.ts:32](https://github.com/cognitedata/reveal/blob/3aaed3491dba3f4ba9ecd87f495d35383cc73a1d/viewer/packages/tools/src/DebugCameraTool.ts#L32)
+[packages/tools/src/DebugCameraTool.ts:32](https://github.com/cognitedata/reveal/blob/2acd9d17229d2bc8e309653b4d6a39ad941e44f1/viewer/packages/tools/src/DebugCameraTool.ts#L32)
 
 ***
 
@@ -62,7 +62,7 @@ Removes all elements and detaches from the viewer.
 
 #### Defined in
 
-[packages/tools/src/DebugCameraTool.ts:43](https://github.com/cognitedata/reveal/blob/3aaed3491dba3f4ba9ecd87f495d35383cc73a1d/viewer/packages/tools/src/DebugCameraTool.ts#L43)
+[packages/tools/src/DebugCameraTool.ts:43](https://github.com/cognitedata/reveal/blob/2acd9d17229d2bc8e309653b4d6a39ad941e44f1/viewer/packages/tools/src/DebugCameraTool.ts#L43)
 
 ***
 
@@ -88,7 +88,7 @@ Unregisters an event handler for the 'disposed'-event.
 
 #### Defined in
 
-[packages/tools/src/Cognite3DViewerToolBase.ts:38](https://github.com/cognitedata/reveal/blob/3aaed3491dba3f4ba9ecd87f495d35383cc73a1d/viewer/packages/tools/src/Cognite3DViewerToolBase.ts#L38)
+[packages/tools/src/Cognite3DViewerToolBase.ts:38](https://github.com/cognitedata/reveal/blob/2acd9d17229d2bc8e309653b4d6a39ad941e44f1/viewer/packages/tools/src/Cognite3DViewerToolBase.ts#L38)
 
 ***
 
@@ -102,4 +102,4 @@ Unregisters an event handler for the 'disposed'-event.
 
 #### Defined in
 
-[packages/tools/src/DebugCameraTool.ts:37](https://github.com/cognitedata/reveal/blob/3aaed3491dba3f4ba9ecd87f495d35383cc73a1d/viewer/packages/tools/src/DebugCameraTool.ts#L37)
+[packages/tools/src/DebugCameraTool.ts:37](https://github.com/cognitedata/reveal/blob/2acd9d17229d2bc8e309653b4d6a39ad941e44f1/viewer/packages/tools/src/DebugCameraTool.ts#L37)

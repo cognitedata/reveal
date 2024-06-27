@@ -29,7 +29,7 @@ onPointerDrag will be fired wnen the mouse button is pressed and the mouse is mo
 
 #### Defined in
 
-[packages/utilities/src/events/PointerEventsTarget.ts:49](https://github.com/cognitedata/reveal/blob/3aaed3491dba3f4ba9ecd87f495d35383cc73a1d/viewer/packages/utilities/src/events/PointerEventsTarget.ts#L49)
+[packages/utilities/src/events/PointerEventsTarget.ts:49](https://github.com/cognitedata/reveal/blob/2acd9d17229d2bc8e309653b4d6a39ad941e44f1/viewer/packages/utilities/src/events/PointerEventsTarget.ts#L49)
 
 ## Methods
 
@@ -45,7 +45,7 @@ onPointerDrag will be fired wnen the mouse button is pressed and the mouse is mo
 
 #### Defined in
 
-[packages/utilities/src/events/PointerEventsTarget.ts:58](https://github.com/cognitedata/reveal/blob/3aaed3491dba3f4ba9ecd87f495d35383cc73a1d/viewer/packages/utilities/src/events/PointerEventsTarget.ts#L58)
+[packages/utilities/src/events/PointerEventsTarget.ts:58](https://github.com/cognitedata/reveal/blob/2acd9d17229d2bc8e309653b4d6a39ad941e44f1/viewer/packages/utilities/src/events/PointerEventsTarget.ts#L58)
 
 ***
 
@@ -61,4 +61,4 @@ onPointerDrag will be fired wnen the mouse button is pressed and the mouse is mo
 
 #### Defined in
 
-[packages/utilities/src/events/PointerEventsTarget.ts:65](https://github.com/cognitedata/reveal/blob/3aaed3491dba3f4ba9ecd87f495d35383cc73a1d/viewer/packages/utilities/src/events/PointerEventsTarget.ts#L65)
+[packages/utilities/src/events/PointerEventsTarget.ts:65](https://github.com/cognitedata/reveal/blob/2acd9d17229d2bc8e309653b4d6a39ad941e44f1/viewer/packages/utilities/src/events/PointerEventsTarget.ts#L65)

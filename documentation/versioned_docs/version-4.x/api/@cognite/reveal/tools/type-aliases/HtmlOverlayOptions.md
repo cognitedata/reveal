@@ -21,4 +21,4 @@ Optional user specified data that is provided to the [HtmlOverlayCreateClusterDe
 
 ## Defined in
 
-[packages/tools/src/HtmlOverlay/HtmlOverlayTool.ts:42](https://github.com/cognitedata/reveal/blob/3aaed3491dba3f4ba9ecd87f495d35383cc73a1d/viewer/packages/tools/src/HtmlOverlay/HtmlOverlayTool.ts#L42)
+[packages/tools/src/HtmlOverlay/HtmlOverlayTool.ts:42](https://github.com/cognitedata/reveal/blob/2acd9d17229d2bc8e309653b4d6a39ad941e44f1/viewer/packages/tools/src/HtmlOverlay/HtmlOverlayTool.ts#L42)

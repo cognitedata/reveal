@@ -8,7 +8,7 @@
 
 #### Defined in
 
-[packages/data-providers/src/types.ts:100](https://github.com/cognitedata/reveal/blob/3aaed3491dba3f4ba9ecd87f495d35383cc73a1d/viewer/packages/data-providers/src/types.ts#L100)
+[packages/data-providers/src/types.ts:100](https://github.com/cognitedata/reveal/blob/2acd9d17229d2bc8e309653b4d6a39ad941e44f1/viewer/packages/data-providers/src/types.ts#L100)
 
 ***
 
@@ -18,7 +18,7 @@
 
 #### Defined in
 
-[packages/data-providers/src/types.ts:95](https://github.com/cognitedata/reveal/blob/3aaed3491dba3f4ba9ecd87f495d35383cc73a1d/viewer/packages/data-providers/src/types.ts#L95)
+[packages/data-providers/src/types.ts:95](https://github.com/cognitedata/reveal/blob/2acd9d17229d2bc8e309653b4d6a39ad941e44f1/viewer/packages/data-providers/src/types.ts#L95)
 
 ***
 
@@ -30,4 +30,4 @@ Reveal v9 and above (GLTF based output)
 
 #### Defined in
 
-[packages/data-providers/src/types.ts:99](https://github.com/cognitedata/reveal/blob/3aaed3491dba3f4ba9ecd87f495d35383cc73a1d/viewer/packages/data-providers/src/types.ts#L99)
+[packages/data-providers/src/types.ts:99](https://github.com/cognitedata/reveal/blob/2acd9d17229d2bc8e309653b4d6a39ad941e44f1/viewer/packages/data-providers/src/types.ts#L99)

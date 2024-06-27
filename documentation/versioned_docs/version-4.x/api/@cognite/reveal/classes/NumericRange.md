@@ -18,7 +18,7 @@
 
 #### Defined in
 
-[packages/utilities/src/NumericRange.ts:10](https://github.com/cognitedata/reveal/blob/3aaed3491dba3f4ba9ecd87f495d35383cc73a1d/viewer/packages/utilities/src/NumericRange.ts#L10)
+[packages/utilities/src/NumericRange.ts:10](https://github.com/cognitedata/reveal/blob/2acd9d17229d2bc8e309653b4d6a39ad941e44f1/viewer/packages/utilities/src/NumericRange.ts#L10)
 
 ## Properties
 
@@ -28,7 +28,7 @@
 
 #### Defined in
 
-[packages/utilities/src/NumericRange.ts:7](https://github.com/cognitedata/reveal/blob/3aaed3491dba3f4ba9ecd87f495d35383cc73a1d/viewer/packages/utilities/src/NumericRange.ts#L7)
+[packages/utilities/src/NumericRange.ts:7](https://github.com/cognitedata/reveal/blob/2acd9d17229d2bc8e309653b4d6a39ad941e44f1/viewer/packages/utilities/src/NumericRange.ts#L7)
 
 ***
 
@@ -38,7 +38,7 @@
 
 #### Defined in
 
-[packages/utilities/src/NumericRange.ts:6](https://github.com/cognitedata/reveal/blob/3aaed3491dba3f4ba9ecd87f495d35383cc73a1d/viewer/packages/utilities/src/NumericRange.ts#L6)
+[packages/utilities/src/NumericRange.ts:6](https://github.com/cognitedata/reveal/blob/2acd9d17229d2bc8e309653b4d6a39ad941e44f1/viewer/packages/utilities/src/NumericRange.ts#L6)
 
 ***
 
@@ -48,7 +48,7 @@
 
 #### Defined in
 
-[packages/utilities/src/NumericRange.ts:8](https://github.com/cognitedata/reveal/blob/3aaed3491dba3f4ba9ecd87f495d35383cc73a1d/viewer/packages/utilities/src/NumericRange.ts#L8)
+[packages/utilities/src/NumericRange.ts:8](https://github.com/cognitedata/reveal/blob/2acd9d17229d2bc8e309653b4d6a39ad941e44f1/viewer/packages/utilities/src/NumericRange.ts#L8)
 
 ## Methods
 
@@ -66,7 +66,7 @@
 
 #### Defined in
 
-[packages/utilities/src/NumericRange.ts:38](https://github.com/cognitedata/reveal/blob/3aaed3491dba3f4ba9ecd87f495d35383cc73a1d/viewer/packages/utilities/src/NumericRange.ts#L38)
+[packages/utilities/src/NumericRange.ts:38](https://github.com/cognitedata/reveal/blob/2acd9d17229d2bc8e309653b4d6a39ad941e44f1/viewer/packages/utilities/src/NumericRange.ts#L38)
 
 ***
 
@@ -84,7 +84,7 @@
 
 #### Defined in
 
-[packages/utilities/src/NumericRange.ts:34](https://github.com/cognitedata/reveal/blob/3aaed3491dba3f4ba9ecd87f495d35383cc73a1d/viewer/packages/utilities/src/NumericRange.ts#L34)
+[packages/utilities/src/NumericRange.ts:34](https://github.com/cognitedata/reveal/blob/2acd9d17229d2bc8e309653b4d6a39ad941e44f1/viewer/packages/utilities/src/NumericRange.ts#L34)
 
 ***
 
@@ -102,7 +102,7 @@
 
 #### Defined in
 
-[packages/utilities/src/NumericRange.ts:72](https://github.com/cognitedata/reveal/blob/3aaed3491dba3f4ba9ecd87f495d35383cc73a1d/viewer/packages/utilities/src/NumericRange.ts#L72)
+[packages/utilities/src/NumericRange.ts:72](https://github.com/cognitedata/reveal/blob/2acd9d17229d2bc8e309653b4d6a39ad941e44f1/viewer/packages/utilities/src/NumericRange.ts#L72)
 
 ***
 
@@ -120,7 +120,7 @@
 
 #### Defined in
 
-[packages/utilities/src/NumericRange.ts:50](https://github.com/cognitedata/reveal/blob/3aaed3491dba3f4ba9ecd87f495d35383cc73a1d/viewer/packages/utilities/src/NumericRange.ts#L50)
+[packages/utilities/src/NumericRange.ts:50](https://github.com/cognitedata/reveal/blob/2acd9d17229d2bc8e309653b4d6a39ad941e44f1/viewer/packages/utilities/src/NumericRange.ts#L50)
 
 ***
 
@@ -138,7 +138,7 @@
 
 #### Defined in
 
-[packages/utilities/src/NumericRange.ts:42](https://github.com/cognitedata/reveal/blob/3aaed3491dba3f4ba9ecd87f495d35383cc73a1d/viewer/packages/utilities/src/NumericRange.ts#L42)
+[packages/utilities/src/NumericRange.ts:42](https://github.com/cognitedata/reveal/blob/2acd9d17229d2bc8e309653b4d6a39ad941e44f1/viewer/packages/utilities/src/NumericRange.ts#L42)
 
 ***
 
@@ -156,7 +156,7 @@
 
 #### Defined in
 
-[packages/utilities/src/NumericRange.ts:46](https://github.com/cognitedata/reveal/blob/3aaed3491dba3f4ba9ecd87f495d35383cc73a1d/viewer/packages/utilities/src/NumericRange.ts#L46)
+[packages/utilities/src/NumericRange.ts:46](https://github.com/cognitedata/reveal/blob/2acd9d17229d2bc8e309653b4d6a39ad941e44f1/viewer/packages/utilities/src/NumericRange.ts#L46)
 
 ***
 
@@ -174,7 +174,7 @@
 
 #### Defined in
 
-[packages/utilities/src/NumericRange.ts:61](https://github.com/cognitedata/reveal/blob/3aaed3491dba3f4ba9ecd87f495d35383cc73a1d/viewer/packages/utilities/src/NumericRange.ts#L61)
+[packages/utilities/src/NumericRange.ts:61](https://github.com/cognitedata/reveal/blob/2acd9d17229d2bc8e309653b4d6a39ad941e44f1/viewer/packages/utilities/src/NumericRange.ts#L61)
 
 ***
 
@@ -188,7 +188,7 @@
 
 #### Defined in
 
-[packages/utilities/src/NumericRange.ts:30](https://github.com/cognitedata/reveal/blob/3aaed3491dba3f4ba9ecd87f495d35383cc73a1d/viewer/packages/utilities/src/NumericRange.ts#L30)
+[packages/utilities/src/NumericRange.ts:30](https://github.com/cognitedata/reveal/blob/2acd9d17229d2bc8e309653b4d6a39ad941e44f1/viewer/packages/utilities/src/NumericRange.ts#L30)
 
 ***
 
@@ -202,7 +202,7 @@
 
 #### Defined in
 
-[packages/utilities/src/NumericRange.ts:78](https://github.com/cognitedata/reveal/blob/3aaed3491dba3f4ba9ecd87f495d35383cc73a1d/viewer/packages/utilities/src/NumericRange.ts#L78)
+[packages/utilities/src/NumericRange.ts:78](https://github.com/cognitedata/reveal/blob/2acd9d17229d2bc8e309653b4d6a39ad941e44f1/viewer/packages/utilities/src/NumericRange.ts#L78)
 
 ***
 
@@ -220,7 +220,7 @@
 
 #### Defined in
 
-[packages/utilities/src/NumericRange.ts:65](https://github.com/cognitedata/reveal/blob/3aaed3491dba3f4ba9ecd87f495d35383cc73a1d/viewer/packages/utilities/src/NumericRange.ts#L65)
+[packages/utilities/src/NumericRange.ts:65](https://github.com/cognitedata/reveal/blob/2acd9d17229d2bc8e309653b4d6a39ad941e44f1/viewer/packages/utilities/src/NumericRange.ts#L65)
 
 ***
 
@@ -234,7 +234,7 @@
 
 #### Defined in
 
-[packages/utilities/src/NumericRange.ts:24](https://github.com/cognitedata/reveal/blob/3aaed3491dba3f4ba9ecd87f495d35383cc73a1d/viewer/packages/utilities/src/NumericRange.ts#L24)
+[packages/utilities/src/NumericRange.ts:24](https://github.com/cognitedata/reveal/blob/2acd9d17229d2bc8e309653b4d6a39ad941e44f1/viewer/packages/utilities/src/NumericRange.ts#L24)
 
 ***
 
@@ -254,7 +254,7 @@
 
 #### Defined in
 
-[packages/utilities/src/NumericRange.ts:20](https://github.com/cognitedata/reveal/blob/3aaed3491dba3f4ba9ecd87f495d35383cc73a1d/viewer/packages/utilities/src/NumericRange.ts#L20)
+[packages/utilities/src/NumericRange.ts:20](https://github.com/cognitedata/reveal/blob/2acd9d17229d2bc8e309653b4d6a39ad941e44f1/viewer/packages/utilities/src/NumericRange.ts#L20)
 
 ***
 
@@ -272,4 +272,4 @@
 
 #### Defined in
 
-[packages/utilities/src/NumericRange.ts:82](https://github.com/cognitedata/reveal/blob/3aaed3491dba3f4ba9ecd87f495d35383cc73a1d/viewer/packages/utilities/src/NumericRange.ts#L82)
+[packages/utilities/src/NumericRange.ts:82](https://github.com/cognitedata/reveal/blob/2acd9d17229d2bc8e309653b4d6a39ad941e44f1/viewer/packages/utilities/src/NumericRange.ts#L82)

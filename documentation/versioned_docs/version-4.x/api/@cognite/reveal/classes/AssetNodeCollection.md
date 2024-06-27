@@ -31,7 +31,7 @@ to the asset.
 
 #### Defined in
 
-[packages/cad-styling/src/AssetNodeCollection.ts:36](https://github.com/cognitedata/reveal/blob/3aaed3491dba3f4ba9ecd87f495d35383cc73a1d/viewer/packages/cad-styling/src/AssetNodeCollection.ts#L36)
+[packages/cad-styling/src/AssetNodeCollection.ts:36](https://github.com/cognitedata/reveal/blob/2acd9d17229d2bc8e309653b4d6a39ad941e44f1/viewer/packages/cad-styling/src/AssetNodeCollection.ts#L36)
 
 ## Properties
 
@@ -41,7 +41,7 @@ to the asset.
 
 #### Defined in
 
-[packages/cad-styling/src/AssetNodeCollection.ts:27](https://github.com/cognitedata/reveal/blob/3aaed3491dba3f4ba9ecd87f495d35383cc73a1d/viewer/packages/cad-styling/src/AssetNodeCollection.ts#L27)
+[packages/cad-styling/src/AssetNodeCollection.ts:27](https://github.com/cognitedata/reveal/blob/2acd9d17229d2bc8e309653b4d6a39ad941e44f1/viewer/packages/cad-styling/src/AssetNodeCollection.ts#L27)
 
 ## Accessors
 
@@ -59,7 +59,7 @@ to the asset.
 
 #### Defined in
 
-[packages/cad-styling/src/NodeCollection.ts:23](https://github.com/cognitedata/reveal/blob/3aaed3491dba3f4ba9ecd87f495d35383cc73a1d/viewer/packages/cad-styling/src/NodeCollection.ts#L23)
+[packages/cad-styling/src/NodeCollection.ts:23](https://github.com/cognitedata/reveal/blob/2acd9d17229d2bc8e309653b4d6a39ad941e44f1/viewer/packages/cad-styling/src/NodeCollection.ts#L23)
 
 ***
 
@@ -77,7 +77,7 @@ to the asset.
 
 #### Defined in
 
-[packages/cad-styling/src/AssetNodeCollection.ts:43](https://github.com/cognitedata/reveal/blob/3aaed3491dba3f4ba9ecd87f495d35383cc73a1d/viewer/packages/cad-styling/src/AssetNodeCollection.ts#L43)
+[packages/cad-styling/src/AssetNodeCollection.ts:43](https://github.com/cognitedata/reveal/blob/2acd9d17229d2bc8e309653b4d6a39ad941e44f1/viewer/packages/cad-styling/src/AssetNodeCollection.ts#L43)
 
 ## Methods
 
@@ -95,7 +95,7 @@ to the asset.
 
 #### Defined in
 
-[packages/cad-styling/src/AssetNodeCollection.ts:139](https://github.com/cognitedata/reveal/blob/3aaed3491dba3f4ba9ecd87f495d35383cc73a1d/viewer/packages/cad-styling/src/AssetNodeCollection.ts#L139)
+[packages/cad-styling/src/AssetNodeCollection.ts:139](https://github.com/cognitedata/reveal/blob/2acd9d17229d2bc8e309653b4d6a39ad941e44f1/viewer/packages/cad-styling/src/AssetNodeCollection.ts#L139)
 
 ***
 
@@ -124,7 +124,7 @@ When provided, only assets within the provided bounds will be included in the fi
 
 #### Defined in
 
-[packages/cad-styling/src/AssetNodeCollection.ts:54](https://github.com/cognitedata/reveal/blob/3aaed3491dba3f4ba9ecd87f495d35383cc73a1d/viewer/packages/cad-styling/src/AssetNodeCollection.ts#L54)
+[packages/cad-styling/src/AssetNodeCollection.ts:54](https://github.com/cognitedata/reveal/blob/2acd9d17229d2bc8e309653b4d6a39ad941e44f1/viewer/packages/cad-styling/src/AssetNodeCollection.ts#L54)
 
 ***
 
@@ -146,7 +146,7 @@ implementations supports this.
 
 #### Defined in
 
-[packages/cad-styling/src/AssetNodeCollection.ts:151](https://github.com/cognitedata/reveal/blob/3aaed3491dba3f4ba9ecd87f495d35383cc73a1d/viewer/packages/cad-styling/src/AssetNodeCollection.ts#L151)
+[packages/cad-styling/src/AssetNodeCollection.ts:151](https://github.com/cognitedata/reveal/blob/2acd9d17229d2bc8e309653b4d6a39ad941e44f1/viewer/packages/cad-styling/src/AssetNodeCollection.ts#L151)
 
 ***
 
@@ -160,7 +160,7 @@ implementations supports this.
 
 #### Defined in
 
-[packages/cad-styling/src/AssetNodeCollection.ts:135](https://github.com/cognitedata/reveal/blob/3aaed3491dba3f4ba9ecd87f495d35383cc73a1d/viewer/packages/cad-styling/src/AssetNodeCollection.ts#L135)
+[packages/cad-styling/src/AssetNodeCollection.ts:135](https://github.com/cognitedata/reveal/blob/2acd9d17229d2bc8e309653b4d6a39ad941e44f1/viewer/packages/cad-styling/src/AssetNodeCollection.ts#L135)
 
 ***
 
@@ -178,7 +178,7 @@ implementations supports this.
 
 #### Defined in
 
-[packages/cad-styling/src/AssetNodeCollection.ts:147](https://github.com/cognitedata/reveal/blob/3aaed3491dba3f4ba9ecd87f495d35383cc73a1d/viewer/packages/cad-styling/src/AssetNodeCollection.ts#L147)
+[packages/cad-styling/src/AssetNodeCollection.ts:147](https://github.com/cognitedata/reveal/blob/2acd9d17229d2bc8e309653b4d6a39ad941e44f1/viewer/packages/cad-styling/src/AssetNodeCollection.ts#L147)
 
 ***
 
@@ -202,7 +202,7 @@ implementations supports this.
 
 #### Defined in
 
-[packages/cad-styling/src/NodeCollection.ts:32](https://github.com/cognitedata/reveal/blob/3aaed3491dba3f4ba9ecd87f495d35383cc73a1d/viewer/packages/cad-styling/src/NodeCollection.ts#L32)
+[packages/cad-styling/src/NodeCollection.ts:32](https://github.com/cognitedata/reveal/blob/2acd9d17229d2bc8e309653b4d6a39ad941e44f1/viewer/packages/cad-styling/src/NodeCollection.ts#L32)
 
 ***
 
@@ -226,7 +226,7 @@ implementations supports this.
 
 #### Defined in
 
-[packages/cad-styling/src/NodeCollection.ts:27](https://github.com/cognitedata/reveal/blob/3aaed3491dba3f4ba9ecd87f495d35383cc73a1d/viewer/packages/cad-styling/src/NodeCollection.ts#L27)
+[packages/cad-styling/src/NodeCollection.ts:27](https://github.com/cognitedata/reveal/blob/2acd9d17229d2bc8e309653b4d6a39ad941e44f1/viewer/packages/cad-styling/src/NodeCollection.ts#L27)
 
 ***
 
@@ -244,4 +244,4 @@ implementations supports this.
 
 #### Defined in
 
-[packages/cad-styling/src/AssetNodeCollection.ts:155](https://github.com/cognitedata/reveal/blob/3aaed3491dba3f4ba9ecd87f495d35383cc73a1d/viewer/packages/cad-styling/src/AssetNodeCollection.ts#L155)
+[packages/cad-styling/src/AssetNodeCollection.ts:155](https://github.com/cognitedata/reveal/blob/2acd9d17229d2bc8e309653b4d6a39ad941e44f1/viewer/packages/cad-styling/src/AssetNodeCollection.ts#L155)

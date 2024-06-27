@@ -28,4 +28,4 @@ Type for handlers of overlay events
 
 ## Defined in
 
-[packages/tools/src/Overlay3D/Overlay3DTool.ts:32](https://github.com/cognitedata/reveal/blob/3aaed3491dba3f4ba9ecd87f495d35383cc73a1d/viewer/packages/tools/src/Overlay3D/Overlay3DTool.ts#L32)
+[packages/tools/src/Overlay3D/Overlay3DTool.ts:32](https://github.com/cognitedata/reveal/blob/2acd9d17229d2bc8e309653b4d6a39ad941e44f1/viewer/packages/tools/src/Overlay3D/Overlay3DTool.ts#L32)

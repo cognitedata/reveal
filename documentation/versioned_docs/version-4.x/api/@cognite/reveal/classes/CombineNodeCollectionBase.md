@@ -33,7 +33,7 @@ Node collection that combines the result from multiple underlying node collectio
 
 #### Defined in
 
-[packages/cad-styling/src/CombineNodeCollectionBase.ts:17](https://github.com/cognitedata/reveal/blob/3aaed3491dba3f4ba9ecd87f495d35383cc73a1d/viewer/packages/cad-styling/src/CombineNodeCollectionBase.ts#L17)
+[packages/cad-styling/src/CombineNodeCollectionBase.ts:17](https://github.com/cognitedata/reveal/blob/2acd9d17229d2bc8e309653b4d6a39ad941e44f1/viewer/packages/cad-styling/src/CombineNodeCollectionBase.ts#L17)
 
 ## Accessors
 
@@ -51,7 +51,7 @@ Node collection that combines the result from multiple underlying node collectio
 
 #### Defined in
 
-[packages/cad-styling/src/NodeCollection.ts:23](https://github.com/cognitedata/reveal/blob/3aaed3491dba3f4ba9ecd87f495d35383cc73a1d/viewer/packages/cad-styling/src/NodeCollection.ts#L23)
+[packages/cad-styling/src/NodeCollection.ts:23](https://github.com/cognitedata/reveal/blob/2acd9d17229d2bc8e309653b4d6a39ad941e44f1/viewer/packages/cad-styling/src/NodeCollection.ts#L23)
 
 ***
 
@@ -71,7 +71,7 @@ Node collection that combines the result from multiple underlying node collectio
 
 #### Defined in
 
-[packages/cad-styling/src/CombineNodeCollectionBase.ts:67](https://github.com/cognitedata/reveal/blob/3aaed3491dba3f4ba9ecd87f495d35383cc73a1d/viewer/packages/cad-styling/src/CombineNodeCollectionBase.ts#L67)
+[packages/cad-styling/src/CombineNodeCollectionBase.ts:67](https://github.com/cognitedata/reveal/blob/2acd9d17229d2bc8e309653b4d6a39ad941e44f1/viewer/packages/cad-styling/src/CombineNodeCollectionBase.ts#L67)
 
 ## Methods
 
@@ -89,7 +89,7 @@ Node collection that combines the result from multiple underlying node collectio
 
 #### Defined in
 
-[packages/cad-styling/src/CombineNodeCollectionBase.ts:26](https://github.com/cognitedata/reveal/blob/3aaed3491dba3f4ba9ecd87f495d35383cc73a1d/viewer/packages/cad-styling/src/CombineNodeCollectionBase.ts#L26)
+[packages/cad-styling/src/CombineNodeCollectionBase.ts:26](https://github.com/cognitedata/reveal/blob/2acd9d17229d2bc8e309653b4d6a39ad941e44f1/viewer/packages/cad-styling/src/CombineNodeCollectionBase.ts#L26)
 
 ***
 
@@ -109,7 +109,7 @@ Clears all underlying node collections.
 
 #### Defined in
 
-[packages/cad-styling/src/CombineNodeCollectionBase.ts:46](https://github.com/cognitedata/reveal/blob/3aaed3491dba3f4ba9ecd87f495d35383cc73a1d/viewer/packages/cad-styling/src/CombineNodeCollectionBase.ts#L46)
+[packages/cad-styling/src/CombineNodeCollectionBase.ts:46](https://github.com/cognitedata/reveal/blob/2acd9d17229d2bc8e309653b4d6a39ad941e44f1/viewer/packages/cad-styling/src/CombineNodeCollectionBase.ts#L46)
 
 ***
 
@@ -131,7 +131,7 @@ implementations supports this.
 
 #### Defined in
 
-[packages/cad-styling/src/CombineNodeCollectionBase.ts:73](https://github.com/cognitedata/reveal/blob/3aaed3491dba3f4ba9ecd87f495d35383cc73a1d/viewer/packages/cad-styling/src/CombineNodeCollectionBase.ts#L73)
+[packages/cad-styling/src/CombineNodeCollectionBase.ts:73](https://github.com/cognitedata/reveal/blob/2acd9d17229d2bc8e309653b4d6a39ad941e44f1/viewer/packages/cad-styling/src/CombineNodeCollectionBase.ts#L73)
 
 ***
 
@@ -151,7 +151,7 @@ implementations supports this.
 
 #### Defined in
 
-[packages/cad-styling/src/CombineNodeCollectionBase.ts:59](https://github.com/cognitedata/reveal/blob/3aaed3491dba3f4ba9ecd87f495d35383cc73a1d/viewer/packages/cad-styling/src/CombineNodeCollectionBase.ts#L59)
+[packages/cad-styling/src/CombineNodeCollectionBase.ts:59](https://github.com/cognitedata/reveal/blob/2acd9d17229d2bc8e309653b4d6a39ad941e44f1/viewer/packages/cad-styling/src/CombineNodeCollectionBase.ts#L59)
 
 ***
 
@@ -175,7 +175,7 @@ implementations supports this.
 
 #### Defined in
 
-[packages/cad-styling/src/NodeCollection.ts:32](https://github.com/cognitedata/reveal/blob/3aaed3491dba3f4ba9ecd87f495d35383cc73a1d/viewer/packages/cad-styling/src/NodeCollection.ts#L32)
+[packages/cad-styling/src/NodeCollection.ts:32](https://github.com/cognitedata/reveal/blob/2acd9d17229d2bc8e309653b4d6a39ad941e44f1/viewer/packages/cad-styling/src/NodeCollection.ts#L32)
 
 ***
 
@@ -199,7 +199,7 @@ implementations supports this.
 
 #### Defined in
 
-[packages/cad-styling/src/NodeCollection.ts:27](https://github.com/cognitedata/reveal/blob/3aaed3491dba3f4ba9ecd87f495d35383cc73a1d/viewer/packages/cad-styling/src/NodeCollection.ts#L27)
+[packages/cad-styling/src/NodeCollection.ts:27](https://github.com/cognitedata/reveal/blob/2acd9d17229d2bc8e309653b4d6a39ad941e44f1/viewer/packages/cad-styling/src/NodeCollection.ts#L27)
 
 ***
 
@@ -217,7 +217,7 @@ implementations supports this.
 
 #### Defined in
 
-[packages/cad-styling/src/CombineNodeCollectionBase.ts:32](https://github.com/cognitedata/reveal/blob/3aaed3491dba3f4ba9ecd87f495d35383cc73a1d/viewer/packages/cad-styling/src/CombineNodeCollectionBase.ts#L32)
+[packages/cad-styling/src/CombineNodeCollectionBase.ts:32](https://github.com/cognitedata/reveal/blob/2acd9d17229d2bc8e309653b4d6a39ad941e44f1/viewer/packages/cad-styling/src/CombineNodeCollectionBase.ts#L32)
 
 ***
 
@@ -235,4 +235,4 @@ implementations supports this.
 
 #### Defined in
 
-[packages/cad-styling/src/CombineNodeCollectionBase.ts:71](https://github.com/cognitedata/reveal/blob/3aaed3491dba3f4ba9ecd87f495d35383cc73a1d/viewer/packages/cad-styling/src/CombineNodeCollectionBase.ts#L71)
+[packages/cad-styling/src/CombineNodeCollectionBase.ts:71](https://github.com/cognitedata/reveal/blob/2acd9d17229d2bc8e309653b4d6a39ad941e44f1/viewer/packages/cad-styling/src/CombineNodeCollectionBase.ts#L71)

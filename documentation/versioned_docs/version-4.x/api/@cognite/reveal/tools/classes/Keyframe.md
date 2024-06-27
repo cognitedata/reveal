@@ -20,7 +20,7 @@ Timeline Key Frames contains parameters to access Nodes, Styles for the Timeline
 
 #### Defined in
 
-[packages/tools/src/Timeline/Keyframe.ts:17](https://github.com/cognitedata/reveal/blob/3aaed3491dba3f4ba9ecd87f495d35383cc73a1d/viewer/packages/tools/src/Timeline/Keyframe.ts#L17)
+[packages/tools/src/Timeline/Keyframe.ts:17](https://github.com/cognitedata/reveal/blob/2acd9d17229d2bc8e309653b4d6a39ad941e44f1/viewer/packages/tools/src/Timeline/Keyframe.ts#L17)
 
 ## Methods
 
@@ -36,7 +36,7 @@ Assigns the styles for the node set for the model for this Keyframe
 
 #### Defined in
 
-[packages/tools/src/Timeline/Keyframe.ts:33](https://github.com/cognitedata/reveal/blob/3aaed3491dba3f4ba9ecd87f495d35383cc73a1d/viewer/packages/tools/src/Timeline/Keyframe.ts#L33)
+[packages/tools/src/Timeline/Keyframe.ts:33](https://github.com/cognitedata/reveal/blob/2acd9d17229d2bc8e309653b4d6a39ad941e44f1/viewer/packages/tools/src/Timeline/Keyframe.ts#L33)
 
 ***
 
@@ -63,7 +63,7 @@ Style to assign to the node collection
 
 #### Defined in
 
-[packages/tools/src/Timeline/Keyframe.ts:54](https://github.com/cognitedata/reveal/blob/3aaed3491dba3f4ba9ecd87f495d35383cc73a1d/viewer/packages/tools/src/Timeline/Keyframe.ts#L54)
+[packages/tools/src/Timeline/Keyframe.ts:54](https://github.com/cognitedata/reveal/blob/2acd9d17229d2bc8e309653b4d6a39ad941e44f1/viewer/packages/tools/src/Timeline/Keyframe.ts#L54)
 
 ***
 
@@ -79,7 +79,7 @@ Removes the style for the model
 
 #### Defined in
 
-[packages/tools/src/Timeline/Keyframe.ts:42](https://github.com/cognitedata/reveal/blob/3aaed3491dba3f4ba9ecd87f495d35383cc73a1d/viewer/packages/tools/src/Timeline/Keyframe.ts#L42)
+[packages/tools/src/Timeline/Keyframe.ts:42](https://github.com/cognitedata/reveal/blob/2acd9d17229d2bc8e309653b4d6a39ad941e44f1/viewer/packages/tools/src/Timeline/Keyframe.ts#L42)
 
 ***
 
@@ -97,7 +97,7 @@ date
 
 #### Defined in
 
-[packages/tools/src/Timeline/Keyframe.ts:26](https://github.com/cognitedata/reveal/blob/3aaed3491dba3f4ba9ecd87f495d35383cc73a1d/viewer/packages/tools/src/Timeline/Keyframe.ts#L26)
+[packages/tools/src/Timeline/Keyframe.ts:26](https://github.com/cognitedata/reveal/blob/2acd9d17229d2bc8e309653b4d6a39ad941e44f1/viewer/packages/tools/src/Timeline/Keyframe.ts#L26)
 
 ***
 
@@ -119,4 +119,4 @@ Nodes to be unassign from node collection
 
 #### Defined in
 
-[packages/tools/src/Timeline/Keyframe.ts:69](https://github.com/cognitedata/reveal/blob/3aaed3491dba3f4ba9ecd87f495d35383cc73a1d/viewer/packages/tools/src/Timeline/Keyframe.ts#L69)
+[packages/tools/src/Timeline/Keyframe.ts:69](https://github.com/cognitedata/reveal/blob/2acd9d17229d2bc8e309653b4d6a39ad941e44f1/viewer/packages/tools/src/Timeline/Keyframe.ts#L69)

@@ -30,7 +30,7 @@ This base should be extended for listen to various pointer events.
 
 #### Defined in
 
-[packages/utilities/src/events/PointerEvents.ts:31](https://github.com/cognitedata/reveal/blob/3aaed3491dba3f4ba9ecd87f495d35383cc73a1d/viewer/packages/utilities/src/events/PointerEvents.ts#L31)
+[packages/utilities/src/events/PointerEvents.ts:31](https://github.com/cognitedata/reveal/blob/2acd9d17229d2bc8e309653b4d6a39ad941e44f1/viewer/packages/utilities/src/events/PointerEvents.ts#L31)
 
 ## Methods
 
@@ -50,7 +50,7 @@ This base should be extended for listen to various pointer events.
 
 #### Defined in
 
-[packages/utilities/src/events/PointerEvents.ts:12](https://github.com/cognitedata/reveal/blob/3aaed3491dba3f4ba9ecd87f495d35383cc73a1d/viewer/packages/utilities/src/events/PointerEvents.ts#L12)
+[packages/utilities/src/events/PointerEvents.ts:12](https://github.com/cognitedata/reveal/blob/2acd9d17229d2bc8e309653b4d6a39ad941e44f1/viewer/packages/utilities/src/events/PointerEvents.ts#L12)
 
 ***
 
@@ -70,7 +70,7 @@ This base should be extended for listen to various pointer events.
 
 #### Defined in
 
-[packages/utilities/src/events/PointerEvents.ts:16](https://github.com/cognitedata/reveal/blob/3aaed3491dba3f4ba9ecd87f495d35383cc73a1d/viewer/packages/utilities/src/events/PointerEvents.ts#L16)
+[packages/utilities/src/events/PointerEvents.ts:16](https://github.com/cognitedata/reveal/blob/2acd9d17229d2bc8e309653b4d6a39ad941e44f1/viewer/packages/utilities/src/events/PointerEvents.ts#L16)
 
 ***
 
@@ -90,7 +90,7 @@ This base should be extended for listen to various pointer events.
 
 #### Defined in
 
-[packages/utilities/src/events/PointerEvents.ts:10](https://github.com/cognitedata/reveal/blob/3aaed3491dba3f4ba9ecd87f495d35383cc73a1d/viewer/packages/utilities/src/events/PointerEvents.ts#L10)
+[packages/utilities/src/events/PointerEvents.ts:10](https://github.com/cognitedata/reveal/blob/2acd9d17229d2bc8e309653b4d6a39ad941e44f1/viewer/packages/utilities/src/events/PointerEvents.ts#L10)
 
 ***
 
@@ -112,7 +112,7 @@ This base should be extended for listen to various pointer events.
 
 #### Defined in
 
-[packages/utilities/src/events/PointerEvents.ts:20](https://github.com/cognitedata/reveal/blob/3aaed3491dba3f4ba9ecd87f495d35383cc73a1d/viewer/packages/utilities/src/events/PointerEvents.ts#L20)
+[packages/utilities/src/events/PointerEvents.ts:20](https://github.com/cognitedata/reveal/blob/2acd9d17229d2bc8e309653b4d6a39ad941e44f1/viewer/packages/utilities/src/events/PointerEvents.ts#L20)
 
 ***
 
@@ -134,7 +134,7 @@ This base should be extended for listen to various pointer events.
 
 #### Defined in
 
-[packages/utilities/src/events/PointerEvents.ts:27](https://github.com/cognitedata/reveal/blob/3aaed3491dba3f4ba9ecd87f495d35383cc73a1d/viewer/packages/utilities/src/events/PointerEvents.ts#L27)
+[packages/utilities/src/events/PointerEvents.ts:27](https://github.com/cognitedata/reveal/blob/2acd9d17229d2bc8e309653b4d6a39ad941e44f1/viewer/packages/utilities/src/events/PointerEvents.ts#L27)
 
 ***
 
@@ -156,4 +156,4 @@ This base should be extended for listen to various pointer events.
 
 #### Defined in
 
-[packages/utilities/src/events/PointerEvents.ts:23](https://github.com/cognitedata/reveal/blob/3aaed3491dba3f4ba9ecd87f495d35383cc73a1d/viewer/packages/utilities/src/events/PointerEvents.ts#L23)
+[packages/utilities/src/events/PointerEvents.ts:23](https://github.com/cognitedata/reveal/blob/2acd9d17229d2bc8e309653b4d6a39ad941e44f1/viewer/packages/utilities/src/events/PointerEvents.ts#L23)

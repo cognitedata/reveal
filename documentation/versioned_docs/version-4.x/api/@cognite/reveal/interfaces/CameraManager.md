@@ -33,7 +33,7 @@ Previously used camera manager.
 
 #### Defined in
 
-[packages/camera-manager/src/CameraManager.ts:61](https://github.com/cognitedata/reveal/blob/3aaed3491dba3f4ba9ecd87f495d35383cc73a1d/viewer/packages/camera-manager/src/CameraManager.ts#L61)
+[packages/camera-manager/src/CameraManager.ts:61](https://github.com/cognitedata/reveal/blob/2acd9d17229d2bc8e309653b4d6a39ad941e44f1/viewer/packages/camera-manager/src/CameraManager.ts#L61)
 
 ***
 
@@ -52,7 +52,7 @@ Note that this is called automatically when a new CameraManager is set on the vi
 
 #### Defined in
 
-[packages/camera-manager/src/CameraManager.ts:69](https://github.com/cognitedata/reveal/blob/3aaed3491dba3f4ba9ecd87f495d35383cc73a1d/viewer/packages/camera-manager/src/CameraManager.ts#L69)
+[packages/camera-manager/src/CameraManager.ts:69](https://github.com/cognitedata/reveal/blob/2acd9d17229d2bc8e309653b4d6a39ad941e44f1/viewer/packages/camera-manager/src/CameraManager.ts#L69)
 
 ***
 
@@ -68,7 +68,7 @@ Note that this is called automatically when a new CameraManager is set on the vi
 
 #### Defined in
 
-[packages/camera-manager/src/CameraManager.ts:109](https://github.com/cognitedata/reveal/blob/3aaed3491dba3f4ba9ecd87f495d35383cc73a1d/viewer/packages/camera-manager/src/CameraManager.ts#L109)
+[packages/camera-manager/src/CameraManager.ts:109](https://github.com/cognitedata/reveal/blob/2acd9d17229d2bc8e309653b4d6a39ad941e44f1/viewer/packages/camera-manager/src/CameraManager.ts#L109)
 
 ***
 
@@ -98,7 +98,7 @@ The ratio of the distance from camera to center of box and radius of the box.
 
 #### Defined in
 
-[packages/camera-manager/src/CameraManager.ts:97](https://github.com/cognitedata/reveal/blob/3aaed3491dba3f4ba9ecd87f495d35383cc73a1d/viewer/packages/camera-manager/src/CameraManager.ts#L97)
+[packages/camera-manager/src/CameraManager.ts:97](https://github.com/cognitedata/reveal/blob/2acd9d17229d2bc8e309653b4d6a39ad941e44f1/viewer/packages/camera-manager/src/CameraManager.ts#L97)
 
 ***
 
@@ -117,7 +117,7 @@ camera changes.
 
 #### Defined in
 
-[packages/camera-manager/src/CameraManager.ts:29](https://github.com/cognitedata/reveal/blob/3aaed3491dba3f4ba9ecd87f495d35383cc73a1d/viewer/packages/camera-manager/src/CameraManager.ts#L29)
+[packages/camera-manager/src/CameraManager.ts:29](https://github.com/cognitedata/reveal/blob/2acd9d17229d2bc8e309653b4d6a39ad941e44f1/viewer/packages/camera-manager/src/CameraManager.ts#L29)
 
 ***
 
@@ -135,7 +135,7 @@ Camera state: position, target and rotation.
 
 #### Defined in
 
-[packages/camera-manager/src/CameraManager.ts:52](https://github.com/cognitedata/reveal/blob/3aaed3491dba3f4ba9ecd87f495d35383cc73a1d/viewer/packages/camera-manager/src/CameraManager.ts#L52)
+[packages/camera-manager/src/CameraManager.ts:52](https://github.com/cognitedata/reveal/blob/2acd9d17229d2bc8e309653b4d6a39ad941e44f1/viewer/packages/camera-manager/src/CameraManager.ts#L52)
 
 ***
 
@@ -163,7 +163,7 @@ Callback function to be unsubscribed.
 
 ##### Defined in
 
-[packages/camera-manager/src/CameraManager.ts:87](https://github.com/cognitedata/reveal/blob/3aaed3491dba3f4ba9ecd87f495d35383cc73a1d/viewer/packages/camera-manager/src/CameraManager.ts#L87)
+[packages/camera-manager/src/CameraManager.ts:87](https://github.com/cognitedata/reveal/blob/2acd9d17229d2bc8e309653b4d6a39ad941e44f1/viewer/packages/camera-manager/src/CameraManager.ts#L87)
 
 #### off(event, callback)
 
@@ -181,7 +181,7 @@ Callback function to be unsubscribed.
 
 ##### Defined in
 
-[packages/camera-manager/src/CameraManager.ts:88](https://github.com/cognitedata/reveal/blob/3aaed3491dba3f4ba9ecd87f495d35383cc73a1d/viewer/packages/camera-manager/src/CameraManager.ts#L88)
+[packages/camera-manager/src/CameraManager.ts:88](https://github.com/cognitedata/reveal/blob/2acd9d17229d2bc8e309653b4d6a39ad941e44f1/viewer/packages/camera-manager/src/CameraManager.ts#L88)
 
 #### off(event, callback)
 
@@ -199,7 +199,7 @@ Callback function to be unsubscribed.
 
 ##### Defined in
 
-[packages/camera-manager/src/CameraManager.ts:89](https://github.com/cognitedata/reveal/blob/3aaed3491dba3f4ba9ecd87f495d35383cc73a1d/viewer/packages/camera-manager/src/CameraManager.ts#L89)
+[packages/camera-manager/src/CameraManager.ts:89](https://github.com/cognitedata/reveal/blob/2acd9d17229d2bc8e309653b4d6a39ad941e44f1/viewer/packages/camera-manager/src/CameraManager.ts#L89)
 
 ***
 
@@ -229,7 +229,7 @@ Callback to be called when the event is fired.
 
 ##### Defined in
 
-[packages/camera-manager/src/CameraManager.ts:78](https://github.com/cognitedata/reveal/blob/3aaed3491dba3f4ba9ecd87f495d35383cc73a1d/viewer/packages/camera-manager/src/CameraManager.ts#L78)
+[packages/camera-manager/src/CameraManager.ts:78](https://github.com/cognitedata/reveal/blob/2acd9d17229d2bc8e309653b4d6a39ad941e44f1/viewer/packages/camera-manager/src/CameraManager.ts#L78)
 
 #### on(event, callback)
 
@@ -247,7 +247,7 @@ Callback to be called when the event is fired.
 
 ##### Defined in
 
-[packages/camera-manager/src/CameraManager.ts:79](https://github.com/cognitedata/reveal/blob/3aaed3491dba3f4ba9ecd87f495d35383cc73a1d/viewer/packages/camera-manager/src/CameraManager.ts#L79)
+[packages/camera-manager/src/CameraManager.ts:79](https://github.com/cognitedata/reveal/blob/2acd9d17229d2bc8e309653b4d6a39ad941e44f1/viewer/packages/camera-manager/src/CameraManager.ts#L79)
 
 #### on(event, callback)
 
@@ -265,7 +265,7 @@ Callback to be called when the event is fired.
 
 ##### Defined in
 
-[packages/camera-manager/src/CameraManager.ts:80](https://github.com/cognitedata/reveal/blob/3aaed3491dba3f4ba9ecd87f495d35383cc73a1d/viewer/packages/camera-manager/src/CameraManager.ts#L80)
+[packages/camera-manager/src/CameraManager.ts:80](https://github.com/cognitedata/reveal/blob/2acd9d17229d2bc8e309653b4d6a39ad941e44f1/viewer/packages/camera-manager/src/CameraManager.ts#L80)
 
 ***
 
@@ -297,7 +297,7 @@ cameraManager.setCameraState({ position, target });
 
 #### Defined in
 
-[packages/camera-manager/src/CameraManager.ts:46](https://github.com/cognitedata/reveal/blob/3aaed3491dba3f4ba9ecd87f495d35383cc73a1d/viewer/packages/camera-manager/src/CameraManager.ts#L46)
+[packages/camera-manager/src/CameraManager.ts:46](https://github.com/cognitedata/reveal/blob/2acd9d17229d2bc8e309653b4d6a39ad941e44f1/viewer/packages/camera-manager/src/CameraManager.ts#L46)
 
 ***
 
@@ -325,4 +325,4 @@ Global bounding box of the model(s) and any custom objects added to the scene.
 
 #### Defined in
 
-[packages/camera-manager/src/CameraManager.ts:105](https://github.com/cognitedata/reveal/blob/3aaed3491dba3f4ba9ecd87f495d35383cc73a1d/viewer/packages/camera-manager/src/CameraManager.ts#L105)
+[packages/camera-manager/src/CameraManager.ts:105](https://github.com/cognitedata/reveal/blob/2acd9d17229d2bc8e309653b4d6a39ad941e44f1/viewer/packages/camera-manager/src/CameraManager.ts#L105)

@@ -10,7 +10,7 @@ A corner of the anything.
 
 #### Defined in
 
-[packages/tools/src/utilities/Corner.ts:12](https://github.com/cognitedata/reveal/blob/3aaed3491dba3f4ba9ecd87f495d35383cc73a1d/viewer/packages/tools/src/utilities/Corner.ts#L12)
+[packages/tools/src/utilities/Corner.ts:12](https://github.com/cognitedata/reveal/blob/2acd9d17229d2bc8e309653b4d6a39ad941e44f1/viewer/packages/tools/src/utilities/Corner.ts#L12)
 
 ***
 
@@ -20,7 +20,7 @@ A corner of the anything.
 
 #### Defined in
 
-[packages/tools/src/utilities/Corner.ts:13](https://github.com/cognitedata/reveal/blob/3aaed3491dba3f4ba9ecd87f495d35383cc73a1d/viewer/packages/tools/src/utilities/Corner.ts#L13)
+[packages/tools/src/utilities/Corner.ts:13](https://github.com/cognitedata/reveal/blob/2acd9d17229d2bc8e309653b4d6a39ad941e44f1/viewer/packages/tools/src/utilities/Corner.ts#L13)
 
 ***
 
@@ -30,7 +30,7 @@ A corner of the anything.
 
 #### Defined in
 
-[packages/tools/src/utilities/Corner.ts:11](https://github.com/cognitedata/reveal/blob/3aaed3491dba3f4ba9ecd87f495d35383cc73a1d/viewer/packages/tools/src/utilities/Corner.ts#L11)
+[packages/tools/src/utilities/Corner.ts:11](https://github.com/cognitedata/reveal/blob/2acd9d17229d2bc8e309653b4d6a39ad941e44f1/viewer/packages/tools/src/utilities/Corner.ts#L11)
 
 ***
 
@@ -40,4 +40,4 @@ A corner of the anything.
 
 #### Defined in
 
-[packages/tools/src/utilities/Corner.ts:10](https://github.com/cognitedata/reveal/blob/3aaed3491dba3f4ba9ecd87f495d35383cc73a1d/viewer/packages/tools/src/utilities/Corner.ts#L10)
+[packages/tools/src/utilities/Corner.ts:10](https://github.com/cognitedata/reveal/blob/2acd9d17229d2bc8e309653b4d6a39ad941e44f1/viewer/packages/tools/src/utilities/Corner.ts#L10)

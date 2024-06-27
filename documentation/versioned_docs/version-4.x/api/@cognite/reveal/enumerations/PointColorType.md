@@ -8,7 +8,7 @@
 
 #### Defined in
 
-[packages/rendering/src/pointcloud-rendering/enums.ts:27](https://github.com/cognitedata/reveal/blob/3aaed3491dba3f4ba9ecd87f495d35383cc73a1d/viewer/packages/rendering/src/pointcloud-rendering/enums.ts#L27)
+[packages/rendering/src/pointcloud-rendering/enums.ts:27](https://github.com/cognitedata/reveal/blob/2acd9d17229d2bc8e309653b4d6a39ad941e44f1/viewer/packages/rendering/src/pointcloud-rendering/enums.ts#L27)
 
 ***
 
@@ -18,7 +18,7 @@
 
 #### Defined in
 
-[packages/rendering/src/pointcloud-rendering/enums.ts:18](https://github.com/cognitedata/reveal/blob/3aaed3491dba3f4ba9ecd87f495d35383cc73a1d/viewer/packages/rendering/src/pointcloud-rendering/enums.ts#L18)
+[packages/rendering/src/pointcloud-rendering/enums.ts:18](https://github.com/cognitedata/reveal/blob/2acd9d17229d2bc8e309653b4d6a39ad941e44f1/viewer/packages/rendering/src/pointcloud-rendering/enums.ts#L18)
 
 ***
 
@@ -28,7 +28,7 @@
 
 #### Defined in
 
-[packages/rendering/src/pointcloud-rendering/enums.ts:21](https://github.com/cognitedata/reveal/blob/3aaed3491dba3f4ba9ecd87f495d35383cc73a1d/viewer/packages/rendering/src/pointcloud-rendering/enums.ts#L21)
+[packages/rendering/src/pointcloud-rendering/enums.ts:21](https://github.com/cognitedata/reveal/blob/2acd9d17229d2bc8e309653b4d6a39ad941e44f1/viewer/packages/rendering/src/pointcloud-rendering/enums.ts#L21)
 
 ***
 
@@ -38,7 +38,7 @@
 
 #### Defined in
 
-[packages/rendering/src/pointcloud-rendering/enums.ts:19](https://github.com/cognitedata/reveal/blob/3aaed3491dba3f4ba9ecd87f495d35383cc73a1d/viewer/packages/rendering/src/pointcloud-rendering/enums.ts#L19)
+[packages/rendering/src/pointcloud-rendering/enums.ts:19](https://github.com/cognitedata/reveal/blob/2acd9d17229d2bc8e309653b4d6a39ad941e44f1/viewer/packages/rendering/src/pointcloud-rendering/enums.ts#L19)
 
 ***
 
@@ -48,7 +48,7 @@
 
 #### Defined in
 
-[packages/rendering/src/pointcloud-rendering/enums.ts:22](https://github.com/cognitedata/reveal/blob/3aaed3491dba3f4ba9ecd87f495d35383cc73a1d/viewer/packages/rendering/src/pointcloud-rendering/enums.ts#L22)
+[packages/rendering/src/pointcloud-rendering/enums.ts:22](https://github.com/cognitedata/reveal/blob/2acd9d17229d2bc8e309653b4d6a39ad941e44f1/viewer/packages/rendering/src/pointcloud-rendering/enums.ts#L22)
 
 ***
 
@@ -58,7 +58,7 @@
 
 #### Defined in
 
-[packages/rendering/src/pointcloud-rendering/enums.ts:25](https://github.com/cognitedata/reveal/blob/3aaed3491dba3f4ba9ecd87f495d35383cc73a1d/viewer/packages/rendering/src/pointcloud-rendering/enums.ts#L25)
+[packages/rendering/src/pointcloud-rendering/enums.ts:25](https://github.com/cognitedata/reveal/blob/2acd9d17229d2bc8e309653b4d6a39ad941e44f1/viewer/packages/rendering/src/pointcloud-rendering/enums.ts#L25)
 
 ***
 
@@ -68,7 +68,7 @@
 
 #### Defined in
 
-[packages/rendering/src/pointcloud-rendering/enums.ts:23](https://github.com/cognitedata/reveal/blob/3aaed3491dba3f4ba9ecd87f495d35383cc73a1d/viewer/packages/rendering/src/pointcloud-rendering/enums.ts#L23)
+[packages/rendering/src/pointcloud-rendering/enums.ts:23](https://github.com/cognitedata/reveal/blob/2acd9d17229d2bc8e309653b4d6a39ad941e44f1/viewer/packages/rendering/src/pointcloud-rendering/enums.ts#L23)
 
 ***
 
@@ -78,7 +78,7 @@
 
 #### Defined in
 
-[packages/rendering/src/pointcloud-rendering/enums.ts:26](https://github.com/cognitedata/reveal/blob/3aaed3491dba3f4ba9ecd87f495d35383cc73a1d/viewer/packages/rendering/src/pointcloud-rendering/enums.ts#L26)
+[packages/rendering/src/pointcloud-rendering/enums.ts:26](https://github.com/cognitedata/reveal/blob/2acd9d17229d2bc8e309653b4d6a39ad941e44f1/viewer/packages/rendering/src/pointcloud-rendering/enums.ts#L26)
 
 ***
 
@@ -88,4 +88,4 @@
 
 #### Defined in
 
-[packages/rendering/src/pointcloud-rendering/enums.ts:17](https://github.com/cognitedata/reveal/blob/3aaed3491dba3f4ba9ecd87f495d35383cc73a1d/viewer/packages/rendering/src/pointcloud-rendering/enums.ts#L17)
+[packages/rendering/src/pointcloud-rendering/enums.ts:17](https://github.com/cognitedata/reveal/blob/2acd9d17229d2bc8e309653b4d6a39ad941e44f1/viewer/packages/rendering/src/pointcloud-rendering/enums.ts#L17)

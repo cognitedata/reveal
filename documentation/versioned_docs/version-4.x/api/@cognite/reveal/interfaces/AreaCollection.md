@@ -17,7 +17,7 @@ of the inserted boxes
 
 #### Defined in
 
-[packages/cad-styling/src/prioritized/AreaCollection.ts:18](https://github.com/cognitedata/reveal/blob/3aaed3491dba3f4ba9ecd87f495d35383cc73a1d/viewer/packages/cad-styling/src/prioritized/AreaCollection.ts#L18)
+[packages/cad-styling/src/prioritized/AreaCollection.ts:18](https://github.com/cognitedata/reveal/blob/2acd9d17229d2bc8e309653b4d6a39ad941e44f1/viewer/packages/cad-styling/src/prioritized/AreaCollection.ts#L18)
 
 ## Methods
 
@@ -38,7 +38,7 @@ AreaCollection.
 
 #### Defined in
 
-[packages/cad-styling/src/prioritized/AreaCollection.ts:36](https://github.com/cognitedata/reveal/blob/3aaed3491dba3f4ba9ecd87f495d35383cc73a1d/viewer/packages/cad-styling/src/prioritized/AreaCollection.ts#L36)
+[packages/cad-styling/src/prioritized/AreaCollection.ts:36](https://github.com/cognitedata/reveal/blob/2acd9d17229d2bc8e309653b4d6a39ad941e44f1/viewer/packages/cad-styling/src/prioritized/AreaCollection.ts#L36)
 
 ***
 
@@ -56,7 +56,7 @@ subset of boxes in the set returned from `areas`
 
 #### Defined in
 
-[packages/cad-styling/src/prioritized/AreaCollection.ts:25](https://github.com/cognitedata/reveal/blob/3aaed3491dba3f4ba9ecd87f495d35383cc73a1d/viewer/packages/cad-styling/src/prioritized/AreaCollection.ts#L25)
+[packages/cad-styling/src/prioritized/AreaCollection.ts:25](https://github.com/cognitedata/reveal/blob/2acd9d17229d2bc8e309653b4d6a39ad941e44f1/viewer/packages/cad-styling/src/prioritized/AreaCollection.ts#L25)
 
 ***
 
@@ -80,7 +80,7 @@ A and B, and will thus be a valid representative set for the intersection of A a
 
 #### Defined in
 
-[packages/cad-styling/src/prioritized/AreaCollection.ts:45](https://github.com/cognitedata/reveal/blob/3aaed3491dba3f4ba9ecd87f495d35383cc73a1d/viewer/packages/cad-styling/src/prioritized/AreaCollection.ts#L45)
+[packages/cad-styling/src/prioritized/AreaCollection.ts:45](https://github.com/cognitedata/reveal/blob/2acd9d17229d2bc8e309653b4d6a39ad941e44f1/viewer/packages/cad-styling/src/prioritized/AreaCollection.ts#L45)
 
 ***
 
@@ -100,4 +100,4 @@ Return whether the input box intersects the AreaCollection.
 
 #### Defined in
 
-[packages/cad-styling/src/prioritized/AreaCollection.ts:30](https://github.com/cognitedata/reveal/blob/3aaed3491dba3f4ba9ecd87f495d35383cc73a1d/viewer/packages/cad-styling/src/prioritized/AreaCollection.ts#L30)
+[packages/cad-styling/src/prioritized/AreaCollection.ts:30](https://github.com/cognitedata/reveal/blob/2acd9d17229d2bc8e309653b4d6a39ad941e44f1/viewer/packages/cad-styling/src/prioritized/AreaCollection.ts#L30)

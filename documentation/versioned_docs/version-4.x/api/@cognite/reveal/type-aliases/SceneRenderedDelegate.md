@@ -20,4 +20,4 @@
 
 ## Defined in
 
-[packages/utilities/src/events/types.ts:37](https://github.com/cognitedata/reveal/blob/3aaed3491dba3f4ba9ecd87f495d35383cc73a1d/viewer/packages/utilities/src/events/types.ts#L37)
+[packages/utilities/src/events/types.ts:37](https://github.com/cognitedata/reveal/blob/2acd9d17229d2bc8e309653b4d6a39ad941e44f1/viewer/packages/utilities/src/events/types.ts#L37)

@@ -17,7 +17,7 @@ historically.
 
 #### Defined in
 
-[packages/pointclouds/src/types.ts:59](https://github.com/cognitedata/reveal/blob/3aaed3491dba3f4ba9ecd87f495d35383cc73a1d/viewer/packages/pointclouds/src/types.ts#L59)
+[packages/pointclouds/src/types.ts:59](https://github.com/cognitedata/reveal/blob/2acd9d17229d2bc8e309653b4d6a39ad941e44f1/viewer/packages/pointclouds/src/types.ts#L59)
 
 ***
 
@@ -27,7 +27,7 @@ historically.
 
 #### Defined in
 
-[packages/pointclouds/src/types.ts:24](https://github.com/cognitedata/reveal/blob/3aaed3491dba3f4ba9ecd87f495d35383cc73a1d/viewer/packages/pointclouds/src/types.ts#L24)
+[packages/pointclouds/src/types.ts:24](https://github.com/cognitedata/reveal/blob/2acd9d17229d2bc8e309653b4d6a39ad941e44f1/viewer/packages/pointclouds/src/types.ts#L24)
 
 ***
 
@@ -39,7 +39,7 @@ Created, never classified.
 
 #### Defined in
 
-[packages/pointclouds/src/types.ts:18](https://github.com/cognitedata/reveal/blob/3aaed3491dba3f4ba9ecd87f495d35383cc73a1d/viewer/packages/pointclouds/src/types.ts#L18)
+[packages/pointclouds/src/types.ts:18](https://github.com/cognitedata/reveal/blob/2acd9d17229d2bc8e309653b4d6a39ad941e44f1/viewer/packages/pointclouds/src/types.ts#L18)
 
 ***
 
@@ -51,7 +51,7 @@ Special value for all other classes. Some point in Potree might be in this class
 
 #### Defined in
 
-[packages/pointclouds/src/types.ts:14](https://github.com/cognitedata/reveal/blob/3aaed3491dba3f4ba9ecd87f495d35383cc73a1d/viewer/packages/pointclouds/src/types.ts#L14)
+[packages/pointclouds/src/types.ts:14](https://github.com/cognitedata/reveal/blob/2acd9d17229d2bc8e309653b4d6a39ad941e44f1/viewer/packages/pointclouds/src/types.ts#L14)
 
 ***
 
@@ -61,7 +61,7 @@ Special value for all other classes. Some point in Potree might be in this class
 
 #### Defined in
 
-[packages/pointclouds/src/types.ts:20](https://github.com/cognitedata/reveal/blob/3aaed3491dba3f4ba9ecd87f495d35383cc73a1d/viewer/packages/pointclouds/src/types.ts#L20)
+[packages/pointclouds/src/types.ts:20](https://github.com/cognitedata/reveal/blob/2acd9d17229d2bc8e309653b4d6a39ad941e44f1/viewer/packages/pointclouds/src/types.ts#L20)
 
 ***
 
@@ -75,7 +75,7 @@ historically.
 
 #### Defined in
 
-[packages/pointclouds/src/types.ts:65](https://github.com/cognitedata/reveal/blob/3aaed3491dba3f4ba9ecd87f495d35383cc73a1d/viewer/packages/pointclouds/src/types.ts#L65)
+[packages/pointclouds/src/types.ts:65](https://github.com/cognitedata/reveal/blob/2acd9d17229d2bc8e309653b4d6a39ad941e44f1/viewer/packages/pointclouds/src/types.ts#L65)
 
 ***
 
@@ -85,7 +85,7 @@ historically.
 
 #### Defined in
 
-[packages/pointclouds/src/types.ts:23](https://github.com/cognitedata/reveal/blob/3aaed3491dba3f4ba9ecd87f495d35383cc73a1d/viewer/packages/pointclouds/src/types.ts#L23)
+[packages/pointclouds/src/types.ts:23](https://github.com/cognitedata/reveal/blob/2acd9d17229d2bc8e309653b4d6a39ad941e44f1/viewer/packages/pointclouds/src/types.ts#L23)
 
 ***
 
@@ -97,7 +97,7 @@ E.g. breakline proximity.
 
 #### Defined in
 
-[packages/pointclouds/src/types.ts:73](https://github.com/cognitedata/reveal/blob/3aaed3491dba3f4ba9ecd87f495d35383cc73a1d/viewer/packages/pointclouds/src/types.ts#L73)
+[packages/pointclouds/src/types.ts:73](https://github.com/cognitedata/reveal/blob/2acd9d17229d2bc8e309653b4d6a39ad941e44f1/viewer/packages/pointclouds/src/types.ts#L73)
 
 ***
 
@@ -109,7 +109,7 @@ Low point, typically "low noise".
 
 #### Defined in
 
-[packages/pointclouds/src/types.ts:28](https://github.com/cognitedata/reveal/blob/3aaed3491dba3f4ba9ecd87f495d35383cc73a1d/viewer/packages/pointclouds/src/types.ts#L28)
+[packages/pointclouds/src/types.ts:28](https://github.com/cognitedata/reveal/blob/2acd9d17229d2bc8e309653b4d6a39ad941e44f1/viewer/packages/pointclouds/src/types.ts#L28)
 
 ***
 
@@ -119,7 +119,7 @@ Low point, typically "low noise".
 
 #### Defined in
 
-[packages/pointclouds/src/types.ts:21](https://github.com/cognitedata/reveal/blob/3aaed3491dba3f4ba9ecd87f495d35383cc73a1d/viewer/packages/pointclouds/src/types.ts#L21)
+[packages/pointclouds/src/types.ts:21](https://github.com/cognitedata/reveal/blob/2acd9d17229d2bc8e309653b4d6a39ad941e44f1/viewer/packages/pointclouds/src/types.ts#L21)
 
 ***
 
@@ -129,7 +129,7 @@ Low point, typically "low noise".
 
 #### Defined in
 
-[packages/pointclouds/src/types.ts:22](https://github.com/cognitedata/reveal/blob/3aaed3491dba3f4ba9ecd87f495d35383cc73a1d/viewer/packages/pointclouds/src/types.ts#L22)
+[packages/pointclouds/src/types.ts:22](https://github.com/cognitedata/reveal/blob/2acd9d17229d2bc8e309653b4d6a39ad941e44f1/viewer/packages/pointclouds/src/types.ts#L22)
 
 ***
 
@@ -141,7 +141,7 @@ E.g. conveyors, mining equipment, traffic lights.
 
 #### Defined in
 
-[packages/pointclouds/src/types.ts:69](https://github.com/cognitedata/reveal/blob/3aaed3491dba3f4ba9ecd87f495d35383cc73a1d/viewer/packages/pointclouds/src/types.ts#L69)
+[packages/pointclouds/src/types.ts:69](https://github.com/cognitedata/reveal/blob/2acd9d17229d2bc8e309653b4d6a39ad941e44f1/viewer/packages/pointclouds/src/types.ts#L69)
 
 ***
 
@@ -151,7 +151,7 @@ E.g. conveyors, mining equipment, traffic lights.
 
 #### Defined in
 
-[packages/pointclouds/src/types.ts:35](https://github.com/cognitedata/reveal/blob/3aaed3491dba3f4ba9ecd87f495d35383cc73a1d/viewer/packages/pointclouds/src/types.ts#L35)
+[packages/pointclouds/src/types.ts:35](https://github.com/cognitedata/reveal/blob/2acd9d17229d2bc8e309653b4d6a39ad941e44f1/viewer/packages/pointclouds/src/types.ts#L35)
 
 ***
 
@@ -164,7 +164,7 @@ revisions this value is reserved.
 
 #### Defined in
 
-[packages/pointclouds/src/types.ts:41](https://github.com/cognitedata/reveal/blob/3aaed3491dba3f4ba9ecd87f495d35383cc73a1d/viewer/packages/pointclouds/src/types.ts#L41)
+[packages/pointclouds/src/types.ts:41](https://github.com/cognitedata/reveal/blob/2acd9d17229d2bc8e309653b4d6a39ad941e44f1/viewer/packages/pointclouds/src/types.ts#L41)
 
 ***
 
@@ -177,7 +177,7 @@ revisions this value is reserved.
 
 #### Defined in
 
-[packages/pointclouds/src/types.ts:33](https://github.com/cognitedata/reveal/blob/3aaed3491dba3f4ba9ecd87f495d35383cc73a1d/viewer/packages/pointclouds/src/types.ts#L33)
+[packages/pointclouds/src/types.ts:33](https://github.com/cognitedata/reveal/blob/2acd9d17229d2bc8e309653b4d6a39ad941e44f1/viewer/packages/pointclouds/src/types.ts#L33)
 
 ***
 
@@ -187,7 +187,7 @@ revisions this value is reserved.
 
 #### Defined in
 
-[packages/pointclouds/src/types.ts:36](https://github.com/cognitedata/reveal/blob/3aaed3491dba3f4ba9ecd87f495d35383cc73a1d/viewer/packages/pointclouds/src/types.ts#L36)
+[packages/pointclouds/src/types.ts:36](https://github.com/cognitedata/reveal/blob/2acd9d17229d2bc8e309653b4d6a39ad941e44f1/viewer/packages/pointclouds/src/types.ts#L36)
 
 ***
 
@@ -197,7 +197,7 @@ revisions this value is reserved.
 
 #### Defined in
 
-[packages/pointclouds/src/types.ts:74](https://github.com/cognitedata/reveal/blob/3aaed3491dba3f4ba9ecd87f495d35383cc73a1d/viewer/packages/pointclouds/src/types.ts#L74)
+[packages/pointclouds/src/types.ts:74](https://github.com/cognitedata/reveal/blob/2acd9d17229d2bc8e309653b4d6a39ad941e44f1/viewer/packages/pointclouds/src/types.ts#L74)
 
 ***
 
@@ -210,7 +210,7 @@ levels, landslides, permafrost
 
 #### Defined in
 
-[packages/pointclouds/src/types.ts:79](https://github.com/cognitedata/reveal/blob/3aaed3491dba3f4ba9ecd87f495d35383cc73a1d/viewer/packages/pointclouds/src/types.ts#L79)
+[packages/pointclouds/src/types.ts:79](https://github.com/cognitedata/reveal/blob/2acd9d17229d2bc8e309653b4d6a39ad941e44f1/viewer/packages/pointclouds/src/types.ts#L79)
 
 ***
 
@@ -220,7 +220,7 @@ levels, landslides, permafrost
 
 #### Defined in
 
-[packages/pointclouds/src/types.ts:50](https://github.com/cognitedata/reveal/blob/3aaed3491dba3f4ba9ecd87f495d35383cc73a1d/viewer/packages/pointclouds/src/types.ts#L50)
+[packages/pointclouds/src/types.ts:50](https://github.com/cognitedata/reveal/blob/2acd9d17229d2bc8e309653b4d6a39ad941e44f1/viewer/packages/pointclouds/src/types.ts#L50)
 
 ***
 
@@ -230,7 +230,7 @@ levels, landslides, permafrost
 
 #### Defined in
 
-[packages/pointclouds/src/types.ts:19](https://github.com/cognitedata/reveal/blob/3aaed3491dba3f4ba9ecd87f495d35383cc73a1d/viewer/packages/pointclouds/src/types.ts#L19)
+[packages/pointclouds/src/types.ts:19](https://github.com/cognitedata/reveal/blob/2acd9d17229d2bc8e309653b4d6a39ad941e44f1/viewer/packages/pointclouds/src/types.ts#L19)
 
 ***
 
@@ -240,7 +240,7 @@ levels, landslides, permafrost
 
 #### Defined in
 
-[packages/pointclouds/src/types.ts:34](https://github.com/cognitedata/reveal/blob/3aaed3491dba3f4ba9ecd87f495d35383cc73a1d/viewer/packages/pointclouds/src/types.ts#L34)
+[packages/pointclouds/src/types.ts:34](https://github.com/cognitedata/reveal/blob/2acd9d17229d2bc8e309653b4d6a39ad941e44f1/viewer/packages/pointclouds/src/types.ts#L34)
 
 ***
 
@@ -252,7 +252,7 @@ Wire conductor (phase).
 
 #### Defined in
 
-[packages/pointclouds/src/types.ts:49](https://github.com/cognitedata/reveal/blob/3aaed3491dba3f4ba9ecd87f495d35383cc73a1d/viewer/packages/pointclouds/src/types.ts#L49)
+[packages/pointclouds/src/types.ts:49](https://github.com/cognitedata/reveal/blob/2acd9d17229d2bc8e309653b4d6a39ad941e44f1/viewer/packages/pointclouds/src/types.ts#L49)
 
 ***
 
@@ -264,7 +264,7 @@ Wire guard shield.
 
 #### Defined in
 
-[packages/pointclouds/src/types.ts:45](https://github.com/cognitedata/reveal/blob/3aaed3491dba3f4ba9ecd87f495d35383cc73a1d/viewer/packages/pointclouds/src/types.ts#L45)
+[packages/pointclouds/src/types.ts:45](https://github.com/cognitedata/reveal/blob/2acd9d17229d2bc8e309653b4d6a39ad941e44f1/viewer/packages/pointclouds/src/types.ts#L45)
 
 ***
 
@@ -276,4 +276,4 @@ Wire-structure connector (e.g. insulator).
 
 #### Defined in
 
-[packages/pointclouds/src/types.ts:54](https://github.com/cognitedata/reveal/blob/3aaed3491dba3f4ba9ecd87f495d35383cc73a1d/viewer/packages/pointclouds/src/types.ts#L54)
+[packages/pointclouds/src/types.ts:54](https://github.com/cognitedata/reveal/blob/2acd9d17229d2bc8e309653b4d6a39ad941e44f1/viewer/packages/pointclouds/src/types.ts#L54)

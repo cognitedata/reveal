@@ -23,7 +23,7 @@ Currently the default mode is FXAA, but this is subject to change.
 
 #### Defined in
 
-[packages/api/src/public/migration/types.ts:116](https://github.com/cognitedata/reveal/blob/3aaed3491dba3f4ba9ecd87f495d35383cc73a1d/viewer/packages/api/src/public/migration/types.ts#L116)
+[packages/api/src/public/migration/types.ts:116](https://github.com/cognitedata/reveal/blob/2acd9d17229d2bc8e309653b4d6a39ad941e44f1/viewer/packages/api/src/public/migration/types.ts#L116)
 
 ***
 
@@ -39,7 +39,7 @@ Default implementation is [DefaultCameraManager](../classes/DefaultCameraManager
 
 #### Defined in
 
-[packages/api/src/public/migration/types.ts:81](https://github.com/cognitedata/reveal/blob/3aaed3491dba3f4ba9ecd87f495d35383cc73a1d/viewer/packages/api/src/public/migration/types.ts#L81)
+[packages/api/src/public/migration/types.ts:81](https://github.com/cognitedata/reveal/blob/2acd9d17229d2bc8e309653b4d6a39ad941e44f1/viewer/packages/api/src/public/migration/types.ts#L81)
 
 ***
 
@@ -55,7 +55,7 @@ Default value is set to true.
 
 #### Defined in
 
-[packages/api/src/public/migration/types.ts:176](https://github.com/cognitedata/reveal/blob/3aaed3491dba3f4ba9ecd87f495d35383cc73a1d/viewer/packages/api/src/public/migration/types.ts#L176)
+[packages/api/src/public/migration/types.ts:176](https://github.com/cognitedata/reveal/blob/2acd9d17229d2bc8e309653b4d6a39ad941e44f1/viewer/packages/api/src/public/migration/types.ts#L176)
 
 ***
 
@@ -74,7 +74,7 @@ This cannot be used together with Cognite3DViewerOptions._localModels.
 
 #### Defined in
 
-[packages/api/src/public/migration/types.ts:167](https://github.com/cognitedata/reveal/blob/3aaed3491dba3f4ba9ecd87f495d35383cc73a1d/viewer/packages/api/src/public/migration/types.ts#L167)
+[packages/api/src/public/migration/types.ts:167](https://github.com/cognitedata/reveal/blob/2acd9d17229d2bc8e309653b4d6a39ad941e44f1/viewer/packages/api/src/public/migration/types.ts#L167)
 
 ***
 
@@ -86,7 +86,7 @@ An existing DOM element that we will render canvas into.
 
 #### Defined in
 
-[packages/api/src/public/migration/types.ts:50](https://github.com/cognitedata/reveal/blob/3aaed3491dba3f4ba9ecd87f495d35383cc73a1d/viewer/packages/api/src/public/migration/types.ts#L50)
+[packages/api/src/public/migration/types.ts:50](https://github.com/cognitedata/reveal/blob/2acd9d17229d2bc8e309653b4d6a39ad941e44f1/viewer/packages/api/src/public/migration/types.ts#L50)
 
 ***
 
@@ -98,7 +98,7 @@ Enables / disables visualizing the edges of geometry. Defaults to true.
 
 #### Defined in
 
-[packages/api/src/public/migration/types.ts:152](https://github.com/cognitedata/reveal/blob/3aaed3491dba3f4ba9ecd87f495d35383cc73a1d/viewer/packages/api/src/public/migration/types.ts#L152)
+[packages/api/src/public/migration/types.ts:152](https://github.com/cognitedata/reveal/blob/2acd9d17229d2bc8e309653b4d6a39ad941e44f1/viewer/packages/api/src/public/migration/types.ts#L152)
 
 ***
 
@@ -112,7 +112,7 @@ Add event listerers around, default is having event listeners.
 
 #### Defined in
 
-[packages/api/src/public/migration/types.ts:204](https://github.com/cognitedata/reveal/blob/3aaed3491dba3f4ba9ecd87f495d35383cc73a1d/viewer/packages/api/src/public/migration/types.ts#L204)
+[packages/api/src/public/migration/types.ts:204](https://github.com/cognitedata/reveal/blob/2acd9d17229d2bc8e309653b4d6a39ad941e44f1/viewer/packages/api/src/public/migration/types.ts#L204)
 
 ***
 
@@ -137,7 +137,7 @@ What corner the spinner should be placed in. Defaults top topLeft.
 
 #### Defined in
 
-[packages/api/src/public/migration/types.ts:63](https://github.com/cognitedata/reveal/blob/3aaed3491dba3f4ba9ecd87f495d35383cc73a1d/viewer/packages/api/src/public/migration/types.ts#L63)
+[packages/api/src/public/migration/types.ts:63](https://github.com/cognitedata/reveal/blob/2acd9d17229d2bc8e309653b4d6a39ad941e44f1/viewer/packages/api/src/public/migration/types.ts#L63)
 
 ***
 
@@ -149,7 +149,7 @@ Send anonymous usage statistics.
 
 #### Defined in
 
-[packages/api/src/public/migration/types.ts:53](https://github.com/cognitedata/reveal/blob/3aaed3491dba3f4ba9ecd87f495d35383cc73a1d/viewer/packages/api/src/public/migration/types.ts#L53)
+[packages/api/src/public/migration/types.ts:53](https://github.com/cognitedata/reveal/blob/2acd9d17229d2bc8e309653b4d6a39ad941e44f1/viewer/packages/api/src/public/migration/types.ts#L53)
 
 ***
 
@@ -161,7 +161,7 @@ Callback to download stream progress.
 
 #### Defined in
 
-[packages/api/src/public/migration/types.ts:155](https://github.com/cognitedata/reveal/blob/3aaed3491dba3f4ba9ecd87f495d35383cc73a1d/viewer/packages/api/src/public/migration/types.ts#L155)
+[packages/api/src/public/migration/types.ts:155](https://github.com/cognitedata/reveal/blob/2acd9d17229d2bc8e309653b4d6a39ad941e44f1/viewer/packages/api/src/public/migration/types.ts#L155)
 
 ***
 
@@ -186,7 +186,7 @@ big enough. Can cause significant decrease in performance on some machines.
 
 #### Defined in
 
-[packages/api/src/public/migration/types.ts:137](https://github.com/cognitedata/reveal/blob/3aaed3491dba3f4ba9ecd87f495d35383cc73a1d/viewer/packages/api/src/public/migration/types.ts#L137)
+[packages/api/src/public/migration/types.ts:137](https://github.com/cognitedata/reveal/blob/2acd9d17229d2bc8e309653b4d6a39ad941e44f1/viewer/packages/api/src/public/migration/types.ts#L137)
 
 ***
 
@@ -206,7 +206,7 @@ Render to offscreen buffer instead of canvas.
 
 #### Defined in
 
-[packages/api/src/public/migration/types.ts:58](https://github.com/cognitedata/reveal/blob/3aaed3491dba3f4ba9ecd87f495d35383cc73a1d/viewer/packages/api/src/public/migration/types.ts#L58)
+[packages/api/src/public/migration/types.ts:58](https://github.com/cognitedata/reveal/blob/2acd9d17229d2bc8e309653b4d6a39ad941e44f1/viewer/packages/api/src/public/migration/types.ts#L58)
 
 ***
 
@@ -220,7 +220,7 @@ Note that when providing a custom renderer, this should be configured with
 
 #### Defined in
 
-[packages/api/src/public/migration/types.ts:87](https://github.com/cognitedata/reveal/blob/3aaed3491dba3f4ba9ecd87f495d35383cc73a1d/viewer/packages/api/src/public/migration/types.ts#L87)
+[packages/api/src/public/migration/types.ts:87](https://github.com/cognitedata/reveal/blob/2acd9d17229d2bc8e309653b4d6a39ad941e44f1/viewer/packages/api/src/public/migration/types.ts#L87)
 
 ***
 
@@ -240,7 +240,7 @@ Use [Cognite3DViewer.setResolutionOptions](../classes/Cognite3DViewer.md#setreso
 
 #### Defined in
 
-[packages/api/src/public/migration/types.ts:98](https://github.com/cognitedata/reveal/blob/3aaed3491dba3f4ba9ecd87f495d35383cc73a1d/viewer/packages/api/src/public/migration/types.ts#L98)
+[packages/api/src/public/migration/types.ts:98](https://github.com/cognitedata/reveal/blob/2acd9d17229d2bc8e309653b4d6a39ad941e44f1/viewer/packages/api/src/public/migration/types.ts#L98)
 
 ***
 
@@ -252,7 +252,7 @@ Initialized connection to CDF used to load data.
 
 #### Defined in
 
-[packages/api/src/public/migration/types.ts:47](https://github.com/cognitedata/reveal/blob/3aaed3491dba3f4ba9ecd87f495d35383cc73a1d/viewer/packages/api/src/public/migration/types.ts#L47)
+[packages/api/src/public/migration/types.ts:47](https://github.com/cognitedata/reveal/blob/2acd9d17229d2bc8e309653b4d6a39ad941e44f1/viewer/packages/api/src/public/migration/types.ts#L47)
 
 ***
 
@@ -265,7 +265,7 @@ an effect creating shadows and that gives the rendered image more depth.
 
 #### Defined in
 
-[packages/api/src/public/migration/types.ts:132](https://github.com/cognitedata/reveal/blob/3aaed3491dba3f4ba9ecd87f495d35383cc73a1d/viewer/packages/api/src/public/migration/types.ts#L132)
+[packages/api/src/public/migration/types.ts:132](https://github.com/cognitedata/reveal/blob/2acd9d17229d2bc8e309653b4d6a39ad941e44f1/viewer/packages/api/src/public/migration/types.ts#L132)
 
 ***
 
@@ -279,4 +279,4 @@ Use the new flexible camera manager or not, default not to be used.
 
 #### Defined in
 
-[packages/api/src/public/migration/types.ts:198](https://github.com/cognitedata/reveal/blob/3aaed3491dba3f4ba9ecd87f495d35383cc73a1d/viewer/packages/api/src/public/migration/types.ts#L198)
+[packages/api/src/public/migration/types.ts:198](https://github.com/cognitedata/reveal/blob/2acd9d17229d2bc8e309653b4d6a39ad941e44f1/viewer/packages/api/src/public/migration/types.ts#L198)

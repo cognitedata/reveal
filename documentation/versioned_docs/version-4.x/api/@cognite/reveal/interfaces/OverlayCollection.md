@@ -28,7 +28,7 @@ The added overlays.
 
 #### Defined in
 
-[packages/3d-overlays/src/OverlayCollection.ts:47](https://github.com/cognitedata/reveal/blob/3aaed3491dba3f4ba9ecd87f495d35383cc73a1d/viewer/packages/3d-overlays/src/OverlayCollection.ts#L47)
+[packages/3d-overlays/src/OverlayCollection.ts:47](https://github.com/cognitedata/reveal/blob/2acd9d17229d2bc8e309653b4d6a39ad941e44f1/viewer/packages/3d-overlays/src/OverlayCollection.ts#L47)
 
 ***
 
@@ -44,7 +44,7 @@ Get all overlays in the collection.
 
 #### Defined in
 
-[packages/3d-overlays/src/OverlayCollection.ts:40](https://github.com/cognitedata/reveal/blob/3aaed3491dba3f4ba9ecd87f495d35383cc73a1d/viewer/packages/3d-overlays/src/OverlayCollection.ts#L40)
+[packages/3d-overlays/src/OverlayCollection.ts:40](https://github.com/cognitedata/reveal/blob/2acd9d17229d2bc8e309653b4d6a39ad941e44f1/viewer/packages/3d-overlays/src/OverlayCollection.ts#L40)
 
 ***
 
@@ -60,7 +60,7 @@ Remove all overlays from the collection.
 
 #### Defined in
 
-[packages/3d-overlays/src/OverlayCollection.ts:58](https://github.com/cognitedata/reveal/blob/3aaed3491dba3f4ba9ecd87f495d35383cc73a1d/viewer/packages/3d-overlays/src/OverlayCollection.ts#L58)
+[packages/3d-overlays/src/OverlayCollection.ts:58](https://github.com/cognitedata/reveal/blob/2acd9d17229d2bc8e309653b4d6a39ad941e44f1/viewer/packages/3d-overlays/src/OverlayCollection.ts#L58)
 
 ***
 
@@ -82,7 +82,7 @@ Overlays to remove from the collection.
 
 #### Defined in
 
-[packages/3d-overlays/src/OverlayCollection.ts:53](https://github.com/cognitedata/reveal/blob/3aaed3491dba3f4ba9ecd87f495d35383cc73a1d/viewer/packages/3d-overlays/src/OverlayCollection.ts#L53)
+[packages/3d-overlays/src/OverlayCollection.ts:53](https://github.com/cognitedata/reveal/blob/2acd9d17229d2bc8e309653b4d6a39ad941e44f1/viewer/packages/3d-overlays/src/OverlayCollection.ts#L53)
 
 ***
 
@@ -102,4 +102,4 @@ Sets whether overlays in the collection should be visible.
 
 #### Defined in
 
-[packages/3d-overlays/src/OverlayCollection.ts:63](https://github.com/cognitedata/reveal/blob/3aaed3491dba3f4ba9ecd87f495d35383cc73a1d/viewer/packages/3d-overlays/src/OverlayCollection.ts#L63)
+[packages/3d-overlays/src/OverlayCollection.ts:63](https://github.com/cognitedata/reveal/blob/2acd9d17229d2bc8e309653b4d6a39ad941e44f1/viewer/packages/3d-overlays/src/OverlayCollection.ts#L63)

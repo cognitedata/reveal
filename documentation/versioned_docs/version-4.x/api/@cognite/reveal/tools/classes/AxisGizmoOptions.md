@@ -26,7 +26,7 @@ Options for styling the AxisGizmoTool
 
 #### Defined in
 
-[packages/tools/src/AxisGizmo/AxisGizmoOptions.ts:33](https://github.com/cognitedata/reveal/blob/3aaed3491dba3f4ba9ecd87f495d35383cc73a1d/viewer/packages/tools/src/AxisGizmo/AxisGizmoOptions.ts#L33)
+[packages/tools/src/AxisGizmo/AxisGizmoOptions.ts:33](https://github.com/cognitedata/reveal/blob/2acd9d17229d2bc8e309653b4d6a39ad941e44f1/viewer/packages/tools/src/AxisGizmo/AxisGizmoOptions.ts#L33)
 
 ***
 
@@ -38,7 +38,7 @@ Options for styling the AxisGizmoTool
 
 #### Defined in
 
-[packages/tools/src/AxisGizmo/AxisGizmoOptions.ts:20](https://github.com/cognitedata/reveal/blob/3aaed3491dba3f4ba9ecd87f495d35383cc73a1d/viewer/packages/tools/src/AxisGizmo/AxisGizmoOptions.ts#L20)
+[packages/tools/src/AxisGizmo/AxisGizmoOptions.ts:20](https://github.com/cognitedata/reveal/blob/2acd9d17229d2bc8e309653b4d6a39ad941e44f1/viewer/packages/tools/src/AxisGizmo/AxisGizmoOptions.ts#L20)
 
 ***
 
@@ -50,7 +50,7 @@ Options for styling the AxisGizmoTool
 
 #### Defined in
 
-[packages/tools/src/AxisGizmo/AxisGizmoOptions.ts:16](https://github.com/cognitedata/reveal/blob/3aaed3491dba3f4ba9ecd87f495d35383cc73a1d/viewer/packages/tools/src/AxisGizmo/AxisGizmoOptions.ts#L16)
+[packages/tools/src/AxisGizmo/AxisGizmoOptions.ts:16](https://github.com/cognitedata/reveal/blob/2acd9d17229d2bc8e309653b4d6a39ad941e44f1/viewer/packages/tools/src/AxisGizmo/AxisGizmoOptions.ts#L16)
 
 ***
 
@@ -62,7 +62,7 @@ Options for styling the AxisGizmoTool
 
 #### Defined in
 
-[packages/tools/src/AxisGizmo/AxisGizmoOptions.ts:13](https://github.com/cognitedata/reveal/blob/3aaed3491dba3f4ba9ecd87f495d35383cc73a1d/viewer/packages/tools/src/AxisGizmo/AxisGizmoOptions.ts#L13)
+[packages/tools/src/AxisGizmo/AxisGizmoOptions.ts:13](https://github.com/cognitedata/reveal/blob/2acd9d17229d2bc8e309653b4d6a39ad941e44f1/viewer/packages/tools/src/AxisGizmo/AxisGizmoOptions.ts#L13)
 
 ***
 
@@ -74,7 +74,7 @@ Options for styling the AxisGizmoTool
 
 #### Defined in
 
-[packages/tools/src/AxisGizmo/AxisGizmoOptions.ts:32](https://github.com/cognitedata/reveal/blob/3aaed3491dba3f4ba9ecd87f495d35383cc73a1d/viewer/packages/tools/src/AxisGizmo/AxisGizmoOptions.ts#L32)
+[packages/tools/src/AxisGizmo/AxisGizmoOptions.ts:32](https://github.com/cognitedata/reveal/blob/2acd9d17229d2bc8e309653b4d6a39ad941e44f1/viewer/packages/tools/src/AxisGizmo/AxisGizmoOptions.ts#L32)
 
 ***
 
@@ -86,7 +86,7 @@ Options for styling the AxisGizmoTool
 
 #### Defined in
 
-[packages/tools/src/AxisGizmo/AxisGizmoOptions.ts:29](https://github.com/cognitedata/reveal/blob/3aaed3491dba3f4ba9ecd87f495d35383cc73a1d/viewer/packages/tools/src/AxisGizmo/AxisGizmoOptions.ts#L29)
+[packages/tools/src/AxisGizmo/AxisGizmoOptions.ts:29](https://github.com/cognitedata/reveal/blob/2acd9d17229d2bc8e309653b4d6a39ad941e44f1/viewer/packages/tools/src/AxisGizmo/AxisGizmoOptions.ts#L29)
 
 ***
 
@@ -98,7 +98,7 @@ Options for styling the AxisGizmoTool
 
 #### Defined in
 
-[packages/tools/src/AxisGizmo/AxisGizmoOptions.ts:28](https://github.com/cognitedata/reveal/blob/3aaed3491dba3f4ba9ecd87f495d35383cc73a1d/viewer/packages/tools/src/AxisGizmo/AxisGizmoOptions.ts#L28)
+[packages/tools/src/AxisGizmo/AxisGizmoOptions.ts:28](https://github.com/cognitedata/reveal/blob/2acd9d17229d2bc8e309653b4d6a39ad941e44f1/viewer/packages/tools/src/AxisGizmo/AxisGizmoOptions.ts#L28)
 
 ***
 
@@ -110,7 +110,7 @@ Options for styling the AxisGizmoTool
 
 #### Defined in
 
-[packages/tools/src/AxisGizmo/AxisGizmoOptions.ts:24](https://github.com/cognitedata/reveal/blob/3aaed3491dba3f4ba9ecd87f495d35383cc73a1d/viewer/packages/tools/src/AxisGizmo/AxisGizmoOptions.ts#L24)
+[packages/tools/src/AxisGizmo/AxisGizmoOptions.ts:24](https://github.com/cognitedata/reveal/blob/2acd9d17229d2bc8e309653b4d6a39ad941e44f1/viewer/packages/tools/src/AxisGizmo/AxisGizmoOptions.ts#L24)
 
 ***
 
@@ -122,7 +122,7 @@ Options for styling the AxisGizmoTool
 
 #### Defined in
 
-[packages/tools/src/AxisGizmo/AxisGizmoOptions.ts:23](https://github.com/cognitedata/reveal/blob/3aaed3491dba3f4ba9ecd87f495d35383cc73a1d/viewer/packages/tools/src/AxisGizmo/AxisGizmoOptions.ts#L23)
+[packages/tools/src/AxisGizmo/AxisGizmoOptions.ts:23](https://github.com/cognitedata/reveal/blob/2acd9d17229d2bc8e309653b4d6a39ad941e44f1/viewer/packages/tools/src/AxisGizmo/AxisGizmoOptions.ts#L23)
 
 ***
 
@@ -134,7 +134,7 @@ Options for styling the AxisGizmoTool
 
 #### Defined in
 
-[packages/tools/src/AxisGizmo/AxisGizmoOptions.ts:25](https://github.com/cognitedata/reveal/blob/3aaed3491dba3f4ba9ecd87f495d35383cc73a1d/viewer/packages/tools/src/AxisGizmo/AxisGizmoOptions.ts#L25)
+[packages/tools/src/AxisGizmo/AxisGizmoOptions.ts:25](https://github.com/cognitedata/reveal/blob/2acd9d17229d2bc8e309653b4d6a39ad941e44f1/viewer/packages/tools/src/AxisGizmo/AxisGizmoOptions.ts#L25)
 
 ***
 
@@ -146,7 +146,7 @@ Options for styling the AxisGizmoTool
 
 #### Defined in
 
-[packages/tools/src/AxisGizmo/AxisGizmoOptions.ts:30](https://github.com/cognitedata/reveal/blob/3aaed3491dba3f4ba9ecd87f495d35383cc73a1d/viewer/packages/tools/src/AxisGizmo/AxisGizmoOptions.ts#L30)
+[packages/tools/src/AxisGizmo/AxisGizmoOptions.ts:30](https://github.com/cognitedata/reveal/blob/2acd9d17229d2bc8e309653b4d6a39ad941e44f1/viewer/packages/tools/src/AxisGizmo/AxisGizmoOptions.ts#L30)
 
 ***
 
@@ -158,7 +158,7 @@ Options for styling the AxisGizmoTool
 
 #### Defined in
 
-[packages/tools/src/AxisGizmo/AxisGizmoOptions.ts:17](https://github.com/cognitedata/reveal/blob/3aaed3491dba3f4ba9ecd87f495d35383cc73a1d/viewer/packages/tools/src/AxisGizmo/AxisGizmoOptions.ts#L17)
+[packages/tools/src/AxisGizmo/AxisGizmoOptions.ts:17](https://github.com/cognitedata/reveal/blob/2acd9d17229d2bc8e309653b4d6a39ad941e44f1/viewer/packages/tools/src/AxisGizmo/AxisGizmoOptions.ts#L17)
 
 ***
 
@@ -170,7 +170,7 @@ Options for styling the AxisGizmoTool
 
 #### Defined in
 
-[packages/tools/src/AxisGizmo/AxisGizmoOptions.ts:31](https://github.com/cognitedata/reveal/blob/3aaed3491dba3f4ba9ecd87f495d35383cc73a1d/viewer/packages/tools/src/AxisGizmo/AxisGizmoOptions.ts#L31)
+[packages/tools/src/AxisGizmo/AxisGizmoOptions.ts:31](https://github.com/cognitedata/reveal/blob/2acd9d17229d2bc8e309653b4d6a39ad941e44f1/viewer/packages/tools/src/AxisGizmo/AxisGizmoOptions.ts#L31)
 
 ***
 
@@ -182,7 +182,7 @@ Options for styling the AxisGizmoTool
 
 #### Defined in
 
-[packages/tools/src/AxisGizmo/AxisGizmoOptions.ts:26](https://github.com/cognitedata/reveal/blob/3aaed3491dba3f4ba9ecd87f495d35383cc73a1d/viewer/packages/tools/src/AxisGizmo/AxisGizmoOptions.ts#L26)
+[packages/tools/src/AxisGizmo/AxisGizmoOptions.ts:26](https://github.com/cognitedata/reveal/blob/2acd9d17229d2bc8e309653b4d6a39ad941e44f1/viewer/packages/tools/src/AxisGizmo/AxisGizmoOptions.ts#L26)
 
 ***
 
@@ -194,7 +194,7 @@ Options for styling the AxisGizmoTool
 
 #### Defined in
 
-[packages/tools/src/AxisGizmo/AxisGizmoOptions.ts:18](https://github.com/cognitedata/reveal/blob/3aaed3491dba3f4ba9ecd87f495d35383cc73a1d/viewer/packages/tools/src/AxisGizmo/AxisGizmoOptions.ts#L18)
+[packages/tools/src/AxisGizmo/AxisGizmoOptions.ts:18](https://github.com/cognitedata/reveal/blob/2acd9d17229d2bc8e309653b4d6a39ad941e44f1/viewer/packages/tools/src/AxisGizmo/AxisGizmoOptions.ts#L18)
 
 ***
 
@@ -206,7 +206,7 @@ Options for styling the AxisGizmoTool
 
 #### Defined in
 
-[packages/tools/src/AxisGizmo/AxisGizmoOptions.ts:19](https://github.com/cognitedata/reveal/blob/3aaed3491dba3f4ba9ecd87f495d35383cc73a1d/viewer/packages/tools/src/AxisGizmo/AxisGizmoOptions.ts#L19)
+[packages/tools/src/AxisGizmo/AxisGizmoOptions.ts:19](https://github.com/cognitedata/reveal/blob/2acd9d17229d2bc8e309653b4d6a39ad941e44f1/viewer/packages/tools/src/AxisGizmo/AxisGizmoOptions.ts#L19)
 
 ***
 
@@ -218,7 +218,7 @@ Options for styling the AxisGizmoTool
 
 #### Defined in
 
-[packages/tools/src/AxisGizmo/AxisGizmoOptions.ts:27](https://github.com/cognitedata/reveal/blob/3aaed3491dba3f4ba9ecd87f495d35383cc73a1d/viewer/packages/tools/src/AxisGizmo/AxisGizmoOptions.ts#L27)
+[packages/tools/src/AxisGizmo/AxisGizmoOptions.ts:27](https://github.com/cognitedata/reveal/blob/2acd9d17229d2bc8e309653b4d6a39ad941e44f1/viewer/packages/tools/src/AxisGizmo/AxisGizmoOptions.ts#L27)
 
 ***
 
@@ -230,7 +230,7 @@ Options for styling the AxisGizmoTool
 
 #### Defined in
 
-[packages/tools/src/AxisGizmo/AxisGizmoOptions.ts:12](https://github.com/cognitedata/reveal/blob/3aaed3491dba3f4ba9ecd87f495d35383cc73a1d/viewer/packages/tools/src/AxisGizmo/AxisGizmoOptions.ts#L12)
+[packages/tools/src/AxisGizmo/AxisGizmoOptions.ts:12](https://github.com/cognitedata/reveal/blob/2acd9d17229d2bc8e309653b4d6a39ad941e44f1/viewer/packages/tools/src/AxisGizmo/AxisGizmoOptions.ts#L12)
 
 ***
 
@@ -242,7 +242,7 @@ Options for styling the AxisGizmoTool
 
 #### Defined in
 
-[packages/tools/src/AxisGizmo/AxisGizmoOptions.ts:21](https://github.com/cognitedata/reveal/blob/3aaed3491dba3f4ba9ecd87f495d35383cc73a1d/viewer/packages/tools/src/AxisGizmo/AxisGizmoOptions.ts#L21)
+[packages/tools/src/AxisGizmo/AxisGizmoOptions.ts:21](https://github.com/cognitedata/reveal/blob/2acd9d17229d2bc8e309653b4d6a39ad941e44f1/viewer/packages/tools/src/AxisGizmo/AxisGizmoOptions.ts#L21)
 
 ***
 
@@ -254,7 +254,7 @@ Options for styling the AxisGizmoTool
 
 #### Defined in
 
-[packages/tools/src/AxisGizmo/AxisGizmoOptions.ts:14](https://github.com/cognitedata/reveal/blob/3aaed3491dba3f4ba9ecd87f495d35383cc73a1d/viewer/packages/tools/src/AxisGizmo/AxisGizmoOptions.ts#L14)
+[packages/tools/src/AxisGizmo/AxisGizmoOptions.ts:14](https://github.com/cognitedata/reveal/blob/2acd9d17229d2bc8e309653b4d6a39ad941e44f1/viewer/packages/tools/src/AxisGizmo/AxisGizmoOptions.ts#L14)
 
 ***
 
@@ -266,7 +266,7 @@ Options for styling the AxisGizmoTool
 
 #### Defined in
 
-[packages/tools/src/AxisGizmo/AxisGizmoOptions.ts:15](https://github.com/cognitedata/reveal/blob/3aaed3491dba3f4ba9ecd87f495d35383cc73a1d/viewer/packages/tools/src/AxisGizmo/AxisGizmoOptions.ts#L15)
+[packages/tools/src/AxisGizmo/AxisGizmoOptions.ts:15](https://github.com/cognitedata/reveal/blob/2acd9d17229d2bc8e309653b4d6a39ad941e44f1/viewer/packages/tools/src/AxisGizmo/AxisGizmoOptions.ts#L15)
 
 ***
 
@@ -278,7 +278,7 @@ Options for styling the AxisGizmoTool
 
 #### Defined in
 
-[packages/tools/src/AxisGizmo/AxisGizmoOptions.ts:22](https://github.com/cognitedata/reveal/blob/3aaed3491dba3f4ba9ecd87f495d35383cc73a1d/viewer/packages/tools/src/AxisGizmo/AxisGizmoOptions.ts#L22)
+[packages/tools/src/AxisGizmo/AxisGizmoOptions.ts:22](https://github.com/cognitedata/reveal/blob/2acd9d17229d2bc8e309653b4d6a39ad941e44f1/viewer/packages/tools/src/AxisGizmo/AxisGizmoOptions.ts#L22)
 
 ## Accessors
 
@@ -294,7 +294,7 @@ Options for styling the AxisGizmoTool
 
 #### Defined in
 
-[packages/tools/src/AxisGizmo/AxisGizmoOptions.ts:37](https://github.com/cognitedata/reveal/blob/3aaed3491dba3f4ba9ecd87f495d35383cc73a1d/viewer/packages/tools/src/AxisGizmo/AxisGizmoOptions.ts#L37)
+[packages/tools/src/AxisGizmo/AxisGizmoOptions.ts:37](https://github.com/cognitedata/reveal/blob/2acd9d17229d2bc8e309653b4d6a39ad941e44f1/viewer/packages/tools/src/AxisGizmo/AxisGizmoOptions.ts#L37)
 
 ## Methods
 
@@ -314,4 +314,4 @@ The font style.
 
 #### Defined in
 
-[packages/tools/src/AxisGizmo/AxisGizmoOptions.ts:44](https://github.com/cognitedata/reveal/blob/3aaed3491dba3f4ba9ecd87f495d35383cc73a1d/viewer/packages/tools/src/AxisGizmo/AxisGizmoOptions.ts#L44)
+[packages/tools/src/AxisGizmo/AxisGizmoOptions.ts:44](https://github.com/cognitedata/reveal/blob/2acd9d17229d2bc8e309653b4d6a39ad941e44f1/viewer/packages/tools/src/AxisGizmo/AxisGizmoOptions.ts#L44)

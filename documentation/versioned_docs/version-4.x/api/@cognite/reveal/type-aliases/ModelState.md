@@ -22,4 +22,4 @@
 
 ## Defined in
 
-[packages/api/src/utilities/ViewStateHelper.ts:35](https://github.com/cognitedata/reveal/blob/3aaed3491dba3f4ba9ecd87f495d35383cc73a1d/viewer/packages/api/src/utilities/ViewStateHelper.ts#L35)
+[packages/api/src/utilities/ViewStateHelper.ts:35](https://github.com/cognitedata/reveal/blob/2acd9d17229d2bc8e309653b4d6a39ad941e44f1/viewer/packages/api/src/utilities/ViewStateHelper.ts#L35)

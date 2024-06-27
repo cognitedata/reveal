@@ -8,7 +8,7 @@
 
 #### Defined in
 
-[packages/rendering/src/pointcloud-rendering/enums.ts:7](https://github.com/cognitedata/reveal/blob/3aaed3491dba3f4ba9ecd87f495d35383cc73a1d/viewer/packages/rendering/src/pointcloud-rendering/enums.ts#L7)
+[packages/rendering/src/pointcloud-rendering/enums.ts:7](https://github.com/cognitedata/reveal/blob/2acd9d17229d2bc8e309653b4d6a39ad941e44f1/viewer/packages/rendering/src/pointcloud-rendering/enums.ts#L7)
 
 ***
 
@@ -18,7 +18,7 @@
 
 #### Defined in
 
-[packages/rendering/src/pointcloud-rendering/enums.ts:6](https://github.com/cognitedata/reveal/blob/3aaed3491dba3f4ba9ecd87f495d35383cc73a1d/viewer/packages/rendering/src/pointcloud-rendering/enums.ts#L6)
+[packages/rendering/src/pointcloud-rendering/enums.ts:6](https://github.com/cognitedata/reveal/blob/2acd9d17229d2bc8e309653b4d6a39ad941e44f1/viewer/packages/rendering/src/pointcloud-rendering/enums.ts#L6)
 
 ***
 
@@ -28,4 +28,4 @@
 
 #### Defined in
 
-[packages/rendering/src/pointcloud-rendering/enums.ts:5](https://github.com/cognitedata/reveal/blob/3aaed3491dba3f4ba9ecd87f495d35383cc73a1d/viewer/packages/rendering/src/pointcloud-rendering/enums.ts#L5)
+[packages/rendering/src/pointcloud-rendering/enums.ts:5](https://github.com/cognitedata/reveal/blob/2acd9d17229d2bc8e309653b4d6a39ad941e44f1/viewer/packages/rendering/src/pointcloud-rendering/enums.ts#L5)

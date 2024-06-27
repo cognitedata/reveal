@@ -28,4 +28,4 @@ or set in [Cognite Fusion](https://fusion.cognite.com/).
 
 ## Defined in
 
-[packages/cad-model/src/types.ts:24](https://github.com/cognitedata/reveal/blob/3aaed3491dba3f4ba9ecd87f495d35383cc73a1d/viewer/packages/cad-model/src/types.ts#L24)
+[packages/cad-model/src/types.ts:24](https://github.com/cognitedata/reveal/blob/2acd9d17229d2bc8e309653b4d6a39ad941e44f1/viewer/packages/cad-model/src/types.ts#L24)

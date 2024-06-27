@@ -12,7 +12,7 @@ The id of the collection.
 
 #### Defined in
 
-[packages/360-images/src/collection/Image360Collection.ts:69](https://github.com/cognitedata/reveal/blob/3aaed3491dba3f4ba9ecd87f495d35383cc73a1d/viewer/packages/360-images/src/collection/Image360Collection.ts#L69)
+[packages/360-images/src/collection/Image360Collection.ts:69](https://github.com/cognitedata/reveal/blob/2acd9d17229d2bc8e309653b4d6a39ad941e44f1/viewer/packages/360-images/src/collection/Image360Collection.ts#L69)
 
 ***
 
@@ -24,7 +24,7 @@ A list containing all the 360 images in this set.
 
 #### Defined in
 
-[packages/360-images/src/collection/Image360Collection.ts:80](https://github.com/cognitedata/reveal/blob/3aaed3491dba3f4ba9ecd87f495d35383cc73a1d/viewer/packages/360-images/src/collection/Image360Collection.ts#L80)
+[packages/360-images/src/collection/Image360Collection.ts:80](https://github.com/cognitedata/reveal/blob/2acd9d17229d2bc8e309653b4d6a39ad941e44f1/viewer/packages/360-images/src/collection/Image360Collection.ts#L80)
 
 ***
 
@@ -36,7 +36,7 @@ The label of the collection.
 
 #### Defined in
 
-[packages/360-images/src/collection/Image360Collection.ts:75](https://github.com/cognitedata/reveal/blob/3aaed3491dba3f4ba9ecd87f495d35383cc73a1d/viewer/packages/360-images/src/collection/Image360Collection.ts#L75)
+[packages/360-images/src/collection/Image360Collection.ts:75](https://github.com/cognitedata/reveal/blob/2acd9d17229d2bc8e309653b4d6a39ad941e44f1/viewer/packages/360-images/src/collection/Image360Collection.ts#L75)
 
 ***
 
@@ -49,7 +49,7 @@ If undefined, the most recent revision will be loaded.
 
 #### Defined in
 
-[packages/360-images/src/collection/Image360Collection.ts:86](https://github.com/cognitedata/reveal/blob/3aaed3491dba3f4ba9ecd87f495d35383cc73a1d/viewer/packages/360-images/src/collection/Image360Collection.ts#L86)
+[packages/360-images/src/collection/Image360Collection.ts:86](https://github.com/cognitedata/reveal/blob/2acd9d17229d2bc8e309653b4d6a39ad941e44f1/viewer/packages/360-images/src/collection/Image360Collection.ts#L86)
 
 ## Methods
 
@@ -69,7 +69,7 @@ Find 360 images associated with an asset through CDF annotations
 
 #### Defined in
 
-[packages/360-images/src/collection/Image360Collection.ts:149](https://github.com/cognitedata/reveal/blob/3aaed3491dba3f4ba9ecd87f495d35383cc73a1d/viewer/packages/360-images/src/collection/Image360Collection.ts#L149)
+[packages/360-images/src/collection/Image360Collection.ts:149](https://github.com/cognitedata/reveal/blob/2acd9d17229d2bc8e309653b4d6a39ad941e44f1/viewer/packages/360-images/src/collection/Image360Collection.ts#L149)
 
 ***
 
@@ -90,7 +90,7 @@ Get IDs of all CDF assets and related image/revision associated with this
 
 #### Defined in
 
-[packages/360-images/src/collection/Image360Collection.ts:164](https://github.com/cognitedata/reveal/blob/3aaed3491dba3f4ba9ecd87f495d35383cc73a1d/viewer/packages/360-images/src/collection/Image360Collection.ts#L164)
+[packages/360-images/src/collection/Image360Collection.ts:164](https://github.com/cognitedata/reveal/blob/2acd9d17229d2bc8e309653b4d6a39ad941e44f1/viewer/packages/360-images/src/collection/Image360Collection.ts#L164)
 
 ***
 
@@ -110,7 +110,7 @@ Use [Image360Collection.getAnnotationsInfo](Image360Collection.md#getannotations
 
 #### Defined in
 
-[packages/360-images/src/collection/Image360Collection.ts:156](https://github.com/cognitedata/reveal/blob/3aaed3491dba3f4ba9ecd87f495d35383cc73a1d/viewer/packages/360-images/src/collection/Image360Collection.ts#L156)
+[packages/360-images/src/collection/Image360Collection.ts:156](https://github.com/cognitedata/reveal/blob/2acd9d17229d2bc8e309653b4d6a39ad941e44f1/viewer/packages/360-images/src/collection/Image360Collection.ts#L156)
 
 ***
 
@@ -126,7 +126,7 @@ Get the assigned default style affecting all annotations
 
 #### Defined in
 
-[packages/360-images/src/collection/Image360Collection.ts:139](https://github.com/cognitedata/reveal/blob/3aaed3491dba3f4ba9ecd87f495d35383cc73a1d/viewer/packages/360-images/src/collection/Image360Collection.ts#L139)
+[packages/360-images/src/collection/Image360Collection.ts:139](https://github.com/cognitedata/reveal/blob/2acd9d17229d2bc8e309653b4d6a39ad941e44f1/viewer/packages/360-images/src/collection/Image360Collection.ts#L139)
 
 ***
 
@@ -144,7 +144,7 @@ true if all icons are visible, false if all icons are invisible
 
 #### Defined in
 
-[packages/360-images/src/collection/Image360Collection.ts:110](https://github.com/cognitedata/reveal/blob/3aaed3491dba3f4ba9ecd87f495d35383cc73a1d/viewer/packages/360-images/src/collection/Image360Collection.ts#L110)
+[packages/360-images/src/collection/Image360Collection.ts:110](https://github.com/cognitedata/reveal/blob/2acd9d17229d2bc8e309653b4d6a39ad941e44f1/viewer/packages/360-images/src/collection/Image360Collection.ts#L110)
 
 ***
 
@@ -164,7 +164,7 @@ Gets the transformation matrix of the collection
 
 #### Defined in
 
-[packages/360-images/src/collection/Image360Collection.ts:97](https://github.com/cognitedata/reveal/blob/3aaed3491dba3f4ba9ecd87f495d35383cc73a1d/viewer/packages/360-images/src/collection/Image360Collection.ts#L97)
+[packages/360-images/src/collection/Image360Collection.ts:97](https://github.com/cognitedata/reveal/blob/2acd9d17229d2bc8e309653b4d6a39ad941e44f1/viewer/packages/360-images/src/collection/Image360Collection.ts#L97)
 
 ***
 
@@ -192,7 +192,7 @@ Callback function to be unsubscribed.
 
 ##### Defined in
 
-[packages/360-images/src/collection/Image360Collection.ts:133](https://github.com/cognitedata/reveal/blob/3aaed3491dba3f4ba9ecd87f495d35383cc73a1d/viewer/packages/360-images/src/collection/Image360Collection.ts#L133)
+[packages/360-images/src/collection/Image360Collection.ts:133](https://github.com/cognitedata/reveal/blob/2acd9d17229d2bc8e309653b4d6a39ad941e44f1/viewer/packages/360-images/src/collection/Image360Collection.ts#L133)
 
 #### off(event, callback)
 
@@ -210,7 +210,7 @@ Callback function to be unsubscribed.
 
 ##### Defined in
 
-[packages/360-images/src/collection/Image360Collection.ts:134](https://github.com/cognitedata/reveal/blob/3aaed3491dba3f4ba9ecd87f495d35383cc73a1d/viewer/packages/360-images/src/collection/Image360Collection.ts#L134)
+[packages/360-images/src/collection/Image360Collection.ts:134](https://github.com/cognitedata/reveal/blob/2acd9d17229d2bc8e309653b4d6a39ad941e44f1/viewer/packages/360-images/src/collection/Image360Collection.ts#L134)
 
 ***
 
@@ -240,7 +240,7 @@ Callback to be called when the event is fired.
 
 ##### Defined in
 
-[packages/360-images/src/collection/Image360Collection.ts:125](https://github.com/cognitedata/reveal/blob/3aaed3491dba3f4ba9ecd87f495d35383cc73a1d/viewer/packages/360-images/src/collection/Image360Collection.ts#L125)
+[packages/360-images/src/collection/Image360Collection.ts:125](https://github.com/cognitedata/reveal/blob/2acd9d17229d2bc8e309653b4d6a39ad941e44f1/viewer/packages/360-images/src/collection/Image360Collection.ts#L125)
 
 #### on(event, callback)
 
@@ -258,7 +258,7 @@ Callback to be called when the event is fired.
 
 ##### Defined in
 
-[packages/360-images/src/collection/Image360Collection.ts:126](https://github.com/cognitedata/reveal/blob/3aaed3491dba3f4ba9ecd87f495d35383cc73a1d/viewer/packages/360-images/src/collection/Image360Collection.ts#L126)
+[packages/360-images/src/collection/Image360Collection.ts:126](https://github.com/cognitedata/reveal/blob/2acd9d17229d2bc8e309653b4d6a39ad941e44f1/viewer/packages/360-images/src/collection/Image360Collection.ts#L126)
 
 ***
 
@@ -284,7 +284,7 @@ Limit the number of points within the given radius. Points closer to the camera 
 
 #### Defined in
 
-[packages/360-images/src/collection/Image360Collection.ts:104](https://github.com/cognitedata/reveal/blob/3aaed3491dba3f4ba9ecd87f495d35383cc73a1d/viewer/packages/360-images/src/collection/Image360Collection.ts#L104)
+[packages/360-images/src/collection/Image360Collection.ts:104](https://github.com/cognitedata/reveal/blob/2acd9d17229d2bc8e309653b4d6a39ad941e44f1/viewer/packages/360-images/src/collection/Image360Collection.ts#L104)
 
 ***
 
@@ -304,7 +304,7 @@ Assign a default style which affects all annotations
 
 #### Defined in
 
-[packages/360-images/src/collection/Image360Collection.ts:144](https://github.com/cognitedata/reveal/blob/3aaed3491dba3f4ba9ecd87f495d35383cc73a1d/viewer/packages/360-images/src/collection/Image360Collection.ts#L144)
+[packages/360-images/src/collection/Image360Collection.ts:144](https://github.com/cognitedata/reveal/blob/2acd9d17229d2bc8e309653b4d6a39ad941e44f1/viewer/packages/360-images/src/collection/Image360Collection.ts#L144)
 
 ***
 
@@ -326,7 +326,7 @@ If true all icons are made visible according to the active culling scheme. If fa
 
 #### Defined in
 
-[packages/360-images/src/collection/Image360Collection.ts:116](https://github.com/cognitedata/reveal/blob/3aaed3491dba3f4ba9ecd87f495d35383cc73a1d/viewer/packages/360-images/src/collection/Image360Collection.ts#L116)
+[packages/360-images/src/collection/Image360Collection.ts:116](https://github.com/cognitedata/reveal/blob/2acd9d17229d2bc8e309653b4d6a39ad941e44f1/viewer/packages/360-images/src/collection/Image360Collection.ts#L116)
 
 ***
 
@@ -348,4 +348,4 @@ The transformation matrix to be applied to the collection.
 
 #### Defined in
 
-[packages/360-images/src/collection/Image360Collection.ts:92](https://github.com/cognitedata/reveal/blob/3aaed3491dba3f4ba9ecd87f495d35383cc73a1d/viewer/packages/360-images/src/collection/Image360Collection.ts#L92)
+[packages/360-images/src/collection/Image360Collection.ts:92](https://github.com/cognitedata/reveal/blob/2acd9d17229d2bc8e309653b4d6a39ad941e44f1/viewer/packages/360-images/src/collection/Image360Collection.ts#L92)

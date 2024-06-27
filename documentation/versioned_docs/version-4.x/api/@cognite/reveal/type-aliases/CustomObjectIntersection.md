@@ -58,4 +58,4 @@ Additional info, for instance which part of the CustomObject was intersected.
 
 ## Defined in
 
-[packages/utilities/src/customObject/CustomObjectIntersection.ts:12](https://github.com/cognitedata/reveal/blob/3aaed3491dba3f4ba9ecd87f495d35383cc73a1d/viewer/packages/utilities/src/customObject/CustomObjectIntersection.ts#L12)
+[packages/utilities/src/customObject/CustomObjectIntersection.ts:12](https://github.com/cognitedata/reveal/blob/2acd9d17229d2bc8e309653b4d6a39ad941e44f1/viewer/packages/utilities/src/customObject/CustomObjectIntersection.ts#L12)

@@ -16,7 +16,7 @@
 
 #### Defined in
 
-[packages/cad-model/src/utilities/BoundingBoxClipper.ts:18](https://github.com/cognitedata/reveal/blob/3aaed3491dba3f4ba9ecd87f495d35383cc73a1d/viewer/packages/cad-model/src/utilities/BoundingBoxClipper.ts#L18)
+[packages/cad-model/src/utilities/BoundingBoxClipper.ts:18](https://github.com/cognitedata/reveal/blob/2acd9d17229d2bc8e309653b4d6a39ad941e44f1/viewer/packages/cad-model/src/utilities/BoundingBoxClipper.ts#L18)
 
 ## Accessors
 
@@ -30,7 +30,7 @@
 
 #### Defined in
 
-[packages/cad-model/src/utilities/BoundingBoxClipper.ts:104](https://github.com/cognitedata/reveal/blob/3aaed3491dba3f4ba9ecd87f495d35383cc73a1d/viewer/packages/cad-model/src/utilities/BoundingBoxClipper.ts#L104)
+[packages/cad-model/src/utilities/BoundingBoxClipper.ts:104](https://github.com/cognitedata/reveal/blob/2acd9d17229d2bc8e309653b4d6a39ad941e44f1/viewer/packages/cad-model/src/utilities/BoundingBoxClipper.ts#L104)
 
 ***
 
@@ -50,7 +50,7 @@
 
 #### Defined in
 
-[packages/cad-model/src/utilities/BoundingBoxClipper.ts:55](https://github.com/cognitedata/reveal/blob/3aaed3491dba3f4ba9ecd87f495d35383cc73a1d/viewer/packages/cad-model/src/utilities/BoundingBoxClipper.ts#L55)
+[packages/cad-model/src/utilities/BoundingBoxClipper.ts:55](https://github.com/cognitedata/reveal/blob/2acd9d17229d2bc8e309653b4d6a39ad941e44f1/viewer/packages/cad-model/src/utilities/BoundingBoxClipper.ts#L55)
 
 ***
 
@@ -70,7 +70,7 @@
 
 #### Defined in
 
-[packages/cad-model/src/utilities/BoundingBoxClipper.ts:64](https://github.com/cognitedata/reveal/blob/3aaed3491dba3f4ba9ecd87f495d35383cc73a1d/viewer/packages/cad-model/src/utilities/BoundingBoxClipper.ts#L64)
+[packages/cad-model/src/utilities/BoundingBoxClipper.ts:64](https://github.com/cognitedata/reveal/blob/2acd9d17229d2bc8e309653b4d6a39ad941e44f1/viewer/packages/cad-model/src/utilities/BoundingBoxClipper.ts#L64)
 
 ***
 
@@ -90,7 +90,7 @@
 
 #### Defined in
 
-[packages/cad-model/src/utilities/BoundingBoxClipper.ts:73](https://github.com/cognitedata/reveal/blob/3aaed3491dba3f4ba9ecd87f495d35383cc73a1d/viewer/packages/cad-model/src/utilities/BoundingBoxClipper.ts#L73)
+[packages/cad-model/src/utilities/BoundingBoxClipper.ts:73](https://github.com/cognitedata/reveal/blob/2acd9d17229d2bc8e309653b4d6a39ad941e44f1/viewer/packages/cad-model/src/utilities/BoundingBoxClipper.ts#L73)
 
 ***
 
@@ -110,7 +110,7 @@
 
 #### Defined in
 
-[packages/cad-model/src/utilities/BoundingBoxClipper.ts:28](https://github.com/cognitedata/reveal/blob/3aaed3491dba3f4ba9ecd87f495d35383cc73a1d/viewer/packages/cad-model/src/utilities/BoundingBoxClipper.ts#L28)
+[packages/cad-model/src/utilities/BoundingBoxClipper.ts:28](https://github.com/cognitedata/reveal/blob/2acd9d17229d2bc8e309653b4d6a39ad941e44f1/viewer/packages/cad-model/src/utilities/BoundingBoxClipper.ts#L28)
 
 ***
 
@@ -130,7 +130,7 @@
 
 #### Defined in
 
-[packages/cad-model/src/utilities/BoundingBoxClipper.ts:37](https://github.com/cognitedata/reveal/blob/3aaed3491dba3f4ba9ecd87f495d35383cc73a1d/viewer/packages/cad-model/src/utilities/BoundingBoxClipper.ts#L37)
+[packages/cad-model/src/utilities/BoundingBoxClipper.ts:37](https://github.com/cognitedata/reveal/blob/2acd9d17229d2bc8e309653b4d6a39ad941e44f1/viewer/packages/cad-model/src/utilities/BoundingBoxClipper.ts#L37)
 
 ***
 
@@ -150,4 +150,4 @@
 
 #### Defined in
 
-[packages/cad-model/src/utilities/BoundingBoxClipper.ts:46](https://github.com/cognitedata/reveal/blob/3aaed3491dba3f4ba9ecd87f495d35383cc73a1d/viewer/packages/cad-model/src/utilities/BoundingBoxClipper.ts#L46)
+[packages/cad-model/src/utilities/BoundingBoxClipper.ts:46](https://github.com/cognitedata/reveal/blob/2acd9d17229d2bc8e309653b4d6a39ad941e44f1/viewer/packages/cad-model/src/utilities/BoundingBoxClipper.ts#L46)

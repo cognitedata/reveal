@@ -43,7 +43,7 @@ Generation to retrieve (0 means node itself, 1 is parent, 2 grand-parent etc).
 
 #### Defined in
 
-[packages/nodes-api/src/NodesApiClient.ts:51](https://github.com/cognitedata/reveal/blob/3aaed3491dba3f4ba9ecd87f495d35383cc73a1d/viewer/packages/nodes-api/src/NodesApiClient.ts#L51)
+[packages/nodes-api/src/NodesApiClient.ts:51](https://github.com/cognitedata/reveal/blob/2acd9d17229d2bc8e309653b4d6a39ad941e44f1/viewer/packages/nodes-api/src/NodesApiClient.ts#L51)
 
 ***
 
@@ -68,7 +68,7 @@ of) given a set of node IDs.
 
 #### Defined in
 
-[packages/nodes-api/src/NodesApiClient.ts:37](https://github.com/cognitedata/reveal/blob/3aaed3491dba3f4ba9ecd87f495d35383cc73a1d/viewer/packages/nodes-api/src/NodesApiClient.ts#L37)
+[packages/nodes-api/src/NodesApiClient.ts:37](https://github.com/cognitedata/reveal/blob/2acd9d17229d2bc8e309653b4d6a39ad941e44f1/viewer/packages/nodes-api/src/NodesApiClient.ts#L37)
 
 ***
 
@@ -100,7 +100,7 @@ Node IDs of nodes
 
 #### Defined in
 
-[packages/nodes-api/src/NodesApiClient.ts:67](https://github.com/cognitedata/reveal/blob/3aaed3491dba3f4ba9ecd87f495d35383cc73a1d/viewer/packages/nodes-api/src/NodesApiClient.ts#L67)
+[packages/nodes-api/src/NodesApiClient.ts:67](https://github.com/cognitedata/reveal/blob/2acd9d17229d2bc8e309653b4d6a39ad941e44f1/viewer/packages/nodes-api/src/NodesApiClient.ts#L67)
 
 ***
 
@@ -125,7 +125,7 @@ Maps a set of "node IDs" that identify nodes, to the respective
 
 #### Defined in
 
-[packages/nodes-api/src/NodesApiClient.ts:27](https://github.com/cognitedata/reveal/blob/3aaed3491dba3f4ba9ecd87f495d35383cc73a1d/viewer/packages/nodes-api/src/NodesApiClient.ts#L27)
+[packages/nodes-api/src/NodesApiClient.ts:27](https://github.com/cognitedata/reveal/blob/2acd9d17229d2bc8e309653b4d6a39ad941e44f1/viewer/packages/nodes-api/src/NodesApiClient.ts#L27)
 
 ***
 
@@ -150,4 +150,4 @@ Maps a set of "tree indexes" that identify nodes, to the respective
 
 #### Defined in
 
-[packages/nodes-api/src/NodesApiClient.ts:17](https://github.com/cognitedata/reveal/blob/3aaed3491dba3f4ba9ecd87f495d35383cc73a1d/viewer/packages/nodes-api/src/NodesApiClient.ts#L17)
+[packages/nodes-api/src/NodesApiClient.ts:17](https://github.com/cognitedata/reveal/blob/2acd9d17229d2bc8e309653b4d6a39ad941e44f1/viewer/packages/nodes-api/src/NodesApiClient.ts#L17)

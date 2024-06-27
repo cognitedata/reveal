@@ -39,4 +39,4 @@ Default is 'zoomPastCursor'.
 
 ## Defined in
 
-[packages/camera-manager/src/CameraControlsOptions.ts:5](https://github.com/cognitedata/reveal/blob/3aaed3491dba3f4ba9ecd87f495d35383cc73a1d/viewer/packages/camera-manager/src/CameraControlsOptions.ts#L5)
+[packages/camera-manager/src/CameraControlsOptions.ts:5](https://github.com/cognitedata/reveal/blob/2acd9d17229d2bc8e309653b4d6a39ad941e44f1/viewer/packages/camera-manager/src/CameraControlsOptions.ts#L5)

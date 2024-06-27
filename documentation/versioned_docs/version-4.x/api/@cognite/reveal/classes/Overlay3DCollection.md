@@ -44,7 +44,7 @@ Additional options for this overlay collection
 
 #### Defined in
 
-[packages/3d-overlays/src/Overlay3DCollection.ts:68](https://github.com/cognitedata/reveal/blob/3aaed3491dba3f4ba9ecd87f495d35383cc73a1d/viewer/packages/3d-overlays/src/Overlay3DCollection.ts#L68)
+[packages/3d-overlays/src/Overlay3DCollection.ts:68](https://github.com/cognitedata/reveal/blob/2acd9d17229d2bc8e309653b4d6a39ad941e44f1/viewer/packages/3d-overlays/src/Overlay3DCollection.ts#L68)
 
 ## Methods
 
@@ -68,7 +68,7 @@ Add more overlays into this collection
 
 #### Defined in
 
-[packages/3d-overlays/src/Overlay3DCollection.ts:115](https://github.com/cognitedata/reveal/blob/3aaed3491dba3f4ba9ecd87f495d35383cc73a1d/viewer/packages/3d-overlays/src/Overlay3DCollection.ts#L115)
+[packages/3d-overlays/src/Overlay3DCollection.ts:115](https://github.com/cognitedata/reveal/blob/2acd9d17229d2bc8e309653b4d6a39ad941e44f1/viewer/packages/3d-overlays/src/Overlay3DCollection.ts#L115)
 
 ***
 
@@ -84,7 +84,7 @@ Dispose this collection and icons with all associated resources
 
 #### Defined in
 
-[packages/3d-overlays/src/Overlay3DCollection.ts:216](https://github.com/cognitedata/reveal/blob/3aaed3491dba3f4ba9ecd87f495d35383cc73a1d/viewer/packages/3d-overlays/src/Overlay3DCollection.ts#L216)
+[packages/3d-overlays/src/Overlay3DCollection.ts:216](https://github.com/cognitedata/reveal/blob/2acd9d17229d2bc8e309653b4d6a39ad941e44f1/viewer/packages/3d-overlays/src/Overlay3DCollection.ts#L216)
 
 ***
 
@@ -104,7 +104,7 @@ Get the overlay icons contained in this collection
 
 #### Defined in
 
-[packages/3d-overlays/src/Overlay3DCollection.ts:108](https://github.com/cognitedata/reveal/blob/3aaed3491dba3f4ba9ecd87f495d35383cc73a1d/viewer/packages/3d-overlays/src/Overlay3DCollection.ts#L108)
+[packages/3d-overlays/src/Overlay3DCollection.ts:108](https://github.com/cognitedata/reveal/blob/2acd9d17229d2bc8e309653b4d6a39ad941e44f1/viewer/packages/3d-overlays/src/Overlay3DCollection.ts#L108)
 
 ***
 
@@ -126,7 +126,7 @@ Run intersection on icons in this collection. Returns the closest hit
 
 #### Defined in
 
-[packages/3d-overlays/src/Overlay3DCollection.ts:166](https://github.com/cognitedata/reveal/blob/3aaed3491dba3f4ba9ecd87f495d35383cc73a1d/viewer/packages/3d-overlays/src/Overlay3DCollection.ts#L166)
+[packages/3d-overlays/src/Overlay3DCollection.ts:166](https://github.com/cognitedata/reveal/blob/2acd9d17229d2bc8e309653b4d6a39ad941e44f1/viewer/packages/3d-overlays/src/Overlay3DCollection.ts#L166)
 
 ***
 
@@ -146,7 +146,7 @@ Clean up all icons in this collection
 
 #### Defined in
 
-[packages/3d-overlays/src/Overlay3DCollection.ts:156](https://github.com/cognitedata/reveal/blob/3aaed3491dba3f4ba9ecd87f495d35383cc73a1d/viewer/packages/3d-overlays/src/Overlay3DCollection.ts#L156)
+[packages/3d-overlays/src/Overlay3DCollection.ts:156](https://github.com/cognitedata/reveal/blob/2acd9d17229d2bc8e309653b4d6a39ad941e44f1/viewer/packages/3d-overlays/src/Overlay3DCollection.ts#L156)
 
 ***
 
@@ -170,7 +170,7 @@ Remove the listed overlays from this collection
 
 #### Defined in
 
-[packages/3d-overlays/src/Overlay3DCollection.ts:146](https://github.com/cognitedata/reveal/blob/3aaed3491dba3f4ba9ecd87f495d35383cc73a1d/viewer/packages/3d-overlays/src/Overlay3DCollection.ts#L146)
+[packages/3d-overlays/src/Overlay3DCollection.ts:146](https://github.com/cognitedata/reveal/blob/2acd9d17229d2bc8e309653b4d6a39ad941e44f1/viewer/packages/3d-overlays/src/Overlay3DCollection.ts#L146)
 
 ***
 
@@ -194,4 +194,4 @@ Set whether this collection is visible or not
 
 #### Defined in
 
-[packages/3d-overlays/src/Overlay3DCollection.ts:101](https://github.com/cognitedata/reveal/blob/3aaed3491dba3f4ba9ecd87f495d35383cc73a1d/viewer/packages/3d-overlays/src/Overlay3DCollection.ts#L101)
+[packages/3d-overlays/src/Overlay3DCollection.ts:101](https://github.com/cognitedata/reveal/blob/2acd9d17229d2bc8e309653b4d6a39ad941e44f1/viewer/packages/3d-overlays/src/Overlay3DCollection.ts#L101)

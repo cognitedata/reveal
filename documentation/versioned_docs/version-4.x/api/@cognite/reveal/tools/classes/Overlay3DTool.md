@@ -32,7 +32,7 @@ Tool for adding and interacting with 2D overlays positioned at points in
 
 #### Defined in
 
-[packages/tools/src/Overlay3D/Overlay3DTool.ts:97](https://github.com/cognitedata/reveal/blob/3aaed3491dba3f4ba9ecd87f495d35383cc73a1d/viewer/packages/tools/src/Overlay3D/Overlay3DTool.ts#L97)
+[packages/tools/src/Overlay3D/Overlay3DTool.ts:97](https://github.com/cognitedata/reveal/blob/2acd9d17229d2bc8e309653b4d6a39ad941e44f1/viewer/packages/tools/src/Overlay3D/Overlay3DTool.ts#L97)
 
 ## Methods
 
@@ -48,7 +48,7 @@ Removes all overlays.
 
 #### Defined in
 
-[packages/tools/src/Overlay3D/Overlay3DTool.ts:193](https://github.com/cognitedata/reveal/blob/3aaed3491dba3f4ba9ecd87f495d35383cc73a1d/viewer/packages/tools/src/Overlay3D/Overlay3DTool.ts#L193)
+[packages/tools/src/Overlay3D/Overlay3DTool.ts:193](https://github.com/cognitedata/reveal/blob/2acd9d17229d2bc8e309653b4d6a39ad941e44f1/viewer/packages/tools/src/Overlay3D/Overlay3DTool.ts#L193)
 
 ***
 
@@ -74,7 +74,7 @@ Overlay group containing it's id.
 
 #### Defined in
 
-[packages/tools/src/Overlay3D/Overlay3DTool.ts:114](https://github.com/cognitedata/reveal/blob/3aaed3491dba3f4ba9ecd87f495d35383cc73a1d/viewer/packages/tools/src/Overlay3D/Overlay3DTool.ts#L114)
+[packages/tools/src/Overlay3D/Overlay3DTool.ts:114](https://github.com/cognitedata/reveal/blob/2acd9d17229d2bc8e309653b4d6a39ad941e44f1/viewer/packages/tools/src/Overlay3D/Overlay3DTool.ts#L114)
 
 ***
 
@@ -94,7 +94,7 @@ Dispose of resources used by this tool
 
 #### Defined in
 
-[packages/tools/src/Overlay3D/Overlay3DTool.ts:249](https://github.com/cognitedata/reveal/blob/3aaed3491dba3f4ba9ecd87f495d35383cc73a1d/viewer/packages/tools/src/Overlay3D/Overlay3DTool.ts#L249)
+[packages/tools/src/Overlay3D/Overlay3DTool.ts:249](https://github.com/cognitedata/reveal/blob/2acd9d17229d2bc8e309653b4d6a39ad941e44f1/viewer/packages/tools/src/Overlay3D/Overlay3DTool.ts#L249)
 
 ***
 
@@ -110,7 +110,7 @@ Gets all added overlay collections.
 
 #### Defined in
 
-[packages/tools/src/Overlay3D/Overlay3DTool.ts:152](https://github.com/cognitedata/reveal/blob/3aaed3491dba3f4ba9ecd87f495d35383cc73a1d/viewer/packages/tools/src/Overlay3D/Overlay3DTool.ts#L152)
+[packages/tools/src/Overlay3D/Overlay3DTool.ts:152](https://github.com/cognitedata/reveal/blob/2acd9d17229d2bc8e309653b4d6a39ad941e44f1/viewer/packages/tools/src/Overlay3D/Overlay3DTool.ts#L152)
 
 ***
 
@@ -126,7 +126,7 @@ Gets whether text overlay is visible.
 
 #### Defined in
 
-[packages/tools/src/Overlay3D/Overlay3DTool.ts:186](https://github.com/cognitedata/reveal/blob/3aaed3491dba3f4ba9ecd87f495d35383cc73a1d/viewer/packages/tools/src/Overlay3D/Overlay3DTool.ts#L186)
+[packages/tools/src/Overlay3D/Overlay3DTool.ts:186](https://github.com/cognitedata/reveal/blob/2acd9d17229d2bc8e309653b4d6a39ad941e44f1/viewer/packages/tools/src/Overlay3D/Overlay3DTool.ts#L186)
 
 ***
 
@@ -142,7 +142,7 @@ Gets whether overlays are visible.
 
 #### Defined in
 
-[packages/tools/src/Overlay3D/Overlay3DTool.ts:171](https://github.com/cognitedata/reveal/blob/3aaed3491dba3f4ba9ecd87f495d35383cc73a1d/viewer/packages/tools/src/Overlay3D/Overlay3DTool.ts#L171)
+[packages/tools/src/Overlay3D/Overlay3DTool.ts:171](https://github.com/cognitedata/reveal/blob/2acd9d17229d2bc8e309653b4d6a39ad941e44f1/viewer/packages/tools/src/Overlay3D/Overlay3DTool.ts#L171)
 
 ***
 
@@ -170,7 +170,7 @@ Unregisters an event handler for the 'disposed'-event.
 
 ##### Defined in
 
-[packages/tools/src/Overlay3D/Overlay3DTool.ts:226](https://github.com/cognitedata/reveal/blob/3aaed3491dba3f4ba9ecd87f495d35383cc73a1d/viewer/packages/tools/src/Overlay3D/Overlay3DTool.ts#L226)
+[packages/tools/src/Overlay3D/Overlay3DTool.ts:226](https://github.com/cognitedata/reveal/blob/2acd9d17229d2bc8e309653b4d6a39ad941e44f1/viewer/packages/tools/src/Overlay3D/Overlay3DTool.ts#L226)
 
 #### off(event, eventHandler)
 
@@ -192,7 +192,7 @@ Unregisters an event handler for the 'disposed'-event.
 
 ##### Defined in
 
-[packages/tools/src/Overlay3D/Overlay3DTool.ts:227](https://github.com/cognitedata/reveal/blob/3aaed3491dba3f4ba9ecd87f495d35383cc73a1d/viewer/packages/tools/src/Overlay3D/Overlay3DTool.ts#L227)
+[packages/tools/src/Overlay3D/Overlay3DTool.ts:227](https://github.com/cognitedata/reveal/blob/2acd9d17229d2bc8e309653b4d6a39ad941e44f1/viewer/packages/tools/src/Overlay3D/Overlay3DTool.ts#L227)
 
 #### off(event, eventHandler)
 
@@ -214,7 +214,7 @@ Unregisters an event handler for the 'disposed'-event.
 
 ##### Defined in
 
-[packages/tools/src/Overlay3D/Overlay3DTool.ts:228](https://github.com/cognitedata/reveal/blob/3aaed3491dba3f4ba9ecd87f495d35383cc73a1d/viewer/packages/tools/src/Overlay3D/Overlay3DTool.ts#L228)
+[packages/tools/src/Overlay3D/Overlay3DTool.ts:228](https://github.com/cognitedata/reveal/blob/2acd9d17229d2bc8e309653b4d6a39ad941e44f1/viewer/packages/tools/src/Overlay3D/Overlay3DTool.ts#L228)
 
 ***
 
@@ -244,7 +244,7 @@ event to subscribe to.
 
 ##### Defined in
 
-[packages/tools/src/Overlay3D/Overlay3DTool.ts:206](https://github.com/cognitedata/reveal/blob/3aaed3491dba3f4ba9ecd87f495d35383cc73a1d/viewer/packages/tools/src/Overlay3D/Overlay3DTool.ts#L206)
+[packages/tools/src/Overlay3D/Overlay3DTool.ts:206](https://github.com/cognitedata/reveal/blob/2acd9d17229d2bc8e309653b4d6a39ad941e44f1/viewer/packages/tools/src/Overlay3D/Overlay3DTool.ts#L206)
 
 #### on(event, eventHandler)
 
@@ -266,7 +266,7 @@ event to subscribe to.
 
 ##### Defined in
 
-[packages/tools/src/Overlay3D/Overlay3DTool.ts:207](https://github.com/cognitedata/reveal/blob/3aaed3491dba3f4ba9ecd87f495d35383cc73a1d/viewer/packages/tools/src/Overlay3D/Overlay3DTool.ts#L207)
+[packages/tools/src/Overlay3D/Overlay3DTool.ts:207](https://github.com/cognitedata/reveal/blob/2acd9d17229d2bc8e309653b4d6a39ad941e44f1/viewer/packages/tools/src/Overlay3D/Overlay3DTool.ts#L207)
 
 #### on(event, eventHandler)
 
@@ -288,7 +288,7 @@ event to subscribe to.
 
 ##### Defined in
 
-[packages/tools/src/Overlay3D/Overlay3DTool.ts:208](https://github.com/cognitedata/reveal/blob/3aaed3491dba3f4ba9ecd87f495d35383cc73a1d/viewer/packages/tools/src/Overlay3D/Overlay3DTool.ts#L208)
+[packages/tools/src/Overlay3D/Overlay3DTool.ts:208](https://github.com/cognitedata/reveal/blob/2acd9d17229d2bc8e309653b4d6a39ad941e44f1/viewer/packages/tools/src/Overlay3D/Overlay3DTool.ts#L208)
 
 ***
 
@@ -310,7 +310,7 @@ Id of the overlay group to remove.
 
 #### Defined in
 
-[packages/tools/src/Overlay3D/Overlay3DTool.ts:137](https://github.com/cognitedata/reveal/blob/3aaed3491dba3f4ba9ecd87f495d35383cc73a1d/viewer/packages/tools/src/Overlay3D/Overlay3DTool.ts#L137)
+[packages/tools/src/Overlay3D/Overlay3DTool.ts:137](https://github.com/cognitedata/reveal/blob/2acd9d17229d2bc8e309653b4d6a39ad941e44f1/viewer/packages/tools/src/Overlay3D/Overlay3DTool.ts#L137)
 
 ***
 
@@ -331,7 +331,7 @@ Default is false.
 
 #### Defined in
 
-[packages/tools/src/Overlay3D/Overlay3DTool.ts:179](https://github.com/cognitedata/reveal/blob/3aaed3491dba3f4ba9ecd87f495d35383cc73a1d/viewer/packages/tools/src/Overlay3D/Overlay3DTool.ts#L179)
+[packages/tools/src/Overlay3D/Overlay3DTool.ts:179](https://github.com/cognitedata/reveal/blob/2acd9d17229d2bc8e309653b4d6a39ad941e44f1/viewer/packages/tools/src/Overlay3D/Overlay3DTool.ts#L179)
 
 ***
 
@@ -351,4 +351,4 @@ Sets whether overlays are visible.
 
 #### Defined in
 
-[packages/tools/src/Overlay3D/Overlay3DTool.ts:159](https://github.com/cognitedata/reveal/blob/3aaed3491dba3f4ba9ecd87f495d35383cc73a1d/viewer/packages/tools/src/Overlay3D/Overlay3DTool.ts#L159)
+[packages/tools/src/Overlay3D/Overlay3DTool.ts:159](https://github.com/cognitedata/reveal/blob/2acd9d17229d2bc8e309653b4d6a39ad941e44f1/viewer/packages/tools/src/Overlay3D/Overlay3DTool.ts#L159)

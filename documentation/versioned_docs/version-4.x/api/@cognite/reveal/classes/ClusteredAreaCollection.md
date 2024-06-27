@@ -34,7 +34,7 @@ It uses simple heuristics to determine which boxes are to be merged.
 
 #### Defined in
 
-[packages/cad-styling/src/prioritized/ClusteredAreaCollection.ts:17](https://github.com/cognitedata/reveal/blob/3aaed3491dba3f4ba9ecd87f495d35383cc73a1d/viewer/packages/cad-styling/src/prioritized/ClusteredAreaCollection.ts#L17)
+[packages/cad-styling/src/prioritized/ClusteredAreaCollection.ts:17](https://github.com/cognitedata/reveal/blob/2acd9d17229d2bc8e309653b4d6a39ad941e44f1/viewer/packages/cad-styling/src/prioritized/ClusteredAreaCollection.ts#L17)
 
 ## Methods
 
@@ -59,7 +59,7 @@ AreaCollection.
 
 #### Defined in
 
-[packages/cad-styling/src/prioritized/ClusteredAreaCollection.ts:35](https://github.com/cognitedata/reveal/blob/3aaed3491dba3f4ba9ecd87f495d35383cc73a1d/viewer/packages/cad-styling/src/prioritized/ClusteredAreaCollection.ts#L35)
+[packages/cad-styling/src/prioritized/ClusteredAreaCollection.ts:35](https://github.com/cognitedata/reveal/blob/2acd9d17229d2bc8e309653b4d6a39ad941e44f1/viewer/packages/cad-styling/src/prioritized/ClusteredAreaCollection.ts#L35)
 
 ***
 
@@ -81,7 +81,7 @@ subset of boxes in the set returned from `areas`
 
 #### Defined in
 
-[packages/cad-styling/src/prioritized/ClusteredAreaCollection.ts:21](https://github.com/cognitedata/reveal/blob/3aaed3491dba3f4ba9ecd87f495d35383cc73a1d/viewer/packages/cad-styling/src/prioritized/ClusteredAreaCollection.ts#L21)
+[packages/cad-styling/src/prioritized/ClusteredAreaCollection.ts:21](https://github.com/cognitedata/reveal/blob/2acd9d17229d2bc8e309653b4d6a39ad941e44f1/viewer/packages/cad-styling/src/prioritized/ClusteredAreaCollection.ts#L21)
 
 ***
 
@@ -109,7 +109,7 @@ A and B, and will thus be a valid representative set for the intersection of A a
 
 #### Defined in
 
-[packages/cad-styling/src/prioritized/ClusteredAreaCollection.ts:39](https://github.com/cognitedata/reveal/blob/3aaed3491dba3f4ba9ecd87f495d35383cc73a1d/viewer/packages/cad-styling/src/prioritized/ClusteredAreaCollection.ts#L39)
+[packages/cad-styling/src/prioritized/ClusteredAreaCollection.ts:39](https://github.com/cognitedata/reveal/blob/2acd9d17229d2bc8e309653b4d6a39ad941e44f1/viewer/packages/cad-styling/src/prioritized/ClusteredAreaCollection.ts#L39)
 
 ***
 
@@ -133,4 +133,4 @@ Return whether the input box intersects the AreaCollection.
 
 #### Defined in
 
-[packages/cad-styling/src/prioritized/ClusteredAreaCollection.ts:25](https://github.com/cognitedata/reveal/blob/3aaed3491dba3f4ba9ecd87f495d35383cc73a1d/viewer/packages/cad-styling/src/prioritized/ClusteredAreaCollection.ts#L25)
+[packages/cad-styling/src/prioritized/ClusteredAreaCollection.ts:25](https://github.com/cognitedata/reveal/blob/2acd9d17229d2bc8e309653b4d6a39ad941e44f1/viewer/packages/cad-styling/src/prioritized/ClusteredAreaCollection.ts#L25)

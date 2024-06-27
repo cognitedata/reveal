@@ -8,7 +8,7 @@
 
 #### Defined in
 
-[packages/api/src/public/migration/types.ts:215](https://github.com/cognitedata/reveal/blob/3aaed3491dba3f4ba9ecd87f495d35383cc73a1d/viewer/packages/api/src/public/migration/types.ts#L215)
+[packages/api/src/public/migration/types.ts:215](https://github.com/cognitedata/reveal/blob/2acd9d17229d2bc8e309653b4d6a39ad941e44f1/viewer/packages/api/src/public/migration/types.ts#L215)
 
 ***
 
@@ -18,7 +18,7 @@
 
 #### Defined in
 
-[packages/api/src/public/migration/types.ts:214](https://github.com/cognitedata/reveal/blob/3aaed3491dba3f4ba9ecd87f495d35383cc73a1d/viewer/packages/api/src/public/migration/types.ts#L214)
+[packages/api/src/public/migration/types.ts:214](https://github.com/cognitedata/reveal/blob/2acd9d17229d2bc8e309653b4d6a39ad941e44f1/viewer/packages/api/src/public/migration/types.ts#L214)
 
 ***
 
@@ -28,7 +28,7 @@
 
 #### Defined in
 
-[packages/api/src/public/migration/types.ts:211](https://github.com/cognitedata/reveal/blob/3aaed3491dba3f4ba9ecd87f495d35383cc73a1d/viewer/packages/api/src/public/migration/types.ts#L211)
+[packages/api/src/public/migration/types.ts:211](https://github.com/cognitedata/reveal/blob/2acd9d17229d2bc8e309653b4d6a39ad941e44f1/viewer/packages/api/src/public/migration/types.ts#L211)
 
 ***
 
@@ -38,4 +38,4 @@
 
 #### Defined in
 
-[packages/api/src/public/migration/types.ts:212](https://github.com/cognitedata/reveal/blob/3aaed3491dba3f4ba9ecd87f495d35383cc73a1d/viewer/packages/api/src/public/migration/types.ts#L212)
+[packages/api/src/public/migration/types.ts:212](https://github.com/cognitedata/reveal/blob/2acd9d17229d2bc8e309653b4d6a39ad941e44f1/viewer/packages/api/src/public/migration/types.ts#L212)

@@ -13,7 +13,7 @@ The date of this revision. Undefined if the revision is undated.
 
 #### Defined in
 
-[packages/360-images/src/entity/Image360Revision.ts:17](https://github.com/cognitedata/reveal/blob/3aaed3491dba3f4ba9ecd87f495d35383cc73a1d/viewer/packages/360-images/src/entity/Image360Revision.ts#L17)
+[packages/360-images/src/entity/Image360Revision.ts:17](https://github.com/cognitedata/reveal/blob/2acd9d17229d2bc8e309653b4d6a39ad941e44f1/viewer/packages/360-images/src/entity/Image360Revision.ts#L17)
 
 ## Methods
 
@@ -29,7 +29,7 @@ The annotations associated with this revision.
 
 #### Defined in
 
-[packages/360-images/src/entity/Image360Revision.ts:22](https://github.com/cognitedata/reveal/blob/3aaed3491dba3f4ba9ecd87f495d35383cc73a1d/viewer/packages/360-images/src/entity/Image360Revision.ts#L22)
+[packages/360-images/src/entity/Image360Revision.ts:22](https://github.com/cognitedata/reveal/blob/2acd9d17229d2bc8e309653b4d6a39ad941e44f1/viewer/packages/360-images/src/entity/Image360Revision.ts#L22)
 
 ***
 
@@ -45,4 +45,4 @@ Get the thumbnail url for this revision.
 
 #### Defined in
 
-[packages/360-images/src/entity/Image360Revision.ts:27](https://github.com/cognitedata/reveal/blob/3aaed3491dba3f4ba9ecd87f495d35383cc73a1d/viewer/packages/360-images/src/entity/Image360Revision.ts#L27)
+[packages/360-images/src/entity/Image360Revision.ts:27](https://github.com/cognitedata/reveal/blob/2acd9d17229d2bc8e309653b4d6a39ad941e44f1/viewer/packages/360-images/src/entity/Image360Revision.ts#L27)

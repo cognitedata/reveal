@@ -12,7 +12,7 @@ The underlying CDF annotation
 
 #### Defined in
 
-[packages/360-images/src/annotation/Image360Annotation.ts:15](https://github.com/cognitedata/reveal/blob/3aaed3491dba3f4ba9ecd87f495d35383cc73a1d/viewer/packages/360-images/src/annotation/Image360Annotation.ts#L15)
+[packages/360-images/src/annotation/Image360Annotation.ts:15](https://github.com/cognitedata/reveal/blob/2acd9d17229d2bc8e309653b4d6a39ad941e44f1/viewer/packages/360-images/src/annotation/Image360Annotation.ts#L15)
 
 ## Methods
 
@@ -32,7 +32,7 @@ Get center of annotation, to e.g. point the camera toward it
 
 #### Defined in
 
-[packages/360-images/src/annotation/Image360Annotation.ts:40](https://github.com/cognitedata/reveal/blob/3aaed3491dba3f4ba9ecd87f495d35383cc73a1d/viewer/packages/360-images/src/annotation/Image360Annotation.ts#L40)
+[packages/360-images/src/annotation/Image360Annotation.ts:40](https://github.com/cognitedata/reveal/blob/2acd9d17229d2bc8e309653b4d6a39ad941e44f1/viewer/packages/360-images/src/annotation/Image360Annotation.ts#L40)
 
 ***
 
@@ -48,7 +48,7 @@ Get the individual display color of this annotation.
 
 #### Defined in
 
-[packages/360-images/src/annotation/Image360Annotation.ts:20](https://github.com/cognitedata/reveal/blob/3aaed3491dba3f4ba9ecd87f495d35383cc73a1d/viewer/packages/360-images/src/annotation/Image360Annotation.ts#L20)
+[packages/360-images/src/annotation/Image360Annotation.ts:20](https://github.com/cognitedata/reveal/blob/2acd9d17229d2bc8e309653b4d6a39ad941e44f1/viewer/packages/360-images/src/annotation/Image360Annotation.ts#L20)
 
 ***
 
@@ -64,7 +64,7 @@ Get whether this annotation is visible
 
 #### Defined in
 
-[packages/360-images/src/annotation/Image360Annotation.ts:30](https://github.com/cognitedata/reveal/blob/3aaed3491dba3f4ba9ecd87f495d35383cc73a1d/viewer/packages/360-images/src/annotation/Image360Annotation.ts#L30)
+[packages/360-images/src/annotation/Image360Annotation.ts:30](https://github.com/cognitedata/reveal/blob/2acd9d17229d2bc8e309653b4d6a39ad941e44f1/viewer/packages/360-images/src/annotation/Image360Annotation.ts#L30)
 
 ***
 
@@ -84,7 +84,7 @@ Set the display color of this annotation. Default: Random, based on annotation l
 
 #### Defined in
 
-[packages/360-images/src/annotation/Image360Annotation.ts:25](https://github.com/cognitedata/reveal/blob/3aaed3491dba3f4ba9ecd87f495d35383cc73a1d/viewer/packages/360-images/src/annotation/Image360Annotation.ts#L25)
+[packages/360-images/src/annotation/Image360Annotation.ts:25](https://github.com/cognitedata/reveal/blob/2acd9d17229d2bc8e309653b4d6a39ad941e44f1/viewer/packages/360-images/src/annotation/Image360Annotation.ts#L25)
 
 ***
 
@@ -104,4 +104,4 @@ Set whether this annotation should be visible. Default: true
 
 #### Defined in
 
-[packages/360-images/src/annotation/Image360Annotation.ts:35](https://github.com/cognitedata/reveal/blob/3aaed3491dba3f4ba9ecd87f495d35383cc73a1d/viewer/packages/360-images/src/annotation/Image360Annotation.ts#L35)
+[packages/360-images/src/annotation/Image360Annotation.ts:35](https://github.com/cognitedata/reveal/blob/2acd9d17229d2bc8e309653b4d6a39ad941e44f1/viewer/packages/360-images/src/annotation/Image360Annotation.ts#L35)
