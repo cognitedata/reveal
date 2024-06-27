@@ -73,6 +73,7 @@ export const CommandButton = ({
         iconPlacement="right"
         onClick={() => {
           command.invoke();
+          renderTarget.domElement.focus();
         }}
       />
     </CogsTooltip>

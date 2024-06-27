@@ -72,6 +72,7 @@ export const OptionButton = ({
         appendTo={document.body}
         onClickOutside={() => {
           setOpen(false);
+          renderTarget.domElement.focus();
         }}
         content={
           <Menu
@@ -92,6 +93,7 @@ export const OptionButton = ({
                   onClick={() => {
                     command.invoke();
                     setOpen(false);
+                    renderTarget.domElement.focus();
                   }}>
                   {command.getLabel(t)}
                 </Menu.Item>
