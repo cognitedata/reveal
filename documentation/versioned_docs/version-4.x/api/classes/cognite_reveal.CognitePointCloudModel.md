@@ -344,14 +344,14 @@ ___
 
 ### getClasses
 
-▸ **getClasses**(): { `code`: `number` ; `name`: `string`  }[]
+▸ **getClasses**(): \{ `code`: `number` ; `name`: `string`  }[]
 
 Returns a list of sorted classification names and codes present in the model.
 Names will be the custom names provided by the user, or a default one if none have been provided.
 
 #### Returns
 
-{ `code`: `number` ; `name`: `string`  }[]
+\{ `code`: `number` ; `name`: `string`  }[]
 
 A sorted list of classification codes and names from the model.
 

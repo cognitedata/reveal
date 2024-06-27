@@ -41,11 +41,11 @@ whether the collection is still loading data in the background i.e. not yet read
 
 ### getAnnotationIds
 
-▸ `Abstract` **getAnnotationIds**(): `Iterable`<`number`\>
+▸ `Abstract` **getAnnotationIds**(): `Iterable`\<`number`\>
 
 #### Returns
 
-`Iterable`<`number`\>
+`Iterable`\<`number`\>
 
 annotation IDs of the annotations for the objects represented by this PointCloudObjectCollection instance
 

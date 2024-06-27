@@ -109,13 +109,13 @@ ___
 
 ### options
 
-• `get` **options**(): `Readonly`<[`ComboControlsOptions`](../modules/cognite_reveal.md#combocontrolsoptions)\>
+• `get` **options**(): `Readonly`\<[`ComboControlsOptions`](../modules/cognite_reveal.md#combocontrolsoptions)\>
 
 Gets current Combo Controls options.
 
 #### Returns
 
-`Readonly`<[`ComboControlsOptions`](../modules/cognite_reveal.md#combocontrolsoptions)\>
+`Readonly`\<[`ComboControlsOptions`](../modules/cognite_reveal.md#combocontrolsoptions)\>
 
 #### Defined in
 
@@ -131,7 +131,7 @@ Only the provided options will be changed, any undefined options will be kept as
 
 | Name | Type |
 | :------ | :------ |
-| `options` | `Partial`<[`ComboControlsOptions`](../modules/cognite_reveal.md#combocontrolsoptions)\> |
+| `options` | `Partial`\<[`ComboControlsOptions`](../modules/cognite_reveal.md#combocontrolsoptions)\> |
 
 #### Returns
 

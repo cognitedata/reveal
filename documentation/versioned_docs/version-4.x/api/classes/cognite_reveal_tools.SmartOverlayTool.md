@@ -25,7 +25,7 @@ Base class for tools attaching to a [Cognite3DViewer](cognite_reveal.Cognite3DVi
 
 ### constructor
 
-• **new SmartOverlayTool**<`MetadataType`\>(`viewer`, `toolParameters?`)
+• **new SmartOverlayTool**\<`MetadataType`\>(`viewer`, `toolParameters?`)
 
 #### Type parameters
 
@@ -52,13 +52,13 @@ Base class for tools attaching to a [Cognite3DViewer](cognite_reveal.Cognite3DVi
 
 ### collections
 
-• `get` **collections**(): [`OverlayCollection`](../interfaces/cognite_reveal.OverlayCollection.md)<`MetadataType`\>[]
+• `get` **collections**(): [`OverlayCollection`](../interfaces/cognite_reveal.OverlayCollection.md)\<`MetadataType`\>[]
 
 Gets all added overlay collections.
 
 #### Returns
 
-[`OverlayCollection`](../interfaces/cognite_reveal.OverlayCollection.md)<`MetadataType`\>[]
+[`OverlayCollection`](../interfaces/cognite_reveal.OverlayCollection.md)\<`MetadataType`\>[]
 
 #### Defined in
 
@@ -146,7 +146,7 @@ ___
 
 ### createOverlayCollection
 
-▸ **createOverlayCollection**(`overlays?`): [`OverlayCollection`](../interfaces/cognite_reveal.OverlayCollection.md)<`MetadataType`\>
+▸ **createOverlayCollection**(`overlays?`): [`OverlayCollection`](../interfaces/cognite_reveal.OverlayCollection.md)\<`MetadataType`\>
 
 Creates new OverlayCollection.
 
@@ -154,11 +154,11 @@ Creates new OverlayCollection.
 
 | Name | Type | Description |
 | :------ | :------ | :------ |
-| `overlays?` | [`OverlayInfo`](../modules/cognite_reveal.md#overlayinfo)<`MetadataType`\>[] | Array of overlays to add. |
+| `overlays?` | [`OverlayInfo`](../modules/cognite_reveal.md#overlayinfo)\<`MetadataType`\>[] | Array of overlays to add. |
 
 #### Returns
 
-[`OverlayCollection`](../interfaces/cognite_reveal.OverlayCollection.md)<`MetadataType`\>
+[`OverlayCollection`](../interfaces/cognite_reveal.OverlayCollection.md)\<`MetadataType`\>
 
 Overlay group containing it's id.
 
@@ -200,7 +200,7 @@ Unregisters an event handler for the 'disposed'-event.
 | Name | Type |
 | :------ | :------ |
 | `event` | ``"hover"`` |
-| `eventHandler` | [`OverlayEventHandler`](../modules/cognite_reveal_tools.md#overlayeventhandler)<`MetadataType`\> |
+| `eventHandler` | [`OverlayEventHandler`](../modules/cognite_reveal_tools.md#overlayeventhandler)\<`MetadataType`\> |
 
 #### Returns
 
@@ -221,7 +221,7 @@ Unregisters an event handler for the 'disposed'-event.
 | Name | Type |
 | :------ | :------ |
 | `event` | ``"click"`` |
-| `eventHandler` | [`OverlayEventHandler`](../modules/cognite_reveal_tools.md#overlayeventhandler)<`MetadataType`\> |
+| `eventHandler` | [`OverlayEventHandler`](../modules/cognite_reveal_tools.md#overlayeventhandler)\<`MetadataType`\> |
 
 #### Returns
 
@@ -269,7 +269,7 @@ Subscribes to overlay events.
 | Name | Type | Description |
 | :------ | :------ | :------ |
 | `event` | ``"hover"`` | event to subscribe to. |
-| `eventHandler` | [`OverlayEventHandler`](../modules/cognite_reveal_tools.md#overlayeventhandler)<`MetadataType`\> |  |
+| `eventHandler` | [`OverlayEventHandler`](../modules/cognite_reveal_tools.md#overlayeventhandler)\<`MetadataType`\> |  |
 
 #### Returns
 
@@ -290,7 +290,7 @@ Cognite3DViewerToolBase.on
 | Name | Type |
 | :------ | :------ |
 | `event` | ``"click"`` |
-| `eventHandler` | [`OverlayEventHandler`](../modules/cognite_reveal_tools.md#overlayeventhandler)<`MetadataType`\> |
+| `eventHandler` | [`OverlayEventHandler`](../modules/cognite_reveal_tools.md#overlayeventhandler)\<`MetadataType`\> |
 
 #### Returns
 
@@ -337,7 +337,7 @@ Removes overlays that were added with addOverlays method.
 
 | Name | Type | Description |
 | :------ | :------ | :------ |
-| `overlayCollection` | [`OverlayCollection`](../interfaces/cognite_reveal.OverlayCollection.md)<`MetadataType`\> | Id of the overlay group to remove. |
+| `overlayCollection` | [`OverlayCollection`](../interfaces/cognite_reveal.OverlayCollection.md)\<`MetadataType`\> | Id of the overlay group to remove. |
 
 #### Returns
 

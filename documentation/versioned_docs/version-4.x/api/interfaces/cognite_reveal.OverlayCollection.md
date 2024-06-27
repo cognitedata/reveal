@@ -17,7 +17,7 @@ custom_edit_url: null
 
 ### addOverlays
 
-▸ **addOverlays**(`overlays`): [`Overlay3D`](cognite_reveal.Overlay3D.md)<`MetadataType`\>[]
+▸ **addOverlays**(`overlays`): [`Overlay3D`](cognite_reveal.Overlay3D.md)\<`MetadataType`\>[]
 
 Add overlays to the collection.
 
@@ -25,11 +25,11 @@ Add overlays to the collection.
 
 | Name | Type | Description |
 | :------ | :------ | :------ |
-| `overlays` | [`OverlayInfo`](../modules/cognite_reveal.md#overlayinfo)<`MetadataType`\>[] | Overlays to add to the collection. |
+| `overlays` | [`OverlayInfo`](../modules/cognite_reveal.md#overlayinfo)\<`MetadataType`\>[] | Overlays to add to the collection. |
 
 #### Returns
 
-[`Overlay3D`](cognite_reveal.Overlay3D.md)<`MetadataType`\>[]
+[`Overlay3D`](cognite_reveal.Overlay3D.md)\<`MetadataType`\>[]
 
 The added overlays.
 
@@ -41,13 +41,13 @@ ___
 
 ### getOverlays
 
-▸ **getOverlays**(): [`Overlay3D`](cognite_reveal.Overlay3D.md)<`MetadataType`\>[]
+▸ **getOverlays**(): [`Overlay3D`](cognite_reveal.Overlay3D.md)\<`MetadataType`\>[]
 
 Get all overlays in the collection.
 
 #### Returns
 
-[`Overlay3D`](cognite_reveal.Overlay3D.md)<`MetadataType`\>[]
+[`Overlay3D`](cognite_reveal.Overlay3D.md)\<`MetadataType`\>[]
 
 #### Defined in
 
@@ -81,7 +81,7 @@ Remove overlays from the collection.
 
 | Name | Type | Description |
 | :------ | :------ | :------ |
-| `overlays` | [`Overlay3D`](cognite_reveal.Overlay3D.md)<`MetadataType`\>[] | Overlays to remove from the collection. |
+| `overlays` | [`Overlay3D`](cognite_reveal.Overlay3D.md)\<`MetadataType`\>[] | Overlays to remove from the collection. |
 
 #### Returns
 

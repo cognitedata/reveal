@@ -13,7 +13,7 @@ Client for retrieving metadata information about CAD nodes.
 
 ### determineNodeAncestorsByNodeId
 
-▸ **determineNodeAncestorsByNodeId**(`modelId`, `revisionId`, `nodeId`, `generation`): `Promise`<{ `subtreeSize`: `number` ; `treeIndex`: `number`  }\>
+▸ **determineNodeAncestorsByNodeId**(`modelId`, `revisionId`, `nodeId`, `generation`): `Promise`\<\{ `subtreeSize`: `number` ; `treeIndex`: `number`  }\>
 
 Determine ancestor subtree span of a given node. If the node doesn't have an
 ancestor at the generation given, the span of the root node is returned.
@@ -29,7 +29,7 @@ ancestor at the generation given, the span of the root node is returned.
 
 #### Returns
 
-`Promise`<{ `subtreeSize`: `number` ; `treeIndex`: `number`  }\>
+`Promise`\<\{ `subtreeSize`: `number` ; `treeIndex`: `number`  }\>
 
 #### Defined in
 
@@ -39,7 +39,7 @@ ___
 
 ### determineTreeIndexAndSubtreeSizesByNodeIds
 
-▸ **determineTreeIndexAndSubtreeSizesByNodeIds**(`modelId`, `revisionId`, `nodeIds`): `Promise`<{ `subtreeSize`: `number` ; `treeIndex`: `number`  }[]\>
+▸ **determineTreeIndexAndSubtreeSizesByNodeIds**(`modelId`, `revisionId`, `nodeIds`): `Promise`\<\{ `subtreeSize`: `number` ; `treeIndex`: `number`  }[]\>
 
 Determines tree index and subtreeSize (i.e. span of the subtree a node is parent
 of) given a set of node IDs.
@@ -54,7 +54,7 @@ of) given a set of node IDs.
 
 #### Returns
 
-`Promise`<{ `subtreeSize`: `number` ; `treeIndex`: `number`  }[]\>
+`Promise`\<\{ `subtreeSize`: `number` ; `treeIndex`: `number`  }[]\>
 
 #### Defined in
 
@@ -64,7 +64,7 @@ ___
 
 ### getBoundingBoxesByNodeIds
 
-▸ **getBoundingBoxesByNodeIds**(`modelId`, `revisionId`, `nodeIds`): `Promise`<`Box3`[]\>
+▸ **getBoundingBoxesByNodeIds**(`modelId`, `revisionId`, `nodeIds`): `Promise`\<`Box3`[]\>
 
 Determines the bounds of the individual nodes provided. Note that the returned
 boxes will be in "CDF coordinates" and not transformed using
@@ -80,7 +80,7 @@ the model transformation for the given model.
 
 #### Returns
 
-`Promise`<`Box3`[]\>
+`Promise`\<`Box3`[]\>
 
 #### Defined in
 
@@ -90,7 +90,7 @@ ___
 
 ### mapNodeIdsToTreeIndices
 
-▸ **mapNodeIdsToTreeIndices**(`modelId`, `revisionId`, `nodeIds`): `Promise`<`number`[]\>
+▸ **mapNodeIdsToTreeIndices**(`modelId`, `revisionId`, `nodeIds`): `Promise`\<`number`[]\>
 
 Maps a set of "node IDs" that identify nodes, to the respective
 "tree indexes".
@@ -105,7 +105,7 @@ Maps a set of "node IDs" that identify nodes, to the respective
 
 #### Returns
 
-`Promise`<`number`[]\>
+`Promise`\<`number`[]\>
 
 #### Defined in
 
@@ -115,7 +115,7 @@ ___
 
 ### mapTreeIndicesToNodeIds
 
-▸ **mapTreeIndicesToNodeIds**(`modelId`, `revisionId`, `treeIndices`): `Promise`<`number`[]\>
+▸ **mapTreeIndicesToNodeIds**(`modelId`, `revisionId`, `treeIndices`): `Promise`\<`number`[]\>
 
 Maps a set of "tree indexes" that identify nodes, to the respective
 "node IDs".
@@ -130,7 +130,7 @@ Maps a set of "tree indexes" that identify nodes, to the respective
 
 #### Returns
 
-`Promise`<`number`[]\>
+`Promise`\<`number`[]\>
 
 #### Defined in
 

@@ -114,13 +114,13 @@ ___
 
 ### styledNodeCollections
 
-• `get` **styledNodeCollections**(): { `appearance`: [`NodeAppearance`](../modules/cognite_reveal.md#nodeappearance) ; `nodeCollection`: [`NodeCollection`](cognite_reveal.NodeCollection.md)  }[]
+• `get` **styledNodeCollections**(): \{ `appearance`: [`NodeAppearance`](../modules/cognite_reveal.md#nodeappearance) ; `nodeCollection`: [`NodeCollection`](cognite_reveal.NodeCollection.md)  }[]
 
 Returns all currently registered node collections and associated appearance.
 
 #### Returns
 
-{ `appearance`: [`NodeAppearance`](../modules/cognite_reveal.md#nodeappearance) ; `nodeCollection`: [`NodeCollection`](cognite_reveal.NodeCollection.md)  }[]
+\{ `appearance`: [`NodeAppearance`](../modules/cognite_reveal.md#nodeappearance) ; `nodeCollection`: [`NodeCollection`](cognite_reveal.NodeCollection.md)  }[]
 
 #### Defined in
 
@@ -232,7 +232,7 @@ ___
 
 ### getAncestorTreeIndices
 
-▸ **getAncestorTreeIndices**(`treeIndex`, `generation`): `Promise`<[`NumericRange`](cognite_reveal.NumericRange.md)\>
+▸ **getAncestorTreeIndices**(`treeIndex`, `generation`): `Promise`\<[`NumericRange`](cognite_reveal.NumericRange.md)\>
 
 Determines the tree index range of a subtree of an ancestor of the provided
 node defined by a tree index.
@@ -246,7 +246,7 @@ node defined by a tree index.
 
 #### Returns
 
-`Promise`<[`NumericRange`](cognite_reveal.NumericRange.md)\>
+`Promise`\<[`NumericRange`](cognite_reveal.NumericRange.md)\>
 
 Tree index range of the subtree spanned by the ancestor at the
 "generation" specified, or the root.
@@ -259,7 +259,7 @@ ___
 
 ### getBoundingBoxByNodeId
 
-▸ **getBoundingBoxByNodeId**(`nodeId`, `box?`): `Promise`<`Box3`\>
+▸ **getBoundingBoxByNodeId**(`nodeId`, `box?`): `Promise`\<`Box3`\>
 
 Fetches a bounding box from the CDF by the nodeId.
 
@@ -285,7 +285,7 @@ const box = await model.getBoundingBoxByNodeId(nodeId);
 
 #### Returns
 
-`Promise`<`Box3`\>
+`Promise`\<`Box3`\>
 
 #### Defined in
 
@@ -295,7 +295,7 @@ ___
 
 ### getBoundingBoxByTreeIndex
 
-▸ **getBoundingBoxByTreeIndex**(`treeIndex`, `box?`): `Promise`<`Box3`\>
+▸ **getBoundingBoxByTreeIndex**(`treeIndex`, `box?`): `Promise`\<`Box3`\>
 
 Determine the bounding box of the node identified by the tree index provided. Note that this
 function uses the CDF API to look up the bounding box.
@@ -322,7 +322,7 @@ const box = await model.getBoundingBoxByTreeIndex(treeIndex);
 
 #### Returns
 
-`Promise`<`Box3`\>
+`Promise`\<`Box3`\>
 
 #### Defined in
 
@@ -474,7 +474,7 @@ ___
 
 ### getSubtreeTreeIndices
 
-▸ **getSubtreeTreeIndices**(`treeIndex`): `Promise`<[`NumericRange`](cognite_reveal.NumericRange.md)\>
+▸ **getSubtreeTreeIndices**(`treeIndex`): `Promise`\<[`NumericRange`](cognite_reveal.NumericRange.md)\>
 
 Determines the range of tree indices for a given subtree.
 
@@ -486,7 +486,7 @@ Determines the range of tree indices for a given subtree.
 
 #### Returns
 
-`Promise`<[`NumericRange`](cognite_reveal.NumericRange.md)\>
+`Promise`\<[`NumericRange`](cognite_reveal.NumericRange.md)\>
 
 #### Defined in
 
@@ -496,7 +496,7 @@ ___
 
 ### iterateNodesByTreeIndex
 
-▸ **iterateNodesByTreeIndex**(`action`): `Promise`<`void`\>
+▸ **iterateNodesByTreeIndex**(`action`): `Promise`\<`void`\>
 
 Iterates over all nodes in the model and applies the provided action to each node (identified by tree index).
 The passed action is applied incrementally to avoid main thread blocking, meaning that the changes can be partially
@@ -517,7 +517,7 @@ await model.iterateNodesByTreeIndex(logIndex); // 0, 1, 2, ...
 
 #### Returns
 
-`Promise`<`void`\>
+`Promise`\<`void`\>
 
 Promise that is resolved once the iteration is done.
 
@@ -529,7 +529,7 @@ ___
 
 ### iterateSubtreeByTreeIndex
 
-▸ **iterateSubtreeByTreeIndex**(`treeIndex`, `action`): `Promise`<`void`\>
+▸ **iterateSubtreeByTreeIndex**(`treeIndex`, `action`): `Promise`\<`void`\>
 
 Iterates over all nodes in a subtree of the model and applies the provided action to each node
 (identified by tree index). The provided node is included in the visited set.  The passed action
@@ -554,7 +554,7 @@ await model.iterateNodesByTreeIndex(treeIndex => {
 
 #### Returns
 
-`Promise`<`void`\>
+`Promise`\<`void`\>
 
 Promise that is resolved once the iteration is done.
 
@@ -589,7 +589,7 @@ ___
 
 ### mapNodeIdToTreeIndex
 
-▸ **mapNodeIdToTreeIndex**(`nodeId`): `Promise`<`number`\>
+▸ **mapNodeIdToTreeIndex**(`nodeId`): `Promise`\<`number`\>
 
 Maps a single node ID to tree index. This is useful when you e.g. have a
 node ID from an asset mapping and want to highlight the given asset using
@@ -608,7 +608,7 @@ If an invalid/non-existant node ID is provided the function throws an error.
 
 #### Returns
 
-`Promise`<`number`\>
+`Promise`\<`number`\>
 
 TreeIndex of the provided node.
 
@@ -620,7 +620,7 @@ ___
 
 ### mapNodeIdsToTreeIndices
 
-▸ **mapNodeIdsToTreeIndices**(`nodeIds`): `Promise`<`number`[]\>
+▸ **mapNodeIdsToTreeIndices**(`nodeIds`): `Promise`\<`number`[]\>
 
 Maps a list of Node IDs to tree indices. This function is useful when you have
 a list of nodes, e.g. from Asset Mappings, that you want to highlight, hide,
@@ -638,7 +638,7 @@ If an invalid/non-existant node ID is provided the function throws an error.
 
 #### Returns
 
-`Promise`<`number`[]\>
+`Promise`\<`number`[]\>
 
 A list of tree indices corresponing to the elements in the input.
 
@@ -673,7 +673,7 @@ ___
 
 ### mapTreeIndexToNodeId
 
-▸ **mapTreeIndexToNodeId**(`treeIndex`): `Promise`<`number`\>
+▸ **mapTreeIndexToNodeId**(`treeIndex`): `Promise`\<`number`\>
 
 Maps a single tree index to node ID for use with the API. If you have multiple
 tree indices to map, [mapNodeIdsToTreeIndices](cognite_reveal.CogniteCadModel.md#mapnodeidstotreeindices) is recommended for better
@@ -691,7 +691,7 @@ If an invalid/non-existent node ID is provided the function throws an error.
 
 #### Returns
 
-`Promise`<`number`\>
+`Promise`\<`number`\>
 
 TreeIndex of the provided node.
 
@@ -703,7 +703,7 @@ ___
 
 ### mapTreeIndicesToNodeIds
 
-▸ **mapTreeIndicesToNodeIds**(`treeIndices`): `Promise`<`number`[]\>
+▸ **mapTreeIndicesToNodeIds**(`treeIndices`): `Promise`\<`number`[]\>
 
 Maps a list of tree indices to node IDs for use with the Cognite SDK.
 This function is useful if you have a list of tree indices, e.g. from
@@ -722,7 +722,7 @@ If an invalid tree index is provided the function throws an error.
 
 #### Returns
 
-`Promise`<`number`[]\>
+`Promise`\<`number`[]\>
 
 A list of node IDs corresponding to the elements of the input.
 
@@ -773,7 +773,7 @@ ___
 
 ### resetNodeTransformByTreeIndex
 
-▸ **resetNodeTransformByTreeIndex**(`treeIndex`, `applyToChildren?`): `Promise`<`number`\>
+▸ **resetNodeTransformByTreeIndex**(`treeIndex`, `applyToChildren?`): `Promise`\<`number`\>
 
 Remove override transform of the node by tree index.
 
@@ -786,7 +786,7 @@ Remove override transform of the node by tree index.
 
 #### Returns
 
-`Promise`<`number`\>
+`Promise`\<`number`\>
 
 #### Defined in
 
@@ -892,7 +892,7 @@ ___
 
 ### setNodeTransformByTreeIndex
 
-▸ **setNodeTransformByTreeIndex**(`treeIndex`, `transform`, `applyToChildren?`): `Promise`<`number`\>
+▸ **setNodeTransformByTreeIndex**(`treeIndex`, `transform`, `applyToChildren?`): `Promise`\<`number`\>
 
 Set override transform of the node by tree index.
 
@@ -906,7 +906,7 @@ Set override transform of the node by tree index.
 
 #### Returns
 
-`Promise`<`number`\>
+`Promise`\<`number`\>
 
 #### Defined in
 

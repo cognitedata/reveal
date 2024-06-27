@@ -193,7 +193,7 @@ ___
 | Name | Type | Description |
 | :------ | :------ | :------ |
 | `boundingBox?` | `THREE.Box3` | The bounds to load geometry within. By default this box is in CDF coordinate space which will be transformed into coordinates relative to the model using the the model transformation which can be specified using [the CDF API](https://docs.cognite.com/api/v1/#operation/update3DRevisions), or set in [Cognite Fusion](https://fusion.cognite.com/).  **`see`** [isBoundingBoxInModelCoordinates](cognite_reveal.md#isboundingboxinmodelcoordinates). |
-| `isBoundingBoxInModelCoordinates?` | `boolean` | When set, the geometry filter {@link boundingBox} will be considered to be in "Reveal/ThreeJS space". Rather than CDF space which is the default. When using Reveal space, the model transformation which can be specified using [the CDF API](https://docs.cognite.com/api/v1/#operation/update3DRevisions), or set in [Cognite Fusion](https://fusion.cognite.com/). |
+| `isBoundingBoxInModelCoordinates?` | `boolean` | When set, the geometry filter \{@link boundingBox} will be considered to be in "Reveal/ThreeJS space". Rather than CDF space which is the default. When using Reveal space, the model transformation which can be specified using [the CDF API](https://docs.cognite.com/api/v1/#operation/update3DRevisions), or set in [Cognite Fusion](https://fusion.cognite.com/). |
 
 #### Defined in
 
@@ -248,7 +248,7 @@ ___
 | `defaultNodeAppearance` | [`NodeAppearance`](cognite_reveal.md#nodeappearance) |
 | `modelId` | `number` |
 | `revisionId` | `number` |
-| `styledSets` | { `appearance`: [`NodeAppearance`](cognite_reveal.md#nodeappearance) ; `options?`: `any` ; `state`: `any` ; `token`: `string`  }[] |
+| `styledSets` | \{ `appearance`: [`NodeAppearance`](cognite_reveal.md#nodeappearance) ; `options?`: `any` ; `state`: `any` ; `token`: `string`  }[] |
 
 #### Defined in
 
@@ -400,10 +400,10 @@ ___
 | Name | Type |
 | :------ | :------ |
 | `continuousModelStreaming?` | `boolean` |
-| `internal?` | { `cad?`: `InternalRevealCadOptions`  } |
+| `internal?` | \{ `cad?`: `InternalRevealCadOptions`  } |
 | `internal.cad?` | `InternalRevealCadOptions` |
 | `logMetrics?` | `boolean` |
-| `outputRenderTarget?` | { `autoSize?`: `boolean` ; `target`: `THREE.WebGLRenderTarget`  } |
+| `outputRenderTarget?` | \{ `autoSize?`: `boolean` ; `target`: `THREE.WebGLRenderTarget`  } |
 | `outputRenderTarget.autoSize?` | `boolean` |
 | `outputRenderTarget.target` | `THREE.WebGLRenderTarget` |
 | `renderOptions?` | `RenderOptions` |
@@ -417,7 +417,7 @@ ___
 
 ### SceneRenderedDelegate
 
-Ƭ **SceneRenderedDelegate**: (`event`: { `camera`: `THREE.PerspectiveCamera` ; `frameNumber`: `number` ; `renderTime`: `number` ; `renderer`: `THREE.WebGLRenderer`  }) => `void`
+Ƭ **SceneRenderedDelegate**: (`event`: \{ `camera`: `THREE.PerspectiveCamera` ; `frameNumber`: `number` ; `renderTime`: `number` ; `renderer`: `THREE.WebGLRenderer`  }) => `void`
 
 #### Type declaration
 
@@ -489,12 +489,12 @@ ___
 
 | Name | Type |
 | :------ | :------ |
-| `camera?` | { `position`: { `x`: `number` ; `y`: `number` ; `z`: `number`  } ; `target`: { `x`: `number` ; `y`: `number` ; `z`: `number`  }  } |
-| `camera.position` | { `x`: `number` ; `y`: `number` ; `z`: `number`  } |
+| `camera?` | \{ `position`: \{ `x`: `number` ; `y`: `number` ; `z`: `number`  } ; `target`: \{ `x`: `number` ; `y`: `number` ; `z`: `number`  }  } |
+| `camera.position` | \{ `x`: `number` ; `y`: `number` ; `z`: `number`  } |
 | `camera.position.x` | `number` |
 | `camera.position.y` | `number` |
 | `camera.position.z` | `number` |
-| `camera.target` | { `x`: `number` ; `y`: `number` ; `z`: `number`  } |
+| `camera.target` | \{ `x`: `number` ; `y`: `number` ; `z`: `number`  } |
 | `camera.target.x` | `number` |
 | `camera.target.y` | `number` |
 | `camera.target.z` | `number` |
@@ -532,7 +532,7 @@ A set of default node appearances used in Reveal.
 | `Default` | [`NodeAppearance`](cognite_reveal.md#nodeappearance) |
 | `Ghosted` | [`NodeAppearance`](cognite_reveal.md#nodeappearance) |
 | `Hidden` | [`NodeAppearance`](cognite_reveal.md#nodeappearance) |
-| `Highlighted` | { `color?`: [`number`, `number`, `number`] ; `outlineColor?`: [`NodeOutlineColor`](../enums/cognite_reveal.NodeOutlineColor.md) ; `prioritizedForLoadingHint?`: `number` ; `renderGhosted?`: `boolean` ; `renderInFront?`: `boolean` ; `visible?`: `boolean`  } |
+| `Highlighted` | \{ `color?`: [`number`, `number`, `number`] ; `outlineColor?`: [`NodeOutlineColor`](../enums/cognite_reveal.NodeOutlineColor.md) ; `prioritizedForLoadingHint?`: `number` ; `renderGhosted?`: `boolean` ; `renderInFront?`: `boolean` ; `visible?`: `boolean`  } |
 | `Highlighted.color?` | [`number`, `number`, `number`] |
 | `Highlighted.outlineColor?` | [`NodeOutlineColor`](../enums/cognite_reveal.NodeOutlineColor.md) |
 | `Highlighted.prioritizedForLoadingHint?` | `number` |
@@ -579,20 +579,20 @@ in cases when you need the latest local files or CDN is blocked by CSP.
 
 ### registerCustomNodeCollectionType
 
-▸ **registerCustomNodeCollectionType**<`T`\>(`nodeCollectionType`, `deserializer`): `void`
+▸ **registerCustomNodeCollectionType**\<`T`\>(`nodeCollectionType`, `deserializer`): `void`
 
 #### Type parameters
 
 | Name | Type |
 | :------ | :------ |
-| `T` | extends [`NodeCollection`](../classes/cognite_reveal.NodeCollection.md)<`T`\> |
+| `T` | extends [`NodeCollection`](../classes/cognite_reveal.NodeCollection.md)\<`T`\> |
 
 #### Parameters
 
 | Name | Type |
 | :------ | :------ |
 | `nodeCollectionType` | `string` |
-| `deserializer` | (`descriptor`: [`NodeCollectionDescriptor`](cognite_reveal.md#nodecollectiondescriptor), `context`: [`NodeCollectionSerializationContext`](cognite_reveal.md#nodecollectionserializationcontext)) => `Promise`<`T`\> |
+| `deserializer` | (`descriptor`: [`NodeCollectionDescriptor`](cognite_reveal.md#nodecollectiondescriptor), `context`: [`NodeCollectionSerializationContext`](cognite_reveal.md#nodecollectionserializationcontext)) => `Promise`\<`T`\> |
 
 #### Returns
 

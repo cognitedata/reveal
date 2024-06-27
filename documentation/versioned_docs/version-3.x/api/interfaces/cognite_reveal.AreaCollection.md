@@ -43,7 +43,7 @@ AreaCollection.
 
 | Name | Type |
 | :------ | :------ |
-| `boxes` | `Iterable`<`Box3`\> |
+| `boxes` | `Iterable`\<`Box3`\> |
 
 #### Returns
 
@@ -57,7 +57,7 @@ ___
 
 ### areas
 
-▸ **areas**(): `Generator`<`Box3`, `any`, `unknown`\>
+▸ **areas**(): `Generator`\<`Box3`, `any`, `unknown`\>
 
 Return some set of boxes that cover the boxes inserted with `addAreas`.
 It is required that each inserted box is completely covered by some
@@ -65,7 +65,7 @@ subset of boxes in the set returned from `areas`
 
 #### Returns
 
-`Generator`<`Box3`, `any`, `unknown`\>
+`Generator`\<`Box3`, `any`, `unknown`\>
 
 #### Defined in
 
@@ -87,7 +87,7 @@ A and B, and will thus be a valid representative set for the intersection of A a
 
 | Name | Type |
 | :------ | :------ |
-| `boxes` | `Iterable`<`Box3`\> |
+| `boxes` | `Iterable`\<`Box3`\> |
 
 #### Returns
 

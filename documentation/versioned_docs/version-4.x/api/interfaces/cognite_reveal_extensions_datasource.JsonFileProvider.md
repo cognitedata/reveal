@@ -17,7 +17,7 @@ custom_edit_url: null
 
 ### getJsonFile
 
-▸ **getJsonFile**(`baseUrl`, `fileName`): `Promise`<`any`\>
+▸ **getJsonFile**(`baseUrl`, `fileName`): `Promise`\<`any`\>
 
 #### Parameters
 
@@ -28,7 +28,7 @@ custom_edit_url: null
 
 #### Returns
 
-`Promise`<`any`\>
+`Promise`\<`any`\>
 
 #### Defined in
 

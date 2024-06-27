@@ -75,13 +75,13 @@ overlayTool.dispose();
 
 ### elements
 
-• `get` **elements**(): { `element`: `HTMLElement` ; `position3D`: `Vector3`  }[]
+• `get` **elements**(): \{ `element`: `HTMLElement` ; `position3D`: `Vector3`  }[]
 
 Returns all added HTML elements along with their 3D positions.
 
 #### Returns
 
-{ `element`: `HTMLElement` ; `position3D`: `Vector3`  }[]
+\{ `element`: `HTMLElement` ; `position3D`: `Vector3`  }[]
 
 #### Defined in
 
