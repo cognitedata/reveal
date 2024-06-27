@@ -13,7 +13,7 @@ Provides metadata for 3D models.
 
 ### getModelCamera
 
-▸ **getModelCamera**(`identifier`): `Promise`<`undefined` \| { `position`: `Vector3` ; `target`: `Vector3`  }\>
+▸ **getModelCamera**(`identifier`): `Promise`\<`undefined` \| \{ `position`: `Vector3` ; `target`: `Vector3`  }\>
 
 #### Parameters
 
@@ -23,7 +23,7 @@ Provides metadata for 3D models.
 
 #### Returns
 
-`Promise`<`undefined` \| { `position`: `Vector3` ; `target`: `Vector3`  }\>
+`Promise`\<`undefined` \| \{ `position`: `Vector3` ; `target`: `Vector3`  }\>
 
 #### Defined in
 
@@ -33,7 +33,7 @@ ___
 
 ### getModelMatrix
 
-▸ **getModelMatrix**(`identifier`, `format`): `Promise`<`Matrix4`\>
+▸ **getModelMatrix**(`identifier`, `format`): `Promise`\<`Matrix4`\>
 
 #### Parameters
 
@@ -44,7 +44,7 @@ ___
 
 #### Returns
 
-`Promise`<`Matrix4`\>
+`Promise`\<`Matrix4`\>
 
 #### Defined in
 
@@ -54,7 +54,7 @@ ___
 
 ### getModelOutputs
 
-▸ **getModelOutputs**(`modelIdentifier`): `Promise`<[`BlobOutputMetadata`](cognite_reveal_extensions_datasource.BlobOutputMetadata.md)[]\>
+▸ **getModelOutputs**(`modelIdentifier`): `Promise`\<[`BlobOutputMetadata`](cognite_reveal_extensions_datasource.BlobOutputMetadata.md)[]\>
 
 #### Parameters
 
@@ -64,7 +64,7 @@ ___
 
 #### Returns
 
-`Promise`<[`BlobOutputMetadata`](cognite_reveal_extensions_datasource.BlobOutputMetadata.md)[]\>
+`Promise`\<[`BlobOutputMetadata`](cognite_reveal_extensions_datasource.BlobOutputMetadata.md)[]\>
 
 #### Defined in
 
@@ -74,7 +74,7 @@ ___
 
 ### getModelUri
 
-▸ **getModelUri**(`identifier`, `formatMetadata`): `Promise`<`string`\>
+▸ **getModelUri**(`identifier`, `formatMetadata`): `Promise`\<`string`\>
 
 #### Parameters
 
@@ -85,7 +85,7 @@ ___
 
 #### Returns
 
-`Promise`<`string`\>
+`Promise`\<`string`\>
 
 #### Defined in
 

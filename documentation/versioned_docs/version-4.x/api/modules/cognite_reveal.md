@@ -78,7 +78,7 @@ ___
 
 ### BeforeSceneRenderedDelegate
 
-Ƭ **BeforeSceneRenderedDelegate**: (`event`: { `camera`: `THREE.PerspectiveCamera` ; `frameNumber`: `number` ; `renderer`: `THREE.WebGLRenderer`  }) => `void`
+Ƭ **BeforeSceneRenderedDelegate**: (`event`: \{ `camera`: `THREE.PerspectiveCamera` ; `frameNumber`: `number` ; `renderer`: `THREE.WebGLRenderer`  }) => `void`
 
 #### Type declaration
 
@@ -349,7 +349,7 @@ ___
 
 ### CompletePointCloudAppearance
 
-Ƭ **CompletePointCloudAppearance**: `Required`<[`PointCloudAppearance`](cognite_reveal.md#pointcloudappearance)\>
+Ƭ **CompletePointCloudAppearance**: `Required`\<[`PointCloudAppearance`](cognite_reveal.md#pointcloudappearance)\>
 
 #### Defined in
 
@@ -594,7 +594,7 @@ ___
 | `defaultNodeAppearance` | [`SerializableNodeAppearance`](cognite_reveal.md#serializablenodeappearance) |
 | `modelId` | `number` |
 | `revisionId` | `number` |
-| `styledSets` | { `appearance`: [`SerializableNodeAppearance`](cognite_reveal.md#serializablenodeappearance) ; `options?`: `any` ; `state`: `any` ; `token`: `string`  }[] |
+| `styledSets` | \{ `appearance`: [`SerializableNodeAppearance`](cognite_reveal.md#serializablenodeappearance) ; `options?`: `any` ; `state`: `any` ; `token`: `string`  }[] |
 
 #### Defined in
 
@@ -674,7 +674,7 @@ ___
 
 ### OverlayInfo
 
-Ƭ **OverlayInfo**<`MetadataType`\>: `Object`
+Ƭ **OverlayInfo**\<`MetadataType`\>: `Object`
 
 #### Type parameters
 
@@ -872,7 +872,7 @@ ___
 
 ### SceneRenderedDelegate
 
-Ƭ **SceneRenderedDelegate**: (`event`: { `camera`: `THREE.PerspectiveCamera` ; `frameNumber`: `number` ; `renderTime`: `number` ; `renderer`: `THREE.WebGLRenderer`  }) => `void`
+Ƭ **SceneRenderedDelegate**: (`event`: \{ `camera`: `THREE.PerspectiveCamera` ; `frameNumber`: `number` ; `renderTime`: `number` ; `renderer`: `THREE.WebGLRenderer`  }) => `void`
 
 #### Type declaration
 
@@ -957,12 +957,12 @@ ___
 
 | Name | Type |
 | :------ | :------ |
-| `camera?` | { `position`: { `x`: `number` ; `y`: `number` ; `z`: `number`  } ; `target`: { `x`: `number` ; `y`: `number` ; `z`: `number`  }  } |
-| `camera.position` | { `x`: `number` ; `y`: `number` ; `z`: `number`  } |
+| `camera?` | \{ `position`: \{ `x`: `number` ; `y`: `number` ; `z`: `number`  } ; `target`: \{ `x`: `number` ; `y`: `number` ; `z`: `number`  }  } |
+| `camera.position` | \{ `x`: `number` ; `y`: `number` ; `z`: `number`  } |
 | `camera.position.x` | `number` |
 | `camera.position.y` | `number` |
 | `camera.position.z` | `number` |
-| `camera.target` | { `x`: `number` ; `y`: `number` ; `z`: `number`  } |
+| `camera.target` | \{ `x`: `number` ; `y`: `number` ; `z`: `number`  } |
 | `camera.target.x` | `number` |
 | `camera.target.y` | `number` |
 | `camera.target.z` | `number` |
@@ -1025,7 +1025,7 @@ A set of default node appearances used in Reveal.
 | `Default` | [`NodeAppearance`](cognite_reveal.md#nodeappearance) |
 | `Ghosted` | [`NodeAppearance`](cognite_reveal.md#nodeappearance) |
 | `Hidden` | [`NodeAppearance`](cognite_reveal.md#nodeappearance) |
-| `Highlighted` | { `color?`: `Color` ; `outlineColor?`: [`NodeOutlineColor`](../enums/cognite_reveal.NodeOutlineColor.md) ; `prioritizedForLoadingHint?`: `number` ; `renderGhosted?`: `boolean` ; `renderInFront?`: `boolean` ; `visible?`: `boolean`  } |
+| `Highlighted` | \{ `color?`: `Color` ; `outlineColor?`: [`NodeOutlineColor`](../enums/cognite_reveal.NodeOutlineColor.md) ; `prioritizedForLoadingHint?`: `number` ; `renderGhosted?`: `boolean` ; `renderInFront?`: `boolean` ; `visible?`: `boolean`  } |
 | `Highlighted.color?` | `Color` |
 | `Highlighted.outlineColor?` | [`NodeOutlineColor`](../enums/cognite_reveal.NodeOutlineColor.md) |
 | `Highlighted.prioritizedForLoadingHint?` | `number` |
@@ -1063,20 +1063,20 @@ ___
 
 ### registerNodeCollectionType
 
-▸ **registerNodeCollectionType**<`T`\>(`nodeCollectionTypeName`, `deserializer`): `void`
+▸ **registerNodeCollectionType**\<`T`\>(`nodeCollectionTypeName`, `deserializer`): `void`
 
 #### Type parameters
 
 | Name | Type |
 | :------ | :------ |
-| `T` | extends [`NodeCollection`](../classes/cognite_reveal.NodeCollection.md)<`T`\> |
+| `T` | extends [`NodeCollection`](../classes/cognite_reveal.NodeCollection.md)\<`T`\> |
 
 #### Parameters
 
 | Name | Type |
 | :------ | :------ |
 | `nodeCollectionTypeName` | `string` |
-| `deserializer` | (`descriptor`: [`SerializedNodeCollection`](cognite_reveal.md#serializednodecollection), `context`: [`NodeCollectionSerializationContext`](cognite_reveal.md#nodecollectionserializationcontext)) => `Promise`<`T`\> |
+| `deserializer` | (`descriptor`: [`SerializedNodeCollection`](cognite_reveal.md#serializednodecollection), `context`: [`NodeCollectionSerializationContext`](cognite_reveal.md#nodecollectionserializationcontext)) => `Promise`\<`T`\> |
 
 #### Returns
 

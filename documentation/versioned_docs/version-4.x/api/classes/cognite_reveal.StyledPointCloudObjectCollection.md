@@ -20,7 +20,7 @@ Represents an object collection that is associated with an appearance
 | Name | Type |
 | :------ | :------ |
 | `objectCollection` | [`PointCloudObjectCollection`](cognite_reveal.PointCloudObjectCollection.md) |
-| `style` | `Required`<[`PointCloudAppearance`](../modules/cognite_reveal.md#pointcloudappearance)\> |
+| `style` | `Required`\<[`PointCloudAppearance`](../modules/cognite_reveal.md#pointcloudappearance)\> |
 
 #### Defined in
 
@@ -40,7 +40,7 @@ ___
 
 ### style
 
-• **style**: `Required`<[`PointCloudAppearance`](../modules/cognite_reveal.md#pointcloudappearance)\>
+• **style**: `Required`\<[`PointCloudAppearance`](../modules/cognite_reveal.md#pointcloudappearance)\>
 
 #### Defined in
 

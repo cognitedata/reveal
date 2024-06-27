@@ -233,13 +233,13 @@ ___
 
 ### getCameraState
 
-▸ **getCameraState**(): `Required`<[`CameraState`](../modules/cognite_reveal.md#camerastate)\>
+▸ **getCameraState**(): `Required`\<[`CameraState`](../modules/cognite_reveal.md#camerastate)\>
 
 Get camera's state
 
 #### Returns
 
-`Required`<[`CameraState`](../modules/cognite_reveal.md#camerastate)\>
+`Required`\<[`CameraState`](../modules/cognite_reveal.md#camerastate)\>
 
 Camera state: position, target and rotation.
 
@@ -255,13 +255,13 @@ ___
 
 ### getComboControlsOptions
 
-▸ **getComboControlsOptions**(): `Readonly`<[`ComboControlsOptions`](../modules/cognite_reveal.md#combocontrolsoptions)\>
+▸ **getComboControlsOptions**(): `Readonly`\<[`ComboControlsOptions`](../modules/cognite_reveal.md#combocontrolsoptions)\>
 
 Gets current Combo Controls options.
 
 #### Returns
 
-`Readonly`<[`ComboControlsOptions`](../modules/cognite_reveal.md#combocontrolsoptions)\>
+`Readonly`\<[`ComboControlsOptions`](../modules/cognite_reveal.md#combocontrolsoptions)\>
 
 #### Defined in
 
@@ -386,7 +386,7 @@ Only provided options will be changed, any undefined options will be kept as is.
 
 | Name | Type |
 | :------ | :------ |
-| `options` | `Partial`<[`ComboControlsOptions`](../modules/cognite_reveal.md#combocontrolsoptions)\> |
+| `options` | `Partial`\<[`ComboControlsOptions`](../modules/cognite_reveal.md#combocontrolsoptions)\> |
 
 #### Returns
 

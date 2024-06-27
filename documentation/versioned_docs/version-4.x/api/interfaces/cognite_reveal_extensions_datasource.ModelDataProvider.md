@@ -21,7 +21,7 @@ Provides data for 3D models.
 
 ### getBinaryFile
 
-▸ **getBinaryFile**(`baseUrl`, `fileName`, `abortSignal?`): `Promise`<`ArrayBuffer`\>
+▸ **getBinaryFile**(`baseUrl`, `fileName`, `abortSignal?`): `Promise`\<`ArrayBuffer`\>
 
 Downloads a binary blob.
 
@@ -35,7 +35,7 @@ Downloads a binary blob.
 
 #### Returns
 
-`Promise`<`ArrayBuffer`\>
+`Promise`\<`ArrayBuffer`\>
 
 #### Overrides
 
@@ -49,7 +49,7 @@ ___
 
 ### getJsonFile
 
-▸ **getJsonFile**(`baseUrl`, `fileName`): `Promise`<`any`\>
+▸ **getJsonFile**(`baseUrl`, `fileName`): `Promise`\<`any`\>
 
 Download and parse a JSON file and return the resulting struct.
 
@@ -62,7 +62,7 @@ Download and parse a JSON file and return the resulting struct.
 
 #### Returns
 
-`Promise`<`any`\>
+`Promise`\<`any`\>
 
 #### Overrides
 

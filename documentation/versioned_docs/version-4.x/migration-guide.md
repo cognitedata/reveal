@@ -15,7 +15,7 @@ We have however also added support for node's module `exports` such that if your
 "moduleResolution": "Node16",
 ```
 
-imports will still work the same way they did with Reveal 3.x. 
+imports will still work the same way they did with Reveal 3.x.
 Note that this may require a bump in typescript version.
 If this is not possible for you, then you need to change all imports to be `from @cognite/reveal`.
 
@@ -34,7 +34,7 @@ const axisViewTool = new AxisViewTool(...);
 
 ## `connect-src data:` is now a required content-security-policy
 See [Installation](./installation.mdx#installation-for-projects-with-content-security-policy) for updated content security policies needed for Reveal.
-Note that this is only relevant if you have a content-security-policy set up. 
+Note that this is only relevant if you have a content-security-policy set up.
 
 ## Three.js is now a peer-dependency
 For Reveal 4 we have changed threejs from being exported from Reveal and rather require applications that consume Reveal to import it.
@@ -42,7 +42,7 @@ There are multiple reasons for this, but a major pain point has been that Reveal
 In addition, we also see a lot of applications ending up having multiple bundles of three.js which we are trying to alliviate.
 
 ## `Cognite3DViewer.setBackgroundColor` now has optional alpha parameter
-The `setBackgroundColor` now supports settings alpha value. 
+The `setBackgroundColor` now supports settings alpha value.
 This becomes relevant when you want your 3D content to blend with your website.
 
 ## `Cognite3DModel` has been renamed to `CogniteCadModel`

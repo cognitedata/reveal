@@ -162,7 +162,7 @@ Point cloud visualisation effects parameteres.
 
 | Name | Type | Description |
 | :------ | :------ | :------ |
-| `edlOptions?` | ``"disabled"`` \| `Partial`<[`EdlOptions`](../modules/cognite_reveal.md#edloptions)\> | Eye Dome Lighting (EDL) effect, considerably improves depth perception of point cloud model. |
+| `edlOptions?` | ``"disabled"`` \| `Partial`\<[`EdlOptions`](../modules/cognite_reveal.md#edloptions)\> | Eye Dome Lighting (EDL) effect, considerably improves depth perception of point cloud model. |
 | `pointBlending?` | `boolean` | Point blending effect, creates more "stable" texture on objects surfaces if point sizing is big enough. Can cause significant decrease in performance on some machines. |
 
 #### Defined in

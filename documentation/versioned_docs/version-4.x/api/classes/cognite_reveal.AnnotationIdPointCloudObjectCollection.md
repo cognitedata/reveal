@@ -25,7 +25,7 @@ A simple PointCloudObjectCollection that consists of an explicitly provided list
 
 | Name | Type |
 | :------ | :------ |
-| `ids` | `Iterable`<`number`\> |
+| `ids` | `Iterable`\<`number`\> |
 
 #### Overrides
 
@@ -59,11 +59,11 @@ PointCloudObjectCollection.isLoading
 
 ### getAnnotationIds
 
-▸ **getAnnotationIds**(): `Iterable`<`number`\>
+▸ **getAnnotationIds**(): `Iterable`\<`number`\>
 
 #### Returns
 
-`Iterable`<`number`\>
+`Iterable`\<`number`\>
 
 annotation IDs of the annotations for the objects represented by this PointCloudObjectCollection instance
 

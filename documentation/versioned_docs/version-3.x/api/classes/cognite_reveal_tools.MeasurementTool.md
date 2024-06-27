@@ -7,7 +7,7 @@ custom_edit_url: null
 
 [@cognite/reveal/tools](../modules/cognite_reveal_tools.md).MeasurementTool
 
-Enables {@see Cognite3DViewer} to perform a point to point measurement.
+Enables \{@see Cognite3DViewer} to perform a point to point measurement.
 This can be achieved by selecting a point on the 3D Object and drag the pointer to
 required point to get measurement of the distance.
 The tools default measurement is in "Meters" as supported in Reveal, but it also provides

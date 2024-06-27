@@ -112,7 +112,7 @@ ___
 
 ### executeFilter
 
-▸ **executeFilter**(`propertyCategory`, `propertyKey`, `propertyValues`): `Promise`<`void`\>
+▸ **executeFilter**(`propertyCategory`, `propertyKey`, `propertyValues`): `Promise`\<`void`\>
 
 Execute filter asynchronously, replacing any existing filter active. When propertyValues
 contains more than 1000 elements, the operation will be split into multiple batches that
@@ -129,7 +129,7 @@ during construction of the node set, the total number of batches will be request
 
 #### Returns
 
-`Promise`<`void`\>
+`Promise`\<`void`\>
 
 #### Defined in
 
