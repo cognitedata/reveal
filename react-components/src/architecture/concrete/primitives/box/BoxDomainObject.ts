@@ -24,6 +24,8 @@ import { type TranslateKey } from '../../../base/utilities/TranslateKey';
 import { Quantity } from '../../../base/domainObjectsHelpers/Quantity';
 import { PanelInfo } from '../../../base/domainObjectsHelpers/PanelInfo';
 import { radToDeg } from 'three/src/math/MathUtils.js';
+import { DomainObjectTransaction } from '../../../base/undo/DomainObjectTransaction';
+import { type Transaction } from '../../../base/undo/Transaction';
 
 export const MIN_BOX_SIZE = 0.01;
 
@@ -35,11 +37,11 @@ export abstract class BoxDomainObject extends VisualDomainObject {
   public readonly size = new Vector3().setScalar(MIN_BOX_SIZE);
   public readonly center = new Vector3();
   public zRotation = 0; // Angle in radians in interval [0, 2*Pi>
+  private readonly _primitiveType: PrimitiveType;
 
   // For focus when edit in 3D (Used when isSelected is true only)
   public focusType: FocusType = FocusType.None;
   public focusFace: BoxFace | undefined = undefined;
-  private readonly _primitiveType: PrimitiveType;
 
   // ==================================================
   // INSTANCE PROPERTIES
@@ -81,6 +83,10 @@ export abstract class BoxDomainObject extends VisualDomainObject {
       default:
         throw new Error('Unknown PrimitiveType');
     }
+  }
+
+  public override get isLegal(): boolean {
+    return this.focusType !== FocusType.Pending;
   }
 
   public override createRenderStyle(): RenderStyle | undefined {
@@ -149,6 +155,20 @@ export abstract class BoxDomainObject extends VisualDomainObject {
       info.add({ key, fallback, value, quantity });
     }
   }
+
+  public override createTransaction(changed: symbol): Transaction {
+    return new DomainObjectTransaction(this, changed);
+  }
+
+  public override copyFrom(domainObject: BoxDomainObject, what?: symbol): void {
+    super.copyFrom(domainObject, what);
+    if (what === undefined || what === Changes.geometry) {
+      this.size.copy(domainObject.size);
+      this.center.copy(domainObject.center);
+      this.zRotation = domainObject.zRotation;
+    }
+  }
+
   // ==================================================
   // OVERRIDES of VisualDomainObject
   // ==================================================

@@ -13,4 +13,14 @@ export class FolderDomainObject extends DomainObject {
   public override get typeName(): TranslateKey {
     return { fallback: 'Folder' };
   }
+
+  // ==================================================
+  // OVERRIDES
+  // ==================================================
+
+  public override clone(what?: symbol): DomainObject {
+    const clone = new FolderDomainObject();
+    clone.copyFrom(this, what);
+    return clone;
+  }
 }

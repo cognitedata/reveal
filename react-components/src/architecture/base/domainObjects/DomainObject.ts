@@ -24,6 +24,7 @@ import { type TranslateKey } from '../utilities/TranslateKey';
 import { DeleteDomainObjectCommand } from '../concreteCommands/DeleteDomainObjectCommand';
 import { CopyToClipboardCommand } from '../concreteCommands/CopyToClipboardCommand';
 import { type BaseCommand } from '../commands/BaseCommand';
+import { type Transaction } from '../undo/Transaction';
 
 /**
  * Represents an abstract base class for domain objects.
@@ -60,11 +61,15 @@ export abstract class DomainObject {
   public readonly views: Views = new Views();
 
   // Unique index for the domain object, used as soft reference
-  private readonly _uniqueId: number;
+  private _uniqueId: number;
   private static _counter: number = 0; // Counter for the unique index
 
   public get uniqueId(): number {
     return this._uniqueId;
+  }
+
+  public set uniqueId(value: number) {
+    this._uniqueId = value;
   }
 
   // ==================================================
@@ -253,6 +258,16 @@ export abstract class DomainObject {
     return true; // to be overridden
   }
 
+  /**
+   * Gets a value indicating whether the domain object is legal.
+   * Normally it is legal, but if the object is pending when creating it, it is not legal.
+   * @returns {boolean} A boolean value indicating whether the domain object is legal.
+   */
+
+  public get isLegal(): boolean {
+    return true;
+  }
+
   // ==================================================
   // VIRTUAL METHODS: Notification
   // ==================================================
@@ -294,6 +309,44 @@ export abstract class DomainObject {
     if (this.hasPanelInfo) {
       // Update the DomainObjectPanel if any
       DomainObjectPanelUpdater.notify(this, change);
+    }
+  }
+
+  /**
+   * Creates a transaction based on the specified changes. This is used for undoing
+   * @param changed - A symbol representing the changes made to the domain object.
+   * @returns A Transaction object if the transaction was created successfully, otherwise undefined.
+   */
+  public createTransaction(_changed: symbol): Transaction | undefined {
+    return undefined;
+  }
+
+  /**
+   * Creates a copy of this the domain object. The copy will not include any parent/child relationships, or views
+   * @param what - Optional parameter specifying which properties to copy. If not provided, all properties will be copied.
+   * @returns A new domain object
+   */
+  public clone(_what?: symbol): DomainObject {
+    throw new Error('Method not implemented.');
+  }
+
+  /**
+   * Copies the properties from another `DomainObject` instance to this instance.
+   * @param domainObject - The `DomainObject` instance to copy from.
+   * @param what - Optional parameter specifying which properties to copy. If not provided, all properties will be copied.
+   */
+  public copyFrom(domainObject: DomainObject, what?: symbol): void {
+    if (what === undefined) {
+      this.uniqueId = domainObject.uniqueId;
+    }
+    if (what === undefined || what === Changes.color) {
+      this.color = domainObject.color;
+    }
+    if (what === undefined || what === Changes.naming) {
+      this.name = domainObject.name;
+    }
+    if (what === undefined || what === Changes.renderStyle) {
+      this._renderStyle = domainObject._renderStyle?.clone();
     }
   }
 
@@ -632,6 +685,15 @@ export abstract class DomainObject {
   public getDescendantByName(name: string): DomainObject | undefined {
     for (const descendant of this.getDescendants()) {
       if (descendant.hasEqualName(name)) {
+        return descendant;
+      }
+    }
+    return undefined;
+  }
+
+  public getThisOrDescendantByUniqueId(uniqueId: number): DomainObject | undefined {
+    for (const descendant of this.getThisAndDescendants()) {
+      if (descendant.uniqueId === uniqueId) {
         return descendant;
       }
     }

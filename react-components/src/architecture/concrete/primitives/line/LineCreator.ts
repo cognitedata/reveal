@@ -10,6 +10,7 @@ import { Changes } from '../../../base/domainObjectsHelpers/Changes';
 import { type DomainObject } from '../../../base/domainObjects/DomainObject';
 import { FocusType } from '../../../base/domainObjectsHelpers/FocusType';
 import { type LineDomainObject } from './LineDomainObject';
+import { type BaseTool } from '../../../base/commands/BaseTool';
 
 /**
  * Helper class for generate a LineDomainObject by clicking around
@@ -25,8 +26,8 @@ export class LineCreator extends BaseCreator {
   // CONSTRUCTOR
   // ==================================================
 
-  constructor(domainObject: LineDomainObject) {
-    super();
+  public constructor(tool: BaseTool, domainObject: LineDomainObject) {
+    super(tool);
     this._domainObject = domainObject;
     this._domainObject.focusType = FocusType.Pending;
   }
@@ -65,6 +66,7 @@ export class LineCreator extends BaseCreator {
     isPending: boolean
   ): boolean {
     // Figure out where the point should be if no intersection
+
     if (isPending && this.notPendingPointCount >= 1 && point === undefined) {
       const lastPoint = this.lastNotPendingPoint;
       const plane = new Plane().setFromNormalAndCoplanarPoint(ray.direction, lastPoint);
@@ -77,8 +79,24 @@ export class LineCreator extends BaseCreator {
     if (point === undefined) {
       return false;
     }
-    this.addRawPoint(point, isPending);
     const domainObject = this._domainObject;
+    if (this.lastIsPending) {
+      domainObject.points.pop();
+    }
+
+    if (this.pointCount !== domainObject.points.length) {
+      // In case of undo is done
+      copy(this.points, domainObject.points);
+      this.lastIsPending = false;
+    }
+    this.addRawPoint(point, isPending);
+
+    if (!isPending && domainObject.hasParent && this._tool.undoManager !== undefined) {
+      const exists = this._tool.undoManager.hasUniqueId(domainObject.uniqueId);
+      this._tool.addTransaction(
+        domainObject.createTransaction(exists ? Changes.geometry : Changes.added)
+      );
+    }
     copy(domainObject.points, this.points);
 
     domainObject.notify(Changes.geometry);

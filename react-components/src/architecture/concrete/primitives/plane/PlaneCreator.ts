@@ -10,6 +10,7 @@ import { Changes } from '../../../base/domainObjectsHelpers/Changes';
 import { type DomainObject } from '../../../base/domainObjects/DomainObject';
 import { type PlaneDomainObject } from './PlaneDomainObject';
 import { rotatePiHalf } from '../../../base/utilities/extensions/vectorExtensions';
+import { type BaseTool } from '../../../base/commands/BaseTool';
 
 /**
  * Helper class for generate a PlaneDomainObject by clicking around
@@ -25,8 +26,8 @@ export class PlaneCreator extends BaseCreator {
   // CONSTRUCTOR
   // ==================================================
 
-  constructor(domainObject: PlaneDomainObject) {
-    super();
+  public constructor(tool: BaseTool, domainObject: PlaneDomainObject) {
+    super(tool);
     this._domainObject = domainObject;
     this._domainObject.focusType = FocusType.Pending;
   }
@@ -70,9 +71,8 @@ export class PlaneCreator extends BaseCreator {
     }
     const domainObject = this._domainObject;
     this.addRawPoint(point, isPending);
-    if (!this.rebuild(ray)) {
-      return false;
-    }
+    this.rebuild(ray);
+
     domainObject.notify(Changes.geometry);
     if (this.isFinished) {
       domainObject.setFocusInteractive(FocusType.Focus);
@@ -84,7 +84,7 @@ export class PlaneCreator extends BaseCreator {
   // INSTANCE METHODS
   // ==================================================
 
-  private rebuild(ray: Ray): boolean {
+  private rebuild(ray: Ray): void {
     if (this.pointCount === 0) {
       throw new Error('Cannot create a plane without points');
     }
@@ -113,6 +113,5 @@ export class PlaneCreator extends BaseCreator {
         }
         break;
     }
-    return true;
   }
 }

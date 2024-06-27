@@ -17,7 +17,9 @@ import { type PerspectiveCamera, type Box3 } from 'three';
  * It can for instance be a view that changes something on another view, dor instance texture on a surface or whatever.
  * I just wanted to make it ready for some corner cases I have seen during a long time as 3D developer.
  */
-export abstract class ThreeView extends BaseView {
+export abstract class ThreeView<
+  DomainObjectType extends DomainObject = DomainObject
+> extends BaseView<DomainObjectType> {
   // ==================================================
   // INSTANCE FIELDS
   // ==================================================
@@ -112,7 +114,7 @@ export abstract class ThreeView extends BaseView {
     this._boundingBox = undefined;
   }
 
-  public attach(domainObject: DomainObject, renderTarget: RevealRenderTarget): void {
+  public attach(domainObject: DomainObjectType, renderTarget: RevealRenderTarget): void {
     super.setDomainObject(domainObject);
     this._renderTarget = renderTarget;
   }

@@ -35,14 +35,10 @@ import { type RegularGrid2 } from './geometry/RegularGrid2';
 const SOLID_NAME = 'Solid';
 const CONTOURS_NAME = 'Contour';
 
-export class TerrainThreeView extends GroupThreeView {
+export class TerrainThreeView extends GroupThreeView<TerrainDomainObject> {
   // ==================================================
   // INSTANCE PROPERTIES
   // ==================================================
-
-  public override get domainObject(): TerrainDomainObject {
-    return super.domainObject as TerrainDomainObject;
-  }
 
   protected override get style(): TerrainRenderStyle {
     return super.style as TerrainRenderStyle;
