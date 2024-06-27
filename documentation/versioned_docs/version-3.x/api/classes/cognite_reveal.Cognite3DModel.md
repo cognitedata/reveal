@@ -76,7 +76,7 @@ THREE.Object3D.type
 
 Returns the unit the coordinates for the model is stored. Returns an empty string
 if no unit has been stored.
-Note that coordinates in Reveal always are converted to meters using \{@see modelUnitToMetersFactor}.
+Note that coordinates in Reveal always are converted to meters using @see \{@link modelUnitToMetersFactor}.
 
 #### Returns
 

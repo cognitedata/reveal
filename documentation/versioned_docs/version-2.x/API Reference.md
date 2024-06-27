@@ -601,7 +601,7 @@ THREE.Object3D.type
 
 Returns the unit the coordinates for the model is stored. Returns an empty string
 if no unit has been stored.
-Note that coordinates in Reveal always are converted to meters using \{@see modelUnitToMetersFactor}.
+Note that coordinates in Reveal always are converted to meters using @see \{@link modelUnitToMetersFactor}.
 
 **`version`** New since 2.1
 
@@ -6158,7 +6158,7 @@ Unregisters an event handler for the 'disposed'-event.
 
 [@cognite/reveal/tools](#modules_cognite_reveal_toolsmd).Cognite3DViewerToolBase
 
-Base class for tools attaching to a \{@see Cognite3DViewer}.
+Base class for tools attaching to a @see \{@link Cognite3DViewer}.
 
 ### Hierarchy
 
@@ -6776,7 +6776,7 @@ Unregisters an event handler for the 'disposed'-event.
 
 [@cognite/reveal/tools](#modules_cognite_reveal_toolsmd).HtmlOverlayTool
 
-Manages HTMLoverlays for \{@see Cognite3DViewer}. Attaches HTML elements to a
+Manages HTMLoverlays for @see \{@link Cognite3DViewer}. Attaches HTML elements to a
 3D position and updates its position/visibility as user moves the camera. This is
 useful to create HTML overlays to highlight information about key positions in the 3D model.
 

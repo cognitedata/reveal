@@ -9,7 +9,7 @@ custom_edit_url: null
 
 Collection that holds a set of nodes including children identified by nodeIds. Note that
 this involves remapping IDs to "tree indices" and subtree sized used by Reveal using
-the CDF API. Its often better to use one of the other node collections or \{@see TreeIndexNodeCollection}
+the CDF API. Its often better to use one of the other node collections or @see \{@link TreeIndexNodeCollection}
 whenever possible for best performance.
 
 ## Hierarchy

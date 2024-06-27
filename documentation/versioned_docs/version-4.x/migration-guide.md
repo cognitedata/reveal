@@ -79,7 +79,7 @@ const style = { color: new THREE.Color(0, 1.0, 0) };
 
 ## `CognitePointCloudModel`'s `getClasses` method now returns more data
 
-Previously, a call to `pointCloudModel.getClasses()` (where `pointCloudModel` is an instance of `CognitePointCloudModel`) would return the available classification codes as a list of numbers. It now returns structs of type `{ code: number, name: string }`, where `code` corresponds to the previously returned classification code, and `name` is a human-readable name of the class.
+Previously, a call to `pointCloudModel.getClasses()` (where `pointCloudModel` is an instance of `CognitePointCloudModel`) would return the available classification codes as a list of numbers. It now returns structs of type `\{ code: number, name: string }`, where `code` corresponds to the previously returned classification code, and `name` is a human-readable name of the class.
 
 ## Changes related to the `CameraManager` interface
 
