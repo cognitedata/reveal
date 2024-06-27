@@ -33,7 +33,7 @@ Once the data is ingested, a set of 360 images can be added to the viewer with `
 `datasource` describes the source data type used for storing the 360 images.
 Currently, the supported `datasource`s are `'events'` and `'datamodels'`.
 The `second` argument describes the filter that is used when fetching data from the data source.
-For events, is a generic key-value pair and can point to any metdata that was set during ingestion. For datamodels, this is an identifier consisting of the Data Models `externalId` and `space` of the relevant 360 collection.
+For events, this is a generic key-value pair and can point to any metdata that was set during ingestion. For datamodels, this is an identifier consisting of the Data Models `externalId` and `space` of the relevant 360 collection instance.
 `viewer.add360ImageSet(...)` will return a `Image360Collection` which contains each of the `image360` entities for this given set.
 The definition of `Image360Collection` can be found [here.](../api/@cognite/reveal/interfaces/Image360Collection)
 
