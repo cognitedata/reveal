@@ -464,7 +464,7 @@ Dispose of WebGL resources. Can be used to free up memory when the viewer is no 
 
 #### See
 
-[https://threejs.org/versioned_docs/version-4.x/#manual/en/introduction/How-to-dispose-of-objects](https://threejs.org/versioned_docs/version-4.x/#manual/en/introduction/How-to-dispose-of-objects)
+[https://threejs.org/docs/#manual/en/introduction/How-to-dispose-of-objects](https://threejs.org/docs/#manual/en/introduction/How-to-dispose-of-objects)
 ```js
 // Viewer is no longer in use, free up memory
 viewer.dispose();
@@ -914,7 +914,7 @@ If false the screenshot will include only the rendered 3D. Default is true.
 
 `Promise`\<`string`\>
 
-A [Data URL](https://developer.mozilla.org/en-US/versioned_docs/version-4.x/Web/HTTP/Basics_of_HTTP/Data_URIs) of the image ('image/png').
+A [Data URL](https://developer.mozilla.org/en-US/docs/Web/HTTP/Basics_of_HTTP/Data_URIs) of the image ('image/png').
 
 #### Example
 
