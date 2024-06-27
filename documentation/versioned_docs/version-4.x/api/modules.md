@@ -1,14 +1,7 @@
----
-id: "modules"
-title: "@cognite/reveal"
-sidebar_label: "Table of Contents"
-sidebar_position: 0.5
-hide_table_of_contents: true
-custom_edit_url: null
----
+# @cognite/reveal
 
 ## Modules
 
-- [@cognite/reveal](modules/cognite_reveal.md)
-- [@cognite/reveal/extensions/datasource](modules/cognite_reveal_extensions_datasource.md)
-- [@cognite/reveal/tools](modules/cognite_reveal_tools.md)
+- [@cognite/reveal](@cognite/reveal/index.md)
+- [@cognite/reveal/extensions/datasource](@cognite/reveal/extensions/datasource/index.md)
+- [@cognite/reveal/tools](@cognite/reveal/tools/index.md)
