@@ -180,7 +180,7 @@ Returns parameters of THREE.WebGLRenderer used by the viewer.
 
 ### add360ImageSet
 
-▸ **add360ImageSet**(`datasource`, `eventFilter`, `add360ImageOptions?`): `Promise`<[`Image360Collection`](../interfaces/cognite_reveal.Image360Collection.md)\>
+▸ **add360ImageSet**(`datasource`, `eventFilter`, `add360ImageOptions?`): `Promise`\<[`Image360Collection`](../interfaces/cognite_reveal.Image360Collection.md)\>
 
 Adds a set of 360 images to the scene from the /events API in Cognite Data Fusion.
 
@@ -201,7 +201,7 @@ await viewer.add360ImageSet('events', eventFilter);
 
 #### Returns
 
-`Promise`<[`Image360Collection`](../interfaces/cognite_reveal.Image360Collection.md)\>
+`Promise`\<[`Image360Collection`](../interfaces/cognite_reveal.Image360Collection.md)\>
 
 #### Defined in
 
@@ -211,7 +211,7 @@ ___
 
 ### addCadModel
 
-▸ **addCadModel**(`options`): `Promise`<[`CogniteCadModel`](cognite_reveal.CogniteCadModel.md)\>
+▸ **addCadModel**(`options`): `Promise`\<[`CogniteCadModel`](cognite_reveal.CogniteCadModel.md)\>
 
 Add a new CAD 3D model to the viewer.
 Call [fitCameraToModel](cognite_reveal.Cognite3DViewer.md#fitcameratomodel) to see the model after the model has loaded.
@@ -236,7 +236,7 @@ viewer.fitCameraToModel(model, 0);
 
 #### Returns
 
-`Promise`<[`CogniteCadModel`](cognite_reveal.CogniteCadModel.md)\>
+`Promise`\<[`CogniteCadModel`](cognite_reveal.CogniteCadModel.md)\>
 
 #### Defined in
 
@@ -246,7 +246,7 @@ ___
 
 ### addModel
 
-▸ **addModel**(`options`): `Promise`<[`CogniteModel`](../modules/cognite_reveal.md#cognitemodel)\>
+▸ **addModel**(`options`): `Promise`\<[`CogniteModel`](../modules/cognite_reveal.md#cognitemodel)\>
 
 Add a new model to the viewer.
 Call [fitCameraToModel](cognite_reveal.Cognite3DViewer.md#fitcameratomodel) to see the model after the model has loaded.
@@ -271,7 +271,7 @@ viewer.fitCameraToModel(model, 0);
 
 #### Returns
 
-`Promise`<[`CogniteModel`](../modules/cognite_reveal.md#cognitemodel)\>
+`Promise`\<[`CogniteModel`](../modules/cognite_reveal.md#cognitemodel)\>
 
 #### Defined in
 
@@ -299,7 +299,7 @@ viewer.addObject3D(sphere);
 
 | Name | Type |
 | :------ | :------ |
-| `object` | `Object3D`<`Event`\> |
+| `object` | `Object3D`\<`Event`\> |
 
 #### Returns
 
@@ -313,7 +313,7 @@ ___
 
 ### addPointCloudModel
 
-▸ **addPointCloudModel**(`options`): `Promise`<[`CognitePointCloudModel`](cognite_reveal.CognitePointCloudModel.md)\>
+▸ **addPointCloudModel**(`options`): `Promise`\<[`CognitePointCloudModel`](cognite_reveal.CognitePointCloudModel.md)\>
 
 Add a new pointcloud 3D model to the viewer.
 Call [fitCameraToModel](cognite_reveal.Cognite3DViewer.md#fitcameratomodel) to see the model after the model has loaded.
@@ -338,7 +338,7 @@ viewer.fitCameraToModel(model, 0);
 
 #### Returns
 
-`Promise`<[`CognitePointCloudModel`](cognite_reveal.CognitePointCloudModel.md)\>
+`Promise`\<[`CognitePointCloudModel`](cognite_reveal.CognitePointCloudModel.md)\>
 
 #### Defined in
 
@@ -348,7 +348,7 @@ ___
 
 ### determineModelType
 
-▸ **determineModelType**(`modelId`, `revisionId`): `Promise`<``""`` \| [`SupportedModelTypes`](../modules/cognite_reveal.md#supportedmodeltypes)\>
+▸ **determineModelType**(`modelId`, `revisionId`): `Promise`\<``""`` \| [`SupportedModelTypes`](../modules/cognite_reveal.md#supportedmodeltypes)\>
 
 Use to determine of which type the model is.
 
@@ -380,7 +380,7 @@ viewer.fitCameraToModel(model);
 
 #### Returns
 
-`Promise`<``""`` \| [`SupportedModelTypes`](../modules/cognite_reveal.md#supportedmodeltypes)\>
+`Promise`\<``""`` \| [`SupportedModelTypes`](../modules/cognite_reveal.md#supportedmodeltypes)\>
 
 Empty string if type is not supported.
 
@@ -416,7 +416,7 @@ ___
 
 ### enter360Image
 
-▸ **enter360Image**(`image360`, `revision?`): `Promise`<`void`\>
+▸ **enter360Image**(`image360`, `revision?`): `Promise`\<`void`\>
 
 Enter visualization of a 360 image.
 
@@ -429,7 +429,7 @@ Enter visualization of a 360 image.
 
 #### Returns
 
-`Promise`<`void`\>
+`Promise`\<`void`\>
 
 #### Defined in
 
@@ -557,10 +557,10 @@ ___
 
 ### get360AnnotationIntersectionFromPixel
 
-▸ **get360AnnotationIntersectionFromPixel**(`offsetX`, `offsetY`): `Promise`<``null`` \| [`Image360AnnotationIntersection`](../modules/cognite_reveal.md#image360annotationintersection)\>
+▸ **get360AnnotationIntersectionFromPixel**(`offsetX`, `offsetY`): `Promise`\<``null`` \| [`Image360AnnotationIntersection`](../modules/cognite_reveal.md#image360annotationintersection)\>
 
 Check for intersections with 360 annotations through the given pixel.
-Similar to {getIntersectionFromPixel}, but checks 360 image annotations
+Similar to \{getIntersectionFromPixel}, but checks 360 image annotations
 instead of models.
 
 #### Parameters
@@ -572,7 +572,7 @@ instead of models.
 
 #### Returns
 
-`Promise`<``null`` \| [`Image360AnnotationIntersection`](../modules/cognite_reveal.md#image360annotationintersection)\>
+`Promise`\<``null`` \| [`Image360AnnotationIntersection`](../modules/cognite_reveal.md#image360annotationintersection)\>
 
 #### Defined in
 
@@ -618,7 +618,7 @@ ___
 
 ### getIntersectionFromPixel
 
-▸ **getIntersectionFromPixel**(`offsetX`, `offsetY`): `Promise`<``null`` \| [`Intersection`](../modules/cognite_reveal.md#intersection)\>
+▸ **getIntersectionFromPixel**(`offsetX`, `offsetY`): `Promise`\<``null`` \| [`Intersection`](../modules/cognite_reveal.md#intersection)\>
 
 Raycasting model(s) for finding where the ray intersects with the model.
 
@@ -665,7 +665,7 @@ if (intersection) // it was a hit
 
 #### Returns
 
-`Promise`<``null`` \| [`Intersection`](../modules/cognite_reveal.md#intersection)\>
+`Promise`\<``null`` \| [`Intersection`](../modules/cognite_reveal.md#intersection)\>
 
 A promise that if there was an intersection then return the intersection object - otherwise it
 returns `null` if there were no intersections.
@@ -678,7 +678,7 @@ ___
 
 ### getScreenshot
 
-▸ **getScreenshot**(`width?`, `height?`, `includeUI?`): `Promise`<`string`\>
+▸ **getScreenshot**(`width?`, `height?`, `includeUI?`): `Promise`\<`string`\>
 
 Take a screenshot from the current camera position. When drawing UI, only the viewer DOM element and its children will be included in the image.
 The DOM is scaled to fit any provided resolution, and as a result some elements can be positioned incorrectly in regards to the 3D render.
@@ -709,7 +709,7 @@ document.body.appendChild(image);
 
 #### Returns
 
-`Promise`<`string`\>
+`Promise`\<`string`\>
 
 A [Data URL](https://developer.mozilla.org/en-US/docs/Web/HTTP/Basics_of_HTTP/Data_URIs) of the image ('image/png').
 
@@ -1057,7 +1057,7 @@ ___
 
 ### remove360Images
 
-▸ **remove360Images**(`...image360Entities`): `Promise`<`void`\>
+▸ **remove360Images**(`...image360Entities`): `Promise`\<`void`\>
 
 Remove a set of 360 images.
 
@@ -1069,7 +1069,7 @@ Remove a set of 360 images.
 
 #### Returns
 
-`Promise`<`void`\>
+`Promise`\<`void`\>
 
 #### Defined in
 
@@ -1119,7 +1119,7 @@ viewer.removeObject3D(sphere);
 
 | Name | Type |
 | :------ | :------ |
-| `object` | `Object3D`<`Event`\> |
+| `object` | `Object3D`\<`Event`\> |
 
 #### Returns
 
@@ -1317,7 +1317,7 @@ ___
 
 ### setViewState
 
-▸ **setViewState**(`state`): `Promise`<`void`\>
+▸ **setViewState**(`state`): `Promise`\<`void`\>
 
 Restores camera settings from the state provided, and clears all current styled
 node collections and applies the `state` object.
@@ -1330,7 +1330,7 @@ node collections and applies the `state` object.
 
 #### Returns
 
-`Promise`<`void`\>
+`Promise`\<`void`\>
 
 #### Defined in
 
@@ -1382,7 +1382,7 @@ if (screenCoordinates == null) {
 | Name | Type | Description |
 | :------ | :------ | :------ |
 | `point` | `Vector3` | World space coordinate. |
-| `normalize?` | `boolean` | Optional. If true, coordinates are normalized into [0,1]. If false, the values are in the range [0, <canvas_size>). |
+| `normalize?` | `boolean` | Optional. If true, coordinates are normalized into [0,1]. If false, the values are in the range [0, \<canvas_size>). |
 
 #### Returns
 

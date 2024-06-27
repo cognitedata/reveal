@@ -26,13 +26,13 @@ The date of this revision. Undefined if the revison is undated.
 
 ### getAnnotations
 
-▸ **getAnnotations**(): `Promise`<[`Image360Annotation`](cognite_reveal.Image360Annotation.md)[]\>
+▸ **getAnnotations**(): `Promise`\<[`Image360Annotation`](cognite_reveal.Image360Annotation.md)[]\>
 
 The annotations associated with this revision
 
 #### Returns
 
-`Promise`<[`Image360Annotation`](cognite_reveal.Image360Annotation.md)[]\>
+`Promise`\<[`Image360Annotation`](cognite_reveal.Image360Annotation.md)[]\>
 
 #### Defined in
 

@@ -246,11 +246,11 @@ ___
 
 ### values
 
-▸ **values**(): `Generator`<`number`, `any`, `unknown`\>
+▸ **values**(): `Generator`\<`number`, `any`, `unknown`\>
 
 #### Returns
 
-`Generator`<`number`, `any`, `unknown`\>
+`Generator`\<`number`, `any`, `unknown`\>
 
 #### Defined in
 

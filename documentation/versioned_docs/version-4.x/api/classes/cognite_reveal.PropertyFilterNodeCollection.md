@@ -108,7 +108,7 @@ ___
 
 ### executeFilter
 
-▸ **executeFilter**(`filter`): `Promise`<`void`\>
+▸ **executeFilter**(`filter`): `Promise`\<`void`\>
 
 Populates the node collection with nodes matching the provided filter. This will replace
 the current nodes held by the filter.
@@ -127,7 +127,7 @@ set.executeFilter({ 'PDMS': { 'Module': 'AQ550' }});
 
 #### Returns
 
-`Promise`<`void`\>
+`Promise`\<`void`\>
 
 #### Defined in
 

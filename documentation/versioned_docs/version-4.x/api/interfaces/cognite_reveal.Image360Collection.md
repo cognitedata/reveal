@@ -38,7 +38,7 @@ If undefined, the most recent revision will be loaded.
 
 ### findImageAnnotation
 
-▸ **findImageAnnotation**(`filter`): `Promise`<[`Image360AnnotationAssetQueryResult`](../modules/cognite_reveal.md#image360annotationassetqueryresult)[]\>
+▸ **findImageAnnotation**(`filter`): `Promise`\<[`Image360AnnotationAssetQueryResult`](../modules/cognite_reveal.md#image360annotationassetqueryresult)[]\>
 
 Find 360 images associated with a asset with the given assetRef
 
@@ -50,7 +50,7 @@ Find 360 images associated with a asset with the given assetRef
 
 #### Returns
 
-`Promise`<[`Image360AnnotationAssetQueryResult`](../modules/cognite_reveal.md#image360annotationassetqueryresult)[]\>
+`Promise`\<[`Image360AnnotationAssetQueryResult`](../modules/cognite_reveal.md#image360annotationassetqueryresult)[]\>
 
 #### Defined in
 

@@ -41,7 +41,7 @@ NodeCollection.constructor
 
 | Name | Type |
 | :------ | :------ |
-| `treeIndices?` | `Iterable`<`number`\> |
+| `treeIndices?` | `Iterable`\<`number`\> |
 
 #### Overrides
 

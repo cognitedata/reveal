@@ -76,7 +76,7 @@ Configuration of [AxisViewTool](../classes/cognite_reveal_tools.AxisViewTool.md)
 | :------ | :------ | :------ |
 | `animationSpeed?` | `number` | How long the camera animation lasts when clicking a face of the orientation box. |
 | `compass?` | [`AxisBoxCompassConfig`](cognite_reveal_tools.md#axisboxcompassconfig) | Configuration of the compass "base" of the tool. |
-| `faces?` | { `xNegativeFace?`: [`AxisBoxFaceConfig`](cognite_reveal_tools.md#axisboxfaceconfig) ; `xPositiveFace?`: [`AxisBoxFaceConfig`](cognite_reveal_tools.md#axisboxfaceconfig) ; `yNegativeFace?`: [`AxisBoxFaceConfig`](cognite_reveal_tools.md#axisboxfaceconfig) ; `yPositiveFace?`: [`AxisBoxFaceConfig`](cognite_reveal_tools.md#axisboxfaceconfig) ; `zNegativeFace?`: [`AxisBoxFaceConfig`](cognite_reveal_tools.md#axisboxfaceconfig) ; `zPositiveFace?`: [`AxisBoxFaceConfig`](cognite_reveal_tools.md#axisboxfaceconfig)  } | Configuration for each of the faces of the orientation box. Note that Reveal uses a right-handed Y up coordinate system, which might differ from the original model space. To account for this, you might want to reassign labels of the faces. |
+| `faces?` | \{ `xNegativeFace?`: [`AxisBoxFaceConfig`](cognite_reveal_tools.md#axisboxfaceconfig) ; `xPositiveFace?`: [`AxisBoxFaceConfig`](cognite_reveal_tools.md#axisboxfaceconfig) ; `yNegativeFace?`: [`AxisBoxFaceConfig`](cognite_reveal_tools.md#axisboxfaceconfig) ; `yPositiveFace?`: [`AxisBoxFaceConfig`](cognite_reveal_tools.md#axisboxfaceconfig) ; `zNegativeFace?`: [`AxisBoxFaceConfig`](cognite_reveal_tools.md#axisboxfaceconfig) ; `zPositiveFace?`: [`AxisBoxFaceConfig`](cognite_reveal_tools.md#axisboxfaceconfig)  } | Configuration for each of the faces of the orientation box. Note that Reveal uses a right-handed Y up coordinate system, which might differ from the original model space. To account for this, you might want to reassign labels of the faces. |
 | `faces.xNegativeFace?` | [`AxisBoxFaceConfig`](cognite_reveal_tools.md#axisboxfaceconfig) | - |
 | `faces.xPositiveFace?` | [`AxisBoxFaceConfig`](cognite_reveal_tools.md#axisboxfaceconfig) | - |
 | `faces.yNegativeFace?` | [`AxisBoxFaceConfig`](cognite_reveal_tools.md#axisboxfaceconfig) | - |
@@ -143,7 +143,7 @@ ___
 
 ### HtmlOverlayCreateClusterDelegate
 
-Ƭ **HtmlOverlayCreateClusterDelegate**: (`overlayElements`: { `htmlElement`: `HTMLElement` ; `userData`: `any`  }[]) => `HTMLElement`
+Ƭ **HtmlOverlayCreateClusterDelegate**: (`overlayElements`: \{ `htmlElement`: `HTMLElement` ; `userData`: `any`  }[]) => `HTMLElement`
 
 #### Type declaration
 
@@ -156,7 +156,7 @@ Callback that is triggered when a set of overlays are clustered together in
 
 | Name | Type |
 | :------ | :------ |
-| `overlayElements` | { `htmlElement`: `HTMLElement` ; `userData`: `any`  }[] |
+| `overlayElements` | \{ `htmlElement`: `HTMLElement` ; `userData`: `any`  }[] |
 
 ##### Returns
 
@@ -276,7 +276,7 @@ ___
 
 ### MeasurementAddedDelegate
 
-Ƭ **MeasurementAddedDelegate**: (`event`: { `distanceInMeters`: `number` ; `endPoint`: `THREE.Vector3` ; `measurementId`: `number` ; `startPoint`: `THREE.Vector3`  }) => `void`
+Ƭ **MeasurementAddedDelegate**: (`event`: \{ `distanceInMeters`: `number` ; `endPoint`: `THREE.Vector3` ; `measurementId`: `number` ; `startPoint`: `THREE.Vector3`  }) => `void`
 
 #### Type declaration
 
@@ -366,7 +366,7 @@ ___
 
 ### OverlayEventHandler
 
-Ƭ **OverlayEventHandler**<`MetadataType`\>: (`event`: { `htmlOverlay`: `HTMLElement` ; `mousePosition`: { `clientX`: `number` ; `clientY`: `number`  } ; `targetOverlay`: [`Overlay3D`](../interfaces/cognite_reveal.Overlay3D.md)<`MetadataType`\>  }) => `void`
+Ƭ **OverlayEventHandler**\<`MetadataType`\>: (`event`: \{ `htmlOverlay`: `HTMLElement` ; `mousePosition`: \{ `clientX`: `number` ; `clientY`: `number`  } ; `targetOverlay`: [`Overlay3D`](../interfaces/cognite_reveal.Overlay3D.md)\<`MetadataType`\>  }) => `void`
 
 #### Type parameters
 
@@ -387,7 +387,7 @@ ___
 | `event.mousePosition` | `Object` |
 | `event.mousePosition.clientX` | `number` |
 | `event.mousePosition.clientY` | `number` |
-| `event.targetOverlay` | [`Overlay3D`](../interfaces/cognite_reveal.Overlay3D.md)<`MetadataType`\> |
+| `event.targetOverlay` | [`Overlay3D`](../interfaces/cognite_reveal.Overlay3D.md)\<`MetadataType`\> |
 
 ##### Returns
 
@@ -448,7 +448,7 @@ ___
 
 ### TimelineDateUpdateDelegate
 
-Ƭ **TimelineDateUpdateDelegate**: (`event`: { `activeKeyframe`: [`Keyframe`](../classes/cognite_reveal_tools.Keyframe.md) \| `undefined` ; `date`: `Date` ; `endDate`: `Date` ; `startDate`: `Date`  }) => `void`
+Ƭ **TimelineDateUpdateDelegate**: (`event`: \{ `activeKeyframe`: [`Keyframe`](../classes/cognite_reveal_tools.Keyframe.md) \| `undefined` ; `date`: `Date` ; `endDate`: `Date` ; `startDate`: `Date`  }) => `void`
 
 #### Type declaration
 

@@ -77,7 +77,7 @@ to the Reveal documentation for details.
 
 Note that the data source must support [CdfModelIdentifier](../classes/cognite_reveal_extensions_datasource.CdfModelIdentifier.md).
 
-This cannot be used together with {@link _localModels}.
+This cannot be used together with \{@link _localModels}.
 
 #### Defined in
 

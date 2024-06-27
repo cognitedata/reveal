@@ -9,7 +9,7 @@ custom_edit_url: null
 
 Collection that holds a set of nodes including children identified by nodeIds. Note that
 this involves remapping IDs to "tree indices" and subtree sized used by Reveal using
-the CDF API. Its often better to use one of the other node collections or {@see TreeIndexNodeCollection}
+the CDF API. Its often better to use one of the other node collections or @see \{@link TreeIndexNodeCollection}
 whenever possible for best performance.
 
 ## Hierarchy
@@ -109,7 +109,7 @@ ___
 
 ### executeFilter
 
-▸ **executeFilter**(`nodeIds`): `Promise`<`void`\>
+▸ **executeFilter**(`nodeIds`): `Promise`\<`void`\>
 
 Populates the collection with the nodes with the IDs provided. All children of
 the nodes are also included in the collection.
@@ -122,7 +122,7 @@ the nodes are also included in the collection.
 
 #### Returns
 
-`Promise`<`void`\>
+`Promise`\<`void`\>
 
 Promise that resolves when the collection is populated.
 
@@ -242,7 +242,7 @@ ___
 
 ### deserialize
 
-▸ `Static` **deserialize**(`descriptor`, `context`): `Promise`<[`NodeIdNodeCollection`](cognite_reveal.NodeIdNodeCollection.md)\>
+▸ `Static` **deserialize**(`descriptor`, `context`): `Promise`\<[`NodeIdNodeCollection`](cognite_reveal.NodeIdNodeCollection.md)\>
 
 #### Parameters
 
@@ -253,7 +253,7 @@ ___
 
 #### Returns
 
-`Promise`<[`NodeIdNodeCollection`](cognite_reveal.NodeIdNodeCollection.md)\>
+`Promise`\<[`NodeIdNodeCollection`](cognite_reveal.NodeIdNodeCollection.md)\>
 
 #### Defined in
 

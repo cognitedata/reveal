@@ -17,7 +17,7 @@ custom_edit_url: null
 
 ### getBinaryFile
 
-▸ **getBinaryFile**(`baseUrl`, `fileName`, `abortSignal?`): `Promise`<`ArrayBuffer`\>
+▸ **getBinaryFile**(`baseUrl`, `fileName`, `abortSignal?`): `Promise`\<`ArrayBuffer`\>
 
 #### Parameters
 
@@ -29,7 +29,7 @@ custom_edit_url: null
 
 #### Returns
 
-`Promise`<`ArrayBuffer`\>
+`Promise`\<`ArrayBuffer`\>
 
 #### Defined in
 

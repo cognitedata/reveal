@@ -17,7 +17,7 @@ custom_edit_url: null
 
 | Name | Type |
 | :------ | :------ |
-| `values?` | `Iterable`<`number`\> |
+| `values?` | `Iterable`\<`number`\> |
 
 #### Defined in
 
@@ -187,7 +187,7 @@ ___
 
 | Name | Type |
 | :------ | :------ |
-| `otherSet` | [`IndexSet`](cognite_reveal.IndexSet.md) \| `Set`<`number`\> \| `Map`<`number`, `number`\> |
+| `otherSet` | [`IndexSet`](cognite_reveal.IndexSet.md) \| `Set`\<`number`\> \| `Map`\<`number`, `number`\> |
 
 #### Returns
 
@@ -289,11 +289,11 @@ ___
 
 ### toPlainSet
 
-▸ **toPlainSet**(): `Set`<`number`\>
+▸ **toPlainSet**(): `Set`\<`number`\>
 
 #### Returns
 
-`Set`<`number`\>
+`Set`\<`number`\>
 
 #### Defined in
 
