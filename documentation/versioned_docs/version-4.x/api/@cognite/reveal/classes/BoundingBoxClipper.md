@@ -1,0 +1,153 @@
+# Class: BoundingBoxClipper
+
+## Constructors
+
+### new BoundingBoxClipper()
+
+> **new BoundingBoxClipper**(`box`?): [`BoundingBoxClipper`](BoundingBoxClipper.md)
+
+#### Parameters
+
+• **box?**: `Box3`
+
+#### Returns
+
+[`BoundingBoxClipper`](BoundingBoxClipper.md)
+
+#### Defined in
+
+[packages/cad-model/src/utilities/BoundingBoxClipper.ts:18](https://github.com/cognitedata/reveal/blob/2acd9d17229d2bc8e309653b4d6a39ad941e44f1/viewer/packages/cad-model/src/utilities/BoundingBoxClipper.ts#L18)
+
+## Accessors
+
+### clippingPlanes
+
+> `get` **clippingPlanes**(): `Plane`[]
+
+#### Returns
+
+`Plane`[]
+
+#### Defined in
+
+[packages/cad-model/src/utilities/BoundingBoxClipper.ts:104](https://github.com/cognitedata/reveal/blob/2acd9d17229d2bc8e309653b4d6a39ad941e44f1/viewer/packages/cad-model/src/utilities/BoundingBoxClipper.ts#L104)
+
+***
+
+### maxX
+
+> `get` **maxX**(): `number`
+
+> `set` **maxX**(`x`): `void`
+
+#### Parameters
+
+• **x**: `number`
+
+#### Returns
+
+`number`
+
+#### Defined in
+
+[packages/cad-model/src/utilities/BoundingBoxClipper.ts:55](https://github.com/cognitedata/reveal/blob/2acd9d17229d2bc8e309653b4d6a39ad941e44f1/viewer/packages/cad-model/src/utilities/BoundingBoxClipper.ts#L55)
+
+***
+
+### maxY
+
+> `get` **maxY**(): `number`
+
+> `set` **maxY**(`y`): `void`
+
+#### Parameters
+
+• **y**: `number`
+
+#### Returns
+
+`number`
+
+#### Defined in
+
+[packages/cad-model/src/utilities/BoundingBoxClipper.ts:64](https://github.com/cognitedata/reveal/blob/2acd9d17229d2bc8e309653b4d6a39ad941e44f1/viewer/packages/cad-model/src/utilities/BoundingBoxClipper.ts#L64)
+
+***
+
+### maxZ
+
+> `get` **maxZ**(): `number`
+
+> `set` **maxZ**(`z`): `void`
+
+#### Parameters
+
+• **z**: `number`
+
+#### Returns
+
+`number`
+
+#### Defined in
+
+[packages/cad-model/src/utilities/BoundingBoxClipper.ts:73](https://github.com/cognitedata/reveal/blob/2acd9d17229d2bc8e309653b4d6a39ad941e44f1/viewer/packages/cad-model/src/utilities/BoundingBoxClipper.ts#L73)
+
+***
+
+### minX
+
+> `get` **minX**(): `number`
+
+> `set` **minX**(`x`): `void`
+
+#### Parameters
+
+• **x**: `number`
+
+#### Returns
+
+`number`
+
+#### Defined in
+
+[packages/cad-model/src/utilities/BoundingBoxClipper.ts:28](https://github.com/cognitedata/reveal/blob/2acd9d17229d2bc8e309653b4d6a39ad941e44f1/viewer/packages/cad-model/src/utilities/BoundingBoxClipper.ts#L28)
+
+***
+
+### minY
+
+> `get` **minY**(): `number`
+
+> `set` **minY**(`y`): `void`
+
+#### Parameters
+
+• **y**: `number`
+
+#### Returns
+
+`number`
+
+#### Defined in
+
+[packages/cad-model/src/utilities/BoundingBoxClipper.ts:37](https://github.com/cognitedata/reveal/blob/2acd9d17229d2bc8e309653b4d6a39ad941e44f1/viewer/packages/cad-model/src/utilities/BoundingBoxClipper.ts#L37)
+
+***
+
+### minZ
+
+> `get` **minZ**(): `number`
+
+> `set` **minZ**(`z`): `void`
+
+#### Parameters
+
+• **z**: `number`
+
+#### Returns
+
+`number`
+
+#### Defined in
+
+[packages/cad-model/src/utilities/BoundingBoxClipper.ts:46](https://github.com/cognitedata/reveal/blob/2acd9d17229d2bc8e309653b4d6a39ad941e44f1/viewer/packages/cad-model/src/utilities/BoundingBoxClipper.ts#L46)

@@ -27,17 +27,17 @@ exit360Image(): void
 ```
 
 To visualize 360 images the data must have been previously ingested into [Cognite Data Fusion](https://www.cognite.com/en/product/cognite_data_fusion_industrial_dataops_platform).
-More info on the ingestion process can be found [here](https://docs.cognite.com/cdf/3d/guides/360images_upload/).
+More info on the ingestion process for 360 images can be found [here](https://docs.cognite.com/cdf/3d/guides/360images_upload/).
 
 Once the data is ingested, a set of 360 images can be added to the viewer with `viewer.add360ImageSet(...)`.
 `datasource` describes the source data type used for storing the 360 images.
-At this time, the only valid `datasource` is `'events'`, but you can expect more to be added in the future.
-The `eventFilter` property describes the filter that is used when fetching data from the data source.
-This is a generic key-value pair and can point to any metdata that was set during ingestion.
+Currently, the supported `datasource`s are `'events'` and `'datamodels'`.
+The `second` argument describes the filter that is used when fetching data from the data source.
+For events, this is a generic key-value pair and can point to any metdata that was set during ingestion. For datamodels, this is an identifier consisting of the Data Models `externalId` and `space` of the relevant 360 collection instance.
 `viewer.add360ImageSet(...)` will return a `Image360Collection` which contains each of the `image360` entities for this given set.
 The definition of `Image360Collection` can be found [here.](../api/@cognite/reveal/interfaces/Image360Collection)
 
-The `AddImage360Options` is used for correcting / adding transformations to the set of 360 images. The declaration can be found [here.](../api/@cognite/reveal/index.md#addimage360options)
+The `AddImage360Options` is used for correcting / adding transformations to the set of 360 images. The declaration can be found [here.](../api/@cognite/reveal/type-aliases/AddImage360Options)
 
 :::note
 The 360 images should be ingested with proper transformation data, and one should only rely on `AddImage360Options` when failing to do so or when using the same 360 images for multiple 3D models with different coordinate system.
