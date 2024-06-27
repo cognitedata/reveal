@@ -22,10 +22,12 @@ import { RuleBasedSelectionItem } from '../RuleBasedOutputs/components/RuleBased
 type RuleBasedOutputsButtonProps = {
   onRuleSetStylingChanged?: (stylings: AssetStylingGroup[] | undefined) => void;
   onRuleSetSelectedChanged?: (ruleSet: RuleAndEnabled | undefined) => void;
+  callbackFunction?: (callback: (isLoaded: boolean) => void) => void;
 };
 export const RuleBasedOutputsButton = ({
   onRuleSetStylingChanged,
-  onRuleSetSelectedChanged
+  onRuleSetSelectedChanged,
+  callbackFunction
 }: RuleBasedOutputsButtonProps): ReactElement => {
   const [currentRuleSetEnabled, setCurrentRuleSetEnabled] = useState<RuleAndEnabled>();
   const [emptyRuleSelected, setEmptyRuleSelected] = useState<EmptyRuleForSelection>();
@@ -72,13 +74,24 @@ export const RuleBasedOutputsButton = ({
         if (onRuleSetStylingChanged !== undefined) onRuleSetStylingChanged(undefined);
       }
 
-      if (onRuleSetSelectedChanged !== undefined) onRuleSetSelectedChanged(selectedRule);
+      console.log(' LOADING SELECTED RULE', selectedRule);
 
+      /* if (onRuleSetSelectedChanged !== undefined)
+        onRuleSetSelectedChanged(selectedRule, (isLoaded) => {
+          console.log(' LOADING IS LOADED FINALY', isLoaded);
+        });
+ */
+
+      if (callbackFunction !== undefined) callbackFunction(callbackLoaded);
       setEmptyRuleSelected(emptySelection);
       setCurrentRuleSetEnabled(selectedRule);
     },
     [ruleInstances, onRuleSetStylingChanged, onRuleSetSelectedChanged]
   );
+
+  const callbackLoaded = (isLoaded: boolean): void => {
+    console.log(' LOADING IS LOADED FINALY', isLoaded);
+  };
 
   const ruleSetStylingChanged = (
     stylingGroups: AssetStylingGroupAndStyleIndex[] | undefined

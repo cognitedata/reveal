@@ -265,6 +265,40 @@ export class AssetMappingCache {
     return { chunkInCache, chunkNotInCache: chunkNotCached };
   }
 
+  private async setAssetMappingsCacheItem(key: ModelNodeIdKey, item: AssetMapping): Promise<void> {
+    const currentAssetMappings = this.getAssetIdsToAssetMappingCacheItem(key);
+    this.setAssetIdsToAssetMappingCacheItem(
+      key,
+      currentAssetMappings.then((value) => {
+        if (value === undefined) {
+          return [item];
+        }
+        value.push(item);
+        return value;
+      })
+    );
+  }
+
+  private async getItemCacheResult(
+    type: string,
+    key: ModelNodeIdKey
+  ): Promise<AssetMapping[] | undefined> {
+    return type === 'nodeIds'
+      ? await this.getNodeIdsToAssetMappingCacheItem(key)
+      : await this.getAssetIdsToAssetMappingCacheItem(key);
+  }
+
+  private setItemCacheResult(
+    type: string,
+    key: ModelNodeIdKey,
+    item: AssetMapping[] | undefined
+  ): void {
+    const value = Promise.resolve(item ?? []);
+    type === 'nodeIds'
+      ? this.setNodeIdsToAssetMappingCacheItem(key, value)
+      : this.setAssetIdsToAssetMappingCacheItem(key, value);
+  }
+
   private async fetchAssetMappingsRequest(
     currentChunk: number[],
     filterType: string,
@@ -304,41 +338,6 @@ export class AssetMappingCache {
 
     return assetMapping3D.filter(isValidAssetMapping);
   }
-
-  private async setAssetMappingsCacheItem(key: ModelNodeIdKey, item: AssetMapping): Promise<void> {
-    const currentAssetMappings = this.getAssetIdsToAssetMappingCacheItem(key);
-    this.setAssetIdsToAssetMappingCacheItem(
-      key,
-      currentAssetMappings.then((value) => {
-        if (value === undefined) {
-          return [item];
-        }
-        value.push(item);
-        return value;
-      })
-    );
-  }
-
-  private async getItemCacheResult(
-    type: string,
-    key: ModelNodeIdKey
-  ): Promise<AssetMapping[] | undefined> {
-    return type === 'nodeIds'
-      ? await this.getNodeIdsToAssetMappingCacheItem(key)
-      : await this.getAssetIdsToAssetMappingCacheItem(key);
-  }
-
-  private setItemCacheResult(
-    type: string,
-    key: ModelNodeIdKey,
-    item: AssetMapping[] | undefined
-  ): void {
-    const value = Promise.resolve(item ?? []);
-    type === 'nodeIds'
-      ? this.setNodeIdsToAssetMappingCacheItem(key, value)
-      : this.setAssetIdsToAssetMappingCacheItem(key, value);
-  }
-
 
   private async fetchMappingsInQueue(
     index: number,

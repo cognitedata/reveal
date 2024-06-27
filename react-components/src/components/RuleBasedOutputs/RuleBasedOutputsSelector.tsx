@@ -12,7 +12,7 @@ import { isDefined } from '../../utilities/isDefined';
 import { type AssetIdsAndTimeseries } from '../../utilities/types';
 import { useAssetsAndTimeseriesLinkageDataQuery } from '../../query/useAssetsAndTimeseriesLinkageDataQuery';
 import { uniqBy } from 'lodash';
-import { useAssetMappedNodesForRevisions, useNodesForAssets } from '../CacheProvider/AssetMappingCacheProvider';
+import { useAssetMappedNodesForRevisions } from '../CacheProvider/AssetMappingCacheProvider';
 import { type CadModelOptions } from '../Reveal3DResources/types';
 import { useAssetsByIdsQuery } from '../../query/useAssetsByIdsQuery';
 

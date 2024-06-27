@@ -43,6 +43,7 @@ export const Reveal3DResources = ({
   instanceStyling,
   onResourcesAdded,
   onResourceLoadError,
+  onCallback,
   image360Settings
 }: Reveal3DResourcesProps): ReactElement => {
   const viewer = useReveal();
@@ -83,7 +84,7 @@ export const Reveal3DResources = ({
 
   console.log('Reveal3DResources instanceStyling', instanceStyling);
 
-  const styledCadModelOptions = useCalculateCadStyling(
+  const { styledModels: styledCadModelOptions, modelMappingsIsFetched } = useCalculateCadStyling(
     cadModelOptions,
     instanceStyling?.filter(isCadAssetMappingStylingGroup) ?? EMPTY_ARRAY,
     defaultResourceStyling
@@ -123,7 +124,17 @@ export const Reveal3DResources = ({
     if (numModelsLoaded.current === expectedTotalLoadCount && onResourcesAdded !== undefined) {
       onResourcesAdded();
     }
+
+    console.log('Loaded models:', numModelsLoaded.current, 'Expected:', expectedTotalLoadCount);
   };
+
+  useEffect(() => {
+    if (modelMappingsIsFetched && onCallback !== undefined) {
+      console.log('LOADING modelMappingsIsFetched', modelMappingsIsFetched);
+      onCallback(modelMappingsIsFetched);
+    }
+    console.log('LOADING modelMappingsIsFetched onCallback ', modelMappingsIsFetched, onCallback);
+  }, [modelMappingsIsFetched, onCallback]);
 
   return (
     <>
