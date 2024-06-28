@@ -35,7 +35,8 @@ export const RuleBasedOutputsButton = ({
   const { t } = useTranslation();
   const models = use3dModels();
   const cadModels = models.filter((model) => model.type === 'cad') as CadModelOptions[];
-  const { isLoading } = useAssetMappedNodesForRevisions(cadModels);
+  const { isLoading: isAssetMappingsLoading } = useAssetMappedNodesForRevisions(cadModels);
+  const [isRuleLoading, setIsRuleLoading] = useState(false);
 
   const ruleInstancesResult = useFetchRuleInstances();
 
@@ -47,6 +48,9 @@ export const RuleBasedOutputsButton = ({
 
   const onChange = useCallback(
     (data: string | undefined): void => {
+
+      setIsRuleLoading(true);
+
       ruleInstances?.forEach((item) => {
         if (item === undefined) return;
         item.isEnabled = false;
@@ -74,15 +78,8 @@ export const RuleBasedOutputsButton = ({
         if (onRuleSetStylingChanged !== undefined) onRuleSetStylingChanged(undefined);
       }
 
-      console.log(' LOADING SELECTED RULE', selectedRule);
-
-      /* if (onRuleSetSelectedChanged !== undefined)
-        onRuleSetSelectedChanged(selectedRule, (isLoaded) => {
-          console.log(' LOADING IS LOADED FINALY', isLoaded);
-        });
- */
-
       if (callbackFunction !== undefined) callbackFunction(callbackLoaded);
+
       setEmptyRuleSelected(emptySelection);
       setCurrentRuleSetEnabled(selectedRule);
     },
@@ -90,7 +87,7 @@ export const RuleBasedOutputsButton = ({
   );
 
   const callbackLoaded = (isLoaded: boolean): void => {
-    console.log(' LOADING IS LOADED FINALY', isLoaded);
+    setIsRuleLoading(!isLoaded);
   };
 
   const ruleSetStylingChanged = (
@@ -112,7 +109,7 @@ export const RuleBasedOutputsButton = ({
         appendTo={document.body}>
         <Dropdown
           placement="right-start"
-          disabled={isLoading}
+          disabled={isAssetMappingsLoading}
           content={
             <Menu
               style={{
@@ -127,6 +124,7 @@ export const RuleBasedOutputsButton = ({
                 label={t('RULESET_NO_SELECTION', 'No RuleSet selected')}
                 checked={currentRuleSetEnabled === undefined || emptyRuleSelected?.isEnabled}
                 onChange={onChange}
+                isLoading={isRuleLoading}
               />
               {ruleInstances?.map((item) => (
                 <RuleBasedSelectionItem
@@ -135,11 +133,17 @@ export const RuleBasedOutputsButton = ({
                   label={item?.rule?.properties.name}
                   checked={item?.isEnabled}
                   onChange={onChange}
+                  isLoading={isRuleLoading}
                 />
               ))}
             </Menu>
           }>
-          <Button icon="ColorPalette" aria-label="Select RuleSet" type="ghost" />
+          <Button
+            disabled={isAssetMappingsLoading}
+            icon="ColorPalette"
+            aria-label="Select RuleSet"
+            type="ghost"
+          />
         </Dropdown>
       </CogsTooltip>
       {ruleInstances !== undefined && ruleInstances?.length > 0 && (
