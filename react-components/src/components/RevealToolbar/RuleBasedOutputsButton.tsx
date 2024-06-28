@@ -35,8 +35,11 @@ export const RuleBasedOutputsButton = ({
   const { t } = useTranslation();
   const models = use3dModels();
   const cadModels = models.filter((model) => model.type === 'cad') as CadModelOptions[];
+
   const { isLoading: isAssetMappingsLoading } = useAssetMappedNodesForRevisions(cadModels);
   const [isRuleLoading, setIsRuleLoading] = useState(false);
+
+  const [newRuleSetEnabled, setNewRuleSetEnabled] = useState<RuleAndEnabled>();
 
   const ruleInstancesResult = useFetchRuleInstances();
 
@@ -46,10 +49,12 @@ export const RuleBasedOutputsButton = ({
     setRuleInstances(ruleInstancesResult.data);
   }, [ruleInstancesResult]);
 
+  useEffect(() => {
+    setCurrentRuleSetEnabled(newRuleSetEnabled);
+  }, [newRuleSetEnabled]);
+
   const onChange = useCallback(
     (data: string | undefined): void => {
-
-      setIsRuleLoading(true);
 
       ruleInstances?.forEach((item) => {
         if (item === undefined) return;
@@ -80,8 +85,10 @@ export const RuleBasedOutputsButton = ({
 
       if (callbackFunction !== undefined) callbackFunction(callbackLoaded);
 
+      setIsRuleLoading(true);
+
       setEmptyRuleSelected(emptySelection);
-      setCurrentRuleSetEnabled(selectedRule);
+      setNewRuleSetEnabled(selectedRule);
     },
     [ruleInstances, onRuleSetStylingChanged, onRuleSetSelectedChanged]
   );
