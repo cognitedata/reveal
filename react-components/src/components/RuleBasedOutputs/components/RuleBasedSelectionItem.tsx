@@ -12,6 +12,7 @@ type RuleBasedSelectionItemProps = {
   checked: boolean | undefined;
   key: string;
   isLoading: boolean;
+  isEmptyRuleItem: boolean;
 };
 export const RuleBasedSelectionItem = ({
   onChange,
@@ -20,6 +21,7 @@ export const RuleBasedSelectionItem = ({
   id,
   checked,
   isLoading,
+  isEmptyRuleItem
 }: RuleBasedSelectionItemProps): ReactElement => {
   return (
     <Menu.Item
@@ -32,7 +34,7 @@ export const RuleBasedSelectionItem = ({
           <Icon type="ColorPalette" />
           {label}
         </Flex>
-        {isLoading && checked === true ? (
+        {!isEmptyRuleItem && isLoading && checked === true ? (
           <Icon type="Loader" />
         ) : (
           <Radio name={id ?? ''} value={id} checked={checked} />

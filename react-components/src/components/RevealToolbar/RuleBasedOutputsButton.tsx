@@ -132,6 +132,7 @@ export const RuleBasedOutputsButton = ({
                 checked={currentRuleSetEnabled === undefined || emptyRuleSelected?.isEnabled}
                 onChange={onChange}
                 isLoading={isRuleLoading}
+                isEmptyRuleItem={true}
               />
               {ruleInstances?.map((item) => (
                 <RuleBasedSelectionItem
@@ -141,6 +142,7 @@ export const RuleBasedOutputsButton = ({
                   checked={item?.isEnabled}
                   onChange={onChange}
                   isLoading={isRuleLoading}
+                  isEmptyRuleItem={false}
                 />
               ))}
             </Menu>
