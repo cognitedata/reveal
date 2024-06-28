@@ -36,6 +36,20 @@ export class UnitSystem {
     return value;
   }
 
+  public convertFromUnit(value: number, quantity: Quantity): number {
+    if (!this.isMetric) {
+      switch (quantity) {
+        case Quantity.Length:
+          return value / METER_TO_FT;
+        case Quantity.Area:
+          return value / (METER_TO_FT * METER_TO_FT);
+        case Quantity.Volume:
+          return value / (METER_TO_FT * METER_TO_FT * METER_TO_FT);
+      }
+    }
+    return value;
+  }
+
   // ==================================================
   // INSTANCE METHODS: Convert number to string
   // ==================================================
@@ -64,14 +78,14 @@ export class UnitSystem {
         return this.isMetric ? 'm²' : 'ft²';
       case Quantity.Volume:
         return this.isMetric ? 'm³' : 'ft³';
-      case Quantity.Degrees:
+      case Quantity.Angle:
         return '°';
     }
   }
 
   private getFractionDigits(quantity: Quantity): number {
     switch (quantity) {
-      case Quantity.Degrees:
+      case Quantity.Angle:
         return 1;
       default:
         return 2;

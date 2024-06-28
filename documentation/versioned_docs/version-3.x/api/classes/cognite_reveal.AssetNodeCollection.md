@@ -107,7 +107,7 @@ ___
 
 ### executeFilter
 
-▸ **executeFilter**(`filter`): `Promise`<`void`\>
+▸ **executeFilter**(`filter`): `Promise`\<`void`\>
 
 Updates the node collection to hold nodes associated with the asset given, or
 assets within the bounding box or all assets associated with the 3D model.
@@ -122,7 +122,7 @@ assets within the bounding box or all assets associated with the 3D model.
 
 #### Returns
 
-`Promise`<`void`\>
+`Promise`\<`void`\>
 
 #### Defined in
 

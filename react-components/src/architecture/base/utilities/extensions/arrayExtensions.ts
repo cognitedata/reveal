@@ -3,7 +3,7 @@
  */
 
 /*
- * Utilitys function for missing array methods
+ * Utility function for missing array methods
  * Use there function in order top increase the readability of your code
  */
 

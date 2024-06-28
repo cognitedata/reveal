@@ -8,7 +8,7 @@ import { type FdmPropertyType } from '../components/Reveal3DResources/types';
 type InstanceType = 'node' | 'edge';
 type EdgeDirection = 'source' | 'destination';
 
-type InstanceFilter = any;
+export type InstanceFilter = Record<string, any>;
 type ViewPropertyReference = any;
 
 export type ExternalId = string;
@@ -283,7 +283,16 @@ export class FdmSDK {
     filter?: InstanceFilter,
     properties?: string[]
   ): Promise<{ instances: Array<EdgeItem<PropertiesType> | NodeItem<PropertiesType>> }> {
-    const data: any = { view: searchedView, query, instanceType, filter, properties, limit };
+    filter = makeSureNonEmptyFilterForRequest(filter);
+
+    const data: any = {
+      view: searchedView,
+      query,
+      instanceType,
+      filter,
+      properties,
+      limit
+    };
 
     const result = await this._sdk.post(this._searchEndpoint, { data });
 
@@ -300,7 +309,7 @@ export class FdmSDK {
 
   // eslint-disable-next-line no-dupe-class-members
   public async filterInstances<PropertiesType = Record<string, any>>(
-    filter: InstanceFilter,
+    filter: InstanceFilter | undefined,
     instanceType: InstanceType,
     source?: Source,
     cursor?: string
@@ -311,7 +320,7 @@ export class FdmSDK {
 
   // eslint-disable-next-line no-dupe-class-members
   public async filterInstances<PropertiesType = Record<string, any>>(
-    filter: InstanceFilter,
+    filter: InstanceFilter | undefined,
     instanceType: 'node',
     source?: Source,
     cursor?: string
@@ -319,7 +328,7 @@ export class FdmSDK {
 
   // eslint-disable-next-line no-dupe-class-members
   public async filterInstances<PropertiesType = Record<string, any>>(
-    filter: InstanceFilter,
+    filter: InstanceFilter | undefined,
     instanceType: 'edge',
     source?: Source,
     cursor?: string
@@ -327,7 +336,7 @@ export class FdmSDK {
 
   // eslint-disable-next-line no-dupe-class-members
   public async filterInstances<PropertiesType = Record<string, any>>(
-    filter: InstanceFilter,
+    filter: InstanceFilter | undefined,
     instanceType: InstanceType,
     source: Source,
     cursor?: string
@@ -384,10 +393,12 @@ export class FdmSDK {
 
   // eslint-disable-next-line no-dupe-class-members
   public async filterAllInstances<PropertiesType = Record<string, any>>(
-    filter: InstanceFilter,
+    filter: InstanceFilter | undefined,
     instanceType: InstanceType,
     source?: Source
   ): Promise<{ instances: Array<EdgeItem<PropertiesType> | FdmNode<PropertiesType>> }> {
+    filter = makeSureNonEmptyFilterForRequest(filter);
+
     let mappings = await this.filterInstances<PropertiesType>(filter, instanceType, source);
 
     while (mappings.nextCursor !== undefined) {
@@ -542,4 +553,10 @@ function hoistInstanceProperties(
       instance.properties = instance.properties[source.space][propertyKey];
     }
   });
+}
+
+function makeSureNonEmptyFilterForRequest(
+  filter: InstanceFilter | undefined
+): InstanceFilter | undefined {
+  return filter !== undefined && Object.keys(filter).length === 0 ? undefined : filter;
 }

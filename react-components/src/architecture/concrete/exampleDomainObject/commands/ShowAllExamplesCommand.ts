@@ -1,46 +1,22 @@
 /*!
  * Copyright 2024 Cognite AS
- * BaseTool: Base class for the tool are used to interact with the render target.
  */
 
-import { RenderTargetCommand } from '../../../base/commands/RenderTargetCommand';
+import { ShowAllDomainObjectsCommand } from '../../../base/commands/ShowAllDomainObjectsCommand';
+import { type DomainObject } from '../../../base/domainObjects/DomainObject';
 import { type TranslateKey } from '../../../base/utilities/TranslateKey';
 import { ExampleDomainObject } from '../ExampleDomainObject';
 
-export class ShowAllExamplesCommand extends RenderTargetCommand {
+export class ShowAllExamplesCommand extends ShowAllDomainObjectsCommand {
   // ==================================================
   // OVERRIDES
   // ==================================================
 
   public override get tooltip(): TranslateKey {
-    return { key: 'EXAMPLES_SHOW', fallback: 'Show or hide all examples' };
+    return { fallback: 'Show or hide all examples' };
   }
 
-  public override get icon(): string {
-    return 'EyeShow';
-  }
-
-  public override get isEnabled(): boolean {
-    return this.getFirst() !== undefined;
-  }
-
-  public override get isChecked(): boolean {
-    const domainObject = this.getFirst();
-    if (domainObject === undefined) {
-      return false;
-    }
-    return domainObject.isVisible(this.renderTarget);
-  }
-
-  protected override invokeCore(): boolean {
-    const isVisible = this.isChecked;
-    for (const domainObject of this.rootDomainObject.getDescendantsByType(ExampleDomainObject)) {
-      domainObject.setVisibleInteractive(!isVisible, this.renderTarget);
-    }
-    return true;
-  }
-
-  private getFirst(): ExampleDomainObject | undefined {
-    return this.rootDomainObject.getDescendantByType(ExampleDomainObject);
+  protected override isInstance(domainObject: DomainObject): boolean {
+    return domainObject instanceof ExampleDomainObject;
   }
 }

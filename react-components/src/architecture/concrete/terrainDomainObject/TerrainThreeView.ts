@@ -35,14 +35,10 @@ import { type RegularGrid2 } from './geometry/RegularGrid2';
 const SOLID_NAME = 'Solid';
 const CONTOURS_NAME = 'Contour';
 
-export class TerrainThreeView extends GroupThreeView {
+export class TerrainThreeView extends GroupThreeView<TerrainDomainObject> {
   // ==================================================
   // INSTANCE PROPERTIES
   // ==================================================
-
-  protected override get domainObject(): TerrainDomainObject {
-    return super.domainObject as TerrainDomainObject;
-  }
 
   protected override get style(): TerrainRenderStyle {
     return super.style as TerrainRenderStyle;
@@ -198,7 +194,7 @@ function updateSolidMaterial(
   is2D: boolean = false
 ): void {
   material.side = DoubleSide; // the terrain must be seen from both side
-  material.polygonOffset = style.showContours; // Because of the countours to be visible
+  material.polygonOffset = style.showContours; // Because of the contours to be visible
   material.polygonOffsetFactor = 1;
   material.polygonOffsetUnits = 4.0;
 

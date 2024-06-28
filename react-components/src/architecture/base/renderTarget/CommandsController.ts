@@ -3,7 +3,7 @@
  * CommandsController: Holds the tools, the active tool and the previous tool
  */
 
-import { PointerEvents, PointerEventsTarget } from '@cognite/reveal';
+import { PointerEvents, PointerEventsTarget, getWheelEventDelta } from '@cognite/reveal';
 import { type BaseTool } from '../commands/BaseTool';
 import { type BaseCommand } from '../commands/BaseCommand';
 
@@ -20,7 +20,7 @@ export class CommandsController extends PointerEvents {
   private readonly _pointerEventsTarget: PointerEventsTarget;
 
   // ==================================================
-  // CONTRUCTORS
+  // CONSTRUCTOR
   // ==================================================
 
   constructor(domElement: HTMLElement) {
@@ -69,15 +69,27 @@ export class CommandsController extends PointerEvents {
 
   public override async onPointerDown(event: PointerEvent, leftButton: boolean): Promise<void> {
     this._domElement.focus();
-    await this.activeTool?.onPointerDown(event, leftButton);
-  }
-
-  public override async onPointerUp(event: PointerEvent, leftButton: boolean): Promise<void> {
-    await this.activeTool?.onPointerUp(event, leftButton);
+    if (leftButton) {
+      await this.activeTool?.onLeftPointerDown(event);
+    } else {
+      await this.defaultTool?.onRightPointerDown(event);
+    }
   }
 
   public override async onPointerDrag(event: PointerEvent, leftButton: boolean): Promise<void> {
-    await this.activeTool?.onPointerDrag(event, leftButton);
+    if (leftButton) {
+      await this.activeTool?.onLeftPointerDrag(event);
+    } else {
+      await this.defaultTool?.onRightPointerDrag(event);
+    }
+  }
+
+  public override async onPointerUp(event: PointerEvent, leftButton: boolean): Promise<void> {
+    if (leftButton) {
+      await this.activeTool?.onLeftPointerUp(event);
+    } else {
+      await this.defaultTool?.onRightPointerUp(event);
+    }
   }
 
   // ==================================================
@@ -157,8 +169,15 @@ export class CommandsController extends PointerEvents {
     // key – the character ("A", "a" and so on), for non-character keys, such as Esc, usually has the same value as code.
     if (down) {
       const key = event.key.toUpperCase();
+      const ctrlKey = event.ctrlKey || event.metaKey;
+      const shiftKey = event.shiftKey;
+
       for (const command of this._commands) {
-        if (command.shortCutKey === key) {
+        if (
+          command.shortCutKey === key &&
+          command.shortCutKeyOnCtrl === ctrlKey &&
+          command.shortCutKeyOnShift === shiftKey
+        ) {
           command.invoke();
           return;
         }
@@ -215,7 +234,8 @@ export class CommandsController extends PointerEvents {
   };
 
   private readonly _onWheel = async (event: WheelEvent): Promise<void> => {
-    await this.activeTool?.onWheel(event);
+    const delta = getWheelEventDelta(event);
+    await this.activeTool?.onWheel(event, delta);
     event.stopPropagation();
     event.preventDefault();
   };

@@ -3,9 +3,10 @@
  */
 
 import { cloneDeep } from 'lodash';
-import { RenderStyle } from '../../base/domainObjectsHelpers/RenderStyle';
+import { CommonRenderStyle } from '../../base/renderStyles/CommonRenderStyle';
+import { type RenderStyle } from '../../base/renderStyles/RenderStyle';
 
-export class ExampleRenderStyle extends RenderStyle {
+export class ExampleRenderStyle extends CommonRenderStyle {
   // ==================================================
   // INSTANCE FIELDS
   // ==================================================

@@ -3,7 +3,8 @@
  */
 
 import { type Color } from 'three';
-import { type RenderStyle } from '../domainObjectsHelpers/RenderStyle';
+import { BLACK_COLOR, WHITE_COLOR } from '../utilities/colors/colorExtensions';
+import { type RenderStyle } from '../renderStyles/RenderStyle';
 import { DomainObjectChange } from '../domainObjectsHelpers/DomainObjectChange';
 import { Changes } from '../domainObjectsHelpers/Changes';
 import { isInstanceOf, type Class } from '../domainObjectsHelpers/Class';
@@ -13,13 +14,17 @@ import { clear, removeAt } from '../utilities/extensions/arrayExtensions';
 import { getNextColor } from '../utilities/colors/getNextColor';
 import { type RevealRenderTarget } from '../renderTarget/RevealRenderTarget';
 import { ColorType } from '../domainObjectsHelpers/ColorType';
-import { BLACK_COLOR, WHITE_COLOR } from '../utilities/colors/colorExtensions';
 import { Views } from '../domainObjectsHelpers/Views';
 import { type PanelInfo } from '../domainObjectsHelpers/PanelInfo';
 import { PopupStyle } from '../domainObjectsHelpers/PopupStyle';
 import { RootDomainObject } from './RootDomainObject';
 import { CommandsUpdater } from '../reactUpdaters/CommandsUpdater';
 import { DomainObjectPanelUpdater } from '../reactUpdaters/DomainObjectPanelUpdater';
+import { type TranslateKey } from '../utilities/TranslateKey';
+import { DeleteDomainObjectCommand } from '../concreteCommands/DeleteDomainObjectCommand';
+import { CopyToClipboardCommand } from '../concreteCommands/CopyToClipboardCommand';
+import { type BaseCommand } from '../commands/BaseCommand';
+import { type Transaction } from '../undo/Transaction';
 
 /**
  * Represents an abstract base class for domain objects.
@@ -42,7 +47,7 @@ export abstract class DomainObject {
   // For instance you can have many crop boxes, but only one can be used at the time.
   private _isActive: boolean = false;
 
-  // Expaned when it is shown in a tree view
+  // Expand when it is shown in a tree view
   private _isExpanded = false;
 
   // Parent-Child relationship
@@ -55,11 +60,32 @@ export abstract class DomainObject {
   // Views and listeners
   public readonly views: Views = new Views();
 
+  // Unique index for the domain object, used as soft reference
+  private _uniqueId: number;
+  private static _counter: number = 0; // Counter for the unique index
+
+  public get uniqueId(): number {
+    return this._uniqueId;
+  }
+
+  public set uniqueId(value: number) {
+    this._uniqueId = value;
+  }
+
+  // ==================================================
+  // CONSTRUCTOR
+  // ==================================================
+
+  public constructor() {
+    DomainObject._counter++;
+    this._uniqueId = DomainObject._counter;
+  }
+
   // ==================================================
   // INSTANCE/VIRTUAL PROPERTIES
   // ==================================================
 
-  public abstract get typeName(): string; // to be overridden
+  public abstract get typeName(): TranslateKey; // to be overridden
 
   public get path(): string {
     return `${this.parent !== undefined ? this.parent.path : ''}\\${this.name}`;
@@ -74,7 +100,7 @@ export abstract class DomainObject {
   }
 
   // ==================================================
-  // INSTANCE/VIRTUAL METHODS: Nameing
+  // INSTANCE/VIRTUAL METHODS: Naming
   // ==================================================
 
   public get canChangeName(): boolean {
@@ -232,6 +258,16 @@ export abstract class DomainObject {
     return true; // to be overridden
   }
 
+  /**
+   * Gets a value indicating whether the domain object is legal.
+   * Normally it is legal, but if the object is pending when creating it, it is not legal.
+   * @returns {boolean} A boolean value indicating whether the domain object is legal.
+   */
+
+  public get isLegal(): boolean {
+    return true;
+  }
+
   // ==================================================
   // VIRTUAL METHODS: Notification
   // ==================================================
@@ -245,6 +281,15 @@ export abstract class DomainObject {
    */
   protected notifyCore(change: DomainObjectChange): void {
     this.views.notify(this, change);
+
+    // If isRenderStyleRoot is true, notify all descendants
+    if (change.isChanged(Changes.renderStyle) && this.isRenderStyleRoot) {
+      const description = change.getChangedDescription(Changes.renderStyle);
+      if (description !== undefined) {
+        const renderStyleChange = new DomainObjectChange(description);
+        this.notifyDescendants(renderStyleChange);
+      }
+    }
 
     if (
       change.isChanged(
@@ -267,6 +312,44 @@ export abstract class DomainObject {
     }
   }
 
+  /**
+   * Creates a transaction based on the specified changes. This is used for undoing
+   * @param changed - A symbol representing the changes made to the domain object.
+   * @returns A Transaction object if the transaction was created successfully, otherwise undefined.
+   */
+  public createTransaction(_changed: symbol): Transaction | undefined {
+    return undefined;
+  }
+
+  /**
+   * Creates a copy of this the domain object. The copy will not include any parent/child relationships, or views
+   * @param what - Optional parameter specifying which properties to copy. If not provided, all properties will be copied.
+   * @returns A new domain object
+   */
+  public clone(_what?: symbol): DomainObject {
+    throw new Error('Method not implemented.');
+  }
+
+  /**
+   * Copies the properties from another `DomainObject` instance to this instance.
+   * @param domainObject - The `DomainObject` instance to copy from.
+   * @param what - Optional parameter specifying which properties to copy. If not provided, all properties will be copied.
+   */
+  public copyFrom(domainObject: DomainObject, what?: symbol): void {
+    if (what === undefined) {
+      this.uniqueId = domainObject.uniqueId;
+    }
+    if (what === undefined || what === Changes.color) {
+      this.color = domainObject.color;
+    }
+    if (what === undefined || what === Changes.naming) {
+      this.name = domainObject.name;
+    }
+    if (what === undefined || what === Changes.renderStyle) {
+      this._renderStyle = domainObject._renderStyle?.clone();
+    }
+  }
+
   // ==================================================
   // VIRTUAL METHODS: For updating the panel
   // ==================================================
@@ -282,15 +365,19 @@ export abstract class DomainObject {
   public getPanelInfoStyle(): PopupStyle {
     // to be overridden
     // Default lower left corner
-    return new PopupStyle({ bottom: 0, left: 0 });
+    return new PopupStyle({ bottom: 50, left: 0 });
+  }
+
+  public getPanelToolbar(): BaseCommand[] {
+    return [new DeleteDomainObjectCommand(this), new CopyToClipboardCommand()];
   }
 
   // ==================================================
   // VIRTUAL METHODS: Others
   // ==================================================
 
-  public get icon(): string {
-    return 'Unknown';
+  public get icon(): string | undefined {
+    return undefined;
   }
 
   /**
@@ -309,11 +396,19 @@ export abstract class DomainObject {
 
   /**
    * Override if the render style is taken from another domain object, for instance the parent
-   * or somewhere else in the hieracy
+   * or somewhere else in the hierarchy
    * @returns The render style root
    */
   public get renderStyleRoot(): DomainObject | undefined {
     return undefined;
+  }
+
+  /**
+   * Override if this domain object is a render style root, se method above
+   * @returns true if this is a render style root
+   */
+  public get isRenderStyleRoot(): boolean {
+    return false;
   }
 
   /**
@@ -328,7 +423,7 @@ export abstract class DomainObject {
   /**
    * Verifies the render style for the domain object, because the render style may
    * be not valid in some cases. In this method you can change the render style.
-   * You can also change som fields in the rebnderstyle to get default values
+   * You can also change som fields in the renderStyle to get default values
    * dependent of the domain object itself.
    * Override this method when needed
    */
@@ -378,7 +473,7 @@ export abstract class DomainObject {
   public setVisibleInteractive(
     visible: boolean,
     renderTarget: RevealRenderTarget,
-    topLevel = true // When calling this from outside, this value should alwaus be true
+    topLevel = true // When calling this from outside, this value should always be true
   ): boolean {
     const visibleState = this.getVisibleState(renderTarget);
     if (visibleState === VisibleState.Disabled) {
@@ -413,7 +508,7 @@ export abstract class DomainObject {
     this.notifyCore(change);
   }
 
-  public notifyRecursive(change: DomainObjectChange | symbol): void {
+  public notifyDescendants(change: DomainObjectChange | symbol): void {
     if (!(change instanceof DomainObjectChange)) {
       change = new DomainObjectChange(change);
     }
@@ -438,9 +533,21 @@ export abstract class DomainObject {
 
   public toggleVisibleInteractive(renderTarget: RevealRenderTarget): void {
     const visibleState = this.getVisibleState(renderTarget);
-    if (visibleState === VisibleState.None) this.setVisibleInteractive(true, renderTarget);
-    else if (visibleState === VisibleState.Some || visibleState === VisibleState.All)
+    if (visibleState === VisibleState.None) {
+      this.setVisibleInteractive(true, renderTarget);
+    } else if (visibleState === VisibleState.Some || visibleState === VisibleState.All) {
       this.setVisibleInteractive(false, renderTarget);
+    }
+  }
+
+  /**
+   * Checks if the domain object is visible in the specified render target.
+   * @param renderTarget - The render target to check visibility in.
+   * @returns `true` if the domain object is visible in the target, `false` otherwise.
+   */
+  public isVisible(renderTarget: RevealRenderTarget): boolean {
+    const visibleState = this.getVisibleState(renderTarget);
+    return visibleState === VisibleState.Some || visibleState === VisibleState.All;
   }
 
   // ==================================================
@@ -464,7 +571,7 @@ export abstract class DomainObject {
   }
 
   public get root(): DomainObject {
-    // Returns the root of the hierarcy, regardless what it is
+    // Returns the root of the hierarchy, regardless what it is
     return this.parent === undefined ? this : this.parent.root;
   }
 
@@ -584,6 +691,15 @@ export abstract class DomainObject {
     return undefined;
   }
 
+  public getThisOrDescendantByUniqueId(uniqueId: number): DomainObject | undefined {
+    for (const descendant of this.getThisAndDescendants()) {
+      if (descendant.uniqueId === uniqueId) {
+        return descendant;
+      }
+    }
+    return undefined;
+  }
+
   public getDescendantByTypeAndName<T extends DomainObject>(
     classType: Class<T>,
     name: string
@@ -668,10 +784,10 @@ export abstract class DomainObject {
 
   public addChild(child: DomainObject, insertFirst = false): void {
     if (child.hasParent) {
-      throw Error(`The child ${child.typeName} already has a parent`);
+      throw Error(`The child ${child.typeName.fallback} already has a parent`);
     }
     if (child === this) {
-      throw Error(`Trying to add illegal child ${child.typeName}`);
+      throw Error(`Trying to add illegal child ${child.typeName.fallback}`);
     }
     if (insertFirst) {
       this._children.unshift(child);
@@ -690,7 +806,7 @@ export abstract class DomainObject {
   private remove(): boolean {
     const { childIndex } = this;
     if (childIndex === undefined) {
-      throw Error(`The child ${this.typeName} is not child of it's parent`);
+      throw Error(`The child ${this.typeName.fallback} is not child of it's parent`);
     }
     clear(this._children);
     this.removeCore();
@@ -754,7 +870,7 @@ export abstract class DomainObject {
   }
 
   private generateNewName(): string {
-    let result = this.typeName;
+    let result = this.typeName.fallback;
     if (!this.canChangeName) {
       return result;
     }
@@ -776,7 +892,7 @@ export abstract class DomainObject {
 
   // ==================================================
   // INSTANCE METHODS: Color type
-  // Used in the renderstyle to determin which of the color a domain object should have.
+  // Used in the render style to determine which of the color a domain object should have.
   // ==================================================
 
   public supportsColorType(colorType: ColorType, solid: boolean): boolean {

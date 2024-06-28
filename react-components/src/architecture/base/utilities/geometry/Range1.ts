@@ -82,7 +82,7 @@ export class Range1 {
   // INSTANCE METHODS: Requests
   // ==================================================
 
-  equals(other: Range1): boolean {
+  public equals(other: Range1): boolean {
     if (other === undefined) {
       return false;
     }
@@ -95,7 +95,7 @@ export class Range1 {
     return this.min === other.min && this.max === other.max;
   }
 
-  isInside(value: number): boolean {
+  public isInside(value: number): boolean {
     return this.min <= value && value <= this.max;
   }
 
@@ -149,7 +149,7 @@ export class Range1 {
   }
 
   public *getFastTicks(increment: number, tolerance: number): Generator<number> {
-    // This method overwrites this (optimalization)
+    // This method overwrites this (optimization)
     if (!this.roundByInc(-increment)) {
       return;
     }
@@ -163,14 +163,14 @@ export class Range1 {
   }
 
   public getBoldIncrement(increment: number, every = 2): number {
-    let numerOfTicks = 0;
+    let numberOfTicks = 0;
     const boldIncrement = increment * every;
     for (const tick of this.getTicks(increment)) {
       if (!isIncrement(tick, boldIncrement)) {
         continue;
       }
-      numerOfTicks += 1;
-      if (numerOfTicks > 2) {
+      numberOfTicks += 1;
+      if (numberOfTicks > 2) {
         return boldIncrement;
       }
     }

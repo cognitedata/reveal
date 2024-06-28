@@ -3,17 +3,9 @@
  */
 
 import type { Meta, StoryObj } from '@storybook/react';
-import {
-  CadModelContainer,
-  type QualitySettings,
-  RevealToolbar,
-  useGetCameraStateFromUrlParam,
-  useCameraNavigation
-} from '../src';
+import { CadModelContainer } from '../src';
 import { Color } from 'three';
-import { Button, Menu } from '@cognite/cogs.js';
-import { type ReactElement, useState, useEffect } from 'react';
-import { signalStoryReadyForScreenshot } from './utilities/signalStoryReadyForScreenshot';
+import { type ReactElement } from 'react';
 import { RevealStoryContainer } from './utilities/RevealStoryContainer';
 import { getAddModelOptionsFromUrl } from './utilities/getAddModelOptionsFromUrl';
 import { DomainObjectPanel } from '../src/components/Architecture/DomainObjectPanel';
@@ -30,52 +22,6 @@ const meta = {
 export default meta;
 type Story = StoryObj<typeof meta>;
 
-const exampleCustomSettingElements = (): ReactElement => {
-  const [originalCadColor, setOriginalCadColor] = useState(false);
-
-  return (
-    <>
-      <Menu.Item
-        hasSwitch
-        toggled={originalCadColor}
-        onChange={() => {
-          setOriginalCadColor((prevMode) => !prevMode);
-        }}>
-        Original CAD coloring
-      </Menu.Item>
-      <Button>Custom Button</Button>
-    </>
-  );
-};
-
-const exampleHighQualitySettings: QualitySettings = {
-  cadBudget: {
-    maximumRenderCost: 95000000,
-    highDetailProximityThreshold: 100
-  },
-  pointCloudBudget: {
-    numberOfPoints: 12000000
-  },
-  resolutionOptions: {
-    maxRenderResolution: Infinity,
-    movingCameraResolutionFactor: 1
-  }
-};
-
-const exampleLowQualitySettings: QualitySettings = {
-  cadBudget: {
-    maximumRenderCost: 10_000_000,
-    highDetailProximityThreshold: 100
-  },
-  pointCloudBudget: {
-    numberOfPoints: 2_000_000
-  },
-  resolutionOptions: {
-    maxRenderResolution: 1e5,
-    movingCameraResolutionFactor: 1
-  }
-};
-
 export const Main: Story = {
   args: {
     addModelOptions: getAddModelOptionsFromUrl('/primitives')
@@ -83,13 +29,7 @@ export const Main: Story = {
   render: ({ addModelOptions }) => {
     return (
       <RevealStoryContainer color={new Color(0x4a4a4a)} viewerOptions={{}}>
-        <FitToUrlCameraState />
         <StoryContent addModelOptions={addModelOptions} />
-        <RevealToolbar
-          customSettingsContent={exampleCustomSettingElements()}
-          lowFidelitySettings={exampleLowQualitySettings}
-          highFidelitySettings={exampleHighQualitySettings}
-        />
         <MainToolbar />
         <ActiveToolToolbar />
         <DomainObjectPanel />
@@ -110,18 +50,4 @@ function StoryContent({ addModelOptions }: { addModelOptions: AddModelOptions })
       />
     </>
   );
-}
-
-function FitToUrlCameraState(): ReactElement {
-  const getCameraState = useGetCameraStateFromUrlParam();
-  const cameraNavigation = useCameraNavigation();
-
-  useEffect(() => {
-    signalStoryReadyForScreenshot();
-    const currentCameraState = getCameraState();
-    if (currentCameraState === undefined) return;
-    cameraNavigation.fitCameraToState(currentCameraState);
-  }, []);
-
-  return <></>;
 }

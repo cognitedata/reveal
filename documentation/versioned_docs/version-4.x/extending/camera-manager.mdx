@@ -17,7 +17,7 @@ In certain cases it can be useful to customize behaviour of the camera:
 
 To create a custom camera manager class, `CameraManager` interface from `@cognite/reveal` must be implemented
 and provided to `Cognite3DViewer` on construction using the `cameraManager`-option. You can also set camera manager
-in runtime by calling `setCameraManager` method of `Cognite3DViewer` class. Interface is defined [here in the API reference](../api/interfaces/cognite_reveal.CameraManager.md).
+in runtime by calling `setCameraManager` method of `Cognite3DViewer` class. Interface is defined [here in the API reference](../api/@cognite/reveal/interfaces/CameraManager.md).
 
 Main implementation specific functions are `setCameraState`, `fitCameraToBoundingBox` and `update`.
 Setting state shouldn't be possible when `rotation` and `target` are passed at the same time because they could conflict.

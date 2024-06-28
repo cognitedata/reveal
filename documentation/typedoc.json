@@ -10,6 +10,10 @@
   "excludePrivate": true,
   "excludeProtected": true,
   "excludeInternal": true,
+  "excludeTags": ["@experimental"],
+  "visibilityFilters": {
+    "@experimental": true
+  },
   "readme": "docs/api_readme.md",
   "tsconfig": "../viewer/tsconfig.typedoc.json",
   "out": "./generated",

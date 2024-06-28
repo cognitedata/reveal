@@ -38,11 +38,11 @@ custom_edit_url: null
 
 ### readyPromise
 
-• `get` **readyPromise**(): `Promise`<`void`\>
+• `get` **readyPromise**(): `Promise`\<`void`\>
 
 #### Returns
 
-`Promise`<`void`\>
+`Promise`\<`void`\>
 
 #### Defined in
 
@@ -73,7 +73,7 @@ ___
 
 ### expand
 
-▸ **expand**(`expandRadius`): `Promise`<`void`\>
+▸ **expand**(`expandRadius`): `Promise`\<`void`\>
 
 #### Parameters
 
@@ -83,7 +83,7 @@ ___
 
 #### Returns
 
-`Promise`<`void`\>
+`Promise`\<`void`\>
 
 #### Defined in
 

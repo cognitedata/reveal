@@ -7,6 +7,7 @@ import {
   type VisualDomainObject,
   type CreateDraggerProps
 } from '../domainObjects/VisualDomainObject';
+import { type Transaction } from '../undo/Transaction';
 
 /**
  * The `BaseDragger` class represents a utility for dragging and manipulating any object in 3D space.
@@ -19,9 +20,22 @@ export abstract class BaseDragger {
   // ==================================================
   protected readonly point: Vector3; // Intersection point at pointer down in CDF coordinates
   protected readonly ray: Ray = new Ray(); // Intersection point at pointer down in CDF coordinates
+  private _transaction?: Transaction;
 
   // ==================================================
-  // CONTRUCTOR
+  // INSTANCE PROPERTIES
+  // ==================================================
+
+  public get transaction(): Transaction | undefined {
+    return this._transaction;
+  }
+
+  protected set transaction(transaction: Transaction) {
+    this._transaction = transaction;
+  }
+
+  // ==================================================
+  // CONSTRUCTOR
   // ==================================================
   /**
    * Represents a base dragger object.
@@ -50,7 +64,7 @@ export abstract class BaseDragger {
   /**
    * Called every times the mouse moves during dragging
    * @param event - The pointer event.
-   * @param ray - The current ray in CDF cooordinates
+   * @param ray - The current ray in CDF coordinates
    * @returns True if the dragger has changed the domain object, false otherwise.
    */
   public abstract onPointerDrag(event: PointerEvent, ray: Ray): boolean;

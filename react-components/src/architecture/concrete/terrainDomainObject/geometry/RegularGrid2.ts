@@ -336,7 +336,7 @@ export class RegularGrid2 extends Grid2 {
           let count = 0;
           let sum = 0;
 
-          // New value = (Sum the surrunding values + 2 * Current value) / N
+          // New value = (Sum the surrounding values + 2 * Current value) / N
           for (let ii = iMin; ii <= iMax; ii++)
             for (let jj = jMin; jj <= jMax; jj++) {
               if (ii === i && jj === j) continue;

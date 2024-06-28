@@ -33,6 +33,8 @@ const measurementTool = new MeasurementTool(viewer);
 measurementTool.enterMeasurementMode();
 ```
 
+Another way to add measurements is to call the `MeasurementTool.addMeasurement()` method. It takes the two endpoints of the measurement line as arguments.
+
 ## Events
 The tool exposes events for subscribing to measurement start, end & added. In the below example, the mouse cursor is changed to a cross-hair while measuring.
 

@@ -5,6 +5,7 @@
 import { type RevealRenderTarget } from '../renderTarget/RevealRenderTarget';
 import { UnitSystem } from '../renderTarget/UnitSystem';
 import { DomainObject } from './DomainObject';
+import { type TranslateKey } from '../utilities/TranslateKey';
 
 export class RootDomainObject extends DomainObject {
   // ==================================================
@@ -33,10 +34,16 @@ export class RootDomainObject extends DomainObject {
   }
 
   // ==================================================
-  // OVERRIDES of DomainObject
+  // OVERRIDES
   // ==================================================
 
-  public override get typeName(): string {
-    return 'Root';
+  public override get typeName(): TranslateKey {
+    return { fallback: 'Root' };
+  }
+
+  public override clone(what?: symbol): DomainObject {
+    const clone = new RootDomainObject(this.renderTarget);
+    clone.copyFrom(this, what);
+    return clone;
   }
 }

@@ -7,5 +7,5 @@ export enum Quantity {
   Length,
   Area,
   Volume,
-  Degrees
+  Angle
 }

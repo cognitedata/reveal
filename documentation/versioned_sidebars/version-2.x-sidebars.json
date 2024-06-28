@@ -1,16 +1,16 @@
 {
-  "version-2.x/docs": [
+  "docs": [
     {
       "type": "doc",
-      "id": "version-2.x/overview"
+      "id": "overview"
     },
     {
       "type": "doc",
-      "id": "version-2.x/installation"
+      "id": "installation"
     },
     {
       "type": "doc",
-      "id": "version-2.x/migration-guide"
+      "id": "migration-guide"
     },
     {
       "collapsed": false,
@@ -19,7 +19,7 @@
       "items": [
         {
           "type": "doc",
-          "id": "version-2.x/examples/cad-basic"
+          "id": "examples/cad-basic"
         },
         {
           "collapsed": true,
@@ -28,91 +28,91 @@
           "items": [
             {
               "type": "doc",
-              "id": "version-2.x/examples/cad-styling"
+              "id": "examples/cad-styling"
             },
             {
               "type": "doc",
-              "id": "version-2.x/examples/cad-styling-assets"
+              "id": "examples/cad-styling-assets"
             },
             {
               "type": "doc",
-              "id": "version-2.x/examples/cad-styling-nodes"
+              "id": "examples/cad-styling-nodes"
             },
             {
               "type": "doc",
-              "id": "version-2.x/examples/cad-styling-custom"
+              "id": "examples/cad-styling-custom"
             }
           ]
         },
         {
           "type": "doc",
-          "id": "version-2.x/examples/cad-transform-override"
+          "id": "examples/cad-transform-override"
         },
         {
           "type": "doc",
-          "id": "version-2.x/examples/cad-2doverlay"
+          "id": "examples/cad-2doverlay"
         },
         {
           "type": "doc",
-          "id": "version-2.x/examples/cad-3dobjects"
+          "id": "examples/cad-3dobjects"
         },
         {
           "type": "doc",
-          "id": "version-2.x/examples/node-visiting"
+          "id": "examples/node-visiting"
         },
         {
           "type": "doc",
-          "id": "version-2.x/examples/clipping"
+          "id": "examples/clipping"
         },
         {
           "type": "doc",
-          "id": "version-2.x/examples/cad-save-viewerstate"
+          "id": "examples/cad-save-viewerstate"
         },
         {
           "type": "doc",
-          "id": "version-2.x/examples/pointcloud"
+          "id": "examples/pointcloud"
         },
         {
           "type": "doc",
-          "id": "version-2.x/examples/click-reactions-cad"
+          "id": "examples/click-reactions-cad"
         },
         {
           "type": "doc",
-          "id": "version-2.x/examples/click-reactions-pointcloud"
+          "id": "examples/click-reactions-pointcloud"
         },
         {
           "type": "doc",
-          "id": "version-2.x/examples/antialiasing"
+          "id": "examples/antialiasing"
         },
         {
           "type": "doc",
-          "id": "version-2.x/examples/cad-explode"
+          "id": "examples/cad-explode"
         },
         {
           "type": "doc",
-          "id": "version-2.x/examples/axisviewtool"
+          "id": "examples/axisviewtool"
         },
         {
           "type": "doc",
-          "id": "version-2.x/examples/geomaptool"
+          "id": "examples/geomaptool"
         },
         {
           "type": "doc",
-          "id": "version-2.x/examples/timelinetool"
+          "id": "examples/timelinetool"
         },
         {
           "type": "doc",
-          "id": "version-2.x/examples/combine-models"
+          "id": "examples/combine-models"
         },
         {
           "type": "doc",
-          "id": "version-2.x/examples/controlsmodes"
+          "id": "examples/controlsmodes"
         }
       ]
     },
     {
       "type": "doc",
-      "id": "version-2.x/concepts"
+      "id": "concepts"
     },
     {
       "collapsed": false,
@@ -121,13 +121,13 @@
       "items": [
         {
           "type": "doc",
-          "id": "version-2.x/extending/datasource"
+          "id": "extending/datasource"
         }
       ]
     },
     {
       "type": "doc",
-      "id": "version-2.x/API Reference"
+      "id": "API Reference"
     },
     {
       "type": "link",

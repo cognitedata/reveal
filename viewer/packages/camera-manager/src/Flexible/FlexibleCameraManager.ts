@@ -235,8 +235,12 @@ export class FlexibleCameraManager extends PointerEvents implements IFlexibleCam
     this.updateControlsSensitivity(modelBoundingBox);
   }
 
+  public get options(): FlexibleControlsOptions {
+    return this._controls.options;
+  }
+
   //================================================
-  // OVERIDES of PointerEvents
+  // OVERRIDES of PointerEvents
   //================================================
 
   public override async onClick(event: PointerEvent): Promise<void> {
@@ -277,8 +281,8 @@ export class FlexibleCameraManager extends PointerEvents implements IFlexibleCam
   // INSTANCE METHODS: Other events
   //================================================
 
-  public async onWheel(event: WheelEvent): Promise<void> {
-    await this.controls.onWheel(event);
+  public async onWheel(event: WheelEvent, delta: number): Promise<void> {
+    await this.controls.onWheel(event, delta);
   }
 
   public onKey(event: KeyboardEvent, down: boolean): void {
@@ -292,10 +296,6 @@ export class FlexibleCameraManager extends PointerEvents implements IFlexibleCam
   //================================================
   // INSTANCE METHODS: Setters and getters
   //================================================
-
-  public get options(): FlexibleControlsOptions {
-    return this._controls.options;
-  }
 
   public get controls(): FlexibleControls {
     return this._controls;

@@ -21,7 +21,7 @@ export abstract class VisualDomainObject extends DomainObject {
   // ==================================================
 
   public override getVisibleState(renderTarget: RevealRenderTarget): VisibleState {
-    if (this.isVisible(renderTarget)) {
+    if (this.getViewByTarget(renderTarget) !== undefined) {
       return VisibleState.All;
     }
     if (this.canCreateThreeView()) {
@@ -61,7 +61,7 @@ export abstract class VisualDomainObject extends DomainObject {
 
   /**
    * Determines whether the visual domain object can create a three view.
-   * It may have a state when it can not create a view bacause of other dependencies
+   * It may have a state when it can not create a view because of other dependencies
    *
    * @returns A boolean value indicating whether the visual domain object can create a three view.
    */
@@ -79,6 +79,10 @@ export abstract class VisualDomainObject extends DomainObject {
     return undefined;
   }
 
+  public get useClippingInIntersection(): boolean {
+    return true;
+  }
+
   // ==================================================
   // INSTANCE METHODS
   // ==================================================
@@ -89,15 +93,6 @@ export abstract class VisualDomainObject extends DomainObject {
         return view;
       }
     }
-  }
-
-  /**
-   * Checks if the visual domain object is visible in the specified render target.
-   * @param renderTarget - The render target to check visibility in.
-   * @returns `true` if the visual domain object is visible in the target, `false` otherwise.
-   */
-  public isVisible(renderTarget: RevealRenderTarget): boolean {
-    return this.getViewByTarget(renderTarget) !== undefined;
   }
 
   /**

@@ -4,6 +4,6 @@
 export type TranslateDelegate = (key: string, fallback?: string) => string;
 
 export type TranslateKey = {
-  key: string;
-  fallback?: string;
+  key?: string;
+  fallback: string;
 };

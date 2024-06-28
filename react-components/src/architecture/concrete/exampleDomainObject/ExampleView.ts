@@ -16,14 +16,10 @@ import {
 import { type DomainObjectIntersection } from '../../base/domainObjectsHelpers/DomainObjectIntersection';
 import { WHITE_COLOR } from '../../base/utilities/colors/colorExtensions';
 
-export class ExampleView extends GroupThreeView {
+export class ExampleView extends GroupThreeView<ExampleDomainObject> {
   // ==================================================
   // INSTANCE PROPERTIES
   // ==================================================
-
-  protected override get domainObject(): ExampleDomainObject {
-    return super.domainObject as ExampleDomainObject;
-  }
 
   protected override get style(): ExampleRenderStyle {
     return super.style as ExampleRenderStyle;
@@ -35,9 +31,8 @@ export class ExampleView extends GroupThreeView {
 
   public override update(change: DomainObjectChange): void {
     super.update(change);
-    if (change.isChanged(Changes.selected, Changes.renderStyle, Changes.color)) {
-      this.removeChildren();
-      this.invalidateBoundingBox();
+    if (change.isChanged(Changes.selected, Changes.renderStyle, Changes.color, Changes.clipping)) {
+      this.clearMemory();
       this.invalidateRenderTarget();
     }
   }
@@ -46,19 +41,24 @@ export class ExampleView extends GroupThreeView {
   // OVERRIDES of GroupThreeView
   // ==================================================
 
-  protected override addChildren(): void {
-    const { domainObject, style } = this;
+  public override get useDepthTest(): boolean {
+    return this.style.depthTest;
+  }
 
-    const color = domainObject.color;
+  protected override addChildren(): void {
+    const { domainObject, style, renderTarget } = this;
+
     const geometry = new SphereGeometry(style.radius, 32, 16);
     const material = new MeshPhongMaterial({
-      color,
+      color: domainObject.color,
       emissive: WHITE_COLOR,
       emissiveIntensity: domainObject.isSelected ? 0.4 : 0.0,
       shininess: 5,
       opacity: style.opacity,
-      transparent: true
+      transparent: true,
+      depthTest: style.depthTest
     });
+    material.clippingPlanes = renderTarget.getGlobalClippingPlanes();
     const sphere = new Mesh(geometry, material);
     const center = domainObject.center.clone();
     center.applyMatrix4(CDF_TO_VIEWER_TRANSFORMATION);
@@ -85,7 +85,7 @@ export class ExampleView extends GroupThreeView {
     if (closestDistance !== undefined && closestDistance < distanceToCamera) {
       return undefined;
     }
-    if (!intersectInput.isVisible(point)) {
+    if (domainObject.useClippingInIntersection && !intersectInput.isVisible(point)) {
       return undefined;
     }
     const customObjectIntersection: DomainObjectIntersection = {

@@ -19,10 +19,10 @@ export class ExampleDragger extends BaseDragger {
   private readonly _domainObject: ExampleDomainObject;
   private readonly _center: Vector3;
   private readonly _plane: Plane;
-  private readonly _offset: Vector3;
+  private readonly _offset: Vector3; // Correction for picking the sphere other places than in the center
 
   // ==================================================
-  // CONTRUCTOR
+  // CONSTRUCTOR
   // ==================================================
 
   public constructor(props: CreateDraggerProps, domainObject: ExampleDomainObject) {
@@ -31,7 +31,7 @@ export class ExampleDragger extends BaseDragger {
     this._center = this._domainObject.center.clone();
     this._plane = new Plane().setFromNormalAndCoplanarPoint(this.ray.direction, this._center);
 
-    // This is the adjustment for hittig the sphere other places than in the center
+    // This is the correction for picking at the sphere other places than in the center
     const planeIntersection = this.ray.intersectPlane(this._plane, new Vector3());
     if (planeIntersection === null) {
       throw new Error('Failed to intersect plane');
@@ -56,8 +56,12 @@ export class ExampleDragger extends BaseDragger {
     if (planeIntersection.equals(this._center)) {
       return false; // No change
     }
+    if (this.transaction === undefined) {
+      this.transaction = this._domainObject.createTransaction(Changes.geometry);
+    }
     this._domainObject.center.copy(planeIntersection);
     this.domainObject.notify(Changes.geometry);
+
     return true;
   }
 }

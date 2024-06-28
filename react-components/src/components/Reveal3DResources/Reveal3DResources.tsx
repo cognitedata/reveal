@@ -62,7 +62,7 @@ export const Reveal3DResources = ({
       .map((options) => ({ ...image360Settings, ...options }));
   }, [resources, image360Settings]);
 
-  useRemoveNonReferencedModels(reveal3DModels, image360CollectionAddOptions, viewer);
+  useRemoveNonReferencedModels(resources, viewer);
 
   const cadModelOptions = useMemo(
     () => reveal3DModels.filter((model): model is CadModelOptions => model.type === 'cad'),

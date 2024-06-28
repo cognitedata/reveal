@@ -14,13 +14,17 @@ import {
   Vector3
 } from 'three';
 import Keyboard from '../Keyboard';
-import { getNormalizedPixelCoordinates, getPixelCoordinatesFromEvent, getWheelEventDelta } from '@reveal/utilities';
+import {
+  Vector3Pool,
+  getNormalizedPixelCoordinates,
+  getPixelCoordinatesFromEvent,
+  getWheelEventDelta
+} from '@reveal/utilities';
 import { FlexibleControlsType } from './FlexibleControlsType';
 import { FlexibleControlsOptions } from './FlexibleControlsOptions';
 import { FlexibleWheelZoomType } from './FlexibleWheelZoomType';
 import { DampedVector3 } from './DampedVector3';
 import { DampedSpherical } from './DampedSpherical';
-import { ReusableVector3s } from './ReusableVector3s';
 import { GetPickedPointByPixelCoordinates } from './GetPickedPointByPixelCoordinates';
 import { FlexibleControlsTranslator } from './FlexibleControlsTranslator';
 import { FlexibleControlsRotationHelper } from './FlexibleControlsRotationHelper';
@@ -63,7 +67,6 @@ export class FlexibleControls {
   private _getPickedPointByPixelCoordinates: GetPickedPointByPixelCoordinates | undefined;
 
   // Temporary objects used for calculations to avoid allocations
-  private readonly _reusableVector3s = new ReusableVector3s();
   private readonly _rotationHelper = new FlexibleControlsRotationHelper();
 
   // Used in mouse move, if not dragging it is undefined
@@ -212,7 +215,7 @@ export class FlexibleControls {
   }
 
   //================================================
-  // INSTANCE METHODS: Pulic getters and setters
+  // INSTANCE METHODS: Public getters and setters
   //================================================
 
   public getTarget(): Vector3 {
@@ -227,7 +230,7 @@ export class FlexibleControls {
     if (this._tempTarget) {
       return this._tempTarget;
     }
-    return this.newVector3().addVectors(this._cameraPosition.value, this._cameraVector.getValueVector());
+    return newVector3().addVectors(this._cameraPosition.value, this._cameraVector.getValueVector());
   }
 
   public getState(): { target: Vector3; position: Vector3 } {
@@ -287,7 +290,7 @@ export class FlexibleControls {
     this._target.copy(target);
 
     // CameraVector = Target - Position
-    const vector = this.newVector3().subVectors(target, position);
+    const vector = newVector3().subVectors(target, position);
     vector.normalize();
     this._cameraVector.copy(vector);
     this.updateCameraAndTriggerCameraChangeEvent();
@@ -309,12 +312,12 @@ export class FlexibleControls {
     this.isInitialized = true;
     this._cameraPosition.copy(position);
 
-    const cameraVector = this.newVector3().set(0, 0, -1);
+    const cameraVector = newVector3().set(0, 0, -1);
     cameraVector.applyQuaternion(rotation);
 
     if (DampedSpherical.isVertical(cameraVector)) {
       // Looking from top or bottom, the theta must be defined in a proper way
-      const upVector = this.newVector3().set(0, 1, 0);
+      const upVector = newVector3().set(0, 1, 0);
       upVector.applyQuaternion(rotation);
       this._cameraVector.setThetaFromVector(upVector);
     }
@@ -377,10 +380,6 @@ export class FlexibleControls {
     const targetFPSOverActualFPS = TARGET_FPS / actualFPS;
     const dampingFactor = Math.min(this._options.dampingFactor * targetFPSOverActualFPS, 1);
     return dampingFactor;
-  }
-
-  private newVector3(): Vector3 {
-    return this._reusableVector3s.getNext();
   }
 
   //================================================
@@ -497,17 +496,22 @@ export class FlexibleControls {
     this._keyboard.onKey(event, down);
   }
 
-  public readonly onWheel = async (event: WheelEvent): Promise<void> => {
+  public readonly onWheelHandler = async (event: WheelEvent): Promise<void> => {
+    if (!this.isEnabled) {
+      return;
+    }
+    this.onWheel(event, getWheelEventDelta(event));
+  };
+
+  public async onWheel(event: WheelEvent, delta: number): Promise<void> {
     if (!this.isEnabled) {
       return;
     }
     event.preventDefault();
-
     const pixelCoords = getPixelCoordinatesFromEvent(event, this._domElement);
 
     await this.setScrollCursorByWheelEventCoords(pixelCoords);
 
-    const delta = getWheelEventDelta(event);
     if (this._camera instanceof PerspectiveCamera) {
       const normalizedCoords = this.getNormalizedPixelCoordinates(pixelCoords);
       if (this.isStationary) {
@@ -521,7 +525,7 @@ export class FlexibleControls {
       const deltaDistance = Math.sign(delta) * this._options.orthographicCameraDollyFactor;
       this.dollyOrthographicCamera(deltaDistance);
     }
-  };
+  }
 
   private readonly onContextMenu = (event: MouseEvent) => {
     if (!this.isEnabled) {
@@ -537,7 +541,7 @@ export class FlexibleControls {
   public addEventListeners(): void {
     this._keyboard.addEventListeners(this._domElement);
     this._domElement.addEventListener('keydown', this.onKeyDown);
-    this._domElement.addEventListener('wheel', this.onWheel);
+    this._domElement.addEventListener('wheel', this.onWheelHandler);
     this._domElement.addEventListener('contextmenu', this.onContextMenu);
   }
 
@@ -545,7 +549,7 @@ export class FlexibleControls {
     this._listeners.removeEventListeners();
     this._keyboard.removeEventListeners(this._domElement);
     this._domElement.removeEventListener('keydown', this.onKeyDown);
-    this._domElement.removeEventListener('wheel', this.onWheel);
+    this._domElement.removeEventListener('wheel', this.onWheelHandler);
     this._domElement.removeEventListener('contextmenu', this.onContextMenu);
   }
 
@@ -606,7 +610,7 @@ export class FlexibleControls {
     }
     let deltaAzimuthAngle = this._options.mouseRotationSpeedAzimuth * delta.x;
     let deltaPolarAngle = this._options.mouseRotationSpeedPolar * delta.y;
-    // It is more natural that the first persion rotate slower then the other modes
+    // It is more natural that the first person rotate slower then the other modes
     if (this.isStationary || this.controlsType == FlexibleControlsType.FirstPerson) {
       deltaAzimuthAngle *= 0.5;
       deltaPolarAngle *= 0.5;
@@ -768,7 +772,7 @@ export class FlexibleControls {
   private pan(deltaX: number, deltaY: number, deltaZ: number, keys = false) {
     // Local function:
     const panByDimension = (distance: number, dimension: number, vertical: boolean) => {
-      const delta = this.newVector3();
+      const delta = newVector3();
       delta.setFromMatrixColumn(this._camera.matrix, dimension);
       if (keys) {
         if (vertical) {
@@ -971,9 +975,9 @@ export class FlexibleControls {
     if (!this.isStationary) {
       this.setControlsType(FlexibleControlsType.FirstPerson);
     }
-    const speedFactor = this._keyboard.isShiftPressed() ? this._options.keyboardFastMoveFactor : 1;
-    const speedXY = timeScale * speedFactor * this._options.keyboardPanSpeed;
-    const speedZ = timeScale * speedFactor * this._options.keyboardDollySpeed;
+    const keyboardSpeed = this._options.getKeyboardSpeed(this._keyboard.isShiftPressed());
+    const speedXY = timeScale * keyboardSpeed * this._options.keyboardPanSpeed;
+    const speedZ = timeScale * keyboardSpeed * this._options.keyboardDollySpeed;
 
     this.pan(speedXY * deltaX, speedXY * deltaY, speedZ * deltaZ, true);
     return true;
@@ -1024,4 +1028,13 @@ class MouseDragInfo {
   }
   public readonly prevPosition: Vector2;
   public translator: FlexibleControlsTranslator | undefined = undefined;
+}
+
+// ==================================================
+// PRIVATE FUNCTIONS: Vector pool
+// ==================================================
+
+const VECTOR_POOL = new Vector3Pool();
+function newVector3(copyFrom?: Vector3): Vector3 {
+  return VECTOR_POOL.getNext(copyFrom);
 }

@@ -1,73 +1,97 @@
-const transformNode = (node) => {
-  const code = node.value
-    .trim()
-    // allows new lines in jsx snippets
-    .replace(/(\r\n|\n|\r)/gm, '\n')
-    // handles backtick usage in jsx snippets
-    .replace(/`/gm, '\\`')
-    .replace(/\$/gm, '\\$');
+import { is } from "unist-util-is";
+import { visit } from "unist-util-visit";
 
-  return [
-    {
-      type: 'jsx',
-      value: '<LiveCodeSnippet>{`' + code + '`}</LiveCodeSnippet>',
-    },
-  ];
-};
+/**
+ * adapted from https://github.com/mrazauskas/docusaurus-remark-plugin-tab-blocks/blob/b7dab1533dc422df00ce965a87fef840a62255bb/index.js
+ */
 
-const versionedImportNode = {
-  runnable: {
-    type: 'import',
-    value:
-      "import { LiveCodeSnippet } from '@site/docs/components/LiveCodeSnippet';",
-  },
-  'runnable-1x': {
-    type: 'import',
-    value:
-      "import { LiveCodeSnippet } from '@site/versioned_docs/version-1.x/components/LiveCodeSnippet';",
-  },
-  'runnable-2x': {
-    type: 'import',
-    value:
-      "import { LiveCodeSnippet } from '@site/versioned_docs/version-2.x/components/LiveCodeSnippet';",
-  },
-  'runnable-3x': {
-    type: 'import',
-    value:
-      "import { LiveCodeSnippet } from '@site/versioned_docs/version-3.x/components/LiveCodeSnippet';",
-  },
-  'runnable-4x': {
-    type: 'import',
-    value:
-      "import { LiveCodeSnippet } from '@site/versioned_docs/version-4.x/components/LiveCodeSnippet';",
+function getImportNodes(metaString) {
+
+  const docsPath = getDocsPath(metaString);
+
+  if (docsPath === undefined) {
+    return undefined;
   }
-};
 
-module.exports = () => {
-  let transformed = false;
-  let importNode;
-  const transformer = (node) => {
-    if (node.type === 'code' && versionedImportNode[node.meta]) {
-      transformed = true;
-      importNode = versionedImportNode[node.meta];
-      return transformNode(node);
-    }
-    if (Array.isArray(node.children)) {
-      let index = 0;
-      while (index < node.children.length) {
-        const result = transformer(node.children[index]);
-        if (result) {
-          node.children.splice(index, 1, ...result);
-          index += result.length;
-        } else {
-          index += 1;
-        }
-      }
-    }
-    if (node.type === 'root' && transformed) {
-      node.children.unshift(importNode);
-    }
-    return null;
+  return {
+    data: {
+      estree: {
+        body: [
+          {
+            source: {
+              raw: `'@site/${docsPath}/components/LiveCodeSnippet'`,
+              type: "Literal",
+              value: `@site/${docsPath}/components/LiveCodeSnippet`,
+            },
+            specifiers: [
+              {
+                local: { name: "LiveCodeSnippet", type: "Identifier" },
+                type: "ImportDefaultSpecifier",
+              },
+            ],
+            type: "ImportDeclaration",
+          },
+        ],
+        type: "Program",
+      },
+    },
+    type: "mdxjsEsm",
+    value: `import LiveCodeSnippet from '@site/${docsPath}/components/LiveCodeSnippet';`,
   };
-  return transformer;
-};
+
+  function getDocsPath(metaString) {
+    switch(metaString) {
+    case 'runnable': return 'docs';
+    case 'runnable-1x': return 'versioned_docs/version-1.x';
+    case 'runnable-2x': return 'versioned_docs/version-2.x';
+    case 'runnable-3x': return 'versioned_docs/version-3.x';
+    case 'runnable-4x': return 'versioned_docs/version-4.x';
+    default: return undefined;
+    }
+  }
+}
+
+function createSnippet(codeNode) {
+  return {
+    type: 'mdxJsxFlowElement',
+    name: 'LiveCodeSnippet',
+    attributes: [],
+    children: [{ type: 'text', value: codeNode.value }]
+  };
+}
+
+function resolveConfig(options) {
+  return {
+    groupId: options.groupId,
+    labels: new Map([
+      ["js", "JavaScript"],
+      ["ts", "TypeScript"],
+      ...(options.labels || []),
+    ]),
+    sync: options.sync ?? true,
+  };
+}
+
+function plugin(options = {}) {
+  const config = resolveConfig(options);
+
+  return function transformer(tree) {
+    let importNodes = undefined;
+
+    visit(tree, ['code', 'mdxjsEsm'], (node, index, parent) => {
+      if (!node.meta?.includes('runnable')) {
+        return;
+      }
+
+      importNodes = getImportNodes(node.meta);
+
+      parent.children[index] = createSnippet(node);
+    });
+
+    if (importNodes !== undefined) {
+      tree.children.unshift(importNodes);
+    }
+  };
+}
+
+export default plugin;

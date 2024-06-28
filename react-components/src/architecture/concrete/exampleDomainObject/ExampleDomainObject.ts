@@ -3,7 +3,7 @@
  */
 
 import { ExampleRenderStyle } from './ExampleRenderStyle';
-import { type RenderStyle } from '../../base/domainObjectsHelpers/RenderStyle';
+import { type RenderStyle } from '../../base/renderStyles/RenderStyle';
 import { type ThreeView } from '../../base/views/ThreeView';
 import { ExampleView } from './ExampleView';
 import { PanelInfo } from '../../base/domainObjectsHelpers/PanelInfo';
@@ -16,6 +16,11 @@ import { PopupStyle } from '../../base/domainObjectsHelpers/PopupStyle';
 import { type BaseDragger } from '../../base/domainObjectsHelpers/BaseDragger';
 import { ExampleDragger } from './ExampleDragger';
 import { Quantity } from '../../base/domainObjectsHelpers/Quantity';
+import { type TranslateKey } from '../../base/utilities/TranslateKey';
+import { type Transaction } from '../../base/undo/Transaction';
+import { type DomainObject } from '../../base/domainObjects/DomainObject';
+import { Changes } from '../../base/domainObjectsHelpers/Changes';
+import { DomainObjectTransaction } from '../../base/undo/DomainObjectTransaction';
 
 export class ExampleDomainObject extends VisualDomainObject {
   // ==================================================
@@ -40,8 +45,8 @@ export class ExampleDomainObject extends VisualDomainObject {
     return 'Circle';
   }
 
-  public override get typeName(): string {
-    return 'Example';
+  public override get typeName(): TranslateKey {
+    return { fallback: 'Example' };
   }
 
   public override get canBeRemoved(): boolean {
@@ -62,20 +67,37 @@ export class ExampleDomainObject extends VisualDomainObject {
 
   public override getPanelInfo(): PanelInfo | undefined {
     const info = new PanelInfo();
-    info.setHeader('NAME', this.name);
-    add('XCORDINATE', 'X coordinate', this.center.x, Quantity.Length);
-    add('YCORDINATE', 'Y coordinate', this.center.y, Quantity.Length);
-    add('ZCORDINATE', 'Z coordinate', this.center.z, Quantity.Length);
+    info.setHeader(this.typeName);
+    // In production code, you should add a Key also!
+    add('X coordinate', this.center.x, Quantity.Length);
+    add('Y coordinate', this.center.y, Quantity.Length);
+    add('Z coordinate', this.center.z, Quantity.Length);
     return info;
 
-    function add(key: string, fallback: string, value: number, quantity: Quantity): void {
-      info.add({ key, fallback, value, quantity });
+    function add(fallback: string, value: number, quantity: Quantity): void {
+      info.add({ fallback, value, quantity });
     }
   }
 
   public override getPanelInfoStyle(): PopupStyle {
-    // bottom = 66 because the toolbar is below
-    return new PopupStyle({ bottom: 66, left: 0 });
+    return new PopupStyle({ bottom: 50, left: 0 });
+  }
+
+  public override createTransaction(changed: symbol): Transaction {
+    return new DomainObjectTransaction(this, changed);
+  }
+
+  public override clone(what?: symbol): DomainObject {
+    const clone = new ExampleDomainObject();
+    clone.copyFrom(this, what);
+    return clone;
+  }
+
+  public override copyFrom(domainObject: ExampleDomainObject, what?: symbol): void {
+    super.copyFrom(domainObject, what);
+    if (what === undefined || what === Changes.geometry) {
+      this.center.copy(domainObject.center);
+    }
   }
 
   // ==================================================

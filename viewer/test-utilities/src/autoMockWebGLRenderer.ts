@@ -64,6 +64,11 @@ function autoMockGLRenderer(
   renderer.setup(instance => instance.getScissorTest()).returns(true);
   renderer.setup(instance => instance.setScissorTest(It.IsAny())).returns();
   renderer.setup(instance => instance.setSize(It.IsAny(), It.IsAny())).returns();
+  renderer
+    .setup(instance =>
+      instance.readRenderTargetPixelsAsync(It.IsAny(), It.IsAny(), It.IsAny(), It.IsAny(), It.IsAny(), It.IsAny())
+    )
+    .returns(Promise.resolve(new Uint8Array(4)));
   renderer.setup(instance => instance.renderLists).returns(renderLists.object());
   renderer.setup(instance => instance.state).returns(webglState.object());
   renderer.setup(instance => instance.extensions).returns(new Mock<WebGLExtensions>().object());

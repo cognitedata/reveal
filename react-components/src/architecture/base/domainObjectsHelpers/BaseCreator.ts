@@ -6,6 +6,7 @@ import { type Vector3, type Ray } from 'three';
 import { replaceLast } from '../utilities/extensions/arrayExtensions';
 import { type AnyIntersection, CDF_TO_VIEWER_TRANSFORMATION } from '@cognite/reveal';
 import { type DomainObject } from '../domainObjects/DomainObject';
+import { type BaseTool } from '../commands/BaseTool';
 
 /**
  * Helper class for create a domain object by clicking around
@@ -17,6 +18,15 @@ export abstract class BaseCreator {
 
   private readonly _points: Vector3[] = []; // Clicked points
   private _lastIsPending: boolean = false; // If true, the last point is hover and not confirmed.
+  protected readonly _tool: BaseTool; // The tool that created this creator
+
+  // ==================================================
+  // CONSTRUCTOR
+  // ==================================================
+
+  protected constructor(tool: BaseTool) {
+    this._tool = tool;
+  }
 
   // ==================================================
   // INSTANCE PROPERTIES
@@ -30,7 +40,7 @@ export abstract class BaseCreator {
     return this.points.length;
   }
 
-  protected get notPendingPointCount(): number {
+  public get notPendingPointCount(): number {
     return this.lastIsPending ? this.pointCount - 1 : this.pointCount;
   }
 
@@ -50,14 +60,18 @@ export abstract class BaseCreator {
     return this._lastIsPending;
   }
 
+  protected set lastIsPending(value: boolean) {
+    this._lastIsPending = value;
+  }
+
   // ==================================================
   // VIRTUAL METHODS
   // ==================================================
 
   /**
-   * Gets the value indicating whether to prefer intersection with somthing.
+   * Gets the value indicating whether to prefer intersection with something.
    * If this is true, it will first try to intersect an object. If false the point
-   * will normally be calculatd based on the previous point and the ray in addPointCore
+   * will normally be calculated based on the previous point and the ray in addPointCore
    *
    * @returns {boolean} The value indicating whether to prefer intersection.
    */
@@ -70,10 +84,10 @@ export abstract class BaseCreator {
   /**
    * @returns The minimum required points to create the domain object.
    */
-  protected abstract get minimumPointCount(): number;
+  public abstract get minimumPointCount(): number;
 
   /**
-   * @returns The maximim required points to create the domain object.
+   * @returns The maximum required points to create the domain object.
    */
 
   protected abstract get maximumPointCount(): number;
@@ -97,7 +111,11 @@ export abstract class BaseCreator {
    * @returns {boolean} Returns true if the pending object is created successfully, false if it is removed
    */
   public handleEscape(): boolean {
-    return false;
+    if (this.notPendingPointCount >= this.minimumPointCount) {
+      return true; // Successfully
+    }
+    this.domainObject.removeInteractive();
+    return false; // Removed
   }
 
   // ==================================================

@@ -12,6 +12,8 @@ import {
   type ICustomObject
 } from '@cognite/reveal';
 import { type DomainObjectIntersection } from '../domainObjectsHelpers/DomainObjectIntersection';
+import { VisualDomainObject } from '../domainObjects/VisualDomainObject';
+import { type DomainObject } from '../domainObjects/DomainObject';
 
 /**
  * Represents an abstract class for a Three.js view that renders an Object3D.
@@ -23,7 +25,10 @@ import { type DomainObjectIntersection } from '../domainObjectsHelpers/DomainObj
  * - calculateBoundingBox() to calculate the bounding box if you don not relay on three.js.
  */
 
-export abstract class GroupThreeView extends ThreeView implements ICustomObject {
+export abstract class GroupThreeView<DomainObjectType extends DomainObject = DomainObject>
+  extends ThreeView<DomainObjectType>
+  implements ICustomObject
+{
   // ==================================================
   // INSTANCE FIELDS
   // ==================================================
@@ -45,7 +50,7 @@ export abstract class GroupThreeView extends ThreeView implements ICustomObject 
       this.removeChildren();
     }
     if (this.isEmpty) {
-      this.makeChilderen();
+      this.makeChildren();
     }
     return this._group;
   }
@@ -59,6 +64,10 @@ export abstract class GroupThreeView extends ThreeView implements ICustomObject 
   }
 
   public get isPartOfBoundingBox(): boolean {
+    return true; // To be overridden
+  }
+
+  public get useDepthTest(): boolean {
     return true; // To be overridden
   }
 
@@ -79,8 +88,16 @@ export abstract class GroupThreeView extends ThreeView implements ICustomObject 
     if (closestDistance !== undefined && closestDistance < distance) {
       return undefined;
     }
-    if (!intersectInput.isVisible(point)) {
-      return undefined;
+    const { domainObject } = this;
+
+    if (domainObject instanceof VisualDomainObject) {
+      if (domainObject.useClippingInIntersection && !intersectInput.isVisible(point)) {
+        return undefined;
+      }
+    } else {
+      if (!intersectInput.isVisible(point)) {
+        return undefined;
+      }
     }
     const customObjectIntersection: DomainObjectIntersection = {
       type: 'customObject',
@@ -88,7 +105,7 @@ export abstract class GroupThreeView extends ThreeView implements ICustomObject 
       distanceToCamera: distance,
       userData: intersection[0],
       customObject: this,
-      domainObject: this.domainObject
+      domainObject
     };
     if (this.shouldPickBoundingBox) {
       const boundingBox = this.boundingBox;
@@ -106,7 +123,7 @@ export abstract class GroupThreeView extends ThreeView implements ICustomObject 
   public override initialize(): void {
     super.initialize();
     if (this.isEmpty) {
-      this.makeChilderen();
+      this.makeChildren();
     }
     const { viewer } = this.renderTarget;
     viewer.addCustomObject(this);
@@ -180,7 +197,7 @@ export abstract class GroupThreeView extends ThreeView implements ICustomObject 
   // INSTANCE METHODS
   // ==================================================
 
-  private makeChilderen(): void {
+  private makeChildren(): void {
     if (!this.isEmpty) {
       throw Error('Can make the object when it is already made');
     }

@@ -138,7 +138,7 @@ ___
 
 #### executeFilter
 
-▸ **executeFilter**(`filter`): `Promise`<void\>
+▸ **executeFilter**(`filter`): `Promise`\<void\>
 
 Updates the node collection to hold nodes associated with the asset given, or
 assets within the bounding box or all assets associated with the 3D model.
@@ -153,7 +153,7 @@ assets within the bounding box or all assets associated with the 3D model.
 
 ##### Returns
 
-`Promise`<void\>
+`Promise`\<void\>
 
 ##### Defined in
 
@@ -601,7 +601,7 @@ THREE.Object3D.type
 
 Returns the unit the coordinates for the model is stored. Returns an empty string
 if no unit has been stored.
-Note that coordinates in Reveal always are converted to meters using {@see modelUnitToMetersFactor}.
+Note that coordinates in Reveal always are converted to meters using @see \{@link modelUnitToMetersFactor}.
 
 **`version`** New since 2.1
 
@@ -652,13 +652,13 @@ ___
 
 #### styledNodeCollections
 
-• `get` **styledNodeCollections**(): { `appearance`: [NodeAppearance](#nodeappearance) ; `nodeCollection`: [NodeCollectionBase](#classes_cognite_revealnodecollectionbasemd)  }[]
+• `get` **styledNodeCollections**(): \{ `appearance`: [NodeAppearance](#nodeappearance) ; `nodeCollection`: [NodeCollectionBase](#classes_cognite_revealnodecollectionbasemd)  }[]
 
 Returns all currently registered node collections and associated appearance.
 
 ##### Returns
 
-{ `appearance`: [NodeAppearance](#nodeappearance) ; `nodeCollection`: [NodeCollectionBase](#classes_cognite_revealnodecollectionbasemd)  }[]
+\{ `appearance`: [NodeAppearance](#nodeappearance) ; `nodeCollection`: [NodeCollectionBase](#classes_cognite_revealnodecollectionbasemd)  }[]
 
 ##### Defined in
 
@@ -735,7 +735,7 @@ ___
 
 #### getAncestorTreeIndices
 
-▸ **getAncestorTreeIndices**(`treeIndex`, `generation`): `Promise`<[NumericRange](#classes_cognite_revealnumericrangemd)\>
+▸ **getAncestorTreeIndices**(`treeIndex`, `generation`): `Promise`\<[NumericRange](#classes_cognite_revealnumericrangemd)\>
 
 Determines the tree index range of a subtree of an ancestor of the provided
 node defined by a tree index.
@@ -749,7 +749,7 @@ node defined by a tree index.
 
 ##### Returns
 
-`Promise`<[NumericRange](#classes_cognite_revealnumericrangemd)\>
+`Promise`\<[NumericRange](#classes_cognite_revealnumericrangemd)\>
 
 Tree index range of the subtree spanned by the ancestor at the
 "generation" specified, or the root.
@@ -762,7 +762,7 @@ ___
 
 #### getBoundingBoxByNodeId
 
-▸ **getBoundingBoxByNodeId**(`nodeId`, `box?`): `Promise`<Box3\>
+▸ **getBoundingBoxByNodeId**(`nodeId`, `box?`): `Promise`\<Box3\>
 
 Fetches a bounding box from the CDF by the nodeId.
 
@@ -787,7 +787,7 @@ const box = await model.getBoundingBoxByNodeId(nodeId);
 
 ##### Returns
 
-`Promise`<Box3\>
+`Promise`\<Box3\>
 
 ##### Defined in
 
@@ -797,7 +797,7 @@ ___
 
 #### getBoundingBoxByTreeIndex
 
-▸ **getBoundingBoxByTreeIndex**(`treeIndex`, `box?`): `Promise`<Box3\>
+▸ **getBoundingBoxByTreeIndex**(`treeIndex`, `box?`): `Promise`\<Box3\>
 
 Determine the bounding box of the node identified by the tree index provided. Note that this
 function uses the CDF API to look up the bounding box.
@@ -823,7 +823,7 @@ const box = await model.getBoundingBoxByTreeIndex(treeIndex);
 
 ##### Returns
 
-`Promise`<Box3\>
+`Promise`\<Box3\>
 
 ##### Defined in
 
@@ -938,7 +938,7 @@ ___
 
 #### getSubtreeTreeIndices
 
-▸ **getSubtreeTreeIndices**(`treeIndex`): `Promise`<[NumericRange](#classes_cognite_revealnumericrangemd)\>
+▸ **getSubtreeTreeIndices**(`treeIndex`): `Promise`\<[NumericRange](#classes_cognite_revealnumericrangemd)\>
 
 Determines the range of tree indices for a given subtree.
 
@@ -950,7 +950,7 @@ Determines the range of tree indices for a given subtree.
 
 ##### Returns
 
-`Promise`<[NumericRange](#classes_cognite_revealnumericrangemd)\>
+`Promise`\<[NumericRange](#classes_cognite_revealnumericrangemd)\>
 
 ##### Defined in
 
@@ -960,7 +960,7 @@ ___
 
 #### iterateNodesByTreeIndex
 
-▸ **iterateNodesByTreeIndex**(`action`): `Promise`<void\>
+▸ **iterateNodesByTreeIndex**(`action`): `Promise`\<void\>
 
 Iterates over all nodes in the model and applies the provided action to each node (identified by tree index).
 The passed action is applied incrementally to avoid main thread blocking, meaning that the changes can be partially
@@ -980,7 +980,7 @@ await model.iterateNodesByTreeIndex(logIndex); // 0, 1, 2, ...
 
 ##### Returns
 
-`Promise`<void\>
+`Promise`\<void\>
 
 Promise that is resolved once the iteration is done.
 
@@ -992,7 +992,7 @@ ___
 
 #### iterateSubtreeByTreeIndex
 
-▸ **iterateSubtreeByTreeIndex**(`treeIndex`, `action`): `Promise`<void\>
+▸ **iterateSubtreeByTreeIndex**(`treeIndex`, `action`): `Promise`\<void\>
 
 Iterates over all nodes in a subtree of the model and applies the provided action to each node
 (identified by tree index). The provided node is included in the visited set.  The passed action
@@ -1016,7 +1016,7 @@ await model.iterateNodesByTreeIndex(treeIndex => {
 
 ##### Returns
 
-`Promise`<void\>
+`Promise`\<void\>
 
 Promise that is resolved once the iteration is done.
 
@@ -1083,7 +1083,7 @@ ___
 
 #### mapNodeIdToTreeIndex
 
-▸ **mapNodeIdToTreeIndex**(`nodeId`): `Promise`<number\>
+▸ **mapNodeIdToTreeIndex**(`nodeId`): `Promise`\<number\>
 
 Maps a single node ID to tree index. This is useful when you e.g. have a
 node ID from an asset mapping and want to highlight the given asset using
@@ -1100,7 +1100,7 @@ mapping multiple IDs.
 
 ##### Returns
 
-`Promise`<number\>
+`Promise`\<number\>
 
 TreeIndex of the provided node.
 
@@ -1112,7 +1112,7 @@ ___
 
 #### mapNodeIdsToTreeIndices
 
-▸ **mapNodeIdsToTreeIndices**(`nodeIds`): `Promise`<number[]\>
+▸ **mapNodeIdsToTreeIndices**(`nodeIds`): `Promise`\<number[]\>
 
 Maps a list of Node IDs to tree indices. This function is useful when you have
 a list of nodes, e.g. from Asset Mappings, that you want to highlight, hide,
@@ -1128,7 +1128,7 @@ color etc in the viewer.
 
 ##### Returns
 
-`Promise`<number[]\>
+`Promise`\<number[]\>
 
 A list of tree indices corresponing to the elements in the input.
 
@@ -1168,7 +1168,7 @@ ___
 
 #### mapTreeIndexToNodeId
 
-▸ **mapTreeIndexToNodeId**(`treeIndex`): `Promise`<number\>
+▸ **mapTreeIndexToNodeId**(`treeIndex`): `Promise`\<number\>
 
 Maps a single tree index to node ID for use with the API. If you have multiple
 tree indices to map, [mapNodeIdsToTreeIndices](#mapnodeidstotreeindices) is recommended for better
@@ -1184,7 +1184,7 @@ performance.
 
 ##### Returns
 
-`Promise`<number\>
+`Promise`\<number\>
 
 TreeIndex of the provided node.
 
@@ -1196,7 +1196,7 @@ ___
 
 #### mapTreeIndicesToNodeIds
 
-▸ **mapTreeIndicesToNodeIds**(`treeIndices`): `Promise`<number[]\>
+▸ **mapTreeIndicesToNodeIds**(`treeIndices`): `Promise`\<number[]\>
 
 Maps a list of tree indices to node IDs for use with the Cognite SDK.
 This function is useful if you have a list of tree indices, e.g. from
@@ -1213,7 +1213,7 @@ some operations on these nodes using the SDK.
 
 ##### Returns
 
-`Promise`<number[]\>
+`Promise`\<number[]\>
 
 A list of node IDs corresponding to the elements of the input.
 
@@ -1264,7 +1264,7 @@ ___
 
 #### resetNodeTransformByTreeIndex
 
-▸ **resetNodeTransformByTreeIndex**(`treeIndex`, `applyToChildren?`): `Promise`<number\>
+▸ **resetNodeTransformByTreeIndex**(`treeIndex`, `applyToChildren?`): `Promise`\<number\>
 
 Remove override transform of the node by tree index.
 
@@ -1277,7 +1277,7 @@ Remove override transform of the node by tree index.
 
 ##### Returns
 
-`Promise`<number\>
+`Promise`\<number\>
 
 ##### Defined in
 
@@ -1364,7 +1364,7 @@ ___
 
 #### setNodeTransformByTreeIndex
 
-▸ **setNodeTransformByTreeIndex**(`treeIndex`, `transform`, `applyToChildren?`): `Promise`<number\>
+▸ **setNodeTransformByTreeIndex**(`treeIndex`, `transform`, `applyToChildren?`): `Promise`\<number\>
 
 Set override transform of the node by tree index.
 
@@ -1378,7 +1378,7 @@ Set override transform of the node by tree index.
 
 ##### Returns
 
-`Promise`<number\>
+`Promise`\<number\>
 
 ##### Defined in
 
@@ -1697,7 +1697,7 @@ Returns the renderer used to produce images from 3D geometry.
 
 #### addCadModel
 
-▸ **addCadModel**(`options`): `Promise`<[Cognite3DModel](#classes_cognite_revealcognite3dmodelmd)\>
+▸ **addCadModel**(`options`): `Promise`\<[Cognite3DModel](#classes_cognite_revealcognite3dmodelmd)\>
 
 Add a new CAD 3D model to the viewer.
 Call [Cognite3DViewer.fitCameraToModel](#fitcameratomodel) to see the model after the model has loaded.
@@ -1721,7 +1721,7 @@ viewer.fitCameraToModel(model, 0);
 
 ##### Returns
 
-`Promise`<[Cognite3DModel](#classes_cognite_revealcognite3dmodelmd)\>
+`Promise`\<[Cognite3DModel](#classes_cognite_revealcognite3dmodelmd)\>
 
 ##### Defined in
 
@@ -1731,7 +1731,7 @@ ___
 
 #### addModel
 
-▸ **addModel**(`options`): `Promise`<[Cognite3DModel](#classes_cognite_revealcognite3dmodelmd) \| [CognitePointCloudModel](#classes_cognite_revealcognitepointcloudmodelmd)\>
+▸ **addModel**(`options`): `Promise`\<[Cognite3DModel](#classes_cognite_revealcognite3dmodelmd) \| [CognitePointCloudModel](#classes_cognite_revealcognitepointcloudmodelmd)\>
 
 Add a new model to the viewer.
 Call [Cognite3DViewer.fitCameraToModel](#fitcameratomodel) to see the model after the model has loaded.
@@ -1755,7 +1755,7 @@ viewer.fitCameraToModel(model, 0);
 
 ##### Returns
 
-`Promise`<[Cognite3DModel](#classes_cognite_revealcognite3dmodelmd) \| [CognitePointCloudModel](#classes_cognite_revealcognitepointcloudmodelmd)\>
+`Promise`\<[Cognite3DModel](#classes_cognite_revealcognite3dmodelmd) \| [CognitePointCloudModel](#classes_cognite_revealcognitepointcloudmodelmd)\>
 
 ##### Defined in
 
@@ -1782,7 +1782,7 @@ viewer.addObject3D(sphere);
 
 | Name | Type |
 | :------ | :------ |
-| `object` | `Object3D`<Event\> |
+| `object` | `Object3D`\<Event\> |
 
 ##### Returns
 
@@ -1796,7 +1796,7 @@ ___
 
 #### addPointCloudModel
 
-▸ **addPointCloudModel**(`options`): `Promise`<[CognitePointCloudModel](#classes_cognite_revealcognitepointcloudmodelmd)\>
+▸ **addPointCloudModel**(`options`): `Promise`\<[CognitePointCloudModel](#classes_cognite_revealcognitepointcloudmodelmd)\>
 
 Add a new pointcloud 3D model to the viewer.
 Call [Cognite3DViewer.fitCameraToModel](#fitcameratomodel) to see the model after the model has loaded.
@@ -1820,7 +1820,7 @@ viewer.fitCameraToModel(model, 0);
 
 ##### Returns
 
-`Promise`<[CognitePointCloudModel](#classes_cognite_revealcognitepointcloudmodelmd)\>
+`Promise`\<[CognitePointCloudModel](#classes_cognite_revealcognitepointcloudmodelmd)\>
 
 ##### Defined in
 
@@ -1838,7 +1838,7 @@ Add an object that will be considered a UI object. It will be rendered in the la
 
 | Name | Type | Description |
 | :------ | :------ | :------ |
-| `object` | `Object3D`<Event\> |  |
+| `object` | `Object3D`\<Event\> |  |
 | `screenPos` | `Vector2` | Screen space position of object (in pixels). |
 | `size` | `Vector2` | Pixel width and height of the object. |
 
@@ -1854,7 +1854,7 @@ ___
 
 #### determineModelType
 
-▸ **determineModelType**(`modelId`, `revisionId`): `Promise`<``""`` \| [SupportedModelTypes](#supportedmodeltypes)\>
+▸ **determineModelType**(`modelId`, `revisionId`): `Promise`\<``""`` \| [SupportedModelTypes](#supportedmodeltypes)\>
 
 Use to determine of which type the model is.
 
@@ -1885,7 +1885,7 @@ viewer.fitCameraToModel(model);
 
 ##### Returns
 
-`Promise`<``""`` \| [SupportedModelTypes](#supportedmodeltypes)\>
+`Promise`\<``""`` \| [SupportedModelTypes](#supportedmodeltypes)\>
 
 Empty string if type is not supported.
 
@@ -2115,7 +2115,7 @@ ___
 
 #### getIntersectionFromPixel
 
-▸ **getIntersectionFromPixel**(`offsetX`, `offsetY`, `options?`): `Promise`<[Intersection](#intersection)\>
+▸ **getIntersectionFromPixel**(`offsetX`, `offsetY`, `options?`): `Promise`\<[Intersection](#intersection)\>
 
 Raycasting model(s) for finding where the ray intersects with the model.
 
@@ -2157,7 +2157,7 @@ if (intersection) // it was a hit
 
 ##### Returns
 
-`Promise`<[Intersection](#intersection)\>
+`Promise`\<[Intersection](#intersection)\>
 
 A promise that if there was an intersection then return the intersection object - otherwise it
 returns `null` if there were no intersections.
@@ -2188,7 +2188,7 @@ ___
 
 #### getScreenshot
 
-▸ **getScreenshot**(`width?`, `height?`): `Promise`<string\>
+▸ **getScreenshot**(`width?`, `height?`): `Promise`\<string\>
 
 Take screenshot from the current camera position.
 
@@ -2214,7 +2214,7 @@ document.body.appendChild(url);
 
 ##### Returns
 
-`Promise`<string\>
+`Promise`\<string\>
 
 A [Data URL](https://developer.mozilla.org/en-US/docs/Web/HTTP/Basics_of_HTTP/Data_URIs) of the image ('image/png').
 
@@ -2494,7 +2494,7 @@ viewer.removeObject3D(sphere);
 
 | Name | Type |
 | :------ | :------ |
-| `object` | `Object3D`<Event\> |
+| `object` | `Object3D`\<Event\> |
 
 ##### Returns
 
@@ -2516,7 +2516,7 @@ Removes the UI object from the viewer.
 
 | Name | Type |
 | :------ | :------ |
-| `object` | `Object3D`<Event\> |
+| `object` | `Object3D`\<Event\> |
 
 ##### Returns
 
@@ -2749,7 +2749,7 @@ ___
 
 #### setViewState
 
-▸ **setViewState**(`state`): `Promise`<void\>
+▸ **setViewState**(`state`): `Promise`\<void\>
 
 Restores camera settings from the state provided, and clears all current styled
 node collections and applies the `state` object.
@@ -2762,7 +2762,7 @@ node collections and applies the `state` object.
 
 ##### Returns
 
-`Promise`<void\>
+`Promise`\<void\>
 
 ##### Defined in
 
@@ -2811,7 +2811,7 @@ if (screenCoordinates == null) {
 | Name | Type | Description |
 | :------ | :------ | :------ |
 | `point` | `Vector3` | World space coordinate. |
-| `normalize?` | `boolean` | Optional. If true, coordinates are normalized into [0,1]. If false, the values are in the range [0, <canvas_size>). |
+| `normalize?` | `boolean` | Optional. If true, coordinates are normalized into [0,1]. If false, the values are in the range [0, \<canvas_size>). |
 
 ##### Returns
 
@@ -3336,7 +3336,7 @@ Sets transformation matrix of the model. This overrides the current transformati
 
 | Name | Type |
 | :------ | :------ |
-| `values?` | `Iterable`<number\> |
+| `values?` | `Iterable`\<number\> |
 
 ##### Defined in
 
@@ -3516,7 +3516,7 @@ ___
 
 | Name | Type |
 | :------ | :------ |
-| `otherSet` | [IndexSet](#classes_cognite_revealindexsetmd) \| `Set`<number\> |
+| `otherSet` | [IndexSet](#classes_cognite_revealindexsetmd) \| `Set`\<number\> |
 
 ##### Returns
 
@@ -3618,11 +3618,11 @@ ___
 
 #### toPlainSet
 
-▸ **toPlainSet**(): `Set`<number\>
+▸ **toPlainSet**(): `Set`\<number\>
 
 ##### Returns
 
-`Set`<number\>
+`Set`\<number\>
 
 ##### Defined in
 
@@ -4872,11 +4872,11 @@ ___
 
 #### values
 
-▸ **values**(): `Generator`<number, any, unknown\>
+▸ **values**(): `Generator`\<number, any, unknown\>
 
 ##### Returns
 
-`Generator`<number, any, unknown\>
+`Generator`\<number, any, unknown\>
 
 ##### Defined in
 
@@ -5052,7 +5052,7 @@ ___
 
 #### executeFilter
 
-▸ **executeFilter**(`filter`): `Promise`<void\>
+▸ **executeFilter**(`filter`): `Promise`\<void\>
 
 Populates the node collection with nodes matching the provided filter. This will replace
 the current nodes held by the filter.
@@ -5070,7 +5070,7 @@ set.executeFilter({ 'PDMS': { 'Module': 'AQ550' }});
 
 ##### Returns
 
-`Promise`<void\>
+`Promise`\<void\>
 
 ##### Defined in
 
@@ -5224,7 +5224,7 @@ Construct a new node set.
 
 | Name | Type | Description |
 | :------ | :------ | :------ |
-| `client` | `default` | {@link CogniteClient} authenticated to the project the model is loaded from. |
+| `client` | `default` | \{@link CogniteClient} authenticated to the project the model is loaded from. |
 | `model` | [Cognite3DModel](#classes_cognite_revealcognite3dmodelmd) | CAD model. |
 | `options` | `PropertyFilterNodeCollectionOptions` |  |
 
@@ -5301,11 +5301,11 @@ ___
 
 #### executeFilter
 
-▸ **executeFilter**(`propertyCategory`, `propertyKey`, `propertyValues`): `Promise`<void\>
+▸ **executeFilter**(`propertyCategory`, `propertyKey`, `propertyValues`): `Promise`\<void\>
 
-Execute filter asynchronously, replacing any existing filter active. When {@link propertyValues}
+Execute filter asynchronously, replacing any existing filter active. When \{@link propertyValues}
 contains more than 1000 elements, the operation will be split into multiple batches that
-are executed in parallel. Note that when providing a {@link PropertyFilterNodeCollectionOptions.requestPartitions}
+are executed in parallel. Note that when providing a \{@link PropertyFilterNodeCollectionOptions.requestPartitions}
 during construction of the node set, the total number of batches will be requestPartitions*numberOfBatches.
 
 ##### Parameters
@@ -5318,7 +5318,7 @@ during construction of the node set, the total number of batches will be request
 
 ##### Returns
 
-`Promise`<void\>
+`Promise`\<void\>
 
 ##### Defined in
 
@@ -5483,7 +5483,7 @@ NodeCollectionBase.constructor
 
 | Name | Type |
 | :------ | :------ |
-| `treeIndices?` | `Iterable`<number\> |
+| `treeIndices?` | `Iterable`\<number\> |
 
 ##### Overrides
 
@@ -6158,7 +6158,7 @@ Unregisters an event handler for the 'disposed'-event.
 
 [@cognite/reveal/tools](#modules_cognite_reveal_toolsmd).Cognite3DViewerToolBase
 
-Base class for tools attaching to a {@see Cognite3DViewer}.
+Base class for tools attaching to a @see \{@link Cognite3DViewer}.
 
 ### Hierarchy
 
@@ -6551,11 +6551,11 @@ ___
 
 #### readyPromise
 
-• `get` **readyPromise**(): `Promise`<void\>
+• `get` **readyPromise**(): `Promise`\<void\>
 
 ##### Returns
 
-`Promise`<void\>
+`Promise`\<void\>
 
 ##### Defined in
 
@@ -6586,7 +6586,7 @@ ___
 
 #### expand
 
-▸ **expand**(`expandRadius`): `Promise`<void\>
+▸ **expand**(`expandRadius`): `Promise`\<void\>
 
 ##### Parameters
 
@@ -6596,7 +6596,7 @@ ___
 
 ##### Returns
 
-`Promise`<void\>
+`Promise`\<void\>
 
 ##### Defined in
 
@@ -6776,7 +6776,7 @@ Unregisters an event handler for the 'disposed'-event.
 
 [@cognite/reveal/tools](#modules_cognite_reveal_toolsmd).HtmlOverlayTool
 
-Manages HTMLoverlays for {@see Cognite3DViewer}. Attaches HTML elements to a
+Manages HTMLoverlays for @see \{@link Cognite3DViewer}. Attaches HTML elements to a
 3D position and updates its position/visibility as user moves the camera. This is
 useful to create HTML overlays to highlight information about key positions in the 3D model.
 
@@ -6862,13 +6862,13 @@ overlayTool.dispose();
 
 #### elements
 
-• `get` **elements**(): { `element`: `HTMLElement` ; `position3D`: `Vector3`  }[]
+• `get` **elements**(): \{ `element`: `HTMLElement` ; `position3D`: `Vector3`  }[]
 
 Returns all added HTML elements along with their 3D positions.
 
 ##### Returns
 
-{ `element`: `HTMLElement` ; `position3D`: `Vector3`  }[]
+\{ `element`: `HTMLElement` ; `position3D`: `Vector3`  }[]
 
 ##### Defined in
 
@@ -8939,7 +8939,7 @@ to the Reveal documentation for details.
 
 Note that the data source must support [CdfModelIdentifier](#classes_cognite_reveal_extensions_datasourcecdfmodelidentifiermd).
 
-This cannot be used together with {@link _localModels}.
+This cannot be used together with \{@link _localModels}.
 
 ##### Defined in
 
@@ -9398,7 +9398,7 @@ HttpHeadersProvider.headers
 
 #### getBinaryFile
 
-▸ **getBinaryFile**(`baseUrl`, `fileName`): `Promise`<ArrayBuffer\>
+▸ **getBinaryFile**(`baseUrl`, `fileName`): `Promise`\<ArrayBuffer\>
 
 Downloads a binary blob.
 
@@ -9411,7 +9411,7 @@ Downloads a binary blob.
 
 ##### Returns
 
-`Promise`<ArrayBuffer\>
+`Promise`\<ArrayBuffer\>
 
 ##### Overrides
 
@@ -9425,7 +9425,7 @@ ___
 
 #### getJsonFile
 
-▸ **getJsonFile**(`baseUrl`, `fileName`): `Promise`<any\>
+▸ **getJsonFile**(`baseUrl`, `fileName`): `Promise`\<any\>
 
 Download and parse a JSON file and return the resulting struct.
 
@@ -9438,7 +9438,7 @@ Download and parse a JSON file and return the resulting struct.
 
 ##### Returns
 
-`Promise`<any\>
+`Promise`\<any\>
 
 ##### Overrides
 
@@ -9506,7 +9506,7 @@ Provides metadata for 3D models.
 
 #### getModelCamera
 
-▸ **getModelCamera**(`identifier`): `Promise`<`Object`\>
+▸ **getModelCamera**(`identifier`): `Promise`\<`Object`\>
 
 ##### Parameters
 
@@ -9516,7 +9516,7 @@ Provides metadata for 3D models.
 
 ##### Returns
 
-`Promise`<`Object`\>
+`Promise`\<`Object`\>
 
 ##### Defined in
 
@@ -9526,7 +9526,7 @@ ___
 
 #### getModelMatrix
 
-▸ **getModelMatrix**(`identifier`): `Promise`<Matrix4\>
+▸ **getModelMatrix**(`identifier`): `Promise`\<Matrix4\>
 
 ##### Parameters
 
@@ -9536,7 +9536,7 @@ ___
 
 ##### Returns
 
-`Promise`<Matrix4\>
+`Promise`\<Matrix4\>
 
 ##### Defined in
 
@@ -9546,7 +9546,7 @@ ___
 
 #### getModelUri
 
-▸ **getModelUri**(`identifier`): `Promise`<string\>
+▸ **getModelUri**(`identifier`): `Promise`\<string\>
 
 ##### Parameters
 
@@ -9556,7 +9556,7 @@ ___
 
 ##### Returns
 
-`Promise`<string\>
+`Promise`\<string\>
 
 ##### Defined in
 
@@ -9589,7 +9589,7 @@ Client for retrieving metadata information about CAD nodes.
 
 #### determineNodeAncestorsByNodeId
 
-▸ **determineNodeAncestorsByNodeId**(`modelId`, `revisionId`, `nodeId`, `generation`): `Promise`<`Object`\>
+▸ **determineNodeAncestorsByNodeId**(`modelId`, `revisionId`, `nodeId`, `generation`): `Promise`\<`Object`\>
 
 Determine ancestor subtree span of a given node. If the node doesn't have an
 ancestor at the generation given, the span of the root node is returned.
@@ -9605,7 +9605,7 @@ ancestor at the generation given, the span of the root node is returned.
 
 ##### Returns
 
-`Promise`<`Object`\>
+`Promise`\<`Object`\>
 
 ##### Defined in
 
@@ -9615,7 +9615,7 @@ ___
 
 #### determineTreeIndexAndSubtreeSizesByNodeIds
 
-▸ **determineTreeIndexAndSubtreeSizesByNodeIds**(`modelId`, `revisionId`, `nodeIds`): `Promise`<{ `subtreeSize`: `number` ; `treeIndex`: `number`  }[]\>
+▸ **determineTreeIndexAndSubtreeSizesByNodeIds**(`modelId`, `revisionId`, `nodeIds`): `Promise`\<\{ `subtreeSize`: `number` ; `treeIndex`: `number`  }[]\>
 
 Determines tree index and subtreeSize (i.e. span of the subtree a node is parent
 of) given a set of node IDs.
@@ -9630,7 +9630,7 @@ of) given a set of node IDs.
 
 ##### Returns
 
-`Promise`<{ `subtreeSize`: `number` ; `treeIndex`: `number`  }[]\>
+`Promise`\<\{ `subtreeSize`: `number` ; `treeIndex`: `number`  }[]\>
 
 ##### Defined in
 
@@ -9640,7 +9640,7 @@ ___
 
 #### getBoundingBoxByNodeId
 
-▸ **getBoundingBoxByNodeId**(`modelId`, `revisionId`, `nodeId`, `box?`): `Promise`<Box3\>
+▸ **getBoundingBoxByNodeId**(`modelId`, `revisionId`, `nodeId`, `box?`): `Promise`\<Box3\>
 
 Determines the bounds of the node provided. Note that the returned
 box returned will be in "CDF coordinates" and not transformed using
@@ -9657,7 +9657,7 @@ the model transformation for the given model.
 
 ##### Returns
 
-`Promise`<Box3\>
+`Promise`\<Box3\>
 
 ##### Defined in
 
@@ -9667,7 +9667,7 @@ ___
 
 #### mapNodeIdsToTreeIndices
 
-▸ **mapNodeIdsToTreeIndices**(`modelId`, `revisionId`, `nodeIds`): `Promise`<number[]\>
+▸ **mapNodeIdsToTreeIndices**(`modelId`, `revisionId`, `nodeIds`): `Promise`\<number[]\>
 
 Maps a set of "node IDs" that identify nodes, to the respective
 "tree indexes".
@@ -9682,7 +9682,7 @@ Maps a set of "node IDs" that identify nodes, to the respective
 
 ##### Returns
 
-`Promise`<number[]\>
+`Promise`\<number[]\>
 
 ##### Defined in
 
@@ -9692,7 +9692,7 @@ ___
 
 #### mapTreeIndicesToNodeIds
 
-▸ **mapTreeIndicesToNodeIds**(`modelId`, `revisionId`, `treeIndices`): `Promise`<number[]\>
+▸ **mapTreeIndicesToNodeIds**(`modelId`, `revisionId`, `treeIndices`): `Promise`\<number[]\>
 
 Maps a set of "tree indexes" that identify nodes, to the respective
 "node IDs".
@@ -9707,7 +9707,7 @@ Maps a set of "tree indexes" that identify nodes, to the respective
 
 ##### Returns
 
-`Promise`<number[]\>
+`Promise`\<number[]\>
 
 ##### Defined in
 
@@ -9997,7 +9997,7 @@ ___
 | `defaultNodeAppearance` | [NodeAppearance](#nodeappearance) |
 | `modelId` | `number` |
 | `revisionId` | `number` |
-| `styledSets` | { `appearance`: [NodeAppearance](#nodeappearance) ; `options?`: `any` ; `state`: `any` ; `token`: `string`  }[] |
+| `styledSets` | \{ `appearance`: [NodeAppearance](#nodeappearance) ; `options?`: `any` ; `state`: `any` ; `token`: `string`  }[] |
 
 ##### Defined in
 
@@ -10131,7 +10131,7 @@ ___
 
 #### PointerEventDelegate
 
-Ƭ **PointerEventDelegate**: (`event`: { `offsetX`: `number` ; `offsetY`: `number`  }) => `void`
+Ƭ **PointerEventDelegate**: (`event`: \{ `offsetX`: `number` ; `offsetY`: `number`  }) => `void`
 
 ##### Type declaration
 
@@ -10170,7 +10170,7 @@ ___
 | Name | Type |
 | :------ | :------ |
 | `internal?` | `Object` |
-| `internal.parseCallback?` | (`parsed`: { `data`: `SectorGeometry` \| `SectorQuads` ; `lod`: `string`  }) => `void` |
+| `internal.parseCallback?` | (`parsed`: \{ `data`: `SectorGeometry` \| `SectorQuads` ; `lod`: `string`  }) => `void` |
 | `internal.sectorCuller?` | `SectorCuller` |
 | `logMetrics?` | `boolean` |
 | `renderOptions?` | `RenderOptions` |
@@ -10183,7 +10183,7 @@ ___
 
 #### SceneRenderedDelegate
 
-Ƭ **SceneRenderedDelegate**: (`event`: { `camera`: `THREE.PerspectiveCamera` ; `frameNumber`: `number` ; `renderTime`: `number` ; `renderer`: `THREE.WebGLRenderer`  }) => `void`
+Ƭ **SceneRenderedDelegate**: (`event`: \{ `camera`: `THREE.PerspectiveCamera` ; `frameNumber`: `number` ; `renderTime`: `number` ; `renderer`: `THREE.WebGLRenderer`  }) => `void`
 
 ##### Type declaration
 
@@ -10333,20 +10333,20 @@ in cases when you need the latest local files or CDN is blocked by CSP.
 
 #### registerCustomNodeCollectionType
 
-▸ **registerCustomNodeCollectionType**<T\>(`nodeCollectionType`, `deserializer`): `void`
+▸ **registerCustomNodeCollectionType**\<T\>(`nodeCollectionType`, `deserializer`): `void`
 
 ##### Type parameters
 
 | Name | Type |
 | :------ | :------ |
-| `T` | `T`: [NodeCollectionBase](#classes_cognite_revealnodecollectionbasemd)<T\> |
+| `T` | `T`: [NodeCollectionBase](#classes_cognite_revealnodecollectionbasemd)\<T\> |
 
 ##### Parameters
 
 | Name | Type |
 | :------ | :------ |
 | `nodeCollectionType` | [TypeName](#typename) |
-| `deserializer` | (`descriptor`: [NodeCollectionDescriptor](#nodecollectiondescriptor), `context`: [NodeCollectionSerializationContext](#nodecollectionserializationcontext)) => `Promise`<T\> |
+| `deserializer` | (`descriptor`: [NodeCollectionDescriptor](#nodecollectiondescriptor), `context`: [NodeCollectionSerializationContext](#nodecollectionserializationcontext)) => `Promise`\<T\> |
 
 ##### Returns
 
@@ -10585,7 +10585,7 @@ ___
 
 #### HtmlOverlayCreateClusterDelegate
 
-Ƭ **HtmlOverlayCreateClusterDelegate**: (`overlayElements`: { `htmlElement`: `HTMLElement` ; `userData`: `any`  }[]) => `HTMLElement`
+Ƭ **HtmlOverlayCreateClusterDelegate**: (`overlayElements`: \{ `htmlElement`: `HTMLElement` ; `userData`: `any`  }[]) => `HTMLElement`
 
 Callback that is triggered when a set of overlays are clustered together in
 [HtmlOverlayTool](#classes_cognite_reveal_toolshtmloverlaytoolmd).
@@ -10598,7 +10598,7 @@ Callback that is triggered when a set of overlays are clustered together in
 
 | Name | Type |
 | :------ | :------ |
-| `overlayElements` | { `htmlElement`: `HTMLElement` ; `userData`: `any`  }[] |
+| `overlayElements` | \{ `htmlElement`: `HTMLElement` ; `userData`: `any`  }[] |
 
 ###### Returns
 
@@ -10662,7 +10662,7 @@ ___
 
 #### MapConfig
 
-Ƭ **MapConfig**: { `latlong`: `LatLongPosition`  } & [BingMapConfig](#bingmapconfig) \| [HereMapConfig](#heremapconfig) \| [MapboxConfig](#mapboxconfig) \| `OpenStreetMapConfig`
+Ƭ **MapConfig**: \{ `latlong`: `LatLongPosition`  } & [BingMapConfig](#bingmapconfig) \| [HereMapConfig](#heremapconfig) \| [MapboxConfig](#mapboxconfig) \| `OpenStreetMapConfig`
 
 Maps Configuration of [GeomapTool](#classes_cognite_reveal_toolsgeomaptoolmd).
 
@@ -10715,7 +10715,7 @@ ___
 
 #### TimelineDateUpdateDelegate
 
-Ƭ **TimelineDateUpdateDelegate**: (`event`: { `activeKeyframe`: [Keyframe](#classes_cognite_reveal_toolskeyframemd) \| `undefined` ; `date`: `Date` ; `endDate`: `Date` ; `startDate`: `Date`  }) => `void`
+Ƭ **TimelineDateUpdateDelegate**: (`event`: \{ `activeKeyframe`: [Keyframe](#classes_cognite_reveal_toolskeyframemd) \| `undefined` ; `date`: `Date` ; `endDate`: `Date` ; `startDate`: `Date`  }) => `void`
 
 Delegate for Timeline Date update
 

@@ -1,6 +1,5 @@
 /*!
  * Copyright 2024 Cognite AS
- * BaseTool: Base class for the tool are used to interact with the render target.
  */
 
 type PopupProps = {
@@ -18,8 +17,8 @@ export class PopupStyle {
   private readonly _right?: number = undefined;
   private readonly _top?: number = undefined;
   private readonly _bottom?: number = undefined;
-  private readonly _margin: number = 16; // margin outside the popup
-  private readonly _padding: number = 8; // margin inside the popup
+  private readonly _margin: number = 8; // margin outside the popup
+  private readonly _padding: number = 6; // margin inside the popup
   private readonly _horizontal: boolean = true; // Used for toolbars only
 
   public constructor(props: PopupProps) {

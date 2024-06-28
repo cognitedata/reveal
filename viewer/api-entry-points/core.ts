@@ -73,6 +73,8 @@ export {
   CustomObjectIntersectInput,
   PointerEventsTarget,
   PointerEvents,
+  Vector3Pool,
+  getWheelEventDelta,
   getNormalizedPixelCoordinatesBySize,
   getNormalizedPixelCoordinates,
   CDF_TO_VIEWER_TRANSFORMATION
@@ -114,4 +116,11 @@ export {
   Image360AnnotationFilterOptions
 } from '../packages/360-images';
 
-export { OverlayCollection, OverlayInfo, Overlay3D, DefaultOverlay3DContentType } from '../packages/3d-overlays';
+export {
+  OverlayCollection,
+  Overlay3DCollection,
+  Overlay3DCollectionOptions,
+  OverlayInfo,
+  Overlay3D,
+  DefaultOverlay3DContentType
+} from '../packages/3d-overlays';

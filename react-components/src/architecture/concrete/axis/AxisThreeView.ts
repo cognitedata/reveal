@@ -29,7 +29,7 @@ import {
 import { TrianglesBuffers } from '../../base/utilities/geometry/TrianglesBuffers';
 import { type DomainObjectChange } from '../../base/domainObjectsHelpers/DomainObjectChange';
 import { Changes } from '../../base/domainObjectsHelpers/Changes';
-import { Vector3Pool } from '../../base/utilities/geometry/Vector3Pool';
+import { Vector3Pool } from '@cognite/reveal';
 
 const FACE_INDEX_NAME1 = 'faceIndex1';
 const FACE_INDEX_NAME2 = 'faceIndex2';
@@ -113,7 +113,7 @@ export class AxisThreeView extends GroupThreeView {
     const target = this.renderTarget;
 
     // Check if bounding box is different
-    const sceneBoundingBox = target.sceneBoundingBox;
+    const sceneBoundingBox = target.clippedSceneBoundingBox;
     if (sceneBoundingBox.equals(this._sceneBoundingBox)) {
       return false;
     }
@@ -195,7 +195,7 @@ export class AxisThreeView extends GroupThreeView {
     if (style.showAxis) {
       this.addAxisLine(style, i0, i1, dimension, faceIndex1, faceIndex2);
     }
-    this.addAxisTickmarksAndLabels(props, i0, i1, dimension, faceIndex1, faceIndex2);
+    this.addAxisTickMarksAndLabels(props, i0, i1, dimension, faceIndex1, faceIndex2);
   }
 
   private addAxisLine(
@@ -223,7 +223,7 @@ export class AxisThreeView extends GroupThreeView {
     }
   }
 
-  private addAxisTickmarksAndLabels(
+  private addAxisTickMarksAndLabels(
     props: AxisProps,
     i0: number,
     i1: number,
@@ -606,7 +606,7 @@ function incrementToString(value: number): string {
   // To get better rounded values, I wrote this myself: Multiply by some high integer and round it, then
   // convert to text, and insert the comma manually afterwards.
 
-  // Small number get less accurate result in tjhis algorithm,, so use the default string conversion.
+  // Small number get less accurate result in this algorithm,, so use the default string conversion.
   if (Math.abs(value) < 0.001) {
     return `${value}`;
   }

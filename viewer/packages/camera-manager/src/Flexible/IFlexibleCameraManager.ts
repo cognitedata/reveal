@@ -3,6 +3,7 @@
  */
 
 import { CameraManager } from '../CameraManager';
+import { FlexibleControlsOptions } from './FlexibleControlsOptions';
 import { FlexibleControlsType } from './FlexibleControlsType';
 import { Vector3 } from 'three';
 
@@ -12,7 +13,7 @@ import { Vector3 } from 'three';
 export type FlexibleControlsTypeChangeDelegate = (controlsType: FlexibleControlsType) => void;
 
 /**
- * Flexible implementation of {@link CameraManager}. The user can switch between Orbit, FirstPersion or OrbitInCenter
+ * Flexible implementation of {@link CameraManager}. The user can switch between Orbit, FirstPerson or OrbitInCenter
  * Supports automatic update of camera near and far planes and animated change of camera position and target.
  * It provides additional functionality for controlling camera behavior and rotation.
  * @beta
@@ -20,14 +21,20 @@ export type FlexibleControlsTypeChangeDelegate = (controlsType: FlexibleControls
 
 export interface IFlexibleCameraManager extends CameraManager {
   /**
-   * Get curent FlexibleControlsType type
+   * Get current FlexibleControlsType type
    */
   get controlsType(): FlexibleControlsType;
 
   /**
-   * Set curent FlexibleControlsType type
+   * Set current FlexibleControlsType type
    */
   set controlsType(value: FlexibleControlsType);
+
+  /**
+   * Set the options for the camera manager
+   * @beta
+   */
+  get options(): FlexibleControlsOptions;
 
   /**
    * Rotates the camera to look in the specified direction.
@@ -83,7 +90,7 @@ export interface IFlexibleCameraManager extends CameraManager {
    * Called when wheel event is triggered
    * @beta
    */
-  onWheel(event: WheelEvent): Promise<void>;
+  onWheel(event: WheelEvent, delta: number): Promise<void>;
 
   /**
    * Called when a key is pressed or released

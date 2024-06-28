@@ -9,6 +9,7 @@ export class Changes {
   public static readonly expanded: symbol = Symbol('expanded');
   public static readonly selected: symbol = Symbol('selected');
   public static readonly focus: symbol = Symbol('focus');
+  public static readonly clipping: symbol = Symbol('visibleState');
 
   // Domain object Fields changed
   public static readonly naming: symbol = Symbol('naming');

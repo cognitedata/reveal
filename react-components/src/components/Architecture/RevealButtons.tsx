@@ -3,23 +3,38 @@
  */
 
 import { type ReactElement } from 'react';
-import { NavigationTool } from '../../architecture/base/commands/NavigationTool';
-import { CreateCommandButton } from './CommandButton';
-import { MeasurementTool } from '../../architecture/concrete/boxDomainObject/MeasurementTool';
+import { NavigationTool } from '../../architecture/base/concreteCommands/NavigationTool';
 import { FitViewCommand } from '../../architecture/base/concreteCommands/FitViewCommand';
 import { FlexibleControlsType } from '@cognite/reveal';
 import { SetFlexibleControlsTypeCommand } from '../../architecture/base/concreteCommands/SetFlexibleControlsTypeCommand';
 import { SetAxisVisibleCommand } from '../../architecture/concrete/axis/SetAxisVisibleCommand';
+import { ClipTool } from '../../architecture/concrete/clipping/ClipTool';
+import { MeasurementTool } from '../../architecture/concrete/measurements/MeasurementTool';
+import { ObservationsTool } from '../../architecture/concrete/observationsDomainObject/ObservationsTool';
+import { KeyboardSpeedCommand } from '../../architecture/base/concreteCommands/KeyboardSpeedCommand';
+import { createCommandButton } from './CommandButton';
 
 export class RevealButtons {
-  static FitView = (): ReactElement => CreateCommandButton(new FitViewCommand());
-  static NavigationTool = (): ReactElement => CreateCommandButton(new NavigationTool());
-  static SetAxisVisible = (): ReactElement => CreateCommandButton(new SetAxisVisibleCommand());
-  static Measurement = (): ReactElement => CreateCommandButton(new MeasurementTool());
+  static FitView = (): ReactElement => createCommandButton(() => new FitViewCommand());
+
+  static NavigationTool = (): ReactElement => createCommandButton(() => new NavigationTool());
+
+  static SetAxisVisible = (): ReactElement =>
+    createCommandButton(() => new SetAxisVisibleCommand());
+
+  static Measurement = (): ReactElement => createCommandButton(() => new MeasurementTool());
+
+  static Clip = (): ReactElement => createCommandButton(() => new ClipTool());
 
   static SetFlexibleControlsTypeOrbit = (): ReactElement =>
-    CreateCommandButton(new SetFlexibleControlsTypeCommand(FlexibleControlsType.Orbit));
+    createCommandButton(() => new SetFlexibleControlsTypeCommand(FlexibleControlsType.Orbit));
 
   static SetFlexibleControlsTypeFirstPerson = (): ReactElement =>
-    CreateCommandButton(new SetFlexibleControlsTypeCommand(FlexibleControlsType.FirstPerson));
+    createCommandButton(() => new SetFlexibleControlsTypeCommand(FlexibleControlsType.FirstPerson));
+
+  static Observations = (): ReactElement => {
+    return createCommandButton(() => new ObservationsTool());
+  };
+
+  static KeyboardSpeed = (): ReactElement => createCommandButton(() => new KeyboardSpeedCommand());
 }

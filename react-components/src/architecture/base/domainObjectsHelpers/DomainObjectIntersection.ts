@@ -6,7 +6,7 @@ import { type CustomObjectIntersection, type AnyIntersection } from '@cognite/re
 import { type DomainObject } from '../domainObjects/DomainObject';
 
 // DomainObjectIntersection extends the CustomObjectIntersection with a domainObject property.
-// This had been a lot simpler with object orienteted intersection objects, but Reveal has of some
+// This had been a lot simpler with object orientated intersection objects, but Reveal has of some
 // unknown reason used types here - to make it hard for us to extend them.
 // It is working but I don't like it at all.
 
