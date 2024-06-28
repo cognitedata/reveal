@@ -91,6 +91,21 @@ model.pointColorType = PointColorType.Depth;
 Other useful coloring schemes are `Rgb` (color) , `Classification` (color by point class) and `Intensity`
 (strength of the backscattered signal in a laser scan).
 
+## Hide model
+
+Models can be temporarily hidden using `CognitePointCloudModel.visible`.
+The viewer must be explicitly re-rendered after setting the visibility flag:
+
+```js runnable-4x
+model.visible = false;
+viewer.requestRedraw();
+
+setTimeout(() => {
+  model.visible = true;
+  viewer.requestRedraw();
+}, 5000);
+```
+
 ## Point cloud post processing effects
 
 ### Point blending

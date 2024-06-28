@@ -20,6 +20,9 @@ import { Quantity } from '../../../base/domainObjectsHelpers/Quantity';
 import { VisualDomainObject } from '../../../base/domainObjects/VisualDomainObject';
 import { getIconByPrimitiveType } from '../../measurements/getIconByPrimitiveType';
 import { type TranslateKey } from '../../../base/utilities/TranslateKey';
+import { clear } from '../../../base/utilities/extensions/arrayExtensions';
+import { type Transaction } from '../../../base/undo/Transaction';
+import { DomainObjectTransaction } from '../../../base/undo/DomainObjectTransaction';
 
 export abstract class LineDomainObject extends VisualDomainObject {
   // ==================================================
@@ -72,6 +75,22 @@ export abstract class LineDomainObject extends VisualDomainObject {
     }
   }
 
+  public override get isLegal(): boolean {
+    if (this.focusType !== FocusType.Pending) {
+      return true;
+    }
+    switch (this.primitiveType) {
+      case PrimitiveType.Line:
+        return this.points.length === 2;
+      case PrimitiveType.Polyline:
+        return this.points.length >= 2;
+      case PrimitiveType.Polygon:
+        return this.points.length >= 3;
+      default:
+        throw new Error('Unknown PrimitiveType');
+    }
+  }
+
   public override createRenderStyle(): RenderStyle | undefined {
     return new LineRenderStyle();
   }
@@ -116,6 +135,20 @@ export abstract class LineDomainObject extends VisualDomainObject {
 
     function add(key: string, fallback: string, value: number, quantity = Quantity.Length): void {
       info.add({ key, fallback, value, quantity });
+    }
+  }
+
+  public override createTransaction(changed: symbol): Transaction {
+    return new DomainObjectTransaction(this, changed);
+  }
+
+  public override copyFrom(domainObject: LineDomainObject, what?: symbol): void {
+    super.copyFrom(domainObject, what);
+    if (what === undefined || what === Changes.geometry) {
+      clear(this.points);
+      for (const point of domainObject.points) {
+        this.points.push(point.clone());
+      }
     }
   }
 

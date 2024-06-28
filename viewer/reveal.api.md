@@ -9,6 +9,7 @@ import { AnnotationsAssetRef } from '@cognite/sdk';
 import { AnnotationsCogniteAnnotationTypesImagesAssetLink } from '@cognite/sdk';
 import { AnnotationStatus } from '@cognite/sdk';
 import { Box3 } from 'three';
+import { Camera } from 'three';
 import { CogniteClient } from '@cognite/sdk';
 import { CogniteInternalId } from '@cognite/sdk';
 import { Color } from 'three';
@@ -23,6 +24,7 @@ import { PerspectiveCamera } from 'three';
 import { Plane } from 'three';
 import { Quaternion } from 'three';
 import { Raycaster } from 'three';
+import { Texture } from 'three';
 import * as THREE from 'three';
 import { Vector2 } from 'three';
 import { Vector3 } from 'three';
@@ -861,12 +863,12 @@ export const DefaultNodeAppearance: {
     InFront: NodeAppearance;
     Ghosted: NodeAppearance;
     Highlighted: {
-        color?: Color | undefined;
-        visible?: boolean | undefined;
-        renderInFront?: boolean | undefined;
-        renderGhosted?: boolean | undefined;
-        outlineColor?: NodeOutlineColor | undefined;
-        prioritizedForLoadingHint?: number | undefined;
+        color?: Color;
+        visible?: boolean;
+        renderInFront?: boolean;
+        renderGhosted?: boolean;
+        outlineColor?: NodeOutlineColor;
+        prioritizedForLoadingHint?: number;
     };
 };
 
@@ -1574,6 +1576,26 @@ export interface Overlay3D<ContentType> {
     setColor(color: Color): void;
     setVisible(visible: boolean): void;
 }
+
+// @public
+export class Overlay3DCollection<MetadataType = DefaultOverlay3DContentType> extends Object3D implements OverlayCollection<MetadataType> {
+    constructor(overlayInfos: OverlayInfo<MetadataType>[], options?: Overlay3DCollectionOptions);
+    addOverlays(overlayInfos: OverlayInfo<MetadataType>[]): Overlay3D<MetadataType>[];
+    dispose(): void;
+    getOverlays(): Overlay3D<MetadataType>[];
+    intersectOverlays(normalizedCoordinates: Vector2, camera: Camera): Overlay3D<MetadataType> | undefined;
+    removeAllOverlays(): void;
+    removeOverlays(overlays: Overlay3D<MetadataType>[]): void;
+    setVisibility(visibility: boolean): void;
+}
+
+// @public
+export type Overlay3DCollectionOptions = {
+    overlayTexture?: Texture;
+    overlayTextureMask?: Texture;
+    maxPointSize?: number;
+    defaultOverlayColor?: Color;
+};
 
 // @public
 export class Overlay3DTool<ContentType = DefaultOverlay3DContentType> extends Cognite3DViewerToolBase {

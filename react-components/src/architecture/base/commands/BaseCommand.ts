@@ -2,7 +2,7 @@
  * Copyright 2024 Cognite AS
  */
 
-import { type TranslateKey } from '../utilities/TranslateKey';
+import { type TranslateDelegate, type TranslateKey } from '../utilities/TranslateKey';
 import { clear, remove } from '../utilities/extensions/arrayExtensions';
 
 type UpdateDelegate = (command: BaseCommand) => void;
@@ -44,19 +44,27 @@ export abstract class BaseCommand {
   // =================================================
 
   public get name(): string {
-    return this.tooltip.fallback ?? this.tooltip.key;
+    return this.tooltip.fallback;
   }
 
   public get shortCutKey(): string | undefined {
     return undefined;
   }
 
+  public get shortCutKeyOnCtrl(): boolean {
+    return false;
+  }
+
+  public get shortCutKeyOnShift(): boolean {
+    return false;
+  }
+
   public get tooltip(): TranslateKey {
     return { fallback: '' };
   }
 
-  public get icon(): string {
-    return 'Unknown';
+  public get icon(): string | undefined {
+    return undefined; // Means no icon
   }
 
   public get buttonType(): string {
@@ -127,5 +135,28 @@ export abstract class BaseCommand {
     for (const listener of this._listeners) {
       listener(this);
     }
+  }
+
+  public getLabel(translate: TranslateDelegate): string {
+    const { key, fallback } = this.tooltip;
+    if (key === undefined) {
+      return fallback;
+    }
+    return translate(key, fallback);
+  }
+
+  public getShortCutKeys(): string | undefined {
+    const key = this.shortCutKey;
+    if (key === undefined) {
+      return undefined;
+    }
+    let result = '';
+    if (this.shortCutKeyOnCtrl) {
+      result += 'Ctrl+';
+    }
+    if (this.shortCutKeyOnShift) {
+      result += 'Shift+';
+    }
+    return result + key;
   }
 }

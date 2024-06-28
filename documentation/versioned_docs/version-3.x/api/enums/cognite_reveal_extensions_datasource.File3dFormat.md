@@ -45,7 +45,7 @@ ___
 
 • **RevealCadModel**
 
-V8 models only due to bug for version checks in Reveal <3.0
+V8 models only due to bug for version checks in Reveal \<3.0
 
 #### Defined in
 

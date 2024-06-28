@@ -55,7 +55,7 @@ const TOP_FACE = new BoxFace(2);
 const CIRCULAR_SEGMENTS = 32;
 const RENDER_ORDER = 100;
 
-export class BoxView extends GroupThreeView {
+export class BoxView extends GroupThreeView<BoxDomainObject> {
   // ==================================================
   // INSTANCE FIELDS
   // ==================================================
@@ -66,10 +66,6 @@ export class BoxView extends GroupThreeView {
   // ==================================================
   // INSTANCE PROPERTIES
   // ==================================================
-
-  public override get domainObject(): BoxDomainObject {
-    return super.domainObject as BoxDomainObject;
-  }
 
   protected override get style(): BoxRenderStyle {
     return super.style as BoxRenderStyle;

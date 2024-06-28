@@ -7,15 +7,15 @@ description: Using and displaying 360 images using Reveal
 import useBaseUrl from '@docusaurus/useBaseUrl';
 
 360 images is a common way to augment the 3D experience of your application.
-A 360 image is a controllable panoramic image that surrounds the original point from which the shot was taken. 
+A 360 image is a controllable panoramic image that surrounds the original point from which the shot was taken.
 360 images simulate being in the shoes of a photographer and looking around to the left, right, up and down as desired as well as zooming.
 
 The `Cognite3DViewer` entrypoint exposes the following methods related to 360 images.
 
 ```ts
 add360ImageSet(
-  datasource: 'events', 
-  eventFilter: { [key: string]: string }, 
+  datasource: 'events',
+  eventFilter: { [key: string]: string },
   add360ImageOptions?: AddImage360Options
 ): Promise<Image360Collection>;
 
@@ -27,17 +27,17 @@ exit360Image(): void
 ```
 
 To visualize 360 images the data must have been previously ingested into [Cognite Data Fusion](https://www.cognite.com/en/product/cognite_data_fusion_industrial_dataops_platform).
-More info on the ingestion process can be found [here](https://docs.cognite.com/cdf/3d/guides/360images_upload/).
+More info on the ingestion process for 360 images can be found [here](https://docs.cognite.com/cdf/3d/guides/360images_upload/).
 
 Once the data is ingested, a set of 360 images can be added to the viewer with `viewer.add360ImageSet(...)`.
 `datasource` describes the source data type used for storing the 360 images.
-At this time, the only valid `datasource` is `'events'`, but you can expect more to be added in the future.
-The `eventFilter` property describes the filter that is used when fetching data from the data source.
-This is a generic key-value pair and can point to any metdata that was set during ingestion.
+Currently, the supported `datasource`s are `'events'` and `'datamodels'`.
+The `second` argument describes the filter that is used when fetching data from the data source.
+For events, this is a generic key-value pair and can point to any metdata that was set during ingestion. For datamodels, this is an identifier consisting of the Data Models `externalId` and `space` of the relevant 360 collection instance.
 `viewer.add360ImageSet(...)` will return a `Image360Collection` which contains each of the `image360` entities for this given set.
-The definition of `Image360Collection` can be found [here.](../api/interfaces/cognite_reveal.Image360Collection)
+The definition of `Image360Collection` can be found [here.](../api/@cognite/reveal/interfaces/Image360Collection)
 
-The `AddImage360Options` is used for correcting / adding transformations to the set of 360 images. The declaration can be found [here.](../api/modules/cognite_reveal#addimage360options)
+The `AddImage360Options` is used for correcting / adding transformations to the set of 360 images. The declaration can be found [here.](../api/@cognite/reveal/type-aliases/AddImage360Options)
 
 :::note
 The 360 images should be ingested with proper transformation data, and one should only rely on `AddImage360Options` when failing to do so or when using the same 360 images for multiple 3D models with different coordinate system.
@@ -63,11 +63,11 @@ An example of entering into a 360 image can be seen here:
 
 To remove one or more 360 images you can use the `remove360Images(...)` method which will also cleanup icons and other related data to the instance.
 
-The `Image360` declaration can be found here [here.](../api/interfaces/cognite_reveal.Image360)
+The `Image360` declaration can be found here [here.](../api/@cognite/reveal/interfaces/Image360)
 
 The `transform` property from `Image360` represents the world transformation (rotation and translation) of the 360 image.
 The `Image360Visualization` object has convenience functionality related to the visualization of the 360 image such as setting the opacity of the given 360 image.
-  
+
 ## Events
 The `Image360Collection` exposes events `image360Entered` and `image360Exited` for subscribing to enter & exit from 360 image mode. The `image360Entered` event is also triggered when the [revision](#historical-images) of an image is changed.
 Subscribing to the events can look like

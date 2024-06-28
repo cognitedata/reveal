@@ -19,6 +19,8 @@ import { type BaseTool } from '../../base/commands/BaseTool';
 import { ToggleMetricUnitsCommand } from '../../base/concreteCommands/ToggleMetricUnitsCommand';
 import { MeasurementTool } from '../measurements/MeasurementTool';
 import { ClipTool } from '../clipping/ClipTool';
+import { KeyboardSpeedCommand } from '../../base/concreteCommands/KeyboardSpeedCommand';
+import { ObservationsTool } from '../observationsDomainObject/ObservationsTool';
 
 export class StoryBookConfig extends BaseRevealConfig {
   // ==================================================
@@ -37,10 +39,12 @@ export class StoryBookConfig extends BaseRevealConfig {
       new FitViewCommand(),
       new SetAxisVisibleCommand(),
       new ToggleMetricUnitsCommand(),
+      new KeyboardSpeedCommand(),
       undefined,
       new ExampleTool(),
       new MeasurementTool(),
       new ClipTool(),
+      new ObservationsTool(),
       undefined,
       new SetTerrainVisibleCommand(),
       new UpdateTerrainCommand()

@@ -5,8 +5,13 @@
 import { type TranslateKey } from '../utilities/TranslateKey';
 import { type DomainObject } from '../domainObjects/DomainObject';
 import { DomainObjectCommand } from '../commands/DomainObjectCommand';
+import { Changes } from '../domainObjectsHelpers/Changes';
 
 export class DeleteDomainObjectCommand extends DomainObjectCommand<DomainObject> {
+  // ==================================================
+  // INSTANCE PROPERTIES
+  // ==================================================
+
   // ==================================================
   // OVERRIDES
   // ==================================================
@@ -28,6 +33,7 @@ export class DeleteDomainObjectCommand extends DomainObjectCommand<DomainObject>
   }
 
   protected override invokeCore(): boolean {
+    this.addTransaction(this._domainObject.createTransaction(Changes.deleted));
     return this._domainObject.removeInteractive();
   }
 }

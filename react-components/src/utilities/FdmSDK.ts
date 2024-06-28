@@ -283,12 +283,6 @@ export class FdmSDK {
     filter?: InstanceFilter,
     properties?: string[]
   ): Promise<{ instances: Array<EdgeItem<PropertiesType> | NodeItem<PropertiesType>> }> {
-    function makeSureNonEmptyFilterForRequest(
-      filter: InstanceFilter | undefined
-    ): InstanceFilter | undefined {
-      return filter !== undefined && Object.keys(filter).length === 0 ? undefined : filter;
-    }
-
     filter = makeSureNonEmptyFilterForRequest(filter);
 
     const data: any = {
@@ -315,7 +309,7 @@ export class FdmSDK {
 
   // eslint-disable-next-line no-dupe-class-members
   public async filterInstances<PropertiesType = Record<string, any>>(
-    filter: InstanceFilter,
+    filter: InstanceFilter | undefined,
     instanceType: InstanceType,
     source?: Source,
     cursor?: string
@@ -326,7 +320,7 @@ export class FdmSDK {
 
   // eslint-disable-next-line no-dupe-class-members
   public async filterInstances<PropertiesType = Record<string, any>>(
-    filter: InstanceFilter,
+    filter: InstanceFilter | undefined,
     instanceType: 'node',
     source?: Source,
     cursor?: string
@@ -334,7 +328,7 @@ export class FdmSDK {
 
   // eslint-disable-next-line no-dupe-class-members
   public async filterInstances<PropertiesType = Record<string, any>>(
-    filter: InstanceFilter,
+    filter: InstanceFilter | undefined,
     instanceType: 'edge',
     source?: Source,
     cursor?: string
@@ -342,7 +336,7 @@ export class FdmSDK {
 
   // eslint-disable-next-line no-dupe-class-members
   public async filterInstances<PropertiesType = Record<string, any>>(
-    filter: InstanceFilter,
+    filter: InstanceFilter | undefined,
     instanceType: InstanceType,
     source: Source,
     cursor?: string
@@ -399,10 +393,12 @@ export class FdmSDK {
 
   // eslint-disable-next-line no-dupe-class-members
   public async filterAllInstances<PropertiesType = Record<string, any>>(
-    filter: InstanceFilter,
+    filter: InstanceFilter | undefined,
     instanceType: InstanceType,
     source?: Source
   ): Promise<{ instances: Array<EdgeItem<PropertiesType> | FdmNode<PropertiesType>> }> {
+    filter = makeSureNonEmptyFilterForRequest(filter);
+
     let mappings = await this.filterInstances<PropertiesType>(filter, instanceType, source);
 
     while (mappings.nextCursor !== undefined) {
@@ -557,4 +553,10 @@ function hoistInstanceProperties(
       instance.properties = instance.properties[source.space][propertyKey];
     }
   });
+}
+
+function makeSureNonEmptyFilterForRequest(
+  filter: InstanceFilter | undefined
+): InstanceFilter | undefined {
+  return filter !== undefined && Object.keys(filter).length === 0 ? undefined : filter;
 }

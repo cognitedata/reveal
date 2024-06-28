@@ -17,6 +17,7 @@ import { LineDomainObject } from './line/LineDomainObject';
 import { CommonRenderStyle } from '../../base/renderStyles/CommonRenderStyle';
 import { type VisualDomainObject } from '../../base/domainObjects/VisualDomainObject';
 import { PlaneDomainObject } from './plane/PlaneDomainObject';
+import { Changes } from '../../base/domainObjectsHelpers/Changes';
 
 export abstract class PrimitiveEditTool extends BaseEditTool {
   // ==================================================
@@ -52,9 +53,10 @@ export abstract class PrimitiveEditTool extends BaseEditTool {
   }
 
   public override onKey(event: KeyboardEvent, down: boolean): void {
-    if (down && event.key === 'Delete') {
+    if (down && (event.key === 'Delete' || event.key === 'Backspace')) {
       const domainObject = this.getSelected();
       if (domainObject !== undefined) {
+        this.addTransaction(domainObject.createTransaction(Changes.deleted));
         domainObject.removeInteractive();
       }
       this._creator = undefined;
@@ -125,10 +127,7 @@ export abstract class PrimitiveEditTool extends BaseEditTool {
     if (creator !== undefined && !creator.preferIntersection) {
       const ray = this.getRay(event);
       if (creator.addPoint(ray, undefined)) {
-        if (creator.isFinished) {
-          this._creator = undefined;
-          this.setDefaultPrimitiveType();
-        }
+        this.endCreatorIfFinished(creator);
         return;
       }
     }
@@ -140,10 +139,7 @@ export abstract class PrimitiveEditTool extends BaseEditTool {
     if (creator !== undefined) {
       const ray = this.getRay(event);
       if (creator.addPoint(ray, intersection)) {
-        if (creator.isFinished) {
-          this._creator = undefined;
-          this.setDefaultPrimitiveType();
-        }
+        this.endCreatorIfFinished(creator);
       }
       return;
     }
@@ -168,12 +164,13 @@ export abstract class PrimitiveEditTool extends BaseEditTool {
         parent.addChildInteractive(domainObject);
         domainObject.setSelectedInteractive(true);
         domainObject.setVisibleInteractive(true, renderTarget);
+        this.addTransaction(domainObject.createTransaction(Changes.added));
+      } else {
+        this._creator = undefined;
+        return;
       }
     }
-    if (creator !== undefined && creator.isFinished) {
-      this.setDefaultPrimitiveType();
-      this._creator = undefined;
-    }
+    this.endCreatorIfFinished(creator);
   }
 
   public override async onLeftPointerDown(event: PointerEvent): Promise<void> {
@@ -181,6 +178,22 @@ export abstract class PrimitiveEditTool extends BaseEditTool {
       return; // Prevent dragging while creating the new
     }
     await super.onLeftPointerDown(event);
+  }
+
+  public override onUndo(): void {
+    // If a undo is coming, the creator should be ended.
+    if (this._creator === undefined) {
+      return;
+    }
+    // End the creator if the domainObject is removed by undo.
+    // To check, it doesn't have any parent if it is removed.
+    const domainObject = this._creator.domainObject;
+    if (domainObject !== undefined && !domainObject.isLegal) {
+      if (domainObject.hasParent) {
+        domainObject.removeInteractive();
+      }
+      this._creator = undefined;
+    }
   }
 
   // ==================================================
@@ -204,10 +217,11 @@ export abstract class PrimitiveEditTool extends BaseEditTool {
       return;
     }
     if (this._creator.handleEscape()) {
-      // Successfully created, set it back to default
+      this.endCreatorIfFinished(this._creator, true);
+    } else {
       this.setDefaultPrimitiveType();
+      this._creator = undefined;
     }
-    this._creator = undefined;
   }
 
   private setCursor(boxDomainObject: BoxDomainObject, point: Vector3, pickInfo: BoxPickInfo): void {
@@ -310,5 +324,12 @@ export abstract class PrimitiveEditTool extends BaseEditTool {
     }
     this.primitiveType = this.defaultPrimitiveType;
     CommandsUpdater.update(this.renderTarget);
+  }
+
+  private endCreatorIfFinished(creator: BaseCreator, force = false): void {
+    if (force || creator.isFinished) {
+      this.setDefaultPrimitiveType();
+      this._creator = undefined;
+    }
   }
 }

@@ -61,6 +61,7 @@ export abstract class BaseEditTool extends NavigationTool {
       await super.onLeftPointerUp(event);
     } else {
       this._dragger.onPointerUp(event);
+      this.addTransaction(this._dragger.transaction);
       this._dragger = undefined;
     }
   }
