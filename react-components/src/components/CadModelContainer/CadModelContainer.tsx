@@ -10,6 +10,7 @@ import { type CadModelStyling, useApplyCadModelStyling } from './useApplyCadMode
 import { useReveal3DResourcesCount } from '../Reveal3DResources/Reveal3DResourcesCountContext';
 import { isEqual } from 'lodash';
 import { modelExists } from '../../utilities/modelExists';
+import { getViewerResourceCount } from '../../utilities/getViewerResourceCount';
 
 export type CogniteCadModelProps = {
   addModelOptions: AddModelOptions;
@@ -44,7 +45,7 @@ export function CadModelContainer({
     addModel(addModelOptions, transform)
       .then((model) => {
         onLoad?.(model);
-        setRevealResourcesCount(viewer.models.length + viewer.get360ImageCollections().length);
+        setRevealResourcesCount(getViewerResourceCount(viewer));
       })
       .catch((error) => {
         const errorReportFunction = onLoadError ?? defaultLoadErrorHandler;
@@ -98,7 +99,7 @@ export function CadModelContainer({
       return;
 
     viewer.removeModel(model);
-    setRevealResourcesCount(viewer.models.length + viewer.get360ImageCollections().length);
+    setRevealResourcesCount(getViewerResourceCount(viewer));
     setModel(undefined);
   }
 }
