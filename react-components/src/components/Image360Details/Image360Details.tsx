@@ -5,7 +5,7 @@
 import { useState, type ReactElement, useCallback, useEffect } from 'react';
 import styled from 'styled-components';
 import { Image360HistoricalDetails } from '../Image360HistoricalDetails/Image360HistoricalDetails';
-import { Image360EnteredDelegate, Image360Revision, type Image360 } from '@cognite/reveal';
+import { type Image360 } from '@cognite/reveal';
 import { Button } from '@cognite/cogs.js';
 import { useReveal } from '../RevealCanvas/ViewerContext';
 import { useImage360Collections } from '../../hooks/useImage360Collections';

@@ -3,7 +3,7 @@
  */
 
 import { Tooltip, CounterChip, Button } from '@cognite/cogs.js';
-import { useMemo, type ReactElement } from 'react';
+import { type ReactElement } from 'react';
 import styled from 'styled-components';
 import { useTranslation } from '../../i18n/I18n';
 
