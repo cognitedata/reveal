@@ -1,10 +1,10 @@
 /*!
  * Copyright 2024 Cognite AS
  */
-import { Checkbox, Flex } from '@cognite/cogs.js';
+import { Checkbox, CounterChip, Flex } from '@cognite/cogs.js';
 import { type ModelHandler } from './ModelHandler';
 import { type ChangeEvent, useCallback, useMemo, type ReactElement, type MouseEvent } from 'react';
-import { StyledChipCount, StyledLabel } from './elements';
+import { StyledLabel } from './elements';
 import { type UpdateModelHandlersCallback } from './useModelHandlers';
 import { useReveal } from '../../RevealCanvas/ViewerContext';
 
@@ -50,7 +50,7 @@ export const WholeLayerVisibilityToggle = ({
         onChange={handleToggleAllClick}
       />
       <StyledLabel> {label} </StyledLabel>
-      <StyledChipCount label={String(modelHandlers.length)} hideTooltip type="neutral" />
+      <CounterChip counter={modelHandlers.length} />
     </Flex>
   );
 };
