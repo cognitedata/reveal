@@ -93,8 +93,6 @@ export class AssetMappingCache {
     const chunkSize = Math.round(assetIdsList.length / amountOfChunks);
     const listChunks = chunk(assetIdsList, chunkSize);
 
-    console.log('chunk listChunks', listChunks.length, listChunks);
-
     const allAssetMappingsReturned = listChunks.map(async (itemChunk) => {
       const assetMappings = await this.getAssetMappingsForAssetIds(modelId, revisionId, itemChunk);
       return assetMappings;
@@ -138,8 +136,6 @@ export class AssetMappingCache {
       revisionId
     );
 
-    console.log('chunk NODE IDS', chunkNotInCache, chunkInCache);
-
     const nodes = await fetchNodesForNodeIds(modelId, revisionId, chunkNotInCache, this._sdk);
     const allNodes = chunkInCache.concat(nodes);
     return allNodes;
@@ -166,14 +162,11 @@ export class AssetMappingCache {
       return;
     }
     assetMappingsPerModel.forEach(async (modelMapping) => {
-      console.log(' assetMappings modelMapping ', modelMapping);
-
       modelMapping.assetMappings.forEach(async (item) => {
         const key = modelRevisionNodesAssetsToKey(modelId, revisionId, [item.assetId]);
         await this.setAssetMappingsCacheItem(key, item);
       });
     });
-    console.log(' assetMappings cache', this._assetIdsToAssetMappings);
   }
 
   public async getAssetMappingsForModel(
@@ -333,7 +326,6 @@ export class AssetMappingCache {
       if (cachedResult === undefined) {
         this.setItemCacheResult(filterType, key, cachedResult);
       }
-      // console.log('chunk fetchAssetMappingsRequest  key, cachedResult ', key, cachedResult);
     });
 
     return assetMapping3D.filter(isValidAssetMapping);
@@ -414,12 +406,6 @@ export class AssetMappingCache {
       notCachedNodeIds,
       'nodeIds'
     );
-    console.log(
-      'chunk getAssetMappingsForNodes  chunkNotInCache, chunkInCache ',
-      chunkNotInCache,
-      chunkInCache,
-      nodeIds
-    );
 
     const allAssetMappings = chunkInCache.concat(assetMappings);
     return allAssetMappings;
@@ -436,10 +422,6 @@ export class AssetMappingCache {
       revisionId,
       'assetIds'
     );
-
-    console.log('chunk assetIds modelId', modelId, assetIds);
-    console.log('chunk chunkInCache modelId ', modelId, chunkInCache);
-    console.log('chunk chunkNotInCache modelId ', modelId, chunkNotInCache);
 
     const notCachedAssetIds: number[] = chunkNotInCache;
 

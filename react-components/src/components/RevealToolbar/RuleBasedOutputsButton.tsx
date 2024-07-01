@@ -22,12 +22,12 @@ import { RuleBasedSelectionItem } from '../RuleBasedOutputs/components/RuleBased
 type RuleBasedOutputsButtonProps = {
   onRuleSetStylingChanged?: (stylings: AssetStylingGroup[] | undefined) => void;
   onRuleSetSelectedChanged?: (ruleSet: RuleAndEnabled | undefined) => void;
-  callbackFunction?: (callback: (isLoaded: boolean) => void) => void;
+  onRuleSetStylingLoaded?: (callback: (isLoaded: boolean) => void) => void;
 };
 export const RuleBasedOutputsButton = ({
   onRuleSetStylingChanged,
   onRuleSetSelectedChanged,
-  callbackFunction
+  onRuleSetStylingLoaded
 }: RuleBasedOutputsButtonProps): ReactElement => {
   const [currentRuleSetEnabled, setCurrentRuleSetEnabled] = useState<RuleAndEnabled>();
   const [emptyRuleSelected, setEmptyRuleSelected] = useState<EmptyRuleForSelection>();
@@ -55,7 +55,6 @@ export const RuleBasedOutputsButton = ({
 
   const onChange = useCallback(
     (data: string | undefined): void => {
-
       ruleInstances?.forEach((item) => {
         if (item === undefined) return;
         item.isEnabled = false;
@@ -83,8 +82,6 @@ export const RuleBasedOutputsButton = ({
         if (onRuleSetStylingChanged !== undefined) onRuleSetStylingChanged(undefined);
       }
 
-      if (callbackFunction !== undefined) callbackFunction(callbackLoaded);
-
       setIsRuleLoading(true);
 
       setEmptyRuleSelected(emptySelection);
@@ -93,16 +90,18 @@ export const RuleBasedOutputsButton = ({
     [ruleInstances, onRuleSetStylingChanged, onRuleSetSelectedChanged]
   );
 
-  const callbackLoaded = (isLoaded: boolean): void => {
-    setIsRuleLoading(!isLoaded);
-  };
-
   const ruleSetStylingChanged = (
     stylingGroups: AssetStylingGroupAndStyleIndex[] | undefined
   ): void => {
     const assetStylingGroups = stylingGroups?.map((group) => group.assetStylingGroup);
     if (onRuleSetStylingChanged !== undefined) onRuleSetStylingChanged(assetStylingGroups);
   };
+
+  const callbackWhenIsLoaded = (isLoaded: boolean): void => {
+    setIsRuleLoading(!isLoaded);
+  };
+
+  if (onRuleSetStylingLoaded !== undefined) onRuleSetStylingLoaded(callbackWhenIsLoaded);
 
   if (ruleInstances === undefined || ruleInstances.length === 0) {
     return <></>;
