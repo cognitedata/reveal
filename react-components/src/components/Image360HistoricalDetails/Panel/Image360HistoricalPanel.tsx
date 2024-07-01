@@ -3,7 +3,7 @@
  */
 
 import { Tooltip, CounterChip, Button } from '@cognite/cogs.js';
-import { type ReactElement } from 'react';
+import { useMemo, type ReactElement } from 'react';
 import styled from 'styled-components';
 import { useTranslation } from '../../i18n/I18n';
 
@@ -33,7 +33,7 @@ export const Image360HistoricalPanel = ({
           {!revisionDetailsExpanded && (
             <StyledButton type="tertiary">
               {t('IMAGES_360_DETAILS', '360 Details')}
-              <StyledChipCount counter={revisionCount} label={' Historic'} />
+              <CounterChip counter={revisionCount} label={' Historic'} />
             </StyledButton>
           )}
           {revisionDetailsExpanded && (
@@ -67,16 +67,6 @@ const StyledToolBar = styled.div<{ isExpanded: boolean }>`
   display: flex;
   flex-direction: row;
   background: #ffffff;
-`;
-
-const StyledChipCount = styled(CounterChip)`
-  && {
-    width: fit-content;
-    height: 20px;
-    max-height: 20px;
-    min-height: 20px;
-    min-width: 20px;
-  }
 `;
 
 const Container = styled.div<{ isExpanded: boolean }>`
