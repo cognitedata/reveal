@@ -500,6 +500,3 @@ const convertExpressionStringMetadataKeyToLowerCase = (expression: Expression): 
 
   expression.trigger.key = expression.trigger.key.toLowerCase();
 };
-
-export const delayMs = async (delayTimeMs: number) =>
-  await new Promise((r) => setTimeout(r, delayTimeMs));
