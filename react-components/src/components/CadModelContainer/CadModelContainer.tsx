@@ -44,7 +44,7 @@ export function CadModelContainer({
     addModel(addModelOptions, transform)
       .then((model) => {
         onLoad?.(model);
-        setRevealResourcesCount(viewer.models.length);
+        setRevealResourcesCount(viewer.models.length + viewer.get360ImageCollections().length);
       })
       .catch((error) => {
         const errorReportFunction = onLoadError ?? defaultLoadErrorHandler;
@@ -98,7 +98,7 @@ export function CadModelContainer({
       return;
 
     viewer.removeModel(model);
-    setRevealResourcesCount(viewer.models.length);
+    setRevealResourcesCount(viewer.models.length + viewer.get360ImageCollections().length);
     setModel(undefined);
   }
 }

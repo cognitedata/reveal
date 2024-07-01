@@ -5,9 +5,10 @@
 import { useState, type ReactElement, useCallback, useEffect } from 'react';
 import styled from 'styled-components';
 import { Image360HistoricalDetails } from '../Image360HistoricalDetails/Image360HistoricalDetails';
-import { type Image360 } from '@cognite/reveal';
+import { Image360EnteredDelegate, Image360Revision, type Image360 } from '@cognite/reveal';
 import { Button } from '@cognite/cogs.js';
 import { useReveal } from '../RevealCanvas/ViewerContext';
+import { useImage360Collections } from '../../hooks/useImage360Collections';
 
 type Image360DetailsProps = {
   appLanguage?: string;
@@ -21,15 +22,15 @@ export function Image360Details({ appLanguage }: Image360DetailsProps): ReactEle
     setIs360HistoricalPanelExpanded(isExpanded);
   }, []);
 
-  const clearEnteredImage360 = (): void => {
+  const clearEnteredImage360 = useCallback((): void => {
     setEnteredEntity(undefined);
-  };
+  }, [setEnteredEntity]);
 
-  const exitImage360Image = (): void => {
+  const exitImage360Image = useCallback((): void => {
     viewer.exit360Image();
-  };
+  }, [viewer]);
 
-  const collections = viewer.get360ImageCollections();
+  const collections = useImage360Collections();
 
   useEffect(() => {
     collections.forEach((collection) => {
@@ -42,7 +43,7 @@ export function Image360Details({ appLanguage }: Image360DetailsProps): ReactEle
         collection.off('image360Exited', clearEnteredImage360);
       });
     };
-  }, [viewer, collections]);
+  }, [viewer, collections, setEnteredEntity, clearEnteredImage360]);
 
   return (
     <>

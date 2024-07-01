@@ -47,7 +47,7 @@ export function PointCloudContainer({
     addModel(modelId, revisionId, transform)
       .then((pointCloudModel) => {
         onLoad?.(pointCloudModel);
-        setRevealResourcesCount(viewer.models.length);
+        setRevealResourcesCount(viewer.models.length + viewer.get360ImageCollections().length);
       })
       .catch((error) => {
         const errorHandler = onLoadError ?? defaultLoadErrorHandler;
@@ -101,7 +101,7 @@ export function PointCloudContainer({
       return;
 
     viewer.removeModel(model);
-    setRevealResourcesCount(viewer.models.length);
+    setRevealResourcesCount(viewer.models.length + viewer.get360ImageCollections().length);
     setModel(undefined);
   }
 }

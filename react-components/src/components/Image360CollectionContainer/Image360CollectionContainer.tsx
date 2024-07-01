@@ -15,6 +15,7 @@ import {
   DEFAULT_IMAGE360_ICON_COUNT_LIMIT,
   DEFAULT_IMAGE360_ICON_CULLING_RADIUS
 } from './constants';
+import { useReveal3DResourcesCount } from '../Reveal3DResources/Reveal3DResourcesCountContext';
 
 type Image360CollectionContainerProps = {
   addImage360CollectionOptions: AddImage360CollectionOptions;
@@ -32,6 +33,7 @@ export function Image360CollectionContainer({
   const cachedViewerRef = useRevealKeepAlive();
   const modelRef = useRef<Image360Collection>();
   const viewer = useReveal();
+  const { setRevealResourcesCount } = useReveal3DResourcesCount();
 
   const initializingSiteId = useRef<{ siteId: string } | { externalId: string } | undefined>(
     undefined
@@ -82,6 +84,7 @@ export function Image360CollectionContainer({
 
         modelRef.current = image360Collection;
         onLoad?.(image360Collection);
+        setRevealResourcesCount(viewer.models.length + viewer.get360ImageCollections().length);
       })
       .catch((error: any) => {
         const errorReportFunction = onLoadError ?? defaultLoadErrorHandler;
@@ -121,6 +124,7 @@ export function Image360CollectionContainer({
       return;
 
     viewer.remove360ImageSet(modelRef.current);
+    setRevealResourcesCount(viewer.models.length + viewer.get360ImageCollections().length);
     modelRef.current = undefined;
   }
 }
