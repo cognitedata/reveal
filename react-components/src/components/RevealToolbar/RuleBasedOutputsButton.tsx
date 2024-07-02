@@ -82,6 +82,8 @@ export const RuleBasedOutputsButton = ({
         if (onRuleSetStylingChanged !== undefined) onRuleSetStylingChanged(undefined);
       }
 
+      if (onRuleSetSelectedChanged !== undefined) onRuleSetSelectedChanged(selectedRule);
+
       setIsRuleLoading(true);
 
       setEmptyRuleSelected(emptySelection);
