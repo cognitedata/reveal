@@ -22,10 +22,12 @@ import { RuleBasedSelectionItem } from '../RuleBasedOutputs/components/RuleBased
 type RuleBasedOutputsButtonProps = {
   onRuleSetStylingChanged?: (stylings: AssetStylingGroup[] | undefined) => void;
   onRuleSetSelectedChanged?: (ruleSet: RuleAndEnabled | undefined) => void;
+  onRuleSetStylingLoaded?: (callback: (isLoaded: boolean) => void) => void;
 };
 export const RuleBasedOutputsButton = ({
   onRuleSetStylingChanged,
-  onRuleSetSelectedChanged
+  onRuleSetSelectedChanged,
+  onRuleSetStylingLoaded
 }: RuleBasedOutputsButtonProps): ReactElement => {
   const [currentRuleSetEnabled, setCurrentRuleSetEnabled] = useState<RuleAndEnabled>();
   const [emptyRuleSelected, setEmptyRuleSelected] = useState<EmptyRuleForSelection>();
@@ -33,7 +35,11 @@ export const RuleBasedOutputsButton = ({
   const { t } = useTranslation();
   const models = use3dModels();
   const cadModels = models.filter((model) => model.type === 'cad') as CadModelOptions[];
-  const { isLoading } = useAssetMappedNodesForRevisions(cadModels);
+
+  const { isLoading: isAssetMappingsLoading } = useAssetMappedNodesForRevisions(cadModels);
+  const [isRuleLoading, setIsRuleLoading] = useState(false);
+
+  const [newRuleSetEnabled, setNewRuleSetEnabled] = useState<RuleAndEnabled>();
 
   const ruleInstancesResult = useFetchRuleInstances();
 
@@ -42,6 +48,10 @@ export const RuleBasedOutputsButton = ({
 
     setRuleInstances(ruleInstancesResult.data);
   }, [ruleInstancesResult]);
+
+  useEffect(() => {
+    setCurrentRuleSetEnabled(newRuleSetEnabled);
+  }, [newRuleSetEnabled]);
 
   const onChange = useCallback(
     (data: string | undefined): void => {
@@ -74,8 +84,10 @@ export const RuleBasedOutputsButton = ({
 
       if (onRuleSetSelectedChanged !== undefined) onRuleSetSelectedChanged(selectedRule);
 
+      setIsRuleLoading(true);
+
       setEmptyRuleSelected(emptySelection);
-      setCurrentRuleSetEnabled(selectedRule);
+      setNewRuleSetEnabled(selectedRule);
     },
     [ruleInstances, onRuleSetStylingChanged, onRuleSetSelectedChanged]
   );
@@ -86,6 +98,12 @@ export const RuleBasedOutputsButton = ({
     const assetStylingGroups = stylingGroups?.map((group) => group.assetStylingGroup);
     if (onRuleSetStylingChanged !== undefined) onRuleSetStylingChanged(assetStylingGroups);
   };
+
+  const callbackWhenIsLoaded = (isLoaded: boolean): void => {
+    setIsRuleLoading(!isLoaded);
+  };
+
+  if (onRuleSetStylingLoaded !== undefined) onRuleSetStylingLoaded(callbackWhenIsLoaded);
 
   if (ruleInstances === undefined || ruleInstances.length === 0) {
     return <></>;
@@ -99,7 +117,7 @@ export const RuleBasedOutputsButton = ({
         appendTo={document.body}>
         <Dropdown
           placement="right-start"
-          disabled={isLoading}
+          disabled={isAssetMappingsLoading}
           content={
             <Menu
               style={{
@@ -114,6 +132,8 @@ export const RuleBasedOutputsButton = ({
                 label={t('RULESET_NO_SELECTION', 'No RuleSet selected')}
                 checked={currentRuleSetEnabled === undefined || emptyRuleSelected?.isEnabled}
                 onChange={onChange}
+                isLoading={isRuleLoading}
+                isEmptyRuleItem={true}
               />
               {ruleInstances?.map((item) => (
                 <RuleBasedSelectionItem
@@ -122,11 +142,18 @@ export const RuleBasedOutputsButton = ({
                   label={item?.rule?.properties.name}
                   checked={item?.isEnabled}
                   onChange={onChange}
+                  isLoading={isRuleLoading}
+                  isEmptyRuleItem={false}
                 />
               ))}
             </Menu>
           }>
-          <Button icon="ColorPalette" aria-label="Select RuleSet" type="ghost" />
+          <Button
+            disabled={isAssetMappingsLoading}
+            icon="ColorPalette"
+            aria-label="Select RuleSet"
+            type="ghost"
+          />
         </Dropdown>
       </CogsTooltip>
       {ruleInstances !== undefined && ruleInstances?.length > 0 && (

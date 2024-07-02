@@ -36,7 +36,6 @@ export const useSearchMappedEquipmentAssetMappings = (
   const sdk = useSDK(userSdk);
   const modelsKey = models.map((model) => [model.modelId, model.revisionId]);
   const { data: assetMappings, isFetched } = useAllMappedEquipmentAssetMappings(models, sdk);
-
   return useQuery({
     queryKey: ['reveal', 'react-components', 'search-mapped-asset-mappings', query, modelsKey],
     queryFn: async () => {

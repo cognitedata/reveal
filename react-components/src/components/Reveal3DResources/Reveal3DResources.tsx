@@ -31,6 +31,11 @@ import {
 import { type ImageCollectionModelStyling } from '../Image360CollectionContainer/useApply360AnnotationStyling';
 import { is360ImageAddOptions } from './typeGuards';
 import { useRemoveNonReferencedModels } from './useRemoveNonReferencedModels';
+import {
+  useAssetMappedNodesForRevisions,
+  useGenerateAssetMappingCachePerItemFromModelCache,
+  useGenerateNode3DCache
+} from '../CacheProvider/AssetMappingCacheProvider';
 
 export const Reveal3DResources = ({
   resources,
@@ -38,9 +43,11 @@ export const Reveal3DResources = ({
   instanceStyling,
   onResourcesAdded,
   onResourceLoadError,
+  onCallback,
   image360Settings
 }: Reveal3DResourcesProps): ReactElement => {
   const viewer = useReveal();
+
   const [reveal3DModels, setReveal3DModels] = useState<TypedReveal3DModel[]>([]);
 
   const numModelsLoaded = useRef(0);
@@ -62,6 +69,11 @@ export const Reveal3DResources = ({
     [reveal3DModels]
   );
 
+  const { data: assetMappings } = useAssetMappedNodesForRevisions(cadModelOptions);
+
+  void useGenerateAssetMappingCachePerItemFromModelCache(cadModelOptions, assetMappings);
+  void useGenerateNode3DCache(cadModelOptions, assetMappings);
+
   const pointCloudModelOptions = useMemo(
     () =>
       reveal3DModels.filter(
@@ -70,7 +82,7 @@ export const Reveal3DResources = ({
     [reveal3DModels]
   );
 
-  const styledCadModelOptions = useCalculateCadStyling(
+  const { styledModels: styledCadModelOptions, modelMappingsIsFetched } = useCalculateCadStyling(
     cadModelOptions,
     instanceStyling?.filter(isCadAssetMappingStylingGroup) ?? EMPTY_ARRAY,
     defaultResourceStyling
@@ -111,6 +123,12 @@ export const Reveal3DResources = ({
       onResourcesAdded();
     }
   };
+
+  useEffect(() => {
+    if (modelMappingsIsFetched && onCallback !== undefined) {
+      onCallback(modelMappingsIsFetched);
+    }
+  }, [modelMappingsIsFetched, onCallback]);
 
   return (
     <>

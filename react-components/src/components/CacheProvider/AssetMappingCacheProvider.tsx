@@ -38,6 +38,53 @@ const useAssetMappingCache = (): AssetMappingCache => {
   return content.cache;
 };
 
+export const useGenerateNode3DCache = async (
+  cadModelOptions: CadModelOptions[],
+  assetMappings: ModelWithAssetMappings[] | undefined
+): Promise<void> => {
+  const assetMappingCache = useAssetMappingCache();
+
+  useMemo(() => {
+    cadModelOptions.forEach(async ({ modelId, revisionId }) => {
+      const assetMapping = assetMappings?.filter(
+        (item) => item.model.modelId === modelId && item.model.revisionId === revisionId
+      );
+      const nodeIdsFromAssetMappings = assetMapping?.flatMap((item) =>
+        item.assetMappings.map((mapping) => mapping.nodeId)
+      );
+
+      if (nodeIdsFromAssetMappings === undefined || nodeIdsFromAssetMappings.length === 0) return;
+
+      await assetMappingCache.generateNode3DCachePerItem(
+        modelId,
+        revisionId,
+        nodeIdsFromAssetMappings
+      );
+    });
+  }, [cadModelOptions, assetMappings]);
+};
+
+export const useGenerateAssetMappingCachePerItemFromModelCache = async (
+  cadModelOptions: CadModelOptions[],
+  assetMappings: ModelWithAssetMappings[] | undefined
+): Promise<void> => {
+  const assetMappingCache = useAssetMappingCache();
+  useMemo(() => {
+    cadModelOptions.forEach(async ({ modelId, revisionId }) => {
+      const assetMapping = assetMappings?.filter(
+        (item) => item.model.modelId === modelId && item.model.revisionId === revisionId
+      );
+      if (assetMapping !== undefined && assetMapping.length > 0) {
+        await assetMappingCache.generateAssetMappingsCachePerItemFromModelCache(
+          modelId,
+          revisionId,
+          assetMapping
+        );
+      }
+    });
+  }, [cadModelOptions, assetMappings]);
+};
+
 export const useAssetMappedNodesForRevisions = (
   cadModels: CadModelOptions[]
 ): UseQueryResult<ModelWithAssetMappings[]> => {
