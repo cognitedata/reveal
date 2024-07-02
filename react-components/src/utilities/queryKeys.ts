@@ -7,6 +7,7 @@ export const queryKeys = {
   all: ['cdf'] as const,
   // ASSETS
   assetsById: (ids: IdEither[]) => [...assets, ids] as const,
+  assetsList: (filter?: any) => [...queryKeys.all, 'assets', 'list', filter],
   // TIMESERIES
   timeseriesById: (ids: IdEither[]) => [...timeseries, ids] as const,
   timeseriesLatestDatapoint: () => [...timeseries, 'latest-datapoints'] as const,
