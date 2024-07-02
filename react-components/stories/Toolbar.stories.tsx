@@ -14,7 +14,8 @@ import {
 } from '../src';
 import { Color } from 'three';
 import styled from 'styled-components';
-import { Button, Menu, ToolBar, type ToolBarButton } from '@cognite/cogs.js';
+import { Button, EditIcon, ToolBar, WorldIcon, type ToolBarButton } from '@cognite/cogs.js';
+import { Menu } from '@cognite/cogs-lab';
 import { type ReactElement, useState, useEffect } from 'react';
 import { signalStoryReadyForScreenshot } from './utilities/signalStoryReadyForScreenshot';
 import { RevealStoryContainer } from './utilities/RevealStoryContainer';
@@ -38,10 +39,10 @@ const MyCustomToolbar = styled(withSuppressRevealEvents(withCameraStateUrlParam(
 
 const exampleToolBarButtons: ToolBarButton[] = [
   {
-    icon: 'Edit'
+    icon: <EditIcon />
   },
   {
-    icon: 'World'
+    icon: <WorldIcon />
   }
 ];
 
@@ -50,14 +51,13 @@ const exampleCustomSettingElements = (): ReactElement => {
 
   return (
     <>
-      <Menu.Item
-        hasSwitch
+      <Menu.ItemToggled
         toggled={originalCadColor}
         onChange={() => {
           setOriginalCadColor((prevMode) => !prevMode);
         }}>
         Original CAD coloring
-      </Menu.Item>
+      </Menu.ItemToggled>
       <Button>Custom Button</Button>
     </>
   );

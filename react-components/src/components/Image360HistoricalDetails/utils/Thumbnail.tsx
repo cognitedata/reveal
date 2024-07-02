@@ -4,7 +4,7 @@
 
 import styled from 'styled-components';
 import { type ReactElement, useMemo } from 'react';
-import { Icon } from '@cognite/cogs.js';
+import { ImageOffIcon, LoaderIcon } from '@cognite/cogs.js';
 
 export const Thumbnail = ({
   imageUrl,
@@ -25,10 +25,10 @@ export const Thumbnail = ({
     }
 
     if (isLoading) {
-      return <Icon type="Loader" />;
+      return <LoaderIcon />;
     }
 
-    return <Icon type="ImageOff" />;
+    return <ImageOffIcon />;
   }, [imageUrl, isLoading]);
 
   return <StyledThumbnail isActive={isActive}> {image} </StyledThumbnail>;

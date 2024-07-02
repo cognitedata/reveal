@@ -3,7 +3,7 @@
  */
 
 import { type ReactElement, useState } from 'react';
-import { Menu } from '@cognite/cogs.js';
+import { Menu } from '@cognite/cogs-lab';
 import { useReveal } from '../../RevealCanvas/ViewerContext';
 import { type QualitySettings, type QualityProps } from './types';
 import { type Cognite3DViewer } from '@cognite/reveal';
@@ -63,9 +63,10 @@ export const HighFidelityContainer = ({
   };
 
   return (
-    <Menu.Item hasSwitch toggled={active} onChange={onClick}>
+    <Menu.ItemToggled toggled={active} onChange={onClick}>
+      {/* <Menu.Item hasSwitch toggled={active} onChange={onClick}> */}
       {t('HIGH_FIDELITY', 'High Fidelity')}
-    </Menu.Item>
+    </Menu.ItemToggled>
   );
 };
 

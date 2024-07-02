@@ -1,7 +1,7 @@
 /*!
  * Copyright 2023 Cognite AS
  */
-import { Body, Title } from '@cognite/cogs.js';
+import { Body, Heading } from '@cognite/cogs.js';
 import styled from 'styled-components';
 import { Mouse } from './Graphics/Mouse';
 
@@ -13,11 +13,11 @@ export const SectionContainer = styled.div`
   max-width: fit-content;
 `;
 
-export const SectionTitle = styled(Title).attrs({ level: 3 })`
+export const SectionTitle = styled(Heading).attrs({ level: 3 })`
   color: #ffffff;
 `;
 
-export const SectionSubTitle = styled(Title).attrs({ level: 5 })`
+export const SectionSubTitle = styled(Heading).attrs({ level: 5 })`
   color: #ffffff;
 `;
 
@@ -40,7 +40,7 @@ export const InstructionText = styled(Body).attrs({
 `;
 
 export const InstructionDetail = styled(Body).attrs({
-  level: 3
+  size: 'small'
 })`
   color: rgba(255, 255, 255, 0.7);
   font-size: 14px;

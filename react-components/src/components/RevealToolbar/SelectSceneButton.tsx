@@ -3,7 +3,8 @@
  */
 import { useCallback, useState, type ReactElement } from 'react';
 
-import { Button, Dropdown, Menu, Tooltip as CogsTooltip } from '@cognite/cogs.js';
+import { Button, Menu, Tooltip as CogsTooltip, WorldIcon } from '@cognite/cogs.js';
+import { Dropdown } from '@cognite/cogs-lab';
 import { use3dScenes } from '../../query/use3dScenes';
 import { useTranslation } from '../i18n/I18n';
 import { type DmsUniqueIdentifier } from '../../utilities/FdmSDK';
@@ -54,7 +55,7 @@ export const SelectSceneButton = ({
             <SceneList selectedScene={selectedScene} onSceneChange={setSceneAndUpdateName} />
           </StyledMenu>
         }>
-        <Button icon="World" aria-label="Select 3D location" type="ghost">
+        <Button icon=<WorldIcon /> aria-label="Select 3D location" type="ghost">
           {orientation === 'horizontal' && sceneName}
         </Button>
       </Dropdown>

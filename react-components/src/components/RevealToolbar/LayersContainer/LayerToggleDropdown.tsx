@@ -10,7 +10,7 @@ import { WholeLayerVisibilityToggle } from './WholeLayerVisibilityToggle';
 import { withSuppressRevealEvents } from '../../../higher-order-components/withSuppressRevealEvents';
 import { type UpdateModelHandlersCallback } from './useModelHandlers';
 
-const SuppressedSubmenu = withSuppressRevealEvents(Menu.Submenu);
+const SuppressedSubmenu = withSuppressRevealEvents(Menu);
 
 export const LayerToggleDropdown = ({
   layerHandlers,
@@ -23,8 +23,7 @@ export const LayerToggleDropdown = ({
 }): ReactElement => {
   return (
     <SuppressedSubmenu
-      appendTo={'parent'}
-      content={<ModelLayersList modelHandlers={layerHandlers} update={update} />}>
+      content={[<ModelLayersList modelHandlers={layerHandlers} update={update} />]}>
       <WholeLayerVisibilityToggle modelHandlers={layerHandlers} update={update} label={label} />
     </SuppressedSubmenu>
   );
