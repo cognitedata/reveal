@@ -7,7 +7,8 @@ import { type ReactElement, useState, useEffect } from 'react';
 import { Box3, Plane, Vector3 } from 'three';
 
 import { useReveal } from '../RevealCanvas/ViewerContext';
-import { Button, Dropdown, Menu, RangeSlider, Tooltip as CogsTooltip } from '@cognite/cogs.js';
+import { Button, Menu, RangeSlider, Tooltip as CogsTooltip, SliceIcon } from '@cognite/cogs.js';
+import { Dropdown } from '@cognite/cogs-lab';
 
 import styled from 'styled-components';
 import { useSlicerUrlParams } from './hooks/useUrlStateParam';
@@ -110,7 +111,6 @@ export const SlicerButton = ({ storeStateInUrl = true }: SlicerButtonProps): Rea
   return (
     <CogsTooltip content={t('SLICE_TOOLTIP', 'Slice')} placement="right" appendTo={document.body}>
       <Dropdown
-        appendTo={() => document.body}
         onClickOutside={() => {
           setSliceActive(false);
         }}
@@ -130,7 +130,7 @@ export const SlicerButton = ({ storeStateInUrl = true }: SlicerButtonProps): Rea
         placement="right-end">
         <Button
           type="ghost"
-          icon="Slice"
+          icon=<SliceIcon />
           aria-label="Slice models"
           toggled={sliceActive}
           onClick={() => {

@@ -4,7 +4,8 @@
 
 import { useState, type ReactElement } from 'react';
 
-import { Button, Dropdown, Tooltip as CogsTooltip } from '@cognite/cogs.js';
+import { Button, Tooltip as CogsTooltip, HelpIcon } from '@cognite/cogs.js';
+import { Dropdown } from '@cognite/cogs-lab';
 import styled from 'styled-components';
 import { MouseNavigation } from './Help/MouseNavigation';
 import { TouchNavigation } from './Help/TouchNavigation';
@@ -22,7 +23,6 @@ export const HelpButton = ({ fallbackLanguage }: HelpButtonProps): ReactElement 
   return (
     <CogsTooltip content={t('HELP_TOOLTIP', 'Help')} placement="right" appendTo={document.body}>
       <Dropdown
-        appendTo={document.body}
         onClickOutside={() => {
           setHelpActive(false);
         }}
@@ -36,7 +36,7 @@ export const HelpButton = ({ fallbackLanguage }: HelpButtonProps): ReactElement 
         placement="right">
         <Button
           type="ghost"
-          icon="Help"
+          icon=<HelpIcon />
           aria-label="help-button"
           toggled={helpActive}
           onClick={() => {

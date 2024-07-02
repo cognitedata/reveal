@@ -3,7 +3,8 @@
  */
 import { useState, type ReactElement, useEffect, useCallback } from 'react';
 
-import { Button, Dropdown, Menu, Tooltip as CogsTooltip } from '@cognite/cogs.js';
+import { Button, Menu, Tooltip as CogsTooltip, ColorPaletteIcon } from '@cognite/cogs.js';
+import { Dropdown } from '@cognite/cogs-lab';
 
 import { RuleBasedOutputsSelector } from '../RuleBasedOutputs/RuleBasedOutputsSelector';
 import {
@@ -126,7 +127,7 @@ export const RuleBasedOutputsButton = ({
               ))}
             </Menu>
           }>
-          <Button icon="ColorPalette" aria-label="Select RuleSet" type="ghost" />
+          <Button icon=<ColorPaletteIcon /> aria-label="Select RuleSet" type="ghost" />
         </Dropdown>
       </CogsTooltip>
       {ruleInstances !== undefined && ruleInstances?.length > 0 && (

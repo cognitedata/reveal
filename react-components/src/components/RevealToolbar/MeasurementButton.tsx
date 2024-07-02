@@ -4,7 +4,7 @@
 
 import { type ReactElement, useState, useEffect, useCallback } from 'react';
 import { useReveal } from '../RevealCanvas/ViewerContext';
-import { Button, Tooltip as CogsTooltip } from '@cognite/cogs.js';
+import { Button, Tooltip as CogsTooltip, RulerIcon } from '@cognite/cogs.js';
 import { type Measurement } from '@cognite/reveal/tools';
 import { FEET_TO_INCHES, METERS_TO_FEET } from '../../utilities/constants';
 import { useTranslation } from '../i18n/I18n';
@@ -79,7 +79,7 @@ export const MeasurementButton = ({
       appendTo={document.body}>
       <Button
         type="ghost"
-        icon="Ruler"
+        icon=<RulerIcon />
         toggled={measurementEnabled}
         aria-label="Make measurements"
         onClick={toggleMeasurementEnabled}

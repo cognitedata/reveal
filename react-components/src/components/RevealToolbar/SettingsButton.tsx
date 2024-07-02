@@ -3,7 +3,8 @@
  */
 
 import { useState, type ReactElement } from 'react';
-import { Button, Dropdown, Menu, Tooltip as CogsTooltip } from '@cognite/cogs.js';
+import { Button, Menu, Tooltip as CogsTooltip, SettingsIcon } from '@cognite/cogs.js';
+import { Dropdown } from '@cognite/cogs-lab';
 import { type QualitySettings } from './SettingsContainer/types';
 import { HighFidelityContainer } from './SettingsContainer/HighFidelityContainer';
 import { useTranslation } from '../i18n/I18n';
@@ -28,7 +29,6 @@ export const SettingsButton = ({
       placement="right"
       appendTo={document.body}>
       <Dropdown
-        appendTo={document.body}
         onClickOutside={() => {
           setSettingsActive(false);
         }}
@@ -43,7 +43,7 @@ export const SettingsButton = ({
         }
         placement="right-start">
         <Button
-          icon="Settings"
+          icon=<SettingsIcon />
           type="ghost"
           aria-label="Show settings"
           toggled={settingsActive}

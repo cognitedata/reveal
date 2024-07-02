@@ -2,7 +2,7 @@
  * Copyright 2023 Cognite AS
  */
 
-import { Detail, Flex } from '@cognite/cogs.js';
+import { Body, Flex } from '@cognite/cogs.js';
 import React, { forwardRef, useEffect, useRef } from 'react';
 import styled from 'styled-components';
 import { Thumbnail } from '../utils/Thumbnail';
@@ -97,7 +97,9 @@ export const Image360HistoricalSummary = forwardRef(
                   imageUrl={revisionDetails.imageUrl}
                   isLoading={false}
                 />
-                <Detail style={{ height: '16px' }}>{revisionDetails.date}</Detail>
+                <Body size="x-small" style={{ height: '16px' }}>
+                  {revisionDetails.date}
+                </Body>
               </RevisionItem>
             ))}
           </StyledLayoutGrid>
@@ -132,7 +134,9 @@ const StyledFlex = styled(Flex)`
   color: rgba(0, 0, 0, 0.9);
 `;
 
-const StyledDetail = styled(Detail)`
+const StyledDetail = styled(Body).attrs({
+  size: 'x-small'
+})`
   font-family: 'Inter';
   font-style: normal;
   font-weight: 500;

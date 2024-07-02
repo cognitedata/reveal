@@ -1,7 +1,7 @@
 /*!
  * Copyright 2024 Cognite AS
  */
-import { Flex, Icon, Menu, Radio } from '@cognite/cogs.js';
+import { ColorPaletteIcon, Flex, Menu, Radio } from '@cognite/cogs.js';
 import { type ReactElement } from 'react';
 
 type RuleBasedSelectionItemProps = {
@@ -26,7 +26,7 @@ export const RuleBasedSelectionItem = ({
       key={key}>
       <Flex justifyContent="space-between" alignItems="center" gap={8}>
         <Flex gap={4} alignItems="center">
-          <Icon type="ColorPalette" />
+          <ColorPaletteIcon />
           {label}
         </Flex>
         <Radio name={id ?? ''} value={id} checked={checked} />
