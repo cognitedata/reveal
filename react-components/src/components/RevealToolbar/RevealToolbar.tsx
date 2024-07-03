@@ -24,7 +24,7 @@ import {
 import { AssetContextualizedButton } from './AssetContextualizedButton';
 
 const StyledToolBar = styled(ToolBar)`
-  position: absolute;
+  position: absolute !important;
   left: 20px;
   top: 70px;
   width: 48px;
