@@ -23,6 +23,7 @@ import { type TranslateKey } from '../../../base/utilities/TranslateKey';
 import { clear } from '../../../base/utilities/extensions/arrayExtensions';
 import { type Transaction } from '../../../base/undo/Transaction';
 import { DomainObjectTransaction } from '../../../base/undo/DomainObjectTransaction';
+import { IconName } from '../../../../components/Architecture/getIconComponent';
 
 export abstract class LineDomainObject extends VisualDomainObject {
   // ==================================================
@@ -58,7 +59,7 @@ export abstract class LineDomainObject extends VisualDomainObject {
   // OVERRIDES of DomainObject
   // ==================================================
 
-  public override get icon(): string {
+  public override get icon(): IconName {
     return getIconByPrimitiveType(this.primitiveType);
   }
 

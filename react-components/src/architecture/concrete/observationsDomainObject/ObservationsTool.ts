@@ -5,9 +5,10 @@ import { type TranslateKey } from '../../base/utilities/TranslateKey';
 import { ObservationsDomainObject } from './ObservationsDomainObject';
 import { BaseEditTool } from '../../base/commands/BaseEditTool';
 import { type VisualDomainObject } from '../../base/domainObjects/VisualDomainObject';
+import { IconName } from '../../../components/Architecture/getIconComponent';
 
 export class ObservationsTool extends BaseEditTool {
-  public override get icon(): string {
+  public override get icon(): IconName {
     return 'Location';
   }
 

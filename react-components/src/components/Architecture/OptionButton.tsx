@@ -23,7 +23,7 @@ import {
   getTooltipPlacement
 } from './utilities';
 import { LabelWithShortcut } from './LabelWithShortcut';
-import { getIconComponent } from './getIconComponent';
+import { getIconComponent, IconName } from './getIconComponent';
 
 export const OptionButton = ({
   inputCommand,
@@ -40,7 +40,7 @@ export const OptionButton = ({
   const [isEnabled, setEnabled] = useState<boolean>(true);
   const [isVisible, setVisible] = useState<boolean>(true);
   const [uniqueId, setUniqueId] = useState<number>(0);
-  const [icon, setIcon] = useState<string | undefined>(undefined);
+  const [icon, setIcon] = useState<IconName | undefined>(undefined);
 
   const update = useCallback((command: BaseCommand) => {
     setEnabled(command.isEnabled);

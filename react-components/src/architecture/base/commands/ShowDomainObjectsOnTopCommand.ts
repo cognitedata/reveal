@@ -2,6 +2,7 @@
  * Copyright 2024 Cognite AS
  */
 
+import { IconName } from '../../../components/Architecture/getIconComponent';
 import { Changes } from '../domainObjectsHelpers/Changes';
 import { CommonRenderStyle } from '../renderStyles/CommonRenderStyle';
 import { InstanceCommand } from './InstanceCommand';
@@ -11,7 +12,7 @@ export abstract class ShowDomainObjectsOnTopCommand extends InstanceCommand {
   // OVERRIDES
   // ==================================================
 
-  public override get icon(): string {
+  public override get icon(): IconName {
     return 'Flag';
   }
 

@@ -2,6 +2,7 @@
  * Copyright 2024 Cognite AS
  */
 
+import { IconName } from '../../../components/Architecture/getIconComponent';
 import { RenderTargetCommand } from '../../base/commands/RenderTargetCommand';
 import { type TranslateKey } from '../../base/utilities/TranslateKey';
 import { AxisDomainObject } from './AxisDomainObject';
@@ -15,7 +16,7 @@ export class SetAxisVisibleCommand extends RenderTargetCommand {
     return { key: 'SHOW_OR_HIDE_AXIS', fallback: 'Show or hide axis' };
   }
 
-  public override get icon(): string {
+  public override get icon(): IconName {
     return 'Axis3D';
   }
 

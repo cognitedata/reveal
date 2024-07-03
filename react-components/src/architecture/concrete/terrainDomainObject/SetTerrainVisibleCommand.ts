@@ -8,13 +8,14 @@ import { Range3 } from '../../base/utilities/geometry/Range3';
 import { createFractalRegularGrid2 } from './geometry/createFractalRegularGrid2';
 import { TerrainDomainObject } from './TerrainDomainObject';
 import { type TranslateKey } from '../../base/utilities/TranslateKey';
+import { IconName } from '../../../components/Architecture/getIconComponent';
 
 export class SetTerrainVisibleCommand extends RenderTargetCommand {
   // ==================================================
   // OVERRIDES
   // ==================================================
 
-  public override get icon(): string {
+  public override get icon(): IconName {
     return 'EyeShow';
   }
 

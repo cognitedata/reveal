@@ -9,7 +9,7 @@ import { useTranslation } from '../i18n/I18n';
 import { type BaseCommand } from '../../architecture/base/commands/BaseCommand';
 import { getButtonType, getDefaultCommand, getIcon, getTooltipPlacement } from './utilities';
 import { LabelWithShortcut } from './LabelWithShortcut';
-import { getIconComponent } from './getIconComponent';
+import { getIconComponent, IconName } from './getIconComponent';
 
 export const createCommandButton = (
   commandConstructor: () => BaseCommand,
@@ -34,7 +34,7 @@ export const CommandButton = ({
   const [isEnabled, setEnabled] = useState<boolean>(true);
   const [isVisible, setVisible] = useState<boolean>(true);
   const [uniqueId, setUniqueId] = useState<number>(0);
-  const [icon, setIcon] = useState<string | undefined>(undefined);
+  const [icon, setIcon] = useState<IconName | undefined>(undefined);
 
   const update = useCallback((command: BaseCommand) => {
     setChecked(command.isChecked);

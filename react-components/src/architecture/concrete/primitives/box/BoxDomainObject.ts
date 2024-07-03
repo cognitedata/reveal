@@ -26,6 +26,7 @@ import { PanelInfo } from '../../../base/domainObjectsHelpers/PanelInfo';
 import { radToDeg } from 'three/src/math/MathUtils.js';
 import { DomainObjectTransaction } from '../../../base/undo/DomainObjectTransaction';
 import { type Transaction } from '../../../base/undo/Transaction';
+import { IconName } from '../../../../components/Architecture/getIconComponent';
 
 export const MIN_BOX_SIZE = 0.01;
 
@@ -68,7 +69,7 @@ export abstract class BoxDomainObject extends VisualDomainObject {
   // OVERRIDES of DomainObject
   // ==================================================
 
-  public override get icon(): string {
+  public override get icon(): IconName {
     return getIconByPrimitiveType(this.primitiveType);
   }
 

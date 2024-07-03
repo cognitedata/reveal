@@ -6,8 +6,9 @@ import { type BaseCommand } from '../../architecture/base/commands/BaseCommand';
 import { type RevealRenderTarget } from '../../architecture/base/renderTarget/RevealRenderTarget';
 import { RenderTargetCommand } from '../../architecture/base/commands/RenderTargetCommand';
 import { type PlacementType, type ButtonType, type FlexDirection } from './types';
+import { IconName } from './getIconComponent';
 
-export function getIcon(command: BaseCommand): string | undefined {
+export function getIcon(command: BaseCommand): IconName | undefined {
   if (command.icon === undefined) {
     return undefined;
   }

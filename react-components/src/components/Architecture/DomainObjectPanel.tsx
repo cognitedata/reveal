@@ -19,7 +19,7 @@ import { withSuppressRevealEvents } from '../../higher-order-components/withSupp
 import { type TranslateDelegate } from '../../architecture/base/utilities/TranslateKey';
 import { type UnitSystem } from '../../architecture/base/renderTarget/UnitSystem';
 import { type DomainObject } from '../../architecture/base/domainObjects/DomainObject';
-import { getIconComponent } from './getIconComponent';
+import { getIconComponent, IconName } from './getIconComponent';
 
 const TEXT_SIZE = 'x-small';
 const HEADER_SIZE = 'small';
@@ -142,7 +142,7 @@ function toString(info: PanelInfo, translate: TranslateDelegate, unitSystem: Uni
   return result;
 }
 
-export function getIcon(domainObject: DomainObject): string | undefined {
+export function getIcon(domainObject: DomainObject): IconName | undefined {
   if (domainObject.icon === undefined) {
     return undefined;
   }

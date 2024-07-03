@@ -18,6 +18,7 @@ import { PlaneCreator } from '../primitives/plane/PlaneCreator';
 import { SliceDomainObject } from './SliceDomainObject';
 import { UndoCommand } from '../../base/concreteCommands/UndoCommand';
 import { NextOrPrevClippingCommand } from './commands/NextClippingCommand';
+import { IconName } from '../../../components/Architecture/getIconComponent';
 
 export class ClipTool extends PrimitiveEditTool {
   // ==================================================
@@ -32,7 +33,7 @@ export class ClipTool extends PrimitiveEditTool {
   // OVERRIDES of BaseCommand
   // ==================================================
 
-  public override get icon(): string {
+  public override get icon(): IconName {
     return 'Crop';
   }
 

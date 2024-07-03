@@ -2,9 +2,10 @@
  * Copyright 2024 Cognite AS
  */
 
+import { IconName } from '../../../components/Architecture/getIconComponent';
 import { PrimitiveType } from '../primitives/PrimitiveType';
 
-export function getIconByPrimitiveType(primitiveType: PrimitiveType): string {
+export function getIconByPrimitiveType(primitiveType: PrimitiveType): IconName {
   switch (primitiveType) {
     case PrimitiveType.Line:
       return 'VectorLine';
@@ -27,6 +28,6 @@ export function getIconByPrimitiveType(primitiveType: PrimitiveType): string {
     case PrimitiveType.Box:
       return 'Cube';
     default:
-      throw new Error('Unknown PrimitiveType');
+      throw new Error('Unrecognized PrimitiveType ' + primitiveType);
   }
 }

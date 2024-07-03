@@ -5,6 +5,7 @@
 import { BaseTool } from '../commands/BaseTool';
 import { type IFlexibleCameraManager } from '@cognite/reveal';
 import { type TranslateKey } from '../utilities/TranslateKey';
+import { IconName } from '../../../components/Architecture/getIconComponent';
 
 /**
  * Represents a tool navigation tool used for camera manipulation.
@@ -23,7 +24,7 @@ export class NavigationTool extends BaseTool {
   // OVERRIDES
   // ==================================================
 
-  public override get icon(): string {
+  public override get icon(): IconName {
     return 'Grab';
   }
 

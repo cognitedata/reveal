@@ -32,9 +32,43 @@ import {
   VectorZigzagIcon,
   View360Icon
 } from '@cognite/cogs.js';
+import { assertNever } from '../../utilities/assertNever';
 
-export function getIconComponent(iconString: string): (iconProps: IconProps) => JSX.Element {
-  switch (iconString) {
+export type IconName =
+  | 'ArrowLeft'
+  | 'ArrowRight'
+  | 'Axis3D'
+  | 'Circle'
+  | 'ClearAll'
+  | 'Coordinates'
+  | 'Copy'
+  | 'Crop'
+  | 'Cube'
+  | 'CubeFrontLeft'
+  | 'CubeFrontRight'
+  | 'CubeTop'
+  | 'Delete'
+  | 'ExpandAlternative'
+  | 'EyeShow'
+  | 'Flag'
+  | 'FlipHorizontal'
+  | 'FlipVertical'
+  | 'FrameTool'
+  | 'Grab'
+  | 'Location'
+  | 'Perspective'
+  | 'Plane'
+  | 'PointCloud'
+  | 'Polygon'
+  | 'Refresh'
+  | 'Ruler'
+  | 'RulerAlternative'
+  | 'VectorLine'
+  | 'VectorZigzag'
+  | 'View360';
+
+export function getIconComponent(iconName: IconName): (iconProps: IconProps) => JSX.Element {
+  switch (iconName) {
     case 'ArrowLeft':
       return ArrowLeftIcon;
     case 'ArrowRight':
@@ -98,6 +132,6 @@ export function getIconComponent(iconString: string): (iconProps: IconProps) => 
     case 'View360':
       return View360Icon;
     default:
-      throw new Error('Could not find icon for name ' + iconString);
+      assertNever(iconName);
   }
 }

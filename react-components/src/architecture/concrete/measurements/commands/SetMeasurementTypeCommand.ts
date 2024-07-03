@@ -8,6 +8,7 @@ import { PrimitiveType } from '../../primitives/PrimitiveType';
 import { getIconByPrimitiveType } from '../getIconByPrimitiveType';
 import { type TranslateKey } from '../../../base/utilities/TranslateKey';
 import { MeasurementTool } from '../MeasurementTool';
+import { IconName } from '../../../../components/Architecture/getIconComponent';
 
 export class SetMeasurementTypeCommand extends RenderTargetCommand {
   private readonly _primitiveType: PrimitiveType;
@@ -25,7 +26,7 @@ export class SetMeasurementTypeCommand extends RenderTargetCommand {
   // OVERRIDES of BaseCommand
   // ==================================================
 
-  public override get icon(): string {
+  public override get icon(): IconName {
     return getIconByPrimitiveType(this._primitiveType);
   }
 

@@ -9,13 +9,14 @@ import { createFractalRegularGrid2 } from './geometry/createFractalRegularGrid2'
 import { TerrainDomainObject } from './TerrainDomainObject';
 import { Changes } from '../../base/domainObjectsHelpers/Changes';
 import { type TranslateKey } from '../../base/utilities/TranslateKey';
+import { IconName } from '../../../components/Architecture/getIconComponent';
 
 export class UpdateTerrainCommand extends RenderTargetCommand {
   // ==================================================
   // OVERRIDES
   // ==================================================
 
-  public override get icon(): string {
+  public override get icon(): IconName {
     return 'Refresh';
   }
 

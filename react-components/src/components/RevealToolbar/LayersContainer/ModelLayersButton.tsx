@@ -3,12 +3,11 @@
  */
 import { Button, Tooltip } from '@cognite/cogs.js';
 import { Dropdown } from '@cognite/cogs-lab';
-import { useReveal } from '../../RevealCanvas/ViewerContext';
 import { type ModelHandler } from './ModelHandler';
 import { ModelLayersList } from './ModelLayersList';
 import { type ReactElement } from 'react';
 import { type UpdateModelHandlersCallback } from './useModelHandlers';
-import { getIconComponent } from '../../Architecture/getIconComponent';
+import { getIconComponent, IconName } from '../../Architecture/getIconComponent';
 
 export const ModelLayersButton = ({
   icon,
@@ -16,13 +15,11 @@ export const ModelLayersButton = ({
   handlers,
   update
 }: {
-  icon: string;
+  icon: IconName;
   label: string;
   handlers: ModelHandler[];
   update: UpdateModelHandlersCallback;
 }): ReactElement => {
-  const viewer = useReveal();
-
   const IconComponent = getIconComponent(icon);
 
   return (

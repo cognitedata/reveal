@@ -7,6 +7,7 @@ import { type TranslateKey } from '../../../base/utilities/TranslateKey';
 import { PrimitiveType } from '../../primitives/PrimitiveType';
 import { type SliceDomainObject } from '../SliceDomainObject';
 import { DomainObjectCommand } from '../../../base/commands/DomainObjectCommand';
+import { IconName } from '../../../../components/Architecture/getIconComponent';
 
 export class FlipSliceCommand extends DomainObjectCommand<SliceDomainObject> {
   // ==================================================
@@ -17,7 +18,7 @@ export class FlipSliceCommand extends DomainObjectCommand<SliceDomainObject> {
     return { key: 'SLICE_FLIP', fallback: 'Flip side on this slice' };
   }
 
-  public override get icon(): string {
+  public override get icon(): IconName {
     if (this._domainObject.primitiveType === PrimitiveType.PlaneZ) {
       return 'FlipHorizontal';
     }

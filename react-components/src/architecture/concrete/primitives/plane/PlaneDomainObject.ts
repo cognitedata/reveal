@@ -30,6 +30,7 @@ import { radToDeg } from 'three/src/math/MathUtils.js';
 import { type DomainObjectChange } from '../../../base/domainObjectsHelpers/DomainObjectChange';
 import { DomainObjectTransaction } from '../../../base/undo/DomainObjectTransaction';
 import { type Transaction } from '../../../base/undo/Transaction';
+import { IconName } from '../../../../components/Architecture/getIconComponent';
 
 const ORIGIN = new Vector3(0, 0, 0);
 
@@ -81,7 +82,7 @@ export abstract class PlaneDomainObject extends VisualDomainObject {
   // OVERRIDES
   // ==================================================
 
-  public override get icon(): string {
+  public override get icon(): IconName {
     return getIconByPrimitiveType(this.primitiveType);
   }
 

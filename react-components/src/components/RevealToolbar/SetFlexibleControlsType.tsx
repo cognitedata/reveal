@@ -15,7 +15,8 @@ import {
 import { useTranslation } from '../i18n/I18n';
 import styled from 'styled-components';
 import { type TranslateDelegate } from '../../architecture/base/utilities/TranslateKey';
-import { getIconComponent } from '../Architecture/getIconComponent';
+import { getIconComponent, IconName } from '../Architecture/getIconComponent';
+import { assertNever } from '../../utilities/assertNever';
 
 type CustomSettingsProps = {
   includeOrbitInCenter?: boolean;
@@ -183,7 +184,7 @@ function getDefaultValue(manager: IFlexibleCameraManager | undefined): FlexibleC
   return manager !== undefined ? manager.controlsType : FlexibleControlsType.Orbit;
 }
 
-function getIcon(controlsType: FlexibleControlsType): string {
+function getIcon(controlsType: FlexibleControlsType): IconName {
   switch (controlsType) {
     case FlexibleControlsType.FirstPerson:
       return 'Plane';
@@ -192,7 +193,7 @@ function getIcon(controlsType: FlexibleControlsType): string {
     case FlexibleControlsType.OrbitInCenter:
       return 'Coordinates';
     default:
-      return 'Error';
+      assertNever(controlsType);
   }
 }
 

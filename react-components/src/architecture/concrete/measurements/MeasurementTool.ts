@@ -17,6 +17,7 @@ import { LineCreator } from '../primitives/line/LineCreator';
 import { type VisualDomainObject } from '../../base/domainObjects/VisualDomainObject';
 import { CDF_TO_VIEWER_TRANSFORMATION } from '@cognite/reveal';
 import { UndoCommand } from '../../base/concreteCommands/UndoCommand';
+import { IconName } from '../../../components/Architecture/getIconComponent';
 
 export class MeasurementTool extends PrimitiveEditTool {
   // ==================================================
@@ -31,7 +32,7 @@ export class MeasurementTool extends PrimitiveEditTool {
   // OVERRIDES of BaseCommand
   // ==================================================
 
-  public override get icon(): string {
+  public override get icon(): IconName {
     return 'Ruler';
   }
 

@@ -2,6 +2,7 @@
  * Copyright 2024 Cognite AS
  */
 
+import { IconName } from '../../../components/Architecture/getIconComponent';
 import { type TranslateKey } from '../utilities/TranslateKey';
 import { InstanceCommand } from './InstanceCommand';
 
@@ -14,7 +15,7 @@ export abstract class ShowAllDomainObjectsCommand extends InstanceCommand {
     return { fallback: 'Show or hide' };
   }
 
-  public override get icon(): string {
+  public override get icon(): IconName {
     return 'EyeShow';
   }
 

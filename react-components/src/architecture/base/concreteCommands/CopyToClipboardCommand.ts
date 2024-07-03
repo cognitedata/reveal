@@ -2,6 +2,7 @@
  * Copyright 2024 Cognite AS
  */
 
+import { IconName } from '../../../components/Architecture/getIconComponent';
 import { BaseCommand } from '../commands/BaseCommand';
 import { type TranslateKey } from '../utilities/TranslateKey';
 
@@ -27,7 +28,7 @@ export class CopyToClipboardCommand extends BaseCommand {
     return { key: 'COPY_TO_CLIPBOARD', fallback: 'Copy to clipboard' };
   }
 
-  public override get icon(): string {
+  public override get icon(): IconName {
     return 'Copy';
   }
 
