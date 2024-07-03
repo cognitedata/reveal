@@ -41,11 +41,13 @@ type ModelStyleGroup = {
 type ModelStyleGroupWithMappingsFetched = {
   combinedMappedStyleGroups: ModelStyleGroup[];
   modelMappingsIsFetched: boolean;
+  modelMappingsIsLoading: boolean;
 };
 
 type StyledModelWithMappingsFetched = {
   styledModels: StyledModel[];
   modelMappingsIsFetched: boolean;
+  modelMappingsIsLoading: boolean;
 };
 
 export type CadStyleGroup = NodeStylingGroup | TreeIndexStylingGroup;
@@ -76,7 +78,8 @@ export const useCalculateCadStyling = (
   );
   return {
     styledModels: joinedStyleGroups,
-    modelMappingsIsFetched: modelInstanceStyleGroupsAndMappingFetched.modelMappingsIsFetched
+    modelMappingsIsFetched: modelInstanceStyleGroupsAndMappingFetched.modelMappingsIsFetched,
+    modelMappingsIsLoading: modelInstanceStyleGroupsAndMappingFetched.modelMappingsIsLoading
   };
 };
 
@@ -178,7 +181,11 @@ function useCalculateInstanceStyling(
     models
   );
 
-  const { data: modelAssetMappings, isFetched } = useNodesForAssets(
+  const {
+    data: modelAssetMappings,
+    isFetched,
+    isLoading
+  } = useNodesForAssets(
     models,
     instanceGroups
       .filter(isAssetMappingStylingGroup)
@@ -206,7 +213,11 @@ function useCalculateInstanceStyling(
     [fdmModelInstanceStyleGroups, assetMappingInstanceStyleGroups]
   );
 
-  return { combinedMappedStyleGroups, modelMappingsIsFetched: isFetched };
+  return {
+    combinedMappedStyleGroups,
+    modelMappingsIsFetched: isFetched,
+    modelMappingsIsLoading: isLoading
+  };
 }
 
 function useAssetMappingInstanceStyleGroups(

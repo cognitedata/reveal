@@ -18,9 +18,11 @@ import {
   type TriggerType,
   type RuleWithOutputs,
   type TriggerTypeData,
-  type TimeseriesAndDatapoints
+  type TimeseriesAndDatapoints,
+  EmptyRuleForSelection,
+  RuleAndEnabled
 } from './types';
-import { TreeIndexNodeCollection, type NodeAppearance } from '@cognite/reveal';
+import { NumericRange, TreeIndexNodeCollection, type NodeAppearance } from '@cognite/reveal';
 import { type AssetMapping3D, type Asset, type Datapoints } from '@cognite/sdk';
 import { type AssetStylingGroup } from '../Reveal3DResources/types';
 import { isDefined } from '../../utilities/isDefined';
@@ -468,7 +470,8 @@ const applyNodeStyles = (
   const nodeIndexSet = ruleOutputAndStyleIndex.styleIndex.getIndexSet();
   nodeIndexSet.clear();
   treeNodes?.forEach((node) => {
-    nodeIndexSet.add(node.treeIndex);
+    const range = new NumericRange(node.treeIndex, node.subtreeSize);
+    nodeIndexSet.addRange(range);
   });
   ruleOutputAndStyleIndex.styleIndex.updateSet(nodeIndexSet);
 
@@ -499,4 +502,25 @@ const convertExpressionStringMetadataKeyToLowerCase = (expression: Expression): 
   }
 
   expression.trigger.key = expression.trigger.key.toLowerCase();
+};
+
+export const generateEmptyRuleForSelection = (name: string): EmptyRuleForSelection => {
+  const emptySelection: EmptyRuleForSelection = {
+    rule: {
+      properties: {
+        id: undefined,
+        name,
+        isNoSelection: true
+      }
+    },
+    isEnabled: false
+  };
+  return emptySelection;
+}
+
+export const getRuleBasedById = (
+  id: string | undefined,
+  ruleInstances: RuleAndEnabled[] | undefined
+): RuleAndEnabled | undefined => {
+  return ruleInstances?.find((item) => item.rule.properties.id === id);
 };

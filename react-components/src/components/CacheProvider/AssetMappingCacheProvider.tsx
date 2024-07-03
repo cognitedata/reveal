@@ -2,7 +2,7 @@
  * Copyright 2023 Cognite AS
  */
 
-import { type ReactElement, type ReactNode, createContext, useContext, useMemo } from 'react';
+import { type ReactElement, type ReactNode, createContext, useContext, useMemo, useEffect } from 'react';
 import { type CadModelOptions } from '../Reveal3DResources/types';
 import {
   type AssetMapping,
@@ -38,10 +38,10 @@ const useAssetMappingCache = (): AssetMappingCache => {
   return content.cache;
 };
 
-export const useGenerateNode3DCache = async (
+export const useGenerateNode3DCache = (
   cadModelOptions: CadModelOptions[],
   assetMappings: ModelWithAssetMappings[] | undefined
-): Promise<void> => {
+): void => {
   const assetMappingCache = useAssetMappingCache();
 
   useMemo(() => {
@@ -64,10 +64,10 @@ export const useGenerateNode3DCache = async (
   }, [cadModelOptions, assetMappings]);
 };
 
-export const useGenerateAssetMappingCachePerItemFromModelCache = async (
+export const useGenerateAssetMappingCachePerItemFromModelCache = (
   cadModelOptions: CadModelOptions[],
   assetMappings: ModelWithAssetMappings[] | undefined
-): Promise<void> => {
+): void => {
   const assetMappingCache = useAssetMappingCache();
   useMemo(() => {
     cadModelOptions.forEach(async ({ modelId, revisionId }) => {

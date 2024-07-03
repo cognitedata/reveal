@@ -66,12 +66,7 @@ export type Image360AnnotationAssetInfo = {
 
 export type AnnotationId = number;
 
-export type ChunkInCacheTypes = {
-  chunkInCache: Array<Required<AssetMapping3D>>;
-  chunkNotInCache: number[];
-};
-
-export type ChunkInCacheTypesNode3D = {
-  chunkInCache: Node3D[];
+export type ChunkInCacheTypes<ObjectType> = {
+  chunkInCache: ObjectType[];
   chunkNotInCache: number[];
 };

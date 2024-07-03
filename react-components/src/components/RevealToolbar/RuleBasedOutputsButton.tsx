@@ -18,6 +18,7 @@ import { type AssetStylingGroup } from '../..';
 import { type CadModelOptions } from '../Reveal3DResources/types';
 import { useAssetMappedNodesForRevisions } from '../CacheProvider/AssetMappingCacheProvider';
 import { RuleBasedSelectionItem } from '../RuleBasedOutputs/components/RuleBasedSelectionItem';
+import { generateEmptyRuleForSelection, getRuleBasedById } from '../RuleBasedOutputs/utils';
 
 type RuleBasedOutputsButtonProps = {
   onRuleSetStylingChanged?: (stylings: AssetStylingGroup[] | undefined) => void;
@@ -50,30 +51,22 @@ export const RuleBasedOutputsButton = ({
   }, [ruleInstancesResult]);
 
   useEffect(() => {
+    if (onRuleSetStylingLoaded !== undefined) onRuleSetStylingLoaded(callbackWhenIsLoaded);
     setCurrentRuleSetEnabled(newRuleSetEnabled);
   }, [newRuleSetEnabled]);
 
   const onChange = useCallback(
     (data: string | undefined): void => {
+      const emptySelection = generateEmptyRuleForSelection(
+        t('RULESET_NO_SELECTION', 'No RuleSet selected')
+      );
+
       ruleInstances?.forEach((item) => {
         if (item === undefined) return;
         item.isEnabled = false;
       });
 
-      const emptySelection: EmptyRuleForSelection = {
-        rule: {
-          properties: {
-            id: undefined,
-            name: t('RULESET_NO_SELECTION', 'No RuleSet selected'),
-            isNoSelection: true
-          }
-        },
-        isEnabled: false
-      };
-
-      const selectedRule = ruleInstances?.find((item) => {
-        return item?.rule?.properties.id === data;
-      });
+      const selectedRule = getRuleBasedById(data, ruleInstances);
 
       if (selectedRule !== undefined) {
         selectedRule.isEnabled = true;
@@ -84,10 +77,9 @@ export const RuleBasedOutputsButton = ({
 
       if (onRuleSetSelectedChanged !== undefined) onRuleSetSelectedChanged(selectedRule);
 
-      setIsRuleLoading(true);
-
       setEmptyRuleSelected(emptySelection);
       setNewRuleSetEnabled(selectedRule);
+      setIsRuleLoading(true);
     },
     [ruleInstances, onRuleSetStylingChanged, onRuleSetSelectedChanged]
   );
@@ -99,11 +91,9 @@ export const RuleBasedOutputsButton = ({
     if (onRuleSetStylingChanged !== undefined) onRuleSetStylingChanged(assetStylingGroups);
   };
 
-  const callbackWhenIsLoaded = (isLoaded: boolean): void => {
-    setIsRuleLoading(!isLoaded);
+  const callbackWhenIsLoaded = (isLoading: boolean): void => {
+    setIsRuleLoading(isLoading);
   };
-
-  if (onRuleSetStylingLoaded !== undefined) onRuleSetStylingLoaded(callbackWhenIsLoaded);
 
   if (ruleInstances === undefined || ruleInstances.length === 0) {
     return <></>;

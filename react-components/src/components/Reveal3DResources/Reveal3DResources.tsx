@@ -43,7 +43,7 @@ export const Reveal3DResources = ({
   instanceStyling,
   onResourcesAdded,
   onResourceLoadError,
-  onCallback,
+  onRuleBasedCallback,
   image360Settings
 }: Reveal3DResourcesProps): ReactElement => {
   const viewer = useReveal();
@@ -71,8 +71,8 @@ export const Reveal3DResources = ({
 
   const { data: assetMappings } = useAssetMappedNodesForRevisions(cadModelOptions);
 
-  void useGenerateAssetMappingCachePerItemFromModelCache(cadModelOptions, assetMappings);
-  void useGenerateNode3DCache(cadModelOptions, assetMappings);
+  useGenerateAssetMappingCachePerItemFromModelCache(cadModelOptions, assetMappings);
+  useGenerateNode3DCache(cadModelOptions, assetMappings);
 
   const pointCloudModelOptions = useMemo(
     () =>
@@ -82,7 +82,11 @@ export const Reveal3DResources = ({
     [reveal3DModels]
   );
 
-  const { styledModels: styledCadModelOptions, modelMappingsIsFetched } = useCalculateCadStyling(
+  const {
+    styledModels: styledCadModelOptions,
+    modelMappingsIsFetched,
+    modelMappingsIsLoading
+  } = useCalculateCadStyling(
     cadModelOptions,
     instanceStyling?.filter(isCadAssetMappingStylingGroup) ?? EMPTY_ARRAY,
     defaultResourceStyling
@@ -125,10 +129,10 @@ export const Reveal3DResources = ({
   };
 
   useEffect(() => {
-    if (modelMappingsIsFetched && onCallback !== undefined) {
-      onCallback(modelMappingsIsFetched);
+    if (onRuleBasedCallback !== undefined) {
+      onRuleBasedCallback(!(modelMappingsIsFetched && !modelMappingsIsLoading));
     }
-  }, [modelMappingsIsFetched, onCallback]);
+  }, [modelMappingsIsFetched, modelMappingsIsLoading, onRuleBasedCallback]);
 
   return (
     <>

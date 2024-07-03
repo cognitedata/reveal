@@ -15,7 +15,6 @@ import {
   type ModelRevisionKey,
   type RevisionId,
   type ChunkInCacheTypes,
-  type ChunkInCacheTypesNode3D
 } from './types';
 import { chunk, maxBy } from 'lodash';
 import assert from 'assert';
@@ -216,7 +215,7 @@ export class AssetMappingCache {
     modelId: ModelId,
     revisionId: RevisionId,
     type: string
-  ): Promise<ChunkInCacheTypes> {
+  ): Promise<ChunkInCacheTypes<AssetMapping3D>> {
     const chunkInCache: Array<Required<AssetMapping3D>> = [];
     const chunkNotCached: number[] = [];
 
@@ -239,7 +238,7 @@ export class AssetMappingCache {
     currentChunk: number[],
     modelId: ModelId,
     revisionId: RevisionId
-  ): Promise<ChunkInCacheTypesNode3D> {
+  ): Promise<ChunkInCacheTypes<Node3D>> {
     const chunkInCache: Node3D[] = [];
     const chunkNotCached: number[] = [];
 
