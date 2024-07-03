@@ -24,14 +24,14 @@ export const SettingsButton = ({
   const [settingsActive, setSettingsActive] = useState<boolean>(false);
 
   return (
-    <CogsTooltip
-      content={t('SETTINGS_TOOLTIP', 'Settings')}
+    <Menu
       placement="right"
-      disabled={settingsActive}
-      appendTo={document.body}>
-      <Menu
-        placement="right"
-        renderTrigger={(props) => (
+      renderTrigger={(props) => (
+        <CogsTooltip
+          content={t('SETTINGS_TOOLTIP', 'Settings')}
+          placement="right"
+          disabled={settingsActive}
+          appendTo={document.body}>
           <Button
             {...props}
             icon=<SettingsIcon />
@@ -42,13 +42,13 @@ export const SettingsButton = ({
               setSettingsActive((prevState) => !prevState);
             }}
           />
-        )}>
-        <HighFidelityContainer
-          lowQualitySettings={lowQualitySettings}
-          highQualitySettings={highQualitySettings}
-        />
-        {customSettingsContent ?? <></>}
-      </Menu>
-    </CogsTooltip>
+        </CogsTooltip>
+      )}>
+      <HighFidelityContainer
+        lowQualitySettings={lowQualitySettings}
+        highQualitySettings={highQualitySettings}
+      />
+      {customSettingsContent ?? <></>}
+    </Menu>
   );
 };

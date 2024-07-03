@@ -34,7 +34,6 @@ export const SlicerButton = ({ storeStateInUrl = true }: SlicerButtonProps): Rea
   const { bottom: initialBottomRatio, top: initialTopRatio } = storeStateInUrl
     ? slicerUrlState
     : { bottom: 0, top: 1 };
-  const [sliceActive, setSliceActive] = useState<boolean>(false);
 
   const [sliceState, setSliceState] = useState<SliceState>({
     minHeight: 0,
@@ -109,56 +108,26 @@ export const SlicerButton = ({ storeStateInUrl = true }: SlicerButtonProps): Rea
   }
 
   return (
-    <CogsTooltip
-      content={t('SLICE_TOOLTIP', 'Slice')}
-      placement="right"
-      appendTo={document.body}
-      disabled={sliceActive}>
-      <StyledMenu
-        placement="right-end"
-        renderTrigger={(props) => (
-          <Button
-            {...props}
-            type="ghost"
-            icon=<SliceIcon />
-            aria-label="Slice models"
-            /* toggled={sliceActive}
-            onClick={() => {
-              console.log('toggling', sliceActive);
-              setSliceActive((prevState) => !prevState);
-            }} */
-          />
-        )}>
-        <RangeSlider
-          min={0}
-          max={1}
-          step={0.01}
-          setValue={changeSlicingState}
-          marks={{}}
-          value={[bottomRatio, topRatio]}
-          vertical
-        />
-      </StyledMenu>
-      {/* <Dropdown
-        onClickOutside={() => {
-          setSliceActive(false);
-        }}
-        content={
-          <StyledMenu>
-            <RangeSlider
-              min={0}
-              max={1}
-              step={0.01}
-              setValue={changeSlicingState}
-              marks={{}}
-              value={[bottomRatio, topRatio]}
-              vertical
-            />
-          </StyledMenu>
-        }
-        placement="right-end">
-        </Dropdown> */}
-    </CogsTooltip>
+    <StyledMenu
+      placement="right-end"
+      renderTrigger={(props) => (
+        <CogsTooltip
+          content={t('SLICE_TOOLTIP', 'Slice')}
+          placement="right"
+          appendTo={document.body}>
+          <Button {...props} type="ghost" icon=<SliceIcon /> aria-label="Slice models" />
+        </CogsTooltip>
+      )}>
+      <RangeSlider
+        min={0}
+        max={1}
+        step={0.01}
+        setValue={changeSlicingState}
+        marks={{}}
+        value={[bottomRatio, topRatio]}
+        vertical
+      />
+    </StyledMenu>
   );
 };
 
@@ -166,4 +135,5 @@ const StyledMenu = styled(Menu)`
   height: 512px;
   padding: 12px;
   min-width: 0px;
+  width: 38px;
 `;

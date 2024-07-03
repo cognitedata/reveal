@@ -19,6 +19,7 @@ export type HelpButtonProps = {
 export const HelpButton = ({ fallbackLanguage }: HelpButtonProps): ReactElement => {
   const { t } = useTranslation(fallbackLanguage);
   const [helpActive, setHelpActive] = useState<boolean>(false);
+  console.log('Rendering with help = ', helpActive);
 
   return (
     <CogsTooltip content={t('HELP_TOOLTIP', 'Help')} placement="right" appendTo={document.body}>
@@ -27,11 +28,11 @@ export const HelpButton = ({ fallbackLanguage }: HelpButtonProps): ReactElement 
           setHelpActive(false);
         }}
         content={
-          <StyledMenu>
+          <StyledContainer>
             <MouseNavigation fallbackLanguage={fallbackLanguage} />
             <KeyboardNavigation fallbackLanguage={fallbackLanguage} />
             <TouchNavigation fallbackLanguage={fallbackLanguage} />
-          </StyledMenu>
+          </StyledContainer>
         }
         placement="right">
         <Button
@@ -39,16 +40,14 @@ export const HelpButton = ({ fallbackLanguage }: HelpButtonProps): ReactElement 
           icon=<HelpIcon />
           aria-label="help-button"
           toggled={helpActive}
-          onClick={() => {
-            setHelpActive((prevState) => !prevState);
-          }}
+          onClick={() => setHelpActive((prevState) => !prevState)}
         />
       </Dropdown>
     </CogsTooltip>
   );
 };
 
-const StyledMenu = styled.div`
+const StyledContainer = styled.div`
   background-color: #516efa;
   border-radius: 4px;
   display: flex;
