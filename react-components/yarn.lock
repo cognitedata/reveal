@@ -1846,35 +1846,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@cognite/cogs-core@npm:^10.9.6":
-  version: 10.9.6
-  resolution: "@cognite/cogs-core@npm:10.9.6"
-  dependencies:
-    "@cognite/cogs-icons": "npm:^10.9.6"
-    "@cognite/cogs-utils": "npm:^10.9.6"
-    "@mui/base": "npm:^5.0.0-beta.33"
-    "@mui/joy": "npm:5.0.0-beta.36"
-    "@mui/x-date-pickers": "npm:^6.19.3"
-    "@mui/x-date-pickers-pro": "npm:^6.19.3"
-    "@mui/x-license-pro": "npm:^6.10.2"
-    "@react-hook/resize-observer": "npm:^1.2.6"
-    classnames: "npm:^2.5.1"
-    color: "npm:3.2.1"
-    csstype: "npm:2.6.10"
-    dayjs: "npm:^1.11.7"
-    framer-motion: "npm:^11.0.3"
-    fuse.js: "npm:^7.0.0"
-    rc-slider: "npm:9.5.4"
-    react-select: "npm:3.2.0"
-    tslib: "npm:^2.6.2"
-  peerDependencies:
-    "@types/react": ^18
-    react: ^18
-    react-dom: ^18
-  checksum: 10/ea06cf3e3013eebedd12c71a6812213c18dbbdf991343000b4788a24f2f6ba90e326a6f4014fd49083db71ccf148dc5f2feea0a151cd0abd034d8371eaed4842
-  languageName: node
-  linkType: hard
-
 "@cognite/cogs-core@npm:^10.9.7":
   version: 10.9.7
   resolution: "@cognite/cogs-core@npm:10.9.7"
@@ -1907,17 +1878,37 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@cognite/cogs-icons@npm:^10.9.6":
-  version: 10.9.6
-  resolution: "@cognite/cogs-icons@npm:10.9.6"
+"@cognite/cogs-core@npm:^10.9.8":
+  version: 10.9.8
+  resolution: "@cognite/cogs-core@npm:10.9.8"
   dependencies:
+    "@cognite/cogs-icons": "npm:^10.9.8"
+    "@cognite/cogs-utils": "npm:^10.9.8"
+    "@emotion/react": "npm:^11.11.3"
+    "@emotion/styled": "npm:^11.11.0"
+    "@mui/base": "npm:^5.0.0-beta.33"
+    "@mui/joy": "npm:5.0.0-beta.36"
+    "@mui/x-date-pickers": "npm:^6.19.3"
+    "@mui/x-date-pickers-pro": "npm:^6.19.3"
+    "@mui/x-license-pro": "npm:^6.10.2"
+    "@react-hook/resize-observer": "npm:^1.2.6"
+    "@tippyjs/react": "npm:4.2.6"
     classnames: "npm:^2.5.1"
+    color: "npm:3.2.1"
+    core-js: "npm:^3.6.5"
+    csstype: "npm:2.6.10"
+    dayjs: "npm:^1.11.7"
+    framer-motion: "npm:^11.0.3"
+    fuse.js: "npm:^7.0.0"
+    rc-slider: "npm:9.5.4"
+    react-select: "npm:3.2.0"
+    tippy.js: "npm:6.3.7"
     tslib: "npm:^2.6.2"
   peerDependencies:
     "@types/react": ^18
     react: ^18
     react-dom: ^18
-  checksum: 10/96dd5e74a033018612d409ecf0862027df2cadc7f12b60a94b49741a6d49f3ada3aed03ce594c16626a68a12801a3754c0230519ee2fb62bad0c0141313dbcb5
+  checksum: 10/05b5e25655453f991176e34b3fdc58581431ae0d72e6cb63a603d6439485f640bd2caa39e5eab32d97e11c2b822e1886e8990c8e37dd4480e7f7f9382081517e
   languageName: node
   linkType: hard
 
@@ -1935,14 +1926,28 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@cognite/cogs-lab@npm:^9.0.0-alpha.66":
-  version: 9.0.0-alpha.66
-  resolution: "@cognite/cogs-lab@npm:9.0.0-alpha.66"
+"@cognite/cogs-icons@npm:^10.9.8":
+  version: 10.9.8
+  resolution: "@cognite/cogs-icons@npm:10.9.8"
+  dependencies:
+    classnames: "npm:^2.5.1"
+    tslib: "npm:^2.6.2"
+  peerDependencies:
+    "@types/react": ^18
+    react: ^18
+    react-dom: ^18
+  checksum: 10/494bcae74b62f25040e7127625bb73240bcd7e21c28e1cca00fa463b74755a702358ae76678ab811e5cf62f988b3f58bb2d47695dd1fa365f9741efea63fff4d
+  languageName: node
+  linkType: hard
+
+"@cognite/cogs-lab@npm:^9.0.0-alpha.69":
+  version: 9.0.0-alpha.69
+  resolution: "@cognite/cogs-lab@npm:9.0.0-alpha.69"
   dependencies:
     "@babel/runtime": "npm:^7.23.2"
-    "@cognite/cogs-core": "npm:^10.9.6"
-    "@cognite/cogs-icons": "npm:^10.9.6"
-    "@cognite/cogs-utils": "npm:^10.9.6"
+    "@cognite/cogs-core": "npm:^10.9.8"
+    "@cognite/cogs-icons": "npm:^10.9.8"
+    "@cognite/cogs-utils": "npm:^10.9.8"
     "@floating-ui/react": "npm:^0.26.6"
     "@mui/base": "npm:^5.0.0-beta.33"
     "@mui/material": "npm:^5.15.5"
@@ -1958,25 +1963,7 @@ __metadata:
     tslib: "npm:^2.6.2"
   peerDependencies:
     react: ^18
-  checksum: 10/0aa4c904de166d2870074d089fe52ad44dcbeb8964b04d351b2768fcd2717431caad9f67ec0fe4140492061dd8195d7c0cca13d1bd4df792a022c7f46ac657ed
-  languageName: node
-  linkType: hard
-
-"@cognite/cogs-utils@npm:^10.9.6":
-  version: 10.9.6
-  resolution: "@cognite/cogs-utils@npm:10.9.6"
-  dependencies:
-    "@babel/runtime": "npm:^7.23.2"
-    "@testing-library/react": "npm:14.3.1"
-    classnames: "npm:^2.5.1"
-    color: "npm:3.2.1"
-    jest-axe: "npm:^8.0.0"
-    resize-observer-polyfill: "npm:1.5.1"
-    styled-components: "npm:^6.1.8"
-    tslib: "npm:^2.6.2"
-  peerDependencies:
-    react: ^18
-  checksum: 10/e38db05807fe68a9434bf8af39074147f9135178a8e93894e042eb1ab2d74c76a402997d318a4623dfd8692fceeb767d7c91569d06aa0114a43da56e316ed18f
+  checksum: 10/18d81364d627d14a4120a59239c5fe2cec862ae892ba7fbd3faa2ff4187a6585d157d4cf5c34dc0a44c1466ff0b464e6ba5904d68a7b818af4354beb4d50a634
   languageName: node
   linkType: hard
 
@@ -1998,6 +1985,24 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@cognite/cogs-utils@npm:^10.9.8":
+  version: 10.9.8
+  resolution: "@cognite/cogs-utils@npm:10.9.8"
+  dependencies:
+    "@babel/runtime": "npm:^7.23.2"
+    "@testing-library/react": "npm:14.3.1"
+    classnames: "npm:^2.5.1"
+    color: "npm:3.2.1"
+    jest-axe: "npm:^8.0.0"
+    resize-observer-polyfill: "npm:1.5.1"
+    styled-components: "npm:^6.1.8"
+    tslib: "npm:^2.6.2"
+  peerDependencies:
+    react: ^18
+  checksum: 10/0ec13d23b1cb69c682ebb6363cef2107821a484bc9b1bc07878405bfd475a95a9560fee867385277bf6551851d0758e86a2f74766c51d3af1bee3c2be839ab9c
+  languageName: node
+  linkType: hard
+
 "@cognite/cogs.js@npm:10.9.7":
   version: 10.9.7
   resolution: "@cognite/cogs.js@npm:10.9.7"
@@ -2015,7 +2020,7 @@ __metadata:
   dependencies:
     "@cognite/cdf-i18n-utils": "npm:^0.7.5"
     "@cognite/cdf-utilities": "npm:^3.6.0"
-    "@cognite/cogs-lab": "npm:^9.0.0-alpha.66"
+    "@cognite/cogs-lab": "npm:^9.0.0-alpha.69"
     "@cognite/cogs.js": "npm:10.9.7"
     "@cognite/reveal": "npm:^4.15.1"
     "@cognite/sdk": "npm:^9.13.0"
@@ -2073,7 +2078,7 @@ __metadata:
     vite-plugin-externalize-deps: "npm:^0.8.0"
     vitest: "npm:^1.5.3"
   peerDependencies:
-    "@cognite/cogs-lab": ^9.0.0-alpha.66
+    "@cognite/cogs-lab": ^9.0.0-alpha.69
     "@cognite/cogs.js": ^10.9.7
     "@cognite/reveal": 4.15.1
     react: ">=18"

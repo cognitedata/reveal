@@ -7,8 +7,8 @@ import { type ReactElement, useState, useEffect } from 'react';
 import { Box3, Plane, Vector3 } from 'three';
 
 import { useReveal } from '../RevealCanvas/ViewerContext';
-import { Button, Menu, RangeSlider, Tooltip as CogsTooltip, SliceIcon } from '@cognite/cogs.js';
-import { Dropdown } from '@cognite/cogs-lab';
+import { Button, RangeSlider, Tooltip as CogsTooltip, SliceIcon } from '@cognite/cogs.js';
+import { Dropdown, Menu } from '@cognite/cogs-lab';
 
 import styled from 'styled-components';
 import { useSlicerUrlParams } from './hooks/useUrlStateParam';
@@ -109,8 +109,37 @@ export const SlicerButton = ({ storeStateInUrl = true }: SlicerButtonProps): Rea
   }
 
   return (
-    <CogsTooltip content={t('SLICE_TOOLTIP', 'Slice')} placement="right" appendTo={document.body}>
-      <Dropdown
+    <CogsTooltip
+      content={t('SLICE_TOOLTIP', 'Slice')}
+      placement="right"
+      appendTo={document.body}
+      disabled={sliceActive}>
+      <StyledMenu
+        placement="right-end"
+        renderTrigger={(props) => (
+          <Button
+            {...props}
+            type="ghost"
+            icon=<SliceIcon />
+            aria-label="Slice models"
+            /* toggled={sliceActive}
+            onClick={() => {
+              console.log('toggling', sliceActive);
+              setSliceActive((prevState) => !prevState);
+            }} */
+          />
+        )}>
+        <RangeSlider
+          min={0}
+          max={1}
+          step={0.01}
+          setValue={changeSlicingState}
+          marks={{}}
+          value={[bottomRatio, topRatio]}
+          vertical
+        />
+      </StyledMenu>
+      {/* <Dropdown
         onClickOutside={() => {
           setSliceActive(false);
         }}
@@ -128,16 +157,7 @@ export const SlicerButton = ({ storeStateInUrl = true }: SlicerButtonProps): Rea
           </StyledMenu>
         }
         placement="right-end">
-        <Button
-          type="ghost"
-          icon=<SliceIcon />
-          aria-label="Slice models"
-          toggled={sliceActive}
-          onClick={() => {
-            setSliceActive((prevState) => !prevState);
-          }}
-        />
-      </Dropdown>
+        </Dropdown> */}
     </CogsTooltip>
   );
 };

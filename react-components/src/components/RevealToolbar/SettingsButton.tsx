@@ -3,8 +3,8 @@
  */
 
 import { useState, type ReactElement } from 'react';
-import { Button, Menu, Tooltip as CogsTooltip, SettingsIcon } from '@cognite/cogs.js';
-import { Dropdown } from '@cognite/cogs-lab';
+import { Button, Tooltip as CogsTooltip, SettingsIcon } from '@cognite/cogs.js';
+import { Menu } from '@cognite/cogs-lab';
 import { type QualitySettings } from './SettingsContainer/types';
 import { HighFidelityContainer } from './SettingsContainer/HighFidelityContainer';
 import { useTranslation } from '../i18n/I18n';
@@ -27,31 +27,28 @@ export const SettingsButton = ({
     <CogsTooltip
       content={t('SETTINGS_TOOLTIP', 'Settings')}
       placement="right"
+      disabled={settingsActive}
       appendTo={document.body}>
-      <Dropdown
-        onClickOutside={() => {
-          setSettingsActive(false);
-        }}
-        content={
-          <Menu>
-            <HighFidelityContainer
-              lowQualitySettings={lowQualitySettings}
-              highQualitySettings={highQualitySettings}
-            />
-            {customSettingsContent ?? <></>}
-          </Menu>
-        }
-        placement="right-start">
-        <Button
-          icon=<SettingsIcon />
-          type="ghost"
-          aria-label="Show settings"
-          toggled={settingsActive}
-          onClick={() => {
-            setSettingsActive((prevState) => !prevState);
-          }}
+      <Menu
+        placement="right"
+        renderTrigger={(props) => (
+          <Button
+            {...props}
+            icon=<SettingsIcon />
+            type="ghost"
+            aria-label="Show settings"
+            toggled={settingsActive}
+            onClick={() => {
+              setSettingsActive((prevState) => !prevState);
+            }}
+          />
+        )}>
+        <HighFidelityContainer
+          lowQualitySettings={lowQualitySettings}
+          highQualitySettings={highQualitySettings}
         />
-      </Dropdown>
+        {customSettingsContent ?? <></>}
+      </Menu>
     </CogsTooltip>
   );
 };

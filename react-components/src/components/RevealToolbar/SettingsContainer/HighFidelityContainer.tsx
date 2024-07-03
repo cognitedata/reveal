@@ -63,10 +63,10 @@ export const HighFidelityContainer = ({
   };
 
   return (
-    <Menu.ItemToggled toggled={active} onChange={onClick}>
-      {/* <Menu.Item hasSwitch toggled={active} onChange={onClick}> */}
-      {t('HIGH_FIDELITY', 'High Fidelity')}
-    </Menu.ItemToggled>
+    <Menu.ItemToggled
+      toggled={active}
+      label={t('HIGH_FIDELITY', 'High Fidelity')}
+      onClick={onClick}></Menu.ItemToggled>
   );
 };
 
