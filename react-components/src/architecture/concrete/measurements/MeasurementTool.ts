@@ -17,7 +17,7 @@ import { LineCreator } from '../primitives/line/LineCreator';
 import { type VisualDomainObject } from '../../base/domainObjects/VisualDomainObject';
 import { CDF_TO_VIEWER_TRANSFORMATION } from '@cognite/reveal';
 import { UndoCommand } from '../../base/concreteCommands/UndoCommand';
-import { IconName } from '../../../components/Architecture/getIconComponent';
+import { type IconName } from '../../../components/Architecture/getIconComponent';
 
 export class MeasurementTool extends PrimitiveEditTool {
   // ==================================================

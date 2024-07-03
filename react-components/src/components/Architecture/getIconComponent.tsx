@@ -1,3 +1,6 @@
+/*!
+ * Copyright 2024 Cognite AS
+ */
 import {
   ArrowLeftIcon,
   ArrowRightIcon,
@@ -19,7 +22,7 @@ import {
   FlipVerticalIcon,
   FrameToolIcon,
   GrabIcon,
-  IconProps,
+  type IconProps,
   LocationIcon,
   PerspectiveIcon,
   PlaneIcon,
@@ -32,6 +35,7 @@ import {
   VectorZigzagIcon,
   View360Icon
 } from '@cognite/cogs.js';
+import { type JSX } from 'react';
 import { assertNever } from '../../utilities/assertNever';
 
 export type IconName =

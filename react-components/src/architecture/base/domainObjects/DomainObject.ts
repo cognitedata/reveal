@@ -25,7 +25,7 @@ import { DeleteDomainObjectCommand } from '../concreteCommands/DeleteDomainObjec
 import { CopyToClipboardCommand } from '../concreteCommands/CopyToClipboardCommand';
 import { type BaseCommand } from '../commands/BaseCommand';
 import { type Transaction } from '../undo/Transaction';
-import { IconName } from '../../../components/Architecture/getIconComponent';
+import { type IconName } from '../../../components/Architecture/getIconComponent';
 
 /**
  * Represents an abstract base class for domain objects.

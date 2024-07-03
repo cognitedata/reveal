@@ -23,7 +23,7 @@ import {
   getTooltipPlacement
 } from './utilities';
 import { LabelWithShortcut } from './LabelWithShortcut';
-import { getIconComponent, IconName } from './getIconComponent';
+import { getIconComponent, type IconName } from './getIconComponent';
 
 export const OptionButton = ({
   inputCommand,

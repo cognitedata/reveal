@@ -8,7 +8,7 @@ import { PrimitiveType } from '../../primitives/PrimitiveType';
 import { getIconByPrimitiveType } from '../getIconByPrimitiveType';
 import { type TranslateKey } from '../../../base/utilities/TranslateKey';
 import { MeasurementTool } from '../MeasurementTool';
-import { IconName } from '../../../../components/Architecture/getIconComponent';
+import { type IconName } from '../../../../components/Architecture/getIconComponent';
 
 export class SetMeasurementTypeCommand extends RenderTargetCommand {
   private readonly _primitiveType: PrimitiveType;

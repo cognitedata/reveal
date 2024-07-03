@@ -2,7 +2,7 @@
  * Copyright 2024 Cognite AS
  */
 
-import { IconName } from '../../../components/Architecture/getIconComponent';
+import { type IconName } from '../../../components/Architecture/getIconComponent';
 import { PrimitiveType } from '../primitives/PrimitiveType';
 
 export function getIconByPrimitiveType(primitiveType: PrimitiveType): IconName {

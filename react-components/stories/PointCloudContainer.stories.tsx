@@ -5,7 +5,6 @@ import type { Meta, StoryObj } from '@storybook/react';
 import { PointCloudContainer, RevealCanvas, RevealContext, RevealToolbar } from '../src';
 import { Color, Matrix4 } from 'three';
 import { createSdkByUrlToken } from './utilities/createSdkByUrlToken';
-import { ToolBar } from '@cognite/cogs.js';
 import { HelpButton } from '../src/components/RevealToolbar/HelpButton';
 
 const meta = {

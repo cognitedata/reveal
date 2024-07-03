@@ -19,7 +19,7 @@ import { withSuppressRevealEvents } from '../../higher-order-components/withSupp
 import { type TranslateDelegate } from '../../architecture/base/utilities/TranslateKey';
 import { type UnitSystem } from '../../architecture/base/renderTarget/UnitSystem';
 import { type DomainObject } from '../../architecture/base/domainObjects/DomainObject';
-import { getIconComponent, IconName } from './getIconComponent';
+import { getIconComponent, type IconName } from './getIconComponent';
 
 const TEXT_SIZE = 'x-small';
 const HEADER_SIZE = 'small';

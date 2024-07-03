@@ -22,8 +22,7 @@ export const LayerToggleDropdown = ({
   label: string;
 }): ReactElement => {
   return (
-    <SuppressedSubmenu
-      content={[<ModelLayersList modelHandlers={layerHandlers} update={update} />]}>
+    <SuppressedSubmenu content={<ModelLayersList modelHandlers={layerHandlers} update={update} />}>
       <WholeLayerVisibilityToggle modelHandlers={layerHandlers} update={update} label={label} />
     </SuppressedSubmenu>
   );

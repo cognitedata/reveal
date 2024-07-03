@@ -7,8 +7,7 @@ import { type RevealRenderTarget } from '../renderTarget/RevealRenderTarget';
 import { FlexibleControlsType } from '@cognite/reveal';
 import { type BaseCommand } from '../commands/BaseCommand';
 import { type TranslateKey } from '../utilities/TranslateKey';
-import { IconName } from '../../../components/Architecture/getIconComponent';
-import { assertNever } from '../../../utilities/assertNever';
+import { type IconName } from '../../../components/Architecture/getIconComponent';
 
 export class SetFlexibleControlsTypeCommand extends RenderTargetCommand {
   private readonly _controlsType: FlexibleControlsType;
@@ -43,7 +42,7 @@ export class SetFlexibleControlsTypeCommand extends RenderTargetCommand {
     flexibleCameraManager.removeControlsTypeChangeListener(this._controlsTypeChangeHandler);
   }
 
-  public override get icon(): IconName {
+  public override get icon(): IconName | undefined {
     switch (this._controlsType) {
       case FlexibleControlsType.FirstPerson:
         return 'Plane';
@@ -52,7 +51,7 @@ export class SetFlexibleControlsTypeCommand extends RenderTargetCommand {
       case FlexibleControlsType.OrbitInCenter:
         return 'Coordinates';
       default:
-        assertNever(this._controlsType);
+        return undefined;
     }
   }
 

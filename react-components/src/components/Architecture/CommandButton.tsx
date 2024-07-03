@@ -9,7 +9,7 @@ import { useTranslation } from '../i18n/I18n';
 import { type BaseCommand } from '../../architecture/base/commands/BaseCommand';
 import { getButtonType, getDefaultCommand, getIcon, getTooltipPlacement } from './utilities';
 import { LabelWithShortcut } from './LabelWithShortcut';
-import { getIconComponent, IconName } from './getIconComponent';
+import { getIconComponent, type IconName } from './getIconComponent';
 
 export const createCommandButton = (
   commandConstructor: () => BaseCommand,

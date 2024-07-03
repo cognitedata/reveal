@@ -9,7 +9,7 @@ import { CropBoxDomainObject } from '../CropBoxDomainObject';
 import { SliceDomainObject } from '../SliceDomainObject';
 import { type RootDomainObject } from '../../../base/domainObjects/RootDomainObject';
 import { FocusType } from '../../../base/domainObjectsHelpers/FocusType';
-import { IconName } from '../../../../components/Architecture/getIconComponent';
+import { type IconName } from '../../../../components/Architecture/getIconComponent';
 
 export class ApplyClipCommand extends RenderTargetCommand {
   // ==================================================

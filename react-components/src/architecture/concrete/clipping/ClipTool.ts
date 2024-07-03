@@ -18,7 +18,7 @@ import { PlaneCreator } from '../primitives/plane/PlaneCreator';
 import { SliceDomainObject } from './SliceDomainObject';
 import { UndoCommand } from '../../base/concreteCommands/UndoCommand';
 import { NextOrPrevClippingCommand } from './commands/NextClippingCommand';
-import { IconName } from '../../../components/Architecture/getIconComponent';
+import { type IconName } from '../../../components/Architecture/getIconComponent';
 
 export class ClipTool extends PrimitiveEditTool {
   // ==================================================
