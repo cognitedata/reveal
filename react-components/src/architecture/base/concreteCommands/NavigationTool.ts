@@ -5,7 +5,7 @@
 import { BaseTool } from '../commands/BaseTool';
 import { type IFlexibleCameraManager } from '@cognite/reveal';
 import { type TranslateKey } from '../utilities/TranslateKey';
-import { type IconName } from '../../../components/Architecture/getIconComponent';
+import { type IconName } from '../../base/utilities/IconName';
 
 /**
  * Represents a tool navigation tool used for camera manipulation.

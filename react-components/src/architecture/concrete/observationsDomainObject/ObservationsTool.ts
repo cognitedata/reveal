@@ -5,7 +5,7 @@ import { type TranslateKey } from '../../base/utilities/TranslateKey';
 import { ObservationsDomainObject } from './ObservationsDomainObject';
 import { BaseEditTool } from '../../base/commands/BaseEditTool';
 import { type VisualDomainObject } from '../../base/domainObjects/VisualDomainObject';
-import { type IconName } from '../../../components/Architecture/getIconComponent';
+import { type IconName } from '../../base/utilities/IconName';
 
 export class ObservationsTool extends BaseEditTool {
   public override get icon(): IconName {

@@ -30,7 +30,7 @@ import { radToDeg } from 'three/src/math/MathUtils.js';
 import { type DomainObjectChange } from '../../../base/domainObjectsHelpers/DomainObjectChange';
 import { DomainObjectTransaction } from '../../../base/undo/DomainObjectTransaction';
 import { type Transaction } from '../../../base/undo/Transaction';
-import { type IconName } from '../../../../components/Architecture/getIconComponent';
+import { type IconName } from '../../../base/utilities/IconName';
 
 const ORIGIN = new Vector3(0, 0, 0);
 

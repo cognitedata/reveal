@@ -9,7 +9,8 @@ import { useTranslation } from '../i18n/I18n';
 import { type BaseCommand } from '../../architecture/base/commands/BaseCommand';
 import { getButtonType, getDefaultCommand, getIcon, getTooltipPlacement } from './utilities';
 import { LabelWithShortcut } from './LabelWithShortcut';
-import { getIconComponent, type IconName } from './getIconComponent';
+import { type IconName } from '../../architecture/base/utilities/IconName';
+import { IconComponent } from './IconComponent';
 
 export const createCommandButton = (
   commandConstructor: () => BaseCommand,
@@ -59,8 +60,6 @@ export const CommandButton = ({
   const tooltip = command.getLabel(t);
   const shortcut = command.getShortCutKeys();
 
-  const IconComponent = getIconComponent(icon);
-
   return (
     <CogsTooltip
       content={<LabelWithShortcut label={tooltip} shortcut={shortcut} />}
@@ -68,7 +67,7 @@ export const CommandButton = ({
       placement={placement}>
       <Button
         type={getButtonType(command)}
-        icon={<IconComponent />}
+        icon={<IconComponent iconName={icon} />}
         key={uniqueId}
         disabled={!isEnabled}
         toggled={isChecked}

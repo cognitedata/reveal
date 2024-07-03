@@ -6,7 +6,7 @@ import { type TranslateKey } from '../utilities/TranslateKey';
 import { type DomainObject } from '../domainObjects/DomainObject';
 import { DomainObjectCommand } from '../commands/DomainObjectCommand';
 import { Changes } from '../domainObjectsHelpers/Changes';
-import { type IconName } from '../../../components/Architecture/getIconComponent';
+import { type IconName } from '../../base/utilities/IconName';
 
 export class DeleteDomainObjectCommand extends DomainObjectCommand<DomainObject> {
   // ==================================================

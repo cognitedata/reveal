@@ -7,7 +7,7 @@ import { Changes } from '../../../base/domainObjectsHelpers/Changes';
 import { type TranslateKey } from '../../../base/utilities/TranslateKey';
 import { type DomainObject } from '../../../base/domainObjects/DomainObject';
 import { InstanceCommand } from '../../../base/commands/InstanceCommand';
-import { type IconName } from '../../../../components/Architecture/getIconComponent';
+import { type IconName } from '../../../base/utilities/IconName';
 
 export class ResetAllExamplesCommand extends InstanceCommand {
   // ==================================================

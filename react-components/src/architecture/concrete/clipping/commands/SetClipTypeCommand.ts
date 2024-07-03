@@ -9,7 +9,7 @@ import { type TranslateKey } from '../../../base/utilities/TranslateKey';
 import { ClipTool } from '../ClipTool';
 import { getIconByPrimitiveType } from '../../measurements/getIconByPrimitiveType';
 import { SliceDomainObject } from '../SliceDomainObject';
-import { type IconName } from '../../../../components/Architecture/getIconComponent';
+import { type IconName } from '../../../base/utilities/IconName';
 
 export class SetClipTypeCommand extends RenderTargetCommand {
   private readonly _primitiveType: PrimitiveType;

@@ -23,7 +23,8 @@ import {
   getTooltipPlacement
 } from './utilities';
 import { LabelWithShortcut } from './LabelWithShortcut';
-import { getIconComponent, type IconName } from './getIconComponent';
+import { IconComponent } from './IconComponent';
+import { type IconName } from '../../architecture/base/utilities/IconName';
 
 export const OptionButton = ({
   inputCommand,
@@ -70,8 +71,6 @@ export const OptionButton = ({
   const options = command.getOrCreateOptions(renderTarget);
   const selectedLabel = command.selectedOption?.getLabel(t);
 
-  const IconComponent = getIconComponent(icon);
-
   const OpenButtonIcon = isOpen ? ChevronUpIcon : ChevronDownIcon;
 
   return (
@@ -96,7 +95,7 @@ export const OptionButton = ({
             {options.map((command, _index): ReactElement => {
               return (
                 <Menu.Item
-                  icon={<IconComponent />}
+                  icon={<IconComponent iconName={icon} />}
                   key={command.uniqueId}
                   toggled={command.isChecked}
                   disabled={!isEnabled}

@@ -1,0 +1,37 @@
+/*!
+ * Copyright 2024 Cognite AS
+ */
+
+export type IconName =
+  | 'Angle'
+  | 'ArrowLeft'
+  | 'ArrowRight'
+  | 'Axis3D'
+  | 'Circle'
+  | 'ClearAll'
+  | 'Coordinates'
+  | 'Copy'
+  | 'Crop'
+  | 'Cube'
+  | 'CubeFrontLeft'
+  | 'CubeFrontRight'
+  | 'CubeTop'
+  | 'Delete'
+  | 'ExpandAlternative'
+  | 'EyeShow'
+  | 'Flag'
+  | 'FlipHorizontal'
+  | 'FlipVertical'
+  | 'FrameTool'
+  | 'Grab'
+  | 'Location'
+  | 'Perspective'
+  | 'Plane'
+  | 'PointCloud'
+  | 'Polygon'
+  | 'Refresh'
+  | 'Ruler'
+  | 'RulerAlternative'
+  | 'VectorLine'
+  | 'VectorZigzag'
+  | 'View360';

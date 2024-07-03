@@ -2,7 +2,7 @@
  * Copyright 2024 Cognite AS
  */
 
-import { type IconName } from '../../../components/Architecture/getIconComponent';
+import { type IconName } from '../../base/utilities/IconName';
 import { type TranslateKey } from '../utilities/TranslateKey';
 import { InstanceCommand } from './InstanceCommand';
 

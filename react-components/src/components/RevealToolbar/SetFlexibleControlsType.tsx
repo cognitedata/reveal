@@ -15,8 +15,9 @@ import {
 import { useTranslation } from '../i18n/I18n';
 import styled from 'styled-components';
 import { type TranslateDelegate } from '../../architecture/base/utilities/TranslateKey';
-import { getIconComponent, type IconName } from '../Architecture/getIconComponent';
 import { assertNever } from '../../utilities/assertNever';
+import { IconComponent } from '../Architecture/IconComponent';
+import { type IconName } from '../../architecture/base/utilities/IconName';
 
 type CustomSettingsProps = {
   includeOrbitInCenter?: boolean;
@@ -116,7 +117,6 @@ const ButtonsControlTypeSelector = ({
   return (
     <ButtonsContainer>
       {options.map((controlType) => {
-        const IconComponent = getIconComponent(getIcon(controlType));
         return (
           <CogsTooltip
             content={getLabel(translateDelegate, controlType)}
@@ -125,7 +125,7 @@ const ButtonsControlTypeSelector = ({
             key={controlType}>
             <Button
               type="ghost"
-              icon=<IconComponent />
+              icon=<IconComponent iconName={getIcon(controlType)} />
               toggled={selectedControlsType === controlType}
               aria-label={getLabel(translateDelegate, controlType)}
               onClick={() => {
@@ -156,9 +156,8 @@ const SegmentedControlTypeSelector = ({
       fullWidth>
       {options.map((controlsType) => {
         const iconName = getIcon(controlsType);
-        const IconComponent = getIconComponent(iconName);
         return (
-          <SegmentedControl.Button key={controlsType} icon={<IconComponent />}>
+          <SegmentedControl.Button key={controlsType} icon={<IconComponent iconName={iconName} />}>
             {getLabel(translateDelegate, controlsType)}
           </SegmentedControl.Button>
         );

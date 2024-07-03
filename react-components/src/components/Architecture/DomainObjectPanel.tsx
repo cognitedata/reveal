@@ -19,7 +19,8 @@ import { withSuppressRevealEvents } from '../../higher-order-components/withSupp
 import { type TranslateDelegate } from '../../architecture/base/utilities/TranslateKey';
 import { type UnitSystem } from '../../architecture/base/renderTarget/UnitSystem';
 import { type DomainObject } from '../../architecture/base/domainObjects/DomainObject';
-import { getIconComponent, type IconName } from './getIconComponent';
+import { IconComponent } from './IconComponent';
+import { type IconName } from '../../architecture/base/utilities/IconName';
 
 const TEXT_SIZE = 'x-small';
 const HEADER_SIZE = 'small';
@@ -62,7 +63,6 @@ export const DomainObjectPanel = (): ReactElement => {
   }
   const unitSystem = root.unitSystem;
   const iconName = getIcon(domainObject);
-  const Icon = getIconComponent(iconName);
   const header = info.header;
   const text = header?.getText(t);
   return (
@@ -78,9 +78,9 @@ export const DomainObjectPanel = (): ReactElement => {
       <table>
         <tbody>
           <tr>
-            {Icon !== undefined && (
+            {iconName !== undefined && (
               <PaddedTh>
-                <Icon />
+                <IconComponent iconName={iconName} />
               </PaddedTh>
             )}
             {text !== undefined && (
@@ -108,7 +108,7 @@ export const DomainObjectPanel = (): ReactElement => {
       <tr key={JSON.stringify(item)}>
         <PaddedTh>
           {text !== undefined && <Body size={TEXT_SIZE}>{text}</Body>}
-          {icon !== undefined && <Icon type={icon} />}
+          {icon !== undefined && <IconComponent iconName={iconName} />}
         </PaddedTh>
         <></>
         <NumberTh>

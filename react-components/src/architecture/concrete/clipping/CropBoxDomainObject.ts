@@ -13,7 +13,7 @@ import { type TranslateKey } from '../../base/utilities/TranslateKey';
 import { ApplyClipCommand } from './commands/ApplyClipCommand';
 import { FocusType } from '../../base/domainObjectsHelpers/FocusType';
 import { type DomainObject } from '../../base/domainObjects/DomainObject';
-import { type IconName } from '../../../components/Architecture/getIconComponent';
+import { type IconName } from '../../base/utilities/IconName';
 
 export class CropBoxDomainObject extends BoxDomainObject {
   // ==================================================

@@ -7,7 +7,8 @@ import { type ModelHandler } from './ModelHandler';
 import { ModelLayersList } from './ModelLayersList';
 import { type ReactElement } from 'react';
 import { type UpdateModelHandlersCallback } from './useModelHandlers';
-import { getIconComponent, type IconName } from '../../Architecture/getIconComponent';
+import { IconComponent } from '../../Architecture/IconComponent';
+import { type IconName } from '../../../architecture/base/utilities/IconName';
 
 export const ModelLayersButton = ({
   icon,
@@ -20,13 +21,11 @@ export const ModelLayersButton = ({
   handlers: ModelHandler[];
   update: UpdateModelHandlersCallback;
 }): ReactElement => {
-  const IconComponent = getIconComponent(icon);
-
   return (
     <Tooltip content={label} placement="right" appendTo={document.body}>
       <Dropdown
         content={<ModelLayersList modelHandlers={handlers} update={update} label={label} />}>
-        <Button type="ghost" icon={<IconComponent />} />
+        <Button type="ghost" icon={<IconComponent iconName={icon} />} />
       </Dropdown>
     </Tooltip>
   );
