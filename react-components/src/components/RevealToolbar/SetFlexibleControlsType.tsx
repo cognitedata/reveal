@@ -156,7 +156,7 @@ const SegmentedControlTypeSelector = ({
       fullWidth>
       {options.map((controlsType) => {
         const iconName = getIcon(controlsType);
-        const IconComponent = iconName !== undefined ? getIconComponent(iconName) : () => <></>;
+        const IconComponent = getIconComponent(iconName);
         return (
           <SegmentedControl.Button key={controlsType} icon={<IconComponent />}>
             {getLabel(translateDelegate, controlsType)}

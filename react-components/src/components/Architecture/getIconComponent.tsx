@@ -67,7 +67,15 @@ export type IconName =
   | 'VectorZigzag'
   | 'View360';
 
-export function getIconComponent(iconName: IconName): (iconProps: IconProps) => JSX.Element {
+const DefaultIcon = (_iconProps: IconProps): JSX.Element => <></>;
+
+export function getIconComponent(
+  iconName: IconName | undefined
+): (iconProps: IconProps) => JSX.Element {
+  if (iconName === undefined) {
+    return DefaultIcon;
+  }
+
   switch (iconName) {
     case 'ArrowLeft':
       return ArrowLeftIcon;

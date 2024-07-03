@@ -62,7 +62,7 @@ export const DomainObjectPanel = (): ReactElement => {
   }
   const unitSystem = root.unitSystem;
   const iconName = getIcon(domainObject);
-  const Icon = iconName !== undefined ? getIconComponent(iconName) : () => <></>;
+  const Icon = getIconComponent(iconName);
   const header = info.header;
   const text = header?.getText(t);
   return (

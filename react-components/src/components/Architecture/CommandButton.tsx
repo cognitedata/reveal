@@ -59,7 +59,7 @@ export const CommandButton = ({
   const tooltip = command.getLabel(t);
   const shortcut = command.getShortCutKeys();
 
-  const IconComponent = icon !== undefined ? getIconComponent(icon) : () => <></>;
+  const IconComponent = getIconComponent(icon);
 
   return (
     <CogsTooltip

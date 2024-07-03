@@ -70,7 +70,7 @@ export const OptionButton = ({
   const options = command.getOrCreateOptions(renderTarget);
   const selectedLabel = command.selectedOption?.getLabel(t);
 
-  const IconComponent = icon !== undefined ? getIconComponent(icon) : () => <></>;
+  const IconComponent = getIconComponent(icon);
 
   const OpenButtonIcon = isOpen ? ChevronUpIcon : ChevronDownIcon;
 
