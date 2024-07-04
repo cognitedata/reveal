@@ -35,6 +35,8 @@ export class AssetMappingCache {
 
   private readonly _nodeAssetIdsToNode3D = new Map<ModelNodeIdKey, Promise<Node3D>>();
 
+  private readonly _amountOfAssetIdsChunks = 1;
+
   constructor(sdk: CogniteClient) {
     this._sdk = sdk;
   }
@@ -87,9 +89,8 @@ export class AssetMappingCache {
   ): Promise<Map<AssetId, Node3D[]>> {
     const relevantAssetIds = new Set(assetIds);
 
-    const amountOfChunks = 1;
     const assetIdsList = Array.from(relevantAssetIds);
-    const chunkSize = Math.round(assetIdsList.length / amountOfChunks);
+    const chunkSize = Math.round(assetIdsList.length / this._amountOfAssetIdsChunks);
     const listChunks = chunk(assetIdsList, chunkSize);
 
     const allAssetMappingsReturned = listChunks.map(async (itemChunk) => {
