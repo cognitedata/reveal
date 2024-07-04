@@ -17,10 +17,6 @@ import {
   isDmsInstance
 } from '../utilities/types';
 import { uniqBy } from 'lodash';
-import {
-  is360ImageDataModelAddOptions,
-  is360ImageEventsAddOptions
-} from '../components/Reveal3DResources/typeGuards';
 import { createAddOptionsKey } from '../utilities/createAddOptionsKey';
 
 export const useModelsForInstanceQuery = (

@@ -1,8 +1,11 @@
+/*!
+ * Copyright 2024 Cognite AS
+ */
 import {
   is360ImageDataModelAddOptions,
   is360ImageEventsAddOptions
 } from '../components/Reveal3DResources/typeGuards';
-import { TaggedAddResourceOptions } from '../components/Reveal3DResources/types';
+import { type TaggedAddResourceOptions } from '../components/Reveal3DResources/types';
 
 export function createAddOptionsKey(model: TaggedAddResourceOptions): string {
   if (model.type === 'cad' || model.type === 'pointcloud') {
