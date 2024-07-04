@@ -21,7 +21,6 @@ import {
   is360ImageDataModelAddOptions,
   is360ImageEventsAddOptions
 } from '../components/Reveal3DResources/typeGuards';
-import { assertNever } from '../utilities/assertNever';
 
 export const useModelsForInstanceQuery = (
   instance: InstanceReference | undefined
