@@ -53,12 +53,10 @@ const exampleCustomSettingElements = (): ReactElement => {
     <>
       <Menu.ItemToggled
         toggled={originalCadColor}
-        onChange={() => {
+        onClick={() => {
           setOriginalCadColor((prevMode) => !prevMode);
-        }}>
-        Original CAD coloring
-      </Menu.ItemToggled>
-      <Button>Custom Button</Button>
+        }}
+        label="Original CAD coloring"></Menu.ItemToggled>
     </>
   );
 };
