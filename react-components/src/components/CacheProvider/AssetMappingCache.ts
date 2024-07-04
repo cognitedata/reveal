@@ -15,6 +15,7 @@ import {
   type ModelRevisionKey,
   type RevisionId,
   type ChunkInCacheTypes,
+  type ModelAssetIdKey
 } from './types';
 import { chunk, maxBy } from 'lodash';
 import assert from 'assert';
@@ -29,11 +30,11 @@ export class AssetMappingCache {
   private readonly _sdk: CogniteClient;
 
   private readonly _modelToAssetMappings = new Map<ModelRevisionKey, Promise<AssetMapping[]>>();
-  private readonly _assetIdsToAssetMappings = new Map<ModelNodeIdKey, Promise<AssetMapping[]>>();
+  private readonly _assetIdsToAssetMappings = new Map<ModelAssetIdKey, Promise<AssetMapping[]>>();
 
   private readonly _nodeIdsToAssetMappings = new Map<ModelNodeIdKey, Promise<AssetMapping[]>>();
 
-  private readonly _nodeAssetIdsToNode3D = new Map<ModelNodeIdKey, Promise<Node3D>>();
+  private readonly _nodeIdsToNode3D = new Map<ModelNodeIdKey, Promise<Node3D>>();
 
   private readonly _amountOfAssetIdsChunks = 1;
 
@@ -149,7 +150,7 @@ export class AssetMappingCache {
     const node3Ds = await this.getNodesForNodeIds(modelId, revisionId, nodeIds ?? []);
     node3Ds.forEach((node) => {
       const key = modelRevisionNodesAssetsToKey(modelId, revisionId, [node.id]);
-      this._nodeAssetIdsToNode3D.set(key, Promise.resolve(node));
+      this._nodeIdsToNode3D.set(key, Promise.resolve(node));
     });
   }
 
@@ -246,7 +247,7 @@ export class AssetMappingCache {
     await Promise.all(
       currentChunk.map(async (id) => {
         const key = modelRevisionNodesAssetsToKey(modelId, revisionId, [id]);
-        const cachedResult = await this._nodeAssetIdsToNode3D.get(key);
+        const cachedResult = await this._nodeIdsToNode3D.get(key);
         if (cachedResult !== undefined) {
           chunkInCache.push(cachedResult);
         } else {
