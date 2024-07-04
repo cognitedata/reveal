@@ -15,7 +15,7 @@ import { useAssetMappedNodesForRevisions } from '../CacheProvider/AssetMappingCa
 import { type CadModelOptions } from '../Reveal3DResources/types';
 import { useAssetsByIdsQuery } from '../../query/useAssetsByIdsQuery';
 import { useCreateAssetMappingsMapPerModel } from '../../hooks/useCreateAssetMappingsMapPerModel';
-import { useExtractUniqueAssetIdsFromMapped } from './hooks/useExtractUniqueAssetIdsFromMapped';
+import { useExtractUniqueAssetIdsFromMapped } from '../../hooks/useExtractUniqueAssetIdsFromMapped';
 import { useConvertAssetMetadatasToLowerCase } from '../../hooks/useConvertAssetMetadatasToLowerCase';
 import { useExtractTimeseriesIdsFromRuleSet } from './hooks/useExtractTimeseriesIdsFromRuleSet';
 
