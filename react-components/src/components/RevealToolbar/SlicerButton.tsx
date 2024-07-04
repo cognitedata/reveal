@@ -8,7 +8,7 @@ import { Box3, Plane, Vector3 } from 'three';
 
 import { useReveal } from '../RevealCanvas/ViewerContext';
 import { Button, RangeSlider, Tooltip as CogsTooltip, SliceIcon } from '@cognite/cogs.js';
-import { Dropdown, Menu } from '@cognite/cogs-lab';
+import { Menu } from '@cognite/cogs-lab';
 
 import styled from 'styled-components';
 import { useSlicerUrlParams } from './hooks/useUrlStateParam';
