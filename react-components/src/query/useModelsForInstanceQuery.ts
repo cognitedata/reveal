@@ -16,6 +16,12 @@ import {
   isAssetInstance,
   isDmsInstance
 } from '../utilities/types';
+import { uniqBy } from 'lodash';
+import {
+  is360ImageDataModelAddOptions,
+  is360ImageEventsAddOptions
+} from '../components/Reveal3DResources/typeGuards';
+import { assertNever } from '../utilities/assertNever';
 
 export const useModelsForInstanceQuery = (
   instance: InstanceReference | undefined
@@ -53,9 +59,27 @@ async function getModelsForAssetInstance(
     cogniteClient
   );
 
-  return (
-    await Promise.all([cadModelsPromise, pointCloudModelsPromise, image360CollectionsPromise])
-  ).flat();
+  return deduplicateModels(
+    (
+      await Promise.all([cadModelsPromise, pointCloudModelsPromise, image360CollectionsPromise])
+    ).flat()
+  );
+}
+
+function deduplicateModels(models: TaggedAddResourceOptions[]): TaggedAddResourceOptions[] {
+  return uniqBy(models, getAddOptionsKey);
+}
+
+function getAddOptionsKey(model: TaggedAddResourceOptions): string {
+  if (model.type === 'cad' || model.type === 'pointcloud') {
+    return `${model.type}-${model.addOptions.modelId}-${model.addOptions.revisionId}`;
+  } else if (model.type === 'image360' && is360ImageDataModelAddOptions(model.addOptions)) {
+    return `${model.type}-${model.addOptions.externalId}/${model.addOptions.space}`;
+  } else if (model.type === 'image360' && is360ImageEventsAddOptions(model.addOptions)) {
+    return `${model.type}-${model.addOptions.siteId}`;
+  } else {
+    throw Error('Unrecognized add option type');
+  }
 }
 
 async function getModelsForFdmInstance(
