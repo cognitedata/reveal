@@ -1,20 +1,23 @@
 /*!
  * Copyright 2024 Cognite AS
  */
-import { useEffect, type ReactElement, useState, useMemo } from 'react';
+import { useEffect, type ReactElement, useState } from 'react';
 
 import { CogniteCadModel } from '@cognite/reveal';
 import { type RuleOutputSet, type AssetStylingGroupAndStyleIndex } from './types';
-import { generateRuleBasedOutputs, traverseExpressionToGetTimeseries } from './utils';
+import { generateRuleBasedOutputs } from './utils';
 import { use3dModels } from '../../hooks/use3dModels';
-import { type Datapoints, type Asset, type AssetMapping3D, type InternalId } from '@cognite/sdk';
+import { type Datapoints, type Asset, type AssetMapping3D } from '@cognite/sdk';
 import { isDefined } from '../../utilities/isDefined';
 import { type AssetIdsAndTimeseries } from '../../utilities/types';
 import { useAssetsAndTimeseriesLinkageDataQuery } from '../../query/useAssetsAndTimeseriesLinkageDataQuery';
-import { uniqBy } from 'lodash';
 import { useAssetMappedNodesForRevisions } from '../CacheProvider/AssetMappingCacheProvider';
 import { type CadModelOptions } from '../Reveal3DResources/types';
 import { useAssetsByIdsQuery } from '../../query/useAssetsByIdsQuery';
+import { useCreateAssetMappingsMapPerModel } from '../../hooks/useCreateAssetMappingsMapPerModel';
+import { useExtractUniqueAssetIdsFromMapped } from './hooks/useExtractUniqueAssetIdsFromMapped';
+import { useConvertAssetMetadatasToLowerCase } from '../../hooks/useConvertAssetMetadatasToLowerCase';
+import { useExtractTimeseriesIdsFromRuleSet } from './hooks/useExtractTimeseriesIdsFromRuleSet';
 
 export type ColorOverlayProps = {
   ruleSet: RuleOutputSet | undefined;
@@ -39,16 +42,7 @@ export function RuleBasedOutputsSelector({
 
   const { data: assetMappings } = useAssetMappedNodesForRevisions(cadModels);
 
-  const assetIdsFromMapped = useMemo(() => {
-    const mappings = assetMappings?.map((item) => item.assetMappings).flat() ?? [];
-    const assetIds: InternalId[] = mappings.flatMap((item) => {
-      return {
-        id: item.assetId
-      };
-    });
-    const uniqueAssetIds = uniqBy(assetIds, 'id');
-    return uniqueAssetIds;
-  }, [assetMappings]);
+  const assetIdsFromMapped = useExtractUniqueAssetIdsFromMapped(assetMappings);
 
   const { data: mappedAssets, isFetched } = useAssetsByIdsQuery(assetIdsFromMapped);
 
@@ -58,45 +52,17 @@ export function RuleBasedOutputsSelector({
     }
   }, [mappedAssets, isFetched]);
 
-  const contextualizedAssetNodes = useMemo(() => {
-    const metadataConvertedContextualizedAssetNodes = allContextualizedAssets
-      ?.filter(isDefined)
-      .map(convertAssetMetadataKeysToLowerCase);
+  const contextualizedAssetNodes = useConvertAssetMetadatasToLowerCase(allContextualizedAssets);
 
-    return metadataConvertedContextualizedAssetNodes ?? [];
-  }, [allContextualizedAssets]);
-
-  const flatAssetsMappingsListPerModel = useMemo(() => {
-    const mappingsPerModel = new Map<CogniteCadModel, AssetMapping3D[] | undefined>();
-    models.forEach((model) => {
-      if (!(model instanceof CogniteCadModel)) {
-        return;
-      }
-      const flatAssetsMappingsList =
-        assetMappings
-          ?.filter((item) => item.model.modelId === model.modelId)
-          .map((item) => item.assetMappings)
-          .flat()
-          .filter(isDefined) ?? [];
-
-      mappingsPerModel.set(model, flatAssetsMappingsList);
-    });
-
-    return mappingsPerModel;
-  }, [assetMappings, models]);
-
-  const timeseriesExternalIds = useMemo(() => {
-    const expressions = ruleSet?.rulesWithOutputs
-      .map((ruleWithOutput) => ruleWithOutput.rule.expression)
-      .filter(isDefined);
-    return traverseExpressionToGetTimeseries(expressions) ?? [];
-  }, [ruleSet]);
+  const timeseriesExternalIds = useExtractTimeseriesIdsFromRuleSet(ruleSet);
 
   const { isLoading: isLoadingAssetIdsAndTimeseriesData, data: assetIdsWithTimeseriesData } =
     useAssetsAndTimeseriesLinkageDataQuery({
       timeseriesExternalIds,
       contextualizedAssetNodes
     });
+
+  const flatAssetsMappingsListPerModel = useCreateAssetMappingsMapPerModel(models, assetMappings);
 
   useEffect(() => {
     if (assetMappings === undefined || models === undefined || !isFetched) return;
@@ -155,15 +121,4 @@ async function initializeRuleBasedOutputs({
   });
 
   return collectionStylings;
-}
-
-function convertAssetMetadataKeysToLowerCase(asset: Asset): Asset {
-  return {
-    ...asset,
-    metadata: Object.fromEntries(
-      [...Object.entries(asset.metadata ?? {})].map(
-        ([key, value]) => [key.toLowerCase(), value] as const
-      )
-    )
-  };
 }

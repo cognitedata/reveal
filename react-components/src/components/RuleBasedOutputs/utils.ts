@@ -516,7 +516,7 @@ export const generateEmptyRuleForSelection = (name: string): EmptyRuleForSelecti
     isEnabled: false
   };
   return emptySelection;
-}
+};
 
 export const getRuleBasedById = (
   id: string | undefined,
