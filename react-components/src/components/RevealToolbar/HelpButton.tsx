@@ -19,7 +19,6 @@ export type HelpButtonProps = {
 export const HelpButton = ({ fallbackLanguage }: HelpButtonProps): ReactElement => {
   const { t } = useTranslation(fallbackLanguage);
   const [helpActive, setHelpActive] = useState<boolean>(false);
-  console.log('Rendering with help = ', helpActive);
 
   return (
     <CogsTooltip content={t('HELP_TOOLTIP', 'Help')} placement="right" appendTo={document.body}>
