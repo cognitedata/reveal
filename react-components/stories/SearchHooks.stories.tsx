@@ -87,7 +87,7 @@ const StoryContent = ({ resources }: { resources: AddResourceOptions[] }): React
     isFetching,
     hasNextPage,
     fetchNextPage
-  } = useAllMappedEquipmentAssetMappings(filteredResources, sdk);
+  } = useAllMappedEquipmentAssetMappings(filteredResources, sdk, 25);
 
   const filtered360ImageResources = resources.filter(
     (resource): resource is AddImage360CollectionOptions => 'siteId' in resource
@@ -166,7 +166,9 @@ const StoryContent = ({ resources }: { resources: AddResourceOptions[] }): React
       const transformedAssets =
         allAssets?.pages
           .flat()
-          .map((mapping) => mapping.assets)
+          .map((modelsAssetPage) =>
+            modelsAssetPage.modelsAssets.flatMap((modelsAsset) => modelsAsset.assets)
+          )
           .flat() ?? [];
 
       const all360ImageAssets =

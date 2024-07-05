@@ -1,6 +1,7 @@
 /*!
  * Copyright 2023 Cognite AS
  */
+import { useRef, type MutableRefObject } from 'react';
 import { type AddModelOptions } from '@cognite/reveal';
 import {
   type Asset,
@@ -16,6 +17,7 @@ import {
 import { useSDK } from '../components/RevealCanvas/SDKProvider';
 import { getAssetsList } from '../hooks/network/getAssetsList';
 import { useAssetMappedNodesForRevisions } from '../components/CacheProvider/AssetMappingCacheProvider';
+import { isDefined } from '../utilities/isDefined';
 
 export type ModelMappings = {
   model: AddModelOptions;
@@ -28,6 +30,11 @@ export type ModelMappingsWithAssets = ModelMappings & {
 
 export type AssetPage = {
   assets: Asset[];
+  nextCursor: string | undefined;
+};
+
+export type ModelAssetPage = {
+  modelsAssets: ModelMappingsWithAssets[];
   nextCursor: string | undefined;
 };
 
@@ -57,9 +64,13 @@ export const useSearchMappedEquipmentAssetMappings = (
       }
       if (query === '') {
         const assets = allAssetMappings.data?.pages.flatMap((modelWithAssets) =>
-          modelWithAssets.map((modelWithAsset) => modelWithAsset.assets).flat()
+          modelWithAssets
+            .map((modelWithAsset) =>
+              modelWithAsset.modelsAssets.flatMap((modelsAsset) => modelsAsset.assets)
+            )
+            .flat()
         );
-        return { assets: assets ?? [], nextCursor: undefined };
+        return { assets, nextCursor: undefined };
       }
       if (assetMappingList === undefined) {
         return { assets: [], nextCursor: undefined };
@@ -98,9 +109,11 @@ export const useSearchMappedEquipmentAssetMappings = (
 
 export const useAllMappedEquipmentAssetMappings = (
   models: AddModelOptions[],
-  userSdk?: CogniteClient
-): UseInfiniteQueryResult<InfiniteData<ModelMappingsWithAssets[]>, Error> => {
+  userSdk?: CogniteClient,
+  limit: number = 1000
+): UseInfiniteQueryResult<InfiniteData<ModelAssetPage[]>, Error> => {
   const sdk = useSDK(userSdk);
+  const usedCursors = useRef(new Set());
 
   return useInfiniteQuery({
     queryKey: [
@@ -128,8 +141,10 @@ export const useAllMappedEquipmentAssetMappings = (
 
         const mappings = await sdk.assetMappings3D.filter(model.modelId, model.revisionId, {
           cursor: nextCursor === 'start' ? undefined : nextCursor,
-          limit: 1000
+          limit
         });
+
+        usedCursors.current.add(nextCursor);
 
         return { mappings, model };
       });
@@ -137,12 +152,35 @@ export const useAllMappedEquipmentAssetMappings = (
       const currentPagesOfAssetMappings = await Promise.all(currentPagesOfAssetMappingsPromises);
 
       const modelsAssets = await getAssetsFromAssetMappings(sdk, currentPagesOfAssetMappings);
+      const nextCursors = currentPagesOfAssetMappings
+        .map(({ mappings }) => mappings.nextCursor)
+        .filter(isDefined);
 
-      return modelsAssets;
+      return await Promise.resolve({
+        modelsAssets,
+        nextCursors
+      });
     },
     initialPageParam: models.map((model) => ({ cursor: 'start', model })),
     staleTime: Infinity,
-    getNextPageParam
+    getNextPageParam: (lastPage: {
+      modelsAssets: ModelMappingsWithAssets[];
+      nextCursors: string[];
+    }): Array<{ cursor: string | undefined; model: AddModelOptions }> | undefined => {
+      const nextCursors = lastPage.nextCursors
+        .map((cursor, index) => ({ cursor, model: lastPage.modelsAssets[index].model }))
+        .filter((mappingModel) => {
+          if (mappingModel.cursor === undefined || usedCursors.current.has(mappingModel.cursor)) {
+            return false;
+          }
+          usedCursors.current.add(mappingModel.cursor);
+          return true;
+        });
+      if (nextCursors.length === 0) {
+        return undefined;
+      }
+      return nextCursors;
+    }
   });
 };
 
