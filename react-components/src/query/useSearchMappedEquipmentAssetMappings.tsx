@@ -1,7 +1,7 @@
 /*!
  * Copyright 2023 Cognite AS
  */
-import { useRef, type MutableRefObject } from 'react';
+import { useRef } from 'react';
 import { type AddModelOptions } from '@cognite/reveal';
 import {
   type Asset,

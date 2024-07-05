@@ -4,14 +4,13 @@
 import { useEffect, type ReactElement, useState, useMemo } from 'react';
 
 import { CogniteCadModel } from '@cognite/reveal';
-import { type ModelMappingsWithAssets, useAllMappedEquipmentAssetMappings } from '../..';
+import { useAllMappedEquipmentAssetMappings } from '../..';
 import { type RuleOutputSet, type AssetStylingGroupAndStyleIndex } from './types';
 import { generateRuleBasedOutputs, traverseExpressionToGetTimeseries } from './utils';
 import { use3dModels } from '../../hooks/use3dModels';
 import { EMPTY_ARRAY } from '../../utilities/constants';
-import { type Datapoints, type Asset } from '@cognite/sdk';
+import { type Datapoints, type Asset, type AssetMapping3D } from '@cognite/sdk';
 import { isDefined } from '../../utilities/isDefined';
-import { type InfiniteData } from '@tanstack/react-query';
 import { type AssetIdsAndTimeseries } from '../../utilities/types';
 import { useAssetsAndTimeseriesLinkageDataQuery } from '../../query/useAssetsAndTimeseriesLinkageDataQuery';
 
@@ -31,7 +30,7 @@ export function RuleBasedOutputsSelector({
   const [stylingGroups, setStylingsGroups] = useState<AssetStylingGroupAndStyleIndex[]>();
 
   const {
-    data: assetMappings,
+    data: modelAssetPage,
     isFetching,
     hasNextPage,
     fetchNextPage
@@ -45,12 +44,24 @@ export function RuleBasedOutputsSelector({
 
   const contextualizedAssetNodes = useMemo(() => {
     return (
-      assetMappings?.pages
+      modelAssetPage?.pages
         .flat()
-        .flatMap((item) => item.assets)
+        .flatMap((modelsAssetPage) =>
+          modelsAssetPage.modelsAssets.flatMap((modelsAsset) => modelsAsset.assets)
+        )
         .map(convertAssetMetadataKeysToLowerCase) ?? []
     );
-  }, [assetMappings]);
+  }, [modelAssetPage]);
+
+  const assetMappings = useMemo(() => {
+    return (
+      modelAssetPage?.pages
+        .flat()
+        .flatMap((modelAssetPage) => modelAssetPage.modelsAssets)
+        .flatMap((node) => node.mappings)
+        .filter(isDefined) ?? []
+    );
+  }, [modelAssetPage]);
 
   const timeseriesExternalIds = useMemo(() => {
     const expressions = ruleSet?.rulesWithOutputs
@@ -70,7 +81,7 @@ export function RuleBasedOutputsSelector({
   }, [stylingGroups]);
 
   useEffect(() => {
-    if (assetMappings === undefined || models === undefined || isFetching) return;
+    if (modelAssetPage === undefined || models === undefined || isFetching) return;
     if (timeseriesExternalIds.length > 0 && isLoadingAssetIdsAndTimeseriesData) return;
 
     setStylingsGroups(EMPTY_ARRAY);
@@ -81,10 +92,11 @@ export function RuleBasedOutputsSelector({
       if (!(model instanceof CogniteCadModel)) {
         return;
       }
+      const assetMappingsData = assetMappings.map((response) => response.items).flat();
       setStylingsGroups(
         await initializeRuleBasedOutputs({
           model,
-          assetMappings,
+          assetMappings: assetMappingsData,
           contextualizedAssetNodes,
           ruleSet,
           assetIdsAndTimeseries: assetIdsWithTimeseriesData?.assetIdsWithTimeseries ?? [],
@@ -106,19 +118,16 @@ async function initializeRuleBasedOutputs({
   timeseriesDatapoints
 }: {
   model: CogniteCadModel;
-  assetMappings: InfiniteData<ModelMappingsWithAssets[]>;
+  assetMappings: AssetMapping3D[];
   contextualizedAssetNodes: Asset[];
   ruleSet: RuleOutputSet;
   assetIdsAndTimeseries: AssetIdsAndTimeseries[];
   timeseriesDatapoints: Datapoints[] | undefined;
 }): Promise<AssetStylingGroupAndStyleIndex[]> {
-  const flatAssetsMappingsList = assetMappings.pages.flat().flatMap((item) => item.mappings);
-  const flatMappings = flatAssetsMappingsList.flatMap((node) => node.items);
-
   const collectionStylings = await generateRuleBasedOutputs({
     model,
     contextualizedAssetNodes,
-    assetMappings: flatMappings,
+    assetMappings,
     ruleSet,
     assetIdsAndTimeseries,
     timeseriesDatapoints
