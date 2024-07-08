@@ -42,8 +42,6 @@ export class AssetMappingCache {
     this._sdk = sdk;
   }
 
-  // PUBLIC METHODS
-
   public async getAssetMappingsForLowestAncestor(
     modelId: ModelId,
     revisionId: RevisionId,
@@ -210,8 +208,6 @@ export class AssetMappingCache {
     return await this._nodeIdsToAssetMappings.get(key);
   }
 
-  // PRIVATE METHODS
-
   private async splitChunkInCacheAssetMappings(
     currentChunk: number[],
     modelId: ModelId,
@@ -323,9 +319,10 @@ export class AssetMappingCache {
 
     currentChunk.forEach(async (id) => {
       const key = modelRevisionNodesAssetsToKey(modelId, revisionId, [id]);
-      const cachedResult = this.getItemCacheResult(filterType, key);
+      const cachedResult = await this.getItemCacheResult(filterType, key);
+
       if (cachedResult === undefined) {
-        this.setItemCacheResult(filterType, key, cachedResult);
+        this.setItemCacheResult(filterType, key, []);
       }
     });
 

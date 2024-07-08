@@ -7,7 +7,7 @@ import { useReveal } from '../RevealCanvas/ViewerContext';
 import { Matrix4 } from 'three';
 import { useRevealKeepAlive } from '../RevealKeepAlive/RevealKeepAliveContext';
 import { type CadModelStyling, useApplyCadModelStyling } from './useApplyCadModelStyling';
-import { useReveal3DResourcesCount } from '../Reveal3DResources/Reveal3DResourcesCountContext';
+import { useReveal3DResourcesCount } from '../Reveal3DResources/Reveal3DResourcesInfoContext';
 import { isEqual } from 'lodash';
 import { modelExists } from '../../utilities/modelExists';
 

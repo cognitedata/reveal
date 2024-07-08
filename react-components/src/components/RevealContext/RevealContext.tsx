@@ -10,7 +10,7 @@ import { ViewerContext } from '../RevealCanvas/ViewerContext';
 import { NodeCacheProvider } from '../CacheProvider/NodeCacheProvider';
 import { AssetMappingCacheProvider } from '../CacheProvider/AssetMappingCacheProvider';
 import { PointCloudAnnotationCacheProvider } from '../CacheProvider/PointCloudAnnotationCacheProvider';
-import { Reveal3DResourcesCountContextProvider } from '../Reveal3DResources/Reveal3DResourcesCountContext';
+import { Reveal3DResourcesInfoContextProvider } from '../Reveal3DResources/Reveal3DResourcesInfoContext';
 import { SDKProvider } from '../RevealCanvas/SDKProvider';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { useRevealKeepAlive } from '../RevealKeepAlive/RevealKeepAliveContext';
@@ -55,9 +55,9 @@ export const RevealContext = (props: RevealContextProps): ReactElement => {
                 <AssetMappingCacheProvider>
                   <PointCloudAnnotationCacheProvider>
                     <Image360AnnotationCacheProvider>
-                      <Reveal3DResourcesCountContextProvider>
+                      <Reveal3DResourcesInfoContextProvider>
                         {props.children}
-                      </Reveal3DResourcesCountContextProvider>
+                      </Reveal3DResourcesInfoContextProvider>
                     </Image360AnnotationCacheProvider>
                   </PointCloudAnnotationCacheProvider>
                 </AssetMappingCacheProvider>

@@ -40,14 +40,14 @@ type ModelStyleGroup = {
 
 type ModelStyleGroupWithMappingsFetched = {
   combinedMappedStyleGroups: ModelStyleGroup[];
-  modelMappingsIsFetched: boolean;
-  modelMappingsIsLoading: boolean;
+  isModelMappingsFetched: boolean;
+  isModelMappingsLoading: boolean;
 };
 
 type StyledModelWithMappingsFetched = {
   styledModels: StyledModel[];
-  modelMappingsIsFetched: boolean;
-  modelMappingsIsLoading: boolean;
+  isModelMappingsFetched: boolean;
+  isModelMappingsLoading: boolean;
 };
 
 export type CadStyleGroup = NodeStylingGroup | TreeIndexStylingGroup;
@@ -73,20 +73,20 @@ export const useCalculateCadStyling = (
 
   const joinedStyleGroups = useJoinStylingGroups(
     models,
-    modelsMappedStyleGroups,
+    modelsMappedStyleGroups.combinedMappedStyleGroups,
     modelInstanceStyleGroupsAndMappingFetched.combinedMappedStyleGroups
   );
   return {
     styledModels: joinedStyleGroups,
-    modelMappingsIsFetched: modelInstanceStyleGroupsAndMappingFetched.modelMappingsIsFetched,
-    modelMappingsIsLoading: modelInstanceStyleGroupsAndMappingFetched.modelMappingsIsLoading
+    isModelMappingsFetched: modelInstanceStyleGroupsAndMappingFetched.isModelMappingsFetched,
+    isModelMappingsLoading: modelInstanceStyleGroupsAndMappingFetched.isModelMappingsLoading
   };
 };
 
 function useCalculateMappedStyling(
   models: CadModelOptions[],
   defaultMappedNodeAppearance?: NodeAppearance
-): ModelStyleGroup[] {
+): ModelStyleGroupWithMappingsFetched {
   const modelsRevisionsWithMappedEquipment = useMemo(
     () => getMappedCadModelsOptions(),
     [models, defaultMappedNodeAppearance]
@@ -94,8 +94,11 @@ function useCalculateMappedStyling(
   const { data: mappedEquipmentEdges, isLoading: isFDMEquipmentMappingLoading } =
     useMappedEdgesForRevisions(modelsRevisionsWithMappedEquipment);
 
-  const { data: assetMappingData, isLoading: isAssetMappingLoading } =
-    useAssetMappedNodesForRevisions(modelsRevisionsWithMappedEquipment);
+  const {
+    data: assetMappingData,
+    isFetched: isModelMappingsFetched,
+    isLoading: isModelMappingsLoading
+  } = useAssetMappedNodesForRevisions(modelsRevisionsWithMappedEquipment);
 
   const modelsMappedFdmStyleGroups = useMemo(() => {
     const isFdmMappingUnavailableOrLoading =
@@ -128,7 +131,7 @@ function useCalculateMappedStyling(
       models.length === 0 ||
       assetMappingData === undefined ||
       assetMappingData.length === 0 ||
-      isAssetMappingLoading;
+      isModelMappingsLoading;
 
     if (isAssetMappingUnavailableOrLoading) {
       return [];
@@ -147,7 +150,7 @@ function useCalculateMappedStyling(
     modelsRevisionsWithMappedEquipment,
     assetMappingData,
     defaultMappedNodeAppearance,
-    isAssetMappingLoading
+    isModelMappingsLoading
   ]);
 
   const combinedMappedStyleGroups = useMemo(
@@ -159,7 +162,11 @@ function useCalculateMappedStyling(
     [modelsMappedAssetStyleGroups, modelsMappedFdmStyleGroups]
   );
 
-  return combinedMappedStyleGroups;
+  return {
+    combinedMappedStyleGroups,
+    isModelMappingsFetched,
+    isModelMappingsLoading
+  };
 
   function getMappedCadModelsOptions(): CadModelOptions[] {
     if (defaultMappedNodeAppearance !== undefined) {
@@ -181,16 +188,15 @@ function useCalculateInstanceStyling(
     models
   );
 
+  const assetIdsFromInstanceGroups = instanceGroups
+    .filter(isAssetMappingStylingGroup)
+    .flatMap((instanceGroup) => instanceGroup.assetIds);
+
   const {
     data: modelAssetMappings,
-    isFetched,
-    isLoading
-  } = useNodesForAssets(
-    models,
-    instanceGroups
-      .filter(isAssetMappingStylingGroup)
-      .flatMap((instanceGroup) => instanceGroup.assetIds)
-  );
+    isFetched: isModelMappingsFetched,
+    isLoading: isModelMappingsLoading
+  } = useNodesForAssets(models, assetIdsFromInstanceGroups);
 
   const fdmModelInstanceStyleGroups = useFdmInstanceStyleGroups(
     models,
@@ -215,8 +221,8 @@ function useCalculateInstanceStyling(
 
   return {
     combinedMappedStyleGroups,
-    modelMappingsIsFetched: isFetched,
-    modelMappingsIsLoading: isLoading
+    isModelMappingsFetched,
+    isModelMappingsLoading
   };
 }
 

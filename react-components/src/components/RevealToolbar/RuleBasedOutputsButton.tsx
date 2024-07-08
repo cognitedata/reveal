@@ -19,19 +19,24 @@ import { type CadModelOptions } from '../Reveal3DResources/types';
 import { useAssetMappedNodesForRevisions } from '../CacheProvider/AssetMappingCacheProvider';
 import { RuleBasedSelectionItem } from '../RuleBasedOutputs/components/RuleBasedSelectionItem';
 import { generateEmptyRuleForSelection, getRuleBasedById } from '../RuleBasedOutputs/utils';
+import {
+  useReveal3DResourcesStylingLoading,
+  useReveal3DResourcesStylingLoadingSetter
+} from '../Reveal3DResources/Reveal3DResourcesInfoContext';
 
 type RuleBasedOutputsButtonProps = {
   onRuleSetStylingChanged?: (stylings: AssetStylingGroup[] | undefined) => void;
   onRuleSetSelectedChanged?: (ruleSet: RuleAndEnabled | undefined) => void;
-  onRuleSetStylingLoaded?: (callback: (isLoaded: boolean) => void) => void;
 };
 export const RuleBasedOutputsButton = ({
   onRuleSetStylingChanged,
-  onRuleSetSelectedChanged,
-  onRuleSetStylingLoaded
+  onRuleSetSelectedChanged
 }: RuleBasedOutputsButtonProps): ReactElement => {
   const [currentRuleSetEnabled, setCurrentRuleSetEnabled] = useState<RuleAndEnabled>();
   const [emptyRuleSelected, setEmptyRuleSelected] = useState<EmptyRuleForSelection>();
+  const [currentStylingGroups, setCurrentStylingGroups] = useState<
+    AssetStylingGroupAndStyleIndex[] | undefined
+  >();
   const [ruleInstances, setRuleInstances] = useState<RuleAndEnabled[] | undefined>();
   const { t } = useTranslation();
   const models = use3dModels();
@@ -41,6 +46,8 @@ export const RuleBasedOutputsButton = ({
   const [isRuleLoading, setIsRuleLoading] = useState(false);
 
   const [newRuleSetEnabled, setNewRuleSetEnabled] = useState<RuleAndEnabled>();
+  const isRuleLoadingFromContext = useReveal3DResourcesStylingLoading();
+  const setModel3DStylingLoading = useReveal3DResourcesStylingLoadingSetter();
 
   const ruleInstancesResult = useFetchRuleInstances();
 
@@ -51,9 +58,22 @@ export const RuleBasedOutputsButton = ({
   }, [ruleInstancesResult]);
 
   useEffect(() => {
-    if (onRuleSetStylingLoaded !== undefined) onRuleSetStylingLoaded(callbackWhenIsLoaded);
     setCurrentRuleSetEnabled(newRuleSetEnabled);
+
+    const hasNewRuleSetEnabled = newRuleSetEnabled !== undefined;
+
+    setIsRuleLoading(hasNewRuleSetEnabled);
+    setModel3DStylingLoading(hasNewRuleSetEnabled);
   }, [newRuleSetEnabled]);
+
+  useEffect(() => {
+    const hasRuleLoading =
+      currentStylingGroups !== undefined &&
+      currentStylingGroups.length > 0 &&
+      isRuleLoadingFromContext;
+
+    setIsRuleLoading(hasRuleLoading);
+  }, [isRuleLoadingFromContext, currentStylingGroups]);
 
   const onChange = useCallback(
     (data: string | undefined): void => {
@@ -79,7 +99,6 @@ export const RuleBasedOutputsButton = ({
 
       setEmptyRuleSelected(emptySelection);
       setNewRuleSetEnabled(selectedRule);
-      setIsRuleLoading(true);
     },
     [ruleInstances, onRuleSetStylingChanged, onRuleSetSelectedChanged]
   );
@@ -87,12 +106,9 @@ export const RuleBasedOutputsButton = ({
   const ruleSetStylingChanged = (
     stylingGroups: AssetStylingGroupAndStyleIndex[] | undefined
   ): void => {
+    setCurrentStylingGroups(stylingGroups);
     const assetStylingGroups = stylingGroups?.map((group) => group.assetStylingGroup);
     if (onRuleSetStylingChanged !== undefined) onRuleSetStylingChanged(assetStylingGroups);
-  };
-
-  const callbackWhenIsLoaded = (isLoading: boolean): void => {
-    setIsRuleLoading(isLoading);
   };
 
   if (ruleInstances === undefined || ruleInstances.length === 0) {

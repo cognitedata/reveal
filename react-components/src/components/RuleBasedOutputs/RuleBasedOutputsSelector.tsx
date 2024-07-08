@@ -1,7 +1,7 @@
 /*!
  * Copyright 2024 Cognite AS
  */
-import { useEffect, type ReactElement, useState } from 'react';
+import { useEffect, type ReactElement, useState, useCallback } from 'react';
 
 import { CogniteCadModel } from '@cognite/reveal';
 import { type RuleOutputSet, type AssetStylingGroupAndStyleIndex } from './types';
@@ -23,6 +23,8 @@ export type ColorOverlayProps = {
   ruleSet: RuleOutputSet | undefined;
   onRuleSetChanged?: (currentStylings: AssetStylingGroupAndStyleIndex[] | undefined) => void;
 };
+
+const ruleSetStylingCache = new Map<string, AssetStylingGroupAndStyleIndex[]>();
 
 export function RuleBasedOutputsSelector({
   ruleSet,
@@ -91,9 +93,17 @@ export function RuleBasedOutputsSelector({
         })
       );
       const filteredStylings = allStylings.flat().filter(isDefined).flat();
-      if (onRuleSetChanged !== undefined) onRuleSetChanged(filteredStylings);
+      ruleSetStylingCache.set(ruleSet.id, filteredStylings);
+
+      if (onRuleSetChanged !== undefined) {
+        onRuleSetChanged(filteredStylings);
+      }
     };
-    void ruleBasedInitilization();
+    if (!ruleSetStylingCache.has(ruleSet.id)) {
+      void ruleBasedInitilization();
+    } else {
+      if (onRuleSetChanged !== undefined) onRuleSetChanged(ruleSetStylingCache.get(ruleSet.id));
+    }
   }, [isLoadingAssetIdsAndTimeseriesData, ruleSet, assetMappings, allContextualizedAssets]);
 
   return <></>;
