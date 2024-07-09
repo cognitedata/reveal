@@ -6,7 +6,7 @@ import {
   type AnnotationModel,
   type AnnotationsBoundingVolume,
   type Node3D,
-  type AnnotationsCogniteAnnotationTypesImagesAssetLink,
+  type AnnotationsCogniteAnnotationTypesImagesAssetLink
 } from '@cognite/sdk';
 import { type DmsUniqueIdentifier, type Source, type EdgeItem } from '../../utilities/FdmSDK';
 import { type InModel3dEdgeProperties } from '../../utilities/globalDataModels';

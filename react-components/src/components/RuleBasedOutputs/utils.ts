@@ -19,8 +19,8 @@ import {
   type RuleWithOutputs,
   type TriggerTypeData,
   type TimeseriesAndDatapoints,
-  EmptyRuleForSelection,
-  RuleAndEnabled
+  type EmptyRuleForSelection,
+  type RuleAndEnabled
 } from './types';
 import { NumericRange, TreeIndexNodeCollection, type NodeAppearance } from '@cognite/reveal';
 import { type AssetMapping3D, type Asset, type Datapoints } from '@cognite/sdk';
