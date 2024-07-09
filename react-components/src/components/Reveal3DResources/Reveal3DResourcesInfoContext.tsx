@@ -28,7 +28,7 @@ const getInfoElementOfContext = (): Reveal3DResourcesInfoContent => {
     );
   }
   return element;
-}
+};
 
 export const useReveal3DResourcesCount = (): Reveal3DResourcesInfoContent => {
   const element = getInfoElementOfContext();

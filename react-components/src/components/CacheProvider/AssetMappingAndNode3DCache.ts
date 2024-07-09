@@ -12,34 +12,41 @@ import {
   type ModelNodeIdKey,
   type AssetId,
   type ModelId,
-  type ModelRevisionKey,
   type RevisionId,
   type ChunkInCacheTypes,
   type ModelAssetIdKey
 } from './types';
 import { chunk, maxBy } from 'lodash';
 import assert from 'assert';
-import { fetchNodesForNodeIds } from './requests';
 import { modelRevisionNodesAssetsToKey, modelRevisionToKey } from './utils';
-import { type ModelWithAssetMappings } from './AssetMappingCacheProvider';
+import { type ModelWithAssetMappings } from './AssetMappingAndNode3DCacheProvider';
+import { AssetMappingPerAssetIdCache } from './AssetMappingPerAssetIdCache';
+import { AssetMappingPerNodeIdCache } from './AssetMappingPerNodeIdCache';
+import { Node3DPerNodeIdCache } from './Node3DPerNodeIdCache';
+import { AssetMappingPerModelCache } from './AssetMappingPerModelCache';
 
 export type NodeAssetMappingResult = { node?: Node3D; mappings: AssetMapping[] };
 
 export type AssetMapping = Required<AssetMapping3D>;
-export class AssetMappingCache {
+export class AssetMappingAndNode3DCache {
   private readonly _sdk: CogniteClient;
 
-  private readonly _modelToAssetMappings = new Map<ModelRevisionKey, Promise<AssetMapping[]>>();
-  private readonly _assetIdsToAssetMappings = new Map<ModelAssetIdKey, Promise<AssetMapping[]>>();
+  private readonly modelToAssetMappingsCache: AssetMappingPerModelCache;
 
-  private readonly _nodeIdsToAssetMappings = new Map<ModelNodeIdKey, Promise<AssetMapping[]>>();
+  private readonly assetIdsToAssetMappingCache: AssetMappingPerAssetIdCache;
 
-  private readonly _nodeIdsToNode3D = new Map<ModelNodeIdKey, Promise<Node3D>>();
+  private readonly nodeIdsToAssetMappingCache: AssetMappingPerNodeIdCache;
+
+  private readonly nodeIdsToNode3DCache: Node3DPerNodeIdCache;
 
   private readonly _amountOfAssetIdsChunks = 1;
 
   constructor(sdk: CogniteClient) {
     this._sdk = sdk;
+    this.modelToAssetMappingsCache = new AssetMappingPerModelCache();
+    this.assetIdsToAssetMappingCache = new AssetMappingPerAssetIdCache();
+    this.nodeIdsToAssetMappingCache = new AssetMappingPerNodeIdCache();
+    this.nodeIdsToNode3DCache = new Node3DPerNodeIdCache(this._sdk);
   }
 
   public async getAssetMappingsForLowestAncestor(
@@ -104,7 +111,7 @@ export class AssetMappingCache {
       relevantAssetIds.has(mapping.assetId)
     );
 
-    const nodes = await this.getNodesForNodeIds(
+    const nodes = await this.nodeIdsToNode3DCache.getNodesForNodeIds(
       modelId,
       revisionId,
       relevantAssetMappings.map((assetMapping) => assetMapping.nodeId)
@@ -124,32 +131,12 @@ export class AssetMappingCache {
     }, new Map<AssetId, Node3D[]>());
   }
 
-  public async getNodesForNodeIds(
-    modelId: ModelId,
-    revisionId: RevisionId,
-    nodeIds: number[]
-  ): Promise<Node3D[]> {
-    const { chunkNotInCache, chunkInCache } = await this.splitChunkInCacheNode3D(
-      nodeIds,
-      modelId,
-      revisionId
-    );
-
-    const nodes = await fetchNodesForNodeIds(modelId, revisionId, chunkNotInCache, this._sdk);
-    const allNodes = chunkInCache.concat(nodes);
-    return allNodes;
-  }
-
   public async generateNode3DCachePerItem(
     modelId: ModelId,
     revisionId: RevisionId,
     nodeIds: number[] | undefined
   ): Promise<void> {
-    const node3Ds = await this.getNodesForNodeIds(modelId, revisionId, nodeIds ?? []);
-    node3Ds.forEach((node) => {
-      const key = modelRevisionNodesAssetsToKey(modelId, revisionId, [node.id]);
-      this._nodeIdsToNode3D.set(key, Promise.resolve(node));
-    });
+    await this.nodeIdsToNode3DCache.generateNode3DCachePerItem(modelId, revisionId, nodeIds);
   }
 
   public async generateAssetMappingsCachePerItemFromModelCache(
@@ -173,39 +160,13 @@ export class AssetMappingCache {
     revisionId: RevisionId
   ): Promise<AssetMapping[]> {
     const key = modelRevisionToKey(modelId, revisionId);
-    const cachedResult = this._modelToAssetMappings.get(key);
+    const cachedResult = await this.modelToAssetMappingsCache.getModelToAssetMappingCacheItems(key);
 
     if (cachedResult !== undefined) {
-      return await cachedResult;
+      return cachedResult;
     }
 
     return await this.fetchAndCacheMappingsForModel(modelId, revisionId);
-  }
-
-  public setAssetIdsToAssetMappingCacheItem(
-    key: ModelNodeIdKey,
-    item: Promise<Array<Required<AssetMapping3D>>>
-  ): void {
-    this._assetIdsToAssetMappings.set(key, Promise.resolve(item));
-  }
-
-  public async getAssetIdsToAssetMappingCacheItem(
-    key: ModelNodeIdKey
-  ): Promise<AssetMapping[] | undefined> {
-    return await this._assetIdsToAssetMappings.get(key);
-  }
-
-  public setNodeIdsToAssetMappingCacheItem(
-    key: ModelNodeIdKey,
-    item: Promise<Array<Required<AssetMapping3D>>>
-  ): void {
-    this._nodeIdsToAssetMappings.set(key, Promise.resolve(item));
-  }
-
-  public async getNodeIdsToAssetMappingCacheItem(
-    key: ModelNodeIdKey
-  ): Promise<AssetMapping[] | undefined> {
-    return await this._nodeIdsToAssetMappings.get(key);
   }
 
   private async splitChunkInCacheAssetMappings(
@@ -232,32 +193,10 @@ export class AssetMappingCache {
     return { chunkInCache, chunkNotInCache: chunkNotCached };
   }
 
-  private async splitChunkInCacheNode3D(
-    currentChunk: number[],
-    modelId: ModelId,
-    revisionId: RevisionId
-  ): Promise<ChunkInCacheTypes<Node3D>> {
-    const chunkInCache: Node3D[] = [];
-    const chunkNotCached: number[] = [];
-
-    await Promise.all(
-      currentChunk.map(async (id) => {
-        const key = modelRevisionNodesAssetsToKey(modelId, revisionId, [id]);
-        const cachedResult = await this._nodeIdsToNode3D.get(key);
-        if (cachedResult !== undefined) {
-          chunkInCache.push(cachedResult);
-        } else {
-          chunkNotCached.push(id);
-        }
-      })
-    );
-
-    return { chunkInCache, chunkNotInCache: chunkNotCached };
-  }
-
-  private async setAssetMappingsCacheItem(key: ModelNodeIdKey, item: AssetMapping): Promise<void> {
-    const currentAssetMappings = this.getAssetIdsToAssetMappingCacheItem(key);
-    this.setAssetIdsToAssetMappingCacheItem(
+  private async setAssetMappingsCacheItem(key: ModelAssetIdKey, item: AssetMapping): Promise<void> {
+    const currentAssetMappings =
+      this.assetIdsToAssetMappingCache.getAssetIdsToAssetMappingCacheItem(key);
+    this.assetIdsToAssetMappingCache.setAssetIdsToAssetMappingCacheItem(
       key,
       currentAssetMappings.then((value) => {
         if (value === undefined) {
@@ -274,8 +213,8 @@ export class AssetMappingCache {
     key: ModelNodeIdKey
   ): Promise<AssetMapping[] | undefined> {
     return type === 'nodeIds'
-      ? await this.getNodeIdsToAssetMappingCacheItem(key)
-      : await this.getAssetIdsToAssetMappingCacheItem(key);
+      ? await this.nodeIdsToAssetMappingCache.getNodeIdsToAssetMappingCacheItem(key)
+      : await this.assetIdsToAssetMappingCache.getAssetIdsToAssetMappingCacheItem(key);
   }
 
   private setItemCacheResult(
@@ -285,8 +224,8 @@ export class AssetMappingCache {
   ): void {
     const value = Promise.resolve(item ?? []);
     type === 'nodeIds'
-      ? this.setNodeIdsToAssetMappingCacheItem(key, value)
-      : this.setAssetIdsToAssetMappingCacheItem(key, value);
+      ? this.nodeIdsToAssetMappingCache.setNodeIdsToAssetMappingCacheItem(key, value)
+      : this.assetIdsToAssetMappingCache.setAssetIdsToAssetMappingCacheItem(key, value);
   }
 
   private async fetchAssetMappingsRequest(
@@ -440,7 +379,7 @@ export class AssetMappingCache {
     const key = modelRevisionToKey(modelId, revisionId);
     const assetMappings = this.fetchAssetMappingsForModel(modelId, revisionId);
 
-    this._modelToAssetMappings.set(key, assetMappings);
+    this.modelToAssetMappingsCache.setModelToAssetMappingCacheItems(key, assetMappings);
     return await assetMappings;
   }
 

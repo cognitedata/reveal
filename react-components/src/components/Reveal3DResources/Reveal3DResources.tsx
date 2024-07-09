@@ -35,7 +35,7 @@ import {
   useAssetMappedNodesForRevisions,
   useGenerateAssetMappingCachePerItemFromModelCache,
   useGenerateNode3DCache
-} from '../CacheProvider/AssetMappingCacheProvider';
+} from '../CacheProvider/AssetMappingAndNode3DCacheProvider';
 import { useReveal3DResourcesStylingLoadingSetter } from './Reveal3DResourcesInfoContext';
 
 export const Reveal3DResources = ({

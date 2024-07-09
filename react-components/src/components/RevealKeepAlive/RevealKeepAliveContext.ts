@@ -3,7 +3,7 @@
  */
 import { type MutableRefObject, createContext, useContext } from 'react';
 import { type FdmNodeCache } from '../CacheProvider/FdmNodeCache';
-import { type AssetMappingCache } from '../CacheProvider/AssetMappingCache';
+import { type AssetMappingAndNode3DCache } from '../CacheProvider/AssetMappingAndNode3DCache';
 import { type PointCloudAnnotationCache } from '../CacheProvider/PointCloudAnnotationCache';
 import { type Image360AnnotationCache } from '../CacheProvider/Image360AnnotationCache';
 import { type SceneIdentifiers } from '../SceneContainer/sceneTypes';
@@ -14,7 +14,7 @@ export type RevealKeepAliveData = {
   isRevealContainerMountedRef: MutableRefObject<boolean>;
   sceneLoadedRef: MutableRefObject<SceneIdentifiers | undefined>;
   fdmNodeCache: MutableRefObject<FdmNodeCache | undefined>;
-  assetMappingCache: MutableRefObject<AssetMappingCache | undefined>;
+  assetMappingCache: MutableRefObject<AssetMappingAndNode3DCache | undefined>;
   pointCloudAnnotationCache: MutableRefObject<PointCloudAnnotationCache | undefined>;
   image360AnnotationCache: MutableRefObject<Image360AnnotationCache | undefined>;
 };

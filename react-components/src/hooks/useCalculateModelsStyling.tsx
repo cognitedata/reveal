@@ -9,7 +9,7 @@ import {
 } from '../components/Reveal3DResources/types';
 import { NumericRange, type NodeAppearance, IndexSet } from '@cognite/reveal';
 import { type ThreeDModelFdmMappings } from './types';
-import { type Node3D, type CogniteExternalId } from '@cognite/sdk';
+import { type Node3D, type CogniteExternalId, type AssetMapping3D } from '@cognite/sdk';
 import {
   useFdmAssetMappings,
   useMappedEdgesForRevisions
@@ -25,11 +25,10 @@ import {
   type NodeStylingGroup,
   type TreeIndexStylingGroup
 } from '../components/CadModelContainer/useApplyCadModelStyling';
-import { type AssetMapping } from '../components/CacheProvider/AssetMappingCache';
 import {
   useAssetMappedNodesForRevisions,
   useNodesForAssets
-} from '../components/CacheProvider/AssetMappingCacheProvider';
+} from '../components/CacheProvider/AssetMappingAndNode3DCacheProvider';
 import { isSameModel } from '../utilities/isSameModel';
 import { isAssetMappingStylingGroup, isFdmAssetStylingGroup } from '../utilities/StylingGroupUtils';
 
@@ -333,7 +332,7 @@ function getMappedStyleGroupFromFdm(
 }
 
 function getMappedStyleGroupFromAssetMappings(
-  assetMappings: AssetMapping[],
+  assetMappings: AssetMapping3D[],
   nodeAppearance: NodeAppearance
 ): TreeIndexStylingGroup {
   const indexSet = new IndexSet();

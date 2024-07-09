@@ -16,7 +16,7 @@ import { useFetchRuleInstances } from '../RuleBasedOutputs/hooks/useFetchRuleIns
 import { use3dModels } from '../../hooks/use3dModels';
 import { type AssetStylingGroup } from '../..';
 import { type CadModelOptions } from '../Reveal3DResources/types';
-import { useAssetMappedNodesForRevisions } from '../CacheProvider/AssetMappingCacheProvider';
+import { useAssetMappedNodesForRevisions } from '../CacheProvider/AssetMappingAndNode3DCacheProvider';
 import { RuleBasedSelectionItem } from '../RuleBasedOutputs/components/RuleBasedSelectionItem';
 import { generateEmptyRuleForSelection, getRuleBasedById } from '../RuleBasedOutputs/utils';
 import {
@@ -32,18 +32,20 @@ export const RuleBasedOutputsButton = ({
   onRuleSetStylingChanged,
   onRuleSetSelectedChanged
 }: RuleBasedOutputsButtonProps): ReactElement => {
+  const { t } = useTranslation();
+  const models = use3dModels();
+  const cadModels = models.filter((model) => model.type === 'cad') as CadModelOptions[];
+
   const [currentRuleSetEnabled, setCurrentRuleSetEnabled] = useState<RuleAndEnabled>();
   const [emptyRuleSelected, setEmptyRuleSelected] = useState<EmptyRuleForSelection>();
   const [currentStylingGroups, setCurrentStylingGroups] = useState<
     AssetStylingGroupAndStyleIndex[] | undefined
   >();
   const [ruleInstances, setRuleInstances] = useState<RuleAndEnabled[] | undefined>();
-  const { t } = useTranslation();
-  const models = use3dModels();
-  const cadModels = models.filter((model) => model.type === 'cad') as CadModelOptions[];
+
+  const [isRuleLoading, setIsRuleLoading] = useState(false);
 
   const { isLoading: isAssetMappingsLoading } = useAssetMappedNodesForRevisions(cadModels);
-  const [isRuleLoading, setIsRuleLoading] = useState(false);
 
   const [newRuleSetEnabled, setNewRuleSetEnabled] = useState<RuleAndEnabled>();
   const isRuleLoadingFromContext = useReveal3DResourcesStylingLoading();

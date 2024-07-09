@@ -1,7 +1,7 @@
 /*!
  * Copyright 2024 Cognite AS
  */
-import { useEffect, type ReactElement, useState, useCallback } from 'react';
+import { useEffect, type ReactElement, useState } from 'react';
 
 import { CogniteCadModel } from '@cognite/reveal';
 import { type RuleOutputSet, type AssetStylingGroupAndStyleIndex } from './types';
@@ -11,7 +11,7 @@ import { type Datapoints, type Asset, type AssetMapping3D } from '@cognite/sdk';
 import { isDefined } from '../../utilities/isDefined';
 import { type AssetIdsAndTimeseries } from '../../utilities/types';
 import { useAssetsAndTimeseriesLinkageDataQuery } from '../../query/useAssetsAndTimeseriesLinkageDataQuery';
-import { useAssetMappedNodesForRevisions } from '../CacheProvider/AssetMappingCacheProvider';
+import { useAssetMappedNodesForRevisions } from '../CacheProvider/AssetMappingAndNode3DCacheProvider';
 import { type CadModelOptions } from '../Reveal3DResources/types';
 import { useAssetsByIdsQuery } from '../../query/useAssetsByIdsQuery';
 import { useCreateAssetMappingsMapPerModel } from '../../hooks/useCreateAssetMappingsMapPerModel';
