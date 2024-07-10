@@ -108,5 +108,4 @@ export type CommonResourceContainerProps = {
   image360Settings?: CommonImage360Settings;
   onResourcesAdded?: () => void;
   onResourceLoadError?: (failedResource: AddResourceOptions, error: any) => void;
-  onRuleBasedCallback?: (data?: any) => void;
 };
