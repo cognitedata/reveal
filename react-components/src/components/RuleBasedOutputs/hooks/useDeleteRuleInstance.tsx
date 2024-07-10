@@ -21,7 +21,7 @@ export const useDeleteRuleInstance = (): ((
         return { items: [] };
       }
 
-      const resultFromSavingRule = await fdmSdk.deleteInstance([
+      const resultFromSavingRule = await fdmSdk.deleteInstances([
         {
           instanceType: 'node',
           space: RULE_BASED_OUTPUTS_VIEW.space,

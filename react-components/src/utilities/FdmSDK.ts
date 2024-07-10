@@ -80,7 +80,7 @@ type QuerySelect = {
 };
 
 export type EdgeItem<EdgeProperties = Record<string, unknown>> = {
-  instanceType: string;
+  instanceType: 'edge';
   version: number;
   type: DmsUniqueIdentifier;
   space: string;
@@ -93,7 +93,7 @@ export type EdgeItem<EdgeProperties = Record<string, unknown>> = {
 };
 
 export type NodeItem<PropertyType = Record<string, unknown>> = {
-  instanceType: InstanceType;
+  instanceType: 'node';
   version: number;
   space: string;
   externalId: string;
@@ -112,6 +112,13 @@ export type FdmNode<PropertyType = Record<string, unknown>> = {
   lastUpdatedTime: number;
   deletedTime: number;
   properties: PropertyType;
+};
+
+export type CreateInstanceItem<PropertyType = Record<string, unknown>> = {
+  instanceType: InstanceType;
+  externalId: string;
+  space: string;
+  sources: { source: Source; properties: PropertyType }[];
 };
 
 type InspectionOperations =
@@ -311,7 +318,7 @@ export class FdmSDK {
   public async filterInstances<PropertiesType = Record<string, any>>(
     filter: InstanceFilter | undefined,
     instanceType: InstanceType,
-    source?: Source,
+    source: Source,
     cursor?: string
   ): Promise<{
     instances: Array<EdgeItem<PropertiesType> | FdmNode<PropertiesType>>;
@@ -322,7 +329,7 @@ export class FdmSDK {
   public async filterInstances<PropertiesType = Record<string, any>>(
     filter: InstanceFilter | undefined,
     instanceType: 'node',
-    source?: Source,
+    source: Source,
     cursor?: string
   ): Promise<{ instances: Array<FdmNode<PropertiesType>>; nextCursor?: string }>;
 
@@ -330,7 +337,7 @@ export class FdmSDK {
   public async filterInstances<PropertiesType = Record<string, any>>(
     filter: InstanceFilter | undefined,
     instanceType: 'edge',
-    source?: Source,
+    source: Source,
     cursor?: string
   ): Promise<{ instances: Array<EdgeItem<PropertiesType>>; nextCursor?: string }>;
 
@@ -435,12 +442,7 @@ export class FdmSDK {
   }
 
   public async createInstance<PropertyType>(
-    queries: Array<{
-      instanceType: InstanceType;
-      externalId: string;
-      space: string;
-      sources: [{ source: Source; properties: any }];
-    }>
+    queries: Array<CreateInstanceItem<PropertyType>>
   ): Promise<ExternalIdsResultList<PropertyType>> {
     const data: any = {
       items: queries,
@@ -480,13 +482,17 @@ export class FdmSDK {
     throw new Error(`Failed to edit instances. Status: ${result.status}`);
   }
 
-  public async deleteInstance<PropertyType>(
+  public async deleteInstances<PropertyType>(
     queries: Array<{
       instanceType: InstanceType;
       externalId: string;
       space: string;
     }>
   ): Promise<ExternalIdsResultList<PropertyType>> {
+    if (queries.length === 0) {
+      return { items: [] };
+    }
+
     const data: any = {
       items: queries
     };
