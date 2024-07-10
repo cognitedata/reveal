@@ -1,3 +1,6 @@
+/*!
+ * Copyright 2024 Cognite AS
+ */
 import { RenderTargetCommand } from '../../base/commands/RenderTargetCommand';
 import { ObservationsDomainObject } from './ObservationsDomainObject';
 import { ObservationsTool } from './ObservationsTool';

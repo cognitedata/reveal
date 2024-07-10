@@ -1,6 +1,13 @@
-import { CDF_TO_VIEWER_TRANSFORMATION, Overlay3D, Overlay3DCollection } from '@cognite/reveal';
-import { Observation, ObservationProperties } from './models';
-import { Vector3 } from 'three';
+/*!
+ * Copyright 2024 Cognite AS
+ */
+import {
+  CDF_TO_VIEWER_TRANSFORMATION,
+  type Overlay3D,
+  type Overlay3DCollection
+} from '@cognite/reveal';
+import { type Observation, type ObservationProperties } from './models';
+import { type Vector3 } from 'three';
 
 export type ObservationOverlay = Overlay3D<Observation> | Overlay3D<ObservationProperties>;
 export type ObservationCollection =

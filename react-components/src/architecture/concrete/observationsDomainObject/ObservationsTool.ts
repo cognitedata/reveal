@@ -6,7 +6,7 @@ import { type TranslateKey } from '../../base/utilities/TranslateKey';
 import { ObservationsDomainObject } from './ObservationsDomainObject';
 import { BaseEditTool } from '../../base/commands/BaseEditTool';
 import { type VisualDomainObject } from '../../base/domainObjects/VisualDomainObject';
-import { BaseCommand } from '../../base/commands/BaseCommand';
+import { type BaseCommand } from '../../base/commands/BaseCommand';
 import { CreateObservationCommand } from './CreateObservationCommand';
 import { first, sortBy } from 'lodash';
 import { isDefined } from '../../../utilities/isDefined';
@@ -67,10 +67,10 @@ export class ObservationsTool extends BaseEditTool {
 
   public override async onClick(event: PointerEvent): Promise<void> {
     if (this._isCreating) {
-      this.createPendingObservation(event);
+      await this.createPendingObservation(event);
       return;
     }
-    this.selectOverlayFromClick(event);
+    await this.selectOverlayFromClick(event);
   }
 
   public getObservationsDomainObject(): ObservationsDomainObject | undefined {

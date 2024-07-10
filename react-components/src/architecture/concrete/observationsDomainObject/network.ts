@@ -1,12 +1,15 @@
+/*!
+ * Copyright 2024 Cognite AS
+ */
 import { chunk } from 'lodash';
 import {
-  CreateInstanceItem,
-  DmsUniqueIdentifier,
-  FdmSDK,
-  InstanceFilter
+  type CreateInstanceItem,
+  type DmsUniqueIdentifier,
+  type FdmSDK,
+  type InstanceFilter
 } from '../../../utilities/FdmSDK';
-import { Observation, OBSERVATION_SOURCE, ObservationProperties } from './models';
-import { Overlay3D } from '@cognite/reveal';
+import { type Observation, OBSERVATION_SOURCE, type ObservationProperties } from './models';
+import { type Overlay3D } from '@cognite/reveal';
 
 import { v4 as uuid } from 'uuid';
 
@@ -24,7 +27,7 @@ export async function fetchObservations(fdmSdk: FdmSDK): Promise<Observation[]> 
 
 export async function createObservationInstances(
   fdmSdk: FdmSDK,
-  observationOverlays: Overlay3D<ObservationProperties>[]
+  observationOverlays: Array<Overlay3D<ObservationProperties>>
 ): Promise<Observation[]> {
   const chunks = chunk(observationOverlays, 100);
   const resultPromises = chunks.map(async (chunk) => {
@@ -89,7 +92,7 @@ function createObservationInstancePayload(
 
 export async function deleteObservationInstances(
   fdmSdk: FdmSDK,
-  observations: Overlay3D<Observation>[]
+  observations: Array<Overlay3D<Observation>>
 ): Promise<void> {
   await fdmSdk.deleteInstances(
     observations.map((observation) => ({

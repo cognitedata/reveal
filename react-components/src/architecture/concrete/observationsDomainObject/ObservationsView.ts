@@ -10,7 +10,7 @@ import { Changes } from '../../base/domainObjectsHelpers/Changes';
 import { type DomainObjectChange } from '../../base/domainObjectsHelpers/DomainObjectChange';
 import { isDefined } from '../../../utilities/isDefined';
 import { first, sortBy } from 'lodash';
-import { ObservationOverlay } from './types';
+import { type ObservationOverlay } from './types';
 import { getColorFromStatus } from './ObservationStatus';
 
 export class ObservationsView extends GroupThreeView<ObservationsDomainObject> {
@@ -21,7 +21,9 @@ export class ObservationsView extends GroupThreeView<ObservationsDomainObject> {
   }
 
   protected override addChildren(): void {
-    this.domainObject.overlayCollections.forEach((collection) => this.addChild(collection));
+    this.domainObject.overlayCollections.forEach((collection) => {
+      this.addChild(collection);
+    });
   }
 
   public override update(change: DomainObjectChange): void {

@@ -1,4 +1,7 @@
-import { Color } from 'three';
+/*!
+ * Copyright 2024 Cognite AS
+ */
+import { type Color } from 'three';
 import {
   convertToSelectedColor,
   DEFAULT_OVERLAY_COLOR,

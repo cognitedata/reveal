@@ -10,22 +10,22 @@ import { type TranslateKey } from '../../base/utilities/TranslateKey';
 import { type FdmSDK } from '../../../utilities/FdmSDK';
 import { Changes } from '../../base/domainObjectsHelpers/Changes';
 import { ObservationsCache } from './ObservationsCache';
-import { Vector3 } from 'three';
+import { type Vector3 } from 'three';
 import { PanelInfo } from '../../base/domainObjectsHelpers/PanelInfo';
-import { ObservationCollection, ObservationOverlay } from './types';
+import { type ObservationCollection, type ObservationOverlay } from './types';
 import { ObservationStatus } from './ObservationStatus';
 
 export class ObservationsDomainObject extends VisualDomainObject {
   private _selectedObservation: ObservationOverlay | undefined;
-  private _observationsCache: ObservationsCache;
+  private readonly _observationsCache: ObservationsCache;
 
   constructor(fdmSdk: FdmSDK) {
     super();
 
     this._observationsCache = new ObservationsCache(fdmSdk);
-    this._observationsCache
-      .getFinishedOriginalLoadingPromise()
-      .then(() => this.notify(Changes.geometry));
+    void this._observationsCache.getFinishedOriginalLoadingPromise().then(() => {
+      this.notify(Changes.geometry);
+    });
   }
 
   public override get typeName(): TranslateKey {

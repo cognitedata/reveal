@@ -118,7 +118,7 @@ export type CreateInstanceItem<PropertyType = Record<string, unknown>> = {
   instanceType: InstanceType;
   externalId: string;
   space: string;
-  sources: { source: Source; properties: PropertyType }[];
+  sources: Array<{ source: Source; properties: PropertyType }>;
 };
 
 type InspectionOperations =

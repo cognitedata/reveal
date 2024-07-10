@@ -1,9 +1,12 @@
-import { CDF_TO_VIEWER_TRANSFORMATION, Overlay3D, Overlay3DCollection } from '@cognite/reveal';
-import { FdmSDK } from '../../../utilities/FdmSDK';
-import { Observation, ObservationProperties } from './models';
+/*!
+ * Copyright 2024 Cognite AS
+ */
+import { CDF_TO_VIEWER_TRANSFORMATION, type Overlay3D, Overlay3DCollection } from '@cognite/reveal';
+import { type FdmSDK } from '../../../utilities/FdmSDK';
+import { type Observation, type ObservationProperties } from './models';
 import { Vector3 } from 'three';
 
-import { isPendingObservation, ObservationCollection, ObservationOverlay } from './types';
+import { isPendingObservation, type ObservationCollection, type ObservationOverlay } from './types';
 import {
   createObservationInstances,
   deleteObservationInstances,
@@ -16,24 +19,26 @@ import { ObservationStatus } from './ObservationStatus';
  * list when e.g. adding or removing observations
  */
 export class ObservationsCache {
-  private _loadedPromise: Promise<void>;
-  private _fdmSdk: FdmSDK;
+  private readonly _loadedPromise: Promise<void>;
+  private readonly _fdmSdk: FdmSDK;
 
-  private _persistedCollection = new Overlay3DCollection<Observation>([]);
+  private readonly _persistedCollection = new Overlay3DCollection<Observation>([]);
 
-  private _pendingOverlaysCollection = new Overlay3DCollection<ObservationProperties>([]);
+  private readonly _pendingOverlaysCollection = new Overlay3DCollection<ObservationProperties>([]);
 
-  private _pendingDeletionObservations: Set<Overlay3D<Observation>> = new Set();
+  private readonly _pendingDeletionObservations = new Set<Overlay3D<Observation>>();
 
   constructor(fdmSdk: FdmSDK) {
     this._loadedPromise = fetchObservations(fdmSdk)
-      .then((data) => this.initializeCollection(data))
+      .then((data) => {
+        this.initializeCollection(data);
+      })
       .then();
     this._fdmSdk = fdmSdk;
   }
 
-  public getFinishedOriginalLoadingPromise(): Promise<void> {
-    return this._loadedPromise;
+  public async getFinishedOriginalLoadingPromise(): Promise<void> {
+    await this._loadedPromise;
   }
 
   public getPersistedCollection(): Overlay3DCollection<Observation> {
@@ -121,7 +126,7 @@ export class ObservationsCache {
     );
   }
 
-  private initializeCollection(observations: Observation[]) {
+  private initializeCollection(observations: Observation[]): void {
     const observationOverlays = observations.map((observation) => {
       const position = new Vector3(
         observation.properties.positionX,

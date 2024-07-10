@@ -1,8 +1,8 @@
-import { IconType } from '@cognite/cogs.js';
-import { TranslateKey } from '../../base/utilities/TranslateKey';
-import { RenderTargetCommand } from '../../base/commands/RenderTargetCommand';
-import { ButtonType } from '../../../components/Architecture/types';
-import { ObservationsTool } from './ObservationsTool';
+/*!
+ * Copyright 2024 Cognite AS
+ */
+import { type IconType } from '@cognite/cogs.js';
+import { type TranslateKey } from '../../base/utilities/TranslateKey';
 import { ObservationsCommand } from './ObservationsCommand';
 
 export class CreateObservationCommand extends ObservationsCommand {
