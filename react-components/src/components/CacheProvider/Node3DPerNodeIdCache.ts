@@ -20,7 +20,7 @@ export class Node3DPerNodeIdCache {
     this._sdk = sdk;
   }
 
-  public async splitChunkInCacheNode3D(
+  private async splitChunkInCacheNode3D(
     currentChunk: number[],
     modelId: ModelId,
     revisionId: RevisionId
