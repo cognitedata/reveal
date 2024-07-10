@@ -7,7 +7,7 @@ import {
   type AnnotationModel,
   type AnnotationsBoundingVolume,
   type CogniteInternalId,
-  AssetMapping3D
+  type AssetMapping3D
 } from '@cognite/sdk';
 import {
   type ModelRevisionId,
