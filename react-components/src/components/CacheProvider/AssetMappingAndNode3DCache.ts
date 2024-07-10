@@ -235,14 +235,14 @@ export class AssetMappingAndNode3DCache {
       .autoPagingToArray({ limit: Infinity });
 
     assetMapping3D.forEach(async (item) => {
-      const key: ModelNodeIdKey = modelRevisionNodesAssetsToKey(modelId, revisionId, [
+      const keyAssetId: ModelAssetIdKey = modelRevisionNodesAssetsToKey(modelId, revisionId, [
         item.assetId
       ]);
-      if (filterType === 'nodeIds') {
-        await this.nodeIdsToAssetMappingCache.setAssetMappingsCacheItem(key, item);
-      } else {
-        await this.assetIdsToAssetMappingCache.setAssetMappingsCacheItem(key, item);
-      }
+      const keyNodeId: ModelNodeIdKey = modelRevisionNodesAssetsToKey(modelId, revisionId, [
+        item.nodeId
+      ]);
+      await this.assetIdsToAssetMappingCache.setAssetMappingsCacheItem(keyAssetId, item);
+      await this.nodeIdsToAssetMappingCache.setAssetMappingsCacheItem(keyNodeId, item);
     });
 
     currentChunk.forEach(async (id) => {
