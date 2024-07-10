@@ -6,7 +6,8 @@ import {
   type AnnotationsCogniteAnnotationTypesImagesAssetLink,
   type AnnotationModel,
   type AnnotationsBoundingVolume,
-  type CogniteInternalId
+  type CogniteInternalId,
+  AssetMapping3D
 } from '@cognite/sdk';
 import {
   type ModelRevisionId,
@@ -49,4 +50,8 @@ export function getAssetIdOrExternalIdFromImage360Annotation(
 ): string | number | undefined {
   const annotationData = annotation.data as AnnotationsCogniteAnnotationTypesImagesAssetLink;
   return annotationData.assetRef?.id ?? annotationData.assetRef?.externalId;
+}
+
+export function isValidAssetMapping(assetMapping: AssetMapping3D): assetMapping is AssetMapping3D {
+  return assetMapping.treeIndex !== undefined && assetMapping.subtreeSize !== undefined;
 }

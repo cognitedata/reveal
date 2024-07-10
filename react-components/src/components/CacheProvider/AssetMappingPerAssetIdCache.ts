@@ -20,4 +20,18 @@ export class AssetMappingPerAssetIdCache {
   ): Promise<AssetMapping[] | undefined> {
     return await this._assetIdsToAssetMappings.get(key);
   }
+
+  public async setAssetMappingsCacheItem(key: ModelAssetIdKey, item: AssetMapping): Promise<void> {
+    const currentAssetMappings = this.getAssetIdsToAssetMappingCacheItem(key);
+    this.setAssetIdsToAssetMappingCacheItem(
+      key,
+      currentAssetMappings.then((value) => {
+        if (value === undefined) {
+          return [item];
+        }
+        value.push(item);
+        return value;
+      })
+    );
+  }
 }
