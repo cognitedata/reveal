@@ -3,8 +3,8 @@
  */
 
 import { useMemo } from 'react';
-import { isDefined } from '../utilities/isDefined';
-import { convertAssetMetadataKeysToLowerCase } from '../utilities/convertAssetMetadataToLowerCase';
+import { isDefined } from '../../../utilities/isDefined';
+import { convertAssetMetadataKeysToLowerCase } from '../../../utilities/convertAssetMetadataToLowerCase';
 import { type Asset } from '@cognite/sdk';
 
 export const useConvertAssetMetadatasToLowerCase = (assets: Asset[] | undefined): Asset[] => {
