@@ -4,7 +4,7 @@
 import { useMemo } from 'react';
 import { useReveal } from '../components/RevealCanvas/ViewerContext';
 import { type Image360Collection } from '@cognite/reveal';
-import { useReveal3DResourcesCount } from '../components/Reveal3DResources/Reveal3DResourcesCountContext';
+import { useReveal3DResourcesCount } from '../components/Reveal3DResources/Reveal3DResourcesInfoContext';
 
 export const useImage360Collections = (): Image360Collection[] => {
   const viewer = useReveal();

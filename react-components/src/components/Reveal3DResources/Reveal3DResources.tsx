@@ -31,6 +31,12 @@ import {
 import { type ImageCollectionModelStyling } from '../Image360CollectionContainer/useApply360AnnotationStyling';
 import { is360ImageAddOptions } from './typeGuards';
 import { useRemoveNonReferencedModels } from './useRemoveNonReferencedModels';
+import {
+  useAssetMappedNodesForRevisions,
+  useGenerateAssetMappingCachePerItemFromModelCache,
+  useGenerateNode3DCache
+} from '../CacheProvider/AssetMappingAndNode3DCacheProvider';
+import { useReveal3DResourcesStylingLoadingSetter } from './Reveal3DResourcesInfoContext';
 
 export const Reveal3DResources = ({
   resources,
@@ -41,6 +47,7 @@ export const Reveal3DResources = ({
   image360Settings
 }: Reveal3DResourcesProps): ReactElement => {
   const viewer = useReveal();
+
   const [reveal3DModels, setReveal3DModels] = useState<TypedReveal3DModel[]>([]);
 
   const numModelsLoaded = useRef(0);
@@ -62,6 +69,11 @@ export const Reveal3DResources = ({
     [reveal3DModels]
   );
 
+  const { data: assetMappings } = useAssetMappedNodesForRevisions(cadModelOptions);
+
+  useGenerateAssetMappingCachePerItemFromModelCache(cadModelOptions, assetMappings);
+  useGenerateNode3DCache(cadModelOptions, assetMappings);
+
   const pointCloudModelOptions = useMemo(
     () =>
       reveal3DModels.filter(
@@ -70,15 +82,29 @@ export const Reveal3DResources = ({
     [reveal3DModels]
   );
 
-  const styledCadModelOptions = useCalculateCadStyling(
+  const {
+    styledModels: styledCadModelOptions,
+    isModelMappingsFetched,
+    isModelMappingsLoading
+  } = useCalculateCadStyling(
     cadModelOptions,
     instanceStyling?.filter(isCadAssetMappingStylingGroup) ?? EMPTY_ARRAY,
     defaultResourceStyling
   );
 
+  const setModel3DStylingLoading = useReveal3DResourcesStylingLoadingSetter();
+  setModel3DStylingLoading(!(isModelMappingsFetched || !isModelMappingsLoading));
+
+  useEffect(() => {
+    setModel3DStylingLoading(!(isModelMappingsFetched || !isModelMappingsLoading));
+  }, [isModelMappingsFetched, isModelMappingsLoading]);
+
+  const instaceStylingWithAssetMappings =
+    instanceStyling?.filter(isAssetMappingStylingGroup) ?? EMPTY_ARRAY;
+
   const styledPointCloudModelOptions = useCalculatePointCloudStyling(
     pointCloudModelOptions,
-    instanceStyling?.filter(isAssetMappingStylingGroup) ?? EMPTY_ARRAY,
+    instaceStylingWithAssetMappings,
     defaultResourceStyling
   );
 
