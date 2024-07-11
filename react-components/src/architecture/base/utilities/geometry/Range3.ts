@@ -242,6 +242,12 @@ export class Range3 {
     this.z.scaleDelta(value.z);
   }
 
+  public scale(value: number): void {
+    this.x.scale(value);
+    this.y.scale(value);
+    this.z.scale(value);
+  }
+
   public add(value: Vector3): void {
     this.x.add(value.x);
     this.y.add(value.y);

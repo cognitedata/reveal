@@ -14,6 +14,7 @@ import {
   type PointCloudModelStyling
 } from './useApplyPointCloudStyling';
 import { modelExists } from '../../utilities/modelExists';
+import { getViewerResourceCount } from '../../utilities/getViewerResourceCount';
 
 export type CognitePointCloudModelProps = {
   addModelOptions: AddModelOptions;
@@ -47,7 +48,7 @@ export function PointCloudContainer({
     addModel(modelId, revisionId, transform)
       .then((pointCloudModel) => {
         onLoad?.(pointCloudModel);
-        setRevealResourcesCount(viewer.models.length);
+        setRevealResourcesCount(getViewerResourceCount(viewer));
       })
       .catch((error) => {
         const errorHandler = onLoadError ?? defaultLoadErrorHandler;
@@ -101,7 +102,7 @@ export function PointCloudContainer({
       return;
 
     viewer.removeModel(model);
-    setRevealResourcesCount(viewer.models.length);
+    setRevealResourcesCount(getViewerResourceCount(viewer));
     setModel(undefined);
   }
 }
