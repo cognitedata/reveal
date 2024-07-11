@@ -30,7 +30,7 @@ void main()
     // Redo appearance texture lookup from vertex shader due to limit in transferable attributes
     NodeAppearance appearance = determineNodeAppearance(colorDataTexture, treeIndexTextureSize, v_treeIndex);
 
-    if (isClipped(appearance, vViewPosition)) {
+    if (isClipped(vViewPosition)) {
         discard;
     }
 

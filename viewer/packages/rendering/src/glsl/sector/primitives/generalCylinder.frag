@@ -90,7 +90,7 @@ void main()
     if (dot(intersectionPoint - planeACenter, planeANormal) > 0.0 ||
         dot(intersectionPoint - planeBCenter, planeBNormal) > 0.0 ||
         theta > v_angles[1] + v_angles[0] ||
-        isClipped(appearance, p) ||
+        isClipped(p) ||
         rayTargetDist + dist < 0.0
        ) {
         // Missed the first point, check the other point
@@ -102,7 +102,7 @@ void main()
         p = rayTarget + dist*rayDirection;
         if (dot(intersectionPoint - planeACenter, planeANormal) > 0.0 ||
             dot(intersectionPoint - planeBCenter, planeBNormal) > 0.0 ||
-            theta > v_angles[1] + v_angles[0] || isClipped(appearance, p) ||
+            theta > v_angles[1] + v_angles[0] || isClipped(p) ||
             rayTargetDist + dist < 0.0
            ) {
             // Missed the other point too
