@@ -92,6 +92,13 @@ export const Reveal3DResources = ({
     defaultResourceStyling
   );
 
+  const setModel3DStylingLoading = useReveal3DResourcesStylingLoadingSetter();
+  setModel3DStylingLoading(!(isModelMappingsFetched || !isModelMappingsLoading));
+
+  useEffect(() => {
+    setModel3DStylingLoading(!(isModelMappingsFetched || !isModelMappingsLoading));
+  }, [isModelMappingsFetched, isModelMappingsLoading]);
+
   const instaceStylingWithAssetMappings =
     instanceStyling?.filter(isAssetMappingStylingGroup) ?? EMPTY_ARRAY;
 
@@ -130,10 +137,6 @@ export const Reveal3DResources = ({
       onResourcesAdded();
     }
   };
-
-  const setModel3DStylingLoading = useReveal3DResourcesStylingLoadingSetter();
-
-  setModel3DStylingLoading(!(isModelMappingsFetched || !isModelMappingsLoading));
 
   return (
     <>

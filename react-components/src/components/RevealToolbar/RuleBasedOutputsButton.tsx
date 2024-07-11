@@ -51,16 +51,15 @@ export const RuleBasedOutputsButton = ({
   const isRuleLoadingFromContext = useReveal3DResourcesStylingLoading();
   const setModel3DStylingLoading = useReveal3DResourcesStylingLoadingSetter();
 
-  const ruleInstancesResult = useFetchRuleInstances();
+  const { data: ruleInstancesResult } = useFetchRuleInstances();
 
   useEffect(() => {
-    if (ruleInstancesResult.data === undefined) return;
-
-    setRuleInstances(ruleInstancesResult.data);
+    setRuleInstances(ruleInstancesResult);
   }, [ruleInstancesResult]);
 
   useEffect(() => {
     setCurrentRuleSetEnabled(newRuleSetEnabled);
+    if (onRuleSetSelectedChanged !== undefined) onRuleSetSelectedChanged(newRuleSetEnabled);
 
     const hasNewRuleSetEnabled = newRuleSetEnabled !== undefined;
 
@@ -73,8 +72,8 @@ export const RuleBasedOutputsButton = ({
       currentStylingGroups !== undefined &&
       currentStylingGroups.length > 0 &&
       isRuleLoadingFromContext;
-
     setIsRuleLoading(hasRuleLoading);
+    setModel3DStylingLoading(hasRuleLoading);
   }, [isRuleLoadingFromContext, currentStylingGroups]);
 
   const onChange = useCallback(
@@ -97,10 +96,10 @@ export const RuleBasedOutputsButton = ({
         if (onRuleSetStylingChanged !== undefined) onRuleSetStylingChanged(undefined);
       }
 
-      if (onRuleSetSelectedChanged !== undefined) onRuleSetSelectedChanged(selectedRule);
-
       setEmptyRuleSelected(emptySelection);
       setNewRuleSetEnabled(selectedRule);
+      setIsRuleLoading(true);
+      setModel3DStylingLoading(true);
     },
     [ruleInstances, onRuleSetStylingChanged, onRuleSetSelectedChanged]
   );
