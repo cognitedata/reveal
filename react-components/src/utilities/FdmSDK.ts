@@ -381,28 +381,28 @@ export class FdmSDK {
   public async filterAllInstances<PropertiesType = Record<string, any>>(
     filter: InstanceFilter,
     instanceType: InstanceType,
-    source?: Source
+    source: Source
   ): Promise<{ instances: Array<EdgeItem<PropertiesType> | FdmNode<PropertiesType>> }>;
 
   // eslint-disable-next-line no-dupe-class-members
   public async filterAllInstances<PropertiesType = Record<string, any>>(
     filter: InstanceFilter,
     instanceType: 'edge',
-    source?: Source
+    source: Source
   ): Promise<{ instances: Array<EdgeItem<PropertiesType>> }>;
 
   // eslint-disable-next-line no-dupe-class-members
   public async filterAllInstances<PropertiesType = Record<string, any>>(
     filter: InstanceFilter,
     instanceType: 'node',
-    source?: Source
+    source: Source
   ): Promise<{ instances: Array<FdmNode<PropertiesType>> }>;
 
   // eslint-disable-next-line no-dupe-class-members
   public async filterAllInstances<PropertiesType = Record<string, any>>(
     filter: InstanceFilter | undefined,
     instanceType: InstanceType,
-    source?: Source
+    source: Source
   ): Promise<{ instances: Array<EdgeItem<PropertiesType> | FdmNode<PropertiesType>> }> {
     filter = makeSureNonEmptyFilterForRequest(filter);
 
