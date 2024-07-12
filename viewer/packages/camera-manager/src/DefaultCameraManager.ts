@@ -2,6 +2,7 @@
  * Copyright 2021 Cognite AS
  */
 
+import { Plane, Vector3 } from 'three';
 import * as THREE from 'three';
 import TWEEN, { type Tween } from '@tweenjs/tween.js';
 import clamp from 'lodash/clamp';
@@ -15,7 +16,9 @@ import {
   CameraChangeDelegate,
   CameraManagerEventType,
   CameraStopDelegate,
-  CameraEventDelegate
+  CameraEventDelegate,
+  NearAndFarPlaneBuffers,
+  CameraFarBuffers
 } from './types';
 
 import { CameraManager } from './CameraManager';
@@ -55,6 +58,29 @@ export class DefaultCameraManager implements CameraManager {
 
   private _isDisposed = false;
   private _nearAndFarNeedsUpdate = false;
+
+  /**
+   * Reusable buffers used by updateNearAndFarPlane function to avoid allocations.
+   */
+  private readonly _updateNearAndFarPlaneBuffers: NearAndFarPlaneBuffers = {
+    cameraPosition: new Vector3(),
+    cameraDirection: new Vector3(),
+    corners: new Array<Vector3>(
+      new Vector3(),
+      new Vector3(),
+      new Vector3(),
+      new Vector3(),
+      new Vector3(),
+      new Vector3(),
+      new Vector3(),
+      new Vector3()
+    )
+  };
+
+  private readonly _calculateCameraFarBuffers: CameraFarBuffers = {
+    nearPlaneCoplanarPoint: new Vector3(),
+    nearPlane: new Plane()
+  };
 
   // The active/inactive state of this manager. Does not always match up with the controls
   // as these are temporarily disabled to block onWheel input during `zoomToCursor`-mode
@@ -427,7 +453,12 @@ export class DefaultCameraManager implements CameraManager {
       return;
     }
     if (this.automaticNearFarPlane) {
-      CameraManagerHelper.updateCameraNearAndFar(camera, boundingBox);
+      CameraManagerHelper.updateCameraNearAndFar(
+        camera,
+        boundingBox,
+        this._updateNearAndFarPlaneBuffers,
+        this._calculateCameraFarBuffers
+      );
     }
     if (this.automaticControlsSensitivity) {
       const diagonal = boundingBox.min.distanceTo(boundingBox.max);

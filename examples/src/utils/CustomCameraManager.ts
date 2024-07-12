@@ -1,3 +1,4 @@
+import { Plane, Vector3 } from "three";
 import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 import pull from 'lodash/pull';
@@ -19,6 +20,29 @@ export class CustomCameraManager implements CameraManager {
   private _controls: OrbitControls;
   private readonly _cameraChangedListener: Array<CameraChangeDelegate> = [];
   private _stopEventHandler: DebouncedCameraStopEventTrigger;
+
+  /**
+   * Reusable buffers used by updateNearAndFarPlane function to avoid allocations.
+   */
+  private readonly _updateNearAndFarPlaneBuffers = {
+    cameraPosition: new Vector3(),
+    cameraDirection: new Vector3(),
+    corners: new Array<Vector3>(
+      new Vector3(),
+      new Vector3(),
+      new Vector3(),
+      new Vector3(),
+      new Vector3(),
+      new Vector3(),
+      new Vector3(),
+      new Vector3()
+    )
+  };
+
+  private readonly _calculateCameraFarBuffers = {
+    nearPlaneCoplanarPoint: new Vector3(),
+    nearPlane: new Plane()
+  };
 
   constructor(domElement: HTMLElement, camera: THREE.PerspectiveCamera) {
     this._domElement = domElement;
@@ -119,7 +143,7 @@ export class CustomCameraManager implements CameraManager {
 
   update(deltaTime: number, boundingBox: THREE.Box3): void {
     this._controls.update();
-    CameraManagerHelper.updateCameraNearAndFar(this._camera, boundingBox);
+    CameraManagerHelper.updateCameraNearAndFar(this._camera, boundingBox, this._updateNearAndFarPlaneBuffers, this._calculateCameraFarBuffers);
   }
 
   dispose(): void {

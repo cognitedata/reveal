@@ -2,7 +2,7 @@
  * Copyright 2024 Cognite AS
  */
 
-import { Box3, PerspectiveCamera, Raycaster, Vector3, Scene, Ray, Spherical, Vector2 } from 'three';
+import { Box3, PerspectiveCamera, Raycaster, Vector3, Scene, Ray, Spherical, Vector2, Plane } from 'three';
 
 import { FlexibleControls } from './FlexibleControls';
 import { FlexibleControlsOptions } from './FlexibleControlsOptions';
@@ -17,7 +17,14 @@ import {
   getPixelCoordinatesFromEvent
 } from '@reveal/utilities';
 
-import { CameraEventDelegate, CameraManagerCallbackData, CameraManagerEventType, CameraState } from './../types';
+import {
+  CameraEventDelegate,
+  CameraFarBuffers,
+  CameraManagerCallbackData,
+  CameraManagerEventType,
+  CameraState,
+  NearAndFarPlaneBuffers
+} from './../types';
 import { CameraManagerHelper } from './../CameraManagerHelper';
 import { CameraManager } from './../CameraManager';
 import { FlexibleControlsType } from './FlexibleControlsType';
@@ -49,6 +56,28 @@ export class FlexibleCameraManager extends PointerEvents implements IFlexibleCam
   private _nearAndFarNeedsUpdate = false;
   private readonly _raycastCallback: RaycastCallback;
   private readonly _haveEventListeners: boolean;
+  /**
+   * Reusable buffers used by updateNearAndFarPlane function to avoid allocations.
+   */
+  private readonly _updateNearAndFarPlaneBuffers: NearAndFarPlaneBuffers = {
+    cameraPosition: new Vector3(),
+    cameraDirection: new Vector3(),
+    corners: new Array<Vector3>(
+      new Vector3(),
+      new Vector3(),
+      new Vector3(),
+      new Vector3(),
+      new Vector3(),
+      new Vector3(),
+      new Vector3(),
+      new Vector3()
+    )
+  };
+
+  private readonly _calculateCameraFarBuffers: CameraFarBuffers = {
+    nearPlaneCoplanarPoint: new Vector3(),
+    nearPlane: new Plane()
+  };
 
   //================================================
   // CONSTRUCTOR
@@ -470,7 +499,12 @@ export class FlexibleCameraManager extends PointerEvents implements IFlexibleCam
     if (!this.options.automaticNearFarPlane) {
       return;
     }
-    CameraManagerHelper.updateCameraNearAndFar(this.camera, boundingBox);
+    CameraManagerHelper.updateCameraNearAndFar(
+      this.camera,
+      boundingBox,
+      this._updateNearAndFarPlaneBuffers,
+      this._calculateCameraFarBuffers
+    );
   }
 
   private updateControlsSensitivity(boundingBox: Box3): void {

@@ -1,7 +1,7 @@
 /*!
  * Copyright 2022 Cognite AS
  */
-import { Box3, Euler, MathUtils, PerspectiveCamera, Quaternion, Vector3 } from 'three';
+import { Box3, Euler, MathUtils, PerspectiveCamera, Plane, Quaternion, Vector3 } from 'three';
 
 import TWEEN from '@tweenjs/tween.js';
 
@@ -13,9 +13,11 @@ import { CameraManagerHelper } from './CameraManagerHelper';
 import {
   CameraChangeDelegate,
   CameraEventDelegate,
+  CameraFarBuffers,
   CameraManagerEventType,
   CameraState,
-  CameraStopDelegate
+  CameraStopDelegate,
+  NearAndFarPlaneBuffers
 } from './types';
 import { DebouncedCameraStopEventTrigger } from './utils/DebouncedCameraStopEventTrigger';
 import { assertNever, getNormalizedPixelCoordinatesBySize, getPixelCoordinatesFromEvent } from '@reveal/utilities';
@@ -29,6 +31,29 @@ export class StationaryCameraManager implements CameraManager {
   private readonly _stopEventTrigger: DebouncedCameraStopEventTrigger;
   private _isDragging = false;
   private _pointerEventCache: Array<PointerEvent> = [];
+
+  /**
+   * Reusable buffers used by updateNearAndFarPlane function to avoid allocations.
+   */
+  private readonly _updateNearAndFarPlaneBuffers: NearAndFarPlaneBuffers = {
+    cameraPosition: new Vector3(),
+    cameraDirection: new Vector3(),
+    corners: new Array<Vector3>(
+      new Vector3(),
+      new Vector3(),
+      new Vector3(),
+      new Vector3(),
+      new Vector3(),
+      new Vector3(),
+      new Vector3(),
+      new Vector3()
+    )
+  };
+
+  private readonly _calculateCameraFarBuffers: CameraFarBuffers = {
+    nearPlaneCoplanarPoint: new Vector3(),
+    nearPlane: new Plane()
+  };
 
   constructor(domElement: HTMLElement, camera: PerspectiveCamera) {
     this._domElement = domElement;
@@ -156,7 +181,12 @@ export class StationaryCameraManager implements CameraManager {
   }
 
   update(_: number, boundingBox: Box3): void {
-    CameraManagerHelper.updateCameraNearAndFar(this._camera, boundingBox);
+    CameraManagerHelper.updateCameraNearAndFar(
+      this._camera,
+      boundingBox,
+      this._updateNearAndFarPlaneBuffers,
+      this._calculateCameraFarBuffers
+    );
   }
 
   dispose(): void {
