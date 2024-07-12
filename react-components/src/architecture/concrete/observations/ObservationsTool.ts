@@ -8,14 +8,11 @@ import { BaseEditTool } from '../../base/commands/BaseEditTool';
 import { type VisualDomainObject } from '../../base/domainObjects/VisualDomainObject';
 import { type BaseCommand } from '../../base/commands/BaseCommand';
 import { CreateObservationCommand } from './CreateObservationCommand';
-import { first, sortBy } from 'lodash';
-import { isDefined } from '../../../utilities/isDefined';
 import { SaveObservationsCommand } from './SaveObservationsCommand';
 import { DeleteObservationCommand } from './DeleteObservationCommand';
 import { createEmptyObservationProperties, isObservationIntersection } from './types';
 import { ObservationsView } from './ObservationsView';
 import { CustomObjectIntersectInput } from '@cognite/reveal';
-import { Changes } from '../../base/domainObjectsHelpers/Changes';
 
 export class ObservationsTool extends BaseEditTool {
   private _isCreating: boolean = false;
@@ -70,7 +67,8 @@ export class ObservationsTool extends BaseEditTool {
 
   public override async onClick(event: PointerEvent): Promise<void> {
     if (this._isCreating) {
-      return this.createPendingObservation(event);
+      await this.createPendingObservation(event);
+      return;
     }
     await this.selectOverlayFromClick(event);
   }

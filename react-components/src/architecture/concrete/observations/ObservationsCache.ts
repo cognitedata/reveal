@@ -4,7 +4,7 @@
 import { type FdmSDK } from '../../../utilities/FdmSDK';
 import { type ObservationFdmNode, type ObservationProperties } from './models';
 
-import { Observation } from './types';
+import { type Observation } from './types';
 import {
   createObservationInstances,
   deleteObservationInstances,
@@ -34,12 +34,9 @@ export class ObservationsCache {
       return;
     }
 
-    console.log('Thinking to delete', observations);
     const observationData = observations
       .map((observation) => observation.fdmMetadata)
       .filter(isDefined);
-
-    console.log('Deleting ', observationData);
 
     await deleteObservationInstances(this._fdmSdk, observationData);
   }
@@ -50,8 +47,6 @@ export class ObservationsCache {
     if (observations.length === 0) {
       return [];
     }
-
-    console.log('Saving ', observations);
 
     return await createObservationInstances(this._fdmSdk, observations);
   }

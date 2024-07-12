@@ -1,11 +1,15 @@
 /*!
  * Copyright 2024 Cognite AS
  */
-import { CDF_TO_VIEWER_TRANSFORMATION, CustomObjectIntersection, Overlay3D } from '@cognite/reveal';
+import {
+  CDF_TO_VIEWER_TRANSFORMATION,
+  type CustomObjectIntersection,
+  type Overlay3D
+} from '@cognite/reveal';
 import { type ObservationProperties } from './models';
 import { type Vector3 } from 'three';
-import { FdmNode } from '../../../utilities/FdmSDK';
-import { DomainObjectIntersection } from '../../base/domainObjectsHelpers/DomainObjectIntersection';
+import { type FdmNode } from '../../../utilities/FdmSDK';
+import { type DomainObjectIntersection } from '../../base/domainObjectsHelpers/DomainObjectIntersection';
 
 export enum ObservationStatus {
   Default,

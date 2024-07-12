@@ -9,9 +9,9 @@ import { type FdmSDK } from '../../../utilities/FdmSDK';
 import { Changes } from '../../base/domainObjectsHelpers/Changes';
 import { ObservationsCache } from './ObservationsCache';
 import { PanelInfo } from '../../base/domainObjectsHelpers/PanelInfo';
-import { Observation, ObservationStatus } from './types';
+import { type Observation, ObservationStatus } from './types';
 import { partition, remove } from 'lodash';
-import { ObservationProperties } from './models';
+import { type ObservationProperties } from './models';
 
 export class ObservationsDomainObject extends VisualDomainObject {
   private _selectedObservation: Observation | undefined;

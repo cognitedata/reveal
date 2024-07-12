@@ -26,7 +26,7 @@ export async function fetchObservations(fdmSdk: FdmSDK): Promise<ObservationFdmN
 
 export async function createObservationInstances(
   fdmSdk: FdmSDK,
-  observationOverlays: Array<ObservationProperties>
+  observationOverlays: ObservationProperties[]
 ): Promise<ObservationFdmNode[]> {
   const chunks = chunk(observationOverlays, 100);
   const resultPromises = chunks.map(async (chunk) => {

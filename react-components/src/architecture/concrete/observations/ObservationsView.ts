@@ -7,21 +7,21 @@ import { GroupThreeView } from '../../base/views/GroupThreeView';
 import {
   CDF_TO_VIEWER_TRANSFORMATION,
   Overlay3DCollection,
-  OverlayInfo,
+  type OverlayInfo,
   type CustomObjectIntersectInput,
   type CustomObjectIntersection
 } from '@cognite/reveal';
 import { type DomainObjectIntersection } from '../../base/domainObjectsHelpers/DomainObjectIntersection';
 import { Changes } from '../../base/domainObjectsHelpers/Changes';
 import { type DomainObjectChange } from '../../base/domainObjectsHelpers/DomainObjectChange';
-import { Observation, ObservationIntersection, observationMarker } from './types';
+import { type Observation, type ObservationIntersection, observationMarker } from './types';
 import { ClosestGeometryFinder } from '../../base/utilities/geometry/ClosestGeometryFinder';
 import { getColorFromStatus } from './color';
 
 type ObservationCollection = Overlay3DCollection<Observation>;
 
 export class ObservationsView extends GroupThreeView<ObservationsDomainObject> {
-  private _overlayCollection: ObservationCollection = new Overlay3DCollection([]);
+  private readonly _overlayCollection: ObservationCollection = new Overlay3DCollection([]);
 
   protected override calculateBoundingBox(): Box3 {
     return this._overlayCollection
@@ -51,23 +51,6 @@ export class ObservationsView extends GroupThreeView<ObservationsDomainObject> {
       this.resetColors();
       this.invalidateRenderTarget();
     }
-  }
-
-  private resetColors() {
-    const selectedObservation = this.domainObject.getSelectedObservation();
-    this._overlayCollection.getOverlays().forEach((overlay) => {
-      const oldColor = overlay.getColor();
-      const newColor = getColorFromStatus(
-        overlay.getContent().status,
-        overlay.getContent() === selectedObservation
-      );
-
-      if (oldColor.equals(newColor)) {
-        return;
-      }
-
-      overlay.setColor(newColor);
-    });
   }
 
   public override intersectIfCloser(
@@ -120,12 +103,29 @@ export class ObservationsView extends GroupThreeView<ObservationsDomainObject> {
   public getOverlays(): ObservationCollection {
     return this._overlayCollection;
   }
+
+  private resetColors(): void {
+    const selectedObservation = this.domainObject.getSelectedObservation();
+    this._overlayCollection.getOverlays().forEach((overlay) => {
+      const oldColor = overlay.getColor();
+      const newColor = getColorFromStatus(
+        overlay.getContent().status,
+        overlay.getContent() === selectedObservation
+      );
+
+      if (oldColor.equals(newColor)) {
+        return;
+      }
+
+      overlay.setColor(newColor);
+    });
+  }
 }
 
 function createObservationOverlays(
   observations: Observation[],
   selectedObservation: Observation | undefined
-): OverlayInfo<Observation>[] {
+): Array<OverlayInfo<Observation>> {
   return observations.map((observation) => ({
     position: extractObservationPosition(observation),
     content: observation,
