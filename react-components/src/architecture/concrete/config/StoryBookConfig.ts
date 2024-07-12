@@ -20,7 +20,7 @@ import { ToggleMetricUnitsCommand } from '../../base/concreteCommands/ToggleMetr
 import { MeasurementTool } from '../measurements/MeasurementTool';
 import { ClipTool } from '../clipping/ClipTool';
 import { KeyboardSpeedCommand } from '../../base/concreteCommands/KeyboardSpeedCommand';
-import { ObservationsTool } from '../observationsDomainObject/ObservationsTool';
+import { ObservationsTool } from '../observations/ObservationsTool';
 
 export class StoryBookConfig extends BaseRevealConfig {
   // ==================================================

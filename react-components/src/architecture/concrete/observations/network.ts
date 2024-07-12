@@ -8,12 +8,11 @@ import {
   type FdmSDK,
   type InstanceFilter
 } from '../../../utilities/FdmSDK';
-import { type Observation, OBSERVATION_SOURCE, type ObservationProperties } from './models';
-import { type Overlay3D } from '@cognite/reveal';
+import { type ObservationFdmNode, OBSERVATION_SOURCE, type ObservationProperties } from './models';
 
 import { v4 as uuid } from 'uuid';
 
-export async function fetchObservations(fdmSdk: FdmSDK): Promise<Observation[]> {
+export async function fetchObservations(fdmSdk: FdmSDK): Promise<ObservationFdmNode[]> {
   const observationsFilter: InstanceFilter = {};
 
   const observationResult = await fdmSdk.filterAllInstances<ObservationProperties>(
@@ -27,8 +26,8 @@ export async function fetchObservations(fdmSdk: FdmSDK): Promise<Observation[]> 
 
 export async function createObservationInstances(
   fdmSdk: FdmSDK,
-  observationOverlays: Array<Overlay3D<ObservationProperties>>
-): Promise<Observation[]> {
+  observationOverlays: Array<ObservationProperties>
+): Promise<ObservationFdmNode[]> {
   const chunks = chunk(observationOverlays, 100);
   const resultPromises = chunks.map(async (chunk) => {
     const payloads = chunk.map(createObservationInstancePayload);
@@ -44,7 +43,7 @@ export async function createObservationInstances(
 async function fetchObservationsWithIds(
   fdmSdk: FdmSDK,
   identifiers: DmsUniqueIdentifier[]
-): Promise<Observation[]> {
+): Promise<ObservationFdmNode[]> {
   return (
     await fdmSdk.filterInstances<ObservationProperties>(
       {
@@ -70,7 +69,7 @@ async function fetchObservationsWithIds(
 }
 
 function createObservationInstancePayload(
-  overlay: Overlay3D<ObservationProperties>
+  observation: ObservationProperties
 ): CreateInstanceItem<ObservationProperties> {
   const id = uuid();
   return {
@@ -81,7 +80,7 @@ function createObservationInstancePayload(
       {
         source: OBSERVATION_SOURCE,
         properties: {
-          ...overlay.getContent(),
+          ...observation,
           type: 'simple',
           sourceId: id
         }
@@ -92,13 +91,13 @@ function createObservationInstancePayload(
 
 export async function deleteObservationInstances(
   fdmSdk: FdmSDK,
-  observations: Array<Overlay3D<Observation>>
+  observations: ObservationFdmNode[]
 ): Promise<void> {
   await fdmSdk.deleteInstances(
     observations.map((observation) => ({
       instanceType: 'node',
-      externalId: observation.getContent().externalId,
-      space: observation.getContent().space
+      externalId: observation.externalId,
+      space: observation.space
     }))
   );
 }

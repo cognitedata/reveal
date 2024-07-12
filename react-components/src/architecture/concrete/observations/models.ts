@@ -47,7 +47,7 @@ export type CommentProperties = {
   text: string;
 };
 
-export type Observation = FdmNode<ObservationProperties>;
+export type ObservationFdmNode = FdmNode<ObservationProperties>;
 
 export const OBSERVATION_SOURCE: Source = {
   type: 'view',

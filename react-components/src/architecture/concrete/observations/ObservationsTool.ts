@@ -12,7 +12,10 @@ import { first, sortBy } from 'lodash';
 import { isDefined } from '../../../utilities/isDefined';
 import { SaveObservationsCommand } from './SaveObservationsCommand';
 import { DeleteObservationCommand } from './DeleteObservationCommand';
-import { createEmptyObservationProperties } from './types';
+import { createEmptyObservationProperties, isObservationIntersection } from './types';
+import { ObservationsView } from './ObservationsView';
+import { CustomObjectIntersectInput } from '@cognite/reveal';
+import { Changes } from '../../base/domainObjectsHelpers/Changes';
 
 export class ObservationsTool extends BaseEditTool {
   private _isCreating: boolean = false;
@@ -67,8 +70,7 @@ export class ObservationsTool extends BaseEditTool {
 
   public override async onClick(event: PointerEvent): Promise<void> {
     if (this._isCreating) {
-      await this.createPendingObservation(event);
-      return;
+      return this.createPendingObservation(event);
     }
     await this.selectOverlayFromClick(event);
   }
@@ -83,26 +85,40 @@ export class ObservationsTool extends BaseEditTool {
   }
 
   private async selectOverlayFromClick(event: PointerEvent): Promise<void> {
-    const intersection = await this.getIntersection(event);
+    const camera = this.renderTarget.camera;
+    const normalizedCoords = this.getNormalizedPixelCoordinates(event);
+    const domainObject = this.getObservationsDomainObject();
 
-    const domainObject = this.getIntersectedSelectableDomainObject(intersection);
-    if (!(domainObject instanceof ObservationsDomainObject)) {
+    if (domainObject === undefined) {
+      return;
+    }
+
+    const threeView = [...domainObject.views.getByType(ObservationsView)][0];
+
+    if (threeView === undefined) {
+      return;
+    }
+
+    const clippingPlanes = this.renderTarget.viewer.getGlobalClippingPlanes();
+
+    const intersectionInput = new CustomObjectIntersectInput(
+      normalizedCoords,
+      camera,
+      clippingPlanes
+    );
+
+    const intersection = threeView.intersectIfCloser(intersectionInput, undefined);
+
+    if (intersection === undefined) {
+      return;
+    }
+
+    if (!isObservationIntersection(intersection)) {
       await super.onClick(event);
       return;
     }
 
-    const camera = this.renderTarget.camera;
-    const normalizedCoords = this.getNormalizedPixelCoordinates(event);
-
-    const intersectedOverlay = domainObject.overlayCollections
-      .map((collection) => collection.intersectOverlays(normalizedCoords, camera))
-      .filter(isDefined);
-
-    sortBy(intersectedOverlay, (overlay) =>
-      camera.position.distanceToSquared(overlay.getPosition())
-    );
-
-    domainObject.setSelectedObservation(first(intersectedOverlay));
+    domainObject.setSelectedObservation(intersection.userData.getContent());
   }
 
   private async createPendingObservation(event: PointerEvent): Promise<void> {
@@ -114,11 +130,9 @@ export class ObservationsTool extends BaseEditTool {
 
     const domainObject = this.getObservationsDomainObject();
     const pendingOverlay = domainObject?.addPendingObservation(
-      intersection.point,
       createEmptyObservationProperties(intersection.point)
     );
     domainObject?.setSelectedObservation(pendingOverlay);
-    this.renderTarget.invalidate();
 
     this.setIsCreating(false);
   }
