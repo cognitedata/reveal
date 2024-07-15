@@ -76,11 +76,6 @@ export class ObservationsTool extends BaseEditTool {
     return this.rootDomainObject.getDescendantByType(ObservationsDomainObject);
   }
 
-  public async save(): Promise<void> {
-    const domainObject = this.getObservationsDomainObject();
-    await domainObject?.save();
-  }
-
   private async selectOverlayFromClick(event: PointerEvent): Promise<void> {
     const intersection = await this.getIntersection(event);
 

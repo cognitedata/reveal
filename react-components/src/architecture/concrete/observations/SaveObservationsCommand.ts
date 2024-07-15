@@ -35,8 +35,10 @@ export class SaveObservationsCommand extends ObservationsCommand {
       return false;
     }
 
-    void tool
-      .save()
+    const domainObject = this.getObservationsDomainObject();
+
+    void domainObject
+      ?.save()
       .then(() => {
         toast.success({ fallback: 'Successfully published changes' }.fallback);
 
