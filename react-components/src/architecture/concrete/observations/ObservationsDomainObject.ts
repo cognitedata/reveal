@@ -137,17 +137,14 @@ export class ObservationsDomainObject extends VisualDomainObject {
   }
 
   public hasPendingObservations(): boolean {
-    return (
-      this._observations.find(
-        (observation) => observation.status === ObservationStatus.PendingCreation
-      ) !== undefined
+    return this._observations.some(
+      (observation) => observation.status === ObservationStatus.PendingCreation
     );
   }
 
   public hasPendingDeletionObservations(): boolean {
-    return (
-      this._observations.find((obs) => obs.status === ObservationStatus.PendingDeletion) !==
-      undefined
+    return this._observations.some(
+      (observations) => observations.status === ObservationStatus.PendingDeletion
     );
   }
 }
