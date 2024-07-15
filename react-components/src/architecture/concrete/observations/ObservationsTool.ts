@@ -82,40 +82,14 @@ export class ObservationsTool extends BaseEditTool {
   }
 
   private async selectOverlayFromClick(event: PointerEvent): Promise<void> {
-    const camera = this.renderTarget.camera;
-    const normalizedCoords = this.getNormalizedPixelCoordinates(event);
-    const domainObject = this.getObservationsDomainObject();
+    const intersection = await this.getIntersection(event);
 
-    if (domainObject === undefined) {
-      return;
-    }
-
-    const threeView = [...domainObject.views.getByType(ObservationsView)][0];
-
-    if (threeView === undefined) {
-      return;
-    }
-
-    const clippingPlanes = this.renderTarget.viewer.getGlobalClippingPlanes();
-
-    const intersectionInput = new CustomObjectIntersectInput(
-      normalizedCoords,
-      camera,
-      clippingPlanes
-    );
-
-    const intersection = threeView.intersectIfCloser(intersectionInput, undefined);
-
-    if (intersection === undefined) {
-      return;
-    }
-
-    if (!isObservationIntersection(intersection)) {
+    if (intersection === undefined || !isObservationIntersection(intersection)) {
       await super.onClick(event);
       return;
     }
 
-    domainObject.setSelectedObservation(intersection.userData.getContent());
+    intersection.domainObject.setSelectedObservation(intersection.userData.getContent());
   }
 
   private async createPendingObservation(event: PointerEvent): Promise<void> {
