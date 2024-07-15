@@ -55,5 +55,3 @@ documentation/.docusaurus
 documentation/generated
 documentation/docs/api
 /react-components/stories/public/cadModel
-
-**/install-state.gz
