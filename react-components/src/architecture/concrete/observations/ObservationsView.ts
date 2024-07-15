@@ -1,7 +1,7 @@
 /*!
  * Copyright 2024 Cognite AS
  */
-import { Box3, Vector3 } from 'three';
+import { Box3, Plane, Vector3 } from 'three';
 import { type ObservationsDomainObject } from './ObservationsDomainObject';
 import { GroupThreeView } from '../../base/views/GroupThreeView';
 import {
@@ -26,7 +26,10 @@ export class ObservationsView extends GroupThreeView<ObservationsDomainObject> {
   protected override calculateBoundingBox(): Box3 {
     return this._overlayCollection
       .getOverlays()
-      .reduce((box, overlay) => box.expandByPoint(overlay.getPosition()), new Box3());
+      .reduce(
+        (box, overlay) => (overlay.getVisible() ? box.expandByPoint(overlay.getPosition()) : box),
+        new Box3()
+      );
   }
 
   protected override addChildren(): void {
@@ -35,7 +38,9 @@ export class ObservationsView extends GroupThreeView<ObservationsDomainObject> {
     const selectedObservation = this.domainObject.getSelectedObservation();
     const overlayInfos = createObservationOverlays(observations, selectedObservation);
     this._overlayCollection.removeAllOverlays();
+
     this._overlayCollection.addOverlays(overlayInfos);
+    this.updateClipping();
 
     this.addChild(this._overlayCollection);
   }
@@ -47,8 +52,10 @@ export class ObservationsView extends GroupThreeView<ObservationsDomainObject> {
       this.clearMemory();
       this.invalidateRenderTarget();
       this.invalidateBoundingBox();
+    } else if (change.isChanged(Changes.clipping)) {
+      this.updateClipping();
     } else if (change.isChanged(Changes.selected)) {
-      this.resetColors();
+      this.updateColors();
       this.invalidateRenderTarget();
     }
   }
@@ -104,7 +111,17 @@ export class ObservationsView extends GroupThreeView<ObservationsDomainObject> {
     return this._overlayCollection;
   }
 
-  private resetColors(): void {
+  private updateClipping(): void {
+    const clippingPlanes = this.renderTarget.getGlobalClippingPlanes();
+    this._overlayCollection.getOverlays().forEach((overlay) => {
+      const isVisible = !isClipped(overlay.getPosition(), clippingPlanes);
+      if (isVisible !== overlay.getVisible()) {
+        overlay.setVisible(isVisible);
+      }
+    });
+  }
+
+  private updateColors(): void {
     const selectedObservation = this.domainObject.getSelectedObservation();
     this._overlayCollection.getOverlays().forEach((overlay) => {
       const oldColor = overlay.getColor();
@@ -139,4 +156,8 @@ function extractObservationPosition(observation: Observation): Vector3 {
     observation.properties.positionY,
     observation.properties.positionZ
   ).applyMatrix4(CDF_TO_VIEWER_TRANSFORMATION);
+}
+
+function isClipped(point: Vector3, planes: Plane[]): boolean {
+  return planes.some((plane) => plane.distanceToPoint(point) < 0);
 }

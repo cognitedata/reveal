@@ -62,7 +62,6 @@ export class ObservationsTool extends BaseEditTool {
   public override onDeactivate(): void {
     const domainObject = this.getObservationsDomainObject();
     domainObject?.setSelectedObservation(undefined);
-    domainObject?.setVisibleInteractive(false, this.renderTarget);
   }
 
   public override async onClick(event: PointerEvent): Promise<void> {
