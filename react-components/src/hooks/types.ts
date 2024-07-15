@@ -3,7 +3,7 @@
  */
 import { type Node3D, type CogniteExternalId, type Asset } from '@cognite/sdk';
 import { type DmsUniqueIdentifier } from '../utilities/FdmSDK';
-import { AssetAnnotationImage360Info } from '@cognite/reveal';
+import { type AssetAnnotationImage360Info } from '@cognite/reveal';
 
 export type ThreeDModelFdmMappings = {
   modelId: number;
