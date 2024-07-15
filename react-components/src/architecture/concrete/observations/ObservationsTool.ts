@@ -11,8 +11,6 @@ import { CreateObservationCommand } from './CreateObservationCommand';
 import { SaveObservationsCommand } from './SaveObservationsCommand';
 import { DeleteObservationCommand } from './DeleteObservationCommand';
 import { createEmptyObservationProperties, isObservationIntersection } from './types';
-import { ObservationsView } from './ObservationsView';
-import { CustomObjectIntersectInput } from '@cognite/reveal';
 
 export class ObservationsTool extends BaseEditTool {
   private _isCreating: boolean = false;
@@ -80,7 +78,8 @@ export class ObservationsTool extends BaseEditTool {
     const intersection = await this.getIntersection(event);
 
     if (intersection === undefined || !isObservationIntersection(intersection)) {
-      return await super.onClick(event);
+      await super.onClick(event);
+      return;
     }
 
     intersection.domainObject.setSelectedObservation(intersection.userData);
@@ -90,7 +89,8 @@ export class ObservationsTool extends BaseEditTool {
     const intersection = await this.getIntersection(event);
 
     if (intersection === undefined) {
-      return await super.onClick(event);
+      await super.onClick(event);
+      return;
     }
 
     const domainObject = this.getObservationsDomainObject();

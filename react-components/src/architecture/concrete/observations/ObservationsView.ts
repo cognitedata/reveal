@@ -1,7 +1,7 @@
 /*!
  * Copyright 2024 Cognite AS
  */
-import { Box3, Plane, Vector3 } from 'three';
+import { Box3, type Plane, Vector3 } from 'three';
 import { type ObservationsDomainObject } from './ObservationsDomainObject';
 import { GroupThreeView } from '../../base/views/GroupThreeView';
 import {
