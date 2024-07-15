@@ -101,7 +101,7 @@ export class ObservationsDomainObject extends VisualDomainObject {
       this.setSelectedObservation(undefined);
     }
 
-    const [toRemove, toKeep] = partition(
+    const [toRemove, notToRemove] = partition(
       this._observations,
       (observation) => observation.status === ObservationStatus.PendingDeletion
     );
@@ -115,13 +115,15 @@ export class ObservationsDomainObject extends VisualDomainObject {
       observationsToCreate.map((obs) => obs.properties)
     );
 
-    this._observations = toKeep.concat(
-      newObservations.map((observation) => ({
-        status: ObservationStatus.Default,
-        fdmMetadata: observation,
-        properties: observation.properties
-      }))
-    );
+    this._observations = notToRemove
+      .filter((observation) => observation.status === ObservationStatus.Default)
+      .concat(
+        newObservations.map((observation) => ({
+          status: ObservationStatus.Default,
+          fdmMetadata: observation,
+          properties: observation.properties
+        }))
+      );
 
     await deletePromise;
 
