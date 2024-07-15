@@ -6,19 +6,19 @@ import {
   type AddImage360CollectionDatamodelsOptions,
   type AddImage360CollectionOptions,
   type AddResourceOptions,
-  type AddReveal3DModelOptions
+  type Add3dResourceOptions
 } from './types';
 
 export function is360ImageAddOptions(
   addOptions: AddResourceOptions
 ): addOptions is AddImage360CollectionOptions {
-  return !is3dModelOptions(addOptions);
+  return !is3dResourceOptions(addOptions);
 }
 
-export function is3dModelOptions(
+export function is3dResourceOptions(
   addOptions: AddResourceOptions
-): addOptions is AddReveal3DModelOptions {
-  const modelOptions = addOptions as AddReveal3DModelOptions;
+): addOptions is Add3dResourceOptions {
+  const modelOptions = addOptions as Add3dResourceOptions;
   return modelOptions.modelId !== undefined && modelOptions.revisionId !== undefined;
 }
 

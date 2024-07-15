@@ -4,20 +4,19 @@
 import { useRef, type ReactElement, useState, useEffect, useMemo } from 'react';
 import { type Cognite3DViewer } from '@cognite/reveal';
 import { CadModelContainer } from '../CadModelContainer/CadModelContainer';
-import { type CadModelStyling } from '../CadModelContainer/useApplyCadModelStyling';
 import { PointCloudContainer } from '../PointCloudContainer/PointCloudContainer';
 import { Image360CollectionContainer } from '../Image360CollectionContainer/Image360CollectionContainer';
 import { useReveal } from '../RevealCanvas/ViewerContext';
 import {
-  type AddReveal3DModelOptions,
   type TypedReveal3DModel,
   type AddResourceOptions,
   type Reveal3DResourcesProps,
   type CadModelOptions,
-  type PointCloudModelOptions
+  type PointCloudModelOptions,
+  type Add3dResourceOptions
 } from './types';
-import { useCalculateCadStyling } from '../../hooks/useCalculateModelsStyling';
-import { useCalculatePointCloudStyling } from '../../hooks/useCalculatePointCloudModelsStyling';
+import { useCalculateCadStyling } from './useCalculateCadStyling';
+import { useCalculatePointCloudStyling } from './useCalculatePointCloudStyling';
 import {
   type AnnotationIdStylingGroup,
   type PointCloudModelStyling
@@ -31,6 +30,7 @@ import {
 import { type ImageCollectionModelStyling } from '../Image360CollectionContainer/useApply360AnnotationStyling';
 import { is360ImageAddOptions } from './typeGuards';
 import { useRemoveNonReferencedModels } from './useRemoveNonReferencedModels';
+import { type CadModelStyling } from '../CadModelContainer/types';
 
 export const Reveal3DResources = ({
   resources,
@@ -114,7 +114,7 @@ export const Reveal3DResources = ({
 
   return (
     <>
-      {styledCadModelOptions.map(({ styleGroups, model }, index) => {
+      {styledCadModelOptions.styledModels.map(({ styleGroups, model }, index) => {
         const defaultStyle = model.styling?.default ?? defaultResourceStyling?.cad?.default;
         const cadStyling: CadModelStyling = {
           defaultStyle,
@@ -186,9 +186,9 @@ async function getTypedModels(
 
   const modelTypePromises = resources
     .filter(
-      (resource): resource is AddReveal3DModelOptions =>
-        (resource as AddReveal3DModelOptions).modelId !== undefined &&
-        (resource as AddReveal3DModelOptions).revisionId !== undefined
+      (resource): resource is Add3dResourceOptions =>
+        (resource as Add3dResourceOptions).modelId !== undefined &&
+        (resource as Add3dResourceOptions).revisionId !== undefined
     )
     .map(async (addModelOptions) => {
       const type = await viewer

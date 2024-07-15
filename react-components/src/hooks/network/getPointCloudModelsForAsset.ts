@@ -2,13 +2,13 @@
  * Copyright 2024 Cognite AS
  */
 import { type Revision3D, type CogniteClient } from '@cognite/sdk/dist/src';
-import { type TaggedAdd3DModelOptions } from '../../components/Reveal3DResources/types';
 import { chunk } from 'lodash';
+import { type TaggedAddPointCloudResourceOptions } from '../../components/Reveal3DResources/types';
 
 export async function getPointCloudModelsForAsset(
   assetId: number,
   sdk: CogniteClient
-): Promise<TaggedAdd3DModelOptions[]> {
+): Promise<TaggedAddPointCloudResourceOptions[]> {
   const modelIdResult = await sdk.annotations
     .reverseLookup({
       filter: { annotatedResourceType: 'threedmodel', data: { assetRef: { id: assetId } } },

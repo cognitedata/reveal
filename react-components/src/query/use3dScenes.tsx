@@ -17,11 +17,11 @@ import {
 } from '../hooks/types';
 import { Euler, MathUtils, Matrix4 } from 'three';
 import { CDF_TO_VIEWER_TRANSFORMATION } from '@cognite/reveal';
+import { type GroundPlane, type Skybox } from '../components/SceneContainer/sceneTypes';
 import {
-  type AddReveal3DModelOptions,
+  type Add3dResourceOptions,
   type AddImage360CollectionDatamodelsOptions
 } from '../components/Reveal3DResources/types';
-import { type GroundPlane, type Skybox } from '../components/SceneContainer/sceneTypes';
 
 export type Space = string;
 export type ExternalId = string;
@@ -34,7 +34,7 @@ export type SceneData = {
   cameraEulerRotationX: number;
   cameraEulerRotationY: number;
   cameraEulerRotationZ: number;
-  cadModelOptions: AddReveal3DModelOptions[];
+  cadModelOptions: Add3dResourceOptions[];
   image360CollectionOptions: AddImage360CollectionDatamodelsOptions[];
   groundPlanes: GroundPlane[];
   skybox?: Skybox;

@@ -91,9 +91,10 @@ export {
 export { type CogniteCadModelProps } from './components/CadModelContainer/CadModelContainer';
 export {
   type CadModelStyling,
+  type CadStyleGroup,
   type TreeIndexStylingGroup,
   type NodeStylingGroup
-} from './components/CadModelContainer/useApplyCadModelStyling';
+} from './components/CadModelContainer/types';
 export {
   type Reveal3DResourcesProps,
   type FdmAssetStylingGroup,
@@ -101,14 +102,17 @@ export {
   type DefaultResourceStyling,
   type Image360AssetStylingGroup,
   type CommonImage360Settings,
+  type TaggedAddCadResourceOptions,
+  type TaggedAddPointCloudResourceOptions,
   type TaggedAddResourceOptions,
-  type TaggedAdd3DModelOptions,
   type TaggedAddImage360CollectionOptions,
   type AddImage360CollectionEventsOptions,
   type AddImage360CollectionDatamodelsOptions,
   type AddImage360CollectionOptions,
   type AddResourceOptions,
-  type AddReveal3DModelOptions
+  type Add3dResourceOptions,
+  type AddCadResourceOptions,
+  type AddPointCloudResourceOptions
 } from './components/Reveal3DResources/types';
 export {
   type PointCloudAnnotationMappedAssetData,
