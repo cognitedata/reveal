@@ -10,7 +10,7 @@ import { useReveal3DResourcesCount } from '../Reveal3DResources/Reveal3DResource
 import { isEqual } from 'lodash';
 import { modelExists } from '../../utilities/modelExists';
 import { getViewerResourceCount } from '../../utilities/getViewerResourceCount';
-import { CadModelStyling } from './types';
+import { type CadModelStyling } from './types';
 import { useApplyCadModelStyling } from './useApplyCadModelStyling';
 
 export type CogniteCadModelProps = {

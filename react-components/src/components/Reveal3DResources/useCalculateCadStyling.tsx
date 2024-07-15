@@ -33,6 +33,8 @@ import {
   isAssetMappingStylingGroup,
   isFdmAssetStylingGroup
 } from '../../utilities/StylingGroupUtils';
+import { type ThreeDModelFdmMappings } from '../../hooks/types';
+import { isSameModel } from '../../utilities/isSameModel';
 
 type ModelStyleGroup = {
   model: CadModelOptions;

@@ -12,8 +12,7 @@ import {
   type AddResourceOptions,
   type Reveal3DResourcesProps,
   type CadModelOptions,
-  type PointCloudModelOptions,
-  type Add3dResourceOptions
+  type PointCloudModelOptions
 } from './types';
 import { useCalculatePointCloudStyling } from './useCalculatePointCloudStyling';
 import {
@@ -27,7 +26,7 @@ import {
   isImage360AssetStylingGroup
 } from '../../utilities/StylingGroupUtils';
 import { type ImageCollectionModelStyling } from '../Image360CollectionContainer/useApply360AnnotationStyling';
-import { is360ImageAddOptions } from './typeGuards';
+import { is360ImageAddOptions, is3dResourceOptions } from './typeGuards';
 import { useRemoveNonReferencedModels } from './useRemoveNonReferencedModels';
 import {
   useAssetMappedNodesForRevisions,
@@ -36,6 +35,7 @@ import {
 } from '../CacheProvider/AssetMappingAndNode3DCacheProvider';
 import { useCalculateCadStyling } from './useCalculateCadStyling';
 import { useReveal3DResourcesStylingLoadingSetter } from './Reveal3DResourcesInfoContext';
+import { type CadModelStyling } from '../CadModelContainer/types';
 
 export const Reveal3DResources = ({
   resources,
@@ -139,7 +139,7 @@ export const Reveal3DResources = ({
 
   return (
     <>
-      {styledCadModelOptions.styledModels.map(({ styleGroups, model }, index) => {
+      {styledCadModelOptions.map(({ styleGroups, model }, index) => {
         const defaultStyle = model.styling?.default ?? defaultResourceStyling?.cad?.default;
         const cadStyling: CadModelStyling = {
           defaultStyle,
@@ -209,22 +209,16 @@ async function getTypedModels(
 ): Promise<TypedReveal3DModel[]> {
   const errorFunction = onLoadFail ?? defaultLoadFailHandler;
 
-  const modelTypePromises = resources
-    .filter(
-      (resource): resource is Add3dResourceOptions =>
-        (resource as Add3dResourceOptions).modelId !== undefined &&
-        (resource as Add3dResourceOptions).revisionId !== undefined
-    )
-    .map(async (addModelOptions) => {
-      const type = await viewer
-        .determineModelType(addModelOptions.modelId, addModelOptions.revisionId)
-        .catch((error) => {
-          errorFunction(addModelOptions, error);
-          return '';
-        });
-      const typedModel = { ...addModelOptions, type };
-      return typedModel;
-    });
+  const modelTypePromises = resources.filter(is3dResourceOptions).map(async (addModelOptions) => {
+    const type = await viewer
+      .determineModelType(addModelOptions.modelId, addModelOptions.revisionId)
+      .catch((error) => {
+        errorFunction(addModelOptions, error);
+        return '';
+      });
+    const typedModel = { ...addModelOptions, type };
+    return typedModel;
+  });
 
   const resourceLoadResults = await Promise.all(modelTypePromises);
   const successfullyLoadedResources = resourceLoadResults.filter(
