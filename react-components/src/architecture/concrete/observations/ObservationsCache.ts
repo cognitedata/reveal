@@ -18,18 +18,16 @@ import { isDefined } from '../../../utilities/isDefined';
  */
 export class ObservationsCache {
   private readonly _loadedPromise: Promise<ObservationFdmNode[]>;
-  private readonly _fdmSdk: FdmSDK;
 
   constructor(fdmSdk: FdmSDK) {
     this._loadedPromise = fetchObservations(fdmSdk);
-    this._fdmSdk = fdmSdk;
   }
 
   public async getFinishedOriginalLoadingPromise(): Promise<ObservationFdmNode[]> {
     return await this._loadedPromise;
   }
 
-  public async deleteObservations(observations: Observation[]): Promise<void> {
+  public async deleteObservations(fdmSdk: FdmSDK, observations: Observation[]): Promise<void> {
     if (observations.length === 0) {
       return;
     }
@@ -38,16 +36,17 @@ export class ObservationsCache {
       .map((observation) => observation.fdmMetadata)
       .filter(isDefined);
 
-    await deleteObservationInstances(this._fdmSdk, observationData);
+    await deleteObservationInstances(fdmSdk, observationData);
   }
 
   public async saveObservations(
+    fdmSdk: FdmSDK,
     observations: ObservationProperties[]
   ): Promise<ObservationFdmNode[]> {
     if (observations.length === 0) {
       return [];
     }
 
-    return await createObservationInstances(this._fdmSdk, observations);
+    return await createObservationInstances(fdmSdk, observations);
   }
 }

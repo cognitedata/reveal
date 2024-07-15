@@ -93,6 +93,12 @@ export class ObservationsDomainObject extends VisualDomainObject {
   }
 
   public async save(): Promise<void> {
+    const fdmSdk = this.rootDomainObject?.renderTarget.fdmSdk;
+
+    if (fdmSdk === undefined) {
+      return fdmSdk;
+    }
+
     if (
       this._selectedObservation !== undefined &&
       (this._selectedObservation.status === ObservationStatus.PendingCreation ||
@@ -106,12 +112,13 @@ export class ObservationsDomainObject extends VisualDomainObject {
       (observation) => observation.status === ObservationStatus.PendingDeletion
     );
 
-    const deletePromise = this._observationsCache.deleteObservations(toRemove);
+    const deletePromise = this._observationsCache.deleteObservations(fdmSdk, toRemove);
 
     const observationsToCreate = this._observations.filter(
       (obs) => obs.status === ObservationStatus.PendingCreation
     );
     const newObservations = await this._observationsCache.saveObservations(
+      fdmSdk,
       observationsToCreate.map((obs) => obs.properties)
     );
 
