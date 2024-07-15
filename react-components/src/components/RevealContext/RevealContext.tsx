@@ -8,9 +8,9 @@ import { type Color } from 'three';
 import { I18nContextProvider } from '../i18n/I18n';
 import { ViewerContext } from '../RevealCanvas/ViewerContext';
 import { NodeCacheProvider } from '../CacheProvider/NodeCacheProvider';
-import { AssetMappingCacheProvider } from '../CacheProvider/AssetMappingCacheProvider';
+import { AssetMappingAndNode3DCacheProvider } from '../CacheProvider/AssetMappingAndNode3DCacheProvider';
 import { PointCloudAnnotationCacheProvider } from '../CacheProvider/PointCloudAnnotationCacheProvider';
-import { Reveal3DResourcesCountContextProvider } from '../Reveal3DResources/Reveal3DResourcesCountContext';
+import { Reveal3DResourcesInfoContextProvider } from '../Reveal3DResources/Reveal3DResourcesInfoContext';
 import { SDKProvider } from '../RevealCanvas/SDKProvider';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { useRevealKeepAlive } from '../RevealKeepAlive/RevealKeepAliveContext';
@@ -52,15 +52,15 @@ export const RevealContext = (props: RevealContextProps): ReactElement => {
           <LoadedSceneProvider>
             <ViewerContext.Provider value={viewer}>
               <NodeCacheProvider>
-                <AssetMappingCacheProvider>
+                <AssetMappingAndNode3DCacheProvider>
                   <PointCloudAnnotationCacheProvider>
                     <Image360AnnotationCacheProvider>
-                      <Reveal3DResourcesCountContextProvider>
+                      <Reveal3DResourcesInfoContextProvider>
                         {props.children}
-                      </Reveal3DResourcesCountContextProvider>
+                      </Reveal3DResourcesInfoContextProvider>
                     </Image360AnnotationCacheProvider>
                   </PointCloudAnnotationCacheProvider>
-                </AssetMappingCacheProvider>
+                </AssetMappingAndNode3DCacheProvider>
               </NodeCacheProvider>
             </ViewerContext.Provider>
           </LoadedSceneProvider>

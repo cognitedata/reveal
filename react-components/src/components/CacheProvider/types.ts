@@ -64,3 +64,8 @@ export type Image360AnnotationAssetInfo = {
 };
 
 export type AnnotationId = number;
+
+export type ChunkInCacheTypes<ObjectType> = {
+  chunkInCache: ObjectType[];
+  chunkNotInCache: number[];
+};

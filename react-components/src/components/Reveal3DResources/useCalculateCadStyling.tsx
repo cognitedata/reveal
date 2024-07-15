@@ -25,16 +25,14 @@ import {
   type NodeStylingGroup,
   type TreeIndexStylingGroup
 } from '../CadModelContainer/types';
-import { isSameModel } from '../../utilities/isSameModel';
+import {
+  useAssetMappedNodesForRevisions,
+  useNodesForAssets
+} from '../CacheProvider/AssetMappingAndNode3DCacheProvider';
 import {
   isAssetMappingStylingGroup,
   isFdmAssetStylingGroup
 } from '../../utilities/StylingGroupUtils';
-import { type ThreeDModelFdmMappings } from '../../hooks/types';
-import {
-  useAssetMappedNodesForRevisions,
-  useNodesForAssets
-} from '../CacheProvider/AssetMappingCacheProvider';
 
 type ModelStyleGroup = {
   model: CadModelOptions;

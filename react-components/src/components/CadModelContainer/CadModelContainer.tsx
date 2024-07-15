@@ -6,11 +6,11 @@ import { type AddModelOptions, type CogniteCadModel } from '@cognite/reveal';
 import { useReveal } from '../RevealCanvas/ViewerContext';
 import { Matrix4 } from 'three';
 import { useRevealKeepAlive } from '../RevealKeepAlive/RevealKeepAliveContext';
+import { useReveal3DResourcesCount } from '../Reveal3DResources/Reveal3DResourcesInfoContext';
 import { isEqual } from 'lodash';
 import { modelExists } from '../../utilities/modelExists';
 import { getViewerResourceCount } from '../../utilities/getViewerResourceCount';
-import { type CadModelStyling } from './types';
-import { useReveal3DResourcesCount } from '../Reveal3DResources/Reveal3DResourcesCountContext';
+import { CadModelStyling } from './types';
 import { useApplyCadModelStyling } from './useApplyCadModelStyling';
 
 export type CogniteCadModelProps = {
