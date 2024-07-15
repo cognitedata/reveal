@@ -13,9 +13,21 @@ export type TreeIndexStylingGroup = {
   style?: NodeAppearance;
 };
 
-export type CadStyleGroup = NodeStylingGroup | TreeIndexStylingGroup;
+export type CadStylingGroup = NodeStylingGroup | TreeIndexStylingGroup;
 
 export type CadModelStyling = {
   defaultStyle?: NodeAppearance;
-  groups?: CadStyleGroup[];
+  groups?: CadStylingGroup[];
 };
+
+export function isNodeStylingGroup(
+  stylingGroup: CadStylingGroup
+): stylingGroup is NodeStylingGroup {
+  return 'nodeIds' in stylingGroup;
+}
+
+export function isTreeIndexStylingGroup(
+  stylingGroup: CadStylingGroup
+): stylingGroup is TreeIndexStylingGroup {
+  return 'treeIndexSet' in stylingGroup;
+}

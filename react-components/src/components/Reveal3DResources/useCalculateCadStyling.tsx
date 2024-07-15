@@ -21,7 +21,7 @@ import {
   type ModelRevisionAssetNodesResult
 } from '../CacheProvider/types';
 import {
-  type CadStyleGroup,
+  type CadStylingGroup,
   type NodeStylingGroup,
   type TreeIndexStylingGroup
 } from '../CadModelContainer/types';
@@ -55,7 +55,7 @@ type StyledModelWithMappingsFetched = {
 
 export type StyledModel = {
   model: CadModelOptions;
-  styleGroups: CadStyleGroup[];
+  styleGroups: CadStylingGroup[];
 };
 
 export const useCalculateCadStyling = (

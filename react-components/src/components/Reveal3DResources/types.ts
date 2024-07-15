@@ -11,7 +11,7 @@ import {
 import { type Matrix4 } from 'three';
 import { type DmsUniqueIdentifier, type Source } from '../../utilities/FdmSDK';
 import { type CogniteInternalId, type Node3D } from '@cognite/sdk';
-import { type CadStyleGroup } from '../CadModelContainer/types';
+import { type TreeIndexStylingGroup } from '../CadModelContainer/types';
 
 export type AddImage360CollectionOptions =
   | AddImage360CollectionEventsOptions
@@ -68,7 +68,11 @@ export type AddPointCloudResourceOptions = Add3dResourceOptions & {
 };
 
 export type AddCadResourceOptions = AddModelOptions & { transform?: Matrix4 } & {
-  styling?: { default?: NodeAppearance; mapped?: NodeAppearance; nodeGroups?: CadStyleGroup[] };
+  styling?: {
+    default?: NodeAppearance;
+    mapped?: NodeAppearance;
+    nodeGroups?: TreeIndexStylingGroup[];
+  };
 };
 
 export type TypedReveal3DModel = CadModelOptions | PointCloudModelOptions;

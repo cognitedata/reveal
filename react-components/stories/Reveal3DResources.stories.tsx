@@ -28,8 +28,7 @@ export const Main: Story = {
         transform: new Matrix4().makeTranslation(40, 0, 0),
         styling: {
           nodeGroups: [
-            { treeIndexSet: new IndexSet([2, 4, 6, 8]), style: { color: new Color('blue') } },
-            { nodeIds: [7152264879809192, 7899489067916664], style: { visible: false } }
+            { treeIndexSet: new IndexSet([2, 4, 6, 8]), style: { color: new Color('blue') } }
           ]
         }
       },

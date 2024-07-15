@@ -91,7 +91,7 @@ export {
 export { type CogniteCadModelProps } from './components/CadModelContainer/CadModelContainer';
 export {
   type CadModelStyling,
-  type CadStyleGroup,
+  type CadStylingGroup,
   type TreeIndexStylingGroup,
   type NodeStylingGroup
 } from './components/CadModelContainer/types';

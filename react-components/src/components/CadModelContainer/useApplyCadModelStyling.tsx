@@ -15,7 +15,14 @@ import { type CogniteClient } from '@cognite/sdk';
 import { isEqual } from 'lodash';
 import { useReveal } from '../RevealCanvas/ViewerContext';
 import { modelExists } from '../../utilities/modelExists';
-import { type CadModelStyling, type NodeStylingGroup, type TreeIndexStylingGroup } from './types';
+import {
+  isNodeStylingGroup,
+  isTreeIndexStylingGroup,
+  type CadModelStyling,
+  type NodeStylingGroup,
+  type TreeIndexStylingGroup
+} from './types';
+import { assertNever } from '../../utilities/assertNever';
 
 export const useApplyCadModelStyling = (
   model?: CogniteCadModel,
@@ -57,15 +64,15 @@ async function applyStyling(
 
     if (stylingGroup.style === undefined) continue;
 
-    if ('treeIndexSet' in stylingGroup) {
+    if (isTreeIndexStylingGroup(stylingGroup)) {
       const nodes = new TreeIndexNodeCollection(stylingGroup.treeIndexSet);
       model.assignStyledNodeCollection(nodes, stylingGroup.style);
-    }
-
-    if ('nodeIds' in stylingGroup) {
+    } else if (isNodeStylingGroup(stylingGroup)) {
       const nodes = new NodeIdNodeCollection(sdk, model);
       await nodes.executeFilter(stylingGroup.nodeIds);
       model.assignStyledNodeCollection(nodes, stylingGroup.style);
+    } else {
+      assertNever(stylingGroup);
     }
   }
 
