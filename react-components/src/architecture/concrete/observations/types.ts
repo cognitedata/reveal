@@ -1,12 +1,7 @@
 /*!
  * Copyright 2024 Cognite AS
  */
-import {
-  AnyIntersection,
-  CDF_TO_VIEWER_TRANSFORMATION,
-  type CustomObjectIntersection,
-  type Overlay3D
-} from '@cognite/reveal';
+import { AnyIntersection, CDF_TO_VIEWER_TRANSFORMATION, ICustomObject } from '@cognite/reveal';
 import { type ObservationProperties } from './models';
 import { type Vector3 } from 'three';
 import { type FdmNode } from '../../../utilities/FdmSDK';
@@ -30,7 +25,7 @@ export function createEmptyObservationProperties(point: Vector3): ObservationPro
   return { positionX: cdfPosition.x, positionY: cdfPosition.y, positionZ: cdfPosition.z };
 }
 
-export const observationMarker = Symbol('observationSymbol');
+const observationMarker = Symbol('observationSymbol');
 
 export type ObservationIntersection = Omit<
   DomainObjectIntersection,
@@ -38,8 +33,26 @@ export type ObservationIntersection = Omit<
 > & {
   marker: typeof observationMarker;
   domainObject: ObservationsDomainObject;
-  userData: Overlay3D<Observation>;
+  userData: Observation;
 };
+
+export function createObservationIntersection(
+  point: Vector3,
+  distanceToCamera: number,
+  customObject: ICustomObject,
+  domainObject: ObservationsDomainObject,
+  overlay: Observation
+): ObservationIntersection {
+  return {
+    type: 'customObject',
+    marker: observationMarker,
+    point,
+    distanceToCamera,
+    customObject,
+    domainObject,
+    userData: overlay
+  };
+}
 
 export function isObservationIntersection(
   objectIntersection: AnyIntersection

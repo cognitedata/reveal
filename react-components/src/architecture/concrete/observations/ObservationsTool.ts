@@ -80,18 +80,17 @@ export class ObservationsTool extends BaseEditTool {
     const intersection = await this.getIntersection(event);
 
     if (intersection === undefined || !isObservationIntersection(intersection)) {
-      await super.onClick(event);
-      return;
+      return await super.onClick(event);
     }
 
-    intersection.domainObject.setSelectedObservation(intersection.userData.getContent());
+    intersection.domainObject.setSelectedObservation(intersection.userData);
   }
 
   private async createPendingObservation(event: PointerEvent): Promise<void> {
     const intersection = await this.getIntersection(event);
 
     if (intersection === undefined) {
-      return;
+      return await super.onClick(event);
     }
 
     const domainObject = this.getObservationsDomainObject();

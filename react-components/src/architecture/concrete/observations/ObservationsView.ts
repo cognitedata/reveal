@@ -14,7 +14,7 @@ import {
 import { type DomainObjectIntersection } from '../../base/domainObjectsHelpers/DomainObjectIntersection';
 import { Changes } from '../../base/domainObjectsHelpers/Changes';
 import { type DomainObjectChange } from '../../base/domainObjectsHelpers/DomainObjectChange';
-import { type Observation, type ObservationIntersection, observationMarker } from './types';
+import { createObservationIntersection, type Observation } from './types';
 import { ClosestGeometryFinder } from '../../base/utilities/geometry/ClosestGeometryFinder';
 import { getColorFromStatus } from './color';
 
@@ -93,15 +93,13 @@ export class ObservationsView extends GroupThreeView<ObservationsDomainObject> {
       return undefined;
     }
 
-    const customObjectIntersection: ObservationIntersection = {
-      type: 'customObject',
-      marker: observationMarker,
+    const customObjectIntersection = createObservationIntersection(
       point,
-      distanceToCamera: closestFinder.minDistance,
-      customObject: this,
+      closestFinder.minDistance,
+      this,
       domainObject,
-      userData: intersectedOverlay
-    };
+      intersectedOverlay.getContent()
+    );
 
     closestFinder.setClosestGeometry(customObjectIntersection);
     return closestFinder.getClosestGeometry();
