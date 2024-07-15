@@ -132,11 +132,6 @@ export class ObservationsDomainObject extends VisualDomainObject {
 
   public setSelectedObservation(observation: Observation | undefined): void {
     this._selectedObservation = observation;
-    if (this._selectedObservation === undefined) {
-      this.setSelectedInteractive(false);
-    } else {
-      this.setSelectedInteractive(true);
-    }
 
     this.notify(Changes.selected);
   }
