@@ -92,7 +92,6 @@ export const Reveal3DResources = ({
   );
 
   const setModel3DStylingLoading = useReveal3DResourcesStylingLoadingSetter();
-  setModel3DStylingLoading(!(isModelMappingsFetched || !isModelMappingsLoading));
 
   useEffect(() => {
     setModel3DStylingLoading(!(isModelMappingsFetched || !isModelMappingsLoading));
