@@ -6,31 +6,35 @@ import {
   type CadModelOptions,
   type DefaultResourceStyling,
   type FdmAssetStylingGroup
-} from '../components/Reveal3DResources/types';
+} from './types';
 import { NumericRange, type NodeAppearance, IndexSet } from '@cognite/reveal';
-import { type ThreeDModelFdmMappings } from './types';
 import { type Node3D, type CogniteExternalId, type AssetMapping3D } from '@cognite/sdk';
 import {
   useFdmAssetMappings,
   useMappedEdgesForRevisions
-} from '../components/CacheProvider/NodeCacheProvider';
+} from '../CacheProvider/NodeCacheProvider';
 import { useMemo } from 'react';
 import {
   type NodeId,
   type FdmEdgeWithNode,
   type AssetId,
   type ModelRevisionAssetNodesResult
-} from '../components/CacheProvider/types';
+} from '../CacheProvider/types';
 import {
+  type CadStylingGroup,
   type NodeStylingGroup,
   type TreeIndexStylingGroup
-} from '../components/CadModelContainer/useApplyCadModelStyling';
+} from '../CadModelContainer/types';
 import {
   useAssetMappedNodesForRevisions,
   useNodesForAssets
-} from '../components/CacheProvider/AssetMappingAndNode3DCacheProvider';
-import { isSameModel } from '../utilities/isSameModel';
-import { isAssetMappingStylingGroup, isFdmAssetStylingGroup } from '../utilities/StylingGroupUtils';
+} from '../CacheProvider/AssetMappingAndNode3DCacheProvider';
+import {
+  isAssetMappingStylingGroup,
+  isFdmAssetStylingGroup
+} from '../../utilities/StylingGroupUtils';
+import { type ThreeDModelFdmMappings } from '../../hooks/types';
+import { isSameModel } from '../../utilities/isSameModel';
 
 type ModelStyleGroup = {
   model: CadModelOptions;
@@ -49,11 +53,9 @@ type StyledModelWithMappingsFetched = {
   isModelMappingsLoading: boolean;
 };
 
-export type CadStyleGroup = NodeStylingGroup | TreeIndexStylingGroup;
-
 export type StyledModel = {
   model: CadModelOptions;
-  styleGroups: CadStyleGroup[];
+  styleGroups: CadStylingGroup[];
 };
 
 export const useCalculateCadStyling = (
@@ -285,6 +287,11 @@ function useJoinStylingGroups(
       const instanceStyleGroups = modelInstanceStyleGroups
         .filter((typedModel) => isSameModel(typedModel.model, model))
         .flatMap((typedModel) => typedModel.styleGroup);
+
+      if (model.styling?.nodeGroups !== undefined) {
+        instanceStyleGroups.push(...model.styling.nodeGroups);
+      }
+
       return {
         model,
         styleGroups: [...mappedStyleGroup, ...instanceStyleGroups]

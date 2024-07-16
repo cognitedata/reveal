@@ -10,9 +10,9 @@ import { SetFlexibleControlsTypeCommand } from '../../architecture/base/concrete
 import { SetAxisVisibleCommand } from '../../architecture/concrete/axis/SetAxisVisibleCommand';
 import { ClipTool } from '../../architecture/concrete/clipping/ClipTool';
 import { MeasurementTool } from '../../architecture/concrete/measurements/MeasurementTool';
-import { ObservationsTool } from '../../architecture/concrete/observationsDomainObject/ObservationsTool';
 import { KeyboardSpeedCommand } from '../../architecture/base/concreteCommands/KeyboardSpeedCommand';
 import { createCommandButton } from './CommandButton';
+import { ObservationsTool } from '../../architecture/concrete/observations/ObservationsTool';
 
 export class RevealButtons {
   static FitView = (): ReactElement => createCommandButton(() => new FitViewCommand());

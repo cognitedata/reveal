@@ -23,15 +23,8 @@ target
 **/yarn-error.log*
 
 # yarn
-documentation/.yarn/
-documentation/docs/.yarn/
-viewer/.yarn/*
-!/viewer/.yarn/releases
-!/viewer/.yarn/releases/*
-
-react-components/.yarn/*
-!/react-components/.yarn/releases
-!/react-components/.yarn/releases/*
+**/.yarn/cache
+**/.yarn/install-state.gz
 
 **/.env
 **/.cdf-env.json
@@ -62,5 +55,3 @@ documentation/.docusaurus
 documentation/generated
 documentation/docs/api
 /react-components/stories/public/cadModel
-
-**/install-state.gz

@@ -1,13 +1,13 @@
 /*!
  * Copyright 2023 Cognite AS
  */
-import { type AddResourceOptions, type AddReveal3DModelOptions } from '../../src';
+import { type Add3dResourceOptions, type AddResourceOptions } from '../../src';
 
 export function is3DModelOptions(
   threeDResource: AddResourceOptions
-): threeDResource is AddReveal3DModelOptions {
+): threeDResource is Add3dResourceOptions {
   return (
-    (threeDResource as AddReveal3DModelOptions).modelId !== undefined &&
-    (threeDResource as AddReveal3DModelOptions).revisionId !== undefined
+    (threeDResource as Add3dResourceOptions).modelId !== undefined &&
+    (threeDResource as Add3dResourceOptions).revisionId !== undefined
   );
 }

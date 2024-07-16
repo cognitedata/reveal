@@ -7,7 +7,7 @@ import {
   is360ImageAddOptions,
   is360ImageDataModelAddOptions,
   is360ImageEventsAddOptions,
-  is3dModelOptions
+  is3dResourceOptions
 } from './typeGuards';
 import { useEffect } from 'react';
 import { isSame3dModel } from '../../utilities/isSameModel';
@@ -36,12 +36,12 @@ function findNonReferencedModels(
   viewer: Cognite3DViewer
 ): CogniteModel[] {
   const models = viewer.models;
-  const addOptionsSet = new Set(addOptions.filter(is3dModelOptions));
+  const addOptionsSet = new Set(addOptions.filter(is3dResourceOptions));
 
   return models.filter((model) => {
     const correspondingAddOptions = (() => {
       for (const options of addOptionsSet) {
-        if (!is3dModelOptions(options)) {
+        if (!is3dResourceOptions(options)) {
           continue;
         }
 
