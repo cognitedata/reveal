@@ -115,6 +115,7 @@ export class CameraManagerHelper {
    * @param boundingBox Bounding box of all objects on the scene.
    * @param nearAndFarPlaneBuffers to read from
    * @param cameraFarBuffers
+   * @deprecated should use instance method instead
    */
   static updateCameraNearAndFar(
     camera: PerspectiveCamera,
