@@ -5,41 +5,41 @@ import { type DmsUniqueIdentifier, type FdmNode, type Source } from '../../../ut
 
 export type ObservationProperties = {
   // "ID as the node appears in the Source system"
-  sourceId: string;
+  sourceId?: string;
   // "Name of the source system node comes from"
-  source: string;
+  source?: string;
   // "Title or name of the node"
-  title: string;
+  title?: string;
   // "Long description of the node"
-  description: string;
+  description?: string;
   // "Text based labels for generic use"
-  labels: string[];
+  labels?: string[];
   // "Visibility of node (PUBLIC, PRIVATE, PROTECTED)"
-  visibility: string;
+  visibility?: string;
   // "Who created this node?"
-  createdBy: string;
+  createdBy?: string;
   // "Who was the last person to update this node?"
-  updatedBy: string;
+  updatedBy?: string;
   // "Is this item archived, and therefore hidden from most UIs?"
-  isArchived: boolean;
+  isArchived?: boolean;
   // "The status of the observation (draft, completed, sent)"
-  status: string;
+  status?: string;
   // "External ID of the associated CDF Asset"
-  asset: DmsUniqueIdentifier;
+  asset?: DmsUniqueIdentifier;
   // "List of associated files"
-  files: DmsUniqueIdentifier[];
+  files?: DmsUniqueIdentifier[];
   // "description of how the observation was troubleshooted"
-  troubleshooting: string;
+  troubleshooting?: string;
   // "Priority of the observation (Urgent, High ...)"
-  priority: string;
+  priority?: string;
   // "The observation type (Malfunction report, Maintenance request, etc.)"
-  type: string;
+  type?: string;
   // "3D position"
   positionX: number;
   positionY: number;
   positionZ: number;
   // "Comments"
-  comments: [CommentProperties];
+  comments?: CommentProperties[];
 };
 
 export type CommentProperties = {
@@ -47,7 +47,7 @@ export type CommentProperties = {
   text: string;
 };
 
-export type Observation = FdmNode<ObservationProperties>;
+export type ObservationFdmNode = FdmNode<ObservationProperties>;
 
 export const OBSERVATION_SOURCE: Source = {
   type: 'view',
