@@ -24,12 +24,13 @@ export class ObservationsView extends GroupThreeView<ObservationsDomainObject> {
   private readonly _overlayCollection: ObservationCollection = new Overlay3DCollection([]);
 
   protected override calculateBoundingBox(): Box3 {
-    return this._overlayCollection
-      .getOverlays()
-      .reduce(
-        (box, overlay) => (overlay.getVisible() ? box.expandByPoint(overlay.getPosition()) : box),
-        new Box3()
-      );
+    const boundingBox = new Box3().makeEmpty();
+    for (const overlay of this._overlayCollection.getOverlays()) {
+      if (overlay.getVisible()) {
+        boundingBox.expandByPoint(overlay.getPosition());
+      }
+    }
+    return boundingBox;
   }
 
   protected override addChildren(): void {
@@ -54,6 +55,8 @@ export class ObservationsView extends GroupThreeView<ObservationsDomainObject> {
       this.invalidateBoundingBox();
     } else if (change.isChanged(Changes.clipping)) {
       this.updateClipping();
+      this.invalidateRenderTarget();
+      this.invalidateBoundingBox();
     } else if (change.isChanged(Changes.selected)) {
       this.updateColors();
       this.invalidateRenderTarget();
@@ -84,10 +87,6 @@ export class ObservationsView extends GroupThreeView<ObservationsDomainObject> {
     }
 
     const point = intersectedOverlay.getPosition();
-
-    if (domainObject.useClippingInIntersection && !intersectInput.isVisible(point)) {
-      return undefined;
-    }
 
     if (!closestFinder.isClosest(point)) {
       return undefined;
@@ -120,7 +119,7 @@ export class ObservationsView extends GroupThreeView<ObservationsDomainObject> {
   }
 
   private updateColors(): void {
-    const selectedObservation = this.domainObject.getSelectedObservation();
+    const selectedObservation = this.domainObject.selectedObservation;
     this._overlayCollection.getOverlays().forEach((overlay) => {
       const oldColor = overlay.getColor();
       const newColor = getColorFromStatus(
