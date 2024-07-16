@@ -3,7 +3,7 @@
  */
 
 import { useMemo } from 'react';
-import { useReveal3DResourcesCount } from '../components/Reveal3DResources/Reveal3DResourcesCountContext';
+import { useReveal3DResourcesCount } from '../components/Reveal3DResources/Reveal3DResourcesInfoContext';
 import { type CogniteModel } from '@cognite/reveal';
 import { useReveal } from '../components/RevealCanvas/ViewerContext';
 

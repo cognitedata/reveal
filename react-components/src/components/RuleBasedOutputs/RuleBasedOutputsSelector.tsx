@@ -1,24 +1,30 @@
 /*!
  * Copyright 2024 Cognite AS
  */
-import { useEffect, type ReactElement, useState, useMemo } from 'react';
+import { useEffect, type ReactElement, useState } from 'react';
 
 import { CogniteCadModel } from '@cognite/reveal';
-import { type ModelMappingsWithAssets, useAllMappedEquipmentAssetMappings } from '../..';
 import { type RuleOutputSet, type AssetStylingGroupAndStyleIndex } from './types';
-import { generateRuleBasedOutputs, traverseExpressionToGetTimeseries } from './utils';
+import { generateRuleBasedOutputs } from './utils';
 import { use3dModels } from '../../hooks/use3dModels';
-import { EMPTY_ARRAY } from '../../utilities/constants';
-import { type Datapoints, type Asset } from '@cognite/sdk';
+import { type Datapoints, type Asset, type AssetMapping3D } from '@cognite/sdk';
 import { isDefined } from '../../utilities/isDefined';
-import { type InfiniteData } from '@tanstack/react-query';
 import { type AssetIdsAndTimeseries } from '../../utilities/types';
 import { useAssetsAndTimeseriesLinkageDataQuery } from '../../query/useAssetsAndTimeseriesLinkageDataQuery';
+import { useAssetMappedNodesForRevisions } from '../CacheProvider/AssetMappingAndNode3DCacheProvider';
+import { type CadModelOptions } from '../Reveal3DResources/types';
+import { useAssetsByIdsQuery } from '../../query/useAssetsByIdsQuery';
+import { useCreateAssetMappingsMapPerModel } from '../../hooks/useCreateAssetMappingsMapPerModel';
+import { useExtractUniqueAssetIdsFromMapped } from './hooks/useExtractUniqueAssetIdsFromMapped';
+import { useConvertAssetMetadatasToLowerCase } from './hooks/useConvertAssetMetadatasToLowerCase';
+import { useExtractTimeseriesIdsFromRuleSet } from './hooks/useExtractTimeseriesIdsFromRuleSet';
 
 export type ColorOverlayProps = {
   ruleSet: RuleOutputSet | undefined;
   onRuleSetChanged?: (currentStylings: AssetStylingGroupAndStyleIndex[] | undefined) => void;
 };
+
+const ruleSetStylingCache = new Map<string, AssetStylingGroupAndStyleIndex[]>();
 
 export function RuleBasedOutputsSelector({
   ruleSet,
@@ -28,36 +34,29 @@ export function RuleBasedOutputsSelector({
 
   const models = use3dModels();
 
-  const [stylingGroups, setStylingsGroups] = useState<AssetStylingGroupAndStyleIndex[]>();
+  const [allContextualizedAssets, setAllContextualizedAssets] = useState<Asset[]>();
 
-  const {
-    data: assetMappings,
-    isFetching,
-    hasNextPage,
-    fetchNextPage
-  } = useAllMappedEquipmentAssetMappings(models);
+  const cadModels: CadModelOptions[] = models
+    .filter((model) => model instanceof CogniteCadModel)
+    .map((model) => {
+      return { type: 'cad', modelId: model.modelId, revisionId: model.revisionId };
+    });
+
+  const { data: assetMappings } = useAssetMappedNodesForRevisions(cadModels);
+
+  const assetIdsFromMapped = useExtractUniqueAssetIdsFromMapped(assetMappings);
+
+  const { data: mappedAssets, isFetched } = useAssetsByIdsQuery(assetIdsFromMapped);
 
   useEffect(() => {
-    if (!isFetching && (hasNextPage ?? false)) {
-      void fetchNextPage();
+    if (isFetched) {
+      setAllContextualizedAssets(mappedAssets);
     }
-  }, [isFetching, hasNextPage, fetchNextPage]);
+  }, [mappedAssets, isFetched]);
 
-  const contextualizedAssetNodes = useMemo(() => {
-    return (
-      assetMappings?.pages
-        .flat()
-        .flatMap((item) => item.assets)
-        .map(convertAssetMetadataKeysToLowerCase) ?? []
-    );
-  }, [assetMappings]);
+  const contextualizedAssetNodes = useConvertAssetMetadatasToLowerCase(allContextualizedAssets);
 
-  const timeseriesExternalIds = useMemo(() => {
-    const expressions = ruleSet?.rulesWithOutputs
-      .map((ruleWithOutput) => ruleWithOutput.rule.expression)
-      .filter(isDefined);
-    return traverseExpressionToGetTimeseries(expressions) ?? [];
-  }, [ruleSet]);
+  const timeseriesExternalIds = useExtractTimeseriesIdsFromRuleSet(ruleSet);
 
   const { isLoading: isLoadingAssetIdsAndTimeseriesData, data: assetIdsWithTimeseriesData } =
     useAssetsAndTimeseriesLinkageDataQuery({
@@ -65,75 +64,71 @@ export function RuleBasedOutputsSelector({
       contextualizedAssetNodes
     });
 
-  useEffect(() => {
-    if (onRuleSetChanged !== undefined) onRuleSetChanged(stylingGroups);
-  }, [stylingGroups]);
+  const flatAssetsMappingsListPerModel = useCreateAssetMappingsMapPerModel(models, assetMappings);
 
   useEffect(() => {
-    if (assetMappings === undefined || models === undefined || isFetching) return;
+    if (assetMappings === undefined || models === undefined || !isFetched) return;
     if (timeseriesExternalIds.length > 0 && isLoadingAssetIdsAndTimeseriesData) return;
-
-    setStylingsGroups(EMPTY_ARRAY);
-
     if (ruleSet === undefined) return;
 
-    models.forEach(async (model) => {
-      if (!(model instanceof CogniteCadModel)) {
-        return;
-      }
-      setStylingsGroups(
-        await initializeRuleBasedOutputs({
-          model,
-          assetMappings,
-          contextualizedAssetNodes,
-          ruleSet,
-          assetIdsAndTimeseries: assetIdsWithTimeseriesData?.assetIdsWithTimeseries ?? [],
-          timeseriesDatapoints: assetIdsWithTimeseriesData?.timeseriesDatapoints ?? []
+    const ruleBasedInitilization = async (): Promise<void> => {
+      const allStylings = await Promise.all(
+        models.map(async (model) => {
+          if (!(model instanceof CogniteCadModel)) {
+            return;
+          }
+
+          const flatAssetsMappingsList = flatAssetsMappingsListPerModel.get(model) ?? [];
+
+          if (flatAssetsMappingsList.length === 0) return [];
+          const stylings = await initializeRuleBasedOutputs({
+            assetMappings: flatAssetsMappingsList,
+            contextualizedAssetNodes,
+            ruleSet,
+            assetIdsAndTimeseries: assetIdsWithTimeseriesData?.assetIdsWithTimeseries ?? [],
+            timeseriesDatapoints: assetIdsWithTimeseriesData?.timeseriesDatapoints ?? []
+          });
+          const filteredStylings = stylings.flat().filter(isDefined);
+          return filteredStylings;
         })
       );
-    });
-  }, [isLoadingAssetIdsAndTimeseriesData, ruleSet]);
+      const filteredStylings = allStylings.flat().filter(isDefined).flat();
+      ruleSetStylingCache.set(ruleSet.id, filteredStylings);
+
+      if (onRuleSetChanged !== undefined) {
+        onRuleSetChanged(filteredStylings);
+      }
+    };
+    if (!ruleSetStylingCache.has(ruleSet.id)) {
+      void ruleBasedInitilization();
+    } else {
+      if (onRuleSetChanged !== undefined) onRuleSetChanged(ruleSetStylingCache.get(ruleSet.id));
+    }
+  }, [isLoadingAssetIdsAndTimeseriesData, ruleSet, assetMappings, allContextualizedAssets]);
 
   return <></>;
 }
 
 async function initializeRuleBasedOutputs({
-  model,
   assetMappings,
   contextualizedAssetNodes,
   ruleSet,
   assetIdsAndTimeseries,
   timeseriesDatapoints
 }: {
-  model: CogniteCadModel;
-  assetMappings: InfiniteData<ModelMappingsWithAssets[]>;
+  assetMappings: AssetMapping3D[];
   contextualizedAssetNodes: Asset[];
   ruleSet: RuleOutputSet;
   assetIdsAndTimeseries: AssetIdsAndTimeseries[];
   timeseriesDatapoints: Datapoints[] | undefined;
 }): Promise<AssetStylingGroupAndStyleIndex[]> {
-  const flatAssetsMappingsList = assetMappings.pages.flat().flatMap((item) => item.mappings);
-  const flatMappings = flatAssetsMappingsList.flatMap((node) => node.items);
-
   const collectionStylings = await generateRuleBasedOutputs({
-    model,
     contextualizedAssetNodes,
-    assetMappings: flatMappings,
+    assetMappings,
     ruleSet,
     assetIdsAndTimeseries,
     timeseriesDatapoints
   });
 
   return collectionStylings;
-}
-
-function convertAssetMetadataKeysToLowerCase(asset: Asset): Asset {
-  return {
-    ...asset,
-    metadata: Object.fromEntries(
-      [...Object.entries(asset.metadata ?? {})].map(
-        ([key, value]) => [key.toLowerCase(), value] as const
-      )
-    )
-  };
 }
