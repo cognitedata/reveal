@@ -19,3 +19,5 @@ export { FlexibleControlsType } from './src/Flexible/FlexibleControlsType';
 export { FlexibleMouseActionType } from './src/Flexible/FlexibleMouseActionType';
 
 export * from './src/types';
+export { CameraFarBuffers } from '@reveal/camera-manager/src/CameraManagerHelper';
+export { NearAndFarPlaneBuffers } from '@reveal/camera-manager/src/CameraManagerHelper';

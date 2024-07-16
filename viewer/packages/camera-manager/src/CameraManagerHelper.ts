@@ -2,10 +2,20 @@
  * Copyright 2022 Cognite AS
  */
 
-import { CameraFarBuffers, NearAndFarPlaneBuffers } from '@reveal/camera-manager';
-import { Box3, PerspectiveCamera, Plane, Quaternion, Vector3 } from 'three';
-import range from 'lodash/range';
 import { fitCameraToBoundingBox } from '@reveal/utilities';
+import range from 'lodash/range';
+import { Box3, PerspectiveCamera, Plane, Quaternion, Vector3 } from 'three';
+
+type NearAndFarPlaneBuffers = {
+  corners: Vector3[];
+  cameraPosition: Vector3;
+  cameraDirection: Vector3;
+};
+
+type CameraFarBuffers = {
+  nearPlane: Plane;
+  nearPlaneCoplanarPoint: Vector3;
+};
 
 /**
  * Helper methods for implementing a camera manager.
@@ -15,7 +25,7 @@ export class CameraManagerHelper {
    * @deprecated usage of mutable static variables is unsafe
    * Reusable buffers used by updateNearAndFarPlane function to avoid allocations.
    */
-  private static readonly _updateNearAndFarPlaneBuffers = {
+  private static readonly _updateNearAndFarPlaneBuffers: NearAndFarPlaneBuffers = {
     cameraPosition: new Vector3(),
     cameraDirection: new Vector3(),
     corners: new Array<Vector3>(
@@ -34,12 +44,12 @@ export class CameraManagerHelper {
    * @deprecated usage of mutable static variables is unsafe
    * @private
    */
-  private static readonly _calculateCameraFarBuffers = {
+  private static readonly _calculateCameraFarBuffers: CameraFarBuffers = {
     nearPlaneCoplanarPoint: new Vector3(),
     nearPlane: new Plane()
   };
 
-  private readonly _instanceUpdateNearAndFarPlaneBuffers = {
+  private readonly _instanceUpdateNearAndFarPlaneBuffers: NearAndFarPlaneBuffers = {
     cameraPosition: new Vector3(),
     cameraDirection: new Vector3(),
     corners: new Array<Vector3>(
@@ -54,7 +64,7 @@ export class CameraManagerHelper {
     )
   };
 
-  private readonly _instanceCalculateCameraFarBuffers = {
+  private readonly _instanceCalculateCameraFarBuffers: CameraFarBuffers = {
     nearPlaneCoplanarPoint: new Vector3(),
     nearPlane: new Plane()
   };

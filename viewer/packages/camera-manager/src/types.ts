@@ -2,7 +2,6 @@
  * Copyright 2021 Cognite AS
  */
 
-import { Plane } from 'three';
 import type { Box3, EventDispatcher, Quaternion, Vector3 } from 'three';
 
 export type ControlsState = {
@@ -107,14 +106,3 @@ export const CAMERA_MANAGER_EVENT_TYPE_LIST = ['cameraChange', 'cameraStop'] as 
  * Union type of the supported camera manager event types
  */
 export type CameraManagerEventType = (typeof CAMERA_MANAGER_EVENT_TYPE_LIST)[number];
-
-export type NearAndFarPlaneBuffers = {
-  corners: Vector3[];
-  cameraPosition: Vector3;
-  cameraDirection: Vector3;
-};
-
-export type CameraFarBuffers = {
-  nearPlane: Plane;
-  nearPlaneCoplanarPoint: Vector3;
-};
