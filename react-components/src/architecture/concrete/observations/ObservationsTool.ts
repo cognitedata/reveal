@@ -19,19 +19,6 @@ export class ObservationsTool extends BaseEditTool {
     return domainObject instanceof ObservationsDomainObject;
   }
 
-  public get isCreating(): boolean {
-    return this._isCreating;
-  }
-
-  public setIsCreating(value: boolean): void {
-    this._isCreating = value;
-    if (value) {
-      this.renderTarget.setCrosshairCursor();
-    } else {
-      this.renderTarget.setNavigateCursor();
-    }
-  }
-
   public override get icon(): IconType {
     return 'Location';
   }
@@ -72,6 +59,19 @@ export class ObservationsTool extends BaseEditTool {
 
   public getObservationsDomainObject(): ObservationsDomainObject | undefined {
     return this.rootDomainObject.getDescendantByType(ObservationsDomainObject);
+  }
+
+  public get isCreating(): boolean {
+    return this._isCreating;
+  }
+
+  public setIsCreating(value: boolean): void {
+    this._isCreating = value;
+    if (value) {
+      this.renderTarget.setCrosshairCursor();
+    } else {
+      this.renderTarget.setNavigateCursor();
+    }
   }
 
   private async selectOverlayFromClick(event: PointerEvent): Promise<void> {
