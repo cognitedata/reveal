@@ -7,7 +7,7 @@ import { type UseQueryResult, useQuery } from '@tanstack/react-query';
 import { type RuleAndEnabled, type RuleOutputSet } from '../types';
 import { fdmViewsExist } from '../../../utilities/fdmViewsExist';
 
-export const useFetchRuleInstances = (): UseQueryResult<RuleAndEnabled[], unknown> => {
+export const useFetchRuleInstances = (): UseQueryResult<RuleAndEnabled[], undefined> => {
   const fdmSdk = useFdmSdk();
 
   return useQuery({

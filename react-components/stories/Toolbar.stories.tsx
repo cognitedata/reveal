@@ -14,7 +14,7 @@ import {
 } from '../src';
 import { Color } from 'three';
 import styled from 'styled-components';
-import { Button, EditIcon, ToolBar, WorldIcon, type ToolBarButton } from '@cognite/cogs.js';
+import { EditIcon, ToolBar, WorldIcon, type ToolBarButton } from '@cognite/cogs.js';
 import { Menu } from '@cognite/cogs-lab';
 import { type ReactElement, useState, useEffect } from 'react';
 import { signalStoryReadyForScreenshot } from './utilities/signalStoryReadyForScreenshot';

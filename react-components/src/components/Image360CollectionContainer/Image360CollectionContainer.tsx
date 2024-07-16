@@ -15,7 +15,7 @@ import {
   DEFAULT_IMAGE360_ICON_COUNT_LIMIT,
   DEFAULT_IMAGE360_ICON_CULLING_RADIUS
 } from './constants';
-import { useReveal3DResourcesCount } from '../Reveal3DResources/Reveal3DResourcesCountContext';
+import { useReveal3DResourcesCount } from '../Reveal3DResources/Reveal3DResourcesInfoContext';
 import { getViewerResourceCount } from '../../utilities/getViewerResourceCount';
 
 type Image360CollectionContainerProps = {

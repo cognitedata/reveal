@@ -39,7 +39,9 @@ export const HelpButton = ({ fallbackLanguage }: HelpButtonProps): ReactElement 
           icon=<HelpIcon />
           aria-label="help-button"
           toggled={helpActive}
-          onClick={() => setHelpActive((prevState) => !prevState)}
+          onClick={() => {
+            setHelpActive((prevState) => !prevState);
+          }}
         />
       </Dropdown>
     </CogsTooltip>

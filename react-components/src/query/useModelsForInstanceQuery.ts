@@ -16,6 +16,8 @@ import {
   isAssetInstance,
   isDmsInstance
 } from '../utilities/types';
+import { uniqBy } from 'lodash';
+import { createAddOptionsKey } from '../utilities/createAddOptionsKey';
 
 export const useModelsForInstanceQuery = (
   instance: InstanceReference | undefined
@@ -53,9 +55,11 @@ async function getModelsForAssetInstance(
     cogniteClient
   );
 
-  return (
+  const results = (
     await Promise.all([cadModelsPromise, pointCloudModelsPromise, image360CollectionsPromise])
   ).flat();
+
+  return uniqBy(results, createAddOptionsKey);
 }
 
 async function getModelsForFdmInstance(

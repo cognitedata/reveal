@@ -9,7 +9,7 @@ import {
 } from '../components/Reveal3DResources/types';
 import { NumericRange, type NodeAppearance, IndexSet } from '@cognite/reveal';
 import { type ThreeDModelFdmMappings } from './types';
-import { type Node3D, type CogniteExternalId } from '@cognite/sdk';
+import { type Node3D, type CogniteExternalId, type AssetMapping3D } from '@cognite/sdk';
 import {
   useFdmAssetMappings,
   useMappedEdgesForRevisions
@@ -25,17 +25,28 @@ import {
   type NodeStylingGroup,
   type TreeIndexStylingGroup
 } from '../components/CadModelContainer/useApplyCadModelStyling';
-import { type AssetMapping } from '../components/CacheProvider/AssetMappingCache';
 import {
   useAssetMappedNodesForRevisions,
   useNodesForAssets
-} from '../components/CacheProvider/AssetMappingCacheProvider';
+} from '../components/CacheProvider/AssetMappingAndNode3DCacheProvider';
 import { isSameModel } from '../utilities/isSameModel';
 import { isAssetMappingStylingGroup, isFdmAssetStylingGroup } from '../utilities/StylingGroupUtils';
 
 type ModelStyleGroup = {
   model: CadModelOptions;
   styleGroup: Array<NodeStylingGroup | TreeIndexStylingGroup>;
+};
+
+type ModelStyleGroupWithMappingsFetched = {
+  combinedMappedStyleGroups: ModelStyleGroup[];
+  isModelMappingsFetched: boolean;
+  isModelMappingsLoading: boolean;
+};
+
+type StyledModelWithMappingsFetched = {
+  styledModels: StyledModel[];
+  isModelMappingsFetched: boolean;
+  isModelMappingsLoading: boolean;
 };
 
 export type CadStyleGroup = NodeStylingGroup | TreeIndexStylingGroup;
@@ -49,25 +60,32 @@ export const useCalculateCadStyling = (
   models: CadModelOptions[],
   instanceGroups: Array<FdmAssetStylingGroup | AssetStylingGroup>,
   defaultResourceStyling?: DefaultResourceStyling
-): StyledModel[] => {
+): StyledModelWithMappingsFetched => {
   const modelsMappedStyleGroups = useCalculateMappedStyling(
     models,
     defaultResourceStyling?.cad?.mapped
   );
-  const modelInstanceStyleGroups = useCalculateInstanceStyling(models, instanceGroups);
+  const modelInstanceStyleGroupsAndMappingFetched = useCalculateInstanceStyling(
+    models,
+    instanceGroups
+  );
 
   const joinedStyleGroups = useJoinStylingGroups(
     models,
-    modelsMappedStyleGroups,
-    modelInstanceStyleGroups
+    modelsMappedStyleGroups.combinedMappedStyleGroups,
+    modelInstanceStyleGroupsAndMappingFetched.combinedMappedStyleGroups
   );
-  return joinedStyleGroups;
+  return {
+    styledModels: joinedStyleGroups,
+    isModelMappingsFetched: modelInstanceStyleGroupsAndMappingFetched.isModelMappingsFetched,
+    isModelMappingsLoading: modelInstanceStyleGroupsAndMappingFetched.isModelMappingsLoading
+  };
 };
 
 function useCalculateMappedStyling(
   models: CadModelOptions[],
   defaultMappedNodeAppearance?: NodeAppearance
-): ModelStyleGroup[] {
+): ModelStyleGroupWithMappingsFetched {
   const modelsRevisionsWithMappedEquipment = useMemo(
     () => getMappedCadModelsOptions(),
     [models, defaultMappedNodeAppearance]
@@ -75,8 +93,11 @@ function useCalculateMappedStyling(
   const { data: mappedEquipmentEdges, isLoading: isFDMEquipmentMappingLoading } =
     useMappedEdgesForRevisions(modelsRevisionsWithMappedEquipment);
 
-  const { data: assetMappingData, isLoading: isAssetMappingLoading } =
-    useAssetMappedNodesForRevisions(modelsRevisionsWithMappedEquipment);
+  const {
+    data: assetMappingData,
+    isFetched: isModelMappingsFetched,
+    isLoading: isModelMappingsLoading
+  } = useAssetMappedNodesForRevisions(modelsRevisionsWithMappedEquipment);
 
   const modelsMappedFdmStyleGroups = useMemo(() => {
     const isFdmMappingUnavailableOrLoading =
@@ -109,7 +130,7 @@ function useCalculateMappedStyling(
       models.length === 0 ||
       assetMappingData === undefined ||
       assetMappingData.length === 0 ||
-      isAssetMappingLoading;
+      isModelMappingsLoading;
 
     if (isAssetMappingUnavailableOrLoading) {
       return [];
@@ -128,7 +149,7 @@ function useCalculateMappedStyling(
     modelsRevisionsWithMappedEquipment,
     assetMappingData,
     defaultMappedNodeAppearance,
-    isAssetMappingLoading
+    isModelMappingsLoading
   ]);
 
   const combinedMappedStyleGroups = useMemo(
@@ -140,7 +161,11 @@ function useCalculateMappedStyling(
     [modelsMappedAssetStyleGroups, modelsMappedFdmStyleGroups]
   );
 
-  return combinedMappedStyleGroups;
+  return {
+    combinedMappedStyleGroups,
+    isModelMappingsFetched,
+    isModelMappingsLoading
+  };
 
   function getMappedCadModelsOptions(): CadModelOptions[] {
     if (defaultMappedNodeAppearance !== undefined) {
@@ -154,7 +179,7 @@ function useCalculateMappedStyling(
 function useCalculateInstanceStyling(
   models: CadModelOptions[],
   instanceGroups: Array<FdmAssetStylingGroup | AssetStylingGroup>
-): ModelStyleGroup[] {
+): ModelStyleGroupWithMappingsFetched {
   const { data: fdmAssetMappings } = useFdmAssetMappings(
     instanceGroups
       .filter(isFdmAssetStylingGroup)
@@ -162,12 +187,15 @@ function useCalculateInstanceStyling(
     models
   );
 
-  const { data: modelAssetMappings } = useNodesForAssets(
-    models,
-    instanceGroups
-      .filter(isAssetMappingStylingGroup)
-      .flatMap((instanceGroup) => instanceGroup.assetIds)
-  );
+  const assetIdsFromInstanceGroups = instanceGroups
+    .filter(isAssetMappingStylingGroup)
+    .flatMap((instanceGroup) => instanceGroup.assetIds);
+
+  const {
+    data: modelAssetMappings,
+    isFetched: isModelMappingsFetched,
+    isLoading: isModelMappingsLoading
+  } = useNodesForAssets(models, assetIdsFromInstanceGroups);
 
   const fdmModelInstanceStyleGroups = useFdmInstanceStyleGroups(
     models,
@@ -190,7 +218,11 @@ function useCalculateInstanceStyling(
     [fdmModelInstanceStyleGroups, assetMappingInstanceStyleGroups]
   );
 
-  return combinedMappedStyleGroups;
+  return {
+    combinedMappedStyleGroups,
+    isModelMappingsFetched,
+    isModelMappingsLoading
+  };
 }
 
 function useAssetMappingInstanceStyleGroups(
@@ -300,7 +332,7 @@ function getMappedStyleGroupFromFdm(
 }
 
 function getMappedStyleGroupFromAssetMappings(
-  assetMappings: AssetMapping[],
+  assetMappings: AssetMapping3D[],
   nodeAppearance: NodeAppearance
 ): TreeIndexStylingGroup {
   const indexSet = new IndexSet();

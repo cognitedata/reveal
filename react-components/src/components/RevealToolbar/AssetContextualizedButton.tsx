@@ -6,7 +6,7 @@ import { useCallback, useState, type ReactElement } from 'react';
 import { AssetsIcon, Button, Tooltip as CogsTooltip } from '@cognite/cogs.js';
 import { useTranslation } from '../i18n/I18n';
 import { use3dModels } from '../../hooks/use3dModels';
-import { useAssetMappedNodesForRevisions } from '../CacheProvider/AssetMappingCacheProvider';
+import { useAssetMappedNodesForRevisions } from '../CacheProvider/AssetMappingAndNode3DCacheProvider';
 import { type CadModelOptions } from '../Reveal3DResources/types';
 
 type AssetContextualizedButtonProps = {
