@@ -2,8 +2,8 @@
  * Copyright 2023 Cognite AS
  */
 import { type Node3D, type CogniteExternalId, type Asset } from '@cognite/sdk';
-import { type AssetAnnotationImage360Info } from '@cognite/reveal';
 import { type DmsUniqueIdentifier } from '../utilities/FdmSDK';
+import { type AssetAnnotationImage360Info } from '@cognite/reveal';
 
 export type ThreeDModelFdmMappings = {
   modelId: number;

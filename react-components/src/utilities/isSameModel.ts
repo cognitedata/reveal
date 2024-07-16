@@ -3,8 +3,8 @@
  */
 import { type GeometryFilter } from '@cognite/reveal';
 import {
-  type CadModelOptions,
-  type AddReveal3DModelOptions
+  type Add3dResourceOptions,
+  type CadModelOptions
 } from '../components/Reveal3DResources/types';
 import { Matrix4 } from 'three';
 
@@ -43,10 +43,7 @@ function isSameGeometryFilter(
   );
 }
 
-export function isSame3dModel(
-  model0: AddReveal3DModelOptions,
-  model1: AddReveal3DModelOptions
-): boolean {
+export function isSame3dModel(model0: Add3dResourceOptions, model1: Add3dResourceOptions): boolean {
   return (
     model0.modelId === model1.modelId &&
     model0.revisionId === model1.revisionId &&

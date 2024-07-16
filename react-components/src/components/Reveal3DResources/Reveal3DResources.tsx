@@ -4,20 +4,17 @@
 import { useRef, type ReactElement, useState, useEffect, useMemo } from 'react';
 import { type Cognite3DViewer } from '@cognite/reveal';
 import { CadModelContainer } from '../CadModelContainer/CadModelContainer';
-import { type CadModelStyling } from '../CadModelContainer/useApplyCadModelStyling';
 import { PointCloudContainer } from '../PointCloudContainer/PointCloudContainer';
 import { Image360CollectionContainer } from '../Image360CollectionContainer/Image360CollectionContainer';
 import { useReveal } from '../RevealCanvas/ViewerContext';
 import {
-  type AddReveal3DModelOptions,
   type TypedReveal3DModel,
   type AddResourceOptions,
   type Reveal3DResourcesProps,
   type CadModelOptions,
   type PointCloudModelOptions
 } from './types';
-import { useCalculateCadStyling } from '../../hooks/useCalculateModelsStyling';
-import { useCalculatePointCloudStyling } from '../../hooks/useCalculatePointCloudModelsStyling';
+import { useCalculatePointCloudStyling } from './useCalculatePointCloudStyling';
 import {
   type AnnotationIdStylingGroup,
   type PointCloudModelStyling
@@ -29,14 +26,16 @@ import {
   isImage360AssetStylingGroup
 } from '../../utilities/StylingGroupUtils';
 import { type ImageCollectionModelStyling } from '../Image360CollectionContainer/useApply360AnnotationStyling';
-import { is360ImageAddOptions } from './typeGuards';
+import { is360ImageAddOptions, is3dResourceOptions } from './typeGuards';
 import { useRemoveNonReferencedModels } from './useRemoveNonReferencedModels';
 import {
   useAssetMappedNodesForRevisions,
   useGenerateAssetMappingCachePerItemFromModelCache,
   useGenerateNode3DCache
 } from '../CacheProvider/AssetMappingAndNode3DCacheProvider';
+import { useCalculateCadStyling } from './useCalculateCadStyling';
 import { useReveal3DResourcesStylingLoadingSetter } from './Reveal3DResourcesInfoContext';
+import { type CadModelStyling } from '../CadModelContainer/types';
 
 export const Reveal3DResources = ({
   resources,
@@ -93,7 +92,6 @@ export const Reveal3DResources = ({
   );
 
   const setModel3DStylingLoading = useReveal3DResourcesStylingLoadingSetter();
-  setModel3DStylingLoading(!(isModelMappingsFetched || !isModelMappingsLoading));
 
   useEffect(() => {
     setModel3DStylingLoading(!(isModelMappingsFetched || !isModelMappingsLoading));
@@ -210,22 +208,16 @@ async function getTypedModels(
 ): Promise<TypedReveal3DModel[]> {
   const errorFunction = onLoadFail ?? defaultLoadFailHandler;
 
-  const modelTypePromises = resources
-    .filter(
-      (resource): resource is AddReveal3DModelOptions =>
-        (resource as AddReveal3DModelOptions).modelId !== undefined &&
-        (resource as AddReveal3DModelOptions).revisionId !== undefined
-    )
-    .map(async (addModelOptions) => {
-      const type = await viewer
-        .determineModelType(addModelOptions.modelId, addModelOptions.revisionId)
-        .catch((error) => {
-          errorFunction(addModelOptions, error);
-          return '';
-        });
-      const typedModel = { ...addModelOptions, type };
-      return typedModel;
-    });
+  const modelTypePromises = resources.filter(is3dResourceOptions).map(async (addModelOptions) => {
+    const type = await viewer
+      .determineModelType(addModelOptions.modelId, addModelOptions.revisionId)
+      .catch((error) => {
+        errorFunction(addModelOptions, error);
+        return '';
+      });
+    const typedModel = { ...addModelOptions, type };
+    return typedModel;
+  });
 
   const resourceLoadResults = await Promise.all(modelTypePromises);
   const successfullyLoadedResources = resourceLoadResults.filter(
