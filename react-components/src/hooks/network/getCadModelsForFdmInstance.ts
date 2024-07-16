@@ -1,13 +1,13 @@
 /*!
  * Copyright 2024 Cognite AS
  */
+import { type TaggedAddCadResourceOptions } from '../../components/Reveal3DResources/types';
 import { type DmsUniqueIdentifier, type EdgeItem, type FdmSDK } from '../../utilities/FdmSDK';
 import {
   type InModel3dEdgeProperties,
   SYSTEM_3D_EDGE_SOURCE
 } from '../../utilities/globalDataModels';
 import { isDefined } from '../../utilities/isDefined';
-import { type TaggedAdd3DModelOptions } from '../../components/Reveal3DResources/types';
 
 type ModelForInstancesResponse = {
   model_edges: Array<EdgeItem<Record<string, Record<string, InModel3dEdgeProperties>>>>;
@@ -16,7 +16,7 @@ type ModelForInstancesResponse = {
 export async function getCadModelsForFdmInstance(
   instance: DmsUniqueIdentifier,
   sdk: FdmSDK
-): Promise<TaggedAdd3DModelOptions[]> {
+): Promise<TaggedAddCadResourceOptions[]> {
   const result = (
     await sdk.queryNodesAndEdges({
       ...modelsForInstanceQuery,

@@ -7,9 +7,9 @@ import {
   RevealCanvas,
   RevealToolbar,
   type AddResourceOptions,
-  type AddReveal3DModelOptions,
   type AddImage360CollectionOptions,
-  RevealContext
+  RevealContext,
+  type Add3dResourceOptions
 } from '../src';
 import { Color } from 'three';
 import { type ReactElement, useState, useMemo, useEffect } from 'react';
@@ -60,7 +60,7 @@ const StoryContent = ({ resources }: { resources: AddResourceOptions[] }): React
   >('fdmSearch');
 
   const filteredResources = resources.filter(
-    (resource): resource is AddReveal3DModelOptions => 'modelId' in resource
+    (resource): resource is Add3dResourceOptions => 'modelId' in resource
   );
 
   const { data: searchData } = useSearchMappedEquipmentFDM(
