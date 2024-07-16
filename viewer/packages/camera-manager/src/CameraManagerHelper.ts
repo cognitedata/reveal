@@ -3,7 +3,7 @@
  */
 
 import { CameraFarBuffers, NearAndFarPlaneBuffers } from '@reveal/camera-manager';
-import { Box3, PerspectiveCamera, Quaternion, Vector3 } from 'three';
+import { Box3, PerspectiveCamera, Plane, Quaternion, Vector3 } from 'three';
 import range from 'lodash/range';
 import { fitCameraToBoundingBox } from '@reveal/utilities';
 
@@ -11,6 +11,54 @@ import { fitCameraToBoundingBox } from '@reveal/utilities';
  * Helper methods for implementing a camera manager.
  */
 export class CameraManagerHelper {
+  /**
+   * @deprecated usage of mutable static variables is unsafe
+   * Reusable buffers used by updateNearAndFarPlane function to avoid allocations.
+   */
+  private static readonly _updateNearAndFarPlaneBuffers = {
+    cameraPosition: new Vector3(),
+    cameraDirection: new Vector3(),
+    corners: new Array<Vector3>(
+      new Vector3(),
+      new Vector3(),
+      new Vector3(),
+      new Vector3(),
+      new Vector3(),
+      new Vector3(),
+      new Vector3(),
+      new Vector3()
+    )
+  };
+
+  /**
+   * @deprecated usage of mutable static variables is unsafe
+   * @private
+   */
+  private static readonly _calculateCameraFarBuffers = {
+    nearPlaneCoplanarPoint: new Vector3(),
+    nearPlane: new Plane()
+  };
+
+  private readonly _instanceUpdateNearAndFarPlaneBuffers = {
+    cameraPosition: new Vector3(),
+    cameraDirection: new Vector3(),
+    corners: new Array<Vector3>(
+      new Vector3(),
+      new Vector3(),
+      new Vector3(),
+      new Vector3(),
+      new Vector3(),
+      new Vector3(),
+      new Vector3(),
+      new Vector3()
+    )
+  };
+
+  private readonly _instanceCalculateCameraFarBuffers = {
+    nearPlaneCoplanarPoint: new Vector3(),
+    nearPlane: new Plane()
+  };
+
   /**
    * Calculates camera target based on new camera rotation.
    * @param camera Used camera instance.
@@ -61,8 +109,8 @@ export class CameraManagerHelper {
   static updateCameraNearAndFar(
     camera: PerspectiveCamera,
     boundingBox: Box3,
-    nearAndFarPlaneBuffers: NearAndFarPlaneBuffers,
-    cameraFarBuffers: CameraFarBuffers
+    nearAndFarPlaneBuffers: NearAndFarPlaneBuffers = CameraManagerHelper._updateNearAndFarPlaneBuffers,
+    cameraFarBuffers: CameraFarBuffers = CameraManagerHelper._calculateCameraFarBuffers
   ): void {
     const { cameraPosition, cameraDirection, corners } = nearAndFarPlaneBuffers;
     this.getBoundingBoxCorners(boundingBox, corners);
@@ -85,6 +133,15 @@ export class CameraManagerHelper {
     camera.near = near;
     camera.far = far;
     camera.updateProjectionMatrix();
+  }
+
+  public updateCameraNearAndFar(camera: PerspectiveCamera, boundingBox: Box3): void {
+    CameraManagerHelper.updateCameraNearAndFar(
+      camera,
+      boundingBox,
+      this._instanceUpdateNearAndFarPlaneBuffers,
+      this._instanceCalculateCameraFarBuffers
+    );
   }
 
   /**
