@@ -84,11 +84,11 @@ export class ObservationsDomainObject extends VisualDomainObject {
     this.notify(Changes.geometry);
   }
 
-  public getObservations(): Observation[] {
+  public get observations(): Observation[] {
     return this._observations;
   }
 
-  public getSelectedObservation(): Observation | undefined {
+  public get selectedObservation(): Observation | undefined {
     return this._selectedObservation;
   }
 

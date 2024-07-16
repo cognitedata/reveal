@@ -33,9 +33,9 @@ export class ObservationsView extends GroupThreeView<ObservationsDomainObject> {
   }
 
   protected override addChildren(): void {
-    const observations = this.domainObject.getObservations();
+    const observations = this.domainObject.observations;
 
-    const selectedObservation = this.domainObject.getSelectedObservation();
+    const selectedObservation = this.domainObject.selectedObservation;
     const overlayInfos = createObservationOverlays(observations, selectedObservation);
     this._overlayCollection.removeAllOverlays();
 

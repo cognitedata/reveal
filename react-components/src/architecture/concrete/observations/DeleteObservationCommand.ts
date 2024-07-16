@@ -26,12 +26,12 @@ export class DeleteObservationCommand extends ObservationsCommand {
   public override get isEnabled(): boolean {
     const observation = this.getObservationsDomainObject();
 
-    return observation?.getSelectedObservation() !== undefined;
+    return observation?.selectedObservation !== undefined;
   }
 
   protected override invokeCore(): boolean {
     const observations = this.getObservationsDomainObject();
-    const selectedOverlay = observations?.getSelectedObservation();
+    const selectedOverlay = observations?.selectedObservation;
     if (observations === undefined || selectedOverlay === undefined) {
       return false;
     }
