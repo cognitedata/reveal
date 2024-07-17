@@ -115,13 +115,46 @@ export class CameraManagerHelper {
    * @param boundingBox Bounding box of all objects on the scene.
    * @param nearAndFarPlaneBuffers to read from
    * @param cameraFarBuffers
-   * @deprecated should use instance method instead
+   * @deprecated use instance method instead
    */
-  static updateCameraNearAndFar(
+  static updateCameraNearAndFar(camera: PerspectiveCamera, boundingBox: Box3): void {
+    CameraManagerHelper.updateCameraNearAndFarInternal(
+      camera,
+      boundingBox,
+      CameraManagerHelper._updateNearAndFarPlaneBuffers,
+      CameraManagerHelper._calculateCameraFarBuffers
+    );
+  }
+
+  public updateCameraNearAndFar(camera: PerspectiveCamera, boundingBox: Box3): void {
+    CameraManagerHelper.updateCameraNearAndFarInternal(
+      camera,
+      boundingBox,
+      this._instanceUpdateNearAndFarPlaneBuffers,
+      this._instanceCalculateCameraFarBuffers
+    );
+  }
+
+  /**
+   * Calculates camera position and target that allows to see the content of provided bounding box.
+   * @param camera Used camera instance.
+   * @param boundingBox Bounding box to be fitted.
+   * @param radiusFactor The ratio of the distance from camera to center of box and radius of the box.
+   * @returns
+   */
+  static calculateCameraStateToFitBoundingBox(
     camera: PerspectiveCamera,
     boundingBox: Box3,
-    nearAndFarPlaneBuffers: NearAndFarPlaneBuffers = CameraManagerHelper._updateNearAndFarPlaneBuffers,
-    cameraFarBuffers: CameraFarBuffers = CameraManagerHelper._calculateCameraFarBuffers
+    radiusFactor: number = 2
+  ): { position: Vector3; target: Vector3 } {
+    return fitCameraToBoundingBox(camera, boundingBox, radiusFactor);
+  }
+
+  private static updateCameraNearAndFarInternal(
+    camera: PerspectiveCamera,
+    boundingBox: Box3,
+    nearAndFarPlaneBuffers: NearAndFarPlaneBuffers,
+    cameraFarBuffers: CameraFarBuffers
   ): void {
     const { cameraPosition, cameraDirection, corners } = nearAndFarPlaneBuffers;
     this.getBoundingBoxCorners(boundingBox, corners);
@@ -144,30 +177,6 @@ export class CameraManagerHelper {
     camera.near = near;
     camera.far = far;
     camera.updateProjectionMatrix();
-  }
-
-  public updateCameraNearAndFar(camera: PerspectiveCamera, boundingBox: Box3): void {
-    CameraManagerHelper.updateCameraNearAndFar(
-      camera,
-      boundingBox,
-      this._instanceUpdateNearAndFarPlaneBuffers,
-      this._instanceCalculateCameraFarBuffers
-    );
-  }
-
-  /**
-   * Calculates camera position and target that allows to see the content of provided bounding box.
-   * @param camera Used camera instance.
-   * @param boundingBox Bounding box to be fitted.
-   * @param radiusFactor The ratio of the distance from camera to center of box and radius of the box.
-   * @returns
-   */
-  static calculateCameraStateToFitBoundingBox(
-    camera: PerspectiveCamera,
-    boundingBox: Box3,
-    radiusFactor: number = 2
-  ): { position: Vector3; target: Vector3 } {
-    return fitCameraToBoundingBox(camera, boundingBox, radiusFactor);
   }
 
   private static calculateCameraFar(
