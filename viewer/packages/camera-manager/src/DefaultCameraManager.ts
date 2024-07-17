@@ -56,6 +56,8 @@ export class DefaultCameraManager implements CameraManager {
   private _isDisposed = false;
   private _nearAndFarNeedsUpdate = false;
 
+  private readonly cameraManagerHelper = new CameraManagerHelper();
+
   // The active/inactive state of this manager. Does not always match up with the controls
   // as these are temporarily disabled to block onWheel input during `zoomToCursor`-mode
   private _isEnabled = true;
@@ -427,7 +429,7 @@ export class DefaultCameraManager implements CameraManager {
       return;
     }
     if (this.automaticNearFarPlane) {
-      CameraManagerHelper.updateCameraNearAndFar(camera, boundingBox);
+      this.cameraManagerHelper.updateCameraNearAndFar(camera, boundingBox);
     }
     if (this.automaticControlsSensitivity) {
       const diagonal = boundingBox.min.distanceTo(boundingBox.max);
