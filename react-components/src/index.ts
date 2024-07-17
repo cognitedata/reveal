@@ -110,7 +110,6 @@ export {
   type AddImage360CollectionDatamodelsOptions,
   type AddImage360CollectionOptions,
   type AddResourceOptions,
-  type Add3dResourceOptions,
   type AddCadResourceOptions,
   type AddPointCloudResourceOptions
 } from './components/Reveal3DResources/types';

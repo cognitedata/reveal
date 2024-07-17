@@ -6,11 +6,10 @@ import { type AddResourceOptions } from './types';
 import {
   is360ImageAddOptions,
   is360ImageDataModelAddOptions,
-  is360ImageEventsAddOptions,
-  is3dResourceOptions
+  is360ImageEventsAddOptions
 } from './typeGuards';
 import { useEffect } from 'react';
-import { isSame3dModel } from '../../utilities/isSameModel';
+import { isSameModel } from '../../utilities/isSameModel';
 
 export function useRemoveNonReferencedModels(
   addOptions: AddResourceOptions[],
@@ -36,22 +35,22 @@ function findNonReferencedModels(
   viewer: Cognite3DViewer
 ): CogniteModel[] {
   const models = viewer.models;
-  const addOptionsSet = new Set(addOptions.filter(is3dResourceOptions));
+  const addOptionsSet = new Set(addOptions.filter((model) => !is360ImageAddOptions(model)));
 
   return models.filter((model) => {
     const correspondingAddOptions = (() => {
       for (const options of addOptionsSet) {
-        if (!is3dResourceOptions(options)) {
+        if (is360ImageAddOptions(options)) {
           continue;
         }
 
-        const isSameModel = isSame3dModel(options, {
+        const sameModel = isSameModel(options, {
           modelId: model.modelId,
           revisionId: model.revisionId,
           transform: model.getModelTransformation()
         });
 
-        if (isSameModel) {
+        if (sameModel) {
           return options;
         }
       }

@@ -9,7 +9,8 @@ import {
   type AddResourceOptions,
   type AddImage360CollectionOptions,
   RevealContext,
-  type Add3dResourceOptions
+  type AddCadResourceOptions,
+  type AddPointCloudResourceOptions
 } from '../src';
 import { Color } from 'three';
 import { type ReactElement, useState, useMemo, useEffect } from 'react';
@@ -36,6 +37,7 @@ import {
 import { isEqual } from 'lodash';
 import { type NodeItem } from '../src/utilities/FdmSDK';
 import { Button, Input } from '@cognite/cogs.js';
+import { is360ImageAddOptions } from '../src/components/Reveal3DResources/typeGuards';
 
 const queryClient = new QueryClient();
 const sdk = createSdkByUrlToken();
@@ -60,7 +62,8 @@ const StoryContent = ({ resources }: { resources: AddResourceOptions[] }): React
   >('fdmSearch');
 
   const filteredResources = resources.filter(
-    (resource): resource is Add3dResourceOptions => 'modelId' in resource
+    (resource): resource is AddCadResourceOptions | AddPointCloudResourceOptions =>
+      !is360ImageAddOptions(resource)
   );
 
   const { data: searchData } = useSearchMappedEquipmentFDM(

@@ -61,13 +61,13 @@ export type AddResourceOptions =
   | AddPointCloudResourceOptions
   | AddImage360CollectionOptions;
 
-export type Add3dResourceOptions = AddModelOptions & { transform?: Matrix4 };
-
-export type AddPointCloudResourceOptions = Add3dResourceOptions & {
+export type AddPointCloudResourceOptions = AddModelOptions & {
+  transform?: Matrix4;
   styling?: { default?: NodeAppearance; mapped?: NodeAppearance };
 };
 
-export type AddCadResourceOptions = AddModelOptions & { transform?: Matrix4 } & {
+export type AddCadResourceOptions = AddModelOptions & {
+  transform?: Matrix4;
   styling?: {
     default?: NodeAppearance;
     mapped?: NodeAppearance;
