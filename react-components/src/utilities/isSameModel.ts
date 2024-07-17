@@ -3,10 +3,15 @@
  */
 import { type GeometryFilter } from '@cognite/reveal';
 import {
-  type Add3dResourceOptions,
+  type AddImage360CollectionOptions,
+  type AddResourceOptions,
   type CadModelOptions
 } from '../components/Reveal3DResources/types';
 import { Matrix4 } from 'three';
+import {
+  is360ImageAddOptions,
+  is360ImageEventsAddOptions
+} from '../components/Reveal3DResources/typeGuards';
 
 export function isSameCadModel(model0: CadModelOptions, model1: CadModelOptions): boolean {
   return (
@@ -43,12 +48,55 @@ function isSameGeometryFilter(
   );
 }
 
-export function isSame3dModel(model0: Add3dResourceOptions, model1: Add3dResourceOptions): boolean {
-  return (
-    model0.modelId === model1.modelId &&
-    model0.revisionId === model1.revisionId &&
-    isSameTransform(model0.transform, model1.transform)
-  );
+export function isSameModel(model0: AddResourceOptions, model1: AddResourceOptions): boolean {
+  const isFirstImage360 = is360ImageAddOptions(model0);
+  const isSecondImage360 = is360ImageAddOptions(model1);
+
+  if (isFirstImage360 !== isSecondImage360) {
+    return false;
+  }
+
+  if (isFirstImage360 && isSecondImage360) {
+    return isSame360Collection(model0, model1);
+  }
+
+  if (!isFirstImage360 && !isSecondImage360) {
+    return (
+      model0.modelId === model1.modelId &&
+      model0.revisionId === model1.revisionId &&
+      isSameTransform(model0.transform, model1.transform)
+    );
+  }
+
+  return false;
+}
+
+export function isSame360Collection(
+  collection0: AddImage360CollectionOptions,
+  collection1: AddImage360CollectionOptions
+): boolean {
+  const isFirstEventsBased = is360ImageEventsAddOptions(collection0);
+  const isSecondEventsBased = is360ImageEventsAddOptions(collection1);
+  if (isFirstEventsBased !== isSecondEventsBased) {
+    return false;
+  }
+
+  if (isFirstEventsBased && isSecondEventsBased) {
+    return (
+      collection0.siteId === collection1.siteId &&
+      isSameTransform(collection0.transform, collection1.transform)
+    );
+  }
+
+  if (!isFirstEventsBased && !isSecondEventsBased) {
+    return (
+      collection0.externalId === collection1.externalId &&
+      collection0.space === collection1.space &&
+      isSameTransform(collection0.transform, collection1.transform)
+    );
+  }
+
+  return false;
 }
 
 const identity = new Matrix4();
@@ -63,8 +111,4 @@ function isSameTransform(m0: Matrix4 | undefined, m1: Matrix4 | undefined): bool
   }
 
   return m0.equals(m1);
-}
-
-export function isSameModel(model1: CadModelOptions, model2: CadModelOptions): boolean {
-  return model1.modelId === model2.modelId && model1.revisionId === model2.revisionId;
 }

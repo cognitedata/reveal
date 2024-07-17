@@ -5,21 +5,16 @@ import {
   type AddImage360CollectionEventsOptions,
   type AddImage360CollectionDatamodelsOptions,
   type AddImage360CollectionOptions,
-  type AddResourceOptions,
-  type Add3dResourceOptions
+  type AddResourceOptions
 } from './types';
 
 export function is360ImageAddOptions(
   addOptions: AddResourceOptions
 ): addOptions is AddImage360CollectionOptions {
-  return !is3dResourceOptions(addOptions);
-}
-
-export function is3dResourceOptions(
-  addOptions: AddResourceOptions
-): addOptions is Add3dResourceOptions {
-  const modelOptions = addOptions as Add3dResourceOptions;
-  return modelOptions.modelId !== undefined && modelOptions.revisionId !== undefined;
+  return (
+    is360ImageDataModelAddOptions(addOptions as AddImage360CollectionOptions) ||
+    is360ImageEventsAddOptions(addOptions as AddImage360CollectionOptions)
+  );
 }
 
 export function is360ImageDataModelAddOptions(

@@ -12,7 +12,9 @@ import {
   type AddResourceOptions,
   type Reveal3DResourcesProps,
   type CadModelOptions,
-  type PointCloudModelOptions
+  type PointCloudModelOptions,
+  type AddCadResourceOptions,
+  type AddPointCloudResourceOptions
 } from './types';
 import { useCalculatePointCloudStyling } from './useCalculatePointCloudStyling';
 import {
@@ -26,7 +28,7 @@ import {
   isImage360AssetStylingGroup
 } from '../../utilities/StylingGroupUtils';
 import { type ImageCollectionModelStyling } from '../Image360CollectionContainer/useApply360AnnotationStyling';
-import { is360ImageAddOptions, is3dResourceOptions } from './typeGuards';
+import { is360ImageAddOptions } from './typeGuards';
 import { useRemoveNonReferencedModels } from './useRemoveNonReferencedModels';
 import {
   useAssetMappedNodesForRevisions,
@@ -208,16 +210,21 @@ async function getTypedModels(
 ): Promise<TypedReveal3DModel[]> {
   const errorFunction = onLoadFail ?? defaultLoadFailHandler;
 
-  const modelTypePromises = resources.filter(is3dResourceOptions).map(async (addModelOptions) => {
-    const type = await viewer
-      .determineModelType(addModelOptions.modelId, addModelOptions.revisionId)
-      .catch((error) => {
-        errorFunction(addModelOptions, error);
-        return '';
-      });
-    const typedModel = { ...addModelOptions, type };
-    return typedModel;
-  });
+  const modelTypePromises = resources
+    .filter(
+      (resource): resource is AddCadResourceOptions | AddPointCloudResourceOptions =>
+        !is360ImageAddOptions(resource)
+    )
+    .map(async (addModelOptions) => {
+      const type = await viewer
+        .determineModelType(addModelOptions.modelId, addModelOptions.revisionId)
+        .catch((error) => {
+          errorFunction(addModelOptions, error);
+          return '';
+        });
+      const typedModel = { ...addModelOptions, type };
+      return typedModel;
+    });
 
   const resourceLoadResults = await Promise.all(modelTypePromises);
   const successfullyLoadedResources = resourceLoadResults.filter(
