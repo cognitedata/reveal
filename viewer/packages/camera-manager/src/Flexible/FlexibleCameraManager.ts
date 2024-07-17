@@ -50,6 +50,8 @@ export class FlexibleCameraManager extends PointerEvents implements IFlexibleCam
   private readonly _raycastCallback: RaycastCallback;
   private readonly _haveEventListeners: boolean;
 
+  private readonly cameraManagerHelper = new CameraManagerHelper();
+
   //================================================
   // CONSTRUCTOR
   //================================================
@@ -470,7 +472,7 @@ export class FlexibleCameraManager extends PointerEvents implements IFlexibleCam
     if (!this.options.automaticNearFarPlane) {
       return;
     }
-    CameraManagerHelper.updateCameraNearAndFar(this.camera, boundingBox);
+    this.cameraManagerHelper.updateCameraNearAndFar(this.camera, boundingBox);
   }
 
   private updateControlsSensitivity(boundingBox: Box3): void {

@@ -29,6 +29,7 @@ export class StationaryCameraManager implements CameraManager {
   private readonly _stopEventTrigger: DebouncedCameraStopEventTrigger;
   private _isDragging = false;
   private _pointerEventCache: Array<PointerEvent> = [];
+  private readonly cameraManagerHelper = new CameraManagerHelper();
 
   constructor(domElement: HTMLElement, camera: PerspectiveCamera) {
     this._domElement = domElement;
@@ -156,7 +157,7 @@ export class StationaryCameraManager implements CameraManager {
   }
 
   update(_: number, boundingBox: Box3): void {
-    CameraManagerHelper.updateCameraNearAndFar(this._camera, boundingBox);
+    this.cameraManagerHelper.updateCameraNearAndFar(this._camera, boundingBox);
   }
 
   dispose(): void {
