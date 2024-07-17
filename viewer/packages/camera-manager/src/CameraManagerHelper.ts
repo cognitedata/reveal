@@ -113,8 +113,6 @@ export class CameraManagerHelper {
    * Updates near and far plane of the camera based on the bounding box.
    * @param camera Used camera instance.
    * @param boundingBox Bounding box of all objects on the scene.
-   * @param nearAndFarPlaneBuffers to read from
-   * @param cameraFarBuffers
    * @deprecated use instance method instead
    */
   static updateCameraNearAndFar(camera: PerspectiveCamera, boundingBox: Box3): void {
@@ -126,6 +124,11 @@ export class CameraManagerHelper {
     );
   }
 
+  /**
+   * Updates near and far plane of the camera based on the bounding box.
+   * @param camera Used camera instance.
+   * @param boundingBox Bounding box of all objects on the scene.
+   */
   public updateCameraNearAndFar(camera: PerspectiveCamera, boundingBox: Box3): void {
     CameraManagerHelper.updateCameraNearAndFarInternal(
       camera,
