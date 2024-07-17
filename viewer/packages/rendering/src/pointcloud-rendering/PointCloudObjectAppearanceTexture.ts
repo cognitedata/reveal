@@ -27,7 +27,7 @@ export class PointCloudObjectAppearanceTexture {
   private _annotationIdsToObjectId: Map<number, number> | undefined;
 
   constructor(width: number, height: number) {
-    this._objectStyleTexture = generateDataTexture(width, height, new THREE.Color(0x01000000)); // Initialize with visibility bit set
+    this._objectStyleTexture = generateDataTexture(width, height, new THREE.Color(0x0), 0x01); // Initialize with visibility bit set
 
     this._width = width;
     this._height = height;
