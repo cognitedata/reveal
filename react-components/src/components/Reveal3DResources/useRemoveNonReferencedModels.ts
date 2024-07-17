@@ -44,13 +44,13 @@ function findNonReferencedModels(
           continue;
         }
 
-        const isSameModel = isSameModel(options, {
+        const sameModel = isSameModel(options, {
           modelId: model.modelId,
           revisionId: model.revisionId,
           transform: model.getModelTransformation()
         });
 
-        if (isSameModel) {
+        if (sameModel) {
           return options;
         }
       }
