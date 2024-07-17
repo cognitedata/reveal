@@ -19,7 +19,8 @@ import { Euler, MathUtils, Matrix4 } from 'three';
 import { CDF_TO_VIEWER_TRANSFORMATION } from '@cognite/reveal';
 import { type GroundPlane, type Skybox } from '../components/SceneContainer/sceneTypes';
 import {
-  type Add3dResourceOptions,
+  AddCadResourceOptions,
+  AddPointCloudResourceOptions,
   type AddImage360CollectionDatamodelsOptions
 } from '../components/Reveal3DResources/types';
 
@@ -34,7 +35,7 @@ export type SceneData = {
   cameraEulerRotationX: number;
   cameraEulerRotationY: number;
   cameraEulerRotationZ: number;
-  cadModelOptions: Add3dResourceOptions[];
+  cadModelOptions: (AddCadResourceOptions | AddPointCloudResourceOptions)[];
   image360CollectionOptions: AddImage360CollectionDatamodelsOptions[];
   groundPlanes: GroundPlane[];
   skybox?: Skybox;
