@@ -172,7 +172,7 @@ export class PointCloudMaterial extends RawShaderMaterial {
       glslVersion: GLSL3
     });
 
-    const tex = (this.visibleNodesTexture = generateDataTexture(2048, 1, COLOR_WHITE));
+    const tex = (this.visibleNodesTexture = generateDataTexture(2048, 1, COLOR_WHITE, 0x0));
     tex.minFilter = NearestFilter;
     tex.magFilter = NearestFilter;
     this.setUniform('visibleNodes', tex);
