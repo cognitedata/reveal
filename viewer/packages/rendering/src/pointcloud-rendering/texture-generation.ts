@@ -14,7 +14,7 @@ import {
 } from 'three';
 import { PointClassification, IGradient } from './types';
 
-export function generateDataTexture(width: number, height: number, color: Color): DataTexture {
+export function generateDataTexture(width: number, height: number, color: Color, alpha: number): DataTexture {
   const size = width * height;
   const data = new Uint8Array(4 * size);
 
@@ -26,6 +26,7 @@ export function generateDataTexture(width: number, height: number, color: Color)
     data[i * 4] = r;
     data[i * 4 + 1] = g;
     data[i * 4 + 2] = b;
+    data[i * 4 + 3] = alpha;
   }
 
   const texture = new DataTexture(data, width, height, RGBAFormat);

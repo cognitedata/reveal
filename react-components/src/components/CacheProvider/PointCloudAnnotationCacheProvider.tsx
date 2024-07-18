@@ -9,7 +9,7 @@ import { useSDK } from '../RevealCanvas/SDKProvider';
 import { useRevealKeepAlive } from '../RevealKeepAlive/RevealKeepAliveContext';
 import { PointCloudAnnotationCache } from './PointCloudAnnotationCache';
 import { type PointCloudModelOptions, type TypedReveal3DModel } from '../Reveal3DResources/types';
-import { type AnnotationModelDataResult } from '../../hooks/useCalculatePointCloudModelsStyling';
+import { type AnnotationModelDataResult } from '../Reveal3DResources/useCalculatePointCloudStyling';
 import { type PointCloudAnnotationMappedAssetData } from '../../hooks/types';
 import { EMPTY_ARRAY } from '../../utilities/constants';
 import { isDefined } from '../../utilities/isDefined';

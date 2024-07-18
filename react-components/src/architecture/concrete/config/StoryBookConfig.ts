@@ -6,11 +6,11 @@ import { FlexibleControlsType } from '@cognite/reveal';
 import { type BaseCommand } from '../../base/commands/BaseCommand';
 import { PopupStyle } from '../../base/domainObjectsHelpers/PopupStyle';
 import { SetFlexibleControlsTypeCommand } from '../../base/concreteCommands/SetFlexibleControlsTypeCommand';
-import { SetTerrainVisibleCommand } from '../terrainDomainObject/SetTerrainVisibleCommand';
-import { UpdateTerrainCommand } from '../terrainDomainObject/UpdateTerrainCommand';
+import { SetTerrainVisibleCommand } from '../terrain/SetTerrainVisibleCommand';
+import { UpdateTerrainCommand } from '../terrain/UpdateTerrainCommand';
 import { FitViewCommand } from '../../base/concreteCommands/FitViewCommand';
 import { SetAxisVisibleCommand } from '../axis/SetAxisVisibleCommand';
-import { ExampleTool } from '../exampleDomainObject/ExampleTool';
+import { ExampleTool } from '../example/ExampleTool';
 import { AxisGizmoTool } from '@cognite/reveal/tools';
 import { BaseRevealConfig } from '../../base/renderTarget/BaseRevealConfig';
 import { type RevealRenderTarget } from '../../base/renderTarget/RevealRenderTarget';
@@ -20,7 +20,7 @@ import { ToggleMetricUnitsCommand } from '../../base/concreteCommands/ToggleMetr
 import { MeasurementTool } from '../measurements/MeasurementTool';
 import { ClipTool } from '../clipping/ClipTool';
 import { KeyboardSpeedCommand } from '../../base/concreteCommands/KeyboardSpeedCommand';
-import { ObservationsTool } from '../observationsDomainObject/ObservationsTool';
+import { ObservationsTool } from '../observations/ObservationsTool';
 
 export class StoryBookConfig extends BaseRevealConfig {
   // ==================================================

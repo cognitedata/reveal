@@ -11,6 +11,7 @@ import {
 import { type Matrix4 } from 'three';
 import { type DmsUniqueIdentifier, type Source } from '../../utilities/FdmSDK';
 import { type CogniteInternalId, type Node3D } from '@cognite/sdk';
+import { type TreeIndexStylingGroup } from '../CadModelContainer/types';
 
 export type AddImage360CollectionOptions =
   | AddImage360CollectionEventsOptions
@@ -40,29 +41,45 @@ export type TaggedAddImage360CollectionOptions = {
   type: 'image360';
   addOptions: AddImage360CollectionOptions;
 };
-export type TaggedAdd3DModelOptions = {
-  type: 'cad' | 'pointcloud';
-  addOptions: AddReveal3DModelOptions;
+export type TaggedAddCadResourceOptions = {
+  type: 'cad';
+  addOptions: AddCadResourceOptions;
 };
 
-export type TaggedAddResourceOptions = TaggedAdd3DModelOptions | TaggedAddImage360CollectionOptions;
+export type TaggedAddPointCloudResourceOptions = {
+  type: 'pointcloud';
+  addOptions: AddPointCloudResourceOptions;
+};
 
-export type AddResourceOptions = AddReveal3DModelOptions | AddImage360CollectionOptions;
+export type TaggedAddResourceOptions =
+  | TaggedAddCadResourceOptions
+  | TaggedAddPointCloudResourceOptions
+  | TaggedAddImage360CollectionOptions;
 
-export type AddReveal3DModelOptions = AddModelOptions & { transform?: Matrix4 } & {
+export type AddResourceOptions =
+  | AddCadResourceOptions
+  | AddPointCloudResourceOptions
+  | AddImage360CollectionOptions;
+
+export type AddPointCloudResourceOptions = AddModelOptions & {
+  transform?: Matrix4;
   styling?: { default?: NodeAppearance; mapped?: NodeAppearance };
 };
+
+export type AddCadResourceOptions = AddModelOptions & {
+  transform?: Matrix4;
+  styling?: {
+    default?: NodeAppearance;
+    mapped?: NodeAppearance;
+    nodeGroups?: TreeIndexStylingGroup[];
+  };
+};
+
 export type TypedReveal3DModel = CadModelOptions | PointCloudModelOptions;
 
-export type CadModelOptions = { type: 'cad' } & AddModelOptions & { transform?: Matrix4 } & {
-    styling?: { default?: NodeAppearance; mapped?: NodeAppearance };
-  };
+export type CadModelOptions = { type: 'cad' } & AddCadResourceOptions;
 
-export type PointCloudModelOptions = { type: 'pointcloud' } & AddModelOptions & {
-    transform?: Matrix4;
-  } & {
-    styling?: { default?: NodeAppearance; mapped?: NodeAppearance };
-  };
+export type PointCloudModelOptions = { type: 'pointcloud' } & AddPointCloudResourceOptions;
 
 export type NodeDataResult = {
   fdmNode: DmsUniqueIdentifier;

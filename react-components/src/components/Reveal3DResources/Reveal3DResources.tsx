@@ -4,20 +4,19 @@
 import { useRef, type ReactElement, useState, useEffect, useMemo } from 'react';
 import { type Cognite3DViewer } from '@cognite/reveal';
 import { CadModelContainer } from '../CadModelContainer/CadModelContainer';
-import { type CadModelStyling } from '../CadModelContainer/useApplyCadModelStyling';
 import { PointCloudContainer } from '../PointCloudContainer/PointCloudContainer';
 import { Image360CollectionContainer } from '../Image360CollectionContainer/Image360CollectionContainer';
 import { useReveal } from '../RevealCanvas/ViewerContext';
 import {
-  type AddReveal3DModelOptions,
   type TypedReveal3DModel,
   type AddResourceOptions,
   type Reveal3DResourcesProps,
   type CadModelOptions,
-  type PointCloudModelOptions
+  type PointCloudModelOptions,
+  type AddCadResourceOptions,
+  type AddPointCloudResourceOptions
 } from './types';
-import { useCalculateCadStyling } from '../../hooks/useCalculateModelsStyling';
-import { useCalculatePointCloudStyling } from '../../hooks/useCalculatePointCloudModelsStyling';
+import { useCalculatePointCloudStyling } from './useCalculatePointCloudStyling';
 import {
   type AnnotationIdStylingGroup,
   type PointCloudModelStyling
@@ -36,7 +35,9 @@ import {
   useGenerateAssetMappingCachePerItemFromModelCache,
   useGenerateNode3DCache
 } from '../CacheProvider/AssetMappingAndNode3DCacheProvider';
+import { useCalculateCadStyling } from './useCalculateCadStyling';
 import { useReveal3DResourcesStylingLoadingSetter } from './Reveal3DResourcesInfoContext';
+import { type CadModelStyling } from '../CadModelContainer/types';
 
 export const Reveal3DResources = ({
   resources,
@@ -93,7 +94,6 @@ export const Reveal3DResources = ({
   );
 
   const setModel3DStylingLoading = useReveal3DResourcesStylingLoadingSetter();
-  setModel3DStylingLoading(!(isModelMappingsFetched || !isModelMappingsLoading));
 
   useEffect(() => {
     setModel3DStylingLoading(!(isModelMappingsFetched || !isModelMappingsLoading));
@@ -212,9 +212,8 @@ async function getTypedModels(
 
   const modelTypePromises = resources
     .filter(
-      (resource): resource is AddReveal3DModelOptions =>
-        (resource as AddReveal3DModelOptions).modelId !== undefined &&
-        (resource as AddReveal3DModelOptions).revisionId !== undefined
+      (resource): resource is AddCadResourceOptions | AddPointCloudResourceOptions =>
+        !is360ImageAddOptions(resource)
     )
     .map(async (addModelOptions) => {
       const type = await viewer

@@ -7,8 +7,7 @@ import {
   type NodeAppearance,
   type NodeCollection,
   NodeIdNodeCollection,
-  TreeIndexNodeCollection,
-  type IndexSet
+  TreeIndexNodeCollection
 } from '@cognite/reveal';
 import { useEffect } from 'react';
 import { useSDK } from '../RevealCanvas/SDKProvider';
@@ -16,21 +15,14 @@ import { type CogniteClient } from '@cognite/sdk';
 import { isEqual } from 'lodash';
 import { useReveal } from '../RevealCanvas/ViewerContext';
 import { modelExists } from '../../utilities/modelExists';
-
-export type NodeStylingGroup = {
-  nodeIds: number[];
-  style?: NodeAppearance;
-};
-
-export type TreeIndexStylingGroup = {
-  treeIndexSet: IndexSet;
-  style?: NodeAppearance;
-};
-
-export type CadModelStyling = {
-  defaultStyle?: NodeAppearance;
-  groups?: Array<NodeStylingGroup | TreeIndexStylingGroup>;
-};
+import {
+  isNodeStylingGroup,
+  isTreeIndexStylingGroup,
+  type CadModelStyling,
+  type NodeStylingGroup,
+  type TreeIndexStylingGroup
+} from './types';
+import { assertNever } from '../../utilities/assertNever';
 
 export const useApplyCadModelStyling = (
   model?: CogniteCadModel,
@@ -72,15 +64,15 @@ async function applyStyling(
 
     if (stylingGroup.style === undefined) continue;
 
-    if ('treeIndexSet' in stylingGroup) {
+    if (isTreeIndexStylingGroup(stylingGroup)) {
       const nodes = new TreeIndexNodeCollection(stylingGroup.treeIndexSet);
       model.assignStyledNodeCollection(nodes, stylingGroup.style);
-    }
-
-    if ('nodeIds' in stylingGroup) {
+    } else if (isNodeStylingGroup(stylingGroup)) {
       const nodes = new NodeIdNodeCollection(sdk, model);
       await nodes.executeFilter(stylingGroup.nodeIds);
       model.assignStyledNodeCollection(nodes, stylingGroup.style);
+    } else {
+      assertNever(stylingGroup);
     }
   }
 

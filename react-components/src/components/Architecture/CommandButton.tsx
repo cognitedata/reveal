@@ -62,7 +62,7 @@ export const CommandButton = ({
 
   return (
     <CogsTooltip
-      content={<LabelWithShortcut key={tooltip} label={tooltip} shortcut={shortcut} />}
+      content={<LabelWithShortcut label={tooltip} shortcut={shortcut} />}
       appendTo={document.body}
       placement={placement}>
       <Button
