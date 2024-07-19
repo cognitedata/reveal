@@ -28,11 +28,13 @@ import {
   LocationIcon,
   PerspectiveIcon,
   PlaneIcon,
+  PlusIcon,
   PointCloudIcon,
   PolygonIcon,
   RefreshIcon,
   RulerAlternativeIcon,
   RulerIcon,
+  SaveIcon,
   VectorLineIcon,
   VectorZigzagIcon,
   View360Icon
@@ -101,6 +103,8 @@ export function IconComponent({ iconName, ...rest }: IconComponentProps): JSX.El
         return PerspectiveIcon;
       case 'Plane':
         return PlaneIcon;
+      case 'Plus':
+        return PlusIcon;
       case 'PointCloud':
         return PointCloudIcon;
       case 'Polygon':
@@ -111,6 +115,8 @@ export function IconComponent({ iconName, ...rest }: IconComponentProps): JSX.El
         return RulerIcon;
       case 'RulerAlternative':
         return RulerAlternativeIcon;
+      case 'Save':
+        return SaveIcon;
       case 'VectorLine':
         return VectorLineIcon;
       case 'VectorZigzag':

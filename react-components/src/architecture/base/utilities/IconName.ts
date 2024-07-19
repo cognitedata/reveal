@@ -27,11 +27,13 @@ export type IconName =
   | 'Location'
   | 'Perspective'
   | 'Plane'
+  | 'Plus'
   | 'PointCloud'
   | 'Polygon'
   | 'Refresh'
   | 'Ruler'
   | 'RulerAlternative'
+  | 'Save'
   | 'VectorLine'
   | 'VectorZigzag'
   | 'View360';

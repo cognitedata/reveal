@@ -1,7 +1,6 @@
 /*!
  * Copyright 2024 Cognite AS
  */
-import { type IconType } from '@cognite/cogs.js';
 import { type TranslateKey } from '../../base/utilities/TranslateKey';
 import { ObservationsDomainObject } from './ObservationsDomainObject';
 import { BaseEditTool } from '../../base/commands/BaseEditTool';
@@ -11,6 +10,7 @@ import { CreateObservationCommand } from './CreateObservationCommand';
 import { SaveObservationsCommand } from './SaveObservationsCommand';
 import { DeleteObservationCommand } from './DeleteObservationCommand';
 import { createEmptyObservationProperties, isObservationIntersection } from './types';
+import { type IconName } from '../../base/utilities/IconName';
 
 export class ObservationsTool extends BaseEditTool {
   private _isCreating: boolean = false;
@@ -19,7 +19,7 @@ export class ObservationsTool extends BaseEditTool {
     return domainObject instanceof ObservationsDomainObject;
   }
 
-  public override get icon(): IconType {
+  public override get icon(): IconName {
     return 'Location';
   }
 
