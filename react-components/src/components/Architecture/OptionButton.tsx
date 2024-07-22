@@ -3,7 +3,14 @@
  */
 
 import { useCallback, useEffect, useMemo, useState, type ReactElement } from 'react';
-import { Button, Dropdown, Menu, Tooltip as CogsTooltip, type IconType } from '@cognite/cogs.js';
+import {
+  Button,
+  Menu,
+  Tooltip as CogsTooltip,
+  ChevronDownIcon,
+  ChevronUpIcon
+} from '@cognite/cogs.js';
+import { Dropdown } from '@cognite/cogs-lab';
 import { useTranslation } from '../i18n/I18n';
 import { type BaseCommand } from '../../architecture/base/commands/BaseCommand';
 import { useRenderTarget } from '../RevealCanvas/ViewerContext';
@@ -16,6 +23,8 @@ import {
   getTooltipPlacement
 } from './utilities';
 import { LabelWithShortcut } from './LabelWithShortcut';
+import { IconComponent } from './IconComponent';
+import { type IconName } from '../../architecture/base/utilities/IconName';
 
 export const OptionButton = ({
   inputCommand,
@@ -32,7 +41,7 @@ export const OptionButton = ({
   const [isEnabled, setEnabled] = useState<boolean>(true);
   const [isVisible, setVisible] = useState<boolean>(true);
   const [uniqueId, setUniqueId] = useState<number>(0);
-  const [icon, setIcon] = useState<IconType | undefined>(undefined);
+  const [icon, setIcon] = useState<IconName | undefined>(undefined);
 
   const update = useCallback((command: BaseCommand) => {
     setEnabled(command.isEnabled);
@@ -62,6 +71,8 @@ export const OptionButton = ({
   const options = command.getOrCreateOptions(renderTarget);
   const selectedLabel = command.selectedOption?.getLabel(t);
 
+  const OpenButtonIcon = isOpen ? ChevronUpIcon : ChevronDownIcon;
+
   return (
     <CogsTooltip
       content={<LabelWithShortcut label={tooltip} shortcut={shortcut} />}
@@ -69,11 +80,11 @@ export const OptionButton = ({
       placement={placement}>
       <Dropdown
         hideOnSelect={true}
-        appendTo={document.body}
         onClickOutside={() => {
           setOpen(false);
           renderTarget.domElement.focus();
         }}
+        placement="bottom"
         content={
           <Menu
             style={{
@@ -84,7 +95,7 @@ export const OptionButton = ({
             {options.map((command, _index): ReactElement => {
               return (
                 <Menu.Item
-                  icon={icon}
+                  icon={<IconComponent iconName={icon} />}
                   key={command.uniqueId}
                   toggled={command.isChecked}
                   disabled={!isEnabled}
@@ -100,12 +111,11 @@ export const OptionButton = ({
               );
             })}
           </Menu>
-        }
-        placement="auto-start">
+        }>
         <Button
           style={{ padding: '8px 4px' }}
           type={getButtonType(command)}
-          icon={isOpen ? 'ChevronUp' : 'ChevronDown'}
+          icon={<OpenButtonIcon />}
           key={uniqueId}
           disabled={!isEnabled}
           toggled={isOpen}

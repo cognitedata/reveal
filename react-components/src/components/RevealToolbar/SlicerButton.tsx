@@ -7,7 +7,8 @@ import { type ReactElement, useState, useEffect } from 'react';
 import { Box3, Plane, Vector3 } from 'three';
 
 import { useReveal } from '../RevealCanvas/ViewerContext';
-import { Button, Dropdown, Menu, RangeSlider, Tooltip as CogsTooltip } from '@cognite/cogs.js';
+import { Button, RangeSlider, Tooltip as CogsTooltip, SliceIcon } from '@cognite/cogs.js';
+import { Menu } from '@cognite/cogs-lab';
 
 import styled from 'styled-components';
 import { useSlicerUrlParams } from './hooks/useUrlStateParam';
@@ -33,7 +34,6 @@ export const SlicerButton = ({ storeStateInUrl = true }: SlicerButtonProps): Rea
   const { bottom: initialBottomRatio, top: initialTopRatio } = storeStateInUrl
     ? slicerUrlState
     : { bottom: 0, top: 1 };
-  const [sliceActive, setSliceActive] = useState<boolean>(false);
 
   const [sliceState, setSliceState] = useState<SliceState>({
     minHeight: 0,
@@ -108,37 +108,26 @@ export const SlicerButton = ({ storeStateInUrl = true }: SlicerButtonProps): Rea
   }
 
   return (
-    <CogsTooltip content={t('SLICE_TOOLTIP', 'Slice')} placement="right" appendTo={document.body}>
-      <Dropdown
-        appendTo={() => document.body}
-        onClickOutside={() => {
-          setSliceActive(false);
-        }}
-        content={
-          <StyledMenu>
-            <RangeSlider
-              min={0}
-              max={1}
-              step={0.01}
-              setValue={changeSlicingState}
-              marks={{}}
-              value={[bottomRatio, topRatio]}
-              vertical
-            />
-          </StyledMenu>
-        }
-        placement="right-end">
-        <Button
-          type="ghost"
-          icon="Slice"
-          aria-label="Slice models"
-          toggled={sliceActive}
-          onClick={() => {
-            setSliceActive((prevState) => !prevState);
-          }}
-        />
-      </Dropdown>
-    </CogsTooltip>
+    <StyledMenu
+      placement="right-end"
+      renderTrigger={(props: any) => (
+        <CogsTooltip
+          content={t('SLICE_TOOLTIP', 'Slice')}
+          placement="right"
+          appendTo={document.body}>
+          <Button {...props} type="ghost" icon=<SliceIcon /> aria-label="Slice models" />
+        </CogsTooltip>
+      )}>
+      <RangeSlider
+        min={0}
+        max={1}
+        step={0.01}
+        setValue={changeSlicingState}
+        marks={{}}
+        value={[bottomRatio, topRatio]}
+        vertical
+      />
+    </StyledMenu>
   );
 };
 
@@ -146,4 +135,5 @@ const StyledMenu = styled(Menu)`
   height: 512px;
   padding: 12px;
   min-width: 0px;
+  width: 38px;
 `;

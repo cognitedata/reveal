@@ -1,13 +1,13 @@
 /*!
  * Copyright 2024 Cognite AS
  */
-import { type IconType } from '@cognite/cogs.js';
 import { type TranslateKey } from '../../base/utilities/TranslateKey';
 import { type ButtonType } from '../../../components/Architecture/types';
 import { ObservationsCommand } from './ObservationsCommand';
+import { type IconName } from '../../base/utilities/IconName';
 
 export class DeleteObservationCommand extends ObservationsCommand {
-  public override get icon(): IconType {
+  public override get icon(): IconName {
     return 'Delete';
   }
 

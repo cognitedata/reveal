@@ -2,6 +2,7 @@
  * Copyright 2024 Cognite AS
  */
 
+import { type IconName } from '../../base/utilities/IconName';
 import { RenderTargetCommand } from '../commands/RenderTargetCommand';
 import { Changes } from '../domainObjectsHelpers/Changes';
 import { type TranslateKey } from '../utilities/TranslateKey';
@@ -11,7 +12,7 @@ export class ToggleMetricUnitsCommand extends RenderTargetCommand {
   // OVERRIDES of BaseCommand
   // ==================================================
 
-  public override get icon(): string {
+  public override get icon(): IconName {
     return 'RulerAlternative';
   }
 

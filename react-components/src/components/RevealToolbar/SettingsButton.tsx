@@ -3,7 +3,8 @@
  */
 
 import { useState, type ReactElement } from 'react';
-import { Button, Dropdown, Menu, Tooltip as CogsTooltip } from '@cognite/cogs.js';
+import { Button, Tooltip as CogsTooltip, SettingsIcon } from '@cognite/cogs.js';
+import { Menu } from '@cognite/cogs-lab';
 import { type QualitySettings } from './SettingsContainer/types';
 import { HighFidelityContainer } from './SettingsContainer/HighFidelityContainer';
 import { useTranslation } from '../i18n/I18n';
@@ -23,35 +24,31 @@ export const SettingsButton = ({
   const [settingsActive, setSettingsActive] = useState<boolean>(false);
 
   return (
-    <CogsTooltip
-      content={t('SETTINGS_TOOLTIP', 'Settings')}
+    <Menu
       placement="right"
-      appendTo={document.body}>
-      <Dropdown
-        appendTo={document.body}
-        onClickOutside={() => {
-          setSettingsActive(false);
-        }}
-        content={
-          <Menu>
-            <HighFidelityContainer
-              lowQualitySettings={lowQualitySettings}
-              highQualitySettings={highQualitySettings}
-            />
-            {customSettingsContent ?? <></>}
-          </Menu>
-        }
-        placement="right-start">
-        <Button
-          icon="Settings"
-          type="ghost"
-          aria-label="Show settings"
-          toggled={settingsActive}
-          onClick={() => {
-            setSettingsActive((prevState) => !prevState);
-          }}
-        />
-      </Dropdown>
-    </CogsTooltip>
+      renderTrigger={(props: any) => (
+        <CogsTooltip
+          content={t('SETTINGS_TOOLTIP', 'Settings')}
+          placement="right"
+          disabled={settingsActive}
+          appendTo={document.body}>
+          <Button
+            {...props}
+            icon=<SettingsIcon />
+            type="ghost"
+            aria-label="Show settings"
+            toggled={settingsActive}
+            onClick={() => {
+              setSettingsActive((prevState) => !prevState);
+            }}
+          />
+        </CogsTooltip>
+      )}>
+      <HighFidelityContainer
+        lowQualitySettings={lowQualitySettings}
+        highQualitySettings={highQualitySettings}
+      />
+      {customSettingsContent ?? <></>}
+    </Menu>
   );
 };

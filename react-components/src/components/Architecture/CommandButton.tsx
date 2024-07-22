@@ -4,11 +4,13 @@
 
 import { type ReactElement, useState, useEffect, useMemo, useCallback } from 'react';
 import { useRenderTarget } from '../RevealCanvas/ViewerContext';
-import { Button, Tooltip as CogsTooltip, type IconType } from '@cognite/cogs.js';
+import { Button, Tooltip as CogsTooltip } from '@cognite/cogs.js';
 import { useTranslation } from '../i18n/I18n';
 import { type BaseCommand } from '../../architecture/base/commands/BaseCommand';
 import { getButtonType, getDefaultCommand, getIcon, getTooltipPlacement } from './utilities';
 import { LabelWithShortcut } from './LabelWithShortcut';
+import { type IconName } from '../../architecture/base/utilities/IconName';
+import { IconComponent } from './IconComponent';
 
 export const createCommandButton = (
   commandConstructor: () => BaseCommand,
@@ -33,7 +35,7 @@ export const CommandButton = ({
   const [isEnabled, setEnabled] = useState<boolean>(true);
   const [isVisible, setVisible] = useState<boolean>(true);
   const [uniqueId, setUniqueId] = useState<number>(0);
-  const [icon, setIcon] = useState<IconType | undefined>(undefined);
+  const [icon, setIcon] = useState<IconName | undefined>(undefined);
 
   const update = useCallback((command: BaseCommand) => {
     setChecked(command.isChecked);
@@ -65,7 +67,7 @@ export const CommandButton = ({
       placement={placement}>
       <Button
         type={getButtonType(command)}
-        icon={icon}
+        icon={<IconComponent iconName={icon} />}
         key={uniqueId}
         disabled={!isEnabled}
         toggled={isChecked}

@@ -22,10 +22,6 @@ export type CommonImage360CollectionAddOptions = {
   iconCullingOptions?: { radius?: number; iconCountLimit?: number };
 };
 
-export type AddImageCollection360EventsOptions = {
-  siteId: string;
-} & CommonImage360CollectionAddOptions;
-
 export type AddImage360CollectionEventsOptions = {
   siteId: string;
 } & CommonImage360CollectionAddOptions;

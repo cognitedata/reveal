@@ -44,19 +44,19 @@ export const LayersButtonStrip = ({
   return (
     <ButtonsContainer>
       <ModelLayersButton
-        icon="Cube"
+        icon={'Cube'}
         label={t('CAD_MODELS', 'CAD models')}
         handlers={cadHandlers}
         update={update}
       />
       <ModelLayersButton
-        icon="PointCloud"
+        icon={'PointCloud'}
         label={t('POINT_CLOUDS', 'Point clouds')}
         handlers={pointCloudHandlers}
         update={update}
       />
       <ModelLayersButton
-        icon="View360"
+        icon={'View360'}
         label={t('IMAGES_360', '360 images')}
         handlers={image360Handlers}
         update={update}

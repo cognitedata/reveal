@@ -2,6 +2,7 @@
  * Copyright 2024 Cognite AS
  */
 
+import { type IconName } from '../../../base/utilities/IconName';
 import { InstanceCommand } from '../../../base/commands/InstanceCommand';
 import { type DomainObject } from '../../../base/domainObjects/DomainObject';
 import { Changes } from '../../../base/domainObjectsHelpers/Changes';
@@ -17,7 +18,7 @@ export class DeleteAllExamplesCommand extends InstanceCommand {
     return { fallback: 'Remove all examples' };
   }
 
-  public override get icon(): string {
+  public override get icon(): IconName {
     return 'Delete';
   }
 

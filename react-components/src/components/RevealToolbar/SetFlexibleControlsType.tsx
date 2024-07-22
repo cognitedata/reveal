@@ -4,7 +4,7 @@
 
 import { type ReactElement, useEffect, useState, useCallback } from 'react';
 
-import { SegmentedControl, Tooltip as CogsTooltip, type IconType, Button } from '@cognite/cogs.js';
+import { SegmentedControl, Tooltip as CogsTooltip, Button } from '@cognite/cogs.js';
 import { useReveal } from '../RevealCanvas/ViewerContext';
 import {
   FlexibleControlsType,
@@ -15,6 +15,9 @@ import {
 import { useTranslation } from '../i18n/I18n';
 import styled from 'styled-components';
 import { type TranslateDelegate } from '../../architecture/base/utilities/TranslateKey';
+import { assertNever } from '../../utilities/assertNever';
+import { IconComponent } from '../Architecture/IconComponent';
+import { type IconName } from '../../architecture/base/utilities/IconName';
 
 type CustomSettingsProps = {
   includeOrbitInCenter?: boolean;
@@ -113,22 +116,24 @@ const ButtonsControlTypeSelector = ({
 }: ControlTypeSelectionProps): ReactElement => {
   return (
     <ButtonsContainer>
-      {options.map((controlType) => (
-        <CogsTooltip
-          content={getLabel(translateDelegate, controlType)}
-          placement="right"
-          appendTo={document.body}
-          key={controlType}>
-          <Button
-            type="ghost"
-            icon={getIcon(controlType)}
-            toggled={selectedControlsType === controlType}
-            aria-label={getLabel(translateDelegate, controlType)}
-            onClick={() => {
-              setSelectedControlsType(controlType);
-            }}></Button>
-        </CogsTooltip>
-      ))}
+      {options.map((controlType) => {
+        return (
+          <CogsTooltip
+            content={getLabel(translateDelegate, controlType)}
+            placement="right"
+            appendTo={document.body}
+            key={controlType}>
+            <Button
+              type="ghost"
+              icon=<IconComponent iconName={getIcon(controlType)} />
+              toggled={selectedControlsType === controlType}
+              aria-label={getLabel(translateDelegate, controlType)}
+              onClick={() => {
+                setSelectedControlsType(controlType);
+              }}></Button>
+          </CogsTooltip>
+        );
+      })}
     </ButtonsContainer>
   );
 };
@@ -149,11 +154,14 @@ const SegmentedControlTypeSelector = ({
       }}
       currentKey={selectedControlsType}
       fullWidth>
-      {options.map((controlsType) => (
-        <SegmentedControl.Button key={controlsType} icon={getIcon(controlsType)}>
-          {getLabel(translateDelegate, controlsType)}
-        </SegmentedControl.Button>
-      ))}
+      {options.map((controlsType) => {
+        const iconName = getIcon(controlsType);
+        return (
+          <SegmentedControl.Button key={controlsType} icon={<IconComponent iconName={iconName} />}>
+            {getLabel(translateDelegate, controlsType)}
+          </SegmentedControl.Button>
+        );
+      })}
     </SegmentedControl>
   </CogsTooltip>
 );
@@ -175,7 +183,7 @@ function getDefaultValue(manager: IFlexibleCameraManager | undefined): FlexibleC
   return manager !== undefined ? manager.controlsType : FlexibleControlsType.Orbit;
 }
 
-function getIcon(controlsType: FlexibleControlsType): IconType {
+function getIcon(controlsType: FlexibleControlsType): IconName {
   switch (controlsType) {
     case FlexibleControlsType.FirstPerson:
       return 'Plane';
@@ -184,7 +192,7 @@ function getIcon(controlsType: FlexibleControlsType): IconType {
     case FlexibleControlsType.OrbitInCenter:
       return 'Coordinates';
     default:
-      return 'Error';
+      assertNever(controlsType);
   }
 }
 

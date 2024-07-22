@@ -1,14 +1,14 @@
 /*!
  * Copyright 2024 Cognite AS
  */
-import { type IconType, toast } from '@cognite/cogs.js';
 import { type ButtonType } from '../../../components/Architecture/types';
 import { type TranslateKey } from '../../base/utilities/TranslateKey';
 import { Changes } from '../../base/domainObjectsHelpers/Changes';
 import { ObservationsCommand } from './ObservationsCommand';
+import { type IconName } from '../../base/utilities/IconName';
 
 export class SaveObservationsCommand extends ObservationsCommand {
-  public override get icon(): IconType {
+  public override get icon(): IconName {
     return 'Save';
   }
 
@@ -40,14 +40,11 @@ export class SaveObservationsCommand extends ObservationsCommand {
     void domainObject
       ?.save()
       .then(() => {
-        toast.success({ fallback: 'Successfully published changes' }.fallback);
-
         const observation = this.getObservationsDomainObject();
         observation?.notify(Changes.geometry);
         this.renderTarget.commandsController.update();
       })
       .catch((e) => {
-        toast.error({ fallback: 'Unable to publish observation changes: ' + e }.fallback);
         throw e;
       });
 
