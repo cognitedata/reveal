@@ -4,9 +4,9 @@
 
 import { type UseQueryResult, useQuery } from '@tanstack/react-query';
 import { useFdmSdk } from '../components/RevealCanvas/SDKProvider';
-import { type Source, type DmsUniqueIdentifier } from '../utilities/FdmSDK';
+import { type Source, type DmsUniqueIdentifier } from '../data-providers/FdmSDK';
 import assert from 'assert';
-import { type FdmInstanceWithView } from '../utilities/types';
+import { type FdmInstanceWithView } from '../data-providers/types';
 
 export function use3dRelatedDirectConnections(
   instance: DmsUniqueIdentifier | undefined
@@ -30,18 +30,15 @@ export function use3dRelatedDirectConnections(
         )
       ).items[0];
 
-      const directlyRelatedObjects = Object.values(instanceContent.properties)
-        .map((spaceScope) =>
-          Object.values(spaceScope)
-            .map((fieldValues) =>
-              Object.values(fieldValues).filter(
-                (value: any): value is DmsUniqueIdentifier =>
-                  value.externalId !== undefined && value.space !== undefined
-              )
+      const directlyRelatedObjects = Object.values(instanceContent.properties).flatMap(
+        (spaceScope) =>
+          Object.values(spaceScope).flatMap((fieldValues) =>
+            Object.values(fieldValues).filter(
+              (value: any): value is DmsUniqueIdentifier =>
+                value.externalId !== undefined && value.space !== undefined
             )
-            .flat()
-        )
-        .flat();
+          )
+      );
 
       if (directlyRelatedObjects.length === 0) {
         return [];

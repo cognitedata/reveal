@@ -4,7 +4,7 @@
 import { type UseQueryResult, useQuery } from '@tanstack/react-query';
 import { useFdmNodeCache } from '../components/CacheProvider/NodeCacheProvider';
 import { type Node3D } from '@cognite/sdk';
-import { type DmsUniqueIdentifier } from '../utilities/FdmSDK';
+import { type DmsUniqueIdentifier } from '../data-providers/FdmSDK';
 import { useReveal } from '../components/RevealCanvas/ViewerContext';
 
 export const use3dNodeByExternalId = ({

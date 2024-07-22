@@ -7,9 +7,10 @@ import {
   type Source,
   type DmsUniqueIdentifier,
   type FdmSDK,
-  type InspectResultList
-} from '../../utilities/FdmSDK';
-import { type FdmCadEdge } from './types';
+  type InspectResultList,
+  type EdgeItem
+} from '../../data-providers/FdmSDK';
+import { type FdmCadConnection } from './types';
 import {
   type InModel3dEdgeProperties,
   SYSTEM_3D_EDGE_SOURCE,
@@ -62,7 +63,7 @@ export async function getMappingEdgesForNodeIds(
   revisionId: number,
   fdmClient: FdmSDK,
   ancestorIds: CogniteInternalId[]
-): Promise<{ edges: FdmCadEdge[] }> {
+): Promise<FdmCadConnection[]> {
   const filter = {
     and: [
       {
@@ -97,13 +98,24 @@ export async function getMappingEdgesForNodeIds(
     ]
   };
 
-  const instances = await fdmClient.filterAllInstances<InModel3dEdgeProperties>(
+  const results = await fdmClient.filterAllInstances<InModel3dEdgeProperties>(
     filter,
     'edge',
     SYSTEM_3D_EDGE_SOURCE
   );
 
-  return { edges: instances.instances };
+  return fdmEdgesToCadConnections(results.instances);
+}
+
+export function fdmEdgesToCadConnections(
+  edges: Array<EdgeItem<InModel3dEdgeProperties>>
+): FdmCadConnection[] {
+  return edges.map((instance) => ({
+    nodeId: instance.properties.revisionNodeId,
+    revisionId: instance.properties.revisionId,
+    modelId: Number(instance.endNode.externalId),
+    instance: instance.startNode
+  }));
 }
 
 export async function inspectNodes(

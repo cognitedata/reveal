@@ -2,7 +2,7 @@
  * Copyright 2024 Cognite AS
  */
 import { type TaggedAddCadResourceOptions } from '../../components/Reveal3DResources/types';
-import { type DmsUniqueIdentifier, type EdgeItem, type FdmSDK } from '../../utilities/FdmSDK';
+import { type DmsUniqueIdentifier, type EdgeItem, type FdmSDK } from '../../data-providers/FdmSDK';
 import {
   type InModel3dEdgeProperties,
   SYSTEM_3D_EDGE_SOURCE

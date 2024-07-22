@@ -2,7 +2,7 @@
  * Copyright 2024 Cognite AS
  */
 import { type UseQueryResult, useQuery } from '@tanstack/react-query';
-import { type DmsUniqueIdentifier, type FdmSDK } from '../utilities/FdmSDK';
+import { type DmsUniqueIdentifier, type FdmSDK } from '../data-providers/FdmSDK';
 import { getCadModelsForAsset } from '../hooks/network/getCadModelsForAsset';
 import { getPointCloudModelsForAsset } from '../hooks/network/getPointCloudModelsForAsset';
 import { useFdmSdk, useSDK } from '../components/RevealCanvas/SDKProvider';
@@ -15,7 +15,7 @@ import {
   type InstanceReference,
   isAssetInstance,
   isDmsInstance
-} from '../utilities/types';
+} from '../data-providers/types';
 import { uniqBy } from 'lodash';
 import { createAddOptionsKey } from '../utilities/createAddOptionsKey';
 

@@ -120,8 +120,8 @@ export {
   type ThreeDModelFdmMappings
 } from './hooks/types';
 export type { CameraNavigationActions } from './hooks/useCameraNavigation';
-export type { Source, DmsUniqueIdentifier } from './utilities/FdmSDK';
-export type { FdmInstanceWithView } from './utilities/types';
+export type { Source, DmsUniqueIdentifier } from './data-providers/FdmSDK';
+export type { FdmInstanceWithView } from './data-providers/types';
 export type { QualitySettings } from './components/RevealToolbar/SettingsContainer/types';
 export type { SceneIdentifiers } from './components/SceneContainer/sceneTypes';
 
@@ -165,4 +165,4 @@ export { RuleBasedOutputsPanel } from './components/RuleBasedOutputs/RuleBasedOu
 // Functions
 export { getRuleTriggerTypes } from './components/RuleBasedOutputs/utils';
 
-export type { InstanceReference, AssetInstanceReference } from './utilities/types';
+export type { InstanceReference, AssetInstanceReference } from './data-providers/types';

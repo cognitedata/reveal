@@ -19,7 +19,7 @@ import {
   type Skybox
 } from '../components/SceneContainer/sceneTypes';
 import { useFdmSdk } from '../components/RevealCanvas/SDKProvider';
-import { type Source, type FdmSDK } from '../utilities/FdmSDK';
+import { type Source, type FdmSDK } from '../data-providers/FdmSDK';
 import { type SceneConfigurationProperties } from '../hooks/types';
 import { fdmViewsExist } from '../utilities/fdmViewsExist';
 

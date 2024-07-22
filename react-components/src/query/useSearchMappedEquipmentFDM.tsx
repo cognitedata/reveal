@@ -13,7 +13,7 @@ import {
   type Space,
   type ExternalId,
   type InstanceFilter
-} from '../utilities/FdmSDK';
+} from '../data-providers/FdmSDK';
 import { useSDK } from '../components/RevealCanvas/SDKProvider';
 import { type UseQueryResult, useQuery } from '@tanstack/react-query';
 import { SYSTEM_3D_EDGE_SOURCE, SYSTEM_SPACE_3D_SCHEMA } from '../utilities/globalDataModels';

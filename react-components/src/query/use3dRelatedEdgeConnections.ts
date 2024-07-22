@@ -4,9 +4,9 @@
 
 import { type UseQueryResult, useQuery } from '@tanstack/react-query';
 import { useFdmSdk } from '../components/RevealCanvas/SDKProvider';
-import { type DmsUniqueIdentifier } from '../utilities/FdmSDK';
+import { type DmsUniqueIdentifier } from '../data-providers/FdmSDK';
 import { zipWith } from 'lodash';
-import { type FdmInstanceWithView } from '../utilities/types';
+import { type FdmInstanceWithView } from '../data-providers/types';
 import assert from 'assert';
 import { SYSTEM_3D_EDGE_SOURCE } from '../utilities/globalDataModels';
 

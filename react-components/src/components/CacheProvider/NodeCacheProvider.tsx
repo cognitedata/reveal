@@ -9,7 +9,7 @@ import { useFdmSdk, useSDK } from '../RevealCanvas/SDKProvider';
 import { type FdmNodeDataPromises, type ModelRevisionToEdgeMap } from './types';
 
 import assert from 'assert';
-import { type DmsUniqueIdentifier } from '../../utilities/FdmSDK';
+import { type DmsUniqueIdentifier } from '../../data-providers/FdmSDK';
 import { type TypedReveal3DModel } from '../Reveal3DResources/types';
 import { type ThreeDModelFdmMappings } from '../../hooks/types';
 import { DEFAULT_QUERY_STALE_TIME } from '../../utilities/constants';

@@ -31,7 +31,7 @@ import { Range3 } from '../utilities/geometry/Range3';
 import { getBoundingBoxFromPlanes } from '../utilities/geometry/getBoundingBoxFromPlanes';
 import { Changes } from '../domainObjectsHelpers/Changes';
 import { type CogniteClient } from '@cognite/sdk/dist/src';
-import { FdmSDK } from '../../../utilities/FdmSDK';
+import { FdmSDK } from '../../../data-providers/FdmSDK';
 
 const DIRECTIONAL_LIGHT_NAME = 'DirectionalLight';
 

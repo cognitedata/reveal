@@ -35,7 +35,7 @@ import {
   useSearchAssetsMappedPointCloudAnnotations
 } from '../src/query/useSearchAssetsMappedPointCloudAnnotations';
 import { isEqual } from 'lodash';
-import { type NodeItem } from '../src/utilities/FdmSDK';
+import { type NodeItem } from '../src/data-providers/FdmSDK';
 import { Button, Input } from '@cognite/cogs.js';
 import { is360ImageAddOptions } from '../src/components/Reveal3DResources/typeGuards';
 
