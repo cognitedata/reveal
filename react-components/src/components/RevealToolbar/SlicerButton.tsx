@@ -110,7 +110,7 @@ export const SlicerButton = ({ storeStateInUrl = true }: SlicerButtonProps): Rea
   return (
     <StyledMenu
       placement="right-end"
-      renderTrigger={(props) => (
+      renderTrigger={(props: any) => (
         <CogsTooltip
           content={t('SLICE_TOOLTIP', 'Slice')}
           placement="right"

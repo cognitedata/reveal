@@ -3,14 +3,14 @@
  */
 
 import { type ReactElement } from 'react';
-import { Menu } from '@cognite/cogs.js';
+import { Menu } from '@cognite/cogs-lab';
 import { type ModelHandler } from './ModelHandler';
 import { ModelLayersList } from './ModelLayersList';
 import { WholeLayerVisibilityToggle } from './WholeLayerVisibilityToggle';
 import { withSuppressRevealEvents } from '../../../higher-order-components/withSuppressRevealEvents';
 import { type UpdateModelHandlersCallback } from './useModelHandlers';
 
-const SuppressedSubmenu = withSuppressRevealEvents(Menu);
+const SuppressedSubmenu = Menu;
 
 export const LayerToggleDropdown = ({
   layerHandlers,
@@ -22,8 +22,17 @@ export const LayerToggleDropdown = ({
   label: string;
 }): ReactElement => {
   return (
-    <SuppressedSubmenu content={<ModelLayersList modelHandlers={layerHandlers} update={update} />}>
-      <WholeLayerVisibilityToggle modelHandlers={layerHandlers} update={update} label={label} />
+    <SuppressedSubmenu
+      label={label}
+      renderTrigger={(props: any) => (
+        <WholeLayerVisibilityToggle
+          {...props}
+          modelHandlers={layerHandlers}
+          update={update}
+          label={label}
+        />
+      )}>
+      <ModelLayersList modelHandlers={layerHandlers} update={update} />
     </SuppressedSubmenu>
   );
 };

@@ -4,7 +4,7 @@
 
 import { type Dispatch, type SetStateAction, type ReactElement } from 'react';
 import { Button, Tooltip as CogsTooltip, LayersIcon } from '@cognite/cogs.js';
-import { Dropdown } from '@cognite/cogs-lab';
+import { Dropdown, Menu } from '@cognite/cogs-lab';
 import { LayersContainer } from '../RevealToolbar/LayersContainer/LayersContainer';
 
 import { useTranslation } from '../i18n/I18n';
@@ -34,15 +34,17 @@ export const LayersButton = ({
   );
 
   return (
-    <CogsTooltip
-      content={t('LAYERS_FILTER_TOOLTIP', 'Filter 3D resource layers')}
+    <Menu
       placement="right"
-      appendTo={document.body}>
-      <Dropdown
-        content={<LayersContainer modelHandlers={modelLayerHandlers} update={update} />}
-        placement="right-start">
-        <Button type="ghost" icon=<LayersIcon /> aria-label="3D Resource layers" />
-      </Dropdown>
-    </CogsTooltip>
+      renderTrigger={(props: any) => (
+        <CogsTooltip
+          content={t('LAYERS_FILTER_TOOLTIP', 'Filter 3D resource layers')}
+          placement="right"
+          appendTo={document.body}>
+          <Button {...props} type="ghost" icon=<LayersIcon /> aria-label="3D Resource layers" />
+        </CogsTooltip>
+      )}>
+      <LayersContainer modelHandlers={modelLayerHandlers} update={update} />
+    </Menu>
   );
 };

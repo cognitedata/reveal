@@ -26,7 +26,7 @@ export const SettingsButton = ({
   return (
     <Menu
       placement="right"
-      renderTrigger={(props) => (
+      renderTrigger={(props: any) => (
         <CogsTooltip
           content={t('SETTINGS_TOOLTIP', 'Settings')}
           placement="right"

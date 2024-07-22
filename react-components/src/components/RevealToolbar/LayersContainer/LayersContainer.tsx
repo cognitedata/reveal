@@ -2,7 +2,7 @@
  * Copyright 2023 Cognite AS
  */
 
-import { Menu } from '@cognite/cogs.js';
+import { Menu } from '@cognite/cogs-lab';
 import styled from 'styled-components';
 import { LayerToggleDropdown } from './LayerToggleDropdown';
 import { type ReactElement, type MouseEvent } from 'react';
@@ -25,28 +25,21 @@ export const LayersContainer = ({
     <>
       {(viewer.models.length > 0 || viewer.get360ImageCollections().length > 0) && (
         <>
-          <Container>
-            <StyledMenu
-              onClick={(event: MouseEvent<HTMLElement>) => {
-                event.stopPropagation();
-              }}>
-              <LayerToggleDropdown
-                layerHandlers={modelHandlers.cadHandlers}
-                update={update}
-                label={t('CAD_MODELS', 'CAD models')}
-              />
-              <LayerToggleDropdown
-                layerHandlers={modelHandlers.pointCloudHandlers}
-                update={update}
-                label={t('POINT_CLOUDS', 'Pointclouds')}
-              />
-              <LayerToggleDropdown
-                layerHandlers={modelHandlers.image360Handlers}
-                update={update}
-                label={t('360_IMAGES', '360 images')}
-              />
-            </StyledMenu>
-          </Container>
+          <LayerToggleDropdown
+            layerHandlers={modelHandlers.cadHandlers}
+            update={update}
+            label={t('CAD_MODELS', 'CAD models')}
+          />
+          <LayerToggleDropdown
+            layerHandlers={modelHandlers.pointCloudHandlers}
+            update={update}
+            label={t('POINT_CLOUDS', 'Pointclouds')}
+          />
+          <LayerToggleDropdown
+            layerHandlers={modelHandlers.image360Handlers}
+            update={update}
+            label={t('360_IMAGES', '360 images')}
+          />
         </>
       )}
     </>
@@ -57,7 +50,8 @@ const Container = styled.div`
   position: relative;
 `;
 
-const StyledMenu = styled(Menu)`
+const StyledContainer = styled.div`
+  position: relative;
   padding: 6px;
   width: 214px;
   border: 1px solid rgba(83, 88, 127, 0.24);

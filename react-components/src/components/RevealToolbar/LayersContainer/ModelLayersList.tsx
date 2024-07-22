@@ -1,7 +1,8 @@
 /*!
  * Copyright 2024 Cognite AS
  */
-import { Divider, Menu } from '@cognite/cogs.js';
+import { Divider } from '@cognite/cogs.js';
+import { Menu } from '@cognite/cogs-lab';
 import { type ModelHandler } from './ModelHandler';
 import { type ReactElement, type ChangeEvent } from 'react';
 import { WholeLayerVisibilityToggle } from './WholeLayerVisibilityToggle';
@@ -25,21 +26,21 @@ export const ModelLayersList = ({
     return <></>;
   }
   return (
-    <SuppressedMenu>
+    <>
       {label !== undefined && (
         <>
-          <Menu.Item>
+          <Menu.ItemToggled>
             <WholeLayerVisibilityToggle
               modelHandlers={modelHandlers}
               label={label}
               update={update}
             />
-          </Menu.Item>
+          </Menu.ItemToggled>
           <Divider />
         </>
       )}
       <ModelContent modelHandlers={modelHandlers} update={update} />
-    </SuppressedMenu>
+    </>
   );
 };
 
@@ -71,10 +72,17 @@ const ModelItem = ({
   viewer: Cognite3DViewer;
 }): ReactElement => {
   return (
-    <Menu.Item
+    <Menu.ItemToggled
       key={modelHandler.key()}
       hideTooltip={true}
-      hasCheckbox
+      toggled={modelHandler.visible()}
+      label={modelHandler.name}
+      onClick={(e: ChangeEvent) => {
+        console.log('Toggled');
+        e.stopPropagation();
+        modelHandler.setVisibility(!modelHandler.visible());
+        update(viewer.models, viewer.get360ImageCollections());
+      }}
       checkboxProps={{
         checked: modelHandler.visible(),
         onChange: (e: ChangeEvent) => {
@@ -82,8 +90,6 @@ const ModelItem = ({
           modelHandler.setVisibility(!modelHandler.visible());
           update(viewer.models, viewer.get360ImageCollections());
         }
-      }}>
-      {modelHandler.name}
-    </Menu.Item>
+      }}></Menu.ItemToggled>
   );
 };
