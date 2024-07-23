@@ -64,9 +64,9 @@ export class ViewStateHelper {
           z: cameraPosition.z
         },
         target: {
-          x: cameraPosition.x,
-          y: cameraPosition.y,
-          z: cameraPosition.z
+          x: cameraTarget.x,
+          y: cameraTarget.y,
+          z: cameraTarget.z
         }
       },
       models: modelStates,
