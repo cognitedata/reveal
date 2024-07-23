@@ -3,20 +3,26 @@
  */
 import React, { useContext, createContext, useMemo } from 'react';
 import { type CogniteClient } from '@cognite/sdk';
+import { FdmSdkContext } from './FdmDataProviderContext';
 import { FdmSDK } from '../../data-providers/FdmSDK';
+import { LegacyFdm3dDataProvider } from '../../data-providers/legacy-fdm-provider/LegacyFdm3dDataProvider';
+import { Fdm3dDataProvider } from '../../data-providers/Fdm3dDataProvider';
 
 const SdkContext = createContext<CogniteClient | null>(null);
-const FdmSdkContext = createContext<FdmSDK | null>(null);
+
 SdkContext.displayName = 'CogniteSdkProvider';
 FdmSdkContext.displayName = 'FdmSdkProvider';
 
 type Props = { sdk: CogniteClient; children: any };
+
 export function SDKProvider({ sdk, children }: Props): React.ReactElement {
   const fdmSdk = useMemo(() => new FdmSDK(sdk), [sdk]);
+  const fdm3dDataProvider = new LegacyFdm3dDataProvider(fdmSdk);
+  const content = useMemo(() => ({ fdmSdk, fdm3dDataProvider }), [fdmSdk, fdm3dDataProvider]);
 
   return (
     <SdkContext.Provider value={sdk}>
-      <FdmSdkContext.Provider value={fdmSdk}>{children}</FdmSdkContext.Provider>
+      <FdmSdkContext.Provider value={content}>{children}</FdmSdkContext.Provider>
     </SdkContext.Provider>
   );
 }
@@ -37,11 +43,22 @@ export const useSDK = (userSdk?: CogniteClient): CogniteClient => {
 };
 
 export const useFdmSdk = (): FdmSDK => {
-  const fdmSdk = useContext(FdmSdkContext);
-  if (fdmSdk === null) {
+  const fdmProvider = useContext(FdmSdkContext);
+  if (fdmProvider === null) {
     throw new Error(
       `FdmSdkContext not found, add '<SDKProvider value={sdk}>' around your component/app`
     );
   }
-  return fdmSdk;
+  return fdmProvider.fdmSdk;
+};
+
+export const useFdm3dDataProvider = (): Fdm3dDataProvider => {
+  const fdmProvider = useContext(FdmSdkContext);
+  if (fdmProvider === null) {
+    throw new Error(
+      `FdmSdkContext not found, add '<SDKProvider value={sdk}>' around your component/app`
+    );
+  }
+
+  return fdmProvider.fdm3dDataProvider;
 };

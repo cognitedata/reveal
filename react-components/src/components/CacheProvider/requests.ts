@@ -17,7 +17,7 @@ import {
   SYSTEM_SPACE_3D_SCHEMA,
   SYSTEM_SPACE_3D_MODEL_ID,
   SYSTEM_SPACE_3D_MODEL_VERSION
-} from '../../utilities/globalDataModels';
+} from '../../data-providers/legacy-fdm-provider/dataModels';
 import { chunk } from 'lodash';
 
 export async function fetchAncestorNodesForTreeIndex(
@@ -35,87 +35,6 @@ export async function fetchAncestorNodesForTreeIndex(
   );
 
   return ancestorNodes.items;
-}
-
-export async function getDMSModels(
-  modelId: number,
-  fdmClient: FdmSDK
-): Promise<DmsUniqueIdentifier[]> {
-  const filter = {
-    equals: {
-      property: ['node', 'externalId'],
-      value: `${modelId}`
-    }
-  };
-  const sources: Source = {
-    type: 'view',
-    space: SYSTEM_SPACE_3D_SCHEMA,
-    externalId: SYSTEM_SPACE_3D_MODEL_ID,
-    version: SYSTEM_SPACE_3D_MODEL_VERSION
-  };
-
-  const modelResults = await fdmClient.filterInstances(filter, 'node', sources);
-  return modelResults.instances;
-}
-
-export async function getMappingEdgesForNodeIds(
-  models: DmsUniqueIdentifier[],
-  revisionId: number,
-  fdmClient: FdmSDK,
-  ancestorIds: CogniteInternalId[]
-): Promise<FdmCadConnection[]> {
-  const filter = {
-    and: [
-      {
-        in: {
-          property: ['edge', 'endNode'],
-          values: models.map((model) => ({
-            externalId: model.externalId,
-            space: model.space
-          }))
-        }
-      },
-      {
-        equals: {
-          property: [
-            SYSTEM_3D_EDGE_SOURCE.space,
-            `${SYSTEM_3D_EDGE_SOURCE.externalId}/${SYSTEM_3D_EDGE_SOURCE.version}`,
-            'revisionId'
-          ],
-          value: revisionId
-        }
-      },
-      {
-        in: {
-          property: [
-            SYSTEM_3D_EDGE_SOURCE.space,
-            `${SYSTEM_3D_EDGE_SOURCE.externalId}/${SYSTEM_3D_EDGE_SOURCE.version}`,
-            'revisionNodeId'
-          ],
-          values: ancestorIds
-        }
-      }
-    ]
-  };
-
-  const results = await fdmClient.filterAllInstances<InModel3dEdgeProperties>(
-    filter,
-    'edge',
-    SYSTEM_3D_EDGE_SOURCE
-  );
-
-  return fdmEdgesToCadConnections(results.instances);
-}
-
-export function fdmEdgesToCadConnections(
-  edges: Array<EdgeItem<InModel3dEdgeProperties>>
-): FdmCadConnection[] {
-  return edges.map((instance) => ({
-    nodeId: instance.properties.revisionNodeId,
-    revisionId: instance.properties.revisionId,
-    modelId: Number(instance.endNode.externalId),
-    instance: instance.startNode
-  }));
 }
 
 export async function inspectNodes(

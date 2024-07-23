@@ -27,7 +27,7 @@ import {
   type InModel3dEdgeProperties,
   SYSTEM_3D_EDGE_SOURCE,
   SYSTEM_SPACE_3D_SCHEMA
-} from '../../utilities/globalDataModels';
+} from '../../data-providers/legacy-fdm-provider/dataModels';
 
 import { partition } from 'lodash';
 

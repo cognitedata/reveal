@@ -13,20 +13,17 @@ import {
   type AncestorQueryResult
 } from './types';
 
-import {
-  fetchAncestorNodesForTreeIndex,
-  getDMSModels,
-  getMappingEdgesForNodeIds,
-  inspectNodes
-} from './requests';
+import { fetchAncestorNodesForTreeIndex, inspectNodes } from './requests';
 
 import { max } from 'lodash';
 
 import assert from 'assert';
+import { Fdm3dDataProvider } from '../../data-providers/Fdm3dDataProvider';
 
 export class RevisionFdmNodeCache {
   private readonly _cogniteClient: CogniteClient;
   private readonly _fdmClient: FdmSDK;
+  private readonly _fdmDataProvider: Fdm3dDataProvider;
 
   private readonly _modelId: number;
   private readonly _revisionId: number;
@@ -38,15 +35,17 @@ export class RevisionFdmNodeCache {
   constructor(
     cogniteClient: CogniteClient,
     fdmClient: FdmSDK,
+    fdmDataProvider: Fdm3dDataProvider,
     modelId: number,
     revisionId: number
   ) {
     this._cogniteClient = cogniteClient;
     this._fdmClient = fdmClient;
+    this._fdmDataProvider = fdmDataProvider;
 
     this._modelId = modelId;
     this._revisionId = revisionId;
-    this._modelInstances = getDMSModels(this._modelId, this._fdmClient).catch(() => undefined);
+    this._modelInstances = fdmDataProvider.getDMSModels(this._modelId).catch(() => undefined);
   }
 
   public getClosestParentFdmData(searchTreeIndex: number): FdmNodeDataPromises {
@@ -270,7 +269,7 @@ export class RevisionFdmNodeCache {
       return [];
     }
 
-    const ancestorMappings = await getMappingEdgesForNodeIds(
+    const ancestorMappings = await getFdmConnectionsForNodeIds(
       modelInstances,
       this._revisionId,
       this._fdmClient,

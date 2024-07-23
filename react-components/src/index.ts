@@ -58,7 +58,7 @@ export { use3dNodeByExternalId } from './query/use3dNodeByExternalId';
 export {
   useAllMappedEquipmentFDM,
   useSearchMappedEquipmentFDM,
-  type SearchResultsWithView
+  type InstancesWithView
 } from './query/useSearchMappedEquipmentFDM';
 export {
   useSearchMappedEquipmentAssetMappings,

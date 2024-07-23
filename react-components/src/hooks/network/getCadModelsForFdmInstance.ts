@@ -6,7 +6,7 @@ import { type DmsUniqueIdentifier, type EdgeItem, type FdmSDK } from '../../data
 import {
   type InModel3dEdgeProperties,
   SYSTEM_3D_EDGE_SOURCE
-} from '../../utilities/globalDataModels';
+} from '../../data-providers/legacy-fdm-provider/dataModels';
 import { isDefined } from '../../utilities/isDefined';
 
 type ModelForInstancesResponse = {

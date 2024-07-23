@@ -1,7 +1,7 @@
 /*!
  * Copyright 2023 Cognite AS
  */
-import { type DmsUniqueIdentifier, type Source } from '../data-providers/FdmSDK';
+import { type DmsUniqueIdentifier, type Source } from '../FdmSDK';
 
 export const SYSTEM_SPACE_3D_SCHEMA = 'cdf_3d_schema'; // Data model, views, containers and types for edges
 
