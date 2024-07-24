@@ -1,6 +1,9 @@
-import { FdmCadConnection } from '../../components/CacheProvider/types';
-import { EdgeItem } from '../FdmSDK';
-import { InModel3dEdgeProperties } from './dataModels';
+/*!
+ * Copyright 2024 Cognite AS
+ */
+import { type FdmCadConnection } from '../../components/CacheProvider/types';
+import { type EdgeItem } from '../FdmSDK';
+import { type InModel3dEdgeProperties } from './dataModels';
 
 export function fdmEdgesToCadConnections(
   edges: Array<EdgeItem<InModel3dEdgeProperties>>

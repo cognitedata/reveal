@@ -35,7 +35,7 @@ export const useModelsForInstanceQuery = (
       }
 
       if (isDmsInstance(instance)) {
-        return fdm3dDataProvider.getCadModelsForInstance(instance);
+        return await fdm3dDataProvider.getCadModelsForInstance(instance);
       }
     },
     enabled: instance !== undefined

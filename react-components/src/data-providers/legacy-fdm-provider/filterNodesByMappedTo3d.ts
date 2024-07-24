@@ -1,17 +1,20 @@
-import { AddModelOptions } from '@cognite/reveal';
-import { InstancesWithView } from '../../query/useSearchMappedEquipmentFDM';
+/*!
+ * Copyright 2024 Cognite AS
+ */
+import { type AddModelOptions } from '@cognite/reveal';
+import { type InstancesWithView } from '../../query/useSearchMappedEquipmentFDM';
 import {
-  DmsUniqueIdentifier,
-  EdgeItem,
-  ExternalId,
-  FdmSDK,
-  NodeItem,
-  Query,
-  Source
+  type DmsUniqueIdentifier,
+  type EdgeItem,
+  type ExternalId,
+  type FdmSDK,
+  type NodeItem,
+  type Query,
+  type Source
 } from '../FdmSDK';
 import { SYSTEM_3D_EDGE_SOURCE, SYSTEM_SPACE_3D_SCHEMA } from './dataModels';
 import { getDMSModels } from './getDMSModels';
-import { FdmKey } from '../../components/CacheProvider/types';
+import { type FdmKey } from '../../components/CacheProvider/types';
 
 export async function filterNodesByMappedTo3d(
   fdmSdk: FdmSDK,

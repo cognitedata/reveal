@@ -1,5 +1,14 @@
-import { AddModelOptions } from '@cognite/reveal';
-import { FdmSDK, InstanceFilter, NodeItem, Query, Source } from '../FdmSDK';
+/*!
+ * Copyright 2024 Cognite AS
+ */
+import { type AddModelOptions } from '@cognite/reveal';
+import {
+  type FdmSDK,
+  type InstanceFilter,
+  type NodeItem,
+  type Query,
+  type Source
+} from '../FdmSDK';
 import { createMappedEquipmentQuery } from './createMappedEquipmentQuery';
 import { chunk, isEqual } from 'lodash';
 import { removeEmptyProperties } from '../../utilities/removeEmptyProperties';

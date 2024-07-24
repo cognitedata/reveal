@@ -6,7 +6,7 @@ import { type CogniteClient } from '@cognite/sdk';
 import { FdmSdkContext } from './FdmDataProviderContext';
 import { FdmSDK } from '../../data-providers/FdmSDK';
 import { LegacyFdm3dDataProvider } from '../../data-providers/legacy-fdm-provider/LegacyFdm3dDataProvider';
-import { Fdm3dDataProvider } from '../../data-providers/Fdm3dDataProvider';
+import { type Fdm3dDataProvider } from '../../data-providers/Fdm3dDataProvider';
 
 const SdkContext = createContext<CogniteClient | null>(null);
 

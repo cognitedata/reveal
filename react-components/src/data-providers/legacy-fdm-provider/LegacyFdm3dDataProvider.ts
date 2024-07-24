@@ -1,9 +1,19 @@
-import { AddModelOptions } from '@cognite/reveal';
-import { FdmCadConnection } from '../../components/CacheProvider/types';
-import { Fdm3dDataProvider } from '../Fdm3dDataProvider';
-import { DmsUniqueIdentifier, FdmSDK, InstanceFilter, NodeItem, Source, ViewItem } from '../FdmSDK';
-import { InstancesWithView } from '../../query/useSearchMappedEquipmentFDM';
-import { TaggedAddResourceOptions } from '../../components/Reveal3DResources/types';
+/*!
+ * Copyright 2024 Cognite AS
+ */
+import { type AddModelOptions } from '@cognite/reveal';
+import { type FdmCadConnection } from '../../components/CacheProvider/types';
+import { type Fdm3dDataProvider } from '../Fdm3dDataProvider';
+import {
+  type DmsUniqueIdentifier,
+  type FdmSDK,
+  type InstanceFilter,
+  type NodeItem,
+  type Source,
+  type ViewItem
+} from '../FdmSDK';
+import { type InstancesWithView } from '../../query/useSearchMappedEquipmentFDM';
+import { type TaggedAddResourceOptions } from '../../components/Reveal3DResources/types';
 import { getEdgeConnected3dInstances } from './getEdgeConnected3dInstances';
 import { getFdmConnectionsForNodeIds } from './getFdmConnectionsForNodeIds';
 import { getDMSModels } from './getDMSModels';
@@ -23,48 +33,53 @@ export class LegacyFdm3dDataProvider implements Fdm3dDataProvider {
     return Object.keys(view.properties).some((propName) => propName === 'inModel3d');
   }
 
-  getDMSModels(modelId: number): Promise<DmsUniqueIdentifier[]> {
-    return getDMSModels(this._fdmSdk, modelId);
+  async getDMSModels(modelId: number): Promise<DmsUniqueIdentifier[]> {
+    return await getDMSModels(this._fdmSdk, modelId);
   }
 
-  getEdgeConnected3dInstances(instance: DmsUniqueIdentifier): Promise<DmsUniqueIdentifier[]> {
-    return getEdgeConnected3dInstances(this._fdmSdk, instance);
+  async getEdgeConnected3dInstances(instance: DmsUniqueIdentifier): Promise<DmsUniqueIdentifier[]> {
+    return await getEdgeConnected3dInstances(this._fdmSdk, instance);
   }
 
-  getFdmConnectionsForNodeIds(
+  async getFdmConnectionsForNodeIds(
     models: DmsUniqueIdentifier[],
     revisionId: number,
     nodeIds: number[]
   ): Promise<FdmCadConnection[]> {
-    return getFdmConnectionsForNodeIds(this._fdmSdk, models, revisionId, nodeIds);
+    return await getFdmConnectionsForNodeIds(this._fdmSdk, models, revisionId, nodeIds);
   }
 
-  listMappedFdmNodes(
+  async listMappedFdmNodes(
     models: AddModelOptions[],
     sourcesToSearch: Source[],
     instanceFilter: InstanceFilter | undefined,
     limit: number
   ): Promise<NodeItem[]> {
-    return listMappedFdmNodes(this._fdmSdk, models, sourcesToSearch, instanceFilter, limit);
+    return await listMappedFdmNodes(this._fdmSdk, models, sourcesToSearch, instanceFilter, limit);
   } // useSearchMappedEquipmentFdm
 
-  listAllMappedFdmNodes(models: AddModelOptions[], sourcesToSearch: Source[]): Promise<NodeItem[]> {
-    return listAllMappedFdmNodes(this._fdmSdk, models, sourcesToSearch);
+  async listAllMappedFdmNodes(
+    models: AddModelOptions[],
+    sourcesToSearch: Source[]
+  ): Promise<NodeItem[]> {
+    return await listAllMappedFdmNodes(this._fdmSdk, models, sourcesToSearch);
   }
 
-  filterNodesByMappedTo3d(
+  async filterNodesByMappedTo3d(
     nodes: InstancesWithView[],
     models: AddModelOptions[],
     spacesToSearch: string[]
   ): Promise<InstancesWithView[]> {
-    return filterNodesByMappedTo3d(this._fdmSdk, nodes, models, spacesToSearch);
+    return await filterNodesByMappedTo3d(this._fdmSdk, nodes, models, spacesToSearch);
   }
 
-  getCadModelsForInstance(instance: DmsUniqueIdentifier): Promise<TaggedAddResourceOptions[]> {
-    return getCadModelsForFdmInstance(this._fdmSdk, instance);
+  async getCadModelsForInstance(
+    instance: DmsUniqueIdentifier
+  ): Promise<TaggedAddResourceOptions[]> {
+    return await getCadModelsForFdmInstance(this._fdmSdk, instance);
   }
 
-  getCadConnectionsForRevisions(revisions: number[]): Promise<FdmCadConnection[]> {
-    return getConnectionsForRevision(revisions, this._fdmSdk);
+  async getCadConnectionsForRevisions(revisions: number[]): Promise<FdmCadConnection[]> {
+    return await getConnectionsForRevision(revisions, this._fdmSdk);
   } // FdmNodeCache.ts / getEdgesForRevisions
 }

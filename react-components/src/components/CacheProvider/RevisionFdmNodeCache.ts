@@ -18,7 +18,7 @@ import { fetchAncestorNodesForTreeIndex, inspectNodes } from './requests';
 import { max } from 'lodash';
 
 import assert from 'assert';
-import { Fdm3dDataProvider } from '../../data-providers/Fdm3dDataProvider';
+import { type Fdm3dDataProvider } from '../../data-providers/Fdm3dDataProvider';
 
 export class RevisionFdmNodeCache {
   private readonly _cogniteClient: CogniteClient;

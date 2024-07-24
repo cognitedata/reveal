@@ -1,7 +1,10 @@
-import { CogniteInternalId } from '@cognite/sdk/dist/src';
-import { DmsUniqueIdentifier, FdmSDK } from '../FdmSDK';
-import { FdmCadConnection } from '../../components/CacheProvider/types';
-import { InModel3dEdgeProperties, SYSTEM_3D_EDGE_SOURCE } from './dataModels';
+/*!
+ * Copyright 2024 Cognite AS
+ */
+import { type CogniteInternalId } from '@cognite/sdk/dist/src';
+import { type DmsUniqueIdentifier, type FdmSDK } from '../FdmSDK';
+import { type FdmCadConnection } from '../../components/CacheProvider/types';
+import { type InModel3dEdgeProperties, SYSTEM_3D_EDGE_SOURCE } from './dataModels';
 import { fdmEdgesToCadConnections } from './fdmEdgesToCadConnections';
 
 export async function getFdmConnectionsForNodeIds(

@@ -1,21 +1,19 @@
 /*!
  * Copyright 2023 Cognite AS
  */
-import { type CogniteClient } from '@cognite/sdk';
 import { useMemo } from 'react';
 import {
   type NodeItem,
-  FdmSDK,
+  type FdmSDK,
   type Source,
-  type Query,
   type DmsUniqueIdentifier,
   type InstanceFilter
 } from '../data-providers/FdmSDK';
-import { useFdm3dDataProvider, useFdmSdk, useSDK } from '../components/RevealCanvas/SDKProvider';
+import { useFdm3dDataProvider, useFdmSdk } from '../components/RevealCanvas/SDKProvider';
 import { type UseQueryResult, useQuery } from '@tanstack/react-query';
 import { type AddModelOptions } from '@cognite/reveal';
 import { isEqual, uniq, chunk } from 'lodash';
-import { Fdm3dDataProvider } from '../data-providers/Fdm3dDataProvider';
+import { type Fdm3dDataProvider } from '../data-providers/Fdm3dDataProvider';
 import { removeEmptyProperties } from '../utilities/removeEmptyProperties';
 
 export type InstancesWithView = { view: Source; instances: NodeItem[] };
@@ -113,7 +111,7 @@ const searchNodesWithViewsAndModels = async (
     });
   }
 
-  return fdmDataProvider.filterNodesByMappedTo3d(searchResults, models, spacesToSearch);
+  return await fdmDataProvider.filterNodesByMappedTo3d(searchResults, models, spacesToSearch);
 };
 
 export const useAllMappedEquipmentFDM = (
@@ -128,7 +126,7 @@ export const useAllMappedEquipmentFDM = (
     queryFn: async () => {
       const viewSources = await createSourcesFromViews(viewsToSearch, fdmSdk);
 
-      return fdmDataProvider.listAllMappedFdmNodes(models, viewSources, undefined);
+      return await fdmDataProvider.listAllMappedFdmNodes(models, viewSources, undefined);
     },
     staleTime: Infinity
   });

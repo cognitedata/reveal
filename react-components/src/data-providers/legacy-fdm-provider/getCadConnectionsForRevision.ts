@@ -1,7 +1,10 @@
-import { FdmCadConnection } from '../../components/CacheProvider/types';
-import { FdmSDK } from '../FdmSDK';
+/*!
+ * Copyright 2024 Cognite AS
+ */
+import { type FdmCadConnection } from '../../components/CacheProvider/types';
+import { type FdmSDK } from '../FdmSDK';
 import {
-  InModel3dEdgeProperties,
+  type InModel3dEdgeProperties,
   SYSTEM_3D_EDGE_SOURCE,
   SYSTEM_SPACE_3D_SCHEMA
 } from './dataModels';

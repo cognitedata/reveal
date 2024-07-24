@@ -1,5 +1,8 @@
-import { FdmSDK } from '../../data-providers/FdmSDK';
-import { Fdm3dDataProvider } from '../../data-providers/Fdm3dDataProvider';
+/*!
+ * Copyright 2024 Cognite AS
+ */
+import { type FdmSDK } from '../../data-providers/FdmSDK';
+import { type Fdm3dDataProvider } from '../../data-providers/Fdm3dDataProvider';
 import { createContext } from 'react';
 
 /**

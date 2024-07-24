@@ -1,4 +1,7 @@
-import { NodeItem } from '../data-providers/FdmSDK';
+/*!
+ * Copyright 2024 Cognite AS
+ */
+import { type NodeItem } from '../data-providers/FdmSDK';
 
 export function removeEmptyProperties(queryResultNode: NodeItem): NodeItem {
   Object.keys(queryResultNode.properties).forEach((space) => {

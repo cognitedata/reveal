@@ -1,5 +1,8 @@
-import { AddModelOptions } from '@cognite/reveal';
-import { InstanceFilter, Query, Source } from '../FdmSDK';
+/*!
+ * Copyright 2024 Cognite AS
+ */
+import { type AddModelOptions } from '@cognite/reveal';
+import { type InstanceFilter, type Query, type Source } from '../FdmSDK';
 import { SYSTEM_3D_EDGE_SOURCE } from './dataModels';
 
 export function createMappedEquipmentQuery(

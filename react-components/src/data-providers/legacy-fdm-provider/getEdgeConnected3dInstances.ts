@@ -1,5 +1,8 @@
+/*!
+ * Copyright 2024 Cognite AS
+ */
 import { SYSTEM_3D_EDGE_SOURCE } from './dataModels';
-import { DmsUniqueIdentifier, FdmSDK } from '../FdmSDK';
+import { type DmsUniqueIdentifier, type FdmSDK } from '../FdmSDK';
 
 export async function getEdgeConnected3dInstances(
   fdmSdk: FdmSDK,

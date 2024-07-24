@@ -17,25 +17,20 @@ import {
   type FdmKey,
   type FdmNodeDataPromises
 } from './types';
+
 import {
   createFdmKey,
   createModelNodeIdKey,
   createModelRevisionKey,
   revisionKeyToIds
 } from './idAndKeyTranslation';
-import {
-  type InModel3dEdgeProperties,
-  SYSTEM_3D_EDGE_SOURCE,
-  SYSTEM_SPACE_3D_SCHEMA
-} from '../../data-providers/legacy-fdm-provider/dataModels';
 
 import { partition } from 'lodash';
 
 import assert from 'assert';
 import { fetchNodesForNodeIds, inspectNodes } from './requests';
 import { type ThreeDModelFdmMappings } from '../../hooks/types';
-import { fdmEdgesToCadConnections } from '../../data-providers/legacy-fdm-provider/fdmEdgesToCadConnections';
-import { Fdm3dDataProvider } from '../../data-providers/Fdm3dDataProvider';
+import { type Fdm3dDataProvider } from '../../data-providers/Fdm3dDataProvider';
 
 export class FdmNodeCache {
   private readonly _revisionNodeCaches = new Map<ModelRevisionKey, RevisionFdmNodeCache>();
