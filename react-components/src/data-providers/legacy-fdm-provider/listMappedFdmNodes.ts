@@ -2,6 +2,7 @@ import { AddModelOptions } from '@cognite/reveal';
 import { FdmSDK, InstanceFilter, NodeItem, Query, Source } from '../FdmSDK';
 import { createMappedEquipmentQuery } from './createMappedEquipmentQuery';
 import { chunk, isEqual } from 'lodash';
+import { removeEmptyProperties } from '../../utilities/removeEmptyProperties';
 
 export async function listMappedFdmNodes(
   fdmSdk: FdmSDK,
@@ -63,23 +64,4 @@ function createChunkedMappedEquipmentQueries(
   return viewChunks.map((viewChunk) =>
     createMappedEquipmentQuery(models, viewChunk, undefined, limit, cursors)
   );
-}
-
-function removeEmptyProperties(queryResultNode: NodeItem): NodeItem {
-  Object.keys(queryResultNode.properties).forEach((space) => {
-    const currentSpaceProperties = queryResultNode.properties[space];
-    const newProperties: Record<string, Record<string, unknown>> = {};
-
-    Object.keys(currentSpaceProperties).forEach((view) => {
-      const currentViewProperties = currentSpaceProperties[view];
-
-      if (Object.keys(currentViewProperties).length !== 0) {
-        newProperties[view] = currentViewProperties;
-      }
-    });
-
-    queryResultNode.properties[space] = newProperties;
-  });
-
-  return queryResultNode;
 }

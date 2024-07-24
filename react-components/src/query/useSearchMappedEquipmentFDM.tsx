@@ -16,6 +16,7 @@ import { type UseQueryResult, useQuery } from '@tanstack/react-query';
 import { type AddModelOptions } from '@cognite/reveal';
 import { isEqual, uniq, chunk } from 'lodash';
 import { Fdm3dDataProvider } from '../data-providers/Fdm3dDataProvider';
+import { removeEmptyProperties } from '../utilities/removeEmptyProperties';
 
 export type InstancesWithView = { view: Source; instances: NodeItem[] };
 

@@ -5,7 +5,7 @@
 import { type ReactElement, type ReactNode, createContext, useContext, useMemo } from 'react';
 import { FdmNodeCache } from './FdmNodeCache';
 import { type UseQueryResult, useQuery } from '@tanstack/react-query';
-import { useFdmSdk, useSDK } from '../RevealCanvas/SDKProvider';
+import { useFdm3dDataProvider, useFdmSdk, useSDK } from '../RevealCanvas/SDKProvider';
 import { type FdmNodeDataPromises, type ModelRevisionToEdgeMap } from './types';
 
 import assert from 'assert';
@@ -103,12 +103,14 @@ export const useFdmAssetMappings = (
 
 export function NodeCacheProvider({ children }: { children?: ReactNode }): ReactElement {
   const fdmClient = useFdmSdk();
+  const fdm3dDataProvider = useFdm3dDataProvider();
   const cdfClient = useSDK();
   const revealKeepAliveData = useRevealKeepAlive();
 
   const fdmCache = useMemo(() => {
     const cache =
-      revealKeepAliveData?.fdmNodeCache.current ?? new FdmNodeCache(cdfClient, fdmClient);
+      revealKeepAliveData?.fdmNodeCache.current ??
+      new FdmNodeCache(cdfClient, fdmClient, fdm3dDataProvider);
 
     const isRevealKeepAliveContextProvided = revealKeepAliveData !== undefined;
     if (isRevealKeepAliveContextProvided) {

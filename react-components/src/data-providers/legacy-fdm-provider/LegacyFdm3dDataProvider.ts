@@ -60,6 +60,9 @@ export class LegacyFdm3dDataProvider implements Fdm3dDataProvider {
 
   getModelsForInstance(instance: DmsUniqueIdentifier): Promise<TaggedAddResourceOptions[]> {
     // useModelsForInstanceQuery (only support CAD for now?)
+    return Promise.resolve([]);
   }
-  getCadConnectionsForRevisions(revisions: number[]): Promise<FdmCadConnection[]>; // FdmNodeCache.ts / getEdgesForRevisions
+  getCadConnectionsForRevisions(revisions: number[]): Promise<FdmCadConnection[]> {
+    return Promise.resolve([]);
+  } // FdmNodeCache.ts / getEdgesForRevisions
 }

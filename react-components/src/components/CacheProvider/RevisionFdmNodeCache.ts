@@ -23,7 +23,7 @@ import { Fdm3dDataProvider } from '../../data-providers/Fdm3dDataProvider';
 export class RevisionFdmNodeCache {
   private readonly _cogniteClient: CogniteClient;
   private readonly _fdmClient: FdmSDK;
-  private readonly _fdmDataProvider: Fdm3dDataProvider;
+  private readonly _fdm3dDataProvider: Fdm3dDataProvider;
 
   private readonly _modelId: number;
   private readonly _revisionId: number;
@@ -41,7 +41,7 @@ export class RevisionFdmNodeCache {
   ) {
     this._cogniteClient = cogniteClient;
     this._fdmClient = fdmClient;
-    this._fdmDataProvider = fdmDataProvider;
+    this._fdm3dDataProvider = fdmDataProvider;
 
     this._modelId = modelId;
     this._revisionId = revisionId;
@@ -269,10 +269,9 @@ export class RevisionFdmNodeCache {
       return [];
     }
 
-    const ancestorMappings = await getFdmConnectionsForNodeIds(
+    const ancestorMappings = await this._fdm3dDataProvider.getFdmConnectionsForNodeIds(
       modelInstances,
       this._revisionId,
-      this._fdmClient,
       ancestors.map((a) => a.id)
     );
 

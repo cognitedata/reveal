@@ -32,20 +32,28 @@ import {
 import { partition } from 'lodash';
 
 import assert from 'assert';
-import { fdmEdgesToCadConnections, fetchNodesForNodeIds, inspectNodes } from './requests';
+import { fetchNodesForNodeIds, inspectNodes } from './requests';
 import { type ThreeDModelFdmMappings } from '../../hooks/types';
+import { fdmEdgesToCadConnections } from '../../data-providers/legacy-fdm-provider/fdmEdgesToCadConnections';
+import { Fdm3dDataProvider } from '../../data-providers/Fdm3dDataProvider';
 
 export class FdmNodeCache {
   private readonly _revisionNodeCaches = new Map<ModelRevisionKey, RevisionFdmNodeCache>();
 
   private readonly _cdfClient: CogniteClient;
   private readonly _fdmClient: FdmSDK;
+  private readonly _fdm3dDataProvider: Fdm3dDataProvider;
 
   private readonly _completeRevisions = new Set<ModelRevisionKey>();
 
-  public constructor(cdfClient: CogniteClient, fdmClient: FdmSDK) {
+  public constructor(
+    cdfClient: CogniteClient,
+    fdmClient: FdmSDK,
+    fdm3dDataProvider: Fdm3dDataProvider
+  ) {
     this._cdfClient = cdfClient;
     this._fdmClient = fdmClient;
+    this._fdm3dDataProvider = fdm3dDataProvider;
   }
 
   public async getMappingsForFdmIds(
@@ -225,7 +233,7 @@ export class FdmNodeCache {
     fetchViews: boolean
   ): Promise<Map<ModelRevisionKey, FdmConnectionWithNode[]>> {
     const revisionIds = modelRevisionIds.map((modelRevisionId) => modelRevisionId.revisionId);
-    const connections = await this.getEdgesForRevisions(revisionIds, this._fdmClient);
+    const connections = await this.getConnectionsForRevision(revisionIds, this._fdmClient);
 
     const connectionsWithOptionalViews = fetchViews
       ? await this.getViewsForConnections(connections)
@@ -268,7 +276,7 @@ export class FdmNodeCache {
     return dataWithViews;
   }
 
-  private async getEdgesForRevisions(
+  private async getConnectionsForRevision(
     revisionIds: number[],
     fdmClient: FdmSDK
   ): Promise<FdmCadConnection[]> {
@@ -301,6 +309,7 @@ export class FdmNodeCache {
     const newRevisionCache = new RevisionFdmNodeCache(
       this._cdfClient,
       this._fdmClient,
+      this._fdm3dDataProvider,
       modelId,
       revisionId
     );
