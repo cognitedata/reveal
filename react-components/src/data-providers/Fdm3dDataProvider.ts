@@ -41,7 +41,7 @@ export type Fdm3dDataProvider = {
     models: AddModelOptions[],
     spacesToSearch: string[]
   ): Promise<InstancesWithView[]>; // useSearchMappedEquipmentFdm
-  getModelsForInstance(instance: DmsUniqueIdentifier): Promise<TaggedAddResourceOptions[]>; // useModelsForInstanceQuery (only support CAD for now?)
+  getCadModelsForInstance(instance: DmsUniqueIdentifier): Promise<TaggedAddResourceOptions[]>; // useModelsForInstanceQuery (only support CAD for now?)
   getCadConnectionsForRevisions(revisions: number[]): Promise<FdmCadConnection[]>; // FdmNodeCache.ts / getEdgesForRevisions
 };
 

@@ -233,7 +233,7 @@ export class FdmNodeCache {
     fetchViews: boolean
   ): Promise<Map<ModelRevisionKey, FdmConnectionWithNode[]>> {
     const revisionIds = modelRevisionIds.map((modelRevisionId) => modelRevisionId.revisionId);
-    const connections = await this.getConnectionsForRevision(revisionIds, this._fdmClient);
+    const connections = await this._fdm3dDataProvider.getCadConnectionsForRevisions(revisionIds);
 
     const connectionsWithOptionalViews = fetchViews
       ? await this.getViewsForConnections(connections)
@@ -274,27 +274,6 @@ export class FdmNodeCache {
     }));
 
     return dataWithViews;
-  }
-
-  private async getConnectionsForRevision(
-    revisionIds: number[],
-    fdmClient: FdmSDK
-  ): Promise<FdmCadConnection[]> {
-    if (revisionIds.length === 0) return [];
-
-    const versionedPropertiesKey = `${SYSTEM_3D_EDGE_SOURCE.externalId}/${SYSTEM_3D_EDGE_SOURCE.version}`;
-    const filter = {
-      in: {
-        property: [SYSTEM_SPACE_3D_SCHEMA, versionedPropertiesKey, 'revisionId'],
-        values: revisionIds
-      }
-    };
-    const mappings = await fdmClient.filterAllInstances<InModel3dEdgeProperties>(
-      filter,
-      'edge',
-      SYSTEM_3D_EDGE_SOURCE
-    );
-    return fdmEdgesToCadConnections(mappings.instances);
   }
 
   private getOrCreateRevisionCache(modelId: number, revisionId: number): RevisionFdmNodeCache {

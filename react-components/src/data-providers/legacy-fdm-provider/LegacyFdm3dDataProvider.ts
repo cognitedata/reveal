@@ -9,6 +9,8 @@ import { getFdmConnectionsForNodeIds } from './getFdmConnectionsForNodeIds';
 import { getDMSModels } from './getDMSModels';
 import { listAllMappedFdmNodes, listMappedFdmNodes } from './listMappedFdmNodes';
 import { filterNodesByMappedTo3d } from './filterNodesByMappedTo3d';
+import { getCadModelsForFdmInstance } from './getCadModelsForFdmInstance';
+import { getConnectionsForRevision } from './getCadConnectionsForRevision';
 
 export class LegacyFdm3dDataProvider implements Fdm3dDataProvider {
   readonly _fdmSdk: FdmSDK;
@@ -58,11 +60,11 @@ export class LegacyFdm3dDataProvider implements Fdm3dDataProvider {
     return filterNodesByMappedTo3d(this._fdmSdk, nodes, models, spacesToSearch);
   }
 
-  getModelsForInstance(instance: DmsUniqueIdentifier): Promise<TaggedAddResourceOptions[]> {
-    // useModelsForInstanceQuery (only support CAD for now?)
-    return Promise.resolve([]);
+  getCadModelsForInstance(instance: DmsUniqueIdentifier): Promise<TaggedAddResourceOptions[]> {
+    return getCadModelsForFdmInstance(this._fdmSdk, instance);
   }
+
   getCadConnectionsForRevisions(revisions: number[]): Promise<FdmCadConnection[]> {
-    return Promise.resolve([]);
+    return getConnectionsForRevision(revisions, this._fdmSdk);
   } // FdmNodeCache.ts / getEdgesForRevisions
 }

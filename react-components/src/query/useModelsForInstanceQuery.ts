@@ -2,13 +2,11 @@
  * Copyright 2024 Cognite AS
  */
 import { type UseQueryResult, useQuery } from '@tanstack/react-query';
-import { type DmsUniqueIdentifier, type FdmSDK } from '../data-providers/FdmSDK';
 import { getCadModelsForAsset } from '../hooks/network/getCadModelsForAsset';
 import { getPointCloudModelsForAsset } from '../hooks/network/getPointCloudModelsForAsset';
-import { useFdmSdk, useSDK } from '../components/RevealCanvas/SDKProvider';
+import { useFdm3dDataProvider, useSDK } from '../components/RevealCanvas/SDKProvider';
 import { type CogniteClient } from '@cognite/sdk';
 import { type TaggedAddResourceOptions } from '../components/Reveal3DResources/types';
-import { getCadModelsForFdmInstance } from '../hooks/network/getCadModelsForFdmInstance';
 import { getImage360CollectionsForAsset } from '../hooks/network/getImage360CollectionsForAsset';
 import {
   type AssetInstanceReference,
@@ -23,7 +21,7 @@ export const useModelsForInstanceQuery = (
   instance: InstanceReference | undefined
 ): UseQueryResult<TaggedAddResourceOptions[]> => {
   const cogniteClient = useSDK();
-  const fdmSdk = useFdmSdk();
+  const fdm3dDataProvider = useFdm3dDataProvider();
 
   return useQuery({
     queryKey: ['reveal', 'react-components', instance],
@@ -37,7 +35,7 @@ export const useModelsForInstanceQuery = (
       }
 
       if (isDmsInstance(instance)) {
-        return await getModelsForFdmInstance(instance, fdmSdk);
+        return fdm3dDataProvider.getCadModelsForInstance(instance);
       }
     },
     enabled: instance !== undefined
@@ -60,13 +58,4 @@ async function getModelsForAssetInstance(
   ).flat();
 
   return uniqBy(results, createAddOptionsKey);
-}
-
-async function getModelsForFdmInstance(
-  instance: DmsUniqueIdentifier,
-  fdmSdk: FdmSDK
-): Promise<TaggedAddResourceOptions[]> {
-  const cadModelsPromise = getCadModelsForFdmInstance(instance, fdmSdk);
-
-  return await cadModelsPromise;
 }
