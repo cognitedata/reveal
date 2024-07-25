@@ -56,7 +56,7 @@ export class LegacyFdm3dDataProvider implements Fdm3dDataProvider {
     limit: number
   ): Promise<NodeItem[]> {
     return await listMappedFdmNodes(this._fdmSdk, models, sourcesToSearch, instanceFilter, limit);
-  } // useSearchMappedEquipmentFdm
+  }
 
   async listAllMappedFdmNodes(
     models: AddModelOptions[],
@@ -81,5 +81,5 @@ export class LegacyFdm3dDataProvider implements Fdm3dDataProvider {
 
   async getCadConnectionsForRevisions(revisions: number[]): Promise<FdmCadConnection[]> {
     return await getConnectionsForRevision(revisions, this._fdmSdk);
-  } // FdmNodeCache.ts / getEdgesForRevisions
+  }
 }
