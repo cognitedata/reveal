@@ -14,21 +14,24 @@ import { type FdmCadConnection } from '../components/CacheProvider/types';
 import { type TaggedAddResourceOptions } from '../components/Reveal3DResources/types';
 
 export type Fdm3dDataProvider = {
-  is3dView: (view: ViewItem) => boolean; // use3drelatedDirectConnection
+  is3dView: (view: ViewItem) => boolean;
+
   getDMSModels: (modelId: number) => Promise<DmsUniqueIdentifier[]>;
-  getEdgeConnected3dInstances: (instance: DmsUniqueIdentifier) => Promise<DmsUniqueIdentifier[]>; //  use3drelateddirectconnection
+
+  getEdgeConnected3dInstances: (instance: DmsUniqueIdentifier) => Promise<DmsUniqueIdentifier[]>;
+
   getFdmConnectionsForNodeIds: (
     models: DmsUniqueIdentifier[],
     revisionId: number,
     nodeIds: number[]
-  ) => Promise<FdmCadConnection[]>; // CacheProvider / requests.ts / getFdmConnectionsForNodeIds
+  ) => Promise<FdmCadConnection[]>;
 
   listMappedFdmNodes: (
     models: AddModelOptions[],
     sourcesToSearch: Source[],
     instancesFilter: InstanceFilter | undefined,
     limit: number
-  ) => Promise<NodeItem[]>; // useSearchMappedEquipmentFdm
+  ) => Promise<NodeItem[]>;
 
   listAllMappedFdmNodes: (
     models: AddModelOptions[],
@@ -40,19 +43,9 @@ export type Fdm3dDataProvider = {
     nodes: InstancesWithView[],
     models: AddModelOptions[],
     spacesToSearch: string[]
-  ) => Promise<InstancesWithView[]>; // useSearchMappedEquipmentFdm
-  getCadModelsForInstance: (instance: DmsUniqueIdentifier) => Promise<TaggedAddResourceOptions[]>; // useModelsForInstanceQuery (only support CAD for now?)
-  getCadConnectionsForRevisions: (revisions: number[]) => Promise<FdmCadConnection[]>; // FdmNodeCache.ts / getEdgesForRevisions
-};
+  ) => Promise<InstancesWithView[]>;
 
-/* use3dRelatedDirectConnections() -
-  use3dRelatedEdgeConnections(related3dEdgesQuery) -
-  `useSearchMappedEquipmentFDM`(
-    createMappedEquipmentQuery,
-    createCheckMappedEquipmentQuery,
-    createInModelsFilter
-  ) -
-  getCadModelsForFdmInstance.ts(getCadModelsForFdmInstance) -
-  CacheProvider / requests.ts(getMappingEdgesForNodeIds, getDMSModels) -
-  FdmNodeCache.ts(getEdgesForRevisions);
-*/
+  getCadModelsForInstance: (instance: DmsUniqueIdentifier) => Promise<TaggedAddResourceOptions[]>;
+
+  getCadConnectionsForRevisions: (revisions: number[]) => Promise<FdmCadConnection[]>;
+};
