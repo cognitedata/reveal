@@ -51,8 +51,8 @@ export class FdmNodeCache {
     this._fdm3dDataProvider = fdm3dDataProvider;
   }
 
-  public async getMappingsForFdmIds(
-    externalIds: DmsUniqueIdentifier[],
+  public async getMappingsForFdmInstances(
+    instances: DmsUniqueIdentifier[],
     modelRevisionIds: ModelRevisionId[]
   ): Promise<ThreeDModelFdmMappings[]> {
     const [cachedModelRevisionIds, nonCachedModelRevisionIds] = partition(
@@ -64,11 +64,11 @@ export class FdmNodeCache {
     );
 
     const nonCachedModelMappings = await this.getNonCachedModelMappings(
-      externalIds,
+      instances,
       nonCachedModelRevisionIds
     );
 
-    const cachedModelMappings = this.getCachedModelMappings(cachedModelRevisionIds, externalIds);
+    const cachedModelMappings = this.getCachedModelMappings(cachedModelRevisionIds, instances);
 
     const combinedList = [...cachedModelMappings, ...nonCachedModelMappings];
     return combinedList;
@@ -96,7 +96,7 @@ export class FdmNodeCache {
       modelRevisionId.revisionId
     );
 
-    const relevantCachedEdgeData = intersectWithStartNodeIdSet(
+    const relevantCachedEdgeData = intersectWithFdmKeySet(
       revisionCache.getAllEdges(),
       relevantFdmKeySet
     );
@@ -112,43 +112,41 @@ export class FdmNodeCache {
   }
 
   private async getNonCachedModelMappings(
-    uniqueIds: DmsUniqueIdentifier[],
+    instances: DmsUniqueIdentifier[],
     modelRevisions: ModelRevisionId[]
   ): Promise<ThreeDModelFdmMappings[]> {
-    if (modelRevisions.length === 0 || uniqueIds.length === 0) {
+    if (modelRevisions.length === 0 || instances.length === 0) {
       return [];
     }
 
-    const fdmKeySet = new Set(uniqueIds.map((id) => createFdmKey(id.space, id.externalId)));
+    const fdmKeySet = new Set(instances.map((id) => createFdmKey(id.space, id.externalId)));
 
     const revisionToEdgesMap = await this.getAndCacheRevisionToEdgesMap(modelRevisions, false);
 
-    const modelDataPromises = modelRevisions.map(async ({ modelId, revisionId }) => {
+    return modelRevisions.map(({ modelId, revisionId }) => {
       const revisionKey = createModelRevisionKey(modelId, revisionId);
-      const edges = revisionToEdgesMap.get(revisionKey);
+      const connections = revisionToEdgesMap.get(revisionKey);
 
       return this.getRelevantExternalIdToNodeMapForRevision(
         { modelId, revisionId },
-        edges,
+        connections,
         fdmKeySet
       );
     });
-
-    return await Promise.all(modelDataPromises);
   }
 
   private getRelevantExternalIdToNodeMapForRevision(
     { modelId, revisionId }: ModelRevisionId,
-    edges: FdmConnectionWithNode[] | undefined,
+    connections: FdmConnectionWithNode[] | undefined,
     relevantFdmKeySet: Set<FdmKey>
   ): ThreeDModelFdmMappings {
-    if (edges === undefined || edges.length === 0)
+    if (connections === undefined || connections.length === 0)
       return { modelId, revisionId, mappings: new Map<CogniteExternalId, Node3D[]>() };
 
-    const relevantEdges = intersectWithStartNodeIdSet(edges, relevantFdmKeySet);
+    const relevantConnections = intersectWithFdmKeySet(connections, relevantFdmKeySet);
 
     const externalIdToNodeMap = createMapWithAccumulatedValues(
-      relevantEdges.map((edge) => [edge.connection.instance.externalId, edge.cadNode])
+      relevantConnections.map((edge) => [edge.connection.instance.externalId, edge.cadNode])
     );
 
     return {
@@ -403,7 +401,7 @@ function createRevisionToNodeIdMap(
   }, new Map<RevisionId, NodeId[]>());
 }
 
-function intersectWithStartNodeIdSet(
+function intersectWithFdmKeySet(
   connections: FdmConnectionWithNode[],
   relevantFdmKeySet: Set<FdmKey>
 ): FdmConnectionWithNode[] {

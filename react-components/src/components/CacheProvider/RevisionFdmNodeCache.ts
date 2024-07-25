@@ -233,19 +233,17 @@ export class RevisionFdmNodeCache {
   }
 
   private combineEdgesWithTreeIndex(
-    mappingEdges: FdmCadConnection[],
+    mappingConnections: FdmCadConnection[],
     nodes: Node3D[]
   ): Array<{ connection: FdmCadConnection; treeIndex: TreeIndex }> {
-    return mappingEdges.map((connection) => {
-      const ancestorConnectedToEdge = nodes.find(
-        (ancestor) => ancestor.id === connection.revisionId
-      );
+    return mappingConnections.map((connection) => {
+      const nodeInConnection = nodes.find((node) => node.id === connection.nodeId);
 
-      assert(ancestorConnectedToEdge !== undefined);
+      assert(nodeInConnection !== undefined);
 
       return {
         connection,
-        treeIndex: ancestorConnectedToEdge.treeIndex
+        treeIndex: nodeInConnection.treeIndex
       };
     });
   }
