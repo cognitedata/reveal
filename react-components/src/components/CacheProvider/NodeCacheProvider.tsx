@@ -92,10 +92,14 @@ export const useFdmAssetMappings = (
   const nodeCacheContent = useFdmNodeCache();
 
   return useQuery({
-    queryKey: ['reveal', 'react-components', 'fdm-asset-mappings', fdmAssetExternalIds],
-    queryFn: async () => {
-      return await nodeCacheContent.cache.getMappingsForFdmIds(fdmAssetExternalIds, models);
-    },
+    queryKey: [
+      'reveal',
+      'react-components',
+      'fdm-asset-mappings',
+      fdmAssetExternalIds,
+      models.map((model) => [model.modelId, model.revisionId])
+    ],
+    queryFn: () => nodeCacheContent.cache.getMappingsForFdmInstances(fdmAssetExternalIds, models),
     enabled: fdmAssetExternalIds.length > 0 && models.length > 0,
     staleTime: DEFAULT_QUERY_STALE_TIME
   });
