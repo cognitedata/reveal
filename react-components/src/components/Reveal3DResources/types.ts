@@ -9,7 +9,7 @@ import {
 } from '@cognite/reveal';
 
 import { type Matrix4 } from 'three';
-import { type DmsUniqueIdentifier, type Source } from '../../utilities/FdmSDK';
+import { type DmsUniqueIdentifier, type Source } from '../../data-providers/FdmSDK';
 import { type CogniteInternalId, type Node3D } from '@cognite/sdk';
 import { type TreeIndexStylingGroup } from '../CadModelContainer/types';
 

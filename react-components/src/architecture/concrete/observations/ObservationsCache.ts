@@ -1,7 +1,7 @@
 /*!
  * Copyright 2024 Cognite AS
  */
-import { type FdmSDK } from '../../../utilities/FdmSDK';
+import { type FdmSDK } from '../../../data-providers/FdmSDK';
 import { type ObservationFdmNode, type ObservationProperties } from './models';
 
 import { type Observation } from './types';

@@ -297,7 +297,7 @@ export class AssetMappingAndNode3DCache {
     if (ids.length === 0) {
       return [];
     }
-    const idChunks = chunk(ids, 100);
+    const idChunks = chunk(ids, 1000);
     const initialIndex = 0;
     const assetMappings = await this.fetchMappingsInQueue(
       initialIndex,
