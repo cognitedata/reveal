@@ -10,14 +10,6 @@ import { type BaseCommand } from '../../architecture/base/commands/BaseCommand';
 import { getButtonType, getDefaultCommand, getIcon, getTooltipPlacement } from './utilities';
 import { LabelWithShortcut } from './LabelWithShortcut';
 
-export const createCommandButton = (
-  commandConstructor: () => BaseCommand,
-  isHorizontal = false
-): ReactElement => {
-  const command = useMemo(commandConstructor, []);
-  return <CommandButton inputCommand={command} isHorizontal={isHorizontal} />;
-};
-
 export const CommandButton = ({
   inputCommand,
   isHorizontal = false
