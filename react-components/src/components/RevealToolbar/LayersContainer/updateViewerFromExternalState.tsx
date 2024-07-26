@@ -13,7 +13,7 @@ export function updateViewerFromExternalState(
   viewer: Cognite3DViewer
 ): void {
   if (layersState === undefined) {
-    setAllModelsVisible(viewer);
+    setDefaultModelsVisible(viewer);
     return;
   }
 
@@ -45,10 +45,10 @@ export function updateViewerFromExternalState(
   });
 }
 
-function setAllModelsVisible(viewer: Cognite3DViewer): void {
-  viewer.models.forEach((model) => (model.visible = true));
+function setDefaultModelsVisible(viewer: Cognite3DViewer): void {
+  viewer.models.forEach((model) => (model.visible = model.type === 'cad'));
 
   viewer.get360ImageCollections().forEach((collection) => {
-    collection.setIconsVisibility(true);
+    collection.setIconsVisibility(false);
   });
 }
