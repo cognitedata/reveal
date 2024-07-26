@@ -13,6 +13,7 @@ export {
   CameraControlsOptions,
   DebouncedCameraStopEventTrigger,
   DefaultCameraManager,
+  isDefaultCameraManager,
   CameraManagerEventType,
   CameraManagerHelper,
   CameraManager,
