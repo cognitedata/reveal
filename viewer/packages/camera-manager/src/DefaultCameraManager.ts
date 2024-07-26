@@ -669,6 +669,9 @@ export class DefaultCameraManager implements CameraManager {
   }
 }
 
+/**
+ * type guard which determines if the provided camera manager is a @see { DefaultCameraManager }
+ */
 export function isDefaultCameraManager(cameraManager: CameraManager): cameraManager is DefaultCameraManager {
   return cameraManager instanceof DefaultCameraManager;
 }
