@@ -27,7 +27,7 @@ import { type AssetMapping3D, type Asset, type Datapoints } from '@cognite/sdk';
 import { type AssetStylingGroup } from '../Reveal3DResources/types';
 import { isDefined } from '../../utilities/isDefined';
 import { assertNever } from '../../utilities/assertNever';
-import { type AssetIdsAndTimeseries } from '../../utilities/types';
+import { type AssetIdsAndTimeseries } from '../../data-providers/types';
 
 const checkStringExpressionStatement = (
   triggerTypeData: TriggerTypeData[],

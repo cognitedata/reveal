@@ -7,7 +7,7 @@ import {
   type DmsUniqueIdentifier,
   type FdmSDK,
   type InstanceFilter
-} from '../../../utilities/FdmSDK';
+} from '../../../data-providers/FdmSDK';
 import { type ObservationFdmNode, OBSERVATION_SOURCE, type ObservationProperties } from './models';
 
 import { v4 as uuid } from 'uuid';

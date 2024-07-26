@@ -6,7 +6,7 @@ import { useCallback, useState, type ReactElement } from 'react';
 import { Button, Dropdown, Menu, Tooltip as CogsTooltip } from '@cognite/cogs.js';
 import { use3dScenes } from '../../query/use3dScenes';
 import { useTranslation } from '../i18n/I18n';
-import { type DmsUniqueIdentifier } from '../../utilities/FdmSDK';
+import { type DmsUniqueIdentifier } from '../../data-providers/FdmSDK';
 import { SceneList, type SceneWithName } from './SceneList';
 import styled from 'styled-components';
 

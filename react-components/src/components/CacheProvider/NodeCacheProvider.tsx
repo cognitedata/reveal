@@ -5,11 +5,11 @@
 import { type ReactElement, type ReactNode, createContext, useContext, useMemo } from 'react';
 import { FdmNodeCache } from './FdmNodeCache';
 import { type UseQueryResult, useQuery } from '@tanstack/react-query';
-import { useFdmSdk, useSDK } from '../RevealCanvas/SDKProvider';
-import { type FdmNodeDataPromises, type ModelRevisionToEdgeMap } from './types';
+import { useFdm3dDataProvider, useFdmSdk, useSDK } from '../RevealCanvas/SDKProvider';
+import { type FdmNodeDataPromises, type ModelRevisionToConnectionMap } from './types';
 
 import assert from 'assert';
-import { type DmsUniqueIdentifier } from '../../utilities/FdmSDK';
+import { type DmsUniqueIdentifier } from '../../data-providers/FdmSDK';
 import { type TypedReveal3DModel } from '../Reveal3DResources/types';
 import { type ThreeDModelFdmMappings } from '../../hooks/types';
 import { DEFAULT_QUERY_STALE_TIME } from '../../utilities/constants';
@@ -36,7 +36,7 @@ export const useMappedEdgesForRevisions = (
   modelRevisionIds: Array<{ modelId: number; revisionId: number }>,
   fetchViews = false,
   enabled = true
-): UseQueryResult<ModelRevisionToEdgeMap> => {
+): UseQueryResult<ModelRevisionToConnectionMap> => {
   const content = useFdmNodeCache();
 
   return useQuery({
@@ -99,9 +99,8 @@ export const useFdmAssetMappings = (
       fdmAssetExternalIds,
       models.map((model) => [model.modelId, model.revisionId])
     ],
-    queryFn: async () => {
-      return await nodeCacheContent.cache.getMappingsForFdmIds(fdmAssetExternalIds, models);
-    },
+    queryFn: async () =>
+      await nodeCacheContent.cache.getMappingsForFdmInstances(fdmAssetExternalIds, models),
     enabled: fdmAssetExternalIds.length > 0 && models.length > 0,
     staleTime: DEFAULT_QUERY_STALE_TIME
   });
@@ -109,12 +108,14 @@ export const useFdmAssetMappings = (
 
 export function NodeCacheProvider({ children }: { children?: ReactNode }): ReactElement {
   const fdmClient = useFdmSdk();
+  const fdm3dDataProvider = useFdm3dDataProvider();
   const cdfClient = useSDK();
   const revealKeepAliveData = useRevealKeepAlive();
 
   const fdmCache = useMemo(() => {
     const cache =
-      revealKeepAliveData?.fdmNodeCache.current ?? new FdmNodeCache(cdfClient, fdmClient);
+      revealKeepAliveData?.fdmNodeCache.current ??
+      new FdmNodeCache(cdfClient, fdmClient, fdm3dDataProvider);
 
     const isRevealKeepAliveContextProvided = revealKeepAliveData !== undefined;
     if (isRevealKeepAliveContextProvided) {

@@ -16,7 +16,7 @@ import {
 import { useMemo } from 'react';
 import {
   type NodeId,
-  type FdmEdgeWithNode,
+  type FdmConnectionWithNode,
   type AssetId,
   type ModelRevisionAssetNodesResult
 } from '../CacheProvider/types';
@@ -326,7 +326,7 @@ function extractDefaultStyles(typedModels: CadModelOptions[]): StyledModel[] {
 }
 
 function getMappedStyleGroupFromFdm(
-  edges: FdmEdgeWithNode[],
+  edges: FdmConnectionWithNode[],
   mapped: NodeAppearance
 ): TreeIndexStylingGroup {
   const indexSet = new IndexSet();

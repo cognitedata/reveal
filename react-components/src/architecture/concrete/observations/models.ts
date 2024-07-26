@@ -1,7 +1,11 @@
 /*!
  * Copyright 2024 Cognite AS
  */
-import { type DmsUniqueIdentifier, type FdmNode, type Source } from '../../../utilities/FdmSDK';
+import {
+  type DmsUniqueIdentifier,
+  type FdmNode,
+  type Source
+} from '../../../data-providers/FdmSDK';
 
 export type ObservationProperties = {
   // "ID as the node appears in the Source system"
