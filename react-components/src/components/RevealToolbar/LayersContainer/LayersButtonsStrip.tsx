@@ -13,7 +13,7 @@ import { type ReactElement } from 'react';
 import { useTranslation } from '../../i18n/I18n';
 import { useModelHandlers } from './useModelHandlers';
 import { useSyncExternalLayersState } from './useSyncExternalLayersState';
-import { LayersButtonProps } from '../LayersButton';
+import { type LayersButtonProps } from '../LayersButton';
 
 export type ModelLayerHandlers = {
   cadHandlers: CadModelHandler[];

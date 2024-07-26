@@ -20,7 +20,7 @@ import {
 import { CadModelHandler, Image360CollectionHandler, PointCloudModelHandler } from './ModelHandler';
 import { use3dModels } from '../../../hooks/use3dModels';
 import { useReveal } from '../../RevealCanvas/ViewerContext';
-import { DefaultLayersConfiguration, type LayersUrlStateParam } from '../../../hooks/types';
+import { type DefaultLayersConfiguration, type LayersUrlStateParam } from '../../../hooks/types';
 import { use3DModelName } from '../../../query/use3DModelName';
 
 export type UpdateModelHandlersCallback = (
@@ -130,7 +130,7 @@ function setDefaultConfigOnNewHandlers(
   newHandlers: ModelLayerHandlers,
   modelHandlers: ModelLayerHandlers,
   defaultLayersConfig: DefaultLayersConfiguration | undefined
-) {
+): void {
   newHandlers.cadHandlers.forEach((newHandler) => {
     if (!modelHandlers.cadHandlers.some((oldHandler) => oldHandler.isSame(newHandler))) {
       newHandler.setVisibility(defaultLayersConfig?.cad ?? true);

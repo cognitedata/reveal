@@ -11,7 +11,7 @@ import { useTranslation } from '../i18n/I18n';
 
 import { useSyncExternalLayersState } from './LayersContainer/useSyncExternalLayersState';
 import { useModelHandlers } from './LayersContainer/useModelHandlers';
-import { DefaultLayersConfiguration, type LayersUrlStateParam } from '../../hooks/types';
+import { type DefaultLayersConfiguration, type LayersUrlStateParam } from '../../hooks/types';
 
 export type LayersButtonProps = {
   layersState?: LayersUrlStateParam | undefined;
