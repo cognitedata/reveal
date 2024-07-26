@@ -668,3 +668,7 @@ export class DefaultCameraManager implements CameraManager {
     return clamp(duration, DefaultCameraManager.MinAnimationDuration, DefaultCameraManager.MaxAnimationDuration);
   }
 }
+
+export function isDefaultCameraManager(cameraManager: CameraManager): cameraManager is DefaultCameraManager {
+  return cameraManager instanceof DefaultCameraManager;
+}
