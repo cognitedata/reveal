@@ -20,7 +20,7 @@ import { getDMSModels } from './getDMSModels';
 import { listAllMappedFdmNodes, listMappedFdmNodes } from './listMappedFdmNodes';
 import { filterNodesByMappedTo3d } from './filterNodesByMappedTo3d';
 import { getCadModelsForFdmInstance } from './getCadModelsForFdmInstance';
-import { getConnectionsForRevision } from './getCadConnectionsForRevision';
+import { getCadConnectionsForRevision } from './getCadConnectionsForRevision';
 
 export class LegacyFdm3dDataProvider implements Fdm3dDataProvider {
   readonly _fdmSdk: FdmSDK;
@@ -80,6 +80,6 @@ export class LegacyFdm3dDataProvider implements Fdm3dDataProvider {
   }
 
   async getCadConnectionsForRevisions(revisions: number[]): Promise<FdmCadConnection[]> {
-    return await getConnectionsForRevision(revisions, this._fdmSdk);
+    return await getCadConnectionsForRevision(revisions, this._fdmSdk);
   }
 }

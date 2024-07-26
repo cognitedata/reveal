@@ -12,7 +12,7 @@ import {
   type RevisionId,
   type NodeId,
   type ModelNodeIdKey,
-  type ModelRevisionToEdgeMap,
+  type ModelRevisionToConnectionMap,
   type ModelRevisionId,
   type FdmKey,
   type FdmNodeDataPromises
@@ -96,13 +96,16 @@ export class FdmNodeCache {
       modelRevisionId.revisionId
     );
 
-    const relevantCachedEdgeData = intersectWithFdmKeySet(
-      revisionCache.getAllEdges(),
+    const relevantCachedConnectionData = intersectWithFdmKeySet(
+      revisionCache.getAllConnections(),
       relevantFdmKeySet
     );
 
     const mappings = createMapWithAccumulatedValues(
-      relevantCachedEdgeData.map((data) => [data.connection.instance.externalId, data.cadNode])
+      relevantCachedConnectionData.map((data) => [
+        data.connection.instance.externalId,
+        data.cadNode
+      ])
     );
 
     return {
@@ -121,11 +124,14 @@ export class FdmNodeCache {
 
     const fdmKeySet = new Set(instances.map((id) => createFdmKey(id.space, id.externalId)));
 
-    const revisionToEdgesMap = await this.getAndCacheRevisionToEdgesMap(modelRevisions, false);
+    const revisionToConnectionsMap = await this.getAndCacheRevisionToConnectionsMap(
+      modelRevisions,
+      false
+    );
 
     return modelRevisions.map(({ modelId, revisionId }) => {
       const revisionKey = createModelRevisionKey(modelId, revisionId);
-      const connections = revisionToEdgesMap.get(revisionKey);
+      const connections = revisionToConnectionsMap.get(revisionKey);
 
       return this.getRelevantExternalIdToNodeMapForRevision(
         { modelId, revisionId },
@@ -146,7 +152,10 @@ export class FdmNodeCache {
     const relevantConnections = intersectWithFdmKeySet(connections, relevantFdmKeySet);
 
     const externalIdToNodeMap = createMapWithAccumulatedValues(
-      relevantConnections.map((edge) => [edge.connection.instance.externalId, edge.cadNode])
+      relevantConnections.map((connection) => [
+        connection.connection.instance.externalId,
+        connection.cadNode
+      ])
     );
 
     return {
@@ -159,7 +168,7 @@ export class FdmNodeCache {
   public async getAllMappingExternalIds(
     modelRevisionIds: ModelRevisionId[],
     fetchViews: boolean = false
-  ): Promise<ModelRevisionToEdgeMap> {
+  ): Promise<ModelRevisionToConnectionMap> {
     const [cachedRevisionIds, nonCachedRevisionIds] = partition(modelRevisionIds, (ids) => {
       const key = createModelRevisionKey(ids.modelId, ids.revisionId);
       return this._completeRevisions.has(key);
@@ -169,18 +178,20 @@ export class FdmNodeCache {
       await this.fetchAllViewsForCachedRevisions(cachedRevisionIds);
     }
 
-    const cachedEdges = cachedRevisionIds.map((id) => this.getCachedEdgesForRevision(id));
+    const cachedConnections = cachedRevisionIds.map((id) =>
+      this.getCachedConnectionsForRevision(id)
+    );
 
-    const revisionToEdgesMap = await this.getAndCacheRevisionToEdgesMap(
+    const revisionToConnectionsMap = await this.getAndCacheRevisionToConnectionsMap(
       nonCachedRevisionIds,
       fetchViews
     );
 
-    cachedEdges.forEach(([revisionKey, edges]) => {
-      revisionToEdgesMap.set(revisionKey, edges);
+    cachedConnections.forEach(([revisionKey, connections]) => {
+      revisionToConnectionsMap.set(revisionKey, connections);
     });
 
-    return revisionToEdgesMap;
+    return revisionToConnectionsMap;
   }
 
   private async fetchAllViewsForCachedRevisions(
@@ -192,20 +203,20 @@ export class FdmNodeCache {
     for (const revision of revisions) {
       const revisionCache = this.getOrCreateRevisionCache(revision.modelId, revision.revisionId);
 
-      await revisionCache.fetchViewsForAllEdges();
+      await revisionCache.fetchViewsForAllConnections();
     }
   }
 
-  private getCachedEdgesForRevision(id: {
+  private getCachedConnectionsForRevision(id: {
     modelId: number;
     revisionId: number;
   }): [ModelRevisionKey, FdmConnectionWithNode[]] {
     const revisionCache = this.getOrCreateRevisionCache(id.modelId, id.revisionId);
     const revisionKey = createModelRevisionKey(id.modelId, id.revisionId);
 
-    const cachedRevisionEdges = revisionCache.getAllEdges();
+    const cachedRevisionConnections = revisionCache.getAllConnections();
 
-    return [revisionKey, cachedRevisionEdges];
+    return [revisionKey, cachedRevisionConnections];
   }
 
   private writeRevisionDataToCache(modelMap: Map<ModelRevisionKey, FdmConnectionWithNode[]>): void {
@@ -213,15 +224,18 @@ export class FdmNodeCache {
       const [modelId, revisionId] = revisionKeyToIds(revisionKey);
       const revisionCache = this.getOrCreateRevisionCache(modelId, revisionId);
 
-      data.forEach((edgeAndNode) => {
-        revisionCache.insertTreeIndexMappings(edgeAndNode.cadNode.treeIndex, edgeAndNode);
+      data.forEach((connectionAndNode) => {
+        revisionCache.insertTreeIndexMappings(
+          connectionAndNode.cadNode.treeIndex,
+          connectionAndNode
+        );
       });
 
       this._completeRevisions.add(revisionKey);
     }
   }
 
-  private async getAndCacheRevisionToEdgesMap(
+  private async getAndCacheRevisionToConnectionsMap(
     modelRevisionIds: ModelRevisionId[],
     fetchViews: boolean
   ): Promise<Map<ModelRevisionKey, FdmConnectionWithNode[]>> {
@@ -232,15 +246,15 @@ export class FdmNodeCache {
       ? await this.getViewsForConnections(connections)
       : connections.map((connection) => ({ connection }));
 
-    const revisionToEdgesMap = await createRevisionToEdgesMap(
+    const revisionToConnectionsMap = await createRevisionToConnectionsMap(
       connectionsWithOptionalViews,
       modelRevisionIds,
       this._cdfClient
     );
 
-    this.writeRevisionDataToCache(revisionToEdgesMap);
+    this.writeRevisionDataToCache(revisionToConnectionsMap);
 
-    return revisionToEdgesMap;
+    return revisionToConnectionsMap;
   }
 
   public getClosestParentDataPromises(
@@ -292,7 +306,7 @@ export class FdmNodeCache {
   }
 }
 
-async function createRevisionToEdgesMap(
+async function createRevisionToConnectionsMap(
   connectionsWithView: Array<{ connection: FdmCadConnection; view?: Source }>,
   modelRevisionIds: ModelRevisionId[],
   cdfClient: CogniteClient
@@ -305,8 +319,8 @@ async function createRevisionToEdgesMap(
   );
 
   return connectionsWithView.reduce((map, connectionWithView) => {
-    const edgeRevisionId = connectionWithView.connection.revisionId;
-    const modelRevisionId = modelRevisionIds.find((p) => p.revisionId === edgeRevisionId);
+    const connectionRevisionId = connectionWithView.connection.revisionId;
+    const modelRevisionId = modelRevisionIds.find((p) => p.revisionId === connectionRevisionId);
 
     if (modelRevisionId === undefined) return map;
 

@@ -6,7 +6,7 @@ import { type ReactElement, type ReactNode, createContext, useContext, useMemo }
 import { FdmNodeCache } from './FdmNodeCache';
 import { type UseQueryResult, useQuery } from '@tanstack/react-query';
 import { useFdm3dDataProvider, useFdmSdk, useSDK } from '../RevealCanvas/SDKProvider';
-import { type FdmNodeDataPromises, type ModelRevisionToEdgeMap } from './types';
+import { type FdmNodeDataPromises, type ModelRevisionToConnectionMap } from './types';
 
 import assert from 'assert';
 import { type DmsUniqueIdentifier } from '../../data-providers/FdmSDK';
@@ -36,7 +36,7 @@ export const useMappedEdgesForRevisions = (
   modelRevisionIds: Array<{ modelId: number; revisionId: number }>,
   fetchViews = false,
   enabled = true
-): UseQueryResult<ModelRevisionToEdgeMap> => {
+): UseQueryResult<ModelRevisionToConnectionMap> => {
   const content = useFdmNodeCache();
 
   return useQuery({

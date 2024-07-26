@@ -57,7 +57,7 @@ export type FdmKey = `${string}/${string}`;
 export type ModelNodeIdKey = `${ModelId}/${RevisionId}/${NodeId}`;
 export type ModelAssetIdKey = `${ModelId}/${RevisionId}/${AssetId}`;
 
-export type ModelRevisionToEdgeMap = Map<ModelRevisionKey, FdmConnectionWithNode[]>;
+export type ModelRevisionToConnectionMap = Map<ModelRevisionKey, FdmConnectionWithNode[]>;
 
 export type PointCloudAnnotationModel = AnnotationModel & { data: AnnotationsBoundingVolume };
 

@@ -10,7 +10,7 @@ import {
 } from './dataModels';
 import { fdmEdgesToCadConnections } from './fdmEdgesToCadConnections';
 
-export async function getConnectionsForRevision(
+export async function getCadConnectionsForRevision(
   revisionIds: number[],
   fdmClient: FdmSDK
 ): Promise<FdmCadConnection[]> {
