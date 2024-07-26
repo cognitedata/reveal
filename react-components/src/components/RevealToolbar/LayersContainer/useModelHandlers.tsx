@@ -20,7 +20,7 @@ import {
 import { CadModelHandler, Image360CollectionHandler, PointCloudModelHandler } from './ModelHandler';
 import { use3dModels } from '../../../hooks/use3dModels';
 import { useReveal } from '../../RevealCanvas/ViewerContext';
-import { type LayersUrlStateParam } from '../../../hooks/types';
+import { DefaultLayersConfiguration, type LayersUrlStateParam } from '../../../hooks/types';
 import { use3DModelName } from '../../../query/use3DModelName';
 
 export type UpdateModelHandlersCallback = (
@@ -29,7 +29,8 @@ export type UpdateModelHandlersCallback = (
 ) => void;
 
 export const useModelHandlers = (
-  setExternalLayersState: Dispatch<SetStateAction<LayersUrlStateParam | undefined>> | undefined
+  setExternalLayersState: Dispatch<SetStateAction<LayersUrlStateParam | undefined>> | undefined,
+  defaultLayersConfig: DefaultLayersConfiguration | undefined
 ): [ModelLayerHandlers, UpdateModelHandlersCallback] => {
   const models = use3dModels();
   const viewer = useReveal();
@@ -46,7 +47,9 @@ export const useModelHandlers = (
   );
 
   useEffect(() => {
-    setModelHandlers(createHandlers(models, modelNames.data, image360Collections, viewer));
+    const newHandlers = createHandlers(models, modelNames.data, image360Collections, viewer);
+    setDefaultConfigOnNewHandlers(newHandlers, modelHandlers, defaultLayersConfig);
+    setModelHandlers(newHandlers);
   }, [models, modelNames.data, image360Collections, viewer]);
 
   const update = useCallback(
@@ -121,4 +124,28 @@ function createExternalStateFromLayers(modelHandlers: ModelLayerHandlers): Layer
       index: handlerIndex
     }))
   };
+}
+
+function setDefaultConfigOnNewHandlers(
+  newHandlers: ModelLayerHandlers,
+  modelHandlers: ModelLayerHandlers,
+  defaultLayersConfig: DefaultLayersConfiguration | undefined
+) {
+  newHandlers.cadHandlers.forEach((newHandler) => {
+    if (!modelHandlers.cadHandlers.some((oldHandler) => oldHandler.isSame(newHandler))) {
+      newHandler.setVisibility(defaultLayersConfig?.cad ?? true);
+    }
+  });
+
+  newHandlers.pointCloudHandlers.forEach((newHandler) => {
+    if (!modelHandlers.pointCloudHandlers.some((oldHandler) => oldHandler.isSame(newHandler))) {
+      newHandler.setVisibility(defaultLayersConfig?.pointcloud ?? true);
+    }
+  });
+
+  newHandlers.image360Handlers.forEach((newHandler) => {
+    if (!modelHandlers.image360Handlers.some((oldHandler) => oldHandler.isSame(newHandler))) {
+      newHandler.setVisibility(defaultLayersConfig?.image360 ?? true);
+    }
+  });
 }

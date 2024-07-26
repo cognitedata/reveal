@@ -117,8 +117,10 @@ export {
   type PointCloudAnnotationMappedAssetData,
   type Image360AnnotationMappedAssetData,
   type LayersUrlStateParam,
+  type DefaultLayersConfiguration,
   type ThreeDModelFdmMappings
 } from './hooks/types';
+export { type LayersButtonProps } from './components/RevealToolbar/LayersButton';
 export type { CameraNavigationActions } from './hooks/useCameraNavigation';
 export type { Source, DmsUniqueIdentifier } from './utilities/FdmSDK';
 export type { FdmInstanceWithView } from './utilities/types';

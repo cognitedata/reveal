@@ -13,7 +13,6 @@ export function updateViewerFromExternalState(
   viewer: Cognite3DViewer
 ): void {
   if (layersState === undefined) {
-    setDefaultModelsVisible(viewer);
     return;
   }
 
@@ -42,13 +41,5 @@ export function updateViewerFromExternalState(
     image360Collections
       .find((collection) => collection.id === layer.siteId)
       ?.setIconsVisibility(layer.applied);
-  });
-}
-
-function setDefaultModelsVisible(viewer: Cognite3DViewer): void {
-  viewer.models.forEach((model) => (model.visible = model.type === 'cad'));
-
-  viewer.get360ImageCollections().forEach((collection) => {
-    collection.setIconsVisibility(false);
   });
 }

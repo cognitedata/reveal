@@ -9,16 +9,11 @@ import {
 } from './ModelHandler';
 import { ModelLayersButton } from './ModelLayersButton';
 
-import { type ReactElement, type Dispatch, type SetStateAction } from 'react';
+import { type ReactElement } from 'react';
 import { useTranslation } from '../../i18n/I18n';
-import { type LayersUrlStateParam } from '../../../hooks/types';
 import { useModelHandlers } from './useModelHandlers';
 import { useSyncExternalLayersState } from './useSyncExternalLayersState';
-
-export type LayersButtonStripProps = {
-  externalLayersState?: LayersUrlStateParam;
-  setExternalLayersState?: Dispatch<SetStateAction<LayersUrlStateParam | undefined>>;
-};
+import { LayersButtonProps } from '../LayersButton';
 
 export type ModelLayerHandlers = {
   cadHandlers: CadModelHandler[];
@@ -27,11 +22,15 @@ export type ModelLayerHandlers = {
 };
 
 export const LayersButtonStrip = ({
-  externalLayersState,
-  setExternalLayersState
-}: LayersButtonStripProps): ReactElement => {
+  layersState: externalLayersState,
+  setLayersState: setExternalLayersState,
+  defaultLayerConfiguration
+}: LayersButtonProps): ReactElement => {
   const { t } = useTranslation();
-  const [modelLayerHandlers, update] = useModelHandlers(setExternalLayersState);
+  const [modelLayerHandlers, update] = useModelHandlers(
+    setExternalLayersState,
+    defaultLayerConfiguration
+  );
   const { cadHandlers, pointCloudHandlers, image360Handlers } = modelLayerHandlers;
 
   useSyncExternalLayersState(
