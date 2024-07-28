@@ -1,5 +1,5 @@
 /*!
- * Copyright 2023 Cognite AS
+ * Copyright 2024 Cognite AS
  */
 
 import { type ReactElement, useState, useEffect, useMemo, useCallback } from 'react';
@@ -53,6 +53,7 @@ export const CommandButton = ({
   return (
     <CogsTooltip
       content={<LabelWithShortcut label={tooltip} shortcut={shortcut} />}
+      disabled={tooltip === undefined}
       appendTo={document.body}
       placement={placement}>
       <Button

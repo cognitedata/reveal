@@ -65,11 +65,11 @@ const exampleCustomSettingElements = (): ReactElement => {
 
 const exampleHighQualitySettings: QualitySettings = {
   cadBudget: {
-    maximumRenderCost: 95000000,
+    maximumRenderCost: 95_000_000,
     highDetailProximityThreshold: 100
   },
   pointCloudBudget: {
-    numberOfPoints: 12000000
+    numberOfPoints: 12_000_000
   },
   resolutionOptions: {
     maxRenderResolution: Infinity,

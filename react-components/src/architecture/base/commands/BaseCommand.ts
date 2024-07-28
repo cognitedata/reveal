@@ -40,7 +40,7 @@ export abstract class BaseCommand {
   }
 
   // ==================================================
-  // VIRTUAL METHODS (To be override)
+  // VIRTUAL METHODS (To be overridden)
   // =================================================
 
   public get name(): string {
