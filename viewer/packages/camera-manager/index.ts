@@ -1,7 +1,7 @@
 /*!
  * Copyright 2021 Cognite AS
  */
-export { DefaultCameraManager } from './src/DefaultCameraManager';
+export { DefaultCameraManager, isDefaultCameraManager } from './src/DefaultCameraManager';
 export { ProxyCameraManager } from './src/ProxyCameraManager';
 export { StationaryCameraManager } from './src/StationaryCameraManager';
 export { CameraManagerHelper } from './src/CameraManagerHelper';

@@ -35,7 +35,7 @@ import {
   useSearchAssetsMappedPointCloudAnnotations
 } from '../src/query/useSearchAssetsMappedPointCloudAnnotations';
 import { isEqual } from 'lodash';
-import { type NodeItem } from '../src/utilities/FdmSDK';
+import { type NodeItem } from '../src/data-providers/FdmSDK';
 import { Button, Input } from '@cognite/cogs.js';
 import { is360ImageAddOptions } from '../src/components/Reveal3DResources/typeGuards';
 
@@ -71,8 +71,7 @@ const StoryContent = ({ resources }: { resources: AddResourceOptions[] }): React
     viewsToSearch,
     filteredResources,
     undefined,
-    100,
-    sdk
+    100
   );
 
   const { data: assetSearchData } = useSearchMappedEquipmentAssetMappings(
@@ -82,7 +81,7 @@ const StoryContent = ({ resources }: { resources: AddResourceOptions[] }): React
     sdk
   );
 
-  const { data: allEquipment } = useAllMappedEquipmentFDM(filteredResources, viewsToSearch, sdk);
+  const { data: allEquipment } = useAllMappedEquipmentFDM(filteredResources, viewsToSearch);
 
   const {
     data: allAssets,
@@ -248,21 +247,19 @@ const StoryContent = ({ resources }: { resources: AddResourceOptions[] }): React
 
   return (
     <>
-      <RevealContext sdk={sdk} color={new Color(0x4a4a4a)}>
-        <RevealCanvas>
-          <ReactQueryDevtools buttonPosition="bottom-right" />
-          <RevealResourcesFitCameraOnLoad
-            resources={resources}
-            defaultResourceStyling={{
-              cad: {
-                default: { color: new Color('#efefef') },
-                mapped: { color: new Color('#c5cbff') }
-              }
-            }}
-          />
-          <RevealToolbar />
-        </RevealCanvas>
-      </RevealContext>
+      <RevealCanvas>
+        <ReactQueryDevtools buttonPosition="bottom-right" />
+        <RevealResourcesFitCameraOnLoad
+          resources={resources}
+          defaultResourceStyling={{
+            cad: {
+              default: { color: new Color('#efefef') },
+              mapped: { color: new Color('#c5cbff') }
+            }
+          }}
+        />
+        <RevealToolbar />
+      </RevealCanvas>
       <h1>Mapped equipment</h1>
       <div style={{ display: 'flex', flexDirection: 'row', gap: 8, padding: '0 8px 8px 0' }}>
         <Input
@@ -368,9 +365,11 @@ export const Main: Story = {
   },
   render: ({ resources }) => {
     return (
-      <QueryClientProvider client={queryClient}>
-        <StoryContent resources={resources} />
-      </QueryClientProvider>
+      <RevealContext sdk={sdk} color={new Color(0x4a4a4a)}>
+        <QueryClientProvider client={queryClient}>
+          <StoryContent resources={resources} />
+        </QueryClientProvider>
+      </RevealContext>
     );
   }
 };

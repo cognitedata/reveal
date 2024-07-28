@@ -58,7 +58,7 @@ export { use3dNodeByExternalId } from './query/use3dNodeByExternalId';
 export {
   useAllMappedEquipmentFDM,
   useSearchMappedEquipmentFDM,
-  type SearchResultsWithView
+  type InstancesWithView
 } from './query/useSearchMappedEquipmentFDM';
 export {
   useSearchMappedEquipmentAssetMappings,
@@ -117,11 +117,13 @@ export {
   type PointCloudAnnotationMappedAssetData,
   type Image360AnnotationMappedAssetData,
   type LayersUrlStateParam,
+  type DefaultLayersConfiguration,
   type ThreeDModelFdmMappings
 } from './hooks/types';
+export { type LayersButtonProps } from './components/RevealToolbar/LayersButton';
 export type { CameraNavigationActions } from './hooks/useCameraNavigation';
-export type { Source, DmsUniqueIdentifier } from './utilities/FdmSDK';
-export type { FdmInstanceWithView } from './utilities/types';
+export type { Source, DmsUniqueIdentifier } from './data-providers/FdmSDK';
+export type { FdmInstanceWithView } from './data-providers/types';
 export type { QualitySettings } from './components/RevealToolbar/SettingsContainer/types';
 export type { SceneIdentifiers } from './components/SceneContainer/sceneTypes';
 
@@ -165,4 +167,4 @@ export { RuleBasedOutputsPanel } from './components/RuleBasedOutputs/RuleBasedOu
 // Functions
 export { getRuleTriggerTypes } from './components/RuleBasedOutputs/utils';
 
-export type { InstanceReference, AssetInstanceReference } from './utilities/types';
+export type { InstanceReference, AssetInstanceReference } from './data-providers/types';

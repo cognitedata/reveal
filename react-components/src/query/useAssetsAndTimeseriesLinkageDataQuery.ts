@@ -20,7 +20,7 @@ import {
   type AssetIdsAndTimeseries,
   type AssetAndTimeseriesIds,
   type AssetIdsAndTimeseriesData
-} from '../utilities/types';
+} from '../data-providers/types';
 import { queryKeys } from '../utilities/queryKeys';
 import { getTimeseriesByIds } from '../hooks/network/getTimeseriesByIds';
 import { isDefined } from '../utilities/isDefined';

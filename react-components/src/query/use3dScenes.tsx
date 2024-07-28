@@ -6,7 +6,7 @@ import { type QueryFunction, useQuery, type UseQueryResult } from '@tanstack/rea
 import { useSDK } from '../components/RevealCanvas/SDKProvider';
 import { type CogniteClient } from '@cognite/sdk';
 import { useMemo } from 'react';
-import { type EdgeItem, FdmSDK, type Query, type NodeItem } from '../utilities/FdmSDK';
+import { type EdgeItem, FdmSDK, type Query, type NodeItem } from '../data-providers/FdmSDK';
 import {
   type SceneConfigurationProperties,
   type Cdf3dRevisionProperties,

@@ -5,7 +5,7 @@ import { VisualDomainObject } from '../../base/domainObjects/VisualDomainObject'
 import { type ThreeView } from '../../base/views/ThreeView';
 import { ObservationsView } from './ObservationsView';
 import { type TranslateKey } from '../../base/utilities/TranslateKey';
-import { type FdmSDK } from '../../../utilities/FdmSDK';
+import { type FdmSDK } from '../../../data-providers/FdmSDK';
 import { Changes } from '../../base/domainObjectsHelpers/Changes';
 import { ObservationsCache } from './ObservationsCache';
 import { PanelInfo } from '../../base/domainObjectsHelpers/PanelInfo';

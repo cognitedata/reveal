@@ -31,10 +31,14 @@ Default value is `false`.
 Example of setting different camera controls options:
 
 ```jsx runnable
+// import { isDefaultCameraManager } from '@cognite/reveal';
+
 const newControlsOptions = {
   mouseWheelAction: 'zoomToCursor',
   changeCameraTargetOnClick: true,
 };
 
-viewer.cameraManager.setCameraControlsOptions(newControlsOptions);
+if (isDefaultCameraManager(viewer.cameraManager)) {
+  viewer.cameraManager.setCameraControlsOptions(newControlsOptions);
+}
 ```

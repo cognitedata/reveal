@@ -1332,6 +1332,9 @@ export class InvertedNodeCollection extends NodeCollection {
     serialize(): SerializedNodeCollection;
 }
 
+// @public
+export function isDefaultCameraManager(cameraManager: CameraManager): cameraManager is DefaultCameraManager;
+
 // @beta
 export function isFlexibleCameraManager(manager: CameraManager): manager is IFlexibleCameraManager;
 
