@@ -1,5 +1,5 @@
 /*!
- * Copyright 2023 Cognite AS
+ * Copyright 2024 Cognite AS
  */
 
 import { useMemo, type ReactElement } from 'react';
@@ -8,9 +8,13 @@ import { type BaseCommand } from '../../architecture/base/commands/BaseCommand';
 import { OptionButton } from './OptionButton';
 import { BaseOptionCommand } from '../../architecture/base/commands/BaseOptionCommand';
 import { CommandButton } from './CommandButton';
+import { SettingsButton } from './SettingsButton';
+import { SettingsCommand } from '../../architecture/base/concreteCommands/SettingsCommand';
 
 export function createButton(command: BaseCommand, isHorizontal = false): ReactElement {
-  if (command instanceof BaseOptionCommand) {
+  if (command instanceof SettingsCommand) {
+    return <SettingsButton inputCommand={command} isHorizontal={isHorizontal} />;
+  } else if (command instanceof BaseOptionCommand) {
     return <OptionButton inputCommand={command} isHorizontal={isHorizontal} />;
   } else {
     return <CommandButton inputCommand={command} isHorizontal={isHorizontal} />;

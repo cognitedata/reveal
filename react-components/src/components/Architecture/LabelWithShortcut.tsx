@@ -1,5 +1,5 @@
 /*!
- * Copyright 2023 Cognite AS
+ * Copyright 2024 Cognite AS
  */
 import React from 'react';
 
@@ -8,11 +8,14 @@ import styled from 'styled-components';
 import { Shortcut } from '@cognite/cogs.js';
 
 type LabelWithShortcutProps = {
-  label: string;
+  label?: string;
   shortcut?: string;
 };
 
 export const LabelWithShortcut: React.FC<LabelWithShortcutProps> = ({ label, shortcut }) => {
+  if (label === undefined) {
+    return <></>;
+  }
   return (
     <Container key={label}>
       <Label>{label}</Label>

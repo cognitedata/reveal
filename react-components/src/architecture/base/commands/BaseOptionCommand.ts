@@ -3,46 +3,52 @@
  */
 
 import { type RevealRenderTarget } from '../renderTarget/RevealRenderTarget';
-import { BaseCommand } from './BaseCommand';
+import { type BaseCommand } from './BaseCommand';
 import { RenderTargetCommand } from './RenderTargetCommand';
 
 /**
- * Base class for all command and tools. These are object that can do a
- * user interaction with the system. It also have enough information to
- * generate the UI for the command.
+ * Base class for all option like commands. Override createOptions to add options
  */
 
-export abstract class BaseOptionCommand extends BaseCommand {
+export abstract class BaseOptionCommand extends RenderTargetCommand {
   private _options: BaseCommand[] | undefined = undefined;
 
+  // ==================================================
+  // OVERRIDES
+  // ==================================================
+
+  public override attach(renderTarget: RevealRenderTarget): void {
+    this._renderTarget = renderTarget;
+    for (const option of this.options) {
+      if (option instanceof RenderTargetCommand) {
+        option.attach(renderTarget);
+      }
+    }
+  }
   // ==================================================
   // VIRTUAL METHODS
   // ==================================================
 
-  public createOptions(): BaseCommand[] {
-    return []; // Override this to add options
+  protected createOptions(): BaseCommand[] {
+    return []; // Override this to add options or use the add method
   }
 
   // ==================================================
   // INSTANCE METHODS
   // ==================================================
 
-  public getOrCreateOptions(renderTarget: RevealRenderTarget): BaseCommand[] {
+  public get options(): BaseCommand[] {
     if (this._options === undefined) {
       this._options = this.createOptions();
-      for (const option of this._options) {
-        if (option instanceof RenderTargetCommand) {
-          option.attach(renderTarget);
-        }
-      }
     }
     return this._options;
   }
 
   public get selectedOption(): BaseCommand | undefined {
-    if (this._options === undefined) {
-      return undefined;
-    }
-    return this._options.find((option) => option.isChecked);
+    return this.options.find((option) => option.isChecked);
+  }
+
+  public add(command: BaseCommand): void {
+    this.options.push(command);
   }
 }

@@ -34,7 +34,7 @@ export abstract class BaseCommand {
   // CONSTRUCTOR
   // ==================================================
 
-  constructor() {
+  public constructor() {
     BaseCommand._counter++;
     this._uniqueId = BaseCommand._counter;
   }
