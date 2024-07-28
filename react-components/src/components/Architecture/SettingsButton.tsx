@@ -23,13 +23,12 @@ import {
 } from './utilities';
 import { LabelWithShortcut } from './LabelWithShortcut';
 import { type TranslateDelegate } from '../../architecture/base/utilities/TranslateKey';
-import { ToggleCommand } from '../../architecture/base/commands/value/ToggleCommand';
-import { SliderCommand } from '../../architecture/base/commands/value/SliderCommand';
 import styled from 'styled-components';
 import { SettingsCommand } from '../../architecture/base/concreteCommands/SettingsCommand';
 import { createButton } from './CommandButtons';
 import { BaseOptionCommand } from '../../architecture/base/commands/BaseOptionCommand';
 import { OptionButton } from './OptionButton';
+import { BaseSliderCommand } from '../../architecture/base/commands/BaseSliderCommand';
 
 export const SettingsButton = ({
   inputCommand,
@@ -119,19 +118,19 @@ export function createMenuItem(
   command: BaseCommand,
   t: TranslateDelegate
 ): ReactElement | undefined {
-  if (command instanceof ToggleCommand) {
-    return createToggle(command, t);
-  }
-  if (command instanceof SliderCommand) {
+  if (command instanceof BaseSliderCommand) {
     return createSlider(command, t);
   }
   if (command instanceof BaseOptionCommand) {
     return createOptionButton(command, t);
   }
+  if (command.canBeChecked) {
+    return createToggle(command, t);
+  }
   return createButton(command);
 }
 
-export function createToggle(command: ToggleCommand, t: TranslateDelegate): ReactElement {
+export function createToggle(command: BaseCommand, t: TranslateDelegate): ReactElement {
   const [isChecked, setChecked] = useState(command.isChecked);
   if (!command.isEnabled) {
     return <></>;
@@ -143,7 +142,7 @@ export function createToggle(command: ToggleCommand, t: TranslateDelegate): Reac
       disabled={!command.isEnabled}
       toggled={isChecked}
       iconPlacement="right"
-      style={{ padding: '4px' }}
+      style={{ padding: '4px 4px' }}
       onChange={() => {
         command.invoke();
         setChecked(command.isChecked);
@@ -153,14 +152,14 @@ export function createToggle(command: ToggleCommand, t: TranslateDelegate): Reac
   );
 }
 
-export function createSlider(command: SliderCommand, t: TranslateDelegate): ReactElement {
+export function createSlider(command: BaseSliderCommand, t: TranslateDelegate): ReactElement {
   const [value, setValue] = useState(command.value);
 
   if (!command.isEnabled) {
     return <></>;
   }
   return (
-    <StyledDiv>
+    <SliderDiv>
       <label>{command.getLabel(t)}</label>
       <StyledSlider
         min={command.min}
@@ -171,7 +170,7 @@ export function createSlider(command: SliderCommand, t: TranslateDelegate): Reac
           setValue(value);
         }}
         value={value}></StyledSlider>
-    </StyledDiv>
+    </SliderDiv>
   );
 }
 
@@ -180,20 +179,30 @@ export function createOptionButton(command: BaseOptionCommand, t: TranslateDeleg
     return <></>;
   }
   return (
-    <StyledDiv>
+    <OptionDiv>
       <label>{command.getLabel(t)}</label>
       <OptionButton inputCommand={command} isHorizontal={false} usedInSettings={true} />
-    </StyledDiv>
+    </OptionDiv>
   );
 }
 
-const StyledDiv = styled.div`
+const OptionDiv = styled.div`
   display: flex;
   flex-direction: row;
   align-items: center;
   justify-content: space-between;
   gap: 8px;
-  padding: 4px;
+  padding: 4px 4px;
+  font-size: 14px;
+`;
+
+const SliderDiv = styled.div`
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 8px 4px;
   font-size: 14px;
 `;
 

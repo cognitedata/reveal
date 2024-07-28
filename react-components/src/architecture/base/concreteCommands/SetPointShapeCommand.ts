@@ -31,7 +31,6 @@ export class SetPointShapeCommand extends BaseOptionCommand {
   }
 
   public override get isEnabled(): boolean {
-    return true;
     return getPointClouds(this.renderTarget).next().value !== undefined;
   }
 }
@@ -39,7 +38,6 @@ export class SetPointShapeCommand extends BaseOptionCommand {
 // Note: This is not exported, as it is only used internally
 
 class OptionCommand extends RenderTargetCommand {
-  static selectedValue = PointShape.Circle; // For debugging only
   private readonly _value: PointShape;
 
   public constructor(value: PointShape) {
@@ -55,7 +53,7 @@ class OptionCommand extends RenderTargetCommand {
     // Let the first PointCloud decide the color type
     const pointCloud = getPointClouds(this.renderTarget).next().value;
     if (pointCloud === undefined) {
-      return OptionCommand.selectedValue === this._value;
+      return false;
     }
     return pointCloud.pointSizeType === this._value;
   }
@@ -64,7 +62,6 @@ class OptionCommand extends RenderTargetCommand {
     for (const pointCloud of getPointClouds(this.renderTarget)) {
       pointCloud.pointShape = this._value;
     }
-    OptionCommand.selectedValue = this._value;
     return true;
   }
 }

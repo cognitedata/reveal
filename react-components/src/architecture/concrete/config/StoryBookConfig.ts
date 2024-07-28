@@ -22,7 +22,7 @@ import { ClipTool } from '../clipping/ClipTool';
 import { KeyboardSpeedCommand } from '../../base/concreteCommands/KeyboardSpeedCommand';
 import { ObservationsTool } from '../observations/ObservationsTool';
 import { SettingsCommand } from '../../base/concreteCommands/SettingsCommand';
-import { QualityCommand } from '../../base/concreteCommands/QualityCommand';
+import { SetQualityCommand } from '../../base/concreteCommands/SetQualityCommand';
 import { SetPointSizeCommand } from '../../base/concreteCommands/SetPointSizeCommand';
 import { SetPointColorTypeCommand } from '../../base/concreteCommands/SetPointColorTypeCommand';
 import { SetPointShapeCommand } from '../../base/concreteCommands/SetPointShapeCommand';
@@ -38,7 +38,7 @@ export class StoryBookConfig extends BaseRevealConfig {
 
   public override createMainToolbar(): Array<BaseCommand | undefined> {
     const settings = new SettingsCommand();
-    settings.add(new QualityCommand());
+    settings.add(new SetQualityCommand());
     settings.add(new SetPointSizeCommand());
     settings.add(new SetPointColorTypeCommand());
     settings.add(new SetPointShapeCommand());

@@ -99,7 +99,9 @@ export const OptionButton = ({
             </Menu>
           }>
           <Button
-            style={{ padding: '8px 4px' }}
+            style={{
+              padding: usedInSettings ? '4px 4px' : '8px 4px'
+            }}
             type={getButtonType(command)}
             icon={isOpen ? 'ChevronUp' : 'ChevronDown'}
             key={uniqueId}

@@ -79,6 +79,10 @@ export abstract class BaseCommand {
     return this.isEnabled;
   }
 
+  public get canBeChecked(): boolean {
+    return false; // Override this to enable checkable commands
+  }
+
   public get isChecked(): boolean {
     return false;
   }

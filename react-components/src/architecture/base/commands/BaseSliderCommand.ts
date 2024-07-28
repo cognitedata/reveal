@@ -2,9 +2,9 @@
  * Copyright 2024 Cognite AS
  */
 
-import { RenderTargetCommand } from '../RenderTargetCommand';
+import { RenderTargetCommand } from './RenderTargetCommand';
 
-export abstract class SliderCommand extends RenderTargetCommand {
+export abstract class BaseSliderCommand extends RenderTargetCommand {
   // ==================================================
   // INSTANCE FIELDS
   // =================================================
