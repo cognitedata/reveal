@@ -64,7 +64,7 @@ export class SetQualityCommand extends RenderTargetCommand {
     return { key: 'HIGH_FIDELITY', fallback: 'High Fidelity' };
   }
 
-  public override get canBeChecked(): boolean {
+  public override get isToggle(): boolean {
     return true;
   }
 

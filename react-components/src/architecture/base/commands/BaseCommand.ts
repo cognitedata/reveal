@@ -79,8 +79,13 @@ export abstract class BaseCommand {
     return this.isEnabled;
   }
 
-  public get canBeChecked(): boolean {
-    return false; // Override this to enable checkable commands
+  /**
+   * Gets a value indicating whether the command can be toggled on or off.
+   * Override this property if the command can be toggled.
+   * You must also override isChecked to get the toggle state.
+   */
+  public get isToggle(): boolean {
+    return false;
   }
 
   public get isChecked(): boolean {

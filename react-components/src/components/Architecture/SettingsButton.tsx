@@ -124,7 +124,7 @@ export function createMenuItem(
   if (command instanceof BaseOptionCommand) {
     return createOptionButton(command, t);
   }
-  if (command.canBeChecked) {
+  if (command.isToggle) {
     return createToggle(command, t);
   }
   return createButton(command);

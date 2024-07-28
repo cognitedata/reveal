@@ -40,6 +40,10 @@ export class ApplyClipCommand extends RenderTargetCommand {
     return false;
   }
 
+  public override get isToggle(): boolean {
+    return true;
+  }
+
   public override get isChecked(): boolean {
     return this.renderTarget.isGlobalClippingActive;
   }
