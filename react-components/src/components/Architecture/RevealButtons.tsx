@@ -1,5 +1,5 @@
 /*!
- * Copyright 2023 Cognite AS
+ * Copyright 2024 Cognite AS
  */
 
 import { type ReactElement } from 'react';
@@ -13,8 +13,15 @@ import { MeasurementTool } from '../../architecture/concrete/measurements/Measur
 import { KeyboardSpeedCommand } from '../../architecture/base/concreteCommands/KeyboardSpeedCommand';
 import { ObservationsTool } from '../../architecture/concrete/observations/ObservationsTool';
 import { createButtonFromCommandConstructor } from './CommandButtons';
+import { SettingsCommand } from '../../architecture/base/concreteCommands/SettingsCommand';
+import { SetPointColorTypeCommand } from '../../architecture/base/concreteCommands/SetPointColorTypeCommand';
+import { SetPointShapeCommand } from '../../architecture/base/concreteCommands/SetPointShapeCommand';
+import { SetPointSizeCommand } from '../../architecture/base/concreteCommands/SetPointSizeCommand';
+import { SetQualityCommand } from '../../architecture/base/concreteCommands/SetQualityCommand';
 
 export class RevealButtons {
+  static Settings = (): ReactElement => createButtonFromCommandConstructor(() => createSettings());
+
   static FitView = (): ReactElement =>
     createButtonFromCommandConstructor(() => new FitViewCommand());
 
@@ -45,4 +52,13 @@ export class RevealButtons {
 
   static KeyboardSpeed = (): ReactElement =>
     createButtonFromCommandConstructor(() => new KeyboardSpeedCommand());
+}
+
+function createSettings(): SettingsCommand {
+  const settings = new SettingsCommand();
+  settings.add(new SetQualityCommand());
+  settings.add(new SetPointSizeCommand());
+  settings.add(new SetPointColorTypeCommand());
+  settings.add(new SetPointShapeCommand());
+  return settings;
 }
