@@ -49,7 +49,7 @@ export abstract class BaseOptionCommand extends RenderTargetCommand {
     return this.options.find((option) => option.isChecked);
   }
 
-  public add(command: BaseCommand): void {
+  protected add(command: BaseCommand): void {
     this.options.push(command);
   }
 }
