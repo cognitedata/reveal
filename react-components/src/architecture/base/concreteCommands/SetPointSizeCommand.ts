@@ -2,7 +2,6 @@
  * Copyright 2024 Cognite AS
  */
 
-import { CognitePointCloudModel } from '@cognite/reveal';
 import { type TranslateKey } from '../utilities/TranslateKey';
 import { BaseSliderCommand } from '../commands/BaseSliderCommand';
 
@@ -29,28 +28,22 @@ export class SetPointSizeCommand extends BaseSliderCommand {
   }
 
   public override get isEnabled(): boolean {
-    for (const model of this.renderTarget.viewer.models) {
-      if (model instanceof CognitePointCloudModel) {
-        return true;
-      }
-    }
-    return false;
+    return true;
+    return this.renderTarget.getPointClouds().next().value !== undefined;
   }
 
   public override get value(): number {
-    for (const model of this.renderTarget.viewer.models) {
-      if (model instanceof CognitePointCloudModel) {
-        return model.pointSize;
-      }
+    // Let the first PointCloud decide the point size
+    const pointCloud = this.renderTarget.getPointClouds().next().value;
+    if (pointCloud === undefined) {
+      return DEFAULT_POINT_SIZE;
     }
-    return DEFAULT_POINT_SIZE;
+    return pointCloud.pointSize;
   }
 
   public override set value(value: number) {
-    for (const model of this.renderTarget.viewer.models) {
-      if (model instanceof CognitePointCloudModel) {
-        model.pointSize = value;
-      }
+    for (const pointCloud of this.renderTarget.getPointClouds()) {
+      pointCloud.pointSize = value;
     }
   }
 }
