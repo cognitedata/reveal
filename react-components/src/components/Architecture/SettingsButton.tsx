@@ -90,7 +90,8 @@ export const SettingsButton = ({
             style={{
               minWidth: '0px',
               overflow: 'auto',
-              flexDirection
+              flexDirection,
+              padding: '4px 4px'
             }}>
             {commands.map((command, _index): ReactElement | undefined => {
               return createMenuItem(command, t);
