@@ -11,13 +11,23 @@ import { CommandButton } from './CommandButton';
 import { SettingsButton } from './SettingsButton';
 import { SettingsCommand } from '../../architecture/base/concreteCommands/SettingsCommand';
 
-export function createButton(command: BaseCommand, isHorizontal = false): ReactElement {
+export function createButton(
+  command: BaseCommand,
+  isHorizontal = false,
+  usedInSettings = false
+): ReactElement {
   if (command instanceof SettingsCommand) {
     return <SettingsButton inputCommand={command} isHorizontal={isHorizontal} />;
   } else if (command instanceof BaseOptionCommand) {
     return <OptionButton inputCommand={command} isHorizontal={isHorizontal} />;
   } else {
-    return <CommandButton inputCommand={command} isHorizontal={isHorizontal} />;
+    return (
+      <CommandButton
+        inputCommand={command}
+        isHorizontal={isHorizontal}
+        usedInSettings={usedInSettings}
+      />
+    );
   }
 }
 

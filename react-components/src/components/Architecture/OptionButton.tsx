@@ -68,7 +68,7 @@ export const OptionButton = ({
     return <></>;
   }
   const placement = getTooltipPlacement(isHorizontal);
-  const tooltip = usedInSettings ? undefined : command.getLabel(t);
+  const label = usedInSettings ? undefined : command.getLabel(t);
   const shortcut = command.getShortCutKeys();
   const flexDirection = getFlexDirection(isHorizontal);
   const options = command.options;
@@ -77,8 +77,8 @@ export const OptionButton = ({
   return (
     <div ref={menuRef}>
       <CogsTooltip
-        content={<LabelWithShortcut label={tooltip} shortcut={shortcut} />}
-        disabled={tooltip === undefined}
+        content={<LabelWithShortcut label={label} shortcut={shortcut} />}
+        disabled={usedInSettings || label === undefined}
         appendTo={document.body}
         placement={placement}>
         <Dropdown

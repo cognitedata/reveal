@@ -8,6 +8,7 @@ import { RenderTargetCommand } from './RenderTargetCommand';
 
 /**
  * Base class for all option like commands. Override createOptions to add options
+ * or use add method to add them in.
  */
 
 export abstract class BaseOptionCommand extends RenderTargetCommand {

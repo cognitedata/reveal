@@ -69,15 +69,15 @@ export const SettingsButton = ({
     return <></>;
   }
   const placement = getTooltipPlacement(isHorizontal);
-  const tooltip = command.getLabel(t);
+  const label = command.getLabel(t);
   const shortcut = command.getShortCutKeys();
   const flexDirection = getFlexDirection(isHorizontal);
   const commands = command.commands;
 
   return (
     <CogsTooltip
-      content={<LabelWithShortcut label={tooltip} shortcut={shortcut} />}
-      disabled={tooltip === undefined}
+      content={<LabelWithShortcut label={label} shortcut={shortcut} />}
+      disabled={label === undefined}
       appendTo={document.body}
       placement={placement}>
       <Dropdown
@@ -103,7 +103,7 @@ export const SettingsButton = ({
           key={uniqueId}
           disabled={!isEnabled}
           toggled={isOpen}
-          aria-label={tooltip}
+          aria-label={label}
           iconPlacement="right"
           onClick={() => {
             setOpen((prevState) => !prevState);
@@ -127,7 +127,7 @@ export function createMenuItem(
   if (command.isToggle) {
     return createToggle(command, t);
   }
-  return createButton(command);
+  return createButton(command, false, true);
 }
 
 export function createToggle(command: BaseCommand, t: TranslateDelegate): ReactElement {

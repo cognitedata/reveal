@@ -146,6 +146,10 @@ export abstract class BaseCommand {
     }
   }
 
+  // ==================================================
+  // INSTANCE METHODS: Others
+  // ==================================================
+
   public getLabel(translate: TranslateDelegate): string {
     const { key, fallback } = this.tooltip;
     if (key === undefined) {
