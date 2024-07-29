@@ -86,17 +86,14 @@ export const SettingsButton = ({
         appendTo={document.body}
         placement="auto-start"
         content={
-          <Menu
+          <StyledMenu
             style={{
-              minWidth: '0px',
-              overflow: 'auto',
-              flexDirection,
-              padding: '4px 4px'
+              flexDirection
             }}>
             {commands.map((command, _index): ReactElement | undefined => {
               return createMenuItem(command, t);
             })}
-          </Menu>
+          </StyledMenu>
         }>
         <Button
           type={getButtonType(command)}
@@ -161,6 +158,7 @@ export function createSlider(command: BaseSliderCommand, t: TranslateDelegate): 
   }
   return (
     <SliderDiv>
+      key={command.uniqueId}
       <label>{command.getLabel(t)}</label>
       <StyledSlider
         min={command.min}
@@ -181,11 +179,18 @@ export function createOptionButton(command: BaseOptionCommand, t: TranslateDeleg
   }
   return (
     <OptionDiv>
+      key={command.uniqueId}
       <label>{command.getLabel(t)}</label>
       <OptionButton inputCommand={command} isHorizontal={false} usedInSettings={true} />
     </OptionDiv>
   );
 }
+
+const StyledMenu = styled(Menu)`
+  min-width: '0px',
+  overflow: 'auto',
+  padding: '4px 4px'
+`;
 
 const OptionDiv = styled.div`
   display: flex;

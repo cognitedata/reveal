@@ -36,7 +36,6 @@ export class SetPointColorTypeCommand extends BaseOptionCommand {
   }
 
   public override get isEnabled(): boolean {
-    return true;
     return this.renderTarget.getPointClouds().next().value !== undefined;
   }
 }
@@ -45,7 +44,6 @@ export class SetPointColorTypeCommand extends BaseOptionCommand {
 
 class OptionCommand extends RenderTargetCommand {
   private readonly _value: PointColorType;
-  private static selected = PointColorType.Rgb;
 
   public constructor(value: PointColorType) {
     super();
@@ -60,7 +58,7 @@ class OptionCommand extends RenderTargetCommand {
     // Let the first PointCloud decide the color type
     const pointCloud = this.renderTarget.getPointClouds().next().value;
     if (pointCloud === undefined) {
-      return OptionCommand.selected === this._value;
+      return false;
     }
     return pointCloud.pointColorType === this._value;
   }
@@ -69,7 +67,6 @@ class OptionCommand extends RenderTargetCommand {
     for (const pointCloud of this.renderTarget.getPointClouds()) {
       pointCloud.pointColorType = this._value;
     }
-    OptionCommand.selected = this._value;
     return true;
   }
 }

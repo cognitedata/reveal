@@ -39,6 +39,10 @@ export class SettingsCommand extends RenderTargetCommand {
   // ==================================================
 
   public add(command: BaseCommand): void {
+    if (this._commands.find((c) => c.equals(command)) !== undefined) {
+      console.error('Duplicated command given: ' + command.name);
+      return;
+    }
     this._commands.push(command);
   }
 

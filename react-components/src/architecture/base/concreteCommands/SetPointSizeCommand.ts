@@ -5,10 +5,10 @@
 import { type TranslateKey } from '../utilities/TranslateKey';
 import { BaseSliderCommand } from '../commands/BaseSliderCommand';
 
-export const DEFAULT_POINT_SIZE = 2;
-export const MIN_POINT_SIZE = 0.0;
-export const MAX_POINT_SIZE = 4; // Default seems be be 2, but the user probably wants lower values
-export const STEP_POINT_SIZE = 0.1;
+const DEFAULT_POINT_SIZE = 2;
+const MIN_POINT_SIZE = 0.0;
+const MAX_POINT_SIZE = 4; // Default seems be be 2, but the user probably wants lower values
+const STEP_POINT_SIZE = 0.1;
 
 export class SetPointSizeCommand extends BaseSliderCommand {
   // ==================================================
@@ -28,17 +28,13 @@ export class SetPointSizeCommand extends BaseSliderCommand {
   }
 
   public override get isEnabled(): boolean {
-    return true;
     return this.renderTarget.getPointClouds().next().value !== undefined;
   }
 
   public override get value(): number {
     // Let the first PointCloud decide the point size
     const pointCloud = this.renderTarget.getPointClouds().next().value;
-    if (pointCloud === undefined) {
-      return DEFAULT_POINT_SIZE;
-    }
-    return pointCloud.pointSize;
+    return pointCloud?.pointSize ?? DEFAULT_POINT_SIZE;
   }
 
   public override set value(value: number) {
