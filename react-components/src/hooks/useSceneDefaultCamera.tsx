@@ -48,10 +48,19 @@ export const useSceneDefaultCamera = (
 
         viewer.cameraManager.setCameraState({ position, target });
 
-        // Keep the camera target (pivot) in the same position
-        viewer.cameraManager.setCameraState({
-          target: initialCameraState.target
-        });
+        // Check if camera pivot point is in origin
+        // If not, preserve the target
+        if (
+          !(
+            initialCameraState.target.x === 0 &&
+            initialCameraState.target.y === 0 &&
+            initialCameraState.target.z === 0
+          )
+        ) {
+          viewer.cameraManager.setCameraState({
+            target: initialCameraState.target
+          });
+        }
       },
       isFetched: true
     };
