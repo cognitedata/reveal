@@ -14,7 +14,6 @@ import {
   useSceneDefaultCamera,
   withSuppressRevealEvents
 } from '../src';
-import { type DefaultCameraManager } from '@cognite/reveal';
 import { ToolBar } from '@cognite/cogs.js';
 import styled from 'styled-components';
 
