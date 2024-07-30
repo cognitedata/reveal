@@ -44,7 +44,14 @@ export const useSceneDefaultCamera = (
 
     return {
       fitCameraToSceneDefault: () => {
+        const initialCameraState = viewer.cameraManager.getCameraState();
+
         viewer.cameraManager.setCameraState({ position, target });
+
+        // Keep the camera target (pivot) in the same position
+        viewer.cameraManager.setCameraState({
+          target: initialCameraState.target
+        });
       },
       isFetched: true
     };
