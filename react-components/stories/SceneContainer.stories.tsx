@@ -79,11 +79,6 @@ const SceneContainerStoryContent = ({
   const { fitCameraToSceneDefault } = useSceneDefaultCamera(sceneExternalId, sceneSpaceId);
 
   useEffect(() => {
-    (reveal.cameraManager as DefaultCameraManager).setCameraControlsOptions({
-      changeCameraTargetOnClick: true,
-      mouseWheelAction: 'zoomToCursor'
-    });
-
     fitCameraToSceneDefault();
   }, [reveal, fitCameraToSceneDefault]);
   return (
