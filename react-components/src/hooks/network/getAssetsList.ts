@@ -4,13 +4,15 @@
 import { type CogniteClient, type CursorResponse, type Asset } from '@cognite/sdk';
 import { buildFilter } from '../../utilities/buildFilter';
 
+const sortOption = [{ property: ['_score_'] }];
+
 export const getAssetsList = async (
   sdk: CogniteClient,
   {
     query,
     cursor,
     limit = 1000,
-    sort = [{ property: ['_score_'] }],
+    sort = sortOption,
     aggregatedProperties = ['path']
   }: {
     query: string;
