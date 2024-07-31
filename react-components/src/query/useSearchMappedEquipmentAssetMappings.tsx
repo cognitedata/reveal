@@ -48,7 +48,7 @@ export const useSearchMappedEquipmentAssetMappings = (
   const { data: assetMappingList, isFetched } = useAssetMappedNodesForRevisions(
     models.map((model) => ({ ...model, type: 'cad' }))
   );
-  const allAssetMappings = useAllMappedEquipmentAssetMappings(models, sdk);
+  const initialAssetMappings = useAllMappedEquipmentAssetMappings(models, sdk);
 
   return useInfiniteQuery({
     queryKey: [
@@ -59,11 +59,11 @@ export const useSearchMappedEquipmentAssetMappings = (
       ...models.map((model) => [model.modelId, model.revisionId])
     ],
     queryFn: async ({ pageParam }: { pageParam: string | undefined }) => {
-      if (allAssetMappings.data === undefined) {
+      if (initialAssetMappings.data === undefined) {
         return { assets: [], nextCursor: undefined };
       }
       if (query === '') {
-        const assets = allAssetMappings.data?.pages.flatMap((modelWithAssets) =>
+        const assets = initialAssetMappings.data?.pages.flatMap((modelWithAssets) =>
           modelWithAssets
             .map((modelWithAsset) =>
               modelWithAsset.modelsAssets.flatMap((modelsAsset) => modelsAsset.assets)
