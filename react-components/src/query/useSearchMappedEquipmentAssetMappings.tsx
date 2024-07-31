@@ -81,16 +81,13 @@ export const useSearchMappedEquipmentAssetMappings = (
         cursor: pageParam
       });
 
-      const assets = assetsResponse.items.filter((asset) => asset !== undefined);
-
-      const assetMappingsWithSearch = assetMappingList.flatMap((mapping) => {
-        return mapping.assetMappings.filter((assetMapping) =>
-          assets.map((asset) => asset.id).includes(assetMapping.assetId)
-        );
+      const assets = assetsResponse.items.filter(isDefined);
+      const filteredSearchedAssets = assetMappingList.flatMap((mapping) => {
+        return mapping.assetMappings
+          .filter((assetMapping) => assets.some((asset) => asset.id === assetMapping.assetId))
+          .map((assetMapping) => assets.find((asset) => asset.id === assetMapping.assetId))
+          .filter(isDefined);
       });
-
-      const assetMappingsSet = new Set(assetMappingsWithSearch.map((mapping) => mapping.assetId));
-      const filteredSearchedAssets = assets.filter((asset) => assetMappingsSet.has(asset.id));
 
       return {
         assets: filteredSearchedAssets,
@@ -103,7 +100,7 @@ export const useSearchMappedEquipmentAssetMappings = (
       const lastPageData = allPages[allPages.length - 1];
       return lastPageData.nextCursor;
     },
-    enabled: isFetched && assetMappingList !== undefined && assetMappingList.length > 0
+    enabled: isFetched === true && assetMappingList !== undefined && assetMappingList.length > 0
   });
 };
 
