@@ -100,7 +100,7 @@ export const useSearchMappedEquipmentAssetMappings = (
       const lastPageData = allPages[allPages.length - 1];
       return lastPageData.nextCursor;
     },
-    enabled: isFetched === true && assetMappingList !== undefined && assetMappingList.length > 0
+    enabled: isFetched && assetMappingList !== undefined && assetMappingList.length > 0
   });
 };
 
