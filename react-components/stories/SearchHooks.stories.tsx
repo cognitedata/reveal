@@ -7,9 +7,10 @@ import {
   RevealCanvas,
   RevealToolbar,
   type AddResourceOptions,
-  type AddReveal3DModelOptions,
   type AddImage360CollectionOptions,
-  RevealContext
+  RevealContext,
+  type AddCadResourceOptions,
+  type AddPointCloudResourceOptions
 } from '../src';
 import { Color } from 'three';
 import { type ReactElement, useState, useMemo, useEffect } from 'react';
@@ -34,8 +35,9 @@ import {
   useSearchAssetsMappedPointCloudAnnotations
 } from '../src/query/useSearchAssetsMappedPointCloudAnnotations';
 import { isEqual } from 'lodash';
-import { type NodeItem } from '../src/utilities/FdmSDK';
+import { type NodeItem } from '../src/data-providers/FdmSDK';
 import { Button, Input } from '@cognite/cogs.js';
+import { is360ImageAddOptions } from '../src/components/Reveal3DResources/typeGuards';
 
 const queryClient = new QueryClient();
 const sdk = createSdkByUrlToken();
@@ -61,7 +63,8 @@ const StoryContent = ({ resources }: { resources: AddResourceOptions[] }): React
   const [loadMore, setLoadMore] = useState<boolean>(false);
 
   const filteredResources = resources.filter(
-    (resource): resource is AddReveal3DModelOptions => 'modelId' in resource
+    (resource): resource is AddCadResourceOptions | AddPointCloudResourceOptions =>
+      !is360ImageAddOptions(resource)
   );
 
   const { data: searchData } = useSearchMappedEquipmentFDM(
@@ -69,8 +72,7 @@ const StoryContent = ({ resources }: { resources: AddResourceOptions[] }): React
     viewsToSearch,
     filteredResources,
     undefined,
-    100,
-    sdk
+    100
   );
 
   const {
@@ -80,7 +82,7 @@ const StoryContent = ({ resources }: { resources: AddResourceOptions[] }): React
     fetchNextPage: fetchAssetSearchNextPage
   } = useSearchMappedEquipmentAssetMappings(mainSearchQuery, filteredResources, 1000, sdk);
 
-  const { data: allEquipment } = useAllMappedEquipmentFDM(filteredResources, viewsToSearch, sdk);
+  const { data: allEquipment } = useAllMappedEquipmentFDM(filteredResources, viewsToSearch);
 
   const {
     data: allAssets,
@@ -395,11 +397,11 @@ export const Main: Story = {
   },
   render: ({ resources }) => {
     return (
-      <QueryClientProvider client={queryClient}>
-        <RevealContext sdk={sdk} color={new Color(0x4a4a4a)}>
+      <RevealContext sdk={sdk} color={new Color(0x4a4a4a)}>
+        <QueryClientProvider client={queryClient}>
           <StoryContent resources={resources} />
-        </RevealContext>
-      </QueryClientProvider>
+        </QueryClientProvider>
+      </RevealContext>
     );
   }
 };

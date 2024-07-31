@@ -2,7 +2,7 @@
  * Copyright 2023 Cognite AS
  */
 
-import { type Query } from '../../utilities/FdmSDK';
+import { type Query } from '../../data-providers/FdmSDK';
 
 export function createGetSceneQuery(sceneExternalId: string, sceneSpaceId: string): Query {
   return {

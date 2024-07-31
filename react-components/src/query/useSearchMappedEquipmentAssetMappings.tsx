@@ -16,7 +16,7 @@ import {
 } from '@tanstack/react-query';
 import { useSDK } from '../components/RevealCanvas/SDKProvider';
 import { getAssetsList } from '../hooks/network/getAssetsList';
-import { useAssetMappedNodesForRevisions } from '../components/CacheProvider/AssetMappingCacheProvider';
+import { useAssetMappedNodesForRevisions } from '../components/CacheProvider/AssetMappingAndNode3DCacheProvider';
 import { isDefined } from '../utilities/isDefined';
 
 export type ModelMappings = {

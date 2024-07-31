@@ -2,18 +2,30 @@
  * Copyright 2022 Cognite AS
  */
 
-import { Box3, PerspectiveCamera, Plane, Quaternion, Vector3 } from 'three';
-import range from 'lodash/range';
 import { fitCameraToBoundingBox } from '@reveal/utilities';
+import range from 'lodash/range';
+import { Box3, PerspectiveCamera, Plane, Quaternion, Vector3 } from 'three';
+
+type NearAndFarPlaneBuffers = {
+  corners: Vector3[];
+  cameraPosition: Vector3;
+  cameraDirection: Vector3;
+};
+
+type CameraFarBuffers = {
+  nearPlane: Plane;
+  nearPlaneCoplanarPoint: Vector3;
+};
 
 /**
  * Helper methods for implementing a camera manager.
  */
 export class CameraManagerHelper {
   /**
+   * @deprecated usage of mutable static variables is unsafe
    * Reusable buffers used by updateNearAndFarPlane function to avoid allocations.
    */
-  private static readonly _updateNearAndFarPlaneBuffers = {
+  private static readonly _updateNearAndFarPlaneBuffers: NearAndFarPlaneBuffers = {
     cameraPosition: new Vector3(),
     cameraDirection: new Vector3(),
     corners: new Array<Vector3>(
@@ -28,10 +40,35 @@ export class CameraManagerHelper {
     )
   };
 
-  private static readonly _calculateCameraFarBuffers = {
+  /**
+   * @deprecated usage of mutable static variables is unsafe
+   * @private
+   */
+  private static readonly _calculateCameraFarBuffers: CameraFarBuffers = {
     nearPlaneCoplanarPoint: new Vector3(),
     nearPlane: new Plane()
   };
+
+  private readonly _instanceUpdateNearAndFarPlaneBuffers: NearAndFarPlaneBuffers = {
+    cameraPosition: new Vector3(),
+    cameraDirection: new Vector3(),
+    corners: new Array<Vector3>(
+      new Vector3(),
+      new Vector3(),
+      new Vector3(),
+      new Vector3(),
+      new Vector3(),
+      new Vector3(),
+      new Vector3(),
+      new Vector3()
+    )
+  };
+
+  private readonly _instanceCalculateCameraFarBuffers: CameraFarBuffers = {
+    nearPlaneCoplanarPoint: new Vector3(),
+    nearPlane: new Plane()
+  };
+
   /**
    * Calculates camera target based on new camera rotation.
    * @param camera Used camera instance.
@@ -76,29 +113,29 @@ export class CameraManagerHelper {
    * Updates near and far plane of the camera based on the bounding box.
    * @param camera Used camera instance.
    * @param boundingBox Bounding box of all objects on the scene.
+   * @deprecated use instance method instead
    */
   static updateCameraNearAndFar(camera: PerspectiveCamera, boundingBox: Box3): void {
-    const { cameraPosition, cameraDirection, corners } = this._updateNearAndFarPlaneBuffers;
-    this.getBoundingBoxCorners(boundingBox, corners);
-    camera.getWorldPosition(cameraPosition);
-    camera.getWorldDirection(cameraDirection);
+    CameraManagerHelper.updateCameraNearAndFarInternal(
+      camera,
+      boundingBox,
+      CameraManagerHelper._updateNearAndFarPlaneBuffers,
+      CameraManagerHelper._calculateCameraFarBuffers
+    );
+  }
 
-    // 1. Compute nearest to fit the whole boundingBox (the case
-    // where the camera is inside the box is ignored for now)
-    let near = this.calculateCameraNear(camera, boundingBox, cameraPosition);
-
-    // 2. Compute the far distance to the distance from camera to furthest
-    // corner of the bounding box that is "in front" of the near plane
-    const far = this.calculateCameraFar(near, cameraPosition, cameraDirection, corners);
-
-    // 3. Handle when camera is inside the model by adjusting the near value
-    if (boundingBox.containsPoint(cameraPosition)) {
-      near = Math.min(0.1, far / 1000.0);
-    }
-
-    camera.near = near;
-    camera.far = far;
-    camera.updateProjectionMatrix();
+  /**
+   * Updates near and far plane of the camera based on the bounding box.
+   * @param camera Used camera instance.
+   * @param boundingBox Bounding box of all objects on the scene.
+   */
+  public updateCameraNearAndFar(camera: PerspectiveCamera, boundingBox: Box3): void {
+    CameraManagerHelper.updateCameraNearAndFarInternal(
+      camera,
+      boundingBox,
+      this._instanceUpdateNearAndFarPlaneBuffers,
+      this._instanceCalculateCameraFarBuffers
+    );
   }
 
   /**
@@ -116,13 +153,43 @@ export class CameraManagerHelper {
     return fitCameraToBoundingBox(camera, boundingBox, radiusFactor);
   }
 
+  private static updateCameraNearAndFarInternal(
+    camera: PerspectiveCamera,
+    boundingBox: Box3,
+    nearAndFarPlaneBuffers: NearAndFarPlaneBuffers,
+    cameraFarBuffers: CameraFarBuffers
+  ): void {
+    const { cameraPosition, cameraDirection, corners } = nearAndFarPlaneBuffers;
+    this.getBoundingBoxCorners(boundingBox, corners);
+    camera.getWorldPosition(cameraPosition);
+    camera.getWorldDirection(cameraDirection);
+
+    // 1. Compute nearest to fit the whole boundingBox (the case
+    // where the camera is inside the box is ignored for now)
+    let near = this.calculateCameraNear(camera, boundingBox, cameraPosition);
+
+    // 2. Compute the far distance to the distance from camera to furthest
+    // corner of the bounding box that is "in front" of the near plane
+    const far = this.calculateCameraFar(near, cameraPosition, cameraDirection, corners, cameraFarBuffers);
+
+    // 3. Handle when camera is inside the model by adjusting the near value
+    if (boundingBox.containsPoint(cameraPosition)) {
+      near = Math.min(0.1, far / 1000.0);
+    }
+
+    camera.near = near;
+    camera.far = far;
+    camera.updateProjectionMatrix();
+  }
+
   private static calculateCameraFar(
     near: number,
     cameraPosition: Vector3,
     cameraDirection: Vector3,
-    corners: Array<Vector3>
+    corners: Array<Vector3>,
+    cameraFarBuffers: CameraFarBuffers
   ): number {
-    const { nearPlane, nearPlaneCoplanarPoint } = this._calculateCameraFarBuffers;
+    const { nearPlane, nearPlaneCoplanarPoint } = cameraFarBuffers;
 
     nearPlaneCoplanarPoint.copy(cameraPosition).addScaledVector(cameraDirection, near);
     nearPlane.setFromNormalAndCoplanarPoint(cameraDirection, nearPlaneCoplanarPoint);

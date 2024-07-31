@@ -19,6 +19,10 @@ export class ToggleMetricUnitsCommand extends RenderTargetCommand {
     return { key: 'TOGGLE_METRIC_UNITS', fallback: 'm/ft' }; // Note: m/ft do not need to be translated!
   }
 
+  public override get isToggle(): boolean {
+    return true;
+  }
+
   public override get isChecked(): boolean {
     return this.rootDomainObject.unitSystem.isMetric;
   }

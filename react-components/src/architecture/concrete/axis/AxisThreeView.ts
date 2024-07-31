@@ -271,7 +271,8 @@ export class AxisThreeView extends GroupThreeView {
           }
           labelCount += 1;
           end.addScaledVector(tickDirection, 2 * tickLength);
-          const text = incrementToString(tick);
+
+          const text = numberToString(dimension === 2 ? -tick : tick);
           const sprite = createSpriteWithText(text, tickFontSize, style.textColor);
           if (sprite === undefined) {
             continue;
@@ -601,7 +602,7 @@ function getTickDirection(faceIndex1: number, faceIndex2: number, target: Vector
   return target;
 }
 
-function incrementToString(value: number): string {
+function numberToString(value: number): string {
   // Sometimes the number comes out like this: 1.20000005 or 1.19999992 due to numeric precision limitations.
   // To get better rounded values, I wrote this myself: Multiply by some high integer and round it, then
   // convert to text, and insert the comma manually afterwards.

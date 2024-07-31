@@ -1,5 +1,5 @@
 /*!
- * Copyright 2023 Cognite AS
+ * Copyright 2024 Cognite AS
  */
 
 import { type ReactElement, useState, useEffect, useMemo, useCallback } from 'react';
@@ -10,20 +10,14 @@ import { type BaseCommand } from '../../architecture/base/commands/BaseCommand';
 import { getButtonType, getDefaultCommand, getIcon, getTooltipPlacement } from './utilities';
 import { LabelWithShortcut } from './LabelWithShortcut';
 
-export const createCommandButton = (
-  commandConstructor: () => BaseCommand,
-  isHorizontal = false
-): ReactElement => {
-  const command = useMemo(commandConstructor, []);
-  return <CommandButton inputCommand={command} isHorizontal={isHorizontal} />;
-};
-
 export const CommandButton = ({
   inputCommand,
-  isHorizontal = false
+  isHorizontal = false,
+  usedInSettings = false
 }: {
   inputCommand: BaseCommand;
   isHorizontal: boolean;
+  usedInSettings?: boolean;
 }): ReactElement => {
   const renderTarget = useRenderTarget();
   const { t } = useTranslation();
@@ -55,12 +49,13 @@ export const CommandButton = ({
     return <></>;
   }
   const placement = getTooltipPlacement(isHorizontal);
-  const tooltip = command.getLabel(t);
+  const label = command.getLabel(t);
   const shortcut = command.getShortCutKeys();
 
   return (
     <CogsTooltip
-      content={<LabelWithShortcut label={tooltip} shortcut={shortcut} />}
+      content={<LabelWithShortcut label={label} shortcut={shortcut} />}
+      disabled={usedInSettings || label === undefined}
       appendTo={document.body}
       placement={placement}>
       <Button
@@ -69,13 +64,14 @@ export const CommandButton = ({
         key={uniqueId}
         disabled={!isEnabled}
         toggled={isChecked}
-        aria-label={tooltip}
-        iconPlacement="right"
+        aria-label={label}
+        iconPlacement={usedInSettings ? 'left' : 'right'}
         onClick={() => {
           command.invoke();
           renderTarget.domElement.focus();
-        }}
-      />
+        }}>
+        {usedInSettings ? label + '' : undefined}
+      </Button>
     </CogsTooltip>
   );
 };

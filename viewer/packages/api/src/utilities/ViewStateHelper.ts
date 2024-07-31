@@ -58,8 +58,16 @@ export class ViewStateHelper {
 
     return {
       camera: {
-        position: cameraPosition,
-        target: cameraTarget
+        position: {
+          x: cameraPosition.x,
+          y: cameraPosition.y,
+          z: cameraPosition.z
+        },
+        target: {
+          x: cameraTarget.x,
+          y: cameraTarget.y,
+          z: cameraTarget.z
+        }
       },
       models: modelStates,
       clippingPlanes: clippingPlanesState

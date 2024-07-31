@@ -2,34 +2,36 @@
  * Copyright 2024 Cognite AS
  */
 
-import { type BaseCommand } from '../commands/BaseCommand';
 import { BaseOptionCommand } from '../commands/BaseOptionCommand';
 import { RenderTargetCommand } from '../commands/RenderTargetCommand';
 import { type TranslateKey } from '../utilities/TranslateKey';
 
-const KEYBOARD_SPEED_VALUES = [0.5, 1, 2, 5, 10, 20];
+const DEFAULT_OPTIONS = [0.5, 1, 2, 5, 10, 20];
 
 export class KeyboardSpeedCommand extends BaseOptionCommand {
+  // ==================================================
+  // CONSTRUCTOR
+  // ==================================================
+
+  constructor(supportedTypes = DEFAULT_OPTIONS) {
+    super();
+    for (const value of supportedTypes) {
+      this.add(new OptionCommand(value));
+    }
+  }
+
   // ==================================================
   // OVERRIDES
   // ==================================================
 
   public override get tooltip(): TranslateKey {
-    return { key: 'FLY_SPEED', fallback: 'Set fly speed on the camera' };
-  }
-
-  public override createOptions(): BaseCommand[] {
-    const options: BaseCommand[] = [];
-    for (const value of KEYBOARD_SPEED_VALUES) {
-      options.push(new OptionCommand(value));
-    }
-    return options;
+    return { key: 'FLY_SPEED', fallback: 'Set camera fly speed' };
   }
 }
 
 // Note: This is not exported, as it is only used internally
 class OptionCommand extends RenderTargetCommand {
-  private readonly _value;
+  private readonly _value: number;
 
   public constructor(value: number) {
     super();

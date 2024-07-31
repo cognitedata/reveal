@@ -33,7 +33,7 @@ export abstract class Transaction {
   }
 
   // ==================================================
-  // VIRTUAL METHODS (To be override)
+  // VIRTUAL METHODS (To be overridden)
   // =================================================
 
   protected abstract undoCore(

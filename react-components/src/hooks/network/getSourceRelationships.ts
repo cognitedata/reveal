@@ -9,7 +9,7 @@ import {
 } from '@cognite/sdk';
 
 import { filterRelationships } from './filterRelationships';
-import { type ExtendedRelationship } from '../../utilities/types';
+import { type ExtendedRelationship } from '../../data-providers/types';
 
 type Payload = {
   targetExternalIds: CogniteExternalId[];

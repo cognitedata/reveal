@@ -6,17 +6,17 @@ import {
   type DefaultResourceStyling,
   type PointCloudModelOptions,
   type AssetStylingGroup
-} from '../components/Reveal3DResources/types';
+} from './types';
 import { useMemo } from 'react';
-import { type AnnotationIdStylingGroup } from '../components/PointCloudContainer/useApplyPointCloudStyling';
+import { type AnnotationIdStylingGroup } from '../PointCloudContainer/useApplyPointCloudStyling';
 import { useQuery } from '@tanstack/react-query';
-import { isSame3dModel } from '../utilities/isSameModel';
+import { isSameModel } from '../../utilities/isSameModel';
 import {
   usePointCloudAnnotationMappingsForModels,
   usePointCloudAnnotationIdsForModels
-} from '../components/CacheProvider/PointCloudAnnotationCacheProvider';
-import { EMPTY_ARRAY } from '../utilities/constants';
-import { type PointCloudAnnotationModel } from '../components/CacheProvider/types';
+} from '../CacheProvider/PointCloudAnnotationCacheProvider';
+import { EMPTY_ARRAY } from '../../utilities/constants';
+import { type PointCloudAnnotationModel } from '../CacheProvider/types';
 
 export type StyledPointCloudModel = {
   model: PointCloudModelOptions;
@@ -168,7 +168,7 @@ function groupStyleGroupByModel(
 
   return styleGroup.reduce<StyledPointCloudModel[]>((accumulatedGroups, currentGroup) => {
     const existingGroupWithModel = accumulatedGroups.find((group) =>
-      isSame3dModel(group.model, currentGroup.model)
+      isSameModel(group.model, currentGroup.model)
     );
     existingGroupWithModel?.styleGroups.push(...currentGroup.styleGroups);
     return accumulatedGroups;

@@ -5,7 +5,7 @@ import { useRef, type ReactElement, useMemo } from 'react';
 import { RevealKeepAliveContext } from '../../src/components/RevealKeepAlive/RevealKeepAliveContext';
 import { RevealCanvas } from '../../src/components/RevealCanvas/RevealCanvas';
 import { type FdmNodeCache } from '../../src/components/CacheProvider/FdmNodeCache';
-import { type AssetMappingCache } from '../../src/components/CacheProvider/AssetMappingCache';
+import { type AssetMappingAndNode3DCache } from '../../src/components/CacheProvider/AssetMappingAndNode3DCache';
 import { type CogniteClient } from '@cognite/sdk';
 import { Cognite3DViewer } from '@cognite/reveal';
 import { createSdkByUrlToken } from './createSdkByUrlToken';
@@ -60,7 +60,7 @@ export const RevealStoryContext = ({
   const isRevealContainerMountedRef = useRef<boolean>(true);
   const sceneLoadedRef = useRef<SceneIdentifiers>();
   const fdmNodeCache = useRef<FdmNodeCache | undefined>();
-  const assetMappingCache = useRef<AssetMappingCache | undefined>();
+  const assetMappingCache = useRef<AssetMappingAndNode3DCache | undefined>();
   const pointCloudAnnotationCache = useRef<PointCloudAnnotationCache | undefined>();
   const image360AnnotationCache = useRef<Image360AnnotationCache | undefined>();
   return (

@@ -6,7 +6,7 @@ import { useFdmSdk } from '../../RevealCanvas/SDKProvider';
 import { RULE_BASED_OUTPUTS_VIEW } from '../constants';
 import { type ExternalIdsResultList, type RuleOutputSet } from '../types';
 import { fdmViewsExist } from '../../../utilities/fdmViewsExist';
-import { type FdmNode } from '../../../utilities/FdmSDK';
+import { type FdmNode } from '../../../data-providers/FdmSDK';
 
 export const useDeleteRuleInstance = (): ((
   ruleOutputSet: FdmNode<RuleOutputSet>
@@ -21,7 +21,7 @@ export const useDeleteRuleInstance = (): ((
         return { items: [] };
       }
 
-      const resultFromSavingRule = await fdmSdk.deleteInstance([
+      const resultFromSavingRule = await fdmSdk.deleteInstances([
         {
           instanceType: 'node',
           space: RULE_BASED_OUTPUTS_VIEW.space,

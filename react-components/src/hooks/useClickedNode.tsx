@@ -11,12 +11,12 @@ import { useEffect, useState } from 'react';
 import { useFdm3dNodeDataPromises } from '../components/CacheProvider/NodeCacheProvider';
 import { type CogniteInternalId, type Node3D } from '@cognite/sdk';
 import { type FdmNodeDataPromises } from '../components/CacheProvider/types';
-import { useAssetMappingForTreeIndex } from '../components/CacheProvider/AssetMappingCacheProvider';
-import { type NodeAssetMappingResult } from '../components/CacheProvider/AssetMappingCache';
+import { useAssetMappingForTreeIndex } from '../components/CacheProvider/AssetMappingAndNode3DCacheProvider';
+import { type NodeAssetMappingResult } from '../components/CacheProvider/AssetMappingAndNode3DCache';
 import { usePointCloudAnnotationMappingForAssetId } from '../components/CacheProvider/PointCloudAnnotationCacheProvider';
 import { type PointCloudAnnotationMappedAssetData } from './types';
 import { MOUSE, Vector2 } from 'three';
-import { type DmsUniqueIdentifier, type Source } from '../utilities/FdmSDK';
+import { type DmsUniqueIdentifier, type Source } from '../data-providers/FdmSDK';
 import { useRenderTarget, useReveal } from '../components/RevealCanvas/ViewerContext';
 
 export type AssetMappingDataResult = {
