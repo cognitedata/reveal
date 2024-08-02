@@ -13,11 +13,12 @@ import { MeasurementTool } from '../../architecture/concrete/measurements/Measur
 import { KeyboardSpeedCommand } from '../../architecture/base/concreteCommands/KeyboardSpeedCommand';
 import { ObservationsTool } from '../../architecture/concrete/observations/ObservationsTool';
 import { createButtonFromCommandConstructor } from './CommandButtons';
-import { SettingsCommand } from '../../architecture/base/concreteCommands/SettingsCommand';
+import { SettingsCommand } from '../../architecture/base/commands/SettingsCommand';
 import { SetPointColorTypeCommand } from '../../architecture/base/concreteCommands/SetPointColorTypeCommand';
 import { SetPointShapeCommand } from '../../architecture/base/concreteCommands/SetPointShapeCommand';
 import { SetPointSizeCommand } from '../../architecture/base/concreteCommands/SetPointSizeCommand';
 import { SetQualityCommand } from '../../architecture/base/concreteCommands/SetQualityCommand';
+import { PointCloudFilterCommand } from '../../architecture/base/concreteCommands/PointCloudFilterCommand';
 
 export class RevealButtons {
   static Settings = (): ReactElement => createButtonFromCommandConstructor(() => createSettings());
@@ -60,5 +61,6 @@ function createSettings(): SettingsCommand {
   settings.add(new SetPointSizeCommand());
   settings.add(new SetPointColorTypeCommand());
   settings.add(new SetPointShapeCommand());
+  settings.add(new PointCloudFilterCommand());
   return settings;
 }

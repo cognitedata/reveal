@@ -23,7 +23,7 @@ export class SetPointColorTypeCommand extends BaseOptionCommand {
   constructor(supportedTypes = DEFAULT_OPTIONS) {
     super();
     for (const value of supportedTypes) {
-      this.add(new OptionCommand(value));
+      this.add(new OptionItemCommand(value));
     }
   }
 
@@ -42,7 +42,7 @@ export class SetPointColorTypeCommand extends BaseOptionCommand {
 
 // Note: This is not exported, as it is only used internally
 
-class OptionCommand extends RenderTargetCommand {
+class OptionItemCommand extends RenderTargetCommand {
   private readonly _value: PointColorType;
 
   public constructor(value: PointColorType) {
