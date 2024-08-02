@@ -6,7 +6,10 @@ import { type UseQueryResult, useQuery } from '@tanstack/react-query';
 import { useFdm3dDataProvider, useFdmSdk } from '../components/RevealCanvas/SDKProvider';
 import { type Source, type DmsUniqueIdentifier } from '../data-providers/FdmSDK';
 import assert from 'assert';
-import { type FdmInstanceWithView } from '../data-providers/types';
+import { type FdmInstanceWithView, type FdmInstanceWithProperties } from '../data-providers/types';
+import { type FdmConnectionWithNode } from '../components/CacheProvider/types';
+import { type InstanceType } from '@cognite/sdk';
+import { pick, uniqBy } from 'lodash';
 
 export function use3dRelatedDirectConnections(
   instance: DmsUniqueIdentifier | undefined
@@ -58,7 +61,7 @@ export function use3dRelatedDirectConnections(
         .map((viewList, objectInd) => viewList.map((view) => [objectInd, view] as const))
         .flat();
 
-      const [deduplicatedViews, viewToDeduplicatedIndexMap] = createDeduplicatediewToIndexMap(
+      const [deduplicatedViews, viewToDeduplicatedIndexMap] = createDeduplicatedViewToIndexMap(
         relatedObjectViewsWithObjectIndex
       );
 
@@ -80,13 +83,77 @@ export function use3dRelatedDirectConnections(
   });
 }
 
+export function useAll3dDirectConnectionsWithProperties(
+  connectionWithNodeAndView: FdmConnectionWithNode[]
+): UseQueryResult<FdmInstanceWithProperties[]> {
+  const fdmSdk = useFdmSdk();
+  const fdmDataProvider = useFdm3dDataProvider();
+
+  return useQuery({
+    queryKey: ['reveal-react-components', 'get-all-3d-related-direct-connections'],
+    queryFn: async () => {
+
+      const instanceType: InstanceType = 'node';
+      const instancesData = connectionWithNodeAndView.map((item) => {
+        return {
+          externalId: item.connection.instance.externalId,
+          space: item.connection.instance.space,
+          instanceType
+        };
+      });
+
+      const instancesViews = connectionWithNodeAndView.map((item) => {
+        return item.view;
+      });
+
+      const uniqueViews = uniqBy(instancesViews, (item) =>
+        JSON.stringify(pick(item, ['externalId', 'space']))
+      );
+
+      const instancesContent = await Promise.all(
+        uniqueViews.map(async (view) => {
+          return await fdmSdk.getByExternalIds(instancesData, view);
+        })
+      );
+
+      if (instancesContent === undefined) {
+        return [];
+      }
+
+      const relatedObjectInspectionsResult = await fdmSdk.inspectInstances({
+        inspectionOperations: { involvedViews: {} },
+        items: instancesContent.flatMap((item) =>
+          item.items.map((fdmId) => ({
+            space: fdmId.space,
+            externalId: fdmId.externalId,
+            instanceType
+          }))
+        )
+      });
+
+      const data: FdmInstanceWithProperties[] = relatedObjectInspectionsResult.items.flatMap(
+        (inspectionResultItem) =>
+          instancesContent.flatMap((instanceContent) =>
+            instanceContent.items.filter(
+              (item) =>
+                item.space === inspectionResultItem.space &&
+                item.externalId === inspectionResultItem.externalId
+            )
+          )
+      );
+      return data;
+    },
+    enabled: connectionWithNodeAndView.length > 0
+  });
+}
+
 type ViewKey = `${string}/${string}/${string}`;
 
 function createViewKey(source: Source): ViewKey {
   return `${source.externalId}/${source.space}/${source.version}`;
 }
 
-function createDeduplicatediewToIndexMap(
+function createDeduplicatedViewToIndexMap(
   viewsWithObjectIndex: Array<readonly [number, Source]>
 ): [Source[], Map<ViewKey, number>] {
   const deduplicatedViews: Source[] = [];

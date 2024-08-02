@@ -18,6 +18,8 @@ import { useCreateAssetMappingsMapPerModel } from '../../hooks/useCreateAssetMap
 import { useExtractUniqueAssetIdsFromMapped } from './hooks/useExtractUniqueAssetIdsFromMapped';
 import { useConvertAssetMetadatasToLowerCase } from './hooks/useConvertAssetMetadatasToLowerCase';
 import { useExtractTimeseriesIdsFromRuleSet } from './hooks/useExtractTimeseriesIdsFromRuleSet';
+import { useMappedEdgesForRevisions } from '../CacheProvider/NodeCacheProvider';
+import { useAll3dDirectConnectionsWithProperties } from '../../query/use3dRelatedDirectConnections';
 
 export type ColorOverlayProps = {
   ruleSet: RuleOutputSet | undefined;
@@ -47,6 +49,36 @@ export function RuleBasedOutputsSelector({
   const assetIdsFromMapped = useExtractUniqueAssetIdsFromMapped(assetMappings);
 
   const { data: mappedAssets, isFetched } = useAssetsByIdsQuery(assetIdsFromMapped);
+
+  const { data: fdmMappedEquipmentEdges } = useMappedEdgesForRevisions(cadModels, true);
+
+  const fdmConnectionWithNodeAndViewList =
+    fdmMappedEquipmentEdges !== undefined
+      ? Array.from(fdmMappedEquipmentEdges.values()).flat()
+      : [];
+
+  const { data: fdmDirectRelationData } = useAll3dDirectConnectionsWithProperties(
+    fdmConnectionWithNodeAndViewList
+  );
+
+  console.log('TEST fdmConnectionWithNodeAndViewList', fdmConnectionWithNodeAndViewList);
+  console.log('TEST fdmDirectRelationData', fdmDirectRelationData);
+  const fdmMappedEquipments =
+    fdmDirectRelationData
+      ?.map((itemsData) => {
+        const connectionFound = fdmConnectionWithNodeAndViewList.find(
+          (item) =>
+            itemsData.externalId === item.connection.instance.externalId &&
+            itemsData.space === item.connection.instance.space
+        );
+        return {
+          ...connectionFound,
+          ...itemsData
+        };
+      })
+      .flat() ?? [];
+
+  console.log('TEST fdmMappedEquipments', fdmMappedEquipments);
 
   useEffect(() => {
     if (isFetched) {

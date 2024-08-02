@@ -9,9 +9,11 @@ import {
   type Metadata,
   type Relationship
 } from '@cognite/sdk/';
-import { type DmsUniqueIdentifier, type Source } from './FdmSDK';
+import { type NodeItem, type DmsUniqueIdentifier, type Source, type EdgeItem } from './FdmSDK';
 
 export type FdmInstanceWithView = DmsUniqueIdentifier & { view: Source };
+
+export type FdmInstanceWithProperties = NodeItem<unknown> | EdgeItem<unknown>;
 
 export type AssetInstanceReference = { assetId: number };
 export type InstanceReference = AssetInstanceReference | DmsUniqueIdentifier;
