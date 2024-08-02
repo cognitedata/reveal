@@ -44,7 +44,25 @@ export const useSceneDefaultCamera = (
 
     return {
       fitCameraToSceneDefault: () => {
-        viewer.cameraManager.setCameraState({ position, target });
+        const initialCameraState = viewer.cameraManager.getCameraState();
+
+        // Preserve pivot point if user has already set a pivot point
+        // If not, set the pivot point near the center of the scene
+        // When moving Scene to system space, we will extend the data
+        // model to store pos, rot and pivot
+        if (
+          initialCameraState.target.x === 0 &&
+          initialCameraState.target.y === 0 &&
+          initialCameraState.target.z === 0
+        ) {
+          viewer.cameraManager.setCameraState({ position, target });
+        } else {
+          const direction = new Vector3().subVectors(position, target).normalize();
+          const rotation = new Euler().setFromVector3(direction);
+          const quaternion = new Quaternion().setFromEuler(rotation);
+
+          viewer.cameraManager.setCameraState({ position, rotation: quaternion });
+        }
       },
       isFetched: true
     };
