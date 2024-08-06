@@ -47,6 +47,8 @@ export const useSceneDefaultCamera = (
       return {
         fitCameraToSceneDefault: () => {
           if (viewer.models.length === 0) {
+            // If no models are loaded, set a default camera position
+            // This is the same default position that have been used in SceneBuilder
             const position = new Vector3(-100, 200, 400);
             const target = new Vector3();
             viewer.cameraManager.setCameraState({ position, target });
