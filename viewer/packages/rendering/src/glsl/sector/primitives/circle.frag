@@ -27,7 +27,7 @@ void main()
       discard;
 
     NodeAppearance appearance = nodeAppearanceFromTexel(v_nodeAppearanceTexel);
-    if (isClipped(appearance, vViewPosition)) {
+    if (isClipped(vViewPosition)) {
         discard;
     }
 

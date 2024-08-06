@@ -2,7 +2,7 @@
 uniform vec4 clippingPlanes[NUM_CLIPPING_PLANES];
 #endif
 
-bool isClipped(NodeAppearance nodeAppearance, vec3 point) {
+bool isClipped(vec3 point) {
 #if NUM_CLIPPING_PLANES > 0
   vec3 pointFlipped = -point;
   vec4 plane;

@@ -108,7 +108,7 @@ void main()
   if (intersectionPoint.z <= 0.0 ||
       intersectionPoint.z > height ||
       theta > v_angle + v_arcAngle ||
-      isClipped(appearance, p) ||
+      isClipped(p) ||
       rayTargetDist + dist < 0.0
     ) {
       // Missed the first point, check the other point
@@ -124,7 +124,7 @@ void main()
       if (intersectionPoint.z <= 0.0 ||
         intersectionPoint.z > height ||
         theta > v_angle + v_arcAngle ||
-        isClipped(appearance, p) ||
+        isClipped(p) ||
         rayTargetDist + dist < 0.0
       ) {
         // Missed the other point too

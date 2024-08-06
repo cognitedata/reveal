@@ -104,7 +104,7 @@ void main()
 
     if (intersectionPointZ <= 0.0 ||
       intersectionPointZ >= L ||
-      isClipped(appearance, p) ||
+      isClipped(p) ||
       rayTargetDist + dist < 0.0
       ) {
       // Either intersection point is behind starting point (happens inside the cone),
@@ -115,7 +115,7 @@ void main()
 
       if (intersectionPointZ <= 0.0 ||
         intersectionPointZ >= L ||
-        isClipped(appearance, p) ||
+        isClipped(p) ||
         rayTargetDist + dist < 0.0
       ) {
         // Missed the other point too
