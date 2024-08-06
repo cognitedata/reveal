@@ -93,18 +93,8 @@ export abstract class BaseFilterCommand extends RenderTargetCommand {
     if (this._children === undefined) {
       return this.getNoneLabel(translate);
     }
-    let label = '';
-    let counter = 0;
-    for (const child of this._children) {
-      if (!child.isChecked) {
-        continue;
-      }
-      if (counter > 0) {
-        label = label.concat(', ');
-      }
-      label = label.concat(child.getLabel(translate));
-      counter++;
-    }
+    const selected = this._children.filter((child) => child.isChecked);
+    const counter = selected.length;
     if (counter === 0) {
       return this.getNoneLabel(translate);
     }
@@ -112,7 +102,7 @@ export abstract class BaseFilterCommand extends RenderTargetCommand {
       return this.getAllLabel(translate);
     }
     if (counter === 1) {
-      return label;
+      return selected[0].getLabel(translate);
     }
     return counter.toString() + ' ' + this.getSelected(translate);
   }
