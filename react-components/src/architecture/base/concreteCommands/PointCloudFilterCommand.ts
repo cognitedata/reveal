@@ -103,7 +103,7 @@ class FilterItemCommand extends BaseFilterItemCommand {
   // ==================================================
 
   public override get tooltip(): TranslateKey {
-    return { fallback: this.displayName };
+    return { fallback: this._pointClass.displayName };
   }
 
   public override get isChecked(): boolean {
@@ -136,21 +136,6 @@ class FilterItemCommand extends BaseFilterItemCommand {
     pointCloud.setClassVisible(this._pointClass.code, value);
     CommandsUpdater.update(this._renderTarget);
   }
-
-  // ==================================================
-  // INSTANCE METHODS
-  // ==================================================
-
-  private get displayName(): string {
-    const name = this._pointClass.name;
-    const changedName = name.charAt(0).toUpperCase() + name.slice(1).replace(/_/g, ' ');
-
-    if (!name.startsWith('ReservedOr')) {
-      return changedName;
-    }
-    const betterKey = changedName.slice('ReservedOr'.length);
-    return `${betterKey} (legacy)`;
-  }
 }
 
 class PointClass {
@@ -162,6 +147,17 @@ class PointClass {
     this.name = name;
     this.code = code;
     this.color = color;
+  }
+
+  public get displayName(): string {
+    const name = this.name;
+    const changedName = name.charAt(0).toUpperCase() + name.slice(1).replace(/_/g, ' ');
+
+    if (!name.startsWith('ReservedOr')) {
+      return changedName;
+    }
+    const betterKey = changedName.slice('ReservedOr'.length);
+    return `${betterKey} (legacy)`;
   }
 }
 
