@@ -67,11 +67,20 @@ export abstract class RenderTargetCommand extends BaseCommand {
 
   public attach(renderTarget: RevealRenderTarget): void {
     this._renderTarget = renderTarget;
+    this.attachChildren();
   }
 
   // ==================================================
   // INSTANCE METHODS
   // ==================================================
+
+  protected attachChildren(): void {
+    for (const child of this.getChildren()) {
+      if (child instanceof RenderTargetCommand) {
+        child.attach(this.renderTarget);
+      }
+    }
+  }
 
   public addTransaction(transaction: Transaction | undefined): void {
     if (transaction === undefined) {

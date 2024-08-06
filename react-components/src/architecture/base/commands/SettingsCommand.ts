@@ -2,17 +2,24 @@
  * Copyright 2024 Cognite AS
  */
 
-import { type RevealRenderTarget } from '../renderTarget/RevealRenderTarget';
 import { type TranslateKey } from '../utilities/TranslateKey';
-import { type BaseCommand } from '../commands/BaseCommand';
-import { RenderTargetCommand } from '../commands/RenderTargetCommand';
+import { type BaseCommand } from './BaseCommand';
+import { RenderTargetCommand } from './RenderTargetCommand';
 
 export class SettingsCommand extends RenderTargetCommand {
   // ==================================================
-  // INSTANCE FIELDS
+  // INSTANCE FIELDS/PROPERTIES
   // ==================================================
 
-  private readonly _commands: BaseCommand[] = [];
+  private readonly _children: BaseCommand[] = [];
+
+  public get children(): BaseCommand[] {
+    return this._children;
+  }
+
+  public get hasChildren(): boolean {
+    return this._children.length > 0;
+  }
 
   // ==================================================
   // OVERRIDES
@@ -26,27 +33,24 @@ export class SettingsCommand extends RenderTargetCommand {
     return 'Settings';
   }
 
-  public override attach(renderTarget: RevealRenderTarget): void {
-    super.attach(renderTarget);
-    for (const command of this._commands) {
-      if (command instanceof RenderTargetCommand) {
-        command.attach(renderTarget);
-      }
+  protected override *getChildren(): Generator<BaseCommand> {
+    if (this._children === undefined) {
+      return;
+    }
+    for (const child of this._children) {
+      yield child;
     }
   }
+
   // ==================================================
   // INSTANCE METHODS
   // ==================================================
 
   public add(command: BaseCommand): void {
-    if (this._commands.find((c) => c.equals(command)) !== undefined) {
+    if (this._children.find((c) => c.equals(command)) !== undefined) {
       console.error('Duplicated command given: ' + command.name);
       return;
     }
-    this._commands.push(command);
-  }
-
-  public get commands(): BaseCommand[] {
-    return this._commands;
+    this._children.push(command);
   }
 }

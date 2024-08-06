@@ -32,16 +32,16 @@ export function getButtonType(command: BaseCommand): ButtonType {
   return 'ghost';
 }
 
-export function getDefaultCommand(
-  newCommand: BaseCommand,
+export function getDefaultCommand<T extends BaseCommand>(
+  newCommand: T,
   renderTarget: RevealRenderTarget
-): BaseCommand {
+): T {
   // If it exists from before, return the existing command
   // Otherwise, add the new command to the controller and attach the renderTarget.
   if (!newCommand.hasData) {
     const oldCommand = renderTarget.commandsController.getEqual(newCommand);
     if (oldCommand !== undefined) {
-      return oldCommand;
+      return oldCommand as T;
     }
     renderTarget.commandsController.add(newCommand);
   }
