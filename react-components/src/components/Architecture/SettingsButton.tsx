@@ -24,11 +24,12 @@ import {
 import { LabelWithShortcut } from './LabelWithShortcut';
 import { type TranslateDelegate } from '../../architecture/base/utilities/TranslateKey';
 import styled from 'styled-components';
-import { SettingsCommand } from '../../architecture/base/concreteCommands/SettingsCommand';
-import { createButton } from './CommandButtons';
+import { type SettingsCommand } from '../../architecture/base/commands/SettingsCommand';
 import { BaseOptionCommand } from '../../architecture/base/commands/BaseOptionCommand';
 import { OptionButton } from './OptionButton';
 import { BaseSliderCommand } from '../../architecture/base/commands/BaseSliderCommand';
+import { BaseFilterCommand } from '../../architecture/base/commands/BaseFilterCommand';
+import { FilterButton } from './FilterButton';
 
 export const SettingsButton = ({
   inputCommand,
@@ -39,7 +40,10 @@ export const SettingsButton = ({
 }): ReactElement => {
   const renderTarget = useRenderTarget();
   const { t } = useTranslation();
-  const command = useMemo<BaseCommand>(() => getDefaultCommand(inputCommand, renderTarget), []);
+  const command = useMemo<SettingsCommand>(
+    () => getDefaultCommand<SettingsCommand>(inputCommand, renderTarget),
+    []
+  );
 
   const [isOpen, setOpen] = useState<boolean>(false);
   const [isEnabled, setEnabled] = useState<boolean>(true);
@@ -62,17 +66,14 @@ export const SettingsButton = ({
     };
   }, [command]);
 
-  if (!(command instanceof SettingsCommand)) {
-    return <></>;
-  }
-  if (!isVisible) {
+  if (!isVisible || !command.hasChildren) {
     return <></>;
   }
   const placement = getTooltipPlacement(isHorizontal);
   const label = command.getLabel(t);
   const shortcut = command.getShortCutKeys();
   const flexDirection = getFlexDirection(isHorizontal);
-  const commands = command.commands;
+  const children = command.children;
 
   return (
     <CogsTooltip
@@ -86,14 +87,15 @@ export const SettingsButton = ({
         appendTo={document.body}
         placement="auto-start"
         content={
-          <StyledMenu
+          <Menu
             style={{
-              flexDirection
+              flexDirection,
+              padding: '4px 4px'
             }}>
-            {commands.map((command, _index): ReactElement | undefined => {
-              return createMenuItem(command, t);
+            {children.map((child, _index): ReactElement | undefined => {
+              return createMenuItem(child, t);
             })}
-          </StyledMenu>
+          </Menu>
         }>
         <Button
           type={getButtonType(command)}
@@ -112,25 +114,25 @@ export const SettingsButton = ({
   );
 };
 
-export function createMenuItem(
-  command: BaseCommand,
-  t: TranslateDelegate
-): ReactElement | undefined {
+function createMenuItem(command: BaseCommand, t: TranslateDelegate): ReactElement | undefined {
   if (command instanceof BaseSliderCommand) {
     return createSlider(command, t);
   }
   if (command instanceof BaseOptionCommand) {
     return createOptionButton(command, t);
   }
+  if (command instanceof BaseFilterCommand) {
+    return createFilterButton(command, t);
+  }
   if (command.isToggle) {
     return createToggle(command, t);
   }
-  return createButton(command, false, true);
+  return createButton(command, t);
 }
 
-export function createToggle(command: BaseCommand, t: TranslateDelegate): ReactElement {
+function createToggle(command: BaseCommand, t: TranslateDelegate): ReactElement {
   const [isChecked, setChecked] = useState(command.isChecked);
-  if (!command.isEnabled) {
+  if (!command.isVisible) {
     return <></>;
   }
   return (
@@ -139,7 +141,6 @@ export function createToggle(command: BaseCommand, t: TranslateDelegate): ReactE
       hasSwitch={true}
       disabled={!command.isEnabled}
       toggled={isChecked}
-      iconPlacement="right"
       style={{ padding: '4px 4px' }}
       onChange={() => {
         command.invoke();
@@ -150,17 +151,41 @@ export function createToggle(command: BaseCommand, t: TranslateDelegate): ReactE
   );
 }
 
-export function createSlider(command: BaseSliderCommand, t: TranslateDelegate): ReactElement {
+function createButton(command: BaseCommand, t: TranslateDelegate): ReactElement {
+  const [isChecked, setChecked] = useState(command.isChecked);
+  if (!command.isVisible) {
+    return <></>;
+  }
+  const label = command.getLabel(t);
+  const shortcut = command.getShortCutKeys();
+  return (
+    <Menu.Item
+      key={command.uniqueId}
+      disabled={!command.isEnabled}
+      toggled={isChecked}
+      icon={getIcon(command)}
+      iconPlacement="left"
+      style={{ padding: '4px 4px' }}
+      onClick={() => {
+        command.invoke();
+        setChecked(command.isChecked);
+      }}>
+      <LabelWithShortcut label={label} shortcut={shortcut} />
+    </Menu.Item>
+  );
+}
+
+function createSlider(command: BaseSliderCommand, t: TranslateDelegate): ReactElement {
   const [value, setValue] = useState(command.value);
 
-  if (!command.isEnabled) {
+  if (!command.isVisible) {
     return <></>;
   }
   return (
     <SliderDiv>
-      key={command.uniqueId}
       <label>{command.getLabel(t)}</label>
       <StyledSlider
+        disabled={!command.isEnabled}
         min={command.min}
         max={command.max}
         step={command.step}
@@ -173,24 +198,29 @@ export function createSlider(command: BaseSliderCommand, t: TranslateDelegate): 
   );
 }
 
-export function createOptionButton(command: BaseOptionCommand, t: TranslateDelegate): ReactElement {
-  if (!command.isEnabled) {
+function createOptionButton(command: BaseOptionCommand, t: TranslateDelegate): ReactElement {
+  if (!command.isVisible) {
     return <></>;
   }
   return (
     <OptionDiv>
-      key={command.uniqueId}
       <label>{command.getLabel(t)}</label>
       <OptionButton inputCommand={command} isHorizontal={false} usedInSettings={true} />
     </OptionDiv>
   );
 }
 
-const StyledMenu = styled(Menu)`
-  min-width: '0px',
-  overflow: 'auto',
-  padding: '4px 4px'
-`;
+function createFilterButton(command: BaseFilterCommand, t: TranslateDelegate): ReactElement {
+  if (!command.isVisible) {
+    return <></>;
+  }
+  return (
+    <OptionDiv>
+      <label>{command.getLabel(t)}</label>
+      <FilterButton inputCommand={command} isHorizontal={false} usedInSettings={true} />
+    </OptionDiv>
+  );
+}
 
 const OptionDiv = styled.div`
   display: flex;
@@ -208,7 +238,7 @@ const SliderDiv = styled.div`
   align-items: center;
   justify-content: space-between;
   gap: 8px;
-  padding: 8px 4px;
+  padding: 4px 4px;
   font-size: 14px;
 `;
 

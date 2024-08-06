@@ -2,7 +2,6 @@
  * Copyright 2024 Cognite AS
  */
 
-import { type RevealRenderTarget } from '../renderTarget/RevealRenderTarget';
 import { type BaseCommand } from './BaseCommand';
 import { RenderTargetCommand } from './RenderTargetCommand';
 
@@ -12,44 +11,61 @@ import { RenderTargetCommand } from './RenderTargetCommand';
  */
 
 export abstract class BaseOptionCommand extends RenderTargetCommand {
-  private _options: BaseCommand[] | undefined = undefined;
+  // ==================================================
+  // INSTANCE FIELDS/PROPERTIES
+  // ==================================================
+
+  private _children: BaseCommand[] | undefined = undefined;
+
+  public get children(): BaseCommand[] | undefined {
+    if (this._children === undefined) {
+      this._children = this.createChildren();
+    }
+    return this._children;
+  }
+
+  public get hasChildren(): boolean {
+    return this._children !== undefined && this._children.length > 0;
+  }
 
   // ==================================================
   // OVERRIDES
   // ==================================================
 
-  public override attach(renderTarget: RevealRenderTarget): void {
-    this._renderTarget = renderTarget;
-    for (const option of this.options) {
-      if (option instanceof RenderTargetCommand) {
-        option.attach(renderTarget);
-      }
+  protected override *getChildren(): Generator<BaseCommand> {
+    if (this._children === undefined) {
+      return;
+    }
+    for (const child of this._children) {
+      yield child;
     }
   }
+
   // ==================================================
   // VIRTUAL METHODS
   // ==================================================
 
-  protected createOptions(): BaseCommand[] {
-    return []; // Override this to add options or use the add method
+  protected createChildren(): BaseCommand[] {
+    return []; // Override this to add options or use the constructor and add them in
   }
 
   // ==================================================
   // INSTANCE METHODS
   // ==================================================
 
-  public get options(): BaseCommand[] {
-    if (this._options === undefined) {
-      this._options = this.createOptions();
+  public get selectedChild(): BaseCommand | undefined {
+    const children = this.children;
+    if (children === undefined) {
+      return undefined;
     }
-    return this._options;
+    return children.find((child) => child.isChecked);
   }
 
-  public get selectedOption(): BaseCommand | undefined {
-    return this.options.find((option) => option.isChecked);
-  }
-
-  protected add(command: BaseCommand): void {
-    this.options.push(command);
+  protected add(child: BaseCommand): void {
+    const children = this.children;
+    if (children === undefined) {
+      return undefined;
+    }
+    children.push(child);
   }
 }
