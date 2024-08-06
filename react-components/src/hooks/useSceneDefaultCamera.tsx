@@ -32,8 +32,7 @@ export const useSceneDefaultCamera = (
       };
     }
 
-    // Use a good default camera position if no camera configuration is provided
-    if (
+    const cameraNotSet =
       data.sceneConfiguration.cameraTranslationX === 0 &&
       data.sceneConfiguration.cameraTranslationY === 0 &&
       data.sceneConfiguration.cameraTranslationZ === 0 &&
@@ -42,8 +41,10 @@ export const useSceneDefaultCamera = (
       data.sceneConfiguration.cameraEulerRotationZ === 0 &&
       data.sceneConfiguration.cameraTargetX === undefined &&
       data.sceneConfiguration.cameraTargetY === undefined &&
-      data.sceneConfiguration.cameraTargetZ === undefined
-    ) {
+      data.sceneConfiguration.cameraTargetZ === undefined;
+
+    // Use a good default camera position if no camera configuration is provided
+    if (cameraNotSet) {
       return {
         fitCameraToSceneDefault: () => {
           if (viewer.models.length === 0) {
@@ -85,14 +86,7 @@ export const useSceneDefaultCamera = (
         ) {
           viewer.cameraManager.setCameraState({ position, target });
         } else {
-          const direction = new Vector3().subVectors(position, target).normalize();
-          const up = new Vector3(0, 1, 0);
-          const right = new Vector3().crossVectors(up, direction).normalize();
-          const recomputedUp = new Vector3().crossVectors(direction, right).normalize();
-          const rotationMatrix = new Matrix4();
-          rotationMatrix.makeBasis(right, recomputedUp, direction);
-          const quaternion = new Quaternion().setFromRotationMatrix(rotationMatrix);
-
+          const quaternion = getLookAtRotation(position, target);
           viewer.cameraManager.setCameraState({ position, rotation: quaternion });
         }
       },
@@ -102,7 +96,11 @@ export const useSceneDefaultCamera = (
 };
 
 function extractCameraTarget(scene: SceneConfiguration): Vector3 {
-  if (scene.cameraTargetX !== undefined) {
+  if (
+    scene.cameraTargetX !== undefined ||
+    scene.cameraTargetY !== undefined ||
+    scene.cameraTargetZ !== undefined
+  ) {
     return new Vector3(scene.cameraTargetX, scene.cameraTargetY, scene.cameraTargetZ);
   } else {
     const rotation = new Quaternion().setFromEuler(
@@ -121,4 +119,14 @@ function extractCameraTarget(scene: SceneConfiguration): Vector3 {
     );
     return position.clone().add(new Vector3(0, 0, -50).applyQuaternion(rotation));
   }
+}
+
+function getLookAtRotation(position: Vector3, target: Vector3): Quaternion {
+  const direction = new Vector3().subVectors(position, target).normalize();
+  const up = new Vector3(0, 1, 0);
+  const right = new Vector3().crossVectors(up, direction).normalize();
+  const recomputedUp = new Vector3().crossVectors(direction, right).normalize();
+  const rotationMatrix = new Matrix4();
+  rotationMatrix.makeBasis(right, recomputedUp, direction);
+  return new Quaternion().setFromRotationMatrix(rotationMatrix);
 }
