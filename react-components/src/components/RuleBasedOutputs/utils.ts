@@ -20,14 +20,20 @@ import {
   type TriggerTypeData,
   type TimeseriesAndDatapoints,
   type EmptyRuleForSelection,
-  type RuleAndEnabled
+  type RuleAndEnabled,
+  type FdmStylingGroupAndStyleIndex,
+  type AllMappingStylingGroupAndStyleIndex
 } from './types';
 import { NumericRange, TreeIndexNodeCollection, type NodeAppearance } from '@cognite/reveal';
 import { type AssetMapping3D, type Asset, type Datapoints } from '@cognite/sdk';
-import { type AssetStylingGroup } from '../Reveal3DResources/types';
+import { type FdmAssetStylingGroup, type AssetStylingGroup } from '../Reveal3DResources/types';
 import { isDefined } from '../../utilities/isDefined';
 import { assertNever } from '../../utilities/assertNever';
-import { type AssetIdsAndTimeseries } from '../../data-providers/types';
+import {
+  type FdmInstanceNodeWithConnectionAndProperties,
+  type AssetIdsAndTimeseries,
+  FdmInstanceWithProperties
+} from '../../data-providers/types';
 
 const checkStringExpressionStatement = (
   triggerTypeData: TriggerTypeData[],
@@ -269,16 +275,18 @@ function getExpressionTriggerTypes(expression: Expression): TriggerType[] {
 export const generateRuleBasedOutputs = async ({
   contextualizedAssetNodes,
   assetMappings,
+  fdmMappings,
   ruleSet,
   assetIdsAndTimeseries,
   timeseriesDatapoints
 }: {
   contextualizedAssetNodes: Asset[];
   assetMappings: AssetMapping3D[];
+  fdmMappings: FdmInstanceNodeWithConnectionAndProperties[];
   ruleSet: RuleOutputSet;
   assetIdsAndTimeseries: AssetIdsAndTimeseries[];
   timeseriesDatapoints: Datapoints[] | undefined;
-}): Promise<AssetStylingGroupAndStyleIndex[]> => {
+}): Promise<AllMappingStylingGroupAndStyleIndex[]> => {
   const outputType = 'color'; // for now it only supports colors as the output
 
   const ruleWithOutputs = ruleSet?.rulesWithOutputs;
@@ -301,7 +309,7 @@ export const generateRuleBasedOutputs = async ({
 
         if (outputSelected === undefined) return;
 
-        return await analyzeNodesAgainstExpression({
+        const assetMappingsStylingGroups = await analyzeAssetMappingsAgainstExpression({
           contextualizedAssetNodes,
           assetIdsAndTimeseries,
           timeseriesDatapoints,
@@ -309,6 +317,19 @@ export const generateRuleBasedOutputs = async ({
           expression,
           outputSelected
         });
+
+        const fdmMappingsStylingGroups = await analyzeFdmMappingsAgainstExpression({
+          fdmMappings,
+          expression,
+          outputSelected
+        });
+
+        const allStyling: AllMappingStylingGroupAndStyleIndex = {
+          assetMappingsStylingGroupAndIndex: assetMappingsStylingGroups,
+          fdmStylingGroupAndStyleIndex: fdmMappingsStylingGroups
+        };
+
+        return allStyling;
       })
     )
   ).filter(isDefined);
@@ -332,7 +353,7 @@ const getRuleOutputFromTypeSelected = (
   return outputSelected;
 };
 
-const analyzeNodesAgainstExpression = async ({
+const analyzeAssetMappingsAgainstExpression = async ({
   contextualizedAssetNodes,
   assetIdsAndTimeseries,
   timeseriesDatapoints,
@@ -347,7 +368,7 @@ const analyzeNodesAgainstExpression = async ({
   expression: Expression;
   outputSelected: ColorRuleOutput;
 }): Promise<AssetStylingGroupAndStyleIndex> => {
-  const allTreeNodes = await Promise.all(
+  const allAssetMappingsTreeNodes = await Promise.all(
     contextualizedAssetNodes.map(async (contextualizedAssetNode) => {
       const triggerData: TriggerTypeData[] = [];
 
@@ -389,13 +410,46 @@ const analyzeNodesAgainstExpression = async ({
         const nodesFromThisAsset = assetMappings.filter(
           (item) => item.assetId === contextualizedAssetNode.id
         );
+
         return nodesFromThisAsset;
       }
     })
   );
 
-  const filteredAllTreeNodes = allTreeNodes.flat().filter(isDefined);
-  return applyNodeStyles(filteredAllTreeNodes, outputSelected);
+  const filteredAllAssetMappingsTreeNodes = allAssetMappingsTreeNodes.flat().filter(isDefined);
+  return applyAssetMappingsNodeStyles(filteredAllAssetMappingsTreeNodes, outputSelected);
+};
+
+const analyzeFdmMappingsAgainstExpression = async ({
+  fdmMappings,
+  expression,
+  outputSelected
+}: {
+  fdmMappings: FdmInstanceNodeWithConnectionAndProperties[];
+  expression: Expression;
+  outputSelected: ColorRuleOutput;
+}): Promise<FdmStylingGroupAndStyleIndex> => {
+  const allFdmtMappingsTreeNodes = await Promise.all(
+    fdmMappings.map(async (mapping) => {
+      const triggerData: TriggerTypeData[] = [];
+
+      const fdmTriggerData: TriggerTypeData = {
+        type: 'fdm',
+        instanceNode: mapping
+      };
+
+      triggerData.push(fdmTriggerData);
+
+      const finalGlobalOutputResult = traverseExpression(triggerData, [expression]);
+
+      if (finalGlobalOutputResult[0] ?? false) {
+        return mapping;
+      }
+    })
+  );
+
+  const filteredAllFdmMappingsTreeNodes = allFdmtMappingsTreeNodes.flat().filter(isDefined);
+  return applyFdmMappingsNodeStyles(filteredAllFdmMappingsTreeNodes, outputSelected);
 };
 
 const generateTimeseriesAndDatapointsFromTheAsset = ({
@@ -458,7 +512,7 @@ export const traverseExpressionToGetTimeseries = (
   return timeseriesExternalIdResults;
 };
 
-const applyNodeStyles = (
+const applyAssetMappingsNodeStyles = (
   treeNodes: AssetMapping3D[],
   outputSelected: ColorRuleOutput
 ): AssetStylingGroupAndStyleIndex => {
@@ -486,6 +540,44 @@ const applyNodeStyles = (
   const stylingGroup: AssetStylingGroupAndStyleIndex = {
     styleIndex: ruleOutputAndStyleIndex.styleIndex,
     assetStylingGroup
+  };
+  return stylingGroup;
+};
+
+const applyFdmMappingsNodeStyles = (
+  treeNodes: FdmInstanceNodeWithConnectionAndProperties[],
+  outputSelected: ColorRuleOutput
+): FdmStylingGroupAndStyleIndex => {
+  const ruleOutputAndStyleIndex: RuleAndStyleIndex = {
+    styleIndex: new TreeIndexNodeCollection(),
+    ruleOutputParams: outputSelected
+  };
+
+  const nodeIndexSet = ruleOutputAndStyleIndex.styleIndex.getIndexSet();
+  nodeIndexSet.clear();
+  treeNodes?.forEach((node) => {
+    if (node.cadNode === undefined) return;
+    const range = new NumericRange(node.cadNode.treeIndex, node.cadNode.subtreeSize);
+    nodeIndexSet.addRange(range);
+  });
+  ruleOutputAndStyleIndex.styleIndex.updateSet(nodeIndexSet);
+
+  const nodeAppearance: NodeAppearance = {
+    color: new Color(outputSelected.fill)
+  };
+  const fdmStylingGroup: FdmAssetStylingGroup = {
+    fdmAssetExternalIds: treeNodes.map((node) => {
+      return {
+        space: node.space,
+        externalId: node.externalId
+      };
+    }),
+    style: { cad: nodeAppearance }
+  };
+
+  const stylingGroup: FdmStylingGroupAndStyleIndex = {
+    styleIndex: ruleOutputAndStyleIndex.styleIndex,
+    fdmStylingGroup
   };
   return stylingGroup;
 };

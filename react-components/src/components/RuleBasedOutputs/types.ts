@@ -4,8 +4,13 @@
 
 import { type TreeIndexNodeCollection, type NumericRange } from '@cognite/reveal';
 import { type FdmNode, type EdgeItem, type DmsUniqueIdentifier } from '../../data-providers/FdmSDK';
-import { type AssetStylingGroup, type FdmPropertyType } from '../Reveal3DResources/types';
+import {
+  type FdmAssetStylingGroup,
+  type AssetStylingGroup,
+  type FdmPropertyType
+} from '../Reveal3DResources/types';
 import { type Datapoints, type Asset, type Timeseries } from '@cognite/sdk';
+import { FdmInstanceWithProperties, type FdmInstanceNodeWithConnectionAndProperties } from '../../data-providers/types';
 
 // =========== RULE BASED OUTPUT DATA MODEL
 
@@ -196,6 +201,16 @@ export type AssetStylingGroupAndStyleIndex = {
   assetStylingGroup: AssetStylingGroup;
 };
 
+export type FdmStylingGroupAndStyleIndex = {
+  styleIndex: TreeIndexNodeCollection;
+  fdmStylingGroup: FdmAssetStylingGroup;
+};
+
+export type AllMappingStylingGroupAndStyleIndex = {
+  assetMappingsStylingGroupAndIndex: AssetStylingGroupAndStyleIndex;
+  fdmStylingGroupAndStyleIndex: FdmStylingGroupAndStyleIndex;
+};
+
 export type NodeAndRange = {
   treeIndex: number;
   nodeId: number;
@@ -271,7 +286,7 @@ export type EmptyRuleForSelectionProps = {
   isNoSelection: boolean;
 };
 
-export type TriggerTypeData = TriggerMetadataType | TriggerTimeseriesType;
+export type TriggerTypeData = TriggerMetadataType | TriggerTimeseriesType | TriggerFdmType;
 
 export type TriggerMetadataType = {
   type: 'metadata';
@@ -284,6 +299,11 @@ export type TriggerTimeseriesType = {
     timeseriesWithDatapoints: TimeseriesAndDatapoints[];
     linkedAssets: Asset;
   };
+};
+
+export type TriggerFdmType = {
+  type: 'fdm';
+  instanceNode: FdmInstanceNodeWithConnectionAndProperties;
 };
 
 export type TimeseriesAndDatapoints = Timeseries & Datapoints;

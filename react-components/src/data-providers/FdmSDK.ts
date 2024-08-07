@@ -434,6 +434,8 @@ export class FdmSDK {
       data.sources = [{ source }];
     }
 
+    console.log('TEST getByExternalIds data', this._byIdsEndpoint, data);
+
     const result = await this._sdk.post(this._byIdsEndpoint, { data });
     if (result.status === 200) {
       return result.data;
