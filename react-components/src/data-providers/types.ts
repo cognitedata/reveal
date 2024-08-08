@@ -18,6 +18,29 @@ export type FdmInstanceWithView = DmsUniqueIdentifier & { view: Source };
 
 export type FdmInstanceWithProperties = NodeItem<unknown> | EdgeItem<unknown>;
 
+export type FdmInstanceWithPropertiesAndTyping = {
+  items: FdmInstanceWithProperties[];
+  typing: FdmTyping;
+};
+
+export type FdmTyping = Record<
+  string,
+  Record<
+    string,
+    Record<
+      string,
+      {
+        nullable?: boolean;
+        autoIncrement?: boolean;
+        defaultValue?: any;
+        description?: string;
+        name?: string;
+        type: { type: string };
+      }
+    >
+  >
+>;
+
 export type FdmInstanceNodeWithConnectionAndProperties = {
   instanceType: 'node';
   version: number;
@@ -30,6 +53,7 @@ export type FdmInstanceNodeWithConnectionAndProperties = {
   connection?: FdmCadConnection | undefined;
   cadNode?: Node3D | undefined;
   view?: Source | undefined;
+  typing: FdmTyping;
 };
 
 export type AssetInstanceReference = { assetId: number };

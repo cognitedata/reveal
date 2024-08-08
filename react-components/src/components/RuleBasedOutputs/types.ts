@@ -10,7 +10,7 @@ import {
   type FdmPropertyType
 } from '../Reveal3DResources/types';
 import { type Datapoints, type Asset, type Timeseries } from '@cognite/sdk';
-import { FdmInstanceWithProperties, type FdmInstanceNodeWithConnectionAndProperties } from '../../data-providers/types';
+import { type FdmInstanceNodeWithConnectionAndProperties } from '../../data-providers/types';
 
 // =========== RULE BASED OUTPUT DATA MODEL
 
@@ -26,10 +26,30 @@ export type MetadataRuleTrigger = {
   key: string;
 };
 
+export type FdmRuleTrigger = {
+  type: 'fdmInstanceProperty';
+  key: string;
+};
+
 export type StringTrigger = MetadataRuleTrigger;
 
 export type StringCondition = {
   type: 'equals' | 'notEquals' | 'contains' | 'startsWith' | 'endsWith';
+  parameter: string;
+};
+
+export type DatetimeCondition = {
+  type:
+    | 'before'
+    | 'notBefore'
+    | 'onOrBefore'
+    | 'between'
+    | 'notBetween'
+    | 'after'
+    | 'notAfter'
+    | 'onOrAfter'
+    | 'on'
+    | 'notOn';
   parameter: string;
 };
 
@@ -205,6 +225,11 @@ export type FdmStylingGroupAndStyleIndex = {
   styleIndex: TreeIndexNodeCollection;
   fdmStylingGroup: FdmAssetStylingGroup;
 };
+
+export type AllRuleBasedStylingGroups = {
+  assetStylingGroup: AssetStylingGroup[];
+  fdmStylingGroup: FdmAssetStylingGroup[];
+}
 
 export type AllMappingStylingGroupAndStyleIndex = {
   assetMappingsStylingGroupAndIndex: AssetStylingGroupAndStyleIndex;

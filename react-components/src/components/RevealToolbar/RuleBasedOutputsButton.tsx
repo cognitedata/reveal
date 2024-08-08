@@ -8,13 +8,13 @@ import { Button, Dropdown, Menu, Tooltip as CogsTooltip } from '@cognite/cogs.js
 import { RuleBasedOutputsSelector } from '../RuleBasedOutputs/RuleBasedOutputsSelector';
 import {
   type EmptyRuleForSelection,
-  type AssetStylingGroupAndStyleIndex,
-  type RuleAndEnabled
+  type RuleAndEnabled,
+  type AllMappingStylingGroupAndStyleIndex,
+  type AllRuleBasedStylingGroups
 } from '../RuleBasedOutputs/types';
 import { useTranslation } from '../i18n/I18n';
 import { useFetchRuleInstances } from '../RuleBasedOutputs/hooks/useFetchRuleInstances';
 import { use3dModels } from '../../hooks/use3dModels';
-import { type AssetStylingGroup } from '../..';
 import { type CadModelOptions } from '../Reveal3DResources/types';
 import { useAssetMappedNodesForRevisions } from '../CacheProvider/AssetMappingAndNode3DCacheProvider';
 import { RuleBasedSelectionItem } from '../RuleBasedOutputs/components/RuleBasedSelectionItem';
@@ -25,7 +25,7 @@ import {
 } from '../Reveal3DResources/Reveal3DResourcesInfoContext';
 
 type RuleBasedOutputsButtonProps = {
-  onRuleSetStylingChanged?: (stylings: AssetStylingGroup[] | undefined) => void;
+  onRuleSetStylingChanged?: (stylings: AllRuleBasedStylingGroups | undefined) => void;
   onRuleSetSelectedChanged?: (ruleSet: RuleAndEnabled | undefined) => void;
 };
 export const RuleBasedOutputsButton = ({
@@ -39,7 +39,7 @@ export const RuleBasedOutputsButton = ({
   const [currentRuleSetEnabled, setCurrentRuleSetEnabled] = useState<RuleAndEnabled>();
   const [emptyRuleSelected, setEmptyRuleSelected] = useState<EmptyRuleForSelection>();
   const [currentStylingGroups, setCurrentStylingGroups] = useState<
-    AssetStylingGroupAndStyleIndex[] | undefined
+    AllMappingStylingGroupAndStyleIndex[] | undefined
   >();
   const [ruleInstances, setRuleInstances] = useState<RuleAndEnabled[] | undefined>();
 
@@ -105,11 +105,20 @@ export const RuleBasedOutputsButton = ({
   );
 
   const ruleSetStylingChanged = (
-    stylingGroups: AssetStylingGroupAndStyleIndex[] | undefined
+    stylingGroups: AllMappingStylingGroupAndStyleIndex[] | undefined
   ): void => {
     setCurrentStylingGroups(stylingGroups);
-    const assetStylingGroups = stylingGroups?.map((group) => group.assetStylingGroup);
-    if (onRuleSetStylingChanged !== undefined) onRuleSetStylingChanged(assetStylingGroups);
+    const assetStylingGroups = stylingGroups?.map(
+      (group) => group.assetMappingsStylingGroupAndIndex.assetStylingGroup
+    );
+    const fdmStylingGroups = stylingGroups?.map(
+      (group) => group.fdmStylingGroupAndStyleIndex.fdmStylingGroup
+    );
+    const allStylingGroups: AllRuleBasedStylingGroups = {
+      assetStylingGroup: assetStylingGroups ?? [],
+      fdmStylingGroup: fdmStylingGroups ?? []
+    };
+    if (onRuleSetStylingChanged !== undefined) onRuleSetStylingChanged(allStylingGroups);
   };
 
   if (ruleInstances === undefined || ruleInstances.length === 0) {

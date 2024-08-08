@@ -155,7 +155,8 @@ export type {
   NumericConditionTypes,
   NumericWithinConditionType,
   NumericOutsideConditionType,
-  CriteriaTypes
+  CriteriaTypes,
+  AllRuleBasedStylingGroups
 } from './components/RuleBasedOutputs/types';
 
 export { ActiveToolToolbar } from './components/Architecture/Toolbar';

@@ -5,8 +5,8 @@
 import { type UseQueryResult, useQuery } from '@tanstack/react-query';
 import { useFdmSdk } from '../components/RevealCanvas/SDKProvider';
 import {
-  type FdmInstanceWithProperties,
-  type FdmInstanceNodeWithConnectionAndProperties
+  type FdmInstanceNodeWithConnectionAndProperties,
+  type FdmInstanceWithPropertiesAndTyping
 } from '../data-providers/types';
 import { type FdmConnectionWithNode } from '../components/CacheProvider/types';
 import { type InstanceType } from '@cognite/sdk';
@@ -74,24 +74,30 @@ export function useAll3dDirectConnectionsWithProperties(
         )
       );
 
-      const data: FdmInstanceWithProperties[] = relatedObjectInspectionsResult.flatMap(
+      const data: FdmInstanceWithPropertiesAndTyping[] = relatedObjectInspectionsResult.flatMap(
         (inspectionResult) =>
           inspectionResult.items.flatMap((inspectionResultItem) =>
-            instancesContent.flatMap((instanceContent) =>
-              instanceContent.items.filter(
-                (item) =>
-                  item.space === inspectionResultItem.space &&
-                  item.externalId === inspectionResultItem.externalId
-              )
-            )
+            instancesContent.flatMap((instanceContent) => {
+              const node: FdmInstanceWithPropertiesAndTyping = {
+                items: instanceContent.items.filter(
+                  (item) =>
+                    item.space === inspectionResultItem.space &&
+                    item.externalId === inspectionResultItem.externalId
+                ),
+                typing: instanceContent.typing ?? {}
+              };
+              return node;
+            })
           )
       );
       const instanceWithData =
         data?.flatMap((itemsData) => {
-          const connectionFound = connectionWithNodeAndView.find(
-            (item) =>
-              itemsData.externalId === item.connection.instance.externalId &&
-              itemsData.space === item.connection.instance.space
+          const connectionFound = connectionWithNodeAndView.find((item) =>
+            itemsData.items.find(
+              (itemData) =>
+                itemData.externalId === item.connection.instance.externalId &&
+                itemData.space === item.connection.instance.space
+            )
           );
           return {
             ...connectionFound,

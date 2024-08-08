@@ -22,7 +22,8 @@ import {
   type EmptyRuleForSelection,
   type RuleAndEnabled,
   type FdmStylingGroupAndStyleIndex,
-  type AllMappingStylingGroupAndStyleIndex
+  type AllMappingStylingGroupAndStyleIndex,
+  FdmRuleTrigger
 } from './types';
 import { NumericRange, TreeIndexNodeCollection, type NodeAppearance } from '@cognite/reveal';
 import { type AssetMapping3D, type Asset, type Datapoints } from '@cognite/sdk';
@@ -31,8 +32,7 @@ import { isDefined } from '../../utilities/isDefined';
 import { assertNever } from '../../utilities/assertNever';
 import {
   type FdmInstanceNodeWithConnectionAndProperties,
-  type AssetIdsAndTimeseries,
-  FdmInstanceWithProperties
+  type AssetIdsAndTimeseries
 } from '../../data-providers/types';
 
 const checkStringExpressionStatement = (
@@ -86,7 +86,7 @@ const checkStringExpressionStatement = (
 
 const getTriggerNumericData = (
   triggerTypeData: TriggerTypeData[],
-  trigger: MetadataRuleTrigger | TimeseriesRuleTrigger
+  trigger: MetadataRuleTrigger | TimeseriesRuleTrigger | FdmRuleTrigger
 ): number | undefined => {
   const currentTriggerData = triggerTypeData.find(
     (triggerType) => triggerType.type === trigger?.type
