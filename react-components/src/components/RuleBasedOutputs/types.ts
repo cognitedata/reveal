@@ -10,11 +10,14 @@ import {
   type FdmPropertyType
 } from '../Reveal3DResources/types';
 import { type Datapoints, type Asset, type Timeseries } from '@cognite/sdk';
-import { type FdmInstanceNodeWithConnectionAndProperties } from '../../data-providers/types';
+import {
+  type FdmTyping,
+  type FdmInstanceNodeWithConnectionAndProperties
+} from '../../data-providers/types';
 
 // =========== RULE BASED OUTPUT DATA MODEL
 
-export type TriggerType = 'timeseries' | 'metadata';
+export type TriggerType = 'timeseries' | 'metadata' | 'fdmInstanceProperty';
 
 export type TimeseriesRuleTrigger = {
   type: 'timeseries';
@@ -34,7 +37,8 @@ export type FdmRuleTrigger = {
 export type FdmInstanceNodeDataKey = {
   space: string;
   externalId: string;
-  key: string;
+  view: Source;
+  typing: FdmTyping;
 };
 
 export type StringTrigger = MetadataRuleTrigger;
@@ -88,13 +92,13 @@ export type NumericCondition =
 
 export type StringExpression = {
   type: 'stringExpression';
-  trigger: StringTrigger;
+  trigger: StringTrigger | FdmRuleTrigger;
   condition: StringCondition;
 };
 
 export type NumericExpression = {
   type: 'numericExpression';
-  trigger: MetadataRuleTrigger | TimeseriesRuleTrigger;
+  trigger: MetadataRuleTrigger | TimeseriesRuleTrigger | FdmRuleTrigger;
   condition: NumericCondition;
 };
 

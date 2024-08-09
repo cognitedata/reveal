@@ -187,6 +187,8 @@ const getTimeseriesExternalIdFromNumericExpression = (
 
   if (isMetadataTrigger(trigger)) return;
 
+  if (isFdmTrigger(trigger)) return;
+
   return [trigger.externalId];
 };
 
@@ -249,6 +251,8 @@ function forEachExpression(
     }
     case 'numericExpression':
     case 'stringExpression':
+    case 'datetimeExpression':
+    case 'booleanExpression':
       return;
     default:
       assertNever(expression);
@@ -265,7 +269,12 @@ function getExpressionTriggerTypes(expression: Expression): TriggerType[] {
     return expression.expressions.flatMap(getExpressionTriggerTypes);
   } else if (expression.type === 'not') {
     return getExpressionTriggerTypes(expression.expression);
-  } else if (expression.type === 'numericExpression' || expression.type === 'stringExpression') {
+  } else if (
+    expression.type === 'numericExpression' ||
+    expression.type === 'stringExpression' ||
+    expression.type === 'datetimeExpression' ||
+    expression.type === 'booleanExpression'
+  ) {
     return [expression.trigger.type];
   } else {
     assertNever(expression);
@@ -583,17 +592,28 @@ const applyFdmMappingsNodeStyles = (
 };
 
 const isMetadataTrigger = (
-  trigger: MetadataRuleTrigger | TimeseriesRuleTrigger
+  trigger: MetadataRuleTrigger | TimeseriesRuleTrigger | FdmRuleTrigger
 ): trigger is MetadataRuleTrigger => {
   return trigger.type === 'metadata';
 };
 
-const convertExpressionStringMetadataKeyToLowerCase = (expression: Expression): void => {
-  if (expression.type !== 'stringExpression') {
-    return;
-  }
+const isFdmTrigger = (
+  trigger: MetadataRuleTrigger | TimeseriesRuleTrigger | FdmRuleTrigger
+): trigger is FdmRuleTrigger => {
+  return trigger.type === 'fdmInstanceProperty';
+};
 
-  expression.trigger.key = expression.trigger.key.toLowerCase();
+const convertExpressionStringMetadataKeyToLowerCase = (expression: Expression): void => {
+  if (
+    expression.type !== 'stringExpression' ||
+    (expression.type === 'stringExpression' && expression.trigger.type === 'fdmInstanceProperty')
+  )
+    return;
+
+  expression.trigger.key =
+    expression.trigger.type === 'metadata'
+      ? expression.trigger.key.toLowerCase()
+      : expression.trigger.key;
 };
 
 export const generateEmptyRuleForSelection = (name: string): EmptyRuleForSelection => {
