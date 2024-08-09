@@ -12,12 +12,10 @@ import { LabelWithShortcut } from './LabelWithShortcut';
 
 export const CommandButton = ({
   inputCommand,
-  isHorizontal = false,
-  usedInSettings = false
+  isHorizontal = false
 }: {
   inputCommand: BaseCommand;
   isHorizontal: boolean;
-  usedInSettings?: boolean;
 }): ReactElement => {
   const renderTarget = useRenderTarget();
   const { t } = useTranslation();
@@ -43,7 +41,7 @@ export const CommandButton = ({
     return () => {
       command.removeEventListener(update);
     };
-  }, [command.isEnabled, command.isChecked, command.isVisible]);
+  }, [command]);
 
   if (!isVisible) {
     return <></>;
@@ -55,7 +53,7 @@ export const CommandButton = ({
   return (
     <CogsTooltip
       content={<LabelWithShortcut label={label} shortcut={shortcut} />}
-      disabled={usedInSettings || label === undefined}
+      disabled={label === undefined}
       appendTo={document.body}
       placement={placement}>
       <Button
@@ -65,13 +63,11 @@ export const CommandButton = ({
         disabled={!isEnabled}
         toggled={isChecked}
         aria-label={label}
-        iconPlacement={usedInSettings ? 'left' : 'right'}
+        iconPlacement="right"
         onClick={() => {
           command.invoke();
           renderTarget.domElement.focus();
-        }}>
-        {usedInSettings ? label + '' : undefined}
-      </Button>
+        }}></Button>
     </CogsTooltip>
   );
 };

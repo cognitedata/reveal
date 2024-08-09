@@ -14,7 +14,6 @@ import {
   useSceneDefaultCamera,
   withSuppressRevealEvents
 } from '../src';
-import { type DefaultCameraManager } from '@cognite/reveal';
 import { ToolBar } from '@cognite/cogs.js';
 import styled from 'styled-components';
 
@@ -79,11 +78,6 @@ const SceneContainerStoryContent = ({
   const { fitCameraToSceneDefault } = useSceneDefaultCamera(sceneExternalId, sceneSpaceId);
 
   useEffect(() => {
-    (reveal.cameraManager as DefaultCameraManager).setCameraControlsOptions({
-      changeCameraTargetOnClick: true,
-      mouseWheelAction: 'zoomToCursor'
-    });
-
     fitCameraToSceneDefault();
   }, [reveal, fitCameraToSceneDefault]);
   return (

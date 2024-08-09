@@ -103,6 +103,8 @@ export abstract class BaseCommand {
     return false;
   }
 
+  protected *getChildren(): Generator<BaseCommand> {}
+
   /*
    * Called when the command is invoked
    * Return true if successful, false otherwise
@@ -143,6 +145,9 @@ export abstract class BaseCommand {
   public update(): void {
     for (const listener of this._listeners) {
       listener(this);
+    }
+    for (const child of this.getChildren()) {
+      child.update();
     }
   }
 
