@@ -65,7 +65,9 @@ export {
   useAllMappedEquipmentAssetMappings,
   useMappingsForAssetIds,
   type ModelMappings,
-  type ModelMappingsWithAssets
+  type ModelMappingsWithAssets,
+  type AssetPage,
+  type ModelAssetPage
 } from './query/useSearchMappedEquipmentAssetMappings';
 export {
   useSearchAssetsMapped360Annotations,

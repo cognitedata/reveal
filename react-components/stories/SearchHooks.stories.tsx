@@ -13,7 +13,7 @@ import {
   type AddPointCloudResourceOptions
 } from '../src';
 import { Color } from 'three';
-import { type ReactElement, useState, useMemo, useEffect } from 'react';
+import { type ReactElement, useState, useMemo, useCallback } from 'react';
 import { createSdkByUrlToken } from './utilities/createSdkByUrlToken';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import { RevealResourcesFitCameraOnLoad } from './utilities/with3dResoursesFitCameraOnLoad';
@@ -59,8 +59,7 @@ const StoryContent = ({ resources }: { resources: AddResourceOptions[] }): React
   const [mainSearchQuery, setMainSearchQuery] = useState<string>('');
   const [searchMethod, setSearchMethod] = useState<
     'allFdm' | 'allAssets' | 'fdmSearch' | 'assetSearch'
-  >('fdmSearch');
-  const [loadMore, setLoadMore] = useState<boolean>(false);
+  >('assetSearch');
 
   const filteredResources = resources.filter(
     (resource): resource is AddCadResourceOptions | AddPointCloudResourceOptions =>
@@ -120,29 +119,14 @@ const StoryContent = ({ resources }: { resources: AddResourceOptions[] }): React
     filteredResources
   );
 
-  useEffect(() => {
-    if (searchMethod !== 'allAssets') return;
-
-    if (!isFetching && hasNextPage && loadMore) {
+  const fetchNextPageCallback = useCallback(() => {
+    if (searchMethod !== 'allAssets' && searchMethod !== 'assetSearch') return;
+    if (searchMethod === 'allAssets' && !isFetching && hasNextPage) {
       void fetchNextPage();
-      setLoadMore(false);
-    }
-  }, [searchMethod, isFetching, hasNextPage, fetchNextPage, loadMore]);
-
-  useEffect(() => {
-    if (searchMethod !== 'assetSearch') return;
-
-    if (!isAssetSearchFetching && assetSearchHasNextPage && loadMore) {
+    } else if (searchMethod === 'assetSearch' && !isAssetSearchFetching && assetSearchHasNextPage) {
       void fetchAssetSearchNextPage();
-      setLoadMore(false);
     }
-  }, [
-    searchMethod,
-    isAssetSearchFetching,
-    assetSearchHasNextPage,
-    fetchAssetSearchNextPage,
-    loadMore
-  ]);
+  }, []);
 
   const filteredEquipment = useMemo(() => {
     if (searchMethod === 'allFdm') {
@@ -332,9 +316,7 @@ const StoryContent = ({ resources }: { resources: AddResourceOptions[] }): React
         <Button
           size="small"
           loading={isFetching || isAssetSearchFetching}
-          onClick={() => {
-            setLoadMore(true);
-          }}>
+          onClick={fetchNextPageCallback}>
           Load More
         </Button>
       </div>
