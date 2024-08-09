@@ -23,7 +23,7 @@ import {
   type RuleAndEnabled,
   type FdmStylingGroupAndStyleIndex,
   type AllMappingStylingGroupAndStyleIndex,
-  FdmRuleTrigger
+  type FdmRuleTrigger
 } from './types';
 import { NumericRange, TreeIndexNodeCollection, type NodeAppearance } from '@cognite/reveal';
 import { type AssetMapping3D, type Asset, type Datapoints } from '@cognite/sdk';

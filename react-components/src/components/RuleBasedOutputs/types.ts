@@ -28,10 +28,21 @@ export type MetadataRuleTrigger = {
 
 export type FdmRuleTrigger = {
   type: 'fdmInstanceProperty';
+  key: FdmInstanceNodeDataKey;
+};
+
+export type FdmInstanceNodeDataKey = {
+  space: string;
+  externalId: string;
   key: string;
 };
 
 export type StringTrigger = MetadataRuleTrigger;
+
+export type BooleanCondition = {
+  type: 'true' | 'false';
+  parameter: boolean;
+};
 
 export type StringCondition = {
   type: 'equals' | 'notEquals' | 'contains' | 'startsWith' | 'endsWith';
@@ -87,6 +98,18 @@ export type NumericExpression = {
   condition: NumericCondition;
 };
 
+export type DatetimeExpression = {
+  type: 'datetimeExpression';
+  trigger: FdmRuleTrigger;
+  condition: DatetimeCondition;
+};
+
+export type BooleanExpression = {
+  type: 'booleanExpression';
+  trigger: FdmRuleTrigger;
+  condition: BooleanCondition;
+};
+
 export type ExpressionOperator =
   | {
       type: 'or';
@@ -101,7 +124,11 @@ export type ExpressionOperator =
       expression: Expression;
     };
 
-export type ConcreteExpression = StringExpression | NumericExpression;
+export type ConcreteExpression =
+  | StringExpression
+  | NumericExpression
+  | DatetimeExpression
+  | BooleanExpression;
 
 export type Expression = ConcreteExpression | ExpressionOperator;
 
@@ -181,6 +208,8 @@ export type FdmRuleOutputSet = {
 
 export type ExpressionOperatorsTypes = 'and' | 'or' | 'not';
 
+export type BooleanConditionTypes = 'true' | 'false';
+
 export type StringConditionTypes = 'equals' | 'notEquals' | 'contains' | 'startsWith' | 'endsWith';
 
 export type NumericConditionTypes =
@@ -205,11 +234,38 @@ export type NumericOutsideConditionType = {
   upperBoundExclusive: number;
 };
 
+export type DatetimeConditionTypes =
+  | 'before'
+  | 'notBefore'
+  | 'onOrBefore'
+  | 'between'
+  | 'notBetween'
+  | 'after'
+  | 'notAfter'
+  | 'onOrAfter'
+  | 'on'
+  | 'notOn';
+
+export type DatetimeBetweenConditionType = {
+  type: 'between';
+  lowerBoundInclusive: number;
+  upperBoundInclusive: number;
+};
+
+export type DatetimeNotBetweenConditionType = {
+  type: 'notBetween';
+  lowerBoundExclusive: number;
+  upperBoundExclusive: number;
+};
+
 export type CriteriaTypes =
+  | BooleanConditionTypes
   | string
   | number
   | NumericWithinConditionType
-  | NumericOutsideConditionType;
+  | NumericOutsideConditionType
+  | DatetimeBetweenConditionType
+  | DatetimeNotBetweenConditionType;
 
 export type RuleAndStyleIndex = {
   styleIndex: TreeIndexNodeCollection;
@@ -229,7 +285,7 @@ export type FdmStylingGroupAndStyleIndex = {
 export type AllRuleBasedStylingGroups = {
   assetStylingGroup: AssetStylingGroup[];
   fdmStylingGroup: FdmAssetStylingGroup[];
-}
+};
 
 export type AllMappingStylingGroupAndStyleIndex = {
   assetMappingsStylingGroupAndIndex: AssetStylingGroupAndStyleIndex;
@@ -265,27 +321,6 @@ export type ViewQueryFilter = {
 };
 
 export type Space = string;
-
-export type ExternalIdsResultList<PropertyType> = {
-  items: Array<NodeItem<PropertyType>>;
-  typing?: Record<
-    string,
-    Record<
-      string,
-      Record<
-        string,
-        {
-          nullable?: boolean;
-          autoIncrement?: boolean;
-          defaultValue?: unknown;
-          description?: string;
-          name?: string;
-          type: { type: string };
-        }
-      >
-    >
-  >;
-};
 
 export type NodeItem<PropertyType = Record<string, unknown>> = {
   instanceType: InstanceType;
