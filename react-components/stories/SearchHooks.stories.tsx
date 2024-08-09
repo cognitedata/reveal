@@ -13,7 +13,7 @@ import {
   type AddPointCloudResourceOptions
 } from '../src';
 import { Color } from 'three';
-import { type ReactElement, useState, useMemo, useEffect } from 'react';
+import { type ReactElement, useState, useMemo, useCallback } from 'react';
 import { createSdkByUrlToken } from './utilities/createSdkByUrlToken';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import { RevealResourcesFitCameraOnLoad } from './utilities/with3dResoursesFitCameraOnLoad';
@@ -59,7 +59,7 @@ const StoryContent = ({ resources }: { resources: AddResourceOptions[] }): React
   const [mainSearchQuery, setMainSearchQuery] = useState<string>('');
   const [searchMethod, setSearchMethod] = useState<
     'allFdm' | 'allAssets' | 'fdmSearch' | 'assetSearch'
-  >('fdmSearch');
+  >('assetSearch');
 
   const filteredResources = resources.filter(
     (resource): resource is AddCadResourceOptions | AddPointCloudResourceOptions =>
@@ -74,12 +74,12 @@ const StoryContent = ({ resources }: { resources: AddResourceOptions[] }): React
     100
   );
 
-  const { data: assetSearchData } = useSearchMappedEquipmentAssetMappings(
-    mainSearchQuery,
-    filteredResources,
-    1000,
-    sdk
-  );
+  const {
+    data: assetSearchData,
+    isFetching: isAssetSearchFetching,
+    hasNextPage: assetSearchHasNextPage,
+    fetchNextPage: fetchAssetSearchNextPage
+  } = useSearchMappedEquipmentAssetMappings(mainSearchQuery, filteredResources, 1000, sdk);
 
   const { data: allEquipment } = useAllMappedEquipmentFDM(filteredResources, viewsToSearch);
 
@@ -88,7 +88,7 @@ const StoryContent = ({ resources }: { resources: AddResourceOptions[] }): React
     isFetching,
     hasNextPage,
     fetchNextPage
-  } = useAllMappedEquipmentAssetMappings(filteredResources, sdk);
+  } = useAllMappedEquipmentAssetMappings(filteredResources, sdk, 25);
 
   const filtered360ImageResources = resources.filter(
     (resource): resource is AddImage360CollectionOptions => 'siteId' in resource
@@ -119,13 +119,14 @@ const StoryContent = ({ resources }: { resources: AddResourceOptions[] }): React
     filteredResources
   );
 
-  useEffect(() => {
-    if (searchMethod !== 'allAssets') return;
-
-    if (!isFetching && hasNextPage) {
+  const fetchNextPageCallback = useCallback(() => {
+    if (searchMethod !== 'allAssets' && searchMethod !== 'assetSearch') return;
+    if (searchMethod === 'allAssets' && !isFetching && hasNextPage) {
       void fetchNextPage();
+    } else if (searchMethod === 'assetSearch' && !isAssetSearchFetching && assetSearchHasNextPage) {
+      void fetchAssetSearchNextPage();
     }
-  }, [searchMethod, isFetching, hasNextPage, fetchNextPage]);
+  }, []);
 
   const filteredEquipment = useMemo(() => {
     if (searchMethod === 'allFdm') {
@@ -151,7 +152,9 @@ const StoryContent = ({ resources }: { resources: AddResourceOptions[] }): React
       const transformedAssets =
         allAssets?.pages
           .flat()
-          .map((mapping) => mapping.assets)
+          .map((modelsAssetPage) =>
+            modelsAssetPage.modelsAssets.flatMap((modelsAsset) => modelsAsset.assets)
+          )
           .flat() ?? [];
 
       const all360ImageAssets =
@@ -190,11 +193,16 @@ const StoryContent = ({ resources }: { resources: AddResourceOptions[] }): React
         return [];
       }
 
+      const transformedAssetsSearch = assetSearchData?.pages
+        .flat()
+        .map((mapping) => mapping.assets)
+        .flat();
+
       const assetImage360SearchData =
         assetAnnotationImage360SearchData?.map((mapping) => mapping.asset) ?? [];
 
       const combinedAssetSearchData = [
-        ...assetSearchData,
+        ...transformedAssetsSearch,
         ...(assetImage360SearchData ?? []),
         ...(pointCloudAssetSearchData ?? [])
       ];
@@ -305,6 +313,12 @@ const StoryContent = ({ resources }: { resources: AddResourceOptions[] }): React
           }}>
           Asset search hook
         </Button>
+        <Button
+          size="small"
+          loading={isFetching || isAssetSearchFetching}
+          onClick={fetchNextPageCallback}>
+          Load More
+        </Button>
       </div>
       <div
         style={{
@@ -345,8 +359,8 @@ export const Main: Story = {
   args: {
     resources: [
       {
-        modelId: 3282558010084460,
-        revisionId: 4932190516335812,
+        modelId: 3544114490298106,
+        revisionId: 6405404576933316,
         styling: {
           default: {
             color: new Color('#efefef')
@@ -358,8 +372,8 @@ export const Main: Story = {
         siteId: 'celanese1'
       },
       {
-        modelId: 1350257070750400,
-        revisionId: 5110855034466831
+        modelId: 5653798104332258,
+        revisionId: 5045518244111296
       }
     ]
   },

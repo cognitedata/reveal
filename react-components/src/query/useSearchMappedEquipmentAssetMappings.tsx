@@ -1,6 +1,7 @@
 /*!
  * Copyright 2023 Cognite AS
  */
+import { useRef } from 'react';
 import { type AddModelOptions } from '@cognite/reveal';
 import {
   type Asset,
@@ -10,13 +11,13 @@ import {
 } from '@cognite/sdk';
 import {
   type UseInfiniteQueryResult,
-  type UseQueryResult,
   useInfiniteQuery,
-  useQuery,
   type InfiniteData
 } from '@tanstack/react-query';
 import { useSDK } from '../components/RevealCanvas/SDKProvider';
-import { chunk } from 'lodash';
+import { getAssetsList } from '../hooks/network/getAssetsList';
+import { useAssetMappedNodesForRevisions } from '../components/CacheProvider/AssetMappingAndNode3DCacheProvider';
+import { isDefined } from '../utilities/isDefined';
 
 export type ModelMappings = {
   model: AddModelOptions;
@@ -27,52 +28,89 @@ export type ModelMappingsWithAssets = ModelMappings & {
   assets: Asset[];
 };
 
+export type AssetPage = {
+  assets: Asset[];
+  nextCursor: string | undefined;
+};
+
+export type ModelAssetPage = {
+  modelsAssets: ModelMappingsWithAssets[];
+  nextCursor: string | undefined;
+};
+
 export const useSearchMappedEquipmentAssetMappings = (
   query: string,
   models: AddModelOptions[],
   limit: number = 100,
   userSdk?: CogniteClient
-): UseQueryResult<Asset[]> => {
+): UseInfiniteQueryResult<InfiniteData<AssetPage[]>, Error> => {
   const sdk = useSDK(userSdk);
-  const modelsKey = models.map((model) => [model.modelId, model.revisionId]);
-  const { data: assetMappings, isFetched } = useAllMappedEquipmentAssetMappings(models, sdk);
-  return useQuery({
-    queryKey: ['reveal', 'react-components', 'search-mapped-asset-mappings', query, modelsKey],
-    queryFn: async () => {
-      if (query === '') {
-        const mappedAssets =
-          assetMappings?.pages
-            .flat()
-            .map((item) => item.assets)
-            .flat() ?? [];
-        return mappedAssets;
+  const { data: assetMappingList, isFetched } = useAssetMappedNodesForRevisions(
+    models.map((model) => ({ ...model, type: 'cad' }))
+  );
+  const initialAssetMappings = useAllMappedEquipmentAssetMappings(models, sdk);
+
+  return useInfiniteQuery({
+    queryKey: [
+      'reveal',
+      'react-components',
+      'search-mapped-asset-mappings',
+      query,
+      ...models.map((model) => [model.modelId, model.revisionId])
+    ],
+    queryFn: async ({ pageParam }: { pageParam: string | undefined }) => {
+      if (initialAssetMappings.data === undefined) {
+        return { assets: [], nextCursor: undefined };
       }
-
-      const searchedAssets = await sdk.assets.search({ search: { query }, limit: 1000 });
-      const assetMappingsWithSearch = await getAssetMappingsByModels(
-        sdk,
-        models,
+      if (query === '') {
+        const assets = initialAssetMappings.data?.pages.flatMap((modelWithAssets) =>
+          modelWithAssets
+            .map((modelWithAsset) =>
+              modelWithAsset.modelsAssets.flatMap((modelsAsset) => modelsAsset.assets)
+            )
+            .flat()
+        );
+        return { assets, nextCursor: undefined };
+      }
+      if (assetMappingList === undefined) {
+        return { assets: [], nextCursor: undefined };
+      }
+      const assetsResponse = await getAssetsList(sdk, {
+        query,
         limit,
-        searchedAssets.map((asset) => asset.id)
-      );
+        cursor: pageParam
+      });
 
-      const assetMappingsSet = createAssetMappingsSet(assetMappingsWithSearch);
-      const filteredSearchedAssets = searchedAssets.filter((asset) =>
-        assetMappingsSet.has(asset.id)
-      );
+      const assets = assetsResponse.items.filter(isDefined);
+      const filteredSearchedAssets = assetMappingList.flatMap((mapping) => {
+        return mapping.assetMappings
+          .filter((assetMapping) => assets.some((asset) => asset.id === assetMapping.assetId))
+          .map((assetMapping) => assets.find((asset) => asset.id === assetMapping.assetId))
+          .filter(isDefined);
+      });
 
-      return filteredSearchedAssets;
+      return {
+        assets: filteredSearchedAssets,
+        nextCursor: assetsResponse.nextCursor
+      };
     },
+    initialPageParam: undefined,
     staleTime: Infinity,
-    enabled: isFetched && assetMappings !== undefined
+    getNextPageParam: (_lastPage, allPages) => {
+      const lastPageData = allPages[allPages.length - 1];
+      return lastPageData.nextCursor;
+    },
+    enabled: isFetched && assetMappingList !== undefined && assetMappingList.length > 0
   });
 };
 
 export const useAllMappedEquipmentAssetMappings = (
   models: AddModelOptions[],
-  userSdk?: CogniteClient
-): UseInfiniteQueryResult<InfiniteData<ModelMappingsWithAssets[]>, Error> => {
+  userSdk?: CogniteClient,
+  limit: number = 1000
+): UseInfiniteQueryResult<InfiniteData<ModelAssetPage[]>, Error> => {
   const sdk = useSDK(userSdk);
+  const usedCursors = useRef(new Set());
 
   return useInfiniteQuery({
     queryKey: [
@@ -100,8 +138,10 @@ export const useAllMappedEquipmentAssetMappings = (
 
         const mappings = await sdk.assetMappings3D.filter(model.modelId, model.revisionId, {
           cursor: nextCursor === 'start' ? undefined : nextCursor,
-          limit: 1000
+          limit
         });
+
+        usedCursors.current.add(nextCursor);
 
         return { mappings, model };
       });
@@ -109,12 +149,35 @@ export const useAllMappedEquipmentAssetMappings = (
       const currentPagesOfAssetMappings = await Promise.all(currentPagesOfAssetMappingsPromises);
 
       const modelsAssets = await getAssetsFromAssetMappings(sdk, currentPagesOfAssetMappings);
+      const nextCursors = currentPagesOfAssetMappings
+        .map(({ mappings }) => mappings.nextCursor)
+        .filter(isDefined);
 
-      return modelsAssets;
+      return await Promise.resolve({
+        modelsAssets,
+        nextCursors
+      });
     },
     initialPageParam: models.map((model) => ({ cursor: 'start', model })),
     staleTime: Infinity,
-    getNextPageParam
+    getNextPageParam: (lastPage: {
+      modelsAssets: ModelMappingsWithAssets[];
+      nextCursors: string[];
+    }): Array<{ cursor: string | undefined; model: AddModelOptions }> | undefined => {
+      const nextCursors = lastPage.nextCursors
+        .map((cursor, index) => ({ cursor, model: lastPage.modelsAssets[index].model }))
+        .filter((mappingModel) => {
+          if (mappingModel.cursor === undefined || usedCursors.current.has(mappingModel.cursor)) {
+            return false;
+          }
+          usedCursors.current.add(mappingModel.cursor);
+          return true;
+        });
+      if (nextCursors.length === 0) {
+        return undefined;
+      }
+      return nextCursors;
+    }
   });
 };
 
@@ -182,39 +245,6 @@ function getNextPageParam(
   return nextCursors;
 }
 
-async function getAssetMappingsByModels(
-  sdk: CogniteClient,
-  models: AddModelOptions[],
-  limit: number = 1000,
-  assetIdsFilter?: number[]
-): Promise<ModelMappings[]> {
-  const mappedEquipmentPromises = models.map(async (model) => {
-    if (assetIdsFilter === undefined) {
-      const mappings = await sdk.assetMappings3D.filter(model.modelId, model.revisionId, {
-        limit
-      });
-      return [{ mappings, model }];
-    }
-
-    const deduplicatedAssetIds = Array.from(new Set(assetIdsFilter));
-    const chunkedFilter = chunk(deduplicatedAssetIds, 100);
-
-    const chunkedPromises = chunkedFilter.map(async (chunk) => {
-      const mappings = await sdk.assetMappings3D.filter(model.modelId, model.revisionId, {
-        filter: { assetIds: chunk },
-        limit
-      });
-      return { mappings, model };
-    });
-
-    return await Promise.all(chunkedPromises);
-  });
-
-  const mappedEquipment = await Promise.all(mappedEquipmentPromises);
-
-  return mappedEquipment.flat();
-}
-
 async function getAssetsFromAssetMappings(
   sdk: CogniteClient,
   modelsMappings: Array<{ model: AddModelOptions; mappings: ListResponse<AssetMapping3D[]> }>
@@ -237,12 +267,4 @@ async function getAssetsFromAssetMappings(
   const mappingsWithAssets = await Promise.all(mappingsWithAssetsPromises);
 
   return mappingsWithAssets;
-}
-
-function createAssetMappingsSet(
-  assetMappings: Array<{ model: AddModelOptions; mappings: ListResponse<AssetMapping3D[]> }>
-): Set<number> {
-  return new Set(
-    assetMappings.map(({ mappings }) => mappings.items.map((item) => item.assetId)).flat()
-  );
 }
