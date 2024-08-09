@@ -475,7 +475,7 @@ __metadata:
     "@types/random-seed": "npm:^0.3.5"
     "@types/skmeans": "npm:^0.11.7"
     "@types/stats": "npm:^0.16.30"
-    "@types/three": "npm:^0.166.0"
+    "@types/three": "npm:^0.167.0"
     "@types/tween.js": "npm:^18.6.1"
     "@typescript-eslint/eslint-plugin": "npm:^7.7.1"
     "@typescript-eslint/parser": "npm:^7.7.1"
@@ -523,7 +523,7 @@ __metadata:
     skmeans: "npm:^0.11.3"
     sparse-octree: "npm:^7.1.8"
     stats.js: "npm:^0.17.0"
-    three: "npm:0.166.1"
+    three: "npm:0.167.1"
     ts-jest: "npm:^29.1.2"
     ts-loader: "npm:^9.5.1"
     tsc-alias: "npm:^1.8.8"
@@ -537,7 +537,7 @@ __metadata:
     workerize-loader: "npm:^2.0.2"
   peerDependencies:
     "@cognite/sdk": ^7.16.0 || ^8.0.0
-    three: 0.166.1
+    three: 0.167.1
   languageName: unknown
   linkType: soft
 
@@ -2032,16 +2032,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/three@npm:^0.166.0":
-  version: 0.166.0
-  resolution: "@types/three@npm:0.166.0"
+"@types/three@npm:^0.167.0":
+  version: 0.167.1
+  resolution: "@types/three@npm:0.167.1"
   dependencies:
     "@tweenjs/tween.js": "npm:~23.1.2"
     "@types/stats.js": "npm:*"
     "@types/webxr": "npm:*"
     fflate: "npm:~0.8.2"
     meshoptimizer: "npm:~0.18.1"
-  checksum: 10/5e929d5870305fdb99420447006cf51119508c9f5a9d496a092dac6aaf0d1ef757bb04fd12f2585fab71699e8a25ceea5228f51befbe54c7c6dd0206c1631a06
+  checksum: 10/e11cae99e9e4c2ae9c6f1a92d7a62a6d8d9f0b111133bcf8395d82a1da8d42cce94bec7c53b6c81a0e8f85d086377fa2cd854426dec72efce02c70150a2dc157
   languageName: node
   linkType: hard
 
@@ -10149,10 +10149,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"three@npm:0.166.1":
-  version: 0.166.1
-  resolution: "three@npm:0.166.1"
-  checksum: 10/10f36702ab0f6b7f03a45f46437157a00ece42a1760d70b1c24db5e8d3f02b7b522a117377e7c8ad7ec504e2008a8776ccb4fa16512d455d431b66390f23a2ed
+"three@npm:0.167.1":
+  version: 0.167.1
+  resolution: "three@npm:0.167.1"
+  checksum: 10/48022352c7feaba61b217958919f93556030b832a90c47661c8c57874ce7120116ca157eec7993755d54881a6135c952435e842541bd6b0972cd66c3add203ad
   languageName: node
   linkType: hard
 
