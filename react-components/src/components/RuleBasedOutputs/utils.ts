@@ -163,54 +163,73 @@ const checkNumericExpressionStatement = (
   const { trigger, condition } = expression;
 
   let expressionResult: boolean = false;
+  let propertyTrigger: number | undefined;
+
+  const currentTriggerData = triggerTypeData.find(
+    (triggerType) => triggerType.type === trigger?.type
+  );
 
   const dataTrigger = getTriggerNumericData(triggerTypeData, trigger);
 
+  const isFdmTrigger = trigger?.type === 'fdm' && currentTriggerData?.type === 'fdm';
+
+  const fdmPropertyTrigger = isFdmTrigger
+    ? getFdmPropertyTrigger<number>(
+        currentTriggerData?.instanceNode?.properties?.[trigger.key.property],
+        trigger
+      )
+    : undefined;
+
   if (dataTrigger === undefined) return;
+  if (fdmPropertyTrigger === undefined) return;
+
+  if (isFdmTrigger) {
+    propertyTrigger = fdmPropertyTrigger;
+  } else {
+    propertyTrigger = dataTrigger;
+  }
 
   switch (condition.type) {
     case 'equals': {
       const parameter = condition.parameters[0];
-      expressionResult = dataTrigger === parameter;
+      expressionResult = propertyTrigger === parameter;
       break;
     }
     case 'notEquals': {
       const parameter = condition.parameters[0];
-      expressionResult = dataTrigger !== parameter;
+      expressionResult = propertyTrigger !== parameter;
       break;
     }
     case 'lessThan': {
       const parameter = condition.parameters[0];
-      expressionResult = dataTrigger < parameter;
+      expressionResult = propertyTrigger < parameter;
       break;
     }
     case 'greaterThan': {
       const parameter = condition.parameters[0];
-      expressionResult = dataTrigger > parameter;
+      expressionResult = propertyTrigger > parameter;
       break;
     }
     case 'lessThanOrEquals': {
       const parameter = condition.parameters[0];
-      expressionResult = dataTrigger <= parameter;
+      expressionResult = propertyTrigger <= parameter;
       break;
     }
     case 'greaterThanOrEquals': {
       const parameter = condition.parameters[0];
-      expressionResult = dataTrigger >= parameter;
+      expressionResult = propertyTrigger >= parameter;
       break;
     }
     case 'within': {
       const lower = condition.lowerBoundInclusive;
       const upper = condition.upperBoundInclusive;
-      const value = dataTrigger;
-      expressionResult = lower < value && value < upper;
+      expressionResult = lower < propertyTrigger && propertyTrigger < upper;
       break;
     }
     case 'outside': {
       const lower = condition.lowerBoundExclusive;
       const upper = condition.upperBoundExclusive;
-      const value = dataTrigger;
-      expressionResult = value <= lower && upper <= value;
+      expressionResult = propertyTrigger <= lower && upper <= propertyTrigger;
       break;
     }
   }
@@ -236,99 +255,76 @@ const checkDatetimeExpressionStatement = (
     ? currentTriggerData?.instanceNode?.properties?.[trigger.key.property]
     : undefined;
 
+  const propertyTrigger = getFdmPropertyTrigger<number>(fdmPropertyTrigger, trigger);
+
+  if (fdmPropertyTrigger === undefined) return;
+
   switch (condition.type) {
     case 'before': {
-      if (isFdmTrigger) {
-        const conditionValue = parseInt(condition.parameter);
-        const propertyTrigger = getFdmPropertyTrigger<number>(fdmPropertyTrigger, trigger);
-        expressionResult = propertyTrigger !== undefined ? propertyTrigger < conditionValue : false;
-      }
+      const conditionValue = parseInt(condition.parameter);
+      expressionResult = propertyTrigger !== undefined ? propertyTrigger < conditionValue : false;
       break;
     }
     case 'notBefore': {
-      if (isFdmTrigger) {
-        const conditionValue = parseInt(condition.parameter);
-        const propertyTrigger = getFdmPropertyTrigger<number>(fdmPropertyTrigger, trigger);
-        expressionResult =
-          propertyTrigger !== undefined ? propertyTrigger >= conditionValue : false;
-      }
+      const conditionValue = parseInt(condition.parameter);
+      const propertyTrigger = getFdmPropertyTrigger<number>(fdmPropertyTrigger, trigger);
+      expressionResult = propertyTrigger !== undefined ? propertyTrigger >= conditionValue : false;
       break;
     }
     case 'onOrBefore': {
-      if (isFdmTrigger) {
-        const conditionValue = parseInt(condition.parameter);
-        const propertyTrigger = getFdmPropertyTrigger<number>(fdmPropertyTrigger, trigger);
-        expressionResult =
-          propertyTrigger !== undefined ? propertyTrigger <= conditionValue : false;
-      }
+      const conditionValue = parseInt(condition.parameter);
+      const propertyTrigger = getFdmPropertyTrigger<number>(fdmPropertyTrigger, trigger);
+      expressionResult = propertyTrigger !== undefined ? propertyTrigger <= conditionValue : false;
       break;
     }
     case 'between': {
-      if (isFdmTrigger) {
-        const lowerBound = condition.lowerBound;
-        const upperBound = condition.upperBound;
-        const propertyTrigger = getFdmPropertyTrigger<number>(fdmPropertyTrigger, trigger);
-        expressionResult =
-          propertyTrigger !== undefined
-            ? lowerBound < propertyTrigger && propertyTrigger < upperBound
-            : false;
-      }
+      const lowerBound = condition.lowerBound;
+      const upperBound = condition.upperBound;
+      const propertyTrigger = getFdmPropertyTrigger<number>(fdmPropertyTrigger, trigger);
+      expressionResult =
+        propertyTrigger !== undefined
+          ? lowerBound < propertyTrigger && propertyTrigger < upperBound
+          : false;
       break;
     }
     case 'notBetween': {
-      if (isFdmTrigger) {
-        const lowerBound = condition.lowerBound;
-        const upperBound = condition.upperBound;
-        const propertyTrigger = getFdmPropertyTrigger<number>(fdmPropertyTrigger, trigger);
-        expressionResult =
-          propertyTrigger !== undefined
-            ? !(lowerBound < propertyTrigger && propertyTrigger < upperBound)
-            : false;
-      }
+      const lowerBound = condition.lowerBound;
+      const upperBound = condition.upperBound;
+      const propertyTrigger = getFdmPropertyTrigger<number>(fdmPropertyTrigger, trigger);
+      expressionResult =
+        propertyTrigger !== undefined
+          ? !(lowerBound < propertyTrigger && propertyTrigger < upperBound)
+          : false;
       break;
     }
     case 'after': {
-      if (isFdmTrigger) {
-        const conditionValue = parseInt(condition.parameter);
-        const propertyTrigger = getFdmPropertyTrigger<number>(fdmPropertyTrigger, trigger);
-        expressionResult = propertyTrigger !== undefined ? propertyTrigger > conditionValue : false;
-      }
+      const conditionValue = parseInt(condition.parameter);
+      const propertyTrigger = getFdmPropertyTrigger<number>(fdmPropertyTrigger, trigger);
+      expressionResult = propertyTrigger !== undefined ? propertyTrigger > conditionValue : false;
       break;
     }
     case 'notAfter': {
-      if (isFdmTrigger) {
-        const conditionValue = parseInt(condition.parameter);
-        const propertyTrigger = getFdmPropertyTrigger<number>(fdmPropertyTrigger, trigger);
-        expressionResult =
-          propertyTrigger !== undefined ? propertyTrigger <= conditionValue : false;
-      }
+      const conditionValue = parseInt(condition.parameter);
+      const propertyTrigger = getFdmPropertyTrigger<number>(fdmPropertyTrigger, trigger);
+      expressionResult = propertyTrigger !== undefined ? propertyTrigger <= conditionValue : false;
       break;
     }
     case 'onOrAfter': {
-      if (isFdmTrigger) {
-        const conditionValue = parseInt(condition.parameter);
-        const propertyTrigger = getFdmPropertyTrigger<number>(fdmPropertyTrigger, trigger);
-        expressionResult =
-          propertyTrigger !== undefined ? propertyTrigger >= conditionValue : false;
-      }
+      const conditionValue = parseInt(condition.parameter);
+      const propertyTrigger = getFdmPropertyTrigger<number>(fdmPropertyTrigger, trigger);
+      expressionResult = propertyTrigger !== undefined ? propertyTrigger >= conditionValue : false;
       break;
     }
     case 'on': {
-      if (isFdmTrigger) {
-        const conditionValue = parseInt(condition.parameter);
-        const propertyTrigger = getFdmPropertyTrigger<number>(fdmPropertyTrigger, trigger);
-        expressionResult =
-          propertyTrigger !== undefined ? propertyTrigger === conditionValue : false;
-      }
+      const conditionValue = parseInt(condition.parameter);
+      const propertyTrigger = getFdmPropertyTrigger<number>(fdmPropertyTrigger, trigger);
+      expressionResult = propertyTrigger !== undefined ? propertyTrigger === conditionValue : false;
       break;
     }
     case 'notOn': {
-      if (isFdmTrigger) {
-        const conditionValue = parseInt(condition.parameter);
-        const propertyTrigger = getFdmPropertyTrigger<number>(fdmPropertyTrigger, trigger);
-        expressionResult =
-          propertyTrigger !== undefined ? propertyTrigger !== conditionValue : false;
-      }
+      const conditionValue = parseInt(condition.parameter);
+      const propertyTrigger = getFdmPropertyTrigger<number>(fdmPropertyTrigger, trigger);
+      expressionResult = propertyTrigger !== undefined ? propertyTrigger !== conditionValue : false;
       break;
     }
   }
@@ -343,6 +339,8 @@ const checkBooleanExpressionStatement = (
   const condition = expression.type === 'booleanExpression' ? expression.condition : undefined;
   const trigger = expression.type === 'booleanExpression' ? expression.trigger : undefined;
 
+  let expressionResult: boolean | undefined = false;
+
   if (condition === undefined || trigger === undefined) return;
 
   const currentTriggerData = triggerTypeData.find(
@@ -355,21 +353,17 @@ const checkBooleanExpressionStatement = (
     ? currentTriggerData?.instanceNode?.properties?.[trigger.key.property]
     : undefined;
 
-  let expressionResult: boolean | undefined = false;
+  if (fdmPropertyTrigger === undefined) return;
+
+  const propertyTrigger = getFdmPropertyTrigger<boolean>(fdmPropertyTrigger, trigger);
 
   switch (condition.type) {
     case 'true': {
-      if (isFdmTrigger) {
-        const propertyTrigger = getFdmPropertyTrigger<boolean>(fdmPropertyTrigger, trigger);
-        expressionResult = propertyTrigger === true;
-      }
+      expressionResult = propertyTrigger === true;
       break;
     }
     case 'false': {
-      if (isFdmTrigger) {
-        const propertyTrigger = getFdmPropertyTrigger<boolean>(fdmPropertyTrigger, trigger);
-        expressionResult = propertyTrigger === false;
-      }
+      expressionResult = propertyTrigger === false;
       break;
     }
   }
