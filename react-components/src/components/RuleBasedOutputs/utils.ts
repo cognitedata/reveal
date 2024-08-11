@@ -23,7 +23,8 @@ import {
   type RuleAndEnabled,
   type FdmStylingGroupAndStyleIndex,
   type AllMappingStylingGroupAndStyleIndex,
-  type FdmRuleTrigger
+  type FdmRuleTrigger,
+  type DatetimeExpression
 } from './types';
 import { NumericRange, TreeIndexNodeCollection, type NodeAppearance } from '@cognite/reveal';
 import { type AssetMapping3D, type Asset, type Datapoints } from '@cognite/sdk';
@@ -56,27 +57,65 @@ const checkStringExpressionStatement = (
     ? currentTriggerData?.asset[trigger.type]?.[trigger.key]
     : undefined;
 
-  if (assetTrigger === undefined) return;
+  const isFdmTrigger = trigger?.type === 'fdm' && currentTriggerData?.type === 'fdm';
+
+  const fdmPropertyTrigger = isFdmTrigger
+    ? currentTriggerData?.instanceNode?.properties?.[trigger.key.property]
+    : undefined;
+
+  const fdmPropertyTypingTrigger = isFdmTrigger
+    ? currentTriggerData?.instanceNode?.typing?.[trigger.key.space]?.[
+        `${trigger.key.view.externalId}/${trigger.key.view.version}`
+      ]?.[trigger.key.property]
+    : undefined;
 
   switch (condition.type) {
     case 'equals': {
-      expressionResult = assetTrigger === condition.parameter;
+      if (isMetadataAndAssetTrigger) {
+        expressionResult = assetTrigger === condition.parameter;
+      } else if (isFdmTrigger) {
+        expressionResult =
+          getFdmPropertyTrigger<string>(fdmPropertyTrigger, trigger) === condition.parameter;
+      }
       break;
     }
     case 'notEquals': {
-      expressionResult = assetTrigger !== condition.parameter;
+      if (isMetadataAndAssetTrigger) {
+        expressionResult = assetTrigger !== condition.parameter;
+      } else if (isFdmTrigger) {
+        expressionResult =
+          getFdmPropertyTrigger<string>(fdmPropertyTrigger, trigger) !== condition.parameter;
+      }
       break;
     }
     case 'contains': {
-      expressionResult = assetTrigger?.includes(condition.parameter) ?? undefined;
+      if (isMetadataAndAssetTrigger) {
+        expressionResult = assetTrigger?.includes(condition.parameter);
+      } else if (isFdmTrigger) {
+        expressionResult = getFdmPropertyTrigger<string>(fdmPropertyTrigger, trigger)?.includes(
+          condition.parameter
+        );
+      }
       break;
     }
     case 'startsWith': {
-      expressionResult = assetTrigger?.startsWith(condition.parameter) ?? undefined;
+      if (isMetadataAndAssetTrigger) {
+        expressionResult = assetTrigger?.startsWith(condition.parameter);
+      } else if (isFdmTrigger) {
+        expressionResult = getFdmPropertyTrigger<string>(fdmPropertyTrigger, trigger)?.startsWith(
+          condition.parameter
+        );
+      }
       break;
     }
     case 'endsWith': {
-      expressionResult = assetTrigger?.endsWith(condition.parameter) ?? undefined;
+      if (isMetadataAndAssetTrigger) {
+        expressionResult = assetTrigger?.endsWith(condition.parameter);
+      } else if (isFdmTrigger) {
+        expressionResult = getFdmPropertyTrigger<string>(fdmPropertyTrigger, trigger)?.endsWith(
+          condition.parameter
+        );
+      }
       break;
     }
   }
@@ -121,8 +160,7 @@ const checkNumericExpressionStatement = (
   triggerTypeData: TriggerTypeData[],
   expression: NumericExpression
 ): boolean | undefined => {
-  const trigger = expression.trigger;
-  const condition = expression.condition;
+  const { trigger, condition } = expression;
 
   let expressionResult: boolean = false;
 
@@ -180,6 +218,164 @@ const checkNumericExpressionStatement = (
   return expressionResult;
 };
 
+const checkDatetimeExpressionStatement = (
+  triggerTypeData: TriggerTypeData[],
+  expression: DatetimeExpression
+): boolean | undefined => {
+  const { trigger, condition } = expression;
+
+  let expressionResult: boolean | undefined = false;
+
+  const currentTriggerData = triggerTypeData.find(
+    (triggerType) => triggerType.type === trigger?.type
+  );
+
+  const isFdmTrigger = trigger?.type === 'fdm' && currentTriggerData?.type === 'fdm';
+
+  const fdmPropertyTrigger = isFdmTrigger
+    ? currentTriggerData?.instanceNode?.properties?.[trigger.key.property]
+    : undefined;
+
+  switch (condition.type) {
+    case 'before': {
+      if (isFdmTrigger) {
+        const conditionValue = parseInt(condition.parameter);
+        const propertyTrigger = getFdmPropertyTrigger<number>(fdmPropertyTrigger, trigger);
+        expressionResult = propertyTrigger !== undefined ? propertyTrigger < conditionValue : false;
+      }
+      break;
+    }
+    case 'notBefore': {
+      if (isFdmTrigger) {
+        const conditionValue = parseInt(condition.parameter);
+        const propertyTrigger = getFdmPropertyTrigger<number>(fdmPropertyTrigger, trigger);
+        expressionResult =
+          propertyTrigger !== undefined ? propertyTrigger >= conditionValue : false;
+      }
+      break;
+    }
+    case 'onOrBefore': {
+      if (isFdmTrigger) {
+        const conditionValue = parseInt(condition.parameter);
+        const propertyTrigger = getFdmPropertyTrigger<number>(fdmPropertyTrigger, trigger);
+        expressionResult =
+          propertyTrigger !== undefined ? propertyTrigger <= conditionValue : false;
+      }
+      break;
+    }
+    case 'between': {
+      if (isFdmTrigger) {
+        const lowerBound = condition.lowerBound;
+        const upperBound = condition.upperBound;
+        const propertyTrigger = getFdmPropertyTrigger<number>(fdmPropertyTrigger, trigger);
+        expressionResult =
+          propertyTrigger !== undefined
+            ? lowerBound < propertyTrigger && propertyTrigger < upperBound
+            : false;
+      }
+      break;
+    }
+    case 'notBetween': {
+      if (isFdmTrigger) {
+        const lowerBound = condition.lowerBound;
+        const upperBound = condition.upperBound;
+        const propertyTrigger = getFdmPropertyTrigger<number>(fdmPropertyTrigger, trigger);
+        expressionResult =
+          propertyTrigger !== undefined
+            ? !(lowerBound < propertyTrigger && propertyTrigger < upperBound)
+            : false;
+      }
+      break;
+    }
+    case 'after': {
+      if (isFdmTrigger) {
+        const conditionValue = parseInt(condition.parameter);
+        const propertyTrigger = getFdmPropertyTrigger<number>(fdmPropertyTrigger, trigger);
+        expressionResult = propertyTrigger !== undefined ? propertyTrigger > conditionValue : false;
+      }
+      break;
+    }
+    case 'notAfter': {
+      if (isFdmTrigger) {
+        const conditionValue = parseInt(condition.parameter);
+        const propertyTrigger = getFdmPropertyTrigger<number>(fdmPropertyTrigger, trigger);
+        expressionResult =
+          propertyTrigger !== undefined ? propertyTrigger <= conditionValue : false;
+      }
+      break;
+    }
+    case 'onOrAfter': {
+      if (isFdmTrigger) {
+        const conditionValue = parseInt(condition.parameter);
+        const propertyTrigger = getFdmPropertyTrigger<number>(fdmPropertyTrigger, trigger);
+        expressionResult =
+          propertyTrigger !== undefined ? propertyTrigger >= conditionValue : false;
+      }
+      break;
+    }
+    case 'on': {
+      if (isFdmTrigger) {
+        const conditionValue = parseInt(condition.parameter);
+        const propertyTrigger = getFdmPropertyTrigger<number>(fdmPropertyTrigger, trigger);
+        expressionResult =
+          propertyTrigger !== undefined ? propertyTrigger === conditionValue : false;
+      }
+      break;
+    }
+    case 'notOn': {
+      if (isFdmTrigger) {
+        const conditionValue = parseInt(condition.parameter);
+        const propertyTrigger = getFdmPropertyTrigger<number>(fdmPropertyTrigger, trigger);
+        expressionResult =
+          propertyTrigger !== undefined ? propertyTrigger !== conditionValue : false;
+      }
+      break;
+    }
+  }
+
+  return expressionResult;
+};
+
+const checkBooleanExpressionStatement = (
+  triggerTypeData: TriggerTypeData[],
+  expression: Expression
+): boolean | undefined => {
+  const condition = expression.type === 'booleanExpression' ? expression.condition : undefined;
+  const trigger = expression.type === 'booleanExpression' ? expression.trigger : undefined;
+
+  if (condition === undefined || trigger === undefined) return;
+
+  const currentTriggerData = triggerTypeData.find(
+    (triggerType) => triggerType.type === trigger?.type
+  );
+
+  const isFdmTrigger = trigger?.type === 'fdm' && currentTriggerData?.type === 'fdm';
+
+  const fdmPropertyTrigger = isFdmTrigger
+    ? currentTriggerData?.instanceNode?.properties?.[trigger.key.property]
+    : undefined;
+
+  let expressionResult: boolean | undefined = false;
+
+  switch (condition.type) {
+    case 'true': {
+      if (isFdmTrigger) {
+        const propertyTrigger = getFdmPropertyTrigger<boolean>(fdmPropertyTrigger, trigger);
+        expressionResult = propertyTrigger === true;
+      }
+      break;
+    }
+    case 'false': {
+      if (isFdmTrigger) {
+        const propertyTrigger = getFdmPropertyTrigger<boolean>(fdmPropertyTrigger, trigger);
+        expressionResult = propertyTrigger === false;
+      }
+      break;
+    }
+  }
+  return expressionResult;
+};
+
 const getTimeseriesExternalIdFromNumericExpression = (
   expression: NumericExpression
 ): string[] | undefined => {
@@ -223,6 +419,14 @@ const traverseExpression = (
       }
       case 'stringExpression': {
         expressionResult = checkStringExpressionStatement(triggerTypeData, expression);
+        break;
+      }
+      case 'datetimeExpression': {
+        expressionResult = checkDatetimeExpressionStatement(triggerTypeData, expression);
+        break;
+      }
+      case 'booleanExpression': {
+        expressionResult = checkBooleanExpressionStatement(triggerTypeData, expression);
         break;
       }
     }
@@ -600,13 +804,13 @@ const isMetadataTrigger = (
 const isFdmTrigger = (
   trigger: MetadataRuleTrigger | TimeseriesRuleTrigger | FdmRuleTrigger
 ): trigger is FdmRuleTrigger => {
-  return trigger.type === 'fdmInstanceProperty';
+  return trigger.type === 'fdm';
 };
 
 const convertExpressionStringMetadataKeyToLowerCase = (expression: Expression): void => {
   if (
     expression.type !== 'stringExpression' ||
-    (expression.type === 'stringExpression' && expression.trigger.type === 'fdmInstanceProperty')
+    (expression.type === 'stringExpression' && expression.trigger.type === 'fdm')
   )
     return;
 
@@ -636,3 +840,12 @@ export const getRuleBasedById = (
 ): RuleAndEnabled | undefined => {
   return ruleInstances?.find((item) => item.rule.properties.id === id);
 };
+
+function getFdmPropertyTrigger<T>(
+  fdmPropertyTrigger: Record<string, unknown> | undefined,
+  trigger: FdmRuleTrigger
+): T | undefined {
+  return fdmPropertyTrigger !== undefined
+    ? (fdmPropertyTrigger[trigger.key.property] as T)
+    : undefined;
+}

@@ -17,7 +17,7 @@ import {
 
 // =========== RULE BASED OUTPUT DATA MODEL
 
-export type TriggerType = 'timeseries' | 'metadata' | 'fdmInstanceProperty';
+export type TriggerType = 'timeseries' | 'metadata' | 'fdm';
 
 export type TimeseriesRuleTrigger = {
   type: 'timeseries';
@@ -30,7 +30,7 @@ export type MetadataRuleTrigger = {
 };
 
 export type FdmRuleTrigger = {
-  type: 'fdmInstanceProperty';
+  type: 'fdm';
   key: FdmInstanceNodeDataKey;
 };
 
@@ -39,6 +39,7 @@ export type FdmInstanceNodeDataKey = {
   externalId: string;
   view: Source;
   typing: FdmTyping;
+  property: string;
 };
 
 export type StringTrigger = MetadataRuleTrigger;
@@ -53,20 +54,24 @@ export type StringCondition = {
   parameter: string;
 };
 
-export type DatetimeCondition = {
-  type:
-    | 'before'
-    | 'notBefore'
-    | 'onOrBefore'
-    | 'between'
-    | 'notBetween'
-    | 'after'
-    | 'notAfter'
-    | 'onOrAfter'
-    | 'on'
-    | 'notOn';
-  parameter: string;
-};
+export type DatetimeCondition =
+  | {
+      type:
+        | 'before'
+        | 'notBefore'
+        | 'onOrBefore'
+        | 'after'
+        | 'notAfter'
+        | 'onOrAfter'
+        | 'on'
+        | 'notOn';
+      parameter: string;
+    }
+  | {
+      type: 'between' | 'notBetween';
+      lowerBound: number;
+      upperBound: number;
+    };
 
 export type NumericCondition =
   | {
