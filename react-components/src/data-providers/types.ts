@@ -35,7 +35,8 @@ export type FdmTyping = Record<
         defaultValue?: any;
         description?: string;
         name?: string;
-        type: { type: string };
+        immutable?: boolean;
+        type: { collation?: string; list?: boolean; type: string };
       }
     >
   >
