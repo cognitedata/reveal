@@ -4,12 +4,20 @@
 
 import { type TreeIndexNodeCollection, type NumericRange } from '@cognite/reveal';
 import { type FdmNode, type EdgeItem, type DmsUniqueIdentifier } from '../../data-providers/FdmSDK';
-import { type AssetStylingGroup, type FdmPropertyType } from '../Reveal3DResources/types';
+import {
+  type FdmAssetStylingGroup,
+  type AssetStylingGroup,
+  type FdmPropertyType
+} from '../Reveal3DResources/types';
 import { type Datapoints, type Asset, type Timeseries } from '@cognite/sdk';
+import {
+  type FdmTyping,
+  type FdmInstanceNodeWithConnectionAndProperties
+} from '../../data-providers/types';
 
 // =========== RULE BASED OUTPUT DATA MODEL
 
-export type TriggerType = 'timeseries' | 'metadata';
+export type TriggerType = 'timeseries' | 'metadata' | 'fdm';
 
 export type TimeseriesRuleTrigger = {
   type: 'timeseries';
@@ -21,12 +29,49 @@ export type MetadataRuleTrigger = {
   key: string;
 };
 
+export type FdmRuleTrigger = {
+  type: 'fdm';
+  key: FdmInstanceNodeDataKey;
+};
+
+export type FdmInstanceNodeDataKey = {
+  space: string;
+  externalId: string;
+  view: Source;
+  typing: FdmTyping;
+  property: string;
+};
+
 export type StringTrigger = MetadataRuleTrigger;
+
+export type BooleanCondition = {
+  type: 'true' | 'false';
+  parameter: boolean;
+};
 
 export type StringCondition = {
   type: 'equals' | 'notEquals' | 'contains' | 'startsWith' | 'endsWith';
   parameter: string;
 };
+
+export type DatetimeCondition =
+  | {
+      type:
+        | 'before'
+        | 'notBefore'
+        | 'onOrBefore'
+        | 'after'
+        | 'notAfter'
+        | 'onOrAfter'
+        | 'on'
+        | 'notOn';
+      parameter: string;
+    }
+  | {
+      type: 'between' | 'notBetween';
+      lowerBound: number;
+      upperBound: number;
+    };
 
 export type NumericCondition =
   | {
@@ -52,14 +97,26 @@ export type NumericCondition =
 
 export type StringExpression = {
   type: 'stringExpression';
-  trigger: StringTrigger;
+  trigger: StringTrigger | FdmRuleTrigger;
   condition: StringCondition;
 };
 
 export type NumericExpression = {
   type: 'numericExpression';
-  trigger: MetadataRuleTrigger | TimeseriesRuleTrigger;
+  trigger: MetadataRuleTrigger | TimeseriesRuleTrigger | FdmRuleTrigger;
   condition: NumericCondition;
+};
+
+export type DatetimeExpression = {
+  type: 'datetimeExpression';
+  trigger: FdmRuleTrigger;
+  condition: DatetimeCondition;
+};
+
+export type BooleanExpression = {
+  type: 'booleanExpression';
+  trigger: FdmRuleTrigger;
+  condition: BooleanCondition;
 };
 
 export type ExpressionOperator =
@@ -76,7 +133,11 @@ export type ExpressionOperator =
       expression: Expression;
     };
 
-export type ConcreteExpression = StringExpression | NumericExpression;
+export type ConcreteExpression =
+  | StringExpression
+  | NumericExpression
+  | DatetimeExpression
+  | BooleanExpression;
 
 export type Expression = ConcreteExpression | ExpressionOperator;
 
@@ -156,6 +217,8 @@ export type FdmRuleOutputSet = {
 
 export type ExpressionOperatorsTypes = 'and' | 'or' | 'not';
 
+export type BooleanConditionTypes = 'true' | 'false';
+
 export type StringConditionTypes = 'equals' | 'notEquals' | 'contains' | 'startsWith' | 'endsWith';
 
 export type NumericConditionTypes =
@@ -180,11 +243,38 @@ export type NumericOutsideConditionType = {
   upperBoundExclusive: number;
 };
 
+export type DatetimeConditionTypes =
+  | 'before'
+  | 'notBefore'
+  | 'onOrBefore'
+  | 'between'
+  | 'notBetween'
+  | 'after'
+  | 'notAfter'
+  | 'onOrAfter'
+  | 'on'
+  | 'notOn';
+
+export type DatetimeBetweenConditionType = {
+  type: 'between';
+  lowerBoundInclusive: number;
+  upperBoundInclusive: number;
+};
+
+export type DatetimeNotBetweenConditionType = {
+  type: 'notBetween';
+  lowerBoundExclusive: number;
+  upperBoundExclusive: number;
+};
+
 export type CriteriaTypes =
+  | BooleanConditionTypes
   | string
   | number
   | NumericWithinConditionType
-  | NumericOutsideConditionType;
+  | NumericOutsideConditionType
+  | DatetimeBetweenConditionType
+  | DatetimeNotBetweenConditionType;
 
 export type RuleAndStyleIndex = {
   styleIndex: TreeIndexNodeCollection;
@@ -194,6 +284,21 @@ export type RuleAndStyleIndex = {
 export type AssetStylingGroupAndStyleIndex = {
   styleIndex: TreeIndexNodeCollection;
   assetStylingGroup: AssetStylingGroup;
+};
+
+export type FdmStylingGroupAndStyleIndex = {
+  styleIndex: TreeIndexNodeCollection;
+  fdmStylingGroup: FdmAssetStylingGroup;
+};
+
+export type AllRuleBasedStylingGroups = {
+  assetStylingGroup: AssetStylingGroup[];
+  fdmStylingGroup: FdmAssetStylingGroup[];
+};
+
+export type AllMappingStylingGroupAndStyleIndex = {
+  assetMappingsStylingGroupAndIndex: AssetStylingGroupAndStyleIndex;
+  fdmStylingGroupAndStyleIndex: FdmStylingGroupAndStyleIndex;
 };
 
 export type NodeAndRange = {
@@ -271,7 +376,7 @@ export type EmptyRuleForSelectionProps = {
   isNoSelection: boolean;
 };
 
-export type TriggerTypeData = TriggerMetadataType | TriggerTimeseriesType;
+export type TriggerTypeData = TriggerMetadataType | TriggerTimeseriesType | TriggerFdmType;
 
 export type TriggerMetadataType = {
   type: 'metadata';
@@ -284,6 +389,11 @@ export type TriggerTimeseriesType = {
     timeseriesWithDatapoints: TimeseriesAndDatapoints[];
     linkedAssets: Asset;
   };
+};
+
+export type TriggerFdmType = {
+  type: 'fdm';
+  instanceNode: FdmInstanceNodeWithConnectionAndProperties;
 };
 
 export type TimeseriesAndDatapoints = Timeseries & Datapoints;
