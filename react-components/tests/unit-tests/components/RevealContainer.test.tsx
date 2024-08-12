@@ -6,7 +6,7 @@ import { type CogniteClient } from '@cognite/sdk';
 import { RevealKeepAliveContext } from '../../../src/components/RevealKeepAlive/RevealKeepAliveContext';
 import { type FC, useRef } from 'react';
 import { type FdmNodeCache } from '../../../src/components/CacheProvider/FdmNodeCache';
-import { type AssetMappingCache } from '../../../src/components/CacheProvider/AssetMappingCache';
+import { type AssetMappingAndNode3DCache } from '../../../src/components/CacheProvider/AssetMappingAndNode3DCache';
 import { type PointCloudAnnotationCache } from '../../../src/components/CacheProvider/PointCloudAnnotationCache';
 import { type Image360AnnotationCache } from '../../../src/components/CacheProvider/Image360AnnotationCache';
 import { type SceneIdentifiers } from '../../../src/components/SceneContainer/sceneTypes';
@@ -32,7 +32,7 @@ describe(RevealCanvas.name, () => {
       const isRevealContainerMountedRef = useRef<boolean>(true);
       const sceneLoadedRef = useRef<SceneIdentifiers | undefined>();
       const fdmNodeCache = useRef<FdmNodeCache | undefined>();
-      const assetMappingCache = useRef<AssetMappingCache | undefined>();
+      const assetMappingCache = useRef<AssetMappingAndNode3DCache | undefined>();
       const pointCloudAnnotationCache = useRef<PointCloudAnnotationCache>();
       const image360AnnotationCache = useRef<Image360AnnotationCache | undefined>();
       return (

@@ -34,7 +34,7 @@ export class DomainObjectTransaction extends Transaction {
   }
 
   // ==================================================
-  // VIRTUAL METHODS (To be override)
+  // VIRTUAL METHODS (To be overridden)
   // =================================================
 
   protected override undoCore(

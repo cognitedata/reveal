@@ -105,7 +105,7 @@ export class PointCloudManager {
   }
 
   updatePointClouds(camera: THREE.PerspectiveCamera): void {
-    const octrees = this._pointCloudNodes.map(node => node.octree);
+    const octrees = this._pointCloudNodes.filter(node => node.visible).map(node => node.octree);
     this._potreeInstance.updatePointClouds(octrees, camera, this._renderer);
   }
 

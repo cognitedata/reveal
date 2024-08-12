@@ -2,21 +2,12 @@
  * Copyright 2023 Cognite AS
  */
 
-import { type CogniteClient, type CogniteInternalId, type Node3D } from '@cognite/sdk';
+import { type CogniteClient, type Node3D } from '@cognite/sdk';
 import {
-  type Source,
   type DmsUniqueIdentifier,
   type FdmSDK,
   type InspectResultList
-} from '../../utilities/FdmSDK';
-import { type FdmCadEdge } from './types';
-import {
-  type InModel3dEdgeProperties,
-  SYSTEM_3D_EDGE_SOURCE,
-  SYSTEM_SPACE_3D_SCHEMA,
-  SYSTEM_SPACE_3D_MODEL_ID,
-  SYSTEM_SPACE_3D_MODEL_VERSION
-} from '../../utilities/globalDataModels';
+} from '../../data-providers/FdmSDK';
 import { chunk } from 'lodash';
 
 export async function fetchAncestorNodesForTreeIndex(
@@ -34,76 +25,6 @@ export async function fetchAncestorNodesForTreeIndex(
   );
 
   return ancestorNodes.items;
-}
-
-export async function getDMSModels(
-  modelId: number,
-  fdmClient: FdmSDK
-): Promise<DmsUniqueIdentifier[]> {
-  const filter = {
-    equals: {
-      property: ['node', 'externalId'],
-      value: `${modelId}`
-    }
-  };
-  const sources: Source = {
-    type: 'view',
-    space: SYSTEM_SPACE_3D_SCHEMA,
-    externalId: SYSTEM_SPACE_3D_MODEL_ID,
-    version: SYSTEM_SPACE_3D_MODEL_VERSION
-  };
-
-  const modelResults = await fdmClient.filterInstances(filter, 'node', sources);
-  return modelResults.instances;
-}
-
-export async function getMappingEdgesForNodeIds(
-  models: DmsUniqueIdentifier[],
-  revisionId: number,
-  fdmClient: FdmSDK,
-  ancestorIds: CogniteInternalId[]
-): Promise<{ edges: FdmCadEdge[] }> {
-  const filter = {
-    and: [
-      {
-        in: {
-          property: ['edge', 'endNode'],
-          values: models.map((model) => ({
-            externalId: model.externalId,
-            space: model.space
-          }))
-        }
-      },
-      {
-        equals: {
-          property: [
-            SYSTEM_3D_EDGE_SOURCE.space,
-            `${SYSTEM_3D_EDGE_SOURCE.externalId}/${SYSTEM_3D_EDGE_SOURCE.version}`,
-            'revisionId'
-          ],
-          value: revisionId
-        }
-      },
-      {
-        in: {
-          property: [
-            SYSTEM_3D_EDGE_SOURCE.space,
-            `${SYSTEM_3D_EDGE_SOURCE.externalId}/${SYSTEM_3D_EDGE_SOURCE.version}`,
-            'revisionNodeId'
-          ],
-          values: ancestorIds
-        }
-      }
-    ]
-  };
-
-  const instances = await fdmClient.filterAllInstances<InModel3dEdgeProperties>(
-    filter,
-    'edge',
-    SYSTEM_3D_EDGE_SOURCE
-  );
-
-  return { edges: instances.instances };
 }
 
 export async function inspectNodes(

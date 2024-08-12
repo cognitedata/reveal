@@ -333,7 +333,9 @@ export class CameraManagerHelper {
     };
     static calculateNewRotationFromTarget(camera: PerspectiveCamera, newTarget: Vector3): Quaternion;
     static calculateNewTargetFromRotation(camera: PerspectiveCamera, rotation: Quaternion, currentTarget: Vector3, position: Vector3): Vector3;
+    // @deprecated
     static updateCameraNearAndFar(camera: PerspectiveCamera, boundingBox: Box3): void;
+    updateCameraNearAndFar(camera: PerspectiveCamera, boundingBox: Box3): void;
 }
 
 // @public (undocumented)
@@ -1329,6 +1331,9 @@ export class InvertedNodeCollection extends NodeCollection {
     // (undocumented)
     serialize(): SerializedNodeCollection;
 }
+
+// @public
+export function isDefaultCameraManager(cameraManager: CameraManager): cameraManager is DefaultCameraManager;
 
 // @beta
 export function isFlexibleCameraManager(manager: CameraManager): manager is IFlexibleCameraManager;

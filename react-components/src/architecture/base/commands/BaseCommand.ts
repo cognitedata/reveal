@@ -34,13 +34,13 @@ export abstract class BaseCommand {
   // CONSTRUCTOR
   // ==================================================
 
-  constructor() {
+  public constructor() {
     BaseCommand._counter++;
     this._uniqueId = BaseCommand._counter;
   }
 
   // ==================================================
-  // VIRTUAL METHODS (To be override)
+  // VIRTUAL METHODS (To be overridden)
   // =================================================
 
   public get name(): string {
@@ -79,6 +79,15 @@ export abstract class BaseCommand {
     return this.isEnabled;
   }
 
+  /**
+   * Gets a value indicating whether the command can be toggled on or off.
+   * Override this property if the command can be toggled.
+   * You must also override isChecked to get the toggle state.
+   */
+  public get isToggle(): boolean {
+    return false;
+  }
+
   public get isChecked(): boolean {
     return false;
   }
@@ -93,6 +102,8 @@ export abstract class BaseCommand {
   public get hasData(): boolean {
     return false;
   }
+
+  protected *getChildren(): Generator<BaseCommand> {}
 
   /*
    * Called when the command is invoked
@@ -135,7 +146,14 @@ export abstract class BaseCommand {
     for (const listener of this._listeners) {
       listener(this);
     }
+    for (const child of this.getChildren()) {
+      child.update();
+    }
   }
+
+  // ==================================================
+  // INSTANCE METHODS: Others
+  // ==================================================
 
   public getLabel(translate: TranslateDelegate): string {
     const { key, fallback } = this.tooltip;

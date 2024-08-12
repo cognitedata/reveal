@@ -1,5 +1,5 @@
 /*!
- * Copyright 2023 Cognite AS
+ * Copyright 2024 Cognite AS
  */
 
 import { type ReactElement, useState, useEffect, useMemo, useCallback } from 'react';
@@ -9,14 +9,6 @@ import { useTranslation } from '../i18n/I18n';
 import { type BaseCommand } from '../../architecture/base/commands/BaseCommand';
 import { getButtonType, getDefaultCommand, getIcon, getTooltipPlacement } from './utilities';
 import { LabelWithShortcut } from './LabelWithShortcut';
-
-export const createCommandButton = (
-  commandConstructor: () => BaseCommand,
-  isHorizontal = false
-): ReactElement => {
-  const command = useMemo(commandConstructor, []);
-  return <CommandButton inputCommand={command} isHorizontal={isHorizontal} />;
-};
 
 export const CommandButton = ({
   inputCommand,
@@ -49,18 +41,19 @@ export const CommandButton = ({
     return () => {
       command.removeEventListener(update);
     };
-  }, [command.isEnabled, command.isChecked, command.isVisible]);
+  }, [command]);
 
   if (!isVisible) {
     return <></>;
   }
   const placement = getTooltipPlacement(isHorizontal);
-  const tooltip = command.getLabel(t);
+  const label = command.getLabel(t);
   const shortcut = command.getShortCutKeys();
 
   return (
     <CogsTooltip
-      content={<LabelWithShortcut key={tooltip} label={tooltip} shortcut={shortcut} />}
+      content={<LabelWithShortcut label={label} shortcut={shortcut} />}
+      disabled={label === undefined}
       appendTo={document.body}
       placement={placement}>
       <Button
@@ -69,13 +62,12 @@ export const CommandButton = ({
         key={uniqueId}
         disabled={!isEnabled}
         toggled={isChecked}
-        aria-label={tooltip}
+        aria-label={label}
         iconPlacement="right"
         onClick={() => {
           command.invoke();
           renderTarget.domElement.focus();
-        }}
-      />
+        }}></Button>
     </CogsTooltip>
   );
 };

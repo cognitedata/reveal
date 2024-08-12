@@ -1,3 +1,4 @@
+import { Plane, Vector3 } from 'three';
 import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 import pull from 'lodash/pull';
@@ -19,6 +20,7 @@ export class CustomCameraManager implements CameraManager {
   private _controls: OrbitControls;
   private readonly _cameraChangedListener: Array<CameraChangeDelegate> = [];
   private _stopEventHandler: DebouncedCameraStopEventTrigger;
+  private readonly cameraManagerHelper = new CameraManagerHelper();
 
   constructor(domElement: HTMLElement, camera: THREE.PerspectiveCamera) {
     this._domElement = domElement;
@@ -119,7 +121,7 @@ export class CustomCameraManager implements CameraManager {
 
   update(deltaTime: number, boundingBox: THREE.Box3): void {
     this._controls.update();
-    CameraManagerHelper.updateCameraNearAndFar(this._camera, boundingBox);
+    this.cameraManagerHelper.updateCameraNearAndFar(this._camera, boundingBox);
   }
 
   dispose(): void {

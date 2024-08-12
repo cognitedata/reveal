@@ -40,6 +40,10 @@ export class ApplyClipCommand extends RenderTargetCommand {
     return false;
   }
 
+  public override get isToggle(): boolean {
+    return true;
+  }
+
   public override get isChecked(): boolean {
     return this.renderTarget.isGlobalClippingActive;
   }
@@ -53,10 +57,10 @@ export class ApplyClipCommand extends RenderTargetCommand {
     const cropBox = this.getSelectedCropBoxDomainObject();
     if (cropBox !== undefined) {
       cropBox.setThisAsGlobalCropBox();
+      renderTarget.fitView();
     } else {
       ApplyClipCommand.setClippingPlanes(this.rootDomainObject);
     }
-    renderTarget.fitView();
     return true;
   }
 

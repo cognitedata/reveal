@@ -2,8 +2,8 @@
  * Copyright 2023 Cognite AS
  */
 import { type Node3D, type CogniteExternalId, type Asset } from '@cognite/sdk';
+import { type DmsUniqueIdentifier } from '../data-providers/FdmSDK';
 import { type AssetAnnotationImage360Info } from '@cognite/reveal';
-import { type DmsUniqueIdentifier } from '../utilities/FdmSDK';
 
 export type ThreeDModelFdmMappings = {
   modelId: number;
@@ -37,6 +37,12 @@ export type LayersUrlStateParam = {
   image360Layers?: Image360LayersUrlStateParam[];
   cadLayers?: CadLayersUrlStateParam[];
   pointCloudLayers?: PointCloudLayersUrlStateParam[];
+};
+
+export type DefaultLayersConfiguration = {
+  cad: boolean;
+  pointcloud: boolean;
+  image360: boolean;
 };
 
 export type Reveal360AnnotationAssetData = {
