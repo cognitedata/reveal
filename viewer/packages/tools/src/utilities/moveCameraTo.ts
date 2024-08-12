@@ -54,6 +54,6 @@ export function moveCameraTo(
       cameraManager.setCameraState({ position: tmpPosition, target: target });
     })
     .start(TWEEN.now());
-
+  TWEEN.add(tween);
   tween.update(TWEEN.now());
 }
