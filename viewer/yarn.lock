@@ -461,7 +461,7 @@ __metadata:
     "@cognite/sdk": "npm:^9.12.0"
     "@microsoft/api-extractor": "npm:^7.43.1"
     "@rajesh896/broprint.js": "npm:^2.1.1"
-    "@tweenjs/tween.js": "npm:^23.1.1"
+    "@tweenjs/tween.js": "npm:^25.0.0"
     "@types/dat.gui": "npm:^0.7.13"
     "@types/gl": "npm:^6.0.5"
     "@types/glob": "npm:^8.1.0"
@@ -1573,7 +1573,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@tweenjs/tween.js@npm:*, @tweenjs/tween.js@npm:^23.1.1, @tweenjs/tween.js@npm:~23.1.2":
+"@tweenjs/tween.js@npm:*, @tweenjs/tween.js@npm:^25.0.0":
+  version: 25.0.0
+  resolution: "@tweenjs/tween.js@npm:25.0.0"
+  checksum: 10/0df3d2668a115dbfffde2f18f7b58fecc2d1a97a69f5f522a2437dea2e7a3fbbb08763dd5dfd8e718a6e9f24153f6c80cb0a5c4ab943dc5fd1802cda9b527c04
+  languageName: node
+  linkType: hard
+
+"@tweenjs/tween.js@npm:~23.1.2":
   version: 23.1.2
   resolution: "@tweenjs/tween.js@npm:23.1.2"
   checksum: 10/ca7f62b1059917ebddf1e7e9d7361b87e945bfc21b3c840dd34b1ebfe7d90d87d0dd10ebfa88e2233fe4887cf260b9e1a45134573b599c905af45853b39ae0b8
