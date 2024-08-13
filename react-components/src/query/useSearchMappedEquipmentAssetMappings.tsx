@@ -18,6 +18,7 @@ import { useSDK } from '../components/RevealCanvas/SDKProvider';
 import { getAssetsList } from '../hooks/network/getAssetsList';
 import { useAssetMappedNodesForRevisions } from '../components/CacheProvider/AssetMappingAndNode3DCacheProvider';
 import { isDefined } from '../utilities/isDefined';
+import { uniq } from 'lodash';
 
 export type ModelMappings = {
   model: AddModelOptions;
@@ -43,7 +44,7 @@ export const useSearchMappedEquipmentAssetMappings = (
   models: AddModelOptions[],
   limit: number = 100,
   userSdk?: CogniteClient
-): UseInfiniteQueryResult<InfiniteData<AssetPage[]>, Error> => {
+): UseInfiniteQueryResult<InfiniteData<AssetPage>, Error> => {
   const sdk = useSDK(userSdk);
   const { data: assetMappingList, isFetched } = useAssetMappedNodesForRevisions(
     models.map((model) => ({ ...model, type: 'cad' }))
@@ -64,11 +65,7 @@ export const useSearchMappedEquipmentAssetMappings = (
       }
       if (query === '') {
         const assets = initialAssetMappings.data?.pages.flatMap((modelWithAssets) =>
-          modelWithAssets
-            .map((modelWithAsset) =>
-              modelWithAsset.modelsAssets.flatMap((modelsAsset) => modelsAsset.assets)
-            )
-            .flat()
+          modelWithAssets.modelsAssets.flatMap((modelsAsset) => modelsAsset.assets).flat()
         );
         return { assets, nextCursor: undefined };
       }
@@ -89,8 +86,11 @@ export const useSearchMappedEquipmentAssetMappings = (
           .filter(isDefined);
       });
 
+      // Remove duplicates
+      const uniqueFilteredSearchedAssets = uniq(filteredSearchedAssets);
+
       return {
-        assets: filteredSearchedAssets,
+        assets: uniqueFilteredSearchedAssets,
         nextCursor: assetsResponse.nextCursor
       };
     },
@@ -108,7 +108,7 @@ export const useAllMappedEquipmentAssetMappings = (
   models: AddModelOptions[],
   userSdk?: CogniteClient,
   limit: number = 1000
-): UseInfiniteQueryResult<InfiniteData<ModelAssetPage[]>, Error> => {
+): UseInfiniteQueryResult<InfiniteData<ModelAssetPage>, Error> => {
   const sdk = useSDK(userSdk);
   const usedCursors = useRef(new Set());
 
