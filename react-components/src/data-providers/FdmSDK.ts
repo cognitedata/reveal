@@ -561,7 +561,7 @@ function hoistInstanceProperties(
   });
 }
 
-function makeSureNonEmptyFilterForRequest(
+export function makeSureNonEmptyFilterForRequest(
   filter: InstanceFilter | undefined
 ): InstanceFilter | undefined {
   return filter !== undefined && Object.keys(filter).length === 0 ? undefined : filter;
