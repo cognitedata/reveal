@@ -208,7 +208,7 @@ export const useMappingsForAssetIds = (
             nextCursor.model.revisionId === model.revisionId
         )?.cursor;
 
-        if (nextCursor === undefined) {
+        if (nextCursor === undefined || assetIds.length === 0) {
           return { mappings: { items: [] }, model };
         }
 

@@ -2,7 +2,12 @@
  * Copyright 2024 Cognite AS
  */
 import { type AddModelOptions } from '@cognite/reveal';
-import { type InstanceFilter, type Query, type Source } from '../FdmSDK';
+import {
+  makeSureNonEmptyFilterForRequest,
+  type InstanceFilter,
+  type Query,
+  type Source
+} from '../FdmSDK';
 import { SYSTEM_3D_EDGE_SOURCE } from './dataModels';
 
 export function createMappedEquipmentQuery(
@@ -12,6 +17,8 @@ export function createMappedEquipmentQuery(
   limit: number = 10000,
   cursors?: Record<string, string>
 ): Query {
+  instanceFilter = makeSureNonEmptyFilterForRequest(instanceFilter);
+
   return {
     with: {
       mapped_edges: {
