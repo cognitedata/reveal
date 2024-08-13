@@ -28,7 +28,11 @@ import {
 } from './types';
 import { NumericRange, TreeIndexNodeCollection, type NodeAppearance } from '@cognite/reveal';
 import { type AssetMapping3D, type Asset, type Datapoints } from '@cognite/sdk';
-import { type FdmAssetStylingGroup, type AssetStylingGroup } from '../Reveal3DResources/types';
+import {
+  type FdmAssetStylingGroup,
+  type AssetStylingGroup,
+  type FdmPropertyType
+} from '../Reveal3DResources/types';
 import { isDefined } from '../../utilities/isDefined';
 import { assertNever } from '../../utilities/assertNever';
 import {
@@ -43,6 +47,8 @@ const checkStringExpressionStatement = (
   const { trigger, condition } = expression;
 
   let expressionResult: boolean | undefined = false;
+
+  let propertyTrigger: string | undefined;
 
   const currentTriggerData = triggerTypeData.find(
     (triggerType) => triggerType.type === trigger?.type
@@ -60,7 +66,7 @@ const checkStringExpressionStatement = (
   const isFdmTrigger = trigger?.type === 'fdm' && currentTriggerData?.type === 'fdm';
 
   const fdmPropertyTrigger = isFdmTrigger
-    ? currentTriggerData?.instanceNode?.properties?.[trigger.key.property]
+    ? (currentTriggerData.instanceNode.items[0].properties as FdmPropertyType<unknown>)
     : undefined;
 
   const fdmPropertyTypingTrigger = isFdmTrigger
@@ -69,57 +75,44 @@ const checkStringExpressionStatement = (
       ]?.[trigger.key.property]
     : undefined;
 
+  if (isMetadataAndAssetTrigger) {
+    propertyTrigger = assetTrigger;
+  } else if (isFdmTrigger) {
+    propertyTrigger = getFdmPropertyTrigger<string>(fdmPropertyTrigger, trigger);
+  }
+
+  console.log('TEST STRING triggerTypeData', triggerTypeData);
+  console.log('TEST STRING condition', condition);
+  console.log('TEST STRING trigger', trigger);
+  console.log('TEST STRING propertyTrigger', propertyTrigger);
+  console.log('TEST STRING fdmPropertyTrigger', fdmPropertyTrigger);
+  console.log('TEST STRING fdmPropertyTypingTrigger', fdmPropertyTypingTrigger);
+
   switch (condition.type) {
     case 'equals': {
-      if (isMetadataAndAssetTrigger) {
-        expressionResult = assetTrigger === condition.parameter;
-      } else if (isFdmTrigger) {
-        expressionResult =
-          getFdmPropertyTrigger<string>(fdmPropertyTrigger, trigger) === condition.parameter;
-      }
+      expressionResult = propertyTrigger === condition.parameter;
       break;
     }
     case 'notEquals': {
-      if (isMetadataAndAssetTrigger) {
-        expressionResult = assetTrigger !== condition.parameter;
-      } else if (isFdmTrigger) {
-        expressionResult =
-          getFdmPropertyTrigger<string>(fdmPropertyTrigger, trigger) !== condition.parameter;
-      }
+      expressionResult = propertyTrigger !== condition.parameter;
       break;
     }
     case 'contains': {
-      if (isMetadataAndAssetTrigger) {
-        expressionResult = assetTrigger?.includes(condition.parameter);
-      } else if (isFdmTrigger) {
-        expressionResult = getFdmPropertyTrigger<string>(fdmPropertyTrigger, trigger)?.includes(
-          condition.parameter
-        );
-      }
+      expressionResult = propertyTrigger?.includes(condition.parameter);
       break;
     }
     case 'startsWith': {
-      if (isMetadataAndAssetTrigger) {
-        expressionResult = assetTrigger?.startsWith(condition.parameter);
-      } else if (isFdmTrigger) {
-        expressionResult = getFdmPropertyTrigger<string>(fdmPropertyTrigger, trigger)?.startsWith(
-          condition.parameter
-        );
-      }
+      expressionResult = propertyTrigger?.startsWith(condition.parameter);
       break;
     }
     case 'endsWith': {
-      if (isMetadataAndAssetTrigger) {
-        expressionResult = assetTrigger?.endsWith(condition.parameter);
-      } else if (isFdmTrigger) {
-        expressionResult = getFdmPropertyTrigger<string>(fdmPropertyTrigger, trigger)?.endsWith(
-          condition.parameter
-        );
-      }
+      expressionResult = propertyTrigger?.endsWith(condition.parameter);
       break;
     }
   }
 
+  console.log('TEST STRING expressionResult', expressionResult);
+  console.log('TEST STRING -------------------');
   return expressionResult;
 };
 
@@ -174,20 +167,19 @@ const checkNumericExpressionStatement = (
   const isFdmTrigger = trigger?.type === 'fdm' && currentTriggerData?.type === 'fdm';
 
   const fdmPropertyTrigger = isFdmTrigger
-    ? getFdmPropertyTrigger<number>(
-        currentTriggerData?.instanceNode?.properties?.[trigger.key.property],
-        trigger
-      )
+    ? (currentTriggerData.instanceNode.items[0].properties as FdmPropertyType<unknown>)
     : undefined;
 
   if (dataTrigger === undefined) return;
   if (fdmPropertyTrigger === undefined) return;
 
   if (isFdmTrigger) {
-    propertyTrigger = fdmPropertyTrigger;
+    propertyTrigger = getFdmPropertyTrigger<number>(fdmPropertyTrigger, trigger);
   } else {
     propertyTrigger = dataTrigger;
   }
+
+  if (propertyTrigger === undefined) return;
 
   switch (condition.type) {
     case 'equals': {
@@ -252,7 +244,7 @@ const checkDatetimeExpressionStatement = (
   const isFdmTrigger = trigger?.type === 'fdm' && currentTriggerData?.type === 'fdm';
 
   const fdmPropertyTrigger = isFdmTrigger
-    ? currentTriggerData?.instanceNode?.properties?.[trigger.key.property]
+    ? (currentTriggerData.instanceNode.items[0].properties as FdmPropertyType<unknown>)
     : undefined;
 
   const propertyTrigger = getFdmPropertyTrigger<number>(fdmPropertyTrigger, trigger);
@@ -350,7 +342,7 @@ const checkBooleanExpressionStatement = (
   const isFdmTrigger = trigger?.type === 'fdm' && currentTriggerData?.type === 'fdm';
 
   const fdmPropertyTrigger = isFdmTrigger
-    ? currentTriggerData?.instanceNode?.properties?.[trigger.key.property]
+    ? (currentTriggerData.instanceNode.items[0].properties as FdmPropertyType<unknown>)
     : undefined;
 
   if (fdmPropertyTrigger === undefined) return;
@@ -531,6 +523,19 @@ export const generateRuleBasedOutputs = async ({
           outputSelected
         });
 
+        console.log(
+          'TEST assetMappingsStylingGroups',
+          assetMappingsStylingGroups,
+          assetMappings,
+          expression
+        );
+        console.log(
+          'TEST fdmMappingsStylingGroups',
+          fdmMappingsStylingGroups,
+          fdmMappings,
+          expression
+        );
+
         const allStyling: AllMappingStylingGroupAndStyleIndex = {
           assetMappingsStylingGroupAndIndex: assetMappingsStylingGroups,
           fdmStylingGroupAndStyleIndex: fdmMappingsStylingGroups
@@ -648,6 +653,13 @@ const analyzeFdmMappingsAgainstExpression = async ({
       triggerData.push(fdmTriggerData);
 
       const finalGlobalOutputResult = traverseExpression(triggerData, [expression]);
+
+      console.log(
+        'TEST finalGlobalOutputResult',
+        triggerData,
+        [expression],
+        finalGlobalOutputResult
+      );
 
       if (finalGlobalOutputResult[0] ?? false) {
         return mapping;
@@ -836,10 +848,18 @@ export const getRuleBasedById = (
 };
 
 function getFdmPropertyTrigger<T>(
-  fdmPropertyTrigger: Record<string, unknown> | undefined,
+  fdmPropertyTrigger: FdmPropertyType<unknown> | undefined,
   trigger: FdmRuleTrigger
 ): T | undefined {
-  return fdmPropertyTrigger !== undefined
-    ? (fdmPropertyTrigger[trigger.key.property] as T)
-    : undefined;
+  console.log('TEST getFdmPropertyTrigger', fdmPropertyTrigger, trigger);
+
+  if (fdmPropertyTrigger === undefined) return;
+
+  const space = fdmPropertyTrigger[trigger.key.space];
+  const instanceProperties = space?.[
+    `${trigger.key.view.externalId}/${trigger.key.view.version}`
+  ] as FdmPropertyType<unknown>;
+  const property = instanceProperties?.[trigger.key.property] as T;
+
+  return property;
 }

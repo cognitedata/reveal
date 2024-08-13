@@ -50,7 +50,7 @@ export type FdmInstanceNodeWithConnectionAndProperties = {
   createdTime: number;
   lastUpdatedTime: number;
   deletedTime: number;
-  properties: FdmPropertyType<unknown>;
+  items: Array<FdmInstanceWithProperties>;
   connection?: FdmCadConnection | undefined;
   cadNode?: Node3D | undefined;
   view?: Source | undefined;
