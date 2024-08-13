@@ -43,13 +43,11 @@ type ModelStyleGroup = {
 
 type ModelStyleGroupWithMappingsFetched = {
   combinedMappedStyleGroups: ModelStyleGroup[];
-  isModelMappingsFetched: boolean;
   isModelMappingsLoading: boolean;
 };
 
 type StyledModelWithMappingsFetched = {
   styledModels: StyledModel[];
-  isModelMappingsFetched: boolean;
   isModelMappingsLoading: boolean;
 };
 
@@ -77,10 +75,12 @@ export const useCalculateCadStyling = (
     modelsMappedStyleGroups.combinedMappedStyleGroups,
     modelInstanceStyleGroupsAndMappingFetched.combinedMappedStyleGroups
   );
+
   return {
     styledModels: joinedStyleGroups,
-    isModelMappingsFetched: modelInstanceStyleGroupsAndMappingFetched.isModelMappingsFetched,
-    isModelMappingsLoading: modelInstanceStyleGroupsAndMappingFetched.isModelMappingsLoading
+    isModelMappingsLoading:
+      modelInstanceStyleGroupsAndMappingFetched.isModelMappingsLoading ||
+      modelsMappedStyleGroups.isModelMappingsLoading
   };
 };
 
@@ -92,13 +92,18 @@ function useCalculateMappedStyling(
     () => getMappedCadModelsOptions(),
     [models, defaultMappedNodeAppearance]
   );
-  const { data: mappedEquipmentEdges, isLoading: isFDMEquipmentMappingLoading } =
-    useMappedEdgesForRevisions(modelsRevisionsWithMappedEquipment);
+  const {
+    data: mappedEquipmentEdges,
+    isLoading: isFDMEquipmentMappingsLoading,
+    isFetched: isFDMEquipmentMappingsFetched,
+    isError: isFDMEquipmentMappingsError
+  } = useMappedEdgesForRevisions(modelsRevisionsWithMappedEquipment);
 
   const {
     data: assetMappingData,
-    isFetched: isModelMappingsFetched,
-    isLoading: isModelMappingsLoading
+    isLoading: isAssetMappingsLoading,
+    isFetched: isAssetMappingsFetched,
+    isError: isAssetMappingsError
   } = useAssetMappedNodesForRevisions(modelsRevisionsWithMappedEquipment);
 
   const modelsMappedFdmStyleGroups = useMemo(() => {
@@ -106,7 +111,7 @@ function useCalculateMappedStyling(
       models.length === 0 ||
       mappedEquipmentEdges === undefined ||
       mappedEquipmentEdges.size === 0 ||
-      isFDMEquipmentMappingLoading;
+      isFDMEquipmentMappingsLoading;
 
     if (isFdmMappingUnavailableOrLoading) {
       return [];
@@ -124,7 +129,7 @@ function useCalculateMappedStyling(
     modelsRevisionsWithMappedEquipment,
     mappedEquipmentEdges,
     defaultMappedNodeAppearance,
-    isFDMEquipmentMappingLoading
+    isFDMEquipmentMappingsLoading
   ]);
 
   const modelsMappedAssetStyleGroups = useMemo(() => {
@@ -132,7 +137,7 @@ function useCalculateMappedStyling(
       models.length === 0 ||
       assetMappingData === undefined ||
       assetMappingData.length === 0 ||
-      isModelMappingsLoading;
+      isAssetMappingsLoading;
 
     if (isAssetMappingUnavailableOrLoading) {
       return [];
@@ -151,7 +156,7 @@ function useCalculateMappedStyling(
     modelsRevisionsWithMappedEquipment,
     assetMappingData,
     defaultMappedNodeAppearance,
-    isModelMappingsLoading
+    isAssetMappingsLoading
   ]);
 
   const combinedMappedStyleGroups = useMemo(
@@ -165,8 +170,11 @@ function useCalculateMappedStyling(
 
   return {
     combinedMappedStyleGroups,
-    isModelMappingsFetched,
-    isModelMappingsLoading
+    isModelMappingsLoading:
+      (!isFDMEquipmentMappingsError &&
+        isFDMEquipmentMappingsLoading &&
+        !isFDMEquipmentMappingsFetched) ||
+      (!isAssetMappingsError && isAssetMappingsLoading && !isAssetMappingsFetched)
   };
 
   function getMappedCadModelsOptions(): CadModelOptions[] {
@@ -195,8 +203,9 @@ function useCalculateInstanceStyling(
 
   const {
     data: modelAssetMappings,
+    isLoading: isModelMappingsLoading,
     isFetched: isModelMappingsFetched,
-    isLoading: isModelMappingsLoading
+    isError
   } = useNodesForAssets(models, assetIdsFromInstanceGroups);
 
   const fdmModelInstanceStyleGroups = useFdmInstanceStyleGroups(
@@ -222,8 +231,7 @@ function useCalculateInstanceStyling(
 
   return {
     combinedMappedStyleGroups,
-    isModelMappingsFetched,
-    isModelMappingsLoading
+    isModelMappingsLoading: !isError && isModelMappingsLoading && !isModelMappingsFetched
   };
 }
 
