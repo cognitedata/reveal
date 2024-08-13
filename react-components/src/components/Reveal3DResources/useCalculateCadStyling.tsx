@@ -13,7 +13,7 @@ import {
   useFdmAssetMappings,
   useMappedEdgesForRevisions
 } from '../CacheProvider/NodeCacheProvider';
-import { useEffect, useMemo } from 'react';
+import { useMemo } from 'react';
 import {
   type NodeId,
   type FdmConnectionWithNode,
