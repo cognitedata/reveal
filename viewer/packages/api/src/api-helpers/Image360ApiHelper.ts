@@ -606,7 +606,7 @@ function moveCameraPositionTo(manager: FlexibleCameraManager, position: Vector3,
   };
 
   const tempPosition = new Vector3();
-  manager.controls.temporarlyDisableKeyboard = true;
+  manager.controls.temporarilyDisableKeyboard = true;
 
   new TWEEN.Tween(from)
     .to(to, duration)
@@ -617,11 +617,11 @@ function moveCameraPositionTo(manager: FlexibleCameraManager, position: Vector3,
     .easing(num => TWEEN.Easing.Quintic.InOut(num))
     .onStop(() => {
       manager.setPosition(tempPosition);
-      manager.controls.temporarlyDisableKeyboard = false;
+      manager.controls.temporarilyDisableKeyboard = false;
     })
     .onComplete(() => {
       manager.setPosition(position);
-      manager.controls.temporarlyDisableKeyboard = false;
+      manager.controls.temporarilyDisableKeyboard = false;
     })
     .start(TWEEN.now());
 }

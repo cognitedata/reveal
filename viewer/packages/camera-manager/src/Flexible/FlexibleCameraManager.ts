@@ -198,7 +198,7 @@ export class FlexibleCameraManager extends PointerEvents implements IFlexibleCam
     const from = { t: 0 };
     const to = { t: 1 };
     const animation = new TWEEN.Tween(from);
-    this.controls.temporarlyDisableKeyboard = true;
+    this.controls.temporarilyDisableKeyboard = true;
     const tween = animation
       .to(to, animationDuration)
       .onUpdate(() => {
@@ -206,12 +206,12 @@ export class FlexibleCameraManager extends PointerEvents implements IFlexibleCam
         this.controls.rotateCameraTo(startDirection, endDirection, from.t);
       })
       .onStop(() => {
-        this.controls.temporarlyDisableKeyboard = false;
+        this.controls.temporarilyDisableKeyboard = false;
         if (this.isDisposed) return;
         this.controls.rotateCameraTo(startDirection, endDirection, 1);
       })
       .onComplete(() => {
-        this.controls.temporarlyDisableKeyboard = false;
+        this.controls.temporarilyDisableKeyboard = false;
         if (this.isDisposed) return;
         this.controls.rotateCameraTo(startDirection, endDirection, 1);
       })
