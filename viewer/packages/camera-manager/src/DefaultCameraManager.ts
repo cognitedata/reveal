@@ -355,6 +355,7 @@ export class DefaultCameraManager implements CameraManager {
         document.removeEventListener('keydown', stopTween);
       })
       .start(TWEEN.now());
+    TWEEN.add(tween);
     tween.update(TWEEN.now());
   }
 
@@ -417,6 +418,7 @@ export class DefaultCameraManager implements CameraManager {
         document.removeEventListener('keydown', stopTween);
       })
       .start(TWEEN.now());
+    TWEEN.add(tween);
     tween.update(TWEEN.now());
   }
 

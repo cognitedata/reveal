@@ -216,6 +216,7 @@ export class FlexibleCameraManager extends PointerEvents implements IFlexibleCam
         this.controls.rotateCameraTo(startDirection, endDirection, 1);
       })
       .start(TWEEN.now());
+    TWEEN.add(tween);
     tween.update(TWEEN.now());
   }
 

@@ -143,6 +143,7 @@ export class TimelineTool extends Cognite3DViewerToolBase {
 
     this._playback = tween;
     tween.start();
+    TWEEN.add(tween);
   }
 
   /**
