@@ -45,7 +45,7 @@ export class FlexibleControls {
   private _isEnabled: boolean = true;
   private _isInitialized: boolean = false;
   private _isStationary = false; // If true the options.controlsType should not be used. Camera cannot change position and zooms by fov
-  public temporarlyDisableKeyboard: boolean = false;
+  public temporarilyDisableKeyboard: boolean = false;
 
   private readonly _options: FlexibleControlsOptions;
   private readonly _domElement: HTMLElement;
@@ -80,7 +80,7 @@ export class FlexibleControls {
   //          , - ~ ~ ~ - ,
   //      , '               ' ,
   //    ,                       ,   In this state the camera rotating round the target
-  //   ,                         ,  which is in the center of the sceen.
+  //   ,                         ,  which is in the center of the screen.
   //  ,          Target           ,
   //  ,             *    <--------* CameraPosition
   //  ,               CameraVector,
@@ -928,7 +928,7 @@ export class FlexibleControls {
     if (!this._options.enableKeyboardNavigation) {
       return false;
     }
-    if (this.temporarlyDisableKeyboard) {
+    if (this.temporarilyDisableKeyboard) {
       return false;
     }
     let handled = false;
