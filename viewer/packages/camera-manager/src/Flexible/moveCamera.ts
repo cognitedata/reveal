@@ -44,7 +44,7 @@ export function moveCameraPositionAndTargetTo(
 
   const tempTarget = new Vector3();
   const tempPosition = new Vector3();
-  manager.controls.temporarlyDisableKeyboard = true;
+  manager.controls.temporarilyDisableKeyboard = true;
 
   const { tween, removeEventListeners } = createTweenAnimationWithStop(manager, from, to, duration);
 
@@ -58,12 +58,12 @@ export function moveCameraPositionAndTargetTo(
       manager.setPositionAndTarget(tempPosition, tempTarget);
     })
     .onStop(() => {
-      manager.controls.temporarlyDisableKeyboard = false;
+      manager.controls.temporarilyDisableKeyboard = false;
       removeEventListeners();
     })
     .onComplete(() => {
       manager.setPositionAndTarget(tempPosition, tempTarget);
-      manager.controls.temporarlyDisableKeyboard = false;
+      manager.controls.temporarilyDisableKeyboard = false;
       removeEventListeners();
     })
     .start(TWEEN.now());
@@ -92,7 +92,7 @@ export function moveCameraTargetTo(manager: FlexibleCameraManager, target: Vecto
   };
 
   const tempTarget = new Vector3();
-  manager.controls.temporarlyDisableKeyboard = true;
+  manager.controls.temporarilyDisableKeyboard = true;
 
   const { tween, removeEventListeners } = createTweenAnimationWithStop(manager, from, to, duration);
   tween
@@ -116,13 +116,13 @@ export function moveCameraTargetTo(manager: FlexibleCameraManager, target: Vecto
     })
     .onStop(() => {
       manager.controls.setTempTarget(undefined);
-      manager.controls.temporarlyDisableKeyboard = false;
+      manager.controls.temporarilyDisableKeyboard = false;
       removeEventListeners();
     })
     .onComplete(() => {
       manager.controls.setTempTarget(undefined);
       manager.setPositionAndTarget(manager.camera.position, tempTarget);
-      manager.controls.temporarlyDisableKeyboard = false;
+      manager.controls.temporarilyDisableKeyboard = false;
       removeEventListeners();
     })
     .start(TWEEN.now());
