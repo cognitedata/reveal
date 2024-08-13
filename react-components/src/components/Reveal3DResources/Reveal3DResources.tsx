@@ -83,11 +83,7 @@ export const Reveal3DResources = ({
     [reveal3DModels]
   );
 
-  const {
-    styledModels: styledCadModelOptions,
-    isModelMappingsFetched,
-    isModelMappingsLoading
-  } = useCalculateCadStyling(
+  const { styledModels: styledCadModelOptions, isModelMappingsLoading } = useCalculateCadStyling(
     cadModelOptions,
     instanceStyling?.filter(isCadAssetMappingStylingGroup) ?? EMPTY_ARRAY,
     defaultResourceStyling
@@ -96,8 +92,8 @@ export const Reveal3DResources = ({
   const setModel3DStylingLoading = useReveal3DResourcesStylingLoadingSetter();
 
   useEffect(() => {
-    setModel3DStylingLoading(!(isModelMappingsFetched || !isModelMappingsLoading));
-  }, [isModelMappingsFetched, isModelMappingsLoading]);
+    setModel3DStylingLoading(isModelMappingsLoading);
+  }, [isModelMappingsLoading]);
 
   const instaceStylingWithAssetMappings =
     instanceStyling?.filter(isAssetMappingStylingGroup) ?? EMPTY_ARRAY;
