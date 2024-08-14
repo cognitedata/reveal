@@ -65,14 +65,13 @@ const checkStringExpressionStatement = (
 
   const isFdmTrigger = trigger?.type === 'fdm' && currentTriggerData?.type === 'fdm';
 
-  const fdmPropertyTrigger = isFdmTrigger
-    ? (currentTriggerData.instanceNode.items[0].properties as FdmPropertyType<unknown>)
-    : undefined;
+  const fdmItemsTrigger =
+    isFdmTrigger && currentTriggerData.instanceNode.items[0] !== undefined
+      ? currentTriggerData.instanceNode.items[0]
+      : undefined;
 
-  const fdmPropertyTypingTrigger = isFdmTrigger
-    ? currentTriggerData?.instanceNode?.typing?.[trigger.key.space]?.[
-        `${trigger.key.view.externalId}/${trigger.key.view.version}`
-      ]?.[trigger.key.property]
+  const fdmPropertyTrigger = isFdmTrigger
+    ? (fdmItemsTrigger?.properties as FdmPropertyType<unknown>)
     : undefined;
 
   if (isMetadataAndAssetTrigger) {
@@ -80,13 +79,6 @@ const checkStringExpressionStatement = (
   } else if (isFdmTrigger) {
     propertyTrigger = getFdmPropertyTrigger<string>(fdmPropertyTrigger, trigger);
   }
-
-  console.log('TEST STRING triggerTypeData', triggerTypeData);
-  console.log('TEST STRING condition', condition);
-  console.log('TEST STRING trigger', trigger);
-  console.log('TEST STRING propertyTrigger', propertyTrigger);
-  console.log('TEST STRING fdmPropertyTrigger', fdmPropertyTrigger);
-  console.log('TEST STRING fdmPropertyTypingTrigger', fdmPropertyTypingTrigger);
 
   switch (condition.type) {
     case 'equals': {
@@ -111,8 +103,6 @@ const checkStringExpressionStatement = (
     }
   }
 
-  console.log('TEST STRING expressionResult', expressionResult);
-  console.log('TEST STRING -------------------');
   return expressionResult;
 };
 
@@ -166,12 +156,16 @@ const checkNumericExpressionStatement = (
 
   const isFdmTrigger = trigger?.type === 'fdm' && currentTriggerData?.type === 'fdm';
 
+  const fdmItemsTrigger =
+    isFdmTrigger && currentTriggerData.instanceNode.items[0] !== undefined
+      ? currentTriggerData.instanceNode.items[0]
+      : undefined;
+
   const fdmPropertyTrigger = isFdmTrigger
-    ? (currentTriggerData.instanceNode.items[0].properties as FdmPropertyType<unknown>)
+    ? (fdmItemsTrigger?.properties as FdmPropertyType<unknown>)
     : undefined;
 
-  if (dataTrigger === undefined) return;
-  if (fdmPropertyTrigger === undefined) return;
+  if (dataTrigger === undefined && fdmPropertyTrigger === undefined) return;
 
   if (isFdmTrigger) {
     propertyTrigger = getFdmPropertyTrigger<number>(fdmPropertyTrigger, trigger);
@@ -243,15 +237,20 @@ const checkDatetimeExpressionStatement = (
 
   const isFdmTrigger = trigger?.type === 'fdm' && currentTriggerData?.type === 'fdm';
 
+  if (isFdmTrigger && currentTriggerData.instanceNode.items.length === 0) return;
+
+  const fdmItemsTrigger =
+    isFdmTrigger && currentTriggerData.instanceNode.items[0] !== undefined
+      ? currentTriggerData.instanceNode.items[0]
+      : undefined;
+
   const fdmPropertyTrigger = isFdmTrigger
-    ? (currentTriggerData.instanceNode.items[0].properties as FdmPropertyType<unknown>)
+    ? (fdmItemsTrigger?.properties as FdmPropertyType<unknown>)
     : undefined;
 
   const propertyTrigger = new Date(
     getFdmPropertyTrigger<string>(fdmPropertyTrigger, trigger) ?? ''
   );
-
-  if (fdmPropertyTrigger === undefined) return;
 
   switch (condition.type) {
     case 'before': {
@@ -334,11 +333,16 @@ const checkBooleanExpressionStatement = (
 
   const isFdmTrigger = trigger?.type === 'fdm' && currentTriggerData?.type === 'fdm';
 
-  const fdmPropertyTrigger = isFdmTrigger
-    ? (currentTriggerData.instanceNode.items[0].properties as FdmPropertyType<unknown>)
-    : undefined;
+  if (isFdmTrigger && currentTriggerData.instanceNode.items.length === 0) return;
 
-  if (fdmPropertyTrigger === undefined) return;
+  const fdmItemsTrigger =
+    isFdmTrigger && currentTriggerData.instanceNode.items[0] !== undefined
+      ? currentTriggerData.instanceNode.items[0]
+      : undefined;
+
+  const fdmPropertyTrigger = isFdmTrigger
+    ? (fdmItemsTrigger?.properties as FdmPropertyType<unknown>)
+    : undefined;
 
   const propertyTrigger = getFdmPropertyTrigger<boolean>(fdmPropertyTrigger, trigger);
 
@@ -516,19 +520,6 @@ export const generateRuleBasedOutputs = async ({
           outputSelected
         });
 
-        console.log(
-          'TEST assetMappingsStylingGroups',
-          assetMappingsStylingGroups,
-          assetMappings,
-          expression
-        );
-        console.log(
-          'TEST fdmMappingsStylingGroups',
-          fdmMappingsStylingGroups,
-          fdmMappings,
-          expression
-        );
-
         const allStyling: AllMappingStylingGroupAndStyleIndex = {
           assetMappingsStylingGroupAndIndex: assetMappingsStylingGroups,
           fdmStylingGroupAndStyleIndex: fdmMappingsStylingGroups
@@ -646,13 +637,6 @@ const analyzeFdmMappingsAgainstExpression = async ({
       triggerData.push(fdmTriggerData);
 
       const finalGlobalOutputResult = traverseExpression(triggerData, [expression]);
-
-      console.log(
-        'TEST finalGlobalOutputResult',
-        triggerData,
-        [expression],
-        finalGlobalOutputResult
-      );
 
       if (finalGlobalOutputResult[0] ?? false) {
         return mapping;
@@ -848,8 +832,6 @@ function getFdmPropertyTrigger<T>(
   fdmPropertyTrigger: FdmPropertyType<unknown> | undefined,
   trigger: FdmRuleTrigger
 ): T | undefined {
-  console.log('TEST getFdmPropertyTrigger', fdmPropertyTrigger, trigger);
-
   if (fdmPropertyTrigger === undefined) return;
 
   const space = fdmPropertyTrigger[trigger.key.space];
