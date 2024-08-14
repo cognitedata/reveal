@@ -69,8 +69,8 @@ export type DatetimeCondition =
     }
   | {
       type: 'between' | 'notBetween';
-      lowerBound: number;
-      upperBound: number;
+      lowerBound: string;
+      upperBound: string;
     };
 
 export type NumericCondition =
