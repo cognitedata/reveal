@@ -247,32 +247,31 @@ const checkDatetimeExpressionStatement = (
     ? (currentTriggerData.instanceNode.items[0].properties as FdmPropertyType<unknown>)
     : undefined;
 
-  const propertyTrigger = getFdmPropertyTrigger<number>(fdmPropertyTrigger, trigger);
+  const propertyTrigger = new Date(
+    getFdmPropertyTrigger<string>(fdmPropertyTrigger, trigger) ?? ''
+  );
 
   if (fdmPropertyTrigger === undefined) return;
 
   switch (condition.type) {
     case 'before': {
-      const conditionValue = parseInt(condition.parameter);
+      const conditionValue = new Date(condition.parameter);
       expressionResult = propertyTrigger !== undefined ? propertyTrigger < conditionValue : false;
       break;
     }
     case 'notBefore': {
-      const conditionValue = parseInt(condition.parameter);
-      const propertyTrigger = getFdmPropertyTrigger<number>(fdmPropertyTrigger, trigger);
+      const conditionValue = new Date(condition.parameter);
       expressionResult = propertyTrigger !== undefined ? propertyTrigger >= conditionValue : false;
       break;
     }
     case 'onOrBefore': {
-      const conditionValue = parseInt(condition.parameter);
-      const propertyTrigger = getFdmPropertyTrigger<number>(fdmPropertyTrigger, trigger);
+      const conditionValue = new Date(condition.parameter);
       expressionResult = propertyTrigger !== undefined ? propertyTrigger <= conditionValue : false;
       break;
     }
     case 'between': {
-      const lowerBound = condition.lowerBound;
-      const upperBound = condition.upperBound;
-      const propertyTrigger = getFdmPropertyTrigger<number>(fdmPropertyTrigger, trigger);
+      const lowerBound = new Date(condition.lowerBound);
+      const upperBound = new Date(condition.upperBound);
       expressionResult =
         propertyTrigger !== undefined
           ? lowerBound < propertyTrigger && propertyTrigger < upperBound
@@ -280,9 +279,8 @@ const checkDatetimeExpressionStatement = (
       break;
     }
     case 'notBetween': {
-      const lowerBound = condition.lowerBound;
-      const upperBound = condition.upperBound;
-      const propertyTrigger = getFdmPropertyTrigger<number>(fdmPropertyTrigger, trigger);
+      const lowerBound = new Date(condition.lowerBound);
+      const upperBound = new Date(condition.upperBound);
       expressionResult =
         propertyTrigger !== undefined
           ? !(lowerBound < propertyTrigger && propertyTrigger < upperBound)
@@ -290,32 +288,27 @@ const checkDatetimeExpressionStatement = (
       break;
     }
     case 'after': {
-      const conditionValue = parseInt(condition.parameter);
-      const propertyTrigger = getFdmPropertyTrigger<number>(fdmPropertyTrigger, trigger);
+      const conditionValue = new Date(condition.parameter);
       expressionResult = propertyTrigger !== undefined ? propertyTrigger > conditionValue : false;
       break;
     }
     case 'notAfter': {
-      const conditionValue = parseInt(condition.parameter);
-      const propertyTrigger = getFdmPropertyTrigger<number>(fdmPropertyTrigger, trigger);
+      const conditionValue = new Date(condition.parameter);
       expressionResult = propertyTrigger !== undefined ? propertyTrigger <= conditionValue : false;
       break;
     }
     case 'onOrAfter': {
-      const conditionValue = parseInt(condition.parameter);
-      const propertyTrigger = getFdmPropertyTrigger<number>(fdmPropertyTrigger, trigger);
+      const conditionValue = new Date(condition.parameter);
       expressionResult = propertyTrigger !== undefined ? propertyTrigger >= conditionValue : false;
       break;
     }
     case 'on': {
-      const conditionValue = parseInt(condition.parameter);
-      const propertyTrigger = getFdmPropertyTrigger<number>(fdmPropertyTrigger, trigger);
+      const conditionValue = new Date(condition.parameter);
       expressionResult = propertyTrigger !== undefined ? propertyTrigger === conditionValue : false;
       break;
     }
     case 'notOn': {
-      const conditionValue = parseInt(condition.parameter);
-      const propertyTrigger = getFdmPropertyTrigger<number>(fdmPropertyTrigger, trigger);
+      const conditionValue = new Date(condition.parameter);
       expressionResult = propertyTrigger !== undefined ? propertyTrigger !== conditionValue : false;
       break;
     }
@@ -785,12 +778,16 @@ const applyFdmMappingsNodeStyles = (
     color: new Color(outputSelected.fill)
   };
   const fdmStylingGroup: FdmAssetStylingGroup = {
-    fdmAssetExternalIds: treeNodes.map((node) => {
-      return {
-        space: node.space,
-        externalId: node.externalId
-      };
-    }),
+    fdmAssetExternalIds:
+      treeNodes
+        .map((node) => {
+          if (node.connection === undefined) return undefined;
+          return {
+            space: node.connection?.instance.space,
+            externalId: node.connection?.instance.externalId
+          };
+        })
+        .filter(isDefined) ?? [],
     style: { cad: nodeAppearance }
   };
 
