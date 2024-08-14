@@ -59,15 +59,21 @@ export class Image360Facade<T> {
   ): Promise<DefaultImage360Collection> {
     const sequencer = this._loadSequencer.getNextSequencer();
 
-    const image360Collection = await this._entityFactory.create(
-      dataProviderFilter,
-      postTransform,
-      preComputedRotation,
-      annotationFilter
-    );
-
-    await sequencer(() => this._image360Collections.push(image360Collection));
-    return image360Collection;
+    try {
+      const image360Collection = await this._entityFactory.create(
+        dataProviderFilter,
+        postTransform,
+        preComputedRotation,
+        annotationFilter
+      );
+      await sequencer(() => {
+        this._image360Collections.push(image360Collection);
+      });
+      return image360Collection;
+    } catch (e) {
+      await sequencer(() => {});
+      throw new Error('Failed to create Image360Collection');
+    }
   }
 
   public removeSet(collection: DefaultImage360Collection): void {
@@ -109,19 +115,29 @@ export class Image360Facade<T> {
   }
 
   public intersect(coords: THREE.Vector2, camera: THREE.Camera): Image360Entity | undefined {
-    this._rayCaster.setFromCamera(coords, camera);
     const cameraDirection = camera.getWorldDirection(new THREE.Vector3());
     const cameraPosition = camera.position.clone();
+    const collectionMatrix = new THREE.Matrix4();
 
-    const intersections = this._image360Collections
-      .flatMap(getImage360Entities)
-      .filter(hasVisibleIcon)
-      .map(entity => getIntersection(entity, this._rayCaster.ray))
-      .filter(hasIntersection)
-      .map(intersectionToCameraSpace)
-      .filter(isInFrontOfCamera)
-      .sort(byDistanceToCamera)
-      .map(selectEntity);
+    const intersections = this._image360Collections.flatMap(collection =>
+      getImage360Entities(collection)
+        .filter(hasVisibleIcon)
+        .map(
+          getIntersector(
+            getTransformedRay(
+              this._rayCaster,
+              coords,
+              camera,
+              getWorldToModelCollectionMatrix(collection, collectionMatrix)
+            )
+          )
+        )
+        .filter(hasIntersection)
+        .map(intersectionToCameraSpace)
+        .filter(isInFrontOfCamera)
+        .sort(byDistanceToCamera)
+        .map(selectEntity)
+    );
 
     return first(intersections);
 
@@ -133,8 +149,28 @@ export class Image360Facade<T> {
       return entity.icon.getVisible() && !entity.image360Visualization.visible;
     }
 
-    function getIntersection(entity: Image360Entity, ray: THREE.Ray): [Image360Entity, THREE.Vector3 | null] {
-      return [entity, entity.icon.intersect(ray)];
+    function getIntersector(ray: THREE.Ray): (entity: Image360Entity) => [Image360Entity, THREE.Vector3 | null] {
+      return (entity: Image360Entity) => [entity, entity.icon.intersect(ray)];
+    }
+
+    function getTransformedRay(
+      rayCaster: THREE.Raycaster,
+      coords: THREE.Vector2,
+      camera: THREE.Camera,
+      transform: THREE.Matrix4
+    ): THREE.Ray {
+      rayCaster.setFromCamera(coords, camera);
+      rayCaster.ray.applyMatrix4(transform);
+      return rayCaster.ray;
+    }
+
+    function getWorldToModelCollectionMatrix(
+      collection: DefaultImage360Collection,
+      collectionMatrix: THREE.Matrix4
+    ): THREE.Matrix4 {
+      collection.getModelTransformation(collectionMatrix);
+      collectionMatrix.invert();
+      return collectionMatrix;
     }
 
     function hasIntersection(

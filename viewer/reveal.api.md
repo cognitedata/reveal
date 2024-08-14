@@ -9,6 +9,7 @@ import { AnnotationsAssetRef } from '@cognite/sdk';
 import { AnnotationsCogniteAnnotationTypesImagesAssetLink } from '@cognite/sdk';
 import { AnnotationStatus } from '@cognite/sdk';
 import { Box3 } from 'three';
+import { Camera } from 'three';
 import { CogniteClient } from '@cognite/sdk';
 import { CogniteInternalId } from '@cognite/sdk';
 import { Color } from 'three';
@@ -17,11 +18,18 @@ import { IdEither } from '@cognite/sdk';
 import { ListResponse } from '@cognite/sdk';
 import { Matrix4 } from 'three';
 import { Node3D } from '@cognite/sdk';
+import { Object3D } from 'three';
 import { OrthographicCamera } from 'three';
 import { PerspectiveCamera } from 'three';
+import { Plane } from 'three';
 import { Quaternion } from 'three';
-import * as THREE_2 from 'three';
+import { Raycaster } from 'three';
+import { Texture } from 'three';
+import * as THREE from 'three';
+import { Vector2 } from 'three';
 import { Vector3 } from 'three';
+import type { WebGLRenderer } from 'three';
+import type { WebGLRenderTarget } from 'three';
 
 // @public
 export type AbsolutePosition = {
@@ -31,7 +39,7 @@ export type AbsolutePosition = {
 
 // @public (undocumented)
 export type AddImage360Options = {
-    collectionTransform?: THREE.Matrix4;
+    collectionTransform?: Matrix4;
     preMultipliedRotation?: boolean;
     annotationFilter?: Image360AnnotationFilterOptions;
 };
@@ -57,12 +65,15 @@ export class AnnotationIdPointCloudObjectCollection extends PointCloudObjectColl
     get isLoading(): false;
 }
 
+// @beta
+export type AnyIntersection = CadIntersection | PointCloudIntersection | CustomObjectIntersection;
+
 // @public
 export interface AreaCollection {
-    addAreas(boxes: Iterable<THREE.Box3>): void;
-    areas(): Generator<THREE.Box3>;
-    intersectsBox(box: THREE.Box3): boolean;
-    intersectWith(boxes: Iterable<THREE.Box3>): void;
+    addAreas(boxes: Iterable<Box3>): void;
+    areas(): Generator<Box3>;
+    intersectsBox(box: Box3): boolean;
+    intersectWith(boxes: Iterable<Box3>): void;
     // (undocumented)
     readonly isEmpty: boolean;
 }
@@ -83,14 +94,14 @@ export class AssetNodeCollection extends NodeCollection {
     clear(): void;
     executeFilter(filter: {
         assetId?: number;
-        boundingBox?: THREE_2.Box3;
+        boundingBox?: THREE.Box3;
     }): Promise<void>;
     // (undocumented)
     getAreas(): AreaCollection;
     // (undocumented)
     getFilter(): {
         assetId?: number | undefined;
-        boundingBox?: THREE_2.Box3 | undefined;
+        boundingBox?: THREE.Box3 | undefined;
     } | undefined;
     // (undocumented)
     getIndexSet(): IndexSet;
@@ -105,8 +116,8 @@ export type AxisBoxCompassConfig = {
     ringLabel?: string;
     labelDelta?: number;
     fontSize?: number;
-    fontColor?: THREE_2.Color;
-    tickColor?: THREE_2.Color;
+    fontColor?: THREE.Color;
+    tickColor?: THREE.Color;
 };
 
 // @public
@@ -129,11 +140,72 @@ export type AxisBoxConfig = {
 export type AxisBoxFaceConfig = {
     label?: string;
     fontSize?: number;
-    fontColor?: THREE_2.Color;
+    fontColor?: THREE.Color;
     outlineSize?: number;
-    outlineColor?: THREE_2.Color;
-    faceColor?: THREE_2.Color;
+    outlineColor?: THREE.Color;
+    faceColor?: THREE.Color;
 };
+
+// @beta
+export class AxisGizmoOptions {
+    // (undocumented)
+    animationDuration: number;
+    // (undocumented)
+    bobbleLineWidth: number;
+    // (undocumented)
+    bubbleRadius: number;
+    // (undocumented)
+    corner: Corner;
+    // (undocumented)
+    darkColors: number[];
+    // (undocumented)
+    focusCircleAlpha: number;
+    // (undocumented)
+    focusCircleColor: string;
+    // (undocumented)
+    fontFamily: string;
+    // (undocumented)
+    fontSize: string;
+    // (undocumented)
+    fontWeight: string;
+    // (undocumented)
+    fontYAdjust: number;
+    getFont(): string;
+    // (undocumented)
+    insideMargin: number;
+    // (undocumented)
+    lightColors: number[];
+    // (undocumented)
+    normalTextColor: string;
+    // (undocumented)
+    primaryLineWidth: number;
+    // (undocumented)
+    get radius(): number;
+    // (undocumented)
+    secondaryLineWidth: number;
+    // (undocumented)
+    selectedTextColor: string;
+    // (undocumented)
+    size: number;
+    // (undocumented)
+    useGeoLabels: boolean;
+    // (undocumented)
+    xMargin: number;
+    // (undocumented)
+    yMargin: number;
+    // (undocumented)
+    yUp: boolean;
+}
+
+// @beta
+export class AxisGizmoTool extends Cognite3DViewerToolBase {
+    constructor(option?: AxisGizmoOptions);
+    connect(viewer: Cognite3DViewer): void;
+    // (undocumented)
+    dispose(): void;
+    // (undocumented)
+    get options(): AxisGizmoOptions;
+}
 
 // @public (undocumented)
 export class AxisViewTool extends Cognite3DViewerToolBase {
@@ -145,8 +217,8 @@ export class AxisViewTool extends Cognite3DViewerToolBase {
 // @public
 export type BeforeSceneRenderedDelegate = (event: {
     frameNumber: number;
-    renderer: THREE.WebGLRenderer;
-    camera: THREE.PerspectiveCamera;
+    renderer: WebGLRenderer;
+    camera: PerspectiveCamera;
 }) => void;
 
 // @public (undocumented)
@@ -167,9 +239,9 @@ export interface BlobOutputMetadata {
 
 // @public (undocumented)
 export class BoundingBoxClipper {
-    constructor(box?: THREE_2.Box3);
+    constructor(box?: THREE.Box3);
     // (undocumented)
-    get clippingPlanes(): THREE_2.Plane[];
+    get clippingPlanes(): THREE.Plane[];
     set maxX(x: number);
     // (undocumented)
     get maxX(): number;
@@ -194,7 +266,7 @@ export class BoundingBoxClipper {
 export type CadIntersection = {
     type: 'cad';
     model: CogniteCadModel;
-    point: THREE.Vector3;
+    point: Vector3;
     treeIndex: number;
     distanceToCamera: number;
 };
@@ -209,12 +281,12 @@ export type CadModelBudget = {
 export const CAMERA_MANAGER_EVENT_TYPE_LIST: readonly ["cameraChange", "cameraStop"];
 
 // @public
-export type CameraChangeDelegate = (position: THREE.Vector3, target: THREE.Vector3) => void;
+export type CameraChangeDelegate = (position: Vector3, target: Vector3) => void;
 
 // @public
 export type CameraConfiguration = {
-    readonly position: THREE.Vector3;
-    readonly target: THREE.Vector3;
+    readonly position: Vector3;
+    readonly target: Vector3;
 };
 
 // @public (undocumented)
@@ -233,8 +305,8 @@ export interface CameraManager {
     deactivate(): void;
     // (undocumented)
     dispose(): void;
-    fitCameraToBoundingBox(boundingBox: THREE_2.Box3, duration?: number, radiusFactor?: number): void;
-    getCamera(): THREE_2.PerspectiveCamera;
+    fitCameraToBoundingBox(boundingBox: Box3, duration?: number, radiusFactor?: number): void;
+    getCamera(): PerspectiveCamera;
     getCameraState(): Required<CameraState>;
     off(event: 'cameraChange', callback: CameraChangeDelegate): void;
     // (undocumented)
@@ -247,7 +319,7 @@ export interface CameraManager {
     // (undocumented)
     on(event: CameraManagerEventType, callback: CameraEventDelegate): void;
     setCameraState(state: CameraState): void;
-    update(deltaTime: number, boundingBox: THREE_2.Box3): void;
+    update(deltaTime: number, boundingBox: Box3): void;
 }
 
 // @public
@@ -255,20 +327,22 @@ export type CameraManagerEventType = (typeof CAMERA_MANAGER_EVENT_TYPE_LIST)[num
 
 // @public
 export class CameraManagerHelper {
-    static calculateCameraStateToFitBoundingBox(camera: THREE_2.PerspectiveCamera, box: THREE_2.Box3, radiusFactor?: number): {
-        position: THREE_2.Vector3;
-        target: THREE_2.Vector3;
+    static calculateCameraStateToFitBoundingBox(camera: PerspectiveCamera, boundingBox: Box3, radiusFactor?: number): {
+        position: Vector3;
+        target: Vector3;
     };
-    static calculateNewRotationFromTarget(camera: THREE_2.PerspectiveCamera, newTarget: THREE_2.Vector3): THREE_2.Quaternion;
-    static calculateNewTargetFromRotation(camera: THREE_2.PerspectiveCamera, rotation: THREE_2.Quaternion, currentTarget: THREE_2.Vector3, position: THREE_2.Vector3): THREE_2.Vector3;
-    static updateCameraNearAndFar(camera: THREE_2.PerspectiveCamera, combinedBbox: THREE_2.Box3): void;
+    static calculateNewRotationFromTarget(camera: PerspectiveCamera, newTarget: Vector3): Quaternion;
+    static calculateNewTargetFromRotation(camera: PerspectiveCamera, rotation: Quaternion, currentTarget: Vector3, position: Vector3): Vector3;
+    // @deprecated
+    static updateCameraNearAndFar(camera: PerspectiveCamera, boundingBox: Box3): void;
+    updateCameraNearAndFar(camera: PerspectiveCamera, boundingBox: Box3): void;
 }
 
 // @public (undocumented)
 export type CameraState = {
-    position?: THREE.Vector3;
-    target?: THREE.Vector3;
-    rotation?: THREE.Quaternion;
+    position?: Vector3;
+    target?: Vector3;
+    rotation?: Quaternion;
 };
 
 // @public
@@ -292,8 +366,8 @@ export class CdfModelIdentifier implements ModelIdentifier {
 
 // @public
 export interface CdfModelNodeCollectionDataProvider {
-    getCdfToDefaultModelTransformation(out?: THREE_2.Matrix4): THREE_2.Matrix4;
-    getModelTransformation(out?: THREE_2.Matrix4): THREE_2.Matrix4;
+    getCdfToDefaultModelTransformation(out?: THREE.Matrix4): THREE.Matrix4;
+    getModelTransformation(out?: THREE.Matrix4): THREE.Matrix4;
     modelId: number;
     nodeCount: number;
     // (undocumented)
@@ -325,13 +399,13 @@ export type ClippingPlanesState = {
 // @public
 export class ClusteredAreaCollection implements AreaCollection {
     // (undocumented)
-    addAreas(boxes: Iterable<THREE.Box3>): void;
+    addAreas(boxes: Iterable<Box3>): void;
     // (undocumented)
-    areas(): Generator<THREE.Box3>;
+    areas(): Generator<Box3>;
     // (undocumented)
-    intersectsBox(box: THREE.Box3): boolean;
+    intersectsBox(box: Box3): boolean;
     // (undocumented)
-    intersectWith(boxes: Iterable<THREE.Box3>): void;
+    intersectWith(boxes: Iterable<Box3>): void;
     // (undocumented)
     get isEmpty(): boolean;
 }
@@ -344,28 +418,42 @@ export class Cognite3DViewer {
         [key: string]: string;
     }, add360ImageOptions?: AddImage360Options): Promise<Image360Collection>;
     addCadModel(options: AddModelOptions): Promise<CogniteCadModel>;
+    // @beta
+    addCustomObject(customObject: ICustomObject): void;
     addModel(options: AddModelOptions): Promise<CogniteModel>;
-    addObject3D(object: THREE_2.Object3D): void;
+    addObject3D(object: THREE.Object3D): void;
     addPointCloudModel(options: AddModelOptions): Promise<CognitePointCloudModel>;
     get cadBudget(): CadModelBudget;
     set cadBudget(budget: CadModelBudget);
     // (undocumented)
     get cameraManager(): CameraManager;
     get canvas(): HTMLCanvasElement;
+    // @beta
+    createCustomObjectIntersectInput(pixelCoords: THREE.Vector2): CustomObjectIntersectInput;
     determineModelType(modelId: number, revisionId: number): Promise<SupportedModelTypes | ''>;
     dispose(): void;
     get domElement(): HTMLElement;
     enter360Image(image360: Image360, revision?: Image360Revision): Promise<void>;
     exit360Image(): void;
-    fitCameraToBoundingBox(box: THREE_2.Box3, duration?: number, radiusFactor?: number): void;
+    fitCameraToBoundingBox(box: THREE.Box3, duration?: number, radiusFactor?: number): void;
     fitCameraToModel(model: CogniteModel, duration?: number): void;
     fitCameraToModels(models?: CogniteModel[], duration?: number, restrictToMostGeometry?: boolean): void;
     get360AnnotationIntersectionFromPixel(offsetX: number, offsetY: number): Promise<null | Image360AnnotationIntersection>;
     get360ImageCollections(): Image360Collection[];
+    getActive360ImageInfo(): Image360WithCollection | undefined;
+    // @beta
+    getAnyIntersectionFromPixel(pixelCoords: THREE.Vector2, options?: {
+        stopOnHitting360Icon?: boolean;
+        predicate?: (customObject: ICustomObject) => boolean;
+    }): Promise<AnyIntersection | undefined>;
     // @deprecated
-    getClippingPlanes(): THREE_2.Plane[];
-    getGlobalClippingPlanes(): THREE_2.Plane[];
+    getClippingPlanes(): THREE.Plane[];
+    getGlobalClippingPlanes(): THREE.Plane[];
     getIntersectionFromPixel(offsetX: number, offsetY: number): Promise<null | Intersection>;
+    getNormalizedPixelCoordinates(pixelCoords: THREE.Vector2): THREE.Vector2;
+    getPixelCoordinatesFromEvent(event: PointerEvent | WheelEvent): THREE.Vector2;
+    // @beta
+    getSceneBoundingBox(): THREE.Box3;
     getScreenshot(width?: number, height?: number, includeUI?: boolean): Promise<string>;
     getVersion(): string;
     getViewState(): ViewerState;
@@ -396,22 +484,24 @@ export class Cognite3DViewer {
     // @deprecated
     remove360Images(...image360Entities: Image360[]): Promise<void>;
     remove360ImageSet(imageCollection: Image360Collection): void;
+    // @beta
+    removeCustomObject(customObject: ICustomObject): void;
     removeModel(model: CogniteModel): void;
-    removeObject3D(object: THREE_2.Object3D): void;
+    removeObject3D(object: THREE.Object3D): void;
     get renderParameters(): RenderParameters;
     requestRedraw(): void;
     setBackgroundColor(backgroundColor: {
-        color?: THREE_2.Color;
+        color?: THREE.Color;
         alpha?: number;
     }): void;
     setCameraManager(cameraManager: CameraManager): void;
     // @deprecated
-    setClippingPlanes(clippingPlanes: THREE_2.Plane[]): void;
-    setGlobalClippingPlanes(clippingPlanes: THREE_2.Plane[]): void;
+    setClippingPlanes(clippingPlanes: THREE.Plane[]): void;
+    setGlobalClippingPlanes(clippingPlanes: THREE.Plane[]): void;
     setLogLevel(level: 'trace' | 'debug' | 'info' | 'warn' | 'error' | 'silent' | 'none'): void;
     setResolutionOptions(options: ResolutionOptions): void;
     setViewState(state: ViewerState): Promise<void>;
-    worldToScreen(point: THREE_2.Vector3, normalize?: boolean): THREE_2.Vector2 | null;
+    worldToScreen(point: THREE.Vector3, normalize?: boolean): THREE.Vector2 | null;
 }
 
 // @public
@@ -422,6 +512,8 @@ export interface Cognite3DViewerOptions {
     customDataSource?: DataSource;
     domElement?: HTMLElement;
     enableEdges?: boolean;
+    // @beta
+    hasEventListeners?: boolean;
     loadingIndicatorStyle?: {
         placement: 'topLeft' | 'topRight' | 'bottomLeft' | 'bottomRight';
         opacity: number;
@@ -432,15 +524,17 @@ export interface Cognite3DViewerOptions {
         pointBlending?: boolean;
         edlOptions?: Partial<EdlOptions> | 'disabled';
     };
-    renderer?: THREE.WebGLRenderer;
+    renderer?: WebGLRenderer;
     // @deprecated
     rendererResolutionThreshold?: number;
     renderTargetOptions?: {
-        target: THREE.WebGLRenderTarget;
+        target: WebGLRenderTarget;
         autoSetSize?: boolean;
     };
     sdk: CogniteClient;
     ssaoQualityHint?: 'medium' | 'high' | 'veryhigh' | 'disabled';
+    // @beta
+    useFlexibleCameraManager?: boolean;
 }
 
 // @public
@@ -452,25 +546,25 @@ export abstract class Cognite3DViewerToolBase {
 
 // @public
 export class CogniteCadModel implements CdfModelNodeCollectionDataProvider {
-    assignStyledNodeCollection(nodeCollection: NodeCollection, appearance: NodeAppearance): void;
+    assignStyledNodeCollection(nodeCollection: NodeCollection, appearance: NodeAppearance, importance?: number): void;
     dispose(): void;
     getAncestorTreeIndices(treeIndex: number, generation: number): Promise<NumericRange>;
-    getBoundingBoxByNodeId(nodeId: number, box?: THREE_2.Box3): Promise<THREE_2.Box3>;
-    getBoundingBoxByTreeIndex(treeIndex: number, box?: THREE_2.Box3): Promise<THREE_2.Box3>;
-    getBoundingBoxesByNodeIds(nodeIds: number[]): Promise<THREE_2.Box3[]>;
+    getBoundingBoxByNodeId(nodeId: number, box?: THREE.Box3): Promise<THREE.Box3>;
+    getBoundingBoxByTreeIndex(treeIndex: number, box?: THREE.Box3): Promise<THREE.Box3>;
+    getBoundingBoxesByNodeIds(nodeIds: number[]): Promise<THREE.Box3[]>;
     getCameraConfiguration(): CameraConfiguration | undefined;
-    getCdfToDefaultModelTransformation(out?: THREE_2.Matrix4): THREE_2.Matrix4;
+    getCdfToDefaultModelTransformation(out?: THREE.Matrix4): THREE.Matrix4;
     getDefaultNodeAppearance(): NodeAppearance;
-    getModelBoundingBox(outBbox?: THREE_2.Box3, restrictToMostGeometry?: boolean): THREE_2.Box3;
-    getModelClippingPlanes(): THREE_2.Plane[];
-    getModelTransformation(out?: THREE_2.Matrix4): THREE_2.Matrix4;
+    getModelBoundingBox(outBoundingBox?: THREE.Box3, restrictToMostGeometry?: boolean): THREE.Box3;
+    getModelClippingPlanes(): THREE.Plane[];
+    getModelTransformation(out?: THREE.Matrix4): THREE.Matrix4;
     getSubtreeTreeIndices(treeIndex: number): Promise<NumericRange>;
     iterateNodesByTreeIndex(action: (treeIndex: number) => void): Promise<void>;
     iterateSubtreeByTreeIndex(treeIndex: number, action: (treeIndex: number) => void): Promise<void>;
-    mapBoxFromCdfToModelCoordinates(box: THREE_2.Box3, out?: THREE_2.Box3): THREE_2.Box3;
+    mapBoxFromCdfToModelCoordinates(box: THREE.Box3, out?: THREE.Box3): THREE.Box3;
     mapNodeIdsToTreeIndices(nodeIds: CogniteInternalId[]): Promise<number[]>;
     mapNodeIdToTreeIndex(nodeId: CogniteInternalId): Promise<number>;
-    mapPointFromCdfToModelCoordinates(point: THREE_2.Vector3, out?: THREE_2.Vector3): THREE_2.Vector3;
+    mapPointFromCdfToModelCoordinates(point: THREE.Vector3, out?: THREE.Vector3): THREE.Vector3;
     mapTreeIndexToNodeId(treeIndex: number): Promise<CogniteInternalId>;
     mapTreeIndicesToNodeIds(treeIndices: number[]): Promise<CogniteInternalId[]>;
     readonly modelId: number;
@@ -482,10 +576,10 @@ export class CogniteCadModel implements CdfModelNodeCollectionDataProvider {
     resetNodeTransformByTreeIndex(treeIndex: number, applyToChildren?: boolean): Promise<number>;
     readonly revisionId: number;
     setDefaultNodeAppearance(appearance: NodeAppearance): void;
-    setModelClippingPlanes(clippingPlanes: THREE_2.Plane[]): void;
-    setModelTransformation(matrix: THREE_2.Matrix4): void;
-    setNodeTransform(treeIndices: NumericRange, transformMatrix: THREE_2.Matrix4, boundingBox?: THREE_2.Box3, space?: 'model' | 'world'): void;
-    setNodeTransformByTreeIndex(treeIndex: number, transform: THREE_2.Matrix4, applyToChildren?: boolean, space?: 'model' | 'world'): Promise<number>;
+    setModelClippingPlanes(clippingPlanes: THREE.Plane[]): void;
+    setModelTransformation(matrix: THREE.Matrix4): void;
+    setNodeTransform(treeIndices: NumericRange, transformMatrix: THREE.Matrix4, boundingBox?: THREE.Box3, space?: 'model' | 'world'): void;
+    setNodeTransformByTreeIndex(treeIndex: number, transform: THREE.Matrix4, applyToChildren?: boolean, space?: 'model' | 'world'): Promise<number>;
     get styledNodeCollections(): {
         nodeCollection: NodeCollection;
         appearance: NodeAppearance;
@@ -505,21 +599,21 @@ export class CognitePointCloudModel {
     assignStyledObjectCollection(objectCollection: PointCloudObjectCollection, appearance: PointCloudAppearance): void;
     dispose(): void;
     getCameraConfiguration(): CameraConfiguration | undefined;
-    getCdfToDefaultModelTransformation(out?: THREE_2.Matrix4): THREE_2.Matrix4;
+    getCdfToDefaultModelTransformation(out?: THREE.Matrix4): THREE.Matrix4;
     getClasses(): Array<{
         name: string;
         code: number | WellKnownAsprsPointClassCodes;
-        color: THREE_2.Color;
+        color: THREE.Color;
     }>;
     getDefaultPointCloudAppearance(): PointCloudAppearance;
     // (undocumented)
-    getModelBoundingBox(outBbox?: THREE_2.Box3): THREE_2.Box3;
-    getModelClippingPlanes(): THREE_2.Plane[];
-    getModelTransformation(out?: THREE_2.Matrix4): THREE_2.Matrix4;
+    getModelBoundingBox(outBoundingBox?: THREE.Box3): THREE.Box3;
+    getModelClippingPlanes(): THREE.Plane[];
+    getModelTransformation(out?: THREE.Matrix4): THREE.Matrix4;
     hasClass(pointClass: number | WellKnownAsprsPointClassCodes): boolean;
     isClassVisible(pointClass: number | WellKnownAsprsPointClassCodes): boolean;
-    mapBoxFromCdfToModelCoordinates(box: THREE_2.Box3, out?: THREE_2.Box3): THREE_2.Box3;
-    mapPointFromCdfToModelCoordinates(point: THREE_2.Vector3, out?: THREE_2.Vector3): THREE_2.Vector3;
+    mapBoxFromCdfToModelCoordinates(box: THREE.Box3, out?: THREE.Box3): THREE.Box3;
+    mapPointFromCdfToModelCoordinates(point: THREE.Vector3, out?: THREE.Vector3): THREE.Vector3;
     // (undocumented)
     readonly modelId: number;
     get pointColorType(): PointColorType;
@@ -534,8 +628,8 @@ export class CognitePointCloudModel {
     readonly revisionId: number;
     setClassVisible(pointClass: number | WellKnownAsprsPointClassCodes, visible: boolean): void;
     setDefaultPointCloudAppearance(appearance: PointCloudAppearance): void;
-    setModelClippingPlanes(clippingPlanes: THREE_2.Plane[]): void;
-    setModelTransformation(transformationMatrix: THREE_2.Matrix4): void;
+    setModelClippingPlanes(clippingPlanes: THREE.Plane[]): void;
+    setModelTransformation(transformationMatrix: THREE.Matrix4): void;
     // (undocumented)
     get stylableObjectCount(): number;
     get styledCollections(): StyledPointCloudObjectCollection[];
@@ -664,6 +758,48 @@ export enum Corner {
     TopRight = 0
 }
 
+// @beta
+export class CustomObject implements ICustomObject {
+    constructor(object: Object3D);
+    beforeRender(_camera: PerspectiveCamera): void;
+    getBoundingBox(target: Box3): Box3;
+    intersectIfCloser(intersectInput: CustomObjectIntersectInput, closestDistance: number | undefined): undefined | CustomObjectIntersection;
+    get isPartOfBoundingBox(): boolean;
+    set isPartOfBoundingBox(value: boolean);
+    get object(): Object3D;
+    get shouldPick(): boolean;
+    set shouldPick(value: boolean);
+    get shouldPickBoundingBox(): boolean;
+    set shouldPickBoundingBox(value: boolean);
+    get useDepthTest(): boolean;
+    set useDepthTest(value: boolean);
+}
+
+// @beta
+export class CustomObjectIntersectInput {
+    constructor(normalizedCoords: Vector2, camera: PerspectiveCamera, clippingPlanes?: Plane[] | undefined);
+    // (undocumented)
+    readonly camera: PerspectiveCamera;
+    // (undocumented)
+    readonly clippingPlanes: Plane[] | undefined;
+    // (undocumented)
+    isVisible(point: Vector3): boolean;
+    // (undocumented)
+    readonly normalizedCoords: Vector2;
+    // (undocumented)
+    readonly raycaster: Raycaster;
+}
+
+// @beta
+export type CustomObjectIntersection = {
+    type: 'customObject';
+    point: Vector3;
+    distanceToCamera: number;
+    customObject: ICustomObject;
+    boundingBox?: Box3;
+    userData?: any;
+};
+
 // @public
 export interface DataSource {
     getModelDataProvider(): ModelDataProvider;
@@ -701,9 +837,9 @@ export class DefaultCameraManager implements CameraManager {
     // (undocumented)
     dispose(): void;
     // (undocumented)
-    fitCameraToBoundingBox(box: THREE_2.Box3, duration?: number, radiusFactor?: number): void;
+    fitCameraToBoundingBox(box: THREE.Box3, duration?: number, radiusFactor?: number): void;
     // (undocumented)
-    getCamera(): THREE_2.PerspectiveCamera;
+    getCamera(): THREE.PerspectiveCamera;
     getCameraControlsOptions(): CameraControlsOptions;
     // (undocumented)
     getCameraState(): Required<CameraState>;
@@ -718,7 +854,7 @@ export class DefaultCameraManager implements CameraManager {
     setCameraState(state: CameraState): void;
     setComboControlsOptions(options: Partial<ComboControlsOptions>): void;
     // (undocumented)
-    update(deltaTime: number, boundingBox: THREE_2.Box3): void;
+    update(deltaTime: number, boundingBox: THREE.Box3): void;
 }
 
 // @public
@@ -729,12 +865,12 @@ export const DefaultNodeAppearance: {
     InFront: NodeAppearance;
     Ghosted: NodeAppearance;
     Highlighted: {
-        color?: Color | undefined;
-        visible?: boolean | undefined;
-        renderInFront?: boolean | undefined;
-        renderGhosted?: boolean | undefined;
-        outlineColor?: NodeOutlineColor | undefined;
-        prioritizedForLoadingHint?: number | undefined;
+        color?: Color;
+        visible?: boolean;
+        renderInFront?: boolean;
+        renderGhosted?: boolean;
+        outlineColor?: NodeOutlineColor;
+        prioritizedForLoadingHint?: number;
     };
 };
 
@@ -767,11 +903,169 @@ export enum File3dFormat {
     GltfCadModel = "gltf-directory"
 }
 
+// @beta (undocumented)
+export class FlexibleControlsOptions {
+    // (undocumented)
+    animationDuration: number;
+    // (undocumented)
+    automaticNearFarPlane: boolean;
+    // (undocumented)
+    automaticSensitivity: boolean;
+    // (undocumented)
+    controlsType: FlexibleControlsType;
+    // (undocumented)
+    dampingFactor: number;
+    // (undocumented)
+    defaultFov: number;
+    // (undocumented)
+    enableChangeControlsTypeOn123Key: boolean;
+    // (undocumented)
+    enableDamping: boolean;
+    // (undocumented)
+    enableKeyboardNavigation: boolean;
+    // (undocumented)
+    getKeyboardSpeed(shift: boolean): number;
+    // (undocumented)
+    getLegalAzimuthAngle(azimuthAngle: number): number;
+    // (undocumented)
+    getLegalFov(fov: number): number;
+    // (undocumented)
+    getLegalPolarAngle(polarAngle: number): number;
+    // (undocumented)
+    getLegalSensitivity(controlsSensitivity: number): number;
+    // (undocumented)
+    innerMarkerColor: string;
+    // (undocumented)
+    keyboardDollySpeed: number;
+    // (undocumented)
+    keyboardFastMoveFactor: number;
+    // (undocumented)
+    keyboardFastRotationFactor: number;
+    // (undocumented)
+    keyboardPanSpeed: number;
+    // (undocumented)
+    keyboardRotationSpeedAzimuth: number;
+    // (undocumented)
+    keyboardRotationSpeedPolar: number;
+    // (undocumented)
+    keyboardSpeed: number;
+    // (undocumented)
+    maxAzimuthAngle: number;
+    // (undocumented)
+    maximumFov: number;
+    // (undocumented)
+    maximumTimeBetweenRaycasts: number;
+    // (undocumented)
+    maxOrthographicZoom: number;
+    // (undocumented)
+    maxPolarAngle: number;
+    // (undocumented)
+    maxSensitivity: number;
+    // (undocumented)
+    minAzimuthAngle: number;
+    // (undocumented)
+    minimumFov: number;
+    // (undocumented)
+    minimumTimeBetweenRaycasts: number;
+    // (undocumented)
+    minOrthographicZoom: number;
+    // (undocumented)
+    minPolarAngle: number;
+    // (undocumented)
+    minSensitivity: number;
+    // (undocumented)
+    mouseClickType: FlexibleMouseActionType;
+    // (undocumented)
+    mouseDistanceThresholdBetweenRaycasts: number;
+    // (undocumented)
+    mouseDollySpeed: number;
+    // (undocumented)
+    mouseDoubleClickType: FlexibleMouseActionType;
+    // (undocumented)
+    mousePanSpeed: number;
+    // (undocumented)
+    mouseRotationSpeedAzimuth: number;
+    // (undocumented)
+    mouseRotationSpeedPolar: number;
+    // (undocumented)
+    mouseWheelAction: FlexibleWheelZoomType;
+    // (undocumented)
+    orthographicCameraDollyFactor: number;
+    // (undocumented)
+    outerMarkerColor: string;
+    // (undocumented)
+    pinchEpsilon: number;
+    // (undocumented)
+    pinchPanSpeed: number;
+    // (undocumented)
+    get realMouseWheelAction(): FlexibleWheelZoomType;
+    // (undocumented)
+    relativeMarkerSize: number;
+    // (undocumented)
+    sensitivity: number;
+    // (undocumented)
+    sensitivityDiagonalFraction: number;
+    // (undocumented)
+    get shouldPick(): boolean;
+    // (undocumented)
+    showTarget: boolean;
+    // (undocumented)
+    wheelDollySpeed: number;
+    // (undocumented)
+    zoomFraction: number;
+}
+
+// @beta (undocumented)
+export enum FlexibleControlsType {
+    // (undocumented)
+    FirstPerson = "firstPerson",
+    // (undocumented)
+    Orbit = "orbit",
+    // (undocumented)
+    OrbitInCenter = "orbitInCenter"
+}
+
+// @beta (undocumented)
+export type FlexibleControlsTypeChangeDelegate = (controlsType: FlexibleControlsType) => void;
+
+// @beta (undocumented)
+export enum FlexibleMouseActionType {
+    // (undocumented)
+    None = "none",
+    // (undocumented)
+    SetTarget = "setTarget",
+    // (undocumented)
+    SetTargetAndCameraDirection = "setTargetAndCameraDirection",
+    // (undocumented)
+    SetTargetAndCameraPosition = "setTargetAndCameraPosition"
+}
+
+// @beta
+export enum FlexibleWheelZoomType {
+    // (undocumented)
+    Auto = "auto",
+    // (undocumented)
+    Center = "center",
+    // (undocumented)
+    PastCursor = "pastCursor",
+    // (undocumented)
+    ToCursor = "toCursor"
+}
+
 // @public (undocumented)
 export type GeometryFilter = {
-    boundingBox?: THREE.Box3;
+    boundingBox?: Box3;
     isBoundingBoxInModelCoordinates?: boolean;
 };
+
+// @public (undocumented)
+export function getNormalizedPixelCoordinates(domElement: HTMLElement, pixelX: number, pixelY: number): THREE.Vector2;
+
+// @public
+export function getNormalizedPixelCoordinatesBySize(pixelX: number, pixelY: number, width: number, height: number): THREE.Vector2;
+
+// @beta
+export function getWheelEventDelta(event: WheelEvent): number;
 
 // @public
 export type HtmlOverlayCreateClusterDelegate = (overlayElements: {
@@ -786,20 +1080,20 @@ export type HtmlOverlayOptions = {
 };
 
 // @public
-export type HtmlOverlayPositionUpdatedDelegate = (element: HTMLElement, position2D: THREE_2.Vector2, position3D: THREE_2.Vector3, distanceToCamera: number, userData: any) => void;
+export type HtmlOverlayPositionUpdatedDelegate = (element: HTMLElement, position2D: THREE.Vector2, position3D: THREE.Vector3, distanceToCamera: number, userData: any) => void;
 
 // @public
 export class HtmlOverlayTool extends Cognite3DViewerToolBase {
     constructor(viewer: Cognite3DViewer, options?: HtmlOverlayToolOptions);
-    add(htmlElement: HTMLElement, position3D: THREE_2.Vector3, options?: HtmlOverlayOptions): void;
+    add(htmlElement: HTMLElement, position3D: THREE.Vector3, options?: HtmlOverlayOptions): void;
     clear(): void;
     // @override
     dispose(): void;
     get elements(): {
         element: HTMLElement;
-        position3D: THREE_2.Vector3;
+        position3D: THREE.Vector3;
     }[];
-    forceUpdate(customCamera?: THREE_2.PerspectiveCamera): void;
+    forceUpdate(customCamera?: THREE.PerspectiveCamera): void;
     remove(htmlElement: HTMLElement): void;
     visible(enable: boolean): void;
 }
@@ -815,6 +1109,36 @@ export type HtmlOverlayToolOptions = {
     clusteringOptions?: HtmlOverlayToolClusteringOptions;
 };
 
+// @beta
+export interface ICustomObject {
+    beforeRender(camera: PerspectiveCamera): void;
+    getBoundingBox(target: Box3): Box3;
+    intersectIfCloser(intersectInput: CustomObjectIntersectInput, closestDistance: number | undefined): undefined | CustomObjectIntersection;
+    get isPartOfBoundingBox(): boolean;
+    get object(): Object3D;
+    get shouldPick(): boolean;
+    get shouldPickBoundingBox(): boolean;
+    get useDepthTest(): boolean;
+}
+
+// @beta
+export interface IFlexibleCameraManager extends CameraManager {
+    addControlsTypeChangeListener(callback: FlexibleControlsTypeChangeDelegate): void;
+    get controlsType(): FlexibleControlsType;
+    set controlsType(value: FlexibleControlsType);
+    onClick(event: PointerEvent): Promise<void>;
+    onDoubleClick(event: PointerEvent): Promise<void>;
+    onFocusChanged(haveFocus: boolean): void;
+    onKey(event: KeyboardEvent, down: boolean): void;
+    onPointerDown(event: PointerEvent, leftButton: boolean): Promise<void>;
+    onPointerDrag(event: PointerEvent, leftButton: boolean): Promise<void>;
+    onPointerUp(event: PointerEvent, leftButton: boolean): Promise<void>;
+    onWheel(event: WheelEvent, delta: number): Promise<void>;
+    get options(): FlexibleControlsOptions;
+    removeControlsTypeChangeListener(callback: FlexibleControlsTypeChangeDelegate): void;
+    rotateCameraTo(direction: Vector3, animationDuration: number): void;
+}
+
 // @public
 export interface Image360 {
     getActiveRevision(): Image360Revision;
@@ -824,7 +1148,7 @@ export interface Image360 {
     readonly image360Visualization: Image360Visualization;
     readonly label: string | undefined;
     setIconColor(color: Color | 'default'): void;
-    readonly transform: THREE.Matrix4;
+    readonly transform: Matrix4;
 }
 
 // @public
@@ -874,6 +1198,8 @@ export interface Image360Collection {
     // @deprecated
     getAssetIds(): Promise<IdEither[]>;
     getDefaultAnnotationStyle(): Image360AnnotationAppearance;
+    getIconsVisibility(): boolean;
+    getModelTransformation(out?: Matrix4): Matrix4;
     readonly id: string;
     readonly image360Entities: Image360[];
     readonly label: string | undefined;
@@ -886,6 +1212,7 @@ export interface Image360Collection {
     set360IconCullingRestrictions(radius: number, pointLimit: number): void;
     setDefaultAnnotationStyle(appearance: Image360AnnotationAppearance): void;
     setIconsVisibility(visible: boolean): void;
+    setModelTransformation(matrix: Matrix4): void;
     targetRevisionDate: Date | undefined;
 }
 
@@ -917,6 +1244,12 @@ export interface Image360Revision {
 export interface Image360Visualization {
     opacity: number;
 }
+
+// @public
+export type Image360WithCollection = {
+    image360Collection: Image360Collection;
+    image360: Image360;
+};
 
 // @public
 export type ImageAssetLinkAnnotationInfo = Omit<AnnotationModel, 'data'> & {
@@ -999,6 +1332,12 @@ export class InvertedNodeCollection extends NodeCollection {
     serialize(): SerializedNodeCollection;
 }
 
+// @public
+export function isDefaultCameraManager(cameraManager: CameraManager): cameraManager is DefaultCameraManager;
+
+// @beta
+export function isFlexibleCameraManager(manager: CameraManager): manager is IFlexibleCameraManager;
+
 // @public (undocumented)
 export interface JsonFileProvider {
     // (undocumented)
@@ -1019,8 +1358,8 @@ export { Keyframe_2 as Keyframe }
 // @public (undocumented)
 export type Measurement = {
     readonly measurementId: number;
-    readonly startPoint: THREE.Vector3;
-    readonly endPoint: THREE.Vector3;
+    readonly startPoint: Vector3;
+    readonly endPoint: Vector3;
     readonly distanceInMeters: number;
 };
 
@@ -1034,7 +1373,7 @@ export type MeasurementEndedDelegate = () => void;
 export type MeasurementOptions = {
     distanceToLabelCallback?: DistanceToLabelDelegate | undefined;
     lineWidth?: number;
-    color?: THREE.Color;
+    color?: Color;
 };
 
 // @public
@@ -1043,7 +1382,7 @@ export type MeasurementStartedDelegate = () => void;
 // @public
 export class MeasurementTool extends Cognite3DViewerToolBase {
     constructor(viewer: Cognite3DViewer, options?: MeasurementOptions);
-    addMeasurement(startPoint: THREE_2.Vector3, endPoint: THREE_2.Vector3): Measurement;
+    addMeasurement(startPoint: THREE.Vector3, endPoint: THREE.Vector3): Measurement;
     dispose(): void;
     enterMeasurementMode(): void;
     exitMeasurementMode(): void;
@@ -1065,7 +1404,7 @@ export class MeasurementTool extends Cognite3DViewerToolBase {
     removeMeasurement(measurement: Measurement): void;
     setLineOptions(options: MeasurementOptions): void;
     setMeasurementLabelsVisible(enable: boolean): void;
-    updateLineColor(measurement: Measurement, color: THREE_2.Color): void;
+    updateLineColor(measurement: Measurement, color: THREE.Color): void;
     updateLineWidth(measurement: Measurement, lineWidth: number): void;
     visible(enable: boolean): void;
 }
@@ -1085,11 +1424,11 @@ export interface ModelIdentifier {
 export interface ModelMetadataProvider {
     // (undocumented)
     getModelCamera(identifier: ModelIdentifier): Promise<{
-        position: THREE_2.Vector3;
-        target: THREE_2.Vector3;
+        position: THREE.Vector3;
+        target: THREE.Vector3;
     } | undefined>;
     // (undocumented)
-    getModelMatrix(identifier: ModelIdentifier, format: File3dFormat | string): Promise<THREE_2.Matrix4>;
+    getModelMatrix(identifier: ModelIdentifier, format: File3dFormat | string): Promise<THREE.Matrix4>;
     // (undocumented)
     getModelOutputs(modelIdentifier: ModelIdentifier): Promise<BlobOutputMetadata[]>;
     // (undocumented)
@@ -1188,7 +1527,7 @@ export interface NodesApiClient {
         treeIndex: number;
         subtreeSize: number;
     }[]>;
-    getBoundingBoxesByNodeIds(modelId: CogniteInternalId, revisionId: CogniteInternalId, nodeIds: CogniteInternalId[]): Promise<THREE_2.Box3[]>;
+    getBoundingBoxesByNodeIds(modelId: CogniteInternalId, revisionId: CogniteInternalId, nodeIds: CogniteInternalId[]): Promise<THREE.Box3[]>;
     mapNodeIdsToTreeIndices(modelId: CogniteInternalId, revisionId: CogniteInternalId, nodeIds: CogniteInternalId[]): Promise<number[]>;
     mapTreeIndicesToNodeIds(modelId: CogniteInternalId, revisionId: CogniteInternalId, treeIndices: number[]): Promise<CogniteInternalId[]>;
 }
@@ -1244,6 +1583,26 @@ export interface Overlay3D<ContentType> {
 }
 
 // @public
+export class Overlay3DCollection<MetadataType = DefaultOverlay3DContentType> extends Object3D implements OverlayCollection<MetadataType> {
+    constructor(overlayInfos: OverlayInfo<MetadataType>[], options?: Overlay3DCollectionOptions);
+    addOverlays(overlayInfos: OverlayInfo<MetadataType>[]): Overlay3D<MetadataType>[];
+    dispose(): void;
+    getOverlays(): Overlay3D<MetadataType>[];
+    intersectOverlays(normalizedCoordinates: Vector2, camera: Camera): Overlay3D<MetadataType> | undefined;
+    removeAllOverlays(): void;
+    removeOverlays(overlays: Overlay3D<MetadataType>[]): void;
+    setVisibility(visibility: boolean): void;
+}
+
+// @public
+export type Overlay3DCollectionOptions = {
+    overlayTexture?: Texture;
+    overlayTextureMask?: Texture;
+    maxPointSize?: number;
+    defaultOverlayColor?: Color;
+};
+
+// @public
 export class Overlay3DTool<ContentType = DefaultOverlay3DContentType> extends Cognite3DViewerToolBase {
     constructor(viewer: Cognite3DViewer, toolParameters?: Overlay3DToolParameters);
     clear(): void;
@@ -1271,7 +1630,7 @@ export class Overlay3DTool<ContentType = DefaultOverlay3DContentType> extends Co
 // @public
 export type Overlay3DToolParameters = {
     maxPointSize?: number;
-    defaultOverlayColor: THREE_2.Color;
+    defaultOverlayColor: THREE.Color;
 };
 
 // @public
@@ -1285,9 +1644,9 @@ export interface OverlayCollection<ContentType> {
 
 // @public
 export type OverlayCollectionOptions = {
-    defaultOverlayColor?: THREE_2.Color;
-    overlayTexture?: THREE_2.Texture;
-    overlayTextureMask?: THREE_2.Texture;
+    defaultOverlayColor?: THREE.Color;
+    overlayTexture?: THREE.Texture;
+    overlayTextureMask?: THREE.Texture;
 };
 
 // @public
@@ -1302,9 +1661,9 @@ export type OverlayEventHandler<ContentType> = (event: {
 
 // @public
 export type OverlayInfo<ContentType = DefaultOverlay3DContentType> = {
-    position: THREE.Vector3;
+    position: Vector3;
     content: ContentType;
-    color?: THREE.Color;
+    color?: Color;
 };
 
 // @public
@@ -1325,7 +1684,7 @@ export type PointCloudBudget = {
 export type PointCloudIntersection = {
     type: 'pointcloud';
     model: CognitePointCloudModel;
-    point: THREE.Vector3;
+    point: Vector3;
     pointIndex: number;
     distanceToCamera: number;
     annotationId: number;
@@ -1385,6 +1744,33 @@ export type PointerEventData = {
 // @public
 export type PointerEventDelegate = (event: PointerEventData) => void;
 
+// @beta
+export class PointerEvents {
+    // (undocumented)
+    get isEnabled(): boolean;
+    // (undocumented)
+    onClick(_event: PointerEvent): Promise<void>;
+    // (undocumented)
+    onDoubleClick(_event: PointerEvent): Promise<void>;
+    // (undocumented)
+    onHover(_event: PointerEvent): void;
+    // (undocumented)
+    onPointerDown(_event: PointerEvent, _leftButton: boolean): Promise<void>;
+    // (undocumented)
+    onPointerDrag(_event: PointerEvent, _leftButton: boolean): Promise<void>;
+    // (undocumented)
+    onPointerUp(_event: PointerEvent, _leftButton: boolean): Promise<void>;
+}
+
+// @beta
+export class PointerEventsTarget {
+    constructor(domElement: HTMLElement, events: PointerEvents);
+    // (undocumented)
+    addEventListeners(): void;
+    // (undocumented)
+    removeEventListeners(): void;
+}
+
 // @public (undocumented)
 export enum PointShape {
     // (undocumented)
@@ -1430,12 +1816,12 @@ export function registerNodeCollectionType<T extends NodeCollection>(nodeCollect
 // @public
 export type RelativePosition = {
     corner: Corner;
-    padding: THREE_2.Vector2;
+    padding: THREE.Vector2;
 };
 
 // @public
 export type RenderParameters = {
-    renderSize: THREE.Vector2;
+    renderSize: Vector2;
 };
 
 // @public
@@ -1451,8 +1837,8 @@ export const REVEAL_VERSION: string;
 export type SceneRenderedDelegate = (event: {
     frameNumber: number;
     renderTime: number;
-    renderer: THREE.WebGLRenderer;
-    camera: THREE.PerspectiveCamera;
+    renderer: WebGLRenderer;
+    camera: PerspectiveCamera;
 }) => void;
 
 // @public
@@ -1525,8 +1911,8 @@ export class TreeIndexNodeCollection extends NodeCollection {
     constructor(treeIndexSet?: IndexSet);
     constructor(treeIndices?: Iterable<number>);
     constructor(treeIndexRange?: NumericRange);
-    addAreaPoints(points: THREE_2.Vector3[]): void;
-    addAreas(areas: THREE_2.Box3[]): void;
+    addAreaPoints(points: THREE.Vector3[]): void;
+    addAreas(areas: THREE.Box3[]): void;
     // (undocumented)
     static readonly classToken = "TreeIndexNodeCollection";
     clear(): void;
@@ -1559,6 +1945,12 @@ export class UnionNodeCollection extends CombineNodeCollectionBase {
     getAreas(): AreaCollection;
     // (undocumented)
     serialize(): SerializedNodeCollection;
+}
+
+// @beta
+export class Vector3Pool {
+    constructor(size?: number);
+    getNext(copyFrom?: Vector3): Vector3;
 }
 
 // @public (undocumented)

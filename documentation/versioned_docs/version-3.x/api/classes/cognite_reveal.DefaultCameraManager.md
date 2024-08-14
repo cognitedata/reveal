@@ -279,13 +279,13 @@ ___
 
 ### getCameraState
 
-▸ **getCameraState**(): `Required`<[`CameraState`](../modules/cognite_reveal.md#camerastate)\>
+▸ **getCameraState**(): `Required`\<[`CameraState`](../modules/cognite_reveal.md#camerastate)\>
 
 Get camera's state
 
 #### Returns
 
-`Required`<[`CameraState`](../modules/cognite_reveal.md#camerastate)\>
+`Required`\<[`CameraState`](../modules/cognite_reveal.md#camerastate)\>
 
 #### Implementation of
 

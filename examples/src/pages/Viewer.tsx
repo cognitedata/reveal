@@ -17,7 +17,7 @@ import {
   CogniteModel,
   AnnotationIdPointCloudObjectCollection
 } from '@cognite/reveal';
-import { DebugCameraTool, Corner, AxisViewTool } from '@cognite/reveal/tools';
+import { DebugCameraTool, AxisGizmoTool } from '@cognite/reveal/tools';
 import * as reveal from '@cognite/reveal';
 import { ClippingUIs } from '../utils/ClippingUIs';
 import { NodeStylingUI } from '../utils/NodeStylingUI';
@@ -39,7 +39,6 @@ import { createFunnyButton } from '../utils/PageVariationUtils';
 import { getCogniteClient } from '../utils/example-helpers';
 import { LoadSplatUi } from '../utils/LoadSplatUi';
 
-window.THREE = THREE;
 (window as any).reveal = reveal;
 
 export function Viewer() {
@@ -90,6 +89,7 @@ export function Viewer() {
         domElement: canvasWrapperRef.current!,
         onLoading: progress,
         logMetrics: false,
+        useFlexibleCameraManager: true,
         antiAliasingHint: (urlParams.get('antialias') ?? undefined) as any,
         ssaoQualityHint: (urlParams.get('ssao') ?? undefined) as any,
         pointCloudEffects: {
@@ -137,13 +137,12 @@ export function Viewer() {
 
       const controlsOptions: CameraControlsOptions = {
         changeCameraTargetOnClick: false,
-        changeCameraPositionOnDoubleClick: false,
         mouseWheelAction: 'zoomToCursor'
       };
       cameraManager = viewer.cameraManager as DefaultCameraManager;
-
-      cameraManager.setCameraControlsOptions(controlsOptions);
-
+      if (viewer.cameraManager instanceof DefaultCameraManager) {
+        cameraManager.setCameraControlsOptions(controlsOptions);
+      }
       cameraManagers = {
         Default: viewer.cameraManager as DefaultCameraManager,
         Custom: new CustomCameraManager(canvasWrapperRef.current!, new THREE.PerspectiveCamera(5, 1, 0.01, 1000))
@@ -415,15 +414,6 @@ export function Viewer() {
           });
         });
       controlsGui
-        .add(guiState.controls, 'changeCameraPositionOnDoubleClick')
-        .name('Change camera position on dblclick')
-        .onFinishChange(value => {
-          cameraManager.setCameraControlsOptions({
-            ...cameraManager.getCameraControlsOptions(),
-            changeCameraPositionOnDoubleClick: value
-          });
-        });
-      controlsGui
         .add(guiState.controls, 'cameraManager', cameraManagerTypes)
         .name('Camera manager type')
         .onFinishChange((value: 'Default' | 'Custom') => {
@@ -438,7 +428,6 @@ export function Viewer() {
 
       viewer.on('click', async event => {
         const { offsetX, offsetY } = event;
-        console.log('2D coordinates', event);
         const start = performance.now();
         const intersection = await viewer.getIntersectionFromPixel(offsetX, offsetY);
         if (intersection !== null) {
@@ -451,7 +440,6 @@ export function Viewer() {
                   point,
                   `took ${(performance.now() - start).toFixed(1)} ms`
                 );
-
                 inspectNodeUi.inspectNode(intersection.model, treeIndex);
               }
               break;
@@ -484,16 +472,8 @@ export function Viewer() {
         }
       });
 
-      new AxisViewTool(
-        viewer,
-        // Give some space for Stats.js overlay
-        {
-          position: {
-            corner: Corner.BottomRight,
-            padding: new THREE.Vector2(60, 0)
-          }
-        }
-      );
+      const axisGizmoTool = new AxisGizmoTool();
+      axisGizmoTool.connect(viewer);
     }
 
     main();

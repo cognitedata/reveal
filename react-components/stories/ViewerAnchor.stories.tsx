@@ -2,7 +2,7 @@
  * Copyright 2023 Cognite AS
  */
 import type { Meta, StoryObj } from '@storybook/react';
-import { Reveal3DResources, RevealContainer, withSuppressRevealEvents } from '../src';
+import { Reveal3DResources, RevealCanvas, RevealContext, withSuppressRevealEvents } from '../src';
 import { Color, Vector3 } from 'three';
 import { ViewerAnchor } from '../src/';
 import { createSdkByUrlToken } from './utilities/createSdkByUrlToken';
@@ -35,7 +35,7 @@ export const Main: Story = {
     const SuppressedDiv = withSuppressRevealEvents(styled.div``);
 
     return (
-      <RevealContainer
+      <RevealContext
         sdk={sdk}
         color={new Color(0x4a4a4a)}
         viewerOptions={{
@@ -44,41 +44,43 @@ export const Main: Story = {
             placement: 'topRight'
           }
         }}>
-        <RevealResourcesFitCameraOnLoad resources={resources} />
-        <ViewerAnchor
-          position={position}
-          sticky
-          stickyMargin={20}
-          style={{
-            transform: 'translate(-50%, calc(-100% - 50px))'
-          }}>
-          <div
+        <RevealCanvas>
+          <RevealResourcesFitCameraOnLoad resources={resources} />
+          <ViewerAnchor
+            position={position}
+            sticky
+            stickyMargin={20}
             style={{
-              backgroundColor: 'turquoise',
-              padding: '10px',
-              borderRadius: '10px',
-              borderStyle: 'solid',
-              maxWidth: '300px'
+              transform: 'translate(-50%, calc(-100% - 50px))'
             }}>
-            <SuppressedDiv>
-              <p>This label is stuck at position {position.toArray().join(',')}</p>
-            </SuppressedDiv>
-          </div>
-        </ViewerAnchor>
-        <ViewerAnchor position={position2}>
-          <p
-            style={{
-              backgroundColor: 'red',
-              padding: '10px',
-              borderRadius: '10px',
-              borderStyle: 'solid',
-              maxWidth: '300px',
-              transform: 'translate(0px, 0px)'
-            }}>
-            This label is stuck at position {position2.toArray().join(',')}
-          </p>
-        </ViewerAnchor>
-      </RevealContainer>
+            <div
+              style={{
+                backgroundColor: 'turquoise',
+                padding: '10px',
+                borderRadius: '10px',
+                borderStyle: 'solid',
+                maxWidth: '300px'
+              }}>
+              <SuppressedDiv>
+                <p>This label is stuck at position {position.toArray().join(',')}</p>
+              </SuppressedDiv>
+            </div>
+          </ViewerAnchor>
+          <ViewerAnchor position={position2}>
+            <p
+              style={{
+                backgroundColor: 'red',
+                padding: '10px',
+                borderRadius: '10px',
+                borderStyle: 'solid',
+                maxWidth: '300px',
+                transform: 'translate(0px, 0px)'
+              }}>
+              This label is stuck at position {position2.toArray().join(',')}
+            </p>
+          </ViewerAnchor>
+        </RevealCanvas>
+      </RevealContext>
     );
   }
 };

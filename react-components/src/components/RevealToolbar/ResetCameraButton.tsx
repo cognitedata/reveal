@@ -19,10 +19,7 @@ export const ResetCameraButton = ({
 }: ResetCameraButtonProps): ReactElement => {
   const { t } = useTranslation();
   const cameraNavigation = useCameraNavigation();
-  const resetToDefaultSceneCamera = useSceneDefaultCamera(
-    sceneExternalId ?? '',
-    sceneSpaceId ?? ''
-  );
+  const resetToDefaultSceneCamera = useSceneDefaultCamera(sceneExternalId, sceneSpaceId);
 
   const resetCameraToHomePosition = useCallback(() => {
     if (sceneExternalId !== undefined && sceneSpaceId !== undefined) {

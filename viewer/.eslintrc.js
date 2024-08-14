@@ -30,7 +30,7 @@ module.exports = {
     'jsdoc/check-indentation': 1,
     'jsdoc/check-param-names': 1,
     'jsdoc/check-syntax': 1,
-    'jsdoc/check-tag-names': ['warn', { definedTags: ['internal', 'noInheritDoc', 'obvious'] }],
+    'jsdoc/check-tag-names': ['warn', { definedTags: ['internal', 'noInheritDoc', 'obvious', 'beta'] }],
     'jsdoc/implements-on-classes': 1,
     'jsdoc/no-types': 1,
     'jsdoc/no-undefined-types': 1,

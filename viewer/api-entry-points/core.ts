@@ -13,6 +13,7 @@ export {
   CameraControlsOptions,
   DebouncedCameraStopEventTrigger,
   DefaultCameraManager,
+  isDefaultCameraManager,
   CameraManagerEventType,
   CameraManagerHelper,
   CameraManager,
@@ -22,7 +23,14 @@ export {
   ComboControlsEventType,
   CameraEventDelegate,
   CameraChangeDelegate,
-  CameraStopDelegate
+  CameraStopDelegate,
+  IFlexibleCameraManager,
+  FlexibleControlsTypeChangeDelegate,
+  FlexibleControlsOptions,
+  FlexibleWheelZoomType,
+  FlexibleControlsType,
+  FlexibleMouseActionType,
+  isFlexibleCameraManager
 } from '../packages/camera-manager';
 
 export {
@@ -60,6 +68,16 @@ export {
   PointerEventDelegate,
   PointerEventData,
   DisposedDelegate,
+  ICustomObject,
+  CustomObject,
+  CustomObjectIntersection,
+  CustomObjectIntersectInput,
+  PointerEventsTarget,
+  PointerEvents,
+  Vector3Pool,
+  getWheelEventDelta,
+  getNormalizedPixelCoordinatesBySize,
+  getNormalizedPixelCoordinates,
   CDF_TO_VIEWER_TRANSFORMATION
 } from '../packages/utilities';
 
@@ -99,4 +117,11 @@ export {
   Image360AnnotationFilterOptions
 } from '../packages/360-images';
 
-export { OverlayCollection, OverlayInfo, Overlay3D, DefaultOverlay3DContentType } from '../packages/3d-overlays';
+export {
+  OverlayCollection,
+  Overlay3DCollection,
+  Overlay3DCollectionOptions,
+  OverlayInfo,
+  Overlay3D,
+  DefaultOverlay3DContentType
+} from '../packages/3d-overlays';

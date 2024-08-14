@@ -12,7 +12,19 @@
     "outDir": "dist",
     "isolatedModules": true,
     "moduleResolution": "bundler",
-    "allowSyntheticDefaultImports": true
+    "allowSyntheticDefaultImports": true,
+    "noImplicitOverride": true
   },
-  "include": ["src/**/*", "stories/**/*", "tests/**/*", "vite.config.ts", "playwright.config.ts"],
+  "include": [
+    "src/**/*",
+    "stories/**/*",
+    "tests/**/*",
+    "vite.config.ts",
+    "playwright.config.ts"
+  ],
+  "exclude": [
+    "node_modules",
+    "dist",
+    "storybook-static"
+  ]
 }

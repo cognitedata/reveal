@@ -11,7 +11,7 @@ import { assertNever } from '@reveal/utilities';
 export type Corner = 'topLeft' | 'topRight' | 'bottomLeft' | 'bottomRight';
 
 export class Spinner {
-  private static readonly stylesId = 'reveal-viewer-spinner-styles';
+  private readonly stylesId = `reveal-viewer-spinner-styles-${Math.random().toString().split('.')[1]}`;
   private static readonly classnames = {
     base: 'reveal-viewer-spinner',
     topLeft: 'reveal-viewer-spinner-top-left',
@@ -28,12 +28,12 @@ export class Spinner {
 
   private _loading = false;
 
-  private static loadStyles() {
-    if (document.getElementById(Spinner.stylesId)) {
+  private static loadStyles(stylesId: string) {
+    if (document.getElementById(stylesId)) {
       return;
     }
     const style = document.createElement('style');
-    style.id = Spinner.stylesId;
+    style.id = stylesId;
     style.appendChild(document.createTextNode(css));
     document.head.appendChild(style);
   }
@@ -41,7 +41,7 @@ export class Spinner {
   private readonly el: HTMLElement;
 
   constructor(parent: HTMLElement) {
-    Spinner.loadStyles();
+    Spinner.loadStyles(this.stylesId);
     this.el = document.createElement('div');
     this.el.title = Spinner.titles.idle;
 
@@ -117,7 +117,7 @@ export class Spinner {
 
   dispose(): void {
     this.el.remove();
-    const styleTag = document.getElementById(Spinner.stylesId);
+    const styleTag = document.getElementById(this.stylesId);
     if (styleTag) {
       styleTag.remove();
     }

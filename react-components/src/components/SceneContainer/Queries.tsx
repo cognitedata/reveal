@@ -2,7 +2,7 @@
  * Copyright 2023 Cognite AS
  */
 
-import { type Query } from '../../utilities/FdmSDK';
+import { type Query } from '../../data-providers/FdmSDK';
 
 export function createGetSceneQuery(sceneExternalId: string, sceneSpaceId: string): Query {
   return {
@@ -112,15 +112,7 @@ export function createGetSceneQuery(sceneExternalId: string, sceneSpaceId: strin
               externalId: 'SceneConfiguration',
               version: 'v1'
             },
-            properties: [
-              'name',
-              'cameraTranslationX',
-              'cameraTranslationY',
-              'cameraTranslationZ',
-              'cameraEulerRotationX',
-              'cameraEulerRotationY',
-              'cameraEulerRotationZ'
-            ]
+            properties: ['*']
           }
         ]
       },
@@ -218,7 +210,7 @@ export function createGetSceneQuery(sceneExternalId: string, sceneSpaceId: strin
               externalId: 'TexturedPlane',
               version: 'v1'
             },
-            properties: ['label', 'file', 'wrapping']
+            properties: ['*']
           }
         ]
       }

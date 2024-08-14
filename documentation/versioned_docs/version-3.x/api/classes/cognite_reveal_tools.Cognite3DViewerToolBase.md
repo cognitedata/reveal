@@ -7,7 +7,7 @@ custom_edit_url: null
 
 [@cognite/reveal/tools](../modules/cognite_reveal_tools.md).Cognite3DViewerToolBase
 
-Base class for tools attaching to a {@see Cognite3DViewer}.
+Base class for tools attaching to a @see \{@link Cognite3DViewer}.
 
 ## Hierarchy
 

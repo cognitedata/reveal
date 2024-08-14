@@ -11,7 +11,7 @@ import dat from 'dat.gui';
  */
 export function initialCadBudgetUi(viewer: Cognite3DViewer, uiFolder: dat.GUI) {
   const state = {
-    factor: 100.0
+    factor: 200.0
   };
   const defaultCadBudget = { ...viewer.cadBudget };
   const onCadBudgetSettingsChanged = () => {

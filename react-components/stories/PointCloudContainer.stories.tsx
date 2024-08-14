@@ -2,7 +2,7 @@
  * Copyright 2023 Cognite AS
  */
 import type { Meta, StoryObj } from '@storybook/react';
-import { PointCloudContainer, RevealContainer } from '../src';
+import { PointCloudContainer, RevealCanvas, RevealContext } from '../src';
 import { Color, Matrix4 } from 'three';
 import { createSdkByUrlToken } from './utilities/createSdkByUrlToken';
 
@@ -50,12 +50,14 @@ export const Main: Story = {
     transform: new Matrix4()
   },
   render: ({ addModelOptions, transform, styling }) => (
-    <RevealContainer sdk={sdk} color={new Color(0x4a4a4a)}>
-      <PointCloudContainer
-        addModelOptions={addModelOptions}
-        transform={transform}
-        styling={styling}
-      />
-    </RevealContainer>
+    <RevealContext sdk={sdk} color={new Color(0x4a4a4a)}>
+      <RevealCanvas>
+        <PointCloudContainer
+          addModelOptions={addModelOptions}
+          transform={transform}
+          styling={styling}
+        />
+      </RevealCanvas>
+    </RevealContext>
   )
 };

@@ -4,7 +4,7 @@
 // TODO 2021-11-08 larsmoa: Enable explicit-module-boundary-types for ComboControls
 /* eslint-disable @typescript-eslint/explicit-module-boundary-types */
 
-import { clickOrTouchEventOffset } from '@reveal/utilities';
+import { getPixelCoordinatesFromEvent, getWheelEventDelta } from '@reveal/utilities';
 import remove from 'lodash/remove';
 import {
   EventDispatcher,
@@ -23,7 +23,6 @@ import clamp from 'lodash/clamp';
 import { ComboControlsOptions, CreateDefaultControlsOptions } from './ComboControlsOptions';
 import { getNormalizedPixelCoordinates } from '@reveal/utilities';
 
-const IS_FIREFOX = navigator.userAgent.toLowerCase().indexOf('firefox') !== -1;
 const TARGET_FPS = 30;
 
 /**
@@ -71,7 +70,7 @@ export class ComboControls extends EventDispatcher<ComboControlsEventType> {
     this._camera = camera;
     this._reusableCamera = camera.clone() as typeof camera;
     this._domElement = domElement;
-    this._keyboard = new Keyboard(this._domElement);
+    this._keyboard = new Keyboard();
 
     // rotation
     this._spherical.setFromVector3(camera.position);
@@ -80,9 +79,6 @@ export class ComboControls extends EventDispatcher<ComboControlsEventType> {
 
     this.dispose = () => {
       this.removeEventListeners();
-
-      // Dispose all keyboard events registered. REV-461!
-      this._keyboard.dispose();
     };
   }
 
@@ -334,26 +330,10 @@ export class ComboControls extends EventDispatcher<ComboControlsEventType> {
     }
     event.preventDefault();
 
-    let delta = 0;
-    // @ts-ignore event.wheelDelta is only part of WebKit / Opera / Explorer 9
-    if (event.wheelDelta) {
-      // @ts-ignore event.wheelDelta is only part of WebKit / Opera / Explorer 9
-      delta = -event.wheelDelta / 40;
-    } else if (event.detail) {
-      // Firefox
-      delta = event.detail;
-    } else if (event.deltaY) {
-      // Firefox / Explorer + event target is SVG.
-      const factor = IS_FIREFOX ? 1 : 40;
-      delta = event.deltaY / factor;
-    }
-    const domElementRelativeOffset = clickOrTouchEventOffset(event, this._domElement);
+    const delta = getWheelEventDelta(event);
+    const position = getPixelCoordinatesFromEvent(event, this._domElement);
 
-    const pixelCoordinates = getNormalizedPixelCoordinates(
-      this._domElement,
-      domElementRelativeOffset.offsetX,
-      domElementRelativeOffset.offsetY
-    );
+    const pixelCoordinates = getNormalizedPixelCoordinates(this._domElement, position.x, position.y);
     const dollyIn = delta < 0;
     let deltaDistance;
     if (this._camera instanceof PerspectiveCamera) {
@@ -386,8 +366,8 @@ export class ComboControls extends EventDispatcher<ComboControlsEventType> {
   };
 
   private readonly onFocusChanged = (event: MouseEvent | TouchEvent | FocusEvent) => {
-    if (event.type !== 'blur') {
-      this._keyboard.disabled = false;
+    if (event.type === 'focus') {
+      this._keyboard.clearPressedKeys();
     }
   };
 
@@ -403,25 +383,25 @@ export class ComboControls extends EventDispatcher<ComboControlsEventType> {
   //================================================
 
   private addEventListeners() {
+    this._keyboard.addEventListeners(this._domElement);
     this._domElement.addEventListener('pointerdown', this.onPointerDown);
-    this._domElement.addEventListener('wheel', event => this.onMouseWheel(event));
+    this._domElement.addEventListener('wheel', this.onMouseWheel);
     this._domElement.addEventListener('contextmenu', this.onContextMenu);
 
-    // canvas has no blur/focus by default, but it's possible to set tabindex on it,
+    // canvas has focus by default, but it's possible to set tabindex on it,
     // in that case events will be fired (we don't set tabindex here, but still support that case)
     this._domElement.addEventListener('focus', this.onFocusChanged);
-    this._domElement.addEventListener('blur', this.onFocusChanged);
 
     window.addEventListener('pointerup', this.onPointerUp);
     window.addEventListener('pointerdown', this.onFocusChanged);
   }
 
   private removeEventListeners() {
+    this._keyboard.removeEventListeners(this._domElement);
     this._domElement.removeEventListener('pointerdown', this.onPointerDown);
     this._domElement.removeEventListener('wheel', this.onMouseWheel);
     this._domElement.removeEventListener('contextmenu', this.onContextMenu);
     this._domElement.removeEventListener('focus', this.onFocusChanged);
-    this._domElement.removeEventListener('blur', this.onFocusChanged);
 
     window.removeEventListener('pointerup', this.onPointerUp);
     window.removeEventListener('pointerdown', this.onFocusChanged);
@@ -458,7 +438,6 @@ export class ComboControls extends EventDispatcher<ComboControlsEventType> {
         return;
       }
       const newOffset = getHTMLOffset(this._domElement, event.clientX, event.clientY);
-      previousOffset.sub(newOffset);
       this.rotate(new Vector2().subVectors(previousOffset, newOffset));
       previousOffset = newOffset;
     };
@@ -671,7 +650,7 @@ export class ComboControls extends EventDispatcher<ComboControlsEventType> {
     }
   }
 
-  private dollyWithWheelScroll(pixelCoordinates: Vector2, deltaDistance: number, cameraDirection: THREE.Vector3) {
+  private dollyWithWheelScroll(pixelCoordinates: Vector2, deltaDistance: number, cameraDirection: Vector3) {
     const isDollyIn = deltaDistance < 0 ? true : false;
     const newTargetOffset = this.newVector3();
     let newRadius = this._sphericalEnd.radius;
@@ -712,7 +691,7 @@ export class ComboControls extends EventDispatcher<ComboControlsEventType> {
   private calculateNewRadiusAndTargetOffsetLerp(
     pixelCoordinates: Vector2,
     deltaDistance: number,
-    cameraDirection: THREE.Vector3
+    cameraDirection: Vector3
   ) {
     const distFromCameraToScreenCenter = Math.tan(MathUtils.degToRad(90 - getFov(this._camera) / 2));
     const distFromCameraToCursor = Math.sqrt(
@@ -749,7 +728,7 @@ export class ComboControls extends EventDispatcher<ComboControlsEventType> {
     return { targetOffset, radius };
   }
 
-  private calculateNewRadiusAndTargetOffsetScrollTarget(deltaDistance: number, cameraDirection: THREE.Vector3) {
+  private calculateNewRadiusAndTargetOffsetScrollTarget(deltaDistance: number, cameraDirection: Vector3) {
     const isDollyOut = deltaDistance > 0 ? true : false;
 
     if (isDollyOut) {
@@ -904,7 +883,7 @@ export class ComboControls extends EventDispatcher<ComboControlsEventType> {
 // LOCAL FUNCTIONS
 //================================================
 
-function isIdentityQuaternion(q: THREE.Quaternion) {
+function isIdentityQuaternion(q: Quaternion) {
   return q.x === 0 && q.y === 0 && q.z === 0 && q.w === 1;
 }
 

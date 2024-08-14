@@ -2,7 +2,7 @@
  * Copyright 2021 Cognite AS
  */
 
-import TWEEN from '@tweenjs/tween.js';
+import TWEEN, { type Tween } from '@tweenjs/tween.js';
 
 import { Cognite3DViewerToolBase } from '../Cognite3DViewerToolBase';
 import { Keyframe } from './Keyframe';
@@ -16,7 +16,7 @@ import { CogniteCadModel } from '@reveal/api';
 export class TimelineTool extends Cognite3DViewerToolBase {
   private readonly _model: CogniteCadModel;
   private readonly _keyframes: Keyframe[];
-  private _playback: TWEEN.Tween | undefined = undefined;
+  private _playback: Tween<{ dateInMs: number }> | undefined = undefined;
   private readonly _events = { dateChanged: new EventTrigger<TimelineDateUpdateDelegate>() };
 
   constructor(cadModel: CogniteCadModel) {
@@ -143,6 +143,7 @@ export class TimelineTool extends Cognite3DViewerToolBase {
 
     this._playback = tween;
     tween.start();
+    TWEEN.add(tween);
   }
 
   /**

@@ -2,10 +2,10 @@
  * Copyright 2023 Cognite AS
  */
 import type { Meta, StoryObj } from '@storybook/react';
-import { Image360CollectionContainer, Image360Details, RevealContainer } from '../src';
-import { createSdkByUrlToken } from './utilities/createSdkByUrlToken';
+import { Image360CollectionContainer, Image360Details, RevealCanvas } from '../src';
 import { Color } from 'three';
 import { useState } from 'react';
+import { RevealStoryContext } from './utilities/RevealStoryContainer';
 
 const meta = {
   title: 'Example/Image360Details',
@@ -16,21 +16,21 @@ const meta = {
 export default meta;
 type Story = StoryObj<typeof meta>;
 
-const sdk = createSdkByUrlToken();
-
 export const Main: Story = {
   render: () => {
     const [loading, setLoading] = useState(true);
     return (
-      <RevealContainer sdk={sdk} color={new Color(0x4a4a4a)}>
-        <Image360CollectionContainer
-          collectionId={{ siteId: 'c_RC_2' }}
-          onLoad={() => {
-            setLoading(false);
-          }}
-        />
-        {!loading && <Image360Details />}
-      </RevealContainer>
+      <RevealStoryContext color={new Color(0x4a4a4a)}>
+        <RevealCanvas>
+          <Image360CollectionContainer
+            addImage360CollectionOptions={{ siteId: 'c_RC_2' }}
+            onLoad={() => {
+              setLoading(false);
+            }}
+          />
+          {!loading && <Image360Details />}
+        </RevealCanvas>
+      </RevealStoryContext>
     );
   }
 };

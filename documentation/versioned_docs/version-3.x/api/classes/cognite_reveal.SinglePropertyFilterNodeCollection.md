@@ -30,7 +30,7 @@ Construct a new node set.
 
 | Name | Type | Description |
 | :------ | :------ | :------ |
-| `client` | `default` | {@link CogniteClient} authenticated to the project the model is loaded from. |
+| `client` | `default` | \{@link CogniteClient} authenticated to the project the model is loaded from. |
 | `model` | [`CdfModelNodeCollectionDataProvider`](../interfaces/cognite_reveal.CdfModelNodeCollectionDataProvider.md) | CAD model. |
 | `options` | `PropertyFilterNodeCollectionOptions` |  |
 
@@ -112,11 +112,11 @@ ___
 
 ### executeFilter
 
-▸ **executeFilter**(`propertyCategory`, `propertyKey`, `propertyValues`): `Promise`<`void`\>
+▸ **executeFilter**(`propertyCategory`, `propertyKey`, `propertyValues`): `Promise`\<`void`\>
 
-Execute filter asynchronously, replacing any existing filter active. When {@link propertyValues}
+Execute filter asynchronously, replacing any existing filter active. When \{@link propertyValues}
 contains more than 1000 elements, the operation will be split into multiple batches that
-are executed in parallel. Note that when providing a {@link PropertyFilterNodeCollectionOptions.requestPartitions}
+are executed in parallel. Note that when providing a \{@link PropertyFilterNodeCollectionOptions.requestPartitions}
 during construction of the node set, the total number of batches will be requestPartitions*numberOfBatches.
 
 #### Parameters
@@ -129,7 +129,7 @@ during construction of the node set, the total number of batches will be request
 
 #### Returns
 
-`Promise`<`void`\>
+`Promise`\<`void`\>
 
 #### Defined in
 

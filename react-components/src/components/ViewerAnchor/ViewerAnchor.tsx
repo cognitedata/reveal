@@ -13,7 +13,7 @@ import {
 } from 'react';
 import { Vector2, type Vector3 } from 'three';
 
-import { useReveal } from '../RevealContainer/RevealContext';
+import { useReveal } from '../RevealCanvas/ViewerContext';
 import { type Cognite3DViewer } from '@cognite/reveal';
 import { clamp } from 'lodash';
 
@@ -190,7 +190,7 @@ function computeCombinedTranslationCss(
   const inherentTranslation = `translateX(calc(${pointPositionOnScreen.x}px + ${stickyCompensation.x}px))
 translateY(calc(${pointPositionOnScreen.y}px + ${stickyCompensation.y}px))`;
 
-  const style = { ...inputStyle } ?? {};
+  const style = { ...inputStyle };
   const userProvidedTranslation = style.transform;
   style.transform = `${userProvidedTranslation ?? ''} ${inherentTranslation}`;
   return style;

@@ -64,3 +64,5 @@ export const LiveCodeSnippet = (props: LiveCodeSnippetProps) => {
     </button>
   </>);
 };
+
+export default LiveCodeSnippet;

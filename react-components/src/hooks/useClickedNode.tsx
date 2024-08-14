@@ -2,14 +2,22 @@
  * Copyright 2023 Cognite AS
  */
 
-import { type CadIntersection, type PointerEventData } from '@cognite/reveal';
-import { type DmsUniqueIdentifier, type Source, useReveal } from '../';
+import {
+  type PointerEventData,
+  type Image360AnnotationIntersection,
+  type AnyIntersection
+} from '@cognite/reveal';
 import { useEffect, useState } from 'react';
-import { useFdm3dNodeDataPromises } from '../components/NodeCacheProvider/NodeCacheProvider';
+import { useFdm3dNodeDataPromises } from '../components/CacheProvider/NodeCacheProvider';
 import { type CogniteInternalId, type Node3D } from '@cognite/sdk';
-import { type FdmNodeDataPromises } from '../components/NodeCacheProvider/types';
-import { useAssetMappingForTreeIndex } from '../components/NodeCacheProvider/AssetMappingCacheProvider';
-import { type NodeAssetMappingResult } from '../components/NodeCacheProvider/AssetMappingCache';
+import { type FdmNodeDataPromises } from '../components/CacheProvider/types';
+import { useAssetMappingForTreeIndex } from '../components/CacheProvider/AssetMappingAndNode3DCacheProvider';
+import { type NodeAssetMappingResult } from '../components/CacheProvider/AssetMappingAndNode3DCache';
+import { usePointCloudAnnotationMappingForAssetId } from '../components/CacheProvider/PointCloudAnnotationCacheProvider';
+import { type PointCloudAnnotationMappedAssetData } from './types';
+import { MOUSE, Vector2 } from 'three';
+import { type DmsUniqueIdentifier, type Source } from '../data-providers/FdmSDK';
+import { useRenderTarget, useReveal } from '../components/RevealCanvas/ViewerContext';
 
 export type AssetMappingDataResult = {
   cadNode: Node3D;
@@ -25,23 +33,46 @@ export type FdmNodeDataResult = {
 export type ClickedNodeData = {
   fdmResult?: FdmNodeDataResult;
   assetMappingResult?: AssetMappingDataResult;
-  intersection: CadIntersection;
+  pointCloudAnnotationMappingResult?: PointCloudAnnotationMappedAssetData[];
+  intersection: AnyIntersection | Image360AnnotationIntersection;
 };
 
 export const useClickedNodeData = (): ClickedNodeData | undefined => {
   const viewer = useReveal();
+  const renderTarget = useRenderTarget();
 
-  const [cadIntersection, setCadIntersection] = useState<CadIntersection | undefined>(undefined);
+  const [intersection, setIntersection] = useState<AnyIntersection | undefined>(undefined);
+
+  const [annotationIntersection, setAnnotationIntersection] = useState<
+    Image360AnnotationIntersection | undefined
+  >(undefined);
 
   useEffect(() => {
     const callback = (event: PointerEventData): void => {
       void (async () => {
-        const intersection = await viewer.getIntersectionFromPixel(event.offsetX, event.offsetY);
+        if (event.button !== MOUSE.LEFT || !renderTarget.commandsController.isDefaultToolActive) {
+          return;
+        }
 
-        if (intersection?.type === 'cad') {
-          setCadIntersection(intersection);
+        const intersection = await viewer.getAnyIntersectionFromPixel(
+          new Vector2(event.offsetX, event.offsetY)
+        );
+
+        const annotationIntersection = await viewer.get360AnnotationIntersectionFromPixel(
+          event.offsetX,
+          event.offsetY
+        );
+
+        if (intersection !== undefined) {
+          setIntersection(intersection);
         } else {
-          setCadIntersection(undefined);
+          setIntersection(undefined);
+        }
+
+        if (annotationIntersection !== null) {
+          setAnnotationIntersection(annotationIntersection);
+        } else {
+          setAnnotationIntersection(undefined);
         }
       })();
     };
@@ -53,31 +84,32 @@ export const useClickedNodeData = (): ClickedNodeData | undefined => {
     };
   }, [viewer]);
 
-  const nodeDataPromises = useFdm3dNodeDataPromises(
-    cadIntersection?.model.modelId,
-    cadIntersection?.model.revisionId,
-    cadIntersection?.treeIndex
-  ).data;
+  const { data: nodeDataPromises } = useFdm3dNodeDataPromises(intersection);
 
-  const assetMappingResult = useAssetMappingForTreeIndex(
-    cadIntersection?.model.modelId,
-    cadIntersection?.model.revisionId,
-    cadIntersection?.treeIndex
-  ).data;
+  const { data: assetMappingResult } = useAssetMappingForTreeIndex(intersection);
 
-  return useCombinedClickedNodeData(nodeDataPromises, assetMappingResult, cadIntersection);
+  const { data: pointCloudAssetMappingResult } =
+    usePointCloudAnnotationMappingForAssetId(intersection);
+
+  return useCombinedClickedNodeData(
+    nodeDataPromises,
+    assetMappingResult,
+    pointCloudAssetMappingResult,
+    annotationIntersection ?? intersection
+  );
 };
 
 const useCombinedClickedNodeData = (
   fdmPromises: FdmNodeDataPromises | undefined,
   assetMappings: NodeAssetMappingResult | undefined,
-  cadIntersection: CadIntersection | undefined
+  pointCloudAssetMappings: PointCloudAnnotationMappedAssetData[] | undefined,
+  intersection: AnyIntersection | Image360AnnotationIntersection | undefined
 ): ClickedNodeData | undefined => {
   const [clickedNodeData, setClickedNodeData] = useState<ClickedNodeData | undefined>();
   const fdmData = useFdmData(fdmPromises);
 
   useEffect(() => {
-    if (cadIntersection === undefined) {
+    if (intersection === undefined) {
       setClickedNodeData(undefined);
       return;
     }
@@ -93,9 +125,10 @@ const useCombinedClickedNodeData = (
     setClickedNodeData({
       fdmResult: fdmData,
       assetMappingResult: assetMappingData,
-      intersection: cadIntersection
+      pointCloudAnnotationMappingResult: pointCloudAssetMappings,
+      intersection
     });
-  }, [cadIntersection, fdmData, assetMappings?.node]);
+  }, [intersection, fdmData, assetMappings?.node, pointCloudAssetMappings]);
 
   return clickedNodeData;
 };

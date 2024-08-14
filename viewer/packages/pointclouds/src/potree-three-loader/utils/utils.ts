@@ -77,8 +77,9 @@ export function makeOnBeforeRender(
   node: IPointCloudTreeNode,
   pcIndex: number
 ): (renderer: WebGLRenderer, scene: Scene, camera: Camera, bufferGeometry: BufferGeometry, material: Material) => void {
-  return (_renderer: WebGLRenderer, _scene: Scene, _camera: Camera, _geometry: BufferGeometry, material: Material) => {
+  return (renderer: WebGLRenderer, _scene: Scene, _camera: Camera, _geometry: BufferGeometry, material: Material) => {
     const pointCloudMaterial = material as PointCloudMaterial;
+    pointCloudMaterial.onBeforeRender(renderer);
     const materialUniforms = pointCloudMaterial.uniforms;
 
     materialUniforms.level.value = node.level;

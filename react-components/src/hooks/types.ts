@@ -2,6 +2,7 @@
  * Copyright 2023 Cognite AS
  */
 import { type Node3D, type CogniteExternalId, type Asset } from '@cognite/sdk';
+import { type DmsUniqueIdentifier } from '../data-providers/FdmSDK';
 import { type AssetAnnotationImage360Info } from '@cognite/reveal';
 
 export type ThreeDModelFdmMappings = {
@@ -38,6 +39,12 @@ export type LayersUrlStateParam = {
   pointCloudLayers?: PointCloudLayersUrlStateParam[];
 };
 
+export type DefaultLayersConfiguration = {
+  cad: boolean;
+  pointcloud: boolean;
+  image360: boolean;
+};
+
 export type Reveal360AnnotationAssetData = {
   asset: Asset;
   assetAnnotationImage360Info: AssetAnnotationImage360Info;
@@ -61,12 +68,16 @@ export type SceneModelsProperties = Transformation3d & {
 
 export type SceneConfigurationProperties = {
   name: string;
+  skybox?: DmsUniqueIdentifier;
   cameraTranslationX: number;
   cameraTranslationY: number;
   cameraTranslationZ: number;
   cameraEulerRotationX: number;
   cameraEulerRotationY: number;
   cameraEulerRotationZ: number;
+  cameraTargetX?: number;
+  cameraTargetY?: number;
+  cameraTargetZ?: number;
 };
 
 export type SkyboxProperties = {
@@ -79,17 +90,25 @@ export type GroundPlaneProperties = {
   file: string;
   label: string;
   wrapping: string;
+  repeatU?: number;
+  repeatV?: number;
 };
 
-export type Cdf3dRevisionProperties = {
+export type Cdf3dRevisionProperties = Transformation3d & {
   revisionId: number;
-  scaleX: number;
-  scaleY: number;
-  scaleZ: number;
-  translationX: number;
-  translationY: number;
-  translationZ: number;
-  eulerRotationX: number;
-  eulerRotationY: number;
-  eulerRotationZ: number;
+};
+
+export type Cdf3dImage360CollectionProperties = Transformation3d & {
+  image360CollectionExternalId: string;
+  image360CollectionSpace: string;
+};
+
+export type PointCloudAnnotationMappedAssetData = {
+  annotationId: number;
+  asset: Asset;
+};
+
+export type Image360AnnotationMappedAssetData = {
+  asset: Asset;
+  annotationIds: number[];
 };

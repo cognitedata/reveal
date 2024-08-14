@@ -2,11 +2,11 @@
  * Copyright 2023 Cognite AS
  */
 
-import { useSceneConfig } from './useSceneConfig';
+import { useSceneConfig } from '../query/useSceneConfig';
 import { type CogniteClient } from '@cognite/sdk';
 import {
   type AddResourceOptions,
-  type AddImageCollection360DatamodelsOptions
+  type AddImage360CollectionDatamodelsOptions
 } from '../components/Reveal3DResources/types';
 import { CDF_TO_VIEWER_TRANSFORMATION, type AddModelOptions } from '@cognite/reveal';
 import { useEffect, useState } from 'react';
@@ -27,7 +27,7 @@ export const useReveal3dResourcesFromScene = (
   const [resourceOptions, setResourceOptions] = useState<AddResourceOptions[]>([]);
 
   useEffect(() => {
-    if (scene.data === undefined) {
+    if (scene.data === undefined || scene.data === null) {
       return;
     }
     const addResourceOptions: AddResourceOptions[] = [];
@@ -47,12 +47,11 @@ export const useReveal3dResourcesFromScene = (
     });
 
     scene.data.image360Collections.forEach((collection) => {
-      const addModelOptions: AddImageCollection360DatamodelsOptions = {
+      const transform = createResourceTransformation(collection);
+      const addModelOptions: AddImage360CollectionDatamodelsOptions = {
         externalId: collection.image360CollectionExternalId,
         space: collection.image360CollectionSpace
       };
-
-      const transform = createResourceTransformation(collection);
 
       addResourceOptions.push({ ...addModelOptions, transform });
     });

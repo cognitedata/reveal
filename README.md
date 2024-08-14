@@ -25,7 +25,7 @@ All information below is for developers.
 
 Install [Node](https://nodejs.org/en/download/) and [Rust](https://doc.rust-lang.org/cargo/getting-started/installation.html).
 
-To test the viewer, you need to build the viewer and then start the examples. 
+To test the viewer, you need to build the viewer and then start the examples.
 
 ```
 cd viewer
@@ -34,8 +34,25 @@ cd ../examples
 yarn && yarn run start
 ```
 
-If you now navigate to [localhost:8080](https://localhost:8080), you will see a list of examples
-that can be explored in the browser.
+If you now navigate to [localhost:3549](https://localhost:3549), the browser should show a simple 3D model with a UI.
+
+To show a model from your own CDF project, you must first configure Reveal to use your CDF credentials. Follows the steps in the section [Credentials Environment](#Credentials-Environment).
+
+change the URL to `https://localhost:3000/?project=<project>&env=<environment>&modelId=<modelId>&revisionId=<revisionId>`.
+
+Here, `<project>` is the name of the CDF project you want to connect to, `<environment>` is the name of the environment specified in the `.env` file (e.g. `example_environment`), and `<modelId>` and `<revisionId>` are the ids of the model you want to visualize. You can find these IDs in Cognite Fusion, in the "Upload 3D models" / "Manage 3D" subapp.
+
+### Troubleshooting
+
+Occasionally, and always the first time you login to an environment, you may get a 401 error in the browser, which, after clicking through, resets the browser window to the model with colorful shapes. In this case, there should be a `#code=...`-segment appended to the URL in the browser. Copy the URL you tried to visit (including the project, environment and IDs), and paste it to the left of the `#`-sign in the URL, replacing everything that was there before. In other words, your URL should now look like
+
+```
+https://localhost:3000/?project=<project>&env=<environment>&modelId=<modelId>&revisionId=<revisionId>#code=<access token>
+```
+
+Press enter to reload.
+
+This may or may not work on the first try, seemingly depending on the access token expiration or other factors. If it fails at first, you may try this step multiple times, it will usually work by the 5th attempt.
 
 ### Building on Macbook M1
 
@@ -51,7 +68,7 @@ try forcing GCC to build for C++14:
 
 There also could be an issue with puppeteer in `examples/` that is caused by it not finding a correct version of chromium for arm64. To solve it you should follow additional steps:
 
-1. Install chromium from Homebrew: 
+1. Install chromium from Homebrew:
 ```
 brew install chromium
 `which chromium`
@@ -68,13 +85,15 @@ source .env
 ```
 3. Run `yarn` again and be happy!
 
-## Environment for Credentials
+## Credentials Environment
 
-Connecting the Cognite SDK client to internal projects through the Cognite API now requires OICD login, meaning that it is no longer sufficient to supply an API key when connecting to these projects. Instead, you need to supply the `tenantId` for the tenant for which the project belongs, as well as the `clientId` for Reveal (or the derived app) within that tenant. This poses a problem when running the examples, which has relied the API keys for authentication.
+The examples are configured to run using any environment variables specified in the file `examples/.env`, which you create yourself.  The file `examples/.env.example` shows the expected JSON format of the value contained in this variable. You must fill in the appropriate values for your environment in this file; The tenant ID, client ID and the cluster of the CDF project you want to use.
 
-The examples are configured to run using any environment variables specified in the file `examples/.env`. Specifically, Reveal will use a variable called `REACT_APP_CREDENTIAL_ENVIRONMENT` for authentication. The file `examples/.env.example` shows the expected JSON format of the value contained in this variable. The JSON object may specify several environments. Note that the values provided in `examples/.env.example` are dummy values.
+Ask your Cognite contact for the tenant ID and client ID if you don't have these available.
 
-When starting an example that uses the Cognite SDK Client, you can add e.g. `env=example_environment` to use the authentication credential stored in the `example_environment` environment specified in the JSON object.
+The cluster value is the name of the subdomain in which the project resides. To find its value for your project, log in to your project in Cognite Fusion and observe that the URL ends with a string akin to `cluster=<cluster>.cognitedata.com`. Here, `<cluster>` is the name you should put in the `.env` file.
+
+When starting an example, you can add e.g. `env=example_environment` to use the authentication credential stored in the `example_environment` environment specified in `.env`.
 
 ## Hosting models locally
 
@@ -91,8 +110,8 @@ cd viewer
 yarn run build
 ```
 
-2. Use the build from `viewer/dist`. 
-You can simply use it as a link dependency in the project that uses reveal if 
+2. Use the build from `viewer/dist`.
+You can simply use it as a link dependency in the project that uses reveal if
 the target project uses yarn as its package manager.
 
   * Replace reveal version with the link on `viewer/dist` in the project `package.json`
@@ -105,7 +124,7 @@ the target project uses yarn as its package manager.
 ```
   * After that, run `yarn` in the target project.
   * Don't forget you must not commit that change to the target project.
-    
+
 If you don't want to change package.json, you can use CLI utility [npm link](https://docs.npmjs.com/cli/link)
 or [yarn link](https://classic.yarnpkg.com/en/docs/cli/link/). To do that:
 
@@ -114,7 +133,7 @@ or [yarn link](https://classic.yarnpkg.com/en/docs/cli/link/). To do that:
 ```bash
 cd viewer/dist
 npm link
-``` 
+```
 
 2. Use the link in your target project
 
@@ -123,7 +142,7 @@ cd your-project-path
 npm link @cognite/reveal
 ```
 
-Now reveal should be replaced with the local build. 
+Now reveal should be replaced with the local build.
 
 When you don't need it linked in the target project anymore, run:
 

@@ -12,6 +12,8 @@ import {
   GreaterDepth,
   Group,
   LessEqualDepth,
+  Matrix4,
+  Object3D,
   Points,
   RawShaderMaterial,
   ShaderMaterial,
@@ -41,14 +43,22 @@ export class OverlayPointsObject extends Group {
   private readonly _positionAttribute: BufferAttribute;
   private readonly _colorBuffer: Float32Array;
   private readonly _colorAttribute: BufferAttribute;
+  private readonly _points: { frontPoints: Points; backPoints: Points };
+  private readonly _onBeforeRender?: Object3D['onBeforeRender'];
+  private _modelTransform: Matrix4;
 
-  constructor(maxNumberOfPoints: number, materialParameters: OverlayPointsParameters) {
+  constructor(
+    maxNumberOfPoints: number,
+    materialParameters: OverlayPointsParameters,
+    onBeforeRender?: Object3D['onBeforeRender']
+  ) {
     super();
     const geometry = new BufferGeometry();
     this._positionBuffer = new Float32Array(maxNumberOfPoints * 3);
     this._positionAttribute = new BufferAttribute(this._positionBuffer, 3);
     this._colorBuffer = new Float32Array(maxNumberOfPoints * 3).fill(1);
     this._colorAttribute = new BufferAttribute(this._colorBuffer, 3);
+    this._modelTransform = new Matrix4();
     geometry.setAttribute('position', this._positionAttribute);
     geometry.setAttribute('color', this._colorAttribute);
     geometry.setDrawRange(0, 0);
@@ -96,6 +106,8 @@ export class OverlayPointsObject extends Group {
 
     this._geometry = geometry;
     this._frontMaterial = frontMaterial;
+    this._points = { frontPoints, backPoints };
+    this._onBeforeRender = onBeforeRender;
   }
 
   public setPoints(points: Vector3[], colors?: Color[]): void {
@@ -118,14 +130,37 @@ export class OverlayPointsObject extends Group {
       }
     }
 
-    this._positionAttribute.updateRange = { offset: 0, count: points.length * 3 };
+    this._positionAttribute.clearUpdateRanges();
+    this._positionAttribute.updateRanges.push({ start: 0, count: points.length * 3 });
     this._positionAttribute.needsUpdate = true;
-    this._colorAttribute.updateRange = { offset: 0, count: points.length * 3 };
+
+    this._colorAttribute.clearUpdateRanges();
+    this._colorAttribute.updateRanges.push({ start: 0, count: points.length * 3 });
     this._colorAttribute.needsUpdate = true;
     this._geometry.setDrawRange(0, points.length);
 
     this._geometry.computeBoundingBox();
     this._geometry.computeBoundingSphere();
+  }
+
+  public setTransform(transform: Matrix4): void {
+    this._points.frontPoints.position.setFromMatrixPosition(transform);
+    this._points.frontPoints.quaternion.setFromRotationMatrix(transform);
+    this._points.frontPoints.scale.setFromMatrixScale(transform);
+
+    this._points.backPoints.position.setFromMatrixPosition(transform);
+    this._points.backPoints.quaternion.setFromRotationMatrix(transform);
+    this._points.backPoints.scale.setFromMatrixScale(transform);
+
+    this._modelTransform = transform.clone();
+  }
+
+  public getTransform(out?: Matrix4): Matrix4 {
+    if (out !== undefined) {
+      out.copy(this._modelTransform);
+      return out;
+    }
+    return this._modelTransform.clone();
   }
 
   public dispose(): void {
@@ -135,7 +170,8 @@ export class OverlayPointsObject extends Group {
 
   private initializePoints(geometry: BufferGeometry, frontMaterial: ShaderMaterial): Points {
     const frontPoints = createPoints(geometry, frontMaterial);
-    frontPoints.onBeforeRender = renderer => {
+    frontPoints.onBeforeRender = (renderer, ...rest) => {
+      this._onBeforeRender?.(renderer, ...rest);
       setUniforms(renderer, frontMaterial);
     };
 

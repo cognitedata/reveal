@@ -16,12 +16,14 @@ import { Cognite3DViewer } from '@reveal/api';
 import { jest } from '@jest/globals';
 import { fakeGetBoundingClientRect, mockViewerComponents } from '../../../../test-utilities';
 
+const TIMER_ADVANCE_MS = 50;
 describe(HtmlOverlayTool.name, () => {
   let canvasContainer: HTMLElement;
   let viewer: Cognite3DViewer;
   let renderer: THREE.WebGLRenderer;
 
   beforeEach(() => {
+    jest.useFakeTimers();
     const components = mockViewerComponents();
     viewer = components.viewer;
     renderer = components.renderer;
@@ -37,7 +39,10 @@ describe(HtmlOverlayTool.name, () => {
     const position = new THREE.Vector3();
 
     // Act & Assert
-    expect(() => helper.add(htmlElement, position)).toThrowError();
+    expect(() => {
+      helper.add(htmlElement, position);
+      jest.advanceTimersByTime(TIMER_ADVANCE_MS);
+    }).toThrowError();
   });
 
   test('add() accepts position set to absolute through cssText', () => {
@@ -62,6 +67,7 @@ describe(HtmlOverlayTool.name, () => {
 
     // Act
     helper.add(htmlElement, position);
+    jest.advanceTimersByTime(TIMER_ADVANCE_MS);
     helper.forceUpdate();
 
     // Assert
@@ -95,6 +101,8 @@ describe(HtmlOverlayTool.name, () => {
     const position = new THREE.Vector3(0, 0, 0.5);
 
     helper.add(htmlElement, position);
+    jest.advanceTimersByTime(TIMER_ADVANCE_MS);
+
     helper.forceUpdate();
 
     expect(htmlElement.style.visibility).toBe('visible');
@@ -121,11 +129,15 @@ describe(HtmlOverlayTool.name, () => {
 
     // Act
     helper.add(behindCameraElement, new THREE.Vector3(0, 0, -1), { ...options, userData: 'behindCameraElement' });
+    jest.advanceTimersByTime(TIMER_ADVANCE_MS);
     helper.add(behindFarPlaneElement, new THREE.Vector3(0, 0, 10), { ...options, userData: 'behindFarPlaneElement' });
+    jest.advanceTimersByTime(TIMER_ADVANCE_MS);
     helper.add(withinNearAndFarPlaneElement, new THREE.Vector3(0, 0, 0.5), {
       ...options,
       userData: 'withinNearAndFarPlaneElement'
     });
+    jest.advanceTimersByTime(TIMER_ADVANCE_MS);
+
     helper.forceUpdate();
 
     // Assert
@@ -160,6 +172,7 @@ describe(HtmlOverlayTool.name, () => {
       const element = document.createElement('div');
       element.style.position = 'absolute';
       helper.add(element, new THREE.Vector3(0, 0, 0));
+      jest.advanceTimersByTime(TIMER_ADVANCE_MS);
     }
     expect(canvasContainer.children.length).toBe(initialNumberOfElements + 10);
 
@@ -178,6 +191,7 @@ describe(HtmlOverlayTool.name, () => {
       const element = document.createElement('div');
       element.style.position = 'absolute';
       helper.add(element, new THREE.Vector3(0, 0, 0));
+      jest.advanceTimersByTime(TIMER_ADVANCE_MS);
     }
 
     // Act
@@ -206,11 +220,15 @@ describe(HtmlOverlayTool.name, () => {
 
     // Act
     helper.add(div1, new THREE.Vector3(0, 0, 0.5));
+    jest.advanceTimersByTime(TIMER_ADVANCE_MS);
+
     helper.add(div2, new THREE.Vector3(0, 0, 0.7));
+    jest.advanceTimersByTime(TIMER_ADVANCE_MS);
+
     helper.forceUpdate();
 
     // Assert
-    expect(createClusterElementCallback).toBeCalledTimes(1);
+    expect(createClusterElementCallback).toHaveBeenCalledTimes(1);
     expect(div1.style.visibility).toEqual('hidden');
     expect(div2.style.visibility).toEqual('hidden');
   });
@@ -233,8 +251,13 @@ describe(HtmlOverlayTool.name, () => {
 
     // Act
     helper.add(div1, new THREE.Vector3(0, 0, 0.5));
+    jest.advanceTimersByTime(TIMER_ADVANCE_MS);
+
     helper.add(div2, new THREE.Vector3(0, 0, 0.7));
+    jest.advanceTimersByTime(TIMER_ADVANCE_MS);
+
     helper.forceUpdate();
+
     expect(div1.parentElement).not.toBeNull();
     expect(div2.parentElement).not.toBeNull();
     expect(compositeElement.parentElement).not.toBeNull();

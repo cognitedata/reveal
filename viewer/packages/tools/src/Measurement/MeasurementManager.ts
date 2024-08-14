@@ -150,7 +150,7 @@ export class MeasurementManager {
     return labelElement;
   }
 
-  private pointerTo3DPosition(offsetX: number, offsetY: number) {
+  private pointerTo3DPosition(offsetX: number, offsetY: number): THREE.Vector3 {
     const mouse = getNormalizedPixelCoordinates(this._domElement, offsetX, offsetY);
 
     // Set the origin of the Ray to camera.

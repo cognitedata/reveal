@@ -7,30 +7,22 @@ import {
   type NodeAppearance,
   type NodeCollection,
   NodeIdNodeCollection,
-  TreeIndexNodeCollection,
-  type Cognite3DViewer,
-  type IndexSet
+  TreeIndexNodeCollection
 } from '@cognite/reveal';
 import { useEffect } from 'react';
-import { useSDK } from '../RevealContainer/SDKProvider';
+import { useSDK } from '../RevealCanvas/SDKProvider';
 import { type CogniteClient } from '@cognite/sdk';
 import { isEqual } from 'lodash';
-import { useReveal } from '../RevealContainer/RevealContext';
-
-export type NodeStylingGroup = {
-  nodeIds: number[];
-  style?: NodeAppearance;
-};
-
-export type TreeIndexStylingGroup = {
-  treeIndexSet: IndexSet;
-  style?: NodeAppearance;
-};
-
-export type CadModelStyling = {
-  defaultStyle?: NodeAppearance;
-  groups?: Array<NodeStylingGroup | TreeIndexStylingGroup>;
-};
+import { useReveal } from '../RevealCanvas/ViewerContext';
+import { modelExists } from '../../utilities/modelExists';
+import {
+  isNodeStylingGroup,
+  isTreeIndexStylingGroup,
+  type CadModelStyling,
+  type NodeStylingGroup,
+  type TreeIndexStylingGroup
+} from './types';
+import { assertNever } from '../../utilities/assertNever';
 
 export const useApplyCadModelStyling = (
   model?: CogniteCadModel,
@@ -62,7 +54,7 @@ async function applyStyling(
 ): Promise<void> {
   const firstChangeIndex = await getFirstChangeIndex();
 
-  for (let i = firstChangeIndex; i < model.styledNodeCollections.length; i++) {
+  for (let i = model.styledNodeCollections.length - 1; i >= firstChangeIndex; i--) {
     const viewerStyledNodeCollection = model.styledNodeCollections[i];
     model.unassignStyledNodeCollection(viewerStyledNodeCollection.nodeCollection);
   }
@@ -72,15 +64,15 @@ async function applyStyling(
 
     if (stylingGroup.style === undefined) continue;
 
-    if ('treeIndexSet' in stylingGroup) {
+    if (isTreeIndexStylingGroup(stylingGroup)) {
       const nodes = new TreeIndexNodeCollection(stylingGroup.treeIndexSet);
       model.assignStyledNodeCollection(nodes, stylingGroup.style);
-    }
-
-    if ('nodeIds' in stylingGroup) {
+    } else if (isNodeStylingGroup(stylingGroup)) {
       const nodes = new NodeIdNodeCollection(sdk, model);
       await nodes.executeFilter(stylingGroup.nodeIds);
       model.assignStyledNodeCollection(nodes, stylingGroup.style);
+    } else {
+      assertNever(stylingGroup);
     }
   }
 
@@ -173,11 +165,4 @@ function isEqualStyle(styleA: NodeAppearance, styleB: NodeAppearance): boolean {
       : colorA.equals(colorB);
 
   return color && isEqual(restA, restB);
-}
-
-export function modelExists(
-  model: CogniteCadModel | undefined,
-  viewer: Cognite3DViewer
-): model is CogniteCadModel {
-  return model !== undefined && viewer.models.includes(model);
 }

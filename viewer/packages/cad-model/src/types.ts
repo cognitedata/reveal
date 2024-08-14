@@ -2,6 +2,7 @@
  * Copyright 2022 Cognite AS
  */
 
+import type { Box3 } from 'three';
 import { CogniteCadModel } from './wrappers/CogniteCadModel';
 
 /**
@@ -28,7 +29,7 @@ export type GeometryFilter = {
    * or set in {@link https://fusion.cognite.com/ |Cognite Fusion}.
    * @see {@link GeometryFilter.isBoundingBoxInModelCoordinates}.
    */
-  boundingBox?: THREE.Box3;
+  boundingBox?: Box3;
 
   /**
    * When set, the geometry filter `boundingBox` will be considered to be in "Reveal/ThreeJS space".

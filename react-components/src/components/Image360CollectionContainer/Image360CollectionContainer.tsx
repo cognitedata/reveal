@@ -2,69 +2,108 @@
  * Copyright 2023 Cognite AS
  */
 import { type ReactElement, useEffect, useRef } from 'react';
-import { useReveal } from '../RevealContainer/RevealContext';
+import { useReveal } from '../RevealCanvas/ViewerContext';
 import { type Image360Collection } from '@cognite/reveal';
 import { useRevealKeepAlive } from '../RevealKeepAlive/RevealKeepAliveContext';
-import { type AddImageCollection360Options } from '../..';
-import { useLayersUrlParams } from '../RevealToolbar/hooks/useUrlStateParam';
+import { type AddImage360CollectionOptions } from '../Reveal3DResources/types';
+import {
+  type ImageCollectionModelStyling,
+  useApply360AnnotationStyling
+} from './useApply360AnnotationStyling';
+import { type Matrix4 } from 'three';
+import {
+  DEFAULT_IMAGE360_ICON_COUNT_LIMIT,
+  DEFAULT_IMAGE360_ICON_CULLING_RADIUS
+} from './constants';
+import { useReveal3DResourcesCount } from '../Reveal3DResources/Reveal3DResourcesInfoContext';
+import { getViewerResourceCount } from '../../utilities/getViewerResourceCount';
 
 type Image360CollectionContainerProps = {
-  collectionId: { siteId: string } | { externalId: string; space: string };
+  addImage360CollectionOptions: AddImage360CollectionOptions;
+  styling?: ImageCollectionModelStyling;
   onLoad?: (image360: Image360Collection) => void;
-  onLoadError?: (addOptions: AddImageCollection360Options, error: any) => void;
+  onLoadError?: (addOptions: AddImage360CollectionOptions, error: any) => void;
 };
 
 export function Image360CollectionContainer({
-  collectionId,
+  addImage360CollectionOptions,
+  styling,
   onLoad,
   onLoadError
 }: Image360CollectionContainerProps): ReactElement {
   const cachedViewerRef = useRevealKeepAlive();
   const modelRef = useRef<Image360Collection>();
   const viewer = useReveal();
-  const [layersUrlState] = useLayersUrlParams();
-  const { image360Layers } = layersUrlState;
+  const { setRevealResourcesCount } = useReveal3DResourcesCount();
 
   const initializingSiteId = useRef<{ siteId: string } | { externalId: string } | undefined>(
     undefined
   );
 
   useEffect(() => {
-    console.log(collectionId);
-    if ('siteId' in collectionId && initializingSiteId.current === collectionId) {
+    if (
+      'siteId' in addImage360CollectionOptions &&
+      initializingSiteId.current === addImage360CollectionOptions
+    ) {
       return;
     }
 
-    initializingSiteId.current = collectionId;
+    initializingSiteId.current = addImage360CollectionOptions;
 
-    void add360Collection();
+    void add360Collection(addImage360CollectionOptions.transform);
     return remove360Collection;
-  }, [collectionId]);
+  }, [addImage360CollectionOptions]);
+
+  useApply360AnnotationStyling(modelRef.current, styling);
+  useSetIconCulling(modelRef.current, addImage360CollectionOptions.iconCullingOptions);
+
+  useEffect(() => {
+    if (
+      modelRef.current === undefined ||
+      addImage360CollectionOptions.transform === undefined ||
+      !viewer.get360ImageCollections().includes(modelRef.current)
+    ) {
+      return;
+    }
+
+    modelRef.current.setModelTransformation(addImage360CollectionOptions.transform);
+  }, [modelRef, addImage360CollectionOptions.transform, viewer]);
 
   return <></>;
 
-  async function add360Collection(): Promise<void> {
+  async function add360Collection(transform?: Matrix4): Promise<void> {
     await getOrAdd360Collection()
       .then((image360Collection) => {
+        if (transform !== undefined) {
+          image360Collection.setModelTransformation(transform);
+        }
+
+        setCollectionCullingOptions(
+          image360Collection,
+          addImage360CollectionOptions.iconCullingOptions
+        );
+
         modelRef.current = image360Collection;
         onLoad?.(image360Collection);
-        applyLayersState(image360Collection);
+        setRevealResourcesCount(getViewerResourceCount(viewer));
       })
       .catch((error: any) => {
         const errorReportFunction = onLoadError ?? defaultLoadErrorHandler;
-        errorReportFunction(collectionId, error);
+        errorReportFunction(addImage360CollectionOptions, error);
       });
 
     async function getOrAdd360Collection(): Promise<Image360Collection> {
       const collections = viewer.get360ImageCollections();
-      const siteId = 'siteId' in collectionId ? collectionId.siteId : collectionId.externalId;
+      const siteId =
+        'siteId' in addImage360CollectionOptions
+          ? addImage360CollectionOptions.siteId
+          : addImage360CollectionOptions.externalId;
       const collection = collections.find((collection) => collection.id === siteId);
       if (collection !== undefined) {
         return collection;
       }
 
-      if ('siteId' in collectionId) {
-        console.log('siteId in collectionId');
+      if ('siteId' in addImage360CollectionOptions) {
         return await viewer.add360ImageSet(
           'events',
           { site_id: siteId },
@@ -72,8 +111,8 @@ export function Image360CollectionContainer({
         );
       } else {
         return await viewer.add360ImageSet('datamodels', {
-          image360CollectionExternalId: collectionId.externalId,
-          space: collectionId.space
+          image360CollectionExternalId: addImage360CollectionOptions.externalId,
+          space: addImage360CollectionOptions.space
         });
       }
     }
@@ -86,19 +125,34 @@ export function Image360CollectionContainer({
       return;
 
     viewer.remove360ImageSet(modelRef.current);
+    setRevealResourcesCount(getViewerResourceCount(viewer));
     modelRef.current = undefined;
-  }
-
-  function applyLayersState(image360Collection: Image360Collection): void {
-    if (image360Layers === undefined) {
-      return;
-    }
-    const urlLayerState = image360Layers.find((layer) => layer.siteId === image360Collection.id);
-    urlLayerState !== undefined && image360Collection.setIconsVisibility(urlLayerState.applied);
   }
 }
 
-function defaultLoadErrorHandler(addOptions: AddImageCollection360Options, error: any): void {
+const useSetIconCulling = (
+  collection?: Image360Collection,
+  cullingParameters?: { radius?: number; iconCountLimit?: number }
+): void => {
+  const radius = cullingParameters?.radius;
+  const iconCountLimit = cullingParameters?.iconCountLimit;
+
+  useEffect(() => {
+    setCollectionCullingOptions(collection, cullingParameters);
+  }, [collection, radius, iconCountLimit]);
+};
+
+function setCollectionCullingOptions(
+  collection?: Image360Collection,
+  cullingParameters?: { radius?: number; iconCountLimit?: number }
+): void {
+  collection?.set360IconCullingRestrictions(
+    cullingParameters?.radius ?? DEFAULT_IMAGE360_ICON_CULLING_RADIUS,
+    cullingParameters?.iconCountLimit ?? DEFAULT_IMAGE360_ICON_COUNT_LIMIT
+  );
+}
+
+function defaultLoadErrorHandler(addOptions: AddImage360CollectionOptions, error: any): void {
   console.warn(
     `Failed to load image collection ${
       'siteId' in addOptions ? addOptions.siteId : addOptions.externalId

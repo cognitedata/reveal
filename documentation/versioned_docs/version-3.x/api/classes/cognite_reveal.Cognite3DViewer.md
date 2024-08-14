@@ -164,7 +164,7 @@ Returns the renderer used to produce images from 3D geometry.
 
 ### addCadModel
 
-▸ **addCadModel**(`options`): `Promise`<[`Cognite3DModel`](cognite_reveal.Cognite3DModel.md)\>
+▸ **addCadModel**(`options`): `Promise`\<[`Cognite3DModel`](cognite_reveal.Cognite3DModel.md)\>
 
 Add a new CAD 3D model to the viewer.
 Call [Cognite3DViewer.fitCameraToModel](cognite_reveal.Cognite3DViewer.md#fitcameratomodel) to see the model after the model has loaded.
@@ -188,7 +188,7 @@ viewer.fitCameraToModel(model, 0);
 
 #### Returns
 
-`Promise`<[`Cognite3DModel`](cognite_reveal.Cognite3DModel.md)\>
+`Promise`\<[`Cognite3DModel`](cognite_reveal.Cognite3DModel.md)\>
 
 #### Defined in
 
@@ -198,7 +198,7 @@ ___
 
 ### addModel
 
-▸ **addModel**(`options`): `Promise`<[`CognitePointCloudModel`](cognite_reveal.CognitePointCloudModel.md) \| [`Cognite3DModel`](cognite_reveal.Cognite3DModel.md)\>
+▸ **addModel**(`options`): `Promise`\<[`CognitePointCloudModel`](cognite_reveal.CognitePointCloudModel.md) \| [`Cognite3DModel`](cognite_reveal.Cognite3DModel.md)\>
 
 Add a new model to the viewer.
 Call [Cognite3DViewer.fitCameraToModel](cognite_reveal.Cognite3DViewer.md#fitcameratomodel) to see the model after the model has loaded.
@@ -222,7 +222,7 @@ viewer.fitCameraToModel(model, 0);
 
 #### Returns
 
-`Promise`<[`CognitePointCloudModel`](cognite_reveal.CognitePointCloudModel.md) \| [`Cognite3DModel`](cognite_reveal.Cognite3DModel.md)\>
+`Promise`\<[`CognitePointCloudModel`](cognite_reveal.CognitePointCloudModel.md) \| [`Cognite3DModel`](cognite_reveal.Cognite3DModel.md)\>
 
 #### Defined in
 
@@ -249,7 +249,7 @@ viewer.addObject3D(sphere);
 
 | Name | Type |
 | :------ | :------ |
-| `object` | `Object3D`<`Event`\> |
+| `object` | `Object3D`\<`Event`\> |
 
 #### Returns
 
@@ -263,7 +263,7 @@ ___
 
 ### addPointCloudModel
 
-▸ **addPointCloudModel**(`options`): `Promise`<[`CognitePointCloudModel`](cognite_reveal.CognitePointCloudModel.md)\>
+▸ **addPointCloudModel**(`options`): `Promise`\<[`CognitePointCloudModel`](cognite_reveal.CognitePointCloudModel.md)\>
 
 Add a new pointcloud 3D model to the viewer.
 Call [Cognite3DViewer.fitCameraToModel](cognite_reveal.Cognite3DViewer.md#fitcameratomodel) to see the model after the model has loaded.
@@ -287,7 +287,7 @@ viewer.fitCameraToModel(model, 0);
 
 #### Returns
 
-`Promise`<[`CognitePointCloudModel`](cognite_reveal.CognitePointCloudModel.md)\>
+`Promise`\<[`CognitePointCloudModel`](cognite_reveal.CognitePointCloudModel.md)\>
 
 #### Defined in
 
@@ -297,7 +297,7 @@ ___
 
 ### determineModelType
 
-▸ **determineModelType**(`modelId`, `revisionId`): `Promise`<``""`` \| [`SupportedModelTypes`](../modules/cognite_reveal.md#supportedmodeltypes)\>
+▸ **determineModelType**(`modelId`, `revisionId`): `Promise`\<``""`` \| [`SupportedModelTypes`](../modules/cognite_reveal.md#supportedmodeltypes)\>
 
 Use to determine of which type the model is.
 
@@ -328,7 +328,7 @@ viewer.fitCameraToModel(model);
 
 #### Returns
 
-`Promise`<``""`` \| [`SupportedModelTypes`](../modules/cognite_reveal.md#supportedmodeltypes)\>
+`Promise`\<``""`` \| [`SupportedModelTypes`](../modules/cognite_reveal.md#supportedmodeltypes)\>
 
 Empty string if type is not supported.
 
@@ -472,7 +472,7 @@ ___
 
 ### getIntersectionFromPixel
 
-▸ **getIntersectionFromPixel**(`offsetX`, `offsetY`): `Promise`<[`Intersection`](../modules/cognite_reveal.md#intersection)\>
+▸ **getIntersectionFromPixel**(`offsetX`, `offsetY`): `Promise`\<[`Intersection`](../modules/cognite_reveal.md#intersection)\>
 
 Raycasting model(s) for finding where the ray intersects with the model.
 
@@ -513,7 +513,7 @@ if (intersection) // it was a hit
 
 #### Returns
 
-`Promise`<[`Intersection`](../modules/cognite_reveal.md#intersection)\>
+`Promise`\<[`Intersection`](../modules/cognite_reveal.md#intersection)\>
 
 A promise that if there was an intersection then return the intersection object - otherwise it
 returns `null` if there were no intersections.
@@ -522,7 +522,7 @@ returns `null` if there were no intersections.
 
 [packages/api/src/public/migration/Cognite3DViewer.ts:1047](https://github.com/cognitedata/reveal/blob/71be00fcc/viewer/packages/api/src/public/migration/Cognite3DViewer.ts#L1047)
 
-▸ **getIntersectionFromPixel**(`offsetX`, `offsetY`, `options`): `Promise`<[`Intersection`](../modules/cognite_reveal.md#intersection)\>
+▸ **getIntersectionFromPixel**(`offsetX`, `offsetY`, `options`): `Promise`\<[`Intersection`](../modules/cognite_reveal.md#intersection)\>
 
 **`deprecated`** Since 3.1 options argument have no effect.
 
@@ -536,7 +536,7 @@ returns `null` if there were no intersections.
 
 #### Returns
 
-`Promise`<[`Intersection`](../modules/cognite_reveal.md#intersection)\>
+`Promise`\<[`Intersection`](../modules/cognite_reveal.md#intersection)\>
 
 #### Defined in
 
@@ -564,7 +564,7 @@ ___
 
 ### getScreenshot
 
-▸ **getScreenshot**(`width?`, `height?`): `Promise`<`string`\>
+▸ **getScreenshot**(`width?`, `height?`): `Promise`\<`string`\>
 
 Take screenshot from the current camera position.
 
@@ -590,7 +590,7 @@ document.body.appendChild(url);
 
 #### Returns
 
-`Promise`<`string`\>
+`Promise`\<`string`\>
 
 A [Data URL](https://developer.mozilla.org/en-US/docs/Web/HTTP/Basics_of_HTTP/Data_URIs) of the image ('image/png').
 
@@ -903,7 +903,7 @@ viewer.removeObject3D(sphere);
 
 | Name | Type |
 | :------ | :------ |
-| `object` | `Object3D`<`Event`\> |
+| `object` | `Object3D`\<`Event`\> |
 
 #### Returns
 
@@ -1050,7 +1050,7 @@ ___
 
 ### setViewState
 
-▸ **setViewState**(`state`): `Promise`<`void`\>
+▸ **setViewState**(`state`): `Promise`\<`void`\>
 
 Restores camera settings from the state provided, and clears all current styled
 node collections and applies the `state` object.
@@ -1063,7 +1063,7 @@ node collections and applies the `state` object.
 
 #### Returns
 
-`Promise`<`void`\>
+`Promise`\<`void`\>
 
 #### Defined in
 
@@ -1112,7 +1112,7 @@ if (screenCoordinates == null) {
 | Name | Type | Description |
 | :------ | :------ | :------ |
 | `point` | `Vector3` | World space coordinate. |
-| `normalize?` | `boolean` | Optional. If true, coordinates are normalized into [0,1]. If false, the values are in the range [0, <canvas_size>). |
+| `normalize?` | `boolean` | Optional. If true, coordinates are normalized into [0,1]. If false, the values are in the range [0, \<canvas_size>). |
 
 #### Returns
 

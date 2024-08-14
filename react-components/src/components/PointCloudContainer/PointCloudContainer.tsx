@@ -1,31 +1,20 @@
 /*!
  * Copyright 2023 Cognite AS
  */
-import {
-  type CognitePointCloudModel,
-  type AddModelOptions,
-  type PointCloudAppearance,
-  DefaultPointCloudAppearance,
-  AnnotationIdPointCloudObjectCollection
-} from '@cognite/reveal';
+import { type CognitePointCloudModel, type AddModelOptions } from '@cognite/reveal';
 
 import { useEffect, type ReactElement, useState, useRef } from 'react';
 import { Matrix4 } from 'three';
-import { useReveal } from '../RevealContainer/RevealContext';
+import { useReveal } from '../RevealCanvas/ViewerContext';
 import { useRevealKeepAlive } from '../RevealKeepAlive/RevealKeepAliveContext';
-import { useReveal3DResourcesCount } from '../Reveal3DResources/Reveal3DResourcesCountContext';
-import { useLayersUrlParams } from '../RevealToolbar/hooks/useUrlStateParam';
+import { useReveal3DResourcesCount } from '../Reveal3DResources/Reveal3DResourcesInfoContext';
 import { cloneDeep, isEqual } from 'lodash';
-
-export type AnnotationIdStylingGroup = {
-  annotationIds: number[];
-  style: PointCloudAppearance;
-};
-
-export type PointCloudModelStyling = {
-  defaultStyle?: PointCloudAppearance;
-  groups?: AnnotationIdStylingGroup[];
-};
+import {
+  useApplyPointCloudStyling,
+  type PointCloudModelStyling
+} from './useApplyPointCloudStyling';
+import { modelExists } from '../../utilities/modelExists';
+import { getViewerResourceCount } from '../../utilities/getViewerResourceCount';
 
 export type CognitePointCloudModelProps = {
   addModelOptions: AddModelOptions;
@@ -43,12 +32,10 @@ export function PointCloudContainer({
   onLoadError
 }: CognitePointCloudModelProps): ReactElement {
   const cachedViewerRef = useRevealKeepAlive();
-  const [model, setModel] = useState<CognitePointCloudModel>();
+  const [model, setModel] = useState<CognitePointCloudModel | undefined>(undefined);
   const viewer = useReveal();
   const { modelId, revisionId } = addModelOptions;
   const { setRevealResourcesCount } = useReveal3DResourcesCount();
-  const [layersUrlState] = useLayersUrlParams();
-  const { pointCloudLayers } = layersUrlState;
   const initializingModel = useRef<AddModelOptions | undefined>(undefined);
 
   useEffect(() => {
@@ -61,8 +48,7 @@ export function PointCloudContainer({
     addModel(modelId, revisionId, transform)
       .then((pointCloudModel) => {
         onLoad?.(pointCloudModel);
-        setRevealResourcesCount(viewer.models.length);
-        applyLayersState(pointCloudModel);
+        setRevealResourcesCount(getViewerResourceCount(viewer));
       })
       .catch((error) => {
         const errorHandler = onLoadError ?? defaultLoadErrorHandler;
@@ -71,17 +57,12 @@ export function PointCloudContainer({
   }, [modelId, revisionId]);
 
   useEffect(() => {
-    if (model === undefined || transform === undefined) return;
+    if (!modelExists(model, viewer) || transform === undefined) return;
+
     model.setModelTransformation(transform);
   }, [transform, model]);
 
-  useEffect(() => {
-    if (model === undefined || styling === undefined) return;
-
-    applyStyling(model, styling);
-
-    return cleanStyling;
-  }, [styling, model]);
+  useApplyPointCloudStyling(model, styling);
 
   useEffect(() => removeModel, [model]);
 
@@ -115,48 +96,14 @@ export function PointCloudContainer({
   }
 
   function removeModel(): void {
-    if (model === undefined || !viewer.models.includes(model)) return;
+    if (!modelExists(model, viewer)) return;
 
     if (cachedViewerRef !== undefined && !cachedViewerRef.isRevealContainerMountedRef.current)
       return;
 
     viewer.removeModel(model);
+    setRevealResourcesCount(getViewerResourceCount(viewer));
     setModel(undefined);
-  }
-
-  function cleanStyling(): void {
-    if (model === undefined || !viewer.models.includes(model)) return;
-
-    model.setDefaultPointCloudAppearance(DefaultPointCloudAppearance);
-    model.removeAllStyledObjectCollections();
-  }
-
-  function applyLayersState(model: CognitePointCloudModel): void {
-    if (pointCloudLayers === undefined) {
-      return;
-    }
-    const index = viewer.models.indexOf(model);
-    const urlLayerState = pointCloudLayers.find(
-      (layer) => layer.revisionId === revisionId && layer.index === index
-    );
-    urlLayerState !== undefined &&
-      model.setDefaultPointCloudAppearance({ visible: urlLayerState.applied });
-  }
-}
-
-function applyStyling(model: CognitePointCloudModel, styling: PointCloudModelStyling): void {
-  if (styling.defaultStyle !== undefined) {
-    model.setDefaultPointCloudAppearance(styling.defaultStyle);
-  }
-
-  if (styling.groups !== undefined) {
-    for (const group of styling.groups) {
-      if (group.annotationIds !== undefined) {
-        const collection = new AnnotationIdPointCloudObjectCollection(group.annotationIds);
-
-        model.assignStyledObjectCollection(collection, group.style);
-      }
-    }
   }
 }
 

@@ -3,21 +3,21 @@
  */
 
 import { useEffect } from 'react';
-import { useSceneConfig } from './useSceneConfig';
+import { useSceneConfig } from '../query/useSceneConfig';
 import * as THREE from 'three';
-import { useReveal } from '..';
 import { useQuery } from '@tanstack/react-query';
-import { useSDK } from '../components/RevealContainer/SDKProvider';
-import { type Cognite3DViewer } from '@cognite/reveal';
+import { useSDK } from '../components/RevealCanvas/SDKProvider';
+import { type Cognite3DViewer, CustomObject } from '@cognite/reveal';
+import { useReveal } from '../components/RevealCanvas/ViewerContext';
 
 export const useSkyboxFromScene = (sceneExternalId: string, sceneSpaceId: string): void => {
   const scene = useSceneConfig(sceneExternalId, sceneSpaceId);
   const viewer = useReveal();
   const sdk = useSDK();
 
-  const { data: skyboxTexture } = useQuery(
-    ['reveal', 'react-components', 'skyboxUrl', scene.data],
-    async () => {
+  const { data: skyboxTexture } = useQuery({
+    queryKey: ['reveal', 'react-components', 'skyboxUrl', scene.data],
+    queryFn: async () => {
       if (scene.data?.skybox === undefined) {
         return null;
       }
@@ -30,10 +30,16 @@ export const useSkyboxFromScene = (sceneExternalId: string, sceneSpaceId: string
       }
 
       const skyboxUrl = skyBoxUrls[0].downloadUrl;
-      return new THREE.TextureLoader().load(skyboxUrl);
+      try {
+        const texture = await new THREE.TextureLoader().loadAsync(skyboxUrl);
+        return texture;
+      } catch (error) {
+        console.error('Failed to load skybox texture');
+        return null;
+      }
     },
-    { staleTime: Infinity }
-  );
+    staleTime: Infinity
+  });
 
   useEffect(() => {
     if (skyboxTexture === undefined || skyboxTexture === null) {
@@ -41,7 +47,9 @@ export const useSkyboxFromScene = (sceneExternalId: string, sceneSpaceId: string
     }
     const [skyboxMesh, cleanupFunction] = initializeSkybox(skyboxTexture, viewer);
 
-    viewer.addObject3D(skyboxMesh);
+    const customObject = new CustomObject(skyboxMesh);
+    customObject.isPartOfBoundingBox = false;
+    viewer.addCustomObject(customObject);
 
     return cleanupFunction;
   }, [skyboxTexture]);

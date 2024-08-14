@@ -1,7 +1,7 @@
 /*!
  * Copyright 2022 Cognite AS
  */
-import * as THREE from 'three';
+import { Box3, PerspectiveCamera } from 'three';
 import {
   CameraState,
   CameraChangeDelegate,
@@ -26,7 +26,7 @@ export interface CameraManager {
    * Implementations must trigger the `cameraChange`-event whenever the
    * camera changes.
    */
-  getCamera(): THREE.PerspectiveCamera;
+  getCamera(): PerspectiveCamera;
   /**
    * Set camera's state. Rotation and target can't be set at the same time as they could conflict,
    * should throw an error if both are passed with non-zero value inside state.
@@ -94,7 +94,7 @@ export interface CameraManager {
    * @param duration The duration of the animation moving the camera.
    * @param radiusFactor The ratio of the distance from camera to center of box and radius of the box.
    */
-  fitCameraToBoundingBox(boundingBox: THREE.Box3, duration?: number, radiusFactor?: number): void;
+  fitCameraToBoundingBox(boundingBox: Box3, duration?: number, radiusFactor?: number): void;
   /**
    * Updates internal state of camera manager. Expected to update visual state of the camera
    * as well as it's near and far planes if needed. Called in `requestAnimationFrame`-loop.
@@ -102,7 +102,7 @@ export interface CameraManager {
    * @param deltaTime Delta time since last update in seconds.
    * @param boundingBox Global bounding box of the model(s) and any custom objects added to the scene.
    */
-  update(deltaTime: number, boundingBox: THREE.Box3): void;
+  update(deltaTime: number, boundingBox: Box3): void;
   /**
    * @obvious
    */

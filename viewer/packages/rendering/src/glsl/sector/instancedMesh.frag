@@ -21,7 +21,7 @@ void main()
 {
     highp float treeIndex = unpackTreeIndex(v_treeIndexPacked);
     NodeAppearance appearance = nodeAppearanceFromTexel(v_nodeAppearanceTexel);
-    if (isClipped(appearance, v_viewPosition)) {
+    if (isClipped(v_viewPosition)) {
         discard;
     }
 

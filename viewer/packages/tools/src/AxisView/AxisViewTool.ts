@@ -5,23 +5,17 @@
 import * as THREE from 'three';
 import cloneDeep from 'lodash/cloneDeep';
 import merge from 'lodash/merge';
-import TWEEN from '@tweenjs/tween.js';
 import glsl from 'glslify';
 
 import { Cognite3DViewerToolBase } from '../Cognite3DViewerToolBase';
-import {
-  AxisBoxConfig,
-  defaultAxisBoxConfig,
-  AxisBoxFaceConfig,
-  Corner,
-  AbsolutePosition,
-  RelativePosition
-} from './types';
+import { AxisBoxConfig, defaultAxisBoxConfig, AxisBoxFaceConfig, AbsolutePosition, RelativePosition } from './types';
 import { MetricsLogger } from '@reveal/metrics';
 import { Cognite3DViewer } from '@reveal/api';
 
 import vertexShader from './shaders/axisTool.vert';
 import fragmentShader from './shaders/axisTool.frag';
+import { moveCameraTo } from '../utilities/moveCameraTo';
+import { Corner } from '../utilities/Corner';
 
 export class AxisViewTool extends Cognite3DViewerToolBase {
   private readonly _layoutConfig: Required<AxisBoxConfig>;
@@ -170,11 +164,10 @@ export class AxisViewTool extends Cognite3DViewerToolBase {
 
     if (!(intersects.length > 0)) return false;
 
-    const targetPosition = intersects[0].object.position.clone().normalize();
+    const targetAxis = intersects[0].object.position.clone().normalize();
     const targetUp = (intersects[0].object.userData.upVector as THREE.Vector3).clone();
 
-    this.moveCameraTo(targetPosition, targetUp);
-
+    moveCameraTo(this._viewer.cameraManager, targetAxis, targetUp, this._layoutConfig.animationSpeed);
     return true;
   }
 
@@ -307,8 +300,9 @@ export class AxisViewTool extends Cognite3DViewerToolBase {
       context.fillStyle = compassLayout.fontColor!.getStyle();
       context.fillText(compassLayout.ringLabel, halfSize, halfSize * (1 / 4) + fontSize / 3);
     }
-
-    return new THREE.CanvasTexture(canvas);
+    const canvasTexture = new THREE.CanvasTexture(canvas);
+    canvasTexture.anisotropy = 8;
+    return canvasTexture;
   }
 
   private getFaceTexture(faceConfig: AxisBoxFaceConfig, size: number) {
@@ -334,8 +328,9 @@ export class AxisViewTool extends Cognite3DViewerToolBase {
       context.fillStyle = faceConfig.fontColor!.getStyle();
       context.fillText(faceConfig.label!, textureSize / 2, textureSize / 2 + fontSize / 3);
     }
-
-    return new THREE.CanvasTexture(canvas);
+    const canvasTexture = new THREE.CanvasTexture(canvas);
+    canvasTexture.anisotropy = 8;
+    return canvasTexture;
   }
 
   private createBoxFace(position: THREE.Vector3, faceConfig: AxisBoxFaceConfig, upVector = new THREE.Vector3(0, 1, 0)) {
@@ -366,62 +361,5 @@ export class AxisViewTool extends Cognite3DViewerToolBase {
     face.userData.upVector = upVector;
 
     return face;
-  }
-
-  private moveCameraTo(targetAxis: THREE.Vector3, targetUpAxis: THREE.Vector3) {
-    const cameraManager = this._viewer.cameraManager;
-
-    const { position: currentCameraPosition, target: cameraTarget, rotation } = cameraManager.getCameraState();
-
-    const offsetInCameraSpace = currentCameraPosition
-      .clone()
-      .sub(cameraTarget)
-      .applyQuaternion(rotation.clone().conjugate());
-
-    const from = { t: 0 };
-    const to = { t: 1 };
-
-    const animation = new TWEEN.Tween(from);
-
-    const forward = targetAxis.clone();
-
-    const fromRotation = rotation.clone();
-    const toRotation = new THREE.Quaternion().setFromRotationMatrix(
-      new THREE.Matrix4().makeBasis(targetUpAxis.clone().cross(forward), targetUpAxis, forward)
-    );
-
-    const epsilon = 1e-6;
-
-    if (fromRotation.angleTo(toRotation) < epsilon) {
-      return;
-    }
-
-    const tmpPosition = new THREE.Vector3();
-    const tmpRotation = new THREE.Quaternion();
-
-    const tween = animation
-      .to(to, this._layoutConfig.animationSpeed)
-      .onUpdate(() => {
-        tmpRotation.slerpQuaternions(fromRotation, toRotation, from.t);
-
-        tmpPosition.copy(offsetInCameraSpace);
-        tmpPosition.applyQuaternion(tmpRotation);
-        tmpPosition.add(cameraTarget);
-
-        cameraManager.setCameraState({ position: tmpPosition, rotation: tmpRotation });
-      })
-      .onComplete(() => {
-        if (targetAxis.y !== 0) {
-          // Camera will be looking straight up or down. By making sure the position and target is exactly on top of each other,
-          // the camera.lookAt() function used in ComboControls will pick another axis as the up-direction. This happens to coincide
-          // with targetUpAxis, but the latter really has no effect on the resulting "up" direction.
-          tmpPosition.x = cameraTarget.x;
-          tmpPosition.z = cameraTarget.z;
-        }
-        cameraManager.setCameraState({ position: tmpPosition, target: cameraTarget });
-      })
-      .start(TWEEN.now());
-
-    tween.update(TWEEN.now());
   }
 }

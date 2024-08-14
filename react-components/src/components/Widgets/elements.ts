@@ -25,7 +25,4 @@ export const StyledComponent = styled.div<{ isMinimized: boolean }>`
   min-width: 20%;
   min-height: 10%;
   max-width: ${({ isMinimized }) => (isMinimized ? '300px' : '100%')};
-  box-shadow:
-    0px 1px 1px 1px rgba(79, 82, 104, 0.06),
-    0px 1px 2px 1px rgba(79, 82, 104, 0.04);
 `;

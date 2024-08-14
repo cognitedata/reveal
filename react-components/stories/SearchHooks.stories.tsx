@@ -4,37 +4,43 @@
 
 import type { Meta, StoryObj } from '@storybook/react';
 import {
-  RevealContainer,
+  RevealCanvas,
   RevealToolbar,
   type AddResourceOptions,
-  type AddReveal3DModelOptions,
-  type AddImageCollection360Options
+  type AddImage360CollectionOptions,
+  RevealContext,
+  type AddCadResourceOptions,
+  type AddPointCloudResourceOptions
 } from '../src';
 import { Color } from 'three';
-import { type ReactElement, useState, useMemo, useEffect } from 'react';
+import { type ReactElement, useState, useMemo, useCallback } from 'react';
 import { createSdkByUrlToken } from './utilities/createSdkByUrlToken';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import { RevealResourcesFitCameraOnLoad } from './utilities/with3dResoursesFitCameraOnLoad';
 import {
   useAllMappedEquipmentFDM,
   useSearchMappedEquipmentFDM
-} from '../src/hooks/useSearchMappedEquipmentFDM';
+} from '../src/query/useSearchMappedEquipmentFDM';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import {
   useAllMappedEquipmentAssetMappings,
   useSearchMappedEquipmentAssetMappings
-} from '../src/hooks/useSearchMappedEquipmentAssetMappings';
+} from '../src/query/useSearchMappedEquipmentAssetMappings';
 import {
   useAllAssetsMapped360Annotations,
   useSearchAssetsMapped360Annotations
-} from '../src/hooks/useSearchAssetsMapped360Annotations';
+} from '../src/query/useSearchAssetsMapped360Annotations';
+import {
+  useAllAssetsMappedPointCloudAnnotations,
+  useSearchAssetsMappedPointCloudAnnotations
+} from '../src/query/useSearchAssetsMappedPointCloudAnnotations';
 import { isEqual } from 'lodash';
-import { type NodeItem } from '../src/utilities/FdmSDK';
+import { type NodeItem } from '../src/data-providers/FdmSDK';
 import { Button, Input } from '@cognite/cogs.js';
+import { is360ImageAddOptions } from '../src/components/Reveal3DResources/typeGuards';
 
 const queryClient = new QueryClient();
 const sdk = createSdkByUrlToken();
-const spacesToSearch = ['fdx-boys'];
 const viewsToSearch = [
   { externalId: 'Equipment', space: 'fdx-boys' },
   { externalId: 'WorkOrderMultiple', space: 'fdx-boys' },
@@ -53,10 +59,11 @@ const StoryContent = ({ resources }: { resources: AddResourceOptions[] }): React
   const [mainSearchQuery, setMainSearchQuery] = useState<string>('');
   const [searchMethod, setSearchMethod] = useState<
     'allFdm' | 'allAssets' | 'fdmSearch' | 'assetSearch'
-  >('fdmSearch');
+  >('assetSearch');
 
   const filteredResources = resources.filter(
-    (resource): resource is AddReveal3DModelOptions => 'modelId' in resource
+    (resource): resource is AddCadResourceOptions | AddPointCloudResourceOptions =>
+      !is360ImageAddOptions(resource)
   );
 
   const { data: searchData } = useSearchMappedEquipmentFDM(
@@ -64,48 +71,62 @@ const StoryContent = ({ resources }: { resources: AddResourceOptions[] }): React
     viewsToSearch,
     filteredResources,
     undefined,
-    100,
-    sdk
+    100
   );
 
-  const { data: assetSearchData } = useSearchMappedEquipmentAssetMappings(
-    mainSearchQuery,
-    filteredResources,
-    100,
-    sdk
-  );
+  const {
+    data: assetSearchData,
+    isFetching: isAssetSearchFetching,
+    hasNextPage: assetSearchHasNextPage,
+    fetchNextPage: fetchAssetSearchNextPage
+  } = useSearchMappedEquipmentAssetMappings(mainSearchQuery, filteredResources, 1000, sdk);
 
-  const { data: allEquipment } = useAllMappedEquipmentFDM(filteredResources, viewsToSearch, sdk);
+  const { data: allEquipment } = useAllMappedEquipmentFDM(filteredResources, viewsToSearch);
 
   const {
     data: allAssets,
     isFetching,
     hasNextPage,
     fetchNextPage
-  } = useAllMappedEquipmentAssetMappings(filteredResources, sdk);
+  } = useAllMappedEquipmentAssetMappings(filteredResources, sdk, 25);
 
   const filtered360ImageResources = resources.filter(
-    (resource): resource is AddImageCollection360Options => 'siteId' in resource
+    (resource): resource is AddImage360CollectionOptions => 'siteId' in resource
   );
   const siteIds = filtered360ImageResources.map((filteredResource) => {
     return 'siteId' in filteredResource ? filteredResource.siteId : filteredResource.externalId;
   });
 
-  const { data: annotationAssetSearchData } = useSearchAssetsMapped360Annotations(
+  const { data: assetAnnotationImage360SearchData } = useSearchAssetsMapped360Annotations(
     siteIds,
     sdk,
     mainSearchQuery
   );
 
-  const { data: allAnnotationAssets } = useAllAssetsMapped360Annotations(sdk, siteIds);
+  const { data: all360ImageAssetAnnotationMappings } = useAllAssetsMapped360Annotations(
+    sdk,
+    siteIds
+  );
 
-  useEffect(() => {
-    if (searchMethod !== 'allAssets') return;
+  const { data: pointCloudAssetSearchData } = useSearchAssetsMappedPointCloudAnnotations(
+    filteredResources,
+    sdk,
+    mainSearchQuery
+  );
 
-    if (!isFetching && hasNextPage !== undefined) {
+  const { data: allPointCloudAssets } = useAllAssetsMappedPointCloudAnnotations(
+    sdk,
+    filteredResources
+  );
+
+  const fetchNextPageCallback = useCallback(() => {
+    if (searchMethod !== 'allAssets' && searchMethod !== 'assetSearch') return;
+    if (searchMethod === 'allAssets' && !isFetching && hasNextPage) {
       void fetchNextPage();
+    } else if (searchMethod === 'assetSearch' && !isAssetSearchFetching && assetSearchHasNextPage) {
+      void fetchAssetSearchNextPage();
     }
-  }, [searchMethod, isFetching, hasNextPage, fetchNextPage]);
+  }, []);
 
   const filteredEquipment = useMemo(() => {
     if (searchMethod === 'allFdm') {
@@ -131,15 +152,23 @@ const StoryContent = ({ resources }: { resources: AddResourceOptions[] }): React
       const transformedAssets =
         allAssets?.pages
           .flat()
-          .map((mapping) => mapping.assets)
+          .map((modelsAssetPage) =>
+            modelsAssetPage.modelsAssets.flatMap((modelsAsset) => modelsAsset.assets)
+          )
           .flat() ?? [];
 
-      const mergedAssets = [...transformedAssets, ...(allAnnotationAssets ?? [])];
+      const all360ImageAssets =
+        all360ImageAssetAnnotationMappings?.map((mapping) => mapping.asset) ?? [];
+      const combinedAssets = [
+        ...transformedAssets,
+        ...(all360ImageAssets ?? []),
+        ...(allPointCloudAssets ?? [])
+      ];
 
       const filteredAssets =
-        mergedAssets.filter((asset) => {
-          const isInName = asset.name.toLowerCase().includes(mainSearchQuery.toLowerCase());
-          const isInDescription = asset.description
+        combinedAssets.filter((assetMappings) => {
+          const isInName = assetMappings.name.toLowerCase().includes(mainSearchQuery.toLowerCase());
+          const isInDescription = assetMappings.description
             ?.toLowerCase()
             .includes(mainSearchQuery.toLowerCase());
 
@@ -164,9 +193,21 @@ const StoryContent = ({ resources }: { resources: AddResourceOptions[] }): React
         return [];
       }
 
-      const megredAssetSearchData = [...assetSearchData, ...(annotationAssetSearchData ?? [])];
+      const transformedAssetsSearch = assetSearchData?.pages
+        .flat()
+        .map((mapping) => mapping.assets)
+        .flat();
 
-      const searchedEquipment: Equipment[] = megredAssetSearchData.map((asset) => {
+      const assetImage360SearchData =
+        assetAnnotationImage360SearchData?.map((mapping) => mapping.asset) ?? [];
+
+      const combinedAssetSearchData = [
+        ...transformedAssetsSearch,
+        ...(assetImage360SearchData ?? []),
+        ...(pointCloudAssetSearchData ?? [])
+      ];
+
+      const searchedEquipment: Equipment[] = combinedAssetSearchData.map((asset) => {
         return {
           view: 'Asset',
           externalId: asset.id + '',
@@ -206,16 +247,16 @@ const StoryContent = ({ resources }: { resources: AddResourceOptions[] }): React
     allEquipment,
     searchData,
     allAssets,
-    allAnnotationAssets,
+    all360ImageAssetAnnotationMappings,
     assetSearchData,
-    annotationAssetSearchData,
+    assetAnnotationImage360SearchData,
     searchMethod
   ]);
 
   return (
     <>
-      <RevealContainer sdk={sdk} color={new Color(0x4a4a4a)}>
-        <ReactQueryDevtools position="bottom-right" />
+      <RevealCanvas>
+        <ReactQueryDevtools buttonPosition="bottom-right" />
         <RevealResourcesFitCameraOnLoad
           resources={resources}
           defaultResourceStyling={{
@@ -226,7 +267,7 @@ const StoryContent = ({ resources }: { resources: AddResourceOptions[] }): React
           }}
         />
         <RevealToolbar />
-      </RevealContainer>
+      </RevealCanvas>
       <h1>Mapped equipment</h1>
       <div style={{ display: 'flex', flexDirection: 'row', gap: 8, padding: '0 8px 8px 0' }}>
         <Input
@@ -272,6 +313,12 @@ const StoryContent = ({ resources }: { resources: AddResourceOptions[] }): React
           }}>
           Asset search hook
         </Button>
+        <Button
+          size="small"
+          loading={isFetching || isAssetSearchFetching}
+          onClick={fetchNextPageCallback}>
+          Load More
+        </Button>
       </div>
       <div
         style={{
@@ -312,8 +359,8 @@ export const Main: Story = {
   args: {
     resources: [
       {
-        modelId: 3282558010084460,
-        revisionId: 4932190516335812,
+        modelId: 3544114490298106,
+        revisionId: 6405404576933316,
         styling: {
           default: {
             color: new Color('#efefef')
@@ -323,20 +370,26 @@ export const Main: Story = {
           }
         },
         siteId: 'celanese1'
+      },
+      {
+        modelId: 5653798104332258,
+        revisionId: 5045518244111296
       }
     ]
   },
   render: ({ resources }) => {
     return (
-      <QueryClientProvider client={queryClient}>
-        <StoryContent resources={resources} />
-      </QueryClientProvider>
+      <RevealContext sdk={sdk} color={new Color(0x4a4a4a)}>
+        <QueryClientProvider client={queryClient}>
+          <StoryContent resources={resources} />
+        </QueryClientProvider>
+      </RevealContext>
     );
   }
 };
 
 function determineViewFromQueryResultNodeItem(nodeItem: NodeItem | Equipment): string {
-  return findNonZeroProperty(nodeItem?.properties?.[spacesToSearch[0]]) ?? 'Unknown';
+  return findNonZeroProperty(nodeItem?.properties) ?? 'Unknown';
 }
 
 function findNonZeroProperty(properties?: Record<string, any>): string | undefined {

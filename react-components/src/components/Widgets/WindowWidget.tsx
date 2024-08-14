@@ -6,7 +6,6 @@ import { Button, Tooltip as CogsTooltip } from '@cognite/cogs.js';
 import { type ReactElement, useState, type ReactNode, useEffect, type SyntheticEvent } from 'react';
 import Widget from './Widget';
 import Draggable, { type DraggableData, type DraggableEvent } from 'react-draggable';
-import { useRevealContainerElement } from '../RevealContainer/RevealContainerElementContext';
 import { ResizableBox, type ResizeCallbackData } from 'react-resizable';
 import 'react-resizable/css/styles.css';
 import {
@@ -21,6 +20,7 @@ import {
 import { useTranslation } from '../i18n/I18n';
 import { withSuppressRevealEvents } from '../../higher-order-components/withSuppressRevealEvents';
 import { StyledComponent, WidgetBody, WidgetContent } from './elements';
+import { useReveal } from '../RevealCanvas/ViewerContext';
 
 type WindowWidgetProps = {
   title?: string;
@@ -44,7 +44,8 @@ export const WindowWidget = ({
   const { t } = useTranslation();
   const [isMinimized, setIsMinimized] = useState(false);
   const [position, setPosition] = useState({ x: 0, y: 0 });
-  const parentContainerElement = useRevealContainerElement();
+  const viewer = useReveal();
+  const parentContainerElement = viewer.domElement;
 
   const size = useParentResize(parentContainerElement, isMinimized, onResize);
 
@@ -53,6 +54,9 @@ export const WindowWidget = ({
   }
 
   const handleExpand = (): void => {
+    if (!isMinimized) {
+      setPosition({ x: 0, y: 0 });
+    }
     setIsMinimized((prev) => !prev);
   };
 
@@ -101,17 +105,13 @@ export const WindowWidget = ({
             }
           : {}
       }>
-      <Draggable
-        onDrag={handleDrag}
-        position={isMinimized ? { x: 0, y: 0 } : position}
-        handle=".widget-header"
-        disabled={isMinimized}>
+      <Draggable onDrag={handleDrag} position={position} handle=".widget-header">
         <ResizableBox
           width={size.width}
           height={size.height}
           minConstraints={[WIDGET_WINDOW_MIN_WIDTH, WIDGET_INSIDE_WINDOW_MIN_HEIGHT]}
           maxConstraints={[parentContainerElement.clientWidth, parentContainerElement.clientHeight]}
-          resizeHandles={isMinimized ? [] : ['se']}
+          resizeHandles={isMinimized ? [] : ['se', 'ne', 'e', 's']}
           onResize={handleResize}>
           <Widget>
             <Widget.Header title={title} type={type} header={header} subtitle={subtitle}>
@@ -164,7 +164,6 @@ const useParentResize = (
 
       const width = isMinimized ? WIDGET_WINDOW_MIN_WIDTH : parentWidth * WIDGET_WIDTH_FACTOR;
       const height = isMinimized ? WIDGET_WINDOW_MIN_HEIGHT : parentHeight * WIDGET_HEIGHT_FACTOR;
-
       setSize({ width, height });
 
       onResize?.(width, height);
@@ -172,10 +171,11 @@ const useParentResize = (
 
     updateSize();
 
-    window.addEventListener('resize', updateSize);
+    const resizeObserver = new ResizeObserver(updateSize);
+    resizeObserver.observe(parentContainerElement);
 
     return () => {
-      window.removeEventListener('resize', updateSize);
+      resizeObserver.disconnect();
     };
   }, [isMinimized, parentContainerElement]);
 

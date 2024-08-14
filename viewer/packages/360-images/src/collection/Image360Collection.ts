@@ -10,6 +10,7 @@ import { Image360Revision } from '../entity/Image360Revision';
 import { IdEither } from '@cognite/sdk';
 import { Image360Annotation } from '../annotation/Image360Annotation';
 import { ImageAssetLinkAnnotationInfo } from '@reveal/data-providers';
+import { Matrix4 } from 'three';
 
 /**
  * Filter for finding annotations related to an asset
@@ -85,11 +86,28 @@ export interface Image360Collection {
   targetRevisionDate: Date | undefined;
 
   /**
+   * Sets the transformation matrix to be applied to the collection.
+   * @param matrix The transformation matrix to be applied to the collection.
+   */
+  setModelTransformation(matrix: Matrix4): void;
+
+  /**
+   * Gets the transformation matrix of the collection
+   */
+  getModelTransformation(out?: Matrix4): Matrix4;
+
+  /**
    * Specify parameters used to determine the number of icons that are visible when entering 360 Images.
    * @param radius Only icons within the given radius will be made visible.
    * @param pointLimit Limit the number of points within the given radius. Points closer to the camera will be prioritized.
    */
   set360IconCullingRestrictions(radius: number, pointLimit: number): void;
+
+  /**
+   * Gets visibility of all 360 image icons.
+   * @returns true if all icons are visible, false if all icons are invisible
+   */
+  getIconsVisibility(): boolean;
 
   /**
    * Set visibility of all 360 image icons.

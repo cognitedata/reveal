@@ -3,7 +3,7 @@
  */
 
 import type { Meta, StoryObj } from '@storybook/react';
-import { CadModelContainer, RevealContainer, PointCloudContainer } from '../src';
+import { CadModelContainer, RevealCanvas, PointCloudContainer, RevealContext } from '../src';
 import { CogniteClient } from '@cognite/sdk';
 import { Color } from 'three';
 import { useState, type ReactElement } from 'react';
@@ -41,14 +41,16 @@ export const Main: Story = {
 
     return (
       <>
-        <RevealContainer sdk={sdk} color={new Color(0x4a4a4a)} appLanguage={'en'}>
-          <PointCloudContainer addModelOptions={addModelOptions} />
-          {isWindowWidgetVisible && (
-            <WindowWidget header="Widget Header" onClose={handleClose}>
-              <SecondaryRevealContainer />
-            </WindowWidget>
-          )}
-        </RevealContainer>
+        <RevealContext sdk={sdk} color={new Color(0x4a4a4a)} appLanguage={'en'}>
+          <RevealCanvas>
+            <PointCloudContainer addModelOptions={addModelOptions} />
+            {isWindowWidgetVisible && (
+              <WindowWidget header="Widget Header" onClose={handleClose}>
+                <SecondaryRevealContainer />
+              </WindowWidget>
+            )}
+          </RevealCanvas>
+        </RevealContext>
       </>
     );
   }
@@ -56,10 +58,12 @@ export const Main: Story = {
 
 function SecondaryRevealContainer(): ReactElement {
   return (
-    <RevealContainer sdk={sdk} color={new Color(0x4a4a4a)} appLanguage={'en'}>
-      <CadModelContainer
-        addModelOptions={{ modelId: 1791160622840317, revisionId: 498427137020189 }}
-      />
-    </RevealContainer>
+    <RevealContext sdk={sdk} color={new Color(0x4a4a4a)} appLanguage={'en'}>
+      <RevealCanvas>
+        <CadModelContainer
+          addModelOptions={{ modelId: 1791160622840317, revisionId: 498427137020189 }}
+        />
+      </RevealCanvas>
+    </RevealContext>
   );
 }

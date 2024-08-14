@@ -24,32 +24,30 @@
     "ws:replace": "replace"
   },
   "dependencies": {
-    "@azure/msal-browser": "2.38.3",
-    "@codemirror/lang-javascript": "6.2.1",
-    "@docusaurus/core": "2.4.3",
-    "@docusaurus/preset-classic": "2.4.3",
-    "@docusaurus/remark-plugin-npm2yarn": "2.4.3",
-    "@uiw/codemirror-theme-material": "4.21.21",
-    "@uiw/react-codemirror": "4.21.21",
-    "clsx": "2.0.0",
+    "@azure/msal-browser": "3.17.0",
+    "@codemirror/lang-javascript": "6.2.2",
+    "@docusaurus/core": "3.4.0",
+    "@docusaurus/preset-classic": "3.4.0",
+    "@docusaurus/remark-plugin-npm2yarn": "3.4.0",
+    "@uiw/codemirror-theme-material": "4.22.2",
+    "@uiw/react-codemirror": "4.22.2",
+    "clsx": "2.1.1",
     "cross-env": "7.0.3",
     "ieee754": "1.2.1",
-    "query-string": "8.1.0",
-    "react": "18.2.0",
-    "react-dom": "18.2.0",
-    "styled-components": "5.3.11"
+    "react": "18.3.1",
+    "react-dom": "18.3.1",
+    "styled-components": "6.1.11"
   },
   "devDependencies": {
-    "@types/react": "18.2.42",
-    "@types/styled-components": "5.1.34",
+    "@types/react": "18.3.3",
     "copyfiles": "2.4.1",
-    "docusaurus-plugin-typedoc": "0.22.0",
+    "docusaurus-plugin-typedoc": "1.0.1",
     "replace": "1.2.2",
-    "rimraf": "5.0.5",
-    "typedoc": "0.25.6",
-    "typedoc-plugin-markdown": "3.17.1",
+    "rimraf": "6.0.0",
+    "typedoc": "0.26.2",
+    "typedoc-plugin-markdown": "4.1.0",
     "typedoc-plugin-no-inherit": "1.4.0",
-    "typescript": "5.3.3"
+    "typescript": "5.5.2"
   },
   "browserslist": {
     "production": [

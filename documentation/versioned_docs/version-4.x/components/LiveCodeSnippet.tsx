@@ -65,7 +65,6 @@ function transformCode(code: string): string {
             }
 
             if (viewer) {
-              resetViewerEventHandlers(viewer);
               if (model instanceof CogniteCadModel) {
                 resetCogniteCadModel(model);
               }
@@ -85,7 +84,6 @@ function onRunCode(code: string) {
 }
 
 export const LiveCodeSnippet = (props: LiveCodeSnippetProps) => {
-
   let code: string = props.children;
   function setCode(newCode: string) {
     code = newCode;
@@ -118,3 +116,5 @@ export const LiveCodeSnippet = (props: LiveCodeSnippetProps) => {
     </button>
   </>);
 };
+
+export default LiveCodeSnippet;
