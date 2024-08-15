@@ -141,6 +141,8 @@ export type {
   MetadataRuleTrigger,
   StringCondition,
   NumericCondition,
+  DatetimeCondition,
+  BooleanCondition,
   StringExpression,
   NumericExpression,
   DatetimeExpression,
