@@ -39,6 +39,7 @@ import {
   type FdmInstanceNodeWithConnectionAndProperties,
   type AssetIdsAndTimeseries
 } from '../../data-providers/types';
+import { uniq } from 'lodash';
 
 const checkStringExpressionStatement = (
   triggerTypeData: TriggerTypeData[],
@@ -59,11 +60,11 @@ const checkStringExpressionStatement = (
     currentTriggerData?.type === 'metadata' &&
     currentTriggerData?.asset !== undefined;
 
+  const isFdmTrigger = trigger?.type === 'fdm' && currentTriggerData?.type === 'fdm';
+
   const assetTrigger = isMetadataAndAssetTrigger
     ? currentTriggerData?.asset[trigger.type]?.[trigger.key]
     : undefined;
-
-  const isFdmTrigger = trigger?.type === 'fdm' && currentTriggerData?.type === 'fdm';
 
   const fdmItemsTrigger =
     isFdmTrigger && currentTriggerData.instanceNode.items[0] !== undefined
@@ -152,9 +153,11 @@ const checkNumericExpressionStatement = (
     (triggerType) => triggerType.type === trigger?.type
   );
 
-  const dataTrigger = getTriggerNumericData(triggerTypeData, trigger);
-
   const isFdmTrigger = trigger?.type === 'fdm' && currentTriggerData?.type === 'fdm';
+
+  const assetOrTimeseriesDataTrigger = !isFdmTrigger
+    ? getTriggerNumericData(triggerTypeData, trigger)
+    : undefined;
 
   const fdmItemsTrigger =
     isFdmTrigger && currentTriggerData.instanceNode.items[0] !== undefined
@@ -165,12 +168,12 @@ const checkNumericExpressionStatement = (
     ? (fdmItemsTrigger?.properties as FdmPropertyType<unknown>)
     : undefined;
 
-  if (dataTrigger === undefined && fdmPropertyTrigger === undefined) return;
+  if (assetOrTimeseriesDataTrigger === undefined && fdmPropertyTrigger === undefined) return;
 
   if (isFdmTrigger) {
     propertyTrigger = getFdmPropertyTrigger<number>(fdmPropertyTrigger, trigger);
   } else {
-    propertyTrigger = dataTrigger;
+    propertyTrigger = assetOrTimeseriesDataTrigger;
   }
 
   if (propertyTrigger === undefined) return;
@@ -705,7 +708,7 @@ export const traverseExpressionToGetTimeseries = (
       return timeseriesExternalIdFound?.filter(isDefined) ?? [];
     })
     .flat();
-  return timeseriesExternalIdResults;
+  return uniq(timeseriesExternalIdResults);
 };
 
 const applyAssetMappingsNodeStyles = (
