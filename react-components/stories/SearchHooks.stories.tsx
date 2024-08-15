@@ -83,7 +83,6 @@ const StoryContent = ({ resources }: { resources: AddResourceOptions[] }): React
 
   const { data: allEquipment } = useAllMappedEquipmentFDM(filteredResources, viewsToSearch);
 
-  console.log('TEST allEquipment', allEquipment);
   const {
     data: allAssets,
     isFetching,
