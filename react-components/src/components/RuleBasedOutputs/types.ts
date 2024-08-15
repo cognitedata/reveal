@@ -256,15 +256,9 @@ export type DatetimeConditionTypes =
   | 'notOn';
 
 export type DatetimeBetweenConditionType = {
-  type: 'between';
-  lowerBoundInclusive: number;
-  upperBoundInclusive: number;
-};
-
-export type DatetimeNotBetweenConditionType = {
-  type: 'notBetween';
-  lowerBoundExclusive: number;
-  upperBoundExclusive: number;
+  type: 'between' | 'notBetween';
+  lowerBound: string;
+  upperBound: string;
 };
 
 export type CriteriaTypes =
@@ -273,8 +267,7 @@ export type CriteriaTypes =
   | number
   | NumericWithinConditionType
   | NumericOutsideConditionType
-  | DatetimeBetweenConditionType
-  | DatetimeNotBetweenConditionType;
+  | DatetimeBetweenConditionType;
 
 export type RuleAndStyleIndex = {
   styleIndex: TreeIndexNodeCollection;

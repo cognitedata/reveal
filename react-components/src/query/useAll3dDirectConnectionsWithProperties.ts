@@ -37,10 +37,6 @@ export function useAll3dDirectConnectionsWithProperties(
         JSON.stringify(pick(item, ['externalId', 'space']))
       );
 
-      console.log('TEST instancesViews', instancesViews);
-      console.log('TEST uniqueViews', uniqueViews);
-      console.log('TEST instancesData', instancesData);
-
       const instancesDataChunks = chunk(instancesData, 1000);
       const instancesContent = await Promise.all(
         instancesDataChunks.flatMap((chunk) => {
@@ -50,8 +46,6 @@ export function useAll3dDirectConnectionsWithProperties(
         })
       );
 
-      console.log('TEST instancesContent', instancesContent);
-
       if (instancesContent === undefined) {
         return [];
       }
@@ -60,38 +54,41 @@ export function useAll3dDirectConnectionsWithProperties(
 
       const relatedObjectInspectionsResult = await Promise.all(
         instancesContentChunks.flatMap((instances) =>
-          instances.flatMap(
-            async (item) =>
-              await fdmSdk.inspectInstances({
-                inspectionOperations: { involvedViews: {} },
-                items: item.items.map((fdmId) => ({
-                  space: fdmId.space,
-                  externalId: fdmId.externalId,
-                  instanceType
-                }))
-              })
-          )
+          instances.flatMap(async (item) => {
+            const items = item.items.map((fdmId) => ({
+              space: fdmId.space,
+              externalId: fdmId.externalId,
+              instanceType
+            }));
+            return await fdmSdk.inspectInstances({
+              inspectionOperations: { involvedViews: {} },
+              items
+            });
+          })
         )
       );
 
-      const data: FdmInstanceWithPropertiesAndTyping[] = relatedObjectInspectionsResult.flatMap(
-        (inspectionResult) =>
-          inspectionResult.items.flatMap((inspectionResultItem) =>
-            instancesContent.flatMap((instanceContent) => {
-              const node: FdmInstanceWithPropertiesAndTyping = {
-                items: instanceContent.items.filter(
-                  (item) =>
-                    item.space === inspectionResultItem.space &&
-                    item.externalId === inspectionResultItem.externalId
-                ),
-                typing: instanceContent.typing ?? {}
-              };
-              return node;
-            })
+      const instanceItemsAndTyping: FdmInstanceWithPropertiesAndTyping[] =
+        relatedObjectInspectionsResult
+          .flatMap((inspectionResult) =>
+            inspectionResult.items.flatMap((inspectionResultItem) =>
+              instancesContent.flatMap((instanceContent) => {
+                const node: FdmInstanceWithPropertiesAndTyping = {
+                  items: instanceContent.items.filter(
+                    (item) =>
+                      item.space === inspectionResultItem.space &&
+                      item.externalId === inspectionResultItem.externalId
+                  ),
+                  typing: instanceContent.typing ?? {}
+                };
+                return node;
+              })
+            )
           )
-      );
+          .filter((item) => item.items.length > 0);
+
       const instanceWithData =
-        data?.flatMap((itemsData) => {
+        instanceItemsAndTyping?.flatMap((itemsData) => {
           const connectionFound = connectionWithNodeAndView.find((item) =>
             itemsData.items.find(
               (itemData) =>

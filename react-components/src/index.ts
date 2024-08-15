@@ -143,6 +143,8 @@ export type {
   NumericCondition,
   StringExpression,
   NumericExpression,
+  DatetimeExpression,
+  BooleanExpression,
   ExpressionOperator,
   Expression,
   ConcreteExpression,
@@ -155,6 +157,9 @@ export type {
   NumericConditionTypes,
   NumericWithinConditionType,
   NumericOutsideConditionType,
+  DatetimeConditionTypes,
+  DatetimeBetweenConditionType,
+  BooleanConditionTypes,
   CriteriaTypes,
   AllRuleBasedStylingGroups
 } from './components/RuleBasedOutputs/types';

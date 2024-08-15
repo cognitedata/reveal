@@ -12,7 +12,6 @@ import {
 } from '@cognite/sdk/';
 import { type NodeItem, type DmsUniqueIdentifier, type Source, type EdgeItem } from './FdmSDK';
 import { type FdmCadConnection } from '../components/CacheProvider/types';
-import { type FdmPropertyType } from '../components/Reveal3DResources/types';
 
 export type FdmInstanceWithView = DmsUniqueIdentifier & { view: Source };
 
