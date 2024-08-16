@@ -98,7 +98,7 @@ class FilterItemCommand extends BaseFilterItemCommand {
     return this._color;
   }
 
-  public setChecked(value: boolean): void {
+  public override setChecked(value: boolean): void {
     if (this._use === value) {
       return;
     }

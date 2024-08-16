@@ -44,6 +44,8 @@ export const FilterButton = ({
     []
   );
 
+  command.initializeChildrenIfNeeded();
+
   const [isEnabled, setEnabled] = useState<boolean>(true);
   const [isVisible, setVisible] = useState<boolean>(true);
   const [uniqueId, setUniqueId] = useState<number>(0);
@@ -94,7 +96,6 @@ export const FilterButton = ({
   const shortcut = command.getShortCutKeys();
   const flexDirection = getFlexDirection(isHorizontal);
 
-  command.initializeChildrenIfNeeded();
   const children = command.children;
   if (children === undefined || !command.hasChildren) {
     return <></>;
