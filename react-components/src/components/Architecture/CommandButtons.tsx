@@ -9,26 +9,21 @@ import { OptionButton } from './OptionButton';
 import { BaseOptionCommand } from '../../architecture/base/commands/BaseOptionCommand';
 import { CommandButton } from './CommandButton';
 import { SettingsButton } from './SettingsButton';
-import { SettingsCommand } from '../../architecture/base/concreteCommands/SettingsCommand';
+import { SettingsCommand } from '../../architecture/base/commands/SettingsCommand';
+import { BaseFilterCommand } from '../../architecture/base/commands/BaseFilterCommand';
+import { FilterButton } from './FilterButton';
 
-export function createButton(
-  command: BaseCommand,
-  isHorizontal = false,
-  usedInSettings = false
-): ReactElement {
+export function createButton(command: BaseCommand, isHorizontal = false): ReactElement {
+  if (command instanceof BaseFilterCommand) {
+    return <FilterButton inputCommand={command} isHorizontal={isHorizontal} />;
+  }
   if (command instanceof SettingsCommand) {
     return <SettingsButton inputCommand={command} isHorizontal={isHorizontal} />;
-  } else if (command instanceof BaseOptionCommand) {
-    return <OptionButton inputCommand={command} isHorizontal={isHorizontal} />;
-  } else {
-    return (
-      <CommandButton
-        inputCommand={command}
-        isHorizontal={isHorizontal}
-        usedInSettings={usedInSettings}
-      />
-    );
   }
+  if (command instanceof BaseOptionCommand) {
+    return <OptionButton inputCommand={command} isHorizontal={isHorizontal} />;
+  }
+  return <CommandButton inputCommand={command} isHorizontal={isHorizontal} />;
 }
 
 export function createButtonFromCommandConstructor(

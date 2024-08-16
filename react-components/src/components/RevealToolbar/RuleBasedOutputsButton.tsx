@@ -19,10 +19,7 @@ import { type CadModelOptions } from '../Reveal3DResources/types';
 import { useAssetMappedNodesForRevisions } from '../CacheProvider/AssetMappingAndNode3DCacheProvider';
 import { RuleBasedSelectionItem } from '../RuleBasedOutputs/components/RuleBasedSelectionItem';
 import { generateEmptyRuleForSelection, getRuleBasedById } from '../RuleBasedOutputs/utils';
-import {
-  useReveal3DResourcesStylingLoading,
-  useReveal3DResourcesStylingLoadingSetter
-} from '../Reveal3DResources/Reveal3DResourcesInfoContext';
+import { useReveal3DResourcesStylingLoading } from '../Reveal3DResources/Reveal3DResourcesInfoContext';
 
 type RuleBasedOutputsButtonProps = {
   onRuleSetStylingChanged?: (stylings: AllRuleBasedStylingGroups | undefined) => void;
@@ -49,7 +46,6 @@ export const RuleBasedOutputsButton = ({
 
   const [newRuleSetEnabled, setNewRuleSetEnabled] = useState<RuleAndEnabled>();
   const isRuleLoadingFromContext = useReveal3DResourcesStylingLoading();
-  const setModel3DStylingLoading = useReveal3DResourcesStylingLoadingSetter();
 
   const { data: ruleInstancesResult } = useFetchRuleInstances();
 
@@ -64,7 +60,6 @@ export const RuleBasedOutputsButton = ({
     const hasNewRuleSetEnabled = newRuleSetEnabled !== undefined;
 
     setIsRuleLoading(hasNewRuleSetEnabled);
-    setModel3DStylingLoading(hasNewRuleSetEnabled);
   }, [newRuleSetEnabled]);
 
   useEffect(() => {
@@ -73,7 +68,6 @@ export const RuleBasedOutputsButton = ({
       currentStylingGroups.length > 0 &&
       isRuleLoadingFromContext;
     setIsRuleLoading(hasRuleLoading);
-    setModel3DStylingLoading(hasRuleLoading);
   }, [isRuleLoadingFromContext, currentStylingGroups]);
 
   const onChange = useCallback(
@@ -98,8 +92,6 @@ export const RuleBasedOutputsButton = ({
 
       setEmptyRuleSelected(emptySelection);
       setNewRuleSetEnabled(selectedRule);
-      setIsRuleLoading(true);
-      setModel3DStylingLoading(true);
     },
     [ruleInstances, onRuleSetStylingChanged, onRuleSetSelectedChanged]
   );

@@ -21,11 +21,14 @@ import { MeasurementTool } from '../measurements/MeasurementTool';
 import { ClipTool } from '../clipping/ClipTool';
 import { KeyboardSpeedCommand } from '../../base/concreteCommands/KeyboardSpeedCommand';
 import { ObservationsTool } from '../observations/ObservationsTool';
-import { SettingsCommand } from '../../base/concreteCommands/SettingsCommand';
+import { SettingsCommand } from '../../base/commands/SettingsCommand';
 import { SetQualityCommand } from '../../base/concreteCommands/SetQualityCommand';
 import { SetPointSizeCommand } from '../../base/concreteCommands/SetPointSizeCommand';
 import { SetPointColorTypeCommand } from '../../base/concreteCommands/SetPointColorTypeCommand';
 import { SetPointShapeCommand } from '../../base/concreteCommands/SetPointShapeCommand';
+import { MockSettingsCommand } from '../../base/commands/mocks/MockSettingsCommand';
+import { PointCloudFilterCommand } from '../../base/concreteCommands/PointCloudFilterCommand';
+import { MockFilterCommand } from '../../base/commands/mocks/MockFilterCommand';
 
 export class StoryBookConfig extends BaseRevealConfig {
   // ==================================================
@@ -42,6 +45,7 @@ export class StoryBookConfig extends BaseRevealConfig {
     settings.add(new SetPointSizeCommand());
     settings.add(new SetPointColorTypeCommand());
     settings.add(new SetPointShapeCommand());
+    settings.add(new PointCloudFilterCommand());
 
     return [
       new SetFlexibleControlsTypeCommand(FlexibleControlsType.Orbit),
@@ -51,6 +55,9 @@ export class StoryBookConfig extends BaseRevealConfig {
       new SetAxisVisibleCommand(),
       new ToggleMetricUnitsCommand(),
       new KeyboardSpeedCommand(),
+      settings,
+      new MockSettingsCommand(),
+      new MockFilterCommand(),
       undefined,
       new ExampleTool(),
       new MeasurementTool(),
@@ -59,8 +66,7 @@ export class StoryBookConfig extends BaseRevealConfig {
       undefined,
       new SetTerrainVisibleCommand(),
       new UpdateTerrainCommand(),
-      undefined,
-      settings
+      undefined
     ];
   }
 

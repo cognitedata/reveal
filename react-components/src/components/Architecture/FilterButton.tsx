@@ -11,11 +11,10 @@ import {
   type ReactElement,
   type MouseEvent
 } from 'react';
-import { Button, Dropdown, Menu, Tooltip as CogsTooltip } from '@cognite/cogs.js';
+import { Button, Dropdown, Menu, Tooltip as CogsTooltip, type IconType } from '@cognite/cogs.js';
 import { useTranslation } from '../i18n/I18n';
 import { type BaseCommand } from '../../architecture/base/commands/BaseCommand';
 import { useRenderTarget } from '../RevealCanvas/ViewerContext';
-import { type BaseOptionCommand } from '../../architecture/base/commands/BaseOptionCommand';
 import {
   getButtonType,
   getDefaultCommand,
@@ -24,35 +23,48 @@ import {
   getIcon
 } from './utilities';
 import { LabelWithShortcut } from './LabelWithShortcut';
-import { type TranslateDelegate } from '../../architecture/base/utilities/TranslateKey';
 import { useClickOutside } from './useClickOutside';
+import styled from 'styled-components';
+import { BaseFilterCommand } from '../../architecture/base/commands/BaseFilterCommand';
+import { FilterItem } from './FilterItem';
 
-export const OptionButton = ({
+export const FilterButton = ({
   inputCommand,
   isHorizontal = false,
   usedInSettings = false
 }: {
-  inputCommand: BaseOptionCommand;
+  inputCommand: BaseFilterCommand;
   isHorizontal: boolean;
   usedInSettings?: boolean;
 }): ReactElement => {
   const renderTarget = useRenderTarget();
   const { t } = useTranslation();
-  const command = useMemo<BaseOptionCommand>(
-    () => getDefaultCommand<BaseOptionCommand>(inputCommand, renderTarget),
+  const command = useMemo<BaseFilterCommand>(
+    () => getDefaultCommand<BaseFilterCommand>(inputCommand, renderTarget),
     []
   );
 
-  const [isOpen, setOpen] = useState<boolean>(false);
   const [isEnabled, setEnabled] = useState<boolean>(true);
   const [isVisible, setVisible] = useState<boolean>(true);
   const [uniqueId, setUniqueId] = useState<number>(0);
+  const [icon, setIcon] = useState<IconType | undefined>(undefined);
+  const [isOpen, setOpen] = useState<boolean>(false);
+  const [isAllChecked, setAllChecked] = useState<boolean>(false);
+  const [selectedLabel, setSelectedLabel] = useState<string>('');
 
-  const update = useCallback((command: BaseCommand) => {
-    setEnabled(command.isEnabled);
-    setVisible(command.isVisible);
-    setUniqueId(command.uniqueId);
-  }, []);
+  const update = useCallback(
+    (command: BaseCommand) => {
+      setEnabled(command.isEnabled);
+      setVisible(command.isVisible);
+      setUniqueId(command.uniqueId);
+      setIcon(getIcon(command));
+      if (command instanceof BaseFilterCommand) {
+        setAllChecked(command.isAllChecked);
+        setSelectedLabel(command.getSelectedLabel(t));
+      }
+    },
+    [command]
+  );
 
   useEffect(() => {
     update(command);
@@ -66,28 +78,27 @@ export const OptionButton = ({
     if (!isOpen) {
       return false;
     }
-    postAction();
-    return true;
-  };
-
-  const postAction = (): void => {
     setOpen(false);
     renderTarget.domElement.focus();
+    return true;
   };
 
   const menuRef = useRef<HTMLDivElement | null>(null);
   useClickOutside(menuRef, outsideAction);
 
-  if (!isVisible || command.children === undefined) {
+  if (!isVisible) {
     return <></>;
   }
   const placement = getTooltipPlacement(isHorizontal);
   const label = usedInSettings ? undefined : command.getLabel(t);
   const shortcut = command.getShortCutKeys();
   const flexDirection = getFlexDirection(isHorizontal);
-  const children = command.children;
-  const selectedLabel = command.selectedChild?.getLabel(t);
 
+  command.initializeChildrenIfNeeded();
+  const children = command.children;
+  if (children === undefined || !command.hasChildren) {
+    return <></>;
+  }
   return (
     <CogsTooltip
       content={<LabelWithShortcut label={label} shortcut={shortcut} />}
@@ -96,64 +107,59 @@ export const OptionButton = ({
       placement={placement}>
       <Dropdown
         visible={isOpen}
-        hideOnSelect={true}
+        hideOnSelect={false}
         appendTo={document.body}
         placement={usedInSettings ? 'bottom-end' : 'auto-start'}
         content={
           <div ref={menuRef}>
             <Menu
               style={{
-                minWidth: '0px',
+                minWidth: '100px',
                 overflow: 'auto',
                 flexDirection
               }}>
-              {children.map((child, _index): ReactElement => {
-                return createMenuItem(child, t, postAction);
-              })}
+              <Menu.Item
+                key={-1}
+                toggled={isAllChecked}
+                onClick={() => {
+                  command.toggleAllChecked();
+                }}>
+                {command.getAllLabel(t)}
+              </Menu.Item>
+              <StyledMenuItems>
+                {children.map((child, _index): ReactElement => {
+                  return <FilterItem key={child.uniqueId} command={child} />;
+                })}
+              </StyledMenuItems>
             </Menu>
           </div>
         }>
         <Button
-          style={{
-            padding: usedInSettings ? '4px 4px' : '8px 4px',
-            minWidth: usedInSettings ? '100px' : undefined
-          }}
           type={usedInSettings ? 'tertiary' : getButtonType(command)}
-          icon={isOpen ? 'ChevronUp' : 'ChevronDown'}
+          icon={usedInSettings ? (isOpen ? 'ChevronUp' : 'ChevronDown') : icon}
           key={uniqueId}
           disabled={!isEnabled}
           toggled={isOpen}
           iconPlacement="right"
           aria-label={command.getLabel(t)}
+          style={{
+            minWidth: usedInSettings ? '100px' : undefined,
+            padding: usedInSettings ? '4px 4px' : undefined
+          }}
           onClick={(event: MouseEvent<HTMLElement>) => {
+            setOpen(!isOpen);
             event.stopPropagation();
             event.preventDefault();
-            setOpen((prevState) => !prevState);
           }}>
-          {selectedLabel}
+          {usedInSettings ? selectedLabel : undefined}
         </Button>
       </Dropdown>
     </CogsTooltip>
   );
 };
 
-export function createMenuItem(
-  command: BaseCommand,
-  t: TranslateDelegate,
-  postAction: () => void
-): ReactElement {
-  return (
-    <Menu.Item
-      key={command.uniqueId}
-      icon={getIcon(command)}
-      disabled={!command.isEnabled}
-      toggled={command.isChecked}
-      iconPlacement="right"
-      onClick={() => {
-        command.invoke();
-        postAction();
-      }}>
-      {command.getLabel(t)}
-    </Menu.Item>
-  );
-}
+const StyledMenuItems = styled.div`
+  max-height: 300px;
+  overflow-y: auto;
+  overflow-x: hidden;
+`;

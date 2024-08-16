@@ -237,16 +237,18 @@ export class RevisionFdmNodeCache {
     mappingConnections: FdmCadConnection[],
     nodes: Node3D[]
   ): Array<{ connection: FdmCadConnection; treeIndex: TreeIndex }> {
-    return mappingConnections.map((connection) => {
+    return mappingConnections.reduce((acc, connection) => {
       const nodeInConnection = nodes.find((node) => node.id === connection.nodeId);
 
-      assert(nodeInConnection !== undefined);
+      if (nodeInConnection !== undefined) {
+        acc.push({
+          connection,
+          treeIndex: nodeInConnection.treeIndex
+        });
+      }
 
-      return {
-        connection,
-        treeIndex: nodeInConnection.treeIndex
-      };
-    });
+      return acc;
+    }, new Array<{ connection: FdmCadConnection; treeIndex: TreeIndex }>());
   }
 
   private async getMappingConnectionsForAncestors(
