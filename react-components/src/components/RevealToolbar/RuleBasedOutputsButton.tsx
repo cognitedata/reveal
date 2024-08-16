@@ -47,6 +47,8 @@ export const RuleBasedOutputsButton = ({
   const [newRuleSetEnabled, setNewRuleSetEnabled] = useState<RuleAndEnabled>();
   const isRuleLoadingFromContext = useReveal3DResourcesStylingLoading();
 
+  const [isAllMappingsFetched, setIsAllMappingsFetched] = useState(false);
+
   const { data: ruleInstancesResult } = useFetchRuleInstances();
 
   useEffect(() => {
@@ -64,11 +66,17 @@ export const RuleBasedOutputsButton = ({
 
   useEffect(() => {
     const hasRuleLoading =
-      currentStylingGroups !== undefined &&
-      currentStylingGroups.length > 0 &&
-      isRuleLoadingFromContext;
+      (currentStylingGroups !== undefined &&
+        currentStylingGroups.length > 0 &&
+        isRuleLoadingFromContext) ||
+      !isAllMappingsFetched;
+
     setIsRuleLoading(hasRuleLoading);
-  }, [isRuleLoadingFromContext, currentStylingGroups]);
+  }, [isAllMappingsFetched, currentStylingGroups, isRuleLoadingFromContext, newRuleSetEnabled]);
+
+  const handleAllMappingsFetched = useCallback((value: boolean) => {
+    setIsAllMappingsFetched(value);
+  }, []);
 
   const onChange = useCallback(
     (data: string | undefined): void => {
@@ -89,11 +97,10 @@ export const RuleBasedOutputsButton = ({
         emptySelection.isEnabled = true;
         if (onRuleSetStylingChanged !== undefined) onRuleSetStylingChanged(undefined);
       }
-
       setEmptyRuleSelected(emptySelection);
       setNewRuleSetEnabled(selectedRule);
     },
-    [ruleInstances, onRuleSetStylingChanged, onRuleSetSelectedChanged]
+    [ruleInstances, emptyRuleSelected, onRuleSetStylingChanged, onRuleSetSelectedChanged]
   );
 
   const ruleSetStylingChanged = (
@@ -110,6 +117,7 @@ export const RuleBasedOutputsButton = ({
       assetStylingGroup: assetStylingGroups ?? [],
       fdmStylingGroup: fdmStylingGroups ?? []
     };
+
     if (onRuleSetStylingChanged !== undefined) onRuleSetStylingChanged(allStylingGroups);
   };
 
@@ -167,6 +175,7 @@ export const RuleBasedOutputsButton = ({
       {ruleInstances !== undefined && ruleInstances?.length > 0 && (
         <RuleBasedOutputsSelector
           onRuleSetChanged={ruleSetStylingChanged}
+          onAllMappingsFetched={handleAllMappingsFetched}
           ruleSet={currentRuleSetEnabled?.rule.properties}
         />
       )}

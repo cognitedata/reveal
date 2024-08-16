@@ -1,7 +1,7 @@
 /*!
  * Copyright 2024 Cognite AS
  */
-import { useEffect, type ReactElement, useState, useMemo } from 'react';
+import { useEffect, type ReactElement, useState } from 'react';
 
 import { CogniteCadModel } from '@cognite/reveal';
 import { type RuleOutputSet, type AllMappingStylingGroupAndStyleIndex } from './types';
@@ -24,14 +24,18 @@ import { useExtractTimeseriesIdsFromRuleSet } from './hooks/useExtractTimeseries
 import { useMappedEdgesForRevisions } from '../CacheProvider/NodeCacheProvider';
 import { useAll3dDirectConnectionsWithProperties } from '../../query/useAll3dDirectConnectionsWithProperties';
 
+const ruleSetStylingCache = new Map<string, AllMappingStylingGroupAndStyleIndex[]>();
+
 export type ColorOverlayProps = {
   ruleSet: RuleOutputSet | undefined;
   onRuleSetChanged?: (currentStylings: AllMappingStylingGroupAndStyleIndex[] | undefined) => void;
+  onAllMappingsFetched: (value: boolean) => void;
 };
 
 export function RuleBasedOutputsSelector({
   ruleSet,
-  onRuleSetChanged
+  onRuleSetChanged,
+  onAllMappingsFetched
 }: ColorOverlayProps): ReactElement | undefined {
   if (ruleSet === undefined) return;
 
@@ -45,29 +49,43 @@ export function RuleBasedOutputsSelector({
       return { type: 'cad', modelId: model.modelId, revisionId: model.revisionId };
     });
 
-  const { data: assetMappings } = useAssetMappedNodesForRevisions(cadModels);
+  const { data: assetMappings, isLoading: isAssetMappingsLoading } =
+    useAssetMappedNodesForRevisions(cadModels);
 
   const assetIdsFromMapped = useExtractUniqueAssetIdsFromMapped(assetMappings);
 
-  const { data: mappedAssets, isFetched: isAssetMappingsFetched } =
-    useAssetsByIdsQuery(assetIdsFromMapped);
+  const {
+    data: mappedAssets,
+    isLoading: isAssetMappedLoading,
+    isFetched: isAssetMappingsFetched
+  } = useAssetsByIdsQuery(assetIdsFromMapped);
 
-  const { data: fdmMappedEquipmentEdges } = useMappedEdgesForRevisions(cadModels, true);
+  const { data: fdmMappedEquipmentEdges, isLoading: isFdmMappingsEdgesLoading } =
+    useMappedEdgesForRevisions(cadModels, true);
 
   const fdmConnectionWithNodeAndViewList =
     fdmMappedEquipmentEdges !== undefined
       ? Array.from(fdmMappedEquipmentEdges.values()).flat()
       : [];
 
-  const { data: fdmMappings } = useAll3dDirectConnectionsWithProperties(
-    fdmConnectionWithNodeAndViewList
-  );
+  const { data: fdmMappings, isLoading: isFdmMappingsLoading } =
+    useAll3dDirectConnectionsWithProperties(fdmConnectionWithNodeAndViewList);
+
+  const allMappingsLoaded =
+    !isAssetMappingsLoading &&
+    !isAssetMappedLoading &&
+    !isFdmMappingsEdgesLoading &&
+    !isFdmMappingsLoading;
 
   useEffect(() => {
     if (isAssetMappingsFetched) {
       setAllContextualizedAssets(mappedAssets);
     }
   }, [mappedAssets, isAssetMappingsFetched]);
+
+  useEffect(() => {
+    onAllMappingsFetched(allMappingsLoaded);
+  }, [allMappingsLoaded]);
 
   const contextualizedAssetNodes = useConvertAssetMetadatasToLowerCase(allContextualizedAssets);
 
@@ -81,12 +99,13 @@ export function RuleBasedOutputsSelector({
 
   const flatAssetsMappingsListPerModel = useCreateAssetMappingsMapPerModel(models, assetMappings);
 
-  const allStyling = useMemo(async () => {
+  useEffect(() => {
     if ((assetMappings === undefined && fdmMappings === undefined) || models === undefined) return;
     if (timeseriesExternalIds.length > 0 && isLoadingAssetIdsAndTimeseriesData) return;
     if (ruleSet === undefined) return;
+    if (!allMappingsLoaded) return;
 
-    const ruleBasedInitilization = async (): Promise<AllMappingStylingGroupAndStyleIndex[]> => {
+    const ruleBasedInitilization = async (): Promise<void> => {
       const allStylings = await Promise.all(
         models.map(async (model) => {
           if (!(model instanceof CogniteCadModel)) {
@@ -111,26 +130,25 @@ export function RuleBasedOutputsSelector({
       );
       const filteredStylings = allStylings.flat().filter(isDefined).flat();
 
-      return filteredStylings;
+      ruleSetStylingCache.set(ruleSet.id, filteredStylings);
+      if (onRuleSetChanged !== undefined) {
+        onRuleSetChanged(filteredStylings);
+      }
     };
-
-    return await ruleBasedInitilization();
+    if (!ruleSetStylingCache.has(ruleSet.id)) {
+      void ruleBasedInitilization();
+    } else {
+      onAllMappingsFetched(true);
+      if (onRuleSetChanged !== undefined) onRuleSetChanged(ruleSetStylingCache.get(ruleSet.id));
+    }
   }, [
-    isLoadingAssetIdsAndTimeseriesData,
     ruleSet,
     assetMappings,
     fdmMappings,
-    allContextualizedAssets
+    contextualizedAssetNodes,
+    assetIdsWithTimeseriesData,
+    models
   ]);
-
-  useEffect(() => {
-    const triggerStyling = async (): Promise<void> => {
-      const styling = await allStyling;
-      if (onRuleSetChanged !== undefined) onRuleSetChanged(styling);
-    };
-
-    void triggerStyling();
-  }, [allStyling]);
 
   return <></>;
 }
