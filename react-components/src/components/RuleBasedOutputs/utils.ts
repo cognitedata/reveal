@@ -40,7 +40,7 @@ import {
   type AssetIdsAndTimeseries
 } from '../../data-providers/types';
 import { uniq } from 'lodash';
-import { DmsUniqueIdentifier } from '../../data-providers/FdmSDK';
+import { type DmsUniqueIdentifier } from '../../data-providers/FdmSDK';
 
 const checkStringExpressionStatement = (
   triggerTypeData: TriggerTypeData[],
@@ -614,7 +614,7 @@ const analyzeAssetMappingsAgainstExpression = async ({
 
       allAssetMappingsTreeNodes.push(nodesFromThisAsset);
     }
-  };
+  }
 
   const filteredAllAssetMappingsTreeNodes = allAssetMappingsTreeNodes.flat();
   return applyAssetMappingsNodeStyles(filteredAllAssetMappingsTreeNodes, outputSelected);
@@ -773,7 +773,6 @@ const applyFdmMappingsNodeStyles = (
   nodeIndexSet.clear();
 
   for (const node of treeNodes) {
-
     if (node.cadNode === undefined) continue;
 
     const range = new NumericRange(node.cadNode.treeIndex, node.cadNode.subtreeSize);
