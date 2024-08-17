@@ -91,40 +91,40 @@ export abstract class BaseFilterCommand extends RenderTargetCommand {
 
   public getSelectedLabel(translate: TranslateDelegate): string {
     if (this._children === undefined) {
-      return getNoneLabel(translate);
+      return BaseFilterCommand.getNoneString(translate);
     }
     const selected = this._children.filter((child) => child.isChecked);
     const counter = selected.length;
     if (counter === 0) {
-      return getNoneLabel(translate);
+      return BaseFilterCommand.getNoneString(translate);
     }
     if (counter === this._children.length) {
-      return getAllLabel(translate);
+      return BaseFilterCommand.getAllString(translate);
     }
     if (counter === 1) {
       return selected[0].getLabel(translate);
     }
-    return counter.toString() + ' ' + getSelectedLabel(translate);
+    return counter.toString() + ' ' + BaseFilterCommand.getSelectedString(translate);
+  }
+
+  // ==================================================
+  // STATIC METHODS
+  // ==================================================
+
+  public static getAllString(translate: TranslateDelegate): string {
+    return translate('ALL', 'All');
+  }
+
+  private static getNoneString(translate: TranslateDelegate): string {
+    return translate('NONE', 'None');
+  }
+
+  private static getSelectedString(translate: TranslateDelegate): string {
+    return translate('SELECTED', 'Selected');
   }
 }
 
 export abstract class BaseFilterItemCommand extends RenderTargetCommand {
   public abstract get color(): Color | undefined;
   public abstract setChecked(value: boolean): void;
-}
-
-// ==================================================
-// PRIVATE FUNCTIONS
-// ==================================================
-
-function getAllLabel(translate: TranslateDelegate): string {
-  return translate('ALL', 'All');
-}
-
-function getNoneLabel(translate: TranslateDelegate): string {
-  return translate('NONE', 'None');
-}
-
-function getSelectedLabel(translate: TranslateDelegate): string {
-  return translate('SELECTED', 'Selected');
 }

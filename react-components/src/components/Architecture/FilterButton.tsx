@@ -125,7 +125,7 @@ export const FilterButton = ({
                 onClick={() => {
                   command.toggleAllChecked();
                 }}>
-                {command.getAllLabel(t)}
+                {BaseFilterCommand.getAllString(t)}
               </Menu.Item>
               <StyledMenuItems>
                 {children.map((child, _index): ReactElement => {
