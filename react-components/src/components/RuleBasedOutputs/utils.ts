@@ -40,6 +40,7 @@ import {
   type AssetIdsAndTimeseries
 } from '../../data-providers/types';
 import { uniq } from 'lodash';
+import { DmsUniqueIdentifier } from '../../data-providers/FdmSDK';
 
 const checkStringExpressionStatement = (
   triggerTypeData: TriggerTypeData[],
@@ -567,55 +568,55 @@ const analyzeAssetMappingsAgainstExpression = async ({
   expression: Expression;
   outputSelected: ColorRuleOutput;
 }): Promise<AssetStylingGroupAndStyleIndex> => {
-  const allAssetMappingsTreeNodes = await Promise.all(
-    contextualizedAssetNodes.map(async (contextualizedAssetNode) => {
-      const triggerData: TriggerTypeData[] = [];
+  const allAssetMappingsTreeNodes: AssetMapping3D[][] = [];
 
-      const metadataTriggerData: TriggerTypeData = {
-        type: 'metadata',
-        asset: contextualizedAssetNode
-      };
+  for (const contextualizedAssetNode of contextualizedAssetNodes) {
+    const triggerData: TriggerTypeData[] = [];
 
-      triggerData.push(metadataTriggerData);
+    const metadataTriggerData: TriggerTypeData = {
+      type: 'metadata',
+      asset: contextualizedAssetNode
+    };
 
-      if (
-        timeseriesDatapoints !== undefined &&
-        timeseriesDatapoints.length > 0 &&
-        assetIdsAndTimeseries !== undefined &&
-        assetIdsAndTimeseries.length > 0
-      ) {
-        const timeseriesDataForThisAsset = generateTimeseriesAndDatapointsFromTheAsset({
-          contextualizedAssetNode,
-          assetIdsAndTimeseries,
-          timeseriesDatapoints
-        });
+    triggerData.push(metadataTriggerData);
 
-        if (timeseriesDataForThisAsset.length > 0) {
-          const timeseriesTriggerData: TriggerTypeData = {
-            type: 'timeseries',
-            timeseries: {
-              timeseriesWithDatapoints: timeseriesDataForThisAsset,
-              linkedAssets: contextualizedAssetNode
-            }
-          };
+    if (
+      timeseriesDatapoints !== undefined &&
+      timeseriesDatapoints.length > 0 &&
+      assetIdsAndTimeseries !== undefined &&
+      assetIdsAndTimeseries.length > 0
+    ) {
+      const timeseriesDataForThisAsset = generateTimeseriesAndDatapointsFromTheAsset({
+        contextualizedAssetNode,
+        assetIdsAndTimeseries,
+        timeseriesDatapoints
+      });
 
-          triggerData.push(timeseriesTriggerData);
-        }
+      if (timeseriesDataForThisAsset.length > 0) {
+        const timeseriesTriggerData: TriggerTypeData = {
+          type: 'timeseries',
+          timeseries: {
+            timeseriesWithDatapoints: timeseriesDataForThisAsset,
+            linkedAssets: contextualizedAssetNode
+          }
+        };
+
+        triggerData.push(timeseriesTriggerData);
       }
+    }
 
-      const finalGlobalOutputResult = traverseExpression(triggerData, [expression]);
+    const finalGlobalOutputResult = traverseExpression(triggerData, [expression]);
 
-      if (finalGlobalOutputResult[0] ?? false) {
-        const nodesFromThisAsset = assetMappings.filter(
-          (item) => item.assetId === contextualizedAssetNode.id
-        );
+    if (finalGlobalOutputResult[0] ?? false) {
+      const nodesFromThisAsset = assetMappings.filter(
+        (item) => item.assetId === contextualizedAssetNode.id
+      );
 
-        return nodesFromThisAsset;
-      }
-    })
-  );
+      allAssetMappingsTreeNodes.push(nodesFromThisAsset);
+    }
+  };
 
-  const filteredAllAssetMappingsTreeNodes = allAssetMappingsTreeNodes.flat().filter(isDefined);
+  const filteredAllAssetMappingsTreeNodes = allAssetMappingsTreeNodes.flat();
   return applyAssetMappingsNodeStyles(filteredAllAssetMappingsTreeNodes, outputSelected);
 };
 
@@ -726,17 +727,23 @@ const applyAssetMappingsNodeStyles = (
 
   const nodeIndexSet = ruleOutputAndStyleIndex.styleIndex.getIndexSet();
   nodeIndexSet.clear();
-  treeNodes?.forEach((node) => {
+
+  const assetIds: number[] = [];
+
+  for (const node of treeNodes) {
     const range = new NumericRange(node.treeIndex, node.subtreeSize);
     nodeIndexSet.addRange(range);
-  });
+
+    assetIds.push(node.assetId);
+  }
   ruleOutputAndStyleIndex.styleIndex.updateSet(nodeIndexSet);
 
   const nodeAppearance: NodeAppearance = {
     color: new Color(outputSelected.fill)
   };
+
   const assetStylingGroup: AssetStylingGroup = {
-    assetIds: treeNodes.map((node) => node.assetId),
+    assetIds,
     style: { cad: nodeAppearance }
   };
 
@@ -756,29 +763,33 @@ const applyFdmMappingsNodeStyles = (
     ruleOutputParams: outputSelected
   };
 
-  const nodeIndexSet = ruleOutputAndStyleIndex.styleIndex.getIndexSet();
-  nodeIndexSet.clear();
-  treeNodes?.forEach((node) => {
-    if (node.cadNode === undefined) return;
-    const range = new NumericRange(node.cadNode.treeIndex, node.cadNode.subtreeSize);
-    nodeIndexSet.addRange(range);
-  });
-  ruleOutputAndStyleIndex.styleIndex.updateSet(nodeIndexSet);
-
   const nodeAppearance: NodeAppearance = {
     color: new Color(outputSelected.fill)
   };
+
+  const fdmAssetExternalIds: DmsUniqueIdentifier[] = [];
+
+  const nodeIndexSet = ruleOutputAndStyleIndex.styleIndex.getIndexSet();
+  nodeIndexSet.clear();
+
+  for (const node of treeNodes) {
+
+    if (node.cadNode === undefined) continue;
+
+    const range = new NumericRange(node.cadNode.treeIndex, node.cadNode.subtreeSize);
+    nodeIndexSet.addRange(range);
+
+    if (node.connection === undefined) continue;
+    fdmAssetExternalIds.push({
+      space: node.connection?.instance.space,
+      externalId: node.connection?.instance.externalId
+    });
+  }
+
+  ruleOutputAndStyleIndex.styleIndex.updateSet(nodeIndexSet);
+
   const fdmStylingGroup: FdmAssetStylingGroup = {
-    fdmAssetExternalIds:
-      treeNodes
-        .map((node) => {
-          if (node.connection === undefined) return undefined;
-          return {
-            space: node.connection?.instance.space,
-            externalId: node.connection?.instance.externalId
-          };
-        })
-        .filter(isDefined) ?? [],
+    fdmAssetExternalIds,
     style: { cad: nodeAppearance }
   };
 
