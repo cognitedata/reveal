@@ -91,36 +91,40 @@ export abstract class BaseFilterCommand extends RenderTargetCommand {
 
   public getSelectedLabel(translate: TranslateDelegate): string {
     if (this._children === undefined) {
-      return this.getNoneLabel(translate);
+      return getNoneLabel(translate);
     }
     const selected = this._children.filter((child) => child.isChecked);
     const counter = selected.length;
     if (counter === 0) {
-      return this.getNoneLabel(translate);
+      return getNoneLabel(translate);
     }
     if (counter === this._children.length) {
-      return this.getAllLabel(translate);
+      return getAllLabel(translate);
     }
     if (counter === 1) {
       return selected[0].getLabel(translate);
     }
-    return counter.toString() + ' ' + this.getSelected(translate);
-  }
-
-  public getAllLabel(translate: TranslateDelegate): string {
-    return translate('ALL', 'All');
-  }
-
-  public getNoneLabel(translate: TranslateDelegate): string {
-    return translate('NONE', 'None');
-  }
-
-  public getSelected(translate: TranslateDelegate): string {
-    return translate('SELECTED', 'Selected');
+    return counter.toString() + ' ' + getSelectedLabel(translate);
   }
 }
 
 export abstract class BaseFilterItemCommand extends RenderTargetCommand {
   public abstract get color(): Color | undefined;
   public abstract setChecked(value: boolean): void;
+}
+
+// ==================================================
+// PRIVATE FUNCTIONS
+// ==================================================
+
+function getAllLabel(translate: TranslateDelegate): string {
+  return translate('ALL', 'All');
+}
+
+function getNoneLabel(translate: TranslateDelegate): string {
+  return translate('NONE', 'None');
+}
+
+function getSelectedLabel(translate: TranslateDelegate): string {
+  return translate('SELECTED', 'Selected');
 }
