@@ -664,18 +664,22 @@ const generateTimeseriesAndDatapointsFromTheAsset = ({
     (item) => item.assetIds?.externalId === contextualizedAssetNode.externalId
   );
 
-  const timeseries = timeseriesLinkedToThisAsset?.map((item) => item.timeseries).filter(isDefined);
   const datapoints = timeseriesDatapoints?.filter((datapoint) =>
-    timeseries?.find((item) => item?.externalId === datapoint.externalId)
+    timeseriesLinkedToThisAsset?.find(
+      (item) => item?.timeseries?.externalId === datapoint.externalId
+    )
   );
 
-  const timeseriesData: TimeseriesAndDatapoints[] = timeseries
+  const timeseriesData: TimeseriesAndDatapoints[] = timeseriesLinkedToThisAsset
     .map((item) => {
-      const datapoint = datapoints?.find((datapoint) => datapoint.externalId === item.externalId);
+      if (item.timeseries === undefined) return undefined;
+      const datapoint = datapoints?.find(
+        (datapoint) => datapoint.externalId === item.timeseries?.externalId
+      );
       if (datapoint === undefined) return undefined;
 
       const content: TimeseriesAndDatapoints = {
-        ...item,
+        ...item.timeseries,
         ...datapoint
       };
       return content;
