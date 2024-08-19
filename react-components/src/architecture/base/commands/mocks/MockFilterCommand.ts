@@ -14,7 +14,7 @@ export class MockFilterCommand extends BaseFilterCommand {
 
   private _timeStamp: number | undefined = undefined;
   private _useAllColor: boolean = true;
-  private readonly _testDynamic: boolean = false;
+  private readonly _testDynamic: boolean = false; // True to test dynamic updates (for testing purposes)
 
   // ==================================================
   // OVERRIDES

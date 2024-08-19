@@ -46,7 +46,7 @@ export class PointCloudFilterCommand extends BaseFilterCommand {
     super.initializeChildrenIfNeeded();
   }
 
-  protected createChildren(): FilterItemCommand[] {
+  protected override createChildren(): FilterItemCommand[] {
     const pointCloud = this.getPointCloud();
     if (pointCloud === undefined) {
       return [];
@@ -68,7 +68,7 @@ export class PointCloudFilterCommand extends BaseFilterCommand {
     if (pointCloud === undefined) {
       return false;
     }
-    return isClassesVisible(pointCloud);
+    return isAllClassesVisible(pointCloud);
   }
 
   public override toggleAllChecked(): void {
@@ -76,7 +76,7 @@ export class PointCloudFilterCommand extends BaseFilterCommand {
     if (pointCloud === undefined) {
       return;
     }
-    const isAllChecked = isClassesVisible(pointCloud);
+    const isAllChecked = isAllClassesVisible(pointCloud);
     const classes = pointCloud.getClasses();
     if (classes === undefined || classes.length === 0) {
       return;
@@ -214,7 +214,7 @@ function getFirstPointCloudWithClasses(
   return undefined;
 }
 
-function isClassesVisible(pointCloud: CognitePointCloudModel): boolean {
+function isAllClassesVisible(pointCloud: CognitePointCloudModel): boolean {
   const classes = pointCloud.getClasses();
   if (classes === undefined || classes.length === 0) {
     return false;
