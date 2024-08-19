@@ -10,6 +10,11 @@ import { CommandsUpdater } from '../reactUpdaters/CommandsUpdater';
 import { type RevealRenderTarget } from '../renderTarget/RevealRenderTarget';
 
 export class PointCloudFilterCommand extends BaseFilterCommand {
+  // ==================================================
+  // INSTANCE FIELDS
+  // ==================================================
+
+  private _modelId: number | undefined = undefined;
   private _revisionId: number | undefined = undefined;
 
   // ==================================================
@@ -21,30 +26,28 @@ export class PointCloudFilterCommand extends BaseFilterCommand {
   }
 
   public override get isEnabled(): boolean {
-    const pointCloud = getFirstPointCloudWithClasses(this.renderTarget);
-    if (pointCloud === undefined) {
-      return false;
-    }
-    return true;
+    return this.getPointCloud() !== undefined;
   }
 
   public override initializeChildrenIfNeeded(): void {
     const pointCloud = getFirstPointCloudWithClasses(this.renderTarget);
     if (pointCloud === undefined) {
       this._children = undefined;
+      this._modelId = undefined;
       this._revisionId = undefined;
       return;
     }
-    if (this._revisionId === pointCloud.revisionId) {
-      return;
+    if (this._modelId === pointCloud.modelId && this._revisionId === pointCloud.revisionId) {
+      return; // Nothing changed
     }
+    this._modelId = pointCloud.modelId;
     this._revisionId = pointCloud.revisionId;
     this._children = undefined;
     super.initializeChildrenIfNeeded();
   }
 
-  protected createChildren(): FilterItemCommand[] {
-    const pointCloud = getFirstPointCloudWithClasses(this.renderTarget);
+  protected override createChildren(): FilterItemCommand[] {
+    const pointCloud = this.getPointCloud();
     if (pointCloud === undefined) {
       return [];
     }
@@ -55,25 +58,25 @@ export class PointCloudFilterCommand extends BaseFilterCommand {
     const children = [];
     for (const c of classes) {
       const pointClass = new PointClass(c.name, c.code, c.color);
-      children.push(new FilterItemCommand(pointClass));
+      children.push(new FilterItemCommand(pointClass, pointCloud.modelId, pointCloud.revisionId));
     }
     return children;
   }
 
   public override get isAllChecked(): boolean {
-    const pointCloud = getFirstPointCloudWithClasses(this.renderTarget);
+    const pointCloud = this.getPointCloud();
     if (pointCloud === undefined) {
       return false;
     }
-    return isClassesVisible(pointCloud);
+    return isAllClassesVisible(pointCloud);
   }
 
   public override toggleAllChecked(): void {
-    const pointCloud = getFirstPointCloudWithClasses(this.renderTarget);
+    const pointCloud = this.getPointCloud();
     if (pointCloud === undefined) {
       return;
     }
-    const isAllChecked = isClassesVisible(pointCloud);
+    const isAllChecked = isAllClassesVisible(pointCloud);
     const classes = pointCloud.getClasses();
     if (classes === undefined || classes.length === 0) {
       return;
@@ -82,19 +85,39 @@ export class PointCloudFilterCommand extends BaseFilterCommand {
       pointCloud.setClassVisible(c.code, !isAllChecked);
     }
   }
+
+  // ==================================================
+  // INSTANCE METHODS
+  // ==================================================
+
+  private getPointCloud(): CognitePointCloudModel | undefined {
+    if (this._modelId === undefined || this._revisionId === undefined) {
+      return undefined;
+    }
+    for (const pointCloud of this.renderTarget.getPointClouds()) {
+      if (this._modelId === pointCloud.modelId && this._revisionId === pointCloud.revisionId) {
+        return pointCloud;
+      }
+    }
+    return undefined;
+  }
 }
 
 // Note: This is not exported, as it is only used internally
 
 class FilterItemCommand extends BaseFilterItemCommand {
+  private readonly _modelId: number;
+  private readonly _revisionId: number;
   private readonly _pointClass: PointClass;
 
   // ==================================================
   // CONSTRUCTOR
   // ==================================================
 
-  public constructor(pointClass: PointClass) {
+  public constructor(pointClass: PointClass, modelId: number, revisionId: number) {
     super();
+    this._modelId = modelId;
+    this._revisionId = revisionId;
     this._pointClass = pointClass;
   }
 
@@ -107,7 +130,7 @@ class FilterItemCommand extends BaseFilterItemCommand {
   }
 
   public override get isChecked(): boolean {
-    const pointCloud = getFirstPointCloudWithClasses(this.renderTarget);
+    const pointCloud = this.getPointCloud();
     if (pointCloud === undefined) {
       return false;
     }
@@ -115,7 +138,7 @@ class FilterItemCommand extends BaseFilterItemCommand {
   }
 
   public override invokeCore(): boolean {
-    const pointCloud = getFirstPointCloudWithClasses(this.renderTarget);
+    const pointCloud = this.getPointCloud();
     if (pointCloud === undefined) {
       return false;
     }
@@ -128,13 +151,26 @@ class FilterItemCommand extends BaseFilterItemCommand {
     return this._pointClass.color;
   }
 
-  public setChecked(value: boolean): void {
-    const pointCloud = getFirstPointCloudWithClasses(this.renderTarget);
+  public override setChecked(value: boolean): void {
+    const pointCloud = this.getPointCloud();
     if (pointCloud === undefined) {
       return;
     }
     pointCloud.setClassVisible(this._pointClass.code, value);
     CommandsUpdater.update(this._renderTarget);
+  }
+
+  // ==================================================
+  // INSTANCE METHODS
+  // ==================================================
+
+  private getPointCloud(): CognitePointCloudModel | undefined {
+    for (const pointCloud of this.renderTarget.getPointClouds()) {
+      if (this._modelId === pointCloud.modelId && this._revisionId === pointCloud.revisionId) {
+        return pointCloud;
+      }
+    }
+    return undefined;
   }
 }
 
@@ -161,6 +197,10 @@ class PointClass {
   }
 }
 
+// ==================================================
+// PRIVATE FUNCTIONS
+// ==================================================
+
 function getFirstPointCloudWithClasses(
   renderTarget: RevealRenderTarget
 ): CognitePointCloudModel | undefined {
@@ -169,11 +209,12 @@ function getFirstPointCloudWithClasses(
     if (classes === undefined || classes.length === 0) {
       continue;
     }
+    return pointCloud;
   }
   return undefined;
 }
 
-function isClassesVisible(pointCloud: CognitePointCloudModel): boolean {
+function isAllClassesVisible(pointCloud: CognitePointCloudModel): boolean {
   const classes = pointCloud.getClasses();
   if (classes === undefined || classes.length === 0) {
     return false;
