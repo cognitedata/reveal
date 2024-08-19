@@ -1,4 +1,4 @@
-import { DateRange, Timestamp, ViewReference } from '@cognite/sdk';
+import { Timestamp, ViewReference } from '@cognite/sdk';
 import { DmsUniqueIdentifier, Source } from '../FdmSDK';
 
 export const CORE_DM_SPACE = 'cdf_cdm_experimental';
@@ -55,7 +55,7 @@ export const COGNITE_VISUALIZABLE_SOURCE = {
   type: 'view'
 } as const satisfies ViewReference;
 
-export const COGNITE_POINT_CLOUD_VOLUME = {
+export const COGNITE_POINT_CLOUD_VOLUME_SOURCE = {
   externalId: 'CognitePointCloudVolume',
   space: CORE_DM_SPACE,
   version: 'v1',

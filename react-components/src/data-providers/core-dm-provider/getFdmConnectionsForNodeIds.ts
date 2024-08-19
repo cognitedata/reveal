@@ -172,7 +172,3 @@ const cadConnectionQuery = {
     }
   }
 } as const satisfies Omit<QueryRequest, 'cursors' | 'parameters'>;
-
-function toFdmKey(dmsId: DmsUniqueIdentifier): FdmKey {
-  return `${dmsId.space}/${dmsId.externalId}`;
-}

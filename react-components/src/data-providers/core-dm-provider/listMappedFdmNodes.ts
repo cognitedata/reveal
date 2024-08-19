@@ -11,7 +11,7 @@ import {
   COGNITE_3D_OBJECT_SOURCE,
   COGNITE_ASSET_SOURCE,
   COGNITE_CAD_NODE_SOURCE,
-  COGNITE_POINT_CLOUD_VOLUME,
+  COGNITE_POINT_CLOUD_VOLUME_SOURCE,
   CogniteAssetProperties
 } from './dataModels';
 import { cogniteAssetSourceWithProperties } from './cogniteAssetSourceWithProperties';
@@ -105,7 +105,7 @@ function createRawQuery(
       pointcloud_object_3d: {
         nodes: {
           from: 'pointcloud_volumes',
-          through: { source: COGNITE_POINT_CLOUD_VOLUME, identifier: 'object3D' }
+          through: { source: COGNITE_POINT_CLOUD_VOLUME_SOURCE, identifier: 'object3D' }
         }
       },
       pointcloud_assets: {

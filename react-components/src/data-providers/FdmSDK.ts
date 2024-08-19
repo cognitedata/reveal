@@ -4,7 +4,11 @@
 
 import { QueryRequest, TableExpressionFilterDefinition, type CogniteClient } from '@cognite/sdk';
 import { type FdmPropertyType } from '../components/Reveal3DResources/types';
-import { queryNodesAndEdges, QueryResult, SelectSourceWithParams } from './queryNodesAndEdges';
+import {
+  queryNodesAndEdges,
+  QueryResult,
+  SelectSourceWithParams
+} from './utils/queryNodesAndEdges';
 
 type InstanceType = 'node' | 'edge';
 type EdgeDirection = 'source' | 'destination';
@@ -194,7 +198,6 @@ export class FdmSDK {
   private readonly _listEndpoint: string;
   private readonly _inspectEndpoint: string;
   private readonly _searchEndpoint: string;
-  private readonly _queryEndpoint: string;
   private readonly _listViewsEndpoint: string;
   private readonly _viewsByIdEndpoint: string;
   private readonly _listDataModelsEndpoint: string;
@@ -209,7 +212,6 @@ export class FdmSDK {
     const viewsBaseUrl = `${baseUrl}/api/v1/projects/${project}/models/views`;
 
     this._listEndpoint = `${instancesBaseUrl}/list`;
-    this._queryEndpoint = `${instancesBaseUrl}/query`;
     this._byIdsEndpoint = `${instancesBaseUrl}/byids`;
     this._inspectEndpoint = `${instancesBaseUrl}/inspect`;
     this._searchEndpoint = `${instancesBaseUrl}/search`;

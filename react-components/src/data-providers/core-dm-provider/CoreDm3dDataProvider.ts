@@ -1,4 +1,4 @@
-import { AddModelOptions, isDefaultCameraManager } from '@cognite/reveal';
+import { AddModelOptions } from '@cognite/reveal';
 import { FdmCadConnection } from '../../components/CacheProvider/types';
 import { Fdm3dDataProvider } from '../Fdm3dDataProvider';
 import { DmsUniqueIdentifier, FdmSDK, InstanceFilter, NodeItem, Source, ViewItem } from '../FdmSDK';
@@ -10,11 +10,10 @@ import { getEdgeConnected3dInstances } from './getEdgeConnected3dInstances';
 import { getFdmConnectionsForNodes } from './getFdmConnectionsForNodeIds';
 import { Node3D } from '@cognite/sdk';
 import { getDMSRevision } from './getDMSRevision';
-import assert from 'assert';
 import { listAllMappedFdmNodes, listMappedFdmNodes } from './listMappedFdmNodes';
 import { isDefined } from '../../utilities/isDefined';
 import { executeParallel } from '../../utilities/executeParallel';
-import { zip } from 'lodash';
+import { filterNodesByMappedTo3d } from './filterNodesByMappedTo3d';
 
 const MAX_PARALLEL_QUERIES = 2;
 
@@ -151,11 +150,20 @@ export class CoreDm3dFdm3dDataProvider implements Fdm3dDataProvider {
     return listAllMappedFdmNodes(revisionRefs, sourcesToSearch, instanceFilter, this._fdmSdk);
   }
 
-  filterNodesByMappedTo3d(
+  async filterNodesByMappedTo3d(
     nodes: InstancesWithView[],
     models: AddModelOptions[],
     spacesToSearch: string[]
-  ): Promise<InstancesWithView[]> {}
+  ): Promise<InstancesWithView[]> {
+    const modelRefs = await this.getDMSModelsForIds(models.map((model) => model.modelId));
+
+    const revisionRefs = await this.getDMSRevisionsForRevisionIdsAndModelRefs(
+      modelRefs,
+      models.map((model) => model.revisionId)
+    );
+
+    return filterNodesByMappedTo3d(nodes, revisionRefs, spacesToSearch, this._fdmSdk);
+  }
 
   getCadModelsForInstance(instance: DmsUniqueIdentifier): Promise<TaggedAddResourceOptions[]> {}
 
