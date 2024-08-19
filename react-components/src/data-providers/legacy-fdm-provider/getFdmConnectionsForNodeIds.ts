@@ -1,18 +1,20 @@
 /*!
  * Copyright 2024 Cognite AS
  */
-import { type CogniteInternalId } from '@cognite/sdk/dist/src';
+import { Node3D } from '@cognite/sdk';
 import { type DmsUniqueIdentifier, type FdmSDK } from '../FdmSDK';
 import { type FdmCadConnection } from '../../components/CacheProvider/types';
 import { type InModel3dEdgeProperties, SYSTEM_3D_EDGE_SOURCE } from './dataModels';
 import { fdmEdgesToCadConnections } from './fdmEdgesToCadConnections';
 
-export async function getFdmConnectionsForNodeIds(
+export async function getFdmConnectionsForNodes(
   fdmClient: FdmSDK,
   models: DmsUniqueIdentifier[],
   revisionId: number,
-  nodeIds: CogniteInternalId[]
+  nodes: Node3D[]
 ): Promise<FdmCadConnection[]> {
+  const nodeIds = nodes.map((node) => node.id);
+
   const filter = {
     and: [
       {

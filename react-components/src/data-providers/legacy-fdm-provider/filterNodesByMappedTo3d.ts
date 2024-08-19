@@ -9,12 +9,13 @@ import {
   type ExternalId,
   type FdmSDK,
   type NodeItem,
-  type Query,
   type Source
 } from '../FdmSDK';
 import { SYSTEM_3D_EDGE_SOURCE, SYSTEM_SPACE_3D_SCHEMA } from './dataModels';
 import { getDMSModels } from './getDMSModels';
 import { type FdmKey } from '../../components/CacheProvider/types';
+import { QueryRequest } from '@cognite/sdk/dist/src';
+import { getDirectRelationProperties } from '../utils/getDirectRelationProperties';
 
 export async function filterNodesByMappedTo3d(
   fdmSdk: FdmSDK,
@@ -29,7 +30,7 @@ export async function filterNodesByMappedTo3d(
     return nodesWithViews;
   }
 
-  const directlyMappedNodes = nodes.map((node) => getDirectRelationProperties(node)).flat();
+  const directlyMappedNodes = nodes.flatMap((node) => getDirectRelationProperties(node));
 
   const mappedEquipmentQuery = createCheckMappedEquipmentQuery(
     nodes,
@@ -37,7 +38,8 @@ export async function filterNodesByMappedTo3d(
     models,
     views
   );
-  const queryResult = await fdmSdk.queryNodesAndEdges(mappedEquipmentQuery);
+  const queryResult =
+    await fdmSdk.queryNodesAndEdges<typeof mappedEquipmentQuery>(mappedEquipmentQuery);
 
   const { mappedEquipmentFirstLevelMap, equipmentSecondLevelMap } = await createMappedEquipmentMaps(
     fdmSdk,
@@ -69,7 +71,7 @@ function createCheckMappedEquipmentQuery(
   models: AddModelOptions[],
   views: Source[],
   limit: number = 1000
-): Query {
+) {
   return {
     with: {
       mapped_nodes: {
@@ -108,7 +110,7 @@ function createCheckMappedEquipmentQuery(
         sources: views.map((view) => ({ source: view, properties: [] }))
       }
     }
-  };
+  } as const satisfies Omit<QueryRequest, 'cursor' | 'parameters'>;
 }
 
 async function createMappedEquipmentMaps(
@@ -212,19 +214,4 @@ function checkInstanceWithMappedEquipmentMaps(
   }
 
   return false;
-}
-
-function getDirectRelationProperties(searchResultNode: NodeItem): DmsUniqueIdentifier[] {
-  const directRelations: DmsUniqueIdentifier[] = [];
-  const nodeProperties = searchResultNode.properties;
-
-  Object.keys(nodeProperties).forEach((propertyKey) => {
-    const { space, externalId } = nodeProperties[propertyKey] as any;
-
-    if (space !== undefined && externalId !== undefined) {
-      directRelations.push({ space, externalId });
-    }
-  });
-
-  return directRelations;
 }

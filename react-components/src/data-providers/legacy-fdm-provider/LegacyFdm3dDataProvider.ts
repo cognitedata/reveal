@@ -15,12 +15,13 @@ import {
 import { type InstancesWithView } from '../../query/useSearchMappedEquipmentFDM';
 import { type TaggedAddResourceOptions } from '../../components/Reveal3DResources/types';
 import { getEdgeConnected3dInstances } from './getEdgeConnected3dInstances';
-import { getFdmConnectionsForNodeIds } from './getFdmConnectionsForNodeIds';
+import { getFdmConnectionsForNodes } from './getFdmConnectionsForNodeIds';
 import { getDMSModels } from './getDMSModels';
 import { listAllMappedFdmNodes, listMappedFdmNodes } from './listMappedFdmNodes';
 import { filterNodesByMappedTo3d } from './filterNodesByMappedTo3d';
 import { getCadModelsForFdmInstance } from './getCadModelsForFdmInstance';
 import { getCadConnectionsForRevision } from './getCadConnectionsForRevision';
+import { Node3D } from '@cognite/sdk/dist/src';
 
 export class LegacyFdm3dDataProvider implements Fdm3dDataProvider {
   readonly _fdmSdk: FdmSDK;
@@ -38,15 +39,15 @@ export class LegacyFdm3dDataProvider implements Fdm3dDataProvider {
   }
 
   async getEdgeConnected3dInstances(instance: DmsUniqueIdentifier): Promise<DmsUniqueIdentifier[]> {
-    return await getEdgeConnected3dInstances(this._fdmSdk, instance);
+    return await getEdgeConnected3dInstances(instance, this._fdmSdk);
   }
 
-  async getFdmConnectionsForNodeIds(
+  async getFdmConnectionsForNodes(
     models: DmsUniqueIdentifier[],
     revisionId: number,
-    nodeIds: number[]
+    nodes: Node3D[]
   ): Promise<FdmCadConnection[]> {
-    return await getFdmConnectionsForNodeIds(this._fdmSdk, models, revisionId, nodeIds);
+    return await getFdmConnectionsForNodes(this._fdmSdk, models, revisionId, nodes);
   }
 
   async listMappedFdmNodes(

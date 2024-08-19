@@ -12,6 +12,7 @@ import {
 import { createMappedEquipmentQuery } from './createMappedEquipmentQuery';
 import { chunk, isEqual } from 'lodash';
 import { removeEmptyProperties } from '../../utilities/removeEmptyProperties';
+import { QueryRequest } from '@cognite/sdk/dist/src';
 
 export async function listMappedFdmNodes(
   fdmSdk: FdmSDK,
@@ -68,7 +69,7 @@ function createChunkedMappedEquipmentQueries(
   views: Source[],
   limit: number = 10000,
   cursors?: Record<string, string>
-): Query[] {
+): QueryRequest[] {
   const viewChunks = chunk(views, 10);
   return viewChunks.map((viewChunk) =>
     createMappedEquipmentQuery(models, viewChunk, undefined, limit, cursors)

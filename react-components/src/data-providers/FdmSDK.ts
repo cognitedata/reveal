@@ -2,13 +2,14 @@
  * Copyright 2023 Cognite AS
  */
 
-import { type CogniteClient } from '@cognite/sdk';
+import { QueryRequest, TableExpressionFilterDefinition, type CogniteClient } from '@cognite/sdk';
 import { type FdmPropertyType } from '../components/Reveal3DResources/types';
+import { queryNodesAndEdges, QueryResult, SelectSourceWithParams } from './queryNodesAndEdges';
 
 type InstanceType = 'node' | 'edge';
 type EdgeDirection = 'source' | 'destination';
 
-export type InstanceFilter = Record<string, any>;
+export type InstanceFilter = TableExpressionFilterDefinition;
 type ViewPropertyReference = any;
 
 export type ExternalId = string;
@@ -99,7 +100,7 @@ export type NodeItem<PropertyType = Record<string, unknown>> = {
   externalId: string;
   createdTime: number;
   lastUpdatedTime: number;
-  deletedTime: number;
+  deletedTime?: number;
   properties: FdmPropertyType<PropertyType>;
 };
 
@@ -110,7 +111,7 @@ export type FdmNode<PropertyType = Record<string, unknown>> = {
   externalId: string;
   createdTime: number;
   lastUpdatedTime: number;
-  deletedTime: number;
+  deletedTime: number | undefined;
   properties: PropertyType;
 };
 
@@ -146,13 +147,6 @@ export type InspectResultList = {
     space: string;
     inspectionResults: InspectResult;
   }>;
-};
-
-type SelectKey<T extends Query> = keyof T['select'];
-
-export type QueryResult<T extends Query> = {
-  items: Record<SelectKey<T>, NodeItem[] | EdgeItem[]>;
-  nextCursor: Record<SelectKey<T>, string> | undefined;
 };
 
 export type ExternalIdsResultList<PropertyType> = {
@@ -529,12 +523,26 @@ export class FdmSDK {
     throw new Error(`Failed to fetch instances. Status: ${result.status}`);
   }
 
-  public async queryNodesAndEdges<const T extends Query>(query: T): Promise<QueryResult<T>> {
-    const result = await this._sdk.post(this._queryEndpoint, { data: query });
-    if (result.status === 200) {
-      return { items: result.data.items, nextCursor: result.data.nextCursor };
+  public async queryAllNodesAndEdges<
+    TQueryRequest extends QueryRequest,
+    TypedSelectSources extends SelectSourceWithParams = SelectSourceWithParams
+  >(query: TQueryRequest): Promise<QueryResult<TQueryRequest, TypedSelectSources>> {
+    let result = await queryNodesAndEdges<TQueryRequest, TypedSelectSources>(query, this._sdk);
+    let items = result.items;
+    while (result.nextCursor !== undefined) {
+      const newQuery = { ...query, cursor: result.nextCursor };
+      result = await queryNodesAndEdges<TQueryRequest, TypedSelectSources>(newQuery, this._sdk);
+      items = mergeQueryResults(items, result.items);
     }
-    throw new Error(`Failed to fetch instances. Status: ${result.status}`);
+
+    return { items };
+  }
+
+  public async queryNodesAndEdges<
+    TQueryRequest extends QueryRequest,
+    TypedSelectSources extends SelectSourceWithParams = SelectSourceWithParams
+  >(query: TQueryRequest): Promise<QueryResult<TQueryRequest, TypedSelectSources>> {
+    return queryNodesAndEdges<TQueryRequest, TypedSelectSources>(query, this._sdk);
   }
 
   public async listDataModels(): Promise<DataModelListResponse> {

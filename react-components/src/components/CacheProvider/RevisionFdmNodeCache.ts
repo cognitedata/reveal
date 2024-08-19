@@ -226,6 +226,7 @@ export class RevisionFdmNodeCache {
     const firstMappedAncestorTreeIndex = findLargestTreeIndex(
       connectionsWithCorrespondingTreeIndex
     );
+
     return getAncestorDataForTreeIndex(
       firstMappedAncestorTreeIndex,
       connectionsWithCorrespondingTreeIndex,
@@ -272,10 +273,10 @@ export class RevisionFdmNodeCache {
       return [];
     }
 
-    const ancestorMappings = await this._fdm3dDataProvider.getFdmConnectionsForNodeIds(
+    const ancestorMappings = await this._fdm3dDataProvider.getFdmConnectionsForNodes(
       modelInstances,
       this._revisionId,
-      ancestors.map((a) => a.id)
+      ancestors
     );
 
     return ancestorMappings;

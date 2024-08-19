@@ -1,27 +1,26 @@
-/*!
- * Copyright 2024 Cognite AS
- */
-import { SYSTEM_3D_EDGE_SOURCE } from './dataModels';
-import { type DmsUniqueIdentifier, type FdmSDK } from '../FdmSDK';
 import { QueryRequest } from '@cognite/sdk/dist/src';
+import { DmsUniqueIdentifier, FdmSDK } from '../FdmSDK';
+import {
+  Cognite3DObjectProperties,
+  COGNITE_3D_OBJECT_SOURCE,
+  COGNITE_VISUALIZABLE_SOURCE
+} from './dataModels';
 
 export async function getEdgeConnected3dInstances(
   instance: DmsUniqueIdentifier,
   fdmSdk: FdmSDK
 ): Promise<DmsUniqueIdentifier[]> {
-  const nodesResult = await fdmSdk.queryNodesAndEdges({
+  const query = {
     ...related3dEdgesQuery,
-    parameters: {
-      instanceExternalId: instance.externalId,
-      instanceSpace: instance.space
-    }
-  });
+    parameters: { instanceExternalId: instance.externalId, instanceSpace: instance.space }
+  } as const satisfies QueryRequest;
 
-  return nodesResult.items.connected_objects_with_3d.map((obj) => ({
-    instanceType: 'node' as const,
-    externalId: obj.externalId,
-    space: obj.space
-  }));
+  const result = await fdmSdk.queryNodesAndEdges<
+    typeof related3dEdgesQuery,
+    [{ source: typeof COGNITE_3D_OBJECT_SOURCE; properties: Cognite3DObjectProperties }]
+  >(query);
+
+  return result.items.connected_objects_with_3d;
 }
 
 const related3dEdgesQuery = {
@@ -55,31 +54,19 @@ const related3dEdgesQuery = {
       },
       limit: 1000
     },
-    connected_objects_with_3d: {
+    objects_connected_with_3d: {
       nodes: {
         from: 'start_to_object_edges',
-        chainTo: 'destination'
-      },
-      limit: 1000
-    },
-    edges_of_3d_type: {
-      edges: {
-        from: 'connected_objects_with_3d',
-        maxDistance: 1,
-        direction: 'outwards',
+        chainTo: 'destination',
         filter: {
-          and: [
-            {
-              hasData: [SYSTEM_3D_EDGE_SOURCE]
-            }
-          ]
+          exists: { property: ['CogniteVisualizable', 'object3D'] }
         }
       }
     },
-    nodes_with_3d_connection: {
+    object_3ds: {
       nodes: {
-        from: 'edges_of_3d_type',
-        chainTo: 'source'
+        from: 'objects_connected_with_3d',
+        through: { view: COGNITE_VISUALIZABLE_SOURCE, identifier: 'object3D' }
       },
       limit: 1000
     }
@@ -88,7 +75,6 @@ const related3dEdgesQuery = {
     start_instance: {},
     start_to_object_edges: {},
     connected_objects_with_3d: {},
-    edges_of_3d_type: {},
-    nodes_with_3d_connection: {}
+    object_3ds: {}
   }
 } as const satisfies Omit<QueryRequest, 'cursors' | 'parameters'>;
