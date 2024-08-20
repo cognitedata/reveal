@@ -38,6 +38,7 @@ __metadata:
     css-loader: "npm:^7.0.0"
     dat.gui: "npm:^0.7.7"
     dotenv-webpack: "npm:^8.0.0"
+    gle-gaussian-splat-3d: "npm:^1.0.19"
     html-webpack-plugin: "npm:^5.5.0"
     lodash: "npm:^4.17.21"
     prettier: "npm:^3.0.0"
@@ -1971,6 +1972,15 @@ __metadata:
   version: 6.0.1
   resolution: "get-stream@npm:6.0.1"
   checksum: 10/781266d29725f35c59f1d214aedc92b0ae855800a980800e2923b3fbc4e56b3cb6e462c42e09a1cf1a00c64e056a78fa407cbe06c7c92b7e5cd49b4b85c2a497
+  languageName: node
+  linkType: hard
+
+"gle-gaussian-splat-3d@npm:^1.0.19":
+  version: 1.0.19
+  resolution: "gle-gaussian-splat-3d@npm:1.0.19"
+  peerDependencies:
+    three: ">=0.160.0"
+  checksum: 10/920a03f4d564126daf7ccbc68c0ae821525e09073404bd9c867c4097d6b3e34b48ac3f9d85492bea0fce7c80e9609314fd365c1eedb8d0949882a39108e94570
   languageName: node
   linkType: hard
 
