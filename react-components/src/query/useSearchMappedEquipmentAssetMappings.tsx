@@ -46,9 +46,8 @@ export const useSearchMappedEquipmentAssetMappings = (
   userSdk?: CogniteClient
 ): UseInfiniteQueryResult<InfiniteData<AssetPage>, Error> => {
   const sdk = useSDK(userSdk);
-  const { data: assetMappingList, isFetched } = useAssetMappedNodesForRevisions(
-    models.map((model) => ({ ...model, type: 'cad' }))
-  );
+  const { data: assetMappingList, isFetched: isAssetMappingNodesFetched } =
+    useAssetMappedNodesForRevisions(models.map((model) => ({ ...model, type: 'cad' })));
   const { data: initialAssetMappings, isLoading: isInitialAssetMappingsLoading } =
     useAllMappedEquipmentAssetMappings(models, sdk);
 
@@ -103,7 +102,7 @@ export const useSearchMappedEquipmentAssetMappings = (
     },
     enabled:
       !isInitialAssetMappingsLoading &&
-      isFetched &&
+      isAssetMappingNodesFetched &&
       assetMappingList !== undefined &&
       assetMappingList.length > 0
   });
