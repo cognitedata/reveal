@@ -21,7 +21,7 @@ export function getIconByPrimitiveType(primitiveType: PrimitiveType): string {
     case PrimitiveType.PlaneXY:
       return 'Perspective';
     case PrimitiveType.HorizontalArea:
-      return 'FrameTool';
+      return 'FrameTool'; // TODO: Change to 'PerspectiveAlt' when new version of Cogs
     case PrimitiveType.VerticalArea:
       return 'Perspective';
     case PrimitiveType.Box:

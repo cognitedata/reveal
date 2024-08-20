@@ -108,7 +108,8 @@
   "CLIP_SHOW_SELECTED_ONLY": "Show/hide slicing planes and crop boxes that are not selected",
   "CLIP_SHOW_ON_TOP": "Show crop boxes and slices on top",
   "CLIP_NEXT": "Set next crop box or slicing plane as global clipping",
-  "CLIP_PREV": "Set previous crop box or slicing plane as global clipping"
+  "CLIP_PREV": "Set previous crop box or slicing plane as global clipping",
+  "ALL": "All",
+  "NONE": "None",
+  "SELECTED": "Selected"
 }
-
-
