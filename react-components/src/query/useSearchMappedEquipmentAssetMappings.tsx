@@ -46,10 +46,10 @@ export const useSearchMappedEquipmentAssetMappings = (
   userSdk?: CogniteClient
 ): UseInfiniteQueryResult<InfiniteData<AssetPage>, Error> => {
   const sdk = useSDK(userSdk);
-  const { data: assetMappingList, isFetched } = useAssetMappedNodesForRevisions(
-    models.map((model) => ({ ...model, type: 'cad' }))
-  );
-  const initialAssetMappings = useAllMappedEquipmentAssetMappings(models, sdk);
+  const { data: assetMappingList, isFetched: isAssetMappingNodesFetched } =
+    useAssetMappedNodesForRevisions(models.map((model) => ({ ...model, type: 'cad' })));
+  const { data: initialAssetMappings, isLoading: isInitialAssetMappingsLoading } =
+    useAllMappedEquipmentAssetMappings(models, sdk);
 
   return useInfiniteQuery({
     queryKey: [
@@ -60,11 +60,11 @@ export const useSearchMappedEquipmentAssetMappings = (
       ...models.map((model) => [model.modelId, model.revisionId])
     ],
     queryFn: async ({ pageParam }: { pageParam: string | undefined }) => {
-      if (initialAssetMappings.data === undefined) {
+      if (initialAssetMappings === undefined) {
         return { assets: [], nextCursor: undefined };
       }
       if (query === '') {
-        const assets = initialAssetMappings.data?.pages.flatMap((modelWithAssets) =>
+        const assets = initialAssetMappings.pages.flatMap((modelWithAssets) =>
           modelWithAssets.modelsAssets.flatMap((modelsAsset) => modelsAsset.assets).flat()
         );
         return { assets, nextCursor: undefined };
@@ -100,7 +100,11 @@ export const useSearchMappedEquipmentAssetMappings = (
       const lastPageData = allPages[allPages.length - 1];
       return lastPageData.nextCursor;
     },
-    enabled: isFetched && assetMappingList !== undefined && assetMappingList.length > 0
+    enabled:
+      !isInitialAssetMappingsLoading &&
+      isAssetMappingNodesFetched &&
+      assetMappingList !== undefined &&
+      assetMappingList.length > 0
   });
 };
 
