@@ -48,11 +48,10 @@ export const CommandButton = ({
   }
   const placement = getTooltipPlacement(isHorizontal);
   const label = command.getLabel(t);
-  const shortcut = command.getShortCutKeys();
 
   return (
     <CogsTooltip
-      content={<LabelWithShortcut label={label} shortcut={shortcut} />}
+      content={<LabelWithShortcut label={label} command={command} />}
       disabled={label === undefined}
       appendTo={document.body}
       placement={placement}>

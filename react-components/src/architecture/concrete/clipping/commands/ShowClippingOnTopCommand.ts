@@ -14,7 +14,7 @@ export class ShowClippingOnTopCommand extends ShowDomainObjectsOnTopCommand {
   // ==================================================
 
   public override get tooltip(): TranslateKey {
-    return { key: 'CLIP_SHOW_ON_TOP', fallback: 'Show all crop boxes and slices on top' };
+    return { key: 'CLIP_SHOW_ON_TOP', fallback: 'Show crop boxes and slices on top' };
   }
 
   protected override isInstance(domainObject: DomainObject): boolean {

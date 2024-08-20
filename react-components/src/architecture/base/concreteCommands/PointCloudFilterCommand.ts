@@ -22,7 +22,7 @@ export class PointCloudFilterCommand extends BaseFilterCommand {
   // ==================================================
 
   public override get tooltip(): TranslateKey {
-    return { key: 'POINT_FILTER', fallback: 'Points filter' };
+    return { key: 'POINT_FILTER', fallback: 'Point filter' };
   }
 
   public override get isEnabled(): boolean {

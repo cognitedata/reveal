@@ -163,18 +163,19 @@ export abstract class BaseCommand {
     return translate(key, fallback);
   }
 
-  public getShortCutKeys(): string | undefined {
+  public getShortCutKeys(): string[] | undefined {
     const key = this.shortCutKey;
     if (key === undefined) {
       return undefined;
     }
-    let result = '';
+    const keys: string[] = [];
     if (this.shortCutKeyOnCtrl) {
-      result += 'Ctrl+';
+      keys.push('Ctrl');
     }
     if (this.shortCutKeyOnShift) {
-      result += 'Shift+';
+      keys.push('Shift');
     }
-    return result + key;
+    keys.push(key);
+    return keys;
   }
 }
