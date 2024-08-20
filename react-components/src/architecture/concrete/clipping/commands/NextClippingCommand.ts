@@ -29,12 +29,12 @@ export class NextOrPrevClippingCommand extends RenderTargetCommand {
     if (this._next) {
       return {
         key: 'CLIP_NEXT',
-        fallback: 'Set the next crop box or slicing plane as global clipping'
+        fallback: 'Set next crop box or slicing plane as global clipping'
       };
     } else {
       return {
         key: 'CLIP_PREV',
-        fallback: 'Set the previous crop box or slicing plane as global clipping'
+        fallback: 'Set previous crop box or slicing plane as global clipping'
       };
     }
   }
