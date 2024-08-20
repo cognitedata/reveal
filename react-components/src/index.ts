@@ -48,6 +48,7 @@ export {
 export { useImage360AnnotationMappingsForAssetIds } from './components/CacheProvider/Image360AnnotationCacheProvider';
 export { useLoadedScene } from './components/SceneContainer/LoadedSceneContext';
 export { useIsDraggingOnViewer } from './hooks/useIsDraggingOnViewer';
+export { useAssetMappedNodesForRevisions } from './components/CacheProvider/AssetMappingAndNode3DCacheProvider';
 
 // Queries
 export { use3DModelName } from './query/use3DModelName';
