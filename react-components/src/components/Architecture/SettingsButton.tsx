@@ -71,13 +71,12 @@ export const SettingsButton = ({
   }
   const placement = getTooltipPlacement(isHorizontal);
   const label = command.getLabel(t);
-  const shortcut = command.getShortCutKeys();
   const flexDirection = getFlexDirection(isHorizontal);
   const children = command.children;
 
   return (
     <CogsTooltip
-      content={<LabelWithShortcut label={label} shortcut={shortcut} />}
+      content={<LabelWithShortcut label={label} command={command} />}
       disabled={label === undefined}
       appendTo={document.body}
       placement={placement}>
@@ -157,7 +156,6 @@ function createButton(command: BaseCommand, t: TranslateDelegate): ReactElement 
     return <></>;
   }
   const label = command.getLabel(t);
-  const shortcut = command.getShortCutKeys();
   return (
     <Menu.Item
       key={command.uniqueId}
@@ -170,7 +168,7 @@ function createButton(command: BaseCommand, t: TranslateDelegate): ReactElement 
         command.invoke();
         setChecked(command.isChecked);
       }}>
-      <LabelWithShortcut label={label} shortcut={shortcut} />
+      <LabelWithShortcut label={label} command={command} inverted={false} />
     </Menu.Item>
   );
 }

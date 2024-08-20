@@ -93,7 +93,6 @@ export const FilterButton = ({
   }
   const placement = getTooltipPlacement(isHorizontal);
   const label = usedInSettings ? undefined : command.getLabel(t);
-  const shortcut = command.getShortCutKeys();
   const flexDirection = getFlexDirection(isHorizontal);
 
   const children = command.children;
@@ -102,7 +101,7 @@ export const FilterButton = ({
   }
   return (
     <CogsTooltip
-      content={<LabelWithShortcut label={label} shortcut={shortcut} />}
+      content={<LabelWithShortcut label={label} command={command} />}
       disabled={usedInSettings || label === undefined}
       appendTo={document.body}
       placement={placement}>
