@@ -97,16 +97,18 @@
   "SLICE_Y": "Vertical slice along X-axis",
   "SLICE_Z": "Horizontal slice",
   "SLICE_XY": "Vertical slice",
-  "SLICE_FLIP": "Flip side on this slice",
-  "ADD_SLICE_X": "Add vertical slice along Y-axis. Click at one point.",
-  "ADD_SLICE_Y": "Add vertical slice along X-axis. Click at one point.",
-  "ADD_SLICE_Z": "Add horizontal slice. Click at one point.",
-  "ADD_SLICE_XY": "Add vertical slice. Click at two points.",
-  "ADD_CROP_BOX": "Create crop box. Click at three points in a horizontal plan and the fourth to give it height.",
-  "CLIP_TOOL": "Create or edit crop boxes and slice planes",
-  "CLIP_APPLY": "Apply selected crop box to the model if any, otherwise apply all slice planes",
-  "CLIP_SHOW_SELECTED_ONLY": "Show or hide all other slicing planes and crop boxes than selected",
-  "CLIP_SHOW_ON_TOP": "Show all crop boxes and slices on top",
-  "CLIP_NEXT": "Set the next crop box or slicing plane as global clipping",
-  "CLIP_PREV": "Set the previous crop box or slicing plane as global clipping"
+  "SLICE_FLIP": "Flip side",
+  "ADD_SLICE_X": "Add vertical slice along Y-axis. Select a point.",
+  "ADD_SLICE_Y": "Add vertical slice along X-axis. Select a point.",
+  "ADD_SLICE_Z": "Add horizontal slice. Select a point.",
+  "ADD_SLICE_XY": "Add vertical slice. Select two points.",
+  "ADD_CROP_BOX": "Create crop box. Select three points in a horizontal plane, then select a fourth point for height.",
+  "CLIP_TOOL": "Create, edit crop boxes, and slice planes",
+  "CLIP_APPLY": "Apply selected crop box to a model. Otherwise, apply to all slice planes",
+  "CLIP_SHOW_SELECTED_ONLY": "Show/hide slicing planes and crop boxes that are not selected",
+  "CLIP_SHOW_ON_TOP": "Show crop boxes and slices on top",
+  "CLIP_NEXT": "Set next crop box or slicing plane as global clipping",
+  "CLIP_PREV": "Set previous crop box or slicing plane as global clipping"
 }
+
+
