@@ -70,7 +70,7 @@ export class Duplex3dDataProvider implements Fdm3dDataProvider {
     return this._dataProvider.getCadModelsForInstance(instance);
   }
 
-  getCadConnectionsForRevisions(revisions: number[]): Promise<FdmCadConnection[]> {
-    return this._dataProvider.getCadConnectionsForRevisions(revisions);
+  getCadConnectionsForRevisions(modelOptions: AddModelOptions[]): Promise<FdmCadConnection[]> {
+    return this._dataProvider.getCadConnectionsForRevisions(modelOptions);
   }
 }

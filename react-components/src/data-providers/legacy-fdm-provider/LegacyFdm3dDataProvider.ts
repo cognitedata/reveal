@@ -80,7 +80,9 @@ export class LegacyFdm3dDataProvider implements Fdm3dDataProvider {
     return await getCadModelsForFdmInstance(this._fdmSdk, instance);
   }
 
-  async getCadConnectionsForRevisions(revisions: number[]): Promise<FdmCadConnection[]> {
-    return await getCadConnectionsForRevision(revisions, this._fdmSdk);
+  async getCadConnectionsForRevisions(
+    modelOptions: AddModelOptions[]
+  ): Promise<FdmCadConnection[]> {
+    return await getCadConnectionsForRevision(modelOptions, this._fdmSdk);
   }
 }

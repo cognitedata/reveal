@@ -239,7 +239,7 @@ export class RevisionFdmNodeCache {
     nodes: Node3D[]
   ): Array<{ connection: FdmCadConnection; treeIndex: TreeIndex }> {
     return mappingConnections.reduce((acc, connection) => {
-      const nodeInConnection = nodes.find((node) => node.id === connection.nodeId);
+      const nodeInConnection = nodes.find((node) => node.treeIndex === connection.treeIndex);
 
       if (nodeInConnection !== undefined) {
         acc.push({

@@ -9,6 +9,7 @@ import {
   type InspectResultList
 } from '../../data-providers/FdmSDK';
 import { chunk } from 'lodash';
+import { ModelId, RevisionId, TreeIndex } from './types';
 
 export async function fetchAncestorNodesForTreeIndex(
   modelId: number,

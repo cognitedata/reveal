@@ -48,5 +48,5 @@ export type Fdm3dDataProvider = {
 
   getCadModelsForInstance: (instance: DmsUniqueIdentifier) => Promise<TaggedAddResourceOptions[]>;
 
-  getCadConnectionsForRevisions: (revisions: number[]) => Promise<FdmCadConnection[]>;
+  getCadConnectionsForRevisions: (modelOptions: AddModelOptions[]) => Promise<FdmCadConnection[]>;
 };

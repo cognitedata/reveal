@@ -16,7 +16,7 @@ export type FdmCadConnection = {
   instance: DmsUniqueIdentifier;
   modelId: number;
   revisionId: number;
-  nodeId: number;
+  treeIndex: number;
 };
 export type FdmConnectionWithNode = {
   connection: FdmCadConnection;
@@ -45,8 +45,8 @@ export type AncestorQueryResult = {
 
 export type ModelId = number;
 export type RevisionId = number;
-export type TreeIndex = number;
 export type NodeId = number;
+export type TreeIndex = number;
 export type AssetId = number;
 export type FdmId = DmsUniqueIdentifier;
 
@@ -54,7 +54,7 @@ export type ModelRevisionId = { modelId: number; revisionId: number };
 
 export type ModelRevisionKey = `${ModelId}/${RevisionId}`;
 export type FdmKey = `${string}/${string}`;
-export type ModelNodeIdKey = `${ModelId}/${RevisionId}/${NodeId}`;
+export type ModelTreeIndexKey = `${ModelId}/${RevisionId}/${TreeIndex}`;
 export type ModelAssetIdKey = `${ModelId}/${RevisionId}/${AssetId}`;
 
 export type ModelRevisionToConnectionMap = Map<ModelRevisionKey, FdmConnectionWithNode[]>;

@@ -9,7 +9,8 @@ import {
   CogniteAssetProperties,
   CogniteCADNodeProperties
 } from './dataModels';
-import { getModelIdFromExternalId } from './getModelIdFromExternalId';
+import { getModelIdFromExternalId } from './getCdfIdFromExternalId';
+import { toFdmKey } from '../utils/toFdmKey';
 
 export async function getFdmConnectionsForNodes(
   model: DmsUniqueIdentifier,
@@ -79,14 +80,14 @@ export async function getFdmConnectionsForNodes(
     }
     const assets = relevantObjectToAssetsMap.get(object3dKey);
 
-    const nodeId = treeIndexToNodeIdMap.get(treeIndex);
-
-    if (assets === undefined || nodeId === undefined) {
+    if (assets === undefined) {
       // Should not happen
       return;
     }
 
-    assets.forEach((asset) => connections.push({ modelId, revisionId, nodeId, instance: asset }));
+    assets.forEach((asset) =>
+      connections.push({ modelId, revisionId, treeIndex, instance: asset })
+    );
   });
 
   return connections;

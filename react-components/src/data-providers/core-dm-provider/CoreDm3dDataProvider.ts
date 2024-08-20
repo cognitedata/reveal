@@ -14,6 +14,9 @@ import { listAllMappedFdmNodes, listMappedFdmNodes } from './listMappedFdmNodes'
 import { isDefined } from '../../utilities/isDefined';
 import { executeParallel } from '../../utilities/executeParallel';
 import { filterNodesByMappedTo3d } from './filterNodesByMappedTo3d';
+import { getCadModelsForInstance } from './getCadModelsForInstance';
+import { getCadConnectionsForRevisions } from './getCadConnectionsForRevisions';
+import { zip } from 'lodash';
 
 const MAX_PARALLEL_QUERIES = 2;
 
@@ -165,7 +168,25 @@ export class CoreDm3dFdm3dDataProvider implements Fdm3dDataProvider {
     return filterNodesByMappedTo3d(nodes, revisionRefs, spacesToSearch, this._fdmSdk);
   }
 
-  getCadModelsForInstance(instance: DmsUniqueIdentifier): Promise<TaggedAddResourceOptions[]> {}
+  getCadModelsForInstance(instance: DmsUniqueIdentifier): Promise<TaggedAddResourceOptions[]> {
+    return getCadModelsForInstance(instance, this._fdmSdk);
+  }
 
-  getCadConnectionsForRevisions(revisions: number[]): Promise<FdmCadConnection[]> {}
+  async getCadConnectionsForRevisions(
+    modelOptions: AddModelOptions[]
+  ): Promise<FdmCadConnection[]> {
+    const modelRefs = await this.getDMSModelsForIds(modelOptions.map((model) => model.modelId));
+
+    const revisionRefs = await this.getDMSRevisionsForRevisionIdsAndModelRefs(
+      modelRefs,
+      modelOptions.map((model) => model.revisionId)
+    );
+
+    const modelRevisions = zip(modelRefs, revisionRefs).filter(
+      (modelRevision): modelRevision is [DmsUniqueIdentifier, DmsUniqueIdentifier] =>
+        isDefined(modelRevision[0]) && isDefined(modelRevision[1])
+    );
+
+    return getCadConnectionsForRevisions(modelRevisions, this._fdmSdk);
+  }
 }

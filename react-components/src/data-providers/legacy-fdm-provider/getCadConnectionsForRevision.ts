@@ -1,6 +1,7 @@
 /*!
  * Copyright 2024 Cognite AS
  */
+import { AddModelOptions } from '@cognite/reveal';
 import { type FdmCadConnection } from '../../components/CacheProvider/types';
 import { type FdmSDK } from '../FdmSDK';
 import {
@@ -11,10 +12,12 @@ import {
 import { fdmEdgesToCadConnections } from './fdmEdgesToCadConnections';
 
 export async function getCadConnectionsForRevision(
-  revisionIds: number[],
+  modelOptions: AddModelOptions[],
   fdmClient: FdmSDK
 ): Promise<FdmCadConnection[]> {
-  if (revisionIds.length === 0) return [];
+  if (modelOptions.length === 0) return [];
+
+  const revisionIds = modelOptions.map((model) => model.revisionId);
 
   const versionedPropertiesKey = `${SYSTEM_3D_EDGE_SOURCE.externalId}/${SYSTEM_3D_EDGE_SOURCE.version}`;
   const filter = {
