@@ -24,7 +24,7 @@ import {
 import { LabelWithShortcut } from './LabelWithShortcut';
 import { type TranslateDelegate } from '../../architecture/base/utilities/TranslateKey';
 import styled from 'styled-components';
-import { type SettingsCommand } from '../../architecture/base/commands/SettingsCommand';
+import { type BaseSettingsCommand } from '../../architecture/base/commands/BaseSettingsCommand';
 import { BaseOptionCommand } from '../../architecture/base/commands/BaseOptionCommand';
 import { OptionButton } from './OptionButton';
 import { BaseSliderCommand } from '../../architecture/base/commands/BaseSliderCommand';
@@ -35,13 +35,13 @@ export const SettingsButton = ({
   inputCommand,
   isHorizontal = false
 }: {
-  inputCommand: SettingsCommand;
+  inputCommand: BaseSettingsCommand;
   isHorizontal: boolean;
 }): ReactElement => {
   const renderTarget = useRenderTarget();
   const { t } = useTranslation();
-  const command = useMemo<SettingsCommand>(
-    () => getDefaultCommand<SettingsCommand>(inputCommand, renderTarget),
+  const command = useMemo<BaseSettingsCommand>(
+    () => getDefaultCommand<BaseSettingsCommand>(inputCommand, renderTarget),
     []
   );
 

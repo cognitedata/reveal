@@ -55,6 +55,10 @@ export abstract class BaseCommand {
     return false;
   }
 
+  public get shortCutKeyOnAlt(): boolean {
+    return false;
+  }
+
   public get shortCutKeyOnShift(): boolean {
     return false;
   }
@@ -171,6 +175,9 @@ export abstract class BaseCommand {
     const keys: string[] = [];
     if (this.shortCutKeyOnCtrl) {
       keys.push('Ctrl');
+    }
+    if (this.shortCutKeyOnAlt) {
+      keys.push('Alt');
     }
     if (this.shortCutKeyOnShift) {
       keys.push('Shift');

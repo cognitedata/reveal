@@ -2,11 +2,11 @@
  * Copyright 2024 Cognite AS
  */
 
-import { type TranslateKey } from '../utilities/TranslateKey';
+import { clear } from '../utilities/extensions/arrayExtensions';
 import { type BaseCommand } from './BaseCommand';
 import { RenderTargetCommand } from './RenderTargetCommand';
 
-export class SettingsCommand extends RenderTargetCommand {
+export abstract class BaseSettingsCommand extends RenderTargetCommand {
   // ==================================================
   // INSTANCE FIELDS/PROPERTIES
   // ==================================================
@@ -24,14 +24,6 @@ export class SettingsCommand extends RenderTargetCommand {
   // ==================================================
   // OVERRIDES
   // ==================================================
-
-  public override get tooltip(): TranslateKey {
-    return { key: 'SETTINGS_TOOLTIP', fallback: 'Settings' };
-  }
-
-  public override get icon(): string | undefined {
-    return 'Settings';
-  }
 
   protected override *getChildren(): Generator<BaseCommand> {
     if (this._children === undefined) {
@@ -52,5 +44,9 @@ export class SettingsCommand extends RenderTargetCommand {
       return;
     }
     this._children.push(command);
+  }
+
+  public clear(): void {
+    clear(this._children);
   }
 }
