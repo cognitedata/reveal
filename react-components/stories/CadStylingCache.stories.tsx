@@ -59,7 +59,7 @@ const Models = ({ addModelOptions }: CogniteCadModelProps): JSX.Element => {
     () =>
       data
         ?.get(`${platformModelOptions.modelId}/${platformModelOptions.revisionId}`)
-        ?.map((edgeWithNode) => edgeWithNode.connection.nodeId),
+        ?.map((edgeWithNode) => edgeWithNode.connection.treeIndex),
     [data]
   );
 
