@@ -8,6 +8,7 @@ import { useFdmNodeCache } from '../components/CacheProvider/NodeCacheProvider';
 import { Box3 } from 'three';
 
 export type CameraNavigationActions = {
+  fitCameraToSceneBoundingBox: (duration?: number) => void;
   fitCameraToAllModels: (duration?: number) => void;
   fitCameraToModelNode: (revisionId: number, nodeId: number) => Promise<void>;
   fitCameraToModelNodes: (revisionId: number, nodeids: number[]) => Promise<void>;
@@ -19,6 +20,10 @@ export type CameraNavigationActions = {
 export const useCameraNavigation = (): CameraNavigationActions => {
   const fdmNodeCache = useFdmNodeCache();
   const viewer = useReveal();
+
+  const fitCameraToSceneBoundingBox = (duration?: number): void => {
+    viewer.fitCameraToSceneBoundingBox(duration);
+  };
 
   const fitCameraToAllModels = (duration?: number): void => {
     const models = viewer.models;
@@ -78,6 +83,7 @@ export const useCameraNavigation = (): CameraNavigationActions => {
   };
 
   return {
+    fitCameraToSceneBoundingBox,
     fitCameraToAllModels,
     fitCameraToInstance,
     fitCameraToInstances,
