@@ -169,10 +169,13 @@ export { getRuleTriggerTypes } from './components/RuleBasedOutputs/utils';
 
 export type { InstanceReference, AssetInstanceReference } from './data-providers/types';
 
+export { ActiveToolToolbar } from './components/Architecture/Toolbar';
+export { DomainObjectPanel } from './components/Architecture/DomainObjectPanel';
+export { RevealButtons } from './components/Architecture/RevealButtons';
+
 /**
  * Export classes and types from architecture
  * Note: This is not stable code yet and is subject to change.
  * @beta
  */
-
 export * as Architecture from './architecture/index';

@@ -1,13 +1,6 @@
 /*!
  * Copyright 2023 Cognite AS
  */
-
-// New architecture: components
-
-export { ActiveToolToolbar } from '../components/Architecture/Toolbar';
-export { DomainObjectPanel } from '../components/Architecture/DomainObjectPanel';
-export { RevealButtons } from '../components/Architecture/RevealButtons';
-
 // New architecture: commands
 export { BaseCommand } from './base/commands/BaseCommand';
 export type { CommandUpdateDelegate } from './base/commands/BaseCommand';
