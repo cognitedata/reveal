@@ -9,7 +9,7 @@ import { OptionButton } from './OptionButton';
 import { BaseOptionCommand } from '../../architecture/base/commands/BaseOptionCommand';
 import { CommandButton } from './CommandButton';
 import { SettingsButton } from './SettingsButton';
-import { SettingsCommand } from '../../architecture/base/commands/SettingsCommand';
+import { BaseSettingsCommand } from '../../architecture/base/commands/BaseSettingsCommand';
 import { BaseFilterCommand } from '../../architecture/base/commands/BaseFilterCommand';
 import { FilterButton } from './FilterButton';
 
@@ -17,7 +17,7 @@ export function createButton(command: BaseCommand, isHorizontal = false): ReactE
   if (command instanceof BaseFilterCommand) {
     return <FilterButton inputCommand={command} isHorizontal={isHorizontal} />;
   }
-  if (command instanceof SettingsCommand) {
+  if (command instanceof BaseSettingsCommand) {
     return <SettingsButton inputCommand={command} isHorizontal={isHorizontal} />;
   }
   if (command instanceof BaseOptionCommand) {
