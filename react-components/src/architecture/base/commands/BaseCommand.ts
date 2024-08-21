@@ -5,7 +5,14 @@
 import { type TranslateDelegate, type TranslateKey } from '../utilities/TranslateKey';
 import { clear, remove } from '../utilities/extensions/arrayExtensions';
 
-type UpdateDelegate = (command: BaseCommand) => void;
+/**
+ * Represents a delegate function for updating a command.
+ *
+ * @param command - The command to be updated.
+ * @param change - An optional symbol representing the change made to the command.
+ * if not set, anything can be changed. See changes is CommandChanges for common legal changes.
+ */
+export type CommandUpdateDelegate = (command: BaseCommand, change?: symbol) => void;
 
 /**
  * Base class for all command and tools. These are object that can do a
@@ -20,7 +27,7 @@ export abstract class BaseCommand {
   // INSTANCE FIELDS
   // ==================================================
 
-  private readonly _listeners: UpdateDelegate[] = [];
+  private readonly _listeners: CommandUpdateDelegate[] = [];
 
   // Unique id for the command, used by in React to force rerender
   // when the command changes for a button.
@@ -130,11 +137,11 @@ export abstract class BaseCommand {
   // INSTANCE METHODS: Event listeners
   // ==================================================
 
-  public addEventListener(listener: UpdateDelegate): void {
+  public addEventListener(listener: CommandUpdateDelegate): void {
     this._listeners.push(listener);
   }
 
-  public removeEventListener(listener: UpdateDelegate): void {
+  public removeEventListener(listener: CommandUpdateDelegate): void {
     remove(this._listeners, listener);
   }
 
@@ -142,12 +149,12 @@ export abstract class BaseCommand {
     clear(this._listeners);
   }
 
-  public update(): void {
+  public update(change?: symbol): void {
     for (const listener of this._listeners) {
-      listener(this);
+      listener(this, change);
     }
     for (const child of this.getChildren()) {
-      child.update();
+      child.update(change);
     }
   }
 

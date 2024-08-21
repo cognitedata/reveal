@@ -29,6 +29,7 @@ export { type Image360AnnotationAssetInfo } from './components/CacheProvider/typ
 
 // Hooks
 export { useReveal } from './components/RevealCanvas/ViewerContext';
+export { useRenderTarget } from './components/RevealCanvas/ViewerContext';
 export { useFdmAssetMappings } from './components/CacheProvider/NodeCacheProvider';
 export { useSceneDefaultCamera } from './hooks/useSceneDefaultCamera';
 export {
@@ -161,13 +162,89 @@ export type {
   CriteriaTypes
 } from './components/RuleBasedOutputs/types';
 
-export { ActiveToolToolbar } from './components/Architecture/Toolbar';
-export { DomainObjectPanel } from './components/Architecture/DomainObjectPanel';
-export { RevealButtons } from './components/Architecture/RevealButtons';
-
 export { RuleBasedOutputsPanel } from './components/RuleBasedOutputs/RuleBasedOutputsPanel';
 
 // Functions
 export { getRuleTriggerTypes } from './components/RuleBasedOutputs/utils';
 
 export type { InstanceReference, AssetInstanceReference } from './data-providers/types';
+
+// ==================================================
+// NEW ARCHITECTURE
+// ==================================================
+
+// New architecture: components
+export { ActiveToolToolbar } from './components/Architecture/Toolbar';
+export { DomainObjectPanel } from './components/Architecture/DomainObjectPanel';
+export { RevealButtons } from './components/Architecture/RevealButtons';
+
+// New architecture: commands
+export { BaseCommand } from './architecture/base/commands/BaseCommand';
+export type { CommandUpdateDelegate } from './architecture/base/commands/BaseCommand';
+export { BaseFilterCommand } from './architecture/base/commands/BaseFilterCommand';
+export { BaseOptionCommand } from './architecture/base/commands/BaseOptionCommand';
+export { BaseSliderCommand } from './architecture/base/commands/BaseSliderCommand';
+export { BaseTool } from './architecture/base/commands/BaseTool';
+export { DomainObjectCommand } from './architecture/base/commands/DomainObjectCommand';
+export { InstanceCommand } from './architecture/base/commands/InstanceCommand';
+export { RenderTargetCommand } from './architecture/base/commands/RenderTargetCommand';
+export { BaseEditTool } from './architecture/base/commands/BaseEditTool';
+export { SettingsCommand } from './architecture/base/commands/SettingsCommand';
+export { ShowAllDomainObjectsCommand } from './architecture/base/commands/ShowAllDomainObjectsCommand';
+export { ShowDomainObjectsOnTopCommand } from './architecture/base/commands/ShowDomainObjectsOnTopCommand';
+export { NavigationTool } from './architecture/base/concreteCommands/NavigationTool';
+
+// New architecture: domainObjects
+export { DomainObject } from './architecture/base/domainObjects/DomainObject';
+export { FolderDomainObject } from './architecture/base/domainObjects/FolderDomainObject';
+export { RootDomainObject } from './architecture/base/domainObjects/RootDomainObject';
+export { VisualDomainObject } from './architecture/base/domainObjects/VisualDomainObject';
+
+export { BaseRevealConfig } from './architecture/base/renderTarget/BaseRevealConfig';
+export { CommandsController } from './architecture/base/renderTarget/CommandsController';
+export { DefaultRevealConfig } from './architecture/base/renderTarget/DefaultRevealConfig';
+export { RevealRenderTarget } from './architecture/base/renderTarget/RevealRenderTarget';
+export { UnitSystem } from './architecture/base/renderTarget/UnitSystem';
+
+// New architecture: renderStyles
+export { RenderStyle } from './architecture/base/renderStyles/RenderStyle';
+export { CommonRenderStyle } from './architecture/base/renderStyles/CommonRenderStyle';
+
+// New architecture: domainObjectsHelpers
+export { BaseCreator } from './architecture/base/domainObjectsHelpers/BaseCreator';
+export { BaseDragger } from './architecture/base/domainObjectsHelpers/BaseDragger';
+export { Changes } from './architecture/base/domainObjectsHelpers/Changes';
+export { CommandChanges } from './architecture/base/domainObjectsHelpers/CommandChanges';
+export { ColorType } from './architecture/base/domainObjectsHelpers/ColorType';
+export { DomainObjectChange } from './architecture/base/domainObjectsHelpers/DomainObjectChange';
+export { FocusType } from './architecture/base/domainObjectsHelpers/FocusType';
+export { PanelInfo } from './architecture/base/domainObjectsHelpers/PanelInfo';
+export { PopupStyle } from './architecture/base/domainObjectsHelpers/PopupStyle';
+export { Quantity } from './architecture/base/domainObjectsHelpers/Quantity';
+export { Views } from './architecture/base/domainObjectsHelpers/Views';
+export { VisibleState } from './architecture/base/domainObjectsHelpers/VisibleState';
+export type { DomainObjectIntersection } from './architecture/base/domainObjectsHelpers/DomainObjectIntersection';
+export { isDomainObjectIntersection } from './architecture/base/domainObjectsHelpers/DomainObjectIntersection';
+export { isCustomObjectIntersection } from './architecture/base/domainObjectsHelpers/DomainObjectIntersection';
+
+// New architecture: undo
+export { DomainObjectTransaction } from './architecture/base/undo/DomainObjectTransaction';
+export { Transaction } from './architecture/base/undo/Transaction';
+export { UndoManager } from './architecture/base/undo/UndoManager';
+
+// New architecture: utilities
+export { ClosestGeometryFinder } from './architecture/base/utilities/geometry/ClosestGeometryFinder';
+export { Index2 } from './architecture/base/utilities/geometry/Index2';
+export { Range1 } from './architecture/base/utilities/geometry/Range1';
+export { Range3 } from './architecture/base/utilities/geometry/Range3';
+export { TrianglesBuffers } from './architecture/base/utilities/geometry/TrianglesBuffers';
+export { getNextColor } from './architecture/base/utilities/colors/getNextColor';
+export { getNextColorByIndex } from './architecture/base/utilities/colors/getNextColor';
+export { getResizeCursor } from './architecture/base/utilities/geometry/getResizeCursor';
+export type { TranslateDelegate } from './architecture/base/utilities/TranslateKey';
+export type { TranslateKey } from './architecture/base/utilities/TranslateKey';
+
+// New architecture: views
+export { BaseView } from './architecture/base/views/BaseView';
+export { GroupThreeView } from './architecture/base/views/GroupThreeView';
+export { ThreeView } from './architecture/base/views/ThreeView';
