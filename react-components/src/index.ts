@@ -192,7 +192,20 @@ export { BaseEditTool } from './architecture/base/commands/BaseEditTool';
 export { SettingsCommand } from './architecture/base/commands/SettingsCommand';
 export { ShowAllDomainObjectsCommand } from './architecture/base/commands/ShowAllDomainObjectsCommand';
 export { ShowDomainObjectsOnTopCommand } from './architecture/base/commands/ShowDomainObjectsOnTopCommand';
+
+// New architecture: concreteCommands
+export { CopyToClipboardCommand } from './architecture/base/concreteCommands/CopyToClipboardCommand';
+export { DeleteDomainObjectCommand } from './architecture/base/concreteCommands/DeleteDomainObjectCommand';
+export { FitViewCommand } from './architecture/base/concreteCommands/FitViewCommand';
+export { KeyboardSpeedCommand } from './architecture/base/concreteCommands/KeyboardSpeedCommand';
 export { NavigationTool } from './architecture/base/concreteCommands/NavigationTool';
+export { PointCloudFilterCommand } from './architecture/base/concreteCommands/PointCloudFilterCommand';
+export { SetPointColorTypeCommand } from './architecture/base/concreteCommands/SetPointColorTypeCommand';
+export { SetPointShapeCommand } from './architecture/base/concreteCommands/SetPointShapeCommand';
+export { SetPointSizeCommand } from './architecture/base/concreteCommands/SetPointSizeCommand';
+export { SetQualityCommand } from './architecture/base/concreteCommands/SetQualityCommand';
+export { ToggleMetricUnitsCommand } from './architecture/base/concreteCommands/ToggleMetricUnitsCommand';
+export { UndoCommand } from './architecture/base/concreteCommands/UndoCommand';
 
 // New architecture: domainObjects
 export { DomainObject } from './architecture/base/domainObjects/DomainObject';
