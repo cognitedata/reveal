@@ -29,7 +29,6 @@ export { type Image360AnnotationAssetInfo } from './components/CacheProvider/typ
 
 // Hooks
 export { useReveal } from './components/RevealCanvas/ViewerContext';
-export { useRenderTarget } from './components/RevealCanvas/ViewerContext';
 export { useFdmAssetMappings } from './components/CacheProvider/NodeCacheProvider';
 export { useSceneDefaultCamera } from './hooks/useSceneDefaultCamera';
 export {
@@ -172,6 +171,7 @@ export type { InstanceReference, AssetInstanceReference } from './data-providers
 export { ActiveToolToolbar } from './components/Architecture/Toolbar';
 export { DomainObjectPanel } from './components/Architecture/DomainObjectPanel';
 export { RevealButtons } from './components/Architecture/RevealButtons';
+export { useRenderTarget } from './components/RevealCanvas/ViewerContext';
 
 /**
  * Export classes and types from architecture
