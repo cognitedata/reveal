@@ -2,8 +2,8 @@
  * Copyright 2023 Cognite AS
  */
 // New architecture: commands
-export { BaseCommand } from './base/commands/BaseCommand';
 export type { CommandUpdateDelegate } from './base/commands/BaseCommand';
+export { BaseCommand } from './base/commands/BaseCommand';
 export { BaseFilterCommand } from './base/commands/BaseFilterCommand';
 export { BaseOptionCommand } from './base/commands/BaseOptionCommand';
 export { BaseSliderCommand } from './base/commands/BaseSliderCommand';
@@ -12,7 +12,7 @@ export { DomainObjectCommand } from './base/commands/DomainObjectCommand';
 export { InstanceCommand } from './base/commands/InstanceCommand';
 export { RenderTargetCommand } from './base/commands/RenderTargetCommand';
 export { BaseEditTool } from './base/commands/BaseEditTool';
-export { SettingsCommand } from './base/commands/SettingsCommand';
+export { BaseSettingsCommand } from './base/commands/BaseSettingsCommand';
 export { ShowAllDomainObjectsCommand } from './base/commands/ShowAllDomainObjectsCommand';
 export { ShowDomainObjectsOnTopCommand } from './base/commands/ShowDomainObjectsOnTopCommand';
 
@@ -27,6 +27,7 @@ export { SetPointColorTypeCommand } from './base/concreteCommands/SetPointColorT
 export { SetPointShapeCommand } from './base/concreteCommands/SetPointShapeCommand';
 export { SetPointSizeCommand } from './base/concreteCommands/SetPointSizeCommand';
 export { SetQualityCommand } from './base/concreteCommands/SetQualityCommand';
+export { SettingsCommand } from './base/concreteCommands/SettingsCommand';
 export { ToggleMetricUnitsCommand } from './base/concreteCommands/ToggleMetricUnitsCommand';
 export { UndoCommand } from './base/concreteCommands/UndoCommand';
 
