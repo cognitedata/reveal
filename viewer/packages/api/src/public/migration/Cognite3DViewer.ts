@@ -1282,6 +1282,19 @@ export class Cognite3DViewer {
   }
 
   /**
+   * Move camera to a place where a all objects in the scene are visible
+   * @param duration The duration of the animation moving the camera. Set this to 0 (zero) to disable animation.
+   */
+  fitCameraToSceneBoundingBox(duration?: number): void {
+    this.recalculateBoundingBox();
+    const boundingBox = this.getSceneBoundingBox();
+    if (boundingBox.isEmpty()) {
+      return;
+    }
+    this.fitCameraToBoundingBox(boundingBox, duration);
+  }
+
+  /**
    * Move camera to a place where the content of a bounding box is visible to the camera.
    * @param box The bounding box in world space.
    * @param duration The duration of the animation moving the camera. Set this to 0 (zero) to disable animation.
@@ -1880,34 +1893,45 @@ export class Cognite3DViewer {
     nearFarPlaneBoundingBox.makeEmpty();
     sceneBoundingBox.makeEmpty();
 
-    this._models.forEach(model => {
-      model.getModelBoundingBox(temporaryBox);
-      if (temporaryBox.isEmpty()) {
-        return;
-      }
-      nearFarPlaneBoundingBox.union(temporaryBox);
+    for (let pass = 0; pass < 2; pass++) {
+      // On the first pass, use visible models only
+      // If no bounding box is found, use all models on the second pass
+      // By this way, a bounding box is forced to be calculated
+      this._models.forEach(model => {
+        if (pass === 0 && !model.visible) {
+          return;
+        }
+        model.getModelBoundingBox(temporaryBox);
+        if (temporaryBox.isEmpty()) {
+          return;
+        }
+        nearFarPlaneBoundingBox.union(temporaryBox);
 
-      // The getModelBoundingBox is using restrictToMostGeometry = true
-      model.getModelBoundingBox(temporaryBox, true);
-      if (temporaryBox.isEmpty()) {
-        return;
+        // The getModelBoundingBox is using restrictToMostGeometry = true
+        model.getModelBoundingBox(temporaryBox, true);
+        if (temporaryBox.isEmpty()) {
+          return;
+        }
+        sceneBoundingBox.union(temporaryBox);
+      });
+      this._sceneHandler.customObjects.forEach(customObject => {
+        if (!customObject.object.visible) {
+          return;
+        }
+        customObject.getBoundingBox(temporaryBox);
+        if (temporaryBox.isEmpty()) {
+          return;
+        }
+        nearFarPlaneBoundingBox.union(temporaryBox);
+        if (!customObject.isPartOfBoundingBox) {
+          return;
+        }
+        sceneBoundingBox.union(temporaryBox);
+      });
+      if (!sceneBoundingBox.isEmpty()) {
+        break;
       }
-      sceneBoundingBox.union(temporaryBox);
-    });
-    this._sceneHandler.customObjects.forEach(customObject => {
-      if (!customObject.object.visible) {
-        return;
-      }
-      customObject.getBoundingBox(temporaryBox);
-      if (temporaryBox.isEmpty()) {
-        return;
-      }
-      nearFarPlaneBoundingBox.union(temporaryBox);
-      if (!customObject.isPartOfBoundingBox) {
-        return;
-      }
-      sceneBoundingBox.union(temporaryBox);
-    });
+    }
   }
 
   /** @private */
