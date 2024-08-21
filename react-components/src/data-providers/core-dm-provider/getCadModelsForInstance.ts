@@ -1,11 +1,14 @@
-import { QueryRequest } from '@cognite/sdk/dist/src';
-import { TaggedAddResourceOptions } from '../../components/Reveal3DResources/types';
-import { DmsUniqueIdentifier, FdmSDK } from '../FdmSDK';
+/*!
+ * Copyright 2024 Cognite AS
+ */
+import { type QueryRequest } from '@cognite/sdk/dist/src';
+import { type TaggedAddResourceOptions } from '../../components/Reveal3DResources/types';
+import { type DmsUniqueIdentifier, type FdmSDK } from '../FdmSDK';
 import {
   COGNITE_3D_OBJECT_SOURCE,
-  COGNITE_CAD_NODE_SOURCE,
+  type COGNITE_CAD_NODE_SOURCE,
   COGNITE_VISUALIZABLE_SOURCE,
-  CogniteCADNodeProperties
+  type CogniteCADNodeProperties
 } from './dataModels';
 import { cogniteCadNodeSourceWithPRoperties } from './cogniteCadNodeSourceWithProperties';
 import { getModelIdFromExternalId, getRevisionIdFromExternalId } from './getCdfIdFromExternalId';
@@ -57,7 +60,7 @@ const cadModelsForInstanceQuery = {
     cad_nodes: {
       nodes: {
         from: 'object_3ds',
-        through: { source: COGNITE_3D_OBJECT_SOURCE, identifier: 'cadNodes' }
+        through: { view: COGNITE_3D_OBJECT_SOURCE, identifier: 'cadNodes' }
       }
     }
   },

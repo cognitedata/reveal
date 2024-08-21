@@ -1,3 +1,6 @@
+/*!
+ * Copyright 2024 Cognite AS
+ */
 export async function executeParallel<T>(
   callbacks: Array<() => Promise<T>>,
   maxParallel: number
@@ -7,7 +10,7 @@ export async function executeParallel<T>(
   let nextCallback = 0;
 
   const resultFillingCallbacks = callbacks.map(
-    (callback, ind) => () => callback().then((value) => (resultArray[ind] = value))
+    (callback, ind) => async () => await callback().then((value) => (resultArray[ind] = value))
   );
 
   async function scheduleNext(): Promise<void> {
@@ -18,10 +21,12 @@ export async function executeParallel<T>(
     nextCallback++;
 
     await resultFillingCallbacks[nextCallback]();
-    return scheduleNext();
+    await scheduleNext();
   }
 
-  const scheduleChains = new Array(maxParallel).fill(0).map(() => scheduleNext());
+  const scheduleChains = new Array(maxParallel).fill(0).map(async () => {
+    await scheduleNext();
+  });
   await Promise.all(scheduleChains);
   return resultArray;
 }

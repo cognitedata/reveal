@@ -2,13 +2,18 @@
  * Copyright 2023 Cognite AS
  */
 
-import { QueryRequest, TableExpressionFilterDefinition, type CogniteClient } from '@cognite/sdk';
+import {
+  type QueryRequest,
+  type TableExpressionFilterDefinition,
+  type CogniteClient
+} from '@cognite/sdk';
 import { type FdmPropertyType } from '../components/Reveal3DResources/types';
 import {
   queryNodesAndEdges,
-  QueryResult,
-  SelectSourceWithParams
+  type QueryResult,
+  type SelectSourceWithParams
 } from './utils/queryNodesAndEdges';
+import { mergeQueryResults } from './utils/mergeQueryResult';
 
 type InstanceType = 'node' | 'edge';
 type EdgeDirection = 'source' | 'destination';
@@ -115,7 +120,7 @@ export type FdmNode<PropertyType = Record<string, unknown>> = {
   externalId: string;
   createdTime: number;
   lastUpdatedTime: number;
-  deletedTime: number | undefined;
+  deletedTime?: number;
   properties: PropertyType;
 };
 
@@ -375,21 +380,21 @@ export class FdmSDK {
 
   // eslint-disable-next-line no-dupe-class-members
   public async filterAllInstances<PropertiesType = Record<string, any>>(
-    filter: InstanceFilter,
+    filter: InstanceFilter | undefined,
     instanceType: InstanceType,
     source: Source
   ): Promise<{ instances: Array<EdgeItem<PropertiesType> | FdmNode<PropertiesType>> }>;
 
   // eslint-disable-next-line no-dupe-class-members
   public async filterAllInstances<PropertiesType = Record<string, any>>(
-    filter: InstanceFilter,
+    filter: InstanceFilter | undefined,
     instanceType: 'edge',
     source: Source
   ): Promise<{ instances: Array<EdgeItem<PropertiesType>> }>;
 
   // eslint-disable-next-line no-dupe-class-members
   public async filterAllInstances<PropertiesType = Record<string, any>>(
-    filter: InstanceFilter,
+    filter: InstanceFilter | undefined,
     instanceType: 'node',
     source: Source
   ): Promise<{ instances: Array<FdmNode<PropertiesType>> }>;
@@ -544,7 +549,7 @@ export class FdmSDK {
     TQueryRequest extends QueryRequest,
     TypedSelectSources extends SelectSourceWithParams = SelectSourceWithParams
   >(query: TQueryRequest): Promise<QueryResult<TQueryRequest, TypedSelectSources>> {
-    return queryNodesAndEdges<TQueryRequest, TypedSelectSources>(query, this._sdk);
+    return await queryNodesAndEdges<TQueryRequest, TypedSelectSources>(query, this._sdk);
   }
 
   public async listDataModels(): Promise<DataModelListResponse> {

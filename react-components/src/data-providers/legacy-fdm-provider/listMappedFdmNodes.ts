@@ -2,17 +2,11 @@
  * Copyright 2024 Cognite AS
  */
 import { type AddModelOptions } from '@cognite/reveal';
-import {
-  type FdmSDK,
-  type InstanceFilter,
-  type NodeItem,
-  type Query,
-  type Source
-} from '../FdmSDK';
+import { type FdmSDK, type InstanceFilter, type NodeItem, type Source } from '../FdmSDK';
 import { createMappedEquipmentQuery } from './createMappedEquipmentQuery';
 import { chunk, isEqual } from 'lodash';
 import { removeEmptyProperties } from '../../utilities/removeEmptyProperties';
-import { QueryRequest } from '@cognite/sdk/dist/src';
+import { type QueryRequest } from '@cognite/sdk/dist/src';
 
 export async function listMappedFdmNodes(
   fdmSdk: FdmSDK,

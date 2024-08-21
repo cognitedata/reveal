@@ -2,14 +2,14 @@
  * Copyright 2023 Cognite AS
  */
 
-import { ExternalId, Space } from '../../data-providers/FdmSDK';
+import { type ExternalId, type Space } from '../../data-providers/FdmSDK';
 import {
   type FdmKey,
   type ModelTreeIndexKey,
   type ModelRevisionKey,
-  TreeIndex,
-  RevisionId,
-  ModelId
+  type TreeIndex,
+  type RevisionId,
+  type ModelId
 } from './types';
 
 import { split } from 'lodash';

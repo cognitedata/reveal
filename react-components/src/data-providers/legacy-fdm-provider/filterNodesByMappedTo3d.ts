@@ -11,10 +11,14 @@ import {
   type NodeItem,
   type Source
 } from '../FdmSDK';
-import { SYSTEM_3D_EDGE_SOURCE, SYSTEM_SPACE_3D_SCHEMA } from './dataModels';
+import {
+  type InModel3dEdgeProperties,
+  SYSTEM_3D_EDGE_SOURCE,
+  SYSTEM_SPACE_3D_SCHEMA
+} from './dataModels';
 import { getDMSModels } from './getDMSModels';
 import { type FdmKey } from '../../components/CacheProvider/types';
-import { QueryRequest } from '@cognite/sdk/dist/src';
+import { type QueryRequest } from '@cognite/sdk/dist/src';
 import { getDirectRelationProperties } from '../utils/getDirectRelationProperties';
 
 export async function filterNodesByMappedTo3d(
@@ -38,12 +42,14 @@ export async function filterNodesByMappedTo3d(
     models,
     views
   );
-  const queryResult =
-    await fdmSdk.queryNodesAndEdges<typeof mappedEquipmentQuery>(mappedEquipmentQuery);
+  const queryResult = await fdmSdk.queryNodesAndEdges<
+    typeof mappedEquipmentQuery,
+    [{ source: typeof SYSTEM_3D_EDGE_SOURCE; properties: InModel3dEdgeProperties }]
+  >(mappedEquipmentQuery);
 
   const { mappedEquipmentFirstLevelMap, equipmentSecondLevelMap } = await createMappedEquipmentMaps(
     fdmSdk,
-    queryResult.items.mapped_edges as EdgeItem[],
+    queryResult.items.mapped_edges,
     models,
     spacesToSearch
   );
@@ -65,6 +71,7 @@ export async function filterNodesByMappedTo3d(
   return filteredSearchResults;
 }
 
+/* eslint-disable @typescript-eslint/explicit-function-return-type */
 function createCheckMappedEquipmentQuery(
   instances: NodeItem[],
   directlyMappedNodes: DmsUniqueIdentifier[],
@@ -104,7 +111,7 @@ function createCheckMappedEquipmentQuery(
     },
     select: {
       mapped_edges: {
-        sources: [{ source: SYSTEM_3D_EDGE_SOURCE, properties: [] }]
+        sources: [{ source: SYSTEM_3D_EDGE_SOURCE, properties: ['revisionId', 'revisionNodeId'] }]
       },
       mapped_nodes: {
         sources: views.map((view) => ({ source: view, properties: [] }))

@@ -1,4 +1,7 @@
-import { DmsUniqueIdentifier, NodeItem } from '../FdmSDK';
+/*!
+ * Copyright 2024 Cognite AS
+ */
+import { type DmsUniqueIdentifier, type NodeItem } from '../FdmSDK';
 
 export function getDirectRelationProperties(searchResultNode: NodeItem): DmsUniqueIdentifier[] {
   const directRelations: DmsUniqueIdentifier[] = [];

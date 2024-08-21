@@ -4,7 +4,7 @@
 import { type AddModelOptions } from '@cognite/reveal';
 import { makeSureNonEmptyFilterForRequest, type InstanceFilter, type Source } from '../FdmSDK';
 import { SYSTEM_3D_EDGE_SOURCE } from './dataModels';
-import { QueryRequest } from '@cognite/sdk';
+import { type QueryRequest } from '@cognite/sdk';
 
 export function createMappedEquipmentQuery(
   models: AddModelOptions[],

@@ -1,8 +1,11 @@
-import { QueryRequest } from '@cognite/sdk/dist/src';
-import { DmsUniqueIdentifier, FdmSDK } from '../FdmSDK';
+/*!
+ * Copyright 2024 Cognite AS
+ */
+import { type QueryRequest } from '@cognite/sdk/dist/src';
+import { type DmsUniqueIdentifier, type FdmSDK } from '../FdmSDK';
 import {
-  Cognite3DObjectProperties,
-  COGNITE_3D_OBJECT_SOURCE,
+  type Cognite3DObjectProperties,
+  type COGNITE_3D_OBJECT_SOURCE,
   COGNITE_VISUALIZABLE_SOURCE
 } from './dataModels';
 

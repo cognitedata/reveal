@@ -6,11 +6,10 @@ import {
   CadModelContainer,
   type CadModelStyling,
   type CogniteCadModelProps,
-  type NodeStylingGroup,
   RevealCanvas,
   useReveal,
   RevealContext,
-  TreeIndexStylingGroup
+  type TreeIndexStylingGroup
 } from '../src';
 import { Color, Matrix4, Vector3 } from 'three';
 import { createSdkByUrlToken } from './utilities/createSdkByUrlToken';

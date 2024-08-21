@@ -1,6 +1,9 @@
-import { QueryRequest } from '@cognite/sdk/dist/src';
-import { DmsUniqueIdentifier, FdmSDK } from '../FdmSDK';
-import { Cognite3DModelProperties, COGNITE_3D_MODEL_SOURCE } from './dataModels';
+/*!
+ * Copyright 2024 Cognite AS
+ */
+import { type QueryRequest } from '@cognite/sdk/dist/src';
+import { type DmsUniqueIdentifier, type FdmSDK } from '../FdmSDK';
+import { type Cognite3DModelProperties, COGNITE_3D_MODEL_SOURCE } from './dataModels';
 
 export async function getDMSModels(
   modelId: number,

@@ -2,7 +2,7 @@
  * Copyright 2023 Cognite AS
  */
 
-import { useSceneConfig } from '../query/useSceneConfig';
+import { useSceneConfig } from './scenes/useSceneConfig';
 import { type CogniteClient } from '@cognite/sdk';
 import {
   type AddResourceOptions,
@@ -10,8 +10,8 @@ import {
 } from '../components/Reveal3DResources/types';
 import { CDF_TO_VIEWER_TRANSFORMATION, type AddModelOptions } from '@cognite/reveal';
 import { useEffect, useState } from 'react';
-import { type Transformation3d } from './types';
 import { Euler, MathUtils, Matrix4 } from 'three';
+import { type Transformation3d } from './scenes/types';
 
 export type UseSyncSceneConfigWithViewerProps = {
   sdk: CogniteClient;

@@ -1,13 +1,16 @@
-import { Node3D, QueryRequest } from '@cognite/sdk';
-import { FdmCadConnection, FdmKey } from '../../components/CacheProvider/types';
-import { DmsUniqueIdentifier, FdmSDK } from '../FdmSDK';
+/*!
+ * Copyright 2024 Cognite AS
+ */
+import { type Node3D, type QueryRequest } from '@cognite/sdk';
+import { type FdmCadConnection, type FdmKey } from '../../components/CacheProvider/types';
+import { type DmsUniqueIdentifier, type FdmSDK } from '../FdmSDK';
 import {
-  Cognite3DObjectProperties,
+  type Cognite3DObjectProperties,
   COGNITE_3D_OBJECT_SOURCE,
-  COGNITE_ASSET_SOURCE,
+  type COGNITE_ASSET_SOURCE,
   COGNITE_CAD_NODE_SOURCE,
-  CogniteAssetProperties,
-  CogniteCADNodeProperties
+  type CogniteAssetProperties,
+  type CogniteCADNodeProperties
 } from './dataModels';
 import { getModelIdFromExternalId } from './getCdfIdFromExternalId';
 import { toFdmKey } from '../utils/toFdmKey';
@@ -21,8 +24,6 @@ export async function getFdmConnectionsForNodes(
 ): Promise<FdmCadConnection[]> {
   const treeIndexes = nodes.map((node) => node.treeIndex);
   const treeIndexSet = new Set(treeIndexes);
-
-  const treeIndexToNodeIdMap = new Map(nodes.map((node) => [node.treeIndex, node.id]));
 
   const relevantCadNodeRefToObject3dRef = new Map<FdmKey, FdmKey>();
   const treeIndexToCadNodeMap = new Map<number, FdmKey>();
@@ -57,10 +58,9 @@ export async function getFdmConnectionsForNodes(
   });
 
   const relevantObjects3D = result.items.objects_3d.filter((object3D) => {
-    return (
-      object3D.properties.cdf_cdm_experimental['CogniteObject3D/v1']
-        .cadNodes as DmsUniqueIdentifier[]
-    ).some((cadNodeId) => relevantCadNodeRefToObject3dRef.has(toFdmKey(cadNodeId)));
+    return object3D.properties.cdf_cdm_experimental['CogniteObject3D/v1'].cadNodes.some(
+      (cadNodeId) => relevantCadNodeRefToObject3dRef.has(toFdmKey(cadNodeId))
+    );
   });
 
   const relevantObjectToAssetsMap = new Map<FdmKey, DmsUniqueIdentifier[]>(
@@ -136,13 +136,13 @@ const cadConnectionQuery = {
     objects_3d: {
       nodes: {
         from: 'cad_nodes',
-        through: { source: COGNITE_CAD_NODE_SOURCE, identifier: 'object3D' }
+        through: { view: COGNITE_CAD_NODE_SOURCE, identifier: 'object3D' }
       }
     },
     assets: {
       nodes: {
         from: 'objects_3d',
-        through: { source: COGNITE_3D_OBJECT_SOURCE, identifier: 'asset' },
+        through: { view: COGNITE_3D_OBJECT_SOURCE, identifier: 'asset' },
         direction: 'outwards'
       }
     }

@@ -1,25 +1,32 @@
-import { AddModelOptions } from '@cognite/reveal';
-import { InstancesWithView } from '../../query/useSearchMappedEquipmentFDM';
-import { QueryRequest, QueryTableExpressionV3, SourceSelectorV3 } from '@cognite/sdk/dist/src';
+/*!
+ * Copyright 2024 Cognite AS
+ */
+import { type InstancesWithView } from '../../query/useSearchMappedEquipmentFDM';
+import {
+  type QueryRequest,
+  type QueryTableExpressionV3,
+  type SourceSelectorV3
+} from '@cognite/sdk/dist/src';
 import { getDirectRelationProperties } from '../utils/getDirectRelationProperties';
 import {
-  Cognite3DObjectProperties,
+  type Cognite3DObjectProperties,
   COGNITE_3D_OBJECT_SOURCE,
   COGNITE_CAD_NODE_SOURCE,
   COGNITE_POINT_CLOUD_VOLUME_SOURCE,
   COGNITE_VISUALIZABLE_SOURCE
 } from './dataModels';
-import { DmsUniqueIdentifier, FdmSDK } from '../FdmSDK';
+import { type DmsUniqueIdentifier, type FdmSDK } from '../FdmSDK';
 import { cogniteObject3dSourceWithProperties } from './cogniteObject3dSourceWithProperties';
-import { FdmKey } from '../../components/CacheProvider/types';
+import { type FdmKey } from '../../components/CacheProvider/types';
 import { toFdmKey } from '../utils/toFdmKey';
-import { ArrayElement, PromiseType } from '../utils/typeUtils';
+import { type ArrayElement, type PromiseType } from '../utils/typeUtils';
 import { head } from 'lodash';
+import { type QueryResult } from '../utils/queryNodesAndEdges';
 
 export async function filterNodesByMappedTo3d(
   nodes: InstancesWithView[],
   revisionRefs: DmsUniqueIdentifier[],
-  spacesToSearch: string[],
+  _spacesToSearch: string[],
   fdmSdk: FdmSDK
 ): Promise<InstancesWithView[]> {
   const connectionData = await fetchConnectionData(nodes, revisionRefs, fdmSdk);
@@ -87,11 +94,20 @@ function createRelevantAssetKeySet(
   return relevantAssetKeySet;
 }
 
+type SelectSourcesType = [
+  { source: typeof COGNITE_3D_OBJECT_SOURCE; properties: Cognite3DObjectProperties },
+  { source: typeof COGNITE_CAD_NODE_SOURCE; properties: { object3D: DmsUniqueIdentifier } },
+  {
+    source: typeof COGNITE_POINT_CLOUD_VOLUME_SOURCE;
+    properties: { object3D: DmsUniqueIdentifier };
+  }
+];
+
 async function fetchConnectionData(
   nodes: InstancesWithView[],
   revisionRefs: DmsUniqueIdentifier[],
   fdmSdk: FdmSDK
-) {
+): Promise<QueryResult<typeof checkEquipmentFilter, SelectSourcesType>> {
   const initialExternalIds = nodes.flatMap((node) =>
     node.instances.map((instance) => instance.externalId)
   );
@@ -107,17 +123,7 @@ async function fetchConnectionData(
     parameters
   };
 
-  return fdmSdk.queryAllNodesAndEdges<
-    typeof query,
-    [
-      { source: typeof COGNITE_3D_OBJECT_SOURCE; properties: Cognite3DObjectProperties },
-      { source: typeof COGNITE_CAD_NODE_SOURCE; properties: { object3D: DmsUniqueIdentifier } },
-      {
-        source: typeof COGNITE_POINT_CLOUD_VOLUME_SOURCE;
-        properties: { object3D: DmsUniqueIdentifier };
-      }
-    ]
-  >(query);
+  return await fdmSdk.queryAllNodesAndEdges<typeof query, SelectSourcesType>(query);
 }
 
 const pointCloudVolumeSourceWithProperties = [
@@ -220,7 +226,7 @@ function getRevisionsCadNodeFromObject3D(object3dTableName: string): QueryTableE
   return {
     nodes: {
       from: object3dTableName,
-      through: { source: COGNITE_3D_OBJECT_SOURCE, identifier: 'cadNodes' },
+      through: { view: COGNITE_3D_OBJECT_SOURCE, identifier: 'cadNodes' },
       filter: {
         containsAny: {
           property: [
@@ -239,7 +245,7 @@ function getRevisionsPointCloudVolumes(object3dTableName: string): QueryTableExp
   return {
     nodes: {
       from: object3dTableName,
-      through: { source: COGNITE_3D_OBJECT_SOURCE, identifier: 'pointCloudVolumes' },
+      through: { view: COGNITE_3D_OBJECT_SOURCE, identifier: 'pointCloudVolumes' },
       filter: {
         containsAny: {
           property: [
@@ -258,16 +264,7 @@ function getObject3dRelation(visualizableTableName: string): QueryTableExpressio
   return {
     nodes: {
       from: visualizableTableName,
-      through: { source: COGNITE_VISUALIZABLE_SOURCE, identifier: 'object3d' }
-    }
-  };
-}
-
-function getAssetRelation(object3dTableName: string): QueryTableExpressionV3 {
-  return {
-    nodes: {
-      from: object3dTableName,
-      through: { source: COGNITE_3D_OBJECT_SOURCE, identifier: 'assets' }
+      through: { view: COGNITE_VISUALIZABLE_SOURCE, identifier: 'object3d' }
     }
   };
 }

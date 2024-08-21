@@ -1,5 +1,8 @@
-import { Timestamp, ViewReference } from '@cognite/sdk';
-import { DmsUniqueIdentifier, Source } from '../FdmSDK';
+/*!
+ * Copyright 2024 Cognite AS
+ */
+import { type Timestamp, type ViewReference } from '@cognite/sdk';
+import { type DmsUniqueIdentifier } from '../FdmSDK';
 
 export const CORE_DM_SPACE = 'cdf_cdm_experimental';
 

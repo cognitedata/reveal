@@ -21,13 +21,15 @@ import { listAllMappedFdmNodes, listMappedFdmNodes } from './listMappedFdmNodes'
 import { filterNodesByMappedTo3d } from './filterNodesByMappedTo3d';
 import { getCadModelsForFdmInstance } from './getCadModelsForFdmInstance';
 import { getCadConnectionsForRevision } from './getCadConnectionsForRevision';
-import { Node3D } from '@cognite/sdk/dist/src';
+import { type CogniteClient, type Node3D } from '@cognite/sdk/dist/src';
 
 export class LegacyFdm3dDataProvider implements Fdm3dDataProvider {
   readonly _fdmSdk: FdmSDK;
+  readonly _cogniteClient: CogniteClient;
 
-  constructor(fdmSdk: FdmSDK) {
+  constructor(fdmSdk: FdmSDK, cogniteClient: CogniteClient) {
     this._fdmSdk = fdmSdk;
+    this._cogniteClient = cogniteClient;
   }
 
   is3dView(view: ViewItem): boolean {
@@ -47,7 +49,13 @@ export class LegacyFdm3dDataProvider implements Fdm3dDataProvider {
     revisionId: number,
     nodes: Node3D[]
   ): Promise<FdmCadConnection[]> {
-    return await getFdmConnectionsForNodes(this._fdmSdk, models, revisionId, nodes);
+    return await getFdmConnectionsForNodes(
+      this._fdmSdk,
+      this._cogniteClient,
+      models,
+      revisionId,
+      nodes
+    );
   }
 
   async listMappedFdmNodes(
@@ -83,6 +91,6 @@ export class LegacyFdm3dDataProvider implements Fdm3dDataProvider {
   async getCadConnectionsForRevisions(
     modelOptions: AddModelOptions[]
   ): Promise<FdmCadConnection[]> {
-    return await getCadConnectionsForRevision(modelOptions, this._fdmSdk);
+    return await getCadConnectionsForRevision(modelOptions, this._fdmSdk, this._cogniteClient);
   }
 }

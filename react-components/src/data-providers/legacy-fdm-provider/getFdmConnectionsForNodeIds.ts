@@ -1,7 +1,7 @@
 /*!
  * Copyright 2024 Cognite AS
  */
-import { Node3D } from '@cognite/sdk';
+import { type CogniteClient, type Node3D } from '@cognite/sdk';
 import { type DmsUniqueIdentifier, type FdmSDK } from '../FdmSDK';
 import { type FdmCadConnection } from '../../components/CacheProvider/types';
 import { type InModel3dEdgeProperties, SYSTEM_3D_EDGE_SOURCE } from './dataModels';
@@ -9,6 +9,7 @@ import { fdmEdgesToCadConnections } from './fdmEdgesToCadConnections';
 
 export async function getFdmConnectionsForNodes(
   fdmClient: FdmSDK,
+  cogniteClient: CogniteClient,
   models: DmsUniqueIdentifier[],
   revisionId: number,
   nodes: Node3D[]
@@ -55,5 +56,5 @@ export async function getFdmConnectionsForNodes(
     SYSTEM_3D_EDGE_SOURCE
   );
 
-  return fdmEdgesToCadConnections(results.instances);
+  return await fdmEdgesToCadConnections(results.instances, cogniteClient);
 }

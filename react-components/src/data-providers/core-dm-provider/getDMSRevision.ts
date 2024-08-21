@@ -1,6 +1,9 @@
-import { QueryRequest } from '@cognite/sdk/dist/src';
-import { DmsUniqueIdentifier, FdmSDK, NodeItem } from '../FdmSDK';
-import { COGNITE_CAD_REVISION_SOURCE, CogniteCADRevisionProperties } from './dataModels';
+/*!
+ * Copyright 2024 Cognite AS
+ */
+import { type QueryRequest } from '@cognite/sdk/dist/src';
+import { type DmsUniqueIdentifier, type FdmSDK, type NodeItem } from '../FdmSDK';
+import { COGNITE_CAD_REVISION_SOURCE, type CogniteCADRevisionProperties } from './dataModels';
 
 export async function getDMSRevision(
   model: DmsUniqueIdentifier,

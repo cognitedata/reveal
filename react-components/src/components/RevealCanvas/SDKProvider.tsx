@@ -17,7 +17,7 @@ type Props = { sdk: CogniteClient; children: any };
 
 export function SDKProvider({ sdk, children }: Props): React.ReactElement {
   const fdmSdk = useMemo(() => new FdmSDK(sdk), [sdk]);
-  const fdm3dDataProvider = new LegacyFdm3dDataProvider(fdmSdk);
+  const fdm3dDataProvider = new LegacyFdm3dDataProvider(fdmSdk, sdk);
   const content = useMemo(() => ({ fdmSdk, fdm3dDataProvider }), [fdmSdk, fdm3dDataProvider]);
 
   return (

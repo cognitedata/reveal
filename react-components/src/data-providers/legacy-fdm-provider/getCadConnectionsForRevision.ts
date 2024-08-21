@@ -1,7 +1,7 @@
 /*!
  * Copyright 2024 Cognite AS
  */
-import { AddModelOptions } from '@cognite/reveal';
+import { type AddModelOptions } from '@cognite/reveal';
 import { type FdmCadConnection } from '../../components/CacheProvider/types';
 import { type FdmSDK } from '../FdmSDK';
 import {
@@ -10,10 +10,12 @@ import {
   SYSTEM_SPACE_3D_SCHEMA
 } from './dataModels';
 import { fdmEdgesToCadConnections } from './fdmEdgesToCadConnections';
+import { type CogniteClient } from '@cognite/sdk/dist/src';
 
 export async function getCadConnectionsForRevision(
   modelOptions: AddModelOptions[],
-  fdmClient: FdmSDK
+  fdmClient: FdmSDK,
+  cogniteClient: CogniteClient
 ): Promise<FdmCadConnection[]> {
   if (modelOptions.length === 0) return [];
 
@@ -31,5 +33,5 @@ export async function getCadConnectionsForRevision(
     'edge',
     SYSTEM_3D_EDGE_SOURCE
   );
-  return fdmEdgesToCadConnections(mappings.instances);
+  return await fdmEdgesToCadConnections(mappings.instances, cogniteClient);
 }

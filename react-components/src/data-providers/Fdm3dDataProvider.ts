@@ -12,7 +12,7 @@ import { type AddModelOptions } from '@cognite/reveal';
 import { type InstancesWithView } from '../query/useSearchMappedEquipmentFDM';
 import { type FdmCadConnection } from '../components/CacheProvider/types';
 import { type TaggedAddResourceOptions } from '../components/Reveal3DResources/types';
-import { Node3D } from '@cognite/sdk';
+import { type Node3D } from '@cognite/sdk';
 
 export type Fdm3dDataProvider = {
   is3dView: (view: ViewItem) => boolean;

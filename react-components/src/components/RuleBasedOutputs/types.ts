@@ -254,7 +254,7 @@ export type NodeItem<PropertyType = Record<string, unknown>> = {
   externalId: string;
   createdTime: number;
   lastUpdatedTime: number;
-  deletedTime: number;
+  deletedTime?: number;
   properties: FdmPropertyType<PropertyType>;
 };
 

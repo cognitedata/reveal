@@ -22,6 +22,12 @@ export function modelRevisionToKey(modelId: ModelId, revisionId: RevisionId): Mo
   return `${modelId}/${revisionId}`;
 }
 
+export function modelRevisionKeyToModelRevision(key: ModelRevisionKey): [ModelId, RevisionId] {
+  const [modelId, revisionId] = key.split('/');
+
+  return [Number(modelId), Number(revisionId)];
+}
+
 export function modelRevisionNodesAssetsToKey(
   modelId: ModelId,
   revisionId: RevisionId,

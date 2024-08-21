@@ -1,18 +1,21 @@
+/*!
+ * Copyright 2024 Cognite AS
+ */
 import {
-  DmsUniqueIdentifier,
-  FdmSDK,
-  InstanceFilter,
+  type DmsUniqueIdentifier,
+  type FdmSDK,
+  type InstanceFilter,
   makeSureNonEmptyFilterForRequest,
-  NodeItem,
-  Source
+  type NodeItem,
+  type Source
 } from '../FdmSDK';
-import { QueryRequest } from '@cognite/sdk';
+import { type QueryRequest } from '@cognite/sdk';
 import {
   COGNITE_3D_OBJECT_SOURCE,
-  COGNITE_ASSET_SOURCE,
+  type COGNITE_ASSET_SOURCE,
   COGNITE_CAD_NODE_SOURCE,
   COGNITE_POINT_CLOUD_VOLUME_SOURCE,
-  CogniteAssetProperties
+  type CogniteAssetProperties
 } from './dataModels';
 import { cogniteAssetSourceWithProperties } from './cogniteAssetSourceWithProperties';
 
@@ -74,7 +77,9 @@ function createRawQuery(
   sourcesToSearch: Source[],
   filter: InstanceFilter | undefined,
   limit: number
-) {
+): QueryRequest {
+  // This return value throws away useful type information about the result, but I haven't found a way to
+  // make the full type easily expressible
   return {
     with: {
       cad_nodes: {
@@ -86,13 +91,13 @@ function createRawQuery(
       cad_object_3d: {
         nodes: {
           from: 'cad_nodes',
-          through: { source: COGNITE_CAD_NODE_SOURCE, identifier: 'object3D' }
+          through: { view: COGNITE_CAD_NODE_SOURCE, identifier: 'object3D' }
         }
       },
       cad_assets: {
         nodes: {
           from: 'cad_object_3d',
-          through: { source: COGNITE_3D_OBJECT_SOURCE, identifier: 'asset' },
+          through: { view: COGNITE_3D_OBJECT_SOURCE, identifier: 'asset' },
           filter
         }
       },
@@ -105,13 +110,13 @@ function createRawQuery(
       pointcloud_object_3d: {
         nodes: {
           from: 'pointcloud_volumes',
-          through: { source: COGNITE_POINT_CLOUD_VOLUME_SOURCE, identifier: 'object3D' }
+          through: { view: COGNITE_POINT_CLOUD_VOLUME_SOURCE, identifier: 'object3D' }
         }
       },
       pointcloud_assets: {
         nodes: {
           from: 'cad_object_3d',
-          through: { source: COGNITE_3D_OBJECT_SOURCE, identifier: 'asset' },
+          through: { view: COGNITE_3D_OBJECT_SOURCE, identifier: 'asset' },
           filter
         }
       }

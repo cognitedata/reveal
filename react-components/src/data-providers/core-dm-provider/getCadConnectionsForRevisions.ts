@@ -1,21 +1,25 @@
-import { QueryRequest } from '@cognite/sdk/dist/src';
-import { FdmCadConnection, FdmKey } from '../../components/CacheProvider/types';
-import { DmsUniqueIdentifier, FdmSDK } from '../FdmSDK';
+/*!
+ * Copyright 2024 Cognite AS
+ */
+import { type QueryRequest } from '@cognite/sdk/dist/src';
+import { type FdmCadConnection, type FdmKey } from '../../components/CacheProvider/types';
+import { type DmsUniqueIdentifier, type FdmSDK } from '../FdmSDK';
 import {
-  Cognite3DObjectProperties,
-  COGNITE_3D_OBJECT_SOURCE,
+  type Cognite3DObjectProperties,
+  type COGNITE_3D_OBJECT_SOURCE,
   COGNITE_CAD_NODE_SOURCE,
-  CogniteCADNodeProperties
+  type CogniteCADNodeProperties
 } from './dataModels';
 import { cogniteObject3dSourceWithProperties } from './cogniteObject3dSourceWithProperties';
 import { cogniteCadNodeSourceWithPRoperties } from './cogniteCadNodeSourceWithProperties';
 import { getModelIdFromExternalId, getRevisionIdFromExternalId } from './getCdfIdFromExternalId';
 import { toFdmKey } from '../utils/toFdmKey';
-import { PromiseType } from '../utils/typeUtils';
+import { type PromiseType } from '../utils/typeUtils';
 import { isDefined } from '../../utilities/isDefined';
+import { type QueryResult } from '../utils/queryNodesAndEdges';
 
 export async function getCadConnectionsForRevisions(
-  modelRevisions: [DmsUniqueIdentifier, DmsUniqueIdentifier][],
+  modelRevisions: Array<[DmsUniqueIdentifier, DmsUniqueIdentifier]>,
   fdmSdk: FdmSDK
 ): Promise<FdmCadConnection[]> {
   const results = await getModelConnectionResults(modelRevisions, fdmSdk);
@@ -37,10 +41,15 @@ export async function getCadConnectionsForRevisions(
   });
 }
 
-function getModelConnectionResults(
-  modelRevisions: [DmsUniqueIdentifier, DmsUniqueIdentifier][],
+type SourcesSelectType = [
+  { source: typeof COGNITE_3D_OBJECT_SOURCE; properties: Cognite3DObjectProperties },
+  { source: typeof COGNITE_CAD_NODE_SOURCE; properties: CogniteCADNodeProperties }
+];
+
+async function getModelConnectionResults(
+  modelRevisions: Array<[DmsUniqueIdentifier, DmsUniqueIdentifier]>,
   fdmSdk: FdmSDK
-) {
+): Promise<QueryResult<typeof cadConnectionsQuery, SourcesSelectType>> {
   const parameters = {
     modelRefs: modelRevisions.map(([modelRef, _revisionRef]) => modelRef),
     revisionRefs: modelRevisions.map(([_modelRef, revisionRef]) => revisionRef)
@@ -51,17 +60,11 @@ function getModelConnectionResults(
     parameters
   };
 
-  return fdmSdk.queryAllNodesAndEdges<
-    typeof query,
-    [
-      { source: typeof COGNITE_3D_OBJECT_SOURCE; properties: Cognite3DObjectProperties },
-      { source: typeof COGNITE_CAD_NODE_SOURCE; properties: CogniteCADNodeProperties }
-    ]
-  >(query);
+  return await fdmSdk.queryAllNodesAndEdges<typeof query, SourcesSelectType>(query);
 }
 
 function createNodeToModelMap(
-  modelRevisions: [DmsUniqueIdentifier, DmsUniqueIdentifier][],
+  modelRevisions: Array<[DmsUniqueIdentifier, DmsUniqueIdentifier]>,
   cadNodes: PromiseType<ReturnType<typeof getModelConnectionResults>>['items']['cad_nodes']
 ): Map<FdmKey, Omit<FdmCadConnection, 'instance'>> {
   return cadNodes.reduce((nodeMap, cadNode) => {
@@ -130,7 +133,7 @@ const cadConnectionsQuery = {
     object_3ds: {
       nodes: {
         from: 'cad_nodes',
-        through: { source: COGNITE_CAD_NODE_SOURCE, identifier: 'object3D' }
+        through: { view: COGNITE_CAD_NODE_SOURCE, identifier: 'object3D' }
       }
     }
   },

@@ -1,14 +1,24 @@
-import { AddModelOptions } from '@cognite/reveal';
-import { FdmCadConnection } from '../../components/CacheProvider/types';
-import { Fdm3dDataProvider } from '../Fdm3dDataProvider';
-import { DmsUniqueIdentifier, FdmSDK, InstanceFilter, NodeItem, Source, ViewItem } from '../FdmSDK';
-import { InstancesWithView } from '../../query/useSearchMappedEquipmentFDM';
-import { TaggedAddResourceOptions } from '../../components/Reveal3DResources/types';
+/*!
+ * Copyright 2024 Cognite AS
+ */
+import { type AddModelOptions } from '@cognite/reveal';
+import { type FdmCadConnection } from '../../components/CacheProvider/types';
+import { type Fdm3dDataProvider } from '../Fdm3dDataProvider';
+import {
+  type DmsUniqueIdentifier,
+  type FdmSDK,
+  type InstanceFilter,
+  type NodeItem,
+  type Source,
+  type ViewItem
+} from '../FdmSDK';
+import { type InstancesWithView } from '../../query/useSearchMappedEquipmentFDM';
+import { type TaggedAddResourceOptions } from '../../components/Reveal3DResources/types';
 import { COGNITE_3D_OBJECT_SOURCE } from './dataModels';
 import { getDMSModels } from './getDMSModels';
 import { getEdgeConnected3dInstances } from './getEdgeConnected3dInstances';
 import { getFdmConnectionsForNodes } from './getFdmConnectionsForNodeIds';
-import { Node3D } from '@cognite/sdk';
+import { type Node3D } from '@cognite/sdk';
 import { getDMSRevision } from './getDMSRevision';
 import { listAllMappedFdmNodes, listMappedFdmNodes } from './listMappedFdmNodes';
 import { isDefined } from '../../utilities/isDefined';
@@ -76,34 +86,33 @@ export class CoreDm3dFdm3dDataProvider implements Fdm3dDataProvider {
 
   private async getDMSModelsForIds(
     modelIds: number[]
-  ): Promise<(DmsUniqueIdentifier | undefined)[]> {
+  ): Promise<Array<DmsUniqueIdentifier | undefined>> {
     return (
       await executeParallel(
-        modelIds.map((id) => () => this.getDMSModels(id)),
+        modelIds.map((id) => async () => await this.getDMSModels(id)),
         MAX_PARALLEL_QUERIES
       )
     ).flat();
   }
 
   private async getDMSRevisionsForRevisionIdsAndModelRefs(
-    modelRefs: (DmsUniqueIdentifier | undefined)[],
+    modelRefs: Array<DmsUniqueIdentifier | undefined>,
     revisionIds: number[]
   ): Promise<DmsUniqueIdentifier[]> {
     return (
       await executeParallel(
-        revisionIds.map(
-          (revisionId, ind) => () =>
-            modelRefs[ind] === undefined
-              ? Promise.resolve(undefined)
-              : this.getDMSRevision(modelRefs[ind], revisionId)
-        ),
+        revisionIds.map((revisionId, ind) => async () => {
+          return modelRefs[ind] === undefined
+            ? undefined
+            : await this.getDMSRevision(modelRefs[ind], revisionId);
+        }),
         MAX_PARALLEL_QUERIES
       )
     ).filter(isDefined);
   }
 
-  getEdgeConnected3dInstances(instance: DmsUniqueIdentifier): Promise<DmsUniqueIdentifier[]> {
-    return getEdgeConnected3dInstances(instance, this._fdmSdk);
+  async getEdgeConnected3dInstances(instance: DmsUniqueIdentifier): Promise<DmsUniqueIdentifier[]> {
+    return await getEdgeConnected3dInstances(instance, this._fdmSdk);
   }
 
   async getFdmConnectionsForNodes(
@@ -119,7 +128,7 @@ export class CoreDm3dFdm3dDataProvider implements Fdm3dDataProvider {
 
     const revisionRef = await this.getDMSRevision(model, revisionId);
 
-    return getFdmConnectionsForNodes(model, revisionRef, revisionId, nodes, this._fdmSdk);
+    return await getFdmConnectionsForNodes(model, revisionRef, revisionId, nodes, this._fdmSdk);
   }
 
   async listMappedFdmNodes(
@@ -135,7 +144,13 @@ export class CoreDm3dFdm3dDataProvider implements Fdm3dDataProvider {
       models.map((model) => model.revisionId)
     );
 
-    return listMappedFdmNodes(revisionRefs, sourcesToSearch, instanceFilter, limit, this._fdmSdk);
+    return await listMappedFdmNodes(
+      revisionRefs,
+      sourcesToSearch,
+      instanceFilter,
+      limit,
+      this._fdmSdk
+    );
   }
 
   async listAllMappedFdmNodes(
@@ -150,7 +165,7 @@ export class CoreDm3dFdm3dDataProvider implements Fdm3dDataProvider {
       models.map((model) => model.revisionId)
     );
 
-    return listAllMappedFdmNodes(revisionRefs, sourcesToSearch, instanceFilter, this._fdmSdk);
+    return await listAllMappedFdmNodes(revisionRefs, sourcesToSearch, instanceFilter, this._fdmSdk);
   }
 
   async filterNodesByMappedTo3d(
@@ -165,11 +180,13 @@ export class CoreDm3dFdm3dDataProvider implements Fdm3dDataProvider {
       models.map((model) => model.revisionId)
     );
 
-    return filterNodesByMappedTo3d(nodes, revisionRefs, spacesToSearch, this._fdmSdk);
+    return await filterNodesByMappedTo3d(nodes, revisionRefs, spacesToSearch, this._fdmSdk);
   }
 
-  getCadModelsForInstance(instance: DmsUniqueIdentifier): Promise<TaggedAddResourceOptions[]> {
-    return getCadModelsForInstance(instance, this._fdmSdk);
+  async getCadModelsForInstance(
+    instance: DmsUniqueIdentifier
+  ): Promise<TaggedAddResourceOptions[]> {
+    return await getCadModelsForInstance(instance, this._fdmSdk);
   }
 
   async getCadConnectionsForRevisions(
@@ -187,6 +204,6 @@ export class CoreDm3dFdm3dDataProvider implements Fdm3dDataProvider {
         isDefined(modelRevision[0]) && isDefined(modelRevision[1])
     );
 
-    return getCadConnectionsForRevisions(modelRevisions, this._fdmSdk);
+    return await getCadConnectionsForRevisions(modelRevisions, this._fdmSdk);
   }
 }

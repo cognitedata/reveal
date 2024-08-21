@@ -1,4 +1,7 @@
-import { SourceSelectorV3 } from '@cognite/sdk/dist/src';
+/*!
+ * Copyright 2024 Cognite AS
+ */
+import { type SourceSelectorV3 } from '@cognite/sdk/dist/src';
 import { COGNITE_3D_OBJECT_SOURCE } from './dataModels';
 
 export const cogniteObject3dSourceWithProperties = [
