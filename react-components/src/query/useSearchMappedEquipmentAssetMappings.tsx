@@ -1,7 +1,6 @@
 /*!
  * Copyright 2023 Cognite AS
  */
-import { useRef } from 'react';
 import { type AddModelOptions } from '@cognite/reveal';
 import {
   type Asset,
@@ -64,15 +63,14 @@ export const useSearchMappedEquipmentAssetMappings = (
       if (assetMappingList === undefined) {
         return { assets: [], nextCursor: undefined };
       }
-      const assets: Asset[] = [];
-      let nextCursor = pageParam;
-      let hasMore = true;
-
-      while (assets.length < limit && hasMore) {
+      const fetchAssets = async (
+        cursor: string | undefined,
+        accumulatedAssets: Asset[]
+      ): Promise<{ assets: Asset[]; nextCursor: string | undefined }> => {
         const assetsResponse = await getAssetsList(sdk, {
           query,
           limit,
-          cursor: nextCursor
+          cursor
         });
 
         const fetchedAssets = assetsResponse.items.filter(isDefined);
@@ -84,12 +82,17 @@ export const useSearchMappedEquipmentAssetMappings = (
             .map((assetMapping) => fetchedAssets.find((asset) => asset.id === assetMapping.assetId))
             .filter(isDefined);
         });
-        const uniqueAssets = uniq([...assets, ...filteredSearchedAssets]);
 
-        assets.push(...uniqueAssets);
-        nextCursor = assetsResponse.nextCursor;
-        hasMore = !(nextCursor === undefined || assets.length >= limit);
-      }
+        const uniqueAssets = uniq([...accumulatedAssets, ...filteredSearchedAssets]);
+
+        if (uniqueAssets.length >= limit || assetsResponse.nextCursor === undefined) {
+          return { assets: uniqueAssets, nextCursor: assetsResponse.nextCursor };
+        }
+
+        return await fetchAssets(assetsResponse.nextCursor, uniqueAssets);
+      };
+
+      const { assets, nextCursor } = await fetchAssets(pageParam, []);
 
       return {
         assets,
