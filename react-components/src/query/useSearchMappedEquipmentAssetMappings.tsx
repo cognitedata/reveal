@@ -48,8 +48,6 @@ export const useSearchMappedEquipmentAssetMappings = (
   const sdk = useSDK(userSdk);
   const { data: assetMappingList, isFetched: isAssetMappingNodesFetched } =
     useAssetMappedNodesForRevisions(models.map((model) => ({ ...model, type: 'cad' })));
-  const { data: initialAssetMappings, isLoading: isInitialAssetMappingsLoading } =
-    useAllMappedEquipmentAssetMappings(models, sdk);
 
   return useInfiniteQuery({
     queryKey: [
@@ -60,38 +58,42 @@ export const useSearchMappedEquipmentAssetMappings = (
       ...models.map((model) => [model.modelId, model.revisionId])
     ],
     queryFn: async ({ pageParam }: { pageParam: string | undefined }) => {
-      if (initialAssetMappings === undefined) {
-        return { assets: [], nextCursor: undefined };
-      }
       if (query === '') {
-        const assets = initialAssetMappings.pages.flatMap((modelWithAssets) =>
-          modelWithAssets.modelsAssets.flatMap((modelsAsset) => modelsAsset.assets).flat()
-        );
-        return { assets, nextCursor: undefined };
+        return { assets: [], nextCursor: undefined };
       }
       if (assetMappingList === undefined) {
         return { assets: [], nextCursor: undefined };
       }
-      const assetsResponse = await getAssetsList(sdk, {
-        query,
-        limit,
-        cursor: pageParam
-      });
+      const assets: Asset[] = [];
+      let nextCursor = pageParam;
+      let hasMore = true;
 
-      const assets = assetsResponse.items.filter(isDefined);
-      const filteredSearchedAssets = assetMappingList.flatMap((mapping) => {
-        return mapping.assetMappings
-          .filter((assetMapping) => assets.some((asset) => asset.id === assetMapping.assetId))
-          .map((assetMapping) => assets.find((asset) => asset.id === assetMapping.assetId))
-          .filter(isDefined);
-      });
+      while (assets.length < limit && hasMore) {
+        const assetsResponse = await getAssetsList(sdk, {
+          query,
+          limit,
+          cursor: nextCursor
+        });
 
-      // Remove duplicates
-      const uniqueFilteredSearchedAssets = uniq(filteredSearchedAssets);
+        const fetchedAssets = assetsResponse.items.filter(isDefined);
+        const filteredSearchedAssets = assetMappingList.flatMap((mapping) => {
+          return mapping.assetMappings
+            .filter((assetMapping) =>
+              fetchedAssets.some((asset) => asset.id === assetMapping.assetId)
+            )
+            .map((assetMapping) => fetchedAssets.find((asset) => asset.id === assetMapping.assetId))
+            .filter(isDefined);
+        });
+        const uniqueAssets = uniq([...assets, ...filteredSearchedAssets]);
+
+        assets.push(...uniqueAssets);
+        nextCursor = assetsResponse.nextCursor;
+        hasMore = !(nextCursor === undefined || assets.length >= limit);
+      }
 
       return {
-        assets: uniqueFilteredSearchedAssets,
-        nextCursor: assetsResponse.nextCursor
+        assets,
+        nextCursor
       };
     },
     initialPageParam: undefined,
@@ -101,10 +103,7 @@ export const useSearchMappedEquipmentAssetMappings = (
       return lastPageData.nextCursor;
     },
     enabled:
-      !isInitialAssetMappingsLoading &&
-      isAssetMappingNodesFetched &&
-      assetMappingList !== undefined &&
-      assetMappingList.length > 0
+      isAssetMappingNodesFetched && assetMappingList !== undefined && assetMappingList.length > 0
   });
 };
 
@@ -112,9 +111,8 @@ export const useAllMappedEquipmentAssetMappings = (
   models: AddModelOptions[],
   userSdk?: CogniteClient,
   limit: number = 1000
-): UseInfiniteQueryResult<InfiniteData<ModelAssetPage>, Error> => {
+): UseInfiniteQueryResult<InfiniteData<ModelMappingsWithAssets[]>, Error> => {
   const sdk = useSDK(userSdk);
-  const usedCursors = useRef(new Set());
 
   return useInfiniteQuery({
     queryKey: [
@@ -129,13 +127,11 @@ export const useAllMappedEquipmentAssetMappings = (
           cursor: string | 'start' | undefined;
           model: AddModelOptions;
         }>;
-
         const nextCursor = nextCursors.find(
           (nextCursor) =>
             nextCursor.model.modelId === model.modelId &&
             nextCursor.model.revisionId === model.revisionId
         )?.cursor;
-
         if (nextCursor === undefined) {
           return { mappings: { items: [] }, model };
         }
@@ -145,43 +141,18 @@ export const useAllMappedEquipmentAssetMappings = (
           limit
         });
 
-        usedCursors.current.add(nextCursor);
-
         return { mappings, model };
       });
 
       const currentPagesOfAssetMappings = await Promise.all(currentPagesOfAssetMappingsPromises);
 
       const modelsAssets = await getAssetsFromAssetMappings(sdk, currentPagesOfAssetMappings);
-      const nextCursors = currentPagesOfAssetMappings
-        .map(({ mappings }) => mappings.nextCursor)
-        .filter(isDefined);
 
-      return await Promise.resolve({
-        modelsAssets,
-        nextCursors
-      });
+      return modelsAssets;
     },
     initialPageParam: models.map((model) => ({ cursor: 'start', model })),
     staleTime: Infinity,
-    getNextPageParam: (lastPage: {
-      modelsAssets: ModelMappingsWithAssets[];
-      nextCursors: string[];
-    }): Array<{ cursor: string | undefined; model: AddModelOptions }> | undefined => {
-      const nextCursors = lastPage.nextCursors
-        .map((cursor, index) => ({ cursor, model: lastPage.modelsAssets[index].model }))
-        .filter((mappingModel) => {
-          if (mappingModel.cursor === undefined || usedCursors.current.has(mappingModel.cursor)) {
-            return false;
-          }
-          usedCursors.current.add(mappingModel.cursor);
-          return true;
-        });
-      if (nextCursors.length === 0) {
-        return undefined;
-      }
-      return nextCursors;
-    }
+    getNextPageParam
   });
 };
 
