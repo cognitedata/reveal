@@ -57,7 +57,8 @@ export const useSearchMappedEquipmentAssetMappings = (
       'react-components',
       'search-mapped-asset-mappings',
       query,
-      ...models.map((model) => [model.modelId, model.revisionId])
+      ...models.map((model) => [model.modelId, model.revisionId]),
+      initialAssetMappings.data?.pages.length ?? 0
     ],
     queryFn: async ({ pageParam }: { pageParam: string | undefined }) => {
       if (initialAssetMappings.data === undefined) {
