@@ -57,12 +57,10 @@ export const useSearchMappedEquipmentAssetMappings = (
       ...models.map((model) => [model.modelId, model.revisionId])
     ],
     queryFn: async ({ pageParam }: { pageParam: string | undefined }) => {
-      if (query === '') {
+      if (query === '' || assetMappingList === undefined) {
         return { assets: [], nextCursor: undefined };
       }
-      if (assetMappingList === undefined) {
-        return { assets: [], nextCursor: undefined };
-      }
+
       const fetchAssets = async (
         cursor: string | undefined,
         accumulatedAssets: Asset[]
