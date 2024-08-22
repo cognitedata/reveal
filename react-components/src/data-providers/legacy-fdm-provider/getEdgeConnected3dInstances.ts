@@ -3,7 +3,7 @@
  */
 import { SYSTEM_3D_EDGE_SOURCE } from './dataModels';
 import { type DmsUniqueIdentifier, type FdmSDK } from '../FdmSDK';
-import { type QueryRequest } from '@cognite/sdk/dist/src';
+import { type QueryRequest } from '@cognite/sdk';
 
 export async function getEdgeConnected3dInstances(
   instance: DmsUniqueIdentifier,
