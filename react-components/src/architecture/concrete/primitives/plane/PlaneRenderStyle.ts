@@ -17,8 +17,8 @@ export class PlaneRenderStyle extends CommonRenderStyle {
   public linesColor = BLACK_COLOR.clone();
   public selectedLinesColor = WHITE_COLOR.clone();
   public opacityUse = true;
-  public opacity = 0.5;
-  public selectedOpacity = 0.8;
+  public opacity = 0.25;
+  public selectedOpacity = 0.5;
 
   // ==================================================
   // OVERRIDES of BaseStyle
