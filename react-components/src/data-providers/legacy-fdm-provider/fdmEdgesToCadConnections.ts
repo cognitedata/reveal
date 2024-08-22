@@ -18,6 +18,7 @@ import {
 } from '../../components/CacheProvider/utils';
 import { executeParallel } from '../../utilities/executeParallel';
 import { isDefined } from '../../utilities/isDefined';
+import { chunk } from 'lodash';
 
 const MAX_PARALLEL_QUERIES = 2;
 
@@ -80,17 +81,27 @@ async function getTreeIndexConnectionsForNodeIdConnections(
   cogniteClient: CogniteClient
 ): Promise<FdmCadConnection[]> {
   const [modelId, revisionId] = modelRevisionKeyToModelRevision(modelRevisionKey);
-  const treeIndices = await nodeIdsToTreeIndices(
-    modelId,
-    revisionId,
-    connectionList.map((connection) => connection.nodeId),
-    cogniteClient
-  );
+  const connectionChunks = chunk(connectionList, 1000);
 
-  return connectionList.map((connection, ind) => ({
-    modelId: connection.modelId,
-    revisionId: connection.revisionId,
-    treeIndex: treeIndices[ind],
-    instance: connection.instance
-  }));
+  const connectionResult: FdmCadConnection[] = [];
+
+  for (const connectionChunk of connectionChunks) {
+    const treeIndices = await nodeIdsToTreeIndices(
+      modelId,
+      revisionId,
+      connectionChunk.map((connection) => connection.nodeId),
+      cogniteClient
+    );
+
+    const cadConnections = connectionChunk.map((connection, ind) => ({
+      modelId: connection.modelId,
+      revisionId: connection.revisionId,
+      treeIndex: treeIndices[ind],
+      instance: connection.instance
+    }));
+
+    connectionResult.push(...cadConnections);
+  }
+
+  return connectionResult;
 }

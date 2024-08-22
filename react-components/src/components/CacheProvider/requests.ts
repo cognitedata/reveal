@@ -63,14 +63,26 @@ export async function treeIndexesToNodeIds(
   const outputsUrl = `${cogniteClient.getBaseUrl()}/api/v1/projects/${
     cogniteClient.project
   }/3d/models/${modelId}/revisions/${revisionId}/nodes/internalids/bytreeindices`;
-  const response = await cogniteClient.post<{ items: NodeId[] }>(outputsUrl, {
-    data: { items: treeIndexes }
-  });
-  if (response.status === 200) {
-    return response.data.items;
-  } else {
-    throw Error(`treeIndex-nodeId translation failed for treeIndexes ${treeIndexes.join(',')}`);
+
+  const treeIndexChunks = chunk(treeIndexes, 1000);
+
+  const nodeIds: NodeId[] = [];
+
+  for (const treeIndexChunk of treeIndexChunks) {
+    const response = await cogniteClient.post<{ items: NodeId[] }>(outputsUrl, {
+      data: { items: treeIndexChunk }
+    });
+
+    if (response.status === 200) {
+      nodeIds.push(...response.data.items);
+    } else {
+      throw Error(
+        `treeIndex-nodeId translation failed for treeIndexes ${treeIndexChunk.join(',')}`
+      );
+    }
   }
+
+  return nodeIds;
 }
 
 export async function nodeIdsToTreeIndices(
