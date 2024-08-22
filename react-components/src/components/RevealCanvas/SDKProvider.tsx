@@ -7,17 +7,21 @@ import { FdmSdkContext } from './FdmDataProviderContext';
 import { FdmSDK } from '../../data-providers/FdmSDK';
 import { LegacyFdm3dDataProvider } from '../../data-providers/legacy-fdm-provider/LegacyFdm3dDataProvider';
 import { type Fdm3dDataProvider } from '../../data-providers/Fdm3dDataProvider';
+import { CoreDm3dFdm3dDataProvider } from '../../data-providers/core-dm-provider/CoreDm3dDataProvider';
 
 const SdkContext = createContext<CogniteClient | null>(null);
 
 SdkContext.displayName = 'CogniteSdkProvider';
 FdmSdkContext.displayName = 'FdmSdkProvider';
 
-type Props = { sdk: CogniteClient; children: any };
+type Props = { sdk: CogniteClient; useCoreDm?: boolean; children: any };
 
-export function SDKProvider({ sdk, children }: Props): React.ReactElement {
+export function SDKProvider({ sdk, children, useCoreDm }: Props): React.ReactElement {
   const fdmSdk = useMemo(() => new FdmSDK(sdk), [sdk]);
-  const fdm3dDataProvider = new LegacyFdm3dDataProvider(fdmSdk, sdk);
+  const fdm3dDataProvider =
+    useCoreDm ?? false
+      ? new CoreDm3dFdm3dDataProvider([], fdmSdk)
+      : new LegacyFdm3dDataProvider(fdmSdk, sdk);
   const content = useMemo(() => ({ fdmSdk, fdm3dDataProvider }), [fdmSdk, fdm3dDataProvider]);
 
   return (
