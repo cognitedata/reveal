@@ -17,7 +17,7 @@ import { useSDK } from '../components/RevealCanvas/SDKProvider';
 import { getAssetsList } from '../hooks/network/getAssetsList';
 import { useAssetMappedNodesForRevisions } from '../components/CacheProvider/AssetMappingAndNode3DCacheProvider';
 import { isDefined } from '../utilities/isDefined';
-import { uniq } from 'lodash';
+import { uniqBy } from 'lodash';
 
 export type ModelMappings = {
   model: AddModelOptions;
@@ -81,7 +81,10 @@ export const useSearchMappedEquipmentAssetMappings = (
             .filter(isDefined);
         });
 
-        const uniqueAssets = uniq([...accumulatedAssets, ...filteredSearchedAssets]);
+        const uniqueAssets = uniqBy(
+          [...accumulatedAssets, ...filteredSearchedAssets],
+          (asset) => asset.id
+        );
 
         if (uniqueAssets.length >= limit || assetsResponse.nextCursor === undefined) {
           return { assets: uniqueAssets, nextCursor: assetsResponse.nextCursor };
