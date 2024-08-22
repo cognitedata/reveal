@@ -134,7 +134,10 @@ export const sceneSourceWithProperties = [
       'cameraTranslationZ',
       'cameraEulerRotationX',
       'cameraEulerRotationY',
-      'cameraEulerRotationZ'
+      'cameraEulerRotationZ',
+      'cameraTargetX',
+      'cameraTargetY',
+      'cameraTargetZ'
     ]
   }
 ] as const satisfies SourceSelectorV3;

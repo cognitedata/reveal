@@ -87,22 +87,22 @@ export const useSceneConfig = (
       >(query);
 
       const sceneResponse = queryResult;
-      const SceneConfigurationProperties = extractProperties<SceneConfigurationProperties>(
+      const sceneConfigurationProperties = extractProperties<SceneConfigurationProperties>(
         sceneResponse.items.myScene[0]?.properties
       );
 
       const scene: Scene = {
         sceneConfiguration: {
-          name: SceneConfigurationProperties.name,
-          cameraTranslationX: SceneConfigurationProperties.cameraTranslationX,
-          cameraTranslationY: SceneConfigurationProperties.cameraTranslationY,
-          cameraTranslationZ: SceneConfigurationProperties.cameraTranslationZ,
-          cameraEulerRotationX: SceneConfigurationProperties.cameraEulerRotationX,
-          cameraEulerRotationY: SceneConfigurationProperties.cameraEulerRotationY,
-          cameraEulerRotationZ: SceneConfigurationProperties.cameraEulerRotationZ,
-          cameraTargetX: SceneConfigurationProperties.cameraTargetX,
-          cameraTargetY: SceneConfigurationProperties.cameraTargetY,
-          cameraTargetZ: SceneConfigurationProperties.cameraTargetZ
+          name: sceneConfigurationProperties.name,
+          cameraTranslationX: sceneConfigurationProperties.cameraTranslationX,
+          cameraTranslationY: sceneConfigurationProperties.cameraTranslationY,
+          cameraTranslationZ: sceneConfigurationProperties.cameraTranslationZ,
+          cameraEulerRotationX: sceneConfigurationProperties.cameraEulerRotationX,
+          cameraEulerRotationY: sceneConfigurationProperties.cameraEulerRotationY,
+          cameraEulerRotationZ: sceneConfigurationProperties.cameraEulerRotationZ,
+          cameraTargetX: sceneConfigurationProperties.cameraTargetX,
+          cameraTargetY: sceneConfigurationProperties.cameraTargetY,
+          cameraTargetZ: sceneConfigurationProperties.cameraTargetZ
         },
         skybox: getSkybox(sceneResponse),
         groundPlanes: getGroundPlanes(sceneResponse),
