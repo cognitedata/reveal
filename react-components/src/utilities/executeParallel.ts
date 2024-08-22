@@ -18,15 +18,17 @@ export async function executeParallel<T>(
       return;
     }
 
+    const relevantCallback = nextCallback;
     nextCallback++;
 
-    await resultFillingCallbacks[nextCallback]();
+    await resultFillingCallbacks[relevantCallback]();
     await scheduleNext();
   }
 
   const scheduleChains = new Array(maxParallel).fill(0).map(async () => {
     await scheduleNext();
   });
+
   await Promise.all(scheduleChains);
   return resultArray;
 }
