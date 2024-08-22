@@ -13,6 +13,5 @@ export function compareAnnotationIdentifiers(
   } else if (a.source === 'fdm' && b.source === 'fdm') {
     return a.space === b.space && a.externalId === b.externalId;
   }
-
   return false;
 }

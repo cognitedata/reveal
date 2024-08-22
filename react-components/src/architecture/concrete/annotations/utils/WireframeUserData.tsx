@@ -4,17 +4,17 @@
 
 import { type PointCloudAnnotation } from './types';
 
-import { type AnnotationType, type Status } from '../AnnotationsView';
+import { type Status } from '../AnnotationsView';
 import { compareAnnotationIdentifiers } from './compareAnnotationIdentifiers';
 
 export class WireframeUserData {
-  public annotationType: AnnotationType;
+  public selected: boolean;
   public status: Status;
   public annotations: PointCloudAnnotation[] = []; // Pending annotation has empty array
 
-  public constructor(status: Status, annotationType: AnnotationType) {
+  public constructor(status: Status, selected: boolean) {
     this.status = status;
-    this.annotationType = annotationType;
+    this.selected = selected;
   }
 
   public get length(): number {

@@ -6,18 +6,14 @@ import * as THREE from 'three';
 import { LineMaterial } from 'three/examples/jsm/lines/LineMaterial.js';
 import { Wireframe } from 'three/examples/jsm/lines/Wireframe.js';
 
-import { type CustomObjectIntersectInput, type CustomObjectIntersection } from '@cognite/reveal';
+import {
+  CDF_TO_VIEWER_TRANSFORMATION,
+  type CustomObjectIntersectInput,
+  type CustomObjectIntersection
+} from '@cognite/reveal';
 import { type AnnotationStatus } from '@cognite/sdk';
 
-import {
-  ANNOTATION_LINE_WIDTH,
-  ANNOTATION_SELECTED_LINE_WIDTH,
-  ANNOTATION_PENDING_LINE_WIDTH,
-  ANNOTATION_BLANK_COLOR,
-  ANNOTATION_BLANK_OPACITY,
-  ANNOTATION_PENDING_COLOR
-} from './utils/constants';
-import { type PointCloudAnnotation, TransformMode } from './utils/types';
+import { type PointCloudAnnotation } from './utils/types';
 
 import {
   getAnnotationGeometries,
@@ -39,8 +35,9 @@ import { type AnnotationsDomainObject } from './AnnotationsDomainObject';
 import { type AnnotationsRenderStyle } from './AnnotationsRenderStyle';
 import { type DomainObjectChange } from '../../base/domainObjectsHelpers/DomainObjectChange';
 import { Changes } from '../../base/domainObjectsHelpers/Changes';
+import { type DomainObjectIntersection } from '../../base/domainObjectsHelpers/DomainObjectIntersection';
 
-const HOVERED_ANNOTATION_NAME = 'hovered-annotation-name';
+const FOCUS_ANNOTATION_NAME = 'focus-annotation-name';
 const GROUP_SIZE = 100;
 const BOX_GEOMETRY = createBoxGeometry(); // Prototype for a box
 const CYLINDER_GEOMETRY = createCylinderGeometry(); // Prototype for a box
@@ -52,44 +49,29 @@ export enum Status {
   Rejected
 }
 
-type LineMaterialConfig = {
-  status: Status;
-  linewidth: number;
-  resolution: THREE.Vector2;
-  depthTest?: boolean;
-  dashed: boolean;
-};
-
-export enum AnnotationType {
-  SELECTED_ANNOTATION = 'selectedAnnotation',
-  NORMAL_ANNOTATION = 'normalAnnotation'
-}
-
 export class AnnotationsView extends GroupThreeView<AnnotationsDomainObject> {
   // ==================================================
   // INSTANCE FIELDS
   // ==================================================
 
   // All needed materials
-  private readonly contextualizedLineMaterial: LineMaterial;
+  private readonly contextLineMaterial: LineMaterial;
   private readonly approvedLineMaterial: LineMaterial;
   private readonly suggestedLineMaterial: LineMaterial;
   private readonly rejectedLineMaterial: LineMaterial;
 
-  private readonly contextualizedSelectedLineMaterial: LineMaterial;
+  private readonly contextSelectedLineMaterial: LineMaterial;
   private readonly approvedSelectedLineMaterial: LineMaterial;
   private readonly suggestedSelectedLineMaterial: LineMaterial;
   private readonly rejectedSelectedLineMaterial: LineMaterial;
 
   private readonly pendingLineMaterial: LineMaterial;
-  private readonly hoveredAnnotationMaterial: THREE.MeshBasicMaterial;
+  private readonly focusAnnotationMaterial: THREE.MeshBasicMaterial;
 
   // This is the only child of the root, annotations are added here
   // When show(hide) annotation I connect/disconnect the child-parent relation between this and the root.
   // Then this functionality doesn't change anything else in the system
   private readonly globalMatrix: THREE.Matrix4 = new THREE.Matrix4();
-
-  private prevTransformMode: TransformMode = TransformMode.NONE;
 
   // ==================================================
   // INSTANCE PROPERTIES
@@ -106,80 +88,21 @@ export class AnnotationsView extends GroupThreeView<AnnotationsDomainObject> {
   constructor() {
     super();
 
-    const resolution = new THREE.Vector2(800, 800);
-    // Create all needed materials upfront
-    const baseConfig = {
-      linewidth: ANNOTATION_LINE_WIDTH,
-      resolution,
-      depthTest: true,
-      dashed: false
-    };
+    this.globalMatrix = CDF_TO_VIEWER_TRANSFORMATION.clone();
 
-    const selectedConfig = {
-      linewidth: ANNOTATION_SELECTED_LINE_WIDTH,
-      resolution,
-      depthTest: true,
-      dashed: false
-    };
+    this.contextLineMaterial = createLineMaterial();
+    this.approvedLineMaterial = createLineMaterial();
+    this.suggestedLineMaterial = createLineMaterial();
+    this.rejectedLineMaterial = createLineMaterial();
 
-    const pendingConfig = {
-      linewidth: ANNOTATION_PENDING_LINE_WIDTH,
-      resolution,
-      depthTest: true,
-      dashed: false
-    };
+    this.contextSelectedLineMaterial = createLineMaterial();
+    this.approvedSelectedLineMaterial = createLineMaterial();
+    this.suggestedSelectedLineMaterial = createLineMaterial();
+    this.rejectedSelectedLineMaterial = createLineMaterial();
 
-    this.contextualizedLineMaterial = createLineMaterial({
-      ...baseConfig,
-      status: Status.Contextualized
-    });
+    this.pendingLineMaterial = createLineMaterial();
 
-    this.approvedLineMaterial = createLineMaterial({
-      ...baseConfig,
-      status: Status.Approved
-    });
-
-    this.suggestedLineMaterial = createLineMaterial({
-      ...baseConfig,
-      status: Status.Suggested
-    });
-
-    this.rejectedLineMaterial = createLineMaterial({
-      ...baseConfig,
-      status: Status.Rejected
-    });
-
-    this.contextualizedSelectedLineMaterial = createLineMaterial({
-      ...selectedConfig,
-      status: Status.Contextualized
-    });
-
-    this.approvedSelectedLineMaterial = createLineMaterial({
-      ...selectedConfig,
-      status: Status.Approved
-    });
-
-    this.suggestedSelectedLineMaterial = createLineMaterial({
-      ...selectedConfig,
-      status: Status.Suggested
-    });
-
-    this.rejectedSelectedLineMaterial = createLineMaterial({
-      ...selectedConfig,
-      status: Status.Rejected
-    });
-
-    this.pendingLineMaterial = new LineMaterial({
-      ...pendingConfig,
-      color: ANNOTATION_PENDING_COLOR
-    });
-
-    this.hoveredAnnotationMaterial = new THREE.MeshBasicMaterial({
-      color: ANNOTATION_BLANK_COLOR,
-      transparent: true,
-      opacity: ANNOTATION_BLANK_OPACITY,
-      depthTest: true
-    });
+    this.focusAnnotationMaterial = new THREE.MeshBasicMaterial();
   }
 
   // ==================================================
@@ -188,8 +111,24 @@ export class AnnotationsView extends GroupThreeView<AnnotationsDomainObject> {
 
   public override update(change: DomainObjectChange): void {
     super.update(change);
-    if (change.isChanged(Changes.selected, Changes.renderStyle, Changes.color, Changes.clipping)) {
+    if (change.isChanged(Changes.clipping)) {
       this.clearMemory();
+      this.invalidateRenderTarget();
+    }
+    if (change.isChanged(Changes.renderStyle)) {
+      this.updateRenderStyle();
+      this.invalidateRenderTarget();
+    }
+    if (change.isChanged(Changes.selected)) {
+      this.setSelectedAnnotation(this.domainObject.selectedAnnotation);
+      this.invalidateRenderTarget();
+    }
+    if (change.isChanged(Changes.focus)) {
+      this.setFocusAnnotation(this.domainObject.focusAnnotation);
+      this.invalidateRenderTarget();
+    }
+    if (change.isChanged(Changes.pending)) {
+      this.setPendingAnnotation(this.domainObject.pendingAnnotation);
       this.invalidateRenderTarget();
     }
   }
@@ -202,37 +141,55 @@ export class AnnotationsView extends GroupThreeView<AnnotationsDomainObject> {
     return this.style.depthTest;
   }
 
+  protected override calculateBoundingBox(): THREE.Box3 {
+    const annotations = this.domainObject.annotations;
+    const boundingBox = new THREE.Box3();
+    boundingBox.makeEmpty();
+    for (const annotation of annotations) {
+      const annotationBoundingBox = getBoundingBox(annotation, this.globalMatrix);
+      if (annotationBoundingBox !== undefined) {
+        boundingBox.union(annotationBoundingBox);
+      }
+    }
+    return boundingBox;
+  }
+
   protected override addChildren(): void {
     const { domainObject } = this;
 
+    this.updateRenderStyle();
     const annotations = domainObject.annotations;
+    if (annotations === undefined) {
+      return;
+    }
 
-    for (const status of [
-      Status.Rejected,
-      Status.Suggested,
-      Status.Approved,
-      Status.Contextualized
-    ]) {
+    const statuses = [Status.Rejected, Status.Suggested, Status.Approved, Status.Contextualized];
+    for (const status of statuses) {
       const filteredAnnotation = annotations.filter(
         (annotation) => getStatusByAnnotation(annotation) === status
       );
       for (let startIndex = 0; startIndex < filteredAnnotation.length; startIndex += GROUP_SIZE) {
         this.addWireframeFromMultipleAnnotations({
           annotations: filteredAnnotation,
-          globalMatrix,
+          globalMatrix: this.globalMatrix,
           status,
-          annotationType: AnnotationType.NORMAL_ANNOTATION,
+          selected: false,
           startIndex,
           groupSize: GROUP_SIZE
         });
       }
     }
+    // Set the other
+    this.setSelectedAnnotation(this.domainObject.selectedAnnotation);
+    this.setFocusAnnotation(this.domainObject.focusAnnotation);
+    this.setPendingAnnotation(this.domainObject.pendingAnnotation);
   }
 
   override intersectIfCloser(
     intersectInput: CustomObjectIntersectInput,
     closestDistance: number | undefined
   ): undefined | CustomObjectIntersection {
+    const { domainObject } = this;
     const closestFinder = getClosestAnnotation(
       this.getAnnotations(),
       this.globalMatrix,
@@ -245,101 +202,79 @@ export class AnnotationsView extends GroupThreeView<AnnotationsDomainObject> {
     if (closestDistance !== undefined && closestFinder.minDistance > closestDistance) {
       return undefined;
     }
-    return {
+    const customObjectIntersection: DomainObjectIntersection = {
       type: 'customObject',
       distanceToCamera: closestFinder.minDistance,
       point: info.point,
       customObject: this,
+      domainObject,
       boundingBox: getBoundingBox(info.annotation, this.globalMatrix),
       userData: info.annotation
     };
+    return customObjectIntersection;
   }
 
   // ==================================================
   // INSTANCE METHODS: Selected annotation
   // ==================================================
 
-  public setSelectedAnnotation(annotation: PointCloudAnnotation | null): void {
-    if (annotation === null) {
+  private setSelectedAnnotation(annotation: PointCloudAnnotation | undefined): void {
+    if (annotation === undefined) {
       this.clearSelectedAnnotation();
     } else {
-      this.styleAnnotation(annotation, AnnotationType.SELECTED_ANNOTATION);
-    }
-  }
-
-  private styleAnnotation(annotation: PointCloudAnnotation, annotationType: AnnotationType): void {
-    // This is only used by AnnotationType = SELECTED_ANNOTATION
-    let wireframeToSplit: Wireframe | undefined;
-    for (const wireframe of this.getWireframes()) {
-      const userData = getUserData(wireframe);
-      if (userData === undefined) {
-        continue;
-      }
-      if (userData.isPending) {
-        continue;
-      }
-      if (!userData.contain(annotation)) {
-        this.styleWireframe(wireframe, AnnotationType.NORMAL_ANNOTATION);
-      } else if (userData.length === 1) {
-        this.styleWireframe(wireframe, annotationType);
-      } else {
-        wireframeToSplit = wireframe;
-      }
-    }
-    if (wireframeToSplit !== undefined) {
-      const userData = getUserData(wireframeToSplit);
-      const remainingAnnotations = userData.annotations.filter((a) => a !== annotation);
-      this.addWireframeFromMultipleAnnotations({
-        annotations: remainingAnnotations,
-        globalMatrix: this.globalMatrix,
-        status: userData.status,
-        annotationType: userData.annotationType,
-        startIndex: 0
-      });
-      const changingAnnotations = [annotation];
-      if (changingAnnotations.length > 0) {
-        this.addWireframeFromMultipleAnnotations({
-          annotations: changingAnnotations,
-          globalMatrix: this.globalMatrix,
-          status: userData.status,
-          annotationType,
-          startIndex: 0
-        });
-      }
-      this._group.remove(wireframeToSplit);
-      dispose(wireframeToSplit);
+      this.styleAnnotation(annotation, true);
     }
   }
 
   private clearSelectedAnnotation(): void {
-    for (const wireframe of this.getWireframes())
-      this.styleWireframe(wireframe, AnnotationType.NORMAL_ANNOTATION);
+    for (const wireframe of this.getWireframes()) this.styleWireframe(wireframe, false);
   }
 
-  private styleWireframe(wireframe: Wireframe, annotationType: AnnotationType): void {
-    const userData = getUserData(wireframe);
-    if (userData === undefined) {
+  // ==================================================
+  // INSTANCE METHODS: Focus Annotation
+  // ==================================================
+
+  private setFocusAnnotation(annotation: PointCloudAnnotation | undefined): void {
+    this.clearFocusAnnotation();
+    if (annotation === undefined) {
       return;
     }
-    userData.annotationType = annotationType;
-    wireframe.material = this.getLineMaterial(userData.status, userData.annotationType);
+    const group = new THREE.Group();
+    group.name = FOCUS_ANNOTATION_NAME;
+    this.addChild(group);
+
+    for (const geometry of getAnnotationGeometries(annotation)) {
+      const matrix = getAnnotationMatrixByGeometry(geometry);
+      if (matrix === undefined) {
+        continue;
+      }
+      matrix.premultiply(this.globalMatrix);
+      const isCylinder = geometry.cylinder !== undefined;
+      const mesh = createMeshByMatrix(matrix, this.focusAnnotationMaterial, isCylinder);
+      group.add(mesh);
+    }
+  }
+
+  private clearFocusAnnotation(): void {
+    const group = this._group.getObjectByName(FOCUS_ANNOTATION_NAME);
+    if (group === undefined) {
+      return;
+    }
+    this._group.remove(group);
+    dispose(group);
   }
 
   // ==================================================
   // INSTANCE METHODS: Pending annotation
   // ==================================================
 
-  public setPendingAnnotation(pendingAnnotation: PendingAnnotation | null): void {
-    this.transformControls.detach();
+  private setPendingAnnotation(pendingAnnotation: PendingAnnotation | undefined): void {
     this.clearPendingAnnotation();
-    if (pendingAnnotation === null) {
+    if (pendingAnnotation === undefined) {
       return;
     }
     const wireframe = this.createPendingAnnotationAsWireframe(pendingAnnotation);
     this.addChild(wireframe);
-
-    this.transformControls.attach(wireframe);
-    this.setTransformControlsMode(this.prevTransformMode);
   }
 
   private clearPendingAnnotation(): void {
@@ -359,66 +294,85 @@ export class AnnotationsView extends GroupThreeView<AnnotationsDomainObject> {
   private createPendingAnnotationAsWireframe(pendingAnnotation: PendingAnnotation): Wireframe {
     const wireframe = createPendingAnnotationAsWireframe(pendingAnnotation);
 
-    wireframe.userData = new WireframeUserData(Status.Suggested, AnnotationType.NORMAL_ANNOTATION);
+    wireframe.userData = new WireframeUserData(Status.Suggested, false);
     wireframe.material = this.pendingLineMaterial;
     wireframe.computeLineDistances();
     return wireframe;
   }
 
   // ==================================================
-  // INSTANCE METHODS: Transform control
+  // INSTANCE METHODS: Style annotation
   // ==================================================
 
-  public setTransformControlsMode(transformMode: TransformMode): void {
-    this.prevTransformMode = transformMode;
-    if (transformMode === TransformMode.NONE) {
-      this.setTransformControlsVisibility(false);
-      return;
+  private updateRenderStyle(): void {
+    const { style } = this;
+
+    const statuses = [Status.Rejected, Status.Suggested, Status.Approved, Status.Contextualized];
+    for (const status of statuses) {
+      this.setStyle(style, status, false);
+      this.setStyle(style, status, true);
     }
-    this.setTransformControlsVisibility(true);
-    this.transformControls.setMode(transformMode);
+    this.pendingLineMaterial.color.set(style.pendingColor);
+    this.pendingLineMaterial.linewidth = style.pendingLineWidth;
+    this.pendingLineMaterial.depthTest = this.style.depthTest;
+
+    this.focusAnnotationMaterial.color.set(style.blankColor);
+    this.focusAnnotationMaterial.transparent = true;
+    this.focusAnnotationMaterial.opacity = style.blankOpacity;
+    this.focusAnnotationMaterial.depthTest = true;
   }
 
-  private setTransformControlsVisibility(visible: boolean): void {
-    this.transformControls.visible = visible;
-    this.transformControls.enabled = visible;
+  private styleWireframe(wireframe: Wireframe, selected: boolean): void {
+    const userData = getUserData(wireframe);
+    if (userData === undefined) {
+      return;
+    }
+    userData.selected = selected;
+    wireframe.material = this.getLineMaterial(userData.status, selected);
   }
 
-  // ==================================================
-  // INSTANCE METHODS: Hovered Annotation
-  // ==================================================
-
-  public setHoveredAnnotation(annotation: PointCloudAnnotation | undefined): void {
-    this.clearHoveredAnnotation();
-    if (annotation === undefined) {
-      return;
-    }
-    if (this.transformControls.visible) {
-      return;
-    }
-    const group = new THREE.Group();
-    group.name = HOVERED_ANNOTATION_NAME;
-    this.addChild(group);
-
-    for (const geometry of getAnnotationGeometries(annotation)) {
-      const matrix = getAnnotationMatrixByGeometry(geometry);
-      if (matrix === undefined) {
+  private styleAnnotation(annotation: PointCloudAnnotation, selected: boolean): void {
+    // This is only used by AnnotationType = SELECTED_ANNOTATION
+    let wireframeToSplit: Wireframe | undefined;
+    for (const wireframe of this.getWireframes()) {
+      const userData = getUserData(wireframe);
+      if (userData === undefined) {
         continue;
       }
-      matrix.premultiply(this.globalMatrix);
-      const isCylinder = geometry.cylinder !== undefined;
-      const mesh = createMeshByMatrix(matrix, this.hoveredAnnotationMaterial, isCylinder);
-      group.add(mesh);
+      if (userData.isPending) {
+        continue;
+      }
+      if (!userData.contain(annotation)) {
+        this.styleWireframe(wireframe, false);
+      } else if (userData.length === 1) {
+        this.styleWireframe(wireframe, selected);
+      } else {
+        wireframeToSplit = wireframe;
+      }
     }
-  }
-
-  private clearHoveredAnnotation(): void {
-    const group = this._group.getObjectByName(HOVERED_ANNOTATION_NAME);
-    if (group === undefined) {
-      return;
+    if (wireframeToSplit !== undefined) {
+      const userData = getUserData(wireframeToSplit);
+      const remainingAnnotations = userData.annotations.filter((a) => a !== annotation);
+      this.addWireframeFromMultipleAnnotations({
+        annotations: remainingAnnotations,
+        globalMatrix: this.globalMatrix,
+        status: userData.status,
+        selected: userData.selected,
+        startIndex: 0
+      });
+      const changingAnnotations = [annotation];
+      if (changingAnnotations.length > 0) {
+        this.addWireframeFromMultipleAnnotations({
+          annotations: changingAnnotations,
+          globalMatrix: this.globalMatrix,
+          status: userData.status,
+          selected,
+          startIndex: 0
+        });
+      }
+      this._group.remove(wireframeToSplit);
+      dispose(wireframeToSplit);
     }
-    this._group.remove(group);
-    dispose(group);
   }
 
   // ==================================================
@@ -450,12 +404,12 @@ export class AnnotationsView extends GroupThreeView<AnnotationsDomainObject> {
   // INSTANCE METHODS: Get Material
   // ==================================================
 
-  private getLineMaterial(status: Status, annotationType: AnnotationType): LineMaterial {
-    switch (annotationType) {
-      case AnnotationType.SELECTED_ANNOTATION:
+  private getLineMaterial(status: Status, selected: boolean): LineMaterial {
+    switch (selected) {
+      case true:
         switch (status) {
           case Status.Contextualized:
-            return this.contextualizedSelectedLineMaterial;
+            return this.contextSelectedLineMaterial;
           case Status.Approved:
             return this.approvedSelectedLineMaterial;
           case Status.Suggested:
@@ -465,10 +419,10 @@ export class AnnotationsView extends GroupThreeView<AnnotationsDomainObject> {
           default:
             return this.suggestedSelectedLineMaterial;
         }
-      case AnnotationType.NORMAL_ANNOTATION:
+      case false:
         switch (status) {
           case Status.Contextualized:
-            return this.contextualizedLineMaterial;
+            return this.contextLineMaterial;
           case Status.Approved:
             return this.approvedLineMaterial;
           case Status.Suggested:
@@ -480,12 +434,20 @@ export class AnnotationsView extends GroupThreeView<AnnotationsDomainObject> {
         }
     }
   }
+
+  private setStyle(style: AnnotationsRenderStyle, status: Status, selected: boolean): void {
+    const material = this.getLineMaterial(status, selected);
+    material.linewidth = selected ? style.selectedLineWidth : style.lineWidth;
+    material.depthTest = style.depthTest;
+    material.color.set(style.getColorByStatus(status));
+  }
+
   // ==================================================
   // INSTANCE METHODS: Create Wireframes
   // ==================================================
 
   private addWireframeFromMultipleAnnotations(args: CreateWireframeArgs): void {
-    const material = this.getLineMaterial(args.status, args.annotationType);
+    const material = this.getLineMaterial(args.status, args.selected);
     const wireframe = createWireframeFromMultipleAnnotations(args, material);
     if (wireframe !== undefined) {
       this.addChild(wireframe);
@@ -497,15 +459,11 @@ export class AnnotationsView extends GroupThreeView<AnnotationsDomainObject> {
 // FUNCTIONS: Creators
 // ==================================================
 
-function createLineMaterial(config: LineMaterialConfig): LineMaterial {
-  const { status, linewidth, resolution, dashed, depthTest } = config;
-  const color = getColorByStatus(status);
+function createLineMaterial(): LineMaterial {
   return new LineMaterial({
-    color,
-    linewidth,
-    resolution,
-    dashed,
-    depthTest,
+    resolution: new THREE.Vector2(800, 800),
+    dashed: false,
+    depthTest: true,
     dashScale: 8
   });
 }

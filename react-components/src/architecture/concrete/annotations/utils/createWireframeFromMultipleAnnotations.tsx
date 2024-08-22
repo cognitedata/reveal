@@ -11,7 +11,7 @@ import { type AnnotationsCogniteAnnotationTypesPrimitivesGeometry3DGeometry as A
 import { type PointCloudAnnotation } from './types';
 
 import { getAnnotationGeometries } from './annotationGeometryUtils';
-import { type AnnotationType, type Status } from '../AnnotationsView';
+import { type Status } from '../AnnotationsView';
 import { createBoxGeometryAsVertices } from './createBoxGeometry';
 import { createCylinderGeometryAsVertices } from './createCylinderGeometry';
 import { createLineSegmentsGeometry } from './createLineSegmentsGeometry';
@@ -22,20 +22,20 @@ export type CreateWireframeArgs = {
   annotations: PointCloudAnnotation[];
   globalMatrix: THREE.Matrix4;
   status: Status;
-  annotationType: AnnotationType;
+  selected: boolean;
   startIndex: number;
   groupSize?: number; // If undefined, take all annotations
 };
 
 export function createWireframeFromMultipleAnnotations(
-  { annotations, globalMatrix, status, annotationType, startIndex, groupSize }: CreateWireframeArgs,
+  { annotations, globalMatrix, status, selected, startIndex, groupSize }: CreateWireframeArgs,
   material: LineMaterial
 ): Wireframe | undefined {
   if (annotations.length === 0) {
     return undefined;
   }
   const vertices: number[] = [];
-  const userData = new WireframeUserData(status, annotationType);
+  const userData = new WireframeUserData(status, selected);
   const endIndex =
     groupSize === undefined
       ? annotations.length

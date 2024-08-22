@@ -49,7 +49,7 @@ export function getClosestAnnotation(
         continue;
       }
       if (closest.volume === undefined) {
-        closest.volume = getVolume(closest.geometry, globalMatrix); // Optimalization, lazy calculation
+        closest.volume = getVolume(closest.geometry, globalMatrix); // Optimization, lazy calculation
       }
       const volume = getVolume(geometry, globalMatrix);
       if (volume > closest.volume) {

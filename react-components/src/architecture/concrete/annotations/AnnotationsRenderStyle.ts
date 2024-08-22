@@ -23,7 +23,6 @@ export class AnnotationsRenderStyle extends CommonRenderStyle {
   public lineWidth = 2;
   public selectedLineWidth = 6;
   public pendingLineWidth = 6;
-  public cylinderRadiusMargin = 0.2; // 20 % percent extra margin on the cylinder radius
 
   // ==================================================
   // OVERRIDES of BaseStyle

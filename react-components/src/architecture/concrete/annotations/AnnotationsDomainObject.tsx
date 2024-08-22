@@ -7,9 +7,12 @@ import { type RenderStyle } from '../../base/renderStyles/RenderStyle';
 import { type ThreeView } from '../../base/views/ThreeView';
 import { type TranslateKey } from '../../base/utilities/TranslateKey';
 import { type PointCloudAnnotation } from './utils/types';
-import { type AnnotationsBoundingVolume } from '@cognite/sdk/dist/src';
 import { AnnotationsView } from './AnnotationsView';
 import { AnnotationsRenderStyle } from './AnnotationsRenderStyle';
+import { FocusType } from '../../base/domainObjectsHelpers/FocusType';
+import { Changes } from '../../base/domainObjectsHelpers/Changes';
+import { remove } from '../../base/utilities/extensions/arrayExtensions';
+import { type PendingAnnotation } from './utils/PendingAnnotation';
 
 export class AnnotationsDomainObject extends VisualDomainObject {
   // ==================================================
@@ -17,10 +20,26 @@ export class AnnotationsDomainObject extends VisualDomainObject {
   // ==================================================
 
   public annotations: PointCloudAnnotation[] = [];
+  public selectedAnnotation: PointCloudAnnotation | undefined = undefined;
+  public focusAnnotation?: PointCloudAnnotation | undefined = undefined;
+  public focusType = FocusType.None;
+  public pendingAnnotation: PendingAnnotation | undefined = undefined;
+
+  // ==================================================
+  // CONSTRUCTOR
+  // ==================================================
+
+  public constructor() {
+    super();
+  }
 
   // ==================================================
   // OVERRIDES of DomainObject
   // ==================================================
+
+  public override get icon(): string {
+    return 'Cube';
+  }
 
   public override get typeName(): TranslateKey {
     return { fallback: 'Annotations' };
@@ -39,35 +58,59 @@ export class AnnotationsDomainObject extends VisualDomainObject {
   }
 
   // ==================================================
-  // INSTANCE METHODS
+  // INSTANCE METHODS; Interactive operations
   // ==================================================
 
-  private createMock(): PointCloudAnnotation[] {
-    const annotations: PointCloudAnnotation[] = [];
+  public removeSelectedInteractive(): boolean {
+    if (this.selectedAnnotation === undefined) {
+      return false;
+    }
+    if (this.annotations === undefined) {
+      return false;
+    }
+    const isChanged = remove(this.annotations, this.selectedAnnotation);
+    this.selectedAnnotation = undefined;
+    if (isChanged) this.notify(Changes.geometry);
+    return isChanged;
+  }
 
-    const geometry: AnnotationsBoundingVolume = {
-      confidence: 0.5,
-      label: 'test',
-      region: [
-        {
-          box: {
-            confidence: 0.5,
-            label: 'test',
-            matrix: [0, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0]
-          }
-        }
-      ]
-    };
+  public override setSelectedInteractive(value: boolean): boolean {
+    if (this.isSelected === value) {
+      return false; // no change
+    }
+    this.isSelected = value;
+    this.selectedAnnotation = undefined;
+    this.notify(Changes.selected);
+    return true;
+  }
 
-    const annotation: PointCloudAnnotation = {
-      source: 'asset-centric',
-      id: 1,
-      status: 'approved',
-      geometry,
-      assetRef: { source: 'asset-centric', id: 1 },
-      creatingApp: '3d-management'
-    };
-    annotations.push(annotation);
-    return annotations;
+  public setSelectedAnnotationInteractive(annotation: PointCloudAnnotation | undefined): boolean {
+    if (this.selectedAnnotation === annotation) {
+      return false;
+    }
+    this.selectedAnnotation = annotation;
+    if (this.selectedAnnotation !== undefined) {
+      this.setSelectedInteractive(true);
+    }
+    this.notify(Changes.selected);
+    return true;
+  }
+
+  public setFocusInteractive(
+    focusType: FocusType,
+    focusAnnotation?: PointCloudAnnotation
+  ): boolean {
+    if (focusAnnotation === this.focusAnnotation && focusType === this.focusType) {
+      return false; // No change
+    }
+    this.focusType = focusType;
+    this.focusAnnotation = focusAnnotation;
+    this.notify(Changes.focus);
+    return true;
+  }
+
+  public setPendingAnnotationInteractive(pendingAnnotation?: PendingAnnotation): void {
+    this.pendingAnnotation = pendingAnnotation;
+    this.notify(Changes.pending);
   }
 }

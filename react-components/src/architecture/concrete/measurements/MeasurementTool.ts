@@ -20,14 +20,6 @@ import { UndoCommand } from '../../base/concreteCommands/UndoCommand';
 
 export class MeasurementTool extends PrimitiveEditTool {
   // ==================================================
-  // CONSTRUCTOR
-  // ==================================================
-
-  public constructor() {
-    super(PrimitiveType.None);
-  }
-
-  // ==================================================
   // OVERRIDES of BaseCommand
   // ==================================================
 
