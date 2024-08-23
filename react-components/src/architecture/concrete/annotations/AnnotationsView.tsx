@@ -127,10 +127,6 @@ export class AnnotationsView extends GroupThreeView<AnnotationsDomainObject> {
       this.setFocusAnnotation(this.domainObject.focusAnnotation);
       this.invalidateRenderTarget();
     }
-    if (change.isChanged(Changes.pending)) {
-      this.setPendingAnnotation(this.domainObject.pendingAnnotation);
-      this.invalidateRenderTarget();
-    }
   }
 
   // ==================================================
@@ -182,7 +178,6 @@ export class AnnotationsView extends GroupThreeView<AnnotationsDomainObject> {
     // Set the other
     this.setSelectedAnnotation(this.domainObject.selectedAnnotation);
     this.setFocusAnnotation(this.domainObject.focusAnnotation);
-    this.setPendingAnnotation(this.domainObject.pendingAnnotation);
   }
 
   override intersectIfCloser(

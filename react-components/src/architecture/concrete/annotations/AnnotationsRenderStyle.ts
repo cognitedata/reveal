@@ -21,7 +21,7 @@ export class AnnotationsRenderStyle extends CommonRenderStyle {
   public blankColor = 0xffffff; // white
   public blankOpacity = 0.4;
   public lineWidth = 2;
-  public selectedLineWidth = 6;
+  public selectedLineWidth = 2;
   public pendingLineWidth = 6;
 
   // ==================================================

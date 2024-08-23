@@ -64,6 +64,15 @@ export abstract class BoxDomainObject extends VisualDomainObject {
     this._primitiveType = primitiveType;
   }
 
+  public clear(): void {
+    this.size.setScalar(MIN_BOX_SIZE);
+    this.center.setScalar(0);
+    this.zRotation = 0; // Angle in radians in interval [0, 2*Pi>
+
+    this.focusType = FocusType.None;
+    this.focusFace = undefined;
+  }
+
   // ==================================================
   // OVERRIDES of DomainObject
   // ==================================================

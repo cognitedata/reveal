@@ -13,8 +13,9 @@ import {
 import { Matrix4, Vector3 } from 'three';
 import { type PointCloudAnnotation } from '../utils/types';
 import { InstanceCommand } from '../../../base/commands/InstanceCommand';
+import { getRandomInt } from '../../../base/utilities/extensions/mathExtensions';
 
-export class CreateAnnotationCommand extends InstanceCommand {
+export class CreateAnnotationMockCommand extends InstanceCommand {
   // ==================================================
   // OVERRIDES
   // ==================================================
@@ -54,10 +55,33 @@ export class CreateAnnotationCommand extends InstanceCommand {
 // PRIVATE FUNCTIONS
 // ==================================================
 
+function createAnnotationsBox(matrix: Matrix4): AnnotationsBox {
+  const box: AnnotationsBox = {
+    confidence: 0.5,
+    label: 'test',
+    matrix: matrix.elements
+  };
+  return box;
+}
+
+function createAnnotationsCylinder(
+  centerA: Vector3,
+  centerB: Vector3,
+  radius: number
+): AnnotationsCylinder {
+  const cylinder: AnnotationsCylinder = {
+    confidence: 0.5,
+    label: 'test',
+    radius,
+    centerA: centerA.toArray(),
+    centerB: centerB.toArray()
+  };
+  return cylinder;
+}
+
 function createMock(): PointCloudAnnotation[] {
   const annotations: PointCloudAnnotation[] = [];
 
-  let id = 1000;
   for (let i = 0; i < 14; i++) {
     const position = new Vector3(2 * i + 2, 2 * i, 0);
     const position2 = position.clone();
@@ -67,37 +91,22 @@ function createMock(): PointCloudAnnotation[] {
     matrix.multiply(new Matrix4().makeScale(2, 0.5, 1));
     matrix.transpose();
 
-    const box: AnnotationsBox = {
-      confidence: 0.5,
-      label: 'test',
-      matrix: matrix.elements
-    };
-
-    const cylinder: AnnotationsCylinder = {
-      confidence: 0.5,
-      label: 'test',
-      radius: 0.8,
-      centerA: position.toArray(),
-      centerB: position2.toArray()
-    };
-
     const geometry: AnnotationsBoundingVolume = {
       confidence: 0.5,
       label: 'test',
       region: [
         {
-          cylinder: i % 2 === 0 ? cylinder : undefined,
-          box: i % 2 !== 0 ? box : undefined
+          cylinder: i % 2 === 0 ? createAnnotationsCylinder(position, position2, 0.5) : undefined,
+          box: i % 2 !== 0 ? createAnnotationsBox(matrix) : undefined
         }
       ]
     };
-    id++;
     const annotation: PointCloudAnnotation = {
       source: 'asset-centric',
-      id,
+      id: getRandomInt(),
       status: 'approved',
       geometry,
-      assetRef: { source: 'asset-centric', id: id * 33 },
+      assetRef: { source: 'asset-centric', id: getRandomInt() },
       creatingApp: '3d-management'
     };
     if (i % 3 === 0) {
@@ -109,4 +118,27 @@ function createMock(): PointCloudAnnotation[] {
     annotations.push(annotation);
   }
   return annotations;
+}
+
+export function createPointCloudAnnotationFromMatrix(matrix: Matrix4): PointCloudAnnotation {
+  const m = matrix.clone().transpose();
+
+  const geometry: AnnotationsBoundingVolume = {
+    confidence: 0.5,
+    label: 'test',
+    region: [
+      {
+        box: createAnnotationsBox(m)
+      }
+    ]
+  };
+  const annotation: PointCloudAnnotation = {
+    source: 'asset-centric',
+    id: getRandomInt(),
+    status: 'approved',
+    geometry,
+    assetRef: { source: 'asset-centric', id: getRandomInt() },
+    creatingApp: '3d-management'
+  };
+  return annotation;
 }

@@ -34,8 +34,8 @@ export abstract class PrimitiveEditTool extends BaseEditTool {
 
   public constructor(primitiveType: PrimitiveType = PrimitiveType.None) {
     super();
+    this.primitiveType = primitiveType;
     this.defaultPrimitiveType = primitiveType;
-    this.primitiveType = this.defaultPrimitiveType;
   }
 
   // ==================================================

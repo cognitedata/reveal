@@ -3,13 +3,13 @@
  */
 
 import { type TranslateKey } from '../../../base/utilities/TranslateKey';
-import { BaseEditTool } from '../../../base/commands/BaseEditTool';
 import { type BaseCommand } from '../../../base/commands/BaseCommand';
-import { AnnotationTool } from './AnnotationTool';
+import { AnnotationEditTool } from './AnnotationEditTool';
 import { PrimitiveType } from '../../primitives/PrimitiveType';
 import { getIconByPrimitiveType } from '../../measurements/getIconByPrimitiveType';
+import { RenderTargetCommand } from '../../../base/commands/RenderTargetCommand';
 
-export class SetAnnotationEditTypeCommand extends BaseEditTool {
+export class SetAnnotationEditTypeCommand extends RenderTargetCommand {
   private readonly _primitiveType: PrimitiveType;
 
   // ==================================================
@@ -61,7 +61,7 @@ export class SetAnnotationEditTypeCommand extends BaseEditTool {
   }
 
   public override equals(other: BaseCommand): boolean {
-    if (!(other instanceof AnnotationTool)) {
+    if (!(other instanceof AnnotationEditTool)) {
       return false;
     }
     return this._primitiveType === other.primitiveType;
@@ -71,9 +71,9 @@ export class SetAnnotationEditTypeCommand extends BaseEditTool {
   // INSTANCE METHODS
   // ==================================================
 
-  private get tool(): AnnotationTool | undefined {
+  private get tool(): AnnotationEditTool | undefined {
     const { activeTool } = this;
-    if (!(activeTool instanceof AnnotationTool)) {
+    if (!(activeTool instanceof AnnotationEditTool)) {
       return undefined;
     }
     return activeTool;

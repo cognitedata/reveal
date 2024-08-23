@@ -80,7 +80,7 @@ export class ClipTool extends PrimitiveEditTool {
   }
 
   // ==================================================
-  // OVERRIDES of BoxOrLineEditTool
+  // OVERRIDES of PrimitiveEditTool
   // ==================================================
 
   protected override createCreator(): BaseCreator | undefined {

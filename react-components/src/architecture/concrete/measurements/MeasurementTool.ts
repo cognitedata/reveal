@@ -93,7 +93,7 @@ export class MeasurementTool extends PrimitiveEditTool {
   }
 
   // ==================================================
-  // OVERRIDES of BoxOrLineEditTool
+  // OVERRIDES of PrimitiveEditTool
   // ==================================================
 
   protected override createCreator(): BaseCreator | undefined {

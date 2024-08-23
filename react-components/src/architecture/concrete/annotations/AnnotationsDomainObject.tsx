@@ -12,7 +12,7 @@ import { AnnotationsRenderStyle } from './AnnotationsRenderStyle';
 import { FocusType } from '../../base/domainObjectsHelpers/FocusType';
 import { Changes } from '../../base/domainObjectsHelpers/Changes';
 import { remove } from '../../base/utilities/extensions/arrayExtensions';
-import { type PendingAnnotation } from './utils/PendingAnnotation';
+import { AnnotationGizmoDomainObject } from './AnnotationGizmoDomainObject';
 
 export class AnnotationsDomainObject extends VisualDomainObject {
   // ==================================================
@@ -23,7 +23,6 @@ export class AnnotationsDomainObject extends VisualDomainObject {
   public selectedAnnotation: PointCloudAnnotation | undefined = undefined;
   public focusAnnotation?: PointCloudAnnotation | undefined = undefined;
   public focusType = FocusType.None;
-  public pendingAnnotation: PendingAnnotation | undefined = undefined;
 
   // ==================================================
   // CONSTRUCTOR
@@ -61,7 +60,7 @@ export class AnnotationsDomainObject extends VisualDomainObject {
   // INSTANCE METHODS; Interactive operations
   // ==================================================
 
-  public removeSelectedInteractive(): boolean {
+  public removeSelectedAnnotationInteractive(): boolean {
     if (this.selectedAnnotation === undefined) {
       return false;
     }
@@ -96,7 +95,7 @@ export class AnnotationsDomainObject extends VisualDomainObject {
     return true;
   }
 
-  public setFocusInteractive(
+  public setFocusAnnotationInteractive(
     focusType: FocusType,
     focusAnnotation?: PointCloudAnnotation
   ): boolean {
@@ -109,8 +108,16 @@ export class AnnotationsDomainObject extends VisualDomainObject {
     return true;
   }
 
-  public setPendingAnnotationInteractive(pendingAnnotation?: PendingAnnotation): void {
-    this.pendingAnnotation = pendingAnnotation;
-    this.notify(Changes.pending);
+  public getAnnotationGizmo(): AnnotationGizmoDomainObject | undefined {
+    return this.getDescendantByType(AnnotationGizmoDomainObject);
+  }
+
+  public getOrCreateAnnotationGizmo(): AnnotationGizmoDomainObject {
+    let annotationGizmo = this.getAnnotationGizmo();
+    if (annotationGizmo === undefined) {
+      annotationGizmo = new AnnotationGizmoDomainObject();
+      this.addChildInteractive(annotationGizmo);
+    }
+    return annotationGizmo;
   }
 }
