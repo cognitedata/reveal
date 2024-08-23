@@ -24,8 +24,6 @@ import { ObservationsTool } from '../observations/ObservationsTool';
 import { SettingsCommand } from '../../base/concreteCommands/SettingsCommand';
 import { MockSettingsCommand } from '../../base/commands/mocks/MockSettingsCommand';
 import { MockFilterCommand } from '../../base/commands/mocks/MockFilterCommand';
-import { CreateAnnotationCommand } from '../annotations/commands/CreateAnnotationCommand';
-import { ShowAnnotationsOnTopCommand } from '../annotations/commands/ShowAnnotationsOnTopCommand';
 import { AnnotationTool } from '../annotations/commands/AnnotationTool';
 
 export class StoryBookConfig extends BaseRevealConfig {
@@ -55,9 +53,8 @@ export class StoryBookConfig extends BaseRevealConfig {
       new ClipTool(),
       new ObservationsTool(),
       undefined,
-      new CreateAnnotationCommand(),
-      new ShowAnnotationsOnTopCommand(),
       new AnnotationTool(),
+      undefined,
       new SetTerrainVisibleCommand(),
       new UpdateTerrainCommand(),
       undefined

@@ -2,7 +2,6 @@
  * Copyright 2024 Cognite AS
  */
 
-import { ShowAllDomainObjectsCommand } from '../../../base/commands/ShowAllDomainObjectsCommand';
 import { type DomainObject } from '../../../base/domainObjects/DomainObject';
 import { type TranslateKey } from '../../../base/utilities/TranslateKey';
 import { AnnotationsDomainObject } from '../AnnotationsDomainObject';
@@ -13,41 +12,47 @@ import {
 } from '@cognite/sdk/dist/src';
 import { Matrix4, Vector3 } from 'three';
 import { type PointCloudAnnotation } from '../utils/types';
+import { InstanceCommand } from '../../../base/commands/InstanceCommand';
 
-export class CreateAnnotationCommand extends ShowAllDomainObjectsCommand {
-  protected override isInstance(domainObject: DomainObject): boolean {
-    return domainObject instanceof AnnotationsDomainObject;
-  }
+export class CreateAnnotationCommand extends InstanceCommand {
   // ==================================================
   // OVERRIDES
   // ==================================================
 
   public override get icon(): string {
-    return 'Cube';
+    return 'Bug';
   }
 
   public override get tooltip(): TranslateKey {
-    return { fallback: 'Create annotation' };
+    return { key: 'ANNOTATIONS_CREATE', fallback: 'Create annotation' };
   }
 
   public override get isEnabled(): boolean {
-    return true;
+    return !this.anyInstances;
+  }
+
+  protected override isInstance(domainObject: DomainObject): boolean {
+    return domainObject instanceof AnnotationsDomainObject;
   }
 
   protected override invokeCore(): boolean {
     const { renderTarget, rootDomainObject } = this;
-    let annotationDomainObject = rootDomainObject.getDescendantByType(AnnotationsDomainObject);
-    if (annotationDomainObject === undefined) {
-      annotationDomainObject = new AnnotationsDomainObject();
-      annotationDomainObject.annotations = createMock();
-      annotationDomainObject.setSelectedInteractive(true);
-      rootDomainObject.addChildInteractive(annotationDomainObject);
-      annotationDomainObject.setVisibleInteractive(true, renderTarget);
-      return true;
+    let annotationDomainObject = this.getFirstInstance() as AnnotationsDomainObject;
+    if (annotationDomainObject !== undefined) {
+      return false;
     }
-    return super.invokeCore();
+    annotationDomainObject = new AnnotationsDomainObject();
+    annotationDomainObject.annotations = createMock();
+    annotationDomainObject.setSelectedInteractive(true);
+    rootDomainObject.addChildInteractive(annotationDomainObject);
+    annotationDomainObject.setVisibleInteractive(true, renderTarget);
+    return true;
   }
 }
+
+// ==================================================
+// PRIVATE FUNCTIONS
+// ==================================================
 
 function createMock(): PointCloudAnnotation[] {
   const annotations: PointCloudAnnotation[] = [];

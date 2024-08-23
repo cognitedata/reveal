@@ -13,10 +13,35 @@ import { FocusType } from '../../../base/domainObjectsHelpers/FocusType';
 import { type DomainObject } from '../../../base/domainObjects/DomainObject';
 import { Matrix4 } from 'three';
 import { PendingAnnotation } from '../utils/PendingAnnotation';
+import { ShowAnnotationsOnTopCommand } from './ShowAnnotationsOnTopCommand';
+import { UndoCommand } from '../../../base/concreteCommands/UndoCommand';
+import { type BaseCommand } from '../../../base/commands/BaseCommand';
+import { ShowAllAnnotationsCommand } from './ShowAllAnnotationsCommand';
+import { CreateAnnotationCommand } from './CreateAnnotationCommand';
+import { PrimitiveType } from '../../primitives/PrimitiveType';
+import { CommandsUpdater } from '../../../base/reactUpdaters/CommandsUpdater';
+import { SetAnnotationEditTypeCommand } from './SetAnnotationEditTypeCommand';
 
 export const ANNOTATION_RADIUS_FACTOR = 0.2;
 
 export class AnnotationTool extends BaseEditTool {
+  // ==================================================
+  // INSTANCE FIELDS
+  // ==================================================
+
+  public primitiveType: PrimitiveType;
+  public defaultPrimitiveType: PrimitiveType;
+
+  // ==================================================
+  // CONSTRUCTOR
+  // ==================================================
+
+  public constructor(primitiveType: PrimitiveType = PrimitiveType.None) {
+    super();
+    this.defaultPrimitiveType = primitiveType;
+    this.primitiveType = this.defaultPrimitiveType;
+  }
+
   // ==================================================
   // OVERRIDES of BaseCommand
   // ==================================================
@@ -26,7 +51,7 @@ export class AnnotationTool extends BaseEditTool {
   }
 
   public override get tooltip(): TranslateKey {
-    return { fallback: 'Create or edit annotations' };
+    return { key: 'ANNOTATIONS_EDIT', fallback: 'Create or edit annotations' };
   }
 
   // ==================================================
@@ -76,25 +101,38 @@ export class AnnotationTool extends BaseEditTool {
         return;
       }
     }
-    // Try to make a new annotation
-    const domainObject = this.getSelected() as AnnotationsDomainObject;
-    if (domainObject === undefined) {
-      return;
+    if (this.primitiveType !== PrimitiveType.None) {
+      // Try to make a new annotation
+      const domainObject = this.getSelected() as AnnotationsDomainObject;
+      if (domainObject === undefined) {
+        return;
+      }
+      const distance = intersection.distanceToCamera;
+      const scale = (distance * ANNOTATION_RADIUS_FACTOR) / 2;
+      const center = intersection.point.clone();
+
+      const matrix = new Matrix4();
+      matrix.makeScale(scale, scale, scale);
+      matrix.setPosition(center);
+
+      const pendingAnnotation = new PendingAnnotation(matrix);
+      domainObject.setSelectedAnnotationInteractive(undefined);
+      domainObject.setPendingAnnotationInteractive(pendingAnnotation);
+
+      // this.addTransaction(domainObject.createTransaction(Changes.added));
+      this.renderTarget.setMoveCursor();
     }
-    const distance = intersection.distanceToCamera;
-    const scale = (distance * ANNOTATION_RADIUS_FACTOR) / 2;
-    const center = intersection.point.clone();
+  }
 
-    const matrix = new Matrix4();
-    matrix.makeScale(scale, scale, scale);
-    matrix.setPosition(center);
-
-    const pendingAnnotation = new PendingAnnotation(matrix);
-    domainObject.setSelectedAnnotationInteractive(undefined);
-    domainObject.setPendingAnnotationInteractive(pendingAnnotation);
-
-    // this.addTransaction(domainObject.createTransaction(Changes.added));
-    this.renderTarget.setMoveCursor();
+  public override getToolbar(): Array<BaseCommand | undefined> {
+    return [
+      new SetAnnotationEditTypeCommand(PrimitiveType.None),
+      new SetAnnotationEditTypeCommand(PrimitiveType.Box),
+      new UndoCommand(),
+      new CreateAnnotationCommand(),
+      new ShowAllAnnotationsCommand(),
+      new ShowAnnotationsOnTopCommand()
+    ];
   }
 
   // ==================================================
@@ -118,6 +156,26 @@ export class AnnotationTool extends BaseEditTool {
         domainObject.setFocusInteractive(FocusType.None);
       }
     }
+  }
+
+  private setDefaultPrimitiveType(): void {
+    if (this.primitiveType === this.defaultPrimitiveType) {
+      return;
+    }
+    this.primitiveType = this.defaultPrimitiveType;
+    CommandsUpdater.update(this.renderTarget);
+  }
+
+  public handleEscape(): void {
+    // if (this._creator === undefined) {
+    //   return;
+    // }
+    // if (this._creator.handleEscape()) {
+    //   this.endCreatorIfFinished(this._creator, true);
+    // } else {
+    //   this.setDefaultPrimitiveType();
+    //   this._creator = undefined;
+    // }
   }
 }
 

@@ -26,6 +26,8 @@ export function getIconByPrimitiveType(primitiveType: PrimitiveType): string {
       return 'Perspective';
     case PrimitiveType.Box:
       return 'Cube';
+    case PrimitiveType.None:
+      return 'Edit';
     default:
       throw new Error('Unknown PrimitiveType');
   }
