@@ -125,7 +125,7 @@ export {
 export { type LayersButtonProps } from './components/RevealToolbar/LayersButton';
 export type { CameraNavigationActions } from './hooks/useCameraNavigation';
 export type { Source, DmsUniqueIdentifier } from './data-providers/FdmSDK';
-export type { FdmInstanceWithView } from './data-providers/types';
+export type { FdmInstanceWithView, FdmTyping } from './data-providers/types';
 export type { QualitySettings } from './components/RevealToolbar/SettingsContainer/types';
 export type { SceneIdentifiers } from './components/SceneContainer/sceneTypes';
 
@@ -141,6 +141,8 @@ export type {
   RuleOutputSet,
   TimeseriesRuleTrigger,
   MetadataRuleTrigger,
+  FdmRuleTrigger,
+  FdmInstanceNodeDataKey,
   StringCondition,
   NumericCondition,
   DatetimeCondition,
