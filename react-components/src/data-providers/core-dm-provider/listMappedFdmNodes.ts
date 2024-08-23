@@ -15,7 +15,8 @@ import {
   type COGNITE_ASSET_SOURCE,
   COGNITE_CAD_NODE_SOURCE,
   COGNITE_POINT_CLOUD_VOLUME_SOURCE,
-  type CogniteAssetProperties
+  type CogniteAssetProperties,
+  CORE_DM_3D_CONTAINER_SPACE
 } from './dataModels';
 import { cogniteAssetSourceWithProperties } from './cogniteAssetSourceWithProperties';
 
@@ -68,7 +69,7 @@ export async function listMappedFdmNodes(
 
 const containsRevisionFilter: InstanceFilter = {
   containsAny: {
-    property: [COGNITE_CAD_NODE_SOURCE.space, COGNITE_CAD_NODE_SOURCE.externalId, 'revisions'],
+    property: [CORE_DM_3D_CONTAINER_SPACE, COGNITE_CAD_NODE_SOURCE.externalId, 'revisions'],
     values: { parameter: 'revisionRefs' }
   }
 } as const;

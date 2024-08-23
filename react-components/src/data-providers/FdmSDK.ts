@@ -536,8 +536,8 @@ export class FdmSDK {
   >(query: TQueryRequest): Promise<QueryResult<TQueryRequest, TypedSelectSources>> {
     let result = await queryNodesAndEdges<TQueryRequest, TypedSelectSources>(query, this._sdk);
     let items = result.items;
-    while (result.nextCursor !== undefined) {
-      const newQuery = { ...query, cursor: result.nextCursor };
+    while (result.nextCursor !== undefined && Object.keys(result.nextCursor).length !== 0) {
+      const newQuery = { ...query, cursors: result.nextCursor };
       result = await queryNodesAndEdges<TQueryRequest, TypedSelectSources>(newQuery, this._sdk);
       items = mergeQueryResults(items, result.items);
     }

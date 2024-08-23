@@ -4,13 +4,11 @@
 import { type Timestamp, type ViewReference } from '@cognite/sdk';
 import { type DmsUniqueIdentifier } from '../FdmSDK';
 
-export const CORE_DM_SPACE = 'cdf_cdm_experimental';
-
-export const SYSTEM_SPACE_3D_MODEL_TYPE = 'CogniteModel3D';
-export const SYSTEM_SPACE_3D_MODEL_VERSION = '1';
+export const CORE_DM_SPACE = 'cdf_cdm' as const;
+export const CORE_DM_3D_CONTAINER_SPACE = 'cdf_cdm_3d' as const;
 
 export const COGNITE_3D_OBJECT_SOURCE = {
-  externalId: 'CogniteObject3D',
+  externalId: 'Cognite3DObject',
   space: CORE_DM_SPACE,
   version: 'v1',
   type: 'view'
@@ -23,8 +21,8 @@ export const COGNITE_3D_MODEL_SOURCE = {
   type: 'view'
 } as const satisfies ViewReference;
 
-export const COGNITE_CAD_MODEL_SOURCE = {
-  externalId: 'CogniteCADModel',
+export const COGNITE_3D_REVISION_SOURCE = {
+  externalId: 'Cognite3DRevision',
   space: CORE_DM_SPACE,
   version: 'v1',
   type: 'view'
@@ -121,7 +119,7 @@ export type CogniteAssetProperties = {
 
 export type CogniteCADRevisionProperties = {
   status: Cognite3DRevision_status;
-  publish: boolean;
+  published: boolean;
   type: Cognite3DRevision_type;
   model3D: DmsUniqueIdentifier;
   revisionId: number;

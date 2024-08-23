@@ -8,7 +8,8 @@ import {
   COGNITE_3D_OBJECT_SOURCE,
   type COGNITE_CAD_NODE_SOURCE,
   COGNITE_VISUALIZABLE_SOURCE,
-  type CogniteCADNodeProperties
+  type CogniteCADNodeProperties,
+  CORE_DM_SPACE
 } from './dataModels';
 import { cogniteCadNodeSourceWithPRoperties } from './cogniteCadNodeSourceWithProperties';
 import { getModelIdFromExternalId, getRevisionIdFromExternalId } from './getCdfIdFromExternalId';
@@ -30,7 +31,7 @@ export async function getCadModelsForInstance(
   >(query);
 
   return results.items.cad_nodes.flatMap((cadNode) => {
-    const props = cadNode.properties.cdf_cdm_experimental['CogniteCADNode/v1'];
+    const props = cadNode.properties[CORE_DM_SPACE]['CogniteCADNode/v1'];
     return props.revisions.map((revision) => ({
       type: 'cad',
       addOptions: {

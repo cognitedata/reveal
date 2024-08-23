@@ -13,7 +13,9 @@ import {
   COGNITE_3D_OBJECT_SOURCE,
   COGNITE_CAD_NODE_SOURCE,
   COGNITE_POINT_CLOUD_VOLUME_SOURCE,
-  COGNITE_VISUALIZABLE_SOURCE
+  COGNITE_VISUALIZABLE_SOURCE,
+  CORE_DM_3D_CONTAINER_SPACE,
+  CORE_DM_SPACE
 } from './dataModels';
 import { type DmsUniqueIdentifier, type FdmSDK } from '../FdmSDK';
 import { cogniteObject3dSourceWithProperties } from './cogniteObject3dSourceWithProperties';
@@ -65,7 +67,7 @@ function createRelevantAssetKeySet(
     .concat(connectionData.items.direct_nodes_object_3ds)
     .concat(connectionData.items.indirect_nodes_object_3ds)
     .filter((object3d) => {
-      const props = object3d.properties.cdf_cdm_experimental['CogniteObject3D/v1'];
+      const props = object3d.properties[CORE_DM_SPACE]['Cognite3DObject/v1'];
       return (
         props.cadNodes.some((node) => cadNodeSet.has(toFdmKey(node))) ||
         props.pointCloudVolumes.some((node) => pointCloudNodeSet.has(toFdmKey(node)))
@@ -74,7 +76,7 @@ function createRelevantAssetKeySet(
 
   const relevantAssetKeySet = relevantObject3Ds.reduce((acc, object3D) => {
     // Assume at most one connected asset
-    const firstAsset = head(object3D.properties.cdf_cdm_experimental['CogniteObject3D/v1'].asset);
+    const firstAsset = head(object3D.properties[CORE_DM_SPACE]['Cognite3DObject/v1'].asset);
     if (firstAsset === undefined) {
       return acc;
     }
@@ -229,11 +231,7 @@ function getRevisionsCadNodeFromObject3D(object3dTableName: string): QueryTableE
       through: { view: COGNITE_3D_OBJECT_SOURCE, identifier: 'cadNodes' },
       filter: {
         containsAny: {
-          property: [
-            COGNITE_CAD_NODE_SOURCE.space,
-            COGNITE_CAD_NODE_SOURCE.externalId,
-            'revisions'
-          ],
+          property: [CORE_DM_3D_CONTAINER_SPACE, COGNITE_CAD_NODE_SOURCE.externalId, 'revisions'],
           values: { parameter: 'revisionRefs' }
         }
       }
@@ -249,7 +247,7 @@ function getRevisionsPointCloudVolumes(object3dTableName: string): QueryTableExp
       filter: {
         containsAny: {
           property: [
-            COGNITE_POINT_CLOUD_VOLUME_SOURCE.space,
+            CORE_DM_3D_CONTAINER_SPACE,
             COGNITE_POINT_CLOUD_VOLUME_SOURCE.externalId,
             'revisions'
           ],

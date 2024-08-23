@@ -10,7 +10,9 @@ import {
   type COGNITE_ASSET_SOURCE,
   COGNITE_CAD_NODE_SOURCE,
   type CogniteAssetProperties,
-  type CogniteCADNodeProperties
+  type CogniteCADNodeProperties,
+  CORE_DM_3D_CONTAINER_SPACE,
+  CORE_DM_SPACE
 } from './dataModels';
 import { getModelIdFromExternalId } from './getCdfIdFromExternalId';
 import { toFdmKey } from '../utils/toFdmKey';
@@ -45,7 +47,7 @@ export async function getFdmConnectionsForNodes(
   >(query);
 
   result.items.cad_nodes.forEach((cadNode) => {
-    const props = cadNode.properties.cdf_cdm_experimental['CogniteCADNode/v1'];
+    const props = cadNode.properties[CORE_DM_SPACE]['CogniteCADNode/v1'];
     const revisionIndex = props.revisions.findIndex((id) => id === revisionRef);
 
     const treeIndex = props.treeIndexes[revisionIndex];
@@ -58,15 +60,15 @@ export async function getFdmConnectionsForNodes(
   });
 
   const relevantObjects3D = result.items.objects_3d.filter((object3D) => {
-    return object3D.properties.cdf_cdm_experimental['CogniteObject3D/v1'].cadNodes.some(
-      (cadNodeId) => relevantCadNodeRefToObject3dRef.has(toFdmKey(cadNodeId))
+    return object3D.properties[CORE_DM_SPACE]['Cognite3DObject/v1'].cadNodes.some((cadNodeId) =>
+      relevantCadNodeRefToObject3dRef.has(toFdmKey(cadNodeId))
     );
   });
 
   const relevantObjectToAssetsMap = new Map<FdmKey, DmsUniqueIdentifier[]>(
     relevantObjects3D.map((obj) => [
       toFdmKey(obj),
-      obj.properties.cdf_cdm_experimental['CogniteObject3D/v1'].asset
+      obj.properties[CORE_DM_SPACE]['Cognite3DObject/v1'].asset
     ])
   );
 
@@ -102,7 +104,7 @@ const cadConnectionQuery = {
             {
               equals: {
                 property: [
-                  COGNITE_CAD_NODE_SOURCE.space,
+                  CORE_DM_3D_CONTAINER_SPACE,
                   COGNITE_CAD_NODE_SOURCE.externalId,
                   'model3D'
                 ],
@@ -112,7 +114,7 @@ const cadConnectionQuery = {
             {
               containsAny: {
                 property: [
-                  COGNITE_CAD_NODE_SOURCE.space,
+                  CORE_DM_3D_CONTAINER_SPACE,
                   COGNITE_CAD_NODE_SOURCE.externalId,
                   'treeIndexes'
                 ],
@@ -122,7 +124,7 @@ const cadConnectionQuery = {
             {
               containsAny: {
                 property: [
-                  COGNITE_CAD_NODE_SOURCE.space,
+                  CORE_DM_3D_CONTAINER_SPACE,
                   COGNITE_CAD_NODE_SOURCE.externalId,
                   'revisions'
                 ],

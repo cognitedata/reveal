@@ -8,7 +8,9 @@ import {
   type Cognite3DObjectProperties,
   type COGNITE_3D_OBJECT_SOURCE,
   COGNITE_CAD_NODE_SOURCE,
-  type CogniteCADNodeProperties
+  type CogniteCADNodeProperties,
+  CORE_DM_3D_CONTAINER_SPACE,
+  CORE_DM_SPACE
 } from './dataModels';
 import { cogniteObject3dSourceWithProperties } from './cogniteObject3dSourceWithProperties';
 import { cogniteCadNodeSourceWithPRoperties } from './cogniteCadNodeSourceWithProperties';
@@ -27,7 +29,7 @@ export async function getCadConnectionsForRevisions(
   const cadNodeToModelMap = createNodeToModelMap(modelRevisions, results.items.cad_nodes);
 
   return results.items.object_3ds.flatMap((obj) => {
-    const props = obj.properties.cdf_cdm_experimental['CogniteObject3D/v1'];
+    const props = obj.properties[CORE_DM_SPACE]['Cognite3DObject/v1'];
 
     return props.cadNodes
       .map((cadNode) => {
@@ -68,7 +70,7 @@ function createNodeToModelMap(
   cadNodes: PromiseType<ReturnType<typeof getModelConnectionResults>>['items']['cad_nodes']
 ): Map<FdmKey, Omit<FdmCadConnection, 'instance'>> {
   return cadNodes.reduce((nodeMap, cadNode) => {
-    const props = cadNode.properties.cdf_cdm_experimental['CogniteCADNode/v1'];
+    const props = cadNode.properties[CORE_DM_SPACE]['CogniteCADNode/v1'];
     const modelRevisionPair = modelRevisions.find(
       ([modelRef, _revisionRef]) =>
         props.model3D.externalId === modelRef.externalId && props.model3D.space === modelRef.space
@@ -109,7 +111,7 @@ const cadConnectionsQuery = {
             {
               in: {
                 property: [
-                  COGNITE_CAD_NODE_SOURCE.space,
+                  CORE_DM_3D_CONTAINER_SPACE,
                   COGNITE_CAD_NODE_SOURCE.externalId,
                   'model3D'
                 ],
@@ -119,7 +121,7 @@ const cadConnectionsQuery = {
             {
               containsAny: {
                 property: [
-                  COGNITE_CAD_NODE_SOURCE.space,
+                  CORE_DM_3D_CONTAINER_SPACE,
                   COGNITE_CAD_NODE_SOURCE.externalId,
                   'revisions'
                 ],

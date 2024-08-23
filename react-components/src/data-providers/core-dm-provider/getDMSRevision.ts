@@ -3,7 +3,12 @@
  */
 import { type QueryRequest } from '@cognite/sdk/dist/src';
 import { type DmsUniqueIdentifier, type FdmSDK, type NodeItem } from '../FdmSDK';
-import { COGNITE_CAD_REVISION_SOURCE, type CogniteCADRevisionProperties } from './dataModels';
+import {
+  COGNITE_3D_REVISION_SOURCE,
+  COGNITE_CAD_REVISION_SOURCE,
+  CORE_DM_3D_CONTAINER_SPACE,
+  type CogniteCADRevisionProperties
+} from './dataModels';
 
 export async function getDMSRevision(
   model: DmsUniqueIdentifier,
@@ -12,7 +17,7 @@ export async function getDMSRevision(
 ): Promise<NodeItem<CogniteCADRevisionProperties>> {
   const query = {
     ...cadConnectionQuery,
-    parameters: { modelReference: model, revisionId }
+    parameters: { modelReference: { space: model.space, externalId: model.externalId }, revisionId }
   } as const satisfies QueryRequest;
 
   const result = await fdmSdk.queryNodesAndEdges<
@@ -38,8 +43,8 @@ const cadConnectionQuery = {
             {
               equals: {
                 property: [
-                  COGNITE_CAD_REVISION_SOURCE.space,
-                  COGNITE_CAD_REVISION_SOURCE.externalId,
+                  CORE_DM_3D_CONTAINER_SPACE,
+                  COGNITE_3D_REVISION_SOURCE.externalId,
                   'model3D'
                 ],
                 value: { parameter: 'modelReference' }
@@ -48,11 +53,11 @@ const cadConnectionQuery = {
             {
               in: {
                 property: [
-                  COGNITE_CAD_REVISION_SOURCE.space,
+                  CORE_DM_3D_CONTAINER_SPACE,
                   COGNITE_CAD_REVISION_SOURCE.externalId,
                   'revisionId'
                 ],
-                values: { parameter: 'nodeIds' }
+                values: { parameter: 'revisionId' }
               }
             }
           ]
@@ -66,7 +71,7 @@ const cadConnectionQuery = {
       sources: [
         {
           source: COGNITE_CAD_REVISION_SOURCE,
-          properties: ['status', 'publish', 'type', 'model3D', 'revisionId']
+          properties: ['status', 'published', 'type', 'model3D', 'revisionId']
         }
       ]
     }
