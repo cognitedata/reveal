@@ -13,7 +13,7 @@ import {
   CORE_DM_SPACE
 } from './dataModels';
 import { cogniteObject3dSourceWithProperties } from './cogniteObject3dSourceWithProperties';
-import { cogniteCadNodeSourceWithPRoperties } from './cogniteCadNodeSourceWithProperties';
+import { cogniteCadNodeSourceWithProperties } from './cogniteCadNodeSourceWithProperties';
 import { getModelIdFromExternalId, getRevisionIdFromExternalId } from './getCdfIdFromExternalId';
 import { toFdmKey } from '../utils/toFdmKey';
 import { type PromiseType } from '../utils/typeUtils';
@@ -140,7 +140,7 @@ const cadConnectionsQuery = {
     }
   },
   select: {
-    cad_nodes: { sources: cogniteCadNodeSourceWithPRoperties },
+    cad_nodes: { sources: cogniteCadNodeSourceWithProperties },
     object_3ds: { sources: cogniteObject3dSourceWithProperties }
   }
 } as const satisfies Omit<QueryRequest, 'cursor' | 'parameters'>;

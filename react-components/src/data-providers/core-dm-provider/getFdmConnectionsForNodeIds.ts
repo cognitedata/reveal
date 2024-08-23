@@ -16,6 +16,7 @@ import {
 } from './dataModels';
 import { getModelIdFromExternalId } from './getCdfIdFromExternalId';
 import { toFdmKey } from '../utils/toFdmKey';
+import { cogniteCadNodeSourceWithProperties } from './cogniteCadNodeSourceWithProperties';
 
 export async function getFdmConnectionsForNodes(
   model: DmsUniqueIdentifier,
@@ -32,7 +33,11 @@ export async function getFdmConnectionsForNodes(
 
   const query = {
     ...cadConnectionQuery,
-    parameters: { modelReference: model, treeIndexes, revisionRef }
+    parameters: {
+      modelReference: { externalId: model.externalId, space: model.space },
+      treeIndexes,
+      revisionRef: { externalId: revisionRef.externalId, space: revisionRef.space }
+    }
   };
 
   const modelId = getModelIdFromExternalId(model.externalId);
@@ -151,23 +156,7 @@ const cadConnectionQuery = {
   },
   select: {
     cad_nodes: {
-      sources: [
-        {
-          source: COGNITE_CAD_NODE_SOURCE,
-          properties: [
-            'name',
-            'description',
-            'tags',
-            'aliases',
-            'object3D',
-            'model3D',
-            'cadNodeReference',
-            'revisions',
-            'treeIndexes',
-            'subTreeSizes'
-          ]
-        }
-      ]
+      sources: cogniteCadNodeSourceWithProperties
     },
     assets: {},
     objects_3d: {

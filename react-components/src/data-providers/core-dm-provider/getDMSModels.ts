@@ -26,12 +26,12 @@ export async function getDMSModels(
       models: {
         nodes: {
           filter: {
-            // and: [
-            // {
-            equals: { property: ['node', 'externalId'], value: modelName }
-            // }
-            /* { hasData: [COGNITE_3D_MODEL_SOURCE] } */
-            // ]
+            and: [
+              {
+                equals: { property: ['node', 'externalId'], value: modelName }
+              },
+              { hasData: [COGNITE_3D_MODEL_SOURCE] }
+            ]
           }
         }
       }

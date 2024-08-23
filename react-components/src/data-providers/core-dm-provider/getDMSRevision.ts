@@ -51,13 +51,13 @@ const cadConnectionQuery = {
               }
             },
             {
-              in: {
+              equals: {
                 property: [
                   CORE_DM_3D_CONTAINER_SPACE,
                   COGNITE_CAD_REVISION_SOURCE.externalId,
                   'revisionId'
                 ],
-                values: { parameter: 'revisionId' }
+                value: { parameter: 'revisionId' }
               }
             }
           ]

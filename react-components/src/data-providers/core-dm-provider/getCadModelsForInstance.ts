@@ -11,7 +11,7 @@ import {
   type CogniteCADNodeProperties,
   CORE_DM_SPACE
 } from './dataModels';
-import { cogniteCadNodeSourceWithPRoperties } from './cogniteCadNodeSourceWithProperties';
+import { cogniteCadNodeSourceWithProperties } from './cogniteCadNodeSourceWithProperties';
 import { getModelIdFromExternalId, getRevisionIdFromExternalId } from './getCdfIdFromExternalId';
 
 export async function getCadModelsForInstance(
@@ -66,6 +66,6 @@ const cadModelsForInstanceQuery = {
     }
   },
   select: {
-    cad_nodes: { sources: cogniteCadNodeSourceWithPRoperties }
+    cad_nodes: { sources: cogniteCadNodeSourceWithProperties }
   }
 } as const satisfies Omit<QueryRequest, 'parameters' | 'cursor'>;
