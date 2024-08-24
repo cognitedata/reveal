@@ -65,7 +65,12 @@ export type DatetimeCondition =
       parameter: string;
     }
   | {
-      type: 'between' | 'notBetween';
+      type: 'between';
+      lowerBound: string;
+      upperBound: string;
+    }
+  | {
+      type: 'notBetween';
       lowerBound: string;
       upperBound: string;
     };
