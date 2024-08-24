@@ -230,6 +230,7 @@ export class AnnotationsView extends GroupThreeView<AnnotationsDomainObject> {
   // ==================================================
 
   private setFocusAnnotation(annotation: PointCloudAnnotation | undefined): void {
+    return;
     this.clearFocusAnnotation();
     if (annotation === undefined) {
       return;

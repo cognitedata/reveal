@@ -12,6 +12,7 @@ import { type DomainObjectChange } from '../../base/domainObjectsHelpers/DomainO
 import { Changes } from '../../base/domainObjectsHelpers/Changes';
 import { AnnotationsDomainObject } from './AnnotationsDomainObject';
 import { getSingleAnnotationGeometry } from './utils/annotationGeometryUtils';
+import { forceBetween0AndPi } from '../../base/utilities/extensions/mathExtensions';
 
 export class AnnotationGizmoDomainObject extends BoxDomainObject {
   // ==================================================
@@ -27,7 +28,7 @@ export class AnnotationGizmoDomainObject extends BoxDomainObject {
   // ==================================================
 
   public override get typeName(): TranslateKey {
-    return { fallback: 'Pending annotation' };
+    return { fallback: 'Annotation gizmo' };
   }
 
   public override createRenderStyle(): RenderStyle | undefined {
@@ -49,7 +50,7 @@ export class AnnotationGizmoDomainObject extends BoxDomainObject {
   protected override notifyCore(change: DomainObjectChange): void {
     super.notifyCore(change);
 
-    if (!change.isChanged(Changes.geometry)) {
+    if (change.isChanged(Changes.geometry)) {
       this.updateSelectedAnnotation();
     }
   }
@@ -76,34 +77,28 @@ export class AnnotationGizmoDomainObject extends BoxDomainObject {
     this.center.copy(position);
 
     const euler = new Euler().setFromRotationMatrix(matrix);
-    this.zRotation = euler.z;
+    this.zRotation = forceBetween0AndPi(euler.z);
   }
 
   private updateSelectedAnnotation(): void {
-    console.log('updateSelectedAnnotation');
     const annotationDomainObject = this.getAncestorByType(AnnotationsDomainObject);
     if (annotationDomainObject === undefined) {
-      console.log('c');
       return;
     }
     const annotation = annotationDomainObject.selectedAnnotation;
     if (annotation === undefined) {
-      console.log('d');
       return;
     }
     const geometry = getSingleAnnotationGeometry(annotation);
     if (geometry === undefined) {
-      console.log('e');
       return;
     }
     const box = geometry.box;
     if (box === undefined) {
-      console.log('f');
       return;
     }
     const matrix = this.getMatrixForAnnotation();
     box.matrix = matrix.clone().transpose().elements;
     annotationDomainObject.notify(Changes.geometry);
-    console.log('updateSelectedAnnotation success');
   }
 }

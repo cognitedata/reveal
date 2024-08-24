@@ -82,12 +82,16 @@ function createAnnotationsCylinder(
 function createMock(): PointCloudAnnotation[] {
   const annotations: PointCloudAnnotation[] = [];
 
+  const radius = 0.5;
   for (let i = 0; i < 14; i++) {
-    const position = new Vector3(2 * i + 2, 2 * i, 0);
-    const position2 = position.clone();
-    position2.x += 4;
+    const x = 2 * i + 2;
+    const y = 2 * i;
+    const centerA = new Vector3(x, y, 0);
+    const centerB = centerA.clone();
+    centerB.x += 4;
+    const center = centerA.clone().add(centerB).multiplyScalar(0.5);
 
-    const matrix = new Matrix4().makeTranslation(position);
+    const matrix = new Matrix4().makeTranslation(center);
     matrix.multiply(new Matrix4().makeScale(2, 0.5, 1));
     matrix.transpose();
 
@@ -96,7 +100,7 @@ function createMock(): PointCloudAnnotation[] {
       label: 'test',
       region: [
         {
-          cylinder: i % 2 === 0 ? createAnnotationsCylinder(position, position2, 0.5) : undefined,
+          cylinder: i % 2 === 0 ? createAnnotationsCylinder(centerA, centerB, radius) : undefined,
           box: i % 2 !== 0 ? createAnnotationsBox(matrix) : undefined
         }
       ]
@@ -121,14 +125,13 @@ function createMock(): PointCloudAnnotation[] {
 }
 
 export function createPointCloudAnnotationFromMatrix(matrix: Matrix4): PointCloudAnnotation {
-  const m = matrix.clone().transpose();
-
+  const boxMatrix = matrix.clone().transpose();
   const geometry: AnnotationsBoundingVolume = {
     confidence: 0.5,
     label: 'test',
     region: [
       {
-        box: createAnnotationsBox(m)
+        box: createAnnotationsBox(boxMatrix)
       }
     ]
   };
@@ -137,7 +140,7 @@ export function createPointCloudAnnotationFromMatrix(matrix: Matrix4): PointClou
     id: getRandomInt(),
     status: 'approved',
     geometry,
-    assetRef: { source: 'asset-centric', id: getRandomInt() },
+    assetRef: { source: 'asset-centric', id: 0 },
     creatingApp: '3d-management'
   };
   return annotation;

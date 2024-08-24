@@ -115,6 +115,20 @@ export abstract class BaseEditTool extends NavigationTool {
     return domainObject.createDragger({ intersection, point, ray });
   }
 
+  /**
+   * Deselects all selectable objects except for the specified object.
+   * If no object is specified, all visual domain objects will be deselected.
+   * @param except - The visual domain object to exclude from deselection.
+   */
+  protected deselectAll(except?: VisualDomainObject | undefined): void {
+    for (const domainObject of this.getSelectable()) {
+      if (except !== undefined && domainObject === except) {
+        continue;
+      }
+      domainObject.setSelectedInteractive(false);
+    }
+  }
+
   // ==================================================
   // INSTANCE METHODS
   // ==================================================
@@ -155,20 +169,6 @@ export abstract class BaseEditTool extends NavigationTool {
         continue;
       }
       yield domainObject;
-    }
-  }
-
-  /**
-   * Deselects all selectable objects except for the specified object.
-   * If no object is specified, all visual domain objects will be deselected.
-   * @param except - The visual domain object to exclude from deselection.
-   */
-  protected deselectAll(except?: VisualDomainObject | undefined): void {
-    for (const domainObject of this.getSelectable()) {
-      if (except !== undefined && domainObject === except) {
-        continue;
-      }
-      domainObject.setSelectedInteractive(false);
     }
   }
 

@@ -6,8 +6,8 @@ import { type TranslateKey } from '../../../base/utilities/TranslateKey';
 import { type BaseCommand } from '../../../base/commands/BaseCommand';
 import { AnnotationEditTool } from './AnnotationEditTool';
 import { PrimitiveType } from '../../primitives/PrimitiveType';
-import { getIconByPrimitiveType } from '../../measurements/getIconByPrimitiveType';
 import { RenderTargetCommand } from '../../../base/commands/RenderTargetCommand';
+import { AnnotationsDomainObject } from '../AnnotationsDomainObject';
 
 export class SetAnnotationEditTypeCommand extends RenderTargetCommand {
   private readonly _primitiveType: PrimitiveType;
@@ -34,6 +34,9 @@ export class SetAnnotationEditTypeCommand extends RenderTargetCommand {
   }
 
   public override get isEnabled(): boolean {
+    if (this.rootDomainObject.getDescendantByType(AnnotationsDomainObject) === undefined) {
+      return false;
+    }
     return this.tool !== undefined;
   }
 
@@ -97,6 +100,17 @@ function getTooltipByPrimitiveType(primitiveType: PrimitiveType): TranslateKey {
         fallback:
           'Edit annotation. Click on an annotation to edit it. Click on the background to deselect the annotation.'
       };
+    default:
+      throw new Error('Unknown PrimitiveType');
+  }
+}
+
+function getIconByPrimitiveType(primitiveType: PrimitiveType): string {
+  switch (primitiveType) {
+    case PrimitiveType.Box:
+      return 'Plus';
+    case PrimitiveType.None:
+      return 'Edit';
     default:
       throw new Error('Unknown PrimitiveType');
   }

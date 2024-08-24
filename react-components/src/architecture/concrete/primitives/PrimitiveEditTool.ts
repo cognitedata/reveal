@@ -18,6 +18,7 @@ import { CommonRenderStyle } from '../../base/renderStyles/CommonRenderStyle';
 import { type VisualDomainObject } from '../../base/domainObjects/VisualDomainObject';
 import { PlaneDomainObject } from './plane/PlaneDomainObject';
 import { Changes } from '../../base/domainObjectsHelpers/Changes';
+import { type BaseTool } from '../../base/commands/BaseTool';
 
 export abstract class PrimitiveEditTool extends BaseEditTool {
   // ==================================================
@@ -224,40 +225,6 @@ export abstract class PrimitiveEditTool extends BaseEditTool {
     }
   }
 
-  private setCursor(boxDomainObject: BoxDomainObject, point: Vector3, pickInfo: BoxPickInfo): void {
-    if (pickInfo.focusType === FocusType.Body) {
-      this.renderTarget.setMoveCursor();
-    } else if (pickInfo.focusType === FocusType.Face) {
-      const matrix = boxDomainObject.getMatrix();
-      matrix.premultiply(CDF_TO_VIEWER_TRANSFORMATION);
-
-      const boxCenter = boxDomainObject.center.clone();
-      const faceCenter = pickInfo.face.getCenter().multiplyScalar(100);
-      const size = boxDomainObject.size.getComponent(pickInfo.face.index);
-      if (size < 1) {
-        // If they are too close, the pixel value will be the same, so multiply faceCenter
-        // so it pretend the size is at least 1.
-        faceCenter.multiplyScalar(1 / size);
-      }
-      boxCenter.applyMatrix4(CDF_TO_VIEWER_TRANSFORMATION);
-      faceCenter.applyMatrix4(matrix);
-
-      this.renderTarget.setResizeCursor(boxCenter, faceCenter);
-    } else if (pickInfo.focusType === FocusType.Corner) {
-      const matrix = boxDomainObject.getMatrix();
-      matrix.premultiply(CDF_TO_VIEWER_TRANSFORMATION);
-
-      const faceCenter = pickInfo.face.getCenter();
-      faceCenter.applyMatrix4(matrix);
-
-      this.renderTarget.setResizeCursor(point, faceCenter);
-    } else if (pickInfo.focusType === FocusType.Rotation) {
-      this.renderTarget.setGrabCursor();
-    } else {
-      this.setDefaultCursor();
-    }
-  }
-
   private setFocus(domainObject: VisualDomainObject, intersection: CustomObjectIntersection): void {
     if (domainObject instanceof LineDomainObject) {
       this.defocusAll(domainObject);
@@ -274,7 +241,7 @@ export abstract class PrimitiveEditTool extends BaseEditTool {
         this.renderTarget.setDefaultCursor();
         return;
       }
-      this.setCursor(domainObject, intersection.point, pickInfo);
+      PrimitiveEditTool.setCursor(this, domainObject, intersection.point, pickInfo);
       this.defocusAll(domainObject);
       domainObject.setFocusInteractive(pickInfo.focusType, pickInfo.face);
     }
@@ -330,6 +297,49 @@ export abstract class PrimitiveEditTool extends BaseEditTool {
     if (force || creator.isFinished) {
       this.setDefaultPrimitiveType();
       this._creator = undefined;
+    }
+  }
+
+  // ==================================================
+  // STATIC METHODS
+  // ==================================================
+
+  public static setCursor(
+    tool: BaseTool,
+    boxDomainObject: BoxDomainObject,
+    point: Vector3,
+    pickInfo: BoxPickInfo
+  ): void {
+    if (pickInfo.focusType === FocusType.Body) {
+      tool.renderTarget.setMoveCursor();
+    } else if (pickInfo.focusType === FocusType.Face) {
+      const matrix = boxDomainObject.getMatrix();
+      matrix.premultiply(CDF_TO_VIEWER_TRANSFORMATION);
+
+      const boxCenter = boxDomainObject.center.clone();
+      const faceCenter = pickInfo.face.getCenter().multiplyScalar(100);
+      const size = boxDomainObject.size.getComponent(pickInfo.face.index);
+      if (size < 1) {
+        // If they are too close, the pixel value will be the same, so multiply faceCenter
+        // so it pretend the size is at least 1.
+        faceCenter.multiplyScalar(1 / size);
+      }
+      boxCenter.applyMatrix4(CDF_TO_VIEWER_TRANSFORMATION);
+      faceCenter.applyMatrix4(matrix);
+
+      tool.renderTarget.setResizeCursor(boxCenter, faceCenter);
+    } else if (pickInfo.focusType === FocusType.Corner) {
+      const matrix = boxDomainObject.getMatrix();
+      matrix.premultiply(CDF_TO_VIEWER_TRANSFORMATION);
+
+      const faceCenter = pickInfo.face.getCenter();
+      faceCenter.applyMatrix4(matrix);
+
+      tool.renderTarget.setResizeCursor(point, faceCenter);
+    } else if (pickInfo.focusType === FocusType.Rotation) {
+      tool.renderTarget.setGrabCursor();
+    } else {
+      tool.setDefaultCursor();
     }
   }
 }

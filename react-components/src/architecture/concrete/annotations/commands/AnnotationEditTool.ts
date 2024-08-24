@@ -28,8 +28,9 @@ import { AnnotationGizmoDomainObject } from '../AnnotationGizmoDomainObject';
 import { Changes } from '../../../base/domainObjectsHelpers/Changes';
 import { getSingleAnnotationGeometry } from '../utils/annotationGeometryUtils';
 import { getAnnotationMatrixByGeometry } from '../utils/getMatrixUtils';
-import { Color } from 'three';
 import { type BaseDragger } from '../../../base/domainObjectsHelpers/BaseDragger';
+import { PrimitiveEditTool } from '../../primitives/PrimitiveEditTool';
+import { type BoxPickInfo } from '../../../base/utilities/box/BoxPickInfo';
 
 export const ANNOTATION_RADIUS_FACTOR = 0.2;
 
@@ -96,104 +97,129 @@ export class AnnotationEditTool extends BaseEditTool {
 
   public override async onHover(event: PointerEvent): Promise<void> {
     const ray = this.getRay(event);
-    if (this.primitiveType !== PrimitiveType.None && this._creator !== undefined) {
+    if (this.primitiveType === PrimitiveType.Box) {
       const { _creator: creator } = this;
-      // Hover in the "air"
-      if (creator.addPoint(ray, undefined, true)) {
-        this.setDefaultCursor();
-        return;
-      }
-      const intersection = await this.getIntersection(event);
-      if (intersection === undefined) {
-        if (creator !== undefined && creator.preferIntersection) {
-          // Hover in the "air"
-          const ray = this.getRay(event);
-          if (creator.addPoint(ray, undefined, true)) {
-            this.setDefaultCursor();
-            return;
+      if (creator !== undefined) {
+        // Hover in the "air"
+        if (creator.addPoint(ray, undefined, true)) {
+          this.setDefaultCursor();
+          return;
+        }
+        const intersection = await this.getIntersection(event);
+        if (intersection === undefined) {
+          if (creator !== undefined && creator.preferIntersection) {
+            // Hover in the "air"
+            const ray = this.getRay(event);
+            if (creator.addPoint(ray, undefined, true)) {
+              this.setDefaultCursor();
+              return;
+            }
           }
+          this.renderTarget.setNavigateCursor();
+          return;
+        }
+        if (getIntersectedAnnotationsDomainObject(intersection) !== undefined) {
+          this.renderTarget.setNavigateCursor();
+          return;
+        }
+        if (creator.addPoint(ray, intersection, true)) {
+          this.setDefaultCursor();
+          return;
         }
         this.renderTarget.setNavigateCursor();
-        return;
+      } else {
+        const intersection = await this.getIntersection(event);
+        if (intersection !== undefined) {
+          this.renderTarget.setCrosshairCursor();
+        } else {
+          this.renderTarget.setNavigateCursor();
+        }
       }
-      if (getSelectedAnnotationsDomainObject(intersection) !== undefined) {
-        this.renderTarget.setNavigateCursor();
-        return;
-      }
-      if (creator.addPoint(ray, intersection, true)) {
-        this.setDefaultCursor();
-        return;
-      }
-      this.renderTarget.setNavigateCursor();
-      return;
-    }
-    // ddddd
-    const intersection = await this.getIntersection(event);
-    const domainObject = getSelectedAnnotationsDomainObject(intersection);
-    const annotation = getSelectedAnnotation(intersection);
-    if (domainObject !== undefined && annotation !== undefined) {
-      this.renderTarget.setMoveCursor();
-      domainObject.setFocusAnnotationInteractive(FocusType.Focus, annotation);
-    } else if (this.primitiveType !== PrimitiveType.None && intersection !== undefined) {
-      this.renderTarget.setCrosshairCursor();
-      this.defocusAll();
     } else {
-      this.renderTarget.setNavigateCursor();
-      this.defocusAll();
+      const intersection = await this.getIntersection(event);
+      const domainObject = getIntersectedAnnotationsDomainObject(intersection);
+      const annotation = getIntersectedAnnotation(intersection);
+      if (domainObject !== undefined && annotation !== undefined) {
+        this.renderTarget.setMoveCursor();
+        domainObject.setFocusAnnotationInteractive(FocusType.Focus, annotation);
+      } else if (this.primitiveType !== PrimitiveType.None && intersection !== undefined) {
+        this.renderTarget.setCrosshairCursor();
+        this.defocusAll();
+      } else {
+        this.renderTarget.setNavigateCursor();
+        this.defocusAll();
+      }
+      const annotationGizmo = getIntersectedAnnotationGizmo(intersection);
+      if (annotationGizmo !== undefined && isDomainObjectIntersection(intersection)) {
+        const pickInfo = intersection.userData as BoxPickInfo;
+        annotationGizmo.setFocusInteractive(pickInfo.focusType, pickInfo.face);
+        PrimitiveEditTool.setCursor(this, annotationGizmo, intersection.point, pickInfo);
+      }
     }
   }
 
   public override async onClick(event: PointerEvent): Promise<void> {
     const { renderTarget } = this;
-    let creator = this._creator;
 
-    // Click in the "air"
-    if (creator !== undefined && !creator.preferIntersection) {
-      const ray = this.getRay(event);
-      if (creator.addPoint(ray, undefined)) {
-        this.endCreatorIfFinished(creator);
-        return;
-      }
-    }
-    const intersection = await this.getIntersection(event);
-    if (intersection === undefined) {
+    if (this.primitiveType === PrimitiveType.Box) {
+      let creator = this._creator;
+
       // Click in the "air"
-      return;
-    }
-    if (creator !== undefined) {
-      const ray = this.getRay(event);
-      if (creator.addPoint(ray, intersection)) {
-        this.endCreatorIfFinished(creator);
+      if (creator !== undefined) {
+        const ray = this.getRay(event);
+        if (creator.addPoint(ray, undefined)) {
+          this.endCreatorIfFinished(creator);
+          return;
+        }
       }
-      return;
-    }
-    const domainObject = getSelectedAnnotationsDomainObject(intersection);
-    const annotation = getSelectedAnnotation(intersection);
-    if (domainObject !== undefined && annotation !== undefined) {
-      this.setSelectedAnnotationInteractive(domainObject, annotation);
-      return;
-    } else if (domainObject !== undefined) {
-      this.setSelectedAnnotationInteractive(domainObject, undefined);
-    }
-    const ray = this.getRay(event);
-    if (this.primitiveType !== PrimitiveType.None && creator === undefined) {
-      creator = this._creator = this.createCreator();
+      const intersection = await this.getIntersection(event);
+      if (intersection === undefined) {
+        // Click in the "air"
+        return;
+      }
+      if (creator !== undefined) {
+        const ray = this.getRay(event);
+        if (creator.addPoint(ray, intersection)) {
+          this.endCreatorIfFinished(creator);
+        }
+        return;
+      }
       if (creator === undefined) {
+        creator = this._creator = this.createCreator();
+        if (creator === undefined) {
+          return;
+        }
+        this.setDeselectedAnnotationInteractive();
+        const ray = this.getRay(event);
+        if (creator.addPoint(ray, intersection)) {
+          const annotationGizmo = creator.domainObject;
+          annotationGizmo.setSelectedInteractive(true);
+          annotationGizmo.setVisibleInteractive(true, renderTarget);
+          annotationGizmo.notify(Changes.geometry);
+          // .addTransaction(domainObject.createTransaction(Changes.added));
+        } else {
+          this._creator = undefined;
+          return;
+        }
+        this.endCreatorIfFinished(creator);
         return;
       }
-      if (creator.addPoint(ray, intersection)) {
-        const annotationGizmo = creator.domainObject;
-        annotationGizmo.setSelectedInteractive(true);
-        annotationGizmo.setVisibleInteractive(true, renderTarget);
-        // .addTransaction(domainObject.createTransaction(Changes.added));
-      } else {
-        this._creator = undefined;
-        return;
+      this.renderTarget.setMoveCursor();
+    } else {
+      const intersection = await this.getIntersection(event);
+      const domainObject = getIntersectedAnnotationsDomainObject(intersection);
+      const annotation = getIntersectedAnnotation(intersection);
+      const annotationGizmo = getIntersectedAnnotationGizmo(intersection);
+
+      if (domainObject !== undefined && annotation !== undefined) {
+        this.setSelectedAnnotationInteractive(domainObject, annotation);
+      } else if (domainObject !== undefined) {
+        this.setSelectedAnnotationInteractive(domainObject, undefined);
+      } else if (annotationGizmo === undefined) {
+        // Click in the "air"
+        this.setDeselectedAnnotationInteractive();
       }
-      this.endCreatorIfFinished(creator);
-      return;
     }
-    this.renderTarget.setMoveCursor();
   }
 
   public override async onLeftPointerDown(event: PointerEvent): Promise<void> {
@@ -215,20 +241,18 @@ export class AnnotationEditTool extends BaseEditTool {
   }
 
   protected override async createDragger(event: PointerEvent): Promise<BaseDragger | undefined> {
-    const intersection = await this.getIntersection(event);
+    function isAnnotationGizmo(domainObject: DomainObject): boolean {
+      return domainObject instanceof AnnotationGizmoDomainObject;
+    }
+    const intersection = await this.getIntersection(event, isAnnotationGizmo);
     if (intersection === undefined) {
       return undefined;
     }
     if (!isDomainObjectIntersection(intersection)) {
       return undefined;
     }
-    const domainObject = intersection.domainObject;
-    let annotationGizmo: AnnotationGizmoDomainObject;
-    if (domainObject instanceof AnnotationsDomainObject) {
-      annotationGizmo = domainObject.getOrCreateAnnotationGizmo();
-    } else if (domainObject instanceof AnnotationGizmoDomainObject) {
-      annotationGizmo = domainObject;
-    } else {
+    const annotationGizmo = intersection.domainObject as AnnotationGizmoDomainObject;
+    if (annotationGizmo === undefined) {
       return undefined;
     }
     const ray = this.getRay(event);
@@ -243,13 +267,13 @@ export class AnnotationEditTool extends BaseEditTool {
   // OVERRIDES of BaseEditTool
   // ==================================================
 
+  protected override deselectAll(_except?: VisualDomainObject | undefined): void {
+    // Don't want this to ado anything
+  }
+
   protected override canBeSelected(domainObject: VisualDomainObject): boolean {
     return domainObject instanceof AnnotationsDomainObject;
   }
-
-  // ==================================================
-  // INSTANCE METHODS
-  // ==================================================
 
   private createCreator(): BaseCreator | undefined {
     const domainObject = this.getSelectedAnnotationsDomainObject();
@@ -266,20 +290,24 @@ export class AnnotationEditTool extends BaseEditTool {
     }
   }
 
+  // ==================================================
+  // INSTANCE METHODS
+  // ==================================================
+
   protected getSelectedAnnotationsDomainObject(): AnnotationsDomainObject | undefined {
     return this.getSelected() as AnnotationsDomainObject;
   }
 
   public handleEscape(): void {
-    // if (this._creator === undefined) {
-    //   return;
-    // }
-    // if (this._creator.handleEscape()) {
-    //   this.endCreatorIfFinished(this._creator, true);
-    // } else {
-    //   this.setDefaultPrimitiveType();
-    //   this._creator = undefined;
-    // }
+    if (this._creator === undefined) {
+      return;
+    }
+    if (this._creator.handleEscape()) {
+      this.endCreatorIfFinished(this._creator, true);
+    } else {
+      this.setDefaultPrimitiveType();
+      this._creator = undefined;
+    }
   }
 
   private defocusAll(except?: DomainObject | undefined): void {
@@ -302,20 +330,29 @@ export class AnnotationEditTool extends BaseEditTool {
   }
 
   private endCreatorIfFinished(creator: BaseCreator, force = false): void {
-    if (!force && !creator.isFinished) {
+    if (!creator.isFinished && !force) {
       return;
-    }
-    const annotationsDomainObject = this.getSelectedAnnotationsDomainObject();
-    const annotationGizmo = creator.domainObject as AnnotationGizmoDomainObject;
-    if (annotationsDomainObject !== undefined && annotationGizmo !== undefined) {
-      const matrix = annotationGizmo.getMatrixForAnnotation();
-      const newAnnotation = createPointCloudAnnotationFromMatrix(matrix);
-      annotationsDomainObject.annotations.push(newAnnotation);
-      annotationsDomainObject.notify(Changes.geometry);
-      this.setSelectedAnnotationInteractive(annotationsDomainObject, newAnnotation);
     }
     this.setDefaultPrimitiveType();
     this._creator = undefined;
+
+    const annotationsDomainObject = this.getSelectedAnnotationsDomainObject();
+    const annotationGizmo = creator.domainObject as AnnotationGizmoDomainObject;
+    if (annotationsDomainObject === undefined || annotationGizmo === undefined) {
+      return;
+    }
+    const matrix = annotationGizmo.getMatrixForAnnotation();
+    const newAnnotation = createPointCloudAnnotationFromMatrix(matrix);
+    annotationsDomainObject.annotations.push(newAnnotation);
+    annotationsDomainObject.notify(Changes.geometry);
+    annotationsDomainObject.setSelectedAnnotationInteractive(newAnnotation);
+  }
+
+  private setDeselectedAnnotationInteractive(): void {
+    const annotationsDomainObject = this.getSelectedAnnotationsDomainObject();
+    if (annotationsDomainObject !== undefined) {
+      this.setSelectedAnnotationInteractive(annotationsDomainObject, undefined);
+    }
   }
 
   private setSelectedAnnotationInteractive(
@@ -343,21 +380,19 @@ export class AnnotationEditTool extends BaseEditTool {
       return;
     }
     annotationsDomainObject.setFocusAnnotationInteractive(FocusType.None);
-    annotationGizmo.setVisibleInteractive(false, this.renderTarget);
-    annotationGizmo.color.set(Color.NAMES.blue);
     annotationGizmo.setMatrixFromAnnotation(matrix);
     annotationGizmo.setFocusInteractive(FocusType.Body);
-    annotationGizmo.setSelectedInteractive(true);
     annotationGizmo.notify(Changes.geometry);
+    annotationGizmo.setSelectedInteractive(true);
     annotationGizmo.setVisibleInteractive(true, this.renderTarget);
   }
 }
 
 // ==================================================
-// PRIVATE FUNCTIONS
+// PRIVATE FUNCTIONS: Getters for selected objects
 // ==================================================
 
-function getSelectedAnnotation(
+function getIntersectedAnnotation(
   intersection: AnyIntersection | undefined
 ): PointCloudAnnotation | undefined {
   if (intersection === undefined) {
@@ -369,7 +404,7 @@ function getSelectedAnnotation(
   return intersection.userData as PointCloudAnnotation;
 }
 
-function getSelectedAnnotationsDomainObject(
+function getIntersectedAnnotationsDomainObject(
   intersection: AnyIntersection | undefined
 ): AnnotationsDomainObject | undefined {
   if (intersection === undefined) {
@@ -380,6 +415,22 @@ function getSelectedAnnotationsDomainObject(
   }
   const { domainObject } = intersection;
   if (!(domainObject instanceof AnnotationsDomainObject)) {
+    return undefined;
+  }
+  return domainObject;
+}
+
+function getIntersectedAnnotationGizmo(
+  intersection: AnyIntersection | undefined
+): AnnotationGizmoDomainObject | undefined {
+  if (intersection === undefined) {
+    return undefined;
+  }
+  if (!isDomainObjectIntersection(intersection)) {
+    return undefined;
+  }
+  const { domainObject } = intersection;
+  if (!(domainObject instanceof AnnotationGizmoDomainObject)) {
     return undefined;
   }
   return domainObject;

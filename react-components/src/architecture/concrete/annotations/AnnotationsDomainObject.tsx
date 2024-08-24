@@ -69,7 +69,13 @@ export class AnnotationsDomainObject extends VisualDomainObject {
     }
     const isChanged = remove(this.annotations, this.selectedAnnotation);
     this.selectedAnnotation = undefined;
-    if (isChanged) this.notify(Changes.geometry);
+    if (isChanged) {
+      this.notify(Changes.geometry);
+      const annotationGizmo = this.getAnnotationGizmo();
+      if (annotationGizmo !== undefined) {
+        annotationGizmo.removeInteractive();
+      }
+    }
     return isChanged;
   }
 
@@ -78,7 +84,6 @@ export class AnnotationsDomainObject extends VisualDomainObject {
       return false; // no change
     }
     this.isSelected = value;
-    this.selectedAnnotation = undefined;
     this.notify(Changes.selected);
     return true;
   }
@@ -91,6 +96,7 @@ export class AnnotationsDomainObject extends VisualDomainObject {
     if (this.selectedAnnotation !== undefined) {
       this.setSelectedInteractive(true);
     }
+    this.setFocusAnnotationInteractive(FocusType.None);
     this.notify(Changes.selected);
     return true;
   }
