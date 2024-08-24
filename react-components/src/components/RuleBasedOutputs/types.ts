@@ -10,10 +10,7 @@ import {
   type FdmPropertyType
 } from '../Reveal3DResources/types';
 import { type Datapoints, type Asset, type Timeseries } from '@cognite/sdk';
-import {
-  type FdmTyping,
-  type FdmInstanceNodeWithConnectionAndProperties
-} from '../../data-providers/types';
+import { type FdmInstanceNodeWithConnectionAndProperties } from '../../data-providers/types';
 
 // =========== RULE BASED OUTPUT DATA MODEL
 
@@ -38,7 +35,7 @@ export type FdmInstanceNodeDataKey = {
   space: string;
   externalId: string;
   view: Source;
-  typing: FdmTyping;
+  typing: FdmKeyRuleTriggerTyping;
   property: string;
 };
 
@@ -369,3 +366,31 @@ export type TriggerFdmType = {
 };
 
 export type TimeseriesAndDatapoints = Timeseries & Datapoints;
+
+export type FdmKeyRuleTriggerTyping = Record<
+  string,
+  Record<
+    string,
+    Record<
+      string,
+      {
+        name: string;
+        typing: FdmRuleTriggerTyping;
+      }
+    >
+  >
+>;
+
+export type FdmRuleTriggerTyping = {
+  nullable?: boolean;
+  autoIncrement?: boolean;
+  defaultValue?: any;
+  description?: string;
+  name?: string;
+  immutable?: boolean;
+  type: {
+    collation?: string;
+    list?: boolean;
+    type: string;
+  };
+};

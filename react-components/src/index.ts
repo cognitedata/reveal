@@ -142,6 +142,8 @@ export type {
   TimeseriesRuleTrigger,
   MetadataRuleTrigger,
   FdmRuleTrigger,
+  FdmKeyRuleTriggerTyping,
+  FdmRuleTriggerTyping,
   FdmInstanceNodeDataKey,
   StringCondition,
   NumericCondition,
