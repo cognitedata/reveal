@@ -124,14 +124,14 @@ export class BoxView extends GroupThreeView<BoxDomainObject> {
       this.addChild(this.createLines(matrix));
     }
     if (showMarkers(focusType)) {
-      this.addChild(this.createRotationRing(matrix));
+      this.addChild(this.createRotationRing(matrix, TOP_FACE));
       this.addEdgeCircles(matrix);
     }
     if (style.showLabel) {
       this.addLabels(matrix);
     } else if (focusType === FocusType.Rotation) {
       const spriteHeight = this.getTextHeight(this.style.relativeTextSize);
-      this.addChild(this.createRotationLabel(matrix, spriteHeight));
+      this.addChild(this.createRotationLabel(matrix, spriteHeight, TOP_FACE));
     }
   }
 
@@ -191,10 +191,10 @@ export class BoxView extends GroupThreeView<BoxDomainObject> {
     return relativeTextSize * this.domainObject.diagonal;
   }
 
-  private getFaceRadius(boxFace: BoxFace): number {
+  private getFaceRadius(face: BoxFace): number {
     const { size } = this.domainObject;
-    const size1 = size.getComponent(boxFace.tangentIndex1);
-    const size2 = size.getComponent(boxFace.tangentIndex2);
+    const size1 = size.getComponent(face.tangentIndex1);
+    const size2 = size.getComponent(face.tangentIndex2);
     return (size1 + size2) / 4;
   }
 
@@ -243,8 +243,12 @@ export class BoxView extends GroupThreeView<BoxDomainObject> {
     return result;
   }
 
-  private createRotationLabel(matrix: Matrix4, spriteHeight: number): Sprite | undefined {
-    if (!this.isFaceVisible(TOP_FACE)) {
+  private createRotationLabel(
+    matrix: Matrix4,
+    spriteHeight: number,
+    face: BoxFace
+  ): Sprite | undefined {
+    if (!this.isFaceVisible(face)) {
       return undefined;
     }
     const { domainObject } = this;
@@ -261,35 +265,39 @@ export class BoxView extends GroupThreeView<BoxDomainObject> {
     if (sprite === undefined) {
       return undefined;
     }
-    const faceCenter = TOP_FACE.getCenter(newVector3());
+    const faceCenter = face.getCenter(newVector3());
     faceCenter.applyMatrix4(matrix);
     adjustLabel(faceCenter, domainObject, spriteHeight);
     sprite.position.copy(faceCenter);
     return sprite;
   }
 
-  private createPendingLabel(matrix: Matrix4, spriteHeight: number): Sprite | undefined {
-    if (!this.isFaceVisible(TOP_FACE)) {
+  private createPendingLabel(
+    matrix: Matrix4,
+    spriteHeight: number,
+    face: BoxFace
+  ): Sprite | undefined {
+    if (!this.isFaceVisible(face)) {
       return undefined;
     }
     const sprite = BoxView.createSprite('Pending', this.style, spriteHeight);
     if (sprite === undefined) {
       return undefined;
     }
-    const faceCenter = TOP_FACE.getCenter(newVector3());
+    const faceCenter = face.getCenter(newVector3());
     faceCenter.applyMatrix4(matrix);
     adjustLabel(faceCenter, this.domainObject, spriteHeight);
     sprite.position.copy(faceCenter);
     return sprite;
   }
 
-  private createRotationRing(matrix: Matrix4): Mesh | undefined {
-    if (!this.isFaceVisible(TOP_FACE)) {
+  private createRotationRing(matrix: Matrix4, face: BoxFace): Mesh | undefined {
+    if (!this.isFaceVisible(face)) {
       return undefined;
     }
     const { domainObject, style } = this;
     const { focusType } = domainObject;
-    const radius = this.getFaceRadius(TOP_FACE);
+    const radius = this.getFaceRadius(face);
 
     const outerRadius = RELATIVE_ROTATION_RADIUS.max * radius;
     const innerRadius = RELATIVE_ROTATION_RADIUS.min * radius;
@@ -297,14 +305,14 @@ export class BoxView extends GroupThreeView<BoxDomainObject> {
 
     const material = new MeshPhongMaterial();
     updateMarkerMaterial(material, domainObject, style, focusType === FocusType.Rotation);
-    material.clippingPlanes = BoxFace.createClippingPlanes(matrix, TOP_FACE.index);
+    material.clippingPlanes = BoxFace.createClippingPlanes(matrix, face.index);
     const result = new Mesh(geometry, material);
     result.renderOrder = RENDER_ORDER;
 
-    const center = TOP_FACE.getCenter(newVector3());
+    const center = face.getCenter(newVector3());
     center.applyMatrix4(matrix);
     result.position.copy(center);
-    result.rotateX(-Math.PI / 2);
+    rotate(result, face, domainObject);
     return result;
   }
 
@@ -328,21 +336,7 @@ export class BoxView extends GroupThreeView<BoxDomainObject> {
     const center = face.getCenter(newVector3());
     center.applyMatrix4(matrix);
     result.position.copy(center);
-
-    // Must be rotated correctly because of sideness
-    if (face.face === 2) {
-      result.rotateX(-Math.PI / 2);
-    } else if (face.face === 5) {
-      result.rotateX(Math.PI / 2);
-    } else if (face.face === 0) {
-      result.rotateY(Math.PI / 2 + domainObject.zRotation);
-    } else if (face.face === 3) {
-      result.rotateY(-Math.PI / 2 + domainObject.zRotation);
-    } else if (face.face === 1) {
-      result.rotateY(Math.PI + domainObject.zRotation);
-    } else if (face.face === 4) {
-      result.rotateY(domainObject.zRotation);
-    }
+    rotate(result, face, domainObject);
     return result;
   }
 
@@ -376,9 +370,9 @@ export class BoxView extends GroupThreeView<BoxDomainObject> {
     this.updateLabels(this.renderTarget.camera);
     const { focusType } = domainObject;
     if (focusType === FocusType.Pending && domainObject.hasArea) {
-      this.addChild(this.createPendingLabel(matrix, spriteHeight));
+      this.addChild(this.createPendingLabel(matrix, spriteHeight, TOP_FACE));
     } else if (showRotationLabel(focusType)) {
-      this.addChild(this.createRotationLabel(matrix, spriteHeight));
+      this.addChild(this.createRotationLabel(matrix, spriteHeight, TOP_FACE));
     }
   }
 
@@ -474,27 +468,27 @@ export class BoxView extends GroupThreeView<BoxDomainObject> {
 
   private getPickedFocusType(
     realPosition: Vector3,
-    boxFace: BoxFace,
+    face: BoxFace,
     outputCornerSign: Vector3
   ): FocusType {
     const { domainObject } = this;
-    const scale = newVector3().setScalar(this.getFaceRadius(boxFace));
+    const scale = newVector3().setScalar(this.getFaceRadius(face));
     const scaledMatrix = domainObject.getScaledMatrix(scale);
     scaledMatrix.invert();
     const scaledPositionAtFace = newVector3(realPosition).applyMatrix4(scaledMatrix);
-    const planePoint = boxFace.getPlanePoint(scaledPositionAtFace);
+    const planePoint = face.getPlanePoint(scaledPositionAtFace);
     const relativeDistance = planePoint.length();
 
-    outputCornerSign.copy(this.getCornerSign(realPosition, boxFace));
-    const corner = this.getCorner(outputCornerSign, boxFace);
+    outputCornerSign.copy(this.getCornerSign(realPosition, face));
+    const corner = this.getCorner(outputCornerSign, face);
 
     if (relativeDistance < RELATIVE_RESIZE_RADIUS) {
       return FocusType.Face;
     }
-    if (realPosition.distanceTo(corner) < 0.2 * this.getFaceRadius(boxFace)) {
+    if (realPosition.distanceTo(corner) < 0.2 * this.getFaceRadius(face)) {
       return FocusType.Corner;
     }
-    if (boxFace.face === 2) {
+    if (face.face === 2) {
       if (RELATIVE_ROTATION_RADIUS.isInside(relativeDistance)) {
         return FocusType.Rotation;
       }
@@ -502,41 +496,41 @@ export class BoxView extends GroupThreeView<BoxDomainObject> {
     return FocusType.Body;
   }
 
-  private getCornerSign(realPosition: Vector3, boxFace: BoxFace): Vector3 {
+  private getCornerSign(realPosition: Vector3, face: BoxFace): Vector3 {
     const { domainObject } = this;
-    const scale = newVector3().setScalar(this.getFaceRadius(boxFace));
+    const scale = newVector3().setScalar(this.getFaceRadius(face));
     const scaledMatrix = domainObject.getScaledMatrix(scale);
     scaledMatrix.invert();
     const scaledPositionAtFace = realPosition.clone().applyMatrix4(scaledMatrix);
-    scaledPositionAtFace.setComponent(boxFace.index, 0);
+    scaledPositionAtFace.setComponent(face.index, 0);
     scaledPositionAtFace.setComponent(
-      boxFace.tangentIndex1,
-      Math.sign(scaledPositionAtFace.getComponent(boxFace.tangentIndex1))
+      face.tangentIndex1,
+      Math.sign(scaledPositionAtFace.getComponent(face.tangentIndex1))
     );
     scaledPositionAtFace.setComponent(
-      boxFace.tangentIndex2,
-      Math.sign(scaledPositionAtFace.getComponent(boxFace.tangentIndex2))
+      face.tangentIndex2,
+      Math.sign(scaledPositionAtFace.getComponent(face.tangentIndex2))
     );
     return scaledPositionAtFace;
   }
 
-  private getCorner(cornerSign: Vector3, boxFace: BoxFace): Vector3 {
+  private getCorner(cornerSign: Vector3, face: BoxFace): Vector3 {
     const { domainObject } = this;
-    const center = boxFace.getCenter(new Vector3()); // In range (-0.5, 0.5)
+    const center = face.getCenter(new Vector3()); // In range (-0.5, 0.5)
     const corner = center.addScaledVector(cornerSign, 0.5);
     const matrix = domainObject.getMatrix();
     corner.applyMatrix4(matrix);
     return corner;
   }
 
-  private isFaceVisible(boxFace: BoxFace): boolean {
+  private isFaceVisible(face: BoxFace): boolean {
     const { domainObject } = this;
     switch (domainObject.primitiveType) {
       case PrimitiveType.VerticalArea:
-        return boxFace.index === 1; // Y Face visible
+        return face.index === 1; // Y Face visible
 
       case PrimitiveType.HorizontalArea:
-        return boxFace.index === 2; // Z face visible
+        return face.index === 2; // Z face visible
     }
     return true;
   }
@@ -651,6 +645,27 @@ function updateMarkerMaterial(
 function adjustLabel(point: Vector3, domainObject: BoxDomainObject, spriteHeight: number): void {
   if (domainObject.primitiveType !== PrimitiveType.VerticalArea) {
     point.y += (1.1 * spriteHeight) / 2;
+  }
+}
+
+// ==================================================
+// PRIVATE FUNCTIONS: Misc
+// ==================================================
+
+function rotate(mesh: Mesh, face: BoxFace, domainObject: BoxDomainObject): void {
+  // Must be rotated correctly because of sideness
+  if (face.face === 2) {
+    mesh.rotateX(-Math.PI / 2);
+  } else if (face.face === 5) {
+    mesh.rotateX(Math.PI / 2);
+  } else if (face.face === 0) {
+    mesh.rotateY(Math.PI / 2 + domainObject.zRotation);
+  } else if (face.face === 3) {
+    mesh.rotateY(-Math.PI / 2 + domainObject.zRotation);
+  } else if (face.face === 1) {
+    mesh.rotateY(Math.PI + domainObject.zRotation);
+  } else if (face.face === 4) {
+    mesh.rotateY(domainObject.zRotation);
   }
 }
 
