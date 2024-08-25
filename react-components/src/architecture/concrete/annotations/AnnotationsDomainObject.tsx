@@ -24,6 +24,10 @@ export class AnnotationsDomainObject extends VisualDomainObject {
   public focusAnnotation?: PointCloudAnnotation | undefined = undefined;
   public focusType = FocusType.None;
 
+  public get style(): AnnotationsRenderStyle {
+    return super.getRenderStyle() as AnnotationsRenderStyle;
+  }
+
   // ==================================================
   // CONSTRUCTOR
   // ==================================================

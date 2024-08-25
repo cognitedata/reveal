@@ -13,6 +13,9 @@ import { Changes } from '../../base/domainObjectsHelpers/Changes';
 import { AnnotationsDomainObject } from './AnnotationsDomainObject';
 import { getSingleAnnotationGeometry } from './utils/annotationGeometryUtils';
 import { forceBetween0AndPi } from '../../base/utilities/extensions/mathExtensions';
+import { getAnnotationMatrixByGeometry } from './utils/getMatrixUtils';
+import { type PointCloudAnnotation } from './utils/types';
+import { createPointCloudAnnotationFromMatrix } from './commands/CreateAnnotationMockCommand';
 
 export class AnnotationGizmoDomainObject extends BoxDomainObject {
   // ==================================================
@@ -34,6 +37,7 @@ export class AnnotationGizmoDomainObject extends BoxDomainObject {
   public override createRenderStyle(): RenderStyle | undefined {
     const style = new BoxRenderStyle();
     style.showLabel = false;
+    style.opacity = 0.333;
     return style;
   }
 
@@ -51,7 +55,7 @@ export class AnnotationGizmoDomainObject extends BoxDomainObject {
     super.notifyCore(change);
 
     if (change.isChanged(Changes.geometry)) {
-      this.updateSelectedAnnotation();
+      this.updateSelectedAnnotationFromThis();
     }
   }
 
@@ -59,28 +63,31 @@ export class AnnotationGizmoDomainObject extends BoxDomainObject {
   // INSTANCE METHODS
   // ==================================================
 
-  public getMatrixForAnnotation(matrix: Matrix4 = new Matrix4()): Matrix4 {
-    const scale = this.size.clone().divideScalar(2);
-    return this.getScaledMatrix(scale, matrix);
+  public createPointCloudAnnotation(): PointCloudAnnotation {
+    const matrix = this.getMatrixForAnnotation();
+    return createPointCloudAnnotationFromMatrix(matrix);
   }
 
-  public setMatrixFromAnnotation(matrix: Matrix4): void {
-    const scale = new Vector3();
-    const position = new Vector3();
-    const quaternion = new Quaternion();
-
-    // Decompose the matrix into position, quaternion (rotation), and scale
-    matrix.decompose(position, quaternion, scale);
-
-    scale.multiplyScalar(2);
-    this.size.copy(scale);
-    this.center.copy(position);
-
-    const euler = new Euler().setFromRotationMatrix(matrix);
-    this.zRotation = forceBetween0AndPi(euler.z);
+  public updateThisFromAnnotation(annotation: PointCloudAnnotation): boolean {
+    const geometry = getSingleAnnotationGeometry(annotation);
+    if (geometry === undefined) {
+      return false;
+    }
+    const matrix = getAnnotationMatrixByGeometry(geometry, 0);
+    if (matrix === undefined) {
+      return false;
+    }
+    if (geometry.box !== undefined) {
+      matrix.scale(new Vector3(2, 2, 2));
+    }
+    if (geometry.cylinder !== undefined) {
+      matrix.scale(new Vector3(2, 1, 2));
+    }
+    this.setMatrixFromAnnotation(matrix);
+    return true;
   }
 
-  private updateSelectedAnnotation(): void {
+  private updateSelectedAnnotationFromThis(): void {
     const annotationDomainObject = this.getAncestorByType(AnnotationsDomainObject);
     if (annotationDomainObject === undefined) {
       return;
@@ -93,12 +100,41 @@ export class AnnotationGizmoDomainObject extends BoxDomainObject {
     if (geometry === undefined) {
       return;
     }
-    const box = geometry.box;
-    if (box === undefined) {
-      return;
+    if (geometry.box !== undefined) {
+      const matrix = this.getMatrixForAnnotation();
+      geometry.box.matrix = matrix.clone().transpose().elements;
+      annotationDomainObject.notify(Changes.geometry);
     }
-    const matrix = this.getMatrixForAnnotation();
-    box.matrix = matrix.clone().transpose().elements;
-    annotationDomainObject.notify(Changes.geometry);
+    if (geometry.cylinder !== undefined) {
+      const matrix = this.getMatrixForAnnotation();
+
+      const centerA = new Vector3(0, 1, 0).applyMatrix4(matrix);
+      const centerB = new Vector3(0, -1, 0).applyMatrix4(matrix);
+      const scale = new Vector3();
+      matrix.decompose(new Vector3(), new Quaternion(), scale);
+
+      geometry.cylinder.centerA = centerA.toArray();
+      geometry.cylinder.centerB = centerB.toArray();
+      geometry.cylinder.radius = scale.x;
+      annotationDomainObject.notify(Changes.geometry);
+    }
+  }
+
+  private getMatrixForAnnotation(matrix: Matrix4 = new Matrix4()): Matrix4 {
+    const scale = this.size.clone().divideScalar(2);
+    return this.getScaledMatrix(scale, matrix);
+  }
+
+  private setMatrixFromAnnotation(matrix: Matrix4): void {
+    const scale = new Vector3();
+    const position = new Vector3();
+    const quaternion = new Quaternion();
+
+    matrix.decompose(position, quaternion, scale);
+    const euler = new Euler().setFromQuaternion(quaternion);
+
+    this.size.copy(scale);
+    this.center.copy(position);
+    this.zRotation = forceBetween0AndPi(euler.z);
   }
 }

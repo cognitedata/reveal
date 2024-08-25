@@ -11,16 +11,10 @@ import {
   type CustomObjectIntersectInput,
   type CustomObjectIntersection
 } from '@cognite/reveal';
-import { type AnnotationStatus } from '@cognite/sdk';
 
 import { type PointCloudAnnotation } from './utils/types';
 
-import {
-  getAnnotationGeometries,
-  isAnnotationsBoundingVolume
-} from './utils/annotationGeometryUtils';
-import { createBoxGeometry } from './utils/createBoxGeometry';
-import { createCylinderGeometry } from './utils/createCylinderGeometry';
+import { getAnnotationGeometries } from './utils/annotationGeometryUtils';
 import {
   type CreateWireframeArgs,
   createWireframeFromMultipleAnnotations
@@ -28,19 +22,17 @@ import {
 import { getBoundingBox } from './utils/getBoundingBox';
 import { getClosestAnnotation } from './utils/getClosestAnnotation';
 import { getAnnotationMatrixByGeometry } from './utils/getMatrixUtils';
-import { type PendingAnnotation } from './utils/PendingAnnotation';
-import { WireframeUserData } from './utils/WireframeUserData';
+import { type WireframeUserData } from './utils/WireframeUserData';
 import { GroupThreeView } from '../../base/views/GroupThreeView';
 import { type AnnotationsDomainObject } from './AnnotationsDomainObject';
 import { type AnnotationsRenderStyle } from './AnnotationsRenderStyle';
 import { type DomainObjectChange } from '../../base/domainObjectsHelpers/DomainObjectChange';
 import { Changes } from '../../base/domainObjectsHelpers/Changes';
 import { type DomainObjectIntersection } from '../../base/domainObjectsHelpers/DomainObjectIntersection';
+import { getStatusByAnnotation } from './utils/getStatusByAnnotation';
 
 const FOCUS_ANNOTATION_NAME = 'focus-annotation-name';
 const GROUP_SIZE = 100;
-const BOX_GEOMETRY = createBoxGeometry(); // Prototype for a box
-const CYLINDER_GEOMETRY = createCylinderGeometry(); // Prototype for a box
 
 export enum Status {
   Contextualized, // This state is Approved and has AssetRef != undefined
@@ -65,7 +57,6 @@ export class AnnotationsView extends GroupThreeView<AnnotationsDomainObject> {
   private readonly suggestedSelectedLineMaterial: LineMaterial;
   private readonly rejectedSelectedLineMaterial: LineMaterial;
 
-  private readonly pendingLineMaterial: LineMaterial;
   private readonly focusAnnotationMaterial: THREE.MeshBasicMaterial;
 
   // This is the only child of the root, annotations are added here
@@ -99,8 +90,6 @@ export class AnnotationsView extends GroupThreeView<AnnotationsDomainObject> {
     this.approvedSelectedLineMaterial = createLineMaterial();
     this.suggestedSelectedLineMaterial = createLineMaterial();
     this.rejectedSelectedLineMaterial = createLineMaterial();
-
-    this.pendingLineMaterial = createLineMaterial();
 
     this.focusAnnotationMaterial = new THREE.MeshBasicMaterial();
   }
@@ -230,7 +219,6 @@ export class AnnotationsView extends GroupThreeView<AnnotationsDomainObject> {
   // ==================================================
 
   private setFocusAnnotation(annotation: PointCloudAnnotation | undefined): void {
-    return;
     this.clearFocusAnnotation();
     if (annotation === undefined) {
       return;
@@ -261,42 +249,6 @@ export class AnnotationsView extends GroupThreeView<AnnotationsDomainObject> {
   }
 
   // ==================================================
-  // INSTANCE METHODS: Pending annotation
-  // ==================================================
-
-  private setPendingAnnotation(pendingAnnotation: PendingAnnotation | undefined): void {
-    this.clearPendingAnnotation();
-    if (pendingAnnotation === undefined) {
-      return;
-    }
-    const wireframe = this.createPendingAnnotationAsWireframe(pendingAnnotation);
-    this.addChild(wireframe);
-  }
-
-  private clearPendingAnnotation(): void {
-    for (const wireframe of this.getWireframes()) {
-      const userData = getUserData(wireframe);
-      if (userData === undefined) {
-        continue;
-      }
-      if (userData.isPending) {
-        this._group.remove(wireframe);
-        dispose(wireframe);
-        break;
-      }
-    }
-  }
-
-  private createPendingAnnotationAsWireframe(pendingAnnotation: PendingAnnotation): Wireframe {
-    const wireframe = createPendingAnnotationAsWireframe(pendingAnnotation);
-
-    wireframe.userData = new WireframeUserData(Status.Suggested, false);
-    wireframe.material = this.pendingLineMaterial;
-    wireframe.computeLineDistances();
-    return wireframe;
-  }
-
-  // ==================================================
   // INSTANCE METHODS: Style annotation
   // ==================================================
 
@@ -308,10 +260,6 @@ export class AnnotationsView extends GroupThreeView<AnnotationsDomainObject> {
       this.setStyle(style, status, false);
       this.setStyle(style, status, true);
     }
-    this.pendingLineMaterial.color.set(style.pendingColor);
-    this.pendingLineMaterial.linewidth = style.pendingLineWidth;
-    this.pendingLineMaterial.depthTest = this.style.depthTest;
-
     this.focusAnnotationMaterial.color.set(style.blankColor);
     this.focusAnnotationMaterial.transparent = true;
     this.focusAnnotationMaterial.opacity = style.blankOpacity;
@@ -338,7 +286,7 @@ export class AnnotationsView extends GroupThreeView<AnnotationsDomainObject> {
       if (userData.isPending) {
         continue;
       }
-      if (!userData.contain(annotation)) {
+      if (!userData.includes(annotation)) {
         this.styleWireframe(wireframe, false);
       } else if (userData.length === 1) {
         this.styleWireframe(wireframe, selected);
@@ -464,16 +412,6 @@ function createLineMaterial(): LineMaterial {
   });
 }
 
-function createPendingAnnotationAsWireframe(pendingAnnotation: PendingAnnotation): Wireframe {
-  const lineSegments = pendingAnnotation.isCylinder
-    ? CYLINDER_GEOMETRY.clone()
-    : BOX_GEOMETRY.clone();
-  const wireframe = new Wireframe(lineSegments);
-  const matrix = pendingAnnotation.matrix;
-  wireframe.applyMatrix4(matrix);
-  return wireframe;
-}
-
 function createMeshByMatrix(
   matrix: THREE.Matrix4,
   material: THREE.MeshBasicMaterial,
@@ -509,33 +447,8 @@ function* getAllWireframes(root: THREE.Object3D | null): Generator<Wireframe> {
   }
 }
 
-function getStatusByAnnotation(annotation: PointCloudAnnotation): Status {
-  const volume = annotation.geometry;
-  if (!isAnnotationsBoundingVolume(volume)) {
-    return Status.Rejected;
-  }
-  if (volume === undefined || volume.region.length === 0) {
-    return Status.Rejected;
-  }
-  const assetId = volume.assetRef?.id;
-  return getStatus(annotation.status, assetId);
-}
-
 function getUserData(wireframe: Wireframe): WireframeUserData {
   return wireframe.userData as WireframeUserData;
-}
-
-function getStatus(status: AnnotationStatus, assetId: number | undefined): Status {
-  if (assetId !== undefined) {
-    return Status.Contextualized;
-  }
-  if (status === 'approved') {
-    return Status.Approved;
-  }
-  if (status === 'suggested') {
-    return Status.Suggested;
-  }
-  return Status.Rejected;
 }
 
 // ==================================================

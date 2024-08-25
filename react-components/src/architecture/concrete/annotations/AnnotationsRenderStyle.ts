@@ -19,7 +19,7 @@ export class AnnotationsRenderStyle extends CommonRenderStyle {
   public pendingColor = 0x4da6ff; // light blue
   public hoveredColor = 0xffff00; // yellow
   public blankColor = 0xffffff; // white
-  public blankOpacity = 0.4;
+  public blankOpacity = 0.333;
   public lineWidth = 2;
   public selectedLineWidth = 2;
   public pendingLineWidth = 6;

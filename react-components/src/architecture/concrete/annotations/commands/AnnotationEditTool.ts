@@ -15,10 +15,7 @@ import { ShowAnnotationsOnTopCommand } from './ShowAnnotationsOnTopCommand';
 import { UndoCommand } from '../../../base/concreteCommands/UndoCommand';
 import { type BaseCommand } from '../../../base/commands/BaseCommand';
 import { ShowAllAnnotationsCommand } from './ShowAllAnnotationsCommand';
-import {
-  CreateAnnotationMockCommand,
-  createPointCloudAnnotationFromMatrix
-} from './CreateAnnotationMockCommand';
+import { CreateAnnotationMockCommand } from './CreateAnnotationMockCommand';
 import { PrimitiveType } from '../../primitives/PrimitiveType';
 import { CommandsUpdater } from '../../../base/reactUpdaters/CommandsUpdater';
 import { SetAnnotationEditTypeCommand } from './SetAnnotationEditTypeCommand';
@@ -31,6 +28,8 @@ import { getAnnotationMatrixByGeometry } from '../utils/getMatrixUtils';
 import { type BaseDragger } from '../../../base/domainObjectsHelpers/BaseDragger';
 import { PrimitiveEditTool } from '../../primitives/PrimitiveEditTool';
 import { type BoxPickInfo } from '../../../base/utilities/box/BoxPickInfo';
+import { getStatusByAnnotation } from '../utils/getStatusByAnnotation';
+import { DomainObjectChange } from '../../../base/domainObjectsHelpers/DomainObjectChange';
 
 export const ANNOTATION_RADIUS_FACTOR = 0.2;
 
@@ -139,18 +138,19 @@ export class AnnotationEditTool extends BaseEditTool {
       const intersection = await this.getIntersection(event);
       const domainObject = getIntersectedAnnotationsDomainObject(intersection);
       const annotation = getIntersectedAnnotation(intersection);
+      const annotationGizmo = getIntersectedAnnotationGizmo(intersection);
+
       if (domainObject !== undefined && annotation !== undefined) {
-        this.renderTarget.setMoveCursor();
-        domainObject.setFocusAnnotationInteractive(FocusType.Focus, annotation);
-      } else if (this.primitiveType !== PrimitiveType.None && intersection !== undefined) {
-        this.renderTarget.setCrosshairCursor();
-        this.defocusAll();
-      } else {
+        this.renderTarget.setDefaultCursor();
+        if (annotation === domainObject.selectedAnnotation) {
+          domainObject.setFocusAnnotationInteractive(FocusType.None);
+        } else {
+          domainObject.setFocusAnnotationInteractive(FocusType.Focus, annotation);
+        }
+      } else if (annotationGizmo === undefined) {
         this.renderTarget.setNavigateCursor();
         this.defocusAll();
-      }
-      const annotationGizmo = getIntersectedAnnotationGizmo(intersection);
-      if (annotationGizmo !== undefined && isDomainObjectIntersection(intersection)) {
+      } else if (annotationGizmo !== undefined && isDomainObjectIntersection(intersection)) {
         const pickInfo = intersection.userData as BoxPickInfo;
         annotationGizmo.setFocusInteractive(pickInfo.focusType, pickInfo.face);
         PrimitiveEditTool.setCursor(this, annotationGizmo, intersection.point, pickInfo);
@@ -294,7 +294,7 @@ export class AnnotationEditTool extends BaseEditTool {
   // INSTANCE METHODS
   // ==================================================
 
-  protected getSelectedAnnotationsDomainObject(): AnnotationsDomainObject | undefined {
+  private getSelectedAnnotationsDomainObject(): AnnotationsDomainObject | undefined {
     return this.getSelected() as AnnotationsDomainObject;
   }
 
@@ -341,8 +341,7 @@ export class AnnotationEditTool extends BaseEditTool {
     if (annotationsDomainObject === undefined || annotationGizmo === undefined) {
       return;
     }
-    const matrix = annotationGizmo.getMatrixForAnnotation();
-    const newAnnotation = createPointCloudAnnotationFromMatrix(matrix);
+    const newAnnotation = annotationGizmo.createPointCloudAnnotation();
     annotationsDomainObject.annotations.push(newAnnotation);
     annotationsDomainObject.notify(Changes.geometry);
     annotationsDomainObject.setSelectedAnnotationInteractive(newAnnotation);
@@ -376,13 +375,26 @@ export class AnnotationEditTool extends BaseEditTool {
     if (matrix === undefined) {
       return;
     }
+    if (!annotationGizmo.updateThisFromAnnotation(annotation)) {
+      return;
+    }
     if (!annotationsDomainObject.setSelectedAnnotationInteractive(annotation)) {
       return;
     }
-    annotationsDomainObject.setFocusAnnotationInteractive(FocusType.None);
-    annotationGizmo.setMatrixFromAnnotation(matrix);
+    annotationGizmo.color.set(
+      annotationsDomainObject.style.getColorByStatus(getStatusByAnnotation(annotation))
+    );
+
+    const change = new DomainObjectChange();
+    change.addChange(Changes.geometry);
+    change.addChange(Changes.color);
+
+    // This little "hack" disables the update up the AnnotationsDomainObject
+    annotationsDomainObject.selectedAnnotation = undefined;
+    annotationGizmo.notify(change);
+    annotationsDomainObject.selectedAnnotation = annotation;
+
     annotationGizmo.setFocusInteractive(FocusType.Body);
-    annotationGizmo.notify(Changes.geometry);
     annotationGizmo.setSelectedInteractive(true);
     annotationGizmo.setVisibleInteractive(true, this.renderTarget);
   }

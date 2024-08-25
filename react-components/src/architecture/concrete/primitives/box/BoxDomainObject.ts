@@ -67,8 +67,7 @@ export abstract class BoxDomainObject extends VisualDomainObject {
   public clear(): void {
     this.size.setScalar(MIN_BOX_SIZE);
     this.center.setScalar(0);
-    this.zRotation = 0; // Angle in radians in interval [0, 2*Pi>
-
+    this.zRotation = 0;
     this.focusType = FocusType.None;
     this.focusFace = undefined;
   }
@@ -268,6 +267,16 @@ export abstract class BoxDomainObject extends VisualDomainObject {
     matrix.setPosition(this.center);
     matrix.scale(scale);
     return matrix;
+
+    // Alternative
+    // const translationMatrix = matrix.identity().makeTranslation(this.center);
+    // const rotationMatrix = this.getRotationMatrix();
+    // const scaleMatrix = new Matrix4().makeScale(scale.x, scale.y, scale.z);
+
+    // translationMatrix.multiply(rotationMatrix);
+    // translationMatrix.multiply(scaleMatrix);
+
+    // return translationMatrix;
   }
 
   // ==================================================

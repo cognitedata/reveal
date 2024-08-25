@@ -44,14 +44,15 @@ export function getSingleAnnotationMatrix(
 }
 
 export function getAnnotationMatrixByGeometry(
-  geometry: AnnotationGeometry
+  geometry: AnnotationGeometry,
+  cylinderMargin = ANNOTATION_CYLINDER_RADIUS_MARGIN
 ): THREE.Matrix4 | undefined {
   if (geometry.box !== undefined) {
     const box = geometry.box;
     return getBoxMatrix(box);
   } else if (geometry.cylinder !== undefined) {
     const cylinder = geometry.cylinder;
-    return getCylinderMatrix(cylinder);
+    return getCylinderMatrix(cylinder, cylinderMargin);
   } else {
     return undefined;
   }
@@ -59,7 +60,7 @@ export function getAnnotationMatrixByGeometry(
 
 const UP_AXIS = new THREE.Vector3(0, 1, 0);
 
-function getCylinderMatrix(cylinder: AnnotationsCylinder): THREE.Matrix4 {
+function getCylinderMatrix(cylinder: AnnotationsCylinder, margin: number): THREE.Matrix4 {
   // Calculate the center of the cylinder
   const centerA = new THREE.Vector3(...cylinder.centerA);
   const centerB = new THREE.Vector3(...cylinder.centerB);
@@ -74,7 +75,7 @@ function getCylinderMatrix(cylinder: AnnotationsCylinder): THREE.Matrix4 {
   axis.normalize();
 
   // Calculate the scale of the cylinder
-  const radius = cylinder.radius * (1 + ANNOTATION_CYLINDER_RADIUS_MARGIN);
+  const radius = cylinder.radius * (1 + margin);
   const height = centerA.distanceTo(centerB);
   const scale = new THREE.Vector3(radius, height, radius);
 

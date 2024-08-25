@@ -5,7 +5,6 @@
 import { type PointCloudAnnotation } from './types';
 
 import { type Status } from '../AnnotationsView';
-import { compareAnnotationIdentifiers } from './compareAnnotationIdentifiers';
 
 export class WireframeUserData {
   public selected: boolean;
@@ -25,8 +24,8 @@ export class WireframeUserData {
     return this.length === 0;
   }
 
-  public contain(annotation: PointCloudAnnotation): boolean {
-    return this.annotations.some((a) => compareAnnotationIdentifiers(a, annotation));
+  public includes(annotation: PointCloudAnnotation): boolean {
+    return this.annotations.includes(annotation);
   }
 
   public add(annotation: PointCloudAnnotation): void {
