@@ -49,7 +49,7 @@ export const Main: Story = {
               <WindowWidget
                 header="Widget Header"
                 onClose={handleClose}
-                openInNewTab={openExternalButton()}>
+                customComponent={openExternalButton()}>
                 <SecondaryRevealContainer />
               </WindowWidget>
             )}
@@ -61,7 +61,11 @@ export const Main: Story = {
 };
 
 function openExternalButton(): ReactNode {
-  return <Button>Open in New Tab</Button>;
+  return (
+    <Button style={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+      Open in New Tab
+    </Button>
+  );
 }
 
 function SecondaryRevealContainer(): ReactElement {
