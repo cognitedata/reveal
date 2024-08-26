@@ -28,7 +28,8 @@ import { type BoxPickInfo } from '../../../base/utilities/box/BoxPickInfo';
 import { getStatusByAnnotation } from '../utils/getStatusByAnnotation';
 import { DomainObjectChange } from '../../../base/domainObjectsHelpers/DomainObjectChange';
 import { type SingleAnnotation } from '../helpers/SingleAnnotation';
-import { DeleteAnnotationCommand } from './DeleteAnnotationCommand';
+import { DeleteSelectedAnnotationCommand } from './DeleteSelectedAnnotationCommand';
+import { AlignSelectedAnnotationCommand } from './AlignSelectedAnnotationCommand';
 
 export const ANNOTATION_RADIUS_FACTOR = 0.2;
 
@@ -232,8 +233,12 @@ export class AnnotationEditTool extends BaseEditTool {
     return [
       new SetAnnotationEditTypeCommand(PrimitiveType.None),
       new SetAnnotationEditTypeCommand(PrimitiveType.Box),
+      undefined,
       new UndoCommand(),
-      new DeleteAnnotationCommand(),
+      new DeleteSelectedAnnotationCommand(),
+      new AlignSelectedAnnotationCommand(true),
+      new AlignSelectedAnnotationCommand(false),
+      undefined,
       new CreateAnnotationMockCommand(),
       new ShowAllAnnotationsCommand(),
       new ShowAnnotationsOnTopCommand()
