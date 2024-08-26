@@ -89,29 +89,36 @@ export class PlaneCreator extends BaseCreator {
       throw new Error('Cannot create a plane without points');
     }
     const domainObject = this._domainObject;
+    let normal: Vector3;
     switch (domainObject.primitiveType) {
       case PrimitiveType.PlaneX:
-        domainObject.plane.setFromNormalAndCoplanarPoint(new Vector3(1, 0, 0), this.firstPoint);
+        normal = new Vector3(1, 0, 0);
         break;
 
       case PrimitiveType.PlaneY:
-        domainObject.plane.setFromNormalAndCoplanarPoint(new Vector3(0, 1, 0), this.firstPoint);
+        normal = new Vector3(0, 1, 0);
         break;
 
       case PrimitiveType.PlaneZ:
-        domainObject.plane.setFromNormalAndCoplanarPoint(new Vector3(0, 0, 1), this.firstPoint);
+        normal = new Vector3(0, 0, 1);
         break;
 
       case PrimitiveType.PlaneXY:
         if (this.pointCount === 1) {
-          const normal = ray.direction.clone().normalize();
-          domainObject.plane.setFromNormalAndCoplanarPoint(normal, this.firstPoint);
-        } else if (this.pointCount === 2) {
-          const normal = new Vector3().subVectors(this.lastPoint, this.firstPoint).normalize();
+          normal = ray.direction.clone().normalize();
+        } else {
+          normal = new Vector3().subVectors(this.lastPoint, this.firstPoint).normalize();
           rotatePiHalf(normal);
-          domainObject.plane.setFromNormalAndCoplanarPoint(normal, this.firstPoint);
         }
         break;
+
+      default:
+        return;
     }
+    // Make sure that the normal is pointing towards the camera
+    if (ray.direction.dot(normal) < 0) {
+      normal.negate();
+    }
+    domainObject.plane.setFromNormalAndCoplanarPoint(normal, this.firstPoint);
   }
 }

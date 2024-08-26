@@ -54,7 +54,7 @@ class OptionItemCommand extends RenderTargetCommand {
     if (pointCloud === undefined) {
       return false;
     }
-    return pointCloud.pointSizeType === this._value;
+    return pointCloud.pointShape === this._value;
   }
 
   public override invokeCore(): boolean {

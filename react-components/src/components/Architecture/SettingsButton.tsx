@@ -24,7 +24,7 @@ import {
 import { LabelWithShortcut } from './LabelWithShortcut';
 import { type TranslateDelegate } from '../../architecture/base/utilities/TranslateKey';
 import styled from 'styled-components';
-import { type SettingsCommand } from '../../architecture/base/commands/SettingsCommand';
+import { type BaseSettingsCommand } from '../../architecture/base/commands/BaseSettingsCommand';
 import { BaseOptionCommand } from '../../architecture/base/commands/BaseOptionCommand';
 import { OptionButton } from './OptionButton';
 import { BaseSliderCommand } from '../../architecture/base/commands/BaseSliderCommand';
@@ -35,13 +35,13 @@ export const SettingsButton = ({
   inputCommand,
   isHorizontal = false
 }: {
-  inputCommand: SettingsCommand;
+  inputCommand: BaseSettingsCommand;
   isHorizontal: boolean;
 }): ReactElement => {
   const renderTarget = useRenderTarget();
   const { t } = useTranslation();
-  const command = useMemo<SettingsCommand>(
-    () => getDefaultCommand<SettingsCommand>(inputCommand, renderTarget),
+  const command = useMemo<BaseSettingsCommand>(
+    () => getDefaultCommand<BaseSettingsCommand>(inputCommand, renderTarget),
     []
   );
 
@@ -71,13 +71,12 @@ export const SettingsButton = ({
   }
   const placement = getTooltipPlacement(isHorizontal);
   const label = command.getLabel(t);
-  const shortcut = command.getShortCutKeys();
   const flexDirection = getFlexDirection(isHorizontal);
   const children = command.children;
 
   return (
     <CogsTooltip
-      content={<LabelWithShortcut label={label} shortcut={shortcut} />}
+      content={<LabelWithShortcut label={label} command={command} />}
       disabled={label === undefined}
       appendTo={document.body}
       placement={placement}>
@@ -157,7 +156,6 @@ function createButton(command: BaseCommand, t: TranslateDelegate): ReactElement 
     return <></>;
   }
   const label = command.getLabel(t);
-  const shortcut = command.getShortCutKeys();
   return (
     <Menu.Item
       key={command.uniqueId}
@@ -170,7 +168,7 @@ function createButton(command: BaseCommand, t: TranslateDelegate): ReactElement 
         command.invoke();
         setChecked(command.isChecked);
       }}>
-      <LabelWithShortcut label={label} shortcut={shortcut} />
+      <LabelWithShortcut label={label} command={command} inverted={false} />
     </Menu.Item>
   );
 }

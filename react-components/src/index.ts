@@ -48,6 +48,7 @@ export {
 export { useImage360AnnotationMappingsForAssetIds } from './components/CacheProvider/Image360AnnotationCacheProvider';
 export { useLoadedScene } from './components/SceneContainer/LoadedSceneContext';
 export { useIsDraggingOnViewer } from './hooks/useIsDraggingOnViewer';
+export { useAssetMappedNodesForRevisions } from './components/CacheProvider/AssetMappingAndNode3DCacheProvider';
 
 // Queries
 export { use3DModelName } from './query/use3DModelName';
@@ -113,7 +114,8 @@ export {
   type AddImage360CollectionOptions,
   type AddResourceOptions,
   type AddCadResourceOptions,
-  type AddPointCloudResourceOptions
+  type AddPointCloudResourceOptions,
+  type CadModelOptions
 } from './components/Reveal3DResources/types';
 export {
   type PointCloudAnnotationMappedAssetData,
@@ -160,13 +162,21 @@ export type {
   CriteriaTypes
 } from './components/RuleBasedOutputs/types';
 
-export { ActiveToolToolbar } from './components/Architecture/Toolbar';
-export { DomainObjectPanel } from './components/Architecture/DomainObjectPanel';
-export { RevealButtons } from './components/Architecture/RevealButtons';
-
 export { RuleBasedOutputsPanel } from './components/RuleBasedOutputs/RuleBasedOutputsPanel';
 
 // Functions
 export { getRuleTriggerTypes } from './components/RuleBasedOutputs/utils';
 
 export type { InstanceReference, AssetInstanceReference } from './data-providers/types';
+
+export { ActiveToolToolbar } from './components/Architecture/Toolbar';
+export { DomainObjectPanel } from './components/Architecture/DomainObjectPanel';
+export { RevealButtons } from './components/Architecture/RevealButtons';
+export { useRenderTarget } from './components/RevealCanvas/ViewerContext';
+
+/**
+ * Export classes and types from architecture
+ * Note: This is not stable code yet and is subject to change.
+ * @beta
+ */
+export * as Architecture from './architecture/index';

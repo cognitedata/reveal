@@ -14,14 +14,14 @@ export class MockFilterCommand extends BaseFilterCommand {
 
   private _timeStamp: number | undefined = undefined;
   private _useAllColor: boolean = true;
-  private readonly _testDynamic: boolean = false;
+  private readonly _testDynamic: boolean = false; // True to test dynamic updates (for testing purposes)
 
   // ==================================================
   // OVERRIDES
   // ==================================================
 
   public override get tooltip(): TranslateKey {
-    return { key: '', fallback: 'Filter' };
+    return { fallback: 'Filter' };
   }
 
   protected override createChildren(): FilterItemCommand[] {
@@ -98,7 +98,7 @@ class FilterItemCommand extends BaseFilterItemCommand {
     return this._color;
   }
 
-  public setChecked(value: boolean): void {
+  public override setChecked(value: boolean): void {
     if (this._use === value) {
       return;
     }

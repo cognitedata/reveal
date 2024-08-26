@@ -25,11 +25,7 @@ export function getTooltipPlacement(isHorizontal: boolean): PlacementType {
 
 export function getButtonType(command: BaseCommand): ButtonType {
   // This was the only way it went through compiler: (more button types will be added in the future)
-  const type = command.buttonType;
-  if (type === 'ghost' || type === 'ghost-destructive' || type === 'primary') {
-    return type;
-  }
-  return 'ghost';
+  return command.buttonType as ButtonType;
 }
 
 export function getDefaultCommand<T extends BaseCommand>(

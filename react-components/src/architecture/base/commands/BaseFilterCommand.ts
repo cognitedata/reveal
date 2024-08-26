@@ -91,31 +91,35 @@ export abstract class BaseFilterCommand extends RenderTargetCommand {
 
   public getSelectedLabel(translate: TranslateDelegate): string {
     if (this._children === undefined) {
-      return this.getNoneLabel(translate);
+      return BaseFilterCommand.getNoneString(translate);
     }
     const selected = this._children.filter((child) => child.isChecked);
     const counter = selected.length;
     if (counter === 0) {
-      return this.getNoneLabel(translate);
+      return BaseFilterCommand.getNoneString(translate);
     }
     if (counter === this._children.length) {
-      return this.getAllLabel(translate);
+      return BaseFilterCommand.getAllString(translate);
     }
     if (counter === 1) {
       return selected[0].getLabel(translate);
     }
-    return counter.toString() + ' ' + this.getSelected(translate);
+    return counter.toString() + ' ' + BaseFilterCommand.getSelectedString(translate);
   }
 
-  public getAllLabel(translate: TranslateDelegate): string {
+  // ==================================================
+  // STATIC METHODS
+  // ==================================================
+
+  public static getAllString(translate: TranslateDelegate): string {
     return translate('ALL', 'All');
   }
 
-  public getNoneLabel(translate: TranslateDelegate): string {
+  private static getNoneString(translate: TranslateDelegate): string {
     return translate('NONE', 'None');
   }
 
-  public getSelected(translate: TranslateDelegate): string {
+  private static getSelectedString(translate: TranslateDelegate): string {
     return translate('SELECTED', 'Selected');
   }
 }

@@ -116,7 +116,10 @@ async function get360AnnotationAssets(
     })
     .filter(isDefined);
 
-  const uniqueAnnotationMapping = uniqBy(filteredAnnotationMappings, 'assetId');
+  const uniqueAnnotationMapping = uniqBy(
+    filteredAnnotationMappings,
+    (annotationMapping) => annotationMapping.assetId
+  );
 
   const assets = await retrieveAssets(sdk, uniqueAnnotationMapping);
   const flatAssets = assets.flat();
