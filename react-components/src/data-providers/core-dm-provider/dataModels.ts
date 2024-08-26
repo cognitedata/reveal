@@ -107,7 +107,7 @@ export type CogniteAssetProperties = {
   parent: DmsUniqueIdentifier;
   root: DmsUniqueIdentifier;
   path: DmsUniqueIdentifier[];
-  lastPathMaterializationTime: Timestamp;
+  pathLastUpdatedTime: Timestamp;
   equipment: DmsUniqueIdentifier;
   assetClass: DmsUniqueIdentifier;
   type: DmsUniqueIdentifier;
@@ -115,6 +115,10 @@ export type CogniteAssetProperties = {
   children: DmsUniqueIdentifier[];
   activities: DmsUniqueIdentifier[];
   timeSeries: DmsUniqueIdentifier[];
+};
+
+export type CogniteVisualizableProperties = {
+  object3D: DmsUniqueIdentifier;
 };
 
 export type CogniteCADRevisionProperties = {

@@ -9,6 +9,7 @@ import {
   CORE_DM_3D_CONTAINER_SPACE,
   type CogniteCADRevisionProperties
 } from './dataModels';
+import { restrictToDmsId } from './restrictToDmsId';
 
 export async function getDMSRevision(
   model: DmsUniqueIdentifier,
@@ -17,7 +18,7 @@ export async function getDMSRevision(
 ): Promise<NodeItem<CogniteCADRevisionProperties>> {
   const query = {
     ...cadConnectionQuery,
-    parameters: { modelReference: { space: model.space, externalId: model.externalId }, revisionId }
+    parameters: { modelReference: restrictToDmsId(model), revisionId }
   } as const satisfies QueryRequest;
 
   const result = await fdmSdk.queryNodesAndEdges<

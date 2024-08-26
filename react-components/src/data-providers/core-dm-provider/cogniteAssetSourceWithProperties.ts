@@ -23,7 +23,7 @@ export const cogniteAssetSourceWithProperties = [
       'parent',
       'root',
       'path',
-      'lastPathMaterializationTime',
+      'pathLastUpdatedTime',
       'equipment',
       'assetClass',
       'type',

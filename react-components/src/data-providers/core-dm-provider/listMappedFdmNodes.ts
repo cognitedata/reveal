@@ -11,8 +11,7 @@ import {
 } from '../FdmSDK';
 import { type QueryRequest } from '@cognite/sdk';
 import {
-  COGNITE_3D_OBJECT_SOURCE,
-  type COGNITE_ASSET_SOURCE,
+  COGNITE_ASSET_SOURCE,
   COGNITE_CAD_NODE_SOURCE,
   COGNITE_POINT_CLOUD_VOLUME_SOURCE,
   type CogniteAssetProperties,
@@ -98,7 +97,8 @@ function createRawQuery(
       cad_assets: {
         nodes: {
           from: 'cad_object_3d',
-          through: { view: COGNITE_3D_OBJECT_SOURCE, identifier: 'asset' },
+          through: { view: COGNITE_ASSET_SOURCE, identifier: 'object3D' },
+          direction: 'inwards',
           filter
         }
       },
@@ -116,8 +116,9 @@ function createRawQuery(
       },
       pointcloud_assets: {
         nodes: {
-          from: 'cad_object_3d',
-          through: { view: COGNITE_3D_OBJECT_SOURCE, identifier: 'asset' },
+          from: 'pointcloud_object_3d',
+          through: { view: COGNITE_ASSET_SOURCE, identifier: 'object3D' },
+          direction: 'inwards',
           filter
         }
       }

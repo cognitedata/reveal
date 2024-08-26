@@ -7,16 +7,19 @@ import { type DmsUniqueIdentifier, type FdmSDK } from '../FdmSDK';
 import {
   type Cognite3DObjectProperties,
   COGNITE_3D_OBJECT_SOURCE,
-  type COGNITE_ASSET_SOURCE,
+  COGNITE_ASSET_SOURCE,
   COGNITE_CAD_NODE_SOURCE,
+  COGNITE_VISUALIZABLE_SOURCE,
   type CogniteAssetProperties,
   type CogniteCADNodeProperties,
+  CogniteVisualizableProperties,
   CORE_DM_3D_CONTAINER_SPACE,
   CORE_DM_SPACE
 } from './dataModels';
 import { getModelIdFromExternalId } from './getCdfIdFromExternalId';
 import { toFdmKey } from '../utils/toFdmKey';
 import { cogniteCadNodeSourceWithProperties } from './cogniteCadNodeSourceWithProperties';
+import { restrictToDmsId } from './restrictToDmsId';
 
 export async function getFdmConnectionsForNodes(
   model: DmsUniqueIdentifier,
@@ -34,9 +37,9 @@ export async function getFdmConnectionsForNodes(
   const query = {
     ...cadConnectionQuery,
     parameters: {
-      modelReference: { externalId: model.externalId, space: model.space },
+      modelReference: restrictToDmsId(model),
       treeIndexes,
-      revisionRef: { externalId: revisionRef.externalId, space: revisionRef.space }
+      revisionRefs: [restrictToDmsId(revisionRef)]
     }
   };
 
@@ -46,6 +49,7 @@ export async function getFdmConnectionsForNodes(
     typeof query,
     [
       { source: typeof COGNITE_ASSET_SOURCE; properties: CogniteAssetProperties },
+      { source: typeof COGNITE_VISUALIZABLE_SOURCE; properties: CogniteVisualizableProperties },
       { source: typeof COGNITE_CAD_NODE_SOURCE; properties: CogniteCADNodeProperties },
       { source: typeof COGNITE_3D_OBJECT_SOURCE; properties: Cognite3DObjectProperties }
     ]
@@ -64,16 +68,10 @@ export async function getFdmConnectionsForNodes(
     }
   });
 
-  const relevantObjects3D = result.items.objects_3d.filter((object3D) => {
-    return object3D.properties[CORE_DM_SPACE]['Cognite3DObject/v1'].cadNodes.some((cadNodeId) =>
-      relevantCadNodeRefToObject3dRef.has(toFdmKey(cadNodeId))
-    );
-  });
-
-  const relevantObjectToAssetsMap = new Map<FdmKey, DmsUniqueIdentifier[]>(
-    relevantObjects3D.map((obj) => [
-      toFdmKey(obj),
-      obj.properties[CORE_DM_SPACE]['Cognite3DObject/v1'].asset
+  const relevantObjectToAssetsMap = new Map<FdmKey, DmsUniqueIdentifier>(
+    result.items.assets.map((asset) => [
+      toFdmKey(asset.properties.cdf_cdm['CogniteVisualizable/v1'].object3D),
+      asset
     ])
   );
 
@@ -85,16 +83,14 @@ export async function getFdmConnectionsForNodes(
       // Should not happen
       return;
     }
-    const assets = relevantObjectToAssetsMap.get(object3dKey);
+    const asset = relevantObjectToAssetsMap.get(object3dKey);
 
-    if (assets === undefined) {
+    if (asset === undefined) {
       // Should not happen
       return;
     }
 
-    assets.forEach((asset) =>
-      connections.push({ modelId, revisionId, treeIndex, instance: asset })
-    );
+    connections.push({ modelId, revisionId, treeIndex, instance: asset });
   });
 
   return connections;
@@ -133,7 +129,7 @@ const cadConnectionQuery = {
                   COGNITE_CAD_NODE_SOURCE.externalId,
                   'revisions'
                 ],
-                values: { parameter: 'revisionRef' }
+                values: { parameter: 'revisionRefs' }
               }
             }
           ]
@@ -149,8 +145,8 @@ const cadConnectionQuery = {
     assets: {
       nodes: {
         from: 'objects_3d',
-        through: { view: COGNITE_3D_OBJECT_SOURCE, identifier: 'asset' },
-        direction: 'outwards'
+        through: { view: COGNITE_ASSET_SOURCE, identifier: 'object3D' },
+        direction: 'inwards'
       }
     }
   },
@@ -158,9 +154,7 @@ const cadConnectionQuery = {
     cad_nodes: {
       sources: cogniteCadNodeSourceWithProperties
     },
-    assets: {},
-    objects_3d: {
-      sources: [{ source: COGNITE_3D_OBJECT_SOURCE, properties: ['name', 'asset', 'cadNodes'] }]
-    }
+    assets: { sources: [{ source: COGNITE_VISUALIZABLE_SOURCE, properties: ['object3D'] }] },
+    objects_3d: {}
   }
 } as const satisfies Omit<QueryRequest, 'cursors' | 'parameters'>;

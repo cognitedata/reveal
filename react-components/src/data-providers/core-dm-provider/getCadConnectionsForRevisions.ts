@@ -6,7 +6,7 @@ import { type FdmCadConnection, type FdmKey } from '../../components/CacheProvid
 import { type DmsUniqueIdentifier, type FdmSDK } from '../FdmSDK';
 import {
   type Cognite3DObjectProperties,
-  type COGNITE_3D_OBJECT_SOURCE,
+  COGNITE_3D_OBJECT_SOURCE,
   COGNITE_CAD_NODE_SOURCE,
   type CogniteCADNodeProperties,
   CORE_DM_3D_CONTAINER_SPACE,
@@ -19,6 +19,7 @@ import { toFdmKey } from '../utils/toFdmKey';
 import { type PromiseType } from '../utils/typeUtils';
 import { isDefined } from '../../utilities/isDefined';
 import { type QueryResult } from '../utils/queryNodesAndEdges';
+import { restrictToDmsId } from './restrictToDmsId';
 
 export async function getCadConnectionsForRevisions(
   modelRevisions: Array<[DmsUniqueIdentifier, DmsUniqueIdentifier]>,
@@ -28,9 +29,9 @@ export async function getCadConnectionsForRevisions(
 
   const cadNodeToModelMap = createNodeToModelMap(modelRevisions, results.items.cad_nodes);
 
-  return results.items.object_3ds.flatMap((obj) => {
-    const props = obj.properties[CORE_DM_SPACE]['Cognite3DObject/v1'];
 
+  const returnResult = results.items.object_3ds.flatMap((obj) => {
+    const props = obj.properties[CORE_DM_SPACE]['Cognite3DObject/v1'];
     return props.cadNodes
       .map((cadNode) => {
         const modelObj = cadNodeToModelMap.get(toFdmKey(cadNode));
@@ -41,6 +42,7 @@ export async function getCadConnectionsForRevisions(
       })
       .filter(isDefined);
   });
+  return returnResult;
 }
 
 type SourcesSelectType = [
@@ -53,8 +55,8 @@ async function getModelConnectionResults(
   fdmSdk: FdmSDK
 ): Promise<QueryResult<typeof cadConnectionsQuery, SourcesSelectType>> {
   const parameters = {
-    modelRefs: modelRevisions.map(([modelRef, _revisionRef]) => modelRef),
-    revisionRefs: modelRevisions.map(([_modelRef, revisionRef]) => revisionRef)
+    modelRefs: modelRevisions.map(([modelRef, _revisionRef]) => restrictToDmsId(modelRef)),
+    revisionRefs: modelRevisions.map(([_modelRef, revisionRef]) => restrictToDmsId(revisionRef))
   };
 
   const query = {
@@ -130,13 +132,19 @@ const cadConnectionsQuery = {
             }
           ]
         }
-      }
+      },
+      limit: 10000
     },
     object_3ds: {
       nodes: {
         from: 'cad_nodes',
-        through: { view: COGNITE_CAD_NODE_SOURCE, identifier: 'object3D' }
-      }
+        through: { view: COGNITE_CAD_NODE_SOURCE, identifier: 'object3D' },
+        direction: 'outwards',
+        filter: {
+          hasData: [COGNITE_3D_OBJECT_SOURCE]
+        }
+      },
+      limit: 10000
     }
   },
   select: {

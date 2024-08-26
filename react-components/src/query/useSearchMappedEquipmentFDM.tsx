@@ -40,12 +40,15 @@ export const useSearchMappedEquipmentFDM = (
   return useQuery({
     queryKey: ['reveal', 'react-components', 'search-mapped-fdm', query, models, viewsToSearch],
     queryFn: async () => {
-      if (models.length === 0 || viewsToSearch.length === 0) {
+      if (models.length === 0) {
         return [];
       }
 
       const sources = await createSourcesFromViews(viewsToSearch, fdmSdk);
       const chunkedSources = chunk(sources, 10);
+      if (chunkedSources.length === 0) {
+        chunkedSources.push([]);
+      }
 
       const queryResults: InstancesWithView[] = [];
 

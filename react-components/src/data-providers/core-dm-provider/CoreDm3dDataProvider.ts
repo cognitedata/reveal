@@ -27,6 +27,7 @@ import { filterNodesByMappedTo3d } from './filterNodesByMappedTo3d';
 import { getCadModelsForInstance } from './getCadModelsForInstance';
 import { getCadConnectionsForRevisions } from './getCadConnectionsForRevisions';
 import { zip } from 'lodash';
+import { restrictToDmsId } from './restrictToDmsId';
 
 const MAX_PARALLEL_QUERIES = 2;
 
@@ -81,7 +82,7 @@ export class CoreDm3dFdm3dDataProvider implements Fdm3dDataProvider {
       throw Error(`No revision with id ${revisionId} found`);
     }
 
-    return revisionRef;
+    return restrictToDmsId(revisionRef);
   }
 
   private async getDMSModelsForIds(
