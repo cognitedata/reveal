@@ -27,7 +27,7 @@ type WindowWidgetProps = {
   subtitle?: string;
   header?: string;
   type?: string;
-  customComponent?: ReactNode;
+  headerElement?: ReactNode;
   children: ReactNode;
   onClose?: () => void;
   onResize?: (width: number, height: number) => void;
@@ -39,7 +39,7 @@ export const WindowWidget = ({
   header,
   type,
   children,
-  customComponent,
+  headerElement,
   onClose,
   onResize
 }: WindowWidgetProps): ReactElement => {
@@ -117,7 +117,7 @@ export const WindowWidget = ({
           onResize={handleResize}>
           <Widget>
             <Widget.Header title={title} type={type} header={header} subtitle={subtitle}>
-              {customComponent !== undefined && customComponent}
+              {headerElement !== undefined && headerElement}
               <CogsTooltip
                 content={
                   isMinimized

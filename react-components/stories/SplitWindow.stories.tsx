@@ -49,7 +49,7 @@ export const Main: Story = {
               <WindowWidget
                 header="Widget Header"
                 onClose={handleClose}
-                customComponent={openExternalButton()}>
+                headerElement={openExternalButton()}>
                 <SecondaryRevealContainer />
               </WindowWidget>
             )}
