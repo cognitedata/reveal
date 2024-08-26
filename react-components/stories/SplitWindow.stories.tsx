@@ -6,7 +6,7 @@ import type { Meta, StoryObj } from '@storybook/react';
 import { CadModelContainer, RevealCanvas, PointCloudContainer, RevealContext } from '../src';
 import { CogniteClient } from '@cognite/sdk';
 import { Color } from 'three';
-import { ReactNode, useState, type ReactElement } from 'react';
+import { type ReactNode, useState, type ReactElement } from 'react';
 import { WindowWidget } from '../src/components/Widgets/WindowWidget';
 import { Button } from '@cognite/cogs.js';
 
