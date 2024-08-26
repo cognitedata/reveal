@@ -351,11 +351,11 @@ const checkBooleanExpressionStatement = (
   const propertyTrigger = getFdmPropertyTrigger<boolean>(fdmPropertyTrigger, trigger);
 
   switch (condition.type) {
-    case 'true': {
+    case 'equals': {
       expressionResult = propertyTrigger === true;
       break;
     }
-    case 'false': {
+    case 'notEquals': {
       expressionResult = propertyTrigger === false;
       break;
     }

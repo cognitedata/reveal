@@ -42,7 +42,7 @@ export type FdmInstanceNodeDataKey = {
 export type StringTrigger = MetadataRuleTrigger;
 
 export type BooleanCondition = {
-  type: 'true' | 'false';
+  type: 'equals' | 'notEquals';
   parameter: boolean;
 };
 
@@ -219,7 +219,7 @@ export type FdmRuleOutputSet = {
 
 export type ExpressionOperatorsTypes = 'and' | 'or' | 'not';
 
-export type BooleanConditionTypes = 'true' | 'false';
+export type BooleanConditionTypes = 'equals' | 'notEquals';
 
 export type StringConditionTypes = 'equals' | 'notEquals' | 'contains' | 'startsWith' | 'endsWith';
 
@@ -232,6 +232,14 @@ export type NumericConditionTypes =
   | 'greaterThanOrEquals'
   | 'within'
   | 'outside';
+
+export type NumericUniqueConditionTypes =
+  | 'equals'
+  | 'notEquals'
+  | 'lessThan'
+  | 'greaterThan'
+  | 'lessThanOrEquals'
+  | 'greaterThanOrEquals';
 
 export type NumericWithinConditionType = {
   type: 'within';
@@ -251,6 +259,16 @@ export type DatetimeConditionTypes =
   | 'onOrBefore'
   | 'between'
   | 'notBetween'
+  | 'after'
+  | 'notAfter'
+  | 'onOrAfter'
+  | 'on'
+  | 'notOn';
+
+export type DatetimeUniqueConditionTypes =
+  | 'before'
+  | 'notBefore'
+  | 'onOrBefore'
   | 'after'
   | 'notAfter'
   | 'onOrAfter'
@@ -393,6 +411,12 @@ export type FdmRuleTriggerTyping = {
   description?: string;
   name?: string;
   immutable?: boolean;
+  container?: {
+    type?: string;
+    space?: string;
+    externalId?: string;
+  };
+  containerPropertyIdentifier?: string;
   type: {
     collation?: string;
     list?: boolean;
