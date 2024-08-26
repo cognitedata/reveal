@@ -109,11 +109,11 @@ export class AnnotationsView extends GroupThreeView<AnnotationsDomainObject> {
       this.invalidateRenderTarget();
     }
     if (change.isChanged(Changes.selected)) {
-      this.setSelectedAnnotation(this.domainObject.selectedAnnotation);
+      this.updateSelectedAnnotation(this.domainObject.selectedAnnotation);
       this.invalidateRenderTarget();
     }
     if (change.isChanged(Changes.focus)) {
-      this.setFocusAnnotation(this.domainObject.focusAnnotation);
+      this.updateFocusAnnotation(this.domainObject.focusAnnotation);
       this.invalidateRenderTarget();
     }
   }
@@ -165,8 +165,8 @@ export class AnnotationsView extends GroupThreeView<AnnotationsDomainObject> {
       }
     }
     // Set the other
-    this.setSelectedAnnotation(this.domainObject.selectedAnnotation);
-    this.setFocusAnnotation(this.domainObject.focusAnnotation);
+    this.updateSelectedAnnotation(this.domainObject.selectedAnnotation);
+    this.updateFocusAnnotation(this.domainObject.focusAnnotation);
   }
 
   override intersectIfCloser(
@@ -202,7 +202,7 @@ export class AnnotationsView extends GroupThreeView<AnnotationsDomainObject> {
   // INSTANCE METHODS: Selected annotation
   // ==================================================
 
-  private setSelectedAnnotation(annotation: PointCloudAnnotation | undefined): void {
+  private updateSelectedAnnotation(annotation: PointCloudAnnotation | undefined): void {
     if (annotation === undefined) {
       this.clearSelectedAnnotation();
     } else {
@@ -211,14 +211,16 @@ export class AnnotationsView extends GroupThreeView<AnnotationsDomainObject> {
   }
 
   private clearSelectedAnnotation(): void {
-    for (const wireframe of this.getWireframes()) this.styleWireframe(wireframe, false);
+    for (const wireframe of this.getWireframes()) {
+      this.styleWireframe(wireframe, false);
+    }
   }
 
   // ==================================================
   // INSTANCE METHODS: Focus Annotation
   // ==================================================
 
-  private setFocusAnnotation(annotation: PointCloudAnnotation | undefined): void {
+  private updateFocusAnnotation(annotation: PointCloudAnnotation | undefined): void {
     this.clearFocusAnnotation();
     if (annotation === undefined) {
       return;
