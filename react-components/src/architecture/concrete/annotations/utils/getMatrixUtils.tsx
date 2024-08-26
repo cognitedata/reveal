@@ -12,10 +12,7 @@ import {
 } from '@cognite/sdk';
 
 import { ANNOTATION_CYLINDER_RADIUS_MARGIN } from './constants';
-import { type PointCloudAnnotation } from './types';
 import { getCognitePointCloudModel } from './getCognitePointCloudModel';
-
-import { getSingleAnnotationGeometry } from './annotationGeometryUtils';
 
 export const getGlobalMatrix = (args: {
   modelId: number;
@@ -27,21 +24,6 @@ export const getGlobalMatrix = (args: {
   }
   return pointCloudModel.getCdfToDefaultModelTransformation();
 };
-
-export function getSingleAnnotationMatrix(
-  annotation: PointCloudAnnotation,
-  globalMatrix: THREE.Matrix4
-): THREE.Matrix4 | undefined {
-  const geometry = getSingleAnnotationGeometry(annotation);
-  if (geometry === undefined) return undefined;
-
-  const matrix = getAnnotationMatrixByGeometry(geometry);
-  if (matrix === undefined) {
-    return undefined;
-  }
-  matrix.premultiply(globalMatrix);
-  return matrix;
-}
 
 export function getAnnotationMatrixByGeometry(
   geometry: AnnotationGeometry,

@@ -16,7 +16,7 @@ import { createBoxGeometryAsVertices } from './createBoxGeometry';
 import { createCylinderGeometryAsVertices } from './createCylinderGeometry';
 import { createLineSegmentsGeometry } from './createLineSegmentsGeometry';
 import { getAnnotationMatrixByGeometry } from './getMatrixUtils';
-import { WireframeUserData } from './WireframeUserData';
+import { WireframeUserData } from '../helpers/WireframeUserData';
 
 export type CreateWireframeArgs = {
   annotations: PointCloudAnnotation[];

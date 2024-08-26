@@ -14,7 +14,6 @@ import {
 
 import { type PointCloudAnnotation } from './utils/types';
 
-import { getAnnotationGeometries } from './utils/annotationGeometryUtils';
 import {
   type CreateWireframeArgs,
   createWireframeFromMultipleAnnotations
@@ -22,7 +21,7 @@ import {
 import { getBoundingBox } from './utils/getBoundingBox';
 import { getClosestAnnotation } from './utils/getClosestAnnotation';
 import { getAnnotationMatrixByGeometry } from './utils/getMatrixUtils';
-import { type WireframeUserData } from './utils/WireframeUserData';
+import { type WireframeUserData } from './helpers/WireframeUserData';
 import { GroupThreeView } from '../../base/views/GroupThreeView';
 import { type AnnotationsDomainObject } from './AnnotationsDomainObject';
 import { type AnnotationsRenderStyle } from './AnnotationsRenderStyle';
@@ -30,6 +29,7 @@ import { type DomainObjectChange } from '../../base/domainObjectsHelpers/DomainO
 import { Changes } from '../../base/domainObjectsHelpers/Changes';
 import { type DomainObjectIntersection } from '../../base/domainObjectsHelpers/DomainObjectIntersection';
 import { getStatusByAnnotation } from './utils/getStatusByAnnotation';
+import { SingleAnnotation } from './helpers/SingleAnnotation';
 
 const FOCUS_ANNOTATION_NAME = 'focus-annotation-name';
 const GROUP_SIZE = 100;
@@ -109,11 +109,11 @@ export class AnnotationsView extends GroupThreeView<AnnotationsDomainObject> {
       this.invalidateRenderTarget();
     }
     if (change.isChanged(Changes.selected)) {
-      this.updateSelectedAnnotation(this.domainObject.selectedAnnotation);
+      this.updateSelectedAnnotation();
       this.invalidateRenderTarget();
     }
     if (change.isChanged(Changes.focus)) {
-      this.updateFocusAnnotation(this.domainObject.focusAnnotation);
+      this.updateFocusAnnotation();
       this.invalidateRenderTarget();
     }
   }
@@ -164,9 +164,9 @@ export class AnnotationsView extends GroupThreeView<AnnotationsDomainObject> {
         });
       }
     }
-    // Set the other
-    this.updateSelectedAnnotation(this.domainObject.selectedAnnotation);
-    this.updateFocusAnnotation(this.domainObject.focusAnnotation);
+    // Update the others
+    this.updateSelectedAnnotation();
+    this.updateFocusAnnotation();
   }
 
   override intersectIfCloser(
@@ -193,7 +193,7 @@ export class AnnotationsView extends GroupThreeView<AnnotationsDomainObject> {
       customObject: this,
       domainObject,
       boundingBox: getBoundingBox(info.annotation, this.globalMatrix),
-      userData: info.annotation
+      userData: new SingleAnnotation(info.annotation, info.geometry)
     };
     return customObjectIntersection;
   }
@@ -202,7 +202,8 @@ export class AnnotationsView extends GroupThreeView<AnnotationsDomainObject> {
   // INSTANCE METHODS: Selected annotation
   // ==================================================
 
-  private updateSelectedAnnotation(annotation: PointCloudAnnotation | undefined): void {
+  private updateSelectedAnnotation(): void {
+    const annotation = this.domainObject.selectedAnnotation;
     if (annotation === undefined) {
       this.clearSelectedAnnotation();
     } else {
@@ -220,16 +221,23 @@ export class AnnotationsView extends GroupThreeView<AnnotationsDomainObject> {
   // INSTANCE METHODS: Focus Annotation
   // ==================================================
 
-  private updateFocusAnnotation(annotation: PointCloudAnnotation | undefined): void {
+  private updateFocusAnnotation(): void {
+    const focusAnnotation = this.domainObject.focusAnnotation;
     this.clearFocusAnnotation();
-    if (annotation === undefined) {
+    if (focusAnnotation === undefined) {
       return;
     }
+    const selectedAnnotation = this.domainObject.selectedAnnotation;
+    const selectedGeometry = selectedAnnotation?.geometry;
+
     const group = new THREE.Group();
     group.name = FOCUS_ANNOTATION_NAME;
     this.addChild(group);
 
-    for (const geometry of getAnnotationGeometries(annotation)) {
+    for (const geometry of focusAnnotation.getGeometries()) {
+      if (selectedGeometry !== undefined && selectedGeometry === geometry) {
+        continue;
+      }
       const matrix = getAnnotationMatrixByGeometry(geometry);
       if (matrix === undefined) {
         continue;
@@ -277,7 +285,7 @@ export class AnnotationsView extends GroupThreeView<AnnotationsDomainObject> {
     wireframe.material = this.getLineMaterial(userData.status, selected);
   }
 
-  private styleAnnotation(annotation: PointCloudAnnotation, selected: boolean): void {
+  private styleAnnotation(annotation: SingleAnnotation, selected: boolean): void {
     // This is only used by AnnotationType = SELECTED_ANNOTATION
     let wireframeToSplit: Wireframe | undefined;
     for (const wireframe of this.getWireframes()) {
@@ -288,7 +296,7 @@ export class AnnotationsView extends GroupThreeView<AnnotationsDomainObject> {
       if (userData.isPending) {
         continue;
       }
-      if (!userData.includes(annotation)) {
+      if (!userData.includes(annotation.annotation)) {
         this.styleWireframe(wireframe, false);
       } else if (userData.length === 1) {
         this.styleWireframe(wireframe, selected);
@@ -298,7 +306,7 @@ export class AnnotationsView extends GroupThreeView<AnnotationsDomainObject> {
     }
     if (wireframeToSplit !== undefined) {
       const userData = getUserData(wireframeToSplit);
-      const remainingAnnotations = userData.annotations.filter((a) => a !== annotation);
+      const remainingAnnotations = userData.annotations.filter((a) => a !== annotation.annotation);
       this.addWireframeFromMultipleAnnotations({
         annotations: remainingAnnotations,
         globalMatrix: this.globalMatrix,
@@ -306,7 +314,7 @@ export class AnnotationsView extends GroupThreeView<AnnotationsDomainObject> {
         selected: userData.selected,
         startIndex: 0
       });
-      const changingAnnotations = [annotation];
+      const changingAnnotations = [annotation.annotation];
       if (changingAnnotations.length > 0) {
         this.addWireframeFromMultipleAnnotations({
           annotations: changingAnnotations,

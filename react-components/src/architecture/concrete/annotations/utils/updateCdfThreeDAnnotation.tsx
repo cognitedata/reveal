@@ -12,7 +12,6 @@ import {
 } from '@cognite/sdk';
 
 import { type AssetPointCloudAnnotation, type PointCloudAnnotation } from './types';
-
 import { type PendingAnnotation } from './PendingAnnotation';
 
 export const updateCdfThreeDAnnotation = async ({

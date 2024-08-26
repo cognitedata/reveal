@@ -13,6 +13,7 @@ import { FocusType } from '../../base/domainObjectsHelpers/FocusType';
 import { Changes } from '../../base/domainObjectsHelpers/Changes';
 import { remove } from '../../base/utilities/extensions/arrayExtensions';
 import { AnnotationGizmoDomainObject } from './AnnotationGizmoDomainObject';
+import { SingleAnnotation } from './helpers/SingleAnnotation';
 
 export class AnnotationsDomainObject extends VisualDomainObject {
   // ==================================================
@@ -20,12 +21,8 @@ export class AnnotationsDomainObject extends VisualDomainObject {
   // ==================================================
 
   public annotations: PointCloudAnnotation[] = [];
-
-  public selectedAnnotation: PointCloudAnnotation | undefined = undefined;
-  public selectedGeometry = undefined;
-
-  public focusAnnotation?: PointCloudAnnotation | undefined = undefined;
-
+  public selectedAnnotation: SingleAnnotation | undefined = undefined;
+  public focusAnnotation?: SingleAnnotation | undefined = undefined;
   public focusType = FocusType.None;
 
   // ==================================================
@@ -79,7 +76,12 @@ export class AnnotationsDomainObject extends VisualDomainObject {
     if (this.annotations === undefined) {
       return false;
     }
-    const isChanged = remove(this.annotations, this.selectedAnnotation);
+    let isChanged: boolean;
+    if (!this.selectedAnnotation.isSingle) {
+      isChanged = this.selectedAnnotation.removeGeometry();
+    } else {
+      isChanged = remove(this.annotations, this.selectedAnnotation.annotation);
+    }
     this.selectedAnnotation = undefined;
     if (isChanged) {
       this.notify(Changes.geometry);
@@ -100,8 +102,8 @@ export class AnnotationsDomainObject extends VisualDomainObject {
     return true;
   }
 
-  public setSelectedAnnotationInteractive(annotation: PointCloudAnnotation | undefined): boolean {
-    if (this.selectedAnnotation === annotation) {
+  public setSelectedAnnotationInteractive(annotation: SingleAnnotation | undefined): boolean {
+    if (SingleAnnotation.areEqual(this.selectedAnnotation, annotation)) {
       return false;
     }
     this.selectedAnnotation = annotation;
@@ -115,13 +117,16 @@ export class AnnotationsDomainObject extends VisualDomainObject {
 
   public setFocusAnnotationInteractive(
     focusType: FocusType,
-    focusAnnotation?: PointCloudAnnotation
+    annotation?: SingleAnnotation
   ): boolean {
-    if (focusAnnotation === this.focusAnnotation && focusType === this.focusType) {
+    if (
+      SingleAnnotation.areEqual(this.focusAnnotation, annotation) &&
+      this.focusType === focusType
+    ) {
       return false; // No change
     }
     this.focusType = focusType;
-    this.focusAnnotation = focusAnnotation;
+    this.focusAnnotation = annotation;
     this.notify(Changes.focus);
     return true;
   }

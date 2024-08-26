@@ -2,7 +2,7 @@
  * Copyright 2024 Cognite AS
  */
 
-import { type PointCloudAnnotation } from './types';
+import { type PointCloudAnnotation } from '../utils/types';
 
 import { type Status } from '../AnnotationsView';
 

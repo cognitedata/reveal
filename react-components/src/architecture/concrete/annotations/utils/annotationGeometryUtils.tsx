@@ -22,14 +22,6 @@ export function isSingleAnnotationGeometry(annotation: PointCloudAnnotation): bo
   return getSingleAnnotationGeometry(annotation) !== undefined;
 }
 
-export function hasAnnotationGeometry(annotation: PointCloudAnnotation): boolean {
-  const volume = annotation.geometry;
-  if (!isAnnotationsBoundingVolume(volume)) {
-    return false;
-  }
-  return volume !== undefined && volume.region.length >= 1;
-}
-
 export function getSingleAnnotationGeometry(
   annotation: PointCloudAnnotation
 ): undefined | AnnotationGeometry {
@@ -38,17 +30,6 @@ export function getSingleAnnotationGeometry(
     return undefined;
   }
   if (volume === undefined || volume.region.length !== 1) return undefined;
-  return volume.region[0];
-}
-
-export function getFirstAnnotationGeometry(
-  annotation: PointCloudAnnotation
-): undefined | AnnotationGeometry {
-  const volume = annotation.geometry;
-  if (!isAnnotationsBoundingVolume(volume)) {
-    return undefined;
-  }
-  if (volume === undefined || volume.region.length === 0) return undefined;
   return volume.region[0];
 }
 
