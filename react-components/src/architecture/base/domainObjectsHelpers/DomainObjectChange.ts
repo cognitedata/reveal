@@ -110,7 +110,7 @@ export class DomainObjectChange {
 // ==================================================
 // LOCAL HELPER CLASS
 // ==================================================
-class ChangedDescription {
+export class ChangedDescription {
   public change: symbol;
   public fieldName: string | undefined;
 
