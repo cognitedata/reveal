@@ -424,7 +424,7 @@ export function Viewer() {
 
       new MeasurementUi(viewer, gui.addFolder('Measurement'));
       new LoadGltfUi(gui.addFolder('GLTF'), viewer);
-	  new LoadSplatUi(gui.addFolder('Splat'), viewer);
+	  new LoadSplatUi(gui.addFolder('Splat'), viewer, client);
 
       viewer.on('click', async event => {
         const { offsetX, offsetY } = event;

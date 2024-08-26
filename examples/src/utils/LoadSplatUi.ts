@@ -11,6 +11,8 @@ import dat from 'dat.gui';
 import { Cognite3DViewer } from '@cognite/reveal';
 import { PLYLoader } from 'three/examples/jsm/loaders/PLYLoader.js';
 
+import { CogniteClient, IdEither, InternalId } from '@cognite/sdk';
+
 //import { Viewer } from "gle-gaussian-splat-3d";
 
 import * as GaussianSplats3D from "gle-gaussian-splat-3d";
@@ -178,11 +180,13 @@ export class SplatBuffers {
 
 export class LoadSplatUi {
   private readonly _viewer: Cognite3DViewer;
+  private readonly _client: CogniteClient;
   private readonly _params = {
     url: '',
 	x: 0.,
 	y: 0.,
-	z: 0.
+	z: 0.,
+	scale : 1.
   };
 
   private splatBuffers: SplatBuffers | null = null;
@@ -194,74 +198,80 @@ export class LoadSplatUi {
 		iOrientation:  {value : (new THREE.Matrix3()) }
 		};
 
-  constructor(uiFolder: dat.GUI, viewer: Cognite3DViewer) {
+  constructor(uiFolder: dat.GUI, viewer: Cognite3DViewer, client: CogniteClient) {
     this._viewer = viewer;
+    this._client = client;
     this.createGui(uiFolder);
   }
 
   private createGui(ui: dat.GUI): void {
     const actions = {
       loadSplat: () => this.loadSplat(this._params),
-      loadSplat2: () => this.loadSplat2(this._params)//,
+      loadSplat2: () => this.loadSplat2(this._params),//,
+      loadSplat3: () => this.loadSplat3(this._params)//,
 	  //sortSplat: () => this.sortSplats(),
     };
     ui.add(this._params, 'url').name('URL');
     ui.add(actions, 'loadSplat').name('Load Splat');
     ui.add(actions, 'loadSplat2').name('Load Splat 2');
+    ui.add(actions, 'loadSplat3').name('Load Splat 3');
 	//ui.add(actions, 'sortSplat').name('Sort splats');
 	ui.add(this._params, 'x',-3.14159265, 3.14159265).name('X').step(0.01);
 	ui.add(this._params, 'y',-3.14159265, 3.14159265).name('Y').step(0.01);
 	ui.add(this._params, 'z',-3.14159265, 3.14159265).name('Z').step(0.01);
+	ui.add(this._params, 'scale', 0.01, 100.).name('Scale').step(0.01);
   }
   
   private loadSplat2(params: any): void {
-	/*
-	const loader = new PLYLoader(); 
-	loader.setCustomPropertyNameMapping( {
-		splatcolor: ['f_dc_0', 'f_dc_1', 'f_dc_2'],
-		splatscale: ['scale_0', 'scale_1', 'scale_2'],
-		splatrotation: ['rot_0', 'rot_1', 'rot_2', 'rot_3'],
-		splatopacity: ['opacity']
-	 } );  
-    */
+	
 	const orientationQuaternion:THREE.Quaternion = new THREE.Quaternion();
 	orientationQuaternion.setFromEuler(new THREE.Euler( params.x, params.y, params.z, 'XYZ' ));
     
 	const url:string = params.url;// '/point_cloud.ply';
     
-      
-	
 	//const camera : any = this._viewer.cameraManager.getCamera();
 	
     const splatviewer = new GaussianSplats3D.DropInViewer({'gpuAcceleratedSort': true, 'sharedMemoryForWorkers': false});
     splatviewer.addSplatScenes([
-    /*{
-        'path': url,
-        'splatAlphaRemovalThreshold': 5
-    }
-    ,*/
     {
         'path': url,
         'rotation':orientationQuaternion.toArray(),
-        'scale': [1., 1., 1.],
+        'scale': [params.scale, params.scale, params.scale],
         'position': [0., 2.5, 0.]
     }
     ]
     , false
     );
     
-    //splatviewer.addSplatScene(url);
-    
-    //threeScene.add(viewer);
-	
     this._viewer.addObject3D(splatviewer);
-    /*
-    loader.load(
-      url,
-      plygeometry => this.addSplatToViewer2(plygeometry, orientationMatrix, url),
-      event => console.log(`Loading Splat: ${event.loaded}/${event.total}`)
+  }
+  
+  private async loadSplat3(params: any): Promise<void> {
+	
+	const orientationQuaternion:THREE.Quaternion = new THREE.Quaternion();
+	orientationQuaternion.setFromEuler(new THREE.Euler( params.x, params.y, params.z, 'XYZ' ));
+    
+	const splat_id:InternalId = {id:Number(params.url)};
+    
+    const response = await this._client.files.getDownloadUrls([splat_id]);
+
+    const url:string = response[0].downloadUrl;
+      
+    const splatviewer = new GaussianSplats3D.DropInViewer({'gpuAcceleratedSort': true, 'sharedMemoryForWorkers': false});
+    splatviewer.addSplatScenes([
+    {
+        'path': url,
+        'rotation':orientationQuaternion.toArray(),
+        'scale': [params.scale, params.scale, params.scale],
+        'position': [0., 2.5, 0.],
+		'format': 2 // SceneFormat.PLY
+    }
+    ]
+    , false
     );
-    */
+    
+    this._viewer.addObject3D(splatviewer);
+
   }
 
   private loadSplat(params: any): void {
