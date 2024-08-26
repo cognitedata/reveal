@@ -6,8 +6,9 @@ import type { Meta, StoryObj } from '@storybook/react';
 import { CadModelContainer, RevealCanvas, PointCloudContainer, RevealContext } from '../src';
 import { CogniteClient } from '@cognite/sdk';
 import { Color } from 'three';
-import { useState, type ReactElement } from 'react';
+import { ReactNode, useState, type ReactElement } from 'react';
 import { WindowWidget } from '../src/components/Widgets/WindowWidget';
+import { Button } from '@cognite/cogs.js';
 
 const meta = {
   title: 'Example/SplitWindow',
@@ -45,7 +46,10 @@ export const Main: Story = {
           <RevealCanvas>
             <PointCloudContainer addModelOptions={addModelOptions} />
             {isWindowWidgetVisible && (
-              <WindowWidget header="Widget Header" onClose={handleClose}>
+              <WindowWidget
+                header="Widget Header"
+                onClose={handleClose}
+                openInNewTab={openExternalButton()}>
                 <SecondaryRevealContainer />
               </WindowWidget>
             )}
@@ -55,6 +59,10 @@ export const Main: Story = {
     );
   }
 };
+
+function openExternalButton(): ReactNode {
+  return <Button>Open in New Tab</Button>;
+}
 
 function SecondaryRevealContainer(): ReactElement {
   return (
