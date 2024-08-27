@@ -96,7 +96,7 @@ export const OptionButton = ({
       <Dropdown
         visible={isOpen}
         hideOnSelect={true}
-        appendTo={document.body}
+        appendTo={'parent'}
         placement={usedInSettings ? 'bottom-end' : 'auto-start'}
         content={
           <div ref={menuRef}>

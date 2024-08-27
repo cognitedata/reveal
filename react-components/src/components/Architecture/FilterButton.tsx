@@ -108,7 +108,7 @@ export const FilterButton = ({
       <Dropdown
         visible={isOpen}
         hideOnSelect={false}
-        appendTo={document.body}
+        appendTo={'parent'}
         placement={usedInSettings ? 'bottom-end' : 'auto-start'}
         content={
           <div ref={menuRef}>
