@@ -114,7 +114,8 @@ export {
   type AddImage360CollectionOptions,
   type AddResourceOptions,
   type AddCadResourceOptions,
-  type AddPointCloudResourceOptions
+  type AddPointCloudResourceOptions,
+  type CadModelOptions
 } from './components/Reveal3DResources/types';
 export {
   type PointCloudAnnotationMappedAssetData,
