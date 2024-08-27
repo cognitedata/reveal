@@ -183,11 +183,15 @@ export class LoadSplatUi {
   private readonly _client: CogniteClient;
   private readonly _params = {
     url: '',
-	x: 0.,
-	y: 0.,
-	z: 0.,
+	pos_x: 0.,
+	pos_y: 0.,
+	pos_z: 0.,
+	rot_x: 0.,
+	rot_y: 0.,
+	rot_z: 0.,
 	scale : 1.
   };
+  private _splatModel : THREE.Object3D | null = null;
 
   private splatBuffers: SplatBuffers | null = null;
   private splat : THREE.InstancedMesh | null = null;
@@ -216,16 +220,19 @@ export class LoadSplatUi {
     ui.add(actions, 'loadSplat2').name('Load Splat 2');
     ui.add(actions, 'loadSplat3').name('Load Splat 3');
 	//ui.add(actions, 'sortSplat').name('Sort splats');
-	ui.add(this._params, 'x',-3.14159265, 3.14159265).name('X').step(0.01);
-	ui.add(this._params, 'y',-3.14159265, 3.14159265).name('Y').step(0.01);
-	ui.add(this._params, 'z',-3.14159265, 3.14159265).name('Z').step(0.01);
-	ui.add(this._params, 'scale', 0.01, 100.).name('Scale').step(0.01);
+	ui.add(this._params, 'rot_x',-3.14159265, 3.14159265).name('X rotation').step(0.01).onChange(() => { this._splatModel!.rotation.x = this._params.rot_x; });
+	ui.add(this._params, 'rot_y',-3.14159265, 3.14159265).name('Y rotation').step(0.01).onChange(() => { this._splatModel!.rotation.y = this._params.rot_y; });
+	ui.add(this._params, 'rot_z',-3.14159265, 3.14159265).name('Z rotation').step(0.01).onChange(() => { this._splatModel!.rotation.z = this._params.rot_z; });
+	ui.add(this._params, 'pos_x',-31415.9265, 31415.9265).name('X position').step(0.01).onChange(() => { this._splatModel!.position.x = this._params.pos_x; });
+	ui.add(this._params, 'pos_z',-31415.9265, 31415.9265).name('Z position').step(0.01).onChange(() => { this._splatModel!.position.z = this._params.pos_z; });
+	ui.add(this._params, 'pos_y',-31415.9265, 31415.9265).name('Y position').step(0.01).onChange(() => { this._splatModel!.position.y = this._params.pos_y; });
+	ui.add(this._params, 'scale', 0.01, 100.).name('Scale').step(0.01).onChange(() => { this._splatModel!.scale.set(this._params.scale, this._params.scale, this._params.scale); });
   }
   
   private loadSplat2(params: any): void {
 	
 	const orientationQuaternion:THREE.Quaternion = new THREE.Quaternion();
-	orientationQuaternion.setFromEuler(new THREE.Euler( params.x, params.y, params.z, 'XYZ' ));
+	orientationQuaternion.setFromEuler(new THREE.Euler( params.rot_x, params.rot_y, params.rot_z, 'XYZ' ));
     
 	const url:string = params.url;// '/point_cloud.ply';
     
@@ -243,13 +250,15 @@ export class LoadSplatUi {
     , false
     );
     
-    this._viewer.addObject3D(splatviewer);
+    
+    this._splatModel = splatviewer;
+    this._viewer.addObject3D(this._splatModel);
   }
   
   private async loadSplat3(params: any): Promise<void> {
 	
 	const orientationQuaternion:THREE.Quaternion = new THREE.Quaternion();
-	orientationQuaternion.setFromEuler(new THREE.Euler( params.x, params.y, params.z, 'XYZ' ));
+	orientationQuaternion.setFromEuler(new THREE.Euler( params.rot_x, params.rot_y, params.rot_z, 'XYZ' ));
     
 	const splat_id:InternalId = {id:Number(params.url)};
     
@@ -269,8 +278,8 @@ export class LoadSplatUi {
     ]
     , false
     );
-    
-    this._viewer.addObject3D(splatviewer);
+    this._splatModel = splatviewer;
+    this._viewer.addObject3D(this._splatModel);
 
   }
 
@@ -285,7 +294,7 @@ export class LoadSplatUi {
 	 } );  
 
 	const orientationMatrix:THREE.Matrix4 = new THREE.Matrix4();
-	orientationMatrix.makeRotationFromEuler(new THREE.Euler( params.x, params.y, params.z, 'XYZ' ));
+	orientationMatrix.makeRotationFromEuler(new THREE.Euler( params.rot_x, params.rot_y, params.rot_z, 'XYZ' ));
     
 	const url:string = params.url;// '/point_cloud.ply';
     loader.load(
