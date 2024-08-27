@@ -9,7 +9,8 @@ import {
   type Cognite3DViewer,
   type IFlexibleCameraManager,
   CDF_TO_VIEWER_TRANSFORMATION,
-  CognitePointCloudModel
+  CognitePointCloudModel,
+  CogniteCadModel
 } from '@cognite/reveal';
 import {
   Vector3,
@@ -149,9 +150,17 @@ export class RevealRenderTarget {
     return this.viewer.getSceneBoundingBox();
   }
 
-  public *getPointClouds(): Generator<CognitePointCloudModel> {
+  public *getPointClouds(): Generator<CogniteCadModel> {
     for (const model of this.viewer.models) {
-      if (model instanceof CognitePointCloudModel) {
+      if (model instanceof CogniteCadModel) {
+        yield model;
+      }
+    }
+  }
+
+  public *getCadModels(): Generator<CogniteCadModel> {
+    for (const model of this.viewer.models) {
+      if (model instanceof CogniteCadModel) {
         yield model;
       }
     }
