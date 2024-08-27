@@ -8,7 +8,8 @@ export function useClickOutside(ref: RefObject<HTMLElement>, callback: () => boo
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent): void => {
       const current = ref.current;
-      if (current !== null && !current.contains(event.target as Node)) {
+      const target = event.target as Node;
+      if (current !== null && !current.contains(target)) {
         if (callback()) {
           event.stopPropagation();
           event.preventDefault();
