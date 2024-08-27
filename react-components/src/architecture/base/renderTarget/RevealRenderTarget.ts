@@ -150,9 +150,9 @@ export class RevealRenderTarget {
     return this.viewer.getSceneBoundingBox();
   }
 
-  public *getPointClouds(): Generator<CogniteCadModel> {
+  public *getPointClouds(): Generator<CognitePointCloudModel> {
     for (const model of this.viewer.models) {
-      if (model instanceof CogniteCadModel) {
+      if (model instanceof CognitePointCloudModel) {
         yield model;
       }
     }
