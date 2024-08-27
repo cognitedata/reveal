@@ -209,6 +209,7 @@ function createOptionButton(command: BaseOptionCommand, t: TranslateDelegate): R
 }
 
 function createFilterButton(command: BaseFilterCommand, t: TranslateDelegate): ReactElement {
+  command.initializeChildrenIfNeeded();
   if (!command.isVisible) {
     return <></>;
   }
