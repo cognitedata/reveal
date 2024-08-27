@@ -14,10 +14,14 @@ import { KeyboardSpeedCommand } from '../../architecture/base/concreteCommands/K
 import { ObservationsTool } from '../../architecture/concrete/observations/ObservationsTool';
 import { createButtonFromCommandConstructor } from './CommandButtons';
 import { SettingsCommand } from '../../architecture/base/concreteCommands/SettingsCommand';
+import { PointCloudFilterCommand } from '../../architecture';
 
 export class RevealButtons {
   static Settings = (): ReactElement =>
     createButtonFromCommandConstructor(() => new SettingsCommand());
+
+  static PointCloudFilter = (): ReactElement =>
+    createButtonFromCommandConstructor(() => new PointCloudFilterCommand());
 
   static FitView = (): ReactElement =>
     createButtonFromCommandConstructor(() => new FitViewCommand());

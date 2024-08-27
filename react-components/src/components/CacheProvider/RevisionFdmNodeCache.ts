@@ -20,6 +20,12 @@ import { max } from 'lodash';
 import assert from 'assert';
 import { type Fdm3dDataProvider } from '../../data-providers/Fdm3dDataProvider';
 
+const emptyAncestorQueryResult: AncestorQueryResult = {
+  connections: [],
+  ancestorsWithSameMapping: [],
+  firstMappedAncestorTreeIndex: -1
+};
+
 export class RevisionFdmNodeCache {
   private readonly _cogniteClient: CogniteClient;
   private readonly _fdmClient: FdmSDK;
@@ -211,11 +217,7 @@ export class RevisionFdmNodeCache {
     const ancestorMappings = await this.getMappingConnectionsForAncestors(ancestors);
 
     if (ancestorMappings.length === 0) {
-      return {
-        connections: [],
-        ancestorsWithSameMapping: ancestors,
-        firstMappedAncestorTreeIndex: -1
-      };
+      return emptyAncestorQueryResult;
     }
 
     const connectionsWithCorrespondingTreeIndex = this.combineConnectionsWithTreeIndex(
@@ -226,6 +228,11 @@ export class RevisionFdmNodeCache {
     const firstMappedAncestorTreeIndex = findLargestTreeIndex(
       connectionsWithCorrespondingTreeIndex
     );
+
+    if (firstMappedAncestorTreeIndex === undefined) {
+      return emptyAncestorQueryResult;
+    }
+
     return getAncestorDataForTreeIndex(
       firstMappedAncestorTreeIndex,
       connectionsWithCorrespondingTreeIndex,
@@ -331,10 +338,8 @@ export class RevisionFdmNodeCache {
 
 function findLargestTreeIndex(
   connectionsWithTreeIndex: Array<{ connection: FdmCadConnection; treeIndex: TreeIndex }>
-): TreeIndex {
-  const maxTreeIndex = max(connectionsWithTreeIndex.map((e) => e.treeIndex));
-  assert(maxTreeIndex !== undefined);
-  return maxTreeIndex;
+): TreeIndex | undefined {
+  return max(connectionsWithTreeIndex.map((e) => e.treeIndex));
 }
 
 function getAncestorDataForTreeIndex(
