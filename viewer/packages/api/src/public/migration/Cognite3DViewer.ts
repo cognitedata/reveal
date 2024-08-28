@@ -1893,6 +1893,51 @@ export class Cognite3DViewer {
     nearFarPlaneBoundingBox.makeEmpty();
     sceneBoundingBox.makeEmpty();
 
+    this._models.forEach(model => {
+      model.getModelBoundingBox(temporaryBox);
+      if (temporaryBox.isEmpty()) {
+        return;
+      }
+      nearFarPlaneBoundingBox.union(temporaryBox);
+
+      // The getModelBoundingBox is using restrictToMostGeometry = true
+      model.getModelBoundingBox(temporaryBox, true);
+      if (temporaryBox.isEmpty()) {
+        return;
+      }
+      sceneBoundingBox.union(temporaryBox);
+    });
+    this._sceneHandler.customObjects.forEach(customObject => {
+      if (!customObject.object.visible) {
+        return;
+      }
+      customObject.getBoundingBox(temporaryBox);
+      if (temporaryBox.isEmpty()) {
+        return;
+      }
+      nearFarPlaneBoundingBox.union(temporaryBox);
+      if (!customObject.isPartOfBoundingBox) {
+        return;
+      }
+      sceneBoundingBox.union(temporaryBox);
+    });
+    console.log('old:');
+    console.log('nearFarPlaneBoundingBox: ', nearFarPlaneBoundingBox);
+    console.log('sceneBoundingBox: ', sceneBoundingBox);
+  }
+
+  /*
+  /** @private *
+  private recalculateBoundingBox() {
+    // See https://stackoverflow.com/questions/8101119/how-do-i-methodically-choose-the-near-clip-plane-distance-for-a-perspective-proj
+    if (this.isDisposed) {
+      return;
+    }
+
+    const { nearFarPlaneBoundingBox, sceneBoundingBox, temporaryBox } = this._boundingBoxes;
+    nearFarPlaneBoundingBox.makeEmpty();
+    sceneBoundingBox.makeEmpty();
+
     for (let pass = 0; pass < 2; pass++) {
       // On the first pass, use visible models only
       // If no bounding box is found, use all models on the second pass
@@ -1932,7 +1977,10 @@ export class Cognite3DViewer {
         break;
       }
     }
+    console.log('nearFarPlaneBoundingBox: ', nearFarPlaneBoundingBox);
+    console.log('sceneBoundingBox: ', sceneBoundingBox);
   }
+  */
 
   /** @private */
   private setupDomElementResizeListener(domElement: HTMLElement): ResizeObserver {
