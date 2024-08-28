@@ -36,8 +36,8 @@ const DefaultContentWrapper = (props: CustomTopbarContent): ReactElement => {
           lowQualitySettings={props.lowFidelitySettings}
           highQualitySettings={props.highFidelitySettings}
         />
+        <ResetCameraButton />
       </FlexSection>
-      <ResetCameraButton />
     </>
   );
 };
