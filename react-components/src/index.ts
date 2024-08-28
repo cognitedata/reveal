@@ -143,10 +143,18 @@ export type {
   RuleOutputSet,
   TimeseriesRuleTrigger,
   MetadataRuleTrigger,
+  FdmRuleTrigger,
+  FdmKeyRuleTriggerTyping,
+  FdmRuleTriggerTyping,
+  FdmInstanceNodeDataKey,
   StringCondition,
   NumericCondition,
+  DatetimeCondition,
+  BooleanCondition,
   StringExpression,
   NumericExpression,
+  DatetimeExpression,
+  BooleanExpression,
   ExpressionOperator,
   Expression,
   ConcreteExpression,
@@ -157,9 +165,15 @@ export type {
   ExpressionOperatorsTypes,
   StringConditionTypes,
   NumericConditionTypes,
+  NumericUniqueConditionTypes,
   NumericWithinConditionType,
   NumericOutsideConditionType,
-  CriteriaTypes
+  DatetimeConditionTypes,
+  DatetimeUniqueConditionTypes,
+  DatetimeBetweenConditionType,
+  BooleanConditionTypes,
+  CriteriaTypes,
+  AllRuleBasedStylingGroups
 } from './components/RuleBasedOutputs/types';
 
 export { RuleBasedOutputsPanel } from './components/RuleBasedOutputs/RuleBasedOutputsPanel';
