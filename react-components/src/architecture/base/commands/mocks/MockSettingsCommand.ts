@@ -2,17 +2,17 @@
  * Copyright 2024 Cognite AS
  */
 
+import { BaseSettingsCommand } from '../BaseSettingsCommand';
 import { MockActionCommand } from './MockActionCommand';
 import { MockToggleCommand } from './MockToggleCommand';
 import { MockCheckableCommand } from './MockCheckableCommand';
 import { MockEnumOptionCommand } from './MockEnumOptionCommand';
 import { MockSliderCommand } from './MockSliderCommand';
-import { SettingsCommand } from '../SettingsCommand';
 import { MockFilterCommand } from './MockFilterCommand';
-import { type TranslateKey } from '../../utilities/TranslateKey';
 import { MockNumberOptionCommand } from './MockNumberOptionCommand';
+import { type TranslateKey } from '../../utilities/TranslateKey';
 
-export class MockSettingsCommand extends SettingsCommand {
+export class MockSettingsCommand extends BaseSettingsCommand {
   // ==================================================
   // INSTANCE FIELDS
   // ==================================================

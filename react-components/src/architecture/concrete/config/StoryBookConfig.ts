@@ -21,13 +21,8 @@ import { MeasurementTool } from '../measurements/MeasurementTool';
 import { ClipTool } from '../clipping/ClipTool';
 import { KeyboardSpeedCommand } from '../../base/concreteCommands/KeyboardSpeedCommand';
 import { ObservationsTool } from '../observations/ObservationsTool';
-import { SettingsCommand } from '../../base/commands/SettingsCommand';
-import { SetQualityCommand } from '../../base/concreteCommands/SetQualityCommand';
-import { SetPointSizeCommand } from '../../base/concreteCommands/SetPointSizeCommand';
-import { SetPointColorTypeCommand } from '../../base/concreteCommands/SetPointColorTypeCommand';
-import { SetPointShapeCommand } from '../../base/concreteCommands/SetPointShapeCommand';
+import { SettingsCommand } from '../../base/concreteCommands/SettingsCommand';
 import { MockSettingsCommand } from '../../base/commands/mocks/MockSettingsCommand';
-import { PointCloudFilterCommand } from '../../base/concreteCommands/PointCloudFilterCommand';
 import { MockFilterCommand } from '../../base/commands/mocks/MockFilterCommand';
 
 export class StoryBookConfig extends BaseRevealConfig {
@@ -40,13 +35,6 @@ export class StoryBookConfig extends BaseRevealConfig {
   }
 
   public override createMainToolbar(): Array<BaseCommand | undefined> {
-    const settings = new SettingsCommand();
-    settings.add(new SetQualityCommand());
-    settings.add(new SetPointSizeCommand());
-    settings.add(new SetPointColorTypeCommand());
-    settings.add(new SetPointShapeCommand());
-    settings.add(new PointCloudFilterCommand());
-
     return [
       new SetFlexibleControlsTypeCommand(FlexibleControlsType.Orbit),
       new SetFlexibleControlsTypeCommand(FlexibleControlsType.FirstPerson),
@@ -55,7 +43,7 @@ export class StoryBookConfig extends BaseRevealConfig {
       new SetAxisVisibleCommand(),
       new ToggleMetricUnitsCommand(),
       new KeyboardSpeedCommand(),
-      settings,
+      new SettingsCommand(),
       new MockSettingsCommand(),
       new MockFilterCommand(),
       undefined,

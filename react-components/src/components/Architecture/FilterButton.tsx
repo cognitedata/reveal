@@ -44,6 +44,8 @@ export const FilterButton = ({
     []
   );
 
+  command.initializeChildrenIfNeeded();
+
   const [isEnabled, setEnabled] = useState<boolean>(true);
   const [isVisible, setVisible] = useState<boolean>(true);
   const [uniqueId, setUniqueId] = useState<number>(0);
@@ -91,24 +93,22 @@ export const FilterButton = ({
   }
   const placement = getTooltipPlacement(isHorizontal);
   const label = usedInSettings ? undefined : command.getLabel(t);
-  const shortcut = command.getShortCutKeys();
   const flexDirection = getFlexDirection(isHorizontal);
 
-  command.initializeChildrenIfNeeded();
   const children = command.children;
   if (children === undefined || !command.hasChildren) {
     return <></>;
   }
   return (
     <CogsTooltip
-      content={<LabelWithShortcut label={label} shortcut={shortcut} />}
+      content={<LabelWithShortcut label={label} command={command} />}
       disabled={usedInSettings || label === undefined}
       appendTo={document.body}
       placement={placement}>
       <Dropdown
         visible={isOpen}
         hideOnSelect={false}
-        appendTo={document.body}
+        appendTo={'parent'}
         placement={usedInSettings ? 'bottom-end' : 'auto-start'}
         content={
           <div ref={menuRef}>
@@ -124,7 +124,7 @@ export const FilterButton = ({
                 onClick={() => {
                   command.toggleAllChecked();
                 }}>
-                {command.getAllLabel(t)}
+                {BaseFilterCommand.getAllString(t)}
               </Menu.Item>
               <StyledMenuItems>
                 {children.map((child, _index): ReactElement => {

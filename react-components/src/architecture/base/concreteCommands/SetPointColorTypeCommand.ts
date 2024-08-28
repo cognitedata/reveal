@@ -80,18 +80,18 @@ function getTranslateKey(type: PointColorType): TranslateKey {
     case PointColorType.Rgb:
       return { key: 'RGB', fallback: 'RGB' };
     case PointColorType.Depth:
-      return { key: 'DEPTH', fallback: 'Depth' };
+      return { key: 'MEASUREMENTS_DEPTH', fallback: 'Depth' };
     case PointColorType.Height:
-      return { key: 'HEIGHT', fallback: 'Height' };
+      return { key: 'MEASUREMENTS_HEIGHT', fallback: 'Height' };
     case PointColorType.Classification:
       return { key: 'CLASSIFICATION', fallback: 'Classification' };
     case PointColorType.Intensity:
       return { key: 'INTENSITY', fallback: 'Intensity' };
     case PointColorType.LevelOfDetail:
-      return { key: 'LEVEL_OF_DETAIL', fallback: 'LevelOfDetail' };
+      return { fallback: 'LevelOfDetail' };
     case PointColorType.PointIndex:
-      return { key: 'POINT_INDEX', fallback: 'PointIndex' };
+      return { fallback: 'PointIndex' };
     default:
-      return { key: 'UNKNOWN', fallback: 'Unknown' };
+      return { fallback: 'Unknown' };
   }
 }

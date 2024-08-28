@@ -16,7 +16,7 @@ export class ShowAllClippingCommand extends InstanceCommand {
   public override get tooltip(): TranslateKey {
     return {
       key: 'CLIP_SHOW_SELECTED_ONLY',
-      fallback: 'Show or hide all other slicing planes and crop boxes than selected'
+      fallback: 'Show/hide slicing planes and crop boxes that are not selected'
     };
   }
 

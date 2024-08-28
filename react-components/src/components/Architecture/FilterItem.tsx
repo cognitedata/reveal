@@ -61,8 +61,9 @@ const ColorBox = styled.div<{ backgroundColor: Color }>`
 `;
 
 const CenteredContainer = styled.div`
+  padding: 0px 1px;
   display: flex;
   row-gap: 3px;
-  gap: 3px;
+  gap: 4px;
   align-items: center;
 `;

@@ -94,7 +94,7 @@ export class LineView extends GroupThreeView<LineDomainObject> {
       return undefined; // Should never be picked
     }
     // Implement the intersection logic here, because of bug in tree.js
-    const radius = getRadius(domainObject, style);
+    const radius = getSelectRadius(domainObject, style);
     if (radius <= 0) {
       return;
     }
@@ -108,7 +108,7 @@ export class LineView extends GroupThreeView<LineDomainObject> {
     const thisPoint = new Vector3();
     const intersection = new Vector3();
 
-    const radiusSquared = square(1.5 * radius); // Add 50% more to make it easier to pick
+    const radiusSquared = square(radius);
     const ray = intersectInput.raycaster.ray;
     const closestFinder = new ClosestGeometryFinder<DomainObjectIntersection>(ray.origin);
 
@@ -340,4 +340,8 @@ function adjustLabel(
 
 function getRadius(domainObject: LineDomainObject, style: LineRenderStyle): number {
   return domainObject.isSelected ? style.selectedPipeRadius : style.pipeRadius;
+}
+
+function getSelectRadius(domainObject: LineDomainObject, style: LineRenderStyle): number {
+  return 1.5 * style.selectedPipeRadius; // Added more to make it easier to pick
 }
