@@ -12,6 +12,7 @@ import { Divider } from '@cognite/cogs.js';
 import { SetOrbitOrFirstPersonControlsType } from '../RevealToolbar/SetFlexibleControlsType';
 import { RuleBasedOutputsButton } from '../RevealToolbar/RuleBasedOutputsButton';
 import { LayersButtonStrip } from '../RevealToolbar/LayersContainer/LayersButtonsStrip';
+import { ResetCameraButton } from '../RevealToolbar/ResetCameraButton';
 
 export type CustomTopbarContent = CustomToolbarContent & { topbarContent?: ReactNode };
 
@@ -36,6 +37,7 @@ const DefaultContentWrapper = (props: CustomTopbarContent): ReactElement => {
           highQualitySettings={props.highFidelitySettings}
         />
       </FlexSection>
+      <ResetCameraButton />
     </>
   );
 };
