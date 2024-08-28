@@ -228,7 +228,7 @@ function getRevisionsCadNodeFromObject3D(object3dTableName: string): QueryTableE
   return {
     nodes: {
       from: object3dTableName,
-      through: { view: COGNITE_3D_OBJECT_SOURCE, identifier: 'cadNodes' },
+      through: { view: COGNITE_CAD_NODE_SOURCE, identifier: 'object3D' },
       filter: {
         containsAny: {
           property: [CORE_DM_3D_CONTAINER_SPACE, COGNITE_CAD_NODE_SOURCE.externalId, 'revisions'],
@@ -243,7 +243,7 @@ function getRevisionsPointCloudVolumes(object3dTableName: string): QueryTableExp
   return {
     nodes: {
       from: object3dTableName,
-      through: { view: COGNITE_3D_OBJECT_SOURCE, identifier: 'pointCloudVolumes' },
+      through: { view: COGNITE_POINT_CLOUD_VOLUME_SOURCE, identifier: 'object3D' },
       filter: {
         containsAny: {
           property: [
@@ -262,7 +262,7 @@ function getObject3dRelation(visualizableTableName: string): QueryTableExpressio
   return {
     nodes: {
       from: visualizableTableName,
-      through: { view: COGNITE_VISUALIZABLE_SOURCE, identifier: 'object3d' }
+      through: { view: COGNITE_VISUALIZABLE_SOURCE, identifier: 'object3D' }
     }
   };
 }

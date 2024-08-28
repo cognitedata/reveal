@@ -6,7 +6,7 @@ import { type TaggedAddResourceOptions } from '../../components/Reveal3DResource
 import { type DmsUniqueIdentifier, type FdmSDK } from '../FdmSDK';
 import {
   COGNITE_3D_OBJECT_SOURCE,
-  type COGNITE_CAD_NODE_SOURCE,
+  COGNITE_CAD_NODE_SOURCE,
   COGNITE_VISUALIZABLE_SOURCE,
   type CogniteCADNodeProperties,
   CORE_DM_SPACE
@@ -18,7 +18,7 @@ export async function getCadModelsForInstance(
   instance: DmsUniqueIdentifier,
   fdmSdk: FdmSDK
 ): Promise<TaggedAddResourceOptions[]> {
-  const parameters = { instanceIds: [instance] };
+  const parameters = { instanceExternalId: instance.externalId, instanceSpace: instance.space };
 
   const query = {
     ...cadModelsForInstanceQuery,
@@ -44,24 +44,40 @@ export async function getCadModelsForInstance(
 
 const cadModelsForInstanceQuery = {
   with: {
-    object_3ds: {
+    asset: {
       nodes: {
         filter: {
-          containsAny: {
-            property: [
-              COGNITE_VISUALIZABLE_SOURCE.space,
-              COGNITE_VISUALIZABLE_SOURCE.externalId,
-              'object3D'
-            ],
-            values: { parameter: 'instanceId' }
-          }
+          and: [
+            {
+              equals: {
+                property: ['node', 'externalId'],
+                value: { parameter: 'instanceExternalId' }
+              }
+            },
+            {
+              equals: {
+                property: ['node', 'space'],
+                value: { parameter: 'instanceSpace' }
+              }
+            }
+          ]
         }
+      }
+    },
+    object_3ds: {
+      nodes: {
+        from: 'asset',
+        through: {
+          view: COGNITE_VISUALIZABLE_SOURCE,
+          identifier: 'object3D'
+        },
+        direction: 'outwards'
       }
     },
     cad_nodes: {
       nodes: {
         from: 'object_3ds',
-        through: { view: COGNITE_3D_OBJECT_SOURCE, identifier: 'cadNodes' }
+        through: { view: COGNITE_CAD_NODE_SOURCE, identifier: 'object3D' }
       }
     }
   },

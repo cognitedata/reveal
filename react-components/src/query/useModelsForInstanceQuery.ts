@@ -24,7 +24,7 @@ export const useModelsForInstanceQuery = (
   const fdm3dDataProvider = useFdm3dDataProvider();
 
   return useQuery({
-    queryKey: ['reveal', 'react-components', instance],
+    queryKey: ['reveal', 'react-components', 'models-for-instance', instance],
     queryFn: async () => {
       if (instance === undefined) {
         return undefined;
