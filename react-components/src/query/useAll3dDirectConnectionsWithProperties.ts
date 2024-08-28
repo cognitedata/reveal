@@ -12,6 +12,7 @@ import {
   type FdmInstanceWithPropertiesAndTyping
 } from '../components/RuleBasedOutputs/types';
 import { useMemo } from 'react';
+import { createFdmKey } from '../components/CacheProvider/idAndKeyTranslation';
 
 export function useAll3dDirectConnectionsWithProperties(
   connectionWithNodeAndView: FdmConnectionWithNode[]
@@ -20,14 +21,22 @@ export function useAll3dDirectConnectionsWithProperties(
 
   const connectionKeys = useMemo(() => {
     return connectionWithNodeAndView.map((item) => {
-      return item.connection.instance.externalId + '/' + item.connection.instance.space;
+      const fdmKey = createFdmKey(
+        item.connection.instance.space,
+        item.connection.instance.externalId
+      );
+      return fdmKey;
     });
   }, [connectionWithNodeAndView]);
 
   const connectionWithNodeAndViewMap = useMemo(() => {
     return new Map(
       connectionWithNodeAndView.map((item) => {
-        return [`${item?.connection.instance.space}/${item?.connection.instance.externalId}`, item];
+        const fdmKey = createFdmKey(
+          item.connection.instance.space,
+          item.connection.instance.externalId
+        );
+        return [fdmKey, item];
       })
     );
   }, [connectionWithNodeAndView]);
@@ -112,9 +121,9 @@ export function useAll3dDirectConnectionsWithProperties(
           let connectionFound: FdmConnectionWithNode | undefined;
 
           itemsData.items.every((itemData) => {
-            const key = `${itemData.space}/${itemData.externalId}`;
-            if (connectionWithNodeAndViewMap.has(key)) {
-              connectionFound = connectionWithNodeAndViewMap.get(key);
+            const fdmKey = createFdmKey(itemData.space, itemData.externalId);
+            if (connectionWithNodeAndViewMap.has(fdmKey)) {
+              connectionFound = connectionWithNodeAndViewMap.get(fdmKey);
               return false;
             }
             return true;
