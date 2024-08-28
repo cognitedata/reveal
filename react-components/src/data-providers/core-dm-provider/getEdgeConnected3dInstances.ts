@@ -23,7 +23,7 @@ export async function getEdgeConnected3dInstances(
     [{ source: typeof COGNITE_3D_OBJECT_SOURCE; properties: Cognite3DObjectProperties }]
   >(query);
 
-  return result.items.connected_objects_with_3d;
+  return result.items.objects_connected_with_3d;
 }
 
 const related3dEdgesQuery = {
@@ -62,7 +62,13 @@ const related3dEdgesQuery = {
         from: 'start_to_object_edges',
         chainTo: 'destination',
         filter: {
-          exists: { property: ['CogniteVisualizable', 'object3D'] }
+          exists: {
+            property: [
+              COGNITE_VISUALIZABLE_SOURCE.space,
+              COGNITE_VISUALIZABLE_SOURCE.externalId,
+              'object3D'
+            ]
+          }
         }
       }
     },
@@ -77,7 +83,7 @@ const related3dEdgesQuery = {
   select: {
     start_instance: {},
     start_to_object_edges: {},
-    connected_objects_with_3d: {},
+    objects_connected_with_3d: {},
     object_3ds: {}
   }
 } as const satisfies Omit<QueryRequest, 'cursors' | 'parameters'>;

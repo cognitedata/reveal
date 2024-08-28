@@ -69,8 +69,8 @@ function createRelevantAssetKeySet(
     .filter((object3d) => {
       const props = object3d.properties[CORE_DM_SPACE]['Cognite3DObject/v1'];
       return (
-        props.cadNodes.some((node) => cadNodeSet.has(toFdmKey(node))) ||
-        props.pointCloudVolumes.some((node) => pointCloudNodeSet.has(toFdmKey(node)))
+        props.cadNodes?.some((node) => cadNodeSet.has(toFdmKey(node))) ||
+        props.pointCloudVolumes?.some((node) => pointCloudNodeSet.has(toFdmKey(node)))
       );
     });
 

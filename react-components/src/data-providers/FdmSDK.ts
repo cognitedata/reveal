@@ -553,7 +553,9 @@ export class FdmSDK {
   }
 
   public async listDataModels(): Promise<DataModelListResponse> {
-    const result = await this._sdk.get(this._listDataModelsEndpoint, { params: { limit: 1000 } });
+    const result = await this._sdk.get(this._listDataModelsEndpoint, {
+      params: { limit: 1000, includeGlobal: true }
+    });
     if (result.status === 200) {
       return result.data;
     }

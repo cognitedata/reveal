@@ -21,14 +21,14 @@ export type FdmCadConnection = {
 export type FdmConnectionWithNode = {
   connection: FdmCadConnection;
   cadNode: Node3D;
-  view?: Source;
+  views?: Source[];
 };
 
 export type CadNodeWithFdmIds = { cadNode: Node3D; fdmIds: DmsUniqueIdentifier[] };
 export type CadNodeWithConnections = { cadNode: Node3D; connections: FdmCadConnection[] };
 export type FdmNodeDataPromises = {
   cadAndFdmNodesPromise: Promise<CadNodeWithFdmIds | undefined>;
-  viewsPromise: Promise<Source[] | undefined>;
+  viewsPromise: Promise<Source[][] | undefined>;
 };
 
 export type ModelRevisionAssetNodesResult = {

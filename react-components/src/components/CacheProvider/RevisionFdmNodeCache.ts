@@ -81,9 +81,9 @@ export class RevisionFdmNodeCache {
   private async assertOrFetchViewsForNodeData(
     searchTreeIndex: number,
     cachedFdmData: FdmConnectionWithNode[]
-  ): Promise<Source[] | undefined> {
-    if (checkDefinedView(cachedFdmData)) {
-      return cachedFdmData.map((data) => data.view);
+  ): Promise<Source[][] | undefined> {
+    if (checkDefinedViews(cachedFdmData)) {
+      return cachedFdmData.map((data) => data.views);
     }
 
     const cadNode = cachedFdmData[0].cadNode;
@@ -123,7 +123,7 @@ export class RevisionFdmNodeCache {
   private async getViewsPromiseFromDataPromises(
     cadAndConnectionsPromise: Promise<CadNodeWithConnections | undefined>,
     ancestorDataPromise: Promise<AncestorQueryResult>
-  ): Promise<Source[] | undefined> {
+  ): Promise<Source[][] | undefined> {
     const cadAndConnections = await cadAndConnectionsPromise;
     const { ancestorsWithSameMapping } = await ancestorDataPromise;
     const ancestorTreeIndexes = ancestorsWithSameMapping.map((ancestor) => ancestor.treeIndex);
@@ -137,9 +137,9 @@ export class RevisionFdmNodeCache {
         ? this._treeIndexToFdmConnections.get(cachedTreeIndexesDescending[0])
         : undefined;
 
-    if (checkDefinedView(cachedNodeData)) {
+    if (checkDefinedViews(cachedNodeData)) {
       this.setCacheDataForTreeIndices(ancestorTreeIndexes, cachedNodeData);
-      return cachedNodeData.map((data) => data.view);
+      return cachedNodeData.map((data) => data.views);
     }
 
     return await this.getAndCacheViewsPromiseForNodeData(cadAndConnections, ancestorTreeIndexes);
@@ -180,7 +180,7 @@ export class RevisionFdmNodeCache {
   private async getAndCacheViewsPromiseForNodeData(
     cadAndFdmIds: CadNodeWithConnections | undefined,
     ancestorIndicesWithSameMapping: TreeIndex[]
-  ): Promise<Source[] | undefined> {
+  ): Promise<Source[][] | undefined> {
     if (cadAndFdmIds === undefined) {
       this.setCacheDataForTreeIndices(ancestorIndicesWithSameMapping, []);
       return undefined;
@@ -191,14 +191,12 @@ export class RevisionFdmNodeCache {
       cadAndFdmIds.connections.map((connection) => connection.instance)
     );
 
-    const views = nodeInspectionResults.items.map(
-      (item) => item.inspectionResults.involvedViews[0]
-    );
+    const views = nodeInspectionResults.items.map((item) => item.inspectionResults.involvedViews);
 
     const dataWithViews = cadAndFdmIds.connections.map((connection, ind) => ({
       connection,
       cadNode: cadAndFdmIds.cadNode,
-      view: nodeInspectionResults.items[ind].inspectionResults.involvedViews[0]
+      view: views[ind]
     }));
 
     this.setCacheDataForTreeIndices(ancestorIndicesWithSameMapping, dataWithViews);
@@ -290,7 +288,7 @@ export class RevisionFdmNodeCache {
 
   public async fetchViewsForAllConnections(): Promise<void> {
     const allConnectionsWithoutView = this.getAllConnections().filter(
-      (connection) => connection.view === undefined
+      (connection) => connection.views === undefined || connection.views.length === 0
     );
 
     if (allConnectionsWithoutView.length === 0) {
@@ -323,7 +321,7 @@ export class RevisionFdmNodeCache {
       );
 
       if (presentConnection !== undefined) {
-        presentConnection.view = connection.view;
+        presentConnection.views = connection.views;
         return;
       }
 
@@ -359,12 +357,13 @@ function getAncestorDataForTreeIndex(
   };
 }
 
-export function checkDefinedView(
+export function checkDefinedViews(
   connections?: FdmConnectionWithNode[]
 ): connections is Array<Required<FdmConnectionWithNode>> {
   if (connections === undefined) return false;
 
   return connections?.every(
-    (connection): connection is Required<FdmConnectionWithNode> => connection.view !== undefined
+    (connection): connection is Required<FdmConnectionWithNode> =>
+      connection.views !== undefined && connection.views.length > 0
   );
 }

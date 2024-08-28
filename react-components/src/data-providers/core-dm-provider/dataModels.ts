@@ -153,8 +153,8 @@ export type Cognite3DObjectProperties = {
   yMax: number;
   zMin: number;
   zMax: number;
-  asset: DmsUniqueIdentifier[];
-  cadNodes: DmsUniqueIdentifier[];
-  images360: DmsUniqueIdentifier[];
-  pointCloudVolumes: DmsUniqueIdentifier[];
+  asset?: DmsUniqueIdentifier[] | undefined;
+  cadNodes?: DmsUniqueIdentifier[] | undefined;
+  images360?: DmsUniqueIdentifier[] | undefined;
+  pointCloudVolumes?: DmsUniqueIdentifier[] | undefined;
 };

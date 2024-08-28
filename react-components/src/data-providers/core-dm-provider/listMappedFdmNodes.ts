@@ -91,7 +91,8 @@ function createRawQuery(
       cad_object_3d: {
         nodes: {
           from: 'cad_nodes',
-          through: { view: COGNITE_CAD_NODE_SOURCE, identifier: 'object3D' }
+          through: { view: COGNITE_CAD_NODE_SOURCE, identifier: 'object3D' },
+          direction: 'outwards'
         }
       },
       cad_assets: {
@@ -111,7 +112,8 @@ function createRawQuery(
       pointcloud_object_3d: {
         nodes: {
           from: 'pointcloud_volumes',
-          through: { view: COGNITE_POINT_CLOUD_VOLUME_SOURCE, identifier: 'object3D' }
+          through: { view: COGNITE_POINT_CLOUD_VOLUME_SOURCE, identifier: 'object3D' },
+          direction: 'outwards'
         }
       },
       pointcloud_assets: {

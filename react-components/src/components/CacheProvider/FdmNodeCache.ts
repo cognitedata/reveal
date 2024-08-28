@@ -269,7 +269,7 @@ export class FdmNodeCache {
 
   private async getViewsForConnections(
     connections: FdmCadConnection[]
-  ): Promise<Array<{ connection: FdmCadConnection; view: Source }>> {
+  ): Promise<Array<{ connection: FdmCadConnection; views: Source[] }>> {
     const nodeInspectionResults = await inspectNodes(
       this._fdmClient,
       connections.map((connection) => connection.instance)
@@ -277,7 +277,7 @@ export class FdmNodeCache {
 
     const dataWithViews = connections.map((connection, ind) => ({
       connection,
-      view: nodeInspectionResults.items[ind].inspectionResults.involvedViews[0]
+      views: nodeInspectionResults.items[ind].inspectionResults.involvedViews
     }));
 
     return dataWithViews;
@@ -307,19 +307,19 @@ export class FdmNodeCache {
 }
 
 async function createRevisionToConnectionsMap(
-  connectionsWithView: Array<{ connection: FdmCadConnection; view?: Source }>,
+  connectionsWithViews: Array<{ connection: FdmCadConnection; views?: Source[] }>,
   modelRevisionIds: ModelRevisionId[],
   cdfClient: CogniteClient
 ): Promise<Map<ModelRevisionKey, FdmConnectionWithNode[]>> {
-  const revisionToTreeIndexMap = createRevisionToTreeIndexMap(connectionsWithView);
+  const revisionToTreeIndexMap = createRevisionToTreeIndexMap(connectionsWithViews);
   const modelTreeIndexToNodeMap = await createModelTreeIndexToNodeMap(
     revisionToTreeIndexMap,
     modelRevisionIds,
     cdfClient
   );
 
-  return connectionsWithView.reduce((map, connectionWithView) => {
-    const connectionRevisionId = connectionWithView.connection.revisionId;
+  return connectionsWithViews.reduce((map, connectionWithViews) => {
+    const connectionRevisionId = connectionWithViews.connection.revisionId;
     const modelRevisionId = modelRevisionIds.find((p) => p.revisionId === connectionRevisionId);
 
     if (modelRevisionId === undefined) return map;
@@ -327,8 +327,8 @@ async function createRevisionToConnectionsMap(
     const value = createFdmConnectionWithNode(
       modelRevisionId,
       modelTreeIndexToNodeMap,
-      connectionWithView.connection,
-      connectionWithView.view
+      connectionWithViews.connection,
+      connectionWithViews.views
     );
 
     insertConnectionIntoMapList(value, map, modelRevisionId);
@@ -341,7 +341,7 @@ function createFdmConnectionWithNode(
   modelRevisionId: ModelRevisionId,
   modelTreeIndexToNodeMap: Map<ModelTreeIndexKey, Node3D>,
   connection: FdmCadConnection,
-  view?: Source
+  views?: Source[]
 ): FdmConnectionWithNode {
   const revisionTreeIndexKey = createModelTreeIndexKey(
     modelRevisionId.modelId,
@@ -352,7 +352,7 @@ function createFdmConnectionWithNode(
   const node = modelTreeIndexToNodeMap.get(revisionTreeIndexKey);
   assert(node !== undefined);
 
-  return { connection, cadNode: node, view };
+  return { connection, cadNode: node, views };
 }
 
 function insertConnectionIntoMapList(
