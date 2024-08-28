@@ -9,8 +9,8 @@ import {
   type AssetStylingGroup,
   type FdmPropertyType
 } from '../Reveal3DResources/types';
-import { type Datapoints, type Asset, type Timeseries, Node3D } from '@cognite/sdk';
-import { FdmCadConnection } from '../CacheProvider/types';
+import { type Datapoints, type Asset, type Timeseries, type Node3D } from '@cognite/sdk';
+import { type FdmCadConnection } from '../CacheProvider/types';
 
 // =========== RULE BASED OUTPUT DATA MODEL
 
