@@ -9,8 +9,8 @@ import {
   type AssetStylingGroup,
   type FdmPropertyType
 } from '../Reveal3DResources/types';
-import { type Datapoints, type Asset, type Timeseries } from '@cognite/sdk';
-import { type FdmInstanceNodeWithConnectionAndProperties } from '../../data-providers/types';
+import { type Datapoints, type Asset, type Timeseries, Node3D } from '@cognite/sdk';
+import { FdmCadConnection } from '../CacheProvider/types';
 
 // =========== RULE BASED OUTPUT DATA MODEL
 
@@ -253,17 +253,7 @@ export type NumericOutsideConditionType = {
   upperBoundExclusive: number;
 };
 
-export type DatetimeConditionTypes =
-  | 'before'
-  | 'notBefore'
-  | 'onOrBefore'
-  | 'between'
-  | 'notBetween'
-  | 'after'
-  | 'notAfter'
-  | 'onOrAfter'
-  | 'on'
-  | 'notOn';
+export type DatetimeConditionTypes = 'between' | 'notBetween' | DatetimeUniqueConditionTypes;
 
 export type DatetimeUniqueConditionTypes =
   | 'before'
@@ -422,4 +412,45 @@ export type FdmRuleTriggerTyping = {
     list?: boolean;
     type: string;
   };
+};
+
+export type FdmInstanceWithProperties = NodeItem<unknown> | EdgeItem<unknown>;
+
+export type FdmInstanceWithPropertiesAndTyping = {
+  items: FdmInstanceWithProperties[];
+  typing: FdmTyping;
+};
+
+export type FdmTyping = Record<
+  string,
+  Record<
+    string,
+    Record<
+      string,
+      {
+        nullable?: boolean;
+        autoIncrement?: boolean;
+        defaultValue?: any;
+        description?: string;
+        name?: string;
+        immutable?: boolean;
+        type: { collation?: string; list?: boolean; type: string };
+      }
+    >
+  >
+>;
+
+export type FdmInstanceNodeWithConnectionAndProperties = {
+  instanceType: 'node';
+  version: number;
+  space: string;
+  externalId: string;
+  createdTime: number;
+  lastUpdatedTime: number;
+  deletedTime: number;
+  items: FdmInstanceWithProperties[];
+  connection?: FdmCadConnection | undefined;
+  cadNode?: Node3D | undefined;
+  view?: Source | undefined;
+  typing: FdmTyping;
 };

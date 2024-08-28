@@ -74,10 +74,6 @@ export const RuleBasedOutputsButton = ({
     setIsRuleLoading(hasRuleLoading);
   }, [isAllMappingsFetched, currentStylingGroups, isRuleLoadingFromContext, newRuleSetEnabled]);
 
-  const handleAllMappingsFetched = useCallback((value: boolean) => {
-    setIsAllMappingsFetched(value);
-  }, []);
-
   const onChange = useCallback(
     (data: string | undefined): void => {
       const emptySelection = generateEmptyRuleForSelection(
@@ -175,7 +171,7 @@ export const RuleBasedOutputsButton = ({
       {ruleInstances !== undefined && ruleInstances?.length > 0 && (
         <RuleBasedOutputsSelector
           onRuleSetChanged={ruleSetStylingChanged}
-          onAllMappingsFetched={handleAllMappingsFetched}
+          onAllMappingsFetched={setIsAllMappingsFetched}
           ruleSet={currentRuleSetEnabled?.rule.properties}
         />
       )}

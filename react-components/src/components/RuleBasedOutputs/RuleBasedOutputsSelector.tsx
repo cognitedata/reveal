@@ -1,18 +1,19 @@
 /*!
  * Copyright 2024 Cognite AS
  */
-import { useEffect, type ReactElement, useState } from 'react';
+import { useEffect, type ReactElement, useState, useMemo } from 'react';
 
 import { CogniteCadModel } from '@cognite/reveal';
-import { type RuleOutputSet, type AllMappingStylingGroupAndStyleIndex } from './types';
+import {
+  type RuleOutputSet,
+  type AllMappingStylingGroupAndStyleIndex,
+  type FdmInstanceNodeWithConnectionAndProperties
+} from './types';
 import { generateRuleBasedOutputs } from './utils';
 import { use3dModels } from '../../hooks/use3dModels';
 import { type Datapoints, type Asset, type AssetMapping3D } from '@cognite/sdk';
 import { isDefined } from '../../utilities/isDefined';
-import {
-  type FdmInstanceNodeWithConnectionAndProperties,
-  type AssetIdsAndTimeseries
-} from '../../data-providers/types';
+import { type AssetIdsAndTimeseries } from '../../data-providers/types';
 import { useAssetsAndTimeseriesLinkageDataQuery } from '../../query/useAssetsAndTimeseriesLinkageDataQuery';
 import { useAssetMappedNodesForRevisions } from '../CacheProvider/AssetMappingAndNode3DCacheProvider';
 import { type CadModelOptions } from '../Reveal3DResources/types';
@@ -63,10 +64,11 @@ export function RuleBasedOutputsSelector({
   const { data: fdmMappedEquipmentEdges, isLoading: isFdmMappingsEdgesLoading } =
     useMappedEdgesForRevisions(cadModels, true);
 
-  const fdmConnectionWithNodeAndViewList =
-    fdmMappedEquipmentEdges !== undefined
+  const fdmConnectionWithNodeAndViewList = useMemo(() => {
+    return fdmMappedEquipmentEdges !== undefined
       ? Array.from(fdmMappedEquipmentEdges.values()).flat()
       : [];
+  }, [fdmMappedEquipmentEdges]);
 
   const { data: fdmMappings, isLoading: isFdmMappingsLoading } =
     useAll3dDirectConnectionsWithProperties(fdmConnectionWithNodeAndViewList);

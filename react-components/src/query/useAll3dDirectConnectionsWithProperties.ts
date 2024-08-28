@@ -4,21 +4,40 @@
 
 import { type UseQueryResult, useQuery } from '@tanstack/react-query';
 import { useFdmSdk } from '../components/RevealCanvas/SDKProvider';
+import { type FdmConnectionWithNode } from '../components/CacheProvider/types';
+import { type InstanceType } from '@cognite/sdk';
+import { chunk, uniqBy } from 'lodash';
 import {
   type FdmInstanceNodeWithConnectionAndProperties,
   type FdmInstanceWithPropertiesAndTyping
-} from '../data-providers/types';
-import { type FdmConnectionWithNode } from '../components/CacheProvider/types';
-import { type InstanceType } from '@cognite/sdk';
-import { chunk, pick, uniqBy } from 'lodash';
+} from '../components/RuleBasedOutputs/types';
+import { useMemo } from 'react';
 
 export function useAll3dDirectConnectionsWithProperties(
   connectionWithNodeAndView: FdmConnectionWithNode[]
 ): UseQueryResult<FdmInstanceNodeWithConnectionAndProperties[]> {
   const fdmSdk = useFdmSdk();
 
+  const connectionKeys = useMemo(() => {
+    return connectionWithNodeAndView.map((item) => {
+      return item.connection.instance.externalId + '/' + item.connection.instance.space;
+    });
+  }, [connectionWithNodeAndView]);
+
+  const connectionWithNodeAndViewMap = useMemo(() => {
+    return new Map(
+      connectionWithNodeAndView.map((item) => {
+        return [`${item?.connection.instance.space}/${item?.connection.instance.externalId}`, item];
+      })
+    );
+  }, [connectionWithNodeAndView]);
+
   return useQuery({
-    queryKey: ['reveal-react-components', 'get-all-3d-related-direct-connections'],
+    queryKey: [
+      'reveal-react-components',
+      'get-all-3d-related-direct-connections',
+      ...connectionKeys.sort()
+    ],
     queryFn: async () => {
       const instanceType: InstanceType = 'node';
       const instancesData = connectionWithNodeAndView.map((item) => {
@@ -33,11 +52,12 @@ export function useAll3dDirectConnectionsWithProperties(
         return item.view;
       });
 
-      const uniqueViews = uniqBy(instancesViews, (item) =>
-        JSON.stringify(pick(item, ['externalId', 'space']))
-      );
+      const uniqueViews = uniqBy(instancesViews, (item) => {
+        return `${item?.space}/${item?.externalId}`;
+      });
 
       const instancesDataChunks = chunk(instancesData, 1000);
+
       const instancesContent = await Promise.all(
         instancesDataChunks.flatMap((chunk) => {
           return uniqueViews.map(async (view) => {
@@ -89,18 +109,23 @@ export function useAll3dDirectConnectionsWithProperties(
 
       const instanceWithData =
         instanceItemsAndTyping?.flatMap((itemsData) => {
-          const connectionFound = connectionWithNodeAndView.find((item) =>
-            itemsData.items.find(
-              (itemData) =>
-                itemData.externalId === item.connection.instance.externalId &&
-                itemData.space === item.connection.instance.space
-            )
-          );
+          let connectionFound: FdmConnectionWithNode | undefined;
+
+          itemsData.items.every((itemData) => {
+            const key = `${itemData.space}/${itemData.externalId}`;
+            if (connectionWithNodeAndViewMap.has(key)) {
+              connectionFound = connectionWithNodeAndViewMap.get(key);
+              return false;
+            }
+            return true;
+          });
+
           return {
             ...connectionFound,
             ...itemsData
           };
         }) ?? [];
+
       return instanceWithData;
     },
     enabled: connectionWithNodeAndView.length > 0
