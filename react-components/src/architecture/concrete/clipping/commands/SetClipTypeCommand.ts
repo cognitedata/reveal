@@ -113,29 +113,29 @@ function getTooltipByPrimitiveType(primitiveType: PrimitiveType): TranslateKey {
   switch (primitiveType) {
     case PrimitiveType.PlaneX:
       return {
-        key: 'SLICE_X_ADD',
-        fallback: 'Add X slice. Click at one point.'
+        key: 'ADD_SLICE_X',
+        fallback: 'Add vertical slice along Y-axis. Select a point.'
       };
     case PrimitiveType.PlaneY:
       return {
-        key: 'SLICE_Y_ADD',
-        fallback: 'Add Y slice. Click at one point.'
+        key: 'ADD_SLICE_Y',
+        fallback: 'Add vertical slice along X-axis. Select a point.'
       };
     case PrimitiveType.PlaneZ:
       return {
-        key: 'SLICE_Z_ADD',
-        fallback: 'Add Z slice. Click at one point.'
+        key: 'ADD_SLICE_Z',
+        fallback: 'Add horizontal slice. Select a point.'
       };
     case PrimitiveType.PlaneXY:
       return {
-        key: 'SLICE_XY_ADD',
-        fallback: 'Add XY slice. Click at two points.'
+        key: 'ADD_SLICE_XY',
+        fallback: 'Add vertical slice. Select two points.'
       };
     case PrimitiveType.Box:
       return {
-        key: 'CROP_BOX_ADD',
+        key: 'ADD_CROP_BOX',
         fallback:
-          'Create crop box. Click at three points in a horizontal plan and the fourth to give it height.'
+          'Create crop box. Select three points in a horizontal plane, then select a fourth point for height.'
       };
     default:
       throw new Error('Unknown PrimitiveType');

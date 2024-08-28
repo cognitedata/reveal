@@ -2,7 +2,15 @@
  * Copyright 2024 Cognite AS
  */
 
-import { useCallback, useEffect, useMemo, useState, type ReactElement } from 'react';
+import {
+  type MouseEvent,
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+  type ReactElement
+} from 'react';
 import {
   Button,
   Dropdown,
@@ -24,24 +32,25 @@ import {
 import { LabelWithShortcut } from './LabelWithShortcut';
 import { type TranslateDelegate } from '../../architecture/base/utilities/TranslateKey';
 import styled from 'styled-components';
-import { type SettingsCommand } from '../../architecture/base/commands/SettingsCommand';
+import { type BaseSettingsCommand } from '../../architecture/base/commands/BaseSettingsCommand';
 import { BaseOptionCommand } from '../../architecture/base/commands/BaseOptionCommand';
 import { OptionButton } from './OptionButton';
 import { BaseSliderCommand } from '../../architecture/base/commands/BaseSliderCommand';
 import { BaseFilterCommand } from '../../architecture/base/commands/BaseFilterCommand';
 import { FilterButton } from './FilterButton';
+import { useClickOutside } from './useClickOutside';
 
 export const SettingsButton = ({
   inputCommand,
   isHorizontal = false
 }: {
-  inputCommand: SettingsCommand;
+  inputCommand: BaseSettingsCommand;
   isHorizontal: boolean;
 }): ReactElement => {
   const renderTarget = useRenderTarget();
   const { t } = useTranslation();
-  const command = useMemo<SettingsCommand>(
-    () => getDefaultCommand<SettingsCommand>(inputCommand, renderTarget),
+  const command = useMemo<BaseSettingsCommand>(
+    () => getDefaultCommand<BaseSettingsCommand>(inputCommand, renderTarget),
     []
   );
 
@@ -66,36 +75,53 @@ export const SettingsButton = ({
     };
   }, [command]);
 
+  const outsideAction = (): boolean => {
+    if (!isOpen) {
+      return false;
+    }
+    postAction();
+    return false;
+  };
+
+  const postAction = (): void => {
+    setOpen(false);
+    renderTarget.domElement.focus();
+  };
+
+  const menuRef = useRef<HTMLDivElement | null>(null);
+  useClickOutside(menuRef, outsideAction);
+
   if (!isVisible || !command.hasChildren) {
     return <></>;
   }
   const placement = getTooltipPlacement(isHorizontal);
   const label = command.getLabel(t);
-  const shortcut = command.getShortCutKeys();
   const flexDirection = getFlexDirection(isHorizontal);
   const children = command.children;
 
   return (
     <CogsTooltip
-      content={<LabelWithShortcut label={label} shortcut={shortcut} />}
+      content={<LabelWithShortcut label={label} command={command} />}
       disabled={label === undefined}
       appendTo={document.body}
       placement={placement}>
       <Dropdown
         visible={isOpen}
         hideOnSelect={false}
-        appendTo={document.body}
+        appendTo={'parent'}
         placement="auto-start"
         content={
-          <Menu
-            style={{
-              flexDirection,
-              padding: '4px 4px'
-            }}>
-            {children.map((child, _index): ReactElement | undefined => {
-              return createMenuItem(child, t);
-            })}
-          </Menu>
+          <div ref={menuRef}>
+            <Menu
+              style={{
+                flexDirection,
+                padding: '4px 4px'
+              }}>
+              {children.map((child, _index): ReactElement | undefined => {
+                return createMenuItem(child, t);
+              })}
+            </Menu>
+          </div>
         }>
         <Button
           type={getButtonType(command)}
@@ -105,7 +131,9 @@ export const SettingsButton = ({
           toggled={isOpen}
           aria-label={label}
           iconPlacement="right"
-          onClick={() => {
+          onClick={(event: MouseEvent<HTMLElement>) => {
+            event.stopPropagation();
+            event.preventDefault();
             setOpen((prevState) => !prevState);
           }}
         />
@@ -157,7 +185,6 @@ function createButton(command: BaseCommand, t: TranslateDelegate): ReactElement 
     return <></>;
   }
   const label = command.getLabel(t);
-  const shortcut = command.getShortCutKeys();
   return (
     <Menu.Item
       key={command.uniqueId}
@@ -170,7 +197,7 @@ function createButton(command: BaseCommand, t: TranslateDelegate): ReactElement 
         command.invoke();
         setChecked(command.isChecked);
       }}>
-      <LabelWithShortcut label={label} shortcut={shortcut} />
+      <LabelWithShortcut label={label} command={command} inverted={false} />
     </Menu.Item>
   );
 }
@@ -211,6 +238,7 @@ function createOptionButton(command: BaseOptionCommand, t: TranslateDelegate): R
 }
 
 function createFilterButton(command: BaseFilterCommand, t: TranslateDelegate): ReactElement {
+  command.initializeChildrenIfNeeded();
   if (!command.isVisible) {
     return <></>;
   }

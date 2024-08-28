@@ -21,8 +21,8 @@ export class SliceDomainObject extends PlaneDomainObject {
 
   public constructor(primitiveType: PrimitiveType) {
     super(primitiveType);
-    this.color = new Color(Color.NAMES.greenyellow);
-    this.backSideColor = new Color(Color.NAMES.red);
+    this.color = new Color(Color.NAMES.orangered);
+    this.backSideColor = new Color(Color.NAMES.palegreen);
   }
 
   // ==================================================
@@ -32,13 +32,13 @@ export class SliceDomainObject extends PlaneDomainObject {
   public override get typeName(): TranslateKey {
     switch (this.primitiveType) {
       case PrimitiveType.PlaneX:
-        return { key: 'SLICE_X', fallback: 'X slice' };
+        return { key: 'SLICE_X', fallback: 'Vertical slice along Y-axis' };
       case PrimitiveType.PlaneY:
-        return { key: 'SLICE_Y', fallback: 'Y slice' };
+        return { key: 'SLICE_Y', fallback: 'Vertical slice along X-axis' };
       case PrimitiveType.PlaneZ:
-        return { key: 'SLICE_Z', fallback: 'Z slice' };
+        return { key: 'SLICE_Z', fallback: 'Horizontal slice' };
       case PrimitiveType.PlaneXY:
-        return { key: 'SLICE_XY', fallback: 'XY slice' };
+        return { key: 'SLICE_XY', fallback: 'Vertical slice' };
       default:
         throw new Error('Unknown PrimitiveType');
     }

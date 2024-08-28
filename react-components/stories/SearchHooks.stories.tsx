@@ -126,7 +126,15 @@ const StoryContent = ({ resources }: { resources: AddResourceOptions[] }): React
     } else if (searchMethod === 'assetSearch' && !isAssetSearchFetching && assetSearchHasNextPage) {
       void fetchAssetSearchNextPage();
     }
-  }, []);
+  }, [
+    searchMethod,
+    isFetching,
+    hasNextPage,
+    fetchNextPage,
+    isAssetSearchFetching,
+    assetSearchHasNextPage,
+    fetchAssetSearchNextPage
+  ]);
 
   const filteredEquipment = useMemo(() => {
     if (searchMethod === 'allFdm') {
@@ -152,9 +160,7 @@ const StoryContent = ({ resources }: { resources: AddResourceOptions[] }): React
       const transformedAssets =
         allAssets?.pages
           .flat()
-          .map((modelsAssetPage) =>
-            modelsAssetPage.modelsAssets.flatMap((modelsAsset) => modelsAsset.assets)
-          )
+          .map((mapping) => mapping.assets)
           .flat() ?? [];
 
       const all360ImageAssets =
@@ -372,8 +378,8 @@ export const Main: Story = {
         siteId: 'celanese1'
       },
       {
-        modelId: 5653798104332258,
-        revisionId: 5045518244111296
+        modelId: 7646043527629245,
+        revisionId: 6059566106376463
       }
     ]
   },
