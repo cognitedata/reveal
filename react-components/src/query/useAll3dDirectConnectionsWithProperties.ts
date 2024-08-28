@@ -62,7 +62,11 @@ export function useAll3dDirectConnectionsWithProperties(
       });
 
       const uniqueViews = uniqBy(instancesViews, (item) => {
-        return `${item?.space}/${item?.externalId}`;
+        if (item === undefined) {
+          return '';
+        }
+        const fdmKey = createFdmKey(item?.space, item?.externalId);
+        return fdmKey;
       });
 
       const instancesDataChunks = chunk(instancesData, 1000);
