@@ -6,7 +6,7 @@ import {
   type QueryRequest,
   type QueryTableExpressionV3,
   type SourceSelectorV3
-} from '@cognite/sdk/dist/src';
+} from '@cognite/sdk';
 import { getDirectRelationProperties } from '../utils/getDirectRelationProperties';
 import {
   type Cognite3DObjectProperties,
@@ -14,15 +14,14 @@ import {
   COGNITE_CAD_NODE_SOURCE,
   COGNITE_POINT_CLOUD_VOLUME_SOURCE,
   COGNITE_VISUALIZABLE_SOURCE,
-  CORE_DM_3D_CONTAINER_SPACE,
-  CORE_DM_SPACE
+  CORE_DM_3D_CONTAINER_SPACE
 } from './dataModels';
 import { type DmsUniqueIdentifier, type FdmSDK } from '../FdmSDK';
 import { cogniteObject3dSourceWithProperties } from './cogniteObject3dSourceWithProperties';
 import { type FdmKey } from '../../components/CacheProvider/types';
 import { toFdmKey } from '../utils/toFdmKey';
-import { type ArrayElement, type PromiseType } from '../utils/typeUtils';
-import { head } from 'lodash';
+import { type PromiseType } from '../utils/typeUtils';
+import { isString } from 'lodash';
 import { type QueryResult } from '../utils/queryNodesAndEdges';
 
 export async function filterNodesByMappedTo3d(
@@ -33,67 +32,48 @@ export async function filterNodesByMappedTo3d(
 ): Promise<InstancesWithView[]> {
   const connectionData = await fetchConnectionData(nodes, revisionRefs, fdmSdk);
 
-  const assetKeys: Set<FdmKey> = createRelevantAssetKeySet(connectionData);
+  const object3dKeys: Set<FdmKey> = createRelevantObject3dKeys(connectionData);
 
-  return nodes.map((viewWithNodes) => ({
-    view: viewWithNodes.view,
-    instances: viewWithNodes.instances.filter((instance) => assetKeys.has(toFdmKey(instance)))
-  }));
+  const result = nodes.map((viewWithNodes) => {
+    if (viewWithNodes.view.externalId !== 'CogniteAsset') {
+      return {
+        view: viewWithNodes.view,
+        instances: []
+      };
+    }
+    return {
+      view: viewWithNodes.view,
+      instances: viewWithNodes.instances.filter((instance) => {
+        const object3dId = instance.properties.object3D as unknown as
+          | DmsUniqueIdentifier
+          | undefined;
+        if (!isString(object3dId?.externalId) || !isString(object3dId?.space)) {
+          return false;
+        }
+        return object3dKeys.has(toFdmKey(object3dId));
+      })
+    };
+  });
+
+  return result;
 }
 
-function createRelevantAssetKeySet(
+function createRelevantObject3dKeys(
   connectionData: PromiseType<ReturnType<typeof fetchConnectionData>>
 ): Set<FdmKey> {
-  const cadNodeSet = new Set<FdmKey>(
-    new Array<DmsUniqueIdentifier>()
-      .concat(connectionData.items.initial_nodes_cad_nodes)
-      .concat(connectionData.items.direct_nodes_cad_nodes)
-      .concat(connectionData.items.indirect_nodes_cad_nodes)
-      .map(toFdmKey)
-  );
+  const cadObject3dList = [...connectionData.items.initial_nodes_cad_nodes]
+    .concat(connectionData.items.direct_nodes_cad_nodes)
+    .concat(connectionData.items.indirect_nodes_cad_nodes)
+    .map((node) => toFdmKey(node.properties.cdf_cdm['CogniteCADNode/v1'].object3D));
 
-  const pointCloudNodeSet = new Set<FdmKey>(
-    new Array<DmsUniqueIdentifier>()
-      .concat(connectionData.items.initial_nodes_point_cloud_volumes)
-      .concat(connectionData.items.direct_nodes_point_cloud_volumes)
-      .concat(connectionData.items.indirect_nodes_point_cloud_volumes)
-      .map(toFdmKey)
-  );
+  const pointCloudObject3dList = [...connectionData.items.initial_nodes_point_cloud_volumes]
+    .concat(connectionData.items.direct_nodes_point_cloud_volumes)
+    .concat(connectionData.items.indirect_nodes_point_cloud_volumes)
+    .map((pointCloudVolume) =>
+      toFdmKey(pointCloudVolume.properties.cdf_cdm['CognitePointCloudVolume/v1'].object3D)
+    );
 
-  const relevantObject3Ds = new Array<
-    ArrayElement<typeof connectionData.items.initial_nodes_object_3ds>
-  >()
-    .concat(connectionData.items.initial_nodes_object_3ds)
-    .concat(connectionData.items.direct_nodes_object_3ds)
-    .concat(connectionData.items.indirect_nodes_object_3ds)
-    .filter((object3d) => {
-      const props = object3d.properties[CORE_DM_SPACE]['Cognite3DObject/v1'];
-      return (
-        props.cadNodes?.some((node) => cadNodeSet.has(toFdmKey(node))) ||
-        props.pointCloudVolumes?.some((node) => pointCloudNodeSet.has(toFdmKey(node)))
-      );
-    });
-
-  const relevantAssetKeySet = relevantObject3Ds.reduce((acc, object3D) => {
-    // Assume at most one connected asset
-    const firstAsset = head(object3D.properties[CORE_DM_SPACE]['Cognite3DObject/v1'].asset);
-    if (firstAsset === undefined) {
-      return acc;
-    }
-    acc.add(toFdmKey(firstAsset));
-    return acc;
-  }, new Set<FdmKey>());
-
-  // Append relevant edge start nodes directly to previous set
-  connectionData.items.indirectly_referenced_edges.reduce((acc, edge) => {
-    if (relevantAssetKeySet.has(toFdmKey(edge.endNode))) {
-      acc.add(toFdmKey(edge.startNode));
-    }
-
-    return acc;
-  }, relevantAssetKeySet);
-
-  return relevantAssetKeySet;
+  return new Set<FdmKey>([...cadObject3dList, ...pointCloudObject3dList]);
 }
 
 type SelectSourcesType = [
@@ -115,7 +95,9 @@ async function fetchConnectionData(
   );
 
   const directlyMappedIds = nodes.flatMap((node) =>
-    node.instances.map(getDirectRelationProperties)
+    node.instances.flatMap((instance) =>
+      getDirectRelationProperties(instance).map((props) => props.externalId)
+    )
   );
 
   const parameters = { initialExternalIds, directlyMappedIds, revisionRefs };
@@ -262,7 +244,8 @@ function getObject3dRelation(visualizableTableName: string): QueryTableExpressio
   return {
     nodes: {
       from: visualizableTableName,
-      through: { view: COGNITE_VISUALIZABLE_SOURCE, identifier: 'object3D' }
+      through: { view: COGNITE_VISUALIZABLE_SOURCE, identifier: 'object3D' },
+      direction: 'outwards'
     }
   };
 }
