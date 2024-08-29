@@ -19,7 +19,7 @@ import {
 import { type DmsUniqueIdentifier, type FdmSDK } from '../FdmSDK';
 import { cogniteObject3dSourceWithProperties } from './cogniteObject3dSourceWithProperties';
 import { type FdmKey } from '../../components/CacheProvider/types';
-import { toFdmKey } from '../utils/toFdmKey';
+import { createFdmKey } from '../../utilities/idAndKeyTranslation';
 import { type PromiseType } from '../utils/typeUtils';
 import { isString } from 'lodash';
 import { type QueryResult } from '../utils/queryNodesAndEdges';
@@ -50,7 +50,7 @@ export async function filterNodesByMappedTo3d(
         if (!isString(object3dId?.externalId) || !isString(object3dId?.space)) {
           return false;
         }
-        return object3dKeys.has(toFdmKey(object3dId));
+        return object3dKeys.has(createFdmKey(object3dId));
       })
     };
   });
@@ -64,13 +64,13 @@ function createRelevantObject3dKeys(
   const cadObject3dList = [...connectionData.items.initial_nodes_cad_nodes]
     .concat(connectionData.items.direct_nodes_cad_nodes)
     .concat(connectionData.items.indirect_nodes_cad_nodes)
-    .map((node) => toFdmKey(node.properties.cdf_cdm['CogniteCADNode/v1'].object3D));
+    .map((node) => createFdmKey(node.properties.cdf_cdm['CogniteCADNode/v1'].object3D));
 
   const pointCloudObject3dList = [...connectionData.items.initial_nodes_point_cloud_volumes]
     .concat(connectionData.items.direct_nodes_point_cloud_volumes)
     .concat(connectionData.items.indirect_nodes_point_cloud_volumes)
     .map((pointCloudVolume) =>
-      toFdmKey(pointCloudVolume.properties.cdf_cdm['CognitePointCloudVolume/v1'].object3D)
+      createFdmKey(pointCloudVolume.properties.cdf_cdm['CognitePointCloudVolume/v1'].object3D)
     );
 
   return new Set<FdmKey>([...cadObject3dList, ...pointCloudObject3dList]);

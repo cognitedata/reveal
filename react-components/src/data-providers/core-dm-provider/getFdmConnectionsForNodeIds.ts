@@ -17,7 +17,7 @@ import {
   CORE_DM_SPACE
 } from './dataModels';
 import { getModelIdFromExternalId } from './getCdfIdFromExternalId';
-import { toFdmKey } from '../utils/toFdmKey';
+import { createFdmKey } from '../../utilities/idAndKeyTranslation';
 import { cogniteCadNodeSourceWithProperties } from './cogniteCadNodeSourceWithProperties';
 import { restrictToDmsId } from './restrictToDmsId';
 
@@ -63,14 +63,14 @@ export async function getFdmConnectionsForNodes(
     const relevant = treeIndexSet.has(treeIndex);
 
     if (relevant) {
-      relevantCadNodeRefToObject3dRef.set(toFdmKey(cadNode), toFdmKey(props.object3D));
-      treeIndexToCadNodeMap.set(treeIndex, toFdmKey(cadNode));
+      relevantCadNodeRefToObject3dRef.set(createFdmKey(cadNode), createFdmKey(props.object3D));
+      treeIndexToCadNodeMap.set(treeIndex, createFdmKey(cadNode));
     }
   });
 
   const relevantObjectToAssetsMap = new Map<FdmKey, DmsUniqueIdentifier>(
     result.items.assets.map((asset) => [
-      toFdmKey(asset.properties.cdf_cdm['CogniteVisualizable/v1'].object3D),
+      createFdmKey(asset.properties.cdf_cdm['CogniteVisualizable/v1'].object3D),
       asset
     ])
   );

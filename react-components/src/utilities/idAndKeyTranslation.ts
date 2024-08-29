@@ -2,7 +2,7 @@
  * Copyright 2023 Cognite AS
  */
 
-import { type ExternalId, type Space } from '../../data-providers/FdmSDK';
+import { type DmsUniqueIdentifier } from '../data-providers/FdmSDK';
 import {
   type FdmKey,
   type ModelTreeIndexKey,
@@ -10,7 +10,7 @@ import {
   type TreeIndex,
   type RevisionId,
   type ModelId
-} from './types';
+} from '../components/CacheProvider/types';
 
 import { split } from 'lodash';
 
@@ -31,6 +31,6 @@ export function createModelTreeIndexKey(
   return `${modelId}/${revisionId}/${treeIndex}`;
 }
 
-export function createFdmKey(spaceId: Space, externalId: ExternalId): FdmKey {
-  return `${spaceId}/${externalId}`;
+export function createFdmKey(id: DmsUniqueIdentifier): FdmKey {
+  return `${id.space}/${id.externalId}`;
 }

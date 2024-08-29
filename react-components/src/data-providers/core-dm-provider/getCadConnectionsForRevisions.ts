@@ -15,7 +15,7 @@ import {
 } from './dataModels';
 import { cogniteCadNodeSourceWithProperties } from './cogniteCadNodeSourceWithProperties';
 import { getModelIdFromExternalId, getRevisionIdFromExternalId } from './getCdfIdFromExternalId';
-import { toFdmKey } from '../utils/toFdmKey';
+import { createFdmKey } from '../../utilities/idAndKeyTranslation';
 import { type PromiseType } from '../utils/typeUtils';
 import { isDefined } from '../../utilities/isDefined';
 import { type QueryResult } from '../utils/queryNodesAndEdges';
@@ -33,7 +33,7 @@ export async function getCadConnectionsForRevisions(
   const returnResult = results.items.cad_nodes
     .map((cadNode) => {
       const props = cadNode.properties[CORE_DM_SPACE]['CogniteCADNode/v1'];
-      const object3dKey = cadNodeToModelMap.get(toFdmKey(cadNode));
+      const object3dKey = cadNodeToModelMap.get(createFdmKey(cadNode));
 
       if (object3dKey === undefined) {
         return undefined;
@@ -66,7 +66,7 @@ function createObject3dToAssetMap<T extends NodeItem<CogniteAssetProperties>>(
 ): Map<FdmKey, T> {
   return new Map(
     assets.map((asset) => [
-      toFdmKey(asset.properties[CORE_DM_SPACE]?.['CogniteAsset/v1'].object3D),
+      createFdmKey(asset.properties[CORE_DM_SPACE]?.['CogniteAsset/v1'].object3D),
       asset
     ])
   );
@@ -77,8 +77,8 @@ function createCadNodeToObject3dMap(
 ): Map<FdmKey, FdmKey> {
   return new Map(
     cadNodes.map((cadNode) => [
-      toFdmKey(cadNode),
-      toFdmKey(cadNode.properties.cdf_cdm['CogniteCADNode/v1'].object3D)
+      createFdmKey(cadNode),
+      createFdmKey(cadNode.properties.cdf_cdm['CogniteCADNode/v1'].object3D)
     ])
   );
 }

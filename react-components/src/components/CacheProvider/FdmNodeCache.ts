@@ -23,7 +23,7 @@ import {
   createModelTreeIndexKey,
   createModelRevisionKey,
   revisionKeyToIds
-} from './idAndKeyTranslation';
+} from '../../utilities/idAndKeyTranslation';
 
 import { partition } from 'lodash';
 
@@ -78,9 +78,7 @@ export class FdmNodeCache {
     modelRevisionIds: ModelRevisionId[],
     externalIds: DmsUniqueIdentifier[]
   ): ThreeDModelFdmMappings[] {
-    const inputExternalIdSet = new Set<FdmKey>(
-      externalIds.map((id) => createFdmKey(id.space, id.externalId))
-    );
+    const inputExternalIdSet = new Set<FdmKey>(externalIds.map(createFdmKey));
 
     return modelRevisionIds.map((modelRevisionId) => {
       return this.getCachedModelMappingForRevision(modelRevisionId, inputExternalIdSet);
@@ -122,7 +120,7 @@ export class FdmNodeCache {
       return [];
     }
 
-    const fdmKeySet = new Set(instances.map((id) => createFdmKey(id.space, id.externalId)));
+    const fdmKeySet = new Set(instances.map(createFdmKey));
 
     const revisionToConnectionsMap = await this.getAndCacheRevisionToConnectionsMap(
       modelRevisions,
@@ -424,10 +422,7 @@ function intersectWithFdmKeySet(
   relevantFdmKeySet: Set<FdmKey>
 ): FdmConnectionWithNode[] {
   return connections.filter((connectionData) => {
-    const fdmKey = createFdmKey(
-      connectionData.connection.instance.space,
-      connectionData.connection.instance.externalId
-    );
+    const fdmKey = createFdmKey(connectionData.connection.instance);
     return relevantFdmKeySet.has(fdmKey);
   });
 }
