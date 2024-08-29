@@ -7,7 +7,6 @@ import { type BaseCreator } from '../../base/domainObjectsHelpers/BaseCreator';
 import { ShowMeasurementsOnTopCommand } from './commands/ShowMeasurementsOnTopCommand';
 import { SetMeasurementTypeCommand } from './commands/SetMeasurementTypeCommand';
 import { type TranslateKey } from '../../base/utilities/TranslateKey';
-import { ToggleMetricUnitsCommand } from '../../base/concreteCommands/ToggleMetricUnitsCommand';
 import { PrimitiveEditTool } from '../primitives/PrimitiveEditTool';
 import { MeasureLineDomainObject } from './MeasureLineDomainObject';
 import { MeasureBoxDomainObject } from './MeasureBoxDomainObject';
@@ -49,7 +48,6 @@ export class MeasurementTool extends PrimitiveEditTool {
       new SetMeasurementTypeCommand(PrimitiveType.Box),
       undefined, // Separator
       new UndoCommand(),
-      new ToggleMetricUnitsCommand(),
       new ShowMeasurementsOnTopCommand()
     ];
   }
