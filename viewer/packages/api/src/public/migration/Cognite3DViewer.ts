@@ -1323,7 +1323,7 @@ export class Cognite3DViewer {
   }
 
   /**
-   * Move camera to a place where a all objects in the scene are visible
+   * Move camera to a place where a all objects in the scene are visible.
    * @param duration The duration of the animation moving the camera. Set this to 0 (zero) to disable animation.
    */
   fitCameraToVisualSceneBoundingBox(duration?: number): void {
