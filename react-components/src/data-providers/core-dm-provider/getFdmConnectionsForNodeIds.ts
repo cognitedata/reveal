@@ -17,7 +17,7 @@ import {
   CORE_DM_SPACE
 } from './dataModels';
 import { getModelIdFromExternalId } from './getCdfIdFromExternalId';
-import { createFdmKey } from '../../utilities/idAndKeyTranslation';
+import { createFdmKey } from '../../components/CacheProvider/idAndKeyTranslation';
 import { cogniteCadNodeSourceWithProperties } from './cogniteCadNodeSourceWithProperties';
 import { restrictToDmsId } from './restrictToDmsId';
 

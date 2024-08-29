@@ -2,7 +2,7 @@
  * Copyright 2023 Cognite AS
  */
 
-import { type DmsUniqueIdentifier } from '../data-providers/FdmSDK';
+import { type DmsUniqueIdentifier } from '../../data-providers/FdmSDK';
 import {
   type FdmKey,
   type ModelTreeIndexKey,
@@ -10,7 +10,7 @@ import {
   type TreeIndex,
   type RevisionId,
   type ModelId
-} from '../components/CacheProvider/types';
+} from './types';
 
 import { split } from 'lodash';
 

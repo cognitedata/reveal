@@ -19,7 +19,7 @@ import {
 import { type DmsUniqueIdentifier, type FdmSDK } from '../FdmSDK';
 import { cogniteObject3dSourceWithProperties } from './cogniteObject3dSourceWithProperties';
 import { type FdmKey } from '../../components/CacheProvider/types';
-import { createFdmKey } from '../../utilities/idAndKeyTranslation';
+import { createFdmKey } from '../../components/CacheProvider/idAndKeyTranslation';
 import { type PromiseType } from '../utils/typeUtils';
 import { isString } from 'lodash';
 import { type QueryResult } from '../utils/queryNodesAndEdges';

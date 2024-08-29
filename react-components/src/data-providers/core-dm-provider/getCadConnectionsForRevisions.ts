@@ -15,7 +15,7 @@ import {
 } from './dataModels';
 import { cogniteCadNodeSourceWithProperties } from './cogniteCadNodeSourceWithProperties';
 import { getModelIdFromExternalId, getRevisionIdFromExternalId } from './getCdfIdFromExternalId';
-import { createFdmKey } from '../../utilities/idAndKeyTranslation';
+import { createFdmKey } from '../../components/CacheProvider/idAndKeyTranslation';
 import { type PromiseType } from '../utils/typeUtils';
 import { isDefined } from '../../utilities/isDefined';
 import { type QueryResult } from '../utils/queryNodesAndEdges';

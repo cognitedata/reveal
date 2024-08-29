@@ -23,7 +23,7 @@ import {
   createModelTreeIndexKey,
   createModelRevisionKey,
   revisionKeyToIds
-} from '../../utilities/idAndKeyTranslation';
+} from './idAndKeyTranslation';
 
 import { partition } from 'lodash';
 
