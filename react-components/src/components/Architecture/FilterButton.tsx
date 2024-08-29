@@ -27,6 +27,7 @@ import { useClickOutside } from './useClickOutside';
 import styled from 'styled-components';
 import { BaseFilterCommand } from '../../architecture/base/commands/BaseFilterCommand';
 import { FilterItem } from './FilterItem';
+import { OPTION_MIN_WIDTH, DEFAULT_PADDING } from './constants';
 
 export const FilterButton = ({
   inputCommand,
@@ -143,8 +144,8 @@ export const FilterButton = ({
           iconPlacement="right"
           aria-label={command.getLabel(t)}
           style={{
-            minWidth: usedInSettings ? '100px' : undefined,
-            padding: usedInSettings ? '4px 4px' : undefined
+            minWidth: usedInSettings ? OPTION_MIN_WIDTH : undefined,
+            padding: usedInSettings ? DEFAULT_PADDING : undefined
           }}
           onClick={(event: MouseEvent<HTMLElement>) => {
             setOpen(!isOpen);

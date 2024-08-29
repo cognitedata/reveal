@@ -26,6 +26,7 @@ import {
 import { LabelWithShortcut } from './LabelWithShortcut';
 import { type TranslateDelegate } from '../../architecture/base/utilities/TranslateKey';
 import { useClickOutside } from './useClickOutside';
+import { DEFAULT_PADDING, OPTION_MIN_WIDTH } from './constants';
 
 export const OptionButton = ({
   inputCommand,
@@ -114,8 +115,8 @@ export const OptionButton = ({
         }>
         <Button
           style={{
-            padding: usedInSettings ? '4px 4px' : '8px 4px',
-            minWidth: usedInSettings ? '100px' : undefined
+            padding: usedInSettings ? DEFAULT_PADDING : '8px 4px',
+            minWidth: usedInSettings ? OPTION_MIN_WIDTH : undefined
           }}
           type={usedInSettings ? 'tertiary' : getButtonType(command)}
           icon={isOpen ? 'ChevronUp' : 'ChevronDown'}

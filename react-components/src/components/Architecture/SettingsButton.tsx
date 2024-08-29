@@ -39,6 +39,7 @@ import { BaseSliderCommand } from '../../architecture/base/commands/BaseSliderCo
 import { BaseFilterCommand } from '../../architecture/base/commands/BaseFilterCommand';
 import { FilterButton } from './FilterButton';
 import { useClickOutside } from './useClickOutside';
+import { DEFAULT_PADDING } from './constants';
 
 export const SettingsButton = ({
   inputCommand,
@@ -115,7 +116,7 @@ export const SettingsButton = ({
             <Menu
               style={{
                 flexDirection,
-                padding: '4px 4px'
+                padding: DEFAULT_PADDING
               }}>
               {children.map((child, _index): ReactElement | undefined => {
                 return createMenuItem(child, t);
@@ -169,7 +170,7 @@ function createToggle(command: BaseCommand, t: TranslateDelegate): ReactElement 
       hasSwitch={true}
       disabled={!command.isEnabled}
       toggled={isChecked}
-      style={{ padding: '4px 4px' }}
+      style={{ padding: DEFAULT_PADDING }}
       onChange={() => {
         command.invoke();
         setChecked(command.isChecked);
@@ -192,7 +193,7 @@ function createButton(command: BaseCommand, t: TranslateDelegate): ReactElement 
       toggled={isChecked}
       icon={getIcon(command)}
       iconPlacement="left"
-      style={{ padding: '4px 4px' }}
+      style={{ padding: DEFAULT_PADDING }}
       onClick={() => {
         command.invoke();
         setChecked(command.isChecked);
