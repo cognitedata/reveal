@@ -8,7 +8,7 @@ import { useFdmNodeCache } from '../components/CacheProvider/NodeCacheProvider';
 import { Box3 } from 'three';
 
 export type CameraNavigationActions = {
-  fitCameraToSceneBoundingBox: (duration?: number) => void;
+  fitCameraToVisualSceneBoundingBox: (duration?: number) => void;
   fitCameraToAllModels: (duration?: number) => void;
   fitCameraToModelNode: (revisionId: number, nodeId: number) => Promise<void>;
   fitCameraToModelNodes: (revisionId: number, nodeids: number[]) => Promise<void>;
@@ -21,8 +21,8 @@ export const useCameraNavigation = (): CameraNavigationActions => {
   const fdmNodeCache = useFdmNodeCache();
   const viewer = useReveal();
 
-  const fitCameraToSceneBoundingBox = (duration?: number): void => {
-    viewer.fitCameraToSceneBoundingBox(duration);
+  const fitCameraToVisualSceneBoundingBox = (duration?: number): void => {
+    viewer.fitCameraToVisualSceneBoundingBox(duration);
   };
 
   const fitCameraToAllModels = (duration?: number): void => {
@@ -41,11 +41,11 @@ export const useCameraNavigation = (): CameraNavigationActions => {
     }
 
     const nodeBoundingBoxes = await (model as CogniteCadModel).getBoundingBoxesByNodeIds(nodeIds);
-    const unionedBox = nodeBoundingBoxes.reduce(
+    const boundingBox = nodeBoundingBoxes.reduce(
       (currentBox, nextBox) => currentBox.union(nextBox),
       new Box3()
     );
-    viewer.cameraManager.fitCameraToBoundingBox(unionedBox);
+    viewer.cameraManager.fitCameraToBoundingBox(boundingBox);
   };
 
   const fitCameraToModelNode = async (revisionId: number, nodeId: number): Promise<void> => {
@@ -83,7 +83,7 @@ export const useCameraNavigation = (): CameraNavigationActions => {
   };
 
   return {
-    fitCameraToSceneBoundingBox,
+    fitCameraToVisualSceneBoundingBox,
     fitCameraToAllModels,
     fitCameraToInstance,
     fitCameraToInstances,

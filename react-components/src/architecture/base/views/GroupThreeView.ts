@@ -34,6 +34,7 @@ export abstract class GroupThreeView<DomainObjectType extends DomainObject = Dom
   // ==================================================
 
   protected readonly _group: Group = new Group();
+  private _inNeedsUpdate = false; // True if inside needsUpdate. This is to avoid infinite recursion.
 
   protected get isEmpty(): boolean {
     return this._group.children.length === 0;
@@ -189,13 +190,23 @@ export abstract class GroupThreeView<DomainObjectType extends DomainObject = Dom
    * When it returns true, the view will be rebuild by addChildren().
    * @returns A boolean value indicating whether the view needs to be updated.
    */
-  protected get needsUpdate(): boolean {
+  protected needsUpdateCore(): boolean {
     return false;
   }
 
   // ==================================================
   // INSTANCE METHODS
   // ==================================================
+
+  protected get needsUpdate(): boolean {
+    if (this._inNeedsUpdate) {
+      return false;
+    }
+    this._inNeedsUpdate = true;
+    const result = this.needsUpdateCore();
+    this._inNeedsUpdate = false;
+    return result;
+  }
 
   private makeChildren(): void {
     if (!this.isEmpty) {

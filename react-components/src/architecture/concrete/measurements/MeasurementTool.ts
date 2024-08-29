@@ -63,7 +63,7 @@ export class MeasurementTool extends PrimitiveEditTool {
       this.setAllVisible(true);
       return;
     }
-    const sceneBoundingBox = this.renderTarget.clippedSceneBoundingBox;
+    const sceneBoundingBox = this.renderTarget.clippedVisualSceneBoundingBox;
     for (const domainObject of this.getSelectable()) {
       if (domainObject instanceof MeasureBoxDomainObject) {
         const boundingBox = domainObject.getBoundingBox();

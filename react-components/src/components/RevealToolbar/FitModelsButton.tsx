@@ -13,7 +13,7 @@ export const FitModelsButton = (): ReactElement => {
   const { t } = useTranslation();
 
   const updateCamera = useCallback(() => {
-    cameraNavigation.fitCameraToSceneBoundingBox();
+    cameraNavigation.fitCameraToVisualSceneBoundingBox();
   }, []);
 
   return (
