@@ -435,9 +435,10 @@ export class Cognite3DViewer {
     get domElement(): HTMLElement;
     enter360Image(image360: Image360, revision?: Image360Revision): Promise<void>;
     exit360Image(): void;
-    fitCameraToBoundingBox(box: THREE.Box3, duration?: number, radiusFactor?: number): void;
+    fitCameraToBoundingBox(boundingBox: THREE.Box3, duration?: number, radiusFactor?: number): void;
     fitCameraToModel(model: CogniteModel, duration?: number): void;
     fitCameraToModels(models?: CogniteModel[], duration?: number, restrictToMostGeometry?: boolean): void;
+    fitCameraToVisualSceneBoundingBox(duration?: number): void;
     get360AnnotationIntersectionFromPixel(offsetX: number, offsetY: number): Promise<null | Image360AnnotationIntersection>;
     get360ImageCollections(): Image360Collection[];
     getActive360ImageInfo(): Image360WithCollection | undefined;
@@ -457,6 +458,8 @@ export class Cognite3DViewer {
     getScreenshot(width?: number, height?: number, includeUI?: boolean): Promise<string>;
     getVersion(): string;
     getViewState(): ViewerState;
+    // @beta
+    getVisualSceneBoundingBox(): THREE.Box3;
     loadCameraFromModel(model: CogniteModel): void;
     get models(): CogniteModel[];
     // (undocumented)
