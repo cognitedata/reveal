@@ -6,6 +6,10 @@ import { RenderTargetCommand } from '../commands/RenderTargetCommand';
 import { type TranslateKey } from '../utilities/TranslateKey';
 
 export class ToggleAllModelsVisibleCommand extends RenderTargetCommand {
+  // ==================================================
+  // OVERRIDES
+  // ==================================================
+
   public override get tooltip(): TranslateKey {
     return { fallback: 'Show or hide all models' };
   }
