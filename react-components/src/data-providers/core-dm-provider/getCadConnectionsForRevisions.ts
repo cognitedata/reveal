@@ -3,17 +3,16 @@
  */
 import { type QueryRequest } from '@cognite/sdk/dist/src';
 import { type FdmCadConnection, type FdmKey } from '../../components/CacheProvider/types';
-import { FdmNode, NodeItem, type DmsUniqueIdentifier, type FdmSDK } from '../FdmSDK';
+import { type NodeItem, type DmsUniqueIdentifier, type FdmSDK } from '../FdmSDK';
 import {
   COGNITE_3D_OBJECT_SOURCE,
   COGNITE_ASSET_SOURCE,
   COGNITE_CAD_NODE_SOURCE,
-  CogniteAssetProperties,
+  type CogniteAssetProperties,
   type CogniteCADNodeProperties,
   CORE_DM_3D_CONTAINER_SPACE,
   CORE_DM_SPACE
 } from './dataModels';
-import { cogniteObject3dSourceWithProperties } from './cogniteObject3dSourceWithProperties';
 import { cogniteCadNodeSourceWithProperties } from './cogniteCadNodeSourceWithProperties';
 import { getModelIdFromExternalId, getRevisionIdFromExternalId } from './getCdfIdFromExternalId';
 import { toFdmKey } from '../utils/toFdmKey';

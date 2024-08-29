@@ -10,7 +10,7 @@ import {
 import { getDirectRelationProperties } from '../utils/getDirectRelationProperties';
 import {
   type Cognite3DObjectProperties,
-  COGNITE_3D_OBJECT_SOURCE,
+  type COGNITE_3D_OBJECT_SOURCE,
   COGNITE_CAD_NODE_SOURCE,
   COGNITE_POINT_CLOUD_VOLUME_SOURCE,
   COGNITE_VISUALIZABLE_SOURCE,

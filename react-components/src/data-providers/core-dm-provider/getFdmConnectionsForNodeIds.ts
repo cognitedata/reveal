@@ -6,13 +6,13 @@ import { type FdmCadConnection, type FdmKey } from '../../components/CacheProvid
 import { type DmsUniqueIdentifier, type FdmSDK } from '../FdmSDK';
 import {
   type Cognite3DObjectProperties,
-  COGNITE_3D_OBJECT_SOURCE,
+  type COGNITE_3D_OBJECT_SOURCE,
   COGNITE_ASSET_SOURCE,
   COGNITE_CAD_NODE_SOURCE,
   COGNITE_VISUALIZABLE_SOURCE,
   type CogniteAssetProperties,
   type CogniteCADNodeProperties,
-  CogniteVisualizableProperties,
+  type CogniteVisualizableProperties,
   CORE_DM_3D_CONTAINER_SPACE,
   CORE_DM_SPACE
 } from './dataModels';

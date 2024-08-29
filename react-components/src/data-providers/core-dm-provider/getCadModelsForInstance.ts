@@ -5,7 +5,6 @@ import { type QueryRequest } from '@cognite/sdk/dist/src';
 import { type TaggedAddResourceOptions } from '../../components/Reveal3DResources/types';
 import { type DmsUniqueIdentifier, type FdmSDK } from '../FdmSDK';
 import {
-  COGNITE_3D_OBJECT_SOURCE,
   COGNITE_CAD_NODE_SOURCE,
   COGNITE_VISUALIZABLE_SOURCE,
   type CogniteCADNodeProperties,

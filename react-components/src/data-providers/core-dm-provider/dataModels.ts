@@ -4,8 +4,8 @@
 import { type Timestamp, type ViewReference } from '@cognite/sdk';
 import { type DmsUniqueIdentifier } from '../FdmSDK';
 
-export const CORE_DM_SPACE = 'cdf_cdm' as const;
-export const CORE_DM_3D_CONTAINER_SPACE = 'cdf_cdm_3d' as const;
+export const CORE_DM_SPACE = 'cdf_cdm';
+export const CORE_DM_3D_CONTAINER_SPACE = 'cdf_cdm_3d';
 
 export const COGNITE_3D_OBJECT_SOURCE = {
   externalId: 'Cognite3DObject',
