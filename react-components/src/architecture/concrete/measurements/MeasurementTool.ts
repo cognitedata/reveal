@@ -49,7 +49,6 @@ export class MeasurementTool extends PrimitiveEditTool {
       new SetMeasurementTypeCommand(PrimitiveType.Box),
       undefined, // Separator
       new UndoCommand(),
-      new ToggleMetricUnitsCommand(),
       new ShowMeasurementsOnTopCommand()
     ];
   }
