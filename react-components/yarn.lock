@@ -1747,7 +1747,7 @@ __metadata:
     "@cognite/cdf-i18n-utils": "npm:^0.7.5"
     "@cognite/cdf-utilities": "npm:^3.6.0"
     "@cognite/cogs.js": "npm:^9.84.3"
-    "@cognite/reveal": "npm:^4.16.1"
+    "@cognite/reveal": "npm:^4.17.0"
     "@cognite/sdk": "npm:^9.13.0"
     "@playwright/test": "npm:^1.43.1"
     "@storybook/addon-essentials": "npm:^8.0.9"
@@ -1802,19 +1802,19 @@ __metadata:
     vitest: "npm:^1.5.3"
   peerDependencies:
     "@cognite/cogs.js": ">=9.84.3"
-    "@cognite/reveal": 4.16.1
+    "@cognite/reveal": 4.17.0
     react: ">=18"
     react-dom: ">=18"
     styled-components: ">=5"
   languageName: unknown
   linkType: soft
 
-"@cognite/reveal@npm:^4.16.1":
-  version: 4.16.1
-  resolution: "@cognite/reveal@npm:4.16.1"
+"@cognite/reveal@npm:^4.17.0":
+  version: 4.17.0
+  resolution: "@cognite/reveal@npm:4.17.0"
   dependencies:
     "@rajesh896/broprint.js": "npm:^2.1.1"
-    "@tweenjs/tween.js": "npm:^23.1.1"
+    "@tweenjs/tween.js": "npm:^25.0.0"
     assert: "npm:^2.1.0"
     async-mutex: "npm:^0.5.0"
     glslify: "npm:^7.1.1"
@@ -1831,7 +1831,7 @@ __metadata:
   peerDependencies:
     "@cognite/sdk": ^7.16.0 || ^8.0.0
     three: 0.166.1
-  checksum: 10/9e695c51f4737a3cc84aceeac63e42c5dd9a436e8f4111611ae95a5a9789dc68f84e195ffcbbea6a30012c18186663f4ebb6dc198f2dda15c13d8ea1ef78efb3
+  checksum: 10/10340201cd744cc64aca3b1d70f44b482d18967fe8d127b22346495e3913b8ba02f281d6e9418d54dbae6fdc0aecd63c7f5b2f2c80475d9d56f7ea27a5926859
   languageName: node
   linkType: hard
 
@@ -4897,7 +4897,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@tweenjs/tween.js@npm:^23.1.1, @tweenjs/tween.js@npm:~23.1.1":
+"@tweenjs/tween.js@npm:^25.0.0":
+  version: 25.0.0
+  resolution: "@tweenjs/tween.js@npm:25.0.0"
+  checksum: 10/0df3d2668a115dbfffde2f18f7b58fecc2d1a97a69f5f522a2437dea2e7a3fbbb08763dd5dfd8e718a6e9f24153f6c80cb0a5c4ab943dc5fd1802cda9b527c04
+  languageName: node
+  linkType: hard
+
+"@tweenjs/tween.js@npm:~23.1.1":
   version: 23.1.2
   resolution: "@tweenjs/tween.js@npm:23.1.2"
   checksum: 10/ca7f62b1059917ebddf1e7e9d7361b87e945bfc21b3c840dd34b1ebfe7d90d87d0dd10ebfa88e2233fe4887cf260b9e1a45134573b599c905af45853b39ae0b8
