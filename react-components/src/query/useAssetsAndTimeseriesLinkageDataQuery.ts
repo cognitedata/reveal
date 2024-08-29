@@ -72,7 +72,9 @@ export function useAssetsAndTimeseriesLinkageDataQuery({
           .flat()
           .filter(isDefined) ?? [];
 
-      const assetFromTimeseries = await getAssetsByIds(sdk, assetIdsFound);
+      const assetFromTimeseries =
+        assetIdsFound.length > 0 ? await getAssetsByIds(sdk, assetIdsFound) : [];
+
       const assetIdsWithTimeseries =
         timeseries
           ?.map((timeseries): AssetIdsAndTimeseries[] | undefined => {

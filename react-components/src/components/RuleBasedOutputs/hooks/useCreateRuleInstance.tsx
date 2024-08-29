@@ -3,9 +3,10 @@
  */
 import { useFdmSdk } from '../../RevealCanvas/SDKProvider';
 import { RULE_BASED_OUTPUTS_VIEW } from '../constants';
-import { type ExternalIdsResultList, type RuleOutputSet } from '../types';
+import { type RuleOutputSet } from '../types';
 import { fdmViewsExist } from '../../../utilities/fdmViewsExist';
 import { useCallback } from 'react';
+import { type ExternalIdsResultList } from '../../../data-providers/FdmSDK';
 
 export const useCreateRuleInstance = (): ((
   ruleOutputSet: RuleOutputSet

@@ -6,6 +6,7 @@ import { RenderTargetCommand } from './RenderTargetCommand';
 import { type TranslateDelegate } from '../utilities/TranslateKey';
 import { type Color } from 'three';
 import { type BaseCommand } from './BaseCommand';
+import { CommandsUpdater } from '../reactUpdaters/CommandsUpdater';
 
 export abstract class BaseFilterCommand extends RenderTargetCommand {
   // ==================================================
@@ -74,15 +75,17 @@ export abstract class BaseFilterCommand extends RenderTargetCommand {
    * Toggles the checked state of all child filter items.
    * Override this method to optimize the logic.
    * If there are no child items, this method does nothing.
+   * @returns A boolean value indicating whether anything is changed
    */
-  public toggleAllChecked(): void {
+  protected toggleAllCheckedCore(): boolean {
     if (this._children === undefined || this._children.length === 0) {
-      return;
+      return false;
     }
     const isAllChecked = this.isAllChecked;
     for (const child of this._children) {
       child.setChecked(!isAllChecked);
     }
+    return true;
   }
 
   // ==================================================
@@ -107,6 +110,12 @@ export abstract class BaseFilterCommand extends RenderTargetCommand {
     return counter.toString() + ' ' + BaseFilterCommand.getSelectedString(translate);
   }
 
+  public toggleAllChecked(): void {
+    if (this.toggleAllCheckedCore()) {
+      CommandsUpdater.update(this._renderTarget);
+    }
+  }
+
   // ==================================================
   // STATIC METHODS
   // ==================================================
@@ -125,6 +134,19 @@ export abstract class BaseFilterCommand extends RenderTargetCommand {
 }
 
 export abstract class BaseFilterItemCommand extends RenderTargetCommand {
-  public abstract get color(): Color | undefined;
-  public abstract setChecked(value: boolean): void;
+  // ==================================================
+  // VIRTUAL METHODS (To be overridden)
+  // ==================================================
+
+  public get color(): Color | undefined {
+    return undefined;
+  }
+
+  protected abstract setCheckedCore(value: boolean): boolean;
+
+  public setChecked(value: boolean): void {
+    if (this.setCheckedCore(value)) {
+      CommandsUpdater.update(this._renderTarget);
+    }
+  }
 }
