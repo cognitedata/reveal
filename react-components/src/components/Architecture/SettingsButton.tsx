@@ -2,7 +2,15 @@
  * Copyright 2024 Cognite AS
  */
 
-import { useCallback, useEffect, useMemo, useState, type ReactElement } from 'react';
+import {
+  type MouseEvent,
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+  type ReactElement
+} from 'react';
 import {
   Button,
   Dropdown,
@@ -30,6 +38,8 @@ import { OptionButton } from './OptionButton';
 import { BaseSliderCommand } from '../../architecture/base/commands/BaseSliderCommand';
 import { BaseFilterCommand } from '../../architecture/base/commands/BaseFilterCommand';
 import { FilterButton } from './FilterButton';
+import { useClickOutside } from './useClickOutside';
+import { DEFAULT_PADDING } from './constants';
 
 export const SettingsButton = ({
   inputCommand,
@@ -66,6 +76,22 @@ export const SettingsButton = ({
     };
   }, [command]);
 
+  const outsideAction = (): boolean => {
+    if (!isOpen) {
+      return false;
+    }
+    postAction();
+    return false;
+  };
+
+  const postAction = (): void => {
+    setOpen(false);
+    renderTarget.domElement.focus();
+  };
+
+  const menuRef = useRef<HTMLDivElement | null>(null);
+  useClickOutside(menuRef, outsideAction);
+
   if (!isVisible || !command.hasChildren) {
     return <></>;
   }
@@ -83,18 +109,20 @@ export const SettingsButton = ({
       <Dropdown
         visible={isOpen}
         hideOnSelect={false}
-        appendTo={document.body}
+        appendTo={'parent'}
         placement="auto-start"
         content={
-          <Menu
-            style={{
-              flexDirection,
-              padding: '4px 4px'
-            }}>
-            {children.map((child, _index): ReactElement | undefined => {
-              return createMenuItem(child, t);
-            })}
-          </Menu>
+          <div ref={menuRef}>
+            <Menu
+              style={{
+                flexDirection,
+                padding: DEFAULT_PADDING
+              }}>
+              {children.map((child, _index): ReactElement | undefined => {
+                return createMenuItem(child, t);
+              })}
+            </Menu>
+          </div>
         }>
         <Button
           type={getButtonType(command)}
@@ -104,7 +132,9 @@ export const SettingsButton = ({
           toggled={isOpen}
           aria-label={label}
           iconPlacement="right"
-          onClick={() => {
+          onClick={(event: MouseEvent<HTMLElement>) => {
+            event.stopPropagation();
+            event.preventDefault();
             setOpen((prevState) => !prevState);
           }}
         />
@@ -140,7 +170,7 @@ function createToggle(command: BaseCommand, t: TranslateDelegate): ReactElement 
       hasSwitch={true}
       disabled={!command.isEnabled}
       toggled={isChecked}
-      style={{ padding: '4px 4px' }}
+      style={{ padding: DEFAULT_PADDING }}
       onChange={() => {
         command.invoke();
         setChecked(command.isChecked);
@@ -163,7 +193,7 @@ function createButton(command: BaseCommand, t: TranslateDelegate): ReactElement 
       toggled={isChecked}
       icon={getIcon(command)}
       iconPlacement="left"
-      style={{ padding: '4px 4px' }}
+      style={{ padding: DEFAULT_PADDING }}
       onClick={() => {
         command.invoke();
         setChecked(command.isChecked);

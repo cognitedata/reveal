@@ -220,8 +220,18 @@ export class Range3 {
   // INSTANCE METHODS: Operations
   // ==================================================
 
+  public makeEmpty(): void {
+    this.x.makeEmpty();
+    this.y.makeEmpty();
+    this.z.makeEmpty();
+  }
+
   public copy(box: Box3): void {
-    this.set(box.min, box.max);
+    if (box.isEmpty()) {
+      this.makeEmpty();
+    } else {
+      this.set(box.min, box.max);
+    }
   }
 
   public set(min: Vector3, max: Vector3): void {

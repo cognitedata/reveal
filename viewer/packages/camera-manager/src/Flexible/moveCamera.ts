@@ -67,6 +67,8 @@ export function moveCameraPositionAndTargetTo(
       removeEventListeners();
     })
     .start(TWEEN.now());
+
+  TWEEN.add(tween);
 }
 
 export function moveCameraTargetTo(manager: FlexibleCameraManager, target: Vector3, duration?: number): void {
