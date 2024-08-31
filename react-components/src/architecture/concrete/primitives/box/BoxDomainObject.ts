@@ -278,9 +278,6 @@ export abstract class BoxDomainObject extends VisualDomainObject {
 
   public getRotationMatrix(matrix: Matrix4 = new Matrix4()): Matrix4 {
     matrix.makeRotationFromEuler(this.rotation);
-    // matrix.makeRotationZ(this.zRotation);
-    // matrix.multiply(new Matrix4().makeRotationX(this.xRotation));
-    // matrix.makeRotationX(this.xRotation);
     return matrix;
   }
 
