@@ -10,10 +10,11 @@ import {
   type AnnotationsCylinder,
   type AnnotationsBoundingVolume
 } from '@cognite/sdk/dist/src';
-import { Matrix4, Vector3 } from 'three';
+import { Euler, Matrix4, Vector3 } from 'three';
 import { type PointCloudAnnotation } from '../utils/types';
 import { InstanceCommand } from '../../../base/commands/InstanceCommand';
 import { getRandomInt } from '../../../base/utilities/extensions/mathExtensions';
+import { degToRad } from 'three/src/math/MathUtils.js';
 
 export class CreateAnnotationMockCommand extends InstanceCommand {
   // ==================================================
@@ -43,7 +44,7 @@ export class CreateAnnotationMockCommand extends InstanceCommand {
       return false;
     }
     annotationDomainObject = new AnnotationsDomainObject();
-    annotationDomainObject.annotations = createMultiAnnotations();
+    annotationDomainObject.annotations = createSingleAnnotations();
     annotationDomainObject.setSelectedInteractive(true);
     rootDomainObject.addChildInteractive(annotationDomainObject);
     annotationDomainObject.setVisibleInteractive(true, renderTarget);
@@ -92,6 +93,10 @@ function createSingleAnnotations(): PointCloudAnnotation[] {
     const center = centerA.clone().add(centerB).multiplyScalar(0.5);
 
     const matrix = new Matrix4().makeTranslation(center);
+    matrix.multiply(
+      new Matrix4().makeRotationFromEuler(new Euler(degToRad(0), 0, degToRad(0), 'ZYX'))
+    );
+
     matrix.multiply(new Matrix4().makeScale(2, 0.5, 1));
     matrix.transpose();
 

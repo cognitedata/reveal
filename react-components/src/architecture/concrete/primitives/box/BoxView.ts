@@ -124,7 +124,9 @@ export class BoxView extends GroupThreeView<BoxDomainObject> {
       this.addChild(this.createLines(matrix));
     }
     if (showMarkers(focusType)) {
-      this.addChild(this.createRotationRing(matrix, TOP_FACE));
+      for (const face of BoxFace.getAllFaces()) {
+        this.addChild(this.createRotationRing(matrix, face));
+      }
       this.addEdgeCircles(matrix);
     }
     if (style.showLabel) {
@@ -488,11 +490,11 @@ export class BoxView extends GroupThreeView<BoxDomainObject> {
     if (realPosition.distanceTo(corner) < 0.2 * this.getFaceRadius(face)) {
       return FocusType.Corner;
     }
-    if (face.face === 2) {
-      if (RELATIVE_ROTATION_RADIUS.isInside(relativeDistance)) {
-        return FocusType.Rotation;
-      }
+    // if (face.equals(TOP_FACE)) {
+    if (RELATIVE_ROTATION_RADIUS.isInside(relativeDistance)) {
+      return FocusType.Rotation;
     }
+    // }
     return FocusType.Body;
   }
 
@@ -654,18 +656,29 @@ function adjustLabel(point: Vector3, domainObject: BoxDomainObject, spriteHeight
 
 function rotate(mesh: Mesh, face: BoxFace, domainObject: BoxDomainObject): void {
   // Must be rotated correctly because of sideness
-  if (face.face === 2) {
-    mesh.rotateX(-Math.PI / 2);
-  } else if (face.face === 5) {
-    mesh.rotateX(Math.PI / 2);
-  } else if (face.face === 0) {
-    mesh.rotateY(Math.PI / 2 + domainObject.zRotation);
-  } else if (face.face === 3) {
-    mesh.rotateY(-Math.PI / 2 + domainObject.zRotation);
-  } else if (face.face === 1) {
-    mesh.rotateY(Math.PI + domainObject.zRotation);
-  } else if (face.face === 4) {
-    mesh.rotateY(domainObject.zRotation);
+  const matrix = domainObject.getRotationMatrix();
+  matrix.premultiply(CDF_TO_VIEWER_TRANSFORMATION);
+  mesh.rotation.setFromRotationMatrix(matrix);
+
+  switch (face.face) {
+    case 0:
+      mesh.rotateY(Math.PI / 2);
+      break;
+    case 3:
+      mesh.rotateY(-Math.PI / 2);
+      break;
+    case 2:
+      mesh.rotateY(0);
+      break;
+    case 5:
+      mesh.rotateY(Math.PI);
+      break;
+    case 1:
+      mesh.rotateX(-Math.PI / 2);
+      break;
+    case 4:
+      mesh.rotateX(Math.PI / 2);
+      break;
   }
 }
 

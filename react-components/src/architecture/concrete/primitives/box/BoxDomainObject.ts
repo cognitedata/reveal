@@ -6,7 +6,7 @@ import { BoxRenderStyle } from './BoxRenderStyle';
 import { type RenderStyle } from '../../../base/renderStyles/RenderStyle';
 import { type ThreeView } from '../../../base/views/ThreeView';
 import { BoxView } from './BoxView';
-import { Box3, Matrix4, Vector3 } from 'three';
+import { Box3, Euler, Matrix4, Vector3 } from 'three';
 import { Changes } from '../../../base/domainObjectsHelpers/Changes';
 import { BoxFace } from '../../../base/utilities/box/BoxFace';
 import { FocusType } from '../../../base/domainObjectsHelpers/FocusType';
@@ -36,6 +36,8 @@ export abstract class BoxDomainObject extends VisualDomainObject {
 
   public readonly size = new Vector3().setScalar(MIN_BOX_SIZE);
   public readonly center = new Vector3();
+  public xRotation = 0; // Angle in radians in interval [0, 2*Pi>
+  public yRotation = 0; // Angle in radians in interval [0, 2*Pi>
   public zRotation = 0; // Angle in radians in interval [0, 2*Pi>
   private readonly _primitiveType: PrimitiveType;
 
@@ -67,6 +69,8 @@ export abstract class BoxDomainObject extends VisualDomainObject {
   public clear(): void {
     this.size.setScalar(MIN_BOX_SIZE);
     this.center.setScalar(0);
+    this.xRotation = 0;
+    this.yRotation = 0;
     this.zRotation = 0;
     this.focusType = FocusType.None;
     this.focusFace = undefined;
@@ -173,6 +177,8 @@ export abstract class BoxDomainObject extends VisualDomainObject {
     if (what === undefined || what === Changes.geometry) {
       this.size.copy(domainObject.size);
       this.center.copy(domainObject.center);
+      this.xRotation = domainObject.xRotation;
+      this.yRotation = domainObject.yRotation;
       this.zRotation = domainObject.zRotation;
     }
   }
@@ -254,7 +260,12 @@ export abstract class BoxDomainObject extends VisualDomainObject {
   // ==================================================
 
   public getRotationMatrix(matrix: Matrix4 = new Matrix4()): Matrix4 {
-    matrix.makeRotationZ(this.zRotation);
+    const euler = new Euler(this.xRotation, this.yRotation, this.zRotation, 'ZYX');
+    matrix.makeRotationFromEuler(euler);
+
+    // matrix.makeRotationZ(this.zRotation);
+    // matrix.multiply(new Matrix4().makeRotationX(this.xRotation));
+    // matrix.makeRotationX(this.xRotation);
     return matrix;
   }
 

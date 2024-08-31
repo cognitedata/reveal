@@ -8,7 +8,10 @@ import {
   verticalDistanceTo
 } from '../../../base/utilities/extensions/vectorExtensions';
 import { Range3 } from '../../../base/utilities/geometry/Range3';
-import { forceBetween0AndPi } from '../../../base/utilities/extensions/mathExtensions';
+import {
+  forceBetween0AndPi,
+  forceBetween0AndTwoPi
+} from '../../../base/utilities/extensions/mathExtensions';
 import { PrimitiveType } from '../PrimitiveType';
 import { getClosestPointOnLine } from '../../../base/utilities/extensions/rayExtensions';
 import { BaseCreator } from '../../../base/domainObjectsHelpers/BaseCreator';
@@ -131,7 +134,7 @@ export class BoxCreator extends BaseCreator {
     if (this.pointCount === 2) {
       // Set the zRotation
       const vector = new Vector3().subVectors(this.firstPoint, this.lastPoint);
-      domainObject.zRotation = forceBetween0AndPi(horizontalAngle(vector));
+      domainObject.zRotation = forceBetween0AndTwoPi(horizontalAngle(vector));
     }
     const primitiveType = domainObject.primitiveType;
     if (this.pointCount <= 3) {

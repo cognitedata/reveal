@@ -2,19 +2,19 @@
  * Copyright 2024 Cognite AS
  */
 
-import { type Ray, Vector3, Plane, Matrix4 } from 'three';
+import { type Ray, Vector3, Plane, type Matrix4 } from 'three';
 import { Changes } from '../../../base/domainObjectsHelpers/Changes';
 import { type BoxFace } from '../../../base/utilities/box/BoxFace';
 import { FocusType } from '../../../base/domainObjectsHelpers/FocusType';
 import { type BoxPickInfo } from '../../../base/utilities/box/BoxPickInfo';
 import {
   forceBetween0AndPi,
+  forceBetween0AndTwoPi,
   round,
   roundIncrement
 } from '../../../base/utilities/extensions/mathExtensions';
 import {
   getAbsMaxComponentIndex,
-  horizontalAngle,
   rotateHorizontal
 } from '../../../base/utilities/extensions/vectorExtensions';
 import { PrimitiveType } from '../PrimitiveType';
@@ -46,12 +46,15 @@ export class BoxDragger extends BaseDragger {
 
   private readonly _face;
   private readonly _focusType: FocusType;
-  private readonly _normal: Vector3 = new Vector3(); // Intersection normal
-  private readonly _planeOfBox: Plane = new Plane(); // Plane of the intersection/normal
+  private readonly _normal = new Vector3(); // Intersection normal
+  private readonly _planeOfFace = new Plane(); // Plane of the intersection/normal
+  private readonly _centerOfFace = new Vector3(); // Plane of the intersection/normal
 
   // Original values when the drag started
-  private readonly _sizeOfBox: Vector3 = new Vector3();
-  private readonly _centerOfBox: Vector3 = new Vector3();
+  private readonly _sizeOfBox = new Vector3();
+  private readonly _centerOfBox = new Vector3();
+  private readonly _xRotationOfBox: number = 0;
+  private readonly _yRotationOfBox: number = 0;
   private readonly _zRotationOfBox: number = 0;
 
   private readonly _cornerSign = new Vector3(); // Indicate the corner of the face
@@ -82,16 +85,22 @@ export class BoxDragger extends BaseDragger {
     this._focusType = pickInfo.focusType;
     this._cornerSign.copy(pickInfo.cornerSign);
     this._face.getNormal(this._normal);
+    this._face.getCenter(this._centerOfFace);
 
     const rotationMatrix = this.getRotationMatrix();
     this._normal.applyMatrix4(rotationMatrix);
     this._normal.normalize();
 
-    this._planeOfBox.setFromNormalAndCoplanarPoint(this._normal, this.point);
+    this._planeOfFace.setFromNormalAndCoplanarPoint(this._normal, this.point);
+
+    const matrix = domainObject.getMatrix();
+    this._centerOfFace.applyMatrix4(matrix);
 
     // Back up the original values
     this._sizeOfBox.copy(this._domainObject.size);
     this._centerOfBox.copy(this._domainObject.center);
+    this._xRotationOfBox = this._domainObject.xRotation;
+    this._yRotationOfBox = this._domainObject.yRotation;
     this._zRotationOfBox = this._domainObject.zRotation;
 
     const root = this._domainObject.rootDomainObject;
@@ -144,7 +153,7 @@ export class BoxDragger extends BaseDragger {
 
   private translate(ray: Ray, shift: boolean): boolean {
     // This translation can only be done in one plane, so we need to find the intersection point
-    const planeIntersect = ray.intersectPlane(this._planeOfBox, newVector3());
+    const planeIntersect = ray.intersectPlane(this._planeOfFace, newVector3());
     if (planeIntersect === null) {
       return false;
     }
@@ -178,7 +187,7 @@ export class BoxDragger extends BaseDragger {
     const pointOnSegment = newVector3();
 
     getClosestPointOnLine(ray, this._normal, this.point, pointOnSegment);
-    const deltaSize = this._planeOfBox.distanceToPoint(pointOnSegment);
+    const deltaSize = this._planeOfFace.distanceToPoint(pointOnSegment);
     if (deltaSize === 0) {
       return false; // Nothing has changed
     }
@@ -225,11 +234,11 @@ export class BoxDragger extends BaseDragger {
   }
 
   private resize(ray: Ray): boolean {
-    const endPoint = ray.intersectPlane(this._planeOfBox, newVector3());
+    const endPoint = ray.intersectPlane(this._planeOfFace, newVector3());
     if (endPoint === null) {
       return false;
     }
-    const startPoint = this._planeOfBox.projectPoint(this.point, newVector3());
+    const startPoint = this._planeOfFace.projectPoint(this.point, newVector3());
 
     const rotationMatrix = this.getRotationMatrix();
     const invRotationMatrix = rotationMatrix.clone().invert();
@@ -262,31 +271,52 @@ export class BoxDragger extends BaseDragger {
   }
 
   private rotate(ray: Ray, shift: boolean): boolean {
-    const endPoint = ray.intersectPlane(this._planeOfBox, newVector3());
+    const endPoint = ray.intersectPlane(this._planeOfFace, newVector3());
     if (endPoint === null) {
       return false;
     }
-    const center = this._planeOfBox.projectPoint(this._centerOfBox, newVector3());
-    const centerToStartPoint = newVector3().subVectors(this.point, center);
-    const centerToEndPoint = newVector3().subVectors(endPoint, center);
+    const centerToStartPoint = newVector3().subVectors(this.point, this._centerOfFace);
+    const centerToEndPoint = newVector3().subVectors(endPoint, this._centerOfFace);
 
     // Ignore Z-value since we are only interested in the rotation around the Z-axis
-    const deltaAngle = horizontalAngle(centerToEndPoint) - horizontalAngle(centerToStartPoint);
+    // const deltaAngle = horizontalAngle(centerToEndPoint) - horizontalAngle(centerToStartPoint);
+    let deltaAngle = centerToEndPoint.angleTo(centerToStartPoint);
+    const cross = centerToEndPoint.cross(centerToStartPoint);
 
-    // Rotate
-    let zRotation = forceBetween0AndPi(deltaAngle + this._zRotationOfBox);
-    if (shift) {
-      let degrees = radToDeg(zRotation);
-      degrees = round(degrees, CONSTRAINED_ANGLE_INCREMENT);
-      zRotation = degToRad(degrees);
+    if (this._planeOfFace.normal.dot(cross) > 0) {
+      deltaAngle = -deltaAngle;
     }
-    this._domainObject.zRotation = zRotation;
+    // Rotate
+    if (this._face.index === 0) {
+      let rotation = forceBetween0AndTwoPi(deltaAngle + this._xRotationOfBox);
+      if (shift) {
+        let degrees = radToDeg(rotation);
+        degrees = round(degrees, CONSTRAINED_ANGLE_INCREMENT);
+        rotation = degToRad(degrees);
+      }
+      this._domainObject.xRotation = rotation;
+    } else if (this._face.index === 1) {
+      let rotation = forceBetween0AndTwoPi(deltaAngle + this._yRotationOfBox);
+      if (shift) {
+        let degrees = radToDeg(rotation);
+        degrees = round(degrees, CONSTRAINED_ANGLE_INCREMENT);
+        rotation = degToRad(degrees);
+      }
+      this._domainObject.yRotation = rotation;
+    } else {
+      let rotation = forceBetween0AndTwoPi(deltaAngle + this._zRotationOfBox);
+      if (shift) {
+        let degrees = radToDeg(rotation);
+        degrees = round(degrees, CONSTRAINED_ANGLE_INCREMENT);
+        rotation = degToRad(degrees);
+      }
+      this._domainObject.zRotation = rotation;
+    }
     return true;
   }
 
-  public getRotationMatrix(matrix: Matrix4 = new Matrix4()): Matrix4 {
-    matrix.makeRotationZ(this._domainObject.zRotation);
-    return matrix;
+  public getRotationMatrix(): Matrix4 {
+    return this._domainObject.getRotationMatrix();
   }
 }
 
