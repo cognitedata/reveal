@@ -2,7 +2,7 @@
  * Copyright 2024 Cognite AS
  */
 
-import { type Ray, Vector3, Plane, type Matrix4 } from 'three';
+import { type Ray, Vector3, Plane, type Matrix4, Euler } from 'three';
 import { Changes } from '../../../base/domainObjectsHelpers/Changes';
 import { type BoxFace } from '../../../base/utilities/box/BoxFace';
 import { FocusType } from '../../../base/domainObjectsHelpers/FocusType';
@@ -53,9 +53,7 @@ export class BoxDragger extends BaseDragger {
   // Original values when the drag started
   private readonly _sizeOfBox = new Vector3();
   private readonly _centerOfBox = new Vector3();
-  private readonly _xRotationOfBox: number = 0;
-  private readonly _yRotationOfBox: number = 0;
-  private readonly _zRotationOfBox: number = 0;
+  private readonly _rotation = new Euler();
 
   private readonly _cornerSign = new Vector3(); // Indicate the corner of the face
   private readonly _unitSystem: UnitSystem | undefined = undefined;
@@ -99,9 +97,7 @@ export class BoxDragger extends BaseDragger {
     // Back up the original values
     this._sizeOfBox.copy(this._domainObject.size);
     this._centerOfBox.copy(this._domainObject.center);
-    this._xRotationOfBox = this._domainObject.xRotation;
-    this._yRotationOfBox = this._domainObject.yRotation;
-    this._zRotationOfBox = this._domainObject.zRotation;
+    this._rotation.copy(this._domainObject.rotation);
 
     const root = this._domainObject.rootDomainObject;
     if (root !== undefined) {
@@ -162,7 +158,7 @@ export class BoxDragger extends BaseDragger {
       return false;
     }
     if (shift) {
-      rotateHorizontal(deltaCenter, -this._domainObject.zRotation);
+      rotateHorizontal(deltaCenter, -this._domainObject.rotation.z);
       const maxIndex = getAbsMaxComponentIndex(deltaCenter);
       for (let index = 0; index < 3; index++) {
         if (index === maxIndex) {
@@ -170,7 +166,7 @@ export class BoxDragger extends BaseDragger {
         }
         deltaCenter.setComponent(index, 0);
       }
-      rotateHorizontal(deltaCenter, this._domainObject.zRotation);
+      rotateHorizontal(deltaCenter, this._domainObject.rotation.z);
     }
     // First copy the original values
     const { center } = this._domainObject;
@@ -287,30 +283,33 @@ export class BoxDragger extends BaseDragger {
       deltaAngle = -deltaAngle;
     }
     // Rotate
-    if (this._face.index === 0) {
-      let rotation = forceBetween0AndTwoPi(deltaAngle + this._xRotationOfBox);
+    if (this._face.index === 0 && this._domainObject.canRotateComponent(0)) {
+      let rotation = forceBetween0AndTwoPi(deltaAngle + this._rotation.x);
       if (shift) {
         let degrees = radToDeg(rotation);
         degrees = round(degrees, CONSTRAINED_ANGLE_INCREMENT);
         rotation = degToRad(degrees);
       }
-      this._domainObject.xRotation = rotation;
-    } else if (this._face.index === 1) {
-      let rotation = forceBetween0AndTwoPi(deltaAngle + this._yRotationOfBox);
+      this._domainObject.rotation.x = rotation;
+    } else if (this._face.index === 1 && this._domainObject.canRotateComponent(1)) {
+      let rotation = forceBetween0AndTwoPi(deltaAngle + this._rotation.y);
       if (shift) {
         let degrees = radToDeg(rotation);
         degrees = round(degrees, CONSTRAINED_ANGLE_INCREMENT);
         rotation = degToRad(degrees);
       }
-      this._domainObject.yRotation = rotation;
-    } else {
-      let rotation = forceBetween0AndTwoPi(deltaAngle + this._zRotationOfBox);
+      this._domainObject.rotation.y = rotation;
+    } else if (this._face.index === 2 && this._domainObject.canRotateComponent(2)) {
+      let rotation = this._domainObject.hasXYRotation
+        ? forceBetween0AndTwoPi(deltaAngle + this._rotation.z)
+        : forceBetween0AndPi(deltaAngle + this._rotation.z);
+
       if (shift) {
         let degrees = radToDeg(rotation);
         degrees = round(degrees, CONSTRAINED_ANGLE_INCREMENT);
         rotation = degToRad(degrees);
       }
-      this._domainObject.zRotation = rotation;
+      this._domainObject.rotation.z = rotation;
     }
     return true;
   }

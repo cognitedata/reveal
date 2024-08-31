@@ -42,7 +42,6 @@ import {
   createOrientedBox
 } from '../../../base/utilities/box/createLineSegmentsBufferGeometryForBox';
 import { BoxPickInfo } from '../../../base/utilities/box/BoxPickInfo';
-import { radToDeg } from 'three/src/math/MathUtils.js';
 import { Range1 } from '../../../base/utilities/geometry/Range1';
 import { PrimitiveType } from '../PrimitiveType';
 import { Quantity } from '../../../base/domainObjectsHelpers/Quantity';
@@ -133,6 +132,9 @@ export class BoxView extends GroupThreeView<BoxDomainObject> {
       this.addLabels(matrix);
     } else if (focusType === FocusType.Rotation) {
       const spriteHeight = this.getTextHeight(this.style.relativeTextSize);
+      // for (const boxFace of BoxFace.getAllFaces()) {
+      //   this.addChild(this.createRotationLabel(matrix, spriteHeight, boxFace));
+      // }
       this.addChild(this.createRotationLabel(matrix, spriteHeight, TOP_FACE));
     }
   }
@@ -254,11 +256,14 @@ export class BoxView extends GroupThreeView<BoxDomainObject> {
       return undefined;
     }
     const { domainObject } = this;
+    if (!domainObject.canRotateComponent(face.index)) {
+      return undefined;
+    }
     const { rootDomainObject } = domainObject;
     if (rootDomainObject === undefined) {
       return undefined;
     }
-    const degrees = radToDeg(domainObject.zRotation);
+    const degrees = domainObject.zRotationInDegrees;
     if (degrees === 0) {
       return undefined; // Not show when about 0
     }
@@ -298,6 +303,9 @@ export class BoxView extends GroupThreeView<BoxDomainObject> {
       return undefined;
     }
     const { domainObject, style } = this;
+    if (!domainObject.canRotateComponent(face.index)) {
+      return undefined;
+    }
     const { focusType } = domainObject;
     const radius = this.getFaceRadius(face);
 
@@ -490,9 +498,10 @@ export class BoxView extends GroupThreeView<BoxDomainObject> {
     if (realPosition.distanceTo(corner) < 0.2 * this.getFaceRadius(face)) {
       return FocusType.Corner;
     }
-    // if (face.equals(TOP_FACE)) {
-    if (RELATIVE_ROTATION_RADIUS.isInside(relativeDistance)) {
-      return FocusType.Rotation;
+    if (domainObject.canRotateComponent(face.index)) {
+      if (RELATIVE_ROTATION_RADIUS.isInside(relativeDistance)) {
+        return FocusType.Rotation;
+      }
     }
     // }
     return FocusType.Body;

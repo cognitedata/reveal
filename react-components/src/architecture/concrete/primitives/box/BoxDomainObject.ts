@@ -26,6 +26,10 @@ import { PanelInfo } from '../../../base/domainObjectsHelpers/PanelInfo';
 import { radToDeg } from 'three/src/math/MathUtils.js';
 import { DomainObjectTransaction } from '../../../base/undo/DomainObjectTransaction';
 import { type Transaction } from '../../../base/undo/Transaction';
+import {
+  forceBetween0AndPi,
+  forceBetween0AndTwoPi
+} from '../../../base/utilities/extensions/mathExtensions';
 
 export const MIN_BOX_SIZE = 0.01;
 
@@ -36,9 +40,7 @@ export abstract class BoxDomainObject extends VisualDomainObject {
 
   public readonly size = new Vector3().setScalar(MIN_BOX_SIZE);
   public readonly center = new Vector3();
-  public xRotation = 0; // Angle in radians in interval [0, 2*Pi>
-  public yRotation = 0; // Angle in radians in interval [0, 2*Pi>
-  public zRotation = 0; // Angle in radians in interval [0, 2*Pi>
+  public readonly rotation = new Euler(0, 0, 0, 'ZYX');
   private readonly _primitiveType: PrimitiveType;
 
   // For focus when edit in 3D (Used when isSelected is true only)
@@ -57,6 +59,17 @@ export abstract class BoxDomainObject extends VisualDomainObject {
     return this._primitiveType;
   }
 
+  public get hasXYRotation(): boolean {
+    return this.rotation.x !== 0 || this.rotation.y !== 0;
+  }
+
+  public get zRotationInDegrees(): number {
+    const zRotation = this.hasXYRotation
+      ? forceBetween0AndTwoPi(this.rotation.z)
+      : forceBetween0AndPi(this.rotation.z);
+    return radToDeg(zRotation);
+  }
+
   // ==================================================
   // CONSTRUCTOR
   // ==================================================
@@ -69,9 +82,7 @@ export abstract class BoxDomainObject extends VisualDomainObject {
   public clear(): void {
     this.size.setScalar(MIN_BOX_SIZE);
     this.center.setScalar(0);
-    this.xRotation = 0;
-    this.yRotation = 0;
-    this.zRotation = 0;
+    this.rotation.set(0, 0, 0, 'ZYX');
     this.focusType = FocusType.None;
     this.focusFace = undefined;
   }
@@ -147,12 +158,12 @@ export abstract class BoxDomainObject extends VisualDomainObject {
       add('MEASUREMENTS_VOLUME', 'Volume', this.volume, Quantity.Volume);
     }
     // I forgot to add text for rotation angle before the deadline, so I used a icon instead.
-    if (this.zRotation !== 0 && isFinished) {
+    if (this.rotation.z !== 0 && isFinished) {
       info.add({
         key: undefined,
         fallback: '',
         icon: 'Angle',
-        value: radToDeg(this.zRotation),
+        value: this.zRotationInDegrees,
         quantity: Quantity.Angle
       });
     }
@@ -177,9 +188,7 @@ export abstract class BoxDomainObject extends VisualDomainObject {
     if (what === undefined || what === Changes.geometry) {
       this.size.copy(domainObject.size);
       this.center.copy(domainObject.center);
-      this.xRotation = domainObject.xRotation;
-      this.yRotation = domainObject.yRotation;
-      this.zRotation = domainObject.zRotation;
+      this.rotation.copy(domainObject.rotation);
     }
   }
 
@@ -189,6 +198,14 @@ export abstract class BoxDomainObject extends VisualDomainObject {
 
   protected override createThreeView(): ThreeView | undefined {
     return new BoxView();
+  }
+
+  // ==================================================
+  // VIRTUAL METHODS (To be overridden)
+  // ==================================================
+
+  public canRotateComponent(component: number): boolean {
+    return component === 2;
   }
 
   // ==================================================
@@ -260,9 +277,7 @@ export abstract class BoxDomainObject extends VisualDomainObject {
   // ==================================================
 
   public getRotationMatrix(matrix: Matrix4 = new Matrix4()): Matrix4 {
-    const euler = new Euler(this.xRotation, this.yRotation, this.zRotation, 'ZYX');
-    matrix.makeRotationFromEuler(euler);
-
+    matrix.makeRotationFromEuler(this.rotation);
     // matrix.makeRotationZ(this.zRotation);
     // matrix.multiply(new Matrix4().makeRotationX(this.xRotation));
     // matrix.makeRotationX(this.xRotation);

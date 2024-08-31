@@ -11,10 +11,6 @@ import { type DomainObject } from '../../base/domainObjects/DomainObject';
 import { type DomainObjectChange } from '../../base/domainObjectsHelpers/DomainObjectChange';
 import { Changes } from '../../base/domainObjectsHelpers/Changes';
 import { AnnotationsDomainObject } from './AnnotationsDomainObject';
-import {
-  forceBetween0AndPi,
-  forceBetween0AndTwoPi
-} from '../../base/utilities/extensions/mathExtensions';
 import { SingleAnnotation } from './helpers/SingleAnnotation';
 
 export class AnnotationGizmoDomainObject extends BoxDomainObject {
@@ -57,6 +53,14 @@ export class AnnotationGizmoDomainObject extends BoxDomainObject {
     if (change.isChanged(Changes.geometry)) {
       this.updateSelectedAnnotationFromThis();
     }
+  }
+
+  // ==================================================
+  // OVERRIDES of BoxDomainObject
+  // ==================================================
+
+  public override canRotateComponent(_component: number): boolean {
+    return true;
   }
 
   // ==================================================
@@ -107,12 +111,10 @@ export class AnnotationGizmoDomainObject extends BoxDomainObject {
     const quaternion = new Quaternion();
 
     matrix.decompose(position, quaternion, scale);
-    const euler = new Euler().setFromQuaternion(quaternion, 'ZYX');
+    const rotation = new Euler().setFromQuaternion(quaternion, 'ZYX');
 
     this.size.copy(scale);
     this.center.copy(position);
-    this.xRotation = forceBetween0AndTwoPi(euler.x);
-    this.yRotation = forceBetween0AndTwoPi(euler.y);
-    this.zRotation = forceBetween0AndTwoPi(euler.z);
+    this.rotation.copy(rotation);
   }
 }

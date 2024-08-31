@@ -8,10 +8,7 @@ import {
   verticalDistanceTo
 } from '../../../base/utilities/extensions/vectorExtensions';
 import { Range3 } from '../../../base/utilities/geometry/Range3';
-import {
-  forceBetween0AndPi,
-  forceBetween0AndTwoPi
-} from '../../../base/utilities/extensions/mathExtensions';
+import { forceBetween0AndTwoPi } from '../../../base/utilities/extensions/mathExtensions';
 import { PrimitiveType } from '../PrimitiveType';
 import { getClosestPointOnLine } from '../../../base/utilities/extensions/rayExtensions';
 import { BaseCreator } from '../../../base/domainObjectsHelpers/BaseCreator';
@@ -134,14 +131,14 @@ export class BoxCreator extends BaseCreator {
     if (this.pointCount === 2) {
       // Set the zRotation
       const vector = new Vector3().subVectors(this.firstPoint, this.lastPoint);
-      domainObject.zRotation = forceBetween0AndTwoPi(horizontalAngle(vector));
+      domainObject.rotation.z = forceBetween0AndTwoPi(horizontalAngle(vector));
     }
     const primitiveType = domainObject.primitiveType;
     if (this.pointCount <= 3) {
       // Set the center and the size only in 2D space
       const newCenter = new Vector3();
       const newSize = new Vector3();
-      this.getCenterAndSizeFromBoundingBox(domainObject.zRotation, newCenter, newSize);
+      this.getCenterAndSizeFromBoundingBox(domainObject.rotation.z, newCenter, newSize);
 
       domainObject.center.x = newCenter.x;
       domainObject.size.x = newSize.x;
