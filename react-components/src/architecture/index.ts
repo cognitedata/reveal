@@ -5,6 +5,7 @@
 export type { CommandUpdateDelegate } from './base/commands/BaseCommand';
 export { BaseCommand } from './base/commands/BaseCommand';
 export { BaseFilterCommand } from './base/commands/BaseFilterCommand';
+export { BaseFilterItemCommand } from './base/commands/BaseFilterCommand';
 export { BaseOptionCommand } from './base/commands/BaseOptionCommand';
 export { BaseSliderCommand } from './base/commands/BaseSliderCommand';
 export { BaseTool } from './base/commands/BaseTool';

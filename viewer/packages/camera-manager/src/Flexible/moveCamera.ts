@@ -67,6 +67,8 @@ export function moveCameraPositionAndTargetTo(
       removeEventListeners();
     })
     .start(TWEEN.now());
+
+  TWEEN.add(tween);
 }
 
 export function moveCameraTargetTo(manager: FlexibleCameraManager, target: Vector3, duration?: number): void {
@@ -126,6 +128,8 @@ export function moveCameraTargetTo(manager: FlexibleCameraManager, target: Vecto
       removeEventListeners();
     })
     .start(TWEEN.now());
+
+  TWEEN.add(tween);
 }
 
 function createTweenAnimationWithStop<T extends Record<string, any>>(

@@ -58,7 +58,7 @@ export function use3dRelatedDirectConnections(
         .map((viewList, objectInd) => viewList.map((view) => [objectInd, view] as const))
         .flat();
 
-      const [deduplicatedViews, viewToDeduplicatedIndexMap] = createDeduplicatediewToIndexMap(
+      const [deduplicatedViews, viewToDeduplicatedIndexMap] = createDeduplicatedViewToIndexMap(
         relatedObjectViewsWithObjectIndex
       );
 
@@ -86,7 +86,7 @@ function createViewKey(source: Source): ViewKey {
   return `${source.externalId}/${source.space}/${source.version}`;
 }
 
-function createDeduplicatediewToIndexMap(
+function createDeduplicatedViewToIndexMap(
   viewsWithObjectIndex: Array<readonly [number, Source]>
 ): [Source[], Map<ViewKey, number>] {
   const deduplicatedViews: Source[] = [];
