@@ -40,7 +40,7 @@ export class AnnotationGizmoDomainObject extends BoxDomainObject {
   }
 
   public override get hasPanelInfo(): boolean {
-    return false;
+    return true;
   }
 
   public override clone(what?: symbol): DomainObject {
@@ -84,7 +84,7 @@ export class AnnotationGizmoDomainObject extends BoxDomainObject {
       matrix.scale(new Vector3(2, 2, 2));
     }
     if (annotation.geometry.cylinder !== undefined) {
-      matrix.scale(new Vector3(2, 1, 2));
+      matrix.scale(new Vector3(2, 2, 2));
     }
     this.setMatrixFromAnnotation(matrix);
     return true;
