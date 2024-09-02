@@ -27,7 +27,7 @@ export function createCylinderGeometryAsVertices(): number[] {
   for (let i = 0; i <= totalSegments; i++) {
     const angle = i * angleIncrement;
     vertices.push(Math.sin(angle)); // x-coordinate
-    vertices.push(-0.5); // y-coordinate (fixed for bottom circle)
+    vertices.push(-1); // y-coordinate (fixed for bottom circle)
     vertices.push(Math.cos(angle)); // z-coordinate
   }
 
@@ -35,7 +35,7 @@ export function createCylinderGeometryAsVertices(): number[] {
   for (let i = 0; i <= totalSegments; i++) {
     const angle = i * angleIncrement;
     vertices.push(Math.sin(angle)); // x-coordinate
-    vertices.push(0.5); // y-coordinate (fixed for top circle)
+    vertices.push(1); // y-coordinate (fixed for top circle)
     vertices.push(Math.cos(angle)); // z-coordinate
   }
 

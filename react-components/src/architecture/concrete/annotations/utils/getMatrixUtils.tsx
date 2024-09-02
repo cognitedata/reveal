@@ -46,19 +46,13 @@ function getCylinderMatrix(cylinder: AnnotationsCylinder, margin: number): Matri
   const centerA = new Vector3(...cylinder.centerA);
   const centerB = new Vector3(...cylinder.centerB);
 
-  const center = centerB.clone();
-  center.add(centerA);
-  center.multiplyScalar(0.5);
-
-  // Calculate the axis of the cylinder
-  const axis = centerB.clone();
-  axis.sub(centerA);
-  axis.normalize();
-
   // Calculate the scale of the cylinder
   const radius = cylinder.radius * (1 + margin);
   const height = centerA.distanceTo(centerB);
-  const scale = new Vector3(radius, height, radius);
+  const scale = new Vector3(radius, height / 2, radius);
+
+  const center = new Vector3().addVectors(centerB, centerA).divideScalar(2);
+  const axis = new Vector3().subVectors(centerB, centerA).normalize();
 
   // Use quaternion to rotate cylinder from default to target orientation
   const quaternion = new Quaternion();

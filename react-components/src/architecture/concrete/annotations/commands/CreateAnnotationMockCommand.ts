@@ -90,7 +90,7 @@ function createSingleAnnotations(): PointCloudAnnotation[] {
     const centerA = new Vector3(x, y, 0);
     const centerB = centerA.clone();
     centerB.x += 4;
-    const center = centerA.clone().add(centerB).multiplyScalar(0.5);
+    const center = new Vector3().addVectors(centerA, centerB).divideScalar(2);
 
     const matrix = new Matrix4().makeTranslation(center);
     matrix.multiply(

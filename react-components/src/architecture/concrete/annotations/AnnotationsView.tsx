@@ -437,8 +437,7 @@ function createMeshByMatrix(
   material: MeshBasicMaterial,
   isCylinder: boolean
 ): Mesh {
-  const geometry = isCylinder ? new CylinderGeometry(1, 1, 1) : new BoxGeometry(2, 2, 2);
-
+  const geometry = isCylinder ? new CylinderGeometry(1, 1, 2) : new BoxGeometry(2, 2, 2);
   const mesh = new Mesh(geometry, material);
   mesh.applyMatrix4(matrix);
   return mesh;
