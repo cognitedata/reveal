@@ -437,7 +437,12 @@ function createMeshByMatrix(
   material: MeshBasicMaterial,
   isCylinder: boolean
 ): Mesh {
-  const geometry = isCylinder ? new CylinderGeometry(1, 1, 2) : new BoxGeometry(2, 2, 2);
+  const geometry = isCylinder ? new CylinderGeometry(1, 1, 2) : new BoxGeometry(1, 1, 1);
+  if (isCylinder) {
+    // In Three.js, the cylinder is oriented along the Y-axis, so we need to rotate it
+    // so up is the Z-axis.
+    geometry.applyMatrix4(CDF_TO_VIEWER_TRANSFORMATION.clone().invert());
+  }
   const mesh = new Mesh(geometry, material);
   mesh.applyMatrix4(matrix);
   return mesh;

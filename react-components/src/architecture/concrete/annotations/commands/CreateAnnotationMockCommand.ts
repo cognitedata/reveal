@@ -83,7 +83,7 @@ function createAnnotationsCylinder(
 function createSingleAnnotations(): PointCloudAnnotation[] {
   const annotations: PointCloudAnnotation[] = [];
 
-  const radius = 0.5;
+  const radius = 1;
   for (let i = 0; i < 14; i++) {
     const x = 2 * i + 2;
     const y = 2 * i;
@@ -97,7 +97,7 @@ function createSingleAnnotations(): PointCloudAnnotation[] {
       new Matrix4().makeRotationFromEuler(new Euler(degToRad(0), 0, degToRad(0), 'ZYX'))
     );
 
-    matrix.multiply(new Matrix4().makeScale(2, 0.5, 1));
+    matrix.multiply(new Matrix4().makeScale(4, 1, 2));
     matrix.transpose();
 
     const geometry: AnnotationsBoundingVolume = {
@@ -105,8 +105,8 @@ function createSingleAnnotations(): PointCloudAnnotation[] {
       label: 'test',
       region: [
         {
-          cylinder: i % 2 === 0 ? createAnnotationsCylinder(centerA, centerB, radius) : undefined,
-          box: i % 2 !== 0 ? createAnnotationsBox(matrix) : undefined
+          cylinder: i % 2 !== 0 ? createAnnotationsCylinder(centerA, centerB, radius) : undefined,
+          box: i % 2 === 0 ? createAnnotationsBox(matrix) : undefined
         }
       ]
     };

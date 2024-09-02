@@ -19,7 +19,8 @@ import {
   CircleGeometry,
   type Material,
   FrontSide,
-  type PerspectiveCamera
+  type PerspectiveCamera,
+  CylinderGeometry
 } from 'three';
 import { CylinderDomainObject } from './CylinderDomainObject';
 import { type DomainObjectChange } from '../../../base/domainObjectsHelpers/DomainObjectChange';
@@ -40,7 +41,7 @@ import { createSpriteWithText } from '../../../base/utilities/sprites/createSpri
 import {
   createLineSegmentsBufferGeometryForBox,
   createOrientedBox
-} from '../../../base/utilities/box/createLineSegmentsBufferGeometryForBox';
+} from '../../../base/utilities/box/createBoxGeometry';
 import { BoxPickInfo } from '../../../base/utilities/box/BoxPickInfo';
 import { Range1 } from '../../../base/utilities/geometry/Range1';
 import { PrimitiveType } from '../PrimitiveType';
@@ -227,7 +228,11 @@ export class CylinderView extends GroupThreeView<CylinderDomainObject> {
 
     const material = new MeshPhongMaterial();
     updateSolidMaterial(material, domainObject, style);
-    const geometry = new BoxGeometry(1, 1, 1);
+
+    const geometry = new CylinderGeometry(1, 1, 2);
+    // In Three.js, the cylinder is oriented along the Y-axis, so we need to rotate it
+    // so up is the Z-axis.
+    geometry.applyMatrix4(CDF_TO_VIEWER_TRANSFORMATION.clone().invert());
     const result = new Mesh(geometry, material);
     result.renderOrder = RENDER_ORDER;
     result.applyMatrix4(matrix);

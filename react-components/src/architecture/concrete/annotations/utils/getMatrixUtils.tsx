@@ -39,7 +39,7 @@ export function getAnnotationMatrixByGeometry(
   }
 }
 
-const UP_AXIS = new Vector3(0, 1, 0);
+const UP_AXIS = new Vector3(0, 0, 1);
 
 function getCylinderMatrix(cylinder: AnnotationsCylinder, margin: number): Matrix4 {
   // Calculate the center of the cylinder
@@ -49,7 +49,7 @@ function getCylinderMatrix(cylinder: AnnotationsCylinder, margin: number): Matri
   // Calculate the scale of the cylinder
   const radius = cylinder.radius * (1 + margin);
   const height = centerA.distanceTo(centerB);
-  const scale = new Vector3(radius, height / 2, radius);
+  const scale = new Vector3(radius, radius, height / 2);
 
   const center = new Vector3().addVectors(centerB, centerA).divideScalar(2);
   const axis = new Vector3().subVectors(centerB, centerA).normalize();

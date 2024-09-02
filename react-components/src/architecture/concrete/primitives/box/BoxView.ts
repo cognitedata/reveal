@@ -40,7 +40,7 @@ import { createSpriteWithText } from '../../../base/utilities/sprites/createSpri
 import {
   createLineSegmentsBufferGeometryForBox,
   createOrientedBox
-} from '../../../base/utilities/box/createLineSegmentsBufferGeometryForBox';
+} from '../../../base/utilities/box/createBoxGeometry';
 import { BoxPickInfo } from '../../../base/utilities/box/BoxPickInfo';
 import { Range1 } from '../../../base/utilities/geometry/Range1';
 import { PrimitiveType } from '../PrimitiveType';

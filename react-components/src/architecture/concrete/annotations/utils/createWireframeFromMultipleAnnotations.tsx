@@ -11,12 +11,14 @@ import { type PointCloudAnnotation } from './types';
 
 import { getAnnotationGeometries } from './annotationGeometryUtils';
 import { type Status } from '../AnnotationsView';
-import { createBoxGeometryAsVertices } from './createBoxGeometry';
-import { createCylinderGeometryAsVertices } from './createCylinderGeometry';
-import { createLineSegmentsGeometry } from './createLineSegmentsGeometry';
+import { createCylinderGeometryAsVertices } from '../../../base/utilities/box/createCylinderGeometry';
 import { getAnnotationMatrixByGeometry } from './getMatrixUtils';
 import { WireframeUserData } from '../helpers/WireframeUserData';
 import { Matrix4, Vector3 } from 'three';
+import {
+  createBoxGeometryAsVertices,
+  createLineSegmentsGeometry
+} from '../../../base/utilities/box/createBoxGeometry';
 
 export type CreateWireframeArgs = {
   annotations: PointCloudAnnotation[];

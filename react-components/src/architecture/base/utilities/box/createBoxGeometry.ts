@@ -2,8 +2,9 @@
  * Copyright 2024 Cognite AS
  */
 
-import { Vector3, BufferGeometry, BufferAttribute } from 'three';
+import { Vector3, BufferGeometry, BufferAttribute, LineSegments } from 'three';
 import { OBB } from 'three/addons/math/OBB.js';
+import { LineSegmentsGeometry } from 'three/examples/jsm/lines/LineSegmentsGeometry.js';
 
 const HALF_SIDE = 0.5;
 
@@ -11,23 +12,12 @@ const HALF_SIDE = 0.5;
 // PUBLIC FUNCTIONS: Functions
 // ==================================================
 
-export function createOrientedBox(): OBB {
-  return new OBB(new Vector3().setScalar(0), new Vector3().setScalar(HALF_SIDE));
-}
-
-export function createLineSegmentsBufferGeometryForBox(): BufferGeometry {
+export function createBoxGeometry(): LineSegmentsGeometry {
   const vertices = createBoxGeometryAsVertices();
-  const verticesArray = new Float32Array(vertices);
-  const geometry = new BufferGeometry();
-  geometry.setAttribute('position', new BufferAttribute(verticesArray, 3));
-  return geometry;
+  return createLineSegmentsGeometry(vertices);
 }
 
-// ==================================================
-// PRIVATE FUNCTIONS:
-// ==================================================
-
-function createBoxGeometryAsVertices(): number[] {
+export function createBoxGeometryAsVertices(): number[] {
   // Define vertices of a cube
   const a = HALF_SIDE;
   const corners = [
@@ -51,7 +41,19 @@ function createBoxGeometryAsVertices(): number[] {
   return createLineSegmentsAsVertices(vertices, indices);
 }
 
-function createLineSegmentsAsVertices(vertices: number[], indices: number[]): number[] {
+export function createOrientedBox(): OBB {
+  return new OBB(new Vector3().setScalar(0), new Vector3().setScalar(HALF_SIDE));
+}
+
+export function createLineSegmentsBufferGeometryForBox(): BufferGeometry {
+  const vertices = createBoxGeometryAsVertices();
+  const verticesArray = new Float32Array(vertices);
+  const geometry = new BufferGeometry();
+  geometry.setAttribute('position', new BufferAttribute(verticesArray, 3));
+  return geometry;
+}
+
+export function createLineSegmentsAsVertices(vertices: number[], indices: number[]): number[] {
   // Convert indexed lines to lines only
   const allVertices: number[] = [];
   for (let i = 0; i < indices.length; i++) {
@@ -59,4 +61,14 @@ function createLineSegmentsAsVertices(vertices: number[], indices: number[]): nu
     allVertices.push(vertices[index], vertices[index + 1], vertices[index + 2]);
   }
   return allVertices;
+}
+
+export function createLineSegmentsGeometry(vertices: number[]): LineSegmentsGeometry {
+  const verticesArray = new Float32Array(vertices);
+  const geometry = new BufferGeometry();
+
+  geometry.setAttribute('position', new BufferAttribute(verticesArray, 3));
+  const lineSegments = new LineSegments(geometry);
+  const lineSegmentsGeometry = new LineSegmentsGeometry().fromLineSegments(lineSegments);
+  return lineSegmentsGeometry;
 }

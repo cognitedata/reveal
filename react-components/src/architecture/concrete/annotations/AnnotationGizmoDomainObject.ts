@@ -54,6 +54,7 @@ export class AnnotationGizmoDomainObject extends BoxDomainObject {
 
     const desc = change.getChangedDescription(Changes.geometry);
     if (desc !== undefined && !desc.isChanged(AnnotationGizmoDomainObject.GizmoOnly)) {
+      console.log('updateSelectedAnnotationFromThis');
       this.updateSelectedAnnotationFromThis();
     }
   }
@@ -80,9 +81,9 @@ export class AnnotationGizmoDomainObject extends BoxDomainObject {
     if (matrix === undefined) {
       return false;
     }
-    if (annotation.geometry.box !== undefined) {
-      matrix.scale(new Vector3(2, 2, 2));
-    }
+    // if (annotation.geometry.box !== undefined) {
+    //   matrix.scale(new Vector3(1, 1, 1));
+    // }
     if (annotation.geometry.cylinder !== undefined) {
       matrix.scale(new Vector3(2, 2, 2));
     }
@@ -104,8 +105,8 @@ export class AnnotationGizmoDomainObject extends BoxDomainObject {
   }
 
   private getMatrixForAnnotation(matrix: Matrix4 = new Matrix4()): Matrix4 {
-    const scale = this.size.clone().divideScalar(2);
-    return this.getScaledMatrix(scale, matrix);
+    // const scale = this.size.clone().divideScalar(2);
+    return this.getMatrix(matrix);
   }
 
   private setMatrixFromAnnotation(matrix: Matrix4): void {

@@ -92,8 +92,8 @@ export class SingleAnnotation {
       geometry.box.matrix = matrix.clone().transpose().elements;
     }
     if (geometry.cylinder !== undefined) {
-      const centerA = new Vector3(0, 1, 0).applyMatrix4(matrix);
-      const centerB = new Vector3(0, -1, 0).applyMatrix4(matrix);
+      const centerA = new Vector3(0, 0, -0.5).applyMatrix4(matrix);
+      const centerB = new Vector3(0, 0, 0.5).applyMatrix4(matrix);
       const scale = new Vector3();
       matrix.decompose(new Vector3(), new Quaternion(), scale);
 

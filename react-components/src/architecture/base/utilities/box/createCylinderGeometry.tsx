@@ -4,10 +4,7 @@
 
 import { type LineSegmentsGeometry } from 'three/examples/jsm/lines/LineSegmentsGeometry.js';
 
-import {
-  createLineSegmentsGeometry,
-  createLineSegmentsAsVertices
-} from './createLineSegmentsGeometry';
+import { createLineSegmentsAsVertices, createLineSegmentsGeometry } from './createBoxGeometry';
 
 export function createCylinderGeometry(): LineSegmentsGeometry {
   const vertices = createCylinderGeometryAsVertices();
@@ -27,16 +24,16 @@ export function createCylinderGeometryAsVertices(): number[] {
   for (let i = 0; i <= totalSegments; i++) {
     const angle = i * angleIncrement;
     vertices.push(Math.sin(angle)); // x-coordinate
-    vertices.push(-1); // y-coordinate (fixed for bottom circle)
-    vertices.push(Math.cos(angle)); // z-coordinate
+    vertices.push(Math.cos(angle)); // y-coordinate
+    vertices.push(-1); // z-coordinate (fixed for bottom circle)
   }
 
   // Top circle vertices
   for (let i = 0; i <= totalSegments; i++) {
     const angle = i * angleIncrement;
     vertices.push(Math.sin(angle)); // x-coordinate
-    vertices.push(1); // y-coordinate (fixed for top circle)
-    vertices.push(Math.cos(angle)); // z-coordinate
+    vertices.push(Math.cos(angle)); // y-coordinate
+    vertices.push(1); // z-coordinate (fixed for top circle)
   }
 
   // Define the indices to form line segments of the cylinder

@@ -81,7 +81,7 @@ function getIntersectionPoint(
 function intersectBoxRegion(box: AnnotationsBox, globalMatrix: Matrix4, ray: Ray): Vector3 | null {
   const matrix = getBoxMatrix(box);
   matrix.premultiply(globalMatrix);
-  const orientedBox = new OBB(new Vector3(), new Vector3(1, 1, 1));
+  const orientedBox = new OBB(new Vector3(), new Vector3(0.5, 0.5, 0.5));
   orientedBox.applyMatrix4(matrix);
   return orientedBox.intersectRay(ray, new Vector3());
 }

@@ -28,6 +28,7 @@ export function equalsIgnoreCaseAndSpace(value1: string, value2: string): boolea
       }
       const lowerChar2 = char2.toLowerCase();
       if (lowerChar2 === lowerChar1) {
+        j++;
         break;
       }
       return false;
