@@ -14,6 +14,8 @@ import { AnnotationsDomainObject } from './AnnotationsDomainObject';
 import { SingleAnnotation } from './helpers/SingleAnnotation';
 
 export class AnnotationGizmoDomainObject extends BoxDomainObject {
+  public static GizmoOnly = 'GizmoOnly';
+
   // ==================================================
   // CONSTRUCTOR
   // ==================================================
@@ -50,7 +52,8 @@ export class AnnotationGizmoDomainObject extends BoxDomainObject {
   protected override notifyCore(change: DomainObjectChange): void {
     super.notifyCore(change);
 
-    if (change.isChanged(Changes.geometry)) {
+    const desc = change.getChangedDescription(Changes.geometry);
+    if (desc !== undefined && !desc.isChanged(AnnotationGizmoDomainObject.GizmoOnly)) {
       this.updateSelectedAnnotationFromThis();
     }
   }

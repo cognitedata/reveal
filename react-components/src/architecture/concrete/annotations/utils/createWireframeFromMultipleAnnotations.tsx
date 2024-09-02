@@ -2,7 +2,6 @@
  * Copyright 2024 Cognite AS
  */
 
-import * as THREE from 'three';
 import { type LineMaterial } from 'three/examples/jsm/lines/LineMaterial.js';
 import { Wireframe } from 'three/examples/jsm/lines/Wireframe.js';
 
@@ -17,10 +16,11 @@ import { createCylinderGeometryAsVertices } from './createCylinderGeometry';
 import { createLineSegmentsGeometry } from './createLineSegmentsGeometry';
 import { getAnnotationMatrixByGeometry } from './getMatrixUtils';
 import { WireframeUserData } from '../helpers/WireframeUserData';
+import { Matrix4, Vector3 } from 'three';
 
 export type CreateWireframeArgs = {
   annotations: PointCloudAnnotation[];
-  globalMatrix: THREE.Matrix4;
+  globalMatrix: Matrix4;
   status: Status;
   selected: boolean;
   startIndex: number;
@@ -43,8 +43,8 @@ export function createWireframeFromMultipleAnnotations(
 
   // Set the translation of the matrix to (0,0,0) and translate all points accordingly
   // In the end set the translation matrix equal this translation
-  const translation = new THREE.Vector3();
-  let translationMatrix: THREE.Matrix4 | undefined;
+  const translation = new Vector3();
+  let translationMatrix: Matrix4 | undefined;
 
   for (let i = startIndex; i < endIndex; i++) {
     const annotation = annotations[i];
@@ -93,20 +93,16 @@ function getObjectVertices(geometry: AnnotationGeometry): number[] | undefined {
   }
 }
 
-function createTranslationMatrix(translation: THREE.Vector3, sign = 1): THREE.Matrix4 {
-  return new THREE.Matrix4().makeTranslation(
+function createTranslationMatrix(translation: Vector3, sign = 1): Matrix4 {
+  return new Matrix4().makeTranslation(
     sign * translation.x,
     sign * translation.y,
     sign * translation.z
   );
 }
 
-function addVerticesForObject(
-  vertices: number[],
-  objectVertices: number[],
-  matrix: THREE.Matrix4
-): void {
-  const point = new THREE.Vector3();
+function addVerticesForObject(vertices: number[], objectVertices: number[], matrix: Matrix4): void {
+  const point = new Vector3();
   const additionalVertices = new Array<number>(objectVertices.length);
   for (let i = 0; i < objectVertices.length; i += 3) {
     const x = objectVertices[i];

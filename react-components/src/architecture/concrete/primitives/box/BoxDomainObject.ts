@@ -40,7 +40,7 @@ export abstract class BoxDomainObject extends VisualDomainObject {
 
   public readonly size = new Vector3().setScalar(MIN_BOX_SIZE);
   public readonly center = new Vector3();
-  public readonly rotation = new Euler(0, 0, 0, 'ZYX');
+  public readonly rotation = new Euler(0, 0, 0);
   private readonly _primitiveType: PrimitiveType;
 
   // For focus when edit in 3D (Used when isSelected is true only)
@@ -82,7 +82,7 @@ export abstract class BoxDomainObject extends VisualDomainObject {
   public clear(): void {
     this.size.setScalar(MIN_BOX_SIZE);
     this.center.setScalar(0);
-    this.rotation.set(0, 0, 0, 'ZYX');
+    this.rotation.set(0, 0, 0);
     this.focusType = FocusType.None;
     this.focusFace = undefined;
   }
@@ -291,14 +291,13 @@ export abstract class BoxDomainObject extends VisualDomainObject {
     matrix.scale(scale);
     return matrix;
 
-    // Alternative
+    // Alternative follow TRS order
     // const translationMatrix = matrix.identity().makeTranslation(this.center);
     // const rotationMatrix = this.getRotationMatrix();
     // const scaleMatrix = new Matrix4().makeScale(scale.x, scale.y, scale.z);
 
     // translationMatrix.multiply(rotationMatrix);
     // translationMatrix.multiply(scaleMatrix);
-
     // return translationMatrix;
   }
 

@@ -383,14 +383,10 @@ export class AnnotationEditTool extends BaseEditTool {
     );
 
     const change = new DomainObjectChange();
-    change.addChange(Changes.geometry);
+    change.addChange(Changes.geometry, AnnotationGizmoDomainObject.GizmoOnly);
     change.addChange(Changes.color);
 
-    // This little "hack" disables the update up the AnnotationsDomainObject
-    annotationsDomainObject.selectedAnnotation = undefined;
     annotationGizmo.notify(change);
-    annotationsDomainObject.selectedAnnotation = annotation;
-
     annotationGizmo.setFocusInteractive(FocusType.Body);
     annotationGizmo.setSelectedInteractive(true);
     annotationGizmo.setVisibleInteractive(true, this.renderTarget);

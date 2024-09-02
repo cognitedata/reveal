@@ -2,15 +2,15 @@
  * Copyright 2024 Cognite AS
  */
 
-import * as THREE from 'three';
+import { BufferAttribute, BufferGeometry, LineSegments } from 'three';
 import { LineSegmentsGeometry } from 'three/examples/jsm/lines/LineSegmentsGeometry.js';
 
 export const createLineSegmentsGeometry = (vertices: number[]): LineSegmentsGeometry => {
   const verticesArray = new Float32Array(vertices);
-  const geometry = new THREE.BufferGeometry();
+  const geometry = new BufferGeometry();
 
-  geometry.setAttribute('position', new THREE.BufferAttribute(verticesArray, 3));
-  const lineSegments = new THREE.LineSegments(geometry);
+  geometry.setAttribute('position', new BufferAttribute(verticesArray, 3));
+  const lineSegments = new LineSegments(geometry);
   const lineSegmentsGeometry = new LineSegmentsGeometry().fromLineSegments(lineSegments);
   return lineSegmentsGeometry;
 };

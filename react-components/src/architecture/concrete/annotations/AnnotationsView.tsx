@@ -2,7 +2,6 @@
  * Copyright 2024 Cognite AS
  */
 
-import * as THREE from 'three';
 import { LineMaterial } from 'three/examples/jsm/lines/LineMaterial.js';
 import { Wireframe } from 'three/examples/jsm/lines/Wireframe.js';
 
@@ -30,6 +29,17 @@ import { Changes } from '../../base/domainObjectsHelpers/Changes';
 import { type DomainObjectIntersection } from '../../base/domainObjectsHelpers/DomainObjectIntersection';
 import { getStatusByAnnotation } from './utils/getStatusByAnnotation';
 import { SingleAnnotation } from './helpers/SingleAnnotation';
+import {
+  Box3,
+  BoxGeometry,
+  CylinderGeometry,
+  Group,
+  Matrix4,
+  Mesh,
+  MeshBasicMaterial,
+  type Object3D,
+  Vector2
+} from 'three';
 
 const FOCUS_ANNOTATION_NAME = 'focus-annotation-name';
 const GROUP_SIZE = 100;
@@ -57,12 +67,12 @@ export class AnnotationsView extends GroupThreeView<AnnotationsDomainObject> {
   private readonly suggestedSelectedLineMaterial: LineMaterial;
   private readonly rejectedSelectedLineMaterial: LineMaterial;
 
-  private readonly focusAnnotationMaterial: THREE.MeshBasicMaterial;
+  private readonly focusAnnotationMaterial: MeshBasicMaterial;
 
   // This is the only child of the root, annotations are added here
   // When show(hide) annotation I connect/disconnect the child-parent relation between this and the root.
   // Then this functionality doesn't change anything else in the system
-  private readonly globalMatrix: THREE.Matrix4 = new THREE.Matrix4();
+  private readonly globalMatrix = new Matrix4();
 
   // ==================================================
   // INSTANCE PROPERTIES
@@ -91,7 +101,7 @@ export class AnnotationsView extends GroupThreeView<AnnotationsDomainObject> {
     this.suggestedSelectedLineMaterial = createLineMaterial();
     this.rejectedSelectedLineMaterial = createLineMaterial();
 
-    this.focusAnnotationMaterial = new THREE.MeshBasicMaterial();
+    this.focusAnnotationMaterial = new MeshBasicMaterial();
   }
 
   // ==================================================
@@ -126,9 +136,9 @@ export class AnnotationsView extends GroupThreeView<AnnotationsDomainObject> {
     return this.style.depthTest;
   }
 
-  protected override calculateBoundingBox(): THREE.Box3 {
+  protected override calculateBoundingBox(): Box3 {
     const annotations = this.domainObject.annotations;
-    const boundingBox = new THREE.Box3();
+    const boundingBox = new Box3();
     boundingBox.makeEmpty();
     for (const annotation of annotations) {
       const annotationBoundingBox = getBoundingBox(annotation, this.globalMatrix);
@@ -230,7 +240,7 @@ export class AnnotationsView extends GroupThreeView<AnnotationsDomainObject> {
     const selectedAnnotation = this.domainObject.selectedAnnotation;
     const selectedGeometry = selectedAnnotation?.geometry;
 
-    const group = new THREE.Group();
+    const group = new Group();
     group.name = FOCUS_ANNOTATION_NAME;
     this.addChild(group);
 
@@ -415,7 +425,7 @@ export class AnnotationsView extends GroupThreeView<AnnotationsDomainObject> {
 
 function createLineMaterial(): LineMaterial {
   return new LineMaterial({
-    resolution: new THREE.Vector2(800, 800),
+    resolution: new Vector2(800, 800),
     dashed: false,
     depthTest: true,
     dashScale: 8
@@ -423,15 +433,13 @@ function createLineMaterial(): LineMaterial {
 }
 
 function createMeshByMatrix(
-  matrix: THREE.Matrix4,
-  material: THREE.MeshBasicMaterial,
+  matrix: Matrix4,
+  material: MeshBasicMaterial,
   isCylinder: boolean
-): THREE.Mesh {
-  const geometry = isCylinder
-    ? new THREE.CylinderGeometry(1, 1, 1)
-    : new THREE.BoxGeometry(2, 2, 2);
+): Mesh {
+  const geometry = isCylinder ? new CylinderGeometry(1, 1, 1) : new BoxGeometry(2, 2, 2);
 
-  const mesh = new THREE.Mesh(geometry, material);
+  const mesh = new Mesh(geometry, material);
   mesh.applyMatrix4(matrix);
   return mesh;
 }
@@ -440,7 +448,7 @@ function createMeshByMatrix(
 // FUNCTIONS: Getters
 // ==================================================
 
-function* getAllWireframes(root: THREE.Object3D | null): Generator<Wireframe> {
+function* getAllWireframes(root: Object3D | null): Generator<Wireframe> {
   if (root === null) {
     return;
   }
@@ -448,7 +456,7 @@ function* getAllWireframes(root: THREE.Object3D | null): Generator<Wireframe> {
     if (child instanceof Wireframe) {
       yield child;
     }
-    if (child instanceof THREE.Mesh) {
+    if (child instanceof Mesh) {
       continue;
     }
     for (const wireframe of getAllWireframes(child)) {
@@ -465,11 +473,11 @@ function getUserData(wireframe: Wireframe): WireframeUserData {
 // FUNCTIONS: Misc
 // ==================================================
 
-function dispose(object3D: THREE.Object3D): void {
+function dispose(object3D: Object3D): void {
   object3D.traverse((child) => {
     if (child instanceof Wireframe) {
       child.geometry.dispose();
-    } else if (child instanceof THREE.Mesh) {
+    } else if (child instanceof Mesh) {
       child.geometry.dispose();
     }
   });

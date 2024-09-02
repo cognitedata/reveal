@@ -61,12 +61,12 @@ export class DomainObjectChange {
    */
   public isFieldNameChanged(change: symbol, ...fieldNames: string[]): boolean {
     // This ignores space and case.
-    const fieldName = this.getFieldNameBySymbol(change);
-    if (fieldName === undefined) {
+    const desc = this.getChangedDescription(change);
+    if (desc === undefined) {
       return false;
     }
-    for (const otherFieldName of fieldNames) {
-      if (equalsIgnoreCaseAndSpace(fieldName, otherFieldName)) {
+    for (const fieldName of fieldNames) {
+      if (desc.isChanged(fieldName)) {
         return true;
       }
     }
@@ -110,6 +110,7 @@ export class DomainObjectChange {
 // ==================================================
 // LOCAL HELPER CLASS
 // ==================================================
+
 export class ChangedDescription {
   public change: symbol;
   public fieldName: string | undefined;
@@ -117,5 +118,12 @@ export class ChangedDescription {
   public constructor(change: symbol, fieldName?: string) {
     this.change = change;
     this.fieldName = fieldName;
+  }
+
+  public isChanged(fieldName: string): boolean {
+    if (this.fieldName === undefined) {
+      return false;
+    }
+    return equalsIgnoreCaseAndSpace(this.fieldName, fieldName);
   }
 }

@@ -2,18 +2,17 @@
  * Copyright 2024 Cognite AS
  */
 
-import * as THREE from 'three';
-
 import { type PointCloudAnnotation } from './types';
 
 import { getAnnotationGeometries } from './annotationGeometryUtils';
 import { getAnnotationMatrixByGeometry } from './getMatrixUtils';
+import { Box3, type Matrix4, Vector3 } from 'three';
 
 export const getBoundingBox = (
   annotation: PointCloudAnnotation,
-  globalMatrix: THREE.Matrix4
-): THREE.Box3 | undefined => {
-  const boundingBox = new THREE.Box3().makeEmpty();
+  globalMatrix: Matrix4
+): Box3 | undefined => {
+  const boundingBox = new Box3().makeEmpty();
   for (const geometry of getAnnotationGeometries(annotation)) {
     const matrix = getAnnotationMatrixByGeometry(geometry);
     if (matrix === undefined) {
@@ -30,12 +29,12 @@ export const getBoundingBox = (
 };
 
 export const CUBE_CORNERS = [
-  new THREE.Vector3(-1, -1, -1),
-  new THREE.Vector3(1, -1, -1),
-  new THREE.Vector3(1, 1, -1),
-  new THREE.Vector3(-1, 1, -1),
-  new THREE.Vector3(-1, -1, 1),
-  new THREE.Vector3(1, -1, 1),
-  new THREE.Vector3(1, 1, 1),
-  new THREE.Vector3(-1, 1, 1)
+  new Vector3(-1, -1, -1),
+  new Vector3(1, -1, -1),
+  new Vector3(1, 1, -1),
+  new Vector3(-1, 1, -1),
+  new Vector3(-1, -1, 1),
+  new Vector3(1, -1, 1),
+  new Vector3(1, 1, 1),
+  new Vector3(-1, 1, 1)
 ];

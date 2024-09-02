@@ -2,8 +2,6 @@
  * Copyright 2024 Cognite AS
  */
 
-import * as THREE from 'three';
-
 import { type CognitePointCloudModel } from '@cognite/reveal';
 import {
   type CogniteClient,
@@ -13,6 +11,7 @@ import {
 
 import { type AssetPointCloudAnnotation, type PointCloudAnnotation } from './types';
 import { type PendingAnnotation } from './PendingAnnotation';
+import { type Matrix4, Quaternion, Vector3 } from 'three';
 
 export const updateCdfThreeDAnnotation = async ({
   annotation,
@@ -58,7 +57,7 @@ export const updateCdfThreeDAnnotation = async ({
 
 const getAnnotationData = (
   pendingAnnotation: PendingAnnotation,
-  globalMatrix: THREE.Matrix4,
+  globalMatrix: Matrix4,
   assetLink: AnnotationsCogniteAnnotationTypesImagesAssetLink | undefined
 ): AnnotationData => {
   if (pendingAnnotation.isCylinder) {
@@ -72,14 +71,14 @@ const getAnnotationData = (
 };
 
 const getCylinderData = (
-  matrix: THREE.Matrix4,
+  matrix: Matrix4,
   assetLink: AnnotationsCogniteAnnotationTypesImagesAssetLink | undefined
 ): AnnotationData => {
   // This seems strange, but Reveal swaps Y and Z axis.
-  const centerA = new THREE.Vector3(0, 0.5, 0).applyMatrix4(matrix);
-  const centerB = new THREE.Vector3(0, -0.5, 0).applyMatrix4(matrix);
-  const scale = new THREE.Vector3();
-  matrix.decompose(new THREE.Vector3(), new THREE.Quaternion(), scale);
+  const centerA = new Vector3(0, 0.5, 0).applyMatrix4(matrix);
+  const centerB = new Vector3(0, -0.5, 0).applyMatrix4(matrix);
+  const scale = new Vector3();
+  matrix.decompose(new Vector3(), new Quaternion(), scale);
 
   const radius = (scale.x + scale.z) / 2;
 
@@ -98,7 +97,7 @@ const getCylinderData = (
 };
 
 const getBoxData = (
-  matrix: THREE.Matrix4,
+  matrix: Matrix4,
   assetLink: AnnotationsCogniteAnnotationTypesImagesAssetLink | undefined
 ): AnnotationData => {
   return {

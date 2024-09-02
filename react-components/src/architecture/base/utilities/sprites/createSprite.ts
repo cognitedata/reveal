@@ -94,8 +94,8 @@ function createTexture(canvas: HTMLCanvasElement): Texture {
   texture.magFilter = NearestFilter;
 
   // texture.generateMipmaps = true; // Default
-  // texture.wrapS = THREE.ClampToEdgeWrapping;
-  // texture.wrapT = THREE.ClampToEdgeWrapping;
+  // texture.wrapS = ClampToEdgeWrapping;
+  // texture.wrapT = ClampToEdgeWrapping;
   texture.needsUpdate = true;
   return texture;
 }

@@ -11,7 +11,7 @@ import {
 import { type PointCloudAnnotation } from '../utils/types';
 import { isAnnotationsBoundingVolume } from '../utils/annotationGeometryUtils';
 import { remove } from '../../../base/utilities/extensions/arrayExtensions';
-import { Quaternion, Vector3, type Matrix4 } from 'three';
+import { Euler, Matrix4, Quaternion, Vector3 } from 'three';
 import { getRandomInt } from '../../../base/utilities/extensions/mathExtensions';
 import { getAnnotationMatrixByGeometry } from '../utils/getMatrixUtils';
 
@@ -62,6 +62,15 @@ export class SingleAnnotation {
     }
   }
 
+  public getMatrix(): Matrix4 | undefined {
+    const { geometry } = this;
+    const matrix = getAnnotationMatrixByGeometry(geometry, 0);
+    if (matrix === undefined) {
+      return undefined;
+    }
+    return matrix;
+  }
+
   public equals(other: SingleAnnotation | undefined): boolean {
     if (other === undefined) {
       return false;
@@ -94,13 +103,63 @@ export class SingleAnnotation {
     }
   }
 
-  public getMatrix(): Matrix4 | undefined {
+  public align(horizontal: boolean): boolean {
     const { geometry } = this;
-    const matrix = getAnnotationMatrixByGeometry(geometry, 0);
-    if (matrix === undefined) {
-      return undefined;
+    if (geometry === undefined) {
+      return false;
     }
-    return matrix;
+    if (geometry.box !== undefined) {
+      // Remove x and y rotation
+      const matrix = this.getMatrix();
+      if (matrix === undefined) {
+        return false;
+      }
+      // Decompose the matrix into translation, rotation (quaternion), and scale
+      const position = new Vector3();
+      const quaternion = new Quaternion();
+      const scale = new Vector3();
+      matrix.decompose(position, quaternion, scale);
+
+      // Convert quaternion to Euler angles
+      const euler = new Euler().setFromQuaternion(quaternion, 'ZYX');
+
+      // Set x and y rotation to zero
+      euler.x = 0;
+      euler.y = 0;
+
+      // Convert Euler back to quaternion
+      quaternion.setFromEuler(euler);
+
+      // Recompose the matrix from the modified components
+      const newMatrix = new Matrix4();
+      newMatrix.compose(position, quaternion, scale);
+      this.updateFromMatrix(newMatrix);
+    } else if (geometry.cylinder !== undefined) {
+      const cylinder = geometry.cylinder;
+      const a = new Vector3(...cylinder.centerA);
+      const b = new Vector3(...cylinder.centerB);
+
+      if (horizontal) {
+        const z = (a.z + b.z) / 2;
+        a.z = z;
+        b.z = z;
+      } else {
+        const x = (a.x + b.x) / 2;
+        a.x = x;
+        b.x = x;
+        const y = (a.y + b.y) / 2;
+        a.y = y;
+        b.y = y;
+      }
+      if (a.distanceTo(b) < cylinder.radius / 4) {
+        return false; // Avoid zero length cylinders
+      }
+      cylinder.centerA = a.toArray();
+      cylinder.centerB = b.toArray();
+    } else {
+      return false;
+    }
+    return true;
   }
 
   // ==================================================

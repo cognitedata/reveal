@@ -5,7 +5,9 @@
 import { type BaseCommand } from '../../../base/commands/BaseCommand';
 import { RenderTargetCommand } from '../../../base/commands/RenderTargetCommand';
 import { Changes } from '../../../base/domainObjectsHelpers/Changes';
+import { DomainObjectChange } from '../../../base/domainObjectsHelpers/DomainObjectChange';
 import { type TranslateKey } from '../../../base/utilities/TranslateKey';
+import { AnnotationGizmoDomainObject } from '../AnnotationGizmoDomainObject';
 import { AnnotationsDomainObject } from '../AnnotationsDomainObject';
 
 export class AlignSelectedAnnotationCommand extends RenderTargetCommand {
@@ -63,34 +65,19 @@ export class AlignSelectedAnnotationCommand extends RenderTargetCommand {
     if (selectedAnnotation === undefined) {
       return false;
     }
-    const { geometry } = selectedAnnotation;
-    if (geometry === undefined) {
+    if (!selectedAnnotation.align(this._horizontal)) {
       return false;
-    }
-
-    if (geometry.box !== undefined) {
-      return false;
-    }
-
-    if (geometry.cylinder !== undefined) {
-      const cylinder = geometry.cylinder;
-      if (this._horizontal) {
-        const z = (cylinder.centerA[2] + cylinder.centerB[2]) / 2;
-        cylinder.centerA[2] = z;
-        cylinder.centerB[2] = z;
-      } else {
-        const x = (cylinder.centerA[0] + cylinder.centerB[0]) / 2;
-        cylinder.centerA[0] = x;
-        cylinder.centerB[0] = x;
-        const y = (cylinder.centerA[1] + cylinder.centerB[1]) / 2;
-        cylinder.centerA[1] = y;
-        cylinder.centerB[1] = y;
-      }
     }
     domainObject.notify(Changes.geometry);
+
     const annotationGizmo = domainObject.getAnnotationGizmo();
     if (annotationGizmo !== undefined) {
       annotationGizmo.updateThisFromAnnotation(selectedAnnotation);
+      const change = new DomainObjectChange(
+        Changes.geometry,
+        AnnotationGizmoDomainObject.GizmoOnly
+      );
+      annotationGizmo.notify(change);
     }
     return true;
   }
