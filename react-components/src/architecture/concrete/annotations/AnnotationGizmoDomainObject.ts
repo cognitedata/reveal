@@ -3,7 +3,7 @@
  */
 
 import { BoxDomainObject } from '../primitives/box/BoxDomainObject';
-import { Color, Euler, Matrix4, Quaternion, Vector3 } from 'three';
+import { Color, Vector3 } from 'three';
 import { BoxRenderStyle } from '../primitives/box/BoxRenderStyle';
 import { type RenderStyle } from '../../base/renderStyles/RenderStyle';
 import { type TranslateKey } from '../../base/utilities/TranslateKey';
@@ -71,7 +71,7 @@ export class AnnotationGizmoDomainObject extends BoxDomainObject {
   // ==================================================
 
   public createSingleAnnotationBox(): SingleAnnotation {
-    const matrix = this.getMatrixForAnnotation();
+    const matrix = this.getMatrix();
     return SingleAnnotation.createBoxFromMatrix(matrix);
   }
 
@@ -80,13 +80,10 @@ export class AnnotationGizmoDomainObject extends BoxDomainObject {
     if (matrix === undefined) {
       return false;
     }
-    // if (annotation.geometry.box !== undefined) {
-    //   matrix.scale(new Vector3(1, 1, 1));
-    // }
-    if (annotation.geometry.cylinder !== undefined) {
+    if (annotation.isCylinder) {
       matrix.scale(new Vector3(2, 2, 2));
     }
-    this.setMatrixFromAnnotation(matrix);
+    this.setMatrix(matrix);
     return true;
   }
 
@@ -99,25 +96,7 @@ export class AnnotationGizmoDomainObject extends BoxDomainObject {
     if (selectedAnnotation === undefined) {
       return;
     }
-    selectedAnnotation.updateFromMatrix(this.getMatrixForAnnotation());
+    selectedAnnotation.updateFromMatrix(this.getMatrix());
     annotationDomainObject.notify(Changes.geometry);
-  }
-
-  private getMatrixForAnnotation(matrix: Matrix4 = new Matrix4()): Matrix4 {
-    // const scale = this.size.clone().divideScalar(2);
-    return this.getMatrix(matrix);
-  }
-
-  private setMatrixFromAnnotation(matrix: Matrix4): void {
-    const scale = new Vector3();
-    const position = new Vector3();
-    const quaternion = new Quaternion();
-
-    matrix.decompose(position, quaternion, scale);
-    const rotation = new Euler().setFromQuaternion(quaternion, 'ZYX');
-
-    this.size.copy(scale);
-    this.center.copy(position);
-    this.rotation.copy(rotation);
   }
 }

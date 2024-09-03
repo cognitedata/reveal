@@ -6,7 +6,7 @@ import { BoxRenderStyle } from './BoxRenderStyle';
 import { type RenderStyle } from '../../../base/renderStyles/RenderStyle';
 import { type ThreeView } from '../../../base/views/ThreeView';
 import { BoxView } from './BoxView';
-import { Box3, Euler, Matrix4, Vector3 } from 'three';
+import { Box3, Euler, Matrix4, Quaternion, Vector3 } from 'three';
 import { Changes } from '../../../base/domainObjectsHelpers/Changes';
 import { BoxFace } from '../../../base/utilities/box/BoxFace';
 import { FocusType } from '../../../base/domainObjectsHelpers/FocusType';
@@ -277,6 +277,7 @@ export abstract class BoxDomainObject extends VisualDomainObject {
   // ==================================================
 
   public getRotationMatrix(matrix: Matrix4 = new Matrix4()): Matrix4 {
+    matrix.identity();
     matrix.makeRotationFromEuler(this.rotation);
     return matrix;
   }
@@ -286,19 +287,17 @@ export abstract class BoxDomainObject extends VisualDomainObject {
   }
 
   public getScaledMatrix(scale: Vector3, matrix: Matrix4 = new Matrix4()): Matrix4 {
-    matrix = this.getRotationMatrix(matrix);
+    matrix.identity();
+    matrix.makeRotationFromEuler(this.rotation);
     matrix.setPosition(this.center);
     matrix.scale(scale);
     return matrix;
+  }
 
-    // Alternative follow TRS order
-    // const translationMatrix = matrix.identity().makeTranslation(this.center);
-    // const rotationMatrix = this.getRotationMatrix();
-    // const scaleMatrix = new Matrix4().makeScale(scale.x, scale.y, scale.z);
-
-    // translationMatrix.multiply(rotationMatrix);
-    // translationMatrix.multiply(scaleMatrix);
-    // return translationMatrix;
+  public setMatrix(matrix: Matrix4): void {
+    const quaternion = new Quaternion();
+    matrix.decompose(this.center, quaternion, this.size);
+    this.rotation.setFromQuaternion(quaternion, 'ZYX');
   }
 
   // ==================================================

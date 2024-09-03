@@ -41,6 +41,11 @@ export class SingleAnnotation {
     return region !== undefined && region.length === 1;
   }
 
+  public get isCylinder(): boolean {
+    const region = this.region;
+    return region !== undefined && region.length === 1 && region[0].cylinder !== undefined;
+  }
+
   private get region(): AnnotationGeometry[] | undefined {
     const volume = this.annotation.geometry;
     if (!isAnnotationsBoundingVolume(volume)) {
