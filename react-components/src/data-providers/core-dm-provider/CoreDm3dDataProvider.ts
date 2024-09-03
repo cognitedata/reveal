@@ -122,7 +122,7 @@ export class CoreDm3dFdm3dDataProvider implements Fdm3dDataProvider {
     nodes: Node3D[]
   ): Promise<FdmCadConnection[]> {
     if (models.length !== 1) {
-      throw new Error(`Expected 1 model, got ${models.length}`);
+      console.warn(`Expected 1 CoreDM 3D model, got ${models.length}:`, ...models);
     }
 
     const model = models[0];
