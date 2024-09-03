@@ -4,7 +4,7 @@
 import { type TaggedAddResourceOptions } from '../../components/Reveal3DResources/types';
 import { type DmsUniqueIdentifier, type FdmSDK } from '../FdmSDK';
 import {
-  COGNITE_CAD_NODE_SOURCE,
+  type COGNITE_CAD_NODE_SOURCE,
   COGNITE_CAD_NODE_VIEW_VERSION_KEY,
   type CogniteCADNodeProperties,
   CORE_DM_SPACE

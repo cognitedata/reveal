@@ -3,7 +3,7 @@
  */
 import { type QueryRequest } from '@cognite/sdk';
 import { type DmsUniqueIdentifier, type FdmSDK, type NodeItem } from '../FdmSDK';
-import { COGNITE_CAD_REVISION_SOURCE, type CogniteCADRevisionProperties } from './dataModels';
+import { type COGNITE_CAD_REVISION_SOURCE, type CogniteCADRevisionProperties } from './dataModels';
 import { restrictToDmsId } from './restrictToDmsId';
 import { revisionQuery } from './revisionQuery';
 

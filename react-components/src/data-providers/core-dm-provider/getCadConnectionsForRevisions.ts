@@ -4,9 +4,9 @@
 import { type FdmCadConnection, type FdmKey } from '../../components/CacheProvider/types';
 import { type NodeItem, type DmsUniqueIdentifier, type FdmSDK } from '../FdmSDK';
 import {
-  COGNITE_ASSET_SOURCE,
+  type COGNITE_ASSET_SOURCE,
   COGNITE_ASSET_VIEW_VERSION_KEY,
-  COGNITE_CAD_NODE_SOURCE,
+  type COGNITE_CAD_NODE_SOURCE,
   COGNITE_CAD_NODE_VIEW_VERSION_KEY,
   type CogniteAssetProperties,
   type CogniteCADNodeProperties,

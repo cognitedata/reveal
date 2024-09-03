@@ -1,4 +1,7 @@
-import { QueryRequest } from '@cognite/sdk/dist/src';
+/*!
+ * Copyright 2024 Cognite AS
+ */
+import { type QueryRequest } from '@cognite/sdk/dist/src';
 import {
   COGNITE_3D_REVISION_SOURCE,
   COGNITE_CAD_REVISION_SOURCE,

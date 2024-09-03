@@ -1,4 +1,7 @@
-import { QueryRequest } from '@cognite/sdk/dist/src';
+/*!
+ * Copyright 2024 Cognite AS
+ */
+import { type QueryRequest } from '@cognite/sdk/dist/src';
 import { cogniteCadNodeSourceWithProperties } from './cogniteCadNodeSourceWithProperties';
 import { COGNITE_CAD_NODE_SOURCE, COGNITE_VISUALIZABLE_SOURCE } from './dataModels';
 

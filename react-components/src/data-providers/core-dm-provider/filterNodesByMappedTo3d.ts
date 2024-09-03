@@ -6,9 +6,9 @@ import { getDirectRelationProperties } from '../utils/getDirectRelationPropertie
 import {
   type Cognite3DObjectProperties,
   type COGNITE_3D_OBJECT_SOURCE,
-  COGNITE_CAD_NODE_SOURCE,
+  type COGNITE_CAD_NODE_SOURCE,
   COGNITE_CAD_NODE_VIEW_VERSION_KEY,
-  COGNITE_POINT_CLOUD_VOLUME_SOURCE,
+  type COGNITE_POINT_CLOUD_VOLUME_SOURCE,
   COGNITE_POINT_CLOUD_VOLUME_VIEW_VERSION_KEY,
   CORE_DM_SPACE
 } from './dataModels';

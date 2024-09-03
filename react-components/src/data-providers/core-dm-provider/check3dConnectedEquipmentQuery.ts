@@ -1,4 +1,11 @@
-import { QueryRequest, QueryTableExpressionV3, SourceSelectorV3 } from '@cognite/sdk/dist/src';
+/*!
+ * Copyright 2024 Cognite AS
+ */
+import {
+  type QueryRequest,
+  type QueryTableExpressionV3,
+  type SourceSelectorV3
+} from '@cognite/sdk/dist/src';
 import { cogniteObject3dSourceWithProperties } from './cogniteObject3dSourceWithProperties';
 import {
   COGNITE_CAD_NODE_SOURCE,
