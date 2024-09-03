@@ -212,21 +212,28 @@ export class LoadSplatUi {
     const actions = {
       loadSplat: () => this.loadSplat(this._params),
       loadSplat2: () => this.loadSplat2(this._params),//,
-      loadSplat3: () => this.loadSplat3(this._params)//,
+      loadSplat3: () => this.loadSplat3(this._params),//,
+	  moveToTarget: () => this.moveToTarget(this._params)//,
 	  //sortSplat: () => this.sortSplats(),
     };
     ui.add(this._params, 'url').name('URL');
     ui.add(actions, 'loadSplat').name('Load Splat');
     ui.add(actions, 'loadSplat2').name('Load Splat 2');
     ui.add(actions, 'loadSplat3').name('Load Splat 3');
+	ui.add(actions, 'moveToTarget').name('Move to camera target');
 	//ui.add(actions, 'sortSplat').name('Sort splats');
-	ui.add(this._params, 'rot_x',-3.14159265, 3.14159265).name('X rotation').step(0.01).onChange(() => { this._splatModel!.rotation.x = this._params.rot_x; });
-	ui.add(this._params, 'rot_y',-3.14159265, 3.14159265).name('Y rotation').step(0.01).onChange(() => { this._splatModel!.rotation.y = this._params.rot_y; });
-	ui.add(this._params, 'rot_z',-3.14159265, 3.14159265).name('Z rotation').step(0.01).onChange(() => { this._splatModel!.rotation.z = this._params.rot_z; });
-	ui.add(this._params, 'pos_x',-31415.9265, 31415.9265).name('X position').step(0.01).onChange(() => { this._splatModel!.position.x = this._params.pos_x; });
-	ui.add(this._params, 'pos_z',-31415.9265, 31415.9265).name('Z position').step(0.01).onChange(() => { this._splatModel!.position.z = this._params.pos_z; });
-	ui.add(this._params, 'pos_y',-31415.9265, 31415.9265).name('Y position').step(0.01).onChange(() => { this._splatModel!.position.y = this._params.pos_y; });
-	ui.add(this._params, 'scale', 0.01, 100.).name('Scale').step(0.01).onChange(() => { this._splatModel!.scale.set(this._params.scale, this._params.scale, this._params.scale); });
+	ui.add(this._params, 'rot_x',-3.14159265, 3.14159265).name('X rotation').step(0.01).onChange(() => { this._splatModel!.rotation.x = this._params.rot_x; this._viewer.requestRedraw();});
+	ui.add(this._params, 'rot_y',-3.14159265, 3.14159265).name('Y rotation').step(0.01).onChange(() => { this._splatModel!.rotation.y = this._params.rot_y; this._viewer.requestRedraw();});
+	ui.add(this._params, 'rot_z',-3.14159265, 3.14159265).name('Z rotation').step(0.01).onChange(() => { this._splatModel!.rotation.z = this._params.rot_z; this._viewer.requestRedraw();});
+	ui.add(this._params, 'pos_x',-31.4159265, 31.4159265).name('X position').step(0.01).onChange(() => { this._splatModel!.position.x = this._params.pos_x; this._viewer.requestRedraw();});
+	ui.add(this._params, 'pos_z',-31.4159265, 31.4159265).name('Z position').step(0.01).onChange(() => { this._splatModel!.position.z = this._params.pos_z; this._viewer.requestRedraw();});
+	ui.add(this._params, 'pos_y',-31.4159265, 31.4159265).name('Y position').step(0.01).onChange(() => { this._splatModel!.position.y = this._params.pos_y; this._viewer.requestRedraw();});
+	ui.add(this._params, 'scale', 0.01, 31.1415).name('Scale').step(0.01).onChange(() => { this._splatModel!.scale.set(this._params.scale, this._params.scale, this._params.scale); this._viewer.requestRedraw();});
+  }
+
+  private moveToTarget(params: any): void {
+	this._splatModel!.position.copy(this._viewer.cameraManager.getCameraState().target);
+	this._viewer.requestRedraw();
   }
   
   private loadSplat2(params: any): void {
