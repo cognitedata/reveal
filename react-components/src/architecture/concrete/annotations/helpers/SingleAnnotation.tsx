@@ -99,7 +99,7 @@ export class SingleAnnotation {
 
       geometry.cylinder.centerA = centerA.toArray();
       geometry.cylinder.centerB = centerB.toArray();
-      geometry.cylinder.radius = scale.x;
+      geometry.cylinder.radius = scale.x / 2;
     }
   }
 

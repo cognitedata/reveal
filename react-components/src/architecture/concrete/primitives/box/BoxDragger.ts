@@ -271,47 +271,43 @@ export class BoxDragger extends BaseDragger {
     if (endPoint === null) {
       return false;
     }
-    const centerToStartPoint = newVector3().subVectors(this.point, this._centerOfFace);
-    const centerToEndPoint = newVector3().subVectors(endPoint, this._centerOfFace);
+    const centerToStartPoint = newVector3().subVectors(this.point, this._centerOfFace).normalize();
+    const centerToEndPoint = newVector3().subVectors(endPoint, this._centerOfFace).normalize();
+    const cross = newVector3().crossVectors(centerToEndPoint, centerToStartPoint).normalize();
 
-    // Ignore Z-value since we are only interested in the rotation around the Z-axis
-    // const deltaAngle = horizontalAngle(centerToEndPoint) - horizontalAngle(centerToStartPoint);
-    let deltaAngle = centerToEndPoint.angleTo(centerToStartPoint);
-    const cross = centerToEndPoint.cross(centerToStartPoint);
-
+    let deltaAngle = centerToEndPoint.angleTo(centerToStartPoint) * this._face.sign;
     if (this._planeOfFace.normal.dot(cross) > 0) {
       deltaAngle = -deltaAngle;
     }
     // Rotate
+    let x = this._domainObject.rotation.x;
+    let y = this._domainObject.rotation.y;
+    let z = this._domainObject.rotation.z;
     if (this._face.index === 0 && this._domainObject.canRotateComponent(0)) {
-      let rotation = forceBetween0AndTwoPi(deltaAngle + this._rotation.x);
-      if (shift) {
-        let degrees = radToDeg(rotation);
-        degrees = round(degrees, CONSTRAINED_ANGLE_INCREMENT);
-        rotation = degToRad(degrees);
-      }
-      this._domainObject.rotation.x = rotation;
+      const rotation = forceBetween0AndTwoPi(deltaAngle + this._rotation.x);
+      x = roundByConstrained(rotation, shift);
     } else if (this._face.index === 1 && this._domainObject.canRotateComponent(1)) {
-      let rotation = forceBetween0AndTwoPi(deltaAngle + this._rotation.y);
-      if (shift) {
-        let degrees = radToDeg(rotation);
-        degrees = round(degrees, CONSTRAINED_ANGLE_INCREMENT);
-        rotation = degToRad(degrees);
-      }
-      this._domainObject.rotation.y = rotation;
+      const rotation = forceBetween0AndTwoPi(deltaAngle + this._rotation.y);
+      y = roundByConstrained(rotation, shift);
     } else if (this._face.index === 2 && this._domainObject.canRotateComponent(2)) {
-      let rotation = this._domainObject.hasXYRotation
+      const rotation = this._domainObject.hasXYRotation
         ? forceBetween0AndTwoPi(deltaAngle + this._rotation.z)
         : forceBetween0AndPi(deltaAngle + this._rotation.z);
-
-      if (shift) {
-        let degrees = radToDeg(rotation);
-        degrees = round(degrees, CONSTRAINED_ANGLE_INCREMENT);
-        rotation = degToRad(degrees);
-      }
-      this._domainObject.rotation.z = rotation;
+      z = roundByConstrained(rotation, shift);
+    } else {
+      return false;
     }
+    this._domainObject.rotation.set(x, y, z, 'ZYX');
     return true;
+
+    function roundByConstrained(rotation: number, shift: boolean): number {
+      if (!shift) {
+        return rotation;
+      }
+      let degrees = radToDeg(rotation);
+      degrees = round(degrees, CONSTRAINED_ANGLE_INCREMENT);
+      return degToRad(degrees);
+    }
   }
 
   public getRotationMatrix(): Matrix4 {

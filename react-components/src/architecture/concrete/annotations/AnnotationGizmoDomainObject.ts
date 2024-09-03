@@ -54,7 +54,6 @@ export class AnnotationGizmoDomainObject extends BoxDomainObject {
 
     const desc = change.getChangedDescription(Changes.geometry);
     if (desc !== undefined && !desc.isChanged(AnnotationGizmoDomainObject.GizmoOnly)) {
-      console.log('updateSelectedAnnotationFromThis');
       this.updateSelectedAnnotationFromThis();
     }
   }
