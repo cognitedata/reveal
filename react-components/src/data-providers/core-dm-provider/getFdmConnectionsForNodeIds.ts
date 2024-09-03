@@ -9,7 +9,9 @@ import {
   type COGNITE_3D_OBJECT_SOURCE,
   COGNITE_ASSET_SOURCE,
   COGNITE_CAD_NODE_SOURCE,
+  COGNITE_CAD_NODE_VIEW_VERSION_KEY,
   COGNITE_VISUALIZABLE_SOURCE,
+  COGNITE_VISUALIZABLE_VIEW_VERSION_KEY,
   type CogniteAssetProperties,
   type CogniteCADNodeProperties,
   type CogniteVisualizableProperties,
@@ -56,7 +58,7 @@ export async function getFdmConnectionsForNodes(
   >(query);
 
   result.items.cad_nodes.forEach((cadNode) => {
-    const props = cadNode.properties[CORE_DM_SPACE]['CogniteCADNode/v1'];
+    const props = cadNode.properties[CORE_DM_SPACE][COGNITE_CAD_NODE_VIEW_VERSION_KEY];
     const revisionIndex = props.revisions.findIndex((id) => id === revisionRef);
 
     const treeIndex = props.treeIndexes[revisionIndex];
@@ -70,7 +72,7 @@ export async function getFdmConnectionsForNodes(
 
   const relevantObjectToAssetsMap = new Map<FdmKey, DmsUniqueIdentifier>(
     result.items.assets.map((asset) => [
-      createFdmKey(asset.properties.cdf_cdm['CogniteVisualizable/v1'].object3D),
+      createFdmKey(asset.properties[CORE_DM_SPACE][COGNITE_VISUALIZABLE_VIEW_VERSION_KEY].object3D),
       asset
     ])
   );

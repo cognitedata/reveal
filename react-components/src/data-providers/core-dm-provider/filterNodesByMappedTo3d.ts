@@ -12,9 +12,12 @@ import {
   type Cognite3DObjectProperties,
   type COGNITE_3D_OBJECT_SOURCE,
   COGNITE_CAD_NODE_SOURCE,
+  COGNITE_CAD_NODE_VIEW_VERSION_KEY,
   COGNITE_POINT_CLOUD_VOLUME_SOURCE,
+  COGNITE_POINT_CLOUD_VOLUME_VIEW_VERSION_KEY,
   COGNITE_VISUALIZABLE_SOURCE,
-  CORE_DM_3D_CONTAINER_SPACE
+  CORE_DM_3D_CONTAINER_SPACE,
+  CORE_DM_SPACE
 } from './dataModels';
 import { type DmsUniqueIdentifier, type FdmSDK } from '../FdmSDK';
 import { cogniteObject3dSourceWithProperties } from './cogniteObject3dSourceWithProperties';
@@ -64,13 +67,18 @@ function createRelevantObject3dKeys(
   const cadObject3dList = [...connectionData.items.initial_nodes_cad_nodes]
     .concat(connectionData.items.direct_nodes_cad_nodes)
     .concat(connectionData.items.indirect_nodes_cad_nodes)
-    .map((node) => createFdmKey(node.properties.cdf_cdm['CogniteCADNode/v1'].object3D));
+    .map((node) =>
+      createFdmKey(node.properties[CORE_DM_SPACE][COGNITE_CAD_NODE_VIEW_VERSION_KEY].object3D)
+    );
 
   const pointCloudObject3dList = [...connectionData.items.initial_nodes_point_cloud_volumes]
     .concat(connectionData.items.direct_nodes_point_cloud_volumes)
     .concat(connectionData.items.indirect_nodes_point_cloud_volumes)
     .map((pointCloudVolume) =>
-      createFdmKey(pointCloudVolume.properties.cdf_cdm['CognitePointCloudVolume/v1'].object3D)
+      createFdmKey(
+        pointCloudVolume.properties[CORE_DM_SPACE][COGNITE_POINT_CLOUD_VOLUME_VIEW_VERSION_KEY]
+          .object3D
+      )
     );
 
   return new Set<FdmKey>([...cadObject3dList, ...pointCloudObject3dList]);

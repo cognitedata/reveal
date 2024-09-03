@@ -1,7 +1,7 @@
 /*!
  * Copyright 2024 Cognite AS
  */
-import { type SourceSelectorV3 } from '@cognite/sdk/dist/src';
+import { type SourceSelectorV3 } from '@cognite/sdk';
 import { COGNITE_ASSET_SOURCE } from './dataModels';
 
 export const cogniteAssetSourceWithProperties = [

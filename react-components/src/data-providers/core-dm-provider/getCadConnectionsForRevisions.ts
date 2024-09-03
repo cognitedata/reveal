@@ -1,13 +1,15 @@
 /*!
  * Copyright 2024 Cognite AS
  */
-import { type QueryRequest } from '@cognite/sdk/dist/src';
+import { type QueryRequest } from '@cognite/sdk';
 import { type FdmCadConnection, type FdmKey } from '../../components/CacheProvider/types';
 import { type NodeItem, type DmsUniqueIdentifier, type FdmSDK } from '../FdmSDK';
 import {
   COGNITE_3D_OBJECT_SOURCE,
   COGNITE_ASSET_SOURCE,
+  COGNITE_ASSET_VIEW_VERSION_KEY,
   COGNITE_CAD_NODE_SOURCE,
+  COGNITE_CAD_NODE_VIEW_VERSION_KEY,
   type CogniteAssetProperties,
   type CogniteCADNodeProperties,
   CORE_DM_3D_CONTAINER_SPACE,
@@ -32,7 +34,7 @@ export async function getCadConnectionsForRevisions(
 
   const returnResult = results.items.cad_nodes
     .map((cadNode) => {
-      const props = cadNode.properties[CORE_DM_SPACE]['CogniteCADNode/v1'];
+      const props = cadNode.properties[CORE_DM_SPACE][COGNITE_CAD_NODE_VIEW_VERSION_KEY];
       const object3dKey = cadNodeToModelMap.get(createFdmKey(cadNode));
 
       if (object3dKey === undefined) {
@@ -66,7 +68,7 @@ function createObject3dToAssetMap<T extends NodeItem<CogniteAssetProperties>>(
 ): Map<FdmKey, T> {
   return new Map(
     assets.map((asset) => [
-      createFdmKey(asset.properties[CORE_DM_SPACE]?.['CogniteAsset/v1'].object3D),
+      createFdmKey(asset.properties[CORE_DM_SPACE]?.[COGNITE_ASSET_VIEW_VERSION_KEY].object3D),
       asset
     ])
   );
@@ -78,7 +80,7 @@ function createCadNodeToObject3dMap(
   return new Map(
     cadNodes.map((cadNode) => [
       createFdmKey(cadNode),
-      createFdmKey(cadNode.properties.cdf_cdm['CogniteCADNode/v1'].object3D)
+      createFdmKey(cadNode.properties[CORE_DM_SPACE][COGNITE_CAD_NODE_VIEW_VERSION_KEY].object3D)
     ])
   );
 }

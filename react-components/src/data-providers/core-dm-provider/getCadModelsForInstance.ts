@@ -1,11 +1,12 @@
 /*!
  * Copyright 2024 Cognite AS
  */
-import { type QueryRequest } from '@cognite/sdk/dist/src';
+import { type QueryRequest } from '@cognite/sdk';
 import { type TaggedAddResourceOptions } from '../../components/Reveal3DResources/types';
 import { type DmsUniqueIdentifier, type FdmSDK } from '../FdmSDK';
 import {
   COGNITE_CAD_NODE_SOURCE,
+  COGNITE_CAD_NODE_VIEW_VERSION_KEY,
   COGNITE_VISUALIZABLE_SOURCE,
   type CogniteCADNodeProperties,
   CORE_DM_SPACE
@@ -30,7 +31,7 @@ export async function getCadModelsForInstance(
   >(query);
 
   return results.items.cad_nodes.flatMap((cadNode) => {
-    const props = cadNode.properties[CORE_DM_SPACE]['CogniteCADNode/v1'];
+    const props = cadNode.properties[CORE_DM_SPACE][COGNITE_CAD_NODE_VIEW_VERSION_KEY];
     return props.revisions.map((revision) => ({
       type: 'cad',
       addOptions: {

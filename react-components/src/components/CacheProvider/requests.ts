@@ -90,7 +90,7 @@ export async function nodeIdsToTreeIndices(
   revisionId: RevisionId,
   nodeIds: NodeId[],
   cogniteClient: CogniteClient
-): Promise<NodeId[]> {
+): Promise<TreeIndex[]> {
   const outputsUrl = `${cogniteClient.getBaseUrl()}/api/v1/projects/${
     cogniteClient.project
   }/3d/models/${modelId}/revisions/${revisionId}/nodes/treeindices/byinternalids`;

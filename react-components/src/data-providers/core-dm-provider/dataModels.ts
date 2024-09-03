@@ -7,6 +7,11 @@ import { type DmsUniqueIdentifier } from '../FdmSDK';
 export const CORE_DM_SPACE = 'cdf_cdm';
 export const CORE_DM_3D_CONTAINER_SPACE = 'cdf_cdm_3d';
 
+export const COGNITE_VISUALIZABLE_VIEW_VERSION_KEY = 'CogniteVisualizable/v1';
+export const COGNITE_ASSET_VIEW_VERSION_KEY = 'CogniteAsset/v1';
+export const COGNITE_CAD_NODE_VIEW_VERSION_KEY = 'CogniteCADNode/v1';
+export const COGNITE_POINT_CLOUD_VOLUME_VIEW_VERSION_KEY = 'CognitePointCloudVolume/v1';
+
 export const COGNITE_3D_OBJECT_SOURCE = {
   externalId: 'Cognite3DObject',
   space: CORE_DM_SPACE,
