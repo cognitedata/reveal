@@ -5,18 +5,15 @@ import { chunk } from 'lodash';
 import {
   type CreateInstanceItem,
   type DmsUniqueIdentifier,
-  type FdmSDK,
-  type InstanceFilter
+  type FdmSDK
 } from '../../../data-providers/FdmSDK';
 import { type ObservationFdmNode, OBSERVATION_SOURCE, type ObservationProperties } from './models';
 
 import { v4 as uuid } from 'uuid';
 
 export async function fetchObservations(fdmSdk: FdmSDK): Promise<ObservationFdmNode[]> {
-  const observationsFilter: InstanceFilter = {};
-
   const observationResult = await fdmSdk.filterAllInstances<ObservationProperties>(
-    observationsFilter,
+    undefined,
     'node',
     OBSERVATION_SOURCE
   );

@@ -9,11 +9,12 @@ import {
   type InspectResultList
 } from '../../data-providers/FdmSDK';
 import { chunk } from 'lodash';
+import { type ModelId, type NodeId, type RevisionId, type TreeIndex } from './types';
 
 export async function fetchAncestorNodesForTreeIndex(
-  modelId: number,
-  revisionId: number,
-  treeIndex: number,
+  modelId: ModelId,
+  revisionId: RevisionId,
+  treeIndex: TreeIndex,
   cogniteClient: CogniteClient
 ): Promise<Node3D[]> {
   const nodeId = await treeIndexesToNodeIds(modelId, revisionId, [treeIndex], cogniteClient);
@@ -54,28 +55,59 @@ export async function inspectNodes(
 }
 
 export async function treeIndexesToNodeIds(
-  modelId: number,
-  revisionId: number,
-  treeIndexes: number[],
+  modelId: ModelId,
+  revisionId: RevisionId,
+  treeIndexes: TreeIndex[],
   cogniteClient: CogniteClient
-): Promise<number[]> {
+): Promise<NodeId[]> {
   const outputsUrl = `${cogniteClient.getBaseUrl()}/api/v1/projects/${
     cogniteClient.project
   }/3d/models/${modelId}/revisions/${revisionId}/nodes/internalids/bytreeindices`;
-  const response = await cogniteClient.post<{ items: number[] }>(outputsUrl, {
-    data: { items: treeIndexes }
+
+  const treeIndexChunks = chunk(treeIndexes, 1000);
+
+  const nodeIds: NodeId[] = [];
+
+  for (const treeIndexChunk of treeIndexChunks) {
+    const response = await cogniteClient.post<{ items: NodeId[] }>(outputsUrl, {
+      data: { items: treeIndexChunk }
+    });
+
+    if (response.status === 200) {
+      nodeIds.push(...response.data.items);
+    } else {
+      throw Error(
+        `treeIndex-nodeId translation failed for treeIndexes ${treeIndexChunk.join(',')}`
+      );
+    }
+  }
+
+  return nodeIds;
+}
+
+export async function nodeIdsToTreeIndices(
+  modelId: ModelId,
+  revisionId: RevisionId,
+  nodeIds: NodeId[],
+  cogniteClient: CogniteClient
+): Promise<TreeIndex[]> {
+  const outputsUrl = `${cogniteClient.getBaseUrl()}/api/v1/projects/${
+    cogniteClient.project
+  }/3d/models/${modelId}/revisions/${revisionId}/nodes/treeindices/byinternalids`;
+  const response = await cogniteClient.post<{ items: TreeIndex[] }>(outputsUrl, {
+    data: { items: nodeIds }
   });
   if (response.status === 200) {
     return response.data.items;
   } else {
-    throw Error(`treeIndex-nodeId translation failed for treeIndexes ${treeIndexes.join(',')}`);
+    throw new Error(`nodeId-treeIndex translation failed for nodeIds ${nodeIds.join(',')}`);
   }
 }
 
 export async function fetchNodesForNodeIds(
-  modelId: number,
-  revisionId: number,
-  nodeIds: number[],
+  modelId: ModelId,
+  revisionId: RevisionId,
+  nodeIds: NodeId[],
   cogniteClient: CogniteClient
 ): Promise<Node3D[]> {
   if (nodeIds.length === 0) {

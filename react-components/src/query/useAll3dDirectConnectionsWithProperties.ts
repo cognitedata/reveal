@@ -21,10 +21,7 @@ export function useAll3dDirectConnectionsWithProperties(
 
   const connectionKeys = useMemo(() => {
     return connectionWithNodeAndView.map((item) => {
-      const fdmKey = createFdmKey(
-        item.connection.instance.space,
-        item.connection.instance.externalId
-      );
+      const fdmKey = createFdmKey(item.connection.instance);
       return fdmKey;
     });
   }, [connectionWithNodeAndView]);
@@ -32,10 +29,7 @@ export function useAll3dDirectConnectionsWithProperties(
   const connectionWithNodeAndViewMap = useMemo(() => {
     return new Map(
       connectionWithNodeAndView.map((item) => {
-        const fdmKey = createFdmKey(
-          item.connection.instance.space,
-          item.connection.instance.externalId
-        );
+        const fdmKey = createFdmKey(item.connection.instance);
         return [fdmKey, item];
       })
     );
@@ -57,15 +51,15 @@ export function useAll3dDirectConnectionsWithProperties(
         };
       });
 
-      const instancesViews = connectionWithNodeAndView.map((item) => {
-        return item.view;
+      const instancesViews = connectionWithNodeAndView.flatMap((item) => {
+        return item.views;
       });
 
       const uniqueViews = uniqBy(instancesViews, (item) => {
         if (item === undefined) {
           return '';
         }
-        const fdmKey = createFdmKey(item?.space, item?.externalId);
+        const fdmKey = createFdmKey(item);
         return fdmKey;
       });
 
@@ -125,7 +119,7 @@ export function useAll3dDirectConnectionsWithProperties(
           let connectionFound: FdmConnectionWithNode | undefined;
 
           itemsData.items.every((itemData) => {
-            const fdmKey = createFdmKey(itemData.space, itemData.externalId);
+            const fdmKey = createFdmKey(itemData);
             if (connectionWithNodeAndViewMap.has(fdmKey)) {
               connectionFound = connectionWithNodeAndViewMap.get(fdmKey);
               return false;

@@ -9,7 +9,7 @@ import {
   type CogniteInternalId
 } from '@cognite/sdk';
 import {
-  type ModelNodeIdKey,
+  type ModelTreeIndexKey,
   type AssetId,
   type ModelId,
   type RevisionId,
@@ -195,7 +195,7 @@ export class AssetMappingAndNode3DCache {
 
   private async getItemCacheResult(
     type: string,
-    key: ModelNodeIdKey | ModelAssetIdKey
+    key: ModelTreeIndexKey | ModelAssetIdKey
   ): Promise<AssetMapping[] | undefined> {
     return type === 'nodeIds'
       ? await this.nodeIdsToAssetMappingCache.getNodeIdsToAssetMappingCacheItem(key)
@@ -204,7 +204,7 @@ export class AssetMappingAndNode3DCache {
 
   private setItemCacheResult(
     type: string,
-    key: ModelNodeIdKey | ModelAssetIdKey,
+    key: ModelTreeIndexKey | ModelAssetIdKey,
     item: AssetMapping[] | undefined
   ): void {
     const value = Promise.resolve(item ?? []);
@@ -238,7 +238,7 @@ export class AssetMappingAndNode3DCache {
       const keyAssetId: ModelAssetIdKey = modelRevisionNodesAssetsToKey(modelId, revisionId, [
         item.assetId
       ]);
-      const keyNodeId: ModelNodeIdKey = modelRevisionNodesAssetsToKey(modelId, revisionId, [
+      const keyNodeId: ModelTreeIndexKey = modelRevisionNodesAssetsToKey(modelId, revisionId, [
         item.nodeId
       ]);
       await this.assetIdsToAssetMappingCache.setAssetMappingsCacheItem(keyAssetId, item);

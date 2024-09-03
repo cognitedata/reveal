@@ -2,13 +2,23 @@
  * Copyright 2023 Cognite AS
  */
 
-import { type CogniteClient } from '@cognite/sdk';
+import {
+  type QueryRequest,
+  type TableExpressionFilterDefinition,
+  type CogniteClient
+} from '@cognite/sdk';
 import { type FdmPropertyType } from '../components/Reveal3DResources/types';
+import {
+  queryNodesAndEdges,
+  type QueryResult,
+  type SelectSourceWithParams
+} from './utils/queryNodesAndEdges';
+import { mergeQueryResults } from './utils/mergeQueryResult';
 
 type InstanceType = 'node' | 'edge';
 type EdgeDirection = 'source' | 'destination';
 
-export type InstanceFilter = Record<string, any>;
+export type InstanceFilter = TableExpressionFilterDefinition;
 type ViewPropertyReference = any;
 
 export type ExternalId = string;
@@ -99,7 +109,7 @@ export type NodeItem<PropertyType = Record<string, unknown>> = {
   externalId: string;
   createdTime: number;
   lastUpdatedTime: number;
-  deletedTime: number;
+  deletedTime?: number;
   properties: FdmPropertyType<PropertyType>;
 };
 
@@ -110,7 +120,7 @@ export type FdmNode<PropertyType = Record<string, unknown>> = {
   externalId: string;
   createdTime: number;
   lastUpdatedTime: number;
-  deletedTime: number;
+  deletedTime?: number;
   properties: PropertyType;
 };
 
@@ -146,13 +156,6 @@ export type InspectResultList = {
     space: string;
     inspectionResults: InspectResult;
   }>;
-};
-
-type SelectKey<T extends Query> = keyof T['select'];
-
-export type QueryResult<T extends Query> = {
-  items: Record<SelectKey<T>, NodeItem[] | EdgeItem[]>;
-  nextCursor: Record<SelectKey<T>, string> | undefined;
 };
 
 export type ExternalIdsResultList<PropertyType> = {
@@ -200,7 +203,6 @@ export class FdmSDK {
   private readonly _listEndpoint: string;
   private readonly _inspectEndpoint: string;
   private readonly _searchEndpoint: string;
-  private readonly _queryEndpoint: string;
   private readonly _listViewsEndpoint: string;
   private readonly _viewsByIdEndpoint: string;
   private readonly _listDataModelsEndpoint: string;
@@ -215,7 +217,6 @@ export class FdmSDK {
     const viewsBaseUrl = `${baseUrl}/api/v1/projects/${project}/models/views`;
 
     this._listEndpoint = `${instancesBaseUrl}/list`;
-    this._queryEndpoint = `${instancesBaseUrl}/query`;
     this._byIdsEndpoint = `${instancesBaseUrl}/byids`;
     this._inspectEndpoint = `${instancesBaseUrl}/inspect`;
     this._searchEndpoint = `${instancesBaseUrl}/search`;
@@ -379,21 +380,21 @@ export class FdmSDK {
 
   // eslint-disable-next-line no-dupe-class-members
   public async filterAllInstances<PropertiesType = Record<string, any>>(
-    filter: InstanceFilter,
+    filter: InstanceFilter | undefined,
     instanceType: InstanceType,
     source: Source
   ): Promise<{ instances: Array<EdgeItem<PropertiesType> | FdmNode<PropertiesType>> }>;
 
   // eslint-disable-next-line no-dupe-class-members
   public async filterAllInstances<PropertiesType = Record<string, any>>(
-    filter: InstanceFilter,
+    filter: InstanceFilter | undefined,
     instanceType: 'edge',
     source: Source
   ): Promise<{ instances: Array<EdgeItem<PropertiesType>> }>;
 
   // eslint-disable-next-line no-dupe-class-members
   public async filterAllInstances<PropertiesType = Record<string, any>>(
-    filter: InstanceFilter,
+    filter: InstanceFilter | undefined,
     instanceType: 'node',
     source: Source
   ): Promise<{ instances: Array<FdmNode<PropertiesType>> }>;
@@ -529,16 +530,32 @@ export class FdmSDK {
     throw new Error(`Failed to fetch instances. Status: ${result.status}`);
   }
 
-  public async queryNodesAndEdges<const T extends Query>(query: T): Promise<QueryResult<T>> {
-    const result = await this._sdk.post(this._queryEndpoint, { data: query });
-    if (result.status === 200) {
-      return { items: result.data.items, nextCursor: result.data.nextCursor };
+  public async queryAllNodesAndEdges<
+    TQueryRequest extends QueryRequest,
+    TypedSelectSources extends SelectSourceWithParams = SelectSourceWithParams
+  >(query: TQueryRequest): Promise<QueryResult<TQueryRequest, TypedSelectSources>> {
+    let result = await queryNodesAndEdges<TQueryRequest, TypedSelectSources>(query, this._sdk);
+    let items = result.items;
+    while (result.nextCursor !== undefined && Object.keys(result.nextCursor).length !== 0) {
+      const newQuery = { ...query, cursors: result.nextCursor };
+      result = await queryNodesAndEdges<TQueryRequest, TypedSelectSources>(newQuery, this._sdk);
+      items = mergeQueryResults(items, result.items);
     }
-    throw new Error(`Failed to fetch instances. Status: ${result.status}`);
+
+    return { items };
+  }
+
+  public async queryNodesAndEdges<
+    TQueryRequest extends QueryRequest,
+    TypedSelectSources extends SelectSourceWithParams = SelectSourceWithParams
+  >(query: TQueryRequest): Promise<QueryResult<TQueryRequest, TypedSelectSources>> {
+    return await queryNodesAndEdges<TQueryRequest, TypedSelectSources>(query, this._sdk);
   }
 
   public async listDataModels(): Promise<DataModelListResponse> {
-    const result = await this._sdk.get(this._listDataModelsEndpoint, { params: { limit: 1000 } });
+    const result = await this._sdk.get(this._listDataModelsEndpoint, {
+      params: { limit: 1000, includeGlobal: true }
+    });
     if (result.status === 200) {
       return result.data;
     }
