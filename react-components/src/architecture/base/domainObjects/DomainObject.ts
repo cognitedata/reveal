@@ -371,9 +371,9 @@ export abstract class DomainObject {
 
   public getPanelToolbar(): BaseCommand[] {
     return [
-      new DeleteDomainObjectCommand(this),
       new CopyToClipboardCommand(),
-      new ToggleMetricUnitsCommand()
+      new ToggleMetricUnitsCommand(),
+      new DeleteDomainObjectCommand(this)
     ];
   }
 
