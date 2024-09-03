@@ -3,16 +3,14 @@
  */
 import { type SourceSelectorV3 } from '@cognite/sdk';
 import { COGNITE_ASSET_SOURCE } from './dataModels';
+import { cogniteDescribableSourceWithProperties } from './cogniteDescribableSourceWithProperties';
 
 export const cogniteAssetSourceWithProperties = [
   {
     source: COGNITE_ASSET_SOURCE,
     properties: [
+      ...cogniteDescribableSourceWithProperties[0].properties,
       'object3D',
-      'name',
-      'description',
-      'tags',
-      'aliases',
       'sourceId',
       'sourceContext',
       'source',

@@ -3,13 +3,9 @@
  */
 import { type QueryRequest } from '@cognite/sdk';
 import { type DmsUniqueIdentifier, type FdmSDK, type NodeItem } from '../FdmSDK';
-import {
-  COGNITE_3D_REVISION_SOURCE,
-  COGNITE_CAD_REVISION_SOURCE,
-  CORE_DM_3D_CONTAINER_SPACE,
-  type CogniteCADRevisionProperties
-} from './dataModels';
+import { COGNITE_CAD_REVISION_SOURCE, type CogniteCADRevisionProperties } from './dataModels';
 import { restrictToDmsId } from './restrictToDmsId';
+import { revisionQuery } from './revisionQuery';
 
 export async function getDMSRevision(
   model: DmsUniqueIdentifier,
@@ -17,12 +13,12 @@ export async function getDMSRevision(
   fdmSdk: FdmSDK
 ): Promise<NodeItem<CogniteCADRevisionProperties>> {
   const query = {
-    ...cadConnectionQuery,
+    ...revisionQuery,
     parameters: { modelReference: restrictToDmsId(model), revisionId }
   } as const satisfies QueryRequest;
 
   const result = await fdmSdk.queryNodesAndEdges<
-    typeof cadConnectionQuery,
+    typeof revisionQuery,
     [{ source: typeof COGNITE_CAD_REVISION_SOURCE; properties: CogniteCADRevisionProperties }]
   >(query);
 
@@ -34,47 +30,3 @@ export async function getDMSRevision(
 
   return result.items.revision[0];
 }
-
-const cadConnectionQuery = {
-  with: {
-    revision: {
-      nodes: {
-        filter: {
-          and: [
-            {
-              equals: {
-                property: [
-                  CORE_DM_3D_CONTAINER_SPACE,
-                  COGNITE_3D_REVISION_SOURCE.externalId,
-                  'model3D'
-                ],
-                value: { parameter: 'modelReference' }
-              }
-            },
-            {
-              equals: {
-                property: [
-                  CORE_DM_3D_CONTAINER_SPACE,
-                  COGNITE_CAD_REVISION_SOURCE.externalId,
-                  'revisionId'
-                ],
-                value: { parameter: 'revisionId' }
-              }
-            }
-          ]
-        }
-      },
-      limit: 1
-    }
-  },
-  select: {
-    revision: {
-      sources: [
-        {
-          source: COGNITE_CAD_REVISION_SOURCE,
-          properties: ['status', 'published', 'type', 'model3D', 'revisionId']
-        }
-      ]
-    }
-  }
-} as const satisfies Omit<QueryRequest, 'cursors' | 'parameters'>;

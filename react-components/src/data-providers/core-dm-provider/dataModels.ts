@@ -12,6 +12,13 @@ export const COGNITE_ASSET_VIEW_VERSION_KEY = 'CogniteAsset/v1';
 export const COGNITE_CAD_NODE_VIEW_VERSION_KEY = 'CogniteCADNode/v1';
 export const COGNITE_POINT_CLOUD_VOLUME_VIEW_VERSION_KEY = 'CognitePointCloudVolume/v1';
 
+export const COGNITE_DESCRIBABLE_SOURCE = {
+  externalId: 'CogniteDescribable',
+  space: CORE_DM_SPACE,
+  version: 'v1',
+  type: 'view'
+} as const satisfies ViewReference;
+
 export const COGNITE_3D_OBJECT_SOURCE = {
   externalId: 'Cognite3DObject',
   space: CORE_DM_SPACE,

@@ -1,28 +1,24 @@
 /*!
  * Copyright 2024 Cognite AS
  */
-import { type QueryRequest } from '@cognite/sdk';
 import { type FdmCadConnection, type FdmKey } from '../../components/CacheProvider/types';
 import { type NodeItem, type DmsUniqueIdentifier, type FdmSDK } from '../FdmSDK';
 import {
-  COGNITE_3D_OBJECT_SOURCE,
   COGNITE_ASSET_SOURCE,
   COGNITE_ASSET_VIEW_VERSION_KEY,
   COGNITE_CAD_NODE_SOURCE,
   COGNITE_CAD_NODE_VIEW_VERSION_KEY,
   type CogniteAssetProperties,
   type CogniteCADNodeProperties,
-  CORE_DM_3D_CONTAINER_SPACE,
   CORE_DM_SPACE
 } from './dataModels';
-import { cogniteCadNodeSourceWithProperties } from './cogniteCadNodeSourceWithProperties';
 import { getModelIdFromExternalId, getRevisionIdFromExternalId } from './getCdfIdFromExternalId';
 import { createFdmKey } from '../../components/CacheProvider/idAndKeyTranslation';
 import { type PromiseType } from '../utils/typeUtils';
 import { isDefined } from '../../utilities/isDefined';
 import { type QueryResult } from '../utils/queryNodesAndEdges';
 import { restrictToDmsId } from './restrictToDmsId';
-import { cogniteAssetSourceWithProperties } from './cogniteAssetSourceWithProperties';
+import { cadConnectionsQuery } from './cadConnectionsQuery';
 
 export async function getCadConnectionsForRevisions(
   modelRevisions: Array<[DmsUniqueIdentifier, DmsUniqueIdentifier]>,
@@ -137,60 +133,3 @@ async function getModelConnectionResults(
 
   return await fdmSdk.queryAllNodesAndEdges<typeof query, SourcesSelectType>(query);
 }
-
-const cadConnectionsQuery = {
-  with: {
-    cad_nodes: {
-      nodes: {
-        filter: {
-          and: [
-            {
-              in: {
-                property: [
-                  CORE_DM_3D_CONTAINER_SPACE,
-                  COGNITE_CAD_NODE_SOURCE.externalId,
-                  'model3D'
-                ],
-                values: { parameter: 'modelRefs' }
-              }
-            },
-            {
-              containsAny: {
-                property: [
-                  CORE_DM_3D_CONTAINER_SPACE,
-                  COGNITE_CAD_NODE_SOURCE.externalId,
-                  'revisions'
-                ],
-                values: { parameter: 'revisionRefs' }
-              }
-            }
-          ]
-        }
-      },
-      limit: 10000
-    },
-    object_3ds: {
-      nodes: {
-        from: 'cad_nodes',
-        through: { view: COGNITE_CAD_NODE_SOURCE, identifier: 'object3D' },
-        direction: 'outwards',
-        filter: {
-          hasData: [COGNITE_3D_OBJECT_SOURCE]
-        }
-      },
-      limit: 10000
-    },
-    assets: {
-      nodes: {
-        from: 'object_3ds',
-        through: { view: COGNITE_ASSET_SOURCE, identifier: 'object3D' },
-        direction: 'inwards'
-      },
-      limit: 10000
-    }
-  },
-  select: {
-    cad_nodes: { sources: cogniteCadNodeSourceWithProperties },
-    assets: { sources: cogniteAssetSourceWithProperties }
-  }
-} as const satisfies Omit<QueryRequest, 'cursor' | 'parameters'>;

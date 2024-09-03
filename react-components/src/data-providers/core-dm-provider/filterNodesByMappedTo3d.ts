@@ -2,11 +2,6 @@
  * Copyright 2024 Cognite AS
  */
 import { type InstancesWithView } from '../../query/useSearchMappedEquipmentFDM';
-import {
-  type QueryRequest,
-  type QueryTableExpressionV3,
-  type SourceSelectorV3
-} from '@cognite/sdk';
 import { getDirectRelationProperties } from '../utils/getDirectRelationProperties';
 import {
   type Cognite3DObjectProperties,
@@ -15,17 +10,15 @@ import {
   COGNITE_CAD_NODE_VIEW_VERSION_KEY,
   COGNITE_POINT_CLOUD_VOLUME_SOURCE,
   COGNITE_POINT_CLOUD_VOLUME_VIEW_VERSION_KEY,
-  COGNITE_VISUALIZABLE_SOURCE,
-  CORE_DM_3D_CONTAINER_SPACE,
   CORE_DM_SPACE
 } from './dataModels';
 import { type DmsUniqueIdentifier, type FdmSDK } from '../FdmSDK';
-import { cogniteObject3dSourceWithProperties } from './cogniteObject3dSourceWithProperties';
 import { type FdmKey } from '../../components/CacheProvider/types';
 import { createFdmKey } from '../../components/CacheProvider/idAndKeyTranslation';
 import { type PromiseType } from '../utils/typeUtils';
 import { isString } from 'lodash';
 import { type QueryResult } from '../utils/queryNodesAndEdges';
+import { check3dConnectedEquipmentQuery } from './check3dConnectedEquipmentQuery';
 
 export async function filterNodesByMappedTo3d(
   nodes: InstancesWithView[],
@@ -97,7 +90,7 @@ async function fetchConnectionData(
   nodes: InstancesWithView[],
   revisionRefs: DmsUniqueIdentifier[],
   fdmSdk: FdmSDK
-): Promise<QueryResult<typeof checkEquipmentFilter, SelectSourcesType>> {
+): Promise<QueryResult<typeof check3dConnectedEquipmentQuery, SelectSourcesType>> {
   const initialExternalIds = nodes.flatMap((node) =>
     node.instances.map((instance) => instance.externalId)
   );
@@ -111,149 +104,9 @@ async function fetchConnectionData(
   const parameters = { initialExternalIds, directlyMappedIds, revisionRefs };
 
   const query = {
-    ...checkEquipmentFilter,
+    ...check3dConnectedEquipmentQuery,
     parameters
   };
 
   return await fdmSdk.queryAllNodesAndEdges<typeof query, SelectSourcesType>(query);
-}
-
-const pointCloudVolumeSourceWithProperties = [
-  {
-    source: COGNITE_POINT_CLOUD_VOLUME_SOURCE,
-    properties: ['object3D']
-  }
-] as const satisfies SourceSelectorV3;
-
-const cadNodeSourceWithProperties = [
-  {
-    source: COGNITE_CAD_NODE_SOURCE,
-    properties: ['object3D']
-  }
-] as const satisfies SourceSelectorV3;
-
-const checkEquipmentFilter = {
-  with: {
-    initial_nodes: {
-      nodes: {
-        filter: {
-          and: [
-            {
-              in: {
-                property: ['node', 'externalId'],
-                values: { parameter: 'initialExternalIds' }
-              }
-            },
-            {
-              hasData: [COGNITE_VISUALIZABLE_SOURCE]
-            }
-          ]
-        }
-      }
-    },
-    directly_referenced_nodes: {
-      nodes: {
-        filter: {
-          and: [
-            {
-              in: {
-                property: ['node', 'externalId'],
-                values: { parameter: 'directlyMappedIds' }
-              }
-            },
-            {
-              hasData: [COGNITE_VISUALIZABLE_SOURCE]
-            }
-          ]
-        }
-      }
-    },
-    indirectly_referenced_edges: {
-      edges: {
-        from: 'initial_nodes',
-        direction: 'outwards',
-        nodeFilter: {
-          hasData: [COGNITE_VISUALIZABLE_SOURCE]
-        }
-      }
-    },
-    indirectly_referenced_nodes: {
-      nodes: {
-        from: 'indirectly_referenced_edges'
-      }
-    },
-    initial_nodes_object_3ds: getObject3dRelation('initial_nodes'),
-    initial_nodes_cad_nodes: getRevisionsCadNodeFromObject3D('initial_nodes_object_3ds'),
-    initial_nodes_point_cloud_volumes: getRevisionsPointCloudVolumes('initial_nodes_object_3ds'),
-    direct_nodes_object_3ds: getObject3dRelation('directly_referenced_nodes'),
-    direct_nodes_cad_nodes: getRevisionsCadNodeFromObject3D('direct_nodes_object_3ds'),
-    direct_nodes_point_cloud_volumes: getRevisionsPointCloudVolumes('direct_nodes_object_3ds'),
-    indirect_nodes_object_3ds: getObject3dRelation('indirectly_referenced_nodes'),
-    indirect_nodes_cad_nodes: getRevisionsCadNodeFromObject3D('indirect_nodes_object_3ds'),
-    indirect_nodes_point_cloud_volumes: getRevisionsPointCloudVolumes('indirect_nodes_object_3ds')
-  },
-  select: {
-    indirectly_referenced_edges: {},
-    initial_nodes_object_3ds: { sources: cogniteObject3dSourceWithProperties },
-    initial_nodes_cad_nodes: {
-      sources: cadNodeSourceWithProperties
-    },
-    initial_nodes_point_cloud_volumes: { sources: pointCloudVolumeSourceWithProperties },
-    direct_nodes_object_3ds: { sources: cogniteObject3dSourceWithProperties },
-    direct_nodes_cad_nodes: {
-      sources: cadNodeSourceWithProperties
-    },
-    direct_nodes_point_cloud_volumes: { sources: pointCloudVolumeSourceWithProperties },
-    indirect_nodes_object_3ds: { sources: cogniteObject3dSourceWithProperties },
-    indirect_nodes_cad_nodes: {
-      sources: cadNodeSourceWithProperties
-    },
-    indirect_nodes_point_cloud_volumes: {
-      sources: pointCloudVolumeSourceWithProperties
-    }
-  }
-} as const satisfies Omit<QueryRequest, 'parameters' | 'cursor'>;
-
-function getRevisionsCadNodeFromObject3D(object3dTableName: string): QueryTableExpressionV3 {
-  return {
-    nodes: {
-      from: object3dTableName,
-      through: { view: COGNITE_CAD_NODE_SOURCE, identifier: 'object3D' },
-      filter: {
-        containsAny: {
-          property: [CORE_DM_3D_CONTAINER_SPACE, COGNITE_CAD_NODE_SOURCE.externalId, 'revisions'],
-          values: { parameter: 'revisionRefs' }
-        }
-      }
-    }
-  };
-}
-
-function getRevisionsPointCloudVolumes(object3dTableName: string): QueryTableExpressionV3 {
-  return {
-    nodes: {
-      from: object3dTableName,
-      through: { view: COGNITE_POINT_CLOUD_VOLUME_SOURCE, identifier: 'object3D' },
-      filter: {
-        containsAny: {
-          property: [
-            CORE_DM_3D_CONTAINER_SPACE,
-            COGNITE_POINT_CLOUD_VOLUME_SOURCE.externalId,
-            'revisions'
-          ],
-          values: { parameter: 'revisionRefs' }
-        }
-      }
-    }
-  };
-}
-
-function getObject3dRelation(visualizableTableName: string): QueryTableExpressionV3 {
-  return {
-    nodes: {
-      from: visualizableTableName,
-      through: { view: COGNITE_VISUALIZABLE_SOURCE, identifier: 'object3D' },
-      direction: 'outwards'
-    }
-  };
 }
