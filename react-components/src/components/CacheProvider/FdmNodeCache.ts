@@ -10,17 +10,17 @@ import {
   type FdmCadConnection,
   type ModelRevisionKey,
   type RevisionId,
-  type NodeId,
-  type ModelNodeIdKey,
+  type ModelTreeIndexKey,
   type ModelRevisionToConnectionMap,
   type ModelRevisionId,
   type FdmKey,
-  type FdmNodeDataPromises
+  type FdmNodeDataPromises,
+  type TreeIndex
 } from './types';
 
 import {
   createFdmKey,
-  createModelNodeIdKey,
+  createModelTreeIndexKey,
   createModelRevisionKey,
   revisionKeyToIds
 } from './idAndKeyTranslation';
@@ -28,7 +28,7 @@ import {
 import { partition } from 'lodash';
 
 import assert from 'assert';
-import { fetchNodesForNodeIds, inspectNodes } from './requests';
+import { fetchNodesForNodeIds, inspectNodes, treeIndexesToNodeIds } from './requests';
 import { type ThreeDModelFdmMappings } from '../../hooks/types';
 import { type Fdm3dDataProvider } from '../../data-providers/Fdm3dDataProvider';
 
@@ -78,9 +78,7 @@ export class FdmNodeCache {
     modelRevisionIds: ModelRevisionId[],
     externalIds: DmsUniqueIdentifier[]
   ): ThreeDModelFdmMappings[] {
-    const inputExternalIdSet = new Set<FdmKey>(
-      externalIds.map((id) => createFdmKey(id.space, id.externalId))
-    );
+    const inputExternalIdSet = new Set<FdmKey>(externalIds.map(createFdmKey));
 
     return modelRevisionIds.map((modelRevisionId) => {
       return this.getCachedModelMappingForRevision(modelRevisionId, inputExternalIdSet);
@@ -122,7 +120,7 @@ export class FdmNodeCache {
       return [];
     }
 
-    const fdmKeySet = new Set(instances.map((id) => createFdmKey(id.space, id.externalId)));
+    const fdmKeySet = new Set(instances.map(createFdmKey));
 
     const revisionToConnectionsMap = await this.getAndCacheRevisionToConnectionsMap(
       modelRevisions,
@@ -239,8 +237,8 @@ export class FdmNodeCache {
     modelRevisionIds: ModelRevisionId[],
     fetchViews: boolean
   ): Promise<Map<ModelRevisionKey, FdmConnectionWithNode[]>> {
-    const revisionIds = modelRevisionIds.map((modelRevisionId) => modelRevisionId.revisionId);
-    const connections = await this._fdm3dDataProvider.getCadConnectionsForRevisions(revisionIds);
+    const connections =
+      await this._fdm3dDataProvider.getCadConnectionsForRevisions(modelRevisionIds);
 
     const connectionsWithOptionalViews = fetchViews
       ? await this.getViewsForConnections(connections)
@@ -269,7 +267,7 @@ export class FdmNodeCache {
 
   private async getViewsForConnections(
     connections: FdmCadConnection[]
-  ): Promise<Array<{ connection: FdmCadConnection; view: Source }>> {
+  ): Promise<Array<{ connection: FdmCadConnection; views: Source[] }>> {
     const nodeInspectionResults = await inspectNodes(
       this._fdmClient,
       connections.map((connection) => connection.instance)
@@ -277,7 +275,7 @@ export class FdmNodeCache {
 
     const dataWithViews = connections.map((connection, ind) => ({
       connection,
-      view: nodeInspectionResults.items[ind].inspectionResults.involvedViews[0]
+      views: nodeInspectionResults.items[ind].inspectionResults.involvedViews
     }));
 
     return dataWithViews;
@@ -307,28 +305,28 @@ export class FdmNodeCache {
 }
 
 async function createRevisionToConnectionsMap(
-  connectionsWithView: Array<{ connection: FdmCadConnection; view?: Source }>,
+  connectionsWithViews: Array<{ connection: FdmCadConnection; views?: Source[] }>,
   modelRevisionIds: ModelRevisionId[],
   cdfClient: CogniteClient
 ): Promise<Map<ModelRevisionKey, FdmConnectionWithNode[]>> {
-  const revisionToNodeIdsMap = createRevisionToNodeIdMap(connectionsWithView);
-  const modelNodeIdToNodeMap = await createModelNodeIdToNodeMap(
-    revisionToNodeIdsMap,
+  const revisionToTreeIndexMap = createRevisionToTreeIndexMap(connectionsWithViews);
+  const modelTreeIndexToNodeMap = await createModelTreeIndexToNodeMap(
+    revisionToTreeIndexMap,
     modelRevisionIds,
     cdfClient
   );
 
-  return connectionsWithView.reduce((map, connectionWithView) => {
-    const connectionRevisionId = connectionWithView.connection.revisionId;
+  return connectionsWithViews.reduce((map, connectionWithViews) => {
+    const connectionRevisionId = connectionWithViews.connection.revisionId;
     const modelRevisionId = modelRevisionIds.find((p) => p.revisionId === connectionRevisionId);
 
     if (modelRevisionId === undefined) return map;
 
     const value = createFdmConnectionWithNode(
       modelRevisionId,
-      modelNodeIdToNodeMap,
-      connectionWithView.connection,
-      connectionWithView.view
+      modelTreeIndexToNodeMap,
+      connectionWithViews.connection,
+      connectionWithViews.views
     );
 
     insertConnectionIntoMapList(value, map, modelRevisionId);
@@ -339,20 +337,20 @@ async function createRevisionToConnectionsMap(
 
 function createFdmConnectionWithNode(
   modelRevisionId: ModelRevisionId,
-  modelNodeIdToNodeMap: Map<ModelNodeIdKey, Node3D>,
+  modelTreeIndexToNodeMap: Map<ModelTreeIndexKey, Node3D>,
   connection: FdmCadConnection,
-  view?: Source
+  views?: Source[]
 ): FdmConnectionWithNode {
-  const revisionNodeIdKey = createModelNodeIdKey(
+  const revisionTreeIndexKey = createModelTreeIndexKey(
     modelRevisionId.modelId,
     modelRevisionId.revisionId,
-    connection.nodeId
+    connection.treeIndex
   );
 
-  const node = modelNodeIdToNodeMap.get(revisionNodeIdKey);
+  const node = modelTreeIndexToNodeMap.get(revisionTreeIndexKey);
   assert(node !== undefined);
 
-  return { connection, cadNode: node, view };
+  return { connection, cadNode: node, views };
 }
 
 function insertConnectionIntoMapList(
@@ -374,45 +372,49 @@ function insertConnectionIntoMapList(
   }
 }
 
-async function createModelNodeIdToNodeMap(
-  revisionToNodeIdsMap: Map<RevisionId, NodeId[]>,
+async function createModelTreeIndexToNodeMap(
+  revisionToTreeIndicesMap: Map<RevisionId, TreeIndex[]>,
   modelRevisionIds: ModelRevisionId[],
   cdfClient: CogniteClient
-): Promise<Map<ModelNodeIdKey, Node3D>> {
-  const revisionNodeIdToNode = new Map<ModelNodeIdKey, Node3D>();
+): Promise<Map<ModelTreeIndexKey, Node3D>> {
+  const revisionTreeIndexToNode = new Map<ModelTreeIndexKey, Node3D>();
 
-  const nodePromises = [...revisionToNodeIdsMap.entries()].map(async ([revisionId, nodeIds]) => {
-    const modelId = modelRevisionIds.find((p) => p.revisionId === revisionId)?.modelId;
-    assert(modelId !== undefined);
+  const nodePromises = [...revisionToTreeIndicesMap.entries()].map(
+    async ([revisionId, treeIndices]) => {
+      const modelId = modelRevisionIds.find((p) => p.revisionId === revisionId)?.modelId;
+      assert(modelId !== undefined);
 
-    const nodes = await fetchNodesForNodeIds(modelId, revisionId, nodeIds, cdfClient);
-    nodeIds.forEach((nodeId, ind) => {
-      const modelNodeIdKey = createModelNodeIdKey(modelId, revisionId, nodeId);
-      revisionNodeIdToNode.set(modelNodeIdKey, nodes[ind]);
-    });
-  });
+      const nodeIds = await treeIndexesToNodeIds(modelId, revisionId, treeIndices, cdfClient);
+      const nodes = await fetchNodesForNodeIds(modelId, revisionId, nodeIds, cdfClient);
+
+      nodes.forEach((node) => {
+        const modelTreeIndexKey = createModelTreeIndexKey(modelId, revisionId, node.treeIndex);
+        revisionTreeIndexToNode.set(modelTreeIndexKey, node);
+      });
+    }
+  );
 
   await Promise.all(nodePromises);
 
-  return revisionNodeIdToNode;
+  return revisionTreeIndexToNode;
 }
 
-function createRevisionToNodeIdMap(
+function createRevisionToTreeIndexMap(
   connections: Array<{ connection: FdmCadConnection; view?: Source }>
-): Map<RevisionId, NodeId[]> {
-  return connections.reduce((revisionNodeIdMap, connectionWithView) => {
-    const { nodeId, revisionId } = connectionWithView.connection;
+): Map<RevisionId, TreeIndex[]> {
+  return connections.reduce((revisionTreeIndexMap, connectionWithView) => {
+    const { treeIndex, revisionId } = connectionWithView.connection;
 
-    const nodeIdsInRevision = revisionNodeIdMap.get(revisionId);
+    const treeIndicesInRevision = revisionTreeIndexMap.get(revisionId);
 
-    if (nodeIdsInRevision !== undefined) {
-      nodeIdsInRevision.push(nodeId);
+    if (treeIndicesInRevision !== undefined) {
+      treeIndicesInRevision.push(treeIndex);
     } else {
-      revisionNodeIdMap.set(revisionId, [nodeId]);
+      revisionTreeIndexMap.set(revisionId, [treeIndex]);
     }
 
-    return revisionNodeIdMap;
-  }, new Map<RevisionId, NodeId[]>());
+    return revisionTreeIndexMap;
+  }, new Map<RevisionId, TreeIndex[]>());
 }
 
 function intersectWithFdmKeySet(
@@ -420,10 +422,7 @@ function intersectWithFdmKeySet(
   relevantFdmKeySet: Set<FdmKey>
 ): FdmConnectionWithNode[] {
   return connections.filter((connectionData) => {
-    const fdmKey = createFdmKey(
-      connectionData.connection.instance.space,
-      connectionData.connection.instance.externalId
-    );
+    const fdmKey = createFdmKey(connectionData.connection.instance);
     return relevantFdmKeySet.has(fdmKey);
   });
 }

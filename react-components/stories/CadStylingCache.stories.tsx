@@ -6,14 +6,14 @@ import {
   CadModelContainer,
   type CadModelStyling,
   type CogniteCadModelProps,
-  type NodeStylingGroup,
   RevealCanvas,
   useReveal,
-  RevealContext
+  RevealContext,
+  type TreeIndexStylingGroup
 } from '../src';
 import { Color, Matrix4, Vector3 } from 'three';
 import { createSdkByUrlToken } from './utilities/createSdkByUrlToken';
-import { type CogniteCadModel, DefaultNodeAppearance } from '@cognite/reveal';
+import { type CogniteCadModel, DefaultNodeAppearance, IndexSet } from '@cognite/reveal';
 import { useEffect, useMemo, useState, type JSX } from 'react';
 import { useMappedEdgesForRevisions } from '../src/components/CacheProvider/NodeCacheProvider';
 
@@ -55,28 +55,29 @@ const Models = ({ addModelOptions }: CogniteCadModelProps): JSX.Element => {
 
   const { data } = useMappedEdgesForRevisions([platformModelOptions]);
 
-  const nodeIds = useMemo(
+  const treeIndices = useMemo(
     () =>
       data
         ?.get(`${platformModelOptions.modelId}/${platformModelOptions.revisionId}`)
-        ?.map((edgeWithNode) => edgeWithNode.connection.nodeId),
+        ?.map((edgeWithNode) => edgeWithNode.connection.treeIndex),
     [data]
   );
 
   useEffect(() => {
     const callback = (): void => {
-      if (platformStyling === undefined || nodeIds === undefined) return;
+      if (platformStyling === undefined || treeIndices === undefined) return;
 
       setPlatformStyling((prev): CadModelStyling | undefined => {
         if (prev?.groups === undefined) return prev;
 
-        const newNodeIds = getRandomSubset(nodeIds, nodeIds.length * 0.8);
+        const newTreeIndices = getRandomSubset(treeIndices, treeIndices.length * 0.4);
+        const indexSet = new IndexSet(newTreeIndices);
 
         return {
           groups: [
             ...prev.groups,
             {
-              nodeIds: newNodeIds.slice(0, newNodeIds.length / 2),
+              treeIndexSet: indexSet,
               style: {
                 color: new Color().setFromVector3(
                   new Vector3(Math.random(), Math.random(), Math.random())
@@ -97,10 +98,10 @@ const Models = ({ addModelOptions }: CogniteCadModelProps): JSX.Element => {
   }, [viewer, platformStyling, setPlatformStyling]);
 
   useEffect(() => {
-    if (nodeIds === undefined) return;
+    if (treeIndices === undefined) return;
 
-    const stylingGroupRed: NodeStylingGroup = {
-      nodeIds: nodeIds.slice(0, nodeIds.length),
+    const stylingGroupRed: TreeIndexStylingGroup = {
+      treeIndexSet: new IndexSet(treeIndices),
       style: {
         color: new Color('red'),
         renderInFront: true

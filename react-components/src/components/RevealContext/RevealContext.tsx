@@ -23,6 +23,7 @@ export type RevealContextProps = {
   sdk: CogniteClient;
   appLanguage?: string;
   children?: ReactNode;
+  useCoreDm?: boolean;
   viewerOptions?: Pick<
     Cognite3DViewerOptions,
     | 'antiAliasingHint'
@@ -46,7 +47,7 @@ export const RevealContext = (props: RevealContextProps): ReactElement => {
   if (viewer === null) return <></>;
 
   return (
-    <SDKProvider sdk={props.sdk}>
+    <SDKProvider sdk={props.sdk} useCoreDm={props.useCoreDm}>
       <QueryClientProvider client={queryClient}>
         <I18nContextProvider appLanguage={props.appLanguage}>
           <LoadedSceneProvider>

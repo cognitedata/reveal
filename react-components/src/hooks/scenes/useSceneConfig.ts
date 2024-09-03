@@ -1,7 +1,7 @@
 /*!
  * Copyright 2023 Cognite AS
  */
-import { createGetSceneQuery } from '../components/SceneContainer/Queries';
+import { sceneQuery } from './sceneQuery';
 import {
   type GroundPlaneProperties,
   type Transformation3d,
@@ -9,7 +9,7 @@ import {
   type SkyboxProperties,
   type SceneModelsProperties,
   type Scene360ImageCollectionsProperties
-} from '../components/SceneContainer/SceneFdmTypes';
+} from '../../components/SceneContainer/SceneFdmTypes';
 import { useQuery, type UseQueryResult } from '@tanstack/react-query';
 import {
   type CadOrPointCloudModel,
@@ -17,11 +17,20 @@ import {
   type Image360Collection,
   type Scene,
   type Skybox
-} from '../components/SceneContainer/sceneTypes';
-import { useFdmSdk } from '../components/RevealCanvas/SDKProvider';
-import { type Source, type FdmSDK } from '../data-providers/FdmSDK';
-import { type SceneConfigurationProperties } from '../hooks/types';
-import { fdmViewsExist } from '../utilities/fdmViewsExist';
+} from '../../components/SceneContainer/sceneTypes';
+import { useFdmSdk } from '../../components/RevealCanvas/SDKProvider';
+import { type Source, type FdmSDK } from '../../data-providers/FdmSDK';
+import { fdmViewsExist } from '../../utilities/fdmViewsExist';
+import {
+  type Cdf3dImage360CollectionProperties,
+  ENVIRONMENT_MAP_SOURCE,
+  GROUND_PLANE_SOURCE,
+  IMAGE_360_COLLECTION_SOURCE,
+  REVISION_SOURCE,
+  SCENE_SOURCE,
+  type SceneConfigurationProperties,
+  type TRANSFORMATION_SOURCE
+} from './types';
 
 const DefaultScene: Scene = {
   sceneConfiguration: {
@@ -41,19 +50,13 @@ const DefaultScene: Scene = {
 
 export const useSceneConfig = (
   sceneExternalId: string | undefined,
-  sceneSpaceExternalId: string | undefined
+  sceneSpace: string | undefined
 ): UseQueryResult<Scene | null> => {
   const fdmSdk = useFdmSdk();
   return useQuery({
-    queryKey: [
-      'reveal',
-      'react-components',
-      'sync-scene-config',
-      sceneExternalId,
-      sceneSpaceExternalId
-    ],
+    queryKey: ['reveal', 'react-components', 'sync-scene-config', sceneExternalId, sceneSpace],
     queryFn: async () => {
-      if (sceneExternalId === undefined || sceneSpaceExternalId === undefined) {
+      if (sceneExternalId === undefined || sceneSpace === undefined) {
         return null;
       }
 
@@ -63,28 +66,43 @@ export const useSceneConfig = (
         return DefaultScene;
       }
 
-      const getSceneQuery = createGetSceneQuery(sceneExternalId, sceneSpaceExternalId);
-      const queryResult = await fdmSdk.queryNodesAndEdges({
-        ...getSceneQuery
-      });
+      const query = {
+        ...sceneQuery,
+        parameters: { sceneExternalId, sceneSpace }
+      };
 
-      const sceneResponse = queryResult as any as SceneResponse;
-      const SceneConfigurationProperties = extractProperties<SceneConfigurationProperties>(
+      const queryResult = await fdmSdk.queryNodesAndEdges<
+        typeof query,
+        [
+          { source: typeof SCENE_SOURCE; properties: SceneConfigurationProperties },
+          { source: typeof ENVIRONMENT_MAP_SOURCE; properties: SkyboxProperties },
+          { source: typeof GROUND_PLANE_SOURCE; properties: GroundPlaneProperties },
+          { source: typeof TRANSFORMATION_SOURCE; properties: Transformation3d },
+          { source: typeof REVISION_SOURCE; properties: SceneModelsProperties },
+          {
+            source: typeof IMAGE_360_COLLECTION_SOURCE;
+            properties: Scene360ImageCollectionsProperties;
+          }
+        ]
+      >(query);
+
+      const sceneResponse = queryResult;
+      const sceneConfigurationProperties = extractProperties<SceneConfigurationProperties>(
         sceneResponse.items.myScene[0]?.properties
       );
 
       const scene: Scene = {
         sceneConfiguration: {
-          name: SceneConfigurationProperties.name,
-          cameraTranslationX: SceneConfigurationProperties.cameraTranslationX,
-          cameraTranslationY: SceneConfigurationProperties.cameraTranslationY,
-          cameraTranslationZ: SceneConfigurationProperties.cameraTranslationZ,
-          cameraEulerRotationX: SceneConfigurationProperties.cameraEulerRotationX,
-          cameraEulerRotationY: SceneConfigurationProperties.cameraEulerRotationY,
-          cameraEulerRotationZ: SceneConfigurationProperties.cameraEulerRotationZ,
-          cameraTargetX: SceneConfigurationProperties.cameraTargetX,
-          cameraTargetY: SceneConfigurationProperties.cameraTargetY,
-          cameraTargetZ: SceneConfigurationProperties.cameraTargetZ
+          name: sceneConfigurationProperties.name,
+          cameraTranslationX: sceneConfigurationProperties.cameraTranslationX,
+          cameraTranslationY: sceneConfigurationProperties.cameraTranslationY,
+          cameraTranslationZ: sceneConfigurationProperties.cameraTranslationZ,
+          cameraEulerRotationX: sceneConfigurationProperties.cameraEulerRotationX,
+          cameraEulerRotationY: sceneConfigurationProperties.cameraEulerRotationY,
+          cameraEulerRotationZ: sceneConfigurationProperties.cameraEulerRotationZ,
+          cameraTargetX: sceneConfigurationProperties.cameraTargetX,
+          cameraTargetY: sceneConfigurationProperties.cameraTargetY,
+          cameraTargetZ: sceneConfigurationProperties.cameraTargetZ
         },
         skybox: getSkybox(sceneResponse),
         groundPlanes: getGroundPlanes(sceneResponse),
@@ -99,36 +117,11 @@ export const useSceneConfig = (
 
 async function sceneViewsExist(fdmSdk: FdmSDK): Promise<boolean> {
   const neededViews: Source[] = [
-    {
-      type: 'view',
-      space: 'scene',
-      externalId: 'SceneConfiguration',
-      version: 'v1'
-    },
-    {
-      type: 'view',
-      space: 'scene',
-      externalId: 'RevisionProperties',
-      version: 'v1'
-    },
-    {
-      type: 'view',
-      space: 'scene',
-      externalId: 'Image360CollectionProperties',
-      version: 'v1'
-    },
-    {
-      type: 'view',
-      space: 'scene',
-      externalId: 'EnvironmentMap',
-      version: 'v1'
-    },
-    {
-      type: 'view',
-      space: 'scene',
-      externalId: 'TexturedPlane',
-      version: 'v1'
-    }
+    SCENE_SOURCE,
+    REVISION_SOURCE,
+    IMAGE_360_COLLECTION_SOURCE,
+    ENVIRONMENT_MAP_SOURCE,
+    GROUND_PLANE_SOURCE
   ];
 
   return await fdmViewsExist(fdmSdk, neededViews);
@@ -164,7 +157,7 @@ function getImageCollections(sceneResponse: SceneResponse): Image360Collection[]
   if (sceneResponse.items.image360CollectionsEdges.length > 0) {
     const sceneModels = sceneResponse.items.image360CollectionsEdges;
     sceneModels.forEach((sceneModel) => {
-      const imageCollectionProperties = extractProperties<Scene360ImageCollectionsProperties>(
+      const imageCollectionProperties = extractProperties<Cdf3dImage360CollectionProperties>(
         sceneModel.properties
       );
       const collection: Image360Collection = {

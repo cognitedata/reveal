@@ -6,7 +6,7 @@ import {
   type ChunkInCacheTypes,
   type ModelId,
   type RevisionId,
-  type ModelNodeIdKey
+  type ModelTreeIndexKey
 } from './types';
 import { modelRevisionNodesAssetsToKey } from './utils';
 import { fetchNodesForNodeIds } from './requests';
@@ -14,7 +14,7 @@ import { fetchNodesForNodeIds } from './requests';
 export class Node3DPerNodeIdCache {
   private readonly _sdk: CogniteClient;
 
-  private readonly _nodeIdsToNode3D = new Map<ModelNodeIdKey, Promise<Node3D>>();
+  private readonly _nodeIdsToNode3D = new Map<ModelTreeIndexKey, Promise<Node3D>>();
 
   constructor(sdk: CogniteClient) {
     this._sdk = sdk;
@@ -71,11 +71,11 @@ export class Node3DPerNodeIdCache {
     return allNodes;
   }
 
-  public async getNodeIdToNode3DCacheItem(key: ModelNodeIdKey): Promise<Node3D | undefined> {
+  public async getNodeIdToNode3DCacheItem(key: ModelTreeIndexKey): Promise<Node3D | undefined> {
     return await this._nodeIdsToNode3D.get(key);
   }
 
-  public setNodeIdToNode3DCacheItem(key: ModelNodeIdKey, item: Promise<Node3D>): void {
+  public setNodeIdToNode3DCacheItem(key: ModelTreeIndexKey, item: Promise<Node3D>): void {
     this._nodeIdsToNode3D.set(key, Promise.resolve(item));
   }
 }
