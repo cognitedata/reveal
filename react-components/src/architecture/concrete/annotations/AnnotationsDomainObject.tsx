@@ -12,7 +12,7 @@ import { AnnotationsRenderStyle } from './AnnotationsRenderStyle';
 import { FocusType } from '../../base/domainObjectsHelpers/FocusType';
 import { Changes } from '../../base/domainObjectsHelpers/Changes';
 import { remove } from '../../base/utilities/extensions/arrayExtensions';
-import { AnnotationGizmoDomainObject } from './AnnotationGizmoDomainObject';
+import { BoxGizmoDomainObject } from './BoxGizmoDomainObject';
 import { SingleAnnotation } from './helpers/SingleAnnotation';
 
 export class AnnotationsDomainObject extends VisualDomainObject {
@@ -131,14 +131,14 @@ export class AnnotationsDomainObject extends VisualDomainObject {
     return true;
   }
 
-  public getAnnotationGizmo(): AnnotationGizmoDomainObject | undefined {
-    return this.getDescendantByType(AnnotationGizmoDomainObject);
+  public getAnnotationGizmo(): BoxGizmoDomainObject | undefined {
+    return this.getDescendantByType(BoxGizmoDomainObject);
   }
 
-  public getOrCreateAnnotationGizmo(): AnnotationGizmoDomainObject {
+  public getOrCreateAnnotationGizmo(): BoxGizmoDomainObject {
     let annotationGizmo = this.getAnnotationGizmo();
     if (annotationGizmo === undefined) {
-      annotationGizmo = new AnnotationGizmoDomainObject();
+      annotationGizmo = new BoxGizmoDomainObject();
       this.addChildInteractive(annotationGizmo);
     }
     return annotationGizmo;

@@ -7,7 +7,7 @@ import { type Matrix4, Box3 } from 'three';
 import { type PointCloudAnnotation } from './types';
 
 import { getSingleAnnotationGeometry } from './annotationGeometryUtils';
-import { CUBE_CORNERS } from './getBoundingBox';
+import { expandBoundingBoxForBox } from '../../../base/utilities/box/createBoxGeometry';
 
 export class PendingAnnotation {
   matrix: Matrix4;
@@ -20,11 +20,7 @@ export class PendingAnnotation {
 
   public getBoundingBox(): Box3 {
     const boundingBox = new Box3().makeEmpty();
-    for (const corner of CUBE_CORNERS) {
-      const copyOfCorner = corner.clone();
-      copyOfCorner.applyMatrix4(this.matrix);
-      boundingBox.expandByPoint(copyOfCorner);
-    }
+    expandBoundingBoxForBox(boundingBox, this.matrix);
     return boundingBox;
   }
 

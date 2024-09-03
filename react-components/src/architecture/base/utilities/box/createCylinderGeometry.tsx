@@ -5,6 +5,13 @@
 import { type LineSegmentsGeometry } from 'three/examples/jsm/lines/LineSegmentsGeometry.js';
 
 import { createLineSegmentsAsVertices, createLineSegmentsGeometry } from './createBoxGeometry';
+import { BufferAttribute, BufferGeometry, CylinderGeometry } from 'three';
+
+const RADIUS = 0.5;
+
+export function createCylinder(): CylinderGeometry {
+  return new CylinderGeometry(RADIUS, RADIUS, 1);
+}
 
 export function createCylinderGeometry(): LineSegmentsGeometry {
   const vertices = createCylinderGeometryAsVertices();
@@ -23,17 +30,17 @@ export function createCylinderGeometryAsVertices(): number[] {
   // Bottom circle vertices
   for (let i = 0; i <= totalSegments; i++) {
     const angle = i * angleIncrement;
-    vertices.push(Math.sin(angle)); // x-coordinate
-    vertices.push(Math.cos(angle)); // y-coordinate
-    vertices.push(-1); // z-coordinate (fixed for bottom circle)
+    vertices.push(RADIUS * Math.sin(angle)); // x-coordinate
+    vertices.push(RADIUS * Math.cos(angle)); // y-coordinate
+    vertices.push(-RADIUS); // z-coordinate (fixed for bottom circle)
   }
 
   // Top circle vertices
   for (let i = 0; i <= totalSegments; i++) {
     const angle = i * angleIncrement;
-    vertices.push(Math.sin(angle)); // x-coordinate
-    vertices.push(Math.cos(angle)); // y-coordinate
-    vertices.push(1); // z-coordinate (fixed for top circle)
+    vertices.push(RADIUS * Math.sin(angle)); // x-coordinate
+    vertices.push(RADIUS * Math.cos(angle)); // y-coordinate
+    vertices.push(RADIUS); // z-coordinate (fixed for top circle)
   }
 
   // Define the indices to form line segments of the cylinder
@@ -56,4 +63,12 @@ export function createCylinderGeometryAsVertices(): number[] {
   // This is maybe a silly solution, but I will keep it like this because
   // we may change to indexed BufferGeometry later on.
   return createLineSegmentsAsVertices(vertices, indices);
+}
+
+export function createLineSegmentsBufferGeometryForCylinder(): BufferGeometry {
+  const vertices = createCylinderGeometryAsVertices();
+  const verticesArray = new Float32Array(vertices);
+  const geometry = new BufferGeometry();
+  geometry.setAttribute('position', new BufferAttribute(verticesArray, 3));
+  return geometry;
 }

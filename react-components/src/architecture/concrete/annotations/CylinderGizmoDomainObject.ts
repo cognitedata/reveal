@@ -2,20 +2,19 @@
  * Copyright 2024 Cognite AS
  */
 
-import { BoxDomainObject } from '../primitives/box/BoxDomainObject';
-import { Color, Vector3 } from 'three';
-import { BoxRenderStyle } from '../primitives/box/BoxRenderStyle';
+import { Color } from 'three';
+import { SolidPrimitiveRenderStyle } from '../primitives/SolidPrimitiveRenderStyle';
 import { type RenderStyle } from '../../base/renderStyles/RenderStyle';
 import { type TranslateKey } from '../../base/utilities/TranslateKey';
 import { type DomainObject } from '../../base/domainObjects/DomainObject';
 import { type DomainObjectChange } from '../../base/domainObjectsHelpers/DomainObjectChange';
 import { Changes } from '../../base/domainObjectsHelpers/Changes';
 import { AnnotationsDomainObject } from './AnnotationsDomainObject';
-import { SingleAnnotation } from './helpers/SingleAnnotation';
+import { type SingleAnnotation } from './helpers/SingleAnnotation';
+import { BoxGizmoDomainObject } from './BoxGizmoDomainObject';
+import { CylinderDomainObject } from '../primitives/cylinder/CylinderDomainObject';
 
-export class AnnotationGizmoDomainObject extends BoxDomainObject {
-  public static GizmoOnly = 'GizmoOnly';
-
+export class CylinderGizmoDomainObject extends CylinderDomainObject {
   // ==================================================
   // CONSTRUCTOR
   // ==================================================
@@ -29,11 +28,11 @@ export class AnnotationGizmoDomainObject extends BoxDomainObject {
   // ==================================================
 
   public override get typeName(): TranslateKey {
-    return { fallback: 'Annotation gizmo' };
+    return { fallback: 'Cylinder' };
   }
 
   public override createRenderStyle(): RenderStyle | undefined {
-    const style = new BoxRenderStyle();
+    const style = new SolidPrimitiveRenderStyle();
     style.showLabel = false;
     style.opacity = 0.333;
     return style;
@@ -44,7 +43,7 @@ export class AnnotationGizmoDomainObject extends BoxDomainObject {
   }
 
   public override clone(what?: symbol): DomainObject {
-    const clone = new AnnotationGizmoDomainObject();
+    const clone = new CylinderGizmoDomainObject();
     clone.copyFrom(this, what);
     return clone;
   }
@@ -52,8 +51,9 @@ export class AnnotationGizmoDomainObject extends BoxDomainObject {
   protected override notifyCore(change: DomainObjectChange): void {
     super.notifyCore(change);
 
+    // Update the selected annotation if the gizmo is moved
     const desc = change.getChangedDescription(Changes.geometry);
-    if (desc !== undefined && !desc.isChanged(AnnotationGizmoDomainObject.GizmoOnly)) {
+    if (desc !== undefined && !desc.isChanged(BoxGizmoDomainObject.GizmoOnly)) {
       this.updateSelectedAnnotationFromThis();
     }
   }
@@ -70,18 +70,10 @@ export class AnnotationGizmoDomainObject extends BoxDomainObject {
   // INSTANCE METHODS
   // ==================================================
 
-  public createSingleAnnotationBox(): SingleAnnotation {
-    const matrix = this.getMatrix();
-    return SingleAnnotation.createBoxFromMatrix(matrix);
-  }
-
   public updateThisFromAnnotation(annotation: SingleAnnotation): boolean {
     const matrix = annotation.getMatrix();
     if (matrix === undefined) {
       return false;
-    }
-    if (annotation.isCylinder) {
-      matrix.scale(new Vector3(2, 2, 2));
     }
     this.setMatrix(matrix);
     return true;

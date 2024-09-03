@@ -7,7 +7,7 @@ import { RenderTargetCommand } from '../../../base/commands/RenderTargetCommand'
 import { Changes } from '../../../base/domainObjectsHelpers/Changes';
 import { DomainObjectChange } from '../../../base/domainObjectsHelpers/DomainObjectChange';
 import { type TranslateKey } from '../../../base/utilities/TranslateKey';
-import { AnnotationGizmoDomainObject } from '../AnnotationGizmoDomainObject';
+import { BoxGizmoDomainObject } from '../BoxGizmoDomainObject';
 import { AnnotationsDomainObject } from '../AnnotationsDomainObject';
 
 export class AlignSelectedAnnotationCommand extends RenderTargetCommand {
@@ -73,10 +73,7 @@ export class AlignSelectedAnnotationCommand extends RenderTargetCommand {
     const annotationGizmo = domainObject.getAnnotationGizmo();
     if (annotationGizmo !== undefined) {
       annotationGizmo.updateThisFromAnnotation(selectedAnnotation);
-      const change = new DomainObjectChange(
-        Changes.geometry,
-        AnnotationGizmoDomainObject.GizmoOnly
-      );
+      const change = new DomainObjectChange(Changes.geometry, BoxGizmoDomainObject.GizmoOnly);
       annotationGizmo.notify(change);
     }
     return true;

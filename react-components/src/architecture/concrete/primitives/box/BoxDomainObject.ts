@@ -2,7 +2,7 @@
  * Copyright 2024 Cognite AS
  */
 
-import { BoxRenderStyle } from './BoxRenderStyle';
+import { SolidPrimitiveRenderStyle } from '../SolidPrimitiveRenderStyle';
 import { type RenderStyle } from '../../../base/renderStyles/RenderStyle';
 import { type ThreeView } from '../../../base/views/ThreeView';
 import { BoxView } from './BoxView';
@@ -51,8 +51,8 @@ export abstract class BoxDomainObject extends VisualDomainObject {
   // INSTANCE PROPERTIES
   // ==================================================
 
-  public get renderStyle(): BoxRenderStyle {
-    return this.getRenderStyle() as BoxRenderStyle;
+  public get renderStyle(): SolidPrimitiveRenderStyle {
+    return this.getRenderStyle() as SolidPrimitiveRenderStyle;
   }
 
   public get primitiveType(): PrimitiveType {
@@ -113,7 +113,7 @@ export abstract class BoxDomainObject extends VisualDomainObject {
   }
 
   public override createRenderStyle(): RenderStyle | undefined {
-    return new BoxRenderStyle();
+    return new SolidPrimitiveRenderStyle();
   }
 
   public override createDragger(props: CreateDraggerProps): BaseDragger | undefined {

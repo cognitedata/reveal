@@ -24,7 +24,7 @@ import {
 import { BoxDomainObject } from './BoxDomainObject';
 import { type DomainObjectChange } from '../../../base/domainObjectsHelpers/DomainObjectChange';
 import { Changes } from '../../../base/domainObjectsHelpers/Changes';
-import { type BoxRenderStyle } from './BoxRenderStyle';
+import { type SolidPrimitiveRenderStyle } from '../SolidPrimitiveRenderStyle';
 import { GroupThreeView } from '../../../base/views/GroupThreeView';
 import {
   CDF_TO_VIEWER_TRANSFORMATION,
@@ -46,6 +46,7 @@ import { Range1 } from '../../../base/utilities/geometry/Range1';
 import { PrimitiveType } from '../PrimitiveType';
 import { Quantity } from '../../../base/domainObjectsHelpers/Quantity';
 import { type PrimitiveRenderStyle } from '../PrimitiveRenderStyle';
+import { type DomainObject } from '../../../base/domainObjects/DomainObject';
 
 const RELATIVE_RESIZE_RADIUS = 0.15;
 const RELATIVE_ROTATION_RADIUS = new Range1(0.6, 0.75);
@@ -66,8 +67,8 @@ export class BoxView extends GroupThreeView<BoxDomainObject> {
   // INSTANCE PROPERTIES
   // ==================================================
 
-  protected override get style(): BoxRenderStyle {
-    return super.style as BoxRenderStyle;
+  protected override get style(): SolidPrimitiveRenderStyle {
+    return super.style as SolidPrimitiveRenderStyle;
   }
 
   // ==================================================
@@ -227,10 +228,10 @@ export class BoxView extends GroupThreeView<BoxDomainObject> {
     const material = new MeshPhongMaterial();
     updateSolidMaterial(material, domainObject, style);
     const geometry = new BoxGeometry(1, 1, 1);
-    const result = new Mesh(geometry, material);
-    result.renderOrder = RENDER_ORDER;
-    result.applyMatrix4(matrix);
-    return result;
+    const mesh = new Mesh(geometry, material);
+    mesh.renderOrder = RENDER_ORDER;
+    mesh.applyMatrix4(matrix);
+    return mesh;
   }
 
   private createLines(matrix: Matrix4): Object3D | undefined {
@@ -322,7 +323,11 @@ export class BoxView extends GroupThreeView<BoxDomainObject> {
     const center = face.getCenter(newVector3());
     center.applyMatrix4(matrix);
     result.position.copy(center);
-    rotate(result, face, domainObject);
+
+    const rotationMatrix = domainObject.getRotationMatrix();
+    rotationMatrix.premultiply(CDF_TO_VIEWER_TRANSFORMATION);
+
+    rotateEdgeCircle(result, face, rotationMatrix);
     return result;
   }
 
@@ -346,7 +351,11 @@ export class BoxView extends GroupThreeView<BoxDomainObject> {
     const center = face.getCenter(newVector3());
     center.applyMatrix4(matrix);
     result.position.copy(center);
-    rotate(result, face, domainObject);
+
+    const rotationMatrix = domainObject.getRotationMatrix();
+    rotationMatrix.premultiply(CDF_TO_VIEWER_TRANSFORMATION);
+
+    rotateEdgeCircle(result, face, rotationMatrix);
     return result;
   }
 
@@ -596,10 +605,10 @@ function showMarkers(focusType: FocusType): boolean {
 // PRIVATE FUNCTIONS: Update materials
 // ==================================================
 
-function updateSolidMaterial(
+export function updateSolidMaterial(
   material: MeshPhongMaterial,
-  domainObject: BoxDomainObject,
-  style: BoxRenderStyle
+  domainObject: DomainObject,
+  style: SolidPrimitiveRenderStyle
 ): void {
   const color = domainObject.getColorByColorType(style.colorType);
   const isSelected = domainObject.isSelected;
@@ -618,10 +627,10 @@ function updateSolidMaterial(
   material.depthTest = style.depthTest;
 }
 
-function updateLineSegmentsMaterial(
+export function updateLineSegmentsMaterial(
   material: LineBasicMaterial,
-  domainObject: BoxDomainObject,
-  style: BoxRenderStyle
+  domainObject: DomainObject,
+  style: SolidPrimitiveRenderStyle
 ): void {
   const color = domainObject.getColorByColorType(style.colorType);
   material.color = color;
@@ -630,10 +639,10 @@ function updateLineSegmentsMaterial(
   material.depthTest = style.depthTest;
 }
 
-function updateMarkerMaterial(
+export function updateMarkerMaterial(
   material: MeshPhongMaterial,
-  domainObject: BoxDomainObject,
-  style: BoxRenderStyle,
+  domainObject: DomainObject,
+  style: SolidPrimitiveRenderStyle,
   hasFocus: boolean
 ): void {
   material.color = ARROW_AND_RING_COLOR;
@@ -663,11 +672,9 @@ function adjustLabel(point: Vector3, domainObject: BoxDomainObject, spriteHeight
 // PRIVATE FUNCTIONS: Misc
 // ==================================================
 
-function rotate(mesh: Mesh, face: BoxFace, domainObject: BoxDomainObject): void {
+export function rotateEdgeCircle(mesh: Mesh, face: BoxFace, rotationMatrix: Matrix4): void {
   // Must be rotated correctly because of sideness
-  const matrix = domainObject.getRotationMatrix();
-  matrix.premultiply(CDF_TO_VIEWER_TRANSFORMATION);
-  mesh.rotation.setFromRotationMatrix(matrix);
+  mesh.rotation.setFromRotationMatrix(rotationMatrix);
 
   switch (face.face) {
     case 0:

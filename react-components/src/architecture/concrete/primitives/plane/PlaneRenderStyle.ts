@@ -4,21 +4,26 @@
 
 import { cloneDeep } from 'lodash';
 import { type RenderStyle } from '../../../base/renderStyles/RenderStyle';
-import { CommonRenderStyle } from '../../../base/renderStyles/CommonRenderStyle';
 import { BLACK_COLOR, WHITE_COLOR } from '../../../base/utilities/colors/colorExtensions';
+import { SolidPrimitiveRenderStyle } from '../SolidPrimitiveRenderStyle';
 
-export class PlaneRenderStyle extends CommonRenderStyle {
+export class PlaneRenderStyle extends SolidPrimitiveRenderStyle {
   // ==================================================
   // INSTANCE FIELDS
   // ==================================================
 
-  public showSolid = true;
-  public showLines = true;
   public linesColor = BLACK_COLOR.clone();
   public selectedLinesColor = WHITE_COLOR.clone();
-  public opacityUse = true;
-  public opacity = 0.25;
   public selectedOpacity = 0.5;
+
+  // ==================================================
+  // CONSTRUCTOR
+  // ==================================================
+
+  public constructor() {
+    super();
+    this.opacity = 0.25;
+  }
 
   // ==================================================
   // OVERRIDES of BaseStyle

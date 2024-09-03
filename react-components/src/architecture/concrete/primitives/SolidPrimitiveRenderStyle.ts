@@ -3,10 +3,10 @@
  */
 
 import { cloneDeep } from 'lodash';
-import { PrimitiveRenderStyle } from '../PrimitiveRenderStyle';
-import { type RenderStyle } from '../../../base/renderStyles/RenderStyle';
+import { PrimitiveRenderStyle } from './PrimitiveRenderStyle';
+import { type RenderStyle } from '../../base/renderStyles/RenderStyle';
 
-export class BoxRenderStyle extends PrimitiveRenderStyle {
+export class SolidPrimitiveRenderStyle extends PrimitiveRenderStyle {
   // ==================================================
   // INSTANCE FIELDS
   // ==================================================
@@ -22,6 +22,6 @@ export class BoxRenderStyle extends PrimitiveRenderStyle {
   // ==================================================
 
   public override clone(): RenderStyle {
-    return cloneDeep<BoxRenderStyle>(this);
+    return cloneDeep<SolidPrimitiveRenderStyle>(this);
   }
 }

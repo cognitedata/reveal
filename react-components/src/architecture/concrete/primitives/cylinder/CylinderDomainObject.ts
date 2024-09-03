@@ -2,7 +2,6 @@
  * Copyright 2024 Cognite AS
  */
 
-import { CylinderRenderStyle } from './CylinderRenderStyle';
 import { type RenderStyle } from '../../../base/renderStyles/RenderStyle';
 import { type ThreeView } from '../../../base/views/ThreeView';
 import { CylinderView } from './CylinderView';
@@ -26,6 +25,7 @@ import { PanelInfo } from '../../../base/domainObjectsHelpers/PanelInfo';
 import { DomainObjectTransaction } from '../../../base/undo/DomainObjectTransaction';
 import { type Transaction } from '../../../base/undo/Transaction';
 import { square } from '../../../base/utilities/extensions/mathExtensions';
+import { SolidPrimitiveRenderStyle } from '../SolidPrimitiveRenderStyle';
 
 export const MIN_BOX_SIZE = 0.01;
 const UP_AXIS = new Vector3(0, 0, 1);
@@ -47,8 +47,8 @@ export abstract class CylinderDomainObject extends VisualDomainObject {
   // INSTANCE PROPERTIES
   // ==================================================
 
-  public get renderStyle(): CylinderRenderStyle {
-    return this.getRenderStyle() as CylinderRenderStyle;
+  public get renderStyle(): SolidPrimitiveRenderStyle {
+    return this.getRenderStyle() as SolidPrimitiveRenderStyle;
   }
 
   public get primitiveType(): PrimitiveType {
@@ -105,7 +105,7 @@ export abstract class CylinderDomainObject extends VisualDomainObject {
   }
 
   public override createRenderStyle(): RenderStyle | undefined {
-    return new CylinderRenderStyle();
+    return new SolidPrimitiveRenderStyle();
   }
 
   public override createDragger(props: CreateDraggerProps): BaseDragger | undefined {
@@ -235,6 +235,17 @@ export abstract class CylinderDomainObject extends VisualDomainObject {
     quaternion.setFromUnitVectors(UP_AXIS, this.axis);
     matrix.compose(this.center, quaternion, scale);
     return matrix;
+  }
+
+  public setMatrix(matrix: Matrix4): void {
+    const centerA = new Vector3(0, 0, -0.5).applyMatrix4(matrix);
+    const centerB = new Vector3(0, 0, 0.5).applyMatrix4(matrix);
+    const scale = new Vector3();
+    matrix.decompose(new Vector3(), new Quaternion(), scale);
+
+    this.centerA.copy(centerA);
+    this.centerB.copy(centerB);
+    this.radius = scale.x / 2;
   }
 
   // ==================================================

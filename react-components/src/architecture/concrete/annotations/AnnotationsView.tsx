@@ -4,15 +4,12 @@
 
 import { LineMaterial } from 'three/examples/jsm/lines/LineMaterial.js';
 import { Wireframe } from 'three/examples/jsm/lines/Wireframe.js';
-
 import {
   CDF_TO_VIEWER_TRANSFORMATION,
   type CustomObjectIntersectInput,
   type CustomObjectIntersection
 } from '@cognite/reveal';
-
 import { type PointCloudAnnotation } from './utils/types';
-
 import {
   type CreateWireframeArgs,
   createWireframeFromMultipleAnnotations
@@ -32,7 +29,6 @@ import { SingleAnnotation } from './helpers/SingleAnnotation';
 import {
   Box3,
   BoxGeometry,
-  CylinderGeometry,
   Group,
   Matrix4,
   Mesh,
@@ -40,6 +36,7 @@ import {
   type Object3D,
   Vector2
 } from 'three';
+import { createCylinder } from '../../base/utilities/box/createCylinderGeometry';
 
 const FOCUS_ANNOTATION_NAME = 'focus-annotation-name';
 const GROUP_SIZE = 100;
@@ -437,7 +434,7 @@ function createMeshByMatrix(
   material: MeshBasicMaterial,
   isCylinder: boolean
 ): Mesh {
-  const geometry = isCylinder ? new CylinderGeometry(1, 1, 2) : new BoxGeometry(1, 1, 1);
+  const geometry = isCylinder ? createCylinder() : new BoxGeometry(1, 1, 1);
   if (isCylinder) {
     // In Three.js, the cylinder is oriented along the Y-axis, so we need to rotate it
     // so up is the Z-axis.

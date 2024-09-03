@@ -49,7 +49,7 @@ function getCylinderMatrix(cylinder: AnnotationsCylinder, margin: number): Matri
   // Calculate the scale of the cylinder
   const radius = cylinder.radius * (1 + margin);
   const height = centerA.distanceTo(centerB);
-  const scale = new Vector3(radius, radius, height / 2);
+  const scale = new Vector3(radius * 2, radius * 2, height);
 
   const center = new Vector3().addVectors(centerB, centerA).divideScalar(2);
   const axis = new Vector3().subVectors(centerB, centerA).normalize();

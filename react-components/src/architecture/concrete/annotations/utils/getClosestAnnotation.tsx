@@ -3,19 +3,16 @@
  */
 
 import { type Matrix4, type Ray, Vector3 } from 'three';
-import { OBB } from 'three/examples/jsm/math/OBB.js';
-
 import {
   type AnnotationsBox,
   type AnnotationsCylinder,
   type AnnotationsCogniteAnnotationTypesPrimitivesGeometry3DGeometry as AnnotationGeometry
 } from '@cognite/sdk';
-
 import { type PointCloudAnnotation } from './types';
-
 import { getAnnotationGeometries } from './annotationGeometryUtils';
 import { getBoxMatrix } from './getMatrixUtils';
 import { ClosestGeometryFinder } from '../../../base/utilities/geometry/ClosestGeometryFinder';
+import { createOrientedBox } from '../../../base/utilities/box/createBoxGeometry';
 
 export function getClosestAnnotation(
   annotations: Generator<PointCloudAnnotation>,
@@ -81,7 +78,7 @@ function getIntersectionPoint(
 function intersectBoxRegion(box: AnnotationsBox, globalMatrix: Matrix4, ray: Ray): Vector3 | null {
   const matrix = getBoxMatrix(box);
   matrix.premultiply(globalMatrix);
-  const orientedBox = new OBB(new Vector3(), new Vector3(0.5, 0.5, 0.5));
+  const orientedBox = createOrientedBox();
   orientedBox.applyMatrix4(matrix);
   return orientedBox.intersectRay(ray, new Vector3());
 }
@@ -92,24 +89,17 @@ function intersectCylinderRegion(
   ray: Ray
 ): Vector3 | null {
   const { centerA, centerB } = getCylinderCenters(cylinder, globalMatrix);
-  const cylinderIntersections = intersectRayCylinder(
-    ray.origin,
-    ray.direction,
-    centerA,
-    centerB,
-    cylinder.radius
-  );
-
-  return cylinderIntersections;
+  return intersectRayCylinder(ray, centerA, centerB, cylinder.radius);
 }
 
-function intersectRayCylinder(
-  rayOrigin: Vector3,
-  rayDirection: Vector3,
+export function intersectRayCylinder(
+  ray: Ray,
   centerA: Vector3,
   centerB: Vector3,
   radius: number
 ): Vector3 | null {
+  const rayOrigin = ray.origin;
+  const rayDirection = ray.direction;
   const ba = new Vector3().subVectors(centerB, centerA);
   const oc = new Vector3().subVectors(rayOrigin, centerA);
   const baba = ba.dot(ba);
@@ -177,7 +167,7 @@ function isInsidePointBoxRegion(
 ): boolean {
   const matrix = getBoxMatrix(box);
   matrix.premultiply(globalMatrix);
-  const orientedBox = new OBB(new Vector3(), new Vector3(1, 1, 1));
+  const orientedBox = createOrientedBox();
   orientedBox.applyMatrix4(matrix);
   return orientedBox.containsPoint(point);
 }
@@ -195,7 +185,7 @@ function getVolume(geometry: AnnotationGeometry, globalMatrix: Matrix4): number 
 function getBoxRegionVolume(box: AnnotationsBox, globalMatrix: Matrix4): number {
   const matrix = getBoxMatrix(box);
   matrix.premultiply(globalMatrix);
-  const obb = new OBB(new Vector3(), new Vector3(1, 1, 1));
+  const obb = createOrientedBox();
   obb.applyMatrix4(matrix);
   return 8 * obb.halfSize.x * obb.halfSize.y * obb.halfSize.z;
 }

@@ -20,7 +20,7 @@ import { CommandsUpdater } from '../../../base/reactUpdaters/CommandsUpdater';
 import { SetAnnotationEditTypeCommand } from './SetAnnotationEditTypeCommand';
 import { type BaseCreator } from '../../../base/domainObjectsHelpers/BaseCreator';
 import { BoxCreator } from '../../primitives/box/BoxCreator';
-import { AnnotationGizmoDomainObject } from '../AnnotationGizmoDomainObject';
+import { BoxGizmoDomainObject } from '../BoxGizmoDomainObject';
 import { Changes } from '../../../base/domainObjectsHelpers/Changes';
 import { type BaseDragger } from '../../../base/domainObjectsHelpers/BaseDragger';
 import { PrimitiveEditTool } from '../../primitives/PrimitiveEditTool';
@@ -247,7 +247,7 @@ export class AnnotationEditTool extends BaseEditTool {
 
   protected override async createDragger(event: PointerEvent): Promise<BaseDragger | undefined> {
     function isAnnotationGizmo(domainObject: DomainObject): boolean {
-      return domainObject instanceof AnnotationGizmoDomainObject;
+      return domainObject instanceof BoxGizmoDomainObject;
     }
     const intersection = await this.getIntersection(event, isAnnotationGizmo);
     if (intersection === undefined) {
@@ -256,7 +256,7 @@ export class AnnotationEditTool extends BaseEditTool {
     if (!isDomainObjectIntersection(intersection)) {
       return undefined;
     }
-    const annotationGizmo = intersection.domainObject as AnnotationGizmoDomainObject;
+    const annotationGizmo = intersection.domainObject as BoxGizmoDomainObject;
     if (annotationGizmo === undefined) {
       return undefined;
     }
@@ -342,7 +342,7 @@ export class AnnotationEditTool extends BaseEditTool {
     this._creator = undefined;
 
     const annotationsDomainObject = this.getSelectedAnnotationsDomainObject();
-    const annotationGizmo = creator.domainObject as AnnotationGizmoDomainObject;
+    const annotationGizmo = creator.domainObject as BoxGizmoDomainObject;
     if (annotationsDomainObject === undefined || annotationGizmo === undefined) {
       return;
     }
@@ -383,7 +383,7 @@ export class AnnotationEditTool extends BaseEditTool {
     );
 
     const change = new DomainObjectChange();
-    change.addChange(Changes.geometry, AnnotationGizmoDomainObject.GizmoOnly);
+    change.addChange(Changes.geometry, BoxGizmoDomainObject.GizmoOnly);
     change.addChange(Changes.color);
 
     annotationGizmo.notify(change);
@@ -427,7 +427,7 @@ function getIntersectedAnnotationsDomainObject(
 
 function getIntersectedAnnotationGizmo(
   intersection: AnyIntersection | undefined
-): AnnotationGizmoDomainObject | undefined {
+): BoxGizmoDomainObject | undefined {
   if (intersection === undefined) {
     return undefined;
   }
@@ -435,7 +435,7 @@ function getIntersectedAnnotationGizmo(
     return undefined;
   }
   const { domainObject } = intersection;
-  if (!(domainObject instanceof AnnotationGizmoDomainObject)) {
+  if (!(domainObject instanceof BoxGizmoDomainObject)) {
     return undefined;
   }
   return domainObject;
