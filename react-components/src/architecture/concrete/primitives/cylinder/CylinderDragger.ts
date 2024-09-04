@@ -19,6 +19,7 @@ import {
 import { Vector3Pool } from '@cognite/reveal';
 import { Quantity } from '../../../base/domainObjectsHelpers/Quantity';
 import { type UnitSystem } from '../../../base/renderTarget/UnitSystem';
+import { MIN_SIZE } from '../base/SolidDomainObject';
 
 /**
  * The `BoxDragger` class represents a utility for dragging and manipulating a box in a 3D space.
@@ -179,14 +180,10 @@ export class CylinderDragger extends BaseDragger {
       return false; // Nothing has changed
     }
     if (this._face.face === 5 || this._face.face === 2) {
-      const { centerA, centerB } = this._domainObject;
-      centerA.copy(this._centerA);
-      centerB.copy(this._centerB);
-
       let newHeight = this._height + deltaHeight;
 
       if (!CylinderDomainObject.isValidSize(newHeight)) {
-        return false; // Nothing has changed
+        newHeight = MIN_SIZE;
       }
       if (shift && this._unitSystem !== undefined) {
         const newConvertedHeight = this._unitSystem.convertToUnit(newHeight, Quantity.Length);
@@ -195,12 +192,16 @@ export class CylinderDragger extends BaseDragger {
         const roundedNewHeight = round(newConvertedHeight, increment);
         newHeight = this._unitSystem.convertFromUnit(roundedNewHeight, Quantity.Length);
         if (!CylinderDomainObject.isValidSize(newHeight)) {
-          return false; // Nothing has changed
+          newHeight = MIN_SIZE;
         }
       }
       if (newHeight === this._height) {
         return false; // Nothing has changed
       }
+      const { centerA, centerB } = this._domainObject;
+      centerA.copy(this._centerA);
+      centerB.copy(this._centerB);
+
       const axis = newVector3().subVectors(centerA, centerB).normalize().multiplyScalar(newHeight);
       if (this._face.face === 2) {
         centerB.subVectors(centerA, axis);
