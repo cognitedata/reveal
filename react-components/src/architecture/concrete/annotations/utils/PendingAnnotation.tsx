@@ -2,12 +2,10 @@
  * Copyright 2024 Cognite AS
  */
 
-import { type Matrix4, Box3 } from 'three';
-
+import { type Matrix4, type Box3 } from 'three';
 import { type PointCloudAnnotation } from './types';
-
 import { getSingleAnnotationGeometry } from './annotationGeometryUtils';
-import { expandBoundingBoxForBox } from '../../../base/utilities/box/createBoxGeometry';
+import { getBoundingBoxForBox } from '../../../base/utilities/box/createBoxGeometry';
 
 export class PendingAnnotation {
   matrix: Matrix4;
@@ -19,9 +17,7 @@ export class PendingAnnotation {
   }
 
   public getBoundingBox(): Box3 {
-    const boundingBox = new Box3().makeEmpty();
-    expandBoundingBoxForBox(boundingBox, this.matrix);
-    return boundingBox;
+    return getBoundingBoxForBox(this.matrix);
   }
 
   public getCdfMatrix(globalMatrix: Matrix4): Matrix4 {

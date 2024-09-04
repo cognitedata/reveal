@@ -59,36 +59,47 @@ export class CylinderGizmoDomainObject extends CylinderDomainObject {
   }
 
   // ==================================================
-  // OVERRIDES of BoxDomainObject
-  // ==================================================
-
-  public override canRotateComponent(_component: number): boolean {
-    return true;
-  }
-
-  // ==================================================
   // INSTANCE METHODS
   // ==================================================
 
   public updateThisFromAnnotation(annotation: SingleAnnotation): boolean {
-    const matrix = annotation.getMatrix();
-    if (matrix === undefined) {
+    const geometry = annotation.geometry;
+    if (geometry === undefined) {
       return false;
     }
-    this.setMatrix(matrix);
+    const cylinder = geometry.cylinder;
+    if (cylinder === undefined) {
+      return false;
+    }
+    const a = cylinder.centerA;
+    const b = cylinder.centerB;
+    this.centerA.set(a[0], a[1], a[2]);
+    this.centerB.set(b[0], b[1], b[2]);
+    this.radius = cylinder.radius;
     return true;
   }
 
-  private updateSelectedAnnotationFromThis(): void {
+  private updateSelectedAnnotationFromThis(): boolean {
     const annotationDomainObject = this.getAncestorByType(AnnotationsDomainObject);
     if (annotationDomainObject === undefined) {
-      return;
+      return false;
     }
-    const selectedAnnotation = annotationDomainObject.selectedAnnotation;
-    if (selectedAnnotation === undefined) {
-      return;
+    const annotation = annotationDomainObject.selectedAnnotation;
+    if (annotation === undefined) {
+      return false;
     }
-    selectedAnnotation.updateFromMatrix(this.getMatrix());
+    const geometry = annotation.geometry;
+    if (geometry === undefined) {
+      return false;
+    }
+    const cylinder = geometry.cylinder;
+    if (cylinder === undefined) {
+      return false;
+    }
+    cylinder.centerA = this.centerA.toArray();
+    cylinder.centerB = this.centerB.toArray();
+    cylinder.radius = this.radius;
     annotationDomainObject.notify(Changes.geometry);
+    return true;
   }
 }

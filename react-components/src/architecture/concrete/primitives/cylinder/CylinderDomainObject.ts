@@ -5,7 +5,7 @@
 import { type RenderStyle } from '../../../base/renderStyles/RenderStyle';
 import { type ThreeView } from '../../../base/views/ThreeView';
 import { CylinderView } from './CylinderView';
-import { Box3, Matrix4, Quaternion, Vector3 } from 'three';
+import { type Box3, Matrix4, Quaternion, Vector3 } from 'three';
 import { Changes } from '../../../base/domainObjectsHelpers/Changes';
 import { BoxFace } from '../../../base/utilities/box/BoxFace';
 import { FocusType } from '../../../base/domainObjectsHelpers/FocusType';
@@ -27,7 +27,7 @@ import { type Transaction } from '../../../base/undo/Transaction';
 import { square } from '../../../base/utilities/extensions/mathExtensions';
 import { SolidPrimitiveRenderStyle } from '../SolidPrimitiveRenderStyle';
 
-export const MIN_BOX_SIZE = 0.01;
+const MIN_SIZE = 0.01;
 const UP_AXIS = new Vector3(0, 0, 1);
 
 export abstract class CylinderDomainObject extends VisualDomainObject {
@@ -88,16 +88,7 @@ export abstract class CylinderDomainObject extends VisualDomainObject {
   }
 
   public override get typeName(): TranslateKey {
-    switch (this.primitiveType) {
-      case PrimitiveType.HorizontalArea:
-        return { key: 'MEASUREMENTS_HORIZONTAL_AREA', fallback: 'Horizontal area' };
-      case PrimitiveType.VerticalArea:
-        return { key: 'MEASUREMENTS_VERTICAL_AREA', fallback: 'Vertical area' };
-      case PrimitiveType.Box:
-        return { key: 'MEASUREMENTS_VOLUME', fallback: 'Volume' };
-      default:
-        throw new Error('Unknown PrimitiveType');
-    }
+    return { key: 'MEASUREMENTS_CYLINDER', fallback: 'Cylinder' };
   }
 
   public override get isLegal(): boolean {
@@ -124,7 +115,20 @@ export abstract class CylinderDomainObject extends VisualDomainObject {
     const info = new PanelInfo();
     info.setHeader(this.typeName);
 
-    add('MEASUREMENTS_LENGTH', 'Length', this.radius, Quantity.Length);
+    const isFinished = this.focusType !== FocusType.Pending;
+    const hasRadius = CylinderDomainObject.isValidSize(this.radius);
+    const hasHeight = CylinderDomainObject.isValidSize(this.height);
+
+    if (isFinished || hasRadius) {
+      add('MEASUREMENTS_RADIUS', 'Radius', this.radius, Quantity.Length);
+    }
+    if (isFinished || hasHeight) {
+      add('MEASUREMENTS_HEIGHT', 'Height', this.height, Quantity.Length);
+    }
+    if (isFinished || (hasRadius && hasHeight)) {
+      add('MEASUREMENTS_AREA', 'Area', this.area, Quantity.Area);
+      add('MEASUREMENTS_VOLUME', 'Volume', this.volume, Quantity.Volume);
+    }
     return info;
 
     function add(
@@ -186,10 +190,6 @@ export abstract class CylinderDomainObject extends VisualDomainObject {
     return new Vector3().subVectors(this.centerB, this.centerA).normalize();
   }
 
-  public get hasArea(): boolean {
-    return true;
-  }
-
   public get area(): number {
     return 2 * Math.PI * this.radius * this.height;
   }
@@ -199,16 +199,9 @@ export abstract class CylinderDomainObject extends VisualDomainObject {
   }
 
   public getBoundingBox(): Box3 {
-    const matrix = this.getMatrix();
-    const boundingBox = new Box3().makeEmpty();
-    const unitCube = Range3.createCube(0.5);
-    const corner = new Vector3();
-    for (let i = 0; i < 8; i++) {
-      unitCube.getCornerPoint(i, corner);
-      corner.applyMatrix4(matrix);
-      boundingBox.expandByPoint(corner);
-    }
-    return boundingBox;
+    const range = new Range3(this.centerA, this.centerB);
+    range.expandByMargin3(Range3.getCircleRangeMargin(this.axis, this.radius, false));
+    return range.getBox();
   }
 
   // ==================================================
@@ -253,7 +246,7 @@ export abstract class CylinderDomainObject extends VisualDomainObject {
   // ==================================================
 
   public forceMinSize(): void {
-    this.radius = Math.max(MIN_BOX_SIZE, this.radius);
+    this.radius = Math.max(MIN_SIZE, this.radius);
   }
 
   public setFocusInteractive(focusType: FocusType, focusFace?: BoxFace): boolean {
@@ -280,6 +273,6 @@ export abstract class CylinderDomainObject extends VisualDomainObject {
   }
 
   public static isValidSize(value: number): boolean {
-    return value > MIN_BOX_SIZE;
+    return value > MIN_SIZE;
   }
 }

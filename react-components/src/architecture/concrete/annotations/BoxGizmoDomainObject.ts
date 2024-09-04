@@ -85,16 +85,17 @@ export class BoxGizmoDomainObject extends BoxDomainObject {
     return true;
   }
 
-  private updateSelectedAnnotationFromThis(): void {
+  private updateSelectedAnnotationFromThis(): boolean {
     const annotationDomainObject = this.getAncestorByType(AnnotationsDomainObject);
     if (annotationDomainObject === undefined) {
-      return;
+      return false;
     }
-    const selectedAnnotation = annotationDomainObject.selectedAnnotation;
-    if (selectedAnnotation === undefined) {
-      return;
+    const annotation = annotationDomainObject.selectedAnnotation;
+    if (annotation === undefined) {
+      return false;
     }
-    selectedAnnotation.updateFromMatrix(this.getMatrix());
+    annotation.updateFromMatrix(this.getMatrix());
     annotationDomainObject.notify(Changes.geometry);
+    return true;
   }
 }

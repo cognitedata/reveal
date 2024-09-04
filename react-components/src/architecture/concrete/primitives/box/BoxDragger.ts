@@ -13,10 +13,7 @@ import {
   round,
   roundIncrement
 } from '../../../base/utilities/extensions/mathExtensions';
-import {
-  getAbsMaxComponentIndex,
-  rotateHorizontal
-} from '../../../base/utilities/extensions/vectorExtensions';
+import { getAbsMaxComponentIndex } from '../../../base/utilities/extensions/vectorExtensions';
 import { PrimitiveType } from '../PrimitiveType';
 import { getClosestPointOnLine } from '../../../base/utilities/extensions/rayExtensions';
 import { BoxDomainObject } from './BoxDomainObject';
@@ -49,14 +46,13 @@ export class BoxDragger extends BaseDragger {
   private readonly _normal = new Vector3(); // Intersection normal
   private readonly _planeOfFace = new Plane(); // Plane of the intersection/normal
   private readonly _centerOfFace = new Vector3(); // Plane of the intersection/normal
-
-  // Original values when the drag started
-  private readonly _sizeOfBox = new Vector3();
-  private readonly _centerOfBox = new Vector3();
-  private readonly _rotation = new Euler();
-
   private readonly _cornerSign = new Vector3(); // Indicate the corner of the face
   private readonly _unitSystem: UnitSystem | undefined = undefined;
+
+  // Original values when the drag started
+  private readonly _size = new Vector3();
+  private readonly _center = new Vector3();
+  private readonly _rotation = new Euler();
 
   // ==================================================
   // INSTANCE PROPERTIES
@@ -95,8 +91,8 @@ export class BoxDragger extends BaseDragger {
     this._centerOfFace.applyMatrix4(matrix);
 
     // Back up the original values
-    this._sizeOfBox.copy(this._domainObject.size);
-    this._centerOfBox.copy(this._domainObject.center);
+    this._size.copy(this._domainObject.size);
+    this._center.copy(this._domainObject.center);
     this._rotation.copy(this._domainObject.rotation);
 
     const root = this._domainObject.rootDomainObject;
@@ -158,7 +154,9 @@ export class BoxDragger extends BaseDragger {
       return false;
     }
     if (shift) {
-      rotateHorizontal(deltaCenter, -this._domainObject.rotation.z);
+      const matrix = this.getRotationMatrix();
+      const invMatrix = matrix.clone().invert();
+      deltaCenter.applyMatrix4(invMatrix);
       const maxIndex = getAbsMaxComponentIndex(deltaCenter);
       for (let index = 0; index < 3; index++) {
         if (index === maxIndex) {
@@ -166,11 +164,11 @@ export class BoxDragger extends BaseDragger {
         }
         deltaCenter.setComponent(index, 0);
       }
-      rotateHorizontal(deltaCenter, this._domainObject.rotation.z);
+      deltaCenter.applyMatrix4(matrix);
     }
     // First copy the original values
     const { center } = this._domainObject;
-    center.copy(this._centerOfBox);
+    center.copy(this._center);
 
     // Then translate the center
     center.add(deltaCenter);
@@ -189,8 +187,8 @@ export class BoxDragger extends BaseDragger {
     }
     // First copy the original values
     const { size, center } = this._domainObject;
-    size.copy(this._sizeOfBox);
-    center.copy(this._centerOfBox);
+    size.copy(this._size);
+    center.copy(this._center);
 
     const index = this._face.index;
     let deltaCenter: number;
@@ -213,11 +211,11 @@ export class BoxDragger extends BaseDragger {
         roundedNewSize = this._unitSystem.convertFromUnit(roundedNewSize, Quantity.Length);
         size.setComponent(index, roundedNewSize);
       }
-      if (size.getComponent(index) === this._sizeOfBox.getComponent(index)) {
+      if (size.getComponent(index) === this._size.getComponent(index)) {
         return false; // Nothing has changed
       }
       // The center of the box should be moved by half of the delta size and take the rotation into account.
-      const newDeltaSize = size.getComponent(index) - this._sizeOfBox.getComponent(index);
+      const newDeltaSize = size.getComponent(index) - this._size.getComponent(index);
       deltaCenter = (this._face.sign * newDeltaSize) / 2;
     }
     // Set new center
@@ -247,18 +245,18 @@ export class BoxDragger extends BaseDragger {
     }
     // First copy the original values
     const { size, center } = this._domainObject;
-    size.copy(this._sizeOfBox);
-    center.copy(this._centerOfBox);
+    size.copy(this._size);
+    center.copy(this._center);
 
     // Apply the change
     size.add(deltaSize);
     this._domainObject.forceMinSize();
 
-    if (size.lengthSq() === this._sizeOfBox.lengthSq()) {
+    if (size.lengthSq() === this._size.lengthSq()) {
       return false; // Nothing has changed
     }
     // The center of the box should be moved by half of the delta size and take the rotation into account.
-    const newDeltaSize = newVector3().subVectors(size, this._sizeOfBox);
+    const newDeltaSize = newVector3().subVectors(size, this._size);
     const deltaCenter = newDeltaSize.divideScalar(2);
     deltaCenter.multiply(this._cornerSign);
     deltaCenter.applyMatrix4(rotationMatrix);

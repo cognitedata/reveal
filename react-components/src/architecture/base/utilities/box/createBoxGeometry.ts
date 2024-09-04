@@ -2,14 +2,7 @@
  * Copyright 2024 Cognite AS
  */
 
-import {
-  Vector3,
-  BufferGeometry,
-  BufferAttribute,
-  LineSegments,
-  type Box3,
-  type Matrix4
-} from 'three';
+import { Box3, Vector3, BufferGeometry, BufferAttribute, LineSegments, type Matrix4 } from 'three';
 import { OBB } from 'three/addons/math/OBB.js';
 import { LineSegmentsGeometry } from 'three/examples/jsm/lines/LineSegmentsGeometry.js';
 
@@ -37,6 +30,12 @@ export function expandBoundingBoxForBox(boundingBox: Box3, matrix: Matrix4): voi
     copyOfCorner.applyMatrix4(matrix);
     boundingBox.expandByPoint(copyOfCorner);
   }
+}
+
+export function getBoundingBoxForBox(matrix: Matrix4): Box3 {
+  const boundingBox = new Box3().makeEmpty();
+  expandBoundingBoxForBox(boundingBox, matrix);
+  return boundingBox;
 }
 
 export function createBoxGeometry(): LineSegmentsGeometry {

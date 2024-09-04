@@ -2,7 +2,7 @@
  * Copyright 2024 Cognite AS
  */
 
-import { type Ray, Vector3, Plane, type Matrix4, Euler } from 'three';
+import { type Ray, Vector3, Plane, type Matrix4 } from 'three';
 import { Changes } from '../../../base/domainObjectsHelpers/Changes';
 import { type BoxFace } from '../../../base/utilities/box/BoxFace';
 import { FocusType } from '../../../base/domainObjectsHelpers/FocusType';
@@ -13,10 +13,7 @@ import {
   round,
   roundIncrement
 } from '../../../base/utilities/extensions/mathExtensions';
-import {
-  getAbsMaxComponentIndex,
-  rotateHorizontal
-} from '../../../base/utilities/extensions/vectorExtensions';
+import { getAbsMaxComponentIndex } from '../../../base/utilities/extensions/vectorExtensions';
 import { PrimitiveType } from '../PrimitiveType';
 import { getClosestPointOnLine } from '../../../base/utilities/extensions/rayExtensions';
 import { CylinderDomainObject } from './CylinderDomainObject';
@@ -49,14 +46,13 @@ export class CylinderDragger extends BaseDragger {
   private readonly _normal = new Vector3(); // Intersection normal
   private readonly _planeOfFace = new Plane(); // Plane of the intersection/normal
   private readonly _centerOfFace = new Vector3(); // Plane of the intersection/normal
-
-  // Original values when the drag started
-  private readonly _sizeOfBox = new Vector3();
-  private readonly _centerOfBox = new Vector3();
-  private readonly _rotation = new Euler();
-
   private readonly _cornerSign = new Vector3(); // Indicate the corner of the face
   private readonly _unitSystem: UnitSystem | undefined = undefined;
+
+  // Original values when the drag started
+  private _radius = 0;
+  private readonly _centerA = new Vector3();
+  private readonly _centerB = new Vector3();
 
   // ==================================================
   // INSTANCE PROPERTIES
@@ -95,9 +91,9 @@ export class CylinderDragger extends BaseDragger {
     this._centerOfFace.applyMatrix4(matrix);
 
     // Back up the original values
-    this._sizeOfBox.copy(this._domainObject.size);
-    this._centerOfBox.copy(this._domainObject.center);
-    this._rotation.copy(this._domainObject.rotation);
+    this._radius = this._domainObject.radius;
+    this._centerA.copy(this._domainObject.centerA);
+    this._centerB.copy(this._domainObject.centerB);
 
     const root = this._domainObject.rootDomainObject;
     if (root !== undefined) {
@@ -136,8 +132,6 @@ export class CylinderDragger extends BaseDragger {
     switch (focusType) {
       case FocusType.Face:
         return this.moveFace(ray, shift);
-      case FocusType.Corner:
-        return this.resize(ray);
       case FocusType.Body:
         return this.translate(ray, shift);
       case FocusType.Rotation:
@@ -158,7 +152,9 @@ export class CylinderDragger extends BaseDragger {
       return false;
     }
     if (shift) {
-      rotateHorizontal(deltaCenter, -this._domainObject.rotation.z);
+      const matrix = this.getRotationMatrix();
+      const invMatrix = matrix.clone().invert();
+      deltaCenter.applyMatrix4(invMatrix);
       const maxIndex = getAbsMaxComponentIndex(deltaCenter);
       for (let index = 0; index < 3; index++) {
         if (index === maxIndex) {
@@ -166,14 +162,16 @@ export class CylinderDragger extends BaseDragger {
         }
         deltaCenter.setComponent(index, 0);
       }
-      rotateHorizontal(deltaCenter, this._domainObject.rotation.z);
+      deltaCenter.applyMatrix4(matrix);
     }
     // First copy the original values
-    const { center } = this._domainObject;
-    center.copy(this._centerOfBox);
+    const { centerA, centerB } = this._domainObject;
+    centerA.copy(this._centerA);
+    centerB.copy(this._centerB);
 
     // Then translate the center
-    center.add(deltaCenter);
+    centerA.add(deltaCenter);
+    centerB.add(deltaCenter);
     return true;
   }
 
@@ -188,9 +186,9 @@ export class CylinderDragger extends BaseDragger {
       return false; // Nothing has changed
     }
     // First copy the original values
-    const { size, center } = this._domainObject;
-    size.copy(this._sizeOfBox);
-    center.copy(this._centerOfBox);
+    const { centerA, centerB } = this._domainObject;
+    centerA.copy(this._centerA);
+    centerB.copy(this._centerB);
 
     const index = this._face.index;
     let deltaCenter: number;
@@ -229,47 +227,12 @@ export class CylinderDragger extends BaseDragger {
     return true;
   }
 
-  private resize(ray: Ray): boolean {
-    const endPoint = ray.intersectPlane(this._planeOfFace, newVector3());
-    if (endPoint === null) {
-      return false;
-    }
-    const startPoint = this._planeOfFace.projectPoint(this.point, newVector3());
-
-    const rotationMatrix = this.getRotationMatrix();
-    const invRotationMatrix = rotationMatrix.clone().invert();
-    const deltaSize = endPoint.sub(startPoint);
-    deltaSize.applyMatrix4(invRotationMatrix);
-
-    deltaSize.multiply(this._cornerSign);
-    if (deltaSize.lengthSq() === 0) {
-      return false; // Nothing has changed
-    }
-    // First copy the original values
-    const { size, center } = this._domainObject;
-    size.copy(this._sizeOfBox);
-    center.copy(this._centerOfBox);
-
-    // Apply the change
-    size.add(deltaSize);
-    this._domainObject.forceMinSize();
-
-    if (size.lengthSq() === this._sizeOfBox.lengthSq()) {
-      return false; // Nothing has changed
-    }
-    // The center of the box should be moved by half of the delta size and take the rotation into account.
-    const newDeltaSize = newVector3().subVectors(size, this._sizeOfBox);
-    const deltaCenter = newDeltaSize.divideScalar(2);
-    deltaCenter.multiply(this._cornerSign);
-    deltaCenter.applyMatrix4(rotationMatrix);
-    center.add(deltaCenter);
-    return true;
-  }
-
   private rotate(ray: Ray, shift: boolean): boolean {
     const endPoint = ray.intersectPlane(this._planeOfFace, newVector3());
     if (endPoint === null) {
       return false;
+    }
+    if (this._face.index === 2) {
     }
     const centerToStartPoint = newVector3().subVectors(this.point, this._centerOfFace).normalize();
     const centerToEndPoint = newVector3().subVectors(endPoint, this._centerOfFace).normalize();

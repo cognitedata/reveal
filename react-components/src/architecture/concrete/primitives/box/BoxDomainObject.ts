@@ -6,7 +6,7 @@ import { SolidPrimitiveRenderStyle } from '../SolidPrimitiveRenderStyle';
 import { type RenderStyle } from '../../../base/renderStyles/RenderStyle';
 import { type ThreeView } from '../../../base/views/ThreeView';
 import { BoxView } from './BoxView';
-import { Box3, Euler, Matrix4, Quaternion, Vector3 } from 'three';
+import { type Box3, Euler, Matrix4, Quaternion, Vector3 } from 'three';
 import { Changes } from '../../../base/domainObjectsHelpers/Changes';
 import { BoxFace } from '../../../base/utilities/box/BoxFace';
 import { FocusType } from '../../../base/domainObjectsHelpers/FocusType';
@@ -18,7 +18,6 @@ import {
   VisualDomainObject,
   type CreateDraggerProps
 } from '../../../base/domainObjects/VisualDomainObject';
-import { Range3 } from '../../../base/utilities/geometry/Range3';
 import { getIconByPrimitiveType } from '../../measurements/getIconByPrimitiveType';
 import { type TranslateKey } from '../../../base/utilities/TranslateKey';
 import { Quantity } from '../../../base/domainObjectsHelpers/Quantity';
@@ -30,15 +29,16 @@ import {
   forceBetween0AndPi,
   forceBetween0AndTwoPi
 } from '../../../base/utilities/extensions/mathExtensions';
+import { getBoundingBoxForBox } from '../../../base/utilities/box/createBoxGeometry';
 
-export const MIN_BOX_SIZE = 0.01;
+const MIN_SIZE = 0.01;
 
 export abstract class BoxDomainObject extends VisualDomainObject {
   // ==================================================
   // INSTANCE FIELDS
   // ==================================================
 
-  public readonly size = new Vector3().setScalar(MIN_BOX_SIZE);
+  public readonly size = new Vector3().setScalar(MIN_SIZE);
   public readonly center = new Vector3();
   public readonly rotation = new Euler(0, 0, 0, 'ZYX');
   private readonly _primitiveType: PrimitiveType;
@@ -80,7 +80,7 @@ export abstract class BoxDomainObject extends VisualDomainObject {
   }
 
   public clear(): void {
-    this.size.setScalar(MIN_BOX_SIZE);
+    this.size.setScalar(MIN_SIZE);
     this.center.setScalar(0);
     this.rotation.set(0, 0, 0, 'ZYX');
     this.focusType = FocusType.None;
@@ -260,16 +260,7 @@ export abstract class BoxDomainObject extends VisualDomainObject {
   }
 
   public getBoundingBox(): Box3 {
-    const matrix = this.getMatrix();
-    const boundingBox = new Box3().makeEmpty();
-    const unitCube = Range3.createCube(0.5);
-    const corner = new Vector3();
-    for (let i = 0; i < 8; i++) {
-      unitCube.getCornerPoint(i, corner);
-      corner.applyMatrix4(matrix);
-      boundingBox.expandByPoint(corner);
-    }
-    return boundingBox;
+    return getBoundingBoxForBox(this.getMatrix());
   }
 
   // ==================================================
@@ -306,9 +297,9 @@ export abstract class BoxDomainObject extends VisualDomainObject {
 
   public forceMinSize(): void {
     const { size } = this;
-    size.x = Math.max(MIN_BOX_SIZE, size.x);
-    size.y = Math.max(MIN_BOX_SIZE, size.y);
-    size.z = Math.max(MIN_BOX_SIZE, size.z);
+    size.x = Math.max(MIN_SIZE, size.x);
+    size.y = Math.max(MIN_SIZE, size.y);
+    size.z = Math.max(MIN_SIZE, size.z);
   }
 
   public setFocusInteractive(focusType: FocusType, focusFace?: BoxFace): boolean {
@@ -335,6 +326,6 @@ export abstract class BoxDomainObject extends VisualDomainObject {
   }
 
   public static isValidSize(value: number): boolean {
-    return value > MIN_BOX_SIZE;
+    return value > MIN_SIZE;
   }
 }
