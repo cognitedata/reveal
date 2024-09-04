@@ -41,10 +41,10 @@ import {
   updateMarkerMaterial,
   updateSolidMaterial
 } from '../box/BoxView';
-import { type SolidPrimitiveRenderStyle } from '../SolidPrimitiveRenderStyle';
+import { type SolidPrimitiveRenderStyle } from '../base/SolidPrimitiveRenderStyle';
 
 const RELATIVE_RESIZE_RADIUS = 0.15;
-const RELATIVE_ROTATION_RADIUS = new Range1(0.6, 0.75);
+const RELATIVE_ROTATION_RADIUS = new Range1(0.3, 0.5);
 const CIRCULAR_SEGMENTS = 32;
 const RENDER_ORDER = 100;
 

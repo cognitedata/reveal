@@ -8,7 +8,7 @@ import { Changes } from '../../../base/domainObjectsHelpers/Changes';
 import { DomainObjectChange } from '../../../base/domainObjectsHelpers/DomainObjectChange';
 import { type TranslateKey } from '../../../base/utilities/TranslateKey';
 import { AnnotationsDomainObject } from '../AnnotationsDomainObject';
-import { SolidDomainObject } from '../../primitives/SolidDomainObject';
+import { SolidDomainObject } from '../../primitives/base/SolidDomainObject';
 import { BoxGizmoDomainObject } from '../BoxGizmoDomainObject';
 import { CylinderGizmoDomainObject } from '../CylinderGizmoDomainObject';
 

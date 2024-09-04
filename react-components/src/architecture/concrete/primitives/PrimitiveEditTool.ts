@@ -19,7 +19,7 @@ import { type VisualDomainObject } from '../../base/domainObjects/VisualDomainOb
 import { PlaneDomainObject } from './plane/PlaneDomainObject';
 import { Changes } from '../../base/domainObjectsHelpers/Changes';
 import { type BaseTool } from '../../base/commands/BaseTool';
-import { type SolidDomainObject } from './SolidDomainObject';
+import { type SolidDomainObject } from './base/SolidDomainObject';
 
 export abstract class PrimitiveEditTool extends BaseEditTool {
   // ==================================================

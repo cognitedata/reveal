@@ -24,7 +24,6 @@ import {
 import { BoxDomainObject } from './BoxDomainObject';
 import { type DomainObjectChange } from '../../../base/domainObjectsHelpers/DomainObjectChange';
 import { Changes } from '../../../base/domainObjectsHelpers/Changes';
-import { type SolidPrimitiveRenderStyle } from '../SolidPrimitiveRenderStyle';
 import { GroupThreeView } from '../../../base/views/GroupThreeView';
 import {
   CDF_TO_VIEWER_TRANSFORMATION,
@@ -45,8 +44,9 @@ import { BoxPickInfo } from '../../../base/utilities/box/BoxPickInfo';
 import { Range1 } from '../../../base/utilities/geometry/Range1';
 import { PrimitiveType } from '../PrimitiveType';
 import { Quantity } from '../../../base/domainObjectsHelpers/Quantity';
-import { type PrimitiveRenderStyle } from '../PrimitiveRenderStyle';
+import { type PrimitiveRenderStyle } from '../base/PrimitiveRenderStyle';
 import { type DomainObject } from '../../../base/domainObjects/DomainObject';
+import { type SolidPrimitiveRenderStyle } from '../base/SolidPrimitiveRenderStyle';
 
 const RELATIVE_RESIZE_RADIUS = 0.15;
 const RELATIVE_ROTATION_RADIUS = new Range1(0.6, 0.75);

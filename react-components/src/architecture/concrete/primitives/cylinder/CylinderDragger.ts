@@ -7,12 +7,7 @@ import { Changes } from '../../../base/domainObjectsHelpers/Changes';
 import { type BoxFace } from '../../../base/utilities/box/BoxFace';
 import { FocusType } from '../../../base/domainObjectsHelpers/FocusType';
 import { type BoxPickInfo } from '../../../base/utilities/box/BoxPickInfo';
-import {
-  forceBetween0AndPi,
-  forceBetween0AndTwoPi,
-  round,
-  roundIncrement
-} from '../../../base/utilities/extensions/mathExtensions';
+import { round, roundIncrement } from '../../../base/utilities/extensions/mathExtensions';
 import { getAbsMaxComponentIndex } from '../../../base/utilities/extensions/vectorExtensions';
 import { PrimitiveType } from '../PrimitiveType';
 import { getClosestPointOnLine } from '../../../base/utilities/extensions/rayExtensions';
@@ -23,7 +18,6 @@ import {
   type CreateDraggerProps
 } from '../../../base/domainObjects/VisualDomainObject';
 import { Vector3Pool } from '@cognite/reveal';
-import { degToRad, radToDeg } from 'three/src/math/MathUtils.js';
 import { Quantity } from '../../../base/domainObjectsHelpers/Quantity';
 import { type UnitSystem } from '../../../base/renderTarget/UnitSystem';
 
@@ -227,50 +221,30 @@ export class CylinderDragger extends BaseDragger {
     return true;
   }
 
-  private rotate(ray: Ray, shift: boolean): boolean {
+  private rotate(ray: Ray, _shift: boolean): boolean {
     const endPoint = ray.intersectPlane(this._planeOfFace, newVector3());
     if (endPoint === null) {
       return false;
     }
-    if (this._face.index === 2) {
-    }
-    const centerToStartPoint = newVector3().subVectors(this.point, this._centerOfFace).normalize();
-    const centerToEndPoint = newVector3().subVectors(endPoint, this._centerOfFace).normalize();
-    const cross = newVector3().crossVectors(centerToEndPoint, centerToStartPoint).normalize();
-
-    let deltaAngle = centerToEndPoint.angleTo(centerToStartPoint) * this._face.sign;
-    if (this._planeOfFace.normal.dot(cross) > 0) {
-      deltaAngle = -deltaAngle;
-    }
-    // Rotate
-    let x = this._domainObject.rotation.x;
-    let y = this._domainObject.rotation.y;
-    let z = this._domainObject.rotation.z;
-    if (this._face.index === 0 && this._domainObject.canRotateComponent(0)) {
-      const rotation = forceBetween0AndTwoPi(deltaAngle + this._rotation.x);
-      x = roundByConstrained(rotation, shift);
-    } else if (this._face.index === 1 && this._domainObject.canRotateComponent(1)) {
-      const rotation = forceBetween0AndTwoPi(deltaAngle + this._rotation.y);
-      y = roundByConstrained(rotation, shift);
-    } else if (this._face.index === 2 && this._domainObject.canRotateComponent(2)) {
-      const rotation = this._domainObject.hasXYRotation
-        ? forceBetween0AndTwoPi(deltaAngle + this._rotation.z)
-        : forceBetween0AndPi(deltaAngle + this._rotation.z);
-      z = roundByConstrained(rotation, shift);
-    } else {
-      return false;
-    }
-    this._domainObject.rotation.set(x, y, z, 'ZYX');
-    return true;
-
-    function roundByConstrained(rotation: number, shift: boolean): number {
-      if (!shift) {
-        return rotation;
+    // Move end point to the same plane as the center of the end point,
+    // and adjust the length so it doesn't change
+    if (this._face.face === 5 || this._face.face === 2) {
+      const translation = newVector3().subVectors(endPoint, this.point);
+      const { centerA, centerB, height } = this._domainObject;
+      if (this._face.face === 2) {
+        centerB.copy(this._centerB);
+        centerB.add(translation);
+        const axis = newVector3().subVectors(centerA, centerB).normalize().multiplyScalar(height);
+        centerB.subVectors(centerA, axis);
+      } else {
+        centerA.copy(this._centerA);
+        centerA.add(translation);
+        const axis = newVector3().subVectors(centerA, centerB).normalize().multiplyScalar(height);
+        centerA.addVectors(centerB, axis);
+        return true;
       }
-      let degrees = radToDeg(rotation);
-      degrees = round(degrees, CONSTRAINED_ANGLE_INCREMENT);
-      return degToRad(degrees);
     }
+    return false;
   }
 
   public getRotationMatrix(): Matrix4 {

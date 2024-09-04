@@ -3,7 +3,6 @@
  */
 
 import { Color } from 'three';
-import { SolidPrimitiveRenderStyle } from '../primitives/SolidPrimitiveRenderStyle';
 import { type RenderStyle } from '../../base/renderStyles/RenderStyle';
 import { type TranslateKey } from '../../base/utilities/TranslateKey';
 import { type DomainObject } from '../../base/domainObjects/DomainObject';
@@ -12,7 +11,8 @@ import { Changes } from '../../base/domainObjectsHelpers/Changes';
 import { AnnotationsDomainObject } from './AnnotationsDomainObject';
 import { SingleAnnotation } from './helpers/SingleAnnotation';
 import { CylinderDomainObject } from '../primitives/cylinder/CylinderDomainObject';
-import { SolidDomainObject } from '../primitives/SolidDomainObject';
+import { SolidDomainObject } from '../primitives/base/SolidDomainObject';
+import { SolidPrimitiveRenderStyle } from '../primitives/base/SolidPrimitiveRenderStyle';
 
 export class CylinderGizmoDomainObject extends CylinderDomainObject {
   // ==================================================
@@ -28,7 +28,7 @@ export class CylinderGizmoDomainObject extends CylinderDomainObject {
   // ==================================================
 
   public override get typeName(): TranslateKey {
-    return { fallback: 'Cylinder' };
+    return { key: 'CYLINDER', fallback: 'Cylinder' };
   }
 
   public override createRenderStyle(): RenderStyle | undefined {

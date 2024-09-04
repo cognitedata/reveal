@@ -2,7 +2,6 @@
  * Copyright 2024 Cognite AS
  */
 
-import { SolidPrimitiveRenderStyle } from '../SolidPrimitiveRenderStyle';
 import { type RenderStyle } from '../../../base/renderStyles/RenderStyle';
 import { type ThreeView } from '../../../base/views/ThreeView';
 import { BoxView } from './BoxView';
@@ -24,7 +23,8 @@ import {
   forceBetween0AndTwoPi
 } from '../../../base/utilities/extensions/mathExtensions';
 import { getBoundingBoxForBox } from '../../../base/utilities/box/createBoxGeometry';
-import { MIN_SIZE, SolidDomainObject } from '../SolidDomainObject';
+import { MIN_SIZE, SolidDomainObject } from '../base/SolidDomainObject';
+import { SolidPrimitiveRenderStyle } from '../base/SolidPrimitiveRenderStyle';
 
 export abstract class BoxDomainObject extends SolidDomainObject {
   // ==================================================

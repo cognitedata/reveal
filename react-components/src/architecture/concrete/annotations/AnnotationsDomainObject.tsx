@@ -14,7 +14,7 @@ import { Changes } from '../../base/domainObjectsHelpers/Changes';
 import { remove } from '../../base/utilities/extensions/arrayExtensions';
 import { BoxGizmoDomainObject } from './BoxGizmoDomainObject';
 import { SingleAnnotation } from './helpers/SingleAnnotation';
-import { SolidDomainObject } from '../primitives/SolidDomainObject';
+import { SolidDomainObject } from '../primitives/base/SolidDomainObject';
 import { PrimitiveType } from '../primitives/PrimitiveType';
 import { CylinderGizmoDomainObject } from './CylinderGizmoDomainObject';
 import { getStatusByAnnotation } from './utils/getStatusByAnnotation';

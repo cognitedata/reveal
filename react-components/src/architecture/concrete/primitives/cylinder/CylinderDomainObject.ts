@@ -19,8 +19,8 @@ import { type TranslateKey } from '../../../base/utilities/TranslateKey';
 import { Quantity } from '../../../base/domainObjectsHelpers/Quantity';
 import { PanelInfo } from '../../../base/domainObjectsHelpers/PanelInfo';
 import { square } from '../../../base/utilities/extensions/mathExtensions';
-import { SolidPrimitiveRenderStyle } from '../SolidPrimitiveRenderStyle';
-import { MIN_SIZE, SolidDomainObject } from '../SolidDomainObject';
+import { MIN_SIZE, SolidDomainObject } from '../base/SolidDomainObject';
+import { SolidPrimitiveRenderStyle } from '../base/SolidPrimitiveRenderStyle';
 
 const UP_AXIS = new Vector3(0, 0, 1);
 

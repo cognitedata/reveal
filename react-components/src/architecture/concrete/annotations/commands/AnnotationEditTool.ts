@@ -29,7 +29,7 @@ import { DomainObjectChange } from '../../../base/domainObjectsHelpers/DomainObj
 import { type SingleAnnotation } from '../helpers/SingleAnnotation';
 import { DeleteSelectedAnnotationCommand } from './DeleteSelectedAnnotationCommand';
 import { AlignSelectedAnnotationCommand } from './AlignSelectedAnnotationCommand';
-import { SolidDomainObject } from '../../primitives/SolidDomainObject';
+import { SolidDomainObject } from '../../primitives/base/SolidDomainObject';
 import { CylinderGizmoDomainObject } from '../CylinderGizmoDomainObject';
 
 export const ANNOTATION_RADIUS_FACTOR = 0.2;
