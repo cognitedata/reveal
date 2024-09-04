@@ -38,8 +38,6 @@ export class CylinderDragger extends BaseDragger {
   private readonly _focusType: FocusType;
   private readonly _normal = new Vector3(); // Intersection normal
   private readonly _planeOfFace = new Plane(); // Plane of the intersection/normal
-  private readonly _centerOfFace = new Vector3(); // Plane of the intersection/normal
-  private readonly _cornerSign = new Vector3(); // Indicate the corner of the face
   private readonly _unitSystem: UnitSystem | undefined = undefined;
 
   // Original values when the drag started
@@ -71,18 +69,13 @@ export class CylinderDragger extends BaseDragger {
     this._domainObject = domainObject;
     this._face = pickInfo.face;
     this._focusType = pickInfo.focusType;
-    this._cornerSign.copy(pickInfo.cornerSign);
     this._face.getNormal(this._normal);
-    this._face.getCenter(this._centerOfFace);
 
     const rotationMatrix = this.getRotationMatrix();
     this._normal.applyMatrix4(rotationMatrix);
     this._normal.normalize();
 
     this._planeOfFace.setFromNormalAndCoplanarPoint(this._normal, this.point);
-
-    const matrix = domainObject.getMatrix();
-    this._centerOfFace.applyMatrix4(matrix);
 
     // Back up the original values
     this._radius = this._domainObject.radius;
