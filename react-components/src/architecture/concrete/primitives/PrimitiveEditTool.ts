@@ -6,7 +6,7 @@ import { CDF_TO_VIEWER_TRANSFORMATION, type CustomObjectIntersection } from '@co
 import { isDomainObjectIntersection } from '../../base/domainObjectsHelpers/DomainObjectIntersection';
 import { FocusType } from '../../base/domainObjectsHelpers/FocusType';
 import { type BoxPickInfo } from '../../base/utilities/box/BoxPickInfo';
-import { type Vector3 } from 'three';
+import { Quaternion, Vector3 } from 'three';
 import { PrimitiveType } from './PrimitiveType';
 import { type BaseCreator } from '../../base/domainObjectsHelpers/BaseCreator';
 import { BaseEditTool } from '../../base/commands/BaseEditTool';
@@ -19,6 +19,7 @@ import { type VisualDomainObject } from '../../base/domainObjects/VisualDomainOb
 import { PlaneDomainObject } from './plane/PlaneDomainObject';
 import { Changes } from '../../base/domainObjectsHelpers/Changes';
 import { type BaseTool } from '../../base/commands/BaseTool';
+import { type SolidDomainObject } from './SolidDomainObject';
 
 export abstract class PrimitiveEditTool extends BaseEditTool {
   // ==================================================
@@ -306,7 +307,7 @@ export abstract class PrimitiveEditTool extends BaseEditTool {
 
   public static setCursor(
     tool: BaseTool,
-    boxDomainObject: BoxDomainObject,
+    boxDomainObject: SolidDomainObject,
     point: Vector3,
     pickInfo: BoxPickInfo
   ): void {
@@ -316,9 +317,12 @@ export abstract class PrimitiveEditTool extends BaseEditTool {
       const matrix = boxDomainObject.getMatrix();
       matrix.premultiply(CDF_TO_VIEWER_TRANSFORMATION);
 
-      const boxCenter = boxDomainObject.center.clone();
+      const boxSize = new Vector3();
+      const boxCenter = new Vector3();
+      matrix.decompose(boxCenter, new Quaternion(), boxSize);
+
       const faceCenter = pickInfo.face.getCenter().multiplyScalar(100);
-      const size = boxDomainObject.size.getComponent(pickInfo.face.index);
+      const size = boxSize.getComponent(pickInfo.face.index);
       if (size < 1) {
         // If they are too close, the pixel value will be the same, so multiply faceCenter
         // so it pretend the size is at least 1.

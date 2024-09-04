@@ -25,11 +25,12 @@ import { Changes } from '../../../base/domainObjectsHelpers/Changes';
 import { type BaseDragger } from '../../../base/domainObjectsHelpers/BaseDragger';
 import { PrimitiveEditTool } from '../../primitives/PrimitiveEditTool';
 import { type BoxPickInfo } from '../../../base/utilities/box/BoxPickInfo';
-import { getStatusByAnnotation } from '../utils/getStatusByAnnotation';
 import { DomainObjectChange } from '../../../base/domainObjectsHelpers/DomainObjectChange';
 import { type SingleAnnotation } from '../helpers/SingleAnnotation';
 import { DeleteSelectedAnnotationCommand } from './DeleteSelectedAnnotationCommand';
 import { AlignSelectedAnnotationCommand } from './AlignSelectedAnnotationCommand';
+import { SolidDomainObject } from '../../primitives/SolidDomainObject';
+import { CylinderGizmoDomainObject } from '../CylinderGizmoDomainObject';
 
 export const ANNOTATION_RADIUS_FACTOR = 0.2;
 
@@ -96,7 +97,7 @@ export class AnnotationEditTool extends BaseEditTool {
 
   public override async onHover(event: PointerEvent): Promise<void> {
     const ray = this.getRay(event);
-    if (this.primitiveType === PrimitiveType.Box) {
+    if (this.primitiveType !== PrimitiveType.None) {
       const { _creator: creator } = this;
       if (creator !== undefined) {
         // Hover in the "air"
@@ -138,7 +139,7 @@ export class AnnotationEditTool extends BaseEditTool {
       const intersection = await this.getIntersection(event);
       const domainObject = getIntersectedAnnotationsDomainObject(intersection);
       const annotation = getIntersectedAnnotation(intersection);
-      const annotationGizmo = getIntersectedAnnotationGizmo(intersection);
+      const gizmo = getIntersectedAnnotationGizmo(intersection);
 
       if (domainObject !== undefined && annotation !== undefined) {
         this.renderTarget.setDefaultCursor();
@@ -147,13 +148,13 @@ export class AnnotationEditTool extends BaseEditTool {
         } else {
           domainObject.setFocusAnnotationInteractive(FocusType.Focus, annotation);
         }
-      } else if (annotationGizmo === undefined) {
+      } else if (gizmo === undefined) {
         this.renderTarget.setNavigateCursor();
         this.defocusAll();
-      } else if (annotationGizmo !== undefined && isDomainObjectIntersection(intersection)) {
+      } else if (gizmo !== undefined && isDomainObjectIntersection(intersection)) {
         const pickInfo = intersection.userData as BoxPickInfo;
-        annotationGizmo.setFocusInteractive(pickInfo.focusType, pickInfo.face);
-        PrimitiveEditTool.setCursor(this, annotationGizmo, intersection.point, pickInfo);
+        gizmo.setFocusInteractive(pickInfo.focusType, pickInfo.face);
+        PrimitiveEditTool.setCursor(this, gizmo, intersection.point, pickInfo);
       }
     }
   }
@@ -161,7 +162,7 @@ export class AnnotationEditTool extends BaseEditTool {
   public override async onClick(event: PointerEvent): Promise<void> {
     const { renderTarget } = this;
 
-    if (this.primitiveType === PrimitiveType.Box) {
+    if (this.primitiveType !== PrimitiveType.None) {
       let creator = this._creator;
 
       // Click in the "air"
@@ -192,10 +193,10 @@ export class AnnotationEditTool extends BaseEditTool {
         this.setDeselectedAnnotationInteractive();
         const ray = this.getRay(event);
         if (creator.addPoint(ray, intersection)) {
-          const annotationGizmo = creator.domainObject;
-          annotationGizmo.setSelectedInteractive(true);
-          annotationGizmo.setVisibleInteractive(true, renderTarget);
-          annotationGizmo.notify(Changes.geometry);
+          const gizmo = creator.domainObject;
+          gizmo.setSelectedInteractive(true);
+          gizmo.setVisibleInteractive(true, renderTarget);
+          gizmo.notify(Changes.geometry);
           // .addTransaction(domainObject.createTransaction(Changes.added));
         } else {
           this._creator = undefined;
@@ -209,13 +210,13 @@ export class AnnotationEditTool extends BaseEditTool {
       const intersection = await this.getIntersection(event);
       const domainObject = getIntersectedAnnotationsDomainObject(intersection);
       const annotation = getIntersectedAnnotation(intersection);
-      const annotationGizmo = getIntersectedAnnotationGizmo(intersection);
+      const gizmo = getIntersectedAnnotationGizmo(intersection);
 
       if (domainObject !== undefined && annotation !== undefined) {
         this.setSelectedAnnotationInteractive(domainObject, annotation);
       } else if (domainObject !== undefined) {
         this.setSelectedAnnotationInteractive(domainObject, undefined);
-      } else if (annotationGizmo === undefined) {
+      } else if (gizmo === undefined) {
         // Click in the "air"
         this.setDeselectedAnnotationInteractive();
       }
@@ -247,7 +248,10 @@ export class AnnotationEditTool extends BaseEditTool {
 
   protected override async createDragger(event: PointerEvent): Promise<BaseDragger | undefined> {
     function isAnnotationGizmo(domainObject: DomainObject): boolean {
-      return domainObject instanceof BoxGizmoDomainObject;
+      return (
+        domainObject instanceof BoxGizmoDomainObject ||
+        domainObject instanceof CylinderGizmoDomainObject
+      );
     }
     const intersection = await this.getIntersection(event, isAnnotationGizmo);
     if (intersection === undefined) {
@@ -256,8 +260,8 @@ export class AnnotationEditTool extends BaseEditTool {
     if (!isDomainObjectIntersection(intersection)) {
       return undefined;
     }
-    const annotationGizmo = intersection.domainObject as BoxGizmoDomainObject;
-    if (annotationGizmo === undefined) {
+    const gizmo = intersection.domainObject as VisualDomainObject;
+    if (gizmo === undefined) {
       return undefined;
     }
     const ray = this.getRay(event);
@@ -265,7 +269,7 @@ export class AnnotationEditTool extends BaseEditTool {
     const point = intersection.point.clone();
     point.applyMatrix4(matrix);
     ray.applyMatrix4(matrix);
-    return annotationGizmo.createDragger({ intersection, point, ray });
+    return gizmo.createDragger({ intersection, point, ray });
   }
 
   // ==================================================
@@ -285,11 +289,14 @@ export class AnnotationEditTool extends BaseEditTool {
     if (domainObject === undefined) {
       return undefined;
     }
-    const annotationGizmo = domainObject.getOrCreateAnnotationGizmo();
-    annotationGizmo.clear();
+    const gizmo = domainObject.getOrCreateGizmo(this.primitiveType);
     switch (this.primitiveType) {
       case PrimitiveType.Box:
-        return new BoxCreator(this, annotationGizmo);
+        if (!(gizmo instanceof BoxGizmoDomainObject)) {
+          return undefined;
+        }
+        gizmo.clear();
+        return new BoxCreator(this, gizmo);
       default:
         return undefined;
     }
@@ -342,11 +349,17 @@ export class AnnotationEditTool extends BaseEditTool {
     this._creator = undefined;
 
     const annotationsDomainObject = this.getSelectedAnnotationsDomainObject();
-    const annotationGizmo = creator.domainObject as BoxGizmoDomainObject;
-    if (annotationsDomainObject === undefined || annotationGizmo === undefined) {
+    if (annotationsDomainObject === undefined) {
       return;
     }
-    const newAnnotation = annotationGizmo.createSingleAnnotationBox();
+    const gizmo = creator.domainObject;
+
+    let newAnnotation: SingleAnnotation | undefined;
+    if (gizmo instanceof BoxGizmoDomainObject || gizmo instanceof CylinderGizmoDomainObject) {
+      newAnnotation = gizmo.createAnnotation();
+    } else {
+      return;
+    }
     annotationsDomainObject.annotations.push(newAnnotation.annotation);
     annotationsDomainObject.notify(Changes.geometry);
     annotationsDomainObject.setSelectedAnnotationInteractive(newAnnotation);
@@ -365,31 +378,27 @@ export class AnnotationEditTool extends BaseEditTool {
   ): void {
     if (annotation === undefined) {
       annotationsDomainObject.setSelectedAnnotationInteractive(undefined);
-      const annotationGizmo = annotationsDomainObject.getAnnotationGizmo();
-      if (annotationGizmo !== undefined) {
-        annotationGizmo.setVisibleInteractive(false, this.renderTarget);
+      const gizmo = annotationsDomainObject.getGizmo();
+      if (gizmo !== undefined) {
+        gizmo.setVisibleInteractive(false, this.renderTarget);
       }
       return;
     }
-    const annotationGizmo = annotationsDomainObject.getOrCreateAnnotationGizmo();
-    if (!annotationGizmo.updateThisFromAnnotation(annotation)) {
+    const gizmo = annotationsDomainObject.getOrCreateGizmoByAnnotation(annotation);
+    if (gizmo === undefined) {
       return;
     }
     if (!annotationsDomainObject.setSelectedAnnotationInteractive(annotation)) {
       return;
     }
-    annotationGizmo.color.set(
-      annotationsDomainObject.style.getColorByStatus(getStatusByAnnotation(annotation.annotation))
-    );
-
     const change = new DomainObjectChange();
-    change.addChange(Changes.geometry, BoxGizmoDomainObject.GizmoOnly);
+    change.addChange(Changes.geometry, SolidDomainObject.GizmoOnly);
     change.addChange(Changes.color);
 
-    annotationGizmo.notify(change);
-    annotationGizmo.setFocusInteractive(FocusType.Body);
-    annotationGizmo.setSelectedInteractive(true);
-    annotationGizmo.setVisibleInteractive(true, this.renderTarget);
+    gizmo.notify(change);
+    gizmo.setFocusInteractive(FocusType.Body);
+    gizmo.setSelectedInteractive(true);
+    gizmo.setVisibleInteractive(true, this.renderTarget);
   }
 }
 
@@ -427,7 +436,7 @@ function getIntersectedAnnotationsDomainObject(
 
 function getIntersectedAnnotationGizmo(
   intersection: AnyIntersection | undefined
-): BoxGizmoDomainObject | undefined {
+): BoxGizmoDomainObject | CylinderGizmoDomainObject | undefined {
   if (intersection === undefined) {
     return undefined;
   }
@@ -435,8 +444,11 @@ function getIntersectedAnnotationGizmo(
     return undefined;
   }
   const { domainObject } = intersection;
-  if (!(domainObject instanceof BoxGizmoDomainObject)) {
-    return undefined;
+  if (domainObject instanceof BoxGizmoDomainObject) {
+    return domainObject;
   }
-  return domainObject;
+  if (domainObject instanceof CylinderGizmoDomainObject) {
+    return domainObject;
+  }
+  return undefined;
 }

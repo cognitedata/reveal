@@ -215,13 +215,12 @@ export class CylinderView extends GroupThreeView<CylinderDomainObject> {
     const { focusType } = domainObject;
     const radius = this.getFaceRadius();
 
-    const outerRadius = RELATIVE_ROTATION_RADIUS.max * radius;
-    const innerRadius = RELATIVE_ROTATION_RADIUS.min * radius;
+    const outerRadius = RELATIVE_ROTATION_RADIUS.max * 2 * radius;
+    const innerRadius = RELATIVE_ROTATION_RADIUS.min * 2 * radius;
     const geometry = new RingGeometry(innerRadius, outerRadius, CIRCULAR_SEGMENTS);
 
     const material = new MeshPhongMaterial();
     updateMarkerMaterial(material, domainObject, style, focusType === FocusType.Rotation);
-    material.clippingPlanes = BoxFace.createClippingPlanes(matrix, face.index);
     const result = new Mesh(geometry, material);
     result.renderOrder = RENDER_ORDER;
 
@@ -232,13 +231,13 @@ export class CylinderView extends GroupThreeView<CylinderDomainObject> {
     const rotationMatrix = domainObject.getRotationMatrix();
     rotationMatrix.premultiply(CDF_TO_VIEWER_TRANSFORMATION);
 
-    rotateEdgeCircle(result, face, matrix);
+    rotateEdgeCircle(result, face, rotationMatrix);
     return result;
   }
 
   private createEdgeCircle(matrix: Matrix4, material: Material, face: BoxFace): Mesh | undefined {
     const { domainObject } = this;
-    const radius = RELATIVE_RESIZE_RADIUS * this.getFaceRadius();
+    const radius = 2 * RELATIVE_RESIZE_RADIUS * this.getFaceRadius();
     const geometry = new CircleGeometry(radius, CIRCULAR_SEGMENTS);
     material.transparent = true;
     material.depthWrite = false;
@@ -294,7 +293,7 @@ export class CylinderView extends GroupThreeView<CylinderDomainObject> {
     scaledMatrix.invert();
     const scaledPositionAtFace = newVector3(realPosition).applyMatrix4(scaledMatrix);
     const planePoint = face.getPlanePoint(scaledPositionAtFace);
-    const relativeDistance = planePoint.length();
+    const relativeDistance = planePoint.length() / 2;
 
     if (relativeDistance < RELATIVE_RESIZE_RADIUS) {
       return FocusType.Face;

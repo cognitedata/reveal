@@ -8,32 +8,25 @@ import { type ThreeView } from '../../../base/views/ThreeView';
 import { BoxView } from './BoxView';
 import { type Box3, Euler, Matrix4, Quaternion, Vector3 } from 'three';
 import { Changes } from '../../../base/domainObjectsHelpers/Changes';
-import { BoxFace } from '../../../base/utilities/box/BoxFace';
 import { FocusType } from '../../../base/domainObjectsHelpers/FocusType';
 import { PrimitiveType } from '../PrimitiveType';
 import { type BoxPickInfo } from '../../../base/utilities/box/BoxPickInfo';
 import { type BaseDragger } from '../../../base/domainObjectsHelpers/BaseDragger';
 import { BoxDragger } from './BoxDragger';
-import {
-  VisualDomainObject,
-  type CreateDraggerProps
-} from '../../../base/domainObjects/VisualDomainObject';
+import { type CreateDraggerProps } from '../../../base/domainObjects/VisualDomainObject';
 import { getIconByPrimitiveType } from '../../measurements/getIconByPrimitiveType';
 import { type TranslateKey } from '../../../base/utilities/TranslateKey';
 import { Quantity } from '../../../base/domainObjectsHelpers/Quantity';
 import { PanelInfo } from '../../../base/domainObjectsHelpers/PanelInfo';
 import { radToDeg } from 'three/src/math/MathUtils.js';
-import { DomainObjectTransaction } from '../../../base/undo/DomainObjectTransaction';
-import { type Transaction } from '../../../base/undo/Transaction';
 import {
   forceBetween0AndPi,
   forceBetween0AndTwoPi
 } from '../../../base/utilities/extensions/mathExtensions';
 import { getBoundingBoxForBox } from '../../../base/utilities/box/createBoxGeometry';
+import { MIN_SIZE, SolidDomainObject } from '../SolidDomainObject';
 
-const MIN_SIZE = 0.01;
-
-export abstract class BoxDomainObject extends VisualDomainObject {
+export abstract class BoxDomainObject extends SolidDomainObject {
   // ==================================================
   // INSTANCE FIELDS
   // ==================================================
@@ -43,21 +36,9 @@ export abstract class BoxDomainObject extends VisualDomainObject {
   public readonly rotation = new Euler(0, 0, 0, 'ZYX');
   private readonly _primitiveType: PrimitiveType;
 
-  // For focus when edit in 3D (Used when isSelected is true only)
-  public focusType: FocusType = FocusType.None;
-  public focusFace: BoxFace | undefined = undefined;
-
   // ==================================================
   // INSTANCE PROPERTIES
   // ==================================================
-
-  public get renderStyle(): SolidPrimitiveRenderStyle {
-    return this.getRenderStyle() as SolidPrimitiveRenderStyle;
-  }
-
-  public get primitiveType(): PrimitiveType {
-    return this._primitiveType;
-  }
 
   public get hasXYRotation(): boolean {
     return this.rotation.x !== 0 || this.rotation.y !== 0;
@@ -77,14 +58,6 @@ export abstract class BoxDomainObject extends VisualDomainObject {
   protected constructor(primitiveType: PrimitiveType = PrimitiveType.Box) {
     super();
     this._primitiveType = primitiveType;
-  }
-
-  public clear(): void {
-    this.size.setScalar(MIN_SIZE);
-    this.center.setScalar(0);
-    this.rotation.set(0, 0, 0, 'ZYX');
-    this.focusType = FocusType.None;
-    this.focusFace = undefined;
   }
 
   // ==================================================
@@ -179,10 +152,6 @@ export abstract class BoxDomainObject extends VisualDomainObject {
     }
   }
 
-  public override createTransaction(changed: symbol): Transaction {
-    return new DomainObjectTransaction(this, changed);
-  }
-
   public override copyFrom(domainObject: BoxDomainObject, what?: symbol): void {
     super.copyFrom(domainObject, what);
     if (what === undefined || what === Changes.geometry) {
@@ -201,11 +170,50 @@ export abstract class BoxDomainObject extends VisualDomainObject {
   }
 
   // ==================================================
-  // VIRTUAL METHODS (To be overridden)
+  // OVERRIDES of SolidDomainObject
   // ==================================================
 
-  public canRotateComponent(component: number): boolean {
+  public override get primitiveType(): PrimitiveType {
+    return this._primitiveType;
+  }
+
+  public override canRotateComponent(component: number): boolean {
     return component === 2;
+  }
+
+  public override getBoundingBox(): Box3 {
+    return getBoundingBoxForBox(this.getMatrix());
+  }
+
+  public override getRotationMatrix(matrix: Matrix4 = new Matrix4()): Matrix4 {
+    matrix.identity();
+    matrix.makeRotationFromEuler(this.rotation);
+    return matrix;
+  }
+
+  public override getScaledMatrix(scale: Vector3, matrix: Matrix4 = new Matrix4()): Matrix4 {
+    matrix.identity();
+    matrix.makeRotationFromEuler(this.rotation);
+    matrix.setPosition(this.center);
+    matrix.scale(scale);
+    return matrix;
+  }
+
+  public override getMatrix(matrix: Matrix4 = new Matrix4()): Matrix4 {
+    return this.getScaledMatrix(this.size, matrix);
+  }
+
+  public override setMatrix(matrix: Matrix4): void {
+    const quaternion = new Quaternion();
+    matrix.decompose(this.center, quaternion, this.size);
+    this.rotation.setFromQuaternion(quaternion, 'ZYX');
+  }
+
+  public override clear(): void {
+    super.clear();
+    this.size.setScalar(MIN_SIZE);
+    this.center.setScalar(0);
+    this.rotation.set(0, 0, 0, 'ZYX');
   }
 
   // ==================================================
@@ -259,38 +267,6 @@ export abstract class BoxDomainObject extends VisualDomainObject {
     return this.size.x * this.size.y * this.size.z;
   }
 
-  public getBoundingBox(): Box3 {
-    return getBoundingBoxForBox(this.getMatrix());
-  }
-
-  // ==================================================
-  // INSTANCE METHODS: Matrix getters
-  // ==================================================
-
-  public getRotationMatrix(matrix: Matrix4 = new Matrix4()): Matrix4 {
-    matrix.identity();
-    matrix.makeRotationFromEuler(this.rotation);
-    return matrix;
-  }
-
-  public getMatrix(matrix: Matrix4 = new Matrix4()): Matrix4 {
-    return this.getScaledMatrix(this.size, matrix);
-  }
-
-  public getScaledMatrix(scale: Vector3, matrix: Matrix4 = new Matrix4()): Matrix4 {
-    matrix.identity();
-    matrix.makeRotationFromEuler(this.rotation);
-    matrix.setPosition(this.center);
-    matrix.scale(scale);
-    return matrix;
-  }
-
-  public setMatrix(matrix: Matrix4): void {
-    const quaternion = new Quaternion();
-    matrix.decompose(this.center, quaternion, this.size);
-    this.rotation.setFromQuaternion(quaternion, 'ZYX');
-  }
-
   // ==================================================
   // INSTANCE METHODS: Others
   // ==================================================
@@ -300,32 +276,5 @@ export abstract class BoxDomainObject extends VisualDomainObject {
     size.x = Math.max(MIN_SIZE, size.x);
     size.y = Math.max(MIN_SIZE, size.y);
     size.z = Math.max(MIN_SIZE, size.z);
-  }
-
-  public setFocusInteractive(focusType: FocusType, focusFace?: BoxFace): boolean {
-    const changeFromPending =
-      this.focusType === FocusType.Pending && focusType !== FocusType.Pending;
-    if (focusType === FocusType.None) {
-      if (this.focusType === FocusType.None) {
-        return false; // No change
-      }
-      this.focusType = FocusType.None;
-      this.focusFace = undefined; // Ignore input face
-    } else {
-      if (focusType === this.focusType && BoxFace.equals(this.focusFace, focusFace)) {
-        return false; // No change
-      }
-      this.focusType = focusType;
-      this.focusFace = focusFace;
-    }
-    this.notify(Changes.focus);
-    if (changeFromPending) {
-      this.notify(Changes.geometry);
-    }
-    return true;
-  }
-
-  public static isValidSize(value: number): boolean {
-    return value > MIN_SIZE;
   }
 }

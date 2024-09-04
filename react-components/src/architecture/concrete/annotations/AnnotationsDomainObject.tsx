@@ -14,6 +14,10 @@ import { Changes } from '../../base/domainObjectsHelpers/Changes';
 import { remove } from '../../base/utilities/extensions/arrayExtensions';
 import { BoxGizmoDomainObject } from './BoxGizmoDomainObject';
 import { SingleAnnotation } from './helpers/SingleAnnotation';
+import { SolidDomainObject } from '../primitives/SolidDomainObject';
+import { PrimitiveType } from '../primitives/PrimitiveType';
+import { CylinderGizmoDomainObject } from './CylinderGizmoDomainObject';
+import { getStatusByAnnotation } from './utils/getStatusByAnnotation';
 
 export class AnnotationsDomainObject extends VisualDomainObject {
   // ==================================================
@@ -66,7 +70,7 @@ export class AnnotationsDomainObject extends VisualDomainObject {
   }
 
   // ==================================================
-  // INSTANCE METHODS; Interactive operations
+  // INSTANCE METHODS: Interactive operations
   // ==================================================
 
   public removeSelectedAnnotationInteractive(): boolean {
@@ -85,9 +89,9 @@ export class AnnotationsDomainObject extends VisualDomainObject {
     this.selectedAnnotation = undefined;
     if (isChanged) {
       this.notify(Changes.geometry);
-      const annotationGizmo = this.getAnnotationGizmo();
-      if (annotationGizmo !== undefined) {
-        annotationGizmo.removeInteractive();
+      const gizmo = this.getGizmo();
+      if (gizmo !== undefined) {
+        gizmo.removeInteractive();
       }
     }
     return isChanged;
@@ -131,16 +135,56 @@ export class AnnotationsDomainObject extends VisualDomainObject {
     return true;
   }
 
-  public getAnnotationGizmo(): BoxGizmoDomainObject | undefined {
-    return this.getDescendantByType(BoxGizmoDomainObject);
+  // ==================================================
+  // INSTANCE METHODS: Get or create the gizmo
+  // ==================================================
+
+  public getGizmo(): SolidDomainObject | undefined {
+    return this.getDescendantByType(SolidDomainObject);
   }
 
-  public getOrCreateAnnotationGizmo(): BoxGizmoDomainObject {
-    let annotationGizmo = this.getAnnotationGizmo();
-    if (annotationGizmo === undefined) {
-      annotationGizmo = new BoxGizmoDomainObject();
-      this.addChildInteractive(annotationGizmo);
+  public getOrCreateGizmo(primitiveType: PrimitiveType): SolidDomainObject | undefined {
+    let gizmo = this.getGizmo();
+    if (gizmo !== undefined && gizmo.primitiveType === primitiveType) {
+      return gizmo;
     }
-    return annotationGizmo;
+    if (gizmo !== undefined) {
+      gizmo.removeInteractive();
+      gizmo = undefined;
+    }
+    gizmo = createGizmo(primitiveType);
+    if (gizmo !== undefined) {
+      this.addChildInteractive(gizmo);
+    }
+    return gizmo;
+  }
+
+  public getOrCreateGizmoByAnnotation(annotation: SingleAnnotation): SolidDomainObject | undefined {
+    const gizmo = this.getOrCreateGizmo(annotation.primitiveType);
+    if (gizmo === undefined) {
+      return gizmo;
+    }
+    if (gizmo instanceof BoxGizmoDomainObject || gizmo instanceof CylinderGizmoDomainObject) {
+      if (!gizmo.updateThisFromAnnotation(annotation)) {
+        return;
+      }
+    }
+    gizmo.color.set(this.style.getColorByStatus(getStatusByAnnotation(annotation.annotation)));
+    return gizmo;
+  }
+}
+
+// ==================================================
+// PRIVATE FUNCTIONS
+// ==================================================
+
+function createGizmo(primitiveType: PrimitiveType): SolidDomainObject | undefined {
+  switch (primitiveType) {
+    case PrimitiveType.Box:
+      return new BoxGizmoDomainObject();
+    case PrimitiveType.Cylinder:
+      return new CylinderGizmoDomainObject();
+    default:
+      return undefined;
   }
 }

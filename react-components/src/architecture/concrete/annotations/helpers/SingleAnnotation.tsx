@@ -5,7 +5,8 @@
 import {
   type AnnotationsBoundingVolume,
   type AnnotationsBox,
-  type AnnotationsCogniteAnnotationTypesPrimitivesGeometry3DGeometry as AnnotationGeometry
+  type AnnotationsCogniteAnnotationTypesPrimitivesGeometry3DGeometry as AnnotationGeometry,
+  type AnnotationsCylinder
 } from '@cognite/sdk';
 
 import { type PointCloudAnnotation } from '../utils/types';
@@ -14,6 +15,7 @@ import { remove } from '../../../base/utilities/extensions/arrayExtensions';
 import { Euler, Matrix4, Quaternion, Vector3 } from 'three';
 import { getRandomInt } from '../../../base/utilities/extensions/mathExtensions';
 import { getAnnotationMatrixByGeometry } from '../utils/getMatrixUtils';
+import { PrimitiveType } from '../../primitives/PrimitiveType';
 
 export class SingleAnnotation {
   // ==================================================
@@ -44,6 +46,18 @@ export class SingleAnnotation {
   public get isCylinder(): boolean {
     const region = this.region;
     return region !== undefined && region.length === 1 && region[0].cylinder !== undefined;
+  }
+
+  public get primitiveType(): PrimitiveType {
+    const region = this.region;
+    if (region === undefined || region.length !== 1) {
+      return PrimitiveType.None;
+    }
+    if (region[0].cylinder !== undefined) {
+      return PrimitiveType.Cylinder;
+    } else {
+      return PrimitiveType.Box;
+    }
   }
 
   private get region(): AnnotationGeometry[] | undefined {
@@ -184,23 +198,9 @@ export class SingleAnnotation {
     return a.equals(b);
   }
 
-  public static createBoxFromMatrix(matrix: Matrix4): SingleAnnotation {
+  public static createBox(matrix: Matrix4): SingleAnnotation {
     const box = createBox(matrix);
-    const geometry = { box };
-    const volume: AnnotationsBoundingVolume = {
-      confidence: 0.5,
-      label: 'test',
-      region: [geometry]
-    };
-    const annotation: PointCloudAnnotation = {
-      source: 'asset-centric',
-      id: getRandomInt(),
-      status: 'approved',
-      geometry: volume,
-      assetRef: { source: 'asset-centric', id: 0 },
-      creatingApp: '3d-management'
-    };
-    return new SingleAnnotation(annotation, geometry);
+    return createAnnotation({ box });
 
     function createBox(matrix: Matrix4): AnnotationsBox {
       const box: AnnotationsBox = {
@@ -211,4 +211,45 @@ export class SingleAnnotation {
       return box;
     }
   }
+
+  public static createCylinder(
+    centerA: Vector3,
+    centerB: Vector3,
+    radius: number
+  ): SingleAnnotation {
+    const cylinder = createCylinder(centerA, centerB, radius);
+    return createAnnotation({ cylinder });
+
+    function createCylinder(
+      centerA: Vector3,
+      centerB: Vector3,
+      radius: number
+    ): AnnotationsCylinder {
+      const cylinder: AnnotationsCylinder = {
+        confidence: 1,
+        label: '',
+        centerA: centerA.toArray(),
+        centerB: centerB.toArray(),
+        radius
+      };
+      return cylinder;
+    }
+  }
+}
+
+function createAnnotation(geometry: AnnotationGeometry): SingleAnnotation {
+  const volume: AnnotationsBoundingVolume = {
+    confidence: 0.5,
+    label: 'test',
+    region: [geometry]
+  };
+  const annotation: PointCloudAnnotation = {
+    source: 'asset-centric',
+    id: getRandomInt(),
+    status: 'approved',
+    geometry: volume,
+    assetRef: { source: 'asset-centric', id: 0 },
+    creatingApp: '3d-management'
+  };
+  return new SingleAnnotation(annotation, geometry);
 }

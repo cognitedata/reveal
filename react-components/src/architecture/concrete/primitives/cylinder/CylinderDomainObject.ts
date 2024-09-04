@@ -7,53 +7,35 @@ import { type ThreeView } from '../../../base/views/ThreeView';
 import { CylinderView } from './CylinderView';
 import { type Box3, Matrix4, Quaternion, Vector3 } from 'three';
 import { Changes } from '../../../base/domainObjectsHelpers/Changes';
-import { BoxFace } from '../../../base/utilities/box/BoxFace';
 import { FocusType } from '../../../base/domainObjectsHelpers/FocusType';
 import { PrimitiveType } from '../PrimitiveType';
 import { type BoxPickInfo } from '../../../base/utilities/box/BoxPickInfo';
 import { type BaseDragger } from '../../../base/domainObjectsHelpers/BaseDragger';
 import { CylinderDragger } from './CylinderDragger';
-import {
-  VisualDomainObject,
-  type CreateDraggerProps
-} from '../../../base/domainObjects/VisualDomainObject';
+import { type CreateDraggerProps } from '../../../base/domainObjects/VisualDomainObject';
 import { Range3 } from '../../../base/utilities/geometry/Range3';
 import { getIconByPrimitiveType } from '../../measurements/getIconByPrimitiveType';
 import { type TranslateKey } from '../../../base/utilities/TranslateKey';
 import { Quantity } from '../../../base/domainObjectsHelpers/Quantity';
 import { PanelInfo } from '../../../base/domainObjectsHelpers/PanelInfo';
-import { DomainObjectTransaction } from '../../../base/undo/DomainObjectTransaction';
-import { type Transaction } from '../../../base/undo/Transaction';
 import { square } from '../../../base/utilities/extensions/mathExtensions';
 import { SolidPrimitiveRenderStyle } from '../SolidPrimitiveRenderStyle';
+import { MIN_SIZE, SolidDomainObject } from '../SolidDomainObject';
 
-const MIN_SIZE = 0.01;
 const UP_AXIS = new Vector3(0, 0, 1);
 
-export abstract class CylinderDomainObject extends VisualDomainObject {
+export abstract class CylinderDomainObject extends SolidDomainObject {
   // ==================================================
   // INSTANCE FIELDS
   // ==================================================
 
-  public radius = 0;
-  public readonly centerA = new Vector3();
-  public readonly centerB = new Vector3();
-
-  // For focus when edit in 3D (Used when isSelected is true only)
-  public focusType: FocusType = FocusType.None;
-  public focusFace: BoxFace | undefined = undefined;
+  public radius = MIN_SIZE;
+  public readonly centerA = new Vector3(0, 0, -MIN_SIZE);
+  public readonly centerB = new Vector3(0, 0, +MIN_SIZE);
 
   // ==================================================
   // INSTANCE PROPERTIES
   // ==================================================
-
-  public get renderStyle(): SolidPrimitiveRenderStyle {
-    return this.getRenderStyle() as SolidPrimitiveRenderStyle;
-  }
-
-  public get primitiveType(): PrimitiveType {
-    return PrimitiveType.Cylinder;
-  }
 
   public get hasXYRotation(): boolean {
     return true;
@@ -65,18 +47,6 @@ export abstract class CylinderDomainObject extends VisualDomainObject {
     //   : forceBetween0AndPi(this.rotation.z);
     // return radToDeg(zRotation);
     return 0;
-  }
-
-  // ==================================================
-  // CONSTRUCTOR
-  // ==================================================
-
-  public clear(): void {
-    this.radius = 0;
-    this.centerA.set(0, 0, 0);
-    this.centerB.set(0, 0, 0);
-    this.focusType = FocusType.None;
-    this.focusFace = undefined;
   }
 
   // ==================================================
@@ -141,10 +111,6 @@ export abstract class CylinderDomainObject extends VisualDomainObject {
     }
   }
 
-  public override createTransaction(changed: symbol): Transaction {
-    return new DomainObjectTransaction(this, changed);
-  }
-
   public override copyFrom(domainObject: CylinderDomainObject, what?: symbol): void {
     super.copyFrom(domainObject, what);
     if (what === undefined || what === Changes.geometry) {
@@ -163,11 +129,61 @@ export abstract class CylinderDomainObject extends VisualDomainObject {
   }
 
   // ==================================================
-  // VIRTUAL METHODS (To be overridden)
+  // OVERRIDES of SolidDomainObject
   // ==================================================
 
-  public canRotateComponent(component: number): boolean {
+  public override get primitiveType(): PrimitiveType {
+    return PrimitiveType.Cylinder;
+  }
+
+  public override canRotateComponent(component: number): boolean {
     return component === 2;
+  }
+
+  public override getBoundingBox(): Box3 {
+    const range = new Range3(this.centerA, this.centerB);
+    range.expandByMargin3(Range3.getCircleRangeMargin(this.axis, this.radius, false));
+    return range.getBox();
+  }
+
+  public override clear(): void {
+    super.clear();
+    this.radius = MIN_SIZE;
+    this.centerA.set(0, 0, -MIN_SIZE);
+    this.centerB.set(0, 0, +MIN_SIZE);
+  }
+
+  public override getRotationMatrix(matrix: Matrix4 = new Matrix4()): Matrix4 {
+    const quaternion = new Quaternion();
+    quaternion.setFromUnitVectors(UP_AXIS, this.axis);
+    matrix.makeRotationFromQuaternion(quaternion);
+    return matrix;
+  }
+
+  public override getScaledMatrix(scale: Vector3, matrix: Matrix4 = new Matrix4()): Matrix4 {
+    const quaternion = new Quaternion();
+    quaternion.setFromUnitVectors(UP_AXIS, this.axis);
+    matrix.compose(this.center, quaternion, scale);
+    return matrix;
+  }
+
+  public override getMatrix(matrix: Matrix4 = new Matrix4()): Matrix4 {
+    const scale = new Vector3(this.radius * 2, this.radius * 2, this.height);
+    const quaternion = new Quaternion();
+    quaternion.setFromUnitVectors(UP_AXIS, this.axis);
+    matrix.compose(this.center, quaternion, scale);
+    return matrix;
+  }
+
+  public setMatrix(matrix: Matrix4): void {
+    const centerA = new Vector3(0, 0, -0.5).applyMatrix4(matrix);
+    const centerB = new Vector3(0, 0, 0.5).applyMatrix4(matrix);
+    const scale = new Vector3();
+    matrix.decompose(new Vector3(), new Quaternion(), scale);
+
+    this.centerA.copy(centerA);
+    this.centerB.copy(centerB);
+    this.radius = scale.x / 2;
   }
 
   // ==================================================
@@ -198,81 +214,11 @@ export abstract class CylinderDomainObject extends VisualDomainObject {
     return Math.PI * square(this.radius) * this.height;
   }
 
-  public getBoundingBox(): Box3 {
-    const range = new Range3(this.centerA, this.centerB);
-    range.expandByMargin3(Range3.getCircleRangeMargin(this.axis, this.radius, false));
-    return range.getBox();
-  }
-
-  // ==================================================
-  // INSTANCE METHODS: Matrix getters
-  // ==================================================
-
-  public getRotationMatrix(matrix: Matrix4 = new Matrix4()): Matrix4 {
-    const quaternion = new Quaternion();
-    quaternion.setFromUnitVectors(UP_AXIS, this.axis);
-    matrix.makeRotationFromQuaternion(quaternion);
-    return matrix;
-  }
-
-  public getMatrix(matrix: Matrix4 = new Matrix4()): Matrix4 {
-    const scale = new Vector3(this.radius, this.radius, this.height / 2);
-    const quaternion = new Quaternion();
-    quaternion.setFromUnitVectors(UP_AXIS, this.axis);
-    matrix.compose(this.center, quaternion, scale);
-    return matrix;
-  }
-
-  public getScaledMatrix(scale: Vector3, matrix: Matrix4 = new Matrix4()): Matrix4 {
-    const quaternion = new Quaternion();
-    quaternion.setFromUnitVectors(UP_AXIS, this.axis);
-    matrix.compose(this.center, quaternion, scale);
-    return matrix;
-  }
-
-  public setMatrix(matrix: Matrix4): void {
-    const centerA = new Vector3(0, 0, -0.5).applyMatrix4(matrix);
-    const centerB = new Vector3(0, 0, 0.5).applyMatrix4(matrix);
-    const scale = new Vector3();
-    matrix.decompose(new Vector3(), new Quaternion(), scale);
-
-    this.centerA.copy(centerA);
-    this.centerB.copy(centerB);
-    this.radius = scale.x / 2;
-  }
-
   // ==================================================
   // INSTANCE METHODS: Others
   // ==================================================
 
   public forceMinSize(): void {
-    this.radius = Math.max(MIN_SIZE, this.radius);
-  }
-
-  public setFocusInteractive(focusType: FocusType, focusFace?: BoxFace): boolean {
-    const changeFromPending =
-      this.focusType === FocusType.Pending && focusType !== FocusType.Pending;
-    if (focusType === FocusType.None) {
-      if (this.focusType === FocusType.None) {
-        return false; // No change
-      }
-      this.focusType = FocusType.None;
-      this.focusFace = undefined; // Ignore input face
-    } else {
-      if (focusType === this.focusType && BoxFace.equals(this.focusFace, focusFace)) {
-        return false; // No change
-      }
-      this.focusType = focusType;
-      this.focusFace = focusFace;
-    }
-    this.notify(Changes.focus);
-    if (changeFromPending) {
-      this.notify(Changes.geometry);
-    }
-    return true;
-  }
-
-  public static isValidSize(value: number): boolean {
-    return value > MIN_SIZE;
+    this.radius = Math.max(this.radius, MIN_SIZE);
   }
 }

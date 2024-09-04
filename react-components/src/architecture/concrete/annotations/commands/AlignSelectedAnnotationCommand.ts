@@ -7,8 +7,10 @@ import { RenderTargetCommand } from '../../../base/commands/RenderTargetCommand'
 import { Changes } from '../../../base/domainObjectsHelpers/Changes';
 import { DomainObjectChange } from '../../../base/domainObjectsHelpers/DomainObjectChange';
 import { type TranslateKey } from '../../../base/utilities/TranslateKey';
-import { BoxGizmoDomainObject } from '../BoxGizmoDomainObject';
 import { AnnotationsDomainObject } from '../AnnotationsDomainObject';
+import { SolidDomainObject } from '../../primitives/SolidDomainObject';
+import { BoxGizmoDomainObject } from '../BoxGizmoDomainObject';
+import { CylinderGizmoDomainObject } from '../CylinderGizmoDomainObject';
 
 export class AlignSelectedAnnotationCommand extends RenderTargetCommand {
   private readonly _horizontal: boolean;
@@ -70,12 +72,14 @@ export class AlignSelectedAnnotationCommand extends RenderTargetCommand {
     }
     domainObject.notify(Changes.geometry);
 
-    const annotationGizmo = domainObject.getAnnotationGizmo();
-    if (annotationGizmo !== undefined) {
-      annotationGizmo.updateThisFromAnnotation(selectedAnnotation);
-      const change = new DomainObjectChange(Changes.geometry, BoxGizmoDomainObject.GizmoOnly);
-      annotationGizmo.notify(change);
+    const gizmo = domainObject.getGizmo();
+    if (gizmo instanceof BoxGizmoDomainObject || gizmo instanceof CylinderGizmoDomainObject) {
+      gizmo.updateThisFromAnnotation(selectedAnnotation);
+    } else {
+      return true;
     }
+    const change = new DomainObjectChange(Changes.geometry, SolidDomainObject.GizmoOnly);
+    gizmo.notify(change);
     return true;
   }
 

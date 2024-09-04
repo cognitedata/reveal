@@ -10,9 +10,9 @@ import { type DomainObject } from '../../base/domainObjects/DomainObject';
 import { type DomainObjectChange } from '../../base/domainObjectsHelpers/DomainObjectChange';
 import { Changes } from '../../base/domainObjectsHelpers/Changes';
 import { AnnotationsDomainObject } from './AnnotationsDomainObject';
-import { type SingleAnnotation } from './helpers/SingleAnnotation';
-import { BoxGizmoDomainObject } from './BoxGizmoDomainObject';
+import { SingleAnnotation } from './helpers/SingleAnnotation';
 import { CylinderDomainObject } from '../primitives/cylinder/CylinderDomainObject';
+import { SolidDomainObject } from '../primitives/SolidDomainObject';
 
 export class CylinderGizmoDomainObject extends CylinderDomainObject {
   // ==================================================
@@ -53,7 +53,7 @@ export class CylinderGizmoDomainObject extends CylinderDomainObject {
 
     // Update the selected annotation if the gizmo is moved
     const desc = change.getChangedDescription(Changes.geometry);
-    if (desc !== undefined && !desc.isChanged(BoxGizmoDomainObject.GizmoOnly)) {
+    if (desc !== undefined && !desc.isChanged(SolidDomainObject.GizmoOnly)) {
       this.updateSelectedAnnotationFromThis();
     }
   }
@@ -61,6 +61,10 @@ export class CylinderGizmoDomainObject extends CylinderDomainObject {
   // ==================================================
   // INSTANCE METHODS
   // ==================================================
+
+  public createAnnotation(): SingleAnnotation {
+    return SingleAnnotation.createCylinder(this.centerA, this.centerB, this.radius);
+  }
 
   public updateThisFromAnnotation(annotation: SingleAnnotation): boolean {
     const geometry = annotation.geometry;

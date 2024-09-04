@@ -12,10 +12,9 @@ import { type DomainObjectChange } from '../../base/domainObjectsHelpers/DomainO
 import { Changes } from '../../base/domainObjectsHelpers/Changes';
 import { AnnotationsDomainObject } from './AnnotationsDomainObject';
 import { SingleAnnotation } from './helpers/SingleAnnotation';
+import { SolidDomainObject } from '../primitives/SolidDomainObject';
 
 export class BoxGizmoDomainObject extends BoxDomainObject {
-  public static GizmoOnly = 'GizmoOnly';
-
   // ==================================================
   // CONSTRUCTOR
   // ==================================================
@@ -54,7 +53,7 @@ export class BoxGizmoDomainObject extends BoxDomainObject {
 
     // Update the selected annotation if the gizmo is moved
     const desc = change.getChangedDescription(Changes.geometry);
-    if (desc !== undefined && !desc.isChanged(BoxGizmoDomainObject.GizmoOnly)) {
+    if (desc !== undefined && !desc.isChanged(SolidDomainObject.GizmoOnly)) {
       this.updateSelectedAnnotationFromThis();
     }
   }
@@ -71,9 +70,9 @@ export class BoxGizmoDomainObject extends BoxDomainObject {
   // INSTANCE METHODS
   // ==================================================
 
-  public createSingleAnnotationBox(): SingleAnnotation {
+  public createAnnotation(): SingleAnnotation {
     const matrix = this.getMatrix();
-    return SingleAnnotation.createBoxFromMatrix(matrix);
+    return SingleAnnotation.createBox(matrix);
   }
 
   public updateThisFromAnnotation(annotation: SingleAnnotation): boolean {

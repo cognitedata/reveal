@@ -50,7 +50,7 @@ export class CylinderDragger extends BaseDragger {
   private readonly _unitSystem: UnitSystem | undefined = undefined;
 
   // Original values when the drag started
-  private _radius = 0;
+  private readonly _radius;
   private readonly _centerA = new Vector3();
   private readonly _centerB = new Vector3();
 
