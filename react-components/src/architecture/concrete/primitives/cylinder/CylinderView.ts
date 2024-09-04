@@ -29,12 +29,7 @@ import { BoxFace } from '../../../base/utilities/box/BoxFace';
 import { FocusType } from '../../../base/domainObjectsHelpers/FocusType';
 import { BoxPickInfo } from '../../../base/utilities/box/BoxPickInfo';
 import { Range1 } from '../../../base/utilities/geometry/Range1';
-import {
-  createCylinder,
-  createLineSegmentsBufferGeometryForCylinder
-} from '../../../base/utilities/box/createCylinderGeometry';
 import { intersectRayCylinder } from '../../annotations/utils/getClosestAnnotation';
-import { createOrientedBox } from '../../../base/utilities/box/createBoxGeometry';
 import {
   rotateEdgeCircle,
   updateLineSegmentsMaterial,
@@ -42,9 +37,10 @@ import {
   updateSolidMaterial
 } from '../box/BoxView';
 import { type SolidPrimitiveRenderStyle } from '../base/SolidPrimitiveRenderStyle';
+import { CylinderUtils } from '../../../base/utilities/box/CylinderUtils';
 
-const RELATIVE_RESIZE_RADIUS = 0.15;
-const RELATIVE_ROTATION_RADIUS = new Range1(0.3, 0.5);
+const RELATIVE_RESIZE_RADIUS = 0.2;
+const RELATIVE_ROTATION_RADIUS = new Range1(0.4, 0.7);
 const CIRCULAR_SEGMENTS = 32;
 const RENDER_ORDER = 100;
 
@@ -123,10 +119,7 @@ export class CylinderView extends GroupThreeView<CylinderDomainObject> {
     if (point === null) {
       return undefined;
     }
-
-    const orientedBox = createOrientedBox();
     const matrix = this.getMatrix();
-    orientedBox.applyMatrix4(matrix);
 
     const distanceToCamera = point.distanceTo(ray.origin);
     if (closestDistance !== undefined && closestDistance < distanceToCamera) {
@@ -181,7 +174,7 @@ export class CylinderView extends GroupThreeView<CylinderDomainObject> {
     const material = new MeshPhongMaterial();
     updateSolidMaterial(material, domainObject, style);
 
-    const geometry = createCylinder();
+    const geometry = CylinderUtils.createUnitGeometry();
     // In Three.js, the cylinder is oriented along the Y-axis, so we need to rotate it
     // so up is the Z-axis.
     geometry.applyMatrix4(CDF_TO_VIEWER_TRANSFORMATION.clone().invert());
@@ -197,7 +190,7 @@ export class CylinderView extends GroupThreeView<CylinderDomainObject> {
 
     const material = new LineBasicMaterial();
     updateLineSegmentsMaterial(material, domainObject, style);
-    const geometry = createLineSegmentsBufferGeometryForCylinder();
+    const geometry = CylinderUtils.createLineSegmentsBufferGeometry();
     const result = new LineSegments(geometry, material);
     result.renderOrder = RENDER_ORDER;
     result.applyMatrix4(matrix);

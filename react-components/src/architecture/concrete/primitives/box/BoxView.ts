@@ -6,7 +6,6 @@ import {
   Mesh,
   MeshPhongMaterial,
   type Object3D,
-  BoxGeometry,
   DoubleSide,
   LineSegments,
   LineBasicMaterial,
@@ -36,10 +35,7 @@ import { BoxFace } from '../../../base/utilities/box/BoxFace';
 import { FocusType } from '../../../base/domainObjectsHelpers/FocusType';
 import { clear } from '../../../base/utilities/extensions/arrayExtensions';
 import { createSpriteWithText } from '../../../base/utilities/sprites/createSprite';
-import {
-  createLineSegmentsBufferGeometryForBox,
-  createOrientedBox
-} from '../../../base/utilities/box/createBoxGeometry';
+import { BoxUtils } from '../../../base/utilities/box/BoxUtils';
 import { BoxPickInfo } from '../../../base/utilities/box/BoxPickInfo';
 import { Range1 } from '../../../base/utilities/geometry/Range1';
 import { PrimitiveType } from '../PrimitiveType';
@@ -148,9 +144,8 @@ export class BoxView extends GroupThreeView<BoxDomainObject> {
     if (domainObject.focusType === FocusType.Pending) {
       return undefined; // Should never be picked
     }
-    const orientedBox = createOrientedBox();
     const matrix = this.getMatrix();
-    orientedBox.applyMatrix4(matrix);
+    const orientedBox = BoxUtils.createOrientedBox(matrix);
 
     const ray = intersectInput.raycaster.ray;
     const point = orientedBox.intersectRay(ray, newVector3());
@@ -227,7 +222,7 @@ export class BoxView extends GroupThreeView<BoxDomainObject> {
 
     const material = new MeshPhongMaterial();
     updateSolidMaterial(material, domainObject, style);
-    const geometry = new BoxGeometry(1, 1, 1);
+    const geometry = BoxUtils.createUnitGeometry();
     const mesh = new Mesh(geometry, material);
     mesh.renderOrder = RENDER_ORDER;
     mesh.applyMatrix4(matrix);
@@ -240,7 +235,7 @@ export class BoxView extends GroupThreeView<BoxDomainObject> {
 
     const material = new LineBasicMaterial();
     updateLineSegmentsMaterial(material, domainObject, style);
-    const geometry = createLineSegmentsBufferGeometryForBox();
+    const geometry = BoxUtils.createLineSegmentsBufferGeometry();
     const result = new LineSegments(geometry, material);
     result.renderOrder = RENDER_ORDER;
 

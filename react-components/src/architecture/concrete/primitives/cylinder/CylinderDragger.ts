@@ -9,7 +9,6 @@ import { FocusType } from '../../../base/domainObjectsHelpers/FocusType';
 import { type BoxPickInfo } from '../../../base/utilities/box/BoxPickInfo';
 import { round, roundIncrement } from '../../../base/utilities/extensions/mathExtensions';
 import { getAbsMaxComponentIndex } from '../../../base/utilities/extensions/vectorExtensions';
-import { PrimitiveType } from '../PrimitiveType';
 import { getClosestPointOnLine } from '../../../base/utilities/extensions/rayExtensions';
 import { CylinderDomainObject } from './CylinderDomainObject';
 import { BaseDragger } from '../../../base/domainObjectsHelpers/BaseDragger';
@@ -21,7 +20,6 @@ import { Vector3Pool } from '@cognite/reveal';
 import { Quantity } from '../../../base/domainObjectsHelpers/Quantity';
 import { type UnitSystem } from '../../../base/renderTarget/UnitSystem';
 
-const CONSTRAINED_ANGLE_INCREMENT = 15;
 /**
  * The `BoxDragger` class represents a utility for dragging and manipulating a box in a 3D space.
  * It provides methods for scaling, translating, and rotating the box based on user interactions.
@@ -45,6 +43,7 @@ export class CylinderDragger extends BaseDragger {
 
   // Original values when the drag started
   private readonly _radius;
+  private readonly _height;
   private readonly _centerA = new Vector3();
   private readonly _centerB = new Vector3();
 
@@ -86,6 +85,7 @@ export class CylinderDragger extends BaseDragger {
 
     // Back up the original values
     this._radius = this._domainObject.radius;
+    this._height = this._domainObject.height;
     this._centerA.copy(this._domainObject.centerA);
     this._centerB.copy(this._domainObject.centerB);
 
@@ -173,52 +173,43 @@ export class CylinderDragger extends BaseDragger {
     // Take find closest point between the ray and the line perpendicular to the face of in picked box.
     // The distance from this point to the face of in picked box is the change.
     const pointOnSegment = newVector3();
-
     getClosestPointOnLine(ray, this._normal, this.point, pointOnSegment);
-    const deltaSize = this._planeOfFace.distanceToPoint(pointOnSegment);
-    if (deltaSize === 0) {
+    const deltaHeight = this._planeOfFace.distanceToPoint(pointOnSegment);
+    if (deltaHeight === 0) {
       return false; // Nothing has changed
     }
-    // First copy the original values
-    const { centerA, centerB } = this._domainObject;
-    centerA.copy(this._centerA);
-    centerB.copy(this._centerB);
+    if (this._face.face === 5 || this._face.face === 2) {
+      const { centerA, centerB } = this._domainObject;
+      centerA.copy(this._centerA);
+      centerB.copy(this._centerB);
 
-    const index = this._face.index;
-    let deltaCenter: number;
-    if (this._domainObject.primitiveType !== PrimitiveType.Box) {
-      deltaCenter = this._face.sign * deltaSize;
-    } else {
-      // Set new size
-      size.setComponent(index, deltaSize + size.getComponent(index));
-      this._domainObject.forceMinSize();
+      let newHeight = this._height + deltaHeight;
 
-      if (
-        shift &&
-        this._unitSystem !== undefined &&
-        CylinderDomainObject.isValidSize(size.getComponent(index))
-      ) {
-        const newSize = this._unitSystem.convertToUnit(size.getComponent(index), Quantity.Length);
-        // Divide the box into abound some parts and use that as the increment
-        const increment = roundIncrement(newSize / 25);
-        let roundedNewSize = round(newSize, increment);
-        roundedNewSize = this._unitSystem.convertFromUnit(roundedNewSize, Quantity.Length);
-        size.setComponent(index, roundedNewSize);
-      }
-      if (size.getComponent(index) === this._sizeOfBox.getComponent(index)) {
+      if (!CylinderDomainObject.isValidSize(newHeight)) {
         return false; // Nothing has changed
       }
-      // The center of the box should be moved by half of the delta size and take the rotation into account.
-      const newDeltaSize = size.getComponent(index) - this._sizeOfBox.getComponent(index);
-      deltaCenter = (this._face.sign * newDeltaSize) / 2;
+      if (shift && this._unitSystem !== undefined) {
+        const newConvertedHeight = this._unitSystem.convertToUnit(newHeight, Quantity.Length);
+        // Divide the box into abound some parts and use that as the increment
+        const increment = roundIncrement(newConvertedHeight / 25);
+        const roundedNewHeight = round(newConvertedHeight, increment);
+        newHeight = this._unitSystem.convertFromUnit(roundedNewHeight, Quantity.Length);
+        if (!CylinderDomainObject.isValidSize(newHeight)) {
+          return false; // Nothing has changed
+        }
+      }
+      if (newHeight === this._height) {
+        return false; // Nothing has changed
+      }
+      const axis = newVector3().subVectors(centerA, centerB).normalize().multiplyScalar(newHeight);
+      if (this._face.face === 2) {
+        centerB.subVectors(centerA, axis);
+      } else {
+        centerA.addVectors(centerB, axis);
+      }
+      return true;
     }
-    // Set new center
-    const deltaCenterVector = newVector3();
-    deltaCenterVector.setComponent(index, deltaCenter);
-    const rotationMatrix = this.getRotationMatrix();
-    deltaCenterVector.applyMatrix4(rotationMatrix);
-    center.add(deltaCenterVector);
-    return true;
+    return false;
   }
 
   private rotate(ray: Ray, _shift: boolean): boolean {
@@ -230,19 +221,26 @@ export class CylinderDragger extends BaseDragger {
     // and adjust the length so it doesn't change
     if (this._face.face === 5 || this._face.face === 2) {
       const translation = newVector3().subVectors(endPoint, this.point);
-      const { centerA, centerB, height } = this._domainObject;
+      const { centerA, centerB } = this._domainObject;
+      centerA.copy(this._centerA);
+      centerB.copy(this._centerB);
+
       if (this._face.face === 2) {
-        centerB.copy(this._centerB);
         centerB.add(translation);
-        const axis = newVector3().subVectors(centerA, centerB).normalize().multiplyScalar(height);
+        const axis = newVector3()
+          .subVectors(centerA, centerB)
+          .normalize()
+          .multiplyScalar(this._height);
         centerB.subVectors(centerA, axis);
       } else {
-        centerA.copy(this._centerA);
         centerA.add(translation);
-        const axis = newVector3().subVectors(centerA, centerB).normalize().multiplyScalar(height);
+        const axis = newVector3()
+          .subVectors(centerA, centerB)
+          .normalize()
+          .multiplyScalar(this._height);
         centerA.addVectors(centerB, axis);
-        return true;
       }
+      return true;
     }
     return false;
   }

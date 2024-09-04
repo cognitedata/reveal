@@ -5,7 +5,7 @@
 import { type Matrix4, type Box3 } from 'three';
 import { type PointCloudAnnotation } from './types';
 import { getSingleAnnotationGeometry } from './annotationGeometryUtils';
-import { getBoundingBoxForBox } from '../../../base/utilities/box/createBoxGeometry';
+import { BoxUtils } from '../../../base/utilities/box/BoxUtils';
 
 export class PendingAnnotation {
   matrix: Matrix4;
@@ -17,7 +17,7 @@ export class PendingAnnotation {
   }
 
   public getBoundingBox(): Box3 {
-    return getBoundingBoxForBox(this.matrix);
+    return BoxUtils.getBoundingBox(this.matrix);
   }
 
   public getCdfMatrix(globalMatrix: Matrix4): Matrix4 {

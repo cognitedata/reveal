@@ -7,7 +7,7 @@ import { type PointCloudAnnotation } from './types';
 import { getAnnotationGeometries } from './annotationGeometryUtils';
 import { getAnnotationMatrixByGeometry } from './getMatrixUtils';
 import { Box3, type Matrix4 } from 'three';
-import { expandBoundingBoxForBox } from '../../../base/utilities/box/createBoxGeometry';
+import { BoxUtils } from '../../../base/utilities/box/BoxUtils';
 
 export const getBoundingBox = (
   annotation: PointCloudAnnotation,
@@ -20,7 +20,7 @@ export const getBoundingBox = (
       continue;
     }
     matrix.premultiply(globalMatrix);
-    expandBoundingBoxForBox(boundingBox, matrix);
+    BoxUtils.expandBoundingBox(boundingBox, matrix);
   }
   return boundingBox.isEmpty() ? undefined : boundingBox;
 };

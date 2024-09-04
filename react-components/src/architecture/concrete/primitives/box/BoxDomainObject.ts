@@ -22,9 +22,9 @@ import {
   forceBetween0AndPi,
   forceBetween0AndTwoPi
 } from '../../../base/utilities/extensions/mathExtensions';
-import { getBoundingBoxForBox } from '../../../base/utilities/box/createBoxGeometry';
 import { MIN_SIZE, SolidDomainObject } from '../base/SolidDomainObject';
 import { SolidPrimitiveRenderStyle } from '../base/SolidPrimitiveRenderStyle';
+import { BoxUtils } from '../../../base/utilities/box/BoxUtils';
 
 export abstract class BoxDomainObject extends SolidDomainObject {
   // ==================================================
@@ -182,7 +182,7 @@ export abstract class BoxDomainObject extends SolidDomainObject {
   }
 
   public override getBoundingBox(): Box3 {
-    return getBoundingBoxForBox(this.getMatrix());
+    return BoxUtils.getBoundingBox(this.getMatrix());
   }
 
   public override getRotationMatrix(matrix: Matrix4 = new Matrix4()): Matrix4 {

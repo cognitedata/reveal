@@ -12,7 +12,7 @@ import { type PointCloudAnnotation } from './types';
 import { getAnnotationGeometries } from './annotationGeometryUtils';
 import { getBoxMatrix } from './getMatrixUtils';
 import { ClosestGeometryFinder } from '../../../base/utilities/geometry/ClosestGeometryFinder';
-import { createOrientedBox } from '../../../base/utilities/box/createBoxGeometry';
+import { BoxUtils } from '../../../base/utilities/box/BoxUtils';
 
 export function getClosestAnnotation(
   annotations: Generator<PointCloudAnnotation>,
@@ -78,8 +78,7 @@ function getIntersectionPoint(
 function intersectBoxRegion(box: AnnotationsBox, globalMatrix: Matrix4, ray: Ray): Vector3 | null {
   const matrix = getBoxMatrix(box);
   matrix.premultiply(globalMatrix);
-  const orientedBox = createOrientedBox();
-  orientedBox.applyMatrix4(matrix);
+  const orientedBox = BoxUtils.createOrientedBox(matrix);
   return orientedBox.intersectRay(ray, new Vector3());
 }
 
@@ -167,8 +166,7 @@ function isInsidePointBoxRegion(
 ): boolean {
   const matrix = getBoxMatrix(box);
   matrix.premultiply(globalMatrix);
-  const orientedBox = createOrientedBox();
-  orientedBox.applyMatrix4(matrix);
+  const orientedBox = BoxUtils.createOrientedBox(matrix);
   return orientedBox.containsPoint(point);
 }
 
@@ -185,9 +183,8 @@ function getVolume(geometry: AnnotationGeometry, globalMatrix: Matrix4): number 
 function getBoxRegionVolume(box: AnnotationsBox, globalMatrix: Matrix4): number {
   const matrix = getBoxMatrix(box);
   matrix.premultiply(globalMatrix);
-  const obb = createOrientedBox();
-  obb.applyMatrix4(matrix);
-  return 8 * obb.halfSize.x * obb.halfSize.y * obb.halfSize.z;
+  const orientedBox = BoxUtils.createOrientedBox(matrix);
+  return 8 * orientedBox.halfSize.x * orientedBox.halfSize.y * orientedBox.halfSize.z;
 }
 
 function getCylinderRegionVolume(cylinder: AnnotationsCylinder, globalMatrix: Matrix4): number {

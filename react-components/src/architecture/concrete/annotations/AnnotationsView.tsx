@@ -26,17 +26,9 @@ import { Changes } from '../../base/domainObjectsHelpers/Changes';
 import { type DomainObjectIntersection } from '../../base/domainObjectsHelpers/DomainObjectIntersection';
 import { getStatusByAnnotation } from './utils/getStatusByAnnotation';
 import { SingleAnnotation } from './helpers/SingleAnnotation';
-import {
-  Box3,
-  BoxGeometry,
-  Group,
-  Matrix4,
-  Mesh,
-  MeshBasicMaterial,
-  type Object3D,
-  Vector2
-} from 'three';
-import { createCylinder } from '../../base/utilities/box/createCylinderGeometry';
+import { Box3, Group, Matrix4, Mesh, MeshBasicMaterial, type Object3D, Vector2 } from 'three';
+import { CylinderUtils } from '../../base/utilities/box/CylinderUtils';
+import { BoxUtils } from '../../base/utilities/box/BoxUtils';
 
 const FOCUS_ANNOTATION_NAME = 'focus-annotation-name';
 const GROUP_SIZE = 100;
@@ -434,7 +426,7 @@ function createMeshByMatrix(
   material: MeshBasicMaterial,
   isCylinder: boolean
 ): Mesh {
-  const geometry = isCylinder ? createCylinder() : new BoxGeometry(1, 1, 1);
+  const geometry = isCylinder ? CylinderUtils.createUnitGeometry() : BoxUtils.createUnitGeometry();
   if (isCylinder) {
     // In Three.js, the cylinder is oriented along the Y-axis, so we need to rotate it
     // so up is the Z-axis.

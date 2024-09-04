@@ -11,14 +11,12 @@ import { type PointCloudAnnotation } from './types';
 
 import { getAnnotationGeometries } from './annotationGeometryUtils';
 import { type Status } from '../AnnotationsView';
-import { createCylinderGeometryAsVertices } from '../../../base/utilities/box/createCylinderGeometry';
 import { getAnnotationMatrixByGeometry } from './getMatrixUtils';
 import { WireframeUserData } from '../helpers/WireframeUserData';
 import { Matrix4, Vector3 } from 'three';
-import {
-  createBoxGeometryAsVertices,
-  createLineSegmentsGeometry
-} from '../../../base/utilities/box/createBoxGeometry';
+import { BoxUtils } from '../../../base/utilities/box/BoxUtils';
+import { CylinderUtils } from '../../../base/utilities/box/CylinderUtils';
+import { PrimitiveUtils } from '../../../base/utilities/box/PrimitiveUtils';
 
 export type CreateWireframeArgs = {
   annotations: PointCloudAnnotation[];
@@ -72,7 +70,7 @@ export function createWireframeFromMultipleAnnotations(
       break;
     }
   }
-  const lineSegmentsGeometry = createLineSegmentsGeometry(vertices);
+  const lineSegmentsGeometry = PrimitiveUtils.createLineSegmentsGeometry(vertices);
   const wireframe = new Wireframe(lineSegmentsGeometry, material);
   translationMatrix = createTranslationMatrix(translation);
   wireframe.matrix = translationMatrix;
@@ -82,8 +80,8 @@ export function createWireframeFromMultipleAnnotations(
   return wireframe;
 }
 
-const CYLINDER_VERTICES = createCylinderGeometryAsVertices();
-const BOX_VERTICES = createBoxGeometryAsVertices();
+const CYLINDER_VERTICES = CylinderUtils.createVertices();
+const BOX_VERTICES = BoxUtils.createVertices();
 
 function getObjectVertices(geometry: AnnotationGeometry): number[] | undefined {
   if (geometry.box !== undefined) {
