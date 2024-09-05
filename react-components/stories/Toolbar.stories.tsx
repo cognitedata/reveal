@@ -8,7 +8,7 @@ import {
   type QualitySettings,
   RevealToolbar,
   withSuppressRevealEvents,
-  withCameraStateUrlParam,
+  withCameraStateControl,
   useGetCameraStateFromUrlParam,
   useCameraNavigation
 } from '../src';
@@ -30,7 +30,7 @@ const meta = {
 export default meta;
 type Story = StoryObj<typeof meta>;
 
-const MyCustomToolbar = styled(withSuppressRevealEvents(withCameraStateUrlParam(ToolBar)))`
+const MyCustomToolbar = styled(withSuppressRevealEvents(withCameraStateControl(ToolBar)))`
   position: absolute;
   right: 20px;
   top: 70px;
