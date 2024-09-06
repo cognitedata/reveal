@@ -77,13 +77,24 @@ export const useGroundPlaneFromScene = (sceneExternalId: string, sceneSpaceId: s
     }
     const groundMeshes: CustomObject[] = [];
 
+    // New scale format was introduced as a bug in the Scenebuilder
+    // on August 1st, 2024. This is a temporary fix to handle both formats.
+    // This should be removed when we upgrade the Scene Data Model to a new version
+    const groundPlaneUsesNewScaleFormat = groundPlaneUseNewScaleFormat(
+      scene.sceneConfiguration.updatedAt
+    );
+
     scene.groundPlanes.forEach((groundPlane, index) => {
       if (groundPlaneTextures?.[index] === undefined) {
         return;
       }
       const texture = groundPlaneTextures[index];
       const material = new MeshBasicMaterial({ map: texture, side: DoubleSide });
-      const geometry = new PlaneGeometry(10000 * groundPlane.scaleX, 10000 * groundPlane.scaleY);
+
+      const scaleX = groundPlane.scaleX;
+      const scaleY = groundPlaneUsesNewScaleFormat ? groundPlane.scaleZ : groundPlane.scaleY;
+
+      const geometry = new PlaneGeometry(10000 * scaleX, 10000 * scaleY);
 
       geometry.name = `CogniteGroundPlane`;
 
@@ -121,4 +132,16 @@ export const useGroundPlaneFromScene = (sceneExternalId: string, sceneSpaceId: s
       clear(groundMeshes);
     };
   }, [groundPlaneTextures]);
+
+  function groundPlaneUseNewScaleFormat(lastUpdatedAt: string | undefined): boolean {
+    if (lastUpdatedAt === undefined) {
+      return false;
+    }
+
+    const dateModified = new Date(lastUpdatedAt);
+
+    const groundPlaneScaleFormatChangedDate = new Date('2024-08-01T10:44:00.000Z');
+
+    return dateModified > groundPlaneScaleFormatChangedDate;
+  }
 };
