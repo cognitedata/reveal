@@ -3,13 +3,7 @@
  */
 
 import type { Meta, StoryObj } from '@storybook/react';
-import {
-  useGetCameraStateFromUrlParam,
-  useCameraNavigation,
-  RevealTopbar,
-  RevealCanvas,
-  Reveal3DResources
-} from '../src';
+import { useCameraNavigation, RevealTopbar, RevealCanvas, Reveal3DResources } from '../src';
 import { Color, Matrix4 } from 'three';
 import { type ReactElement, useEffect } from 'react';
 import { signalStoryReadyForScreenshot } from './utilities/signalStoryReadyForScreenshot';
@@ -51,22 +45,7 @@ export const Main: Story = {
       <RevealTopbar />
       <RevealCanvas>
         <Reveal3DResources resources={resources} />
-        <FitToUrlCameraState />
       </RevealCanvas>
     </RevealStoryContext>
   )
 };
-
-function FitToUrlCameraState(): ReactElement {
-  const getCameraState = useGetCameraStateFromUrlParam();
-  const cameraNavigation = useCameraNavigation();
-
-  useEffect(() => {
-    signalStoryReadyForScreenshot();
-    const currentCameraState = getCameraState();
-    if (currentCameraState === undefined) return;
-    cameraNavigation.fitCameraToState(currentCameraState);
-  }, []);
-
-  return <></>;
-}
