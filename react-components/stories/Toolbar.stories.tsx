@@ -8,7 +8,6 @@ import {
   type QualitySettings,
   RevealToolbar,
   withSuppressRevealEvents,
-  withCameraStateControl,
   useCameraNavigation
 } from '../src';
 import { Color } from 'three';
