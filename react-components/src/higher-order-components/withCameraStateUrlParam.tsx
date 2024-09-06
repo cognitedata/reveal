@@ -4,32 +4,31 @@
 
 import { useEffect, type ReactElement, type FunctionComponent } from 'react';
 import { useReveal } from '..';
-import { Vector3 } from 'three';
 import { type CameraState } from '@cognite/reveal';
 
-type CameraStateTransform = Omit<Required<CameraState>, 'rotation'>;
+export type CameraStateParameters = Omit<Required<CameraState>, 'rotation'>;
+export type CameraStateProps = {
+  cameraState: CameraStateParameters | undefined;
+  setCameraState: (value: CameraStateParameters | undefined) => void;
+};
 
-export function withCameraStateUrlParam<T extends object>(
+export function withCameraStateControl<T extends object>(
   Component: FunctionComponent<T>
-): FunctionComponent<T> {
-  return function CameraStateUrlParam(props: T): ReactElement {
+): FunctionComponent<T & CameraStateProps> {
+  return function CameraStateUrlParam(props: T & CameraStateProps): ReactElement {
     const reveal = useReveal();
-    const getCameraStateFromUrlParam = useGetCameraStateFromUrlParam();
+    const externalCameraState = props.cameraState;
 
     const setUrlParamOnCameraStop = (): void => {
-      const currentUrlCameraState = getCameraStateFromUrlParam();
       const currentCameraManagerState = reveal.cameraManager.getCameraState();
       if (
-        currentUrlCameraState !== undefined &&
-        !hasCameraStateChanged(currentUrlCameraState, currentCameraManagerState)
+        externalCameraState !== undefined &&
+        !hasCameraStateChanged(externalCameraState, currentCameraManagerState)
       ) {
         return;
       }
-      const { position, target } = currentCameraManagerState;
-      const url = new URL(window.location.toString());
-      url.searchParams.set('cameraPosition', `[${position.x},${position.y},${position.z}]`);
-      url.searchParams.set('cameraTarget', `[${target.x},${target.y},${target.z}]`);
-      window.history.replaceState({}, '', url);
+
+      props.setCameraState(currentCameraManagerState);
     };
 
     useEffect(() => {
@@ -43,8 +42,8 @@ export function withCameraStateUrlParam<T extends object>(
   };
 
   function hasCameraStateChanged(
-    previous: CameraStateTransform,
-    current: CameraStateTransform
+    previous: CameraStateParameters,
+    current: CameraStateParameters
   ): boolean {
     const epsilon = 0.001;
     const { position: previousPosition, target: previousTarget } = previous;
@@ -53,34 +52,5 @@ export function withCameraStateUrlParam<T extends object>(
       previousPosition.distanceToSquared(currentPosition) > epsilon ||
       previousTarget.distanceToSquared(currentTarget) > epsilon
     );
-  }
-}
-
-export function useGetCameraStateFromUrlParam(): () => CameraStateTransform | undefined {
-  return () => {
-    const url = new URL(window.location.toString());
-    const position = url.searchParams.get('cameraPosition');
-    const target = url.searchParams.get('cameraTarget');
-
-    if (position === null || target === null) {
-      return;
-    }
-
-    const parsedPosition = getParsedVector(position);
-    const parsedTarget = getParsedVector(target);
-
-    if (parsedPosition === undefined || parsedTarget === undefined) {
-      return;
-    }
-
-    return { position: parsedPosition, target: parsedTarget };
-  };
-
-  function getParsedVector(s: string): Vector3 | undefined {
-    try {
-      return new Vector3().fromArray(JSON.parse(s) as [number, number, number]);
-    } catch (e) {
-      return undefined;
-    }
   }
 }

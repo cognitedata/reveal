@@ -10,7 +10,6 @@ import { useReveal } from '../RevealCanvas/ViewerContext';
 import { Button, Dropdown, Menu, RangeSlider, Tooltip as CogsTooltip } from '@cognite/cogs.js';
 
 import styled from 'styled-components';
-import { useSlicerUrlParams } from './hooks/useUrlStateParam';
 import { useTranslation } from '../i18n/I18n';
 import { use3dModels } from '../../hooks/use3dModels';
 
@@ -21,18 +20,11 @@ type SliceState = {
   bottomRatio: number;
 };
 
-type SlicerButtonProps = {
-  storeStateInUrl?: boolean;
-};
-
-export const SlicerButton = ({ storeStateInUrl = true }: SlicerButtonProps): ReactElement => {
+export const SlicerButton = (): ReactElement => {
   const viewer = useReveal();
   const { t } = useTranslation();
   const models = use3dModels();
-  const [slicerUrlState, setSlicerUrlState] = useSlicerUrlParams();
-  const { bottom: initialBottomRatio, top: initialTopRatio } = storeStateInUrl
-    ? slicerUrlState
-    : { bottom: 0, top: 1 };
+  const { bottom: initialBottomRatio, top: initialTopRatio } = { bottom: 0, top: 1 };
   const [sliceActive, setSliceActive] = useState<boolean>(false);
 
   const [sliceState, setSliceState] = useState<SliceState>({
@@ -58,10 +50,6 @@ export const SlicerButton = ({ storeStateInUrl = true }: SlicerButtonProps): Rea
     if (maxHeight !== newMaxY || minHeight !== newMinY) {
       // Set clipping plane only if top or bottom has changed & storeStateInUrl is enabled
 
-      if (storeStateInUrl && (bottomRatio !== 0 || topRatio !== 1)) {
-        setGlobalPlanes(bottomRatio, topRatio, newMaxY, newMinY);
-      }
-
       setSliceState({
         maxHeight: newMaxY,
         minHeight: newMinY,
@@ -80,10 +68,6 @@ export const SlicerButton = ({ storeStateInUrl = true }: SlicerButtonProps): Rea
       bottomRatio: newValues[0],
       topRatio: newValues[1]
     });
-
-    if (storeStateInUrl) {
-      setSlicerUrlState(newValues);
-    }
   }
 
   function setGlobalPlanes(

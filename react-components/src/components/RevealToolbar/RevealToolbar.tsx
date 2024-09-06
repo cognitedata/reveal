@@ -9,7 +9,6 @@ import { LayersButton } from './LayersButton';
 import { SlicerButton } from './SlicerButton';
 import { SettingsButton } from './SettingsButton';
 import { withSuppressRevealEvents } from '../../higher-order-components/withSuppressRevealEvents';
-import { MeasurementButton } from './MeasurementButton';
 import { HelpButton } from './HelpButton';
 import { ShareButton } from './ShareButton';
 import { ResetCameraButton } from './ResetCameraButton';
@@ -51,8 +50,7 @@ const DefaultContentWrapper = (props: CustomToolbarContent): ReactElement => {
       <RuleBasedOutputsButton />
       <Divider weight="2px" length="75%" />
 
-      <SlicerButton storeStateInUrl={props.storeStateInUrl} />
-      <MeasurementButton />
+      <SlicerButton />
 
       <Divider weight="2px" length="75%" />
 
@@ -105,7 +103,6 @@ export const RevealToolbar = withSuppressRevealEvents(
   FitModelsButton: typeof FitModelsButton;
   SlicerButton: typeof SlicerButton;
   LayersButton: typeof LayersButton;
-  MeasurementButton: typeof MeasurementButton;
   ShareButton: typeof ShareButton;
   SettingsButton: typeof SettingsButton;
   HelpButton: typeof HelpButton;
@@ -120,7 +117,6 @@ export const RevealToolbar = withSuppressRevealEvents(
 RevealToolbar.FitModelsButton = FitModelsButton;
 RevealToolbar.SlicerButton = SlicerButton;
 RevealToolbar.LayersButton = LayersButton;
-RevealToolbar.MeasurementButton = MeasurementButton;
 RevealToolbar.ShareButton = ShareButton;
 RevealToolbar.SettingsButton = SettingsButton;
 RevealToolbar.HelpButton = HelpButton;

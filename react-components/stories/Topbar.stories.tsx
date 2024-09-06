@@ -3,17 +3,12 @@
  */
 
 import type { Meta, StoryObj } from '@storybook/react';
-import {
-  useGetCameraStateFromUrlParam,
-  useCameraNavigation,
-  RevealTopbar,
-  RevealCanvas,
-  Reveal3DResources
-} from '../src';
+import { useCameraNavigation, RevealTopbar, RevealCanvas, Reveal3DResources } from '../src';
 import { Color, Matrix4 } from 'three';
 import { type ReactElement, useEffect } from 'react';
 import { signalStoryReadyForScreenshot } from './utilities/signalStoryReadyForScreenshot';
 import { RevealStoryContext } from './utilities/RevealStoryContainer';
+import { useGetCameraStateFromUrlParam } from './utilities/useGetCameraStateFromUrlParam';
 
 const meta = {
   title: 'Example/Topbar',
