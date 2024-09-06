@@ -54,6 +54,7 @@ export const useSearchMappedEquipmentAssetMappings = (
       'react-components',
       'search-mapped-asset-mappings',
       query,
+      limit,
       ...models.map((model) => [model.modelId, model.revisionId])
     ],
     queryFn: async ({ pageParam }: { pageParam: string | undefined }) => {
@@ -123,6 +124,7 @@ export const useAllMappedEquipmentAssetMappings = (
       'reveal',
       'react-components',
       'all-mapped-equipment-asset-mappings',
+      limit,
       ...models.map((model) => [model.modelId, model.revisionId])
     ],
     queryFn: async ({ pageParam }) => {

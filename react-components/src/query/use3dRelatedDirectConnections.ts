@@ -15,7 +15,12 @@ export function use3dRelatedDirectConnections(
   const fdmDataProvider = useFdm3dDataProvider();
 
   return useQuery({
-    queryKey: ['reveal-react-components', 'get-3d-related-direct-connections'],
+    queryKey: [
+      'reveal-react-components',
+      'get-3d-related-direct-connections',
+      instance?.externalId,
+      instance?.space
+    ],
     queryFn: async () => {
       assert(instance !== undefined);
       const views = await fdmSdk.inspectInstances({
