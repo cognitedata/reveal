@@ -12,6 +12,7 @@ import { type AddModelOptions } from '@cognite/reveal';
 import { type InstancesWithView } from '../query/useSearchMappedEquipmentFDM';
 import { type FdmCadConnection } from '../components/CacheProvider/types';
 import { type TaggedAddResourceOptions } from '../components/Reveal3DResources/types';
+import { type Node3D } from '@cognite/sdk';
 
 export type Fdm3dDataProvider = {
   is3dView: (view: ViewItem) => boolean;
@@ -20,10 +21,10 @@ export type Fdm3dDataProvider = {
 
   getEdgeConnected3dInstances: (instance: DmsUniqueIdentifier) => Promise<DmsUniqueIdentifier[]>;
 
-  getFdmConnectionsForNodeIds: (
+  getFdmConnectionsForNodes: (
     models: DmsUniqueIdentifier[],
     revisionId: number,
-    nodeIds: number[]
+    nodes: Node3D[]
   ) => Promise<FdmCadConnection[]>;
 
   listMappedFdmNodes: (
@@ -47,5 +48,5 @@ export type Fdm3dDataProvider = {
 
   getCadModelsForInstance: (instance: DmsUniqueIdentifier) => Promise<TaggedAddResourceOptions[]>;
 
-  getCadConnectionsForRevisions: (revisions: number[]) => Promise<FdmCadConnection[]>;
+  getCadConnectionsForRevisions: (modelOptions: AddModelOptions[]) => Promise<FdmCadConnection[]>;
 };

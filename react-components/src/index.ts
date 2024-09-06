@@ -52,7 +52,7 @@ export { useAssetMappedNodesForRevisions } from './components/CacheProvider/Asse
 
 // Queries
 export { use3DModelName } from './query/use3DModelName';
-export { use3dScenes } from './query/use3dScenes';
+export { use3dScenes } from './hooks/scenes/use3dScenes';
 export { use3dRelatedEdgeConnections } from './query/use3dRelatedEdgeConnections';
 export { use3dRelatedDirectConnections } from './query/use3dRelatedDirectConnections';
 export { use3dNodeByExternalId } from './query/use3dNodeByExternalId';

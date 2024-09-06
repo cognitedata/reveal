@@ -27,7 +27,7 @@ export type AssetMappingDataResult = {
 export type FdmNodeDataResult = {
   fdmNodes: DmsUniqueIdentifier[];
   cadNode: Node3D;
-  views?: Source[];
+  views?: Source[][];
 };
 
 export type ClickedNodeData = {

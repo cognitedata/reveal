@@ -394,6 +394,7 @@ export class Image360ApiHelper {
       })
       .easing(num => TWEEN.Easing.Quintic.InOut(num))
       .start(TWEEN.now());
+    TWEEN.add(tween);
 
     return new Promise(resolve => {
       tween.onComplete(() => {
@@ -420,6 +421,7 @@ export class Image360ApiHelper {
       .delay(delay)
       .easing(num => TWEEN.Easing.Quintic.InOut(num))
       .start(TWEEN.now());
+    TWEEN.add(tween);
 
     return new Promise(resolve => {
       tween.onComplete(() => {
@@ -608,7 +610,7 @@ function moveCameraPositionTo(manager: FlexibleCameraManager, position: Vector3,
   const tempPosition = new Vector3();
   manager.controls.temporarilyDisableKeyboard = true;
 
-  new TWEEN.Tween(from)
+  const tween = new TWEEN.Tween(from)
     .to(to, duration)
     .onUpdate(() => {
       tempPosition.set(from.x, from.y, from.z);
@@ -624,13 +626,15 @@ function moveCameraPositionTo(manager: FlexibleCameraManager, position: Vector3,
       manager.controls.temporarilyDisableKeyboard = false;
     })
     .start(TWEEN.now());
+
+  TWEEN.add(tween);
 }
 
 function tweenCameraToDefaultFov(manager: FlexibleCameraManager, duration: number): void {
   const from = { fov: manager.controls.fov };
   const to = { fov: manager.controls.options.defaultFov };
   const delay = duration * 0.25;
-  new TWEEN.Tween(from)
+  const tween = new TWEEN.Tween(from)
     .to(to, duration * 0.5)
     .onUpdate(() => {
       manager.controls.setFov(from.fov);
@@ -641,4 +645,6 @@ function tweenCameraToDefaultFov(manager: FlexibleCameraManager, duration: numbe
     .delay(delay)
     .easing(num => TWEEN.Easing.Quintic.InOut(num))
     .start(TWEEN.now());
+
+  TWEEN.add(tween);
 }

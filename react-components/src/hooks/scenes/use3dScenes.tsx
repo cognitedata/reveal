@@ -3,26 +3,38 @@
  */
 
 import { type QueryFunction, useQuery, type UseQueryResult } from '@tanstack/react-query';
-import { useSDK } from '../components/RevealCanvas/SDKProvider';
-import { type CogniteClient } from '@cognite/sdk';
+import { useSDK } from '../../components/RevealCanvas/SDKProvider';
+import { type QueryRequest, type CogniteClient } from '@cognite/sdk';
 import { useMemo } from 'react';
-import { type EdgeItem, FdmSDK, type Query, type NodeItem } from '../data-providers/FdmSDK';
-import {
-  type SceneConfigurationProperties,
-  type Cdf3dRevisionProperties,
-  type Transformation3d,
-  type Cdf3dImage360CollectionProperties,
-  type GroundPlaneProperties,
-  type SkyboxProperties
-} from '../hooks/types';
+import { type EdgeItem, FdmSDK, type NodeItem } from '../../data-providers/FdmSDK';
 import { Euler, MathUtils, Matrix4 } from 'three';
 import { CDF_TO_VIEWER_TRANSFORMATION } from '@cognite/reveal';
-import { type GroundPlane, type Skybox } from '../components/SceneContainer/sceneTypes';
+import { type GroundPlane, type Skybox } from '../../components/SceneContainer/sceneTypes';
 import {
   type AddCadResourceOptions,
   type AddPointCloudResourceOptions,
   type AddImage360CollectionDatamodelsOptions
-} from '../components/Reveal3DResources/types';
+} from '../../components/Reveal3DResources/types';
+import {
+  type Cdf3dImage360CollectionProperties,
+  type Cdf3dRevisionProperties,
+  type ENVIRONMENT_MAP_SOURCE,
+  environmentMapSourceWithProperties,
+  type GROUND_PLANE_SOURCE,
+  type GroundPlaneProperties,
+  groundPlaneSourceWithProperties,
+  image360CollectionSourceWithProperties,
+  type IMAGE_360_COLLECTION_SOURCE,
+  type REVISION_SOURCE,
+  revisionSourceWithProperties,
+  type SCENE_SOURCE,
+  type SceneConfigurationProperties,
+  sceneSourceWithProperties,
+  type SkyboxProperties,
+  type Transformation3d,
+  type TRANSFORMATION_SOURCE,
+  transformationSourceWithProperties
+} from './types';
 
 export type Space = string;
 export type ExternalId = string;
@@ -63,8 +75,22 @@ export const use3dScenes = (
     const scenesQuery = createGetScenesQuery();
 
     try {
-      const queryResult = (await fdmSdk.queryNodesAndEdges(scenesQuery))
-        .items as Use3dScenesQueryResult;
+      const queryResult: Use3dScenesQueryResult = (
+        await fdmSdk.queryNodesAndEdges<
+          typeof scenesQuery,
+          [
+            { source: typeof SCENE_SOURCE; properties: SceneConfigurationProperties },
+            { source: typeof TRANSFORMATION_SOURCE; properties: Transformation3d },
+            { source: typeof ENVIRONMENT_MAP_SOURCE; properties: SkyboxProperties },
+            {
+              source: typeof IMAGE_360_COLLECTION_SOURCE;
+              properties: Cdf3dImage360CollectionProperties;
+            },
+            { source: typeof REVISION_SOURCE; properties: Cdf3dRevisionProperties },
+            { source: typeof GROUND_PLANE_SOURCE; properties: GroundPlaneProperties }
+          ]
+        >(scenesQuery)
+      ).items;
 
       const scenesMap = createMapOfScenes(queryResult.scenes, queryResult.sceneSkybox);
       populateSceneMapWithModels(queryResult.sceneModels, scenesMap);
@@ -274,7 +300,8 @@ function fixModelScale(modelProps: Transformation3d): Transformation3d {
   return modelProps;
 }
 
-function createGetScenesQuery(limit: number = 100): Query {
+/* eslint-disable @typescript-eslint/explicit-function-return-type */
+function createGetScenesQuery(limit: number = 100) {
   return {
     with: {
       scenes: {
@@ -369,102 +396,23 @@ function createGetScenesQuery(limit: number = 100): Query {
     },
     select: {
       scenes: {
-        sources: [
-          {
-            source: {
-              type: 'view',
-              space: 'scene',
-              externalId: 'SceneConfiguration',
-              version: 'v1'
-            },
-            properties: [
-              'name',
-              'skybox',
-              'cameraTranslationX',
-              'cameraTranslationY',
-              'cameraTranslationZ',
-              'cameraEulerRotationX',
-              'cameraEulerRotationY',
-              'cameraEulerRotationZ'
-            ]
-          }
-        ]
+        sources: sceneSourceWithProperties
       },
       sceneModels: {
-        sources: [
-          {
-            source: {
-              type: 'view',
-              space: 'scene',
-              externalId: 'RevisionProperties',
-              version: 'v1'
-            },
-            properties: ['*']
-          }
-        ]
+        sources: revisionSourceWithProperties
       },
       scene360Collections: {
-        sources: [
-          {
-            source: {
-              type: 'view',
-              space: 'scene',
-              externalId: 'Image360CollectionProperties',
-              version: 'v1'
-            },
-            properties: ['*']
-          }
-        ]
+        sources: image360CollectionSourceWithProperties
       },
       sceneSkybox: {
-        sources: [
-          {
-            source: {
-              type: 'view',
-              space: 'scene',
-              externalId: 'EnvironmentMap',
-              version: 'v1'
-            },
-            properties: ['label', 'file', 'isSpherical']
-          }
-        ]
+        sources: environmentMapSourceWithProperties
       },
       sceneGroundPlaneEdges: {
-        sources: [
-          {
-            source: {
-              type: 'view',
-              space: 'cdf_3d_schema',
-              externalId: 'Transformation3d',
-              version: 'v1'
-            },
-            properties: [
-              'translationX',
-              'translationY',
-              'translationZ',
-              'eulerRotationX',
-              'eulerRotationY',
-              'eulerRotationZ',
-              'scaleX',
-              'scaleY',
-              'scaleZ'
-            ]
-          }
-        ]
+        sources: transformationSourceWithProperties
       },
       sceneGroundPlanes: {
-        sources: [
-          {
-            source: {
-              type: 'view',
-              space: 'scene',
-              externalId: 'TexturedPlane',
-              version: 'v1'
-            },
-            properties: ['*']
-          }
-        ]
+        sources: groundPlaneSourceWithProperties
       }
     }
-  };
+  } as const satisfies Omit<QueryRequest, 'cursor' | 'parameters'>;
 }

@@ -3,7 +3,7 @@
  */
 
 import { useMemo } from 'react';
-import { useSceneConfig } from '../query/useSceneConfig';
+import { useSceneConfig } from './scenes/useSceneConfig';
 import { Vector3, Quaternion, Euler, MathUtils, Matrix4 } from 'three';
 import { CDF_TO_VIEWER_TRANSFORMATION } from '@cognite/reveal';
 import { type SceneConfiguration } from '../components/SceneContainer/sceneTypes';

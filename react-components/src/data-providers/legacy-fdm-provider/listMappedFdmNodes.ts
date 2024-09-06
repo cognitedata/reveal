@@ -2,16 +2,11 @@
  * Copyright 2024 Cognite AS
  */
 import { type AddModelOptions } from '@cognite/reveal';
-import {
-  type FdmSDK,
-  type InstanceFilter,
-  type NodeItem,
-  type Query,
-  type Source
-} from '../FdmSDK';
+import { type FdmSDK, type InstanceFilter, type NodeItem, type Source } from '../FdmSDK';
 import { createMappedEquipmentQuery } from './createMappedEquipmentQuery';
 import { chunk, isEqual } from 'lodash';
 import { removeEmptyProperties } from '../../utilities/removeEmptyProperties';
+import { type QueryRequest } from '@cognite/sdk/dist/src';
 
 export async function listMappedFdmNodes(
   fdmSdk: FdmSDK,
@@ -68,7 +63,7 @@ function createChunkedMappedEquipmentQueries(
   views: Source[],
   limit: number = 10000,
   cursors?: Record<string, string>
-): Query[] {
+): QueryRequest[] {
   const viewChunks = chunk(views, 10);
   return viewChunks.map((viewChunk) =>
     createMappedEquipmentQuery(models, viewChunk, undefined, limit, cursors)

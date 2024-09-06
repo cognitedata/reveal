@@ -3,7 +3,7 @@
  */
 
 import { useEffect } from 'react';
-import { useSceneConfig } from '../query/useSceneConfig';
+import { useSceneConfig } from './scenes/useSceneConfig';
 import {
   DoubleSide,
   Mesh,

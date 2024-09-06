@@ -15,18 +15,21 @@ import {
 import { type InstancesWithView } from '../../query/useSearchMappedEquipmentFDM';
 import { type TaggedAddResourceOptions } from '../../components/Reveal3DResources/types';
 import { getEdgeConnected3dInstances } from './getEdgeConnected3dInstances';
-import { getFdmConnectionsForNodeIds } from './getFdmConnectionsForNodeIds';
+import { getFdmConnectionsForNodes } from './getFdmConnectionsForNodeIds';
 import { getDMSModels } from './getDMSModels';
 import { listAllMappedFdmNodes, listMappedFdmNodes } from './listMappedFdmNodes';
 import { filterNodesByMappedTo3d } from './filterNodesByMappedTo3d';
 import { getCadModelsForFdmInstance } from './getCadModelsForFdmInstance';
 import { getCadConnectionsForRevision } from './getCadConnectionsForRevision';
+import { type CogniteClient, type Node3D } from '@cognite/sdk/dist/src';
 
 export class LegacyFdm3dDataProvider implements Fdm3dDataProvider {
   readonly _fdmSdk: FdmSDK;
+  readonly _cogniteClient: CogniteClient;
 
-  constructor(fdmSdk: FdmSDK) {
+  constructor(fdmSdk: FdmSDK, cogniteClient: CogniteClient) {
     this._fdmSdk = fdmSdk;
+    this._cogniteClient = cogniteClient;
   }
 
   is3dView(view: ViewItem): boolean {
@@ -38,15 +41,21 @@ export class LegacyFdm3dDataProvider implements Fdm3dDataProvider {
   }
 
   async getEdgeConnected3dInstances(instance: DmsUniqueIdentifier): Promise<DmsUniqueIdentifier[]> {
-    return await getEdgeConnected3dInstances(this._fdmSdk, instance);
+    return await getEdgeConnected3dInstances(instance, this._fdmSdk);
   }
 
-  async getFdmConnectionsForNodeIds(
+  async getFdmConnectionsForNodes(
     models: DmsUniqueIdentifier[],
     revisionId: number,
-    nodeIds: number[]
+    nodes: Node3D[]
   ): Promise<FdmCadConnection[]> {
-    return await getFdmConnectionsForNodeIds(this._fdmSdk, models, revisionId, nodeIds);
+    return await getFdmConnectionsForNodes(
+      this._fdmSdk,
+      this._cogniteClient,
+      models,
+      revisionId,
+      nodes
+    );
   }
 
   async listMappedFdmNodes(
@@ -79,7 +88,9 @@ export class LegacyFdm3dDataProvider implements Fdm3dDataProvider {
     return await getCadModelsForFdmInstance(this._fdmSdk, instance);
   }
 
-  async getCadConnectionsForRevisions(revisions: number[]): Promise<FdmCadConnection[]> {
-    return await getCadConnectionsForRevision(revisions, this._fdmSdk);
+  async getCadConnectionsForRevisions(
+    modelOptions: AddModelOptions[]
+  ): Promise<FdmCadConnection[]> {
+    return await getCadConnectionsForRevision(modelOptions, this._fdmSdk, this._cogniteClient);
   }
 }
