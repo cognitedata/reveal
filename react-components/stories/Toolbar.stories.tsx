@@ -30,7 +30,7 @@ const meta = {
 export default meta;
 type Story = StoryObj<typeof meta>;
 
-const MyCustomToolbar = styled(withSuppressRevealEvents(withCameraStateControl(ToolBar)))`
+const MyCustomToolbar = styled(withSuppressRevealEvents(ToolBar))`
   position: absolute;
   right: 20px;
   top: 70px;
