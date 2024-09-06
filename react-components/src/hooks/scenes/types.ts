@@ -32,6 +32,7 @@ export type SceneConfigurationProperties = {
   cameraTargetX?: number;
   cameraTargetY?: number;
   cameraTargetZ?: number;
+  updatedAt?: string;
 };
 
 export type SkyboxProperties = {
@@ -137,7 +138,8 @@ export const sceneSourceWithProperties = [
       'cameraEulerRotationZ',
       'cameraTargetX',
       'cameraTargetY',
-      'cameraTargetZ'
+      'cameraTargetZ',
+      'updatedAt'
     ]
   }
 ] as const satisfies SourceSelectorV3;
