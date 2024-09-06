@@ -1,5 +1,8 @@
+/*!
+ * Copyright 2024 Cognite AS
+ */
 import { Vector3 } from 'three';
-import { CameraStateParameters } from '../../src';
+import { type CameraStateParameters } from '../../src';
 
 export function useGetCameraStateFromUrlParam(): () => CameraStateParameters | undefined {
   return () => {
