@@ -12,9 +12,10 @@ export async function getDMSRevision(
   revisionId: number,
   fdmSdk: FdmSDK
 ): Promise<NodeItem<CogniteCADRevisionProperties>> {
+  const revisionExternalId = `cog_3d_revision_${revisionId}`;
   const query = {
     ...revisionQuery,
-    parameters: { modelReference: restrictToDmsId(model), revisionId }
+    parameters: { modelReference: restrictToDmsId(model), revisionExternalId }
   } as const satisfies QueryRequest;
 
   const result = await fdmSdk.queryNodesAndEdges<
