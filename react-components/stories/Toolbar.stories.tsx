@@ -8,12 +8,15 @@ import {
   type QualitySettings,
   RevealToolbar,
   withSuppressRevealEvents,
-  withCameraStateControl
+  withCameraStateControl,
+  useGetCameraStateFromUrlParam,
+  useCameraNavigation
 } from '../src';
 import { Color } from 'three';
 import styled from 'styled-components';
 import { Button, Menu, ToolBar, type ToolBarButton } from '@cognite/cogs.js';
-import { type ReactElement, useState } from 'react';
+import { type ReactElement, useState, useEffect } from 'react';
+import { signalStoryReadyForScreenshot } from './utilities/signalStoryReadyForScreenshot';
 import { RevealStoryContainer } from './utilities/RevealStoryContainer';
 import { getAddModelOptionsFromUrl } from './utilities/getAddModelOptionsFromUrl';
 import { SetOrbitOrFirstPersonControlsType } from '../src/components/RevealToolbar/SetFlexibleControlsType';
@@ -94,6 +97,7 @@ export const Main: Story = {
   },
   render: ({ addModelOptions }) => (
     <RevealStoryContainer color={new Color(0x4a4a4a)} viewerOptions={{}}>
+      <FitToUrlCameraState />
       <CadModelContainer addModelOptions={addModelOptions} />
       <RevealToolbar
         customSettingsContent={exampleCustomSettingElements()}
@@ -109,3 +113,17 @@ export const Main: Story = {
     </RevealStoryContainer>
   )
 };
+
+function FitToUrlCameraState(): ReactElement {
+  const getCameraState = useGetCameraStateFromUrlParam();
+  const cameraNavigation = useCameraNavigation();
+
+  useEffect(() => {
+    signalStoryReadyForScreenshot();
+    const currentCameraState = getCameraState();
+    if (currentCameraState === undefined) return;
+    cameraNavigation.fitCameraToState(currentCameraState);
+  }, []);
+
+  return <></>;
+}
