@@ -9,7 +9,6 @@ import {
   RevealToolbar,
   withSuppressRevealEvents,
   withCameraStateControl,
-  useGetCameraStateFromUrlParam,
   useCameraNavigation
 } from '../src';
 import { Color } from 'three';
@@ -20,6 +19,7 @@ import { signalStoryReadyForScreenshot } from './utilities/signalStoryReadyForSc
 import { RevealStoryContainer } from './utilities/RevealStoryContainer';
 import { getAddModelOptionsFromUrl } from './utilities/getAddModelOptionsFromUrl';
 import { SetOrbitOrFirstPersonControlsType } from '../src/components/RevealToolbar/SetFlexibleControlsType';
+import { useGetCameraStateFromUrlParam } from './utilities/useGetCameraStateFromUrlParam';
 
 const meta = {
   title: 'Example/Toolbar',
