@@ -38,7 +38,16 @@ export const useSearchMappedEquipmentFDM = (
   );
 
   return useQuery({
-    queryKey: ['reveal', 'react-components', 'search-mapped-fdm', query, models, viewsToSearch],
+    queryKey: [
+      'reveal',
+      'react-components',
+      'search-mapped-fdm',
+      query,
+      models,
+      viewsToSearch,
+      instancesFilter,
+      limit
+    ],
     queryFn: async () => {
       if (models.length === 0) {
         return [];
@@ -123,7 +132,7 @@ export const useAllMappedEquipmentFDM = (
   const fdmDataProvider = useFdm3dDataProvider();
 
   return useQuery({
-    queryKey: ['reveal', 'react-components', 'all-mapped-equipment-fdm', viewsToSearch],
+    queryKey: ['reveal', 'react-components', 'all-mapped-equipment-fdm', viewsToSearch, models],
     queryFn: async () => {
       const viewSources = await createSourcesFromViews(viewsToSearch, fdmSdk);
 
