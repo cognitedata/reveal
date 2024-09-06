@@ -75,14 +75,13 @@ export const useGroundPlaneFromScene = (sceneExternalId: string, sceneSpaceId: s
     ) {
       return;
     }
+    const groundPlaneScaleFactor = 10000;
     const groundMeshes: CustomObject[] = [];
 
     // New scale format was introduced as a bug in the Scenebuilder
     // on August 1st, 2024. This is a temporary fix to handle both formats.
     // This should be removed when we upgrade the Scene Data Model to a new version
-    const groundPlaneUsesNewScaleFormat = groundPlaneUseNewScaleFormat(
-      scene.sceneConfiguration.updatedAt
-    );
+    const useNewScaleFormat = groundPlaneUsesNewScaleFormat(scene.sceneConfiguration.updatedAt);
 
     scene.groundPlanes.forEach((groundPlane, index) => {
       if (groundPlaneTextures?.[index] === undefined) {
@@ -92,9 +91,12 @@ export const useGroundPlaneFromScene = (sceneExternalId: string, sceneSpaceId: s
       const material = new MeshBasicMaterial({ map: texture, side: DoubleSide });
 
       const scaleX = groundPlane.scaleX;
-      const scaleY = groundPlaneUsesNewScaleFormat ? groundPlane.scaleZ : groundPlane.scaleY;
+      const scaleY = useNewScaleFormat ? groundPlane.scaleZ : groundPlane.scaleY;
 
-      const geometry = new PlaneGeometry(10000 * scaleX, 10000 * scaleY);
+      const geometry = new PlaneGeometry(
+        groundPlaneScaleFactor * scaleX,
+        groundPlaneScaleFactor * scaleY
+      );
 
       geometry.name = `CogniteGroundPlane`;
 
@@ -133,7 +135,7 @@ export const useGroundPlaneFromScene = (sceneExternalId: string, sceneSpaceId: s
     };
   }, [groundPlaneTextures]);
 
-  function groundPlaneUseNewScaleFormat(lastUpdatedAt: string | undefined): boolean {
+  function groundPlaneUsesNewScaleFormat(lastUpdatedAt: string | undefined): boolean {
     if (lastUpdatedAt === undefined) {
       return false;
     }
