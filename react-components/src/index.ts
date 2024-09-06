@@ -86,7 +86,7 @@ export {
   withCameraStateControl,
   type CameraStateParameters,
   type CameraStateProps
-} from './higher-order-components/withCameraStateUrlParam';
+} from './components/RevealCanvas/hooks/useCameraStateControl';
 // Types
 export {
   type PointCloudModelStyling,

@@ -17,6 +17,7 @@ import { useRevealKeepAlive } from '../RevealKeepAlive/RevealKeepAliveContext';
 import { Image360AnnotationCacheProvider } from '../CacheProvider/Image360AnnotationCacheProvider';
 import { RevealRenderTarget } from '../../architecture/base/renderTarget/RevealRenderTarget';
 import { LoadedSceneProvider } from '../SceneContainer/LoadedSceneContext';
+import { CameraStateParameters } from '../RevealCanvas/hooks/useCameraStateControl';
 
 export type RevealContextProps = {
   color?: Color;
@@ -24,6 +25,8 @@ export type RevealContextProps = {
   appLanguage?: string;
   children?: ReactNode;
   useCoreDm?: boolean;
+  cameraState?: CameraStateParameters;
+  setCameraState?: (cameraState?: CameraStateParameters) => void;
   viewerOptions?: Pick<
     Cognite3DViewerOptions,
     | 'antiAliasingHint'
@@ -51,7 +54,10 @@ export const RevealContext = (props: RevealContextProps): ReactElement => {
       <QueryClientProvider client={queryClient}>
         <I18nContextProvider appLanguage={props.appLanguage}>
           <LoadedSceneProvider>
-            <ViewerContext.Provider value={viewer}>
+            <ViewerContext.Provider
+              cameraState={props.cameraState}
+              setCameraState={props.setCameraState}
+              value={viewer}>
               <NodeCacheProvider>
                 <AssetMappingAndNode3DCacheProvider>
                   <PointCloudAnnotationCacheProvider>

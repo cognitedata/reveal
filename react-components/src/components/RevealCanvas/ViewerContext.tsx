@@ -4,8 +4,22 @@
 import { type Cognite3DViewer } from '@cognite/reveal';
 import { createContext, useContext } from 'react';
 import { type RevealRenderTarget } from '../../architecture/base/renderTarget/RevealRenderTarget';
+import { CameraStateParameters, useCameraStateControl } from './hooks/useCameraStateControl';
 
-export const ViewerContext = createContext<RevealRenderTarget | null>(null);
+const ViewerContext = createContext<RevealRenderTarget | null>(null);
+
+export const ViewerContextProvider = ({
+  cameraState,
+  setCameraState,
+  value
+}: {
+  cameraState?: CameraStateParameters;
+  setCameraState?: (cameraState?: CameraStateParameters) => void;
+  value: RevealRenderTarget | null;
+}) => {
+  useCameraStateControl(cameraState, setCameraState);
+  return <ViewerContext.Provider value={value} />;
+};
 
 export const useReveal = (): Cognite3DViewer => {
   const renderTarget = useRenderTarget();
