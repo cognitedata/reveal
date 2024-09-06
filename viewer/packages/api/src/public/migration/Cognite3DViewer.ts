@@ -1218,6 +1218,45 @@ export class Cognite3DViewer {
   }
 
   /**
+   * Get the union of bounding box of all visual objects in the Cognite3DViewer.
+   * @returns The visual bounding box of the Cognite3DViewer.
+   * @beta
+   */
+  getVisualSceneBoundingBox(): THREE.Box3 {
+    const boundingBox = new THREE.Box3();
+    boundingBox.makeEmpty();
+
+    if (this.isDisposed) {
+      return boundingBox;
+    }
+    const temporaryBox = new THREE.Box3();
+    for (const model of this.models) {
+      if (!model.visible) {
+        continue;
+      }
+      model.getModelBoundingBox(temporaryBox, true);
+      if (temporaryBox.isEmpty()) {
+        continue;
+      }
+      boundingBox.union(temporaryBox);
+    }
+    for (const customObject of this._sceneHandler.customObjects) {
+      if (!customObject.object.visible) {
+        continue;
+      }
+      customObject.getBoundingBox(temporaryBox);
+      if (temporaryBox.isEmpty()) {
+        continue;
+      }
+      if (!customObject.isPartOfBoundingBox) {
+        continue;
+      }
+      boundingBox.union(temporaryBox);
+    }
+    return boundingBox;
+  }
+
+  /**
    * Attempts to load the camera settings from the settings stored for the
    * provided model. See {@link https://docs.cognite.com/api/v1/#operation/get3DRevision}
    * and {@link https://docs.cognite.com/api/v1/#operation/update3DRevisions} for
@@ -1257,6 +1296,9 @@ export class Cognite3DViewer {
    */
   fitCameraToModel(model: CogniteModel, duration?: number): void {
     const boundingBox = model.getModelBoundingBox(new THREE.Box3(), true);
+    if (boundingBox.isEmpty()) {
+      return;
+    }
     this._activeCameraManager.fitCameraToBoundingBox(boundingBox, duration);
   }
 
@@ -1268,7 +1310,6 @@ export class Cognite3DViewer {
    */
   fitCameraToModels(models?: CogniteModel[], duration?: number, restrictToMostGeometry = false): void {
     const cogniteModels = models ?? this.models;
-
     if (cogniteModels.length < 1) {
       return;
     }
@@ -1282,8 +1323,17 @@ export class Cognite3DViewer {
   }
 
   /**
+   * Move camera to a place where a all objects in the scene are visible.
+   * @param duration The duration of the animation moving the camera. Set this to 0 (zero) to disable animation.
+   */
+  fitCameraToVisualSceneBoundingBox(duration?: number): void {
+    const boundingBox = this.getVisualSceneBoundingBox();
+    this.fitCameraToBoundingBox(boundingBox, duration);
+  }
+
+  /**
    * Move camera to a place where the content of a bounding box is visible to the camera.
-   * @param box The bounding box in world space.
+   * @param boundingBox The bounding box in world space.
    * @param duration The duration of the animation moving the camera. Set this to 0 (zero) to disable animation.
    * @param radiusFactor The ratio of the distance from camera to center of box and radius of the box.
    * @example
@@ -1300,8 +1350,11 @@ export class Cognite3DViewer {
    * viewer.fitCameraToBoundingBox(boundingBox, 500, 2);
    * ```
    */
-  fitCameraToBoundingBox(box: THREE.Box3, duration?: number, radiusFactor: number = 2): void {
-    this._activeCameraManager.fitCameraToBoundingBox(box, duration, radiusFactor);
+  fitCameraToBoundingBox(boundingBox: THREE.Box3, duration?: number, radiusFactor: number = 2): void {
+    if (boundingBox.isEmpty()) {
+      return;
+    }
+    this._activeCameraManager.fitCameraToBoundingBox(boundingBox, duration, radiusFactor);
   }
 
   /**
@@ -1880,34 +1933,45 @@ export class Cognite3DViewer {
     nearFarPlaneBoundingBox.makeEmpty();
     sceneBoundingBox.makeEmpty();
 
-    this._models.forEach(model => {
-      model.getModelBoundingBox(temporaryBox);
-      if (temporaryBox.isEmpty()) {
-        return;
-      }
-      nearFarPlaneBoundingBox.union(temporaryBox);
+    for (let pass = 0; pass < 2; pass++) {
+      // On the first pass, use visible models only
+      // If no bounding box is found, use all models on the second pass
+      // By this way, a bounding box is forced to be calculated
+      for (const model of this.models) {
+        if (pass === 0 && !model.visible) {
+          continue;
+        }
+        model.getModelBoundingBox(temporaryBox);
+        if (temporaryBox.isEmpty()) {
+          continue;
+        }
+        nearFarPlaneBoundingBox.union(temporaryBox);
 
-      // The getModelBoundingBox is using restrictToMostGeometry = true
-      model.getModelBoundingBox(temporaryBox, true);
-      if (temporaryBox.isEmpty()) {
-        return;
+        // The getModelBoundingBox is using restrictToMostGeometry = true
+        model.getModelBoundingBox(temporaryBox, true);
+        if (temporaryBox.isEmpty()) {
+          continue;
+        }
+        sceneBoundingBox.union(temporaryBox);
       }
-      sceneBoundingBox.union(temporaryBox);
-    });
-    this._sceneHandler.customObjects.forEach(customObject => {
-      if (!customObject.object.visible) {
-        return;
+      for (const customObject of this._sceneHandler.customObjects) {
+        if (!customObject.object.visible) {
+          continue;
+        }
+        customObject.getBoundingBox(temporaryBox);
+        if (temporaryBox.isEmpty()) {
+          continue;
+        }
+        nearFarPlaneBoundingBox.union(temporaryBox);
+        if (!customObject.isPartOfBoundingBox) {
+          continue;
+        }
+        sceneBoundingBox.union(temporaryBox);
       }
-      customObject.getBoundingBox(temporaryBox);
-      if (temporaryBox.isEmpty()) {
-        return;
+      if (!sceneBoundingBox.isEmpty()) {
+        break;
       }
-      nearFarPlaneBoundingBox.union(temporaryBox);
-      if (!customObject.isPartOfBoundingBox) {
-        return;
-      }
-      sceneBoundingBox.union(temporaryBox);
-    });
+    }
   }
 
   /** @private */

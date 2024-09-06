@@ -3,10 +3,11 @@
  */
 import { SYSTEM_3D_EDGE_SOURCE } from './dataModels';
 import { type DmsUniqueIdentifier, type FdmSDK } from '../FdmSDK';
+import { type QueryRequest } from '@cognite/sdk';
 
 export async function getEdgeConnected3dInstances(
-  fdmSdk: FdmSDK,
-  instance: DmsUniqueIdentifier
+  instance: DmsUniqueIdentifier,
+  fdmSdk: FdmSDK
 ): Promise<DmsUniqueIdentifier[]> {
   const nodesResult = await fdmSdk.queryNodesAndEdges({
     ...related3dEdgesQuery,
@@ -90,4 +91,4 @@ const related3dEdgesQuery = {
     edges_of_3d_type: {},
     nodes_with_3d_connection: {}
   }
-} as const;
+} as const satisfies Omit<QueryRequest, 'cursors' | 'parameters'>;

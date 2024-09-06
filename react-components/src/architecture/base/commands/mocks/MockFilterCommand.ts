@@ -5,7 +5,6 @@
 import { Color } from 'three';
 import { BaseFilterCommand, BaseFilterItemCommand } from '../BaseFilterCommand';
 import { type TranslateKey } from '../../utilities/TranslateKey';
-import { CommandsUpdater } from '../../reactUpdaters/CommandsUpdater';
 
 export class MockFilterCommand extends BaseFilterCommand {
   // ==================================================
@@ -98,11 +97,11 @@ class FilterItemCommand extends BaseFilterItemCommand {
     return this._color;
   }
 
-  public override setChecked(value: boolean): void {
+  protected override setCheckedCore(value: boolean): boolean {
     if (this._use === value) {
-      return;
+      return false;
     }
     this._use = value;
-    CommandsUpdater.update(this._renderTarget);
+    return true;
   }
 }

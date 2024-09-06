@@ -89,7 +89,7 @@ export class PlaneView extends GroupThreeView<PlaneDomainObject> {
     return this.style.depthTest;
   }
 
-  protected override get needsUpdate(): boolean {
+  protected override needsUpdateCore(): boolean {
     const target = this.renderTarget;
 
     // Check if bounding box is different
@@ -98,7 +98,7 @@ export class PlaneView extends GroupThreeView<PlaneDomainObject> {
       return false;
     }
     this._sceneBoundingBox.copy(sceneBoundingBox);
-    this._sceneRange.copy(this._sceneBoundingBox);
+    this._sceneRange.copy(sceneBoundingBox);
     return true;
   }
 
@@ -106,10 +106,13 @@ export class PlaneView extends GroupThreeView<PlaneDomainObject> {
     const { domainObject, style } = this;
     const plane = domainObject.plane;
 
-    const sceneBoundingBox = this._sceneBoundingBox.clone();
-    sceneBoundingBox.applyMatrix4(CDF_TO_VIEWER_TRANSFORMATION.clone().invert());
+    if (this._sceneBoundingBox.isEmpty()) {
+      return;
+    }
+    const boundingBox = this._sceneBoundingBox.clone();
+    boundingBox.applyMatrix4(CDF_TO_VIEWER_TRANSFORMATION.clone().invert());
     const range = new Range3();
-    range.copy(sceneBoundingBox);
+    range.copy(boundingBox);
 
     let p0: Vector3 | undefined;
     let p1: Vector3 | undefined;

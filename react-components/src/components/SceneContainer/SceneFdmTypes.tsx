@@ -35,8 +35,8 @@ export type SceneResponse = {
     sceneModels: SceneModelsResponse[];
     image360CollectionsEdges: Image360CollectionsResponse[];
   };
-  nextCursor: {
-    scene: string;
+  nextCursor?: {
+    myScene: string;
     skybox: string;
   };
 };

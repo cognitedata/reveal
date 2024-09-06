@@ -6,7 +6,6 @@ import { type CognitePointCloudModel, type WellKnownAsprsPointClassCodes } from 
 import { type TranslateKey } from '../utilities/TranslateKey';
 import { type Color } from 'three';
 import { BaseFilterCommand, BaseFilterItemCommand } from '../commands/BaseFilterCommand';
-import { CommandsUpdater } from '../reactUpdaters/CommandsUpdater';
 import { type RevealRenderTarget } from '../renderTarget/RevealRenderTarget';
 
 export class PointCloudFilterCommand extends BaseFilterCommand {
@@ -71,19 +70,20 @@ export class PointCloudFilterCommand extends BaseFilterCommand {
     return isAllClassesVisible(pointCloud);
   }
 
-  public override toggleAllChecked(): void {
+  protected override toggleAllCheckedCore(): boolean {
     const pointCloud = this.getPointCloud();
     if (pointCloud === undefined) {
-      return;
+      return false;
     }
     const isAllChecked = isAllClassesVisible(pointCloud);
     const classes = pointCloud.getClasses();
     if (classes === undefined || classes.length === 0) {
-      return;
+      return false;
     }
     for (const c of classes) {
       pointCloud.setClassVisible(c.code, !isAllChecked);
     }
+    return true;
   }
 
   // ==================================================
@@ -151,13 +151,16 @@ export class FilterItemCommand extends BaseFilterItemCommand {
     return this._pointClass.color;
   }
 
-  public override setChecked(value: boolean): void {
+  protected override setCheckedCore(value: boolean): boolean {
     const pointCloud = this.getPointCloud();
     if (pointCloud === undefined) {
-      return;
+      return false;
+    }
+    if (pointCloud.isClassVisible(this._pointClass.code) === value) {
+      return false;
     }
     pointCloud.setClassVisible(this._pointClass.code, value);
-    CommandsUpdater.update(this._renderTarget);
+    return true;
   }
 
   // ==================================================

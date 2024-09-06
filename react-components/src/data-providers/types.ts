@@ -8,7 +8,7 @@ import {
   type InternalId,
   type Metadata,
   type Relationship
-} from '@cognite/sdk/';
+} from '@cognite/sdk';
 import { type DmsUniqueIdentifier, type Source } from './FdmSDK';
 
 export type FdmInstanceWithView = DmsUniqueIdentifier & { view: Source };

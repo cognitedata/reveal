@@ -24,6 +24,7 @@ import { ObservationsTool } from '../observations/ObservationsTool';
 import { SettingsCommand } from '../../base/concreteCommands/SettingsCommand';
 import { MockSettingsCommand } from '../../base/commands/mocks/MockSettingsCommand';
 import { MockFilterCommand } from '../../base/commands/mocks/MockFilterCommand';
+import { ToggleAllModelsVisibleCommand } from '../../base/concreteCommands/ToggleAllModelsVisibleCommand';
 
 export class StoryBookConfig extends BaseRevealConfig {
   // ==================================================
@@ -41,6 +42,7 @@ export class StoryBookConfig extends BaseRevealConfig {
       undefined,
       new FitViewCommand(),
       new SetAxisVisibleCommand(),
+      new ToggleAllModelsVisibleCommand(),
       new ToggleMetricUnitsCommand(),
       new KeyboardSpeedCommand(),
       new SettingsCommand(),

@@ -40,29 +40,31 @@ export const useSearchMappedEquipmentFDM = (
   return useQuery({
     queryKey: ['reveal', 'react-components', 'search-mapped-fdm', query, models, viewsToSearch],
     queryFn: async () => {
-      if (models.length === 0 || viewsToSearch.length === 0) {
+      if (models.length === 0) {
         return [];
       }
-
       const sources = await createSourcesFromViews(viewsToSearch, fdmSdk);
       const chunkedSources = chunk(sources, 10);
+      if (chunkedSources.length === 0) {
+        chunkedSources.push([]);
+      }
 
       const queryResults: InstancesWithView[] = [];
 
       for (const sourceChunk of chunkedSources) {
-        queryResults.push(
-          ...(await searchNodesWithViewsAndModels(
-            query,
-            spacesToSearch,
-            sourceChunk,
-            models,
-            instancesFilter,
-            fdmSdk,
-            fdmDataProvider,
-            limit
-          ))
+        const chunkResult = await searchNodesWithViewsAndModels(
+          query,
+          spacesToSearch,
+          sourceChunk,
+          models,
+          instancesFilter,
+          fdmSdk,
+          fdmDataProvider,
+          limit
         );
+        queryResults.push(...chunkResult);
       }
+
       return queryResults;
     },
     staleTime: Infinity
@@ -86,7 +88,6 @@ const searchNodesWithViewsAndModels = async (
       instancesFilter,
       limit
     );
-
     const transformedResults = convertQueryNodeItemsToSearchResultsWithViews(nodeItems);
 
     const combinedWithOtherViews = sourcesToSearch.map((view) => ({
@@ -138,8 +139,8 @@ function convertQueryNodeItemsToSearchResultsWithViews(
   return queryItems.reduce<InstancesWithView[]>((acc, fdmNode) => {
     const cleanedNode = removeEmptyProperties(fdmNode);
 
-    Object.keys(cleanedNode.properties).forEach((space) => {
-      const currentSpaceProperties = cleanedNode.properties[space];
+    Object.keys(cleanedNode.properties).forEach((nodeViewSpace) => {
+      const currentSpaceProperties = cleanedNode.properties[nodeViewSpace];
 
       const fdmNodeView = Object.keys(currentSpaceProperties)
         .find((key) => !isEqual(currentSpaceProperties[key], {}))
@@ -155,13 +156,13 @@ function convertQueryNodeItemsToSearchResultsWithViews(
       const currentSearchResultWithView = acc.find(
         (searchResultsWithView) =>
           searchResultsWithView.view.externalId === fdmNodeViewExternalId &&
-          searchResultsWithView.view.space === space
+          searchResultsWithView.view.space === nodeViewSpace
       );
 
       if (currentSearchResultWithView === undefined) {
         acc.push({
           view: {
-            space: cleanedNode.space,
+            space: nodeViewSpace,
             externalId: fdmNodeViewExternalId,
             version: fdmNodeViewVersion,
             type: 'view'
@@ -182,26 +183,31 @@ async function createSourcesFromViews(
   viewsToSearch: DmsUniqueIdentifier[],
   fdmSdk: FdmSDK
 ): Promise<Source[]> {
-  const dataModelResult = await fdmSdk.listDataModels();
-  const viewToVersionMap = new Map<string, string>(
-    dataModelResult.items.flatMap((dataModel: any) => {
-      return dataModel.views.map(
-        (view: Source) => [`${view.space}/${view.externalId}`, view.version] as const
-      );
-    })
-  );
+  try {
+    const dataModelResult = await fdmSdk.listDataModels();
+    const viewToVersionMap = new Map<string, string>(
+      dataModelResult.items.flatMap((dataModel: { views: Source[] }) => {
+        return dataModel.views.map(
+          (view: Source) => [`${view.space}/${view.externalId}`, view.version] as const
+        );
+      })
+    );
 
-  return viewsToSearch.map((view) => {
-    const version = viewToVersionMap.get(`${view.space}/${view.externalId}`);
-    if (version === undefined) {
-      throw Error(
-        `Could not find version for view with space/externalId ${view.space}/${view.externalId}`
-      );
-    }
-    return {
-      ...view,
-      type: 'view' as const,
-      version
-    };
-  });
+    return viewsToSearch.map((view) => {
+      const version = viewToVersionMap.get(`${view.space}/${view.externalId}`);
+      if (version === undefined) {
+        throw Error(
+          `Could not find version for view with space/externalId ${view.space}/${view.externalId}`
+        );
+      }
+      return {
+        ...view,
+        type: 'view' as const,
+        version
+      };
+    });
+  } catch (e) {
+    console.error('Error when fetching sources from views', e);
+    throw e;
+  }
 }
