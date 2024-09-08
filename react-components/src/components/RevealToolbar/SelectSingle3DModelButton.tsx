@@ -5,36 +5,56 @@ import { useState, type ReactElement } from 'react';
 
 import { Button, Dropdown, Menu, Tooltip as CogsTooltip } from '@cognite/cogs.js';
 import { useTranslation } from '../i18n/I18n';
-import { type DmsUniqueIdentifier } from '../../data-providers/FdmSDK';
 import styled from 'styled-components';
 import { useAll3dModels } from '../../hooks/useAll3dModels';
 import { useSDK } from '../RevealCanvas/SDKProvider';
 import { RevealContext } from '../RevealContext/RevealContext';
-import { type Model3D, type CogniteClient } from '@cognite/sdk';
-import { ModesList } from './ModelsList';
+import { type CogniteClient } from '@cognite/sdk';
+import { ModelsList } from './ModelsList';
+import { useRevisions } from '../../hooks/useRevisions';
+import { type ModelWithRevision } from '../../hooks/types';
 
-export type SelectSingle3DModelButtonProps = {
-  selectedScene: DmsUniqueIdentifier | undefined;
-  setSelectedScene: (scene?: DmsUniqueIdentifier | undefined) => void;
-  orientation?: 'horizontal' | 'none';
+type SelectSingle3DModelButtonProps = {
+  onSingleModelChanged?: (model: ModelWithRevision | undefined) => void;
 };
 
-export const SelectSingle3DModelButton = (): ReactElement => {
+export const SelectSingle3DModelButton = ({
+  onSingleModelChanged
+}: SelectSingle3DModelButtonProps): ReactElement => {
   const sdk = useSDK();
+
+  const handleSingleModelChange = (model: ModelWithRevision | undefined): void => {
+    if (onSingleModelChanged !== undefined) onSingleModelChanged(model);
+  };
 
   return (
     <RevealContext sdk={sdk}>
-      <Single3DModelSelection sdk={sdk} />
+      <Single3DModelSelection sdk={sdk} onModelChange={handleSingleModelChange}  />
     </RevealContext>
   );
 };
 
-export const Single3DModelSelection = (opts: { sdk: CogniteClient }): ReactElement => {
-  const { data: models } = useAll3dModels(opts.sdk, true);
+type Single3DModelSelectionProps = {
+  sdk: CogniteClient;
+  onModelChange: (model: ModelWithRevision | undefined) => void;
+};
 
-  const [selectedModel, setSelectedModel] = useState<Model3D | undefined>(undefined);
+export const Single3DModelSelection = ({
+  sdk,
+  onModelChange
+}: Single3DModelSelectionProps): ReactElement => {
+  const { data: models } = useAll3dModels(sdk, true);
+
+  const { data: modelsWithRevision } = useRevisions(sdk, models);
+
+  const [selectedModel, setSelectedModel] = useState<ModelWithRevision | undefined>(undefined);
 
   const { t } = useTranslation();
+
+  const handleSelectedModelChange = (model: ModelWithRevision | undefined): void => {
+    setSelectedModel(model);
+    onModelChange(model);
+  };
 
   return (
     <CogsTooltip
@@ -46,10 +66,10 @@ export const Single3DModelSelection = (opts: { sdk: CogniteClient }): ReactEleme
         content={
           <StyledMenu>
             <Menu.Header>{t('MODEL_SELECT_HEADER', 'Select 3D model')}</Menu.Header>
-            <ModesList
-              models={models ?? []}
+            <ModelsList
+              modelsWithRevision={modelsWithRevision ?? []}
               selectedModel={selectedModel}
-              onModelChange={setSelectedModel}
+              onModelChange={handleSelectedModelChange}
             />
           </StyledMenu>
         }>

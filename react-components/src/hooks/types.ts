@@ -1,7 +1,13 @@
 /*!
  * Copyright 2023 Cognite AS
  */
-import { type Node3D, type CogniteExternalId, type Asset } from '@cognite/sdk';
+import {
+  type Node3D,
+  type CogniteExternalId,
+  type Asset,
+  type Revision3D,
+  type Model3D
+} from '@cognite/sdk';
 import { type AssetAnnotationImage360Info } from '@cognite/reveal';
 
 export type ThreeDModelFdmMappings = {
@@ -57,4 +63,9 @@ export type PointCloudAnnotationMappedAssetData = {
 export type Image360AnnotationMappedAssetData = {
   asset: Asset;
   annotationIds: number[];
+};
+
+export type ModelWithRevision = {
+  model: Model3D | undefined;
+  revision: Revision3D | undefined;
 };

@@ -4,33 +4,33 @@
 import { type ReactElement } from 'react';
 
 import { Menu } from '@cognite/cogs.js';
-import { type Model3D } from '@cognite/sdk';
+import { type ModelWithRevision } from '../../hooks/types';
 
 export type ModelListProps = {
-  models: Model3D[];
-  selectedModel: Model3D | undefined;
-  onModelChange: (model: Model3D | undefined) => void;
+  modelsWithRevision: ModelWithRevision[];
+  selectedModel: ModelWithRevision | undefined;
+  onModelChange: (model: ModelWithRevision | undefined) => void;
 };
 
-export const ModesList = ({
-  models,
+export const ModelsList = ({
+  modelsWithRevision,
   selectedModel,
   onModelChange
 }: ModelListProps): ReactElement => {
-  if (models.length === 0) {
+  if (modelsWithRevision.length === 0) {
     return <></>;
   }
   return (
     <>
-      {models.map((model) => {
+      {modelsWithRevision.map((modelData) => {
         return (
           <Menu.Item
-            key={`${model.id}`}
-            toggled={selectedModel?.id === model.id}
+            key={`${modelData.model?.id}`}
+            toggled={selectedModel?.model?.id === modelData.model?.id}
             onClick={() => {
-              onModelChange(model);
+              onModelChange(modelData);
             }}>
-            {model.name}
+            {modelData.model?.name}
           </Menu.Item>
         );
       })}
