@@ -1,6 +1,6 @@
 {
   "name": "@cognite/reveal-react-components",
-  "version": "0.56.0",
+  "version": "0.57.0",
   "exports": {
     ".": {
       "import": "./dist/index.js",
@@ -91,7 +91,7 @@
     "ts-loader": "^9.5.1",
     "typescript": "^5.4.5",
     "vite": "^5.2.10",
-    "vite-plugin-dts": "^3.9.0",
+    "vite-plugin-dts": "^4.0.0",
     "vite-plugin-externalize-deps": "^0.8.0",
     "vitest": "^1.5.3"
   },

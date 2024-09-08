@@ -2,11 +2,7 @@
  * Copyright 2024 Cognite AS
  */
 import { type QueryRequest } from '@cognite/sdk/dist/src';
-import {
-  COGNITE_3D_REVISION_SOURCE,
-  COGNITE_CAD_REVISION_SOURCE,
-  CORE_DM_3D_CONTAINER_SPACE
-} from './dataModels';
+import { COGNITE_3D_REVISION_SOURCE, CORE_DM_3D_CONTAINER_SPACE } from './dataModels';
 import { cogniteCadRevisionSourceWithProperties } from './cogniteCadRevisionSourceWithProperties';
 
 export const revisionQuery = {
@@ -27,12 +23,8 @@ export const revisionQuery = {
             },
             {
               equals: {
-                property: [
-                  CORE_DM_3D_CONTAINER_SPACE,
-                  COGNITE_CAD_REVISION_SOURCE.externalId,
-                  'revisionId'
-                ],
-                value: { parameter: 'revisionId' }
+                property: ['node', 'externalId'],
+                value: { parameter: 'revisionExternalId' }
               }
             }
           ]

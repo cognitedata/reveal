@@ -23,6 +23,7 @@ export type SceneConfiguration = {
   cameraTargetX?: number;
   cameraTargetY?: number;
   cameraTargetZ?: number;
+  updatedAt?: string;
 };
 
 export type CadOrPointCloudModel = Transformation3d & {
