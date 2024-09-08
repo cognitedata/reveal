@@ -123,7 +123,7 @@ export {
   type LayersUrlStateParam,
   type DefaultLayersConfiguration,
   type ThreeDModelFdmMappings,
-  type ModelWithRevision,
+  type ModelWithRevision
 } from './hooks/types';
 export { type LayersButtonProps } from './components/RevealToolbar/LayersButton';
 export type { CameraNavigationActions } from './hooks/useCameraNavigation';
