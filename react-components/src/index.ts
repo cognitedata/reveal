@@ -83,8 +83,9 @@ export { useModelsForInstanceQuery } from './query/useModelsForInstanceQuery';
 // Higher order components
 export { withSuppressRevealEvents } from './higher-order-components/withSuppressRevealEvents';
 export {
-  withCameraStateUrlParam,
-  useGetCameraStateFromUrlParam
+  withCameraStateControl,
+  type CameraStateParameters,
+  type CameraStateProps
 } from './higher-order-components/withCameraStateUrlParam';
 // Types
 export {
