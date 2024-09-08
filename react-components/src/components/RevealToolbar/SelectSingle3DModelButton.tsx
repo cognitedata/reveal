@@ -29,7 +29,7 @@ export const SelectSingle3DModelButton = ({
 
   return (
     <RevealContext sdk={sdk}>
-      <Single3DModelSelection sdk={sdk} onModelChange={handleSingleModelChange}  />
+      <Single3DModelSelection sdk={sdk} onModelChange={handleSingleModelChange} />
     </RevealContext>
   );
 };
