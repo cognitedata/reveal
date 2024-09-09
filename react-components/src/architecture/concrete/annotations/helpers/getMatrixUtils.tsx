@@ -9,8 +9,8 @@ import {
   type AnnotationsCogniteAnnotationTypesPrimitivesGeometry3DGeometry as AnnotationGeometry
 } from '@cognite/sdk';
 
-import { ANNOTATION_CYLINDER_RADIUS_MARGIN } from './constants';
-import { getCognitePointCloudModel } from './getCognitePointCloudModel';
+import { ANNOTATION_CYLINDER_RADIUS_MARGIN } from '../utils/constants';
+import { getCognitePointCloudModel } from '../utils/getCognitePointCloudModel';
 import { Matrix4, Quaternion, Vector3 } from 'three';
 
 export const getGlobalMatrix = (args: {

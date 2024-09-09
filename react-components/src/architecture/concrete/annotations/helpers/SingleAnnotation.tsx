@@ -14,7 +14,7 @@ import { isAnnotationsBoundingVolume } from '../utils/annotationGeometryUtils';
 import { remove } from '../../../base/utilities/extensions/arrayExtensions';
 import { Euler, Matrix4, Quaternion, Vector3 } from 'three';
 import { getRandomInt } from '../../../base/utilities/extensions/mathExtensions';
-import { getAnnotationMatrixByGeometry } from '../utils/getMatrixUtils';
+import { getAnnotationMatrixByGeometry } from './getMatrixUtils';
 import { PrimitiveType } from '../../primitives/PrimitiveType';
 
 export class SingleAnnotation {

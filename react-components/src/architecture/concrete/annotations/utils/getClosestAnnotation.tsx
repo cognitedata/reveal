@@ -10,7 +10,7 @@ import {
 } from '@cognite/sdk';
 import { type PointCloudAnnotation } from './types';
 import { getAnnotationGeometries } from './annotationGeometryUtils';
-import { getBoxMatrix } from './getMatrixUtils';
+import { getBoxMatrix } from '../helpers/getMatrixUtils';
 import { ClosestGeometryFinder } from '../../../base/utilities/geometry/ClosestGeometryFinder';
 import { BoxUtils } from '../../../base/utilities/box/BoxUtils';
 

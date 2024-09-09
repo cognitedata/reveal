@@ -311,15 +311,12 @@ export class Range3 {
     return range;
   }
 
-  public static getCircleRangeMargin(normal: Vector3, radius: number, normalized = false): Vector3 {
+  public static getCircleRangeMargin(normal: Vector3, radius: number): Vector3 {
     // http://gdalgorithms-list.narkive.com/s2wbl3Cd/axis-aligned-bounding-box-of-cylinder
     // https://en.wikipedia.org/wiki/Bounding_volume
     const dot = normal.clone();
     dot.multiply(normal);
 
-    if (!normalized) {
-      dot.divideScalar(normal.lengthSq()); // This do a normalization
-    }
     if (dot.x > 1) dot.x = 1;
     if (dot.y > 1) dot.y = 1;
     if (dot.z > 1) dot.z = 1;

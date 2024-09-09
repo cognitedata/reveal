@@ -33,7 +33,7 @@ export class AnnotationsDomainObject extends VisualDomainObject {
   // INSTANCE PROPERTIES
   // ==================================================
 
-  public get style(): AnnotationsRenderStyle {
+  public get renderStyle(): AnnotationsRenderStyle {
     return super.getRenderStyle() as AnnotationsRenderStyle;
   }
 
@@ -169,7 +169,10 @@ export class AnnotationsDomainObject extends VisualDomainObject {
         return;
       }
     }
-    gizmo.color.set(this.style.getColorByStatus(getStatusByAnnotation(annotation.annotation)));
+    gizmo.color.set(
+      this.renderStyle.getColorByStatus(getStatusByAnnotation(annotation.annotation))
+    );
+    gizmo.renderStyle.depthTest = this.renderStyle.depthTest;
     return gizmo;
   }
 }

@@ -11,7 +11,7 @@ import { type PointCloudAnnotation } from './types';
 
 import { getAnnotationGeometries } from './annotationGeometryUtils';
 import { type Status } from '../AnnotationsView';
-import { getAnnotationMatrixByGeometry } from './getMatrixUtils';
+import { getAnnotationMatrixByGeometry } from '../helpers/getMatrixUtils';
 import { WireframeUserData } from '../helpers/WireframeUserData';
 import { Matrix4, Vector3 } from 'three';
 import { BoxUtils } from '../../../base/utilities/box/BoxUtils';

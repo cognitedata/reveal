@@ -13,6 +13,7 @@ import { SingleAnnotation } from './helpers/SingleAnnotation';
 import { CylinderDomainObject } from '../primitives/cylinder/CylinderDomainObject';
 import { SolidDomainObject } from '../primitives/base/SolidDomainObject';
 import { SolidPrimitiveRenderStyle } from '../primitives/base/SolidPrimitiveRenderStyle';
+import { ANNOTATION_CYLINDER_RADIUS_MARGIN } from './utils/constants';
 
 export class CylinderGizmoDomainObject extends CylinderDomainObject {
   // ==================================================
@@ -63,7 +64,8 @@ export class CylinderGizmoDomainObject extends CylinderDomainObject {
   // ==================================================
 
   public createAnnotation(): SingleAnnotation {
-    return SingleAnnotation.createCylinder(this.centerA, this.centerB, this.radius);
+    const radius = this.radius / (1 + ANNOTATION_CYLINDER_RADIUS_MARGIN);
+    return SingleAnnotation.createCylinder(this.centerA, this.centerB, radius);
   }
 
   public updateThisFromAnnotation(annotation: SingleAnnotation): boolean {
@@ -79,7 +81,7 @@ export class CylinderGizmoDomainObject extends CylinderDomainObject {
     const b = cylinder.centerB;
     this.centerA.set(a[0], a[1], a[2]);
     this.centerB.set(b[0], b[1], b[2]);
-    this.radius = cylinder.radius;
+    this.radius = cylinder.radius * (1 + ANNOTATION_CYLINDER_RADIUS_MARGIN);
     return true;
   }
 
@@ -100,9 +102,11 @@ export class CylinderGizmoDomainObject extends CylinderDomainObject {
     if (cylinder === undefined) {
       return false;
     }
+    const radius = this.radius / (1 + ANNOTATION_CYLINDER_RADIUS_MARGIN);
+
     cylinder.centerA = this.centerA.toArray();
     cylinder.centerB = this.centerB.toArray();
-    cylinder.radius = this.radius;
+    cylinder.radius = radius;
     annotationDomainObject.notify(Changes.geometry);
     return true;
   }

@@ -33,6 +33,10 @@ export abstract class CylinderDomainObject extends SolidDomainObject {
   public readonly centerA = new Vector3(0, 0, -MIN_SIZE);
   public readonly centerB = new Vector3(0, 0, +MIN_SIZE);
 
+  // Redundant variable, calculated when needed
+  private readonly _center = new Vector3();
+  private readonly _axis = new Vector3();
+
   // ==================================================
   // INSTANCE PROPERTIES
   // ==================================================
@@ -142,7 +146,7 @@ export abstract class CylinderDomainObject extends SolidDomainObject {
 
   public override getBoundingBox(): Box3 {
     const range = new Range3(this.centerA, this.centerB);
-    range.expandByMargin3(Range3.getCircleRangeMargin(this.axis, this.radius, false));
+    range.expandByMargin3(Range3.getCircleRangeMargin(this.axis, this.radius));
     return range.getBox();
   }
 
@@ -199,11 +203,11 @@ export abstract class CylinderDomainObject extends SolidDomainObject {
   }
 
   public get center(): Vector3 {
-    return new Vector3().addVectors(this.centerB, this.centerA).divideScalar(2);
+    return this._center.addVectors(this.centerB, this.centerA).divideScalar(2);
   }
 
   public get axis(): Vector3 {
-    return new Vector3().subVectors(this.centerB, this.centerA).normalize();
+    return this._axis.subVectors(this.centerB, this.centerA).normalize();
   }
 
   public get area(): number {

@@ -14,9 +14,9 @@ import {
   type CreateWireframeArgs,
   createWireframeFromMultipleAnnotations
 } from './utils/createWireframeFromMultipleAnnotations';
-import { getBoundingBox } from './utils/getBoundingBox';
+import { expandBoundingBox, getBoundingBox } from './utils/getBoundingBox';
 import { getClosestAnnotation } from './utils/getClosestAnnotation';
-import { getAnnotationMatrixByGeometry } from './utils/getMatrixUtils';
+import { getAnnotationMatrixByGeometry } from './helpers/getMatrixUtils';
 import { type WireframeUserData } from './helpers/WireframeUserData';
 import { GroupThreeView } from '../../base/views/GroupThreeView';
 import { type AnnotationsDomainObject } from './AnnotationsDomainObject';
@@ -127,13 +127,9 @@ export class AnnotationsView extends GroupThreeView<AnnotationsDomainObject> {
 
   protected override calculateBoundingBox(): Box3 {
     const annotations = this.domainObject.annotations;
-    const boundingBox = new Box3();
-    boundingBox.makeEmpty();
+    const boundingBox = new Box3().makeEmpty();
     for (const annotation of annotations) {
-      const annotationBoundingBox = getBoundingBox(annotation, this.globalMatrix);
-      if (annotationBoundingBox !== undefined) {
-        boundingBox.union(annotationBoundingBox);
-      }
+      expandBoundingBox(boundingBox, annotation, this.globalMatrix);
     }
     return boundingBox;
   }
