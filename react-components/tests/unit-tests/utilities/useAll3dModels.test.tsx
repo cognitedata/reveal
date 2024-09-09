@@ -1,9 +1,9 @@
-import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
+import { beforeEach, describe, expect, test, vi } from 'vitest';
 import { type CogniteClient, type Model3D } from '@cognite/sdk';
 import { renderHook, waitFor } from '@testing-library/react';
 import { useAll3dModels } from '../../../src/hooks/useAll3dModels';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { useFetchModels } from '../../../src/hooks/useFetchModels';
+import { get3dModels } from '../../../src/hooks/network/get3dModels';
 
 const models: Model3D[] = [
   {
@@ -39,7 +39,7 @@ const wrapper = ({ children }: { children: any }): any => (
   <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
 );
 
-vi.mock('../../../src/hooks/useFetchModels');
+vi.mock('../../../src/hooks/network/get3dModels');
 
 describe('useAll3dModels', () => {
   beforeEach(() => {
@@ -48,8 +48,7 @@ describe('useAll3dModels', () => {
   });
 
   test('should return a list of models', async () => {
-
-    vi.mocked(useFetchModels).mockResolvedValue(models);
+    vi.mocked(get3dModels).mockResolvedValue(models);
 
     const { result } = renderHook(() => useAll3dModels(sdk, true), { wrapper });
 
@@ -59,7 +58,7 @@ describe('useAll3dModels', () => {
   });
 
   test('should return an empty list of models if no models exist', async () => {
-    vi.mocked(useFetchModels).mockResolvedValue([]);
+    vi.mocked(get3dModels).mockResolvedValue([]);
     const { result } = renderHook(() => useAll3dModels(sdk, true), { wrapper });
 
     await waitFor(() => {

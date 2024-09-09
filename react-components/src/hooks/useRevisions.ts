@@ -5,7 +5,7 @@ import { useQuery, type UseQueryResult } from '@tanstack/react-query';
 
 import { type Model3D, type CogniteClient } from '@cognite/sdk';
 import { type ModelWithRevision } from './types';
-import { useFetchRevisions } from './useFetchRevisions';
+import { getRevisions } from './network/getRevisions';
 
 const STALE_TIME = 10 * 1000;
 const REFRESH_INTERVAL = 10 * 1000;
@@ -17,7 +17,7 @@ export function useRevisions(
   return useQuery({
     queryKey: ['model-revision', models],
     queryFn: async () => {
-      const fetchPromises = models?.map(async (model) => await useFetchRevisions(model, sdk));
+      const fetchPromises = models?.map(async (model) => await getRevisions(model, sdk));
       return await Promise.all(fetchPromises ?? []);
     },
     staleTime: STALE_TIME,

@@ -2,9 +2,9 @@
  * Copyright 2024 Cognite AS
  */
 import { type Model3D, type CogniteClient, type Revision3D } from '@cognite/sdk';
-import { type ModelWithRevision } from './types';
+import { type ModelWithRevision } from '../types';
 
-export const useFetchRevisions = async (
+export const getRevisions = async (
   model: Model3D | undefined,
   sdk: CogniteClient
 ): Promise<ModelWithRevision | undefined> => {

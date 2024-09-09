@@ -3,6 +3,6 @@
  */
 import { type CogniteClient, type Model3D } from '@cognite/sdk';
 
-export const useFetchModels = async (sdk: CogniteClient): Promise<Model3D[]> => {
+export const get3dModels = async (sdk: CogniteClient): Promise<Model3D[]> => {
   return await sdk.models3D.list().autoPagingToArray({ limit: Infinity });
 };

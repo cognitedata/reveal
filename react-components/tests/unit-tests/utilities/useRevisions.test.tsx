@@ -2,9 +2,9 @@ import { afterEach, describe, expect, test, vi } from 'vitest';
 import { useRevisions } from '../../../src/hooks/useRevisions';
 import { type ModelWithRevision } from '../../../src';
 import { type CogniteClient, type Model3D } from '@cognite/sdk';
-import { useFetchRevisions } from '../../../src/hooks/useFetchRevisions';
 import { renderHook, waitFor } from '@testing-library/react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { getRevisions } from '../../../src/hooks/network/getRevisions';
 
 const models: Model3D[] = [
   {
@@ -39,7 +39,7 @@ const wrapper = ({ children }: { children: any }): any => (
   <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
 );
 
-vi.mock('../../../src/hooks/useFetchRevisions');
+vi.mock('../../../src/hooks/network/getRevisions');
 
 describe('useRevisions', () => {
   afterEach(() => {
@@ -47,7 +47,7 @@ describe('useRevisions', () => {
   });
 
   test('should return the model with revision', async () => {
-    vi.mocked(useFetchRevisions).mockResolvedValue(modelsWithRevision[0]);
+    vi.mocked(getRevisions).mockResolvedValue(modelsWithRevision[0]);
 
     const { result } = renderHook(() => useRevisions(sdk, models), { wrapper });
 
@@ -57,7 +57,7 @@ describe('useRevisions', () => {
   });
 
   test('should return undefined if model is undefined', async () => {
-    vi.mocked(useFetchRevisions).mockResolvedValue(undefined);
+    vi.mocked(getRevisions).mockResolvedValue(undefined);
 
     const { result } = renderHook(() => useRevisions(sdk, undefined), { wrapper });
 
@@ -67,7 +67,7 @@ describe('useRevisions', () => {
   });
 
   test('should return undefined if model is empty', async () => {
-    vi.mocked(useFetchRevisions).mockResolvedValue(undefined);
+    vi.mocked(getRevisions).mockResolvedValue(undefined);
 
     const { result } = renderHook(() => useRevisions(sdk, []), { wrapper });
 
