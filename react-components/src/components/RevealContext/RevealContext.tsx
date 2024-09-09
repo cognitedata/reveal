@@ -6,7 +6,7 @@ import { type CogniteClient } from '@cognite/sdk/dist/src';
 import { type ReactNode, useEffect, useMemo, useState, type ReactElement } from 'react';
 import { type Color } from 'three';
 import { I18nContextProvider } from '../i18n/I18n';
-import { ViewerContext } from '../RevealCanvas/ViewerContext';
+import { ViewerContextProvider } from '../RevealCanvas/ViewerContext';
 import { NodeCacheProvider } from '../CacheProvider/NodeCacheProvider';
 import { AssetMappingAndNode3DCacheProvider } from '../CacheProvider/AssetMappingAndNode3DCacheProvider';
 import { PointCloudAnnotationCacheProvider } from '../CacheProvider/PointCloudAnnotationCacheProvider';
@@ -17,6 +17,7 @@ import { useRevealKeepAlive } from '../RevealKeepAlive/RevealKeepAliveContext';
 import { Image360AnnotationCacheProvider } from '../CacheProvider/Image360AnnotationCacheProvider';
 import { RevealRenderTarget } from '../../architecture/base/renderTarget/RevealRenderTarget';
 import { LoadedSceneProvider } from '../SceneContainer/LoadedSceneContext';
+import { type CameraStateParameters } from '../RevealCanvas/hooks/useCameraStateControl';
 
 export type RevealContextProps = {
   color?: Color;
@@ -24,6 +25,8 @@ export type RevealContextProps = {
   appLanguage?: string;
   children?: ReactNode;
   useCoreDm?: boolean;
+  cameraState?: CameraStateParameters;
+  setCameraState?: (cameraState?: CameraStateParameters) => void;
   viewerOptions?: Pick<
     Cognite3DViewerOptions,
     | 'antiAliasingHint'
@@ -51,7 +54,10 @@ export const RevealContext = (props: RevealContextProps): ReactElement => {
       <QueryClientProvider client={queryClient}>
         <I18nContextProvider appLanguage={props.appLanguage}>
           <LoadedSceneProvider>
-            <ViewerContext.Provider value={viewer}>
+            <ViewerContextProvider
+              cameraState={props.cameraState}
+              setCameraState={props.setCameraState}
+              value={viewer}>
               <NodeCacheProvider>
                 <AssetMappingAndNode3DCacheProvider>
                   <PointCloudAnnotationCacheProvider>
@@ -63,7 +69,7 @@ export const RevealContext = (props: RevealContextProps): ReactElement => {
                   </PointCloudAnnotationCacheProvider>
                 </AssetMappingAndNode3DCacheProvider>
               </NodeCacheProvider>
-            </ViewerContext.Provider>
+            </ViewerContextProvider>
           </LoadedSceneProvider>
         </I18nContextProvider>
       </QueryClientProvider>
