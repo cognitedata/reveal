@@ -21,7 +21,9 @@ export class Changes {
 
   // Something in the geometry changed
   public static readonly geometry: symbol = Symbol('geometry');
-  public static readonly geometryPart: symbol = Symbol('geometryPart');
+
+  // Part of the domain object changed
+  public static readonly changedPart: symbol = Symbol('changedPart');
   public static readonly deletePart: symbol = Symbol('deletePart');
   public static readonly addPart: symbol = Symbol('addPart');
 

@@ -6,7 +6,7 @@ import { Color } from 'three';
 import { type RenderStyle } from '../../base/renderStyles/RenderStyle';
 import { type TranslateKey } from '../../base/utilities/TranslateKey';
 import { type DomainObject } from '../../base/domainObjects/DomainObject';
-import { DomainObjectChange } from '../../base/domainObjectsHelpers/DomainObjectChange';
+import { type DomainObjectChange } from '../../base/domainObjectsHelpers/DomainObjectChange';
 import { Changes } from '../../base/domainObjectsHelpers/Changes';
 import { AnnotationsDomainObject } from './AnnotationsDomainObject';
 import { SingleAnnotation } from './helpers/SingleAnnotation';
@@ -109,8 +109,8 @@ export class CylinderGizmoDomainObject extends CylinderDomainObject {
     cylinder.centerB = this.centerB.toArray();
     cylinder.radius = radius;
 
-    const changeDesc = new AnnotationChangedDescription(Changes.geometryPart, annotation);
-    annotationDomainObject.notify(new DomainObjectChange(changeDesc));
+    const change = new AnnotationChangedDescription(Changes.changedPart, annotation);
+    annotationDomainObject.notify(change);
     return true;
   }
 }

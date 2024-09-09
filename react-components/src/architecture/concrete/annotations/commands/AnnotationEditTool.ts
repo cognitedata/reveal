@@ -363,8 +363,8 @@ export class AnnotationEditTool extends BaseEditTool {
     }
     domainObject.annotations.push(newAnnotation.annotation);
 
-    const changeDesc = new AnnotationChangedDescription(Changes.addPart, newAnnotation);
-    domainObject.notify(new DomainObjectChange(changeDesc));
+    const change = new AnnotationChangedDescription(Changes.addPart, newAnnotation);
+    domainObject.notify(change);
     domainObject.setSelectedAnnotationInteractive(newAnnotation);
   }
 
@@ -394,8 +394,7 @@ export class AnnotationEditTool extends BaseEditTool {
     if (!annotationsDomainObject.setSelectedAnnotationInteractive(annotation)) {
       return;
     }
-    const change = new DomainObjectChange();
-    change.addChange(Changes.geometry, SolidDomainObject.GizmoOnly);
+    const change = new DomainObjectChange(Changes.geometry, SolidDomainObject.GizmoOnly);
     change.addChange(Changes.color);
 
     gizmo.notify(change);

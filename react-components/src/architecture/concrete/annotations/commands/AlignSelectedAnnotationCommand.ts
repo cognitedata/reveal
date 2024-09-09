@@ -71,18 +71,18 @@ export class AlignSelectedAnnotationCommand extends RenderTargetCommand {
     if (!annotation.align(this._horizontal)) {
       return false;
     }
-    const changeDesc = new AnnotationChangedDescription(Changes.geometryPart, annotation);
-    domainObject.notify(new DomainObjectChange(changeDesc));
+    const change = new AnnotationChangedDescription(Changes.changedPart, annotation);
+    domainObject.notify(change);
 
     const gizmo = domainObject.getGizmo();
     if (gizmo instanceof BoxGizmoDomainObject || gizmo instanceof CylinderGizmoDomainObject) {
       gizmo.updateThisFromAnnotation(annotation);
+      const change = new DomainObjectChange(Changes.geometry, SolidDomainObject.GizmoOnly);
+      gizmo.notify(change);
+      return true;
     } else {
       return true;
     }
-    const change = new DomainObjectChange(Changes.geometry, SolidDomainObject.GizmoOnly);
-    gizmo.notify(change);
-    return true;
   }
 
   // ==================================================

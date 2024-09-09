@@ -34,7 +34,7 @@ const onAnnotationChanged = (domainObject: DomainObject, change: DomainObjectCha
   // if undefined all geometry has changed. You may want to save the whole annotation anyway.
   const _geometry = description.annotation.geometry;
 
-  if (description.change === Changes.geometryPart) {
+  if (description.change === Changes.changedPart) {
     // Save the annotation
   } else if (description.change === Changes.deletePart) {
     // Delete the annotation or part of it

@@ -19,7 +19,6 @@ import { PrimitiveType } from '../primitives/PrimitiveType';
 import { CylinderGizmoDomainObject } from './CylinderGizmoDomainObject';
 import { getStatusByAnnotation } from './utils/getStatusByAnnotation';
 import { AnnotationChangedDescription } from './helpers/AnnotationChangedDescription';
-import { DomainObjectChange } from '../../base/domainObjectsHelpers/DomainObjectChange';
 
 export class AnnotationsDomainObject extends VisualDomainObject {
   // ==================================================
@@ -89,11 +88,8 @@ export class AnnotationsDomainObject extends VisualDomainObject {
       isChanged = remove(this.annotations, this.selectedAnnotation.annotation);
     }
     if (isChanged) {
-      const changeDesc = new AnnotationChangedDescription(
-        Changes.deletePart,
-        this.selectedAnnotation
-      );
-      this.notify(new DomainObjectChange(changeDesc));
+      const change = new AnnotationChangedDescription(Changes.deletePart, this.selectedAnnotation);
+      this.notify(change);
 
       const gizmo = this.getGizmo();
       if (gizmo !== undefined) {
