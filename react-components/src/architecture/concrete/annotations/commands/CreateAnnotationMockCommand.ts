@@ -38,7 +38,7 @@ export class CreateAnnotationMockCommand extends InstanceCommand {
   }
 
   protected override invokeCore(): boolean {
-    const multiple = true;
+    const multiple = false;
     const { renderTarget, rootDomainObject } = this;
     let annotationDomainObject = this.getFirstInstance() as AnnotationsDomainObject;
     if (annotationDomainObject !== undefined) {

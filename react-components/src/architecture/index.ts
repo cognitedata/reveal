@@ -37,6 +37,7 @@ export { DomainObject } from './base/domainObjects/DomainObject';
 export { FolderDomainObject } from './base/domainObjects/FolderDomainObject';
 export { RootDomainObject } from './base/domainObjects/RootDomainObject';
 export { VisualDomainObject } from './base/domainObjects/VisualDomainObject';
+export { AnnotationsDomainObject } from './concrete/annotations/AnnotationsDomainObject';
 
 export { BaseRevealConfig } from './base/renderTarget/BaseRevealConfig';
 export { CommandsController } from './base/renderTarget/CommandsController';

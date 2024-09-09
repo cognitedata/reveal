@@ -15,8 +15,12 @@ import { ObservationsTool } from '../../architecture/concrete/observations/Obser
 import { createButtonFromCommandConstructor } from './CommandButtons';
 import { SettingsCommand } from '../../architecture/base/concreteCommands/SettingsCommand';
 import { PointCloudFilterCommand } from '../../architecture';
+import { AnnotationEditTool } from '../../architecture/concrete/annotations/commands/AnnotationEditTool';
 
 export class RevealButtons {
+  static AnnotationTool = (): ReactElement =>
+    createButtonFromCommandConstructor(() => new AnnotationEditTool());
+
   static Settings = (): ReactElement =>
     createButtonFromCommandConstructor(() => new SettingsCommand());
 
