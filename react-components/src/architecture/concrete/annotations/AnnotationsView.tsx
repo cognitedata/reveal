@@ -29,6 +29,7 @@ import { SingleAnnotation } from './helpers/SingleAnnotation';
 import { Box3, Group, Matrix4, Mesh, MeshBasicMaterial, type Object3D, Vector2 } from 'three';
 import { CylinderUtils } from '../../base/utilities/box/CylinderUtils';
 import { BoxUtils } from '../../base/utilities/box/BoxUtils';
+import { AnnotationChangedDescription } from './AnnotationChangedDescription';
 
 const FOCUS_ANNOTATION_NAME = 'focus-annotation-name';
 const GROUP_SIZE = 100;
@@ -114,6 +115,34 @@ export class AnnotationsView extends GroupThreeView<AnnotationsDomainObject> {
     if (change.isChanged(Changes.focus)) {
       this.updateFocusAnnotation();
       this.invalidateRenderTarget();
+    }
+    const changedDesc = change.getChangedDescription(Changes.geometryPart);
+
+    if (changedDesc instanceof AnnotationChangedDescription) {
+      const annotation = changedDesc.annotation;
+
+      for (const wireframe of this.getWireframes()) {
+        const userData = getUserData(wireframe);
+        if (userData === undefined) {
+          continue;
+        }
+        if (userData.isPending) {
+          continue;
+        }
+        if (!userData.includes(annotation.annotation)) {
+          continue;
+        }
+        this.addWireframeFromMultipleAnnotations({
+          annotations: userData.annotations,
+          globalMatrix: this.globalMatrix,
+          status: userData.status,
+          selected: userData.selected,
+          startIndex: 0
+        });
+        this._group.remove(wireframe);
+        dispose(wireframe);
+        break;
+      }
     }
   }
 
@@ -281,7 +310,6 @@ export class AnnotationsView extends GroupThreeView<AnnotationsDomainObject> {
   }
 
   private styleAnnotation(annotation: SingleAnnotation, selected: boolean): void {
-    // This is only used by AnnotationType = SELECTED_ANNOTATION
     let wireframeToSplit: Wireframe | undefined;
     for (const wireframe of this.getWireframes()) {
       const userData = getUserData(wireframe);

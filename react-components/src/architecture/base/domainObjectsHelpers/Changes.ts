@@ -21,6 +21,7 @@ export class Changes {
 
   // Something in the geometry changed
   public static readonly geometry: symbol = Symbol('geometry');
+  public static readonly geometryPart: symbol = Symbol('geometryPart');
 
   // Parent-child relationship changed
   public static readonly added: symbol = Symbol('added'); // When added to the system

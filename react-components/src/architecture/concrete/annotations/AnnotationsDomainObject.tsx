@@ -86,7 +86,6 @@ export class AnnotationsDomainObject extends VisualDomainObject {
     } else {
       isChanged = remove(this.annotations, this.selectedAnnotation.annotation);
     }
-    this.selectedAnnotation = undefined;
     if (isChanged) {
       this.notify(Changes.geometry);
       const gizmo = this.getGizmo();
@@ -94,6 +93,7 @@ export class AnnotationsDomainObject extends VisualDomainObject {
         gizmo.removeInteractive();
       }
     }
+    this.selectedAnnotation = undefined;
     return isChanged;
   }
 

@@ -54,7 +54,7 @@ export { BaseDragger } from './base/domainObjectsHelpers/BaseDragger';
 export { Changes } from './base/domainObjectsHelpers/Changes';
 export { CommandChanges } from './base/domainObjectsHelpers/CommandChanges';
 export { ColorType } from './base/domainObjectsHelpers/ColorType';
-export { DomainObjectChange } from './base/domainObjectsHelpers/DomainObjectChange';
+export { DomainObjectChange } from './base/domainObjectsHelpers/ChangedDescription';
 export { FocusType } from './base/domainObjectsHelpers/FocusType';
 export { PanelInfo } from './base/domainObjectsHelpers/PanelInfo';
 export { PopupStyle } from './base/domainObjectsHelpers/PopupStyle';

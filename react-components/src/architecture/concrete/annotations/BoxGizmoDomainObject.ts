@@ -7,12 +7,13 @@ import { Color } from 'three';
 import { type RenderStyle } from '../../base/renderStyles/RenderStyle';
 import { type TranslateKey } from '../../base/utilities/TranslateKey';
 import { type DomainObject } from '../../base/domainObjects/DomainObject';
-import { type DomainObjectChange } from '../../base/domainObjectsHelpers/DomainObjectChange';
+import { DomainObjectChange } from '../../base/domainObjectsHelpers/DomainObjectChange';
 import { Changes } from '../../base/domainObjectsHelpers/Changes';
 import { AnnotationsDomainObject } from './AnnotationsDomainObject';
 import { SingleAnnotation } from './helpers/SingleAnnotation';
 import { SolidDomainObject } from '../primitives/base/SolidDomainObject';
 import { SolidPrimitiveRenderStyle } from '../primitives/base/SolidPrimitiveRenderStyle';
+import { AnnotationChangedDescription } from './AnnotationChangedDescription';
 
 export class BoxGizmoDomainObject extends BoxDomainObject {
   // ==================================================
@@ -94,7 +95,9 @@ export class BoxGizmoDomainObject extends BoxDomainObject {
       return false;
     }
     annotation.updateFromMatrix(this.getMatrix());
-    annotationDomainObject.notify(Changes.geometry);
+
+    const changeDesc = new AnnotationChangedDescription(annotation);
+    annotationDomainObject.notify(new DomainObjectChange(changeDesc));
     return true;
   }
 }
