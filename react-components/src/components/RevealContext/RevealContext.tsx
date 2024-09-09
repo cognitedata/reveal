@@ -6,7 +6,7 @@ import { type CogniteClient } from '@cognite/sdk/dist/src';
 import { type ReactNode, useEffect, useMemo, useState, type ReactElement } from 'react';
 import { type Color } from 'three';
 import { I18nContextProvider } from '../i18n/I18n';
-import { ViewerContext } from '../RevealCanvas/ViewerContext';
+import { ViewerContextProvider } from '../RevealCanvas/ViewerContext';
 import { NodeCacheProvider } from '../CacheProvider/NodeCacheProvider';
 import { AssetMappingAndNode3DCacheProvider } from '../CacheProvider/AssetMappingAndNode3DCacheProvider';
 import { PointCloudAnnotationCacheProvider } from '../CacheProvider/PointCloudAnnotationCacheProvider';
@@ -54,7 +54,7 @@ export const RevealContext = (props: RevealContextProps): ReactElement => {
       <QueryClientProvider client={queryClient}>
         <I18nContextProvider appLanguage={props.appLanguage}>
           <LoadedSceneProvider>
-            <ViewerContext.Provider
+            <ViewerContextProvider
               cameraState={props.cameraState}
               setCameraState={props.setCameraState}
               value={viewer}>
@@ -69,7 +69,7 @@ export const RevealContext = (props: RevealContextProps): ReactElement => {
                   </PointCloudAnnotationCacheProvider>
                 </AssetMappingAndNode3DCacheProvider>
               </NodeCacheProvider>
-            </ViewerContext.Provider>
+            </ViewerContextProvider>
           </LoadedSceneProvider>
         </I18nContextProvider>
       </QueryClientProvider>

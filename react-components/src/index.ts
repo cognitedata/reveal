@@ -82,11 +82,7 @@ export { useModelsForInstanceQuery } from './query/useModelsForInstanceQuery';
 
 // Higher order components
 export { withSuppressRevealEvents } from './higher-order-components/withSuppressRevealEvents';
-export {
-  withCameraStateControl,
-  type CameraStateParameters,
-  type CameraStateProps
-} from './components/RevealCanvas/hooks/useCameraStateControl';
+export { type CameraStateParameters } from './components/RevealCanvas/hooks/useCameraStateControl';
 // Types
 export {
   type PointCloudModelStyling,
