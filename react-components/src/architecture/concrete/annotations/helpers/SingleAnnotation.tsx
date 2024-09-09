@@ -44,8 +44,11 @@ export class SingleAnnotation {
   }
 
   public get isCylinder(): boolean {
-    const region = this.region;
-    return region !== undefined && region.length === 1 && region[0].cylinder !== undefined;
+    return this.primitiveType === PrimitiveType.Cylinder;
+  }
+
+  public get isBox(): boolean {
+    return this.primitiveType === PrimitiveType.Box;
   }
 
   public get primitiveType(): PrimitiveType {

@@ -13,7 +13,7 @@ import { AnnotationsDomainObject } from './AnnotationsDomainObject';
 import { SingleAnnotation } from './helpers/SingleAnnotation';
 import { SolidDomainObject } from '../primitives/base/SolidDomainObject';
 import { SolidPrimitiveRenderStyle } from '../primitives/base/SolidPrimitiveRenderStyle';
-import { AnnotationChangedDescription } from './AnnotationChangedDescription';
+import { AnnotationChangedDescription } from './helpers/AnnotationChangedDescription';
 
 export class BoxGizmoDomainObject extends BoxDomainObject {
   // ==================================================
@@ -96,7 +96,7 @@ export class BoxGizmoDomainObject extends BoxDomainObject {
     }
     annotation.updateFromMatrix(this.getMatrix());
 
-    const changeDesc = new AnnotationChangedDescription(annotation);
+    const changeDesc = new AnnotationChangedDescription(Changes.geometryPart, annotation);
     annotationDomainObject.notify(new DomainObjectChange(changeDesc));
     return true;
   }

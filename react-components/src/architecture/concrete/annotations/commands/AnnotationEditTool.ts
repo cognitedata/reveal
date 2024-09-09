@@ -31,6 +31,7 @@ import { DeleteSelectedAnnotationCommand } from './DeleteSelectedAnnotationComma
 import { AlignSelectedAnnotationCommand } from './AlignSelectedAnnotationCommand';
 import { SolidDomainObject } from '../../primitives/base/SolidDomainObject';
 import { CylinderGizmoDomainObject } from '../CylinderGizmoDomainObject';
+import { AnnotationChangedDescription } from '../helpers/AnnotationChangedDescription';
 
 export const ANNOTATION_RADIUS_FACTOR = 0.2;
 
@@ -348,8 +349,8 @@ export class AnnotationEditTool extends BaseEditTool {
     this.setDefaultPrimitiveType();
     this._creator = undefined;
 
-    const annotationsDomainObject = this.getSelectedAnnotationsDomainObject();
-    if (annotationsDomainObject === undefined) {
+    const domainObject = this.getSelectedAnnotationsDomainObject();
+    if (domainObject === undefined) {
       return;
     }
     const gizmo = creator.domainObject;
@@ -360,9 +361,11 @@ export class AnnotationEditTool extends BaseEditTool {
     } else {
       return;
     }
-    annotationsDomainObject.annotations.push(newAnnotation.annotation);
-    annotationsDomainObject.notify(Changes.geometry);
-    annotationsDomainObject.setSelectedAnnotationInteractive(newAnnotation);
+    domainObject.annotations.push(newAnnotation.annotation);
+
+    const changeDesc = new AnnotationChangedDescription(Changes.addPart, newAnnotation);
+    domainObject.notify(new DomainObjectChange(changeDesc));
+    domainObject.setSelectedAnnotationInteractive(newAnnotation);
   }
 
   private setDeselectedAnnotationInteractive(): void {

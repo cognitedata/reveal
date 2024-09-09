@@ -11,7 +11,7 @@ import { AnnotationsDomainObject } from '../AnnotationsDomainObject';
 import { SolidDomainObject } from '../../primitives/base/SolidDomainObject';
 import { BoxGizmoDomainObject } from '../BoxGizmoDomainObject';
 import { CylinderGizmoDomainObject } from '../CylinderGizmoDomainObject';
-import { AnnotationChangedDescription } from '../AnnotationChangedDescription';
+import { AnnotationChangedDescription } from '../helpers/AnnotationChangedDescription';
 
 export class AlignSelectedAnnotationCommand extends RenderTargetCommand {
   private readonly _horizontal: boolean;
@@ -71,7 +71,7 @@ export class AlignSelectedAnnotationCommand extends RenderTargetCommand {
     if (!annotation.align(this._horizontal)) {
       return false;
     }
-    const changeDesc = new AnnotationChangedDescription(annotation);
+    const changeDesc = new AnnotationChangedDescription(Changes.geometryPart, annotation);
     domainObject.notify(new DomainObjectChange(changeDesc));
 
     const gizmo = domainObject.getGizmo();

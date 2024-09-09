@@ -29,7 +29,7 @@ import { SingleAnnotation } from './helpers/SingleAnnotation';
 import { Box3, Group, Matrix4, Mesh, MeshBasicMaterial, type Object3D, Vector2 } from 'three';
 import { CylinderUtils } from '../../base/utilities/box/CylinderUtils';
 import { BoxUtils } from '../../base/utilities/box/BoxUtils';
-import { AnnotationChangedDescription } from './AnnotationChangedDescription';
+import { AnnotationChangedDescription } from './helpers/AnnotationChangedDescription';
 
 const FOCUS_ANNOTATION_NAME = 'focus-annotation-name';
 const GROUP_SIZE = 100;
@@ -116,32 +116,42 @@ export class AnnotationsView extends GroupThreeView<AnnotationsDomainObject> {
       this.updateFocusAnnotation();
       this.invalidateRenderTarget();
     }
-    const changedDesc = change.getChangedDescription(Changes.geometryPart);
+    const changedDesc = change.getChangedDescriptionByType(AnnotationChangedDescription);
 
-    if (changedDesc instanceof AnnotationChangedDescription) {
-      const annotation = changedDesc.annotation;
+    if (changedDesc !== undefined) {
+      if (changedDesc.change === Changes.addPart) {
+        this.removeChildren();
+        this.invalidateRenderTarget();
+      } else {
+        const annotation = changedDesc.annotation;
+        for (const wireframe of this.getWireframes()) {
+          const userData = getUserData(wireframe);
+          if (userData === undefined) {
+            continue;
+          }
+          if (userData.isPending) {
+            continue;
+          }
+          if (!userData.includes(annotation.annotation)) {
+            continue;
+          }
+          const remainingAnnotations =
+            changedDesc.change === Changes.deletedPart
+              ? userData.annotations.filter((a) => a !== annotation.annotation)
+              : userData.annotations;
 
-      for (const wireframe of this.getWireframes()) {
-        const userData = getUserData(wireframe);
-        if (userData === undefined) {
-          continue;
+          this.addWireframeFromMultipleAnnotations({
+            annotations: remainingAnnotations,
+            globalMatrix: this.globalMatrix,
+            status: userData.status,
+            selected: userData.selected,
+            startIndex: 0
+          });
+          this._group.remove(wireframe);
+          dispose(wireframe);
+          this.invalidateRenderTarget();
+          break;
         }
-        if (userData.isPending) {
-          continue;
-        }
-        if (!userData.includes(annotation.annotation)) {
-          continue;
-        }
-        this.addWireframeFromMultipleAnnotations({
-          annotations: userData.annotations,
-          globalMatrix: this.globalMatrix,
-          status: userData.status,
-          selected: userData.selected,
-          startIndex: 0
-        });
-        this._group.remove(wireframe);
-        dispose(wireframe);
-        break;
       }
     }
   }

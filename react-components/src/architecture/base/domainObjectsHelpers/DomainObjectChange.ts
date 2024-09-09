@@ -3,6 +3,7 @@
  */
 
 import { ChangedDescription } from './ChangedDescription';
+import { type Class, isInstanceOf } from './Class';
 
 export class DomainObjectChange {
   // ==================================================
@@ -84,9 +85,18 @@ export class DomainObjectChange {
     return this._changes.find((desc: ChangedDescription) => desc.change === change);
   }
 
-  private getFieldNameBySymbol(change: symbol): string | undefined {
-    const changedDescription = this.getChangedDescription(change);
-    return changedDescription === undefined ? undefined : changedDescription.fieldName;
+  public getChangedDescriptionByType<T extends ChangedDescription>(
+    classType: Class<T>
+  ): T | undefined {
+    if (this._changes === undefined) {
+      return undefined;
+    }
+    for (const description of this._changes) {
+      if (isInstanceOf(description, classType)) {
+        return description;
+      }
+    }
+    return undefined;
   }
 
   // ==================================================

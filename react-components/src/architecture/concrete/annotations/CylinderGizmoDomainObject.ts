@@ -14,7 +14,7 @@ import { CylinderDomainObject } from '../primitives/cylinder/CylinderDomainObjec
 import { SolidDomainObject } from '../primitives/base/SolidDomainObject';
 import { SolidPrimitiveRenderStyle } from '../primitives/base/SolidPrimitiveRenderStyle';
 import { ANNOTATION_CYLINDER_RADIUS_MARGIN } from './utils/constants';
-import { AnnotationChangedDescription } from './AnnotationChangedDescription';
+import { AnnotationChangedDescription } from './helpers/AnnotationChangedDescription';
 
 export class CylinderGizmoDomainObject extends CylinderDomainObject {
   // ==================================================
@@ -109,7 +109,7 @@ export class CylinderGizmoDomainObject extends CylinderDomainObject {
     cylinder.centerB = this.centerB.toArray();
     cylinder.radius = radius;
 
-    const changeDesc = new AnnotationChangedDescription(annotation);
+    const changeDesc = new AnnotationChangedDescription(Changes.geometryPart, annotation);
     annotationDomainObject.notify(new DomainObjectChange(changeDesc));
     return true;
   }

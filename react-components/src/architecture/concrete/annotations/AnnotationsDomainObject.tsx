@@ -18,6 +18,8 @@ import { SolidDomainObject } from '../primitives/base/SolidDomainObject';
 import { PrimitiveType } from '../primitives/PrimitiveType';
 import { CylinderGizmoDomainObject } from './CylinderGizmoDomainObject';
 import { getStatusByAnnotation } from './utils/getStatusByAnnotation';
+import { AnnotationChangedDescription } from './helpers/AnnotationChangedDescription';
+import { DomainObjectChange } from '../../base/domainObjectsHelpers/DomainObjectChange';
 
 export class AnnotationsDomainObject extends VisualDomainObject {
   // ==================================================
@@ -87,7 +89,12 @@ export class AnnotationsDomainObject extends VisualDomainObject {
       isChanged = remove(this.annotations, this.selectedAnnotation.annotation);
     }
     if (isChanged) {
-      this.notify(Changes.geometry);
+      const changeDesc = new AnnotationChangedDescription(
+        Changes.deletedPart,
+        this.selectedAnnotation
+      );
+      this.notify(new DomainObjectChange(changeDesc));
+
       const gizmo = this.getGizmo();
       if (gizmo !== undefined) {
         gizmo.removeInteractive();

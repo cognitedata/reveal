@@ -37,7 +37,6 @@ export { DomainObject } from './base/domainObjects/DomainObject';
 export { FolderDomainObject } from './base/domainObjects/FolderDomainObject';
 export { RootDomainObject } from './base/domainObjects/RootDomainObject';
 export { VisualDomainObject } from './base/domainObjects/VisualDomainObject';
-export { AnnotationsDomainObject } from './concrete/annotations/AnnotationsDomainObject';
 
 export { BaseRevealConfig } from './base/renderTarget/BaseRevealConfig';
 export { CommandsController } from './base/renderTarget/CommandsController';
@@ -54,8 +53,10 @@ export { BaseCreator } from './base/domainObjectsHelpers/BaseCreator';
 export { BaseDragger } from './base/domainObjectsHelpers/BaseDragger';
 export { Changes } from './base/domainObjectsHelpers/Changes';
 export { CommandChanges } from './base/domainObjectsHelpers/CommandChanges';
-export { ColorType } from './base/domainObjectsHelpers/ColorType';
+export { DomainObjectChange } from './base/domainObjectsHelpers/DomainObjectChange';
 export { ChangedDescription } from './base/domainObjectsHelpers/ChangedDescription';
+
+export { ColorType } from './base/domainObjectsHelpers/ColorType';
 export { FocusType } from './base/domainObjectsHelpers/FocusType';
 export { PanelInfo } from './base/domainObjectsHelpers/PanelInfo';
 export { PopupStyle } from './base/domainObjectsHelpers/PopupStyle';
@@ -87,3 +88,10 @@ export type { TranslateKey } from './base/utilities/TranslateKey';
 export { BaseView } from './base/views/BaseView';
 export { GroupThreeView } from './base/views/GroupThreeView';
 export { ThreeView } from './base/views/ThreeView';
+
+// New architecture: annotations
+export { AnnotationsDomainObject } from './concrete/annotations/AnnotationsDomainObject';
+export { AnnotationsRenderStyle } from './concrete/annotations/AnnotationsRenderStyle';
+export { SingleAnnotation } from './concrete/annotations/helpers/SingleAnnotation';
+export { AnnotationChangedDescription } from './concrete/annotations/helpers/AnnotationChangedDescription';
+export { PrimitiveType } from './concrete/primitives/PrimitiveType';

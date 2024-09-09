@@ -15,6 +15,30 @@ import { type PointCloudAnnotation } from '../utils/types';
 import { InstanceCommand } from '../../../base/commands/InstanceCommand';
 import { getRandomInt } from '../../../base/utilities/extensions/mathExtensions';
 import { degToRad } from 'three/src/math/MathUtils.js';
+import { type DomainObjectChange } from '../../../base/domainObjectsHelpers/DomainObjectChange';
+import { AnnotationChangedDescription } from '../helpers/AnnotationChangedDescription';
+import { Changes } from '../../../base/domainObjectsHelpers/Changes';
+
+const onAnnotationChanged = (domainObject: DomainObject, change: DomainObjectChange): void => {
+  const description = change.getChangedDescriptionByType(AnnotationChangedDescription);
+  if (!(description instanceof AnnotationChangedDescription)) return;
+
+  if (!(domainObject instanceof AnnotationsDomainObject)) return;
+  // This is the changed annotation
+  const _annotation = description.annotation.annotation;
+
+  // This gives the changed geometry of the annotation.
+  // if undefined all geometry has changed. You may want to save the whole annotation anyway.
+  const _geometry = description.annotation.geometry;
+
+  if (description.change === Changes.geometryPart) {
+    // Save the annotation
+  } else if (description.change === Changes.deletedPart) {
+    // Delete the annotation or part of it
+  } else if (description.change === Changes.addPart) {
+    // Maybe use this for pending?
+  }
+};
 
 export class CreateAnnotationMockCommand extends InstanceCommand {
   // ==================================================
@@ -51,6 +75,9 @@ export class CreateAnnotationMockCommand extends InstanceCommand {
     annotationDomainObject.setSelectedInteractive(true);
     rootDomainObject.addChildInteractive(annotationDomainObject);
     annotationDomainObject.setVisibleInteractive(true, renderTarget);
+
+    annotationDomainObject = new AnnotationsDomainObject();
+    annotationDomainObject.views.addEventListener(onAnnotationChanged);
     return true;
   }
 }
