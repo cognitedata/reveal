@@ -136,7 +136,7 @@ export class AnnotationsView extends GroupThreeView<AnnotationsDomainObject> {
             continue;
           }
           const remainingAnnotations =
-            changedDesc.change === Changes.deletedPart
+            changedDesc.change === Changes.deletePart
               ? userData.annotations.filter((a) => a !== annotation.annotation)
               : userData.annotations;
 

@@ -21,9 +21,12 @@ import { Changes } from '../../../base/domainObjectsHelpers/Changes';
 
 const onAnnotationChanged = (domainObject: DomainObject, change: DomainObjectChange): void => {
   const description = change.getChangedDescriptionByType(AnnotationChangedDescription);
-  if (!(description instanceof AnnotationChangedDescription)) return;
-
-  if (!(domainObject instanceof AnnotationsDomainObject)) return;
+  if (!(description instanceof AnnotationChangedDescription)) {
+    return;
+  }
+  if (!(domainObject instanceof AnnotationsDomainObject)) {
+    return;
+  }
   // This is the changed annotation
   const _annotation = description.annotation.annotation;
 
@@ -33,7 +36,7 @@ const onAnnotationChanged = (domainObject: DomainObject, change: DomainObjectCha
 
   if (description.change === Changes.geometryPart) {
     // Save the annotation
-  } else if (description.change === Changes.deletedPart) {
+  } else if (description.change === Changes.deletePart) {
     // Delete the annotation or part of it
   } else if (description.change === Changes.addPart) {
     // Maybe use this for pending?

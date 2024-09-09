@@ -90,7 +90,7 @@ export class AnnotationsDomainObject extends VisualDomainObject {
     }
     if (isChanged) {
       const changeDesc = new AnnotationChangedDescription(
-        Changes.deletedPart,
+        Changes.deletePart,
         this.selectedAnnotation
       );
       this.notify(new DomainObjectChange(changeDesc));
