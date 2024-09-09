@@ -34,7 +34,7 @@ export class PlaneDragger extends BaseDragger {
   // ==================================================
 
   public constructor(props: CreateDraggerProps, domainObject: PlaneDomainObject) {
-    super(props);
+    super(props, domainObject);
 
     this._domainObject = domainObject;
     this._plane = this._domainObject.plane.clone();

@@ -25,7 +25,6 @@ import {
 import { Vector3Pool } from '@cognite/reveal';
 import { degToRad, radToDeg } from 'three/src/math/MathUtils.js';
 import { Quantity } from '../../../base/domainObjectsHelpers/Quantity';
-import { type UnitSystem } from '../../../base/renderTarget/UnitSystem';
 
 const CONSTRAINED_ANGLE_INCREMENT = 15;
 /**
@@ -47,7 +46,6 @@ export class BoxDragger extends BaseDragger {
   private readonly _planeOfFace = new Plane(); // Plane of the intersection/normal
   private readonly _centerOfFace = new Vector3(); // Plane of the intersection/normal
   private readonly _cornerSign = new Vector3(); // Indicate the corner of the face
-  private readonly _unitSystem: UnitSystem | undefined = undefined;
 
   // Original values when the drag started
   private readonly _size = new Vector3();
@@ -71,7 +69,7 @@ export class BoxDragger extends BaseDragger {
   // ==================================================
 
   public constructor(props: CreateDraggerProps, domainObject: BoxDomainObject) {
-    super(props);
+    super(props, domainObject);
 
     const pickInfo = props.intersection.userData as BoxPickInfo;
     this._domainObject = domainObject;
@@ -94,11 +92,6 @@ export class BoxDragger extends BaseDragger {
     this._size.copy(this._domainObject.size);
     this._center.copy(this._domainObject.center);
     this._rotation.copy(this._domainObject.rotation);
-
-    const root = this._domainObject.rootDomainObject;
-    if (root !== undefined) {
-      this._unitSystem = root.unitSystem;
-    }
   }
 
   // ==================================================

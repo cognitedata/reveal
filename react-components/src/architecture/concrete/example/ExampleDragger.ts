@@ -26,7 +26,7 @@ export class ExampleDragger extends BaseDragger {
   // ==================================================
 
   public constructor(props: CreateDraggerProps, domainObject: ExampleDomainObject) {
-    super(props);
+    super(props, domainObject);
     this._domainObject = domainObject;
     this._center = this._domainObject.center.clone();
     this._plane = new Plane().setFromNormalAndCoplanarPoint(this.ray.direction, this._center);

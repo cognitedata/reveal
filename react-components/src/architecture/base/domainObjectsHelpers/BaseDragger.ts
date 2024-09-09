@@ -8,6 +8,8 @@ import {
   type CreateDraggerProps
 } from '../domainObjects/VisualDomainObject';
 import { type Transaction } from '../undo/Transaction';
+import { type UnitSystem } from '../renderTarget/UnitSystem';
+import { type DomainObject } from '../domainObjects/DomainObject';
 
 /**
  * The `BaseDragger` class represents a utility for dragging and manipulating any object in 3D space.
@@ -21,6 +23,7 @@ export abstract class BaseDragger {
   protected readonly point: Vector3; // Intersection point at pointer down in CDF coordinates
   protected readonly ray: Ray = new Ray(); // Intersection point at pointer down in CDF coordinates
   private _transaction?: Transaction;
+  protected readonly _unitSystem: UnitSystem | undefined = undefined;
 
   // ==================================================
   // INSTANCE PROPERTIES
@@ -40,10 +43,16 @@ export abstract class BaseDragger {
   /**
    * Represents a base dragger object.
    * @param props - Contains the ray amd the clicked point in CDF coordinates
+   * @param domainObject - The domain object to act on
    */
-  protected constructor(props: CreateDraggerProps) {
+  protected constructor(props: CreateDraggerProps, domainObject: DomainObject) {
     this.point = props.point;
     this.ray = props.ray;
+
+    const root = domainObject.rootDomainObject;
+    if (root !== undefined) {
+      this._unitSystem = root.unitSystem;
+    }
   }
 
   // ==================================================
