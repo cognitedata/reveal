@@ -10,13 +10,12 @@ import { type BoxPickInfo } from '../../../base/utilities/box/BoxPickInfo';
 import {
   forceBetween0AndPi,
   forceBetween0AndTwoPi,
-  round,
-  roundIncrement
+  round
 } from '../../../base/utilities/extensions/mathExtensions';
 import { getAbsMaxComponentIndex } from '../../../base/utilities/extensions/vectorExtensions';
 import { PrimitiveType } from '../PrimitiveType';
 import { getClosestPointOnLine } from '../../../base/utilities/extensions/rayExtensions';
-import { BoxDomainObject } from './BoxDomainObject';
+import { type BoxDomainObject } from './BoxDomainObject';
 import { BaseDragger } from '../../../base/domainObjectsHelpers/BaseDragger';
 import {
   type VisualDomainObject,
@@ -24,7 +23,7 @@ import {
 } from '../../../base/domainObjects/VisualDomainObject';
 import { Vector3Pool } from '@cognite/reveal';
 import { degToRad, radToDeg } from 'three/src/math/MathUtils.js';
-import { Quantity } from '../../../base/domainObjectsHelpers/Quantity';
+import { MIN_SIZE } from '../base/SolidDomainObject';
 
 const CONSTRAINED_ANGLE_INCREMENT = 15;
 /**
@@ -189,24 +188,12 @@ export class BoxDragger extends BaseDragger {
       deltaCenter = this._face.sign * deltaSize;
     } else {
       // Set new size
-      size.setComponent(index, deltaSize + size.getComponent(index));
-      this._domainObject.forceMinSize();
-
-      if (
-        shift &&
-        this._unitSystem !== undefined &&
-        BoxDomainObject.isValidSize(size.getComponent(index))
-      ) {
-        const newSize = this._unitSystem.convertToUnit(size.getComponent(index), Quantity.Length);
-        // Divide the box into abound some parts and use that as the increment
-        const increment = roundIncrement(newSize / 25);
-        let roundedNewSize = round(newSize, increment);
-        roundedNewSize = this._unitSystem.convertFromUnit(roundedNewSize, Quantity.Length);
-        size.setComponent(index, roundedNewSize);
-      }
-      if (size.getComponent(index) === this._size.getComponent(index)) {
+      const value = deltaSize + size.getComponent(index);
+      const newValue = this.getBestValue(value, shift, MIN_SIZE);
+      if (newValue === this._size.getComponent(index)) {
         return false; // Nothing has changed
       }
+      size.setComponent(index, newValue);
       // The center of the box should be moved by half of the delta size and take the rotation into account.
       const newDeltaSize = size.getComponent(index) - this._size.getComponent(index);
       deltaCenter = (this._face.sign * newDeltaSize) / 2;

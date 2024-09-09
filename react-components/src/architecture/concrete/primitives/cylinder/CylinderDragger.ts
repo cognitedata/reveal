@@ -7,17 +7,14 @@ import { Changes } from '../../../base/domainObjectsHelpers/Changes';
 import { type BoxFace } from '../../../base/utilities/box/BoxFace';
 import { FocusType } from '../../../base/domainObjectsHelpers/FocusType';
 import { type BoxPickInfo } from '../../../base/utilities/box/BoxPickInfo';
-import { round, roundIncrement } from '../../../base/utilities/extensions/mathExtensions';
 import { getClosestPointOnLine } from '../../../base/utilities/extensions/rayExtensions';
-import { CylinderDomainObject } from './CylinderDomainObject';
+import { type CylinderDomainObject } from './CylinderDomainObject';
 import { BaseDragger } from '../../../base/domainObjectsHelpers/BaseDragger';
 import {
   type VisualDomainObject,
   type CreateDraggerProps
 } from '../../../base/domainObjects/VisualDomainObject';
 import { Vector3Pool } from '@cognite/reveal';
-import { Quantity } from '../../../base/domainObjectsHelpers/Quantity';
-import { type UnitSystem } from '../../../base/renderTarget/UnitSystem';
 import { MIN_SIZE } from '../base/SolidDomainObject';
 
 /**
@@ -149,12 +146,12 @@ export class CylinderDragger extends BaseDragger {
       const { centerA, centerB } = this._domainObject;
       const axis = new Line3(centerA, centerB);
       const closestOnAxis = axis.closestPointToPoint(this.point, true, newVector3());
-      const axisNormal = new Vector3().subVectors(closestOnAxis, this.point).normalize();
+      const axisNormal = newVector3().subVectors(closestOnAxis, this.point).normalize();
 
       const closestToRay = getClosestPointOnLine(ray, axisNormal, closestOnAxis);
 
-      const distance = closestToRay.distanceTo(closestOnAxis);
-      const newRadius = getBestValue(distance, shift, this._unitSystem);
+      const radius = closestToRay.distanceTo(closestOnAxis);
+      const newRadius = this.getBestValue(radius, shift, MIN_SIZE);
       if (newRadius === this._radius) {
         return false; // Nothing has changed
       }
@@ -175,7 +172,7 @@ export class CylinderDragger extends BaseDragger {
     if (deltaHeight === 0) {
       return false; // Nothing has changed
     }
-    const newHeight = getBestValue(this._height + deltaHeight, shift, this._unitSystem);
+    const newHeight = this.getBestValue(this._height + deltaHeight, shift, MIN_SIZE);
     if (newHeight === this._height) {
       return false; // Nothing has changed
     }
@@ -237,21 +234,4 @@ export class CylinderDragger extends BaseDragger {
 const VECTOR_POOL = new Vector3Pool();
 function newVector3(copyFrom?: Vector3): Vector3 {
   return VECTOR_POOL.getNext(copyFrom);
-}
-
-function getBestValue(value: number, shift: boolean, unitSystem: UnitSystem | undefined): number {
-  if (!CylinderDomainObject.isValidSize(value)) {
-    value = MIN_SIZE;
-  }
-  if (shift && unitSystem !== undefined) {
-    const newConvertedValue = unitSystem.convertToUnit(value, Quantity.Length);
-    // Divide the box into abound some parts and use that as the increment
-    const increment = roundIncrement(newConvertedValue / 25);
-    const roundedNewValue = round(newConvertedValue, increment);
-    value = unitSystem.convertFromUnit(roundedNewValue, Quantity.Length);
-    if (!CylinderDomainObject.isValidSize(value)) {
-      return MIN_SIZE;
-    }
-  }
-  return value;
 }

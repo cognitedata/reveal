@@ -10,6 +10,8 @@ import {
 import { type Transaction } from '../undo/Transaction';
 import { type UnitSystem } from '../renderTarget/UnitSystem';
 import { type DomainObject } from '../domainObjects/DomainObject';
+import { Quantity } from './Quantity';
+import { round, roundIncrement } from '../utilities/extensions/mathExtensions';
 
 /**
  * The `BaseDragger` class represents a utility for dragging and manipulating any object in 3D space.
@@ -83,4 +85,26 @@ export abstract class BaseDragger {
    * @param _event - The pointer event.
    */
   public onPointerUp(_event: PointerEvent): void {}
+
+  // ==================================================
+  // INSTANCE METHODS
+  // ==================================================
+
+  protected getBestValue(value: number, shift: boolean, minValue: number): number {
+    if (value < minValue) {
+      value = minValue;
+    }
+    if (!shift || this._unitSystem === undefined) {
+      return value;
+    }
+    const convertedValue = this._unitSystem.convertToUnit(value, Quantity.Length);
+    // Divide the box into abound some parts and use that as the increment
+    const increment = roundIncrement(convertedValue / 25);
+    const roundedValue = round(convertedValue, increment);
+    const newValue = this._unitSystem.convertFromUnit(roundedValue, Quantity.Length);
+    if (newValue < minValue) {
+      return minValue;
+    }
+    return newValue;
+  }
 }
