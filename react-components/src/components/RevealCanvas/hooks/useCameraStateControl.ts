@@ -3,7 +3,7 @@
  */
 
 import { type MutableRefObject, useEffect, useRef } from 'react';
-import { useReveal } from '../../..';
+import { useReveal } from '../ViewerContext';
 import { type CameraState } from '@cognite/reveal';
 
 export type CameraStateParameters = Omit<Required<CameraState>, 'rotation'>;
