@@ -20,26 +20,39 @@ import { AnnotationChangedDescription } from '../helpers/AnnotationChangedDescri
 import { Changes } from '../../../base/domainObjectsHelpers/Changes';
 
 const onAnnotationChanged = (domainObject: DomainObject, change: DomainObjectChange): void => {
-  const description = change.getChangedDescriptionByType(AnnotationChangedDescription);
-  if (!(description instanceof AnnotationChangedDescription)) {
-    return;
-  }
   if (!(domainObject instanceof AnnotationsDomainObject)) {
     return;
   }
-  // This is the changed annotation
-  const _annotation = description.annotation.annotation;
+  const description = change.getChangedDescriptionByType(AnnotationChangedDescription);
+  if (description instanceof AnnotationChangedDescription) {
+    // This is the changed annotation
+    const _annotation = description.annotation.annotation;
 
-  // This gives the changed geometry of the annotation.
-  // if undefined all geometry has changed. You may want to save the whole annotation anyway.
-  const _geometry = description.annotation.geometry;
+    // This gives the changed geometry of the annotation.
+    // if undefined all geometry has changed. You may want to save the whole annotation anyway.
+    const _geometry = description.annotation.geometry;
 
-  if (description.change === Changes.changedPart) {
-    // Save the annotation
-  } else if (description.change === Changes.deletePart) {
-    // Delete the annotation or part of it
-  } else if (description.change === Changes.addPart) {
-    // Maybe use this for pending?
+    if (description.change === Changes.changedPart) {
+      // Save the annotation
+      console.log('Change annotation');
+    } else if (description.change === Changes.deletePart) {
+      // Delete the annotation or part of it
+      console.log('Delete annotation');
+    } else if (description.change === Changes.addPart) {
+      // Maybe use this for pending?
+      console.log('Add annotation');
+    }
+  }
+
+  if (change.isChanged(Changes.selected)) {
+    // Selection has change. Get selection by: (undefined if not any)
+    const _annotation = domainObject.selectedAnnotation;
+    console.log('Selected has changed');
+  }
+  if (change.isChanged(Changes.focus)) {
+    // Focus has change. Get focus by: (undefined if not any)
+    const _annotation = domainObject.focusAnnotation;
+    console.log('Focus has changed');
   }
 };
 
@@ -78,8 +91,6 @@ export class CreateAnnotationMockCommand extends InstanceCommand {
     annotationDomainObject.setSelectedInteractive(true);
     rootDomainObject.addChildInteractive(annotationDomainObject);
     annotationDomainObject.setVisibleInteractive(true, renderTarget);
-
-    annotationDomainObject = new AnnotationsDomainObject();
     annotationDomainObject.views.addEventListener(onAnnotationChanged);
     return true;
   }
