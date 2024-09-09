@@ -1,20 +1,14 @@
-import { describe, expect, test, vi, beforeEach, beforeAll, afterAll, Mock } from 'vitest';
+import { describe, expect, test, vi, beforeEach, beforeAll, afterAll } from 'vitest';
 
-import { act, renderHook } from '@testing-library/react';
+import { renderHook } from '@testing-library/react';
 
-import {
-  viewerMock,
-  viewerCameraOn,
-  viewerCameraOff,
-  viewerGlobalCameraEvents
-} from '../../../fixtures/viewer';
-import { CameraManagerEventType, CameraStopDelegate } from '@cognite/reveal';
+import { viewerMock } from '../../../fixtures/viewer';
 import {
   CameraStateParameters,
   useCameraStateControl
 } from '../../../../../src/components/RevealCanvas/hooks/useCameraStateControl';
-import { remove } from 'lodash';
 import { Vector3 } from 'three';
+import { cameraManagerGlobalCameraEvents } from '../../../fixtures/cameraManager';
 
 vi.mock('../../../../../src/components/RevealCanvas/ViewerContext', () => ({
   useReveal: () => viewerMock
@@ -40,7 +34,7 @@ describe(useCameraStateControl.name, () => {
     rerender();
     vi.runAllTimers();
 
-    viewerGlobalCameraEvents.cameraStop.forEach((mockCallback) =>
+    cameraManagerGlobalCameraEvents.cameraStop.forEach((mockCallback) =>
       expect(mockCallback).not.toBeCalled()
     );
   });
@@ -59,30 +53,19 @@ describe(useCameraStateControl.name, () => {
   test('calls internal cameraStop delegates but not external setter on applying external camera state', () => {
     const setter = vi.fn<[CameraStateParameters | undefined], void>();
 
-    const { rerender } = renderHook(() =>
-      useCameraStateControl(
-        { position: new Vector3(0, 0, 0), target: new Vector3(1, 1, 1) },
-        setter
-      )
+    const { rerender } = renderHook(
+      ({ position }: { position: Vector3 }) =>
+        useCameraStateControl({ position: position.clone(), target: new Vector3(1, 1, 1) }, setter),
+      { initialProps: { position: new Vector3(0, 0, 0) } }
     );
 
     vi.runAllTimers();
-    renderHook(() =>
-      useCameraStateControl(
-        { position: new Vector3(1, 0, 0), target: new Vector3(1, 1, 1) },
-        setter
-      )
-    );
-
-    act(() => {
-      vi.advanceTimersByTime(1000);
-      vi.runAllTimers();
-    });
+    rerender({ position: new Vector3(1, 0, 0) });
 
     vi.runAllTimers();
     expect(setter).not.toBeCalled();
 
-    viewerGlobalCameraEvents.cameraStop.forEach((mockCallback) =>
+    cameraManagerGlobalCameraEvents.cameraStop.forEach((mockCallback) =>
       expect(mockCallback).toBeCalledTimes(1)
     );
   });
@@ -103,6 +86,8 @@ describe(useCameraStateControl.name, () => {
       position: new Vector3(1, 0, 0),
       target: new Vector3(1, 1, 1)
     });
+
+    vi.runAllTimers();
 
     rerender();
     vi.runAllTimers();

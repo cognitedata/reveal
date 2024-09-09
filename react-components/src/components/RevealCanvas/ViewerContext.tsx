@@ -2,9 +2,9 @@
  * Copyright 2023 Cognite AS
  */
 import { type Cognite3DViewer } from '@cognite/reveal';
-import { createContext, ReactNode, useContext } from 'react';
+import { createContext, type ReactElement, type ReactNode, useContext } from 'react';
 import { type RevealRenderTarget } from '../../architecture/base/renderTarget/RevealRenderTarget';
-import { CameraStateParameters, useCameraStateControl } from './hooks/useCameraStateControl';
+import { type CameraStateParameters, useCameraStateControl } from './hooks/useCameraStateControl';
 
 const ViewerContext = createContext<RevealRenderTarget | null>(null);
 
@@ -18,7 +18,7 @@ export const ViewerContextProvider = ({
   setCameraState?: (cameraState?: CameraStateParameters) => void;
   value: RevealRenderTarget | null;
   children: ReactNode;
-}) => {
+}): ReactElement => {
   return (
     <ViewerContext.Provider value={value}>
       <ViewerControls cameraState={cameraState} setCameraState={setCameraState} />
@@ -33,9 +33,9 @@ const ViewerControls = ({
 }: {
   cameraState?: CameraStateParameters;
   setCameraState?: (cameraState?: CameraStateParameters) => void;
-}) => {
+}): ReactNode => {
   useCameraStateControl(cameraState, setCameraState);
-  return <></>;
+  return null;
 };
 
 export const useReveal = (): Cognite3DViewer => {

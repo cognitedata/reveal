@@ -2,7 +2,7 @@
  * Copyright 2023 Cognite AS
  */
 
-import { MutableRefObject, useEffect, useRef } from 'react';
+import { type MutableRefObject, useEffect, useRef } from 'react';
 import { useReveal } from '../../..';
 import { type CameraState } from '@cognite/reveal';
 
@@ -29,7 +29,7 @@ export const useCameraStateControl = (
 const useSetInternalCameraStateOnExternalUpdate = (
   externalCameraState: CameraStateParameters | undefined,
   lastSetExternalState: MutableRefObject<CameraStateParameters | undefined>
-) => {
+): void => {
   const reveal = useReveal();
 
   useEffect(() => {
@@ -48,11 +48,12 @@ const useSetExternalCameraStateOnCameraMove = (
   setCameraState: ((cameraState?: CameraStateParameters) => void) | undefined,
   externalCameraState: CameraStateParameters | undefined,
   lastSetExternalState: MutableRefObject<CameraStateParameters | undefined>
-) => {
+): void => {
   const reveal = useReveal();
   useEffect(() => {
     const updateStateOnCameraStop = (): void => {
       const currentCameraManagerState = reveal.cameraManager.getCameraState();
+
       if (
         externalCameraState !== undefined &&
         isCameraStatesEqual(externalCameraState, currentCameraManagerState)
@@ -72,7 +73,7 @@ const useSetExternalCameraStateOnCameraMove = (
     return () => {
       reveal.cameraManager.off('cameraStop', updateStateOnCameraStop);
     };
-  }, []);
+  }, [externalCameraState, setCameraState, lastSetExternalState]);
 };
 
 function isCameraStatesEqual(

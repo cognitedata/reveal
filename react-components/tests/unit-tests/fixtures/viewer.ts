@@ -1,7 +1,15 @@
-import { vi } from 'vitest';
+import { vi, Mock as viMock } from 'vitest';
 
-import { Cognite3DViewer, CogniteModel, Image360Collection } from '@cognite/reveal';
+import {
+  CameraManagerEventType,
+  Cognite3DViewer,
+  CogniteModel,
+  Image360Collection
+} from '@cognite/reveal';
 import { Mock, It } from 'moq.ts';
+import { Vector3 } from 'three';
+import { remove } from 'lodash';
+import { cameraManagerMock } from './cameraManager';
 
 const domElement = document.createElement('div').appendChild(document.createElement('canvas'));
 
@@ -20,4 +28,6 @@ export const viewerMock = new Mock<Cognite3DViewer>()
   .callback(viewerImage360CollectionsMock)
   .setup((p) => p.removeModel)
   .returns(viewerRemoveModelsMock)
+  .setup((p) => p.cameraManager)
+  .returns(cameraManagerMock)
   .object();
