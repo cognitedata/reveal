@@ -11,6 +11,7 @@ import { AnnotationsDomainObject } from '../AnnotationsDomainObject';
 import { SolidDomainObject } from '../../primitives/base/SolidDomainObject';
 import { BoxGizmoDomainObject } from '../BoxGizmoDomainObject';
 import { CylinderGizmoDomainObject } from '../CylinderGizmoDomainObject';
+import { AnnotationChangedDescription } from '../AnnotationChangedDescription';
 
 export class AlignSelectedAnnotationCommand extends RenderTargetCommand {
   private readonly _horizontal: boolean;
@@ -63,18 +64,19 @@ export class AlignSelectedAnnotationCommand extends RenderTargetCommand {
     if (domainObject === undefined) {
       return false;
     }
-    const { selectedAnnotation } = domainObject;
-    if (selectedAnnotation === undefined) {
+    const annotation = domainObject.selectedAnnotation;
+    if (annotation === undefined) {
       return false;
     }
-    if (!selectedAnnotation.align(this._horizontal)) {
+    if (!annotation.align(this._horizontal)) {
       return false;
     }
-    domainObject.notify(Changes.geometry);
+    const changeDesc = new AnnotationChangedDescription(annotation);
+    domainObject.notify(new DomainObjectChange(changeDesc));
 
     const gizmo = domainObject.getGizmo();
     if (gizmo instanceof BoxGizmoDomainObject || gizmo instanceof CylinderGizmoDomainObject) {
-      gizmo.updateThisFromAnnotation(selectedAnnotation);
+      gizmo.updateThisFromAnnotation(annotation);
     } else {
       return true;
     }

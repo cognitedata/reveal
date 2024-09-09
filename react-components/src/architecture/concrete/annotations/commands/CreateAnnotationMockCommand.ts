@@ -38,13 +38,16 @@ export class CreateAnnotationMockCommand extends InstanceCommand {
   }
 
   protected override invokeCore(): boolean {
+    const multiple = true;
     const { renderTarget, rootDomainObject } = this;
     let annotationDomainObject = this.getFirstInstance() as AnnotationsDomainObject;
     if (annotationDomainObject !== undefined) {
       return false;
     }
     annotationDomainObject = new AnnotationsDomainObject();
-    annotationDomainObject.annotations = createSingleAnnotations();
+    annotationDomainObject.annotations = multiple
+      ? createMultiAnnotations()
+      : createSingleAnnotations();
     annotationDomainObject.setSelectedInteractive(true);
     rootDomainObject.addChildInteractive(annotationDomainObject);
     annotationDomainObject.setVisibleInteractive(true, renderTarget);
@@ -129,51 +132,51 @@ function createSingleAnnotations(): PointCloudAnnotation[] {
   return annotations;
 }
 
-// function createMultiAnnotations(): PointCloudAnnotation[] {
-//   const annotations: PointCloudAnnotation[] = [];
+function createMultiAnnotations(): PointCloudAnnotation[] {
+  const annotations: PointCloudAnnotation[] = [];
 
-//   const radius = 0.5;
-//   for (let i = 0; i < 4; i++) {
-//     const x = 4 * i + 2;
-//     const y = 4 * i;
-//     const centerA = new Vector3(x, y, 0);
-//     const centerB = centerA.clone();
-//     centerB.x += 4;
-//     const cylinder1 = createAnnotationsCylinder(centerA, centerB, radius);
+  const radius = 0.5;
+  for (let i = 0; i < 4; i++) {
+    const x = 4 * i + 2;
+    const y = 4 * i;
+    const centerA = new Vector3(x, y, 0);
+    const centerB = centerA.clone();
+    centerB.x += 4;
+    const cylinder1 = createAnnotationsCylinder(centerA, centerB, radius);
 
-//     centerA.x += 4;
-//     centerB.x = centerA.x + 2;
-//     const center = centerA.clone().add(centerB).multiplyScalar(0.5);
+    centerA.x += 4;
+    centerB.x = centerA.x + 2;
+    const center = centerA.clone().add(centerB).multiplyScalar(0.5);
 
-//     const matrix = new Matrix4().makeTranslation(center);
-//     matrix.multiply(new Matrix4().makeScale(1, 2, 1));
-//     matrix.transpose();
-//     const box = createAnnotationsBox(matrix);
+    const matrix = new Matrix4().makeTranslation(center);
+    matrix.multiply(new Matrix4().makeScale(1, 2, 1));
+    matrix.transpose();
+    const box = createAnnotationsBox(matrix);
 
-//     centerA.x += 2;
-//     centerB.x = centerA.x + 6;
-//     const cylinder2 = createAnnotationsCylinder(centerA, centerB, 2 * radius);
+    centerA.x += 2;
+    centerB.x = centerA.x + 6;
+    const cylinder2 = createAnnotationsCylinder(centerA, centerB, 2 * radius);
 
-//     const geometry: AnnotationsBoundingVolume = {
-//       confidence: 0.5,
-//       label: 'test',
-//       region: [{ cylinder: cylinder1 }, { box }, { cylinder: cylinder2 }]
-//     };
-//     const annotation: PointCloudAnnotation = {
-//       source: 'asset-centric',
-//       id: getRandomInt(),
-//       status: 'approved',
-//       geometry,
-//       assetRef: { source: 'asset-centric', id: getRandomInt() },
-//       creatingApp: '3d-management'
-//     };
-//     if (i % 3 === 0) {
-//       annotation.status = 'rejected';
-//     }
-//     if (i % 4 === 0) {
-//       annotation.status = 'suggested';
-//     }
-//     annotations.push(annotation);
-//   }
-//   return annotations;
-// }
+    const geometry: AnnotationsBoundingVolume = {
+      confidence: 0.5,
+      label: 'test',
+      region: [{ cylinder: cylinder1 }, { box }, { cylinder: cylinder2 }]
+    };
+    const annotation: PointCloudAnnotation = {
+      source: 'asset-centric',
+      id: getRandomInt(),
+      status: 'approved',
+      geometry,
+      assetRef: { source: 'asset-centric', id: getRandomInt() },
+      creatingApp: '3d-management'
+    };
+    if (i % 3 === 0) {
+      annotation.status = 'rejected';
+    }
+    if (i % 4 === 0) {
+      annotation.status = 'suggested';
+    }
+    annotations.push(annotation);
+  }
+  return annotations;
+}
