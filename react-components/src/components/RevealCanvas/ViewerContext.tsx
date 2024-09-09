@@ -8,17 +8,19 @@ import { type CameraStateParameters, useCameraStateControl } from './hooks/useCa
 
 const ViewerContext = createContext<RevealRenderTarget | null>(null);
 
+export type ViewerContextProviderProps = {
+  cameraState?: CameraStateParameters;
+  setCameraState?: (cameraState?: CameraStateParameters) => void;
+  value: RevealRenderTarget | null;
+  children: ReactNode;
+};
+
 export const ViewerContextProvider = ({
   cameraState,
   setCameraState,
   value,
   children
-}: {
-  cameraState?: CameraStateParameters;
-  setCameraState?: (cameraState?: CameraStateParameters) => void;
-  value: RevealRenderTarget | null;
-  children: ReactNode;
-}): ReactElement => {
+}: ViewerContextProviderProps): ReactElement => {
   return (
     <ViewerContext.Provider value={value}>
       <ViewerControls cameraState={cameraState} setCameraState={setCameraState} />
