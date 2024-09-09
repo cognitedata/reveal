@@ -66,6 +66,7 @@
   "RULESET_NO_SELECTION": "No Rule Set Selected",
   "RULESET_SELECT_HEADER": "Select color overlay",
   "SCENE_SELECT_HEADER": "Select 3D location",
+  "MODEL_SELECT_HEADER": "Select 3D model",
   "SEARCH_PLACEHOLDER": "Search",
   "SELECT_INDIVIDUAL_3D_MODELS": "Select individual models",
   "SETTINGS_TOOLTIP": "Settings",

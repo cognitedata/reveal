@@ -66,6 +66,6 @@ export type Image360AnnotationMappedAssetData = {
 };
 
 export type ModelWithRevision = {
-  model: Model3D | undefined;
-  revision: Revision3D | undefined;
+  model: Model3D;
+  revision: Revision3D;
 };

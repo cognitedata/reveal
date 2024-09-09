@@ -6,7 +6,7 @@ import { type ReactElement } from 'react';
 import { Menu } from '@cognite/cogs.js';
 import { type ModelWithRevision } from '../../hooks/types';
 
-export type ModelListProps = {
+type ModelListProps = {
   modelsWithRevision: ModelWithRevision[];
   selectedModel: ModelWithRevision | undefined;
   onModelChange: (model: ModelWithRevision | undefined) => void;
@@ -25,8 +25,8 @@ export const ModelsList = ({
       {modelsWithRevision.map((modelData) => {
         return (
           <Menu.Item
-            key={`${modelData.model?.id}`}
-            toggled={selectedModel?.model?.id === modelData.model?.id}
+            key={`${modelData.model.id}`}
+            toggled={selectedModel?.model.id === modelData.model.id}
             onClick={() => {
               onModelChange(modelData);
             }}>
