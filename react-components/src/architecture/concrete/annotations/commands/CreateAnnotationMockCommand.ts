@@ -34,25 +34,32 @@ const onAnnotationChanged = (domainObject: DomainObject, change: DomainObjectCha
 
     if (description.change === Changes.changedPart) {
       // Save the annotation
-      console.log('Change annotation');
-    } else if (description.change === Changes.deletePart) {
+      // console.log('Change annotation');
+    } else if (description.change === Changes.deletedPart) {
       // Delete the annotation or part of it
-      console.log('Delete annotation');
-    } else if (description.change === Changes.addPart) {
+      // console.log('Delete annotation');
+    } else if (description.change === Changes.addedPart) {
       // Maybe use this for pending?
-      console.log('Add annotation');
+      // console.log('Add annotation');
     }
   }
 
+  if (change.isChanged(Changes.newPending)) {
+    // Selection has change. Get selection by: (undefined if not any)
+    const _annotation = domainObject.pendingAnnotation;
+    // console.log('New Pending');
+    // Call domainObject.applyPendingAnnotationInteractive() when ready
+    domainObject.applyPendingAnnotationInteractive();
+  }
   if (change.isChanged(Changes.selected)) {
     // Selection has change. Get selection by: (undefined if not any)
     const _annotation = domainObject.selectedAnnotation;
-    console.log('Selected has changed');
+    // console.log('Selected has changed');
   }
   if (change.isChanged(Changes.focus)) {
     // Focus has change. Get focus by: (undefined if not any)
     const _annotation = domainObject.focusAnnotation;
-    console.log('Focus has changed');
+    // console.log('Focus has changed');
   }
 };
 

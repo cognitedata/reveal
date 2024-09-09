@@ -24,8 +24,9 @@ export class Changes {
 
   // Part of the domain object changed
   public static readonly changedPart: symbol = Symbol('changedPart');
-  public static readonly deletePart: symbol = Symbol('deletePart');
-  public static readonly addPart: symbol = Symbol('addPart');
+  public static readonly deletedPart: symbol = Symbol('deletedPart');
+  public static readonly addedPart: symbol = Symbol('addedPart');
+  public static readonly newPending: symbol = Symbol('newPending');
 
   // Parent-child relationship changed
   public static readonly added: symbol = Symbol('added'); // When added to the system

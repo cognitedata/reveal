@@ -19,6 +19,7 @@ import { PrimitiveType } from '../primitives/PrimitiveType';
 import { CylinderGizmoDomainObject } from './CylinderGizmoDomainObject';
 import { getStatusByAnnotation } from './utils/getStatusByAnnotation';
 import { AnnotationChangedDescription } from './helpers/AnnotationChangedDescription';
+import { DomainObjectChange } from '../../base/domainObjectsHelpers/DomainObjectChange';
 
 export class AnnotationsDomainObject extends VisualDomainObject {
   // ==================================================
@@ -28,6 +29,7 @@ export class AnnotationsDomainObject extends VisualDomainObject {
   public annotations: PointCloudAnnotation[] = [];
   public selectedAnnotation: SingleAnnotation | undefined = undefined;
   public focusAnnotation?: SingleAnnotation | undefined = undefined;
+  public pendingAnnotation: SingleAnnotation | undefined = undefined;
   public focusType = FocusType.None;
 
   // ==================================================
@@ -88,7 +90,7 @@ export class AnnotationsDomainObject extends VisualDomainObject {
       isChanged = remove(this.annotations, this.selectedAnnotation.annotation);
     }
     if (isChanged) {
-      const change = new AnnotationChangedDescription(Changes.deletePart, this.selectedAnnotation);
+      const change = new AnnotationChangedDescription(Changes.deletedPart, this.selectedAnnotation);
       this.notify(change);
 
       const gizmo = this.getGizmo();
@@ -138,6 +140,26 @@ export class AnnotationsDomainObject extends VisualDomainObject {
     return true;
   }
 
+  public applyPendingAnnotationInteractive(): boolean {
+    if (this.pendingAnnotation === undefined) {
+      return false;
+    }
+    this.annotations.push(this.pendingAnnotation.annotation);
+    this.notify(new AnnotationChangedDescription(Changes.addedPart, this.pendingAnnotation));
+    this.setSelectedAnnotationInteractive(this.pendingAnnotation);
+
+    const gizmo = this.getOrCreateGizmoByAnnotation(this.pendingAnnotation);
+    if (gizmo !== undefined) {
+      const change = new DomainObjectChange(Changes.geometry, SolidDomainObject.GizmoOnly);
+      change.addChange(Changes.color);
+      gizmo.notify(change);
+      gizmo.setFocusInteractive(FocusType.Body);
+      gizmo.setSelectedInteractive(true);
+    }
+    this.pendingAnnotation = undefined;
+    return true;
+  }
+
   // ==================================================
   // INSTANCE METHODS: Get or create the gizmo
   // ==================================================
@@ -176,6 +198,7 @@ export class AnnotationsDomainObject extends VisualDomainObject {
       this.renderStyle.getColorByStatus(getStatusByAnnotation(annotation.annotation))
     );
     gizmo.renderStyle.depthTest = this.renderStyle.depthTest;
+    gizmo.renderStyle.opacity = 0.5;
     return gizmo;
   }
 }

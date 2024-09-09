@@ -119,7 +119,7 @@ export class AnnotationsView extends GroupThreeView<AnnotationsDomainObject> {
     const changedDesc = change.getChangedDescriptionByType(AnnotationChangedDescription);
 
     if (changedDesc !== undefined) {
-      if (changedDesc.change === Changes.addPart) {
+      if (changedDesc.change === Changes.addedPart) {
         this.removeChildren();
         this.invalidateRenderTarget();
       } else {
@@ -136,7 +136,7 @@ export class AnnotationsView extends GroupThreeView<AnnotationsDomainObject> {
             continue;
           }
           const remainingAnnotations =
-            changedDesc.change === Changes.deletePart
+            changedDesc.change === Changes.deletedPart
               ? userData.annotations.filter((a) => a !== annotation.annotation)
               : userData.annotations;
 

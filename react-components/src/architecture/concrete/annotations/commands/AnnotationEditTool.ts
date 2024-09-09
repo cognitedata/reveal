@@ -296,6 +296,8 @@ export class AnnotationEditTool extends BaseEditTool {
         if (!(gizmo instanceof BoxGizmoDomainObject)) {
           return undefined;
         }
+        gizmo.color.set(domainObject.renderStyle.pendingColor);
+        gizmo.renderStyle.opacity = 0.3333;
         gizmo.clear();
         return new BoxCreator(this, gizmo);
       default:
@@ -361,11 +363,17 @@ export class AnnotationEditTool extends BaseEditTool {
     } else {
       return;
     }
-    domainObject.annotations.push(newAnnotation.annotation);
-
-    const change = new AnnotationChangedDescription(Changes.addPart, newAnnotation);
-    domainObject.notify(change);
-    domainObject.setSelectedAnnotationInteractive(newAnnotation);
+    const usePending = true;
+    if (usePending) {
+      domainObject.pendingAnnotation = newAnnotation;
+      domainObject.notify(Changes.newPending);
+    } else {
+      // See applyAnnotationInteractive
+      domainObject.annotations.push(newAnnotation.annotation);
+      const change = new AnnotationChangedDescription(Changes.addedPart, newAnnotation);
+      domainObject.notify(change);
+      domainObject.setSelectedAnnotationInteractive(newAnnotation);
+    }
   }
 
   private setDeselectedAnnotationInteractive(): void {
