@@ -126,7 +126,8 @@ const ButtonsControlTypeSelector = ({
             aria-label={getLabel(translateDelegate, controlType)}
             onClick={() => {
               setSelectedControlsType(controlType);
-            }}></Button>
+            }}
+          />
         </CogsTooltip>
       ))}
     </ButtonsContainer>

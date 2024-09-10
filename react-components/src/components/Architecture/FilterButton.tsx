@@ -101,40 +101,40 @@ export const FilterButton = ({
     return <></>;
   }
   return (
-    <CogsTooltip
-      content={<LabelWithShortcut label={label} command={command} />}
-      disabled={usedInSettings || label === undefined}
-      appendTo={document.body}
-      placement={placement}>
-      <Dropdown
-        visible={isOpen}
-        hideOnSelect={false}
-        appendTo={'parent'}
-        placement={usedInSettings ? 'bottom-end' : 'auto-start'}
-        content={
-          <div ref={menuRef}>
-            <Menu
-              style={{
-                minWidth: '100px',
-                overflow: 'auto',
-                flexDirection
+    <Dropdown
+      visible={isOpen}
+      hideOnSelect={false}
+      appendTo={'parent'}
+      placement={usedInSettings ? 'bottom-end' : 'auto-start'}
+      content={
+        <div ref={menuRef}>
+          <Menu
+            style={{
+              minWidth: '100px',
+              overflow: 'auto',
+              flexDirection
+            }}>
+            <Menu.Item
+              key={-1}
+              toggled={isAllChecked}
+              onClick={() => {
+                command.toggleAllChecked();
               }}>
-              <Menu.Item
-                key={-1}
-                toggled={isAllChecked}
-                onClick={() => {
-                  command.toggleAllChecked();
-                }}>
-                {BaseFilterCommand.getAllString(t)}
-              </Menu.Item>
-              <StyledMenuItems>
-                {children.map((child, _index): ReactElement => {
-                  return <FilterItem key={child.uniqueId} command={child} />;
-                })}
-              </StyledMenuItems>
-            </Menu>
-          </div>
-        }>
+              {BaseFilterCommand.getAllString(t)}
+            </Menu.Item>
+            <StyledMenuItems>
+              {children.map((child, _index): ReactElement => {
+                return <FilterItem key={child.uniqueId} command={child} />;
+              })}
+            </StyledMenuItems>
+          </Menu>
+        </div>
+      }>
+      <CogsTooltip
+        content={<LabelWithShortcut label={label} command={command} />}
+        disabled={usedInSettings || label === undefined}
+        appendTo={document.body}
+        placement={placement}>
         <Button
           type={usedInSettings ? 'tertiary' : getButtonType(command)}
           icon={usedInSettings ? (isOpen ? 'ChevronUp' : 'ChevronDown') : icon}
@@ -154,8 +154,8 @@ export const FilterButton = ({
           }}>
           {usedInSettings ? selectedLabel : undefined}
         </Button>
-      </Dropdown>
-    </CogsTooltip>
+      </CogsTooltip>
+    </Dropdown>
   );
 };
 
