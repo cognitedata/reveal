@@ -53,7 +53,9 @@ export abstract class BaseEditTool extends NavigationTool {
       return;
     }
     const ray = this.getRay(event, true);
-    this._dragger.onPointerDrag(event, ray);
+    if (this._dragger.onPointerDrag(event, ray)) {
+      this._dragger.isChanged = true;
+    }
   }
 
   public override async onLeftPointerUp(event: PointerEvent): Promise<void> {
@@ -61,7 +63,9 @@ export abstract class BaseEditTool extends NavigationTool {
       await super.onLeftPointerUp(event);
     } else {
       this._dragger.onPointerUp(event);
-      this.addTransaction(this._dragger.transaction);
+      if (this._dragger.isChanged) {
+        this.addTransaction(this._dragger.transaction);
+      }
       this._dragger = undefined;
     }
   }

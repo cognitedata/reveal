@@ -50,7 +50,15 @@ export class DomainObjectPanelUpdater {
       if (change.isChanged(Changes.deleted)) {
         this.hide();
       }
-      if (change.isChanged(Changes.selected, Changes.geometry, Changes.naming, Changes.unit)) {
+      if (
+        change.isChanged(
+          Changes.selected,
+          Changes.geometry,
+          Changes.dragging,
+          Changes.naming,
+          Changes.unit
+        )
+      ) {
         this.show(domainObject);
       }
     } else {

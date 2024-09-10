@@ -12,10 +12,11 @@ import {
 import { type PointCloudAnnotation } from '../utils/types';
 import { isAnnotationsBoundingVolume } from '../utils/annotationGeometryUtils';
 import { remove } from '../../../base/utilities/extensions/arrayExtensions';
-import { Euler, Matrix4, Quaternion, Vector3 } from 'three';
+import { type Box3, Euler, Matrix4, Quaternion, Vector3 } from 'three';
 import { getRandomInt } from '../../../base/utilities/extensions/mathExtensions';
 import { getAnnotationMatrixByGeometry } from './getMatrixUtils';
 import { PrimitiveType } from '../../primitives/PrimitiveType';
+import { getBoundingBox } from '../utils/getBoundingBox';
 
 export class SingleAnnotation {
   // ==================================================
@@ -82,6 +83,10 @@ export class SingleAnnotation {
     for (const geometry of region) {
       yield geometry;
     }
+  }
+
+  public getBoundingBox(): Box3 | undefined {
+    return getBoundingBox(this.annotation, new Matrix4().identity());
   }
 
   public getMatrix(): Matrix4 | undefined {

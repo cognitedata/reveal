@@ -55,7 +55,9 @@ export class BoxGizmoDomainObject extends BoxDomainObject {
     // Update the selected annotation if the gizmo is moved
     const desc = change.getChangedDescription(Changes.geometry);
     if (desc !== undefined && !desc.isChanged(SolidDomainObject.GizmoOnly)) {
-      this.updateSelectedAnnotationFromThis();
+      this.updateSelectedAnnotationFromThis(false);
+    } else if (change.isChanged(Changes.dragging)) {
+      this.updateSelectedAnnotationFromThis(true);
     }
   }
 
@@ -85,7 +87,7 @@ export class BoxGizmoDomainObject extends BoxDomainObject {
     return true;
   }
 
-  private updateSelectedAnnotationFromThis(): boolean {
+  private updateSelectedAnnotationFromThis(inDragging: boolean): boolean {
     const annotationDomainObject = this.getAncestorByType(AnnotationsDomainObject);
     if (annotationDomainObject === undefined) {
       return false;
@@ -96,8 +98,9 @@ export class BoxGizmoDomainObject extends BoxDomainObject {
     }
     annotation.updateFromMatrix(this.getMatrix());
 
-    const change = new AnnotationChangedDescription(Changes.changedPart, annotation);
-    annotationDomainObject.notify(change);
+    const change = inDragging ? Changes.dragging : Changes.changedPart;
+    const changeDesc = new AnnotationChangedDescription(change, annotation);
+    annotationDomainObject.notify(changeDesc);
     return true;
   }
 }

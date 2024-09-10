@@ -12,6 +12,7 @@ import { type UnitSystem } from '../renderTarget/UnitSystem';
 import { type DomainObject } from '../domainObjects/DomainObject';
 import { Quantity } from './Quantity';
 import { round, roundIncrement } from '../utilities/extensions/mathExtensions';
+import { Changes } from './Changes';
 
 /**
  * The `BaseDragger` class represents a utility for dragging and manipulating any object in 3D space.
@@ -26,6 +27,7 @@ export abstract class BaseDragger {
   protected readonly ray: Ray = new Ray(); // Intersection point at pointer down in CDF coordinates
   private _transaction?: Transaction;
   protected readonly _unitSystem: UnitSystem | undefined = undefined;
+  public isChanged = false;
 
   // ==================================================
   // INSTANCE PROPERTIES
@@ -84,7 +86,11 @@ export abstract class BaseDragger {
    * Called just before the dragger is deleted.
    * @param _event - The pointer event.
    */
-  public onPointerUp(_event: PointerEvent): void {}
+  public onPointerUp(_event: PointerEvent): void {
+    if (this.isChanged) {
+      this.domainObject.notify(Changes.geometry);
+    }
+  }
 
   // ==================================================
   // INSTANCE METHODS

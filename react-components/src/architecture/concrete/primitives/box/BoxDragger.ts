@@ -112,7 +112,7 @@ export class BoxDragger extends BaseDragger {
     if (!this.applyByFocusType(this.focusType, ray, event.shiftKey)) {
       return false;
     }
-    this.domainObject.notify(Changes.geometry);
+    this.domainObject.notify(Changes.dragging);
     return true;
   }
 

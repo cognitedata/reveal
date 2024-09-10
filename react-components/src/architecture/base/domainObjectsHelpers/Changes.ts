@@ -21,6 +21,7 @@ export class Changes {
 
   // Something in the geometry changed
   public static readonly geometry: symbol = Symbol('geometry');
+  public static readonly dragging: symbol = Symbol('dragging');
 
   // Part of the domain object changed
   public static readonly changedPart: symbol = Symbol('changedPart');

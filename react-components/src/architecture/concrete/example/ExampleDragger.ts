@@ -60,7 +60,7 @@ export class ExampleDragger extends BaseDragger {
       this.transaction = this._domainObject.createTransaction(Changes.geometry);
     }
     this._domainObject.center.copy(planeIntersection);
-    this.domainObject.notify(Changes.geometry);
+    this.domainObject.notify(Changes.dragging);
 
     return true;
   }

@@ -45,7 +45,15 @@ export class CropBoxDomainObject extends BoxDomainObject {
   protected override notifyCore(change: DomainObjectChange): void {
     super.notifyCore(change);
 
-    if (change.isChanged(Changes.deleted, Changes.added, Changes.geometry, Changes.selected)) {
+    if (
+      change.isChanged(
+        Changes.selected,
+        Changes.deleted,
+        Changes.added,
+        Changes.geometry,
+        Changes.dragging
+      )
+    ) {
       if (change.isChanged(Changes.deleted)) {
         this.focusType = FocusType.Pending; // Make sure that the crop box is not used in clipping anymore
       }
@@ -114,7 +122,10 @@ export class CropBoxDomainObject extends BoxDomainObject {
         return;
       }
     }
-    if ((isGlobalCropBox || this.isSelected) && change.isChanged(Changes.geometry)) {
+    if (
+      (isGlobalCropBox || this.isSelected) &&
+      change.isChanged(Changes.geometry, Changes.dragging)
+    ) {
       this.setThisAsGlobalCropBox();
     } else if (change.isChanged(Changes.selected) && this.isSelected) {
       this.setThisAsGlobalCropBox();

@@ -49,7 +49,7 @@ export class ObservationsView extends GroupThreeView<ObservationsDomainObject> {
   public override update(change: DomainObjectChange): void {
     super.update(change);
 
-    if (change.isChanged(Changes.geometry)) {
+    if (change.isChanged(Changes.geometry, Changes.dragging)) {
       this.clearMemory();
       this.invalidateRenderTarget();
       this.invalidateBoundingBox();
