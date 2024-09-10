@@ -18,7 +18,8 @@ import {
   CircleGeometry,
   type Material,
   FrontSide,
-  type PerspectiveCamera
+  type PerspectiveCamera,
+  Vector2
 } from 'three';
 import { BoxDomainObject } from './BoxDomainObject';
 import { type DomainObjectChange } from '../../../base/domainObjectsHelpers/DomainObjectChange';
@@ -43,6 +44,8 @@ import { Quantity } from '../../../base/domainObjectsHelpers/Quantity';
 import { type PrimitiveRenderStyle } from '../base/PrimitiveRenderStyle';
 import { type DomainObject } from '../../../base/domainObjects/DomainObject';
 import { type SolidPrimitiveRenderStyle } from '../base/SolidPrimitiveRenderStyle';
+import { LineMaterial } from 'three/examples/jsm/lines/LineMaterial.js';
+import { Wireframe } from 'three/examples/jsm/lines/Wireframe.js';
 
 const RELATIVE_RESIZE_RADIUS = 0.15;
 const RELATIVE_ROTATION_RADIUS = new Range1(0.6, 0.75);
@@ -117,7 +120,11 @@ export class BoxView extends GroupThreeView<BoxDomainObject> {
       this.addChild(this.createSolid(matrix));
     }
     if (style.showLines) {
-      this.addChild(this.createLines(matrix));
+      if (style.lineWidth === 1) {
+        this.addChild(this.createLines(matrix));
+      } else {
+        this.addChild(this.createWireframe(matrix));
+      }
     }
     if (showMarkers(focusType)) {
       for (const face of BoxFace.getAllFaces()) {
@@ -238,7 +245,19 @@ export class BoxView extends GroupThreeView<BoxDomainObject> {
     const geometry = BoxUtils.createLineSegmentsBufferGeometry();
     const result = new LineSegments(geometry, material);
     result.renderOrder = RENDER_ORDER;
+    result.applyMatrix4(matrix);
+    return result;
+  }
 
+  private createWireframe(matrix: Matrix4): Object3D | undefined {
+    const { domainObject } = this;
+    const { style } = this;
+
+    const material = new LineMaterial();
+    updateLineMaterial(material, domainObject, style);
+    const geometry = BoxUtils.createLineSegmentsGeometry();
+    const result = new Wireframe(geometry, material);
+    result.renderOrder = RENDER_ORDER;
     result.applyMatrix4(matrix);
     return result;
   }
@@ -632,6 +651,21 @@ export function updateLineSegmentsMaterial(
   material.transparent = true;
   material.depthWrite = false;
   material.depthTest = style.depthTest;
+}
+
+export function updateLineMaterial(
+  material: LineMaterial,
+  domainObject: DomainObject,
+  style: SolidPrimitiveRenderStyle
+): void {
+  const color = domainObject.getColorByColorType(style.colorType);
+  material.color = color;
+  material.transparent = true;
+  material.depthWrite = false;
+  material.depthTest = style.depthTest;
+  material.linewidth = 2;
+  material.resolution = new Vector2(1000, 1000);
+  material.worldUnits = false;
 }
 
 export function updateMarkerMaterial(

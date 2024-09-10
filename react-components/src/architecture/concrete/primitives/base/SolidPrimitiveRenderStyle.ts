@@ -12,6 +12,7 @@ export class SolidPrimitiveRenderStyle extends PrimitiveRenderStyle {
   // ==================================================
 
   public showLines = true;
+  public lineWidth = 1;
   public showSolid = true;
 
   public opacity = 0.5;

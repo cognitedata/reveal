@@ -32,12 +32,15 @@ import { Range1 } from '../../../base/utilities/geometry/Range1';
 import { intersectRayCylinder } from '../../annotations/utils/getClosestAnnotation';
 import {
   rotateEdgeCircle,
+  updateLineMaterial,
   updateLineSegmentsMaterial,
   updateMarkerMaterial,
   updateSolidMaterial
 } from '../box/BoxView';
 import { type SolidPrimitiveRenderStyle } from '../base/SolidPrimitiveRenderStyle';
 import { CylinderUtils } from '../../../base/utilities/box/CylinderUtils';
+import { LineMaterial } from 'three/examples/jsm/lines/LineMaterial.js';
+import { Wireframe } from 'three/examples/jsm/lines/Wireframe.js';
 
 const RELATIVE_RESIZE_RADIUS = 0.2;
 const RELATIVE_ROTATION_RADIUS = new Range1(0.4, 0.7);
@@ -91,7 +94,11 @@ export class CylinderView extends GroupThreeView<CylinderDomainObject> {
       this.addChild(this.createSolid(matrix));
     }
     if (style.showLines) {
-      this.addChild(this.createLines(matrix));
+      if (style.lineWidth === 1) {
+        this.addChild(this.createLines(matrix));
+      } else {
+        this.addChild(this.createWireframe(matrix));
+      }
     }
     if (showMarkers(focusType)) {
       this.addChild(this.createRotationRing(matrix, new BoxFace(2)));
@@ -192,6 +199,19 @@ export class CylinderView extends GroupThreeView<CylinderDomainObject> {
     updateLineSegmentsMaterial(material, domainObject, style);
     const geometry = CylinderUtils.createLineSegmentsBufferGeometry();
     const result = new LineSegments(geometry, material);
+    result.renderOrder = RENDER_ORDER;
+    result.applyMatrix4(matrix);
+    return result;
+  }
+
+  private createWireframe(matrix: Matrix4): Object3D | undefined {
+    const { domainObject } = this;
+    const { style } = this;
+
+    const material = new LineMaterial();
+    updateLineMaterial(material, domainObject, style);
+    const geometry = CylinderUtils.createLineSegmentsGeometry();
+    const result = new Wireframe(geometry, material);
     result.renderOrder = RENDER_ORDER;
     result.applyMatrix4(matrix);
     return result;

@@ -92,7 +92,6 @@ export class AnnotationsDomainObject extends VisualDomainObject {
     if (isChanged) {
       const change = new AnnotationChangedDescription(Changes.deletedPart, this.selectedAnnotation);
       this.notify(change);
-
       const gizmo = this.getGizmo();
       if (gizmo !== undefined) {
         gizmo.removeInteractive();
@@ -187,18 +186,41 @@ export class AnnotationsDomainObject extends VisualDomainObject {
   public getOrCreateGizmoByAnnotation(annotation: SingleAnnotation): SolidDomainObject | undefined {
     const gizmo = this.getOrCreateGizmo(annotation.primitiveType);
     if (gizmo === undefined) {
-      return gizmo;
+      return undefined;
     }
     if (gizmo instanceof BoxGizmoDomainObject || gizmo instanceof CylinderGizmoDomainObject) {
       if (!gizmo.updateThisFromAnnotation(annotation)) {
-        return;
+        return undefined;
       }
     }
+    const renderStyle = this.renderStyle;
+    const gizmoRenderStyle = gizmo.renderStyle;
+
+    gizmoRenderStyle.opacity = 0.3333;
+    gizmoRenderStyle.showLines = false;
+    gizmoRenderStyle.lineWidth = 1;
+    gizmoRenderStyle.depthTest = renderStyle.depthTest;
     gizmo.color.set(
       this.renderStyle.getColorByStatus(getStatusByAnnotation(annotation.annotation))
     );
-    gizmo.renderStyle.depthTest = this.renderStyle.depthTest;
-    gizmo.renderStyle.opacity = 0.5;
+    return gizmo;
+  }
+
+  public getOrCreateGizmoForPending(primitiveType: PrimitiveType): SolidDomainObject | undefined {
+    const gizmo = this.getOrCreateGizmo(primitiveType);
+    if (gizmo === undefined) {
+      return undefined;
+    }
+    gizmo.clear();
+
+    const renderStyle = this.renderStyle;
+    const gizmoRenderStyle = gizmo.renderStyle;
+
+    gizmoRenderStyle.opacity = 0.3333;
+    gizmoRenderStyle.showLines = true;
+    gizmoRenderStyle.lineWidth = renderStyle.selectedLineWidth;
+    gizmoRenderStyle.depthTest = renderStyle.depthTest;
+    gizmo.color.set(renderStyle.pendingColor);
     return gizmo;
   }
 }

@@ -290,16 +290,14 @@ export class AnnotationEditTool extends BaseEditTool {
     if (domainObject === undefined) {
       return undefined;
     }
-    const gizmo = domainObject.getOrCreateGizmo(this.primitiveType);
+    const gizmo = domainObject.getOrCreateGizmoForPending(this.primitiveType);
     switch (this.primitiveType) {
-      case PrimitiveType.Box:
+      case PrimitiveType.Box: {
         if (!(gizmo instanceof BoxGizmoDomainObject)) {
           return undefined;
         }
-        gizmo.color.set(domainObject.renderStyle.pendingColor);
-        gizmo.renderStyle.opacity = 0.3333;
-        gizmo.clear();
         return new BoxCreator(this, gizmo);
+      }
       default:
         return undefined;
     }

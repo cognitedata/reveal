@@ -49,7 +49,7 @@ const onAnnotationChanged = (domainObject: DomainObject, change: DomainObjectCha
     const _annotation = domainObject.pendingAnnotation;
     // console.log('New Pending');
     // Call domainObject.applyPendingAnnotationInteractive() when ready
-    domainObject.applyPendingAnnotationInteractive();
+    // domainObject.applyPendingAnnotationInteractive();
   }
   if (change.isChanged(Changes.selected)) {
     // Selection has change. Get selection by: (undefined if not any)
