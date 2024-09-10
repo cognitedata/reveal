@@ -187,11 +187,11 @@ export class AnnotationEditTool extends BaseEditTool {
         return;
       }
       if (creator === undefined) {
+        this.setDeselectedAnnotationInteractive();
         creator = this._creator = this.createCreator();
         if (creator === undefined) {
           return;
         }
-        this.setDeselectedAnnotationInteractive();
         const ray = this.getRay(event);
         if (creator.addPoint(ray, intersection)) {
           const gizmo = creator.domainObject;
@@ -291,6 +291,7 @@ export class AnnotationEditTool extends BaseEditTool {
       return undefined;
     }
     const gizmo = domainObject.getOrCreateGizmoForPending(this.primitiveType);
+
     switch (this.primitiveType) {
       case PrimitiveType.Box: {
         if (!(gizmo instanceof BoxGizmoDomainObject)) {
@@ -389,7 +390,7 @@ export class AnnotationEditTool extends BaseEditTool {
       annotationsDomainObject.setSelectedAnnotationInteractive(undefined);
       const gizmo = annotationsDomainObject.getGizmo();
       if (gizmo !== undefined) {
-        gizmo.removeInteractive();
+        gizmo.removeInteractive(false);
       }
       return;
     }

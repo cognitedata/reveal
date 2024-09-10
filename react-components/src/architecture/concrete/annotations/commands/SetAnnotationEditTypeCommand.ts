@@ -33,6 +33,13 @@ export class SetAnnotationEditTypeCommand extends RenderTargetCommand {
     return getTooltipByPrimitiveType(this._primitiveType);
   }
 
+  public override get buttonType(): string {
+    if (this._primitiveType === PrimitiveType.Box) {
+      return 'primary';
+    }
+    return super.buttonType;
+  }
+
   public override get isEnabled(): boolean {
     if (this.rootDomainObject.getDescendantByType(AnnotationsDomainObject) === undefined) {
       return false;
@@ -91,8 +98,13 @@ function getTooltipByPrimitiveType(primitiveType: PrimitiveType): TranslateKey {
   switch (primitiveType) {
     case PrimitiveType.Box:
       return {
-        key: 'ANNOTATIONS_CREATE',
-        fallback: 'Create a new annotation'
+        key: 'ANNOTATIONS_CREATE_BOX',
+        fallback: 'Create a new box annotation'
+      };
+    case PrimitiveType.Cylinder:
+      return {
+        key: 'ANNOTATIONS_CREATE_CYLINDER',
+        fallback: 'Create a new cylinder annotation'
       };
     case PrimitiveType.None:
       return {
@@ -108,9 +120,11 @@ function getTooltipByPrimitiveType(primitiveType: PrimitiveType): TranslateKey {
 function getIconByPrimitiveType(primitiveType: PrimitiveType): string {
   switch (primitiveType) {
     case PrimitiveType.Box:
-      return 'Plus';
+      return 'Cube';
+    case PrimitiveType.Cylinder:
+      return 'DataSource';
     case PrimitiveType.None:
-      return 'Edit';
+      return 'Cursor';
     default:
       throw new Error('Unknown PrimitiveType');
   }

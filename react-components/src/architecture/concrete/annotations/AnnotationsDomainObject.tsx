@@ -94,7 +94,7 @@ export class AnnotationsDomainObject extends VisualDomainObject {
       this.notify(change);
       const gizmo = this.getGizmo();
       if (gizmo !== undefined) {
-        gizmo.removeInteractive();
+        gizmo.removeInteractive(false);
       }
     }
     this.selectedAnnotation = undefined;
@@ -165,7 +165,7 @@ export class AnnotationsDomainObject extends VisualDomainObject {
     }
     const gizmo = this.getGizmo();
     if (gizmo !== undefined) {
-      gizmo.removeInteractive();
+      gizmo.removeInteractive(false);
     }
     this.pendingAnnotation = undefined;
     return true;
@@ -180,19 +180,18 @@ export class AnnotationsDomainObject extends VisualDomainObject {
   }
 
   private getOrCreateGizmo(primitiveType: PrimitiveType): SolidDomainObject | undefined {
-    let gizmo = this.getGizmo();
+    const gizmo = this.getGizmo();
     if (gizmo !== undefined && gizmo.primitiveType === primitiveType) {
       return gizmo;
     }
     if (gizmo !== undefined) {
-      gizmo.removeInteractive();
-      gizmo = undefined;
+      gizmo.removeInteractive(false);
     }
-    gizmo = createGizmo(primitiveType);
-    if (gizmo !== undefined) {
-      this.addChildInteractive(gizmo);
+    const newGizmo = createGizmo(primitiveType);
+    if (newGizmo !== undefined) {
+      this.addChildInteractive(newGizmo);
     }
-    return gizmo;
+    return newGizmo;
   }
 
   public getOrCreateGizmoByAnnotation(annotation: SingleAnnotation): SolidDomainObject | undefined {
