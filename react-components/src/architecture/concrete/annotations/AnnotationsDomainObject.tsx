@@ -159,6 +159,18 @@ export class AnnotationsDomainObject extends VisualDomainObject {
     return true;
   }
 
+  public cancelPendingAnnotationInteractive(): boolean {
+    if (this.pendingAnnotation === undefined) {
+      return false;
+    }
+    const gizmo = this.getGizmo();
+    if (gizmo !== undefined) {
+      gizmo.removeInteractive();
+    }
+    this.pendingAnnotation = undefined;
+    return true;
+  }
+
   // ==================================================
   // INSTANCE METHODS: Get or create the gizmo
   // ==================================================
