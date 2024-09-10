@@ -95,3 +95,4 @@ export { AnnotationsRenderStyle } from './concrete/annotations/AnnotationsRender
 export { SingleAnnotation } from './concrete/annotations/helpers/SingleAnnotation';
 export { AnnotationChangedDescription } from './concrete/annotations/helpers/AnnotationChangedDescription';
 export { PrimitiveType } from './concrete/primitives/PrimitiveType';
+export { getBoundingBox } from './concrete/annotations/utils/getBoundingBox';
