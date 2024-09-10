@@ -89,30 +89,30 @@ export const OptionButton = ({
   const selectedLabel = command.selectedChild?.getLabel(t);
 
   return (
-    <CogsTooltip
-      content={<LabelWithShortcut label={label} command={command} />}
-      disabled={usedInSettings || label === undefined}
-      appendTo={document.body}
-      placement={placement}>
-      <Dropdown
-        visible={isOpen}
-        hideOnSelect={true}
-        appendTo={'parent'}
-        placement={usedInSettings ? 'bottom-end' : 'auto-start'}
-        content={
-          <div ref={menuRef}>
-            <Menu
-              style={{
-                minWidth: '0px',
-                overflow: 'auto',
-                flexDirection
-              }}>
-              {children.map((child, _index): ReactElement => {
-                return createMenuItem(child, t, postAction);
-              })}
-            </Menu>
-          </div>
-        }>
+    <Dropdown
+      visible={isOpen}
+      hideOnSelect={true}
+      appendTo={'parent'}
+      placement={usedInSettings ? 'bottom-end' : 'auto-start'}
+      content={
+        <div ref={menuRef}>
+          <Menu
+            style={{
+              minWidth: '0px',
+              overflow: 'auto',
+              flexDirection
+            }}>
+            {children.map((child, _index): ReactElement => {
+              return createMenuItem(child, t, postAction);
+            })}
+          </Menu>
+        </div>
+      }>
+      <CogsTooltip
+        content={<LabelWithShortcut label={label} command={command} />}
+        disabled={usedInSettings || label === undefined}
+        appendTo={document.body}
+        placement={placement}>
         <Button
           style={{
             padding: usedInSettings ? DEFAULT_PADDING : '8px 4px',
@@ -132,8 +132,8 @@ export const OptionButton = ({
           }}>
           {selectedLabel}
         </Button>
-      </Dropdown>
-    </CogsTooltip>
+      </CogsTooltip>
+    </Dropdown>
   );
 };
 

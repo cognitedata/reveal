@@ -92,26 +92,26 @@ export const SlicerButton = (): ReactElement => {
   }
 
   return (
-    <CogsTooltip content={t('SLICE_TOOLTIP', 'Slice')} placement="right" appendTo={document.body}>
-      <Dropdown
-        appendTo={() => document.body}
-        onClickOutside={() => {
-          setSliceActive(false);
-        }}
-        content={
-          <StyledMenu>
-            <RangeSlider
-              min={0}
-              max={1}
-              step={0.01}
-              setValue={changeSlicingState}
-              marks={{}}
-              value={[bottomRatio, topRatio]}
-              vertical
-            />
-          </StyledMenu>
-        }
-        placement="right-end">
+    <Dropdown
+      appendTo={() => document.body}
+      onClickOutside={() => {
+        setSliceActive(false);
+      }}
+      content={
+        <StyledMenu>
+          <RangeSlider
+            min={0}
+            max={1}
+            step={0.01}
+            setValue={changeSlicingState}
+            marks={{}}
+            value={[bottomRatio, topRatio]}
+            vertical
+          />
+        </StyledMenu>
+      }
+      placement="right-end">
+      <CogsTooltip content={t('SLICE_TOOLTIP', 'Slice')} placement="right" appendTo={document.body}>
         <Button
           type="ghost"
           icon="Slice"
@@ -121,8 +121,8 @@ export const SlicerButton = (): ReactElement => {
             setSliceActive((prevState) => !prevState);
           }}
         />
-      </Dropdown>
-    </CogsTooltip>
+      </CogsTooltip>
+    </Dropdown>
   );
 };
 

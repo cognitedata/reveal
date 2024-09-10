@@ -20,20 +20,20 @@ export const HelpButton = ({ fallbackLanguage }: HelpButtonProps): ReactElement 
   const [helpActive, setHelpActive] = useState<boolean>(false);
 
   return (
-    <CogsTooltip content={t('HELP_TOOLTIP', 'Help')} placement="right" appendTo={document.body}>
-      <Dropdown
-        appendTo={document.body}
-        onClickOutside={() => {
-          setHelpActive(false);
-        }}
-        content={
-          <StyledMenu>
-            <MouseNavigation fallbackLanguage={fallbackLanguage} />
-            <KeyboardNavigation fallbackLanguage={fallbackLanguage} />
-            <TouchNavigation fallbackLanguage={fallbackLanguage} />
-          </StyledMenu>
-        }
-        placement="right">
+    <Dropdown
+      appendTo={document.body}
+      onClickOutside={() => {
+        setHelpActive(false);
+      }}
+      content={
+        <StyledMenu>
+          <MouseNavigation fallbackLanguage={fallbackLanguage} />
+          <KeyboardNavigation fallbackLanguage={fallbackLanguage} />
+          <TouchNavigation fallbackLanguage={fallbackLanguage} />
+        </StyledMenu>
+      }
+      placement="right">
+      <CogsTooltip content={t('HELP_TOOLTIP', 'Help')} placement="right" appendTo={document.body}>
         <Button
           type="ghost"
           icon="Help"
@@ -43,8 +43,8 @@ export const HelpButton = ({ fallbackLanguage }: HelpButtonProps): ReactElement 
             setHelpActive((prevState) => !prevState);
           }}
         />
-      </Dropdown>
-    </CogsTooltip>
+      </CogsTooltip>
+    </Dropdown>
   );
 };
 

@@ -101,29 +101,29 @@ export const SettingsButton = ({
   const children = command.children;
 
   return (
-    <CogsTooltip
-      content={<LabelWithShortcut label={label} command={command} />}
-      disabled={label === undefined}
-      appendTo={document.body}
-      placement={placement}>
-      <Dropdown
-        visible={isOpen}
-        hideOnSelect={false}
-        appendTo={'parent'}
-        placement="auto-start"
-        content={
-          <div ref={menuRef}>
-            <Menu
-              style={{
-                flexDirection,
-                padding: DEFAULT_PADDING
-              }}>
-              {children.map((child, _index): ReactElement | undefined => {
-                return createMenuItem(child, t);
-              })}
-            </Menu>
-          </div>
-        }>
+    <Dropdown
+      visible={isOpen}
+      hideOnSelect={false}
+      appendTo={'parent'}
+      placement="auto-start"
+      content={
+        <div ref={menuRef}>
+          <Menu
+            style={{
+              flexDirection,
+              padding: DEFAULT_PADDING
+            }}>
+            {children.map((child, _index): ReactElement | undefined => {
+              return createMenuItem(child, t);
+            })}
+          </Menu>
+        </div>
+      }>
+      <CogsTooltip
+        content={<LabelWithShortcut label={label} command={command} />}
+        disabled={label === undefined}
+        appendTo={document.body}
+        placement={placement}>
         <Button
           type={getButtonType(command)}
           icon={icon}
@@ -138,8 +138,8 @@ export const SettingsButton = ({
             setOpen((prevState) => !prevState);
           }}
         />
-      </Dropdown>
-    </CogsTooltip>
+      </CogsTooltip>
+    </Dropdown>
   );
 };
 
