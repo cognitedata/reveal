@@ -35,7 +35,6 @@ export class BoxGizmoDomainObject extends BoxDomainObject {
   public override createRenderStyle(): RenderStyle | undefined {
     const style = new SolidPrimitiveRenderStyle();
     style.showLabel = false;
-    style.opacity = 0.333;
     return style;
   }
 

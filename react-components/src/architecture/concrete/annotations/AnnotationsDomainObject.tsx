@@ -179,7 +179,7 @@ export class AnnotationsDomainObject extends VisualDomainObject {
     return this.getDescendantByType(SolidDomainObject);
   }
 
-  public getOrCreateGizmo(primitiveType: PrimitiveType): SolidDomainObject | undefined {
+  private getOrCreateGizmo(primitiveType: PrimitiveType): SolidDomainObject | undefined {
     let gizmo = this.getGizmo();
     if (gizmo !== undefined && gizmo.primitiveType === primitiveType) {
       return gizmo;
