@@ -59,7 +59,7 @@ export class AnnotationEditTool extends BaseEditTool {
   // ==================================================
 
   public override get icon(): string {
-    return 'Edit';
+    return 'Shapes';
   }
 
   public override get tooltip(): TranslateKey {

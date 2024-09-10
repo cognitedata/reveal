@@ -14,6 +14,9 @@ import { SingleAnnotation } from './helpers/SingleAnnotation';
 import { SolidDomainObject } from '../primitives/base/SolidDomainObject';
 import { SolidPrimitiveRenderStyle } from '../primitives/base/SolidPrimitiveRenderStyle';
 import { AnnotationChangedDescription } from './helpers/AnnotationChangedDescription';
+import { BaseCommand } from '../../base/commands/BaseCommand';
+import { CopyToClipboardCommand } from '../../base/concreteCommands/CopyToClipboardCommand';
+import { ToggleMetricUnitsCommand } from '../../base/concreteCommands/ToggleMetricUnitsCommand';
 
 export class BoxGizmoDomainObject extends BoxDomainObject {
   // ==================================================
@@ -58,6 +61,10 @@ export class BoxGizmoDomainObject extends BoxDomainObject {
     } else if (change.isChanged(Changes.dragging)) {
       this.updateSelectedAnnotationFromThis(true);
     }
+  }
+
+  public override getPanelToolbar(): BaseCommand[] {
+    return [new CopyToClipboardCommand(), new ToggleMetricUnitsCommand()];
   }
 
   // ==================================================

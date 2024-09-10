@@ -15,6 +15,9 @@ import { SolidDomainObject } from '../primitives/base/SolidDomainObject';
 import { SolidPrimitiveRenderStyle } from '../primitives/base/SolidPrimitiveRenderStyle';
 import { ANNOTATION_CYLINDER_RADIUS_MARGIN } from './utils/constants';
 import { AnnotationChangedDescription } from './helpers/AnnotationChangedDescription';
+import { BaseCommand } from '../../base/commands/BaseCommand';
+import { CopyToClipboardCommand } from '../../base/concreteCommands/CopyToClipboardCommand';
+import { ToggleMetricUnitsCommand } from '../../base/concreteCommands/ToggleMetricUnitsCommand';
 
 export class CylinderGizmoDomainObject extends CylinderDomainObject {
   // ==================================================
@@ -59,6 +62,10 @@ export class CylinderGizmoDomainObject extends CylinderDomainObject {
     } else if (change.isChanged(Changes.dragging)) {
       this.updateSelectedAnnotationFromThis(true);
     }
+  }
+
+  public override getPanelToolbar(): BaseCommand[] {
+    return [new CopyToClipboardCommand(), new ToggleMetricUnitsCommand()];
   }
 
   // ==================================================
