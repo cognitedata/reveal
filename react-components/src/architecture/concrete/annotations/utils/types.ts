@@ -4,19 +4,6 @@
 
 import { type AnnotationData } from '@cognite/sdk';
 
-export enum ThreeDModelType {
-  NONE = 'none',
-  CAD = 'cad',
-  POINT_CLOUD = 'pointcloud',
-  UNKNOWN = 'unknown'
-}
-
-export type SelectedNodeAndRange = {
-  treeIndex: number;
-  nodeId: number;
-  subtreeSize: number;
-};
-
 export type LegacyIdentifier = {
   source: 'asset-centric';
   id: number;
@@ -35,23 +22,6 @@ export type FdmAssetIdentifier = FdmIdentifier & {
 export type AnnotationIdentifier = LegacyIdentifier | FdmAssetIdentifier;
 
 export type AssetIdentifier = LegacyIdentifier | FdmAssetIdentifier;
-
-export enum ToolType {
-  SELECT = 'select',
-  CREATE = 'create'
-}
-
-export enum TransformMode {
-  NONE = 'none',
-  TRANSLATE = 'translate',
-  ROTATE = 'rotate',
-  SCALE = 'scale'
-}
-
-export type OnDeleteAnnotation = (
-  annotation: AnnotationIdentifier,
-  metricsOptions?: { source: string }
-) => void;
 
 export type PointCloudAnnotation = AnnotationIdentifier & {
   geometry: AnnotationData;

@@ -97,3 +97,13 @@ export { AnnotationChangedDescription } from './concrete/annotations/helpers/Ann
 export { PrimitiveType } from './concrete/primitives/PrimitiveType';
 export { getBoundingBox } from './concrete/annotations/utils/getBoundingBox';
 export { getGlobalMatrix } from './concrete/annotations/helpers/getMatrixUtils';
+export type {
+  LegacyIdentifier,
+  FdmIdentifier,
+  FdmAssetIdentifier,
+  AnnotationIdentifier,
+  AssetIdentifier,
+  PointCloudAnnotation,
+  AssetPointCloudAnnotation,
+  FdmPointCloudAnnotation
+} from './concrete/annotations/utils/types';
