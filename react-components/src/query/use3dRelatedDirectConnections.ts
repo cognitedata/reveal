@@ -25,13 +25,13 @@ export function use3dRelatedDirectConnections(
       assert(instance !== undefined);
       const views = await fdmSdk.inspectInstances({
         inspectionOperations: { involvedViews: {} },
-        items: [{ instanceType: 'node', ...instance }]
+        items: [{ instanceType: 'node', externalId: instance.externalId, space: instance.space }]
       });
 
       const view = views.items[0].inspectionResults.involvedViews[0];
       const instanceContent = (
         await fdmSdk.getByExternalIds<Record<string, unknown>>(
-          [{ instanceType: 'node', ...instance }],
+          [{ instanceType: 'node', externalId: instance.externalId, space: instance.space }],
           view
         )
       ).items[0];
@@ -52,7 +52,11 @@ export function use3dRelatedDirectConnections(
 
       const relatedObjectInspectionsResult = await fdmSdk.inspectInstances({
         inspectionOperations: { involvedViews: {} },
-        items: directlyRelatedObjects.map((fdmId) => ({ ...fdmId, instanceType: 'node' }))
+        items: directlyRelatedObjects.map((fdmId) => ({
+          externalId: fdmId.externalId,
+          space: fdmId.space,
+          instanceType: 'node'
+        }))
       });
 
       const relatedObjectsViewLists = relatedObjectInspectionsResult.items.map(
