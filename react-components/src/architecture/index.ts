@@ -96,3 +96,4 @@ export { SingleAnnotation } from './concrete/annotations/helpers/SingleAnnotatio
 export { AnnotationChangedDescription } from './concrete/annotations/helpers/AnnotationChangedDescription';
 export { PrimitiveType } from './concrete/primitives/PrimitiveType';
 export { getBoundingBox } from './concrete/annotations/utils/getBoundingBox';
+export { getGlobalMatrix } from './concrete/annotations/helpers/getMatrixUtils';
