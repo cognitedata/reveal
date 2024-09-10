@@ -230,7 +230,7 @@ export class AnnotationsDomainObject extends VisualDomainObject {
     gizmoRenderStyle.opacity = 0.3333;
     gizmoRenderStyle.showLines = true;
     gizmoRenderStyle.lineWidth = renderStyle.selectedLineWidth;
-    gizmoRenderStyle.depthTest = renderStyle.depthTest;
+    gizmoRenderStyle.depthTest = false;
     gizmo.color.set(renderStyle.pendingColor);
     return gizmo;
   }
