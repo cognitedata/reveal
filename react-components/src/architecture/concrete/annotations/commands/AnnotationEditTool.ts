@@ -92,6 +92,7 @@ export class AnnotationEditTool extends BaseEditTool {
     }
     if (down && event.key === 'Escape') {
       this.handleEscape();
+      this.deselectedAnnotationInteractive();
     }
     super.onKey(event, down);
   }
@@ -187,7 +188,7 @@ export class AnnotationEditTool extends BaseEditTool {
         return;
       }
       if (creator === undefined) {
-        this.setDeselectedAnnotationInteractive();
+        this.deselectedAnnotationInteractive();
         creator = this._creator = this.createCreator();
         if (creator === undefined) {
           return;
@@ -219,7 +220,7 @@ export class AnnotationEditTool extends BaseEditTool {
         this.setSelectedAnnotationInteractive(domainObject, undefined);
       } else if (gizmo === undefined) {
         // Click in the "air"
-        this.setDeselectedAnnotationInteractive();
+        this.deselectedAnnotationInteractive();
       }
     }
   }
@@ -375,7 +376,7 @@ export class AnnotationEditTool extends BaseEditTool {
     }
   }
 
-  private setDeselectedAnnotationInteractive(): void {
+  private deselectedAnnotationInteractive(): void {
     const annotationsDomainObject = this.getSelectedAnnotationsDomainObject();
     if (annotationsDomainObject !== undefined) {
       this.setSelectedAnnotationInteractive(annotationsDomainObject, undefined);
