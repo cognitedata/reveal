@@ -680,7 +680,7 @@ export function updateMarkerMaterial(
   material.polygonOffsetUnits = 4.0;
   material.transparent = true;
   material.emissive = ARROW_AND_RING_COLOR;
-  material.emissiveIntensity = hasFocus ? 0.8 : 0.3;
+  material.emissiveIntensity = hasFocus ? 0.9 : 0.2;
   material.side = FrontSide;
   material.flatShading = true;
   material.depthWrite = false;
