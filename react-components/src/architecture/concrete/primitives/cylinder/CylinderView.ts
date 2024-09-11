@@ -29,7 +29,7 @@ import { BoxFace } from '../../../base/utilities/box/BoxFace';
 import { FocusType } from '../../../base/domainObjectsHelpers/FocusType';
 import { BoxPickInfo } from '../../../base/utilities/box/BoxPickInfo';
 import { Range1 } from '../../../base/utilities/geometry/Range1';
-import { intersectRayCylinder } from '../../annotations/utils/getClosestAnnotation';
+import { intersectRayCylinder } from '../../annotations/helpers/getClosestAnnotation';
 import {
   rotateEdgeCircle,
   updateLineMaterial,

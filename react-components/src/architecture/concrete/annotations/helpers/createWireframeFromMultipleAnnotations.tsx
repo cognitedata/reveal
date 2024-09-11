@@ -7,16 +7,16 @@ import { Wireframe } from 'three/examples/jsm/lines/Wireframe.js';
 
 import { type AnnotationsCogniteAnnotationTypesPrimitivesGeometry3DGeometry as AnnotationGeometry } from '@cognite/sdk';
 
-import { type PointCloudAnnotation } from './types';
+import { type PointCloudAnnotation } from '../utils/types';
 
-import { getAnnotationGeometries } from './annotationGeometryUtils';
-import { getAnnotationMatrixByGeometry } from '../helpers/getMatrixUtils';
-import { WireframeUserData } from '../helpers/WireframeUserData';
+import { getAnnotationGeometries } from '../utils/annotationGeometryUtils';
+import { getAnnotationMatrixByGeometry } from './getMatrixUtils';
+import { WireframeUserData } from './WireframeUserData';
 import { Matrix4, Vector3 } from 'three';
 import { BoxUtils } from '../../../base/utilities/box/BoxUtils';
 import { CylinderUtils } from '../../../base/utilities/box/CylinderUtils';
 import { PrimitiveUtils } from '../../../base/utilities/box/PrimitiveUtils';
-import { type Status } from '../helpers/Status';
+import { type Status } from './Status';
 
 export type CreateWireframeArgs = {
   annotations: PointCloudAnnotation[];

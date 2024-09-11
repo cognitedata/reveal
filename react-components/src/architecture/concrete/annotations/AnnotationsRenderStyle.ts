@@ -5,7 +5,7 @@
 import { cloneDeep } from 'lodash';
 import { CommonRenderStyle } from '../../base/renderStyles/CommonRenderStyle';
 import { type RenderStyle } from '../../base/renderStyles/RenderStyle';
-import { Status } from './AnnotationsView';
+import { Status } from './helpers/Status';
 
 export class AnnotationsRenderStyle extends CommonRenderStyle {
   // ==================================================

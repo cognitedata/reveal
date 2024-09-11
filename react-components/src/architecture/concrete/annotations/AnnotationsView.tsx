@@ -13,9 +13,9 @@ import { type PointCloudAnnotation } from './utils/types';
 import {
   type CreateWireframeArgs,
   createWireframeFromMultipleAnnotations
-} from './utils/createWireframeFromMultipleAnnotations';
+} from './helpers/createWireframeFromMultipleAnnotations';
 import { expandBoundingBox, getBoundingBox } from './utils/getBoundingBox';
-import { getClosestAnnotation } from './utils/getClosestAnnotation';
+import { getClosestAnnotation } from './helpers/getClosestAnnotation';
 import { getAnnotationMatrixByGeometry } from './helpers/getMatrixUtils';
 import { type WireframeUserData } from './helpers/WireframeUserData';
 import { GroupThreeView } from '../../base/views/GroupThreeView';

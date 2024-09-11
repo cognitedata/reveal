@@ -8,9 +8,9 @@ import {
   type AnnotationsCylinder,
   type AnnotationsCogniteAnnotationTypesPrimitivesGeometry3DGeometry as AnnotationGeometry
 } from '@cognite/sdk';
-import { type PointCloudAnnotation } from './types';
-import { getAnnotationGeometries } from './annotationGeometryUtils';
-import { getBoxMatrix } from '../helpers/getMatrixUtils';
+import { type PointCloudAnnotation } from '../utils/types';
+import { getAnnotationGeometries } from '../utils/annotationGeometryUtils';
+import { getBoxMatrix } from './getMatrixUtils';
 import { ClosestGeometryFinder } from '../../../base/utilities/geometry/ClosestGeometryFinder';
 import { BoxUtils } from '../../../base/utilities/box/BoxUtils';
 
