@@ -69,6 +69,14 @@ export class CylinderGizmoDomainObject extends CylinderDomainObject {
   }
 
   // ==================================================
+  // OVERRIDES of VisualDomainObject
+  // ==================================================
+
+  public override get useClippingInIntersection(): boolean {
+    return false;
+  }
+
+  // ==================================================
   // INSTANCE METHODS
   // ==================================================
 

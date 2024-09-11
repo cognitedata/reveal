@@ -68,6 +68,14 @@ export class BoxGizmoDomainObject extends BoxDomainObject {
   }
 
   // ==================================================
+  // OVERRIDES of VisualDomainObject
+  // ==================================================
+
+  public override get useClippingInIntersection(): boolean {
+    return false;
+  }
+
+  // ==================================================
   // OVERRIDES of BoxDomainObject
   // ==================================================
 

@@ -30,6 +30,7 @@ import { CylinderUtils } from '../../base/utilities/box/CylinderUtils';
 import { BoxUtils } from '../../base/utilities/box/BoxUtils';
 import { AnnotationChangedDescription } from './helpers/AnnotationChangedDescription';
 import { ALL_STATUSES, getStatusByAnnotation, Status } from './helpers/Status';
+import { isBoxPartlyVisibleByPlanes } from '../../base/utilities/geometry/isPointVisibleByPlanes';
 
 const FOCUS_ANNOTATION_NAME = 'focus-annotation-name';
 const GROUP_SIZE = 100;
@@ -93,10 +94,6 @@ export class AnnotationsView extends GroupThreeView<AnnotationsDomainObject> {
 
   public override update(change: DomainObjectChange): void {
     super.update(change);
-    if (change.isChanged(Changes.clipping)) {
-      this.clearMemory();
-      this.invalidateRenderTarget();
-    }
     if (change.isChanged(Changes.renderStyle)) {
       this.updateRenderStyle();
       this.invalidateRenderTarget();
@@ -107,6 +104,10 @@ export class AnnotationsView extends GroupThreeView<AnnotationsDomainObject> {
     }
     if (change.isChanged(Changes.focus)) {
       this.updateFocusAnnotation();
+      this.invalidateRenderTarget();
+    }
+    if (change.isChanged(Changes.clipping)) {
+      this.removeChildren();
       this.invalidateRenderTarget();
     }
     const changedDesc = change.getChangedDescriptionByType(AnnotationChangedDescription);
@@ -160,8 +161,20 @@ export class AnnotationsView extends GroupThreeView<AnnotationsDomainObject> {
   protected override calculateBoundingBox(): Box3 {
     const annotations = this.domainObject.annotations;
     const boundingBox = new Box3().makeEmpty();
-    for (const annotation of annotations) {
-      expandBoundingBox(boundingBox, annotation, this.globalMatrix);
+    const clippingPlanes = this.renderTarget.getGlobalClippingPlanes();
+    if (clippingPlanes.length === 0) {
+      for (const annotation of annotations) {
+        expandBoundingBox(boundingBox, annotation, this.globalMatrix);
+      }
+    } else {
+      const tempBoundingBox = new Box3();
+      for (const annotation of annotations) {
+        tempBoundingBox.makeEmpty();
+        expandBoundingBox(tempBoundingBox, annotation, this.globalMatrix);
+        if (isBoxPartlyVisibleByPlanes(clippingPlanes, tempBoundingBox)) {
+          boundingBox.union(tempBoundingBox);
+        }
+      }
     }
     return boundingBox;
   }
@@ -175,10 +188,21 @@ export class AnnotationsView extends GroupThreeView<AnnotationsDomainObject> {
       return;
     }
 
+    const clippingPlanes = this.renderTarget.getGlobalClippingPlanes();
+    const boundingBox = new Box3();
     for (const status of ALL_STATUSES) {
-      const filteredAnnotation = annotations.filter(
-        (annotation) => getStatusByAnnotation(annotation) === status
-      );
+      const filteredAnnotation = annotations.filter((annotation) => {
+        if (getStatusByAnnotation(annotation) !== status) {
+          return false;
+        }
+        if (clippingPlanes.length === 0) {
+          return true;
+        }
+        boundingBox.makeEmpty();
+        expandBoundingBox(boundingBox, annotation, this.globalMatrix);
+        return isBoxPartlyVisibleByPlanes(clippingPlanes, boundingBox);
+      });
+
       for (let startIndex = 0; startIndex < filteredAnnotation.length; startIndex += GROUP_SIZE) {
         this.addWireframeFromMultipleAnnotations({
           annotations: filteredAnnotation,
