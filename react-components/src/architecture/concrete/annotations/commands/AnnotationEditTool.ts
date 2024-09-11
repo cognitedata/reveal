@@ -32,6 +32,7 @@ import { AlignSelectedAnnotationCommand } from './AlignSelectedAnnotationCommand
 import { SolidDomainObject } from '../../primitives/base/SolidDomainObject';
 import { CylinderGizmoDomainObject } from '../CylinderGizmoDomainObject';
 import { AnnotationChangedDescription } from '../helpers/AnnotationChangedDescription';
+import { CylinderCreator } from '../../primitives/cylinder/CylinderCreator';
 
 export const ANNOTATION_RADIUS_FACTOR = 0.2;
 
@@ -236,6 +237,7 @@ export class AnnotationEditTool extends BaseEditTool {
     return [
       new SetAnnotationEditTypeCommand(PrimitiveType.None),
       new SetAnnotationEditTypeCommand(PrimitiveType.Box),
+      new SetAnnotationEditTypeCommand(PrimitiveType.Cylinder),
       undefined,
       new UndoCommand(),
       new DeleteSelectedAnnotationCommand(),
@@ -299,6 +301,12 @@ export class AnnotationEditTool extends BaseEditTool {
           return undefined;
         }
         return new BoxCreator(this, gizmo);
+      }
+      case PrimitiveType.Cylinder: {
+        if (!(gizmo instanceof CylinderGizmoDomainObject)) {
+          return undefined;
+        }
+        return new CylinderCreator(this, gizmo);
       }
       default:
         return undefined;
