@@ -30,7 +30,7 @@ import { CylinderUtils } from '../../base/utilities/box/CylinderUtils';
 import { BoxUtils } from '../../base/utilities/box/BoxUtils';
 import { AnnotationChangedDescription } from './helpers/AnnotationChangedDescription';
 import { ALL_STATUSES, getStatusByAnnotation, Status } from './helpers/Status';
-import { isBoxPartlyVisibleByPlanes } from '../../base/utilities/geometry/isPointVisibleByPlanes';
+import { isPartOfBoxVisibleByPlanes } from '../../base/utilities/geometry/isPointVisibleByPlanes';
 
 const FOCUS_ANNOTATION_NAME = 'focus-annotation-name';
 const GROUP_SIZE = 100;
@@ -171,7 +171,7 @@ export class AnnotationsView extends GroupThreeView<AnnotationsDomainObject> {
       for (const annotation of annotations) {
         tempBoundingBox.makeEmpty();
         expandBoundingBox(tempBoundingBox, annotation, this.globalMatrix);
-        if (isBoxPartlyVisibleByPlanes(clippingPlanes, tempBoundingBox)) {
+        if (isPartOfBoxVisibleByPlanes(clippingPlanes, tempBoundingBox)) {
           boundingBox.union(tempBoundingBox);
         }
       }
@@ -200,7 +200,7 @@ export class AnnotationsView extends GroupThreeView<AnnotationsDomainObject> {
         }
         boundingBox.makeEmpty();
         expandBoundingBox(boundingBox, annotation, this.globalMatrix);
-        return isBoxPartlyVisibleByPlanes(clippingPlanes, boundingBox);
+        return isPartOfBoxVisibleByPlanes(clippingPlanes, boundingBox);
       });
 
       for (let startIndex = 0; startIndex < filteredAnnotation.length; startIndex += GROUP_SIZE) {

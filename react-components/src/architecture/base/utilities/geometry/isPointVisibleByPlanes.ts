@@ -5,10 +5,10 @@
 import { type Box3, type Plane, Vector3 } from 'three';
 import { getCorners } from './getCorners';
 
-const tempTarget = new Vector3(); // Used by isBoxPartlyVisibleByPlanes for speed
+const tempTarget = new Vector3(); // Reuse this vector to avoid creating a new one every time
 
-export function isBoxPartlyVisibleByPlanes(planes: Plane[], box: Box3 | undefined): boolean {
-  if (box === undefined) {
+export function isPartOfBoxVisibleByPlanes(planes: Plane[], box: Box3): boolean {
+  if (box.isEmpty()) {
     return false;
   }
   for (const corner of getCorners(box, tempTarget)) {
@@ -17,6 +17,18 @@ export function isBoxPartlyVisibleByPlanes(planes: Plane[], box: Box3 | undefine
     }
   }
   return false;
+}
+
+export function isEntireBoxVisibleByPlanes(planes: Plane[], box: Box3): boolean {
+  if (box.isEmpty()) {
+    return false;
+  }
+  for (const corner of getCorners(box, tempTarget)) {
+    if (!isPointVisibleByPlanes(planes, corner)) {
+      return false;
+    }
+  }
+  return true;
 }
 
 // TODO: This function is defined in Reveal. Reuse that instead
