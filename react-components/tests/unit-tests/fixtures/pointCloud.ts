@@ -1,4 +1,4 @@
-import { CognitePointCloudModel } from '@cognite/reveal';
+import { type CognitePointCloudModel } from '@cognite/reveal';
 import { Mock } from 'moq.ts';
 import { Matrix4 } from 'three';
 
