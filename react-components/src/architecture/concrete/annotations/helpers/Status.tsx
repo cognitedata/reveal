@@ -3,9 +3,22 @@
  */
 
 import { type AnnotationStatus } from '@cognite/sdk';
-import { type PointCloudAnnotation } from './types';
-import { isAnnotationsBoundingVolume } from './annotationGeometryUtils';
-import { Status } from '../AnnotationsView';
+import { type PointCloudAnnotation } from '../utils/types';
+import { isAnnotationsBoundingVolume } from '../utils/annotationGeometryUtils';
+
+export enum Status {
+  Contextualized, // This state is Approved and has AssetRef != undefined
+  Approved,
+  Suggested,
+  Rejected
+}
+
+export const ALL_STATUSES = [
+  Status.Rejected,
+  Status.Suggested,
+  Status.Approved,
+  Status.Contextualized
+];
 
 export function getStatusByAnnotation(annotation: PointCloudAnnotation): Status {
   const volume = annotation.geometry;

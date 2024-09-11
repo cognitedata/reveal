@@ -24,22 +24,15 @@ import { type AnnotationsRenderStyle } from './AnnotationsRenderStyle';
 import { type DomainObjectChange } from '../../base/domainObjectsHelpers/DomainObjectChange';
 import { Changes } from '../../base/domainObjectsHelpers/Changes';
 import { type DomainObjectIntersection } from '../../base/domainObjectsHelpers/DomainObjectIntersection';
-import { getStatusByAnnotation } from './utils/getStatusByAnnotation';
 import { SingleAnnotation } from './helpers/SingleAnnotation';
 import { Box3, Group, Matrix4, Mesh, MeshBasicMaterial, type Object3D, Vector2 } from 'three';
 import { CylinderUtils } from '../../base/utilities/box/CylinderUtils';
 import { BoxUtils } from '../../base/utilities/box/BoxUtils';
 import { AnnotationChangedDescription } from './helpers/AnnotationChangedDescription';
+import { ALL_STATUSES, getStatusByAnnotation, Status } from './helpers/Status';
 
 const FOCUS_ANNOTATION_NAME = 'focus-annotation-name';
 const GROUP_SIZE = 100;
-
-export enum Status {
-  Contextualized, // This state is Approved and has AssetRef != undefined
-  Approved,
-  Suggested,
-  Rejected
-}
 
 export class AnnotationsView extends GroupThreeView<AnnotationsDomainObject> {
   // ==================================================
@@ -182,8 +175,7 @@ export class AnnotationsView extends GroupThreeView<AnnotationsDomainObject> {
       return;
     }
 
-    const statuses = [Status.Rejected, Status.Suggested, Status.Approved, Status.Contextualized];
-    for (const status of statuses) {
+    for (const status of ALL_STATUSES) {
       const filteredAnnotation = annotations.filter(
         (annotation) => getStatusByAnnotation(annotation) === status
       );
@@ -299,8 +291,7 @@ export class AnnotationsView extends GroupThreeView<AnnotationsDomainObject> {
   private updateRenderStyle(): void {
     const { style } = this;
 
-    const statuses = [Status.Rejected, Status.Suggested, Status.Approved, Status.Contextualized];
-    for (const status of statuses) {
+    for (const status of ALL_STATUSES) {
       this.setStyle(style, status, false);
       this.setStyle(style, status, true);
     }

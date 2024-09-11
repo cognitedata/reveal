@@ -10,13 +10,13 @@ import { type AnnotationsCogniteAnnotationTypesPrimitivesGeometry3DGeometry as A
 import { type PointCloudAnnotation } from './types';
 
 import { getAnnotationGeometries } from './annotationGeometryUtils';
-import { type Status } from '../AnnotationsView';
 import { getAnnotationMatrixByGeometry } from '../helpers/getMatrixUtils';
 import { WireframeUserData } from '../helpers/WireframeUserData';
 import { Matrix4, Vector3 } from 'three';
 import { BoxUtils } from '../../../base/utilities/box/BoxUtils';
 import { CylinderUtils } from '../../../base/utilities/box/CylinderUtils';
 import { PrimitiveUtils } from '../../../base/utilities/box/PrimitiveUtils';
+import { type Status } from '../helpers/Status';
 
 export type CreateWireframeArgs = {
   annotations: PointCloudAnnotation[];

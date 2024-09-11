@@ -3,8 +3,7 @@
  */
 
 import { type PointCloudAnnotation } from '../utils/types';
-
-import { type Status } from '../AnnotationsView';
+import { type Status } from './Status';
 
 export class WireframeUserData {
   public selected: boolean;

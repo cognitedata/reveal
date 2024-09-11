@@ -17,7 +17,7 @@ import { SingleAnnotation } from './helpers/SingleAnnotation';
 import { SolidDomainObject } from '../primitives/base/SolidDomainObject';
 import { PrimitiveType } from '../primitives/PrimitiveType';
 import { CylinderGizmoDomainObject } from './CylinderGizmoDomainObject';
-import { getStatusByAnnotation } from './utils/getStatusByAnnotation';
+import { getStatusByAnnotation } from './utils/Status';
 import { AnnotationChangedDescription } from './helpers/AnnotationChangedDescription';
 import { DomainObjectChange } from '../../base/domainObjectsHelpers/DomainObjectChange';
 
