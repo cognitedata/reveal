@@ -155,7 +155,7 @@ export function forceBetween0AndPi(value: number): number {
   return value;
 }
 
-export function forceAroundPi(value: number): number {
+export function forceAngleAround0(value: number): number {
   // Force the angle to be between -PI and PI
   while (value < -Math.PI) {
     value += 2 * Math.PI;

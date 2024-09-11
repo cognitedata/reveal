@@ -19,7 +19,7 @@ import { Quantity } from '../../../base/domainObjectsHelpers/Quantity';
 import { PanelInfo } from '../../../base/domainObjectsHelpers/PanelInfo';
 import { radToDeg } from 'three/src/math/MathUtils.js';
 import {
-  forceAroundPi,
+  forceAngleAround0,
   forceBetween0AndPi,
   forceBetween0AndTwoPi
 } from '../../../base/utilities/extensions/mathExtensions';
@@ -219,10 +219,10 @@ export abstract class BoxDomainObject extends SolidDomainObject {
 
   public getRotationInDegrees(component: number): number {
     if (component === 0) {
-      return radToDeg(forceAroundPi(this.rotation.x));
+      return radToDeg(forceAngleAround0(this.rotation.x));
     }
     if (component === 1) {
-      return radToDeg(forceAroundPi(this.rotation.y));
+      return radToDeg(forceAngleAround0(this.rotation.y));
     }
     return this.zRotationInDegrees;
   }
