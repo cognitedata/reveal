@@ -17,7 +17,7 @@ import { type TaggedAddResourceOptions } from '../../components/Reveal3DResource
 import { COGNITE_3D_OBJECT_SOURCE } from './dataModels';
 import { getDMSModels } from './getDMSModels';
 import { getEdgeConnected3dInstances } from './getEdgeConnected3dInstances';
-import { getFdmConnectionsForNodes } from './getFdmConnectionsForNodeIds';
+import { getFdmConnectionsForNodes } from './getFdmConnectionsForNodes';
 import { type Node3D } from '@cognite/sdk';
 import { getDMSRevision } from './getDMSRevision';
 import { listAllMappedFdmNodes, listMappedFdmNodes } from './listMappedFdmNodes';

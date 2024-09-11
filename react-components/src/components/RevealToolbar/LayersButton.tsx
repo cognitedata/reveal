@@ -40,16 +40,16 @@ export const LayersButton = ({
   );
 
   return (
-    <CogsTooltip
-      content={t('LAYERS_FILTER_TOOLTIP', 'Filter 3D resource layers')}
-      placement="right"
-      appendTo={document.body}>
-      <Dropdown
-        appendTo={viewer.domElement ?? document.body}
-        content={<LayersContainer modelHandlers={modelLayerHandlers} update={update} />}
-        placement="right-start">
+    <Dropdown
+      appendTo={viewer.domElement ?? document.body}
+      content={<LayersContainer modelHandlers={modelLayerHandlers} update={update} />}
+      placement="right-start">
+      <CogsTooltip
+        content={t('LAYERS_FILTER_TOOLTIP', 'Filter 3D resource layers')}
+        placement="right"
+        appendTo={document.body}>
         <Button type="ghost" icon="Layers" aria-label="3D Resource layers" />
-      </Dropdown>
-    </CogsTooltip>
+      </CogsTooltip>
+    </Dropdown>
   );
 };

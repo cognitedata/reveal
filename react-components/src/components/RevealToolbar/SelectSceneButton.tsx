@@ -40,25 +40,25 @@ export const SelectSceneButton = ({
   }
 
   return (
-    <CogsTooltip
-      content={t('SCENE_SELECT_HEADER', 'Select 3D location')}
-      placement="right"
-      appendTo={document.body}>
-      <Dropdown
-        placement="right-start"
-        content={
-          <StyledMenu>
-            {orientation === 'none' && (
-              <Menu.Header>{t('SCENE_SELECT_HEADER', 'Select 3D location')}</Menu.Header>
-            )}
-            <SceneList selectedScene={selectedScene} onSceneChange={setSceneAndUpdateName} />
-          </StyledMenu>
-        }>
+    <Dropdown
+      placement="right-start"
+      content={
+        <StyledMenu>
+          {orientation === 'none' && (
+            <Menu.Header>{t('SCENE_SELECT_HEADER', 'Select 3D location')}</Menu.Header>
+          )}
+          <SceneList selectedScene={selectedScene} onSceneChange={setSceneAndUpdateName} />
+        </StyledMenu>
+      }>
+      <CogsTooltip
+        content={t('SCENE_SELECT_HEADER', 'Select 3D location')}
+        placement="right"
+        appendTo={document.body}>
         <Button icon="World" aria-label="Select 3D location" type="ghost">
           {orientation === 'horizontal' && sceneName}
         </Button>
-      </Dropdown>
-    </CogsTooltip>
+      </CogsTooltip>
+    </Dropdown>
   );
 };
 

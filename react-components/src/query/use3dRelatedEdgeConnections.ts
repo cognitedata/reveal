@@ -34,7 +34,11 @@ export function use3dRelatedEdgeConnections(
 
       const views = await fdmSdk.inspectInstances({
         inspectionOperations: { involvedViews: {} },
-        items: relatedInstances.map((instance) => ({ ...instance, instanceType: 'node' }))
+        items: relatedInstances.map((instance) => ({
+          externalId: instance.externalId,
+          space: instance.space,
+          instanceType: 'node'
+        }))
       });
 
       return zipWith(relatedInstances, views.items, (node, view) => ({

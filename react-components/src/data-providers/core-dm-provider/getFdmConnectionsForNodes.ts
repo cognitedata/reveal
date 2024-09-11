@@ -59,7 +59,9 @@ export async function getFdmConnectionsForNodes(
 
   result.items.cad_nodes.forEach((cadNode) => {
     const props = cadNode.properties[CORE_DM_SPACE][COGNITE_CAD_NODE_VIEW_VERSION_KEY];
-    const revisionIndex = props.revisions.findIndex((id) => id === revisionRef);
+    const revisionIndex = props.revisions.findIndex(
+      (id) => id.externalId === revisionRef.externalId && id.space === revisionRef.space
+    );
 
     const treeIndex = props.treeIndexes[revisionIndex];
     const relevant = treeIndexSet.has(treeIndex);
@@ -141,7 +143,8 @@ const cadConnectionQuery = {
     objects_3d: {
       nodes: {
         from: 'cad_nodes',
-        through: { view: COGNITE_CAD_NODE_SOURCE, identifier: 'object3D' }
+        through: { view: COGNITE_CAD_NODE_SOURCE, identifier: 'object3D' },
+        direction: 'outwards'
       }
     },
     assets: {
