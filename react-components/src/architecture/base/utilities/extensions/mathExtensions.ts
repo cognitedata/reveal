@@ -134,6 +134,7 @@ export function floor(value: number, delta: number): number {
 }
 
 export function forceBetween0AndTwoPi(value: number): number {
+  // Force the angle to be between 0 and 2*PI
   while (value < 0) {
     value += 2 * Math.PI;
   }
@@ -144,11 +145,23 @@ export function forceBetween0AndTwoPi(value: number): number {
 }
 
 export function forceBetween0AndPi(value: number): number {
+  // Force the angle to be between 0 and PI
   while (value < 0) {
     value += Math.PI;
   }
   while (value >= Math.PI) {
     value -= Math.PI;
+  }
+  return value;
+}
+
+export function forceAroundPi(value: number): number {
+  // Force the angle to be between -PI and PI
+  while (value < -Math.PI) {
+    value += 2 * Math.PI;
+  }
+  while (value >= Math.PI) {
+    value -= 2 * Math.PI;
   }
   return value;
 }

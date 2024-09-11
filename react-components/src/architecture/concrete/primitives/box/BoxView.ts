@@ -127,19 +127,17 @@ export class BoxView extends GroupThreeView<BoxDomainObject> {
       }
     }
     if (showMarkers(focusType)) {
-      for (const face of BoxFace.getAllFaces()) {
-        this.addChild(this.createRotationRing(matrix, face));
-      }
+      this.addRotationRing(matrix);
       this.addEdgeCircles(matrix);
     }
     if (style.showLabel) {
       this.addLabels(matrix);
     } else if (focusType === FocusType.Rotation) {
-      const spriteHeight = this.getTextHeight(this.style.relativeTextSize);
-      // for (const boxFace of BoxFace.getAllFaces()) {
-      //   this.addChild(this.createRotationLabel(matrix, spriteHeight, boxFace));
-      // }
-      this.addChild(this.createRotationLabel(matrix, spriteHeight, TOP_FACE));
+      const face = domainObject.focusFace;
+      if (face !== undefined) {
+        const spriteHeight = this.getTextHeight(this.style.relativeTextSize);
+        this.addChild(this.createRotationLabel(matrix, spriteHeight, face));
+      }
     }
   }
 
@@ -278,7 +276,7 @@ export class BoxView extends GroupThreeView<BoxDomainObject> {
     if (rootDomainObject === undefined) {
       return undefined;
     }
-    const degrees = domainObject.zRotationInDegrees;
+    const degrees = domainObject.getRotationInDegrees(face.index);
     if (degrees === 0) {
       return undefined; // Not show when about 0
     }
@@ -313,24 +311,14 @@ export class BoxView extends GroupThreeView<BoxDomainObject> {
     return sprite;
   }
 
-  private createRotationRing(matrix: Matrix4, face: BoxFace): Mesh | undefined {
-    if (!this.isFaceVisible(face)) {
-      return undefined;
-    }
-    const { domainObject, style } = this;
-    if (!domainObject.canRotateComponent(face.index)) {
-      return undefined;
-    }
-    const { focusType } = domainObject;
+  private createRotationRing(matrix: Matrix4, material: Material, face: BoxFace): Mesh | undefined {
+    const { domainObject } = this;
     const radius = this.getFaceRadius(face);
 
     const outerRadius = RELATIVE_ROTATION_RADIUS.max * radius;
     const innerRadius = RELATIVE_ROTATION_RADIUS.min * radius;
     const geometry = new RingGeometry(innerRadius, outerRadius, CIRCULAR_SEGMENTS);
 
-    const material = new MeshPhongMaterial();
-    updateMarkerMaterial(material, domainObject, style, focusType === FocusType.Rotation);
-    material.clippingPlanes = BoxFace.createClippingPlanes(matrix, face.index);
     const result = new Mesh(geometry, material);
     result.renderOrder = RENDER_ORDER;
 
@@ -480,18 +468,50 @@ export class BoxView extends GroupThreeView<BoxDomainObject> {
     }
     const material = new MeshPhongMaterial();
     updateMarkerMaterial(material, domainObject, style, false);
-    for (const boxFace of BoxFace.getAllFaces()) {
-      if (!this.isFaceVisible(boxFace)) {
+    for (const face of BoxFace.getAllFaces()) {
+      if (!this.isFaceVisible(face)) {
         continue;
       }
-      if (selectedFace === undefined || !selectedFace.equals(boxFace)) {
-        this.addChild(this.createEdgeCircle(matrix, material, boxFace));
+      if (selectedFace !== undefined && selectedFace.equals(face)) {
+        continue;
       }
+      this.addChild(this.createEdgeCircle(matrix, material, face));
     }
     if (selectedFace !== undefined && this.isFaceVisible(selectedFace)) {
       const material = new MeshPhongMaterial();
       updateMarkerMaterial(material, domainObject, style, true);
       this.addChild(this.createEdgeCircle(matrix, material, selectedFace));
+    }
+  }
+
+  private addRotationRing(matrix: Matrix4): void {
+    const { domainObject, style } = this;
+    let selectedFace = domainObject.focusFace;
+    if (this.domainObject.focusType !== FocusType.Rotation) {
+      selectedFace = undefined;
+    } else if (selectedFace !== undefined && !domainObject.canRotateComponent(selectedFace.index)) {
+      selectedFace = undefined;
+    }
+    for (const face of BoxFace.getAllFaces()) {
+      if (!this.isFaceVisible(face)) {
+        continue;
+      }
+      if (!domainObject.canRotateComponent(face.index)) {
+        continue;
+      }
+      if (selectedFace !== undefined && selectedFace.equals(face)) {
+        continue;
+      }
+      const material = new MeshPhongMaterial();
+      updateMarkerMaterial(material, domainObject, style, false);
+      material.clippingPlanes = BoxFace.createClippingPlanes(matrix, face.index);
+      this.addChild(this.createRotationRing(matrix, material, face));
+    }
+    if (selectedFace !== undefined && this.isFaceVisible(selectedFace)) {
+      const material = new MeshPhongMaterial();
+      updateMarkerMaterial(material, domainObject, style, true);
+      material.clippingPlanes = BoxFace.createClippingPlanes(matrix, selectedFace.index);
+      this.addChild(this.createRotationRing(matrix, material, selectedFace));
     }
   }
 

@@ -19,6 +19,7 @@ import { Quantity } from '../../../base/domainObjectsHelpers/Quantity';
 import { PanelInfo } from '../../../base/domainObjectsHelpers/PanelInfo';
 import { radToDeg } from 'three/src/math/MathUtils.js';
 import {
+  forceAroundPi,
   forceBetween0AndPi,
   forceBetween0AndTwoPi
 } from '../../../base/utilities/extensions/mathExtensions';
@@ -35,21 +36,6 @@ export abstract class BoxDomainObject extends SolidDomainObject {
   public readonly center = new Vector3();
   public readonly rotation = new Euler(0, 0, 0, 'ZYX');
   private readonly _primitiveType: PrimitiveType;
-
-  // ==================================================
-  // INSTANCE PROPERTIES
-  // ==================================================
-
-  public get hasXYRotation(): boolean {
-    return this.rotation.x !== 0 || this.rotation.y !== 0;
-  }
-
-  public get zRotationInDegrees(): number {
-    const zRotation = this.hasXYRotation
-      ? forceBetween0AndTwoPi(this.rotation.z)
-      : forceBetween0AndPi(this.rotation.z);
-    return radToDeg(zRotation);
-  }
 
   // ==================================================
   // CONSTRUCTOR
@@ -219,6 +205,27 @@ export abstract class BoxDomainObject extends SolidDomainObject {
   // ==================================================
   // INSTANCE METHODS / PROPERTIES: Geometrical getters
   // ==================================================
+
+  public get hasXYRotation(): boolean {
+    return this.rotation.x !== 0 || this.rotation.y !== 0;
+  }
+
+  public get zRotationInDegrees(): number {
+    const zRotation = this.hasXYRotation
+      ? forceBetween0AndTwoPi(this.rotation.z)
+      : forceBetween0AndPi(this.rotation.z);
+    return radToDeg(zRotation);
+  }
+
+  public getRotationInDegrees(component: number): number {
+    if (component === 0) {
+      return radToDeg(forceAroundPi(this.rotation.x));
+    }
+    if (component === 1) {
+      return radToDeg(forceAroundPi(this.rotation.y));
+    }
+    return this.zRotationInDegrees;
+  }
 
   public get diagonal(): number {
     return this.size.length();
