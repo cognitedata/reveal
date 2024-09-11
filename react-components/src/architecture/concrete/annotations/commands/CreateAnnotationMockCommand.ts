@@ -33,7 +33,7 @@ const onAnnotationChanged = (domainObject: DomainObject, change: DomainObjectCha
     const _geometry = description.annotation.geometry;
 
     if (description.change === Changes.changedPart) {
-      // Save the annotation
+      // updateAnnotationToCdf(_annotation.);
       // console.log('Change annotation');
     }
     if (description.change === Changes.dragging) {
@@ -41,18 +41,23 @@ const onAnnotationChanged = (domainObject: DomainObject, change: DomainObjectCha
     } else if (description.change === Changes.deletedPart) {
       // Delete the annotation or part of it
       // console.log('Delete annotation');
+      // deleteAnnotationToCdf(_annotation);
     } else if (description.change === Changes.addedPart) {
       // Maybe use this for pending?
       // console.log('Add annotation');
+      // addAnnotationToCdf(_annotation);
     }
   }
-
   if (change.isChanged(Changes.newPending)) {
     // Selection has change. Get selection by: (undefined if not any)
     const _annotation = domainObject.pendingAnnotation;
     // console.log('New Pending');
     // Call domainObject.applyPendingAnnotationInteractive() when ready
-    // domainObject.applyPendingAnnotationInteractive();
+
+    // Hos Henrik
+    // _annotation?.annotation.assetRef = 2222;
+    domainObject.applyPendingAnnotationInteractive();
+    // domainObject.notifyChange(linkChange);
   }
   if (change.isChanged(Changes.selected)) {
     // Selection has change. Get selection by: (undefined if not any)

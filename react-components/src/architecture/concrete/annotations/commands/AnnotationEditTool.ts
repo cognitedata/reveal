@@ -217,13 +217,17 @@ export class AnnotationEditTool extends BaseEditTool {
       const gizmo = getIntersectedAnnotationGizmo(intersection);
 
       if (domainObject !== undefined && annotation !== undefined) {
+        // Click at an annotation
         this.setSelectedAnnotationInteractive(domainObject, annotation);
+        return;
       } else if (domainObject !== undefined) {
+        // This will rather ont happen
         this.setSelectedAnnotationInteractive(domainObject, undefined);
       } else if (gizmo === undefined) {
         // Click in the "air"
         this.deselectedAnnotationInteractive();
       }
+      await super.onClick(event);
     }
   }
 
