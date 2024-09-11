@@ -102,8 +102,8 @@ export class CylinderCreator extends BaseCreator {
 
   /**
    * Create the cylinder by adding points. The first point will make a centerA.
-   * The second point will give the centerB
-   * The third will give radius
+   * The second point will give the centerB.
+   * The third will give radius. The radius is already calculated in the recalculatePoint
    */
 
   private rebuild(): void {
@@ -112,15 +112,19 @@ export class CylinderCreator extends BaseCreator {
     }
     const domainObject = this._domainObject;
     if (this.pointCount === 1) {
-      domainObject.forceMinSize();
-      domainObject.centerA.copy(this.firstPoint);
-      domainObject.centerB.copy(this.firstPoint);
+      const { centerA, centerB } = this._domainObject;
+      centerA.copy(this.firstPoint);
+      centerB.copy(this.firstPoint);
       const smallVector = new Vector3(MIN_SIZE, 0, 0);
-      domainObject.centerA.sub(smallVector);
-      domainObject.centerB.add(smallVector);
-    } else if (this.pointCount === 2) {
-      domainObject.centerA.copy(this.firstPoint);
-      domainObject.centerB.copy(this.lastPoint);
+      centerA.sub(smallVector);
+      centerB.add(smallVector);
+      domainObject.forceMinSize();
+    }
+    if (this.pointCount === 2) {
+      const { centerA, centerB } = this._domainObject;
+      centerA.copy(this.firstPoint);
+      centerB.copy(this.lastPoint);
+      domainObject.forceMinSize();
     } else {
       domainObject.radius = this._radius;
     }
