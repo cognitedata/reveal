@@ -28,7 +28,7 @@ export abstract class PrimitiveEditTool extends BaseEditTool {
 
   private _creator: BaseCreator | undefined = undefined;
   public primitiveType: PrimitiveType;
-  public defaultPrimitiveType: PrimitiveType;
+  public readonly defaultPrimitiveType: PrimitiveType;
 
   // ==================================================
   // CONSTRUCTOR

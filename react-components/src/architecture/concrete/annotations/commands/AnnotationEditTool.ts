@@ -43,7 +43,8 @@ export class AnnotationEditTool extends BaseEditTool {
 
   private _creator: BaseCreator | undefined = undefined;
   public primitiveType: PrimitiveType;
-  public defaultPrimitiveType: PrimitiveType;
+  public isHorizontal = false;
+  public readonly defaultPrimitiveType: PrimitiveType;
 
   // ==================================================
   // CONSTRUCTOR
@@ -237,7 +238,8 @@ export class AnnotationEditTool extends BaseEditTool {
     return [
       new SetAnnotationEditTypeCommand(PrimitiveType.None),
       new SetAnnotationEditTypeCommand(PrimitiveType.Box),
-      new SetAnnotationEditTypeCommand(PrimitiveType.Cylinder),
+      new SetAnnotationEditTypeCommand(PrimitiveType.Cylinder, true),
+      new SetAnnotationEditTypeCommand(PrimitiveType.Cylinder, false),
       undefined,
       new UndoCommand(),
       new DeleteSelectedAnnotationCommand(),
@@ -306,7 +308,7 @@ export class AnnotationEditTool extends BaseEditTool {
         if (!(gizmo instanceof CylinderGizmoDomainObject)) {
           return undefined;
         }
-        return new CylinderCreator(this, gizmo);
+        return new CylinderCreator(this, gizmo, this.isHorizontal);
       }
       default:
         return undefined;

@@ -22,16 +22,18 @@ export class CylinderCreator extends BaseCreator {
   // ==================================================
 
   private readonly _domainObject: CylinderDomainObject;
+  private readonly _isHorizontal;
   private _radius = MIN_SIZE;
 
   // ==================================================
   // CONSTRUCTOR
   // ==================================================
 
-  public constructor(tool: BaseTool, domainObject: CylinderDomainObject) {
+  public constructor(tool: BaseTool, domainObject: CylinderDomainObject, isHorizontal: boolean) {
     super(tool);
     this._domainObject = domainObject;
     this._domainObject.focusType = FocusType.Pending;
+    this._isHorizontal = isHorizontal;
   }
 
   // ==================================================
@@ -82,9 +84,30 @@ export class CylinderCreator extends BaseCreator {
     // Recalculate the point anyway for >= 1 points
     // This makes it more natural and you can pick in empty space
     if (this.notPendingPointCount === 1) {
-      const plane = new Plane().setFromNormalAndCoplanarPoint(UP_VECTOR, this.firstPoint);
-      const newPoint = ray.intersectPlane(plane, new Vector3());
-      return newPoint ?? undefined;
+      if (this._isHorizontal) {
+        if (point === undefined) {
+          const plane = new Plane().setFromNormalAndCoplanarPoint(UP_VECTOR, this.firstPoint);
+          const newPoint = ray.intersectPlane(plane, new Vector3());
+          return newPoint ?? undefined;
+        } else {
+          point.x = this.firstPoint.x;
+          point.y = this.firstPoint.y;
+          return point;
+        }
+      } else {
+        if (point === undefined) {
+          const lineLength = ray.origin.distanceTo(this.firstPoint) * 100;
+          const v0 = this.firstPoint.clone().addScaledVector(UP_VECTOR, -lineLength);
+          const v1 = this.firstPoint.clone().addScaledVector(UP_VECTOR, +lineLength);
+
+          const point = new Vector3();
+          ray.distanceSqToSegment(v0, v1, undefined, point);
+          return point;
+        } else {
+          point.z = this.firstPoint.z;
+          return point;
+        }
+      }
     } else if (this.notPendingPointCount === 2) {
       const { center, axis } = this._domainObject;
 
