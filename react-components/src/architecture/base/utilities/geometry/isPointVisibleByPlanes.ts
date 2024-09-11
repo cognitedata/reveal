@@ -31,7 +31,7 @@ export function isEntireBoxVisibleByPlanes(planes: Plane[], box: Box3): boolean 
   return true;
 }
 
-// TODO: This function is defined in Reveal. Reuse that instead
+// TODO: This function is defined in Reveal. Reuse that instead?
 export function isPointVisibleByPlanes(planes: Plane[], point: Vector3): boolean {
   return planes.every((p) => p.distanceToPoint(point) >= 0);
 }

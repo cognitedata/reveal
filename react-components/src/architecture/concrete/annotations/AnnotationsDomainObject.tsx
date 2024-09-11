@@ -92,10 +92,7 @@ export class AnnotationsDomainObject extends VisualDomainObject {
     if (isChanged) {
       const change = new AnnotationChangedDescription(Changes.deletedPart, this.selectedAnnotation);
       this.notify(change);
-      const gizmo = this.getGizmo();
-      if (gizmo !== undefined) {
-        gizmo.removeInteractive(false);
-      }
+      this.removeGizmoInteractive();
     }
     this.selectedAnnotation = undefined;
     return isChanged;
@@ -163,10 +160,7 @@ export class AnnotationsDomainObject extends VisualDomainObject {
     if (this.pendingAnnotation === undefined) {
       return false;
     }
-    const gizmo = this.getGizmo();
-    if (gizmo !== undefined) {
-      gizmo.removeInteractive(false);
-    }
+    this.removeGizmoInteractive();
     this.pendingAnnotation = undefined;
     return true;
   }
@@ -233,6 +227,13 @@ export class AnnotationsDomainObject extends VisualDomainObject {
     gizmoRenderStyle.depthTest = false;
     gizmo.color.set(renderStyle.pendingColor);
     return gizmo;
+  }
+
+  public removeGizmoInteractive(): void {
+    const gizmo = this.getGizmo();
+    if (gizmo !== undefined) {
+      gizmo.removeInteractive(false);
+    }
   }
 }
 

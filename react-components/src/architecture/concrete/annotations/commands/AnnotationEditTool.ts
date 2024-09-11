@@ -403,10 +403,7 @@ export class AnnotationEditTool extends BaseEditTool {
   ): void {
     if (annotation === undefined) {
       annotationsDomainObject.setSelectedAnnotationInteractive(undefined);
-      const gizmo = annotationsDomainObject.getGizmo();
-      if (gizmo !== undefined) {
-        gizmo.removeInteractive(false);
-      }
+      annotationsDomainObject.removeGizmoInteractive();
       return;
     }
     const gizmo = annotationsDomainObject.getOrCreateGizmoByAnnotation(annotation);
