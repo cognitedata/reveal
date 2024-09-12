@@ -64,7 +64,7 @@ export function CadModelContainer({
 
   useApplyCadModelStyling(model, styling);
 
-  useEffect(() => removeModel, [model]);
+  useEffect(() => () => removeModel(model), [model]);
 
   return <></>;
 
@@ -96,7 +96,7 @@ export function CadModelContainer({
     }
   }
 
-  function removeModel(): void {
+  function removeModel(model: CogniteCadModel | undefined): void {
     if (!modelExists(model, viewer)) return;
 
     if (cachedViewerRef !== undefined && !cachedViewerRef.isRevealContainerMountedRef.current)
@@ -104,7 +104,6 @@ export function CadModelContainer({
 
     viewer.removeModel(model);
     setRevealResourcesCount(getViewerResourceCount(viewer));
-    setModel(undefined);
   }
 }
 
