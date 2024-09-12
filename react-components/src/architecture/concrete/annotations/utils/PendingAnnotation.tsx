@@ -5,7 +5,7 @@
 import { type Matrix4, type Box3 } from 'three';
 import { type PointCloudAnnotation } from './types';
 import { getSingleAnnotationGeometry } from './annotationGeometryUtils';
-import { BoxUtils } from '../../../base/utilities/box/BoxUtils';
+import { BoxUtils } from '../../../base/utilities/geometry/BoxUtils';
 
 export class PendingAnnotation {
   matrix: Matrix4;

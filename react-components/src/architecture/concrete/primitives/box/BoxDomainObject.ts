@@ -25,7 +25,7 @@ import {
 } from '../../../base/utilities/extensions/mathExtensions';
 import { MIN_SIZE, SolidDomainObject } from '../base/SolidDomainObject';
 import { SolidPrimitiveRenderStyle } from '../base/SolidPrimitiveRenderStyle';
-import { BoxUtils } from '../../../base/utilities/box/BoxUtils';
+import { BoxUtils } from '../../../base/utilities/geometry/BoxUtils';
 
 export abstract class BoxDomainObject extends SolidDomainObject {
   // ==================================================

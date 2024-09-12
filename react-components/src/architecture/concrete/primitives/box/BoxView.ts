@@ -36,7 +36,7 @@ import { BoxFace } from '../../../base/utilities/box/BoxFace';
 import { FocusType } from '../../../base/domainObjectsHelpers/FocusType';
 import { clear } from '../../../base/utilities/extensions/arrayExtensions';
 import { createSpriteWithText } from '../../../base/utilities/sprites/createSprite';
-import { BoxUtils } from '../../../base/utilities/box/BoxUtils';
+import { BoxUtils } from '../../../base/utilities/geometry/BoxUtils';
 import { BoxPickInfo } from '../../../base/utilities/box/BoxPickInfo';
 import { Range1 } from '../../../base/utilities/geometry/Range1';
 import { PrimitiveType } from '../PrimitiveType';

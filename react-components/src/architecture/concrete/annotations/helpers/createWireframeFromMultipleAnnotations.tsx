@@ -13,9 +13,9 @@ import { getAnnotationGeometries } from '../utils/annotationGeometryUtils';
 import { getAnnotationMatrixByGeometry } from './getMatrixUtils';
 import { WireframeUserData } from './WireframeUserData';
 import { Matrix4, Vector3 } from 'three';
-import { BoxUtils } from '../../../base/utilities/box/BoxUtils';
-import { CylinderUtils } from '../../../base/utilities/box/CylinderUtils';
-import { PrimitiveUtils } from '../../../base/utilities/box/PrimitiveUtils';
+import { BoxUtils } from '../../../base/utilities/geometry/BoxUtils';
+import { CylinderUtils } from '../../../base/utilities/geometry/CylinderUtils';
+import { PrimitiveUtils } from '../../../base/utilities/geometry/PrimitiveUtils';
 import { type Status } from './Status';
 
 export type CreateWireframeArgs = {
@@ -34,7 +34,7 @@ export function createWireframeFromMultipleAnnotations(
   if (annotations.length === 0) {
     return undefined;
   }
-  const vertices: number[] = [];
+  const positions: number[] = [];
   const userData = new WireframeUserData(status, selected);
   const endIndex =
     groupSize === undefined
@@ -63,14 +63,14 @@ export function createWireframeFromMultipleAnnotations(
         translationMatrix = createTranslationMatrix(translation, -1);
       }
       matrix.premultiply(translationMatrix);
-      addVerticesForObject(vertices, objectVertices, matrix);
+      addPositionsForObject(positions, objectVertices, matrix);
     }
     userData.add(annotation);
     if (groupSize !== undefined && userData.length >= groupSize) {
       break;
     }
   }
-  const lineSegmentsGeometry = PrimitiveUtils.createLineSegmentsGeometry(vertices);
+  const lineSegmentsGeometry = PrimitiveUtils.createLineSegmentsGeometry(positions);
   const wireframe = new Wireframe(lineSegmentsGeometry, material);
   translationMatrix = createTranslationMatrix(translation);
   wireframe.matrix = translationMatrix;
@@ -80,14 +80,14 @@ export function createWireframeFromMultipleAnnotations(
   return wireframe;
 }
 
-const CYLINDER_VERTICES = CylinderUtils.createVertices();
-const BOX_VERTICES = BoxUtils.createVertices();
+const CYLINDER_POSITIONS = CylinderUtils.createPositions();
+const BOX_POSITIONS = BoxUtils.createPositions();
 
 function getObjectVertices(geometry: AnnotationGeometry): number[] | undefined {
   if (geometry.box !== undefined) {
-    return BOX_VERTICES;
+    return BOX_POSITIONS;
   } else if (geometry.cylinder !== undefined) {
-    return CYLINDER_VERTICES;
+    return CYLINDER_POSITIONS;
   } else {
     return undefined;
   }
@@ -101,7 +101,11 @@ function createTranslationMatrix(translation: Vector3, sign = 1): Matrix4 {
   );
 }
 
-function addVerticesForObject(vertices: number[], objectVertices: number[], matrix: Matrix4): void {
+function addPositionsForObject(
+  positions: number[],
+  objectVertices: number[],
+  matrix: Matrix4
+): void {
   const point = new Vector3();
   const additionalVertices = new Array<number>(objectVertices.length);
   for (let i = 0; i < objectVertices.length; i += 3) {
@@ -116,5 +120,5 @@ function addVerticesForObject(vertices: number[], objectVertices: number[], matr
     additionalVertices[i + 1] = point.y;
     additionalVertices[i + 2] = point.z;
   }
-  vertices.push(...additionalVertices);
+  positions.push(...additionalVertices);
 }

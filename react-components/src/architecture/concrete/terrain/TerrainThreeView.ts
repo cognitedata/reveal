@@ -3,10 +3,8 @@
  */
 
 import {
-  BufferGeometry,
   type DataTexture,
   DoubleSide,
-  Float32BufferAttribute,
   LineBasicMaterial,
   LineSegments,
   Mesh,
@@ -31,6 +29,7 @@ import { getColorMap } from '../../base/utilities/colors/colorMaps';
 import { GroupThreeView } from '../../base/views/GroupThreeView';
 import { CDF_TO_VIEWER_TRANSFORMATION } from '@cognite/reveal';
 import { type RegularGrid2 } from './geometry/RegularGrid2';
+import { PrimitiveUtils } from '../../base/utilities/geometry/PrimitiveUtils';
 
 const SOLID_NAME = 'Solid';
 const CONTOURS_NAME = 'Contour';
@@ -161,12 +160,11 @@ export class TerrainThreeView extends GroupThreeView<TerrainDomainObject> {
       return undefined;
     }
     const service = new ContouringService(style.increment);
-    const contoursBuffer = service.createContoursAsXyzArray(grid);
-    if (contoursBuffer.length === 0) {
+    const positions = service.createContoursAsPositions(grid);
+    if (positions.length === 0) {
       return undefined;
     }
-    const geometry = new BufferGeometry();
-    geometry.setAttribute('position', new Float32BufferAttribute(contoursBuffer, 3));
+    const geometry = PrimitiveUtils.createBufferGeometry(positions);
 
     const material = new LineBasicMaterial();
     updateContoursMaterial(material, domainObject, style);

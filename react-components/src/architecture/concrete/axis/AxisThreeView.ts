@@ -13,8 +13,6 @@ import {
   BackSide,
   Box3,
   OrthographicCamera,
-  BufferGeometry,
-  BufferAttribute,
   type PerspectiveCamera
 } from 'three';
 import { GroupThreeView } from '../../base/views/GroupThreeView';
@@ -30,6 +28,7 @@ import { TrianglesBuffers } from '../../base/utilities/geometry/TrianglesBuffers
 import { type DomainObjectChange } from '../../base/domainObjectsHelpers/DomainObjectChange';
 import { Changes } from '../../base/domainObjectsHelpers/Changes';
 import { Vector3Pool } from '@cognite/reveal';
+import { PrimitiveUtils } from '../../base/utilities/geometry/PrimitiveUtils';
 
 const FACE_INDEX_NAME1 = 'faceIndex1';
 const FACE_INDEX_NAME2 = 'faceIndex2';
@@ -211,12 +210,12 @@ export class AxisThreeView extends GroupThreeView {
 
       const color = style.getAxisColor(isMainAxis, convertToViewerDimension(dimension));
       const linewidth = isMainAxis ? 2 : 1;
-      const vertices: number[] = [];
+      const positions: number[] = [];
 
-      vertices.push(...this._corners[i0]);
-      vertices.push(...this._corners[i1]);
+      positions.push(...this._corners[i0]);
+      positions.push(...this._corners[i1]);
 
-      const lineSegments = createLineSegments(vertices, color, linewidth);
+      const lineSegments = createLineSegments(positions, color, linewidth);
       this.setUserDataOnAxis(lineSegments, faceIndex1, faceIndex2, isMainAxis);
       this.addChild(lineSegments);
     }
@@ -248,7 +247,7 @@ export class AxisThreeView extends GroupThreeView {
 
     // Add tick marks and labels
     if (style.showAxisTicks || style.showAxisNumbers) {
-      const vertices: number[] = [];
+      const positions: number[] = [];
       const tickFontSize = style.tickFontSize * tickLength;
       for (const tick of range.getTicks(increment)) {
         const start = newVector3(this._corners[i0]);
@@ -258,8 +257,8 @@ export class AxisThreeView extends GroupThreeView {
         // Add tick mark
         if (style.showAxisTicks) {
           end.addScaledVector(tickDirection, tickLength);
-          vertices.push(...start);
-          vertices.push(...end);
+          positions.push(...start);
+          positions.push(...end);
         }
         if (style.showAxisNumbers) {
           if (!isIncrement(tick, labelInc)) {
@@ -282,7 +281,7 @@ export class AxisThreeView extends GroupThreeView {
         }
       }
       if (style.showAxisTicks) {
-        const lineSegments = createLineSegments(vertices, style.mainAxisColor, 1);
+        const lineSegments = createLineSegments(positions, style.mainAxisColor, 1);
         this.setUserDataOnAxis(lineSegments, faceIndex1, faceIndex2, true);
         this.addChild(lineSegments);
       }
@@ -357,18 +356,18 @@ export class AxisThreeView extends GroupThreeView {
       return;
     }
     const indexes = getFaceCornerIndexes(faceIndex);
-    const vertices: number[] = [];
+    const positions: number[] = [];
 
-    this.addGridInOneDirection(vertices, increment, indexes[0], indexes[1], indexes[3], dim1);
-    this.addGridInOneDirection(vertices, increment, indexes[0], indexes[3], indexes[1], dim2);
+    this.addGridInOneDirection(positions, increment, indexes[0], indexes[1], indexes[3], dim1);
+    this.addGridInOneDirection(positions, increment, indexes[0], indexes[3], indexes[1], dim2);
 
-    const lineSegments = createLineSegments(vertices, style.gridColor, 1);
+    const lineSegments = createLineSegments(positions, style.gridColor, 1);
     this.setUserDataOnFace(lineSegments, faceIndex);
     this.addChild(lineSegments);
   }
 
   private addGridInOneDirection(
-    vertices: number[],
+    positions: number[],
     increment: number,
     i0: number,
     i1: number,
@@ -398,8 +397,8 @@ export class AxisThreeView extends GroupThreeView {
       }
       p0.setComponent(dimension, tick);
       p2.setComponent(dimension, tick);
-      vertices.push(...p0);
-      vertices.push(...p2);
+      positions.push(...p0);
+      positions.push(...p2);
     }
   }
 
@@ -517,16 +516,10 @@ function createUseFaceArray(range: Range3): boolean[] {
   return useFace;
 }
 
-function createLineSegments(vertices: number[], color: Color, linewidth: number): LineSegments {
+function createLineSegments(positions: number[], color: Color, linewidth: number): LineSegments {
+  const geometry = PrimitiveUtils.createBufferGeometry(positions);
   const material = new LineBasicMaterial({ color, linewidth });
-  return new LineSegments(createBufferGeometry(vertices), material);
-
-  function createBufferGeometry(vertices: number[]): BufferGeometry {
-    const verticesArray = new Float32Array(vertices);
-    const geometry = new BufferGeometry();
-    geometry.setAttribute('position', new BufferAttribute(verticesArray, 3));
-    return geometry;
-  }
+  return new LineSegments(geometry, material);
 }
 
 // ==================================================
