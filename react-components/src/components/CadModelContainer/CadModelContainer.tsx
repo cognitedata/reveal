@@ -2,9 +2,9 @@
  * Copyright 2023 Cognite AS
  */
 import { type ReactElement, useEffect, useState, useRef } from 'react';
-import { GeometryFilter, type AddModelOptions, type CogniteCadModel } from '@cognite/reveal';
+import { type GeometryFilter, type AddModelOptions, type CogniteCadModel } from '@cognite/reveal';
 import { useReveal } from '../RevealCanvas/ViewerContext';
-import { Matrix4 } from 'three';
+import { type Matrix4 } from 'three';
 import { useRevealKeepAlive } from '../RevealKeepAlive/RevealKeepAliveContext';
 import { useReveal3DResourcesCount } from '../Reveal3DResources/Reveal3DResourcesInfoContext';
 import { isEqual } from 'lodash';
@@ -12,7 +12,7 @@ import { modelExists } from '../../utilities/modelExists';
 import { getViewerResourceCount } from '../../utilities/getViewerResourceCount';
 import { type CadModelStyling } from './types';
 import { useApplyCadModelStyling } from './useApplyCadModelStyling';
-import { isSameCadModel, isSameGeometryFilter, isSameModel } from '../../utilities/isSameModel';
+import { isSameGeometryFilter, isSameModel } from '../../utilities/isSameModel';
 
 export type CogniteCadModelProps = {
   addModelOptions: AddModelOptions;
@@ -64,7 +64,12 @@ export function CadModelContainer({
 
   useApplyCadModelStyling(model, styling);
 
-  useEffect(() => () => removeModel(model), [model]);
+  useEffect(
+    () => () => {
+      removeModel(model);
+    },
+    [model]
+  );
 
   return <></>;
 
