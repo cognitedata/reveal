@@ -22,7 +22,7 @@ export function isSameCadModel(model0: CadModelOptions, model1: CadModelOptions)
   );
 }
 
-function isSameGeometryFilter(
+export function isSameGeometryFilter(
   filter0: GeometryFilter | undefined,
   filter1: GeometryFilter | undefined
 ): boolean {

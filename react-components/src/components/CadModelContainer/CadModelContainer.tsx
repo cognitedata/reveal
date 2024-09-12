@@ -2,7 +2,7 @@
  * Copyright 2023 Cognite AS
  */
 import { type ReactElement, useEffect, useState, useRef } from 'react';
-import { type AddModelOptions, type CogniteCadModel } from '@cognite/reveal';
+import { GeometryFilter, type AddModelOptions, type CogniteCadModel } from '@cognite/reveal';
 import { useReveal } from '../RevealCanvas/ViewerContext';
 import { Matrix4 } from 'three';
 import { useRevealKeepAlive } from '../RevealKeepAlive/RevealKeepAliveContext';
@@ -12,6 +12,7 @@ import { modelExists } from '../../utilities/modelExists';
 import { getViewerResourceCount } from '../../utilities/getViewerResourceCount';
 import { type CadModelStyling } from './types';
 import { useApplyCadModelStyling } from './useApplyCadModelStyling';
+import { isSameCadModel, isSameGeometryFilter, isSameModel } from '../../utilities/isSameModel';
 
 export type CogniteCadModelProps = {
   addModelOptions: AddModelOptions;
@@ -32,6 +33,7 @@ export function CadModelContainer({
   const viewer = useReveal();
   const { setRevealResourcesCount } = useReveal3DResourcesCount();
   const initializingModel = useRef<AddModelOptions | undefined>(undefined);
+  const initializingModelsGeometryFilter = useRef<GeometryFilter | undefined>(undefined);
 
   const [model, setModel] = useState<CogniteCadModel | undefined>(undefined);
 
@@ -82,13 +84,14 @@ export function CadModelContainer({
     async function getOrAddModel(): Promise<CogniteCadModel> {
       const viewerModel = viewer.models.find(
         (model) =>
-          model.modelId === modelId &&
-          model.revisionId === revisionId &&
-          model.getModelTransformation().equals(transform ?? new Matrix4())
+          isSameModel(model, addModelOptions) &&
+          isSameGeometryFilter(geometryFilter, initializingModelsGeometryFilter.current)
       );
+
       if (viewerModel !== undefined) {
         return await Promise.resolve(viewerModel as CogniteCadModel);
       }
+      initializingModelsGeometryFilter.current = geometryFilter;
       return await viewer.addCadModel(addModelOptions);
     }
   }
