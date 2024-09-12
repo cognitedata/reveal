@@ -213,7 +213,6 @@ export class AnnotationsDomainObject extends VisualDomainObject {
     const gizmoRenderStyle = gizmo.renderStyle;
 
     gizmoRenderStyle.showLines = false;
-    gizmoRenderStyle.lineWidth = 1;
     gizmoRenderStyle.depthTest = renderStyle.depthTest;
     gizmo.color.set(
       this.renderStyle.getColorByStatus(getStatusByAnnotation(annotation.annotation))
@@ -232,7 +231,8 @@ export class AnnotationsDomainObject extends VisualDomainObject {
     const gizmoRenderStyle = gizmo.renderStyle;
 
     gizmoRenderStyle.showLines = true;
-    gizmoRenderStyle.lineWidth = renderStyle.selectedLineWidth;
+    gizmoRenderStyle.lineWidth = renderStyle.lineWidth;
+    gizmoRenderStyle.selectedLineWidth = renderStyle.selectedLineWidth;
     gizmoRenderStyle.depthTest = false;
     gizmo.color.set(renderStyle.pendingColor);
     return gizmo;
