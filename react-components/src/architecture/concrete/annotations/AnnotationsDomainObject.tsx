@@ -214,9 +214,7 @@ export class AnnotationsDomainObject extends VisualDomainObject {
 
     gizmoRenderStyle.showLines = false;
     gizmoRenderStyle.depthTest = renderStyle.depthTest;
-    gizmo.color.set(
-      this.renderStyle.getColorByStatus(getStatusByAnnotation(annotation.annotation))
-    );
+    gizmo.color.set(renderStyle.getColorByStatus(getStatusByAnnotation(annotation.annotation)));
     return gizmo;
   }
 

@@ -19,7 +19,7 @@ export class WireframeUserData {
     return this.annotations.length;
   }
 
-  public get isPending(): boolean {
+  public get isEmpty(): boolean {
     return this.length === 0;
   }
 

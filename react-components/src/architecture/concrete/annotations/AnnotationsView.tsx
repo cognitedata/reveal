@@ -123,7 +123,7 @@ export class AnnotationsView extends GroupThreeView<AnnotationsDomainObject> {
           if (userData === undefined) {
             continue;
           }
-          if (userData.isPending) {
+          if (userData.isEmpty) {
             continue;
           }
           if (!userData.includes(annotation.annotation)) {
@@ -341,7 +341,7 @@ export class AnnotationsView extends GroupThreeView<AnnotationsDomainObject> {
       if (userData === undefined) {
         continue;
       }
-      if (userData.isPending) {
+      if (userData.isEmpty) {
         continue;
       }
       if (!userData.includes(annotation.annotation)) {
@@ -393,7 +393,7 @@ export class AnnotationsView extends GroupThreeView<AnnotationsDomainObject> {
       if (userData === undefined) {
         continue;
       }
-      if (userData.isPending) {
+      if (userData.isEmpty) {
         continue;
       }
       for (const annotation of userData.annotations) {
