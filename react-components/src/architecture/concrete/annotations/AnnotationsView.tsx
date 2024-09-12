@@ -278,7 +278,7 @@ export class AnnotationsView extends GroupThreeView<AnnotationsDomainObject> {
       return;
     }
     const selectedAnnotation = this.domainObject.selectedAnnotation;
-    const selectedGeometry = selectedAnnotation?.geometry;
+    const selectedGeometry = selectedAnnotation?.selectedGeometry;
 
     const group = new Group();
     group.name = FOCUS_ANNOTATION_NAME;

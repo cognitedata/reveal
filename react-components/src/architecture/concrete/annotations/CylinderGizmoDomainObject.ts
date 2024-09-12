@@ -86,7 +86,7 @@ export class CylinderGizmoDomainObject extends CylinderDomainObject {
   }
 
   public updateThisFromAnnotation(annotation: SingleAnnotation): boolean {
-    const geometry = annotation.geometry;
+    const geometry = annotation.selectedGeometry;
     if (geometry === undefined) {
       return false;
     }
@@ -111,7 +111,7 @@ export class CylinderGizmoDomainObject extends CylinderDomainObject {
     if (annotation === undefined) {
       return false;
     }
-    const geometry = annotation.geometry;
+    const geometry = annotation.selectedGeometry;
     if (geometry === undefined) {
       return false;
     }

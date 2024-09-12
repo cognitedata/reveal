@@ -24,15 +24,15 @@ export class SingleAnnotation {
   // ==================================================
 
   public annotation: PointCloudAnnotation;
-  public geometry: AnnotationGeometry;
+  public selectedGeometry?: AnnotationGeometry;
 
   // ==================================================
   // CONSTRUCTORS
   // ==================================================
 
-  constructor(annotation: PointCloudAnnotation, geometry: AnnotationGeometry) {
+  constructor(annotation: PointCloudAnnotation, selectedGeometry?: AnnotationGeometry) {
     this.annotation = annotation;
-    this.geometry = geometry;
+    this.selectedGeometry = selectedGeometry;
   }
 
   // ==================================================
@@ -44,6 +44,14 @@ export class SingleAnnotation {
     return region !== undefined && region.length === 1;
   }
 
+  public get firstGeometry(): AnnotationGeometry | undefined {
+    const region = this.region;
+    if (region === undefined) {
+      return undefined;
+    }
+    return region[0];
+  }
+
   public get isCylinder(): boolean {
     return this.primitiveType === PrimitiveType.Cylinder;
   }
@@ -53,15 +61,30 @@ export class SingleAnnotation {
   }
 
   public get primitiveType(): PrimitiveType {
-    const region = this.region;
-    if (region === undefined || region.length !== 1) {
+    const { selectedGeometry } = this;
+    if (selectedGeometry !== undefined) {
+      if (selectedGeometry.box !== undefined) {
+        return PrimitiveType.Box;
+      }
+      if (selectedGeometry.cylinder !== undefined) {
+        return PrimitiveType.Cylinder;
+      }
       return PrimitiveType.None;
     }
-    if (region[0].cylinder !== undefined) {
-      return PrimitiveType.Cylinder;
-    } else {
-      return PrimitiveType.Box;
-    }
+    // if (!this.isSingle) {
+    //   return PrimitiveType.None;
+    // }
+    // const geometry = this.firstGeometry;
+    // if (geometry === undefined) {
+    //   return PrimitiveType.None;
+    // }
+    // if (geometry.box !== undefined) {
+    //   return PrimitiveType.Box;
+    // }
+    // if (geometry.cylinder !== undefined) {
+    //   return PrimitiveType.Cylinder;
+    // }
+    return PrimitiveType.None;
   }
 
   private get region(): AnnotationGeometry[] | undefined {
@@ -90,7 +113,10 @@ export class SingleAnnotation {
   }
 
   public getMatrix(): Matrix4 | undefined {
-    const { geometry } = this;
+    const { selectedGeometry: geometry } = this;
+    if (geometry === undefined) {
+      return undefined;
+    }
     const matrix = getAnnotationMatrixByGeometry(geometry, 0);
     if (matrix === undefined) {
       return undefined;
@@ -102,40 +128,47 @@ export class SingleAnnotation {
     if (other === undefined) {
       return false;
     }
-    return this.annotation === other.annotation && this.geometry === other.geometry;
+    return this.annotation === other.annotation && this.selectedGeometry === other.selectedGeometry;
   }
 
-  public removeGeometry(): boolean {
+  public removeSelectedGeometryGeometry(): boolean {
     const region = this.region;
     if (region === undefined) {
       return false;
     }
-    return remove(region, this.geometry);
+    if (!remove(region, this.selectedGeometry)) {
+      return false;
+    }
+    this.selectedGeometry = undefined;
+    return true;
   }
 
   public updateFromMatrix(matrix: Matrix4): void {
-    const { geometry } = this;
-    if (geometry.box !== undefined) {
-      geometry.box.matrix = matrix.clone().transpose().elements;
+    const { selectedGeometry } = this;
+    if (selectedGeometry === undefined) {
+      return;
     }
-    if (geometry.cylinder !== undefined) {
+    if (selectedGeometry.box !== undefined) {
+      selectedGeometry.box.matrix = matrix.clone().transpose().elements;
+    }
+    if (selectedGeometry.cylinder !== undefined) {
       const centerA = new Vector3(0, 0, -0.5).applyMatrix4(matrix);
       const centerB = new Vector3(0, 0, 0.5).applyMatrix4(matrix);
       const scale = new Vector3();
       matrix.decompose(new Vector3(), new Quaternion(), scale);
 
-      geometry.cylinder.centerA = centerA.toArray();
-      geometry.cylinder.centerB = centerB.toArray();
-      geometry.cylinder.radius = scale.x / 2;
+      selectedGeometry.cylinder.centerA = centerA.toArray();
+      selectedGeometry.cylinder.centerB = centerB.toArray();
+      selectedGeometry.cylinder.radius = scale.x / 2;
     }
   }
 
   public align(horizontal: boolean): boolean {
-    const { geometry } = this;
-    if (geometry === undefined) {
+    const { selectedGeometry } = this;
+    if (selectedGeometry === undefined) {
       return false;
     }
-    if (geometry.box !== undefined) {
+    if (selectedGeometry.box !== undefined) {
       // Remove x and y rotation
       const matrix = this.getMatrix();
       if (matrix === undefined) {
@@ -161,8 +194,8 @@ export class SingleAnnotation {
       const newMatrix = new Matrix4();
       newMatrix.compose(position, quaternion, scale);
       this.updateFromMatrix(newMatrix);
-    } else if (geometry.cylinder !== undefined) {
-      const cylinder = geometry.cylinder;
+    } else if (selectedGeometry.cylinder !== undefined) {
+      const cylinder = selectedGeometry.cylinder;
       const a = new Vector3(...cylinder.centerA);
       const b = new Vector3(...cylinder.centerB);
 

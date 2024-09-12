@@ -30,7 +30,7 @@ const onAnnotationChanged = (domainObject: DomainObject, change: DomainObjectCha
 
     // This gives the changed geometry of the annotation.
     // if undefined all geometry has changed. You may want to save the whole annotation anyway.
-    const _geometry = description.annotation.geometry;
+    const _geometry = description.annotation.selectedGeometry;
 
     if (description.change === Changes.changedPart) {
       // updateAnnotationToCdf(_annotation.);
@@ -93,7 +93,7 @@ export class CreateAnnotationMockCommand extends InstanceCommand {
   }
 
   protected override invokeCore(): boolean {
-    const multiple = false;
+    const multiple = true;
     const { renderTarget, rootDomainObject } = this;
     let annotationDomainObject = this.getFirstInstance() as AnnotationsDomainObject;
     if (annotationDomainObject !== undefined) {

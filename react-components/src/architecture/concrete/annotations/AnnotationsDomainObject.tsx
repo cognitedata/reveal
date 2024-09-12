@@ -85,16 +85,27 @@ export class AnnotationsDomainObject extends VisualDomainObject {
     }
     let isChanged: boolean;
     if (!this.selectedAnnotation.isSingle) {
-      isChanged = this.selectedAnnotation.removeGeometry();
+      isChanged = this.selectedAnnotation.removeSelectedGeometryGeometry();
+      if (isChanged) {
+        const change = new AnnotationChangedDescription(
+          Changes.changedPart,
+          this.selectedAnnotation
+        );
+        this.notify(change);
+        this.removeGizmoInteractive();
+      }
     } else {
       isChanged = remove(this.annotations, this.selectedAnnotation.annotation);
+      if (isChanged) {
+        const change = new AnnotationChangedDescription(
+          Changes.deletedPart,
+          this.selectedAnnotation
+        );
+        this.notify(change);
+        this.removeGizmoInteractive();
+        this.selectedAnnotation = undefined;
+      }
     }
-    if (isChanged) {
-      const change = new AnnotationChangedDescription(Changes.deletedPart, this.selectedAnnotation);
-      this.notify(change);
-      this.removeGizmoInteractive();
-    }
-    this.selectedAnnotation = undefined;
     return isChanged;
   }
 
