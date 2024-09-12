@@ -70,7 +70,7 @@ export function CadModelContainer({
     addModelOptions: AddModelOptions,
     transform?: Matrix4
   ): Promise<CogniteCadModel> {
-    const cadModel = await getOrAddModel();
+    const cadModel = await viewer.addCadModel(addModelOptions);
 
     if (transform !== undefined) {
       cadModel.setModelTransformation(transform);
@@ -78,19 +78,6 @@ export function CadModelContainer({
     setModel(cadModel);
 
     return cadModel;
-
-    async function getOrAddModel(): Promise<CogniteCadModel> {
-      const viewerModel = viewer.models.find(
-        (model) =>
-          model.modelId === modelId &&
-          model.revisionId === revisionId &&
-          model.getModelTransformation().equals(transform ?? new Matrix4())
-      );
-      if (viewerModel !== undefined) {
-        return await Promise.resolve(viewerModel as CogniteCadModel);
-      }
-      return await viewer.addCadModel(addModelOptions);
-    }
   }
 
   function removeModel(): void {
