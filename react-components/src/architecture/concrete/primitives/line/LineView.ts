@@ -12,6 +12,7 @@ import {
   LineBasicMaterial,
   Mesh,
   MeshPhongMaterial,
+  Object3D,
   Quaternion,
   Vector2,
   Vector3
@@ -217,7 +218,7 @@ export class LineView extends GroupThreeView<LineDomainObject> {
     return result;
   }
 
-  private createLines(): Line | undefined {
+  private createLines(): Object3D | undefined {
     const { domainObject, style } = this;
     const vertices = createVertices(domainObject);
     if (vertices === undefined) {

@@ -212,7 +212,6 @@ export class AnnotationsDomainObject extends VisualDomainObject {
     const renderStyle = this.renderStyle;
     const gizmoRenderStyle = gizmo.renderStyle;
 
-    gizmoRenderStyle.opacity = 0.3333;
     gizmoRenderStyle.showLines = false;
     gizmoRenderStyle.lineWidth = 1;
     gizmoRenderStyle.depthTest = renderStyle.depthTest;
@@ -232,7 +231,6 @@ export class AnnotationsDomainObject extends VisualDomainObject {
     const renderStyle = this.renderStyle;
     const gizmoRenderStyle = gizmo.renderStyle;
 
-    gizmoRenderStyle.opacity = 0.3333;
     gizmoRenderStyle.showLines = true;
     gizmoRenderStyle.lineWidth = renderStyle.selectedLineWidth;
     gizmoRenderStyle.depthTest = false;

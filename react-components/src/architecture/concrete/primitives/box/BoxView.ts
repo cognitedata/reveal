@@ -120,7 +120,7 @@ export class BoxView extends GroupThreeView<BoxDomainObject> {
       this.addChild(this.createSolid(matrix));
     }
     if (style.showLines) {
-      if (style.lineWidth === 1) {
+      if (style.getLineWidth(domainObject.isSelected) === 1) {
         this.addChild(this.createLines(matrix));
       } else {
         this.addChild(this.createWireframe(matrix));
@@ -222,9 +222,7 @@ export class BoxView extends GroupThreeView<BoxDomainObject> {
   // ==================================================
 
   private createSolid(matrix: Matrix4): Object3D | undefined {
-    const { domainObject } = this;
-    const { style } = this;
-
+    const { domainObject, style } = this;
     const material = new MeshPhongMaterial();
     updateSolidMaterial(material, domainObject, style);
     const geometry = BoxUtils.createUnitGeometry();
@@ -235,9 +233,7 @@ export class BoxView extends GroupThreeView<BoxDomainObject> {
   }
 
   private createLines(matrix: Matrix4): Object3D | undefined {
-    const { domainObject } = this;
-    const { style } = this;
-
+    const { domainObject, style } = this;
     const material = new LineBasicMaterial();
     updateLineSegmentsMaterial(material, domainObject, style);
     const geometry = BoxUtils.createLineSegmentsBufferGeometry();
@@ -248,11 +244,9 @@ export class BoxView extends GroupThreeView<BoxDomainObject> {
   }
 
   private createWireframe(matrix: Matrix4): Object3D | undefined {
-    const { domainObject } = this;
-    const { style } = this;
-
+    const { domainObject, style } = this;
     const material = new LineMaterial();
-    updateLineMaterial(material, domainObject, style);
+    updateWireframeMaterial(material, domainObject, style);
     const geometry = BoxUtils.createLineSegmentsGeometry();
     const result = new Wireframe(geometry, material);
     result.renderOrder = RENDER_ORDER;
@@ -645,13 +639,11 @@ export function updateSolidMaterial(
   style: SolidPrimitiveRenderStyle
 ): void {
   const color = domainObject.getColorByColorType(style.colorType);
-  const isSelected = domainObject.isSelected;
-  const opacity = isSelected ? style.opacity : style.opacity / 4;
   material.polygonOffset = true;
   material.polygonOffsetFactor = 1;
   material.polygonOffsetUnits = 4.0;
   material.color = color;
-  material.opacity = style.opacityUse ? opacity : 1;
+  material.opacity = style.getOpacity(domainObject.isSelected);
   material.transparent = true;
   material.emissive = color;
   material.emissiveIntensity = 0.2;
@@ -673,7 +665,7 @@ export function updateLineSegmentsMaterial(
   material.depthTest = style.depthTest;
 }
 
-export function updateLineMaterial(
+export function updateWireframeMaterial(
   material: LineMaterial,
   domainObject: DomainObject,
   style: SolidPrimitiveRenderStyle
@@ -683,7 +675,7 @@ export function updateLineMaterial(
   material.transparent = true;
   material.depthWrite = false;
   material.depthTest = style.depthTest;
-  material.linewidth = 2;
+  material.linewidth = style.getLineWidth(domainObject.isSelected);
   material.resolution = new Vector2(1000, 1000);
   material.worldUnits = false;
 }

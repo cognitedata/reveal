@@ -2,7 +2,7 @@
  * Copyright 2024 Cognite AS
  */
 
-import { BufferAttribute, BufferGeometry, LineSegments } from 'three';
+import { BufferAttribute, BufferGeometry, LineSegments, type Vector3 } from 'three';
 import { LineSegmentsGeometry } from 'three/examples/jsm/lines/LineSegmentsGeometry.js';
 
 export class PrimitiveUtils {
@@ -24,5 +24,11 @@ export class PrimitiveUtils {
     const lineSegments = new LineSegments(geometry);
     const lineSegmentsGeometry = new LineSegmentsGeometry().fromLineSegments(lineSegments);
     return lineSegmentsGeometry;
+  }
+
+  public static createLineSegmentsGeometryByVertices(corners: Vector3[]): LineSegmentsGeometry {
+    const buffer = new BufferGeometry().setFromPoints(corners);
+    const lineSegments = new LineSegments(buffer);
+    return new LineSegmentsGeometry().fromLineSegments(lineSegments);
   }
 }

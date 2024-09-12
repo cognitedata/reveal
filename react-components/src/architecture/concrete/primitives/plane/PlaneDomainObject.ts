@@ -14,7 +14,6 @@ import {
   VisualDomainObject,
   type CreateDraggerProps
 } from '../../../base/domainObjects/VisualDomainObject';
-import { PlaneRenderStyle } from './PlaneRenderStyle';
 import { PlaneDragger } from './PlaneDragger';
 import { getIconByPrimitiveType } from '../../measurements/getIconByPrimitiveType';
 import { getComplementary } from '../../../base/utilities/colors/colorExtensions';
@@ -30,6 +29,7 @@ import { radToDeg } from 'three/src/math/MathUtils.js';
 import { type DomainObjectChange } from '../../../base/domainObjectsHelpers/DomainObjectChange';
 import { DomainObjectTransaction } from '../../../base/undo/DomainObjectTransaction';
 import { type Transaction } from '../../../base/undo/Transaction';
+import { SolidPrimitiveRenderStyle } from '../base/SolidPrimitiveRenderStyle';
 
 const ORIGIN = new Vector3(0, 0, 0);
 
@@ -49,8 +49,8 @@ export abstract class PlaneDomainObject extends VisualDomainObject {
   // INSTANCE PROPERTIES
   // ==================================================
 
-  public get renderStyle(): PlaneRenderStyle {
-    return this.getRenderStyle() as PlaneRenderStyle;
+  public get renderStyle(): SolidPrimitiveRenderStyle {
+    return this.getRenderStyle() as SolidPrimitiveRenderStyle;
   }
 
   public get primitiveType(): PrimitiveType {
@@ -105,7 +105,12 @@ export abstract class PlaneDomainObject extends VisualDomainObject {
   }
 
   public override createRenderStyle(): RenderStyle | undefined {
-    return new PlaneRenderStyle();
+    const style = new SolidPrimitiveRenderStyle();
+    style.selectedOpacity = 0.5;
+    style.opacity = style.selectedOpacity / 2;
+    style.lineWidth = 1;
+    style.selectedLineWidth = 2;
+    return style;
   }
 
   public override createDragger(props: CreateDraggerProps): BaseDragger | undefined {

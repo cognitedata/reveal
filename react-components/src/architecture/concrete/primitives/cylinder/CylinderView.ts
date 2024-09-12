@@ -32,7 +32,7 @@ import { Range1 } from '../../../base/utilities/geometry/Range1';
 import { intersectRayCylinder } from '../../annotations/helpers/getClosestAnnotation';
 import {
   rotateEdgeCircle,
-  updateLineMaterial,
+  updateWireframeMaterial,
   updateLineSegmentsMaterial,
   updateMarkerMaterial,
   updateSolidMaterial
@@ -94,7 +94,7 @@ export class CylinderView extends GroupThreeView<CylinderDomainObject> {
       this.addChild(this.createSolid(matrix));
     }
     if (style.showLines) {
-      if (style.lineWidth === 1) {
+      if (style.getLineWidth(domainObject.isSelected) === 1) {
         this.addChild(this.createLines(matrix));
       } else {
         this.addChild(this.createWireframe(matrix));
@@ -209,7 +209,7 @@ export class CylinderView extends GroupThreeView<CylinderDomainObject> {
     const { style } = this;
 
     const material = new LineMaterial();
-    updateLineMaterial(material, domainObject, style);
+    updateWireframeMaterial(material, domainObject, style);
     const geometry = CylinderUtils.createLineSegmentsGeometry();
     const result = new Wireframe(geometry, material);
     result.renderOrder = RENDER_ORDER;
