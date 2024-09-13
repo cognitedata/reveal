@@ -2,7 +2,7 @@
  * Copyright 2024 Cognite AS
  */
 
-import { type Ray, Vector3, Plane, type Matrix4, Euler } from 'three';
+import { type Ray, Vector3, Plane, type Matrix4 } from 'three';
 import { Changes } from '../../../base/domainObjectsHelpers/Changes';
 import { type BoxFace } from '../common/BoxFace';
 import { FocusType } from '../../../base/domainObjectsHelpers/FocusType';
@@ -23,7 +23,7 @@ import {
 } from '../../../base/domainObjects/VisualDomainObject';
 import { Vector3Pool } from '@cognite/reveal';
 import { degToRad, radToDeg } from 'three/src/math/MathUtils.js';
-import { MIN_SIZE } from '../common/SolidDomainObject';
+import { Box } from './Box';
 
 const CONSTRAINED_ANGLE_INCREMENT = 15;
 /**
@@ -46,10 +46,8 @@ export class BoxDragger extends BaseDragger {
   private readonly _centerOfFace = new Vector3(); // Plane of the intersection/normal
   private readonly _cornerSign = new Vector3(); // Indicate the corner of the face
 
-  // Original values when the drag started
-  private readonly _size = new Vector3();
-  private readonly _center = new Vector3();
-  private readonly _rotation = new Euler();
+  // Original box when the drag started
+  private readonly _originalBox = new Box();
 
   // ==================================================
   // INSTANCE PROPERTIES
@@ -84,13 +82,11 @@ export class BoxDragger extends BaseDragger {
 
     this._planeOfFace.setFromNormalAndCoplanarPoint(this._normal, this.point);
 
-    const matrix = domainObject.getMatrix();
+    const matrix = domainObject.box.getMatrix();
     this._centerOfFace.applyMatrix4(matrix);
 
-    // Back up the original values
-    this._size.copy(this._domainObject.size);
-    this._center.copy(this._domainObject.center);
-    this._rotation.copy(this._domainObject.rotation);
+    // Back up the original box
+    this._originalBox.copy(domainObject.box);
   }
 
   // ==================================================
@@ -159,11 +155,12 @@ export class BoxDragger extends BaseDragger {
       deltaCenter.applyMatrix4(matrix);
     }
     // First copy the original values
-    const { center } = this._domainObject;
-    center.copy(this._center);
+    const originalBox = this._originalBox;
+    const { box } = this._domainObject;
+    box.copy(originalBox);
 
     // Then translate the center
-    center.add(deltaCenter);
+    box.center.add(deltaCenter);
     return true;
   }
 
@@ -178,9 +175,10 @@ export class BoxDragger extends BaseDragger {
       return false; // Nothing has changed
     }
     // First copy the original values
-    const { size, center } = this._domainObject;
-    size.copy(this._size);
-    center.copy(this._center);
+    const originalBox = this._originalBox;
+    const { box } = this._domainObject;
+    box.copy(originalBox);
+    const { size, center } = box;
 
     const index = this._face.index;
     let deltaCenter: number;
@@ -189,13 +187,13 @@ export class BoxDragger extends BaseDragger {
     } else {
       // Set new size
       const value = deltaSize + size.getComponent(index);
-      const newValue = this.getBestValue(value, shift, MIN_SIZE);
-      if (newValue === this._size.getComponent(index)) {
+      const newValue = this.getBestValue(value, shift, Box.MIN_SIZE);
+      if (newValue === originalBox.size.getComponent(index)) {
         return false; // Nothing has changed
       }
       size.setComponent(index, newValue);
       // The center of the box should be moved by half of the delta size and take the rotation into account.
-      const newDeltaSize = size.getComponent(index) - this._size.getComponent(index);
+      const newDeltaSize = size.getComponent(index) - originalBox.size.getComponent(index);
       deltaCenter = (this._face.sign * newDeltaSize) / 2;
     }
     // Set new center
@@ -224,19 +222,20 @@ export class BoxDragger extends BaseDragger {
       return false; // Nothing has changed
     }
     // First copy the original values
-    const { size, center } = this._domainObject;
-    size.copy(this._size);
-    center.copy(this._center);
+    const originalBox = this._originalBox;
+    const { box } = this._domainObject;
+    box.copy(originalBox);
+    const { size, center } = box;
 
     // Apply the change
     size.add(deltaSize);
-    this._domainObject.forceMinSize();
+    box.forceMinSize();
 
-    if (size.lengthSq() === this._size.lengthSq()) {
+    if (size.lengthSq() === originalBox.size.lengthSq()) {
       return false; // Nothing has changed
     }
     // The center of the box should be moved by half of the delta size and take the rotation into account.
-    const newDeltaSize = newVector3().subVectors(size, this._size);
+    const newDeltaSize = newVector3().subVectors(size, originalBox.size);
     const deltaCenter = newDeltaSize.divideScalar(2);
     deltaCenter.multiply(this._cornerSign);
     deltaCenter.applyMatrix4(rotationMatrix);
@@ -258,24 +257,28 @@ export class BoxDragger extends BaseDragger {
       deltaAngle = -deltaAngle;
     }
     // Rotate
-    let x = this._domainObject.rotation.x;
-    let y = this._domainObject.rotation.y;
-    let z = this._domainObject.rotation.z;
-    if (this._face.index === 0 && this._domainObject.canRotateComponent(0)) {
-      const rotation = forceBetween0AndTwoPi(deltaAngle + this._rotation.x);
+    const originalBox = this._originalBox;
+    const domainObject = this._domainObject;
+    const { box } = domainObject;
+    let x = box.rotation.x;
+    let y = box.rotation.y;
+    let z = box.rotation.z;
+
+    if (this._face.index === 0 && domainObject.canRotateComponent(0)) {
+      const rotation = forceBetween0AndTwoPi(deltaAngle + originalBox.rotation.x);
       x = roundByConstrained(rotation, shift);
-    } else if (this._face.index === 1 && this._domainObject.canRotateComponent(1)) {
-      const rotation = forceBetween0AndTwoPi(deltaAngle + this._rotation.y);
+    } else if (this._face.index === 1 && domainObject.canRotateComponent(1)) {
+      const rotation = forceBetween0AndTwoPi(deltaAngle + originalBox.rotation.y);
       y = roundByConstrained(rotation, shift);
-    } else if (this._face.index === 2 && this._domainObject.canRotateComponent(2)) {
-      const rotation = this._domainObject.hasXYRotation
-        ? forceBetween0AndTwoPi(deltaAngle + this._rotation.z)
-        : forceBetween0AndPi(deltaAngle + this._rotation.z);
+    } else if (this._face.index === 2 && domainObject.canRotateComponent(2)) {
+      const rotation = box.hasXYRotation
+        ? forceBetween0AndTwoPi(deltaAngle + originalBox.rotation.z)
+        : forceBetween0AndPi(deltaAngle + originalBox.rotation.z);
       z = roundByConstrained(rotation, shift);
     } else {
       return false;
     }
-    this._domainObject.rotation.set(x, y, z, 'ZYX');
+    box.rotation.set(x, y, z, 'ZYX');
     return true;
 
     function roundByConstrained(rotation: number, shift: boolean): number {
@@ -289,7 +292,7 @@ export class BoxDragger extends BaseDragger {
   }
 
   public getRotationMatrix(): Matrix4 {
-    return this._domainObject.getRotationMatrix();
+    return this._domainObject.box.getRotationMatrix();
   }
 }
 

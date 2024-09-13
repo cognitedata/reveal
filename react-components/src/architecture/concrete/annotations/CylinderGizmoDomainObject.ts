@@ -82,8 +82,9 @@ export class CylinderGizmoDomainObject extends CylinderDomainObject {
   // ==================================================
 
   public createAnnotation(): SingleAnnotation {
-    const radius = this.radius / (1 + CYLINDER_RADIUS_MARGIN);
-    return SingleAnnotation.createCylinder(this.centerA, this.centerB, radius);
+    const { cylinder } = this;
+    const radius = cylinder.radius / (1 + CYLINDER_RADIUS_MARGIN);
+    return SingleAnnotation.createCylinder(cylinder.centerA, cylinder.centerB, radius);
   }
 
   public updateThisFromAnnotation(annotation: SingleAnnotation): boolean {
@@ -91,15 +92,14 @@ export class CylinderGizmoDomainObject extends CylinderDomainObject {
     if (geometry === undefined) {
       return false;
     }
-    const cylinder = geometry.cylinder;
-    if (cylinder === undefined) {
+    const toCylinder = this.cylinder;
+    const fromCylinder = geometry.cylinder;
+    if (fromCylinder === undefined) {
       return false;
     }
-    const a = cylinder.centerA;
-    const b = cylinder.centerB;
-    this.centerA.set(a[0], a[1], a[2]);
-    this.centerB.set(b[0], b[1], b[2]);
-    this.radius = cylinder.radius * (1 + CYLINDER_RADIUS_MARGIN);
+    toCylinder.centerA.fromArray(fromCylinder.centerA);
+    toCylinder.centerB.fromArray(fromCylinder.centerB);
+    toCylinder.radius = fromCylinder.radius * (1 + CYLINDER_RADIUS_MARGIN);
     return true;
   }
 
@@ -116,15 +116,15 @@ export class CylinderGizmoDomainObject extends CylinderDomainObject {
     if (geometry === undefined) {
       return false;
     }
-    const cylinder = geometry.cylinder;
-    if (cylinder === undefined) {
+    const toCylinder = geometry.cylinder;
+    if (toCylinder === undefined) {
       return false;
     }
-    const radius = this.radius / (1 + CYLINDER_RADIUS_MARGIN);
+    const fromCylinder = this.cylinder;
 
-    cylinder.centerA = this.centerA.toArray();
-    cylinder.centerB = this.centerB.toArray();
-    cylinder.radius = radius;
+    toCylinder.centerA = fromCylinder.centerA.toArray();
+    toCylinder.centerB = fromCylinder.centerB.toArray();
+    toCylinder.radius = fromCylinder.radius / (1 + CYLINDER_RADIUS_MARGIN);
 
     const change = inDragging ? Changes.dragging : Changes.changedPart;
     const changeDesc = new AnnotationChangedDescription(change, annotation);

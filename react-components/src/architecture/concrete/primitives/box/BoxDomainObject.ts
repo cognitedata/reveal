@@ -5,7 +5,6 @@
 import { type RenderStyle } from '../../../base/renderStyles/RenderStyle';
 import { type ThreeView } from '../../../base/views/ThreeView';
 import { BoxView } from './BoxView';
-import { type Box3, Euler, Matrix4, Quaternion, Vector3 } from 'three';
 import { Changes } from '../../../base/domainObjectsHelpers/Changes';
 import { FocusType } from '../../../base/domainObjectsHelpers/FocusType';
 import { PrimitiveType } from '../common/PrimitiveType';
@@ -17,24 +16,16 @@ import { getIconByPrimitiveType } from '../../measurements/getIconByPrimitiveTyp
 import { type TranslateKey } from '../../../base/utilities/TranslateKey';
 import { Quantity } from '../../../base/domainObjectsHelpers/Quantity';
 import { PanelInfo } from '../../../base/domainObjectsHelpers/PanelInfo';
-import { radToDeg } from 'three/src/math/MathUtils.js';
-import {
-  forceAngleAround0,
-  forceBetween0AndPi,
-  forceBetween0AndTwoPi
-} from '../../../base/utilities/extensions/mathExtensions';
-import { MIN_SIZE, SolidDomainObject } from '../common/SolidDomainObject';
+import { SolidDomainObject } from '../common/SolidDomainObject';
 import { SolidPrimitiveRenderStyle } from '../common/SolidPrimitiveRenderStyle';
-import { BoxUtils } from '../../../base/utilities/geometry/BoxUtils';
+import { Box } from './Box';
 
 export abstract class BoxDomainObject extends SolidDomainObject {
   // ==================================================
   // INSTANCE FIELDS
   // ==================================================
 
-  public readonly size = new Vector3().setScalar(MIN_SIZE);
-  public readonly center = new Vector3();
-  public readonly rotation = new Euler(0, 0, 0, 'ZYX');
+  public readonly box = new Box();
   private readonly _primitiveType: PrimitiveType;
 
   // ==================================================
@@ -93,36 +84,38 @@ export abstract class BoxDomainObject extends SolidDomainObject {
 
     const { primitiveType } = this;
     const isFinished = this.focusType !== FocusType.Pending;
+    const { box } = this;
+    const { size } = box;
 
-    const hasX = BoxDomainObject.isValidSize(this.size.x);
-    const hasY = BoxDomainObject.isValidSize(this.size.y);
-    const hasZ = BoxDomainObject.isValidSize(this.size.z);
+    const hasX = Box.isValidSize(size.x);
+    const hasY = Box.isValidSize(size.y);
+    const hasZ = Box.isValidSize(size.z);
 
     if (isFinished || hasX) {
-      add('MEASUREMENTS_LENGTH', 'Length', this.size.x, Quantity.Length);
+      add('MEASUREMENTS_LENGTH', 'Length', size.x, Quantity.Length);
     }
     if (primitiveType !== PrimitiveType.VerticalArea && (isFinished || hasY)) {
-      add('MEASUREMENTS_DEPTH', 'Depth', this.size.y, Quantity.Length);
+      add('MEASUREMENTS_DEPTH', 'Depth', size.y, Quantity.Length);
     }
     if (primitiveType !== PrimitiveType.HorizontalArea && (isFinished || hasZ)) {
-      add('MEASUREMENTS_HEIGHT', 'Height', this.size.z, Quantity.Length);
+      add('MEASUREMENTS_HEIGHT', 'Height', size.z, Quantity.Length);
     }
     if (primitiveType !== PrimitiveType.Box && (isFinished || this.hasArea)) {
       add('MEASUREMENTS_AREA', 'Area', this.area, Quantity.Area);
     }
     if (primitiveType === PrimitiveType.Box && (isFinished || this.hasHorizontalArea)) {
-      add('MEASUREMENTS_HORIZONTAL_AREA', 'Horizontal area', this.horizontalArea, Quantity.Area);
+      add('MEASUREMENTS_HORIZONTAL_AREA', 'Horizontal area', box.horizontalArea, Quantity.Area);
     }
     if (primitiveType === PrimitiveType.Box && (isFinished || this.hasVolume)) {
-      add('MEASUREMENTS_VOLUME', 'Volume', this.volume, Quantity.Volume);
+      add('MEASUREMENTS_VOLUME', 'Volume', box.volume, Quantity.Volume);
     }
     // I forgot to add text for rotation angle before the deadline, so I used a icon instead.
-    if (this.rotation.z !== 0 && isFinished) {
+    if (box.rotation.z !== 0 && isFinished) {
       info.add({
         key: undefined,
         fallback: '',
         icon: 'Angle',
-        value: this.zRotationInDegrees,
+        value: box.zRotationInDegrees,
         quantity: Quantity.Angle
       });
     }
@@ -141,9 +134,7 @@ export abstract class BoxDomainObject extends SolidDomainObject {
   public override copyFrom(domainObject: BoxDomainObject, what?: symbol): void {
     super.copyFrom(domainObject, what);
     if (what === undefined || what === Changes.geometry) {
-      this.size.copy(domainObject.size);
-      this.center.copy(domainObject.center);
-      this.rotation.copy(domainObject.rotation);
+      this.box.copy(domainObject.box);
     }
   }
 
@@ -163,91 +154,41 @@ export abstract class BoxDomainObject extends SolidDomainObject {
     return this._primitiveType;
   }
 
-  public override canRotateComponent(component: number): boolean {
-    return component === 2;
-  }
-
-  public override getBoundingBox(): Box3 {
-    return BoxUtils.getBoundingBox(this.getMatrix());
-  }
-
-  public override getRotationMatrix(matrix: Matrix4 = new Matrix4()): Matrix4 {
-    matrix.identity();
-    matrix.makeRotationFromEuler(this.rotation);
-    return matrix;
-  }
-
-  public override getScaledMatrix(scale: Vector3, matrix: Matrix4 = new Matrix4()): Matrix4 {
-    matrix.identity();
-    matrix.makeRotationFromEuler(this.rotation);
-    matrix.setPosition(this.center);
-    matrix.scale(scale);
-    return matrix;
-  }
-
-  public override getMatrix(matrix: Matrix4 = new Matrix4()): Matrix4 {
-    return this.getScaledMatrix(this.size, matrix);
-  }
-
-  public override setMatrix(matrix: Matrix4): void {
-    const quaternion = new Quaternion();
-    matrix.decompose(this.center, quaternion, this.size);
-    this.rotation.setFromQuaternion(quaternion, 'ZYX');
-  }
-
   public override clear(): void {
     super.clear();
-    this.size.setScalar(MIN_SIZE);
-    this.center.setScalar(0);
-    this.rotation.set(0, 0, 0, 'ZYX');
+    this.box.clear();
+  }
+
+  // ==================================================
+  // VIRTUAL METHODS
+  // ==================================================
+
+  public canRotateComponent(component: number): boolean {
+    return component === 2;
   }
 
   // ==================================================
   // INSTANCE METHODS / PROPERTIES: Geometrical getters
   // ==================================================
 
-  public get hasXYRotation(): boolean {
-    return this.rotation.x !== 0 || this.rotation.y !== 0;
-  }
-
-  public get zRotationInDegrees(): number {
-    const zRotation = this.hasXYRotation
-      ? forceBetween0AndTwoPi(this.rotation.z)
-      : forceBetween0AndPi(this.rotation.z);
-    return radToDeg(zRotation);
-  }
-
-  public getRotationInDegrees(component: number): number {
-    if (component === 0) {
-      return radToDeg(forceAngleAround0(this.rotation.x));
-    }
-    if (component === 1) {
-      return radToDeg(forceAngleAround0(this.rotation.y));
-    }
-    return this.zRotationInDegrees;
-  }
-
-  public get diagonal(): number {
-    return this.size.length();
-  }
-
   public get hasArea(): boolean {
+    const { size } = this.box;
     let count = 0;
-    if (BoxDomainObject.isValidSize(this.size.x)) count++;
-    if (BoxDomainObject.isValidSize(this.size.y)) count++;
-    if (BoxDomainObject.isValidSize(this.size.z)) count++;
+    if (Box.isValidSize(size.x)) count++;
+    if (Box.isValidSize(size.y)) count++;
+    if (Box.isValidSize(size.z)) count++;
     return count >= 2;
   }
 
   public get area(): number {
+    const { size } = this.box;
     switch (this.primitiveType) {
       case PrimitiveType.HorizontalArea:
-        return this.size.x * this.size.y;
+        return size.x * size.y;
       case PrimitiveType.VerticalArea:
-        return this.size.x * this.size.z;
+        return size.x * size.z;
       case PrimitiveType.Box: {
-        const a = this.size.x * this.size.y + this.size.y * this.size.z + this.size.z * this.size.x;
-        return a * 2;
+        return this.box.area;
       }
       default:
         throw new Error('Unknown MeasureType type');
@@ -255,33 +196,12 @@ export abstract class BoxDomainObject extends SolidDomainObject {
   }
 
   public get hasHorizontalArea(): boolean {
-    return BoxDomainObject.isValidSize(this.size.x) && BoxDomainObject.isValidSize(this.size.y);
-  }
-
-  public get horizontalArea(): number {
-    return this.size.x * this.size.y;
+    const { size } = this.box;
+    return Box.isValidSize(size.x) && Box.isValidSize(size.y);
   }
 
   public get hasVolume(): boolean {
-    return (
-      BoxDomainObject.isValidSize(this.size.x) &&
-      BoxDomainObject.isValidSize(this.size.y) &&
-      BoxDomainObject.isValidSize(this.size.z)
-    );
-  }
-
-  public get volume(): number {
-    return this.size.x * this.size.y * this.size.z;
-  }
-
-  // ==================================================
-  // INSTANCE METHODS: Others
-  // ==================================================
-
-  public forceMinSize(): void {
-    const { size } = this;
-    size.x = Math.max(MIN_SIZE, size.x);
-    size.y = Math.max(MIN_SIZE, size.y);
-    size.z = Math.max(MIN_SIZE, size.z);
+    const { size } = this.box;
+    return Box.isValidSize(size.x) && Box.isValidSize(size.y) && Box.isValidSize(size.z);
   }
 }

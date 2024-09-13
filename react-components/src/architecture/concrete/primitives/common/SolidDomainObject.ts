@@ -3,7 +3,6 @@
  */
 
 import { type SolidPrimitiveRenderStyle } from './SolidPrimitiveRenderStyle';
-import { type Box3, type Matrix4, type Vector3 } from 'three';
 import { Changes } from '../../../base/domainObjectsHelpers/Changes';
 import { BoxFace } from './BoxFace';
 import { FocusType } from '../../../base/domainObjectsHelpers/FocusType';
@@ -12,8 +11,6 @@ import { VisualDomainObject } from '../../../base/domainObjects/VisualDomainObje
 import { getIconByPrimitiveType } from '../../measurements/getIconByPrimitiveType';
 import { DomainObjectTransaction } from '../../../base/undo/DomainObjectTransaction';
 import { type Transaction } from '../../../base/undo/Transaction';
-
-export const MIN_SIZE = 0.01;
 
 export abstract class SolidDomainObject extends VisualDomainObject {
   // For focus when edit in 3D (Used when isSelected is true only)
@@ -60,20 +57,6 @@ export abstract class SolidDomainObject extends VisualDomainObject {
 
   public abstract get primitiveType(): PrimitiveType;
 
-  public canRotateComponent(_component: number): boolean {
-    return true;
-  }
-
-  public abstract getBoundingBox(): Box3;
-
-  public abstract getRotationMatrix(): Matrix4;
-
-  public abstract getScaledMatrix(scale: Vector3): Matrix4;
-
-  public abstract getMatrix(): Matrix4;
-
-  public abstract setMatrix(matrix: Matrix4): void;
-
   public clear(): void {
     this.focusType = FocusType.None;
     this.focusFace = undefined;
@@ -104,9 +87,5 @@ export abstract class SolidDomainObject extends VisualDomainObject {
       this.notify(Changes.geometry);
     }
     return true;
-  }
-
-  public static isValidSize(value: number): boolean {
-    return value > MIN_SIZE;
   }
 }

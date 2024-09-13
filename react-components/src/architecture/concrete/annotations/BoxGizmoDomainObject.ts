@@ -89,7 +89,7 @@ export class BoxGizmoDomainObject extends BoxDomainObject {
   // ==================================================
 
   public createAnnotation(): SingleAnnotation {
-    const matrix = this.getMatrix();
+    const matrix = this.box.getMatrix();
     return SingleAnnotation.createBox(matrix);
   }
 
@@ -98,7 +98,7 @@ export class BoxGizmoDomainObject extends BoxDomainObject {
     if (matrix === undefined) {
       return false;
     }
-    this.setMatrix(matrix);
+    this.box.setMatrix(matrix);
     return true;
   }
 
@@ -111,7 +111,7 @@ export class BoxGizmoDomainObject extends BoxDomainObject {
     if (annotation === undefined) {
       return false;
     }
-    annotation.updateFromMatrix(this.getMatrix());
+    annotation.updateFromMatrix(this.box.getMatrix());
 
     const change = inDragging ? Changes.dragging : Changes.changedPart;
     const changeDesc = new AnnotationChangedDescription(change, annotation);

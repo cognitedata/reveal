@@ -120,46 +120,47 @@ export class BoxCreator extends BaseCreator {
       throw new Error('Cannot create a box without points');
     }
     const domainObject = this._domainObject;
+    const { box } = domainObject;
     if (this.pointCount === 1) {
-      domainObject.forceMinSize();
-      domainObject.center.copy(this.firstPoint);
+      box.forceMinSize();
+      box.center.copy(this.firstPoint);
       if (domainObject.primitiveType !== PrimitiveType.VerticalArea) {
-        domainObject.center.z += domainObject.size.z / 2;
+        box.center.z += box.size.z / 2;
       }
       return;
     }
     if (this.pointCount === 2) {
       // Set the zRotation
       const vector = new Vector3().subVectors(this.firstPoint, this.lastPoint);
-      domainObject.rotation.z = forceBetween0AndTwoPi(horizontalAngle(vector));
+      box.rotation.z = forceBetween0AndTwoPi(horizontalAngle(vector));
     }
     const primitiveType = domainObject.primitiveType;
     if (this.pointCount <= 3) {
       // Set the center and the size only in 2D space
       const newCenter = new Vector3();
       const newSize = new Vector3();
-      this.getCenterAndSizeFromBoundingBox(domainObject.rotation.z, newCenter, newSize);
+      this.getCenterAndSizeFromBoundingBox(box.rotation.z, newCenter, newSize);
 
-      domainObject.center.x = newCenter.x;
-      domainObject.size.x = newSize.x;
+      box.center.x = newCenter.x;
+      box.size.x = newSize.x;
 
       if (primitiveType === PrimitiveType.VerticalArea) {
-        domainObject.center.z = newCenter.z;
-        domainObject.center.y = newCenter.y;
-        domainObject.size.z = newSize.z;
+        box.center.z = newCenter.z;
+        box.center.y = newCenter.y;
+        box.size.z = newSize.z;
       } else {
-        domainObject.center.y = newCenter.y;
-        domainObject.size.y = newSize.y;
+        box.center.y = newCenter.y;
+        box.size.y = newSize.y;
       }
-      domainObject.forceMinSize();
+      box.forceMinSize();
     } else {
       // Now set the 3D center and size
       const p2 = this.points[2];
       const p3 = this.points[3];
       const sizeZ = verticalDistanceTo(p2, p3);
       const centerZ = (p2.z + p3.z) / 2;
-      domainObject.size.z = sizeZ;
-      domainObject.center.z = centerZ;
+      box.size.z = sizeZ;
+      box.center.z = centerZ;
     }
   }
 

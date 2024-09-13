@@ -94,7 +94,7 @@ export class CropBoxDomainObject extends BoxDomainObject {
     if (root === undefined) {
       return [];
     }
-    const matrix = this.getMatrix();
+    const matrix = this.box.getMatrix();
     return BoxFace.createClippingPlanes(matrix);
   }
 

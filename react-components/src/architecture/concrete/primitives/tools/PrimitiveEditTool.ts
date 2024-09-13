@@ -6,7 +6,7 @@ import { CDF_TO_VIEWER_TRANSFORMATION, type CustomObjectIntersection } from '@co
 import { isDomainObjectIntersection } from '../../../base/domainObjectsHelpers/DomainObjectIntersection';
 import { FocusType } from '../../../base/domainObjectsHelpers/FocusType';
 import { type PrimitivePickInfo } from '../common/PrimitivePickInfo';
-import { Quaternion, Vector3 } from 'three';
+import { Line3, Vector3 } from 'three';
 import { PrimitiveType } from '../common/PrimitiveType';
 import { type BaseCreator } from '../../../base/domainObjectsHelpers/BaseCreator';
 import { BaseEditTool } from '../../../base/commands/BaseEditTool';
@@ -19,6 +19,8 @@ import { PlaneDomainObject } from '../plane/PlaneDomainObject';
 import { Changes } from '../../../base/domainObjectsHelpers/Changes';
 import { type BaseTool } from '../../../base/commands/BaseTool';
 import { SolidDomainObject } from '../common/SolidDomainObject';
+import { BoxDomainObject } from '../box/BoxDomainObject';
+import { CylinderDomainObject } from '../cylinder/CylinderDomainObject';
 
 export abstract class PrimitiveEditTool extends BaseEditTool {
   // ==================================================
@@ -310,35 +312,72 @@ export abstract class PrimitiveEditTool extends BaseEditTool {
     point: Vector3,
     pickInfo: PrimitivePickInfo
   ): void {
+    if (domainObject instanceof BoxDomainObject) {
+      PrimitiveEditTool.setCursorForBox(tool, domainObject, point, pickInfo);
+    } else if (domainObject instanceof CylinderDomainObject) {
+      PrimitiveEditTool.setCursorForCylinder(tool, domainObject, point, pickInfo);
+    }
+  }
+
+  private static setCursorForBox(
+    tool: BaseTool,
+    domainObject: BoxDomainObject,
+    point: Vector3,
+    pickInfo: PrimitivePickInfo
+  ): void {
     if (pickInfo.focusType === FocusType.Body) {
       tool.renderTarget.setMoveCursor();
     } else if (pickInfo.focusType === FocusType.Face) {
-      const matrix = domainObject.getMatrix();
-      matrix.premultiply(CDF_TO_VIEWER_TRANSFORMATION);
-
-      const boxSize = new Vector3();
-      const boxCenter = new Vector3();
-      matrix.decompose(boxCenter, new Quaternion(), boxSize);
-
-      const faceCenter = pickInfo.face.getCenter().multiplyScalar(100);
-      const size = boxSize.getComponent(pickInfo.face.index);
-      if (size < 1) {
-        // If they are too close, the pixel value will be the same, so multiply faceCenter
-        // so it pretend the size is at least 1.
-        faceCenter.multiplyScalar(1 / size);
-      }
-      boxCenter.applyMatrix4(CDF_TO_VIEWER_TRANSFORMATION);
-      faceCenter.applyMatrix4(matrix);
-
-      tool.renderTarget.setResizeCursor(boxCenter, faceCenter);
-    } else if (pickInfo.focusType === FocusType.Corner) {
-      const matrix = domainObject.getMatrix();
-      matrix.premultiply(CDF_TO_VIEWER_TRANSFORMATION);
+      const center = domainObject.box.center.clone();
+      center.applyMatrix4(CDF_TO_VIEWER_TRANSFORMATION);
 
       const faceCenter = pickInfo.face.getCenter();
+      const matrix = domainObject.box.getMatrix();
       faceCenter.applyMatrix4(matrix);
+      faceCenter.applyMatrix4(CDF_TO_VIEWER_TRANSFORMATION);
+
+      tool.renderTarget.setResizeCursor(center, faceCenter);
+    } else if (pickInfo.focusType === FocusType.Corner) {
+      const faceCenter = pickInfo.face.getCenter();
+      const matrix = domainObject.box.getMatrix();
+      faceCenter.applyMatrix4(matrix);
+      faceCenter.applyMatrix4(CDF_TO_VIEWER_TRANSFORMATION);
 
       tool.renderTarget.setResizeCursor(point, faceCenter);
+    } else if (pickInfo.focusType === FocusType.Rotation) {
+      tool.renderTarget.setGrabCursor();
+    } else {
+      tool.setDefaultCursor();
+    }
+  }
+
+  private static setCursorForCylinder(
+    tool: BaseTool,
+    domainObject: CylinderDomainObject,
+    point: Vector3,
+    pickInfo: PrimitivePickInfo
+  ): void {
+    if (pickInfo.focusType === FocusType.Body) {
+      tool.renderTarget.setMoveCursor();
+    } else if (pickInfo.focusType === FocusType.Face) {
+      const { cylinder } = domainObject;
+
+      if (pickInfo.face.index === 2) {
+        const centerA = cylinder.centerA.clone();
+        const centerB = cylinder.centerB.clone();
+        centerA.applyMatrix4(CDF_TO_VIEWER_TRANSFORMATION);
+        centerB.applyMatrix4(CDF_TO_VIEWER_TRANSFORMATION);
+        tool.renderTarget.setResizeCursor(centerA, centerB);
+      } else {
+        const centerA = cylinder.centerA.clone();
+        const centerB = cylinder.centerB.clone();
+        centerA.applyMatrix4(CDF_TO_VIEWER_TRANSFORMATION);
+        centerB.applyMatrix4(CDF_TO_VIEWER_TRANSFORMATION);
+
+        const axis = new Line3(centerA, centerB);
+        const closestOnAxis = axis.closestPointToPoint(point, false, new Vector3());
+        tool.renderTarget.setResizeCursor(point, closestOnAxis);
+      }
     } else if (pickInfo.focusType === FocusType.Rotation) {
       tool.renderTarget.setGrabCursor();
     } else {

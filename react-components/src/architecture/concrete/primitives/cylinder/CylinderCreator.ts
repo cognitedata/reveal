@@ -10,7 +10,7 @@ import { Changes } from '../../../base/domainObjectsHelpers/Changes';
 import { type DomainObject } from '../../../base/domainObjects/DomainObject';
 import { type BaseTool } from '../../../base/commands/BaseTool';
 import { type CylinderDomainObject } from './CylinderDomainObject';
-import { MIN_SIZE } from '../common/SolidDomainObject';
+import { Cylinder } from './Cylinder';
 
 const UP_VECTOR = new Vector3(0, 0, 1);
 /**
@@ -23,7 +23,7 @@ export class CylinderCreator extends BaseCreator {
 
   private readonly _domainObject: CylinderDomainObject;
   private readonly _isHorizontal;
-  private _radius = MIN_SIZE;
+  private _radius = Cylinder.MIN_SIZE;
 
   // ==================================================
   // CONSTRUCTOR
@@ -109,7 +109,7 @@ export class CylinderCreator extends BaseCreator {
         }
       }
     } else if (this.notPendingPointCount === 2) {
-      const { center, axis } = this._domainObject;
+      const { center, axis } = this._domainObject.cylinder;
 
       const lineLength = ray.origin.distanceTo(center) * 100;
       const v0 = center.clone().addScaledVector(axis, -lineLength);
@@ -117,7 +117,7 @@ export class CylinderCreator extends BaseCreator {
 
       const pointOnRay = new Vector3();
       this._radius = Math.sqrt(ray.distanceSqToSegment(v0, v1, pointOnRay, undefined));
-      this._radius = Math.max(this._radius, MIN_SIZE);
+      this._radius = Math.max(this._radius, Cylinder.MIN_SIZE);
       return pointOnRay;
     }
     return point;
@@ -133,23 +133,23 @@ export class CylinderCreator extends BaseCreator {
     if (this.pointCount === 0) {
       throw new Error('Cannot create a cylinder without points');
     }
-    const domainObject = this._domainObject;
+    const { cylinder } = this._domainObject;
     if (this.pointCount === 1) {
-      const { centerA, centerB } = this._domainObject;
+      const { centerA, centerB } = cylinder;
       centerA.copy(this.firstPoint);
       centerB.copy(this.firstPoint);
-      const smallVector = new Vector3(MIN_SIZE, 0, 0);
+      const smallVector = new Vector3(Cylinder.MIN_SIZE, 0, 0);
       centerA.sub(smallVector);
       centerB.add(smallVector);
-      domainObject.forceMinSize();
+      cylinder.forceMinSize();
     }
     if (this.pointCount === 2) {
-      const { centerA, centerB } = this._domainObject;
+      const { centerA, centerB } = cylinder;
       centerA.copy(this.firstPoint);
       centerB.copy(this.lastPoint);
-      domainObject.forceMinSize();
+      cylinder.forceMinSize();
     } else {
-      domainObject.radius = this._radius;
+      cylinder.radius = this._radius;
     }
   }
 }

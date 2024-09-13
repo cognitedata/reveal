@@ -21,7 +21,7 @@ import {
   type PerspectiveCamera,
   Vector2
 } from 'three';
-import { BoxDomainObject } from './BoxDomainObject';
+import { type BoxDomainObject } from './BoxDomainObject';
 import { type DomainObjectChange } from '../../../base/domainObjectsHelpers/DomainObjectChange';
 import { Changes } from '../../../base/domainObjectsHelpers/Changes';
 import { GroupThreeView } from '../../../base/views/GroupThreeView';
@@ -46,6 +46,7 @@ import { type DomainObject } from '../../../base/domainObjects/DomainObject';
 import { type SolidPrimitiveRenderStyle } from '../common/SolidPrimitiveRenderStyle';
 import { LineMaterial } from 'three/examples/jsm/lines/LineMaterial.js';
 import { Wireframe } from 'three/examples/jsm/lines/Wireframe.js';
+import { Box } from './Box';
 
 const RELATIVE_RESIZE_RADIUS = 0.15;
 const RELATIVE_ROTATION_RADIUS = new Range1(0.6, 0.75);
@@ -193,11 +194,11 @@ export class BoxView extends GroupThreeView<BoxDomainObject> {
   // ==================================================
 
   private getTextHeight(relativeTextSize: number): number {
-    return relativeTextSize * this.domainObject.diagonal;
+    return relativeTextSize * this.domainObject.box.diagonal;
   }
 
   private getFaceRadius(face: BoxFace): number {
-    const { size } = this.domainObject;
+    const { size } = this.domainObject.box;
     const size1 = size.getComponent(face.tangentIndex1);
     const size2 = size.getComponent(face.tangentIndex2);
     return (size1 + size2) / 4;
@@ -205,14 +206,14 @@ export class BoxView extends GroupThreeView<BoxDomainObject> {
 
   private getMatrix(): Matrix4 {
     const { domainObject } = this;
-    const matrix = domainObject.getMatrix();
+    const matrix = domainObject.box.getMatrix();
     matrix.premultiply(CDF_TO_VIEWER_TRANSFORMATION);
     return matrix;
   }
 
   private getRotationMatrix(): Matrix4 {
     const { domainObject } = this;
-    const matrix = domainObject.getRotationMatrix();
+    const matrix = domainObject.box.getRotationMatrix();
     matrix.premultiply(CDF_TO_VIEWER_TRANSFORMATION);
     return matrix;
   }
@@ -270,7 +271,7 @@ export class BoxView extends GroupThreeView<BoxDomainObject> {
     if (rootDomainObject === undefined) {
       return undefined;
     }
-    const degrees = domainObject.getRotationInDegrees(face.index);
+    const degrees = domainObject.box.getRotationInDegrees(face.index);
     if (degrees === 0) {
       return undefined; // Not show when about 0
     }
@@ -320,7 +321,7 @@ export class BoxView extends GroupThreeView<BoxDomainObject> {
     center.applyMatrix4(matrix);
     result.position.copy(center);
 
-    const rotationMatrix = domainObject.getRotationMatrix();
+    const rotationMatrix = domainObject.box.getRotationMatrix();
     rotationMatrix.premultiply(CDF_TO_VIEWER_TRANSFORMATION);
 
     rotateEdgeCircle(result, face, rotationMatrix);
@@ -329,12 +330,12 @@ export class BoxView extends GroupThreeView<BoxDomainObject> {
 
   private createEdgeCircle(matrix: Matrix4, material: Material, face: BoxFace): Mesh | undefined {
     const { domainObject } = this;
-    const adjacentSize1 = domainObject.size.getComponent(face.tangentIndex1);
-    if (!BoxDomainObject.isValidSize(adjacentSize1)) {
+    const adjacentSize1 = domainObject.box.size.getComponent(face.tangentIndex1);
+    if (!Box.isValidSize(adjacentSize1)) {
       return undefined;
     }
-    const adjacentSize2 = domainObject.size.getComponent(face.tangentIndex2);
-    if (!BoxDomainObject.isValidSize(adjacentSize2)) {
+    const adjacentSize2 = domainObject.box.size.getComponent(face.tangentIndex2);
+    if (!Box.isValidSize(adjacentSize2)) {
       return undefined;
     }
     const radius = RELATIVE_RESIZE_RADIUS * this.getFaceRadius(face);
@@ -348,7 +349,7 @@ export class BoxView extends GroupThreeView<BoxDomainObject> {
     center.applyMatrix4(matrix);
     result.position.copy(center);
 
-    const rotationMatrix = domainObject.getRotationMatrix();
+    const rotationMatrix = domainObject.box.getRotationMatrix();
     rotationMatrix.premultiply(CDF_TO_VIEWER_TRANSFORMATION);
 
     rotateEdgeCircle(result, face, rotationMatrix);
@@ -368,8 +369,8 @@ export class BoxView extends GroupThreeView<BoxDomainObject> {
     const spriteHeight = this.getTextHeight(style.relativeTextSize);
     clear(this._sprites);
     for (let index = 0; index < 3; index++) {
-      const size = domainObject.size.getComponent(index);
-      if (!BoxDomainObject.isValidSize(size)) {
+      const size = domainObject.box.size.getComponent(index);
+      if (!Box.isValidSize(size)) {
         this._sprites.push(undefined);
         continue;
       }
@@ -396,7 +397,7 @@ export class BoxView extends GroupThreeView<BoxDomainObject> {
     const matrix = this.getMatrix();
 
     const rotationMatrix = this.getRotationMatrix();
-    const centerOfBox = newVector3(domainObject.center);
+    const centerOfBox = newVector3(domainObject.box.center);
     centerOfBox.applyMatrix4(CDF_TO_VIEWER_TRANSFORMATION);
     const cameraPosition = camera.getWorldPosition(newVector3());
     const cameraDirection = centerOfBox.sub(cameraPosition).normalize();
@@ -520,7 +521,7 @@ export class BoxView extends GroupThreeView<BoxDomainObject> {
   ): FocusType {
     const { domainObject } = this;
     const scale = newVector3().setScalar(this.getFaceRadius(face));
-    const scaledMatrix = domainObject.getScaledMatrix(scale);
+    const scaledMatrix = domainObject.box.getScaledMatrix(scale);
     scaledMatrix.invert();
     const scaledPositionAtFace = newVector3(realPosition).applyMatrix4(scaledMatrix);
     const planePoint = face.getPlanePoint(scaledPositionAtFace);
@@ -547,7 +548,7 @@ export class BoxView extends GroupThreeView<BoxDomainObject> {
   private getCornerSign(realPosition: Vector3, face: BoxFace): Vector3 {
     const { domainObject } = this;
     const scale = newVector3().setScalar(this.getFaceRadius(face));
-    const scaledMatrix = domainObject.getScaledMatrix(scale);
+    const scaledMatrix = domainObject.box.getScaledMatrix(scale);
     scaledMatrix.invert();
     const scaledPositionAtFace = realPosition.clone().applyMatrix4(scaledMatrix);
     scaledPositionAtFace.setComponent(face.index, 0);
@@ -566,7 +567,7 @@ export class BoxView extends GroupThreeView<BoxDomainObject> {
     const { domainObject } = this;
     const center = face.getCenter(new Vector3()); // In range (-0.5, 0.5)
     const corner = center.addScaledVector(cornerSign, 0.5);
-    const matrix = domainObject.getMatrix();
+    const matrix = domainObject.box.getMatrix();
     corner.applyMatrix4(matrix);
     return corner;
   }

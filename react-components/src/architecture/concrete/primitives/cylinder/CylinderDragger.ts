@@ -15,10 +15,10 @@ import {
   type CreateDraggerProps
 } from '../../../base/domainObjects/VisualDomainObject';
 import { Vector3Pool } from '@cognite/reveal';
-import { MIN_SIZE } from '../common/SolidDomainObject';
+import { Cylinder } from './Cylinder';
 
 /**
- * The `BoxDragger` class represents a utility for dragging and manipulating a box in a 3D space.
+ * The `CylinderDragger` class represents a utility for dragging and manipulating a cylinder in a 3D space.
  * It provides methods for scaling, translating, and rotating the box based on user interactions.
  * All geometry in this class assume Z-axis is up
  */
@@ -35,12 +35,8 @@ export class CylinderDragger extends BaseDragger {
   private readonly _normal = new Vector3(); // Intersection normal
   private readonly _planeOfFace = new Plane(); // Plane of the intersection/normal
 
-  // Original values when the drag started
-  private readonly _radius;
-  private readonly _height;
-  private readonly _centerA = new Vector3();
-  private readonly _centerB = new Vector3();
-  private readonly _axis = new Vector3();
+  // Original cylinder when the drag started
+  private readonly _originalCylinder = new Cylinder();
 
   // ==================================================
   // INSTANCE PROPERTIES
@@ -73,12 +69,8 @@ export class CylinderDragger extends BaseDragger {
       this._normal.normalize();
       this._planeOfFace.setFromNormalAndCoplanarPoint(this._normal, this.point);
     }
-    // Back up the original values
-    this._radius = this._domainObject.radius;
-    this._height = this._domainObject.height;
-    this._centerA.copy(this._domainObject.centerA);
-    this._centerB.copy(this._domainObject.centerB);
-    this._axis.copy(this._domainObject.axis);
+    // Back up the original cylinder
+    this._originalCylinder.copy(domainObject.cylinder);
   }
 
   // ==================================================
@@ -121,49 +113,57 @@ export class CylinderDragger extends BaseDragger {
     }
   }
 
-  private translate(ray: Ray, shift: boolean): boolean {
+  private translate(ray: Ray, _shift: boolean): boolean {
     // This translation can only be done in one plane, so we need to find the intersection point
-    if (this._face.index === 2) {
-      const planeIntersect = ray.intersectPlane(this._planeOfFace, newVector3());
-      if (planeIntersect === null) {
-        return false;
-      }
-      const deltaCenter = planeIntersect.sub(this.point);
-      if (deltaCenter.lengthSq() === 0) {
-        return false;
-      }
-      // First copy the original values
-      const { centerA, centerB } = this._domainObject;
-      centerA.copy(this._centerA);
-      centerB.copy(this._centerB);
-
-      // Then translate the center
-      centerA.add(deltaCenter);
-      centerB.add(deltaCenter);
-      return true;
-    } else {
-      // Change radius
-      const { centerA, centerB } = this._domainObject;
-      const axis = new Line3(centerA, centerB);
-      const closestOnAxis = axis.closestPointToPoint(this.point, true, newVector3());
-      const axisNormal = newVector3().subVectors(closestOnAxis, this.point).normalize();
-
-      const closestToRay = getClosestPointOnLine(ray, axisNormal, closestOnAxis);
-
-      const radius = closestToRay.distanceTo(closestOnAxis);
-      const newRadius = this.getBestValue(radius, shift, MIN_SIZE);
-      if (newRadius === this._radius) {
-        return false; // Nothing has changed
-      }
-      this._domainObject.radius = newRadius;
-      return true;
+    if (this._face.index !== 2) {
+      return false;
     }
+    const planeIntersect = ray.intersectPlane(this._planeOfFace, newVector3());
+    if (planeIntersect === null) {
+      return false;
+    }
+    const deltaCenter = planeIntersect.sub(this.point);
+    if (deltaCenter.lengthSq() === 0) {
+      return false;
+    }
+    // First copy the original values
+    const { cylinder } = this._domainObject;
+    const originalCylinder = this._originalCylinder;
+    cylinder.copy(originalCylinder);
+
+    // Then translate the center
+    cylinder.centerA.add(deltaCenter);
+    cylinder.centerB.add(deltaCenter);
+    return true;
   }
 
   private moveFace(ray: Ray, shift: boolean): boolean {
     if (this._face.index !== 2) {
-      return false;
+      return this.moveRadius(ray, shift);
+    } else {
+      return this.moveEndCaps(ray, shift);
     }
+  }
+
+  private moveRadius(ray: Ray, shift: boolean): boolean {
+    // Change radius
+    const { cylinder } = this._domainObject;
+    const axis = new Line3(cylinder.centerA, cylinder.centerB);
+    const closestOnAxis = axis.closestPointToPoint(this.point, true, newVector3());
+    const axisNormal = newVector3().subVectors(closestOnAxis, this.point).normalize();
+
+    const closestToRay = getClosestPointOnLine(ray, axisNormal, closestOnAxis);
+
+    const radius = closestToRay.distanceTo(closestOnAxis);
+    const newRadius = this.getBestValue(radius, shift, Cylinder.MIN_SIZE);
+    if (newRadius === cylinder.radius) {
+      return false; // Nothing has changed
+    }
+    cylinder.radius = newRadius;
+    return true;
+  }
+
+  private moveEndCaps(ray: Ray, shift: boolean): boolean {
     // Take find closest point between the ray and the line perpendicular to the end face.
     // The distance from this point to the face is the change.
     const pointOnSegment = newVector3();
@@ -172,13 +172,18 @@ export class CylinderDragger extends BaseDragger {
     if (deltaHeight === 0) {
       return false; // Nothing has changed
     }
-    const newHeight = this.getBestValue(this._height + deltaHeight, shift, MIN_SIZE);
-    if (newHeight === this._height) {
+    const originalCylinder = this._originalCylinder;
+    const newHeight = this.getBestValue(
+      originalCylinder.height + deltaHeight,
+      shift,
+      Cylinder.MIN_SIZE
+    );
+    if (newHeight === originalCylinder.height) {
       return false; // Nothing has changed
     }
-    const { centerA, centerB } = this._domainObject;
-    centerA.copy(this._centerA);
-    centerB.copy(this._centerB);
+    const { cylinder } = this._domainObject;
+    cylinder.copy(originalCylinder);
+    const { centerA, centerB } = cylinder;
 
     const axis = newVector3().subVectors(centerA, centerB).normalize().multiplyScalar(newHeight);
     if (this._face.face === 2) {
@@ -200,30 +205,31 @@ export class CylinderDragger extends BaseDragger {
     // Move end point to the same plane as the center of the end point,
     // and adjust the length so it doesn't change
     const translation = newVector3().subVectors(endPoint, this.point);
-    const { centerA, centerB } = this._domainObject;
-    centerA.copy(this._centerA);
-    centerB.copy(this._centerB);
+    const { cylinder } = this._domainObject;
+    const originalCylinder = this._originalCylinder;
+    cylinder.copy(originalCylinder);
+    const { centerA, centerB } = cylinder;
 
     if (this._face.face === 2) {
       centerB.add(translation);
       const axis = newVector3()
         .subVectors(centerA, centerB)
         .normalize()
-        .multiplyScalar(this._height);
+        .multiplyScalar(originalCylinder.height);
       centerB.subVectors(centerA, axis);
     } else {
       centerA.add(translation);
       const axis = newVector3()
         .subVectors(centerA, centerB)
         .normalize()
-        .multiplyScalar(this._height);
+        .multiplyScalar(originalCylinder.height);
       centerA.addVectors(centerB, axis);
     }
     return true;
   }
 
   public getRotationMatrix(): Matrix4 {
-    return this._domainObject.getRotationMatrix();
+    return this._domainObject.cylinder.getRotationMatrix();
   }
 }
 

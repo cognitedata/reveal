@@ -116,13 +116,14 @@ export class CylinderView extends GroupThreeView<CylinderDomainObject> {
       return undefined; // Should never be picked
     }
 
-    const centerA = domainObject.centerA.clone();
-    const centerB = domainObject.centerB.clone();
+    const { cylinder } = domainObject;
+    const centerA = cylinder.centerA.clone();
+    const centerB = cylinder.centerB.clone();
     centerA.applyMatrix4(CDF_TO_VIEWER_TRANSFORMATION);
     centerB.applyMatrix4(CDF_TO_VIEWER_TRANSFORMATION);
     const ray = intersectInput.raycaster.ray;
 
-    const point = intersectRayCylinder(ray, centerA, centerB, domainObject.radius);
+    const point = intersectRayCylinder(ray, centerA, centerB, cylinder.radius);
     if (point === null) {
       return undefined;
     }
@@ -160,12 +161,12 @@ export class CylinderView extends GroupThreeView<CylinderDomainObject> {
   // ==================================================
 
   private getFaceRadius(): number {
-    return this.domainObject.radius / 2;
+    return this.domainObject.cylinder.radius / 2;
   }
 
   private getMatrix(): Matrix4 {
     const { domainObject } = this;
-    const matrix = domainObject.getMatrix();
+    const matrix = domainObject.cylinder.getMatrix();
     matrix.premultiply(CDF_TO_VIEWER_TRANSFORMATION);
     return matrix;
   }
@@ -222,9 +223,6 @@ export class CylinderView extends GroupThreeView<CylinderDomainObject> {
       return undefined;
     }
     const { domainObject, style } = this;
-    if (!domainObject.canRotateComponent(face.index)) {
-      return undefined;
-    }
     const { focusType } = domainObject;
     const radius = this.getFaceRadius();
 
@@ -241,7 +239,7 @@ export class CylinderView extends GroupThreeView<CylinderDomainObject> {
     center.applyMatrix4(matrix);
     result.position.copy(center);
 
-    const rotationMatrix = domainObject.getRotationMatrix();
+    const rotationMatrix = domainObject.cylinder.getRotationMatrix();
     rotationMatrix.premultiply(CDF_TO_VIEWER_TRANSFORMATION);
 
     rotateEdgeCircle(result, face, rotationMatrix);
@@ -261,7 +259,7 @@ export class CylinderView extends GroupThreeView<CylinderDomainObject> {
     center.applyMatrix4(matrix);
     result.position.copy(center);
 
-    const rotationMatrix = domainObject.getRotationMatrix();
+    const rotationMatrix = domainObject.cylinder.getRotationMatrix();
     rotationMatrix.premultiply(CDF_TO_VIEWER_TRANSFORMATION);
 
     rotateEdgeCircle(result, face, rotationMatrix);
@@ -302,21 +300,22 @@ export class CylinderView extends GroupThreeView<CylinderDomainObject> {
   private getPickedFocusType(realPosition: Vector3, face: BoxFace): FocusType {
     const { domainObject } = this;
     const scale = newVector3().setScalar(this.getFaceRadius());
-    const scaledMatrix = domainObject.getScaledMatrix(scale);
+    const scaledMatrix = domainObject.cylinder.getScaledMatrix(scale);
     scaledMatrix.invert();
     const scaledPositionAtFace = newVector3(realPosition).applyMatrix4(scaledMatrix);
     const planePoint = face.getPlanePoint(scaledPositionAtFace);
     const relativeDistance = planePoint.length() / 2;
 
-    if (relativeDistance < RELATIVE_RESIZE_RADIUS) {
-      return FocusType.Face;
-    }
-    if (domainObject.canRotateComponent(face.index)) {
+    if (face.index === 2) {
+      if (relativeDistance < RELATIVE_RESIZE_RADIUS) {
+        return FocusType.Face;
+      }
       if (RELATIVE_ROTATION_RADIUS.isInside(relativeDistance)) {
         return FocusType.Rotation;
       }
+      return FocusType.Body;
     }
-    return FocusType.Body;
+    return FocusType.Face;
   }
 
   private isFaceVisible(face: BoxFace): boolean {
