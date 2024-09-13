@@ -22,6 +22,7 @@ export class Cylinder {
   // Redundant variable, calculated when needed
   private readonly _center = new Vector3();
   private readonly _axis = new Vector3();
+  private readonly _scale = new Vector3();
 
   // ==================================================
   // INSTANCE PROPERTIES
@@ -35,8 +36,16 @@ export class Cylinder {
     return this._center.addVectors(this.centerB, this.centerA).divideScalar(2);
   }
 
+  public get size(): Vector3 {
+    return this._scale.set(this.diameter, this.diameter, this.height);
+  }
+
   public get axis(): Vector3 {
     return this._axis.subVectors(this.centerB, this.centerA).normalize();
+  }
+
+  public get diameter(): number {
+    return 2 * this.radius;
   }
 
   public get area(): number {
@@ -58,10 +67,9 @@ export class Cylinder {
   }
 
   public getMatrix(matrix: Matrix4 = new Matrix4()): Matrix4 {
-    const scale = new Vector3(this.radius * 2, this.radius * 2, this.height);
     const quaternion = new Quaternion();
     quaternion.setFromUnitVectors(UP_AXIS, this.axis);
-    matrix.compose(this.center, quaternion, scale);
+    matrix.compose(this.center, quaternion, this.size);
     return matrix;
   }
 
