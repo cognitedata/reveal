@@ -12,14 +12,13 @@ import { type BaseCreator } from '../../base/domainObjectsHelpers/BaseCreator';
 import { BaseEditTool } from '../../base/commands/BaseEditTool';
 import { type DomainObject } from '../../base/domainObjects/DomainObject';
 import { CommandsUpdater } from '../../base/reactUpdaters/CommandsUpdater';
-import { BoxDomainObject } from './box/BoxDomainObject';
 import { LineDomainObject } from './line/LineDomainObject';
 import { CommonRenderStyle } from '../../base/renderStyles/CommonRenderStyle';
 import { type VisualDomainObject } from '../../base/domainObjects/VisualDomainObject';
 import { PlaneDomainObject } from './plane/PlaneDomainObject';
 import { Changes } from '../../base/domainObjectsHelpers/Changes';
 import { type BaseTool } from '../../base/commands/BaseTool';
-import { type SolidDomainObject } from './base/SolidDomainObject';
+import { SolidDomainObject } from './base/SolidDomainObject';
 
 export abstract class PrimitiveEditTool extends BaseEditTool {
   // ==================================================
@@ -235,7 +234,7 @@ export abstract class PrimitiveEditTool extends BaseEditTool {
       this.defocusAll(domainObject);
       domainObject.setFocusInteractive(FocusType.Focus);
       this.renderTarget.setMoveCursor();
-    } else if (domainObject instanceof BoxDomainObject) {
+    } else if (domainObject instanceof SolidDomainObject) {
       const pickInfo = intersection.userData as BoxPickInfo;
       if (pickInfo === undefined) {
         this.defocusAll();
@@ -257,7 +256,7 @@ export abstract class PrimitiveEditTool extends BaseEditTool {
         domainObject.setFocusInteractive(FocusType.None);
       } else if (domainObject instanceof PlaneDomainObject) {
         domainObject.setFocusInteractive(FocusType.None);
-      } else if (domainObject instanceof BoxDomainObject) {
+      } else if (domainObject instanceof SolidDomainObject) {
         domainObject.setFocusInteractive(FocusType.None);
       }
     }
@@ -307,14 +306,14 @@ export abstract class PrimitiveEditTool extends BaseEditTool {
 
   public static setCursor(
     tool: BaseTool,
-    boxDomainObject: SolidDomainObject,
+    domainObject: SolidDomainObject,
     point: Vector3,
     pickInfo: BoxPickInfo
   ): void {
     if (pickInfo.focusType === FocusType.Body) {
       tool.renderTarget.setMoveCursor();
     } else if (pickInfo.focusType === FocusType.Face) {
-      const matrix = boxDomainObject.getMatrix();
+      const matrix = domainObject.getMatrix();
       matrix.premultiply(CDF_TO_VIEWER_TRANSFORMATION);
 
       const boxSize = new Vector3();
@@ -333,7 +332,7 @@ export abstract class PrimitiveEditTool extends BaseEditTool {
 
       tool.renderTarget.setResizeCursor(boxCenter, faceCenter);
     } else if (pickInfo.focusType === FocusType.Corner) {
-      const matrix = boxDomainObject.getMatrix();
+      const matrix = domainObject.getMatrix();
       matrix.premultiply(CDF_TO_VIEWER_TRANSFORMATION);
 
       const faceCenter = pickInfo.face.getCenter();

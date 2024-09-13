@@ -47,7 +47,7 @@ export class BoxUtils {
 
   public static createLineSegmentsGeometry(): LineSegmentsGeometry {
     const positions = BoxUtils.createPositions();
-    return PrimitiveUtils.createLineSegmentsGeometry(positions);
+    return PrimitiveUtils.createLineSegmentsGeometryByPosition(positions);
   }
 
   public static createPositions(): number[] {

@@ -21,7 +21,7 @@ export class PrimitiveUtils {
     return new BufferGeometry().setAttribute('position', attributes);
   }
 
-  public static createLineSegmentsGeometry(positions: number[]): LineSegmentsGeometry {
+  public static createLineSegmentsGeometryByPosition(positions: number[]): LineSegmentsGeometry {
     const geometry = PrimitiveUtils.createBufferGeometry(positions);
     const lineSegments = new LineSegments(geometry);
     return new LineSegmentsGeometry().fromLineSegments(lineSegments);
@@ -31,9 +31,5 @@ export class PrimitiveUtils {
     const geometry = new BufferGeometry().setFromPoints(vertices);
     const lineSegments = new LineSegments(geometry);
     return new LineSegmentsGeometry().fromLineSegments(lineSegments);
-  }
-
-  public static createLineSegmentsGeometryByPositions(positions: number[]): LineSegmentsGeometry {
-    return new LineSegmentsGeometry().setPositions(positions);
   }
 }

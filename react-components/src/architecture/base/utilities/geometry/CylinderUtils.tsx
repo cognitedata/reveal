@@ -15,7 +15,7 @@ export class CylinderUtils {
 
   public static createLineSegmentsGeometry(): LineSegmentsGeometry {
     const positions = CylinderUtils.createPositions();
-    return PrimitiveUtils.createLineSegmentsGeometry(positions);
+    return PrimitiveUtils.createLineSegmentsGeometryByPosition(positions);
   }
 
   public static createPositions(): number[] {

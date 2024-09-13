@@ -53,8 +53,8 @@ export function createWireframeFromMultipleAnnotations(
       if (matrix === undefined) {
         continue;
       }
-      const objectVertices = getObjectVertices(geometry);
-      if (objectVertices === undefined) {
+      const objectPositions = getObjectPositions(geometry);
+      if (objectPositions === undefined) {
         continue;
       }
       matrix.premultiply(globalMatrix);
@@ -63,15 +63,15 @@ export function createWireframeFromMultipleAnnotations(
         translationMatrix = createTranslationMatrix(translation, -1);
       }
       matrix.premultiply(translationMatrix);
-      addPositionsForObject(positions, objectVertices, matrix);
+      addPositionsForObject(positions, objectPositions, matrix);
     }
     userData.add(annotation);
     if (groupSize !== undefined && userData.length >= groupSize) {
       break;
     }
   }
-  const lineSegmentsGeometry = PrimitiveUtils.createLineSegmentsGeometry(positions);
-  const wireframe = new Wireframe(lineSegmentsGeometry, material);
+  const geometry = PrimitiveUtils.createLineSegmentsGeometryByPosition(positions);
+  const wireframe = new Wireframe(geometry, material);
   translationMatrix = createTranslationMatrix(translation);
   wireframe.matrix = translationMatrix;
   wireframe.matrixAutoUpdate = false;
@@ -83,7 +83,7 @@ export function createWireframeFromMultipleAnnotations(
 const CYLINDER_POSITIONS = CylinderUtils.createPositions();
 const BOX_POSITIONS = BoxUtils.createPositions();
 
-function getObjectVertices(geometry: AnnotationGeometry): number[] | undefined {
+function getObjectPositions(geometry: AnnotationGeometry): number[] | undefined {
   if (geometry.box !== undefined) {
     return BOX_POSITIONS;
   } else if (geometry.cylinder !== undefined) {
@@ -103,22 +103,22 @@ function createTranslationMatrix(translation: Vector3, sign = 1): Matrix4 {
 
 function addPositionsForObject(
   positions: number[],
-  objectVertices: number[],
+  objectPositions: number[],
   matrix: Matrix4
 ): void {
   const point = new Vector3();
-  const additionalVertices = new Array<number>(objectVertices.length);
-  for (let i = 0; i < objectVertices.length; i += 3) {
-    const x = objectVertices[i];
-    const y = objectVertices[i + 1];
-    const z = objectVertices[i + 2];
+  const additionalPositions = new Array<number>(objectPositions.length);
+  for (let i = 0; i < objectPositions.length; i += 3) {
+    const x = objectPositions[i];
+    const y = objectPositions[i + 1];
+    const z = objectPositions[i + 2];
 
     point.set(x, y, z);
     point.applyMatrix4(matrix);
 
-    additionalVertices[i] = point.x;
-    additionalVertices[i + 1] = point.y;
-    additionalVertices[i + 2] = point.z;
+    additionalPositions[i] = point.x;
+    additionalPositions[i + 1] = point.y;
+    additionalPositions[i + 2] = point.z;
   }
-  positions.push(...additionalVertices);
+  positions.push(...additionalPositions);
 }

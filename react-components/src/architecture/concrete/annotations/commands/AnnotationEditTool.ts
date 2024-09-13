@@ -75,6 +75,12 @@ export class AnnotationEditTool extends BaseEditTool {
   public override onDeactivate(): void {
     this.handleEscape();
     super.onDeactivate();
+
+    for (const domainObject of this.rootDomainObject.getDescendantsByType(
+      AnnotationsDomainObject
+    )) {
+      domainObject.removeGizmoInteractive();
+    }
   }
 
   public override clearDragging(): void {
