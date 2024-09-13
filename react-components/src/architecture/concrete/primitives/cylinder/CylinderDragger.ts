@@ -4,9 +4,9 @@
 
 import { type Ray, Vector3, Plane, type Matrix4, Line3 } from 'three';
 import { Changes } from '../../../base/domainObjectsHelpers/Changes';
-import { type BoxFace } from '../../../base/utilities/box/BoxFace';
+import { type BoxFace } from '../common/BoxFace';
 import { FocusType } from '../../../base/domainObjectsHelpers/FocusType';
-import { type BoxPickInfo } from '../../../base/utilities/box/BoxPickInfo';
+import { type PrimitivePickInfo } from '../common/PrimitivePickInfo';
 import { getClosestPointOnLine } from '../../../base/utilities/extensions/rayExtensions';
 import { type CylinderDomainObject } from './CylinderDomainObject';
 import { BaseDragger } from '../../../base/domainObjectsHelpers/BaseDragger';
@@ -15,7 +15,7 @@ import {
   type CreateDraggerProps
 } from '../../../base/domainObjects/VisualDomainObject';
 import { Vector3Pool } from '@cognite/reveal';
-import { MIN_SIZE } from '../base/SolidDomainObject';
+import { MIN_SIZE } from '../common/SolidDomainObject';
 
 /**
  * The `BoxDragger` class represents a utility for dragging and manipulating a box in a 3D space.
@@ -61,7 +61,7 @@ export class CylinderDragger extends BaseDragger {
   public constructor(props: CreateDraggerProps, domainObject: CylinderDomainObject) {
     super(props, domainObject);
 
-    const pickInfo = props.intersection.userData as BoxPickInfo;
+    const pickInfo = props.intersection.userData as PrimitivePickInfo;
     this._domainObject = domainObject;
     this._face = pickInfo.face;
     this._focusType = pickInfo.focusType;

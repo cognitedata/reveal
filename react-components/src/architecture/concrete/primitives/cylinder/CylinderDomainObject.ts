@@ -8,8 +8,8 @@ import { CylinderView } from './CylinderView';
 import { type Box3, Matrix4, Quaternion, Vector3 } from 'three';
 import { Changes } from '../../../base/domainObjectsHelpers/Changes';
 import { FocusType } from '../../../base/domainObjectsHelpers/FocusType';
-import { PrimitiveType } from '../PrimitiveType';
-import { type BoxPickInfo } from '../../../base/utilities/box/BoxPickInfo';
+import { PrimitiveType } from '../common/PrimitiveType';
+import { type PrimitivePickInfo } from '../common/PrimitivePickInfo';
 import { type BaseDragger } from '../../../base/domainObjectsHelpers/BaseDragger';
 import { CylinderDragger } from './CylinderDragger';
 import { type CreateDraggerProps } from '../../../base/domainObjects/VisualDomainObject';
@@ -19,8 +19,8 @@ import { type TranslateKey } from '../../../base/utilities/TranslateKey';
 import { Quantity } from '../../../base/domainObjectsHelpers/Quantity';
 import { PanelInfo } from '../../../base/domainObjectsHelpers/PanelInfo';
 import { square } from '../../../base/utilities/extensions/mathExtensions';
-import { MIN_SIZE, SolidDomainObject } from '../base/SolidDomainObject';
-import { SolidPrimitiveRenderStyle } from '../base/SolidPrimitiveRenderStyle';
+import { MIN_SIZE, SolidDomainObject } from '../common/SolidDomainObject';
+import { SolidPrimitiveRenderStyle } from '../common/SolidPrimitiveRenderStyle';
 
 const UP_AXIS = new Vector3(0, 0, 1);
 
@@ -74,9 +74,9 @@ export abstract class CylinderDomainObject extends SolidDomainObject {
   }
 
   public override createDragger(props: CreateDraggerProps): BaseDragger | undefined {
-    const pickInfo = props.intersection.userData as BoxPickInfo;
+    const pickInfo = props.intersection.userData as PrimitivePickInfo;
     if (pickInfo === undefined) {
-      return undefined; // If the BoxPickInfo isn't specified, no dragger is created
+      return undefined; // If the pickInfo isn't specified, no dragger is created
     }
     return new CylinderDragger(props, this);
   }

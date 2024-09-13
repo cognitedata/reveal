@@ -3,22 +3,22 @@
  */
 
 import { CDF_TO_VIEWER_TRANSFORMATION, type CustomObjectIntersection } from '@cognite/reveal';
-import { isDomainObjectIntersection } from '../../base/domainObjectsHelpers/DomainObjectIntersection';
-import { FocusType } from '../../base/domainObjectsHelpers/FocusType';
-import { type BoxPickInfo } from '../../base/utilities/box/BoxPickInfo';
+import { isDomainObjectIntersection } from '../../../base/domainObjectsHelpers/DomainObjectIntersection';
+import { FocusType } from '../../../base/domainObjectsHelpers/FocusType';
+import { type PrimitivePickInfo } from '../common/PrimitivePickInfo';
 import { Quaternion, Vector3 } from 'three';
-import { PrimitiveType } from './PrimitiveType';
-import { type BaseCreator } from '../../base/domainObjectsHelpers/BaseCreator';
-import { BaseEditTool } from '../../base/commands/BaseEditTool';
-import { type DomainObject } from '../../base/domainObjects/DomainObject';
-import { CommandsUpdater } from '../../base/reactUpdaters/CommandsUpdater';
-import { LineDomainObject } from './line/LineDomainObject';
-import { CommonRenderStyle } from '../../base/renderStyles/CommonRenderStyle';
-import { type VisualDomainObject } from '../../base/domainObjects/VisualDomainObject';
-import { PlaneDomainObject } from './plane/PlaneDomainObject';
-import { Changes } from '../../base/domainObjectsHelpers/Changes';
-import { type BaseTool } from '../../base/commands/BaseTool';
-import { SolidDomainObject } from './base/SolidDomainObject';
+import { PrimitiveType } from '../common/PrimitiveType';
+import { type BaseCreator } from '../../../base/domainObjectsHelpers/BaseCreator';
+import { BaseEditTool } from '../../../base/commands/BaseEditTool';
+import { type DomainObject } from '../../../base/domainObjects/DomainObject';
+import { CommandsUpdater } from '../../../base/reactUpdaters/CommandsUpdater';
+import { LineDomainObject } from '../line/LineDomainObject';
+import { CommonRenderStyle } from '../../../base/renderStyles/CommonRenderStyle';
+import { type VisualDomainObject } from '../../../base/domainObjects/VisualDomainObject';
+import { PlaneDomainObject } from '../plane/PlaneDomainObject';
+import { Changes } from '../../../base/domainObjectsHelpers/Changes';
+import { type BaseTool } from '../../../base/commands/BaseTool';
+import { SolidDomainObject } from '../common/SolidDomainObject';
 
 export abstract class PrimitiveEditTool extends BaseEditTool {
   // ==================================================
@@ -235,7 +235,7 @@ export abstract class PrimitiveEditTool extends BaseEditTool {
       domainObject.setFocusInteractive(FocusType.Focus);
       this.renderTarget.setMoveCursor();
     } else if (domainObject instanceof SolidDomainObject) {
-      const pickInfo = intersection.userData as BoxPickInfo;
+      const pickInfo = intersection.userData as PrimitivePickInfo;
       if (pickInfo === undefined) {
         this.defocusAll();
         this.renderTarget.setDefaultCursor();
@@ -308,7 +308,7 @@ export abstract class PrimitiveEditTool extends BaseEditTool {
     tool: BaseTool,
     domainObject: SolidDomainObject,
     point: Vector3,
-    pickInfo: BoxPickInfo
+    pickInfo: PrimitivePickInfo
   ): void {
     if (pickInfo.focusType === FocusType.Body) {
       tool.renderTarget.setMoveCursor();

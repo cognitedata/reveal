@@ -15,7 +15,7 @@ import { UndoCommand } from '../../../base/concreteCommands/UndoCommand';
 import { type BaseCommand } from '../../../base/commands/BaseCommand';
 import { ShowAllAnnotationsCommand } from './ShowAllAnnotationsCommand';
 import { CreateAnnotationMockCommand } from './CreateAnnotationMockCommand';
-import { PrimitiveType } from '../../primitives/PrimitiveType';
+import { PrimitiveType } from '../../primitives/common/PrimitiveType';
 import { CommandsUpdater } from '../../../base/reactUpdaters/CommandsUpdater';
 import { SetAnnotationEditTypeCommand } from './SetAnnotationEditTypeCommand';
 import { type BaseCreator } from '../../../base/domainObjectsHelpers/BaseCreator';
@@ -23,13 +23,13 @@ import { BoxCreator } from '../../primitives/box/BoxCreator';
 import { BoxGizmoDomainObject } from '../BoxGizmoDomainObject';
 import { Changes } from '../../../base/domainObjectsHelpers/Changes';
 import { type BaseDragger } from '../../../base/domainObjectsHelpers/BaseDragger';
-import { PrimitiveEditTool } from '../../primitives/PrimitiveEditTool';
-import { type BoxPickInfo } from '../../../base/utilities/box/BoxPickInfo';
+import { PrimitiveEditTool } from '../../primitives/tools/PrimitiveEditTool';
+import { type PrimitivePickInfo } from '../../primitives/common/PrimitivePickInfo';
 import { DomainObjectChange } from '../../../base/domainObjectsHelpers/DomainObjectChange';
 import { type SingleAnnotation } from '../helpers/SingleAnnotation';
 import { DeleteSelectedAnnotationCommand } from './DeleteSelectedAnnotationCommand';
 import { AlignSelectedAnnotationCommand } from './AlignSelectedAnnotationCommand';
-import { SolidDomainObject } from '../../primitives/base/SolidDomainObject';
+import { SolidDomainObject } from '../../primitives/common/SolidDomainObject';
 import { CylinderGizmoDomainObject } from '../CylinderGizmoDomainObject';
 import { AnnotationChangedDescription } from '../helpers/AnnotationChangedDescription';
 import { CylinderCreator } from '../../primitives/cylinder/CylinderCreator';
@@ -162,7 +162,7 @@ export class AnnotationEditTool extends BaseEditTool {
         this.renderTarget.setNavigateCursor();
         this.defocusAll();
       } else if (gizmo !== undefined && isDomainObjectIntersection(intersection)) {
-        const pickInfo = intersection.userData as BoxPickInfo;
+        const pickInfo = intersection.userData as PrimitivePickInfo;
         gizmo.setFocusInteractive(pickInfo.focusType, pickInfo.face);
         PrimitiveEditTool.setCursor(this, gizmo, intersection.point, pickInfo);
       }

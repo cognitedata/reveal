@@ -8,7 +8,7 @@ import { PlaneView } from './PlaneView';
 import { type Color, Plane, Vector3 } from 'three';
 import { Changes } from '../../../base/domainObjectsHelpers/Changes';
 import { FocusType } from '../../../base/domainObjectsHelpers/FocusType';
-import { PrimitiveType } from '../PrimitiveType';
+import { PrimitiveType } from '../common/PrimitiveType';
 import { type BaseDragger } from '../../../base/domainObjectsHelpers/BaseDragger';
 import {
   VisualDomainObject,
@@ -29,7 +29,7 @@ import { radToDeg } from 'three/src/math/MathUtils.js';
 import { type DomainObjectChange } from '../../../base/domainObjectsHelpers/DomainObjectChange';
 import { DomainObjectTransaction } from '../../../base/undo/DomainObjectTransaction';
 import { type Transaction } from '../../../base/undo/Transaction';
-import { SolidPrimitiveRenderStyle } from '../base/SolidPrimitiveRenderStyle';
+import { SolidPrimitiveRenderStyle } from '../common/SolidPrimitiveRenderStyle';
 
 const ORIGIN = new Vector3(0, 0, 0);
 

@@ -5,8 +5,8 @@
 import { type BaseCommand } from '../../base/commands/BaseCommand';
 import { type BaseCreator } from '../../base/domainObjectsHelpers/BaseCreator';
 import { type TranslateKey } from '../../base/utilities/TranslateKey';
-import { PrimitiveEditTool } from '../primitives/PrimitiveEditTool';
-import { PrimitiveType } from '../primitives/PrimitiveType';
+import { PrimitiveEditTool } from '../primitives/tools/PrimitiveEditTool';
+import { PrimitiveType } from '../primitives/common/PrimitiveType';
 import { BoxCreator } from '../primitives/box/BoxCreator';
 import { CropBoxDomainObject } from './CropBoxDomainObject';
 import { ApplyClipCommand } from './commands/ApplyClipCommand';

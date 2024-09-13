@@ -5,9 +5,9 @@
 import { type SolidPrimitiveRenderStyle } from './SolidPrimitiveRenderStyle';
 import { type Box3, type Matrix4, type Vector3 } from 'three';
 import { Changes } from '../../../base/domainObjectsHelpers/Changes';
-import { BoxFace } from '../../../base/utilities/box/BoxFace';
+import { BoxFace } from './BoxFace';
 import { FocusType } from '../../../base/domainObjectsHelpers/FocusType';
-import { type PrimitiveType } from '../PrimitiveType';
+import { type PrimitiveType } from './PrimitiveType';
 import { VisualDomainObject } from '../../../base/domainObjects/VisualDomainObject';
 import { getIconByPrimitiveType } from '../../measurements/getIconByPrimitiveType';
 import { DomainObjectTransaction } from '../../../base/undo/DomainObjectTransaction';

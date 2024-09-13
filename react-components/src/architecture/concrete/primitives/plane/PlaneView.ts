@@ -31,8 +31,8 @@ import {
 } from '@cognite/reveal';
 import { FocusType } from '../../../base/domainObjectsHelpers/FocusType';
 import { type DomainObjectIntersection } from '../../../base/domainObjectsHelpers/DomainObjectIntersection';
-import { PrimitiveType } from '../PrimitiveType';
-import { type SolidPrimitiveRenderStyle } from '../base/SolidPrimitiveRenderStyle';
+import { PrimitiveType } from '../common/PrimitiveType';
+import { type SolidPrimitiveRenderStyle } from '../common/SolidPrimitiveRenderStyle';
 import { LineMaterial } from 'three/examples/jsm/lines/LineMaterial.js';
 import { updateWireframeMaterial } from '../box/BoxView';
 import { Wireframe } from 'three/examples/jsm/lines/Wireframe.js';

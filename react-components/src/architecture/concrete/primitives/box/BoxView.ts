@@ -32,18 +32,18 @@ import {
   Vector3Pool
 } from '@cognite/reveal';
 import { type DomainObjectIntersection } from '../../../base/domainObjectsHelpers/DomainObjectIntersection';
-import { BoxFace } from '../../../base/utilities/box/BoxFace';
+import { BoxFace } from '../common/BoxFace';
 import { FocusType } from '../../../base/domainObjectsHelpers/FocusType';
 import { clear } from '../../../base/utilities/extensions/arrayExtensions';
 import { createSpriteWithText } from '../../../base/utilities/sprites/createSprite';
 import { BoxUtils } from '../../../base/utilities/geometry/BoxUtils';
-import { BoxPickInfo } from '../../../base/utilities/box/BoxPickInfo';
+import { PrimitivePickInfo } from '../common/PrimitivePickInfo';
 import { Range1 } from '../../../base/utilities/geometry/Range1';
-import { PrimitiveType } from '../PrimitiveType';
+import { PrimitiveType } from '../common/PrimitiveType';
 import { Quantity } from '../../../base/domainObjectsHelpers/Quantity';
-import { type PrimitiveRenderStyle } from '../base/PrimitiveRenderStyle';
+import { type PrimitiveRenderStyle } from '../common/PrimitiveRenderStyle';
 import { type DomainObject } from '../../../base/domainObjects/DomainObject';
-import { type SolidPrimitiveRenderStyle } from '../base/SolidPrimitiveRenderStyle';
+import { type SolidPrimitiveRenderStyle } from '../common/SolidPrimitiveRenderStyle';
 import { LineMaterial } from 'three/examples/jsm/lines/LineMaterial.js';
 import { Wireframe } from 'three/examples/jsm/lines/Wireframe.js';
 
@@ -178,7 +178,7 @@ export class BoxView extends GroupThreeView<BoxDomainObject> {
       type: 'customObject',
       point,
       distanceToCamera,
-      userData: new BoxPickInfo(boxFace, focusType, cornerSign),
+      userData: new PrimitivePickInfo(boxFace, focusType, cornerSign),
       customObject: this,
       domainObject
     };

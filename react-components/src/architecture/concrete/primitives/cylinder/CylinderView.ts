@@ -25,9 +25,9 @@ import {
   Vector3Pool
 } from '@cognite/reveal';
 import { type DomainObjectIntersection } from '../../../base/domainObjectsHelpers/DomainObjectIntersection';
-import { BoxFace } from '../../../base/utilities/box/BoxFace';
+import { BoxFace } from '../common/BoxFace';
 import { FocusType } from '../../../base/domainObjectsHelpers/FocusType';
-import { BoxPickInfo } from '../../../base/utilities/box/BoxPickInfo';
+import { PrimitivePickInfo } from '../common/PrimitivePickInfo';
 import { Range1 } from '../../../base/utilities/geometry/Range1';
 import { intersectRayCylinder } from '../../annotations/helpers/getClosestAnnotation';
 import {
@@ -37,7 +37,7 @@ import {
   updateMarkerMaterial,
   updateSolidMaterial
 } from '../box/BoxView';
-import { type SolidPrimitiveRenderStyle } from '../base/SolidPrimitiveRenderStyle';
+import { type SolidPrimitiveRenderStyle } from '../common/SolidPrimitiveRenderStyle';
 import { CylinderUtils } from '../../../base/utilities/geometry/CylinderUtils';
 import { LineMaterial } from 'three/examples/jsm/lines/LineMaterial.js';
 import { Wireframe } from 'three/examples/jsm/lines/Wireframe.js';
@@ -145,7 +145,7 @@ export class CylinderView extends GroupThreeView<CylinderDomainObject> {
       type: 'customObject',
       point,
       distanceToCamera,
-      userData: new BoxPickInfo(boxFace, focusType, new Vector3()),
+      userData: new PrimitivePickInfo(boxFace, focusType, new Vector3()),
       customObject: this,
       domainObject
     };

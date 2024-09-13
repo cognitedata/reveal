@@ -15,7 +15,7 @@ import { remove } from '../../../base/utilities/extensions/arrayExtensions';
 import { type Box3, Euler, Matrix4, Quaternion, Vector3 } from 'three';
 import { getRandomInt } from '../../../base/utilities/extensions/mathExtensions';
 import { getAnnotationMatrixByGeometry } from './getMatrixUtils';
-import { PrimitiveType } from '../../primitives/PrimitiveType';
+import { PrimitiveType } from '../../primitives/common/PrimitiveType';
 import { getBoundingBox } from '../utils/getBoundingBox';
 
 export class SingleAnnotation {

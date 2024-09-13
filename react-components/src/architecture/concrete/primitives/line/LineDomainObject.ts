@@ -6,7 +6,7 @@ import { type RenderStyle } from '../../../base/renderStyles/RenderStyle';
 import { type ThreeView } from '../../../base/views/ThreeView';
 import { LineView } from './LineView';
 import { Box3, Vector3 } from 'three';
-import { PrimitiveType } from '../PrimitiveType';
+import { PrimitiveType } from '../common/PrimitiveType';
 import { LineRenderStyle } from './LineRenderStyle';
 import {
   getHorizontalCrossProduct,

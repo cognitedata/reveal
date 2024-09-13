@@ -5,7 +5,7 @@
 import { type TranslateKey } from '../../../base/utilities/TranslateKey';
 import { type BaseCommand } from '../../../base/commands/BaseCommand';
 import { AnnotationEditTool } from './AnnotationEditTool';
-import { PrimitiveType } from '../../primitives/PrimitiveType';
+import { PrimitiveType } from '../../primitives/common/PrimitiveType';
 import { RenderTargetCommand } from '../../../base/commands/RenderTargetCommand';
 import { AnnotationsDomainObject } from '../AnnotationsDomainObject';
 

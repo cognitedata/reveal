@@ -8,8 +8,8 @@ import { BoxView } from './BoxView';
 import { type Box3, Euler, Matrix4, Quaternion, Vector3 } from 'three';
 import { Changes } from '../../../base/domainObjectsHelpers/Changes';
 import { FocusType } from '../../../base/domainObjectsHelpers/FocusType';
-import { PrimitiveType } from '../PrimitiveType';
-import { type BoxPickInfo } from '../../../base/utilities/box/BoxPickInfo';
+import { PrimitiveType } from '../common/PrimitiveType';
+import { type PrimitivePickInfo } from '../common/PrimitivePickInfo';
 import { type BaseDragger } from '../../../base/domainObjectsHelpers/BaseDragger';
 import { BoxDragger } from './BoxDragger';
 import { type CreateDraggerProps } from '../../../base/domainObjects/VisualDomainObject';
@@ -23,8 +23,8 @@ import {
   forceBetween0AndPi,
   forceBetween0AndTwoPi
 } from '../../../base/utilities/extensions/mathExtensions';
-import { MIN_SIZE, SolidDomainObject } from '../base/SolidDomainObject';
-import { SolidPrimitiveRenderStyle } from '../base/SolidPrimitiveRenderStyle';
+import { MIN_SIZE, SolidDomainObject } from '../common/SolidDomainObject';
+import { SolidPrimitiveRenderStyle } from '../common/SolidPrimitiveRenderStyle';
 import { BoxUtils } from '../../../base/utilities/geometry/BoxUtils';
 
 export abstract class BoxDomainObject extends SolidDomainObject {
@@ -76,9 +76,9 @@ export abstract class BoxDomainObject extends SolidDomainObject {
   }
 
   public override createDragger(props: CreateDraggerProps): BaseDragger | undefined {
-    const pickInfo = props.intersection.userData as BoxPickInfo;
+    const pickInfo = props.intersection.userData as PrimitivePickInfo;
     if (pickInfo === undefined) {
-      return undefined; // If the BoxPickInfo isn't specified, no dragger is created
+      return undefined; // If the pickInfo isn't specified, no dragger is created
     }
     return new BoxDragger(props, this);
   }

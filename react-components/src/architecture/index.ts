@@ -94,7 +94,7 @@ export { AnnotationsDomainObject } from './concrete/annotations/AnnotationsDomai
 export { AnnotationsRenderStyle } from './concrete/annotations/AnnotationsRenderStyle';
 export { SingleAnnotation } from './concrete/annotations/helpers/SingleAnnotation';
 export { AnnotationChangedDescription } from './concrete/annotations/helpers/AnnotationChangedDescription';
-export { PrimitiveType } from './concrete/primitives/PrimitiveType';
+export { PrimitiveType } from './concrete/primitives/common/PrimitiveType';
 export { getBoundingBox } from './concrete/annotations/utils/getBoundingBox';
 export { getGlobalMatrix } from './concrete/annotations/helpers/getMatrixUtils';
 export type {

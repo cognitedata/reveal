@@ -4,7 +4,7 @@
 
 import { Changes } from '../../base/domainObjectsHelpers/Changes';
 import { type DomainObjectChange } from '../../base/domainObjectsHelpers/DomainObjectChange';
-import { BoxFace } from '../../base/utilities/box/BoxFace';
+import { BoxFace } from '../primitives/common/BoxFace';
 import { BoxDomainObject } from '../primitives/box/BoxDomainObject';
 import { Color, type Plane } from 'three';
 import { type RenderStyle } from '../../base/renderStyles/RenderStyle';
@@ -12,7 +12,7 @@ import { type TranslateKey } from '../../base/utilities/TranslateKey';
 import { ApplyClipCommand } from './commands/ApplyClipCommand';
 import { FocusType } from '../../base/domainObjectsHelpers/FocusType';
 import { type DomainObject } from '../../base/domainObjects/DomainObject';
-import { SolidPrimitiveRenderStyle } from '../primitives/base/SolidPrimitiveRenderStyle';
+import { SolidPrimitiveRenderStyle } from '../primitives/common/SolidPrimitiveRenderStyle';
 
 export class CropBoxDomainObject extends BoxDomainObject {
   // ==================================================

@@ -4,16 +4,16 @@
 
 import { type Ray, Vector3, Plane, type Matrix4, Euler } from 'three';
 import { Changes } from '../../../base/domainObjectsHelpers/Changes';
-import { type BoxFace } from '../../../base/utilities/box/BoxFace';
+import { type BoxFace } from '../common/BoxFace';
 import { FocusType } from '../../../base/domainObjectsHelpers/FocusType';
-import { type BoxPickInfo } from '../../../base/utilities/box/BoxPickInfo';
+import { type PrimitivePickInfo } from '../common/PrimitivePickInfo';
 import {
   forceBetween0AndPi,
   forceBetween0AndTwoPi,
   round
 } from '../../../base/utilities/extensions/mathExtensions';
 import { getAbsMaxComponentIndex } from '../../../base/utilities/extensions/vectorExtensions';
-import { PrimitiveType } from '../PrimitiveType';
+import { PrimitiveType } from '../common/PrimitiveType';
 import { getClosestPointOnLine } from '../../../base/utilities/extensions/rayExtensions';
 import { type BoxDomainObject } from './BoxDomainObject';
 import { BaseDragger } from '../../../base/domainObjectsHelpers/BaseDragger';
@@ -23,7 +23,7 @@ import {
 } from '../../../base/domainObjects/VisualDomainObject';
 import { Vector3Pool } from '@cognite/reveal';
 import { degToRad, radToDeg } from 'three/src/math/MathUtils.js';
-import { MIN_SIZE } from '../base/SolidDomainObject';
+import { MIN_SIZE } from '../common/SolidDomainObject';
 
 const CONSTRAINED_ANGLE_INCREMENT = 15;
 /**
@@ -70,7 +70,7 @@ export class BoxDragger extends BaseDragger {
   public constructor(props: CreateDraggerProps, domainObject: BoxDomainObject) {
     super(props, domainObject);
 
-    const pickInfo = props.intersection.userData as BoxPickInfo;
+    const pickInfo = props.intersection.userData as PrimitivePickInfo;
     this._domainObject = domainObject;
     this._face = pickInfo.face;
     this._focusType = pickInfo.focusType;

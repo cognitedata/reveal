@@ -11,8 +11,8 @@ import { type DomainObjectChange } from '../../base/domainObjectsHelpers/DomainO
 import { Changes } from '../../base/domainObjectsHelpers/Changes';
 import { AnnotationsDomainObject } from './AnnotationsDomainObject';
 import { SingleAnnotation } from './helpers/SingleAnnotation';
-import { SolidDomainObject } from '../primitives/base/SolidDomainObject';
-import { SolidPrimitiveRenderStyle } from '../primitives/base/SolidPrimitiveRenderStyle';
+import { SolidDomainObject } from '../primitives/common/SolidDomainObject';
+import { SolidPrimitiveRenderStyle } from '../primitives/common/SolidPrimitiveRenderStyle';
 import { AnnotationChangedDescription } from './helpers/AnnotationChangedDescription';
 import { type BaseCommand } from '../../base/commands/BaseCommand';
 import { CopyToClipboardCommand } from '../../base/concreteCommands/CopyToClipboardCommand';

@@ -3,14 +3,14 @@
  */
 
 import { Plane, type Ray, Vector3 } from 'three';
-import { type PrimitiveType } from '../PrimitiveType';
+import { type PrimitiveType } from '../common/PrimitiveType';
 import { BaseCreator } from '../../../base/domainObjectsHelpers/BaseCreator';
 import { FocusType } from '../../../base/domainObjectsHelpers/FocusType';
 import { Changes } from '../../../base/domainObjectsHelpers/Changes';
 import { type DomainObject } from '../../../base/domainObjects/DomainObject';
 import { type BaseTool } from '../../../base/commands/BaseTool';
 import { type CylinderDomainObject } from './CylinderDomainObject';
-import { MIN_SIZE } from '../base/SolidDomainObject';
+import { MIN_SIZE } from '../common/SolidDomainObject';
 
 const UP_VECTOR = new Vector3(0, 0, 1);
 /**

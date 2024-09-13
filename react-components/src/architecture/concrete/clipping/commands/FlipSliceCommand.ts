@@ -4,7 +4,7 @@
 
 import { Changes } from '../../../base/domainObjectsHelpers/Changes';
 import { type TranslateKey } from '../../../base/utilities/TranslateKey';
-import { PrimitiveType } from '../../primitives/PrimitiveType';
+import { PrimitiveType } from '../../primitives/common/PrimitiveType';
 import { type SliceDomainObject } from '../SliceDomainObject';
 import { DomainObjectCommand } from '../../../base/commands/DomainObjectCommand';
 
