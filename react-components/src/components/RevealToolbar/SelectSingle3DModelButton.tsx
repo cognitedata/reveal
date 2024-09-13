@@ -4,7 +4,6 @@
 import { type ReactElement } from 'react';
 
 import { useSDK } from '../RevealCanvas/SDKProvider';
-import { RevealContext } from '../RevealContext/RevealContext';
 import { type ModelWithRevision } from '../../hooks/types';
 import { Single3DModelSelection } from './Single3DModelSelection/SelectSingle3DModelSelection';
 
@@ -21,9 +20,5 @@ export const SelectSingle3DModelButton = ({
     if (onSingleModelChanged !== undefined) onSingleModelChanged(model);
   };
 
-  return (
-    <RevealContext sdk={sdk}>
-      <Single3DModelSelection sdk={sdk} onModelChange={handleSingleModelChange} />
-    </RevealContext>
-  );
+  return <Single3DModelSelection sdk={sdk} onModelChange={handleSingleModelChange} />;
 };
