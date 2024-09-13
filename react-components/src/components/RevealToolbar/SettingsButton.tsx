@@ -23,25 +23,25 @@ export const SettingsButton = ({
   const [settingsActive, setSettingsActive] = useState<boolean>(false);
 
   return (
-    <CogsTooltip
-      content={t('SETTINGS_TOOLTIP', 'Settings')}
-      placement="right"
-      appendTo={document.body}>
-      <Dropdown
-        appendTo={document.body}
-        onClickOutside={() => {
-          setSettingsActive(false);
-        }}
-        content={
-          <Menu>
-            <HighFidelityContainer
-              lowQualitySettings={lowQualitySettings}
-              highQualitySettings={highQualitySettings}
-            />
-            {customSettingsContent ?? <></>}
-          </Menu>
-        }
-        placement="right-start">
+    <Dropdown
+      appendTo={document.body}
+      onClickOutside={() => {
+        setSettingsActive(false);
+      }}
+      content={
+        <Menu>
+          <HighFidelityContainer
+            lowQualitySettings={lowQualitySettings}
+            highQualitySettings={highQualitySettings}
+          />
+          {customSettingsContent ?? <></>}
+        </Menu>
+      }
+      placement="right-start">
+      <CogsTooltip
+        content={t('SETTINGS_TOOLTIP', 'Settings')}
+        placement="right"
+        appendTo={document.body}>
         <Button
           icon="Settings"
           type="ghost"
@@ -51,7 +51,7 @@ export const SettingsButton = ({
             setSettingsActive((prevState) => !prevState);
           }}
         />
-      </Dropdown>
-    </CogsTooltip>
+      </CogsTooltip>
+    </Dropdown>
   );
 };
