@@ -2,7 +2,7 @@
  * Copyright 2024 Cognite AS
  */
 
-import { type Ray, Vector3, Plane, type Matrix4 } from 'three';
+import { Matrix4, type Ray, Vector3, Plane } from 'three';
 import { Changes } from '../../../base/domainObjectsHelpers/Changes';
 import { type BoxFace } from '../common/BoxFace';
 import { FocusType } from '../../../base/domainObjectsHelpers/FocusType';
@@ -244,6 +244,10 @@ export class BoxDragger extends BaseDragger {
   }
 
   private rotate(ray: Ray, shift: boolean): boolean {
+    const domainObject = this._domainObject;
+    if (!domainObject.canRotateComponent(this._face.index)) {
+      return false;
+    }
     const endPoint = ray.intersectPlane(this._planeOfFace, newVector3());
     if (endPoint === null) {
       return false;
@@ -252,33 +256,41 @@ export class BoxDragger extends BaseDragger {
     const centerToEndPoint = newVector3().subVectors(endPoint, this._centerOfFace).normalize();
     const cross = newVector3().crossVectors(centerToEndPoint, centerToStartPoint).normalize();
 
-    let deltaAngle = centerToEndPoint.angleTo(centerToStartPoint) * this._face.sign;
-    if (this._planeOfFace.normal.dot(cross) > 0) {
+    let deltaAngle = centerToEndPoint.angleTo(centerToStartPoint);
+    if (this._normal.dot(cross) > 0) {
       deltaAngle = -deltaAngle;
     }
-    // Rotate
     const originalBox = this._originalBox;
-    const domainObject = this._domainObject;
     const { box } = domainObject;
-    let x = box.rotation.x;
-    let y = box.rotation.y;
-    let z = box.rotation.z;
+    box.copy(originalBox);
 
-    if (this._face.index === 0 && domainObject.canRotateComponent(0)) {
-      const rotation = forceBetween0AndTwoPi(deltaAngle + originalBox.rotation.x);
-      x = roundByConstrained(rotation, shift);
-    } else if (this._face.index === 1 && domainObject.canRotateComponent(1)) {
-      const rotation = forceBetween0AndTwoPi(deltaAngle + originalBox.rotation.y);
-      y = roundByConstrained(rotation, shift);
-    } else if (this._face.index === 2 && domainObject.canRotateComponent(2)) {
-      const rotation = box.hasXYRotation
-        ? forceBetween0AndTwoPi(deltaAngle + originalBox.rotation.z)
-        : forceBetween0AndPi(deltaAngle + originalBox.rotation.z);
-      z = roundByConstrained(rotation, shift);
-    } else {
-      return false;
+    if (shift) {
+      let oldAngle;
+      if (this._face.index === 0) {
+        oldAngle = originalBox.rotation.x;
+      } else if (this._face.index === 1) {
+        oldAngle = originalBox.rotation.y;
+      } else if (this._face.index === 2) {
+        oldAngle = originalBox.rotation.z;
+      } else {
+        return false;
+      }
+      let newAngle;
+      if (this._face.index === 2) {
+        newAngle = box.hasXYRotation
+          ? forceBetween0AndTwoPi(deltaAngle + oldAngle)
+          : forceBetween0AndPi(deltaAngle + oldAngle);
+      } else {
+        newAngle = forceBetween0AndTwoPi(deltaAngle + oldAngle);
+      }
+      newAngle = roundByConstrained(newAngle, shift);
+      deltaAngle = newAngle - oldAngle;
     }
-    box.rotation.set(x, y, z, 'ZYX');
+    // Rotate
+    const matrix = originalBox.getRotationMatrix();
+    const rotationMatrix = new Matrix4().makeRotationAxis(this._normal, deltaAngle);
+    matrix.premultiply(rotationMatrix);
+    box.rotation.setFromRotationMatrix(matrix, 'ZYX', true);
     return true;
 
     function roundByConstrained(rotation: number, shift: boolean): number {
