@@ -4,7 +4,7 @@
 import { type ReactElement } from 'react';
 
 import { Menu } from '@cognite/cogs.js';
-import { type ModelWithRevision } from '../../hooks/types';
+import { type ModelWithRevision } from '../../../hooks/types';
 
 type ModelListProps = {
   modelsWithRevision: ModelWithRevision[];

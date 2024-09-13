@@ -6,7 +6,7 @@ import { type ReactElement } from 'react';
 import { useSDK } from '../RevealCanvas/SDKProvider';
 import { RevealContext } from '../RevealContext/RevealContext';
 import { type ModelWithRevision } from '../../hooks/types';
-import { Single3DModelSelection } from './SelectSingle3DModelSelection';
+import { Single3DModelSelection } from './Single3DModelSelection/SelectSingle3DModelSelection';
 
 type SelectSingle3DModelButtonProps = {
   onSingleModelChanged?: (model: ModelWithRevision | undefined) => void;
