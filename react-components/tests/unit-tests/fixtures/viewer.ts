@@ -1,14 +1,7 @@
-import { vi, Mock as viMock } from 'vitest';
+import { vi } from 'vitest';
 
-import {
-  CameraManagerEventType,
-  Cognite3DViewer,
-  CogniteModel,
-  Image360Collection
-} from '@cognite/reveal';
+import { type Cognite3DViewer, type CogniteModel, type Image360Collection } from '@cognite/reveal';
 import { Mock, It } from 'moq.ts';
-import { Vector3 } from 'three';
-import { remove } from 'lodash';
 import { cameraManagerMock } from './cameraManager';
 
 const domElement = document.createElement('div').appendChild(document.createElement('canvas'));
@@ -18,7 +11,9 @@ export const viewerRemoveModelsMock = vi.fn<[CogniteModel], void>();
 export const viewerImage360CollectionsMock = vi.fn<[], Image360Collection[]>();
 
 export const viewerMock = new Mock<Cognite3DViewer>()
-  .setup((viewer) => viewer.setBackgroundColor(It.IsAny()))
+  .setup((viewer) => {
+    viewer.setBackgroundColor(It.IsAny());
+  })
   .returns()
   .setup((viewer) => viewer.domElement)
   .returns(domElement)
