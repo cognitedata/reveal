@@ -9,12 +9,12 @@ import { getAnnotationMatrixByGeometry } from '../helpers/getMatrixUtils';
 import { Box3, Vector3, type Matrix4 } from 'three';
 import { BoxUtils } from '../../../base/utilities/geometry/BoxUtils';
 import { Range3 } from '../../../base/utilities/geometry/Range3';
-import { ANNOTATION_CYLINDER_RADIUS_MARGIN } from './constants';
+import { CYLINDER_RADIUS_MARGIN } from './constants';
 
 export const getBoundingBox = (
   annotation: PointCloudAnnotation,
   globalMatrix: Matrix4,
-  cylinderMargin = ANNOTATION_CYLINDER_RADIUS_MARGIN
+  cylinderMargin = CYLINDER_RADIUS_MARGIN
 ): Box3 | undefined => {
   const boundingBox = new Box3().makeEmpty();
   expandBoundingBox(boundingBox, annotation, globalMatrix, cylinderMargin);
@@ -25,7 +25,7 @@ export function expandBoundingBox(
   boundingBox: Box3,
   annotation: PointCloudAnnotation,
   globalMatrix: Matrix4,
-  cylinderMargin = ANNOTATION_CYLINDER_RADIUS_MARGIN
+  cylinderMargin = CYLINDER_RADIUS_MARGIN
 ): void {
   for (const geometry of getAnnotationGeometries(annotation)) {
     if (geometry.box !== undefined) {
