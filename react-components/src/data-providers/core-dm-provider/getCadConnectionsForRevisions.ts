@@ -24,6 +24,9 @@ export async function getCadConnectionsForRevisions(
   modelRevisions: Array<[DmsUniqueIdentifier, DmsUniqueIdentifier]>,
   fdmSdk: FdmSDK
 ): Promise<FdmCadConnection[]> {
+  if (modelRevisions.length === 0) {
+    return [];
+  }
   const results = await getModelConnectionResults(modelRevisions, fdmSdk);
   const object3dToAssetMap = createObject3dToAssetMap(results.items.assets);
   const cadNodeToModelMap = createCadNodeToObject3dMap(results.items.cad_nodes);
