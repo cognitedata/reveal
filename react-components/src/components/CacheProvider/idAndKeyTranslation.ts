@@ -9,7 +9,8 @@ import {
   type ModelRevisionKey,
   type TreeIndex,
   type RevisionId,
-  type ModelId
+  type ModelId,
+  ModelAssetIdKey
 } from './types';
 
 import { split } from 'lodash';
@@ -33,4 +34,12 @@ export function createModelTreeIndexKey(
 
 export function createFdmKey(id: DmsUniqueIdentifier): FdmKey {
   return `${id.space}/${id.externalId}`;
+}
+
+export function modelRevisionNodesAssetToKey(
+  modelId: ModelId,
+  revisionId: RevisionId,
+  id: number
+): ModelAssetIdKey {
+  return `${modelId}/${revisionId}/${id}`;
 }
