@@ -35,6 +35,7 @@ import {
   type TRANSFORMATION_SOURCE,
   transformationSourceWithProperties
 } from './types';
+import { tryGetModelIdFromExternalId } from '../../utilities/tryGetModelIdFromExternalId';
 
 export type Space = string;
 export type ExternalId = string;
@@ -173,10 +174,10 @@ function populateSceneMapWithModels(
 
     const properties = Object.values(Object.values(edge.properties)[0])[0];
 
-    const newModelId = Number(edge.endNode.externalId);
+    const newModelId = tryGetModelIdFromExternalId(edge.endNode.externalId);
     const newModelRevisionId = Number(properties?.revisionId);
 
-    if (isNaN(newModelId) || isNaN(newModelRevisionId)) {
+    if (newModelId === undefined || isNaN(newModelRevisionId)) {
       return;
     }
 
