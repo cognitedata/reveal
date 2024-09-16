@@ -15,6 +15,7 @@ import { type AddModelOptions } from '@cognite/reveal';
 import { isEqual, uniq, chunk } from 'lodash';
 import { type Fdm3dDataProvider } from '../data-providers/Fdm3dDataProvider';
 import { removeEmptyProperties } from '../utilities/removeEmptyProperties';
+import { isDefined } from '../utilities/isDefined';
 
 export type InstancesWithView = { view: Source; instances: NodeItem[] };
 
@@ -202,19 +203,22 @@ async function createSourcesFromViews(
       })
     );
 
-    return viewsToSearch.map((view) => {
-      const version = viewToVersionMap.get(`${view.space}/${view.externalId}`);
-      if (version === undefined) {
-        throw Error(
-          `Could not find version for view with space/externalId ${view.space}/${view.externalId}`
-        );
-      }
-      return {
-        ...view,
-        type: 'view' as const,
-        version
-      };
-    });
+    return viewsToSearch
+      .map((view) => {
+        const version = viewToVersionMap.get(`${view.space}/${view.externalId}`);
+        if (version === undefined) {
+          console.error(
+            `Could not find version for view with space/externalId ${view.space}/${view.externalId}`
+          );
+          return undefined;
+        }
+        return {
+          ...view,
+          type: 'view' as const,
+          version
+        };
+      })
+      .filter(isDefined);
   } catch (e) {
     console.error('Error when fetching sources from views', e);
     throw e;
