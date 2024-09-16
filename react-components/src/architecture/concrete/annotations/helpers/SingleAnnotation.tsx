@@ -9,7 +9,7 @@ import {
   type AnnotationsCylinder
 } from '@cognite/sdk';
 
-import { type PointCloudAnnotation } from '../utils/types';
+import { compareAnnotationIdentifiers, type PointCloudAnnotation } from '../utils/types';
 import { isAnnotationsBoundingVolume } from '../utils/annotationGeometryUtils';
 import { remove } from '../../../base/utilities/extensions/arrayExtensions';
 import { type Box3, Euler, Matrix4, Quaternion, Vector3 } from 'three';
@@ -219,6 +219,16 @@ export class SingleAnnotation {
     } else {
       return false;
     }
+    return true;
+  }
+
+  public remap(annotations: PointCloudAnnotation[]): boolean {
+    const newAnnotation = annotations.find((a) => compareAnnotationIdentifiers(a, this.annotation));
+    if (newAnnotation === undefined) {
+      return false;
+    }
+    this.annotation = newAnnotation;
+    this.selectedGeometry = this.firstGeometry;
     return true;
   }
 

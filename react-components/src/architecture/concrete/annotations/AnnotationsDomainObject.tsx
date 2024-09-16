@@ -26,11 +26,47 @@ export class AnnotationsDomainObject extends VisualDomainObject {
   // INSTANCE FIELDS
   // ==================================================
 
-  public annotations: PointCloudAnnotation[] = [];
+  public _annotations: PointCloudAnnotation[] = [];
   public selectedAnnotation: SingleAnnotation | undefined = undefined;
   public focusAnnotation?: SingleAnnotation | undefined = undefined;
   public pendingAnnotation: SingleAnnotation | undefined = undefined;
   public focusType = FocusType.None;
+
+  // ==================================================
+  // INSTANCE PROPERTIES
+  // ==================================================
+
+  public get annotations(): PointCloudAnnotation[] {
+    return this._annotations;
+  }
+
+  public set annotations(annotations: PointCloudAnnotation[]) {
+    this._annotations = annotations;
+
+    // The pointer may have so refresh all
+    if (this.selectedAnnotation !== undefined) {
+      if (!this.selectedAnnotation.remap(annotations)) {
+        this.selectedAnnotation = undefined;
+        this.removeGizmoInteractive();
+      }
+    }
+    if (this.focusAnnotation !== undefined) {
+      if (!this.focusAnnotation.remap(annotations)) {
+        this.focusAnnotation = undefined;
+      }
+    }
+    if (this.pendingAnnotation !== undefined) {
+      if (!this.pendingAnnotation.remap(annotations)) {
+        this.pendingAnnotation = undefined;
+        this.removeGizmoInteractive();
+      }
+    }
+    const gizmo = this.getGizmo();
+    if (gizmo !== undefined) {
+      gizmo.notify(Changes.geometry);
+    }
+    this.notify(Changes.geometry);
+  }
 
   // ==================================================
   // INSTANCE PROPERTIES
