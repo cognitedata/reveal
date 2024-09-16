@@ -31,6 +31,7 @@ import {
   type SceneConfigurationProperties,
   type TRANSFORMATION_SOURCE
 } from './types';
+import { tryGetModelIdFromExternalId } from '../../utilities/tryGetModelIdFromExternalId';
 
 const DefaultScene: Scene = {
   sceneConfiguration: {
@@ -140,14 +141,17 @@ function getSceneModels(sceneResponse: SceneResponse): CadOrPointCloudModel[] {
     const sceneModels = sceneResponse.items.sceneModels;
     sceneModels.forEach((sceneModel) => {
       const sceneModelProperties = extractProperties<SceneModelsProperties>(sceneModel.properties);
-      if (!isNaN(Number(sceneModel.endNode.externalId))) {
-        const model: CadOrPointCloudModel = {
-          modelId: Number(sceneModel.endNode.externalId),
-          ...sceneModelProperties
-        };
-
-        models.push(model);
+      const parsedModelId = tryGetModelIdFromExternalId(sceneModel.endNode.externalId);
+      if (parsedModelId === undefined) {
+        throw Error(`Could not parse model Id from externalId ${sceneModel.endNode.externalId}`);
       }
+
+      const model: CadOrPointCloudModel = {
+        modelId: parsedModelId,
+        ...sceneModelProperties
+      };
+
+      models.push(model);
     });
   }
   return models;
