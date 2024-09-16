@@ -1,7 +1,7 @@
 /*!
  * Copyright 2024 Cognite AS
  */
-import { getModelIdFromExternalId } from '../data-providers/core-dm-provider/getCdfIdFromExternalId';
+import { getModelIdFromExternalId as getCoreDmModelIdFromExternalId } from '../data-providers/core-dm-provider/getCdfIdFromExternalId';
 
 export function tryGetModelIdFromExternalId(externalId: string): number | undefined {
   const legacyModelId = Number(externalId);
@@ -9,7 +9,7 @@ export function tryGetModelIdFromExternalId(externalId: string): number | undefi
     return legacyModelId;
   }
 
-  const coreDmModelId = getModelIdFromExternalId(externalId);
+  const coreDmModelId = getCoreDmModelIdFromExternalId(externalId);
 
   if (!isNaN(coreDmModelId)) {
     return coreDmModelId;
