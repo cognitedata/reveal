@@ -67,7 +67,7 @@ export class SetAnnotationEditTypeCommand extends RenderTargetCommand {
     }
     tool.handleEscape();
     tool.clearDragging();
-    if (tool.primitiveType === this._primitiveType) {
+    if (tool.primitiveType === this._primitiveType && tool.isHorizontal === this._isHorizontal) {
       tool.primitiveType = PrimitiveType.None;
     } else {
       tool.primitiveType = this._primitiveType;
