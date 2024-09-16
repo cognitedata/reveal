@@ -187,7 +187,6 @@ export class AnnotationsDomainObject extends VisualDomainObject {
     if (this.pendingAnnotation === undefined) {
       return false;
     }
-
     this.pendingAnnotation.annotation = annotation;
     this.pendingAnnotation.selectedGeometry = this.pendingAnnotation.firstGeometry;
 
