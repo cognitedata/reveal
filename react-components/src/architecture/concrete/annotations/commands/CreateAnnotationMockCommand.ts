@@ -93,14 +93,14 @@ export class CreateAnnotationMockCommand extends InstanceCommand {
   }
 
   protected override invokeCore(): boolean {
-    const multiple = true;
+    const isMultiple = true;
     const { renderTarget, rootDomainObject } = this;
     let annotationDomainObject = this.getFirstInstance() as AnnotationsDomainObject;
     if (annotationDomainObject !== undefined) {
       return false;
     }
     annotationDomainObject = new AnnotationsDomainObject();
-    annotationDomainObject.annotations = multiple
+    annotationDomainObject.annotations = isMultiple
       ? createMultiAnnotations()
       : createSingleAnnotations();
     annotationDomainObject.setSelectedInteractive(true);
