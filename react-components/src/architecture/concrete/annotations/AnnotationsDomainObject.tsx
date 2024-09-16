@@ -225,6 +225,13 @@ export class AnnotationsDomainObject extends VisualDomainObject {
 
   private getOrCreateGizmo(primitiveType: PrimitiveType): SolidDomainObject | undefined {
     const gizmo = this.getGizmo();
+
+    if (
+      primitiveType === PrimitiveType.HorizontalCylinder ||
+      primitiveType === PrimitiveType.VerticalCylinder
+    ) {
+      primitiveType = PrimitiveType.Cylinder;
+    }
     if (gizmo !== undefined && gizmo.primitiveType === primitiveType) {
       return gizmo;
     }

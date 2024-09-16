@@ -216,10 +216,7 @@ export abstract class PrimitiveEditTool extends BaseEditTool {
   // ==================================================
 
   public handleEscape(): void {
-    if (this._creator === undefined) {
-      return;
-    }
-    if (this._creator.handleEscape()) {
+    if (this._creator !== undefined && this._creator.handleEscape()) {
       this.endCreatorIfFinished(this._creator, true);
     } else {
       this.setDefaultPrimitiveType();

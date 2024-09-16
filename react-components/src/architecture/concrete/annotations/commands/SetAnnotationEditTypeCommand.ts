@@ -11,16 +11,14 @@ import { AnnotationsDomainObject } from '../AnnotationsDomainObject';
 
 export class SetAnnotationEditTypeCommand extends RenderTargetCommand {
   private readonly _primitiveType: PrimitiveType;
-  private readonly _isHorizontal: boolean;
 
   // ==================================================
   // CONSTRUCTOR
   // ==================================================
 
-  public constructor(primitiveType: PrimitiveType, isHorizontal = false) {
+  public constructor(primitiveType: PrimitiveType) {
     super();
     this._primitiveType = primitiveType;
-    this._isHorizontal = isHorizontal;
   }
 
   // ==================================================
@@ -28,14 +26,11 @@ export class SetAnnotationEditTypeCommand extends RenderTargetCommand {
   // ==================================================
 
   public override get icon(): string {
-    if (this._primitiveType === PrimitiveType.Cylinder) {
-      return this._isHorizontal ? 'SplitViewHorizontal' : 'SplitView';
-    }
     return getIconByPrimitiveType(this._primitiveType);
   }
 
   public override get tooltip(): TranslateKey {
-    return getTooltipByPrimitiveType(this._primitiveType, this._isHorizontal);
+    return getTooltipByPrimitiveType(this._primitiveType);
   }
 
   public override get buttonType(): string {
@@ -57,7 +52,7 @@ export class SetAnnotationEditTypeCommand extends RenderTargetCommand {
     if (tool === undefined) {
       return false;
     }
-    return tool.primitiveType === this._primitiveType && tool.isHorizontal === this._isHorizontal;
+    return tool.primitiveType === this._primitiveType;
   }
 
   protected override invokeCore(): boolean {
@@ -67,20 +62,19 @@ export class SetAnnotationEditTypeCommand extends RenderTargetCommand {
     }
     tool.handleEscape();
     tool.clearDragging();
-    if (tool.primitiveType === this._primitiveType && tool.isHorizontal === this._isHorizontal) {
+    if (this.isChecked) {
       tool.primitiveType = PrimitiveType.None;
     } else {
       tool.primitiveType = this._primitiveType;
-      tool.isHorizontal = this._isHorizontal;
     }
     return true;
   }
 
   public override equals(other: BaseCommand): boolean {
-    if (!(other instanceof AnnotationEditTool)) {
+    if (!(other instanceof SetAnnotationEditTypeCommand)) {
       return false;
     }
-    return this._primitiveType === other.primitiveType && this._isHorizontal === other.isHorizontal;
+    return this._primitiveType === other._primitiveType;
   }
 
   // ==================================================
@@ -100,30 +94,26 @@ export class SetAnnotationEditTypeCommand extends RenderTargetCommand {
 // PRIMATE FUNCTIONS
 // ==================================================
 
-function getTooltipByPrimitiveType(
-  primitiveType: PrimitiveType,
-  isHorizontal: boolean
-): TranslateKey {
+function getTooltipByPrimitiveType(primitiveType: PrimitiveType): TranslateKey {
   switch (primitiveType) {
     case PrimitiveType.Box:
       return {
         key: 'ANNOTATIONS_CREATE_BOX',
         fallback: 'Create a new box annotation'
       };
-    case PrimitiveType.Cylinder:
-      if (isHorizontal) {
-        return {
-          key: 'ANNOTATIONS_CREATE_HORIZONTAL_CYLINDER',
-          fallback:
-            'Create a new horizontal cylinder annotation. Click two times to get the center endpoints, the third defines the radius.'
-        };
-      } else {
-        return {
-          key: 'ANNOTATIONS_CREATE_VERTICAL_CYLINDER',
-          fallback:
-            'Create a new vertical cylinder annotation. Click two times to get the center endpoints, the third defines the radius.'
-        };
-      }
+    case PrimitiveType.HorizontalCylinder:
+      return {
+        key: 'ANNOTATIONS_CREATE_HORIZONTAL_CYLINDER',
+        fallback:
+          'Create a new horizontal cylinder annotation. Click two times to get the center endpoints, the third defines the radius.'
+      };
+    case PrimitiveType.VerticalCylinder:
+      return {
+        key: 'ANNOTATIONS_CREATE_VERTICAL_CYLINDER',
+        fallback:
+          'Create a new vertical cylinder annotation. Click two times to get the center endpoints, the third defines the radius.'
+      };
+
     case PrimitiveType.None:
       return {
         key: 'ANNOTATIONS_EDIT',
@@ -141,6 +131,10 @@ function getIconByPrimitiveType(primitiveType: PrimitiveType): string {
       return 'Cube';
     case PrimitiveType.Cylinder:
       return 'DataSource';
+    case PrimitiveType.HorizontalCylinder:
+      return 'SplitViewHorizontal';
+    case PrimitiveType.VerticalCylinder:
+      return 'SplitView';
     case PrimitiveType.None:
       return 'Cursor';
     default:

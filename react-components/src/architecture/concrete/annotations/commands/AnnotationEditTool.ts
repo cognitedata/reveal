@@ -43,7 +43,6 @@ export class AnnotationEditTool extends BaseEditTool {
 
   private _creator: BaseCreator | undefined = undefined;
   public primitiveType: PrimitiveType;
-  public isHorizontal = false;
   public readonly defaultPrimitiveType: PrimitiveType;
 
   // ==================================================
@@ -248,8 +247,8 @@ export class AnnotationEditTool extends BaseEditTool {
     return [
       new SetAnnotationEditTypeCommand(PrimitiveType.None),
       new SetAnnotationEditTypeCommand(PrimitiveType.Box),
-      new SetAnnotationEditTypeCommand(PrimitiveType.Cylinder, true),
-      new SetAnnotationEditTypeCommand(PrimitiveType.Cylinder, false),
+      new SetAnnotationEditTypeCommand(PrimitiveType.HorizontalCylinder),
+      new SetAnnotationEditTypeCommand(PrimitiveType.VerticalCylinder),
       undefined,
       new UndoCommand(),
       new DeleteSelectedAnnotationCommand(),
@@ -314,11 +313,13 @@ export class AnnotationEditTool extends BaseEditTool {
         }
         return new BoxCreator(this, gizmo);
       }
-      case PrimitiveType.Cylinder: {
+      case PrimitiveType.HorizontalCylinder:
+      case PrimitiveType.VerticalCylinder: {
         if (!(gizmo instanceof CylinderGizmoDomainObject)) {
           return undefined;
         }
-        return new CylinderCreator(this, gizmo, this.isHorizontal);
+        const isHorizontal = this.primitiveType === PrimitiveType.HorizontalCylinder;
+        return new CylinderCreator(this, gizmo, isHorizontal);
       }
       default:
         return undefined;
@@ -334,10 +335,7 @@ export class AnnotationEditTool extends BaseEditTool {
   }
 
   public handleEscape(): void {
-    if (this._creator === undefined) {
-      return;
-    }
-    if (this._creator.handleEscape()) {
+    if (this._creator !== undefined && this._creator.handleEscape()) {
       this.endCreatorIfFinished(this._creator, true);
     } else {
       this.setDefaultPrimitiveType();
