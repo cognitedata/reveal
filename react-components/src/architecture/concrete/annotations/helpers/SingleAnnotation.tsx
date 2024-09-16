@@ -227,8 +227,10 @@ export class SingleAnnotation {
     if (newAnnotation === undefined) {
       return false;
     }
-    this.annotation = newAnnotation;
-    this.selectedGeometry = this.firstGeometry;
+    if (this.annotation !== newAnnotation) {
+      this.annotation = newAnnotation;
+      this.selectedGeometry = this.firstGeometry;
+    }
     return true;
   }
 
