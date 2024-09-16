@@ -8,7 +8,7 @@ import {
   type RevisionId,
   type ModelTreeIndexKey
 } from './types';
-import { modelRevisionNodesAssetsToKey } from './utils';
+import { modelRevisionNodesAssetToKey } from './idAndKeyTranslation';
 import { fetchNodesForNodeIds } from './requests';
 
 export class Node3DPerNodeIdCache {
@@ -30,7 +30,7 @@ export class Node3DPerNodeIdCache {
 
     await Promise.all(
       currentChunk.map(async (id) => {
-        const key = modelRevisionNodesAssetsToKey(modelId, revisionId, [id]);
+        const key = modelRevisionNodesAssetToKey(modelId, revisionId, id);
         const cachedResult = await this.getNodeIdToNode3DCacheItem(key);
         if (cachedResult !== undefined) {
           chunkInCache.push(cachedResult);
@@ -50,7 +50,7 @@ export class Node3DPerNodeIdCache {
   ): Promise<void> {
     const node3Ds = await this.getNodesForNodeIds(modelId, revisionId, nodeIds ?? []);
     node3Ds.forEach((node) => {
-      const key = modelRevisionNodesAssetsToKey(modelId, revisionId, [node.id]);
+      const key = modelRevisionNodesAssetToKey(modelId, revisionId, node.id);
       this.setNodeIdToNode3DCacheItem(key, Promise.resolve(node));
     });
   }
