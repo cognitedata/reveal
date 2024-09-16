@@ -18,12 +18,13 @@ import {
 } from './types';
 import { chunk, maxBy } from 'lodash';
 import assert from 'assert';
-import { isValidAssetMapping, modelRevisionNodesAssetsToKey, modelRevisionToKey } from './utils';
+import { isValidAssetMapping, modelRevisionNodesAssetsToKey } from './utils';
 import { type ModelWithAssetMappings } from './AssetMappingAndNode3DCacheProvider';
 import { AssetMappingPerAssetIdCache } from './AssetMappingPerAssetIdCache';
 import { AssetMappingPerNodeIdCache } from './AssetMappingPerNodeIdCache';
 import { Node3DPerNodeIdCache } from './Node3DPerNodeIdCache';
 import { AssetMappingPerModelCache } from './AssetMappingPerModelCache';
+import { createModelRevisionKey } from './idAndKeyTranslation';
 
 export type NodeAssetMappingResult = { node?: Node3D; mappings: AssetMapping[] };
 
@@ -159,7 +160,7 @@ export class AssetMappingAndNode3DCache {
     modelId: ModelId,
     revisionId: RevisionId
   ): Promise<AssetMapping[]> {
-    const key = modelRevisionToKey(modelId, revisionId);
+    const key = createModelRevisionKey(modelId, revisionId);
     const cachedResult = await this.modelToAssetMappingsCache.getModelToAssetMappingCacheItems(key);
 
     if (cachedResult !== undefined) {

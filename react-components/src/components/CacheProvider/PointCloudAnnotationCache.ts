@@ -10,9 +10,10 @@ import {
   type AnnotationId
 } from './types';
 import { type CogniteClient, type Asset, type AnnotationFilterProps } from '@cognite/sdk';
-import { getAssetIdOrExternalIdFromPointCloudAnnotation, modelRevisionToKey } from './utils';
+import { getAssetIdOrExternalIdFromPointCloudAnnotation } from './utils';
 import { fetchPointCloudAnnotationAssets } from './AnnotationModelUtils';
 import assert from 'assert';
+import { createModelRevisionKey } from './idAndKeyTranslation';
 
 export class PointCloudAnnotationCache {
   private readonly _sdk: CogniteClient;
@@ -34,7 +35,7 @@ export class PointCloudAnnotationCache {
     modelId: ModelId,
     revisionId: RevisionId
   ): Promise<Map<AnnotationId, Asset>> {
-    const key = modelRevisionToKey(modelId, revisionId);
+    const key = createModelRevisionKey(modelId, revisionId);
     const cachedResult = this._modelToAnnotationAssetMappings.get(key);
 
     if (cachedResult !== undefined) {
@@ -51,7 +52,7 @@ export class PointCloudAnnotationCache {
     modelId: ModelId,
     revisionId: RevisionId
   ): Promise<PointCloudAnnotationModel[]> {
-    const key = modelRevisionToKey(modelId, revisionId);
+    const key = createModelRevisionKey(modelId, revisionId);
     const cachedResult = this._modelToAnnotationMappings.get(key);
 
     if (cachedResult !== undefined) {
