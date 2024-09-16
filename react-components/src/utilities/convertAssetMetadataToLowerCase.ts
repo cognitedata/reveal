@@ -7,7 +7,7 @@ export function convertAssetMetadataKeysToLowerCase(asset: Asset): Asset {
   return {
     ...asset,
     metadata: Object.fromEntries(
-      [...Object.entries(asset.metadata ?? {})].map(
+      Object.entries(asset.metadata ?? {}).map(
         ([key, value]) => [key.toLowerCase(), value] as const
       )
     )
