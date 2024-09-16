@@ -18,13 +18,13 @@ import {
 } from './types';
 import { chunk, maxBy } from 'lodash';
 import assert from 'assert';
-import { isValidAssetMapping, modelRevisionNodesAssetToKey } from './idAndKeyTranslation';
+import { isValidAssetMapping } from './utils';
+import { modelRevisionNodesAssetToKey, createModelRevisionKey } from './idAndKeyTranslation';
 import { type ModelWithAssetMappings } from './AssetMappingAndNode3DCacheProvider';
 import { AssetMappingPerAssetIdCache } from './AssetMappingPerAssetIdCache';
 import { AssetMappingPerNodeIdCache } from './AssetMappingPerNodeIdCache';
 import { Node3DPerNodeIdCache } from './Node3DPerNodeIdCache';
 import { AssetMappingPerModelCache } from './AssetMappingPerModelCache';
-import { createModelRevisionKey } from './idAndKeyTranslation';
 
 export type NodeAssetMappingResult = { node?: Node3D; mappings: AssetMapping[] };
 

@@ -10,7 +10,7 @@ import {
   type TreeIndex,
   type RevisionId,
   type ModelId,
-  ModelAssetIdKey
+  type ModelAssetIdKey
 } from './types';
 
 import { split } from 'lodash';
