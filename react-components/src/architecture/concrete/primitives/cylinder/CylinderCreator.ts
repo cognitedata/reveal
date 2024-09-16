@@ -23,7 +23,7 @@ export class CylinderCreator extends BaseCreator {
 
   private readonly _domainObject: CylinderDomainObject;
   private readonly _isHorizontal;
-  private _radius = Cylinder.MIN_SIZE;
+  private _radius = Cylinder.MinSize;
 
   // ==================================================
   // CONSTRUCTOR
@@ -117,7 +117,7 @@ export class CylinderCreator extends BaseCreator {
 
       const pointOnRay = new Vector3();
       this._radius = Math.sqrt(ray.distanceSqToSegment(v0, v1, pointOnRay, undefined));
-      this._radius = Math.max(this._radius, Cylinder.MIN_SIZE);
+      this._radius = Math.max(this._radius, Cylinder.MinSize);
       return pointOnRay;
     }
     return point;
@@ -138,7 +138,7 @@ export class CylinderCreator extends BaseCreator {
       const { centerA, centerB } = cylinder;
       centerA.copy(this.firstPoint);
       centerB.copy(this.firstPoint);
-      const smallVector = new Vector3(Cylinder.MIN_SIZE, 0, 0);
+      const smallVector = new Vector3(Cylinder.MinSize, 0, 0);
       centerA.sub(smallVector);
       centerB.add(smallVector);
       cylinder.forceMinSize();

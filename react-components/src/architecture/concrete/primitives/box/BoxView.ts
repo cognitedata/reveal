@@ -128,8 +128,9 @@ export class BoxView extends GroupThreeView<BoxDomainObject> {
       }
     }
     if (showMarkers(focusType)) {
-      this.addRotationRing(matrix);
-      this.addEdgeCircles(matrix);
+      const rotationMatrix = this.getRotationMatrix();
+      this.addRotationRing(matrix, rotationMatrix);
+      this.addEdgeCircles(matrix, rotationMatrix);
     }
     if (style.showLabel) {
       this.addLabels(matrix);
@@ -306,8 +307,12 @@ export class BoxView extends GroupThreeView<BoxDomainObject> {
     return sprite;
   }
 
-  private createRotationRing(matrix: Matrix4, material: Material, face: BoxFace): Mesh | undefined {
-    const { domainObject } = this;
+  private createRotationRing(
+    matrix: Matrix4,
+    rotationMatrix: Matrix4,
+    material: Material,
+    face: BoxFace
+  ): Mesh | undefined {
     const radius = this.getFaceRadius(face);
 
     const outerRadius = RELATIVE_ROTATION_RADIUS.max * radius;
@@ -321,14 +326,16 @@ export class BoxView extends GroupThreeView<BoxDomainObject> {
     center.applyMatrix4(matrix);
     result.position.copy(center);
 
-    const rotationMatrix = domainObject.box.getRotationMatrix();
-    rotationMatrix.premultiply(CDF_TO_VIEWER_TRANSFORMATION);
-
     rotateEdgeCircle(result, face, rotationMatrix);
     return result;
   }
 
-  private createEdgeCircle(matrix: Matrix4, material: Material, face: BoxFace): Mesh | undefined {
+  private createEdgeCircle(
+    matrix: Matrix4,
+    rotationMatrix: Matrix4,
+    material: Material,
+    face: BoxFace
+  ): Mesh | undefined {
     const { domainObject } = this;
     const adjacentSize1 = domainObject.box.size.getComponent(face.tangentIndex1);
     if (!Box.isValidSize(adjacentSize1)) {
@@ -348,9 +355,6 @@ export class BoxView extends GroupThreeView<BoxDomainObject> {
     const center = face.getCenter(newVector3());
     center.applyMatrix4(matrix);
     result.position.copy(center);
-
-    const rotationMatrix = domainObject.box.getRotationMatrix();
-    rotationMatrix.premultiply(CDF_TO_VIEWER_TRANSFORMATION);
 
     rotateEdgeCircle(result, face, rotationMatrix);
     return result;
@@ -455,7 +459,7 @@ export class BoxView extends GroupThreeView<BoxDomainObject> {
     }
   }
 
-  private addEdgeCircles(matrix: Matrix4): void {
+  private addEdgeCircles(matrix: Matrix4, rotationMatrix: Matrix4): void {
     const { domainObject, style } = this;
     let selectedFace = domainObject.focusFace;
     if (this.domainObject.focusType !== FocusType.Face) {
@@ -470,16 +474,16 @@ export class BoxView extends GroupThreeView<BoxDomainObject> {
       if (selectedFace !== undefined && selectedFace.equals(face)) {
         continue;
       }
-      this.addChild(this.createEdgeCircle(matrix, material, face));
+      this.addChild(this.createEdgeCircle(matrix, rotationMatrix, material, face));
     }
     if (selectedFace !== undefined && this.isFaceVisible(selectedFace)) {
       const material = new MeshPhongMaterial();
       updateMarkerMaterial(material, domainObject, style, true);
-      this.addChild(this.createEdgeCircle(matrix, material, selectedFace));
+      this.addChild(this.createEdgeCircle(matrix, rotationMatrix, material, selectedFace));
     }
   }
 
-  private addRotationRing(matrix: Matrix4): void {
+  private addRotationRing(matrix: Matrix4, rotationMatrix: Matrix4): void {
     const { domainObject, style } = this;
     let selectedFace = domainObject.focusFace;
     if (this.domainObject.focusType !== FocusType.Rotation) {
@@ -500,13 +504,13 @@ export class BoxView extends GroupThreeView<BoxDomainObject> {
       const material = new MeshPhongMaterial();
       updateMarkerMaterial(material, domainObject, style, false);
       material.clippingPlanes = BoxFace.createClippingPlanes(matrix, face.index);
-      this.addChild(this.createRotationRing(matrix, material, face));
+      this.addChild(this.createRotationRing(matrix, rotationMatrix, material, face));
     }
     if (selectedFace !== undefined && this.isFaceVisible(selectedFace)) {
       const material = new MeshPhongMaterial();
       updateMarkerMaterial(material, domainObject, style, true);
       material.clippingPlanes = BoxFace.createClippingPlanes(matrix, selectedFace.index);
-      this.addChild(this.createRotationRing(matrix, material, selectedFace));
+      this.addChild(this.createRotationRing(matrix, rotationMatrix, material, selectedFace));
     }
   }
 

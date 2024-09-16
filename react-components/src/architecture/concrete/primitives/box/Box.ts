@@ -12,14 +12,15 @@ import {
 import { BoxUtils } from '../../../base/utilities/geometry/BoxUtils';
 
 export class Box {
-  public static MIN_SIZE = 0.01;
+  public static MinSize = 0.01;
+
   // ==================================================
   // INSTANCE FIELDS
   // ==================================================
 
-  public readonly size = new Vector3().setScalar(Box.MIN_SIZE);
+  public readonly size = new Vector3().setScalar(Box.MinSize);
   public readonly center = new Vector3();
-  public readonly rotation = new Euler(0, 0, 0, 'ZYX');
+  public readonly rotation = new Euler(0, 0, 0);
 
   // ==================================================
   // INSTANCE PROPERTIES
@@ -95,7 +96,7 @@ export class Box {
   public setMatrix(matrix: Matrix4): void {
     const quaternion = new Quaternion();
     matrix.decompose(this.center, quaternion, this.size);
-    this.rotation.setFromQuaternion(quaternion, 'ZYX');
+    this.rotation.setFromQuaternion(quaternion);
   }
 
   // ==================================================
@@ -110,16 +111,16 @@ export class Box {
   }
 
   public clear(): void {
-    this.size.setScalar(Box.MIN_SIZE);
+    this.size.setScalar(Box.MinSize);
     this.center.setScalar(0);
-    this.rotation.set(0, 0, 0, 'ZYX');
+    this.rotation.set(0, 0, 0);
   }
 
   public forceMinSize(): void {
     const { size } = this;
-    size.x = Math.max(Box.MIN_SIZE, size.x);
-    size.y = Math.max(Box.MIN_SIZE, size.y);
-    size.z = Math.max(Box.MIN_SIZE, size.z);
+    size.x = Math.max(Box.MinSize, size.x);
+    size.y = Math.max(Box.MinSize, size.y);
+    size.z = Math.max(Box.MinSize, size.z);
   }
 
   // ==================================================
@@ -127,6 +128,6 @@ export class Box {
   // ==================================================
 
   public static isValidSize(value: number): boolean {
-    return value > Box.MIN_SIZE;
+    return value > Box.MinSize;
   }
 }

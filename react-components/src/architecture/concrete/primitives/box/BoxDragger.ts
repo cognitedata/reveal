@@ -45,6 +45,7 @@ export class BoxDragger extends BaseDragger {
   private readonly _planeOfFace = new Plane(); // Plane of the intersection/normal
   private readonly _centerOfFace = new Vector3(); // Plane of the intersection/normal
   private readonly _cornerSign = new Vector3(); // Indicate the corner of the face
+  private readonly _rotationMatrix: Matrix4;
 
   // Original box when the drag started
   private readonly _originalBox = new Box();
@@ -76,8 +77,8 @@ export class BoxDragger extends BaseDragger {
     this._face.getNormal(this._normal);
     this._face.getCenter(this._centerOfFace);
 
-    const rotationMatrix = this.getRotationMatrix();
-    this._normal.applyMatrix4(rotationMatrix);
+    this._rotationMatrix = domainObject.box.getRotationMatrix();
+    this._normal.applyMatrix4(this._rotationMatrix);
     this._normal.normalize();
 
     this._planeOfFace.setFromNormalAndCoplanarPoint(this._normal, this.point);
@@ -142,9 +143,8 @@ export class BoxDragger extends BaseDragger {
       return false;
     }
     if (shift) {
-      const matrix = this.getRotationMatrix();
-      const invMatrix = matrix.clone().invert();
-      deltaCenter.applyMatrix4(invMatrix);
+      const invRotationMatrix = this._rotationMatrix.clone().invert();
+      deltaCenter.applyMatrix4(invRotationMatrix);
       const maxIndex = getAbsMaxComponentIndex(deltaCenter);
       for (let index = 0; index < 3; index++) {
         if (index === maxIndex) {
@@ -152,7 +152,7 @@ export class BoxDragger extends BaseDragger {
         }
         deltaCenter.setComponent(index, 0);
       }
-      deltaCenter.applyMatrix4(matrix);
+      deltaCenter.applyMatrix4(this._rotationMatrix);
     }
     // First copy the original values
     const originalBox = this._originalBox;
@@ -187,7 +187,7 @@ export class BoxDragger extends BaseDragger {
     } else {
       // Set new size
       const value = deltaSize + size.getComponent(index);
-      const newValue = this.getBestValue(value, shift, Box.MIN_SIZE);
+      const newValue = this.getBestValue(value, shift, Box.MinSize);
       if (newValue === originalBox.size.getComponent(index)) {
         return false; // Nothing has changed
       }
@@ -199,8 +199,7 @@ export class BoxDragger extends BaseDragger {
     // Set new center
     const deltaCenterVector = newVector3();
     deltaCenterVector.setComponent(index, deltaCenter);
-    const rotationMatrix = this.getRotationMatrix();
-    deltaCenterVector.applyMatrix4(rotationMatrix);
+    deltaCenterVector.applyMatrix4(this._rotationMatrix);
     center.add(deltaCenterVector);
     return true;
   }
@@ -212,8 +211,7 @@ export class BoxDragger extends BaseDragger {
     }
     const startPoint = this._planeOfFace.projectPoint(this.point, newVector3());
 
-    const rotationMatrix = this.getRotationMatrix();
-    const invRotationMatrix = rotationMatrix.clone().invert();
+    const invRotationMatrix = this._rotationMatrix.clone().invert();
     const deltaSize = endPoint.sub(startPoint);
     deltaSize.applyMatrix4(invRotationMatrix);
 
@@ -238,7 +236,7 @@ export class BoxDragger extends BaseDragger {
     const newDeltaSize = newVector3().subVectors(size, originalBox.size);
     const deltaCenter = newDeltaSize.divideScalar(2);
     deltaCenter.multiply(this._cornerSign);
-    deltaCenter.applyMatrix4(rotationMatrix);
+    deltaCenter.applyMatrix4(this._rotationMatrix);
     center.add(deltaCenter);
     return true;
   }
@@ -287,10 +285,10 @@ export class BoxDragger extends BaseDragger {
       deltaAngle = newAngle - oldAngle;
     }
     // Rotate
-    const matrix = originalBox.getRotationMatrix();
+    const matrix = this._rotationMatrix.clone();
     const rotationMatrix = new Matrix4().makeRotationAxis(this._normal, deltaAngle);
     matrix.premultiply(rotationMatrix);
-    box.rotation.setFromRotationMatrix(matrix, 'ZYX', true);
+    box.rotation.setFromRotationMatrix(matrix);
     return true;
 
     function roundByConstrained(rotation: number, shift: boolean): number {
@@ -301,10 +299,6 @@ export class BoxDragger extends BaseDragger {
       degrees = round(degrees, CONSTRAINED_ANGLE_INCREMENT);
       return degToRad(degrees);
     }
-  }
-
-  public getRotationMatrix(): Matrix4 {
-    return this._domainObject.box.getRotationMatrix();
   }
 }
 

@@ -181,7 +181,7 @@ export class SingleAnnotation {
       matrix.decompose(position, quaternion, scale);
 
       // Convert quaternion to Euler angles
-      const euler = new Euler().setFromQuaternion(quaternion, 'ZYX');
+      const euler = new Euler().setFromQuaternion(quaternion);
 
       // Set x and y rotation to zero
       euler.x = 0;

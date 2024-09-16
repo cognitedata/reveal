@@ -2,7 +2,7 @@
  * Copyright 2024 Cognite AS
  */
 
-import { type Ray, Vector3, Plane, type Matrix4, Line3 } from 'three';
+import { type Ray, Vector3, Plane, Line3 } from 'three';
 import { Changes } from '../../../base/domainObjectsHelpers/Changes';
 import { type BoxFace } from '../common/BoxFace';
 import { FocusType } from '../../../base/domainObjectsHelpers/FocusType';
@@ -64,7 +64,7 @@ export class CylinderDragger extends BaseDragger {
 
     if (this._face.index === 2) {
       this._face.getNormal(this._normal);
-      const rotationMatrix = this.getRotationMatrix();
+      const rotationMatrix = domainObject.cylinder.getRotationMatrix();
       this._normal.applyMatrix4(rotationMatrix);
       this._normal.normalize();
       this._planeOfFace.setFromNormalAndCoplanarPoint(this._normal, this.point);
@@ -155,7 +155,7 @@ export class CylinderDragger extends BaseDragger {
     const closestToRay = getClosestPointOnLine(ray, axisNormal, closestOnAxis);
 
     const radius = closestToRay.distanceTo(closestOnAxis);
-    const newRadius = this.getBestValue(radius, shift, Cylinder.MIN_SIZE);
+    const newRadius = this.getBestValue(radius, shift, Cylinder.MinSize);
     if (newRadius === cylinder.radius) {
       return false; // Nothing has changed
     }
@@ -176,7 +176,7 @@ export class CylinderDragger extends BaseDragger {
     const newHeight = this.getBestValue(
       originalCylinder.height + deltaHeight,
       shift,
-      Cylinder.MIN_SIZE
+      Cylinder.MinSize
     );
     if (newHeight === originalCylinder.height) {
       return false; // Nothing has changed
@@ -226,10 +226,6 @@ export class CylinderDragger extends BaseDragger {
       centerA.addVectors(centerB, axis);
     }
     return true;
-  }
-
-  public getRotationMatrix(): Matrix4 {
-    return this._domainObject.cylinder.getRotationMatrix();
   }
 }
 

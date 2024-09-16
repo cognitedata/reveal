@@ -152,9 +152,7 @@ function createSingleAnnotations(): PointCloudAnnotation[] {
     const center = new Vector3().addVectors(centerA, centerB).divideScalar(2);
 
     const matrix = new Matrix4().makeTranslation(center);
-    matrix.multiply(
-      new Matrix4().makeRotationFromEuler(new Euler(degToRad(0), 0, degToRad(0), 'ZYX'))
-    );
+    matrix.multiply(new Matrix4().makeRotationFromEuler(new Euler(degToRad(0), 0, degToRad(0))));
 
     matrix.multiply(new Matrix4().makeScale(4, 1, 2));
     matrix.transpose();

@@ -9,15 +9,15 @@ import { square } from '../../../base/utilities/extensions/mathExtensions';
 const UP_AXIS = new Vector3(0, 0, 1);
 
 export class Cylinder {
-  public static MIN_SIZE = 0.01;
+  public static MinSize = 0.01;
 
   // ==================================================
   // INSTANCE FIELDS
   // ==================================================
 
-  public radius = Cylinder.MIN_SIZE;
-  public readonly centerA = new Vector3(0, 0, -Cylinder.MIN_SIZE);
-  public readonly centerB = new Vector3(0, 0, +Cylinder.MIN_SIZE);
+  public radius = Cylinder.MinSize;
+  public readonly centerA = new Vector3(0, 0, -Cylinder.MinSize);
+  public readonly centerB = new Vector3(0, 0, +Cylinder.MinSize);
 
   // Redundant variable, calculated when needed
   private readonly _center = new Vector3();
@@ -67,24 +67,20 @@ export class Cylinder {
   }
 
   public getMatrix(matrix: Matrix4 = new Matrix4()): Matrix4 {
-    const quaternion = new Quaternion();
-    quaternion.setFromUnitVectors(UP_AXIS, this.axis);
-    matrix.compose(this.center, quaternion, this.size);
-    return matrix;
+    return matrix.compose(this.center, this.getQuaternion(), this.size);
   }
 
   public getRotationMatrix(matrix: Matrix4 = new Matrix4()): Matrix4 {
-    const quaternion = new Quaternion();
-    quaternion.setFromUnitVectors(UP_AXIS, this.axis);
-    matrix.makeRotationFromQuaternion(quaternion);
-    return matrix;
+    return matrix.makeRotationFromQuaternion(this.getQuaternion());
   }
 
   public getScaledMatrix(scale: Vector3, matrix: Matrix4 = new Matrix4()): Matrix4 {
+    return matrix.compose(this.center, this.getQuaternion(), scale);
+  }
+
+  private getQuaternion(): Quaternion {
     const quaternion = new Quaternion();
-    quaternion.setFromUnitVectors(UP_AXIS, this.axis);
-    matrix.compose(this.center, quaternion, scale);
-    return matrix;
+    return quaternion.setFromUnitVectors(UP_AXIS, this.axis);
   }
 
   // ==================================================
@@ -114,13 +110,13 @@ export class Cylinder {
   }
 
   public clear(): void {
-    this.radius = Cylinder.MIN_SIZE;
-    this.centerA.set(0, 0, -Cylinder.MIN_SIZE);
-    this.centerB.set(0, 0, +Cylinder.MIN_SIZE);
+    this.radius = Cylinder.MinSize;
+    this.centerA.set(0, 0, -Cylinder.MinSize);
+    this.centerB.set(0, 0, +Cylinder.MinSize);
   }
 
   public forceMinSize(): void {
-    this.radius = Math.max(this.radius, Cylinder.MIN_SIZE);
+    this.radius = Math.max(this.radius, Cylinder.MinSize);
   }
 
   // ==================================================
@@ -128,6 +124,6 @@ export class Cylinder {
   // ==================================================
 
   public static isValidSize(value: number): boolean {
-    return value > Cylinder.MIN_SIZE;
+    return value > Cylinder.MinSize;
   }
 }
