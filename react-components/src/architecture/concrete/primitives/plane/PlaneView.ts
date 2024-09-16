@@ -201,7 +201,7 @@ export class PlaneView extends GroupThreeView<PlaneDomainObject> {
     ];
     const { domainObject, style } = this;
     const material = new LineMaterial();
-    updateWireframeMaterial(material, domainObject, style);
+    updateWireframeMaterial(material, domainObject, style, this.useDepthTest);
     material.color = getLineColor(domainObject, style);
     const geometry = PrimitiveUtils.createLineSegmentsGeometryByVertices(points);
     return new Wireframe(geometry, material);

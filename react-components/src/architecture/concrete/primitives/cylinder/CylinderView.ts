@@ -82,6 +82,10 @@ export class CylinderView extends GroupThreeView<CylinderDomainObject> {
   // ==================================================
 
   public override get useDepthTest(): boolean {
+    const { domainObject } = this;
+    if (domainObject.focusType === FocusType.Pending || domainObject.isSelected) {
+      return false;
+    }
     return this.style.depthTest;
   }
 
@@ -197,7 +201,7 @@ export class CylinderView extends GroupThreeView<CylinderDomainObject> {
     const { style } = this;
 
     const material = new LineBasicMaterial();
-    updateLineSegmentsMaterial(material, domainObject, style);
+    updateLineSegmentsMaterial(material, domainObject, style, this.useDepthTest);
     const geometry = CylinderUtils.createLineSegmentsBufferGeometry();
     const result = new LineSegments(geometry, material);
     result.renderOrder = RENDER_ORDER;
@@ -210,7 +214,7 @@ export class CylinderView extends GroupThreeView<CylinderDomainObject> {
     const { style } = this;
 
     const material = new LineMaterial();
-    updateWireframeMaterial(material, domainObject, style);
+    updateWireframeMaterial(material, domainObject, style, this.useDepthTest);
     const geometry = CylinderUtils.createLineSegmentsGeometry();
     const result = new Wireframe(geometry, material);
     result.renderOrder = RENDER_ORDER;
@@ -231,7 +235,13 @@ export class CylinderView extends GroupThreeView<CylinderDomainObject> {
     const geometry = new RingGeometry(innerRadius, outerRadius, CIRCULAR_SEGMENTS);
 
     const material = new MeshPhongMaterial();
-    updateMarkerMaterial(material, domainObject, style, focusType === FocusType.Rotation);
+    updateMarkerMaterial(
+      material,
+      domainObject,
+      style,
+      focusType === FocusType.Rotation,
+      this.useDepthTest
+    );
     const result = new Mesh(geometry, material);
     result.renderOrder = RENDER_ORDER;
 
@@ -277,7 +287,7 @@ export class CylinderView extends GroupThreeView<CylinderDomainObject> {
       selectedFace = undefined;
     }
     const material = new MeshPhongMaterial();
-    updateMarkerMaterial(material, domainObject, style, false);
+    updateMarkerMaterial(material, domainObject, style, false, this.useDepthTest);
     for (const boxFace of BoxFace.getAllFaces()) {
       if (!this.isFaceVisible(boxFace)) {
         continue;
@@ -288,7 +298,7 @@ export class CylinderView extends GroupThreeView<CylinderDomainObject> {
     }
     if (selectedFace !== undefined && this.isFaceVisible(selectedFace)) {
       const material = new MeshPhongMaterial();
-      updateMarkerMaterial(material, domainObject, style, true);
+      updateMarkerMaterial(material, domainObject, style, true, this.useDepthTest);
       this.addChild(this.createEdgeCircle(matrix, material, selectedFace));
     }
   }

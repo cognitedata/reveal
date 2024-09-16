@@ -109,6 +109,10 @@ export class BoxView extends GroupThreeView<BoxDomainObject> {
   // ==================================================
 
   public override get useDepthTest(): boolean {
+    const { domainObject } = this;
+    if (domainObject.focusType === FocusType.Pending || domainObject.isSelected) {
+      return false;
+    }
     return this.style.depthTest;
   }
 
@@ -237,7 +241,7 @@ export class BoxView extends GroupThreeView<BoxDomainObject> {
   private createLines(matrix: Matrix4): Object3D | undefined {
     const { domainObject, style } = this;
     const material = new LineBasicMaterial();
-    updateLineSegmentsMaterial(material, domainObject, style);
+    updateLineSegmentsMaterial(material, domainObject, style, this.useDepthTest);
     const geometry = BoxUtils.createLineSegmentsBufferGeometry();
     const result = new LineSegments(geometry, material);
     result.renderOrder = RENDER_ORDER;
@@ -248,7 +252,7 @@ export class BoxView extends GroupThreeView<BoxDomainObject> {
   private createWireframe(matrix: Matrix4): Object3D | undefined {
     const { domainObject, style } = this;
     const material = new LineMaterial();
-    updateWireframeMaterial(material, domainObject, style);
+    updateWireframeMaterial(material, domainObject, style, this.useDepthTest);
     const geometry = BoxUtils.createLineSegmentsGeometry();
     const result = new Wireframe(geometry, material);
     result.renderOrder = RENDER_ORDER;
@@ -466,7 +470,7 @@ export class BoxView extends GroupThreeView<BoxDomainObject> {
       selectedFace = undefined;
     }
     const material = new MeshPhongMaterial();
-    updateMarkerMaterial(material, domainObject, style, false);
+    updateMarkerMaterial(material, domainObject, style, false, this.useDepthTest);
     for (const face of BoxFace.getAllFaces()) {
       if (!this.isFaceVisible(face)) {
         continue;
@@ -478,7 +482,7 @@ export class BoxView extends GroupThreeView<BoxDomainObject> {
     }
     if (selectedFace !== undefined && this.isFaceVisible(selectedFace)) {
       const material = new MeshPhongMaterial();
-      updateMarkerMaterial(material, domainObject, style, true);
+      updateMarkerMaterial(material, domainObject, style, true, this.useDepthTest);
       this.addChild(this.createEdgeCircle(matrix, rotationMatrix, material, selectedFace));
     }
   }
@@ -502,13 +506,13 @@ export class BoxView extends GroupThreeView<BoxDomainObject> {
         continue;
       }
       const material = new MeshPhongMaterial();
-      updateMarkerMaterial(material, domainObject, style, false);
+      updateMarkerMaterial(material, domainObject, style, false, this.useDepthTest);
       material.clippingPlanes = BoxFace.createClippingPlanes(matrix, face.index);
       this.addChild(this.createRotationRing(matrix, rotationMatrix, material, face));
     }
     if (selectedFace !== undefined && this.isFaceVisible(selectedFace)) {
       const material = new MeshPhongMaterial();
-      updateMarkerMaterial(material, domainObject, style, true);
+      updateMarkerMaterial(material, domainObject, style, true, this.useDepthTest);
       material.clippingPlanes = BoxFace.createClippingPlanes(matrix, selectedFace.index);
       this.addChild(this.createRotationRing(matrix, rotationMatrix, material, selectedFace));
     }
@@ -661,25 +665,27 @@ export function updateSolidMaterial(
 export function updateLineSegmentsMaterial(
   material: LineBasicMaterial,
   domainObject: DomainObject,
-  style: SolidPrimitiveRenderStyle
+  style: SolidPrimitiveRenderStyle,
+  depthTest: boolean
 ): void {
   const color = domainObject.getColorByColorType(style.colorType);
   material.color = color;
   material.transparent = true;
   material.depthWrite = false;
-  material.depthTest = style.depthTest;
+  material.depthTest = depthTest;
 }
 
 export function updateWireframeMaterial(
   material: LineMaterial,
   domainObject: DomainObject,
-  style: SolidPrimitiveRenderStyle
+  style: SolidPrimitiveRenderStyle,
+  depthTest: boolean
 ): void {
   const color = domainObject.getColorByColorType(style.colorType);
   material.color = color;
   material.transparent = true;
   material.depthWrite = false;
-  material.depthTest = style.depthTest;
+  material.depthTest = depthTest;
   material.linewidth = style.getLineWidth(domainObject.isSelected);
   material.resolution = new Vector2(1000, 1000);
   material.worldUnits = false;
@@ -689,7 +695,8 @@ export function updateMarkerMaterial(
   material: MeshPhongMaterial,
   domainObject: DomainObject,
   style: SolidPrimitiveRenderStyle,
-  hasFocus: boolean
+  hasFocus: boolean,
+  depthTest: boolean
 ): void {
   material.color = ARROW_AND_RING_COLOR;
   material.polygonOffset = true;
@@ -701,7 +708,7 @@ export function updateMarkerMaterial(
   material.side = FrontSide;
   material.flatShading = true;
   material.depthWrite = false;
-  material.depthTest = style.depthTest;
+  material.depthTest = depthTest;
 }
 
 // ==================================================
