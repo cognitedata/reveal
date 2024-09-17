@@ -1,4 +1,4 @@
-import { CogniteCadModel } from '@cognite/reveal';
+import { type CogniteCadModel } from '@cognite/reveal';
 import { Mock } from 'moq.ts';
 import { Matrix4 } from 'three';
 

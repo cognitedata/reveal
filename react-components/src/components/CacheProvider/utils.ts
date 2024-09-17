@@ -6,43 +6,8 @@ import {
   type AnnotationsCogniteAnnotationTypesImagesAssetLink,
   type AnnotationModel,
   type AnnotationsBoundingVolume,
-  type CogniteInternalId,
   type AssetMapping3D
 } from '@cognite/sdk';
-import {
-  type ModelRevisionId,
-  type ModelAssetIdKey,
-  type ModelId,
-  type ModelRevisionKey,
-  type RevisionId,
-  type ModelTreeIndexKey
-} from './types';
-
-export function modelRevisionToKey(modelId: ModelId, revisionId: RevisionId): ModelRevisionKey {
-  return `${modelId}/${revisionId}`;
-}
-
-export function modelRevisionKeyToModelRevision(key: ModelRevisionKey): [ModelId, RevisionId] {
-  const [modelId, revisionId] = key.split('/');
-
-  return [Number(modelId), Number(revisionId)];
-}
-
-export function modelRevisionNodesAssetsToKey(
-  modelId: ModelId,
-  revisionId: RevisionId,
-  ids: number[]
-): ModelTreeIndexKey {
-  const idsSerialized = ids.reduce((a, b) => a + b, 0);
-  return `${modelId}/${revisionId}/${idsSerialized}`;
-}
-
-export function modelRevisionAssetIdsToKey(
-  modelRevisionId: ModelRevisionId,
-  assetId: CogniteInternalId
-): ModelAssetIdKey {
-  return `${modelRevisionId.modelId}/${modelRevisionId.revisionId}/${assetId}`;
-}
 
 export function getAssetIdOrExternalIdFromPointCloudAnnotation(
   annotation: AnnotationModel

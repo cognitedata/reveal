@@ -4,7 +4,8 @@
 import { type CogniteClient, type AssetMapping3D } from '@cognite/sdk/dist/src';
 import { type ModelId, type RevisionId, type ModelRevisionKey } from './types';
 import { type AssetMapping } from './AssetMappingAndNode3DCache';
-import { isValidAssetMapping, modelRevisionToKey } from './utils';
+import { isValidAssetMapping } from './utils';
+import { createModelRevisionKey } from './idAndKeyTranslation';
 
 export class AssetMappingPerModelCache {
   private readonly _sdk: CogniteClient;
@@ -32,7 +33,7 @@ export class AssetMappingPerModelCache {
     modelId: ModelId,
     revisionId: RevisionId
   ): Promise<AssetMapping[]> {
-    const key = modelRevisionToKey(modelId, revisionId);
+    const key = createModelRevisionKey(modelId, revisionId);
     const assetMappings = this.fetchAssetMappingsForModel(modelId, revisionId);
 
     this.setModelToAssetMappingCacheItems(key, assetMappings);

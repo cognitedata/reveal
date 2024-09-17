@@ -18,7 +18,8 @@ import {
 } from './types';
 import { chunk, maxBy } from 'lodash';
 import assert from 'assert';
-import { isValidAssetMapping, modelRevisionNodesAssetsToKey, modelRevisionToKey } from './utils';
+import { isValidAssetMapping } from './utils';
+import { modelRevisionNodesAssetToKey, createModelRevisionKey } from './idAndKeyTranslation';
 import { type ModelWithAssetMappings } from './AssetMappingAndNode3DCacheProvider';
 import { AssetMappingPerAssetIdCache } from './AssetMappingPerAssetIdCache';
 import { AssetMappingPerNodeIdCache } from './AssetMappingPerNodeIdCache';
@@ -149,7 +150,7 @@ export class AssetMappingAndNode3DCache {
     }
     assetMappingsPerModel.forEach(async (modelMapping) => {
       modelMapping.assetMappings.forEach(async (item) => {
-        const key = modelRevisionNodesAssetsToKey(modelId, revisionId, [item.assetId]);
+        const key = modelRevisionNodesAssetToKey(modelId, revisionId, item.assetId);
         await this.assetIdsToAssetMappingCache.setAssetMappingsCacheItem(key, item);
       });
     });
@@ -159,7 +160,7 @@ export class AssetMappingAndNode3DCache {
     modelId: ModelId,
     revisionId: RevisionId
   ): Promise<AssetMapping[]> {
-    const key = modelRevisionToKey(modelId, revisionId);
+    const key = createModelRevisionKey(modelId, revisionId);
     const cachedResult = await this.modelToAssetMappingsCache.getModelToAssetMappingCacheItems(key);
 
     if (cachedResult !== undefined) {
@@ -180,7 +181,7 @@ export class AssetMappingAndNode3DCache {
 
     await Promise.all(
       currentChunk.map(async (id) => {
-        const key = modelRevisionNodesAssetsToKey(modelId, revisionId, [id]);
+        const key = modelRevisionNodesAssetToKey(modelId, revisionId, id);
         const cachedResult = await this.getItemCacheResult(type, key);
         if (cachedResult !== undefined) {
           chunkInCache.push(...cachedResult);
@@ -235,18 +236,22 @@ export class AssetMappingAndNode3DCache {
       .autoPagingToArray({ limit: Infinity });
 
     assetMapping3D.forEach(async (item) => {
-      const keyAssetId: ModelAssetIdKey = modelRevisionNodesAssetsToKey(modelId, revisionId, [
+      const keyAssetId: ModelAssetIdKey = modelRevisionNodesAssetToKey(
+        modelId,
+        revisionId,
         item.assetId
-      ]);
-      const keyNodeId: ModelTreeIndexKey = modelRevisionNodesAssetsToKey(modelId, revisionId, [
+      );
+      const keyNodeId: ModelTreeIndexKey = modelRevisionNodesAssetToKey(
+        modelId,
+        revisionId,
         item.nodeId
-      ]);
+      );
       await this.assetIdsToAssetMappingCache.setAssetMappingsCacheItem(keyAssetId, item);
       await this.nodeIdsToAssetMappingCache.setAssetMappingsCacheItem(keyNodeId, item);
     });
 
     currentChunk.forEach(async (id) => {
-      const key = modelRevisionNodesAssetsToKey(modelId, revisionId, [id]);
+      const key = modelRevisionNodesAssetToKey(modelId, revisionId, id);
       const cachedResult = await this.getItemCacheResult(filterType, key);
 
       if (cachedResult === undefined) {
