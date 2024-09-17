@@ -7,7 +7,7 @@ import { type PointCloudAnnotation } from './types';
 import { getAnnotationGeometries } from './annotationGeometryUtils';
 import { getAnnotationMatrixByGeometry } from '../helpers/getMatrixUtils';
 import { Box3, Vector3, type Matrix4 } from 'three';
-import { BoxUtils } from '../../../base/utilities/geometry/BoxUtils';
+import { BoxUtils } from '../../../base/utilities/primitives/BoxUtils';
 import { Range3 } from '../../../base/utilities/geometry/Range3';
 import { CYLINDER_RADIUS_MARGIN } from './constants';
 

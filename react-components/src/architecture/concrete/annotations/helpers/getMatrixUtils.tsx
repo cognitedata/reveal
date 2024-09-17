@@ -2,7 +2,7 @@
  * Copyright 2024 Cognite AS
  */
 
-import { type Cognite3DViewer } from '@cognite/reveal';
+import { CognitePointCloudModel, type Cognite3DViewer } from '@cognite/reveal';
 import {
   type AnnotationsBox,
   type AnnotationsCylinder,
@@ -10,19 +10,27 @@ import {
 } from '@cognite/sdk';
 
 import { CYLINDER_RADIUS_MARGIN } from '../utils/constants';
-import { getCognitePointCloudModel } from '../utils/getCognitePointCloudModel';
 import { Matrix4, Quaternion, Vector3 } from 'three';
 
 export const getGlobalMatrix = (args: {
   modelId: number;
   viewer: Cognite3DViewer;
 }): Matrix4 | null => {
-  const pointCloudModel = getCognitePointCloudModel(args);
+  const pointCloudModel = getCognitePointCloudModel(args.modelId, args.viewer);
   if (pointCloudModel === undefined) {
     return null;
   }
   return pointCloudModel.getCdfToDefaultModelTransformation();
 };
+
+function getCognitePointCloudModel(
+  modelId: number,
+  viewer: Cognite3DViewer
+): CognitePointCloudModel | undefined {
+  return viewer.models
+    .filter((model) => model instanceof CognitePointCloudModel)
+    .find((model) => model instanceof CognitePointCloudModel && model.modelId === modelId);
+}
 
 export function getAnnotationMatrixByGeometry(
   geometry: AnnotationGeometry,

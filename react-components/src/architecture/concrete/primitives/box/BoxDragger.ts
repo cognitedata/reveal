@@ -23,7 +23,7 @@ import {
 } from '../../../base/domainObjects/VisualDomainObject';
 import { Vector3Pool } from '@cognite/reveal';
 import { degToRad, radToDeg } from 'three/src/math/MathUtils.js';
-import { Box } from './Box';
+import { Box } from '../../../base/utilities/primitives/Box';
 
 const CONSTRAINED_ANGLE_INCREMENT = 15;
 /**

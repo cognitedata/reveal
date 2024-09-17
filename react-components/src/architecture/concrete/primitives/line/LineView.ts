@@ -32,7 +32,7 @@ import { ClosestGeometryFinder } from '../../../base/utilities/geometry/ClosestG
 import { square } from '../../../base/utilities/extensions/mathExtensions';
 import { Quantity } from '../../../base/domainObjectsHelpers/Quantity';
 import { BoxView } from '../box/BoxView';
-import { PrimitiveUtils } from '../../../base/utilities/geometry/PrimitiveUtils';
+import { PrimitiveUtils } from '../../../base/utilities/primitives/PrimitiveUtils';
 
 const CYLINDER_DEFAULT_AXIS = new Vector3(0, 1, 0);
 const RENDER_ORDER = 100;

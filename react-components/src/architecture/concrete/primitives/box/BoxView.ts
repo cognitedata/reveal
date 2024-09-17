@@ -36,7 +36,7 @@ import { BoxFace } from '../common/BoxFace';
 import { FocusType } from '../../../base/domainObjectsHelpers/FocusType';
 import { clear } from '../../../base/utilities/extensions/arrayExtensions';
 import { createSpriteWithText } from '../../../base/utilities/sprites/createSprite';
-import { BoxUtils } from '../../../base/utilities/geometry/BoxUtils';
+import { BoxUtils } from '../../../base/utilities/primitives/BoxUtils';
 import { PrimitivePickInfo } from '../common/PrimitivePickInfo';
 import { Range1 } from '../../../base/utilities/geometry/Range1';
 import { PrimitiveType } from '../common/PrimitiveType';
@@ -46,7 +46,7 @@ import { type DomainObject } from '../../../base/domainObjects/DomainObject';
 import { type SolidPrimitiveRenderStyle } from '../common/SolidPrimitiveRenderStyle';
 import { LineMaterial } from 'three/examples/jsm/lines/LineMaterial.js';
 import { Wireframe } from 'three/examples/jsm/lines/Wireframe.js';
-import { Box } from './Box';
+import { Box } from '../../../base/utilities/primitives/Box';
 
 const RELATIVE_RESIZE_RADIUS = 0.15;
 const RELATIVE_ROTATION_RADIUS = new Range1(0.6, 0.75);

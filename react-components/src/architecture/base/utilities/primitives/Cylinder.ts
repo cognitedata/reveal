@@ -3,12 +3,13 @@
  */
 
 import { type Box3, Matrix4, Quaternion, Vector3 } from 'three';
-import { Range3 } from '../../../base/utilities/geometry/Range3';
-import { square } from '../../../base/utilities/extensions/mathExtensions';
+import { Range3 } from '../geometry/Range3';
+import { square } from '../extensions/mathExtensions';
+import { Primitive } from './Primitive';
 
 const UP_AXIS = new Vector3(0, 0, 1);
 
-export class Cylinder {
+export class Cylinder extends Primitive {
   public static MinSize = 0.01;
 
   // ==================================================
@@ -60,17 +61,18 @@ export class Cylinder {
   // INSTANCE METHODS: Getters
   // ==================================================
 
-  public getBoundingBox(): Box3 {
+  public override getBoundingBox(): Box3 {
     const range = new Range3(this.centerA, this.centerB);
     range.expandByMargin3(Range3.getCircleRangeMargin(this.axis, this.radius));
     return range.getBox();
   }
 
-  public getMatrix(matrix: Matrix4 = new Matrix4()): Matrix4 {
+  public override getMatrix(matrix: Matrix4 = new Matrix4()): Matrix4 {
     return matrix.compose(this.center, this.getQuaternion(), this.size);
   }
 
   public getRotationMatrix(matrix: Matrix4 = new Matrix4()): Matrix4 {
+    matrix.identity();
     return matrix.makeRotationFromQuaternion(this.getQuaternion());
   }
 

@@ -18,7 +18,7 @@ import { Quantity } from '../../../base/domainObjectsHelpers/Quantity';
 import { PanelInfo } from '../../../base/domainObjectsHelpers/PanelInfo';
 import { SolidDomainObject } from '../common/SolidDomainObject';
 import { SolidPrimitiveRenderStyle } from '../common/SolidPrimitiveRenderStyle';
-import { Cylinder } from './Cylinder';
+import { Cylinder } from '../../../base/utilities/primitives/Cylinder';
 
 export abstract class CylinderDomainObject extends SolidDomainObject {
   // ==================================================

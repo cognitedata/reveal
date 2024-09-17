@@ -18,21 +18,6 @@ export const isAnnotationsBoundingVolume = (
   return 'region' in annotationData;
 };
 
-export function isSingleAnnotationGeometry(annotation: PointCloudAnnotation): boolean {
-  return getSingleAnnotationGeometry(annotation) !== undefined;
-}
-
-export function getSingleAnnotationGeometry(
-  annotation: PointCloudAnnotation
-): undefined | AnnotationGeometry {
-  const volume = annotation.geometry;
-  if (!isAnnotationsBoundingVolume(volume)) {
-    return undefined;
-  }
-  if (volume === undefined || volume.region.length !== 1) return undefined;
-  return volume.region[0];
-}
-
 export function* getAnnotationGeometries(
   annotation: PointCloudAnnotation
 ): Generator<AnnotationGeometry> {

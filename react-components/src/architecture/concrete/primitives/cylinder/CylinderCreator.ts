@@ -10,7 +10,7 @@ import { Changes } from '../../../base/domainObjectsHelpers/Changes';
 import { type DomainObject } from '../../../base/domainObjects/DomainObject';
 import { type BaseTool } from '../../../base/commands/BaseTool';
 import { type CylinderDomainObject } from './CylinderDomainObject';
-import { Cylinder } from './Cylinder';
+import { Cylinder } from '../../../base/utilities/primitives/Cylinder';
 
 const UP_VECTOR = new Vector3(0, 0, 1);
 /**

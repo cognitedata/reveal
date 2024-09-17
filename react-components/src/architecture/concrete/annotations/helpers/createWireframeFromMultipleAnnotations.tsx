@@ -13,9 +13,9 @@ import { getAnnotationGeometries } from '../utils/annotationGeometryUtils';
 import { getAnnotationMatrixByGeometry } from './getMatrixUtils';
 import { WireframeUserData } from './WireframeUserData';
 import { Matrix4, Vector3 } from 'three';
-import { BoxUtils } from '../../../base/utilities/geometry/BoxUtils';
-import { CylinderUtils } from '../../../base/utilities/geometry/CylinderUtils';
-import { PrimitiveUtils } from '../../../base/utilities/geometry/PrimitiveUtils';
+import { BoxUtils } from '../../../base/utilities/primitives/BoxUtils';
+import { CylinderUtils } from '../../../base/utilities/primitives/CylinderUtils';
+import { PrimitiveUtils } from '../../../base/utilities/primitives/PrimitiveUtils';
 import { type Status } from './Status';
 
 export type CreateWireframeArgs = {

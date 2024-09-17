@@ -28,7 +28,7 @@ import { TrianglesBuffers } from '../../base/utilities/geometry/TrianglesBuffers
 import { type DomainObjectChange } from '../../base/domainObjectsHelpers/DomainObjectChange';
 import { Changes } from '../../base/domainObjectsHelpers/Changes';
 import { Vector3Pool } from '@cognite/reveal';
-import { PrimitiveUtils } from '../../base/utilities/geometry/PrimitiveUtils';
+import { PrimitiveUtils } from '../../base/utilities/primitives/PrimitiveUtils';
 
 const FACE_INDEX_NAME1 = 'faceIndex1';
 const FACE_INDEX_NAME2 = 'faceIndex2';

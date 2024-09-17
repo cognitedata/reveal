@@ -15,7 +15,7 @@ import {
   type CreateDraggerProps
 } from '../../../base/domainObjects/VisualDomainObject';
 import { Vector3Pool } from '@cognite/reveal';
-import { Cylinder } from './Cylinder';
+import { Cylinder } from '../../../base/utilities/primitives/Cylinder';
 
 /**
  * The `CylinderDragger` class represents a utility for dragging and manipulating a cylinder in a 3D space.

@@ -38,7 +38,7 @@ import {
   updateSolidMaterial
 } from '../box/BoxView';
 import { type SolidPrimitiveRenderStyle } from '../common/SolidPrimitiveRenderStyle';
-import { CylinderUtils } from '../../../base/utilities/geometry/CylinderUtils';
+import { CylinderUtils } from '../../../base/utilities/primitives/CylinderUtils';
 import { LineMaterial } from 'three/examples/jsm/lines/LineMaterial.js';
 import { Wireframe } from 'three/examples/jsm/lines/Wireframe.js';
 

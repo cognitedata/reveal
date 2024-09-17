@@ -18,7 +18,7 @@ import { Quantity } from '../../../base/domainObjectsHelpers/Quantity';
 import { PanelInfo } from '../../../base/domainObjectsHelpers/PanelInfo';
 import { SolidDomainObject } from '../common/SolidDomainObject';
 import { SolidPrimitiveRenderStyle } from '../common/SolidPrimitiveRenderStyle';
-import { Box } from './Box';
+import { Box } from '../../../base/utilities/primitives/Box';
 
 export abstract class BoxDomainObject extends SolidDomainObject {
   // ==================================================

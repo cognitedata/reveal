@@ -8,10 +8,11 @@ import {
   forceAngleAround0,
   forceBetween0AndPi,
   forceBetween0AndTwoPi
-} from '../../../base/utilities/extensions/mathExtensions';
-import { BoxUtils } from '../../../base/utilities/geometry/BoxUtils';
+} from '../extensions/mathExtensions';
+import { BoxUtils } from './BoxUtils';
+import { Primitive } from './Primitive';
 
-export class Box {
+export class Box extends Primitive {
   public static MinSize = 0.01;
 
   // ==================================================
@@ -57,26 +58,24 @@ export class Box {
   // INSTANCE METHODS: Getters
   // ==================================================
 
-  public getBoundingBox(): Box3 {
+  public override getBoundingBox(): Box3 {
     return BoxUtils.getBoundingBox(this.getMatrix());
   }
 
-  public getMatrix(matrix: Matrix4 = new Matrix4()): Matrix4 {
+  public override getMatrix(matrix: Matrix4 = new Matrix4()): Matrix4 {
     return this.getScaledMatrix(this.size, matrix);
   }
 
   public getRotationMatrix(matrix: Matrix4 = new Matrix4()): Matrix4 {
     matrix.identity();
-    matrix.makeRotationFromEuler(this.rotation);
-    return matrix;
+    return matrix.makeRotationFromEuler(this.rotation);
   }
 
   public getScaledMatrix(scale: Vector3, matrix: Matrix4 = new Matrix4()): Matrix4 {
     matrix.identity();
     matrix.makeRotationFromEuler(this.rotation);
     matrix.setPosition(this.center);
-    matrix.scale(scale);
-    return matrix;
+    return matrix.scale(scale);
   }
 
   public getRotationInDegrees(component: number): number {
