@@ -33,7 +33,6 @@ import { Range3 } from '../utilities/geometry/Range3';
 import { getBoundingBoxFromPlanes } from '../utilities/geometry/getBoundingBoxFromPlanes';
 import { Changes } from '../domainObjectsHelpers/Changes';
 import { type CogniteClient } from '@cognite/sdk/dist/src';
-import { FdmSDK } from '../../../data-providers/FdmSDK';
 
 const DIRECTIONAL_LIGHT_NAME = 'DirectionalLight';
 
@@ -43,8 +42,6 @@ export class RevealRenderTarget {
   // ==================================================
 
   private readonly _viewer: Cognite3DViewer;
-  private readonly _sdk: CogniteClient;
-  private readonly _fdmSdk: FdmSDK;
   private readonly _commandsController: CommandsController;
   private readonly _rootDomainObject: RootDomainObject;
   private _ambientLight: AmbientLight | undefined;
@@ -60,8 +57,6 @@ export class RevealRenderTarget {
 
   constructor(viewer: Cognite3DViewer, sdk: CogniteClient) {
     this._viewer = viewer;
-    this._sdk = sdk;
-    this._fdmSdk = new FdmSDK(sdk);
 
     const cameraManager = this.cameraManager;
     if (!isFlexibleCameraManager(cameraManager)) {
@@ -69,7 +64,7 @@ export class RevealRenderTarget {
     }
     this._commandsController = new CommandsController(this.domElement);
     this._commandsController.addEventListeners();
-    this._rootDomainObject = new RootDomainObject(this);
+    this._rootDomainObject = new RootDomainObject(this, sdk);
 
     this.initializeLights();
     this._viewer.on('cameraChange', this.cameraChangeHandler);
@@ -83,14 +78,6 @@ export class RevealRenderTarget {
 
   public get viewer(): Cognite3DViewer {
     return this._viewer;
-  }
-
-  public get sdk(): CogniteClient {
-    return this._sdk;
-  }
-
-  public get fdmSdk(): FdmSDK {
-    return this._fdmSdk;
   }
 
   public get config(): BaseRevealConfig | undefined {

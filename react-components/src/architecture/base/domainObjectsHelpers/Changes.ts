@@ -34,4 +34,6 @@ export class Changes {
   public static readonly deleted: symbol = Symbol('deleted'); // When deleted from the system
   public static readonly childDeleted: symbol = Symbol('childDeleted'); // When a child is deleted
   public static readonly childAdded: symbol = Symbol('childAdded'); // When a child is added
+
+  public static readonly loaded: symbol = Symbol('loaded');
 }

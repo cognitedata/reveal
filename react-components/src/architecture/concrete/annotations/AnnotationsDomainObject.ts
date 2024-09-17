@@ -20,6 +20,7 @@ import { CylinderGizmoDomainObject } from './CylinderGizmoDomainObject';
 import { AnnotationChangedDescription } from './helpers/AnnotationChangedDescription';
 import { DomainObjectChange } from '../../base/domainObjectsHelpers/DomainObjectChange';
 import { getStatusByAnnotation } from './helpers/Status';
+import { Annotation } from './Annotation';
 
 export class AnnotationsDomainObject extends VisualDomainObject {
   // ==================================================
@@ -299,6 +300,23 @@ export class AnnotationsDomainObject extends VisualDomainObject {
     if (gizmo !== undefined) {
       gizmo.removeInteractive(false);
     }
+  }
+
+  // ==================================================
+  // INSTANCE METHODS: Create, update, delete
+  // ==================================================
+
+  public fetch(modelId: number): boolean {
+    const rootDomainObject = this.rootDomainObject;
+    if (rootDomainObject === undefined) {
+      return false;
+    }
+    void Annotation.fetchAllAnnotations(rootDomainObject.sdk, modelId).then((_annotations) => {
+      this.setSelectedInteractive(true);
+      this.setVisibleInteractive(true);
+      this.notify(Changes.loaded);
+    });
+    return true;
   }
 }
 

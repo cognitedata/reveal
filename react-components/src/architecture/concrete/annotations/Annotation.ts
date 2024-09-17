@@ -72,17 +72,22 @@ export class Annotation {
     return this.isEmpty ? undefined : this.primitives[0].confidence;
   }
 
-  private createRegion(): AnnotationGeometry[] {
-    const result: AnnotationGeometry[] = [];
-    for (const primitive of this.primitives) {
-      const cdfGeometry = createCdfGeometry(primitive);
-      if (cdfGeometry === undefined) {
-        console.error('The Cdf geometry is not a box or a cylinder');
-        continue;
-      }
-      result.push(cdfGeometry);
+  // ==================================================
+  // INSTANCE METHODS: Getters
+  // ==================================================
+
+  public getAssetRefId(): number | undefined {
+    if (this.assetId instanceof AssetCentricAssetId) {
+      return this.assetId.id;
     }
-    return result;
+    return undefined;
+  }
+
+  public getAssetRefExternalId(): string | undefined {
+    if (this.assetId instanceof AssetCentricAssetId) {
+      return this.assetId.externalId;
+    }
+    return undefined;
   }
 
   // ==================================================
@@ -99,8 +104,10 @@ export class Annotation {
           },
           data: {
             set: {
-              region: this.createRegion()
-              // assetRef: { id: this.assetId }
+              region: createCdfGeometries(this.primitives),
+              assetRef: { id: this.getAssetRefId(), externalId: this.getAssetRefExternalId() },
+              confidence: this.confidence,
+              label: this.label
             }
           }
         }
@@ -115,10 +122,10 @@ export class Annotation {
       {
         status: this.resultingStatus,
         data: {
-          region: this.createRegion(),
-          // assetRef: { id: this.assetId },
-          confidence: 1,
-          label: this.firstLabel
+          region: createCdfGeometries(this.primitives),
+          assetRef: { id: this.getAssetRefId(), externalId: this.getAssetRefExternalId() },
+          confidence: this.confidence,
+          label: this.label
         },
         annotatedResourceType: ANNOTATED_RESOURCE_TYPE,
         annotatedResourceId: this.modelId,
@@ -143,7 +150,7 @@ export class Annotation {
   // STATIC METHODS
   // ==================================================
 
-  public static async loadAnnotations(
+  public static async fetchAllAnnotations(
     client: CogniteClient,
     modelId: number
   ): Promise<Annotation[]> {
@@ -180,17 +187,7 @@ export class Annotation {
       }
       annotation.assetId = assetId;
       annotation.status = cdfAnnotation.status;
-
-      const primitives = new Array<Primitive>();
-      for (const cdfGeometry of data.region) {
-        const primitive = createPrimitive(cdfGeometry);
-        if (primitive === undefined) {
-          console.error('The primitive is not a box or a cylinder');
-          continue;
-        }
-        primitives.push(primitive);
-      }
-      annotation.primitives = primitives;
+      annotation.primitives = createPrimitives(data.region);
       result.push(annotation);
     }
     return result;
@@ -200,6 +197,19 @@ export class Annotation {
 // ==================================================
 // PRIVATE FUNCTIONS
 // ==================================================
+
+function createPrimitives(cdfGeometries: AnnotationGeometry[]): Primitive[] {
+  const primitives: Primitive[] = [];
+  for (const cdfGeometry of cdfGeometries) {
+    const primitive = createPrimitive(cdfGeometry);
+    if (primitive === undefined) {
+      console.error('The primitive is not a box or a cylinder');
+      continue;
+    }
+    primitives.push(primitive);
+  }
+  return primitives;
+}
 
 function createPrimitive(cdfGeometry: AnnotationGeometry): Primitive | undefined {
   if (cdfGeometry.box !== undefined) {
@@ -224,10 +234,23 @@ function createCylinder(cdfCylinder: AnnotationsCylinder): Cylinder {
   const cylinder = new Cylinder();
   cylinder.centerA.copy(new Vector3(...cdfCylinder.centerA));
   cylinder.centerB.copy(new Vector3(...cdfCylinder.centerB));
-  cylinder.radius = cdfCylinder.radius;
+  cylinder.radius = cdfCylinder.radius * (1 + CYLINDER_RADIUS_MARGIN);
   cylinder.label = cdfCylinder.label;
   cylinder.confidence = cdfCylinder.confidence;
   return cylinder;
+}
+
+function createCdfGeometries(primitives: Primitive[]): AnnotationGeometry[] {
+  const cdfGeometries: AnnotationGeometry[] = [];
+  for (const primitive of primitives) {
+    const cdfGeometry = createCdfGeometry(primitive);
+    if (cdfGeometry === undefined) {
+      console.error('The Cdf geometry is not a box or a cylinder');
+      continue;
+    }
+    cdfGeometries.push(cdfGeometry);
+  }
+  return cdfGeometries;
 }
 
 function createCdfGeometry(primitive: Primitive): AnnotationGeometry | undefined {
