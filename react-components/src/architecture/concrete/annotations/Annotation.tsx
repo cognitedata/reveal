@@ -64,13 +64,12 @@ export class Annotation {
   private createRegion(): AnnotationGeometry[] {
     const result: AnnotationGeometry[] = [];
     for (const primitive of this.primitives) {
-      if (primitive instanceof Cylinder) {
-        result.push({ cylinder: Annotation.createCylinder(primitive) });
-      } else if (primitive instanceof Box) {
-        result.push({ box: Annotation.createBox(primitive) });
-      } else {
-        console.error('Not a box or a cylinder');
+      const cdfGeometry = createCdfGeometry(primitive);
+      if (cdfGeometry === undefined) {
+        console.error('The Cdf geometry is not a box or a cylinder');
+        continue;
       }
+      result.push(cdfGeometry);
     }
     return result;
   }
@@ -133,24 +132,6 @@ export class Annotation {
   // STATIC METHODS
   // ==================================================
 
-  private static createCylinder(primitive: Cylinder): AnnotationsCylinder {
-    return {
-      centerA: primitive.centerA.toArray(),
-      centerB: primitive.centerB.toArray(),
-      radius: primitive.radius / (1 + CYLINDER_RADIUS_MARGIN),
-      confidence: primitive.confidence,
-      label: primitive.label
-    };
-  }
-
-  private static createBox(primitive: Box): AnnotationsBox {
-    return {
-      matrix: primitive.getMatrix().clone().transpose().elements,
-      confidence: primitive.confidence,
-      label: primitive.label
-    };
-  }
-
   public static async loadAnnotations(
     client: CogniteClient,
     modelId: number
@@ -180,9 +161,10 @@ export class Annotation {
       annotation.status = cdfAnnotation.status;
 
       const primitives = new Array<Primitive>();
-      for (const geometry of data.region) {
-        const primitive = createPrimitive(geometry);
+      for (const cdfGeometry of data.region) {
+        const primitive = createPrimitive(cdfGeometry);
         if (primitive === undefined) {
+          console.error('The primitive is not a box or a cylinder');
           continue;
         }
         primitives.push(primitive);
@@ -194,23 +176,63 @@ export class Annotation {
   }
 }
 
-function createPrimitive(geometry: AnnotationGeometry): Primitive | undefined {
-  if (geometry.cylinder !== undefined) {
-    const cylinder = new Cylinder();
-    cylinder.centerA.copy(new Vector3(...geometry.cylinder.centerA));
-    cylinder.centerB.copy(new Vector3(...geometry.cylinder.centerB));
-    cylinder.radius = geometry.cylinder.radius;
-    cylinder.label = geometry.cylinder.label;
-    cylinder.confidence = geometry.cylinder.confidence;
-    return cylinder;
+// ==================================================
+// PRIVATE FUNCTIONS
+// ==================================================
+
+function createPrimitive(cdfGeometry: AnnotationGeometry): Primitive | undefined {
+  if (cdfGeometry.box !== undefined) {
+    return createBox(cdfGeometry.box);
   }
-  if (geometry.box !== undefined) {
-    const matrix = new Matrix4().fromArray(geometry.box.matrix).transpose();
-    const box = new Box();
-    box.setMatrix(matrix);
-    box.label = geometry.box.label;
-    box.confidence = geometry.box.confidence;
-    return box;
+  if (cdfGeometry.cylinder !== undefined) {
+    return createCylinder(cdfGeometry.cylinder);
   }
   return undefined;
+}
+
+function createBox(cdfBox: AnnotationsBox): Box {
+  const matrix = new Matrix4().fromArray(cdfBox.matrix).transpose();
+  const box = new Box();
+  box.setMatrix(matrix);
+  box.label = cdfBox.label;
+  box.confidence = cdfBox.confidence;
+  return box;
+}
+
+function createCylinder(cdfCylinder: AnnotationsCylinder): Cylinder {
+  const cylinder = new Cylinder();
+  cylinder.centerA.copy(new Vector3(...cdfCylinder.centerA));
+  cylinder.centerB.copy(new Vector3(...cdfCylinder.centerB));
+  cylinder.radius = cdfCylinder.radius;
+  cylinder.label = cdfCylinder.label;
+  cylinder.confidence = cdfCylinder.confidence;
+  return cylinder;
+}
+
+function createCdfGeometry(primitive: Primitive): AnnotationGeometry | undefined {
+  if (primitive instanceof Box) {
+    return { box: createCdfBox(primitive) };
+  } else if (primitive instanceof Cylinder) {
+    return { cylinder: createCdfCylinder(primitive) };
+  } else {
+    return undefined;
+  }
+}
+
+function createCdfBox(primitive: Box): AnnotationsBox {
+  return {
+    matrix: primitive.getMatrix().clone().transpose().elements,
+    confidence: primitive.confidence,
+    label: primitive.label
+  };
+}
+
+function createCdfCylinder(primitive: Cylinder): AnnotationsCylinder {
+  return {
+    centerA: primitive.centerA.toArray(),
+    centerB: primitive.centerB.toArray(),
+    radius: primitive.radius / (1 + CYLINDER_RADIUS_MARGIN),
+    confidence: primitive.confidence,
+    label: primitive.label
+  };
 }
