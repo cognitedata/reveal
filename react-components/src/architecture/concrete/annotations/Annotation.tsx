@@ -11,10 +11,18 @@ import {
   type AnnotationsCylinder,
   type AnnotationsBox,
   type AnnotationCreate,
-  type AnnotationStatus
+  type AnnotationStatus,
+  type AnnotationsBoundingVolume
 } from '@cognite/sdk';
 import { CYLINDER_RADIUS_MARGIN } from './utils/constants';
 import { Box } from '../../base/utilities/primitives/Box';
+import { Matrix4, Vector3 } from 'three';
+
+const ANNOTATED_RESOURCE_TYPE = 'threedmodel';
+const ANNOTATION_TYPE = 'pointcloud.BoundingVolume';
+const CREATING_APP = '3d-management';
+const CREATING_APP_VERSION = '0.0.1';
+const CREATING_USER = '3d-management';
 
 export class Annotation {
   // ==================================================
@@ -25,13 +33,17 @@ export class Annotation {
   public modelId: number = 0;
   public assetId: number | undefined = undefined;
   public status: AnnotationStatus = 'suggested';
+  public primitives = new Array<Primitive>();
   public confidence: number | undefined = undefined;
   public label: string | undefined = undefined;
-  public primitives = new Array<Primitive>();
 
   // ==================================================
   // INSTANCE PROPERTIES
   // ==================================================
+
+  public get isEmpty(): boolean {
+    return this.primitives.length === 0;
+  }
 
   public get hasAssetRef(): boolean {
     return this.assetId !== undefined;
@@ -39,6 +51,14 @@ export class Annotation {
 
   public get resultingStatus(): AnnotationStatus {
     return this.hasAssetRef ? 'approved' : this.status;
+  }
+
+  public get firstLabel(): string | undefined {
+    return this.isEmpty ? undefined : this.primitives[0].label;
+  }
+
+  public get getConfidence(): number | undefined {
+    return this.isEmpty ? undefined : this.primitives[0].confidence;
   }
 
   private createRegion(): AnnotationGeometry[] {
@@ -86,14 +106,16 @@ export class Annotation {
         status: this.resultingStatus,
         data: {
           region: this.createRegion(),
-          assetRef: { id: this.assetId }
+          assetRef: { id: this.assetId },
+          confidence: 1,
+          label: this.firstLabel
         },
-        annotatedResourceType: 'threedmodel',
+        annotatedResourceType: ANNOTATED_RESOURCE_TYPE,
         annotatedResourceId: this.modelId,
-        annotationType: 'pointcloud.BoundingVolume',
-        creatingApp: '3d-management',
-        creatingAppVersion: '0.0.1',
-        creatingUser: '3d-management'
+        annotationType: ANNOTATION_TYPE,
+        creatingApp: CREATING_APP,
+        creatingAppVersion: CREATING_APP_VERSION,
+        creatingUser: CREATING_USER
       }
     ];
     const result = await sdk.annotations.create(changes);
@@ -111,50 +133,84 @@ export class Annotation {
   // STATIC METHODS
   // ==================================================
 
-  private static createCylinder(cylinder: Cylinder): AnnotationsCylinder {
+  private static createCylinder(primitive: Cylinder): AnnotationsCylinder {
     return {
-      centerA: cylinder.centerA.toArray(),
-      centerB: cylinder.centerB.toArray(),
-      radius: cylinder.radius / (1 + CYLINDER_RADIUS_MARGIN),
-      confidence: undefined,
-      label: ''
+      centerA: primitive.centerA.toArray(),
+      centerB: primitive.centerB.toArray(),
+      radius: primitive.radius / (1 + CYLINDER_RADIUS_MARGIN),
+      confidence: primitive.confidence,
+      label: primitive.label
     };
   }
 
-  private static createBox(box: Box): AnnotationsBox {
+  private static createBox(primitive: Box): AnnotationsBox {
     return {
-      matrix: box.getMatrix().clone().transpose().elements,
-      confidence: undefined,
-      label: ''
+      matrix: primitive.getMatrix().clone().transpose().elements,
+      confidence: primitive.confidence,
+      label: primitive.label
     };
   }
 
-  // private static async loadAnnotations(
-  //   client: CogniteClient,
-  //   modelId: number
-  // ): Promise<Annotation[]> {
-  //   const result = await client.annotations
-  //     .list({
-  //       filter: {
-  //         annotatedResourceType: 'threedmodel',
-  //         annotationType: 'pointcloud.BoundingVolume',
-  //         annotatedResourceIds: [{ id: modelId }]
-  //       },
-  //       limit: 1000
-  //     })
-  //     .autoPagingToArray({ limit: Infinity });
+  public static async loadAnnotations(
+    client: CogniteClient,
+    modelId: number
+  ): Promise<Annotation[]> {
+    const cdfAnnotations = await client.annotations
+      .list({
+        filter: {
+          annotatedResourceType: ANNOTATED_RESOURCE_TYPE,
+          annotationType: ANNOTATION_TYPE,
+          annotatedResourceIds: [{ id: modelId }]
+        },
+        limit: 1000
+      })
+      .autoPagingToArray({ limit: Infinity });
 
-  //   for (const annotation of result) {
-  //     const primitives = new Array<Primitive>();
-  //     for (const region of annotation.data.region) {
-  //       if (region.cylinder) {
-  //         primitives.push(new Cylinder(region.cylinder));
-  //       } else if (region.box) {
-  //         primitives.push(new Box(region.box));
-  //       }
-  //     }
-  //     annotation.primitives = primitives;
-  //   }
-  //   return result;
-  // }
+    const result: Annotation[] = [];
+
+    for (const cdfAnnotation of cdfAnnotations) {
+      const annotation = new Annotation();
+      annotation.id = cdfAnnotation.id;
+      annotation.modelId = cdfAnnotation.annotatedResourceId;
+
+      const data = cdfAnnotation.data as AnnotationsBoundingVolume;
+      annotation.confidence = data.confidence;
+      annotation.label = data.label;
+      // annotation.assetId = data.assetRef?.id ?? data.assetRef?.externalId;
+      annotation.status = cdfAnnotation.status;
+
+      const primitives = new Array<Primitive>();
+      for (const geometry of data.region) {
+        const primitive = createPrimitive(geometry);
+        if (primitive === undefined) {
+          continue;
+        }
+        primitives.push(primitive);
+      }
+      annotation.primitives = primitives;
+      result.push(annotation);
+    }
+    return result;
+  }
+}
+
+function createPrimitive(geometry: AnnotationGeometry): Primitive | undefined {
+  if (geometry.cylinder !== undefined) {
+    const cylinder = new Cylinder();
+    cylinder.centerA.copy(new Vector3(...geometry.cylinder.centerA));
+    cylinder.centerB.copy(new Vector3(...geometry.cylinder.centerB));
+    cylinder.radius = geometry.cylinder.radius;
+    cylinder.label = geometry.cylinder.label;
+    cylinder.confidence = geometry.cylinder.confidence;
+    return cylinder;
+  }
+  if (geometry.box !== undefined) {
+    const matrix = new Matrix4().fromArray(geometry.box.matrix).transpose();
+    const box = new Box();
+    box.setMatrix(matrix);
+    box.label = geometry.box.label;
+    box.confidence = geometry.box.confidence;
+    return box;
+  }
+  return undefined;
 }
