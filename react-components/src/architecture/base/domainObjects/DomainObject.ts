@@ -478,9 +478,15 @@ export abstract class DomainObject {
 
   public setVisibleInteractive(
     visible: boolean,
-    renderTarget: RevealRenderTarget,
+    renderTarget: RevealRenderTarget | undefined = undefined,
     topLevel = true // When calling this from outside, this value should always be true
   ): boolean {
+    if (renderTarget === undefined) {
+      renderTarget = this.rootDomainObject?.renderTarget;
+      if (renderTarget === undefined) {
+        return false;
+      }
+    }
     const visibleState = this.getVisibleState(renderTarget);
     if (visibleState === VisibleState.Disabled) {
       return false;

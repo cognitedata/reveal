@@ -154,7 +154,10 @@ export class AnnotationsDomainObject extends VisualDomainObject {
     return true;
   }
 
-  public setSelectedAnnotationInteractive(annotation: SingleAnnotation | undefined): boolean {
+  public setSelectedAnnotationInteractive(
+    annotation: SingleAnnotation | undefined,
+    updateGizmo = true
+  ): boolean {
     if (SingleAnnotation.areEqual(this.selectedAnnotation, annotation)) {
       return false;
     }
@@ -164,6 +167,22 @@ export class AnnotationsDomainObject extends VisualDomainObject {
     }
     this.setFocusAnnotationInteractive(FocusType.None);
     this.notify(Changes.selected);
+
+    if (updateGizmo) {
+      if (annotation !== undefined) {
+        const gizmo = this.getOrCreateGizmoByAnnotation(annotation);
+        if (gizmo !== undefined) {
+          const change = new DomainObjectChange(Changes.geometry, SolidDomainObject.GizmoOnly);
+          change.addChange(Changes.color);
+          gizmo.notify(change);
+          gizmo.setFocusInteractive(FocusType.Body);
+          gizmo.setSelectedInteractive(true);
+          gizmo.setVisibleInteractive(true);
+        }
+      } else {
+        this.removeGizmoInteractive();
+      }
+    }
     return true;
   }
 
@@ -193,15 +212,6 @@ export class AnnotationsDomainObject extends VisualDomainObject {
     this.annotations.push(this.pendingAnnotation.annotation);
     this.notify(new AnnotationChangedDescription(Changes.addedPart, this.pendingAnnotation));
     this.setSelectedAnnotationInteractive(this.pendingAnnotation);
-
-    const gizmo = this.getOrCreateGizmoByAnnotation(this.pendingAnnotation);
-    if (gizmo !== undefined) {
-      const change = new DomainObjectChange(Changes.geometry, SolidDomainObject.GizmoOnly);
-      change.addChange(Changes.color);
-      gizmo.notify(change);
-      gizmo.setFocusInteractive(FocusType.Body);
-      gizmo.setSelectedInteractive(true);
-    }
     this.pendingAnnotation = undefined;
     return true;
   }

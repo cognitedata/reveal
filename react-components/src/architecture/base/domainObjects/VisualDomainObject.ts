@@ -35,9 +35,15 @@ export abstract class VisualDomainObject extends DomainObject {
 
   public override setVisibleInteractive(
     visible: boolean,
-    renderTarget: RevealRenderTarget,
+    renderTarget: RevealRenderTarget | undefined = undefined,
     topLevel = true
   ): boolean {
+    if (renderTarget === undefined) {
+      renderTarget = this.rootDomainObject?.renderTarget;
+      if (renderTarget === undefined) {
+        return false;
+      }
+    }
     if (visible && !this.canBeSetVisibleNow(renderTarget)) {
       return false;
     }

@@ -24,6 +24,17 @@ const CREATING_APP = '3d-management';
 const CREATING_APP_VERSION = '0.0.1';
 const CREATING_USER = '3d-management';
 
+abstract class AssetId {}
+
+class AssetCentricAssetId extends AssetId {
+  id?: number;
+  externalId?: string;
+}
+
+// class DataModelingAssetId extends AssetId {
+//   id: DirectRelationReference;
+// }
+
 export class Annotation {
   // ==================================================
   // INSTANCE FIELDS
@@ -31,7 +42,7 @@ export class Annotation {
 
   public id: number = 0;
   public modelId: number = 0;
-  public assetId: number | undefined = undefined;
+  public assetId: AssetId | undefined = undefined;
   public status: AnnotationStatus = 'suggested';
   public primitives = new Array<Primitive>();
   public confidence: number | undefined = undefined;
@@ -88,8 +99,8 @@ export class Annotation {
           },
           data: {
             set: {
-              region: this.createRegion(),
-              assetRef: { id: this.assetId }
+              region: this.createRegion()
+              // assetRef: { id: this.assetId }
             }
           }
         }
@@ -105,7 +116,7 @@ export class Annotation {
         status: this.resultingStatus,
         data: {
           region: this.createRegion(),
-          assetRef: { id: this.assetId },
+          // assetRef: { id: this.assetId },
           confidence: 1,
           label: this.firstLabel
         },
@@ -157,7 +168,17 @@ export class Annotation {
       const data = cdfAnnotation.data as AnnotationsBoundingVolume;
       annotation.confidence = data.confidence;
       annotation.label = data.label;
-      // annotation.assetId = data.assetRef?.id ?? data.assetRef?.externalId;
+
+      const assetId = new AssetCentricAssetId();
+      if (data.assetRef !== undefined) {
+        if (data.assetRef.id !== undefined) {
+          assetId.id = data.assetRef.id;
+        }
+        if (data.assetRef.externalId !== undefined) {
+          assetId.externalId = data.assetRef.externalId;
+        }
+      }
+      annotation.assetId = assetId;
       annotation.status = cdfAnnotation.status;
 
       const primitives = new Array<Primitive>();

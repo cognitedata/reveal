@@ -25,11 +25,9 @@ import { Changes } from '../../../base/domainObjectsHelpers/Changes';
 import { type BaseDragger } from '../../../base/domainObjectsHelpers/BaseDragger';
 import { PrimitiveEditTool } from '../../primitives/tools/PrimitiveEditTool';
 import { type PrimitivePickInfo } from '../../primitives/common/PrimitivePickInfo';
-import { DomainObjectChange } from '../../../base/domainObjectsHelpers/DomainObjectChange';
 import { type SingleAnnotation } from '../helpers/SingleAnnotation';
 import { DeleteSelectedAnnotationCommand } from './DeleteSelectedAnnotationCommand';
 import { AlignSelectedAnnotationCommand } from './AlignSelectedAnnotationCommand';
-import { SolidDomainObject } from '../../primitives/common/SolidDomainObject';
 import { CylinderGizmoDomainObject } from '../CylinderGizmoDomainObject';
 import { AnnotationChangedDescription } from '../helpers/AnnotationChangedDescription';
 import { CylinderCreator } from '../../primitives/cylinder/CylinderCreator';
@@ -223,11 +221,11 @@ export class AnnotationEditTool extends BaseEditTool {
 
       if (domainObject !== undefined && annotation !== undefined) {
         // Click at an annotation
-        this.setSelectedAnnotationInteractive(domainObject, annotation);
+        domainObject.setSelectedAnnotationInteractive(annotation);
         return;
       } else if (domainObject !== undefined) {
         // This will rather ont happen
-        this.setSelectedAnnotationInteractive(domainObject, undefined);
+        domainObject.setSelectedAnnotationInteractive(undefined);
       } else if (gizmo === undefined) {
         // Click in the "air"
         this.deselectedAnnotationInteractive();
@@ -397,33 +395,8 @@ export class AnnotationEditTool extends BaseEditTool {
   private deselectedAnnotationInteractive(): void {
     const annotationsDomainObject = this.getSelectedAnnotationsDomainObject();
     if (annotationsDomainObject !== undefined) {
-      this.setSelectedAnnotationInteractive(annotationsDomainObject, undefined);
-    }
-  }
-
-  private setSelectedAnnotationInteractive(
-    annotationsDomainObject: AnnotationsDomainObject,
-    annotation: SingleAnnotation | undefined
-  ): void {
-    if (annotation === undefined) {
       annotationsDomainObject.setSelectedAnnotationInteractive(undefined);
-      annotationsDomainObject.removeGizmoInteractive();
-      return;
     }
-    const gizmo = annotationsDomainObject.getOrCreateGizmoByAnnotation(annotation);
-    if (gizmo === undefined) {
-      return;
-    }
-    if (!annotationsDomainObject.setSelectedAnnotationInteractive(annotation)) {
-      return;
-    }
-    const change = new DomainObjectChange(Changes.geometry, SolidDomainObject.GizmoOnly);
-    change.addChange(Changes.color);
-
-    gizmo.notify(change);
-    gizmo.setFocusInteractive(FocusType.Body);
-    gizmo.setSelectedInteractive(true);
-    gizmo.setVisibleInteractive(true, this.renderTarget);
   }
 }
 
