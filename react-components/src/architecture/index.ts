@@ -95,6 +95,8 @@ export { AnnotationsRenderStyle } from './concrete/annotations/AnnotationsRender
 export { SingleAnnotation } from './concrete/annotations/helpers/SingleAnnotation';
 export { AnnotationChangedDescription } from './concrete/annotations/helpers/AnnotationChangedDescription';
 export { PrimitiveType } from './concrete/primitives/common/PrimitiveType';
+export { AnnotationsSelectTool } from './concrete/annotations/commands/AnnotationsSelectTool';
+export { AnnotationsCreateTool } from './concrete/annotations/commands/AnnotationsCreateTool';
 export { getBoundingBox } from './concrete/annotations/utils/getBoundingBox';
 export { getGlobalMatrix } from './concrete/annotations/helpers/getMatrixUtils';
 export type {

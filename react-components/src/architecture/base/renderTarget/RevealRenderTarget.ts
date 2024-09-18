@@ -33,6 +33,7 @@ import { Range3 } from '../utilities/geometry/Range3';
 import { getBoundingBoxFromPlanes } from '../utilities/geometry/getBoundingBoxFromPlanes';
 import { Changes } from '../domainObjectsHelpers/Changes';
 import { type CogniteClient } from '@cognite/sdk/dist/src';
+import { type BaseTool } from '../commands/BaseTool';
 
 const DIRECTIONAL_LIGHT_NAME = 'DirectionalLight';
 
@@ -169,14 +170,24 @@ export class RevealRenderTarget {
   // INSTANCE METHODS
   // ==================================================
 
+  public setDefaultTool(tool: BaseTool): boolean {
+    const defaultTool = this.commandsController.defaultTool;
+    if (defaultTool !== undefined && tool.equals(defaultTool)) {
+      return false;
+    }
+    const oldTool = this.commandsController.getEqual(tool) as BaseTool;
+    if (oldTool !== undefined) {
+      return this.commandsController.setDefaultTool(oldTool);
+    }
+    tool.attach(this);
+    this.commandsController.add(tool);
+    return this.commandsController.setDefaultTool(tool);
+  }
+
   public setConfig(config: BaseRevealConfig): void {
     this._config = config;
 
-    const defaultTool = config.createDefaultTool();
-    defaultTool.attach(this);
-    this.commandsController.add(defaultTool);
-    this.commandsController.setDefaultTool(defaultTool);
-
+    this.setDefaultTool(config.createDefaultTool());
     const axisGizmoTool = config.createAxisGizmoTool();
     if (axisGizmoTool !== undefined) {
       axisGizmoTool.connect(this._viewer);

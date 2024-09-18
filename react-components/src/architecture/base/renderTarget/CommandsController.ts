@@ -111,44 +111,44 @@ export class CommandsController extends PointerEvents {
     this._commands.add(command);
   }
 
-  public setPreviousTool(): void {
-    if (this._previousTool !== undefined) {
-      this.setActiveTool(this._previousTool);
+  public setPreviousTool(): boolean {
+    if (this._previousTool === undefined) {
+      return false;
     }
+    return this.setActiveTool(this._previousTool);
   }
 
-  public setDefaultTool(tool: BaseTool | undefined): void {
+  public setDefaultTool(tool: BaseTool | undefined): boolean {
     if (tool === undefined) {
-      return;
+      return false;
     }
     this._defaultTool = tool;
-    this.activateDefaultTool();
+    return this.activateDefaultTool();
   }
 
   public setActiveToolByType<T extends BaseTool>(classType: Class<T>): boolean {
     for (const tool of this._commands) {
       if (isInstanceOf(tool, classType)) {
-        this.setActiveTool(tool);
-        return true;
+        return this.setActiveTool(tool);
       }
     }
     return false;
   }
 
-  public activateDefaultTool(): void {
+  public activateDefaultTool(): boolean {
     if (this._defaultTool === undefined) {
-      return;
+      return false;
     }
-    this.setActiveTool(this._defaultTool);
+    return this.setActiveTool(this._defaultTool);
   }
 
-  public setActiveTool(tool: BaseTool | undefined): void {
+  public setActiveTool(tool: BaseTool | undefined): boolean {
     if (tool === undefined) {
-      return;
+      return false;
     }
     const prevActiveTool = this._activeTool;
     if (prevActiveTool === tool) {
-      return;
+      return false;
     }
     if (prevActiveTool !== undefined) {
       this._activeTool = undefined;
@@ -157,6 +157,7 @@ export class CommandsController extends PointerEvents {
     }
     this._activeTool = tool;
     this._activeTool.onActivate();
+    return true;
   }
 
   public update(): void {
