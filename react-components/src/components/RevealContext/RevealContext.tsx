@@ -44,7 +44,13 @@ export const RevealContext = (props: RevealContextProps): ReactElement => {
   const viewer = useRevealFromKeepAlive(props);
 
   const queryClient = useMemo(() => {
-    return new QueryClient();
+    return new QueryClient({
+      defaultOptions: {
+        queries: {
+          refetchOnWindowFocus: false
+        }
+      }
+    });
   }, []);
 
   if (viewer === null) return <></>;
