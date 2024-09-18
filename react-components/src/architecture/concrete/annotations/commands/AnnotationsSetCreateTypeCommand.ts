@@ -4,12 +4,16 @@
 
 import { type TranslateKey } from '../../../base/utilities/TranslateKey';
 import { type BaseCommand } from '../../../base/commands/BaseCommand';
-import { AnnotationEditTool } from './AnnotationEditTool';
 import { PrimitiveType } from '../../primitives/common/PrimitiveType';
 import { RenderTargetCommand } from '../../../base/commands/RenderTargetCommand';
 import { AnnotationsDomainObject } from '../AnnotationsDomainObject';
+import { AnnotationsCreateTool } from './AnnotationsCreateTool';
 
-export class SetAnnotationEditTypeCommand extends RenderTargetCommand {
+export class AnnotationsSetCreateTypeCommand extends RenderTargetCommand {
+  // ==================================================
+  // INSTANCE FIELDS
+  // ==================================================
+
   private readonly _primitiveType: PrimitiveType;
 
   // ==================================================
@@ -31,13 +35,6 @@ export class SetAnnotationEditTypeCommand extends RenderTargetCommand {
 
   public override get tooltip(): TranslateKey {
     return getTooltipByPrimitiveType(this._primitiveType);
-  }
-
-  public override get buttonType(): string {
-    if (this._primitiveType === PrimitiveType.Box) {
-      return 'primary';
-    }
-    return super.buttonType;
   }
 
   public override get isEnabled(): boolean {
@@ -71,7 +68,7 @@ export class SetAnnotationEditTypeCommand extends RenderTargetCommand {
   }
 
   public override equals(other: BaseCommand): boolean {
-    if (!(other instanceof SetAnnotationEditTypeCommand)) {
+    if (!(other instanceof AnnotationsSetCreateTypeCommand)) {
       return false;
     }
     return this._primitiveType === other._primitiveType;
@@ -81,9 +78,9 @@ export class SetAnnotationEditTypeCommand extends RenderTargetCommand {
   // INSTANCE METHODS
   // ==================================================
 
-  private get tool(): AnnotationEditTool | undefined {
+  private get tool(): AnnotationsCreateTool | undefined {
     const { activeTool } = this;
-    if (!(activeTool instanceof AnnotationEditTool)) {
+    if (!(activeTool instanceof AnnotationsCreateTool)) {
       return undefined;
     }
     return activeTool;

@@ -203,11 +203,13 @@ export class AnnotationsDomainObject extends VisualDomainObject {
     return true;
   }
 
-  public applyPendingAnnotationInteractive(annotation: PointCloudAnnotation): boolean {
+  public applyPendingAnnotationInteractive(annotation?: PointCloudAnnotation): boolean {
     if (this.pendingAnnotation === undefined) {
       return false;
     }
-    this.pendingAnnotation.annotation = annotation;
+    if (annotation !== undefined) {
+      this.pendingAnnotation.annotation = annotation;
+    }
     this.pendingAnnotation.selectedGeometry = this.pendingAnnotation.firstGeometry;
 
     this.annotations.push(this.pendingAnnotation.annotation);

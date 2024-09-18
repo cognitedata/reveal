@@ -6,7 +6,7 @@ import { RenderTargetCommand } from '../../../base/commands/RenderTargetCommand'
 import { type TranslateKey } from '../../../base/utilities/TranslateKey';
 import { AnnotationsDomainObject } from '../AnnotationsDomainObject';
 
-export class DeleteSelectedAnnotationCommand extends RenderTargetCommand {
+export class AnnotationsDeleteCommand extends RenderTargetCommand {
   // ==================================================
   // OVERRIDES
   // ==================================================

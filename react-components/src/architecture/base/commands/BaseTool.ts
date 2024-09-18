@@ -15,7 +15,6 @@ import {
   type DomainObjectIntersection,
   isDomainObjectIntersection
 } from '../domainObjectsHelpers/DomainObjectIntersection';
-import { type Class } from '../domainObjectsHelpers/Class';
 import { type DomainObject } from '../domainObjects/DomainObject';
 import { type BaseCommand } from './BaseCommand';
 import { ActiveToolUpdater } from '../reactUpdaters/ActiveToolUpdater';
@@ -160,9 +159,9 @@ export abstract class BaseTool extends RenderTargetCommand {
     return await viewer.getAnyIntersectionFromPixel(point, { predicate });
   }
 
-  protected getSpecificIntersection<T extends DomainObject>(
+  protected getSpecificIntersection(
     event: PointerEvent,
-    classType: Class<T>
+    domainObjectPredicate?: (domainObject: DomainObject) => boolean
   ): DomainObjectIntersection | undefined {
     // This function is similar to getIntersection, but it only considers a specific DomainObject
     const { renderTarget, rootDomainObject } = this;
@@ -173,7 +172,10 @@ export abstract class BaseTool extends RenderTargetCommand {
 
     let closestIntersection: CustomObjectIntersection | undefined;
     let closestDistanceToCamera: number | undefined;
-    for (const domainObject of rootDomainObject.getDescendantsByType(classType)) {
+    for (const domainObject of rootDomainObject.getDescendants()) {
+      if (domainObjectPredicate !== undefined && !domainObjectPredicate(domainObject)) {
+        continue;
+      }
       for (const view of domainObject.views.getByType(GroupThreeView)) {
         if (view.renderTarget !== renderTarget) {
           continue;

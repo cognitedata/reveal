@@ -6,6 +6,7 @@
 import { PointerEvents, PointerEventsTarget, getWheelEventDelta } from '@cognite/reveal';
 import { type BaseTool } from '../commands/BaseTool';
 import { type BaseCommand } from '../commands/BaseCommand';
+import { type Class, isInstanceOf } from '../domainObjectsHelpers/Class';
 
 export class CommandsController extends PointerEvents {
   // ==================================================
@@ -122,6 +123,16 @@ export class CommandsController extends PointerEvents {
     }
     this._defaultTool = tool;
     this.activateDefaultTool();
+  }
+
+  public setToolByType<T extends BaseTool>(classType: Class<T>): boolean {
+    for (const tool of this._commands) {
+      if (isInstanceOf(tool, classType)) {
+        this.setActiveTool(tool);
+        return true;
+      }
+    }
+    return false;
   }
 
   public activateDefaultTool(): void {

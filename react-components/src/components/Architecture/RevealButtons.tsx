@@ -15,11 +15,23 @@ import { ObservationsTool } from '../../architecture/concrete/observations/Obser
 import { createButtonFromCommandConstructor } from './CommandButtons';
 import { SettingsCommand } from '../../architecture/base/concreteCommands/SettingsCommand';
 import { PointCloudFilterCommand } from '../../architecture';
-import { AnnotationEditTool } from '../../architecture/concrete/annotations/commands/AnnotationEditTool';
+import { AnnotationsShowCommand } from '../../architecture/concrete/annotations/commands/AnnotationsShowCommand';
+import { AnnotationsShowOnTopCommand } from '../../architecture/concrete/annotations/commands/AnnotationsShowOnTopCommand';
+import { AnnotationsCreateTool } from '../../architecture/concrete/annotations/commands/AnnotationsCreateTool';
+import { AnnotationsSelectTool } from '../../architecture/concrete/annotations/commands/AnnotationsSelectTool';
 
 export class RevealButtons {
-  static AnnotationTool = (): ReactElement =>
-    createButtonFromCommandConstructor(() => new AnnotationEditTool());
+  static AnnotationsSelect = (): ReactElement =>
+    createButtonFromCommandConstructor(() => new AnnotationsSelectTool());
+
+  static AnnotationsCreate = (): ReactElement =>
+    createButtonFromCommandConstructor(() => new AnnotationsCreateTool());
+
+  static AnnotationsShow = (): ReactElement =>
+    createButtonFromCommandConstructor(() => new AnnotationsShowCommand());
+
+  static AnnotationsShowOnTop = (): ReactElement =>
+    createButtonFromCommandConstructor(() => new AnnotationsShowOnTopCommand());
 
   static Settings = (): ReactElement =>
     createButtonFromCommandConstructor(() => new SettingsCommand());

@@ -31,6 +31,10 @@ export abstract class PrimitiveEditTool extends BaseEditTool {
   public primitiveType: PrimitiveType;
   public readonly defaultPrimitiveType: PrimitiveType;
 
+  public get isEdit(): boolean {
+    return this.primitiveType === PrimitiveType.None;
+  }
+
   // ==================================================
   // CONSTRUCTOR
   // ==================================================
@@ -73,7 +77,7 @@ export abstract class PrimitiveEditTool extends BaseEditTool {
 
   public override async onHover(event: PointerEvent): Promise<void> {
     // Handle when creator is set first
-    if (this.primitiveType !== PrimitiveType.None && this._creator !== undefined) {
+    if (!this.isEdit && this._creator !== undefined) {
       const { _creator: creator } = this;
       if (!creator.preferIntersection) {
         // Hover in the "air"
@@ -112,7 +116,7 @@ export abstract class PrimitiveEditTool extends BaseEditTool {
     const domainObject = this.getIntersectedSelectableDomainObject(intersection);
     if (!isDomainObjectIntersection(intersection) || domainObject === undefined) {
       this.defocusAll();
-      if (this.primitiveType === PrimitiveType.None || intersection === undefined) {
+      if (this.isEdit || intersection === undefined) {
         this.renderTarget.setNavigateCursor();
       } else {
         this.setDefaultCursor();

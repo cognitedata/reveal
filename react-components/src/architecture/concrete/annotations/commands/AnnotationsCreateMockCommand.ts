@@ -50,15 +50,14 @@ const onAnnotationChanged = (domainObject: DomainObject, change: DomainObjectCha
   }
   if (change.isChanged(Changes.newPending)) {
     // Selection has change. Get selection by: (undefined if not any)
-    const annotation = domainObject.pendingAnnotation;
+    // const annotation = domainObject.pendingAnnotation;
     // console.log('New Pending');
     // Call domainObject.applyPendingAnnotationInteractive() when ready
-
     // Hos Henrik
     // _annotation?.annotation.assetRef = 2222;
-    if (annotation !== undefined) {
-      domainObject.applyPendingAnnotationInteractive(annotation.annotation);
-    }
+    // if (annotation !== undefined) {
+    // domainObject.applyPendingAnnotationInteractive(annotation.annotation);
+    // }
     // domainObject.notifyChange(linkChange);
   }
   if (change.isChanged(Changes.selected)) {
@@ -73,7 +72,7 @@ const onAnnotationChanged = (domainObject: DomainObject, change: DomainObjectCha
   }
 };
 
-export class CreateAnnotationMockCommand extends InstanceCommand {
+export class AnnotationsCreateMockCommand extends InstanceCommand {
   // ==================================================
   // OVERRIDES
   // ==================================================
