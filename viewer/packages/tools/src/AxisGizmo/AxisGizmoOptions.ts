@@ -18,7 +18,7 @@ export class AxisGizmoOptions {
   public primaryLineWidth = 3; // If 0 invisible
   public secondaryLineWidth = 0; // If 0 invisible
   public bobbleLineWidth = 2; // If 0 invisible, only used on secondary axis
-  public useGeoLabels = true; // If true use EW-NS-UD, otherwise use XYZ or -XYZ
+  public useGeoLabels = false; // If true use EW-NS-UD, otherwise use XYZ or -XYZ
   public yUp = false;
   public fontSize = '12px';
   public fontFamily = 'arial';
