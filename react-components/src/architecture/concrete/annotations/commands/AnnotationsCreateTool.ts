@@ -69,11 +69,6 @@ export class AnnotationsCreateTool extends NavigationTool {
   public override onDeactivate(): void {
     super.onDeactivate();
     this.handleEscape();
-    for (const domainObject of this.rootDomainObject.getDescendantsByType(
-      AnnotationsDomainObject
-    )) {
-      domainObject.removeGizmoInteractive();
-    }
   }
 
   public override clearDragging(): void {
@@ -246,7 +241,7 @@ export class AnnotationsCreateTool extends NavigationTool {
   }
 
   private setSelectTool(): void {
-    if (this.renderTarget.commandsController.setToolByType(AnnotationsSelectTool)) {
+    if (this.renderTarget.commandsController.setActiveToolByType(AnnotationsSelectTool)) {
       CommandsUpdater.update(this.renderTarget);
     }
   }
@@ -255,15 +250,12 @@ export class AnnotationsCreateTool extends NavigationTool {
     if (!creator.isFinished && !force) {
       return;
     }
-    this.setSelectTool();
     this._creator = undefined;
-
     const domainObject = this.getSelectedAnnotationsDomainObject();
     if (domainObject === undefined) {
       return;
     }
     const gizmo = creator.domainObject;
-
     let pendingAnnotation: SingleAnnotation | undefined;
     if (gizmo instanceof BoxGizmoDomainObject || gizmo instanceof CylinderGizmoDomainObject) {
       pendingAnnotation = gizmo.createAnnotation();
@@ -276,6 +268,7 @@ export class AnnotationsCreateTool extends NavigationTool {
     } else {
       domainObject.notify(Changes.newPending);
     }
+    this.setSelectTool();
   }
 
   private deselectedAnnotationInteractive(): void {
