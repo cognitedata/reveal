@@ -176,7 +176,6 @@ export class AnnotationsCreateTool extends NavigationTool {
 
   public override getToolbar(): Array<BaseCommand | undefined> {
     return [
-      new AnnotationsSelectTool(),
       new AnnotationsSetCreateTypeCommand(PrimitiveType.Box),
       new AnnotationsSetCreateTypeCommand(PrimitiveType.HorizontalCylinder),
       new AnnotationsSetCreateTypeCommand(PrimitiveType.VerticalCylinder),
