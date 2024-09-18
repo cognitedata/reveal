@@ -77,6 +77,9 @@ export class AnnotationsSelectTool extends BaseEditTool {
       }
       return;
     }
+    if (down && event.key === 'Escape') {
+      this.deselectedAnnotationInteractive();
+    }
     super.onKey(event, down);
   }
 
