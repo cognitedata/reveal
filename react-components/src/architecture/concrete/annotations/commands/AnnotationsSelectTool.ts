@@ -21,6 +21,7 @@ import { type SingleAnnotation } from '../helpers/SingleAnnotation';
 import { AnnotationsDeleteCommand } from './AnnotationsDeleteCommand';
 import { AlignSelectedAnnotationCommand } from './AnnotationsAlignCommand';
 import { CylinderGizmoDomainObject } from '../CylinderGizmoDomainObject';
+import { AnnotationsCreateTool } from './AnnotationsCreateTool';
 
 export const ANNOTATION_RADIUS_FACTOR = 0.2;
 
@@ -124,11 +125,13 @@ export class AnnotationsSelectTool extends BaseEditTool {
 
   public override getToolbar(): Array<BaseCommand | undefined> {
     return [
-      new UndoCommand(),
+      new AnnotationsCreateTool(),
       new AnnotationsDeleteCommand(),
       new AlignSelectedAnnotationCommand(true),
       new AlignSelectedAnnotationCommand(false),
-      new AnnotationsCreateMockCommand()
+      new AnnotationsCreateMockCommand(),
+      undefined,
+      new UndoCommand()
     ];
   }
 

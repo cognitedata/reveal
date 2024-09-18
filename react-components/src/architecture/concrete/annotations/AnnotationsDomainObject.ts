@@ -27,11 +27,13 @@ export class AnnotationsDomainObject extends VisualDomainObject {
   // INSTANCE FIELDS
   // ==================================================
 
-  public _annotations: PointCloudAnnotation[] = [];
+  private _annotations: PointCloudAnnotation[] = [];
+  private _focusType = FocusType.None;
+
   public selectedAnnotation: SingleAnnotation | undefined = undefined;
   public focusAnnotation?: SingleAnnotation | undefined = undefined;
   public pendingAnnotation: SingleAnnotation | undefined = undefined;
-  public focusType = FocusType.None;
+  public applyPendingWhenCreated = false;
 
   // ==================================================
   // INSTANCE PROPERTIES
@@ -193,11 +195,11 @@ export class AnnotationsDomainObject extends VisualDomainObject {
   ): boolean {
     if (
       SingleAnnotation.areEqual(this.focusAnnotation, annotation) &&
-      this.focusType === focusType
+      this._focusType === focusType
     ) {
       return false; // No change
     }
-    this.focusType = focusType;
+    this._focusType = focusType;
     this.focusAnnotation = annotation;
     this.notify(Changes.focus);
     return true;
@@ -215,6 +217,7 @@ export class AnnotationsDomainObject extends VisualDomainObject {
     this.annotations.push(this.pendingAnnotation.annotation);
     this.notify(new AnnotationChangedDescription(Changes.addedPart, this.pendingAnnotation));
     this.setSelectedAnnotationInteractive(this.pendingAnnotation);
+    this.setVisibleInteractive(true);
     this.pendingAnnotation = undefined;
     return true;
   }

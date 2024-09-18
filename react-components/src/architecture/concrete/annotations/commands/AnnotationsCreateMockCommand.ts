@@ -19,59 +19,6 @@ import { type DomainObjectChange } from '../../../base/domainObjectsHelpers/Doma
 import { AnnotationChangedDescription } from '../helpers/AnnotationChangedDescription';
 import { Changes } from '../../../base/domainObjectsHelpers/Changes';
 
-const onAnnotationChanged = (domainObject: DomainObject, change: DomainObjectChange): void => {
-  if (!(domainObject instanceof AnnotationsDomainObject)) {
-    return;
-  }
-  const description = change.getChangedDescriptionByType(AnnotationChangedDescription);
-  if (description instanceof AnnotationChangedDescription) {
-    // This is the changed annotation
-    const _annotation = description.annotation.annotation;
-
-    // This gives the changed geometry of the annotation.
-    // if undefined all geometry has changed. You may want to save the whole annotation anyway.
-    const _geometry = description.annotation.selectedGeometry;
-
-    if (description.change === Changes.changedPart) {
-      // updateAnnotationToCdf(_annotation.);
-      // console.log('Change annotation');
-    }
-    if (description.change === Changes.dragging) {
-      // console.log('Dragging');
-    } else if (description.change === Changes.deletedPart) {
-      // Delete the annotation or part of it
-      // console.log('Delete annotation');
-      // deleteAnnotationToCdf(_annotation);
-    } else if (description.change === Changes.addedPart) {
-      // Maybe use this for pending?
-      // console.log('Add annotation');
-      // addAnnotationToCdf(_annotation);
-    }
-  }
-  if (change.isChanged(Changes.newPending)) {
-    // Selection has change. Get selection by: (undefined if not any)
-    // const annotation = domainObject.pendingAnnotation;
-    // console.log('New Pending');
-    // Call domainObject.applyPendingAnnotationInteractive() when ready
-    // Hos Henrik
-    // _annotation?.annotation.assetRef = 2222;
-    // if (annotation !== undefined) {
-    // domainObject.applyPendingAnnotationInteractive(annotation.annotation);
-    // }
-    // domainObject.notifyChange(linkChange);
-  }
-  if (change.isChanged(Changes.selected)) {
-    // Selection has change. Get selection by: (undefined if not any)
-    const _annotation = domainObject.selectedAnnotation;
-    // console.log('Selected has changed');
-  }
-  if (change.isChanged(Changes.focus)) {
-    // Focus has change. Get focus by: (undefined if not any)
-    const _annotation = domainObject.focusAnnotation;
-    // console.log('Focus has changed');
-  }
-};
-
 export class AnnotationsCreateMockCommand extends InstanceCommand {
   // ==================================================
   // OVERRIDES
@@ -101,6 +48,7 @@ export class AnnotationsCreateMockCommand extends InstanceCommand {
       return false;
     }
     annotationDomainObject = new AnnotationsDomainObject();
+    annotationDomainObject.applyPendingWhenCreated = true;
     annotationDomainObject.annotations = isMultiple
       ? createMultiAnnotations()
       : createSingleAnnotations();
@@ -234,4 +182,45 @@ function createMultiAnnotations(): PointCloudAnnotation[] {
     annotations.push(annotation);
   }
   return annotations;
+}
+
+function onAnnotationChanged(domainObject: DomainObject, change: DomainObjectChange): void {
+  if (!(domainObject instanceof AnnotationsDomainObject)) {
+    return;
+  }
+  const description = change.getChangedDescriptionByType(AnnotationChangedDescription);
+  if (description instanceof AnnotationChangedDescription) {
+    // This is the changed annotation
+    const _annotation = description.annotation.annotation;
+
+    // This gives the changed geometry of the annotation.
+    // if undefined all geometry has changed. You may want to save the whole annotation anyway.
+    const _geometry = description.annotation.selectedGeometry;
+
+    if (description.change === Changes.changedPart) {
+      // console.log('Change annotation');
+    }
+    if (description.change === Changes.dragging) {
+      // console.log('Dragging');
+    } else if (description.change === Changes.deletedPart) {
+      // console.log('Delete annotation');
+    } else if (description.change === Changes.addedPart) {
+      // console.log('Add annotation');
+    }
+  }
+  if (change.isChanged(Changes.newPending)) {
+    // console.log('New pending annotation');
+    // const annotation = domainObject.pendingAnnotation;
+    // Call domainObject.applyPendingAnnotationInteractive() when ready
+  }
+  if (change.isChanged(Changes.selected)) {
+    // Selection has change. Get selection by: (undefined if not any)
+    const _annotation = domainObject.selectedAnnotation;
+    // console.log('Selected has changed');
+  }
+  if (change.isChanged(Changes.focus)) {
+    // Focus has change. Get focus by: (undefined if not any)
+    const _annotation = domainObject.focusAnnotation;
+    // console.log('Focus has changed');
+  }
 }

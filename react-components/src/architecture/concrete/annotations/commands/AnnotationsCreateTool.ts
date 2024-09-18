@@ -50,13 +50,6 @@ export class AnnotationsCreateTool extends NavigationTool {
     return { key: 'ANNOTATIONS_EDIT', fallback: 'Create new annotation' };
   }
 
-  public override equals(other: BaseCommand): boolean {
-    if (!(other instanceof AnnotationsCreateTool)) {
-      return false;
-    }
-    return other.primitiveType === this.primitiveType;
-  }
-
   // ==================================================
   // OVERRIDES of BaseTool
   // ==================================================
@@ -183,6 +176,7 @@ export class AnnotationsCreateTool extends NavigationTool {
 
   public override getToolbar(): Array<BaseCommand | undefined> {
     return [
+      new AnnotationsSelectTool(),
       new AnnotationsSetCreateTypeCommand(PrimitiveType.Box),
       new AnnotationsSetCreateTypeCommand(PrimitiveType.HorizontalCylinder),
       new AnnotationsSetCreateTypeCommand(PrimitiveType.VerticalCylinder),
@@ -224,15 +218,7 @@ export class AnnotationsCreateTool extends NavigationTool {
   // ==================================================
 
   private getSelectedAnnotationsDomainObject(): AnnotationsDomainObject | undefined {
-    const domainObject = this.rootDomainObject.getSelectedDescendantByType(AnnotationsDomainObject);
-    if (domainObject !== undefined) {
-      return domainObject;
-    }
-    const newDomainObject = new AnnotationsDomainObject();
-    this.rootDomainObject.addChildInteractive(newDomainObject);
-    newDomainObject.setSelectedInteractive(true);
-    newDomainObject.setVisibleInteractive(true);
-    return newDomainObject;
+    return this.rootDomainObject.getSelectedDescendantByType(AnnotationsDomainObject);
   }
 
   private getSelectedAnnotationsDomainObjectByForce(): AnnotationsDomainObject {
@@ -241,6 +227,7 @@ export class AnnotationsCreateTool extends NavigationTool {
       return domainObject;
     }
     const newDomainObject = new AnnotationsDomainObject();
+    newDomainObject.applyPendingWhenCreated = true;
     this.rootDomainObject.addChildInteractive(newDomainObject);
     newDomainObject.setSelectedInteractive(true);
     newDomainObject.setVisibleInteractive(true);
@@ -281,13 +268,11 @@ export class AnnotationsCreateTool extends NavigationTool {
     } else {
       return;
     }
-    const usePending = false;
     domainObject.pendingAnnotation = pendingAnnotation;
-    if (usePending) {
-      domainObject.notify(Changes.newPending);
-    } else {
+    if (domainObject.applyPendingWhenCreated) {
       domainObject.applyPendingAnnotationInteractive();
-      domainObject.setVisibleInteractive(true, this.renderTarget);
+    } else {
+      domainObject.notify(Changes.newPending);
     }
   }
 

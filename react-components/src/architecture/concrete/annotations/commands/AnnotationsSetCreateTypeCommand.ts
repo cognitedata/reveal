@@ -6,7 +6,6 @@ import { type TranslateKey } from '../../../base/utilities/TranslateKey';
 import { type BaseCommand } from '../../../base/commands/BaseCommand';
 import { PrimitiveType } from '../../primitives/common/PrimitiveType';
 import { RenderTargetCommand } from '../../../base/commands/RenderTargetCommand';
-import { AnnotationsDomainObject } from '../AnnotationsDomainObject';
 import { AnnotationsCreateTool } from './AnnotationsCreateTool';
 
 export class AnnotationsSetCreateTypeCommand extends RenderTargetCommand {
@@ -38,9 +37,6 @@ export class AnnotationsSetCreateTypeCommand extends RenderTargetCommand {
   }
 
   public override get isEnabled(): boolean {
-    if (this.rootDomainObject.getDescendantByType(AnnotationsDomainObject) === undefined) {
-      return false;
-    }
     return this.tool !== undefined;
   }
 
