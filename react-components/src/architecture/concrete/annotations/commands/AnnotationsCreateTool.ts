@@ -47,7 +47,10 @@ export class AnnotationsCreateTool extends NavigationTool {
   }
 
   public override get tooltip(): TranslateKey {
-    return { key: 'ANNOTATIONS_EDIT', fallback: 'Create new annotation' };
+    return {
+      key: 'ANNOTATIONS_CREATE',
+      fallback: 'Create new annotation. Select type of annotation in the toolbar below.'
+    };
   }
 
   // ==================================================

@@ -97,11 +97,7 @@ export class SetClipTypeCommand extends RenderTargetCommand {
   // ==================================================
 
   private get tool(): ClipTool | undefined {
-    const { activeTool } = this;
-    if (!(activeTool instanceof ClipTool)) {
-      return undefined;
-    }
-    return activeTool;
+    return this.getActiveTool(ClipTool);
   }
 }
 

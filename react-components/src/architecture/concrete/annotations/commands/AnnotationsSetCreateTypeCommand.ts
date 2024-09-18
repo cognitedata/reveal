@@ -29,7 +29,16 @@ export class AnnotationsSetCreateTypeCommand extends RenderTargetCommand {
   // ==================================================
 
   public override get icon(): string {
-    return getIconByPrimitiveType(this._primitiveType);
+    switch (this._primitiveType) {
+      case PrimitiveType.Box:
+        return 'Cube';
+      case PrimitiveType.HorizontalCylinder:
+        return 'SplitViewHorizontal';
+      case PrimitiveType.VerticalCylinder:
+        return 'SplitView';
+      default:
+        throw new Error('Unknown PrimitiveType');
+    }
   }
 
   public override get tooltip(): TranslateKey {
@@ -75,11 +84,7 @@ export class AnnotationsSetCreateTypeCommand extends RenderTargetCommand {
   // ==================================================
 
   private get tool(): AnnotationsCreateTool | undefined {
-    const { activeTool } = this;
-    if (!(activeTool instanceof AnnotationsCreateTool)) {
-      return undefined;
-    }
-    return activeTool;
+    return this.getActiveTool(AnnotationsCreateTool);
   }
 }
 
@@ -106,30 +111,6 @@ function getTooltipByPrimitiveType(primitiveType: PrimitiveType): TranslateKey {
         fallback:
           'Create a new vertical cylinder annotation. Click two times to get the center endpoints, the third defines the radius.'
       };
-
-    case PrimitiveType.None:
-      return {
-        key: 'ANNOTATIONS_EDIT',
-        fallback:
-          'Edit annotation. Click on an annotation to edit it. Click on the background to deselect the annotation.'
-      };
-    default:
-      throw new Error('Unknown PrimitiveType');
-  }
-}
-
-function getIconByPrimitiveType(primitiveType: PrimitiveType): string {
-  switch (primitiveType) {
-    case PrimitiveType.Box:
-      return 'Cube';
-    case PrimitiveType.Cylinder:
-      return 'DataSource';
-    case PrimitiveType.HorizontalCylinder:
-      return 'SplitViewHorizontal';
-    case PrimitiveType.VerticalCylinder:
-      return 'SplitView';
-    case PrimitiveType.None:
-      return 'Cursor';
     default:
       throw new Error('Unknown PrimitiveType');
   }

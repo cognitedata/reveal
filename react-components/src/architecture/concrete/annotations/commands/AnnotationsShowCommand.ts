@@ -15,7 +15,7 @@ export class AnnotationsShowCommand extends ShowAllDomainObjectsCommand {
   // ==================================================
 
   public override get tooltip(): TranslateKey {
-    return { key: 'ANNOTATIONS_SHOW_OR_HIDE', fallback: 'Show or hide annotations' };
+    return { key: 'ANNOTATIONS_SHOW_OR_HIDE', fallback: 'Show or hide annotations.' };
   }
 
   protected override isInstance(domainObject: DomainObject): boolean {

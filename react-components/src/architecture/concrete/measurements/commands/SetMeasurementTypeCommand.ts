@@ -72,11 +72,7 @@ export class SetMeasurementTypeCommand extends RenderTargetCommand {
   // ==================================================
 
   private get tool(): MeasurementTool | undefined {
-    const { activeTool } = this;
-    if (!(activeTool instanceof MeasurementTool)) {
-      return undefined;
-    }
-    return activeTool;
+    return this.getActiveTool(MeasurementTool);
   }
 }
 

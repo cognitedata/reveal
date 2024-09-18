@@ -29,7 +29,7 @@ export class AnnotationsCreateMockCommand extends InstanceCommand {
   }
 
   public override get tooltip(): TranslateKey {
-    return { key: 'ANNOTATIONS_CREATE', fallback: 'Create annotation' };
+    return { fallback: 'Create a mock annotation' };
   }
 
   public override get isEnabled(): boolean {

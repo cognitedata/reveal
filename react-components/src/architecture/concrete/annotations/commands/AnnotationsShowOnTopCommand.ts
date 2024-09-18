@@ -15,7 +15,7 @@ export class AnnotationsShowOnTopCommand extends ShowDomainObjectsOnTopCommand {
   // ==================================================
 
   public override get tooltip(): TranslateKey {
-    return { key: 'ANNOTATIONS_SHOW_ON_TOP', fallback: 'Show all annotations on top' };
+    return { key: 'ANNOTATIONS_SHOW_ON_TOP', fallback: 'Show all annotations on top.' };
   }
 
   protected override isInstance(domainObject: DomainObject): boolean {

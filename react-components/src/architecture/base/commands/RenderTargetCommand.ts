@@ -9,6 +9,7 @@ import { CommandsUpdater } from '../reactUpdaters/CommandsUpdater';
 import { type UndoManager } from '../undo/UndoManager';
 import { type Transaction } from '../undo/Transaction';
 import { type BaseTool } from './BaseTool';
+import { type Class, isInstanceOf } from '../domainObjectsHelpers/Class';
 
 /**
  * Represents a base class where the render target is known.
@@ -38,6 +39,11 @@ export abstract class RenderTargetCommand extends BaseCommand {
 
   protected get activeTool(): BaseTool | undefined {
     return this.renderTarget.commandsController.activeTool;
+  }
+
+  protected getActiveTool<T extends BaseTool>(classType: Class<T>): T | undefined {
+    const { activeTool } = this.renderTarget.commandsController;
+    return isInstanceOf(activeTool, classType) ? activeTool : undefined;
   }
 
   // ==================================================
