@@ -3,6 +3,11 @@ import { type FdmNodeCache } from '../../../src/components/CacheProvider/FdmNode
 import { type FdmNodeCacheContent } from '../../../src/components/CacheProvider/NodeCacheProvider';
 import { type DmsUniqueIdentifier } from '../../../src/data-providers/FdmSDK';
 import { type TypedReveal3DModel } from '../../../src/components/Reveal3DResources/types';
+import { type Node3D } from '@cognite/sdk';
+import {
+  type FdmCadConnection,
+  type FdmConnectionWithNode
+} from '../../../src/components/CacheProvider/types';
 
 const fdmNodeCacheMock = new Mock<FdmNodeCache>()
   .setup((instance) => instance.getAllMappingExternalIds)
@@ -13,19 +18,38 @@ const fdmNodeCacheMock = new Mock<FdmNodeCache>()
     ) => {
       return new Map(
         modelRevisionIds.map(({ modelId, revisionId }) => [
-          `${modelId}-${revisionId}`,
-          [`externalId-${modelId}/${revisionId}`]
+          `${modelId}/${revisionId}`,
+          [
+            {
+              connection: {
+                instance: { space: 'space', externalId: 'id' },
+                modelId,
+                revisionId,
+                treeIndex: 1
+              } satisfies FdmCadConnection,
+              cadNode: {
+                id: 1,
+                treeIndex: 1,
+                parentId: 0,
+                depth: 0,
+                name: 'node-name',
+                subtreeSize: 1
+              } satisfies Node3D
+            } satisfies FdmConnectionWithNode
+          ]
         ])
       );
     }
   )
   .setup((instance) => instance.getClosestParentDataPromises)
-  .returns(async (modelId: number, revisionId: number, treeIndex: number) => {
+  .returns((modelId: number, revisionId: number, treeIndex: number) => {
     return {
       modelId,
       revisionId,
       treeIndex,
-      data: `data-for-${modelId}-${revisionId}-${treeIndex}`
+      data: `data-for-${modelId}-${revisionId}-${treeIndex}`,
+      cadAndFdmNodesPromise: Promise.resolve(undefined),
+      viewsPromise: Promise.resolve([])
     };
   })
   .setup((instance) => instance.getMappingsForFdmInstances)
@@ -33,12 +57,7 @@ const fdmNodeCacheMock = new Mock<FdmNodeCache>()
     return models.map((model) => ({
       modelId: model.modelId,
       revisionId: model.revisionId,
-      mappings: new Map(
-        fdmAssetExternalIds.map((id) => [
-          id,
-          `mapping-for-${JSON.stringify(id)}-${model.modelId}-${model.revisionId}`
-        ])
-      )
+      mappings: new Map(fdmAssetExternalIds.map((id) => [JSON.stringify(id), [] as Node3D[]]))
     }));
   });
 
