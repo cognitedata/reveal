@@ -12,13 +12,13 @@ import {
 } from '../../components/CacheProvider/types';
 import { type DmsUniqueIdentifier, type EdgeItem } from '../FdmSDK';
 import { type InModel3dEdgeProperties } from './dataModels';
-import {
-  modelRevisionKeyToModelRevision,
-  modelRevisionToKey
-} from '../../components/CacheProvider/utils';
 import { executeParallel } from '../../utilities/executeParallel';
 import { isDefined } from '../../utilities/isDefined';
 import { chunk } from 'lodash';
+import {
+  createModelRevisionKey,
+  revisionKeyToIds
+} from '../../components/CacheProvider/idAndKeyTranslation';
 
 const MAX_PARALLEL_QUERIES = 2;
 
@@ -56,7 +56,7 @@ function createModelToNodeIdConnectionsMap(
 ): Map<ModelRevisionKey, NodeIdConnection[]> {
   return edges.reduce((connectionMap, edge) => {
     const modelId = Number(edge.endNode.externalId);
-    const revisionKey = modelRevisionToKey(modelId, edge.properties.revisionId);
+    const revisionKey = createModelRevisionKey(modelId, edge.properties.revisionId);
 
     const connectionObject = {
       nodeId: edge.properties.revisionNodeId,
@@ -80,7 +80,7 @@ async function getTreeIndexConnectionsForNodeIdConnections(
   connectionList: NodeIdConnection[],
   cogniteClient: CogniteClient
 ): Promise<FdmCadConnection[]> {
-  const [modelId, revisionId] = modelRevisionKeyToModelRevision(modelRevisionKey);
+  const [modelId, revisionId] = revisionKeyToIds(modelRevisionKey);
   const connectionChunks = chunk(connectionList, 1000);
 
   const connectionResult: FdmCadConnection[] = [];
