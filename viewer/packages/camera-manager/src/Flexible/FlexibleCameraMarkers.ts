@@ -7,6 +7,10 @@ import { FlexibleCameraManager } from './FlexibleCameraManager';
 import { FlexibleControlsType } from './FlexibleControlsType';
 import { FlexibleControlsOptions } from './FlexibleControlsOptions';
 
+const TEXTURE_SIZE = 25;
+const LINE_WIDTH = 3;
+const NO_DEPTH_TEST_OPACITY = 0.5;
+
 export class FlexibleCameraMarkers {
   private readonly _scene: Scene;
   private _targetMarker1: Sprite | undefined;
@@ -92,11 +96,11 @@ function setPosition(object3D: Object3D, position: Vector3, manager: FlexibleCam
 }
 
 function createSprite(options: FlexibleControlsOptions, depthTest: boolean): Sprite {
-  const texture = createTexture(25, 3, options.outerMarkerColor, options.innerMarkerColor);
+  const texture = createTexture(TEXTURE_SIZE, LINE_WIDTH, options.outerMarkerColor, options.innerMarkerColor);
   const material = new SpriteMaterial({ map: texture, depthTest });
   if (!depthTest) {
     material.transparent = true;
-    material.opacity = 0.5;
+    material.opacity = NO_DEPTH_TEST_OPACITY;
   }
   const sprite = new Sprite(material);
   sprite.updateMatrixWorld();
