@@ -195,7 +195,13 @@ export class CommandsController extends PointerEvents {
         }
       }
     }
-    this.activeTool?.onKey(event, down);
+    if (down && (event.key === 'Delete' || event.key === 'Backspace')) {
+      this.activeTool?.onDeleteKey();
+    } else if (down && event.key === 'Escape') {
+      this.activeTool?.onEscapeKey();
+    } else {
+      this.activeTool?.onKey(event, down);
+    }
   }
 
   // ==================================================

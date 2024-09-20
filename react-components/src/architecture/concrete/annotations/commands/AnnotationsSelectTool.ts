@@ -68,19 +68,16 @@ export class AnnotationsSelectTool extends BaseEditTool {
     }
   }
 
-  public override onKey(event: KeyboardEvent, down: boolean): void {
-    if (down && (event.key === 'Delete' || event.key === 'Backspace')) {
-      const domainObject = this.getSelectedAnnotationsDomainObject();
-      if (domainObject !== undefined) {
-        // this.addTransaction(domainObject.createTransaction(Changes.deleted));
-        domainObject.removeSelectedAnnotationInteractive();
-      }
-      return;
+  public override onDeleteKey(): void {
+    const domainObject = this.getSelectedAnnotationsDomainObject();
+    if (domainObject !== undefined) {
+      // this.addTransaction(domainObject.createTransaction(Changes.deleted));
+      domainObject.removeSelectedAnnotationInteractive();
     }
-    if (down && event.key === 'Escape') {
-      this.deselectedAnnotationInteractive();
-    }
-    super.onKey(event, down);
+  }
+
+  public override onEscapeKey(): void {
+    this.deselectedAnnotationInteractive();
   }
 
   public override async onHover(event: PointerEvent): Promise<void> {

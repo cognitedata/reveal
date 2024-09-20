@@ -68,7 +68,7 @@ export class AnnotationsCreateTool extends NavigationTool {
 
   public override onDeactivate(): void {
     super.onDeactivate();
-    this.handleEscape();
+    this.onEscapeKey();
   }
 
   public override clearDragging(): void {
@@ -76,12 +76,14 @@ export class AnnotationsCreateTool extends NavigationTool {
     this._creator = undefined;
   }
 
-  public override onKey(event: KeyboardEvent, down: boolean): void {
-    if (down && event.key === 'Escape') {
-      this.handleEscape();
-      this.deselectedAnnotationInteractive();
+  public override onEscapeKey(): void {
+    if (this._creator !== undefined && this._creator.onEscapeKey()) {
+      this.endCreatorIfFinished(this._creator, true);
+      this.setSelectTool();
+    } else {
+      this._creator = undefined;
     }
-    super.onKey(event, down);
+    this.deselectedAnnotationInteractive();
   }
 
   public override async onHover(event: PointerEvent): Promise<void> {
@@ -229,15 +231,6 @@ export class AnnotationsCreateTool extends NavigationTool {
     newDomainObject.setSelectedInteractive(true);
     newDomainObject.setVisibleInteractive(true);
     return newDomainObject;
-  }
-
-  public handleEscape(): void {
-    if (this._creator !== undefined && this._creator.handleEscape()) {
-      this.endCreatorIfFinished(this._creator, true);
-      this.setSelectTool();
-    } else {
-      this._creator = undefined;
-    }
   }
 
   private setSelectTool(): void {

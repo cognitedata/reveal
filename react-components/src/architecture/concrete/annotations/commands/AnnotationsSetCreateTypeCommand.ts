@@ -62,7 +62,7 @@ export class AnnotationsSetCreateTypeCommand extends RenderTargetCommand {
     if (tool === undefined) {
       return false;
     }
-    tool.handleEscape();
+    tool.onEscapeKey();
     tool.clearDragging();
     if (this.isChecked) {
       tool.primitiveType = PrimitiveType.None;

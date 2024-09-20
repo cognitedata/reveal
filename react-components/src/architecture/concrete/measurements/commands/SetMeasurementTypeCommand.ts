@@ -50,7 +50,7 @@ export class SetMeasurementTypeCommand extends RenderTargetCommand {
     if (tool === undefined) {
       return false;
     }
-    tool.handleEscape();
+    tool.onEscapeKey();
     tool.clearDragging();
     if (tool.primitiveType === this._primitiveType) {
       tool.primitiveType = PrimitiveType.None;

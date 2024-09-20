@@ -50,7 +50,7 @@ export abstract class PrimitiveEditTool extends BaseEditTool {
   // ==================================================
 
   public override onDeactivate(): void {
-    this.handleEscape();
+    this.onEscapeKey();
     super.onDeactivate();
   }
 
@@ -59,20 +59,22 @@ export abstract class PrimitiveEditTool extends BaseEditTool {
     this._creator = undefined;
   }
 
-  public override onKey(event: KeyboardEvent, down: boolean): void {
-    if (down && (event.key === 'Delete' || event.key === 'Backspace')) {
-      const domainObject = this.getSelected();
-      if (domainObject !== undefined) {
-        this.addTransaction(domainObject.createTransaction(Changes.deleted));
-        domainObject.removeInteractive();
-      }
+  public override onDeleteKey(): void {
+    const domainObject = this.getSelected();
+    if (domainObject !== undefined) {
+      this.addTransaction(domainObject.createTransaction(Changes.deleted));
+      domainObject.removeInteractive();
+    }
+    this._creator = undefined;
+  }
+
+  public override onEscapeKey(): void {
+    if (this._creator !== undefined && this._creator.onEscapeKey()) {
+      this.endCreatorIfFinished(this._creator, true);
+    } else {
+      this.setDefaultPrimitiveType();
       this._creator = undefined;
-      return;
     }
-    if (down && event.key === 'Escape') {
-      this.handleEscape();
-    }
-    super.onKey(event, down);
   }
 
   public override async onHover(event: PointerEvent): Promise<void> {
@@ -218,15 +220,6 @@ export abstract class PrimitiveEditTool extends BaseEditTool {
   // ==================================================
   // INSTANCE METHODS
   // ==================================================
-
-  public handleEscape(): void {
-    if (this._creator !== undefined && this._creator.handleEscape()) {
-      this.endCreatorIfFinished(this._creator, true);
-    } else {
-      this.setDefaultPrimitiveType();
-      this._creator = undefined;
-    }
-  }
 
   private setFocus(domainObject: VisualDomainObject, intersection: CustomObjectIntersection): void {
     if (domainObject instanceof LineDomainObject) {

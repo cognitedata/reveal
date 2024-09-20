@@ -35,16 +35,12 @@ export class ExampleTool extends BaseEditTool {
   // OVERRIDES of BaseTool
   // ==================================================
 
-  public override onKey(event: KeyboardEvent, down: boolean): void {
-    if (down && (event.key === 'Delete' || event.key === 'Backspace')) {
-      const domainObject = this.getSelected();
-      if (domainObject instanceof ExampleDomainObject) {
-        this.addTransaction(domainObject.createTransaction(Changes.deleted));
-        domainObject.removeInteractive();
-      }
-      return;
+  public override onDeleteKey(): void {
+    const domainObject = this.getSelected();
+    if (domainObject instanceof ExampleDomainObject) {
+      this.addTransaction(domainObject.createTransaction(Changes.deleted));
+      domainObject.removeInteractive();
     }
-    super.onKey(event, down);
   }
 
   public override async onWheel(event: WheelEvent, delta: number): Promise<void> {

@@ -79,6 +79,16 @@ export abstract class BaseCreator {
     return false;
   }
 
+  /**
+   * This functions returns true only if the first point can start on hover.
+   * This is to indicate where the object can be created when hovering.
+   *
+   * @returns {boolean} The value indicating whether to start on hover.
+   */
+  public get canStartOnHover(): boolean {
+    return false;
+  }
+
   public abstract get domainObject(): DomainObject;
 
   /**
@@ -110,7 +120,7 @@ export abstract class BaseCreator {
    *
    * @returns {boolean} Returns true if the pending object is created successfully, false if it is removed
    */
-  public handleEscape(): boolean {
+  public onEscapeKey(): boolean {
     if (this.notPendingPointCount >= this.minimumPointCount) {
       return true; // Successfully
     }

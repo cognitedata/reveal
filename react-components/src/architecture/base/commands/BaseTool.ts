@@ -128,6 +128,10 @@ export abstract class BaseTool extends RenderTargetCommand {
 
   public onKey(_event: KeyboardEvent, _down: boolean): void {}
 
+  public onDeleteKey(): void {}
+
+  public onEscapeKey(): void {}
+
   public onUndo(): void {}
 
   // ==================================================
@@ -226,6 +230,10 @@ export abstract class BaseTool extends RenderTargetCommand {
   // ==================================================
 
   public setDefaultCursor(): void {
+    this.renderTarget.cursor = this.defaultCursor;
+  }
+
+  public Escape(): void {
     this.renderTarget.cursor = this.defaultCursor;
   }
 }
