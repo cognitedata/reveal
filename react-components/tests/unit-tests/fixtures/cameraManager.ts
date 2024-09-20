@@ -1,19 +1,20 @@
-import { CameraManager, CameraManagerEventType, CameraState } from '@cognite/reveal';
+import { type CameraManager, type CameraManagerEventType, type CameraState } from '@cognite/reveal';
 import { remove } from 'lodash';
 import { Mock } from 'moq.ts';
-import { Vector3 } from 'three';
+import { type Box3, type Vector3 } from 'three';
 
-import { vi, Mock as viMock } from 'vitest';
+import { vi, type Mock as viMock } from 'vitest';
 
 export const cameraManagerGlobalCameraEvents: Record<
   CameraManagerEventType,
-  viMock<[Vector3, Vector3], void>[]
+  Array<viMock<[Vector3, Vector3], void>>
 > = {
   cameraChange: [],
   cameraStop: []
 };
 
 const cameraManagerGlobalCurrentCameraState: CameraState = {};
+export const fitCameraToBoundingBoxMock = vi.fn<[Box3], void>();
 
 export const cameraManagerMock = new Mock<CameraManager>()
   .setup((p) => p.on)
@@ -31,14 +32,14 @@ export const cameraManagerMock = new Mock<CameraManager>()
   .returns(({ position, target }) => {
     cameraManagerGlobalCurrentCameraState.position = position;
     cameraManagerGlobalCurrentCameraState.target = target;
-    setTimeout(
-      () =>
-        cameraManagerGlobalCameraEvents.cameraStop.forEach((callback) =>
-          callback(position!, target!)
-        ),
-      50
-    );
+    setTimeout(() => {
+      cameraManagerGlobalCameraEvents.cameraStop.forEach((callback) => {
+        callback(position!, target!);
+      });
+    }, 50);
   })
   .setup((p) => p.getCameraState())
   .returns(cameraManagerGlobalCurrentCameraState as Required<CameraState>)
+  .setup((p) => p.fitCameraToBoundingBox)
+  .returns(fitCameraToBoundingBoxMock)
   .object();
