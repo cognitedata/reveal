@@ -79,19 +79,10 @@ export abstract class PrimitiveEditTool extends BaseEditTool {
 
   public override async onHover(event: PointerEvent): Promise<void> {
     // Handle when creator is set first
-    if (!this.isEdit && this._creator !== undefined) {
-      const { _creator: creator } = this;
-      if (!creator.preferIntersection) {
-        // Hover in the "air"
-        const ray = this.getRay(event);
-        if (creator.addPoint(ray, undefined, true)) {
-          this.setDefaultCursor();
-          return;
-        }
-      }
-      const intersection = await this.getIntersection(event);
-      if (intersection === undefined) {
-        if (creator !== undefined && creator.preferIntersection) {
+    if (!this.isEdit) {
+      if (this._creator !== undefined) {
+        const { _creator: creator } = this;
+        if (!creator.preferIntersection) {
           // Hover in the "air"
           const ray = this.getRay(event);
           if (creator.addPoint(ray, undefined, true)) {
@@ -99,20 +90,35 @@ export abstract class PrimitiveEditTool extends BaseEditTool {
             return;
           }
         }
+        const intersection = await this.getIntersection(event);
+        if (intersection === undefined) {
+          if (creator !== undefined && creator.preferIntersection) {
+            // Hover in the "air"
+            const ray = this.getRay(event);
+            if (creator.addPoint(ray, undefined, true)) {
+              this.setDefaultCursor();
+              return;
+            }
+          }
+          this.renderTarget.setNavigateCursor();
+          return;
+        }
+        if (this.getIntersectedSelectableDomainObject(intersection) !== undefined) {
+          this.renderTarget.setNavigateCursor();
+          return;
+        }
+        const ray = this.getRay(event);
+        if (creator.addPoint(ray, intersection, true)) {
+          this.setDefaultCursor();
+          return;
+        }
         this.renderTarget.setNavigateCursor();
         return;
+      } else {
+        if (await this.tryStartOnHover(event)) {
+          return;
+        }
       }
-      if (this.getIntersectedSelectableDomainObject(intersection) !== undefined) {
-        this.renderTarget.setNavigateCursor();
-        return;
-      }
-      const ray = this.getRay(event);
-      if (creator.addPoint(ray, intersection, true)) {
-        this.setDefaultCursor();
-        return;
-      }
-      this.renderTarget.setNavigateCursor();
-      return;
     }
     const intersection = await this.getIntersection(event);
     const domainObject = this.getIntersectedSelectableDomainObject(intersection);
@@ -160,24 +166,23 @@ export abstract class PrimitiveEditTool extends BaseEditTool {
     }
     const ray = this.getRay(event);
     if (creator === undefined) {
-      creator = this._creator = this.createCreator();
+      creator = this.createCreator();
       if (creator === undefined) {
         return;
       }
-      if (creator.addPoint(ray, intersection)) {
-        const { domainObject } = creator;
-        this.initializeStyle(domainObject);
-        this.deselectAll();
-
-        const parent = this.getOrCreateParent();
-        parent.addChildInteractive(domainObject);
-        domainObject.setSelectedInteractive(true);
-        domainObject.setVisibleInteractive(true, renderTarget);
-        this.addTransaction(domainObject.createTransaction(Changes.added));
-      } else {
-        this._creator = undefined;
+      if (!creator.addPoint(ray, intersection)) {
         return;
       }
+      const { domainObject } = creator;
+      this.initializeStyle(domainObject);
+      this.deselectAll();
+
+      const parent = this.getOrCreateParent();
+      parent.addChildInteractive(domainObject);
+      domainObject.setSelectedInteractive(true);
+      domainObject.setVisibleInteractive(true, renderTarget);
+      this.addTransaction(domainObject.createTransaction(Changes.added));
+      this._creator = creator;
     }
     this.endCreatorIfFinished(creator);
   }
@@ -294,6 +299,33 @@ export abstract class PrimitiveEditTool extends BaseEditTool {
       this.setDefaultPrimitiveType();
       this._creator = undefined;
     }
+  }
+
+  private async tryStartOnHover(event: PointerEvent): Promise<boolean> {
+    const creator = this.createCreator();
+    if (creator === undefined || !creator.canStartOnHover) {
+      return false;
+    }
+    const intersection = await this.getIntersection(event);
+    if (intersection === undefined) {
+      // Click in the "air"
+      return false;
+    }
+    const ray = this.getRay(event);
+    if (!creator.addPoint(ray, intersection, true)) {
+      return false;
+    }
+    const { domainObject } = creator;
+    this.initializeStyle(domainObject);
+    this.deselectAll();
+
+    const parent = this.getOrCreateParent();
+    parent.addChildInteractive(domainObject);
+    domainObject.setSelectedInteractive(true);
+    domainObject.setVisibleInteractive(true, this.renderTarget);
+    this.addTransaction(domainObject.createTransaction(Changes.added));
+    this._creator = creator;
+    return true;
   }
 
   // ==================================================
