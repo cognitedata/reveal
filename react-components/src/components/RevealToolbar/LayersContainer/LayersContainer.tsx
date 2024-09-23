@@ -2,10 +2,8 @@
  * Copyright 2023 Cognite AS
  */
 
-import { Menu } from '@cognite/cogs-lab';
-import styled from 'styled-components';
 import { LayerToggleDropdown } from './LayerToggleDropdown';
-import { type ReactElement, type MouseEvent } from 'react';
+import { type ReactElement } from 'react';
 import { useReveal } from '../../RevealCanvas/ViewerContext';
 import { type ModelLayerHandlers } from './LayersButtonsStrip';
 import { useTranslation } from '../../i18n/I18n';
@@ -45,14 +43,3 @@ export const LayersContainer = ({
     </>
   );
 };
-
-const Container = styled.div`
-  position: relative;
-`;
-
-const StyledContainer = styled.div`
-  position: relative;
-  padding: 6px;
-  width: 214px;
-  border: 1px solid rgba(83, 88, 127, 0.24);
-`;

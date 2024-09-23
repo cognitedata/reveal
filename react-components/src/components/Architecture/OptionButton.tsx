@@ -26,8 +26,6 @@ import {
   getIcon
 } from './utilities';
 import { LabelWithShortcut } from './LabelWithShortcut';
-import { IconComponent } from './IconComponentMapper';
-import { type IconName } from '../../architecture/base/utilities/IconName';
 import { type TranslateDelegate } from '../../architecture/base/utilities/TranslateKey';
 import { useClickOutside } from './useClickOutside';
 import { DEFAULT_PADDING, OPTION_MIN_WIDTH } from './constants';
@@ -52,7 +50,6 @@ export const OptionButton = ({
   const [isEnabled, setEnabled] = useState<boolean>(true);
   const [isVisible, setVisible] = useState<boolean>(true);
   const [uniqueId, setUniqueId] = useState<number>(0);
-  const [icon, setIcon] = useState<IconName | undefined>(undefined);
 
   const update = useCallback((command: BaseCommand) => {
     setEnabled(command.isEnabled);
@@ -105,7 +102,7 @@ export const OptionButton = ({
       hideOnSelect={true}
       appendTo={'parent'}
       placement={usedInSettings ? 'bottom-end' : 'auto-start'}
-      renderTrigger={(props: any) => (
+      renderTrigger={
         <CogsTooltip
           content={<LabelWithShortcut label={label} command={command} />}
           disabled={usedInSettings || label === undefined}
@@ -132,7 +129,7 @@ export const OptionButton = ({
           {selectedLabel}
           <Button />
         </CogsTooltip>
-      )}>
+      }>
       {children.map((child, _index): ReactElement => {
         return createMenuItem(child, t, postAction);
       })}

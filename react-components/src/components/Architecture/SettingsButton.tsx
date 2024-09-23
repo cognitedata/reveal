@@ -11,7 +11,7 @@ import {
   useState,
   type ReactElement
 } from 'react';
-import { Button, Dropdown, Menu, Tooltip as CogsTooltip, Slider } from '@cognite/cogs.js';
+import { Button, Menu, Tooltip as CogsTooltip, Slider } from '@cognite/cogs.js';
 import { useTranslation } from '../i18n/I18n';
 import { type BaseCommand } from '../../architecture/base/commands/BaseCommand';
 import { useRenderTarget } from '../RevealCanvas/ViewerContext';
@@ -96,45 +96,41 @@ export const SettingsButton = ({
   const children = command.children;
 
   return (
-    <Dropdown
+    <Menu
       visible={isOpen}
       hideOnSelect={false}
       appendTo={'parent'}
       placement="auto-start"
-      content={
-        <div ref={menuRef}>
-          <Menu
-            style={{
-              flexDirection,
-              padding: DEFAULT_PADDING
-            }}>
-            {children.map((child, _index): ReactElement | undefined => {
-              return createMenuItem(child, t);
-            })}
-          </Menu>
-        </div>
+      style={{
+        flexDirection,
+        padding: DEFAULT_PADDING
+      }}
+      renderTrigger={
+        <CogsTooltip
+          content={<LabelWithShortcut label={label} command={command} />}
+          disabled={label === undefined}
+          appendTo={document.body}
+          placement={placement}>
+          <Button
+            type={getButtonType(command)}
+            icon={<IconComponent iconName={icon} />}
+            key={uniqueId}
+            disabled={!isEnabled}
+            toggled={isOpen}
+            aria-label={label}
+            iconPlacement="right"
+            onClick={(event: MouseEvent<HTMLElement>) => {
+              event.stopPropagation();
+              event.preventDefault();
+              setOpen((prevState) => !prevState);
+            }}
+          />
+        </CogsTooltip>
       }>
-      <CogsTooltip
-        content={<LabelWithShortcut label={label} command={command} />}
-        disabled={label === undefined}
-        appendTo={document.body}
-        placement={placement}>
-        <Button
-          type={getButtonType(command)}
-          icon={<IconComponent iconName={icon} />}
-          key={uniqueId}
-          disabled={!isEnabled}
-          toggled={isOpen}
-          aria-label={label}
-          iconPlacement="right"
-          onClick={(event: MouseEvent<HTMLElement>) => {
-            event.stopPropagation();
-            event.preventDefault();
-            setOpen((prevState) => !prevState);
-          }}
-        />
-      </CogsTooltip>
-    </Dropdown>
+      {children.map((child, _index): ReactElement | undefined => {
+        return createMenuItem(child, t);
+      })}
+    </Menu>
   );
 };
 

@@ -4,7 +4,7 @@
 
 import { type Dispatch, type SetStateAction, type ReactElement } from 'react';
 import { Button, Tooltip as CogsTooltip, LayersIcon } from '@cognite/cogs.js';
-import { Dropdown, Menu } from '@cognite/cogs-lab';
+import { Menu } from '@cognite/cogs-lab';
 import { LayersContainer } from '../RevealToolbar/LayersContainer/LayersContainer';
 
 import { useTranslation } from '../i18n/I18n';

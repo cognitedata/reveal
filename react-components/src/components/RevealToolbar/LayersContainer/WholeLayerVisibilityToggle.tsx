@@ -1,10 +1,9 @@
 /*!
  * Copyright 2024 Cognite AS
  */
-import { Checkbox, CounterChip, Flex } from '@cognite/cogs.js';
+import { CounterChip } from '@cognite/cogs.js';
 import { type ModelHandler } from './ModelHandler';
 import { type ChangeEvent, useCallback, useMemo, type ReactElement, type MouseEvent } from 'react';
-import { StyledLabel } from './elements';
 import { type UpdateModelHandlersCallback } from './useModelHandlers';
 import { useReveal } from '../../RevealCanvas/ViewerContext';
 import { Menu } from '@cognite/cogs-lab';

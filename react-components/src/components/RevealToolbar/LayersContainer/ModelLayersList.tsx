@@ -6,12 +6,9 @@ import { Menu } from '@cognite/cogs-lab';
 import { type ModelHandler } from './ModelHandler';
 import { type ReactElement, type ChangeEvent } from 'react';
 import { WholeLayerVisibilityToggle } from './WholeLayerVisibilityToggle';
-import { withSuppressRevealEvents } from '../../../higher-order-components/withSuppressRevealEvents';
 import { type UpdateModelHandlersCallback } from './useModelHandlers';
 import { useReveal } from '../../RevealCanvas/ViewerContext';
 import { type Cognite3DViewer } from '@cognite/reveal';
-
-const SuppressedMenu = withSuppressRevealEvents(Menu);
 
 export const ModelLayersList = ({
   modelHandlers,
@@ -78,7 +75,6 @@ const ModelItem = ({
       toggled={modelHandler.visible()}
       label={modelHandler.name}
       onClick={(e: ChangeEvent) => {
-        console.log('Toggled');
         e.stopPropagation();
         modelHandler.setVisibility(!modelHandler.visible());
         update(viewer.models, viewer.get360ImageCollections());

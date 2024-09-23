@@ -4,7 +4,6 @@
 import { useCallback, useState, type ReactElement } from 'react';
 
 import { Button, Menu, Tooltip as CogsTooltip, WorldIcon } from '@cognite/cogs.js';
-import { Dropdown } from '@cognite/cogs-lab';
 import { use3dScenes } from '../../hooks/scenes/use3dScenes';
 import { useTranslation } from '../i18n/I18n';
 import { type DmsUniqueIdentifier } from '../../data-providers/FdmSDK';
@@ -41,25 +40,21 @@ export const SelectSceneButton = ({
   }
 
   return (
-    <CogsTooltip
-      content={t('SCENE_SELECT_HEADER', 'Select 3D location')}
-      placement="right"
-      appendTo={document.body}>
-      <Dropdown
-        placement="right-start"
-        content={
-          <StyledMenu>
-            {orientation === 'none' && (
-              <Menu.Header>{t('SCENE_SELECT_HEADER', 'Select 3D location')}</Menu.Header>
-            )}
-            <SceneList selectedScene={selectedScene} onSceneChange={setSceneAndUpdateName} />
-          </StyledMenu>
-        }>
-        <Button icon=<WorldIcon /> aria-label="Select 3D location" type="ghost">
-          {orientation === 'horizontal' && sceneName}
-        </Button>
-      </Dropdown>
-    </CogsTooltip>
+    <StyledMenu
+      placement="right-start"
+      appendTo={document.body}
+      renderTrigger={
+        <CogsTooltip content={t('SCENE_SELECT_HEADER', 'Select 3D location')}>
+          <Button icon=<WorldIcon /> aria-label="Select 3D location" type="ghost">
+            {orientation === 'horizontal' && sceneName}
+          </Button>
+        </CogsTooltip>
+      }>
+      {orientation === 'none' && (
+        <Menu.Header>{t('SCENE_SELECT_HEADER', 'Select 3D location')}</Menu.Header>
+      )}
+      <SceneList selectedScene={selectedScene} onSceneChange={setSceneAndUpdateName} />
+    </StyledMenu>
   );
 };
 

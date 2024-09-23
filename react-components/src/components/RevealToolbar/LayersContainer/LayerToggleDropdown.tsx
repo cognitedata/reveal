@@ -7,7 +7,6 @@ import { Menu } from '@cognite/cogs-lab';
 import { type ModelHandler } from './ModelHandler';
 import { ModelLayersList } from './ModelLayersList';
 import { WholeLayerVisibilityToggle } from './WholeLayerVisibilityToggle';
-import { withSuppressRevealEvents } from '../../../higher-order-components/withSuppressRevealEvents';
 import { type UpdateModelHandlersCallback } from './useModelHandlers';
 
 const SuppressedSubmenu = Menu;

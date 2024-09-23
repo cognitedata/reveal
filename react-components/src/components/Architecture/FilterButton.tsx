@@ -6,19 +6,12 @@ import {
   useCallback,
   useEffect,
   useMemo,
-  useRef,
   useState,
   type ReactElement,
   type MouseEvent
 } from 'react';
-import {
-  Button,
-  Dropdown,
-  Menu,
-  Tooltip as CogsTooltip,
-  ChevronUpIcon,
-  ChevronDownIcon
-} from '@cognite/cogs.js';
+import { Button, Tooltip as CogsTooltip, ChevronUpIcon, ChevronDownIcon } from '@cognite/cogs.js';
+import { Menu } from '@cognite/cogs-lab';
 import { useTranslation } from '../i18n/I18n';
 import { type BaseCommand } from '../../architecture/base/commands/BaseCommand';
 import { useRenderTarget } from '../RevealCanvas/ViewerContext';
@@ -30,7 +23,6 @@ import {
   getIcon
 } from './utilities';
 import { LabelWithShortcut } from './LabelWithShortcut';
-import { useClickOutside } from './useClickOutside';
 import styled from 'styled-components';
 import { BaseFilterCommand } from '../../architecture/base/commands/BaseFilterCommand';
 import { FilterItem } from './FilterItem';
@@ -86,18 +78,6 @@ export const FilterButton = ({
     };
   }, [command]);
 
-  const outsideAction = (): boolean => {
-    if (!isOpen) {
-      return false;
-    }
-    setOpen(false);
-    renderTarget.domElement.focus();
-    return true;
-  };
-
-  const menuRef = useRef<HTMLDivElement | null>(null);
-  useClickOutside(menuRef, outsideAction);
-
   if (!isVisible) {
     return <></>;
   }
@@ -110,71 +90,67 @@ export const FilterButton = ({
     return <></>;
   }
   return (
-    <Dropdown
+    <Menu
+      style={{
+        minWidth: '100px',
+        overflow: 'auto',
+        flexDirection
+      }}
       visible={isOpen}
       hideOnSelect={false}
       appendTo={'parent'}
       placement={usedInSettings ? 'bottom-end' : 'auto-start'}
-      content={
-        <div ref={menuRef}>
-          <Menu
-            style={{
-              minWidth: '100px',
-              overflow: 'auto',
-              flexDirection
-            }}>
-            <Menu.Item
-              key={-1}
-              toggled={isAllChecked}
-              onClick={() => {
-                command.toggleAllChecked();
-              }}>
-              {BaseFilterCommand.getAllString(t)}
-            </Menu.Item>
-            <StyledMenuItems>
-              {children.map((child, _index): ReactElement => {
-                return <FilterItem key={child.uniqueId} command={child} />;
-              })}
-            </StyledMenuItems>
-          </Menu>
-        </div>
-      }>
-      <CogsTooltip
-        content={<LabelWithShortcut label={label} command={command} />}
-        disabled={usedInSettings || label === undefined}
-        appendTo={document.body}
-        placement={placement}>
-        <Button
-          type={usedInSettings ? 'tertiary' : getButtonType(command)}
-          icon={
-            usedInSettings ? (
-              isOpen ? (
-                <ChevronUpIcon />
+      renderTrigger={
+        <CogsTooltip
+          content={<LabelWithShortcut label={label} command={command} />}
+          disabled={usedInSettings || label === undefined}
+          appendTo={document.body}
+          placement={placement}>
+          <Button
+            type={usedInSettings ? 'tertiary' : getButtonType(command)}
+            icon={
+              usedInSettings ? (
+                isOpen ? (
+                  <ChevronUpIcon />
+                ) : (
+                  <ChevronDownIcon />
+                )
               ) : (
-                <ChevronDownIcon />
+                <IconComponent iconName={icon} />
               )
-            ) : (
-              <IconComponent iconName={icon} />
-            )
-          }
-          key={uniqueId}
-          disabled={!isEnabled}
-          toggled={isOpen}
-          iconPlacement="right"
-          aria-label={command.getLabel(t)}
-          style={{
-            minWidth: usedInSettings ? OPTION_MIN_WIDTH : undefined,
-            padding: usedInSettings ? DEFAULT_PADDING : undefined
-          }}
-          onClick={(event: MouseEvent<HTMLElement>) => {
-            setOpen(!isOpen);
-            event.stopPropagation();
-            event.preventDefault();
-          }}>
-          {usedInSettings ? selectedLabel : undefined}
-        </Button>
-      </CogsTooltip>
-    </Dropdown>
+            }
+            key={uniqueId}
+            disabled={!isEnabled}
+            toggled={isOpen}
+            iconPlacement="right"
+            aria-label={command.getLabel(t)}
+            style={{
+              minWidth: usedInSettings ? OPTION_MIN_WIDTH : undefined,
+              padding: usedInSettings ? DEFAULT_PADDING : undefined
+            }}
+            onClick={(event: MouseEvent<HTMLElement>) => {
+              setOpen(!isOpen);
+              event.stopPropagation();
+              event.preventDefault();
+            }}>
+            {usedInSettings ? selectedLabel : undefined}
+          </Button>
+        </CogsTooltip>
+      }>
+      <Menu.ItemAction
+        key={-1}
+        toggled={isAllChecked}
+        onClick={() => {
+          command.toggleAllChecked();
+        }}>
+        {BaseFilterCommand.getAllString(t)}
+      </Menu.ItemAction>
+      <StyledMenuItems>
+        {children.map((child, _index): ReactElement => {
+          return <FilterItem key={child.uniqueId} command={child} />;
+        })}
+      </StyledMenuItems>
+    </Menu>
   );
 };
 
