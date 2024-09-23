@@ -20,7 +20,7 @@ import { CylinderGizmoDomainObject } from './CylinderGizmoDomainObject';
 import { AnnotationChangedDescription } from './helpers/AnnotationChangedDescription';
 import { DomainObjectChange } from '../../base/domainObjectsHelpers/DomainObjectChange';
 import { getStatusByAnnotation } from './helpers/Status';
-import { Annotation } from './Annotation';
+import { AnnotationUtils } from './AnnotationUtils';
 
 export class AnnotationsDomainObject extends VisualDomainObject {
   // ==================================================
@@ -316,7 +316,8 @@ export class AnnotationsDomainObject extends VisualDomainObject {
     if (rootDomainObject === undefined) {
       return false;
     }
-    void Annotation.fetchAllAnnotations(rootDomainObject.sdk, modelId).then((_annotations) => {
+    void AnnotationUtils.fetchAllAnnotations(rootDomainObject.sdk, modelId).then((_annotations) => {
+      // this.annotations = annotations;
       this.setSelectedInteractive(true);
       this.setVisibleInteractive(true);
       this.notify(Changes.loaded);
