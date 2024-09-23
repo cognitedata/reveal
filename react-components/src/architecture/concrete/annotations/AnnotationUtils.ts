@@ -2,8 +2,6 @@
  * Copyright 2024 Cognite AS
  */
 
-import { Cylinder } from '../../base/utilities/primitives/Cylinder';
-import { type Primitive } from '../../base/utilities/primitives/Primitive';
 import {
   type CogniteClient,
   type AnnotationChangeById,
@@ -15,6 +13,8 @@ import {
 } from '@cognite/sdk';
 import { CYLINDER_RADIUS_MARGIN } from './utils/constants';
 import { Box } from '../../base/utilities/primitives/Box';
+import { Cylinder } from '../../base/utilities/primitives/Cylinder';
+import { type Primitive } from '../../base/utilities/primitives/Primitive';
 import { Matrix4, Vector3 } from 'three';
 import { Annotation, AssetCentricAssetId } from './Annotation';
 
