@@ -16,7 +16,7 @@ import { useTranslation } from '../i18n/I18n';
 import styled from 'styled-components';
 import { type TranslateDelegate } from '../../architecture/base/utilities/TranslateKey';
 import { assertNever } from '../../utilities/assertNever';
-import { IconComponent } from '../Architecture/IconComponent';
+import { IconComponent } from '../Architecture/IconComponentMapper';
 import { type IconName } from '../../architecture/base/utilities/IconName';
 
 type CustomSettingsProps = {

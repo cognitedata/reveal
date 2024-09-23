@@ -2,7 +2,6 @@
  * Copyright 2024 Cognite AS
  */
 import { Checkbox, CounterChip, Flex } from '@cognite/cogs.js';
-import { CounterChip }
 import { type ModelHandler } from './ModelHandler';
 import { type ChangeEvent, useCallback, useMemo, type ReactElement, type MouseEvent } from 'react';
 import { StyledLabel } from './elements';
@@ -49,13 +48,4 @@ export const WholeLayerVisibilityToggle = ({
       <CounterChip counter={modelHandlers.length} />
     </Menu.ItemToggled>
   );
-  /* <Flex direction="row" justifyContent="space-between" gap={4} onClick={handleToggleAllClick}>
-      <Checkbox
-        checked={someVisible}
-        indeterminate={indeterminate}
-        onChange={handleToggleAllClick}
-        />
-      <StyledLabel> {label} </StyledLabel>
-      <CounterChip counter={modelHandlers.length} />
-      </Flex> */
 };

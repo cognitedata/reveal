@@ -9,6 +9,7 @@ import { SetPointColorTypeCommand } from './SetPointColorTypeCommand';
 import { SetPointShapeCommand } from './SetPointShapeCommand';
 import { PointCloudFilterCommand } from './PointCloudFilterCommand';
 import { type TranslateKey } from '../utilities/TranslateKey';
+import { type IconName } from '../utilities/IconName';
 
 export class SettingsCommand extends BaseSettingsCommand {
   // ==================================================
@@ -33,7 +34,7 @@ export class SettingsCommand extends BaseSettingsCommand {
     return { key: 'SETTINGS_TOOLTIP', fallback: 'Settings' };
   }
 
-  public override get icon(): string | undefined {
+  public override get icon(): IconName | undefined {
     return 'Settings';
   }
 }

@@ -37,7 +37,7 @@ export const HelpButton = ({ fallbackLanguage }: HelpButtonProps): ReactElement 
       <CogsTooltip content={t('HELP_TOOLTIP', 'Help')} placement="right" appendTo={document.body}>
         <Button
           type="ghost"
-          icon="Help"
+          icon={<HelpButton />}
           aria-label="help-button"
           toggled={helpActive}
           onClick={() => {

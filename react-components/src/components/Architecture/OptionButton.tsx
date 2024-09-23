@@ -2,14 +2,8 @@
  * Copyright 2024 Cognite AS
  */
 
-import {
-  Button,
-  Menu,
-  Tooltip as CogsTooltip,
-  ChevronDownIcon,
-  ChevronUpIcon
-} from '@cognite/cogs.js';
-import { Dropdown } from '@cognite/cogs-lab';
+import { Button, Tooltip as CogsTooltip, ChevronDownIcon, ChevronUpIcon } from '@cognite/cogs.js';
+import { Menu } from '@cognite/cogs-lab';
 import {
   useCallback,
   useEffect,
@@ -32,7 +26,7 @@ import {
   getIcon
 } from './utilities';
 import { LabelWithShortcut } from './LabelWithShortcut';
-import { IconComponent } from './IconComponent';
+import { IconComponent } from './IconComponentMapper';
 import { type IconName } from '../../architecture/base/utilities/IconName';
 import { type TranslateDelegate } from '../../architecture/base/utilities/TranslateKey';
 import { useClickOutside } from './useClickOutside';
@@ -102,72 +96,57 @@ export const OptionButton = ({
   const OpenButtonIcon = isOpen ? ChevronUpIcon : ChevronDownIcon;
 
   return (
-    <CogsTooltip
-      content={<LabelWithShortcut label={tooltip} shortcut={shortcut} />}
-      appendTo={document.body}
-      placement={placement}>
-      <Dropdown
-        hideOnSelect={true}
-        onClickOutside={() => {
-          setOpen(false);
-          renderTarget.domElement.focus();
-        }}
-        placement="bottom"
-        content={
-          <Menu
+    <Menu
+      style={{
+        minWidth: '0px',
+        overflow: 'auto',
+        flexDirection
+      }}
+      hideOnSelect={true}
+      appendTo={'parent'}
+      placement={usedInSettings ? 'bottom-end' : 'auto-start'}
+      renderTrigger={(props: any) => (
+        <CogsTooltip
+          content={<LabelWithShortcut label={label} command={command} />}
+          disabled={usedInSettings || label === undefined}
+          appendTo={document.body}
+          placement={placement}>
+          <Button
             style={{
-              minWidth: '0px',
-              overflow: 'auto',
-              flexDirection
-            }}>
-            {options.map((command, _index): ReactElement => {
-              return (
-                <Menu.Item
-                  icon={<IconComponent iconName={icon} />}
-                  key={command.uniqueId}
-                  toggled={command.isChecked}
-                  disabled={!isEnabled}
-                  aria-label={tooltip}
-                  iconPlacement="right"
-                  onClick={() => {
-                    command.invoke();
-                    setOpen(false);
-                    renderTarget.domElement.focus();
-                  }}>
-                  {command.getLabel(t)}
-                </Menu.Item>
-              );
-            })}
-          </Menu>
-        }>
-        <Button
-          style={{ padding: '8px 4px' }}
-          type={getButtonType(command)}
-          icon={<OpenButtonIcon />}
-          key={uniqueId}
-          disabled={!isEnabled}
-          toggled={isOpen}
-          iconPlacement="right"
-          aria-label={command.getLabel(t)}
-          onClick={(event: MouseEvent<HTMLElement>) => {
-            event.stopPropagation();
-            event.preventDefault();
-            setOpen((prevState) => !prevState);
-          }}>
+              padding: usedInSettings ? DEFAULT_PADDING : '8px 4px',
+              minWidth: usedInSettings ? OPTION_MIN_WIDTH : undefined
+            }}
+            type={usedInSettings ? 'tertiary' : getButtonType(command)}
+            icon={<OpenButtonIcon />}
+            key={uniqueId}
+            disabled={!isEnabled}
+            toggled={isOpen}
+            iconPlacement="right"
+            aria-label={command.getLabel(t)}
+            onClick={(event: MouseEvent<HTMLElement>) => {
+              event.stopPropagation();
+              event.preventDefault();
+              setOpen((prevState) => !prevState);
+            }}
+          />
           {selectedLabel}
-        </Button>
-      </CogsTooltip>
-    </Dropdown>
+          <Button />
+        </CogsTooltip>
+      )}>
+      {children.map((child, _index): ReactElement => {
+        return createMenuItem(child, t, postAction);
+      })}
+    </Menu>
   );
 };
 
-export function createMenuItem(
+function createMenuItem(
   command: BaseCommand,
   t: TranslateDelegate,
   postAction: () => void
 ): ReactElement {
   return (
-    <Menu.Item
+    <Menu.ItemAction
       key={command.uniqueId}
       icon={getIcon(command)}
       disabled={!command.isEnabled}
@@ -178,6 +157,6 @@ export function createMenuItem(
         postAction();
       }}>
       {command.getLabel(t)}
-    </Menu.Item>
+    </Menu.ItemAction>
   );
 }

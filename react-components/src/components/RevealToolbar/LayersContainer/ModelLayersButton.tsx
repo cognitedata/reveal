@@ -7,7 +7,7 @@ import { type ModelHandler } from './ModelHandler';
 import { ModelLayersList } from './ModelLayersList';
 import { type ReactElement } from 'react';
 import { type UpdateModelHandlersCallback } from './useModelHandlers';
-import { IconComponent } from '../../Architecture/IconComponent';
+import { IconComponent } from '../../Architecture/IconComponentMapper';
 import { type IconName } from '../../../architecture/base/utilities/IconName';
 
 export const ModelLayersButton = ({

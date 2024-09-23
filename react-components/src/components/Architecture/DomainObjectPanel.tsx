@@ -1,8 +1,7 @@
 /*!
  * Copyright 2024 Cognite AS
  */
-import { Body } from '@cognite/cogs.js';
-import { Icon, type IconType, Body, Flex } from '@cognite/cogs.js';
+import { Body, Flex } from '@cognite/cogs.js';
 import styled from 'styled-components';
 import { useEffect, useMemo, useState, type ReactElement } from 'react';
 import {
@@ -20,7 +19,7 @@ import { withSuppressRevealEvents } from '../../higher-order-components/withSupp
 import { type TranslateDelegate } from '../../architecture/base/utilities/TranslateKey';
 import { type UnitSystem } from '../../architecture/base/renderTarget/UnitSystem';
 import { type DomainObject } from '../../architecture/base/domainObjects/DomainObject';
-import { IconComponent } from './IconComponent';
+import { IconComponent } from './IconComponentMapper';
 import { type IconName } from '../../architecture/base/utilities/IconName';
 
 const TEXT_SIZE = 'x-small';
@@ -78,7 +77,7 @@ export const DomainObjectPanel = (): ReactElement => {
       }}>
       <Flex justifyContent={'space-between'} alignItems={'center'}>
         <Flex gap={8}>
-          {iconName !== undefined && <Icon type={iconName} />}
+          {iconName !== undefined && <IconComponent iconName={iconName} type={'ghost'} />}
           {text !== undefined && <Body size={HEADER_SIZE}>{text}</Body>}
         </Flex>
         <Flex>

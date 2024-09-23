@@ -10,7 +10,7 @@ import { type BaseCommand } from '../../architecture/base/commands/BaseCommand';
 import { getButtonType, getDefaultCommand, getIcon, getTooltipPlacement } from './utilities';
 import { LabelWithShortcut } from './LabelWithShortcut';
 import { type IconName } from '../../architecture/base/utilities/IconName';
-import { IconComponent } from './IconComponent';
+import { IconComponent } from './IconComponentMapper';
 
 export const CommandButton = ({
   inputCommand,

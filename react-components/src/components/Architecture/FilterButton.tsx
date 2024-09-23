@@ -11,7 +11,14 @@ import {
   type ReactElement,
   type MouseEvent
 } from 'react';
-import { Button, Dropdown, Menu, Tooltip as CogsTooltip, type IconType } from '@cognite/cogs.js';
+import {
+  Button,
+  Dropdown,
+  Menu,
+  Tooltip as CogsTooltip,
+  ChevronUpIcon,
+  ChevronDownIcon
+} from '@cognite/cogs.js';
 import { useTranslation } from '../i18n/I18n';
 import { type BaseCommand } from '../../architecture/base/commands/BaseCommand';
 import { useRenderTarget } from '../RevealCanvas/ViewerContext';
@@ -28,6 +35,8 @@ import styled from 'styled-components';
 import { BaseFilterCommand } from '../../architecture/base/commands/BaseFilterCommand';
 import { FilterItem } from './FilterItem';
 import { OPTION_MIN_WIDTH, DEFAULT_PADDING } from './constants';
+import { type IconName } from '../../architecture/base/utilities/IconName';
+import { IconComponent } from './IconComponentMapper';
 
 export const FilterButton = ({
   inputCommand,
@@ -50,7 +59,7 @@ export const FilterButton = ({
   const [isEnabled, setEnabled] = useState<boolean>(true);
   const [isVisible, setVisible] = useState<boolean>(true);
   const [uniqueId, setUniqueId] = useState<number>(0);
-  const [icon, setIcon] = useState<IconType | undefined>(undefined);
+  const [icon, setIcon] = useState<IconName | undefined>(undefined);
   const [isOpen, setOpen] = useState<boolean>(false);
   const [isAllChecked, setAllChecked] = useState<boolean>(false);
   const [selectedLabel, setSelectedLabel] = useState<string>('');
@@ -137,7 +146,17 @@ export const FilterButton = ({
         placement={placement}>
         <Button
           type={usedInSettings ? 'tertiary' : getButtonType(command)}
-          icon={usedInSettings ? (isOpen ? 'ChevronUp' : 'ChevronDown') : icon}
+          icon={
+            usedInSettings ? (
+              isOpen ? (
+                <ChevronUpIcon />
+              ) : (
+                <ChevronDownIcon />
+              )
+            ) : (
+              <IconComponent iconName={icon} />
+            )
+          }
           key={uniqueId}
           disabled={!isEnabled}
           toggled={isOpen}
