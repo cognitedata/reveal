@@ -365,12 +365,12 @@ export abstract class DomainObject {
   }
 
   public getPanelInfoStyle(): PopupStyle {
-    // to be overridden
     // Default lower left corner
     return new PopupStyle({ bottom: 50, left: 0 });
   }
 
   public getPanelToolbar(): BaseCommand[] {
+    // to be overridden
     return [
       new CopyToClipboardCommand(),
       new ToggleMetricUnitsCommand(),

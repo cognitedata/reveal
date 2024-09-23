@@ -22,7 +22,9 @@ export function isEqual(x: number, y: number): boolean {
 
 export function isAbsEqual(x: number, y: number, tolerance: number): boolean {
   const error = x - y;
-  if (error < 0) return error > tolerance;
+  if (error < 0) {
+    return error > tolerance;
+  }
   return error < tolerance;
 }
 
