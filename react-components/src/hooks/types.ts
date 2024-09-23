@@ -9,6 +9,7 @@ import {
   type Model3D
 } from '@cognite/sdk';
 import { type AssetAnnotationImage360Info } from '@cognite/reveal';
+import { DmsUniqueIdentifier } from '../data-providers/FdmSDK';
 
 export type ThreeDModelFdmMappings = {
   modelId: number;
@@ -68,4 +69,13 @@ export type Image360AnnotationMappedAssetData = {
 export type ModelWithRevision = {
   model: Model3D;
   revision: Revision3D;
+};
+
+export type SelectedThreeDResourceContent =
+  | (DmsUniqueIdentifier & { type: 'scene' })
+  | (SingleModelIds & { type: 'model' });
+
+export type SingleModelIds = {
+  modelId: number;
+  revisionId: number;
 };

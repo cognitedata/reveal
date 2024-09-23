@@ -4,15 +4,18 @@
 import { type ReactElement } from 'react';
 
 import { useSDK } from '../RevealCanvas/SDKProvider';
-import { type ModelWithRevision } from '../../hooks/types';
+import { type ModelWithRevision, type SingleModelIds } from '../../hooks/types';
 import { Single3DModelSelection } from './Single3DModelSelection/SelectSingle3DModelSelection';
+import { type DmsUniqueIdentifier } from '../../data-providers/FdmSDK';
 
 type SelectSingle3DModelButtonProps = {
   onSingleModelChanged?: (model: ModelWithRevision | undefined) => void;
+  selectedResource?: DmsUniqueIdentifier | SingleModelIds | undefined;
 };
 
 export const SelectSingle3DModelButton = ({
-  onSingleModelChanged
+  onSingleModelChanged,
+  selectedResource
 }: SelectSingle3DModelButtonProps): ReactElement => {
   const sdk = useSDK();
 
@@ -20,5 +23,11 @@ export const SelectSingle3DModelButton = ({
     if (onSingleModelChanged !== undefined) onSingleModelChanged(model);
   };
 
-  return <Single3DModelSelection sdk={sdk} onModelChange={handleSingleModelChange} />;
+  return (
+    <Single3DModelSelection
+      selectedResource={selectedResource}
+      sdk={sdk}
+      onModelChange={handleSingleModelChange}
+    />
+  );
 };
