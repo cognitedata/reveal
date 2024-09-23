@@ -1,5 +1,5 @@
 /*!
- * Copyright 2023 Cognite AS
+ * Copyright 2024 Cognite AS
  */
 
 import { type BaseCommand } from '../../architecture/base/commands/BaseCommand';
@@ -25,23 +25,19 @@ export function getTooltipPlacement(isHorizontal: boolean): PlacementType {
 
 export function getButtonType(command: BaseCommand): ButtonType {
   // This was the only way it went through compiler: (more button types will be added in the future)
-  const type = command.buttonType;
-  if (type === 'ghost' || type === 'ghost-destructive' || type === 'primary') {
-    return type;
-  }
-  return 'ghost';
+  return command.buttonType as ButtonType;
 }
 
-export function getDefaultCommand(
-  newCommand: BaseCommand,
+export function getDefaultCommand<T extends BaseCommand>(
+  newCommand: T,
   renderTarget: RevealRenderTarget
-): BaseCommand {
+): T {
   // If it exists from before, return the existing command
   // Otherwise, add the new command to the controller and attach the renderTarget.
   if (!newCommand.hasData) {
     const oldCommand = renderTarget.commandsController.getEqual(newCommand);
     if (oldCommand !== undefined) {
-      return oldCommand;
+      return oldCommand as T;
     }
     renderTarget.commandsController.add(newCommand);
   }

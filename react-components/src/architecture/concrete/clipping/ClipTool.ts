@@ -38,7 +38,7 @@ export class ClipTool extends PrimitiveEditTool {
   }
 
   public override get tooltip(): TranslateKey {
-    return { key: 'CLIP_TOOL', fallback: 'Create or edit crop box and slice planes' };
+    return { key: 'CLIP_TOOL', fallback: 'Create, edit crop boxes, and slice planes' };
   }
 
   public override getToolbar(): Array<BaseCommand | undefined> {

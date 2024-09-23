@@ -65,12 +65,21 @@ export abstract class RenderTargetCommand extends BaseCommand {
     return activeTool.undoManager;
   }
 
+  public attach(renderTarget: RevealRenderTarget): void {
+    this._renderTarget = renderTarget;
+    this.attachChildren();
+  }
+
   // ==================================================
   // INSTANCE METHODS
   // ==================================================
 
-  public attach(renderTarget: RevealRenderTarget): void {
-    this._renderTarget = renderTarget;
+  protected attachChildren(): void {
+    for (const child of this.getChildren()) {
+      if (child instanceof RenderTargetCommand) {
+        child.attach(this.renderTarget);
+      }
+    }
   }
 
   public addTransaction(transaction: Transaction | undefined): void {

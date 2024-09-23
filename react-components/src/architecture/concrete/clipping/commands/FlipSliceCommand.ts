@@ -15,7 +15,7 @@ export class FlipSliceCommand extends DomainObjectCommand<SliceDomainObject> {
   // ==================================================
 
   public override get tooltip(): TranslateKey {
-    return { key: 'SLICE_FLIP', fallback: 'Flip side on this slice' };
+    return { key: 'SLICE_FLIP', fallback: 'Flip side' };
   }
 
   public override get icon(): IconName {

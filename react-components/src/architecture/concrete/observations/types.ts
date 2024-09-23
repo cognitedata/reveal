@@ -8,7 +8,7 @@ import {
 } from '@cognite/reveal';
 import { type ObservationProperties } from './models';
 import { type Vector3 } from 'three';
-import { type FdmNode } from '../../../utilities/FdmSDK';
+import { type FdmNode } from '../../../data-providers/FdmSDK';
 import { type DomainObjectIntersection } from '../../base/domainObjectsHelpers/DomainObjectIntersection';
 import { type ObservationsDomainObject } from './ObservationsDomainObject';
 

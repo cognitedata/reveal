@@ -3,45 +3,48 @@
  */
 
 import { type UseQueryResult, useQuery } from '@tanstack/react-query';
-import { useFdmSdk } from '../components/RevealCanvas/SDKProvider';
-import { type Source, type DmsUniqueIdentifier } from '../utilities/FdmSDK';
+import { useFdm3dDataProvider, useFdmSdk } from '../components/RevealCanvas/SDKProvider';
+import { type Source, type DmsUniqueIdentifier } from '../data-providers/FdmSDK';
 import assert from 'assert';
-import { type FdmInstanceWithView } from '../utilities/types';
+import { type FdmInstanceWithView } from '../data-providers/types';
 
 export function use3dRelatedDirectConnections(
   instance: DmsUniqueIdentifier | undefined
 ): UseQueryResult<FdmInstanceWithView[]> {
   const fdmSdk = useFdmSdk();
+  const fdmDataProvider = useFdm3dDataProvider();
 
   return useQuery({
-    queryKey: ['reveal-react-components', 'get-3d-related-direct-connections'],
+    queryKey: [
+      'reveal-react-components',
+      'get-3d-related-direct-connections',
+      instance?.externalId,
+      instance?.space
+    ],
     queryFn: async () => {
       assert(instance !== undefined);
       const views = await fdmSdk.inspectInstances({
         inspectionOperations: { involvedViews: {} },
-        items: [{ instanceType: 'node', ...instance }]
+        items: [{ instanceType: 'node', externalId: instance.externalId, space: instance.space }]
       });
 
       const view = views.items[0].inspectionResults.involvedViews[0];
       const instanceContent = (
         await fdmSdk.getByExternalIds<Record<string, unknown>>(
-          [{ instanceType: 'node', ...instance }],
+          [{ instanceType: 'node', externalId: instance.externalId, space: instance.space }],
           view
         )
       ).items[0];
 
-      const directlyRelatedObjects = Object.values(instanceContent.properties)
-        .map((spaceScope) =>
-          Object.values(spaceScope)
-            .map((fieldValues) =>
-              Object.values(fieldValues).filter(
-                (value: any): value is DmsUniqueIdentifier =>
-                  value.externalId !== undefined && value.space !== undefined
-              )
+      const directlyRelatedObjects = Object.values(instanceContent.properties).flatMap(
+        (spaceScope) =>
+          Object.values(spaceScope).flatMap((fieldValues) =>
+            Object.values(fieldValues).filter(
+              (value: any): value is DmsUniqueIdentifier =>
+                value.externalId !== undefined && value.space !== undefined
             )
-            .flat()
-        )
-        .flat();
+          )
+      );
 
       if (directlyRelatedObjects.length === 0) {
         return [];
@@ -49,7 +52,11 @@ export function use3dRelatedDirectConnections(
 
       const relatedObjectInspectionsResult = await fdmSdk.inspectInstances({
         inspectionOperations: { involvedViews: {} },
-        items: directlyRelatedObjects.map((fdmId) => ({ ...fdmId, instanceType: 'node' }))
+        items: directlyRelatedObjects.map((fdmId) => ({
+          externalId: fdmId.externalId,
+          space: fdmId.space,
+          instanceType: 'node'
+        }))
       });
 
       const relatedObjectsViewLists = relatedObjectInspectionsResult.items.map(
@@ -60,7 +67,7 @@ export function use3dRelatedDirectConnections(
         .map((viewList, objectInd) => viewList.map((view) => [objectInd, view] as const))
         .flat();
 
-      const [deduplicatedViews, viewToDeduplicatedIndexMap] = createDeduplicatediewToIndexMap(
+      const [deduplicatedViews, viewToDeduplicatedIndexMap] = createDeduplicatedViewToIndexMap(
         relatedObjectViewsWithObjectIndex
       );
 
@@ -70,7 +77,7 @@ export function use3dRelatedDirectConnections(
         const viewResultIndex = viewToDeduplicatedIndexMap.get(createViewKey(view));
         assert(viewResultIndex !== undefined);
         const propsForView = viewProps.items[viewResultIndex];
-        return Object.keys(propsForView.properties).some((propName) => propName === 'inModel3d');
+        return fdmDataProvider.is3dView(propsForView);
       });
 
       return threeDRelatedViews.map(([index, view]) => ({
@@ -88,7 +95,7 @@ function createViewKey(source: Source): ViewKey {
   return `${source.externalId}/${source.space}/${source.version}`;
 }
 
-function createDeduplicatediewToIndexMap(
+function createDeduplicatedViewToIndexMap(
   viewsWithObjectIndex: Array<readonly [number, Source]>
 ): [Source[], Map<ViewKey, number>] {
   const deduplicatedViews: Source[] = [];

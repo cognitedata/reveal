@@ -4,7 +4,7 @@
 
 import { useState, type ReactElement } from 'react';
 
-import { Button, Tooltip as CogsTooltip, HelpIcon } from '@cognite/cogs.js';
+import { Button, Tooltip as CogsTooltip } from '@cognite/cogs.js';
 import { Dropdown } from '@cognite/cogs-lab';
 import styled from 'styled-components';
 import { MouseNavigation } from './Help/MouseNavigation';
@@ -21,30 +21,31 @@ export const HelpButton = ({ fallbackLanguage }: HelpButtonProps): ReactElement 
   const [helpActive, setHelpActive] = useState<boolean>(false);
 
   return (
-    <CogsTooltip content={t('HELP_TOOLTIP', 'Help')} placement="right" appendTo={document.body}>
-      <Dropdown
-        onClickOutside={() => {
-          setHelpActive(false);
-        }}
-        content={
-          <StyledContainer>
-            <MouseNavigation fallbackLanguage={fallbackLanguage} />
-            <KeyboardNavigation fallbackLanguage={fallbackLanguage} />
-            <TouchNavigation fallbackLanguage={fallbackLanguage} />
-          </StyledContainer>
-        }
-        placement="right">
+    <Dropdown
+      appendTo={document.body}
+      onClickOutside={() => {
+        setHelpActive(false);
+      }}
+      content={
+        <StyledContainer>
+          <MouseNavigation fallbackLanguage={fallbackLanguage} />
+          <KeyboardNavigation fallbackLanguage={fallbackLanguage} />
+          <TouchNavigation fallbackLanguage={fallbackLanguage} />
+        </StyledContainer>
+      }
+      placement="right">
+      <CogsTooltip content={t('HELP_TOOLTIP', 'Help')} placement="right" appendTo={document.body}>
         <Button
           type="ghost"
-          icon=<HelpIcon />
+          icon="Help"
           aria-label="help-button"
           toggled={helpActive}
           onClick={() => {
             setHelpActive((prevState) => !prevState);
           }}
         />
-      </Dropdown>
-    </CogsTooltip>
+      </CogsTooltip>
+    </Dropdown>
   );
 };
 

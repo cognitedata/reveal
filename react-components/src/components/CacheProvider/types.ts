@@ -8,19 +8,27 @@ import {
   type Node3D,
   type AnnotationsCogniteAnnotationTypesImagesAssetLink
 } from '@cognite/sdk';
-import { type DmsUniqueIdentifier, type Source, type EdgeItem } from '../../utilities/FdmSDK';
-import { type InModel3dEdgeProperties } from '../../utilities/globalDataModels';
+import { type DmsUniqueIdentifier, type Source } from '../../data-providers/FdmSDK';
 import { type AssetAnnotationImage360Info } from '@cognite/reveal';
 import { type Vector3 } from 'three';
 
-export type FdmCadEdge = EdgeItem<InModel3dEdgeProperties>;
-export type FdmEdgeWithNode = { edge: FdmCadEdge; cadNode: Node3D; view?: Source };
+export type FdmCadConnection = {
+  instance: DmsUniqueIdentifier;
+  modelId: number;
+  revisionId: number;
+  treeIndex: number;
+};
+export type FdmConnectionWithNode = {
+  connection: FdmCadConnection;
+  cadNode: Node3D;
+  views?: Source[];
+};
 
 export type CadNodeWithFdmIds = { cadNode: Node3D; fdmIds: DmsUniqueIdentifier[] };
-export type CadNodeWithEdges = { cadNode: Node3D; edges: FdmCadEdge[] };
+export type CadNodeWithConnections = { cadNode: Node3D; connections: FdmCadConnection[] };
 export type FdmNodeDataPromises = {
   cadAndFdmNodesPromise: Promise<CadNodeWithFdmIds | undefined>;
-  viewsPromise: Promise<Source[] | undefined>;
+  viewsPromise: Promise<Source[][] | undefined>;
 };
 
 export type ModelRevisionAssetNodesResult = {
@@ -30,15 +38,15 @@ export type ModelRevisionAssetNodesResult = {
 };
 
 export type AncestorQueryResult = {
-  edges: FdmCadEdge[];
+  connections: FdmCadConnection[];
   ancestorsWithSameMapping: Node3D[];
   firstMappedAncestorTreeIndex: number;
 };
 
 export type ModelId = number;
 export type RevisionId = number;
-export type TreeIndex = number;
 export type NodeId = number;
+export type TreeIndex = number;
 export type AssetId = number;
 export type FdmId = DmsUniqueIdentifier;
 
@@ -46,10 +54,10 @@ export type ModelRevisionId = { modelId: number; revisionId: number };
 
 export type ModelRevisionKey = `${ModelId}/${RevisionId}`;
 export type FdmKey = `${string}/${string}`;
-export type ModelNodeIdKey = `${ModelId}/${RevisionId}/${NodeId}`;
+export type ModelTreeIndexKey = `${ModelId}/${RevisionId}/${TreeIndex}`;
 export type ModelAssetIdKey = `${ModelId}/${RevisionId}/${AssetId}`;
 
-export type ModelRevisionToEdgeMap = Map<ModelRevisionKey, FdmEdgeWithNode[]>;
+export type ModelRevisionToConnectionMap = Map<ModelRevisionKey, FdmConnectionWithNode[]>;
 
 export type PointCloudAnnotationModel = AnnotationModel & { data: AnnotationsBoundingVolume };
 

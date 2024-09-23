@@ -142,6 +142,7 @@ export class StationaryCameraManager implements CameraManager {
       })
       .easing(num => TWEEN.Easing.Quintic.InOut(num))
       .start(TWEEN.now());
+    TWEEN.add(tween);
 
     return new Promise(resolve => {
       tween.onComplete(() => {

@@ -36,6 +36,7 @@ export class ObservationsTool extends BaseEditTool {
   }
 
   public override onActivate(): void {
+    super.onActivate();
     let domainObject = this.getObservationsDomainObject();
     if (domainObject === undefined) {
       domainObject = new ObservationsDomainObject(this.renderTarget.fdmSdk);
@@ -45,6 +46,7 @@ export class ObservationsTool extends BaseEditTool {
   }
 
   public override onDeactivate(): void {
+    super.onDeactivate();
     const domainObject = this.getObservationsDomainObject();
     domainObject?.setSelectedObservation(undefined);
   }

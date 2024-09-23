@@ -49,24 +49,27 @@ export {
 export { useImage360AnnotationMappingsForAssetIds } from './components/CacheProvider/Image360AnnotationCacheProvider';
 export { useLoadedScene } from './components/SceneContainer/LoadedSceneContext';
 export { useIsDraggingOnViewer } from './hooks/useIsDraggingOnViewer';
+export { useAssetMappedNodesForRevisions } from './components/CacheProvider/AssetMappingAndNode3DCacheProvider';
 
 // Queries
 export { use3DModelName } from './query/use3DModelName';
-export { use3dScenes } from './query/use3dScenes';
+export { use3dScenes } from './hooks/scenes/use3dScenes';
 export { use3dRelatedEdgeConnections } from './query/use3dRelatedEdgeConnections';
 export { use3dRelatedDirectConnections } from './query/use3dRelatedDirectConnections';
 export { use3dNodeByExternalId } from './query/use3dNodeByExternalId';
 export {
   useAllMappedEquipmentFDM,
   useSearchMappedEquipmentFDM,
-  type SearchResultsWithView
+  type InstancesWithView
 } from './query/useSearchMappedEquipmentFDM';
 export {
   useSearchMappedEquipmentAssetMappings,
   useAllMappedEquipmentAssetMappings,
   useMappingsForAssetIds,
   type ModelMappings,
-  type ModelMappingsWithAssets
+  type ModelMappingsWithAssets,
+  type AssetPage,
+  type ModelAssetPage
 } from './query/useSearchMappedEquipmentAssetMappings';
 export {
   useSearchAssetsMapped360Annotations,
@@ -80,10 +83,7 @@ export { useModelsForInstanceQuery } from './query/useModelsForInstanceQuery';
 
 // Higher order components
 export { withSuppressRevealEvents } from './higher-order-components/withSuppressRevealEvents';
-export {
-  withCameraStateUrlParam,
-  useGetCameraStateFromUrlParam
-} from './higher-order-components/withCameraStateUrlParam';
+export { type CameraStateParameters } from './components/RevealCanvas/hooks/useCameraStateControl';
 // Types
 export {
   type PointCloudModelStyling,
@@ -112,17 +112,20 @@ export {
   type AddImage360CollectionOptions,
   type AddResourceOptions,
   type AddCadResourceOptions,
-  type AddPointCloudResourceOptions
+  type AddPointCloudResourceOptions,
+  type CadModelOptions
 } from './components/Reveal3DResources/types';
 export {
   type PointCloudAnnotationMappedAssetData,
   type Image360AnnotationMappedAssetData,
   type LayersUrlStateParam,
+  type DefaultLayersConfiguration,
   type ThreeDModelFdmMappings
 } from './hooks/types';
+export { type LayersButtonProps } from './components/RevealToolbar/LayersButton';
 export type { CameraNavigationActions } from './hooks/useCameraNavigation';
-export type { Source, DmsUniqueIdentifier } from './utilities/FdmSDK';
-export type { FdmInstanceWithView } from './utilities/types';
+export type { Source, DmsUniqueIdentifier } from './data-providers/FdmSDK';
+export type { FdmInstanceWithView } from './data-providers/types';
 export type { QualitySettings } from './components/RevealToolbar/SettingsContainer/types';
 export type { SceneIdentifiers } from './components/SceneContainer/sceneTypes';
 
@@ -138,10 +141,18 @@ export type {
   RuleOutputSet,
   TimeseriesRuleTrigger,
   MetadataRuleTrigger,
+  FdmRuleTrigger,
+  FdmKeyRuleTriggerTyping,
+  FdmRuleTriggerTyping,
+  FdmInstanceNodeDataKey,
   StringCondition,
   NumericCondition,
+  DatetimeCondition,
+  BooleanCondition,
   StringExpression,
   NumericExpression,
+  DatetimeExpression,
+  BooleanExpression,
   ExpressionOperator,
   Expression,
   ConcreteExpression,
@@ -152,18 +163,32 @@ export type {
   ExpressionOperatorsTypes,
   StringConditionTypes,
   NumericConditionTypes,
+  NumericUniqueConditionTypes,
   NumericWithinConditionType,
   NumericOutsideConditionType,
-  CriteriaTypes
+  DatetimeConditionTypes,
+  DatetimeUniqueConditionTypes,
+  DatetimeBetweenConditionType,
+  BooleanConditionTypes,
+  CriteriaTypes,
+  AllRuleBasedStylingGroups
 } from './components/RuleBasedOutputs/types';
-
-export { ActiveToolToolbar } from './components/Architecture/Toolbar';
-export { DomainObjectPanel } from './components/Architecture/DomainObjectPanel';
-export { RevealButtons } from './components/Architecture/RevealButtons';
 
 export { RuleBasedOutputsPanel } from './components/RuleBasedOutputs/RuleBasedOutputsPanel';
 
 // Functions
 export { getRuleTriggerTypes } from './components/RuleBasedOutputs/utils';
 
-export type { InstanceReference, AssetInstanceReference } from './utilities/types';
+export type { InstanceReference, AssetInstanceReference } from './data-providers/types';
+
+export { ActiveToolToolbar } from './components/Architecture/Toolbar';
+export { DomainObjectPanel } from './components/Architecture/DomainObjectPanel';
+export { RevealButtons } from './components/Architecture/RevealButtons';
+export { useRenderTarget } from './components/RevealCanvas/ViewerContext';
+
+/**
+ * Export classes and types from architecture
+ * Note: This is not stable code yet and is subject to change.
+ * @beta
+ */
+export * as Architecture from './architecture/index';

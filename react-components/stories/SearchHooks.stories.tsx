@@ -13,7 +13,7 @@ import {
   type AddPointCloudResourceOptions
 } from '../src';
 import { Color } from 'three';
-import { type ReactElement, useState, useMemo, useEffect } from 'react';
+import { type ReactElement, useState, useMemo, useCallback } from 'react';
 import { createSdkByUrlToken } from './utilities/createSdkByUrlToken';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import { RevealResourcesFitCameraOnLoad } from './utilities/with3dResoursesFitCameraOnLoad';
@@ -35,7 +35,7 @@ import {
   useSearchAssetsMappedPointCloudAnnotations
 } from '../src/query/useSearchAssetsMappedPointCloudAnnotations';
 import { isEqual } from 'lodash';
-import { type NodeItem } from '../src/utilities/FdmSDK';
+import { type NodeItem } from '../src/data-providers/FdmSDK';
 import { Button, Input } from '@cognite/cogs.js';
 import { is360ImageAddOptions } from '../src/components/Reveal3DResources/typeGuards';
 
@@ -59,7 +59,7 @@ const StoryContent = ({ resources }: { resources: AddResourceOptions[] }): React
   const [mainSearchQuery, setMainSearchQuery] = useState<string>('');
   const [searchMethod, setSearchMethod] = useState<
     'allFdm' | 'allAssets' | 'fdmSearch' | 'assetSearch'
-  >('fdmSearch');
+  >('assetSearch');
 
   const filteredResources = resources.filter(
     (resource): resource is AddCadResourceOptions | AddPointCloudResourceOptions =>
@@ -71,25 +71,24 @@ const StoryContent = ({ resources }: { resources: AddResourceOptions[] }): React
     viewsToSearch,
     filteredResources,
     undefined,
-    100,
-    sdk
+    100
   );
 
-  const { data: assetSearchData } = useSearchMappedEquipmentAssetMappings(
-    mainSearchQuery,
-    filteredResources,
-    1000,
-    sdk
-  );
+  const {
+    data: assetSearchData,
+    isFetching: isAssetSearchFetching,
+    hasNextPage: assetSearchHasNextPage,
+    fetchNextPage: fetchAssetSearchNextPage
+  } = useSearchMappedEquipmentAssetMappings(mainSearchQuery, filteredResources, 1000, sdk);
 
-  const { data: allEquipment } = useAllMappedEquipmentFDM(filteredResources, viewsToSearch, sdk);
+  const { data: allEquipment } = useAllMappedEquipmentFDM(filteredResources, viewsToSearch);
 
   const {
     data: allAssets,
     isFetching,
     hasNextPage,
     fetchNextPage
-  } = useAllMappedEquipmentAssetMappings(filteredResources, sdk);
+  } = useAllMappedEquipmentAssetMappings(filteredResources, sdk, 25);
 
   const filtered360ImageResources = resources.filter(
     (resource): resource is AddImage360CollectionOptions => 'siteId' in resource
@@ -120,13 +119,22 @@ const StoryContent = ({ resources }: { resources: AddResourceOptions[] }): React
     filteredResources
   );
 
-  useEffect(() => {
-    if (searchMethod !== 'allAssets') return;
-
-    if (!isFetching && hasNextPage) {
+  const fetchNextPageCallback = useCallback(() => {
+    if (searchMethod !== 'allAssets' && searchMethod !== 'assetSearch') return;
+    if (searchMethod === 'allAssets' && !isFetching && hasNextPage) {
       void fetchNextPage();
+    } else if (searchMethod === 'assetSearch' && !isAssetSearchFetching && assetSearchHasNextPage) {
+      void fetchAssetSearchNextPage();
     }
-  }, [searchMethod, isFetching, hasNextPage, fetchNextPage]);
+  }, [
+    searchMethod,
+    isFetching,
+    hasNextPage,
+    fetchNextPage,
+    isAssetSearchFetching,
+    assetSearchHasNextPage,
+    fetchAssetSearchNextPage
+  ]);
 
   const filteredEquipment = useMemo(() => {
     if (searchMethod === 'allFdm') {
@@ -191,11 +199,16 @@ const StoryContent = ({ resources }: { resources: AddResourceOptions[] }): React
         return [];
       }
 
+      const transformedAssetsSearch = assetSearchData?.pages
+        .flat()
+        .map((mapping) => mapping.assets)
+        .flat();
+
       const assetImage360SearchData =
         assetAnnotationImage360SearchData?.map((mapping) => mapping.asset) ?? [];
 
       const combinedAssetSearchData = [
-        ...assetSearchData,
+        ...transformedAssetsSearch,
         ...(assetImage360SearchData ?? []),
         ...(pointCloudAssetSearchData ?? [])
       ];
@@ -248,21 +261,19 @@ const StoryContent = ({ resources }: { resources: AddResourceOptions[] }): React
 
   return (
     <>
-      <RevealContext sdk={sdk} color={new Color(0x4a4a4a)}>
-        <RevealCanvas>
-          <ReactQueryDevtools buttonPosition="bottom-right" />
-          <RevealResourcesFitCameraOnLoad
-            resources={resources}
-            defaultResourceStyling={{
-              cad: {
-                default: { color: new Color('#efefef') },
-                mapped: { color: new Color('#c5cbff') }
-              }
-            }}
-          />
-          <RevealToolbar />
-        </RevealCanvas>
-      </RevealContext>
+      <RevealCanvas>
+        <ReactQueryDevtools buttonPosition="bottom-right" />
+        <RevealResourcesFitCameraOnLoad
+          resources={resources}
+          defaultResourceStyling={{
+            cad: {
+              default: { color: new Color('#efefef') },
+              mapped: { color: new Color('#c5cbff') }
+            }
+          }}
+        />
+        <RevealToolbar />
+      </RevealCanvas>
       <h1>Mapped equipment</h1>
       <div style={{ display: 'flex', flexDirection: 'row', gap: 8, padding: '0 8px 8px 0' }}>
         <Input
@@ -308,6 +319,12 @@ const StoryContent = ({ resources }: { resources: AddResourceOptions[] }): React
           }}>
           Asset search hook
         </Button>
+        <Button
+          size="small"
+          loading={isFetching || isAssetSearchFetching}
+          onClick={fetchNextPageCallback}>
+          Load More
+        </Button>
       </div>
       <div
         style={{
@@ -348,8 +365,8 @@ export const Main: Story = {
   args: {
     resources: [
       {
-        modelId: 3282558010084460,
-        revisionId: 4932190516335812,
+        modelId: 3544114490298106,
+        revisionId: 6405404576933316,
         styling: {
           default: {
             color: new Color('#efefef')
@@ -361,16 +378,18 @@ export const Main: Story = {
         siteId: 'celanese1'
       },
       {
-        modelId: 1350257070750400,
-        revisionId: 5110855034466831
+        modelId: 7646043527629245,
+        revisionId: 6059566106376463
       }
     ]
   },
   render: ({ resources }) => {
     return (
-      <QueryClientProvider client={queryClient}>
-        <StoryContent resources={resources} />
-      </QueryClientProvider>
+      <RevealContext sdk={sdk} color={new Color(0x4a4a4a)}>
+        <QueryClientProvider client={queryClient}>
+          <StoryContent resources={resources} />
+        </QueryClientProvider>
+      </RevealContext>
     );
   }
 };

@@ -8,7 +8,9 @@ import {
   isFlexibleCameraManager,
   type Cognite3DViewer,
   type IFlexibleCameraManager,
-  CDF_TO_VIEWER_TRANSFORMATION
+  CDF_TO_VIEWER_TRANSFORMATION,
+  CognitePointCloudModel,
+  CogniteCadModel
 } from '@cognite/reveal';
 import {
   Vector3,
@@ -31,7 +33,7 @@ import { Range3 } from '../utilities/geometry/Range3';
 import { getBoundingBoxFromPlanes } from '../utilities/geometry/getBoundingBoxFromPlanes';
 import { Changes } from '../domainObjectsHelpers/Changes';
 import { type CogniteClient } from '@cognite/sdk/dist/src';
-import { FdmSDK } from '../../../utilities/FdmSDK';
+import { FdmSDK } from '../../../data-providers/FdmSDK';
 
 const DIRECTIONAL_LIGHT_NAME = 'DirectionalLight';
 
@@ -135,11 +137,15 @@ export class RevealRenderTarget {
     return this.cameraManager.getCamera();
   }
 
-  public get clippedSceneBoundingBox(): Box3 {
+  // ==================================================
+  // INSTANCE PROPERTIES: Get bounding box
+  // ==================================================
+
+  public get clippedVisualSceneBoundingBox(): Box3 {
     if (this._clippedBoundingBox === undefined) {
-      return this.sceneBoundingBox;
+      return this.visualSceneBoundingBox;
     }
-    const boundingBox = this.sceneBoundingBox.clone();
+    const boundingBox = this.visualSceneBoundingBox.clone();
     boundingBox.intersect(this._clippedBoundingBox);
     return boundingBox;
   }
@@ -148,9 +154,29 @@ export class RevealRenderTarget {
     return this.viewer.getSceneBoundingBox();
   }
 
+  public get visualSceneBoundingBox(): Box3 {
+    return this.viewer.getVisualSceneBoundingBox();
+  }
+
   // ==================================================
   // INSTANCE METHODS
   // ==================================================
+
+  public *getPointClouds(): Generator<CognitePointCloudModel> {
+    for (const model of this.viewer.models) {
+      if (model instanceof CognitePointCloudModel) {
+        yield model;
+      }
+    }
+  }
+
+  public *getCadModels(): Generator<CogniteCadModel> {
+    for (const model of this.viewer.models) {
+      if (model instanceof CogniteCadModel) {
+        yield model;
+      }
+    }
+  }
 
   public setConfig(config: BaseRevealConfig): void {
     this._config = config;
@@ -169,6 +195,7 @@ export class RevealRenderTarget {
 
   public onStartup(): void {
     this._config?.onStartup(this);
+    CommandsUpdater.update(this);
   }
 
   public dispose(): void {
@@ -228,11 +255,7 @@ export class RevealRenderTarget {
   // ==================================================
 
   public fitView(): boolean {
-    const boundingBox = this.clippedSceneBoundingBox;
-    if (boundingBox.isEmpty()) {
-      return false;
-    }
-    this.viewer.fitCameraToBoundingBox(this.clippedSceneBoundingBox);
+    this.viewer.fitCameraToBoundingBox(this.clippedVisualSceneBoundingBox);
     return true;
   }
 

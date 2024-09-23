@@ -6,6 +6,7 @@ import { type TranslateKey } from '../../base/utilities/TranslateKey';
 import { Changes } from '../../base/domainObjectsHelpers/Changes';
 import { ObservationsCommand } from './ObservationsCommand';
 import { type IconName } from '../../base/utilities/IconName';
+import { CommandsUpdater } from '../../base/reactUpdaters/CommandsUpdater';
 
 export class SaveObservationsCommand extends ObservationsCommand {
   public override get icon(): IconName {
@@ -42,7 +43,7 @@ export class SaveObservationsCommand extends ObservationsCommand {
       .then(() => {
         const observation = this.getObservationsDomainObject();
         observation?.notify(Changes.geometry);
-        this.renderTarget.commandsController.update();
+        CommandsUpdater.update(this.renderTarget);
       })
       .catch((e) => {
         throw e;

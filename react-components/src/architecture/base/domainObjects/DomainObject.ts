@@ -26,6 +26,7 @@ import { CopyToClipboardCommand } from '../concreteCommands/CopyToClipboardComma
 import { type BaseCommand } from '../commands/BaseCommand';
 import { type Transaction } from '../undo/Transaction';
 import { type IconName } from '../../base/utilities/IconName';
+import { ToggleMetricUnitsCommand } from '../concreteCommands/ToggleMetricUnitsCommand';
 
 /**
  * Represents an abstract base class for domain objects.
@@ -370,7 +371,11 @@ export abstract class DomainObject {
   }
 
   public getPanelToolbar(): BaseCommand[] {
-    return [new DeleteDomainObjectCommand(this), new CopyToClipboardCommand()];
+    return [
+      new CopyToClipboardCommand(),
+      new ToggleMetricUnitsCommand(),
+      new DeleteDomainObjectCommand(this)
+    ];
   }
 
   // ==================================================

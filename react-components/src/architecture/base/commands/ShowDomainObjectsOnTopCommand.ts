@@ -16,6 +16,10 @@ export abstract class ShowDomainObjectsOnTopCommand extends InstanceCommand {
     return 'Flag';
   }
 
+  public override get isToggle(): boolean {
+    return true;
+  }
+
   public override get isChecked(): boolean {
     return !this.getDepthTest();
   }

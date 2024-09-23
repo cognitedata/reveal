@@ -4,7 +4,6 @@
 
 import { Color } from 'three';
 import {
-  type StringExpression,
   type ColorRuleOutput,
   type RuleOutput,
   type NumericExpression,
@@ -20,67 +19,32 @@ import {
   type TriggerTypeData,
   type TimeseriesAndDatapoints,
   type EmptyRuleForSelection,
-  type RuleAndEnabled
+  type RuleAndEnabled,
+  type FdmStylingGroupAndStyleIndex,
+  type AllMappingStylingGroupAndStyleIndex,
+  type FdmRuleTrigger,
+  type FdmInstanceNodeWithConnectionAndProperties
 } from './types';
 import { NumericRange, TreeIndexNodeCollection, type NodeAppearance } from '@cognite/reveal';
 import { type AssetMapping3D, type Asset, type Datapoints } from '@cognite/sdk';
-import { type AssetStylingGroup } from '../Reveal3DResources/types';
+import {
+  type FdmAssetStylingGroup,
+  type AssetStylingGroup,
+  type FdmPropertyType
+} from '../Reveal3DResources/types';
 import { isDefined } from '../../utilities/isDefined';
 import { assertNever } from '../../utilities/assertNever';
-import { type AssetIdsAndTimeseries } from '../../utilities/types';
+import { type AssetIdsAndTimeseries } from '../../data-providers/types';
+import { uniq } from 'lodash';
+import { type DmsUniqueIdentifier } from '../../data-providers/FdmSDK';
+import { checkNumericExpressionStatement } from './core/checkNumericExpressionStatement';
+import { checkStringExpressionStatement } from './core/checkStringExpressionStatement';
+import { checkDatetimeExpressionStatement } from './core/checkDatetimeExpressionStatement';
+import { checkBooleanExpressionStatement } from './core/checkBooleanExpressionStatement';
 
-const checkStringExpressionStatement = (
+export const getTriggerNumericData = (
   triggerTypeData: TriggerTypeData[],
-  expression: StringExpression
-): boolean | undefined => {
-  const { trigger, condition } = expression;
-
-  let expressionResult: boolean | undefined = false;
-
-  const currentTriggerData = triggerTypeData.find(
-    (triggerType) => triggerType.type === trigger?.type
-  );
-
-  const isMetadataAndAssetTrigger =
-    trigger?.type === 'metadata' &&
-    currentTriggerData?.type === 'metadata' &&
-    currentTriggerData?.asset !== undefined;
-
-  const assetTrigger = isMetadataAndAssetTrigger
-    ? currentTriggerData?.asset[trigger.type]?.[trigger.key]
-    : undefined;
-
-  if (assetTrigger === undefined) return;
-
-  switch (condition.type) {
-    case 'equals': {
-      expressionResult = assetTrigger === condition.parameter;
-      break;
-    }
-    case 'notEquals': {
-      expressionResult = assetTrigger !== condition.parameter;
-      break;
-    }
-    case 'contains': {
-      expressionResult = assetTrigger?.includes(condition.parameter) ?? undefined;
-      break;
-    }
-    case 'startsWith': {
-      expressionResult = assetTrigger?.startsWith(condition.parameter) ?? undefined;
-      break;
-    }
-    case 'endsWith': {
-      expressionResult = assetTrigger?.endsWith(condition.parameter) ?? undefined;
-      break;
-    }
-  }
-
-  return expressionResult;
-};
-
-const getTriggerNumericData = (
-  triggerTypeData: TriggerTypeData[],
-  trigger: MetadataRuleTrigger | TimeseriesRuleTrigger
+  trigger: MetadataRuleTrigger | TimeseriesRuleTrigger | FdmRuleTrigger
 ): number | undefined => {
   const currentTriggerData = triggerTypeData.find(
     (triggerType) => triggerType.type === trigger?.type
@@ -95,7 +59,7 @@ const getTriggerNumericData = (
   }
 };
 
-const getTriggerTimeseriesNumericData = (
+export const getTriggerTimeseriesNumericData = (
   triggerTypeData: TriggerTypeData,
   trigger: TimeseriesRuleTrigger
 ): number | undefined => {
@@ -111,75 +75,14 @@ const getTriggerTimeseriesNumericData = (
   return Number(datapoint);
 };
 
-const checkNumericExpressionStatement = (
-  triggerTypeData: TriggerTypeData[],
-  expression: NumericExpression
-): boolean | undefined => {
-  const trigger = expression.trigger;
-  const condition = expression.condition;
-
-  let expressionResult: boolean = false;
-
-  const dataTrigger = getTriggerNumericData(triggerTypeData, trigger);
-
-  if (dataTrigger === undefined) return;
-
-  switch (condition.type) {
-    case 'equals': {
-      const parameter = condition.parameters[0];
-      expressionResult = dataTrigger === parameter;
-      break;
-    }
-    case 'notEquals': {
-      const parameter = condition.parameters[0];
-      expressionResult = dataTrigger !== parameter;
-      break;
-    }
-    case 'lessThan': {
-      const parameter = condition.parameters[0];
-      expressionResult = dataTrigger < parameter;
-      break;
-    }
-    case 'greaterThan': {
-      const parameter = condition.parameters[0];
-      expressionResult = dataTrigger > parameter;
-      break;
-    }
-    case 'lessThanOrEquals': {
-      const parameter = condition.parameters[0];
-      expressionResult = dataTrigger <= parameter;
-      break;
-    }
-    case 'greaterThanOrEquals': {
-      const parameter = condition.parameters[0];
-      expressionResult = dataTrigger >= parameter;
-      break;
-    }
-    case 'within': {
-      const lower = condition.lowerBoundInclusive;
-      const upper = condition.upperBoundInclusive;
-      const value = dataTrigger;
-      expressionResult = lower < value && value < upper;
-      break;
-    }
-    case 'outside': {
-      const lower = condition.lowerBoundExclusive;
-      const upper = condition.upperBoundExclusive;
-      const value = dataTrigger;
-      expressionResult = value <= lower && upper <= value;
-      break;
-    }
-  }
-
-  return expressionResult;
-};
-
 const getTimeseriesExternalIdFromNumericExpression = (
   expression: NumericExpression
 ): string[] | undefined => {
   const trigger = expression.trigger;
 
   if (isMetadataTrigger(trigger)) return;
+
+  if (isFdmTrigger(trigger)) return;
 
   return [trigger.externalId];
 };
@@ -217,6 +120,14 @@ const traverseExpression = (
         expressionResult = checkStringExpressionStatement(triggerTypeData, expression);
         break;
       }
+      case 'datetimeExpression': {
+        expressionResult = checkDatetimeExpressionStatement(triggerTypeData, expression);
+        break;
+      }
+      case 'booleanExpression': {
+        expressionResult = checkBooleanExpressionStatement(triggerTypeData, expression);
+        break;
+      }
     }
     expressionResults.push(expressionResult);
   });
@@ -243,6 +154,8 @@ function forEachExpression(
     }
     case 'numericExpression':
     case 'stringExpression':
+    case 'datetimeExpression':
+    case 'booleanExpression':
       return;
     default:
       assertNever(expression);
@@ -259,7 +172,12 @@ function getExpressionTriggerTypes(expression: Expression): TriggerType[] {
     return expression.expressions.flatMap(getExpressionTriggerTypes);
   } else if (expression.type === 'not') {
     return getExpressionTriggerTypes(expression.expression);
-  } else if (expression.type === 'numericExpression' || expression.type === 'stringExpression') {
+  } else if (
+    expression.type === 'numericExpression' ||
+    expression.type === 'stringExpression' ||
+    expression.type === 'datetimeExpression' ||
+    expression.type === 'booleanExpression'
+  ) {
     return [expression.trigger.type];
   } else {
     assertNever(expression);
@@ -269,16 +187,18 @@ function getExpressionTriggerTypes(expression: Expression): TriggerType[] {
 export const generateRuleBasedOutputs = async ({
   contextualizedAssetNodes,
   assetMappings,
+  fdmMappings,
   ruleSet,
   assetIdsAndTimeseries,
   timeseriesDatapoints
 }: {
   contextualizedAssetNodes: Asset[];
   assetMappings: AssetMapping3D[];
+  fdmMappings: FdmInstanceNodeWithConnectionAndProperties[];
   ruleSet: RuleOutputSet;
   assetIdsAndTimeseries: AssetIdsAndTimeseries[];
   timeseriesDatapoints: Datapoints[] | undefined;
-}): Promise<AssetStylingGroupAndStyleIndex[]> => {
+}): Promise<AllMappingStylingGroupAndStyleIndex[]> => {
   const outputType = 'color'; // for now it only supports colors as the output
 
   const ruleWithOutputs = ruleSet?.rulesWithOutputs;
@@ -301,7 +221,7 @@ export const generateRuleBasedOutputs = async ({
 
         if (outputSelected === undefined) return;
 
-        return await analyzeNodesAgainstExpression({
+        const assetMappingsStylingGroups = await analyzeAssetMappingsAgainstExpression({
           contextualizedAssetNodes,
           assetIdsAndTimeseries,
           timeseriesDatapoints,
@@ -309,6 +229,19 @@ export const generateRuleBasedOutputs = async ({
           expression,
           outputSelected
         });
+
+        const fdmMappingsStylingGroups = await analyzeFdmMappingsAgainstExpression({
+          fdmMappings,
+          expression,
+          outputSelected
+        });
+
+        const allStyling: AllMappingStylingGroupAndStyleIndex = {
+          assetMappingsStylingGroupAndIndex: assetMappingsStylingGroups,
+          fdmStylingGroupAndStyleIndex: fdmMappingsStylingGroups
+        };
+
+        return allStyling;
       })
     )
   ).filter(isDefined);
@@ -332,7 +265,7 @@ const getRuleOutputFromTypeSelected = (
   return outputSelected;
 };
 
-const analyzeNodesAgainstExpression = async ({
+const analyzeAssetMappingsAgainstExpression = async ({
   contextualizedAssetNodes,
   assetIdsAndTimeseries,
   timeseriesDatapoints,
@@ -347,55 +280,88 @@ const analyzeNodesAgainstExpression = async ({
   expression: Expression;
   outputSelected: ColorRuleOutput;
 }): Promise<AssetStylingGroupAndStyleIndex> => {
-  const allTreeNodes = await Promise.all(
-    contextualizedAssetNodes.map(async (contextualizedAssetNode) => {
+  const allAssetMappingsTreeNodes: AssetMapping3D[][] = [];
+
+  for (const contextualizedAssetNode of contextualizedAssetNodes) {
+    const triggerData: TriggerTypeData[] = [];
+
+    const metadataTriggerData: TriggerTypeData = {
+      type: 'metadata',
+      asset: contextualizedAssetNode
+    };
+
+    triggerData.push(metadataTriggerData);
+
+    if (
+      timeseriesDatapoints !== undefined &&
+      timeseriesDatapoints.length > 0 &&
+      assetIdsAndTimeseries !== undefined &&
+      assetIdsAndTimeseries.length > 0
+    ) {
+      const timeseriesDataForThisAsset = generateTimeseriesAndDatapointsFromTheAsset({
+        contextualizedAssetNode,
+        assetIdsAndTimeseries,
+        timeseriesDatapoints
+      });
+
+      if (timeseriesDataForThisAsset.length > 0) {
+        const timeseriesTriggerData: TriggerTypeData = {
+          type: 'timeseries',
+          timeseries: {
+            timeseriesWithDatapoints: timeseriesDataForThisAsset,
+            linkedAssets: contextualizedAssetNode
+          }
+        };
+
+        triggerData.push(timeseriesTriggerData);
+      }
+    }
+
+    const finalGlobalOutputResult = traverseExpression(triggerData, [expression]);
+
+    if (finalGlobalOutputResult[0] ?? false) {
+      const nodesFromThisAsset = assetMappings.filter(
+        (item) => item.assetId === contextualizedAssetNode.id
+      );
+
+      allAssetMappingsTreeNodes.push(nodesFromThisAsset);
+    }
+  }
+
+  const filteredAllAssetMappingsTreeNodes = allAssetMappingsTreeNodes.flat();
+  return applyAssetMappingsNodeStyles(filteredAllAssetMappingsTreeNodes, outputSelected);
+};
+
+const analyzeFdmMappingsAgainstExpression = async ({
+  fdmMappings,
+  expression,
+  outputSelected
+}: {
+  fdmMappings: FdmInstanceNodeWithConnectionAndProperties[];
+  expression: Expression;
+  outputSelected: ColorRuleOutput;
+}): Promise<FdmStylingGroupAndStyleIndex> => {
+  const allFdmtMappingsTreeNodes = await Promise.all(
+    fdmMappings.map(async (mapping) => {
       const triggerData: TriggerTypeData[] = [];
 
-      const metadataTriggerData: TriggerTypeData = {
-        type: 'metadata',
-        asset: contextualizedAssetNode
+      const fdmTriggerData: TriggerTypeData = {
+        type: 'fdm',
+        instanceNode: mapping
       };
 
-      triggerData.push(metadataTriggerData);
-
-      if (
-        timeseriesDatapoints !== undefined &&
-        timeseriesDatapoints.length > 0 &&
-        assetIdsAndTimeseries !== undefined &&
-        assetIdsAndTimeseries.length > 0
-      ) {
-        const timeseriesDataForThisAsset = generateTimeseriesAndDatapointsFromTheAsset({
-          contextualizedAssetNode,
-          assetIdsAndTimeseries,
-          timeseriesDatapoints
-        });
-
-        if (timeseriesDataForThisAsset.length > 0) {
-          const timeseriesTriggerData: TriggerTypeData = {
-            type: 'timeseries',
-            timeseries: {
-              timeseriesWithDatapoints: timeseriesDataForThisAsset,
-              linkedAssets: contextualizedAssetNode
-            }
-          };
-
-          triggerData.push(timeseriesTriggerData);
-        }
-      }
+      triggerData.push(fdmTriggerData);
 
       const finalGlobalOutputResult = traverseExpression(triggerData, [expression]);
 
       if (finalGlobalOutputResult[0] ?? false) {
-        const nodesFromThisAsset = assetMappings.filter(
-          (item) => item.assetId === contextualizedAssetNode.id
-        );
-        return nodesFromThisAsset;
+        return mapping;
       }
     })
   );
 
-  const filteredAllTreeNodes = allTreeNodes.flat().filter(isDefined);
-  return applyNodeStyles(filteredAllTreeNodes, outputSelected);
+  const filteredAllFdmMappingsTreeNodes = allFdmtMappingsTreeNodes.flat().filter(isDefined);
+  return applyFdmMappingsNodeStyles(filteredAllFdmMappingsTreeNodes, outputSelected);
 };
 
 const generateTimeseriesAndDatapointsFromTheAsset = ({
@@ -411,18 +377,22 @@ const generateTimeseriesAndDatapointsFromTheAsset = ({
     (item) => item.assetIds?.externalId === contextualizedAssetNode.externalId
   );
 
-  const timeseries = timeseriesLinkedToThisAsset?.map((item) => item.timeseries).filter(isDefined);
   const datapoints = timeseriesDatapoints?.filter((datapoint) =>
-    timeseries?.find((item) => item?.externalId === datapoint.externalId)
+    timeseriesLinkedToThisAsset?.find(
+      (item) => item?.timeseries?.externalId === datapoint.externalId
+    )
   );
 
-  const timeseriesData: TimeseriesAndDatapoints[] = timeseries
+  const timeseriesData: TimeseriesAndDatapoints[] = timeseriesLinkedToThisAsset
     .map((item) => {
-      const datapoint = datapoints?.find((datapoint) => datapoint.externalId === item.externalId);
+      if (item.timeseries === undefined) return undefined;
+      const datapoint = datapoints?.find(
+        (datapoint) => datapoint.externalId === item.timeseries?.externalId
+      );
       if (datapoint === undefined) return undefined;
 
       const content: TimeseriesAndDatapoints = {
-        ...item,
+        ...item.timeseries,
         ...datapoint
       };
       return content;
@@ -455,10 +425,10 @@ export const traverseExpressionToGetTimeseries = (
       return timeseriesExternalIdFound?.filter(isDefined) ?? [];
     })
     .flat();
-  return timeseriesExternalIdResults;
+  return uniq(timeseriesExternalIdResults);
 };
 
-const applyNodeStyles = (
+const applyAssetMappingsNodeStyles = (
   treeNodes: AssetMapping3D[],
   outputSelected: ColorRuleOutput
 ): AssetStylingGroupAndStyleIndex => {
@@ -469,17 +439,23 @@ const applyNodeStyles = (
 
   const nodeIndexSet = ruleOutputAndStyleIndex.styleIndex.getIndexSet();
   nodeIndexSet.clear();
-  treeNodes?.forEach((node) => {
+
+  const assetIds: number[] = [];
+
+  for (const node of treeNodes) {
     const range = new NumericRange(node.treeIndex, node.subtreeSize);
     nodeIndexSet.addRange(range);
-  });
+
+    assetIds.push(node.assetId);
+  }
   ruleOutputAndStyleIndex.styleIndex.updateSet(nodeIndexSet);
 
   const nodeAppearance: NodeAppearance = {
     color: new Color(outputSelected.fill)
   };
+
   const assetStylingGroup: AssetStylingGroup = {
-    assetIds: treeNodes.map((node) => node.assetId),
+    assetIds,
     style: { cad: nodeAppearance }
   };
 
@@ -490,18 +466,74 @@ const applyNodeStyles = (
   return stylingGroup;
 };
 
+const applyFdmMappingsNodeStyles = (
+  treeNodes: FdmInstanceNodeWithConnectionAndProperties[],
+  outputSelected: ColorRuleOutput
+): FdmStylingGroupAndStyleIndex => {
+  const ruleOutputAndStyleIndex: RuleAndStyleIndex = {
+    styleIndex: new TreeIndexNodeCollection(),
+    ruleOutputParams: outputSelected
+  };
+
+  const nodeAppearance: NodeAppearance = {
+    color: new Color(outputSelected.fill)
+  };
+
+  const fdmAssetExternalIds: DmsUniqueIdentifier[] = [];
+
+  const nodeIndexSet = ruleOutputAndStyleIndex.styleIndex.getIndexSet();
+  nodeIndexSet.clear();
+
+  for (const node of treeNodes) {
+    if (node.cadNode === undefined) continue;
+
+    const range = new NumericRange(node.cadNode.treeIndex, node.cadNode.subtreeSize);
+    nodeIndexSet.addRange(range);
+
+    if (node.connection === undefined) continue;
+    fdmAssetExternalIds.push({
+      space: node.connection?.instance.space,
+      externalId: node.connection?.instance.externalId
+    });
+  }
+
+  ruleOutputAndStyleIndex.styleIndex.updateSet(nodeIndexSet);
+
+  const fdmStylingGroup: FdmAssetStylingGroup = {
+    fdmAssetExternalIds,
+    style: { cad: nodeAppearance }
+  };
+
+  const stylingGroup: FdmStylingGroupAndStyleIndex = {
+    styleIndex: ruleOutputAndStyleIndex.styleIndex,
+    fdmStylingGroup
+  };
+  return stylingGroup;
+};
+
 const isMetadataTrigger = (
-  trigger: MetadataRuleTrigger | TimeseriesRuleTrigger
+  trigger: MetadataRuleTrigger | TimeseriesRuleTrigger | FdmRuleTrigger
 ): trigger is MetadataRuleTrigger => {
   return trigger.type === 'metadata';
 };
 
-const convertExpressionStringMetadataKeyToLowerCase = (expression: Expression): void => {
-  if (expression.type !== 'stringExpression') {
-    return;
-  }
+const isFdmTrigger = (
+  trigger: MetadataRuleTrigger | TimeseriesRuleTrigger | FdmRuleTrigger
+): trigger is FdmRuleTrigger => {
+  return trigger.type === 'fdm';
+};
 
-  expression.trigger.key = expression.trigger.key.toLowerCase();
+const convertExpressionStringMetadataKeyToLowerCase = (expression: Expression): void => {
+  if (
+    expression.type !== 'stringExpression' ||
+    (expression.type === 'stringExpression' && expression.trigger.type === 'fdm')
+  )
+    return;
+
+  expression.trigger.key =
+    expression.trigger.type === 'metadata'
+      ? expression.trigger.key.toLowerCase()
+      : expression.trigger.key;
 };
 
 export const generateEmptyRuleForSelection = (name: string): EmptyRuleForSelection => {
@@ -524,3 +556,18 @@ export const getRuleBasedById = (
 ): RuleAndEnabled | undefined => {
   return ruleInstances?.find((item) => item.rule.properties.id === id);
 };
+
+export function getFdmPropertyTrigger<T>(
+  fdmPropertyTrigger: FdmPropertyType<unknown> | undefined,
+  trigger: FdmRuleTrigger
+): T | undefined {
+  if (fdmPropertyTrigger === undefined) return;
+
+  const space = fdmPropertyTrigger[trigger.key.space];
+  const instanceProperties = space?.[
+    `${trigger.key.view.externalId}/${trigger.key.view.version}`
+  ] as FdmPropertyType<unknown>;
+  const property = instanceProperties?.[trigger.key.property] as T;
+
+  return property;
+}

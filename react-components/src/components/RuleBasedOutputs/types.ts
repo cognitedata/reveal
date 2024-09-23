@@ -3,13 +3,18 @@
  */
 
 import { type TreeIndexNodeCollection, type NumericRange } from '@cognite/reveal';
-import { type FdmNode, type EdgeItem, type DmsUniqueIdentifier } from '../../utilities/FdmSDK';
-import { type AssetStylingGroup, type FdmPropertyType } from '../Reveal3DResources/types';
-import { type Datapoints, type Asset, type Timeseries } from '@cognite/sdk';
+import { type FdmNode, type EdgeItem, type DmsUniqueIdentifier } from '../../data-providers/FdmSDK';
+import {
+  type FdmAssetStylingGroup,
+  type AssetStylingGroup,
+  type FdmPropertyType
+} from '../Reveal3DResources/types';
+import { type Datapoints, type Asset, type Timeseries, type Node3D } from '@cognite/sdk';
+import { type FdmCadConnection } from '../CacheProvider/types';
 
 // =========== RULE BASED OUTPUT DATA MODEL
 
-export type TriggerType = 'timeseries' | 'metadata';
+export type TriggerType = 'timeseries' | 'metadata' | 'fdm';
 
 export type TimeseriesRuleTrigger = {
   type: 'timeseries';
@@ -21,12 +26,54 @@ export type MetadataRuleTrigger = {
   key: string;
 };
 
+export type FdmRuleTrigger = {
+  type: 'fdm';
+  key: FdmInstanceNodeDataKey;
+};
+
+export type FdmInstanceNodeDataKey = {
+  space: string;
+  externalId: string;
+  view: Source;
+  typing: FdmKeyRuleTriggerTyping;
+  property: string;
+};
+
 export type StringTrigger = MetadataRuleTrigger;
+
+export type BooleanCondition = {
+  type: 'equals' | 'notEquals';
+  parameter: boolean;
+};
 
 export type StringCondition = {
   type: 'equals' | 'notEquals' | 'contains' | 'startsWith' | 'endsWith';
   parameter: string;
 };
+
+export type DatetimeCondition =
+  | {
+      type:
+        | 'before'
+        | 'notBefore'
+        | 'onOrBefore'
+        | 'after'
+        | 'notAfter'
+        | 'onOrAfter'
+        | 'on'
+        | 'notOn';
+      parameter: string;
+    }
+  | {
+      type: 'between';
+      lowerBound: string;
+      upperBound: string;
+    }
+  | {
+      type: 'notBetween';
+      lowerBound: string;
+      upperBound: string;
+    };
 
 export type NumericCondition =
   | {
@@ -52,14 +99,26 @@ export type NumericCondition =
 
 export type StringExpression = {
   type: 'stringExpression';
-  trigger: StringTrigger;
+  trigger: StringTrigger | FdmRuleTrigger;
   condition: StringCondition;
 };
 
 export type NumericExpression = {
   type: 'numericExpression';
-  trigger: MetadataRuleTrigger | TimeseriesRuleTrigger;
+  trigger: MetadataRuleTrigger | TimeseriesRuleTrigger | FdmRuleTrigger;
   condition: NumericCondition;
+};
+
+export type DatetimeExpression = {
+  type: 'datetimeExpression';
+  trigger: FdmRuleTrigger;
+  condition: DatetimeCondition;
+};
+
+export type BooleanExpression = {
+  type: 'booleanExpression';
+  trigger: FdmRuleTrigger;
+  condition: BooleanCondition;
 };
 
 export type ExpressionOperator =
@@ -76,7 +135,11 @@ export type ExpressionOperator =
       expression: Expression;
     };
 
-export type ConcreteExpression = StringExpression | NumericExpression;
+export type ConcreteExpression =
+  | StringExpression
+  | NumericExpression
+  | DatetimeExpression
+  | BooleanExpression;
 
 export type Expression = ConcreteExpression | ExpressionOperator;
 
@@ -156,6 +219,8 @@ export type FdmRuleOutputSet = {
 
 export type ExpressionOperatorsTypes = 'and' | 'or' | 'not';
 
+export type BooleanConditionTypes = 'equals' | 'notEquals';
+
 export type StringConditionTypes = 'equals' | 'notEquals' | 'contains' | 'startsWith' | 'endsWith';
 
 export type NumericConditionTypes =
@@ -167,6 +232,14 @@ export type NumericConditionTypes =
   | 'greaterThanOrEquals'
   | 'within'
   | 'outside';
+
+export type NumericUniqueConditionTypes =
+  | 'equals'
+  | 'notEquals'
+  | 'lessThan'
+  | 'greaterThan'
+  | 'lessThanOrEquals'
+  | 'greaterThanOrEquals';
 
 export type NumericWithinConditionType = {
   type: 'within';
@@ -180,11 +253,31 @@ export type NumericOutsideConditionType = {
   upperBoundExclusive: number;
 };
 
+export type DatetimeConditionTypes = 'between' | 'notBetween' | DatetimeUniqueConditionTypes;
+
+export type DatetimeUniqueConditionTypes =
+  | 'before'
+  | 'notBefore'
+  | 'onOrBefore'
+  | 'after'
+  | 'notAfter'
+  | 'onOrAfter'
+  | 'on'
+  | 'notOn';
+
+export type DatetimeBetweenConditionType = {
+  type: 'between' | 'notBetween';
+  lowerBound: string;
+  upperBound: string;
+};
+
 export type CriteriaTypes =
+  | BooleanConditionTypes
   | string
   | number
   | NumericWithinConditionType
-  | NumericOutsideConditionType;
+  | NumericOutsideConditionType
+  | DatetimeBetweenConditionType;
 
 export type RuleAndStyleIndex = {
   styleIndex: TreeIndexNodeCollection;
@@ -194,6 +287,21 @@ export type RuleAndStyleIndex = {
 export type AssetStylingGroupAndStyleIndex = {
   styleIndex: TreeIndexNodeCollection;
   assetStylingGroup: AssetStylingGroup;
+};
+
+export type FdmStylingGroupAndStyleIndex = {
+  styleIndex: TreeIndexNodeCollection;
+  fdmStylingGroup: FdmAssetStylingGroup;
+};
+
+export type AllRuleBasedStylingGroups = {
+  assetStylingGroup: AssetStylingGroup[];
+  fdmStylingGroup: FdmAssetStylingGroup[];
+};
+
+export type AllMappingStylingGroupAndStyleIndex = {
+  assetMappingsStylingGroupAndIndex: AssetStylingGroupAndStyleIndex;
+  fdmStylingGroupAndStyleIndex: FdmStylingGroupAndStyleIndex;
 };
 
 export type NodeAndRange = {
@@ -226,27 +334,6 @@ export type ViewQueryFilter = {
 
 export type Space = string;
 
-export type ExternalIdsResultList<PropertyType> = {
-  items: Array<NodeItem<PropertyType>>;
-  typing?: Record<
-    string,
-    Record<
-      string,
-      Record<
-        string,
-        {
-          nullable?: boolean;
-          autoIncrement?: boolean;
-          defaultValue?: unknown;
-          description?: string;
-          name?: string;
-          type: { type: string };
-        }
-      >
-    >
-  >;
-};
-
 export type NodeItem<PropertyType = Record<string, unknown>> = {
   instanceType: InstanceType;
   version: number;
@@ -254,7 +341,7 @@ export type NodeItem<PropertyType = Record<string, unknown>> = {
   externalId: string;
   createdTime: number;
   lastUpdatedTime: number;
-  deletedTime: number;
+  deletedTime?: number;
   properties: FdmPropertyType<PropertyType>;
 };
 
@@ -271,7 +358,7 @@ export type EmptyRuleForSelectionProps = {
   isNoSelection: boolean;
 };
 
-export type TriggerTypeData = TriggerMetadataType | TriggerTimeseriesType;
+export type TriggerTypeData = TriggerMetadataType | TriggerTimeseriesType | TriggerFdmType;
 
 export type TriggerMetadataType = {
   type: 'metadata';
@@ -286,4 +373,84 @@ export type TriggerTimeseriesType = {
   };
 };
 
+export type TriggerFdmType = {
+  type: 'fdm';
+  instanceNode: FdmInstanceNodeWithConnectionAndProperties;
+};
+
 export type TimeseriesAndDatapoints = Timeseries & Datapoints;
+
+export type FdmKeyRuleTriggerTyping = Record<
+  string,
+  Record<
+    string,
+    Record<
+      string,
+      {
+        name: string;
+        typing: FdmRuleTriggerTyping;
+      }
+    >
+  >
+>;
+
+export type FdmRuleTriggerTyping = {
+  nullable?: boolean;
+  autoIncrement?: boolean;
+  defaultValue?: any;
+  description?: string;
+  name?: string;
+  immutable?: boolean;
+  container?: {
+    type?: string;
+    space?: string;
+    externalId?: string;
+  };
+  containerPropertyIdentifier?: string;
+  type: {
+    collation?: string;
+    list?: boolean;
+    type: string;
+  };
+};
+
+export type FdmInstanceWithProperties = NodeItem<unknown> | EdgeItem<unknown>;
+
+export type FdmInstanceWithPropertiesAndTyping = {
+  items: FdmInstanceWithProperties[];
+  typing: FdmTyping;
+};
+
+export type FdmTyping = Record<
+  string,
+  Record<
+    string,
+    Record<
+      string,
+      {
+        nullable?: boolean;
+        autoIncrement?: boolean;
+        defaultValue?: any;
+        description?: string;
+        name?: string;
+        immutable?: boolean;
+        type: { collation?: string; list?: boolean; type: string };
+      }
+    >
+  >
+>;
+
+export type FdmInstanceNodeWithConnectionAndProperties = {
+  instanceType: 'node';
+  version: number;
+  space: string;
+  externalId: string;
+  createdTime: number;
+  lastUpdatedTime: number;
+  deletedTime: number;
+  items: FdmInstanceWithProperties[];
+  connection?: FdmCadConnection | undefined;
+  cadNode?: Node3D | undefined;
+  view?: Source | undefined;
+  typing: FdmTyping;
+};

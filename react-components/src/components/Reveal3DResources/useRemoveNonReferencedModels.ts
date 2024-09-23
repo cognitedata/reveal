@@ -10,11 +10,14 @@ import {
 } from './typeGuards';
 import { useEffect } from 'react';
 import { isSameModel } from '../../utilities/isSameModel';
+import { useReveal3DResourcesCount } from './Reveal3DResourcesInfoContext';
+import { getViewerResourceCount } from '../../utilities/getViewerResourceCount';
 
 export function useRemoveNonReferencedModels(
   addOptions: AddResourceOptions[],
   viewer: Cognite3DViewer
 ): void {
+  const { setRevealResourcesCount } = useReveal3DResourcesCount();
   useEffect(() => {
     const nonReferencedModels = findNonReferencedModels(addOptions, viewer);
 
@@ -27,6 +30,7 @@ export function useRemoveNonReferencedModels(
     nonReferencedCollections.forEach((collection) => {
       viewer.remove360ImageSet(collection);
     });
+    setRevealResourcesCount(getViewerResourceCount(viewer));
   }, [addOptions]);
 }
 

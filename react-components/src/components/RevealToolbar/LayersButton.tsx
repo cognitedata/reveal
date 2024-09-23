@@ -11,20 +11,25 @@ import { useTranslation } from '../i18n/I18n';
 
 import { useSyncExternalLayersState } from './LayersContainer/useSyncExternalLayersState';
 import { useModelHandlers } from './LayersContainer/useModelHandlers';
-import { type LayersUrlStateParam } from '../../hooks/types';
+import { type DefaultLayersConfiguration, type LayersUrlStateParam } from '../../hooks/types';
 
-type LayersButtonProps = {
+export type LayersButtonProps = {
   layersState?: LayersUrlStateParam | undefined;
   setLayersState?: Dispatch<SetStateAction<LayersUrlStateParam | undefined>> | undefined;
+  defaultLayerConfiguration?: DefaultLayersConfiguration | undefined;
 };
 
 export const LayersButton = ({
   layersState: externalLayersState,
-  setLayersState: setExternalLayersState
+  setLayersState: setExternalLayersState,
+  defaultLayerConfiguration
 }: LayersButtonProps): ReactElement => {
   const { t } = useTranslation();
 
-  const [modelLayerHandlers, update] = useModelHandlers(setExternalLayersState);
+  const [modelLayerHandlers, update] = useModelHandlers(
+    setExternalLayersState,
+    defaultLayerConfiguration
+  );
 
   useSyncExternalLayersState(
     modelLayerHandlers,

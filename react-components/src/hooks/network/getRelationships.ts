@@ -10,7 +10,7 @@ import {
 
 import { getSourceRelationships } from './getSourceRelationships';
 import { getTargetRelationships } from './getTargetRelationships';
-import { type ExtendedRelationship } from '../../utilities/types';
+import { type ExtendedRelationship } from '../../data-providers/types';
 
 type Payload = {
   resourceExternalIds: CogniteExternalId[];

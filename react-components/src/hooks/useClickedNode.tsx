@@ -16,7 +16,7 @@ import { type NodeAssetMappingResult } from '../components/CacheProvider/AssetMa
 import { usePointCloudAnnotationMappingForAssetId } from '../components/CacheProvider/PointCloudAnnotationCacheProvider';
 import { type PointCloudAnnotationMappedAssetData } from './types';
 import { MOUSE, Vector2 } from 'three';
-import { type DmsUniqueIdentifier, type Source } from '../utilities/FdmSDK';
+import { type DmsUniqueIdentifier, type Source } from '../data-providers/FdmSDK';
 import { useRenderTarget, useReveal } from '../components/RevealCanvas/ViewerContext';
 
 export type AssetMappingDataResult = {
@@ -27,7 +27,7 @@ export type AssetMappingDataResult = {
 export type FdmNodeDataResult = {
   fdmNodes: DmsUniqueIdentifier[];
   cadNode: Node3D;
-  views?: Source[];
+  views?: Source[][];
 };
 
 export type ClickedNodeData = {

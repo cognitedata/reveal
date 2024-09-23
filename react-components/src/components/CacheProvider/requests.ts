@@ -2,27 +2,19 @@
  * Copyright 2023 Cognite AS
  */
 
-import { type CogniteClient, type CogniteInternalId, type Node3D } from '@cognite/sdk';
+import { type CogniteClient, type Node3D } from '@cognite/sdk';
 import {
-  type Source,
   type DmsUniqueIdentifier,
   type FdmSDK,
   type InspectResultList
-} from '../../utilities/FdmSDK';
-import { type FdmCadEdge } from './types';
-import {
-  type InModel3dEdgeProperties,
-  SYSTEM_3D_EDGE_SOURCE,
-  SYSTEM_SPACE_3D_SCHEMA,
-  SYSTEM_SPACE_3D_MODEL_ID,
-  SYSTEM_SPACE_3D_MODEL_VERSION
-} from '../../utilities/globalDataModels';
+} from '../../data-providers/FdmSDK';
 import { chunk } from 'lodash';
+import { type ModelId, type NodeId, type RevisionId, type TreeIndex } from './types';
 
 export async function fetchAncestorNodesForTreeIndex(
-  modelId: number,
-  revisionId: number,
-  treeIndex: number,
+  modelId: ModelId,
+  revisionId: RevisionId,
+  treeIndex: TreeIndex,
   cogniteClient: CogniteClient
 ): Promise<Node3D[]> {
   const nodeId = await treeIndexesToNodeIds(modelId, revisionId, [treeIndex], cogniteClient);
@@ -34,76 +26,6 @@ export async function fetchAncestorNodesForTreeIndex(
   );
 
   return ancestorNodes.items;
-}
-
-export async function getDMSModels(
-  modelId: number,
-  fdmClient: FdmSDK
-): Promise<DmsUniqueIdentifier[]> {
-  const filter = {
-    equals: {
-      property: ['node', 'externalId'],
-      value: `${modelId}`
-    }
-  };
-  const sources: Source = {
-    type: 'view',
-    space: SYSTEM_SPACE_3D_SCHEMA,
-    externalId: SYSTEM_SPACE_3D_MODEL_ID,
-    version: SYSTEM_SPACE_3D_MODEL_VERSION
-  };
-
-  const modelResults = await fdmClient.filterInstances(filter, 'node', sources);
-  return modelResults.instances;
-}
-
-export async function getMappingEdgesForNodeIds(
-  models: DmsUniqueIdentifier[],
-  revisionId: number,
-  fdmClient: FdmSDK,
-  ancestorIds: CogniteInternalId[]
-): Promise<{ edges: FdmCadEdge[] }> {
-  const filter = {
-    and: [
-      {
-        in: {
-          property: ['edge', 'endNode'],
-          values: models.map((model) => ({
-            externalId: model.externalId,
-            space: model.space
-          }))
-        }
-      },
-      {
-        equals: {
-          property: [
-            SYSTEM_3D_EDGE_SOURCE.space,
-            `${SYSTEM_3D_EDGE_SOURCE.externalId}/${SYSTEM_3D_EDGE_SOURCE.version}`,
-            'revisionId'
-          ],
-          value: revisionId
-        }
-      },
-      {
-        in: {
-          property: [
-            SYSTEM_3D_EDGE_SOURCE.space,
-            `${SYSTEM_3D_EDGE_SOURCE.externalId}/${SYSTEM_3D_EDGE_SOURCE.version}`,
-            'revisionNodeId'
-          ],
-          values: ancestorIds
-        }
-      }
-    ]
-  };
-
-  const instances = await fdmClient.filterAllInstances<InModel3dEdgeProperties>(
-    filter,
-    'edge',
-    SYSTEM_3D_EDGE_SOURCE
-  );
-
-  return { edges: instances.instances };
 }
 
 export async function inspectNodes(
@@ -133,28 +55,59 @@ export async function inspectNodes(
 }
 
 export async function treeIndexesToNodeIds(
-  modelId: number,
-  revisionId: number,
-  treeIndexes: number[],
+  modelId: ModelId,
+  revisionId: RevisionId,
+  treeIndexes: TreeIndex[],
   cogniteClient: CogniteClient
-): Promise<number[]> {
+): Promise<NodeId[]> {
   const outputsUrl = `${cogniteClient.getBaseUrl()}/api/v1/projects/${
     cogniteClient.project
   }/3d/models/${modelId}/revisions/${revisionId}/nodes/internalids/bytreeindices`;
-  const response = await cogniteClient.post<{ items: number[] }>(outputsUrl, {
-    data: { items: treeIndexes }
+
+  const treeIndexChunks = chunk(treeIndexes, 1000);
+
+  const nodeIds: NodeId[] = [];
+
+  for (const treeIndexChunk of treeIndexChunks) {
+    const response = await cogniteClient.post<{ items: NodeId[] }>(outputsUrl, {
+      data: { items: treeIndexChunk }
+    });
+
+    if (response.status === 200) {
+      nodeIds.push(...response.data.items);
+    } else {
+      throw Error(
+        `treeIndex-nodeId translation failed for treeIndexes ${treeIndexChunk.join(',')}`
+      );
+    }
+  }
+
+  return nodeIds;
+}
+
+export async function nodeIdsToTreeIndices(
+  modelId: ModelId,
+  revisionId: RevisionId,
+  nodeIds: NodeId[],
+  cogniteClient: CogniteClient
+): Promise<TreeIndex[]> {
+  const outputsUrl = `${cogniteClient.getBaseUrl()}/api/v1/projects/${
+    cogniteClient.project
+  }/3d/models/${modelId}/revisions/${revisionId}/nodes/treeindices/byinternalids`;
+  const response = await cogniteClient.post<{ items: TreeIndex[] }>(outputsUrl, {
+    data: { items: nodeIds }
   });
   if (response.status === 200) {
     return response.data.items;
   } else {
-    throw Error(`treeIndex-nodeId translation failed for treeIndexes ${treeIndexes.join(',')}`);
+    throw new Error(`nodeId-treeIndex translation failed for nodeIds ${nodeIds.join(',')}`);
   }
 }
 
 export async function fetchNodesForNodeIds(
-  modelId: number,
-  revisionId: number,
-  nodeIds: number[],
+  modelId: ModelId,
+  revisionId: RevisionId,
+  nodeIds: NodeId[],
   cogniteClient: CogniteClient
 ): Promise<Node3D[]> {
   if (nodeIds.length === 0) {

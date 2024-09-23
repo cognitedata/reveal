@@ -2,6 +2,7 @@
  * Copyright 2024 Cognite AS
  */
 import { Body } from '@cognite/cogs.js';
+import { Icon, type IconType, Body, Flex } from '@cognite/cogs.js';
 import styled from 'styled-components';
 import { useEffect, useMemo, useState, type ReactElement } from 'react';
 import {
@@ -23,7 +24,7 @@ import { IconComponent } from './IconComponent';
 import { type IconName } from '../../architecture/base/utilities/IconName';
 
 const TEXT_SIZE = 'x-small';
-const HEADER_SIZE = 'small';
+const HEADER_SIZE = 'medium';
 
 export const DomainObjectPanel = (): ReactElement => {
   const [currentDomainObjectInfo, setCurrentDomainObjectInfo] = useState<
@@ -39,16 +40,16 @@ export const DomainObjectPanel = (): ReactElement => {
   useEffect(() => {
     DomainObjectPanelUpdater.setDomainObjectDelegate(setCurrentDomainObjectInfo);
 
-    if (commands === undefined || info === undefined) {
-      return;
-    }
-
     // Set in the get string on the copy command if any
+  }, [setCurrentDomainObjectInfo, commands]);
+
+  // Fore the getString to be updated
+  if (commands !== undefined && info !== undefined) {
     for (const command of commands) {
       if (command instanceof CopyToClipboardCommand)
         command.getString = () => toString(info, t, unitSystem);
     }
-  }, [setCurrentDomainObjectInfo, commands]);
+  }
 
   const { t } = useTranslation();
 
@@ -75,25 +76,15 @@ export const DomainObjectPanel = (): ReactElement => {
         margin: style.marginPx,
         padding: style.paddingPx
       }}>
-      <table>
-        <tbody>
-          <tr>
-            {iconName !== undefined && (
-              <PaddedTh>
-                <IconComponent iconName={iconName} />
-              </PaddedTh>
-            )}
-            {text !== undefined && (
-              <PaddedTh>
-                <Body size={HEADER_SIZE}>{text}</Body>
-              </PaddedTh>
-            )}
-            <th>
-              <CommandButtons commands={commands} isHorizontal={true} />
-            </th>
-          </tr>
-        </tbody>
-      </table>
+      <Flex justifyContent={'space-between'} alignItems={'center'}>
+        <Flex gap={8}>
+          {iconName !== undefined && <Icon type={iconName} />}
+          {text !== undefined && <Body size={HEADER_SIZE}>{text}</Body>}
+        </Flex>
+        <Flex>
+          <CommandButtons commands={commands} isHorizontal={true} />
+        </Flex>
+      </Flex>
       <table>
         <tbody>{info.items.map((item, _i) => addTextWithNumber(item, unitSystem))}</tbody>
       </table>
@@ -104,11 +95,14 @@ export const DomainObjectPanel = (): ReactElement => {
     const icon = item.icon;
     const { quantity, value } = item;
     const text = item?.getText(t);
+    if (iconName === undefined) {
+      return <></>;
+    }
     return (
       <tr key={JSON.stringify(item)}>
         <PaddedTh>
           {text !== undefined && <Body size={TEXT_SIZE}>{text}</Body>}
-          {icon !== undefined && <IconComponent iconName={iconName} />}
+          {icon !== undefined && <IconComponent type={iconName} iconName={iconName} />}
         </PaddedTh>
         <></>
         <NumberTh>

@@ -23,7 +23,10 @@ export async function fetchPointCloudAnnotationAssets(
   });
   const filteredAnnotationMapping = annotationMapping.filter(isDefined);
 
-  const uniqueAnnotationMapping = uniqBy(filteredAnnotationMapping, 'assetId');
+  const uniqueAnnotationMapping = uniqBy(
+    filteredAnnotationMapping,
+    (annotationMapping) => annotationMapping.assetId
+  );
   const assetIds = uniqueAnnotationMapping.map((mapping) => mapping.assetId);
   const assets = await fetchAssetForAssetIds(assetIds, sdk);
 

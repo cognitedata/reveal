@@ -5,13 +5,14 @@ import { VisualDomainObject } from '../../base/domainObjects/VisualDomainObject'
 import { type ThreeView } from '../../base/views/ThreeView';
 import { ObservationsView } from './ObservationsView';
 import { type TranslateKey } from '../../base/utilities/TranslateKey';
-import { type FdmSDK } from '../../../utilities/FdmSDK';
+import { type FdmSDK } from '../../../data-providers/FdmSDK';
 import { Changes } from '../../base/domainObjectsHelpers/Changes';
 import { ObservationsCache } from './ObservationsCache';
 import { PanelInfo } from '../../base/domainObjectsHelpers/PanelInfo';
 import { type Observation, ObservationStatus } from './types';
 import { partition, remove } from 'lodash';
 import { type ObservationProperties } from './models';
+import { Quantity } from '../../base/domainObjectsHelpers/Quantity';
 
 export class ObservationsDomainObject extends VisualDomainObject {
   private _selectedObservation: Observation | undefined;
@@ -54,10 +55,12 @@ export class ObservationsDomainObject extends VisualDomainObject {
     const header = { fallback: 'Observation' };
     info.setHeader(header);
 
-    info.add({ fallback: 'X', value: this._selectedObservation?.properties.positionX });
-    info.add({ fallback: 'Y', value: this._selectedObservation?.properties.positionY });
-    info.add({ fallback: 'Z', value: this._selectedObservation?.properties.positionZ });
-
+    if (this._selectedObservation !== undefined) {
+      const properties = this._selectedObservation.properties;
+      info.add({ fallback: 'X', value: properties.positionX, quantity: Quantity.Length });
+      info.add({ fallback: 'Y', value: properties.positionY, quantity: Quantity.Length });
+      info.add({ fallback: 'Z', value: properties.positionZ, quantity: Quantity.Length });
+    }
     return info;
   }
 

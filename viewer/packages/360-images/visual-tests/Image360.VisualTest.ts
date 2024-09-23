@@ -161,7 +161,7 @@ export default class Image360VisualTestFixture extends StreamingVisualTestFixtur
     function animateTransition() {
       const from = { t: 0 };
       const to = { t: 1 };
-      const anim = new TWEEN.Tween(from)
+      const tween = new TWEEN.Tween(from)
         .to(to, 1000)
         .onUpdate(() => {
           const animatedPosition = new THREE.Vector3().lerpVectors(translationFrom, translationTo, from.t);
@@ -170,9 +170,10 @@ export default class Image360VisualTestFixture extends StreamingVisualTestFixtur
         })
         .easing(num => TWEEN.Easing.Quintic.InOut(num))
         .start(TWEEN.now());
+      TWEEN.add(tween);
 
-      anim.onComplete(() => {
-        anim.stop();
+      tween.onComplete(() => {
+        tween.stop();
         clearInterval(renderTrigger);
         camera.position.copy(translationTo);
         const cameraForward = camera.getWorldDirection(new THREE.Vector3());

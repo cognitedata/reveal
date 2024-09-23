@@ -23,7 +23,13 @@ export const useAllAssetsMapped360Annotations = (
   image360AnnotationFilterOptions: Image360AnnotationFilterOptions = { status: `approved` }
 ): UseQueryResult<Image360AnnotationMappedAssetData[]> => {
   return useQuery({
-    queryKey: ['reveal', 'react-components', 'all-assets-mapped-360-annotations', siteIds],
+    queryKey: [
+      'reveal',
+      'react-components',
+      'all-assets-mapped-360-annotations',
+      siteIds,
+      image360AnnotationFilterOptions.status
+    ],
     queryFn: async () => {
       const assetMappings = await getAssetsMapped360Annotations(
         sdk,
@@ -54,7 +60,8 @@ export const useSearchAssetsMapped360Annotations = (
       'react-components',
       'search-assets-mapped-360-annotations',
       query,
-      siteIds
+      siteIds,
+      image360AnnotationFilterOptions?.status
     ],
     queryFn: async () => {
       if (query === '') {
@@ -116,7 +123,10 @@ async function get360AnnotationAssets(
     })
     .filter(isDefined);
 
-  const uniqueAnnotationMapping = uniqBy(filteredAnnotationMappings, 'assetId');
+  const uniqueAnnotationMapping = uniqBy(
+    filteredAnnotationMappings,
+    (annotationMapping) => annotationMapping.assetId
+  );
 
   const assets = await retrieveAssets(sdk, uniqueAnnotationMapping);
   const flatAssets = assets.flat();

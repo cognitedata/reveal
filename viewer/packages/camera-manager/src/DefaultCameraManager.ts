@@ -355,6 +355,7 @@ export class DefaultCameraManager implements CameraManager {
         document.removeEventListener('keydown', stopTween);
       })
       .start(TWEEN.now());
+    TWEEN.add(tween);
     tween.update(TWEEN.now());
   }
 
@@ -417,6 +418,7 @@ export class DefaultCameraManager implements CameraManager {
         document.removeEventListener('keydown', stopTween);
       })
       .start(TWEEN.now());
+    TWEEN.add(tween);
     tween.update(TWEEN.now());
   }
 
@@ -667,4 +669,11 @@ export class DefaultCameraManager implements CameraManager {
     const duration = distanceToCamera * 125; // 125ms per unit distance
     return clamp(duration, DefaultCameraManager.MinAnimationDuration, DefaultCameraManager.MaxAnimationDuration);
   }
+}
+
+/**
+ * type guard which determines if the provided camera manager is a @see { DefaultCameraManager }
+ */
+export function isDefaultCameraManager(cameraManager: CameraManager): cameraManager is DefaultCameraManager {
+  return cameraManager instanceof DefaultCameraManager;
 }

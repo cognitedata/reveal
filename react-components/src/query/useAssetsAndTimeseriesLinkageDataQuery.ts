@@ -20,7 +20,7 @@ import {
   type AssetIdsAndTimeseries,
   type AssetAndTimeseriesIds,
   type AssetIdsAndTimeseriesData
-} from '../utilities/types';
+} from '../data-providers/types';
 import { queryKeys } from '../utilities/queryKeys';
 import { getTimeseriesByIds } from '../hooks/network/getTimeseriesByIds';
 import { isDefined } from '../utilities/isDefined';
@@ -72,7 +72,9 @@ export function useAssetsAndTimeseriesLinkageDataQuery({
           .flat()
           .filter(isDefined) ?? [];
 
-      const assetFromTimeseries = await getAssetsByIds(sdk, assetIdsFound);
+      const assetFromTimeseries =
+        assetIdsFound.length > 0 ? await getAssetsByIds(sdk, assetIdsFound) : [];
+
       const assetIdsWithTimeseries =
         timeseries
           ?.map((timeseries): AssetIdsAndTimeseries[] | undefined => {

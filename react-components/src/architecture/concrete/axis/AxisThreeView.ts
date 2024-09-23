@@ -109,25 +109,24 @@ export class AxisThreeView extends GroupThreeView {
     return false;
   }
 
-  protected override get needsUpdate(): boolean {
+  protected override needsUpdateCore(): boolean {
     const target = this.renderTarget;
 
     // Check if bounding box is different
-    const sceneBoundingBox = target.clippedSceneBoundingBox;
-    if (sceneBoundingBox.equals(this._sceneBoundingBox)) {
+    const boundingBox = target.clippedVisualSceneBoundingBox;
+    if (boundingBox.equals(this._sceneBoundingBox)) {
       return false;
     }
-    this._sceneBoundingBox.copy(sceneBoundingBox);
-    this._expandedSceneBoundingBox.copy(sceneBoundingBox);
-    this._expandedSceneBoundingBox.expandByFraction(0.02);
+    this._sceneBoundingBox.copy(boundingBox);
+    this._expandedSceneBoundingBox.copy(boundingBox);
+    if (!this._expandedSceneBoundingBox.isEmpty) {
+      this._expandedSceneBoundingBox.expandByFraction(0.02);
+    }
     return true;
   }
 
   protected override addChildren(): void {
     const boundingBox = this._expandedSceneBoundingBox;
-    if (boundingBox === undefined) {
-      return;
-    }
     if (boundingBox.isEmpty) {
       return;
     }

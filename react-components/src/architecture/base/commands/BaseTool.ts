@@ -22,6 +22,7 @@ import { ActiveToolUpdater } from '../reactUpdaters/ActiveToolUpdater';
 import { PopupStyle } from '../domainObjectsHelpers/PopupStyle';
 import { ThreeView } from '../views/ThreeView';
 import { UndoManager } from '../undo/UndoManager';
+import { CommandChanges } from '../domainObjectsHelpers/CommandChanges';
 
 /**
  * Base class for interactions in the 3D viewer
@@ -70,14 +71,14 @@ export abstract class BaseTool extends RenderTargetCommand {
   }
 
   public onActivate(): void {
-    this.update();
+    this.update(CommandChanges.active);
     this.setDefaultCursor();
     this.clearDragging();
     ActiveToolUpdater.update();
   }
 
   public onDeactivate(): void {
-    this.update();
+    this.update(CommandChanges.deactive);
     this.clearDragging();
     ActiveToolUpdater.update();
   }

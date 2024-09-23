@@ -19,6 +19,10 @@ export abstract class ShowAllDomainObjectsCommand extends InstanceCommand {
     return 'EyeShow';
   }
 
+  public override get isToggle(): boolean {
+    return true;
+  }
+
   public override get isChecked(): boolean {
     return this.isAnyVisible();
   }

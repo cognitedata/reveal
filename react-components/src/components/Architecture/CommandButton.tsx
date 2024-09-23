@@ -1,5 +1,5 @@
 /*!
- * Copyright 2023 Cognite AS
+ * Copyright 2024 Cognite AS
  */
 
 import { type ReactElement, useState, useEffect, useMemo, useCallback } from 'react';
@@ -11,14 +11,6 @@ import { getButtonType, getDefaultCommand, getIcon, getTooltipPlacement } from '
 import { LabelWithShortcut } from './LabelWithShortcut';
 import { type IconName } from '../../architecture/base/utilities/IconName';
 import { IconComponent } from './IconComponent';
-
-export const createCommandButton = (
-  commandConstructor: () => BaseCommand,
-  isHorizontal = false
-): ReactElement => {
-  const command = useMemo(commandConstructor, []);
-  return <CommandButton inputCommand={command} isHorizontal={isHorizontal} />;
-};
 
 export const CommandButton = ({
   inputCommand,
@@ -51,18 +43,18 @@ export const CommandButton = ({
     return () => {
       command.removeEventListener(update);
     };
-  }, [command.isEnabled, command.isChecked, command.isVisible]);
+  }, [command]);
 
   if (!isVisible) {
     return <></>;
   }
   const placement = getTooltipPlacement(isHorizontal);
-  const tooltip = command.getLabel(t);
-  const shortcut = command.getShortCutKeys();
+  const label = command.getLabel(t);
 
   return (
     <CogsTooltip
-      content={<LabelWithShortcut label={tooltip} shortcut={shortcut} />}
+      content={<LabelWithShortcut label={label} command={command} />}
+      disabled={label === undefined}
       appendTo={document.body}
       placement={placement}>
       <Button
@@ -71,13 +63,12 @@ export const CommandButton = ({
         key={uniqueId}
         disabled={!isEnabled}
         toggled={isChecked}
-        aria-label={tooltip}
+        aria-label={label}
         iconPlacement="right"
         onClick={() => {
           command.invoke();
           renderTarget.domElement.focus();
-        }}
-      />
+        }}></Button>
     </CogsTooltip>
   );
 };

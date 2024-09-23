@@ -8,8 +8,6 @@ import {
   type QualitySettings,
   RevealToolbar,
   withSuppressRevealEvents,
-  withCameraStateUrlParam,
-  useGetCameraStateFromUrlParam,
   useCameraNavigation
 } from '../src';
 import { Color } from 'three';
@@ -21,6 +19,7 @@ import { signalStoryReadyForScreenshot } from './utilities/signalStoryReadyForSc
 import { RevealStoryContainer } from './utilities/RevealStoryContainer';
 import { getAddModelOptionsFromUrl } from './utilities/getAddModelOptionsFromUrl';
 import { SetOrbitOrFirstPersonControlsType } from '../src/components/RevealToolbar/SetFlexibleControlsType';
+import { useGetCameraStateFromUrlParam } from './utilities/useGetCameraStateFromUrlParam';
 
 const meta = {
   title: 'Example/Toolbar',
@@ -31,8 +30,8 @@ const meta = {
 export default meta;
 type Story = StoryObj<typeof meta>;
 
-const MyCustomToolbar = styled(withSuppressRevealEvents(withCameraStateUrlParam(ToolBar)))`
-  position: absolute !important;
+const MyCustomToolbar = styled(withSuppressRevealEvents(ToolBar))`
+  position: absolute;
   right: 20px;
   top: 70px;
 `;
@@ -63,11 +62,11 @@ const exampleCustomSettingElements = (): ReactElement => {
 
 const exampleHighQualitySettings: QualitySettings = {
   cadBudget: {
-    maximumRenderCost: 95000000,
+    maximumRenderCost: 95_000_000,
     highDetailProximityThreshold: 100
   },
   pointCloudBudget: {
-    numberOfPoints: 12000000
+    numberOfPoints: 12_000_000
   },
   resolutionOptions: {
     maxRenderResolution: Infinity,

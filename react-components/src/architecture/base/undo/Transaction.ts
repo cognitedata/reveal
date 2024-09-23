@@ -29,11 +29,10 @@ export abstract class Transaction {
       throw new Error('Parent is undefined');
     }
     this.parentUniqueId = parent.uniqueId;
-    // console.log('Add transaction:', this.changed);
   }
 
   // ==================================================
-  // VIRTUAL METHODS (To be override)
+  // VIRTUAL METHODS (To be overridden)
   // =================================================
 
   protected abstract undoCore(
@@ -52,7 +51,6 @@ export abstract class Transaction {
     if (domainObject === undefined) {
       return false;
     }
-    // console.log('Undo transaction:', this.changed);
     this.undoCore(domainObject, root.renderTarget);
     return true;
   }

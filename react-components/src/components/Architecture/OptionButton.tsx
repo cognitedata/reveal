@@ -1,8 +1,7 @@
 /*!
- * Copyright 2023 Cognite AS
+ * Copyright 2024 Cognite AS
  */
 
-import { useCallback, useEffect, useMemo, useState, type ReactElement } from 'react';
 import {
   Button,
   Menu,
@@ -11,31 +10,49 @@ import {
   ChevronUpIcon
 } from '@cognite/cogs.js';
 import { Dropdown } from '@cognite/cogs-lab';
+import {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+  type ReactElement,
+  type MouseEvent
+} from 'react';
+
 import { useTranslation } from '../i18n/I18n';
 import { type BaseCommand } from '../../architecture/base/commands/BaseCommand';
 import { useRenderTarget } from '../RevealCanvas/ViewerContext';
-import { BaseOptionCommand } from '../../architecture/base/commands/BaseOptionCommand';
+import { type BaseOptionCommand } from '../../architecture/base/commands/BaseOptionCommand';
 import {
   getButtonType,
   getDefaultCommand,
   getFlexDirection,
-  getIcon,
-  getTooltipPlacement
+  getTooltipPlacement,
+  getIcon
 } from './utilities';
 import { LabelWithShortcut } from './LabelWithShortcut';
 import { IconComponent } from './IconComponent';
 import { type IconName } from '../../architecture/base/utilities/IconName';
+import { type TranslateDelegate } from '../../architecture/base/utilities/TranslateKey';
+import { useClickOutside } from './useClickOutside';
+import { DEFAULT_PADDING, OPTION_MIN_WIDTH } from './constants';
 
 export const OptionButton = ({
   inputCommand,
-  isHorizontal = false
+  isHorizontal = false,
+  usedInSettings = false
 }: {
   inputCommand: BaseOptionCommand;
   isHorizontal: boolean;
+  usedInSettings?: boolean;
 }): ReactElement => {
   const renderTarget = useRenderTarget();
   const { t } = useTranslation();
-  const command = useMemo<BaseCommand>(() => getDefaultCommand(inputCommand, renderTarget), []);
+  const command = useMemo<BaseOptionCommand>(
+    () => getDefaultCommand<BaseOptionCommand>(inputCommand, renderTarget),
+    []
+  );
 
   const [isOpen, setOpen] = useState<boolean>(false);
   const [isEnabled, setEnabled] = useState<boolean>(true);
@@ -47,7 +64,6 @@ export const OptionButton = ({
     setEnabled(command.isEnabled);
     setVisible(command.isVisible);
     setUniqueId(command.uniqueId);
-    setIcon(getIcon(command));
   }, []);
 
   useEffect(() => {
@@ -58,18 +74,30 @@ export const OptionButton = ({
     };
   }, [command]);
 
-  if (!(command instanceof BaseOptionCommand)) {
-    return <></>;
-  }
-  if (!isVisible) {
+  const outsideAction = (): boolean => {
+    if (!isOpen) {
+      return false;
+    }
+    postAction();
+    return true;
+  };
+
+  const postAction = (): void => {
+    setOpen(false);
+    renderTarget.domElement.focus();
+  };
+
+  const menuRef = useRef<HTMLDivElement | null>(null);
+  useClickOutside(menuRef, outsideAction);
+
+  if (!isVisible || command.children === undefined) {
     return <></>;
   }
   const placement = getTooltipPlacement(isHorizontal);
-  const tooltip = command.getLabel(t);
-  const shortcut = command.getShortCutKeys();
+  const label = usedInSettings ? undefined : command.getLabel(t);
   const flexDirection = getFlexDirection(isHorizontal);
-  const options = command.getOrCreateOptions(renderTarget);
-  const selectedLabel = command.selectedOption?.getLabel(t);
+  const children = command.children;
+  const selectedLabel = command.selectedChild?.getLabel(t);
 
   const OpenButtonIcon = isOpen ? ChevronUpIcon : ChevronDownIcon;
 
@@ -119,14 +147,37 @@ export const OptionButton = ({
           key={uniqueId}
           disabled={!isEnabled}
           toggled={isOpen}
-          aria-label={tooltip}
           iconPlacement="right"
-          onClick={() => {
+          aria-label={command.getLabel(t)}
+          onClick={(event: MouseEvent<HTMLElement>) => {
+            event.stopPropagation();
+            event.preventDefault();
             setOpen((prevState) => !prevState);
           }}>
           {selectedLabel}
         </Button>
-      </Dropdown>
-    </CogsTooltip>
+      </CogsTooltip>
+    </Dropdown>
   );
 };
+
+export function createMenuItem(
+  command: BaseCommand,
+  t: TranslateDelegate,
+  postAction: () => void
+): ReactElement {
+  return (
+    <Menu.Item
+      key={command.uniqueId}
+      icon={getIcon(command)}
+      disabled={!command.isEnabled}
+      toggled={command.isChecked}
+      iconPlacement="right"
+      onClick={() => {
+        command.invoke();
+        postAction();
+      }}>
+      {command.getLabel(t)}
+    </Menu.Item>
+  );
+}

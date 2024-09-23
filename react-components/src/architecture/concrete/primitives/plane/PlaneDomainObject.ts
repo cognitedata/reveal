@@ -89,13 +89,13 @@ export abstract class PlaneDomainObject extends VisualDomainObject {
   public override get typeName(): TranslateKey {
     switch (this.primitiveType) {
       case PrimitiveType.PlaneX:
-        return { key: 'PLANE_X', fallback: 'Vertical plane along Y-axis' };
+        return { fallback: 'Vertical plane along Y-axis' };
       case PrimitiveType.PlaneY:
-        return { key: 'PLANE_Y', fallback: 'Vertical plane along X-axis' };
+        return { fallback: 'Vertical plane along X-axis' };
       case PrimitiveType.PlaneZ:
-        return { key: 'PLANE_Z', fallback: 'Horizontal plane' };
+        return { fallback: 'Horizontal plane' };
       case PrimitiveType.PlaneXY:
-        return { key: 'PLANE_XY', fallback: 'Vertical plane' };
+        return { fallback: 'Vertical plane' };
       default:
         throw new Error('Unknown PrimitiveType');
     }

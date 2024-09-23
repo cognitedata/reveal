@@ -6,15 +6,15 @@ import {
   type ChunkInCacheTypes,
   type ModelId,
   type RevisionId,
-  type ModelNodeIdKey
+  type ModelTreeIndexKey
 } from './types';
-import { modelRevisionNodesAssetsToKey } from './utils';
+import { modelRevisionNodesAssetToKey } from './idAndKeyTranslation';
 import { fetchNodesForNodeIds } from './requests';
 
 export class Node3DPerNodeIdCache {
   private readonly _sdk: CogniteClient;
 
-  private readonly _nodeIdsToNode3D = new Map<ModelNodeIdKey, Promise<Node3D>>();
+  private readonly _nodeIdsToNode3D = new Map<ModelTreeIndexKey, Promise<Node3D>>();
 
   constructor(sdk: CogniteClient) {
     this._sdk = sdk;
@@ -30,7 +30,7 @@ export class Node3DPerNodeIdCache {
 
     await Promise.all(
       currentChunk.map(async (id) => {
-        const key = modelRevisionNodesAssetsToKey(modelId, revisionId, [id]);
+        const key = modelRevisionNodesAssetToKey(modelId, revisionId, id);
         const cachedResult = await this.getNodeIdToNode3DCacheItem(key);
         if (cachedResult !== undefined) {
           chunkInCache.push(cachedResult);
@@ -50,7 +50,7 @@ export class Node3DPerNodeIdCache {
   ): Promise<void> {
     const node3Ds = await this.getNodesForNodeIds(modelId, revisionId, nodeIds ?? []);
     node3Ds.forEach((node) => {
-      const key = modelRevisionNodesAssetsToKey(modelId, revisionId, [node.id]);
+      const key = modelRevisionNodesAssetToKey(modelId, revisionId, node.id);
       this.setNodeIdToNode3DCacheItem(key, Promise.resolve(node));
     });
   }
@@ -71,11 +71,11 @@ export class Node3DPerNodeIdCache {
     return allNodes;
   }
 
-  public async getNodeIdToNode3DCacheItem(key: ModelNodeIdKey): Promise<Node3D | undefined> {
+  public async getNodeIdToNode3DCacheItem(key: ModelTreeIndexKey): Promise<Node3D | undefined> {
     return await this._nodeIdsToNode3D.get(key);
   }
 
-  public setNodeIdToNode3DCacheItem(key: ModelNodeIdKey, item: Promise<Node3D>): void {
+  public setNodeIdToNode3DCacheItem(key: ModelTreeIndexKey, item: Promise<Node3D>): void {
     this._nodeIdsToNode3D.set(key, Promise.resolve(item));
   }
 }

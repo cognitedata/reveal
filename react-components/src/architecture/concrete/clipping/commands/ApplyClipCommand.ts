@@ -19,7 +19,7 @@ export class ApplyClipCommand extends RenderTargetCommand {
   public override get tooltip(): TranslateKey {
     return {
       key: 'CLIP_APPLY',
-      fallback: 'Apply selected crop box to the model if any, otherwise apply all slice planes'
+      fallback: 'Apply selected crop box to a model. Otherwise, apply to all slice planes'
     };
   }
 
@@ -32,13 +32,18 @@ export class ApplyClipCommand extends RenderTargetCommand {
   }
 
   public override get isEnabled(): boolean {
-    if (this.getSelectedCropBoxDomainObject() !== undefined) {
-      return true;
+    const cropBox = this.getSelectedCropBoxDomainObject();
+    if (cropBox !== undefined) {
+      return cropBox.focusType !== FocusType.Pending;
     }
     if (this.rootDomainObject.getDescendantByType(SliceDomainObject) !== undefined) {
       return true;
     }
     return false;
+  }
+
+  public override get isToggle(): boolean {
+    return true;
   }
 
   public override get isChecked(): boolean {
@@ -53,8 +58,10 @@ export class ApplyClipCommand extends RenderTargetCommand {
     }
     const cropBox = this.getSelectedCropBoxDomainObject();
     if (cropBox !== undefined) {
-      cropBox.setThisAsGlobalCropBox();
-      renderTarget.fitView();
+      if (cropBox.focusType !== FocusType.Pending) {
+        cropBox.setThisAsGlobalCropBox();
+        renderTarget.fitView();
+      }
     } else {
       ApplyClipCommand.setClippingPlanes(this.rootDomainObject);
     }
