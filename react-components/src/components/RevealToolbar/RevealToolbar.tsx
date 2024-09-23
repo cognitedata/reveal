@@ -21,6 +21,7 @@ import {
   SetOrbitOrFirstPersonControlsType
 } from './SetFlexibleControlsType';
 import { AssetContextualizedButton } from './AssetContextualizedButton';
+import { NewLayersButton } from './LayersContainer/NewLayersButton';
 
 const StyledToolBar = styled(ToolBar)`
   position: absolute !important;
@@ -45,7 +46,7 @@ export type CustomToolbarContent = {
 const DefaultContentWrapper = (props: CustomToolbarContent): ReactElement => {
   return (
     <>
-      <LayersButton />
+      <NewLayersButton />
       <FitModelsButton />
       <RuleBasedOutputsButton />
       <Divider weight="2px" length="75%" />

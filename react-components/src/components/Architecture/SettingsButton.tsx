@@ -105,7 +105,7 @@ export const SettingsButton = ({
         flexDirection,
         padding: DEFAULT_PADDING
       }}
-      renderTrigger={
+      renderTrigger={(props: any) => (
         <CogsTooltip
           content={<LabelWithShortcut label={label} command={command} />}
           disabled={label === undefined}
@@ -124,9 +124,10 @@ export const SettingsButton = ({
               event.preventDefault();
               setOpen((prevState) => !prevState);
             }}
+            {...props}
           />
         </CogsTooltip>
-      }>
+      )}>
       {children.map((child, _index): ReactElement | undefined => {
         return createMenuItem(child, t);
       })}

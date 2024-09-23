@@ -102,7 +102,7 @@ export const OptionButton = ({
       hideOnSelect={true}
       appendTo={'parent'}
       placement={usedInSettings ? 'bottom-end' : 'auto-start'}
-      renderTrigger={
+      renderTrigger={(props: any) => (
         <CogsTooltip
           content={<LabelWithShortcut label={label} command={command} />}
           disabled={usedInSettings || label === undefined}
@@ -125,11 +125,11 @@ export const OptionButton = ({
               event.preventDefault();
               setOpen((prevState) => !prevState);
             }}
+            {...props}
           />
           {selectedLabel}
-          <Button />
         </CogsTooltip>
-      }>
+      )}>
       {children.map((child, _index): ReactElement => {
         return createMenuItem(child, t, postAction);
       })}

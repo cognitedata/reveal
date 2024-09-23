@@ -100,7 +100,7 @@ export const FilterButton = ({
       hideOnSelect={false}
       appendTo={'parent'}
       placement={usedInSettings ? 'bottom-end' : 'auto-start'}
-      renderTrigger={
+      renderTrigger={(props: any) => (
         <CogsTooltip
           content={<LabelWithShortcut label={label} command={command} />}
           disabled={usedInSettings || label === undefined}
@@ -132,11 +132,12 @@ export const FilterButton = ({
               setOpen(!isOpen);
               event.stopPropagation();
               event.preventDefault();
-            }}>
+            }}
+            {...props}>
             {usedInSettings ? selectedLabel : undefined}
           </Button>
         </CogsTooltip>
-      }>
+      )}>
       <Menu.ItemAction
         key={-1}
         toggled={isAllChecked}

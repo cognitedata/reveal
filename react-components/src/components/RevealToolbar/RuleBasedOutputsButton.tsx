@@ -131,7 +131,7 @@ export const RuleBasedOutputsButton = ({
         overflow: 'auto',
         marginBottom: '20px'
       }}
-      renderTrigger={
+      renderTrigger={(props: any) => (
         <CogsTooltip
           content={t('RULESET_SELECT_HEADER', 'Select color overlay')}
           placement="right"
@@ -141,9 +141,10 @@ export const RuleBasedOutputsButton = ({
             disabled={isAssetMappingsLoading}
             aria-label="Select RuleSet"
             type="ghost"
+            {...props}
           />
         </CogsTooltip>
-      }>
+      )}>
       <Menu.Section>{t('RULESET_SELECT_HEADER', 'Select color overlay')}</Menu.Section>
       <RuleBasedSelectionItem
         key="no-rule-selected"

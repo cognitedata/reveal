@@ -43,13 +43,13 @@ export const SelectSceneButton = ({
     <StyledMenu
       placement="right-start"
       appendTo={document.body}
-      renderTrigger={
+      renderTrigger={(props: any) => (
         <CogsTooltip content={t('SCENE_SELECT_HEADER', 'Select 3D location')}>
-          <Button icon=<WorldIcon /> aria-label="Select 3D location" type="ghost">
+          <Button icon=<WorldIcon /> aria-label="Select 3D location" type="ghost" {...props}>
             {orientation === 'horizontal' && sceneName}
           </Button>
         </CogsTooltip>
-      }>
+      )}>
       {orientation === 'none' && (
         <Menu.Header>{t('SCENE_SELECT_HEADER', 'Select 3D location')}</Menu.Header>
       )}
