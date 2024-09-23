@@ -10,13 +10,14 @@ import { type DomainObject } from '../../base/domainObjects/DomainObject';
 import { type DomainObjectChange } from '../../base/domainObjectsHelpers/DomainObjectChange';
 import { Changes } from '../../base/domainObjectsHelpers/Changes';
 import { AnnotationsDomainObject } from './AnnotationsDomainObject';
-import { SingleAnnotation } from './helpers/SingleAnnotation';
+import { createAnnotation, type SingleAnnotation } from './helpers/SingleAnnotation';
 import { SolidDomainObject } from '../primitives/common/SolidDomainObject';
 import { SolidPrimitiveRenderStyle } from '../primitives/common/SolidPrimitiveRenderStyle';
 import { AnnotationChangedDescription } from './helpers/AnnotationChangedDescription';
 import { type BaseCommand } from '../../base/commands/BaseCommand';
 import { CopyToClipboardCommand } from '../../base/concreteCommands/CopyToClipboardCommand';
 import { ToggleMetricUnitsCommand } from '../../base/concreteCommands/ToggleMetricUnitsCommand';
+import { Box } from '../../base/utilities/primitives/Box';
 
 export class BoxGizmoDomainObject extends BoxDomainObject {
   // ==================================================
@@ -89,16 +90,17 @@ export class BoxGizmoDomainObject extends BoxDomainObject {
   // ==================================================
 
   public createAnnotation(): SingleAnnotation {
-    const matrix = this.box.getMatrix();
-    return SingleAnnotation.createBox(matrix);
+    const box = new Box();
+    box.copy(this.box);
+    return createAnnotation(box);
   }
 
   public updateThisFromAnnotation(annotation: SingleAnnotation): boolean {
-    const matrix = annotation.getMatrix();
-    if (matrix === undefined) {
+    const box = annotation.selectedPrimitive;
+    if (!(box instanceof Box)) {
       return false;
     }
-    this.box.setMatrix(matrix);
+    this.box.copy(box);
     return true;
   }
 
@@ -111,7 +113,11 @@ export class BoxGizmoDomainObject extends BoxDomainObject {
     if (annotation === undefined) {
       return false;
     }
-    annotation.updateFromMatrix(this.box.getMatrix());
+    const box = annotation.selectedPrimitive;
+    if (!(box instanceof Box)) {
+      return false;
+    }
+    box.copy(this.box);
 
     const change = inDragging ? Changes.dragging : Changes.changedPart;
     const changeDesc = new AnnotationChangedDescription(change, annotation);

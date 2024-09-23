@@ -8,7 +8,7 @@ import { PlaneView } from './PlaneView';
 import { type Color, Plane, Vector3 } from 'three';
 import { Changes } from '../../../base/domainObjectsHelpers/Changes';
 import { FocusType } from '../../../base/domainObjectsHelpers/FocusType';
-import { PrimitiveType } from '../common/PrimitiveType';
+import { PrimitiveType } from '../../../base/utilities/primitives/PrimitiveType';
 import { type BaseDragger } from '../../../base/domainObjectsHelpers/BaseDragger';
 import {
   VisualDomainObject,

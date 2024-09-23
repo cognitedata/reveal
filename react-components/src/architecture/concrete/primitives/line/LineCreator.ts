@@ -3,7 +3,7 @@
  */
 
 import { Plane, type Ray, Vector3 } from 'three';
-import { PrimitiveType } from '../common/PrimitiveType';
+import { PrimitiveType } from '../../../base/utilities/primitives/PrimitiveType';
 import { BaseCreator } from '../../../base/domainObjectsHelpers/BaseCreator';
 import { copy } from '../../../base/utilities/extensions/arrayExtensions';
 import { Changes } from '../../../base/domainObjectsHelpers/Changes';

@@ -10,7 +10,7 @@ import { type TranslateKey } from '../../base/utilities/TranslateKey';
 import { PrimitiveEditTool } from '../primitives/tools/PrimitiveEditTool';
 import { MeasureLineDomainObject } from './MeasureLineDomainObject';
 import { MeasureBoxDomainObject } from './MeasureBoxDomainObject';
-import { PrimitiveType } from '../primitives/common/PrimitiveType';
+import { PrimitiveType } from '../../base/utilities/primitives/PrimitiveType';
 import { BoxCreator } from '../primitives/box/BoxCreator';
 import { LineCreator } from '../primitives/line/LineCreator';
 import { type VisualDomainObject } from '../../base/domainObjects/VisualDomainObject';

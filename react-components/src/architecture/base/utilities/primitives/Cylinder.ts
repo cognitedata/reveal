@@ -6,6 +6,7 @@ import { type Box3, Matrix4, Quaternion, Vector3 } from 'three';
 import { Range3 } from '../geometry/Range3';
 import { square } from '../extensions/mathExtensions';
 import { Primitive } from './Primitive';
+import { PrimitiveType } from './PrimitiveType';
 
 const UP_AXIS = new Vector3(0, 0, 1);
 
@@ -29,6 +30,10 @@ export class Cylinder extends Primitive {
   // INSTANCE PROPERTIES
   // ==================================================
 
+  public override get primitiveType(): PrimitiveType {
+    return PrimitiveType.Cylinder;
+  }
+
   public get height(): number {
     return this.centerA.distanceTo(this.centerB);
   }
@@ -49,11 +54,11 @@ export class Cylinder extends Primitive {
     return 2 * this.radius;
   }
 
-  public get area(): number {
+  public override get area(): number {
     return 2 * Math.PI * this.radius * this.height;
   }
 
-  public get volume(): number {
+  public override get volume(): number {
     return Math.PI * square(this.radius) * this.height;
   }
 

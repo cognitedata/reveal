@@ -24,7 +24,7 @@ import {
   CustomObjectIntersectInput,
   CustomObjectIntersection
 } from '@cognite/reveal';
-import { PrimitiveType } from '../common/PrimitiveType';
+import { PrimitiveType } from '../../../base/utilities/primitives/PrimitiveType';
 import { mergeGeometries } from 'three/examples/jsm/utils/BufferGeometryUtils.js';
 import { FocusType } from '../../../base/domainObjectsHelpers/FocusType';
 import { DomainObjectIntersection } from '../../../base/domainObjectsHelpers/DomainObjectIntersection';

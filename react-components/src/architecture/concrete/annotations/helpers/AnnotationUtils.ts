@@ -11,10 +11,10 @@ import {
   type AnnotationCreate,
   type AnnotationsBoundingVolume
 } from '@cognite/sdk';
-import { CYLINDER_RADIUS_MARGIN } from './utils/constants';
-import { Box } from '../../base/utilities/primitives/Box';
-import { Cylinder } from '../../base/utilities/primitives/Cylinder';
-import { type Primitive } from '../../base/utilities/primitives/Primitive';
+import { CYLINDER_RADIUS_MARGIN } from './constants';
+import { Box } from '../../../base/utilities/primitives/Box';
+import { Cylinder } from '../../../base/utilities/primitives/Cylinder';
+import { type Primitive } from '../../../base/utilities/primitives/Primitive';
 import { Matrix4, Vector3 } from 'three';
 import { Annotation, AssetCentricAssetId } from './Annotation';
 
@@ -35,7 +35,7 @@ export class AnnotationUtils {
         id: annotation.id,
         update: {
           status: {
-            set: annotation.resultingStatus
+            set: annotation.resultingCdfStatus
           },
           data: {
             set: {
@@ -58,7 +58,7 @@ export class AnnotationUtils {
   public static async create(sdk: CogniteClient, annotation: Annotation): Promise<boolean> {
     const changes: AnnotationCreate[] = [
       {
-        status: annotation.resultingStatus,
+        status: annotation.resultingCdfStatus,
         data: {
           region: createCdfGeometries(annotation.primitives),
           assetRef: {
@@ -206,7 +206,7 @@ function createCdfGeometry(primitive: Primitive): AnnotationGeometry | undefined
 
 function createCdfBox(primitive: Box): AnnotationsBox {
   return {
-    matrix: primitive.getMatrix().clone().transpose().elements,
+    matrix: primitive.getMatrix().transpose().elements,
     confidence: primitive.confidence,
     label: primitive.label
   };

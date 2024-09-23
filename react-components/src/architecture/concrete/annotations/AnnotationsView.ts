@@ -9,14 +9,11 @@ import {
   type CustomObjectIntersectInput,
   type CustomObjectIntersection
 } from '@cognite/reveal';
-import { type PointCloudAnnotation } from './utils/types';
 import {
   type CreateWireframeArgs,
   createWireframeFromMultipleAnnotations
 } from './helpers/createWireframeFromMultipleAnnotations';
-import { expandBoundingBox, getBoundingBox } from './utils/getBoundingBox';
 import { getClosestAnnotation } from './helpers/getClosestAnnotation';
-import { getAnnotationMatrixByGeometry } from './helpers/getMatrixUtils';
 import { type WireframeUserData } from './helpers/WireframeUserData';
 import { GroupThreeView } from '../../base/views/GroupThreeView';
 import { type AnnotationsDomainObject } from './AnnotationsDomainObject';
@@ -29,8 +26,10 @@ import { Box3, Group, Matrix4, Mesh, MeshBasicMaterial, type Object3D, Vector2 }
 import { CylinderUtils } from '../../base/utilities/primitives/CylinderUtils';
 import { BoxUtils } from '../../base/utilities/primitives/BoxUtils';
 import { AnnotationChangedDescription } from './helpers/AnnotationChangedDescription';
-import { ALL_STATUSES, getStatusByAnnotation, Status } from './helpers/Status';
+import { ALL_STATUSES, Status } from './helpers/Status';
 import { isPartOfBoxVisibleByPlanes } from '../../base/utilities/geometry/isPointVisibleByPlanes';
+import { type Annotation } from './helpers/Annotation';
+import { Cylinder } from '../../base/utilities/primitives/Cylinder';
 
 const FOCUS_ANNOTATION_NAME = 'focus-annotation-name';
 const GROUP_SIZE = 100;
@@ -164,13 +163,15 @@ export class AnnotationsView extends GroupThreeView<AnnotationsDomainObject> {
     const clippingPlanes = this.renderTarget.getGlobalClippingPlanes();
     if (clippingPlanes.length === 0) {
       for (const annotation of annotations) {
-        expandBoundingBox(boundingBox, annotation, this.globalMatrix);
+        annotation.expandBoundingBox(boundingBox);
       }
+      boundingBox.applyMatrix4(this.globalMatrix);
     } else {
       const tempBoundingBox = new Box3();
       for (const annotation of annotations) {
         tempBoundingBox.makeEmpty();
-        expandBoundingBox(tempBoundingBox, annotation, this.globalMatrix);
+        annotation.expandBoundingBox(tempBoundingBox);
+        tempBoundingBox.applyMatrix4(this.globalMatrix);
         if (isPartOfBoxVisibleByPlanes(clippingPlanes, tempBoundingBox)) {
           boundingBox.union(tempBoundingBox);
         }
@@ -192,14 +193,15 @@ export class AnnotationsView extends GroupThreeView<AnnotationsDomainObject> {
     const boundingBox = new Box3();
     for (const status of ALL_STATUSES) {
       const filteredAnnotation = annotations.filter((annotation) => {
-        if (getStatusByAnnotation(annotation) !== status) {
+        if (annotation.getStatus() !== status) {
           return false;
         }
         if (clippingPlanes.length === 0) {
           return true;
         }
         boundingBox.makeEmpty();
-        expandBoundingBox(boundingBox, annotation, this.globalMatrix);
+        annotation.expandBoundingBox(boundingBox);
+        boundingBox.applyMatrix4(this.globalMatrix);
         return isPartOfBoxVisibleByPlanes(clippingPlanes, boundingBox);
       });
 
@@ -236,14 +238,17 @@ export class AnnotationsView extends GroupThreeView<AnnotationsDomainObject> {
     if (closestDistance !== undefined && closestFinder.minDistance > closestDistance) {
       return undefined;
     }
+    const boundingBox = info.annotation.getBoundingBox();
+    boundingBox.applyMatrix4(this.globalMatrix);
+
     const customObjectIntersection: DomainObjectIntersection = {
       type: 'customObject',
       distanceToCamera: closestFinder.minDistance,
       point: info.point,
       customObject: this,
       domainObject,
-      boundingBox: getBoundingBox(info.annotation, this.globalMatrix),
-      userData: new SingleAnnotation(info.annotation, info.geometry)
+      boundingBox,
+      userData: new SingleAnnotation(info.annotation, info.primitive)
     };
     return customObjectIntersection;
   }
@@ -278,22 +283,22 @@ export class AnnotationsView extends GroupThreeView<AnnotationsDomainObject> {
       return;
     }
     const selectedAnnotation = this.domainObject.selectedAnnotation;
-    const selectedGeometry = selectedAnnotation?.selectedGeometry;
+    const selectedGeometry = selectedAnnotation?.selectedPrimitive;
 
     const group = new Group();
     group.name = FOCUS_ANNOTATION_NAME;
     this.addChild(group);
 
-    for (const geometry of focusAnnotation.getGeometries()) {
-      if (selectedGeometry !== undefined && selectedGeometry === geometry) {
+    for (const primitive of focusAnnotation.annotation.primitives) {
+      if (selectedGeometry !== undefined && selectedGeometry === primitive) {
         continue;
       }
-      const matrix = getAnnotationMatrixByGeometry(geometry);
+      const matrix = primitive.getMatrix();
       if (matrix === undefined) {
         continue;
       }
       matrix.premultiply(this.globalMatrix);
-      const isCylinder = geometry.cylinder !== undefined;
+      const isCylinder = primitive instanceof Cylinder;
       const mesh = createMeshByMatrix(matrix, this.focusAnnotationMaterial, isCylinder);
       group.add(mesh);
     }
@@ -387,7 +392,7 @@ export class AnnotationsView extends GroupThreeView<AnnotationsDomainObject> {
     }
   }
 
-  private *getAnnotations(): Generator<PointCloudAnnotation> {
+  private *getAnnotations(): Generator<Annotation> {
     for (const wireframe of this.getWireframes()) {
       const userData = getUserData(wireframe);
       if (userData === undefined) {

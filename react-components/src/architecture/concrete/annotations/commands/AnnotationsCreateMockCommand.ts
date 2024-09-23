@@ -5,19 +5,16 @@
 import { type DomainObject } from '../../../base/domainObjects/DomainObject';
 import { type TranslateKey } from '../../../base/utilities/TranslateKey';
 import { AnnotationsDomainObject } from '../AnnotationsDomainObject';
-import {
-  type AnnotationsBox,
-  type AnnotationsCylinder,
-  type AnnotationsBoundingVolume
-} from '@cognite/sdk/dist/src';
 import { Euler, Matrix4, Vector3 } from 'three';
-import { type PointCloudAnnotation } from '../utils/types';
 import { InstanceCommand } from '../../../base/commands/InstanceCommand';
 import { getRandomInt } from '../../../base/utilities/extensions/mathExtensions';
 import { degToRad } from 'three/src/math/MathUtils.js';
 import { type DomainObjectChange } from '../../../base/domainObjectsHelpers/DomainObjectChange';
 import { AnnotationChangedDescription } from '../helpers/AnnotationChangedDescription';
 import { Changes } from '../../../base/domainObjectsHelpers/Changes';
+import { Annotation } from '../helpers/Annotation';
+import { Cylinder } from '../../../base/utilities/primitives/Cylinder';
+import { Box } from '../../../base/utilities/primitives/Box';
 
 export class AnnotationsCreateMockCommand extends InstanceCommand {
   // ==================================================
@@ -64,32 +61,22 @@ export class AnnotationsCreateMockCommand extends InstanceCommand {
 // PRIVATE FUNCTIONS
 // ==================================================
 
-function createAnnotationsBox(matrix: Matrix4): AnnotationsBox {
-  const box: AnnotationsBox = {
-    confidence: 0.5,
-    label: 'test',
-    matrix: matrix.elements
-  };
+function createBox(matrix: Matrix4): Box {
+  const box = new Box();
+  box.setMatrix(matrix);
   return box;
 }
 
-function createAnnotationsCylinder(
-  centerA: Vector3,
-  centerB: Vector3,
-  radius: number
-): AnnotationsCylinder {
-  const cylinder: AnnotationsCylinder = {
-    confidence: 1,
-    label: '',
-    radius,
-    centerA: centerA.toArray(),
-    centerB: centerB.toArray()
-  };
+function createCylinder(centerA: Vector3, centerB: Vector3, radius: number): Cylinder {
+  const cylinder = new Cylinder();
+  cylinder.radius = radius;
+  cylinder.centerA.copy(centerA);
+  cylinder.centerB.copy(centerB);
   return cylinder;
 }
 
-function createSingleAnnotations(): PointCloudAnnotation[] {
-  const annotations: PointCloudAnnotation[] = [];
+function createSingleAnnotations(): Annotation[] {
+  const annotations: Annotation[] = [];
 
   const radius = 1;
   for (let i = 0; i < 14; i++) {
@@ -104,48 +91,39 @@ function createSingleAnnotations(): PointCloudAnnotation[] {
     matrix.multiply(new Matrix4().makeRotationFromEuler(new Euler(degToRad(0), 0, degToRad(0))));
 
     matrix.multiply(new Matrix4().makeScale(4, 1, 2));
-    matrix.transpose();
 
-    const geometry: AnnotationsBoundingVolume = {
-      confidence: 0.5,
-      label: 'test',
-      region: [
-        {
-          cylinder: i % 2 !== 0 ? createAnnotationsCylinder(centerA, centerB, radius) : undefined,
-          box: i % 2 === 0 ? createAnnotationsBox(matrix) : undefined
-        }
-      ]
-    };
-    const annotation: PointCloudAnnotation = {
-      source: 'asset-centric',
-      id: getRandomInt(),
-      status: 'approved',
-      geometry,
-      assetRef: { source: 'asset-centric', id: getRandomInt() },
-      creatingApp: '3d-management'
-    };
+    const annotation = new Annotation();
+    annotation.id = getRandomInt();
+    annotation.label = 'test';
+    if (i % 2 !== 0) {
+      annotation.primitives.push(createCylinder(centerA, centerB, radius));
+    } else {
+      annotation.primitives.push(createBox(matrix));
+    }
     if (i % 3 === 0) {
       annotation.status = 'rejected';
-    }
-    if (i % 4 === 0) {
+    } else if (i % 3 === 1) {
       annotation.status = 'suggested';
+    } else {
+      annotation.status = 'approved';
+      annotation.setAssetRefId(getRandomInt());
     }
     annotations.push(annotation);
   }
   return annotations;
 }
 
-function createMultiAnnotations(): PointCloudAnnotation[] {
-  const annotations: PointCloudAnnotation[] = [];
+function createMultiAnnotations(): Annotation[] {
+  const annotations: Annotation[] = [];
 
   const radius = 0.5;
-  for (let i = 0; i < 4; i++) {
+  for (let i = 0; i < 6; i++) {
     const x = 4 * i + 2;
     const y = 4 * i;
     const centerA = new Vector3(x, y, 0);
     const centerB = centerA.clone();
     centerB.x += 4;
-    const cylinder1 = createAnnotationsCylinder(centerA, centerB, radius);
+    const cylinder1 = createCylinder(centerA, centerB, radius);
 
     centerA.x += 4;
     centerB.x = centerA.x + 2;
@@ -153,31 +131,23 @@ function createMultiAnnotations(): PointCloudAnnotation[] {
 
     const matrix = new Matrix4().makeTranslation(center);
     matrix.multiply(new Matrix4().makeScale(1, 2, 1));
-    matrix.transpose();
-    const box = createAnnotationsBox(matrix);
+    const box = createBox(matrix);
 
     centerA.x += 2;
     centerB.x = centerA.x + 6;
-    const cylinder2 = createAnnotationsCylinder(centerA, centerB, 2 * radius);
+    const cylinder2 = createCylinder(centerA, centerB, 2 * radius);
 
-    const geometry: AnnotationsBoundingVolume = {
-      confidence: 0.5,
-      label: 'test',
-      region: [{ cylinder: cylinder1 }, { box }, { cylinder: cylinder2 }]
-    };
-    const annotation: PointCloudAnnotation = {
-      source: 'asset-centric',
-      id: getRandomInt(),
-      status: 'approved',
-      geometry,
-      assetRef: { source: 'asset-centric', id: getRandomInt() },
-      creatingApp: '3d-management'
-    };
+    const annotation = new Annotation();
+    annotation.id = getRandomInt();
+    annotation.label = 'test';
+    annotation.primitives.push(cylinder1, box, cylinder2);
     if (i % 3 === 0) {
       annotation.status = 'rejected';
-    }
-    if (i % 4 === 0) {
+    } else if (i % 3 === 1) {
       annotation.status = 'suggested';
+    } else {
+      annotation.status = 'approved';
+      annotation.setAssetRefId(getRandomInt());
     }
     annotations.push(annotation);
   }
@@ -195,7 +165,7 @@ function onAnnotationChanged(domainObject: DomainObject, change: DomainObjectCha
 
     // This gives the changed geometry of the annotation.
     // if undefined all geometry has changed. You may want to save the whole annotation anyway.
-    const _geometry = description.annotation.selectedGeometry;
+    const _geometry = description.annotation.selectedPrimitive;
 
     if (description.change === Changes.changedPart) {
       // console.log('Change annotation');

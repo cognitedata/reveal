@@ -93,19 +93,11 @@ export { ThreeView } from './base/views/ThreeView';
 export { AnnotationsDomainObject } from './concrete/annotations/AnnotationsDomainObject';
 export { AnnotationsRenderStyle } from './concrete/annotations/AnnotationsRenderStyle';
 export { SingleAnnotation } from './concrete/annotations/helpers/SingleAnnotation';
+export { Annotation } from './concrete/annotations/helpers/Annotation';
+export { Status } from './concrete/annotations/helpers/Status';
+export { AnnotationUtils } from './concrete/annotations/helpers/AnnotationUtils';
 export { AnnotationChangedDescription } from './concrete/annotations/helpers/AnnotationChangedDescription';
-export { PrimitiveType } from './concrete/primitives/common/PrimitiveType';
+export { PrimitiveType } from './base/utilities/primitives/PrimitiveType';
 export { AnnotationsSelectTool } from './concrete/annotations/commands/AnnotationsSelectTool';
 export { AnnotationsCreateTool } from './concrete/annotations/commands/AnnotationsCreateTool';
-export { getBoundingBox } from './concrete/annotations/utils/getBoundingBox';
 export { getGlobalMatrix } from './concrete/annotations/helpers/getMatrixUtils';
-export type {
-  LegacyIdentifier,
-  FdmIdentifier,
-  FdmAssetIdentifier,
-  AnnotationIdentifier,
-  AssetIdentifier,
-  PointCloudAnnotation,
-  AssetPointCloudAnnotation,
-  FdmPointCloudAnnotation
-} from './concrete/annotations/utils/types';

@@ -11,6 +11,7 @@ import {
 } from '../extensions/mathExtensions';
 import { BoxUtils } from './BoxUtils';
 import { Primitive } from './Primitive';
+import { PrimitiveType } from './PrimitiveType';
 
 export class Box extends Primitive {
   public static MinSize = 0.01;
@@ -27,16 +28,20 @@ export class Box extends Primitive {
   // INSTANCE PROPERTIES
   // ==================================================
 
-  public get area(): number {
+  public override get primitiveType(): PrimitiveType {
+    return PrimitiveType.Box;
+  }
+
+  public override get area(): number {
     return 2 * (this.size.x * this.size.y + this.size.y * this.size.z + this.size.z * this.size.x);
+  }
+
+  public override get volume(): number {
+    return this.size.x * this.size.y * this.size.z;
   }
 
   public get horizontalArea(): number {
     return this.size.x * this.size.y;
-  }
-
-  public get volume(): number {
-    return this.size.x * this.size.y * this.size.z;
   }
 
   public get diagonal(): number {

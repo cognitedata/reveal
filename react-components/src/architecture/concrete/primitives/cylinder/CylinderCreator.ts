@@ -3,7 +3,7 @@
  */
 
 import { Plane, type Ray, Vector3 } from 'three';
-import { type PrimitiveType } from '../common/PrimitiveType';
+import { type PrimitiveType } from '../../../base/utilities/primitives/PrimitiveType';
 import { BaseCreator } from '../../../base/domainObjectsHelpers/BaseCreator';
 import { FocusType } from '../../../base/domainObjectsHelpers/FocusType';
 import { Changes } from '../../../base/domainObjectsHelpers/Changes';

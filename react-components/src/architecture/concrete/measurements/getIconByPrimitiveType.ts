@@ -2,7 +2,7 @@
  * Copyright 2024 Cognite AS
  */
 
-import { PrimitiveType } from '../primitives/common/PrimitiveType';
+import { PrimitiveType } from '../../base/utilities/primitives/PrimitiveType';
 
 export function getIconByPrimitiveType(primitiveType: PrimitiveType): string {
   switch (primitiveType) {

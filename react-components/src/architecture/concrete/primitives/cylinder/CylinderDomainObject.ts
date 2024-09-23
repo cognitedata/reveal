@@ -7,7 +7,7 @@ import { type ThreeView } from '../../../base/views/ThreeView';
 import { CylinderView } from './CylinderView';
 import { Changes } from '../../../base/domainObjectsHelpers/Changes';
 import { FocusType } from '../../../base/domainObjectsHelpers/FocusType';
-import { PrimitiveType } from '../common/PrimitiveType';
+import { PrimitiveType } from '../../../base/utilities/primitives/PrimitiveType';
 import { type PrimitivePickInfo } from '../common/PrimitivePickInfo';
 import { type BaseDragger } from '../../../base/domainObjectsHelpers/BaseDragger';
 import { CylinderDragger } from './CylinderDragger';

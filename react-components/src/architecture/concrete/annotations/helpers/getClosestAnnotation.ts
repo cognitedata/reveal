@@ -3,27 +3,23 @@
  */
 
 import { type Matrix4, type Ray, Vector3 } from 'three';
-import {
-  type AnnotationsBox,
-  type AnnotationsCylinder,
-  type AnnotationsCogniteAnnotationTypesPrimitivesGeometry3DGeometry as AnnotationGeometry
-} from '@cognite/sdk';
-import { type PointCloudAnnotation } from '../utils/types';
-import { getAnnotationGeometries } from '../utils/annotationGeometryUtils';
-import { getBoxMatrix } from './getMatrixUtils';
 import { ClosestGeometryFinder } from '../../../base/utilities/geometry/ClosestGeometryFinder';
 import { BoxUtils } from '../../../base/utilities/primitives/BoxUtils';
+import { type Annotation } from './Annotation';
+import { Box } from '../../../base/utilities/primitives/Box';
+import { Cylinder } from '../../../base/utilities/primitives/Cylinder';
+import { type Primitive } from '../../../base/utilities/primitives/Primitive';
 
 export function getClosestAnnotation(
-  annotations: Generator<PointCloudAnnotation>,
+  annotations: Generator<Annotation>,
   globalMatrix: Matrix4,
   ray: Ray
 ): ClosestGeometryFinder<AnnotationIntersectInfo> {
   const closestFinder = new ClosestGeometryFinder<AnnotationIntersectInfo>(ray.origin);
 
   for (const annotation of annotations) {
-    for (const geometry of getAnnotationGeometries(annotation)) {
-      const point = getIntersectionPoint(geometry, globalMatrix, ray);
+    for (const primitive of annotation.primitives) {
+      const point = getIntersectionPoint(primitive, globalMatrix, ray);
       if (point === null) {
         continue;
       }
@@ -34,26 +30,26 @@ export function getClosestAnnotation(
           return false;
         }
         return (
-          isPointInside(point, closest.geometry, globalMatrix) ||
-          isPointInside(closest.point, geometry, globalMatrix)
+          isPointInside(point, closest.primitive, globalMatrix) ||
+          isPointInside(closest.point, primitive, globalMatrix)
         );
       };
       if (closest === undefined || !isOverlappingWithClosestGeometry()) {
         closestFinder.addLazy(
           point,
-          () => new AnnotationIntersectInfo(annotation, geometry, point)
+          () => new AnnotationIntersectInfo(annotation, primitive, point)
         );
         continue;
       }
       if (closest.volume === undefined) {
-        closest.volume = getVolume(closest.geometry, globalMatrix); // Optimization, lazy calculation
+        closest.volume = closest.primitive.volume; // Optimization, lazy calculation
       }
-      const volume = getVolume(geometry, globalMatrix);
+      const volume = primitive.volume;
       if (volume > closest.volume) {
         continue; // Select the one with the smallest volume
       }
       closestFinder.clear();
-      const info = new AnnotationIntersectInfo(annotation, geometry, point);
+      const info = new AnnotationIntersectInfo(annotation, primitive, point);
       info.volume = volume;
       closestFinder.add(point, info);
     }
@@ -62,31 +58,27 @@ export function getClosestAnnotation(
 }
 
 function getIntersectionPoint(
-  geometry: AnnotationGeometry,
+  primitive: Primitive,
   globalMatrix: Matrix4,
   ray: Ray
 ): Vector3 | null {
-  if (geometry.box !== undefined) {
-    return intersectBoxRegion(geometry.box, globalMatrix, ray);
+  if (primitive instanceof Box) {
+    return intersectBox(primitive, globalMatrix, ray);
   }
-  if (geometry.cylinder !== undefined) {
-    return intersectCylinderRegion(geometry.cylinder, globalMatrix, ray);
+  if (primitive instanceof Cylinder) {
+    return intersectCylinder(primitive, globalMatrix, ray);
   }
   return null;
 }
 
-function intersectBoxRegion(box: AnnotationsBox, globalMatrix: Matrix4, ray: Ray): Vector3 | null {
-  const matrix = getBoxMatrix(box);
+function intersectBox(box: Box, globalMatrix: Matrix4, ray: Ray): Vector3 | null {
+  const matrix = box.getMatrix();
   matrix.premultiply(globalMatrix);
   const orientedBox = BoxUtils.createOrientedBox(matrix);
   return orientedBox.intersectRay(ray, new Vector3());
 }
 
-function intersectCylinderRegion(
-  cylinder: AnnotationsCylinder,
-  globalMatrix: Matrix4,
-  ray: Ray
-): Vector3 | null {
+function intersectCylinder(cylinder: Cylinder, globalMatrix: Matrix4, ray: Ray): Vector3 | null {
   const { centerA, centerB } = getCylinderCenters(cylinder, globalMatrix);
   return intersectRayCylinder(ray, centerA, centerB, cylinder.radius);
 }
@@ -128,25 +120,17 @@ export function intersectRayCylinder(
   return null;
 }
 
-function isPointInside(
-  point: Vector3,
-  geometry: AnnotationGeometry,
-  globalMatrix: Matrix4
-): boolean {
-  if (geometry.box !== undefined) {
-    return isInsidePointBoxRegion(point, geometry.box, globalMatrix);
+function isPointInside(point: Vector3, primitive: Primitive, globalMatrix: Matrix4): boolean {
+  if (primitive instanceof Box) {
+    return isInsideBox(point, primitive, globalMatrix);
   }
-  if (geometry.cylinder !== undefined) {
-    return isInsideCylinderRegion(point, geometry.cylinder, globalMatrix);
+  if (primitive instanceof Cylinder) {
+    return isInsideCylinder(point, primitive, globalMatrix);
   }
   return false;
 }
 
-function isInsideCylinderRegion(
-  point: Vector3,
-  cylinder: AnnotationsCylinder,
-  globalMatrix: Matrix4
-): boolean {
+function isInsideCylinder(point: Vector3, cylinder: Cylinder, globalMatrix: Matrix4): boolean {
   const { centerA, centerB } = getCylinderCenters(cylinder, globalMatrix);
   const center = new Vector3().addVectors(centerA, centerB).divideScalar(2);
   const vector = centerB.sub(centerA);
@@ -159,60 +143,33 @@ function isInsideCylinderRegion(
   return distanceToAxis <= cylinder.radius;
 }
 
-function isInsidePointBoxRegion(
-  point: Vector3,
-  box: AnnotationsBox,
-  globalMatrix: Matrix4
-): boolean {
-  const matrix = getBoxMatrix(box);
+function isInsideBox(point: Vector3, box: Box, globalMatrix: Matrix4): boolean {
+  const matrix = box.getMatrix();
   matrix.premultiply(globalMatrix);
   const orientedBox = BoxUtils.createOrientedBox(matrix);
   return orientedBox.containsPoint(point);
 }
 
-function getVolume(geometry: AnnotationGeometry, globalMatrix: Matrix4): number {
-  if (geometry.box !== undefined) {
-    return getBoxRegionVolume(geometry.box, globalMatrix);
-  }
-  if (geometry.cylinder !== undefined) {
-    return getCylinderRegionVolume(geometry.cylinder, globalMatrix);
-  }
-  return 0;
-}
-
-function getBoxRegionVolume(box: AnnotationsBox, globalMatrix: Matrix4): number {
-  const matrix = getBoxMatrix(box);
-  matrix.premultiply(globalMatrix);
-  const orientedBox = BoxUtils.createOrientedBox(matrix);
-  return 8 * orientedBox.halfSize.x * orientedBox.halfSize.y * orientedBox.halfSize.z;
-}
-
-function getCylinderRegionVolume(cylinder: AnnotationsCylinder, globalMatrix: Matrix4): number {
-  const { centerA, centerB } = getCylinderCenters(cylinder, globalMatrix);
-  const h = centerA.distanceTo(centerB);
-  return Math.PI * cylinder.radius * cylinder.radius * h;
-}
-
 function getCylinderCenters(
-  cylinder: AnnotationsCylinder,
+  cylinder: Cylinder,
   globalMatrix: Matrix4
 ): { centerA: Vector3; centerB: Vector3 } {
-  const centerA = new Vector3(...cylinder.centerA);
-  const centerB = new Vector3(...cylinder.centerB);
+  const centerA = cylinder.centerA.clone();
+  const centerB = cylinder.centerB.clone();
   centerA.applyMatrix4(globalMatrix);
   centerB.applyMatrix4(globalMatrix);
   return { centerA, centerB };
 }
 
 export class AnnotationIntersectInfo {
-  public annotation: PointCloudAnnotation;
-  public geometry: AnnotationGeometry;
+  public annotation: Annotation;
+  public primitive: Primitive;
   public point: Vector3;
   public volume: number | undefined = undefined;
 
-  constructor(annotation: PointCloudAnnotation, geometry: AnnotationGeometry, point: Vector3) {
+  constructor(annotation: Annotation, primitive: Primitive, point: Vector3) {
     this.annotation = annotation;
-    this.geometry = geometry;
+    this.primitive = primitive;
     this.point = point;
   }
 }

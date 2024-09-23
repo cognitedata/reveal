@@ -6,7 +6,6 @@ import { VisualDomainObject } from '../../base/domainObjects/VisualDomainObject'
 import { type RenderStyle } from '../../base/renderStyles/RenderStyle';
 import { type ThreeView } from '../../base/views/ThreeView';
 import { type TranslateKey } from '../../base/utilities/TranslateKey';
-import { type PointCloudAnnotation } from './utils/types';
 import { AnnotationsView } from './AnnotationsView';
 import { AnnotationsRenderStyle } from './AnnotationsRenderStyle';
 import { FocusType } from '../../base/domainObjectsHelpers/FocusType';
@@ -15,19 +14,19 @@ import { remove } from '../../base/utilities/extensions/arrayExtensions';
 import { BoxGizmoDomainObject } from './BoxGizmoDomainObject';
 import { SingleAnnotation } from './helpers/SingleAnnotation';
 import { SolidDomainObject } from '../primitives/common/SolidDomainObject';
-import { PrimitiveType } from '../primitives/common/PrimitiveType';
+import { PrimitiveType } from '../../base/utilities/primitives/PrimitiveType';
 import { CylinderGizmoDomainObject } from './CylinderGizmoDomainObject';
 import { AnnotationChangedDescription } from './helpers/AnnotationChangedDescription';
 import { DomainObjectChange } from '../../base/domainObjectsHelpers/DomainObjectChange';
-import { getStatusByAnnotation } from './helpers/Status';
-import { AnnotationUtils } from './AnnotationUtils';
+import { AnnotationUtils } from './helpers/AnnotationUtils';
+import { type Annotation } from './helpers/Annotation';
 
 export class AnnotationsDomainObject extends VisualDomainObject {
   // ==================================================
   // INSTANCE FIELDS
   // ==================================================
 
-  private _annotations: PointCloudAnnotation[] = [];
+  private _annotations: Annotation[] = [];
   private _focusType = FocusType.None;
 
   public selectedAnnotation: SingleAnnotation | undefined = undefined;
@@ -39,11 +38,11 @@ export class AnnotationsDomainObject extends VisualDomainObject {
   // INSTANCE PROPERTIES
   // ==================================================
 
-  public get annotations(): PointCloudAnnotation[] {
+  public get annotations(): Annotation[] {
     return this._annotations;
   }
 
-  public set annotations(annotations: PointCloudAnnotation[]) {
+  public set annotations(annotations: Annotation[]) {
     this._annotations = annotations;
 
     // The pointer may have so refresh all
@@ -205,14 +204,14 @@ export class AnnotationsDomainObject extends VisualDomainObject {
     return true;
   }
 
-  public applyPendingAnnotationInteractive(annotation?: PointCloudAnnotation): boolean {
+  public applyPendingAnnotationInteractive(annotation?: Annotation): boolean {
     if (this.pendingAnnotation === undefined) {
       return false;
     }
     if (annotation !== undefined) {
       this.pendingAnnotation.annotation = annotation;
     }
-    this.pendingAnnotation.selectedGeometry = this.pendingAnnotation.firstGeometry;
+    this.pendingAnnotation.selectedPrimitive = this.pendingAnnotation.annotation.firstPrimitive;
 
     this.annotations.push(this.pendingAnnotation.annotation);
     this.notify(new AnnotationChangedDescription(Changes.addedPart, this.pendingAnnotation));
@@ -278,7 +277,7 @@ export class AnnotationsDomainObject extends VisualDomainObject {
     gizmoRenderStyle.lineWidth = renderStyle.lineWidth;
     gizmoRenderStyle.selectedLineWidth = renderStyle.selectedLineWidth;
     gizmoRenderStyle.depthTest = renderStyle.depthTest;
-    gizmo.color.set(renderStyle.getColorByStatus(getStatusByAnnotation(annotation.annotation)));
+    gizmo.color.set(renderStyle.getColorByStatus(annotation.annotation.getStatus()));
     return gizmo;
   }
 

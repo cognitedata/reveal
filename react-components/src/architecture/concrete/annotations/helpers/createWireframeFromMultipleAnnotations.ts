@@ -5,21 +5,19 @@
 import { type LineMaterial } from 'three/examples/jsm/lines/LineMaterial.js';
 import { Wireframe } from 'three/examples/jsm/lines/Wireframe.js';
 
-import { type AnnotationsCogniteAnnotationTypesPrimitivesGeometry3DGeometry as AnnotationGeometry } from '@cognite/sdk';
-
-import { type PointCloudAnnotation } from '../utils/types';
-
-import { getAnnotationGeometries } from '../utils/annotationGeometryUtils';
-import { getAnnotationMatrixByGeometry } from './getMatrixUtils';
 import { WireframeUserData } from './WireframeUserData';
 import { Matrix4, Vector3 } from 'three';
 import { BoxUtils } from '../../../base/utilities/primitives/BoxUtils';
 import { CylinderUtils } from '../../../base/utilities/primitives/CylinderUtils';
 import { PrimitiveUtils } from '../../../base/utilities/primitives/PrimitiveUtils';
 import { type Status } from './Status';
+import { type Annotation } from './Annotation';
+import { type Primitive } from '../../../base/utilities/primitives/Primitive';
+import { Cylinder } from '../../../base/utilities/primitives/Cylinder';
+import { Box } from '../../../base/utilities/primitives/Box';
 
 export type CreateWireframeArgs = {
-  annotations: PointCloudAnnotation[];
+  annotations: Annotation[];
   globalMatrix: Matrix4;
   status: Status;
   selected: boolean;
@@ -48,12 +46,12 @@ export function createWireframeFromMultipleAnnotations(
 
   for (let i = startIndex; i < endIndex; i++) {
     const annotation = annotations[i];
-    for (const geometry of getAnnotationGeometries(annotation)) {
-      const matrix = getAnnotationMatrixByGeometry(geometry);
+    for (const primitive of annotation.primitives) {
+      const matrix = primitive.getMatrix();
       if (matrix === undefined) {
         continue;
       }
-      const objectPositions = getObjectPositions(geometry);
+      const objectPositions = getObjectPositions(primitive);
       if (objectPositions === undefined) {
         continue;
       }
@@ -83,10 +81,10 @@ export function createWireframeFromMultipleAnnotations(
 const CYLINDER_POSITIONS = CylinderUtils.createPositions();
 const BOX_POSITIONS = BoxUtils.createPositions();
 
-function getObjectPositions(geometry: AnnotationGeometry): number[] | undefined {
-  if (geometry.box !== undefined) {
+function getObjectPositions(primitive: Primitive): number[] | undefined {
+  if (primitive instanceof Box) {
     return BOX_POSITIONS;
-  } else if (geometry.cylinder !== undefined) {
+  } else if (primitive instanceof Cylinder) {
     return CYLINDER_POSITIONS;
   } else {
     return undefined;

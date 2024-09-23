@@ -2,13 +2,13 @@
  * Copyright 2024 Cognite AS
  */
 
-import { type PointCloudAnnotation } from '../utils/types';
+import { type Annotation } from './Annotation';
 import { type Status } from './Status';
 
 export class WireframeUserData {
   public selected: boolean;
   public status: Status;
-  public annotations: PointCloudAnnotation[] = []; // Pending annotation has empty array
+  public annotations: Annotation[] = []; // Pending annotation has empty array
 
   public constructor(status: Status, selected: boolean) {
     this.status = status;
@@ -23,11 +23,11 @@ export class WireframeUserData {
     return this.length === 0;
   }
 
-  public includes(annotation: PointCloudAnnotation): boolean {
+  public includes(annotation: Annotation): boolean {
     return this.annotations.includes(annotation);
   }
 
-  public add(annotation: PointCloudAnnotation): void {
+  public add(annotation: Annotation): void {
     this.annotations.push(annotation);
   }
 }

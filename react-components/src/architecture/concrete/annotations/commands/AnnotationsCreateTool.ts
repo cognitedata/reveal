@@ -6,7 +6,7 @@ import { type TranslateKey } from '../../../base/utilities/TranslateKey';
 import { AnnotationsDomainObject } from '../AnnotationsDomainObject';
 import { UndoCommand } from '../../../base/concreteCommands/UndoCommand';
 import { type BaseCommand } from '../../../base/commands/BaseCommand';
-import { PrimitiveType } from '../../primitives/common/PrimitiveType';
+import { PrimitiveType } from '../../../base/utilities/primitives/PrimitiveType';
 import { CommandsUpdater } from '../../../base/reactUpdaters/CommandsUpdater';
 import { AnnotationsSetCreateTypeCommand } from './AnnotationsSetCreateTypeCommand';
 import { type BaseCreator } from '../../../base/domainObjectsHelpers/BaseCreator';

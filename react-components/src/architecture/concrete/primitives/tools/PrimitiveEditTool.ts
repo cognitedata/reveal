@@ -7,7 +7,7 @@ import { isDomainObjectIntersection } from '../../../base/domainObjectsHelpers/D
 import { FocusType } from '../../../base/domainObjectsHelpers/FocusType';
 import { type PrimitivePickInfo } from '../common/PrimitivePickInfo';
 import { Line3, Vector3 } from 'three';
-import { PrimitiveType } from '../common/PrimitiveType';
+import { PrimitiveType } from '../../../base/utilities/primitives/PrimitiveType';
 import { type BaseCreator } from '../../../base/domainObjectsHelpers/BaseCreator';
 import { BaseEditTool } from '../../../base/commands/BaseEditTool';
 import { type DomainObject } from '../../../base/domainObjects/DomainObject';

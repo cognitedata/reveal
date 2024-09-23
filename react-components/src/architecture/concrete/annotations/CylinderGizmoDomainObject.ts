@@ -9,15 +9,15 @@ import { type DomainObject } from '../../base/domainObjects/DomainObject';
 import { type DomainObjectChange } from '../../base/domainObjectsHelpers/DomainObjectChange';
 import { Changes } from '../../base/domainObjectsHelpers/Changes';
 import { AnnotationsDomainObject } from './AnnotationsDomainObject';
-import { SingleAnnotation } from './helpers/SingleAnnotation';
+import { createAnnotation, type SingleAnnotation } from './helpers/SingleAnnotation';
 import { CylinderDomainObject } from '../primitives/cylinder/CylinderDomainObject';
 import { SolidDomainObject } from '../primitives/common/SolidDomainObject';
 import { SolidPrimitiveRenderStyle } from '../primitives/common/SolidPrimitiveRenderStyle';
-import { CYLINDER_RADIUS_MARGIN } from './utils/constants';
 import { AnnotationChangedDescription } from './helpers/AnnotationChangedDescription';
 import { type BaseCommand } from '../../base/commands/BaseCommand';
 import { CopyToClipboardCommand } from '../../base/concreteCommands/CopyToClipboardCommand';
 import { ToggleMetricUnitsCommand } from '../../base/concreteCommands/ToggleMetricUnitsCommand';
+import { Cylinder } from '../../base/utilities/primitives/Cylinder';
 
 export class CylinderGizmoDomainObject extends CylinderDomainObject {
   // ==================================================
@@ -82,24 +82,17 @@ export class CylinderGizmoDomainObject extends CylinderDomainObject {
   // ==================================================
 
   public createAnnotation(): SingleAnnotation {
-    const { cylinder } = this;
-    const radius = cylinder.radius / (1 + CYLINDER_RADIUS_MARGIN);
-    return SingleAnnotation.createCylinder(cylinder.centerA, cylinder.centerB, radius);
+    const cylinder = new Cylinder();
+    cylinder.copy(this.cylinder);
+    return createAnnotation(cylinder);
   }
 
   public updateThisFromAnnotation(annotation: SingleAnnotation): boolean {
-    const geometry = annotation.selectedGeometry;
-    if (geometry === undefined) {
+    const cylinder = annotation.selectedPrimitive;
+    if (!(cylinder instanceof Cylinder)) {
       return false;
     }
-    const toCylinder = this.cylinder;
-    const fromCylinder = geometry.cylinder;
-    if (fromCylinder === undefined) {
-      return false;
-    }
-    toCylinder.centerA.fromArray(fromCylinder.centerA);
-    toCylinder.centerB.fromArray(fromCylinder.centerB);
-    toCylinder.radius = fromCylinder.radius * (1 + CYLINDER_RADIUS_MARGIN);
+    this.cylinder.copy(cylinder);
     return true;
   }
 
@@ -112,19 +105,11 @@ export class CylinderGizmoDomainObject extends CylinderDomainObject {
     if (annotation === undefined) {
       return false;
     }
-    const geometry = annotation.selectedGeometry;
-    if (geometry === undefined) {
+    const cylinder = annotation.selectedPrimitive;
+    if (!(cylinder instanceof Cylinder)) {
       return false;
     }
-    const toCylinder = geometry.cylinder;
-    if (toCylinder === undefined) {
-      return false;
-    }
-    const fromCylinder = this.cylinder;
-
-    toCylinder.centerA = fromCylinder.centerA.toArray();
-    toCylinder.centerB = fromCylinder.centerB.toArray();
-    toCylinder.radius = fromCylinder.radius / (1 + CYLINDER_RADIUS_MARGIN);
+    cylinder.copy(this.cylinder);
 
     const change = inDragging ? Changes.dragging : Changes.changedPart;
     const changeDesc = new AnnotationChangedDescription(change, annotation);

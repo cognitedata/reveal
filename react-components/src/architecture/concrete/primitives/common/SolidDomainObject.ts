@@ -6,7 +6,7 @@ import { type SolidPrimitiveRenderStyle } from './SolidPrimitiveRenderStyle';
 import { Changes } from '../../../base/domainObjectsHelpers/Changes';
 import { BoxFace } from './BoxFace';
 import { FocusType } from '../../../base/domainObjectsHelpers/FocusType';
-import { type PrimitiveType } from './PrimitiveType';
+import { type PrimitiveType } from '../../../base/utilities/primitives/PrimitiveType';
 import { VisualDomainObject } from '../../../base/domainObjects/VisualDomainObject';
 import { getIconByPrimitiveType } from '../../measurements/getIconByPrimitiveType';
 import { DomainObjectTransaction } from '../../../base/undo/DomainObjectTransaction';

@@ -4,7 +4,7 @@
 
 import { Color } from 'three';
 import { PlaneDomainObject } from '../primitives/plane/PlaneDomainObject';
-import { PrimitiveType } from '../primitives/common/PrimitiveType';
+import { PrimitiveType } from '../../base/utilities/primitives/PrimitiveType';
 import { type TranslateKey } from '../../base/utilities/TranslateKey';
 import { type BaseCommand } from '../../base/commands/BaseCommand';
 import { FlipSliceCommand } from './commands/FlipSliceCommand';

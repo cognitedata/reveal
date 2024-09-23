@@ -13,7 +13,7 @@ import {
   round
 } from '../../../base/utilities/extensions/mathExtensions';
 import { getAbsMaxComponentIndex } from '../../../base/utilities/extensions/vectorExtensions';
-import { PrimitiveType } from '../common/PrimitiveType';
+import { PrimitiveType } from '../../../base/utilities/primitives/PrimitiveType';
 import { getClosestPointOnLine } from '../../../base/utilities/extensions/rayExtensions';
 import { type BoxDomainObject } from './BoxDomainObject';
 import { BaseDragger } from '../../../base/domainObjectsHelpers/BaseDragger';

@@ -9,7 +9,7 @@ import {
 } from '../../../base/utilities/extensions/vectorExtensions';
 import { Range3 } from '../../../base/utilities/geometry/Range3';
 import { forceBetween0AndTwoPi } from '../../../base/utilities/extensions/mathExtensions';
-import { PrimitiveType } from '../common/PrimitiveType';
+import { PrimitiveType } from '../../../base/utilities/primitives/PrimitiveType';
 import { getClosestPointOnLine } from '../../../base/utilities/extensions/rayExtensions';
 import { BaseCreator } from '../../../base/domainObjectsHelpers/BaseCreator';
 import { FocusType } from '../../../base/domainObjectsHelpers/FocusType';

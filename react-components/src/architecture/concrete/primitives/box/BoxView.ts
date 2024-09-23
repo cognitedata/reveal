@@ -39,7 +39,7 @@ import { createSpriteWithText } from '../../../base/utilities/sprites/createSpri
 import { BoxUtils } from '../../../base/utilities/primitives/BoxUtils';
 import { PrimitivePickInfo } from '../common/PrimitivePickInfo';
 import { Range1 } from '../../../base/utilities/geometry/Range1';
-import { PrimitiveType } from '../common/PrimitiveType';
+import { PrimitiveType } from '../../../base/utilities/primitives/PrimitiveType';
 import { Quantity } from '../../../base/domainObjectsHelpers/Quantity';
 import { type PrimitiveRenderStyle } from '../common/PrimitiveRenderStyle';
 import { type DomainObject } from '../../../base/domainObjects/DomainObject';
