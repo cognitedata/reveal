@@ -1,4 +1,4 @@
-import { Image360Collection } from '@cognite/reveal';
+import { type Image360Collection } from '@cognite/reveal';
 import { Mock } from 'moq.ts';
 
 export const image360Options = {

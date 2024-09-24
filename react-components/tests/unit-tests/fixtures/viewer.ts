@@ -9,6 +9,8 @@ const domElement = document.createElement('div').appendChild(document.createElem
 export const viewerModelsMock = vi.fn<[], CogniteModel[]>();
 export const viewerRemoveModelsMock = vi.fn<[CogniteModel], void>();
 export const viewerImage360CollectionsMock = vi.fn<[], Image360Collection[]>();
+export const fitCameraToVisualSceneBoundingBoxMock = vi.fn<[number?], void>();
+export const fitCameraToModelsMock = vi.fn<[CogniteModel[], number?, boolean?], void>();
 
 export const viewerMock = new Mock<Cognite3DViewer>()
   .setup((viewer) => {
@@ -25,4 +27,8 @@ export const viewerMock = new Mock<Cognite3DViewer>()
   .returns(viewerRemoveModelsMock)
   .setup((p) => p.cameraManager)
   .returns(cameraManagerMock)
+  .setup((p) => p.fitCameraToVisualSceneBoundingBox)
+  .returns(fitCameraToVisualSceneBoundingBoxMock)
+  .setup((p) => p.fitCameraToModels)
+  .returns(fitCameraToModelsMock)
   .object();
