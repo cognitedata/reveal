@@ -17,11 +17,11 @@ import { BoxGizmoDomainObject } from '../BoxGizmoDomainObject';
 import { type BaseDragger } from '../../../base/domainObjectsHelpers/BaseDragger';
 import { PrimitiveEditTool } from '../../primitives/tools/PrimitiveEditTool';
 import { type PrimitivePickInfo } from '../../primitives/common/PrimitivePickInfo';
-import { type SingleAnnotation } from '../helpers/SingleAnnotation';
 import { AnnotationsDeleteCommand } from './AnnotationsDeleteCommand';
 import { AlignSelectedAnnotationCommand } from './AnnotationsAlignCommand';
 import { CylinderGizmoDomainObject } from '../CylinderGizmoDomainObject';
 import { AnnotationsCreateTool } from './AnnotationsCreateTool';
+import { type AnnotationIntersectInfo } from '../helpers/getClosestAnnotation';
 
 export const ANNOTATION_RADIUS_FACTOR = 0.2;
 
@@ -83,20 +83,21 @@ export class AnnotationsSelectTool extends BaseEditTool {
   public override async onHover(event: PointerEvent): Promise<void> {
     const intersection = this.getSpecificIntersection(event, isAnnotationsOrGizmo);
     const domainObject = AnnotationsSelectTool.getIntersectedAnnotationsDomainObject(intersection);
-    const annotation = getIntersectedAnnotation(intersection);
+    const intersectInfo = getIntersectedAnnotation(intersection);
     const gizmo = getIntersectedAnnotationGizmo(intersection);
 
-    if (domainObject !== undefined && annotation !== undefined) {
+    if (domainObject !== undefined && intersectInfo !== undefined) {
       this.renderTarget.setDefaultCursor();
-      if (annotation.equals(domainObject.selectedAnnotation)) {
+      if (intersectInfo.annotation === domainObject.selectedAnnotation) {
         domainObject.setFocusAnnotationInteractive(FocusType.None);
       } else {
-        domainObject.setFocusAnnotationInteractive(FocusType.Focus, annotation);
+        domainObject.setFocusAnnotationInteractive(FocusType.Focus, intersectInfo.annotation);
       }
     } else if (gizmo === undefined) {
       this.renderTarget.setNavigateCursor();
       this.defocusAll();
     } else if (gizmo !== undefined && isDomainObjectIntersection(intersection)) {
+      this.defocusAll();
       const pickInfo = intersection.userData as PrimitivePickInfo;
       gizmo.setFocusInteractive(pickInfo.focusType, pickInfo.face);
       PrimitiveEditTool.setCursor(this, gizmo, intersection.point, pickInfo);
@@ -106,12 +107,15 @@ export class AnnotationsSelectTool extends BaseEditTool {
   public override async onClick(event: PointerEvent): Promise<void> {
     const intersection = await this.getIntersection(event);
     const domainObject = AnnotationsSelectTool.getIntersectedAnnotationsDomainObject(intersection);
-    const annotation = getIntersectedAnnotation(intersection);
+    const intersectInfo = getIntersectedAnnotation(intersection);
     const gizmo = getIntersectedAnnotationGizmo(intersection);
 
-    if (domainObject !== undefined && annotation !== undefined) {
+    if (domainObject !== undefined && intersectInfo !== undefined) {
       // Click at an annotation
-      domainObject.setSelectedAnnotationInteractive(annotation);
+      domainObject.setSelectedAnnotationInteractive(
+        intersectInfo.annotation,
+        intersectInfo.primitiveIndex
+      );
       return;
     } else if (domainObject !== undefined) {
       // This will rather ont happen
@@ -219,14 +223,14 @@ export class AnnotationsSelectTool extends BaseEditTool {
 
 function getIntersectedAnnotation(
   intersection: AnyIntersection | undefined
-): SingleAnnotation | undefined {
+): AnnotationIntersectInfo | undefined {
   if (intersection === undefined) {
     return undefined;
   }
   if (!isDomainObjectIntersection(intersection)) {
     return undefined;
   }
-  return intersection.userData as SingleAnnotation;
+  return intersection.userData as AnnotationIntersectInfo;
 }
 
 function getIntersectedAnnotationGizmo(

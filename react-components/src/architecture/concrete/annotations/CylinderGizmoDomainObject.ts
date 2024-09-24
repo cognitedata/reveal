@@ -9,7 +9,6 @@ import { type DomainObject } from '../../base/domainObjects/DomainObject';
 import { type DomainObjectChange } from '../../base/domainObjectsHelpers/DomainObjectChange';
 import { Changes } from '../../base/domainObjectsHelpers/Changes';
 import { AnnotationsDomainObject } from './AnnotationsDomainObject';
-import { createAnnotation, type SingleAnnotation } from './helpers/SingleAnnotation';
 import { CylinderDomainObject } from '../primitives/cylinder/CylinderDomainObject';
 import { SolidDomainObject } from '../primitives/common/SolidDomainObject';
 import { SolidPrimitiveRenderStyle } from '../primitives/common/SolidPrimitiveRenderStyle';
@@ -18,6 +17,7 @@ import { type BaseCommand } from '../../base/commands/BaseCommand';
 import { CopyToClipboardCommand } from '../../base/concreteCommands/CopyToClipboardCommand';
 import { ToggleMetricUnitsCommand } from '../../base/concreteCommands/ToggleMetricUnitsCommand';
 import { Cylinder } from '../../base/utilities/primitives/Cylinder';
+import { Annotation } from './helpers/Annotation';
 
 export class CylinderGizmoDomainObject extends CylinderDomainObject {
   // ==================================================
@@ -81,13 +81,13 @@ export class CylinderGizmoDomainObject extends CylinderDomainObject {
   // INSTANCE METHODS
   // ==================================================
 
-  public createAnnotation(): SingleAnnotation {
+  public createAnnotation(): Annotation {
     const cylinder = new Cylinder();
     cylinder.copy(this.cylinder);
-    return createAnnotation(cylinder);
+    return Annotation.create(cylinder);
   }
 
-  public updateThisFromAnnotation(annotation: SingleAnnotation): boolean {
+  public updateThisFromAnnotation(annotation: Annotation): boolean {
     const cylinder = annotation.selectedPrimitive;
     if (!(cylinder instanceof Cylinder)) {
       return false;

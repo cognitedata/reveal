@@ -92,7 +92,6 @@ export { ThreeView } from './base/views/ThreeView';
 // New architecture: annotations
 export { AnnotationsDomainObject } from './concrete/annotations/AnnotationsDomainObject';
 export { AnnotationsRenderStyle } from './concrete/annotations/AnnotationsRenderStyle';
-export { SingleAnnotation } from './concrete/annotations/helpers/SingleAnnotation';
 export { Annotation } from './concrete/annotations/helpers/Annotation';
 export { Status } from './concrete/annotations/helpers/Status';
 export { AnnotationUtils } from './concrete/annotations/helpers/AnnotationUtils';

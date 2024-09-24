@@ -12,14 +12,13 @@ import { FocusType } from '../../base/domainObjectsHelpers/FocusType';
 import { Changes } from '../../base/domainObjectsHelpers/Changes';
 import { remove } from '../../base/utilities/extensions/arrayExtensions';
 import { BoxGizmoDomainObject } from './BoxGizmoDomainObject';
-import { SingleAnnotation } from './helpers/SingleAnnotation';
 import { SolidDomainObject } from '../primitives/common/SolidDomainObject';
 import { PrimitiveType } from '../../base/utilities/primitives/PrimitiveType';
 import { CylinderGizmoDomainObject } from './CylinderGizmoDomainObject';
 import { AnnotationChangedDescription } from './helpers/AnnotationChangedDescription';
 import { DomainObjectChange } from '../../base/domainObjectsHelpers/DomainObjectChange';
 import { AnnotationUtils } from './helpers/AnnotationUtils';
-import { type Annotation } from './helpers/Annotation';
+import { Annotation } from './helpers/Annotation';
 
 export class AnnotationsDomainObject extends VisualDomainObject {
   // ==================================================
@@ -29,9 +28,9 @@ export class AnnotationsDomainObject extends VisualDomainObject {
   private _annotations: Annotation[] = [];
   private _focusType = FocusType.None;
 
-  public selectedAnnotation: SingleAnnotation | undefined = undefined;
-  public focusAnnotation?: SingleAnnotation | undefined = undefined;
-  public pendingAnnotation: SingleAnnotation | undefined = undefined;
+  public selectedAnnotation: Annotation | undefined = undefined;
+  public focusAnnotation?: Annotation | undefined = undefined;
+  public pendingAnnotation: Annotation | undefined = undefined;
   public applyPendingWhenCreated = false;
 
   // ==================================================
@@ -47,19 +46,17 @@ export class AnnotationsDomainObject extends VisualDomainObject {
 
     // The pointer may have so refresh all
     if (this.selectedAnnotation !== undefined) {
-      if (!this.selectedAnnotation.remap(annotations)) {
-        this.selectedAnnotation = undefined;
+      this.selectedAnnotation = this.selectedAnnotation.remap(annotations);
+      if (this.selectedAnnotation === undefined) {
         this.removeGizmoInteractive();
       }
     }
     if (this.focusAnnotation !== undefined) {
-      if (!this.focusAnnotation.remap(annotations)) {
-        this.focusAnnotation = undefined;
-      }
+      this.focusAnnotation = this.focusAnnotation.remap(annotations);
     }
     if (this.pendingAnnotation !== undefined) {
-      if (!this.pendingAnnotation.remap(annotations)) {
-        this.pendingAnnotation = undefined;
+      this.pendingAnnotation = this.pendingAnnotation.remap(annotations);
+      if (this.pendingAnnotation === undefined) {
         this.removeGizmoInteractive();
       }
     }
@@ -123,7 +120,7 @@ export class AnnotationsDomainObject extends VisualDomainObject {
     }
     let isChanged: boolean;
     if (!this.selectedAnnotation.isSingle) {
-      isChanged = this.selectedAnnotation.removeSelectedGeometryGeometry();
+      isChanged = this.selectedAnnotation.removeSelectedPrimitive();
       if (isChanged) {
         const change = new AnnotationChangedDescription(
           Changes.changedPart,
@@ -133,7 +130,7 @@ export class AnnotationsDomainObject extends VisualDomainObject {
         this.removeGizmoInteractive();
       }
     } else {
-      isChanged = remove(this.annotations, this.selectedAnnotation.annotation);
+      isChanged = remove(this.annotations, this.selectedAnnotation);
       if (isChanged) {
         const change = new AnnotationChangedDescription(
           Changes.deletedPart,
@@ -157,14 +154,16 @@ export class AnnotationsDomainObject extends VisualDomainObject {
   }
 
   public setSelectedAnnotationInteractive(
-    annotation: SingleAnnotation | undefined,
+    annotation?: Annotation,
+    primitiveIndex?: number,
     updateGizmo = true
   ): boolean {
-    if (SingleAnnotation.areEqual(this.selectedAnnotation, annotation)) {
+    if (Annotation.areEqualIncludeSelected(this.selectedAnnotation, annotation, primitiveIndex)) {
       return false;
     }
     this.selectedAnnotation = annotation;
     if (this.selectedAnnotation !== undefined) {
+      this.selectedAnnotation.selectedIndex = primitiveIndex;
       this.setSelectedInteractive(true);
     }
     this.setFocusAnnotationInteractive(FocusType.None);
@@ -188,14 +187,8 @@ export class AnnotationsDomainObject extends VisualDomainObject {
     return true;
   }
 
-  public setFocusAnnotationInteractive(
-    focusType: FocusType,
-    annotation?: SingleAnnotation
-  ): boolean {
-    if (
-      SingleAnnotation.areEqual(this.focusAnnotation, annotation) &&
-      this._focusType === focusType
-    ) {
+  public setFocusAnnotationInteractive(focusType: FocusType, annotation?: Annotation): boolean {
+    if (Annotation.areEqual(this.focusAnnotation, annotation) && this._focusType === focusType) {
       return false; // No change
     }
     this._focusType = focusType;
@@ -209,13 +202,11 @@ export class AnnotationsDomainObject extends VisualDomainObject {
       return false;
     }
     if (annotation !== undefined) {
-      this.pendingAnnotation.annotation = annotation;
+      this.pendingAnnotation = annotation;
     }
-    this.pendingAnnotation.selectedPrimitive = this.pendingAnnotation.annotation.firstPrimitive;
-
-    this.annotations.push(this.pendingAnnotation.annotation);
+    this.annotations.push(this.pendingAnnotation);
     this.notify(new AnnotationChangedDescription(Changes.addedPart, this.pendingAnnotation));
-    this.setSelectedAnnotationInteractive(this.pendingAnnotation);
+    this.setSelectedAnnotationInteractive(this.pendingAnnotation, 0);
     this.setVisibleInteractive(true);
     this.pendingAnnotation = undefined;
     return true;
@@ -260,7 +251,7 @@ export class AnnotationsDomainObject extends VisualDomainObject {
     return newGizmo;
   }
 
-  public getOrCreateGizmoByAnnotation(annotation: SingleAnnotation): SolidDomainObject | undefined {
+  public getOrCreateGizmoByAnnotation(annotation: Annotation): SolidDomainObject | undefined {
     const gizmo = this.getOrCreateGizmo(annotation.primitiveType);
     if (gizmo === undefined) {
       return undefined;
@@ -277,7 +268,7 @@ export class AnnotationsDomainObject extends VisualDomainObject {
     gizmoRenderStyle.lineWidth = renderStyle.lineWidth;
     gizmoRenderStyle.selectedLineWidth = renderStyle.selectedLineWidth;
     gizmoRenderStyle.depthTest = renderStyle.depthTest;
-    gizmo.color.set(renderStyle.getColorByStatus(annotation.annotation.getStatus()));
+    gizmo.color.set(renderStyle.getColorByStatus(annotation.getStatus()));
     return gizmo;
   }
 

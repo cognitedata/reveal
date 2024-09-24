@@ -10,7 +10,6 @@ import { type DomainObject } from '../../base/domainObjects/DomainObject';
 import { type DomainObjectChange } from '../../base/domainObjectsHelpers/DomainObjectChange';
 import { Changes } from '../../base/domainObjectsHelpers/Changes';
 import { AnnotationsDomainObject } from './AnnotationsDomainObject';
-import { createAnnotation, type SingleAnnotation } from './helpers/SingleAnnotation';
 import { SolidDomainObject } from '../primitives/common/SolidDomainObject';
 import { SolidPrimitiveRenderStyle } from '../primitives/common/SolidPrimitiveRenderStyle';
 import { AnnotationChangedDescription } from './helpers/AnnotationChangedDescription';
@@ -18,6 +17,7 @@ import { type BaseCommand } from '../../base/commands/BaseCommand';
 import { CopyToClipboardCommand } from '../../base/concreteCommands/CopyToClipboardCommand';
 import { ToggleMetricUnitsCommand } from '../../base/concreteCommands/ToggleMetricUnitsCommand';
 import { Box } from '../../base/utilities/primitives/Box';
+import { Annotation } from './helpers/Annotation';
 
 export class BoxGizmoDomainObject extends BoxDomainObject {
   // ==================================================
@@ -89,13 +89,13 @@ export class BoxGizmoDomainObject extends BoxDomainObject {
   // INSTANCE METHODS
   // ==================================================
 
-  public createAnnotation(): SingleAnnotation {
+  public createAnnotation(): Annotation {
     const box = new Box();
     box.copy(this.box);
-    return createAnnotation(box);
+    return Annotation.create(box);
   }
 
-  public updateThisFromAnnotation(annotation: SingleAnnotation): boolean {
+  public updateThisFromAnnotation(annotation: Annotation): boolean {
     const box = annotation.selectedPrimitive;
     if (!(box instanceof Box)) {
       return false;

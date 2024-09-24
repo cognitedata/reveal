@@ -13,11 +13,11 @@ import { type BaseCreator } from '../../../base/domainObjectsHelpers/BaseCreator
 import { BoxCreator } from '../../primitives/box/BoxCreator';
 import { BoxGizmoDomainObject } from '../BoxGizmoDomainObject';
 import { Changes } from '../../../base/domainObjectsHelpers/Changes';
-import { type SingleAnnotation } from '../helpers/SingleAnnotation';
 import { CylinderGizmoDomainObject } from '../CylinderGizmoDomainObject';
 import { CylinderCreator } from '../../primitives/cylinder/CylinderCreator';
 import { NavigationTool } from '../../../base/concreteCommands/NavigationTool';
 import { AnnotationsSelectTool } from './AnnotationsSelectTool';
+import { type Annotation } from '../helpers/Annotation';
 
 export const ANNOTATION_RADIUS_FACTOR = 0.2;
 
@@ -80,10 +80,10 @@ export class AnnotationsCreateTool extends NavigationTool {
     if (this._creator !== undefined && this._creator.onEscapeKey()) {
       this.endCreatorIfFinished(this._creator, true);
       this.setSelectTool();
+      this.deselectedAnnotationInteractive();
     } else {
       this._creator = undefined;
     }
-    this.deselectedAnnotationInteractive();
   }
 
   public override async onHover(event: PointerEvent): Promise<void> {
@@ -249,7 +249,7 @@ export class AnnotationsCreateTool extends NavigationTool {
       return;
     }
     const gizmo = creator.domainObject;
-    let pendingAnnotation: SingleAnnotation | undefined;
+    let pendingAnnotation: Annotation | undefined;
     if (gizmo instanceof BoxGizmoDomainObject || gizmo instanceof CylinderGizmoDomainObject) {
       pendingAnnotation = gizmo.createAnnotation();
     } else {

@@ -3,12 +3,12 @@
  */
 
 import { ChangedDescription } from '../../../base/domainObjectsHelpers/ChangedDescription';
-import { type SingleAnnotation } from './SingleAnnotation';
+import { type Annotation } from './Annotation';
 
 export class AnnotationChangedDescription extends ChangedDescription {
-  public annotation: SingleAnnotation;
+  public annotation: Annotation;
 
-  public constructor(change: symbol, annotation: SingleAnnotation) {
+  public constructor(change: symbol, annotation: Annotation) {
     super(change);
     this.annotation = annotation;
   }

@@ -21,7 +21,6 @@ import { type AnnotationsRenderStyle } from './AnnotationsRenderStyle';
 import { type DomainObjectChange } from '../../base/domainObjectsHelpers/DomainObjectChange';
 import { Changes } from '../../base/domainObjectsHelpers/Changes';
 import { type DomainObjectIntersection } from '../../base/domainObjectsHelpers/DomainObjectIntersection';
-import { SingleAnnotation } from './helpers/SingleAnnotation';
 import { Box3, Group, Matrix4, Mesh, MeshBasicMaterial, type Object3D, Vector2 } from 'three';
 import { CylinderUtils } from '../../base/utilities/primitives/CylinderUtils';
 import { BoxUtils } from '../../base/utilities/primitives/BoxUtils';
@@ -125,12 +124,12 @@ export class AnnotationsView extends GroupThreeView<AnnotationsDomainObject> {
           if (userData.isEmpty) {
             continue;
           }
-          if (!userData.includes(annotation.annotation)) {
+          if (!userData.includes(annotation)) {
             continue;
           }
           const remainingAnnotations =
             changedDesc.change === Changes.deletedPart
-              ? userData.annotations.filter((a) => a !== annotation.annotation)
+              ? userData.annotations.filter((a) => a !== annotation)
               : userData.annotations;
 
           this.addWireframeFromMultipleAnnotations({
@@ -238,7 +237,8 @@ export class AnnotationsView extends GroupThreeView<AnnotationsDomainObject> {
     if (closestDistance !== undefined && closestFinder.minDistance > closestDistance) {
       return undefined;
     }
-    const boundingBox = info.annotation.getBoundingBox();
+    const { annotation } = info;
+    const boundingBox = annotation.getBoundingBox();
     boundingBox.applyMatrix4(this.globalMatrix);
 
     const customObjectIntersection: DomainObjectIntersection = {
@@ -248,7 +248,7 @@ export class AnnotationsView extends GroupThreeView<AnnotationsDomainObject> {
       customObject: this,
       domainObject,
       boundingBox,
-      userData: new SingleAnnotation(info.annotation, info.primitive)
+      userData: info
     };
     return customObjectIntersection;
   }
@@ -289,7 +289,7 @@ export class AnnotationsView extends GroupThreeView<AnnotationsDomainObject> {
     group.name = FOCUS_ANNOTATION_NAME;
     this.addChild(group);
 
-    for (const primitive of focusAnnotation.annotation.primitives) {
+    for (const primitive of focusAnnotation.primitives) {
       if (selectedGeometry !== undefined && selectedGeometry === primitive) {
         continue;
       }
@@ -339,7 +339,7 @@ export class AnnotationsView extends GroupThreeView<AnnotationsDomainObject> {
     wireframe.material = this.getLineMaterial(userData.status, selected);
   }
 
-  private styleAnnotation(annotation: SingleAnnotation, selected: boolean): void {
+  private styleAnnotation(annotation: Annotation, selected: boolean): void {
     let wireframeToSplit: Wireframe | undefined;
     for (const wireframe of this.getWireframes()) {
       const userData = getUserData(wireframe);
@@ -349,7 +349,7 @@ export class AnnotationsView extends GroupThreeView<AnnotationsDomainObject> {
       if (userData.isEmpty) {
         continue;
       }
-      if (!userData.includes(annotation.annotation)) {
+      if (!userData.includes(annotation)) {
         this.styleWireframe(wireframe, false);
       } else if (userData.length === 1) {
         this.styleWireframe(wireframe, selected);
@@ -359,7 +359,7 @@ export class AnnotationsView extends GroupThreeView<AnnotationsDomainObject> {
     }
     if (wireframeToSplit !== undefined) {
       const userData = getUserData(wireframeToSplit);
-      const remainingAnnotations = userData.annotations.filter((a) => a !== annotation.annotation);
+      const remainingAnnotations = userData.annotations.filter((a) => a !== annotation);
       this.addWireframeFromMultipleAnnotations({
         annotations: remainingAnnotations,
         globalMatrix: this.globalMatrix,
@@ -367,7 +367,7 @@ export class AnnotationsView extends GroupThreeView<AnnotationsDomainObject> {
         selected: userData.selected,
         startIndex: 0
       });
-      const changingAnnotations = [annotation.annotation];
+      const changingAnnotations = [annotation];
       if (changingAnnotations.length > 0) {
         this.addWireframeFromMultipleAnnotations({
           annotations: changingAnnotations,

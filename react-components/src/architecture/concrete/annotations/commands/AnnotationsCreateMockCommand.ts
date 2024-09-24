@@ -161,7 +161,7 @@ function onAnnotationChanged(domainObject: DomainObject, change: DomainObjectCha
   const description = change.getChangedDescriptionByType(AnnotationChangedDescription);
   if (description instanceof AnnotationChangedDescription) {
     // This is the changed annotation
-    const _annotation = description.annotation.annotation;
+    const _annotation = description.annotation;
 
     // This gives the changed geometry of the annotation.
     // if undefined all geometry has changed. You may want to save the whole annotation anyway.

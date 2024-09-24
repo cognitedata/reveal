@@ -172,4 +172,9 @@ export class AnnotationIntersectInfo {
     this.primitive = primitive;
     this.point = point;
   }
+
+  public get primitiveIndex(): number | undefined {
+    const index = this.annotation.primitives.indexOf(this.primitive);
+    return index >= 0 ? index : undefined;
+  }
 }
