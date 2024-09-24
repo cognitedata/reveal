@@ -8,14 +8,200 @@ import {
 } from 'three';
 import * as BufferGeometryUtils from 'three/addons/utils/BufferGeometryUtils.js';
 import dat from 'dat.gui';
-import { Cognite3DViewer } from '@cognite/reveal';
+import { Cognite3DViewer, CustomObjectIntersection } from '@cognite/reveal';
 import { PLYLoader } from 'three/examples/jsm/loaders/PLYLoader.js';
 
 import { CogniteClient, IdEither, InternalId } from '@cognite/sdk';
 
-//import { Viewer } from "gle-gaussian-splat-3d";
+import { CustomObjectIntersectInput, ICustomObject } from '@cognite/reveal';
 
 import * as GaussianSplats3D from "gle-gaussian-splat-3d";
+
+export class GaussianSplatWrapper extends THREE.Group implements ICustomObject
+{
+	//  Implementation from: GaussianSplats3D.DropInViewer
+	viewer: GaussianSplats3D.Viewer | any;
+	splatMesh: null;
+	callbackMesh: any;
+	outHits: any;
+	
+    constructor(options :any = {}) {
+        super();
+
+        options.selfDrivenMode = false;
+        options.useBuiltInControls = false;
+        options.rootElement = null;
+        options.ignoreDevicePixelRatio = false;
+        options.dropInMode = true;
+        options.camera = undefined;
+        options.renderer = undefined;
+
+        this.viewer = new GaussianSplats3D.Viewer(options);
+        this.splatMesh = null;
+        this.updateSplatMesh();
+
+        this.callbackMesh = GaussianSplatWrapper.createCallbackMesh();
+        this.add(this.callbackMesh);
+        this.callbackMesh.onBeforeRender = GaussianSplatWrapper.onBeforeRender.bind(this, this.viewer);
+
+        this.viewer.onSplatMeshChanged(() => {
+            this.updateSplatMesh();
+        });
+
+    }
+
+    updateSplatMesh() {
+        if (this.splatMesh !== this.viewer.splatMesh) {
+            if (this.splatMesh) {
+                this.remove(this.splatMesh);
+            }
+            this.splatMesh = this.viewer.splatMesh;
+            this.add(this.viewer.splatMesh);
+        }
+    }
+
+    /**
+     * Add a single splat scene to the viewer.
+     * @param {string} path Path to splat scene to be loaded
+     * @param {object} options {
+     *         splatAlphaRemovalThreshold: Ignore any splats with an alpha less than the specified
+     *                                     value (valid range: 0 - 255), defaults to 1
+     *         showLoadingUI:         Display a loading spinner while the scene is loading, defaults to true
+     *         position (Array<number>):   Position of the scene, acts as an offset from its default position, defaults to [0, 0, 0]
+     *         rotation (Array<number>):   Rotation of the scene represented as a quaternion, defaults to [0, 0, 0, 1]
+     *         scale (Array<number>):      Scene's scale, defaults to [1, 1, 1]
+     *         onProgress:                 Function to be called as file data are received
+     * }
+     * @return {AbortablePromise}
+     */
+    addSplatScene(path:string, options:any = {}) {
+        if (options.showLoadingUI !== false) options.showLoadingUI = true;
+        return this.viewer.addSplatScene(path, options);
+    }
+
+    /**
+     * Add multiple splat scenes to the viewer.
+     * @param {Array<object>} sceneOptions Array of per-scene options: {
+     *         path: Path to splat scene to be loaded
+     *         splatAlphaRemovalThreshold: Ignore any splats with an alpha less than the specified
+     *                                     value (valid range: 0 - 255), defaults to 1
+     *         position (Array<number>):   Position of the scene, acts as an offset from its default position, defaults to [0, 0, 0]
+     *         rotation (Array<number>):   Rotation of the scene represented as a quaternion, defaults to [0, 0, 0, 1]
+     *         scale (Array<number>):      Scene's scale, defaults to [1, 1, 1]
+     * }
+     * @param {boolean} showLoadingUI Display a loading spinner while the scene is loading, defaults to true
+     * @return {AbortablePromise}
+     */
+    addSplatScenes(sceneOptions:any, showLoadingUI:boolean) {
+        if (showLoadingUI !== false) showLoadingUI = true;
+        return this.viewer.addSplatScenes(sceneOptions, showLoadingUI);
+    }
+
+    /**
+     * Get a reference to a splat scene.
+     * @param {number} sceneIndex The index of the scene to which the reference will be returned
+     * @return {SplatScene}
+     */
+    getSplatScene(sceneIndex:number) {
+        return this.viewer.getSplatScene(sceneIndex);
+    }
+
+    removeSplatScene(index:number, showLoadingUI = true) {
+        return this.viewer.removeSplatScene(index, showLoadingUI);
+    }
+
+    removeSplatScenes(indexes:number, showLoadingUI = true) {
+        return this.viewer.removeSplatScenes(indexes, showLoadingUI);
+    }
+
+    dispose() {
+        return this.viewer.dispose();
+    }
+
+    static onBeforeRender(viewer:GaussianSplats3D.Viewer, renderer: any, _threeScene: any, camera: any) {
+        viewer.update(renderer, camera);
+    }
+
+    static createCallbackMesh() {
+        const geometry = new THREE.SphereGeometry(1, 8, 8);
+        const material = new THREE.MeshBasicMaterial();
+        material.colorWrite = false;
+        material.depthWrite = false;
+        const mesh = new THREE.Mesh(geometry, material);
+        mesh.frustumCulled = false;
+        return mesh;
+    }
+
+	// End of DropinViewer
+
+
+	/*
+	// ICustomObject Interface
+	*/
+	get object(): THREE.Object3D<THREE.Object3DEventMap> {
+		return this;
+	}
+
+	get isPartOfBoundingBox(): boolean {
+		return false;
+	}
+
+	get shouldPick(): boolean {
+		return true;
+	}
+
+	get shouldPickBoundingBox(): boolean {
+		return false;
+	}
+
+	get useDepthTest(): boolean {
+		return false;
+	}
+
+	getBoundingBox(target: THREE.Box3): THREE.Box3 {
+		return this.viewer.splatMesh.boundingBox; // Todo, check if correct?
+	}
+
+	intersectIfCloser(intersectInput: CustomObjectIntersectInput, closestDistance: number | undefined): undefined | CustomObjectIntersection {
+		console.log("click splat");
+
+		const mousePosition = intersectInput.normalizedCoords; //: Vector2;
+		const camera = intersectInput.camera;//: PerspectiveCamera;
+		intersectInput.clippingPlanes;//: Plane[] | undefined;
+		intersectInput.raycaster;//: Raycaster;
+
+		const outHits: any[] = [];
+        const renderDimensions = new THREE.Vector2();
+		this.viewer.getRenderDimensions(renderDimensions);
+		this.viewer.raycaster.setFromCameraAndScreenPosition(camera, mousePosition, renderDimensions);
+		outHits.length = 0;
+		this.viewer.raycaster.intersectSplatMesh(this.splatMesh, outHits);
+
+		if (outHits.length > 0) {
+			const hit = outHits[0];
+			const intersectionPoint : THREE.Vector3 = hit.origin;
+		
+			console.log(intersectionPoint);
+
+			return {
+				type: 'customObject', //  The intersection type.
+				point: intersectionPoint,// Vector3, Coordinate of the intersection.
+				distanceToCamera: intersectionPoint.clone().sub(intersectInput.camera.position).length(), // Distance from the camera to the intersection.
+				customObject: this, // The CustomObject that was intersected.
+				//boundingBox?: this.getBoundingBox(), // The bounding box of the part of the CustomObject that was intersected.
+				//userData?: any; // Additional info, for instance which part of the CustomObject was intersected.
+			};
+		}
+		return 
+	}
+	beforeRender(camera: THREE.PerspectiveCamera): void {
+		//throw new Error('Method not implemented.');
+	}
+
+	/*
+	// End of ICustomObject Interface
+	*/
+}
 
 export class SplatSortingWorkerData
 {
@@ -191,7 +377,8 @@ export class LoadSplatUi {
 	rot_z: 0.,
 	scale : 1.
   };
-  private _splatModel : THREE.Object3D | null = null;
+
+  private _splatModel : GaussianSplatWrapper | GaussianSplats3D.DropInViewer | null = null;
 
   private splatBuffers: SplatBuffers | null = null;
   private splat : THREE.InstancedMesh | null = null;
@@ -273,7 +460,9 @@ export class LoadSplatUi {
 
     const url:string = response[0].downloadUrl;
       
-    const splatviewer = new GaussianSplats3D.DropInViewer({'gpuAcceleratedSort': true, 'sharedMemoryForWorkers': false});
+	console.log(url);
+
+    const splatviewer = new GaussianSplatWrapper({'gpuAcceleratedSort': true, 'sharedMemoryForWorkers': false});
     splatviewer.addSplatScenes([
     {
         'path': url,
@@ -287,6 +476,7 @@ export class LoadSplatUi {
     );
     this._splatModel = splatviewer;
     this._viewer.addObject3D(this._splatModel);
+	//this._viewer.addCustomObject(this._splatModel);
 
   }
 
