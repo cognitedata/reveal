@@ -29,7 +29,6 @@ import { BoxFace } from '../common/BoxFace';
 import { FocusType } from '../../../base/domainObjectsHelpers/FocusType';
 import { PrimitivePickInfo } from '../common/PrimitivePickInfo';
 import { Range1 } from '../../../base/utilities/geometry/Range1';
-import { intersectRayCylinder } from '../../annotations/helpers/getClosestAnnotation';
 import {
   rotateEdgeCircle,
   updateWireframeMaterial,
@@ -126,8 +125,7 @@ export class CylinderView extends GroupThreeView<CylinderDomainObject> {
     centerA.applyMatrix4(CDF_TO_VIEWER_TRANSFORMATION);
     centerB.applyMatrix4(CDF_TO_VIEWER_TRANSFORMATION);
     const ray = intersectInput.raycaster.ray;
-
-    const point = intersectRayCylinder(ray, centerA, centerB, cylinder.radius);
+    const point = cylinder.intersectRay(ray, CDF_TO_VIEWER_TRANSFORMATION);
     if (point === null) {
       return undefined;
     }

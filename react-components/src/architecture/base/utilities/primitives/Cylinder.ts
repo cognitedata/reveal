@@ -2,7 +2,7 @@
  * Copyright 2024 Cognite AS
  */
 
-import { type Box3, Matrix4, Quaternion, Vector3 } from 'three';
+import { type Box3, Matrix4, Quaternion, type Ray, Vector3 } from 'three';
 import { Range3 } from '../geometry/Range3';
 import { square } from '../extensions/mathExtensions';
 import { Primitive } from './Primitive';
@@ -65,6 +65,24 @@ export class Cylinder extends Primitive {
     const range = new Range3(this.centerA, this.centerB);
     range.expandByMargin3(Range3.getCircleRangeMargin(this.axis, this.radius));
     boundingBox.union(range.getBox());
+  }
+
+  public override isPointInside(point: Vector3, globalMatrix: Matrix4): boolean {
+    const { centerA, centerB } = getCylinderCenters(this, globalMatrix);
+    const center = new Vector3().addVectors(centerA, centerB).divideScalar(2);
+    const vector = centerB.sub(centerA);
+    const diff = center.sub(point);
+    const dot = vector.dot(diff);
+    vector.multiplyScalar(dot);
+    vector.sub(diff);
+
+    const distanceToAxis = vector.length();
+    return distanceToAxis <= this.radius;
+  }
+
+  public override intersectRay(ray: Ray, globalMatrix: Matrix4): Vector3 | null {
+    const { centerA, centerB } = getCylinderCenters(this, globalMatrix);
+    return intersectRayCylinder(ray, centerA, centerB, this.radius);
   }
 
   // ==================================================
@@ -137,4 +155,52 @@ export class Cylinder extends Primitive {
   public static isValidSize(value: number): boolean {
     return value > Cylinder.MinSize;
   }
+}
+
+export function intersectRayCylinder(
+  ray: Ray,
+  centerA: Vector3,
+  centerB: Vector3,
+  radius: number
+): Vector3 | null {
+  const rayOrigin = ray.origin;
+  const rayDirection = ray.direction;
+  const ba = new Vector3().subVectors(centerB, centerA);
+  const oc = new Vector3().subVectors(rayOrigin, centerA);
+  const baba = ba.dot(ba);
+  const bard = ba.dot(rayDirection);
+  const baoc = ba.dot(oc);
+  const k2 = baba - bard * bard;
+  const k1 = baba * oc.dot(rayDirection) - baoc * bard;
+  const k0 = baba * oc.dot(oc) - baoc * baoc - radius * radius * baba;
+  const discriminant = k1 * k1 - k2 * k0;
+
+  if (discriminant < 0.0) return null;
+
+  const sqrtH = Math.sqrt(discriminant);
+  const t = (-k1 - sqrtH) / k2;
+
+  // body
+  const y = baoc + t * bard;
+  if (y > 0.0 && y < baba) {
+    return new Vector3().addVectors(rayOrigin, rayDirection.clone().multiplyScalar(t));
+  }
+
+  // caps
+  const t2 = ((y < 0.0 ? 0.0 : baba) - baoc) / bard;
+  if (Math.abs(k1 + k2 * t2) < sqrtH) {
+    return new Vector3().addVectors(rayOrigin, rayDirection.clone().multiplyScalar(t2));
+  }
+  return null;
+}
+
+function getCylinderCenters(
+  cylinder: Cylinder,
+  globalMatrix: Matrix4
+): { centerA: Vector3; centerB: Vector3 } {
+  const centerA = cylinder.centerA.clone();
+  const centerB = cylinder.centerB.clone();
+  centerA.applyMatrix4(globalMatrix);
+  centerB.applyMatrix4(globalMatrix);
+  return { centerA, centerB };
 }

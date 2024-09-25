@@ -2,7 +2,7 @@
  * Copyright 2024 Cognite AS
  */
 
-import { Box3, type Matrix4 } from 'three';
+import { Box3, type Ray, type Vector3, type Matrix4 } from 'three';
 import { type PrimitiveType } from './PrimitiveType';
 
 export abstract class Primitive {
@@ -25,6 +25,9 @@ export abstract class Primitive {
   public abstract getMatrix(): Matrix4;
   public abstract setMatrix(matrix: Matrix4): void;
   public abstract expandBoundingBox(boundingBox: Box3): void;
+
+  public abstract isPointInside(point: Vector3, globalMatrix: Matrix4): boolean;
+  public abstract intersectRay(ray: Ray, globalMatrix: Matrix4): Vector3 | null;
 
   // ==================================================
   // INSTANCE METHODS

@@ -2,7 +2,7 @@
  * Copyright 2024 Cognite AS
  */
 
-import { type Box3, Euler, Matrix4, Quaternion, Vector3 } from 'three';
+import { type Box3, Euler, Matrix4, Quaternion, type Ray, Vector3 } from 'three';
 import { radToDeg } from 'three/src/math/MathUtils.js';
 import {
   forceAngleAround0,
@@ -56,6 +56,20 @@ export class Box extends Primitive {
 
   public override expandBoundingBox(boundingBox: Box3): void {
     BoxUtils.expandBoundingBox(boundingBox, this.getMatrix());
+  }
+
+  public override isPointInside(point: Vector3, globalMatrix: Matrix4): boolean {
+    const matrix = this.getMatrix();
+    matrix.premultiply(globalMatrix);
+    const orientedBox = BoxUtils.createOrientedBox(matrix);
+    return orientedBox.containsPoint(point);
+  }
+
+  public override intersectRay(ray: Ray, globalMatrix: Matrix4): Vector3 | null {
+    const matrix = this.getMatrix();
+    matrix.premultiply(globalMatrix);
+    const orientedBox = BoxUtils.createOrientedBox(matrix);
+    return orientedBox.intersectRay(ray, new Vector3());
   }
 
   // ==================================================
