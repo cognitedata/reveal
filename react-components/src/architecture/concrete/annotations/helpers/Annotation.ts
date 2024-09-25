@@ -174,8 +174,7 @@ export class Annotation {
 
   public expandBoundingBox(boundingBox: Box3): void {
     for (const primitive of this.primitives) {
-      const box = primitive.getBoundingBox();
-      boundingBox.union(box);
+      primitive.expandBoundingBox(boundingBox);
     }
   }
 

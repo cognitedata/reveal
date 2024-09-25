@@ -16,6 +16,7 @@ import { LineCreator } from '../primitives/line/LineCreator';
 import { type VisualDomainObject } from '../../base/domainObjects/VisualDomainObject';
 import { CDF_TO_VIEWER_TRANSFORMATION } from '@cognite/reveal';
 import { UndoCommand } from '../../base/concreteCommands/UndoCommand';
+import { Box3 } from 'three';
 
 export class MeasurementTool extends PrimitiveEditTool {
   // ==================================================
@@ -56,15 +57,18 @@ export class MeasurementTool extends PrimitiveEditTool {
       return;
     }
     const sceneBoundingBox = this.renderTarget.clippedVisualSceneBoundingBox;
+    const boundingBox = new Box3();
     for (const domainObject of this.getSelectable()) {
       if (domainObject instanceof MeasureBoxDomainObject) {
-        const boundingBox = domainObject.box.getBoundingBox();
+        boundingBox.makeEmpty();
+        domainObject.box.expandBoundingBox(boundingBox);
         boundingBox.applyMatrix4(CDF_TO_VIEWER_TRANSFORMATION);
         if (!sceneBoundingBox.intersectsBox(boundingBox)) {
           continue;
         }
       } else if (domainObject instanceof MeasureLineDomainObject) {
-        const boundingBox = domainObject.getBoundingBox();
+        boundingBox.makeEmpty();
+        domainObject.expandBoundingBox(boundingBox);
         boundingBox.applyMatrix4(CDF_TO_VIEWER_TRANSFORMATION);
         if (!sceneBoundingBox.intersectsBox(boundingBox)) {
           continue;

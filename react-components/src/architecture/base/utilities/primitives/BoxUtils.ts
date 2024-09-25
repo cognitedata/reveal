@@ -2,7 +2,7 @@
  * Copyright 2024 Cognite AS
  */
 
-import { Box3, Vector3, type BufferGeometry, type Matrix4, BoxGeometry } from 'three';
+import { type Box3, Vector3, type BufferGeometry, type Matrix4, BoxGeometry } from 'three';
 import { OBB } from 'three/addons/math/OBB.js';
 import { type LineSegmentsGeometry } from 'three/examples/jsm/lines/LineSegmentsGeometry.js';
 import { PrimitiveUtils } from './PrimitiveUtils';
@@ -31,12 +31,6 @@ export class BoxUtils {
       copyOfCorner.applyMatrix4(matrix);
       boundingBox.expandByPoint(copyOfCorner);
     }
-  }
-
-  public static getBoundingBox(matrix: Matrix4): Box3 {
-    const boundingBox = new Box3().makeEmpty();
-    BoxUtils.expandBoundingBox(boundingBox, matrix);
-    return boundingBox;
   }
 
   public static createOrientedBox(matrix: Matrix4): OBB {

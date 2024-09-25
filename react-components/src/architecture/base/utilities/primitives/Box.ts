@@ -25,11 +25,15 @@ export class Box extends Primitive {
   public readonly rotation = new Euler(0, 0, 0);
 
   // ==================================================
-  // INSTANCE PROPERTIES
+  // OVERRIDES of Primitive
   // ==================================================
 
   public override get primitiveType(): PrimitiveType {
     return PrimitiveType.Box;
+  }
+
+  public override get diagonal(): number {
+    return this.size.length();
   }
 
   public override get area(): number {
@@ -40,12 +44,26 @@ export class Box extends Primitive {
     return this.size.x * this.size.y * this.size.z;
   }
 
-  public get horizontalArea(): number {
-    return this.size.x * this.size.y;
+  public override getMatrix(): Matrix4 {
+    return this.getScaledMatrix(this.size, new Matrix4());
   }
 
-  public get diagonal(): number {
-    return this.size.length();
+  public override setMatrix(matrix: Matrix4): void {
+    const quaternion = new Quaternion();
+    matrix.decompose(this.center, quaternion, this.size);
+    this.rotation.setFromQuaternion(quaternion);
+  }
+
+  public override expandBoundingBox(boundingBox: Box3): void {
+    BoxUtils.expandBoundingBox(boundingBox, this.getMatrix());
+  }
+
+  // ==================================================
+  // INSTANCE PROPERTIES
+  // ==================================================
+
+  public get horizontalArea(): number {
+    return this.size.x * this.size.y;
   }
 
   public get hasXYRotation(): boolean {
@@ -62,14 +80,6 @@ export class Box extends Primitive {
   // ==================================================
   // INSTANCE METHODS: Getters
   // ==================================================
-
-  public override getBoundingBox(): Box3 {
-    return BoxUtils.getBoundingBox(this.getMatrix());
-  }
-
-  public override getMatrix(matrix: Matrix4 = new Matrix4()): Matrix4 {
-    return this.getScaledMatrix(this.size, matrix);
-  }
 
   public getRotationMatrix(matrix: Matrix4 = new Matrix4()): Matrix4 {
     matrix.identity();
@@ -92,17 +102,6 @@ export class Box extends Primitive {
     }
     return this.zRotationInDegrees;
   }
-
-  // ==================================================
-  // INSTANCE METHODS: Setters
-  // ==================================================
-
-  public setMatrix(matrix: Matrix4): void {
-    const quaternion = new Quaternion();
-    matrix.decompose(this.center, quaternion, this.size);
-    this.rotation.setFromQuaternion(quaternion);
-  }
-
   // ==================================================
   // INSTANCE METHODS: Operations
   // ==================================================

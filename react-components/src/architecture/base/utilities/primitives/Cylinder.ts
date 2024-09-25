@@ -27,12 +27,49 @@ export class Cylinder extends Primitive {
   private readonly _scale = new Vector3();
 
   // ==================================================
-  // INSTANCE PROPERTIES
+  // OVERRIDES of Primitive
   // ==================================================
 
   public override get primitiveType(): PrimitiveType {
     return PrimitiveType.Cylinder;
   }
+
+  public override get area(): number {
+    return 2 * Math.PI * this.radius * this.height;
+  }
+
+  public override get volume(): number {
+    return Math.PI * square(this.radius) * this.height;
+  }
+
+  public override get diagonal(): number {
+    return Math.sqrt(square(this.radius) + square(this.height));
+  }
+
+  public override getMatrix(matrix: Matrix4 = new Matrix4()): Matrix4 {
+    return matrix.compose(this.center, this.getQuaternion(), this.size);
+  }
+
+  public setMatrix(matrix: Matrix4): void {
+    const centerA = new Vector3(0, 0, -0.5).applyMatrix4(matrix);
+    const centerB = new Vector3(0, 0, 0.5).applyMatrix4(matrix);
+    const scale = new Vector3();
+    matrix.decompose(new Vector3(), new Quaternion(), scale);
+
+    this.centerA.copy(centerA);
+    this.centerB.copy(centerB);
+    this.radius = scale.x / 2;
+  }
+
+  public override expandBoundingBox(boundingBox: Box3): void {
+    const range = new Range3(this.centerA, this.centerB);
+    range.expandByMargin3(Range3.getCircleRangeMargin(this.axis, this.radius));
+    boundingBox.union(range.getBox());
+  }
+
+  // ==================================================
+  // INSTANCE PROPERTIES
+  // ==================================================
 
   public get height(): number {
     return this.centerA.distanceTo(this.centerB);
@@ -54,27 +91,9 @@ export class Cylinder extends Primitive {
     return 2 * this.radius;
   }
 
-  public override get area(): number {
-    return 2 * Math.PI * this.radius * this.height;
-  }
-
-  public override get volume(): number {
-    return Math.PI * square(this.radius) * this.height;
-  }
-
   // ==================================================
   // INSTANCE METHODS: Getters
   // ==================================================
-
-  public override getBoundingBox(): Box3 {
-    const range = new Range3(this.centerA, this.centerB);
-    range.expandByMargin3(Range3.getCircleRangeMargin(this.axis, this.radius));
-    return range.getBox();
-  }
-
-  public override getMatrix(matrix: Matrix4 = new Matrix4()): Matrix4 {
-    return matrix.compose(this.center, this.getQuaternion(), this.size);
-  }
 
   public getRotationMatrix(matrix: Matrix4 = new Matrix4()): Matrix4 {
     matrix.identity();
@@ -88,21 +107,6 @@ export class Cylinder extends Primitive {
   private getQuaternion(): Quaternion {
     const quaternion = new Quaternion();
     return quaternion.setFromUnitVectors(UP_AXIS, this.axis);
-  }
-
-  // ==================================================
-  // INSTANCE METHODS: Setters
-  // ==================================================
-
-  public setMatrix(matrix: Matrix4): void {
-    const centerA = new Vector3(0, 0, -0.5).applyMatrix4(matrix);
-    const centerB = new Vector3(0, 0, 0.5).applyMatrix4(matrix);
-    const scale = new Vector3();
-    matrix.decompose(new Vector3(), new Quaternion(), scale);
-
-    this.centerA.copy(centerA);
-    this.centerB.copy(centerB);
-    this.radius = scale.x / 2;
   }
 
   // ==================================================
