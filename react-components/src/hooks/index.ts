@@ -25,6 +25,7 @@ export type {
   DefaultLayersConfiguration,
   ThreeDModelFdmMappings,
   SelectedThreeDResourceContent,
-  SingleModelIds,
-  ModelWithRevision
+  SingleModelData,
+  ModelWithRevision,
+  ThreeDResourceContentTypes
 } from './types';

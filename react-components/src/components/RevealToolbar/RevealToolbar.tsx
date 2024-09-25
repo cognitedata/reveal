@@ -15,7 +15,6 @@ import { ResetCameraButton } from './ResetCameraButton';
 import { type QualitySettings } from './SettingsContainer/types';
 import styled from 'styled-components';
 import { SelectSceneButton } from './SelectSceneButton';
-import { SelectSingle3DModelButton } from './SelectSingle3DModelButton';
 import { RuleBasedOutputsButton } from './RuleBasedOutputsButton';
 import {
   SetFlexibleControlsType,
@@ -49,7 +48,6 @@ const DefaultContentWrapper = (props: CustomToolbarContent): ReactElement => {
       <LayersButton />
       <FitModelsButton />
       <RuleBasedOutputsButton />
-      <SelectSingle3DModelButton />
       <Divider weight="2px" length="75%" />
 
       <SlicerButton />
@@ -110,7 +108,6 @@ export const RevealToolbar = withSuppressRevealEvents(
   HelpButton: typeof HelpButton;
   ResetCameraButton: typeof ResetCameraButton;
   SelectSceneButton: typeof SelectSceneButton;
-  SelectSingle3DModelButton: typeof SelectSingle3DModelButton;
   RuleBasedOutputsButton: typeof RuleBasedOutputsButton;
   AssetContextualizedButton: typeof AssetContextualizedButton;
   SetOrbitOrFirstPersonControlsType: typeof SetOrbitOrFirstPersonControlsType;
@@ -125,7 +122,6 @@ RevealToolbar.SettingsButton = SettingsButton;
 RevealToolbar.HelpButton = HelpButton;
 RevealToolbar.ResetCameraButton = ResetCameraButton;
 RevealToolbar.SelectSceneButton = SelectSceneButton;
-RevealToolbar.SelectSingle3DModelButton = SelectSingle3DModelButton;
 RevealToolbar.RuleBasedOutputsButton = RuleBasedOutputsButton;
 RevealToolbar.AssetContextualizedButton = AssetContextualizedButton;
 RevealToolbar.SetOrbitOrFirstPersonControlsType = SetOrbitOrFirstPersonControlsType;

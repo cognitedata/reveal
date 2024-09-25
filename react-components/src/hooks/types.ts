@@ -73,9 +73,12 @@ export type ModelWithRevision = {
 
 export type SelectedThreeDResourceContent =
   | (DmsUniqueIdentifier & { type: 'scene' })
-  | (SingleModelIds & { type: 'model' });
+  | (SingleModelData & { type: 'model' });
 
-export type SingleModelIds = {
+export type SingleModelData = {
   modelId: number;
   revisionId: number;
+  name?: string;
 };
+
+export type ThreeDResourceContentTypes = 'scene' | 'model';
