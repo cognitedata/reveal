@@ -100,6 +100,7 @@ export const OptionButton = ({
         flexDirection
       }}
       hideOnSelect={true}
+      open={isOpen}
       appendTo={'parent'}
       placement={usedInSettings ? 'bottom-end' : 'auto-start'}
       renderTrigger={(props: any) => (
@@ -117,17 +118,19 @@ export const OptionButton = ({
             icon={<OpenButtonIcon />}
             key={uniqueId}
             disabled={!isEnabled}
-            toggled={isOpen}
             iconPlacement="right"
             aria-label={command.getLabel(t)}
+            label={selectedLabel}
+            toggled={isOpen}
+            {...props}
             onClick={(event: MouseEvent<HTMLElement>) => {
+              props.onClick?.(event);
               event.stopPropagation();
               event.preventDefault();
               setOpen((prevState) => !prevState);
-            }}
-            {...props}
-          />
-          {selectedLabel}
+            }}>
+            {selectedLabel}
+          </Button>
         </CogsTooltip>
       )}>
       {children.map((child, _index): ReactElement => {
@@ -143,17 +146,17 @@ function createMenuItem(
   postAction: () => void
 ): ReactElement {
   return (
-    <Menu.ItemAction
+    <Menu.ItemToggled
       key={command.uniqueId}
       icon={getIcon(command)}
       disabled={!command.isEnabled}
       toggled={command.isChecked}
       iconPlacement="right"
+      label={command.getLabel(t)}
       onClick={() => {
         command.invoke();
         postAction();
-      }}>
-      {command.getLabel(t)}
-    </Menu.ItemAction>
+      }}
+    />
   );
 }
