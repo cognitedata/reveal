@@ -11,7 +11,8 @@ import {
   useState,
   type ReactElement
 } from 'react';
-import { Button, Menu, Tooltip as CogsTooltip, Slider } from '@cognite/cogs.js';
+import { Button, Tooltip as CogsTooltip, Slider } from '@cognite/cogs.js';
+import { Menu } from '@cognite/cogs-lab';
 import { useTranslation } from '../i18n/I18n';
 import { type BaseCommand } from '../../architecture/base/commands/BaseCommand';
 import { useRenderTarget } from '../RevealCanvas/ViewerContext';
