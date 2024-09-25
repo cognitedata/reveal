@@ -17,7 +17,7 @@ export function getClosestAnnotation(
   for (const annotation of annotations) {
     for (const primitive of annotation.primitives) {
       const point = primitive.intersectRay(ray, globalMatrix);
-      if (point === null) {
+      if (point === undefined) {
         continue;
       }
       const closest = closestFinder.getClosestGeometry();

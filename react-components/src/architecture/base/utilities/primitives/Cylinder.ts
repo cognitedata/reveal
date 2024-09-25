@@ -68,7 +68,7 @@ export class Cylinder extends Primitive {
   }
 
   public override isPointInside(point: Vector3, globalMatrix: Matrix4): boolean {
-    const { centerA, centerB } = getCylinderCenters(this, globalMatrix);
+    const { centerA, centerB } = this.getCenters(globalMatrix);
     const center = new Vector3().addVectors(centerA, centerB).divideScalar(2);
     const vector = centerB.sub(centerA);
     const diff = center.sub(point);
@@ -80,9 +80,38 @@ export class Cylinder extends Primitive {
     return distanceToAxis <= this.radius;
   }
 
-  public override intersectRay(ray: Ray, globalMatrix: Matrix4): Vector3 | null {
-    const { centerA, centerB } = getCylinderCenters(this, globalMatrix);
-    return intersectRayCylinder(ray, centerA, centerB, this.radius);
+  public override intersectRay(ray: Ray, globalMatrix: Matrix4): Vector3 | undefined {
+    const { centerA, centerB } = this.getCenters(globalMatrix);
+
+    const rayOrigin = ray.origin;
+    const rayDirection = ray.direction;
+    const ba = new Vector3().subVectors(centerB, centerA);
+    const oc = new Vector3().subVectors(rayOrigin, centerA);
+    const baba = ba.dot(ba);
+    const bard = ba.dot(rayDirection);
+    const baoc = ba.dot(oc);
+    const k2 = baba - bard * bard;
+    const k1 = baba * oc.dot(rayDirection) - baoc * bard;
+    const k0 = baba * oc.dot(oc) - baoc * baoc - this.radius * this.radius * baba;
+    const discriminant = k1 * k1 - k2 * k0;
+
+    if (discriminant < 0.0) {
+      return undefined;
+    }
+    const sqrtH = Math.sqrt(discriminant);
+    const t = (-k1 - sqrtH) / k2;
+
+    // body
+    const y = baoc + t * bard;
+    if (y > 0.0 && y < baba) {
+      return new Vector3().addVectors(rayOrigin, rayDirection.clone().multiplyScalar(t));
+    }
+    // caps
+    const t2 = ((y < 0.0 ? 0.0 : baba) - baoc) / bard;
+    if (Math.abs(k1 + k2 * t2) < sqrtH) {
+      return new Vector3().addVectors(rayOrigin, rayDirection.clone().multiplyScalar(t2));
+    }
+    return undefined;
   }
 
   // ==================================================
@@ -127,6 +156,14 @@ export class Cylinder extends Primitive {
     return quaternion.setFromUnitVectors(UP_AXIS, this.axis);
   }
 
+  private getCenters(globalMatrix: Matrix4): { centerA: Vector3; centerB: Vector3 } {
+    const centerA = this.centerA.clone();
+    const centerB = this.centerB.clone();
+    centerA.applyMatrix4(globalMatrix);
+    centerB.applyMatrix4(globalMatrix);
+    return { centerA, centerB };
+  }
+
   // ==================================================
   // INSTANCE METHODS: Operations
   // ==================================================
@@ -155,52 +192,4 @@ export class Cylinder extends Primitive {
   public static isValidSize(value: number): boolean {
     return value > Cylinder.MinSize;
   }
-}
-
-export function intersectRayCylinder(
-  ray: Ray,
-  centerA: Vector3,
-  centerB: Vector3,
-  radius: number
-): Vector3 | null {
-  const rayOrigin = ray.origin;
-  const rayDirection = ray.direction;
-  const ba = new Vector3().subVectors(centerB, centerA);
-  const oc = new Vector3().subVectors(rayOrigin, centerA);
-  const baba = ba.dot(ba);
-  const bard = ba.dot(rayDirection);
-  const baoc = ba.dot(oc);
-  const k2 = baba - bard * bard;
-  const k1 = baba * oc.dot(rayDirection) - baoc * bard;
-  const k0 = baba * oc.dot(oc) - baoc * baoc - radius * radius * baba;
-  const discriminant = k1 * k1 - k2 * k0;
-
-  if (discriminant < 0.0) return null;
-
-  const sqrtH = Math.sqrt(discriminant);
-  const t = (-k1 - sqrtH) / k2;
-
-  // body
-  const y = baoc + t * bard;
-  if (y > 0.0 && y < baba) {
-    return new Vector3().addVectors(rayOrigin, rayDirection.clone().multiplyScalar(t));
-  }
-
-  // caps
-  const t2 = ((y < 0.0 ? 0.0 : baba) - baoc) / bard;
-  if (Math.abs(k1 + k2 * t2) < sqrtH) {
-    return new Vector3().addVectors(rayOrigin, rayDirection.clone().multiplyScalar(t2));
-  }
-  return null;
-}
-
-function getCylinderCenters(
-  cylinder: Cylinder,
-  globalMatrix: Matrix4
-): { centerA: Vector3; centerB: Vector3 } {
-  const centerA = cylinder.centerA.clone();
-  const centerB = cylinder.centerB.clone();
-  centerA.applyMatrix4(globalMatrix);
-  centerB.applyMatrix4(globalMatrix);
-  return { centerA, centerB };
 }

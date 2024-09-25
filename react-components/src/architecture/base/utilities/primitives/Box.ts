@@ -65,11 +65,11 @@ export class Box extends Primitive {
     return orientedBox.containsPoint(point);
   }
 
-  public override intersectRay(ray: Ray, globalMatrix: Matrix4): Vector3 | null {
+  public override intersectRay(ray: Ray, globalMatrix: Matrix4): Vector3 | undefined {
     const matrix = this.getMatrix();
     matrix.premultiply(globalMatrix);
     const orientedBox = BoxUtils.createOrientedBox(matrix);
-    return orientedBox.intersectRay(ray, new Vector3());
+    return orientedBox.intersectRay(ray, new Vector3()) ?? undefined;
   }
 
   // ==================================================

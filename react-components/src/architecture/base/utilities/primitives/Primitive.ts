@@ -27,7 +27,7 @@ export abstract class Primitive {
   public abstract expandBoundingBox(boundingBox: Box3): void;
 
   public abstract isPointInside(point: Vector3, globalMatrix: Matrix4): boolean;
-  public abstract intersectRay(ray: Ray, globalMatrix: Matrix4): Vector3 | null;
+  public abstract intersectRay(ray: Ray, globalMatrix: Matrix4): Vector3 | undefined;
 
   // ==================================================
   // INSTANCE METHODS

@@ -126,7 +126,7 @@ export class CylinderView extends GroupThreeView<CylinderDomainObject> {
     centerB.applyMatrix4(CDF_TO_VIEWER_TRANSFORMATION);
     const ray = intersectInput.raycaster.ray;
     const point = cylinder.intersectRay(ray, CDF_TO_VIEWER_TRANSFORMATION);
-    if (point === null) {
+    if (point === undefined) {
       return undefined;
     }
     const matrix = this.getMatrix();
