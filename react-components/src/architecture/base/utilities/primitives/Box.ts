@@ -45,7 +45,7 @@ export class Box extends Primitive {
   }
 
   public override getMatrix(): Matrix4 {
-    return this.getScaledMatrix(this.size, new Matrix4());
+    return this.getScaledMatrix(this.size);
   }
 
   public override setMatrix(matrix: Matrix4): void {

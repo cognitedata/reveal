@@ -24,7 +24,7 @@ export class Cylinder extends Primitive {
   // Redundant variable, calculated when needed
   private readonly _center = new Vector3();
   private readonly _axis = new Vector3();
-  private readonly _scale = new Vector3();
+  private readonly _size = new Vector3();
 
   // ==================================================
   // OVERRIDES of Primitive
@@ -46,11 +46,11 @@ export class Cylinder extends Primitive {
     return Math.sqrt(square(this.radius) + square(this.height));
   }
 
-  public override getMatrix(matrix: Matrix4 = new Matrix4()): Matrix4 {
-    return matrix.compose(this.center, this.getQuaternion(), this.size);
+  public override getMatrix(): Matrix4 {
+    return new Matrix4().compose(this.center, this.getQuaternion(), this.size);
   }
 
-  public setMatrix(matrix: Matrix4): void {
+  public override setMatrix(matrix: Matrix4): void {
     const centerA = new Vector3(0, 0, -0.5).applyMatrix4(matrix);
     const centerB = new Vector3(0, 0, 0.5).applyMatrix4(matrix);
     const scale = new Vector3();
@@ -80,7 +80,7 @@ export class Cylinder extends Primitive {
   }
 
   public get size(): Vector3 {
-    return this._scale.set(this.diameter, this.diameter, this.height);
+    return this._size.set(this.diameter, this.diameter, this.height);
   }
 
   public get axis(): Vector3 {
