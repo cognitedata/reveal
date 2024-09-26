@@ -24,11 +24,7 @@ import { ObservationsTool } from '../observations/ObservationsTool';
 import { SettingsCommand } from '../../base/concreteCommands/SettingsCommand';
 import { MockSettingsCommand } from '../../base/commands/mocks/MockSettingsCommand';
 import { MockFilterCommand } from '../../base/commands/mocks/MockFilterCommand';
-import { AnnotationsCreateTool } from '../annotations/commands/AnnotationsCreateTool';
 import { ToggleAllModelsVisibleCommand } from '../../base/concreteCommands/ToggleAllModelsVisibleCommand';
-import { AnnotationsShowCommand } from '../annotations/commands/AnnotationsShowCommand';
-import { AnnotationsShowOnTopCommand } from '../annotations/commands/AnnotationsShowOnTopCommand';
-import { AnnotationsSelectTool } from '../annotations/commands/AnnotationsSelectTool';
 
 export class StoryBookConfig extends BaseRevealConfig {
   // ==================================================
@@ -57,11 +53,6 @@ export class StoryBookConfig extends BaseRevealConfig {
       new MeasurementTool(),
       new ClipTool(),
       new ObservationsTool(),
-      undefined,
-      new AnnotationsSelectTool(),
-      new AnnotationsCreateTool(),
-      new AnnotationsShowCommand(),
-      new AnnotationsShowOnTopCommand(),
       undefined,
       new SetTerrainVisibleCommand(),
       new UpdateTerrainCommand(),
