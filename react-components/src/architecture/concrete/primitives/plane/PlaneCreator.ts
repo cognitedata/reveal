@@ -41,7 +41,7 @@ export class PlaneCreator extends BaseCreator {
   }
 
   public override get canStartOnHover(): boolean {
-    return true;
+    return false;
   }
 
   public override get preferIntersection(): boolean {
