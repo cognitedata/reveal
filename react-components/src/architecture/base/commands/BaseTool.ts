@@ -232,8 +232,4 @@ export abstract class BaseTool extends RenderTargetCommand {
   public setDefaultCursor(): void {
     this.renderTarget.cursor = this.defaultCursor;
   }
-
-  public Escape(): void {
-    this.renderTarget.cursor = this.defaultCursor;
-  }
 }
