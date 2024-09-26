@@ -15,7 +15,6 @@ import { type AddModelOptions } from '@cognite/reveal';
 import { isEqual, uniq, chunk } from 'lodash';
 import { type Fdm3dDataProvider } from '../data-providers/Fdm3dDataProvider';
 import { removeEmptyProperties } from '../utilities/removeEmptyProperties';
-import { isDefined } from '../utilities/isDefined';
 
 export type InstancesWithView = { view: Source; instances: NodeItem[] };
 
@@ -53,7 +52,7 @@ export const useSearchMappedEquipmentFDM = (
       if (models.length === 0) {
         return [];
       }
-      const sources = await createSourcesFromViews(viewsToSearch);
+      const sources = createSourcesFromViews(viewsToSearch);
       const chunkedSources = chunk(sources, 10);
       if (chunkedSources.length === 0) {
         chunkedSources.push([]);
@@ -134,7 +133,7 @@ export const useAllMappedEquipmentFDM = (
   return useQuery({
     queryKey: ['reveal', 'react-components', 'all-mapped-equipment-fdm', viewsToSearch, models],
     queryFn: async () => {
-      const viewSources = await createSourcesFromViews(viewsToSearch);
+      const viewSources = createSourcesFromViews(viewsToSearch);
 
       return await fdmDataProvider.listAllMappedFdmNodes(models, viewSources, undefined);
     },
@@ -188,24 +187,9 @@ function convertQueryNodeItemsToSearchResultsWithViews(
   }, []);
 }
 
-async function createSourcesFromViews(viewsToSearch: SimpleSource[]): Promise<Source[]> {
-  try {
-    return viewsToSearch
-      .map((view) => {
-        if (view.version === undefined) {
-          console.error(
-            `Could not find version for view with space/externalId ${view.space}/${view.externalId}`
-          );
-          return undefined;
-        }
-        return {
-          ...view,
-          type: 'view' as const
-        };
-      })
-      .filter(isDefined);
-  } catch (e) {
-    console.error('Error when fetching sources from views', e);
-    throw e;
-  }
+function createSourcesFromViews(viewsToSearch: SimpleSource[]): Source[] {
+  return viewsToSearch.map((view) => ({
+    ...view,
+    type: 'view'
+  }));
 }
