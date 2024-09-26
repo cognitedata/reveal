@@ -42,9 +42,9 @@ import { is360ImageAddOptions } from '../src/components/Reveal3DResources/typeGu
 const queryClient = new QueryClient();
 const sdk = createSdkByUrlToken();
 const viewsToSearch = [
-  { externalId: 'Equipment', space: 'fdx-boys' },
-  { externalId: 'WorkOrderMultiple', space: 'fdx-boys' },
-  { externalId: 'WorkOrderSingle', space: 'fdx-boys' }
+  { externalId: 'Equipment', space: 'fdx-boys', version: 'e040583320d31a' },
+  { externalId: 'WorkOrderMultiple', space: 'fdx-boys', version: 'e040583320d31a' },
+  { externalId: 'WorkOrderSingle', space: 'fdx-boys', version: 'e040583320d31a' }
 ];
 
 type Equipment = {
