@@ -98,10 +98,13 @@ export const SettingsButton = ({
 
   return (
     <Menu
-      visible={isOpen}
+      open={isOpen}
       hideOnSelect={false}
       appendTo={'parent'}
-      placement="auto-start"
+      onOutsideClick={() => {
+        setOpen(false);
+      }}
+      placement="right-start"
       style={{
         flexDirection,
         padding: DEFAULT_PADDING
@@ -120,12 +123,13 @@ export const SettingsButton = ({
             toggled={isOpen}
             aria-label={label}
             iconPlacement="right"
+            {...props}
             onClick={(event: MouseEvent<HTMLElement>) => {
+              props.onClick?.(event);
               event.stopPropagation();
               event.preventDefault();
-              setOpen((prevState) => !prevState);
+              setOpen((prev) => !prev);
             }}
-            {...props}
           />
         </CogsTooltip>
       )}>
@@ -158,18 +162,18 @@ function createToggle(command: BaseCommand, t: TranslateDelegate): ReactElement 
     return <></>;
   }
   return (
-    <Menu.Item
+    <Menu.ItemToggled
       key={command.uniqueId}
       hasSwitch={true}
       disabled={!command.isEnabled}
       toggled={isChecked}
       style={{ padding: DEFAULT_PADDING }}
+      label={command.getLabel(t)}
       onClick={() => {
         command.invoke();
         setChecked(command.isChecked);
-      }}>
-      {command.getLabel(t)}
-    </Menu.Item>
+      }}
+    />
   );
 }
 
@@ -180,7 +184,7 @@ function createButton(command: BaseCommand, t: TranslateDelegate): ReactElement 
   }
   const label = command.getLabel(t);
   return (
-    <Menu.Item
+    <Menu.ItemAction
       key={command.uniqueId}
       disabled={!command.isEnabled}
       toggled={isChecked}
@@ -192,7 +196,7 @@ function createButton(command: BaseCommand, t: TranslateDelegate): ReactElement 
         setChecked(command.isChecked);
       }}>
       <LabelWithShortcut label={label} command={command} inverted={false} />
-    </Menu.Item>
+    </Menu.ItemAction>
   );
 }
 
