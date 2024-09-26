@@ -6,8 +6,8 @@ import {
   type NodeItem,
   type FdmSDK,
   type Source,
-  type DmsUniqueIdentifier,
-  type InstanceFilter
+  type InstanceFilter,
+  type SimpleSource
 } from '../data-providers/FdmSDK';
 import { useFdm3dDataProvider, useFdmSdk } from '../components/RevealCanvas/SDKProvider';
 import { type UseQueryResult, useQuery } from '@tanstack/react-query';
@@ -21,7 +21,7 @@ export type InstancesWithView = { view: Source; instances: NodeItem[] };
 
 export const useSearchMappedEquipmentFDM = (
   query: string,
-  viewsToSearch: DmsUniqueIdentifier[],
+  viewsToSearch: SimpleSource[],
   models: AddModelOptions[],
   instancesFilter: InstanceFilter | undefined,
   limit: number = 100
@@ -53,7 +53,7 @@ export const useSearchMappedEquipmentFDM = (
       if (models.length === 0) {
         return [];
       }
-      const sources = await createSourcesFromViews(viewsToSearch, fdmSdk);
+      const sources = await createSourcesFromViews(viewsToSearch);
       const chunkedSources = chunk(sources, 10);
       if (chunkedSources.length === 0) {
         chunkedSources.push([]);
@@ -127,15 +127,14 @@ const searchNodesWithViewsAndModels = async (
 
 export const useAllMappedEquipmentFDM = (
   models: AddModelOptions[],
-  viewsToSearch: DmsUniqueIdentifier[]
+  viewsToSearch: SimpleSource[]
 ): UseQueryResult<NodeItem[]> => {
-  const fdmSdk = useFdmSdk();
   const fdmDataProvider = useFdm3dDataProvider();
 
   return useQuery({
     queryKey: ['reveal', 'react-components', 'all-mapped-equipment-fdm', viewsToSearch, models],
     queryFn: async () => {
-      const viewSources = await createSourcesFromViews(viewsToSearch, fdmSdk);
+      const viewSources = await createSourcesFromViews(viewsToSearch);
 
       return await fdmDataProvider.listAllMappedFdmNodes(models, viewSources, undefined);
     },
@@ -189,24 +188,11 @@ function convertQueryNodeItemsToSearchResultsWithViews(
   }, []);
 }
 
-async function createSourcesFromViews(
-  viewsToSearch: DmsUniqueIdentifier[],
-  fdmSdk: FdmSDK
-): Promise<Source[]> {
+async function createSourcesFromViews(viewsToSearch: SimpleSource[]): Promise<Source[]> {
   try {
-    const dataModelResult = await fdmSdk.listDataModels();
-    const viewToVersionMap = new Map<string, string>(
-      dataModelResult.items.flatMap((dataModel: { views: Source[] }) => {
-        return dataModel.views.map(
-          (view: Source) => [`${view.space}/${view.externalId}`, view.version] as const
-        );
-      })
-    );
-
     return viewsToSearch
       .map((view) => {
-        const version = viewToVersionMap.get(`${view.space}/${view.externalId}`);
-        if (version === undefined) {
+        if (view.version === undefined) {
           console.error(
             `Could not find version for view with space/externalId ${view.space}/${view.externalId}`
           );
@@ -214,8 +200,7 @@ async function createSourcesFromViews(
         }
         return {
           ...view,
-          type: 'view' as const,
-          version
+          type: 'view' as const
         };
       })
       .filter(isDefined);
