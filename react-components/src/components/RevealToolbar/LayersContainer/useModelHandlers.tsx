@@ -131,6 +131,8 @@ function setDefaultConfigOnNewHandlers(
   modelHandlers: ModelLayerHandlers,
   defaultLayersConfig: DefaultLayersConfiguration | undefined
 ): void {
+  const containsCadModel = newHandlers.cadHandlers.length > 0;
+  const containsPointCloudModel = newHandlers.pointCloudHandlers.length > 0;
   newHandlers.cadHandlers.forEach((newHandler) => {
     if (!modelHandlers.cadHandlers.some((oldHandler) => oldHandler.isSame(newHandler))) {
       newHandler.setVisibility(defaultLayersConfig?.cad ?? true);
@@ -139,13 +141,17 @@ function setDefaultConfigOnNewHandlers(
 
   newHandlers.pointCloudHandlers.forEach((newHandler) => {
     if (!modelHandlers.pointCloudHandlers.some((oldHandler) => oldHandler.isSame(newHandler))) {
-      newHandler.setVisibility(defaultLayersConfig?.pointcloud ?? true);
+      newHandler.setVisibility(containsCadModel ? defaultLayersConfig?.pointcloud ?? true : true);
     }
   });
 
   newHandlers.image360Handlers.forEach((newHandler) => {
     if (!modelHandlers.image360Handlers.some((oldHandler) => oldHandler.isSame(newHandler))) {
-      newHandler.setVisibility(defaultLayersConfig?.image360 ?? true);
+      if (!containsCadModel && !containsPointCloudModel) {
+        newHandler.setVisibility(true);
+      } else {
+        newHandler.setVisibility(defaultLayersConfig?.image360 ?? true);
+      }
     }
   });
 }
