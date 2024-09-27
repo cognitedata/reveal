@@ -100,13 +100,13 @@ export abstract class BoxDomainObject extends SolidDomainObject {
     if (primitiveType !== PrimitiveType.HorizontalArea && (isFinished || hasZ)) {
       add('MEASUREMENTS_HEIGHT', 'Height', size.z, Quantity.Length);
     }
-    if (primitiveType !== PrimitiveType.Box && (isFinished || this.hasArea)) {
+    if (primitiveType !== PrimitiveType.Box && (isFinished || box.hasArea)) {
       add('MEASUREMENTS_AREA', 'Area', this.area, Quantity.Area);
     }
-    if (primitiveType === PrimitiveType.Box && (isFinished || this.hasHorizontalArea)) {
+    if (primitiveType === PrimitiveType.Box && (isFinished || box.hasHorizontalArea)) {
       add('MEASUREMENTS_HORIZONTAL_AREA', 'Horizontal area', box.horizontalArea, Quantity.Area);
     }
-    if (primitiveType === PrimitiveType.Box && (isFinished || this.hasVolume)) {
+    if (primitiveType === PrimitiveType.Box && (isFinished || box.hasVolume)) {
       add('MEASUREMENTS_VOLUME', 'Volume', box.volume, Quantity.Volume);
     }
     // I forgot to add text for rotation angle before the deadline, so I used a icon instead.
@@ -171,15 +171,6 @@ export abstract class BoxDomainObject extends SolidDomainObject {
   // INSTANCE METHODS / PROPERTIES: Geometrical getters
   // ==================================================
 
-  public get hasArea(): boolean {
-    const { size } = this.box;
-    let count = 0;
-    if (Box.isValidSize(size.x)) count++;
-    if (Box.isValidSize(size.y)) count++;
-    if (Box.isValidSize(size.z)) count++;
-    return count >= 2;
-  }
-
   public get area(): number {
     const { size } = this.box;
     switch (this.primitiveType) {
@@ -193,15 +184,5 @@ export abstract class BoxDomainObject extends SolidDomainObject {
       default:
         throw new Error('Unknown MeasureType type');
     }
-  }
-
-  public get hasHorizontalArea(): boolean {
-    const { size } = this.box;
-    return Box.isValidSize(size.x) && Box.isValidSize(size.y);
-  }
-
-  public get hasVolume(): boolean {
-    const { size } = this.box;
-    return Box.isValidSize(size.x) && Box.isValidSize(size.y) && Box.isValidSize(size.z);
   }
 }

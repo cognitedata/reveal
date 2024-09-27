@@ -76,6 +76,25 @@ export class Box extends Primitive {
   // INSTANCE PROPERTIES
   // ==================================================
 
+  public get hasHorizontalArea(): boolean {
+    const { size } = this;
+    return Box.isValidSize(size.x) && Box.isValidSize(size.y);
+  }
+
+  public get hasArea(): boolean {
+    const { size } = this;
+    let count = 0;
+    if (Box.isValidSize(size.x)) count++;
+    if (Box.isValidSize(size.y)) count++;
+    if (Box.isValidSize(size.z)) count++;
+    return count >= 2;
+  }
+
+  public get hasVolume(): boolean {
+    const { size } = this;
+    return Box.isValidSize(size.x) && Box.isValidSize(size.y) && Box.isValidSize(size.z);
+  }
+
   public get horizontalArea(): number {
     return this.size.x * this.size.y;
   }
