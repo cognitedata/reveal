@@ -393,7 +393,7 @@ export class BoxView extends GroupThreeView<BoxDomainObject> {
     }
     this.updateLabels(this.renderTarget.camera);
     const { focusType } = domainObject;
-    if (focusType === FocusType.Pending && domainObject.hasArea) {
+    if (focusType === FocusType.Pending && domainObject.box.hasArea) {
       this.addChild(this.createPendingLabel(matrix, spriteHeight, TOP_FACE));
     } else if (showRotationLabel(focusType)) {
       this.addChild(this.createRotationLabel(matrix, spriteHeight, TOP_FACE));
