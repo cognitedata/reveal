@@ -1711,7 +1711,7 @@ __metadata:
     "@react-hook/resize-observer": "npm:1.2.6"
     "@tippyjs/react": "npm:4.2.6"
     "@types/react-date-range": "npm:1.4.4"
-    axios: "npm:^1.6.0"
+    axios: "npm:1.6.0"
     classnames: "npm:2.3.2"
     color: "npm:3.2.1"
     csstype: "npm:2.6.10"
@@ -6397,14 +6397,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"axios@npm:^1.6.0":
-  version: 1.7.7
-  resolution: "axios@npm:1.7.7"
+"axios@npm:1.6.0":
+  version: 1.6.0
+  resolution: "axios@npm:1.6.0"
   dependencies:
-    follow-redirects: "npm:^1.15.6"
+    follow-redirects: "npm:^1.15.0"
     form-data: "npm:^4.0.0"
     proxy-from-env: "npm:^1.1.0"
-  checksum: 10/7f875ea13b9298cd7b40fd09985209f7a38d38321f1118c701520939de2f113c4ba137832fe8e3f811f99a38e12c8225481011023209a77b0c0641270e20cde1
+  checksum: 10/f069d938a05d2293e27c7cd6f0c08a1cb764f7cc43a1e637572f8d5928837ecd735890ad67a867d696094ee4b8b4dfdb3727a57aae600845e4c295581cb32f9a
   languageName: node
   linkType: hard
 
@@ -9054,7 +9054,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"follow-redirects@npm:^1.15.6":
+"follow-redirects@npm:^1.15.0":
   version: 1.15.9
   resolution: "follow-redirects@npm:1.15.9"
   peerDependenciesMeta:
