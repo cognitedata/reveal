@@ -3,4 +3,4 @@
  */
 
 export type { FdmInstanceWithView, InstanceReference, AssetInstanceReference } from './types';
-export type { Source, DmsUniqueIdentifier } from './FdmSDK';
+export type { Source, DmsUniqueIdentifier, SimpleSource } from './FdmSDK';
