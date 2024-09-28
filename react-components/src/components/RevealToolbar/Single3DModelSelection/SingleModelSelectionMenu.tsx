@@ -11,7 +11,7 @@ import { ModelsList } from './ModelsList';
 import {
   type SelectedThreeDResourceContent,
   type ModelWithRevision,
-  type SingleModelIds
+  type SingleModelData
 } from '../../../hooks/types';
 import { type DmsUniqueIdentifier } from '../../../data-providers';
 import { useAll3dModels } from '../../../hooks/useAll3dModels';
@@ -19,7 +19,7 @@ import { useRevisions } from '../../../hooks/useRevisions';
 
 type SingleModelSelectionMenuProps = {
   sdk: CogniteClient;
-  selectedResource?: DmsUniqueIdentifier | SingleModelIds | undefined;
+  selectedResource?: DmsUniqueIdentifier | SingleModelData | undefined;
   onModelChange: (model: SelectedThreeDResourceContent | undefined) => void;
 };
 
@@ -57,8 +57,6 @@ export const SingleModelSelectionMenu = ({
 
     onModelChange(singleModelData);
   };
-
-  console.log('TEST selectedModel', selectedModel, selectedResource);
 
   return (
     <StyledMenu>
