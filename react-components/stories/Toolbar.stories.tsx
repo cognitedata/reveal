@@ -20,6 +20,7 @@ import { RevealStoryContainer } from './utilities/RevealStoryContainer';
 import { getAddModelOptionsFromUrl } from './utilities/getAddModelOptionsFromUrl';
 import { SetOrbitOrFirstPersonControlsType } from '../src/components/RevealToolbar/SetFlexibleControlsType';
 import { useGetCameraStateFromUrlParam } from './utilities/useGetCameraStateFromUrlParam';
+import { LayersButton } from '../src/components/RevealToolbar/LayersButton/LayersButton';
 
 const meta = {
   title: 'Example/Toolbar',
@@ -31,7 +32,7 @@ export default meta;
 type Story = StoryObj<typeof meta>;
 
 const MyCustomToolbar = styled(withSuppressRevealEvents(ToolBar))`
-  position: absolute;
+  position: absolute !important;
   right: 20px;
   top: 70px;
 `;
@@ -102,6 +103,7 @@ export const Main: Story = {
         highFidelitySettings={exampleHighQualitySettings}
       />
       <MyCustomToolbar>
+        <LayersButton />
         <RevealToolbar.FitModelsButton />
         <ToolBar.ButtonGroup buttonGroup={exampleToolBarButtons} />
         <SetOrbitOrFirstPersonControlsType />

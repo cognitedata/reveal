@@ -6,7 +6,7 @@ import {
   type CogniteCadModel,
   type CognitePointCloudModel
 } from '@cognite/reveal';
-import { type LayersUrlStateParam } from '../../../hooks/types';
+import { type LayersUrlStateParam } from './types';
 
 export function updateViewerFromExternalState(
   layersState: LayersUrlStateParam | undefined,

@@ -5,7 +5,6 @@
 import { type ReactElement, type JSX, forwardRef, type Ref } from 'react';
 import { Divider, ToolBar, type ToolBarProps } from '@cognite/cogs.js';
 import { FitModelsButton } from './FitModelsButton';
-import { LayersButton } from './LayersButton';
 import { SlicerButton } from './SlicerButton';
 import { SettingsButton } from './SettingsButton';
 import { withSuppressRevealEvents } from '../../higher-order-components/withSuppressRevealEvents';
@@ -21,7 +20,7 @@ import {
   SetOrbitOrFirstPersonControlsType
 } from './SetFlexibleControlsType';
 import { AssetContextualizedButton } from './AssetContextualizedButton';
-import { NewLayersButton } from './LayersContainer/NewLayersButton';
+import { LayersButton } from './LayersButton/LayersButton';
 
 const StyledToolBar = styled(ToolBar)`
   position: absolute !important;
@@ -46,7 +45,7 @@ export type CustomToolbarContent = {
 const DefaultContentWrapper = (props: CustomToolbarContent): ReactElement => {
   return (
     <>
-      <NewLayersButton />
+      <LayersButton />
       <FitModelsButton />
       <RuleBasedOutputsButton />
       <Divider weight="2px" length="75%" />

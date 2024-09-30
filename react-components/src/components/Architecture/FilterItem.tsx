@@ -3,7 +3,7 @@
  */
 
 import { useCallback, useEffect, useState, type ReactElement } from 'react';
-import { Menu } from '@cognite/cogs.js';
+import { Menu } from '@cognite/cogs-lab';
 import { useTranslation } from '../i18n/I18n';
 import { type BaseCommand } from '../../architecture/base/commands/BaseCommand';
 import styled from 'styled-components';
@@ -37,18 +37,18 @@ export const FilterItem = ({ command }: { command: BaseFilterItemCommand }): Rea
     return <></>;
   }
   return (
-    <Menu.Item
+    <Menu.ItemToggled
       key={uniqueId}
       disabled={!isEnabled}
       toggled={isChecked}
       onClick={() => {
         command.invoke();
-      }}>
+      }}
+      label={command.getLabel(t)}>
       <CenteredContainer>
         {command.color !== undefined && <ColorBox backgroundColor={command.color} />}
-        <label>{command.getLabel(t)}</label>
       </CenteredContainer>
-    </Menu.Item>
+    </Menu.ItemToggled>
   );
 };
 

@@ -3,7 +3,7 @@
  */
 import { useReveal } from '../../..';
 import { type Dispatch, type SetStateAction, useEffect, useRef } from 'react';
-import { type LayersUrlStateParam } from '../../../hooks/types';
+import { type LayersUrlStateParam } from './types';
 import { updateExternalStateFromLayerHandlers } from './updateExternalStateFromLayerHandlers';
 import { updateViewerFromExternalState } from './updateViewerFromExternalState';
 import { type ModelLayerHandlers } from './LayersButtonsStrip';

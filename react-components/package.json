@@ -44,7 +44,7 @@
   "devDependencies": {
     "@cognite/cdf-i18n-utils": "^0.7.5",
     "@cognite/cdf-utilities": "^3.6.0",
-    "@cognite/cogs-lab": "^9.0.0-alpha.111",
+    "@cognite/cogs-lab": "^9.0.0-alpha.113",
     "@cognite/cogs.js": "^10.25.0",
     "@cognite/reveal": "^4.17.0",
     "@cognite/sdk": "^9.13.0",

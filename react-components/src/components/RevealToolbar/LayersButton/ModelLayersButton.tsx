@@ -1,14 +1,14 @@
 /*!
  * Copyright 2024 Cognite AS
  */
-import { Button, Tooltip } from '@cognite/cogs.js';
-import { Dropdown } from '@cognite/cogs-lab';
+
+import { Button } from '@cognite/cogs.js';
+import { SelectPanel } from '@cognite/cogs-lab';
 import { type ModelHandler } from './ModelHandler';
-import { ModelLayersList } from './ModelLayersList';
 import { type ReactElement } from 'react';
-import { type UpdateModelHandlersCallback } from './useModelHandlers';
 import { IconComponent } from '../../Architecture/IconComponentMapper';
 import { type IconName } from '../../../architecture/base/utilities/IconName';
+import { ModelLayersList } from './ModelLayersList';
 
 export const ModelLayersButton = ({
   icon,
@@ -19,14 +19,16 @@ export const ModelLayersButton = ({
   icon: IconName;
   label: string;
   handlers: ModelHandler[];
-  update: UpdateModelHandlersCallback;
+  update: () => void;
 }): ReactElement => {
   return (
-    <Tooltip content={label} placement="right" appendTo={document.body}>
-      <Dropdown
-        content={<ModelLayersList modelHandlers={handlers} update={update} label={label} />}>
+    <SelectPanel placement="bottom" hideOnOutsideClick={true}>
+      <SelectPanel.Trigger>
         <Button type="ghost" icon={<IconComponent iconName={icon} />} />
-      </Dropdown>
-    </Tooltip>
+      </SelectPanel.Trigger>
+      <SelectPanel.Body>
+        <ModelLayersList modelLayerHandlers={handlers} update={update} label={label} />
+      </SelectPanel.Body>
+    </SelectPanel>
   );
 };

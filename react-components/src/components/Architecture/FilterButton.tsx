@@ -100,6 +100,7 @@ export const FilterButton = ({
       hideOnSelect={false}
       appendTo={'parent'}
       placement={usedInSettings ? 'bottom-end' : 'auto-start'}
+      disableCloseOnClickInside
       renderTrigger={(props: any) => (
         <CogsTooltip
           content={<LabelWithShortcut label={label} command={command} />}
