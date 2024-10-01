@@ -98,17 +98,15 @@ export const SettingsButton = ({
 
   return (
     <Menu
-      open={isOpen}
       hideOnSelect={false}
+      onOpenChange={(open: boolean) => setOpen(open)}
       appendTo={'parent'}
-      onOutsideClick={() => {
-        setOpen(false);
-      }}
       placement="right-start"
       style={{
         flexDirection,
         padding: DEFAULT_PADDING
       }}
+      disableCloseOnClickInside
       renderTrigger={(props: any) => (
         <CogsTooltip
           content={<LabelWithShortcut label={label} command={command} />}
@@ -128,7 +126,6 @@ export const SettingsButton = ({
               props.onClick?.(event);
               event.stopPropagation();
               event.preventDefault();
-              setOpen((prev) => !prev);
             }}
           />
         </CogsTooltip>

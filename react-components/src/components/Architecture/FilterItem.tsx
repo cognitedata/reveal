@@ -41,14 +41,15 @@ export const FilterItem = ({ command }: { command: BaseFilterItemCommand }): Rea
       key={uniqueId}
       disabled={!isEnabled}
       toggled={isChecked}
+      trailingContent={
+        <CenteredContainer>
+          {command.color !== undefined && <ColorBox backgroundColor={command.color} />}
+        </CenteredContainer>
+      }
       onClick={() => {
         command.invoke();
       }}
-      label={command.getLabel(t)}>
-      <CenteredContainer>
-        {command.color !== undefined && <ColorBox backgroundColor={command.color} />}
-      </CenteredContainer>
-    </Menu.ItemToggled>
+      label={command.getLabel(t)}></Menu.ItemToggled>
   );
 };
 

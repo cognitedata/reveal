@@ -98,8 +98,9 @@ export const FilterButton = ({
       }}
       visible={isOpen}
       hideOnSelect={false}
+      onOpenChange={(open: boolean) => setOpen(open)}
       appendTo={'parent'}
-      placement={usedInSettings ? 'bottom-end' : 'auto-start'}
+      placement={usedInSettings ? 'auto-start' : 'bottom-end'}
       disableCloseOnClickInside
       renderTrigger={(props: any) => (
         <CogsTooltip
@@ -129,12 +130,12 @@ export const FilterButton = ({
               minWidth: usedInSettings ? OPTION_MIN_WIDTH : undefined,
               padding: usedInSettings ? DEFAULT_PADDING : undefined
             }}
+            {...props}
             onClick={(event: MouseEvent<HTMLElement>) => {
-              setOpen(!isOpen);
+              props.onClick(event);
               event.stopPropagation();
               event.preventDefault();
-            }}
-            {...props}>
+            }}>
             {usedInSettings ? selectedLabel : undefined}
           </Button>
         </CogsTooltip>
