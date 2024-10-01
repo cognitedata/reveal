@@ -7,6 +7,7 @@ import { Changes } from '../../base/domainObjectsHelpers/Changes';
 import { ObservationsCommand } from './ObservationsCommand';
 import { type IconName } from '../../base/utilities/IconName';
 import { CommandsUpdater } from '../../base/reactUpdaters/CommandsUpdater';
+import { makeToast } from '@cognite/cogs-lab';
 
 export class SaveObservationsCommand extends ObservationsCommand {
   public override get icon(): IconName {
@@ -41,11 +42,19 @@ export class SaveObservationsCommand extends ObservationsCommand {
     void domainObject
       ?.save()
       .then(() => {
+        makeToast({
+          body: { fallback: 'Successfully published changes' }.fallback,
+          type: 'success'
+        });
         const observation = this.getObservationsDomainObject();
         observation?.notify(Changes.geometry);
         CommandsUpdater.update(this.renderTarget);
       })
       .catch((e) => {
+        makeToast({
+          body: { fallback: 'Unable to publish observation changes: ' + e }.fallback,
+          type: 'warning'
+        });
         throw e;
       });
 
