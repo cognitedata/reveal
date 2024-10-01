@@ -26,6 +26,7 @@ export const SettingsButton = ({
   return (
     <Menu
       placement="right"
+      disableCloseOnClickInside
       renderTrigger={(props: any) => (
         <CogsTooltip
           content={t('SETTINGS_TOOLTIP', 'Settings')}
