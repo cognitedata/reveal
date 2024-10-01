@@ -98,7 +98,9 @@ export const FilterButton = ({
       }}
       visible={isOpen}
       hideOnSelect={false}
-      onOpenChange={(open: boolean) => setOpen(open)}
+      onOpenChange={(open: boolean) => {
+        setOpen(open);
+      }}
       appendTo={'parent'}
       placement={usedInSettings ? 'auto-start' : 'bottom-end'}
       disableCloseOnClickInside

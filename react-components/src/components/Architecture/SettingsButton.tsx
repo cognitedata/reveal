@@ -99,7 +99,9 @@ export const SettingsButton = ({
   return (
     <Menu
       hideOnSelect={false}
-      onOpenChange={(open: boolean) => setOpen(open)}
+      onOpenChange={(open: boolean) => {
+        setOpen(open);
+      }}
       appendTo={'parent'}
       placement="right-start"
       style={{
