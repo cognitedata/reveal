@@ -84,7 +84,7 @@ export const OptionButton = ({
   }
   const placement = getTooltipPlacement(isHorizontal);
   const label = usedInSettings ? undefined : command.getLabel(t);
-  const flexDirection = getFlexDirection(isHorizontal);
+  const flexDirection = getFlexDirection(false);
   const children = command.children;
   const selectedLabel = command.selectedChild?.getLabel(t);
 

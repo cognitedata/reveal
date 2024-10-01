@@ -11,6 +11,8 @@ import { RenderTargetCommand } from './RenderTargetCommand';
  */
 
 export abstract class BaseOptionCommand extends RenderTargetCommand {
+  public readonly isOptionMenu;
+
   // ==================================================
   // INSTANCE FIELDS/PROPERTIES
   // ==================================================
@@ -26,6 +28,15 @@ export abstract class BaseOptionCommand extends RenderTargetCommand {
 
   public get hasChildren(): boolean {
     return this._children !== undefined && this._children.length > 0;
+  }
+
+  // ==================================================
+  // CONSTRUCTOR
+  // ==================================================
+
+  public constructor(isOptionMenu: boolean = true) {
+    super();
+    this.isOptionMenu = isOptionMenu;
   }
 
   // ==================================================

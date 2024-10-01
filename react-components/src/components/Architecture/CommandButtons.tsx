@@ -12,6 +12,7 @@ import { SettingsButton } from './SettingsButton';
 import { BaseSettingsCommand } from '../../architecture/base/commands/BaseSettingsCommand';
 import { BaseFilterCommand } from '../../architecture/base/commands/BaseFilterCommand';
 import { FilterButton } from './FilterButton';
+import { SegmentedButtons } from './SegmentedButtons';
 
 export function createButton(command: BaseCommand, isHorizontal = false): ReactElement {
   if (command instanceof BaseFilterCommand) {
@@ -21,7 +22,11 @@ export function createButton(command: BaseCommand, isHorizontal = false): ReactE
     return <SettingsButton inputCommand={command} isHorizontal={isHorizontal} />;
   }
   if (command instanceof BaseOptionCommand) {
-    return <OptionButton inputCommand={command} isHorizontal={isHorizontal} />;
+    if (command.isOptionMenu) {
+      return <OptionButton inputCommand={command} isHorizontal={isHorizontal} />;
+    } else {
+      return <SegmentedButtons inputCommand={command} isHorizontal={isHorizontal} />;
+    }
   }
   return <CommandButton inputCommand={command} isHorizontal={isHorizontal} />;
 }

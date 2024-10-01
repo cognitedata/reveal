@@ -28,6 +28,23 @@ export const MainToolbar = (): ReactElement => {
   return <ToolbarContent commands={commands} style={style} />;
 };
 
+export const TopToolbar = (): ReactElement => {
+  const renderTarget = useRenderTarget();
+  if (renderTarget === undefined) {
+    return <></>;
+  }
+  const config = renderTarget.config;
+  if (config === undefined) {
+    return <></>;
+  }
+  const commands = useMemo(() => config.createTopToolbar(), [config]);
+  if (commands.length === 0) {
+    return <></>;
+  }
+  const style = config.createTopToolbarStyle();
+  return <ToolbarContent commands={commands} style={style} />;
+};
+
 export const ActiveToolToolbar = (): ReactElement => {
   //
   const [_activeToolUpdater, setActiveToolUpdater] = useState<number>(0);

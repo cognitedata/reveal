@@ -22,6 +22,14 @@ export abstract class BaseRevealConfig {
     return new PopupStyle({ right: 0, top: 0, horizontal: false });
   }
 
+  public createTopToolbar(): Array<BaseCommand | undefined> {
+    return [];
+  }
+
+  public createTopToolbarStyle(): PopupStyle {
+    return new PopupStyle({ right: 0, top: 0, horizontal: true });
+  }
+
   public createAxisGizmoTool(): AxisGizmoTool | undefined {
     return undefined;
   }

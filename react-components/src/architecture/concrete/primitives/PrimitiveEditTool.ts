@@ -153,6 +153,7 @@ export abstract class PrimitiveEditTool extends BaseEditTool {
     if (creator === undefined) {
       creator = this._creator = this.createCreator();
       if (creator === undefined) {
+        await super.onClick(event);
         return;
       }
       if (creator.addPoint(ray, intersection)) {
