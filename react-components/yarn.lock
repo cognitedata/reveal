@@ -1594,7 +1594,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@babel/runtime@npm:^7.25.0":
+"@babel/runtime@npm:^7.24.6, @babel/runtime@npm:^7.25.6":
   version: 7.25.6
   resolution: "@babel/runtime@npm:7.25.6"
   dependencies:
@@ -1893,6 +1893,40 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@cognite/cogs-core@npm:^10.25.2":
+  version: 10.25.2
+  resolution: "@cognite/cogs-core@npm:10.25.2"
+  dependencies:
+    "@cognite/cogs-icons": "npm:^10.25.2"
+    "@cognite/cogs-utils": "npm:^10.25.2"
+    "@emotion/react": "npm:^11.11.3"
+    "@emotion/styled": "npm:^11.11.0"
+    "@mui/base": "npm:^5.0.0-beta.33"
+    "@mui/joy": "npm:5.0.0-beta.48"
+    "@mui/x-date-pickers": "npm:^6.19.3"
+    "@mui/x-date-pickers-pro": "npm:^6.19.3"
+    "@mui/x-license-pro": "npm:^6.10.2"
+    "@react-hook/resize-observer": "npm:^2.0.0"
+    "@tippyjs/react": "npm:4.2.6"
+    classnames: "npm:^2.5.1"
+    color: "npm:4.2.3"
+    core-js: "npm:^3.6.5"
+    csstype: "npm:2.6.10"
+    dayjs: "npm:^1.11.7"
+    framer-motion: "npm:^11.0.3"
+    fuse.js: "npm:^7.0.0"
+    rc-slider: "npm:9.5.4"
+    react-select: "npm:3.2.0"
+    tippy.js: "npm:6.3.7"
+    tslib: "npm:^2.6.2"
+  peerDependencies:
+    "@types/react": ^18
+    react: ^18
+    react-dom: ^18
+  checksum: 10/8858af1936bff310e648c2223c1d26994e0b468d975beb826d3f080758aba6d5d0d6c8fd29331fc78dfa849c66badb8c97fd850fd32c4d5a01c50682b15dc977
+  languageName: node
+  linkType: hard
+
 "@cognite/cogs-icons@npm:^10.25.0":
   version: 10.25.0
   resolution: "@cognite/cogs-icons@npm:10.25.0"
@@ -1908,14 +1942,29 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@cognite/cogs-lab@npm:^9.0.0-alpha.111":
-  version: 9.0.0-alpha.111
-  resolution: "@cognite/cogs-lab@npm:9.0.0-alpha.111"
+"@cognite/cogs-icons@npm:^10.25.2":
+  version: 10.25.2
+  resolution: "@cognite/cogs-icons@npm:10.25.2"
+  dependencies:
+    classnames: "npm:^2.5.1"
+    core-js: "npm:^3.6.5"
+    tslib: "npm:^2.6.2"
+  peerDependencies:
+    "@types/react": ^18
+    react: ^18
+    react-dom: ^18
+  checksum: 10/fc18c32244963804cb9a65a8d53a27b8c45cf0f25395945e9a0040d867850c3105afb5768a108df2b04ba9c8778e2efb9ac8f9865a1fc38bd7e0e5bf15afc44c
+  languageName: node
+  linkType: hard
+
+"@cognite/cogs-lab@npm:^9.0.0-alpha.113":
+  version: 9.0.0-alpha.113
+  resolution: "@cognite/cogs-lab@npm:9.0.0-alpha.113"
   dependencies:
     "@babel/runtime": "npm:^7.23.2"
-    "@cognite/cogs-core": "npm:^10.25.0"
-    "@cognite/cogs-icons": "npm:^10.25.0"
-    "@cognite/cogs-utils": "npm:^10.25.0"
+    "@cognite/cogs-core": "npm:^10.25.2"
+    "@cognite/cogs-icons": "npm:^10.25.2"
+    "@cognite/cogs-utils": "npm:^10.25.2"
     "@floating-ui/react": "npm:^0.26.6"
     "@mui/base": "npm:^5.0.0-beta.33"
     "@mui/material": "npm:^5.15.5"
@@ -1934,7 +1983,7 @@ __metadata:
     tslib: "npm:^2.6.2"
   peerDependencies:
     react: ^18
-  checksum: 10/6df4bf7deb57a20a96bfa2c3bbc3a82472a66e4773d33874b92e88ea403d6efa8bcbe6792530b207370c8f6cb82a9ed43c1f252886c5baa2fd0a8dbd29f0c455
+  checksum: 10/a1848ba5eca0d13f2457e0bcff81c4e97ecf071c43b78579e7eb00f834c3a391d147aa61c37e7a961cfcea6a589e8db69310aea509dfbeffd656723fc944dea3
   languageName: node
   linkType: hard
 
@@ -1957,6 +2006,25 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@cognite/cogs-utils@npm:^10.25.2":
+  version: 10.25.2
+  resolution: "@cognite/cogs-utils@npm:10.25.2"
+  dependencies:
+    "@babel/runtime": "npm:^7.23.2"
+    "@testing-library/react": "npm:16.0.1"
+    classnames: "npm:^2.5.1"
+    color: "npm:4.2.3"
+    core-js: "npm:^3.6.5"
+    jest-axe: "npm:^8.0.0"
+    lodash: "npm:4.17.21"
+    resize-observer-polyfill: "npm:1.5.1"
+    tslib: "npm:^2.6.2"
+  peerDependencies:
+    react: ^18
+  checksum: 10/5751a513792e9a2be3b91ba4274d391e4f883825b5a38ec0a450118029b86f9c01fa573134abef03a68b1594a8104786d5b235165b1056313a485d2455c38e83
+  languageName: node
+  linkType: hard
+
 "@cognite/cogs.js@npm:^10.25.0":
   version: 10.25.0
   resolution: "@cognite/cogs.js@npm:10.25.0"
@@ -1974,7 +2042,7 @@ __metadata:
   dependencies:
     "@cognite/cdf-i18n-utils": "npm:^0.7.5"
     "@cognite/cdf-utilities": "npm:^3.6.0"
-    "@cognite/cogs-lab": "npm:^9.0.0-alpha.111"
+    "@cognite/cogs-lab": "npm:^9.0.0-alpha.113"
     "@cognite/cogs.js": "npm:^10.25.0"
     "@cognite/reveal": "npm:^4.17.0"
     "@cognite/sdk": "npm:^9.13.0"
@@ -2854,7 +2922,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@floating-ui/react-dom@npm:^2.1.1, @floating-ui/react-dom@npm:^2.1.2":
+"@floating-ui/react-dom@npm:^2.0.8, @floating-ui/react-dom@npm:^2.1.2":
   version: 2.1.2
   resolution: "@floating-ui/react-dom@npm:2.1.2"
   dependencies:
@@ -3113,14 +3181,36 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@mui/base@npm:5.0.0-beta.58":
-  version: 5.0.0-beta.58
-  resolution: "@mui/base@npm:5.0.0-beta.58"
+"@mui/base@npm:5.0.0-beta.40":
+  version: 5.0.0-beta.40
+  resolution: "@mui/base@npm:5.0.0-beta.40"
   dependencies:
-    "@babel/runtime": "npm:^7.25.0"
-    "@floating-ui/react-dom": "npm:^2.1.1"
-    "@mui/types": "npm:^7.2.15"
-    "@mui/utils": "npm:6.0.0-rc.0"
+    "@babel/runtime": "npm:^7.23.9"
+    "@floating-ui/react-dom": "npm:^2.0.8"
+    "@mui/types": "npm:^7.2.14"
+    "@mui/utils": "npm:^5.15.14"
+    "@popperjs/core": "npm:^2.11.8"
+    clsx: "npm:^2.1.0"
+    prop-types: "npm:^15.8.1"
+  peerDependencies:
+    "@types/react": ^17.0.0 || ^18.0.0
+    react: ^17.0.0 || ^18.0.0
+    react-dom: ^17.0.0 || ^18.0.0
+  peerDependenciesMeta:
+    "@types/react":
+      optional: true
+  checksum: 10/ebee3d9e1136710dcb2af5828acc6bd8d54f6b124785d011585c2665a48dc66e35ccb344d5ebc7fd8bfd776cccb8ea434911f151a62bee193677ee9dc67fc7fc
+  languageName: node
+  linkType: hard
+
+"@mui/base@npm:^5.0.0-beta.22, @mui/base@npm:^5.0.0-beta.33":
+  version: 5.0.0-dev.20240529-082515-213b5e33ab
+  resolution: "@mui/base@npm:5.0.0-dev.20240529-082515-213b5e33ab"
+  dependencies:
+    "@babel/runtime": "npm:^7.24.6"
+    "@floating-ui/react-dom": "npm:^2.0.8"
+    "@mui/types": "npm:^7.2.14-dev.20240529-082515-213b5e33ab"
+    "@mui/utils": "npm:^6.0.0-dev.20240529-082515-213b5e33ab"
     "@popperjs/core": "npm:^2.11.8"
     clsx: "npm:^2.1.1"
     prop-types: "npm:^15.8.1"
@@ -3131,7 +3221,7 @@ __metadata:
   peerDependenciesMeta:
     "@types/react":
       optional: true
-  checksum: 10/151842a4b3421cb40dbcc88d22200ae3112174bcc160211baa3ac6f932e58eb13627c339a6bc457e3ccbcb279bf3605203d75b4e2cf0e4c195df59583ebbc4a6
+  checksum: 10/5e6a4f8d2583dec3c776a8681753665504b8c72e8b7c0348c6a373c3830bc51243be7740c38a4876f300b6114f2e57247b75f5754df7bee11c625d228d2640c9
   languageName: node
   linkType: hard
 
@@ -3270,7 +3360,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@mui/types@npm:^7.2.15":
+"@mui/types@npm:^7.2.14, @mui/types@npm:^7.2.14-dev.20240529-082515-213b5e33ab, @mui/types@npm:^7.2.15, @mui/types@npm:^7.2.17":
   version: 7.2.17
   resolution: "@mui/types@npm:7.2.17"
   peerDependencies:
@@ -3279,26 +3369,6 @@ __metadata:
     "@types/react":
       optional: true
   checksum: 10/de21ecd69e4fe22738f1437d7084747c07a1e88f6fbdea5a2927594c587aaf8cac7bd67118b8749a8c7a6f45875b937d4a20b43f531773cdfd870445a4237893
-  languageName: node
-  linkType: hard
-
-"@mui/utils@npm:6.0.0-rc.0":
-  version: 6.0.0-rc.0
-  resolution: "@mui/utils@npm:6.0.0-rc.0"
-  dependencies:
-    "@babel/runtime": "npm:^7.25.0"
-    "@mui/types": "npm:^7.2.15"
-    "@types/prop-types": "npm:^15.7.12"
-    clsx: "npm:^2.1.1"
-    prop-types: "npm:^15.8.1"
-    react-is: "npm:^18.3.1"
-  peerDependencies:
-    "@types/react": ^17.0.0 || ^18.0.0 || ^19.0.0
-    react: ^17.0.0 || ^18.0.0 || ^19.0.0
-  peerDependenciesMeta:
-    "@types/react":
-      optional: true
-  checksum: 10/9254808d615b0d2f20fdc866f4e90587d7c650ddfb2a989ec6aa553ce0d774dce296d246896bb608ef51e9b9192f83bb6bfd9e02353d9e5fe4cbeaec9b8a702a
   languageName: node
   linkType: hard
 
@@ -3320,7 +3390,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@mui/utils@npm:^5.15.6, @mui/utils@npm:^5.16.1, @mui/utils@npm:^5.16.6":
+"@mui/utils@npm:^5.15.14, @mui/utils@npm:^5.15.6, @mui/utils@npm:^5.16.1, @mui/utils@npm:^5.16.6":
   version: 5.16.6
   resolution: "@mui/utils@npm:5.16.6"
   dependencies:
@@ -3337,6 +3407,26 @@ __metadata:
     "@types/react":
       optional: true
   checksum: 10/214bc3e9fe49579c5aee264477c802e5f5ced3473cafb1ed0aacd63db223e2668a08fb1f7304e70ea0511f68200dd80c3b49cc58050c7b0962228758a003371d
+  languageName: node
+  linkType: hard
+
+"@mui/utils@npm:^6.0.0-dev.20240529-082515-213b5e33ab":
+  version: 6.1.1
+  resolution: "@mui/utils@npm:6.1.1"
+  dependencies:
+    "@babel/runtime": "npm:^7.25.6"
+    "@mui/types": "npm:^7.2.17"
+    "@types/prop-types": "npm:^15.7.12"
+    clsx: "npm:^2.1.1"
+    prop-types: "npm:^15.8.1"
+    react-is: "npm:^18.3.1"
+  peerDependencies:
+    "@types/react": ^17.0.0 || ^18.0.0 || ^19.0.0
+    react: ^17.0.0 || ^18.0.0 || ^19.0.0
+  peerDependenciesMeta:
+    "@types/react":
+      optional: true
+  checksum: 10/11555b8595ba8f215d3e90c36ea992c17f7901465f10a992b7c7d90596bac25f0ea4f07c9a9d9cd64015828cc6b9c3dedaf5d39a039e75ab252a3d097022bbcb
   languageName: node
   linkType: hard
 
