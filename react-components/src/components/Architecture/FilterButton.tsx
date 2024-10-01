@@ -29,6 +29,9 @@ import { FilterItem } from './FilterItem';
 import { OPTION_MIN_WIDTH, DEFAULT_PADDING } from './constants';
 import { type IconName } from '../../architecture/base/utilities/IconName';
 import { IconComponent } from './IconComponentMapper';
+import { TOOLBAR_HORIZONTAL_PANEL_OFFSET } from '../constants';
+
+import { offset } from '@floating-ui/dom';
 
 export const FilterButton = ({
   inputCommand,
@@ -96,6 +99,7 @@ export const FilterButton = ({
         overflow: 'auto',
         flexDirection
       }}
+      floatingProps={{ middleware: [offset(TOOLBAR_HORIZONTAL_PANEL_OFFSET)] }}
       visible={isOpen}
       hideOnSelect={false}
       onOpenChange={(open: boolean) => {

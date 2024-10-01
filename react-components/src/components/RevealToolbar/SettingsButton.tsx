@@ -8,6 +8,9 @@ import { Menu } from '@cognite/cogs-lab';
 import { type QualitySettings } from './SettingsContainer/types';
 import { HighFidelityContainer } from './SettingsContainer/HighFidelityContainer';
 import { useTranslation } from '../i18n/I18n';
+import { TOOLBAR_HORIZONTAL_PANEL_OFFSET } from '../constants';
+
+import { offset } from '@floating-ui/dom';
 
 type CustomSettingsProps = {
   customSettingsContent?: ReactElement;
@@ -26,6 +29,7 @@ export const SettingsButton = ({
   return (
     <Menu
       placement="right"
+      floatingProps={{ middleware: [offset(TOOLBAR_HORIZONTAL_PANEL_OFFSET)] }}
       disableCloseOnClickInside
       renderTrigger={(props: any) => (
         <CogsTooltip

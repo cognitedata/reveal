@@ -13,6 +13,8 @@ import { useReveal } from '../../RevealCanvas/ViewerContext';
 import { WholeLayerVisibilitySelectItem } from './WholeLayerVisibilitySelectItem';
 import { ModelLayersList } from './ModelLayersList';
 import { type DefaultLayersConfiguration, type LayersUrlStateParam } from './types';
+import styled from 'styled-components';
+import { TOOLBAR_HORIZONTAL_PANEL_OFFSET } from '../../constants';
 
 export type LayersButtonProps = {
   layersState?: LayersUrlStateParam | undefined;
@@ -46,9 +48,9 @@ export const LayersButton = ({
 
   return (
     <>
-      <SelectPanel placement="right">
+      <SelectPanel placement="right" hideOnOutsideClick offset={TOOLBAR_HORIZONTAL_PANEL_OFFSET}>
         <SelectPanel.Trigger>
-          <Button icon=<LayersIcon /> />
+          <Button icon=<LayersIcon /> type="ghost" />
         </SelectPanel.Trigger>
         <SelectPanel.Body>
           <SelectPanel.Section>

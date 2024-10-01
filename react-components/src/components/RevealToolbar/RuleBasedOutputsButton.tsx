@@ -21,6 +21,8 @@ import { useAssetMappedNodesForRevisions } from '../CacheProvider/AssetMappingAn
 import { RuleBasedSelectionItem } from '../RuleBasedOutputs/components/RuleBasedSelectionItem';
 import { generateEmptyRuleForSelection, getRuleBasedById } from '../RuleBasedOutputs/utils';
 import { useReveal3DResourcesStylingLoading } from '../Reveal3DResources/Reveal3DResourcesInfoContext';
+import { offset } from '@floating-ui/dom';
+import { TOOLBAR_HORIZONTAL_PANEL_OFFSET } from '../constants';
 
 type RuleBasedOutputsButtonProps = {
   onRuleSetStylingChanged?: (stylings: AllRuleBasedStylingGroups | undefined) => void;
@@ -131,6 +133,7 @@ export const RuleBasedOutputsButton = ({
         overflow: 'auto',
         marginBottom: '20px'
       }}
+      floatingProps={{ middleware: [offset(TOOLBAR_HORIZONTAL_PANEL_OFFSET)] }}
       disableCloseOnClickInside
       renderTrigger={(props: any) => (
         <CogsTooltip

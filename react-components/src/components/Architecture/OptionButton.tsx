@@ -8,7 +8,6 @@ import {
   useCallback,
   useEffect,
   useMemo,
-  useRef,
   useState,
   type ReactElement,
   type MouseEvent
@@ -27,8 +26,10 @@ import {
 } from './utilities';
 import { LabelWithShortcut } from './LabelWithShortcut';
 import { type TranslateDelegate } from '../../architecture/base/utilities/TranslateKey';
-import { useClickOutside } from './useClickOutside';
 import { DEFAULT_PADDING, OPTION_MIN_WIDTH } from './constants';
+import { TOOLBAR_HORIZONTAL_PANEL_OFFSET } from '../constants';
+
+import { offset } from '@floating-ui/dom';
 
 export const OptionButton = ({
   inputCommand,
@@ -65,22 +66,6 @@ export const OptionButton = ({
     };
   }, [command]);
 
-  const outsideAction = (): boolean => {
-    if (!isOpen) {
-      return false;
-    }
-    postAction();
-    return true;
-  };
-
-  const postAction = (): void => {
-    setOpen(false);
-    renderTarget.domElement.focus();
-  };
-
-  const menuRef = useRef<HTMLDivElement | null>(null);
-  useClickOutside(menuRef, outsideAction);
-
   if (!isVisible || command.children === undefined) {
     return <></>;
   }
@@ -99,8 +84,11 @@ export const OptionButton = ({
         overflow: 'auto',
         flexDirection
       }}
+      floatingProps={{ middleware: [offset(TOOLBAR_HORIZONTAL_PANEL_OFFSET)] }}
+      onOpenChange={(open: boolean) => {
+        setOpen(open);
+      }}
       hideOnSelect={true}
-      open={isOpen}
       appendTo={'parent'}
       placement={usedInSettings ? 'bottom-end' : 'auto-start'}
       renderTrigger={(props: any) => (
@@ -127,24 +115,19 @@ export const OptionButton = ({
               props.onClick?.(event);
               event.stopPropagation();
               event.preventDefault();
-              setOpen((prevState) => !prevState);
             }}>
             {selectedLabel}
           </Button>
         </CogsTooltip>
       )}>
       {children.map((child, _index): ReactElement => {
-        return createMenuItem(child, t, postAction);
+        return createMenuItem(child, t);
       })}
     </Menu>
   );
 };
 
-function createMenuItem(
-  command: BaseCommand,
-  t: TranslateDelegate,
-  postAction: () => void
-): ReactElement {
+function createMenuItem(command: BaseCommand, t: TranslateDelegate): ReactElement {
   return (
     <Menu.ItemToggled
       key={command.uniqueId}
@@ -155,7 +138,6 @@ function createMenuItem(
       label={command.getLabel(t)}
       onClick={() => {
         command.invoke();
-        postAction();
       }}
     />
   );

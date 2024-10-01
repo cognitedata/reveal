@@ -13,6 +13,8 @@ import { Menu } from '@cognite/cogs-lab';
 import styled from 'styled-components';
 import { useTranslation } from '../i18n/I18n';
 import { use3dModels } from '../../hooks/use3dModels';
+import { TOOLBAR_HORIZONTAL_PANEL_OFFSET } from '../constants';
+import { offset } from '@floating-ui/dom';
 
 type SliceState = {
   minHeight: number;
@@ -94,6 +96,7 @@ export const SlicerButton = (): ReactElement => {
   return (
     <StyledMenu
       placement="right-end"
+      floatingProps={{ middleware: [offset(TOOLBAR_HORIZONTAL_PANEL_OFFSET)] }}
       renderTrigger={(props: any) => (
         <CogsTooltip
           content={t('SLICE_TOOLTIP', 'Slice')}

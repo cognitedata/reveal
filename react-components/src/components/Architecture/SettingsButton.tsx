@@ -32,10 +32,13 @@ import { OptionButton } from './OptionButton';
 import { BaseSliderCommand } from '../../architecture/base/commands/BaseSliderCommand';
 import { BaseFilterCommand } from '../../architecture/base/commands/BaseFilterCommand';
 import { FilterButton } from './FilterButton';
-import { useClickOutside } from './useClickOutside';
 import { DEFAULT_PADDING } from './constants';
 import { type IconName } from '../../architecture/base/utilities/IconName';
 import { IconComponent } from './IconComponentMapper';
+
+import { TOOLBAR_HORIZONTAL_PANEL_OFFSET } from '../constants';
+
+import { offset } from '@floating-ui/dom';
 
 export const SettingsButton = ({
   inputCommand,
@@ -72,22 +75,6 @@ export const SettingsButton = ({
     };
   }, [command]);
 
-  const outsideAction = (): boolean => {
-    if (!isOpen) {
-      return false;
-    }
-    postAction();
-    return false;
-  };
-
-  const postAction = (): void => {
-    setOpen(false);
-    renderTarget.domElement.focus();
-  };
-
-  const menuRef = useRef<HTMLDivElement | null>(null);
-  useClickOutside(menuRef, outsideAction);
-
   if (!isVisible || !command.hasChildren) {
     return <></>;
   }
@@ -102,6 +89,7 @@ export const SettingsButton = ({
       onOpenChange={(open: boolean) => {
         setOpen(open);
       }}
+      floatingProps={{ middleware: [offset(TOOLBAR_HORIZONTAL_PANEL_OFFSET)] }}
       appendTo={'parent'}
       placement="right-start"
       style={{

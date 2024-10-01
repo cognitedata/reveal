@@ -9,6 +9,9 @@ import { useTranslation } from '../i18n/I18n';
 import { type DmsUniqueIdentifier } from '../../data-providers/FdmSDK';
 import { SceneList, type SceneWithName } from './SceneList';
 import styled from 'styled-components';
+import { TOOLBAR_HORIZONTAL_PANEL_OFFSET } from '../constants';
+
+import { offset } from '@floating-ui/dom';
 
 export type SelectSceneButtonProps = {
   selectedScene: DmsUniqueIdentifier | undefined;
@@ -43,6 +46,7 @@ export const SelectSceneButton = ({
     <StyledMenu
       placement="right-start"
       appendTo={document.body}
+      floatingProps={{ middleware: [offset(TOOLBAR_HORIZONTAL_PANEL_OFFSET)] }}
       renderTrigger={(props: any) => (
         <CogsTooltip content={t('SCENE_SELECT_HEADER', 'Select 3D location')}>
           <Button icon=<WorldIcon /> aria-label="Select 3D location" type="ghost" {...props}>
