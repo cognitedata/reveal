@@ -13,7 +13,7 @@ export class UndoCommand extends RenderTargetCommand {
   // ==================================================
 
   public override get icon(): IconName {
-    return 'Restore'; // Should be 'Restore ' but it doesn't exist
+    return 'Restore';
   }
 
   public override get tooltip(): TranslateKey {
