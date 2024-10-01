@@ -131,6 +131,7 @@ export const RuleBasedOutputsButton = ({
         overflow: 'auto',
         marginBottom: '20px'
       }}
+      disableCloseOnClickInside
       renderTrigger={(props: any) => (
         <CogsTooltip
           content={t('RULESET_SELECT_HEADER', 'Select color overlay')}
