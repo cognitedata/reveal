@@ -3,7 +3,7 @@
  */
 import { type ReactElement } from 'react';
 
-import { Menu } from '@cognite/cogs.js';
+import { Icon, Menu } from '@cognite/cogs.js';
 import { useTranslation } from '../../i18n/I18n';
 import styled from 'styled-components';
 import { type CogniteClient } from '@cognite/sdk';
@@ -30,9 +30,9 @@ export const SingleModelSelectionMenu = ({
 }: SingleModelSelectionMenuProps): ReactElement => {
   const { t } = useTranslation();
 
-  const { data: models } = useAll3dModels(sdk, true);
+  const { data: models, isLoading: isModelsLoading  } = useAll3dModels(sdk, true);
 
-  const { data: modelsWithRevision } = useRevisions(sdk, models);
+  const { data: modelsWithRevision, isLoading: isRevisionLoading } = useRevisions(sdk, models);
 
   const selectedModel =
     selectedResource !== undefined &&
@@ -61,6 +61,7 @@ export const SingleModelSelectionMenu = ({
   return (
     <StyledMenu>
       <Menu.Header>{t('MODEL_SELECT_HEADER', 'Select 3D model')}</Menu.Header>
+      {(isRevisionLoading || isModelsLoading) && <StyledLoadingIcon type="Loader" />}
       <ModelsList
         modelsWithRevision={modelsWithRevision ?? []}
         selectedModel={selectedModel}
@@ -69,6 +70,11 @@ export const SingleModelSelectionMenu = ({
     </StyledMenu>
   );
 };
+
+const StyledLoadingIcon = styled(Icon)`
+  margin-left: 10px;
+  margin-bottom: 5px;
+`;
 
 const StyledMenu = styled(Menu)`
   max-height: 400px;
