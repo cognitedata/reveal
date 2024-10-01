@@ -1,7 +1,7 @@
 /*!
  * Copyright 2024 Cognite AS
  */
-import { useReveal } from '../../..';
+import { useReveal } from '../../RevealCanvas';
 import { type Dispatch, type SetStateAction, useEffect, useRef } from 'react';
 import { type LayersUrlStateParam } from './types';
 import { updateExternalStateFromLayerHandlers } from './updateExternalStateFromLayerHandlers';
