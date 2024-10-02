@@ -49,7 +49,11 @@ export class AlignSelectedAnnotationCommand extends RenderTargetCommand {
 
   public override get isEnabled(): boolean {
     const domainObject = this.getAnnotationsDomainObject();
-    return domainObject !== undefined && domainObject.selectedAnnotation !== undefined;
+    return (
+      domainObject !== undefined &&
+      domainObject.selectedAnnotation !== undefined &&
+      domainObject.selectedAnnotation.selectedPrimitive !== undefined
+    );
   }
 
   public override equals(other: BaseCommand): boolean {

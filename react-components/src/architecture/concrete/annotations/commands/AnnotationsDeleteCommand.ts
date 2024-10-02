@@ -25,7 +25,11 @@ export class AnnotationsDeleteCommand extends RenderTargetCommand {
 
   public override get isEnabled(): boolean {
     const domainObject = this.getAnnotationsDomainObject();
-    return domainObject !== undefined && domainObject.selectedAnnotation !== undefined;
+    return (
+      domainObject !== undefined &&
+      domainObject.selectedAnnotation !== undefined &&
+      domainObject.selectedAnnotation.selectedPrimitive !== undefined
+    );
   }
 
   protected override invokeCore(): boolean {
