@@ -26,6 +26,7 @@ import { CopyToClipboardCommand } from '../concreteCommands/CopyToClipboardComma
 import { type BaseCommand } from '../commands/BaseCommand';
 import { type Transaction } from '../undo/Transaction';
 import { ToggleMetricUnitsCommand } from '../concreteCommands/ToggleMetricUnitsCommand';
+import { ChangedDescription } from '../domainObjectsHelpers/ChangedDescription';
 
 /**
  * Represents an abstract base class for domain objects.
@@ -364,12 +365,12 @@ export abstract class DomainObject {
   }
 
   public getPanelInfoStyle(): PopupStyle {
-    // to be overridden
     // Default lower left corner
     return new PopupStyle({ bottom: 50, left: 0 });
   }
 
   public getPanelToolbar(): BaseCommand[] {
+    // to be overridden
     return [
       new CopyToClipboardCommand(),
       new ToggleMetricUnitsCommand(),
@@ -477,9 +478,15 @@ export abstract class DomainObject {
 
   public setVisibleInteractive(
     visible: boolean,
-    renderTarget: RevealRenderTarget,
+    renderTarget: RevealRenderTarget | undefined = undefined,
     topLevel = true // When calling this from outside, this value should always be true
   ): boolean {
+    if (renderTarget === undefined) {
+      renderTarget = this.rootDomainObject?.renderTarget;
+      if (renderTarget === undefined) {
+        return false;
+      }
+    }
     const visibleState = this.getVisibleState(renderTarget);
     if (visibleState === VisibleState.Disabled) {
       return false;
@@ -506,15 +513,19 @@ export abstract class DomainObject {
   // INSTANCE METHODS: Notification
   // ==================================================
 
-  public notify(change: DomainObjectChange | symbol): void {
-    if (!(change instanceof DomainObjectChange)) {
+  public notify(change: DomainObjectChange | ChangedDescription | symbol): void {
+    if (typeof change === 'symbol') {
+      change = new DomainObjectChange(change);
+    } else if (change instanceof ChangedDescription) {
       change = new DomainObjectChange(change);
     }
     this.notifyCore(change);
   }
 
   public notifyDescendants(change: DomainObjectChange | symbol): void {
-    if (!(change instanceof DomainObjectChange)) {
+    if (typeof change === 'symbol') {
+      change = new DomainObjectChange(change);
+    } else if (change instanceof ChangedDescription) {
       change = new DomainObjectChange(change);
     }
     for (const descendant of this.getDescendants()) {

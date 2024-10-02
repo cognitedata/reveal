@@ -3,7 +3,7 @@
  */
 
 import { type DomainObject } from '../../base/domainObjects/DomainObject';
-import { type PrimitiveType } from '../primitives/PrimitiveType';
+import { type PrimitiveType } from '../../base/utilities/primitives/PrimitiveType';
 import { LineDomainObject } from '../primitives/line/LineDomainObject';
 import { Color } from 'three';
 

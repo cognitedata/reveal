@@ -4,7 +4,7 @@
 
 import { Color } from 'three';
 import { PlaneDomainObject } from '../primitives/plane/PlaneDomainObject';
-import { PrimitiveType } from '../primitives/PrimitiveType';
+import { PrimitiveType } from '../../base/utilities/primitives/PrimitiveType';
 import { type TranslateKey } from '../../base/utilities/TranslateKey';
 import { type BaseCommand } from '../../base/commands/BaseCommand';
 import { FlipSliceCommand } from './commands/FlipSliceCommand';
@@ -53,7 +53,15 @@ export class SliceDomainObject extends PlaneDomainObject {
   protected override notifyCore(change: DomainObjectChange): void {
     super.notifyCore(change);
 
-    if (change.isChanged(Changes.added, Changes.deleted, Changes.geometry)) {
+    if (
+      change.isChanged(
+        Changes.selected,
+        Changes.deleted,
+        Changes.added,
+        Changes.geometry,
+        Changes.dragging
+      )
+    ) {
       if (change.isChanged(Changes.deleted)) {
         this.focusType = FocusType.Pending; // Make sure that the slice is not used in clipping anymore
       }

@@ -4,7 +4,7 @@
 
 import { RenderTargetCommand } from '../../../base/commands/RenderTargetCommand';
 import { type BaseCommand } from '../../../base/commands/BaseCommand';
-import { PrimitiveType } from '../../primitives/PrimitiveType';
+import { PrimitiveType } from '../../../base/utilities/primitives/PrimitiveType';
 import { getIconByPrimitiveType } from '../getIconByPrimitiveType';
 import { type TranslateKey } from '../../../base/utilities/TranslateKey';
 import { MeasurementTool } from '../MeasurementTool';
@@ -50,7 +50,7 @@ export class SetMeasurementTypeCommand extends RenderTargetCommand {
     if (tool === undefined) {
       return false;
     }
-    tool.handleEscape();
+    tool.onEscapeKey();
     tool.clearDragging();
     if (tool.primitiveType === this._primitiveType) {
       tool.primitiveType = PrimitiveType.None;
@@ -72,11 +72,7 @@ export class SetMeasurementTypeCommand extends RenderTargetCommand {
   // ==================================================
 
   private get tool(): MeasurementTool | undefined {
-    const { activeTool } = this;
-    if (!(activeTool instanceof MeasurementTool)) {
-      return undefined;
-    }
-    return activeTool;
+    return this.getActiveTool(MeasurementTool);
   }
 }
 

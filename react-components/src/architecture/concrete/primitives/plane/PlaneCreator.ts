@@ -3,7 +3,7 @@
  */
 
 import { type Ray, Vector3 } from 'three';
-import { PrimitiveType } from '../PrimitiveType';
+import { PrimitiveType } from '../../../base/utilities/primitives/PrimitiveType';
 import { BaseCreator } from '../../../base/domainObjectsHelpers/BaseCreator';
 import { FocusType } from '../../../base/domainObjectsHelpers/FocusType';
 import { Changes } from '../../../base/domainObjectsHelpers/Changes';
@@ -38,6 +38,10 @@ export class PlaneCreator extends BaseCreator {
 
   public override get domainObject(): DomainObject {
     return this._domainObject;
+  }
+
+  public override get canStartOnHover(): boolean {
+    return false;
   }
 
   public override get preferIntersection(): boolean {

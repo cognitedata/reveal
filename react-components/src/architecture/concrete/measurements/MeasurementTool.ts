@@ -7,25 +7,18 @@ import { type BaseCreator } from '../../base/domainObjectsHelpers/BaseCreator';
 import { ShowMeasurementsOnTopCommand } from './commands/ShowMeasurementsOnTopCommand';
 import { SetMeasurementTypeCommand } from './commands/SetMeasurementTypeCommand';
 import { type TranslateKey } from '../../base/utilities/TranslateKey';
-import { PrimitiveEditTool } from '../primitives/PrimitiveEditTool';
+import { PrimitiveEditTool } from '../primitives/tools/PrimitiveEditTool';
 import { MeasureLineDomainObject } from './MeasureLineDomainObject';
 import { MeasureBoxDomainObject } from './MeasureBoxDomainObject';
-import { PrimitiveType } from '../primitives/PrimitiveType';
+import { PrimitiveType } from '../../base/utilities/primitives/PrimitiveType';
 import { BoxCreator } from '../primitives/box/BoxCreator';
 import { LineCreator } from '../primitives/line/LineCreator';
 import { type VisualDomainObject } from '../../base/domainObjects/VisualDomainObject';
 import { CDF_TO_VIEWER_TRANSFORMATION } from '@cognite/reveal';
 import { UndoCommand } from '../../base/concreteCommands/UndoCommand';
+import { Box3 } from 'three';
 
 export class MeasurementTool extends PrimitiveEditTool {
-  // ==================================================
-  // CONSTRUCTOR
-  // ==================================================
-
-  public constructor() {
-    super(PrimitiveType.None);
-  }
-
   // ==================================================
   // OVERRIDES of BaseCommand
   // ==================================================
@@ -64,15 +57,18 @@ export class MeasurementTool extends PrimitiveEditTool {
       return;
     }
     const sceneBoundingBox = this.renderTarget.clippedVisualSceneBoundingBox;
+    const boundingBox = new Box3();
     for (const domainObject of this.getSelectable()) {
       if (domainObject instanceof MeasureBoxDomainObject) {
-        const boundingBox = domainObject.getBoundingBox();
+        boundingBox.makeEmpty();
+        domainObject.box.expandBoundingBox(boundingBox);
         boundingBox.applyMatrix4(CDF_TO_VIEWER_TRANSFORMATION);
         if (!sceneBoundingBox.intersectsBox(boundingBox)) {
           continue;
         }
       } else if (domainObject instanceof MeasureLineDomainObject) {
-        const boundingBox = domainObject.getBoundingBox();
+        boundingBox.makeEmpty();
+        domainObject.expandBoundingBox(boundingBox);
         boundingBox.applyMatrix4(CDF_TO_VIEWER_TRANSFORMATION);
         if (!sceneBoundingBox.intersectsBox(boundingBox)) {
           continue;
@@ -99,7 +95,7 @@ export class MeasurementTool extends PrimitiveEditTool {
   }
 
   // ==================================================
-  // OVERRIDES of BoxOrLineEditTool
+  // OVERRIDES of PrimitiveEditTool
   // ==================================================
 
   protected override createCreator(): BaseCreator | undefined {

@@ -6,7 +6,7 @@ import { NavigationTool } from '../concreteCommands/NavigationTool';
 import { isDomainObjectIntersection } from '../domainObjectsHelpers/DomainObjectIntersection';
 import { type BaseDragger } from '../domainObjectsHelpers/BaseDragger';
 import { VisualDomainObject } from '../domainObjects/VisualDomainObject';
-import { type AnyIntersection, CDF_TO_VIEWER_TRANSFORMATION } from '@cognite/reveal';
+import { type AnyIntersection } from '@cognite/reveal';
 import { DomainObjectPanelUpdater } from '../reactUpdaters/DomainObjectPanelUpdater';
 
 /**
@@ -53,7 +53,9 @@ export abstract class BaseEditTool extends NavigationTool {
       return;
     }
     const ray = this.getRay(event, true);
-    this._dragger.onPointerDrag(event, ray);
+    if (this._dragger.onPointerDrag(event, ray)) {
+      this._dragger.isChanged = true;
+    }
   }
 
   public override async onLeftPointerUp(event: PointerEvent): Promise<void> {
@@ -61,7 +63,9 @@ export abstract class BaseEditTool extends NavigationTool {
       await super.onLeftPointerUp(event);
     } else {
       this._dragger.onPointerUp(event);
-      this.addTransaction(this._dragger.transaction);
+      if (this._dragger.isChanged) {
+        this.addTransaction(this._dragger.transaction);
+      }
       this._dragger = undefined;
     }
   }
@@ -108,11 +112,25 @@ export abstract class BaseEditTool extends NavigationTool {
       return undefined;
     }
     const ray = this.getRay(event);
-    const matrix = CDF_TO_VIEWER_TRANSFORMATION.clone().invert();
+    const matrix = this.renderTarget.fromViewerMatrix;
     const point = intersection.point.clone();
     point.applyMatrix4(matrix);
     ray.applyMatrix4(matrix);
     return domainObject.createDragger({ intersection, point, ray });
+  }
+
+  /**
+   * Deselects all selectable objects except for the specified object.
+   * If no object is specified, all visual domain objects will be deselected.
+   * @param except - The visual domain object to exclude from deselection.
+   */
+  protected deselectAll(except?: VisualDomainObject | undefined): void {
+    for (const domainObject of this.getSelectable()) {
+      if (except !== undefined && domainObject === except) {
+        continue;
+      }
+      domainObject.setSelectedInteractive(false);
+    }
   }
 
   // ==================================================
@@ -155,20 +173,6 @@ export abstract class BaseEditTool extends NavigationTool {
         continue;
       }
       yield domainObject;
-    }
-  }
-
-  /**
-   * Deselects all selectable objects except for the specified object.
-   * If no object is specified, all visual domain objects will be deselected.
-   * @param except - The visual domain object to exclude from deselection.
-   */
-  protected deselectAll(except?: VisualDomainObject | undefined): void {
-    for (const domainObject of this.getSelectable()) {
-      if (except !== undefined && domainObject === except) {
-        continue;
-      }
-      domainObject.setSelectedInteractive(false);
     }
   }
 
