@@ -18,8 +18,7 @@ import {
   DirectionalLight,
   type PerspectiveCamera,
   type Box3,
-  type Plane,
-  type Matrix4
+  type Plane
 } from 'three';
 import { CommandsController } from './CommandsController';
 import { RootDomainObject } from '../domainObjects/RootDomainObject';
@@ -37,7 +36,6 @@ import { type CogniteClient } from '@cognite/sdk/dist/src';
 import { type BaseTool } from '../commands/BaseTool';
 
 const DIRECTIONAL_LIGHT_NAME = 'DirectionalLight';
-const VIEWER_TO_CDF_TRANSFORMATION = CDF_TO_VIEWER_TRANSFORMATION.clone().invert();
 
 export class RevealRenderTarget {
   // ==================================================
@@ -53,6 +51,9 @@ export class RevealRenderTarget {
   private _cropBoxUniqueId: number | undefined = undefined;
   private _axisGizmoTool: AxisGizmoTool | undefined;
   private _config: BaseRevealConfig | undefined = undefined;
+
+  public readonly toViewerMatrix = CDF_TO_VIEWER_TRANSFORMATION.clone();
+  public readonly fromViewerMatrix = CDF_TO_VIEWER_TRANSFORMATION.clone().invert();
 
   // ==================================================
   // CONSTRUCTOR
@@ -97,14 +98,6 @@ export class RevealRenderTarget {
 
   public get domElement(): HTMLElement {
     return this._viewer.domElement;
-  }
-
-  public get toViewerMatrix(): Matrix4 {
-    return CDF_TO_VIEWER_TRANSFORMATION;
-  }
-
-  public get fromViewerMatrix(): Matrix4 {
-    return VIEWER_TO_CDF_TRANSFORMATION;
   }
 
   public get commandsController(): CommandsController {
