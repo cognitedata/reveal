@@ -82,7 +82,6 @@ const ToolbarContent = ({
         top: style.topPx,
         bottom: style.bottomPx,
         margin: style.marginPx
-        // Padding is not used here
       }}>
       <MyCustomToolbar
         style={{

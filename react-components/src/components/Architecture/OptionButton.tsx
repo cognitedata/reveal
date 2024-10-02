@@ -84,7 +84,7 @@ export const OptionButton = ({
   }
   const placement = getTooltipPlacement(isHorizontal);
   const label = usedInSettings ? undefined : command.getLabel(t);
-  const flexDirection = getFlexDirection(false);
+  const flexDirection = getFlexDirection(false); // Always vertical
   const children = command.children;
   const selectedLabel = command.selectedChild?.getLabel(t);
 
@@ -123,7 +123,7 @@ export const OptionButton = ({
           key={uniqueId}
           disabled={!isEnabled}
           toggled={isOpen}
-          iconPlacement="right"
+          iconPlacement="left"
           aria-label={command.getLabel(t)}
           onClick={(event: MouseEvent<HTMLElement>) => {
             event.stopPropagation();
@@ -148,7 +148,7 @@ export function createMenuItem(
       icon={getIcon(command)}
       disabled={!command.isEnabled}
       toggled={command.isChecked}
-      iconPlacement="right"
+      iconPlacement="left"
       onClick={() => {
         command.invoke();
         postAction();

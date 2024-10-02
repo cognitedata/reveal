@@ -131,7 +131,7 @@ export const SettingsButton = ({
           disabled={!isEnabled}
           toggled={isOpen}
           aria-label={label}
-          iconPlacement="right"
+          iconPlacement="left"
           onClick={(event: MouseEvent<HTMLElement>) => {
             event.stopPropagation();
             event.preventDefault();
