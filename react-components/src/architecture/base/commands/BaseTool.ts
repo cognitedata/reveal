@@ -7,7 +7,6 @@ import { RenderTargetCommand } from './RenderTargetCommand';
 import {
   type CustomObjectIntersection,
   type AnyIntersection,
-  CDF_TO_VIEWER_TRANSFORMATION,
   type ICustomObject
 } from '@cognite/reveal';
 import { GroupThreeView } from '../views/GroupThreeView';
@@ -15,7 +14,6 @@ import {
   type DomainObjectIntersection,
   isDomainObjectIntersection
 } from '../domainObjectsHelpers/DomainObjectIntersection';
-import { type Class } from '../domainObjectsHelpers/Class';
 import { type DomainObject } from '../domainObjects/DomainObject';
 import { type BaseCommand } from './BaseCommand';
 import { ActiveToolUpdater } from '../reactUpdaters/ActiveToolUpdater';
@@ -129,6 +127,10 @@ export abstract class BaseTool extends RenderTargetCommand {
 
   public onKey(_event: KeyboardEvent, _down: boolean): void {}
 
+  public onDeleteKey(): void {}
+
+  public onEscapeKey(): void {}
+
   public onUndo(): void {}
 
   // ==================================================
@@ -160,9 +162,9 @@ export abstract class BaseTool extends RenderTargetCommand {
     return await viewer.getAnyIntersectionFromPixel(point, { predicate });
   }
 
-  protected getSpecificIntersection<T extends DomainObject>(
+  protected getSpecificIntersection(
     event: PointerEvent,
-    classType: Class<T>
+    domainObjectPredicate?: (domainObject: DomainObject) => boolean
   ): DomainObjectIntersection | undefined {
     // This function is similar to getIntersection, but it only considers a specific DomainObject
     const { renderTarget, rootDomainObject } = this;
@@ -173,7 +175,10 @@ export abstract class BaseTool extends RenderTargetCommand {
 
     let closestIntersection: CustomObjectIntersection | undefined;
     let closestDistanceToCamera: number | undefined;
-    for (const domainObject of rootDomainObject.getDescendantsByType(classType)) {
+    for (const domainObject of rootDomainObject.getDescendants()) {
+      if (domainObjectPredicate !== undefined && !domainObjectPredicate(domainObject)) {
+        continue;
+      }
       for (const view of domainObject.views.getByType(GroupThreeView)) {
         if (view.renderTarget !== renderTarget) {
           continue;
@@ -207,7 +212,7 @@ export abstract class BaseTool extends RenderTargetCommand {
   protected getRay(event: PointerEvent | WheelEvent, convertToCdf: boolean = false): Ray {
     const ray = this.getRaycaster(event).ray;
     if (convertToCdf) {
-      ray.applyMatrix4(CDF_TO_VIEWER_TRANSFORMATION.clone().invert());
+      ray.applyMatrix4(this.renderTarget.fromViewerMatrix);
     }
     return ray;
   }

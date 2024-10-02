@@ -45,7 +45,16 @@ class OptionItemCommand extends RenderTargetCommand {
   }
 
   public override get tooltip(): TranslateKey {
-    return getTranslateKey(this._value);
+    switch (this._value) {
+      case PointShape.Circle:
+        return { key: 'CIRCLE', fallback: 'Circle' };
+      case PointShape.Square:
+        return { key: 'SQUARE', fallback: 'Square' };
+      case PointShape.Paraboloid:
+        return { key: 'PARABOLOID', fallback: 'Paraboloid' };
+      default:
+        throw new Error(`Unknown point shape`);
+    }
   }
 
   public override get isChecked(): boolean {
@@ -62,20 +71,5 @@ class OptionItemCommand extends RenderTargetCommand {
       pointCloud.pointShape = this._value;
     }
     return true;
-  }
-}
-
-// ==================================================
-// PRIVATE FUNCTIONS
-// ==================================================
-
-function getTranslateKey(type: PointShape): TranslateKey {
-  switch (type) {
-    case PointShape.Circle:
-      return { key: 'CIRCLE', fallback: 'Circle' };
-    case PointShape.Square:
-      return { key: 'SQUARE', fallback: 'Square' };
-    case PointShape.Paraboloid:
-      return { key: 'PARABOLOID', fallback: 'Paraboloid' };
   }
 }

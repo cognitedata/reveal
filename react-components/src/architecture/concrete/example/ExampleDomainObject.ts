@@ -21,6 +21,7 @@ import { type Transaction } from '../../base/undo/Transaction';
 import { type DomainObject } from '../../base/domainObjects/DomainObject';
 import { Changes } from '../../base/domainObjectsHelpers/Changes';
 import { DomainObjectTransaction } from '../../base/undo/DomainObjectTransaction';
+import { type RevealRenderTarget } from '../../base/renderTarget/RevealRenderTarget';
 
 export class ExampleDomainObject extends VisualDomainObject {
   // ==================================================
@@ -106,5 +107,16 @@ export class ExampleDomainObject extends VisualDomainObject {
 
   protected override createThreeView(): ThreeView | undefined {
     return new ExampleView();
+  }
+
+  // ==================================================
+  // OVERRIDES of VisualDomainObject
+  // ==================================================
+
+  public override getEditToolCursor(
+    _renderTarget: RevealRenderTarget,
+    _point?: Vector3
+  ): string | undefined {
+    return 'move';
   }
 }

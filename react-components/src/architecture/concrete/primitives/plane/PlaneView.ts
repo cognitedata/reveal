@@ -14,12 +14,13 @@ import {
   Triangle,
   LineBasicMaterial,
   BufferGeometry,
-  Line
+  Line,
+  type Object3D,
+  type Color
 } from 'three';
 import { type PlaneDomainObject } from './PlaneDomainObject';
 import { type DomainObjectChange } from '../../../base/domainObjectsHelpers/DomainObjectChange';
 import { Changes } from '../../../base/domainObjectsHelpers/Changes';
-import { type PlaneRenderStyle } from './PlaneRenderStyle';
 import { GroupThreeView } from '../../../base/views/GroupThreeView';
 import { Range3 } from '../../../base/utilities/geometry/Range3';
 import { TrianglesBuffers } from '../../../base/utilities/geometry/TrianglesBuffers';
@@ -30,7 +31,12 @@ import {
 } from '@cognite/reveal';
 import { FocusType } from '../../../base/domainObjectsHelpers/FocusType';
 import { type DomainObjectIntersection } from '../../../base/domainObjectsHelpers/DomainObjectIntersection';
-import { PrimitiveType } from '../PrimitiveType';
+import { PrimitiveType } from '../../../base/utilities/primitives/PrimitiveType';
+import { type SolidPrimitiveRenderStyle } from '../common/SolidPrimitiveRenderStyle';
+import { LineMaterial } from 'three/examples/jsm/lines/LineMaterial.js';
+import { updateWireframeMaterial } from '../box/BoxView';
+import { Wireframe } from 'three/examples/jsm/lines/Wireframe.js';
+import { PrimitiveUtils } from '../../../base/utilities/primitives/PrimitiveUtils';
 
 export class PlaneView extends GroupThreeView<PlaneDomainObject> {
   // ==================================================
@@ -44,8 +50,8 @@ export class PlaneView extends GroupThreeView<PlaneDomainObject> {
   // INSTANCE PROPERTIES
   // ==================================================
 
-  protected override get style(): PlaneRenderStyle {
-    return super.style as PlaneRenderStyle;
+  protected override get style(): SolidPrimitiveRenderStyle {
+    return super.style as SolidPrimitiveRenderStyle;
   }
 
   // ==================================================
@@ -103,80 +109,20 @@ export class PlaneView extends GroupThreeView<PlaneDomainObject> {
   }
 
   protected override addChildren(): void {
-    const { domainObject, style } = this;
-    const plane = domainObject.plane;
-
-    if (this._sceneBoundingBox.isEmpty()) {
+    const { style, domainObject } = this;
+    const corners = this.createCorners();
+    if (corners === undefined) {
       return;
     }
-    const boundingBox = this._sceneBoundingBox.clone();
-    boundingBox.applyMatrix4(CDF_TO_VIEWER_TRANSFORMATION.clone().invert());
-    const range = new Range3();
-    range.copy(boundingBox);
-
-    let p0: Vector3 | undefined;
-    let p1: Vector3 | undefined;
-    let p2: Vector3 | undefined;
-    let p3: Vector3 | undefined;
-
-    if (domainObject.primitiveType === PrimitiveType.PlaneZ) {
-      p0 = range.getHorizontalIntersection(plane, 0);
-      p1 = range.getHorizontalIntersection(plane, 1);
-      p2 = range.getHorizontalIntersection(plane, 3);
-      p3 = range.getHorizontalIntersection(plane, 2);
-    } else {
-      for (let startIndex = 0; startIndex < 2; startIndex++) {
-        const start = new Vector3();
-        const end = new Vector3();
-        if (!range.getVerticalPlaneIntersection(plane, startIndex > 0, start, end)) {
-          continue;
-        }
-        if (startIndex === 0) {
-          p0 = start;
-          p1 = end;
-        } else {
-          p2 = start;
-          p3 = end;
-        }
-      }
-    }
-    if (p0 === undefined || p1 === undefined || p2 === undefined || p3 === undefined) {
-      return;
-    }
-    // Layout of the points
-    //     2------3
-    //     |      |
-    //     0------1
-    // Make sure it is right handed
-    const normal = Triangle.getNormal(p0, p1, p2, new Vector3()).normalize();
-    const angle = normal.angleTo(plane.normal);
-    if (Math.abs(angle) > Math.PI / 2) {
-      [p0, p1] = [p1, p0];
-      [p2, p3] = [p3, p2];
-    }
-    p0.applyMatrix4(CDF_TO_VIEWER_TRANSFORMATION);
-    p1.applyMatrix4(CDF_TO_VIEWER_TRANSFORMATION);
-    p2.applyMatrix4(CDF_TO_VIEWER_TRANSFORMATION);
-    p3.applyMatrix4(CDF_TO_VIEWER_TRANSFORMATION);
-
     if (style.showSolid) {
-      const buffer = new TrianglesBuffers(4);
-      buffer.addPairWithNormal(p0, p1, plane.normal);
-      buffer.addPairWithNormal(p2, p3, plane.normal);
-      this.addSolid(buffer);
+      this.addSolid(corners);
     }
     if (style.showLines) {
-      const material = new LineBasicMaterial({});
-
-      const hasFocus = domainObject.focusType !== FocusType.None;
-      material.color =
-        domainObject.isSelected || hasFocus ? style.selectedLinesColor : style.linesColor;
-
-      const points = [p0, p1, p3, p2, p0];
-      const geometry = new BufferGeometry().setFromPoints(points);
-
-      const line = new Line(geometry, material);
-      this.addChild(line);
+      if (style.getLineWidth(domainObject.isSelected) === 1) {
+        this.addChild(this.createLines(corners));
+      } else {
+        this.addChild(this.createWireframe(corners));
+      }
     }
   }
 
@@ -233,11 +179,43 @@ export class PlaneView extends GroupThreeView<PlaneDomainObject> {
   // INSTANCE METHODS
   // ==================================================
 
-  private addSolid(buffer: TrianglesBuffers): void {
+  private createLines(corners: Vector3[]): Object3D {
+    const points = [corners[0], corners[1], corners[3], corners[2], corners[0]];
+    const { domainObject, style } = this;
+    const material = new LineBasicMaterial({});
+    material.color = getLineColor(domainObject, style);
+    const geometry = new BufferGeometry().setFromPoints(points);
+    return new Line(geometry, material);
+  }
+
+  private createWireframe(corners: Vector3[]): Object3D | undefined {
+    const points = [
+      corners[0],
+      corners[1],
+      corners[1],
+      corners[3],
+      corners[3],
+      corners[2],
+      corners[2],
+      corners[0]
+    ];
+    const { domainObject, style } = this;
+    const material = new LineMaterial();
+    updateWireframeMaterial(material, domainObject, style, this.useDepthTest);
+    material.color = getLineColor(domainObject, style);
+    const geometry = PrimitiveUtils.createLineSegmentsGeometryByVertices(points);
+    return new Wireframe(geometry, material);
+  }
+
+  private addSolid(points: Vector3[]): void {
+    const { domainObject, style } = this;
+    const buffer = new TrianglesBuffers(4);
+    const normal = domainObject.plane.normal;
+    buffer.addPairWithNormal(points[0], points[1], normal);
+    buffer.addPairWithNormal(points[2], points[3], normal);
     if (!buffer.isFilled) {
       return;
     }
-    const { domainObject, style } = this;
     const geometry = buffer.createBufferGeometry();
     {
       const material = new MeshPhongMaterial();
@@ -254,6 +232,66 @@ export class PlaneView extends GroupThreeView<PlaneDomainObject> {
       this.addChild(mesh);
     }
   }
+
+  private createCorners(): Vector3[] | undefined {
+    const { domainObject } = this;
+    const { plane } = domainObject;
+
+    if (this._sceneBoundingBox.isEmpty()) {
+      return undefined;
+    }
+    const boundingBox = this._sceneBoundingBox.clone();
+    boundingBox.applyMatrix4(this.renderTarget.fromViewerMatrix);
+    const range = new Range3();
+    range.copy(boundingBox);
+
+    let p0: Vector3 | undefined;
+    let p1: Vector3 | undefined;
+    let p2: Vector3 | undefined;
+    let p3: Vector3 | undefined;
+
+    if (domainObject.primitiveType === PrimitiveType.PlaneZ) {
+      p0 = range.getHorizontalIntersection(plane, 0);
+      p1 = range.getHorizontalIntersection(plane, 1);
+      p2 = range.getHorizontalIntersection(plane, 3);
+      p3 = range.getHorizontalIntersection(plane, 2);
+    } else {
+      for (let startIndex = 0; startIndex < 2; startIndex++) {
+        const start = new Vector3();
+        const end = new Vector3();
+        if (!range.getVerticalPlaneIntersection(plane, startIndex > 0, start, end)) {
+          continue;
+        }
+        if (startIndex === 0) {
+          p0 = start;
+          p1 = end;
+        } else {
+          p2 = start;
+          p3 = end;
+        }
+      }
+    }
+    if (p0 === undefined || p1 === undefined || p2 === undefined || p3 === undefined) {
+      return undefined;
+    }
+    // Layout of the points
+    //     2------3
+    //     |      |
+    //     0------1
+    // Make sure it is right handed
+    const normal = Triangle.getNormal(p0, p1, p2, new Vector3()).normalize();
+    const angle = normal.angleTo(plane.normal);
+    if (Math.abs(angle) > Math.PI / 2) {
+      [p0, p1] = [p1, p0];
+      [p2, p3] = [p3, p2];
+    }
+    p0.applyMatrix4(CDF_TO_VIEWER_TRANSFORMATION);
+    p1.applyMatrix4(CDF_TO_VIEWER_TRANSFORMATION);
+    p2.applyMatrix4(CDF_TO_VIEWER_TRANSFORMATION);
+    p3.applyMatrix4(CDF_TO_VIEWER_TRANSFORMATION);
+
+    return [p0, p1, p2, p3];
+  }
 }
 
 // ==================================================
@@ -263,16 +301,15 @@ export class PlaneView extends GroupThreeView<PlaneDomainObject> {
 function updateSolidMaterial(
   material: MeshPhongMaterial,
   domainObject: PlaneDomainObject,
-  style: PlaneRenderStyle,
+  style: SolidPrimitiveRenderStyle,
   side: Side
 ): void {
   const color = side === FrontSide ? domainObject.color : domainObject.backSideColor;
-  const opacity = domainObject.isSelected ? style.selectedOpacity : style.opacity;
   material.polygonOffset = true;
   material.polygonOffsetFactor = 1;
   material.polygonOffsetUnits = 4.0;
   material.color = color;
-  material.opacity = style.opacityUse ? opacity : 1;
+  material.opacity = style.getOpacity(domainObject.isSelected);
   material.transparent = true;
   material.emissive = color;
   material.emissiveIntensity = 0.2;
@@ -280,4 +317,9 @@ function updateSolidMaterial(
   material.flatShading = true;
   material.depthWrite = false;
   material.depthTest = style.depthTest;
+}
+
+function getLineColor(domainObject: PlaneDomainObject, style: SolidPrimitiveRenderStyle): Color {
+  const isSelected = domainObject.isSelected || domainObject.focusType !== FocusType.None;
+  return style.getLineColor(isSelected);
 }

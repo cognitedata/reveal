@@ -4,7 +4,7 @@
 
 import { type Vector3, type Ray } from 'three';
 import { replaceLast } from '../utilities/extensions/arrayExtensions';
-import { type AnyIntersection, CDF_TO_VIEWER_TRANSFORMATION } from '@cognite/reveal';
+import { type AnyIntersection } from '@cognite/reveal';
 import { type DomainObject } from '../domainObjects/DomainObject';
 import { type BaseTool } from '../commands/BaseTool';
 
@@ -79,6 +79,16 @@ export abstract class BaseCreator {
     return false;
   }
 
+  /**
+   * This functions returns true only if the first point can start on hover.
+   * This is to indicate where the object can be created when hovering.
+   *
+   * @returns {boolean} The value indicating whether to start on hover.
+   */
+  public get canStartOnHover(): boolean {
+    return false;
+  }
+
   public abstract get domainObject(): DomainObject;
 
   /**
@@ -110,7 +120,7 @@ export abstract class BaseCreator {
    *
    * @returns {boolean} Returns true if the pending object is created successfully, false if it is removed
    */
-  public handleEscape(): boolean {
+  public onEscapeKey(): boolean {
     if (this.notPendingPointCount >= this.minimumPointCount) {
       return true; // Successfully
     }
@@ -153,7 +163,7 @@ export abstract class BaseCreator {
   }
 
   private convertToCdfCoords(ray: Ray, point: Vector3 | undefined): void {
-    const matrix = CDF_TO_VIEWER_TRANSFORMATION.clone().invert();
+    const matrix = this._tool.renderTarget.fromViewerMatrix;
     ray.applyMatrix4(matrix);
     if (point !== undefined) {
       point.applyMatrix4(matrix);

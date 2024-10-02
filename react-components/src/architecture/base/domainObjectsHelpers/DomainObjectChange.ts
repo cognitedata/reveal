@@ -2,7 +2,8 @@
  * Copyright 2024 Cognite AS
  */
 
-import { equalsIgnoreCaseAndSpace } from '../utilities/extensions/stringExtensions';
+import { ChangedDescription } from './ChangedDescription';
+import { type Class, isInstanceOf } from './Class';
 
 export class DomainObjectChange {
   // ==================================================
@@ -61,12 +62,12 @@ export class DomainObjectChange {
    */
   public isFieldNameChanged(change: symbol, ...fieldNames: string[]): boolean {
     // This ignores space and case.
-    const fieldName = this.getFieldNameBySymbol(change);
-    if (fieldName === undefined) {
+    const desc = this.getChangedDescription(change);
+    if (desc === undefined) {
       return false;
     }
-    for (const otherFieldName of fieldNames) {
-      if (equalsIgnoreCaseAndSpace(fieldName, otherFieldName)) {
+    for (const fieldName of fieldNames) {
+      if (desc.isChanged(fieldName)) {
         return true;
       }
     }
@@ -84,9 +85,18 @@ export class DomainObjectChange {
     return this._changes.find((desc: ChangedDescription) => desc.change === change);
   }
 
-  private getFieldNameBySymbol(change: symbol): string | undefined {
-    const changedDescription = this.getChangedDescription(change);
-    return changedDescription === undefined ? undefined : changedDescription.fieldName;
+  public getChangedDescriptionByType<T extends ChangedDescription>(
+    classType: Class<T>
+  ): T | undefined {
+    if (this._changes === undefined) {
+      return undefined;
+    }
+    for (const description of this._changes) {
+      if (isInstanceOf(description, classType)) {
+        return description;
+      }
+    }
+    return undefined;
   }
 
   // ==================================================
@@ -104,18 +114,5 @@ export class DomainObjectChange {
       this._changes = [];
     }
     this._changes.push(changedDescription);
-  }
-}
-
-// ==================================================
-// LOCAL HELPER CLASS
-// ==================================================
-export class ChangedDescription {
-  public change: symbol;
-  public fieldName: string | undefined;
-
-  public constructor(change: symbol, fieldName?: string) {
-    this.change = change;
-    this.fieldName = fieldName;
   }
 }
