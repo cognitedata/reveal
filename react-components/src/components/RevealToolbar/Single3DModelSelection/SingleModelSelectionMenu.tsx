@@ -1,9 +1,9 @@
 /*!
  * Copyright 2024 Cognite AS
  */
-import { type ReactElement } from 'react';
+import { type ChangeEvent, useMemo, useState, type ReactElement, useCallback } from 'react';
 
-import { Icon, Menu } from '@cognite/cogs.js';
+import { Flex, Icon, Input, Menu } from '@cognite/cogs.js';
 import { useTranslation } from '../../i18n/I18n';
 import styled from 'styled-components';
 import { type CogniteClient } from '@cognite/sdk';
@@ -30,7 +30,9 @@ export const SingleModelSelectionMenu = ({
 }: SingleModelSelectionMenuProps): ReactElement => {
   const { t } = useTranslation();
 
-  const { data: models, isLoading: isModelsLoading  } = useAll3dModels(sdk, true);
+  const [searchQuery, setSearchQuery] = useState<string>('');
+
+  const { data: models, isLoading: isModelsLoading } = useAll3dModels(sdk, true);
 
   const { data: modelsWithRevision, isLoading: isRevisionLoading } = useRevisions(sdk, models);
 
@@ -45,6 +47,12 @@ export const SingleModelSelectionMenu = ({
         )
       : undefined;
 
+  const filteredModelsWithRevision = useMemo(() => {
+    return modelsWithRevision?.filter((data) =>
+      data.model.name.toLowerCase().includes(searchQuery.toLowerCase())
+    );
+  }, [modelsWithRevision, searchQuery]);
+
   const handleSingleModelChange = (model: ModelWithRevision | undefined): void => {
     if (model?.model.id === undefined) return;
 
@@ -58,23 +66,37 @@ export const SingleModelSelectionMenu = ({
     onModelChange(singleModelData);
   };
 
+  const handleSearchInputChange = useCallback(
+    (event: ChangeEvent<HTMLInputElement>): void => {
+      setSearchQuery(event.target.value);
+    },
+    [setSearchQuery]
+  );
+
   return (
-    <StyledMenu>
+    <StyledMenu loading={isModelsLoading || isRevisionLoading} onFocus={undefined}>
       <Menu.Header>{t('MODEL_SELECT_HEADER', 'Select 3D model')}</Menu.Header>
-      {(isRevisionLoading || isModelsLoading) && <StyledLoadingIcon type="Loader" />}
+      <Input
+        fullWidth
+        icon="Search"
+        placeholder={t('SEARCH_3D_MODELS', 'Search 3d models')}
+        value={searchQuery}
+        onChange={handleSearchInputChange}
+        clearable={{
+          callback: () => {
+            setSearchQuery('');
+          }
+        }}
+        type="search"
+      />
       <ModelsList
-        modelsWithRevision={modelsWithRevision ?? []}
+        modelsWithRevision={filteredModelsWithRevision ?? []}
         selectedModel={selectedModel}
         onModelChange={handleSingleModelChange}
       />
     </StyledMenu>
   );
 };
-
-const StyledLoadingIcon = styled(Icon)`
-  margin-left: 10px;
-  margin-bottom: 5px;
-`;
 
 const StyledMenu = styled(Menu)`
   max-height: 400px;
