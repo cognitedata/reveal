@@ -15,7 +15,6 @@ import { type BaseCommand } from '../../../base/commands/BaseCommand';
 import { AnnotationsCreateMockCommand } from './AnnotationsCreateMockCommand';
 import { BoxGizmoDomainObject } from '../BoxGizmoDomainObject';
 import { type BaseDragger } from '../../../base/domainObjectsHelpers/BaseDragger';
-import { PrimitiveEditTool } from '../../primitives/tools/PrimitiveEditTool';
 import { type PrimitivePickInfo } from '../../primitives/common/PrimitivePickInfo';
 import { AnnotationsDeleteCommand } from './AnnotationsDeleteCommand';
 import { AlignSelectedAnnotationCommand } from './AnnotationsAlignCommand';
