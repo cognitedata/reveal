@@ -12,7 +12,6 @@ import {
 } from '../../../base/domainObjects/VisualDomainObject';
 import { FocusType } from '../../../base/domainObjectsHelpers/FocusType';
 import { getClosestPointOnLine } from '../../../base/utilities/extensions/rayExtensions';
-import { CDF_TO_VIEWER_TRANSFORMATION } from '@cognite/reveal';
 
 /**
  * The `PlaneDragger` class represents a utility for dragging and manipulating a plane in a 3D space.
@@ -34,7 +33,7 @@ export class PlaneDragger extends BaseDragger {
   // ==================================================
 
   public constructor(props: CreateDraggerProps, domainObject: PlaneDomainObject) {
-    super(props);
+    super(props, domainObject);
 
     this._domainObject = domainObject;
     this._plane = this._domainObject.plane.clone();
@@ -45,7 +44,7 @@ export class PlaneDragger extends BaseDragger {
     }
     const boundingBox = root.renderTarget.sceneBoundingBox;
     this._boundingBox = boundingBox.clone();
-    this._boundingBox.applyMatrix4(CDF_TO_VIEWER_TRANSFORMATION.clone().invert());
+    this._boundingBox.applyMatrix4(root.renderTarget.fromViewerMatrix);
   }
 
   // ==================================================
@@ -73,7 +72,7 @@ export class PlaneDragger extends BaseDragger {
     const newPlane = new Plane().setFromNormalAndCoplanarPoint(this._plane.normal, newPoint);
     this._domainObject.plane.copy(newPlane);
     this._domainObject.makeFlippingConsistent();
-    this.domainObject.notify(Changes.geometry);
+    this.domainObject.notify(Changes.dragging);
     return true;
   }
 }

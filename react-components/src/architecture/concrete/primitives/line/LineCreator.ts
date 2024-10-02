@@ -3,7 +3,7 @@
  */
 
 import { Plane, type Ray, Vector3 } from 'three';
-import { PrimitiveType } from '../PrimitiveType';
+import { PrimitiveType } from '../../../base/utilities/primitives/PrimitiveType';
 import { BaseCreator } from '../../../base/domainObjectsHelpers/BaseCreator';
 import { copy } from '../../../base/utilities/extensions/arrayExtensions';
 import { Changes } from '../../../base/domainObjectsHelpers/Changes';
@@ -106,7 +106,7 @@ export class LineCreator extends BaseCreator {
     return true;
   }
 
-  public override handleEscape(): boolean {
+  public override onEscapeKey(): boolean {
     const domainObject = this._domainObject;
     if (this.notPendingPointCount < this.minimumPointCount) {
       domainObject.removeInteractive();

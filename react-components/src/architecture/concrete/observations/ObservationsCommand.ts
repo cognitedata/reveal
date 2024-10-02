@@ -7,11 +7,7 @@ import { ObservationsTool } from './ObservationsTool';
 
 export abstract class ObservationsCommand extends RenderTargetCommand {
   protected getTool(): ObservationsTool | undefined {
-    if (this.activeTool instanceof ObservationsTool) {
-      return this.activeTool;
-    }
-
-    return undefined;
+    return this.getActiveTool(ObservationsTool);
   }
 
   protected getObservationsDomainObject(): ObservationsDomainObject | undefined {

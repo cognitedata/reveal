@@ -63,6 +63,7 @@ export class PointCloudFilterCommand extends BaseFilterCommand {
   }
 
   public override get isAllChecked(): boolean {
+    // Override the default implementation to optimize the logic
     const pointCloud = this.getPointCloud();
     if (pointCloud === undefined) {
       return false;
@@ -71,6 +72,7 @@ export class PointCloudFilterCommand extends BaseFilterCommand {
   }
 
   protected override toggleAllCheckedCore(): boolean {
+    // Override the default implementation to optimize the logic
     const pointCloud = this.getPointCloud();
     if (pointCloud === undefined) {
       return false;
@@ -135,16 +137,6 @@ export class FilterItemCommand extends BaseFilterItemCommand {
       return false;
     }
     return pointCloud.isClassVisible(this._pointClass.code);
-  }
-
-  public override invokeCore(): boolean {
-    const pointCloud = this.getPointCloud();
-    if (pointCloud === undefined) {
-      return false;
-    }
-    const isVisible = pointCloud.isClassVisible(this._pointClass.code);
-    pointCloud.setClassVisible(this._pointClass.code, !isVisible);
-    return true;
   }
 
   public override get color(): Color | undefined {

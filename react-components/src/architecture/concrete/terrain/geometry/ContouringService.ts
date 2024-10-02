@@ -30,7 +30,7 @@ export class ContouringService {
   // INSTANCE METHODS: Create functions
   // ==================================================
 
-  public createContoursAsXyzArray(grid: RegularGrid2): number[] {
+  public createContoursAsPositions(grid: RegularGrid2): number[] {
     const p0 = new Vector3();
     const p1 = new Vector3();
     const p2 = new Vector3();

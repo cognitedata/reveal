@@ -1,7 +1,7 @@
 /*!
  * Copyright 2024 Cognite AS
  */
-import { Box3, type Plane, Vector3 } from 'three';
+import { Box3, Vector3 } from 'three';
 import { type ObservationsDomainObject } from './ObservationsDomainObject';
 import { GroupThreeView } from '../../base/views/GroupThreeView';
 import {
@@ -17,6 +17,7 @@ import { type DomainObjectChange } from '../../base/domainObjectsHelpers/DomainO
 import { createObservationIntersection, type Observation } from './types';
 import { ClosestGeometryFinder } from '../../base/utilities/geometry/ClosestGeometryFinder';
 import { getColorFromStatus } from './color';
+import { isPointVisibleByPlanes } from '../../base/utilities/geometry/isPointVisibleByPlanes';
 
 type ObservationCollection = Overlay3DCollection<Observation>;
 
@@ -49,7 +50,7 @@ export class ObservationsView extends GroupThreeView<ObservationsDomainObject> {
   public override update(change: DomainObjectChange): void {
     super.update(change);
 
-    if (change.isChanged(Changes.geometry)) {
+    if (change.isChanged(Changes.geometry, Changes.dragging)) {
       this.clearMemory();
       this.invalidateRenderTarget();
       this.invalidateBoundingBox();
@@ -111,7 +112,7 @@ export class ObservationsView extends GroupThreeView<ObservationsDomainObject> {
   private updateClipping(): void {
     const clippingPlanes = this.renderTarget.getGlobalClippingPlanes();
     this._overlayCollection.getOverlays().forEach((overlay) => {
-      const isVisible = !isClipped(overlay.getPosition(), clippingPlanes);
+      const isVisible = isPointVisibleByPlanes(clippingPlanes, overlay.getPosition());
       if (isVisible !== overlay.getVisible()) {
         overlay.setVisible(isVisible);
       }
@@ -153,8 +154,4 @@ function extractObservationPosition(observation: Observation): Vector3 {
     observation.properties.positionY,
     observation.properties.positionZ
   ).applyMatrix4(CDF_TO_VIEWER_TRANSFORMATION);
-}
-
-function isClipped(point: Vector3, planes: Plane[]): boolean {
-  return planes.some((plane) => plane.distanceToPoint(point) < 0);
 }

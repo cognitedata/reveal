@@ -92,10 +92,6 @@ function createTexture(canvas: HTMLCanvasElement): Texture {
   const texture = new CanvasTexture(canvas);
   texture.minFilter = LinearFilter; // Don't change this, https://stackoverflow.com/questions/55175351/remove-texture-has-been-resized-console-logs-in-three-js
   texture.magFilter = NearestFilter;
-
-  // texture.generateMipmaps = true; // Default
-  // texture.wrapS = THREE.ClampToEdgeWrapping;
-  // texture.wrapT = THREE.ClampToEdgeWrapping;
   texture.needsUpdate = true;
   return texture;
 }

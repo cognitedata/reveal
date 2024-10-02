@@ -33,7 +33,7 @@ import { Range3 } from '../utilities/geometry/Range3';
 import { getBoundingBoxFromPlanes } from '../utilities/geometry/getBoundingBoxFromPlanes';
 import { Changes } from '../domainObjectsHelpers/Changes';
 import { type CogniteClient } from '@cognite/sdk/dist/src';
-import { FdmSDK } from '../../../data-providers/FdmSDK';
+import { type BaseTool } from '../commands/BaseTool';
 
 const DIRECTIONAL_LIGHT_NAME = 'DirectionalLight';
 
@@ -43,8 +43,6 @@ export class RevealRenderTarget {
   // ==================================================
 
   private readonly _viewer: Cognite3DViewer;
-  private readonly _sdk: CogniteClient;
-  private readonly _fdmSdk: FdmSDK;
   private readonly _commandsController: CommandsController;
   private readonly _rootDomainObject: RootDomainObject;
   private _ambientLight: AmbientLight | undefined;
@@ -54,14 +52,15 @@ export class RevealRenderTarget {
   private _axisGizmoTool: AxisGizmoTool | undefined;
   private _config: BaseRevealConfig | undefined = undefined;
 
+  public readonly toViewerMatrix = CDF_TO_VIEWER_TRANSFORMATION.clone();
+  public readonly fromViewerMatrix = CDF_TO_VIEWER_TRANSFORMATION.clone().invert();
+
   // ==================================================
   // CONSTRUCTOR
   // ==================================================
 
   constructor(viewer: Cognite3DViewer, sdk: CogniteClient) {
     this._viewer = viewer;
-    this._sdk = sdk;
-    this._fdmSdk = new FdmSDK(sdk);
 
     const cameraManager = this.cameraManager;
     if (!isFlexibleCameraManager(cameraManager)) {
@@ -69,7 +68,7 @@ export class RevealRenderTarget {
     }
     this._commandsController = new CommandsController(this.domElement);
     this._commandsController.addEventListeners();
-    this._rootDomainObject = new RootDomainObject(this);
+    this._rootDomainObject = new RootDomainObject(this, sdk);
 
     this.initializeLights();
     this._viewer.on('cameraChange', this.cameraChangeHandler);
@@ -83,14 +82,6 @@ export class RevealRenderTarget {
 
   public get viewer(): Cognite3DViewer {
     return this._viewer;
-  }
-
-  public get sdk(): CogniteClient {
-    return this._sdk;
-  }
-
-  public get fdmSdk(): FdmSDK {
-    return this._fdmSdk;
   }
 
   public get config(): BaseRevealConfig | undefined {
@@ -117,8 +108,8 @@ export class RevealRenderTarget {
     return this.domElement.style.cursor;
   }
 
-  public set cursor(value: string) {
-    this.domElement.style.cursor = value;
+  public set cursor(value: string | undefined) {
+    this.domElement.style.cursor = value ?? 'default';
   }
 
   public get cameraManager(): CameraManager {
@@ -159,7 +150,7 @@ export class RevealRenderTarget {
   }
 
   // ==================================================
-  // INSTANCE METHODS
+  // INSTANCE METHODS: Get models from the viewer
   // ==================================================
 
   public *getPointClouds(): Generator<CognitePointCloudModel> {
@@ -178,14 +169,44 @@ export class RevealRenderTarget {
     }
   }
 
+  // ==================================================
+  // INSTANCE METHODS: Convert back and from Viewer coordinates
+  // ==================================================
+
+  public convertFromViewerCoordinates(point: Vector3): Vector3 {
+    const clone = point.clone();
+    clone.applyMatrix4(this.fromViewerMatrix);
+    return clone;
+  }
+
+  public convertToViewerCoordinates(point: Vector3): Vector3 {
+    const clone = point.clone();
+    clone.applyMatrix4(this.toViewerMatrix);
+    return clone;
+  }
+
+  // ==================================================
+  // INSTANCE METHODS
+  // ==================================================
+
+  public setDefaultTool(tool: BaseTool): boolean {
+    const defaultTool = this.commandsController.defaultTool;
+    if (defaultTool !== undefined && tool.equals(defaultTool)) {
+      return false;
+    }
+    const oldTool = this.commandsController.getEqual(tool) as BaseTool;
+    if (oldTool !== undefined) {
+      return this.commandsController.setDefaultTool(oldTool);
+    }
+    tool.attach(this);
+    this.commandsController.add(tool);
+    return this.commandsController.setDefaultTool(tool);
+  }
+
   public setConfig(config: BaseRevealConfig): void {
     this._config = config;
 
-    const defaultTool = config.createDefaultTool();
-    defaultTool.attach(this);
-    this.commandsController.add(defaultTool);
-    this.commandsController.setDefaultTool(defaultTool);
-
+    this.setDefaultTool(config.createDefaultTool());
     const axisGizmoTool = config.createAxisGizmoTool();
     if (axisGizmoTool !== undefined) {
       axisGizmoTool.connect(this._viewer);
@@ -285,16 +306,16 @@ export class RevealRenderTarget {
       return;
     }
     const sceneBoundingBox = this.sceneBoundingBox.clone();
-    sceneBoundingBox.applyMatrix4(CDF_TO_VIEWER_TRANSFORMATION.clone().invert());
+    sceneBoundingBox.applyMatrix4(this.fromViewerMatrix);
     const sceneRange = new Range3();
     sceneRange.copy(sceneBoundingBox);
     const clippedRange = getBoundingBoxFromPlanes(clippingPlanes, sceneRange);
     const clippedBoundingBox = clippedRange.getBox();
 
     for (const plane of clippingPlanes) {
-      plane.applyMatrix4(CDF_TO_VIEWER_TRANSFORMATION);
+      plane.applyMatrix4(this.toViewerMatrix);
     }
-    clippedBoundingBox.applyMatrix4(CDF_TO_VIEWER_TRANSFORMATION);
+    clippedBoundingBox.applyMatrix4(this.toViewerMatrix);
 
     // Set the values
     this.viewer.setGlobalClippingPlanes(clippingPlanes);
@@ -319,16 +340,8 @@ export class RevealRenderTarget {
     this.cursor = 'default';
   }
 
-  public setMoveCursor(): void {
-    this.cursor = 'move';
-  }
-
   public setNavigateCursor(): void {
     this.cursor = 'pointer';
-  }
-
-  public setGrabCursor(): void {
-    this.cursor = 'grab';
   }
 
   public setCrosshairCursor(): void {
@@ -338,23 +351,23 @@ export class RevealRenderTarget {
   /**
    * Sets the resize cursor based on two points in 3D space to the resize
    * // cursor has a correct direction.
-   * @param point1 - The first point in 3D space.
-   * @param point2 - The second point in 3D space.
+   * @param point1 - The first point in CDF space.
+   * @param point2 - The second point in CDF space.
    */
-  public setResizeCursor(point1: Vector3, point2: Vector3): void {
+  public getResizeCursor(point1: Vector3, point2: Vector3): string | undefined {
+    point1 = this.convertToViewerCoordinates(point1);
+    point2 = this.convertToViewerCoordinates(point2);
+
     const screenPoint1 = this.viewer.worldToScreen(point1, false);
     if (screenPoint1 === null) {
-      return;
+      return undefined;
     }
     const screenPoint2 = this.viewer.worldToScreen(point2, false);
     if (screenPoint2 === null) {
-      return;
+      return undefined;
     }
     const screenVector = screenPoint2?.sub(screenPoint1).normalize();
     screenVector.y = -screenVector.y; // Flip y axis so the x-y axis is mathematically correct
-    const cursor = getResizeCursor(getOctDir(screenVector));
-    if (cursor !== undefined) {
-      this.cursor = cursor;
-    }
+    return getResizeCursor(getOctDir(screenVector));
   }
 }

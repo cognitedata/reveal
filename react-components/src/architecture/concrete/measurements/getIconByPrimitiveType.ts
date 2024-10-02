@@ -2,7 +2,7 @@
  * Copyright 2024 Cognite AS
  */
 
-import { PrimitiveType } from '../primitives/PrimitiveType';
+import { PrimitiveType } from '../../base/utilities/primitives/PrimitiveType';
 
 export function getIconByPrimitiveType(primitiveType: PrimitiveType): string {
   switch (primitiveType) {
@@ -26,6 +26,10 @@ export function getIconByPrimitiveType(primitiveType: PrimitiveType): string {
       return 'Perspective';
     case PrimitiveType.Box:
       return 'Cube';
+    case PrimitiveType.Cylinder:
+      return 'DataSource';
+    case PrimitiveType.None:
+      return 'Edit';
     default:
       throw new Error('Unknown PrimitiveType');
   }

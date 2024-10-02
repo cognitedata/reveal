@@ -132,7 +132,7 @@ export abstract class GroupThreeView<DomainObjectType extends DomainObject = Dom
 
   public override update(change: DomainObjectChange): void {
     super.update(change);
-    if (change.isChanged(Changes.geometry)) {
+    if (change.isChanged(Changes.geometry, Changes.dragging)) {
       this.removeChildren();
       this.invalidateRenderTarget();
     }

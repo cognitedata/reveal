@@ -135,6 +135,16 @@ export abstract class BaseFilterCommand extends RenderTargetCommand {
 
 export abstract class BaseFilterItemCommand extends RenderTargetCommand {
   // ==================================================
+  // OVERRIDES
+  // ==================================================
+
+  public override invokeCore(): boolean {
+    // Toggle the checked state, you do not need to override this method
+    // as long as setCheckedCore and isChecked are overridden
+    return this.setCheckedCore(!this.isChecked);
+  }
+
+  // ==================================================
   // VIRTUAL METHODS (To be overridden)
   // ==================================================
 

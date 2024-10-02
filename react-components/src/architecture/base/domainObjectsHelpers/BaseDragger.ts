@@ -8,6 +8,11 @@ import {
   type CreateDraggerProps
 } from '../domainObjects/VisualDomainObject';
 import { type Transaction } from '../undo/Transaction';
+import { type UnitSystem } from '../renderTarget/UnitSystem';
+import { type DomainObject } from '../domainObjects/DomainObject';
+import { Quantity } from './Quantity';
+import { round, roundIncrement } from '../utilities/extensions/mathExtensions';
+import { Changes } from './Changes';
 
 /**
  * The `BaseDragger` class represents a utility for dragging and manipulating any object in 3D space.
@@ -21,6 +26,8 @@ export abstract class BaseDragger {
   protected readonly point: Vector3; // Intersection point at pointer down in CDF coordinates
   protected readonly ray: Ray = new Ray(); // Intersection point at pointer down in CDF coordinates
   private _transaction?: Transaction;
+  protected readonly _unitSystem: UnitSystem | undefined = undefined;
+  public isChanged = false;
 
   // ==================================================
   // INSTANCE PROPERTIES
@@ -40,10 +47,16 @@ export abstract class BaseDragger {
   /**
    * Represents a base dragger object.
    * @param props - Contains the ray amd the clicked point in CDF coordinates
+   * @param domainObject - The domain object to act on
    */
-  protected constructor(props: CreateDraggerProps) {
+  protected constructor(props: CreateDraggerProps, domainObject: DomainObject) {
     this.point = props.point;
     this.ray = props.ray;
+
+    const root = domainObject.rootDomainObject;
+    if (root !== undefined) {
+      this._unitSystem = root.unitSystem;
+    }
   }
 
   // ==================================================
@@ -73,5 +86,31 @@ export abstract class BaseDragger {
    * Called just before the dragger is deleted.
    * @param _event - The pointer event.
    */
-  public onPointerUp(_event: PointerEvent): void {}
+  public onPointerUp(_event: PointerEvent): void {
+    if (this.isChanged) {
+      this.domainObject.notify(Changes.geometry);
+    }
+  }
+
+  // ==================================================
+  // INSTANCE METHODS
+  // ==================================================
+
+  protected getBestValue(value: number, isShiftPressed: boolean, minValue: number): number {
+    if (value < minValue) {
+      value = minValue;
+    }
+    if (!isShiftPressed || this._unitSystem === undefined) {
+      return value;
+    }
+    const convertedValue = this._unitSystem.convertToUnit(value, Quantity.Length);
+    // Divide the box into abound some parts and use that as the increment
+    const increment = roundIncrement(convertedValue / 25);
+    const roundedValue = round(convertedValue, increment);
+    const newValue = this._unitSystem.convertFromUnit(roundedValue, Quantity.Length);
+    if (newValue < minValue) {
+      return minValue;
+    }
+    return newValue;
+  }
 }

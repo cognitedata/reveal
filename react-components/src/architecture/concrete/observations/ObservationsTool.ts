@@ -39,8 +39,8 @@ export class ObservationsTool extends BaseEditTool {
     super.onActivate();
     let domainObject = this.getObservationsDomainObject();
     if (domainObject === undefined) {
-      domainObject = new ObservationsDomainObject(this.renderTarget.fdmSdk);
-      this.renderTarget.rootDomainObject.addChild(domainObject);
+      domainObject = new ObservationsDomainObject(this.rootDomainObject.fdmSdk);
+      this.renderTarget.rootDomainObject.addChildInteractive(domainObject);
     }
     domainObject.setVisibleInteractive(true, this.renderTarget);
   }
@@ -94,7 +94,6 @@ export class ObservationsTool extends BaseEditTool {
       await super.onClick(event);
       return;
     }
-
     const domainObject = this.getObservationsDomainObject();
     const pendingOverlay = domainObject?.addPendingObservation(
       createEmptyObservationProperties(intersection.point)

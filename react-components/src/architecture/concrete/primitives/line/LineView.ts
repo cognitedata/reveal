@@ -4,19 +4,16 @@
 
 /* eslint-disable @typescript-eslint/consistent-type-imports */
 import {
-  BufferAttribute,
-  BufferGeometry,
   CylinderGeometry,
   FrontSide,
   Line,
   LineBasicMaterial,
   Mesh,
   MeshPhongMaterial,
+  Object3D,
   Quaternion,
-  Vector2,
   Vector3
 } from 'three';
-import { Wireframe } from 'three/examples/jsm/lines/Wireframe.js';
 import { LineDomainObject } from './LineDomainObject';
 import { DomainObjectChange } from '../../../base/domainObjectsHelpers/DomainObjectChange';
 import { Changes } from '../../../base/domainObjectsHelpers/Changes';
@@ -27,9 +24,7 @@ import {
   CustomObjectIntersectInput,
   CustomObjectIntersection
 } from '@cognite/reveal';
-import { LineSegmentsGeometry } from 'three/examples/jsm/lines/LineSegmentsGeometry.js';
-import { LineMaterial } from 'three/examples/jsm/lines/LineMaterial.js';
-import { PrimitiveType } from '../PrimitiveType';
+import { PrimitiveType } from '../../../base/utilities/primitives/PrimitiveType';
 import { mergeGeometries } from 'three/examples/jsm/utils/BufferGeometryUtils.js';
 import { FocusType } from '../../../base/domainObjectsHelpers/FocusType';
 import { DomainObjectIntersection } from '../../../base/domainObjectsHelpers/DomainObjectIntersection';
@@ -37,6 +32,7 @@ import { ClosestGeometryFinder } from '../../../base/utilities/geometry/ClosestG
 import { square } from '../../../base/utilities/extensions/mathExtensions';
 import { Quantity } from '../../../base/domainObjectsHelpers/Quantity';
 import { BoxView } from '../box/BoxView';
+import { PrimitiveUtils } from '../../../base/utilities/primitives/PrimitiveUtils';
 
 const CYLINDER_DEFAULT_AXIS = new Vector3(0, 1, 0);
 const RENDER_ORDER = 100;
@@ -193,39 +189,15 @@ export class LineView extends GroupThreeView<LineDomainObject> {
     return new Mesh(mergeGeometries(geometries, false), material);
   }
 
-  private createWireframe(): Wireframe | undefined {
+  private createLines(): Object3D | undefined {
     const { domainObject, style } = this;
-    const linewidth = domainObject.isSelected ? style.selectedLineWidth : style.lineWidth;
-    if (linewidth === 0) {
-      return undefined;
-    }
-    const vertices = createVertices(domainObject);
-    if (vertices === undefined) {
-      return undefined;
-    }
-    const color = domainObject.getColorByColorType(style.colorType);
-    const geometry = new LineSegmentsGeometry().setPositions(vertices);
-    const material = new LineMaterial({
-      linewidth,
-      color,
-      resolution: new Vector2(1000, 1000),
-      worldUnits: true,
-      depthTest: style.depthTest
-    });
-    const result = new Wireframe(geometry, material);
-    result.renderOrder = RENDER_ORDER;
-    return result;
-  }
-
-  private createLines(): Line | undefined {
-    const { domainObject, style } = this;
-    const vertices = createVertices(domainObject);
-    if (vertices === undefined) {
+    const positions = createPositions(domainObject);
+    if (positions === undefined) {
       return undefined;
     }
     const color = domainObject.getColorByColorType(style.colorType);
     const linewidth = domainObject.isSelected ? style.selectedLineWidth : style.lineWidth;
-    const geometry = createBufferGeometry(vertices);
+    const geometry = PrimitiveUtils.createBufferGeometry(positions);
     const material = new LineBasicMaterial({
       linewidth,
       color,
@@ -234,13 +206,6 @@ export class LineView extends GroupThreeView<LineDomainObject> {
     const result = new Line(geometry, material);
     result.renderOrder = RENDER_ORDER;
     return result;
-
-    function createBufferGeometry(vertices: number[]): BufferGeometry {
-      const verticesArray = new Float32Array(vertices);
-      const geometry = new BufferGeometry();
-      geometry.setAttribute('position', new BufferAttribute(verticesArray, 3));
-      return geometry;
-    }
   }
 
   private addLabels(): void {
@@ -290,24 +255,24 @@ export class LineView extends GroupThreeView<LineDomainObject> {
 // PRIVATE FUNCTIONS: Create object3D's
 // ==================================================
 
-function createVertices(domainObject: LineDomainObject): number[] | undefined {
+function createPositions(domainObject: LineDomainObject): number[] | undefined {
   const { points } = domainObject;
   const { length } = points;
   if (length < 2) {
     return undefined;
   }
-  const vertices: number[] = [];
+  const positions: number[] = [];
   const loopLength = domainObject.primitiveType === PrimitiveType.Polygon ? length + 1 : length;
 
   for (let i = 0; i < loopLength; i++) {
     const point = points[i % length].clone();
     point.applyMatrix4(CDF_TO_VIEWER_TRANSFORMATION);
-    vertices.push(...point);
+    positions.push(...point);
     if (i > 0 && i < loopLength - 1) {
-      vertices.push(...point);
+      positions.push(...point);
     }
   }
-  return vertices;
+  return positions;
 }
 
 function updateSolidMaterial(

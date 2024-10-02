@@ -19,7 +19,7 @@ export function verticalDistanceTo(from: Vector3, to: Vector3): number {
   return Math.abs(from.z - to.z);
 }
 
-export function rotateHorizontal(vector: Vector3, angle: number): void {
+export function rotateHorizontal(vector: Vector3 | Vector2, angle: number): void {
   const dx = vector.x;
   vector.x = dx * Math.cos(angle) - vector.y * Math.sin(angle);
   vector.y = dx * Math.sin(angle) + vector.y * Math.cos(angle);
@@ -39,11 +39,14 @@ export function getAbsMaxComponentIndex(vector: Vector3): number {
   return maxIndex;
 }
 
-export function getHorizontalCrossProduct(self: Vector3, other: Vector3): number {
+export function getHorizontalCrossProduct(
+  self: Vector3 | Vector2,
+  other: Vector3 | Vector2
+): number {
   return self.x * other.y - self.y * other.x;
 }
 
-export function rotatePiHalf(vector: Vector3): void {
+export function rotatePiHalf(vector: Vector3 | Vector2): void {
   const x = vector.x;
   vector.x = -vector.y;
   vector.y = x;
