@@ -11,23 +11,6 @@ import { useRenderTarget } from '../RevealCanvas/ViewerContext';
 import { ActiveToolUpdater } from '../../architecture/base/reactUpdaters/ActiveToolUpdater';
 import { type PopupStyle } from '../../architecture/base/domainObjectsHelpers/PopupStyle';
 
-export const MainToolbar = (): ReactElement => {
-  const renderTarget = useRenderTarget();
-  if (renderTarget === undefined) {
-    return <></>;
-  }
-  const config = renderTarget.config;
-  if (config === undefined) {
-    return <></>;
-  }
-  const commands = useMemo(() => config.createMainToolbar(), [config]);
-  if (commands.length === 0) {
-    return <></>;
-  }
-  const style = config.createMainToolbarStyle();
-  return <ToolbarContent commands={commands} style={style} />;
-};
-
 export const TopToolbar = (): ReactElement => {
   const renderTarget = useRenderTarget();
   if (renderTarget === undefined) {
@@ -42,6 +25,23 @@ export const TopToolbar = (): ReactElement => {
     return <></>;
   }
   const style = config.createTopToolbarStyle();
+  return <ToolbarContent commands={commands} style={style} />;
+};
+
+export const MainToolbar = (): ReactElement => {
+  const renderTarget = useRenderTarget();
+  if (renderTarget === undefined) {
+    return <></>;
+  }
+  const config = renderTarget.config;
+  if (config === undefined) {
+    return <></>;
+  }
+  const commands = useMemo(() => config.createMainToolbar(), [config]);
+  if (commands.length === 0) {
+    return <></>;
+  }
+  const style = config.createMainToolbarStyle();
   return <ToolbarContent commands={commands} style={style} />;
 };
 

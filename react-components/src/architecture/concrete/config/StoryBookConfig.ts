@@ -3,7 +3,6 @@
  */
 
 import { type BaseCommand } from '../../base/commands/BaseCommand';
-import { PopupStyle } from '../../base/domainObjectsHelpers/PopupStyle';
 import { SetTerrainVisibleCommand } from '../terrain/SetTerrainVisibleCommand';
 import { UpdateTerrainCommand } from '../terrain/UpdateTerrainCommand';
 import { FitViewCommand } from '../../base/concreteCommands/FitViewCommand';
@@ -34,11 +33,19 @@ export class StoryBookConfig extends BaseRevealConfig {
     return new NavigationTool();
   }
 
+  public override createTopToolbar(): Array<BaseCommand | undefined> {
+    return [
+      new SetOrbitOrFirstPersonModeCommand(),
+      new FitViewCommand(),
+      new SetAxisVisibleCommand(),
+      new KeyboardSpeedCommand()
+    ];
+  }
+
   public override createMainToolbar(): Array<BaseCommand | undefined> {
     return [
       new ToggleAllModelsVisibleCommand(),
       new ToggleMetricUnitsCommand(),
-      new KeyboardSpeedCommand(),
       new SettingsCommand(),
       new MockSettingsCommand(),
       new MockFilterCommand(),
@@ -52,19 +59,6 @@ export class StoryBookConfig extends BaseRevealConfig {
       new UpdateTerrainCommand(),
       undefined
     ];
-  }
-
-  public override createTopToolbar(): Array<BaseCommand | undefined> {
-    return [
-      new SetOrbitOrFirstPersonModeCommand(),
-      new FitViewCommand(),
-      new SetAxisVisibleCommand(),
-      new KeyboardSpeedCommand()
-    ];
-  }
-
-  public override createTopToolbarStyle(): PopupStyle {
-    return new PopupStyle({ left: 0, top: 0, horizontal: true });
   }
 
   public override createAxisGizmoTool(): AxisGizmoTool | undefined {
