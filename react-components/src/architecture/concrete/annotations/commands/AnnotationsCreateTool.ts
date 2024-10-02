@@ -170,9 +170,9 @@ export class AnnotationsCreateTool extends NavigationTool {
         return;
       }
       this.endCreatorIfFinished(creator);
-      // return;
+      return;
     }
-    // this.renderTarget.setMoveCursor();
+    this.renderTarget.cursor = 'move';
   }
 
   public override getToolbar(): Array<BaseCommand | undefined> {
