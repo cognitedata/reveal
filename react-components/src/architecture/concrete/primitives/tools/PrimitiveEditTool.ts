@@ -158,12 +158,13 @@ export abstract class PrimitiveEditTool extends BaseEditTool {
       domainObject.setSelectedInteractive(true);
       return;
     }
-    const ray = this.getRay(event);
     if (creator === undefined) {
       creator = this.createCreator();
       if (creator === undefined) {
+        await super.onClick(event);
         return;
       }
+      const ray = this.getRay(event);
       if (!creator.addPoint(ray, intersection)) {
         return;
       }
