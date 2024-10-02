@@ -96,11 +96,11 @@ export abstract class BaseDragger {
   // INSTANCE METHODS
   // ==================================================
 
-  protected getBestValue(value: number, shift: boolean, minValue: number): number {
+  protected getBestValue(value: number, isShiftPressed: boolean, minValue: number): number {
     if (value < minValue) {
       value = minValue;
     }
-    if (!shift || this._unitSystem === undefined) {
+    if (!isShiftPressed || this._unitSystem === undefined) {
       return value;
     }
     const convertedValue = this._unitSystem.convertToUnit(value, Quantity.Length);

@@ -140,9 +140,8 @@ export class CylinderView extends GroupThreeView<CylinderDomainObject> {
     }
     const positionAtFace = newVector3(point).applyMatrix4(matrix.invert());
     const boxFace = new BoxFace().fromPositionAtFace(positionAtFace);
-    const cdfPosition = newVector3(point).applyMatrix4(
-      CDF_TO_VIEWER_TRANSFORMATION.clone().invert()
-    );
+
+    const cdfPosition = this.renderTarget.convertFromViewerCoordinates(point);
     const focusType = this.getPickedFocusType(cdfPosition, boxFace);
     const customObjectIntersection: DomainObjectIntersection = {
       type: 'customObject',
@@ -187,7 +186,7 @@ export class CylinderView extends GroupThreeView<CylinderDomainObject> {
     const geometry = CylinderUtils.createUnitGeometry();
     // In Three.js, the cylinder is oriented along the Y-axis, so we need to rotate it
     // so up is the Z-axis.
-    geometry.applyMatrix4(CDF_TO_VIEWER_TRANSFORMATION.clone().invert());
+    geometry.applyMatrix4(this.renderTarget.fromViewerMatrix);
     const mesh = new Mesh(geometry, material);
     mesh.renderOrder = RENDER_ORDER;
     mesh.applyMatrix4(matrix);

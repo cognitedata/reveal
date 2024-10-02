@@ -241,7 +241,7 @@ export class PlaneView extends GroupThreeView<PlaneDomainObject> {
       return undefined;
     }
     const boundingBox = this._sceneBoundingBox.clone();
-    boundingBox.applyMatrix4(CDF_TO_VIEWER_TRANSFORMATION.clone().invert());
+    boundingBox.applyMatrix4(this.renderTarget.fromViewerMatrix);
     const range = new Range3();
     range.copy(boundingBox);
 

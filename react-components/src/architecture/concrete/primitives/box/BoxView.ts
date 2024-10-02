@@ -176,9 +176,7 @@ export class BoxView extends GroupThreeView<BoxDomainObject> {
       return undefined;
     }
     const cornerSign = new Vector3();
-    const cdfPosition = newVector3(point).applyMatrix4(
-      CDF_TO_VIEWER_TRANSFORMATION.clone().invert()
-    );
+    const cdfPosition = this.renderTarget.convertFromViewerCoordinates(point);
     const focusType = this.getPickedFocusType(cdfPosition, boxFace, cornerSign);
     const customObjectIntersection: DomainObjectIntersection = {
       type: 'customObject',

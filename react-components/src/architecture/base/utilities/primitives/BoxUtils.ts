@@ -2,23 +2,15 @@
  * Copyright 2024 Cognite AS
  */
 
-import { type Box3, Vector3, type BufferGeometry, type Matrix4, BoxGeometry } from 'three';
+import { Vector3, type BufferGeometry, type Matrix4, Box3, BoxGeometry } from 'three';
 import { OBB } from 'three/addons/math/OBB.js';
 import { type LineSegmentsGeometry } from 'three/examples/jsm/lines/LineSegmentsGeometry.js';
 import { PrimitiveUtils } from './PrimitiveUtils';
+import { getCorners } from '../geometry/getCorners';
 
 const HALF_SIDE = 0.5;
+export const CUBE_CORNERS = createCubeCorners();
 
-export const CUBE_CORNERS = [
-  new Vector3(-HALF_SIDE, -HALF_SIDE, -HALF_SIDE),
-  new Vector3(+HALF_SIDE, -HALF_SIDE, -HALF_SIDE),
-  new Vector3(+HALF_SIDE, +HALF_SIDE, -HALF_SIDE),
-  new Vector3(-HALF_SIDE, +HALF_SIDE, -HALF_SIDE),
-  new Vector3(-HALF_SIDE, -HALF_SIDE, +HALF_SIDE),
-  new Vector3(+HALF_SIDE, -HALF_SIDE, +HALF_SIDE),
-  new Vector3(+HALF_SIDE, +HALF_SIDE, +HALF_SIDE),
-  new Vector3(-HALF_SIDE, +HALF_SIDE, +HALF_SIDE)
-];
 export class BoxUtils {
   public static createUnitGeometry(): BoxGeometry {
     return new BoxGeometry(1, 1, 1);
@@ -61,4 +53,13 @@ export class BoxUtils {
     const positions = BoxUtils.createPositions();
     return PrimitiveUtils.createBufferGeometry(positions);
   }
+}
+
+function createCubeCorners(): Vector3[] {
+  const box = new Box3(new Vector3().setScalar(-HALF_SIDE), new Vector3().setScalar(HALF_SIDE));
+  const result: Vector3[] = [];
+  for (const corner of getCorners(box)) {
+    result.push(corner.clone());
+  }
+  return result;
 }

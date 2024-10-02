@@ -127,14 +127,24 @@ export class Box extends Primitive {
   }
 
   public getRotationInDegrees(component: number): number {
-    if (component === 0) {
-      return radToDeg(forceAngleAround0(this.rotation.x));
+    if (component === 2) {
+      return this.zRotationInDegrees;
     }
-    if (component === 1) {
-      return radToDeg(forceAngleAround0(this.rotation.y));
-    }
-    return this.zRotationInDegrees;
+    return radToDeg(forceAngleAround0(this.getRotationAngleByComponent(component)));
   }
+
+  public getRotationAngleByComponent(component: number): number {
+    if (component === 0) {
+      return this.rotation.x;
+    } else if (component === 1) {
+      return this.rotation.y;
+    } else if (component === 2) {
+      return this.rotation.z;
+    } else {
+      throw new Error('Invalid component: ' + component);
+    }
+  }
+
   // ==================================================
   // INSTANCE METHODS: Operations
   // ==================================================

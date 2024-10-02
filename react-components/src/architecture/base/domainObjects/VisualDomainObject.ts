@@ -9,6 +9,8 @@ import { DomainObject } from './DomainObject';
 import { type DomainObjectIntersection } from '../domainObjectsHelpers/DomainObjectIntersection';
 import { type BaseDragger } from '../domainObjectsHelpers/BaseDragger';
 import { type Vector3, type Ray } from 'three';
+import { FocusType } from '../domainObjectsHelpers/FocusType';
+import { Changes } from '../domainObjectsHelpers/Changes';
 
 /**
  * Represents a visual domain object that can be rendered and manipulated in a three-dimensional space.
@@ -16,6 +18,13 @@ import { type Vector3, type Ray } from 'three';
  */
 
 export abstract class VisualDomainObject extends DomainObject {
+  // ==================================================
+  // INSTANCE FIELDS
+  // ==================================================
+
+  // For focus when edit in 3D
+  public focusType: FocusType = FocusType.None;
+
   // ==================================================
   // OVERRIDES of DomainObject
   // ==================================================
@@ -56,6 +65,10 @@ export abstract class VisualDomainObject extends DomainObject {
     return true;
   }
 
+  public override get isLegal(): boolean {
+    return this.focusType !== FocusType.Pending;
+  }
+
   // ==================================================
   // VIRTUAL METHODS
   // ==================================================
@@ -86,6 +99,28 @@ export abstract class VisualDomainObject extends DomainObject {
   }
 
   public get useClippingInIntersection(): boolean {
+    return true;
+  }
+
+  public getEditToolCursor(
+    _renderTarget: RevealRenderTarget,
+    _point?: Vector3
+  ): string | undefined {
+    return undefined;
+  }
+
+  public setFocusInteractive(focusType: FocusType): boolean {
+    if (this.focusType === focusType) {
+      return false;
+    }
+    const changedFromPending =
+      this.focusType === FocusType.Pending && focusType !== FocusType.Pending;
+
+    this.focusType = focusType;
+    this.notify(Changes.focus);
+    if (changedFromPending) {
+      this.notify(Changes.geometry);
+    }
     return true;
   }
 

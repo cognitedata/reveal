@@ -18,7 +18,8 @@ import {
   DirectionalLight,
   type PerspectiveCamera,
   type Box3,
-  type Plane
+  type Plane,
+  type Matrix4
 } from 'three';
 import { CommandsController } from './CommandsController';
 import { RootDomainObject } from '../domainObjects/RootDomainObject';
@@ -36,6 +37,7 @@ import { type CogniteClient } from '@cognite/sdk/dist/src';
 import { type BaseTool } from '../commands/BaseTool';
 
 const DIRECTIONAL_LIGHT_NAME = 'DirectionalLight';
+const VIEWER_TO_CDF_TRANSFORMATION = CDF_TO_VIEWER_TRANSFORMATION.clone().invert();
 
 export class RevealRenderTarget {
   // ==================================================
@@ -97,6 +99,14 @@ export class RevealRenderTarget {
     return this._viewer.domElement;
   }
 
+  public get toViewerMatrix(): Matrix4 {
+    return CDF_TO_VIEWER_TRANSFORMATION;
+  }
+
+  public get fromViewerMatrix(): Matrix4 {
+    return VIEWER_TO_CDF_TRANSFORMATION;
+  }
+
   public get commandsController(): CommandsController {
     return this._commandsController;
   }
@@ -105,8 +115,8 @@ export class RevealRenderTarget {
     return this.domElement.style.cursor;
   }
 
-  public set cursor(value: string) {
-    this.domElement.style.cursor = value;
+  public set cursor(value: string | undefined) {
+    this.domElement.style.cursor = value ?? 'default';
   }
 
   public get cameraManager(): CameraManager {
@@ -147,7 +157,7 @@ export class RevealRenderTarget {
   }
 
   // ==================================================
-  // INSTANCE METHODS
+  // INSTANCE METHODS: Get models from the viewer
   // ==================================================
 
   public *getPointClouds(): Generator<CognitePointCloudModel> {
@@ -164,6 +174,22 @@ export class RevealRenderTarget {
         yield model;
       }
     }
+  }
+
+  // ==================================================
+  // INSTANCE METHODS: Convert back and from Viewer coordinates
+  // ==================================================
+
+  public convertFromViewerCoordinates(point: Vector3): Vector3 {
+    const clone = point.clone();
+    clone.applyMatrix4(this.fromViewerMatrix);
+    return clone;
+  }
+
+  public convertToViewerCoordinates(point: Vector3): Vector3 {
+    const clone = point.clone();
+    clone.applyMatrix4(this.toViewerMatrix);
+    return clone;
   }
 
   // ==================================================
@@ -287,16 +313,16 @@ export class RevealRenderTarget {
       return;
     }
     const sceneBoundingBox = this.sceneBoundingBox.clone();
-    sceneBoundingBox.applyMatrix4(CDF_TO_VIEWER_TRANSFORMATION.clone().invert());
+    sceneBoundingBox.applyMatrix4(this.fromViewerMatrix);
     const sceneRange = new Range3();
     sceneRange.copy(sceneBoundingBox);
     const clippedRange = getBoundingBoxFromPlanes(clippingPlanes, sceneRange);
     const clippedBoundingBox = clippedRange.getBox();
 
     for (const plane of clippingPlanes) {
-      plane.applyMatrix4(CDF_TO_VIEWER_TRANSFORMATION);
+      plane.applyMatrix4(this.toViewerMatrix);
     }
-    clippedBoundingBox.applyMatrix4(CDF_TO_VIEWER_TRANSFORMATION);
+    clippedBoundingBox.applyMatrix4(this.toViewerMatrix);
 
     // Set the values
     this.viewer.setGlobalClippingPlanes(clippingPlanes);
@@ -321,16 +347,8 @@ export class RevealRenderTarget {
     this.cursor = 'default';
   }
 
-  public setMoveCursor(): void {
-    this.cursor = 'move';
-  }
-
   public setNavigateCursor(): void {
     this.cursor = 'pointer';
-  }
-
-  public setGrabCursor(): void {
-    this.cursor = 'grab';
   }
 
   public setCrosshairCursor(): void {
@@ -340,23 +358,23 @@ export class RevealRenderTarget {
   /**
    * Sets the resize cursor based on two points in 3D space to the resize
    * // cursor has a correct direction.
-   * @param point1 - The first point in 3D space.
-   * @param point2 - The second point in 3D space.
+   * @param point1 - The first point in CDF space.
+   * @param point2 - The second point in CDF space.
    */
-  public setResizeCursor(point1: Vector3, point2: Vector3): void {
+  public getResizeCursor(point1: Vector3, point2: Vector3): string | undefined {
+    point1 = this.convertToViewerCoordinates(point1);
+    point2 = this.convertToViewerCoordinates(point2);
+
     const screenPoint1 = this.viewer.worldToScreen(point1, false);
     if (screenPoint1 === null) {
-      return;
+      return undefined;
     }
     const screenPoint2 = this.viewer.worldToScreen(point2, false);
     if (screenPoint2 === null) {
-      return;
+      return undefined;
     }
     const screenVector = screenPoint2?.sub(screenPoint1).normalize();
     screenVector.y = -screenVector.y; // Flip y axis so the x-y axis is mathematically correct
-    const cursor = getResizeCursor(getOctDir(screenVector));
-    if (cursor !== undefined) {
-      this.cursor = cursor;
-    }
+    return getResizeCursor(getOctDir(screenVector));
   }
 }

@@ -19,6 +19,8 @@ import { PanelInfo } from '../../../base/domainObjectsHelpers/PanelInfo';
 import { SolidDomainObject } from '../common/SolidDomainObject';
 import { SolidPrimitiveRenderStyle } from '../common/SolidPrimitiveRenderStyle';
 import { Box } from '../../../base/utilities/primitives/Box';
+import { type Vector3 } from 'three';
+import { type RevealRenderTarget } from '../../../base/renderTarget/RevealRenderTarget';
 
 export abstract class BoxDomainObject extends SolidDomainObject {
   // ==================================================
@@ -56,10 +58,6 @@ export abstract class BoxDomainObject extends SolidDomainObject {
       default:
         throw new Error('Unknown PrimitiveType');
     }
-  }
-
-  public override get isLegal(): boolean {
-    return this.focusType !== FocusType.Pending;
   }
 
   public override createRenderStyle(): RenderStyle | undefined {
@@ -144,6 +142,36 @@ export abstract class BoxDomainObject extends SolidDomainObject {
 
   protected override createThreeView(): ThreeView | undefined {
     return new BoxView();
+  }
+
+  public override getEditToolCursor(
+    renderTarget: RevealRenderTarget,
+    point?: Vector3
+  ): string | undefined {
+    if (this.focusType === FocusType.Body) {
+      return 'move';
+    } else if (this.focusType === FocusType.Face) {
+      if (this.focusFace === undefined) {
+        return undefined;
+      }
+      const faceCenter = this.focusFace.getCenter();
+      const matrix = this.box.getMatrix();
+      faceCenter.applyMatrix4(matrix);
+      return renderTarget.getResizeCursor(this.box.center, faceCenter);
+    } else if (this.focusType === FocusType.Corner) {
+      if (this.focusFace === undefined || point === undefined) {
+        return undefined;
+      }
+      const faceCenter = this.focusFace.getCenter();
+      const matrix = this.box.getMatrix();
+      faceCenter.applyMatrix4(matrix);
+
+      return renderTarget.getResizeCursor(point, faceCenter);
+    } else if (this.focusType === FocusType.Rotation) {
+      return 'grab';
+    } else {
+      return undefined;
+    }
   }
 
   // ==================================================

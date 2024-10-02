@@ -6,7 +6,7 @@ import { NavigationTool } from '../concreteCommands/NavigationTool';
 import { isDomainObjectIntersection } from '../domainObjectsHelpers/DomainObjectIntersection';
 import { type BaseDragger } from '../domainObjectsHelpers/BaseDragger';
 import { VisualDomainObject } from '../domainObjects/VisualDomainObject';
-import { type AnyIntersection, CDF_TO_VIEWER_TRANSFORMATION } from '@cognite/reveal';
+import { type AnyIntersection } from '@cognite/reveal';
 import { DomainObjectPanelUpdater } from '../reactUpdaters/DomainObjectPanelUpdater';
 
 /**
@@ -112,7 +112,7 @@ export abstract class BaseEditTool extends NavigationTool {
       return undefined;
     }
     const ray = this.getRay(event);
-    const matrix = CDF_TO_VIEWER_TRANSFORMATION.clone().invert();
+    const matrix = this.renderTarget.fromViewerMatrix;
     const point = intersection.point.clone();
     point.applyMatrix4(matrix);
     ray.applyMatrix4(matrix);

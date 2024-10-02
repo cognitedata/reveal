@@ -100,20 +100,20 @@ export class CylinderDragger extends BaseDragger {
   // INSTANCE METHODS
   // ==================================================
 
-  private applyByFocusType(focusType: FocusType, ray: Ray, shift: boolean): boolean {
+  private applyByFocusType(focusType: FocusType, ray: Ray, isShiftPressed: boolean): boolean {
     switch (focusType) {
       case FocusType.Face:
-        return this.moveFace(ray, shift);
+        return this.moveFace(ray, isShiftPressed);
       case FocusType.Body:
-        return this.translate(ray, shift);
+        return this.translate(ray);
       case FocusType.Rotation:
-        return this.rotate(ray, shift);
+        return this.rotate(ray);
       default:
         return false;
     }
   }
 
-  private translate(ray: Ray, _shift: boolean): boolean {
+  private translate(ray: Ray): boolean {
     // This translation can only be done in one plane, so we need to find the intersection point
     if (this._face.index !== 2) {
       return false;
@@ -137,15 +137,15 @@ export class CylinderDragger extends BaseDragger {
     return true;
   }
 
-  private moveFace(ray: Ray, shift: boolean): boolean {
+  private moveFace(ray: Ray, isShiftPressed: boolean): boolean {
     if (this._face.index !== 2) {
-      return this.moveRadius(ray, shift);
+      return this.moveRadius(ray, isShiftPressed);
     } else {
-      return this.moveEndCaps(ray, shift);
+      return this.moveEndCaps(ray, isShiftPressed);
     }
   }
 
-  private moveRadius(ray: Ray, shift: boolean): boolean {
+  private moveRadius(ray: Ray, isShiftPressed: boolean): boolean {
     // Change radius
     const { cylinder } = this._domainObject;
     const axis = new Line3(cylinder.centerA, cylinder.centerB);
@@ -155,7 +155,7 @@ export class CylinderDragger extends BaseDragger {
     const closestToRay = getClosestPointOnLine(ray, axisNormal, closestOnAxis);
 
     const radius = closestToRay.distanceTo(closestOnAxis);
-    const newRadius = this.getBestValue(radius, shift, Cylinder.MinSize);
+    const newRadius = this.getBestValue(radius, isShiftPressed, Cylinder.MinSize);
     if (newRadius === cylinder.radius) {
       return false; // Nothing has changed
     }
@@ -163,7 +163,7 @@ export class CylinderDragger extends BaseDragger {
     return true;
   }
 
-  private moveEndCaps(ray: Ray, shift: boolean): boolean {
+  private moveEndCaps(ray: Ray, isShiftPressed: boolean): boolean {
     // Take find closest point between the ray and the line perpendicular to the end face.
     // The distance from this point to the face is the change.
     const pointOnSegment = newVector3();
@@ -175,7 +175,7 @@ export class CylinderDragger extends BaseDragger {
     const originalCylinder = this._originalCylinder;
     const newHeight = this.getBestValue(
       originalCylinder.height + deltaHeight,
-      shift,
+      isShiftPressed,
       Cylinder.MinSize
     );
     if (newHeight === originalCylinder.height) {
@@ -194,7 +194,7 @@ export class CylinderDragger extends BaseDragger {
     return true;
   }
 
-  private rotate(ray: Ray, _shift: boolean): boolean {
+  private rotate(ray: Ray): boolean {
     if (this._face.index !== 2) {
       return false;
     }

@@ -7,7 +7,6 @@ import { RenderTargetCommand } from './RenderTargetCommand';
 import {
   type CustomObjectIntersection,
   type AnyIntersection,
-  CDF_TO_VIEWER_TRANSFORMATION,
   type ICustomObject
 } from '@cognite/reveal';
 import { GroupThreeView } from '../views/GroupThreeView';
@@ -213,7 +212,7 @@ export abstract class BaseTool extends RenderTargetCommand {
   protected getRay(event: PointerEvent | WheelEvent, convertToCdf: boolean = false): Ray {
     const ray = this.getRaycaster(event).ray;
     if (convertToCdf) {
-      ray.applyMatrix4(CDF_TO_VIEWER_TRANSFORMATION.clone().invert());
+      ray.applyMatrix4(this.renderTarget.fromViewerMatrix);
     }
     return ray;
   }

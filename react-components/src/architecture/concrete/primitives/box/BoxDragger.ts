@@ -117,22 +117,22 @@ export class BoxDragger extends BaseDragger {
   // INSTANCE METHODS
   // ==================================================
 
-  private applyByFocusType(focusType: FocusType, ray: Ray, shift: boolean): boolean {
+  private applyByFocusType(focusType: FocusType, ray: Ray, isShiftPressed: boolean): boolean {
     switch (focusType) {
       case FocusType.Face:
-        return this.moveFace(ray, shift);
+        return this.moveFace(ray, isShiftPressed);
       case FocusType.Corner:
         return this.resize(ray);
       case FocusType.Body:
-        return this.translate(ray, shift);
+        return this.translate(ray, isShiftPressed);
       case FocusType.Rotation:
-        return this.rotate(ray, shift);
+        return this.rotate(ray, isShiftPressed);
       default:
         return false;
     }
   }
 
-  private translate(ray: Ray, shift: boolean): boolean {
+  private translate(ray: Ray, isShiftPressed: boolean): boolean {
     // This translation can only be done in one plane, so we need to find the intersection point
     const planeIntersect = ray.intersectPlane(this._planeOfFace, newVector3());
     if (planeIntersect === null) {
@@ -142,7 +142,7 @@ export class BoxDragger extends BaseDragger {
     if (deltaCenter.lengthSq() === 0) {
       return false;
     }
-    if (shift) {
+    if (isShiftPressed) {
       const invRotationMatrix = this._rotationMatrix.clone().invert();
       deltaCenter.applyMatrix4(invRotationMatrix);
       const maxIndex = getAbsMaxComponentIndex(deltaCenter);
@@ -164,7 +164,7 @@ export class BoxDragger extends BaseDragger {
     return true;
   }
 
-  private moveFace(ray: Ray, shift: boolean): boolean {
+  private moveFace(ray: Ray, isShiftPressed: boolean): boolean {
     // Take find closest point between the ray and the line perpendicular to the face of in picked box.
     // The distance from this point to the face of in picked box is the change.
     const pointOnSegment = newVector3();
@@ -187,7 +187,7 @@ export class BoxDragger extends BaseDragger {
     } else {
       // Set new size
       const value = deltaSize + size.getComponent(index);
-      const newValue = this.getBestValue(value, shift, Box.MinSize);
+      const newValue = this.getBestValue(value, isShiftPressed, Box.MinSize);
       if (newValue === originalBox.size.getComponent(index)) {
         return false; // Nothing has changed
       }
@@ -241,7 +241,7 @@ export class BoxDragger extends BaseDragger {
     return true;
   }
 
-  private rotate(ray: Ray, shift: boolean): boolean {
+  private rotate(ray: Ray, isShiftPressed: boolean): boolean {
     const domainObject = this._domainObject;
     if (!domainObject.canRotateComponent(this._face.index)) {
       return false;
@@ -262,27 +262,8 @@ export class BoxDragger extends BaseDragger {
     const { box } = domainObject;
     box.copy(originalBox);
 
-    if (shift) {
-      let oldAngle;
-      if (this._face.index === 0) {
-        oldAngle = originalBox.rotation.x;
-      } else if (this._face.index === 1) {
-        oldAngle = originalBox.rotation.y;
-      } else if (this._face.index === 2) {
-        oldAngle = originalBox.rotation.z;
-      } else {
-        return false;
-      }
-      let newAngle;
-      if (this._face.index === 2) {
-        newAngle = box.hasXYRotation
-          ? forceBetween0AndTwoPi(deltaAngle + oldAngle)
-          : forceBetween0AndPi(deltaAngle + oldAngle);
-      } else {
-        newAngle = forceBetween0AndTwoPi(deltaAngle + oldAngle);
-      }
-      newAngle = roundByConstrained(newAngle, shift);
-      deltaAngle = newAngle - oldAngle;
+    if (isShiftPressed) {
+      deltaAngle = roundDeltaAngleByConstrained(deltaAngle, this._face.index);
     }
     // Rotate
     const matrix = this._rotationMatrix.clone();
@@ -291,13 +272,27 @@ export class BoxDragger extends BaseDragger {
     box.rotation.setFromRotationMatrix(matrix);
     return true;
 
-    function roundByConstrained(rotation: number, shift: boolean): number {
-      if (!shift) {
-        return rotation;
+    function roundDeltaAngleByConstrained(deltaAngle: number, component: number): number {
+      const oldAngle = originalBox.getRotationAngleByComponent(component);
+      let newAngle;
+      if (component === 2) {
+        newAngle = box.hasXYRotation
+          ? forceBetween0AndTwoPi(deltaAngle + oldAngle)
+          : forceBetween0AndPi(deltaAngle + oldAngle);
+      } else {
+        newAngle = forceBetween0AndTwoPi(deltaAngle + oldAngle);
       }
-      let degrees = radToDeg(rotation);
-      degrees = round(degrees, CONSTRAINED_ANGLE_INCREMENT);
-      return degToRad(degrees);
+      newAngle = roundAngleByConstrained(newAngle, isShiftPressed);
+      return newAngle - oldAngle;
+
+      function roundAngleByConstrained(rotation: number, isShiftPressed: boolean): number {
+        if (!isShiftPressed) {
+          return rotation;
+        }
+        let degrees = radToDeg(rotation);
+        degrees = round(degrees, CONSTRAINED_ANGLE_INCREMENT);
+        return degToRad(degrees);
+      }
     }
   }
 }

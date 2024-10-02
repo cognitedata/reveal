@@ -12,7 +12,6 @@ import {
 } from '../../../base/domainObjects/VisualDomainObject';
 import { FocusType } from '../../../base/domainObjectsHelpers/FocusType';
 import { getClosestPointOnLine } from '../../../base/utilities/extensions/rayExtensions';
-import { CDF_TO_VIEWER_TRANSFORMATION } from '@cognite/reveal';
 
 /**
  * The `PlaneDragger` class represents a utility for dragging and manipulating a plane in a 3D space.
@@ -45,7 +44,7 @@ export class PlaneDragger extends BaseDragger {
     }
     const boundingBox = root.renderTarget.sceneBoundingBox;
     this._boundingBox = boundingBox.clone();
-    this._boundingBox.applyMatrix4(CDF_TO_VIEWER_TRANSFORMATION.clone().invert());
+    this._boundingBox.applyMatrix4(root.renderTarget.fromViewerMatrix);
   }
 
   // ==================================================

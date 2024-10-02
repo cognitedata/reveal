@@ -4,7 +4,7 @@
 
 import { type Vector3, type Ray } from 'three';
 import { replaceLast } from '../utilities/extensions/arrayExtensions';
-import { type AnyIntersection, CDF_TO_VIEWER_TRANSFORMATION } from '@cognite/reveal';
+import { type AnyIntersection } from '@cognite/reveal';
 import { type DomainObject } from '../domainObjects/DomainObject';
 import { type BaseTool } from '../commands/BaseTool';
 
@@ -163,7 +163,7 @@ export abstract class BaseCreator {
   }
 
   private convertToCdfCoords(ray: Ray, point: Vector3 | undefined): void {
-    const matrix = CDF_TO_VIEWER_TRANSFORMATION.clone().invert();
+    const matrix = this._tool.renderTarget.fromViewerMatrix;
     ray.applyMatrix4(matrix);
     if (point !== undefined) {
       point.applyMatrix4(matrix);

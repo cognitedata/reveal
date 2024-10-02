@@ -19,6 +19,8 @@ import { PanelInfo } from '../../../base/domainObjectsHelpers/PanelInfo';
 import { SolidDomainObject } from '../common/SolidDomainObject';
 import { SolidPrimitiveRenderStyle } from '../common/SolidPrimitiveRenderStyle';
 import { Cylinder } from '../../../base/utilities/primitives/Cylinder';
+import { Line3, Vector3 } from 'three';
+import { type RevealRenderTarget } from '../../../base/renderTarget/RevealRenderTarget';
 
 export abstract class CylinderDomainObject extends SolidDomainObject {
   // ==================================================
@@ -37,10 +39,6 @@ export abstract class CylinderDomainObject extends SolidDomainObject {
 
   public override get typeName(): TranslateKey {
     return { key: 'MEASUREMENTS_CYLINDER', fallback: 'Cylinder' };
-  }
-
-  public override get isLegal(): boolean {
-    return this.focusType !== FocusType.Pending;
   }
 
   public override createRenderStyle(): RenderStyle | undefined {
@@ -104,6 +102,34 @@ export abstract class CylinderDomainObject extends SolidDomainObject {
 
   protected override createThreeView(): ThreeView | undefined {
     return new CylinderView();
+  }
+
+  public override getEditToolCursor(
+    renderTarget: RevealRenderTarget,
+    point?: Vector3
+  ): string | undefined {
+    if (this.focusType === FocusType.Body) {
+      return 'move';
+    } else if (this.focusType === FocusType.Face) {
+      if (this.focusFace === undefined) {
+        return undefined;
+      }
+      const { cylinder } = this;
+      if (this.focusFace.index === 2) {
+        return renderTarget.getResizeCursor(cylinder.centerA, cylinder.centerB);
+      } else {
+        if (point === undefined) {
+          return undefined;
+        }
+        const axis = new Line3(cylinder.centerA, cylinder.centerB);
+        const closestOnAxis = axis.closestPointToPoint(point, false, new Vector3());
+        return renderTarget.getResizeCursor(point, closestOnAxis);
+      }
+    } else if (this.focusType === FocusType.Rotation) {
+      return 'grab';
+    } else {
+      return undefined;
+    }
   }
 
   // ==================================================

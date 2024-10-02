@@ -14,7 +14,6 @@ import { type Transaction } from '../../../base/undo/Transaction';
 
 export abstract class SolidDomainObject extends VisualDomainObject {
   // For focus when edit in 3D (Used when isSelected is true only)
-  public focusType: FocusType = FocusType.None;
   public focusFace: BoxFace | undefined = undefined;
 
   public static GizmoOnly = 'GizmoOnly';
@@ -43,31 +42,16 @@ export abstract class SolidDomainObject extends VisualDomainObject {
     return getIconByPrimitiveType(this.primitiveType);
   }
 
-  public override get isLegal(): boolean {
-    return this.focusType !== FocusType.Pending;
-  }
-
   public override createTransaction(changed: symbol): Transaction {
     return new DomainObjectTransaction(this, changed);
   }
 
   // ==================================================
-  // VIRTUAL METHODS (To be overridden)
+  // OVERRIDES of VisualDomainObject
   // ==================================================
 
-  public abstract get primitiveType(): PrimitiveType;
-
-  public clear(): void {
-    this.focusType = FocusType.None;
-    this.focusFace = undefined;
-  }
-
-  // ==================================================
-  // INSTANCE METHODS: Others
-  // ==================================================
-
-  public setFocusInteractive(focusType: FocusType, focusFace?: BoxFace): boolean {
-    const changeFromPending =
+  public override setFocusInteractive(focusType: FocusType, focusFace?: BoxFace): boolean {
+    const changedFromPending =
       this.focusType === FocusType.Pending && focusType !== FocusType.Pending;
     if (focusType === FocusType.None) {
       if (this.focusType === FocusType.None) {
@@ -83,9 +67,20 @@ export abstract class SolidDomainObject extends VisualDomainObject {
       this.focusFace = focusFace;
     }
     this.notify(Changes.focus);
-    if (changeFromPending) {
+    if (changedFromPending) {
       this.notify(Changes.geometry);
     }
     return true;
+  }
+
+  // ==================================================
+  // VIRTUAL METHODS (To be overridden)
+  // ==================================================
+
+  public abstract get primitiveType(): PrimitiveType;
+
+  public clear(): void {
+    this.focusType = FocusType.None;
+    this.focusFace = undefined;
   }
 }

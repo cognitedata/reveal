@@ -3,7 +3,6 @@
  */
 
 import { ExampleDomainObject } from './ExampleDomainObject';
-import { CDF_TO_VIEWER_TRANSFORMATION } from '@cognite/reveal';
 import { type BaseCommand } from '../../base/commands/BaseCommand';
 import { BaseEditTool } from '../../base/commands/BaseEditTool';
 import { Changes } from '../../base/domainObjectsHelpers/Changes';
@@ -81,8 +80,9 @@ export class ExampleTool extends BaseEditTool {
   public override async onHover(event: PointerEvent): Promise<void> {
     const intersection = await this.getIntersection(event);
     // Just set the cursor
-    if (this.getIntersectedSelectableDomainObject(intersection) !== undefined) {
-      this.renderTarget.setMoveCursor();
+    const domainObject = this.getIntersectedSelectableDomainObject(intersection);
+    if (domainObject !== undefined) {
+      this.renderTarget.cursor = domainObject.getEditToolCursor(this.renderTarget);
     } else if (intersection !== undefined) {
       this.renderTarget.setCrosshairCursor();
     } else {
@@ -104,10 +104,7 @@ export class ExampleTool extends BaseEditTool {
         return;
       }
     }
-    const center = intersection.point.clone();
-    const matrix = CDF_TO_VIEWER_TRANSFORMATION.clone().invert();
-    center.applyMatrix4(matrix);
-
+    const center = this.renderTarget.convertFromViewerCoordinates(intersection.point);
     const domainObject = new ExampleDomainObject();
     domainObject.center.copy(center);
 
@@ -117,7 +114,7 @@ export class ExampleTool extends BaseEditTool {
     domainObject.setSelectedInteractive(true);
 
     this.addTransaction(domainObject.createTransaction(Changes.added));
-    this.renderTarget.setMoveCursor();
+    this.renderTarget.cursor = domainObject.getEditToolCursor(this.renderTarget);
   }
 
   public override getToolbar(): Array<BaseCommand | undefined> {

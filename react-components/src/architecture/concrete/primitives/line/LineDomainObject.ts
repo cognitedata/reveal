@@ -31,7 +31,6 @@ export abstract class LineDomainObject extends VisualDomainObject {
 
   public readonly points: Vector3[] = [];
   private readonly _primitiveType: PrimitiveType;
-  public focusType = FocusType.None;
 
   // ==================================================
   // INSTANCE PROPERTIES
@@ -76,7 +75,7 @@ export abstract class LineDomainObject extends VisualDomainObject {
   }
 
   public override get isLegal(): boolean {
-    if (this.focusType !== FocusType.Pending) {
+    if (super.isLegal) {
       return true;
     }
     switch (this.primitiveType) {
@@ -234,19 +233,5 @@ export abstract class LineDomainObject extends VisualDomainObject {
     for (const point of this.points) {
       boundingBox.expandByPoint(point);
     }
-  }
-
-  public setFocusInteractive(focusType: FocusType): boolean {
-    if (this.focusType === focusType) {
-      return false;
-    }
-    const changeFromPending =
-      this.focusType === FocusType.Pending && focusType !== FocusType.Pending;
-    this.focusType = focusType;
-    this.notify(Changes.focus);
-    if (changeFromPending) {
-      this.notify(Changes.geometry);
-    }
-    return true;
   }
 }

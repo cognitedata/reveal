@@ -139,6 +139,8 @@ export abstract class BaseFilterItemCommand extends RenderTargetCommand {
   // ==================================================
 
   public override invokeCore(): boolean {
+    // Toggle the checked state, you do npt need to override this method
+    // as long as setCheckedCore and isChecked are overridden
     return this.setCheckedCore(!this.isChecked);
   }
 
