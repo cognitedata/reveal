@@ -15,6 +15,8 @@ import { ObservationsTool } from '../../architecture/concrete/observations/Obser
 import { createButtonFromCommandConstructor } from './CommandButtons';
 import { SettingsCommand } from '../../architecture/base/concreteCommands/SettingsCommand';
 import { PointCloudFilterCommand } from '../../architecture';
+import { SetOrbitOrFirstPersonModeCommand } from '../../architecture/base/concreteCommands/SetOrbitOrFirstPersonModeCommand';
+
 import { AnnotationsShowCommand } from '../../architecture/concrete/annotations/commands/AnnotationsShowCommand';
 import { AnnotationsShowOnTopCommand } from '../../architecture/concrete/annotations/commands/AnnotationsShowOnTopCommand';
 import { AnnotationsCreateTool } from '../../architecture/concrete/annotations/commands/AnnotationsCreateTool';
@@ -41,12 +43,15 @@ export class RevealButtons {
 
   static Clip = (): ReactElement => createButtonFromCommandConstructor(() => new ClipTool());
 
-  static SetFlexibleControlsTypeOrbit = (): ReactElement =>
+  static SetOrbitOrFirstPersonMode = (): ReactElement =>
+    createButtonFromCommandConstructor(() => new SetOrbitOrFirstPersonModeCommand());
+
+  static SetOrbitMode = (): ReactElement =>
     createButtonFromCommandConstructor(
       () => new SetFlexibleControlsTypeCommand(FlexibleControlsType.Orbit)
     );
 
-  static SetFlexibleControlsTypeFirstPerson = (): ReactElement =>
+  static SetFirstPersonMode = (): ReactElement =>
     createButtonFromCommandConstructor(
       () => new SetFlexibleControlsTypeCommand(FlexibleControlsType.FirstPerson)
     );

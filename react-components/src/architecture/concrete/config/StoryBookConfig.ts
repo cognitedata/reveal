@@ -2,10 +2,7 @@
  * Copyright 2024 Cognite AS
  */
 
-import { FlexibleControlsType } from '@cognite/reveal';
 import { type BaseCommand } from '../../base/commands/BaseCommand';
-import { PopupStyle } from '../../base/domainObjectsHelpers/PopupStyle';
-import { SetFlexibleControlsTypeCommand } from '../../base/concreteCommands/SetFlexibleControlsTypeCommand';
 import { SetTerrainVisibleCommand } from '../terrain/SetTerrainVisibleCommand';
 import { UpdateTerrainCommand } from '../terrain/UpdateTerrainCommand';
 import { FitViewCommand } from '../../base/concreteCommands/FitViewCommand';
@@ -25,6 +22,8 @@ import { SettingsCommand } from '../../base/concreteCommands/SettingsCommand';
 import { MockSettingsCommand } from '../../base/commands/mocks/MockSettingsCommand';
 import { MockFilterCommand } from '../../base/commands/mocks/MockFilterCommand';
 import { ToggleAllModelsVisibleCommand } from '../../base/concreteCommands/ToggleAllModelsVisibleCommand';
+import { SetOrbitOrFirstPersonModeCommand } from '../../base/concreteCommands/SetOrbitOrFirstPersonModeCommand';
+
 import { AnnotationsCreateTool } from '../annotations/commands/AnnotationsCreateTool';
 import { AnnotationsShowCommand } from '../annotations/commands/AnnotationsShowCommand';
 import { AnnotationsShowOnTopCommand } from '../annotations/commands/AnnotationsShowOnTopCommand';
@@ -39,16 +38,19 @@ export class StoryBookConfig extends BaseRevealConfig {
     return new NavigationTool();
   }
 
-  public override createMainToolbar(): Array<BaseCommand | undefined> {
+  public override createTopToolbar(): Array<BaseCommand | undefined> {
     return [
-      new SetFlexibleControlsTypeCommand(FlexibleControlsType.Orbit),
-      new SetFlexibleControlsTypeCommand(FlexibleControlsType.FirstPerson),
-      undefined,
+      new SetOrbitOrFirstPersonModeCommand(),
       new FitViewCommand(),
       new SetAxisVisibleCommand(),
+      new KeyboardSpeedCommand()
+    ];
+  }
+
+  public override createMainToolbar(): Array<BaseCommand | undefined> {
+    return [
       new ToggleAllModelsVisibleCommand(),
       new ToggleMetricUnitsCommand(),
-      new KeyboardSpeedCommand(),
       new SettingsCommand(),
       new MockSettingsCommand(),
       new MockFilterCommand(),
@@ -67,10 +69,6 @@ export class StoryBookConfig extends BaseRevealConfig {
       new UpdateTerrainCommand(),
       undefined
     ];
-  }
-
-  public override createMainToolbarStyle(): PopupStyle {
-    return new PopupStyle({ right: 0, top: 0, horizontal: false });
   }
 
   public override createAxisGizmoTool(): AxisGizmoTool | undefined {

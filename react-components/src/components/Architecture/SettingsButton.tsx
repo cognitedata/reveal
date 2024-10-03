@@ -34,7 +34,7 @@ import { type TranslateDelegate } from '../../architecture/base/utilities/Transl
 import styled from 'styled-components';
 import { type BaseSettingsCommand } from '../../architecture/base/commands/BaseSettingsCommand';
 import { BaseOptionCommand } from '../../architecture/base/commands/BaseOptionCommand';
-import { OptionButton } from './OptionButton';
+import { DropdownButton } from './DropdownButton';
 import { BaseSliderCommand } from '../../architecture/base/commands/BaseSliderCommand';
 import { BaseFilterCommand } from '../../architecture/base/commands/BaseFilterCommand';
 import { FilterButton } from './FilterButton';
@@ -131,7 +131,7 @@ export const SettingsButton = ({
           disabled={!isEnabled}
           toggled={isOpen}
           aria-label={label}
-          iconPlacement="right"
+          iconPlacement="left"
           onClick={(event: MouseEvent<HTMLElement>) => {
             event.stopPropagation();
             event.preventDefault();
@@ -148,7 +148,7 @@ function createMenuItem(command: BaseCommand, t: TranslateDelegate): ReactElemen
     return createSlider(command, t);
   }
   if (command instanceof BaseOptionCommand) {
-    return createOptionButton(command, t);
+    return createDropdownButton(command, t);
   }
   if (command instanceof BaseFilterCommand) {
     return createFilterButton(command, t);
@@ -226,14 +226,14 @@ function createSlider(command: BaseSliderCommand, t: TranslateDelegate): ReactEl
   );
 }
 
-function createOptionButton(command: BaseOptionCommand, t: TranslateDelegate): ReactElement {
+function createDropdownButton(command: BaseOptionCommand, t: TranslateDelegate): ReactElement {
   if (!command.isVisible) {
     return <></>;
   }
   return (
     <OptionDiv>
       <label>{command.getLabel(t)}</label>
-      <OptionButton inputCommand={command} isHorizontal={false} usedInSettings={true} />
+      <DropdownButton inputCommand={command} isHorizontal={false} usedInSettings={true} />
     </OptionDiv>
   );
 }
