@@ -62,7 +62,7 @@ export const CommandButton = ({
         disabled={!isEnabled}
         toggled={isChecked}
         aria-label={label}
-        iconPlacement="right"
+        iconPlacement="left"
         onClick={() => {
           command.invoke();
           renderTarget.domElement.focus();

@@ -10,14 +10,16 @@ import { type TranslateKey } from '../utilities/TranslateKey';
 
 export class SetFlexibleControlsTypeCommand extends RenderTargetCommand {
   private readonly _controlsType: FlexibleControlsType;
+  private readonly _standAlone: boolean; // False if part of a group
 
   // ==================================================
   // CONSTRUCTOR
   // ==================================================
 
-  public constructor(controlsType: FlexibleControlsType) {
+  public constructor(controlsType: FlexibleControlsType, standAlone: boolean = true) {
     super();
     this._controlsType = controlsType;
+    this._standAlone = standAlone;
   }
 
   // ==================================================
@@ -37,6 +39,9 @@ export class SetFlexibleControlsTypeCommand extends RenderTargetCommand {
 
   public override dispose(): void {
     super.dispose();
+    if (!this._standAlone) {
+      return; // Done by parent
+    }
     const { flexibleCameraManager } = this.renderTarget;
     flexibleCameraManager.removeControlsTypeChangeListener(this._controlsTypeChangeHandler);
   }
@@ -85,6 +90,9 @@ export class SetFlexibleControlsTypeCommand extends RenderTargetCommand {
 
   public override attach(renderTarget: RevealRenderTarget): void {
     super.attach(renderTarget);
+    if (!this._standAlone) {
+      return; // Done by parent
+    }
     const { flexibleCameraManager } = renderTarget;
     flexibleCameraManager.addControlsTypeChangeListener(this._controlsTypeChangeHandler);
   }
