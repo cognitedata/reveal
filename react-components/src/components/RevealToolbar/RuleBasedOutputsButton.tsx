@@ -52,7 +52,7 @@ export const RuleBasedOutputsButton = ({
 
   const { data: ruleInstancesResult } = useFetchRuleInstances();
 
-  const disabled = isAssetMappingsFetched ? false : isAssetMappingsLoading;
+  const disabled = isAssetMappingsLoading && !isAssetMappingsFetched;
 
   useEffect(() => {
     setRuleInstances(ruleInstancesResult);

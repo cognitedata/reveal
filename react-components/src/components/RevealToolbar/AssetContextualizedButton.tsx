@@ -32,7 +32,7 @@ export const AssetContextualizedButton = ({
   const cadModels = models.filter((model) => model.type === 'cad') as CadModelOptions[];
   const [enableContextualizedStyling, setEnableContextualizedStyling] = useState<boolean>(false);
   const { isLoading, isFetched } = useAssetMappedNodesForRevisions(cadModels);
-  const disabled = isFetched ? false : isLoading;
+  const disabled = isLoading && !isFetched;
 
   const tooltip = disabled ? tooltipMapping.true : tooltipMapping.false;
 
