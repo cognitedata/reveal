@@ -5,6 +5,7 @@
 import { type IconName } from '../utilities/IconName';
 import { type TranslateDelegate, type TranslateKey } from '../utilities/TranslateKey';
 import { clear, remove } from '../utilities/extensions/arrayExtensions';
+import { isMacOs } from '../utilities/extensions/isMacOs';
 
 /**
  * Represents a delegate function for updating a command.
@@ -182,7 +183,7 @@ export abstract class BaseCommand {
     }
     const keys: string[] = [];
     if (this.shortCutKeyOnCtrl) {
-      keys.push('Ctrl');
+      keys.push(isMacOs() ? 'Cmd' : 'Ctrl');
     }
     if (this.shortCutKeyOnAlt) {
       keys.push('Alt');

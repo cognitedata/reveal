@@ -5,8 +5,8 @@
 import { type RenderStyle } from '../../../base/renderStyles/RenderStyle';
 import { type ThreeView } from '../../../base/views/ThreeView';
 import { LineView } from './LineView';
-import { Box3, Vector3 } from 'three';
-import { PrimitiveType } from '../PrimitiveType';
+import { type Box3, Vector3 } from 'three';
+import { PrimitiveType } from '../../../base/utilities/primitives/PrimitiveType';
 import { LineRenderStyle } from './LineRenderStyle';
 import {
   getHorizontalCrossProduct,
@@ -32,7 +32,6 @@ export abstract class LineDomainObject extends VisualDomainObject {
 
   public readonly points: Vector3[] = [];
   private readonly _primitiveType: PrimitiveType;
-  public focusType = FocusType.None;
 
   // ==================================================
   // INSTANCE PROPERTIES
@@ -77,7 +76,7 @@ export abstract class LineDomainObject extends VisualDomainObject {
   }
 
   public override get isLegal(): boolean {
-    if (this.focusType !== FocusType.Pending) {
+    if (super.isLegal) {
       return true;
     }
     switch (this.primitiveType) {
@@ -231,25 +230,9 @@ export abstract class LineDomainObject extends VisualDomainObject {
     return Math.abs(sum) / 2;
   }
 
-  public getBoundingBox(): Box3 {
-    const boundingBox = new Box3().makeEmpty();
+  public expandBoundingBox(boundingBox: Box3): void {
     for (const point of this.points) {
       boundingBox.expandByPoint(point);
     }
-    return boundingBox;
-  }
-
-  public setFocusInteractive(focusType: FocusType): boolean {
-    if (this.focusType === focusType) {
-      return false;
-    }
-    const changeFromPending =
-      this.focusType === FocusType.Pending && focusType !== FocusType.Pending;
-    this.focusType = focusType;
-    this.notify(Changes.focus);
-    if (changeFromPending) {
-      this.notify(Changes.geometry);
-    }
-    return true;
   }
 }

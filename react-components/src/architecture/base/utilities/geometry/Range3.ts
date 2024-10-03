@@ -310,6 +310,21 @@ export class Range3 {
     range.z.set(-halfSize, halfSize);
     return range;
   }
+
+  public static getCircleRangeMargin(normal: Vector3, radius: number): Vector3 {
+    // http://gdalgorithms-list.narkive.com/s2wbl3Cd/axis-aligned-bounding-box-of-cylinder
+    // https://en.wikipedia.org/wiki/Bounding_volume
+    const dot = normal.clone();
+    dot.multiply(normal);
+
+    if (dot.x > 1) dot.x = 1;
+    if (dot.y > 1) dot.y = 1;
+    if (dot.z > 1) dot.z = 1;
+
+    const margin = dot.set(Math.sqrt(1 - dot.x), Math.sqrt(1 - dot.y), Math.sqrt(1 - dot.z));
+    margin.multiplyScalar(radius);
+    return margin;
+  }
 }
 
 // ==================================================

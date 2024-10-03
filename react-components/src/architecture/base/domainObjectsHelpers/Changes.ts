@@ -21,10 +21,19 @@ export class Changes {
 
   // Something in the geometry changed
   public static readonly geometry: symbol = Symbol('geometry');
+  public static readonly dragging: symbol = Symbol('dragging');
+
+  // Part of the domain object changed
+  public static readonly changedPart: symbol = Symbol('changedPart');
+  public static readonly deletedPart: symbol = Symbol('deletedPart');
+  public static readonly addedPart: symbol = Symbol('addedPart');
+  public static readonly newPending: symbol = Symbol('newPending');
 
   // Parent-child relationship changed
   public static readonly added: symbol = Symbol('added'); // When added to the system
   public static readonly deleted: symbol = Symbol('deleted'); // When deleted from the system
   public static readonly childDeleted: symbol = Symbol('childDeleted'); // When a child is deleted
   public static readonly childAdded: symbol = Symbol('childAdded'); // When a child is added
+
+  public static readonly loaded: symbol = Symbol('loaded');
 }

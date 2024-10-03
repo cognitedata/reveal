@@ -26,9 +26,12 @@ export function replaceLast<T>(array: T[], element: T): void {
   }
 }
 
-export function remove<T>(array: T[], element: T): void {
+export function remove<T>(array: T[], element: T): boolean {
+  // Return true if changed
   const index = array.indexOf(element);
-  if (index >= 0) {
-    removeAt(array, index);
+  if (index < 0) {
+    return false;
   }
+  removeAt(array, index);
+  return true;
 }

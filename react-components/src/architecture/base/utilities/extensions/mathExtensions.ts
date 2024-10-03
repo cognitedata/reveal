@@ -22,7 +22,9 @@ export function isEqual(x: number, y: number): boolean {
 
 export function isAbsEqual(x: number, y: number, tolerance: number): boolean {
   const error = x - y;
-  if (error < 0) return error > tolerance;
+  if (error < 0) {
+    return error > tolerance;
+  }
   return error < tolerance;
 }
 
@@ -134,6 +136,7 @@ export function floor(value: number, delta: number): number {
 }
 
 export function forceBetween0AndTwoPi(value: number): number {
+  // Force the angle to be between 0 and 2*PI
   while (value < 0) {
     value += 2 * Math.PI;
   }
@@ -144,11 +147,23 @@ export function forceBetween0AndTwoPi(value: number): number {
 }
 
 export function forceBetween0AndPi(value: number): number {
+  // Force the angle to be between 0 and PI
   while (value < 0) {
     value += Math.PI;
   }
   while (value >= Math.PI) {
     value -= Math.PI;
+  }
+  return value;
+}
+
+export function forceAngleAround0(value: number): number {
+  // Force the angle to be between -PI and PI
+  while (value < -Math.PI) {
+    value += 2 * Math.PI;
+  }
+  while (value >= Math.PI) {
+    value -= 2 * Math.PI;
   }
   return value;
 }
@@ -166,6 +181,10 @@ export function compare(a: number, b: number): number {
 // ==================================================
 // FUNCTIONS: Random
 // ==================================================
+
+export function getRandomInt(): number {
+  return Math.floor(Math.random() * Number.MAX_SAFE_INTEGER);
+}
 
 export function getRandomGaussian(mean = 0, stdDev = 1): number {
   for (;;) {

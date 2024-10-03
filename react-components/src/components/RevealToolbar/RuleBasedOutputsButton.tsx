@@ -45,7 +45,8 @@ export const RuleBasedOutputsButton = ({
 
   const [isRuleLoading, setIsRuleLoading] = useState(false);
 
-  const { isLoading: isAssetMappingsLoading } = useAssetMappedNodesForRevisions(cadModels);
+  const { isLoading: isAssetMappingsLoading, isFetched: isAssetMappingsFetched } =
+    useAssetMappedNodesForRevisions(cadModels);
 
   const [newRuleSetEnabled, setNewRuleSetEnabled] = useState<RuleAndEnabled>();
   const isRuleLoadingFromContext = useReveal3DResourcesStylingLoading();
@@ -53,6 +54,8 @@ export const RuleBasedOutputsButton = ({
   const [isAllMappingsFetched, setIsAllMappingsFetched] = useState(false);
 
   const { data: ruleInstancesResult } = useFetchRuleInstances();
+
+  const disabled = isAssetMappingsLoading && !isAssetMappingsFetched;
 
   useEffect(() => {
     setRuleInstances(ruleInstancesResult);
@@ -127,7 +130,7 @@ export const RuleBasedOutputsButton = ({
   return (
     <Menu
       placement="right-start"
-      disabled={isAssetMappingsLoading}
+      disabled={disabled}
       style={{
         maxHeight: 300,
         overflow: 'auto',
@@ -142,7 +145,7 @@ export const RuleBasedOutputsButton = ({
           appendTo={document.body}>
           <Button
             icon=<ColorPaletteIcon />
-            disabled={isAssetMappingsLoading}
+            disabled={disabled}
             aria-label="Select RuleSet"
             type="ghost"
             {...props}

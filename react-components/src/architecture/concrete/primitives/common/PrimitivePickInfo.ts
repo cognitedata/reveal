@@ -2,16 +2,16 @@
  * Copyright 2024 Cognite AS
  */
 
-import { type FocusType } from '../../domainObjectsHelpers/FocusType';
+import { type FocusType } from '../../../base/domainObjectsHelpers/FocusType';
 import { type BoxFace } from './BoxFace';
 import { type Vector3 } from 'three';
 
 /**
  * Represents information about a picked box.
  */
-export class BoxPickInfo {
+export class PrimitivePickInfo {
   /**
-   * The face of the box that was picked.
+   * The face of the primitive that was picked.
    */
   public readonly face: BoxFace;
 
@@ -26,7 +26,7 @@ export class BoxPickInfo {
   public readonly cornerSign: Vector3;
 
   /**
-   * Creates a new instance of BoxPickInfo.
+   * Creates a new instance of PrimitivePickInfo.
    * @param face The face of the box that was picked.
    * @param focusType The type of focus on the picked box.
    * @param cornerSign Indicates the corner of the face.

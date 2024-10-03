@@ -52,7 +52,7 @@ export abstract class ThreeView<
 
   public override update(change: DomainObjectChange): void {
     super.update(change);
-    if (change.isChanged(Changes.geometry)) {
+    if (change.isChanged(Changes.geometry, Changes.dragging)) {
       this.invalidateBoundingBox();
       this.invalidateRenderTarget();
     }

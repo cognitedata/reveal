@@ -7,14 +7,12 @@ import { type ThreeView } from '../../../base/views/ThreeView';
 import { PlaneView } from './PlaneView';
 import { type Color, Plane, Vector3 } from 'three';
 import { Changes } from '../../../base/domainObjectsHelpers/Changes';
-import { FocusType } from '../../../base/domainObjectsHelpers/FocusType';
-import { PrimitiveType } from '../PrimitiveType';
+import { PrimitiveType } from '../../../base/utilities/primitives/PrimitiveType';
 import { type BaseDragger } from '../../../base/domainObjectsHelpers/BaseDragger';
 import {
   VisualDomainObject,
   type CreateDraggerProps
 } from '../../../base/domainObjects/VisualDomainObject';
-import { PlaneRenderStyle } from './PlaneRenderStyle';
 import { PlaneDragger } from './PlaneDragger';
 import { getIconByPrimitiveType } from '../../measurements/getIconByPrimitiveType';
 import { getComplementary } from '../../../base/utilities/colors/colorExtensions';
@@ -31,6 +29,8 @@ import { type DomainObjectChange } from '../../../base/domainObjectsHelpers/Doma
 import { DomainObjectTransaction } from '../../../base/undo/DomainObjectTransaction';
 import { type Transaction } from '../../../base/undo/Transaction';
 import { type IconName } from '../../../base/utilities/IconName';
+import { SolidPrimitiveRenderStyle } from '../common/SolidPrimitiveRenderStyle';
+import { type RevealRenderTarget } from '../../../base/renderTarget/RevealRenderTarget';
 
 const ORIGIN = new Vector3(0, 0, 0);
 
@@ -43,15 +43,12 @@ export abstract class PlaneDomainObject extends VisualDomainObject {
   private readonly _primitiveType: PrimitiveType;
   private _backSideColor: Color | undefined = undefined;
 
-  // For focus when edit in 3D (Used when isSelected is true only)
-  public focusType: FocusType = FocusType.None;
-
   // ==================================================
   // INSTANCE PROPERTIES
   // ==================================================
 
-  public get renderStyle(): PlaneRenderStyle {
-    return this.getRenderStyle() as PlaneRenderStyle;
+  public get renderStyle(): SolidPrimitiveRenderStyle {
+    return this.getRenderStyle() as SolidPrimitiveRenderStyle;
   }
 
   public get primitiveType(): PrimitiveType {
@@ -101,12 +98,13 @@ export abstract class PlaneDomainObject extends VisualDomainObject {
     }
   }
 
-  public override get isLegal(): boolean {
-    return this.focusType !== FocusType.Pending;
-  }
-
   public override createRenderStyle(): RenderStyle | undefined {
-    return new PlaneRenderStyle();
+    const style = new SolidPrimitiveRenderStyle();
+    style.selectedOpacity = 0.5;
+    style.opacity = style.selectedOpacity / 2;
+    style.lineWidth = 1;
+    style.selectedLineWidth = 2;
+    return style;
   }
 
   public override createDragger(props: CreateDraggerProps): BaseDragger | undefined {
@@ -170,6 +168,17 @@ export abstract class PlaneDomainObject extends VisualDomainObject {
   }
 
   // ==================================================
+  // OVERRIDES of VisualDomainObject
+  // ==================================================
+
+  public override getEditToolCursor(
+    _renderTarget: RevealRenderTarget,
+    _point?: Vector3
+  ): string | undefined {
+    return 'move';
+  }
+
+  // ==================================================
   // INSTANCE METHODS / PROPERTIES: Geometrical getters
   // ==================================================
 
@@ -199,20 +208,6 @@ export abstract class PlaneDomainObject extends VisualDomainObject {
   // ==================================================
   // INSTANCE METHODS: Others
   // ==================================================
-
-  public setFocusInteractive(focusType: FocusType): boolean {
-    if (this.focusType === focusType) {
-      return false;
-    }
-    const changeFromPending =
-      this.focusType === FocusType.Pending && focusType !== FocusType.Pending;
-    this.focusType = focusType;
-    this.notify(Changes.focus);
-    if (changeFromPending) {
-      this.notify(Changes.geometry);
-    }
-    return true;
-  }
 
   public flip(): void {
     const { plane } = this;

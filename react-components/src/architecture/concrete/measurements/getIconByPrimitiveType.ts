@@ -3,7 +3,7 @@
  */
 
 import { type IconName } from '../../base/utilities/IconName';
-import { PrimitiveType } from '../primitives/PrimitiveType';
+import { PrimitiveType } from '../../base/utilities/primitives/PrimitiveType';
 
 export function getIconByPrimitiveType(primitiveType: PrimitiveType): IconName {
   switch (primitiveType) {
@@ -27,6 +27,10 @@ export function getIconByPrimitiveType(primitiveType: PrimitiveType): IconName {
       return 'Perspective';
     case PrimitiveType.Box:
       return 'Cube';
+    case PrimitiveType.Cylinder:
+      return 'DataSource';
+    case PrimitiveType.None:
+      return 'Edit';
     default:
       throw new Error('Unrecognized PrimitiveType ' + primitiveType);
   }

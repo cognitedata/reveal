@@ -96,8 +96,7 @@ export class ObservationsDomainObject extends VisualDomainObject {
   }
 
   public async save(): Promise<void> {
-    const fdmSdk = this.rootDomainObject?.renderTarget.fdmSdk;
-
+    const fdmSdk = this.rootDomainObject?.fdmSdk;
     if (fdmSdk === undefined) {
       return fdmSdk;
     }
