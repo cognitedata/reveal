@@ -52,10 +52,7 @@ export class StoryBookConfig extends BaseRevealConfig {
       new ToggleAllModelsVisibleCommand(),
       new ToggleMetricUnitsCommand(),
       new SettingsCommand(),
-      new MockSettingsCommand(),
-      new MockFilterCommand(),
       undefined,
-      new ExampleTool(),
       new MeasurementTool(),
       new ClipTool(),
       new ObservationsTool(),
@@ -65,8 +62,12 @@ export class StoryBookConfig extends BaseRevealConfig {
       new AnnotationsShowCommand(),
       new AnnotationsShowOnTopCommand(),
       undefined,
+      new ExampleTool(),
       new SetTerrainVisibleCommand(),
       new UpdateTerrainCommand(),
+      undefined,
+      new MockSettingsCommand(),
+      new MockFilterCommand(),
       undefined
     ];
   }
