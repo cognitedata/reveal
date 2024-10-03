@@ -7,7 +7,6 @@ import {
   useCallback,
   useEffect,
   useMemo,
-  useRef,
   useState,
   type ReactElement
 } from 'react';

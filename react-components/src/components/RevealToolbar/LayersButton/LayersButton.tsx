@@ -13,7 +13,6 @@ import { useReveal } from '../../RevealCanvas/ViewerContext';
 import { WholeLayerVisibilitySelectItem } from './WholeLayerVisibilitySelectItem';
 import { ModelLayersList } from './ModelLayersList';
 import { type DefaultLayersConfiguration, type LayersUrlStateParam } from './types';
-import styled from 'styled-components';
 import { TOOLBAR_HORIZONTAL_PANEL_OFFSET } from '../../constants';
 
 export type LayersButtonProps = {

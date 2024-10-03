@@ -152,7 +152,7 @@ export const FilterButton = ({
     </Menu>
   );
 
-  function getButtonIcon(usedInSettings: boolean, isOpen: boolean) {
+  function getButtonIcon(usedInSettings: boolean, isOpen: boolean): ReactElement {
     return usedInSettings ? (
       isOpen ? (
         <ChevronUpIcon />
