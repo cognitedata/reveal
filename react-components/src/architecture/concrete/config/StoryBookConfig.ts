@@ -67,8 +67,7 @@ export class StoryBookConfig extends BaseRevealConfig {
       new UpdateTerrainCommand(),
       undefined,
       new MockSettingsCommand(),
-      new MockFilterCommand(),
-      undefined
+      new MockFilterCommand()
     ];
   }
 
