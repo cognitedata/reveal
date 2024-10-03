@@ -5,8 +5,8 @@
 import { useMemo, type ReactElement } from 'react';
 import { Divider } from '@cognite/cogs.js';
 import { type BaseCommand } from '../../architecture/base/commands/BaseCommand';
-import { OptionButton } from './OptionButton';
-import { BaseOptionCommand } from '../../architecture/base/commands/BaseOptionCommand';
+import { DropdownButton } from './DropdownButton';
+import { BaseOptionCommand, OptionType } from '../../architecture/base/commands/BaseOptionCommand';
 import { CommandButton } from './CommandButton';
 import { SettingsButton } from './SettingsButton';
 import { BaseSettingsCommand } from '../../architecture/base/commands/BaseSettingsCommand';
@@ -22,10 +22,13 @@ export function createButton(command: BaseCommand, isHorizontal = false): ReactE
     return <SettingsButton inputCommand={command} isHorizontal={isHorizontal} />;
   }
   if (command instanceof BaseOptionCommand) {
-    if (command.isOptionMenu) {
-      return <OptionButton inputCommand={command} isHorizontal={isHorizontal} />;
-    } else {
-      return <SegmentedButtons inputCommand={command} isHorizontal={isHorizontal} />;
+    switch (command.optionType) {
+      case OptionType.Dropdown:
+        return <DropdownButton inputCommand={command} isHorizontal={isHorizontal} />;
+      case OptionType.Segmented:
+        return <SegmentedButtons inputCommand={command} isHorizontal={isHorizontal} />;
+      default:
+        return <></>;
     }
   }
   return <CommandButton inputCommand={command} isHorizontal={isHorizontal} />;

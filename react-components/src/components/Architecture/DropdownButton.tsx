@@ -28,7 +28,7 @@ import { type TranslateDelegate } from '../../architecture/base/utilities/Transl
 import { useClickOutside } from './useClickOutside';
 import { DEFAULT_PADDING, OPTION_MIN_WIDTH } from './constants';
 
-export const OptionButton = ({
+export const DropdownButton = ({
   inputCommand,
   isHorizontal = false,
   usedInSettings = false

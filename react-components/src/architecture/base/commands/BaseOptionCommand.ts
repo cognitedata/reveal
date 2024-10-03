@@ -5,18 +5,22 @@
 import { type BaseCommand } from './BaseCommand';
 import { RenderTargetCommand } from './RenderTargetCommand';
 
+export enum OptionType {
+  Dropdown,
+  Segmented
+}
+
 /**
  * Base class for all option like commands. Override createOptions to add options
  * or use add method to add them in.
  */
 
 export abstract class BaseOptionCommand extends RenderTargetCommand {
-  public readonly isOptionMenu;
-
   // ==================================================
   // INSTANCE FIELDS/PROPERTIES
   // ==================================================
 
+  public readonly optionType: OptionType;
   private _children: BaseCommand[] | undefined = undefined;
 
   public get children(): BaseCommand[] | undefined {
@@ -34,9 +38,9 @@ export abstract class BaseOptionCommand extends RenderTargetCommand {
   // CONSTRUCTOR
   // ==================================================
 
-  public constructor(isOptionMenu: boolean = true) {
+  public constructor(optionType: OptionType = OptionType.Dropdown) {
     super();
-    this.isOptionMenu = isOptionMenu;
+    this.optionType = optionType;
   }
 
   // ==================================================

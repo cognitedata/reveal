@@ -5,7 +5,7 @@
 import { type RevealRenderTarget } from '../renderTarget/RevealRenderTarget';
 import { FlexibleControlsType } from '@cognite/reveal';
 import { type TranslateKey } from '../utilities/TranslateKey';
-import { BaseOptionCommand } from '../commands/BaseOptionCommand';
+import { BaseOptionCommand, OptionType } from '../commands/BaseOptionCommand';
 import { SetFlexibleControlsTypeCommand } from './SetFlexibleControlsTypeCommand';
 
 export class SetOrbitOrFirstPersonModeCommand extends BaseOptionCommand {
@@ -14,7 +14,7 @@ export class SetOrbitOrFirstPersonModeCommand extends BaseOptionCommand {
   // ==================================================
 
   public constructor() {
-    super(false);
+    super(OptionType.Segmented);
     this.add(new SetFlexibleControlsTypeCommand(FlexibleControlsType.Orbit, false));
     this.add(new SetFlexibleControlsTypeCommand(FlexibleControlsType.FirstPerson, false));
   }
