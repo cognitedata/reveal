@@ -116,24 +116,23 @@ const ButtonsControlTypeSelector = ({
 }: ControlTypeSelectionProps): ReactElement => {
   return (
     <ButtonsContainer>
-      {options.map((controlType) => {
-        return (
-          <CogsTooltip
-            content={getLabel(translateDelegate, controlType)}
-            placement="right"
-            appendTo={document.body}
-            key={controlType}>
-            <Button
-              type="ghost"
-              icon=<IconComponent iconName={getIcon(controlType)} />
-              toggled={selectedControlsType === controlType}
-              aria-label={getLabel(translateDelegate, controlType)}
-              onClick={() => {
-                setSelectedControlsType(controlType);
-              }}></Button>
-          </CogsTooltip>
-        );
-      })}
+      {options.map((controlType) => (
+        <CogsTooltip
+          content={getLabel(translateDelegate, controlType)}
+          placement="right"
+          appendTo={document.body}
+          key={controlType}>
+          <Button
+            type="ghost"
+            icon=<IconComponent iconName={getIcon(controlType)} />
+            toggled={selectedControlsType === controlType}
+            aria-label={getLabel(translateDelegate, controlType)}
+            onClick={() => {
+              setSelectedControlsType(controlType);
+            }}
+          />
+        </CogsTooltip>
+      ))}
     </ButtonsContainer>
   );
 };
@@ -154,14 +153,13 @@ const SegmentedControlTypeSelector = ({
       }}
       currentKey={selectedControlsType}
       fullWidth>
-      {options.map((controlsType) => {
-        const iconName = getIcon(controlsType);
-        return (
-          <SegmentedControl.Button key={controlsType} icon={<IconComponent iconName={iconName} />}>
-            {getLabel(translateDelegate, controlsType)}
-          </SegmentedControl.Button>
-        );
-      })}
+      {options.map((controlsType) => (
+        <SegmentedControl.Button
+          key={controlsType}
+          icon={<IconComponent iconName={getIcon(controlsType)} />}>
+          {getLabel(translateDelegate, controlsType)}
+        </SegmentedControl.Button>
+      ))}
     </SegmentedControl>
   </CogsTooltip>
 );
