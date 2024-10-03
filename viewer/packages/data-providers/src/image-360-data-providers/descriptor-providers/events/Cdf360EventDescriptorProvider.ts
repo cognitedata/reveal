@@ -120,8 +120,9 @@ export class Cdf360EventDescriptorProvider implements Image360DescriptorProvider
       const req = { filter, limit: 1000, partition: `${index}/${partitions}` };
       return this._client.files.list(req).autoPagingEach(fileInfo => {
         const id = fileInfo.metadata?.station_id;
-        if (!id) return;
+        if (!id) return undefined;
         addToMap(id, fileInfo);
+        return undefined;
       });
     });
 

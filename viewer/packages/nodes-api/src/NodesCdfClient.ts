@@ -118,7 +118,7 @@ export class NodesCdfClient implements NodesApiClient {
     if (response.status === 200) {
       return response.data.items;
     } else {
-      throw new HttpError(response.status, response.data, response.headers);
+      throw new HttpError(response.status, response.data as any, response.headers);
     }
   }
 
@@ -136,7 +136,7 @@ export class NodesCdfClient implements NodesApiClient {
     if (response.status === 200) {
       return response.data.items;
     } else {
-      throw new HttpError(response.status, response.data, response.headers);
+      throw new HttpError(response.status, response.data as any, response.headers);
     }
   }
 }
