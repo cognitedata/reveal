@@ -121,7 +121,7 @@ class EmulatedListResponse<T> {
     this.nextCursor = rawResponse.nextCursor;
     if (this.nextCursor !== undefined) {
       this.next = async () => {
-        const nextOptions = { ...options, data: { ...options.data, cursor: this.nextCursor } };
+        const nextOptions = { ...options, data: { ...(options.data as object), cursor: this.nextCursor } };
         const response = await postAsListResponseRaw<T>(client, url, nextOptions);
         return new EmulatedListResponse<T>(client, url, options, response);
       };

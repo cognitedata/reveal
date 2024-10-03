@@ -13,7 +13,11 @@ export async function fetchWithStatusCheck(url: string): Promise<Response> {
     response.headers.forEach((key, value) => {
       headers[key] = value;
     });
-    throw new HttpError(response.status, response.body, headers);
+    throw new HttpError(
+      response.status,
+      { error: { message: (response.body ?? '') as unknown as string, code: response.status } },
+      headers
+    );
   }
   return response;
 }

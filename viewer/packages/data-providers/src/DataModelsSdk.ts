@@ -22,9 +22,11 @@ export class DataModelsSdk {
     query: T,
     nextCursor?: QueryNextCursors<T>
   ): Promise<QueryResult<T>> {
-    const result = await this._sdk.post(this._queryEndpoint, { data: { cursors: nextCursor, ...query } });
+    const result = await this._sdk.post<{ items: object; nextCursor?: object }>(this._queryEndpoint, {
+      data: { cursors: nextCursor, ...query }
+    });
     if (result.status === 200) {
-      return { ...result.data.items, nextCursor: result.data.nextCursor };
+      return { ...result.data.items, nextCursor: result.data.nextCursor } as QueryResult<T>;
     }
     throw new Error(`Failed to fetch instances. Status: ${result.status}`);
   }
