@@ -116,17 +116,7 @@ export const FilterButton = ({
           placement={placement}>
           <Button
             type={usedInSettings ? 'tertiary' : getButtonType(command)}
-            icon={
-              usedInSettings ? (
-                isOpen ? (
-                  <ChevronUpIcon />
-                ) : (
-                  <ChevronDownIcon />
-                )
-              ) : (
-                <IconComponent iconName={icon} />
-              )
-            }
+            icon={getButtonIcon(usedInSettings, isOpen)}
             key={uniqueId}
             disabled={!isEnabled}
             toggled={isOpen}
@@ -138,9 +128,9 @@ export const FilterButton = ({
             }}
             {...props}
             onClick={(event: MouseEvent<HTMLElement>) => {
-              props.onClick(event);
               event.stopPropagation();
               event.preventDefault();
+              props.onClick(event);
             }}>
             {usedInSettings ? selectedLabel : undefined}
           </Button>
@@ -161,6 +151,18 @@ export const FilterButton = ({
       </StyledMenuItems>
     </Menu>
   );
+
+  function getButtonIcon(usedInSettings: boolean, isOpen: boolean) {
+    return usedInSettings ? (
+      isOpen ? (
+        <ChevronUpIcon />
+      ) : (
+        <ChevronDownIcon />
+      )
+    ) : (
+      <IconComponent iconName={icon} />
+    );
+  }
 };
 
 const StyledMenuItems = styled.div`
