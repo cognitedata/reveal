@@ -1,7 +1,7 @@
 {
   "compilerOptions": {
     "target": "es6",
-    "lib": ["dom", "dom.iterable", "esnext"],
+    "lib": ["dom", "dom.iterable", "es6"],
     "allowJs": true,
     "skipLibCheck": false,
     "esModuleInterop": true,
@@ -9,7 +9,7 @@
     "strict": true,
     "sourceMap": true,
     "forceConsistentCasingInFileNames": true,
-    "module": "esnext",
+    "module": "es6",
     "moduleResolution": "bundler",
     "resolveJsonModule": true,
     "isolatedModules": true,
