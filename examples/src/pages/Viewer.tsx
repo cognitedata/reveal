@@ -92,7 +92,7 @@ export function Viewer() {
         antiAliasingHint: (urlParams.get('antialias') ?? undefined) as any,
         ssaoQualityHint: (urlParams.get('ssao') ?? undefined) as any,
         pointCloudEffects: {
-          pointBlending: urlParams.get('pointBlending') === 'true' ?? undefined,
+          pointBlending: urlParams.get('pointBlending') === 'true',
           edlOptions: edlEnabled
             ? {
                 strength: parseFloat(urlParams.get('edlStrength') ?? '0.5'),
