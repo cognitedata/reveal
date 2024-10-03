@@ -94,14 +94,11 @@ export const DomainObjectPanel = (): ReactElement => {
     const icon = item.icon;
     const { quantity, value } = item;
     const text = item?.getText(t);
-    if (iconName === undefined) {
-      return <></>;
-    }
     return (
       <tr key={JSON.stringify(item)}>
         <PaddedTh>
           {text !== undefined && <Body size={TEXT_SIZE}>{text}</Body>}
-          {icon !== undefined && <IconComponent type={iconName} iconName={iconName} />}
+          {icon !== undefined && <IconComponent type={icon} iconName={icon} />}
         </PaddedTh>
         <></>
         <NumberTh>
