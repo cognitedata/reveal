@@ -141,7 +141,7 @@ function setDefaultConfigOnNewHandlers(
 
   newHandlers.pointCloudHandlers.forEach((newHandler) => {
     if (!modelHandlers.pointCloudHandlers.some((oldHandler) => oldHandler.isSame(newHandler))) {
-      newHandler.setVisibility(containsCadModel ? defaultLayersConfig?.pointcloud ?? true : true);
+      newHandler.setVisibility(containsCadModel ? (defaultLayersConfig?.pointcloud ?? true) : true);
     }
   });
 
