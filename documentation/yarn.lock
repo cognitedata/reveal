@@ -197,12 +197,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@azure/msal-browser@npm:3.24.0":
-  version: 3.24.0
-  resolution: "@azure/msal-browser@npm:3.24.0"
+"@azure/msal-browser@npm:3.25.0":
+  version: 3.25.0
+  resolution: "@azure/msal-browser@npm:3.25.0"
   dependencies:
     "@azure/msal-common": 14.15.0
-  checksum: 3108b13aa16b0fb8ab5e080838ba0b4f4a6155d98674a084399642fc627562af8200810256f0fa8591acb831e48bd7841ddbe0e265f50f8924b0d3aecef7b766
+  checksum: 8cb55cc86236814dd280e9b0ae2c1eac46af4af3bc27d85ba163db3c5b6c5f0acef6c26accdf14fa62b6a695033e5b1715bda8310f68670d33789122249faf73
   languageName: node
   linkType: hard
 
@@ -1890,14 +1890,14 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@cognite/reveal-documentation@workspace:."
   dependencies:
-    "@azure/msal-browser": 3.24.0
+    "@azure/msal-browser": 3.25.0
     "@codemirror/lang-javascript": 6.2.2
     "@docusaurus/core": 3.5.2
     "@docusaurus/preset-classic": 3.5.2
     "@docusaurus/remark-plugin-npm2yarn": 3.5.2
-    "@types/react": 18.3.10
-    "@uiw/codemirror-theme-material": 4.23.3
-    "@uiw/react-codemirror": 4.23.3
+    "@types/react": 18.3.11
+    "@uiw/codemirror-theme-material": 4.23.4
+    "@uiw/react-codemirror": 4.23.4
     clsx: 2.1.1
     copyfiles: 2.4.1
     cross-env: 7.0.3
@@ -1909,7 +1909,7 @@ __metadata:
     rimraf: 6.0.1
     styled-components: 6.1.13
     typedoc: 0.26.7
-    typedoc-plugin-markdown: 4.2.8
+    typedoc-plugin-markdown: 4.2.9
     typedoc-plugin-no-inherit: 1.4.0
     typescript: 5.6.2
   languageName: unknown
@@ -3667,13 +3667,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/react@npm:*, @types/react@npm:18.3.10":
-  version: 18.3.10
-  resolution: "@types/react@npm:18.3.10"
+"@types/react@npm:*, @types/react@npm:18.3.11":
+  version: 18.3.11
+  resolution: "@types/react@npm:18.3.11"
   dependencies:
     "@types/prop-types": "*"
     csstype: ^3.0.2
-  checksum: 04261654b5f4bc9584e9d882c7dfd5b36dc58963f958f8c3efd24cb68c9d205bc2d57558a1479b86d7827f0e5116d5bd111791d1253583d1e1c165f0aeb48c48
+  checksum: 6cbf36673b64e758dd61b16c24139d015f58530e0d476777de26ba83f24b55e142fbf64e3b8f6b3c7b05ed9ba548551b2a62d9ffb0f95743d0a368646a619163
   languageName: node
   linkType: hard
 
@@ -3816,9 +3816,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@uiw/codemirror-extensions-basic-setup@npm:4.23.3":
-  version: 4.23.3
-  resolution: "@uiw/codemirror-extensions-basic-setup@npm:4.23.3"
+"@uiw/codemirror-extensions-basic-setup@npm:4.23.4":
+  version: 4.23.4
+  resolution: "@uiw/codemirror-extensions-basic-setup@npm:4.23.4"
   dependencies:
     "@codemirror/autocomplete": ^6.0.0
     "@codemirror/commands": ^6.0.0
@@ -3835,22 +3835,22 @@ __metadata:
     "@codemirror/search": ">=6.0.0"
     "@codemirror/state": ">=6.0.0"
     "@codemirror/view": ">=6.0.0"
-  checksum: 3ad2d1df268823278e034fff3bee7206f232c460d8678de3679842ea9a0bdb502b962ab5622c925b1821ef28cf44a6f95a193e74e5d62f2c371cdd23233fb5ad
+  checksum: 9b6516f75036e304f59ee4fdb882a8cd4951b904f4ff0d9f469cd06a270d143c0f2150663111e6d52b9660abceddfcd916cc40fdff920074a08e390e77ad388c
   languageName: node
   linkType: hard
 
-"@uiw/codemirror-theme-material@npm:4.23.3":
-  version: 4.23.3
-  resolution: "@uiw/codemirror-theme-material@npm:4.23.3"
+"@uiw/codemirror-theme-material@npm:4.23.4":
+  version: 4.23.4
+  resolution: "@uiw/codemirror-theme-material@npm:4.23.4"
   dependencies:
-    "@uiw/codemirror-themes": 4.23.3
-  checksum: 187a12ca113a86c06ed0b1ac4f518ad5078269a813902a9a3a83cb94edd37fa07df02f221c736afe957c01fbe79b20627c5b5295f78aba92bb5d224e6e09ed6a
+    "@uiw/codemirror-themes": 4.23.4
+  checksum: 7b73fc12892ee3da0b112a7c24c3cda5dc9bae991a2675f60cc9d78ccfa41c8f0c89866f8af17e6dd6dd2bfa1403107956166248d388484a3037d1f4526b47ab
   languageName: node
   linkType: hard
 
-"@uiw/codemirror-themes@npm:4.23.3":
-  version: 4.23.3
-  resolution: "@uiw/codemirror-themes@npm:4.23.3"
+"@uiw/codemirror-themes@npm:4.23.4":
+  version: 4.23.4
+  resolution: "@uiw/codemirror-themes@npm:4.23.4"
   dependencies:
     "@codemirror/language": ^6.0.0
     "@codemirror/state": ^6.0.0
@@ -3859,19 +3859,19 @@ __metadata:
     "@codemirror/language": ">=6.0.0"
     "@codemirror/state": ">=6.0.0"
     "@codemirror/view": ">=6.0.0"
-  checksum: f100424279404bdada6bbe9a48933c91ecc6e78936792010c87124a63fa38b32110db90155a50f2c433b6b9938ba6b497b187cb86e81cbb2e3ca85f1c8869e9c
+  checksum: d8e6fc25f05e389b97047b887f3cd95792d4d533a37fb195210dffbab4a09e2eb18259180e42098467285f722eda7337ddedd8150eef1aecb1dca22a90d4e69b
   languageName: node
   linkType: hard
 
-"@uiw/react-codemirror@npm:4.23.3":
-  version: 4.23.3
-  resolution: "@uiw/react-codemirror@npm:4.23.3"
+"@uiw/react-codemirror@npm:4.23.4":
+  version: 4.23.4
+  resolution: "@uiw/react-codemirror@npm:4.23.4"
   dependencies:
     "@babel/runtime": ^7.18.6
     "@codemirror/commands": ^6.1.0
     "@codemirror/state": ^6.1.1
     "@codemirror/theme-one-dark": ^6.0.0
-    "@uiw/codemirror-extensions-basic-setup": 4.23.3
+    "@uiw/codemirror-extensions-basic-setup": 4.23.4
     codemirror: ^6.0.0
   peerDependencies:
     "@babel/runtime": ">=7.11.0"
@@ -3881,7 +3881,7 @@ __metadata:
     codemirror: ">=6.0.0"
     react: ">=16.8.0"
     react-dom: ">=16.8.0"
-  checksum: bd612f3e0ec0606b99a93988cb8d61c07b66a61ca65ac1f4406a5d0efd6a9a40ebabffcb1f67985ab25faa333f399408bef8eada5a320062f19f4f719d7de5df
+  checksum: fac90a4bc0a23c7679ff53470937dfa4062288abaf24c7e8c3acde7f93a9df5a3e8d7d8d6a47df07a23b388d9ee400d74e1766da6e732ca84eb3561cd4fadaea
   languageName: node
   linkType: hard
 
@@ -13419,12 +13419,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"typedoc-plugin-markdown@npm:4.2.8":
-  version: 4.2.8
-  resolution: "typedoc-plugin-markdown@npm:4.2.8"
+"typedoc-plugin-markdown@npm:4.2.9":
+  version: 4.2.9
+  resolution: "typedoc-plugin-markdown@npm:4.2.9"
   peerDependencies:
     typedoc: 0.26.x
-  checksum: a6b7d1656930f8b175e13a59ad546deb4fd55098c5f10fe5a6fb6bfc8df90b94c01f7f943ef2c570dbec3a0b0e8c69a0a10c9da69daebe6d75fc85a47619ba2d
+  checksum: 20ff33c1586a339de016c230d2eca341524d62160bdfcffe3e80e861f50f83c00290d3af04cd5f066b0b3c9ad564cdf8fd3a020dfd87bd8768a7971eec618959
   languageName: node
   linkType: hard
 
