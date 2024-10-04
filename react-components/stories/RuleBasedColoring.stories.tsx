@@ -3,7 +3,7 @@
  */
 
 import type { Meta, StoryObj } from '@storybook/react';
-import { Reveal3DResources, RevealTopbar, RevealCanvas, AddResourceOptions } from '../src';
+import { Reveal3DResources, RevealTopbar, RevealCanvas, type AddResourceOptions } from '../src';
 import { Color } from 'three';
 import { useState } from 'react';
 import { RevealResourcesFitCameraOnLoad } from './utilities/with3dResoursesFitCameraOnLoad';

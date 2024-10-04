@@ -2,7 +2,7 @@
  * Copyright 2023 Cognite AS
  */
 import type { Meta, StoryObj } from '@storybook/react';
-import { AddResourceOptions, Reveal3DResources, RevealCanvas, RevealContext } from '../src';
+import { type AddResourceOptions, Reveal3DResources, RevealCanvas, RevealContext } from '../src';
 import { Color, Matrix4 } from 'three';
 import { createSdkByUrlToken } from './utilities/createSdkByUrlToken';
 import { RevealResourcesFitCameraOnLoad } from './utilities/with3dResoursesFitCameraOnLoad';

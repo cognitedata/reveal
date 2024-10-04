@@ -13,7 +13,7 @@ import {
 } from '../src';
 import { CogniteClient } from '@cognite/sdk';
 import { Color, Matrix4 } from 'three';
-import { AddModelOptions } from '@cognite/reveal';
+import { type AddModelOptions } from '@cognite/reveal';
 
 const meta = {
   title: 'Example/Toolbar/LayersContainer',

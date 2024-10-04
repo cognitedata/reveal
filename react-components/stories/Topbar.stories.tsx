@@ -8,7 +8,7 @@ import {
   RevealTopbar,
   RevealCanvas,
   Reveal3DResources,
-  AddResourceOptions
+  type AddResourceOptions
 } from '../src';
 import { Color, Matrix4 } from 'three';
 import { type ReactElement, useEffect } from 'react';

@@ -21,7 +21,7 @@ import { getAddModelOptionsFromUrl } from './utilities/getAddModelOptionsFromUrl
 import { SetOrbitOrFirstPersonControlsType } from '../src/components/RevealToolbar/SetFlexibleControlsType';
 import { useGetCameraStateFromUrlParam } from './utilities/useGetCameraStateFromUrlParam';
 import { LayersButton } from '../src/components/RevealToolbar/LayersButton/LayersButton';
-import { AddModelOptions } from '@cognite/reveal';
+import { type AddModelOptions } from '@cognite/reveal';
 
 const meta = {
   title: 'Example/Toolbar',

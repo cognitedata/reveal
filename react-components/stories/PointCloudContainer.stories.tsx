@@ -2,10 +2,15 @@
  * Copyright 2023 Cognite AS
  */
 import type { Meta, StoryObj } from '@storybook/react';
-import { PointCloudContainer, PointCloudModelStyling, RevealCanvas, RevealContext } from '../src';
+import {
+  PointCloudContainer,
+  type PointCloudModelStyling,
+  RevealCanvas,
+  RevealContext
+} from '../src';
 import { Color, Matrix4 } from 'three';
 import { createSdkByUrlToken } from './utilities/createSdkByUrlToken';
-import { AddModelOptions, PointCloudAppearance } from '@cognite/reveal';
+import { type AddModelOptions } from '@cognite/reveal';
 
 const meta = {
   title: 'Example/PrimitiveWrappers/PointCloudContainer',

@@ -3,8 +3,8 @@
  */
 import type { Meta, StoryObj } from '@storybook/react';
 import {
-  AddResourceOptions,
-  DefaultResourceStyling,
+  type AddResourceOptions,
+  type DefaultResourceStyling,
   Reveal3DResources,
   RevealCanvas,
   RevealContext,
