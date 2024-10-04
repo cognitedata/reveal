@@ -131,7 +131,7 @@
     "shx": "^0.3.4",
     "stats.js": "^0.17.0",
     "three": "0.166.1",
-    "ts-jest": "29.1.2",
+    "ts-jest": "29.2.5",
     "ts-loader": "^9.5.1",
     "tsc-alias": "^1.8.8",
     "typescript": "^5.4.5",
