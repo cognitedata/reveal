@@ -14,7 +14,7 @@ import {
 import { Color, Matrix4, Vector3 } from 'three';
 import { createSdkByUrlToken } from './utilities/createSdkByUrlToken';
 import {
-  AddModelOptions,
+  type AddModelOptions,
   type CogniteCadModel,
   DefaultNodeAppearance,
   IndexSet
