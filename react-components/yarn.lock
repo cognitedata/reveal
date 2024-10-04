@@ -2257,7 +2257,7 @@ __metadata:
     "@storybook/blocks": "npm:^8.0.9"
     "@storybook/react": "npm:^8.0.9"
     "@storybook/react-vite": "npm:^8.0.9"
-    "@storybook/test": "npm:8.3.4"
+    "@storybook/test": "npm:8.3.5"
     "@tanstack/react-query": "npm:^5.32.0"
     "@tanstack/react-query-devtools": "npm:^5.32.0"
     "@testing-library/react": "npm:^16.0.0"
@@ -5076,16 +5076,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@storybook/instrumenter@npm:8.3.4":
-  version: 8.3.4
-  resolution: "@storybook/instrumenter@npm:8.3.4"
+"@storybook/instrumenter@npm:8.3.5":
+  version: 8.3.5
+  resolution: "@storybook/instrumenter@npm:8.3.5"
   dependencies:
     "@storybook/global": "npm:^5.0.0"
     "@vitest/utils": "npm:^2.0.5"
     util: "npm:^0.12.4"
   peerDependencies:
-    storybook: ^8.3.4
-  checksum: 10/7c2c25b90c2b410c8b34edfd8e6dfaf73b5b9544ec740ab09f9254050be21a388b8ecd972473a4005b89b0bc31abd5b0005fe39080f17c3d8bd623ca7ee1a633
+    storybook: ^8.3.5
+  checksum: 10/79769e4bab3b39bb2997fa718a8ff5aad444a97cc37bcd21bb574b6feb85cca0dd2f1581ab2cf1f0ab624a4f96312bb64fbc4570ef5970fff1f272c2ec8a566d
   languageName: node
   linkType: hard
 
@@ -5337,13 +5337,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@storybook/test@npm:8.3.4":
-  version: 8.3.4
-  resolution: "@storybook/test@npm:8.3.4"
+"@storybook/test@npm:8.3.5":
+  version: 8.3.5
+  resolution: "@storybook/test@npm:8.3.5"
   dependencies:
     "@storybook/csf": "npm:^0.1.11"
     "@storybook/global": "npm:^5.0.0"
-    "@storybook/instrumenter": "npm:8.3.4"
+    "@storybook/instrumenter": "npm:8.3.5"
     "@testing-library/dom": "npm:10.4.0"
     "@testing-library/jest-dom": "npm:6.5.0"
     "@testing-library/user-event": "npm:14.5.2"
@@ -5351,8 +5351,8 @@ __metadata:
     "@vitest/spy": "npm:2.0.5"
     util: "npm:^0.12.4"
   peerDependencies:
-    storybook: ^8.3.4
-  checksum: 10/b0a5f3408bc0786752bf3c9adcd2fb128aadaaa8bc1b31858cc67b742ecf5d873e43afbb006d4b8933009b43fe812c8f1dca15857fb8fff60a3d4e12bf6968fe
+    storybook: ^8.3.5
+  checksum: 10/7a1d948e83eb4f12a04117b17e5026ce0d776c04e25f1960ac3285561dfecd8f5e9a3e678520437473cd258467f67cf6a547dd1d9efcf1a409e3031350f7c2c5
   languageName: node
   linkType: hard
 
