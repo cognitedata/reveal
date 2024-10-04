@@ -120,7 +120,7 @@ export const FilterButton = ({
             key={uniqueId}
             disabled={!isEnabled}
             toggled={isOpen}
-            iconPlacement="right"
+            iconPlacement="left"
             aria-label={command.getLabel(t)}
             style={{
               minWidth: usedInSettings ? OPTION_MIN_WIDTH : undefined,

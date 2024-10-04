@@ -31,7 +31,7 @@ import { TOOLBAR_HORIZONTAL_PANEL_OFFSET } from '../constants';
 
 import { offset } from '@floating-ui/dom';
 
-export const OptionButton = ({
+export const DropdownButton = ({
   inputCommand,
   isHorizontal = false,
   usedInSettings = false
@@ -71,7 +71,7 @@ export const OptionButton = ({
   }
   const placement = getTooltipPlacement(isHorizontal);
   const label = usedInSettings ? undefined : command.getLabel(t);
-  const flexDirection = getFlexDirection(isHorizontal);
+  const flexDirection = getFlexDirection(false); // Always vertical
   const children = command.children;
   const selectedLabel = command.selectedChild?.getLabel(t);
 
@@ -106,15 +106,15 @@ export const OptionButton = ({
             icon={<OpenButtonIcon />}
             key={uniqueId}
             disabled={!isEnabled}
-            iconPlacement="right"
+            iconPlacement="left"
             aria-label={command.getLabel(t)}
             label={selectedLabel}
             toggled={isOpen}
             {...props}
             onClick={(event: MouseEvent<HTMLElement>) => {
-              props.onClick?.(event);
               event.stopPropagation();
               event.preventDefault();
+              props.onClick?.(event);
             }}>
             {selectedLabel}
           </Button>
@@ -134,7 +134,7 @@ function createMenuItem(command: BaseCommand, t: TranslateDelegate): ReactElemen
       icon={getIcon(command)}
       disabled={!command.isEnabled}
       toggled={command.isChecked}
-      iconPlacement="right"
+      iconPlacement="left"
       label={command.getLabel(t)}
       onClick={() => {
         command.invoke();
