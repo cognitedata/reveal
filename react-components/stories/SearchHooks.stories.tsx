@@ -383,7 +383,7 @@ export const Main: Story = {
       }
     ]
   },
-  render: ({ resources }) => {
+  render: ({ resources }: { resources: AddResourceOptions[] }) => {
     return (
       <RevealContext sdk={sdk} color={new Color(0x4a4a4a)}>
         <QueryClientProvider client={queryClient}>

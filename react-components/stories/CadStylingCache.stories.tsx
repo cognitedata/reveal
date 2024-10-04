@@ -13,7 +13,12 @@ import {
 } from '../src';
 import { Color, Matrix4, Vector3 } from 'three';
 import { createSdkByUrlToken } from './utilities/createSdkByUrlToken';
-import { type CogniteCadModel, DefaultNodeAppearance, IndexSet } from '@cognite/reveal';
+import {
+  AddModelOptions,
+  type CogniteCadModel,
+  DefaultNodeAppearance,
+  IndexSet
+} from '@cognite/reveal';
 import { useEffect, useMemo, useState, type JSX } from 'react';
 import { useMappedEdgesForRevisions } from '../src/components/CacheProvider/NodeCacheProvider';
 
@@ -37,7 +42,15 @@ export const Main: Story = {
     styling: {},
     transform: new Matrix4().makeTranslation(0, 10, 0)
   },
-  render: ({ addModelOptions, transform, styling }) => (
+  render: ({
+    addModelOptions,
+    transform,
+    styling
+  }: {
+    addModelOptions: AddModelOptions;
+    transform: Matrix4;
+    styling: CadModelStyling;
+  }) => (
     <RevealContext sdk={sdk} color={new Color(0x4a4a4a)}>
       <RevealCanvas>
         <Models addModelOptions={addModelOptions} styling={styling} transform={transform} />

@@ -26,7 +26,7 @@ export const Main: Story = {
   args: {
     addModelOptions: getAddModelOptionsFromUrl('/primitives')
   },
-  render: ({ addModelOptions }) => {
+  render: ({ addModelOptions }: { addModelOptions: AddModelOptions }) => {
     return (
       <RevealStoryContainer color={new Color(0x4a4a4a)} viewerOptions={{}}>
         <StoryContent addModelOptions={addModelOptions} />
