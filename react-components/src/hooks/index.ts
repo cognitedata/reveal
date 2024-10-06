@@ -23,5 +23,9 @@ export type {
   Image360AnnotationMappedAssetData,
   LayersUrlStateParam,
   DefaultLayersConfiguration,
-  ThreeDModelFdmMappings
+  ThreeDModelFdmMappings,
+  SelectedThreeDResourceContent,
+  SingleModelData,
+  ModelWithRevision,
+  ThreeDResourceContentTypes
 } from './types';
