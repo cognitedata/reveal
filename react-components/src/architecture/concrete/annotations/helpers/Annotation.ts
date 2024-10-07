@@ -201,18 +201,11 @@ export class Annotation {
     } else if (primitive instanceof Cylinder) {
       const a = primitive.centerA;
       const b = primitive.centerB;
-
       if (horizontal) {
-        const z = (a.z + b.z) / 2;
-        a.z = z;
-        b.z = z;
+        a.z = b.z = (a.z + b.z) / 2;
       } else {
-        const x = (a.x + b.x) / 2;
-        a.x = x;
-        b.x = x;
-        const y = (a.y + b.y) / 2;
-        a.y = y;
-        b.y = y;
+        a.x = b.x = (a.x + b.x) / 2;
+        a.y = b.y = (a.y + b.y) / 2;
       }
       if (a.distanceTo(b) < primitive.radius / 4) {
         return false; // Avoid zero length cylinders
