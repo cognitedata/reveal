@@ -31,7 +31,7 @@ export const Main: Story = {
     styling
   }: {
     addImage360CollectionOptions: AddImage360CollectionOptions;
-    styling: ImageCollectionModelStyling;
+    styling?: ImageCollectionModelStyling;
   }) => (
     <RevealStoryContainer color={new Color(0x4a4a4a)}>
       <Image360CollectionContainerStoryContent
