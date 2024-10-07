@@ -13,14 +13,14 @@ import { type DomainObject } from '../../../base/domainObjects/DomainObject';
 import { UndoCommand } from '../../../base/concreteCommands/UndoCommand';
 import { type BaseCommand } from '../../../base/commands/BaseCommand';
 import { AnnotationsCreateMockCommand } from './AnnotationsCreateMockCommand';
-import { BoxGizmoDomainObject } from '../BoxGizmoDomainObject';
 import { type BaseDragger } from '../../../base/domainObjectsHelpers/BaseDragger';
 import { type PrimitivePickInfo } from '../../primitives/common/PrimitivePickInfo';
 import { AnnotationsDeleteCommand } from './AnnotationsDeleteCommand';
 import { AlignSelectedAnnotationCommand } from './AnnotationsAlignCommand';
-import { CylinderGizmoDomainObject } from '../CylinderGizmoDomainObject';
 import { AnnotationsCreateTool } from './AnnotationsCreateTool';
 import { type AnnotationIntersectInfo } from '../helpers/getClosestAnnotation';
+import { SolidDomainObject } from '../../primitives/common/SolidDomainObject';
+import { isAnnotationsOrGizmo, isGizmo } from './isGizmo';
 
 export const ANNOTATION_RADIUS_FACTOR = 0.2;
 
@@ -163,7 +163,7 @@ export class AnnotationsSelectTool extends BaseEditTool {
   // ==================================================
 
   protected override deselectAll(_except?: VisualDomainObject | undefined): void {
-    // Don't want this to ado anything
+    // Do nothing here
   }
 
   protected override canBeSelected(domainObject: VisualDomainObject): boolean {
@@ -234,7 +234,7 @@ function getIntersectedAnnotation(
 
 function getIntersectedAnnotationGizmo(
   intersection: AnyIntersection | undefined
-): BoxGizmoDomainObject | CylinderGizmoDomainObject | undefined {
+): SolidDomainObject | undefined {
   if (intersection === undefined) {
     return undefined;
   }
@@ -242,22 +242,11 @@ function getIntersectedAnnotationGizmo(
     return undefined;
   }
   const { domainObject } = intersection;
-  if (domainObject instanceof BoxGizmoDomainObject) {
-    return domainObject;
+  if (!isGizmo(domainObject)) {
+    return undefined;
   }
-  if (domainObject instanceof CylinderGizmoDomainObject) {
+  if (domainObject instanceof SolidDomainObject) {
     return domainObject;
   }
   return undefined;
-}
-
-function isAnnotationsOrGizmo(domainObject: DomainObject): boolean {
-  return domainObject instanceof AnnotationsDomainObject || isGizmo(domainObject);
-}
-
-function isGizmo(domainObject: DomainObject): boolean {
-  return (
-    domainObject instanceof BoxGizmoDomainObject ||
-    domainObject instanceof CylinderGizmoDomainObject
-  );
 }

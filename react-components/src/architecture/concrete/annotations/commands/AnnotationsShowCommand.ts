@@ -5,9 +5,7 @@
 import { ShowAllDomainObjectsCommand } from '../../../base/commands/ShowAllDomainObjectsCommand';
 import { type DomainObject } from '../../../base/domainObjects/DomainObject';
 import { type TranslateKey } from '../../../base/utilities/TranslateKey';
-import { AnnotationsDomainObject } from '../AnnotationsDomainObject';
-import { BoxGizmoDomainObject } from '../BoxGizmoDomainObject';
-import { CylinderGizmoDomainObject } from '../CylinderGizmoDomainObject';
+import { isAnnotationsOrGizmo } from './isGizmo';
 
 export class AnnotationsShowCommand extends ShowAllDomainObjectsCommand {
   // ==================================================
@@ -19,10 +17,6 @@ export class AnnotationsShowCommand extends ShowAllDomainObjectsCommand {
   }
 
   protected override isInstance(domainObject: DomainObject): boolean {
-    return (
-      domainObject instanceof AnnotationsDomainObject ||
-      domainObject instanceof BoxGizmoDomainObject ||
-      domainObject instanceof CylinderGizmoDomainObject
-    );
+    return isAnnotationsOrGizmo(domainObject);
   }
 }

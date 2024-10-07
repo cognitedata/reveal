@@ -20,6 +20,8 @@ import { DomainObjectChange } from '../../base/domainObjectsHelpers/DomainObject
 import { AnnotationUtils } from './helpers/AnnotationUtils';
 import { Annotation } from './helpers/Annotation';
 
+type GizmoDomainObject = BoxGizmoDomainObject | CylinderGizmoDomainObject;
+
 export class AnnotationsDomainObject extends VisualDomainObject {
   // ==================================================
   // INSTANCE FIELDS
@@ -225,13 +227,16 @@ export class AnnotationsDomainObject extends VisualDomainObject {
   // INSTANCE METHODS: Get or create the gizmo
   // ==================================================
 
-  public getGizmo(): SolidDomainObject | undefined {
-    return this.getDescendantByType(SolidDomainObject);
+  public getGizmo(): GizmoDomainObject | undefined {
+    const boxGizmo = this.getDescendantByType(BoxGizmoDomainObject);
+    if (boxGizmo !== undefined) {
+      return boxGizmo;
+    }
+    return this.getDescendantByType(CylinderGizmoDomainObject);
   }
 
-  private getOrCreateGizmo(primitiveType: PrimitiveType): SolidDomainObject | undefined {
+  private getOrCreateGizmo(primitiveType: PrimitiveType): GizmoDomainObject | undefined {
     const gizmo = this.getGizmo();
-
     if (
       primitiveType === PrimitiveType.HorizontalCylinder ||
       primitiveType === PrimitiveType.VerticalCylinder
@@ -251,15 +256,13 @@ export class AnnotationsDomainObject extends VisualDomainObject {
     return newGizmo;
   }
 
-  public getOrCreateGizmoByAnnotation(annotation: Annotation): SolidDomainObject | undefined {
+  public getOrCreateGizmoByAnnotation(annotation: Annotation): GizmoDomainObject | undefined {
     const gizmo = this.getOrCreateGizmo(annotation.primitiveType);
     if (gizmo === undefined) {
       return undefined;
     }
-    if (gizmo instanceof BoxGizmoDomainObject || gizmo instanceof CylinderGizmoDomainObject) {
-      if (!gizmo.updateThisFromAnnotation(annotation)) {
-        return undefined;
-      }
+    if (!gizmo.updateThisFromAnnotation(annotation)) {
+      return undefined;
     }
     const renderStyle = this.renderStyle;
     const gizmoRenderStyle = gizmo.renderStyle;
@@ -272,7 +275,7 @@ export class AnnotationsDomainObject extends VisualDomainObject {
     return gizmo;
   }
 
-  public getOrCreateGizmoForPending(primitiveType: PrimitiveType): SolidDomainObject | undefined {
+  public getOrCreateGizmoForPending(primitiveType: PrimitiveType): GizmoDomainObject | undefined {
     const gizmo = this.getOrCreateGizmo(primitiveType);
     if (gizmo === undefined) {
       return undefined;
@@ -320,7 +323,7 @@ export class AnnotationsDomainObject extends VisualDomainObject {
 // PRIVATE FUNCTIONS
 // ==================================================
 
-function createGizmo(primitiveType: PrimitiveType): SolidDomainObject | undefined {
+function createGizmo(primitiveType: PrimitiveType): GizmoDomainObject | undefined {
   switch (primitiveType) {
     case PrimitiveType.Box:
       return new BoxGizmoDomainObject();

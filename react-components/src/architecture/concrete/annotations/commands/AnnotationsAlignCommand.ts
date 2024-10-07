@@ -9,8 +9,6 @@ import { DomainObjectChange } from '../../../base/domainObjectsHelpers/DomainObj
 import { type TranslateKey } from '../../../base/utilities/TranslateKey';
 import { AnnotationsDomainObject } from '../AnnotationsDomainObject';
 import { SolidDomainObject } from '../../primitives/common/SolidDomainObject';
-import { BoxGizmoDomainObject } from '../BoxGizmoDomainObject';
-import { CylinderGizmoDomainObject } from '../CylinderGizmoDomainObject';
 import { AnnotationChangedDescription } from '../helpers/AnnotationChangedDescription';
 
 export class AlignSelectedAnnotationCommand extends RenderTargetCommand {
@@ -79,14 +77,13 @@ export class AlignSelectedAnnotationCommand extends RenderTargetCommand {
     domainObject.notify(change);
 
     const gizmo = domainObject.getGizmo();
-    if (gizmo instanceof BoxGizmoDomainObject || gizmo instanceof CylinderGizmoDomainObject) {
-      gizmo.updateThisFromAnnotation(annotation);
-      const change = new DomainObjectChange(Changes.geometry, SolidDomainObject.GizmoOnly);
-      gizmo.notify(change);
-      return true;
-    } else {
+    if (gizmo === undefined) {
       return true;
     }
+    gizmo.updateThisFromAnnotation(annotation);
+    const gizmoChange = new DomainObjectChange(Changes.geometry, SolidDomainObject.GizmoOnly);
+    gizmo.notify(gizmoChange);
+    return true;
   }
 
   // ==================================================
