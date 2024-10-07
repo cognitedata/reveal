@@ -147,7 +147,7 @@ export class AnnotationsSelectTool extends BaseEditTool {
       return undefined;
     }
     const gizmo = intersection.domainObject as VisualDomainObject;
-    if (gizmo === undefined) {
+    if (!isGizmo(gizmo)) {
       return undefined;
     }
     const ray = this.getRay(event);
