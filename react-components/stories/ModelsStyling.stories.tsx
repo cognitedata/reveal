@@ -82,7 +82,7 @@ export const Main: Story = {
     defaultResourceStyling
   }: {
     resources: AddResourceOptions[];
-    defaultResourceStyling: DefaultResourceStyling;
+    defaultResourceStyling?: DefaultResourceStyling;
   }) => {
     return (
       <RevealContext

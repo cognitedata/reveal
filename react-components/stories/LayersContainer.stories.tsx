@@ -45,7 +45,7 @@ export const Main: Story = {
     transform
   }: {
     addModelOptions: AddModelOptions;
-    transform: Matrix4;
+    transform?: Matrix4;
   }) => (
     <RevealContext sdk={sdk} color={new Color(0x4a4a4a)}>
       <RevealCanvas>
