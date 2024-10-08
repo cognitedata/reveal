@@ -102,5 +102,8 @@
   "packageManager": "yarn@4.5.0",
   "files": [
     "dist"
-  ]
+  ],
+  "resolutions": {
+    "@mui/base": "5.0.0-beta.58"
+  }
 }
