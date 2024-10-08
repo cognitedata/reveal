@@ -34,7 +34,7 @@ export const useFdmNodeCache = (): FdmNodeCacheContent => {
 
 export const useMappedEdgesForRevisions = (
   modelRevisionIds: Array<{ modelId: number; revisionId: number }>,
-  fetchViews = false,
+  fetchViews = true,
   enabled = true
 ): UseQueryResult<ModelRevisionToConnectionMap> => {
   const content = useFdmNodeCache();
