@@ -20,7 +20,6 @@ import { RevealStoryContainer } from './utilities/RevealStoryContainer';
 import { getAddModelOptionsFromUrl } from './utilities/getAddModelOptionsFromUrl';
 import { SetOrbitOrFirstPersonControlsType } from '../src/components/RevealToolbar/SetFlexibleControlsType';
 import { useGetCameraStateFromUrlParam } from './utilities/useGetCameraStateFromUrlParam';
-import { LayersButton } from '../src/components/RevealToolbar/LayersButton/LayersButton';
 import { type AddModelOptions } from '@cognite/reveal';
 
 const meta = {
@@ -104,7 +103,6 @@ export const Main: Story = {
         highFidelitySettings={exampleHighQualitySettings}
       />
       <MyCustomToolbar>
-        <LayersButton />
         <RevealToolbar.FitModelsButton />
         <ToolBar.ButtonGroup buttonGroup={exampleToolBarButtons} />
         <SetOrbitOrFirstPersonControlsType />
