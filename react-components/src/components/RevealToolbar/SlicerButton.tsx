@@ -95,7 +95,7 @@ export const SlicerButton = (): ReactElement => {
 
   return (
     <StyledMenu
-      placement="right-end"
+      placement="right-start"
       floatingProps={{ middleware: [offset(TOOLBAR_HORIZONTAL_PANEL_OFFSET)] }}
       renderTrigger={(props: any) => (
         <CogsTooltip
