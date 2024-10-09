@@ -182,14 +182,8 @@ export class CommandsController extends PointerEvents {
     if (down) {
       const key = event.key.toUpperCase();
       const ctrlKey = event.ctrlKey || event.metaKey;
-      const shiftKey = event.shiftKey;
-
       for (const command of this._commands) {
-        if (
-          command.shortCutKey === key &&
-          command.shortCutKeyOnCtrl === ctrlKey &&
-          command.shortCutKeyOnShift === shiftKey
-        ) {
+        if (command.hasShortCutKey(key, ctrlKey, event.shiftKey, event.altKey)) {
           command.invoke();
           return;
         }
