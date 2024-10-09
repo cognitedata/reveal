@@ -37,8 +37,14 @@ export class Image360Facade<T> {
     this.getCollectionContainingEntity(entity).setSelectedVisibility(visible);
   }
 
-  hideAllHoverIcons(): void {
-    this._image360Collections.forEach(collection => collection.setSelectedVisibility(false));
+  hideAllHoverIcons(): boolean {
+    let changed = false;
+    for (const collection of this._image360Collections) {
+      if (collection.setSelectedVisibility(false)) {
+        changed = true;
+      }
+    }
+    return changed;
   }
 
   set allIconCullingScheme(scheme: IconCullingScheme) {
