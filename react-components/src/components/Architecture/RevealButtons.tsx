@@ -17,6 +17,11 @@ import { SettingsCommand } from '../../architecture/base/concreteCommands/Settin
 import { PointCloudFilterCommand } from '../../architecture';
 import { SetOrbitOrFirstPersonModeCommand } from '../../architecture/base/concreteCommands/SetOrbitOrFirstPersonModeCommand';
 
+import { AnnotationsShowCommand } from '../../architecture/concrete/annotations/commands/AnnotationsShowCommand';
+import { AnnotationsShowOnTopCommand } from '../../architecture/concrete/annotations/commands/AnnotationsShowOnTopCommand';
+import { AnnotationsCreateTool } from '../../architecture/concrete/annotations/commands/AnnotationsCreateTool';
+import { AnnotationsSelectTool } from '../../architecture/concrete/annotations/commands/AnnotationsSelectTool';
+
 export class RevealButtons {
   static Settings = (): ReactElement =>
     createButtonFromCommandConstructor(() => new SettingsCommand());
@@ -57,4 +62,17 @@ export class RevealButtons {
 
   static KeyboardSpeed = (): ReactElement =>
     createButtonFromCommandConstructor(() => new KeyboardSpeedCommand());
+
+  // Annotations
+  static AnnotationsSelect = (): ReactElement =>
+    createButtonFromCommandConstructor(() => new AnnotationsSelectTool());
+
+  static AnnotationsCreate = (): ReactElement =>
+    createButtonFromCommandConstructor(() => new AnnotationsCreateTool());
+
+  static AnnotationsShow = (): ReactElement =>
+    createButtonFromCommandConstructor(() => new AnnotationsShowCommand());
+
+  static AnnotationsShowOnTop = (): ReactElement =>
+    createButtonFromCommandConstructor(() => new AnnotationsShowOnTopCommand());
 }

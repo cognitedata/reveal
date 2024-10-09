@@ -24,6 +24,11 @@ import { MockFilterCommand } from '../../base/commands/mocks/MockFilterCommand';
 import { ToggleAllModelsVisibleCommand } from '../../base/concreteCommands/ToggleAllModelsVisibleCommand';
 import { SetOrbitOrFirstPersonModeCommand } from '../../base/concreteCommands/SetOrbitOrFirstPersonModeCommand';
 
+import { AnnotationsCreateTool } from '../annotations/commands/AnnotationsCreateTool';
+import { AnnotationsShowCommand } from '../annotations/commands/AnnotationsShowCommand';
+import { AnnotationsShowOnTopCommand } from '../annotations/commands/AnnotationsShowOnTopCommand';
+import { AnnotationsSelectTool } from '../annotations/commands/AnnotationsSelectTool';
+
 export class StoryBookConfig extends BaseRevealConfig {
   // ==================================================
   // OVERRIDES
@@ -47,17 +52,22 @@ export class StoryBookConfig extends BaseRevealConfig {
       new ToggleAllModelsVisibleCommand(),
       new ToggleMetricUnitsCommand(),
       new SettingsCommand(),
-      new MockSettingsCommand(),
-      new MockFilterCommand(),
       undefined,
-      new ExampleTool(),
       new MeasurementTool(),
       new ClipTool(),
       new ObservationsTool(),
       undefined,
+      new AnnotationsSelectTool(),
+      new AnnotationsCreateTool(),
+      new AnnotationsShowCommand(),
+      new AnnotationsShowOnTopCommand(),
+      undefined,
+      new ExampleTool(),
       new SetTerrainVisibleCommand(),
       new UpdateTerrainCommand(),
-      undefined
+      undefined,
+      new MockSettingsCommand(),
+      new MockFilterCommand()
     ];
   }
 
