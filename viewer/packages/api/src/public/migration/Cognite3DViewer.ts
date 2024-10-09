@@ -1668,7 +1668,7 @@ export class Cognite3DViewer {
   /**
    * Event function to click on 360 images.
    * @param event The event type.
-   * @returns true if the event was handled, false otherwise.
+   * @returns True if the event was handled, false otherwise.
    * @beta
    */
   public async onClick360Images(event: PointerEvent): Promise<boolean> {
@@ -1681,8 +1681,8 @@ export class Cognite3DViewer {
   /**
    * Event function to to move the mouse.
    * @param event The event type.
-   * @returns true if the event was handled, false otherwise.
-   * beta
+   * @returns True if the event was handled, false otherwise.
+   * @beta
    */
   public onHover360Images(event: PointerEvent): boolean {
     if (this._image360ApiHelper === undefined) {
