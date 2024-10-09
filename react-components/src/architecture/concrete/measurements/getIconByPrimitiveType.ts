@@ -2,9 +2,10 @@
  * Copyright 2024 Cognite AS
  */
 
+import { type IconName } from '../../base/utilities/IconName';
 import { PrimitiveType } from '../../base/utilities/primitives/PrimitiveType';
 
-export function getIconByPrimitiveType(primitiveType: PrimitiveType): string {
+export function getIconByPrimitiveType(primitiveType: PrimitiveType): IconName {
   switch (primitiveType) {
     case PrimitiveType.Line:
       return 'VectorLine';
@@ -31,6 +32,6 @@ export function getIconByPrimitiveType(primitiveType: PrimitiveType): string {
     case PrimitiveType.None:
       return 'Edit';
     default:
-      throw new Error('Unknown PrimitiveType');
+      throw new Error('Unrecognized PrimitiveType ' + primitiveType);
   }
 }

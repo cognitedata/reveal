@@ -1,6 +1,7 @@
 /*!
  * Copyright 2024 Cognite AS
  */
+
 import styled from 'styled-components';
 import {
   type CadModelHandler,
@@ -9,11 +10,12 @@ import {
 } from './ModelHandler';
 import { ModelLayersButton } from './ModelLayersButton';
 
-import { type ReactElement } from 'react';
+import { useCallback, type ReactElement } from 'react';
 import { useTranslation } from '../../i18n/I18n';
 import { useModelHandlers } from './useModelHandlers';
 import { useSyncExternalLayersState } from './useSyncExternalLayersState';
-import { type LayersButtonProps } from '../LayersButton';
+import { type LayersButtonProps } from './LayersButton';
+import { useReveal } from '../../RevealCanvas/ViewerContext';
 
 export type ModelLayerHandlers = {
   cadHandlers: CadModelHandler[];
@@ -40,25 +42,30 @@ export const LayersButtonStrip = ({
     update
   );
 
+  const viewer = useReveal();
+  const updateCallback = useCallback(() => {
+    update(viewer.models, viewer.get360ImageCollections());
+  }, [viewer, update]);
+
   return (
     <ButtonsContainer>
       <ModelLayersButton
-        icon="Cube"
+        icon={'Cube'}
         label={t('CAD_MODELS', 'CAD models')}
         handlers={cadHandlers}
-        update={update}
+        update={updateCallback}
       />
       <ModelLayersButton
-        icon="PointCloud"
+        icon={'PointCloud'}
         label={t('POINT_CLOUDS', 'Point clouds')}
         handlers={pointCloudHandlers}
-        update={update}
+        update={updateCallback}
       />
       <ModelLayersButton
-        icon="View360"
+        icon={'View360'}
         label={t('IMAGES_360', '360 images')}
         handlers={image360Handlers}
-        update={update}
+        update={updateCallback}
       />
     </ButtonsContainer>
   );

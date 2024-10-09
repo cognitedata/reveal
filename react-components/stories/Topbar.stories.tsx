@@ -3,7 +3,13 @@
  */
 
 import type { Meta, StoryObj } from '@storybook/react';
-import { useCameraNavigation, RevealTopbar, RevealCanvas, Reveal3DResources } from '../src';
+import {
+  useCameraNavigation,
+  RevealTopbar,
+  RevealCanvas,
+  Reveal3DResources,
+  type AddResourceOptions
+} from '../src';
 import { Color, Matrix4 } from 'three';
 import { type ReactElement, useEffect } from 'react';
 import { signalStoryReadyForScreenshot } from './utilities/signalStoryReadyForScreenshot';
@@ -41,7 +47,7 @@ export const Main: Story = {
       }
     ]
   },
-  render: ({ resources }) => (
+  render: ({ resources }: { resources: AddResourceOptions[] }) => (
     <RevealStoryContext viewerOptions={{}} color={new Color(0x4a4a4a)}>
       <RevealTopbar />
       <RevealCanvas>

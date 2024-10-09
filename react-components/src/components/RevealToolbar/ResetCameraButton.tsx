@@ -3,7 +3,7 @@
  */
 
 import { type ReactElement, useCallback } from 'react';
-import { Button, Tooltip as CogsTooltip } from '@cognite/cogs.js';
+import { Button, Tooltip as CogsTooltip, HomeIcon } from '@cognite/cogs.js';
 import { useTranslation } from '../i18n/I18n';
 import { useCameraNavigation } from '../../hooks/useCameraNavigation';
 import { useSceneDefaultCamera } from '../../hooks/useSceneDefaultCamera';
@@ -41,7 +41,7 @@ export const ResetCameraButton = ({
       appendTo={document.body}>
       <Button
         type="ghost"
-        icon="Home"
+        icon=<HomeIcon />
         aria-label="Reset camera to home"
         onClick={resetCameraToHomePosition}
       />

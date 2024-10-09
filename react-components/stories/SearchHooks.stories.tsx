@@ -277,7 +277,7 @@ const StoryContent = ({ resources }: { resources: AddResourceOptions[] }): React
       <h1>Mapped equipment</h1>
       <div style={{ display: 'flex', flexDirection: 'row', gap: 8, padding: '0 8px 8px 0' }}>
         <Input
-          onInput={(event) => {
+          onInput={(event: any) => {
             setTempSearchQuery((event.target as HTMLInputElement).value);
           }}></Input>
         <Button
@@ -383,7 +383,7 @@ export const Main: Story = {
       }
     ]
   },
-  render: ({ resources }) => {
+  render: ({ resources }: { resources: AddResourceOptions[] }) => {
     return (
       <RevealContext sdk={sdk} color={new Color(0x4a4a4a)}>
         <QueryClientProvider client={queryClient}>
