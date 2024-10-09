@@ -5,7 +5,6 @@
 import { type ReactElement, type JSX, forwardRef, type Ref } from 'react';
 import { Divider, ToolBar, type ToolBarProps } from '@cognite/cogs.js';
 import { FitModelsButton } from './FitModelsButton';
-import { LayersButton } from './LayersButton';
 import { SlicerButton } from './SlicerButton';
 import { SettingsButton } from './SettingsButton';
 import { withSuppressRevealEvents } from '../../higher-order-components/withSuppressRevealEvents';
@@ -21,9 +20,10 @@ import {
   SetOrbitOrFirstPersonControlsType
 } from './SetFlexibleControlsType';
 import { AssetContextualizedButton } from './AssetContextualizedButton';
+import { LayersButton } from './LayersButton/LayersButton';
 
 const StyledToolBar = styled(ToolBar)`
-  position: absolute;
+  position: absolute !important;
   left: 20px;
   top: 70px;
   width: 48px;

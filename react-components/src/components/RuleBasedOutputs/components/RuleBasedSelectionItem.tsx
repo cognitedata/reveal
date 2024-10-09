@@ -1,7 +1,8 @@
 /*!
  * Copyright 2024 Cognite AS
  */
-import { Flex, Icon, Menu, Radio } from '@cognite/cogs.js';
+import { ColorPaletteIcon, Flex, LoaderIcon } from '@cognite/cogs.js';
+import { Menu } from '@cognite/cogs-lab';
 import { type ReactElement } from 'react';
 import styled from 'styled-components';
 
@@ -24,23 +25,21 @@ export const RuleBasedSelectionItem = ({
   isEmptyRuleItem
 }: RuleBasedSelectionItemProps): ReactElement => {
   return (
-    <Menu.Item
+    <Menu.ItemToggled
       onClick={() => {
         onChange(id);
       }}
-      key={key}>
-      <StyledFlex justifyContent="space-between" alignItems="center" gap={8}>
-        <Flex gap={4} alignItems="center">
-          <Icon type="ColorPalette" />
-          {label}
-        </Flex>
-        {!isEmptyRuleItem && isLoading && checked === true ? (
-          <Icon type="Loader" />
-        ) : (
-          <Radio name={id ?? ''} value={id} checked={checked} />
-        )}
-      </StyledFlex>
-    </Menu.Item>
+      label={label}
+      toggled={checked}
+      key={key}
+      trailingContent={
+        <StyledFlex justifyContent="space-between" alignItems="center" gap={8}>
+          {!isEmptyRuleItem && isLoading && checked === true && <LoaderIcon />}
+          <Flex gap={4} alignItems="center">
+            <ColorPaletteIcon />
+          </Flex>
+        </StyledFlex>
+      }></Menu.ItemToggled>
   );
 };
 

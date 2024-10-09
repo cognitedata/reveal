@@ -11,7 +11,7 @@ import { HelpButton } from '../RevealToolbar/HelpButton';
 import { Divider } from '@cognite/cogs.js';
 import { SetOrbitOrFirstPersonControlsType } from '../RevealToolbar/SetFlexibleControlsType';
 import { RuleBasedOutputsButton } from '../RevealToolbar/RuleBasedOutputsButton';
-import { LayersButtonStrip } from '../RevealToolbar/LayersContainer/LayersButtonsStrip';
+import { LayersButtonStrip } from '../RevealToolbar/LayersButton/LayersButtonsStrip';
 import { ResetCameraButton } from '../RevealToolbar/ResetCameraButton';
 
 export type CustomTopbarContent = CustomToolbarContent & { topbarContent?: ReactNode };

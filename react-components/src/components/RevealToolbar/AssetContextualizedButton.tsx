@@ -3,7 +3,7 @@
  */
 import { useCallback, useState, type ReactElement } from 'react';
 
-import { Button, Tooltip as CogsTooltip } from '@cognite/cogs.js';
+import { AssetsIcon, Button, Tooltip as CogsTooltip } from '@cognite/cogs.js';
 import { useTranslation } from '../i18n/I18n';
 import { use3dModels } from '../../hooks/use3dModels';
 import { useAssetMappedNodesForRevisions } from '../CacheProvider/AssetMappingAndNode3DCacheProvider';
@@ -48,7 +48,7 @@ export const AssetContextualizedButton = ({
       appendTo={document.body}>
       <Button
         type="ghost"
-        icon="Assets"
+        icon=<AssetsIcon />
         toggled={enableContextualizedStyling}
         aria-label="asset-labels-button"
         onClick={onClick}

@@ -3,10 +3,14 @@
  */
 
 import { useState, type ReactElement } from 'react';
-import { Button, Dropdown, Menu, Tooltip as CogsTooltip } from '@cognite/cogs.js';
+import { Button, Tooltip as CogsTooltip, SettingsIcon } from '@cognite/cogs.js';
+import { Menu } from '@cognite/cogs-lab';
 import { type QualitySettings } from './SettingsContainer/types';
 import { HighFidelityContainer } from './SettingsContainer/HighFidelityContainer';
 import { useTranslation } from '../i18n/I18n';
+import { TOOLBAR_HORIZONTAL_PANEL_OFFSET } from '../constants';
+
+import { offset } from '@floating-ui/dom';
 
 type CustomSettingsProps = {
   customSettingsContent?: ReactElement;
@@ -23,35 +27,33 @@ export const SettingsButton = ({
   const [settingsActive, setSettingsActive] = useState<boolean>(false);
 
   return (
-    <Dropdown
-      appendTo={document.body}
-      onClickOutside={() => {
-        setSettingsActive(false);
-      }}
-      content={
-        <Menu>
-          <HighFidelityContainer
-            lowQualitySettings={lowQualitySettings}
-            highQualitySettings={highQualitySettings}
+    <Menu
+      placement="right"
+      floatingProps={{ middleware: [offset(TOOLBAR_HORIZONTAL_PANEL_OFFSET)] }}
+      disableCloseOnClickInside
+      renderTrigger={(props: any) => (
+        <CogsTooltip
+          content={t('SETTINGS_TOOLTIP', 'Settings')}
+          placement="right"
+          disabled={settingsActive}
+          appendTo={document.body}>
+          <Button
+            {...props}
+            icon=<SettingsIcon />
+            type="ghost"
+            aria-label="Show settings"
+            toggled={settingsActive}
+            onClick={() => {
+              setSettingsActive((prevState) => !prevState);
+            }}
           />
-          {customSettingsContent ?? <></>}
-        </Menu>
-      }
-      placement="right-start">
-      <CogsTooltip
-        content={t('SETTINGS_TOOLTIP', 'Settings')}
-        placement="right"
-        appendTo={document.body}>
-        <Button
-          icon="Settings"
-          type="ghost"
-          aria-label="Show settings"
-          toggled={settingsActive}
-          onClick={() => {
-            setSettingsActive((prevState) => !prevState);
-          }}
-        />
-      </CogsTooltip>
-    </Dropdown>
+        </CogsTooltip>
+      )}>
+      <HighFidelityContainer
+        lowQualitySettings={lowQualitySettings}
+        highQualitySettings={highQualitySettings}
+      />
+      {customSettingsContent ?? <></>}
+    </Menu>
   );
 };

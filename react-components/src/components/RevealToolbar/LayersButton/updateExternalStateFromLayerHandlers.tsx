@@ -2,7 +2,7 @@
  * Copyright 2024 Cognite AS
  */
 import { type Dispatch, type SetStateAction } from 'react';
-import { type LayersUrlStateParam } from '../../../hooks/types';
+import { type LayersUrlStateParam } from './types';
 import { type ModelLayerHandlers } from './LayersButtonsStrip';
 
 export function updateExternalStateFromLayerHandlers(

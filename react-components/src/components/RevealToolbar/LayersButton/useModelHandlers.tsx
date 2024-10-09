@@ -20,7 +20,7 @@ import {
 import { CadModelHandler, Image360CollectionHandler, PointCloudModelHandler } from './ModelHandler';
 import { use3dModels } from '../../../hooks/use3dModels';
 import { useReveal } from '../../RevealCanvas/ViewerContext';
-import { type DefaultLayersConfiguration, type LayersUrlStateParam } from '../../../hooks/types';
+import { type DefaultLayersConfiguration, type LayersUrlStateParam } from './types';
 import { use3DModelName } from '../../../query/use3DModelName';
 
 export type UpdateModelHandlersCallback = (

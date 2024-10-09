@@ -7,6 +7,7 @@ import { type TranslateDelegate } from '../utilities/TranslateKey';
 import { type Color } from 'three';
 import { type BaseCommand } from './BaseCommand';
 import { CommandsUpdater } from '../reactUpdaters/CommandsUpdater';
+import { type IconName } from '../utilities/IconName';
 
 export abstract class BaseFilterCommand extends RenderTargetCommand {
   // ==================================================
@@ -27,7 +28,7 @@ export abstract class BaseFilterCommand extends RenderTargetCommand {
   // OVERRIDES
   // ==================================================
 
-  public override get icon(): string {
+  public override get icon(): IconName {
     return 'Filter';
   }
 

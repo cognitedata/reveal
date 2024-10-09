@@ -11,6 +11,7 @@ import { MockSliderCommand } from './MockSliderCommand';
 import { MockFilterCommand } from './MockFilterCommand';
 import { MockNumberOptionCommand } from './MockNumberOptionCommand';
 import { type TranslateKey } from '../../utilities/TranslateKey';
+import { type IconName } from '../../utilities/IconName';
 
 export class MockSettingsCommand extends BaseSettingsCommand {
   // ==================================================
@@ -36,7 +37,7 @@ export class MockSettingsCommand extends BaseSettingsCommand {
     return { fallback: 'Mock Settings' };
   }
 
-  public override get icon(): string | undefined {
+  public override get icon(): IconName | undefined {
     return 'Bug';
   }
 }
