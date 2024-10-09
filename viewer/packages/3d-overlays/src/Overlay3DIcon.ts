@@ -122,8 +122,9 @@ export class Overlay3DIcon<ContentType = DefaultOverlay3DContentType> implements
   }
 
   updateHoverSpriteScale(): void {
-    if (!this._hoverSprite) return;
-
+    if (!this._hoverSprite) {
+      return;
+    }
     this._hoverSprite.scale.set(this._adaptiveScale * 2, this._adaptiveScale * 2, 1);
   }
 

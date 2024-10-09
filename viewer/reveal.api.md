@@ -482,6 +482,10 @@ export class Cognite3DViewer {
     on(event: 'cameraStop', callback: CameraStopDelegate): void;
     on(event: 'beforeSceneRendered', callback: BeforeSceneRenderedDelegate): void;
     on(event: 'sceneRendered', callback: SceneRenderedDelegate): void;
+    // @beta
+    onClick360Images(event: PointerEvent): Promise<boolean>;
+    // @beta
+    onHover360Images(event: PointerEvent): boolean;
     get pointCloudBudget(): PointCloudBudget;
     set pointCloudBudget(budget: PointCloudBudget);
     // @deprecated
