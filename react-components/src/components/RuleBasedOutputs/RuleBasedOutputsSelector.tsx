@@ -96,7 +96,7 @@ export function RuleBasedOutputsSelector({
   const { isLoading: isLoadingAssetIdsAndTimeseriesData, data: assetIdsWithTimeseriesData } =
     useAssetsAndTimeseriesLinkageDataQuery({
       timeseriesExternalIds,
-      contextualizedAssetNodes
+      assetNodes: contextualizedAssetNodes
     });
 
   const flatAssetsMappingsListPerModel = useCreateAssetMappingsMapPerModel(models, assetMappings);
