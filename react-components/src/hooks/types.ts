@@ -32,18 +32,6 @@ export type PointCloudLayersUrlStateParam = {
   index: number;
 };
 
-export type LayersUrlStateParam = {
-  image360Layers?: Image360LayersUrlStateParam[];
-  cadLayers?: CadLayersUrlStateParam[];
-  pointCloudLayers?: PointCloudLayersUrlStateParam[];
-};
-
-export type DefaultLayersConfiguration = {
-  cad: boolean;
-  pointcloud: boolean;
-  image360: boolean;
-};
-
 export type Reveal360AnnotationAssetData = {
   asset: Asset;
   assetAnnotationImage360Info: AssetAnnotationImage360Info;

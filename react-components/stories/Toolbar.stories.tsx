@@ -12,13 +12,15 @@ import {
 } from '../src';
 import { Color } from 'three';
 import styled from 'styled-components';
-import { Button, Menu, ToolBar, type ToolBarButton } from '@cognite/cogs.js';
+import { EditIcon, ToolBar, WorldIcon, type ToolBarButton } from '@cognite/cogs.js';
+import { Menu } from '@cognite/cogs-lab';
 import { type ReactElement, useState, useEffect } from 'react';
 import { signalStoryReadyForScreenshot } from './utilities/signalStoryReadyForScreenshot';
 import { RevealStoryContainer } from './utilities/RevealStoryContainer';
 import { getAddModelOptionsFromUrl } from './utilities/getAddModelOptionsFromUrl';
 import { SetOrbitOrFirstPersonControlsType } from '../src/components/RevealToolbar/SetFlexibleControlsType';
 import { useGetCameraStateFromUrlParam } from './utilities/useGetCameraStateFromUrlParam';
+import { type AddModelOptions } from '@cognite/reveal';
 
 const meta = {
   title: 'Example/Toolbar',
@@ -30,17 +32,17 @@ export default meta;
 type Story = StoryObj<typeof meta>;
 
 const MyCustomToolbar = styled(withSuppressRevealEvents(ToolBar))`
-  position: absolute;
+  position: absolute !important;
   right: 20px;
   top: 70px;
 `;
 
 const exampleToolBarButtons: ToolBarButton[] = [
   {
-    icon: 'Edit'
+    icon: <EditIcon />
   },
   {
-    icon: 'World'
+    icon: <WorldIcon />
   }
 ];
 
@@ -49,15 +51,12 @@ const exampleCustomSettingElements = (): ReactElement => {
 
   return (
     <>
-      <Menu.Item
-        hasSwitch
+      <Menu.ItemToggled
         toggled={originalCadColor}
-        onChange={() => {
+        onClick={() => {
           setOriginalCadColor((prevMode) => !prevMode);
-        }}>
-        Original CAD coloring
-      </Menu.Item>
-      <Button>Custom Button</Button>
+        }}
+        label="Original CAD coloring"></Menu.ItemToggled>
     </>
   );
 };
@@ -94,7 +93,7 @@ export const Main: Story = {
   args: {
     addModelOptions: getAddModelOptionsFromUrl('/primitives')
   },
-  render: ({ addModelOptions }) => (
+  render: ({ addModelOptions }: { addModelOptions: AddModelOptions }) => (
     <RevealStoryContainer color={new Color(0x4a4a4a)} viewerOptions={{}}>
       <FitToUrlCameraState />
       <CadModelContainer addModelOptions={addModelOptions} />

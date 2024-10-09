@@ -29,13 +29,14 @@
     "sort-keys": "cdf-i18n-utils-cli sort-local-keys --namespace reveal-react-components --path ./src/common/i18n"
   },
   "peerDependencies": {
-    "@cognite/cogs.js": ">=9.84.3",
+    "@cognite/cogs-lab": "^9.0.0-alpha.111",
     "@cognite/reveal": "4.17.0",
     "react": ">=18",
     "react-dom": ">=18",
     "styled-components": ">=5"
   },
   "dependencies": {
+    "@cognite/cogs.js": "^10.25.0",
     "@tanstack/react-query": "^5.32.0",
     "assert": "^2.1.0",
     "lodash": "^4.17.21"
@@ -43,27 +44,30 @@
   "devDependencies": {
     "@cognite/cdf-i18n-utils": "^0.7.5",
     "@cognite/cdf-utilities": "^3.6.0",
-    "@cognite/cogs.js": "^9.84.3",
+    "@cognite/cogs-lab": "^9.0.0-alpha.113",
+    "@cognite/cogs.js": "^10.25.0",
     "@cognite/reveal": "^4.17.0",
     "@cognite/sdk": "^9.13.0",
-    "@playwright/test": "^1.43.1",
-    "@storybook/addon-essentials": "^8.0.9",
-    "@storybook/addon-interactions": "^8.0.9",
-    "@storybook/addon-links": "^8.0.9",
-    "@storybook/blocks": "^8.0.9",
-    "@storybook/react": "^8.0.9",
-    "@storybook/react-vite": "^8.0.9",
+    "@playwright/test": "1.48.0",
+    "@storybook/addon-essentials": "8.3.5",
+    "@storybook/addon-interactions": "8.3.5",
+    "@storybook/addon-links": "8.3.5",
+    "@storybook/blocks": "8.3.5",
+    "@storybook/react": "8.3.5",
+    "@storybook/react-vite": "8.3.5",
     "@storybook/test": "8.3.5",
     "@tanstack/react-query-devtools": "^5.32.0",
     "@testing-library/react": "^16.0.0",
+    "@tippyjs/react": "4.2.6",
     "@types/lodash": "^4.17.0",
     "@types/node": "^20.12.7",
     "@types/react": "^18.3.1",
     "@types/react-dom": "^18.3.0",
     "@types/react-resizable": "^3.0.7",
-    "@types/three": "0.164.0",
+    "@types/three": "0.165.0",
     "@typescript-eslint/eslint-plugin": "^7.8.0",
     "@vitejs/plugin-react": "^4.2.1",
+    "core-js": "^3.6.5",
     "eslint": "^8.57.0",
     "eslint-config-love": "47.0.0",
     "eslint-config-prettier": "^9.1.0",
@@ -76,7 +80,7 @@
     "happy-dom": "^15.0.0",
     "locize-cli": "^8.0.1",
     "moq.ts": "10.0.8",
-    "playwright": "^1.43.1",
+    "playwright": "1.48.0",
     "prettier": "^3.2.5",
     "prop-types": "^15.8.1",
     "react": "^18.3.1",
@@ -84,10 +88,10 @@
     "react-draggable": "^4.4.6",
     "react-resizable": "^3.0.5",
     "react-router-dom": "^6.23.0",
-    "storybook": "^8.0.9",
+    "storybook": "^8.3.5",
     "style-loader": "^4.0.0",
     "styled-components": "^6.1.10",
-    "three": "0.164.1",
+    "three": "0.165.0",
     "ts-loader": "^9.5.1",
     "typescript": "^5.4.5",
     "vite": "^5.2.10",
@@ -98,5 +102,8 @@
   "packageManager": "yarn@4.5.0",
   "files": [
     "dist"
-  ]
+  ],
+  "resolutions": {
+    "@mui/base": "5.0.0-beta.58"
+  }
 }

@@ -3,7 +3,7 @@
  */
 import { type ReactElement } from 'react';
 
-import { Menu } from '@cognite/cogs.js';
+import { Menu } from '@cognite/cogs-lab';
 import { use3dScenes } from '../../hooks/scenes/use3dScenes';
 import { type DmsUniqueIdentifier } from '../../data-providers/FdmSDK';
 
@@ -28,14 +28,14 @@ export const SceneList = ({ selectedScene, onSceneChange }: SceneListProps): Rea
         return Object.keys(data[space] ?? {}).map((externalId) => {
           const name = data[space][externalId].name;
           return (
-            <Menu.Item
+            <Menu.ItemToggled
               key={`${space}-${externalId}`}
               toggled={selectedScene?.externalId === externalId && selectedScene?.space === space}
               onClick={() => {
                 onSceneChange({ externalId, space, name });
               }}>
               {data[space][externalId].name}
-            </Menu.Item>
+            </Menu.ItemToggled>
           );
         });
       })}

@@ -7,18 +7,11 @@ import {
   useCallback,
   useEffect,
   useMemo,
-  useRef,
   useState,
   type ReactElement
 } from 'react';
-import {
-  Button,
-  Dropdown,
-  Menu,
-  Tooltip as CogsTooltip,
-  type IconType,
-  Slider
-} from '@cognite/cogs.js';
+import { Button, Tooltip as CogsTooltip, Slider } from '@cognite/cogs.js';
+import { Menu } from '@cognite/cogs-lab';
 import { useTranslation } from '../i18n/I18n';
 import { type BaseCommand } from '../../architecture/base/commands/BaseCommand';
 import { useRenderTarget } from '../RevealCanvas/ViewerContext';
@@ -38,8 +31,13 @@ import { DropdownButton } from './DropdownButton';
 import { BaseSliderCommand } from '../../architecture/base/commands/BaseSliderCommand';
 import { BaseFilterCommand } from '../../architecture/base/commands/BaseFilterCommand';
 import { FilterButton } from './FilterButton';
-import { useClickOutside } from './useClickOutside';
 import { DEFAULT_PADDING } from './constants';
+import { type IconName } from '../../architecture/base/utilities/IconName';
+import { IconComponent } from './IconComponentMapper';
+
+import { TOOLBAR_HORIZONTAL_PANEL_OFFSET } from '../constants';
+
+import { offset } from '@floating-ui/dom';
 
 export const SettingsButton = ({
   inputCommand,
@@ -59,7 +57,7 @@ export const SettingsButton = ({
   const [isEnabled, setEnabled] = useState<boolean>(true);
   const [isVisible, setVisible] = useState<boolean>(true);
   const [uniqueId, setUniqueId] = useState<number>(0);
-  const [icon, setIcon] = useState<IconType | undefined>(undefined);
+  const [icon, setIcon] = useState<IconName | undefined>(undefined);
 
   const update = useCallback((command: BaseCommand) => {
     setEnabled(command.isEnabled);
@@ -76,22 +74,6 @@ export const SettingsButton = ({
     };
   }, [command]);
 
-  const outsideAction = (): boolean => {
-    if (!isOpen) {
-      return false;
-    }
-    postAction();
-    return false;
-  };
-
-  const postAction = (): void => {
-    setOpen(false);
-    renderTarget.domElement.focus();
-  };
-
-  const menuRef = useRef<HTMLDivElement | null>(null);
-  useClickOutside(menuRef, outsideAction);
-
   if (!isVisible || !command.hasChildren) {
     return <></>;
   }
@@ -101,45 +83,46 @@ export const SettingsButton = ({
   const children = command.children;
 
   return (
-    <Dropdown
-      visible={isOpen}
+    <Menu
       hideOnSelect={false}
+      onOpenChange={(open: boolean) => {
+        setOpen(open);
+      }}
+      floatingProps={{ middleware: [offset(TOOLBAR_HORIZONTAL_PANEL_OFFSET)] }}
       appendTo={'parent'}
-      placement="auto-start"
-      content={
-        <div ref={menuRef}>
-          <Menu
-            style={{
-              flexDirection,
-              padding: DEFAULT_PADDING
-            }}>
-            {children.map((child, _index): ReactElement | undefined => {
-              return createMenuItem(child, t);
-            })}
-          </Menu>
-        </div>
-      }>
-      <CogsTooltip
-        content={<LabelWithShortcut label={label} command={command} />}
-        disabled={label === undefined}
-        appendTo={document.body}
-        placement={placement}>
-        <Button
-          type={getButtonType(command)}
-          icon={icon}
-          key={uniqueId}
-          disabled={!isEnabled}
-          toggled={isOpen}
-          aria-label={label}
-          iconPlacement="left"
-          onClick={(event: MouseEvent<HTMLElement>) => {
-            event.stopPropagation();
-            event.preventDefault();
-            setOpen((prevState) => !prevState);
-          }}
-        />
-      </CogsTooltip>
-    </Dropdown>
+      placement="right-start"
+      style={{
+        flexDirection,
+        padding: DEFAULT_PADDING
+      }}
+      disableCloseOnClickInside
+      renderTrigger={(props: any) => (
+        <CogsTooltip
+          content={<LabelWithShortcut label={label} command={command} />}
+          disabled={label === undefined}
+          appendTo={document.body}
+          placement={placement}>
+          <Button
+            type={getButtonType(command)}
+            icon={<IconComponent iconName={icon} />}
+            key={uniqueId}
+            disabled={!isEnabled}
+            toggled={isOpen}
+            aria-label={label}
+            iconPlacement="left"
+            {...props}
+            onClick={(event: MouseEvent<HTMLElement>) => {
+              props.onClick?.(event);
+              event.stopPropagation();
+              event.preventDefault();
+            }}
+          />
+        </CogsTooltip>
+      )}>
+      {children.map((child, _index): ReactElement | undefined => {
+        return createMenuItem(child, t);
+      })}
+    </Menu>
   );
 };
 
@@ -165,18 +148,18 @@ function createToggle(command: BaseCommand, t: TranslateDelegate): ReactElement 
     return <></>;
   }
   return (
-    <Menu.Item
+    <Menu.ItemToggled
       key={command.uniqueId}
       hasSwitch={true}
       disabled={!command.isEnabled}
       toggled={isChecked}
       style={{ padding: DEFAULT_PADDING }}
-      onChange={() => {
+      label={command.getLabel(t)}
+      onClick={() => {
         command.invoke();
         setChecked(command.isChecked);
-      }}>
-      {command.getLabel(t)}
-    </Menu.Item>
+      }}
+    />
   );
 }
 
@@ -187,11 +170,11 @@ function createButton(command: BaseCommand, t: TranslateDelegate): ReactElement 
   }
   const label = command.getLabel(t);
   return (
-    <Menu.Item
+    <Menu.ItemAction
       key={command.uniqueId}
       disabled={!command.isEnabled}
       toggled={isChecked}
-      icon={getIcon(command)}
+      icon={<IconComponent iconName={getIcon(command)} />}
       iconPlacement="left"
       style={{ padding: DEFAULT_PADDING }}
       onClick={() => {
@@ -199,7 +182,7 @@ function createButton(command: BaseCommand, t: TranslateDelegate): ReactElement 
         setChecked(command.isChecked);
       }}>
       <LabelWithShortcut label={label} command={command} inverted={false} />
-    </Menu.Item>
+    </Menu.ItemAction>
   );
 }
 

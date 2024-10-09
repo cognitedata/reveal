@@ -12,6 +12,7 @@ import { type TranslateKey } from '../../base/utilities/TranslateKey';
 import { ApplyClipCommand } from './commands/ApplyClipCommand';
 import { FocusType } from '../../base/domainObjectsHelpers/FocusType';
 import { type DomainObject } from '../../base/domainObjects/DomainObject';
+import { type IconName } from '../../base/utilities/IconName';
 import { SolidPrimitiveRenderStyle } from '../primitives/common/SolidPrimitiveRenderStyle';
 
 export class CropBoxDomainObject extends BoxDomainObject {
@@ -28,7 +29,7 @@ export class CropBoxDomainObject extends BoxDomainObject {
   // OVERRIDES
   // ==================================================
 
-  public override get icon(): string {
+  public override get icon(): IconName {
     return 'Crop';
   }
 

@@ -16,6 +16,7 @@ import { getIconByPrimitiveType } from '../../measurements/getIconByPrimitiveTyp
 import { type TranslateKey } from '../../../base/utilities/TranslateKey';
 import { Quantity } from '../../../base/domainObjectsHelpers/Quantity';
 import { PanelInfo } from '../../../base/domainObjectsHelpers/PanelInfo';
+import { type IconName } from '../../../base/utilities/IconName';
 import { SolidDomainObject } from '../common/SolidDomainObject';
 import { SolidPrimitiveRenderStyle } from '../common/SolidPrimitiveRenderStyle';
 import { Box } from '../../../base/utilities/primitives/Box';
@@ -43,7 +44,7 @@ export abstract class BoxDomainObject extends SolidDomainObject {
   // OVERRIDES of DomainObject
   // ==================================================
 
-  public override get icon(): string {
+  public override get icon(): IconName {
     return getIconByPrimitiveType(this.primitiveType);
   }
 

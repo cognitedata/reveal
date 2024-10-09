@@ -3,6 +3,7 @@
  */
 
 import { RenderTargetCommand } from '../commands/RenderTargetCommand';
+import { type IconName } from '../utilities/IconName';
 import { type TranslateKey } from '../utilities/TranslateKey';
 
 export class ToggleAllModelsVisibleCommand extends RenderTargetCommand {
@@ -14,7 +15,7 @@ export class ToggleAllModelsVisibleCommand extends RenderTargetCommand {
     return { fallback: 'Show or hide all models' };
   }
 
-  public override get icon(): string {
+  public override get icon(): IconName {
     return 'EyeShow';
   }
 

@@ -2,13 +2,14 @@
  * Copyright 2024 Cognite AS
  */
 
+import { type IconName } from '../utilities/IconName';
 import { type TranslateDelegate, type TranslateKey } from '../utilities/TranslateKey';
 import { Quantity } from './Quantity';
 
 type PanelItemProps = {
   key?: string;
   fallback: string;
-  icon?: string;
+  icon?: IconName;
   value?: number;
   quantity?: Quantity;
 };
