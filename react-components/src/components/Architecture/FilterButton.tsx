@@ -10,8 +10,8 @@ import {
   type ReactElement,
   type MouseEvent
 } from 'react';
-import { Button, Tooltip as CogsTooltip, ChevronUpIcon, ChevronDownIcon } from '@cognite/cogs.js';
-import { Menu } from '@cognite/cogs-lab';
+import { Button, Tooltip as CogsTooltip } from '@cognite/cogs.js';
+import { Menu, SelectPanel } from '@cognite/cogs-lab';
 import { useTranslation } from '../i18n/I18n';
 import { type BaseCommand } from '../../architecture/base/commands/BaseCommand';
 import { useRenderTarget } from '../RevealCanvas/ViewerContext';
@@ -23,7 +23,6 @@ import {
   getIcon
 } from './utilities';
 import { LabelWithShortcut } from './LabelWithShortcut';
-import styled from 'styled-components';
 import { BaseFilterCommand } from '../../architecture/base/commands/BaseFilterCommand';
 import { FilterItem } from './FilterItem';
 import { OPTION_MIN_WIDTH, DEFAULT_PADDING } from './constants';
@@ -57,6 +56,7 @@ export const FilterButton = ({
   const [icon, setIcon] = useState<IconName | undefined>(undefined);
   const [isOpen, setOpen] = useState<boolean>(false);
   const [isAllChecked, setAllChecked] = useState<boolean>(false);
+  const [isSomeChecked, setSomeChecked] = useState<boolean>(false);
   const [selectedLabel, setSelectedLabel] = useState<string>('');
 
   const update = useCallback(
@@ -67,6 +67,7 @@ export const FilterButton = ({
       setIcon(getIcon(command));
       if (command instanceof BaseFilterCommand) {
         setAllChecked(command.isAllChecked);
+        setSomeChecked(command.children.some((child) => child.isChecked));
         setSelectedLabel(command.getSelectedLabel(t));
       }
     },
@@ -85,7 +86,7 @@ export const FilterButton = ({
     return <></>;
   }
   const placement = getTooltipPlacement(isHorizontal);
-  const label = usedInSettings ? undefined : command.getLabel(t);
+  const label = command.getLabel(t);
   const flexDirection = getFlexDirection(isHorizontal);
 
   const children = command.children;
@@ -99,74 +100,70 @@ export const FilterButton = ({
         overflow: 'auto',
         flexDirection
       }}
+      label={usedInSettings ? label : undefined}
       floatingProps={{ middleware: [offset(TOOLBAR_HORIZONTAL_PANEL_OFFSET)] }}
-      visible={isOpen}
-      hideOnSelect={false}
-      onOpenChange={(open: boolean) => {
-        setOpen(open);
-      }}
+      onOpenChange={setOpen}
       appendTo={'parent'}
-      placement={usedInSettings ? 'auto-start' : 'bottom-end'}
+      placement={usedInSettings ? 'right-start' : 'right-start'}
       disableCloseOnClickInside
-      renderTrigger={(props: any) => (
-        <CogsTooltip
-          content={<LabelWithShortcut label={label} command={command} />}
-          disabled={usedInSettings || label === undefined}
-          appendTo={document.body}
-          placement={placement}>
-          <Button
-            type={usedInSettings ? 'tertiary' : getButtonType(command)}
-            icon={getButtonIcon(usedInSettings, isOpen)}
-            key={uniqueId}
-            disabled={!isEnabled}
-            toggled={isOpen}
-            iconPlacement="left"
-            aria-label={command.getLabel(t)}
-            style={{
-              minWidth: usedInSettings ? OPTION_MIN_WIDTH : undefined,
-              padding: usedInSettings ? DEFAULT_PADDING : undefined
+      renderTrigger={
+        usedInSettings
+          ? undefined
+          : (props: any) => (
+              <CogsTooltip
+                content={<LabelWithShortcut label={label} command={command} />}
+                disabled={isOpen || usedInSettings || label === undefined}
+                appendTo={document.body}
+                placement={placement}>
+                <Button
+                  type={usedInSettings ? 'tertiary' : getButtonType(command)}
+                  icon={getButtonIcon(usedInSettings)}
+                  key={uniqueId}
+                  disabled={!isEnabled}
+                  toggled={isOpen}
+                  iconPlacement="left"
+                  aria-label={command.getLabel(t)}
+                  style={{
+                    minWidth: usedInSettings ? OPTION_MIN_WIDTH : undefined,
+                    padding: usedInSettings ? DEFAULT_PADDING : undefined
+                  }}
+                  {...props}
+                  onClick={(event: MouseEvent<HTMLElement>) => {
+                    event.stopPropagation();
+                    event.preventDefault();
+                    props.onClick(event);
+                  }}>
+                  {usedInSettings ? selectedLabel : undefined}
+                </Button>
+              </CogsTooltip>
+            )
+      }>
+      <SelectPanel.Header title={label} />
+      <SelectPanel.Body label={label}>
+        <SelectPanel.Section>
+          <SelectPanel.Item
+            key={-1}
+            variant="checkbox"
+            checked={isAllChecked}
+            indeterminate={!isAllChecked && isSomeChecked}
+            onClick={() => {
+              command.toggleAllChecked();
             }}
-            {...props}
-            onClick={(event: MouseEvent<HTMLElement>) => {
-              event.stopPropagation();
-              event.preventDefault();
-              props.onClick(event);
-            }}>
-            {usedInSettings ? selectedLabel : undefined}
-          </Button>
-        </CogsTooltip>
-      )}>
-      <Menu.ItemAction
-        key={-1}
-        toggled={isAllChecked}
-        onClick={() => {
-          command.toggleAllChecked();
-        }}>
-        {BaseFilterCommand.getAllString(t)}
-      </Menu.ItemAction>
-      <StyledMenuItems>
-        {children.map((child, _index): ReactElement => {
-          return <FilterItem key={child.uniqueId} command={child} />;
-        })}
-      </StyledMenuItems>
+            label={BaseFilterCommand.getAllString(t)}>
+            {BaseFilterCommand.getAllString(t)}
+          </SelectPanel.Item>
+        </SelectPanel.Section>
+
+        <SelectPanel.Section>
+          {children.map((child, _index): ReactElement => {
+            return <FilterItem key={child.uniqueId} command={child} />;
+          })}
+        </SelectPanel.Section>
+      </SelectPanel.Body>
     </Menu>
   );
 
-  function getButtonIcon(usedInSettings: boolean, isOpen: boolean): ReactElement {
-    return usedInSettings ? (
-      isOpen ? (
-        <ChevronUpIcon />
-      ) : (
-        <ChevronDownIcon />
-      )
-    ) : (
-      <IconComponent iconName={icon} />
-    );
+  function getButtonIcon(usedInSettings: boolean): ReactElement | undefined {
+    return usedInSettings ? undefined : <IconComponent iconName={icon} />;
   }
 };
-
-const StyledMenuItems = styled.div`
-  max-height: 300px;
-  overflow-y: auto;
-  overflow-x: hidden;
-`;

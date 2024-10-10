@@ -17,7 +17,7 @@ export const ModelLayersList = ({
   label?: string;
   disabled?: boolean;
 }): ReactElement => {
-  if (disabled) {
+  if (disabled === true) {
     return <></>;
   }
 

@@ -2,15 +2,8 @@
  * Copyright 2024 Cognite AS
  */
 
-import {
-  type MouseEvent,
-  useCallback,
-  useEffect,
-  useMemo,
-  useState,
-  type ReactElement
-} from 'react';
-import { Button, Tooltip as CogsTooltip, Slider } from '@cognite/cogs.js';
+import { useCallback, useEffect, useMemo, useState, type ReactElement } from 'react';
+import { Button, Tooltip as CogsTooltip, Slider, Switch } from '@cognite/cogs.js';
 import { Menu } from '@cognite/cogs-lab';
 import { useTranslation } from '../i18n/I18n';
 import { type BaseCommand } from '../../architecture/base/commands/BaseCommand';
@@ -99,7 +92,7 @@ export const SettingsButton = ({
       renderTrigger={(props: any) => (
         <CogsTooltip
           content={<LabelWithShortcut label={label} command={command} />}
-          disabled={label === undefined}
+          disabled={isOpen || label === undefined}
           appendTo={document.body}
           placement={placement}>
           <Button
@@ -111,11 +104,6 @@ export const SettingsButton = ({
             aria-label={label}
             iconPlacement="left"
             {...props}
-            onClick={(event: MouseEvent<HTMLElement>) => {
-              props.onClick?.(event);
-              event.stopPropagation();
-              event.preventDefault();
-            }}
           />
         </CogsTooltip>
       )}>
@@ -147,18 +135,16 @@ function createToggle(command: BaseCommand, t: TranslateDelegate): ReactElement 
   if (!command.isVisible) {
     return <></>;
   }
+
+  const label = command.getLabel(t);
   return (
-    <Menu.ItemToggled
-      key={command.uniqueId}
-      hasSwitch={true}
-      disabled={!command.isEnabled}
-      toggled={isChecked}
-      style={{ padding: DEFAULT_PADDING }}
-      label={command.getLabel(t)}
+    <Menu.ItemAction
+      label={label}
       onClick={() => {
         command.invoke();
         setChecked(command.isChecked);
       }}
+      trailingContent={<Switch checked={isChecked} disabled={!command.isEnabled} />}
     />
   );
 }
@@ -177,12 +163,13 @@ function createButton(command: BaseCommand, t: TranslateDelegate): ReactElement 
       icon={<IconComponent iconName={getIcon(command)} />}
       iconPlacement="left"
       style={{ padding: DEFAULT_PADDING }}
+      shortcutKeys={command.getShortCutKeys()}
+      label={label}
       onClick={() => {
         command.invoke();
         setChecked(command.isChecked);
-      }}>
-      <LabelWithShortcut label={label} command={command} inverted={false} />
-    </Menu.ItemAction>
+      }}
+    />
   );
 }
 
@@ -193,70 +180,58 @@ function createSlider(command: BaseSliderCommand, t: TranslateDelegate): ReactEl
     return <></>;
   }
   return (
-    <SliderDiv>
-      <label>{command.getLabel(t)}</label>
-      <StyledSlider
-        disabled={!command.isEnabled}
-        min={command.min}
-        max={command.max}
-        step={command.step}
-        onChange={(value: number) => {
-          command.value = value;
-          setValue(value);
-        }}
-        value={value}></StyledSlider>
-    </SliderDiv>
+    <>
+      <Menu.Divider />
+      <SliderDiv>
+        <StrongLabel>{command.getLabel(t)}</StrongLabel>
+        <StyledSlider
+          disabled={!command.isEnabled}
+          min={command.min}
+          max={command.max}
+          step={command.step}
+          onChange={(value: number) => {
+            command.value = value;
+            setValue(value);
+          }}
+          value={value}></StyledSlider>
+      </SliderDiv>
+      <Menu.Divider />
+    </>
   );
 }
 
-function createDropdownButton(command: BaseOptionCommand, t: TranslateDelegate): ReactElement {
+function createDropdownButton(command: BaseOptionCommand): ReactElement {
   if (!command.isVisible) {
     return <></>;
   }
-  return (
-    <OptionDiv>
-      <label>{command.getLabel(t)}</label>
-      <DropdownButton inputCommand={command} isHorizontal={false} usedInSettings={true} />
-    </OptionDiv>
-  );
+  return <DropdownButton inputCommand={command} isHorizontal={false} usedInSettings={true} />;
 }
 
-function createFilterButton(command: BaseFilterCommand, t: TranslateDelegate): ReactElement {
+function createFilterButton(command: BaseFilterCommand): ReactElement {
   command.initializeChildrenIfNeeded();
   if (!command.isVisible) {
     return <></>;
   }
-  return (
-    <OptionDiv>
-      <label>{command.getLabel(t)}</label>
-      <FilterButton inputCommand={command} isHorizontal={false} usedInSettings={true} />
-    </OptionDiv>
-  );
+  return <FilterButton inputCommand={command} isHorizontal={false} usedInSettings={true} />;
 }
 
-const OptionDiv = styled.div`
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  justify-content: space-between;
-  gap: 8px;
-  padding: 4px 4px;
-  font-size: 14px;
+const StrongLabel = styled.label`
+  font-weight: bold;
 `;
 
 const SliderDiv = styled.div`
   display: flex;
-  flex-direction: row;
-  align-items: center;
+  flex-direction: column;
+  align-items: start;
   justify-content: space-between;
   gap: 8px;
-  padding: 4px 4px;
+  padding: 4px 8px;
   font-size: 14px;
 `;
 
 const StyledSlider = styled(Slider)`
   offset-anchor: right top;
-  float: right;
-  display: inline;
-  width: 120px;
+  float: center;
+  display: flex;
+  justify-content: space-around;
 `;
