@@ -70,7 +70,7 @@ export const DropdownButton = ({
     return <></>;
   }
   const placement = getTooltipPlacement(isHorizontal);
-  const label = usedInSettings ? undefined : command.getLabel(t);
+  const label = command.getLabel(t);
   const flexDirection = getFlexDirection(false); // Always vertical
   const children = command.children;
   const selectedLabel = command.selectedChild?.getLabel(t);
@@ -84,42 +84,47 @@ export const DropdownButton = ({
         overflow: 'auto',
         flexDirection
       }}
+      label={label}
       floatingProps={{ middleware: [offset(TOOLBAR_HORIZONTAL_PANEL_OFFSET)] }}
       onOpenChange={(open: boolean) => {
         setOpen(open);
       }}
       hideOnSelect={true}
       appendTo={'parent'}
-      placement={usedInSettings ? 'bottom-end' : 'auto-start'}
-      renderTrigger={(props: any) => (
-        <CogsTooltip
-          content={<LabelWithShortcut label={label} command={command} />}
-          disabled={usedInSettings || label === undefined}
-          appendTo={document.body}
-          placement={placement}>
-          <Button
-            style={{
-              padding: usedInSettings ? DEFAULT_PADDING : '8px 4px',
-              minWidth: usedInSettings ? OPTION_MIN_WIDTH : undefined
-            }}
-            type={usedInSettings ? 'tertiary' : getButtonType(command)}
-            icon={<OpenButtonIcon />}
-            key={uniqueId}
-            disabled={!isEnabled}
-            iconPlacement="left"
-            aria-label={command.getLabel(t)}
-            label={selectedLabel}
-            toggled={isOpen}
-            {...props}
-            onClick={(event: MouseEvent<HTMLElement>) => {
-              event.stopPropagation();
-              event.preventDefault();
-              props.onClick?.(event);
-            }}>
-            {selectedLabel}
-          </Button>
-        </CogsTooltip>
-      )}>
+      placement={usedInSettings ? 'bottom-end' : 'bottom-start'}
+      renderTrigger={
+        usedInSettings
+          ? undefined
+          : (props: any) => (
+              <CogsTooltip
+                content={<LabelWithShortcut label={label} command={command} />}
+                disabled={usedInSettings || label === undefined}
+                appendTo={document.body}
+                placement={placement}>
+                <Button
+                  style={{
+                    padding: usedInSettings ? DEFAULT_PADDING : '8px 4px',
+                    minWidth: usedInSettings ? OPTION_MIN_WIDTH : undefined
+                  }}
+                  type={usedInSettings ? 'tertiary' : getButtonType(command)}
+                  icon={<OpenButtonIcon />}
+                  key={uniqueId}
+                  disabled={!isEnabled}
+                  iconPlacement="left"
+                  aria-label={command.getLabel(t)}
+                  label={selectedLabel}
+                  toggled={isOpen}
+                  {...props}
+                  onClick={(event: MouseEvent<HTMLElement>) => {
+                    event.stopPropagation();
+                    event.preventDefault();
+                    props.onClick?.(event);
+                  }}>
+                  {selectedLabel}
+                </Button>
+              </CogsTooltip>
+            )
+      }>
       {children.map((child, _index): ReactElement => {
         return createMenuItem(child, t);
       })}

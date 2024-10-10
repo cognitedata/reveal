@@ -35,9 +35,9 @@ export const RuleBasedSelectionItem = ({
       trailingContent={
         <StyledFlex justifyContent="space-between" alignItems="center" gap={8}>
           {!isEmptyRuleItem && isLoading && checked === true && <LoaderIcon />}
-          <Flex gap={4} alignItems="center">
+          <RightFlex gap={4} alignItems="center">
             <ColorPaletteIcon />
-          </Flex>
+          </RightFlex>
         </StyledFlex>
       }></Menu.ItemToggled>
   );
@@ -45,4 +45,8 @@ export const RuleBasedSelectionItem = ({
 
 const StyledFlex = styled(Flex)`
   min-height: 24px;
+`;
+
+const RightFlex = styled(Flex)`
+  padding-right: 4px;
 `;

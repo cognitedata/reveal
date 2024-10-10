@@ -9,12 +9,18 @@ import { type ReactElement } from 'react';
 export const ModelLayersList = ({
   modelLayerHandlers,
   update,
-  label
+  label,
+  disabled
 }: {
   modelLayerHandlers: ModelHandler[];
   update: () => void;
   label?: string;
+  disabled?: boolean;
 }): ReactElement => {
+  if (disabled === true) {
+    return <></>;
+  }
+
   return (
     <>
       {label !== undefined && (

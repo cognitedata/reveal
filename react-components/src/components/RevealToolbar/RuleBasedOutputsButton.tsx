@@ -152,7 +152,7 @@ export const RuleBasedOutputsButton = ({
           />
         </CogsTooltip>
       )}>
-      <Menu.Section>{t('RULESET_SELECT_HEADER', 'Select color overlay')}</Menu.Section>
+      <Menu.Section label={t('RULESET_SELECT_HEADER', 'Select color overlay')} />
       <RuleBasedSelectionItem
         key="no-rule-selected"
         id="no-rule-selected"

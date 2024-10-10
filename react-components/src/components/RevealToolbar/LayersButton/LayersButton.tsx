@@ -107,7 +107,11 @@ const ModelLayerSelection = ({
         />
       </SelectPanel.Trigger>
       <SelectPanel.Body>
-        <ModelLayersList modelLayerHandlers={modelLayerHandlers} update={updateCallback} />
+        <ModelLayersList
+          modelLayerHandlers={modelLayerHandlers}
+          update={updateCallback}
+          disabled={isDisabled}
+        />
       </SelectPanel.Body>
     </SelectPanel>
   );

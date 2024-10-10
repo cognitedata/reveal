@@ -38,7 +38,6 @@ export const SettingsButton = ({
           disabled={settingsActive}
           appendTo={document.body}>
           <Button
-            {...props}
             icon=<SettingsIcon />
             type="ghost"
             aria-label="Show settings"
@@ -46,6 +45,7 @@ export const SettingsButton = ({
             onClick={() => {
               setSettingsActive((prevState) => !prevState);
             }}
+            {...props}
           />
         </CogsTooltip>
       )}>

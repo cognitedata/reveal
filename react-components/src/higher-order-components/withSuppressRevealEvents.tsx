@@ -12,6 +12,7 @@ export function withSuppressRevealEvents<T extends object>(
 
     const stopPropagation = (event: Event): void => {
       event.stopPropagation();
+      event.preventDefault();
     };
 
     useEffect(() => {

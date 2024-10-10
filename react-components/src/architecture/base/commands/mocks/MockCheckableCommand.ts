@@ -28,4 +28,8 @@ export class MockCheckableCommand extends RenderTargetCommand {
     this.value = !this.value;
     return true;
   }
+
+  public override get isToggle(): boolean {
+    return true;
+  }
 }
