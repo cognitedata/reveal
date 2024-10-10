@@ -67,7 +67,7 @@ export const FilterButton = ({
       setIcon(getIcon(command));
       if (command instanceof BaseFilterCommand) {
         setAllChecked(command.isAllChecked);
-        setSomeChecked(command.children.some((child) => child.isChecked));
+        setSomeChecked(command.children?.some((child) => child.isChecked) === true);
         setSelectedLabel(command.getSelectedLabel(t));
       }
     },

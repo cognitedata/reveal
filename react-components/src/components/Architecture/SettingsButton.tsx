@@ -119,10 +119,10 @@ function createMenuItem(command: BaseCommand, t: TranslateDelegate): ReactElemen
     return createSlider(command, t);
   }
   if (command instanceof BaseOptionCommand) {
-    return createDropdownButton(command, t);
+    return createDropdownButton(command);
   }
   if (command instanceof BaseFilterCommand) {
-    return createFilterButton(command, t);
+    return createFilterButton(command);
   }
   if (command.isToggle) {
     return createToggle(command, t);
