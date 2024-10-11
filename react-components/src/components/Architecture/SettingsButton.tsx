@@ -31,10 +31,7 @@ import { IconComponent } from './IconComponentMapper';
 import { TOOLBAR_HORIZONTAL_PANEL_OFFSET } from '../constants';
 
 import { offset } from '@floating-ui/dom';
-import {
-  CommandSettingsItem,
-  DividerSettingsItem
-} from '../../architecture/base/commands/SettingsItem';
+import { DividerCommand } from '../../architecture/base/concreteCommands/DividerCommand';
 
 export const SettingsButton = ({
   inputCommand,
@@ -77,7 +74,7 @@ export const SettingsButton = ({
   const placement = getTooltipPlacement(isHorizontal);
   const label = command.getLabel(t);
   const flexDirection = getFlexDirection(isHorizontal);
-  const children = command.getSettingsItems();
+  const children = command.children;
 
   return (
     <Menu
@@ -112,12 +109,7 @@ export const SettingsButton = ({
         </CogsTooltip>
       )}>
       {children.map((child): ReactElement | undefined => {
-        if (child instanceof DividerSettingsItem) {
-          return <Menu.Divider key={child.key()} />;
-        }
-        if (child instanceof CommandSettingsItem) {
-          return createMenuItem(child.command, t);
-        }
+        return createMenuItem(child, t);
 
         return undefined;
       })}
@@ -138,7 +130,17 @@ function createMenuItem(command: BaseCommand, t: TranslateDelegate): ReactElemen
   if (command.isToggle) {
     return createToggle(command, t);
   }
+  if (command instanceof DividerCommand) {
+    return createDivider(command);
+  }
   return createButton(command, t);
+}
+
+function createDivider(command: BaseCommand): ReactElement | undefined {
+  if (!command.isVisible) {
+    return <></>;
+  }
+  return <Menu.Divider key={command.uniqueId} />;
 }
 
 function createToggle(command: BaseCommand, t: TranslateDelegate): ReactElement {
@@ -150,6 +152,7 @@ function createToggle(command: BaseCommand, t: TranslateDelegate): ReactElement 
   const label = command.getLabel(t);
   return (
     <Menu.ItemAction
+      key={command.uniqueId}
       label={label}
       onClick={() => {
         command.invoke();
@@ -191,22 +194,20 @@ function createSlider(command: BaseSliderCommand, t: TranslateDelegate): ReactEl
     return <></>;
   }
   return (
-    <>
-      <SliderDiv>
-        <label>{command.getLabel(t)}</label>
-        <StyledSlider
-          disabled={!command.isEnabled}
-          min={command.min}
-          max={command.max}
-          step={command.step}
-          onChange={(value: number) => {
-            command.value = value;
-            setValue(value);
-          }}
-          value={value}
-        />
-      </SliderDiv>
-    </>
+    <SliderDiv key={command.uniqueId}>
+      <label>{command.getLabel(t)}</label>
+      <StyledSlider
+        disabled={!command.isEnabled}
+        min={command.min}
+        max={command.max}
+        step={command.step}
+        onChange={(value: number) => {
+          command.value = value;
+          setValue(value);
+        }}
+        value={value}
+      />
+    </SliderDiv>
   );
 }
 
@@ -214,7 +215,14 @@ function createDropdownButton(command: BaseOptionCommand): ReactElement {
   if (!command.isVisible) {
     return <></>;
   }
-  return <DropdownButton inputCommand={command} isHorizontal={false} usedInSettings={true} />;
+  return (
+    <DropdownButton
+      key={command.uniqueId}
+      inputCommand={command}
+      isHorizontal={false}
+      usedInSettings={true}
+    />
+  );
 }
 
 function createFilterButton(command: BaseFilterCommand): ReactElement {
@@ -222,7 +230,14 @@ function createFilterButton(command: BaseFilterCommand): ReactElement {
   if (!command.isVisible) {
     return <></>;
   }
-  return <FilterButton inputCommand={command} isHorizontal={false} usedInSettings={true} />;
+  return (
+    <FilterButton
+      key={command.uniqueId}
+      inputCommand={command}
+      isHorizontal={false}
+      usedInSettings={true}
+    />
+  );
 }
 
 const SliderDiv = styled.div`

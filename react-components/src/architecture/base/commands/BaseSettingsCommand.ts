@@ -2,19 +2,19 @@
  * Copyright 2024 Cognite AS
  */
 
+import { PointCloudDividerCommand } from '../concreteCommands/DividerCommand';
 import { clear } from '../utilities/extensions/arrayExtensions';
 import { type BaseCommand } from './BaseCommand';
 import { RenderTargetCommand } from './RenderTargetCommand';
-import { CommandSettingsItem, DividerSettingsItem, type SettingsItem } from './SettingsItem';
 
 export abstract class BaseSettingsCommand extends RenderTargetCommand {
   // ==================================================
   // INSTANCE FIELDS/PROPERTIES
   // ==================================================
 
-  private readonly _children: SettingsItem[] = [];
+  private readonly _children: BaseCommand[] = [];
 
-  public get children(): SettingsItem[] {
+  public get children(): BaseCommand[] {
     return this._children;
   }
 
@@ -31,9 +31,7 @@ export abstract class BaseSettingsCommand extends RenderTargetCommand {
       return;
     }
     for (const child of this._children) {
-      if (child instanceof CommandSettingsItem) {
-        yield child.command;
-      }
+      yield child;
     }
   }
 
@@ -41,23 +39,12 @@ export abstract class BaseSettingsCommand extends RenderTargetCommand {
   // INSTANCE METHODS
   // ==================================================
 
-  public getSettingsItems(): SettingsItem[] {
-    return this._children;
-  }
-
-  public addCommand(command: BaseCommand): void {
-    if (
-      this._children.find((c) => c instanceof CommandSettingsItem && c.command.equals(command)) !==
-      undefined
-    ) {
+  public add(command: BaseCommand): void {
+    if (this._children.find((c) => c.equals(command)) !== undefined) {
       console.error('Duplicated command given: ' + command.name);
       return;
     }
-    this._children.push(new CommandSettingsItem(command));
-  }
-
-  public addDivider(): void {
-    this._children.push(new DividerSettingsItem(this._children.length));
+    this._children.push(command);
   }
 
   public clear(): void {

@@ -20,13 +20,13 @@ export class MockSettingsCommand extends BaseSettingsCommand {
 
   constructor() {
     super();
-    this.addCommand(new MockToggleCommand());
-    this.addCommand(new MockSliderCommand());
-    this.addCommand(new MockEnumOptionCommand());
-    this.addCommand(new MockNumberOptionCommand());
-    this.addCommand(new MockActionCommand());
-    this.addCommand(new MockCheckableCommand());
-    this.addCommand(new MockFilterCommand());
+    this.add(new MockToggleCommand());
+    this.add(new MockSliderCommand());
+    this.add(new MockEnumOptionCommand());
+    this.add(new MockNumberOptionCommand());
+    this.add(new MockActionCommand());
+    this.add(new MockCheckableCommand());
+    this.add(new MockFilterCommand());
   }
 
   // ==================================================
