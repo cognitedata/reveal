@@ -5,15 +5,16 @@
 import { clear } from '../utilities/extensions/arrayExtensions';
 import { type BaseCommand } from './BaseCommand';
 import { RenderTargetCommand } from './RenderTargetCommand';
+import { CommandSettingsItem, DividerSettingsItem, type SettingsItem } from './SettingsItem';
 
 export abstract class BaseSettingsCommand extends RenderTargetCommand {
   // ==================================================
   // INSTANCE FIELDS/PROPERTIES
   // ==================================================
 
-  private readonly _children: BaseCommand[] = [];
+  private readonly _children: SettingsItem[] = [];
 
-  public get children(): BaseCommand[] {
+  public get children(): SettingsItem[] {
     return this._children;
   }
 
@@ -30,7 +31,9 @@ export abstract class BaseSettingsCommand extends RenderTargetCommand {
       return;
     }
     for (const child of this._children) {
-      yield child;
+      if (child instanceof CommandSettingsItem) {
+        yield child.command;
+      }
     }
   }
 
@@ -38,12 +41,23 @@ export abstract class BaseSettingsCommand extends RenderTargetCommand {
   // INSTANCE METHODS
   // ==================================================
 
-  public add(command: BaseCommand): void {
-    if (this._children.find((c) => c.equals(command)) !== undefined) {
+  public getSettingsItems(): SettingsItem[] {
+    return this._children;
+  }
+
+  public addCommand(command: BaseCommand): void {
+    if (
+      this._children.find((c) => c instanceof CommandSettingsItem && c.command.equals(command)) !==
+      undefined
+    ) {
       console.error('Duplicated command given: ' + command.name);
       return;
     }
-    this._children.push(command);
+    this._children.push(new CommandSettingsItem(command));
+  }
+
+  public addDivider(): void {
+    this._children.push(new DividerSettingsItem());
   }
 
   public clear(): void {

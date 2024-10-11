@@ -19,11 +19,13 @@ export class SettingsCommand extends BaseSettingsCommand {
   public constructor() {
     super();
 
-    this.add(new SetQualityCommand());
-    this.add(new SetPointSizeCommand());
-    this.add(new SetPointColorTypeCommand());
-    this.add(new SetPointShapeCommand());
-    this.add(new PointCloudFilterCommand());
+    this.addCommand(new SetQualityCommand());
+    this.addDivider();
+    this.addCommand(new SetPointSizeCommand());
+    this.addDivider();
+    this.addCommand(new SetPointColorTypeCommand());
+    this.addCommand(new SetPointShapeCommand());
+    this.addCommand(new PointCloudFilterCommand());
   }
 
   // ==================================================

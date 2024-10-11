@@ -31,6 +31,10 @@ import { IconComponent } from './IconComponentMapper';
 import { TOOLBAR_HORIZONTAL_PANEL_OFFSET } from '../constants';
 
 import { offset } from '@floating-ui/dom';
+import {
+  CommandSettingsItem,
+  DividerSettingsItem
+} from '../../architecture/base/commands/SettingsItem';
 
 export const SettingsButton = ({
   inputCommand,
@@ -73,7 +77,7 @@ export const SettingsButton = ({
   const placement = getTooltipPlacement(isHorizontal);
   const label = command.getLabel(t);
   const flexDirection = getFlexDirection(isHorizontal);
-  const children = command.children;
+  const children = command.getSettingsItems();
 
   return (
     <Menu
@@ -107,8 +111,15 @@ export const SettingsButton = ({
           />
         </CogsTooltip>
       )}>
-      {children.map((child, _index): ReactElement | undefined => {
-        return createMenuItem(child, t);
+      {children.map((child, index): ReactElement | undefined => {
+        if (child instanceof DividerSettingsItem) {
+          return <Menu.Divider key={index} />;
+        }
+        if (child instanceof CommandSettingsItem) {
+          return createMenuItem(child.command, t);
+        }
+
+        return undefined;
       })}
     </Menu>
   );
@@ -181,7 +192,6 @@ function createSlider(command: BaseSliderCommand, t: TranslateDelegate): ReactEl
   }
   return (
     <>
-      <Menu.Divider />
       <SliderDiv>
         <label>{command.getLabel(t)}</label>
         <StyledSlider
@@ -193,9 +203,9 @@ function createSlider(command: BaseSliderCommand, t: TranslateDelegate): ReactEl
             command.value = value;
             setValue(value);
           }}
-          value={value}></StyledSlider>
+          value={value}
+        />
       </SliderDiv>
-      <Menu.Divider />
     </>
   );
 }
