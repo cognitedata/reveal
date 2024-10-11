@@ -15,13 +15,7 @@ import { Menu, SelectPanel } from '@cognite/cogs-lab';
 import { useTranslation } from '../i18n/I18n';
 import { type BaseCommand } from '../../architecture/base/commands/BaseCommand';
 import { useRenderTarget } from '../RevealCanvas/ViewerContext';
-import {
-  getButtonType,
-  getDefaultCommand,
-  getFlexDirection,
-  getTooltipPlacement,
-  getIcon
-} from './utilities';
+import { getButtonType, getDefaultCommand, getTooltipPlacement, getIcon } from './utilities';
 import { LabelWithShortcut } from './LabelWithShortcut';
 import { BaseFilterCommand } from '../../architecture/base/commands/BaseFilterCommand';
 import { FilterItem } from './FilterItem';

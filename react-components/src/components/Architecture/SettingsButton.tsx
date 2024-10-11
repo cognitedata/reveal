@@ -215,10 +215,6 @@ function createFilterButton(command: BaseFilterCommand): ReactElement {
   return <FilterButton inputCommand={command} isHorizontal={false} usedInSettings={true} />;
 }
 
-const StrongLabel = styled.label`
-  font-weight: bold;
-`;
-
 const SliderDiv = styled.div`
   display: flex;
   flex-direction: column;
