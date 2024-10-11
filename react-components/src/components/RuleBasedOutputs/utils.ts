@@ -26,13 +26,7 @@ import {
   type FdmInstanceNodeWithConnectionAndProperties
 } from './types';
 import { NumericRange, TreeIndexNodeCollection, type NodeAppearance } from '@cognite/reveal';
-import {
-  type AssetMapping3D,
-  type Asset,
-  type Datapoints,
-  type RelationshipResourceType,
-  type CogniteClient
-} from '@cognite/sdk';
+import { type AssetMapping3D, type Asset, type Datapoints } from '@cognite/sdk';
 import {
   type FdmAssetStylingGroup,
   type AssetStylingGroup,
@@ -40,19 +34,13 @@ import {
 } from '../Reveal3DResources/types';
 import { isDefined } from '../../utilities/isDefined';
 import { assertNever } from '../../utilities/assertNever';
-import {
-  type ExtendedRelationshipWithSourceAndTarget,
-  type AssetIdsAndTimeseries
-} from '../../data-providers/types';
+import { type AssetIdsAndTimeseries } from '../../data-providers/types';
 import { uniq } from 'lodash';
 import { type DmsUniqueIdentifier } from '../../data-providers/FdmSDK';
 import { checkNumericExpressionStatement } from './core/checkNumericExpressionStatement';
 import { checkStringExpressionStatement } from './core/checkStringExpressionStatement';
 import { checkDatetimeExpressionStatement } from './core/checkDatetimeExpressionStatement';
 import { checkBooleanExpressionStatement } from './core/checkBooleanExpressionStatement';
-import { useSDK } from '../RevealCanvas/SDKProvider';
-import { useMemo } from 'react';
-import { getRelationships } from '../../hooks/network/getRelationships';
 
 export const getTriggerNumericData = (
   triggerTypeData: TriggerTypeData[],
