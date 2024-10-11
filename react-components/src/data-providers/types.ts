@@ -32,10 +32,21 @@ export type ExtendedRelationship = {
   relation: 'Source' | 'Target';
 } & Relationship;
 
+export type ExtendedRelationshipWithSourceAndTarget = {
+  relation: 'Source' | 'Target';
+} & Relationship &
+  Partial<RelationshipSourceAndTargetTimeseries>;
+
+export type RelationshipSourceAndTargetTimeseries = {
+  source: Timeseries;
+  target: Timeseries;
+};
+
 export type RelationshipSourceAndTarget = {
   source: RelationshipSourceAndTargetData;
   target: RelationshipSourceAndTargetData;
 };
+
 export type RelationshipSourceAndTargetData = {
   externalId?: string;
   id?: number;

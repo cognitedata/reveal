@@ -3,14 +3,14 @@
  */
 import { type RelationshipResourceType } from '@cognite/sdk';
 import { getRelationships } from '../hooks/network/getRelationships';
-import { type ExtendedRelationship } from '../data-providers/types';
+import { type ExtendedRelationshipWithSourceAndTarget } from '../data-providers/types';
 import { useSDK } from '../components/RevealCanvas/SDKProvider';
 import { useMemo } from 'react';
 
 export const useGetResourceRelationship = async (
   resourceIds: string[],
   resourceTypes: RelationshipResourceType[]
-): Promise<ExtendedRelationship[]> => {
+): Promise<ExtendedRelationshipWithSourceAndTarget[]> => {
   const sdk = useSDK();
 
   const result = useMemo(async () => {

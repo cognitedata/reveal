@@ -30,8 +30,6 @@ export {
 export { useTimeseriesByIdsQuery } from './useTimeseriesByIdsQuery';
 export { useTimeseriesLatestDatapointQuery } from './useTimeseriesLatestDatapointQuery';
 
-export { useGetResourceRelationship } from './useGetResourceRelationship';
-
 export type {
   ModelMappings,
   ModelMappingsWithAssets,
