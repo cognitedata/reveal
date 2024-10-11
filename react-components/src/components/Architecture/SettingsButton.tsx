@@ -111,9 +111,9 @@ export const SettingsButton = ({
           />
         </CogsTooltip>
       )}>
-      {children.map((child, index): ReactElement | undefined => {
+      {children.map((child): ReactElement | undefined => {
         if (child instanceof DividerSettingsItem) {
-          return <Menu.Divider key={index} />;
+          return <Menu.Divider key={child.key()} />;
         }
         if (child instanceof CommandSettingsItem) {
           return createMenuItem(child.command, t);

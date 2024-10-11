@@ -57,7 +57,7 @@ export abstract class BaseSettingsCommand extends RenderTargetCommand {
   }
 
   public addDivider(): void {
-    this._children.push(new DividerSettingsItem());
+    this._children.push(new DividerSettingsItem(this._children.length));
   }
 
   public clear(): void {
