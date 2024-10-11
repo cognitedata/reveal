@@ -88,7 +88,7 @@ export const FilterButton = ({
   }
   return (
     <Menu
-      label={usedInSettings ? label : undefined}
+      label={usedInSettings ? `${label} - ${selectedLabel}` : undefined}
       floatingProps={{ middleware: [offset(TOOLBAR_HORIZONTAL_PANEL_OFFSET)] }}
       onOpenChange={setOpen}
       appendTo={'parent'}

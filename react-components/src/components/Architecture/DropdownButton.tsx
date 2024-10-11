@@ -72,7 +72,7 @@ export const DropdownButton = ({
 
   return (
     <Menu
-      label={label}
+      label={`${label} - ${selectedLabel}`}
       floatingProps={{ middleware: [offset(TOOLBAR_HORIZONTAL_PANEL_OFFSET)] }}
       onOpenChange={(open: boolean) => {
         setOpen(open);
