@@ -110,8 +110,6 @@ export const SettingsButton = ({
       )}>
       {children.map((child): ReactElement | undefined => {
         return createMenuItem(child, t);
-
-        return undefined;
       })}
     </Menu>
   );

@@ -2,7 +2,6 @@
  * Copyright 2024 Cognite AS
  */
 
-import { PointCloudDividerCommand } from '../concreteCommands/DividerCommand';
 import { clear } from '../utilities/extensions/arrayExtensions';
 import { type BaseCommand } from './BaseCommand';
 import { RenderTargetCommand } from './RenderTargetCommand';

@@ -1,4 +1,7 @@
-import { BaseCommand } from '../commands/BaseCommand';
+/*!
+ * Copyright 2024 Cognite AS
+ */
+import { type BaseCommand } from '../commands/BaseCommand';
 import { RenderTargetCommand } from '../commands/RenderTargetCommand';
 
 export class DividerCommand extends RenderTargetCommand {}
