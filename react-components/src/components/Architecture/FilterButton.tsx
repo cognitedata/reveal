@@ -87,7 +87,6 @@ export const FilterButton = ({
   }
   const placement = getTooltipPlacement(isHorizontal);
   const label = command.getLabel(t);
-  const flexDirection = getFlexDirection(isHorizontal);
 
   const children = command.children;
   if (children === undefined || !command.hasChildren) {
@@ -95,11 +94,6 @@ export const FilterButton = ({
   }
   return (
     <Menu
-      style={{
-        minWidth: '100px',
-        overflow: 'auto',
-        flexDirection
-      }}
       label={usedInSettings ? label : undefined}
       floatingProps={{ middleware: [offset(TOOLBAR_HORIZONTAL_PANEL_OFFSET)] }}
       onOpenChange={setOpen}

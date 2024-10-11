@@ -183,7 +183,7 @@ function createSlider(command: BaseSliderCommand, t: TranslateDelegate): ReactEl
     <>
       <Menu.Divider />
       <SliderDiv>
-        <StrongLabel>{command.getLabel(t)}</StrongLabel>
+        <label>{command.getLabel(t)}</label>
         <StyledSlider
           disabled={!command.isEnabled}
           min={command.min}

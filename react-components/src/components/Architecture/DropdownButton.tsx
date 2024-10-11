@@ -71,7 +71,6 @@ export const DropdownButton = ({
   }
   const placement = getTooltipPlacement(isHorizontal);
   const label = command.getLabel(t);
-  const flexDirection = getFlexDirection(false); // Always vertical
   const children = command.children;
   const selectedLabel = command.selectedChild?.getLabel(t);
 
@@ -79,11 +78,6 @@ export const DropdownButton = ({
 
   return (
     <Menu
-      style={{
-        minWidth: '0px',
-        overflow: 'auto',
-        flexDirection
-      }}
       label={label}
       floatingProps={{ middleware: [offset(TOOLBAR_HORIZONTAL_PANEL_OFFSET)] }}
       onOpenChange={(open: boolean) => {
