@@ -77,3 +77,22 @@ export type ChunkInCacheTypes<ObjectType> = {
   chunkInCache: ObjectType[];
   chunkNotInCache: number[];
 };
+
+export type PointCloudVolume = {
+  externalId: string;
+  space: string;
+  volumeReference: string;
+  volumeType: string;
+  volume: number[];
+  object3D: DmsUniqueIdentifier;
+};
+
+export type PointCloudVolumeWithAsset = PointCloudVolume & {
+  asset?: {
+    externalId: string;
+    space: string;
+    object3D: DmsUniqueIdentifier;
+    name: string;
+    description: string;
+  };
+};

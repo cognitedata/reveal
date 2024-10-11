@@ -17,6 +17,8 @@ import {
 } from '../CacheProvider/PointCloudAnnotationCacheProvider';
 import { EMPTY_ARRAY } from '../../utilities/constants';
 import { type PointCloudAnnotationModel } from '../CacheProvider/types';
+import { useMappedEdgesForRevisions } from '../CacheProvider/NodeCacheProvider';
+import { usePointCloudDMAnnotation } from '../CacheProvider/PointCloudDMAnnotation';
 
 export type StyledPointCloudModel = {
   model: PointCloudModelOptions;
@@ -37,6 +39,14 @@ export const useCalculatePointCloudStyling = (
     models,
     defaultResourceStyling?.pointcloud?.mapped
   );
+  usePointCloudDMAnnotation(models);
+  // console.log(
+  //   `mappedEquipmentEdges, isFDMEquipmentMappingsLoading, isFDMEquipmentMappingsFetched, isFDMEquipmentMappingsError)`,
+  //   mappedEquipmentEdges,
+  //   isFDMEquipmentMappingsLoading,
+  //   isFDMEquipmentMappingsFetched,
+  //   isFDMEquipmentMappingsError
+  // );
   const modelInstanceStyleGroups = useCalculateInstanceStyling(models, instanceGroups);
 
   const combinedStyledPointCloudModels = useMemo(() => {

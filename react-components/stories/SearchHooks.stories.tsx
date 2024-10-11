@@ -365,8 +365,8 @@ export const Main: Story = {
   args: {
     resources: [
       {
-        modelId: 3544114490298106,
-        revisionId: 6405404576933316,
+        modelId: 5018365656512439,
+        revisionId: 1617304887543490,
         styling: {
           default: {
             color: new Color('#efefef')
@@ -374,13 +374,13 @@ export const Main: Story = {
           mapped: {
             color: new Color('#c5cbff')
           }
-        },
-        siteId: 'celanese1'
-      },
-      {
-        modelId: 7646043527629245,
-        revisionId: 6059566106376463
+        }
+        // siteId: 'celanese1'
       }
+      // {
+      //   modelId: 7646043527629245,
+      //   revisionId: 6059566106376463
+      // }
     ]
   },
   render: ({ resources }) => {

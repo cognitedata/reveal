@@ -40,8 +40,8 @@ export const Main: Story = {
   args: {
     resources: [
       {
-        modelId: 2231774635735416,
-        revisionId: 912809199849811,
+        modelId: 5018365656512439,
+        revisionId: 1617304887543490,
         styling: {
           default: {
             color: new Color('#efefef')
@@ -50,27 +50,12 @@ export const Main: Story = {
             color: new Color('#c5cbff')
           }
         }
-      },
-      {
-        modelId: 1350257070750400,
-        revisionId: 5110855034466831,
-        styling: {
-          default: {
-            color: new Color('#efefef')
-          },
-          mapped: {
-            color: new Color('#c5cbff')
-          }
-        }
-      },
-      {
-        siteId: 'celanese1'
       }
     ]
   },
   render: ({ resources }) => {
     return (
-      <RevealContext sdk={sdk} color={new Color(0x4a4a4a)}>
+      <RevealContext sdk={sdk} color={new Color(0x4a4a4a)} useCoreDm={true}>
         <RevealCanvas>
           <StoryContent resources={resources} />
           <ReactQueryDevtools />
