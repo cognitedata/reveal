@@ -62,7 +62,7 @@ const StyledRuleBasedOutputsPanel = withSuppressRevealEvents(styled.div<{ $showM
   min-width: 200px;
   max-width: 400px;
   max-height: ${({ $showMore }: { $showMore?: boolean }) =>
-    $showMore ?? false ? MAX_HEIGHT : 'inherit'};
+    ($showMore ?? false) ? MAX_HEIGHT : 'inherit'};
   border-radius: var(--cogs-border-radius--default);
   font-size: 13px;
   line-height: 18px;

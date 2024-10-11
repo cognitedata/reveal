@@ -7,6 +7,6 @@ export type {
   InstanceReference,
   AssetInstanceReference,
   AssetIdsAndTimeseriesData,
-  ExtendedRelationship,
+  ExtendedRelationship
 } from './types';
 export type { Source, DmsUniqueIdentifier, SimpleSource } from './FdmSDK';
