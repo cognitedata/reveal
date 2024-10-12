@@ -12,9 +12,9 @@ import { DomainObjectPanel } from '../src/components/Architecture/DomainObjectPa
 import { ActiveToolToolbar, MainToolbar, TopToolbar } from '../src/components/Architecture/Toolbar';
 import { useRenderTarget } from '../src/components/RevealCanvas/ViewerContext';
 import { type AddModelOptions, type CogniteCadModel } from '@cognite/reveal';
-import { TreeView } from '../src/components/Architecture/TreeView/TreeView';
-import { createMock, TreeNode } from '../src/components/Architecture/TreeView/TreeNode';
-import { CheckBoxState, type ITreeNode } from '../src/components/Architecture/TreeView/ITreeNode';
+import { onNodeCheck, onNodeSelect } from '../src/components/Architecture/TreeView/TreeNode';
+import { TreeContainer } from '../src/components/Architecture/TreeView/TreeViewContainer';
+import { createTreeMock } from '../src/components/Architecture/TreeView/createTreeMock';
 
 const meta = {
   title: 'Example/Architecture',
@@ -25,40 +25,7 @@ const meta = {
 export default meta;
 type Story = StoryObj<typeof meta>;
 
-const root = createMock();
-
-const onSelect = (node: ITreeNode): boolean => {
-  if (!(node instanceof TreeNode)) {
-    return false;
-  }
-  for (const child of root.getThisAndDescendants()) {
-    if (child !== node) {
-      child.isSelected = false;
-    }
-  }
-  node.isSelected = !node.isSelected;
-  return true;
-};
-
-const onCheck = (node: ITreeNode): boolean => {
-  if (!(node instanceof TreeNode)) {
-    return false;
-  }
-  if (node.checkedBoxState === CheckBoxState.All) {
-    node.checkedBoxState = CheckBoxState.None;
-  } else {
-    node.checkedBoxState = CheckBoxState.All;
-  }
-  for (const child of node.getDescendants()) {
-    if (child.checkedBoxState !== CheckBoxState.Hidden && child.isEnabled) {
-      child.checkedBoxState = node.checkedBoxState;
-    }
-  }
-  for (const ancestor of node.getAncestors()) {
-    ancestor.checkedBoxState = ancestor.calculateCheckBoxState();
-  }
-  return true;
-};
+const root = createTreeMock();
 
 export const Main: Story = {
   args: {
@@ -72,7 +39,13 @@ export const Main: Story = {
         <TopToolbar />
         <ActiveToolToolbar />
         <DomainObjectPanel />
-        <TreeView root={root} onSelect={onSelect} onCheck={onCheck} />
+        <TreeContainer
+          root={root}
+          onSelect={onNodeSelect}
+          onCheck={onNodeCheck}
+          hasCheckboxes
+          hasIcons
+        />
       </RevealStoryContainer>
     );
   }
