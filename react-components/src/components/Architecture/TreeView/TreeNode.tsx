@@ -4,7 +4,7 @@
 
 import { remove } from '../../../architecture/base/utilities/extensions/arrayExtensions';
 import { type IconName } from '../../../architecture/base/utilities/IconName';
-import { type ITreeNode, CheckBoxState, type TreeNodeAction } from './ITreeNode';
+import { type ITreeNode, CheckBoxState, type TreeNodeAction, type IconColor } from './ITreeNode';
 
 export class TreeNode implements ITreeNode {
   // ==================================================
@@ -45,11 +45,11 @@ export class TreeNode implements ITreeNode {
     this._icon = value;
   }
 
-  public get iconColor(): string | undefined {
+  public get iconColor(): IconColor {
     return this._iconColor;
   }
 
-  public set iconColor(value: string | undefined) {
+  public set iconColor(value: IconColor) {
     if (this._iconColor !== value) {
       this._iconColor = value;
       this.update();
@@ -141,6 +141,13 @@ export class TreeNode implements ITreeNode {
   // INSTANCE METHODS: Parent children methods
   // ==================================================
 
+  public getRoot(): TreeNode {
+    if (this._parent !== undefined) {
+      return this._parent.getRoot();
+    }
+    return this;
+  }
+
   public addChild(child: TreeNode): void {
     if (this._children === undefined) {
       this._children = [];
@@ -149,22 +156,25 @@ export class TreeNode implements ITreeNode {
     child._parent = this;
   }
 
-  public getRoot(): TreeNode {
-    if (this._parent !== undefined) {
-      return this._parent.getRoot();
-    }
-    return this;
+  protected async loadChildren(): Promise<void> {
+    this.isLoadingChildren = true;
+    await new Promise(() =>
+      setTimeout(() => {
+        this.isLoadingChildren = false;
+        this.needLoading = false;
+      }, 2000)
+    );
   }
 
   // ==================================================
   // INSTANCE METHODS: Iterators
   // ==================================================
 
-  public *getChildren(): Generator<TreeNode> {
+  public *getChildren(forceLoading = false): Generator<TreeNode> {
     if (this.isLoadingChildren) {
       return;
     }
-    if (this.needLoading && this._parent !== undefined) {
+    if (forceLoading && this.needLoading && this._parent !== undefined) {
       void this.loadChildren();
     }
     if (this._children === undefined) {
@@ -199,15 +209,9 @@ export class TreeNode implements ITreeNode {
     }
   }
 
-  protected async loadChildren(): Promise<void> {
-    this.isLoadingChildren = true;
-    await new Promise(() =>
-      setTimeout(() => {
-        this.isLoadingChildren = false;
-        this.needLoading = false;
-      }, 2000)
-    );
-  }
+  // ==================================================
+  // INSTANCE METHODS: Others
+  // ==================================================
 
   public calculateCheckBoxState(): CheckBoxState {
     let numCandidates = 0;
@@ -240,6 +244,10 @@ export class TreeNode implements ITreeNode {
     }
     return CheckBoxState.Some;
   }
+
+  // ==================================================
+  // INSTANCE METHODS: Event listeners
+  // ==================================================
 
   private readonly _treeNodeListeners: TreeNodeAction[] = [];
 

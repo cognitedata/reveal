@@ -37,7 +37,7 @@ export function createTreeMock(): TreeNode {
         child2.checkBoxState = CheckBoxState.None;
         child2.isEnabled = k !== 3;
         child2.hasBoldLabel = k === 5;
-        if (k === 4) child2.iconColor = 'red';
+        if (k === 4) child2.iconColor = 'darkred';
         if (k === 5) child2.iconColor = 'blue';
         child1.addChild(child2);
       }

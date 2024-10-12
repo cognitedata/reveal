@@ -6,7 +6,7 @@
 
 import { type ReactElement, useEffect, useState, useCallback } from 'react';
 import { CaretDownIcon, CaretRightIcon, Checkbox, HourglassIcon } from '@cognite/cogs.js';
-import { CheckBoxState, type TreeNodeAction, type ITreeNode } from './ITreeNode';
+import { CheckBoxState, type TreeNodeAction, type ITreeNode, type IconColor } from './ITreeNode';
 import { IconComponentMapper } from '../IconComponentMapper';
 import { type TreeViewProps } from './TreeViewProps';
 
@@ -41,12 +41,13 @@ export const TreeViewNode = ({
 }): ReactElement => {
   // States
   const [hoverOverTextOrIcon, setHoverOverTextOrIcon] = useState(false);
-  const [_isSelected, setSelected] = useState<boolean>();
+  const [_isSelected, setSelected] = useState(false);
   const [_checkBoxState, setCheckBoxState] = useState<CheckBoxState>();
-  const [_enabled, setEnabled] = useState<boolean>();
-  const [_expanded, setExpanded] = useState<boolean>();
-  const [_hasBoldLabel, setBoldLabel] = useState<boolean>();
-  const [_isLoadingChildren, setLoadingChildren] = useState<boolean>();
+  const [_enabled, setEnabled] = useState(true);
+  const [_expanded, setExpanded] = useState(false);
+  const [_hasBoldLabel, setBoldLabel] = useState(false);
+  const [_iconColor, setIconColor] = useState<IconColor>();
+  const [_isLoadingChildren, setLoadingChildren] = useState(false);
 
   const children = getChildrenAsArray(node);
   const backgroundColor = getBackgroundColor(node, hoverOverTextOrIcon);
@@ -63,6 +64,7 @@ export const TreeViewNode = ({
     setEnabled(node.isEnabled);
     setExpanded(node.isExpanded);
     setBoldLabel(node.hasBoldLabel);
+    setIconColor(node.iconColor);
     setLoadingChildren(node.isLoadingChildren);
   }, []);
 
@@ -281,10 +283,10 @@ export function getChildrenAsArray(node: ITreeNode, useExpanded = true): ITreeNo
   if (node.isLoadingChildren) {
     return undefined;
   }
-  if (node.getChildren().next().value === undefined) {
+  if (node.getChildren(true).next().value === undefined) {
     return undefined;
   }
-  return Array.from(node.getChildren());
+  return Array.from(node.getChildren(true));
 }
 
 function getCaretColor(
