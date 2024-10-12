@@ -18,7 +18,7 @@ export function createTreeMock(): TreeNode {
     child.checkBoxState = CheckBoxState.None;
     root.addChild(child);
 
-    for (let j = 1; j <= 5; j++) {
+    for (let j = 1; j <= 10; j++) {
       const child1 = new TreeNode();
       child1.label = 'Child ' + i + '.' + j;
       child1.icon = 'Snow';
@@ -30,7 +30,7 @@ export function createTreeMock(): TreeNode {
 
       child.addChild(child1);
 
-      for (let k = 1; k <= 5; k++) {
+      for (let k = 1; k <= 500; k++) {
         const child2 = new TreeNode();
         child2.icon = 'Bug';
         child2.label = 'Leaf ' + i + '.' + j + '.' + k;

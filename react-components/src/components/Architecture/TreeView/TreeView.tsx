@@ -33,6 +33,12 @@ export const TreeView = (props: TreeViewProps): ReactElement => {
   // const s = useRefDimensions(htmlRef, counter);
   // console.log(s.height, s.width);
 
+  const elem = document.getElementById('treeView');
+  if (elem !== null) {
+    const rect = elem.getBoundingClientRect();
+    console.log(rect);
+  }
+
   const nodes = getChildrenAsArray(props.root, false);
   if (nodes === undefined) {
     return <></>;
@@ -40,6 +46,7 @@ export const TreeView = (props: TreeViewProps): ReactElement => {
   return (
     <div
       // ref={htmlRef}
+      id="treeView"
       style={{
         backgroundColor: props.backgroundColor ?? BACKGROUND_COLOR
       }}>

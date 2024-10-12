@@ -158,10 +158,19 @@ export class TreeNode implements ITreeNode {
 
   protected async loadChildren(): Promise<void> {
     this.isLoadingChildren = true;
+    const checkBoxState = this.checkBoxState;
+    const children = this._children;
+    this._children = undefined;
     await new Promise(() =>
       setTimeout(() => {
         this.isLoadingChildren = false;
         this.needLoading = false;
+        this._children = children;
+        if (children !== undefined) {
+          for (const child of children) {
+            child.checkBoxState = checkBoxState;
+          }
+        }
       }, 2000)
     );
   }
@@ -174,7 +183,7 @@ export class TreeNode implements ITreeNode {
     if (this.isLoadingChildren) {
       return;
     }
-    if (forceLoading && this.needLoading && this._parent !== undefined) {
+    if (forceLoading && !this.isLeaf && this.needLoading && this._parent !== undefined) {
       void this.loadChildren();
     }
     if (this._children === undefined) {

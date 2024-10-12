@@ -39,7 +39,7 @@ export const TreeViewNode = ({
   level: number;
   props: TreeViewProps;
 }): ReactElement => {
-  // States
+  // @update-ui-component-pattern
   const [hoverOverTextOrIcon, setHoverOverTextOrIcon] = useState(false);
   const [_isSelected, setSelected] = useState(false);
   const [_checkBoxState, setCheckBoxState] = useState<CheckBoxState>();
@@ -49,6 +49,28 @@ export const TreeViewNode = ({
   const [_iconColor, setIconColor] = useState<IconColor>();
   const [_isLoadingChildren, setLoadingChildren] = useState(false);
 
+  const update = useCallback(
+    (node: ITreeNode) => {
+      setSelected(node.isSelected);
+      setCheckBoxState(node.checkBoxState);
+      setEnabled(node.isEnabled);
+      setExpanded(node.isExpanded);
+      setBoldLabel(node.hasBoldLabel);
+      setIconColor(node.iconColor);
+      setLoadingChildren(node.isLoadingChildren);
+    },
+    [node]
+  );
+  useEffect(() => {
+    update(node);
+    node.addTreeNodeListener(update);
+    return () => {
+      node.removeTreeNodeListener(update);
+    };
+  }, [node]);
+  // @end
+
+  // Props
   const children = getChildrenAsArray(node);
   const backgroundColor = getBackgroundColor(node, hoverOverTextOrIcon);
   const color = getTextColor(node, hoverOverTextOrIcon);
@@ -57,24 +79,6 @@ export const TreeViewNode = ({
   const hasHover = props.hasHover ?? true;
   const hasCheckBoxes = props.hasCheckboxes ?? false;
   const hasIcons = props.hasIcons ?? false;
-
-  const update = useCallback((node: ITreeNode) => {
-    setSelected(node.isSelected);
-    setCheckBoxState(node.checkBoxState);
-    setEnabled(node.isEnabled);
-    setExpanded(node.isExpanded);
-    setBoldLabel(node.hasBoldLabel);
-    setIconColor(node.iconColor);
-    setLoadingChildren(node.isLoadingChildren);
-  }, []);
-
-  useEffect(() => {
-    update(node);
-    node.addTreeNodeListener(update);
-    return () => {
-      node.removeTreeNodeListener(update);
-    };
-  }, [node]);
 
   return (
     <div>
