@@ -6,8 +6,6 @@ export * from './hooks';
 export { RuleBasedOutputsPanel } from './RuleBasedOutputsPanel';
 export { getRuleTriggerTypes } from './utils';
 
-export * from './utils/index';
-
 export type {
   RuleAndEnabled,
   TriggerType,
