@@ -16,6 +16,7 @@ export type LoadChildrenAction = (node: ITreeNode) => ITreeNode[] | undefined;
 export type IconColor = string | undefined;
 
 export type ITreeNode = {
+  get numberOfChildren(): number;
   get label(): string;
   get hasBoldLabel(): boolean;
   get icon(): IconName | undefined; // undefined is no icon
@@ -27,6 +28,8 @@ export type ITreeNode = {
   get checkBoxState(): CheckBoxState; // Return CheckBoxState.Hidden of no checkbox
   get isLoadingChildren(): boolean;
   set isLoadingChildren(value: boolean);
+  get needLoadMoreChildren(): boolean;
+  set needLoadMoreChildren(value: boolean);
   get isLeaf(): boolean;
 
   getChildren: (loadChildren?: LoadChildrenAction) => Generator<ITreeNode>;

@@ -24,7 +24,7 @@ export function createTreeMock(): TreeNode {
       child1.label = 'Child ' + i + '.' + j;
       child1.icon = 'Snow';
       child1.isExpanded = false;
-      child1.needLoading = true;
+      child1.needLoadMoreChildren = true;
       child1.checkBoxState = CheckBoxState.None;
       child1.isEnabled = j !== 2;
       child1.hasBoldLabel = j === 4;
@@ -51,23 +51,23 @@ export function loadChildren(parent: ITreeNode): TreeNode[] | undefined {
   if (!(parent instanceof TreeNode)) {
     return undefined;
   }
+  const oldLength = parent.children?.length ?? 0;
   const array: TreeNode[] = [];
-  const length = parent.children?.length ?? 0;
   const totalCount = 123;
   const batchSize = 10;
 
-  for (let i = length, j = 0; i <= totalCount && j < batchSize; i++, j++) {
+  for (let i = oldLength, j = 0; i <= totalCount && j < batchSize; i++, j++) {
     const child = new TreeNode();
     child.label = 'Child ' + i;
     child.icon = 'Snow';
     child.isExpanded = false;
     child.checkBoxState = CheckBoxState.None;
-    child.isEnabled = i % 5 === 0;
+    child.isEnabled = i % 5 !== 0;
     child.hasBoldLabel = i % 4 === 0;
     array.push(child);
-    if (j + length === totalCount) {
-      child.needLoading = false;
-    }
+  }
+  if (oldLength + array.length === totalCount) {
+    parent.needLoadMoreChildren = false;
   }
   return array;
 }

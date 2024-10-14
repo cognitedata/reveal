@@ -38,7 +38,7 @@ export const TreeView = (props: TreeViewProps): ReactElement => {
   const element = document.getElementById(id);
   if (element !== null) {
     const rect = element.getBoundingClientRect();
-    console.log(rect);
+    // console.log(rect);
   }
 
   const nodes = getChildrenAsArray(props.root, props.loadChildren, false);

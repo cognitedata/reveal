@@ -26,10 +26,14 @@ export class TreeNode implements ITreeNode {
   private _isEnabled: boolean = true;
   private _hasBoldLabel: boolean = false;
   private _isLoadingChildren: boolean = false;
-  public _needLoading = false;
+  private _needLoadMoreChildren = false;
 
   private _children: TreeNode[] | undefined = undefined;
   private _parent: TreeNode | undefined = undefined;
+
+  get numberOfChildren(): number {
+    return this._children === undefined ? 0 : this._children.length;
+  }
 
   // ==================================================
   // INSTANCE PROPERTIES
@@ -139,18 +143,18 @@ export class TreeNode implements ITreeNode {
   }
 
   public get isLeaf(): boolean {
-    if (this.needLoading) {
+    if (this.needLoadMoreChildren) {
       return false;
     }
     return this._children === undefined || this._children.length === 0;
   }
 
-  public get needLoading(): boolean {
-    return this._needLoading;
+  public get needLoadMoreChildren(): boolean {
+    return this._needLoadMoreChildren;
   }
 
-  public set needLoading(value: boolean) {
-    this._needLoading = value;
+  public set needLoadMoreChildren(value: boolean) {
+    this._needLoadMoreChildren = value;
   }
 
   // ==================================================
@@ -180,13 +184,11 @@ export class TreeNode implements ITreeNode {
         const children = loadChildren(this);
         if (children === undefined || children.length === 0) {
           this.isLoadingChildren = false;
-          this.needLoading = false;
           return;
         }
         if (this._children === undefined) {
           this._children = [];
         }
-
         if (children !== undefined) {
           for (const child of children) {
             if (!(child instanceof TreeNode)) {
@@ -197,7 +199,6 @@ export class TreeNode implements ITreeNode {
           }
         }
         this.isLoadingChildren = false;
-        this.needLoading = false;
       }, 2000)
     );
   }
@@ -208,10 +209,10 @@ export class TreeNode implements ITreeNode {
 
   public *getChildren(loadChildren?: LoadChildrenAction): Generator<TreeNode> {
     if (this.isLoadingChildren) {
-      return;
+      loadChildren = undefined;
     }
     const isLeftOrRoot = this.isLeaf || this._parent === undefined;
-    if (!isLeftOrRoot && loadChildren !== undefined && this.needLoading) {
+    if (!isLeftOrRoot && loadChildren !== undefined && this.needLoadMoreChildren) {
       void this.loadChildren(loadChildren);
     }
     if (this._children === undefined) {

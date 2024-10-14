@@ -5,7 +5,7 @@
 /* eslint-disable react/prop-types */
 
 import { type ReactElement, useEffect, useState, useCallback } from 'react';
-import { CaretDownIcon, CaretRightIcon, Checkbox, HourglassIcon } from '@cognite/cogs.js';
+import { Button, CaretDownIcon, CaretRightIcon, Checkbox, HourglassIcon } from '@cognite/cogs.js';
 import {
   CheckBoxState,
   type TreeNodeAction,
@@ -56,6 +56,7 @@ export const TreeViewNode = ({
   const [_isExpanded, setExpanded] = useState(false);
   const [_checkBoxState, setCheckBoxState] = useState<CheckBoxState>();
   const [_isLoadingChildren, setLoadingChildren] = useState(false);
+  const [needLoadMoreChildren, setNeedLoadMoreChildren] = useState(false);
   const [hoverOverTextOrIcon, setHoverOverTextOrIcon] = useState(false);
 
   const update = useCallback(
@@ -69,6 +70,7 @@ export const TreeViewNode = ({
       setExpanded(node.isExpanded);
       setCheckBoxState(node.checkBoxState);
       setLoadingChildren(node.isLoadingChildren);
+      setNeedLoadMoreChildren(node.needLoadMoreChildren && node.numberOfChildren > 0);
     },
     [node]
   );
@@ -128,8 +130,25 @@ export const TreeViewNode = ({
         children.map((node, index) => (
           <TreeViewNode node={node} key={index} level={level + 1} props={props} />
         ))}
+      {needLoadMoreChildren && (
+        <Button
+          style={{
+            gap: gapBetweenItems,
+            marginTop: gapBetweenItems,
+            marginLeft: (level + 1) * 2 * gapToChildren + 'px'
+          }}
+          onClick={() => {
+            onLoadMore(node);
+          }}>
+          {'Load more ...'}
+        </Button>
+      )}
     </div>
   );
+
+  function onLoadMore(node: ITreeNode): void {
+    node.isLoadingChildren = true;
+  }
 
   function onHoverOverTextOrIcon(node: ITreeNode, value: boolean, hasHover: boolean): void {
     if (!node.isEnabled) {
@@ -279,12 +298,16 @@ const TreeNodeIcon = ({
   if (!node.isSelected && node.iconColor !== undefined) {
     color = node.iconColor;
   }
-  const Icon = node.isLoadingChildren ? HourglassIcon : IconComponentMapper.getIcon(node.icon);
+  const Icon =
+    node.isLoadingChildren && node.numberOfChildren === 0
+      ? HourglassIcon
+      : IconComponentMapper.getIcon(node.icon);
   return <Icon style={{ color, marginTop: '3px' }} />;
 };
 
 const TreeViewLabel = ({ node }: { node: ITreeNode }): ReactElement => {
-  const label = node.isLoadingChildren ? 'Loading children ...' : node.label;
+  const label =
+    node.isLoadingChildren && node.numberOfChildren === 0 ? 'Loading children ...' : node.label;
   if (node.hasBoldLabel) {
     return <b>{label}</b>;
   }
@@ -297,9 +320,6 @@ export function getChildrenAsArray(
   useExpanded = true
 ): ITreeNode[] | undefined {
   if (useExpanded && !node.isExpanded) {
-    return undefined;
-  }
-  if (node.isLoadingChildren) {
     return undefined;
   }
   if (node.getChildren(loadChildren).next().value === undefined) {
