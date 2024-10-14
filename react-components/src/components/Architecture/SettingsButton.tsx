@@ -31,7 +31,7 @@ import { IconComponent } from './IconComponentMapper';
 import { TOOLBAR_HORIZONTAL_PANEL_OFFSET } from '../constants';
 
 import { offset } from '@floating-ui/dom';
-import { DividerCommand } from '../../architecture/base/concreteCommands/DividerCommand';
+import { DividerCommand } from '../../architecture/base/commands/DividerCommand';
 
 export const SettingsButton = ({
   inputCommand,

@@ -2,9 +2,7 @@
  * Copyright 2024 Cognite AS
  */
 import { type BaseCommand } from '../commands/BaseCommand';
-import { RenderTargetCommand } from '../commands/RenderTargetCommand';
-
-export class DividerCommand extends RenderTargetCommand {}
+import { DividerCommand } from '../commands/DividerCommand';
 
 export class PointCloudDividerCommand extends DividerCommand {
   public override get isVisible(): boolean {
