@@ -1,29 +1,30 @@
 /*!
  * Copyright 2024 Cognite AS
  */
-import { type Asset, type Timeseries } from '@cognite/sdk';
+import { type RelationshipResourceType, type Asset, type Timeseries } from '@cognite/sdk';
 import { isUndefined } from 'lodash';
-import { useEffect } from 'react';
 import { useSDK } from '../components/RevealCanvas/SDKProvider';
-import { getResourceRelationship } from './network/getResourceRelationship';
+import { getResourceRelationship } from '../hooks/network/getResourceRelationship';
+import { useQuery, type UseQueryResult } from '@tanstack/react-query';
 
 export const useFetchTimeseriesResourceRelationship = ({
   asset,
   filter,
-  callback
+  resourceTypes
 }: {
   asset: Asset;
-  callback: (data: Timeseries[]) => void;
-  filter?: { isStep?: boolean; isString?: boolean };
-}): void => {
+  resourceTypes: RelationshipResourceType[];
+  filter?: { isStep?: boolean };
+}): UseQueryResult<Timeseries[]> => {
   const sdk = useSDK();
 
-  useEffect(() => {
-    const getRelationship = async (): Promise<void> => {
+  return useQuery({
+    queryKey: ['reveal', 'react-components', asset.externalId, filter?.isStep, ...resourceTypes],
+    queryFn: async () => {
       const relationshipsFound = await getResourceRelationship(
         sdk,
         [asset.externalId ?? ''],
-        ['timeSeries']
+        resourceTypes
       );
 
       if (relationshipsFound.length > 0) {
@@ -42,9 +43,8 @@ export const useFetchTimeseriesResourceRelationship = ({
             return undefined;
           })
           .filter((ts) => !isUndefined(ts));
-        callback(timeseriesFromRelationshipFound);
+        return timeseriesFromRelationshipFound;
       }
-    };
-    void getRelationship();
-  }, [asset.externalId, filter, filter?.isStep, filter?.isString, sdk]);
+    }
+  });
 };
