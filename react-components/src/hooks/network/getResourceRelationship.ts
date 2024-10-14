@@ -1,7 +1,7 @@
 /*!
  * Copyright 2024 Cognite AS
  */
-import { type RelationshipResourceType, type CogniteClient } from '@cognite/sdk/dist/src';
+import { type RelationshipResourceType, type CogniteClient } from '@cognite/sdk';
 import { type ExtendedRelationshipWithSourceAndTarget } from '../../data-providers/types';
 import { getRelationships } from './getRelationships';
 
