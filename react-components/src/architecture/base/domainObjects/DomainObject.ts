@@ -25,6 +25,7 @@ import { DeleteDomainObjectCommand } from '../concreteCommands/DeleteDomainObjec
 import { CopyToClipboardCommand } from '../concreteCommands/CopyToClipboardCommand';
 import { type BaseCommand } from '../commands/BaseCommand';
 import { type Transaction } from '../undo/Transaction';
+import { type IconName } from '../../base/utilities/IconName';
 import { ToggleMetricUnitsCommand } from '../concreteCommands/ToggleMetricUnitsCommand';
 import { ChangedDescription } from '../domainObjectsHelpers/ChangedDescription';
 
@@ -382,7 +383,7 @@ export abstract class DomainObject {
   // VIRTUAL METHODS: Others
   // ==================================================
 
-  public get icon(): string | undefined {
+  public get icon(): IconName | undefined {
     return undefined;
   }
 

@@ -39,7 +39,13 @@ export const Main: Story = {
     sceneExternalId: 'pramod_scene',
     sceneSpaceId: 'scene'
   },
-  render: ({ sceneExternalId, sceneSpaceId }) => {
+  render: ({
+    sceneExternalId,
+    sceneSpaceId
+  }: {
+    sceneExternalId: string;
+    sceneSpaceId: string;
+  }) => {
     const [selectedScene, setSelectedScene] = useState<DmsUniqueIdentifier | undefined>(undefined);
     return (
       <RevealStoryContainer color={new Color(0x4a4a4a)} sdk={sdk}>

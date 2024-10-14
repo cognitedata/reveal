@@ -1,12 +1,12 @@
 /*!
  * Copyright 2024 Cognite AS
  */
-import { type IconType } from '@cognite/cogs.js';
+import { type IconName } from '../../base/utilities/IconName';
 import { type TranslateKey } from '../../base/utilities/TranslateKey';
 import { ObservationsCommand } from './ObservationsCommand';
 
 export class CreateObservationCommand extends ObservationsCommand {
-  public override get icon(): IconType {
+  public override get icon(): IconName {
     return 'Plus';
   }
 

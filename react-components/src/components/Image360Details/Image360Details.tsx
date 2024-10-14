@@ -6,7 +6,7 @@ import { useState, type ReactElement, useCallback, useEffect } from 'react';
 import styled from 'styled-components';
 import { Image360HistoricalDetails } from '../Image360HistoricalDetails/Image360HistoricalDetails';
 import { type Image360 } from '@cognite/reveal';
-import { Button } from '@cognite/cogs.js';
+import { Button, CloseLargeIcon } from '@cognite/cogs.js';
 import { useReveal } from '../RevealCanvas/ViewerContext';
 import { useImage360Collections } from '../../hooks/useImage360Collections';
 
@@ -58,7 +58,7 @@ export function Image360Details({ appLanguage }: Image360DetailsProps): ReactEle
             />
           </Image360HistoricalPanel>
           <ExitButtonContainer>
-            <StyledExitButton icon="CloseLarge" type="tertiary" onClick={exitImage360Image} />
+            <StyledExitButton icon=<CloseLargeIcon /> type="tertiary" onClick={exitImage360Image} />
           </ExitButtonContainer>
         </>
       )}

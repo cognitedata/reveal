@@ -2,6 +2,7 @@
  * Copyright 2024 Cognite AS
  */
 
+import { type IconName } from '../../utilities/IconName';
 import { type TranslateKey } from '../../utilities/TranslateKey';
 import { RenderTargetCommand } from '../RenderTargetCommand';
 
@@ -15,7 +16,7 @@ export class MockCheckableCommand extends RenderTargetCommand {
     return { fallback: 'Checkable action' };
   }
 
-  public override get icon(): string {
+  public override get icon(): IconName {
     return 'Snow';
   }
 

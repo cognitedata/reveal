@@ -37,7 +37,15 @@ export const Main: Story = {
     },
     transform: new Matrix4().makeTranslation(0, 10, 0)
   },
-  render: ({ addModelOptions, transform, styling }) => {
+  render: ({
+    addModelOptions,
+    transform,
+    styling
+  }: {
+    addModelOptions: AddModelOptions;
+    transform?: Matrix4;
+    styling?: CadModelStyling;
+  }) => {
     return (
       <RevealStoryContainer color={new Color(0x4a4a4a)}>
         <CadModelContainerStoryContent

@@ -2,6 +2,7 @@
  * Copyright 2024 Cognite AS
  */
 
+import { type IconName } from '../utilities/IconName';
 import { type TranslateDelegate, type TranslateKey } from '../utilities/TranslateKey';
 import { clear, remove } from '../utilities/extensions/arrayExtensions';
 import { isMacOs } from '../utilities/extensions/isMacOs';
@@ -75,7 +76,7 @@ export abstract class BaseCommand {
     return { fallback: '' };
   }
 
-  public get icon(): string | undefined {
+  public get icon(): IconName | undefined {
     return undefined; // Means no icon
   }
 
