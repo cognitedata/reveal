@@ -14,7 +14,10 @@ import { useRenderTarget } from '../src/components/RevealCanvas/ViewerContext';
 import { type AddModelOptions, type CogniteCadModel } from '@cognite/reveal';
 import { onNodeCheck, onNodeSelect } from '../src/components/Architecture/TreeView/TreeNode';
 import { TreeContainer } from '../src/components/Architecture/TreeView/TreeViewContainer';
-import { createTreeMock } from '../src/components/Architecture/TreeView/createTreeMock';
+import {
+  createTreeMock,
+  loadChildren
+} from '../src/components/Architecture/TreeView/createTreeMock';
 
 const meta = {
   title: 'Example/Architecture',
@@ -43,6 +46,7 @@ export const Main: Story = {
           root={root}
           onSelect={onNodeSelect}
           onCheck={onNodeCheck}
+          loadChildren={loadChildren}
           hasCheckboxes
           hasIcons
         />

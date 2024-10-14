@@ -4,7 +4,13 @@
 
 import { remove } from '../../../architecture/base/utilities/extensions/arrayExtensions';
 import { type IconName } from '../../../architecture/base/utilities/IconName';
-import { type ITreeNode, CheckBoxState, type TreeNodeAction, type IconColor } from './ITreeNode';
+import {
+  type ITreeNode,
+  CheckBoxState,
+  type TreeNodeAction,
+  type IconColor,
+  type LoadChildrenAction
+} from './ITreeNode';
 
 export class TreeNode implements ITreeNode {
   // ==================================================
@@ -29,12 +35,30 @@ export class TreeNode implements ITreeNode {
   // INSTANCE PROPERTIES
   // ==================================================
 
+  public get children(): TreeNode[] | undefined {
+    return this._children;
+  }
+
   public get label(): string {
     return this._label;
   }
 
   public set label(value: string) {
-    this._label = value;
+    if (this._label !== value) {
+      this._label = value;
+      this.update();
+    }
+  }
+
+  public get hasBoldLabel(): boolean {
+    return this._hasBoldLabel;
+  }
+
+  public set hasBoldLabel(value: boolean) {
+    if (this._hasBoldLabel !== value) {
+      this._hasBoldLabel = value;
+      this.update();
+    }
   }
 
   public get icon(): IconName | undefined {
@@ -42,7 +66,10 @@ export class TreeNode implements ITreeNode {
   }
 
   public set icon(value: IconName | undefined) {
-    this._icon = value;
+    if (this._icon !== value) {
+      this._icon = value;
+      this.update();
+    }
   }
 
   public get iconColor(): IconColor {
@@ -67,13 +94,13 @@ export class TreeNode implements ITreeNode {
     }
   }
 
-  public get checkBoxState(): CheckBoxState {
-    return this._checkBoxState;
+  public get isEnabled(): boolean {
+    return this._isEnabled;
   }
 
-  public set checkBoxState(value: CheckBoxState) {
-    if (this._checkBoxState !== value) {
-      this._checkBoxState = value;
+  public set isEnabled(value: boolean) {
+    if (this._isEnabled !== value) {
+      this._isEnabled = value;
       this.update();
     }
   }
@@ -89,24 +116,13 @@ export class TreeNode implements ITreeNode {
     }
   }
 
-  public get isEnabled(): boolean {
-    return this._isEnabled;
+  public get checkBoxState(): CheckBoxState {
+    return this._checkBoxState;
   }
 
-  public set isEnabled(value: boolean) {
-    if (this._isEnabled !== value) {
-      this._isEnabled = value;
-      this.update();
-    }
-  }
-
-  public get hasBoldLabel(): boolean {
-    return this._hasBoldLabel;
-  }
-
-  public set hasBoldLabel(value: boolean) {
-    if (this._hasBoldLabel !== value) {
-      this._hasBoldLabel = value;
+  public set checkBoxState(value: CheckBoxState) {
+    if (this._checkBoxState !== value) {
+      this._checkBoxState = value;
       this.update();
     }
   }
@@ -156,21 +172,32 @@ export class TreeNode implements ITreeNode {
     child._parent = this;
   }
 
-  protected async loadChildren(): Promise<void> {
+  protected async loadChildren(loadChildren: LoadChildrenAction): Promise<void> {
     this.isLoadingChildren = true;
     const checkBoxState = this.checkBoxState;
-    const children = this._children;
-    this._children = undefined;
     await new Promise(() =>
       setTimeout(() => {
-        this.isLoadingChildren = false;
-        this.needLoading = false;
-        this._children = children;
+        const children = loadChildren(this);
+        if (children === undefined || children.length === 0) {
+          this.isLoadingChildren = false;
+          this.needLoading = false;
+          return;
+        }
+        if (this._children === undefined) {
+          this._children = [];
+        }
+
         if (children !== undefined) {
           for (const child of children) {
+            if (!(child instanceof TreeNode)) {
+              continue;
+            }
             child.checkBoxState = checkBoxState;
+            this._children.push(child);
           }
         }
+        this.isLoadingChildren = false;
+        this.needLoading = false;
       }, 2000)
     );
   }
@@ -179,12 +206,13 @@ export class TreeNode implements ITreeNode {
   // INSTANCE METHODS: Iterators
   // ==================================================
 
-  public *getChildren(forceLoading = false): Generator<TreeNode> {
+  public *getChildren(loadChildren?: LoadChildrenAction): Generator<TreeNode> {
     if (this.isLoadingChildren) {
       return;
     }
-    if (forceLoading && !this.isLeaf && this.needLoading && this._parent !== undefined) {
-      void this.loadChildren();
+    const isLeftOrRoot = this.isLeaf || this._parent === undefined;
+    if (!isLeftOrRoot && loadChildren !== undefined && this.needLoading) {
+      void this.loadChildren(loadChildren);
     }
     if (this._children === undefined) {
       return;
@@ -279,9 +307,9 @@ export class TreeNode implements ITreeNode {
 // PUBLIC FUNCTIONS
 // ==================================================
 
-export function onNodeSelect(node: ITreeNode): boolean {
+export function onNodeSelect(node: ITreeNode): void {
   if (!(node instanceof TreeNode)) {
-    return false;
+    return;
   }
   // Deselect all others
   const root = node.getRoot();
@@ -291,12 +319,11 @@ export function onNodeSelect(node: ITreeNode): boolean {
     }
   }
   node.isSelected = !node.isSelected;
-  return true;
 }
 
-export function onNodeCheck(node: ITreeNode): boolean {
+export function onNodeCheck(node: ITreeNode): void {
   if (!(node instanceof TreeNode)) {
-    return false;
+    return;
   }
   if (node.checkBoxState === CheckBoxState.All) {
     node.checkBoxState = CheckBoxState.None;
@@ -314,5 +341,4 @@ export function onNodeCheck(node: ITreeNode): boolean {
       ancestor.checkBoxState = ancestor.calculateCheckBoxState();
     }
   }
-  return true;
 }

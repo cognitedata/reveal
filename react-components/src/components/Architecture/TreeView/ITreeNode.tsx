@@ -12,23 +12,24 @@ export enum CheckBoxState {
 }
 
 export type TreeNodeAction = (node: ITreeNode) => void;
+export type LoadChildrenAction = (node: ITreeNode) => ITreeNode[] | undefined;
 export type IconColor = string | undefined;
 
 export type ITreeNode = {
   get label(): string;
+  get hasBoldLabel(): boolean;
   get icon(): IconName | undefined; // undefined is no icon
   get iconColor(): IconColor; // undefined means default color, normally black
   get isSelected(): boolean;
-  get checkBoxState(): CheckBoxState; // Return CheckBoxState.Hidden of no checkbox
+  get isEnabled(): boolean; // True for selectable and checkable
   get isExpanded(): boolean;
   set isExpanded(value: boolean);
-  get isEnabled(): boolean; // True for selectable and checkable
-  get hasBoldLabel(): boolean;
+  get checkBoxState(): CheckBoxState; // Return CheckBoxState.Hidden of no checkbox
   get isLoadingChildren(): boolean;
   set isLoadingChildren(value: boolean);
   get isLeaf(): boolean;
 
-  getChildren: (forceLoading: boolean) => Generator<ITreeNode>;
+  getChildren: (loadChildren?: LoadChildrenAction) => Generator<ITreeNode>;
 
   addTreeNodeListener: (listener: TreeNodeAction) => void;
   removeTreeNodeListener: (listener: TreeNodeAction) => void;

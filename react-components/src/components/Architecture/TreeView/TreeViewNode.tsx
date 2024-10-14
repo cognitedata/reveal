@@ -6,9 +6,16 @@
 
 import { type ReactElement, useEffect, useState, useCallback } from 'react';
 import { CaretDownIcon, CaretRightIcon, Checkbox, HourglassIcon } from '@cognite/cogs.js';
-import { CheckBoxState, type TreeNodeAction, type ITreeNode, type IconColor } from './ITreeNode';
+import {
+  CheckBoxState,
+  type TreeNodeAction,
+  type ITreeNode,
+  type IconColor,
+  type LoadChildrenAction
+} from './ITreeNode';
 import { IconComponentMapper } from '../IconComponentMapper';
 import { type TreeViewProps } from './TreeViewProps';
+import { type IconName } from '../../../architecture/base/utilities/IconName';
 
 // ==================================================
 // CONSTANTS
@@ -40,23 +47,27 @@ export const TreeViewNode = ({
   props: TreeViewProps;
 }): ReactElement => {
   // @update-ui-component-pattern
-  const [hoverOverTextOrIcon, setHoverOverTextOrIcon] = useState(false);
-  const [_isSelected, setSelected] = useState(false);
-  const [_checkBoxState, setCheckBoxState] = useState<CheckBoxState>();
-  const [_enabled, setEnabled] = useState(true);
-  const [_expanded, setExpanded] = useState(false);
+  const [_label, setLabel] = useState<string>();
   const [_hasBoldLabel, setBoldLabel] = useState(false);
+  const [_icon, setIcon] = useState<IconName | undefined>();
   const [_iconColor, setIconColor] = useState<IconColor>();
+  const [_isSelected, setSelected] = useState(false);
+  const [_isEnabled, setEnabled] = useState(true);
+  const [_isExpanded, setExpanded] = useState(false);
+  const [_checkBoxState, setCheckBoxState] = useState<CheckBoxState>();
   const [_isLoadingChildren, setLoadingChildren] = useState(false);
+  const [hoverOverTextOrIcon, setHoverOverTextOrIcon] = useState(false);
 
   const update = useCallback(
     (node: ITreeNode) => {
+      setLabel(node.label);
+      setBoldLabel(node.hasBoldLabel);
+      setIcon(node.icon);
+      setIconColor(node.iconColor);
       setSelected(node.isSelected);
-      setCheckBoxState(node.checkBoxState);
       setEnabled(node.isEnabled);
       setExpanded(node.isExpanded);
-      setBoldLabel(node.hasBoldLabel);
-      setIconColor(node.iconColor);
+      setCheckBoxState(node.checkBoxState);
       setLoadingChildren(node.isLoadingChildren);
     },
     [node]
@@ -71,7 +82,7 @@ export const TreeViewNode = ({
   // @end
 
   // Props
-  const children = getChildrenAsArray(node);
+  const children = getChildrenAsArray(node, props.loadChildren);
   const backgroundColor = getBackgroundColor(node, hoverOverTextOrIcon);
   const color = getTextColor(node, hoverOverTextOrIcon);
   const gapBetweenItems = (props.gapBetweenItems ?? GAP_BETWEEN_ITEMS) + 'px';
@@ -265,7 +276,7 @@ const TreeNodeIcon = ({
   node: ITreeNode;
   color: string | undefined;
 }): ReactElement => {
-  if (node.iconColor !== undefined) {
+  if (!node.isSelected && node.iconColor !== undefined) {
     color = node.iconColor;
   }
   const Icon = node.isLoadingChildren ? HourglassIcon : IconComponentMapper.getIcon(node.icon);
@@ -280,17 +291,21 @@ const TreeViewLabel = ({ node }: { node: ITreeNode }): ReactElement => {
   return <span>{label}</span>;
 };
 
-export function getChildrenAsArray(node: ITreeNode, useExpanded = true): ITreeNode[] | undefined {
+export function getChildrenAsArray(
+  node: ITreeNode,
+  loadChildren: LoadChildrenAction | undefined,
+  useExpanded = true
+): ITreeNode[] | undefined {
   if (useExpanded && !node.isExpanded) {
     return undefined;
   }
   if (node.isLoadingChildren) {
     return undefined;
   }
-  if (node.getChildren(true).next().value === undefined) {
+  if (node.getChildren(loadChildren).next().value === undefined) {
     return undefined;
   }
-  return Array.from(node.getChildren(true));
+  return Array.from(node.getChildren(loadChildren));
 }
 
 function getCaretColor(

@@ -2,9 +2,7 @@
  * Copyright 2023 Cognite AS
  */
 
-import { type ITreeNode } from './ITreeNode';
-
-type NodeAction = (node: ITreeNode) => boolean;
+import { type TreeNodeAction, type LoadChildrenAction, type ITreeNode } from './ITreeNode';
 
 export type TreeViewProps = {
   // Colors
@@ -29,8 +27,9 @@ export type TreeViewProps = {
   hasIcons?: boolean; // Default is false
 
   // Event handlers
-  onSelect?: NodeAction;
-  onCheck?: NodeAction;
+  onSelect?: TreeNodeAction;
+  onCheck?: TreeNodeAction;
+  loadChildren?: LoadChildrenAction;
 
   // The root node of the tree, the root is not rendered.
   root: ITreeNode;

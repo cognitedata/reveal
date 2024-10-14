@@ -2,7 +2,8 @@
  * Copyright 2023 Cognite AS
  */
 
-import { CheckBoxState } from './ITreeNode';
+import { i } from 'vitest/dist/reporters-yx5ZTtEV.js';
+import { CheckBoxState, ITreeNode } from './ITreeNode';
 import { TreeNode } from './TreeNode';
 
 export function createTreeMock(): TreeNode {
@@ -30,18 +31,43 @@ export function createTreeMock(): TreeNode {
 
       child.addChild(child1);
 
-      for (let k = 1; k <= 500; k++) {
-        const child2 = new TreeNode();
-        child2.icon = 'Bug';
-        child2.label = 'Leaf ' + i + '.' + j + '.' + k;
-        child2.checkBoxState = CheckBoxState.None;
-        child2.isEnabled = k !== 3;
-        child2.hasBoldLabel = k === 5;
-        if (k === 4) child2.iconColor = 'darkred';
-        if (k === 5) child2.iconColor = 'blue';
-        child1.addChild(child2);
-      }
+      // for (let k = 1; k <= 500; k++) {
+      //   const child2 = new TreeNode();
+      //   child2.icon = 'Bug';
+      //   child2.label = 'Leaf ' + i + '.' + j + '.' + k;
+      //   child2.checkBoxState = CheckBoxState.None;
+      //   child2.isEnabled = k !== 3;
+      //   child2.hasBoldLabel = k === 5;
+      //   if (k === 4) child2.iconColor = 'darkred';
+      //   if (k === 5) child2.iconColor = 'blue';
+      //   child1.addChild(child2);
+      // }
     }
   }
   return root;
+}
+
+export function loadChildren(parent: ITreeNode): TreeNode[] | undefined {
+  if (!(parent instanceof TreeNode)) {
+    return undefined;
+  }
+  const array: TreeNode[] = [];
+  const length = parent.children?.length ?? 0;
+  const totalCount = 123;
+  const batchSize = 10;
+
+  for (let i = length, j = 0; i <= totalCount && j < batchSize; i++, j++) {
+    const child = new TreeNode();
+    child.label = 'Child ' + i;
+    child.icon = 'Snow';
+    child.isExpanded = false;
+    child.checkBoxState = CheckBoxState.None;
+    child.isEnabled = i % 5 === 0;
+    child.hasBoldLabel = i % 4 === 0;
+    array.push(child);
+    if (j + length === totalCount) {
+      child.needLoading = false;
+    }
+  }
+  return array;
 }
