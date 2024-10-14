@@ -88,3 +88,15 @@ export type { TranslateKey } from './base/utilities/TranslateKey';
 export { BaseView } from './base/views/BaseView';
 export { GroupThreeView } from './base/views/GroupThreeView';
 export { ThreeView } from './base/views/ThreeView';
+
+// New architecture: annotations
+export { AnnotationsDomainObject } from './concrete/annotations/AnnotationsDomainObject';
+export { AnnotationsRenderStyle } from './concrete/annotations/AnnotationsRenderStyle';
+export { Annotation } from './concrete/annotations/helpers/Annotation';
+export { Status } from './concrete/annotations/helpers/Status';
+export { AnnotationUtils } from './concrete/annotations/helpers/AnnotationUtils';
+export { AnnotationChangedDescription } from './concrete/annotations/helpers/AnnotationChangedDescription';
+export { PrimitiveType } from './base/utilities/primitives/PrimitiveType';
+export { AnnotationsSelectTool } from './concrete/annotations/commands/AnnotationsSelectTool';
+export { AnnotationsCreateTool } from './concrete/annotations/commands/AnnotationsCreateTool';
+export { getGlobalMatrix } from './concrete/annotations/helpers/getMatrixUtils';
