@@ -30,7 +30,7 @@ const HOVER_BACKGROUND_COLOR = 'lightgray';
 const CARET_COLOR = 'gray';
 const HOVER_CARET_COLOR = 'highlight';
 const CARET_SIZE = 20;
-const GAP_TO_CHILDREN = 15;
+const GAP_TO_CHILDREN = 24;
 const GAP_BETWEEN_ITEMS = 4;
 
 // ==================================================
