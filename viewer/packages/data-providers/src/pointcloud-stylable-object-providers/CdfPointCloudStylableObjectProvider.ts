@@ -18,7 +18,7 @@ import { PointCloudStylableObjectProvider } from '../PointCloudStylableObjectPro
 import * as THREE from 'three';
 import { cdfAnnotationsToObjectInfo } from './cdfAnnotationsToObjects';
 
-export class CdfPointCloudStylableObjectProvider implements PointCloudStylableObjectProvider {
+export class CdfPointCloudStylableObjectProvider implements PointCloudStylableObjectProvider<ModelIdentifier> {
   private readonly _sdk: CogniteClient;
 
   constructor(sdk: CogniteClient) {

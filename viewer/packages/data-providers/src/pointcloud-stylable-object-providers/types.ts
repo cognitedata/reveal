@@ -45,3 +45,9 @@ export type PointCloudObjectMetadata = {
 export type PointCloudObject = PointCloudObjectMetadata & {
   stylableObject: StylableObject;
 };
+
+export type PointCloudAnnotationDataModelIdentifier = {
+  space: string;
+  pointCloudModelExternalId: string;
+  pointCloudModelRevisionId: string;
+};
