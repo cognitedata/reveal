@@ -38,13 +38,9 @@ export class Image360Facade<T> {
   }
 
   hideAllHoverIcons(): boolean {
-    let changed = false;
-    for (const collection of this._image360Collections) {
-      if (collection.setSelectedVisibility(false)) {
-        changed = true;
-      }
-    }
-    return changed;
+    return this._image360Collections.reduce((changed, collection) => {
+      return collection.setSelectedVisibility(false) || changed;
+    }, false);
   }
 
   set allIconCullingScheme(scheme: IconCullingScheme) {
