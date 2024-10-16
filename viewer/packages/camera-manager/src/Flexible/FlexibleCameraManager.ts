@@ -48,7 +48,7 @@ export class FlexibleCameraManager extends PointerEvents implements IFlexibleCam
   private _isEnableClickAndDoubleClick = true;
   private _nearAndFarNeedsUpdate = false;
   private readonly _raycastCallback: RaycastCallback;
-  private readonly _haveEventListeners: boolean;
+  private readonly _hasEventListeners: boolean;
 
   private readonly cameraManagerHelper = new CameraManagerHelper();
 
@@ -61,15 +61,15 @@ export class FlexibleCameraManager extends PointerEvents implements IFlexibleCam
     raycastCallback: RaycastCallback,
     camera?: PerspectiveCamera,
     scene?: Scene,
-    haveEventListeners?: boolean
+    hasEventListeners?: boolean
   ) {
     super();
-    this._haveEventListeners = haveEventListeners ?? true;
+    this._hasEventListeners = hasEventListeners ?? true;
     this._controls = new FlexibleControls(camera, domElement, new FlexibleControlsOptions());
     this._controls.getPickedPointByPixelCoordinates = this.getPickedPointByPixelCoordinates;
     this._raycastCallback = raycastCallback;
 
-    if (this._haveEventListeners) {
+    if (this._hasEventListeners) {
       this._pointerEventsTarget = new PointerEventsTarget(domElement, this);
       this.addEventListeners();
     }
@@ -393,7 +393,7 @@ export class FlexibleCameraManager extends PointerEvents implements IFlexibleCam
   //================================================
 
   private addEventListeners() {
-    if (!this._haveEventListeners) {
+    if (!this._hasEventListeners) {
       return;
     }
     this._pointerEventsTarget?.addEventListeners();
@@ -401,7 +401,7 @@ export class FlexibleCameraManager extends PointerEvents implements IFlexibleCam
   }
 
   private removeEventListeners(): void {
-    if (!this._haveEventListeners) {
+    if (!this._hasEventListeners) {
       return;
     }
     this._pointerEventsTarget?.removeEventListeners();

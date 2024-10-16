@@ -189,7 +189,7 @@ export class Cognite3DViewer {
   private readonly spinner: Spinner;
 
   /**
-   * Enbles us to ensure models are added in the order their load is initialized.
+   * Enable us to ensure models are added in the order their load is initialized.
    */
   private readonly _addModelSequencer: AsyncSequencer = new AsyncSequencer();
 
@@ -350,6 +350,7 @@ export class Cognite3DViewer {
         this._activeCameraManager,
         this._mouseHandler,
         this._events.beforeSceneRendered,
+        options.hasEventListeners,
         {
           platformMaxPointsSize: getMaxPointSize(this._renderer)
         }
@@ -1662,6 +1663,33 @@ export class Cognite3DViewer {
       intersection = customIntersectionPass2;
     }
     return intersection;
+  }
+
+  /**
+   * Event function to click on 360 images.
+   * @param event The event type.
+   * @returns True if the event was handled, false otherwise.
+   * @beta
+   */
+  public async onClick360Images(event: PointerEvent): Promise<boolean> {
+    if (this._image360ApiHelper === undefined) {
+      return false;
+    }
+    return this._image360ApiHelper.enter360ImageHandler({ offsetX: event.offsetX, offsetY: event.offsetY });
+  }
+
+  /**
+   * Event function to to move the mouse.
+   * @param event The event type.
+   * @returns True if the event was handled, false otherwise.
+   * @beta
+   */
+  public onHover360Images(event: PointerEvent): boolean {
+    if (this._image360ApiHelper === undefined) {
+      return false;
+    }
+    this._image360ApiHelper.setHoverIconEventHandler(event);
+    return true;
   }
 
   private isIntersecting360Icon(vector: THREE.Vector2): boolean {

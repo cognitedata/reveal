@@ -209,8 +209,12 @@ export class DefaultImage360Collection implements Image360Collection {
     this.image360Entities.forEach(entity => (entity.icon.selected = selected));
   }
 
-  public setSelectedVisibility(visible: boolean): void {
+  public setSelectedVisibility(visible: boolean): boolean {
+    if (this._icons.hoverSpriteVisibility == visible) {
+      return false;
+    }
     this._icons.hoverSpriteVisibility = visible;
+    return true;
   }
 
   public setCullingScheme(scheme: IconCullingScheme): void {
