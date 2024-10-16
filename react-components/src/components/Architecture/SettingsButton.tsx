@@ -53,6 +53,7 @@ export const SettingsButton = ({
     []
   );
 
+  // @update-ui-component-pattern
   const [isOpen, setOpen] = useState<boolean>(false);
   const [isEnabled, setEnabled] = useState<boolean>(true);
   const [isVisible, setVisible] = useState<boolean>(true);
@@ -65,6 +66,7 @@ export const SettingsButton = ({
     setUniqueId(command.uniqueId);
     setIcon(getIcon(command));
   }, []);
+  // @end
 
   useEffect(() => {
     update(command);
