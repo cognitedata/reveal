@@ -67,7 +67,7 @@ export class Image360UI {
   private icons360Setting = {
     visible: true,
     opacity: 1,
-    hiddenIconsVisible: true,
+    occludedIconsVisible: true,
     radius: Infinity,
     limit: 50
   };
@@ -149,11 +149,11 @@ export class Image360UI {
         }
       });
     this.gui
-      .add(this.icons360Setting, 'hiddenIconsVisible')
-      .name('Set hidden icons visible')
+      .add(this.icons360Setting, 'occludedIconsVisible')
+      .name('Set occluded icons visible')
       .onChange(() => {
         for (const collection of viewer.get360ImageCollections()) {
-          collection.setHiddenIconsVisible(this.icons360Setting.hiddenIconsVisible);
+          collection.setOccludedIconsVisible(this.icons360Setting.occludedIconsVisible);
         }
       });
     this.gui

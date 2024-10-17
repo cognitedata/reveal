@@ -1211,7 +1211,7 @@ export interface Image360Collection {
     getModelTransformation(out?: Matrix4): Matrix4;
     readonly id: string;
     readonly image360Entities: Image360[];
-    isHiddenIconsVisible(): boolean;
+    isOccludedIconsVisible(): boolean;
     readonly label: string | undefined;
     off(event: 'image360Entered', callback: Image360EnteredDelegate): void;
     // (undocumented)
@@ -1221,11 +1221,11 @@ export interface Image360Collection {
     on(event: 'image360Exited', callback: Image360ExitedDelegate): void;
     set360IconCullingRestrictions(radius: number, pointLimit: number): void;
     setDefaultAnnotationStyle(appearance: Image360AnnotationAppearance): void;
-    setHiddenIconsVisible(visible: boolean): void;
     setIconsOpacity(opacity: number): void;
     setIconsVisibility(visible: boolean): void;
     setImagesOpacity(opacity: number): void;
     setModelTransformation(matrix: Matrix4): void;
+    setOccludedIconsVisible(visible: boolean): void;
     targetRevisionDate: Date | undefined;
 }
 

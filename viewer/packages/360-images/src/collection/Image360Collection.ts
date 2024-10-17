@@ -116,16 +116,16 @@ export interface Image360Collection {
   setIconsVisibility(visible: boolean): void;
 
   /**
-   * Check weather the hidden icons are visible
-   * @returns true is hidden icons are visible
+   * Check if the occluded icons are visible
+   * @returns true is occluded icons are visible
    */
-  isHiddenIconsVisible(): boolean;
+  isOccludedIconsVisible(): boolean;
 
   /**
-   * Set the hidden icons visible
+   * Set the occluded icons visible
    * @param visible
    */
-  setHiddenIconsVisible(visible: boolean): void;
+  setOccludedIconsVisible(visible: boolean): void;
 
   /**
    * Get the opacity of the images

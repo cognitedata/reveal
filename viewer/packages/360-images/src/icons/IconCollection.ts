@@ -322,11 +322,11 @@ export class IconCollection {
     this._pointsObject.setOpacity(value);
   }
 
-  public isHiddenVisible(): boolean {
+  public isOccludedVisible(): boolean {
     return this._pointsObject.isBackPointsVisible();
   }
 
-  public setHiddenVisible(value: boolean): void {
+  public setOccludedVisible(value: boolean): void {
     this._pointsObject.setBackPointsVisible(value);
   }
 }

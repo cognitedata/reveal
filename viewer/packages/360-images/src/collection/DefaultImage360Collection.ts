@@ -172,12 +172,12 @@ export class DefaultImage360Collection implements Image360Collection {
     this._needsRedraw = true;
   }
 
-  public isHiddenIconsVisible(): boolean {
-    return this._icons.isHiddenVisible();
+  public isOccludedIconsVisible(): boolean {
+    return this._icons.isOccludedVisible();
   }
 
-  public setHiddenIconsVisible(value: boolean): void {
-    this._icons.setHiddenVisible(value);
+  public setOccludedIconsVisible(value: boolean): void {
+    this._icons.setOccludedVisible(value);
     this._needsRedraw = true;
   }
 
