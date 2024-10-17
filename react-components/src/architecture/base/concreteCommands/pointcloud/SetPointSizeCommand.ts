@@ -2,8 +2,8 @@
  * Copyright 2024 Cognite AS
  */
 
-import { type TranslateKey } from '../utilities/TranslateKey';
-import { BaseSliderCommand } from '../commands/BaseSliderCommand';
+import { type TranslateKey } from '../../utilities/TranslateKey';
+import { BaseSliderCommand } from '../../commands/BaseSliderCommand';
 
 const DEFAULT_POINT_SIZE = 2;
 const MIN_POINT_SIZE = 0.0;

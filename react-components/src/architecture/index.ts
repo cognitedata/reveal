@@ -23,10 +23,10 @@ export { DeleteDomainObjectCommand } from './base/concreteCommands/DeleteDomainO
 export { FitViewCommand } from './base/concreteCommands/FitViewCommand';
 export { KeyboardSpeedCommand } from './base/concreteCommands/KeyboardSpeedCommand';
 export { NavigationTool } from './base/concreteCommands/NavigationTool';
-export { PointCloudFilterCommand } from './base/concreteCommands/PointCloudFilterCommand';
-export { SetPointColorTypeCommand } from './base/concreteCommands/SetPointColorTypeCommand';
-export { SetPointShapeCommand } from './base/concreteCommands/SetPointShapeCommand';
-export { SetPointSizeCommand } from './base/concreteCommands/SetPointSizeCommand';
+export { PointCloudFilterCommand } from './base/concreteCommands/pointcloud/PointCloudFilterCommand';
+export { SetPointColorTypeCommand } from './base/concreteCommands/pointcloud/SetPointColorTypeCommand';
+export { SetPointShapeCommand } from './base/concreteCommands/pointcloud/SetPointShapeCommand';
+export { SetPointSizeCommand } from './base/concreteCommands/pointcloud/SetPointSizeCommand';
 export { SetQualityCommand } from './base/concreteCommands/SetQualityCommand';
 export { SettingsCommand } from './base/concreteCommands/SettingsCommand';
 export { ToggleMetricUnitsCommand } from './base/concreteCommands/ToggleMetricUnitsCommand';

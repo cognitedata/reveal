@@ -4,13 +4,13 @@
 
 import { BaseSettingsCommand } from '../commands/BaseSettingsCommand';
 import { SetQualityCommand } from './SetQualityCommand';
-import { SetPointSizeCommand } from './SetPointSizeCommand';
-import { SetPointColorTypeCommand } from './SetPointColorTypeCommand';
-import { SetPointShapeCommand } from './SetPointShapeCommand';
-import { PointCloudFilterCommand } from './PointCloudFilterCommand';
+import { SetPointSizeCommand } from './pointcloud/SetPointSizeCommand';
+import { SetPointColorTypeCommand } from './pointcloud/SetPointColorTypeCommand';
+import { SetPointShapeCommand } from './pointcloud/SetPointShapeCommand';
+import { PointCloudFilterCommand } from './pointcloud/PointCloudFilterCommand';
 import { type TranslateKey } from '../utilities/TranslateKey';
 import { type IconName } from '../utilities/IconName';
-import { PointCloudDividerCommand } from './PointCloudDividerCommand';
+import { PointCloudDividerCommand } from './pointcloud/PointCloudDividerCommand';
 
 export class SettingsCommand extends BaseSettingsCommand {
   // ==================================================

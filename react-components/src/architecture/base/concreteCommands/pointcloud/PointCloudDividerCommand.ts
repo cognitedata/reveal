@@ -1,8 +1,8 @@
 /*!
  * Copyright 2024 Cognite AS
  */
-import { type BaseCommand } from '../commands/BaseCommand';
-import { DividerCommand } from '../commands/DividerCommand';
+import { type BaseCommand } from '../../commands/BaseCommand';
+import { DividerCommand } from '../../commands/DividerCommand';
 
 export class PointCloudDividerCommand extends DividerCommand {
   public override get isVisible(): boolean {
