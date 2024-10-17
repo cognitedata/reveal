@@ -12,7 +12,13 @@ import {
   type Dispatch,
   type SetStateAction
 } from 'react';
-import { Button, ChevronDownIcon, Tooltip as CogsTooltip } from '@cognite/cogs.js';
+import {
+  Button,
+  ChevronDownIcon,
+  ChevronUpIcon,
+  Tooltip as CogsTooltip,
+  TextLabel
+} from '@cognite/cogs.js';
 import { Menu, SelectPanel } from '@cognite/cogs-lab';
 import { useTranslation } from '../i18n/I18n';
 import { type BaseCommand } from '../../architecture/base/commands/BaseCommand';
@@ -21,7 +27,7 @@ import { getButtonType, getDefaultCommand, getTooltipPlacement, getIcon } from '
 import { LabelWithShortcut } from './LabelWithShortcut';
 import { BaseFilterCommand } from '../../architecture/base/commands/BaseFilterCommand';
 import { FilterItem } from './FilterItem';
-import { OPTION_MIN_WIDTH, DEFAULT_PADDING } from './constants';
+import { OPTION_MIN_WIDTH, DEFAULT_PADDING, SELECT_DROPDOWN_ICON_COLOR } from './constants';
 import { type IconName } from '../../architecture/base/utilities/IconName';
 import { IconComponent } from './IconComponentMapper';
 import { TOOLBAR_HORIZONTAL_PANEL_OFFSET } from '../constants';
@@ -98,7 +104,12 @@ export const FilterButton = ({
   );
 
   return usedInSettings ? (
-    <FilterDropdown label={label} selectedLabel={selectedLabel} PanelContent={PanelContent} />
+    <FilterDropdown
+      label={label}
+      selectedLabel={selectedLabel}
+      isOpen={isOpen}
+      PanelContent={PanelContent}
+    />
   ) : (
     <FilterMenu
       command={command}
@@ -175,10 +186,12 @@ const FilterMenu = ({
 const FilterDropdown = ({
   label,
   selectedLabel,
+  isOpen,
   PanelContent
 }: {
   label: string;
   selectedLabel: string;
+  isOpen: boolean;
   PanelContent: ReactElement;
 }): ReactElement => {
   return (
@@ -195,8 +208,12 @@ const FilterDropdown = ({
               paddingRight: '8px',
               paddingLeft: '8px'
             }}>
-            {selectedLabel}
-            <ChevronDownIcon />
+            <StyledDropdownSelectionLabel>{selectedLabel}</StyledDropdownSelectionLabel>
+            {isOpen ? (
+              <ChevronUpIcon color={SELECT_DROPDOWN_ICON_COLOR} />
+            ) : (
+              <ChevronDownIcon color={SELECT_DROPDOWN_ICON_COLOR} />
+            )}
           </Button>
         </SelectPanel.Trigger>
         <SelectPanel.Body>{PanelContent}</SelectPanel.Body>
@@ -262,4 +279,8 @@ const StyledSelectPanel = styled(SelectPanel)`
   justify-content: space-between;
   align-items: center;
   gap: 8px;
+`;
+
+const StyledDropdownSelectionLabel = styled.label`
+  font-weight: 400;
 `;
