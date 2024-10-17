@@ -38,7 +38,7 @@ export class Image360UI {
   }
 
   private params = {
-    siteId: getSiteIdFromUrl() ?? '', // For instance: helideck-site-2-jpeg
+    siteId: getSiteIdFromUrl() ?? 'helideck-site-2-jpeg', // For instance: helideck-site-2-jpeg
     space: getSpaceFromUrl() ?? '',
     add: () => this.add360ImageSet(),
     remove: () => this.remove360ImageSet(),
@@ -66,14 +66,16 @@ export class Image360UI {
     radians: 0
   };
 
-  private opacity = {
-    alpha: 1
+  private images360Settings = {
+    opacity: 1
   };
 
-  private iconCulling = {
+  private icons360Setting = {
     radius: Infinity,
     limit: 50,
-    hideAll: false
+    show: true,
+    opacity: 1,
+    backPointsVisible: true
   };
 
   private imageRevisions = {
@@ -99,8 +101,8 @@ export class Image360UI {
       });
 
     const optionsFolder = this.gui.addFolder('Add Options (Events)');
-    optionsFolder.hide();
     const optionsFolderFdm = this.gui.addFolder('Add Options (Data Models)');
+    optionsFolderFdm.hide();
     // events
     optionsFolder.add(this.params, 'siteId').name('Site ID');
 
@@ -124,36 +126,46 @@ export class Image360UI {
     this.gui.add(this.params, 'add').name('Add image set');
     this.gui.add(this.params, 'remove').name('Remove image set');
 
-    this.gui.add(this.opacity, 'alpha', 0, 1, 0.01).onChange(() => {
-      this.entities.forEach(p => (p.image360Visualization.opacity = this.opacity.alpha));
-      this.viewer.requestRedraw();
-    });
-
     gui.add(this.params, 'assetId').name('Asset ID');
     gui.add(this.params, 'findAsset').name('Find asset');
 
     this.gui
-      .add(this.iconCulling, 'radius', 0, 10000, 1)
-      .name('Culling radius')
+      .add(this.images360Settings, 'opacity', 0, 1, 0.01)
+      .name('Image opacity')
+      .onChange(() => {
+        viewer.set360ImagesOpacity(this.images360Settings.opacity);
+      });
+
+    this.gui
+      .add(this.icons360Setting, 'show')
+      .name('Show all 360 images')
+      .onChange(() => {
+        viewer.set360IconsVisible(this.icons360Setting.show);
+      });
+    this.gui
+      .add(this.icons360Setting, 'opacity', 0, 1, 0.01)
+      .name('Icon opacity')
+      .onChange(() => {
+        viewer.set360IconsOpacity(this.icons360Setting.opacity);
+      });
+    this.gui
+      .add(this.icons360Setting, 'backPointsVisible')
+      .name('Icon back points visible')
+      .onChange(() => {
+        viewer.set360IconsBackPointsVisible(this.icons360Setting.backPointsVisible);
+      });
+    this.gui
+      .add(this.icons360Setting, 'radius', 0, 10000, 1)
+      .name('Icon Culling radius')
       .onChange(() => {
         this.set360IconCullingRestrictions();
       });
 
     this.gui
-      .add(this.iconCulling, 'limit', 0, 10000, 1)
-      .name('Number of points')
+      .add(this.icons360Setting, 'limit', 0, 10000, 1)
+      .name('Icon Number of points')
       .onChange(() => {
         this.set360IconCullingRestrictions();
-      });
-
-    this.gui
-      .add(this.iconCulling, 'hideAll')
-      .name('Hide all 360 images')
-      .onChange(() => {
-        if (this._collections.length > 0) {
-          this._collections.forEach(p => p.setIconsVisibility(!this.iconCulling.hideAll));
-          this.viewer.requestRedraw();
-        }
       });
 
     this.gui.add(this.params, 'saveToUrl').name('Save 360 site to URL');
@@ -207,7 +219,7 @@ export class Image360UI {
 
     const collection = await this.addCollection();
 
-    collection.setIconsVisibility(!this.iconCulling.hideAll);
+    collection.setIconsVisibility(this.icons360Setting.show);
     collection.on('image360Entered', (entity, _) => {
       this.selectedEntity = entity;
     });
@@ -249,7 +261,9 @@ export class Image360UI {
 
   private async set360IconCullingRestrictions() {
     if (this._collections.length > 0) {
-      this._collections.forEach(p => p.set360IconCullingRestrictions(this.iconCulling.radius, this.iconCulling.limit));
+      this._collections.forEach(p =>
+        p.set360IconCullingRestrictions(this.icons360Setting.radius, this.icons360Setting.limit)
+      );
       this.viewer.requestRedraw();
     }
   }

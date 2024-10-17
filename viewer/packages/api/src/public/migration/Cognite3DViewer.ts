@@ -95,6 +95,8 @@ import {
 import { Image360ApiHelper } from '../../api-helpers/Image360ApiHelper';
 import html2canvas from 'html2canvas';
 import { AsyncSequencer, SequencerFunction } from '../../../../utilities/src/AsyncSequencer';
+import { DEFAULT_IMAGE_360_OPACITY } from '@reveal/360-images/src/entity/Image360VisualizationBox';
+import { DEFAULT_OVERLAY_FRONT_OPACITY } from '@reveal/3d-overlays/src/OverlayPointsObject';
 
 type Cognite3DViewerEvents =
   | 'click'
@@ -1718,6 +1720,38 @@ export class Cognite3DViewer {
     offsetY: number
   ): Promise<null | Image360AnnotationIntersection> {
     return this._image360ApiHelper?.intersect360ImageAnnotations(offsetX, offsetY) ?? null;
+  }
+
+  public get360ImagesOpacity(): number {
+    return this._image360ApiHelper?.getImagesOpacity() ?? DEFAULT_IMAGE_360_OPACITY;
+  }
+
+  public set360ImagesOpacity(value: number): void {
+    this._image360ApiHelper?.setImagesOpacity(value);
+  }
+
+  public is360IconsVisible(): boolean {
+    return this._image360ApiHelper?.isIconsVisible() ?? true;
+  }
+
+  public set360IconsVisible(value: boolean): void {
+    this._image360ApiHelper?.setIconsVisible(value);
+  }
+
+  public is360IconsBackPointsVisible(): boolean {
+    return this._image360ApiHelper?.isIconsBackPointsVisible() ?? false;
+  }
+
+  public set360IconsBackPointsVisible(value: boolean): void {
+    this._image360ApiHelper?.setIconsBackPointsVisible(value);
+  }
+
+  public get360IconsOpacity(): number {
+    return this._image360ApiHelper?.getIconsOpacity() ?? DEFAULT_OVERLAY_FRONT_OPACITY;
+  }
+
+  public set360IconsOpacity(value: number): void {
+    this._image360ApiHelper?.setIconsOpacity(value);
   }
 
   /** @private */

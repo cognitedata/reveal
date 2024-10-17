@@ -350,6 +350,28 @@ export class DefaultImage360Collection implements Image360Collection {
       return map;
     }, new Map<number, { entity: Image360; revision: Image360Revision }>());
   }
+
+  //================================================
+  // INSTANCE METHODS: Setter and getters
+  //================================================
+
+  public getIconsOpacity(): number {
+    return this._icons.getOpacity();
+  }
+
+  public setIconsOpacity(value: number): void {
+    this._icons.setOpacity(value);
+    this._needsRedraw = true;
+  }
+
+  public isIconsBackPointsVisible(): boolean {
+    return this._icons.isBackPointsVisible();
+  }
+
+  public setIconsBackPointsVisible(value: boolean): void {
+    this._icons.setBackPointsVisible(value);
+    this._needsRedraw = true;
+  }
 }
 
 function matchesAssetRef(assetLink: AnnotationsCogniteAnnotationTypesImagesAssetLink, matchRef: IdEither): boolean {
