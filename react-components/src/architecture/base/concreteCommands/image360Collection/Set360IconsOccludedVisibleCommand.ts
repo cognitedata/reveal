@@ -2,6 +2,7 @@
  * Copyright 2024 Cognite AS
  */
 
+import { Image360Collection } from '@cognite/reveal';
 import { RenderTargetCommand } from '../../commands/RenderTargetCommand';
 import { type TranslateKey } from '../../utilities/TranslateKey';
 
@@ -15,8 +16,7 @@ export class Set360IconsOccludedVisibleCommand extends RenderTargetCommand {
   }
 
   public override get isEnabled(): boolean {
-    const collection = this.renderTarget.get360ImageCollections().next().value;
-    return collection?.getIconsVisibility() ?? false;
+    return this.firstCollection?.getIconsVisibility() ?? false;
   }
 
   public override get isToggle(): boolean {
@@ -24,8 +24,7 @@ export class Set360IconsOccludedVisibleCommand extends RenderTargetCommand {
   }
 
   public override get isChecked(): boolean {
-    const collection = this.renderTarget.get360ImageCollections().next().value;
-    return collection?.getOccludedIconsVisible() ?? 1;
+    return this.firstCollection?.getOccludedIconsVisible() ?? true;
   }
 
   protected override invokeCore(): boolean {
@@ -34,5 +33,9 @@ export class Set360IconsOccludedVisibleCommand extends RenderTargetCommand {
       collection.setOccludedIconsVisible(visible);
     }
     return true;
+  }
+
+  private get firstCollection(): Image360Collection | undefined {
+    return this.renderTarget.get360ImageCollections().next().value;
   }
 }

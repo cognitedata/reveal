@@ -4,6 +4,7 @@
 
 import { type TranslateKey } from '../../utilities/TranslateKey';
 import { FractionSliderCommand } from '../../commands/FractionSliderCommand';
+import { Image360Collection } from '@cognite/reveal';
 
 export class Set360ImagesOpacityCommand extends FractionSliderCommand {
   // ==================================================
@@ -15,17 +16,20 @@ export class Set360ImagesOpacityCommand extends FractionSliderCommand {
   }
 
   public override get isEnabled(): boolean {
-    return this.renderTarget.get360ImageCollections().next().value !== undefined;
+    return this.firstCollection !== undefined;
   }
 
   public override get value(): number {
-    const collection = this.renderTarget.get360ImageCollections().next().value;
-    return collection?.getImagesOpacity() ?? 1;
+    return this.firstCollection?.getImagesOpacity() ?? 1;
   }
 
   public override set value(value: number) {
     for (const collection of this.renderTarget.get360ImageCollections()) {
       collection.setImagesOpacity(value);
     }
+  }
+
+  private get firstCollection(): Image360Collection | undefined {
+    return this.renderTarget.get360ImageCollections().next().value;
   }
 }
