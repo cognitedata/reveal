@@ -3,9 +3,11 @@
  */
 import { type IconName } from '../../base/utilities/IconName';
 import { type TranslateKey } from '../../base/utilities/TranslateKey';
-import { ObservationsCommand } from './ObservationsCommand';
+import { ObservationCommand } from './ObservationsCommand';
 
-export class CreateObservationCommand extends ObservationsCommand {
+export class CreateObservationCommand<
+  ObservationIdType
+> extends ObservationCommand<ObservationIdType> {
   public override get icon(): IconName {
     return 'Plus';
   }

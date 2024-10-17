@@ -11,8 +11,10 @@ import { SaveObservationsCommand } from './SaveObservationsCommand';
 import { DeleteObservationCommand } from './DeleteObservationCommand';
 import { createEmptyObservationProperties, isObservationIntersection } from './types';
 import { type IconName } from '../../base/utilities/IconName';
+import { FdmObservationProvider } from './fdm/FdmObservationProvider';
+import { type DmsUniqueIdentifier } from '../../../data-providers';
 
-export class ObservationsTool extends BaseEditTool {
+export class ObservationsTool<ObservationIdType> extends BaseEditTool {
   private _isCreating: boolean = false;
 
   protected override canBeSelected(domainObject: VisualDomainObject): boolean {
@@ -29,9 +31,9 @@ export class ObservationsTool extends BaseEditTool {
 
   public override getToolbar(): Array<BaseCommand | undefined> {
     return [
-      new CreateObservationCommand(),
-      new DeleteObservationCommand(),
-      new SaveObservationsCommand()
+      new CreateObservationCommand<ObservationIdType>(),
+      new DeleteObservationCommand<ObservationIdType>(),
+      new SaveObservationsCommand<ObservationIdType>()
     ];
   }
 
@@ -39,7 +41,9 @@ export class ObservationsTool extends BaseEditTool {
     super.onActivate();
     let domainObject = this.getObservationsDomainObject();
     if (domainObject === undefined) {
-      domainObject = new ObservationsDomainObject(this.rootDomainObject.fdmSdk);
+      domainObject = new ObservationsDomainObject(
+        new FdmObservationProvider(this.rootDomainObject.fdmSdk)
+      );
       this.renderTarget.rootDomainObject.addChildInteractive(domainObject);
     }
     domainObject.setVisibleInteractive(true, this.renderTarget);
@@ -59,7 +63,7 @@ export class ObservationsTool extends BaseEditTool {
     await this.selectOverlayFromClick(event);
   }
 
-  public getObservationsDomainObject(): ObservationsDomainObject | undefined {
+  public getObservationsDomainObject(): ObservationsDomainObject<DmsUniqueIdentifier> | undefined {
     return this.rootDomainObject.getDescendantByType(ObservationsDomainObject);
   }
 

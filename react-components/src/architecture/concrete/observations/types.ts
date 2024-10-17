@@ -8,7 +8,6 @@ import {
 } from '@cognite/reveal';
 import { type ObservationProperties } from './models';
 import { type Vector3 } from 'three';
-import { type FdmNode } from '../../../data-providers/FdmSDK';
 import { type DomainObjectIntersection } from '../../base/domainObjectsHelpers/DomainObjectIntersection';
 import { type ObservationsDomainObject } from './ObservationsDomainObject';
 
@@ -31,22 +30,22 @@ export function createEmptyObservationProperties(point: Vector3): ObservationPro
 
 const observationMarker = Symbol('observationSymbol');
 
-export type ObservationIntersection = Omit<
+export type ObservationIntersection<ObservationIdType> = Omit<
   DomainObjectIntersection,
   'userData' | 'domainObject'
 > & {
   marker: typeof observationMarker;
-  domainObject: ObservationsDomainObject;
-  userData: Observation;
+  domainObject: ObservationsDomainObject<ObservationIdType>;
+  userData: Observation<ObservationIdType>;
 };
 
-export function createObservationIntersection(
+export function createObservationIntersection<ObservationIdType>(
   point: Vector3,
   distanceToCamera: number,
   customObject: ICustomObject,
-  domainObject: ObservationsDomainObject,
-  overlay: Observation
-): ObservationIntersection {
+  domainObject: ObservationsDomainObject<ObservationIdType>,
+  overlay: Observation<ObservationIdType>
+): ObservationIntersection<ObservationIdType> {
   return {
     type: 'customObject',
     marker: observationMarker,
@@ -58,8 +57,10 @@ export function createObservationIntersection(
   };
 }
 
-export function isObservationIntersection(
+export function isObservationIntersection<ObservationIdType>(
   objectIntersection: AnyIntersection
-): objectIntersection is ObservationIntersection {
-  return (objectIntersection as ObservationIntersection).marker === observationMarker;
+): objectIntersection is ObservationIntersection<ObservationIdType> {
+  return (
+    (objectIntersection as ObservationIntersection<ObservationIdType>).marker === observationMarker
+  );
 }

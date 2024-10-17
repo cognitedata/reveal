@@ -3,10 +3,12 @@
  */
 import { type TranslateKey } from '../../base/utilities/TranslateKey';
 import { type ButtonType } from '../../../components/Architecture/types';
-import { ObservationsCommand } from './ObservationsCommand';
+import { ObservationCommand } from './ObservationsCommand';
 import { type IconName } from '../../base/utilities/IconName';
 
-export class DeleteObservationCommand extends ObservationsCommand {
+export class DeleteObservationCommand<
+  ObservationIdType
+> extends ObservationCommand<ObservationIdType> {
   public override get icon(): IconName {
     return 'Delete';
   }

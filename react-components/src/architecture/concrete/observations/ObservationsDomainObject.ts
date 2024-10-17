@@ -5,25 +5,23 @@ import { VisualDomainObject } from '../../base/domainObjects/VisualDomainObject'
 import { type ThreeView } from '../../base/views/ThreeView';
 import { ObservationsView } from './ObservationsView';
 import { type TranslateKey } from '../../base/utilities/TranslateKey';
-import { DmsUniqueIdentifier, type FdmSDK } from '../../../data-providers/FdmSDK';
 import { Changes } from '../../base/domainObjectsHelpers/Changes';
 import { ObservationsCache } from './ObservationsCache';
 import { PanelInfo } from '../../base/domainObjectsHelpers/PanelInfo';
 import { type Observation, ObservationStatus } from './types';
 import { partition, remove } from 'lodash';
-import { type ObservationInstance, type ObservationProperties } from './models';
+import { type ObservationProperties } from './models';
 import { Quantity } from '../../base/domainObjectsHelpers/Quantity';
-import { FdmObservationProvider } from './fdm/FdmObservationProvider';
 import { type ObservationProvider } from './ObservationProvider';
 import { isDefined } from '../../../utilities/isDefined';
 
-export class ObservationsDomainObject<ObservationIdType extends object> extends VisualDomainObject {
+export class ObservationsDomainObject<ObservationIdType> extends VisualDomainObject {
   private _selectedObservation: Observation<ObservationIdType> | undefined;
   private readonly _observationsCache: ObservationsCache<ObservationIdType>;
 
   private _observations: Array<Observation<ObservationIdType>> = [];
 
-  constructor(fdmSdk: FdmSDK, observationProvider: ObservationProvider<ObservationIdType>) {
+  constructor(observationProvider: ObservationProvider<ObservationIdType>) {
     super();
 
     this._observationsCache = new ObservationsCache<ObservationIdType>(observationProvider);
@@ -84,11 +82,11 @@ export class ObservationsDomainObject<ObservationIdType extends object> extends 
     return newObservation;
   }
 
-  public removeObservation(observation: Observation<ObservationIdType>): void {
-    if (observation.status === ObservationStatus.PendingCreation) {
-      remove(this._observations, observation);
-    } else if (this._observations.includes(observation)) {
-      observation.status = ObservationStatus.PendingDeletion;
+  public removeObservation(observationToDelete: Observation<ObservationIdType>): void {
+    if (observationToDelete.status === ObservationStatus.PendingCreation) {
+      remove(this._observations, (observation) => observationToDelete === observation);
+    } else if (this._observations.includes(observationToDelete)) {
+      observationToDelete.status = ObservationStatus.PendingDeletion;
     }
 
     this.notify(Changes.geometry);

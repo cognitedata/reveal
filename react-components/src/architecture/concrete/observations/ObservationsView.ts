@@ -19,10 +19,13 @@ import { ClosestGeometryFinder } from '../../base/utilities/geometry/ClosestGeom
 import { getColorFromStatus } from './color';
 import { isPointVisibleByPlanes } from '../../base/utilities/geometry/isPointVisibleByPlanes';
 
-type ObservationCollection = Overlay3DCollection<Observation>;
+type ObservationCollection<ObservationIdType> = Overlay3DCollection<Observation<ObservationIdType>>;
 
-export class ObservationsView extends GroupThreeView<ObservationsDomainObject> {
-  private readonly _overlayCollection: ObservationCollection = new Overlay3DCollection([]);
+export class ObservationsView<ObservationIdType> extends GroupThreeView<
+  ObservationsDomainObject<ObservationIdType>
+> {
+  private readonly _overlayCollection: ObservationCollection<ObservationIdType> =
+    new Overlay3DCollection([]);
 
   protected override calculateBoundingBox(): Box3 {
     const boundingBox = new Box3().makeEmpty();
@@ -105,7 +108,7 @@ export class ObservationsView extends GroupThreeView<ObservationsDomainObject> {
     return closestFinder.getClosestGeometry();
   }
 
-  public getOverlays(): ObservationCollection {
+  public getOverlays(): ObservationCollection<ObservationIdType> {
     return this._overlayCollection;
   }
 
@@ -137,10 +140,10 @@ export class ObservationsView extends GroupThreeView<ObservationsDomainObject> {
   }
 }
 
-function createObservationOverlays(
-  observations: Observation[],
-  selectedObservation: Observation | undefined
-): Array<OverlayInfo<Observation>> {
+function createObservationOverlays<ObservationIdType>(
+  observations: Array<Observation<ObservationIdType>>,
+  selectedObservation: Observation<ObservationIdType> | undefined
+): Array<OverlayInfo<Observation<ObservationIdType>>> {
   return observations.map((observation) => ({
     position: extractObservationPosition(observation),
     content: observation,
@@ -148,7 +151,9 @@ function createObservationOverlays(
   }));
 }
 
-function extractObservationPosition(observation: Observation): Vector3 {
+function extractObservationPosition<ObservationIdType>(
+  observation: Observation<ObservationIdType>
+): Vector3 {
   return new Vector3(
     observation.properties.positionX,
     observation.properties.positionY,

@@ -4,12 +4,14 @@
 import { type ButtonType } from '../../../components/Architecture/types';
 import { type TranslateKey } from '../../base/utilities/TranslateKey';
 import { Changes } from '../../base/domainObjectsHelpers/Changes';
-import { ObservationsCommand } from './ObservationsCommand';
+import { ObservationCommand } from './ObservationsCommand';
 import { type IconName } from '../../base/utilities/IconName';
 import { CommandsUpdater } from '../../base/reactUpdaters/CommandsUpdater';
 import { makeToast } from '@cognite/cogs-lab';
 
-export class SaveObservationsCommand extends ObservationsCommand {
+export class SaveObservationsCommand<
+  ObservationIdType
+> extends ObservationCommand<ObservationIdType> {
   public override get icon(): IconName {
     return 'Save';
   }
