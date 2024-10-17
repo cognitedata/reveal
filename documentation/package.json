@@ -24,7 +24,7 @@
     "ws:replace": "replace"
   },
   "dependencies": {
-    "@azure/msal-browser": "3.25.0",
+    "@azure/msal-browser": "3.26.1",
     "@codemirror/lang-javascript": "6.2.2",
     "@docusaurus/core": "3.5.2",
     "@docusaurus/preset-classic": "3.5.2",
@@ -44,10 +44,10 @@
     "docusaurus-plugin-typedoc": "1.0.5",
     "replace": "1.2.2",
     "rimraf": "6.0.1",
-    "typedoc": "0.26.8",
+    "typedoc": "0.26.9",
     "typedoc-plugin-markdown": "4.2.9",
     "typedoc-plugin-no-inherit": "1.4.0",
-    "typescript": "5.6.2"
+    "typescript": "5.6.3"
   },
   "browserslist": {
     "production": [
