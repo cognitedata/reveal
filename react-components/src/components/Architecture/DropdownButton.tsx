@@ -3,14 +3,15 @@
  */
 
 import { Button, Tooltip as CogsTooltip, ChevronDownIcon, ChevronUpIcon } from '@cognite/cogs.js';
-import { Menu } from '@cognite/cogs-lab';
+import { Menu, Option, Select } from '@cognite/cogs-lab';
 import {
   useCallback,
   useEffect,
   useMemo,
   useState,
   type ReactElement,
-  type MouseEvent
+  type SetStateAction,
+  type Dispatch
 } from 'react';
 
 import { useTranslation } from '../i18n/I18n';
@@ -21,9 +22,8 @@ import { getButtonType, getDefaultCommand, getTooltipPlacement, getIcon } from '
 import { LabelWithShortcut } from './LabelWithShortcut';
 import { type TranslateDelegate } from '../../architecture/base/utilities/TranslateKey';
 import { DEFAULT_PADDING, OPTION_MIN_WIDTH } from './constants';
-import { TOOLBAR_HORIZONTAL_PANEL_OFFSET } from '../constants';
 
-import { offset } from '@floating-ui/dom';
+import styled from 'styled-components';
 
 export const DropdownButton = ({
   inputCommand,
@@ -35,7 +35,6 @@ export const DropdownButton = ({
   usedInSettings?: boolean;
 }): ReactElement => {
   const renderTarget = useRenderTarget();
-  const { t } = useTranslation();
   const command = useMemo<BaseOptionCommand>(
     () => getDefaultCommand<BaseOptionCommand>(inputCommand, renderTarget),
     []
@@ -60,63 +59,121 @@ export const DropdownButton = ({
     };
   }, [command]);
 
-  if (!isVisible || command.children === undefined) {
-    return <></>;
-  }
-  const placement = getTooltipPlacement(isHorizontal);
+  return usedInSettings ? (
+    <MenuItemWithDropdown command={command} isVisible={isVisible} />
+  ) : (
+    <DropdownElement
+      command={command}
+      isVisible={isVisible}
+      isOpen={isOpen}
+      setOpen={setOpen}
+      isEnabled={isEnabled}
+      isHorizontal={isHorizontal}
+      uniqueId={uniqueId}
+    />
+  );
+};
+
+const DropdownElement = ({
+  command,
+  isVisible,
+  isOpen,
+  setOpen,
+  isEnabled,
+  isHorizontal,
+  uniqueId
+}: {
+  command: BaseOptionCommand;
+  isVisible: boolean;
+  isOpen: boolean;
+  setOpen: Dispatch<SetStateAction<boolean>>;
+  isEnabled: boolean;
+  isHorizontal: boolean;
+  uniqueId: number;
+}): ReactElement => {
+  const { t } = useTranslation();
   const label = command.getLabel(t);
-  const children = command.children;
   const selectedLabel = command.selectedChild?.getLabel(t);
+
+  const placement = getTooltipPlacement(isHorizontal);
 
   const OpenButtonIcon = isOpen ? ChevronUpIcon : ChevronDownIcon;
 
+  if (!isVisible || command.children === undefined) {
+    return <></>;
+  }
+
   return (
     <Menu
-      label={`${label} - ${selectedLabel}`}
-      floatingProps={{ middleware: [offset(TOOLBAR_HORIZONTAL_PANEL_OFFSET)] }}
       onOpenChange={(open: boolean) => {
         setOpen(open);
       }}
       hideOnSelect={true}
       appendTo={'parent'}
-      placement={usedInSettings ? 'bottom-end' : 'bottom-start'}
-      renderTrigger={
-        usedInSettings
-          ? undefined
-          : (props: any) => (
-              <CogsTooltip
-                content={<LabelWithShortcut label={label} command={command} />}
-                disabled={usedInSettings || label === undefined}
-                appendTo={document.body}
-                placement={placement}>
-                <Button
-                  style={{
-                    padding: usedInSettings ? DEFAULT_PADDING : '8px 4px',
-                    minWidth: usedInSettings ? OPTION_MIN_WIDTH : undefined
-                  }}
-                  type={usedInSettings ? 'tertiary' : getButtonType(command)}
-                  icon={<OpenButtonIcon />}
-                  key={uniqueId}
-                  disabled={!isEnabled}
-                  iconPlacement="left"
-                  aria-label={command.getLabel(t)}
-                  label={selectedLabel}
-                  toggled={isOpen}
-                  {...props}
-                  onClick={(event: MouseEvent<HTMLElement>) => {
-                    event.stopPropagation();
-                    event.preventDefault();
-                    props.onClick?.(event);
-                  }}>
-                  {selectedLabel}
-                </Button>
-              </CogsTooltip>
-            )
-      }>
-      {children.map((child, _index): ReactElement => {
-        return createMenuItem(child, t);
-      })}
+      placement={'bottom-start'}
+      renderTrigger={(props: any) => (
+        <CogsTooltip
+          content={<LabelWithShortcut label={label} command={command} />}
+          disabled={label === undefined}
+          appendTo={document.body}
+          placement={placement}>
+          <Button
+            style={{
+              padding: '8px 4px'
+            }}
+            type={getButtonType(command)}
+            icon={<OpenButtonIcon />}
+            key={uniqueId}
+            disabled={!isEnabled}
+            iconPlacement="left"
+            aria-label={command.getLabel(t)}
+            toggled={isOpen}
+            {...props}
+            onClick={(event) => {
+              event.stopPropagation();
+              event.preventDefault();
+              props.onClick?.(event);
+            }}>
+            {selectedLabel}
+          </Button>
+        </CogsTooltip>
+      )}>
+      {command.children.map((child) => createMenuItem(child, t))}
     </Menu>
+  );
+};
+
+const MenuItemWithDropdown = ({
+  command,
+  isVisible
+}: {
+  command: BaseOptionCommand;
+  isVisible: boolean;
+}): ReactElement => {
+  const { t } = useTranslation();
+  const label = command.getLabel(t);
+
+  if (!isVisible || command.children === undefined) {
+    return <></>;
+  }
+
+  return (
+    <StyledDropdownRow>
+      <label>{label}</label>
+      <Select
+        defaultValue={command.selectedChild}
+        fullWidth
+        aria-label={command.getLabel(t)}
+        onChange={(_event, value) => {
+          value?.invoke();
+        }}>
+        {command.children.map((child) => (
+          <Option value={child} key={child.uniqueId}>
+            {child.getLabel(t)}
+          </Option>
+        ))}
+      </Select>
+    </StyledDropdownRow>
   );
 };
 
@@ -135,3 +192,13 @@ function createMenuItem(command: BaseCommand, t: TranslateDelegate): ReactElemen
     />
   );
 }
+
+const StyledDropdownRow = styled.div`
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8;
+  minwidth: ${OPTION_MIN_WIDTH};
+  padding: ${DEFAULT_PADDING};
+`;
