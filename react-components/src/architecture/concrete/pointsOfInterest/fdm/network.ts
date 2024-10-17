@@ -11,7 +11,7 @@ import { type PointsOfInterestInstance, type PointsOfInterestProperties } from '
 
 import { v4 as uuid } from 'uuid';
 import { POI_SOURCE } from './view';
-import { restrictToDmsId } from '../../../../data-providers/utils/restrictToDmsId';
+import { restrictToDmsId } from '../../../../utilities/restrictToDmsId';
 
 export async function fetchPointsOfInterest(
   fdmSdk: FdmSDK

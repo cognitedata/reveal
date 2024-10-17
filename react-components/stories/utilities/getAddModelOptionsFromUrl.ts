@@ -16,8 +16,8 @@ export function getAddModelOptionsFromUrl(localModelUrlFallback: string): AddMod
   }
 
   return {
-    modelId: -1,
-    revisionId: -1,
+    modelId: 3544114490298106,
+    revisionId: 6405404576933316,
     localPath: modelUrl ?? localModelUrlFallback
   };
 }

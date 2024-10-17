@@ -21,7 +21,7 @@ import {
 import { getModelIdFromExternalId } from './getCdfIdFromExternalId';
 import { createFdmKey } from '../../components/CacheProvider/idAndKeyTranslation';
 import { cogniteCadNodeSourceWithProperties } from './cogniteCadNodeSourceWithProperties';
-import { restrictToDmsId } from '../utils/restrictToDmsId';
+import { restrictToDmsId } from '../../utilities/restrictToDmsId';
 
 export async function getFdmConnectionsForNodes(
   model: DmsUniqueIdentifier,

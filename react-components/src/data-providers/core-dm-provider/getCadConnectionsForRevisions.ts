@@ -17,7 +17,7 @@ import { createFdmKey } from '../../components/CacheProvider/idAndKeyTranslation
 import { type PromiseType } from '../utils/typeUtils';
 import { isDefined } from '../../utilities/isDefined';
 import { type QueryResult } from '../utils/queryNodesAndEdges';
-import { restrictToDmsId } from '../utils/restrictToDmsId';
+import { restrictToDmsId } from '../../utilities/restrictToDmsId';
 import { cadConnectionsQuery } from './cadConnectionsQuery';
 
 export async function getCadConnectionsForRevisions(
