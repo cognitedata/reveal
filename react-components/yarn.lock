@@ -607,7 +607,7 @@ __metadata:
     "@cognite/cdf-utilities": "npm:^3.6.0"
     "@cognite/cogs-lab": "npm:^9.0.0-alpha.113"
     "@cognite/cogs.js": "npm:^10.25.0"
-    "@cognite/reveal": "npm:^4.17.0"
+    "@cognite/reveal": "npm:^4.18.0"
     "@cognite/sdk": "npm:^9.13.0"
     "@playwright/test": "npm:1.48.0"
     "@storybook/addon-essentials": "npm:8.3.5"
@@ -664,14 +664,14 @@ __metadata:
     vitest: "npm:^1.5.3"
   peerDependencies:
     "@cognite/cogs-lab": ^9.0.0-alpha.111
-    "@cognite/reveal": 4.17.0
+    "@cognite/reveal": 4.18.0
     react: ">=18"
     react-dom: ">=18"
     styled-components: ">=5"
   languageName: unknown
   linkType: soft
 
-"@cognite/reveal@npm:^4.17.0":
+"@cognite/reveal@npm:^4.18.0":
   version: 4.18.0
   resolution: "@cognite/reveal@npm:4.18.0"
   dependencies:
