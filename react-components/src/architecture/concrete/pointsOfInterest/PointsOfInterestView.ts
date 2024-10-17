@@ -2,7 +2,7 @@
  * Copyright 2024 Cognite AS
  */
 import { Box3, Vector3 } from 'three';
-import { type ObservationsDomainObject } from './ObservationsDomainObject';
+import { type PointsOfInterestDomainObject } from './PointsOfInterestDomainObject';
 import { GroupThreeView } from '../../base/views/GroupThreeView';
 import {
   CDF_TO_VIEWER_TRANSFORMATION,
@@ -14,17 +14,17 @@ import {
 import { type DomainObjectIntersection } from '../../base/domainObjectsHelpers/DomainObjectIntersection';
 import { Changes } from '../../base/domainObjectsHelpers/Changes';
 import { type DomainObjectChange } from '../../base/domainObjectsHelpers/DomainObjectChange';
-import { createObservationIntersection, type Observation } from './types';
+import { createPointsOfInterestIntersection, type PointsOfInterest } from './types';
 import { ClosestGeometryFinder } from '../../base/utilities/geometry/ClosestGeometryFinder';
 import { getColorFromStatus } from './color';
 import { isPointVisibleByPlanes } from '../../base/utilities/geometry/isPointVisibleByPlanes';
 
-type ObservationCollection<ObservationIdType> = Overlay3DCollection<Observation<ObservationIdType>>;
+type PointsOfInterestCollection<PoIIdType> = Overlay3DCollection<PointsOfInterest<PoIIdType>>;
 
-export class ObservationsView<ObservationIdType> extends GroupThreeView<
-  ObservationsDomainObject<ObservationIdType>
+export class PointsOfInterestView<PoIIdType> extends GroupThreeView<
+  PointsOfInterestDomainObject<PoIIdType>
 > {
-  private readonly _overlayCollection: ObservationCollection<ObservationIdType> =
+  private readonly _overlayCollection: PointsOfInterestCollection<PoIIdType> =
     new Overlay3DCollection([]);
 
   protected override calculateBoundingBox(): Box3 {
@@ -38,10 +38,10 @@ export class ObservationsView<ObservationIdType> extends GroupThreeView<
   }
 
   protected override addChildren(): void {
-    const observations = this.domainObject.observations;
+    const pois = this.domainObject.pois;
 
-    const selectedObservation = this.domainObject.selectedObservation;
-    const overlayInfos = createObservationOverlays(observations, selectedObservation);
+    const selectedPointsOfInterest = this.domainObject.selectedPointsOfInterest;
+    const overlayInfos = createPointsOfInterestOverlays(pois, selectedPointsOfInterest);
     this._overlayCollection.removeAllOverlays();
 
     this._overlayCollection.addOverlays(overlayInfos);
@@ -96,7 +96,7 @@ export class ObservationsView<ObservationIdType> extends GroupThreeView<
       return undefined;
     }
 
-    const customObjectIntersection = createObservationIntersection(
+    const customObjectIntersection = createPointsOfInterestIntersection(
       point,
       closestFinder.minDistance,
       this,
@@ -108,7 +108,7 @@ export class ObservationsView<ObservationIdType> extends GroupThreeView<
     return closestFinder.getClosestGeometry();
   }
 
-  public getOverlays(): ObservationCollection<ObservationIdType> {
+  public getOverlays(): PointsOfInterestCollection<PoIIdType> {
     return this._overlayCollection;
   }
 
@@ -123,12 +123,12 @@ export class ObservationsView<ObservationIdType> extends GroupThreeView<
   }
 
   private updateColors(): void {
-    const selectedObservation = this.domainObject.selectedObservation;
+    const selectedPointsOfInterest = this.domainObject.selectedPointsOfInterest;
     this._overlayCollection.getOverlays().forEach((overlay) => {
       const oldColor = overlay.getColor();
       const newColor = getColorFromStatus(
         overlay.getContent().status,
-        overlay.getContent() === selectedObservation
+        overlay.getContent() === selectedPointsOfInterest
       );
 
       if (oldColor.equals(newColor)) {
@@ -140,23 +140,21 @@ export class ObservationsView<ObservationIdType> extends GroupThreeView<
   }
 }
 
-function createObservationOverlays<ObservationIdType>(
-  observations: Array<Observation<ObservationIdType>>,
-  selectedObservation: Observation<ObservationIdType> | undefined
-): Array<OverlayInfo<Observation<ObservationIdType>>> {
-  return observations.map((observation) => ({
-    position: extractObservationPosition(observation),
-    content: observation,
-    color: getColorFromStatus(observation.status, observation === selectedObservation)
+function createPointsOfInterestOverlays<PoIIdType>(
+  pois: Array<PointsOfInterest<PoIIdType>>,
+  selectedPointsOfInterest: PointsOfInterest<PoIIdType> | undefined
+): Array<OverlayInfo<PointsOfInterest<PoIIdType>>> {
+  return pois.map((poi) => ({
+    position: extractPointsOfInterestPosition(poi),
+    content: poi,
+    color: getColorFromStatus(poi.status, poi === selectedPointsOfInterest)
   }));
 }
 
-function extractObservationPosition<ObservationIdType>(
-  observation: Observation<ObservationIdType>
-): Vector3 {
+function extractPointsOfInterestPosition<PoIIdType>(poi: PointsOfInterest<PoIIdType>): Vector3 {
   return new Vector3(
-    observation.properties.positionX,
-    observation.properties.positionY,
-    observation.properties.positionZ
+    poi.properties.positionX,
+    poi.properties.positionY,
+    poi.properties.positionZ
   ).applyMatrix4(CDF_TO_VIEWER_TRANSFORMATION);
 }

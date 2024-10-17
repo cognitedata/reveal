@@ -2,7 +2,7 @@
  * Copyright 2024 Cognite AS
  */
 
-export type ObservationProperties = {
+export type PointsOfInterestProperties = {
   // "ID as the node appears in the Source system"
   /* sourceId?: string;
   // "Name of the source system node comes from"
@@ -46,5 +46,4 @@ export type ObservationProperties = {
   text: string;
 }; */
 
-// export type ObservationFdmNode = FdmNode<ObservationProperties>;
-export type ObservationInstance<ID> = { id: ID; properties: ObservationProperties };
+export type PointsOfInterestInstance<ID> = { id: ID; properties: PointsOfInterestProperties };

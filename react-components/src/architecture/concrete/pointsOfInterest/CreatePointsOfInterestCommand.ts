@@ -3,17 +3,15 @@
  */
 import { type IconName } from '../../base/utilities/IconName';
 import { type TranslateKey } from '../../base/utilities/TranslateKey';
-import { ObservationCommand } from './ObservationsCommand';
+import { PointsOfInterestCommand } from './PointsOfInterestCommand';
 
-export class CreateObservationCommand<
-  ObservationIdType
-> extends ObservationCommand<ObservationIdType> {
+export class CreatePointsOfInterestCommand<PoIIdType> extends PointsOfInterestCommand<PoIIdType> {
   public override get icon(): IconName {
     return 'Plus';
   }
 
   public override get tooltip(): TranslateKey {
-    return { key: 'ADD_OBSERVATION', fallback: 'Add observation. Click at a point' };
+    return { key: 'ADD_OBSERVATION', fallback: 'Add point of interest. Click at a point' };
   }
 
   protected override invokeCore(): boolean {

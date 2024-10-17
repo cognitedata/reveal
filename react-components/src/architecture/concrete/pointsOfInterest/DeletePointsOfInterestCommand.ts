@@ -3,18 +3,16 @@
  */
 import { type TranslateKey } from '../../base/utilities/TranslateKey';
 import { type ButtonType } from '../../../components/Architecture/types';
-import { ObservationCommand } from './ObservationsCommand';
+import { PointsOfInterestCommand } from './PointsOfInterestCommand';
 import { type IconName } from '../../base/utilities/IconName';
 
-export class DeleteObservationCommand<
-  ObservationIdType
-> extends ObservationCommand<ObservationIdType> {
+export class DeletePointsOfInterestCommand<PoIIdType> extends PointsOfInterestCommand<PoIIdType> {
   public override get icon(): IconName {
     return 'Delete';
   }
 
   public override get tooltip(): TranslateKey {
-    return { fallback: 'Delete observation' };
+    return { fallback: 'Delete point of interest' };
   }
 
   public override get buttonType(): ButtonType {
@@ -26,20 +24,20 @@ export class DeleteObservationCommand<
   }
 
   public override get isEnabled(): boolean {
-    const observation = this.getObservationsDomainObject();
+    const poi = this.getPointsOfInterestDomainObject();
 
-    return observation?.selectedObservation !== undefined;
+    return poi?.selectedPointsOfInterest !== undefined;
   }
 
   protected override invokeCore(): boolean {
-    const observations = this.getObservationsDomainObject();
-    const selectedOverlay = observations?.selectedObservation;
-    if (observations === undefined || selectedOverlay === undefined) {
+    const pois = this.getPointsOfInterestDomainObject();
+    const selectedOverlay = pois?.selectedPointsOfInterest;
+    if (pois === undefined || selectedOverlay === undefined) {
       return false;
     }
 
-    observations.removeObservation(selectedOverlay);
-    observations.setSelectedObservation(undefined);
+    pois.removePointsOfInterest(selectedOverlay);
+    pois.setSelectedPointsOfInterest(undefined);
 
     return true;
   }

@@ -2,23 +2,23 @@
  * Copyright 2024 Cognite AS
  */
 import { type TranslateKey } from '../../base/utilities/TranslateKey';
-import { ObservationsDomainObject } from './ObservationsDomainObject';
+import { PointsOfInterestDomainObject } from './PointsOfInterestDomainObject';
 import { BaseEditTool } from '../../base/commands/BaseEditTool';
 import { type VisualDomainObject } from '../../base/domainObjects/VisualDomainObject';
 import { type BaseCommand } from '../../base/commands/BaseCommand';
-import { CreateObservationCommand } from './CreateObservationCommand';
-import { SaveObservationsCommand } from './SaveObservationsCommand';
-import { DeleteObservationCommand } from './DeleteObservationCommand';
-import { createEmptyObservationProperties, isObservationIntersection } from './types';
+import { CreatePointsOfInterestCommand } from './CreatePointsOfInterestCommand';
+import { SavePointsOfInterestCommand } from './SavePointsOfInterestCommand';
+import { DeletePointsOfInterestCommand } from './DeletePointsOfInterestCommand';
+import { createEmptyPointsOfInterestProperties, isPointsOfInterestIntersection } from './types';
 import { type IconName } from '../../base/utilities/IconName';
-import { FdmObservationProvider } from './fdm/FdmObservationProvider';
+import { FdmPointsOfInterestProvider } from './fdm/FdmPointsOfInterestProvider';
 import { type DmsUniqueIdentifier } from '../../../data-providers';
 
-export class ObservationsTool<ObservationIdType> extends BaseEditTool {
+export class PointsOfInterestTool<PoIIdType> extends BaseEditTool {
   private _isCreating: boolean = false;
 
   protected override canBeSelected(domainObject: VisualDomainObject): boolean {
-    return domainObject instanceof ObservationsDomainObject;
+    return domainObject instanceof PointsOfInterestDomainObject;
   }
 
   public override get icon(): IconName {
@@ -26,23 +26,23 @@ export class ObservationsTool<ObservationIdType> extends BaseEditTool {
   }
 
   public override get tooltip(): TranslateKey {
-    return { fallback: 'Show and edit observations' };
+    return { fallback: 'Show and edit points of interest' };
   }
 
   public override getToolbar(): Array<BaseCommand | undefined> {
     return [
-      new CreateObservationCommand<ObservationIdType>(),
-      new DeleteObservationCommand<ObservationIdType>(),
-      new SaveObservationsCommand<ObservationIdType>()
+      new CreatePointsOfInterestCommand<PoIIdType>(),
+      new DeletePointsOfInterestCommand<PoIIdType>(),
+      new SavePointsOfInterestCommand<PoIIdType>()
     ];
   }
 
   public override onActivate(): void {
     super.onActivate();
-    let domainObject = this.getObservationsDomainObject();
+    let domainObject = this.getPointsOfInterestDomainObject();
     if (domainObject === undefined) {
-      domainObject = new ObservationsDomainObject(
-        new FdmObservationProvider(this.rootDomainObject.fdmSdk)
+      domainObject = new PointsOfInterestDomainObject(
+        new FdmPointsOfInterestProvider(this.rootDomainObject.fdmSdk)
       );
       this.renderTarget.rootDomainObject.addChildInteractive(domainObject);
     }
@@ -51,20 +51,22 @@ export class ObservationsTool<ObservationIdType> extends BaseEditTool {
 
   public override onDeactivate(): void {
     super.onDeactivate();
-    const domainObject = this.getObservationsDomainObject();
-    domainObject?.setSelectedObservation(undefined);
+    const domainObject = this.getPointsOfInterestDomainObject();
+    domainObject?.setSelectedPointsOfInterest(undefined);
   }
 
   public override async onClick(event: PointerEvent): Promise<void> {
     if (this._isCreating) {
-      await this.createPendingObservation(event);
+      await this.createPendingPointsOfInterest(event);
       return;
     }
     await this.selectOverlayFromClick(event);
   }
 
-  public getObservationsDomainObject(): ObservationsDomainObject<DmsUniqueIdentifier> | undefined {
-    return this.rootDomainObject.getDescendantByType(ObservationsDomainObject);
+  public getPointsOfInterestDomainObject():
+    | PointsOfInterestDomainObject<DmsUniqueIdentifier>
+    | undefined {
+    return this.rootDomainObject.getDescendantByType(PointsOfInterestDomainObject);
   }
 
   public get isCreating(): boolean {
@@ -83,26 +85,26 @@ export class ObservationsTool<ObservationIdType> extends BaseEditTool {
   private async selectOverlayFromClick(event: PointerEvent): Promise<void> {
     const intersection = await this.getIntersection(event);
 
-    if (intersection === undefined || !isObservationIntersection(intersection)) {
+    if (intersection === undefined || !isPointsOfInterestIntersection(intersection)) {
       await super.onClick(event);
       return;
     }
 
-    intersection.domainObject.setSelectedObservation(intersection.userData);
+    intersection.domainObject.setSelectedPointsOfInterest(intersection.userData);
   }
 
-  private async createPendingObservation(event: PointerEvent): Promise<void> {
+  private async createPendingPointsOfInterest(event: PointerEvent): Promise<void> {
     const intersection = await this.getIntersection(event);
 
     if (intersection === undefined) {
       await super.onClick(event);
       return;
     }
-    const domainObject = this.getObservationsDomainObject();
-    const pendingOverlay = domainObject?.addPendingObservation(
-      createEmptyObservationProperties(intersection.point)
+    const domainObject = this.getPointsOfInterestDomainObject();
+    const pendingOverlay = domainObject?.addPendingPointsOfInterest(
+      createEmptyPointsOfInterestProperties(intersection.point)
     );
-    domainObject?.setSelectedObservation(pendingOverlay);
+    domainObject?.setSelectedPointsOfInterest(pendingOverlay);
 
     this.setIsCreating(false);
   }

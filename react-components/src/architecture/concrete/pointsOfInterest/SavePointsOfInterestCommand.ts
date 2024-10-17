@@ -4,20 +4,18 @@
 import { type ButtonType } from '../../../components/Architecture/types';
 import { type TranslateKey } from '../../base/utilities/TranslateKey';
 import { Changes } from '../../base/domainObjectsHelpers/Changes';
-import { ObservationCommand } from './ObservationsCommand';
+import { PointsOfInterestCommand } from './PointsOfInterestCommand';
 import { type IconName } from '../../base/utilities/IconName';
 import { CommandsUpdater } from '../../base/reactUpdaters/CommandsUpdater';
 import { makeToast } from '@cognite/cogs-lab';
 
-export class SaveObservationsCommand<
-  ObservationIdType
-> extends ObservationCommand<ObservationIdType> {
+export class SavePointsOfInterestCommand<PoIIdType> extends PointsOfInterestCommand<PoIIdType> {
   public override get icon(): IconName {
     return 'Save';
   }
 
   public override get tooltip(): TranslateKey {
-    return { fallback: 'Publish observation changes' };
+    return { fallback: 'Publish point of interest changes' };
   }
 
   public override get buttonType(): ButtonType {
@@ -25,11 +23,11 @@ export class SaveObservationsCommand<
   }
 
   public override get isEnabled(): boolean {
-    const observation = this.getObservationsDomainObject();
+    const poi = this.getPointsOfInterestDomainObject();
 
     return (
-      observation !== undefined &&
-      (observation.hasPendingObservations() || observation.hasPendingDeletionObservations())
+      poi !== undefined &&
+      (poi.hasPendingPointsOfInterest() || poi.hasPendingDeletionPointsOfInterest())
     );
   }
 
@@ -39,7 +37,7 @@ export class SaveObservationsCommand<
       return false;
     }
 
-    const domainObject = this.getObservationsDomainObject();
+    const domainObject = this.getPointsOfInterestDomainObject();
 
     void domainObject
       ?.save()
@@ -48,13 +46,13 @@ export class SaveObservationsCommand<
           body: { fallback: 'Successfully published changes' }.fallback,
           type: 'success'
         });
-        const observation = this.getObservationsDomainObject();
-        observation?.notify(Changes.geometry);
+        const poi = this.getPointsOfInterestDomainObject();
+        poi?.notify(Changes.geometry);
         CommandsUpdater.update(this.renderTarget);
       })
       .catch((e) => {
         makeToast({
-          body: { fallback: 'Unable to publish observation changes: ' + e }.fallback,
+          body: { fallback: 'Unable to publish point of interest changes: ' + e }.fallback,
           type: 'warning'
         });
         throw e;
