@@ -28,6 +28,7 @@ import { AnnotationsCreateTool } from '../annotations/commands/AnnotationsCreate
 import { AnnotationsShowCommand } from '../annotations/commands/AnnotationsShowCommand';
 import { AnnotationsShowOnTopCommand } from '../annotations/commands/AnnotationsShowOnTopCommand';
 import { AnnotationsSelectTool } from '../annotations/commands/AnnotationsSelectTool';
+import { DmsUniqueIdentifier } from '../../../data-providers';
 
 export class StoryBookConfig extends BaseRevealConfig {
   // ==================================================
@@ -55,7 +56,7 @@ export class StoryBookConfig extends BaseRevealConfig {
       undefined,
       new MeasurementTool(),
       new ClipTool(),
-      new ObservationsTool(),
+      new ObservationsTool<DmsUniqueIdentifier>(),
       undefined,
       new AnnotationsSelectTool(),
       new AnnotationsCreateTool(),
