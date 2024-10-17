@@ -10,6 +10,6 @@ export class Set360IconsSectionCommand extends SectionCommand {
   }
 
   public override get tooltip(): TranslateKey {
-    return { fallback: '360 Markers' };
+    return { fallback: '360 Markers' }; // @need-translation
   }
 }

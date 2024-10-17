@@ -11,7 +11,7 @@ export class Set360IconsVisibleCommand extends RenderTargetCommand {
   // ==================================================
 
   public override get tooltip(): TranslateKey {
-    return { fallback: 'Visible' };
+    return { fallback: 'Visible' }; // @need-translation
   }
 
   public override get isEnabled(): boolean {

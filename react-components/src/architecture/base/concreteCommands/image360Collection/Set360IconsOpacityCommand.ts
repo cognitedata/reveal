@@ -11,7 +11,7 @@ export class Set360IconsOpacityCommand extends FractionSliderCommand {
   // ==================================================
 
   public override get tooltip(): TranslateKey {
-    return { fallback: 'Marker transparency' };
+    return { fallback: 'Marker transparency' }; // @need-translation
   }
 
   public override get isEnabled(): boolean {

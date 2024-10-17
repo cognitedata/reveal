@@ -11,7 +11,7 @@ export class Set360ImagesOpacityCommand extends FractionSliderCommand {
   // ==================================================
 
   public override get tooltip(): TranslateKey {
-    return { fallback: 'Image Transparency' };
+    return { fallback: 'Image Transparency' }; // @need-translation
   }
 
   public override get isEnabled(): boolean {
