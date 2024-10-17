@@ -1205,10 +1205,13 @@ export interface Image360Collection {
     // @deprecated
     getAssetIds(): Promise<IdEither[]>;
     getDefaultAnnotationStyle(): Image360AnnotationAppearance;
+    getIconsOpacity(): number;
     getIconsVisibility(): boolean;
+    getImagesOpacity(): number;
     getModelTransformation(out?: Matrix4): Matrix4;
     readonly id: string;
     readonly image360Entities: Image360[];
+    isHiddenIconsVisible(): boolean;
     readonly label: string | undefined;
     off(event: 'image360Entered', callback: Image360EnteredDelegate): void;
     // (undocumented)
@@ -1218,7 +1221,10 @@ export interface Image360Collection {
     on(event: 'image360Exited', callback: Image360ExitedDelegate): void;
     set360IconCullingRestrictions(radius: number, pointLimit: number): void;
     setDefaultAnnotationStyle(appearance: Image360AnnotationAppearance): void;
+    setHiddenIconsVisible(value: boolean): void;
+    setIconsOpacity(value: number): void;
     setIconsVisibility(visible: boolean): void;
+    setImagesOpacity(value: number): void;
     setModelTransformation(matrix: Matrix4): void;
     targetRevisionDate: Date | undefined;
 }

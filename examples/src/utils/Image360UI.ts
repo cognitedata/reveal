@@ -33,7 +33,7 @@ export class Image360UI {
   }
 
   private params = {
-    siteId: getSiteIdFromUrl() ?? 'helideck-site-2-jpeg', // For instance: helideck-site-2-jpeg
+    siteId: getSiteIdFromUrl() ?? '', // For instance: helideck-site-2-jpeg
     space: getSpaceFromUrl() ?? '',
     add: () => this.add360ImageSet(),
     remove: () => this.remove360ImageSet(),
@@ -66,7 +66,7 @@ export class Image360UI {
   };
 
   private icons360Setting = {
-    show: true,
+    visible: true,
     opacity: 1,
     hiddenIconsVisible: true,
     radius: Infinity,
@@ -134,11 +134,11 @@ export class Image360UI {
       });
 
     this.gui
-      .add(this.icons360Setting, 'show')
+      .add(this.icons360Setting, 'visible')
       .name('Show all 360 images')
       .onChange(() => {
         for (const collection of viewer.get360ImageCollections()) {
-          collection.setIconsVisibility(this.icons360Setting.show);
+          collection.setIconsVisibility(this.icons360Setting.visible);
         }
       });
     this.gui
@@ -224,7 +224,7 @@ export class Image360UI {
 
     const collection = await this.addCollection();
 
-    collection.setIconsVisibility(this.icons360Setting.show);
+    collection.setIconsVisibility(this.icons360Setting.visible);
     collection.on('image360Entered', (entity, _) => {
       this.selectedEntity = entity;
     });
