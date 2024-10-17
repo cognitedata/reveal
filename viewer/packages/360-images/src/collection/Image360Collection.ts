@@ -117,7 +117,7 @@ export interface Image360Collection {
 
   /**
    * Check weather the hidden icons are visible
-   * @returns true is hidden
+   * @returns true is hidden icons are visible
    */
   isHiddenIconsVisible(): boolean;
 
@@ -125,7 +125,7 @@ export interface Image360Collection {
    * Set the hidden icons visible
    * @param visible
    */
-  setHiddenIconsVisible(value: boolean): void;
+  setHiddenIconsVisible(visible: boolean): void;
 
   /**
    * Get the opacity of the images
@@ -135,9 +135,9 @@ export interface Image360Collection {
 
   /**
    * Set the opacity of the images
-   * @param value The opacity of the images
+   * @param opacity The opacity of the images
    */
-  setImagesOpacity(value: number): void;
+  setImagesOpacity(opacity: number): void;
 
   /**
    * Get the opacity of the icons
@@ -147,9 +147,9 @@ export interface Image360Collection {
 
   /**
    * Set the opacity of the icons
-   * @param value The opacity of the icons
+   * @param opacity The opacity of the icons
    */
-  setIconsOpacity(value: number): void;
+  setIconsOpacity(opacity: number): void;
 
   /**
    * Subscribes to events on 360 Image datasets. There are several event types:

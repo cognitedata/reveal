@@ -1221,10 +1221,10 @@ export interface Image360Collection {
     on(event: 'image360Exited', callback: Image360ExitedDelegate): void;
     set360IconCullingRestrictions(radius: number, pointLimit: number): void;
     setDefaultAnnotationStyle(appearance: Image360AnnotationAppearance): void;
-    setHiddenIconsVisible(value: boolean): void;
-    setIconsOpacity(value: number): void;
+    setHiddenIconsVisible(visible: boolean): void;
+    setIconsOpacity(opacity: number): void;
     setIconsVisibility(visible: boolean): void;
-    setImagesOpacity(value: number): void;
+    setImagesOpacity(opacity: number): void;
     setModelTransformation(matrix: Matrix4): void;
     targetRevisionDate: Date | undefined;
 }

@@ -12,7 +12,6 @@ import {
 } from '@cognite/reveal';
 
 import * as dat from 'dat.gui';
-import { forEach } from 'lodash';
 
 export class Image360UI {
   private viewer: Cognite3DViewer;

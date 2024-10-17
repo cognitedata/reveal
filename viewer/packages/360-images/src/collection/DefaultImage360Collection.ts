@@ -166,9 +166,9 @@ export class DefaultImage360Collection implements Image360Collection {
     return this._isCollectionVisible;
   }
 
-  public setIconsVisibility(visible: boolean): void {
-    this._isCollectionVisible = visible;
-    this.image360Entities.forEach(entity => entity.icon.setVisible(visible));
+  public setIconsVisibility(value: boolean): void {
+    this._isCollectionVisible = value;
+    this.image360Entities.forEach(entity => entity.icon.setVisible(value));
     this._needsRedraw = true;
   }
 
