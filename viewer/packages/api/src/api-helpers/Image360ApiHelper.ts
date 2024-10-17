@@ -42,8 +42,6 @@ import {
 import { MetricsLogger } from '@reveal/metrics';
 import debounce from 'lodash/debounce';
 import { Image360WithCollection } from '../public/types';
-import { DEFAULT_IMAGE_360_OPACITY } from '@reveal/360-images/src/entity/Image360VisualizationBox';
-import { DEFAULT_OVERLAY_FRONT_OPACITY } from '@reveal/3d-overlays/src/OverlayPointsObject';
 
 export class Image360ApiHelper {
   private readonly _image360Facade: Image360Facade<Metadata | Image360DataModelIdentifier>;
@@ -594,68 +592,6 @@ export class Image360ApiHelper {
       lastEntered.image360Visualization.opacity = currentOpacity;
     }
     this.exit360Image();
-  }
-
-  //================================================
-  // INSTANCE METHODS: Setter and getters
-  //================================================
-
-  public getImagesOpacity(): number {
-    for (const collection of this._image360Facade.collections) {
-      for (const entity of collection.image360Entities) {
-        return entity.image360Visualization.opacity;
-      }
-    }
-    return DEFAULT_IMAGE_360_OPACITY;
-  }
-
-  public setImagesOpacity(value: number): void {
-    for (const collection of this._image360Facade.collections) {
-      for (const entity of collection.image360Entities) {
-        entity.image360Visualization.opacity = value;
-      }
-    }
-    this._needsRedraw = true;
-  }
-
-  public isIconsVisible(): boolean {
-    for (const collection of this._image360Facade.collections) {
-      return collection.getIconsVisibility();
-    }
-    return true;
-  }
-
-  public setIconsVisible(value: boolean): void {
-    for (const collection of this._image360Facade.collections) {
-      collection.setIconsVisibility(value);
-    }
-  }
-
-  public isIconsBackPointsVisible(): boolean {
-    for (const collection of this._image360Facade.collections) {
-      return collection.isIconsBackPointsVisible();
-    }
-    return true;
-  }
-
-  public setIconsBackPointsVisible(value: boolean): void {
-    for (const collection of this._image360Facade.collections) {
-      collection.setIconsBackPointsVisible(value);
-    }
-    this._needsRedraw = true;
-  }
-
-  public getIconsOpacity(): number {
-    for (const collection of this._image360Facade.collections) {
-      return collection.getIconsOpacity();
-    }
-    return DEFAULT_OVERLAY_FRONT_OPACITY;
-  }
-
-  public setIconsOpacity(value: number): void {
-    for (const collection of this._image360Facade.collections) {
-      collection.setIconsOpacity(value);
-    }
   }
 }
 

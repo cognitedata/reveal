@@ -116,6 +116,42 @@ export interface Image360Collection {
   setIconsVisibility(visible: boolean): void;
 
   /**
+   * Check weather the hidden icons are visible
+   * @returns true is hidden
+   */
+  isHiddenIconsVisible(): boolean;
+
+  /**
+   * Set the hidden icons visible
+   * @param visible
+   */
+  setHiddenIconsVisible(value: boolean): void;
+
+  /**
+   * Get the opacity of the images
+   * @returns The opacity of the images
+   */
+  getImagesOpacity(): number;
+
+  /**
+   * Set the opacity of the images
+   * @param value The opacity of the images
+   */
+  setImagesOpacity(value: number): void;
+
+  /**
+   * Get the opacity of the icons
+   * @returns The opacity of the icons
+   */
+  getIconsOpacity(): number;
+
+  /**
+   * Set the opacity of the icons
+   * @param value The opacity of the icons
+   */
+  setIconsOpacity(value: number): void;
+
+  /**
    * Subscribes to events on 360 Image datasets. There are several event types:
    * 'image360Entered' - Subscribes to a event for entering 360 image mode.
    * 'image360Exited' - Subscribes to events indicating 360 image mode has exited.

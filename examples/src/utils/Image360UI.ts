@@ -12,14 +12,13 @@ import {
 } from '@cognite/reveal';
 
 import * as dat from 'dat.gui';
+import { forEach } from 'lodash';
 
 export class Image360UI {
   private viewer: Cognite3DViewer;
   private gui: dat.GUI;
-  private entities: Image360[] = [];
   private selectedEntity: Image360 | undefined;
   private _lastAnnotation: Image360Annotation | undefined = undefined;
-  private _collections: Image360Collection[] = [];
 
   private async handleIntersectionAsync(intersectionPromise: Promise<Image360AnnotationIntersection | null>) {
     const intersection = await intersectionPromise;
@@ -31,10 +30,6 @@ export class Image360UI {
     intersection.annotation.setColor(new THREE.Color(0.8, 0.8, 1.0));
     this.viewer.requestRedraw();
     this._lastAnnotation = intersection.annotation;
-  }
-
-  get collections(): Image360Collection[] {
-    return this._collections;
   }
 
   private params = {
@@ -71,11 +66,11 @@ export class Image360UI {
   };
 
   private icons360Setting = {
-    radius: Infinity,
-    limit: 50,
     show: true,
     opacity: 1,
-    backPointsVisible: true
+    hiddenIconsVisible: true,
+    radius: Infinity,
+    limit: 50
   };
 
   private imageRevisions = {
@@ -133,26 +128,34 @@ export class Image360UI {
       .add(this.images360Settings, 'opacity', 0, 1, 0.01)
       .name('Image opacity')
       .onChange(() => {
-        viewer.set360ImagesOpacity(this.images360Settings.opacity);
+        for (const collection of viewer.get360ImageCollections()) {
+          collection.setImagesOpacity(this.images360Settings.opacity);
+        }
       });
 
     this.gui
       .add(this.icons360Setting, 'show')
       .name('Show all 360 images')
       .onChange(() => {
-        viewer.set360IconsVisible(this.icons360Setting.show);
+        for (const collection of viewer.get360ImageCollections()) {
+          collection.setIconsVisibility(this.icons360Setting.show);
+        }
       });
     this.gui
       .add(this.icons360Setting, 'opacity', 0, 1, 0.01)
       .name('Icon opacity')
       .onChange(() => {
-        viewer.set360IconsOpacity(this.icons360Setting.opacity);
+        for (const collection of viewer.get360ImageCollections()) {
+          collection.setIconsOpacity(this.icons360Setting.opacity);
+        }
       });
     this.gui
-      .add(this.icons360Setting, 'backPointsVisible')
-      .name('Icon back points visible')
+      .add(this.icons360Setting, 'hiddenIconsVisible')
+      .name('Set hidden icons visible')
       .onChange(() => {
-        viewer.set360IconsBackPointsVisible(this.icons360Setting.backPointsVisible);
+        for (const collection of viewer.get360ImageCollections()) {
+          collection.setHiddenIconsVisible(this.icons360Setting.hiddenIconsVisible);
+        }
       });
     this.gui
       .add(this.icons360Setting, 'radius', 0, 10000, 1)
@@ -175,11 +178,13 @@ export class Image360UI {
       .add(this.imageRevisions, 'targetDate')
       .name('Revision date (Unix epoch time):')
       .onChange(() => {
-        if (this.collections.length === 0) return;
-
+        const collections = this.viewer.get360ImageCollections();
+        if (collections.length === 0) {
+          return;
+        }
         const date =
           this.imageRevisions.targetDate.length > 0 ? new Date(Number(this.imageRevisions.targetDate)) : undefined;
-        this.collections.forEach(p => (p.targetRevisionDate = date));
+        collections.forEach(p => (p.targetRevisionDate = date));
         if (this.selectedEntity) viewer.enter360Image(this.selectedEntity);
       });
 
@@ -224,9 +229,6 @@ export class Image360UI {
       this.selectedEntity = entity;
     });
     this.viewer.on('click', event => this.onAnnotationClicked(event));
-    this._collections.push(collection);
-    this.entities = this.entities.concat(collection.image360Entities);
-
     this.viewer.requestRedraw();
   }
 
@@ -260,18 +262,16 @@ export class Image360UI {
   }
 
   private async set360IconCullingRestrictions() {
-    if (this._collections.length > 0) {
-      this._collections.forEach(p =>
-        p.set360IconCullingRestrictions(this.icons360Setting.radius, this.icons360Setting.limit)
-      );
-      this.viewer.requestRedraw();
+    const collections = this.viewer.get360ImageCollections();
+    if (collections.length === 0) {
+      return;
     }
+    collections.forEach(p => p.set360IconCullingRestrictions(this.icons360Setting.radius, this.icons360Setting.limit));
+    this.viewer.requestRedraw();
   }
 
   private async removeAll360Images() {
-    this._collections.forEach(p => this.viewer.remove360ImageSet(p));
-    this.entities = [];
-    this._collections = [];
+    this.viewer.get360ImageCollections().forEach(p => this.viewer.remove360ImageSet(p));
   }
 
   private onAnnotationClicked(event: { offsetX: number; offsetY: number; button?: number }): void {
@@ -300,12 +300,12 @@ export class Image360UI {
     if (this.params.assetId.length === 0) {
       return;
     }
-
     const assetId = Number(this.params.assetId);
-
     const revisionsAndEntities = (
       await Promise.all(
-        this.collections.map(async coll => await coll.findImageAnnotations({ assetRef: { id: assetId } }))
+        this.viewer
+          .get360ImageCollections()
+          .map(async collection => await collection.findImageAnnotations({ assetRef: { id: assetId } }))
       )
     ).flat(1);
 
