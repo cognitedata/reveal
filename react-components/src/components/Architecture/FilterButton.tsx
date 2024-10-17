@@ -12,13 +12,7 @@ import {
   type Dispatch,
   type SetStateAction
 } from 'react';
-import {
-  Button,
-  ChevronDownIcon,
-  ChevronUpIcon,
-  Tooltip as CogsTooltip,
-  TextLabel
-} from '@cognite/cogs.js';
+import { Button, ChevronDownIcon, ChevronUpIcon, Tooltip as CogsTooltip } from '@cognite/cogs.js';
 import { Menu, SelectPanel } from '@cognite/cogs-lab';
 import { useTranslation } from '../i18n/I18n';
 import { type BaseCommand } from '../../architecture/base/commands/BaseCommand';
