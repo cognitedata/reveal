@@ -10,6 +10,7 @@ import { SetPointShapeCommand } from './SetPointShapeCommand';
 import { PointCloudFilterCommand } from './PointCloudFilterCommand';
 import { type TranslateKey } from '../utilities/TranslateKey';
 import { type IconName } from '../utilities/IconName';
+import { PointCloudDividerCommand } from './PointCloudDividerCommand';
 
 export class SettingsCommand extends BaseSettingsCommand {
   // ==================================================
@@ -20,6 +21,7 @@ export class SettingsCommand extends BaseSettingsCommand {
     super();
 
     this.add(new SetQualityCommand());
+    this.add(new PointCloudDividerCommand());
     this.add(new SetPointSizeCommand());
     this.add(new SetPointColorTypeCommand());
     this.add(new SetPointShapeCommand());
