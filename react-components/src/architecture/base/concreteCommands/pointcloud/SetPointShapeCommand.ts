@@ -3,9 +3,9 @@
  */
 
 import { PointShape } from '@cognite/reveal';
-import { BaseOptionCommand } from '../commands/BaseOptionCommand';
-import { RenderTargetCommand } from '../commands/RenderTargetCommand';
-import { type TranslateKey } from '../utilities/TranslateKey';
+import { BaseOptionCommand } from '../../commands/BaseOptionCommand';
+import { RenderTargetCommand } from '../../commands/RenderTargetCommand';
+import { type TranslateKey } from '../../utilities/TranslateKey';
 
 const DEFAULT_OPTIONS: PointShape[] = [PointShape.Circle, PointShape.Square, PointShape.Paraboloid];
 

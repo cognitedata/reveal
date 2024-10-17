@@ -3,18 +3,10 @@
  */
 
 import { type TranslateKey } from '../../utilities/TranslateKey';
-import { BaseSliderCommand } from '../BaseSliderCommand';
+import { FractionSliderCommand } from '../FractionSliderCommand';
 
-export class MockSliderCommand extends BaseSliderCommand {
-  public _value = 5;
-
-  // ==================================================
-  // CONSTRUCTOR
-  // ==================================================
-
-  public constructor() {
-    super(1, 10, 1);
-  }
+export class MockSliderCommand extends FractionSliderCommand {
+  public _value = 0.5;
 
   // ==================================================
   // OVERRIDES
