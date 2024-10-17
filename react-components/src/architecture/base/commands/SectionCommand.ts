@@ -4,7 +4,7 @@
 import { type BaseCommand } from './BaseCommand';
 import { RenderTargetCommand } from './RenderTargetCommand';
 
-export class DividerCommand extends RenderTargetCommand {
+export class SectionCommand extends RenderTargetCommand {
   public override get isVisible(): boolean {
     return true;
   }

@@ -3,8 +3,8 @@
  */
 import { DividerCommand } from '../../commands/DividerCommand';
 
-export class PointCloudDividerCommand extends DividerCommand {
+export class Image360CollectionDividerCommand extends DividerCommand {
   public override get isVisible(): boolean {
-    return this.renderTarget.getPointClouds().next().value !== undefined;
+    return this.renderTarget.get360ImageCollections().next().value !== undefined;
   }
 }
