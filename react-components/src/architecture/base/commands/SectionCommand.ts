@@ -12,4 +12,8 @@ export class SectionCommand extends RenderTargetCommand {
   public override equals(other: BaseCommand): boolean {
     return this === other;
   }
+
+  protected override invokeCore(): boolean {
+    throw Error('invoke should never be called on a section.');
+  }
 }
