@@ -6,25 +6,32 @@ import {
   type CreateInstanceItem,
   type DmsUniqueIdentifier,
   type FdmSDK
-} from '../../../data-providers/FdmSDK';
-import { type ObservationFdmNode, OBSERVATION_SOURCE, type ObservationProperties } from './models';
+} from '../../../../data-providers/FdmSDK';
+import { type ObservationInstance, type ObservationProperties } from '../models';
 
 import { v4 as uuid } from 'uuid';
+import { OBSERVATION_SOURCE } from './view';
+import { restrictToDmsId } from '../../../../data-providers/utils/restrictToDmsId';
 
-export async function fetchObservations(fdmSdk: FdmSDK): Promise<ObservationFdmNode[]> {
+export async function fetchObservations(
+  fdmSdk: FdmSDK
+): Promise<Array<ObservationInstance<DmsUniqueIdentifier>>> {
   const observationResult = await fdmSdk.filterAllInstances<ObservationProperties>(
     undefined,
     'node',
     OBSERVATION_SOURCE
   );
 
-  return observationResult.instances;
+  return observationResult.instances.map((observation) => ({
+    id: restrictToDmsId(observation),
+    properties: observation.properties
+  }));
 }
 
 export async function createObservationInstances(
   fdmSdk: FdmSDK,
   observationOverlays: ObservationProperties[]
-): Promise<ObservationFdmNode[]> {
+): Promise<Array<ObservationInstance<DmsUniqueIdentifier>>> {
   const chunks = chunk(observationOverlays, 100);
   const resultPromises = chunks.map(async (chunk) => {
     const payloads = chunk.map(createObservationInstancePayload);
@@ -40,7 +47,7 @@ export async function createObservationInstances(
 async function fetchObservationsWithIds(
   fdmSdk: FdmSDK,
   identifiers: DmsUniqueIdentifier[]
-): Promise<ObservationFdmNode[]> {
+): Promise<Array<ObservationInstance<DmsUniqueIdentifier>>> {
   return (
     await fdmSdk.filterInstances<ObservationProperties>(
       {
@@ -62,13 +69,15 @@ async function fetchObservationsWithIds(
       'node',
       OBSERVATION_SOURCE
     )
-  ).instances.map((observation) => observation);
+  ).instances.map((observation) => ({
+    id: restrictToDmsId(observation),
+    properties: observation.properties
+  }));
 }
 
 function createObservationInstancePayload(
   observation: ObservationProperties
 ): CreateInstanceItem<ObservationProperties> {
-  const id = uuid();
   return {
     instanceType: 'node' as const,
     externalId: uuid(),
@@ -77,9 +86,7 @@ function createObservationInstancePayload(
       {
         source: OBSERVATION_SOURCE,
         properties: {
-          ...observation,
-          type: 'simple',
-          sourceId: id
+          ...observation
         }
       }
     ]
@@ -88,13 +95,13 @@ function createObservationInstancePayload(
 
 export async function deleteObservationInstances(
   fdmSdk: FdmSDK,
-  observations: ObservationFdmNode[]
+  ids: DmsUniqueIdentifier[]
 ): Promise<void> {
   await fdmSdk.deleteInstances(
-    observations.map((observation) => ({
+    ids.map((id) => ({
       instanceType: 'node',
-      externalId: observation.externalId,
-      space: observation.space
+      externalId: id.externalId,
+      space: id.space
     }))
   );
 }

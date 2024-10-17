@@ -1,52 +1,43 @@
 /*!
  * Copyright 2024 Cognite AS
  */
-import { type FdmSDK } from '../../../data-providers/FdmSDK';
-import { type ObservationFdmNode, type ObservationProperties } from './models';
-
-import { type Observation } from './types';
-import {
-  createObservationInstances,
-  deleteObservationInstances,
-  fetchObservations
-} from './network';
-import { isDefined } from '../../../utilities/isDefined';
+import { type ObservationInstance, type ObservationProperties } from './models';
+import { type ObservationProvider } from './ObservationProvider';
 
 /**
  * A cache that takes care of loading the observations, but also buffers changes to the overlays
  * list when e.g. adding or removing observations
  */
-export class ObservationsCache {
-  private readonly _loadedPromise: Promise<ObservationFdmNode[]>;
+export class ObservationsCache<ObservationId> {
+  private readonly _loadedPromise: Promise<Array<ObservationInstance<ObservationId>>>;
+  private readonly _observationProvider: ObservationProvider<ObservationId>;
 
-  constructor(fdmSdk: FdmSDK) {
-    this._loadedPromise = fetchObservations(fdmSdk);
+  constructor(observationProvider: ObservationProvider<ObservationId>) {
+    this._observationProvider = observationProvider;
+    this._loadedPromise = observationProvider.fetchAllObservations();
   }
 
-  public async getFinishedOriginalLoadingPromise(): Promise<ObservationFdmNode[]> {
+  public async getFinishedOriginalLoadingPromise(): Promise<
+    Array<ObservationInstance<ObservationId>>
+  > {
     return await this._loadedPromise;
   }
 
-  public async deleteObservations(fdmSdk: FdmSDK, observations: Observation[]): Promise<void> {
-    if (observations.length === 0) {
+  public async deleteObservations(observationIds: ObservationId[]): Promise<void> {
+    if (observationIds.length === 0) {
       return;
     }
 
-    const observationData = observations
-      .map((observation) => observation.fdmMetadata)
-      .filter(isDefined);
-
-    await deleteObservationInstances(fdmSdk, observationData);
+    await this._observationProvider.deleteObservations(observationIds);
   }
 
   public async saveObservations(
-    fdmSdk: FdmSDK,
     observations: ObservationProperties[]
-  ): Promise<ObservationFdmNode[]> {
+  ): Promise<Array<ObservationInstance<ObservationId>>> {
     if (observations.length === 0) {
       return [];
     }
 
-    return await createObservationInstances(fdmSdk, observations);
+    return await this._observationProvider.createObservations(observations);
   }
 }

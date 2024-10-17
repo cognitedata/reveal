@@ -18,9 +18,9 @@ export enum ObservationStatus {
   PendingCreation
 }
 
-export type Observation = {
+export type Observation<IdType> = {
   properties: ObservationProperties;
-  fdmMetadata?: FdmNode<ObservationProperties>;
+  id?: IdType;
   status: ObservationStatus;
 };
 

@@ -5,28 +5,31 @@ import { VisualDomainObject } from '../../base/domainObjects/VisualDomainObject'
 import { type ThreeView } from '../../base/views/ThreeView';
 import { ObservationsView } from './ObservationsView';
 import { type TranslateKey } from '../../base/utilities/TranslateKey';
-import { type FdmSDK } from '../../../data-providers/FdmSDK';
+import { DmsUniqueIdentifier, type FdmSDK } from '../../../data-providers/FdmSDK';
 import { Changes } from '../../base/domainObjectsHelpers/Changes';
 import { ObservationsCache } from './ObservationsCache';
 import { PanelInfo } from '../../base/domainObjectsHelpers/PanelInfo';
 import { type Observation, ObservationStatus } from './types';
 import { partition, remove } from 'lodash';
-import { type ObservationProperties } from './models';
+import { type ObservationInstance, type ObservationProperties } from './models';
 import { Quantity } from '../../base/domainObjectsHelpers/Quantity';
+import { FdmObservationProvider } from './fdm/FdmObservationProvider';
+import { type ObservationProvider } from './ObservationProvider';
+import { isDefined } from '../../../utilities/isDefined';
 
-export class ObservationsDomainObject extends VisualDomainObject {
-  private _selectedObservation: Observation | undefined;
-  private readonly _observationsCache: ObservationsCache;
+export class ObservationsDomainObject<ObservationIdType extends object> extends VisualDomainObject {
+  private _selectedObservation: Observation<ObservationIdType> | undefined;
+  private readonly _observationsCache: ObservationsCache<ObservationIdType>;
 
-  private _observations: Observation[] = [];
+  private _observations: Array<Observation<ObservationIdType>> = [];
 
-  constructor(fdmSdk: FdmSDK) {
+  constructor(fdmSdk: FdmSDK, observationProvider: ObservationProvider<ObservationIdType>) {
     super();
 
-    this._observationsCache = new ObservationsCache(fdmSdk);
+    this._observationsCache = new ObservationsCache<ObservationIdType>(observationProvider);
     void this._observationsCache.getFinishedOriginalLoadingPromise().then((observations) => {
       this._observations = observations.map((observation) => ({
-        fdmMetadata: observation,
+        id: observation.id,
         properties: observation.properties,
         status: ObservationStatus.Default
       }));
@@ -38,7 +41,9 @@ export class ObservationsDomainObject extends VisualDomainObject {
     return { fallback: ObservationsDomainObject.name };
   }
 
-  protected override createThreeView(): ThreeView<ObservationsDomainObject> | undefined {
+  protected override createThreeView():
+    | ThreeView<ObservationsDomainObject<ObservationIdType>>
+    | undefined {
     return new ObservationsView();
   }
 
@@ -64,7 +69,9 @@ export class ObservationsDomainObject extends VisualDomainObject {
     return info;
   }
 
-  public addPendingObservation(observationData: ObservationProperties): Observation {
+  public addPendingObservation(
+    observationData: ObservationProperties
+  ): Observation<ObservationIdType> {
     const newObservation = {
       properties: observationData,
       status: ObservationStatus.PendingCreation
@@ -77,7 +84,7 @@ export class ObservationsDomainObject extends VisualDomainObject {
     return newObservation;
   }
 
-  public removeObservation(observation: Observation): void {
+  public removeObservation(observation: Observation<ObservationIdType>): void {
     if (observation.status === ObservationStatus.PendingCreation) {
       remove(this._observations, observation);
     } else if (this._observations.includes(observation)) {
@@ -87,11 +94,11 @@ export class ObservationsDomainObject extends VisualDomainObject {
     this.notify(Changes.geometry);
   }
 
-  public get observations(): Observation[] {
+  public get observations(): Array<Observation<ObservationIdType>> {
     return this._observations;
   }
 
-  public get selectedObservation(): Observation | undefined {
+  public get selectedObservation(): Observation<ObservationIdType> | undefined {
     return this._selectedObservation;
   }
 
@@ -114,13 +121,14 @@ export class ObservationsDomainObject extends VisualDomainObject {
       (observation) => observation.status === ObservationStatus.PendingDeletion
     );
 
-    const deletePromise = this._observationsCache.deleteObservations(fdmSdk, toRemove);
+    const deletePromise = this._observationsCache.deleteObservations(
+      toRemove.map((observation) => observation.id).filter(isDefined)
+    );
 
     const observationsToCreate = this._observations.filter(
       (obs) => obs.status === ObservationStatus.PendingCreation
     );
     const newObservations = await this._observationsCache.saveObservations(
-      fdmSdk,
       observationsToCreate.map((obs) => obs.properties)
     );
 
@@ -139,7 +147,7 @@ export class ObservationsDomainObject extends VisualDomainObject {
     this.notify(Changes.geometry);
   }
 
-  public setSelectedObservation(observation: Observation | undefined): void {
+  public setSelectedObservation(observation: Observation<ObservationIdType> | undefined): void {
     this._selectedObservation = observation;
 
     this.notify(Changes.selected);

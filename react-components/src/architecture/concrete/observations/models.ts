@@ -1,15 +1,10 @@
 /*!
  * Copyright 2024 Cognite AS
  */
-import {
-  type DmsUniqueIdentifier,
-  type FdmNode,
-  type Source
-} from '../../../data-providers/FdmSDK';
 
 export type ObservationProperties = {
   // "ID as the node appears in the Source system"
-  sourceId?: string;
+  /* sourceId?: string;
   // "Name of the source system node comes from"
   source?: string;
   // "Title or name of the node"
@@ -38,24 +33,18 @@ export type ObservationProperties = {
   priority?: string;
   // "The observation type (Malfunction report, Maintenance request, etc.)"
   type?: string;
-  // "3D position"
+  // "3D position" */
   positionX: number;
   positionY: number;
   positionZ: number;
   // "Comments"
-  comments?: CommentProperties[];
+  // comments?: CommentProperties[];
 };
 
-export type CommentProperties = {
+/* export type CommentProperties = {
   createdBy: string;
   text: string;
-};
+}; */
 
-export type ObservationFdmNode = FdmNode<ObservationProperties>;
-
-export const OBSERVATION_SOURCE: Source = {
-  type: 'view',
-  version: '3c207ca2355dbb',
-  externalId: 'Observation',
-  space: 'observations'
-};
+// export type ObservationFdmNode = FdmNode<ObservationProperties>;
+export type ObservationInstance<ID> = { id: ID; properties: ObservationProperties };
