@@ -7,7 +7,8 @@ import {
   type ExternalId,
   type InternalId,
   type Metadata,
-  type Relationship
+  type Relationship,
+  type Asset
 } from '@cognite/sdk';
 import { type DmsUniqueIdentifier, type Source } from './FdmSDK';
 
@@ -58,6 +59,11 @@ export type RelationshipData = ExtendedRelationship & RelationshipSourceAndTarge
 export type AssetIdsAndTimeseries = {
   assetIds?: Partial<ExternalId & InternalId>;
   timeseries?: Timeseries | undefined;
+};
+
+export type AssetAndTimeseries = {
+  asset: Asset;
+  timeseries?: Timeseries[] | undefined;
 };
 
 export type AssetAndTimeseriesIds = {
