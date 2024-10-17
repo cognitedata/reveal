@@ -29,6 +29,8 @@ export {
 } from './useSearchMappedEquipmentFDM';
 export { useTimeseriesByIdsQuery } from './useTimeseriesByIdsQuery';
 export { useTimeseriesLatestDatapointQuery } from './useTimeseriesLatestDatapointQuery';
+export { useFetchTimeseriesResourceRelationship } from './useFetchTimeseriesResourceRelationship';
+export { useAssetsAndTimeseriesLinkages } from './useAssetsAndTimeseriesLinkages';
 
 export type {
   ModelMappings,
