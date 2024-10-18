@@ -10,6 +10,11 @@ import { PointCloudNode } from './PointCloudNode';
 import { PickPoint, PointCloudOctree, PointCloudOctreePicker } from './potree-three-loader';
 import { AnnotationsAssetRef } from '@cognite/sdk';
 import { isPointVisibleByPlanes } from '@reveal/utilities';
+import {
+  DMInstanceRef,
+  isCombinedPointCloudObjectDataModelProperties,
+  isCombinedPointCloudObjectMetadata
+} from '@reveal/data-providers';
 
 export interface IntersectPointCloudNodeResult {
   /**
@@ -36,6 +41,10 @@ export interface IntersectPointCloudNodeResult {
    * annotationId of the clicked object within a pointcloud.
    */
   annotationId: number;
+  /**
+   * externalId of clicked object within a pointcloud representing annotation.
+   */
+  instanceRef?: DMInstanceRef;
   /**
    * asset reference of the clicked object in the pointcloud, if any.
    */
@@ -83,12 +92,27 @@ export class PointCloudPickingHandler {
       .map(x => {
         const pointCloudNode = determinePointCloudNode(x.object, visibleNodes);
         if (pointCloudNode === null) {
-          throw new Error(`Coulds not find PointCloudNode for intersected point`);
+          throw new Error(`Could not find PointCloudNode for intersected point`);
         }
 
         const pointCloudObject = pointCloudNode.getStylableObjectMetadata(x.objectId);
-        const [annotationId, asset] =
-          pointCloudObject !== undefined ? [pointCloudObject.annotationId, pointCloudObject.assetRef] : [0, undefined];
+
+        let annotationId: number = 0;
+        let assetRef: AnnotationsAssetRef | undefined;
+        let instanceRef: DMInstanceRef | undefined;
+
+        if (pointCloudObject !== undefined) {
+          if (isCombinedPointCloudObjectMetadata(pointCloudObject)) {
+            annotationId = pointCloudObject.annotationId;
+            assetRef = pointCloudObject.assetRef;
+          } else if (isCombinedPointCloudObjectDataModelProperties(pointCloudObject)) {
+            annotationId = -1;
+            instanceRef = pointCloudObject.instanceRef;
+            assetRef = pointCloudObject.assetRef;
+          } else {
+            throw new Error('Unknown point cloud object type');
+          }
+        }
 
         const result: IntersectPointCloudNodeResult = {
           distance: x.position.distanceTo(camera.position),
@@ -96,8 +120,9 @@ export class PointCloudPickingHandler {
           pointIndex: x.pointIndex,
           pointCloudNode,
           object: x.object,
-          annotationId: annotationId,
-          assetRef: asset
+          annotationId,
+          instanceRef,
+          assetRef: assetRef
         };
         return result;
       });

@@ -71,7 +71,8 @@ describe('RevealManager', () => {
       cameraManagerMock.object(),
       {
         internal: { cad: { sectorCuller } }
-      }
+      },
+      undefined
     );
 
     jest.useFakeTimers();

@@ -22,6 +22,7 @@ function cdfAnnotationsToPointCloudObjects(cdfAnnotations: CdfPointCloudObjectAn
       assetId: cdfAnnotation.asset?.id,
       assetRef: cdfAnnotation.asset,
       boundingBox: stylableObject.shape.createBoundingBox(),
+      instanceRef: cdfAnnotation.instanceRef,
       stylableObject
     };
   });

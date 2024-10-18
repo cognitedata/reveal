@@ -215,6 +215,22 @@ export interface AddModelOptions {
   geometryFilter?: GeometryFilter;
 }
 
+/**
+ * @module @cognite/reveal
+ */
+export interface AddDMModelOptions {
+  revisionExternalId: string;
+  space: string;
+  // if you need to access local files, this is where you would specify it.
+  localPath?: string;
+  geometryFilter?: GeometryFilter;
+}
+
+/**
+ * @module @cognite/reveal
+ */
+export type AddCdfModelOptions = AddModelOptions | AddDMModelOptions;
+
 export type AddImage360Options = {
   /**
    * An optional transformation which will be applied to all 360 images that are fetched.

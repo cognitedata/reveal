@@ -3,6 +3,6 @@
  */
 
 export type PointCloudObjectIdMaps = {
-  annotationToObjectIds: Map<number, number>;
-  objectToAnnotationIds: Map<number, number>;
+  annotationToObjectIds: Map<number | string, number>;
+  objectToAnnotationIds: Map<number, number | string>;
 };
