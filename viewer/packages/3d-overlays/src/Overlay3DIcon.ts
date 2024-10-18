@@ -30,7 +30,7 @@ export type IconParameters = {
 
 export type SetAdaptiveScaleDelegate = (args: { camera: Camera; renderSize: Vector2; domElement: HTMLElement }) => void;
 
-export type ParametersChangeDelegate = (event: { color: Color; visble: boolean }) => void;
+export type ParametersChangeDelegate = (event: { color: Color; visible: boolean }) => void;
 export type SelectedDelegate = (event: { selected: boolean }) => void;
 
 export type IconEvent = 'selected' | 'parametersChange';
@@ -146,7 +146,7 @@ export class Overlay3DIcon<ContentType = DefaultOverlay3DContentType> implements
     } else {
       this._color = color;
     }
-    this._events.parametersChange.fire({ color: this._color, visble: this.getVisible() });
+    this._events.parametersChange.fire({ color: this._color, visible: this.getVisible() });
   }
 
   getColor(): Color {
@@ -171,7 +171,7 @@ export class Overlay3DIcon<ContentType = DefaultOverlay3DContentType> implements
 
   public setVisible(visible: boolean): void {
     this._visible = visible;
-    this._events.parametersChange.fire({ color: this._color, visble: visible });
+    this._events.parametersChange.fire({ color: this._color, visible: visible });
   }
 
   public getVisible(): boolean {
