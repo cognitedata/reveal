@@ -10,7 +10,8 @@ import {
   type IFlexibleCameraManager,
   CDF_TO_VIEWER_TRANSFORMATION,
   CognitePointCloudModel,
-  CogniteCadModel
+  CogniteCadModel,
+  type Image360Collection
 } from '@cognite/reveal';
 import {
   Vector3,
@@ -166,6 +167,12 @@ export class RevealRenderTarget {
       if (model instanceof CogniteCadModel) {
         yield model;
       }
+    }
+  }
+
+  public *get360ImageCollections(): Generator<Image360Collection> {
+    for (const collection of this.viewer.get360ImageCollections()) {
+      yield collection;
     }
   }
 
