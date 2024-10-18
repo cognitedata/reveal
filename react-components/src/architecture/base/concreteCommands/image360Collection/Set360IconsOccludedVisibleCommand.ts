@@ -24,7 +24,7 @@ export class Set360IconsOccludedVisibleCommand extends RenderTargetCommand {
   }
 
   public override get isChecked(): boolean {
-    return this.firstCollection?.getOccludedIconsVisible() ?? true;
+    return this.firstCollection?.isOccludedIconsVisible() ?? true;
   }
 
   protected override invokeCore(): boolean {
