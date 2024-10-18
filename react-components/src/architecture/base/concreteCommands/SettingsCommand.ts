@@ -7,11 +7,11 @@ import { type IconName } from '../utilities/IconName';
 
 import { BaseSettingsCommand } from '../commands/BaseSettingsCommand';
 import { SetQualityCommand } from './SetQualityCommand';
-import { SetPointSizeCommand } from './pointCloudKKK/SetPointSizeCommand';
-import { SetPointColorTypeCommand } from './pointCloudKKK/SetPointColorTypeCommand';
-import { SetPointShapeCommand } from './pointCloudKKK/SetPointShapeCommand';
-import { PointCloudFilterCommand } from './pointCloudKKK/PointCloudFilterCommand';
-import { PointCloudDividerCommand } from './pointCloudKKK/PointCloudDividerCommand';
+import { SetPointSizeCommand } from './pointCloud/SetPointSizeCommand';
+import { SetPointColorTypeCommand } from './pointCloud/SetPointColorTypeCommand';
+import { SetPointShapeCommand } from './pointCloud/SetPointShapeCommand';
+import { PointCloudFilterCommand } from './pointCloud/PointCloudFilterCommand';
+import { PointCloudDividerCommand } from './pointCloud/PointCloudDividerCommand';
 import { Image360CollectionDividerCommand } from './image360Collection/Image360CollectionDividerCommand';
 import { Set360ImagesSectionCommand } from './image360Collection/Set360ImagesSectionCommand';
 import { Set360ImagesOpacityCommand } from './image360Collection/Set360ImagesOpacityCommand';
