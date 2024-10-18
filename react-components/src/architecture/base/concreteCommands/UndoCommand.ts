@@ -28,11 +28,11 @@ export class UndoCommand extends RenderTargetCommand {
     return undoManager.canUndo;
   }
 
-  public override get shortCutKey(): string | undefined {
+  protected override get shortCutKey(): string | undefined {
     return 'Z';
   }
 
-  public override get shortCutKeyOnCtrl(): boolean {
+  protected override get shortCutKeyOnCtrl(): boolean {
     return true;
   }
 
