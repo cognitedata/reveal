@@ -335,23 +335,38 @@ export class CognitePointCloudModel {
     appearance: PointCloudAppearance
   ): void {
     const fullAppearance: CompletePointCloudAppearance = applyDefaultsToPointCloudAppearance(appearance);
-    const index = this._styledObjectCollections.findIndex(x => x.objectCollection === objectCollection);
-    const combinedCollectionIndex = this._combinedStyledObjectCollections.findIndex(
-      x => x.objectCollection === objectCollection
-    );
-    if (index !== -1 && combinedCollectionIndex !== -1) {
-      this._styledObjectCollections[index].style = fullAppearance;
-      this.pointCloudNode.assignStyledPointCloudObjectCollection(this._styledObjectCollections[index]);
-    } else if (combinedCollectionIndex !== -1 && isPointCloudObjectCollection(objectCollection)) {
-      const newObjectCollection = new StyledPointCloudAnnotationVolumeCollection(objectCollection, fullAppearance);
 
-      this._styledObjectCollections.push(newObjectCollection);
-      this.pointCloudNode.assignStyledPointCloudObjectCollection(newObjectCollection);
+    const updateOrCreateCollection = <T extends PointCloudObjectCollection | DMInstanceRefPointCloudObjectCollection>(
+      collections: Array<{ objectCollection: T; style: CompletePointCloudAppearance }>,
+      CollectionClass: new (
+        objectCollection: T,
+        style: CompletePointCloudAppearance
+      ) => { objectCollection: T; style: CompletePointCloudAppearance },
+      objectCollection: T
+    ) => {
+      const index = collections.findIndex(x => x.objectCollection === objectCollection);
+      if (index !== -1) {
+        collections[index].style = fullAppearance;
+        this.pointCloudNode.assignStyledPointCloudObjectCollection(collections[index]);
+      } else {
+        const newObjectCollection = new CollectionClass(objectCollection, fullAppearance);
+        collections.push(newObjectCollection);
+        this.pointCloudNode.assignStyledPointCloudObjectCollection(newObjectCollection);
+      }
+    };
+
+    if (isPointCloudObjectCollection(objectCollection)) {
+      updateOrCreateCollection(
+        this._styledObjectCollections,
+        StyledPointCloudAnnotationVolumeCollection,
+        objectCollection
+      );
     } else {
-      const newObjectCollection = new StyledPointCloudVolumeCollection(objectCollection, fullAppearance);
-
-      this._combinedStyledObjectCollections.push(newObjectCollection);
-      this.pointCloudNode.assignStyledPointCloudObjectCollection(newObjectCollection);
+      updateOrCreateCollection(
+        this._combinedStyledObjectCollections,
+        StyledPointCloudVolumeCollection,
+        objectCollection
+      );
     }
   }
 
@@ -362,19 +377,36 @@ export class CognitePointCloudModel {
   unassignStyledObjectCollection(
     objectCollection: PointCloudObjectCollection | DMInstanceRefPointCloudObjectCollection
   ): void {
-    const styledCollectionIndex = this._styledObjectCollections.findIndex(x => x.objectCollection === objectCollection);
+    const removeCollection = (
+      collections: Array<StyledPointCloudVolumeCollection | StyledPointCloudAnnotationVolumeCollection>,
+      objectCollection: PointCloudObjectCollection | DMInstanceRefPointCloudObjectCollection
+    ) => {
+      const index = collections.findIndex(x => x.objectCollection === objectCollection);
+      if (index !== -1) {
+        collections.splice(index, 1);
+      }
+      return index !== -1;
+    };
 
-    if (styledCollectionIndex === -1) {
+    const styledRemoved = removeCollection(this._styledObjectCollections, objectCollection);
+    const combinedRemoved = removeCollection(this._combinedStyledObjectCollections, objectCollection);
+
+    if (!styledRemoved && !combinedRemoved) {
       return;
     }
 
-    this._styledObjectCollections.splice(styledCollectionIndex, 1);
-
     this.pointCloudNode.removeAllStyledPointCloudObjects();
 
-    for (const styledObjectCollection of this._styledObjectCollections) {
-      this.pointCloudNode.assignStyledPointCloudObjectCollection(styledObjectCollection);
-    }
+    const reassignCollections = (
+      collections: Array<StyledPointCloudVolumeCollection | StyledPointCloudAnnotationVolumeCollection>
+    ) => {
+      for (const styledObjectCollection of collections) {
+        this.pointCloudNode.assignStyledPointCloudObjectCollection(styledObjectCollection);
+      }
+    };
+
+    reassignCollections(this._styledObjectCollections);
+    reassignCollections(this._combinedStyledObjectCollections);
   }
 
   /**
@@ -383,6 +415,7 @@ export class CognitePointCloudModel {
   removeAllStyledObjectCollections(): void {
     this.pointCloudNode.removeAllStyledPointCloudObjects();
     this._styledObjectCollections.splice(0);
+    this._combinedStyledObjectCollections.splice(0);
   }
 
   /**
