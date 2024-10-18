@@ -39,7 +39,8 @@ describe('createRevealManager', () => {
           .setup(p => p.on(It.IsAny(), It.IsAny()))
           .returns()
           .object(),
-        {}
+        {},
+        undefined
       )
     ).not.toThrow();
   });

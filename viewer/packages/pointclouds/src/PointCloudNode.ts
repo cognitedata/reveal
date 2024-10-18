@@ -9,10 +9,17 @@ import { WellKnownAsprsPointClassCodes } from './types';
 
 import { PointColorType, PointShape, PointSizeType } from '@reveal/rendering';
 
-import { PointCloudObjectMetadata, PointCloudObject } from '@reveal/data-providers';
+import {
+  PointCloudObject,
+  CombinedPointCloudObject,
+  isPointCloudObjectMetadata,
+  PointCloudObjectMetadata,
+  isPointCloudObjectDataModelProperties,
+  PointCloudVolumeDataModelProperties
+} from '@reveal/data-providers';
 import { ClassificationHandler } from './ClassificationHandler';
 
-import { CompletePointCloudAppearance, StyledPointCloudObjectCollection } from '@reveal/pointcloud-styling';
+import { StyledPointCloudVolumeCollection, CompletePointCloudAppearance } from '@reveal/pointcloud-styling';
 
 import { Matrix4, Group, Box3, Color, type Camera, type Plane, type Ray, type WebGLRenderer } from 'three';
 
@@ -206,16 +213,33 @@ export class PointCloudNode extends Group {
     return out.copy(this._sourceTransform);
   }
 
-  get stylableObjectAnnotationMetadata(): Iterable<PointCloudObjectMetadata> {
-    return [...this._objectIdToAnnotationsMap.values()].map(a => ({
-      annotationId: a.annotationId,
-      assetId: a.assetRef?.id,
-      assetRef: a.assetRef,
-      boundingBox: a.boundingBox.clone().applyMatrix4(this._octree.matrixWorld)
-    }));
+  get stylableObjectAnnotationMetadata(): Iterable<CombinedPointCloudObject> {
+    return [...this._objectIdToAnnotationsMap.values()].map(a => {
+      const baseObject = {
+        boundingBox: a.boundingBox.clone().applyMatrix4(this._octree.matrixWorld),
+        stylableObject: a.stylableObject
+      };
+
+      if (isPointCloudObjectMetadata(a)) {
+        return {
+          ...baseObject,
+          annotationId: a.annotationId,
+          assetId: a.assetRef?.id,
+          assetRef: a.assetRef
+        } as PointCloudObjectMetadata;
+      } else if (isPointCloudObjectDataModelProperties(a)) {
+        return {
+          ...baseObject,
+          instanceRef: a.instanceRef,
+          assetRef: a.assetRef
+        } as PointCloudVolumeDataModelProperties;
+      } else {
+        throw new Error('Unknown object type');
+      }
+    });
   }
 
-  getStylableObjectMetadata(objectId: number): PointCloudObjectMetadata | undefined {
+  getStylableObjectMetadata(objectId: number): CombinedPointCloudObject | undefined {
     return this._objectIdToAnnotationsMap.get(objectId);
   }
 
@@ -237,7 +261,7 @@ export class PointCloudNode extends Group {
     this._needsRedraw = true;
   }
 
-  assignStyledPointCloudObjectCollection(styledCollection: StyledPointCloudObjectCollection): void {
+  assignStyledPointCloudObjectCollection(styledCollection: StyledPointCloudVolumeCollection): void {
     this._octree.material.objectAppearanceTexture.assignStyledObjectSet(styledCollection);
     this._needsRedraw = true;
   }

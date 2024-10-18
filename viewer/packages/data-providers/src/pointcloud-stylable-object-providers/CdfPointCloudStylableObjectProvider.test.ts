@@ -51,7 +51,7 @@ describe(CdfPointCloudStylableObjectProvider.name, () => {
     const expectedIds = [123, 124];
 
     const gottenIds = (await annotationProvider.getPointCloudObjects(new CdfModelIdentifier(123, 456))).map(
-      obj => obj.annotationId
+      (obj: any) => obj.annotationId
     );
 
     expect(gottenIds.length).toEqual(expectedIds.length);

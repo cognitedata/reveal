@@ -3,7 +3,10 @@
  */
 
 import { PointCloudObjectAppearanceTexture } from './PointCloudObjectAppearanceTexture';
-import { AnnotationIdPointCloudObjectCollection, StyledPointCloudObjectCollection } from '@reveal/pointcloud-styling';
+import {
+  AnnotationIdPointCloudObjectCollection,
+  StyledPointCloudAnnotationVolumeCollection
+} from '@reveal/pointcloud-styling';
 
 import { Color } from 'three';
 
@@ -29,7 +32,7 @@ describe(PointCloudObjectAppearanceTexture.name, () => {
     const objectId = 5;
 
     const objectSet = new AnnotationIdPointCloudObjectCollection([annotationId]);
-    const stylableObjectSet = new StyledPointCloudObjectCollection(objectSet, { color, visible: true });
+    const stylableObjectSet = new StyledPointCloudAnnotationVolumeCollection(objectSet, { color, visible: true });
 
     const objectsMaps = {
       annotationToObjectIds: new Map<number, number>([[annotationId, objectId]]),
@@ -63,7 +66,7 @@ describe(PointCloudObjectAppearanceTexture.name, () => {
     const objectId = 89;
 
     const objectSet = new AnnotationIdPointCloudObjectCollection([annotationId]);
-    const stylableObjectSet = new StyledPointCloudObjectCollection(objectSet, {
+    const stylableObjectSet = new StyledPointCloudAnnotationVolumeCollection(objectSet, {
       color: new Color('black'),
       visible: false
     });

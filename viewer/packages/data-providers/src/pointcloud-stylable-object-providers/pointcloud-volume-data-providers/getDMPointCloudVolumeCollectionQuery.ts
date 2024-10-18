@@ -2,19 +2,23 @@
  * Copyright 2024 Cognite AS
  */
 
-import { DirectRelationReference, QueryRequest } from '@cognite/sdk';
+import { QueryRequest } from '@cognite/sdk';
 import {
   pointCloudVolumeFilter,
-  COGNITE_POINT_CLOUD_VOLUME_SOURCE,
   POINT_CLOUD_VOLUME_REVISIONS_OBJECT3D_PROPERTIES_LIST,
-  ASSET_PROPERTIES_LIST,
-  COGNITE_ASSET_SOURCE,
-  COGNITE_VISUALIZABLE_SOURCE,
-  COGNITE_3D_OBJECT_SOURCE
+  ASSET_PROPERTIES_LIST
 } from './types';
 import { getModelEqualsFilter, getRevisionContainsAnyFilter } from './utils';
+import {
+  COGNITE_POINT_CLOUD_VOLUME_SOURCE,
+  COGNITE_VISUALIZABLE_SOURCE,
+  COGNITE_ASSET_SOURCE
+} from '../../utilities/constants';
+import { DMInstanceRef } from 'api-entry-points/core';
 
-const getPointCloudDMAnnotationsQuery = (modelRef: DirectRelationReference, revisionRef: DirectRelationReference[]) => {
+const getDMPointCloudVolumeQuery = (modelRef: DMInstanceRef, revisionRef: DMInstanceRef[]) => {
+  const modelExternalId = `cog_3d_model_${modelRef.externalId}`;
+  const revisionExternalId = `cog_3d_revision_${revisionRef[0].externalId}`;
   return {
     with: {
       pointCloudVolumes: {
@@ -23,12 +27,12 @@ const getPointCloudDMAnnotationsQuery = (modelRef: DirectRelationReference, revi
             and: [
               pointCloudVolumeFilter,
               getModelEqualsFilter({
-                externalId: modelRef.externalId,
+                externalId: modelExternalId,
                 space: modelRef.space
               }),
               getRevisionContainsAnyFilter([
                 {
-                  externalId: revisionRef[0].externalId,
+                  externalId: revisionExternalId,
                   space: revisionRef[0].space
                 }
               ])
@@ -68,14 +72,6 @@ const getPointCloudDMAnnotationsQuery = (modelRef: DirectRelationReference, revi
           }
         ]
       },
-      object3D: {
-        sources: [
-          {
-            source: COGNITE_3D_OBJECT_SOURCE,
-            properties: ['object3D']
-          }
-        ]
-      },
       assets: {
         sources: [
           {
@@ -88,14 +84,14 @@ const getPointCloudDMAnnotationsQuery = (modelRef: DirectRelationReference, revi
   } as const satisfies QueryRequest;
 };
 
-export type CdfPointCloudAnnotationDMQuery = ReturnType<typeof getPointCloudDMAnnotationsQuery>;
+export type CdfDMPointCloudVolumeQuery = ReturnType<typeof getDMPointCloudVolumeQuery>;
 
-export function getPointCloudAnnotationCollectionQuery(
+export function getDMPointCloudVolumeCollectionQuery(
   modelExternalId: string,
   revisionExternalId: string,
   space: string
-): CdfPointCloudAnnotationDMQuery {
-  return getPointCloudDMAnnotationsQuery({ externalId: modelExternalId, space }, [
+): CdfDMPointCloudVolumeQuery {
+  return getDMPointCloudVolumeQuery({ externalId: modelExternalId, space }, [
     { externalId: revisionExternalId, space }
   ]);
 }

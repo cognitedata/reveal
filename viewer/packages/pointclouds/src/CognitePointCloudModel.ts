@@ -10,14 +10,17 @@ import { PointCloudNode } from './PointCloudNode';
 import { PointColorType, PointShape, PointSizeType } from '@reveal/rendering';
 
 import { SupportedModelTypes } from '@reveal/model-base';
-import { PointCloudObjectMetadata } from '@reveal/data-providers';
+import { CombinedPointCloudObject, PointCloudObjectMetadata } from '@reveal/data-providers';
 
 import {
-  StyledPointCloudObjectCollection,
   PointCloudObjectCollection,
   applyDefaultsToPointCloudAppearance,
   PointCloudAppearance,
-  CompletePointCloudAppearance
+  CompletePointCloudAppearance,
+  DMInstanceRefPointCloudObjectCollection,
+  isPointCloudObjectCollection,
+  StyledPointCloudVolumeCollection,
+  StyledPointCloudAnnotationVolumeCollection
 } from '@reveal/pointcloud-styling';
 
 /**
@@ -38,7 +41,8 @@ export class CognitePointCloudModel {
    */
   readonly pointCloudNode: PointCloudNode;
 
-  private readonly _styledObjectCollections: StyledPointCloudObjectCollection[] = [];
+  private readonly _styledObjectCollections: StyledPointCloudAnnotationVolumeCollection[] = [];
+  private readonly _combinedStyledObjectCollections: StyledPointCloudVolumeCollection[] = [];
 
   /**
    * @param modelId
@@ -300,8 +304,24 @@ export class CognitePointCloudModel {
    * Gets the object collections that have been assigned a style
    * @returns All object collections and their associated style
    */
-  get styledCollections(): StyledPointCloudObjectCollection[] {
+  get styledCollections(): StyledPointCloudAnnotationVolumeCollection[] {
     return this._styledObjectCollections;
+  }
+
+  /**
+   * Gets the object collections that have been assigned a style
+   * @returns All object collections and their associated style
+   */
+  get combinedStyledCollections(): StyledPointCloudVolumeCollection[] {
+    return this._combinedStyledObjectCollections;
+  }
+
+  /**
+   * Gets array of stylable objects for the point cloud model.
+   * @returns All stylable objects for this model
+   */
+  get stylableObjects(): CombinedPointCloudObject[] {
+    return [...this.pointCloudNode.stylableObjectAnnotationMetadata];
   }
 
   /**
@@ -310,16 +330,27 @@ export class CognitePointCloudModel {
    * @param objectCollection The object collection to assign a style to
    * @param appearance The style to assign to the object collection
    */
-  assignStyledObjectCollection(objectCollection: PointCloudObjectCollection, appearance: PointCloudAppearance): void {
+  assignStyledObjectCollection(
+    objectCollection: PointCloudObjectCollection | DMInstanceRefPointCloudObjectCollection,
+    appearance: PointCloudAppearance
+  ): void {
     const fullAppearance: CompletePointCloudAppearance = applyDefaultsToPointCloudAppearance(appearance);
     const index = this._styledObjectCollections.findIndex(x => x.objectCollection === objectCollection);
-    if (index !== -1) {
+    const combinedCollectionIndex = this._combinedStyledObjectCollections.findIndex(
+      x => x.objectCollection === objectCollection
+    );
+    if (index !== -1 && combinedCollectionIndex !== -1) {
       this._styledObjectCollections[index].style = fullAppearance;
       this.pointCloudNode.assignStyledPointCloudObjectCollection(this._styledObjectCollections[index]);
-    } else {
-      const newObjectCollection = new StyledPointCloudObjectCollection(objectCollection, fullAppearance);
+    } else if (combinedCollectionIndex !== -1 && isPointCloudObjectCollection(objectCollection)) {
+      const newObjectCollection = new StyledPointCloudAnnotationVolumeCollection(objectCollection, fullAppearance);
 
       this._styledObjectCollections.push(newObjectCollection);
+      this.pointCloudNode.assignStyledPointCloudObjectCollection(newObjectCollection);
+    } else {
+      const newObjectCollection = new StyledPointCloudVolumeCollection(objectCollection, fullAppearance);
+
+      this._combinedStyledObjectCollections.push(newObjectCollection);
       this.pointCloudNode.assignStyledPointCloudObjectCollection(newObjectCollection);
     }
   }
@@ -328,7 +359,9 @@ export class CognitePointCloudModel {
    * Unassign style from an already styled object collection.
    * @param objectCollection The object collection from which to remove the style
    */
-  unassignStyledObjectCollection(objectCollection: PointCloudObjectCollection): void {
+  unassignStyledObjectCollection(
+    objectCollection: PointCloudObjectCollection | DMInstanceRefPointCloudObjectCollection
+  ): void {
     const styledCollectionIndex = this._styledObjectCollections.findIndex(x => x.objectCollection === objectCollection);
 
     if (styledCollectionIndex === -1) {
@@ -370,7 +403,9 @@ export class CognitePointCloudModel {
    */
   traverseStylableObjects(callback: (annotationMetadata: PointCloudObjectMetadata) => void): void {
     for (const obj of this.pointCloudNode.stylableObjectAnnotationMetadata) {
-      callback(obj);
+      if ('annotationId' in obj) {
+        callback(obj as PointCloudObjectMetadata);
+      }
     }
   }
 }

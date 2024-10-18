@@ -2,41 +2,12 @@
  * Copyright 2024 Cognite AS
  */
 
-import { DirectRelationReference, HasExistingDataFilterV3, ViewReference } from '@cognite/sdk';
-
-export const CORE_DM_SPACE = 'cdf_cdm';
-export const CORE_DM_3D_CONTAINER_SPACE = 'cdf_cdm_3d';
-
-export const COGNITE_POINT_CLOUD_VOLUME_SOURCE = {
-  externalId: 'CognitePointCloudVolume',
-  space: CORE_DM_SPACE,
-  version: 'v1',
-  type: 'view'
-} as const satisfies ViewReference;
-
-export const COGNITE_3D_OBJECT_SOURCE = {
-  externalId: 'Cognite3DObject',
-  space: CORE_DM_SPACE,
-  version: 'v1',
-  type: 'view'
-} as const satisfies ViewReference;
-
-export const COGNITE_ASSET_SOURCE = {
-  externalId: 'CogniteAsset',
-  space: CORE_DM_SPACE,
-  version: 'v1',
-  type: 'view'
-} as const satisfies ViewReference;
-
-export const COGNITE_VISUALIZABLE_SOURCE = {
-  externalId: 'CogniteVisualizable',
-  space: CORE_DM_SPACE,
-  version: 'v1',
-  type: 'view'
-} as const satisfies ViewReference;
+import { HasExistingDataFilterV3 } from '@cognite/sdk';
+import { COGNITE_POINT_CLOUD_VOLUME_SOURCE } from '../../utilities/constants';
+import { DMInstanceRef } from 'api-entry-points/core';
 
 export type AssetProperties = {
-  object3D: DirectRelationReference;
+  object3D: DMInstanceRef;
   name: string;
   description: string;
 };
@@ -65,7 +36,7 @@ export const POINT_CLOUD_VOLUME_REVISIONS_OBJECT3D_PROPERTIES_LIST = [
 ] as const satisfies Array<keyof PointCloudVolumeObject3DProperties>;
 
 export type PointCloudVolumeRevisionProperties = {
-  revisions: DirectRelationReference[];
+  revisions: DMInstanceRef[];
   volumeReferences: string[];
 };
 
@@ -75,5 +46,5 @@ export type PointCloudVolumeRevisionVolumeProperties = PointCloudVolumeRevisionP
 };
 
 export type PointCloudVolumeObject3DProperties = PointCloudVolumeRevisionVolumeProperties & {
-  object3D: DirectRelationReference;
+  object3D: DMInstanceRef;
 };

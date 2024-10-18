@@ -13,7 +13,7 @@ import { Cylinder } from '../../utilities';
 import { PointCloudNode } from '../src/PointCloudNode';
 import {
   AnnotationIdPointCloudObjectCollection,
-  StyledPointCloudObjectCollection,
+  StyledPointCloudAnnotationVolumeCollection,
   applyDefaultsToPointCloudAppearance
 } from '../../pointcloud-styling';
 
@@ -69,7 +69,7 @@ export default class PointCloudColorStylingVisualTest extends StreamingVisualTes
 
     model.geometryNode.pointSize = 5;
     model.geometryNode.assignStyledPointCloudObjectCollection(
-      new StyledPointCloudObjectCollection(objectCollection, appearance)
+      new StyledPointCloudAnnotationVolumeCollection(objectCollection, appearance)
     );
     model.geometryNode.defaultAppearance = applyDefaultsToPointCloudAppearance({ visible: false });
     model.geometryNode.pointColorType = PointColorType.Height;

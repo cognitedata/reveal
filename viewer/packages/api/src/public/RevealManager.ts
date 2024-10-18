@@ -26,6 +26,7 @@ import { assertNever, EventTrigger } from '@reveal/utilities';
 import { CameraManager } from '@reveal/camera-manager';
 
 import { ModelIdentifier } from '@reveal/data-providers';
+import { CogniteClient } from '@cognite/sdk';
 
 /* eslint-disable jsdoc/require-jsdoc */
 
@@ -40,6 +41,7 @@ export type AddCadModelOptions = {
 export type LoadingStateChangeListener = (loadingState: LoadingState) => any;
 
 export class RevealManager {
+  private readonly _sdk: CogniteClient | undefined;
   private readonly _cadManager: CadManager;
   private readonly _pointCloudManager: PointCloudManager;
   private readonly _pipelineExecutor: RenderPipelineExecutor;
@@ -66,13 +68,15 @@ export class RevealManager {
     pipelineExecutor: RenderPipelineExecutor,
     renderPipeline: RenderPipelineProvider & SettableRenderTarget,
     resizeHandler: ResizeHandler,
-    cameraManager: CameraManager
+    cameraManager: CameraManager,
+    sdk: CogniteClient | undefined
   ) {
     this._pipelineExecutor = pipelineExecutor;
     this._renderPipeline = renderPipeline;
     this._cadManager = cadManager;
     this._pointCloudManager = pointCloudManager;
     this._resizeHandler = resizeHandler;
+    this._sdk = sdk;
     this.initLoadingStateObserver(this._cadManager, this._pointCloudManager);
 
     this._cameraManager = cameraManager;
@@ -122,6 +126,10 @@ export class RevealManager {
 
   public setOutputRenderTarget(target: THREE.WebGLRenderTarget | null, autoSizeRenderTarget?: boolean): void {
     this._renderPipeline.setOutputRenderTarget(target, autoSizeRenderTarget);
+  }
+
+  get sdk(): CogniteClient | undefined {
+    return this._sdk;
   }
 
   get materialManager(): CadMaterialManager {

@@ -6,7 +6,7 @@ import { ModelIdentifier } from '../ModelIdentifier';
 import { PointCloudStylableObjectProvider } from '../PointCloudStylableObjectProvider';
 import { PointCloudObject } from './types';
 
-export class DummyPointCloudStylableObjectProvider implements PointCloudStylableObjectProvider<ModelIdentifier> {
+export class DummyPointCloudStylableObjectProvider implements PointCloudStylableObjectProvider {
   async getPointCloudObjects(_modelIdentifier: ModelIdentifier): Promise<PointCloudObject[]> {
     return [];
   }

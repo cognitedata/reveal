@@ -19,7 +19,13 @@ export { ModelIdentifier } from './src/ModelIdentifier';
 export { ModelMetadataProvider } from './src/ModelMetadataProvider';
 export { ModelDataProvider } from './src/ModelDataProvider';
 
-export { PointCloudObjectMetadata, PointCloudObject } from './src/pointcloud-stylable-object-providers/types';
+export {
+  PointCloudObjectMetadata,
+  PointCloudObject,
+  CombinedPointCloudObject,
+  DMInstanceRef,
+  PointCloudVolumeDataModelProperties
+} from './src/pointcloud-stylable-object-providers/types';
 export { PointCloudStylableObjectProvider } from './src/PointCloudStylableObjectProvider';
 export { StylableObject, SerializableStylableObject } from './src/pointcloud-stylable-object-providers/StylableObject';
 
@@ -39,3 +45,11 @@ export {
   Image360FileDescriptor,
   ImageAssetLinkAnnotationInfo
 } from './src/types';
+
+export { fetchDMModelIdFromRevisionId } from './src/utilities/fetchDMModelIdFromRevisionId';
+export {
+  isPointCloudObjectMetadata,
+  isPointCloudObjectDataModelProperties,
+  isCombinedPointCloudObjectMetadata,
+  isCombinedPointCloudObjectDataModelProperties
+} from './src/utilities/utils';
