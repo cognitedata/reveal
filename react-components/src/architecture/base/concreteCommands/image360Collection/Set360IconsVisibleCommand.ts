@@ -2,7 +2,7 @@
  * Copyright 2024 Cognite AS
  */
 
-import { Image360Collection } from '@cognite/reveal';
+import { type Image360Collection } from '@cognite/reveal';
 import { RenderTargetCommand } from '../../commands/RenderTargetCommand';
 import { type TranslateKey } from '../../utilities/TranslateKey';
 
