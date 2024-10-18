@@ -4,7 +4,7 @@
 
 import { TableExpressionContainsAnyFilterV3, TableExpressionEqualsFilterV3 } from '@cognite/sdk';
 import { COGNITE_POINT_CLOUD_VOLUME_SOURCE, CORE_DM_3D_CONTAINER_SPACE } from '../../utilities/constants';
-import { DMInstanceRef } from 'api-entry-points/core';
+import { DMInstanceRef } from '../types';
 
 export function getModelEqualsFilter<T extends DMInstanceRef>(model3DReference: T): TableExpressionEqualsFilterV3 {
   return {

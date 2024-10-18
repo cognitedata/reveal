@@ -14,7 +14,7 @@ import {
   COGNITE_VISUALIZABLE_SOURCE,
   COGNITE_ASSET_SOURCE
 } from '../../utilities/constants';
-import { DMInstanceRef } from 'api-entry-points/core';
+import { DMInstanceRef } from '../types';
 
 const getDMPointCloudVolumeQuery = (modelRef: DMInstanceRef, revisionRef: DMInstanceRef[]) => {
   const modelExternalId = `cog_3d_model_${modelRef.externalId}`;
