@@ -80,25 +80,24 @@ export class PointCloudObjectStylingUI {
             Math.floor(Math.random() * 255),
             Math.floor(Math.random() * 255)
           );
-            const annotationId = object.annotationId;
-            const stylableObject = new AnnotationIdPointCloudObjectCollection([annotationId]);
+          const annotationId = object.annotationId;
+          const stylableObject = new AnnotationIdPointCloudObjectCollection([annotationId]);
+          model.assignStyledObjectCollection(stylableObject, {
+            color: objectStyle
+          });
+        });
+        model.stylableObjects.forEach(object => {
+          const objectStyle = new THREE.Color(
+            Math.floor(Math.random() * 255),
+            Math.floor(Math.random() * 255),
+            Math.floor(Math.random() * 255)
+          );
+          if (isCombinedPointCloudObjectDataModelProperties(object)) {
+            const stylableObject = new DMInstanceRefPointCloudObjectCollection([object.instanceRef]);
             model.assignStyledObjectCollection(stylableObject, {
               color: objectStyle
             });
-          });
-          model.stylableObjects.forEach(object => {
-            const objectStyle = new THREE.Color(
-              Math.floor(Math.random() * 255),
-              Math.floor(Math.random() * 255),
-              Math.floor(Math.random() * 255)
-            );
-            if (isCombinedPointCloudObjectDataModelProperties(object)) {
-              const stylableObject = new DMInstanceRefPointCloudObjectCollection([object.instanceRef]);
-              model.assignStyledObjectCollection(stylableObject, {
-                color: objectStyle
-            });
           }
-        
         });
       }
     };

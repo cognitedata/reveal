@@ -459,9 +459,7 @@ export function Viewer() {
                   model.removeAllStyledObjectCollections();
                   const selected = new DMInstanceRefPointCloudObjectCollection([intersection.instanceRef]);
                   model.assignStyledObjectCollection(selected, { color: new THREE.Color('red') });
-
-                }
-                else {
+                } else {
                   const sphere = new THREE.Mesh(
                     new THREE.SphereGeometry(0.1),
                     new THREE.MeshBasicMaterial({ color: 'red' })
