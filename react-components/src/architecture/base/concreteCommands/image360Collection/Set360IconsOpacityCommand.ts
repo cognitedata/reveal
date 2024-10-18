@@ -4,7 +4,7 @@
 
 import { type TranslateKey } from '../../utilities/TranslateKey';
 import { FractionSliderCommand } from '../../commands/FractionSliderCommand';
-import { Image360Collection } from '@cognite/reveal';
+import { type Image360Collection } from '@cognite/reveal';
 
 export class Set360IconsOpacityCommand extends FractionSliderCommand {
   // ==================================================
