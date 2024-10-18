@@ -10,7 +10,7 @@ import {
   fetchPointsOfInterest
 } from './network';
 
-export class FdmPointsOfInterestProvider implements PointsOfInterestProvider<DmsUniqueIdentifier> {
+export class PointsOfInterestFdmProvider implements PointsOfInterestProvider<DmsUniqueIdentifier> {
   constructor(private readonly _fdmSdk: FdmSDK) {}
 
   async createPointsOfInterest(

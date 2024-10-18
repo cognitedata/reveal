@@ -11,7 +11,7 @@ import { SavePointsOfInterestCommand } from './SavePointsOfInterestCommand';
 import { DeletePointsOfInterestCommand } from './DeletePointsOfInterestCommand';
 import { createEmptyPointsOfInterestProperties, isPointsOfInterestIntersection } from './types';
 import { type IconName } from '../../base/utilities/IconName';
-import { FdmPointsOfInterestProvider } from './fdm/FdmPointsOfInterestProvider';
+import { PointsOfInterestFdmProvider } from './fdm/PointsOfInterestFdmProvider';
 import { type DmsUniqueIdentifier } from '../../../data-providers';
 
 export class PointsOfInterestTool<PoIIdType> extends BaseEditTool {
@@ -42,7 +42,7 @@ export class PointsOfInterestTool<PoIIdType> extends BaseEditTool {
     let domainObject = this.getPointsOfInterestDomainObject();
     if (domainObject === undefined) {
       domainObject = new PointsOfInterestDomainObject(
-        new FdmPointsOfInterestProvider(this.rootDomainObject.fdmSdk)
+        new PointsOfInterestFdmProvider(this.rootDomainObject.fdmSdk)
       );
       this.renderTarget.rootDomainObject.addChildInteractive(domainObject);
     }
