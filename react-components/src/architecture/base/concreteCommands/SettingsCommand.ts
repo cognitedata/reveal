@@ -25,7 +25,7 @@ export class SettingsCommand extends BaseSettingsCommand {
   // CONSTRUCTOR
   // ==================================================
 
-  public constructor() {
+  public constructor(includeNextRelease: boolean = true) {
     super();
 
     this.add(new SetQualityCommand());
@@ -37,16 +37,18 @@ export class SettingsCommand extends BaseSettingsCommand {
     this.add(new SetPointShapeCommand());
     this.add(new PointCloudFilterCommand());
 
-    // 360 Images
-    this.add(new Image360CollectionDividerCommand());
-    this.add(new Set360ImagesSectionCommand());
-    this.add(new Set360ImagesOpacityCommand());
+    if (includeNextRelease) {
+      // 360 Images
+      this.add(new Image360CollectionDividerCommand());
+      this.add(new Set360ImagesSectionCommand());
+      this.add(new Set360ImagesOpacityCommand());
 
-    // 360 Markers
-    this.add(new Set360IconsSectionCommand());
-    this.add(new Set360IconsVisibleCommand());
-    this.add(new Set360IconsOccludedVisibleCommand());
-    this.add(new Set360IconsOpacityCommand());
+      // 360 Markers
+      this.add(new Set360IconsSectionCommand());
+      this.add(new Set360IconsVisibleCommand());
+      this.add(new Set360IconsOccludedVisibleCommand());
+      this.add(new Set360IconsOpacityCommand());
+    }
   }
 
   // ==================================================
