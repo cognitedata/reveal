@@ -6,8 +6,9 @@ import { isUndefined } from 'lodash';
 import { useSDK } from '../components/RevealCanvas/SDKProvider';
 import { getResourceRelationship } from '../hooks/network/getResourceRelationship';
 import { useQuery, type UseQueryResult } from '@tanstack/react-query';
+import { queryKeys } from '../utilities/queryKeys';
 
-export const useFetchTimeseriesResourceRelationship = ({
+export const useFetchTimeseriesFromRelationshipByAsset = ({
   asset,
   filter,
   resourceTypes
@@ -19,7 +20,12 @@ export const useFetchTimeseriesResourceRelationship = ({
   const sdk = useSDK();
 
   return useQuery({
-    queryKey: ['reveal', 'react-components', asset.externalId, filter?.isStep, ...resourceTypes],
+    queryKey: [
+      queryKeys.timeseriesFromRelationship(),
+      asset.externalId,
+      filter?.isStep,
+      ...resourceTypes
+    ],
     queryFn: async () => {
       const relationshipsFound = await getResourceRelationship(
         sdk,

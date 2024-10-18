@@ -29,7 +29,7 @@ export {
 } from './useSearchMappedEquipmentFDM';
 export { useTimeseriesByIdsQuery } from './useTimeseriesByIdsQuery';
 export { useTimeseriesLatestDatapointQuery } from './useTimeseriesLatestDatapointQuery';
-export { useFetchTimeseriesResourceRelationship } from './useFetchTimeseriesResourceRelationship';
+export { useFetchTimeseriesFromRelationshipByAsset } from './useFetchTimeseriesFromRelationshipByAsset';
 export { useAssetsAndTimeseriesLinkages } from './useAssetsAndTimeseriesLinkages';
 
 export type {
