@@ -13,7 +13,6 @@
     "@reveal/cad-styling": "workspace:*",
     "@reveal/camera-manager": "workspace:*",
     "@reveal/logger": "workspace:*",
-    "@reveal/data-providers": "workspace:*",
     "@reveal/pointcloud-styling": "workspace:*",
     "@reveal/utilities": "workspace:*"
   },

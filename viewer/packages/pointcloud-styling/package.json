@@ -7,7 +7,6 @@
     "lint": "yarn ws:lint"
   },
   "dependencies": {
-    "@reveal/data-providers": "workspace:*",
     "@reveal/utilities": "workspace:*"
   }
 }
