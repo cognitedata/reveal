@@ -28,7 +28,7 @@ export function createEmptyPointsOfInterestProperties(point: Vector3): PointsOfI
   return { positionX: cdfPosition.x, positionY: cdfPosition.y, positionZ: cdfPosition.z };
 }
 
-const poiMarker = Symbol('poiSymbol');
+const poiMarker = Symbol('poiMarker');
 
 export type PointsOfInterestIntersection<PoIIdType> = Omit<
   DomainObjectIntersection,

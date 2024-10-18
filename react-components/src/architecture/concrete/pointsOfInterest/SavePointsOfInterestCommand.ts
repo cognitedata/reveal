@@ -23,11 +23,12 @@ export class SavePointsOfInterestCommand<PoIIdType> extends PointsOfInterestComm
   }
 
   public override get isEnabled(): boolean {
-    const poi = this.getPointsOfInterestDomainObject();
+    const domainObject = this.getPointsOfInterestDomainObject();
 
     return (
-      poi !== undefined &&
-      (poi.hasPendingPointsOfInterest() || poi.hasPendingDeletionPointsOfInterest())
+      domainObject !== undefined &&
+      (domainObject.hasPendingPointsOfInterest() ||
+        domainObject.hasPendingDeletionPointsOfInterest())
     );
   }
 
@@ -46,8 +47,8 @@ export class SavePointsOfInterestCommand<PoIIdType> extends PointsOfInterestComm
           body: { fallback: 'Successfully published changes' }.fallback,
           type: 'success'
         });
-        const poi = this.getPointsOfInterestDomainObject();
-        poi?.notify(Changes.geometry);
+        const domainObject = this.getPointsOfInterestDomainObject();
+        domainObject?.notify(Changes.geometry);
         CommandsUpdater.update(this.renderTarget);
       })
       .catch((e) => {
