@@ -455,7 +455,7 @@ __metadata:
     "@types/random-seed": "npm:^0.3.5"
     "@types/skmeans": "npm:^0.11.7"
     "@types/stats": "npm:^0.16.30"
-    "@types/three": "npm:^0.166.0"
+    "@types/three": "npm:^0.169.0"
     "@typescript-eslint/eslint-plugin": "npm:^7.7.1"
     "@typescript-eslint/parser": "npm:^7.7.1"
     assert: "npm:^2.1.0"
@@ -502,7 +502,7 @@ __metadata:
     skmeans: "npm:^0.11.3"
     sparse-octree: "npm:^7.1.8"
     stats.js: "npm:^0.17.0"
-    three: "npm:0.166.1"
+    three: "npm:0.169.0"
     ts-jest: "npm:29.1.2"
     ts-loader: "npm:^9.5.1"
     tsc-alias: "npm:^1.8.8"
@@ -516,7 +516,7 @@ __metadata:
     workerize-loader: "npm:^2.0.2"
   peerDependencies:
     "@cognite/sdk": ^7.16.0 || ^8.0.0
-    three: 0.166.1
+    three: 0.169.0
   languageName: unknown
   linkType: soft
 
@@ -1591,7 +1591,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@tweenjs/tween.js@npm:~23.1.2":
+"@tweenjs/tween.js@npm:~23.1.3":
   version: 23.1.3
   resolution: "@tweenjs/tween.js@npm:23.1.3"
   checksum: 10/10ecaf311c975162459bd016ef7eb1f3118a257050c4886de9737dee823fc829100a0887f3fc298f7a5577140eac054f9609b823eb0748ca7b653ec85ffba75e
@@ -2063,16 +2063,17 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/three@npm:^0.166.0":
-  version: 0.166.0
-  resolution: "@types/three@npm:0.166.0"
+"@types/three@npm:^0.169.0":
+  version: 0.169.0
+  resolution: "@types/three@npm:0.169.0"
   dependencies:
-    "@tweenjs/tween.js": "npm:~23.1.2"
+    "@tweenjs/tween.js": "npm:~23.1.3"
     "@types/stats.js": "npm:*"
     "@types/webxr": "npm:*"
+    "@webgpu/types": "npm:*"
     fflate: "npm:~0.8.2"
     meshoptimizer: "npm:~0.18.1"
-  checksum: 10/5e929d5870305fdb99420447006cf51119508c9f5a9d496a092dac6aaf0d1ef757bb04fd12f2585fab71699e8a25ceea5228f51befbe54c7c6dd0206c1631a06
+  checksum: 10/cb863c8b247eedbdc04301b4e8f17ccd33f1fbd517e8dcc8cfff4f60300cb3be40ef5ffa130c1d0263c4da38a257a1f35fc1d9390d5529fd72b91c2d1ec08a7e
   languageName: node
   linkType: hard
 
@@ -2417,6 +2418,13 @@ __metadata:
     "@webassemblyjs/ast": "npm:1.12.1"
     "@xtuc/long": "npm:4.2.2"
   checksum: 10/1a6a4b6bc4234f2b5adbab0cb11a24911b03380eb1cab6fb27a2250174a279fdc6aa2f5a9cf62dd1f6d4eb39f778f488e8ff15b9deb0670dee5c5077d46cf572
+  languageName: node
+  linkType: hard
+
+"@webgpu/types@npm:*":
+  version: 0.1.49
+  resolution: "@webgpu/types@npm:0.1.49"
+  checksum: 10/0d505d928d9cdec6a4c12bbcb73386085f128ff934dab9191ff7cc85296893f01158c26a024b24f24d53b4c87e487ccc41fc787bfdb1b99953fc62cb96a6c14e
   languageName: node
   linkType: hard
 
@@ -9878,10 +9886,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"three@npm:0.166.1":
-  version: 0.166.1
-  resolution: "three@npm:0.166.1"
-  checksum: 10/10f36702ab0f6b7f03a45f46437157a00ece42a1760d70b1c24db5e8d3f02b7b522a117377e7c8ad7ec504e2008a8776ccb4fa16512d455d431b66390f23a2ed
+"three@npm:0.169.0":
+  version: 0.169.0
+  resolution: "three@npm:0.169.0"
+  checksum: 10/5d0a5a4c8aeff37877132c4cb633989dba0749891fd1bf6414c551b16ef46ddb3529954901cbcbe4b493698d93c915c1cff9145157adcaa69f122c1fc2d1538f
   languageName: node
   linkType: hard
 
