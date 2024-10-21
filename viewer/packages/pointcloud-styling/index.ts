@@ -13,7 +13,7 @@ export {
   StyledPointCloudAnnotationVolumeCollection
 } from './src/StyledPointCloudObjectCollection';
 export { StyledPointCloudVolumeCollection } from './src/StyledPointCloudVolumeCollection';
-export { PointCloudObjectCollection } from './src/PointCloudObjectCollection';
+export { PointCloudObjectCollection, PointCloudAnnotationVolumeCollection } from './src/PointCloudObjectCollection';
 export { AnnotationIdPointCloudObjectCollection } from './src/AnnotationIdPointCloudObjectCollection';
-export { DMInstanceRefPointCloudObjectCollection } from './src/DMInstanceRefPointCloudObjectCollection';
+export { PointCloudDMVolumeCollection } from './src/PointCloudDMVolumeCollection';
 export { isPointCloudObjectCollection, isDMInstanceRefPointCloudObjectCollection } from './src/utils';

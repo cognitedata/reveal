@@ -79,7 +79,7 @@ export class CdfPointCloudStylableObjectProvider implements PointCloudStylableOb
   }
 
   getDataModelIdentifier(modelIdentifier: CdfModelIdentifier): DMPointCloudVolumeIdentifier | undefined {
-    if (modelIdentifier.space === undefined) {
+    if (modelIdentifier.space === undefined || modelIdentifier.space === '') {
       return;
     }
     const dataModelIdentifier = {

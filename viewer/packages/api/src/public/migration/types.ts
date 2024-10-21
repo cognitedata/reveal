@@ -219,10 +219,21 @@ export interface AddModelOptions {
  * @module @cognite/reveal
  */
 export interface AddDMModelOptions {
+  /**
+   * An CDF externalId of 3D model revision.
+   */
   revisionExternalId: string;
-  space: string;
-  // if you need to access local files, this is where you would specify it.
+  /**
+   * An CDF space of the 3D model revision.
+   */
+  revisionSpace: string;
+  /**
+   * An optional local file which will be used to load the data.
+   */
   localPath?: string;
+  /**
+   * An optional geometryFilter which will be applied to loading model.
+   */
   geometryFilter?: GeometryFilter;
 }
 

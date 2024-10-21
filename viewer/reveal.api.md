@@ -43,14 +43,10 @@ export type AddCdfModelOptions = AddModelOptions | AddDMModelOptions;
 
 // @public
 export interface AddDMModelOptions {
-    // (undocumented)
     geometryFilter?: GeometryFilter;
-    // (undocumented)
     localPath?: string;
-    // (undocumented)
     revisionExternalId: string;
-    // (undocumented)
-    space: string;
+    revisionSpace: string;
 }
 
 // @public (undocumented)
@@ -73,7 +69,7 @@ export interface AddModelOptions {
 }
 
 // @public
-export class AnnotationIdPointCloudObjectCollection extends PointCloudObjectCollection {
+export class AnnotationIdPointCloudObjectCollection extends PointCloudAnnotationVolumeCollection {
     constructor(ids: Iterable<number>);
     // (undocumented)
     getAnnotationIds(): Iterable<number>;
@@ -617,7 +613,7 @@ export type CogniteModel = CogniteCadModel | CognitePointCloudModel;
 
 // @public
 export class CognitePointCloudModel {
-    assignStyledObjectCollection(objectCollection: PointCloudObjectCollection | DMInstanceRefPointCloudObjectCollection, appearance: PointCloudAppearance): void;
+    assignStyledObjectCollection(objectCollection: PointCloudAnnotationVolumeCollection | PointCloudDMVolumeCollection, appearance: PointCloudAppearance): void;
     get combinedStyledCollections(): StyledPointCloudVolumeCollection[];
     dispose(): void;
     getCameraConfiguration(): CameraConfiguration | undefined;
@@ -654,19 +650,16 @@ export class CognitePointCloudModel {
     setModelTransformation(transformationMatrix: THREE.Matrix4): void;
     // (undocumented)
     get stylableObjectCount(): number;
-    get stylableObjects(): CombinedPointCloudObject[];
+    get stylableObjects(): PointCloudVolumeMetadata[];
     get styledCollections(): StyledPointCloudAnnotationVolumeCollection[];
     traverseStylableObjects(callback: (annotationMetadata: PointCloudObjectMetadata) => void): void;
     // (undocumented)
     readonly type: SupportedModelTypes;
-    unassignStyledObjectCollection(objectCollection: PointCloudObjectCollection | DMInstanceRefPointCloudObjectCollection): void;
+    unassignStyledObjectCollection(objectCollection: PointCloudAnnotationVolumeCollection | PointCloudDMVolumeCollection): void;
     set visible(value: boolean);
     get visible(): boolean;
     get visiblePointCount(): number;
 }
-
-// @public
-export type CombinedPointCloudObject = PointCloudObjectMetadata | PointCloudVolumeDataModelProperties;
 
 // @public
 export abstract class CombineNodeCollectionBase extends NodeCollection {
@@ -916,13 +909,6 @@ export type DistanceToLabelDelegate = (distanceInMeters: number) => string;
 
 // @public
 export type DMInstanceRef = DirectRelationReference;
-
-// @public
-export class DMInstanceRefPointCloudObjectCollection {
-    constructor(ids: Iterable<DMInstanceRef>);
-    getDataModelInstanceRefs(): Iterable<DMInstanceRef>;
-    get isLoading(): false;
-}
 
 // @public
 export type EdlOptions = {
@@ -1369,10 +1355,10 @@ export class InvertedNodeCollection extends NodeCollection {
 }
 
 // @public
-export function isCombinedPointCloudObjectDataModelProperties(pointCloudObject: CombinedPointCloudObject): pointCloudObject is PointCloudVolumeDataModelProperties;
+export function isCombinedPointCloudObjectDataModelProperties(pointCloudObject: PointCloudVolumeMetadata): pointCloudObject is PointCloudVolumeDataModelProperties;
 
 // @public
-export function isCombinedPointCloudObjectMetadata(pointCloudObject: CombinedPointCloudObject): pointCloudObject is PointCloudObjectMetadata;
+export function isCombinedPointCloudObjectMetadata(pointCloudObject: PointCloudVolumeMetadata): pointCloudObject is PointCloudObjectMetadata;
 
 // @public
 export function isDefaultCameraManager(cameraManager: CameraManager): cameraManager is DefaultCameraManager;
@@ -1711,6 +1697,10 @@ export type OverlayInfo<ContentType = DefaultOverlay3DContentType> = {
 // @public
 export type OverlayToolEvent = 'hover' | 'click' | 'disposed';
 
+// @public
+export abstract class PointCloudAnnotationVolumeCollection extends PointCloudObjectCollection {
+}
+
 // @public (undocumented)
 export type PointCloudAppearance = {
     color?: Color;
@@ -1722,6 +1712,13 @@ export type PointCloudBudget = {
     readonly numberOfPoints: number;
 };
 
+// @public
+export class PointCloudDMVolumeCollection {
+    constructor(ids: Iterable<DMInstanceRef>);
+    getDataModelInstanceRefs(): Iterable<DMInstanceRef>;
+    get isLoading(): false;
+}
+
 // @public (undocumented)
 export type PointCloudIntersection = {
     type: 'pointcloud';
@@ -1731,10 +1728,10 @@ export type PointCloudIntersection = {
     distanceToCamera: number;
     annotationId: number;
     assetRef?: AnnotationsAssetRef;
-    instanceRef?: DMInstanceRef;
+    volumeRef?: PointCloudVolumeReference;
 };
 
-// @public
+// @public @deprecated
 export abstract class PointCloudObjectCollection {
     // (undocumented)
     abstract getAnnotationIds(): Iterable<number>;
@@ -1760,6 +1757,16 @@ export type PointCloudVolumeDataModelProperties = {
     instanceRef: DMInstanceRef;
     assetRef?: AnnotationsAssetRef;
     boundingBox: Box3;
+};
+
+// @public
+export type PointCloudVolumeMetadata = PointCloudObjectMetadata | PointCloudVolumeDataModelProperties;
+
+// @public
+export type PointCloudVolumeReference = {
+    annotationId: number;
+    volumeInstanceRef: DMInstanceRef;
+    assetRef?: AnnotationsAssetRef;
 };
 
 // @public (undocumented)
@@ -1924,18 +1931,18 @@ export class StyledPointCloudAnnotationVolumeCollection extends StyledPointCloud
 
 // @public @deprecated
 export class StyledPointCloudObjectCollection {
-    constructor(objectCollection: PointCloudObjectCollection, style: CompletePointCloudAppearance);
+    constructor(objectCollection: PointCloudAnnotationVolumeCollection, style: CompletePointCloudAppearance);
     // (undocumented)
-    objectCollection: PointCloudObjectCollection;
+    objectCollection: PointCloudAnnotationVolumeCollection;
     // (undocumented)
     style: CompletePointCloudAppearance;
 }
 
 // @public
 export class StyledPointCloudVolumeCollection {
-    constructor(objectCollection: PointCloudObjectCollection | DMInstanceRefPointCloudObjectCollection, style: CompletePointCloudAppearance);
+    constructor(objectCollection: PointCloudAnnotationVolumeCollection | PointCloudDMVolumeCollection, style: CompletePointCloudAppearance);
     // (undocumented)
-    objectCollection: PointCloudObjectCollection | DMInstanceRefPointCloudObjectCollection;
+    objectCollection: PointCloudAnnotationVolumeCollection | PointCloudDMVolumeCollection;
     // (undocumented)
     style: CompletePointCloudAppearance;
 }

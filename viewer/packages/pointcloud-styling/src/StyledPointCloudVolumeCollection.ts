@@ -2,17 +2,17 @@
  * Copyright 2024 Cognite AS
  */
 
-import { PointCloudObjectCollection } from './PointCloudObjectCollection';
+import { PointCloudAnnotationVolumeCollection } from './PointCloudObjectCollection';
 import { CompletePointCloudAppearance } from './PointCloudAppearance';
-import { DMInstanceRefPointCloudObjectCollection } from './DMInstanceRefPointCloudObjectCollection';
+import { PointCloudDMVolumeCollection } from './PointCloudDMVolumeCollection';
 
 /**
- * Represents an either PointCloudObjectCollection or DMInstanceRefPointCloudObjectCollection object collection
+ * Represents either an PointCloudAnnotationVolumeCollection or PointCloudDMVolumeCollection
  * that is associated with an appearance.
  */
 export class StyledPointCloudVolumeCollection {
   constructor(
-    public objectCollection: PointCloudObjectCollection | DMInstanceRefPointCloudObjectCollection,
+    public objectCollection: PointCloudAnnotationVolumeCollection | PointCloudDMVolumeCollection,
     public style: CompletePointCloudAppearance
   ) {}
 }

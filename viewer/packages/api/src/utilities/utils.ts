@@ -5,10 +5,10 @@
 import { CogniteClient } from '@cognite/sdk';
 import { AddCdfModelOptions, AddDMModelOptions } from '../public/migration/types';
 
-function isAddDMModelOptions(options: AddCdfModelOptions): options is AddDMModelOptions {
+export function isAddDMModelOptions(options: AddCdfModelOptions): options is AddDMModelOptions {
   return (
     (options as AddDMModelOptions).revisionExternalId !== undefined &&
-    (options as AddDMModelOptions).space !== undefined
+    (options as AddDMModelOptions).revisionSpace !== undefined
   );
 }
 
@@ -22,7 +22,7 @@ export async function getModelAndRevisionId(
   sdk: CogniteClient | undefined
 ): Promise<{ modelId: number; revisionId: number }> {
   if (isAddDMModelOptions(options)) {
-    return fetchDMModelIdFromRevisionId(options.revisionExternalId, options.space, sdk);
+    return fetchDMModelIdFromRevisionId(options.revisionExternalId, options.revisionSpace, sdk);
   } else {
     return { modelId: options.modelId, revisionId: options.revisionId };
   }

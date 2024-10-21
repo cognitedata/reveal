@@ -7,8 +7,8 @@ import { DMInstanceRef } from '@reveal/data-providers';
 /**
  * A simple DMInstanceRefPointCloudObjectCollection that consists of an explicitly provided list of data model instance.
  */
-export class DMInstanceRefPointCloudObjectCollection {
-  private readonly _dataModelInstanceRef = new Set<DMInstanceRef>();
+export class PointCloudDMVolumeCollection {
+  private readonly _dataModelInstanceRef;
 
   constructor(ids: Iterable<DMInstanceRef>) {
     this._dataModelInstanceRef = new Set<DMInstanceRef>(ids);

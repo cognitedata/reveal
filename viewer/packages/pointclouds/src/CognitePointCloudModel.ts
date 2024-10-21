@@ -10,14 +10,18 @@ import { PointCloudNode } from './PointCloudNode';
 import { PointColorType, PointShape, PointSizeType } from '@reveal/rendering';
 
 import { SupportedModelTypes } from '@reveal/model-base';
-import { CombinedPointCloudObject, PointCloudObjectMetadata } from '@reveal/data-providers';
+import {
+  PointCloudVolumeMetadata,
+  isCombinedPointCloudObjectMetadata,
+  PointCloudObjectMetadata
+} from '@reveal/data-providers';
 
 import {
-  PointCloudObjectCollection,
+  PointCloudAnnotationVolumeCollection,
   applyDefaultsToPointCloudAppearance,
   PointCloudAppearance,
   CompletePointCloudAppearance,
-  DMInstanceRefPointCloudObjectCollection,
+  PointCloudDMVolumeCollection,
   isPointCloudObjectCollection,
   StyledPointCloudVolumeCollection,
   StyledPointCloudAnnotationVolumeCollection
@@ -320,7 +324,7 @@ export class CognitePointCloudModel {
    * Gets array of stylable objects for the point cloud model.
    * @returns All stylable objects for this model
    */
-  get stylableObjects(): CombinedPointCloudObject[] {
+  get stylableObjects(): PointCloudVolumeMetadata[] {
     return [...this.pointCloudNode.stylableObjectAnnotationMetadata];
   }
 
@@ -331,12 +335,12 @@ export class CognitePointCloudModel {
    * @param appearance The style to assign to the object collection
    */
   assignStyledObjectCollection(
-    objectCollection: PointCloudObjectCollection | DMInstanceRefPointCloudObjectCollection,
+    objectCollection: PointCloudAnnotationVolumeCollection | PointCloudDMVolumeCollection,
     appearance: PointCloudAppearance
   ): void {
     const fullAppearance: CompletePointCloudAppearance = applyDefaultsToPointCloudAppearance(appearance);
 
-    const updateOrCreateCollection = <T extends PointCloudObjectCollection | DMInstanceRefPointCloudObjectCollection>(
+    const updateOrCreateCollection = <T extends PointCloudAnnotationVolumeCollection | PointCloudDMVolumeCollection>(
       collections: Array<{ objectCollection: T; style: CompletePointCloudAppearance }>,
       CollectionClass: new (
         objectCollection: T,
@@ -375,11 +379,11 @@ export class CognitePointCloudModel {
    * @param objectCollection The object collection from which to remove the style
    */
   unassignStyledObjectCollection(
-    objectCollection: PointCloudObjectCollection | DMInstanceRefPointCloudObjectCollection
+    objectCollection: PointCloudAnnotationVolumeCollection | PointCloudDMVolumeCollection
   ): void {
     const removeCollection = (
       collections: Array<StyledPointCloudVolumeCollection | StyledPointCloudAnnotationVolumeCollection>,
-      objectCollection: PointCloudObjectCollection | DMInstanceRefPointCloudObjectCollection
+      objectCollection: PointCloudAnnotationVolumeCollection | PointCloudDMVolumeCollection
     ) => {
       const index = collections.findIndex(x => x.objectCollection === objectCollection);
       if (index !== -1) {
@@ -436,7 +440,7 @@ export class CognitePointCloudModel {
    */
   traverseStylableObjects(callback: (annotationMetadata: PointCloudObjectMetadata) => void): void {
     for (const obj of this.pointCloudNode.stylableObjectAnnotationMetadata) {
-      if ('annotationId' in obj) {
+      if (isCombinedPointCloudObjectMetadata(obj)) {
         callback(obj as PointCloudObjectMetadata);
       }
     }

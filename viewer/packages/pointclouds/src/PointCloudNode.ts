@@ -11,7 +11,7 @@ import { PointColorType, PointShape, PointSizeType } from '@reveal/rendering';
 
 import {
   PointCloudObject,
-  CombinedPointCloudObject,
+  PointCloudVolumeMetadata,
   isPointCloudObjectMetadata,
   PointCloudObjectMetadata,
   isPointCloudObjectDataModelProperties,
@@ -213,7 +213,7 @@ export class PointCloudNode extends Group {
     return out.copy(this._sourceTransform);
   }
 
-  get stylableObjectAnnotationMetadata(): Iterable<CombinedPointCloudObject> {
+  get stylableObjectAnnotationMetadata(): Iterable<PointCloudVolumeMetadata> {
     return [...this._objectIdToAnnotationsMap.values()].map(a => {
       const baseObject = {
         boundingBox: a.boundingBox.clone().applyMatrix4(this._octree.matrixWorld),
@@ -239,7 +239,7 @@ export class PointCloudNode extends Group {
     });
   }
 
-  getStylableObjectMetadata(objectId: number): CombinedPointCloudObject | undefined {
+  getStylableObjectMetadata(objectId: number): PointCloudVolumeMetadata | undefined {
     return this._objectIdToAnnotationsMap.get(objectId);
   }
 

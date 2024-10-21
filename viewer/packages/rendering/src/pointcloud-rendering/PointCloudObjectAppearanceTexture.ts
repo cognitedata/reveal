@@ -6,10 +6,9 @@ import { generateDataTexture } from './texture-generation';
 
 import * as THREE from 'three';
 import {
-  PointCloudObjectCollection,
+  PointCloudAnnotationVolumeCollection,
   DefaultPointCloudAppearance,
   CompletePointCloudAppearance,
-  isDMInstanceRefPointCloudObjectCollection,
   isPointCloudObjectCollection,
   StyledPointCloudVolumeCollection
 } from '@reveal/pointcloud-styling';
@@ -27,7 +26,7 @@ export class PointCloudObjectAppearanceTexture {
   private readonly _width: number;
   private readonly _height: number;
 
-  private _annotationIdsToObjectId: Map<number | string, number> | undefined;
+  private _annotationIdsToObjectId: Map<number | DMInstanceRef, number> | undefined;
 
   constructor(width: number, height: number) {
     this._objectStyleTexture = generateDataTexture(width, height, new THREE.Color(0x0), 0x01); // Initialize with visibility bit set
@@ -61,7 +60,7 @@ export class PointCloudObjectAppearanceTexture {
 
     const objectCollection = styledObjectSet.objectCollection;
 
-    const applyStyle = (transformedObjectId: number | string) => {
+    const applyStyle = (transformedObjectId: number | DMInstanceRef) => {
       const objectId = this._annotationIdsToObjectId?.get(transformedObjectId);
       if (objectId === undefined) {
         throw new Error('Could not find corresponding object ID for ' + transformedObjectId);
@@ -71,22 +70,12 @@ export class PointCloudObjectAppearanceTexture {
 
     if (isPointCloudObjectCollection(objectCollection)) {
       for (const annotationId of objectCollection.getAnnotationIds()) {
-        let transformedObjectId: number | string;
-        if (typeof annotationId === 'object' && 'externalId' in annotationId) {
-          transformedObjectId = (annotationId as DMInstanceRef).externalId;
-        } else if (typeof annotationId === 'number') {
-          transformedObjectId = annotationId;
-        } else {
-          throw new Error('Invalid annotation ID type');
-        }
-        applyStyle(transformedObjectId);
-      }
-    } else if (isDMInstanceRefPointCloudObjectCollection(objectCollection)) {
-      for (const instanceRef of objectCollection.getDataModelInstanceRefs()) {
-        applyStyle(instanceRef.externalId);
+        applyStyle(annotationId);
       }
     } else {
-      throw new Error('Unknown object collection type');
+      for (const instanceRef of objectCollection.getDataModelInstanceRefs()) {
+        applyStyle(instanceRef);
+      }
     }
   }
 
@@ -122,7 +111,7 @@ export class PointCloudObjectAppearanceTexture {
     this._needsReconstruction = true;
   }
 
-  removeStyledObjectSet(collection: PointCloudObjectCollection): void {
+  removeStyledObjectSet(collection: PointCloudAnnotationVolumeCollection): void {
     const ind = this._styledObjectSets.findIndex(s => s.objectCollection === collection);
     if (ind !== -1) {
       this._styledObjectSets.splice(ind, 1);

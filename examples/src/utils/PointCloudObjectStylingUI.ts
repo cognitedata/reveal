@@ -10,7 +10,7 @@ import {
   PointCloudAppearance,
   DefaultPointCloudAppearance,
   isCombinedPointCloudObjectDataModelProperties,
-  DMInstanceRefPointCloudObjectCollection,
+  PointCloudDMVolumeCollection,
   PointCloudObjectMetadata
 } from '@cognite/reveal';
 import { AnnotationModel, AnnotationsBoundingVolume, AnnotationType, CogniteClient } from '@cognite/sdk';
@@ -93,7 +93,7 @@ export class PointCloudObjectStylingUI {
             Math.floor(Math.random() * 255)
           );
           if (isCombinedPointCloudObjectDataModelProperties(object)) {
-            const stylableObject = new DMInstanceRefPointCloudObjectCollection([object.instanceRef]);
+            const stylableObject = new PointCloudDMVolumeCollection([object.instanceRef]);
             model.assignStyledObjectCollection(stylableObject, {
               color: objectStyle
             });

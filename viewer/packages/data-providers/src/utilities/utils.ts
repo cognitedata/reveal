@@ -5,7 +5,7 @@
 import { TableExpressionEqualsFilterV3 } from '@cognite/sdk/dist/src';
 import { StylableObject } from '../pointcloud-stylable-object-providers/StylableObject';
 import {
-  CombinedPointCloudObject,
+  PointCloudVolumeMetadata,
   PointCloudObject,
   PointCloudVolumeDataModelProperties,
   PointCloudObjectMetadata
@@ -31,8 +31,8 @@ export function isPointCloudObjectMetadata(
  * @param pointCloudObject - The object to check
  * @returns True if the object is of type PointCloudObjectMetadata, false otherwise
  */
-export function isCombinedPointCloudObjectMetadata(
-  pointCloudObject: CombinedPointCloudObject
+export function isPointCloudVolumeMetadata(
+  pointCloudObject: PointCloudVolumeMetadata
 ): pointCloudObject is PointCloudObjectMetadata {
   return (
     (pointCloudObject as PointCloudObjectMetadata).annotationId !== undefined &&
@@ -59,8 +59,8 @@ export function isPointCloudObjectDataModelProperties(
  * @param pointCloudObject - The object to check
  * @returns True if the object is of type PointCloudObjectDataModelProperties, false otherwise
  */
-export function isCombinedPointCloudObjectDataModelProperties(
-  pointCloudObject: CombinedPointCloudObject
+export function isPointCloudVolumeMetadataDataModelProperties(
+  pointCloudObject: PointCloudVolumeMetadata
 ): pointCloudObject is PointCloudVolumeDataModelProperties {
   return (pointCloudObject as PointCloudVolumeDataModelProperties).instanceRef !== undefined;
 }

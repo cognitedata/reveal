@@ -96,7 +96,7 @@ import {
 import { Image360ApiHelper } from '../../api-helpers/Image360ApiHelper';
 import html2canvas from 'html2canvas';
 import { AsyncSequencer, SequencerFunction } from '../../../../utilities/src/AsyncSequencer';
-import { getModelAndRevisionId } from '../../utilities/utils';
+import { getModelAndRevisionId, isAddDMModelOptions } from '../../utilities/utils';
 
 type Cognite3DViewerEvents =
   | 'click'
@@ -781,7 +781,13 @@ export class Cognite3DViewer {
         fetchDMModelIdFromRevisionId,
         this._cdfSdkClient
       );
-      const cadNode = await this._revealManagerHelper.addCadModel(options);
+
+      const addCadModelOptions = {
+        ...options,
+        modelId,
+        revisionId
+      };
+      const cadNode = await this._revealManagerHelper.addCadModel(addCadModelOptions);
 
       const model3d = new CogniteCadModel(modelId, revisionId, cadNode, nodesApiClient);
       await modelLoadSequencer(() => {
@@ -831,7 +837,17 @@ export class Cognite3DViewer {
         this._cdfSdkClient
       );
 
-      const pointCloudNode = await this._revealManagerHelper.addPointCloudModel(options);
+      const addPointCloudModelOptions = {
+        ...options,
+        modelId,
+        revisionId
+      };
+      const revisionSpace = isAddDMModelOptions(options) ? options.revisionSpace : undefined;
+
+      const pointCloudNode = await this._revealManagerHelper.addPointCloudModel(
+        addPointCloudModelOptions,
+        revisionSpace
+      );
       const model = new CognitePointCloudModel(modelId, revisionId, pointCloudNode);
 
       await modelLoadSequencer(() => {
@@ -1814,7 +1830,7 @@ export class Cognite3DViewer {
               distanceToCamera: result.distance,
               annotationId: result.annotationId,
               assetRef: result.assetRef,
-              instanceRef: result.instanceRef
+              volumeRef: result.volumeRef
             };
             intersections.push(intersection);
             break;

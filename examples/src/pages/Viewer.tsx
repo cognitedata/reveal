@@ -16,7 +16,7 @@ import {
   DefaultCameraManager,
   CogniteModel,
   AnnotationIdPointCloudObjectCollection,
-  DMInstanceRefPointCloudObjectCollection
+  PointCloudDMVolumeCollection
 } from '@cognite/reveal';
 import { DebugCameraTool, AxisGizmoTool } from '@cognite/reveal/tools';
 import * as reveal from '@cognite/reveal';
@@ -68,7 +68,7 @@ export function Viewer() {
       const overrideToken = urlParams.get('token');
 
       const cdfModel = urlParams.get('modelId') && urlParams.get('revisionId');
-      const dataModelId = urlParams.get('revisionExternalId') && urlParams.get('space');
+      const dataModelId = urlParams.get('revisionExternalId') && urlParams.get('revisionSpace');
       let modelUrl = urlParams.get('modelUrl');
       if (!modelUrl && !cdfModel && !dataModelId) {
         modelUrl = 'primitives';
@@ -450,14 +450,14 @@ export function Viewer() {
                   `Clicked point assigned to the object with annotationId: ${intersection.annotationId} and assetId: ${intersection?.assetRef?.id} at`,
                   point
                 );
-                if (intersection.annotationId !== 0 && intersection.annotationId !== -1) {
+                if (intersection.annotationId !== 0) {
                   pointCloudObjectsUi.updateSelectedAnnotation(intersection.annotationId);
                   model.removeAllStyledObjectCollections();
                   const selected = new AnnotationIdPointCloudObjectCollection([intersection.annotationId]);
                   model.assignStyledObjectCollection(selected, { color: new THREE.Color('red') });
-                } else if (intersection.instanceRef !== undefined) {
+                } else if (intersection.volumeRef !== undefined) {
                   model.removeAllStyledObjectCollections();
-                  const selected = new DMInstanceRefPointCloudObjectCollection([intersection.instanceRef]);
+                  const selected = new PointCloudDMVolumeCollection([intersection.volumeRef.volumeInstanceRef]);
                   model.assignStyledObjectCollection(selected, { color: new THREE.Color('red') });
                 } else {
                   const sphere = new THREE.Mesh(

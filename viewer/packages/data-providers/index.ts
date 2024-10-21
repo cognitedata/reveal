@@ -22,7 +22,7 @@ export { ModelDataProvider } from './src/ModelDataProvider';
 export {
   PointCloudObjectMetadata,
   PointCloudObject,
-  CombinedPointCloudObject,
+  PointCloudVolumeMetadata,
   DMInstanceRef,
   PointCloudVolumeDataModelProperties
 } from './src/pointcloud-stylable-object-providers/types';
@@ -50,6 +50,6 @@ export { fetchDMModelIdFromRevisionId } from './src/utilities/fetchDMModelIdFrom
 export {
   isPointCloudObjectMetadata,
   isPointCloudObjectDataModelProperties,
-  isCombinedPointCloudObjectMetadata,
-  isCombinedPointCloudObjectDataModelProperties
+  isPointCloudVolumeMetadata as isCombinedPointCloudObjectMetadata,
+  isPointCloudVolumeMetadataDataModelProperties as isCombinedPointCloudObjectDataModelProperties
 } from './src/utilities/utils';

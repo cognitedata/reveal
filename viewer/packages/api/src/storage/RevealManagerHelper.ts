@@ -3,7 +3,7 @@
  */
 import * as THREE from 'three';
 
-import { AddCdfModelOptions, AddModelOptions } from '../public/migration/types';
+import { AddModelOptions } from '../public/migration/types';
 import { createCdfRevealManager, createLocalRevealManager, createRevealManager } from '../public/createRevealManager';
 import { RevealManager } from '../public/RevealManager';
 import { RevealOptions } from '../public/RevealOptions';
@@ -14,7 +14,7 @@ import {
   DummyPointCloudStylableObjectProvider
 } from '@reveal/data-providers';
 import { DataSource } from '@reveal/data-source';
-import { SceneHandler } from '@reveal/utilities';
+import { assertNever, SceneHandler } from '@reveal/utilities';
 
 import { CadNode } from '@reveal/cad-model';
 import { CogniteClient } from '@cognite/sdk';
@@ -29,52 +29,33 @@ import { CameraManager } from '@reveal/camera-manager';
 export class RevealManagerHelper {
   private readonly _revealManager: RevealManager;
 
-  addCadModel: (model: AddCdfModelOptions) => Promise<CadNode>;
-  addPointCloudModel: (model: AddCdfModelOptions) => Promise<PointCloudNode>;
+  addCadModel: (model: AddModelOptions) => Promise<CadNode>;
+  addPointCloudModel: (model: AddModelOptions, revisionSpace?: string) => Promise<PointCloudNode>;
 
   private constructor(type: 'local', manager: RevealManager);
   private constructor(type: 'cdf', manager: RevealManager);
   private constructor(type: 'local' | 'cdf', manager: RevealManager) {
     this._revealManager = manager;
 
-    const addModel = async (
-      model: AddCdfModelOptions,
-      addModelFunction: (model: AddModelOptions, manager: RevealManager) => Promise<CadNode>
-    ) => {
-      return addModelFunction(model as AddModelOptions, manager);
-    };
-
-    const addPointCloudModel = async (
-      model: AddCdfModelOptions,
-      addPointCloudFunction: (
-        model: AddModelOptions,
-        manager: RevealManager,
-        dmSpace: string
-      ) => Promise<PointCloudNode>
-    ) => {
-      const dmSpace = 'space' in model ? model.space : '';
-      return addPointCloudFunction(model as AddModelOptions, manager, dmSpace);
-    };
-
-    const modelFunctions = {
-      cdf: {
-        addCadModel: (model: AddModelOptions, manager: RevealManager) =>
-          RevealManagerHelper.addCdfCadModel(model, manager),
-        addPointCloudModel: (model: AddModelOptions, manager: RevealManager, dmSpace: string) =>
-          RevealManagerHelper.addCdfPointCloudModel(model, manager, dmSpace)
-      },
-      local: {
-        addCadModel: (model: AddModelOptions, manager: RevealManager) =>
-          RevealManagerHelper.addLocalCadModel(model, manager),
-        addPointCloudModel: (model: AddModelOptions, manager: RevealManager) =>
-          RevealManagerHelper.addLocalPointCloudModel(model, manager)
-      }
-    };
-
-    const { addCadModel, addPointCloudModel: addPointCloudModelFunc } = modelFunctions[type];
-
-    this.addCadModel = (model: AddCdfModelOptions) => addModel(model, addCadModel);
-    this.addPointCloudModel = (model: AddCdfModelOptions) => addPointCloudModel(model, addPointCloudModelFunc);
+    switch (type) {
+      case 'cdf':
+        {
+          this.addCadModel = model => RevealManagerHelper.addCdfCadModel(model, manager);
+          this.addPointCloudModel = (model, revisionSpace) => {
+            return RevealManagerHelper.addCdfPointCloudModel(model, manager, revisionSpace ?? '');
+          };
+        }
+        break;
+      case 'local':
+        {
+          this.addCadModel = model => RevealManagerHelper.addLocalCadModel(model as AddModelOptions, manager);
+          this.addPointCloudModel = model =>
+            RevealManagerHelper.addLocalPointCloudModel(model as AddModelOptions, manager);
+        }
+        break;
+      default:
+        assertNever(type);
+    }
   }
 
   /**

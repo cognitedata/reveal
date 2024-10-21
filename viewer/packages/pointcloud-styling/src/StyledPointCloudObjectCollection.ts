@@ -2,7 +2,7 @@
  * Copyright 2022 Cognite AS
  */
 
-import { PointCloudObjectCollection } from './PointCloudObjectCollection';
+import { PointCloudAnnotationVolumeCollection } from './PointCloudObjectCollection';
 import { CompletePointCloudAppearance } from './PointCloudAppearance';
 
 /**
@@ -11,7 +11,7 @@ import { CompletePointCloudAppearance } from './PointCloudAppearance';
  */
 export class StyledPointCloudObjectCollection {
   constructor(
-    public objectCollection: PointCloudObjectCollection,
+    public objectCollection: PointCloudAnnotationVolumeCollection,
     public style: CompletePointCloudAppearance
   ) {}
 }

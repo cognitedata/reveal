@@ -74,9 +74,9 @@ export type PointCloudVolumeDataModelProperties = {
  * @public
  * Combined data model properties and metadata for a single point cloud object
  */
-export type CombinedPointCloudObject = PointCloudObjectMetadata | PointCloudVolumeDataModelProperties;
+export type PointCloudVolumeMetadata = PointCloudObjectMetadata | PointCloudVolumeDataModelProperties;
 
-export type PointCloudObject = CombinedPointCloudObject & {
+export type PointCloudObject = PointCloudVolumeMetadata & {
   stylableObject: StylableObject;
 };
 

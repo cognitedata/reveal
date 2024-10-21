@@ -23,8 +23,8 @@ export class ModelUi {
     modelId: number;
     revisionId: number;
     geometryFilter: { center: THREE.Vector3; size: THREE.Vector3; enabled: boolean };
-    externalId: string;
-    space: string;
+    revisionExternalId: string;
+    revisionSpace: string;
   };
 
   private readonly _geometryFilterGui: dat.GUI;
@@ -45,8 +45,8 @@ export class ModelUi {
         geometryFilter !== undefined
           ? { ...geometryFilter, enabled: true }
           : { center: new THREE.Vector3(), size: new THREE.Vector3(), enabled: false },
-      externalId: '',
-      space: ''
+      revisionExternalId: '',
+      revisionSpace: ''
     };
     const guiActions = {
       removeLastModel: () => {
@@ -60,8 +60,8 @@ export class ModelUi {
           geometryFilter: this._guiState.geometryFilter.enabled
             ? createGeometryFilterFromState(this._guiState.geometryFilter)
             : undefined,
-          revisionExternalId: this._guiState.externalId,
-          space: this._guiState.space
+          revisionExternalId: this._guiState.revisionExternalId,
+          revisionSpace: this._guiState.revisionSpace
         }),
       fitToModel: () => {
         const model = this._cadModels[0] || this._pointCloudModels[0];
@@ -74,8 +74,8 @@ export class ModelUi {
 
     modelGui.add(this._guiState, 'modelId').name('Model ID');
     modelGui.add(this._guiState, 'revisionId').name('Revision ID');
-    modelGui.add(this._guiState, 'externalId').name('External ID');
-    modelGui.add(this._guiState, 'space').name('Data Model Space');
+    modelGui.add(this._guiState, 'revisionExternalId').name('Revision External ID');
+    modelGui.add(this._guiState, 'revisionSpace').name('Revision Space');
     modelGui.add(guiActions, 'addModel').name('Load model');
     modelGui.add(guiActions, 'removeLastModel').name('Remove last model');
     modelGui.add(guiActions, 'fitToModel').name('Fit camera');
@@ -124,10 +124,10 @@ export class ModelUi {
   private async restoreModelsFromIds(urlParams: URLSearchParams) {
     const modelIdStr = urlParams.get('modelId');
     const revisionIdStr = urlParams.get('revisionId');
-    const space = urlParams.get('space');
+    const revisionSpace = urlParams.get('revisionSpace');
     const revisionExternalIdStr = urlParams.get('revisionExternalId');
     const modelUrl = urlParams.get('modelUrl');
-    if ((modelIdStr && revisionIdStr) || (space && revisionExternalIdStr)) {
+    if ((modelIdStr && revisionIdStr) || (revisionSpace && revisionExternalIdStr)) {
       const modelId = modelIdStr !== null ? Number.parseInt(modelIdStr, 10) : NaN;
       const revisionId = revisionIdStr !== null ? Number.parseInt(revisionIdStr, 10) : NaN;
       const revisionExternalId = revisionExternalIdStr ? revisionExternalIdStr : undefined;
@@ -136,7 +136,7 @@ export class ModelUi {
         revisionId,
         geometryFilter: createGeometryFilterFromState(this._guiState.geometryFilter),
         revisionExternalId: revisionExternalId,
-        space: space ?? undefined
+        revisionSpace: revisionSpace ?? undefined
       });
     } else if (modelUrl) {
       await this.addModel({
