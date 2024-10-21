@@ -30,13 +30,6 @@ export class SettingsCommand extends BaseSettingsCommand {
 
     this.add(new SetQualityCommand());
 
-    // Point clouds
-    this.add(new PointCloudDividerCommand());
-    this.add(new SetPointSizeCommand());
-    this.add(new SetPointColorTypeCommand());
-    this.add(new SetPointShapeCommand());
-    this.add(new PointCloudFilterCommand());
-
     if (includeNextRelease) {
       // 360 Images
       this.add(new Image360CollectionDividerCommand());
@@ -49,6 +42,12 @@ export class SettingsCommand extends BaseSettingsCommand {
       this.add(new Set360IconsOccludedVisibleCommand());
       this.add(new Set360IconsOpacityCommand());
     }
+    // Point clouds
+    this.add(new PointCloudDividerCommand());
+    this.add(new SetPointSizeCommand());
+    this.add(new SetPointColorTypeCommand());
+    this.add(new SetPointShapeCommand());
+    this.add(new PointCloudFilterCommand());
   }
 
   // ==================================================
