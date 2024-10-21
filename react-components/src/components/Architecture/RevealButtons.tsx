@@ -11,7 +11,7 @@ import { SetAxisVisibleCommand } from '../../architecture/concrete/axis/SetAxisV
 import { ClipTool } from '../../architecture/concrete/clipping/ClipTool';
 import { MeasurementTool } from '../../architecture/concrete/measurements/MeasurementTool';
 import { KeyboardSpeedCommand } from '../../architecture/base/concreteCommands/KeyboardSpeedCommand';
-import { ObservationsTool } from '../../architecture/concrete/observations/ObservationsTool';
+import { PointsOfInterestTool } from '../../architecture/concrete/pointsOfInterest/PointsOfInterestTool';
 import { createButtonFromCommandConstructor } from './CommandButtons';
 import { SettingsCommand } from '../../architecture/base/concreteCommands/SettingsCommand';
 import { PointCloudFilterCommand } from '../../architecture';
@@ -56,8 +56,8 @@ export class RevealButtons {
       () => new SetFlexibleControlsTypeCommand(FlexibleControlsType.FirstPerson)
     );
 
-  static Observations = (): ReactElement => {
-    return createButtonFromCommandConstructor(() => new ObservationsTool());
+  static PointsOfInterest = (): ReactElement => {
+    return createButtonFromCommandConstructor(() => new PointsOfInterestTool());
   };
 
   static KeyboardSpeed = (): ReactElement =>
