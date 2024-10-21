@@ -3,7 +3,7 @@
  */
 import { Color } from 'three';
 import { assertNever } from '../../../utilities/assertNever';
-import { ObservationStatus } from './types';
+import { PointsOfInterestStatus } from './types';
 
 export const DEFAULT_OVERLAY_COLOR = new Color('#3333AA');
 export const PENDING_OVERLAY_COLOR = new Color('#33AA33');
@@ -16,7 +16,7 @@ export function convertToSelectedColor(color: Color): Color {
   return new Color().setHSL(hsl.h, hsl.s, hsl.l);
 }
 
-export function getColorFromStatus(status: ObservationStatus, selected: boolean): Color {
+export function getColorFromStatus(status: PointsOfInterestStatus, selected: boolean): Color {
   const baseColor = getBaseColor(status);
 
   if (selected) {
@@ -25,13 +25,13 @@ export function getColorFromStatus(status: ObservationStatus, selected: boolean)
 
   return baseColor;
 
-  function getBaseColor(status: ObservationStatus): Color {
+  function getBaseColor(status: PointsOfInterestStatus): Color {
     switch (status) {
-      case ObservationStatus.Default:
+      case PointsOfInterestStatus.Default:
         return DEFAULT_OVERLAY_COLOR;
-      case ObservationStatus.PendingDeletion:
+      case PointsOfInterestStatus.PendingDeletion:
         return PENDING_DELETION_OVERLAY_COLOR;
-      case ObservationStatus.PendingCreation:
+      case PointsOfInterestStatus.PendingCreation:
         return PENDING_OVERLAY_COLOR;
       default:
         assertNever(status);

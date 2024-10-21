@@ -32,8 +32,13 @@ export class NavigationTool extends BaseTool {
     return { key: 'NAVIGATION', fallback: 'Navigation' };
   }
 
+  public override onHover(event: PointerEvent): void {
+    this.renderTarget.viewer.onHover360Images(event);
+  }
+
   public override async onClick(event: PointerEvent): Promise<void> {
-    await this.cameraManager.onClick(event);
+    if (!(await this.renderTarget.viewer.onClick360Images(event)))
+      await this.cameraManager.onClick(event);
   }
 
   public override async onDoubleClick(event: PointerEvent): Promise<void> {
