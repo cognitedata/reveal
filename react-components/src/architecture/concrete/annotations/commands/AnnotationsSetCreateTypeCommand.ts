@@ -33,9 +33,9 @@ export class AnnotationsSetCreateTypeCommand extends RenderTargetCommand {
       case PrimitiveType.Box:
         return 'Cube';
       case PrimitiveType.HorizontalCylinder:
-        return 'SplitViewHorizontal';
+        return 'CylinderHorizontal';
       case PrimitiveType.VerticalCylinder:
-        return 'SplitView';
+        return 'CylinderVertical';
       default:
         throw new Error('Unknown PrimitiveType');
     }

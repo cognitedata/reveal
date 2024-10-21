@@ -2,12 +2,12 @@
  * Copyright 2024 Cognite AS
  */
 
-import { type TranslateKey } from '../utilities/TranslateKey';
-import { BaseSliderCommand } from '../commands/BaseSliderCommand';
+import { type TranslateKey } from '../../utilities/TranslateKey';
+import { BaseSliderCommand } from '../../commands/BaseSliderCommand';
 
 const DEFAULT_POINT_SIZE = 2;
 const MIN_POINT_SIZE = 0.0;
-const MAX_POINT_SIZE = 4; // Default seems be be 2, but the user probably wants lower values
+const MAX_POINT_SIZE = 4;
 const STEP_POINT_SIZE = 0.1;
 
 export class SetPointSizeCommand extends BaseSliderCommand {

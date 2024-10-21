@@ -4,7 +4,7 @@
 import { type BaseCommand } from './BaseCommand';
 import { RenderTargetCommand } from './RenderTargetCommand';
 
-export class DividerCommand extends RenderTargetCommand {
+export class SectionCommand extends RenderTargetCommand {
   public override get isVisible(): boolean {
     return true;
   }
@@ -14,6 +14,6 @@ export class DividerCommand extends RenderTargetCommand {
   }
 
   protected override invokeCore(): boolean {
-    throw Error('invoke should never be called on a divider.');
+    throw Error('invoke should never be called on a section.');
   }
 }
