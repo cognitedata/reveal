@@ -38,18 +38,20 @@ export const useFetchTimeseriesFromRelationshipByAsset = ({
           ?.map((rel) => {
             if (rel.targetType === 'timeSeries' && rel.target !== undefined) {
               const newTimeseries: Timeseries = rel.target;
-              if (filter?.isStep === false && newTimeseries.isStep) return undefined;
+              if ((filter?.isStep === false || filter?.isStep === undefined) && newTimeseries.isStep) return undefined;
               return newTimeseries;
             }
             if (rel.sourceType === 'timeSeries' && rel.source !== undefined) {
               const newTimeseries: Timeseries = rel.source;
-              if (filter?.isStep === false && newTimeseries.isStep) return undefined;
+              if ((filter?.isStep === false || filter?.isStep === undefined) && newTimeseries.isStep) return undefined;
               return newTimeseries;
             }
             return undefined;
           })
           .filter((ts) => !isUndefined(ts));
         return timeseriesFromRelationshipFound;
+      } else {
+        return [];
       }
     }
   });
