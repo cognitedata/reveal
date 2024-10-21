@@ -48,6 +48,7 @@ import {
   ShapesIcon,
   SnowIcon,
   SunIcon,
+  SyncIcon,
   VectorLineIcon,
   VectorZigzagIcon,
   View360Icon
@@ -102,6 +103,7 @@ const defaultMappings: Array<[IconName, IconType]> = [
   ['Settings', SettingsIcon],
   ['Snow', SnowIcon],
   ['Sun', SunIcon],
+  ['Sync', SyncIcon],
   ['VectorLine', VectorLineIcon],
   ['VectorZigzag', VectorZigzagIcon],
   ['View360', View360Icon]
