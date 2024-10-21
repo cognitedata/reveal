@@ -68,7 +68,8 @@ export function createLocalRevealManager(
     renderer,
     sceneHandler,
     cameraManager,
-    revealOptions
+    revealOptions,
+    undefined
   );
 }
 
@@ -102,7 +103,8 @@ export function createCdfRevealManager(
     renderer,
     sceneHandler,
     cameraManager,
-    revealOptions
+    revealOptions,
+    client
   );
 }
 
@@ -119,6 +121,7 @@ export function createCdfRevealManager(
  * @param sceneHandler
  * @param cameraManager
  * @param revealOptions
+ * @param client
  */
 export function createRevealManager(
   project: string,
@@ -130,7 +133,8 @@ export function createRevealManager(
   renderer: THREE.WebGLRenderer,
   sceneHandler: SceneHandler,
   cameraManager: CameraManager,
-  revealOptions: RevealOptions = {}
+  revealOptions: RevealOptions = {},
+  client: CogniteClient | undefined
 ): RevealManager {
   MetricsLogger.init(revealOptions.logMetrics !== false, project, applicationId, {
     constructorOptions: revealOptions
@@ -169,7 +173,8 @@ export function createRevealManager(
     pipelineExecutor,
     defaultRenderPipeline,
     resizeHandler,
-    cameraManager
+    cameraManager,
+    client
   );
 }
 

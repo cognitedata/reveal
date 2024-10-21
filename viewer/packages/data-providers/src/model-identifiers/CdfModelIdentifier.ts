@@ -12,11 +12,13 @@ export class CdfModelIdentifier implements ModelIdentifier {
 
   readonly modelId: number;
   readonly revisionId: number;
+  readonly space: string | undefined;
 
-  constructor(modelId: number, revisionId: number) {
+  constructor(modelId: number, revisionId: number, space?: string) {
     this.revealInternalId = Symbol(`${modelId}/${revisionId}`);
     this.modelId = modelId;
     this.revisionId = revisionId;
+    this.space = space;
   }
 
   public toString(): string {

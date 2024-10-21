@@ -4,7 +4,7 @@
 
 import { CogniteClient } from '@cognite/sdk';
 
-import { Mock } from 'moq.ts';
+import { It, Mock } from 'moq.ts';
 import { CompositeShape, Cylinder, Box } from '@reveal/utilities';
 import { CdfPointCloudStylableObjectProvider } from './CdfPointCloudStylableObjectProvider';
 import { CdfModelIdentifier } from '../model-identifiers/CdfModelIdentifier';
@@ -27,6 +27,10 @@ const dummyAnnotationsResponse = {
 };
 
 const sdkMock = new Mock<CogniteClient>()
+  .setup(instance => instance.post(It.IsAny(), It.IsAny()))
+  .returns(Promise.resolve({ data: {}, status: 200, headers: {} }))
+  .setup(instance => instance.getBaseUrl())
+  .returns('https://example.com')
   .setup(p => p.annotations)
   .returns(
     new Mock<CogniteClient['annotations']>()
@@ -51,7 +55,7 @@ describe(CdfPointCloudStylableObjectProvider.name, () => {
     const expectedIds = [123, 124];
 
     const gottenIds = (await annotationProvider.getPointCloudObjects(new CdfModelIdentifier(123, 456))).map(
-      obj => obj.annotationId
+      (obj: any) => obj.annotationId
     );
 
     expect(gottenIds.length).toEqual(expectedIds.length);

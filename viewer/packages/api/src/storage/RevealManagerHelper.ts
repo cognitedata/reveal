@@ -30,23 +30,27 @@ export class RevealManagerHelper {
   private readonly _revealManager: RevealManager;
 
   addCadModel: (model: AddModelOptions) => Promise<CadNode>;
-  addPointCloudModel: (model: AddModelOptions) => Promise<PointCloudNode>;
+  addPointCloudModel: (model: AddModelOptions, revisionSpace?: string) => Promise<PointCloudNode>;
 
   private constructor(type: 'local', manager: RevealManager);
   private constructor(type: 'cdf', manager: RevealManager);
   private constructor(type: 'local' | 'cdf', manager: RevealManager) {
     this._revealManager = manager;
+
     switch (type) {
       case 'cdf':
         {
           this.addCadModel = model => RevealManagerHelper.addCdfCadModel(model, manager);
-          this.addPointCloudModel = model => RevealManagerHelper.addCdfPointCloudModel(model, manager);
+          this.addPointCloudModel = (model, revisionSpace) => {
+            return RevealManagerHelper.addCdfPointCloudModel(model, manager, revisionSpace ?? '');
+          };
         }
         break;
       case 'local':
         {
-          this.addCadModel = model => RevealManagerHelper.addLocalCadModel(model, manager);
-          this.addPointCloudModel = model => RevealManagerHelper.addLocalPointCloudModel(model, manager);
+          this.addCadModel = model => RevealManagerHelper.addLocalCadModel(model as AddModelOptions, manager);
+          this.addPointCloudModel = model =>
+            RevealManagerHelper.addLocalPointCloudModel(model as AddModelOptions, manager);
         }
         break;
       default:
@@ -96,7 +100,8 @@ export class RevealManagerHelper {
     sceneHandler: SceneHandler,
     cameraManager: CameraManager,
     revealOptions: RevealOptions,
-    dataSource: DataSource
+    dataSource: DataSource,
+    client: CogniteClient | undefined
   ): RevealManagerHelper {
     const revealManager = createRevealManager(
       'custom-datasource',
@@ -108,7 +113,8 @@ export class RevealManagerHelper {
       renderer,
       sceneHandler,
       cameraManager,
-      revealOptions
+      revealOptions,
+      client
     );
     // Note! We consider custom data sources 'CDF-type' as we use CDF model identifiers
     // for custom data sources too.
@@ -161,11 +167,15 @@ export class RevealManagerHelper {
    * @param model
    * @param revealManager
    */
-  private static addCdfPointCloudModel(model: AddModelOptions, revealManager: RevealManager): Promise<PointCloudNode> {
+  private static addCdfPointCloudModel(
+    model: AddModelOptions,
+    revealManager: RevealManager,
+    dmSpace: string
+  ): Promise<PointCloudNode> {
     if (model.modelId === -1 || model.revisionId === -1) {
       throw new Error('addCdfPointCloudModel only works with CDF hosted models');
     }
-    const modelIdentifier = new CdfModelIdentifier(model.modelId, model.revisionId);
+    const modelIdentifier = new CdfModelIdentifier(model.modelId, model.revisionId, dmSpace);
     return revealManager.addModel('pointcloud', modelIdentifier);
   }
 }

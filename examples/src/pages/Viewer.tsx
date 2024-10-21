@@ -15,7 +15,8 @@ import {
   CameraControlsOptions,
   DefaultCameraManager,
   CogniteModel,
-  AnnotationIdPointCloudObjectCollection
+  AnnotationIdPointCloudObjectCollection,
+  PointCloudDMVolumeCollection
 } from '@cognite/reveal';
 import { DebugCameraTool, AxisGizmoTool } from '@cognite/reveal/tools';
 import * as reveal from '@cognite/reveal';
@@ -67,8 +68,9 @@ export function Viewer() {
       const overrideToken = urlParams.get('token');
 
       const cdfModel = urlParams.get('modelId') && urlParams.get('revisionId');
+      const dataModelId = urlParams.get('revisionExternalId') && urlParams.get('revisionSpace');
       let modelUrl = urlParams.get('modelUrl');
-      if (!modelUrl && !cdfModel) {
+      if (!modelUrl && !cdfModel && !dataModelId) {
         modelUrl = 'primitives';
         url.searchParams.set('modelUrl', modelUrl);
         window.history.pushState({}, '', url.toString());
@@ -452,6 +454,10 @@ export function Viewer() {
                   pointCloudObjectsUi.updateSelectedAnnotation(intersection.annotationId);
                   model.removeAllStyledObjectCollections();
                   const selected = new AnnotationIdPointCloudObjectCollection([intersection.annotationId]);
+                  model.assignStyledObjectCollection(selected, { color: new THREE.Color('red') });
+                } else if (intersection.volumeRef !== undefined) {
+                  model.removeAllStyledObjectCollections();
+                  const selected = new PointCloudDMVolumeCollection([intersection.volumeRef.volumeInstanceRef]);
                   model.assignStyledObjectCollection(selected, { color: new THREE.Color('red') });
                 } else {
                   const sphere = new THREE.Mesh(

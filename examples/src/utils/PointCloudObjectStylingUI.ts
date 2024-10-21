@@ -9,6 +9,8 @@ import {
   AnnotationIdPointCloudObjectCollection,
   PointCloudAppearance,
   DefaultPointCloudAppearance,
+  isCombinedPointCloudObjectDataModelProperties,
+  PointCloudDMVolumeCollection,
   PointCloudObjectMetadata
 } from '@cognite/reveal';
 import { AnnotationModel, AnnotationsBoundingVolume, AnnotationType, CogniteClient } from '@cognite/sdk';
@@ -78,11 +80,24 @@ export class PointCloudObjectStylingUI {
             Math.floor(Math.random() * 255),
             Math.floor(Math.random() * 255)
           );
-
-          const stylableObject = new AnnotationIdPointCloudObjectCollection([object.annotationId]);
+          const annotationId = object.annotationId;
+          const stylableObject = new AnnotationIdPointCloudObjectCollection([annotationId]);
           model.assignStyledObjectCollection(stylableObject, {
             color: objectStyle
           });
+        });
+        model.stylableObjects.forEach(object => {
+          const objectStyle = new THREE.Color(
+            Math.floor(Math.random() * 255),
+            Math.floor(Math.random() * 255),
+            Math.floor(Math.random() * 255)
+          );
+          if (isCombinedPointCloudObjectDataModelProperties(object)) {
+            const stylableObject = new PointCloudDMVolumeCollection([object.instanceRef]);
+            model.assignStyledObjectCollection(stylableObject, {
+              color: objectStyle
+            });
+          }
         });
       }
     };
@@ -154,6 +169,12 @@ export class PointCloudObjectStylingUI {
       this._model.traverseStylableObjects(object => {
         const box = new THREE.Box3Helper(object.boundingBox);
         this._boundingBoxGroup!.add(box);
+      });
+      this._model.stylableObjects.forEach(object => {
+        if (isCombinedPointCloudObjectDataModelProperties(object)) {
+          const box = new THREE.Box3Helper(object.boundingBox);
+          this._boundingBoxGroup!.add(box);
+        }
       });
       this._viewer.addObject3D(this._boundingBoxGroup);
     } else {

@@ -8,6 +8,7 @@ import { EventTrigger } from '@reveal/utilities';
 
 /**
  * Base class for collections of point cloud objects intended for styling operations
+ * @deprecated Use {@link PointCloudAnnotationVolumeCollection} instead
  */
 export abstract class PointCloudObjectCollection {
   private readonly _changedEvent = new EventTrigger<() => void>();
@@ -39,3 +40,8 @@ export abstract class PointCloudObjectCollection {
     this._changedEvent.fire();
   }
 }
+
+/**
+ * Alias for PointCloudObjectCollection
+ */
+export abstract class PointCloudAnnotationVolumeCollection extends PointCloudObjectCollection {}
