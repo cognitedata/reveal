@@ -40,6 +40,7 @@ export const DropdownButton = ({
     []
   );
 
+  // @update-ui-component-pattern
   const [isOpen, setOpen] = useState<boolean>(false);
   const [isEnabled, setEnabled] = useState<boolean>(true);
   const [isVisible, setVisible] = useState<boolean>(true);
@@ -58,6 +59,7 @@ export const DropdownButton = ({
       command.removeEventListener(update);
     };
   }, [command]);
+  // @end
 
   return usedInSettings ? (
     <MenuItemWithDropdown command={command} isVisible={isVisible} />
