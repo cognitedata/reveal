@@ -86,7 +86,6 @@ const defaultMappings: Array<[IconName, IconType]> = [
   ['Flag', FlagIcon],
   ['FlipHorizontal', FlipHorizontalIcon],
   ['FlipVertical', FlipVerticalIcon],
-  ['FrameTool', FrameToolIcon],
   ['Grab', GrabIcon],
   ['Location', LocationIcon],
   ['Perspective', PerspectiveIcon],
