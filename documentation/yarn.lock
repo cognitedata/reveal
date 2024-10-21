@@ -216,12 +216,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@azure/msal-browser@npm:3.25.0":
-  version: 3.25.0
-  resolution: "@azure/msal-browser@npm:3.25.0"
+"@azure/msal-browser@npm:3.26.1":
+  version: 3.26.1
+  resolution: "@azure/msal-browser@npm:3.26.1"
   dependencies:
     "@azure/msal-common": 14.15.0
-  checksum: 8cb55cc86236814dd280e9b0ae2c1eac46af4af3bc27d85ba163db3c5b6c5f0acef6c26accdf14fa62b6a695033e5b1715bda8310f68670d33789122249faf73
+  checksum: 70ebea1abc4bc6b0e5a250f865cffd24a1aeb615a35e7b572dad11369d486a7aeb4af60048c5f6a5bc3627fad65dbdc8c118f16086cb3f9cc03931699b08f4f7
   languageName: node
   linkType: hard
 
@@ -1869,7 +1869,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@cognite/reveal-documentation@workspace:."
   dependencies:
-    "@azure/msal-browser": 3.25.0
+    "@azure/msal-browser": 3.26.1
     "@codemirror/lang-javascript": 6.2.2
     "@docusaurus/core": 3.5.2
     "@docusaurus/preset-classic": 3.5.2
@@ -1887,10 +1887,10 @@ __metadata:
     replace: 1.2.2
     rimraf: 6.0.1
     styled-components: 6.1.13
-    typedoc: 0.26.8
+    typedoc: 0.26.10
     typedoc-plugin-markdown: 4.2.9
     typedoc-plugin-no-inherit: 1.4.0
-    typescript: 5.6.2
+    typescript: 5.6.3
   languageName: unknown
   linkType: soft
 
@@ -13307,9 +13307,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"typedoc@npm:0.26.8":
-  version: 0.26.8
-  resolution: "typedoc@npm:0.26.8"
+"typedoc@npm:0.26.10":
+  version: 0.26.10
+  resolution: "typedoc@npm:0.26.10"
   dependencies:
     lunr: ^2.3.9
     markdown-it: ^14.1.0
@@ -13320,27 +13320,27 @@ __metadata:
     typescript: 4.6.x || 4.7.x || 4.8.x || 4.9.x || 5.0.x || 5.1.x || 5.2.x || 5.3.x || 5.4.x || 5.5.x || 5.6.x
   bin:
     typedoc: bin/typedoc
-  checksum: fe2a49591a2713c6c1bf9978c711ef125a158f6619301bea91627425a3cc063a65a089a536bf8a5d84520e2af8dda0ce832cb3ed3ecf0c8dca3a1b41bdf31639
+  checksum: c356c96b12c6e3c1a7bc61e07ffab6d3e5ae80407f2e47da743202ab81f9c24345a399177f5eeb06b294480a216d5629eef480b4329cb8ab653b4e338930b957
   languageName: node
   linkType: hard
 
-"typescript@npm:5.6.2":
-  version: 5.6.2
-  resolution: "typescript@npm:5.6.2"
+"typescript@npm:5.6.3":
+  version: 5.6.3
+  resolution: "typescript@npm:5.6.3"
   bin:
     tsc: bin/tsc
     tsserver: bin/tsserver
-  checksum: 48777e1dabd9044519f56cd012b0296e3b72bafe12b7e8e34222751d45c67e0eba5387ecdaa6c14a53871a29361127798df6dc8d1d35643a0a47cb0b1c65a33a
+  checksum: ba302f8822777ebefb28b554105f3e074466b671e7444ec6b75dadc008a62f46f373d9e57ceced1c433756d06c8b7dc569a7eefdf3a9573122a49205ff99021a
   languageName: node
   linkType: hard
 
-"typescript@patch:typescript@5.6.2#~builtin<compat/typescript>":
-  version: 5.6.2
-  resolution: "typescript@patch:typescript@npm%3A5.6.2#~builtin<compat/typescript>::version=5.6.2&hash=7ad353"
+"typescript@patch:typescript@5.6.3#~builtin<compat/typescript>":
+  version: 5.6.3
+  resolution: "typescript@patch:typescript@npm%3A5.6.3#~builtin<compat/typescript>::version=5.6.3&hash=7ad353"
   bin:
     tsc: bin/tsc
     tsserver: bin/tsserver
-  checksum: c084ee1ab865f108c787e6233a5f63c126c482c0c8e87ec998ac5288a2ad54b603e1ea8b8b272355823b833eb31b9fabb99e8c6152283e1cb47e3a76bd6faf6c
+  checksum: ade87bce2363ee963eed0e4ca8a312ea02c81873ebd53609bc3f6dc0a57f6e61ad7e3fb8cbb7f7ab8b5081cbee801b023f7c4823ee70b1c447eae050e6c7622b
   languageName: node
   linkType: hard
 

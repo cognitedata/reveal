@@ -155,5 +155,5 @@
   "files": [
     "dist"
   ],
-  "packageManager": "yarn@4.5.0"
+  "packageManager": "yarn@4.5.1"
 }

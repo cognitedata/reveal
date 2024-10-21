@@ -16,11 +16,11 @@ __metadata:
   linkType: hard
 
 "@azure/msal-browser@npm:^3.13.0":
-  version: 3.25.0
-  resolution: "@azure/msal-browser@npm:3.25.0"
+  version: 3.26.1
+  resolution: "@azure/msal-browser@npm:3.26.1"
   dependencies:
     "@azure/msal-common": "npm:14.15.0"
-  checksum: 10/2499440811d4fddead38cd026d9fdecb420b2fcf73a77390214fde25f0299c63f3cdabcba2b40c344006b14c4c6572e405a8a8e95a54d51b6dfda2794283abd2
+  checksum: 10/69e28e598d9cead3650bc9e4adf42322da75ef10766fabf78369591d1b4b843fa7918f031ab2b7c936b68a017f1d36cf473043c9eadb8ea90ed132cc5cfd159c
   languageName: node
   linkType: hard
 
@@ -531,14 +531,14 @@ __metadata:
   linkType: hard
 
 "@cognite/sdk@npm:^9.12.0":
-  version: 9.15.7
-  resolution: "@cognite/sdk@npm:9.15.7"
+  version: 9.16.0
+  resolution: "@cognite/sdk@npm:9.16.0"
   dependencies:
     "@cognite/sdk-core": "npm:^4.10.6"
     "@types/geojson": "npm:^7946.0.8"
     geojson: "npm:^0.5.0"
     lodash: "npm:^4.17.11"
-  checksum: 10/3e1856f9e7780c08dc306a248a28ffc1e2573919546fb6ed504ac058b2a1f921840678840ad049873e9a0c8857635e38b97f5fe305287a05ae6c70322ec24f5c
+  checksum: 10/3538dbe7575735fb88bb4e1486520861e0fcd95d7300a06bde799909b4c74507bed900eabbfe8427ad20bebedf05784ea148e4ccc4b8749e95bd147a6e38641a
   languageName: node
   linkType: hard
 
@@ -1049,8 +1049,8 @@ __metadata:
   linkType: hard
 
 "@microsoft/api-extractor@npm:^7.43.1":
-  version: 7.47.9
-  resolution: "@microsoft/api-extractor@npm:7.47.9"
+  version: 7.47.11
+  resolution: "@microsoft/api-extractor@npm:7.47.11"
   dependencies:
     "@microsoft/api-extractor-model": "npm:7.29.8"
     "@microsoft/tsdoc": "npm:~0.15.0"
@@ -1058,7 +1058,7 @@ __metadata:
     "@rushstack/node-core-library": "npm:5.9.0"
     "@rushstack/rig-package": "npm:0.5.3"
     "@rushstack/terminal": "npm:0.14.2"
-    "@rushstack/ts-command-line": "npm:4.22.8"
+    "@rushstack/ts-command-line": "npm:4.23.0"
     lodash: "npm:~4.17.15"
     minimatch: "npm:~3.0.3"
     resolve: "npm:~1.22.1"
@@ -1067,7 +1067,7 @@ __metadata:
     typescript: "npm:5.4.2"
   bin:
     api-extractor: bin/api-extractor
-  checksum: 10/1814708284ed95a45969060f794b24b21a5a5e17aa88ec95099a8fc052d5c435523f465f60c4128288e210a39ff056a564fb2b8f291959ef0fc3d7423759f837
+  checksum: 10/692f8b53c403e358af0878220c8eec1c8ca381ccd79578433977b8bcc35a7d76b160ec80d13ca76e1b4abbcff88611bce637af270a5515d6be59fd3b08a821a0
   languageName: node
   linkType: hard
 
@@ -1469,15 +1469,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@rushstack/ts-command-line@npm:4.22.8":
-  version: 4.22.8
-  resolution: "@rushstack/ts-command-line@npm:4.22.8"
+"@rushstack/ts-command-line@npm:4.23.0":
+  version: 4.23.0
+  resolution: "@rushstack/ts-command-line@npm:4.23.0"
   dependencies:
     "@rushstack/terminal": "npm:0.14.2"
     "@types/argparse": "npm:1.0.38"
     argparse: "npm:~1.0.9"
     string-argv: "npm:~0.3.1"
-  checksum: 10/f4d57a50b320f382929471258aaab6f38251a4febac981a503ae5217faec6fff68374d0126af59554d2f4a99e0ac67596649109fcc57608ef144b132de83cb63
+  checksum: 10/94ca2c85c7781e7c0b9542eec055359ef1e64e1ed1721ce11e28d65fab25974048519492afa261cd244db798bac505f758497dae2e55c2fc891f2f908e172ce9
   languageName: node
   linkType: hard
 
@@ -1896,9 +1896,9 @@ __metadata:
   linkType: hard
 
 "@types/lodash@npm:^4.17.0":
-  version: 4.17.10
-  resolution: "@types/lodash@npm:4.17.10"
-  checksum: 10/10fe24a93adc6048cb23e4135c1ed1d52cc39033682e6513f4f51b74a9af6d7a24fbea92203c22dc4e01e35f1ab3aa0fd0a2b487e8a4a2bbdf1fc05970094066
+  version: 4.17.12
+  resolution: "@types/lodash@npm:4.17.12"
+  checksum: 10/3d829f97c0ea713135e6eb48e983feffb315f4cf228d03654ca8a328e3fecd03005bf7dd30bf411f4306967c610d96738d441588283a41456815f2ce1fd7044c
   languageName: node
   linkType: hard
 
@@ -1917,9 +1917,9 @@ __metadata:
   linkType: hard
 
 "@types/mixpanel-browser@npm:^2.49.0":
-  version: 2.50.0
-  resolution: "@types/mixpanel-browser@npm:2.50.0"
-  checksum: 10/754cd7fc5c3e9e49c18a6d77e660b5ba6837253765e52671fa9640ff2a4121fc95688a36166d763d8e9aeba07ea278ba678e19775a5fe80c7b2e89424339e3cf
+  version: 2.50.1
+  resolution: "@types/mixpanel-browser@npm:2.50.1"
+  checksum: 10/2cfe8902a6ca78c34e27a54e20e90d639a4e2cf75e0747375b83ad446e0c3f64e6969793444b04266bbd0ee7e1f7ab009288c4edf1cef03dfa4c121228d23593
   languageName: node
   linkType: hard
 
@@ -1933,20 +1933,20 @@ __metadata:
   linkType: hard
 
 "@types/node@npm:*":
-  version: 22.7.4
-  resolution: "@types/node@npm:22.7.4"
+  version: 22.7.7
+  resolution: "@types/node@npm:22.7.7"
   dependencies:
     undici-types: "npm:~6.19.2"
-  checksum: 10/19ddab80c4eba2253c855ed67c9bbc47417183049d01e59010a738bd80d47338bab79fd1f44ae51516bd63a1db4bf21ddb38b16bf6401a2e93252068ec52e88b
+  checksum: 10/ada6c5f850fa09621e21923d7b17c3f3b5264c3b39c0953006f4a8b0b3d4b6d77ac02e2bbf8bae1d493abf81668804624470d895dd4483875fde8382b6eb7933
   languageName: node
   linkType: hard
 
 "@types/node@npm:^20.12.7":
-  version: 20.16.10
-  resolution: "@types/node@npm:20.16.10"
+  version: 20.16.13
+  resolution: "@types/node@npm:20.16.13"
   dependencies:
     undici-types: "npm:~6.19.2"
-  checksum: 10/f0832d16fed07737c2c3edd6cb6414a22e8379173e56e701ab8890b8798c8f9bc37337332631818f813ff7f8c0e168e9900e8f44cdfd2406d15150289c813acc
+  checksum: 10/6e7b82119372cc12d28fcc1b0c10d1b8fa560bbb500f87a4c68bc446a0986d42c92e0f583040167841a0c598131979c3399b17c736c9fb8ba4f0dcf2b2048a84
   languageName: node
   linkType: hard
 
@@ -4648,10 +4648,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"expect-puppeteer@npm:^10.1.1":
-  version: 10.1.1
-  resolution: "expect-puppeteer@npm:10.1.1"
-  checksum: 10/1e44c1f06f9113fed8ce51abf945975055d058917f496c0e3f38719507d0a981c85cca8f146f43d709cd8c4b0bb0c018ad87bed4a3840067368a3d9b8401ab91
+"expect-puppeteer@npm:^10.1.2":
+  version: 10.1.2
+  resolution: "expect-puppeteer@npm:10.1.2"
+  checksum: 10/281fd4228de6e9708520a68040704fa8c691b71b8e120a7b6dc445b3fcc6fb4fd12f62bde5d7d21b37086540a4af898f1fbf2211829fd594274708a90c12fc43
   languageName: node
   linkType: hard
 
@@ -5688,8 +5688,8 @@ __metadata:
   linkType: hard
 
 "html-webpack-plugin@npm:^5.6.0":
-  version: 5.6.0
-  resolution: "html-webpack-plugin@npm:5.6.0"
+  version: 5.6.2
+  resolution: "html-webpack-plugin@npm:5.6.2"
   dependencies:
     "@types/html-minifier-terser": "npm:^6.0.0"
     html-minifier-terser: "npm:^6.0.2"
@@ -5704,7 +5704,7 @@ __metadata:
       optional: true
     webpack:
       optional: true
-  checksum: 10/d651f3a88a7c932c72c6a30f0fdd610b49a864a69f1ddb34562c750f1602ea471e27fd8fc32c01adadd484b38fa6b74f055d1ccce26e5f8fcf814ee0d398a121
+  checksum: 10/ab04cd2ac138a9c2b4b9cbe347704d59ea94c54ee279c9e16aeb5d432813bc44a6b0539acebe3a1eddb87f79dbe1f8e2b365faef2624a88457ffcac4122a85ba
   languageName: node
   linkType: hard
 
@@ -6545,16 +6545,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"jest-environment-puppeteer@npm:^10.1.1":
-  version: 10.1.1
-  resolution: "jest-environment-puppeteer@npm:10.1.1"
+"jest-environment-puppeteer@npm:^10.1.2":
+  version: 10.1.2
+  resolution: "jest-environment-puppeteer@npm:10.1.2"
   dependencies:
     chalk: "npm:^4.1.2"
     cosmiconfig: "npm:^8.3.6"
     deepmerge: "npm:^4.3.1"
     jest-dev-server: "npm:^10.1.1"
     jest-environment-node: "npm:^29.7.0"
-  checksum: 10/ebb398290aa3457ce2c1d99f75ae848297ca782c0f5434c5dfcdf306caaecbf5312f0d73d1ff4c555853b28cd2c8a29d2c6ae21b1ae59ffaf665d9ed91eefbcf
+  checksum: 10/3d318700bfc603c90ffe9bf42a8d84604d14fe40ee4a969ae20a6e7a862dc66912f5ee690f201f09d963e269a2cbb6aca5befd1a911b7f36c405536d38f39c97
   languageName: node
   linkType: hard
 
@@ -6714,14 +6714,14 @@ __metadata:
   linkType: hard
 
 "jest-puppeteer@npm:^10.0.1":
-  version: 10.1.1
-  resolution: "jest-puppeteer@npm:10.1.1"
+  version: 10.1.2
+  resolution: "jest-puppeteer@npm:10.1.2"
   dependencies:
-    expect-puppeteer: "npm:^10.1.1"
-    jest-environment-puppeteer: "npm:^10.1.1"
+    expect-puppeteer: "npm:^10.1.2"
+    jest-environment-puppeteer: "npm:^10.1.2"
   peerDependencies:
     puppeteer: ">=19"
-  checksum: 10/996e2e5ef4e4ebe2e4a102204ceb33e82d4c7f66a0c98d5273cdec9358f13bea50cb5be7589f435bbb94a726268927aa379d6bc929d77203acd2fe69aa533169
+  checksum: 10/318685059bf23fd452883f09d45bdd7b3ce7515452f47998bde1d6fa757d17abb8b406835d211aea14d43d73f6b3b532faa89407dfd15edfc27ca6d3a633dd40
   languageName: node
   linkType: hard
 
@@ -10186,12 +10186,12 @@ __metadata:
   linkType: hard
 
 "typescript@npm:^5.4.5":
-  version: 5.6.2
-  resolution: "typescript@npm:5.6.2"
+  version: 5.6.3
+  resolution: "typescript@npm:5.6.3"
   bin:
     tsc: bin/tsc
     tsserver: bin/tsserver
-  checksum: 10/f95365d4898f357823e93d334ecda9fcade54f009b397c7d05b7621cd9e865981033cf89ccde0f3e3a7b73b1fdbae18e92bc77db237b43e912f053fef0f9a53b
+  checksum: 10/c328e418e124b500908781d9f7b9b93cf08b66bf5936d94332b463822eea2f4e62973bfb3b8a745fdc038785cb66cf59d1092bac3ec2ac6a3e5854687f7833f1
   languageName: node
   linkType: hard
 
@@ -10206,12 +10206,12 @@ __metadata:
   linkType: hard
 
 "typescript@patch:typescript@npm%3A^5.4.5#optional!builtin<compat/typescript>":
-  version: 5.6.2
-  resolution: "typescript@patch:typescript@npm%3A5.6.2#optional!builtin<compat/typescript>::version=5.6.2&hash=8c6c40"
+  version: 5.6.3
+  resolution: "typescript@patch:typescript@npm%3A5.6.3#optional!builtin<compat/typescript>::version=5.6.3&hash=8c6c40"
   bin:
     tsc: bin/tsc
     tsserver: bin/tsserver
-  checksum: 10/8bfc7ca0d9feca4c3fcbd6c70741abfcd714197d6448e68225ae71e462447d904d3bfba49759a8fbe4956d87f054e2d346833c8349c222daa594a2626d4e1be8
+  checksum: 10/00504c01ee42d470c23495426af07512e25e6546bce7e24572e72a9ca2e6b2e9bea63de4286c3cfea644874da1467dcfca23f4f98f7caf20f8b03c0213bb6837
   languageName: node
   linkType: hard
 
