@@ -26,15 +26,19 @@ import { getTimeseriesByIds } from '../hooks/network/getTimeseriesByIds';
 import { isDefined } from '../utilities/isDefined';
 import { getAssetsByIds } from '../hooks/network/getAssetsByIds';
 import { getTimeseriesLatestDatapoints } from '../hooks/network/getTimeseriesLatestDatapoints';
+import { chunk, uniqBy } from 'lodash';
+import { executeParallel } from '../utilities/executeParallel';
+
+const FETCH_RELATIONSHIP_CHUNK = 1000;
 
 type Props = {
   timeseriesExternalIds: CogniteExternalId[];
-  contextualizedAssetNodes: Asset[];
+  assetNodes: Asset[];
 };
 
 export function useAssetsAndTimeseriesLinkageDataQuery({
   timeseriesExternalIds,
-  contextualizedAssetNodes
+  assetNodes
 }: Props): UseQueryResult<AssetIdsAndTimeseriesData, unknown> {
   const sdk = useSDK();
 
@@ -64,7 +68,7 @@ export function useAssetsAndTimeseriesLinkageDataQuery({
         timeseries
           ?.map((timeseries) => {
             return getAssetIdsFromTimeseries(
-              contextualizedAssetNodes,
+              assetNodes,
               timeseries,
               assetAndTimeseriesIdsFromRelationship
             );
@@ -72,8 +76,10 @@ export function useAssetsAndTimeseriesLinkageDataQuery({
           .flat()
           .filter(isDefined) ?? [];
 
+      const uniqueAssetIds = uniqBy(assetIdsFound, 'externalId');
+
       const assetFromTimeseries =
-        assetIdsFound.length > 0 ? await getAssetsByIds(sdk, assetIdsFound) : [];
+        assetIdsFound.length > 0 ? await getAssetsByIds(sdk, uniqueAssetIds) : [];
 
       const assetIdsWithTimeseries =
         timeseries
@@ -102,13 +108,23 @@ const getLinkFromRelationships = async (
   timeseriesExternalIds: string[],
   relationshipResourceTypes: RelationshipResourceType[]
 ): Promise<AssetAndTimeseriesIds[]> => {
-  const dataRelationship = await getRelationships(sdk, {
-    resourceExternalIds: timeseriesExternalIds,
-    relationshipResourceTypes
-  });
+  const timeseriesChunks = chunk(timeseriesExternalIds, FETCH_RELATIONSHIP_CHUNK);
+
+  const dataRelationship = await executeParallel(
+    timeseriesChunks.map(
+      (timeseriesIds) => async () =>
+        await getRelationships(sdk, {
+          resourceExternalIds: timeseriesIds,
+          relationshipResourceTypes
+        })
+    ),
+    2
+  );
+
+  const cleanDataRelationship = dataRelationship.filter(isDefined).flat();
 
   const assetAndTimeseriesIdsFromRelationship =
-    dataRelationship?.map((item) => {
+    cleanDataRelationship?.map((item) => {
       const assetAndTimeseriesIds: AssetAndTimeseriesIds = {
         assetIds: { externalId: '' },
         timeseriesIds: { externalId: '' }
