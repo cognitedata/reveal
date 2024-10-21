@@ -22,13 +22,13 @@ export function getIconByPrimitiveType(primitiveType: PrimitiveType): IconName {
     case PrimitiveType.PlaneXY:
       return 'Perspective';
     case PrimitiveType.HorizontalArea:
-      return 'FrameTool'; // TODO: Change to 'PerspectiveAlt' when new version of Cogs
+      return 'PerspectiveAlt';
     case PrimitiveType.VerticalArea:
       return 'Perspective';
     case PrimitiveType.Box:
       return 'Cube';
     case PrimitiveType.Cylinder:
-      return 'DataSource';
+      return 'CylinderArbitrary';
     case PrimitiveType.None:
       return 'Edit';
     default:
