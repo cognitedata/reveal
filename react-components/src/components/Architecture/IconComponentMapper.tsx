@@ -30,7 +30,6 @@ import {
   FlagIcon,
   FlipHorizontalIcon,
   FlipVerticalIcon,
-  FrameToolIcon,
   GrabIcon,
   type IconProps,
   LocationIcon,

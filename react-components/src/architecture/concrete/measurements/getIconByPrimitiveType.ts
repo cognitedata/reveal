@@ -29,9 +29,13 @@ export function getIconByPrimitiveType(primitiveType: PrimitiveType): IconName {
       return 'Cube';
     case PrimitiveType.Cylinder:
       return 'CylinderArbitrary';
+    case PrimitiveType.VerticalCylinder:
+      return 'CylinderVertical';
+    case PrimitiveType.HorizontalCylinder:
+      return 'CylinderHorizontal';
     case PrimitiveType.None:
       return 'Edit';
     default:
-      throw new Error('Unrecognized PrimitiveType ' + primitiveType);
+      throw new Error('Unrecognized PrimitiveType');
   }
 }
