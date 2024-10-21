@@ -2,15 +2,8 @@
  * Copyright 2024 Cognite AS
  */
 
-import {
-  type MouseEvent,
-  useCallback,
-  useEffect,
-  useMemo,
-  useState,
-  type ReactElement
-} from 'react';
-import { Button, Tooltip as CogsTooltip, Slider } from '@cognite/cogs.js';
+import { useCallback, useEffect, useMemo, useState, type ReactElement } from 'react';
+import { Button, Tooltip as CogsTooltip, Slider, Switch } from '@cognite/cogs.js';
 import { Menu } from '@cognite/cogs-lab';
 import { useTranslation } from '../i18n/I18n';
 import { type BaseCommand } from '../../architecture/base/commands/BaseCommand';
@@ -38,6 +31,7 @@ import { IconComponent } from './IconComponentMapper';
 import { TOOLBAR_HORIZONTAL_PANEL_OFFSET } from '../constants';
 
 import { offset } from '@floating-ui/dom';
+import { DividerCommand } from '../../architecture/base/commands/DividerCommand';
 
 export const SettingsButton = ({
   inputCommand,
@@ -101,7 +95,7 @@ export const SettingsButton = ({
       renderTrigger={(props: any) => (
         <CogsTooltip
           content={<LabelWithShortcut label={label} command={command} />}
-          disabled={label === undefined}
+          disabled={isOpen || label === undefined}
           appendTo={document.body}
           placement={placement}>
           <Button
@@ -113,15 +107,10 @@ export const SettingsButton = ({
             aria-label={label}
             iconPlacement="left"
             {...props}
-            onClick={(event: MouseEvent<HTMLElement>) => {
-              props.onClick?.(event);
-              event.stopPropagation();
-              event.preventDefault();
-            }}
           />
         </CogsTooltip>
       )}>
-      {children.map((child, _index): ReactElement | undefined => {
+      {children.map((child): ReactElement | undefined => {
         return createMenuItem(child, t);
       })}
     </Menu>
@@ -133,15 +122,25 @@ function createMenuItem(command: BaseCommand, t: TranslateDelegate): ReactElemen
     return createSlider(command, t);
   }
   if (command instanceof BaseOptionCommand) {
-    return createDropdownButton(command, t);
+    return createDropdownButton(command);
   }
   if (command instanceof BaseFilterCommand) {
-    return createFilterButton(command, t);
+    return createFilterButton(command);
   }
   if (command.isToggle) {
     return createToggle(command, t);
   }
+  if (command instanceof DividerCommand) {
+    return createDivider(command);
+  }
   return createButton(command, t);
+}
+
+function createDivider(command: BaseCommand): ReactElement | undefined {
+  if (!command.isVisible) {
+    return <></>;
+  }
+  return <Menu.Divider key={command.uniqueId} />;
 }
 
 function createToggle(command: BaseCommand, t: TranslateDelegate): ReactElement {
@@ -149,18 +148,17 @@ function createToggle(command: BaseCommand, t: TranslateDelegate): ReactElement 
   if (!command.isVisible) {
     return <></>;
   }
+
+  const label = command.getLabel(t);
   return (
-    <Menu.ItemToggled
+    <Menu.ItemAction
       key={command.uniqueId}
-      hasSwitch={true}
-      disabled={!command.isEnabled}
-      toggled={isChecked}
-      style={{ padding: DEFAULT_PADDING }}
-      label={command.getLabel(t)}
+      label={label}
       onClick={() => {
         command.invoke();
         setChecked(command.isChecked);
       }}
+      trailingContent={<Switch checked={isChecked} disabled={!command.isEnabled} />}
     />
   );
 }
@@ -179,12 +177,13 @@ function createButton(command: BaseCommand, t: TranslateDelegate): ReactElement 
       icon={<IconComponent iconName={getIcon(command)} />}
       iconPlacement="left"
       style={{ padding: DEFAULT_PADDING }}
+      shortcutKeys={command.getShortCutKeys()}
+      label={label}
       onClick={() => {
         command.invoke();
         setChecked(command.isChecked);
-      }}>
-      <LabelWithShortcut label={label} command={command} inverted={false} />
-    </Menu.ItemAction>
+      }}
+    />
   );
 }
 
@@ -195,7 +194,7 @@ function createSlider(command: BaseSliderCommand, t: TranslateDelegate): ReactEl
     return <></>;
   }
   return (
-    <SliderDiv>
+    <SliderDiv key={command.uniqueId}>
       <label>{command.getLabel(t)}</label>
       <StyledSlider
         disabled={!command.isEnabled}
@@ -206,59 +205,54 @@ function createSlider(command: BaseSliderCommand, t: TranslateDelegate): ReactEl
           command.value = value;
           setValue(value);
         }}
-        value={value}></StyledSlider>
+        value={value}
+      />
     </SliderDiv>
   );
 }
 
-function createDropdownButton(command: BaseOptionCommand, t: TranslateDelegate): ReactElement {
+function createDropdownButton(command: BaseOptionCommand): ReactElement {
   if (!command.isVisible) {
     return <></>;
   }
   return (
-    <OptionDiv>
-      <label>{command.getLabel(t)}</label>
-      <DropdownButton inputCommand={command} isHorizontal={false} usedInSettings={true} />
-    </OptionDiv>
+    <DropdownButton
+      key={command.uniqueId}
+      inputCommand={command}
+      isHorizontal={false}
+      usedInSettings={true}
+    />
   );
 }
 
-function createFilterButton(command: BaseFilterCommand, t: TranslateDelegate): ReactElement {
+function createFilterButton(command: BaseFilterCommand): ReactElement {
   command.initializeChildrenIfNeeded();
   if (!command.isVisible) {
     return <></>;
   }
   return (
-    <OptionDiv>
-      <label>{command.getLabel(t)}</label>
-      <FilterButton inputCommand={command} isHorizontal={false} usedInSettings={true} />
-    </OptionDiv>
+    <FilterButton
+      key={command.uniqueId}
+      inputCommand={command}
+      isHorizontal={false}
+      usedInSettings={true}
+    />
   );
 }
 
-const OptionDiv = styled.div`
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  justify-content: space-between;
-  gap: 8px;
-  padding: 4px 4px;
-  font-size: 14px;
-`;
-
 const SliderDiv = styled.div`
   display: flex;
-  flex-direction: row;
-  align-items: center;
+  flex-direction: column;
+  align-items: start;
   justify-content: space-between;
   gap: 8px;
-  padding: 4px 4px;
+  padding: 4px 8px;
   font-size: 14px;
 `;
 
 const StyledSlider = styled(Slider)`
   offset-anchor: right top;
-  float: right;
-  display: inline;
-  width: 120px;
+  float: center;
+  display: flex;
+  justify-content: space-around;
 `;

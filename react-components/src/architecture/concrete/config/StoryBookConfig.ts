@@ -17,7 +17,6 @@ import { ToggleMetricUnitsCommand } from '../../base/concreteCommands/ToggleMetr
 import { MeasurementTool } from '../measurements/MeasurementTool';
 import { ClipTool } from '../clipping/ClipTool';
 import { KeyboardSpeedCommand } from '../../base/concreteCommands/KeyboardSpeedCommand';
-import { ObservationsTool } from '../observations/ObservationsTool';
 import { SettingsCommand } from '../../base/concreteCommands/SettingsCommand';
 import { MockSettingsCommand } from '../../base/commands/mocks/MockSettingsCommand';
 import { MockFilterCommand } from '../../base/commands/mocks/MockFilterCommand';
@@ -28,6 +27,8 @@ import { AnnotationsCreateTool } from '../annotations/commands/AnnotationsCreate
 import { AnnotationsShowCommand } from '../annotations/commands/AnnotationsShowCommand';
 import { AnnotationsShowOnTopCommand } from '../annotations/commands/AnnotationsShowOnTopCommand';
 import { AnnotationsSelectTool } from '../annotations/commands/AnnotationsSelectTool';
+import { type DmsUniqueIdentifier } from '../../../data-providers';
+import { PointsOfInterestTool } from '../pointsOfInterest/PointsOfInterestTool';
 
 export class StoryBookConfig extends BaseRevealConfig {
   // ==================================================
@@ -55,7 +56,7 @@ export class StoryBookConfig extends BaseRevealConfig {
       undefined,
       new MeasurementTool(),
       new ClipTool(),
-      new ObservationsTool(),
+      new PointsOfInterestTool<DmsUniqueIdentifier>(),
       undefined,
       new AnnotationsSelectTool(),
       new AnnotationsCreateTool(),

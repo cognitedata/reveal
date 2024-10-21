@@ -389,7 +389,7 @@ export function Viewer() {
       const pointCloudUi = new PointCloudUi(viewer, gui.addFolder('Point clouds'));
       await modelUi.restoreModelsFromUrl();
       const image360Ui = new Image360UI(viewer, gui.addFolder('360 Images'));
-      new Image360StylingUI(image360Ui, gui.addFolder('360 annotation styling'));
+      new Image360StylingUI(viewer, gui.addFolder('360 annotation styling'));
 
       const controlsGui = gui.addFolder('Camera controls');
       const mouseWheelActionTypes = ['zoomToCursor', 'zoomPastCursor', 'zoomToTarget'];
