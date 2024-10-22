@@ -25,12 +25,12 @@ export class SettingsCommand extends BaseSettingsCommand {
   // CONSTRUCTOR
   // ==================================================
 
-  public constructor(includeNextRelease: boolean = true) {
+  public constructor(include360Images: boolean = true) {
     super();
 
     this.add(new SetQualityCommand());
 
-    if (includeNextRelease) {
+    if (include360Images) {
       // 360 Images
       this.add(new Image360CollectionDividerCommand());
       this.add(new Set360ImagesSectionCommand());
