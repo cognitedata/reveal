@@ -226,7 +226,7 @@ function createToggle(command: BaseCommand, t: TranslateDelegate): ReactElement 
         command.invoke();
         setChecked(command.isChecked);
       }}
-      trailingContent={<Switch checked={isChecked} disabled={!command.isEnabled} />}
+      trailingContent={<Switch checked={isChecked} disabled={!isEnabled} />}
     />
   );
 }
