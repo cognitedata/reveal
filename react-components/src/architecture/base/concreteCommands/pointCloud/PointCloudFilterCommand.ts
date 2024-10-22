@@ -3,10 +3,10 @@
  */
 
 import { type CognitePointCloudModel, type WellKnownAsprsPointClassCodes } from '@cognite/reveal';
-import { type TranslateKey } from '../utilities/TranslateKey';
+import { type TranslateKey } from '../../utilities/TranslateKey';
 import { type Color } from 'three';
-import { BaseFilterCommand, BaseFilterItemCommand } from '../commands/BaseFilterCommand';
-import { type RevealRenderTarget } from '../renderTarget/RevealRenderTarget';
+import { BaseFilterCommand, BaseFilterItemCommand } from '../../commands/BaseFilterCommand';
+import { type RevealRenderTarget } from '../../renderTarget/RevealRenderTarget';
 
 export class PointCloudFilterCommand extends BaseFilterCommand {
   // ==================================================
