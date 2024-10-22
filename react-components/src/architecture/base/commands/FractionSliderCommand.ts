@@ -6,7 +6,7 @@ import { BaseSliderCommand } from './BaseSliderCommand';
 
 const MIN_VALUE = 0;
 const MAX_VALUE = 1;
-const STEP_VALUE = 1;
+const STEP_VALUE = 0.02;
 export abstract class FractionSliderCommand extends BaseSliderCommand {
   // ==================================================
   // CONSTRUCTOR
