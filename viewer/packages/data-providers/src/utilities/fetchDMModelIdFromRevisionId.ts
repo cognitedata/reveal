@@ -42,8 +42,12 @@ export async function fetchDMModelIdFromRevisionId(
 }
 
 function extractNumericId(externalId: string): number | null {
-  const match = externalId.match(/\d+$/);
-  return match ? parseInt(match[0], 10) : null;
+  const lastUnderscoreIndex = externalId.lastIndexOf('_');
+  if (lastUnderscoreIndex === -1) {
+    return null;
+  }
+  const numericPart = externalId.slice(lastUnderscoreIndex + 1);
+  return numericPart.length > 0 && !isNaN(Number(numericPart)) ? parseInt(numericPart, 10) : null;
 }
 
 function getModelIdQuery(revisionExternalId: string, space: string) {
