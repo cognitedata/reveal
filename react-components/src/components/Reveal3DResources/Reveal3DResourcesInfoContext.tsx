@@ -9,8 +9,8 @@ import {
   useState,
   type ReactNode,
   useMemo,
-  Dispatch,
-  SetStateAction,
+  type Dispatch,
+  type SetStateAction,
   useEffect
 } from 'react';
 
@@ -54,7 +54,9 @@ export const useThisAsExpectedResourceLoad = (): void => {
   const element = useInfoElementOfContext();
   useEffect(() => {
     element.setReveal3DResourcesExpectedToLoad((prev) => prev + 1);
-    return () => element.setReveal3DResourcesExpectedToLoad((prev) => prev - 1);
+    return () => {
+      element.setReveal3DResourcesExpectedToLoad((prev) => prev - 1);
+    };
   }, []);
 };
 
