@@ -42,6 +42,7 @@ import {
 import { MetricsLogger } from '@reveal/metrics';
 import debounce from 'lodash/debounce';
 import { Image360WithCollection } from '../public/types';
+import { DEFAULT_IMAGE_360_OPACITY } from '@reveal/360-images/src/entity/Image360VisualizationBox';
 
 export class Image360ApiHelper {
   private readonly _image360Facade: Image360Facade<Metadata | Image360DataModelIdentifier>;
@@ -273,6 +274,9 @@ export class Image360ApiHelper {
 
     image360Entity.icon.setVisible(false);
     image360Entity.image360Visualization.visible = true;
+
+    const currentOpacity = this.getImageOpacity();
+
     this._image360Facade.allIconCullingScheme = 'proximity';
 
     // Only do transition if we are switching between entities.
@@ -292,12 +296,12 @@ export class Image360ApiHelper {
         if (flexibleCameraManager) {
           await Promise.all([
             moveCameraPositionTo(flexibleCameraManager, position, transitionDuration),
-            this.tweenVisualizationAlpha(image360Entity, 0, 1, transitionDuration)
+            this.tweenVisualizationAlpha(image360Entity, 0, currentOpacity, transitionDuration)
           ]);
         } else if (this._stationaryCameraManager) {
           await Promise.all([
             this._stationaryCameraManager.moveTo(position, transitionDuration),
-            this.tweenVisualizationAlpha(image360Entity, 0, 1, transitionDuration)
+            this.tweenVisualizationAlpha(image360Entity, 0, currentOpacity, transitionDuration)
           ]);
         }
         image360Entity.activateAnnotations();
@@ -592,6 +596,13 @@ export class Image360ApiHelper {
       lastEntered.image360Visualization.opacity = currentOpacity;
     }
     this.exit360Image();
+  }
+
+  private getImageOpacity(): number {
+    for (const image360Collection of this._image360Facade.collections) {
+      return image360Collection.getImagesOpacity();
+    }
+    return DEFAULT_IMAGE_360_OPACITY;
   }
 }
 
