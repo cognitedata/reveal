@@ -365,15 +365,13 @@ export const CDF_TO_VIEWER_TRANSFORMATION: Matrix4;
 
 // @public
 export class CdfModelIdentifier implements ModelIdentifier {
-    constructor(modelId: number, revisionId: number, space?: string);
+    constructor(modelId: number, revisionId: number);
     // (undocumented)
     readonly modelId: number;
     // (undocumented)
     readonly revealInternalId: symbol;
     // (undocumented)
     readonly revisionId: number;
-    // (undocumented)
-    readonly space: string | undefined;
     // (undocumented)
     toString(): string;
 }
@@ -614,7 +612,6 @@ export type CogniteModel = CogniteCadModel | CognitePointCloudModel;
 // @public
 export class CognitePointCloudModel {
     assignStyledObjectCollection(objectCollection: PointCloudAnnotationVolumeCollection | PointCloudDMVolumeCollection, appearance: PointCloudAppearance): void;
-    get combinedStyledCollections(): StyledPointCloudVolumeCollection[];
     dispose(): void;
     getCameraConfiguration(): CameraConfiguration | undefined;
     getCdfToDefaultModelTransformation(out?: THREE.Matrix4): THREE.Matrix4;
@@ -652,6 +649,7 @@ export class CognitePointCloudModel {
     get stylableObjectCount(): number;
     get stylableObjects(): PointCloudVolumeMetadata[];
     get styledCollections(): StyledPointCloudAnnotationVolumeCollection[];
+    get styledPointCloudVolumeCollections(): StyledPointCloudVolumeCollection[];
     traverseStylableObjects(callback: (annotationMetadata: PointCloudObjectMetadata) => void): void;
     // (undocumented)
     readonly type: SupportedModelTypes;
@@ -1754,8 +1752,8 @@ export type PointCloudObjectMetadata = {
 
 // @public
 export type PointCloudVolumeDataModelProperties = {
-    instanceRef: DMInstanceRef;
-    assetRef?: AnnotationsAssetRef;
+    volumeRef: DMInstanceRef;
+    assetRef?: DMInstanceRef;
     boundingBox: Box3;
 };
 
