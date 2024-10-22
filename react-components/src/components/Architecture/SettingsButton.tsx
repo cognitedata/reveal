@@ -32,6 +32,7 @@ import { TOOLBAR_HORIZONTAL_PANEL_OFFSET } from '../constants';
 
 import { offset } from '@floating-ui/dom';
 import { DividerCommand } from '../../architecture/base/commands/DividerCommand';
+import { SectionCommand } from '../../architecture/base/commands/SectionCommand';
 
 export const SettingsButton = ({
   inputCommand,
@@ -131,6 +132,9 @@ function createMenuItem(command: BaseCommand, t: TranslateDelegate): ReactElemen
   if (command instanceof DividerCommand) {
     return createDivider(command);
   }
+  if (command instanceof SectionCommand) {
+    return createSection(command, t);
+  }
   return createButton(command, t);
 }
 
@@ -139,6 +143,14 @@ function createDivider(command: BaseCommand): ReactElement | undefined {
     return <></>;
   }
   return <Menu.Divider key={command.uniqueId} />;
+}
+
+function createSection(command: BaseCommand, t: TranslateDelegate): ReactElement | undefined {
+  if (!command.isVisible) {
+    return <></>;
+  }
+  const label = command.getLabel(t);
+  return <Menu.Section key={command.uniqueId} label={label} />;
 }
 
 function createToggle(command: BaseCommand, t: TranslateDelegate): ReactElement {
@@ -191,9 +203,10 @@ function createSlider(command: BaseSliderCommand, t: TranslateDelegate): ReactEl
   if (!command.isVisible) {
     return <></>;
   }
+  const label = command.getLabel(t) + ': ' + command.getValueLabel();
   return (
     <SliderDiv key={command.uniqueId}>
-      <label>{command.getLabel(t)}</label>
+      <label>{label}</label>
       <StyledSlider
         disabled={!command.isEnabled}
         min={command.min}
