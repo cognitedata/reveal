@@ -136,6 +136,9 @@ export abstract class BaseCommand {
   }
 
   public dispose(): void {
+    for (const child of this.getChildren()) {
+      child.dispose();
+    }
     this.removeEventListeners();
   }
 
