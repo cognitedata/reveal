@@ -11,7 +11,7 @@ import {
   DefaultPointCloudAppearance,
   PointCloudDMVolumeCollection,
   isDMPointCloudDataType,
-  isClassicPointCloudDataType,
+  isClassicPointCloudDataType
 } from '@cognite/reveal';
 import { AnnotationModel, AnnotationsBoundingVolume, AnnotationType, CogniteClient } from '@cognite/sdk';
 
