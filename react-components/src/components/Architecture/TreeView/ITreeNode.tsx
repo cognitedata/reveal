@@ -12,7 +12,7 @@ export enum CheckBoxState {
 }
 
 export type TreeNodeAction = (node: ITreeNode) => void;
-export type LoadChildrenAction = (node: ITreeNode) => ITreeNode[] | undefined;
+export type LoadNodesAction = (node: ITreeNode, loadChildren: boolean) => ITreeNode[] | undefined;
 export type IconColor = string | undefined;
 
 export type ITreeNode = {
@@ -26,16 +26,21 @@ export type ITreeNode = {
   get isExpanded(): boolean;
   set isExpanded(value: boolean);
   get checkBoxState(): CheckBoxState; // Return CheckBoxState.Hidden of no checkbox
-  get isLoadingChildren(): boolean;
-  set isLoadingChildren(value: boolean);
+
   get needLoadChildren(): boolean;
   set needLoadChildren(value: boolean);
   get needLoadSiblings(): boolean;
   set needLoadSiblings(value: boolean);
+  get isLoadingChildren(): boolean;
+  set isLoadingChildren(value: boolean);
+  get isLoadingSiblings(): boolean;
+  set isLoadingSiblings(value: boolean);
+
   get isLeaf(): boolean;
 
-  getChildren: (loadChildren?: LoadChildrenAction) => Generator<ITreeNode>;
+  getChildren: (loadNodes?: LoadNodesAction) => Generator<ITreeNode>;
 
+  loadSiblings: (loadNodes: LoadNodesAction) => Promise<void>;
   addTreeNodeListener: (listener: TreeNodeAction) => void;
   removeTreeNodeListener: (listener: TreeNodeAction) => void;
 };

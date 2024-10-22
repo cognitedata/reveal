@@ -46,7 +46,7 @@ export const Main: Story = {
           root={root}
           onSelect={onNodeSelect}
           onCheck={onNodeCheck}
-          loadChildren={loadChildren}
+          loadNodes={loadChildren}
           hasCheckboxes
           hasIcons
         />

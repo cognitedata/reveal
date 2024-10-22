@@ -2,14 +2,14 @@
  * Copyright 2023 Cognite AS
  */
 
-import { remove } from '../../../architecture/base/utilities/extensions/arrayExtensions';
+import { insertAt, remove } from '../../../architecture/base/utilities/extensions/arrayExtensions';
 import { type IconName } from '../../../architecture/base/utilities/IconName';
 import {
   type ITreeNode,
   CheckBoxState,
   type TreeNodeAction,
   type IconColor,
-  type LoadChildrenAction
+  type LoadNodesAction
 } from './ITreeNode';
 
 export class TreeNode implements ITreeNode {
@@ -26,6 +26,7 @@ export class TreeNode implements ITreeNode {
   private _isEnabled: boolean = true;
   private _hasBoldLabel: boolean = false;
   private _isLoadingChildren: boolean = false;
+  private _isLoadingSiblings: boolean = false;
   private _needLoadChildren = false;
   private _needLoadSiblings = false;
 
@@ -40,7 +41,7 @@ export class TreeNode implements ITreeNode {
   // INSTANCE PROPERTIES
   // ==================================================
 
-  public get children(): TreeNode[] | undefined {
+  public get children(): ITreeNode[] | undefined {
     return this._children;
   }
 
@@ -143,6 +144,17 @@ export class TreeNode implements ITreeNode {
     }
   }
 
+  public get isLoadingSiblings(): boolean {
+    return this._isLoadingSiblings;
+  }
+
+  public set isLoadingSiblings(value: boolean) {
+    if (this._isLoadingSiblings !== value) {
+      this._isLoadingSiblings = value;
+      this.update();
+    }
+  }
+
   public get isLeaf(): boolean {
     if (this.needLoadChildren) {
       return false;
@@ -185,12 +197,12 @@ export class TreeNode implements ITreeNode {
     child._parent = this;
   }
 
-  protected async loadChildren(loadChildren: LoadChildrenAction): Promise<void> {
+  protected async loadChildren(loadNodes: LoadNodesAction): Promise<void> {
     this.isLoadingChildren = true;
     const checkBoxState = this.checkBoxState;
     await new Promise(() =>
       setTimeout(() => {
-        const children = loadChildren(this);
+        const children = loadNodes(this, true);
         if (children === undefined || children.length === 0) {
           this.isLoadingChildren = false;
           return;
@@ -212,17 +224,52 @@ export class TreeNode implements ITreeNode {
     );
   }
 
+  public async loadSiblings(loadNodes: LoadNodesAction): Promise<void> {
+    this.isLoadingSiblings = true;
+    const checkBoxState = this.checkBoxState;
+    await new Promise(() =>
+      setTimeout(() => {
+        const siblings = loadNodes(this, false);
+        if (siblings === undefined || siblings.length === 0) {
+          this.isLoadingSiblings = false;
+          return;
+        }
+        if (this._parent === undefined || this._parent._children === undefined) {
+          this.isLoadingSiblings = false;
+          return;
+        }
+        const children = this._parent._children;
+        let index = children.indexOf(this);
+        if (index === undefined || index < 0) {
+          this.isLoadingSiblings = false;
+          return;
+        }
+
+        for (const child of siblings) {
+          if (!(child instanceof TreeNode)) {
+            continue;
+          }
+          child.checkBoxState = checkBoxState;
+          index++;
+          insertAt(children, index, child);
+        }
+        this.isLoadingSiblings = false;
+        this.needLoadSiblings = false;
+      }, 2000)
+    );
+  }
+
   // ==================================================
   // INSTANCE METHODS: Iterators
   // ==================================================
 
-  public *getChildren(loadChildren?: LoadChildrenAction): Generator<TreeNode> {
+  public *getChildren(loadNodes?: LoadNodesAction): Generator<TreeNode> {
     if (this.isLoadingChildren) {
-      loadChildren = undefined;
+      loadNodes = undefined;
     }
     const isLeftOrRoot = this.isLeaf || this._parent === undefined;
-    if (!isLeftOrRoot && loadChildren !== undefined && this.needLoadChildren) {
-      void this.loadChildren(loadChildren);
+    if (!isLeftOrRoot && loadNodes !== undefined && this.needLoadChildren) {
+      void this.loadChildren(loadNodes);
     }
     if (this._children === undefined) {
       return;

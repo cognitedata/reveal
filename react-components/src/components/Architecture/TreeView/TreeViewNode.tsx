@@ -11,7 +11,7 @@ import {
   type TreeNodeAction,
   type ITreeNode,
   type IconColor,
-  type LoadChildrenAction
+  type LoadNodesAction
 } from './ITreeNode';
 import { IconComponentMapper } from '../IconComponentMapper';
 import { type TreeViewProps } from './TreeViewProps';
@@ -56,7 +56,7 @@ export const TreeViewNode = ({
   const [_isExpanded, setExpanded] = useState(false);
   const [_checkBoxState, setCheckBoxState] = useState<CheckBoxState>();
   const [_isLoadingChildren, setLoadingChildren] = useState(false);
-  const [needLoadChildren, setNeedLoadChildren] = useState(false);
+  const [isLoadingSiblings, setLoadingSiblings] = useState(false);
   const [needLoadSiblings, setNeedLoadSiblings] = useState(false);
   const [hoverOverTextOrIcon, setHoverOverTextOrIcon] = useState(false);
 
@@ -71,8 +71,8 @@ export const TreeViewNode = ({
       setExpanded(node.isExpanded);
       setCheckBoxState(node.checkBoxState);
       setLoadingChildren(node.isLoadingChildren);
-      setNeedLoadChildren(node.needLoadChildren && node.numberOfChildren > 0);
-      setNeedLoadSiblings(node.needLoadSiblings && node.numberOfChildren > 0);
+      setLoadingSiblings(node.isLoadingSiblings);
+      setNeedLoadSiblings(node.needLoadSiblings);
     },
     [node]
   );
@@ -86,7 +86,7 @@ export const TreeViewNode = ({
   // @end
 
   // Props
-  const children = getChildrenAsArray(node, props.loadChildren);
+  const children = getChildrenAsArray(node, props.loadNodes);
   const backgroundColor = getBackgroundColor(node, hoverOverTextOrIcon);
   const color = getTextColor(node, hoverOverTextOrIcon);
   const gapBetweenItems = (props.gapBetweenItems ?? GAP_BETWEEN_ITEMS) + 'px';
@@ -132,24 +132,19 @@ export const TreeViewNode = ({
         children.map((node, index) => (
           <TreeViewNode node={node} key={index} level={level + 1} props={props} />
         ))}
-      {needLoadSiblings && (
-        <Button
-          style={{
-            gap: gapBetweenItems,
-            marginTop: gapBetweenItems,
-            marginLeft: (level + 1) * 2 * gapToChildren + 'px'
-          }}
-          onClick={() => {
-            onLoadMore(node);
-          }}>
-          {'Load more ...'}
-        </Button>
+
+      {!isLoadingSiblings && needLoadSiblings && (
+        <LoadMoreButton node={node} onClick={onLoadMore} level={level} props={props} />
       )}
+      {isLoadingSiblings && <LoadingMoreLabel level={level} props={props} />}
     </div>
   );
 
   function onLoadMore(node: ITreeNode): void {
-    node.isLoadingChildren = true;
+    if (props.loadNodes === undefined) {
+      return;
+    }
+    void node.loadSiblings(props.loadNodes);
   }
 
   function onHoverOverTextOrIcon(node: ITreeNode, value: boolean, hasHover: boolean): void {
@@ -300,16 +295,64 @@ const TreeNodeIcon = ({
   if (!node.isSelected && node.iconColor !== undefined) {
     color = node.iconColor;
   }
-  const Icon =
-    node.isLoadingChildren && node.numberOfChildren === 0
-      ? LoaderIcon
-      : IconComponentMapper.getIcon(node.icon);
+  const Icon = node.isLoadingChildren ? LoaderIcon : IconComponentMapper.getIcon(node.icon);
   return <Icon style={{ color, marginTop: '3px' }} />;
 };
 
+const LoadMoreButton = ({
+  node,
+  onClick,
+  level,
+  props
+}: {
+  node: ITreeNode;
+  onClick: TreeNodeAction;
+  level: number;
+  props: TreeViewProps;
+}): ReactElement => {
+  const gapBetweenItems = (props.gapBetweenItems ?? GAP_BETWEEN_ITEMS) + 'px';
+  const gapToChildren = props.gapToChildren ?? GAP_TO_CHILDREN;
+  return (
+    <Button
+      style={{
+        gap: gapBetweenItems,
+        padding: '4px',
+        marginTop: gapBetweenItems,
+        marginLeft: (level + 1) * gapToChildren + 'px'
+      }}
+      onClick={() => {
+        onClick(node);
+      }}>
+      {'Load more ...'}
+    </Button>
+  );
+};
+
+const LoadingMoreLabel = ({
+  level,
+  props
+}: {
+  level: number;
+  props: TreeViewProps;
+}): ReactElement => {
+  const label = 'Loading ...';
+  const gapBetweenItems = (props.gapBetweenItems ?? GAP_BETWEEN_ITEMS) + 'px';
+  const gapToChildren = props.gapToChildren ?? GAP_TO_CHILDREN;
+  return (
+    <div
+      style={{
+        gap: gapBetweenItems,
+        marginTop: gapBetweenItems,
+        marginLeft: (level + 1) * gapToChildren + 'px'
+      }}>
+      <LoaderIcon style={{ marginTop: '3px', marginRight: '5px' }} />
+      <span>{label}</span>
+    </div>
+  );
+};
+
 const TreeViewLabel = ({ node }: { node: ITreeNode }): ReactElement => {
-  const label =
-    node.isLoadingChildren && node.numberOfChildren === 0 ? 'Loading children ...' : node.label;
+  const label = node.isLoadingChildren ? 'Loading children ...' : node.label;
   if (node.hasBoldLabel) {
     return <b>{label}</b>;
   }
@@ -318,7 +361,7 @@ const TreeViewLabel = ({ node }: { node: ITreeNode }): ReactElement => {
 
 export function getChildrenAsArray(
   node: ITreeNode,
-  loadChildren: LoadChildrenAction | undefined,
+  loadChildren: LoadNodesAction | undefined,
   useExpanded = true
 ): ITreeNode[] | undefined {
   if (useExpanded && !node.isExpanded) {

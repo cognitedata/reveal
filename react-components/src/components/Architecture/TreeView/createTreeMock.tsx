@@ -50,12 +50,11 @@ export function loadChildren(parent: ITreeNode): TreeNode[] | undefined {
   if (!(parent instanceof TreeNode)) {
     return undefined;
   }
-  const oldLength = parent.children?.length ?? 0;
   const array: TreeNode[] = [];
   const totalCount = 123;
   const batchSize = 10;
 
-  for (let i = oldLength, j = 0; i <= totalCount && j < batchSize; i++, j++) {
+  for (let i = 0; i <= batchSize && i < totalCount; i++) {
     const child = new TreeNode();
     child.label = 'Child ' + i;
     child.icon = 'Snow';
@@ -65,8 +64,9 @@ export function loadChildren(parent: ITreeNode): TreeNode[] | undefined {
     child.hasBoldLabel = i % 4 === 0;
     array.push(child);
   }
-  if (oldLength + array.length === totalCount) {
-    parent.needLoadChildren = false;
+  parent.needLoadChildren = false;
+  if (array.length > 0 && array.length < totalCount) {
+    array[array.length - 1].needLoadSiblings = true;
   }
   return array;
 }

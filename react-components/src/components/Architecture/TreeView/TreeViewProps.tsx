@@ -2,7 +2,7 @@
  * Copyright 2023 Cognite AS
  */
 
-import { type TreeNodeAction, type LoadChildrenAction, type ITreeNode } from './ITreeNode';
+import { type TreeNodeAction, type LoadNodesAction, type ITreeNode } from './ITreeNode';
 
 export type TreeViewProps = {
   // Colors
@@ -29,7 +29,7 @@ export type TreeViewProps = {
   // Event handlers
   onSelect?: TreeNodeAction;
   onCheck?: TreeNodeAction;
-  loadChildren?: LoadChildrenAction;
+  loadNodes?: LoadNodesAction;
 
   // The root node of the tree, the root is not rendered.
   root: ITreeNode;
