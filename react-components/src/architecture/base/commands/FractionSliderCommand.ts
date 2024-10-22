@@ -4,13 +4,16 @@
 
 import { BaseSliderCommand } from './BaseSliderCommand';
 
+const MIN_VALUE = 0;
+const MAX_VALUE = 1;
+const STEP_VALUE = 1;
 export abstract class FractionSliderCommand extends BaseSliderCommand {
   // ==================================================
   // CONSTRUCTOR
   // ==================================================
 
   public constructor() {
-    super(0, 1, 0.01);
+    super(MIN_VALUE, MAX_VALUE, STEP_VALUE);
   }
 
   // ==================================================

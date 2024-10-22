@@ -203,9 +203,10 @@ function createSlider(command: BaseSliderCommand, t: TranslateDelegate): ReactEl
   if (!command.isVisible) {
     return <></>;
   }
+  const label = command.getLabel(t) + ': ' + command.getValueLabel();
   return (
     <SliderDiv key={command.uniqueId}>
-      <label>{command.getLabel(t) + ': ' + command.getValueLabel()}</label>
+      <label>{label}</label>
       <StyledSlider
         disabled={!command.isEnabled}
         min={command.min}
