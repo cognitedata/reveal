@@ -600,7 +600,7 @@ export class Image360ApiHelper {
 
   private getImageOpacity(): number {
     for (const image360Collection of this._image360Facade.collections) {
-      return image360Collection.getIconsOpacity();
+      return image360Collection.getImagesOpacity();
     }
     return DEFAULT_IMAGE_360_OPACITY;
   }
