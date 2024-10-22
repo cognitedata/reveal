@@ -23,8 +23,8 @@ import { AnnotationsCreateTool } from '../../architecture/concrete/annotations/c
 import { AnnotationsSelectTool } from '../../architecture/concrete/annotations/commands/AnnotationsSelectTool';
 
 export class RevealButtons {
-  static Settings = (): ReactElement =>
-    createButtonFromCommandConstructor(() => new SettingsCommand());
+  static Settings = ({ include360Images = true }: { include360Images?: boolean }): ReactElement =>
+    createButtonFromCommandConstructor(() => new SettingsCommand(include360Images));
 
   static PointCloudFilter = (): ReactElement =>
     createButtonFromCommandConstructor(() => new PointCloudFilterCommand());

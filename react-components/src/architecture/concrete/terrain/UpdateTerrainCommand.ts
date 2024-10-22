@@ -17,7 +17,7 @@ export class UpdateTerrainCommand extends RenderTargetCommand {
   // ==================================================
 
   public override get icon(): IconName {
-    return 'Refresh';
+    return 'Sync';
   }
 
   public override get tooltip(): TranslateKey {
