@@ -230,7 +230,7 @@ export class PointCloudNode extends Group {
       } else if (isPointCloudObjectDataModelProperties(a)) {
         return {
           ...baseObject,
-          instanceRef: a.instanceRef,
+          volumeRef: a.volumeRef,
           assetRef: a.assetRef
         } as PointCloudVolumeDataModelProperties;
       } else {

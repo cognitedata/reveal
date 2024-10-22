@@ -45,8 +45,8 @@ export class CognitePointCloudModel {
    */
   readonly pointCloudNode: PointCloudNode;
 
-  private readonly _styledObjectCollections: StyledPointCloudAnnotationVolumeCollection[] = [];
-  private readonly _combinedStyledObjectCollections: StyledPointCloudVolumeCollection[] = [];
+  private readonly _styledAnnotationVolumeCollections: StyledPointCloudAnnotationVolumeCollection[] = [];
+  private readonly _styledVolumeCollections: StyledPointCloudVolumeCollection[] = [];
 
   /**
    * @param modelId
@@ -309,15 +309,15 @@ export class CognitePointCloudModel {
    * @returns All object collections and their associated style
    */
   get styledCollections(): StyledPointCloudAnnotationVolumeCollection[] {
-    return this._styledObjectCollections;
+    return this._styledAnnotationVolumeCollections;
   }
 
   /**
    * Gets the object collections that have been assigned a style
    * @returns All object collections and their associated style
    */
-  get combinedStyledCollections(): StyledPointCloudVolumeCollection[] {
-    return this._combinedStyledObjectCollections;
+  get styledPointCloudVolumeCollections(): StyledPointCloudVolumeCollection[] {
+    return this._styledVolumeCollections;
   }
 
   /**
@@ -361,16 +361,12 @@ export class CognitePointCloudModel {
 
     if (isPointCloudObjectCollection(objectCollection)) {
       updateOrCreateCollection(
-        this._styledObjectCollections,
+        this._styledAnnotationVolumeCollections,
         StyledPointCloudAnnotationVolumeCollection,
         objectCollection
       );
     } else {
-      updateOrCreateCollection(
-        this._combinedStyledObjectCollections,
-        StyledPointCloudVolumeCollection,
-        objectCollection
-      );
+      updateOrCreateCollection(this._styledVolumeCollections, StyledPointCloudVolumeCollection, objectCollection);
     }
   }
 
@@ -392,8 +388,8 @@ export class CognitePointCloudModel {
       return index !== -1;
     };
 
-    const styledRemoved = removeCollection(this._styledObjectCollections, objectCollection);
-    const combinedRemoved = removeCollection(this._combinedStyledObjectCollections, objectCollection);
+    const styledRemoved = removeCollection(this._styledAnnotationVolumeCollections, objectCollection);
+    const combinedRemoved = removeCollection(this._styledVolumeCollections, objectCollection);
 
     if (!styledRemoved && !combinedRemoved) {
       return;
@@ -409,8 +405,8 @@ export class CognitePointCloudModel {
       }
     };
 
-    reassignCollections(this._styledObjectCollections);
-    reassignCollections(this._combinedStyledObjectCollections);
+    reassignCollections(this._styledAnnotationVolumeCollections);
+    reassignCollections(this._styledVolumeCollections);
   }
 
   /**
@@ -418,8 +414,8 @@ export class CognitePointCloudModel {
    */
   removeAllStyledObjectCollections(): void {
     this.pointCloudNode.removeAllStyledPointCloudObjects();
-    this._styledObjectCollections.splice(0);
-    this._combinedStyledObjectCollections.splice(0);
+    this._styledAnnotationVolumeCollections.splice(0);
+    this._styledVolumeCollections.splice(0);
   }
 
   /**

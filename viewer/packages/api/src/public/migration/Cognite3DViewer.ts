@@ -70,7 +70,6 @@ import {
 } from '@reveal/camera-manager';
 import {
   CdfModelIdentifier,
-  fetchDMModelIdFromRevisionId,
   File3dFormat,
   Image360DataModelIdentifier,
   LocalModelIdentifier
@@ -719,11 +718,7 @@ export class Cognite3DViewer {
    */
   async addModel(options: AddCdfModelOptions): Promise<CogniteModel> {
     const modelLoadSequencer = this._addModelSequencer.getNextSequencer<void>();
-    const { modelId, revisionId } = await getModelAndRevisionId(
-      options,
-      fetchDMModelIdFromRevisionId,
-      this._cdfSdkClient
-    );
+    const { modelId, revisionId } = await getModelAndRevisionId(options, this._cdfSdkClient);
 
     return (async () => {
       let type: '' | SupportedModelTypes;
@@ -776,11 +771,7 @@ export class Cognite3DViewer {
     try {
       const nodesApiClient = this._dataSource.getNodesApiClient();
 
-      const { modelId, revisionId } = await getModelAndRevisionId(
-        options,
-        fetchDMModelIdFromRevisionId,
-        this._cdfSdkClient
-      );
+      const { modelId, revisionId } = await getModelAndRevisionId(options, this._cdfSdkClient);
 
       const addCadModelOptions = {
         ...options,
@@ -831,11 +822,7 @@ export class Cognite3DViewer {
         throw new Error('geometryFilter is not supported for point clouds');
       }
 
-      const { modelId, revisionId } = await getModelAndRevisionId(
-        options,
-        fetchDMModelIdFromRevisionId,
-        this._cdfSdkClient
-      );
+      const { modelId, revisionId } = await getModelAndRevisionId(options, this._cdfSdkClient);
 
       const addPointCloudModelOptions = {
         ...options,

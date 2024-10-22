@@ -21,7 +21,7 @@ export function isPointCloudObjectMetadata(
 ): pointCloudObject is PointCloudObjectMetadata & { stylableObject: StylableObject } {
   return (
     (pointCloudObject as PointCloudObjectMetadata).annotationId !== undefined &&
-    (pointCloudObject as PointCloudObjectMetadata).annotationId !== -1 &&
+    (pointCloudObject as PointCloudObjectMetadata).annotationId !== 0 &&
     (pointCloudObject as { stylableObject: StylableObject }).stylableObject !== undefined
   );
 }
@@ -36,7 +36,7 @@ export function isPointCloudVolumeMetadata(
 ): pointCloudObject is PointCloudObjectMetadata {
   return (
     (pointCloudObject as PointCloudObjectMetadata).annotationId !== undefined &&
-    (pointCloudObject as PointCloudObjectMetadata).annotationId !== -1
+    (pointCloudObject as PointCloudObjectMetadata).annotationId !== 0
   );
 }
 
@@ -49,7 +49,7 @@ export function isPointCloudObjectDataModelProperties(
   pointCloudObject: PointCloudObject
 ): pointCloudObject is PointCloudVolumeDataModelProperties & { stylableObject: StylableObject } {
   return (
-    (pointCloudObject as PointCloudVolumeDataModelProperties).instanceRef !== undefined &&
+    (pointCloudObject as PointCloudVolumeDataModelProperties).volumeRef !== undefined &&
     (pointCloudObject as { stylableObject: StylableObject }).stylableObject !== undefined
   );
 }
@@ -62,7 +62,7 @@ export function isPointCloudObjectDataModelProperties(
 export function isPointCloudVolumeMetadataDataModelProperties(
   pointCloudObject: PointCloudVolumeMetadata
 ): pointCloudObject is PointCloudVolumeDataModelProperties {
-  return (pointCloudObject as PointCloudVolumeDataModelProperties).instanceRef !== undefined;
+  return (pointCloudObject as PointCloudVolumeDataModelProperties).volumeRef !== undefined;
 }
 
 export function getNodeExternalIdEqualsFilter<T extends string>(externalId: T): TableExpressionEqualsFilterV3 {

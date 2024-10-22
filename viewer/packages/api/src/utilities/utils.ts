@@ -4,6 +4,7 @@
 
 import { CogniteClient } from '@cognite/sdk';
 import { AddCdfModelOptions, AddDMModelOptions } from '../public/migration/types';
+import { fetchDMModelIdFromRevisionId } from '@reveal/data-providers';
 
 export function isAddDMModelOptions(options: AddCdfModelOptions): options is AddDMModelOptions {
   return (
@@ -14,11 +15,6 @@ export function isAddDMModelOptions(options: AddCdfModelOptions): options is Add
 
 export async function getModelAndRevisionId(
   options: AddCdfModelOptions,
-  fetchDMModelIdFromRevisionId: (
-    revisionExternalId: string,
-    space: string,
-    sdk: CogniteClient | undefined
-  ) => Promise<{ modelId: number; revisionId: number }>,
   sdk: CogniteClient | undefined
 ): Promise<{ modelId: number; revisionId: number }> {
   if (isAddDMModelOptions(options)) {

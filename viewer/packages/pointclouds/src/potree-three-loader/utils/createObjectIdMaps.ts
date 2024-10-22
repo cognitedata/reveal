@@ -15,8 +15,8 @@ export function createObjectIdMaps(objects: PointCloudObject[]): PointCloudObjec
       annotationToObjectIds.set(annotation.annotationId, objectId);
       objectToAnnotationIds.set(objectId, annotation.annotationId);
     } else {
-      annotationToObjectIds.set(annotation.instanceRef, objectId);
-      objectToAnnotationIds.set(objectId, annotation.instanceRef);
+      annotationToObjectIds.set(annotation.volumeRef, objectId);
+      objectToAnnotationIds.set(objectId, annotation.volumeRef);
     }
   });
 

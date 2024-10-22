@@ -114,7 +114,7 @@ export class PointCloudManager {
     this.requestRedraw();
   }
 
-  async addModel(modelIdentifier: ModelIdentifier): Promise<PointCloudNode> {
+  async addModel(modelIdentifier: ModelIdentifier, revisionSpace?: string): Promise<PointCloudNode> {
     const metadata = await this._pointCloudMetadataRepository.loadData(modelIdentifier);
 
     const modelType: SupportedModelTypes = 'pointcloud';
@@ -126,7 +126,7 @@ export class PointCloudManager {
       metadata.formatVersion
     );
 
-    const pointCloudNode = await this._pointCloudFactory.createModel(metadata);
+    const pointCloudNode = await this._pointCloudFactory.createModel(metadata, revisionSpace);
     this._pointCloudNodes.push(pointCloudNode);
 
     this.requestRedraw();

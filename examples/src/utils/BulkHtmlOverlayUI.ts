@@ -9,7 +9,7 @@ import {
   TreeIndexNodeCollection
 } from '@cognite/reveal';
 import { HtmlOverlayTool } from '@cognite/reveal/tools';
-import { CogniteClient } from '@cognite/sdk/dist/src';
+import { CogniteClient } from '@cognite/sdk';
 import * as dat from 'dat.gui';
 
 type OverlayUserdata = {

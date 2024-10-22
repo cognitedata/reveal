@@ -19,10 +19,10 @@ function cdfAnnotationsToPointCloudObjects(cdfAnnotations: CdfPointCloudObjectAn
 
     return {
       annotationId: cdfAnnotation.annotationId,
-      assetId: cdfAnnotation.asset?.id,
+      assetId: cdfAnnotation.asset && 'id' in cdfAnnotation.asset ? cdfAnnotation.asset.id : undefined,
       assetRef: cdfAnnotation.asset,
       boundingBox: stylableObject.shape.createBoundingBox(),
-      instanceRef: cdfAnnotation.instanceRef,
+      volumeRef: cdfAnnotation.volumeInstanceRef,
       stylableObject
     };
   });

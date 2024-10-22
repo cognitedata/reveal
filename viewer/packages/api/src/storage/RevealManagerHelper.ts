@@ -175,7 +175,7 @@ export class RevealManagerHelper {
     if (model.modelId === -1 || model.revisionId === -1) {
       throw new Error('addCdfPointCloudModel only works with CDF hosted models');
     }
-    const modelIdentifier = new CdfModelIdentifier(model.modelId, model.revisionId, dmSpace);
-    return revealManager.addModel('pointcloud', modelIdentifier);
+    const modelIdentifier = new CdfModelIdentifier(model.modelId, model.revisionId);
+    return revealManager.addModel('pointcloud', modelIdentifier, dmSpace);
   }
 }

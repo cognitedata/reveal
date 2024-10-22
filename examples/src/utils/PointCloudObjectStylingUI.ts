@@ -93,7 +93,7 @@ export class PointCloudObjectStylingUI {
             Math.floor(Math.random() * 255)
           );
           if (isCombinedPointCloudObjectDataModelProperties(object)) {
-            const stylableObject = new PointCloudDMVolumeCollection([object.instanceRef]);
+            const stylableObject = new PointCloudDMVolumeCollection([object.volumeRef]);
             model.assignStyledObjectCollection(stylableObject, {
               color: objectStyle
             });

@@ -225,19 +225,23 @@ export class RevealManager {
   }
 
   public addModel(type: 'cad', modelIdentifier: ModelIdentifier, options?: AddCadModelOptions): Promise<CadNode>;
-  public addModel(type: 'pointcloud', modelIdentifier: ModelIdentifier): Promise<PointCloudNode>;
+  public addModel(
+    type: 'pointcloud',
+    modelIdentifier: ModelIdentifier,
+    revisionSpace?: string
+  ): Promise<PointCloudNode>;
   public async addModel(
     type: SupportedModelTypes,
     modelIdentifier: ModelIdentifier,
-    options?: AddCadModelOptions
+    options?: AddCadModelOptions | string
   ): Promise<PointCloudNode | CadNode> {
     switch (type) {
       case 'cad': {
-        return this._cadManager.addModel(modelIdentifier, options?.geometryFilter);
+        return this._cadManager.addModel(modelIdentifier, (options as AddCadModelOptions).geometryFilter);
       }
 
       case 'pointcloud': {
-        return this._pointCloudManager.addModel(modelIdentifier);
+        return this._pointCloudManager.addModel(modelIdentifier, options as string);
       }
 
       default:

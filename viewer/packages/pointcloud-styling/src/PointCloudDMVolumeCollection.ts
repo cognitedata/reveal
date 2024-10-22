@@ -5,7 +5,7 @@
 import { DMInstanceRef } from '@reveal/data-providers';
 
 /**
- * A simple DMInstanceRefPointCloudObjectCollection that consists of an explicitly provided list of data model instance.
+ * A simple PointCloudDMVolumeCollection that consists of an explicitly provided list of data model instance.
  */
 export class PointCloudDMVolumeCollection {
   private readonly _dataModelInstanceRef;
@@ -15,7 +15,7 @@ export class PointCloudDMVolumeCollection {
   }
 
   /**
-   * Gets data model external IDs for the objects represented by this DMInstanceRefPointCloudObjectCollection instance
+   * Gets data model external IDs for the objects represented by this PointCloudDMVolumeCollection instance
    */
   getDataModelInstanceRefs(): Iterable<DMInstanceRef> {
     return this._dataModelInstanceRef.values();

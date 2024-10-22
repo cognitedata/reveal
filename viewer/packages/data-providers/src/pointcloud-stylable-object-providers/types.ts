@@ -16,8 +16,8 @@ export type DMInstanceRef = DirectRelationReference;
 
 export type CdfPointCloudObjectAnnotation = {
   annotationId: number;
-  instanceRef?: DMInstanceRef;
-  asset?: AnnotationsAssetRef;
+  volumeInstanceRef?: DMInstanceRef;
+  asset?: AnnotationsAssetRef | DMInstanceRef;
   region: IShape[];
 };
 
@@ -57,12 +57,12 @@ export type PointCloudVolumeDataModelProperties = {
   /**
    * The CDF point cloud volume reference associated with the object which include externalId and space.
    */
-  instanceRef: DMInstanceRef;
+  volumeRef: DMInstanceRef;
 
   /**
-   * Asset identifiers for asset associated with this point cloud volume, if any.
+   * The CDF Asset reference for asset associated with this point cloud volume, if any.
    */
-  assetRef?: AnnotationsAssetRef;
+  assetRef?: DMInstanceRef;
 
   /**
    * The bounding box of this point cloud volume

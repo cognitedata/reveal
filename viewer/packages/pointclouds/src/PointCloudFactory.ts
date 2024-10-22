@@ -35,10 +35,10 @@ export class PointCloudFactory {
     this._pointCloudMaterialManager.dispose();
   }
 
-  async createModel(modelMetadata: PointCloudMetadata): Promise<PointCloudNode> {
+  async createModel(modelMetadata: PointCloudMetadata, revisionSpace?: string): Promise<PointCloudNode> {
     const { modelBaseUrl, modelIdentifier, modelMatrix, cameraConfiguration } = modelMetadata;
 
-    const annotationInfoPromise = this._pointCloudObjectProvider.getPointCloudObjects(modelIdentifier);
+    const annotationInfoPromise = this._pointCloudObjectProvider.getPointCloudObjects(modelIdentifier, revisionSpace);
     const classSchemaPromise = this._classificationsProvider.getClassifications(modelMetadata);
 
     const [annotationInfo, classSchema] = await Promise.all([annotationInfoPromise, classSchemaPromise]);

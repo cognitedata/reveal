@@ -30,17 +30,16 @@ export async function fetchDMModelIdFromRevisionId(
     'Cognite3DRevision/v1'
   ] as unknown as Cognite3DRevisionProperties;
   const modelExternalId = revisionProperties.model3D.externalId;
-  const match = modelExternalId.match(/\d+$/);
-  if (!match) {
+  const modelMatched = modelExternalId.match(/\d+$/);
+  const revisionMatched = revisionExternalId.match(/\d+$/);
+  if (!modelMatched || !revisionMatched) {
     throw new Error(`No numeric ID found in external ID ${modelExternalId}`);
   }
 
-  return { modelId: parseInt(match[0], 10), revisionId: Number(revisionExternalId) };
+  return { modelId: parseInt(modelMatched[0], 10), revisionId: parseInt(revisionMatched[0], 10) };
 }
 
-function getModelIdQuery(revisionlId: string, space: string) {
-  const revisionExternalId = `cog_3d_revision_${revisionlId}`;
-
+function getModelIdQuery(revisionExternalId: string, space: string) {
   return {
     with: {
       revision: {

@@ -78,25 +78,28 @@ export class CdfPointCloudStylableObjectProvider implements PointCloudStylableOb
     return annotations;
   }
 
-  getDataModelIdentifier(modelIdentifier: CdfModelIdentifier): DMPointCloudVolumeIdentifier | undefined {
-    if (modelIdentifier.space === undefined || modelIdentifier.space === '') {
+  getDataModelIdentifier(
+    modelIdentifier: CdfModelIdentifier,
+    revisionSpace: string | undefined
+  ): DMPointCloudVolumeIdentifier | undefined {
+    if (revisionSpace === undefined || revisionSpace === '') {
       return;
     }
     const dataModelIdentifier = {
-      space: modelIdentifier.space,
-      pointCloudModelExternalId: (modelIdentifier as CdfModelIdentifier).modelId.toString(),
-      pointCloudModelRevisionId: (modelIdentifier as CdfModelIdentifier).revisionId.toString()
+      space: revisionSpace,
+      pointCloudModelExternalId: modelIdentifier.modelId.toString(),
+      pointCloudModelRevisionId: modelIdentifier.revisionId.toString()
     };
     return dataModelIdentifier;
   }
 
-  async getPointCloudObjects(modelIdentifier: ModelIdentifier): Promise<PointCloudObject[]> {
+  async getPointCloudObjects(modelIdentifier: ModelIdentifier, revisionSpace?: string): Promise<PointCloudObject[]> {
     assert(modelIdentifier instanceof CdfModelIdentifier);
 
-    const dataModelIdentifier = this.getDataModelIdentifier(modelIdentifier as CdfModelIdentifier);
+    const dataModelIdentifier = this.getDataModelIdentifier(modelIdentifier, revisionSpace);
     const annotations = dataModelIdentifier
       ? await getDMPointCloudObjects(this._dmsSdk, dataModelIdentifier)
-      : await this.fetchAnnotations(modelIdentifier as CdfModelIdentifier);
+      : await this.fetchAnnotations(modelIdentifier);
 
     return cdfAnnotationsToObjectInfo(annotations);
   }

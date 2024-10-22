@@ -72,7 +72,7 @@ export class PointCloudPickingHandler {
             annotationId = pointCloudObject.annotationId;
             assetRef = pointCloudObject.assetRef;
           } else if (isCombinedPointCloudObjectDataModelProperties(pointCloudObject)) {
-            pointCloudVolumeInstanceRef = pointCloudObject.instanceRef;
+            pointCloudVolumeInstanceRef = pointCloudObject.volumeRef;
             assetRef = pointCloudObject.assetRef;
           } else {
             assertNever(pointCloudObject, 'Unknown point cloud object type');
