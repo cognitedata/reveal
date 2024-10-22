@@ -2,8 +2,7 @@
  * Copyright 2023 Cognite AS
  */
 
-import { i } from 'vitest/dist/reporters-yx5ZTtEV.js';
-import { CheckBoxState, ITreeNode } from './ITreeNode';
+import { CheckBoxState, type ITreeNode } from './ITreeNode';
 import { TreeNode } from './TreeNode';
 
 export function createTreeMock(): TreeNode {
@@ -24,7 +23,7 @@ export function createTreeMock(): TreeNode {
       child1.label = 'Child ' + i + '.' + j;
       child1.icon = 'Snow';
       child1.isExpanded = false;
-      child1.needLoadMoreChildren = true;
+      child1.needLoadChildren = true;
       child1.checkBoxState = CheckBoxState.None;
       child1.isEnabled = j !== 2;
       child1.hasBoldLabel = j === 4;
@@ -67,7 +66,7 @@ export function loadChildren(parent: ITreeNode): TreeNode[] | undefined {
     array.push(child);
   }
   if (oldLength + array.length === totalCount) {
-    parent.needLoadMoreChildren = false;
+    parent.needLoadChildren = false;
   }
   return array;
 }

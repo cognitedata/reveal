@@ -28,8 +28,10 @@ export type ITreeNode = {
   get checkBoxState(): CheckBoxState; // Return CheckBoxState.Hidden of no checkbox
   get isLoadingChildren(): boolean;
   set isLoadingChildren(value: boolean);
-  get needLoadMoreChildren(): boolean;
-  set needLoadMoreChildren(value: boolean);
+  get needLoadChildren(): boolean;
+  set needLoadChildren(value: boolean);
+  get needLoadSiblings(): boolean;
+  set needLoadSiblings(value: boolean);
   get isLeaf(): boolean;
 
   getChildren: (loadChildren?: LoadChildrenAction) => Generator<ITreeNode>;

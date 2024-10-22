@@ -26,7 +26,8 @@ export class TreeNode implements ITreeNode {
   private _isEnabled: boolean = true;
   private _hasBoldLabel: boolean = false;
   private _isLoadingChildren: boolean = false;
-  private _needLoadMoreChildren = false;
+  private _needLoadChildren = false;
+  private _needLoadSiblings = false;
 
   private _children: TreeNode[] | undefined = undefined;
   private _parent: TreeNode | undefined = undefined;
@@ -143,18 +144,26 @@ export class TreeNode implements ITreeNode {
   }
 
   public get isLeaf(): boolean {
-    if (this.needLoadMoreChildren) {
+    if (this.needLoadChildren) {
       return false;
     }
     return this._children === undefined || this._children.length === 0;
   }
 
-  public get needLoadMoreChildren(): boolean {
-    return this._needLoadMoreChildren;
+  public get needLoadChildren(): boolean {
+    return this._needLoadChildren;
   }
 
-  public set needLoadMoreChildren(value: boolean) {
-    this._needLoadMoreChildren = value;
+  public set needLoadChildren(value: boolean) {
+    this._needLoadChildren = value;
+  }
+
+  public get needLoadSiblings(): boolean {
+    return this._needLoadSiblings;
+  }
+
+  public set needLoadSiblings(value: boolean) {
+    this._needLoadSiblings = value;
   }
 
   // ==================================================
@@ -212,7 +221,7 @@ export class TreeNode implements ITreeNode {
       loadChildren = undefined;
     }
     const isLeftOrRoot = this.isLeaf || this._parent === undefined;
-    if (!isLeftOrRoot && loadChildren !== undefined && this.needLoadMoreChildren) {
+    if (!isLeftOrRoot && loadChildren !== undefined && this.needLoadChildren) {
       void this.loadChildren(loadChildren);
     }
     if (this._children === undefined) {

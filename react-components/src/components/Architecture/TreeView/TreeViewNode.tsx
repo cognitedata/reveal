@@ -5,7 +5,7 @@
 /* eslint-disable react/prop-types */
 
 import { type ReactElement, useEffect, useState, useCallback } from 'react';
-import { Button, CaretDownIcon, CaretRightIcon, Checkbox, HourglassIcon } from '@cognite/cogs.js';
+import { Button, CaretDownIcon, CaretRightIcon, Checkbox, LoaderIcon } from '@cognite/cogs.js';
 import {
   CheckBoxState,
   type TreeNodeAction,
@@ -56,7 +56,8 @@ export const TreeViewNode = ({
   const [_isExpanded, setExpanded] = useState(false);
   const [_checkBoxState, setCheckBoxState] = useState<CheckBoxState>();
   const [_isLoadingChildren, setLoadingChildren] = useState(false);
-  const [needLoadMoreChildren, setNeedLoadMoreChildren] = useState(false);
+  const [needLoadChildren, setNeedLoadChildren] = useState(false);
+  const [needLoadSiblings, setNeedLoadSiblings] = useState(false);
   const [hoverOverTextOrIcon, setHoverOverTextOrIcon] = useState(false);
 
   const update = useCallback(
@@ -70,7 +71,8 @@ export const TreeViewNode = ({
       setExpanded(node.isExpanded);
       setCheckBoxState(node.checkBoxState);
       setLoadingChildren(node.isLoadingChildren);
-      setNeedLoadMoreChildren(node.needLoadMoreChildren && node.numberOfChildren > 0);
+      setNeedLoadChildren(node.needLoadChildren && node.numberOfChildren > 0);
+      setNeedLoadSiblings(node.needLoadSiblings && node.numberOfChildren > 0);
     },
     [node]
   );
@@ -130,7 +132,7 @@ export const TreeViewNode = ({
         children.map((node, index) => (
           <TreeViewNode node={node} key={index} level={level + 1} props={props} />
         ))}
-      {needLoadMoreChildren && (
+      {needLoadSiblings && (
         <Button
           style={{
             gap: gapBetweenItems,
@@ -300,7 +302,7 @@ const TreeNodeIcon = ({
   }
   const Icon =
     node.isLoadingChildren && node.numberOfChildren === 0
-      ? HourglassIcon
+      ? LoaderIcon
       : IconComponentMapper.getIcon(node.icon);
   return <Icon style={{ color, marginTop: '3px' }} />;
 };
