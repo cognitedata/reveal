@@ -7,7 +7,10 @@ import { useEffect, type ReactElement, useState, useRef } from 'react';
 import { Matrix4 } from 'three';
 import { useReveal } from '../RevealCanvas/ViewerContext';
 import { useRevealKeepAlive } from '../RevealKeepAlive/RevealKeepAliveContext';
-import { useReveal3DResourcesCount } from '../Reveal3DResources/Reveal3DResourcesInfoContext';
+import {
+  useReveal3DResourcesCount,
+  useThisAsExpectedResourceLoad
+} from '../Reveal3DResources/Reveal3DResourcesInfoContext';
 import { cloneDeep, isEqual } from 'lodash';
 import {
   useApplyPointCloudStyling,
@@ -37,6 +40,8 @@ export function PointCloudContainer({
   const { modelId, revisionId } = addModelOptions;
   const { setRevealResourcesCount } = useReveal3DResourcesCount();
   const initializingModel = useRef<AddModelOptions | undefined>(undefined);
+
+  useThisAsExpectedResourceLoad();
 
   useEffect(() => {
     if (isEqual(initializingModel.current, addModelOptions)) {
