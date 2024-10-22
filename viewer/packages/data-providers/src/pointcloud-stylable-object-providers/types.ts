@@ -23,60 +23,52 @@ export type CdfPointCloudObjectAnnotation = {
 
 /**
  * @public
+ * Data model instance reference for point cloud volume object with asset reference.
+ */
+export type DMPointCloudDataType = {
+  /**
+   * The CDF point cloud model identifier associated with the object which includes revisionExternalId and revisionSpace.
+   */
+  modelIdentifier: DMInstanceRef;
+  /**
+   * The CDF point cloud volume metadata containing reference associated with the object which includes externalId, space
+   * and asset reference if any.
+   */
+  volumeMetadata: { volumeInstanceRef: DMInstanceRef; assetRef?: DMInstanceRef };
+  _never: never;
+};
+
+/**
+ * @public
+ * Classic point cloud annotation data type with asset reference.
+ */
+export type ClassicPointCloudDataType = {
+  /**
+   * The classic point cloud model identifier associated with the object which include modelId and revisionId.
+   */
+  modelIdentifier: { modelId: number; revisionId: number };
+  /**
+   * The classic point cloud volume metadata containing reference associated with the object which includes annotationId
+   * and asset reference if any.
+   */
+  volumeMetadata: { annotationId: number; assetRef?: AnnotationsAssetRef };
+  _never: never;
+};
+
+export type PointCloudDataType = DMPointCloudDataType | ClassicPointCloudDataType;
+
+/**
+ * @public
  * Metadata for a single point cloud object
  */
-export type PointCloudObjectMetadata = {
-  /**
-   * The CDF Annotation ID associated with the point cloud object.
-   */
-  annotationId: number;
-
-  /**
-   * The CDF Asset ID associated with the point cloud object, if any.
-   *
-   * @deprecated Use {@link PointCloudObjectMetadata.assetRef} instead.
-   */
-  assetId?: number;
-
-  /**
-   * Asset identifiers for asset associated with this point cloud object, if any.
-   */
-  assetRef?: AnnotationsAssetRef;
-
-  /**
-   * The bounding box of this annotation
-   */
+export type PointCloudObjectMetadata<T extends PointCloudDataType = ClassicPointCloudDataType> = {
   boundingBox: Box3;
-};
+} & T['volumeMetadata'];
 
 /**
- * @public
- * Data Model properties for a single point cloud volume
+ * Point cloud object containing point cloud volume or annotation metadata and stylable object
  */
-export type PointCloudVolumeDataModelProperties = {
-  /**
-   * The CDF point cloud volume reference associated with the object which include externalId and space.
-   */
-  volumeRef: DMInstanceRef;
-
-  /**
-   * The CDF Asset reference for asset associated with this point cloud volume, if any.
-   */
-  assetRef?: DMInstanceRef;
-
-  /**
-   * The bounding box of this point cloud volume
-   */
-  boundingBox: Box3;
-};
-
-/**
- * @public
- * Combined data model properties and metadata for a single point cloud object
- */
-export type PointCloudVolumeMetadata = PointCloudObjectMetadata | PointCloudVolumeDataModelProperties;
-
-export type PointCloudObject = PointCloudVolumeMetadata & {
+export type PointCloudObject<T extends PointCloudDataType = ClassicPointCloudDataType> = PointCloudObjectMetadata<T> & {
   stylableObject: StylableObject;
 };
 

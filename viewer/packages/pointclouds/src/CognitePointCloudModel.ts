@@ -10,11 +10,7 @@ import { PointCloudNode } from './PointCloudNode';
 import { PointColorType, PointShape, PointSizeType } from '@reveal/rendering';
 
 import { SupportedModelTypes } from '@reveal/model-base';
-import {
-  PointCloudVolumeMetadata,
-  isCombinedPointCloudObjectMetadata,
-  PointCloudObjectMetadata
-} from '@reveal/data-providers';
+import { ClassicPointCloudDataType, PointCloudDataType, PointCloudObjectMetadata } from '@reveal/data-providers';
 
 import {
   PointCloudAnnotationVolumeCollection,
@@ -32,7 +28,7 @@ import {
  * @noInheritDoc
  * @module @cognite/reveal
  */
-export class CognitePointCloudModel {
+export class CognitePointCloudModel<T extends PointCloudDataType = ClassicPointCloudDataType> {
   public readonly type: SupportedModelTypes = 'pointcloud';
   public readonly modelId: number;
   /**
@@ -324,8 +320,8 @@ export class CognitePointCloudModel {
    * Gets array of stylable objects for the point cloud model.
    * @returns All stylable objects for this model
    */
-  get stylableObjects(): PointCloudVolumeMetadata[] {
-    return [...this.pointCloudNode.stylableObjectAnnotationMetadata];
+  get stylableObjects(): PointCloudObjectMetadata<PointCloudDataType>[] {
+    return Array.from(this.pointCloudNode.stylableObjectAnnotationMetadata);
   }
 
   /**
@@ -434,11 +430,9 @@ export class CognitePointCloudModel {
    * );
    * ```
    */
-  traverseStylableObjects(callback: (annotationMetadata: PointCloudObjectMetadata) => void): void {
+  traverseStylableObjects(callback: (annotationMetadata: PointCloudObjectMetadata<T>) => void): void {
     for (const obj of this.pointCloudNode.stylableObjectAnnotationMetadata) {
-      if (isCombinedPointCloudObjectMetadata(obj)) {
-        callback(obj as PointCloudObjectMetadata);
-      }
+      callback(obj as PointCloudObjectMetadata<T>);
     }
   }
 }

@@ -9,12 +9,8 @@ import { PointCloudNode } from './PointCloudNode';
 
 import { PickPoint, PointCloudOctree, PointCloudOctreePicker } from './potree-three-loader';
 import { AnnotationsAssetRef } from '@cognite/sdk';
-import { assertNever, isPointVisibleByPlanes } from '@reveal/utilities';
-import {
-  DMInstanceRef,
-  isCombinedPointCloudObjectDataModelProperties,
-  isCombinedPointCloudObjectMetadata
-} from '@reveal/data-providers';
+import { isPointVisibleByPlanes } from '@reveal/utilities';
+import { DMInstanceRef, isClassicPointCloudDataType, isDMPointCloudDataType } from '@reveal/data-providers';
 import { IntersectPointCloudNodeResult } from './types';
 
 export class PointCloudPickingHandler {
@@ -68,14 +64,14 @@ export class PointCloudPickingHandler {
         let pointCloudVolumeInstanceRef: DMInstanceRef | undefined;
 
         if (pointCloudObject !== undefined) {
-          if (isCombinedPointCloudObjectMetadata(pointCloudObject)) {
+          if (isClassicPointCloudDataType(pointCloudObject)) {
             annotationId = pointCloudObject.annotationId;
             assetRef = pointCloudObject.assetRef;
-          } else if (isCombinedPointCloudObjectDataModelProperties(pointCloudObject)) {
-            pointCloudVolumeInstanceRef = pointCloudObject.volumeRef;
+          } else if (isDMPointCloudDataType(pointCloudObject)) {
+            pointCloudVolumeInstanceRef = pointCloudObject.volumeInstanceRef;
             assetRef = pointCloudObject.assetRef;
           } else {
-            assertNever(pointCloudObject, 'Unknown point cloud object type');
+            throw new Error('Unknown point cloud object type');
           }
         }
         const volumeRef = pointCloudVolumeInstanceRef

@@ -18,7 +18,10 @@ import {
 import {
   CdfPointCloudStylableObjectProvider,
   PointCloudStylableObjectProvider,
-  DummyPointCloudStylableObjectProvider
+  DummyPointCloudStylableObjectProvider,
+  CdfPointCloudDMStylableObjectProvider,
+  DMPointCloudDataType,
+  DummyPointCloudDMStylableObjectProvider
 } from '@reveal/data-providers';
 import { createPointCloudManager } from '@reveal/pointclouds';
 import {
@@ -57,6 +60,7 @@ export function createLocalRevealManager(
   const modelMetadataProvider = new LocalModelMetadataProvider();
   const modelDataProvider = new LocalModelDataProvider();
   const annotationProvider = new DummyPointCloudStylableObjectProvider();
+  const pointCloudDMProvider = new DummyPointCloudDMStylableObjectProvider();
   const pointClassificationsProvider = new LocalPointClassificationsProvider();
   return createRevealManager(
     'local',
@@ -64,6 +68,7 @@ export function createLocalRevealManager(
     modelMetadataProvider,
     modelDataProvider,
     annotationProvider,
+    pointCloudDMProvider,
     pointClassificationsProvider,
     renderer,
     sceneHandler,
@@ -92,6 +97,7 @@ export function createCdfRevealManager(
   const modelMetadataProvider = new CdfModelMetadataProvider(client);
   const modelDataProvider = new CdfModelDataProvider(client);
   const annotationProvider = new CdfPointCloudStylableObjectProvider(client);
+  const pointCloudDMProvider = new CdfPointCloudDMStylableObjectProvider(client);
   const pointClassificationsProvider = new UrlPointClassificationsProvider(modelDataProvider);
   return createRevealManager(
     client.project,
@@ -99,6 +105,7 @@ export function createCdfRevealManager(
     modelMetadataProvider,
     modelDataProvider,
     annotationProvider,
+    pointCloudDMProvider,
     pointClassificationsProvider,
     renderer,
     sceneHandler,
@@ -116,6 +123,7 @@ export function createCdfRevealManager(
  * @param modelMetadataProvider
  * @param modelDataProvider
  * @param annotationProvider
+ * @param pointCloudDMProvider
  * @param pointClassificationsProvider
  * @param renderer
  * @param sceneHandler
@@ -129,6 +137,7 @@ export function createRevealManager(
   modelMetadataProvider: ModelMetadataProvider,
   modelDataProvider: ModelDataProvider,
   annotationProvider: PointCloudStylableObjectProvider,
+  pointCloudDMProvider: PointCloudStylableObjectProvider<DMPointCloudDataType>,
   pointClassificationsProvider: IPointClassificationsProvider,
   renderer: THREE.WebGLRenderer,
   sceneHandler: SceneHandler,
@@ -159,6 +168,7 @@ export function createRevealManager(
     modelDataProvider,
     annotationProvider,
     pointClassificationsProvider,
+    pointCloudDMProvider,
     pointCloudMaterialManager,
     sceneHandler.scene,
     renderer

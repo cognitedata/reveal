@@ -11,7 +11,8 @@ import { RevealOptions } from '../public/RevealOptions';
 import {
   CdfModelIdentifier,
   LocalModelIdentifier,
-  DummyPointCloudStylableObjectProvider
+  DummyPointCloudStylableObjectProvider,
+  DummyPointCloudDMStylableObjectProvider
 } from '@reveal/data-providers';
 import { DataSource } from '@reveal/data-source';
 import { assertNever, SceneHandler } from '@reveal/utilities';
@@ -109,6 +110,7 @@ export class RevealManagerHelper {
       dataSource.getModelMetadataProvider(),
       dataSource.getModelDataProvider(),
       new DummyPointCloudStylableObjectProvider(),
+      new DummyPointCloudDMStylableObjectProvider(),
       new LocalPointClassificationsProvider(),
       renderer,
       sceneHandler,

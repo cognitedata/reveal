@@ -8,7 +8,12 @@ import {
 } from '../../../visual-tests/test-fixtures/StreamingVisualTestFixture';
 import { PointCloudFactory } from '../src/PointCloudFactory';
 import { cdfAnnotationsToObjectInfo } from '../../data-providers/src/pointcloud-stylable-object-providers/cdfAnnotationsToObjects';
-import { PointCloudObject, PointCloudStylableObjectProvider } from '../../data-providers';
+import {
+  DMPointCloudDataType,
+  PointCloudDataType,
+  PointCloudObject,
+  PointCloudStylableObjectProvider
+} from '../../data-providers';
 import { Cylinder } from '../../utilities';
 import { PointCloudNode } from '../src/PointCloudNode';
 import {
@@ -38,6 +43,22 @@ class CustomAnnotationProvider implements PointCloudStylableObjectProvider {
   }
 }
 
+class CustomDMProvider implements PointCloudStylableObjectProvider<DMPointCloudDataType> {
+  async getPointCloudObjects<DMPointCloudDataType extends PointCloudDataType>(
+    _modelIdentifier: ModelIdentifier
+  ): Promise<PointCloudObject<DMPointCloudDataType>[]> {
+    const cdfAnnotations = [
+      {
+        annotationId: 0,
+        volumeInstanceRef: { externalId: '123', space: 'space' },
+        region: [new Cylinder(new THREE.Vector3(-0.03, 0.1, -1000), new THREE.Vector3(-0.03, 0.1, 1000), 0.03478)]
+      }
+    ];
+
+    return cdfAnnotationsToObjectInfo(cdfAnnotations);
+  }
+}
+
 export default class PointCloudColorStylingVisualTest extends StreamingVisualTestFixture {
   constructor() {
     super('pointcloud-bunny');
@@ -47,6 +68,7 @@ export default class PointCloudColorStylingVisualTest extends StreamingVisualTes
     return new PointCloudFactory(
       this.potreeInstance,
       new CustomAnnotationProvider(),
+      new CustomDMProvider(),
       new LocalPointClassificationsProvider(),
       this._pcMaterialManager
     );

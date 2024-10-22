@@ -2,21 +2,29 @@
  * Copyright 2022 Cognite AS
  */
 
-import { DMInstanceRef, isPointCloudObjectMetadata, PointCloudObject } from '@reveal/data-providers';
+import {
+  DMInstanceRef,
+  isClassicPointCloudDataTypeObject,
+  isDMPointCloudDataTypeObject,
+  PointCloudDataType,
+  PointCloudObject
+} from '@reveal/data-providers';
 import { PointCloudObjectIdMaps } from '@reveal/rendering';
 
-export function createObjectIdMaps(objects: PointCloudObject[]): PointCloudObjectIdMaps {
+export function createObjectIdMaps<T extends PointCloudDataType>(
+  objects: PointCloudObject<T>[]
+): PointCloudObjectIdMaps {
   const annotationToObjectIds = new Map<number | DMInstanceRef, number>();
   const objectToAnnotationIds = new Map<number, number | DMInstanceRef>();
 
   objects.forEach(annotation => {
     const objectId = annotation.stylableObject.objectId;
-    if (isPointCloudObjectMetadata(annotation)) {
+    if (isClassicPointCloudDataTypeObject(annotation)) {
       annotationToObjectIds.set(annotation.annotationId, objectId);
       objectToAnnotationIds.set(objectId, annotation.annotationId);
-    } else {
-      annotationToObjectIds.set(annotation.volumeRef, objectId);
-      objectToAnnotationIds.set(objectId, annotation.volumeRef);
+    } else if (isDMPointCloudDataTypeObject(annotation)) {
+      annotationToObjectIds.set(annotation.volumeInstanceRef, objectId);
+      objectToAnnotationIds.set(objectId, annotation.volumeInstanceRef);
     }
   });
 

@@ -7,7 +7,7 @@ import { PointCloudMetadata } from './PointCloudMetadata';
 
 import { Potree } from './potree-three-loader';
 import { DEFAULT_POINT_CLOUD_METADATA_FILE } from './constants';
-import { PointCloudStylableObjectProvider } from '@reveal/data-providers';
+import { DMPointCloudDataType, PointCloudDataType, PointCloudStylableObjectProvider } from '@reveal/data-providers';
 import { IPointClassificationsProvider } from './classificationsProviders/IPointClassificationsProvider';
 
 import { PointCloudMaterialManager } from '@reveal/rendering';
@@ -16,17 +16,20 @@ import { createObjectIdMaps } from './potree-three-loader/utils/createObjectIdMa
 export class PointCloudFactory {
   private readonly _potreeInstance: Potree;
   private readonly _pointCloudObjectProvider: PointCloudStylableObjectProvider;
+  private readonly _pointCloudDMProvider: PointCloudStylableObjectProvider<DMPointCloudDataType>;
   private readonly _classificationsProvider: IPointClassificationsProvider;
   private readonly _pointCloudMaterialManager: PointCloudMaterialManager;
 
   constructor(
     potreeInstance: Potree,
     pointCloudObjectProvider: PointCloudStylableObjectProvider,
+    pointCloudDMProvider: PointCloudStylableObjectProvider<DMPointCloudDataType>,
     classificationsProvider: IPointClassificationsProvider,
     pointCloudMaterialManager: PointCloudMaterialManager
   ) {
     this._potreeInstance = potreeInstance;
     this._pointCloudObjectProvider = pointCloudObjectProvider;
+    this._pointCloudDMProvider = pointCloudDMProvider;
     this._classificationsProvider = classificationsProvider;
     this._pointCloudMaterialManager = pointCloudMaterialManager;
   }
@@ -38,20 +41,25 @@ export class PointCloudFactory {
   async createModel(modelMetadata: PointCloudMetadata, revisionSpace?: string): Promise<PointCloudNode> {
     const { modelBaseUrl, modelIdentifier, modelMatrix, cameraConfiguration } = modelMetadata;
 
-    const annotationInfoPromise = this._pointCloudObjectProvider.getPointCloudObjects(modelIdentifier, revisionSpace);
+    const pointCloudProvider =
+      revisionSpace !== undefined && revisionSpace !== '' ? this._pointCloudDMProvider : this._pointCloudObjectProvider;
+
+    const annotationInfoPromise = pointCloudProvider.getPointCloudObjects(modelIdentifier, revisionSpace);
     const classSchemaPromise = this._classificationsProvider.getClassifications(modelMetadata);
 
     const [annotationInfo, classSchema] = await Promise.all([annotationInfoPromise, classSchemaPromise]);
 
+    const stylableObject = annotationInfo.map(obj => obj.stylableObject);
+
     this._pointCloudMaterialManager.addModelMaterial(
       modelIdentifier.revealInternalId,
-      createObjectIdMaps(annotationInfo)
+      createObjectIdMaps<PointCloudDataType>(annotationInfo)
     );
 
     const pointCloudOctree = await this._potreeInstance.loadPointCloud(
       modelBaseUrl,
       DEFAULT_POINT_CLOUD_METADATA_FILE,
-      annotationInfo,
+      stylableObject,
       modelIdentifier.revealInternalId
     );
 

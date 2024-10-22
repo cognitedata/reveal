@@ -12,21 +12,17 @@ import { ModelIdentifier } from '../ModelIdentifier';
 import { CdfModelIdentifier } from '../model-identifiers/CdfModelIdentifier';
 import { IShape, Box, Cylinder } from '@reveal/utilities';
 import assert from 'assert';
-import { CdfPointCloudObjectAnnotation, DMPointCloudVolumeIdentifier, PointCloudObject } from './types';
+import { CdfPointCloudObjectAnnotation, PointCloudObject } from './types';
 import { PointCloudStylableObjectProvider } from '../PointCloudStylableObjectProvider';
 
 import * as THREE from 'three';
 import { cdfAnnotationsToObjectInfo } from './cdfAnnotationsToObjects';
-import { DataModelsSdk } from '../DataModelsSdk';
-import { getDMPointCloudObjects } from '../utilities/getDMPointCloudObjects';
 
 export class CdfPointCloudStylableObjectProvider implements PointCloudStylableObjectProvider {
   private readonly _sdk: CogniteClient;
-  private readonly _dmsSdk: DataModelsSdk;
 
   constructor(sdk: CogniteClient) {
     this._sdk = sdk;
-    this._dmsSdk = new DataModelsSdk(sdk);
   }
 
   private annotationGeometryToRevealShapes(geometry: AnnotationsGeometry): IShape {
@@ -78,28 +74,10 @@ export class CdfPointCloudStylableObjectProvider implements PointCloudStylableOb
     return annotations;
   }
 
-  getDataModelIdentifier(
-    modelIdentifier: CdfModelIdentifier,
-    revisionSpace: string | undefined
-  ): DMPointCloudVolumeIdentifier | undefined {
-    if (revisionSpace === undefined || revisionSpace === '') {
-      return;
-    }
-    const dataModelIdentifier = {
-      space: revisionSpace,
-      pointCloudModelExternalId: modelIdentifier.modelId.toString(),
-      pointCloudModelRevisionId: modelIdentifier.revisionId.toString()
-    };
-    return dataModelIdentifier;
-  }
-
-  async getPointCloudObjects(modelIdentifier: ModelIdentifier, revisionSpace?: string): Promise<PointCloudObject[]> {
+  async getPointCloudObjects(modelIdentifier: ModelIdentifier): Promise<PointCloudObject[]> {
     assert(modelIdentifier instanceof CdfModelIdentifier);
 
-    const dataModelIdentifier = this.getDataModelIdentifier(modelIdentifier, revisionSpace);
-    const annotations = dataModelIdentifier
-      ? await getDMPointCloudObjects(this._dmsSdk, dataModelIdentifier)
-      : await this.fetchAnnotations(modelIdentifier);
+    const annotations = await this.fetchAnnotations(modelIdentifier);
 
     return cdfAnnotationsToObjectInfo(annotations);
   }

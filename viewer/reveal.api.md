@@ -400,6 +400,19 @@ export abstract class CdfNodeCollectionBase extends NodeCollection {
     protected updateCollectionFromResults(requests: Promise<ListResponse<Node3D[]>>[]): Promise<void>;
 }
 
+// @public
+export type ClassicPointCloudDataType = {
+    modelIdentifier: {
+        modelId: number;
+        revisionId: number;
+    };
+    volumeMetadata: {
+        annotationId: number;
+        assetRef?: AnnotationsAssetRef;
+    };
+    _never: never;
+};
+
 // @public (undocumented)
 export type ClippingPlanesState = {
     nx: number;
@@ -610,7 +623,7 @@ export class CogniteCadModel implements CdfModelNodeCollectionDataProvider {
 export type CogniteModel = CogniteCadModel | CognitePointCloudModel;
 
 // @public
-export class CognitePointCloudModel {
+export class CognitePointCloudModel<T extends PointCloudDataType = ClassicPointCloudDataType> {
     assignStyledObjectCollection(objectCollection: PointCloudAnnotationVolumeCollection | PointCloudDMVolumeCollection, appearance: PointCloudAppearance): void;
     dispose(): void;
     getCameraConfiguration(): CameraConfiguration | undefined;
@@ -647,10 +660,10 @@ export class CognitePointCloudModel {
     setModelTransformation(transformationMatrix: THREE.Matrix4): void;
     // (undocumented)
     get stylableObjectCount(): number;
-    get stylableObjects(): PointCloudVolumeMetadata[];
+    get stylableObjects(): PointCloudObjectMetadata<PointCloudDataType>[];
     get styledCollections(): StyledPointCloudAnnotationVolumeCollection[];
     get styledPointCloudVolumeCollections(): StyledPointCloudVolumeCollection[];
-    traverseStylableObjects(callback: (annotationMetadata: PointCloudObjectMetadata) => void): void;
+    traverseStylableObjects(callback: (annotationMetadata: PointCloudObjectMetadata<T>) => void): void;
     // (undocumented)
     readonly type: SupportedModelTypes;
     unassignStyledObjectCollection(objectCollection: PointCloudAnnotationVolumeCollection | PointCloudDMVolumeCollection): void;
@@ -907,6 +920,16 @@ export type DistanceToLabelDelegate = (distanceInMeters: number) => string;
 
 // @public
 export type DMInstanceRef = DirectRelationReference;
+
+// @public
+export type DMPointCloudDataType = {
+    modelIdentifier: DMInstanceRef;
+    volumeMetadata: {
+        volumeInstanceRef: DMInstanceRef;
+        assetRef?: DMInstanceRef;
+    };
+    _never: never;
+};
 
 // @public
 export type EdlOptions = {
@@ -1352,14 +1375,14 @@ export class InvertedNodeCollection extends NodeCollection {
     serialize(): SerializedNodeCollection;
 }
 
-// @public
-export function isCombinedPointCloudObjectDataModelProperties(pointCloudObject: PointCloudVolumeMetadata): pointCloudObject is PointCloudVolumeDataModelProperties;
-
-// @public
-export function isCombinedPointCloudObjectMetadata(pointCloudObject: PointCloudVolumeMetadata): pointCloudObject is PointCloudObjectMetadata;
+// @public (undocumented)
+export function isClassicPointCloudDataType(pointCloudMetadata: PointCloudObjectMetadata<PointCloudDataType>): pointCloudMetadata is PointCloudObjectMetadata<ClassicPointCloudDataType>;
 
 // @public
 export function isDefaultCameraManager(cameraManager: CameraManager): cameraManager is DefaultCameraManager;
+
+// @public (undocumented)
+export function isDMPointCloudDataType(pointCloudMetadata: PointCloudObjectMetadata<PointCloudDataType>): pointCloudMetadata is PointCloudObjectMetadata<DMPointCloudDataType>;
 
 // @beta
 export function isFlexibleCameraManager(manager: CameraManager): manager is IFlexibleCameraManager;
@@ -1710,6 +1733,9 @@ export type PointCloudBudget = {
     readonly numberOfPoints: number;
 };
 
+// @public (undocumented)
+export type PointCloudDataType = DMPointCloudDataType | ClassicPointCloudDataType;
+
 // @public
 export class PointCloudDMVolumeCollection {
     constructor(ids: Iterable<DMInstanceRef>);
@@ -1743,22 +1769,9 @@ export abstract class PointCloudObjectCollection {
 }
 
 // @public
-export type PointCloudObjectMetadata = {
-    annotationId: number;
-    assetId?: number;
-    assetRef?: AnnotationsAssetRef;
+export type PointCloudObjectMetadata<T extends PointCloudDataType = ClassicPointCloudDataType> = {
     boundingBox: Box3;
-};
-
-// @public
-export type PointCloudVolumeDataModelProperties = {
-    volumeRef: DMInstanceRef;
-    assetRef?: DMInstanceRef;
-    boundingBox: Box3;
-};
-
-// @public
-export type PointCloudVolumeMetadata = PointCloudObjectMetadata | PointCloudVolumeDataModelProperties;
+} & T['volumeMetadata'];
 
 // @public
 export type PointCloudVolumeReference = {

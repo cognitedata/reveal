@@ -9,9 +9,9 @@ import {
   AnnotationIdPointCloudObjectCollection,
   PointCloudAppearance,
   DefaultPointCloudAppearance,
-  isCombinedPointCloudObjectDataModelProperties,
   PointCloudDMVolumeCollection,
-  PointCloudObjectMetadata
+  isDMPointCloudDataType,
+  isClassicPointCloudDataType,
 } from '@cognite/reveal';
 import { AnnotationModel, AnnotationsBoundingVolume, AnnotationType, CogniteClient } from '@cognite/sdk';
 
@@ -74,26 +74,20 @@ export class PointCloudObjectStylingUI {
         this._model.removeAllStyledObjectCollections();
       },
       randomColors: () => {
-        model.traverseStylableObjects((object: PointCloudObjectMetadata) => {
-          const objectStyle = new THREE.Color(
-            Math.floor(Math.random() * 255),
-            Math.floor(Math.random() * 255),
-            Math.floor(Math.random() * 255)
-          );
-          const annotationId = object.annotationId;
-          const stylableObject = new AnnotationIdPointCloudObjectCollection([annotationId]);
-          model.assignStyledObjectCollection(stylableObject, {
-            color: objectStyle
-          });
-        });
         model.stylableObjects.forEach(object => {
           const objectStyle = new THREE.Color(
             Math.floor(Math.random() * 255),
             Math.floor(Math.random() * 255),
             Math.floor(Math.random() * 255)
           );
-          if (isCombinedPointCloudObjectDataModelProperties(object)) {
-            const stylableObject = new PointCloudDMVolumeCollection([object.volumeRef]);
+          if (isClassicPointCloudDataType(object)) {
+            const annotationId = object.annotationId;
+            const stylableObject = new AnnotationIdPointCloudObjectCollection([annotationId]);
+            model.assignStyledObjectCollection(stylableObject, {
+              color: objectStyle
+            });
+          } else if (isDMPointCloudDataType(object)) {
+            const stylableObject = new PointCloudDMVolumeCollection([object.volumeInstanceRef]);
             model.assignStyledObjectCollection(stylableObject, {
               color: objectStyle
             });
@@ -171,7 +165,7 @@ export class PointCloudObjectStylingUI {
         this._boundingBoxGroup!.add(box);
       });
       this._model.stylableObjects.forEach(object => {
-        if (isCombinedPointCloudObjectDataModelProperties(object)) {
+        if (isClassicPointCloudDataType(object)) {
           const box = new THREE.Box3Helper(object.boundingBox);
           this._boundingBoxGroup!.add(box);
         }

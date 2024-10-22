@@ -4,10 +4,12 @@
 
 import { CompositeShape } from '@reveal/utilities';
 
-import { PointCloudObject, CdfPointCloudObjectAnnotation } from './types';
+import { PointCloudObject, CdfPointCloudObjectAnnotation, PointCloudDataType } from './types';
 import { StylableObject } from './StylableObject';
 
-function cdfAnnotationsToPointCloudObjects(cdfAnnotations: CdfPointCloudObjectAnnotation[]): PointCloudObject[] {
+function cdfAnnotationsToPointCloudObjects<T extends PointCloudDataType>(
+  cdfAnnotations: CdfPointCloudObjectAnnotation[]
+): PointCloudObject<T>[] {
   const resultAnnotations = cdfAnnotations.map((cdfAnnotation, index) => {
     const shapes = cdfAnnotation.region;
 
@@ -16,20 +18,26 @@ function cdfAnnotationsToPointCloudObjects(cdfAnnotations: CdfPointCloudObjectAn
       shape: compShape,
       objectId: index + 1
     };
+    const annotationId = cdfAnnotation.annotationId;
+    const volumeMetadata =
+      annotationId === 0
+        ? { volumeInstanceRef: cdfAnnotation.volumeInstanceRef, assetRef: cdfAnnotation.asset }
+        : { annotationId, assetRef: cdfAnnotation.asset };
 
-    return {
-      annotationId: cdfAnnotation.annotationId,
-      assetId: cdfAnnotation.asset && 'id' in cdfAnnotation.asset ? cdfAnnotation.asset.id : undefined,
-      assetRef: cdfAnnotation.asset,
+    const pointCloudObject = {
       boundingBox: stylableObject.shape.createBoundingBox(),
-      volumeRef: cdfAnnotation.volumeInstanceRef,
+      ...(volumeMetadata as T['volumeMetadata']),
       stylableObject
     };
+
+    return pointCloudObject;
   });
 
   return resultAnnotations;
 }
 
-export function cdfAnnotationsToObjectInfo(annotations: CdfPointCloudObjectAnnotation[]): PointCloudObject[] {
+export function cdfAnnotationsToObjectInfo<T extends PointCloudDataType>(
+  annotations: CdfPointCloudObjectAnnotation[]
+): PointCloudObject<T>[] {
   return cdfAnnotationsToPointCloudObjects(annotations);
 }

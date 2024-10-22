@@ -7,7 +7,12 @@ import { PointCloudMetadataRepository } from './PointCloudMetadataRepository';
 
 import * as THREE from 'three';
 
-import { ModelDataProvider, ModelMetadataProvider, PointCloudStylableObjectProvider } from '@reveal/data-providers';
+import {
+  DMPointCloudDataType,
+  ModelDataProvider,
+  ModelMetadataProvider,
+  PointCloudStylableObjectProvider
+} from '@reveal/data-providers';
 import { Potree } from './potree-three-loader';
 import { PointCloudFactory } from './PointCloudFactory';
 import { IPointClassificationsProvider } from './classificationsProviders/IPointClassificationsProvider';
@@ -19,6 +24,7 @@ export function createPointCloudManager(
   modelDataProvider: ModelDataProvider,
   pointCloudStylableObjectProvider: PointCloudStylableObjectProvider,
   classificationsProvider: IPointClassificationsProvider,
+  pointCloudDMProvider: PointCloudStylableObjectProvider<DMPointCloudDataType>,
   pointCloudMaterialManager: PointCloudMaterialManager,
   scene: THREE.Scene,
   renderer: THREE.WebGLRenderer
@@ -29,6 +35,7 @@ export function createPointCloudManager(
   const pointCloudFactory = new PointCloudFactory(
     potreeInstance,
     pointCloudStylableObjectProvider,
+    pointCloudDMProvider,
     classificationsProvider,
     pointCloudMaterialManager
   );

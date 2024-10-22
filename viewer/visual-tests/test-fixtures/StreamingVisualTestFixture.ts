@@ -32,7 +32,8 @@ import {
   ModelIdentifier,
   ModelMetadataProvider,
   DummyPointCloudStylableObjectProvider,
-  ModelDataProvider
+  ModelDataProvider,
+  DummyPointCloudDMStylableObjectProvider
 } from '../../packages/data-providers';
 import { LoadingState } from '../../packages/model-base';
 
@@ -133,6 +134,7 @@ export abstract class StreamingVisualTestFixture implements VisualTestFixture {
     return new PointCloudFactory(
       this.potreeInstance,
       new DummyPointCloudStylableObjectProvider(),
+      new DummyPointCloudDMStylableObjectProvider(),
       new LocalPointClassificationsProvider(),
       this._pcMaterialManager
     );
