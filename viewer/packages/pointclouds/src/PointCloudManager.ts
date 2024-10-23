@@ -15,7 +15,7 @@ import { Potree } from './potree-three-loader';
 
 import { asyncScheduler, combineLatest, Observable, scan, Subject, throttleTime } from 'rxjs';
 
-import { ModelIdentifier } from '@reveal/data-providers';
+import { ModelIdentifier, DataSourceType } from '@reveal/data-providers';
 import { MetricsLogger } from '@reveal/metrics';
 import { SupportedModelTypes } from '@reveal/model-base';
 import { PointCloudMaterialManager } from '@reveal/rendering';
@@ -114,7 +114,10 @@ export class PointCloudManager {
     this.requestRedraw();
   }
 
-  async addModel(modelIdentifier: ModelIdentifier, revisionSpace?: string): Promise<PointCloudNode> {
+  async addModel<T extends DataSourceType>(
+    modelIdentifier: ModelIdentifier,
+    revisionSpace?: string
+  ): Promise<PointCloudNode<T>> {
     const metadata = await this._pointCloudMetadataRepository.loadData(modelIdentifier);
 
     const modelType: SupportedModelTypes = 'pointcloud';
@@ -126,7 +129,7 @@ export class PointCloudManager {
       metadata.formatVersion
     );
 
-    const pointCloudNode = await this._pointCloudFactory.createModel(metadata, revisionSpace);
+    const pointCloudNode = await this._pointCloudFactory.createModel<T>(metadata, revisionSpace);
     this._pointCloudNodes.push(pointCloudNode);
 
     this.requestRedraw();
@@ -141,7 +144,7 @@ export class PointCloudManager {
     return pointCloudNode;
   }
 
-  removeModel(node: PointCloudNode): void {
+  removeModel<T extends DataSourceType>(node: PointCloudNode<T>): void {
     const index = this._pointCloudNodes.indexOf(node);
     if (index === -1) {
       throw new Error('Point cloud is not added - cannot remove it');

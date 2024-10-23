@@ -7,7 +7,7 @@ import { PointCloudMetadata } from './PointCloudMetadata';
 
 import { Potree } from './potree-three-loader';
 import { DEFAULT_POINT_CLOUD_METADATA_FILE } from './constants';
-import { DMPointCloudDataType, PointCloudDataType, PointCloudStylableObjectProvider } from '@reveal/data-providers';
+import { DMPointCloudDataType, DataSourceType, PointCloudStylableObjectProvider } from '@reveal/data-providers';
 import { IPointClassificationsProvider } from './classificationsProviders/IPointClassificationsProvider';
 
 import { PointCloudMaterialManager } from '@reveal/rendering';
@@ -38,7 +38,10 @@ export class PointCloudFactory {
     this._pointCloudMaterialManager.dispose();
   }
 
-  async createModel(modelMetadata: PointCloudMetadata, revisionSpace?: string): Promise<PointCloudNode> {
+  async createModel<T extends DataSourceType>(
+    modelMetadata: PointCloudMetadata,
+    revisionSpace?: string
+  ): Promise<PointCloudNode<T>> {
     const { modelBaseUrl, modelIdentifier, modelMatrix, cameraConfiguration } = modelMetadata;
 
     const pointCloudProvider =
@@ -53,7 +56,7 @@ export class PointCloudFactory {
 
     this._pointCloudMaterialManager.addModelMaterial(
       modelIdentifier.revealInternalId,
-      createObjectIdMaps<PointCloudDataType>(annotationInfo)
+      createObjectIdMaps<DataSourceType>(annotationInfo)
     );
 
     const pointCloudOctree = await this._potreeInstance.loadPointCloud(
@@ -64,7 +67,7 @@ export class PointCloudFactory {
     );
 
     pointCloudOctree.name = `PointCloudOctree: ${modelBaseUrl}`;
-    return new PointCloudNode(
+    return new PointCloudNode<T>(
       modelIdentifier.revealInternalId,
       modelMatrix,
       pointCloudOctree,

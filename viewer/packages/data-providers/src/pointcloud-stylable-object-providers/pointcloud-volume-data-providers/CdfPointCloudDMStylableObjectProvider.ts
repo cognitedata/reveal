@@ -8,7 +8,7 @@ import { DataModelsSdk } from '../../DataModelsSdk';
 import { PointCloudStylableObjectProvider } from '../../PointCloudStylableObjectProvider';
 import { getDMPointCloudObjects } from '../../utilities/getDMPointCloudObjects';
 import { cdfAnnotationsToObjectInfo } from '../cdfAnnotationsToObjects';
-import { DMPointCloudDataType, DMPointCloudVolumeIdentifier, PointCloudDataType, PointCloudObject } from '../types';
+import { DMPointCloudDataType, DMPointCloudVolumeIdentifier, PointCloudObject } from '../types';
 import { CdfModelIdentifier } from '../../model-identifiers/CdfModelIdentifier';
 import { ModelIdentifier } from '../../ModelIdentifier';
 
@@ -34,7 +34,7 @@ export class CdfPointCloudDMStylableObjectProvider implements PointCloudStylable
     return dataModelIdentifier;
   }
 
-  async getPointCloudObjects<DMPointCloudDataType extends PointCloudDataType>(
+  async getPointCloudObjects(
     modelIdentifier: ModelIdentifier,
     revisionSpace?: string
   ): Promise<PointCloudObject<DMPointCloudDataType>[]> {

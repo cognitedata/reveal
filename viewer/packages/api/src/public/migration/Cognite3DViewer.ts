@@ -48,7 +48,7 @@ import {
   ResolutionOptions,
   RenderParameters,
   AnyIntersection,
-  AddCdfModelOptions
+  AddModelOptions
 } from './types';
 import { RevealManager } from '../RevealManager';
 import { CogniteModel, Image360WithCollection } from '../types';
@@ -96,6 +96,7 @@ import { Image360ApiHelper } from '../../api-helpers/Image360ApiHelper';
 import html2canvas from 'html2canvas';
 import { AsyncSequencer, SequencerFunction } from '../../../../utilities/src/AsyncSequencer';
 import { getModelAndRevisionId, isAddDMModelOptions } from '../../utilities/utils';
+import { ClassicDataSourceType, DataSourceType, isClassicIdentifier } from '@reveal/data-providers/src/DataSourceType';
 
 type Cognite3DViewerEvents =
   | 'click'
@@ -716,7 +717,9 @@ export class Cognite3DViewer {
    * });
    * ```
    */
-  async addModel(options: AddCdfModelOptions): Promise<CogniteModel> {
+  async addModel<T extends DataSourceType = ClassicDataSourceType>(
+    options: AddModelOptions<T>
+  ): Promise<CogniteModel<T>> {
     const modelLoadSequencer = this._addModelSequencer.getNextSequencer<void>();
     const { modelId, revisionId } = await getModelAndRevisionId(options, this._cdfSdkClient);
 
@@ -736,7 +739,7 @@ export class Cognite3DViewer {
         case 'cad':
           return this.addCadModelWithSequencer({ ...options, modelId, revisionId }, modelLoadSequencer);
         case 'pointcloud':
-          return this.addPointCloudModelWithSequencer({ ...options, modelId, revisionId }, modelLoadSequencer);
+          return this.addPointCloudModelWithSequencer<T>({ ...options, modelId, revisionId }, modelLoadSequencer);
         default:
           await modelLoadSequencer(() => {});
           throw new Error('Model is not supported');
@@ -759,13 +762,13 @@ export class Cognite3DViewer {
    * });
    * ```
    */
-  addCadModel(options: AddCdfModelOptions): Promise<CogniteCadModel> {
+  addCadModel(options: AddModelOptions): Promise<CogniteCadModel> {
     const modelLoaderSequencer = this._addModelSequencer.getNextSequencer<void>();
     return this.addCadModelWithSequencer(options, modelLoaderSequencer);
   }
 
   private async addCadModelWithSequencer(
-    options: AddCdfModelOptions,
+    options: AddModelOptions,
     modelLoadSequencer: SequencerFunction<void>
   ): Promise<CogniteCadModel> {
     try {
@@ -808,15 +811,17 @@ export class Cognite3DViewer {
    * });
    * ```
    */
-  addPointCloudModel(options: AddCdfModelOptions): Promise<CognitePointCloudModel> {
+  addPointCloudModel<T extends DataSourceType = ClassicDataSourceType>(
+    options: AddModelOptions<T>
+  ): Promise<CognitePointCloudModel<T>> {
     const sequencerFunction = this._addModelSequencer.getNextSequencer<void>();
-    return this.addPointCloudModelWithSequencer(options, sequencerFunction);
+    return this.addPointCloudModelWithSequencer<T>(options, sequencerFunction);
   }
 
-  private async addPointCloudModelWithSequencer(
-    options: AddCdfModelOptions,
+  private async addPointCloudModelWithSequencer<T extends DataSourceType>(
+    options: AddModelOptions<T>,
     modelLoadSequencer: SequencerFunction<void>
-  ) {
+  ): Promise<CognitePointCloudModel<T>> {
     try {
       if (options.geometryFilter) {
         throw new Error('geometryFilter is not supported for point clouds');
@@ -829,16 +834,19 @@ export class Cognite3DViewer {
         modelId,
         revisionId
       };
-      const revisionSpace = isAddDMModelOptions(options) ? options.revisionSpace : undefined;
 
-      const pointCloudNode = await this._revealManagerHelper.addPointCloudModel(
-        addPointCloudModelOptions,
-        revisionSpace
-      );
-      const model = new CognitePointCloudModel(modelId, revisionId, pointCloudNode);
+      const pointCloudNode = await this._revealManagerHelper.addPointCloudModel<T>(addPointCloudModelOptions);
+      const model = new CognitePointCloudModel<T>(options, pointCloudNode);
 
       await modelLoadSequencer(() => {
-        this._models.push(model);
+        const isCdfModel = (
+          m: CognitePointCloudModel<DataSourceType>
+        ): m is CognitePointCloudModel<ClassicDataSourceType> => isClassicIdentifier(m.modelIdentifier);
+
+        if (isCdfModel(model)) {
+          this._models.push(model);
+        }
+
         this._sceneHandler.addPointCloudModel(pointCloudNode, pointCloudNode.modelIdentifier);
       });
 
@@ -1815,9 +1823,12 @@ export class Cognite3DViewer {
               point: result.point,
               pointIndex: result.pointIndex,
               distanceToCamera: result.distance,
-              annotationId: result.annotationId,
-              assetRef: result.assetRef,
-              volumeRef: result.volumeRef
+              annotationId:
+                result.volumeMetadata !== undefined && 'annotationId' in result.volumeMetadata
+                  ? result.volumeMetadata.annotationId
+                  : 0,
+              assetRef: result.volumeMetadata?.assetRef,
+              volumeMetadata: result.volumeMetadata
             };
             intersections.push(intersection);
             break;

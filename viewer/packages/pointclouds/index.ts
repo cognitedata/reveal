@@ -4,7 +4,7 @@
 
 export { PointCloudPickingHandler } from './src/PointCloudPickingHandler';
 
-export { WellKnownAsprsPointClassCodes, PointCloudVolumeReference } from './src/types';
+export { WellKnownAsprsPointClassCodes, PointCloudVolumeMetadata } from './src/types';
 
 export { PointCloudNode } from './src/PointCloudNode';
 export { PointCloudManager } from './src/PointCloudManager';

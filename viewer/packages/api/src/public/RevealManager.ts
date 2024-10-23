@@ -25,7 +25,7 @@ import { MetricsLogger } from '@reveal/metrics';
 import { assertNever, EventTrigger } from '@reveal/utilities';
 import { CameraManager } from '@reveal/camera-manager';
 
-import { ModelIdentifier } from '@reveal/data-providers';
+import { ModelIdentifier, DataSourceType } from '@reveal/data-providers';
 import { CogniteClient } from '@cognite/sdk';
 
 /* eslint-disable jsdoc/require-jsdoc */
@@ -225,23 +225,23 @@ export class RevealManager {
   }
 
   public addModel(type: 'cad', modelIdentifier: ModelIdentifier, options?: AddCadModelOptions): Promise<CadNode>;
-  public addModel(
+  public addModel<T extends DataSourceType>(
     type: 'pointcloud',
     modelIdentifier: ModelIdentifier,
     revisionSpace?: string
-  ): Promise<PointCloudNode>;
-  public async addModel(
+  ): Promise<PointCloudNode<T>>;
+  public async addModel<T extends DataSourceType>(
     type: SupportedModelTypes,
     modelIdentifier: ModelIdentifier,
     options?: AddCadModelOptions | string
-  ): Promise<PointCloudNode | CadNode> {
+  ): Promise<PointCloudNode<T> | CadNode> {
     switch (type) {
       case 'cad': {
         return this._cadManager.addModel(modelIdentifier, (options as AddCadModelOptions).geometryFilter);
       }
 
       case 'pointcloud': {
-        return this._pointCloudManager.addModel(modelIdentifier, options as string);
+        return this._pointCloudManager.addModel<T>(modelIdentifier, options as string);
       }
 
       default:

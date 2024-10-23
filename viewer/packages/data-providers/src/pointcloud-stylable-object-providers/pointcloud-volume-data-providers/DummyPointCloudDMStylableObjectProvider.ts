@@ -4,12 +4,10 @@
 
 import { ModelIdentifier } from '../../ModelIdentifier';
 import { PointCloudStylableObjectProvider } from '../../PointCloudStylableObjectProvider';
-import { DMPointCloudDataType, PointCloudDataType, PointCloudObject } from '../types';
+import { DMPointCloudDataType, PointCloudObject } from '../types';
 
 export class DummyPointCloudDMStylableObjectProvider implements PointCloudStylableObjectProvider<DMPointCloudDataType> {
-  async getPointCloudObjects<DMPointCloudDataType extends PointCloudDataType>(
-    _modelIdentifier: ModelIdentifier
-  ): Promise<PointCloudObject<DMPointCloudDataType>[]> {
+  async getPointCloudObjects(_modelIdentifier: ModelIdentifier): Promise<PointCloudObject<DMPointCloudDataType>[]> {
     return [];
   }
 }

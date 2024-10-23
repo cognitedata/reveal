@@ -4,7 +4,7 @@
 
 import { Object3D, Vector3 } from 'three';
 import { PointCloudNode } from './PointCloudNode';
-import { DMInstanceRef } from '@reveal/data-providers';
+import { DMInstanceRef, DataSourceType } from '@reveal/data-providers';
 import { AnnotationsAssetRef } from '@cognite/sdk';
 
 /**
@@ -91,13 +91,13 @@ export enum WellKnownAsprsPointClassCodes {
  * @public
  * CDF Data model instance reference for point cloud volume object with asset.
  */
-export type PointCloudVolumeReference = {
-  annotationId: number;
-  volumeInstanceRef: DMInstanceRef;
-  assetRef?: AnnotationsAssetRef;
+export type PointCloudVolumeMetadata = {
+  annotationId?: number;
+  volumeInstanceRef?: DMInstanceRef;
+  assetRef?: AnnotationsAssetRef | DMInstanceRef;
 };
 
-export interface IntersectPointCloudNodeResult {
+export type IntersectPointCloudNodeResult<T extends DataSourceType> = {
   /**
    * Distance from camera to intersected point.
    */
@@ -113,23 +113,13 @@ export interface IntersectPointCloudNodeResult {
   /**
    * Point cloud node defining what model the point is a part of.
    */
-  pointCloudNode: PointCloudNode;
+  pointCloudNode: PointCloudNode<T>;
   /**
    * The geometry object that was intersected.
    */
   object: Object3D;
   /**
-   * @deprecated
-   * annotationId of the clicked object within a pointcloud.
+   * Volume metadata, e.g. asset reference
    */
-  annotationId: number;
-  /**
-   * pointcloud volume reference.
-   */
-  volumeRef?: PointCloudVolumeReference;
-  /**
-   * @deprecated
-   * asset reference of the clicked object in the pointcloud, if any.
-   */
-  assetRef?: AnnotationsAssetRef;
-}
+  volumeMetadata?: T['pointCloudVolumeMetadata'];
+};

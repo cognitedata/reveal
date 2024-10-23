@@ -24,8 +24,7 @@ export {
   PointCloudObject,
   DMInstanceRef,
   DMPointCloudDataType,
-  ClassicPointCloudDataType,
-  PointCloudDataType
+  ClassicPointCloudDataType
 } from './src/pointcloud-stylable-object-providers/types';
 export { PointCloudStylableObjectProvider } from './src/PointCloudStylableObjectProvider';
 export { StylableObject, SerializableStylableObject } from './src/pointcloud-stylable-object-providers/StylableObject';
@@ -57,3 +56,11 @@ export {
   isDMPointCloudDataType,
   isClassicPointCloudDataType
 } from './src/utilities/utils';
+
+export {
+  DataSourceType,
+  ClassicDataSourceType,
+  DMDataSourceType,
+  ClassicModelIdentifierType,
+  DMModelIdentifierType
+} from './src/DataSourceType';

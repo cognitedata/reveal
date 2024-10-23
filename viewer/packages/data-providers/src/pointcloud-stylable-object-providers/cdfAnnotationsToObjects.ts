@@ -4,10 +4,11 @@
 
 import { CompositeShape } from '@reveal/utilities';
 
-import { PointCloudObject, CdfPointCloudObjectAnnotation, PointCloudDataType } from './types';
+import { PointCloudObject, CdfPointCloudObjectAnnotation } from './types';
 import { StylableObject } from './StylableObject';
+import { DataSourceType } from '../DataSourceType';
 
-function cdfAnnotationsToPointCloudObjects<T extends PointCloudDataType>(
+function cdfAnnotationsToPointCloudObjects<T extends DataSourceType>(
   cdfAnnotations: CdfPointCloudObjectAnnotation[]
 ): PointCloudObject<T>[] {
   const resultAnnotations = cdfAnnotations.map((cdfAnnotation, index) => {
@@ -26,7 +27,7 @@ function cdfAnnotationsToPointCloudObjects<T extends PointCloudDataType>(
 
     const pointCloudObject = {
       boundingBox: stylableObject.shape.createBoundingBox(),
-      ...(volumeMetadata as T['volumeMetadata']),
+      ...(volumeMetadata as T['pointCloudVolumeMetadata']),
       stylableObject
     };
 
@@ -36,7 +37,7 @@ function cdfAnnotationsToPointCloudObjects<T extends PointCloudDataType>(
   return resultAnnotations;
 }
 
-export function cdfAnnotationsToObjectInfo<T extends PointCloudDataType>(
+export function cdfAnnotationsToObjectInfo<T extends DataSourceType>(
   annotations: CdfPointCloudObjectAnnotation[]
 ): PointCloudObject<T>[] {
   return cdfAnnotationsToPointCloudObjects(annotations);

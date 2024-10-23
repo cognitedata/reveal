@@ -7,6 +7,7 @@ import { IShape } from '@reveal/utilities';
 
 import { Box3 } from 'three';
 import { AnnotationsAssetRef, DirectRelationReference } from '@cognite/sdk';
+import { ClassicDataSourceType, DataSourceType, DMDataSourceType } from '../DataSourceType';
 
 /**
  * @public
@@ -25,16 +26,11 @@ export type CdfPointCloudObjectAnnotation = {
  * @public
  * Data model instance reference for point cloud volume object with asset reference.
  */
-export type DMPointCloudDataType = {
+export type DMPointCloudDataType = DMDataSourceType & {
   /**
-   * The CDF point cloud model identifier associated with the object which includes revisionExternalId and revisionSpace.
+   * The typename of the point cloud data
    */
-  modelIdentifier: DMInstanceRef;
-  /**
-   * The CDF point cloud volume metadata containing reference associated with the object which includes externalId, space
-   * and asset reference if any.
-   */
-  volumeMetadata: { volumeInstanceRef: DMInstanceRef; assetRef?: DMInstanceRef };
+  type: 'dm';
   _never: never;
 };
 
@@ -42,33 +38,26 @@ export type DMPointCloudDataType = {
  * @public
  * Classic point cloud annotation data type with asset reference.
  */
-export type ClassicPointCloudDataType = {
+export type ClassicPointCloudDataType = ClassicDataSourceType & {
   /**
-   * The classic point cloud model identifier associated with the object which include modelId and revisionId.
+   * The typename of the point cloud data
    */
-  modelIdentifier: { modelId: number; revisionId: number };
-  /**
-   * The classic point cloud volume metadata containing reference associated with the object which includes annotationId
-   * and asset reference if any.
-   */
-  volumeMetadata: { annotationId: number; assetRef?: AnnotationsAssetRef };
+  type: 'classic';
   _never: never;
 };
-
-export type PointCloudDataType = DMPointCloudDataType | ClassicPointCloudDataType;
 
 /**
  * @public
  * Metadata for a single point cloud object
  */
-export type PointCloudObjectMetadata<T extends PointCloudDataType = ClassicPointCloudDataType> = {
+export type PointCloudObjectMetadata<T extends DataSourceType = ClassicPointCloudDataType> = {
   boundingBox: Box3;
-} & T['volumeMetadata'];
+} & T['pointCloudVolumeMetadata'];
 
 /**
  * Point cloud object containing point cloud volume or annotation metadata and stylable object
  */
-export type PointCloudObject<T extends PointCloudDataType = ClassicPointCloudDataType> = PointCloudObjectMetadata<T> & {
+export type PointCloudObject<T extends DataSourceType = ClassicPointCloudDataType> = PointCloudObjectMetadata<T> & {
   stylableObject: StylableObject;
 };
 

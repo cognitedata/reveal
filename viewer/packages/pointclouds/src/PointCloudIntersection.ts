@@ -4,7 +4,7 @@
 import { AnnotationsAssetRef } from '@cognite/sdk';
 import { CognitePointCloudModel } from './CognitePointCloudModel';
 import type { Vector3 } from 'three';
-import { PointCloudVolumeReference } from './types';
+import { PointCloudVolumeMetadata } from './types';
 
 export type PointCloudIntersection = {
   /**
@@ -29,6 +29,7 @@ export type PointCloudIntersection = {
   distanceToCamera: number;
   /**
    * Annotation Id of the intersected object within a pointcloud. (0 if not applicable)
+   * @deprecated Use `volumeRef` instead
    */
   annotationId: number;
   /**
@@ -38,5 +39,5 @@ export type PointCloudIntersection = {
   /**
    * Point cloud volume reference associated with the intersected point cloud volume, if any.
    */
-  volumeRef?: PointCloudVolumeReference;
+  volumeMetadata?: PointCloudVolumeMetadata;
 };

@@ -10,7 +10,7 @@ import { PointCloudNode } from './PointCloudNode';
 import { PointColorType, PointShape, PointSizeType } from '@reveal/rendering';
 
 import { SupportedModelTypes } from '@reveal/model-base';
-import { ClassicPointCloudDataType, PointCloudDataType, PointCloudObjectMetadata } from '@reveal/data-providers';
+import { ClassicPointCloudDataType, DataSourceType, PointCloudObjectMetadata } from '@reveal/data-providers';
 
 import {
   PointCloudAnnotationVolumeCollection,
@@ -22,21 +22,31 @@ import {
   StyledPointCloudVolumeCollection,
   StyledPointCloudAnnotationVolumeCollection
 } from '@reveal/pointcloud-styling';
+import { ClassicDataSourceType, isClassicIdentifier } from '@reveal/data-providers/src/DataSourceType';
 
 /**
  * Represents a point clouds model loaded from CDF.
  * @noInheritDoc
  * @module @cognite/reveal
  */
-export class CognitePointCloudModel<T extends PointCloudDataType = ClassicPointCloudDataType> {
+export class CognitePointCloudModel<T extends DataSourceType = ClassicDataSourceType> {
   public readonly type: SupportedModelTypes = 'pointcloud';
-  public readonly modelId: number;
+
   /**
-   * The modelId of the point cloud model in Cognite Data Fusion.
+   * The modelId of the point cloud model in Cognite Data Fusion. 0 if not applicable
+   * @deprecated Use modelIdentifier instead
    */
-  public readonly revisionId: number;
+  public readonly modelId: number = 0;
   /**
-   * The revisionId of the specific model revision in Cognite Data Fusion.
+   * The revisionId of the specific model revision in Cognite Data Fusion. 0 if not applicable
+   * @deprecated Use modelIdentifier instead
+   */
+  public readonly revisionId: number = 0;
+
+  public readonly modelIdentifier: T['modelIdentifier'];
+
+  /**
+   * Point cloud node
    * @internal
    */
   readonly pointCloudNode: PointCloudNode;
@@ -50,9 +60,12 @@ export class CognitePointCloudModel<T extends PointCloudDataType = ClassicPointC
    * @param pointCloudNode
    * @internal
    */
-  constructor(modelId: number, revisionId: number, pointCloudNode: PointCloudNode) {
-    this.modelId = modelId;
-    this.revisionId = revisionId;
+  constructor(identifier: T['modelIdentifier'], pointCloudNode: PointCloudNode) {
+    if (isClassicIdentifier(identifier)) {
+      this.modelId = identifier.modelId;
+      this.revisionId = identifier.revisionId;
+    }
+    this.modelIdentifier = identifier;
     this.pointCloudNode = pointCloudNode;
   }
 
@@ -320,7 +333,7 @@ export class CognitePointCloudModel<T extends PointCloudDataType = ClassicPointC
    * Gets array of stylable objects for the point cloud model.
    * @returns All stylable objects for this model
    */
-  get stylableObjects(): PointCloudObjectMetadata<PointCloudDataType>[] {
+  get stylableObjects(): PointCloudObjectMetadata<DataSourceType>[] {
     return Array.from(this.pointCloudNode.stylableObjectAnnotationMetadata);
   }
 
@@ -432,7 +445,7 @@ export class CognitePointCloudModel<T extends PointCloudDataType = ClassicPointC
    */
   traverseStylableObjects(callback: (annotationMetadata: PointCloudObjectMetadata<T>) => void): void {
     for (const obj of this.pointCloudNode.stylableObjectAnnotationMetadata) {
-      callback(obj as PointCloudObjectMetadata<T>);
+      callback(obj);
     }
   }
 }
