@@ -48,6 +48,7 @@ export const SettingsButton = ({
     []
   );
 
+  // @update-ui-component-pattern
   const [isOpen, setOpen] = useState<boolean>(false);
   const [isEnabled, setEnabled] = useState<boolean>(true);
   const [isVisible, setVisible] = useState<boolean>(true);
@@ -68,6 +69,7 @@ export const SettingsButton = ({
       command.removeEventListener(update);
     };
   }, [command]);
+  // @end
 
   if (!isVisible || !command.hasChildren) {
     return <></>;

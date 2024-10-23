@@ -47,6 +47,7 @@ export const FilterButton = ({
 
   command.initializeChildrenIfNeeded();
 
+  // @update-ui-component-pattern
   const [isEnabled, setEnabled] = useState<boolean>(true);
   const [isVisible, setVisible] = useState<boolean>(true);
   const [uniqueId, setUniqueId] = useState<number>(0);
@@ -81,6 +82,7 @@ export const FilterButton = ({
       command.removeEventListener(update);
     };
   }, [command]);
+  // @end
 
   const children = command.children;
   if (!isVisible || children === undefined || children.length === 0) {

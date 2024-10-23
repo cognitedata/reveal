@@ -56,19 +56,19 @@ export abstract class BaseCommand {
     return this.tooltip.fallback;
   }
 
-  public get shortCutKey(): string | undefined {
+  protected get shortCutKey(): string | undefined {
     return undefined;
   }
 
-  public get shortCutKeyOnCtrl(): boolean {
+  protected get shortCutKeyOnCtrl(): boolean {
     return false;
   }
 
-  public get shortCutKeyOnAlt(): boolean {
+  protected get shortCutKeyOnAlt(): boolean {
     return false;
   }
 
-  public get shortCutKeyOnShift(): boolean {
+  protected get shortCutKeyOnShift(): boolean {
     return false;
   }
 
@@ -196,5 +196,14 @@ export abstract class BaseCommand {
     }
     keys.push(key);
     return keys;
+  }
+
+  public hasShortCutKey(key: string, ctrl: boolean, shift: boolean, alt: boolean): boolean {
+    return (
+      this.shortCutKey === key &&
+      this.shortCutKeyOnCtrl === ctrl &&
+      this.shortCutKeyOnShift === shift &&
+      this.shortCutKeyOnAlt === alt
+    );
   }
 }
