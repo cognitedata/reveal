@@ -33,7 +33,7 @@ describe('RevealManager', () => {
     .setup(p => p.getPointCloudObjects(It.IsAny()))
     .returns(Promise.resolve([]))
     .object();
-  const apointCloudVolumeDMProvider = new Mock<PointCloudStylableObjectProvider<DMPointCloudDataType>>()
+  const pointCloudVolumeDMProvider = new Mock<PointCloudStylableObjectProvider<DMPointCloudDataType>>()
     .setup(p => p.getPointCloudObjects(It.IsAny()))
     .returns(Promise.resolve([]))
     .object();
@@ -74,15 +74,14 @@ describe('RevealManager', () => {
       stubMetadataProvider,
       stubDataProvider,
       annotationProvider,
-      apointCloudVolumeDMProvider,
+      pointCloudVolumeDMProvider,
       pointClassificationsProvider,
       rendererMock.object(),
       new SceneHandler(),
       cameraManagerMock.object(),
       {
         internal: { cad: { sectorCuller } }
-      },
-      undefined
+      }
     );
 
     jest.useFakeTimers();

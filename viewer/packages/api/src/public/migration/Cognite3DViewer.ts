@@ -331,8 +331,7 @@ export class Cognite3DViewer {
         this._sceneHandler,
         this._activeCameraManager,
         revealOptions,
-        options.customDataSource,
-        this._cdfSdkClient
+        options.customDataSource
       );
     } else {
       // CDF - default mode
