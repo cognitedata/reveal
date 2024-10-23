@@ -649,8 +649,8 @@ export class CognitePointCloudModel<T extends DataSourceType = ClassicDataSource
     setModelTransformation(transformationMatrix: THREE.Matrix4): void;
     // (undocumented)
     get stylableObjectCount(): number;
-    get stylableObjects(): PointCloudObjectMetadata<DataSourceType>[];
-    get styledPointCloudVolumeCollections(): StyledPointCloudVolumeCollection<T>[];
+    get stylableObjects(): PointCloudObjectMetadata<T>[];
+    get styledVolumeCollections(): StyledPointCloudVolumeCollection<T>[];
     traverseStylableObjects(callback: (annotationMetadata: PointCloudObjectMetadata<T>) => void): void;
     // (undocumented)
     readonly type: SupportedModelTypes;
@@ -1727,14 +1727,10 @@ export type OverlayToolEvent = 'hover' | 'click' | 'disposed';
 
 // @public
 export abstract class PointCloudAnnotationVolumeCollection {
-    // (undocumented)
     abstract getAnnotationIds(): Iterable<number>;
-    // (undocumented)
     abstract get isLoading(): boolean;
     protected notifyChanged(): void;
-    // (undocumented)
     off(event: 'changed', listener: () => void): void;
-    // (undocumented)
     on(event: 'changed', listener: () => void): void;
 }
 
@@ -1945,12 +1941,14 @@ export class StyledPointCloudObjectCollection extends StyledPointCloudVolumeColl
 }
 
 // @public
-export class StyledPointCloudVolumeCollection<T extends DataSourceType> {
-    constructor(objectCollection: T['pointCloudCollectionType'], style: CompletePointCloudAppearance);
-    // (undocumented)
+export class StyledPointCloudVolumeCollection<T extends DataSourceType = ClassicDataSourceType> {
+    constructor(
+    objectCollection: T['pointCloudCollectionType'],
+    style: CompletePointCloudAppearance);
+    // @deprecated
     objectCollection: T['pointCloudCollectionType'];
-    // (undocumented)
     style: CompletePointCloudAppearance;
+    get volumeCollection(): T['pointCloudCollectionType'];
 }
 
 // @public (undocumented)

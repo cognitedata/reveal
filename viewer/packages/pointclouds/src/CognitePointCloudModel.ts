@@ -319,7 +319,7 @@ export class CognitePointCloudModel<T extends DataSourceType = ClassicDataSource
    * Gets the object collections that have been assigned a style
    * @returns All object collections and their associated style
    */
-  get styledPointCloudVolumeCollections(): StyledPointCloudVolumeCollection<T>[] {
+  get styledVolumeCollections(): StyledPointCloudVolumeCollection<T>[] {
     return this._styledVolumeCollections;
   }
 
@@ -327,7 +327,7 @@ export class CognitePointCloudModel<T extends DataSourceType = ClassicDataSource
    * Gets array of stylable objects for the point cloud model.
    * @returns All stylable objects for this model
    */
-  get stylableObjects(): PointCloudObjectMetadata<DataSourceType>[] {
+  get stylableObjects(): PointCloudObjectMetadata<T>[] {
     return Array.from(this.pointCloudNode.stylableObjectAnnotationMetadata);
   }
 
@@ -342,27 +342,15 @@ export class CognitePointCloudModel<T extends DataSourceType = ClassicDataSource
     appearance: PointCloudAppearance
   ): void {
     const fullAppearance: CompletePointCloudAppearance = applyDefaultsToPointCloudAppearance(appearance);
-
-    const updateOrCreateCollection = <T extends PointCloudAnnotationVolumeCollection | PointCloudDMVolumeCollection>(
-      collections: Array<{ objectCollection: T; style: CompletePointCloudAppearance }>,
-      CollectionClass: new (
-        objectCollection: T,
-        style: CompletePointCloudAppearance
-      ) => { objectCollection: T; style: CompletePointCloudAppearance },
-      objectCollection: T
-    ) => {
-      const index = collections.findIndex(x => x.objectCollection === objectCollection);
-      if (index !== -1) {
-        collections[index].style = fullAppearance;
-        this.pointCloudNode.assignStyledPointCloudObjectCollection(collections[index]);
-      } else {
-        const newObjectCollection = new CollectionClass(objectCollection, fullAppearance);
-        collections.push(newObjectCollection);
-        this.pointCloudNode.assignStyledPointCloudObjectCollection(newObjectCollection);
-      }
-    };
-
-    updateOrCreateCollection(this._styledVolumeCollections, StyledPointCloudVolumeCollection, objectCollection);
+    const index = this._styledVolumeCollections.findIndex(x => x.volumeCollection === objectCollection);
+    if (index !== -1) {
+      this._styledVolumeCollections[index].style = fullAppearance;
+      this.pointCloudNode.assignStyledPointCloudObjectCollection(this._styledVolumeCollections[index]);
+    } else {
+      const newObjectCollection = new StyledPointCloudVolumeCollection<T>(objectCollection, fullAppearance);
+      this._styledVolumeCollections.push(newObjectCollection);
+      this.pointCloudNode.assignStyledPointCloudObjectCollection(newObjectCollection);
+    }
   }
 
   /**

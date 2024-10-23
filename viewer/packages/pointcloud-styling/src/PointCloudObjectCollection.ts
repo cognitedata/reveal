@@ -13,20 +13,26 @@ export abstract class PointCloudAnnotationVolumeCollection {
   private readonly _changedEvent = new EventTrigger<() => void>();
 
   /**
-   * @returns annotation IDs of the annotations for the objects represented by this PointCloudObjectCollection instance
+   * annotation IDs of the annotations for the objects represented by this PointCloudObjectCollection instance
    */
   abstract getAnnotationIds(): Iterable<number>;
 
   /**
-   * @returns whether the collection is still loading data in the background i.e. not yet ready for use
+   * Whether the collection is still loading data in the background i.e. not yet ready for use
    */
   abstract get isLoading(): boolean;
 
+  /**
+   * Register an event listener on this collection
+   */
   on(event: 'changed', listener: () => void): void {
     assert(event === 'changed');
     this._changedEvent.subscribe(listener);
   }
 
+  /**
+   * Unregister an event listener on this collection
+   */
   off(event: 'changed', listener: () => void): void {
     assert(event === 'changed');
     this._changedEvent.unsubscribe(listener);
