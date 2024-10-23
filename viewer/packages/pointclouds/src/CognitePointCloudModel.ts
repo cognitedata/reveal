@@ -319,6 +319,15 @@ export class CognitePointCloudModel<T extends PointCloudDataType = ClassicPointC
   /**
    * Gets array of stylable objects for the point cloud model.
    * @returns All stylable objects for this model
+   * * @example
+   * ```js
+   * model.stylableObjects.forEach(pointCloudMetadata => console.log(pointCloudMetadata.annotationId));
+   * // or
+   * model.stylableObjects.forEach(pointCloudMetadata => {
+   *   if (isDMPointCloudDataType(pointCloudMetadata))
+   *      console.log(pointCloudMetadata.volumeInstanceRef);
+   *   });
+   * ```
    */
   get stylableObjects(): PointCloudObjectMetadata<PointCloudDataType>[] {
     return Array.from(this.pointCloudNode.stylableObjectAnnotationMetadata);
@@ -422,6 +431,7 @@ export class CognitePointCloudModel<T extends PointCloudDataType = ClassicPointC
   }
 
   /**
+   * @deprecated Use {@link CognitePointCloudModel.stylableObjects}
    * Iterates through all stylable objects for this model
    * @example
    * ```js

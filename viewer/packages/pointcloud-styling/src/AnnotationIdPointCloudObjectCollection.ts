@@ -5,7 +5,7 @@
 import { PointCloudAnnotationVolumeCollection } from './PointCloudObjectCollection';
 
 /**
- * A simple PointCloudObjectCollection that consists of an explicitly provided list of annotation IDs
+ * A simple PointCloudAnnotationVolumeCollection that consists of an explicitly provided list of annotation IDs
  */
 export class AnnotationIdPointCloudObjectCollection extends PointCloudAnnotationVolumeCollection {
   private readonly _annotationIds = new Set<number>();
