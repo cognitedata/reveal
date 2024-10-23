@@ -46,7 +46,6 @@ export const TreeViewNode = ({
   level: number;
   props: TreeViewProps;
 }): ReactElement => {
-  // @update-ui-component-pattern
   const [hoverOverTextOrIcon, setHoverOverTextOrIcon] = useState(false);
 
   // This force to update the component when the node changes
@@ -63,7 +62,6 @@ export const TreeViewNode = ({
       node.removeTreeNodeListener(update);
     };
   }, [node]);
-  // @end
 
   // Props
   const children = getChildrenAsArray(node, props.loadNodes);

@@ -26,7 +26,6 @@ export const SegmentedButtons = ({
     []
   );
 
-  // @update-ui-component-pattern
   const [isEnabled, setEnabled] = useState(true);
   const [isVisible, setVisible] = useState(true);
   const [uniqueId, setUniqueId] = useState(0);
@@ -48,7 +47,6 @@ export const SegmentedButtons = ({
       command.removeEventListener(update);
     };
   }, [command]);
-  // @end
 
   if (!isVisible || command.children === undefined) {
     return <></>;

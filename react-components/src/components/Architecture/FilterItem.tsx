@@ -13,7 +13,6 @@ import { type BaseFilterItemCommand } from '../../architecture/base/commands/Bas
 export const FilterItem = ({ command }: { command: BaseFilterItemCommand }): ReactElement => {
   const { t } = useTranslation();
 
-  // @update-ui-component-pattern
   const [isChecked, setChecked] = useState<boolean>(false);
   const [isEnabled, setEnabled] = useState<boolean>(true);
   const [isVisible, setVisible] = useState<boolean>(true);
@@ -33,7 +32,6 @@ export const FilterItem = ({ command }: { command: BaseFilterItemCommand }): Rea
       command.removeEventListener(update);
     };
   }, [command]);
-  // @end
 
   if (!isVisible) {
     return <></>;

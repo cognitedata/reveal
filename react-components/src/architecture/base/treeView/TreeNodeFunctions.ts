@@ -31,7 +31,17 @@ export function onMultiSelectNode(node: ITreeNode): void {
   node.isSelected = !node.isSelected;
 }
 
-export function onAdvancedCheckNode(node: ITreeNode): void {
+export function onIndependentCheckNode(node: ITreeNode): void {
+  if (!(node instanceof TreeNode)) {
+    return;
+  }
+  if (node.checkBoxState === CheckBoxState.All) {
+    node.checkBoxState = CheckBoxState.None;
+  } else {
+    node.checkBoxState = CheckBoxState.All;
+  }
+}
+export function onDependentCheckNode(node: ITreeNode): void {
   if (!(node instanceof TreeNode)) {
     return;
   }
@@ -50,17 +60,6 @@ export function onAdvancedCheckNode(node: ITreeNode): void {
     if (ancestor.checkBoxState !== CheckBoxState.Hidden) {
       ancestor.checkBoxState = calculateCheckBoxState(ancestor);
     }
-  }
-}
-
-export function onSimpleCheckNode(node: ITreeNode): void {
-  if (!(node instanceof TreeNode)) {
-    return;
-  }
-  if (node.checkBoxState === CheckBoxState.All) {
-    node.checkBoxState = CheckBoxState.None;
-  } else {
-    node.checkBoxState = CheckBoxState.All;
   }
 }
 

@@ -12,8 +12,8 @@ import { TreeNode } from '../src/architecture/base/treeView/TreeNode';
 import { getRandomIntByMax } from '../src/architecture/base/utilities/extensions/mathExtensions';
 import {
   onSingleSelectNode,
-  onAdvancedCheckNode,
-  onSimpleCheckNode,
+  onDependentCheckNode,
+  onIndependentCheckNode,
   onMultiSelectNode
 } from '../src/architecture/base/treeView/TreeNodeFunctions';
 import { CheckBoxState } from '../src/architecture/base/treeView/types';
@@ -47,7 +47,7 @@ export const Main: Story = {
           <TreeView
             root={root1}
             onSelectNode={onSingleSelectNode}
-            onCheckNode={onAdvancedCheckNode}
+            onCheckNode={onDependentCheckNode}
             loadNodes={loadNodes}
             hasCheckboxes
             hasIcons
@@ -62,7 +62,7 @@ export const Main: Story = {
           <TreeView
             root={root2}
             onSelectNode={onSingleSelectNode}
-            onCheckNode={onSimpleCheckNode}
+            onCheckNode={onIndependentCheckNode}
             loadNodes={loadNodes}
             hasCheckboxes
             hasIcons={false}
