@@ -1761,7 +1761,7 @@ export type PointCloudIntersection = {
     distanceToCamera: number;
     annotationId: number;
     assetRef?: AnnotationsAssetRef;
-    volumeMetadata?: PointCloudVolumeMetadata;
+    volumeMetadata?: PointCloudVolumeIntersectionData;
 };
 
 // @public @deprecated
@@ -1774,7 +1774,7 @@ export type PointCloudObjectMetadata<T extends DataSourceType = ClassicDataSourc
 } & T['pointCloudVolumeMetadata'];
 
 // @public
-export type PointCloudVolumeMetadata = {
+export type PointCloudVolumeIntersectionData = {
     annotationId?: number;
     volumeInstanceRef?: DMInstanceRef;
     assetRef?: AnnotationsAssetRef | DMInstanceRef;

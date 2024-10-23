@@ -4,14 +4,14 @@
 
 export { PointCloudPickingHandler } from './src/PointCloudPickingHandler';
 
-export { WellKnownAsprsPointClassCodes, PointCloudVolumeMetadata } from './src/types';
+export { WellKnownAsprsPointClassCodes } from './src/types';
 
 export { PointCloudNode } from './src/PointCloudNode';
 export { PointCloudManager } from './src/PointCloudManager';
 export { createPointCloudManager } from './src/createPointCloudManager';
 
 export { PointCloudBudget } from './src/PointCloudBudget';
-export { PointCloudIntersection } from './src/PointCloudIntersection';
+export { PointCloudIntersection, PointCloudVolumeIntersectionData } from './src/PointCloudIntersection';
 export { CognitePointCloudModel } from './src/CognitePointCloudModel';
 
 export { PointCloudLoadingStateHandler } from './src/PointCloudLoadingStateHandler';

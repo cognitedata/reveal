@@ -4,8 +4,7 @@
 
 import { Object3D, Vector3 } from 'three';
 import { PointCloudNode } from './PointCloudNode';
-import { DMInstanceRef, DataSourceType } from '@reveal/data-providers';
-import { AnnotationsAssetRef } from '@cognite/sdk';
+import { DataSourceType } from '@reveal/data-providers';
 
 /**
  * ASPRS well known point class types.
@@ -86,16 +85,6 @@ export enum WellKnownAsprsPointClassCodes {
    * Values up to and including 63 are reserved
    */
 }
-
-/**
- * @public
- * CDF Data model instance reference for point cloud volume object with asset.
- */
-export type PointCloudVolumeMetadata = {
-  annotationId?: number;
-  volumeInstanceRef?: DMInstanceRef;
-  assetRef?: AnnotationsAssetRef | DMInstanceRef;
-};
 
 export type IntersectPointCloudNodeResult<T extends DataSourceType> = {
   /**

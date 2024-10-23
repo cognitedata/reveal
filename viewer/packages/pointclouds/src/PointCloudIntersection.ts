@@ -4,7 +4,7 @@
 import { AnnotationsAssetRef } from '@cognite/sdk';
 import { CognitePointCloudModel } from './CognitePointCloudModel';
 import type { Vector3 } from 'three';
-import { PointCloudVolumeMetadata } from './types';
+import { DMInstanceRef } from '@reveal/data-providers';
 
 export type PointCloudIntersection = {
   /**
@@ -39,5 +39,15 @@ export type PointCloudIntersection = {
   /**
    * Point cloud volume reference associated with the intersected point cloud volume, if any.
    */
-  volumeMetadata?: PointCloudVolumeMetadata;
+  volumeMetadata?: PointCloudVolumeIntersectionData;
+};
+
+/**
+ * @public
+ * CDF Data model instance reference for point cloud volume object with asset.
+ */
+export type PointCloudVolumeIntersectionData = {
+  annotationId?: number;
+  volumeInstanceRef?: DMInstanceRef;
+  assetRef?: AnnotationsAssetRef | DMInstanceRef;
 };
