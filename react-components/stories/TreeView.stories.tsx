@@ -110,12 +110,15 @@ async function loadNodes(
       for (let i = 0; i < batchSize && i < totalCount; i++) {
         const child = new TreeNode();
         child.label = 'Leaf ' + getRandomIntByMax(1000);
-        child.icon = 'Snow';
+        child.icon = i % 3 === 0 ? 'Cube' : 'CylinderHorizontal';
         child.isExpanded = false;
         child.checkBoxState = CheckBoxState.None;
         child.isEnabled = i % 5 !== 0;
         child.hasBoldLabel = i % 4 === 0;
         child.needLoadSiblings = i === batchSize - 1;
+        if (i % 4 === 0) child.iconColor = 'blue';
+        if (i % 5 === 0) child.iconColor = 'green';
+        if (i % 7 === 0) child.iconColor = 'red';
         array.push(child);
       }
       resolve(array);
@@ -130,24 +133,32 @@ function createTreeMock(lazyLoading: boolean): ITreeNode {
   root.isExpanded = true;
 
   for (let i = 1; i <= 100; i++) {
-    const child = new TreeNode();
-    child.label = 'Folder ' + i;
-    child.isExpanded = true;
-    child.icon = 'Snow';
-    child.checkBoxState = CheckBoxState.None;
-    root.addChild(child);
+    const parent = new TreeNode();
+    parent.label = 'Folder ' + i;
+    parent.isExpanded = true;
+    parent.icon = 'Snow';
+    parent.checkBoxState = CheckBoxState.None;
+    root.addChild(parent);
+    if (i % 8 === 0) parent.iconColor = 'blue';
+    if (i % 6 === 0) parent.iconColor = 'red';
+    parent.icon = i % 3 === 0 ? 'CylinderArbitrary' : 'CylinderVertical';
+    parent.icon = i % 3 === 0 ? 'CubeFrontRight' : 'CubeFrontLeft';
 
     for (let j = 1; j <= 10; j++) {
-      const child1 = new TreeNode();
-      child1.label = 'Child ' + i + '.' + j;
-      child1.icon = 'Snow';
-      child1.isExpanded = false;
-      child1.needLoadChildren = lazyLoading;
-      child1.checkBoxState = CheckBoxState.None;
-      child1.isEnabled = j !== 2;
-      child1.hasBoldLabel = j === 4;
+      const child = new TreeNode();
+      child.label = 'Child ' + i + '.' + j;
+      child.icon = j % 3 === 0 ? 'CylinderArbitrary' : 'CylinderVertical';
+      child.isExpanded = false;
+      child.needLoadChildren = lazyLoading;
+      child.checkBoxState = CheckBoxState.None;
+      child.isEnabled = j !== 2;
+      child.hasBoldLabel = j === 4;
+      if (j % 6 === 0) child.iconColor = 'magenta';
+      if (j % 7 === 0) child.iconColor = 'green';
+      if (j % 8 === 0) child.iconColor = 'blue';
+      if (j % 9 === 0) child.iconColor = 'red';
 
-      child.addChild(child1);
+      parent.addChild(child);
     }
   }
   return root;
