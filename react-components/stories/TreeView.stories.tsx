@@ -141,22 +141,31 @@ function createTreeMock(lazyLoading: boolean): ITreeNode {
     root.addChild(parent);
     if (i % 8 === 0) parent.iconColor = 'blue';
     if (i % 6 === 0) parent.iconColor = 'red';
-    parent.icon = i % 3 === 0 ? 'CylinderArbitrary' : 'CylinderVertical';
-    parent.icon = i % 3 === 0 ? 'CubeFrontRight' : 'CubeFrontLeft';
+    parent.icon = i % 2 === 0 ? 'CubeFrontRight' : 'CubeFrontLeft';
 
     for (let j = 1; j <= 10; j++) {
       const child = new TreeNode();
       child.label = 'Child ' + i + '.' + j;
-      child.icon = j % 3 === 0 ? 'CylinderArbitrary' : 'CylinderVertical';
+      switch (j % 3) {
+        case 0:
+          child.icon = 'CylinderArbitrary';
+          break;
+        case 1:
+          child.icon = 'CylinderHorizontal';
+          break;
+        case 2:
+          child.icon = 'CylinderVertical';
+          break;
+      }
       child.isExpanded = false;
       child.needLoadChildren = lazyLoading;
       child.checkBoxState = CheckBoxState.None;
       child.isEnabled = j !== 2;
       child.hasBoldLabel = j === 4;
-      if (j % 6 === 0) child.iconColor = 'magenta';
-      if (j % 7 === 0) child.iconColor = 'green';
-      if (j % 8 === 0) child.iconColor = 'blue';
-      if (j % 9 === 0) child.iconColor = 'red';
+      if (j % 3 === 0) child.iconColor = 'magenta';
+      if (j % 5 === 0) child.iconColor = 'green';
+      if (j % 7 === 0) child.iconColor = 'blue';
+      if (j % 11 === 0) child.iconColor = 'red';
 
       parent.addChild(child);
     }
