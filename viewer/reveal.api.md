@@ -663,6 +663,7 @@ export class CognitePointCloudModel<T extends PointCloudDataType = ClassicPointC
     get stylableObjects(): PointCloudObjectMetadata<PointCloudDataType>[];
     get styledCollections(): StyledPointCloudAnnotationVolumeCollection[];
     get styledPointCloudVolumeCollections(): StyledPointCloudVolumeCollection[];
+    // @deprecated (undocumented)
     traverseStylableObjects(callback: (annotationMetadata: PointCloudObjectMetadata<T>) => void): void;
     // (undocumented)
     readonly type: SupportedModelTypes;
