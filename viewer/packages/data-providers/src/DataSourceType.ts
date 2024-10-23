@@ -1,8 +1,18 @@
 import { AnnotationsAssetRef } from '@cognite/sdk';
-import { DMInstanceRef } from 'api-entry-points/core';
+import {
+  DMInstanceRef,
+  PointCloudAnnotationVolumeCollection,
+  PointCloudDMVolumeCollection
+} from 'api-entry-points/core';
 
+/**
+ * Model identifier for classic CDF models, referenced by modelId and revisionId
+ */
 export type ClassicModelIdentifierType = { modelId: number; revisionId: number };
 
+/**
+ * Model identifier for DM-based models, referenced by externalId and space of the model revision
+ */
 export type DMModelIdentifierType = { revisionExternalId: string; revisionSpace: string };
 
 /**
@@ -18,6 +28,11 @@ export type ClassicDataSourceType = {
    * and asset reference if any.
    */
   pointCloudVolumeMetadata: { annotationId: number; assetRef?: AnnotationsAssetRef };
+
+  /**
+   * Point cloud volume collection type
+   */
+  pointCloudCollectionType: PointCloudAnnotationVolumeCollection;
   /**
    * Marker to make this type inconstructable
    */
@@ -33,6 +48,10 @@ export type DMDataSourceType = {
    * and asset reference if any.
    */
   pointCloudVolumeMetadata: { volumeInstanceRef: DMInstanceRef; assetRef?: DMInstanceRef };
+  /**
+   * Point cloud volume collection type
+   */
+  pointCloudCollectionType: PointCloudDMVolumeCollection;
   /**
    * The DM point cloud model identifier associated with the object, consisting of revision externalId and revision space
    */

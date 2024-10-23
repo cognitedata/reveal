@@ -22,9 +22,7 @@ export { ModelDataProvider } from './src/ModelDataProvider';
 export {
   PointCloudObjectMetadata,
   PointCloudObject,
-  DMInstanceRef,
-  DMPointCloudDataType,
-  ClassicPointCloudDataType
+  DMInstanceRef
 } from './src/pointcloud-stylable-object-providers/types';
 export { PointCloudStylableObjectProvider } from './src/PointCloudStylableObjectProvider';
 export { StylableObject, SerializableStylableObject } from './src/pointcloud-stylable-object-providers/StylableObject';
@@ -62,5 +60,7 @@ export {
   ClassicDataSourceType,
   DMDataSourceType,
   ClassicModelIdentifierType,
-  DMModelIdentifierType
+  DMModelIdentifierType,
+  isClassicIdentifier,
+  isDMIdentifier
 } from './src/DataSourceType';

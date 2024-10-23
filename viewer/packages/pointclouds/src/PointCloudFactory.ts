@@ -7,7 +7,7 @@ import { PointCloudMetadata } from './PointCloudMetadata';
 
 import { Potree } from './potree-three-loader';
 import { DEFAULT_POINT_CLOUD_METADATA_FILE } from './constants';
-import { DMPointCloudDataType, DataSourceType, PointCloudStylableObjectProvider } from '@reveal/data-providers';
+import { DMDataSourceType, DataSourceType, PointCloudStylableObjectProvider } from '@reveal/data-providers';
 import { IPointClassificationsProvider } from './classificationsProviders/IPointClassificationsProvider';
 
 import { PointCloudMaterialManager } from '@reveal/rendering';
@@ -16,14 +16,14 @@ import { createObjectIdMaps } from './potree-three-loader/utils/createObjectIdMa
 export class PointCloudFactory {
   private readonly _potreeInstance: Potree;
   private readonly _pointCloudObjectProvider: PointCloudStylableObjectProvider;
-  private readonly _pointCloudDMProvider: PointCloudStylableObjectProvider<DMPointCloudDataType>;
+  private readonly _pointCloudDMProvider: PointCloudStylableObjectProvider<DMDataSourceType>;
   private readonly _classificationsProvider: IPointClassificationsProvider;
   private readonly _pointCloudMaterialManager: PointCloudMaterialManager;
 
   constructor(
     potreeInstance: Potree,
     pointCloudObjectProvider: PointCloudStylableObjectProvider,
-    pointCloudDMProvider: PointCloudStylableObjectProvider<DMPointCloudDataType>,
+    pointCloudDMProvider: PointCloudStylableObjectProvider<DMDataSourceType>,
     classificationsProvider: IPointClassificationsProvider,
     pointCloudMaterialManager: PointCloudMaterialManager
   ) {

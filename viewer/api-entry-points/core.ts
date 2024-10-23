@@ -89,8 +89,6 @@ export {
   DataSourceType,
   ClassicDataSourceType,
   DMDataSourceType,
-  ClassicPointCloudDataType,
-  DMPointCloudDataType,
   ClassicModelIdentifierType,
   DMModelIdentifierType,
   isDMPointCloudDataType,
@@ -110,8 +108,7 @@ export {
   PointCloudDMVolumeCollection,
   DefaultPointCloudAppearance,
   StyledPointCloudObjectCollection,
-  StyledPointCloudVolumeCollection,
-  StyledPointCloudAnnotationVolumeCollection
+  StyledPointCloudVolumeCollection
 } from '../packages/pointcloud-styling';
 
 export {

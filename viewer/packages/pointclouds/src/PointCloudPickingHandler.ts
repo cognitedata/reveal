@@ -10,8 +10,8 @@ import { PointCloudNode } from './PointCloudNode';
 import { PickPoint, PointCloudOctree, PointCloudOctreePicker } from './potree-three-loader';
 import { isPointVisibleByPlanes } from '@reveal/utilities';
 import {
-  ClassicPointCloudDataType,
-  DMPointCloudDataType,
+  ClassicDataSourceType,
+  DMDataSourceType,
   isClassicPointCloudDataType,
   isDMPointCloudDataType,
   DataSourceType
@@ -77,9 +77,9 @@ export class PointCloudPickingHandler {
 
         if (pointCloudObject !== undefined) {
           if (isClassicPointCloudDataType(pointCloudObject)) {
-            const result: IntersectPointCloudNodeResult<ClassicPointCloudDataType> = {
+            const result: IntersectPointCloudNodeResult<ClassicDataSourceType> = {
               ...baseObject,
-              pointCloudNode: pointCloudNode as PointCloudNode<ClassicPointCloudDataType>,
+              pointCloudNode: pointCloudNode as PointCloudNode<ClassicDataSourceType>,
               volumeMetadata: {
                 annotationId: pointCloudObject.annotationId,
                 assetRef: pointCloudObject.assetRef
@@ -88,9 +88,9 @@ export class PointCloudPickingHandler {
 
             return result;
           } else if (isDMPointCloudDataType(pointCloudObject)) {
-            const result: IntersectPointCloudNodeResult<DMPointCloudDataType> = {
+            const result: IntersectPointCloudNodeResult<DMDataSourceType> = {
               ...baseObject,
-              pointCloudNode: pointCloudNode as PointCloudNode<DMPointCloudDataType>,
+              pointCloudNode: pointCloudNode as PointCloudNode<DMDataSourceType>,
               volumeMetadata: {
                 volumeInstanceRef: pointCloudObject.volumeInstanceRef,
                 assetRef: pointCloudObject.assetRef

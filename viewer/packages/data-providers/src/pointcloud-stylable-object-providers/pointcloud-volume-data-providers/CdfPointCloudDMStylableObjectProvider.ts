@@ -8,11 +8,12 @@ import { DataModelsSdk } from '../../DataModelsSdk';
 import { PointCloudStylableObjectProvider } from '../../PointCloudStylableObjectProvider';
 import { getDMPointCloudObjects } from '../../utilities/getDMPointCloudObjects';
 import { cdfAnnotationsToObjectInfo } from '../cdfAnnotationsToObjects';
-import { DMPointCloudDataType, DMPointCloudVolumeIdentifier, PointCloudObject } from '../types';
+import { DMPointCloudVolumeIdentifier, PointCloudObject } from '../types';
 import { CdfModelIdentifier } from '../../model-identifiers/CdfModelIdentifier';
 import { ModelIdentifier } from '../../ModelIdentifier';
+import { DMDataSourceType } from 'api-entry-points/core';
 
-export class CdfPointCloudDMStylableObjectProvider implements PointCloudStylableObjectProvider<DMPointCloudDataType> {
+export class CdfPointCloudDMStylableObjectProvider implements PointCloudStylableObjectProvider<DMDataSourceType> {
   private readonly _dmsSdk: DataModelsSdk;
 
   constructor(sdk: CogniteClient) {
@@ -37,7 +38,7 @@ export class CdfPointCloudDMStylableObjectProvider implements PointCloudStylable
   async getPointCloudObjects(
     modelIdentifier: ModelIdentifier,
     revisionSpace?: string
-  ): Promise<PointCloudObject<DMPointCloudDataType>[]> {
+  ): Promise<PointCloudObject<DMDataSourceType>[]> {
     assert(modelIdentifier instanceof CdfModelIdentifier);
 
     const dataModelIdentifier = this.getDataModelIdentifier(modelIdentifier, revisionSpace);
@@ -46,6 +47,6 @@ export class CdfPointCloudDMStylableObjectProvider implements PointCloudStylable
     }
     const annotations = await getDMPointCloudObjects(this._dmsSdk, dataModelIdentifier);
 
-    return cdfAnnotationsToObjectInfo<DMPointCloudDataType>(annotations);
+    return cdfAnnotationsToObjectInfo<DMDataSourceType>(annotations);
   }
 }
