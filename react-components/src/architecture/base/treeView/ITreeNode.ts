@@ -35,7 +35,7 @@ export type ITreeNode = {
   // Load siblings. The siblings will be inserted just after the node.
   loadSiblings: (loadNodes: LoadNodesAction) => Promise<void>;
 
-  // Add or remove listener functions for updating
+  // Add or remove listener functions for updating.
   addTreeNodeListener: (listener: TreeNodeAction) => void;
   removeTreeNodeListener: (listener: TreeNodeAction) => void;
 };
