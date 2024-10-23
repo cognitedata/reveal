@@ -2,21 +2,16 @@
  * Copyright 2023 Cognite AS
  */
 
-import { type IconName } from '../../../architecture/base/utilities/IconName';
-
-export enum CheckBoxState {
-  All,
-  Some,
-  None,
-  Hidden
-}
-
-export type TreeNodeAction = (node: ITreeNode) => void;
-export type LoadNodesAction = (node: ITreeNode, loadChildren: boolean) => ITreeNode[] | undefined;
-export type IconColor = string | undefined;
+import { type IconName } from '../utilities/IconName';
+import {
+  type TreeNodeAction,
+  type CheckBoxState,
+  type IconColor,
+  type LoadNodesAction
+} from './types';
 
 export type ITreeNode = {
-  get numberOfChildren(): number;
+  // Appearance
   get label(): string;
   get hasBoldLabel(): boolean;
   get icon(): IconName | undefined; // undefined is no icon
@@ -27,20 +22,17 @@ export type ITreeNode = {
   set isExpanded(value: boolean);
   get checkBoxState(): CheckBoxState; // Return CheckBoxState.Hidden of no checkbox
 
-  get needLoadChildren(): boolean;
-  set needLoadChildren(value: boolean);
+  // For lazy loading
   get needLoadSiblings(): boolean;
-  set needLoadSiblings(value: boolean);
   get isLoadingChildren(): boolean;
-  set isLoadingChildren(value: boolean);
   get isLoadingSiblings(): boolean;
-  set isLoadingSiblings(value: boolean);
+  loadSiblings: (loadNodes: LoadNodesAction) => Promise<void>;
 
-  get isLeaf(): boolean;
-
+  // Parent-children
+  get isParent(): boolean;
   getChildren: (loadNodes?: LoadNodesAction) => Generator<ITreeNode>;
 
-  loadSiblings: (loadNodes: LoadNodesAction) => Promise<void>;
+  // For updating
   addTreeNodeListener: (listener: TreeNodeAction) => void;
   removeTreeNodeListener: (listener: TreeNodeAction) => void;
 };

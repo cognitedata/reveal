@@ -20,7 +20,7 @@ export function removeAt<T>(array: T[], index: number): void {
   array.splice(index, 1);
 }
 
-export function insertAt<T>(array: T[], index: number, element: T): void {
+export function insert<T>(array: T[], index: number, element: T): void {
   array.splice(index, 0, element);
 }
 

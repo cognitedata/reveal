@@ -2,7 +2,11 @@
  * Copyright 2023 Cognite AS
  */
 
-import { type TreeNodeAction, type LoadNodesAction, type ITreeNode } from './ITreeNode';
+import { type ITreeNode } from '../../../architecture/base/treeView/ITreeNode';
+import {
+  type LoadNodesAction,
+  type TreeNodeAction
+} from '../../../architecture/base/treeView/types';
 
 export type TreeViewProps = {
   // Colors
@@ -25,10 +29,12 @@ export type TreeViewProps = {
   hasHover?: boolean; // Default true, If this is set, it uses the hover color for the mouse over effect
   hasCheckboxes?: boolean; // Default is false
   hasIcons?: boolean; // Default is false
+  loadingLabel?: string; // Default is 'Loading...'
+  loadMoreLabel?: string; // Default is 'Load more...'
 
   // Event handlers
-  onSelect?: TreeNodeAction;
-  onCheck?: TreeNodeAction;
+  onSelectNode?: TreeNodeAction;
+  onCheckNode?: TreeNodeAction;
   loadNodes?: LoadNodesAction;
 
   // The root node of the tree, the root is not rendered.

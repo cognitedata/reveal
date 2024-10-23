@@ -4,18 +4,16 @@
 
 /* eslint-disable react/prop-types */
 
-import { type ReactElement, useEffect, useState, useCallback } from 'react';
+import { type ReactElement, useEffect, useState, useCallback, useReducer } from 'react';
 import { Button, CaretDownIcon, CaretRightIcon, Checkbox, LoaderIcon } from '@cognite/cogs.js';
-import {
-  CheckBoxState,
-  type TreeNodeAction,
-  type ITreeNode,
-  type IconColor,
-  type LoadNodesAction
-} from './ITreeNode';
 import { IconComponentMapper } from '../IconComponentMapper';
 import { type TreeViewProps } from './TreeViewProps';
-import { type IconName } from '../../../architecture/base/utilities/IconName';
+import { type ITreeNode } from '../../../architecture/base/treeView/ITreeNode';
+import {
+  CheckBoxState,
+  type LoadNodesAction,
+  type TreeNodeAction
+} from '../../../architecture/base/treeView/types';
 
 // ==================================================
 // CONSTANTS
@@ -30,8 +28,10 @@ const HOVER_BACKGROUND_COLOR = 'lightgray';
 const CARET_COLOR = 'gray';
 const HOVER_CARET_COLOR = 'highlight';
 const CARET_SIZE = 20;
-const GAP_TO_CHILDREN = 24;
+const GAP_TO_CHILDREN = 16;
 const GAP_BETWEEN_ITEMS = 4;
+const LOADING_LABEL = 'Loading ...';
+const LOAD_MORE_LABEL = 'Load more ...';
 
 // ==================================================
 // MAIN COMPONENT
@@ -47,35 +47,15 @@ export const TreeViewNode = ({
   props: TreeViewProps;
 }): ReactElement => {
   // @update-ui-component-pattern
-  const [_label, setLabel] = useState<string>();
-  const [_hasBoldLabel, setBoldLabel] = useState(false);
-  const [_icon, setIcon] = useState<IconName | undefined>();
-  const [_iconColor, setIconColor] = useState<IconColor>();
-  const [_isSelected, setSelected] = useState(false);
-  const [_isEnabled, setEnabled] = useState(true);
-  const [_isExpanded, setExpanded] = useState(false);
-  const [_checkBoxState, setCheckBoxState] = useState<CheckBoxState>();
-  const [_isLoadingChildren, setLoadingChildren] = useState(false);
-  const [isLoadingSiblings, setLoadingSiblings] = useState(false);
-  const [needLoadSiblings, setNeedLoadSiblings] = useState(false);
   const [hoverOverTextOrIcon, setHoverOverTextOrIcon] = useState(false);
 
-  const update = useCallback(
-    (node: ITreeNode) => {
-      setLabel(node.label);
-      setBoldLabel(node.hasBoldLabel);
-      setIcon(node.icon);
-      setIconColor(node.iconColor);
-      setSelected(node.isSelected);
-      setEnabled(node.isEnabled);
-      setExpanded(node.isExpanded);
-      setCheckBoxState(node.checkBoxState);
-      setLoadingChildren(node.isLoadingChildren);
-      setLoadingSiblings(node.isLoadingSiblings);
-      setNeedLoadSiblings(node.needLoadSiblings);
-    },
-    [node]
-  );
+  // This force to update the component when the node changes
+  // See https://coreui.io/blog/how-to-force-a-react-component-to-re-render/
+  const [, forceUpdate] = useReducer((x) => x + 1, 0);
+  const update = useCallback((_node: ITreeNode) => {
+    forceUpdate();
+  }, []);
+
   useEffect(() => {
     update(node);
     node.addTreeNodeListener(update);
@@ -105,8 +85,8 @@ export const TreeViewNode = ({
           marginTop: gapBetweenItems,
           marginLeft: level * gapToChildren + 'px'
         }}>
-        <TreeNodeCaret node={node} onClick={onExpand} props={props} />
-        {hasCheckBoxes && <TreeNodeCheckBox node={node} onClick={onCheck} />}
+        <TreeNodeCaret node={node} onClick={onExpandNode} props={props} />
+        {hasCheckBoxes && <TreeNodeCheckBox node={node} onClick={onCheckNode} />}
         <div
           style={{
             backgroundColor,
@@ -116,7 +96,7 @@ export const TreeViewNode = ({
             gap: gapBetweenItems
           }}
           onClick={() => {
-            onSelect(node);
+            onSelectNode(node);
           }}
           onMouseEnter={() => {
             onHoverOverTextOrIcon(node, true, hasHover);
@@ -125,7 +105,7 @@ export const TreeViewNode = ({
             onHoverOverTextOrIcon(node, false, hasHover);
           }}>
           {hasIcons && <TreeNodeIcon node={node} color={color} />}
-          <TreeViewLabel node={node} />
+          <TreeViewLabel node={node} props={props} />
         </div>
       </div>
       {children !== undefined &&
@@ -133,12 +113,39 @@ export const TreeViewNode = ({
           <TreeViewNode node={node} key={index} level={level + 1} props={props} />
         ))}
 
-      {!isLoadingSiblings && needLoadSiblings && (
+      {!node.isLoadingSiblings && node.needLoadSiblings && (
         <LoadMoreButton node={node} onClick={onLoadMore} level={level} props={props} />
       )}
-      {isLoadingSiblings && <LoadingMoreLabel level={level} props={props} />}
+      {node.isLoadingSiblings && <LoadingMoreLabel level={level} props={props} />}
     </div>
   );
+
+  function onSelectNode(node: ITreeNode): void {
+    if (!node.isEnabled) {
+      return;
+    }
+    if (props.onSelectNode === undefined) {
+      return;
+    }
+    props.onSelectNode(node);
+  }
+
+  function onCheckNode(node: ITreeNode): void {
+    if (!node.isEnabled || node.checkBoxState === CheckBoxState.Hidden) {
+      return;
+    }
+    if (props.onCheckNode === undefined) {
+      return;
+    }
+    props.onCheckNode(node);
+  }
+
+  function onExpandNode(node: ITreeNode): void {
+    if (!node.isParent) {
+      return;
+    }
+    node.isExpanded = !node.isExpanded;
+  }
 
   function onLoadMore(node: ITreeNode): void {
     if (props.loadNodes === undefined) {
@@ -155,33 +162,6 @@ export const TreeViewNode = ({
       return;
     }
     setHoverOverTextOrIcon(value);
-  }
-
-  function onSelect(node: ITreeNode): void {
-    if (!node.isEnabled) {
-      return;
-    }
-    if (props.onSelect === undefined) {
-      return;
-    }
-    props.onSelect(node);
-  }
-
-  function onCheck(node: ITreeNode): void {
-    if (!node.isEnabled || node.checkBoxState === CheckBoxState.Hidden) {
-      return;
-    }
-    if (props.onCheck === undefined) {
-      return;
-    }
-    props.onCheck(node);
-  }
-
-  function onExpand(node: ITreeNode): void {
-    if (node.isLeaf) {
-      return;
-    }
-    node.isExpanded = !node.isExpanded;
   }
 
   function getBackgroundColor(node: ITreeNode, hover: boolean): string | undefined {
@@ -265,7 +245,7 @@ const TreeNodeCaret = ({
   const sizePx = size + 'px';
   const style = { color, marginTop: '0px', width: sizePx, height: sizePx };
 
-  if (!node.isLeaf) {
+  if (node.isParent) {
     const Icon = node.isExpanded ? CaretDownIcon : CaretRightIcon;
     return (
       <Icon
@@ -323,7 +303,7 @@ const LoadMoreButton = ({
       onClick={() => {
         onClick(node);
       }}>
-      {'Load more ...'}
+      {props.loadMoreLabel ?? LOAD_MORE_LABEL}
     </Button>
   );
 };
@@ -335,7 +315,7 @@ const LoadingMoreLabel = ({
   level: number;
   props: TreeViewProps;
 }): ReactElement => {
-  const label = 'Loading ...';
+  const label = props.loadingLabel ?? LOADING_LABEL;
   const gapBetweenItems = (props.gapBetweenItems ?? GAP_BETWEEN_ITEMS) + 'px';
   const gapToChildren = props.gapToChildren ?? GAP_TO_CHILDREN;
   return (
@@ -351,26 +331,36 @@ const LoadingMoreLabel = ({
   );
 };
 
-const TreeViewLabel = ({ node }: { node: ITreeNode }): ReactElement => {
-  const label = node.isLoadingChildren ? 'Loading children ...' : node.label;
+const TreeViewLabel = ({
+  node,
+  props
+}: {
+  node: ITreeNode;
+  props: TreeViewProps;
+}): ReactElement => {
+  const label = node.isLoadingChildren ? (props.loadingLabel ?? LOADING_LABEL) : node.label;
   if (node.hasBoldLabel) {
     return <b>{label}</b>;
   }
   return <span>{label}</span>;
 };
 
+// ==================================================
+// FUNCTIONS
+// ==================================================
+
 export function getChildrenAsArray(
   node: ITreeNode,
-  loadChildren: LoadNodesAction | undefined,
+  loadNodes: LoadNodesAction | undefined,
   useExpanded = true
 ): ITreeNode[] | undefined {
   if (useExpanded && !node.isExpanded) {
     return undefined;
   }
-  if (node.getChildren(loadChildren).next().value === undefined) {
+  if (node.getChildren(loadNodes).next().value === undefined) {
     return undefined;
   }
-  return Array.from(node.getChildren(loadChildren));
+  return Array.from(node.getChildren(loadNodes));
 }
 
 function getCaretColor(
@@ -378,7 +368,7 @@ function getCaretColor(
   props: TreeViewProps,
   isHoverOver: boolean
 ): string | undefined {
-  if (node.isLeaf) {
+  if (!node.isParent) {
     return 'transparent';
   }
   if (isHoverOver) {

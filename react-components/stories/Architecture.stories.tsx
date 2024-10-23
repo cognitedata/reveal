@@ -12,12 +12,6 @@ import { DomainObjectPanel } from '../src/components/Architecture/DomainObjectPa
 import { ActiveToolToolbar, MainToolbar, TopToolbar } from '../src/components/Architecture/Toolbar';
 import { useRenderTarget } from '../src/components/RevealCanvas/ViewerContext';
 import { type AddModelOptions, type CogniteCadModel } from '@cognite/reveal';
-import { onNodeCheck, onNodeSelect } from '../src/components/Architecture/TreeView/TreeNode';
-import { TreeContainer } from '../src/components/Architecture/TreeView/TreeViewContainer';
-import {
-  createTreeMock,
-  loadChildren
-} from '../src/components/Architecture/TreeView/createTreeMock';
 
 const meta = {
   title: 'Example/Architecture',
@@ -27,8 +21,6 @@ const meta = {
 
 export default meta;
 type Story = StoryObj<typeof meta>;
-
-const root = createTreeMock();
 
 export const Main: Story = {
   args: {
@@ -42,14 +34,6 @@ export const Main: Story = {
         <TopToolbar />
         <ActiveToolToolbar />
         <DomainObjectPanel />
-        <TreeContainer
-          root={root}
-          onSelect={onNodeSelect}
-          onCheck={onNodeCheck}
-          loadNodes={loadChildren}
-          hasCheckboxes
-          hasIcons
-        />
       </RevealStoryContainer>
     );
   }
