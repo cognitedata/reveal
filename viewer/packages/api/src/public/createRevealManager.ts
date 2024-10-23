@@ -127,7 +127,6 @@ export function createCdfRevealManager(
  * @param sceneHandler
  * @param cameraManager
  * @param revealOptions
- * @param client
  */
 export function createRevealManager(
   project: string,
