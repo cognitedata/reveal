@@ -240,8 +240,7 @@ export class TreeNode implements ITreeNode {
         continue;
       }
       index++;
-      insert(children, index, child);
-      child._parent = parent;
+      parent.insertChild(index, child);
     }
     this.needLoadSiblings = false;
     parent.update();

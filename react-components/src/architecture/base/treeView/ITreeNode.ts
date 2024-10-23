@@ -12,27 +12,30 @@ import {
 
 export type ITreeNode = {
   // Appearance
-  get label(): string;
-  get hasBoldLabel(): boolean;
-  get icon(): IconName | undefined; // undefined is no icon
+  get isParent(): boolean; // Returns true if this node has children (loaded or not loaded)
+  get label(): string; // Returns the label
+  get hasBoldLabel(): boolean; // Returns true if the label should be rendered in bold font
+  get icon(): IconName | undefined; // Returns the icon. undefined is no icon
   get iconColor(): IconColor; // undefined means default color, normally black
-  get isSelected(): boolean;
-  get isEnabled(): boolean; // True for selectable and checkable
-  get isExpanded(): boolean;
+  get isSelected(): boolean; // Returns true if it is selected
+  get isEnabled(): boolean; // True for selectable or checkable
+  get isExpanded(): boolean; // Returns true if expanded
   set isExpanded(value: boolean);
   get checkBoxState(): CheckBoxState; // Return CheckBoxState.Hidden of no checkbox
 
   // For lazy loading
-  get needLoadSiblings(): boolean;
-  get isLoadingChildren(): boolean;
-  get isLoadingSiblings(): boolean;
-  loadSiblings: (loadNodes: LoadNodesAction) => Promise<void>;
+  get needLoadSiblings(): boolean; // Returns true if this node has more siblings to be loaded
+  get isLoadingChildren(): boolean; // Returns true if this node is loading children now
+  get isLoadingSiblings(): boolean; // Returns true if this node is loading siblings now
 
-  // Parent-children
-  get isParent(): boolean;
+  // Get the children of this node. If the children are not loaded,
+  // the loadNodes function will be called.
   getChildren: (loadNodes?: LoadNodesAction) => Generator<ITreeNode>;
 
-  // For updating
+  // Load siblings. The siblings will be inserted just after the node.
+  loadSiblings: (loadNodes: LoadNodesAction) => Promise<void>;
+
+  // Add or remove listener functions for updating
   addTreeNodeListener: (listener: TreeNodeAction) => void;
   removeTreeNodeListener: (listener: TreeNodeAction) => void;
 };
