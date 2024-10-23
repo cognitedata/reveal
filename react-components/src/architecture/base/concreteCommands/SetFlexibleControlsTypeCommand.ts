@@ -27,7 +27,7 @@ export class SetFlexibleControlsTypeCommand extends RenderTargetCommand {
   // OVERRIDES
   // ==================================================
 
-  protected override get shortCutKey(): string | undefined {
+  public override get shortCutKey(): string | undefined {
     return this._controlsType === FlexibleControlsType.Orbit ? '1' : '2';
   }
 
