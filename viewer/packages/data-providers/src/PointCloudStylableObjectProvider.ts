@@ -2,10 +2,9 @@
  * Copyright 2022 Cognite AS
  */
 
-import { ClassicDataSourceType, DataSourceType } from './DataSourceType';
-import { ModelIdentifier } from './ModelIdentifier';
+import { ClassicDataSourceType, InternalDataSourceType } from './DataSourceType';
 import { PointCloudObject } from './pointcloud-stylable-object-providers/types';
 
-export interface PointCloudStylableObjectProvider<T extends DataSourceType = ClassicDataSourceType> {
-  getPointCloudObjects(modelIdentifier: ModelIdentifier, revisionSpace?: string): Promise<PointCloudObject<T>[]>;
+export interface PointCloudStylableObjectProvider<T extends InternalDataSourceType = ClassicDataSourceType> {
+  getPointCloudObjects(identifier: T['modelIdentifier']): Promise<PointCloudObject<T>[]>;
 }

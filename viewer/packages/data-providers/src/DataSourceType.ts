@@ -15,6 +15,8 @@ export type ClassicModelIdentifierType = { modelId: number; revisionId: number }
  */
 export type DMModelIdentifierType = { revisionExternalId: string; revisionSpace: string };
 
+export type LocalModelIdentifierType = { localPath: string };
+
 /**
  * Data source type for classic models
  */
@@ -63,21 +65,42 @@ export type DMDataSourceType = {
 };
 
 /**
+ * Data source type for local models
+ * @internal
+ */
+export type LocalDataSourceType = {
+  modelIdentifier: LocalModelIdentifierType;
+  pointCloudVolumeMetadata: any;
+  pointCloudCollectionType: any;
+  _never: never;
+};
+
+/**
  * Common data source type
  */
 export type DataSourceType = ClassicDataSourceType | DMDataSourceType;
 
-export function isClassicIdentifier(
-  identifier: DataSourceType['modelIdentifier']
-): identifier is ClassicModelIdentifierType {
+/**
+ * Internal model identifiers
+ */
+export type InternalModelIdentifier = ClassicModelIdentifierType | DMModelIdentifierType | LocalModelIdentifierType;
+
+export type InternalDataSourceType = DataSourceType | LocalDataSourceType;
+
+export function isClassicIdentifier(identifier: InternalModelIdentifier): identifier is ClassicModelIdentifierType {
   return (
     (identifier as ClassicModelIdentifierType).modelId !== undefined &&
     (identifier as ClassicModelIdentifierType).revisionId !== undefined
   );
 }
-export function isDMIdentifier(identifier: DataSourceType['modelIdentifier']): identifier is DMModelIdentifierType {
+
+export function isDMIdentifier(identifier: InternalModelIdentifier): identifier is DMModelIdentifierType {
   return (
     (identifier as DMModelIdentifierType).revisionExternalId !== undefined &&
     (identifier as DMModelIdentifierType).revisionSpace !== undefined
   );
+}
+
+export function isLocalIdentifier(identifier: InternalModelIdentifier): identifier is LocalModelIdentifierType {
+  return (identifier as LocalModelIdentifierType).localPath !== undefined;
 }

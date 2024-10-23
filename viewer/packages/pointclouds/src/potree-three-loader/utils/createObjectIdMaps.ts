@@ -6,12 +6,14 @@ import {
   DMInstanceRef,
   isClassicPointCloudDataTypeObject,
   isDMPointCloudDataTypeObject,
-  DataSourceType,
+  InternalDataSourceType,
   PointCloudObject
 } from '@reveal/data-providers';
 import { PointCloudObjectIdMaps } from '@reveal/rendering';
 
-export function createObjectIdMaps<T extends DataSourceType>(objects: PointCloudObject<T>[]): PointCloudObjectIdMaps {
+export function createObjectIdMaps<T extends InternalDataSourceType>(
+  objects: PointCloudObject<T>[]
+): PointCloudObjectIdMaps {
   const annotationToObjectIds = new Map<number | DMInstanceRef, number>();
   const objectToAnnotationIds = new Map<number, number | DMInstanceRef>();
 

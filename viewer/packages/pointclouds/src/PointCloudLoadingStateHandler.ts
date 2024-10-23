@@ -10,7 +10,7 @@ import * as THREE from 'three';
 
 import { PointCloudNode } from './PointCloudNode';
 import { numPointCloudNodesLoading } from './potree-three-loader';
-import { DataSourceType } from '@reveal/data-providers';
+import { InternalDataSourceType } from '@reveal/data-providers';
 
 /**
  * Wrapper around Potree.Group with type information and
@@ -82,7 +82,7 @@ export class PointCloudLoadingStateHandler {
     );
   }
 
-  updatePointBuffersHash(pointCloudNodes: PointCloudNode<DataSourceType>[]): void {
+  updatePointBuffersHash(pointCloudNodes: PointCloudNode<InternalDataSourceType>[]): void {
     this._lastDrawPointBuffersHash = this.getPointBuffersHash(pointCloudNodes);
   }
 
@@ -90,7 +90,7 @@ export class PointCloudLoadingStateHandler {
    * Generates a hash for the current loaded points to allow determining if we have
    * loaded data since last redraw.
    */
-  private getPointBuffersHash(pointCloudNodes: PointCloudNode<DataSourceType>[]) {
+  private getPointBuffersHash(pointCloudNodes: PointCloudNode<InternalDataSourceType>[]) {
     let pointHash = 0xbaadf00d; // Kind of random bit pattern
     for (const pointCloud of pointCloudNodes) {
       pointCloud.octree.traverseVisible((x: THREE.Object3D) => {

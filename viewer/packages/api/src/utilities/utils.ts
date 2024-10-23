@@ -3,23 +3,22 @@
  */
 
 import { CogniteClient } from '@cognite/sdk';
-import { AddModelOptions, DMAddModelOptions } from '../public/migration/types';
-import { DataSourceType, fetchDMModelIdFromRevisionId } from '@reveal/data-providers';
-
-export function isAddDMModelOptions(options: AddModelOptions<DataSourceType>): options is DMAddModelOptions {
-  return (
-    (options as DMAddModelOptions).revisionExternalId !== undefined &&
-    (options as DMAddModelOptions).revisionSpace !== undefined
-  );
-}
+import { AddModelOptions, LocalAddModelOptions } from '../public/migration/types';
+import { DataSourceType, fetchDMModelIdFromRevisionId, isDMIdentifier } from '@reveal/data-providers';
+import { isClassicIdentifier, isLocalIdentifier } from '@reveal/data-providers/src/DataSourceType';
+import { assertNever } from '@reveal/utilities';
 
 export async function getModelAndRevisionId(
-  options: AddModelOptions<DataSourceType>,
+  options: AddModelOptions<DataSourceType> | LocalAddModelOptions,
   sdk: CogniteClient | undefined
 ): Promise<{ modelId: number; revisionId: number }> {
-  if (isAddDMModelOptions(options)) {
+  if (isDMIdentifier(options)) {
     return fetchDMModelIdFromRevisionId(options.revisionExternalId, options.revisionSpace, sdk);
-  } else {
+  } else if (isLocalIdentifier(options)) {
+    return { modelId: -1, revisionId: -1 };
+  } else if (isClassicIdentifier(options)) {
     return { modelId: options.modelId, revisionId: options.revisionId };
+  } else {
+    assertNever(options);
   }
 }

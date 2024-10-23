@@ -15,12 +15,13 @@ import { Potree } from './potree-three-loader';
 
 import { asyncScheduler, combineLatest, Observable, scan, Subject, throttleTime } from 'rxjs';
 
-import { ModelIdentifier, DataSourceType } from '@reveal/data-providers';
+import { ModelIdentifier, InternalDataSourceType } from '@reveal/data-providers';
 import { MetricsLogger } from '@reveal/metrics';
 import { SupportedModelTypes } from '@reveal/model-base';
 import { PointCloudMaterialManager } from '@reveal/rendering';
 
 import { Mesh } from 'three';
+import { createModelIdentifier } from '@reveal/data-providers/src/ModelIdentifier';
 
 export class PointCloudManager {
   private readonly _pointCloudMetadataRepository: PointCloudMetadataRepository;
@@ -114,10 +115,9 @@ export class PointCloudManager {
     this.requestRedraw();
   }
 
-  async addModel<T extends DataSourceType>(
-    modelIdentifier: ModelIdentifier,
-    revisionSpace?: string
-  ): Promise<PointCloudNode<T>> {
+  async addModel<T extends InternalDataSourceType>(identifier: T['modelIdentifier']): Promise<PointCloudNode<T>> {
+    const modelIdentifier = createModelIdentifier(identifier);
+
     const metadata = await this._pointCloudMetadataRepository.loadData(modelIdentifier);
 
     const modelType: SupportedModelTypes = 'pointcloud';
@@ -129,7 +129,7 @@ export class PointCloudManager {
       metadata.formatVersion
     );
 
-    const pointCloudNode = await this._pointCloudFactory.createModel<T>(metadata, revisionSpace);
+    const pointCloudNode = await this._pointCloudFactory.createModel<T>(identifier, metadata);
     this._pointCloudNodes.push(pointCloudNode);
 
     this.requestRedraw();
@@ -144,7 +144,7 @@ export class PointCloudManager {
     return pointCloudNode;
   }
 
-  removeModel<T extends DataSourceType>(node: PointCloudNode<T>): void {
+  removeModel<T extends InternalDataSourceType>(node: PointCloudNode<T>): void {
     const index = this._pointCloudNodes.indexOf(node);
     if (index === -1) {
       throw new Error('Point cloud is not added - cannot remove it');

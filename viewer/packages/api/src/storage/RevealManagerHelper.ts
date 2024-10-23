@@ -3,27 +3,25 @@
  */
 import * as THREE from 'three';
 
-import { AddModelOptions } from '../public/migration/types';
+import { AddModelOptions, CommonModelOptions, LocalAddModelOptions } from '../public/migration/types';
 import { createCdfRevealManager, createLocalRevealManager, createRevealManager } from '../public/createRevealManager';
 import { RevealManager } from '../public/RevealManager';
 import { RevealOptions } from '../public/RevealOptions';
 
 import {
   CdfModelIdentifier,
-  LocalModelIdentifier,
   DummyPointCloudStylableObjectProvider,
   DummyPointCloudDMStylableObjectProvider,
-  DataSourceType
+  InternalDataSourceType,
+  LocalModelIdentifierType
 } from '@reveal/data-providers';
 import { DataSource } from '@reveal/data-source';
-import { assertNever, SceneHandler } from '@reveal/utilities';
+import { SceneHandler } from '@reveal/utilities';
 
 import { CadNode } from '@reveal/cad-model';
 import { CogniteClient } from '@cognite/sdk';
 import { PointCloudNode, LocalPointClassificationsProvider } from '@reveal/pointclouds';
 import { CameraManager } from '@reveal/camera-manager';
-import { isClassicIdentifier, isDMIdentifier } from '@reveal/data-providers/src/DataSourceType';
-import { DMModelIdentifier } from '@reveal/data-providers/src/model-identifiers/DMModelIdentifier';
 
 /**
  * Helper for {@link RevealManager} for creating a uniform interface for
@@ -33,8 +31,7 @@ import { DMModelIdentifier } from '@reveal/data-providers/src/model-identifiers/
 export class RevealManagerHelper {
   private readonly _revealManager: RevealManager;
 
-  // addCadModel: (model: AddModelOptions) => Promise<CadNode>;
-  addPointCloudModel<T extends DataSourceType>(model: AddModelOptions<T>): Promise<PointCloudNode<T>> {
+  addPointCloudModel<T extends InternalDataSourceType>(model: AddModelOptions<T>): Promise<PointCloudNode<T>> {
     if (this._type === 'cdf') {
       return RevealManagerHelper.addCdfPointCloudModel<T>(model, this._revealManager);
     } else {
@@ -42,7 +39,7 @@ export class RevealManagerHelper {
     }
   }
 
-  addCadModel(model: AddModelOptions): Promise<CadNode> {
+  addCadModel(model: AddModelOptions<InternalDataSourceType>): Promise<CadNode> {
     if (this._type === 'cdf') {
       return RevealManagerHelper.addCdfCadModel(model, this._revealManager);
     } else {
@@ -130,12 +127,8 @@ export class RevealManagerHelper {
    * @param model
    * @param revealManager
    */
-  private static addLocalCadModel(model: AddModelOptions, revealManager: RevealManager): Promise<CadNode> {
-    if (model.localPath === undefined) {
-      throw new Error('addLocalCadModel only works with local models');
-    }
-    const modelIdentifier = new LocalModelIdentifier(model.localPath);
-    return revealManager.addModel('cad', modelIdentifier, { geometryFilter: model.geometryFilter });
+  private static addLocalCadModel(model: LocalAddModelOptions, revealManager: RevealManager): Promise<CadNode> {
+    return revealManager.addModel('cad', model, { geometryFilter: model.geometryFilter });
   }
 
   /**
@@ -151,15 +144,14 @@ export class RevealManagerHelper {
     return revealManager.addModel('cad', modelIdentifier, { geometryFilter: model.geometryFilter });
   }
 
-  private static addLocalPointCloudModel<T extends DataSourceType>(
-    model: AddModelOptions<T>,
+  private static addLocalPointCloudModel<T extends InternalDataSourceType>(
+    model: LocalAddModelOptions,
     revealManager: RevealManager
   ): Promise<PointCloudNode<T>> {
     if (model.localPath === undefined) {
       throw new Error('addLocalPointCloudModel only works with local models');
     }
-    const modelIdentifier = new LocalModelIdentifier(model.localPath);
-    return revealManager.addModel<T>('pointcloud', modelIdentifier);
+    return revealManager.addModel<T>('pointcloud', model);
   }
 
   /**
@@ -167,23 +159,10 @@ export class RevealManagerHelper {
    * @param model
    * @param revealManager
    */
-  private static addCdfPointCloudModel<T extends DataSourceType>(
+  private static addCdfPointCloudModel<T extends InternalDataSourceType>(
     identifier: T['modelIdentifier'],
     revealManager: RevealManager
   ): Promise<PointCloudNode<T>> {
-    /* if (model.modelId === -1 || model.revisionId === -1) {
-      throw new Error('addCdfPointCloudModel only works with CDF hosted models');
-      } */
-    const modelIdentifier = (() => {
-      if (isClassicIdentifier(identifier)) {
-        return new CdfModelIdentifier(identifier.modelId, identifier.revisionId);
-      } else if (isDMIdentifier(identifier)) {
-        return new DMModelIdentifier(identifier);
-      } else {
-        assertNever(identifier);
-      }
-    })();
-
-    return revealManager.addModel<T>('pointcloud', modelIdentifier);
+    return revealManager.addModel<T>('pointcloud', identifier);
   }
 }

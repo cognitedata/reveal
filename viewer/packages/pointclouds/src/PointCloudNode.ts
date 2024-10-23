@@ -10,9 +10,9 @@ import { WellKnownAsprsPointClassCodes } from './types';
 import { PointColorType, PointShape, PointSizeType } from '@reveal/rendering';
 
 import {
+  InternalDataSourceType,
   isClassicPointCloudDataTypeObject,
   isDMPointCloudDataTypeObject,
-  DataSourceType,
   PointCloudObject,
   PointCloudObjectMetadata
 } from '@reveal/data-providers';
@@ -22,7 +22,7 @@ import { StyledPointCloudVolumeCollection, CompletePointCloudAppearance } from '
 
 import { Matrix4, Group, Box3, Color, type Camera, type Plane, type Ray, type WebGLRenderer } from 'three';
 
-export class PointCloudNode<T extends DataSourceType = DataSourceType> extends Group {
+export class PointCloudNode<T extends InternalDataSourceType = InternalDataSourceType> extends Group {
   private readonly _cameraConfiguration?: CameraConfiguration;
   private readonly _octree: PointCloudOctree;
 
@@ -273,7 +273,7 @@ export class PointCloudNode<T extends DataSourceType = DataSourceType> extends G
   }
 }
 
-function createObjectIdToAnnotationsMap<T extends DataSourceType>(
+function createObjectIdToAnnotationsMap<T extends InternalDataSourceType>(
   annotations: PointCloudObject<T>[]
 ): Map<number, PointCloudObject<T>> {
   const map = new Map();

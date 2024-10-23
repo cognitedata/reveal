@@ -48,7 +48,9 @@ import {
   ResolutionOptions,
   RenderParameters,
   AnyIntersection,
-  AddModelOptions
+  AddModelOptions,
+  AddModelOptionsWithModelRevisionId,
+  ClassicAddModelOptions
 } from './types';
 import { RevealManager } from '../RevealManager';
 import { CogniteModel, Image360WithCollection } from '../types';
@@ -95,8 +97,9 @@ import {
 import { Image360ApiHelper } from '../../api-helpers/Image360ApiHelper';
 import html2canvas from 'html2canvas';
 import { AsyncSequencer, SequencerFunction } from '../../../../utilities/src/AsyncSequencer';
-import { getModelAndRevisionId, isAddDMModelOptions } from '../../utilities/utils';
+import { getModelAndRevisionId } from '../../utilities/utils';
 import { ClassicDataSourceType, DataSourceType, isClassicIdentifier } from '@reveal/data-providers/src/DataSourceType';
+import assert from 'assert';
 
 type Cognite3DViewerEvents =
   | 'click'
@@ -736,9 +739,13 @@ export class Cognite3DViewer {
       }
       switch (type) {
         case 'cad':
-          return this.addCadModelWithSequencer({ ...options, modelId, revisionId }, modelLoadSequencer);
+          assert(isClassicIdentifier(options));
+          return this.addCadModelWithSequencer({ ...options, classicModelRevisionId: options }, modelLoadSequencer);
         case 'pointcloud':
-          return this.addPointCloudModelWithSequencer<T>({ ...options, modelId, revisionId }, modelLoadSequencer);
+          return this.addPointCloudModelWithSequencer<T>(
+            { ...options, classicModelRevisionId: { modelId, revisionId } },
+            modelLoadSequencer
+          );
         default:
           await modelLoadSequencer(() => {});
           throw new Error('Model is not supported');
@@ -761,13 +768,13 @@ export class Cognite3DViewer {
    * });
    * ```
    */
-  addCadModel(options: AddModelOptions): Promise<CogniteCadModel> {
+  addCadModel(options: AddModelOptions<ClassicDataSourceType>): Promise<CogniteCadModel> {
     const modelLoaderSequencer = this._addModelSequencer.getNextSequencer<void>();
-    return this.addCadModelWithSequencer(options, modelLoaderSequencer);
+    return this.addCadModelWithSequencer({ ...options, classicModelRevisionId: options }, modelLoaderSequencer);
   }
 
   private async addCadModelWithSequencer(
-    options: AddModelOptions,
+    options: AddModelOptionsWithModelRevisionId<ClassicDataSourceType>,
     modelLoadSequencer: SequencerFunction<void>
   ): Promise<CogniteCadModel> {
     try {
@@ -810,15 +817,16 @@ export class Cognite3DViewer {
    * });
    * ```
    */
-  addPointCloudModel<T extends DataSourceType = ClassicDataSourceType>(
+  async addPointCloudModel<T extends DataSourceType = ClassicDataSourceType>(
     options: AddModelOptions<T>
   ): Promise<CognitePointCloudModel<T>> {
+    const classicModelRevisionId = await getModelAndRevisionId(options, this._cdfSdkClient);
     const sequencerFunction = this._addModelSequencer.getNextSequencer<void>();
-    return this.addPointCloudModelWithSequencer<T>(options, sequencerFunction);
+    return this.addPointCloudModelWithSequencer<T>({ ...options, classicModelRevisionId }, sequencerFunction);
   }
 
   private async addPointCloudModelWithSequencer<T extends DataSourceType>(
-    options: AddModelOptions<T>,
+    options: AddModelOptionsWithModelRevisionId<T>,
     modelLoadSequencer: SequencerFunction<void>
   ): Promise<CognitePointCloudModel<T>> {
     try {
@@ -826,15 +834,7 @@ export class Cognite3DViewer {
         throw new Error('geometryFilter is not supported for point clouds');
       }
 
-      const { modelId, revisionId } = await getModelAndRevisionId(options, this._cdfSdkClient);
-
-      const addPointCloudModelOptions = {
-        ...options,
-        modelId,
-        revisionId
-      };
-
-      const pointCloudNode = await this._revealManagerHelper.addPointCloudModel<T>(addPointCloudModelOptions);
+      const pointCloudNode = await this._revealManagerHelper.addPointCloudModel<T>(options);
       const model = new CognitePointCloudModel<T>(options, pointCloudNode);
 
       await modelLoadSequencer(() => {

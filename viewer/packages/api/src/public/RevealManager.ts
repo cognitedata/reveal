@@ -25,7 +25,8 @@ import { MetricsLogger } from '@reveal/metrics';
 import { assertNever, EventTrigger } from '@reveal/utilities';
 import { CameraManager } from '@reveal/camera-manager';
 
-import { ModelIdentifier, DataSourceType } from '@reveal/data-providers';
+import { ClassicModelIdentifierType, InternalDataSourceType, LocalModelIdentifierType } from '@reveal/data-providers';
+import { createModelIdentifier } from '@reveal/data-providers/src/ModelIdentifier';
 
 /* eslint-disable jsdoc/require-jsdoc */
 
@@ -216,24 +217,30 @@ export class RevealManager {
     this.resetRedraw();
   }
 
-  public addModel(type: 'cad', modelIdentifier: ModelIdentifier, options?: AddCadModelOptions): Promise<CadNode>;
-  public addModel<T extends DataSourceType>(
+  public addModel(
+    type: 'cad',
+    modelIdentifier: ClassicModelIdentifierType | LocalModelIdentifierType,
+    options?: AddCadModelOptions
+  ): Promise<CadNode>;
+  public addModel<T extends InternalDataSourceType>(
     type: 'pointcloud',
-    modelIdentifier: ModelIdentifier,
-    revisionSpace?: string
+    modelIdentifier: T['modelIdentifier']
   ): Promise<PointCloudNode<T>>;
-  public async addModel<T extends DataSourceType>(
+  public async addModel<T extends InternalDataSourceType>(
     type: SupportedModelTypes,
-    modelIdentifier: ModelIdentifier,
-    options?: AddCadModelOptions | string
+    modelIdentifier: T['modelIdentifier'] | ClassicModelIdentifierType,
+    options?: AddCadModelOptions
   ): Promise<PointCloudNode<T> | CadNode> {
     switch (type) {
       case 'cad': {
-        return this._cadManager.addModel(modelIdentifier, (options as AddCadModelOptions).geometryFilter);
+        return this._cadManager.addModel(
+          createModelIdentifier(modelIdentifier),
+          (options as AddCadModelOptions).geometryFilter
+        );
       }
 
       case 'pointcloud': {
-        return this._pointCloudManager.addModel<T>(modelIdentifier, options as string);
+        return this._pointCloudManager.addModel<T>(modelIdentifier);
       }
 
       default:
