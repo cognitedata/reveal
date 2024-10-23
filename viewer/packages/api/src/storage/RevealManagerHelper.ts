@@ -101,8 +101,7 @@ export class RevealManagerHelper {
     sceneHandler: SceneHandler,
     cameraManager: CameraManager,
     revealOptions: RevealOptions,
-    dataSource: DataSource,
-    client: CogniteClient | undefined
+    dataSource: DataSource
   ): RevealManagerHelper {
     const revealManager = createRevealManager(
       'custom-datasource',
@@ -115,8 +114,7 @@ export class RevealManagerHelper {
       renderer,
       sceneHandler,
       cameraManager,
-      revealOptions,
-      client
+      revealOptions
     );
     // Note! We consider custom data sources 'CDF-type' as we use CDF model identifiers
     // for custom data sources too.
