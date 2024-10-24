@@ -58,7 +58,7 @@ export class AnnotationIdPointCloudObjectCollection extends PointCloudAnnotation
 }
 
 // @beta
-export type AnyIntersection = CadIntersection | PointCloudIntersection | CustomObjectIntersection;
+export type AnyIntersection<T extends DataSourceType> = CadIntersection | PointCloudIntersection<T> | CustomObjectIntersection;
 
 // @public
 export interface AreaCollection {
@@ -71,10 +71,10 @@ export interface AreaCollection {
 }
 
 // @public
-export type AssetAnnotationImage360Info = {
+export type AssetAnnotationImage360Info<T extends DataSourceType = ClassicDataSourceType> = {
     annotationInfo: ImageAssetLinkAnnotationInfo;
-    imageEntity: Image360;
-    imageRevision: Image360Revision;
+    imageEntity: Image360<T>;
+    imageRevision: Image360Revision<T>;
 };
 
 // @public
@@ -192,7 +192,7 @@ export class AxisGizmoOptions {
 // @beta
 export class AxisGizmoTool extends Cognite3DViewerToolBase {
     constructor(option?: AxisGizmoOptions);
-    connect(viewer: Cognite3DViewer): void;
+    connect(viewer: Cognite3DViewer<DataSourceType>): void;
     // (undocumented)
     dispose(): void;
     // (undocumented)
@@ -391,6 +391,10 @@ export type ClassicDataSourceType = {
         assetRef?: AnnotationsAssetRef;
     };
     pointCloudCollectionType: PointCloudAnnotationVolumeCollection;
+    image360Identifier: {
+        [key: string]: string;
+    } | Image360DataModelIdentifier;
+    image360AnnotationType: AnnotationModel;
     _never: never;
 };
 
@@ -423,18 +427,18 @@ export class ClusteredAreaCollection implements AreaCollection {
 }
 
 // @public (undocumented)
-export class Cognite3DViewer {
+export class Cognite3DViewer<DataSourceT extends DataSourceType = ClassicDataSourceType> {
     constructor(options: Cognite3DViewerOptions);
-    add360ImageSet(datasource: 'datamodels', dataModelIdentifier: Image360DataModelIdentifier): Promise<Image360Collection>;
+    add360ImageSet(datasource: 'datamodels', dataModelIdentifier: Image360DataModelIdentifier): Promise<Image360Collection<DataSourceT & ClassicDataSourceType>>;
     add360ImageSet(datasource: 'events', eventFilter: {
         [key: string]: string;
-    }, add360ImageOptions?: AddImage360Options): Promise<Image360Collection>;
-    addCadModel(options: AddModelOptions): Promise<CogniteCadModel>;
+    }, add360ImageOptions?: AddImage360Options): Promise<Image360Collection<DataSourceT & ClassicDataSourceType>>;
+    addCadModel<T extends DataSourceT>(options: AddModelOptions<T>): Promise<CogniteCadModel>;
     // @beta
     addCustomObject(customObject: ICustomObject): void;
-    addModel<T extends DataSourceType = ClassicDataSourceType>(options: AddModelOptions<T>): Promise<CogniteModel<T>>;
+    addModel(options: AddModelOptions<DataSourceT>): Promise<CogniteModel<DataSourceT>>;
     addObject3D(object: THREE.Object3D): void;
-    addPointCloudModel<T extends DataSourceType = ClassicDataSourceType>(options: AddModelOptions<T>): Promise<CognitePointCloudModel<T>>;
+    addPointCloudModel(options: AddModelOptions<DataSourceT>): Promise<CognitePointCloudModel<DataSourceT>>;
     get cadBudget(): CadModelBudget;
     set cadBudget(budget: CadModelBudget);
     // (undocumented)
@@ -445,24 +449,24 @@ export class Cognite3DViewer {
     determineModelType(modelId: number, revisionId: number): Promise<SupportedModelTypes | ''>;
     dispose(): void;
     get domElement(): HTMLElement;
-    enter360Image(image360: Image360, revision?: Image360Revision): Promise<void>;
+    enter360Image(image360: Image360<DataSourceT>, revision?: Image360Revision<DataSourceT>): Promise<void>;
     exit360Image(): void;
     fitCameraToBoundingBox(boundingBox: THREE.Box3, duration?: number, radiusFactor?: number): void;
-    fitCameraToModel(model: CogniteModel, duration?: number): void;
-    fitCameraToModels(models?: CogniteModel[], duration?: number, restrictToMostGeometry?: boolean): void;
+    fitCameraToModel(model: CogniteModel<DataSourceT>, duration?: number): void;
+    fitCameraToModels(models?: CogniteModel<DataSourceT>[], duration?: number, restrictToMostGeometry?: boolean): void;
     fitCameraToVisualSceneBoundingBox(duration?: number): void;
     get360AnnotationIntersectionFromPixel(offsetX: number, offsetY: number): Promise<null | Image360AnnotationIntersection>;
-    get360ImageCollections(): Image360Collection[];
-    getActive360ImageInfo(): Image360WithCollection | undefined;
+    get360ImageCollections(): Image360Collection<DataSourceT>[];
+    getActive360ImageInfo(): Image360WithCollection<DataSourceT> | undefined;
     // @beta
     getAnyIntersectionFromPixel(pixelCoords: THREE.Vector2, options?: {
         stopOnHitting360Icon?: boolean;
         predicate?: (customObject: ICustomObject) => boolean;
-    }): Promise<AnyIntersection | undefined>;
+    }): Promise<AnyIntersection<DataSourceT> | undefined>;
     // @deprecated
     getClippingPlanes(): THREE.Plane[];
     getGlobalClippingPlanes(): THREE.Plane[];
-    getIntersectionFromPixel(offsetX: number, offsetY: number): Promise<null | Intersection>;
+    getIntersectionFromPixel(offsetX: number, offsetY: number): Promise<null | Intersection<DataSourceT>>;
     getNormalizedPixelCoordinates(pixelCoords: THREE.Vector2): THREE.Vector2;
     getPixelCoordinatesFromEvent(event: PointerEvent | WheelEvent): THREE.Vector2;
     // @beta
@@ -472,8 +476,8 @@ export class Cognite3DViewer {
     getViewState(): ViewerState;
     // @beta
     getVisualSceneBoundingBox(): THREE.Box3;
-    loadCameraFromModel(model: CogniteModel): void;
-    get models(): CogniteModel[];
+    loadCameraFromModel(model: CogniteModel<DataSourceT>): void;
+    get models(): CogniteModel<DataSourceT>[];
     // (undocumented)
     off(event: 'click' | 'hover', callback: PointerEventDelegate): void;
     // (undocumented)
@@ -497,11 +501,11 @@ export class Cognite3DViewer {
     get pointCloudBudget(): PointCloudBudget;
     set pointCloudBudget(budget: PointCloudBudget);
     // @deprecated
-    remove360Images(...image360Entities: Image360[]): Promise<void>;
-    remove360ImageSet(imageCollection: Image360Collection): void;
+    remove360Images(...image360Entities: Image360<DataSourceT>[]): Promise<void>;
+    remove360ImageSet(imageCollection: Image360Collection<DataSourceT>): void;
     // @beta
     removeCustomObject(customObject: ICustomObject): void;
-    removeModel(model: CogniteModel): void;
+    removeModel(model: CogniteModel<DataSourceT>): void;
     removeObject3D(object: THREE.Object3D): void;
     get renderParameters(): RenderParameters;
     requestRedraw(): void;
@@ -650,7 +654,7 @@ export class CognitePointCloudModel<T extends DataSourceType = ClassicDataSource
     // (undocumented)
     get stylableObjectCount(): number;
     get stylableObjects(): PointCloudObjectMetadata<T>[];
-    get styledVolumeCollections(): StyledPointCloudVolumeCollection<T>[];
+    get styledCollections(): StyledPointCloudVolumeCollection<T>[];
     // @deprecated (undocumented)
     traverseStylableObjects(callback: (annotationMetadata: PointCloudObjectMetadata<T>) => void): void;
     // (undocumented)
@@ -845,7 +849,7 @@ export class DebouncedCameraStopEventTrigger {
 
 // @public (undocumented)
 export class DebugCameraTool extends Cognite3DViewerToolBase {
-    constructor(viewer: Cognite3DViewer);
+    constructor(viewer: Cognite3DViewer<DataSourceType>);
     // @override
     dispose(): void;
     // (undocumented)
@@ -927,6 +931,8 @@ export type DMDataSourceType = {
     };
     pointCloudCollectionType: PointCloudDMVolumeCollection;
     modelIdentifier: DMModelIdentifierType;
+    image360Identifier: Image360DataModelIdentifier;
+    image360AnnotationType: never;
     _never: never;
 };
 
@@ -1135,7 +1141,7 @@ export type HtmlOverlayPositionUpdatedDelegate = (element: HTMLElement, position
 
 // @public
 export class HtmlOverlayTool extends Cognite3DViewerToolBase {
-    constructor(viewer: Cognite3DViewer, options?: HtmlOverlayToolOptions);
+    constructor(viewer: Cognite3DViewer<DataSourceType>, options?: HtmlOverlayToolOptions);
     add(htmlElement: HTMLElement, position3D: THREE.Vector3, options?: HtmlOverlayOptions): void;
     clear(): void;
     // @override
@@ -1191,10 +1197,10 @@ export interface IFlexibleCameraManager extends CameraManager {
 }
 
 // @public
-export interface Image360 {
-    getActiveRevision(): Image360Revision;
+export interface Image360<T extends DataSourceType = ClassicDataSourceType> {
+    getActiveRevision(): Image360Revision<T>;
     getIconColor(): Color | 'default';
-    getRevisions(): Image360Revision[];
+    getRevisions(): Image360Revision<T>[];
     readonly id: string;
     readonly image360Visualization: Image360Visualization;
     readonly label: string | undefined;
@@ -1203,8 +1209,8 @@ export interface Image360 {
 }
 
 // @public
-export interface Image360Annotation {
-    readonly annotation: AnnotationModel;
+export interface Image360Annotation<T extends DataSourceType = ClassicDataSourceType> {
+    readonly annotation: T['image360AnnotationType'];
     getCenter(out?: Vector3): Vector3;
     getColor(): Color;
     getVisible(): boolean;
@@ -1243,16 +1249,16 @@ export type Image360AnnotationIntersection = {
 };
 
 // @public
-export interface Image360Collection {
+export interface Image360Collection<T extends DataSourceType = ClassicDataSourceType> {
     findImageAnnotations(filter: Image360AnnotationAssetFilter): Promise<Image360AnnotationAssetQueryResult[]>;
-    getAnnotationsInfo(source: 'assets'): Promise<AssetAnnotationImage360Info[]>;
+    getAnnotationsInfo(source: 'assets'): Promise<AssetAnnotationImage360Info<T>[]>;
     // @deprecated
     getAssetIds(): Promise<IdEither[]>;
     getDefaultAnnotationStyle(): Image360AnnotationAppearance;
     getIconsVisibility(): boolean;
     getModelTransformation(out?: Matrix4): Matrix4;
     readonly id: string;
-    readonly image360Entities: Image360[];
+    readonly image360Entities: Image360<T>[];
     readonly label: string | undefined;
     off(event: 'image360Entered', callback: Image360EnteredDelegate): void;
     // (undocumented)
@@ -1285,9 +1291,9 @@ export type Image360IconStyle = {
 };
 
 // @public
-export interface Image360Revision {
+export interface Image360Revision<T extends DataSourceType = ClassicDataSourceType> {
     readonly date: Date | undefined;
-    getAnnotations(): Promise<Image360Annotation[]>;
+    getAnnotations(): Promise<Image360Annotation<T>[]>;
     getPreviewThumbnailUrl(): Promise<string | undefined>;
 }
 
@@ -1297,9 +1303,9 @@ export interface Image360Visualization {
 }
 
 // @public
-export type Image360WithCollection = {
-    image360Collection: Image360Collection;
-    image360: Image360;
+export type Image360WithCollection<T extends DataSourceType = ClassicDataSourceType> = {
+    image360Collection: Image360Collection<T>;
+    image360: Image360<T>;
 };
 
 // @public
@@ -1350,7 +1356,7 @@ export class IndexSet {
 }
 
 // @public
-export type Intersection = CadIntersection | PointCloudIntersection;
+export type Intersection<T extends DataSourceType = ClassicDataSourceType> = CadIntersection | PointCloudIntersection<T>;
 
 // @public
 export class IntersectionNodeCollection extends CombineNodeCollectionBase {
@@ -1383,14 +1389,20 @@ export class InvertedNodeCollection extends NodeCollection {
     serialize(): SerializedNodeCollection;
 }
 
+// @public
+export function isClassicPointCloudDataType(pointCloudMetadata: DataSourceType['pointCloudVolumeMetadata']): pointCloudMetadata is ClassicDataSourceType['pointCloudVolumeMetadata'];
+
 // @public (undocumented)
-export function isClassicPointCloudDataType(pointCloudMetadata: PointCloudObjectMetadata<DataSourceType>): pointCloudMetadata is PointCloudObjectMetadata<ClassicDataSourceType>;
+export function isClassicPointCloudModel(model: CognitePointCloudModel<DataSourceType>): model is CognitePointCloudModel<ClassicDataSourceType>;
 
 // @public
 export function isDefaultCameraManager(cameraManager: CameraManager): cameraManager is DefaultCameraManager;
 
+// @public
+export function isDMPointCloudDataType(pointCloudMetadata: DataSourceType['pointCloudVolumeMetadata']): pointCloudMetadata is DMDataSourceType['pointCloudVolumeMetadata'];
+
 // @public (undocumented)
-export function isDMPointCloudDataType(pointCloudMetadata: PointCloudObjectMetadata<DataSourceType>): pointCloudMetadata is PointCloudObjectMetadata<DMDataSourceType>;
+export function isDMPointCloudModel(model: CognitePointCloudModel<DataSourceType>): model is CognitePointCloudModel<DMDataSourceType>;
 
 // @beta
 export function isFlexibleCameraManager(manager: CameraManager): manager is IFlexibleCameraManager;
@@ -1438,7 +1450,7 @@ export type MeasurementStartedDelegate = () => void;
 
 // @public
 export class MeasurementTool extends Cognite3DViewerToolBase {
-    constructor(viewer: Cognite3DViewer, options?: MeasurementOptions);
+    constructor(viewer: Cognite3DViewer<DataSourceType>, options?: MeasurementOptions);
     addMeasurement(startPoint: THREE.Vector3, endPoint: THREE.Vector3): Measurement;
     dispose(): void;
     enterMeasurementMode(): void;
@@ -1753,16 +1765,16 @@ export class PointCloudDMVolumeCollection {
     get isLoading(): false;
 }
 
-// @public (undocumented)
-export type PointCloudIntersection = {
+// @public
+export type PointCloudIntersection<T extends DataSourceType = ClassicDataSourceType> = {
     type: 'pointcloud';
-    model: CognitePointCloudModel;
+    model: CognitePointCloudModel<T>;
     point: Vector3;
     pointIndex: number;
     distanceToCamera: number;
     annotationId: number;
     assetRef?: AnnotationsAssetRef;
-    volumeMetadata?: PointCloudVolumeIntersectionData;
+    volumeMetadata?: T['pointCloudVolumeMetadata'];
 };
 
 // @public @deprecated
@@ -1773,13 +1785,6 @@ export abstract class PointCloudObjectCollection extends PointCloudAnnotationVol
 export type PointCloudObjectMetadata<T extends DataSourceType = ClassicDataSourceType> = {
     boundingBox: Box3;
 } & T['pointCloudVolumeMetadata'];
-
-// @public
-export type PointCloudVolumeIntersectionData = {
-    annotationId?: number;
-    volumeInstanceRef?: DMInstanceRef;
-    assetRef?: AnnotationsAssetRef | DMInstanceRef;
-};
 
 // @public (undocumented)
 export enum PointColorType {
@@ -1937,12 +1942,12 @@ export class SinglePropertyFilterNodeCollection extends CdfNodeCollectionBase {
     serialize(): SerializedNodeCollection;
 }
 
-// @public (undocumented)
+// @public @deprecated
 export class StyledPointCloudObjectCollection extends StyledPointCloudVolumeCollection<ClassicDataSourceType> {
 }
 
 // @public
-export class StyledPointCloudVolumeCollection<T extends DataSourceType = ClassicDataSourceType> {
+export class StyledPointCloudVolumeCollection<T extends DataSourceType> {
     constructor(
     objectCollection: T['pointCloudCollectionType'],
     style: CompletePointCloudAppearance);

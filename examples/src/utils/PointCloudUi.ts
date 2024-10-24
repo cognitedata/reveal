@@ -1,8 +1,15 @@
-import { Cognite3DViewer, CognitePointCloudModel, PointColorType, PointShape, PointSizeType } from '@cognite/reveal';
+import {
+  Cognite3DViewer,
+  CognitePointCloudModel,
+  PointColorType,
+  PointShape,
+  PointSizeType,
+  DataSourceType
+} from '@cognite/reveal';
 import * as dat from 'dat.gui';
 
 export class PointCloudUi {
-  private readonly _viewer: Cognite3DViewer;
+  private readonly _viewer: Cognite3DViewer<DataSourceType>;
   private readonly _params = {
     pointSize: 1.0,
     pointSizeType: PointSizeType.Adaptive,
@@ -18,7 +25,7 @@ export class PointCloudUi {
     visible: true
   };
 
-  constructor(viewer: Cognite3DViewer, ui: dat.GUI) {
+  constructor(viewer: Cognite3DViewer<DataSourceType>, ui: dat.GUI) {
     const url = new URL(window.location.href);
     const urlParams = url.searchParams;
 
@@ -78,7 +85,7 @@ export class PointCloudUi {
 
   applyToAllModels() {
     this._viewer.pointCloudBudget = { numberOfPoints: this._params.budget };
-    const pointCloudModels = this._viewer.allModels
+    const pointCloudModels = this._viewer.models
       .filter(model => model.type === 'pointcloud')
       .map(x => x as CognitePointCloudModel);
     pointCloudModels.forEach(model => {

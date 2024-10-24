@@ -66,5 +66,13 @@ export {
   InternalDataSourceType,
   LocalDataSourceType,
   LocalModelIdentifierType,
-  isLocalIdentifier
+  isLocalIdentifier,
+  GenericDataSourceType
 } from './src/DataSourceType';
+
+export {
+  LocalAddModelOptions,
+  CommonModelOptions,
+  InternalAddModelOptions,
+  AddModelOptionsWithModelRevisionId
+} from './src/utilities/internalAddModelOptions';

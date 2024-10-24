@@ -5,7 +5,7 @@
 import * as THREE from 'three';
 import { DeviceDescriptor, SceneHandler } from '@reveal/utilities';
 import assert from 'assert';
-import { Image360Face, Image360Texture } from '@reveal/data-providers';
+import { DataSourceType, Image360Face, Image360Texture } from '@reveal/data-providers';
 import { Image360Visualization } from './Image360Visualization';
 import { ImageAnnotationObject } from '../annotation/ImageAnnotationObject';
 
@@ -74,7 +74,7 @@ export class Image360VisualizationBox implements Image360Visualization {
     this._visualizationMesh.renderOrder = newRenderOrder;
   }
 
-  setAnnotations(annotations: ImageAnnotationObject[]): void {
+  setAnnotations(annotations: ImageAnnotationObject<DataSourceType>[]): void {
     this._annotationsGroup.remove(...this._annotationsGroup.children);
 
     if (annotations.length === 0) {

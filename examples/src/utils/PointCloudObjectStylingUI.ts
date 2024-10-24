@@ -18,7 +18,7 @@ import { AnnotationModel, AnnotationsBoundingVolume, AnnotationType, CogniteClie
 
 export class PointCloudObjectStylingUI<T extends DataSourceType> {
   private readonly _model: CognitePointCloudModel<T>;
-  private readonly _viewer: Cognite3DViewer;
+  private readonly _viewer: Cognite3DViewer<DataSourceType>;
   private readonly _client: CogniteClient;
 
   private _boundingBoxGroup: THREE.Group | undefined;
@@ -45,7 +45,12 @@ export class PointCloudObjectStylingUI<T extends DataSourceType> {
   };
   private _createAnnotationsOnClick = false;
 
-  constructor(uiFolder: dat.GUI, model: CognitePointCloudModel<T>, viewer: Cognite3DViewer, client: CogniteClient) {
+  constructor(
+    uiFolder: dat.GUI,
+    model: CognitePointCloudModel<T>,
+    viewer: Cognite3DViewer<DataSourceType>,
+    client: CogniteClient
+  ) {
     this._model = model;
     this._viewer = viewer;
     this._client = client;

@@ -8,13 +8,14 @@ import {
   Image360,
   Image360Collection,
   Image360Annotation,
-  Image360AnnotationIntersection
+  Image360AnnotationIntersection,
+  DataSourceType
 } from '@cognite/reveal';
 
 import * as dat from 'dat.gui';
 
 export class Image360UI {
-  private viewer: Cognite3DViewer;
+  private viewer: Cognite3DViewer<DataSourceType>;
   private gui: dat.GUI;
   private entities: Image360[] = [];
   private selectedEntity: Image360 | undefined;
@@ -81,7 +82,7 @@ export class Image360UI {
     targetDate: ''
   };
 
-  constructor(viewer: Cognite3DViewer, gui: dat.GUI) {
+  constructor(viewer: Cognite3DViewer<DataSourceType>, gui: dat.GUI) {
     this.viewer = viewer;
     this.gui = gui;
 

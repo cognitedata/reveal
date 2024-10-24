@@ -10,8 +10,7 @@ export {
 } from './src/PointCloudAppearance';
 export {
   StyledPointCloudObjectCollection,
-  StyledPointCloudVolumeCollection,
-  InternalStyledPointCloudVolumeCollection
+  StyledPointCloudVolumeCollection
 } from './src/StyledPointCloudVolumeCollection';
 export { PointCloudObjectCollection, PointCloudAnnotationVolumeCollection } from './src/PointCloudObjectCollection';
 export { AnnotationIdPointCloudObjectCollection } from './src/AnnotationIdPointCloudObjectCollection';

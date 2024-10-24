@@ -6,7 +6,7 @@ import * as THREE from 'three';
 
 import { Subscription, combineLatest, asyncScheduler, Subject } from 'rxjs';
 import { map, observeOn, subscribeOn, tap, auditTime, distinctUntilChanged } from 'rxjs/operators';
-import { AddModelOptionsWithModelRevisionId, PointCloudBudget } from './types';
+import { PointCloudBudget } from './types';
 
 import { GeometryFilter, CadModelSectorLoadStatistics, CadNode } from '@reveal/cad-model';
 import { PointCloudManager, PointCloudNode } from '@reveal/pointclouds';
@@ -25,8 +25,14 @@ import { MetricsLogger } from '@reveal/metrics';
 import { assertNever, EventTrigger } from '@reveal/utilities';
 import { CameraManager } from '@reveal/camera-manager';
 
-import { ClassicModelIdentifierType, InternalDataSourceType, LocalModelIdentifierType } from '@reveal/data-providers';
+import {
+  ClassicModelIdentifierType,
+  DataSourceType,
+  InternalDataSourceType,
+  LocalModelIdentifierType
+} from '@reveal/data-providers';
 import { createModelIdentifier } from '@reveal/data-providers';
+import { AddModelOptionsWithModelRevisionId } from '../../../data-providers/src/utilities/internalAddModelOptions';
 
 /* eslint-disable jsdoc/require-jsdoc */
 
@@ -222,11 +228,11 @@ export class RevealManager {
     modelIdentifier: AddModelOptionsWithModelRevisionId<T>,
     options?: AddCadModelOptions
   ): Promise<CadNode>;
-  public addModel<T extends InternalDataSourceType>(
+  public addModel<T extends DataSourceType>(
     type: 'pointcloud',
     modelIdentifier: AddModelOptionsWithModelRevisionId<T>
   ): Promise<PointCloudNode<T>>;
-  public async addModel<T extends InternalDataSourceType>(
+  public async addModel<T extends DataSourceType>(
     type: SupportedModelTypes,
     modelIdentifier: AddModelOptionsWithModelRevisionId<T>,
     options?: AddCadModelOptions

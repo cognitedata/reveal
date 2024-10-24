@@ -4,10 +4,15 @@
 
 import * as THREE from 'three';
 
-import { Image360Provider } from '@reveal/data-providers';
+import { GenericDataSourceType, Image360Provider } from '@reveal/data-providers';
 import { It, Mock } from 'moq.ts';
 import { BeforeSceneRenderedDelegate, DeviceDescriptor, EventTrigger, SceneHandler } from '@reveal/utilities';
 import { Image360CollectionFactory } from '../src/collection/Image360CollectionFactory';
+
+type TestDataSourceType = Omit<GenericDataSourceType, 'image360Identifier'> & {
+  image360Identifier: string;
+  _never: never;
+};
 
 describe(Image360CollectionFactory.name, () => {
   test('Calling create should produce a valid image360Entity', async () => {
@@ -56,7 +61,7 @@ describe(Image360CollectionFactory.name, () => {
     const mockSceneHandler = new Mock<SceneHandler>().setup(p => p.addObject3D(It.IsAny())).returns();
     const desktopDevice: DeviceDescriptor = { deviceType: 'desktop' };
 
-    const image360EntityFactory = new Image360CollectionFactory(
+    const image360EntityFactory = new Image360CollectionFactory<TestDataSourceType>(
       mock360ImageProvider.object(),
       mockSceneHandler.object(),
       new EventTrigger<BeforeSceneRenderedDelegate>(),

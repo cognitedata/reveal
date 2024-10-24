@@ -56,7 +56,7 @@ export function Viewer() {
     }
 
     const gui = new dat.GUI({ width: Math.min(500, 0.8 * window.innerWidth) });
-    let viewer: Cognite3DViewer;
+    let viewer: Cognite3DViewer<DataSourceType>;
     let cameraManager: DefaultCameraManager;
     let cameraManagers: {
       Default: DefaultCameraManager;
@@ -125,7 +125,7 @@ export function Viewer() {
       }
 
       // Prepare viewer
-      viewer = new Cognite3DViewer(viewerOptions);
+      viewer = new Cognite3DViewer<DataSourceType>(viewerOptions);
       (window as any).viewer = viewer;
 
       // Add Stats.js overlay with FPS etc

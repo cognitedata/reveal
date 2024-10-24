@@ -4,7 +4,7 @@
 
 import { Object3D, Vector3 } from 'three';
 import { PointCloudNode } from './PointCloudNode';
-import { InternalDataSourceType } from '@reveal/data-providers';
+import { DataSourceType } from '@reveal/data-providers';
 
 /**
  * ASPRS well known point class types.
@@ -86,7 +86,7 @@ export enum WellKnownAsprsPointClassCodes {
    */
 }
 
-export type IntersectPointCloudNodeResult<T extends InternalDataSourceType> = {
+export type IntersectPointCloudNodeResult<T extends DataSourceType> = {
   /**
    * Distance from camera to intersected point.
    */

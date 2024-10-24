@@ -15,14 +15,13 @@ import { Potree } from './potree-three-loader';
 
 import { asyncScheduler, combineLatest, Observable, scan, Subject, throttleTime } from 'rxjs';
 
-import { ModelIdentifier, InternalDataSourceType } from '@reveal/data-providers';
+import { ModelIdentifier, AddModelOptionsWithModelRevisionId, DataSourceType } from '@reveal/data-providers';
 import { MetricsLogger } from '@reveal/metrics';
 import { SupportedModelTypes } from '@reveal/model-base';
 import { PointCloudMaterialManager } from '@reveal/rendering';
 
 import { Mesh } from 'three';
-import { createModelIdentifier } from '@reveal/data-providers/src/ModelIdentifier';
-import { AddModelOptionsWithModelRevisionId } from '@reveal/api';
+import { createModelIdentifier } from '@reveal/data-providers';
 
 export class PointCloudManager {
   private readonly _pointCloudMetadataRepository: PointCloudMetadataRepository;
@@ -116,7 +115,7 @@ export class PointCloudManager {
     this.requestRedraw();
   }
 
-  async addModel<T extends InternalDataSourceType>(
+  async addModel<T extends DataSourceType>(
     identifier: AddModelOptionsWithModelRevisionId<T>
   ): Promise<PointCloudNode<T>> {
     const modelIdentifier = createModelIdentifier({ ...identifier, ...identifier.classicModelRevisionId });
@@ -147,7 +146,7 @@ export class PointCloudManager {
     return pointCloudNode;
   }
 
-  removeModel<T extends InternalDataSourceType>(node: PointCloudNode<T>): void {
+  removeModel<T extends DataSourceType>(node: PointCloudNode<T>): void {
     const index = this._pointCloudNodes.indexOf(node);
     if (index === -1) {
       throw new Error('Point cloud is not added - cannot remove it');

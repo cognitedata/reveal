@@ -3,7 +3,6 @@
  */
 import * as THREE from 'three';
 
-import { AddModelOptionsWithModelRevisionId, LocalAddModelOptions } from '../public/migration/types';
 import { createCdfRevealManager, createLocalRevealManager, createRevealManager } from '../public/createRevealManager';
 import { RevealManager } from '../public/RevealManager';
 import { RevealOptions } from '../public/RevealOptions';
@@ -12,7 +11,8 @@ import {
   DummyPointCloudStylableObjectProvider,
   DummyPointCloudDMStylableObjectProvider,
   InternalDataSourceType,
-  LocalDataSourceType
+  LocalDataSourceType,
+  DataSourceType
 } from '@reveal/data-providers';
 import { DataSource } from '@reveal/data-source';
 import { SceneHandler } from '@reveal/utilities';
@@ -21,6 +21,10 @@ import { CadNode } from '@reveal/cad-model';
 import { CogniteClient } from '@cognite/sdk';
 import { PointCloudNode, LocalPointClassificationsProvider } from '@reveal/pointclouds';
 import { CameraManager } from '@reveal/camera-manager';
+import {
+  AddModelOptionsWithModelRevisionId,
+  LocalAddModelOptions
+} from '../../../data-providers/src/utilities/internalAddModelOptions';
 
 /**
  * Helper for {@link RevealManager} for creating a uniform interface for
@@ -30,7 +34,7 @@ import { CameraManager } from '@reveal/camera-manager';
 export class RevealManagerHelper {
   private readonly _revealManager: RevealManager;
 
-  addPointCloudModel<T extends InternalDataSourceType>(
+  addPointCloudModel<T extends DataSourceType>(
     model: AddModelOptionsWithModelRevisionId<T>
   ): Promise<PointCloudNode<T>> {
     if (this._type === 'cdf') {
@@ -153,7 +157,7 @@ export class RevealManagerHelper {
     return revealManager.addModel('cad', model, { geometryFilter: model.geometryFilter });
   }
 
-  private static addLocalPointCloudModel<T extends InternalDataSourceType>(
+  private static addLocalPointCloudModel<T extends DataSourceType>(
     model: LocalAddModelOptions & AddModelOptionsWithModelRevisionId<T>,
     revealManager: RevealManager
   ): Promise<PointCloudNode<T>> {
@@ -168,7 +172,7 @@ export class RevealManagerHelper {
    * @param identifier
    * @param revealManager
    */
-  private static addCdfPointCloudModel<T extends InternalDataSourceType>(
+  private static addCdfPointCloudModel<T extends DataSourceType>(
     identifier: AddModelOptionsWithModelRevisionId<T>,
     revealManager: RevealManager
   ): Promise<PointCloudNode<T>> {

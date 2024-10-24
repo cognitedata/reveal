@@ -3,7 +3,7 @@
  */
 
 import { CogniteClient } from '@cognite/sdk';
-import { AddModelOptions, LocalAddModelOptions } from '../public/migration/types';
+import { AddModelOptions } from '../public/migration/types';
 import {
   DataSourceType,
   fetchDMModelIdFromRevisionId,
@@ -12,6 +12,7 @@ import {
   isLocalIdentifier
 } from '@reveal/data-providers';
 import { assertNever } from '@reveal/utilities';
+import { LocalAddModelOptions } from '../../../data-providers/src/utilities/internalAddModelOptions';
 
 export async function getModelAndRevisionId(
   options: AddModelOptions<DataSourceType> | LocalAddModelOptions,

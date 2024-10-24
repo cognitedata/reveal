@@ -10,7 +10,7 @@ import { WellKnownAsprsPointClassCodes } from './types';
 import { PointColorType, PointShape, PointSizeType } from '@reveal/rendering';
 
 import {
-  InternalDataSourceType,
+  DataSourceType,
   isClassicPointCloudDataTypeObject,
   isDMPointCloudDataTypeObject,
   PointCloudObject,
@@ -21,9 +21,9 @@ import { ClassificationHandler } from './ClassificationHandler';
 import { CompletePointCloudAppearance } from '@reveal/pointcloud-styling';
 
 import { Matrix4, Group, Box3, Color, type Camera, type Plane, type Ray, type WebGLRenderer } from 'three';
-import { InternalStyledPointCloudVolumeCollection } from '@reveal/pointcloud-styling';
+import { StyledPointCloudVolumeCollection } from '@reveal/pointcloud-styling';
 
-export class PointCloudNode<T extends InternalDataSourceType = InternalDataSourceType> extends Group {
+export class PointCloudNode<T extends DataSourceType = DataSourceType> extends Group {
   private readonly _cameraConfiguration?: CameraConfiguration;
   private readonly _octree: PointCloudOctree;
 
@@ -260,7 +260,7 @@ export class PointCloudNode<T extends InternalDataSourceType = InternalDataSourc
     this._needsRedraw = true;
   }
 
-  assignStyledPointCloudObjectCollection(styledCollection: InternalStyledPointCloudVolumeCollection<T>): void {
+  assignStyledPointCloudObjectCollection(styledCollection: StyledPointCloudVolumeCollection<T>): void {
     this._octree.material.objectAppearanceTexture.assignStyledObjectSet(styledCollection);
     this._needsRedraw = true;
   }
@@ -274,7 +274,7 @@ export class PointCloudNode<T extends InternalDataSourceType = InternalDataSourc
   }
 }
 
-function createObjectIdToAnnotationsMap<T extends InternalDataSourceType>(
+function createObjectIdToAnnotationsMap<T extends DataSourceType>(
   annotations: PointCloudObject<T>[]
 ): Map<number, PointCloudObject<T>> {
   const map = new Map();

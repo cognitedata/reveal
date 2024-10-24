@@ -92,7 +92,8 @@ export {
   ClassicModelIdentifierType,
   DMModelIdentifierType,
   isDMPointCloudDataType,
-  isClassicPointCloudDataType
+  isClassicPointCloudDataType,
+  CommonModelOptions
 } from '../packages/data-providers';
 
 export { CogniteCadModel, BoundingBoxClipper, GeometryFilter, WellKnownUnit } from '../packages/cad-model';

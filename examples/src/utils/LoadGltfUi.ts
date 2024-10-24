@@ -1,13 +1,13 @@
 import * as THREE from 'three';
 import dat from 'dat.gui';
-import { Cognite3DViewer } from '@cognite/reveal';
+import { Cognite3DViewer, DataSourceType } from '@cognite/reveal';
 import { GLTFLoader, GLTF } from 'three/examples/jsm/loaders/GLTFLoader.js';
 import { TransformControls } from 'three/examples/jsm/controls/TransformControls.js';
 
 export class LoadGltfUi {
   private readonly _gizmos: TransformControls[] = [];
   private readonly _objects: THREE.Object3D[] = [];
-  private readonly _viewer: Cognite3DViewer;
+  private readonly _viewer: Cognite3DViewer<DataSourceType>;
   private readonly _params = {
     url: 'https://threejs.org/examples/models/gltf/DamagedHelmet/glTF/DamagedHelmet.gltf',
     transformGizmosVisible: true,
@@ -15,7 +15,7 @@ export class LoadGltfUi {
     scaleStr: '1.0'
   };
 
-  constructor(uiFolder: dat.GUI, viewer: Cognite3DViewer) {
+  constructor(uiFolder: dat.GUI, viewer: Cognite3DViewer<DataSourceType>) {
     this._viewer = viewer;
     this.createGui(uiFolder);
   }

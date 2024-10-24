@@ -21,9 +21,9 @@ export { PointShape, PointColorType, PointSizeType } from '@reveal/rendering';
 /**
  * A tuple of a 360 image and its collection.
  */
-export type Image360WithCollection = {
-  image360Collection: Image360Collection;
-  image360: Image360;
+export type Image360WithCollection<T extends DataSourceType = ClassicDataSourceType> = {
+  image360Collection: Image360Collection<T>;
+  image360: Image360<T>;
 };
 
 export * from './migration/types';

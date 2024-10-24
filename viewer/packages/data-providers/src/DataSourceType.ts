@@ -1,8 +1,8 @@
 /*!
  * Copyright 2024 Cognite AS
  */
-import { AnnotationsAssetRef } from '@cognite/sdk';
-import { DMInstanceRef } from '@reveal/data-providers';
+import { AnnotationModel, AnnotationsAssetRef } from '@cognite/sdk';
+import { DMInstanceRef, Image360DataModelIdentifier } from '@reveal/data-providers';
 import { PointCloudAnnotationVolumeCollection, PointCloudDMVolumeCollection } from '@reveal/pointcloud-styling';
 
 /**
@@ -36,6 +36,16 @@ export type ClassicDataSourceType = {
    */
   pointCloudCollectionType: PointCloudAnnotationVolumeCollection;
   /**
+   * Identifier type for Event- or DM-based 360 images
+   */
+
+  image360Identifier: { [key: string]: string } | Image360DataModelIdentifier;
+  /**
+   * Type of classic 360 annotations
+   */
+
+  image360AnnotationType: AnnotationModel;
+  /**
    * Marker to make this type inconstructable
    */
   _never: never;
@@ -58,6 +68,15 @@ export type DMDataSourceType = {
    * The DM point cloud model identifier associated with the object, consisting of revision externalId and revision space
    */
   modelIdentifier: DMModelIdentifierType;
+
+  /**
+   * Identifier type for DM 360 collections
+   */
+  image360Identifier: Image360DataModelIdentifier;
+  /**
+   * Type of CoreDM 360 image annotations (to be defined)
+   */
+  image360AnnotationType: never;
   /**
    * Marker to make this type inconstructable
    */
@@ -78,6 +97,18 @@ export type LocalDataSourceType = {
  * Common data source type
  */
 export type DataSourceType = ClassicDataSourceType | DMDataSourceType;
+
+/**
+ * A DataSourceType used internally to allow for flexibility and generic testing
+ */
+export type GenericDataSourceType = {
+  modelIdentifier: any;
+  pointCloudVolumeMetadata: any;
+  pointCloudCollectionType: any;
+  image360Identifier: any;
+  image360AnnotationType: any;
+  _never: never;
+};
 
 /**
  * Internal model identifiers

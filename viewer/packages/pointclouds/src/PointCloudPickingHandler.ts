@@ -14,7 +14,7 @@ import {
   DMDataSourceType,
   isClassicPointCloudDataType,
   isDMPointCloudDataType,
-  InternalDataSourceType
+  DataSourceType
 } from '@reveal/data-providers';
 import { IntersectPointCloudNodeResult } from './types';
 
@@ -35,9 +35,9 @@ export class PointCloudPickingHandler {
   }
 
   intersectPointClouds(
-    nodes: PointCloudNode<InternalDataSourceType>[],
+    nodes: PointCloudNode<DataSourceType>[],
     input: IntersectInput
-  ): IntersectPointCloudNodeResult<InternalDataSourceType>[] {
+  ): IntersectPointCloudNodeResult<DataSourceType>[] {
     const { normalizedCoords, camera } = input;
     this._normalized.set(normalizedCoords.x, normalizedCoords.y);
     this._raycaster.setFromCamera(normalizedCoords, camera);
@@ -110,8 +110,8 @@ export class PointCloudPickingHandler {
 
 function determinePointCloudNode(
   node: THREE.Object3D,
-  candidates: PointCloudNode<InternalDataSourceType>[]
-): PointCloudNode<InternalDataSourceType> | null {
+  candidates: PointCloudNode<DataSourceType>[]
+): PointCloudNode<DataSourceType> | null {
   while (node.type === 'Points' && node.parent !== null) {
     node = node.parent;
   }

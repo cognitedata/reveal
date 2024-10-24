@@ -4,9 +4,12 @@
 import { AnnotationsAssetRef } from '@cognite/sdk';
 import { CognitePointCloudModel } from './CognitePointCloudModel';
 import type { Vector3 } from 'three';
-import { DataSourceType } from '@reveal/data-providers';
+import { ClassicDataSourceType, DataSourceType } from '@reveal/data-providers';
 
-export type PointCloudIntersection<T extends DataSourceType> = {
+/**
+ * An intersection with a point cloud model. Contains metadata of the first intersected volume, if any
+ */
+export type PointCloudIntersection<T extends DataSourceType = ClassicDataSourceType> = {
   /**
    * The intersection type.
    */

@@ -6,9 +6,9 @@ import { CompositeShape } from '@reveal/utilities';
 
 import { PointCloudObject, CdfPointCloudObjectAnnotation } from './types';
 import { StylableObject } from './StylableObject';
-import { InternalDataSourceType } from '../DataSourceType';
+import { DataSourceType } from '../DataSourceType';
 
-function cdfAnnotationsToPointCloudObjects<T extends InternalDataSourceType>(
+function cdfAnnotationsToPointCloudObjects<T extends DataSourceType>(
   cdfAnnotations: CdfPointCloudObjectAnnotation[]
 ): PointCloudObject<T>[] {
   const resultAnnotations = cdfAnnotations.map((cdfAnnotation, index) => {
@@ -37,7 +37,7 @@ function cdfAnnotationsToPointCloudObjects<T extends InternalDataSourceType>(
   return resultAnnotations;
 }
 
-export function cdfAnnotationsToObjectInfo<T extends InternalDataSourceType>(
+export function cdfAnnotationsToObjectInfo<T extends DataSourceType>(
   annotations: CdfPointCloudObjectAnnotation[]
 ): PointCloudObject<T>[] {
   return cdfAnnotationsToPointCloudObjects(annotations);

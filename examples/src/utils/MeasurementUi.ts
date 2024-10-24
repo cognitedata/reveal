@@ -1,10 +1,10 @@
 import dat from 'dat.gui';
 import * as THREE from 'three';
-import { Cognite3DViewer } from '@cognite/reveal';
+import { Cognite3DViewer, DataSourceType } from '@cognite/reveal';
 import { MeasurementTool } from '@cognite/reveal/tools';
 
 export class MeasurementUi {
-  private readonly _viewer: Cognite3DViewer;
+  private readonly _viewer: Cognite3DViewer<DataSourceType>;
   private readonly _measurementTool: MeasurementTool;
   private _gui: dat.GUI;
   private _guiController: dat.GUIController[];
@@ -21,7 +21,7 @@ export class MeasurementUi {
     enable: false
   };
 
-  constructor(viewer: Cognite3DViewer, ui: dat.GUI) {
+  constructor(viewer: Cognite3DViewer<DataSourceType>, ui: dat.GUI) {
     this._viewer = viewer;
     this._measurementTool = new MeasurementTool(this._viewer, {
       distanceToLabelCallback: (distanceInMeters: number) => {

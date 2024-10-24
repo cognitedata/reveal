@@ -14,7 +14,7 @@ import * as dat from 'dat.gui';
 import { isLocalUrlPointCloudModel } from './isLocalUrlPointCloudModel';
 
 export class ModelUi {
-  private readonly _viewer: Cognite3DViewer;
+  private readonly _viewer: Cognite3DViewer<DataSourceType>;
   private readonly _onModelAdded: (model: CogniteModel<DataSourceType>) => void;
 
   private readonly _cadModels = new Array<CogniteCadModel>();
@@ -30,7 +30,11 @@ export class ModelUi {
 
   private readonly _geometryFilterGui: dat.GUI;
 
-  constructor(modelGui: dat.GUI, viewer: Cognite3DViewer, onModelAdded: (model: CogniteModel<DataSourceType>) => void) {
+  constructor(
+    modelGui: dat.GUI,
+    viewer: Cognite3DViewer<DataSourceType>,
+    onModelAdded: (model: CogniteModel<DataSourceType>) => void
+  ) {
     this._viewer = viewer;
     this._onModelAdded = onModelAdded;
 
@@ -183,7 +187,7 @@ export class ModelUi {
 }
 
 async function addLocalModel(
-  viewer: Cognite3DViewer,
+  viewer: Cognite3DViewer<DataSourceType>,
   addModelOptions: AddModelOptions<DataSourceType>
 ): Promise<CogniteModel<DataSourceType>> {
   const isPointCloud =
@@ -219,7 +223,7 @@ function createGeometryFilter(input: string | null): { center: THREE.Vector3; si
 
 function initializeGeometryFilterGui(
   uiFolder: dat.GUI,
-  viewer: Cognite3DViewer,
+  viewer: Cognite3DViewer<DataSourceType>,
   geometryFilterState: { center: THREE.Vector3; size: THREE.Vector3; enabled: boolean }
 ): void {
   let geometryFilterPreview: THREE.Object3D | undefined = undefined;

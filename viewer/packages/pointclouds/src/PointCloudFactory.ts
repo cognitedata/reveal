@@ -10,7 +10,7 @@ import { DEFAULT_POINT_CLOUD_METADATA_FILE } from './constants';
 import {
   ClassicDataSourceType,
   DMDataSourceType,
-  InternalDataSourceType,
+  DataSourceType,
   PointCloudStylableObjectProvider,
   isDMIdentifier
 } from '@reveal/data-providers';
@@ -46,7 +46,7 @@ export class PointCloudFactory {
     this._pointCloudMaterialManager.dispose();
   }
 
-  async createModel<T extends InternalDataSourceType>(
+  async createModel<T extends DataSourceType>(
     identifier: T['modelIdentifier'],
     modelIdentifier: ModelIdentifier,
     modelMetadata: PointCloudMetadata
@@ -67,7 +67,7 @@ export class PointCloudFactory {
 
     this._pointCloudMaterialManager.addModelMaterial(
       modelIdentifier.revealInternalId,
-      createObjectIdMaps<InternalDataSourceType>(annotationInfo)
+      createObjectIdMaps<DataSourceType>(annotationInfo)
     );
 
     const pointCloudOctree = await this._potreeInstance.loadPointCloud(

@@ -7,7 +7,7 @@ import { IShape } from '@reveal/utilities';
 
 import { Box3 } from 'three';
 import { AnnotationsAssetRef, DirectRelationReference } from '@cognite/sdk';
-import { ClassicDataSourceType, InternalDataSourceType } from '../DataSourceType';
+import { ClassicDataSourceType, DataSourceType } from '../DataSourceType';
 
 /**
  * @public
@@ -26,13 +26,13 @@ export type CdfPointCloudObjectAnnotation = {
  * @public
  * Metadata for a single point cloud object
  */
-export type PointCloudObjectMetadata<T extends InternalDataSourceType = ClassicDataSourceType> = {
+export type PointCloudObjectMetadata<T extends DataSourceType = ClassicDataSourceType> = {
   boundingBox: Box3;
 } & T['pointCloudVolumeMetadata'];
 
 /**
  * Point cloud object containing point cloud volume or annotation metadata and stylable object
  */
-export type PointCloudObject<T extends InternalDataSourceType = ClassicDataSourceType> = PointCloudObjectMetadata<T> & {
+export type PointCloudObject<T extends DataSourceType = ClassicDataSourceType> = PointCloudObjectMetadata<T> & {
   stylableObject: StylableObject;
 };

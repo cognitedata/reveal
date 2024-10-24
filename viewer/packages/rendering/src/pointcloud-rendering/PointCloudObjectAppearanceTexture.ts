@@ -10,16 +10,16 @@ import {
   DefaultPointCloudAppearance,
   CompletePointCloudAppearance,
   isPointCloudObjectCollection,
-  InternalStyledPointCloudVolumeCollection
+  StyledPointCloudVolumeCollection
 } from '@reveal/pointcloud-styling';
 import { PointCloudObjectIdMaps } from './PointCloudObjectIdMaps';
-import { DMInstanceRef, InternalDataSourceType } from '@reveal/data-providers';
+import { DataSourceType, DMInstanceRef } from '@reveal/data-providers';
 
 export class PointCloudObjectAppearanceTexture {
   private readonly _objectStyleTexture: THREE.DataTexture;
   private _needsReconstruction: boolean = true;
 
-  private readonly _styledObjectSets: InternalStyledPointCloudVolumeCollection<InternalDataSourceType>[] = [];
+  private readonly _styledObjectSets: StyledPointCloudVolumeCollection<DataSourceType>[] = [];
 
   private _defaultAppearance: CompletePointCloudAppearance = { ...DefaultPointCloudAppearance };
 
@@ -53,9 +53,7 @@ export class PointCloudObjectAppearanceTexture {
     data.set(styleData, 4 * objectId);
   }
 
-  private setObjectCollectionStyle(
-    styledObjectSet: InternalStyledPointCloudVolumeCollection<InternalDataSourceType>
-  ): void {
+  private setObjectCollectionStyle(styledObjectSet: StyledPointCloudVolumeCollection<DataSourceType>): void {
     if (!this._annotationIdsToObjectId) {
       throw new Error('Annotation ID to Object ID map not initialized');
     }
@@ -101,7 +99,7 @@ export class PointCloudObjectAppearanceTexture {
     }
   }
 
-  assignStyledObjectSet(styledCollection: InternalStyledPointCloudVolumeCollection<InternalDataSourceType>): void {
+  assignStyledObjectSet(styledCollection: StyledPointCloudVolumeCollection<DataSourceType>): void {
     const ind = this._styledObjectSets.findIndex(s => s.objectCollection === styledCollection.objectCollection);
 
     if (ind !== -1) {

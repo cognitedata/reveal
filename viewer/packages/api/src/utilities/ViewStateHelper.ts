@@ -15,6 +15,7 @@ import { CameraManager } from '@reveal/camera-manager';
 
 import { CogniteClient } from '@cognite/sdk';
 import { SerializableNodeAppearance } from '@reveal/cad-styling/src/NodeAppearance';
+import { DataSourceType } from '@reveal/data-providers';
 
 export type ViewerState = {
   camera?: {
@@ -39,14 +40,14 @@ export type ModelState = {
   styledSets: { token: string; state: any; options?: any; appearance: SerializableNodeAppearance }[];
 };
 
-export class ViewStateHelper {
-  private readonly _viewer: Cognite3DViewer;
+export class ViewStateHelper<T extends DataSourceType> {
+  private readonly _viewer: Cognite3DViewer<T>;
   private readonly _cdfClient: CogniteClient;
   private get _cameraManager(): CameraManager {
     return this._viewer.cameraManager;
   }
 
-  constructor(viewer: Cognite3DViewer, cdfClient: CogniteClient) {
+  constructor(viewer: Cognite3DViewer<T>, cdfClient: CogniteClient) {
     this._viewer = viewer;
     this._cdfClient = cdfClient;
   }
@@ -87,7 +88,7 @@ export class ViewStateHelper {
   }
 
   private getModelsState(): ModelState[] {
-    return this._viewer.allModels
+    return this._viewer.models
       .filter(model => model instanceof CogniteCadModel)
       .map(model => model as CogniteCadModel)
       .map(model => {
@@ -126,7 +127,7 @@ export class ViewStateHelper {
   }
 
   private async setModelState(modelsState: ModelState[]) {
-    const cadModels = this._viewer.allModels
+    const cadModels = this._viewer.models
       .filter(model => model instanceof CogniteCadModel)
       .map(model => model as CogniteCadModel);
 
