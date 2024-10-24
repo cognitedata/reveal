@@ -703,7 +703,7 @@ export class Cognite3DViewer {
   setViewState(state: ViewerState): Promise<void> {
     const stateHelper = this.createViewStateHelper();
 
-    this.models
+    this.allModels
       .filter(model => model instanceof CogniteCadModel)
       .map(model => model as CogniteCadModel)
       .forEach(model => model.removeAllStyledNodeCollections());
@@ -1270,7 +1270,7 @@ export class Cognite3DViewer {
       return boundingBox;
     }
     const temporaryBox = new THREE.Box3();
-    for (const model of this.models) {
+    for (const model of this.allModels) {
       if (!model.visible) {
         continue;
       }
@@ -1339,6 +1339,8 @@ export class Cognite3DViewer {
     if (boundingBox.isEmpty()) {
       return;
     }
+
+    console.log('Bounding box = ', boundingBox);
     this._activeCameraManager.fitCameraToBoundingBox(boundingBox, duration);
   }
 
@@ -1349,7 +1351,7 @@ export class Cognite3DViewer {
    * @param restrictToMostGeometry If true, attempt to remove junk geometry from the boundingBox to allow setting a good camera position.
    */
   fitCameraToModels(models?: CogniteModel<DataSourceType>[], duration?: number, restrictToMostGeometry = false): void {
-    const cogniteModels = models ?? this.models;
+    const cogniteModels = models ?? this.allModels;
     if (cogniteModels.length < 1) {
       return;
     }
@@ -1840,7 +1842,7 @@ export class Cognite3DViewer {
               point: result.point,
               pointIndex: result.pointIndex,
               distanceToCamera: result.distance,
-              annotationId: result.volumeMetadata.annotationId,
+              annotationId: result.volumeMetadata?.annotationId ?? 0,
               assetRef: result.volumeMetadata?.assetRef,
               volumeMetadata: result.volumeMetadata
             };
@@ -1985,7 +1987,7 @@ export class Cognite3DViewer {
       // On the first pass, use visible models only
       // If no bounding box is found, use all models on the second pass
       // By this way, a bounding box is forced to be calculated
-      for (const model of this.models) {
+      for (const model of this.allModels) {
         if (pass === 0 && !model.visible) {
           continue;
         }

@@ -164,6 +164,7 @@ export class ModelUi {
       if (model instanceof CogniteCadModel) {
         this._cadModels.push(model);
       } else if (model instanceof CognitePointCloudModel) {
+        console.log('Adding point cloud model!', model);
         this._pointCloudModels.push(model);
       }
 

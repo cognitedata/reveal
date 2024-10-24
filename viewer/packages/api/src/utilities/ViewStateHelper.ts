@@ -87,7 +87,7 @@ export class ViewStateHelper {
   }
 
   private getModelsState(): ModelState[] {
-    return this._viewer.models
+    return this._viewer.allModels
       .filter(model => model instanceof CogniteCadModel)
       .map(model => model as CogniteCadModel)
       .map(model => {
@@ -126,7 +126,7 @@ export class ViewStateHelper {
   }
 
   private async setModelState(modelsState: ModelState[]) {
-    const cadModels = this._viewer.models
+    const cadModels = this._viewer.allModels
       .filter(model => model instanceof CogniteCadModel)
       .map(model => model as CogniteCadModel);
 

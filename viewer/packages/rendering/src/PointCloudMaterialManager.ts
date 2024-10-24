@@ -11,6 +11,7 @@ export class PointCloudMaterialManager {
   private readonly _modelsMaterialsMap: Map<symbol, PointCloudMaterial> = new Map();
 
   addModelMaterial(modelIdentifier: symbol, objectIdMaps: PointCloudObjectIdMaps): void {
+    console.log('Adding model material: ', modelIdentifier);
     this._modelsMaterialsMap.set(modelIdentifier, new PointCloudMaterial({ objectsMaps: objectIdMaps }));
   }
 
@@ -19,6 +20,8 @@ export class PointCloudMaterialManager {
     if (this._modelsMaterialsMap.size < 1) {
       return;
     }
+
+    console.log('Removing model material: ', modelIdentifier);
     const material = this._modelsMaterialsMap.get(modelIdentifier);
 
     if (material) {
@@ -35,6 +38,8 @@ export class PointCloudMaterialManager {
     if (material === undefined) {
       throw new Error(`Model ${modelIdentifier.toString()} has not been added to PointCloudMaterialManager`);
     }
+
+    console.log('Returning material for identifier', modelIdentifier);
 
     return material;
   }
