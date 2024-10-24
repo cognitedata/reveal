@@ -13,14 +13,10 @@ import { SupportedModelTypes } from '@reveal/model-base';
 import { ClassicDataSourceType, DataSourceType, PointCloudObjectMetadata } from '@reveal/data-providers';
 
 import {
-  PointCloudAnnotationVolumeCollection,
   applyDefaultsToPointCloudAppearance,
   PointCloudAppearance,
   CompletePointCloudAppearance,
-  PointCloudDMVolumeCollection,
-  isPointCloudObjectCollection,
-  StyledPointCloudVolumeCollection,
-  StyledPointCloudObjectCollection
+  StyledPointCloudVolumeCollection
 } from '@reveal/pointcloud-styling';
 import { isClassicIdentifier } from '@reveal/data-providers';
 
@@ -319,7 +315,8 @@ export class CognitePointCloudModel<T extends DataSourceType = ClassicDataSource
    * Gets the object collections that have been assigned a style
    * @returns All object collections and their associated style
    */
-  get styledVolumeCollections(): StyledPointCloudVolumeCollection<T>[] {
+
+  get styledCollections(): StyledPointCloudVolumeCollection<T>[] {
     return this._styledVolumeCollections;
   }
 

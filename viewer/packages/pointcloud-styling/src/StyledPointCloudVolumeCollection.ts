@@ -3,13 +3,13 @@
  */
 
 import { CompletePointCloudAppearance } from './PointCloudAppearance';
-import { ClassicDataSourceType, DataSourceType } from '@reveal/data-providers';
+import { ClassicDataSourceType, DataSourceType, InternalDataSourceType } from '@reveal/data-providers';
 
 /**
  * Represents either an PointCloudAnnotationVolumeCollection or PointCloudDMVolumeCollection
  * that is associated with an appearance.
  */
-export class StyledPointCloudVolumeCollection<T extends DataSourceType = ClassicDataSourceType> {
+export class InternalStyledPointCloudVolumeCollection<T extends InternalDataSourceType> {
   /**
    * Get the volume collection for this StyledPointCloudVolumeCollection
    */
@@ -29,5 +29,9 @@ export class StyledPointCloudVolumeCollection<T extends DataSourceType = Classic
     public style: CompletePointCloudAppearance
   ) {}
 }
+
+export class StyledPointCloudVolumeCollection<
+  T extends DataSourceType = ClassicDataSourceType
+> extends InternalStyledPointCloudVolumeCollection<T> {}
 
 export class StyledPointCloudObjectCollection extends StyledPointCloudVolumeCollection<ClassicDataSourceType> {}

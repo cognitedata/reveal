@@ -4,7 +4,7 @@
 
 import { Object3D, Vector3 } from 'three';
 import { PointCloudNode } from './PointCloudNode';
-import { DataSourceType, InternalDataSourceType } from '@reveal/data-providers';
+import { InternalDataSourceType } from '@reveal/data-providers';
 
 /**
  * ASPRS well known point class types.

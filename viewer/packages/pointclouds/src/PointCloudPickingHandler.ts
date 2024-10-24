@@ -14,7 +14,6 @@ import {
   DMDataSourceType,
   isClassicPointCloudDataType,
   isDMPointCloudDataType,
-  DataSourceType,
   InternalDataSourceType
 } from '@reveal/data-providers';
 import { IntersectPointCloudNodeResult } from './types';

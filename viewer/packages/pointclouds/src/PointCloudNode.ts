@@ -18,9 +18,10 @@ import {
 } from '@reveal/data-providers';
 import { ClassificationHandler } from './ClassificationHandler';
 
-import { StyledPointCloudVolumeCollection, CompletePointCloudAppearance } from '@reveal/pointcloud-styling';
+import { CompletePointCloudAppearance } from '@reveal/pointcloud-styling';
 
 import { Matrix4, Group, Box3, Color, type Camera, type Plane, type Ray, type WebGLRenderer } from 'three';
+import { InternalStyledPointCloudVolumeCollection } from '@reveal/pointcloud-styling';
 
 export class PointCloudNode<T extends InternalDataSourceType = InternalDataSourceType> extends Group {
   private readonly _cameraConfiguration?: CameraConfiguration;
@@ -259,7 +260,7 @@ export class PointCloudNode<T extends InternalDataSourceType = InternalDataSourc
     this._needsRedraw = true;
   }
 
-  assignStyledPointCloudObjectCollection(styledCollection: StyledPointCloudVolumeCollection<T>): void {
+  assignStyledPointCloudObjectCollection(styledCollection: InternalStyledPointCloudVolumeCollection<T>): void {
     this._octree.material.objectAppearanceTexture.assignStyledObjectSet(styledCollection);
     this._needsRedraw = true;
   }

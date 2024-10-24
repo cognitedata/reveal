@@ -3,7 +3,6 @@
  */
 
 import { DMDataSourceType, DMModelIdentifierType } from 'api-entry-points/core';
-import { ModelIdentifier } from '../../ModelIdentifier';
 import { PointCloudStylableObjectProvider } from '../../PointCloudStylableObjectProvider';
 import { PointCloudObject } from '../types';
 

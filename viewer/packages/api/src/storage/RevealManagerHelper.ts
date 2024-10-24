@@ -3,7 +3,12 @@
  */
 import * as THREE from 'three';
 
-import { AddModelOptions, CommonModelOptions, LocalAddModelOptions } from '../public/migration/types';
+import {
+  AddModelOptions,
+  ClassicAddModelOptions,
+  InternalAddModelOptions,
+  LocalAddModelOptions
+} from '../public/migration/types';
 import { createCdfRevealManager, createLocalRevealManager, createRevealManager } from '../public/createRevealManager';
 import { RevealManager } from '../public/RevealManager';
 import { RevealOptions } from '../public/RevealOptions';
@@ -13,7 +18,8 @@ import {
   DummyPointCloudStylableObjectProvider,
   DummyPointCloudDMStylableObjectProvider,
   InternalDataSourceType,
-  LocalModelIdentifierType
+  ClassicDataSourceType,
+  LocalDataSourceType
 } from '@reveal/data-providers';
 import { DataSource } from '@reveal/data-source';
 import { SceneHandler } from '@reveal/utilities';
@@ -31,19 +37,19 @@ import { CameraManager } from '@reveal/camera-manager';
 export class RevealManagerHelper {
   private readonly _revealManager: RevealManager;
 
-  addPointCloudModel<T extends InternalDataSourceType>(model: AddModelOptions<T>): Promise<PointCloudNode<T>> {
+  addPointCloudModel<T extends InternalDataSourceType>(model: InternalAddModelOptions<T>): Promise<PointCloudNode<T>> {
     if (this._type === 'cdf') {
       return RevealManagerHelper.addCdfPointCloudModel<T>(model, this._revealManager);
     } else {
-      return RevealManagerHelper.addLocalPointCloudModel<T>(model, this._revealManager);
+      return RevealManagerHelper.addLocalPointCloudModel<T>(model as LocalAddModelOptions, this._revealManager);
     }
   }
 
-  addCadModel(model: AddModelOptions<InternalDataSourceType>): Promise<CadNode> {
+  addCadModel(model: InternalAddModelOptions<ClassicDataSourceType | LocalDataSourceType>): Promise<CadNode> {
     if (this._type === 'cdf') {
-      return RevealManagerHelper.addCdfCadModel(model, this._revealManager);
+      return RevealManagerHelper.addCdfCadModel(model as ClassicAddModelOptions, this._revealManager);
     } else {
-      return RevealManagerHelper.addLocalCadModel(model, this._revealManager);
+      return RevealManagerHelper.addLocalCadModel(model as LocalAddModelOptions, this._revealManager);
     }
   }
 

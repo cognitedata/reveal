@@ -22,7 +22,7 @@ import {
   ClassicModelIdentifierType,
   DataSourceType,
   DMDataSourceType,
-  GenericDataSourceType,
+  InternalDataSourceType,
   LocalModelIdentifierType
 } from '@reveal/data-providers/src/DataSourceType';
 
@@ -232,7 +232,9 @@ export type CommonModelOptions = {
 export type AddModelOptions<T extends DataSourceType = ClassicDataSourceType> = CommonModelOptions &
   T['modelIdentifier'];
 
-export type LocalAddModelOptions = LocalModelIdentifierType & CommonModelOptions;
+export type LocalAddModelOptions = CommonModelOptions & LocalModelIdentifierType;
+
+export type InternalAddModelOptions<T extends InternalDataSourceType> = CommonModelOptions & T['modelIdentifier'];
 
 export type AddModelOptionsWithModelRevisionId<T extends DataSourceType> = AddModelOptions<T> & {
   classicModelRevisionId: ClassicModelIdentifierType;

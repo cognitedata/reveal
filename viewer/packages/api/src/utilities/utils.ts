@@ -14,10 +14,10 @@ export async function getModelAndRevisionId(
 ): Promise<{ modelId: number; revisionId: number }> {
   if (isDMIdentifier(options)) {
     return fetchDMModelIdFromRevisionId(options.revisionExternalId, options.revisionSpace, sdk);
-  } else if (isLocalIdentifier(options)) {
-    return { modelId: -1, revisionId: -1 };
   } else if (isClassicIdentifier(options)) {
     return { modelId: options.modelId, revisionId: options.revisionId };
+  } else if (isLocalIdentifier(options)) {
+    return { modelId: -1, revisionId: -1 };
   } else {
     assertNever(options);
   }

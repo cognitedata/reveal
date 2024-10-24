@@ -49,8 +49,7 @@ import {
   RenderParameters,
   AnyIntersection,
   AddModelOptions,
-  AddModelOptionsWithModelRevisionId,
-  ClassicAddModelOptions
+  AddModelOptionsWithModelRevisionId
 } from './types';
 import { RevealManager } from '../RevealManager';
 import { CogniteModel, Image360WithCollection } from '../types';

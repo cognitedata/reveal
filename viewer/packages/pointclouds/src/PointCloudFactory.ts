@@ -18,6 +18,7 @@ import { IPointClassificationsProvider } from './classificationsProviders/IPoint
 
 import { PointCloudMaterialManager } from '@reveal/rendering';
 import { createObjectIdMaps } from './potree-three-loader/utils/createObjectIdMaps';
+import { isLocalIdentifier } from '@reveal/data-providers/src/DataSourceType';
 
 export class PointCloudFactory {
   private readonly _potreeInstance: Potree;
@@ -50,9 +51,11 @@ export class PointCloudFactory {
   ): Promise<PointCloudNode<T>> {
     const { modelBaseUrl, modelIdentifier, modelMatrix, cameraConfiguration } = modelMetadata;
 
-    const annotationInfoPromise = isDMIdentifier(identifier)
-      ? this._pointCloudDMProvider.getPointCloudObjects(identifier)
-      : this._pointCloudObjectProvider.getPointCloudObjects(identifier);
+    const annotationInfoPromise = isLocalIdentifier(identifier)
+      ? Promise.resolve([])
+      : isDMIdentifier(identifier)
+        ? this._pointCloudDMProvider.getPointCloudObjects(identifier)
+        : this._pointCloudObjectProvider.getPointCloudObjects(identifier);
 
     const classSchemaPromise = this._classificationsProvider.getClassifications(modelMetadata);
 
