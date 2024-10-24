@@ -19,11 +19,11 @@ export class MockActionCommand extends RenderTargetCommand {
     return 'Sun';
   }
 
-  public override get shortCutKey(): string | undefined {
+  protected override get shortCutKey(): string | undefined {
     return 'A';
   }
 
-  public override get shortCutKeyOnCtrl(): boolean {
+  protected override get shortCutKeyOnCtrl(): boolean {
     return true;
   }
 

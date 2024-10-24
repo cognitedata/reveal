@@ -23,6 +23,7 @@ export const CommandButton = ({
   const { t } = useTranslation();
   const command = useMemo<BaseCommand>(() => getDefaultCommand(inputCommand, renderTarget), []);
 
+  // @update-ui-component-pattern
   const [isChecked, setChecked] = useState<boolean>(false);
   const [isEnabled, setEnabled] = useState<boolean>(true);
   const [isVisible, setVisible] = useState<boolean>(true);
@@ -44,6 +45,7 @@ export const CommandButton = ({
       command.removeEventListener(update);
     };
   }, [command]);
+  // @end
 
   if (!isVisible) {
     return <></>;

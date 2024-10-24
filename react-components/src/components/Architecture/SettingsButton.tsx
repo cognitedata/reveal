@@ -48,6 +48,7 @@ export const SettingsButton = ({
     []
   );
 
+  // @update-ui-component-pattern
   const [isOpen, setOpen] = useState<boolean>(false);
   const [isEnabled, setEnabled] = useState<boolean>(true);
   const [isVisible, setVisible] = useState<boolean>(true);
@@ -68,6 +69,7 @@ export const SettingsButton = ({
       command.removeEventListener(update);
     };
   }, [command]);
+  // @end
 
   if (!isVisible || !command.hasChildren) {
     return <></>;
@@ -139,52 +141,133 @@ function createMenuItem(command: BaseCommand, t: TranslateDelegate): ReactElemen
 }
 
 function createDivider(command: BaseCommand): ReactElement | undefined {
-  if (!command.isVisible) {
+  // @update-ui-component-pattern
+  const [isVisible, setVisible] = useState<boolean>(true);
+  const [uniqueId, setUniqueId] = useState<number>(0);
+
+  const update = useCallback((command: BaseCommand) => {
+    setVisible(command.isVisible);
+    setUniqueId(command.uniqueId);
+  }, []);
+
+  useEffect(() => {
+    update(command);
+    command.addEventListener(update);
+    return () => {
+      command.removeEventListener(update);
+    };
+  }, [command]);
+  // @end
+
+  if (!isVisible) {
     return <></>;
   }
-  return <Menu.Divider key={command.uniqueId} />;
+  return <Menu.Divider key={uniqueId} />;
 }
 
 function createSection(command: BaseCommand, t: TranslateDelegate): ReactElement | undefined {
-  if (!command.isVisible) {
+  // @update-ui-component-pattern
+  const [isVisible, setVisible] = useState<boolean>(true);
+  const [uniqueId, setUniqueId] = useState<number>(0);
+
+  const update = useCallback((command: BaseCommand) => {
+    setVisible(command.isVisible);
+    setUniqueId(command.uniqueId);
+  }, []);
+
+  useEffect(() => {
+    update(command);
+    command.addEventListener(update);
+    return () => {
+      command.removeEventListener(update);
+    };
+  }, [command]);
+  // @end
+
+  if (!isVisible) {
     return <></>;
   }
   const label = command.getLabel(t);
-  return <Menu.Section key={command.uniqueId} label={label} />;
+  return <Menu.Section key={uniqueId} label={label} />;
 }
 
 function createToggle(command: BaseCommand, t: TranslateDelegate): ReactElement {
-  const [isChecked, setChecked] = useState(command.isChecked);
-  if (!command.isVisible) {
+  // @update-ui-component-pattern
+  const [isChecked, setChecked] = useState<boolean>(false);
+  const [isEnabled, setEnabled] = useState<boolean>(true);
+  const [isVisible, setVisible] = useState<boolean>(true);
+  const [uniqueId, setUniqueId] = useState<number>(0);
+
+  const update = useCallback((command: BaseCommand) => {
+    setChecked(command.isChecked);
+    setEnabled(command.isEnabled);
+    setVisible(command.isVisible);
+    setUniqueId(command.uniqueId);
+  }, []);
+
+  useEffect(() => {
+    update(command);
+    command.addEventListener(update);
+    return () => {
+      command.removeEventListener(update);
+    };
+  }, [command]);
+  // @end
+
+  if (!isVisible) {
     return <></>;
   }
 
   const label = command.getLabel(t);
   return (
     <Menu.ItemAction
-      key={command.uniqueId}
+      key={uniqueId}
       label={label}
+      disabled={!isEnabled}
       onClick={() => {
         command.invoke();
         setChecked(command.isChecked);
       }}
-      trailingContent={<Switch checked={isChecked} disabled={!command.isEnabled} />}
+      trailingContent={<Switch checked={isChecked} disabled={!isEnabled} />}
     />
   );
 }
 
 function createButton(command: BaseCommand, t: TranslateDelegate): ReactElement {
-  const [isChecked, setChecked] = useState(command.isChecked);
-  if (!command.isVisible) {
+  // @update-ui-component-pattern
+  const [isChecked, setChecked] = useState<boolean>(false);
+  const [isEnabled, setEnabled] = useState<boolean>(true);
+  const [isVisible, setVisible] = useState<boolean>(true);
+  const [uniqueId, setUniqueId] = useState<number>(0);
+  const [icon, setIcon] = useState<IconName | undefined>(undefined);
+
+  const update = useCallback((command: BaseCommand) => {
+    setChecked(command.isChecked);
+    setEnabled(command.isEnabled);
+    setVisible(command.isVisible);
+    setUniqueId(command.uniqueId);
+    setIcon(getIcon(command));
+  }, []);
+
+  useEffect(() => {
+    update(command);
+    command.addEventListener(update);
+    return () => {
+      command.removeEventListener(update);
+    };
+  }, [command]);
+  // @end
+
+  if (!isVisible) {
     return <></>;
   }
   const label = command.getLabel(t);
   return (
     <Menu.ItemAction
-      key={command.uniqueId}
-      disabled={!command.isEnabled}
+      key={uniqueId}
+      disabled={!isEnabled}
       toggled={isChecked}
-      icon={<IconComponent iconName={getIcon(command)} />}
+      icon={<IconComponent iconName={icon} />}
       iconPlacement="left"
       style={{ padding: DEFAULT_PADDING }}
       shortcutKeys={command.getShortCutKeys()}
@@ -198,17 +281,39 @@ function createButton(command: BaseCommand, t: TranslateDelegate): ReactElement 
 }
 
 function createSlider(command: BaseSliderCommand, t: TranslateDelegate): ReactElement {
+  // @update-ui-component-pattern
+  const [isEnabled, setEnabled] = useState<boolean>(true);
+  const [isVisible, setVisible] = useState<boolean>(true);
+  const [uniqueId, setUniqueId] = useState<number>(0);
   const [value, setValue] = useState(command.value);
 
-  if (!command.isVisible) {
+  const update = useCallback((command: BaseCommand) => {
+    setEnabled(command.isEnabled);
+    setVisible(command.isVisible);
+    setUniqueId(command.uniqueId);
+    if (command instanceof BaseSliderCommand) {
+      setValue(command.value);
+    }
+  }, []);
+
+  useEffect(() => {
+    update(command);
+    command.addEventListener(update);
+    return () => {
+      command.removeEventListener(update);
+    };
+  }, [command]);
+  // @end
+
+  if (!isVisible) {
     return <></>;
   }
   const label = command.getLabel(t) + ': ' + command.getValueLabel();
   return (
-    <SliderDiv key={command.uniqueId}>
+    <SliderDiv key={uniqueId}>
       <label>{label}</label>
       <StyledSlider
-        disabled={!command.isEnabled}
+        disabled={!isEnabled}
         min={command.min}
         max={command.max}
         step={command.step}
@@ -223,12 +328,30 @@ function createSlider(command: BaseSliderCommand, t: TranslateDelegate): ReactEl
 }
 
 function createDropdownButton(command: BaseOptionCommand): ReactElement {
-  if (!command.isVisible) {
+  // @update-ui-component-pattern
+  const [isVisible, setVisible] = useState<boolean>(true);
+  const [uniqueId, setUniqueId] = useState<number>(0);
+
+  const update = useCallback((command: BaseCommand) => {
+    setVisible(command.isVisible);
+    setUniqueId(command.uniqueId);
+  }, []);
+
+  useEffect(() => {
+    update(command);
+    command.addEventListener(update);
+    return () => {
+      command.removeEventListener(update);
+    };
+  }, [command]);
+  // @end
+
+  if (!isVisible) {
     return <></>;
   }
   return (
     <DropdownButton
-      key={command.uniqueId}
+      key={uniqueId}
       inputCommand={command}
       isHorizontal={false}
       usedInSettings={true}
@@ -238,12 +361,31 @@ function createDropdownButton(command: BaseOptionCommand): ReactElement {
 
 function createFilterButton(command: BaseFilterCommand): ReactElement {
   command.initializeChildrenIfNeeded();
-  if (!command.isVisible) {
+
+  // @update-ui-component-pattern
+  const [isVisible, setVisible] = useState<boolean>(true);
+  const [uniqueId, setUniqueId] = useState<number>(0);
+
+  const update = useCallback((command: BaseCommand) => {
+    setVisible(command.isVisible);
+    setUniqueId(command.uniqueId);
+  }, []);
+
+  useEffect(() => {
+    update(command);
+    command.addEventListener(update);
+    return () => {
+      command.removeEventListener(update);
+    };
+  }, [command]);
+  // @end
+
+  if (!isVisible) {
     return <></>;
   }
   return (
     <FilterButton
-      key={command.uniqueId}
+      key={uniqueId}
       inputCommand={command}
       isHorizontal={false}
       usedInSettings={true}
