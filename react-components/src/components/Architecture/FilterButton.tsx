@@ -212,7 +212,9 @@ const FilterDropdown = ({
             )}
           </Button>
         </SelectPanel.Trigger>
-        <SelectPanel.Body style={{ overflow: 'hidden' }}>{PanelContent}</SelectPanel.Body>
+        <SelectPanel.Body style={{ overflow: 'hidden', zindex: 2000 }}>
+          {PanelContent}
+        </SelectPanel.Body>
       </StyledSelectPanel>
     </StyledDropdownRow>
   );
@@ -235,7 +237,6 @@ const FilterSelectPanelContent = ({
 
   return (
     <>
-      <SelectPanel.Header title={label} />
       <SelectPanel.Section>
         <SelectPanel.Item
           key={-1}
@@ -249,7 +250,7 @@ const FilterSelectPanelContent = ({
           {BaseFilterCommand.getAllString(t)}
         </SelectPanel.Item>
       </SelectPanel.Section>
-      <SelectPanel.Body label={label} style={{ height: '200px' }}>
+      <SelectPanel.Body label={label} style={{ maxHeight: '300px' }}>
         <SelectPanel.Section>
           {children?.map((child, _index): ReactElement => {
             return <FilterItem key={child.uniqueId} command={child} />;
