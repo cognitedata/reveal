@@ -8,13 +8,11 @@ import {
   getDMPointCloudVolumeCollectionQuery
 } from '../pointcloud-stylable-object-providers/pointcloud-volume-data-providers/getDMPointCloudVolumeCollectionQuery';
 import { PointCloudVolumeObject3DProperties } from '../pointcloud-stylable-object-providers/pointcloud-volume-data-providers/types';
-import {
-  DMPointCloudVolumeIdentifier,
-  CdfPointCloudObjectAnnotation
-} from '../pointcloud-stylable-object-providers/types';
+import { CdfPointCloudObjectAnnotation } from '../pointcloud-stylable-object-providers/types';
 import { QueryNextCursors } from '../types';
 
 import { IShape, Box, Cylinder } from '@reveal/utilities';
+import { DMModelIdentifierType } from '../DataSourceType';
 
 type QueryResult = Awaited<ReturnType<typeof DataModelsSdk.prototype.queryNodesAndEdges<CdfDMPointCloudVolumeQuery>>>;
 
@@ -40,17 +38,13 @@ function pointCloudVolumeToRevealShapes(volume: number[], volumeType: string): I
 
 export async function getDMPointCloudObjects(
   dmsSdk: DataModelsSdk,
-  modelIdentifier: DMPointCloudVolumeIdentifier
+  modelIdentifier: DMModelIdentifierType
 ): Promise<CdfPointCloudObjectAnnotation[]> {
   const result: ExhaustedQueryResult = {
     pointCloudVolumes: [],
     assets: []
   };
-  const query = getDMPointCloudVolumeCollectionQuery(
-    modelIdentifier.pointCloudModelExternalId,
-    modelIdentifier.pointCloudModelRevisionId,
-    modelIdentifier.space
-  );
+  const query = getDMPointCloudVolumeCollectionQuery(modelIdentifier.revisionExternalId, modelIdentifier.revisionSpace);
 
   const annotationLimit = query.with.pointCloudVolumes.limit;
   let nextCursor: QueryNextCursors<CdfDMPointCloudVolumeQuery> | undefined = undefined;

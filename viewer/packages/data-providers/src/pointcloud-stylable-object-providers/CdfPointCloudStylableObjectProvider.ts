@@ -8,8 +8,6 @@ import {
   AnnotationsBoundingVolume,
   AnnotationsCogniteAnnotationTypesPrimitivesGeometry3DGeometry as AnnotationsGeometry
 } from '@cognite/sdk';
-import { ModelIdentifier } from '../ModelIdentifier';
-import { CdfModelIdentifier } from '../model-identifiers/CdfModelIdentifier';
 import { IShape, Box, Cylinder } from '@reveal/utilities';
 import assert from 'assert';
 import { CdfPointCloudObjectAnnotation, PointCloudObject } from './types';
@@ -17,8 +15,9 @@ import { PointCloudStylableObjectProvider } from '../PointCloudStylableObjectPro
 
 import * as THREE from 'three';
 import { cdfAnnotationsToObjectInfo } from './cdfAnnotationsToObjects';
+import { ClassicDataSourceType, ClassicModelIdentifierType } from '../DataSourceType';
 
-export class CdfPointCloudStylableObjectProvider implements PointCloudStylableObjectProvider {
+export class CdfPointCloudStylableObjectProvider implements PointCloudStylableObjectProvider<ClassicDataSourceType> {
   private readonly _sdk: CogniteClient;
 
   constructor(sdk: CogniteClient) {
@@ -45,7 +44,9 @@ export class CdfPointCloudStylableObjectProvider implements PointCloudStylableOb
     return (annotationData as AnnotationsBoundingVolume).region !== undefined;
   }
 
-  private async fetchAnnotations(modelIdentifier: CdfModelIdentifier): Promise<CdfPointCloudObjectAnnotation[]> {
+  private async fetchAnnotations(
+    modelIdentifier: ClassicModelIdentifierType
+  ): Promise<CdfPointCloudObjectAnnotation[]> {
     const modelAnnotations = await this._sdk.annotations
       .list({
         filter: {
@@ -74,9 +75,7 @@ export class CdfPointCloudStylableObjectProvider implements PointCloudStylableOb
     return annotations;
   }
 
-  async getPointCloudObjects(modelIdentifier: ModelIdentifier): Promise<PointCloudObject[]> {
-    assert(modelIdentifier instanceof CdfModelIdentifier);
-
+  async getPointCloudObjects(modelIdentifier: ClassicModelIdentifierType): Promise<PointCloudObject[]> {
     const annotations = await this.fetchAnnotations(modelIdentifier);
 
     return cdfAnnotationsToObjectInfo(annotations);

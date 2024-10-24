@@ -86,16 +86,18 @@ export {
   ImageAssetLinkAnnotationInfo,
   Image360DataModelIdentifier,
   DMInstanceRef,
-  PointCloudDataType,
-  ClassicPointCloudDataType,
-  DMPointCloudDataType,
+  DataSourceType,
+  ClassicDataSourceType,
+  DMDataSourceType,
+  ClassicModelIdentifierType,
+  DMModelIdentifierType,
   isDMPointCloudDataType,
   isClassicPointCloudDataType
 } from '../packages/data-providers';
 
 export { CogniteCadModel, BoundingBoxClipper, GeometryFilter, WellKnownUnit } from '../packages/cad-model';
 
-export { CognitePointCloudModel, PointCloudVolumeReference } from '../packages/pointclouds';
+export { CognitePointCloudModel, PointCloudVolumeIntersectionData } from '../packages/pointclouds';
 
 export {
   CompletePointCloudAppearance,
@@ -106,8 +108,7 @@ export {
   PointCloudDMVolumeCollection,
   DefaultPointCloudAppearance,
   StyledPointCloudObjectCollection,
-  StyledPointCloudVolumeCollection,
-  StyledPointCloudAnnotationVolumeCollection
+  StyledPointCloudVolumeCollection
 } from '../packages/pointcloud-styling';
 
 export {

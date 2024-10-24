@@ -5,7 +5,7 @@
 import { createRevealManager } from './createRevealManager';
 
 import {
-  DMPointCloudDataType,
+  DMDataSourceType,
   ModelDataProvider,
   ModelMetadataProvider,
   PointCloudStylableObjectProvider
@@ -27,7 +27,7 @@ describe('createRevealManager', () => {
         new Mock<ModelMetadataProvider>().object(),
         new Mock<ModelDataProvider>().object(),
         new Mock<PointCloudStylableObjectProvider>().object(),
-        new Mock<PointCloudStylableObjectProvider<DMPointCloudDataType>>().object(),
+        new Mock<PointCloudStylableObjectProvider<DMDataSourceType>>().object(),
         new Mock<IPointClassificationsProvider>().object(),
         new Mock<THREE.WebGLRenderer>()
           .setup(_ => It.Is((expression: SetPropertyExpression) => expression.name === 'info'))

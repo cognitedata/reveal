@@ -6,7 +6,7 @@ import { CogniteClient } from '@cognite/sdk';
 import { It, Mock } from 'moq.ts';
 import { CompositeShape, Cylinder, Box } from '@reveal/utilities';
 import { CdfPointCloudDMStylableObjectProvider } from './CdfPointCloudDMStylableObjectProvider';
-import { CdfModelIdentifier } from '../../model-identifiers/CdfModelIdentifier';
+import { DMModelIdentifier } from '../../model-identifiers/DMModelIdentifier';
 
 const mock = {
   headers: {
@@ -122,7 +122,9 @@ describe(CdfPointCloudDMStylableObjectProvider.name, () => {
   test('contains right point cloud volume references provided by SDK', async () => {
     const expectedRefs = [dummyDMAnnotationsResponse.items[0].volumeRef, dummyDMAnnotationsResponse.items[1].volumeRef];
     const gottenRefs = (
-      await dmAnnotationProvider.getPointCloudObjects(new CdfModelIdentifier(123, 456), 'someSpace')
+      await dmAnnotationProvider.getPointCloudObjects(
+        new DMModelIdentifier({ revisionSpace: 'some space', revisionExternalId: 'some external id' })
+      )
     ).map((obj: any) => obj.volumeInstanceRef);
 
     expect(gottenRefs.length).toEqual(dummyDMAnnotationsResponse.items.length);
@@ -130,9 +132,11 @@ describe(CdfPointCloudDMStylableObjectProvider.name, () => {
   });
 
   test('contains right geometry types for point cloud volumes provided by SDK', async () => {
-    const shapes = (await dmAnnotationProvider.getPointCloudObjects(new CdfModelIdentifier(123, 456), 'someSpace')).map(
-      obj => obj.stylableObject.shape
-    );
+    const shapes = (
+      await dmAnnotationProvider.getPointCloudObjects(
+        new DMModelIdentifier({ revisionSpace: 'some space', revisionExternalId: 'some external id' })
+      )
+    ).map(obj => obj.stylableObject.shape);
 
     expect((shapes[0] as CompositeShape).innerShapes[0]).toBeInstanceOf(Box);
     expect((shapes[1] as CompositeShape).innerShapes[0]).toBeInstanceOf(Cylinder);
@@ -141,7 +145,9 @@ describe(CdfPointCloudDMStylableObjectProvider.name, () => {
   test('contains right asset references provided by SDK', async () => {
     const expectedAssets = [dummyDMAnnotationsResponse.items[0].assetRef, dummyDMAnnotationsResponse.items[1].assetRef];
     const gottenAssets = (
-      await dmAnnotationProvider.getPointCloudObjects(new CdfModelIdentifier(123, 456), 'someSpace')
+      await dmAnnotationProvider.getPointCloudObjects(
+        new DMModelIdentifier({ revisionSpace: 'some space', revisionExternalId: 'some external id' })
+      )
     ).map((obj: any) => obj.assetRef);
 
     expect(gottenAssets.length).toEqual(expectedAssets.length);
@@ -152,13 +158,17 @@ describe(CdfPointCloudDMStylableObjectProvider.name, () => {
     const emptyMock = { ...mock, data: { items: { pointCloudVolumes: [], assets: [] } } };
     sdkMock.setup(instance => instance.post(It.IsAny(), It.IsAny())).returns(Promise.resolve(emptyMock));
 
-    const gottenRefs = await dmAnnotationProvider.getPointCloudObjects(new CdfModelIdentifier(123, 456), 'someSpace');
+    const gottenRefs = await dmAnnotationProvider.getPointCloudObjects(
+      new DMModelIdentifier({ revisionSpace: 'some space', revisionExternalId: 'some external id' })
+    );
 
     expect(gottenRefs.length).toEqual(0);
   });
 
   test('handles missing revisionSpace gracefully', async () => {
-    const gottenRefs = await dmAnnotationProvider.getPointCloudObjects(new CdfModelIdentifier(123, 456));
+    const gottenRefs = await dmAnnotationProvider.getPointCloudObjects(
+      new DMModelIdentifier({ revisionSpace: 'some space', revisionExternalId: 'some external id' })
+    );
 
     expect(gottenRefs.length).toEqual(0);
   });

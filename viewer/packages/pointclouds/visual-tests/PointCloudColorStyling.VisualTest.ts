@@ -9,8 +9,8 @@ import {
 import { PointCloudFactory } from '../src/PointCloudFactory';
 import { cdfAnnotationsToObjectInfo } from '../../data-providers/src/pointcloud-stylable-object-providers/cdfAnnotationsToObjects';
 import {
-  DMPointCloudDataType,
-  PointCloudDataType,
+  DMDataSourceType,
+  DataSourceType,
   PointCloudObject,
   PointCloudStylableObjectProvider
 } from '../../data-providers';
@@ -43,8 +43,8 @@ class CustomAnnotationProvider implements PointCloudStylableObjectProvider {
   }
 }
 
-class CustomDMProvider implements PointCloudStylableObjectProvider<DMPointCloudDataType> {
-  async getPointCloudObjects<DMPointCloudDataType extends PointCloudDataType>(
+class CustomDMProvider implements PointCloudStylableObjectProvider<DMDataSourceType> {
+  async getPointCloudObjects<DMPointCloudDataType extends DataSourceType>(
     _modelIdentifier: ModelIdentifier
   ): Promise<PointCloudObject<DMPointCloudDataType>[]> {
     const cdfAnnotations = [

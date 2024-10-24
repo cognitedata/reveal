@@ -8,7 +8,7 @@ import {
   POINT_CLOUD_VOLUME_REVISIONS_OBJECT3D_PROPERTIES_LIST,
   ASSET_PROPERTIES_LIST
 } from './types';
-import { getModelEqualsFilter, getRevisionContainsAnyFilter } from './utils';
+import { getRevisionContainsAnyFilter } from './utils';
 import {
   COGNITE_POINT_CLOUD_VOLUME_SOURCE,
   COGNITE_VISUALIZABLE_SOURCE,
@@ -16,27 +16,13 @@ import {
 } from '../../utilities/constants';
 import { DMInstanceRef } from '../types';
 
-const getDMPointCloudVolumeQuery = (modelRef: DMInstanceRef, revisionRef: DMInstanceRef[]) => {
-  const modelExternalId = `cog_3d_model_${modelRef.externalId}`;
-  const revisionExternalId = `cog_3d_revision_${revisionRef[0].externalId}`;
+const getDMPointCloudVolumeQuery = (revisionRef: DMInstanceRef) => {
   return {
     with: {
       pointCloudVolumes: {
         nodes: {
           filter: {
-            and: [
-              pointCloudVolumeFilter,
-              getModelEqualsFilter({
-                externalId: modelExternalId,
-                space: modelRef.space
-              }),
-              getRevisionContainsAnyFilter([
-                {
-                  externalId: revisionExternalId,
-                  space: revisionRef[0].space
-                }
-              ])
-            ]
+            and: [pointCloudVolumeFilter, getRevisionContainsAnyFilter([revisionRef])]
           }
         },
         limit: 1000
@@ -87,11 +73,8 @@ const getDMPointCloudVolumeQuery = (modelRef: DMInstanceRef, revisionRef: DMInst
 export type CdfDMPointCloudVolumeQuery = ReturnType<typeof getDMPointCloudVolumeQuery>;
 
 export function getDMPointCloudVolumeCollectionQuery(
-  modelExternalId: string,
   revisionExternalId: string,
   space: string
 ): CdfDMPointCloudVolumeQuery {
-  return getDMPointCloudVolumeQuery({ externalId: modelExternalId, space }, [
-    { externalId: revisionExternalId, space }
-  ]);
+  return getDMPointCloudVolumeQuery({ externalId: revisionExternalId, space });
 }

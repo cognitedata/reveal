@@ -38,17 +38,6 @@ export type AbsolutePosition = {
     yAbsolute: number;
 };
 
-// @public
-export type AddCdfModelOptions = AddModelOptions | AddDMModelOptions;
-
-// @public
-export interface AddDMModelOptions {
-    geometryFilter?: GeometryFilter;
-    localPath?: string;
-    revisionExternalId: string;
-    revisionSpace: string;
-}
-
 // @public (undocumented)
 export type AddImage360Options = {
     collectionTransform?: Matrix4;
@@ -57,16 +46,7 @@ export type AddImage360Options = {
 };
 
 // @public
-export interface AddModelOptions {
-    // (undocumented)
-    geometryFilter?: GeometryFilter;
-    // (undocumented)
-    localPath?: string;
-    // (undocumented)
-    modelId: number;
-    // (undocumented)
-    revisionId: number;
-}
+export type AddModelOptions<T extends DataSourceType = ClassicDataSourceType> = CommonModelOptions & T['modelIdentifier'];
 
 // @public
 export class AnnotationIdPointCloudObjectCollection extends PointCloudAnnotationVolumeCollection {
@@ -401,16 +381,23 @@ export abstract class CdfNodeCollectionBase extends NodeCollection {
 }
 
 // @public
-export type ClassicPointCloudDataType = {
-    modelIdentifier: {
-        modelId: number;
-        revisionId: number;
-    };
-    volumeMetadata: {
+export type ClassicAddModelOptions = AddModelOptions<ClassicDataSourceType>;
+
+// @public
+export type ClassicDataSourceType = {
+    modelIdentifier: ClassicModelIdentifierType;
+    pointCloudVolumeMetadata: {
         annotationId: number;
         assetRef?: AnnotationsAssetRef;
     };
+    pointCloudCollectionType: PointCloudAnnotationVolumeCollection;
     _never: never;
+};
+
+// @public
+export type ClassicModelIdentifierType = {
+    modelId: number;
+    revisionId: number;
 };
 
 // @public (undocumented)
@@ -442,12 +429,12 @@ export class Cognite3DViewer {
     add360ImageSet(datasource: 'events', eventFilter: {
         [key: string]: string;
     }, add360ImageOptions?: AddImage360Options): Promise<Image360Collection>;
-    addCadModel(options: AddCdfModelOptions): Promise<CogniteCadModel>;
+    addCadModel(options: AddModelOptions): Promise<CogniteCadModel>;
     // @beta
     addCustomObject(customObject: ICustomObject): void;
-    addModel(options: AddCdfModelOptions): Promise<CogniteModel>;
+    addModel<T extends DataSourceType = ClassicDataSourceType>(options: AddModelOptions<T>): Promise<CogniteModel<T>>;
     addObject3D(object: THREE.Object3D): void;
-    addPointCloudModel(options: AddCdfModelOptions): Promise<CognitePointCloudModel>;
+    addPointCloudModel<T extends DataSourceType = ClassicDataSourceType>(options: AddModelOptions<T>): Promise<CognitePointCloudModel<T>>;
     get cadBudget(): CadModelBudget;
     set cadBudget(budget: CadModelBudget);
     // (undocumented)
@@ -620,11 +607,11 @@ export class CogniteCadModel implements CdfModelNodeCollectionDataProvider {
 }
 
 // @public
-export type CogniteModel = CogniteCadModel | CognitePointCloudModel;
+export type CogniteModel<T extends DataSourceType = ClassicDataSourceType> = CogniteCadModel | CognitePointCloudModel<T>;
 
 // @public
-export class CognitePointCloudModel<T extends PointCloudDataType = ClassicPointCloudDataType> {
-    assignStyledObjectCollection(objectCollection: PointCloudAnnotationVolumeCollection | PointCloudDMVolumeCollection, appearance: PointCloudAppearance): void;
+export class CognitePointCloudModel<T extends DataSourceType = ClassicDataSourceType> {
+    assignStyledObjectCollection(objectCollection: T['pointCloudCollectionType'], appearance: PointCloudAppearance): void;
     dispose(): void;
     getCameraConfiguration(): CameraConfiguration | undefined;
     getCdfToDefaultModelTransformation(out?: THREE.Matrix4): THREE.Matrix4;
@@ -642,8 +629,9 @@ export class CognitePointCloudModel<T extends PointCloudDataType = ClassicPointC
     isClassVisible(pointClass: number | WellKnownAsprsPointClassCodes): boolean;
     mapBoxFromCdfToModelCoordinates(box: THREE.Box3, out?: THREE.Box3): THREE.Box3;
     mapPointFromCdfToModelCoordinates(point: THREE.Vector3, out?: THREE.Vector3): THREE.Vector3;
-    // (undocumented)
+    // @deprecated
     readonly modelId: number;
+    readonly modelIdentifier: T['modelIdentifier'];
     get pointColorType(): PointColorType;
     set pointColorType(type: PointColorType);
     get pointShape(): PointShape;
@@ -653,6 +641,7 @@ export class CognitePointCloudModel<T extends PointCloudDataType = ClassicPointC
     get pointSizeType(): PointSizeType;
     set pointSizeType(type: PointSizeType);
     removeAllStyledObjectCollections(): void;
+    // @deprecated
     readonly revisionId: number;
     setClassVisible(pointClass: number | WellKnownAsprsPointClassCodes, visible: boolean): void;
     setDefaultPointCloudAppearance(appearance: PointCloudAppearance): void;
@@ -660,14 +649,13 @@ export class CognitePointCloudModel<T extends PointCloudDataType = ClassicPointC
     setModelTransformation(transformationMatrix: THREE.Matrix4): void;
     // (undocumented)
     get stylableObjectCount(): number;
-    get stylableObjects(): PointCloudObjectMetadata<PointCloudDataType>[];
-    get styledCollections(): StyledPointCloudAnnotationVolumeCollection[];
-    get styledPointCloudVolumeCollections(): StyledPointCloudVolumeCollection[];
+    get stylableObjects(): PointCloudObjectMetadata<T>[];
+    get styledVolumeCollections(): StyledPointCloudVolumeCollection<T>[];
     // @deprecated (undocumented)
     traverseStylableObjects(callback: (annotationMetadata: PointCloudObjectMetadata<T>) => void): void;
     // (undocumented)
     readonly type: SupportedModelTypes;
-    unassignStyledObjectCollection(objectCollection: PointCloudAnnotationVolumeCollection | PointCloudDMVolumeCollection): void;
+    unassignStyledObjectCollection(objectCollection: T['pointCloudCollectionType']): void;
     set visible(value: boolean);
     get visible(): boolean;
     get visiblePointCount(): number;
@@ -774,6 +762,12 @@ export type ComboControlsOptions = {
     maxDeltaDownscaleCoefficient: number;
 };
 
+// @public
+export type CommonModelOptions = {
+    localPath?: string;
+    geometryFilter?: GeometryFilter;
+};
+
 // @public (undocumented)
 export type CompletePointCloudAppearance = Required<PointCloudAppearance>;
 
@@ -837,6 +831,9 @@ export interface DataSource {
     getModelMetadataProvider(): ModelMetadataProvider;
     getNodesApiClient(): NodesApiClient;
 }
+
+// @public
+export type DataSourceType = ClassicDataSourceType | DMDataSourceType;
 
 // @public
 export class DebouncedCameraStopEventTrigger {
@@ -920,16 +917,26 @@ export type DisposedDelegate = () => void;
 export type DistanceToLabelDelegate = (distanceInMeters: number) => string;
 
 // @public
-export type DMInstanceRef = DirectRelationReference;
+export type DMAddModelOptions = AddModelOptions<DMDataSourceType>;
 
 // @public
-export type DMPointCloudDataType = {
-    modelIdentifier: DMInstanceRef;
-    volumeMetadata: {
+export type DMDataSourceType = {
+    pointCloudVolumeMetadata: {
         volumeInstanceRef: DMInstanceRef;
         assetRef?: DMInstanceRef;
     };
+    pointCloudCollectionType: PointCloudDMVolumeCollection;
+    modelIdentifier: DMModelIdentifierType;
     _never: never;
+};
+
+// @public
+export type DMInstanceRef = DirectRelationReference;
+
+// @public
+export type DMModelIdentifierType = {
+    revisionExternalId: string;
+    revisionSpace: string;
 };
 
 // @public
@@ -1377,13 +1384,13 @@ export class InvertedNodeCollection extends NodeCollection {
 }
 
 // @public (undocumented)
-export function isClassicPointCloudDataType(pointCloudMetadata: PointCloudObjectMetadata<PointCloudDataType>): pointCloudMetadata is PointCloudObjectMetadata<ClassicPointCloudDataType>;
+export function isClassicPointCloudDataType(pointCloudMetadata: PointCloudObjectMetadata<DataSourceType>): pointCloudMetadata is PointCloudObjectMetadata<ClassicDataSourceType>;
 
 // @public
 export function isDefaultCameraManager(cameraManager: CameraManager): cameraManager is DefaultCameraManager;
 
 // @public (undocumented)
-export function isDMPointCloudDataType(pointCloudMetadata: PointCloudObjectMetadata<PointCloudDataType>): pointCloudMetadata is PointCloudObjectMetadata<DMPointCloudDataType>;
+export function isDMPointCloudDataType(pointCloudMetadata: PointCloudObjectMetadata<DataSourceType>): pointCloudMetadata is PointCloudObjectMetadata<DMDataSourceType>;
 
 // @beta
 export function isFlexibleCameraManager(manager: CameraManager): manager is IFlexibleCameraManager;
@@ -1720,7 +1727,12 @@ export type OverlayInfo<ContentType = DefaultOverlay3DContentType> = {
 export type OverlayToolEvent = 'hover' | 'click' | 'disposed';
 
 // @public
-export abstract class PointCloudAnnotationVolumeCollection extends PointCloudObjectCollection {
+export abstract class PointCloudAnnotationVolumeCollection {
+    abstract getAnnotationIds(): Iterable<number>;
+    abstract get isLoading(): boolean;
+    protected notifyChanged(): void;
+    off(event: 'changed', listener: () => void): void;
+    on(event: 'changed', listener: () => void): void;
 }
 
 // @public (undocumented)
@@ -1733,9 +1745,6 @@ export type PointCloudAppearance = {
 export type PointCloudBudget = {
     readonly numberOfPoints: number;
 };
-
-// @public (undocumented)
-export type PointCloudDataType = DMPointCloudDataType | ClassicPointCloudDataType;
 
 // @public
 export class PointCloudDMVolumeCollection {
@@ -1753,32 +1762,23 @@ export type PointCloudIntersection = {
     distanceToCamera: number;
     annotationId: number;
     assetRef?: AnnotationsAssetRef;
-    volumeRef?: PointCloudVolumeReference;
+    volumeMetadata?: PointCloudVolumeIntersectionData;
 };
 
 // @public @deprecated
-export abstract class PointCloudObjectCollection {
-    // (undocumented)
-    abstract getAnnotationIds(): Iterable<number>;
-    // (undocumented)
-    abstract get isLoading(): boolean;
-    protected notifyChanged(): void;
-    // (undocumented)
-    off(event: 'changed', listener: () => void): void;
-    // (undocumented)
-    on(event: 'changed', listener: () => void): void;
+export abstract class PointCloudObjectCollection extends PointCloudAnnotationVolumeCollection {
 }
 
 // @public
-export type PointCloudObjectMetadata<T extends PointCloudDataType = ClassicPointCloudDataType> = {
+export type PointCloudObjectMetadata<T extends DataSourceType = ClassicDataSourceType> = {
     boundingBox: Box3;
-} & T['volumeMetadata'];
+} & T['pointCloudVolumeMetadata'];
 
 // @public
-export type PointCloudVolumeReference = {
-    annotationId: number;
-    volumeInstanceRef: DMInstanceRef;
-    assetRef?: AnnotationsAssetRef;
+export type PointCloudVolumeIntersectionData = {
+    annotationId?: number;
+    volumeInstanceRef?: DMInstanceRef;
+    assetRef?: AnnotationsAssetRef | DMInstanceRef;
 };
 
 // @public (undocumented)
@@ -1937,26 +1937,19 @@ export class SinglePropertyFilterNodeCollection extends CdfNodeCollectionBase {
     serialize(): SerializedNodeCollection;
 }
 
-// @public
-export class StyledPointCloudAnnotationVolumeCollection extends StyledPointCloudObjectCollection {
-}
-
-// @public @deprecated
-export class StyledPointCloudObjectCollection {
-    constructor(objectCollection: PointCloudAnnotationVolumeCollection, style: CompletePointCloudAppearance);
-    // (undocumented)
-    objectCollection: PointCloudAnnotationVolumeCollection;
-    // (undocumented)
-    style: CompletePointCloudAppearance;
+// @public (undocumented)
+export class StyledPointCloudObjectCollection extends StyledPointCloudVolumeCollection<ClassicDataSourceType> {
 }
 
 // @public
-export class StyledPointCloudVolumeCollection {
-    constructor(objectCollection: PointCloudAnnotationVolumeCollection | PointCloudDMVolumeCollection, style: CompletePointCloudAppearance);
-    // (undocumented)
-    objectCollection: PointCloudAnnotationVolumeCollection | PointCloudDMVolumeCollection;
-    // (undocumented)
+export class StyledPointCloudVolumeCollection<T extends DataSourceType = ClassicDataSourceType> {
+    constructor(
+    objectCollection: T['pointCloudCollectionType'],
+    style: CompletePointCloudAppearance);
+    // @deprecated
+    objectCollection: T['pointCloudCollectionType'];
     style: CompletePointCloudAppearance;
+    get volumeCollection(): T['pointCloudCollectionType'];
 }
 
 // @public (undocumented)

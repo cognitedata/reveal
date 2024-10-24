@@ -17,6 +17,14 @@ import { CdfModelIdentifier } from '@reveal/data-providers';
 import { Image360AnnotationFilterOptions } from '@reveal/360-images';
 import type { Vector2, WebGLRenderTarget, WebGLRenderer, Matrix4, Vector3 } from 'three';
 import { CustomObjectIntersection } from '@reveal/utilities';
+import {
+  ClassicDataSourceType,
+  ClassicModelIdentifierType,
+  DataSourceType,
+  DMDataSourceType,
+  InternalDataSourceType,
+  LocalModelIdentifierType
+} from '@reveal/data-providers/src/DataSourceType';
 
 /**
  * Callback to monitor loaded requests and progress.
@@ -205,28 +213,9 @@ export interface Cognite3DViewerOptions {
 }
 
 /**
- * @module @cognite/reveal
+ * Model options common to all model types
  */
-export interface AddModelOptions {
-  modelId: number;
-  revisionId: number;
-  // if you need to access local files, this is where you would specify it.
-  localPath?: string;
-  geometryFilter?: GeometryFilter;
-}
-
-/**
- * @module @cognite/reveal
- */
-export interface AddDMModelOptions {
-  /**
-   * An CDF externalId of 3D model revision.
-   */
-  revisionExternalId: string;
-  /**
-   * An CDF space of the 3D model revision.
-   */
-  revisionSpace: string;
+export type CommonModelOptions = {
   /**
    * An optional local file which will be used to load the data.
    */
@@ -235,12 +224,31 @@ export interface AddDMModelOptions {
    * An optional geometryFilter which will be applied to loading model.
    */
   geometryFilter?: GeometryFilter;
-}
+};
 
 /**
  * @module @cognite/reveal
  */
-export type AddCdfModelOptions = AddModelOptions | AddDMModelOptions;
+export type AddModelOptions<T extends DataSourceType = ClassicDataSourceType> = CommonModelOptions &
+  T['modelIdentifier'];
+
+export type LocalAddModelOptions = CommonModelOptions & LocalModelIdentifierType;
+
+export type InternalAddModelOptions<T extends InternalDataSourceType> = CommonModelOptions & T['modelIdentifier'];
+
+export type AddModelOptionsWithModelRevisionId<T extends DataSourceType> = AddModelOptions<T> & {
+  classicModelRevisionId: ClassicModelIdentifierType;
+};
+
+/**
+ * Add model options for models of classic format, identified by modelId and revisionId
+ */
+export type ClassicAddModelOptions = AddModelOptions<ClassicDataSourceType>;
+
+/**
+ * Add model options for models of DM format, identified by revisionExternalId and revisionSpace
+ */
+export type DMAddModelOptions = AddModelOptions<DMDataSourceType>;
 
 export type AddImage360Options = {
   /**
