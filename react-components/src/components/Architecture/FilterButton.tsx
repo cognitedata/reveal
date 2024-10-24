@@ -236,20 +236,20 @@ const FilterSelectPanelContent = ({
   return (
     <>
       <SelectPanel.Header title={label} />
+      <SelectPanel.Section>
+        <SelectPanel.Item
+          key={-1}
+          variant="checkbox"
+          checked={isAllChecked}
+          indeterminate={!isAllChecked && isSomeChecked}
+          onClick={() => {
+            command.toggleAllChecked();
+          }}
+          label={BaseFilterCommand.getAllString(t)}>
+          {BaseFilterCommand.getAllString(t)}
+        </SelectPanel.Item>
+      </SelectPanel.Section>
       <SelectPanel.Body label={label}>
-        <SelectPanel.Section>
-          <SelectPanel.Item
-            key={-1}
-            variant="checkbox"
-            checked={isAllChecked}
-            indeterminate={!isAllChecked && isSomeChecked}
-            onClick={() => {
-              command.toggleAllChecked();
-            }}
-            label={BaseFilterCommand.getAllString(t)}>
-            {BaseFilterCommand.getAllString(t)}
-          </SelectPanel.Item>
-        </SelectPanel.Section>
         <SelectPanel.Section>
           {children?.map((child, _index): ReactElement => {
             return <FilterItem key={child.uniqueId} command={child} />;
