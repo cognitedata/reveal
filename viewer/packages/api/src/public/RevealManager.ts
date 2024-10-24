@@ -233,7 +233,6 @@ export class RevealManager {
   ): Promise<PointCloudNode<T> | CadNode> {
     switch (type) {
       case 'cad': {
-        console.log('Adding model with identifier', modelIdentifier);
         return this._cadManager.addModel(
           createModelIdentifier(modelIdentifier as ClassicModelIdentifierType | LocalModelIdentifierType),
           (options as AddCadModelOptions).geometryFilter

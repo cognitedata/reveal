@@ -255,7 +255,7 @@ export class Cognite3DViewer {
   }
 
   /**
-   * get all models
+   * Get all models.
    */
   public get allModels(): CogniteModel<DataSourceType>[] {
     return this._allModels.slice();
@@ -826,7 +826,6 @@ export class Cognite3DViewer {
   async addPointCloudModel<T extends DataSourceType = ClassicDataSourceType>(
     options: AddModelOptions<T>
   ): Promise<CognitePointCloudModel<T>> {
-    console.log('Adding point cloud model ', options);
     const classicModelRevisionId = await getModelAndRevisionId(options, this._cdfSdkClient);
     const sequencerFunction = this._addModelSequencer.getNextSequencer<void>();
     return this.addPointCloudModelWithSequencer<T>({ ...options, classicModelRevisionId }, sequencerFunction);
@@ -836,7 +835,6 @@ export class Cognite3DViewer {
     options: AddModelOptionsWithModelRevisionId<T>,
     modelLoadSequencer: SequencerFunction<void>
   ): Promise<CognitePointCloudModel<T>> {
-    console.log('Adding point cloud with ', options);
     try {
       if (options.geometryFilter) {
         throw new Error('geometryFilter is not supported for point clouds');
@@ -844,8 +842,6 @@ export class Cognite3DViewer {
 
       const pointCloudNode = await this._revealManagerHelper.addPointCloudModel<T>(options);
       const model = new CognitePointCloudModel<T>(options, pointCloudNode);
-
-      console.log('Identifier = ', options);
 
       await modelLoadSequencer(() => {
         const isCdfModel = (
@@ -1340,7 +1336,6 @@ export class Cognite3DViewer {
       return;
     }
 
-    console.log('Bounding box = ', boundingBox);
     this._activeCameraManager.fitCameraToBoundingBox(boundingBox, duration);
   }
 

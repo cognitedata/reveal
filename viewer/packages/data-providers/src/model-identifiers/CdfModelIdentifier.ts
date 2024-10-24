@@ -17,7 +17,6 @@ export class CdfModelIdentifier implements ModelIdentifier {
     this.revealInternalId = Symbol(`${modelId}/${revisionId}`);
     this.modelId = modelId;
     this.revisionId = revisionId;
-    console.log('Creating model identifier', modelId, revisionId);
   }
 
   public toString(): string {

@@ -131,7 +131,6 @@ export async function createSDKFromEnvironment(
   const credentialEnvironmentList = JSON.parse(
     process.env.REACT_APP_CREDENTIAL_ENVIRONMENTS!
   ) as CredentialEnvironmentList;
-  console.log('Environment list: ', credentialEnvironmentList, 'environment: ', environmentParam);
   const credentialEnvironment = credentialEnvironmentList.environments[environmentParam];
 
   const baseUrl = `https://${credentialEnvironment.cluster}.cognitedata.com`;

@@ -2,7 +2,6 @@
  * Copyright 2024 Cognite AS
  */
 import { ClassicModelIdentifierType, DMModelIdentifierType } from '../DataSourceType';
-import { ModelIdentifier } from '../ModelIdentifier';
 import { CdfModelIdentifier } from './CdfModelIdentifier';
 
 export class DMModelIdentifier extends CdfModelIdentifier {
@@ -21,8 +20,6 @@ export class DMModelIdentifier extends CdfModelIdentifier {
     this.revealInternalId = Symbol(`${revisionSpace}/${revisionExternalId}`);
     this.revisionExternalId = revisionExternalId;
     this.revisionSpace = revisionSpace;
-
-    console.log('Creating identifier ', modelId, revisionId, revisionExternalId, revisionSpace);
   }
 
   public toString(): string {

@@ -65,5 +65,6 @@ export {
   isDMIdentifier,
   InternalDataSourceType,
   LocalDataSourceType,
-  LocalModelIdentifierType
+  LocalModelIdentifierType,
+  isLocalIdentifier
 } from './src/DataSourceType';
