@@ -2,11 +2,8 @@
  * Copyright 2024 Cognite AS
  */
 import { AnnotationsAssetRef } from '@cognite/sdk';
-import {
-  DMInstanceRef,
-  PointCloudAnnotationVolumeCollection,
-  PointCloudDMVolumeCollection
-} from 'api-entry-points/core';
+import { DMInstanceRef } from '@reveal/data-providers';
+import { PointCloudAnnotationVolumeCollection, PointCloudDMVolumeCollection } from '@reveal/pointcloud-styling';
 
 /**
  * Model identifier for classic CDF models, referenced by modelId and revisionId

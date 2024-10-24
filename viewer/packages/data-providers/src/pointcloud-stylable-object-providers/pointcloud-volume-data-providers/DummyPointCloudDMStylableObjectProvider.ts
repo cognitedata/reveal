@@ -2,7 +2,7 @@
  * Copyright 2024 Cognite AS
  */
 
-import { DMDataSourceType, DMModelIdentifierType } from 'api-entry-points/core';
+import { DMModelIdentifierType, DMDataSourceType } from '@reveal/data-providers';
 import { PointCloudStylableObjectProvider } from '../../PointCloudStylableObjectProvider';
 import { PointCloudObject } from '../types';
 

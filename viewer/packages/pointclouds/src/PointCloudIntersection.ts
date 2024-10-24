@@ -34,7 +34,7 @@ export type PointCloudIntersection<T extends DataSourceType> = {
   annotationId: number;
   /**
    * Reference to the asset associated to the intersected point cloud object, if any.
-   * @deprecated use `volumeMetadat` instead
+   * @deprecated use `volumeMetadata` instead
    */
   assetRef?: AnnotationsAssetRef;
   /**

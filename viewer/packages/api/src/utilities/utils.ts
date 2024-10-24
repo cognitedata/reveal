@@ -4,8 +4,13 @@
 
 import { CogniteClient } from '@cognite/sdk';
 import { AddModelOptions, LocalAddModelOptions } from '../public/migration/types';
-import { DataSourceType, fetchDMModelIdFromRevisionId, isDMIdentifier } from '@reveal/data-providers';
-import { isClassicIdentifier, isLocalIdentifier } from '@reveal/data-providers/src/DataSourceType';
+import {
+  DataSourceType,
+  fetchDMModelIdFromRevisionId,
+  isDMIdentifier,
+  isClassicIdentifier,
+  isLocalIdentifier
+} from '@reveal/data-providers';
 import { assertNever } from '@reveal/utilities';
 
 export async function getModelAndRevisionId(

@@ -24,7 +24,7 @@ import {
   DMDataSourceType,
   InternalDataSourceType,
   LocalModelIdentifierType
-} from '@reveal/data-providers/src/DataSourceType';
+} from '@reveal/data-providers';
 
 /**
  * Callback to monitor loaded requests and progress.

@@ -15,7 +15,7 @@ export { LocalModelDataProvider } from './src/model-data-providers/LocalModelDat
 export { LocalModelIdentifier } from './src/model-identifiers/LocalModelIdentifier';
 export { LocalModelMetadataProvider } from './src/metadata-providers/LocalModelMetadataProvider';
 export { Local360ImageProvider } from './src/image-360-data-providers/Local360ImageProvider';
-export { ModelIdentifier } from './src/ModelIdentifier';
+export { ModelIdentifier, createModelIdentifier } from './src/ModelIdentifier';
 export { ModelMetadataProvider } from './src/ModelMetadataProvider';
 export { ModelDataProvider } from './src/ModelDataProvider';
 

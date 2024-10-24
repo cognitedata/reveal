@@ -61,8 +61,9 @@ export class ModelUi {
           geometryFilter: this._guiState.geometryFilter.enabled
             ? createGeometryFilterFromState(this._guiState.geometryFilter)
             : undefined,
-          revisionExternalId: this._guiState.revisionExternalId,
-          revisionSpace: this._guiState.revisionSpace
+          revisionExternalId:
+            this._guiState.revisionExternalId.length !== 0 ? this._guiState.revisionExternalId : undefined,
+          revisionSpace: this._guiState.revisionSpace.length !== 0 ? this._guiState.revisionSpace : undefined
         }),
       fitToModel: () => {
         const model = this._cadModels[0] || this._pointCloudModels[0];
@@ -164,7 +165,6 @@ export class ModelUi {
       if (model instanceof CogniteCadModel) {
         this._cadModels.push(model);
       } else if (model instanceof CognitePointCloudModel) {
-        console.log('Adding point cloud model!', model);
         this._pointCloudModels.push(model);
       }
 
@@ -188,9 +188,7 @@ async function addLocalModel(
 ): Promise<CogniteModel<DataSourceType>> {
   const isPointCloud =
     addModelOptions.localPath !== undefined && (await isLocalUrlPointCloudModel(addModelOptions.localPath));
-  return isPointCloud
-    ? viewer.addPointCloudModel(addModelOptions)
-    : viewer.addCadModel(addModelOptions as ClassicAddModelOptions);
+  return isPointCloud ? viewer.addPointCloudModel(addModelOptions) : viewer.addCadModel(addModelOptions);
 }
 
 function createGeometryFilterStateFromBounds(bounds: THREE.Box3, out: { center: THREE.Vector3; size: THREE.Vector3 }) {

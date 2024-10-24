@@ -26,7 +26,7 @@ import { assertNever, EventTrigger } from '@reveal/utilities';
 import { CameraManager } from '@reveal/camera-manager';
 
 import { ClassicModelIdentifierType, InternalDataSourceType, LocalModelIdentifierType } from '@reveal/data-providers';
-import { createModelIdentifier } from '@reveal/data-providers/src/ModelIdentifier';
+import { createModelIdentifier } from '@reveal/data-providers';
 
 /* eslint-disable jsdoc/require-jsdoc */
 

@@ -97,7 +97,7 @@ import { Image360ApiHelper } from '../../api-helpers/Image360ApiHelper';
 import html2canvas from 'html2canvas';
 import { AsyncSequencer, SequencerFunction } from '../../../../utilities/src/AsyncSequencer';
 import { getModelAndRevisionId } from '../../utilities/utils';
-import { ClassicDataSourceType, DataSourceType, isClassicIdentifier } from '@reveal/data-providers/src/DataSourceType';
+import { ClassicDataSourceType, DataSourceType, isClassicIdentifier } from '@reveal/data-providers';
 import assert from 'assert';
 
 type Cognite3DViewerEvents =
