@@ -12,7 +12,7 @@ export class MockFilterCommand extends BaseFilterCommand {
   // ==================================================
 
   public override get tooltip(): TranslateKey {
-    return { fallback: 'Filter' };
+    return { fallback: 'Mock Filter' };
   }
 
   protected override createChildren(): FilterItemCommand[] {
