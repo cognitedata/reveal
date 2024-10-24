@@ -23,6 +23,13 @@ export class MockFilterCommand extends BaseFilterCommand {
       new FilterItemCommand('Yellow', new Color(Color.NAMES.yellow)),
       new FilterItemCommand('Cyan', new Color(Color.NAMES.cyan)),
       new FilterItemCommand('Magenta', new Color(Color.NAMES.magenta)),
+      new FilterItemCommand('Light green', new Color(Color.NAMES.lightgreen)),
+      new FilterItemCommand('Blue violet', new Color(Color.NAMES.blueviolet)),
+      new FilterItemCommand('Salmon', new Color(Color.NAMES.salmon)),
+      new FilterItemCommand('Pink', new Color(Color.NAMES.pink)),
+      new FilterItemCommand('Gold', new Color(Color.NAMES.gold)),
+      new FilterItemCommand('Silver', new Color(Color.NAMES.silver)),
+      new FilterItemCommand('Goral', new Color(Color.NAMES.coral)),
       new FilterItemCommand('No color')
     ];
   }
