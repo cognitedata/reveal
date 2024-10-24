@@ -13,6 +13,7 @@ import { Camera } from 'three';
 import { CogniteClient } from '@cognite/sdk';
 import { CogniteInternalId } from '@cognite/sdk';
 import { Color } from 'three';
+import { DirectRelationReference } from '@cognite/sdk';
 import { EventDispatcher } from 'three';
 import { IdEither } from '@cognite/sdk';
 import { ListResponse } from '@cognite/sdk';
@@ -37,6 +38,17 @@ export type AbsolutePosition = {
     yAbsolute: number;
 };
 
+// @public
+export type AddCdfModelOptions = AddModelOptions | AddDMModelOptions;
+
+// @public
+export interface AddDMModelOptions {
+    geometryFilter?: GeometryFilter;
+    localPath?: string;
+    revisionExternalId: string;
+    revisionSpace: string;
+}
+
 // @public (undocumented)
 export type AddImage360Options = {
     collectionTransform?: Matrix4;
@@ -57,7 +69,7 @@ export interface AddModelOptions {
 }
 
 // @public
-export class AnnotationIdPointCloudObjectCollection extends PointCloudObjectCollection {
+export class AnnotationIdPointCloudObjectCollection extends PointCloudAnnotationVolumeCollection {
     constructor(ids: Iterable<number>);
     // (undocumented)
     getAnnotationIds(): Iterable<number>;
@@ -388,6 +400,19 @@ export abstract class CdfNodeCollectionBase extends NodeCollection {
     protected updateCollectionFromResults(requests: Promise<ListResponse<Node3D[]>>[]): Promise<void>;
 }
 
+// @public
+export type ClassicPointCloudDataType = {
+    modelIdentifier: {
+        modelId: number;
+        revisionId: number;
+    };
+    volumeMetadata: {
+        annotationId: number;
+        assetRef?: AnnotationsAssetRef;
+    };
+    _never: never;
+};
+
 // @public (undocumented)
 export type ClippingPlanesState = {
     nx: number;
@@ -417,12 +442,12 @@ export class Cognite3DViewer {
     add360ImageSet(datasource: 'events', eventFilter: {
         [key: string]: string;
     }, add360ImageOptions?: AddImage360Options): Promise<Image360Collection>;
-    addCadModel(options: AddModelOptions): Promise<CogniteCadModel>;
+    addCadModel(options: AddCdfModelOptions): Promise<CogniteCadModel>;
     // @beta
     addCustomObject(customObject: ICustomObject): void;
-    addModel(options: AddModelOptions): Promise<CogniteModel>;
+    addModel(options: AddCdfModelOptions): Promise<CogniteModel>;
     addObject3D(object: THREE.Object3D): void;
-    addPointCloudModel(options: AddModelOptions): Promise<CognitePointCloudModel>;
+    addPointCloudModel(options: AddCdfModelOptions): Promise<CognitePointCloudModel>;
     get cadBudget(): CadModelBudget;
     set cadBudget(budget: CadModelBudget);
     // (undocumented)
@@ -602,8 +627,8 @@ export class CogniteCadModel implements CdfModelNodeCollectionDataProvider {
 export type CogniteModel = CogniteCadModel | CognitePointCloudModel;
 
 // @public
-export class CognitePointCloudModel {
-    assignStyledObjectCollection(objectCollection: PointCloudObjectCollection, appearance: PointCloudAppearance): void;
+export class CognitePointCloudModel<T extends PointCloudDataType = ClassicPointCloudDataType> {
+    assignStyledObjectCollection(objectCollection: PointCloudAnnotationVolumeCollection | PointCloudDMVolumeCollection, appearance: PointCloudAppearance): void;
     dispose(): void;
     getCameraConfiguration(): CameraConfiguration | undefined;
     getCdfToDefaultModelTransformation(out?: THREE.Matrix4): THREE.Matrix4;
@@ -639,11 +664,14 @@ export class CognitePointCloudModel {
     setModelTransformation(transformationMatrix: THREE.Matrix4): void;
     // (undocumented)
     get stylableObjectCount(): number;
-    get styledCollections(): StyledPointCloudObjectCollection[];
-    traverseStylableObjects(callback: (annotationMetadata: PointCloudObjectMetadata) => void): void;
+    get stylableObjects(): PointCloudObjectMetadata<PointCloudDataType>[];
+    get styledCollections(): StyledPointCloudAnnotationVolumeCollection[];
+    get styledPointCloudVolumeCollections(): StyledPointCloudVolumeCollection[];
+    // @deprecated (undocumented)
+    traverseStylableObjects(callback: (annotationMetadata: PointCloudObjectMetadata<T>) => void): void;
     // (undocumented)
     readonly type: SupportedModelTypes;
-    unassignStyledObjectCollection(objectCollection: PointCloudObjectCollection): void;
+    unassignStyledObjectCollection(objectCollection: PointCloudAnnotationVolumeCollection | PointCloudDMVolumeCollection): void;
     set visible(value: boolean);
     get visible(): boolean;
     get visiblePointCount(): number;
@@ -894,6 +922,19 @@ export type DisposedDelegate = () => void;
 
 // @public
 export type DistanceToLabelDelegate = (distanceInMeters: number) => string;
+
+// @public
+export type DMInstanceRef = DirectRelationReference;
+
+// @public
+export type DMPointCloudDataType = {
+    modelIdentifier: DMInstanceRef;
+    volumeMetadata: {
+        volumeInstanceRef: DMInstanceRef;
+        assetRef?: DMInstanceRef;
+    };
+    _never: never;
+};
 
 // @public
 export type EdlOptions = {
@@ -1345,8 +1386,14 @@ export class InvertedNodeCollection extends NodeCollection {
     serialize(): SerializedNodeCollection;
 }
 
+// @public (undocumented)
+export function isClassicPointCloudDataType(pointCloudMetadata: PointCloudObjectMetadata<PointCloudDataType>): pointCloudMetadata is PointCloudObjectMetadata<ClassicPointCloudDataType>;
+
 // @public
 export function isDefaultCameraManager(cameraManager: CameraManager): cameraManager is DefaultCameraManager;
+
+// @public (undocumented)
+export function isDMPointCloudDataType(pointCloudMetadata: PointCloudObjectMetadata<PointCloudDataType>): pointCloudMetadata is PointCloudObjectMetadata<DMPointCloudDataType>;
 
 // @beta
 export function isFlexibleCameraManager(manager: CameraManager): manager is IFlexibleCameraManager;
@@ -1682,6 +1729,10 @@ export type OverlayInfo<ContentType = DefaultOverlay3DContentType> = {
 // @public
 export type OverlayToolEvent = 'hover' | 'click' | 'disposed';
 
+// @public
+export abstract class PointCloudAnnotationVolumeCollection extends PointCloudObjectCollection {
+}
+
 // @public (undocumented)
 export type PointCloudAppearance = {
     color?: Color;
@@ -1694,6 +1745,16 @@ export type PointCloudBudget = {
 };
 
 // @public (undocumented)
+export type PointCloudDataType = DMPointCloudDataType | ClassicPointCloudDataType;
+
+// @public
+export class PointCloudDMVolumeCollection {
+    constructor(ids: Iterable<DMInstanceRef>);
+    getDataModelInstanceRefs(): Iterable<DMInstanceRef>;
+    get isLoading(): false;
+}
+
+// @public (undocumented)
 export type PointCloudIntersection = {
     type: 'pointcloud';
     model: CognitePointCloudModel;
@@ -1702,9 +1763,10 @@ export type PointCloudIntersection = {
     distanceToCamera: number;
     annotationId: number;
     assetRef?: AnnotationsAssetRef;
+    volumeRef?: PointCloudVolumeReference;
 };
 
-// @public
+// @public @deprecated
 export abstract class PointCloudObjectCollection {
     // (undocumented)
     abstract getAnnotationIds(): Iterable<number>;
@@ -1718,11 +1780,15 @@ export abstract class PointCloudObjectCollection {
 }
 
 // @public
-export type PointCloudObjectMetadata = {
-    annotationId: number;
-    assetId?: number;
-    assetRef?: AnnotationsAssetRef;
+export type PointCloudObjectMetadata<T extends PointCloudDataType = ClassicPointCloudDataType> = {
     boundingBox: Box3;
+} & T['volumeMetadata'];
+
+// @public
+export type PointCloudVolumeReference = {
+    annotationId: number;
+    volumeInstanceRef: DMInstanceRef;
+    assetRef?: AnnotationsAssetRef;
 };
 
 // @public (undocumented)
@@ -1882,10 +1948,23 @@ export class SinglePropertyFilterNodeCollection extends CdfNodeCollectionBase {
 }
 
 // @public
+export class StyledPointCloudAnnotationVolumeCollection extends StyledPointCloudObjectCollection {
+}
+
+// @public @deprecated
 export class StyledPointCloudObjectCollection {
-    constructor(objectCollection: PointCloudObjectCollection, style: CompletePointCloudAppearance);
+    constructor(objectCollection: PointCloudAnnotationVolumeCollection, style: CompletePointCloudAppearance);
     // (undocumented)
-    objectCollection: PointCloudObjectCollection;
+    objectCollection: PointCloudAnnotationVolumeCollection;
+    // (undocumented)
+    style: CompletePointCloudAppearance;
+}
+
+// @public
+export class StyledPointCloudVolumeCollection {
+    constructor(objectCollection: PointCloudAnnotationVolumeCollection | PointCloudDMVolumeCollection, style: CompletePointCloudAppearance);
+    // (undocumented)
+    objectCollection: PointCloudAnnotationVolumeCollection | PointCloudDMVolumeCollection;
     // (undocumented)
     style: CompletePointCloudAppearance;
 }

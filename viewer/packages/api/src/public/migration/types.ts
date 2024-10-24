@@ -215,6 +215,33 @@ export interface AddModelOptions {
   geometryFilter?: GeometryFilter;
 }
 
+/**
+ * @module @cognite/reveal
+ */
+export interface AddDMModelOptions {
+  /**
+   * An CDF externalId of 3D model revision.
+   */
+  revisionExternalId: string;
+  /**
+   * An CDF space of the 3D model revision.
+   */
+  revisionSpace: string;
+  /**
+   * An optional local file which will be used to load the data.
+   */
+  localPath?: string;
+  /**
+   * An optional geometryFilter which will be applied to loading model.
+   */
+  geometryFilter?: GeometryFilter;
+}
+
+/**
+ * @module @cognite/reveal
+ */
+export type AddCdfModelOptions = AddModelOptions | AddDMModelOptions;
+
 export type AddImage360Options = {
   /**
    * An optional transformation which will be applied to all 360 images that are fetched.

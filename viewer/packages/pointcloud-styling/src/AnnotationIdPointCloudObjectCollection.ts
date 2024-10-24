@@ -2,12 +2,12 @@
  * Copyright 2022 Cognite AS
  */
 
-import { PointCloudObjectCollection } from './PointCloudObjectCollection';
+import { PointCloudAnnotationVolumeCollection } from './PointCloudObjectCollection';
 
 /**
- * A simple PointCloudObjectCollection that consists of an explicitly provided list of annotation IDs
+ * A simple PointCloudAnnotationVolumeCollection that consists of an explicitly provided list of annotation IDs
  */
-export class AnnotationIdPointCloudObjectCollection extends PointCloudObjectCollection {
+export class AnnotationIdPointCloudObjectCollection extends PointCloudAnnotationVolumeCollection {
   private readonly _annotationIds = new Set<number>();
 
   constructor(ids: Iterable<number>) {

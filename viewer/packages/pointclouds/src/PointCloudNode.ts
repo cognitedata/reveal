@@ -9,10 +9,16 @@ import { WellKnownAsprsPointClassCodes } from './types';
 
 import { PointColorType, PointShape, PointSizeType } from '@reveal/rendering';
 
-import { PointCloudObjectMetadata, PointCloudObject } from '@reveal/data-providers';
+import {
+  isClassicPointCloudDataTypeObject,
+  isDMPointCloudDataTypeObject,
+  PointCloudDataType,
+  PointCloudObject,
+  PointCloudObjectMetadata
+} from '@reveal/data-providers';
 import { ClassificationHandler } from './ClassificationHandler';
 
-import { CompletePointCloudAppearance, StyledPointCloudObjectCollection } from '@reveal/pointcloud-styling';
+import { StyledPointCloudVolumeCollection, CompletePointCloudAppearance } from '@reveal/pointcloud-styling';
 
 import { Matrix4, Group, Box3, Color, type Camera, type Plane, type Ray, type WebGLRenderer } from 'three';
 
@@ -20,7 +26,7 @@ export class PointCloudNode extends Group {
   private readonly _cameraConfiguration?: CameraConfiguration;
   private readonly _octree: PointCloudOctree;
 
-  private readonly _objectIdToAnnotationsMap: Map<number, PointCloudObject>;
+  private readonly _objectIdToAnnotationsMap: Map<number, PointCloudObject<PointCloudDataType>>;
   private readonly _classificationHandler: ClassificationHandler;
 
   private _needsRedraw: boolean = false;
@@ -35,7 +41,7 @@ export class PointCloudNode extends Group {
     modelIdentifier: symbol,
     sourceTransform: Matrix4,
     octree: PointCloudOctree,
-    annotations: PointCloudObject[],
+    annotations: PointCloudObject<PointCloudDataType>[],
     classificationInfo: ClassificationInfo,
     cameraConfiguration?: CameraConfiguration
   ) {
@@ -206,16 +212,32 @@ export class PointCloudNode extends Group {
     return out.copy(this._sourceTransform);
   }
 
-  get stylableObjectAnnotationMetadata(): Iterable<PointCloudObjectMetadata> {
-    return [...this._objectIdToAnnotationsMap.values()].map(a => ({
-      annotationId: a.annotationId,
-      assetId: a.assetRef?.id,
-      assetRef: a.assetRef,
-      boundingBox: a.boundingBox.clone().applyMatrix4(this._octree.matrixWorld)
-    }));
+  get stylableObjectAnnotationMetadata(): Iterable<PointCloudObjectMetadata<PointCloudDataType>> {
+    return [...this._objectIdToAnnotationsMap.values()].map(a => {
+      const baseObject = {
+        boundingBox: a.boundingBox.clone().applyMatrix4(this._octree.matrixWorld),
+        stylableObject: a.stylableObject
+      };
+
+      if (isClassicPointCloudDataTypeObject(a)) {
+        return {
+          ...baseObject,
+          annotationId: a.annotationId,
+          assetRef: a.assetRef
+        };
+      } else if (isDMPointCloudDataTypeObject(a)) {
+        return {
+          ...baseObject,
+          volumeInstanceRef: a.volumeInstanceRef,
+          assetRef: a.assetRef
+        };
+      } else {
+        throw new Error('Unknown object type');
+      }
+    }) as PointCloudObjectMetadata<PointCloudDataType>[];
   }
 
-  getStylableObjectMetadata(objectId: number): PointCloudObjectMetadata | undefined {
+  getStylableObjectMetadata(objectId: number): PointCloudObjectMetadata<PointCloudDataType> | undefined {
     return this._objectIdToAnnotationsMap.get(objectId);
   }
 
@@ -237,7 +259,7 @@ export class PointCloudNode extends Group {
     this._needsRedraw = true;
   }
 
-  assignStyledPointCloudObjectCollection(styledCollection: StyledPointCloudObjectCollection): void {
+  assignStyledPointCloudObjectCollection(styledCollection: StyledPointCloudVolumeCollection): void {
     this._octree.material.objectAppearanceTexture.assignStyledObjectSet(styledCollection);
     this._needsRedraw = true;
   }
@@ -251,7 +273,9 @@ export class PointCloudNode extends Group {
   }
 }
 
-function createObjectIdToAnnotationsMap(annotations: PointCloudObject[]): Map<number, PointCloudObject> {
+function createObjectIdToAnnotationsMap(
+  annotations: PointCloudObject<PointCloudDataType>[]
+): Map<number, PointCloudObject<PointCloudDataType>> {
   const map = new Map();
   for (const annotation of annotations) {
     map.set(annotation.stylableObject.objectId, annotation);

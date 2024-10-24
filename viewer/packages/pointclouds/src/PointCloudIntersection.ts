@@ -4,6 +4,7 @@
 import { AnnotationsAssetRef } from '@cognite/sdk';
 import { CognitePointCloudModel } from './CognitePointCloudModel';
 import type { Vector3 } from 'three';
+import { PointCloudVolumeReference } from './types';
 
 export type PointCloudIntersection = {
   /**
@@ -34,4 +35,8 @@ export type PointCloudIntersection = {
    * Reference to the asset associated to the intersected point cloud object, if any.
    */
   assetRef?: AnnotationsAssetRef;
+  /**
+   * Point cloud volume reference associated with the intersected point cloud volume, if any.
+   */
+  volumeRef?: PointCloudVolumeReference;
 };

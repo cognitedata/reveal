@@ -2,6 +2,11 @@
  * Copyright 2021 Cognite AS
  */
 
+import { Object3D, Vector3 } from 'three';
+import { PointCloudNode } from './PointCloudNode';
+import { DMInstanceRef } from '@reveal/data-providers';
+import { AnnotationsAssetRef } from '@cognite/sdk';
+
 /**
  * ASPRS well known point class types.
  * @see {@link http://www.asprs.org/wp-content/uploads/2019/03/LAS_1_4_r14.pdf} (page 30)
@@ -80,4 +85,51 @@ export enum WellKnownAsprsPointClassCodes {
   /*
    * Values up to and including 63 are reserved
    */
+}
+
+/**
+ * @public
+ * CDF Data model instance reference for point cloud volume object with asset.
+ */
+export type PointCloudVolumeReference = {
+  annotationId: number;
+  volumeInstanceRef: DMInstanceRef;
+  assetRef?: AnnotationsAssetRef;
+};
+
+export interface IntersectPointCloudNodeResult {
+  /**
+   * Distance from camera to intersected point.
+   */
+  distance: number;
+  /**
+   * Coordinate of the intersected point.
+   */
+  point: Vector3;
+  /**
+   * Point index in the point cloud of the intersected point.
+   */
+  pointIndex: number;
+  /**
+   * Point cloud node defining what model the point is a part of.
+   */
+  pointCloudNode: PointCloudNode;
+  /**
+   * The geometry object that was intersected.
+   */
+  object: Object3D;
+  /**
+   * @deprecated
+   * annotationId of the clicked object within a pointcloud.
+   */
+  annotationId: number;
+  /**
+   * pointcloud volume reference.
+   */
+  volumeRef?: PointCloudVolumeReference;
+  /**
+   * @deprecated
+   * asset reference of the clicked object in the pointcloud, if any.
+   */
+  assetRef?: AnnotationsAssetRef;
 }
