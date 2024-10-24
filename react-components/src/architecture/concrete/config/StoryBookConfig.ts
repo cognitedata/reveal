@@ -50,7 +50,6 @@ export class StoryBookConfig extends BaseRevealConfig {
 
   public override createMainToolbar(): Array<BaseCommand | undefined> {
     return [
-      new MockSettingsCommand(),
       new ToggleAllModelsVisibleCommand(),
       new ToggleMetricUnitsCommand(),
       new SettingsCommand(),
@@ -59,6 +58,9 @@ export class StoryBookConfig extends BaseRevealConfig {
       new ClipTool(),
       new PointsOfInterestTool<DmsUniqueIdentifier>(),
       undefined,
+      new MockSettingsCommand(),
+      new MockFilterCommand(),
+      undefined,
       new AnnotationsSelectTool(),
       new AnnotationsCreateTool(),
       new AnnotationsShowCommand(),
@@ -66,10 +68,7 @@ export class StoryBookConfig extends BaseRevealConfig {
       undefined,
       new ExampleTool(),
       new SetTerrainVisibleCommand(),
-      new UpdateTerrainCommand(),
-      undefined,
-      new MockSettingsCommand(),
-      new MockFilterCommand()
+      new UpdateTerrainCommand()
     ];
   }
 
