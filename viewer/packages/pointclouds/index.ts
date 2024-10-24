@@ -11,7 +11,7 @@ export { PointCloudManager } from './src/PointCloudManager';
 export { createPointCloudManager } from './src/createPointCloudManager';
 
 export { PointCloudBudget } from './src/PointCloudBudget';
-export { PointCloudIntersection, PointCloudVolumeIntersectionData } from './src/PointCloudIntersection';
+export { PointCloudIntersection } from './src/PointCloudIntersection';
 export { CognitePointCloudModel } from './src/CognitePointCloudModel';
 
 export { PointCloudLoadingStateHandler } from './src/PointCloudLoadingStateHandler';

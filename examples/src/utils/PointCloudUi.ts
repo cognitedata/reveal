@@ -78,7 +78,7 @@ export class PointCloudUi {
 
   applyToAllModels() {
     this._viewer.pointCloudBudget = { numberOfPoints: this._params.budget };
-    const pointCloudModels = this._viewer.models
+    const pointCloudModels = this._viewer.allModels
       .filter(model => model.type === 'pointcloud')
       .map(x => x as CognitePointCloudModel);
     pointCloudModels.forEach(model => {

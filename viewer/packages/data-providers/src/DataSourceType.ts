@@ -1,3 +1,6 @@
+/*!
+ * Copyright 2024 Cognite AS
+ */
 import { AnnotationsAssetRef } from '@cognite/sdk';
 import {
   DMInstanceRef,
@@ -66,7 +69,6 @@ export type DMDataSourceType = {
 
 /**
  * Data source type for local models
- * @internal
  */
 export type LocalDataSourceType = {
   modelIdentifier: LocalModelIdentifierType;
@@ -85,6 +87,9 @@ export type DataSourceType = ClassicDataSourceType | DMDataSourceType;
  */
 export type InternalModelIdentifier = ClassicModelIdentifierType | DMModelIdentifierType | LocalModelIdentifierType;
 
+/**
+ * Alias for internal + external data source types
+ */
 export type InternalDataSourceType = DataSourceType | LocalDataSourceType;
 
 export function isClassicIdentifier(identifier: InternalModelIdentifier): identifier is ClassicModelIdentifierType {

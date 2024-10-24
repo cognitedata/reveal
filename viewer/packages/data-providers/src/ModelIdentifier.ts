@@ -3,7 +3,14 @@
  */
 
 import { assertNever } from '@reveal/utilities';
-import { InternalModelIdentifier, isClassicIdentifier, isDMIdentifier, isLocalIdentifier } from './DataSourceType';
+import {
+  ClassicModelIdentifierType,
+  DMModelIdentifierType,
+  isClassicIdentifier,
+  isDMIdentifier,
+  isLocalIdentifier,
+  LocalModelIdentifierType
+} from './DataSourceType';
 import { CdfModelIdentifier } from './model-identifiers/CdfModelIdentifier';
 import { DMModelIdentifier } from './model-identifiers/DMModelIdentifier';
 import { LocalModelIdentifier } from './model-identifiers/LocalModelIdentifier';
@@ -18,13 +25,18 @@ export interface ModelIdentifier {
   readonly revealInternalId: symbol;
 }
 
-export function createModelIdentifier(identifier: InternalModelIdentifier): ModelIdentifier {
-  if (isClassicIdentifier(identifier)) {
-    return new CdfModelIdentifier(identifier.modelId, identifier.revisionId);
+export function createModelIdentifier(
+  identifier:
+    | ClassicModelIdentifierType
+    | (DMModelIdentifierType & ClassicModelIdentifierType)
+    | LocalModelIdentifierType
+): ModelIdentifier {
+  if (isLocalIdentifier(identifier)) {
+    return new LocalModelIdentifier(identifier.localPath);
   } else if (isDMIdentifier(identifier)) {
     return new DMModelIdentifier(identifier);
-  } else if (isLocalIdentifier(identifier)) {
-    return new LocalModelIdentifier(identifier.localPath);
+  } else if (isClassicIdentifier(identifier)) {
+    return new CdfModelIdentifier(identifier.modelId, identifier.revisionId);
   } else {
     assertNever(identifier);
   }

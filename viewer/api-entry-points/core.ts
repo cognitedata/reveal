@@ -97,7 +97,7 @@ export {
 
 export { CogniteCadModel, BoundingBoxClipper, GeometryFilter, WellKnownUnit } from '../packages/cad-model';
 
-export { CognitePointCloudModel, PointCloudVolumeIntersectionData } from '../packages/pointclouds';
+export { CognitePointCloudModel } from '../packages/pointclouds';
 
 export {
   CompletePointCloudAppearance,

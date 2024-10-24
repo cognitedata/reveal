@@ -5,6 +5,7 @@ import * as THREE from 'three';
 
 import {
   AddModelOptions,
+  AddModelOptionsWithModelRevisionId,
   ClassicAddModelOptions,
   InternalAddModelOptions,
   LocalAddModelOptions
@@ -37,11 +38,16 @@ import { CameraManager } from '@reveal/camera-manager';
 export class RevealManagerHelper {
   private readonly _revealManager: RevealManager;
 
-  addPointCloudModel<T extends InternalDataSourceType>(model: InternalAddModelOptions<T>): Promise<PointCloudNode<T>> {
+  addPointCloudModel<T extends InternalDataSourceType>(
+    model: AddModelOptionsWithModelRevisionId<T>
+  ): Promise<PointCloudNode<T>> {
     if (this._type === 'cdf') {
       return RevealManagerHelper.addCdfPointCloudModel<T>(model, this._revealManager);
     } else {
-      return RevealManagerHelper.addLocalPointCloudModel<T>(model as LocalAddModelOptions, this._revealManager);
+      return RevealManagerHelper.addLocalPointCloudModel<T>(
+        model as LocalAddModelOptions & AddModelOptionsWithModelRevisionId<T>,
+        this._revealManager
+      );
     }
   }
 
@@ -151,7 +157,7 @@ export class RevealManagerHelper {
   }
 
   private static addLocalPointCloudModel<T extends InternalDataSourceType>(
-    model: LocalAddModelOptions,
+    model: LocalAddModelOptions & AddModelOptionsWithModelRevisionId<T>,
     revealManager: RevealManager
   ): Promise<PointCloudNode<T>> {
     if (model.localPath === undefined) {
@@ -162,11 +168,11 @@ export class RevealManagerHelper {
 
   /**
    * Add a CDF hosted point cloud model.
-   * @param model
+   * @param identifier
    * @param revealManager
    */
   private static addCdfPointCloudModel<T extends InternalDataSourceType>(
-    identifier: T['modelIdentifier'],
+    identifier: AddModelOptionsWithModelRevisionId<T>,
     revealManager: RevealManager
   ): Promise<PointCloudNode<T>> {
     return revealManager.addModel<T>('pointcloud', identifier);

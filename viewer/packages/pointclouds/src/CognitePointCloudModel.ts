@@ -10,7 +10,13 @@ import { PointCloudNode } from './PointCloudNode';
 import { PointColorType, PointShape, PointSizeType } from '@reveal/rendering';
 
 import { SupportedModelTypes } from '@reveal/model-base';
-import { ClassicDataSourceType, DataSourceType, PointCloudObjectMetadata } from '@reveal/data-providers';
+import {
+  ClassicDataSourceType,
+  DataSourceType,
+  DMDataSourceType,
+  isDMIdentifier,
+  PointCloudObjectMetadata
+} from '@reveal/data-providers';
 
 import {
   applyDefaultsToPointCloudAppearance,
@@ -48,17 +54,16 @@ export class CognitePointCloudModel<T extends DataSourceType = ClassicDataSource
    * Point cloud node
    * @internal
    */
-  readonly pointCloudNode: PointCloudNode;
+  readonly pointCloudNode: PointCloudNode<T>;
 
   private readonly _styledVolumeCollections: StyledPointCloudVolumeCollection<T>[] = [];
 
   /**
-   * @param modelId
-   * @param revisionId
+   * @param identifier
    * @param pointCloudNode
    * @internal
    */
-  constructor(identifier: T['modelIdentifier'], pointCloudNode: PointCloudNode) {
+  constructor(identifier: T['modelIdentifier'], pointCloudNode: PointCloudNode<T>) {
     if (isClassicIdentifier(identifier)) {
       this.modelId = identifier.modelId;
       this.revisionId = identifier.revisionId;
@@ -334,7 +339,7 @@ export class CognitePointCloudModel<T extends DataSourceType = ClassicDataSource
    * ```
    */
   get stylableObjects(): PointCloudObjectMetadata<T>[] {
-    return Array.from(this.pointCloudNode.stylableObjectAnnotationMetadata);
+    return Array.from(this.pointCloudNode.stylableVolumeMetadata);
   }
 
   /**
@@ -418,8 +423,20 @@ export class CognitePointCloudModel<T extends DataSourceType = ClassicDataSource
    * ```
    */
   traverseStylableObjects(callback: (annotationMetadata: PointCloudObjectMetadata<T>) => void): void {
-    for (const obj of this.pointCloudNode.stylableObjectAnnotationMetadata) {
+    for (const obj of this.pointCloudNode.stylableVolumeMetadata) {
       callback(obj);
     }
   }
+}
+
+export function isDMPointCloudModel(
+  model: CognitePointCloudModel<DataSourceType>
+): model is CognitePointCloudModel<DMDataSourceType> {
+  return isDMIdentifier(model.modelIdentifier);
+}
+
+export function isClassicPointCloudModel(
+  model: CognitePointCloudModel<DataSourceType>
+): model is CognitePointCloudModel<ClassicDataSourceType> {
+  return isClassicIdentifier(model.modelIdentifier);
 }

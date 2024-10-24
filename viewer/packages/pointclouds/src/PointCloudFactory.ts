@@ -18,7 +18,9 @@ import { IPointClassificationsProvider } from './classificationsProviders/IPoint
 
 import { PointCloudMaterialManager } from '@reveal/rendering';
 import { createObjectIdMaps } from './potree-three-loader/utils/createObjectIdMaps';
-import { isLocalIdentifier } from '@reveal/data-providers/src/DataSourceType';
+import { ClassicModelIdentifierType, isLocalIdentifier } from '@reveal/data-providers/src/DataSourceType';
+import { ClassicAddModelOptions } from '@reveal/api';
+import { createModelIdentifier, ModelIdentifier } from '@reveal/data-providers/src/ModelIdentifier';
 
 export class PointCloudFactory {
   private readonly _potreeInstance: Potree;
@@ -47,9 +49,12 @@ export class PointCloudFactory {
 
   async createModel<T extends InternalDataSourceType>(
     identifier: T['modelIdentifier'],
+    modelIdentifier: ModelIdentifier,
     modelMetadata: PointCloudMetadata
   ): Promise<PointCloudNode<T>> {
-    const { modelBaseUrl, modelIdentifier, modelMatrix, cameraConfiguration } = modelMetadata;
+    const { modelBaseUrl, modelMatrix, cameraConfiguration } = modelMetadata;
+
+    console.log('Making volumes identifier from identifier', identifier);
 
     const annotationInfoPromise = isLocalIdentifier(identifier)
       ? Promise.resolve([])
@@ -57,6 +62,7 @@ export class PointCloudFactory {
         ? this._pointCloudDMProvider.getPointCloudObjects(identifier)
         : this._pointCloudObjectProvider.getPointCloudObjects(identifier);
 
+    console.log('DMDM?');
     const classSchemaPromise = this._classificationsProvider.getClassifications(modelMetadata);
 
     const [annotationInfo, classSchema] = await Promise.all([annotationInfoPromise, classSchemaPromise]);

@@ -38,6 +38,7 @@ import { Image360StylingUI } from '../utils/Image360StylingUI';
 import { LoadGltfUi } from '../utils/LoadGltfUi';
 import { createFunnyButton } from '../utils/PageVariationUtils';
 import { getCogniteClient } from '../utils/example-helpers';
+import { isDMIdentifier } from '../../../viewer/dist/packages/data-providers';
 
 (window as any).reveal = reveal;
 
@@ -60,7 +61,7 @@ export function Viewer() {
       Default: DefaultCameraManager;
       Custom: CustomCameraManager;
     };
-    let pointCloudObjectsUi: PointCloudObjectStylingUI;
+    let pointCloudObjectsUi: PointCloudObjectStylingUI<reveal.DataSourceType>;
 
     async function main() {
       const project = urlParams.get('project');
@@ -208,7 +209,7 @@ export function Viewer() {
       initialCadBudgetUi(viewer, gui.addFolder('CAD budget'));
 
       const totalBounds = new THREE.Box3();
-      function handleModelAdded(model: CogniteModel) {
+      function handleModelAdded(model: CogniteModel<reveal.DataSourceType>) {
         const bounds = model.getModelBoundingBox();
         totalBounds.expandByPoint(bounds.min);
         totalBounds.expandByPoint(bounds.max);
@@ -429,9 +430,12 @@ export function Viewer() {
       viewer.on('click', async event => {
         const { offsetX, offsetY } = event;
         const start = performance.now();
-        const intersection = await viewer.getIntersectionFromPixel(offsetX, offsetY);
-        if (intersection !== null) {
+        const intersection = await viewer.getAnyIntersectionFromPixel(new THREE.Vector2(offsetX, offsetY));
+        if (intersection !== undefined) {
           switch (intersection.type) {
+            case 'customObject': {
+              break;
+            }
             case 'cad':
               {
                 const { treeIndex, point } = intersection;
@@ -446,19 +450,27 @@ export function Viewer() {
             case 'pointcloud':
               {
                 const { point, model } = intersection;
+
                 console.log(
                   `Clicked point assigned to the object with annotationId: ${intersection.annotationId} and assetId: ${intersection?.assetRef?.id} at`,
                   point
                 );
-                if (intersection.annotationId !== 0) {
-                  pointCloudObjectsUi.updateSelectedAnnotation(intersection.annotationId);
+                if (intersection.volumeMetadata !== undefined && 'annotationId' in intersection.volumeMetadata) {
+                  pointCloudObjectsUi.updateSelectedAnnotation(intersection.volumeMetadata.annotationId);
                   model.removeAllStyledObjectCollections();
-                  const selected = new AnnotationIdPointCloudObjectCollection([intersection.annotationId]);
+                  const selected = new AnnotationIdPointCloudObjectCollection([
+                    intersection.volumeMetadata.annotationId
+                  ]);
                   model.assignStyledObjectCollection(selected, { color: new THREE.Color('red') });
-                } else if (intersection.volumeRef !== undefined) {
+                } else if (
+                  intersection.volumeMetadata !== undefined &&
+                  'volumeInstanceRef' in intersection.volumeMetadata
+                ) {
                   model.removeAllStyledObjectCollections();
-                  const selected = new PointCloudDMVolumeCollection([intersection.volumeRef.volumeInstanceRef]);
-                  model.assignStyledObjectCollection(selected, { color: new THREE.Color('red') });
+                  const selected = new PointCloudDMVolumeCollection([intersection.volumeMetadata.volumeInstanceRef]);
+                  (model as CognitePointCloudModel<reveal.DMDataSourceType>).assignStyledObjectCollection(selected, {
+                    color: new THREE.Color('red')
+                  });
                 } else {
                   const sphere = new THREE.Mesh(
                     new THREE.SphereGeometry(0.1),

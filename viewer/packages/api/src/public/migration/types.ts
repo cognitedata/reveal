@@ -213,7 +213,7 @@ export interface Cognite3DViewerOptions {
 }
 
 /**
- * Model options common to all model types
+ * Model options common to all model types.
  */
 export type CommonModelOptions = {
   /**
@@ -236,17 +236,17 @@ export type LocalAddModelOptions = CommonModelOptions & LocalModelIdentifierType
 
 export type InternalAddModelOptions<T extends InternalDataSourceType> = CommonModelOptions & T['modelIdentifier'];
 
-export type AddModelOptionsWithModelRevisionId<T extends DataSourceType> = AddModelOptions<T> & {
+export type AddModelOptionsWithModelRevisionId<T extends InternalDataSourceType> = InternalAddModelOptions<T> & {
   classicModelRevisionId: ClassicModelIdentifierType;
 };
 
 /**
- * Add model options for models of classic format, identified by modelId and revisionId
+ * Add model options for models of classic format, identified by modelId and revisionId.
  */
 export type ClassicAddModelOptions = AddModelOptions<ClassicDataSourceType>;
 
 /**
- * Add model options for models of DM format, identified by revisionExternalId and revisionSpace
+ * Add model options for models of DM format, identified by revisionExternalId and revisionSpace.
  */
 export type DMAddModelOptions = AddModelOptions<DMDataSourceType>;
 
@@ -319,14 +319,14 @@ export type ResolutionOptions = {
  * Represents the result from {@link Cognite3DViewer.getIntersectionFromPixel}.
  * @module @cognite/reveal
  */
-export type Intersection = CadIntersection | PointCloudIntersection;
+export type Intersection = CadIntersection | PointCloudIntersection<ClassicDataSourceType>;
 
 /**
  * Represents the result from {@link Cognite3DViewer.getAnyIntersectionFromPixel}.
  * @module @cognite/reveal
  * @beta
  */
-export type AnyIntersection = CadIntersection | PointCloudIntersection | CustomObjectIntersection;
+export type AnyIntersection = CadIntersection | PointCloudIntersection<DataSourceType> | CustomObjectIntersection;
 
 /**
  * @module @cognite/reveal

@@ -213,7 +213,7 @@ export class PointCloudNode<T extends InternalDataSourceType = InternalDataSourc
     return out.copy(this._sourceTransform);
   }
 
-  get stylableObjectAnnotationMetadata(): Iterable<PointCloudObjectMetadata<T>> {
+  get stylableVolumeMetadata(): Iterable<PointCloudObjectMetadata<T>> {
     return [...this._objectIdToAnnotationsMap.values()].map(a => {
       const baseObject = {
         boundingBox: a.boundingBox.clone().applyMatrix4(this._octree.matrixWorld),

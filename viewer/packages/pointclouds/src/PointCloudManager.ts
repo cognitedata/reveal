@@ -15,13 +15,14 @@ import { Potree } from './potree-three-loader';
 
 import { asyncScheduler, combineLatest, Observable, scan, Subject, throttleTime } from 'rxjs';
 
-import { ModelIdentifier, InternalDataSourceType } from '@reveal/data-providers';
+import { ModelIdentifier, InternalDataSourceType, CdfModelIdentifier } from '@reveal/data-providers';
 import { MetricsLogger } from '@reveal/metrics';
 import { SupportedModelTypes } from '@reveal/model-base';
 import { PointCloudMaterialManager } from '@reveal/rendering';
 
 import { Mesh } from 'three';
 import { createModelIdentifier } from '@reveal/data-providers/src/ModelIdentifier';
+import { AddModelOptionsWithModelRevisionId } from '@reveal/api';
 
 export class PointCloudManager {
   private readonly _pointCloudMetadataRepository: PointCloudMetadataRepository;
@@ -115,10 +116,16 @@ export class PointCloudManager {
     this.requestRedraw();
   }
 
-  async addModel<T extends InternalDataSourceType>(identifier: T['modelIdentifier']): Promise<PointCloudNode<T>> {
-    const modelIdentifier = createModelIdentifier(identifier);
+  async addModel<T extends InternalDataSourceType>(
+    identifier: AddModelOptionsWithModelRevisionId<T>
+  ): Promise<PointCloudNode<T>> {
+    console.log('Addingadding', identifier);
+    const modelIdentifier = createModelIdentifier({ ...identifier, ...identifier.classicModelRevisionId });
+
+    console.log('Loaddata?');
 
     const metadata = await this._pointCloudMetadataRepository.loadData(modelIdentifier);
+    console.log('LoadData!');
 
     const modelType: SupportedModelTypes = 'pointcloud';
     MetricsLogger.trackLoadModel(
@@ -129,7 +136,7 @@ export class PointCloudManager {
       metadata.formatVersion
     );
 
-    const pointCloudNode = await this._pointCloudFactory.createModel<T>(identifier, metadata);
+    const pointCloudNode = await this._pointCloudFactory.createModel<T>(identifier, modelIdentifier, metadata);
     this._pointCloudNodes.push(pointCloudNode);
 
     this.requestRedraw();

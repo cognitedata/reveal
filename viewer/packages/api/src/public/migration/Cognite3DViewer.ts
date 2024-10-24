@@ -180,6 +180,7 @@ export class Cognite3DViewer {
   private readonly _mouseHandler: InputHandler;
 
   private readonly _models: CogniteModel[] = [];
+  private readonly _allModels: CogniteModel<DataSourceType>[] = [];
 
   private isDisposed = false;
 
@@ -251,6 +252,13 @@ export class Cognite3DViewer {
    */
   public get models(): CogniteModel[] {
     return this._models.slice();
+  }
+
+  /**
+   * get all models
+   */
+  public get allModels(): CogniteModel<DataSourceType>[] {
+    return this._allModels.slice();
   }
 
   /**
@@ -460,7 +468,7 @@ export class Cognite3DViewer {
     }
 
     // Copy list, as this._models will be mutated in below iteration
-    const modelListCopy = [...this._models];
+    const modelListCopy = [...this._allModels];
 
     for (const model of modelListCopy) {
       this.removeModel(model);
@@ -479,7 +487,7 @@ export class Cognite3DViewer {
     this.spinner.dispose();
     this.sessionLogger.dispose();
 
-    this._models.forEach(m => m.dispose());
+    this._allModels.forEach(m => m.dispose());
     this._sceneHandler.dispose();
 
     this._events.disposed.fire();
@@ -782,14 +790,13 @@ export class Cognite3DViewer {
       const { modelId, revisionId } = await getModelAndRevisionId(options, this._cdfSdkClient);
 
       const addCadModelOptions = {
-        ...options,
-        modelId,
-        revisionId
+        ...options
       };
       const cadNode = await this._revealManagerHelper.addCadModel(addCadModelOptions);
 
       const model3d = new CogniteCadModel(modelId, revisionId, cadNode, nodesApiClient);
       await modelLoadSequencer(() => {
+        this._allModels.push(model3d);
         this._models.push(model3d);
         this._sceneHandler.addCadModel(cadNode, cadNode.cadModelIdentifier);
       });
@@ -819,6 +826,7 @@ export class Cognite3DViewer {
   async addPointCloudModel<T extends DataSourceType = ClassicDataSourceType>(
     options: AddModelOptions<T>
   ): Promise<CognitePointCloudModel<T>> {
+    console.log('Adding point cloud model ', options);
     const classicModelRevisionId = await getModelAndRevisionId(options, this._cdfSdkClient);
     const sequencerFunction = this._addModelSequencer.getNextSequencer<void>();
     return this.addPointCloudModelWithSequencer<T>({ ...options, classicModelRevisionId }, sequencerFunction);
@@ -828,6 +836,7 @@ export class Cognite3DViewer {
     options: AddModelOptionsWithModelRevisionId<T>,
     modelLoadSequencer: SequencerFunction<void>
   ): Promise<CognitePointCloudModel<T>> {
+    console.log('Adding point cloud with ', options);
     try {
       if (options.geometryFilter) {
         throw new Error('geometryFilter is not supported for point clouds');
@@ -835,6 +844,8 @@ export class Cognite3DViewer {
 
       const pointCloudNode = await this._revealManagerHelper.addPointCloudModel<T>(options);
       const model = new CognitePointCloudModel<T>(options, pointCloudNode);
+
+      console.log('Identifier = ', options);
 
       await modelLoadSequencer(() => {
         const isCdfModel = (
@@ -844,6 +855,7 @@ export class Cognite3DViewer {
         if (isCdfModel(model)) {
           this._models.push(model);
         }
+        this._allModels.push(model);
 
         this._sceneHandler.addPointCloudModel(pointCloudNode, pointCloudNode.modelIdentifier);
       });
@@ -974,11 +986,12 @@ export class Cognite3DViewer {
    * .
    * @param model
    */
-  removeModel(model: CogniteModel): void {
-    const modelIdx = this._models.indexOf(model);
+  removeModel<T extends DataSourceType>(model: CogniteModel<T>): void {
+    const modelIdx = this._allModels.indexOf(model);
     if (modelIdx === -1) {
       throw new Error('Model is not added to viewer');
     }
+    this._allModels.splice(modelIdx, 1);
     this._models.splice(modelIdx, 1);
 
     switch (model.type) {
@@ -1293,7 +1306,7 @@ export class Cognite3DViewer {
    * is used as a fallback.
    * @param model The model to load camera settings from.
    */
-  loadCameraFromModel(model: CogniteModel): void {
+  loadCameraFromModel(model: CogniteModel<DataSourceType>): void {
     const config = model.getCameraConfiguration();
     if (config) {
       this._activeCameraManager.setCameraState({ position: config.position, target: config.target });
@@ -1321,7 +1334,7 @@ export class Cognite3DViewer {
    * viewer.fitCameraToModel(model, 0);
    * ```
    */
-  fitCameraToModel(model: CogniteModel, duration?: number): void {
+  fitCameraToModel(model: CogniteModel<DataSourceType>, duration?: number): void {
     const boundingBox = model.getModelBoundingBox(new THREE.Box3(), true);
     if (boundingBox.isEmpty()) {
       return;
@@ -1335,7 +1348,7 @@ export class Cognite3DViewer {
    * @param duration The duration of the animation moving the camera. Set this to 0 (zero) to disable animation.
    * @param restrictToMostGeometry If true, attempt to remove junk geometry from the boundingBox to allow setting a good camera position.
    */
-  fitCameraToModels(models?: CogniteModel[], duration?: number, restrictToMostGeometry = false): void {
+  fitCameraToModels(models?: CogniteModel<DataSourceType>[], duration?: number, restrictToMostGeometry = false): void {
     const cogniteModels = models ?? this.models;
     if (cogniteModels.length < 1) {
       return;
@@ -1640,7 +1653,7 @@ export class Cognite3DViewer {
     if (this.isIntersecting360Icon(new THREE.Vector2(offsetX, offsetY))) {
       return null;
     }
-    return this.intersectModels(offsetX, offsetY);
+    return this.intersectModels(offsetX, offsetY, { classicPointCloudOnly: true }) as Promise<Intersection | null>;
   }
 
   /**
@@ -1722,10 +1735,10 @@ export class Cognite3DViewer {
   /** @private */
   private getModels(type: 'cad'): CogniteCadModel[];
   /** @private */
-  private getModels(type: 'pointcloud'): CognitePointCloudModel[];
+  private getModels(type: 'pointcloud'): CognitePointCloudModel<DataSourceType>[];
   /** @private */
-  private getModels(type: SupportedModelTypes): CogniteModel[] {
-    return this._models.filter(x => x.type === type);
+  private getModels(type: SupportedModelTypes): CogniteModel<DataSourceType>[] {
+    return this._allModels.filter(x => x.type === type);
   }
 
   /**
@@ -1794,8 +1807,8 @@ export class Cognite3DViewer {
   private async intersectModels(
     offsetX: number,
     offsetY: number,
-    options?: { asyncCADIntersection?: boolean }
-  ): Promise<null | Intersection> {
+    options?: { asyncCADIntersection?: boolean; classicPointCloudOnly?: boolean }
+  ): Promise<null | AnyIntersection> {
     const normalizedCoords = getNormalizedPixelCoordinates(this.renderer.domElement, offsetX, offsetY);
     const input: IntersectInput = {
       normalizedCoords,
@@ -1805,7 +1818,7 @@ export class Cognite3DViewer {
       domElement: this.renderer.domElement
     };
 
-    const intersections: Intersection[] = [];
+    const intersections: AnyIntersection[] = [];
     {
       const pointCloudModels = this.getModels('pointcloud');
       const pointCloudNodes = pointCloudModels.map(x => x.pointCloudNode);
@@ -1815,20 +1828,24 @@ export class Cognite3DViewer {
         const result = pointCloudResults[0]; // Nearest intersection
         for (const model of pointCloudModels) {
           if (model.pointCloudNode === result.pointCloudNode) {
-            const intersection: PointCloudIntersection = {
+            const isClassicData = isClassicIdentifier(model.modelIdentifier);
+
+            if (!isClassicData && options?.classicPointCloudOnly) {
+              continue;
+            }
+
+            const intersection: PointCloudIntersection<DataSourceType> = {
               type: 'pointcloud',
               model,
               point: result.point,
               pointIndex: result.pointIndex,
               distanceToCamera: result.distance,
-              annotationId:
-                result.volumeMetadata !== undefined && 'annotationId' in result.volumeMetadata
-                  ? result.volumeMetadata.annotationId
-                  : 0,
+              annotationId: result.volumeMetadata.annotationId,
               assetRef: result.volumeMetadata?.assetRef,
               volumeMetadata: result.volumeMetadata
             };
             intersections.push(intersection);
+
             break;
           }
         }

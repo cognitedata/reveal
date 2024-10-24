@@ -6,7 +6,7 @@ import * as THREE from 'three';
 
 import { Subscription, combineLatest, asyncScheduler, Subject } from 'rxjs';
 import { map, observeOn, subscribeOn, tap, auditTime, distinctUntilChanged } from 'rxjs/operators';
-import { PointCloudBudget } from './types';
+import { AddModelOptionsWithModelRevisionId, PointCloudBudget } from './types';
 
 import { GeometryFilter, CadModelSectorLoadStatistics, CadNode } from '@reveal/cad-model';
 import { PointCloudManager, PointCloudNode } from '@reveal/pointclouds';
@@ -224,23 +224,24 @@ export class RevealManager {
   ): Promise<CadNode>;
   public addModel<T extends InternalDataSourceType>(
     type: 'pointcloud',
-    modelIdentifier: T['modelIdentifier']
+    modelIdentifier: AddModelOptionsWithModelRevisionId<T>
   ): Promise<PointCloudNode<T>>;
   public async addModel<T extends InternalDataSourceType>(
     type: SupportedModelTypes,
-    modelIdentifier: T['modelIdentifier'] | ClassicModelIdentifierType,
+    modelIdentifier: AddModelOptionsWithModelRevisionId<T> | ClassicModelIdentifierType | LocalModelIdentifierType,
     options?: AddCadModelOptions
   ): Promise<PointCloudNode<T> | CadNode> {
     switch (type) {
       case 'cad': {
+        console.log('Adding model with identifier', modelIdentifier);
         return this._cadManager.addModel(
-          createModelIdentifier(modelIdentifier),
+          createModelIdentifier(modelIdentifier as ClassicModelIdentifierType | LocalModelIdentifierType),
           (options as AddCadModelOptions).geometryFilter
         );
       }
 
       case 'pointcloud': {
-        return this._pointCloudManager.addModel<T>(modelIdentifier);
+        return this._pointCloudManager.addModel<T>(modelIdentifier as AddModelOptionsWithModelRevisionId<T>);
       }
 
       default:
