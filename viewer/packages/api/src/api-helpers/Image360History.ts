@@ -26,7 +26,7 @@ export class Image360History {
       return undefined;
     }
     this._currentIndex = currentIndex;
-    return this._history[currentIndex];
+    return this.current();
   }
 
   public backward(): Image360Entity | undefined {
@@ -35,7 +35,7 @@ export class Image360History {
       return undefined;
     }
     this._currentIndex = currentIndex;
-    return this._history[currentIndex];
+    return this.current();
   }
 
   public clear(): void {
