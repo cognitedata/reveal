@@ -249,6 +249,7 @@ export class Cognite3DViewer {
 
   /**
    * Gets a list of models currently added to the viewer.
+   * @deprecated Use allModels instead
    */
   public get models(): CogniteModel[] {
     return this._models.slice();
