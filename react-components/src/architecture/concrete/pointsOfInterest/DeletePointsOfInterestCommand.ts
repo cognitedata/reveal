@@ -19,7 +19,7 @@ export class DeletePointsOfInterestCommand<PoIIdType> extends PointsOfInterestCo
     return 'ghost-destructive';
   }
 
-  public override get shortCutKey(): string {
+  protected override get shortCutKey(): string {
     return 'DELETE';
   }
 
