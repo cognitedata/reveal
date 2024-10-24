@@ -1,3 +1,6 @@
+/*!
+ * Copyright 2024 Cognite AS
+ */
 import {
   ClassicDataSourceType,
   DataSourceType,

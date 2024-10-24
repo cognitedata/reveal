@@ -3,27 +3,16 @@
  */
 import * as THREE from 'three';
 
-import {
-  AddModelOptions,
-  AddModelOptionsWithModelRevisionId,
-  ClassicAddModelOptions,
-  DMAddModelOptions,
-  InternalAddModelOptions,
-  LocalAddModelOptions
-} from '../public/migration/types';
+import { AddModelOptionsWithModelRevisionId, LocalAddModelOptions } from '../public/migration/types';
 import { createCdfRevealManager, createLocalRevealManager, createRevealManager } from '../public/createRevealManager';
 import { RevealManager } from '../public/RevealManager';
 import { RevealOptions } from '../public/RevealOptions';
 
 import {
-  CdfModelIdentifier,
   DummyPointCloudStylableObjectProvider,
   DummyPointCloudDMStylableObjectProvider,
   InternalDataSourceType,
-  ClassicDataSourceType,
-  LocalDataSourceType,
-  DataSourceType,
-  createModelIdentifier
+  LocalDataSourceType
 } from '@reveal/data-providers';
 import { DataSource } from '@reveal/data-source';
 import { SceneHandler } from '@reveal/utilities';
