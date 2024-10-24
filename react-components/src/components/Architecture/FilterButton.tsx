@@ -249,7 +249,7 @@ const FilterSelectPanelContent = ({
           {BaseFilterCommand.getAllString(t)}
         </SelectPanel.Item>
       </SelectPanel.Section>
-      <SelectPanel.Body label={label}>
+      <SelectPanel.Body label={label} style={{ overflow: 'visible' }}>
         <SelectPanel.Section>
           {children?.map((child, _index): ReactElement => {
             return <FilterItem key={child.uniqueId} command={child} />;
