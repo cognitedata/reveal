@@ -10,13 +10,7 @@ import { PointCloudNode } from './PointCloudNode';
 import { PointColorType, PointShape, PointSizeType } from '@reveal/rendering';
 
 import { SupportedModelTypes } from '@reveal/model-base';
-import {
-  ClassicDataSourceType,
-  DataSourceType,
-  DMDataSourceType,
-  isDMIdentifier,
-  PointCloudObjectMetadata
-} from '@reveal/data-providers';
+import { ClassicDataSourceType, DataSourceType, PointCloudObjectMetadata } from '@reveal/data-providers';
 
 import {
   applyDefaultsToPointCloudAppearance,
