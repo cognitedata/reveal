@@ -4,7 +4,7 @@
 
 import { createPointCloudModel } from '../../../test-utilities/src/createPointCloudModel';
 import { CognitePointCloudModel } from './CognitePointCloudModel';
-import { AnnotationIdPointCloudObjectCollection } from '@reveal/pointcloud-styling';
+import { AnnotationIdPointCloudObjectCollection, PointCloudDMVolumeCollection } from '@reveal/pointcloud-styling';
 
 import { Color, Matrix4 } from 'three';
 
@@ -15,11 +15,11 @@ describe(CognitePointCloudModel.name, () => {
     model = createPointCloudModel(1, 2);
   });
 
-  test('default CognitePointCloudModel does not contain annotations', () => {
+  test('default CognitePointCloudModel does not contain annotations or core data odel point cloud volume', () => {
     expect(model.stylableObjectCount).toEqual(0);
   });
 
-  test('assigned styled object collection is available in styledCollections', () => {
+  test('assigned styled object collection is available in styledCollections for annotation object', () => {
     const annotationIds = [1, 2, 3];
     const color = new Color(1.0, 0.0, 0.498);
 
@@ -32,17 +32,43 @@ describe(CognitePointCloudModel.name, () => {
     expect([...collections[0].objectCollection.getAnnotationIds()]).toEqual(annotationIds);
   });
 
+  test('assigned styled object collection is available in styledCollections for core data model object', () => {
+    const volumeInstanceRef = [
+      { externalId: '1', space: 'test_space' },
+      { externalId: '2', space: 'test_space' },
+      { externalId: '3', space: 'test_space' }
+    ];
+    const color = new Color(1.0, 0.0, 0.498);
+
+    model.assignStyledObjectCollection(new PointCloudDMVolumeCollection(volumeInstanceRef), { color });
+
+    const collections = model.styledPointCloudVolumeCollections;
+
+    expect(collections).toHaveLength(1);
+    expect(collections[0].style.color).toEqual(color);
+    const expectedRefs = Array.from(
+      (collections[0].objectCollection as PointCloudDMVolumeCollection).getDataModelInstanceRefs()
+    );
+    expect(expectedRefs).toEqual(volumeInstanceRef);
+  });
+
   test('Removing all styled object collection leaves zero collections', () => {
     const annotationIds = [1, 2, 3];
+    const volumeInstanceRef = [
+      { externalId: '1', space: 'test_space' },
+      { externalId: '2', space: 'test_space' },
+      { externalId: '3', space: 'test_space' }
+    ];
     const color = new Color(1.0, 0.0, 0.498);
 
     model.assignStyledObjectCollection(new AnnotationIdPointCloudObjectCollection(annotationIds), { color });
+    model.assignStyledObjectCollection(new PointCloudDMVolumeCollection(volumeInstanceRef), { color });
 
     model.removeAllStyledObjectCollections();
     expect(model.styledCollections).toHaveLength(0);
   });
 
-  test('Unassigning collection removes the right one', () => {
+  test('Unassigning collection removes the right one for annotation Id collection', () => {
     const annotationIds0 = [1, 2, 3];
     const annotationIds1 = [4, 5, 6];
     const color0 = new Color(0.498, 0.0, 1.0);
@@ -60,6 +86,40 @@ describe(CognitePointCloudModel.name, () => {
 
     expect(model.styledCollections).toHaveLength(1);
     expect([...model.styledCollections[0].objectCollection.getAnnotationIds()]).toEqual(annotationIds1);
+  });
+
+  test('Unassigning collection removes the right one for core point cloud volume collection', () => {
+    const volumeInstanceRef1 = [
+      { externalId: '1', space: 'test_space' },
+      { externalId: '2', space: 'test_space' },
+      { externalId: '3', space: 'test_space' }
+    ];
+    const volumeInstanceRef2 = [
+      { externalId: '4', space: 'test_space' },
+      { externalId: '5', space: 'test_space' },
+      { externalId: '6', space: 'test_space' }
+    ];
+
+    const color0 = new Color(0.498, 0.0, 1.0);
+    const color1 = new Color(0.0, 0.498, 1.0);
+
+    const collection0 = new PointCloudDMVolumeCollection(volumeInstanceRef1);
+    const collection1 = new PointCloudDMVolumeCollection(volumeInstanceRef2);
+
+    model.assignStyledObjectCollection(collection0, { color: color0 });
+    model.assignStyledObjectCollection(collection1, { color: color1 });
+
+    expect(model.styledPointCloudVolumeCollections).toHaveLength(2);
+
+    model.unassignStyledObjectCollection(collection0);
+
+    expect(model.styledPointCloudVolumeCollections).toHaveLength(1);
+    const expectedRefs = Array.from(
+      (
+        model.styledPointCloudVolumeCollections[0].objectCollection as PointCloudDMVolumeCollection
+      ).getDataModelInstanceRefs()
+    );
+    expect(expectedRefs).toEqual(volumeInstanceRef2);
   });
 
   test('setModelTransform() changes custom transform, not source transform', () => {

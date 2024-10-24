@@ -2,10 +2,12 @@
  * Copyright 2022 Cognite AS
  */
 
+import { DMInstanceRef } from '@reveal/data-providers';
 import { PointCloudObjectAppearanceTexture } from './PointCloudObjectAppearanceTexture';
 import {
   AnnotationIdPointCloudObjectCollection,
-  StyledPointCloudAnnotationVolumeCollection
+  PointCloudDMVolumeCollection,
+  StyledPointCloudVolumeCollection
 } from '@reveal/pointcloud-styling';
 
 import { Color } from 'three';
@@ -24,7 +26,7 @@ describe(PointCloudObjectAppearanceTexture.name, () => {
     appearanceTexture = new PointCloudObjectAppearanceTexture(textureWidth, textureHeight);
   });
 
-  test('color is correctly set for one object', () => {
+  test('color is correctly set for one object with annotation Id', () => {
     const color = new Color(0.5, 0.0, 1.0);
     const colorBytes = toByteTuple(color);
 
@@ -32,7 +34,7 @@ describe(PointCloudObjectAppearanceTexture.name, () => {
     const objectId = 5;
 
     const objectSet = new AnnotationIdPointCloudObjectCollection([annotationId]);
-    const stylableObjectSet = new StyledPointCloudAnnotationVolumeCollection(objectSet, { color, visible: true });
+    const stylableObjectSet = new StyledPointCloudVolumeCollection(objectSet, { color, visible: true });
 
     const objectsMaps = {
       annotationToObjectIds: new Map<number, number>([[annotationId, objectId]]),
@@ -61,12 +63,49 @@ describe(PointCloudObjectAppearanceTexture.name, () => {
     }
   });
 
-  test('visibility is correctly set for one object', () => {
+  test('color is correctly set for one object with point cloud volume reference', () => {
+    const color = new Color(0.5, 0.0, 1.0);
+    const colorBytes = toByteTuple(color);
+
+    const volumeIntanceRef = { externalId: '123', space: 'space' };
+    const objectId = 5;
+
+    const objectSet = new PointCloudDMVolumeCollection([volumeIntanceRef]);
+    const stylableObjectSet = new StyledPointCloudVolumeCollection(objectSet, { color, visible: true });
+
+    const objectsMaps = {
+      annotationToObjectIds: new Map<DMInstanceRef, number>([[volumeIntanceRef, objectId]]),
+      objectToAnnotationIds: new Map<number, DMInstanceRef>([[objectId, volumeIntanceRef]])
+    };
+
+    appearanceTexture.setObjectsMaps(objectsMaps);
+
+    appearanceTexture.assignStyledObjectSet(stylableObjectSet);
+    appearanceTexture.onBeforeRender();
+
+    const rawTexture = appearanceTexture.objectStyleTexture;
+    const resultRgb = rawTexture.image.data.slice(4 * objectId, 4 * (objectId + 1));
+
+    expect([...resultRgb.values()]).toEqual([...colorBytes, 1]);
+
+    // Check that all other objects are unchanged
+    for (let i = 0; i < rawTexture.image.data.length; i += 4) {
+      // Ignore the modified object
+      if (i >= 4 * objectId && i < 4 * (objectId + 1)) {
+        continue;
+      }
+
+      const data = rawTexture.image.data.slice(i, i + 4);
+      expect([...data.values()]).toStrictEqual([0, 0, 0, 1]);
+    }
+  });
+
+  test('visibility is correctly set for one object with annotation Id', () => {
     const annotationId = 3945873;
     const objectId = 89;
 
     const objectSet = new AnnotationIdPointCloudObjectCollection([annotationId]);
-    const stylableObjectSet = new StyledPointCloudAnnotationVolumeCollection(objectSet, {
+    const stylableObjectSet = new StyledPointCloudVolumeCollection(objectSet, {
       color: new Color('black'),
       visible: false
     });
@@ -74,6 +113,42 @@ describe(PointCloudObjectAppearanceTexture.name, () => {
     const objectsMaps = {
       annotationToObjectIds: new Map<number, number>([[annotationId, objectId]]),
       objectToAnnotationIds: new Map<number, number>([[objectId, annotationId]])
+    };
+
+    appearanceTexture.setObjectsMaps(objectsMaps);
+
+    appearanceTexture.assignStyledObjectSet(stylableObjectSet);
+    appearanceTexture.onBeforeRender();
+
+    const rawTexture = appearanceTexture.objectStyleTexture;
+    const resultRgb = rawTexture.image.data.slice(4 * objectId, 4 * (objectId + 1));
+
+    expect([...resultRgb.values()]).toEqual([0, 0, 0, 0]);
+
+    for (let i = 0; i < rawTexture.image.data.length; i += 4) {
+      // Ignore the modified object
+      if (i >= 4 * objectId && i < 4 * (objectId + 1)) {
+        continue;
+      }
+
+      const data = rawTexture.image.data.slice(i, i + 4);
+      expect([...data.values()]).toStrictEqual([0, 0, 0, 1]);
+    }
+  });
+
+  test('visibility is correctly set for one object with point cloud volume reference', () => {
+    const volumeIntanceRef = { externalId: '123', space: 'space' };
+    const objectId = 89;
+
+    const objectSet = new PointCloudDMVolumeCollection([volumeIntanceRef]);
+    const stylableObjectSet = new StyledPointCloudVolumeCollection(objectSet, {
+      color: new Color('black'),
+      visible: false
+    });
+
+    const objectsMaps = {
+      annotationToObjectIds: new Map<DMInstanceRef, number>([[volumeIntanceRef, objectId]]),
+      objectToAnnotationIds: new Map<number, DMInstanceRef>([[objectId, volumeIntanceRef]])
     };
 
     appearanceTexture.setObjectsMaps(objectsMaps);
