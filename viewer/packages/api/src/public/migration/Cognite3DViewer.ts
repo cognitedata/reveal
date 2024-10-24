@@ -748,9 +748,9 @@ export class Cognite3DViewer {
       switch (type) {
         case 'cad':
           assert(isClassicIdentifier(options));
-          return this.addCadModelWithSequencer({ ...options, classicModelRevisionId: options }, modelLoadSequencer);
+          return this.addCadModelWithSequencer(options, modelLoadSequencer);
         case 'pointcloud':
-          return this.addPointCloudModelWithSequencer<T>(
+          return this.addPointCloudModelWithSequencer(
             { ...options, classicModelRevisionId: { modelId, revisionId } },
             modelLoadSequencer
           );
@@ -776,13 +776,13 @@ export class Cognite3DViewer {
    * });
    * ```
    */
-  addCadModel(options: AddModelOptions<ClassicDataSourceType>): Promise<CogniteCadModel> {
+  addCadModel<T extends DataSourceType>(options: AddModelOptions<T>): Promise<CogniteCadModel> {
     const modelLoaderSequencer = this._addModelSequencer.getNextSequencer<void>();
-    return this.addCadModelWithSequencer({ ...options, classicModelRevisionId: options }, modelLoaderSequencer);
+    return this.addCadModelWithSequencer({ ...options }, modelLoaderSequencer);
   }
 
-  private async addCadModelWithSequencer(
-    options: AddModelOptionsWithModelRevisionId<ClassicDataSourceType>,
+  private async addCadModelWithSequencer<T extends DataSourceType>(
+    options: AddModelOptions<T>,
     modelLoadSequencer: SequencerFunction<void>
   ): Promise<CogniteCadModel> {
     try {
@@ -793,7 +793,10 @@ export class Cognite3DViewer {
       const addCadModelOptions = {
         ...options
       };
-      const cadNode = await this._revealManagerHelper.addCadModel(addCadModelOptions);
+      const cadNode = await this._revealManagerHelper.addCadModel({
+        ...addCadModelOptions,
+        classicModelRevisionId: { modelId, revisionId }
+      });
 
       const model3d = new CogniteCadModel(modelId, revisionId, cadNode, nodesApiClient);
       await modelLoadSequencer(() => {

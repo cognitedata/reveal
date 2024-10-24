@@ -7,6 +7,7 @@ import {
   AddModelOptions,
   AddModelOptionsWithModelRevisionId,
   ClassicAddModelOptions,
+  DMAddModelOptions,
   InternalAddModelOptions,
   LocalAddModelOptions
 } from '../public/migration/types';
@@ -20,7 +21,9 @@ import {
   DummyPointCloudDMStylableObjectProvider,
   InternalDataSourceType,
   ClassicDataSourceType,
-  LocalDataSourceType
+  LocalDataSourceType,
+  DataSourceType,
+  createModelIdentifier
 } from '@reveal/data-providers';
 import { DataSource } from '@reveal/data-source';
 import { SceneHandler } from '@reveal/utilities';
@@ -51,11 +54,14 @@ export class RevealManagerHelper {
     }
   }
 
-  addCadModel(model: InternalAddModelOptions<ClassicDataSourceType | LocalDataSourceType>): Promise<CadNode> {
+  addCadModel<T extends InternalDataSourceType>(model: AddModelOptionsWithModelRevisionId<T>): Promise<CadNode> {
     if (this._type === 'cdf') {
-      return RevealManagerHelper.addCdfCadModel(model as ClassicAddModelOptions, this._revealManager);
+      return RevealManagerHelper.addCdfCadModel(model, this._revealManager);
     } else {
-      return RevealManagerHelper.addLocalCadModel(model as LocalAddModelOptions, this._revealManager);
+      return RevealManagerHelper.addLocalCadModel(
+        model as AddModelOptionsWithModelRevisionId<LocalDataSourceType>,
+        this._revealManager
+      );
     }
   }
 
@@ -139,7 +145,10 @@ export class RevealManagerHelper {
    * @param model
    * @param revealManager
    */
-  private static addLocalCadModel(model: LocalAddModelOptions, revealManager: RevealManager): Promise<CadNode> {
+  private static addLocalCadModel(
+    model: AddModelOptionsWithModelRevisionId<LocalDataSourceType>,
+    revealManager: RevealManager
+  ): Promise<CadNode> {
     return revealManager.addModel('cad', model, { geometryFilter: model.geometryFilter });
   }
 
@@ -148,12 +157,11 @@ export class RevealManagerHelper {
    * @param model
    * @param revealManager
    */
-  private static addCdfCadModel(model: AddModelOptions, revealManager: RevealManager): Promise<CadNode> {
-    if (model.modelId === -1 || model.revisionId === -1) {
-      throw new Error('addCdfCadModel only works with CDF hosted models');
-    }
-    const modelIdentifier = new CdfModelIdentifier(model.modelId, model.revisionId);
-    return revealManager.addModel('cad', modelIdentifier, { geometryFilter: model.geometryFilter });
+  private static addCdfCadModel<T extends InternalDataSourceType>(
+    model: AddModelOptionsWithModelRevisionId<T>,
+    revealManager: RevealManager
+  ): Promise<CadNode> {
+    return revealManager.addModel('cad', model, { geometryFilter: model.geometryFilter });
   }
 
   private static addLocalPointCloudModel<T extends InternalDataSourceType>(

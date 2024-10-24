@@ -217,9 +217,9 @@ export class RevealManager {
     this.resetRedraw();
   }
 
-  public addModel(
+  public addModel<T extends InternalDataSourceType>(
     type: 'cad',
-    modelIdentifier: ClassicModelIdentifierType | LocalModelIdentifierType,
+    modelIdentifier: AddModelOptionsWithModelRevisionId<T>,
     options?: AddCadModelOptions
   ): Promise<CadNode>;
   public addModel<T extends InternalDataSourceType>(
@@ -228,7 +228,7 @@ export class RevealManager {
   ): Promise<PointCloudNode<T>>;
   public async addModel<T extends InternalDataSourceType>(
     type: SupportedModelTypes,
-    modelIdentifier: AddModelOptionsWithModelRevisionId<T> | ClassicModelIdentifierType | LocalModelIdentifierType,
+    modelIdentifier: AddModelOptionsWithModelRevisionId<T>,
     options?: AddCadModelOptions
   ): Promise<PointCloudNode<T> | CadNode> {
     switch (type) {
