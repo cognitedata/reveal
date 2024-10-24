@@ -43,8 +43,10 @@ import { MetricsLogger } from '@reveal/metrics';
 import debounce from 'lodash/debounce';
 import { Image360WithCollection } from '../public/types';
 import { DEFAULT_IMAGE_360_OPACITY } from '@reveal/360-images/src/entity/Image360VisualizationBox';
+import { Image360History } from './Image360History';
 
 export class Image360ApiHelper {
+  private readonly _history = new Image360History();
   private readonly _image360Facade: Image360Facade<Metadata | Image360DataModelIdentifier>;
   private readonly _domElement: HTMLElement;
   private _transitionInProgress: boolean = false;
@@ -77,11 +79,41 @@ export class Image360ApiHelper {
   private _cachedCameraManager: CameraManager | undefined;
 
   private readonly onKeyDown = (event: KeyboardEvent) => {
-    if (event.key !== 'Escape') {
-      return;
+    if (event.key === 'Escape') {
+      this.exit360ImageForEntry(this._interactionState.currentImage360Entered);
+    } else if (event.key === 'PageUp') {
+      const entry = this._history.forward();
+      if (entry !== undefined) {
+        this.enter360ImageInternal(entry);
+      }
+    } else if (event.key === 'PageDown') {
+      const entry = this._history.backward();
+      if (entry !== undefined) {
+        this.enter360ImageInternal(entry);
+      }
     }
-    this.exit360ImageForEntry(this._interactionState.currentImage360Entered);
   };
+
+  public enterLast(): void {
+    const entry = this._history.current();
+    if (entry !== undefined) {
+      this.enter360ImageInternal(entry);
+    }
+  }
+
+  public enterForward(): void {
+    const entry = this._history.forward();
+    if (entry !== undefined) {
+      this.enter360ImageInternal(entry);
+    }
+  }
+
+  public enterBackward(): void {
+    const entry = this._history.backward();
+    if (entry !== undefined) {
+      this.enter360ImageInternal(entry);
+    }
+  }
 
   public readonly onHover = (event: MouseEvent): void => this.setHoverIcon(event.offsetX, event.offsetY);
 
@@ -93,6 +125,7 @@ export class Image360ApiHelper {
     if (entity === undefined) {
       return Promise.resolve(false);
     }
+    this._history.start(entity);
     return this.enter360ImageInternal(entity);
   };
 
@@ -522,17 +555,6 @@ export class Image360ApiHelper {
   private findRevisionIdToEnter(image360Entity: Image360Entity): Image360RevisionEntity {
     const targetDate = this._image360Facade.getCollectionContainingEntity(image360Entity).targetRevisionDate;
     return targetDate ? image360Entity.getRevisionClosestToDate(targetDate) : image360Entity.getMostRecentRevision();
-  }
-
-  private enter360ImageOnIntersect(event: PointerEventData): Promise<boolean> {
-    if (this._transitionInProgress) {
-      return Promise.resolve(false);
-    }
-    const entity = this.intersect360ImageIcons(event.offsetX, event.offsetY);
-    if (entity === undefined) {
-      return Promise.resolve(false);
-    }
-    return this.enter360ImageInternal(entity);
   }
 
   public intersect360ImageIcons(offsetX: number, offsetY: number): Image360Entity | undefined {
