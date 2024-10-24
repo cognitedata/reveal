@@ -50,6 +50,7 @@ export class StoryBookConfig extends BaseRevealConfig {
 
   public override createMainToolbar(): Array<BaseCommand | undefined> {
     return [
+      new MockSettingsCommand(),
       new ToggleAllModelsVisibleCommand(),
       new ToggleMetricUnitsCommand(),
       new SettingsCommand(),
