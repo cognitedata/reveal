@@ -16,7 +16,9 @@ import {
   DefaultCameraManager,
   CogniteModel,
   AnnotationIdPointCloudObjectCollection,
-  PointCloudDMVolumeCollection
+  PointCloudDMVolumeCollection,
+  DataSourceType,
+  isDMPointCloudModel
 } from '@cognite/reveal';
 import { DebugCameraTool, AxisGizmoTool } from '@cognite/reveal/tools';
 import * as reveal from '@cognite/reveal';
@@ -38,7 +40,6 @@ import { Image360StylingUI } from '../utils/Image360StylingUI';
 import { LoadGltfUi } from '../utils/LoadGltfUi';
 import { createFunnyButton } from '../utils/PageVariationUtils';
 import { getCogniteClient } from '../utils/example-helpers';
-import { isDMIdentifier } from '../../../viewer/dist/packages/data-providers';
 
 (window as any).reveal = reveal;
 
@@ -61,7 +62,7 @@ export function Viewer() {
       Default: DefaultCameraManager;
       Custom: CustomCameraManager;
     };
-    let pointCloudObjectsUi: PointCloudObjectStylingUI<reveal.DataSourceType>;
+    let pointCloudObjectsUi: PointCloudObjectStylingUI<DataSourceType>;
 
     async function main() {
       const project = urlParams.get('project');
@@ -209,7 +210,7 @@ export function Viewer() {
       initialCadBudgetUi(viewer, gui.addFolder('CAD budget'));
 
       const totalBounds = new THREE.Box3();
-      function handleModelAdded(model: CogniteModel<reveal.DataSourceType>) {
+      function handleModelAdded(model: CogniteModel<DataSourceType>) {
         const bounds = model.getModelBoundingBox();
         totalBounds.expandByPoint(bounds.min);
         totalBounds.expandByPoint(bounds.max);
@@ -464,11 +465,12 @@ export function Viewer() {
                   model.assignStyledObjectCollection(selected, { color: new THREE.Color('red') });
                 } else if (
                   intersection.volumeMetadata !== undefined &&
-                  'volumeInstanceRef' in intersection.volumeMetadata
+                  'volumeInstanceRef' in intersection.volumeMetadata &&
+                  isDMPointCloudModel(model)
                 ) {
                   model.removeAllStyledObjectCollections();
                   const selected = new PointCloudDMVolumeCollection([intersection.volumeMetadata.volumeInstanceRef]);
-                  (model as CognitePointCloudModel<reveal.DMDataSourceType>).assignStyledObjectCollection(selected, {
+                  model.assignStyledObjectCollection(selected, {
                     color: new THREE.Color('red')
                   });
                 } else {

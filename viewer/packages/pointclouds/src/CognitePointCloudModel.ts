@@ -428,15 +428,3 @@ export class CognitePointCloudModel<T extends DataSourceType = ClassicDataSource
     }
   }
 }
-
-export function isDMPointCloudModel(
-  model: CognitePointCloudModel<DataSourceType>
-): model is CognitePointCloudModel<DMDataSourceType> {
-  return isDMIdentifier(model.modelIdentifier);
-}
-
-export function isClassicPointCloudModel(
-  model: CognitePointCloudModel<DataSourceType>
-): model is CognitePointCloudModel<ClassicDataSourceType> {
-  return isClassicIdentifier(model.modelIdentifier);
-}

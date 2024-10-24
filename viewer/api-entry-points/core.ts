@@ -97,7 +97,7 @@ export {
 
 export { CogniteCadModel, BoundingBoxClipper, GeometryFilter, WellKnownUnit } from '../packages/cad-model';
 
-export { CognitePointCloudModel } from '../packages/pointclouds';
+export { CognitePointCloudModel, isDMPointCloudModel, isClassicPointCloudModel } from '../packages/pointclouds';
 
 export {
   CompletePointCloudAppearance,

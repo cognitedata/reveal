@@ -13,6 +13,7 @@ export { createPointCloudManager } from './src/createPointCloudManager';
 export { PointCloudBudget } from './src/PointCloudBudget';
 export { PointCloudIntersection } from './src/PointCloudIntersection';
 export { CognitePointCloudModel } from './src/CognitePointCloudModel';
+export { isDMPointCloudModel, isClassicPointCloudModel } from './src/typeGuards';
 
 export { PointCloudLoadingStateHandler } from './src/PointCloudLoadingStateHandler';
 
