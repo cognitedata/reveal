@@ -1675,7 +1675,7 @@ export class Cognite3DViewer {
     if (this._image360ApiHelper === undefined) {
       return false;
     }
-    return this._image360ApiHelper.enter360ImageHandler({ offsetX: event.offsetX, offsetY: event.offsetY });
+    return this._image360ApiHelper.onClick({ offsetX: event.offsetX, offsetY: event.offsetY });
   }
 
   /**
@@ -1688,7 +1688,7 @@ export class Cognite3DViewer {
     if (this._image360ApiHelper === undefined) {
       return false;
     }
-    this._image360ApiHelper.setHoverIconEventHandler(event);
+    this._image360ApiHelper.onHover(event);
     return true;
   }
 
