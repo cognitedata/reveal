@@ -91,8 +91,8 @@ export {
   DMDataSourceType,
   ClassicModelIdentifierType,
   DMModelIdentifierType,
-  isDMPointCloudDataType,
-  isClassicPointCloudDataType,
+  isDMPointCloudVolume,
+  isClassicPointCloudVolume,
   CommonModelOptions
 } from '../packages/data-providers';
 

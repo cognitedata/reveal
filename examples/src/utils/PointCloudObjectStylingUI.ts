@@ -10,8 +10,8 @@ import {
   PointCloudAppearance,
   DefaultPointCloudAppearance,
   PointCloudDMVolumeCollection,
-  isDMPointCloudDataType,
-  isClassicPointCloudDataType,
+  isDMPointCloudVolume,
+  isClassicPointCloudVolume,
   DataSourceType
 } from '@cognite/reveal';
 import { AnnotationModel, AnnotationsBoundingVolume, AnnotationType, CogniteClient } from '@cognite/sdk';
@@ -86,13 +86,13 @@ export class PointCloudObjectStylingUI<T extends DataSourceType> {
             Math.floor(Math.random() * 255),
             Math.floor(Math.random() * 255)
           );
-          if (isClassicPointCloudDataType(object)) {
+          if (isClassicPointCloudVolume(object)) {
             const annotationId = object.annotationId;
             const stylableObject = new AnnotationIdPointCloudObjectCollection([annotationId]);
             model.assignStyledObjectCollection(stylableObject, {
               color: objectStyle
             });
-          } else if (isDMPointCloudDataType(object)) {
+          } else if (isDMPointCloudVolume(object)) {
             const stylableObject = new PointCloudDMVolumeCollection([object.volumeInstanceRef]);
             model.assignStyledObjectCollection(stylableObject, {
               color: objectStyle
@@ -169,12 +169,6 @@ export class PointCloudObjectStylingUI<T extends DataSourceType> {
       this._model.traverseStylableObjects(object => {
         const box = new THREE.Box3Helper(object.boundingBox);
         this._boundingBoxGroup!.add(box);
-      });
-      this._model.stylableObjects.forEach(object => {
-        if (isClassicPointCloudDataType(object)) {
-          const box = new THREE.Box3Helper(object.boundingBox);
-          this._boundingBoxGroup!.add(box);
-        }
       });
       this._viewer.addObject3D(this._boundingBoxGroup);
     } else {

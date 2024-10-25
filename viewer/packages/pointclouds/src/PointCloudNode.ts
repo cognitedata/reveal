@@ -11,8 +11,8 @@ import { PointColorType, PointShape, PointSizeType } from '@reveal/rendering';
 
 import {
   DataSourceType,
-  isClassicPointCloudDataTypeObject,
-  isDMPointCloudDataTypeObject,
+  isClassicPointCloudVolumeObject,
+  isDMPointCloudVolumeObject,
   PointCloudObject,
   PointCloudObjectMetadata
 } from '@reveal/data-providers';
@@ -220,13 +220,13 @@ export class PointCloudNode<T extends DataSourceType = DataSourceType> extends G
         stylableObject: a.stylableObject
       };
 
-      if (isClassicPointCloudDataTypeObject(a)) {
+      if (isClassicPointCloudVolumeObject(a)) {
         return {
           ...baseObject,
           annotationId: a.annotationId,
           assetRef: a.assetRef
         };
-      } else if (isDMPointCloudDataTypeObject(a)) {
+      } else if (isDMPointCloudVolumeObject(a)) {
         return {
           ...baseObject,
           volumeInstanceRef: a.volumeInstanceRef,

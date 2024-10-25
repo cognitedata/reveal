@@ -4,8 +4,8 @@
 
 import {
   DMInstanceRef,
-  isClassicPointCloudDataTypeObject,
-  isDMPointCloudDataTypeObject,
+  isClassicPointCloudVolumeObject,
+  isDMPointCloudVolumeObject,
   PointCloudObject,
   DataSourceType
 } from '@reveal/data-providers';
@@ -17,10 +17,10 @@ export function createObjectIdMaps<T extends DataSourceType>(objects: PointCloud
 
   objects.forEach(annotation => {
     const objectId = annotation.stylableObject.objectId;
-    if (isClassicPointCloudDataTypeObject(annotation)) {
+    if (isClassicPointCloudVolumeObject(annotation)) {
       annotationToObjectIds.set(annotation.annotationId, objectId);
       objectToAnnotationIds.set(objectId, annotation.annotationId);
-    } else if (isDMPointCloudDataTypeObject(annotation)) {
+    } else if (isDMPointCloudVolumeObject(annotation)) {
       annotationToObjectIds.set(annotation.volumeInstanceRef, objectId);
       objectToAnnotationIds.set(objectId, annotation.volumeInstanceRef);
     }

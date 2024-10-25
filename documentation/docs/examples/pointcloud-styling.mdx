@@ -74,7 +74,7 @@ To color all stylable objects blue for point cloud volume references:
 const pointCloudVolumeRefs = [];
 
 model.stylableObjects.forEach(objectMetadata => {
-  if (isDMPointCloudDataType(objectMetadata))
+  if (isDMPointCloudVolume(objectMetadata))
     pointCloudVolumeRefs.push(objectMetadata.volumeInstanceRef);
 });
 
@@ -107,7 +107,7 @@ For Cognite core data model point cloud model
 const pointCloudVolumeRefs = [];
 
 model.stylableObjects.forEach(objectMetadata => {
-  if (isDMPointCloudDataType(objectMetadata))
+  if (isDMPointCloudVolume(objectMetadata))
     pointCloudVolumeRefs.push(objectMetadata.volumeInstanceRef);
 });
 

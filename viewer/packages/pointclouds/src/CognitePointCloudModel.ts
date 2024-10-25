@@ -327,7 +327,7 @@ export class CognitePointCloudModel<T extends DataSourceType = ClassicDataSource
    * model.stylableObjects.forEach(pointCloudMetadata => console.log(pointCloudMetadata.annotationId));
    * // or
    * model.stylableObjects.forEach(pointCloudMetadata => {
-   *   if (isDMPointCloudDataType(pointCloudMetadata))
+   *   if (isDMPointCloudVolume(pointCloudMetadata))
    *      console.log(pointCloudMetadata.volumeInstanceRef);
    *   });
    * ```

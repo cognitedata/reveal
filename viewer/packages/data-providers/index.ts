@@ -47,12 +47,12 @@ export {
   ImageAssetLinkAnnotationInfo
 } from './src/types';
 
-export { fetchDMModelIdFromRevisionId } from './src/utilities/fetchDMModelIdFromRevisionId';
+export { fetchDMModelIdFromRevisionId } from './src/requests/fetchDMModelIdFromRevisionId';
 export {
-  isDMPointCloudDataTypeObject,
-  isClassicPointCloudDataTypeObject,
-  isDMPointCloudDataType,
-  isClassicPointCloudDataType
+  isDMPointCloudVolumeObject,
+  isClassicPointCloudVolumeObject,
+  isDMPointCloudVolume,
+  isClassicPointCloudVolume
 } from './src/utilities/utils';
 
 export {

@@ -12,7 +12,9 @@ import {
   DummyPointCloudDMStylableObjectProvider,
   InternalDataSourceType,
   LocalDataSourceType,
-  DataSourceType
+  DataSourceType,
+  AddModelOptionsWithModelRevisionId,
+  LocalAddModelOptions
 } from '@reveal/data-providers';
 import { DataSource } from '@reveal/data-source';
 import { SceneHandler } from '@reveal/utilities';
@@ -21,10 +23,6 @@ import { CadNode } from '@reveal/cad-model';
 import { CogniteClient } from '@cognite/sdk';
 import { PointCloudNode, LocalPointClassificationsProvider } from '@reveal/pointclouds';
 import { CameraManager } from '@reveal/camera-manager';
-import {
-  AddModelOptionsWithModelRevisionId,
-  LocalAddModelOptions
-} from '../../../data-providers/src/utilities/internalAddModelOptions';
 
 /**
  * Helper for {@link RevealManager} for creating a uniform interface for

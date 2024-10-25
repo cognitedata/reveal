@@ -136,17 +136,16 @@ export class ModelUi {
     if ((modelIdStr && revisionIdStr) || (revisionSpace && revisionExternalIdStr)) {
       const modelId = modelIdStr !== null ? Number.parseInt(modelIdStr, 10) : undefined;
       const revisionId = revisionIdStr !== null ? Number.parseInt(revisionIdStr, 10) : undefined;
-      const revisionExternalId = revisionExternalIdStr ? revisionExternalIdStr : undefined;
       if (modelId !== undefined && revisionId !== undefined) {
         await this.addModel({
           modelId,
           revisionId,
           geometryFilter: createGeometryFilterFromState(this._guiState.geometryFilter)
         });
-      } else if (revisionExternalId !== undefined && revisionSpace !== null) {
+      } else if (revisionExternalIdStr !== null && revisionSpace !== null) {
         await this.addModel({
           geometryFilter: createGeometryFilterFromState(this._guiState.geometryFilter),
-          revisionExternalId: revisionExternalId,
+          revisionExternalId: revisionExternalIdStr,
           revisionSpace: revisionSpace
         });
       }

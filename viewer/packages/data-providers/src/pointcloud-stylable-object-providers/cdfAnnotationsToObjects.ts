@@ -4,7 +4,7 @@
 
 import { CompositeShape } from '@reveal/utilities';
 
-import { PointCloudObject, CdfPointCloudObjectAnnotation } from './types';
+import { PointCloudObject, CdfPointCloudObjectAnnotation, isVolumeDMReference } from './types';
 import { StylableObject } from './StylableObject';
 import { DataSourceType } from '../DataSourceType';
 
@@ -19,11 +19,10 @@ function cdfAnnotationsToPointCloudObjects<T extends DataSourceType>(
       shape: compShape,
       objectId: index + 1
     };
-    const annotationId = cdfAnnotation.annotationId;
-    const volumeMetadata =
-      annotationId === 0
-        ? { volumeInstanceRef: cdfAnnotation.volumeInstanceRef, assetRef: cdfAnnotation.asset }
-        : { annotationId, assetRef: cdfAnnotation.asset };
+
+    const volumeMetadata = isVolumeDMReference(cdfAnnotation.volumeMetadata)
+      ? { volumeInstanceRef: cdfAnnotation.volumeMetadata.instanceRef, assetRef: cdfAnnotation.volumeMetadata.asset }
+      : { annotationId: cdfAnnotation.volumeMetadata.annotationId, assetRef: cdfAnnotation.volumeMetadata.asset };
 
     const pointCloudObject = {
       boundingBox: stylableObject.shape.createBoundingBox(),

@@ -73,7 +73,7 @@ import {
   CdfModelIdentifier,
   File3dFormat,
   Image360DataModelIdentifier,
-  isClassicPointCloudDataType,
+  isClassicPointCloudVolume,
   LocalModelIdentifier
 } from '@reveal/data-providers';
 import { DataSource, CdfDataSource, LocalDataSource } from '@reveal/data-source';
@@ -769,7 +769,7 @@ export class Cognite3DViewer<DataSourceT extends DataSourceType = ClassicDataSou
    */
   addCadModel<T extends DataSourceT>(options: AddModelOptions<T>): Promise<CogniteCadModel> {
     const modelLoaderSequencer = this._addModelSequencer.getNextSequencer<void>();
-    return this.addCadModelWithSequencer({ ...options }, modelLoaderSequencer);
+    return this.addCadModelWithSequencer(options, modelLoaderSequencer);
   }
 
   private async addCadModelWithSequencer<T extends DataSourceType>(
@@ -781,11 +781,8 @@ export class Cognite3DViewer<DataSourceT extends DataSourceType = ClassicDataSou
 
       const { modelId, revisionId } = await getModelAndRevisionId(options, this._cdfSdkClient);
 
-      const addCadModelOptions = {
-        ...options
-      };
       const cadNode = await this._revealManagerHelper.addCadModel({
-        ...addCadModelOptions,
+        ...options,
         classicModelRevisionId: { modelId, revisionId }
       });
 
@@ -881,7 +878,7 @@ export class Cognite3DViewer<DataSourceT extends DataSourceType = ClassicDataSou
     sourceParameters: { [key: string]: string } | Image360DataModelIdentifier,
     add360ImageOptions?: AddImage360Options
   ): Promise<Image360Collection<DataSourceT>> {
-    if (datasource !== 'events' && datasource !== 'datamodels' && datasource !== 'coredm') {
+    if (datasource !== 'events' && datasource !== 'datamodels') {
       throw new Error(`${datasource} is an unknown datasource from 360 images`);
     }
 
@@ -1821,7 +1818,7 @@ export class Cognite3DViewer<DataSourceT extends DataSourceType = ClassicDataSou
   private async intersectModels(
     offsetX: number,
     offsetY: number,
-    options?: { asyncCADIntersection?: boolean; classicPointCloudOnly?: boolean }
+    options?: { asyncCADIntersection?: boolean }
   ): Promise<null | Intersection<DataSourceT>> {
     const normalizedCoords = getNormalizedPixelCoordinates(this.renderer.domElement, offsetX, offsetY);
     const input: IntersectInput = {
@@ -1842,14 +1839,8 @@ export class Cognite3DViewer<DataSourceT extends DataSourceType = ClassicDataSou
         const result = pointCloudResults[0]; // Nearest intersection
         for (const model of pointCloudModels) {
           if (model.pointCloudNode === result.pointCloudNode) {
-            const isClassicData = isClassicIdentifier(model.modelIdentifier);
-
-            if (!isClassicData && options?.classicPointCloudOnly) {
-              continue;
-            }
-
             const annotationId =
-              result.volumeMetadata !== undefined && isClassicPointCloudDataType(result.volumeMetadata)
+              result.volumeMetadata !== undefined && isClassicPointCloudVolume(result.volumeMetadata)
                 ? result.volumeMetadata.annotationId
                 : 0;
 

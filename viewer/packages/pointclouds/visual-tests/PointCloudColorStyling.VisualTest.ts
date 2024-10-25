@@ -35,7 +35,7 @@ class CustomAnnotationProvider implements PointCloudStylableObjectProvider<Class
   async getPointCloudObjects(_modelIdentifier: ClassicModelIdentifierType): Promise<PointCloudObject[]> {
     const cdfAnnotations = [
       {
-        annotationId: 123,
+        volumeMetadata: { annotationId: 123 },
         region: [new Cylinder(new THREE.Vector3(-0.03, 0.1, -1000), new THREE.Vector3(-0.03, 0.1, 1000), 0.03478)]
       }
     ];
@@ -50,8 +50,7 @@ class CustomDMProvider implements PointCloudStylableObjectProvider<DMDataSourceT
   ): Promise<PointCloudObject<DMPointCloudDataType>[]> {
     const cdfAnnotations = [
       {
-        annotationId: 0,
-        volumeInstanceRef: { externalId: '123', space: 'space' },
+        volumeMetadata: { instanceRef: { externalId: '123', space: 'space' } },
         region: [new Cylinder(new THREE.Vector3(-0.03, 0.1, -1000), new THREE.Vector3(-0.03, 0.1, 1000), 0.03478)]
       }
     ];

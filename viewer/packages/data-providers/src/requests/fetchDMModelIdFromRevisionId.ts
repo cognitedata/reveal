@@ -4,8 +4,8 @@
 
 import { CogniteClient } from '@cognite/sdk';
 import { DataModelsSdk } from '../DataModelsSdk';
-import { COGNITE_3D_REVISION_SOURCE } from './constants';
-import { getNodeExternalIdEqualsFilter, getNodeSpaceEqualsFilter } from './utils';
+import { COGNITE_3D_REVISION_SOURCE } from '../utilities/constants';
+import { getNodeExternalIdEqualsFilter, getNodeSpaceEqualsFilter } from '../utilities/utils';
 
 type Cognite3DRevisionProperties = {
   model3D: { externalId: string; space: string };

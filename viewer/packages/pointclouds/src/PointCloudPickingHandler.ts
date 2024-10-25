@@ -12,8 +12,8 @@ import { isPointVisibleByPlanes } from '@reveal/utilities';
 import {
   ClassicDataSourceType,
   DMDataSourceType,
-  isClassicPointCloudDataType,
-  isDMPointCloudDataType,
+  isClassicPointCloudVolume,
+  isDMPointCloudVolume,
   DataSourceType
 } from '@reveal/data-providers';
 import { IntersectPointCloudNodeResult } from './types';
@@ -76,7 +76,7 @@ export class PointCloudPickingHandler {
         };
 
         if (pointCloudObject !== undefined) {
-          if (isClassicPointCloudDataType(pointCloudObject)) {
+          if (isClassicPointCloudVolume(pointCloudObject)) {
             const result: IntersectPointCloudNodeResult<ClassicDataSourceType> = {
               ...baseObject,
               pointCloudNode: pointCloudNode as PointCloudNode<ClassicDataSourceType>,
@@ -87,7 +87,7 @@ export class PointCloudPickingHandler {
             };
 
             return result;
-          } else if (isDMPointCloudDataType(pointCloudObject)) {
+          } else if (isDMPointCloudVolume(pointCloudObject)) {
             const result: IntersectPointCloudNodeResult<DMDataSourceType> = {
               ...baseObject,
               pointCloudNode: pointCloudNode as PointCloudNode<DMDataSourceType>,

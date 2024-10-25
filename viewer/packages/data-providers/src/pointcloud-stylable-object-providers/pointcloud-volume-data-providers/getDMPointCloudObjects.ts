@@ -2,17 +2,17 @@
  * Copyright 2024 Cognite AS
  */
 import { Matrix4, Vector3 } from 'three';
-import { DataModelsSdk } from '../DataModelsSdk';
+import { DataModelsSdk } from '../../DataModelsSdk';
 import {
   CdfDMPointCloudVolumeQuery,
   getDMPointCloudVolumeCollectionQuery
-} from '../pointcloud-stylable-object-providers/pointcloud-volume-data-providers/getDMPointCloudVolumeCollectionQuery';
-import { PointCloudVolumeObject3DProperties } from '../pointcloud-stylable-object-providers/pointcloud-volume-data-providers/types';
-import { CdfPointCloudObjectAnnotation } from '../pointcloud-stylable-object-providers/types';
-import { QueryNextCursors } from '../types';
+} from './getDMPointCloudVolumeCollectionQuery';
+import { PointCloudVolumeObject3DProperties } from './types';
+import { CdfPointCloudObjectAnnotation } from '../types';
+import { QueryNextCursors } from '../../types';
 
 import { IShape, Box, Cylinder } from '@reveal/utilities';
-import { DMModelIdentifierType } from '../DataSourceType';
+import { DMModelIdentifierType } from '../../DataSourceType';
 
 type QueryResult = Awaited<ReturnType<typeof DataModelsSdk.prototype.queryNodesAndEdges<CdfDMPointCloudVolumeQuery>>>;
 
@@ -77,10 +77,11 @@ export async function getDMPointCloudObjects(
     );
 
     return {
-      annotationId: 0,
-      volumeInstanceRef: { externalId: volume.externalId, space: volume.space },
-      region: [region],
-      asset: { externalId: result.assets[index].externalId, space: result.assets[index].space }
+      volumeMetadata: {
+        instanceRef: { externalId: volume.externalId, space: volume.space },
+        asset: { externalId: result.assets[index].externalId, space: result.assets[index].space }
+      },
+      region: [region]
     };
   });
   return annotations;

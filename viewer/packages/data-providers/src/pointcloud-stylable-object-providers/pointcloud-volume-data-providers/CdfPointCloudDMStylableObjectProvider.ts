@@ -5,7 +5,7 @@
 import { CogniteClient } from '@cognite/sdk';
 import { DataModelsSdk } from '../../DataModelsSdk';
 import { PointCloudStylableObjectProvider } from '../../PointCloudStylableObjectProvider';
-import { getDMPointCloudObjects } from '../../utilities/getDMPointCloudObjects';
+import { getDMPointCloudObjects } from './getDMPointCloudObjects';
 import { cdfAnnotationsToObjectInfo } from '../cdfAnnotationsToObjects';
 import { PointCloudObject } from '../types';
 import { DMDataSourceType, DMModelIdentifierType } from '../../DataSourceType';

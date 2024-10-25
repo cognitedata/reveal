@@ -1400,19 +1400,19 @@ export class InvertedNodeCollection extends NodeCollection {
 }
 
 // @public
-export function isClassicPointCloudDataType(pointCloudMetadata: DataSourceType['pointCloudVolumeMetadata']): pointCloudMetadata is ClassicDataSourceType['pointCloudVolumeMetadata'];
-
-// @public (undocumented)
 export function isClassicPointCloudModel(model: CognitePointCloudModel<DataSourceType>): model is CognitePointCloudModel<ClassicDataSourceType>;
+
+// @public
+export function isClassicPointCloudVolume(pointCloudMetadata: DataSourceType['pointCloudVolumeMetadata']): pointCloudMetadata is ClassicDataSourceType['pointCloudVolumeMetadata'];
 
 // @public
 export function isDefaultCameraManager(cameraManager: CameraManager): cameraManager is DefaultCameraManager;
 
 // @public
-export function isDMPointCloudDataType(pointCloudMetadata: DataSourceType['pointCloudVolumeMetadata']): pointCloudMetadata is DMDataSourceType['pointCloudVolumeMetadata'];
-
-// @public (undocumented)
 export function isDMPointCloudModel(model: CognitePointCloudModel<DataSourceType>): model is CognitePointCloudModel<DMDataSourceType>;
+
+// @public
+export function isDMPointCloudVolume(pointCloudMetadata: DataSourceType['pointCloudVolumeMetadata']): pointCloudMetadata is DMDataSourceType['pointCloudVolumeMetadata'];
 
 // @beta
 export function isFlexibleCameraManager(manager: CameraManager): manager is IFlexibleCameraManager;

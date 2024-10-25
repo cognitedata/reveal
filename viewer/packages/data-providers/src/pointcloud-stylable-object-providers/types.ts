@@ -15,12 +15,29 @@ import { ClassicDataSourceType, DataSourceType } from '../DataSourceType';
  */
 export type DMInstanceRef = DirectRelationReference;
 
-export type CdfPointCloudObjectAnnotation = {
+type VolumeAnnotation = {
   annotationId: number;
-  volumeInstanceRef?: DMInstanceRef;
-  asset?: AnnotationsAssetRef | DMInstanceRef;
+  asset?: AnnotationsAssetRef;
+};
+type VolumeDMReference = {
+  instanceRef: DMInstanceRef;
+  asset?: DMInstanceRef;
+};
+
+export type VolumeMetadata = VolumeAnnotation | VolumeDMReference;
+
+export type CdfPointCloudObjectAnnotation = {
+  volumeMetadata: VolumeMetadata;
   region: IShape[];
 };
+
+export function isVolumeAnnotation(volumeMetadata: VolumeMetadata): volumeMetadata is VolumeAnnotation {
+  return (volumeMetadata as VolumeAnnotation).annotationId !== undefined;
+}
+
+export function isVolumeDMReference(volumeMetadata: VolumeMetadata): volumeMetadata is VolumeDMReference {
+  return (volumeMetadata as VolumeDMReference).instanceRef !== undefined;
+}
 
 /**
  * @public

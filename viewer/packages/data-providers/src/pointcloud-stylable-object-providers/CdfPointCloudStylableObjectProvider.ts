@@ -66,8 +66,10 @@ export class CdfPointCloudStylableObjectProvider implements PointCloudStylableOb
       });
 
       return {
-        annotationId: annotation.id,
-        asset: annotation.data.assetRef,
+        volumeMetadata: {
+          annotationId: annotation.id,
+          asset: annotation.data.assetRef
+        },
         region
       };
     });
