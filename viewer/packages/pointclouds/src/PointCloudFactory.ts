@@ -54,7 +54,7 @@ export class PointCloudFactory {
     const { modelBaseUrl, modelMatrix, cameraConfiguration } = modelMetadata;
 
     const annotationInfoPromise = isLocalIdentifier(identifier)
-      ? Promise.resolve([])
+      ? this._pointCloudObjectProvider.getPointCloudObjects({ modelId: -1, revisionId: -1 })
       : isDMIdentifier(identifier)
         ? this._pointCloudDMProvider.getPointCloudObjects(identifier)
         : this._pointCloudObjectProvider.getPointCloudObjects(identifier);
