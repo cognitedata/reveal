@@ -58,7 +58,7 @@ export class AnnotationIdPointCloudObjectCollection extends PointCloudAnnotation
 }
 
 // @beta
-export type AnyIntersection<T extends DataSourceType> = CadIntersection | PointCloudIntersection<T> | CustomObjectIntersection;
+export type AnyIntersection<T extends DataSourceType = DataSourceType> = CadIntersection | PointCloudIntersection<T> | CustomObjectIntersection;
 
 // @public
 export interface AreaCollection {
