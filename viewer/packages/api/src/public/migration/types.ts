@@ -299,7 +299,7 @@ export type Intersection<T extends DataSourceType = ClassicDataSourceType> =
  * @module @cognite/reveal
  * @beta
  */
-export type AnyIntersection<T extends DataSourceType> =
+export type AnyIntersection<T extends DataSourceType = DataSourceType> =
   | CadIntersection
   | PointCloudIntersection<T>
   | CustomObjectIntersection;
