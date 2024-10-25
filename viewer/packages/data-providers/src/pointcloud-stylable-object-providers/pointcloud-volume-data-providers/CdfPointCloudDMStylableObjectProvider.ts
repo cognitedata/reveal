@@ -8,7 +8,7 @@ import { PointCloudStylableObjectProvider } from '../../PointCloudStylableObject
 import { getDMPointCloudObjects } from '../../utilities/getDMPointCloudObjects';
 import { cdfAnnotationsToObjectInfo } from '../cdfAnnotationsToObjects';
 import { PointCloudObject } from '../types';
-import { DMDataSourceType, DMModelIdentifierType } from 'api-entry-points/core';
+import { DMDataSourceType, DMModelIdentifierType } from '../../DataSourceType';
 
 export class CdfPointCloudDMStylableObjectProvider implements PointCloudStylableObjectProvider<DMDataSourceType> {
   private readonly _dmsSdk: DataModelsSdk;

@@ -12,7 +12,7 @@ import * as THREE from 'three';
 import { IPointCloudTreeGeometry } from '../../packages/pointclouds/src/potree-three-loader/geometry/IPointCloudTreeGeometry';
 import { DEFAULT_CLASSIFICATION, PointCloudMaterial } from '../../packages/rendering';
 import { PointCloudObjectAppearanceTexture } from '../../packages/rendering/src/pointcloud-rendering/PointCloudObjectAppearanceTexture';
-import { ClassicDataSourceType } from '@reveal/data-providers';
+import { ClassicDataSourceType } from '../../packages/data-providers/src/DataSourceType';
 
 export function createPointCloudModel(modelId: number, revisionId: number): CognitePointCloudModel {
   const pointCloudNode = createPointCloudNode();
