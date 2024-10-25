@@ -90,7 +90,7 @@ export default class PointCloudColorStylingVisualTest extends StreamingVisualTes
       stylableObjectIds.push(m.annotationId);
     });
 
-    const objectCollection = new AnnotationIdPointCloudObjectCollection([123]);
+    const objectCollection = new AnnotationIdPointCloudObjectCollection(stylableObjectIds);
     const appearance = { color: new Color(0, 1, 0), visible: true };
 
     model.geometryNode.pointSize = 5;

@@ -21,7 +21,6 @@ import { SupportedModelTypes } from '@reveal/model-base';
 import { PointCloudMaterialManager } from '@reveal/rendering';
 
 import { Mesh } from 'three';
-import { createModelIdentifier } from '@reveal/data-providers';
 
 export class PointCloudManager {
   private readonly _pointCloudMetadataRepository: PointCloudMetadataRepository;
@@ -116,10 +115,9 @@ export class PointCloudManager {
   }
 
   async addModel<T extends DataSourceType>(
-    identifier: AddModelOptionsWithModelRevisionId<T>
+    identifier: AddModelOptionsWithModelRevisionId<T>,
+    modelIdentifier: ModelIdentifier
   ): Promise<PointCloudNode<T>> {
-    const modelIdentifier = createModelIdentifier({ ...identifier, ...identifier.classicModelRevisionId });
-
     const metadata = await this._pointCloudMetadataRepository.loadData(modelIdentifier);
 
     const modelType: SupportedModelTypes = 'pointcloud';

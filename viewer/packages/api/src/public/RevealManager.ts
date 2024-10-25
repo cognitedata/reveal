@@ -246,7 +246,10 @@ export class RevealManager {
       }
 
       case 'pointcloud': {
-        return this._pointCloudManager.addModel<T>(modelIdentifier as AddModelOptionsWithModelRevisionId<T>);
+        return this._pointCloudManager.addModel<T>(
+          modelIdentifier,
+          createModelIdentifier({ ...modelIdentifier, ...modelIdentifier.classicModelRevisionId })
+        );
       }
 
       default:
