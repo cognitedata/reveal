@@ -22,6 +22,7 @@ import {
   Cdf360DataModelsDescriptorProvider,
   Cdf360EventDescriptorProvider,
   Cdf360ImageProvider,
+  DataSourceType,
   Image360DataModelIdentifier
 } from '@reveal/data-providers';
 import {
@@ -43,18 +44,18 @@ import { MetricsLogger } from '@reveal/metrics';
 import debounce from 'lodash/debounce';
 import { Image360WithCollection } from '../public/types';
 
-export class Image360ApiHelper {
-  private readonly _image360Facade: Image360Facade<Metadata | Image360DataModelIdentifier>;
+export class Image360ApiHelper<DataSourceT extends DataSourceType> {
+  private readonly _image360Facade: Image360Facade<DataSourceT>;
   private readonly _domElement: HTMLElement;
   private _transitionInProgress: boolean = false;
   private readonly _raycaster = new Raycaster();
   private _needsRedraw: boolean = false;
 
   private readonly _interactionState: {
-    currentImage360Hovered?: Image360Entity;
-    currentImage360Entered?: Image360Entity;
-    revisionSelectedForEntry?: Image360RevisionEntity;
-    enteredCollection?: DefaultImage360Collection;
+    currentImage360Hovered?: Image360Entity<DataSourceT>;
+    currentImage360Entered?: Image360Entity<DataSourceT>;
+    revisionSelectedForEntry?: Image360RevisionEntity<DataSourceT>;
+    enteredCollection?: DefaultImage360Collection<DataSourceT>;
     lastMousePosition?: { offsetX: number; offsetY: number };
   };
 
@@ -100,7 +101,7 @@ export class Image360ApiHelper {
 
     const image360DataProvider = new Cdf360ImageProvider(cogniteClient, combinedDescriptorProvider);
     const device = determineCurrentDevice();
-    const image360EntityFactory = new Image360CollectionFactory(
+    const image360EntityFactory = new Image360CollectionFactory<DataSourceT>(
       image360DataProvider,
       sceneHandler,
       onBeforeSceneRendered,
@@ -108,7 +109,7 @@ export class Image360ApiHelper {
       device,
       iconsOptions
     );
-    this._image360Facade = new Image360Facade(image360EntityFactory);
+    this._image360Facade = new Image360Facade<DataSourceT>(image360EntityFactory);
 
     this._domElement = domElement;
     this._interactionState = {};
@@ -159,7 +160,7 @@ export class Image360ApiHelper {
     collectionTransform: Matrix4,
     preMultipliedRotation: boolean,
     annotationOptions?: Image360AnnotationFilterOptions
-  ): Promise<Image360Collection> {
+  ): Promise<Image360Collection<DataSourceT>> {
     validateIds(this._image360Facade);
 
     const imageCollection = await this._image360Facade.create(
@@ -172,7 +173,7 @@ export class Image360ApiHelper {
     this._needsRedraw = true;
     return imageCollection;
 
-    function validateIds(image360Facade: Image360Facade<Metadata | Image360DataModelIdentifier>) {
+    function validateIds(image360Facade: Image360Facade<DataSourceT>) {
       if (!Cdf360CombinedDescriptorProvider.isFdmIdentifier(collectionIdentifier)) {
         const id: string | undefined = collectionIdentifier.site_id;
         if (id === undefined) {
@@ -195,7 +196,7 @@ export class Image360ApiHelper {
     }
   }
 
-  public getImageCollections(): Image360Collection[] {
+  public getImageCollections(): Image360Collection<DataSourceT>[] {
     return [...this._image360Facade.collections];
   }
 
@@ -207,11 +208,11 @@ export class Image360ApiHelper {
       this.exit360Image();
     }
 
-    await Promise.all(entities.map(entity => this._image360Facade.delete(entity as Image360Entity)));
+    await Promise.all(entities.map(entity => this._image360Facade.delete(entity as Image360Entity<DataSourceT>)));
     this._needsRedraw = true;
   }
 
-  public remove360ImageCollection(collection: Image360Collection): void {
+  public remove360ImageCollection(collection: Image360Collection<DataSourceT>): void {
     if (
       this._interactionState.currentImage360Entered !== undefined &&
       collection.image360Entities.includes(this._interactionState.currentImage360Entered)
@@ -219,12 +220,12 @@ export class Image360ApiHelper {
       this.exit360Image();
     }
 
-    this._image360Facade.removeSet(collection as DefaultImage360Collection);
+    this._image360Facade.removeSet(collection as DefaultImage360Collection<DataSourceT>);
 
     this._needsRedraw = true;
   }
 
-  public getCurrentlyEnteredImageInfo(): Image360WithCollection | undefined {
+  public getCurrentlyEnteredImageInfo(): Image360WithCollection<DataSourceT> | undefined {
     const entity = this._interactionState.currentImage360Entered;
 
     if (entity === undefined) {
@@ -239,7 +240,10 @@ export class Image360ApiHelper {
     };
   }
 
-  public async enter360Image(image360Entity: Image360Entity, revision?: Image360RevisionEntity): Promise<void> {
+  public async enter360Image(
+    image360Entity: Image360Entity<DataSourceT>,
+    revision?: Image360RevisionEntity<DataSourceT>
+  ): Promise<void> {
     const revisionToEnter = revision ?? this.findRevisionIdToEnter(image360Entity);
     if (revisionToEnter === this._interactionState.revisionSelectedForEntry) {
       return;
@@ -310,12 +314,12 @@ export class Image360ApiHelper {
     imageCollection.events.image360Entered.fire(image360Entity, revisionToEnter);
   }
 
-  private async applyFullResolutionTextures(revision: Image360RevisionEntity) {
+  private async applyFullResolutionTextures(revision: Image360RevisionEntity<DataSourceT>) {
     await revision.applyFullResolutionTextures();
     this._needsRedraw = true;
   }
 
-  private async transition(from360Entity: Image360Entity, to360Entity: Image360Entity) {
+  private async transition(from360Entity: Image360Entity<DataSourceT>, to360Entity: Image360Entity<DataSourceT>) {
     const cameraTransitionDuration = 1000;
     const alphaTweenDuration = 800;
     const default360ImageRenderOrder = 3;
@@ -379,7 +383,7 @@ export class Image360ApiHelper {
   }
 
   private tweenVisualizationAlpha(
-    entity: Image360Entity,
+    entity: Image360Entity<DataSourceT>,
     alphaFrom: number,
     alphaTo: number,
     duration: number
@@ -495,7 +499,7 @@ export class Image360ApiHelper {
     this._image360Facade.dispose();
   }
 
-  private findRevisionIdToEnter(image360Entity: Image360Entity): Image360RevisionEntity {
+  private findRevisionIdToEnter(image360Entity: Image360Entity<DataSourceT>): Image360RevisionEntity<DataSourceT> {
     const targetDate = this._image360Facade.getCollectionContainingEntity(image360Entity).targetRevisionDate;
     return targetDate ? image360Entity.getRevisionClosestToDate(targetDate) : image360Entity.getMostRecentRevision();
   }
@@ -511,7 +515,7 @@ export class Image360ApiHelper {
     return this.enter360Image(entity);
   }
 
-  public intersect360ImageIcons(offsetX: number, offsetY: number): Image360Entity | undefined {
+  public intersect360ImageIcons(offsetX: number, offsetY: number): Image360Entity<DataSourceT> | undefined {
     const ndcCoordinates = getNormalizedPixelCoordinates(this._domElement, offsetX, offsetY);
     const entity = this._image360Facade.intersect(
       new Vector2(ndcCoordinates.x, ndcCoordinates.y),

@@ -8,15 +8,16 @@ import { CadModelBudget, SectorCuller } from '@reveal/cad-geometry-loaders';
 import { PointCloudBudget, PointCloudIntersection } from '@reveal/pointclouds';
 import { CameraManager } from '@reveal/camera-manager';
 
-import { GeometryFilter, CogniteCadModel } from '@reveal/cad-model';
+import { CogniteCadModel } from '@reveal/cad-model';
 import { DataSource } from '@reveal/data-source';
 import { EdlOptions } from '@reveal/rendering';
 import { Cognite3DViewer } from './Cognite3DViewer';
 import { DefaultCameraManager } from '@reveal/camera-manager';
-import { CdfModelIdentifier } from '@reveal/data-providers';
+import { CdfModelIdentifier, CommonModelOptions } from '@reveal/data-providers';
 import { Image360AnnotationFilterOptions } from '@reveal/360-images';
 import type { Vector2, WebGLRenderTarget, WebGLRenderer, Matrix4, Vector3 } from 'three';
 import { CustomObjectIntersection } from '@reveal/utilities';
+import { ClassicDataSourceType, DataSourceType, DMDataSourceType } from '@reveal/data-providers';
 
 /**
  * Callback to monitor loaded requests and progress.
@@ -207,40 +208,18 @@ export interface Cognite3DViewerOptions {
 /**
  * @module @cognite/reveal
  */
-export interface AddModelOptions {
-  modelId: number;
-  revisionId: number;
-  // if you need to access local files, this is where you would specify it.
-  localPath?: string;
-  geometryFilter?: GeometryFilter;
-}
+export type AddModelOptions<T extends DataSourceType = ClassicDataSourceType> = CommonModelOptions &
+  T['modelIdentifier'];
 
 /**
- * @module @cognite/reveal
+ * Add model options for models of classic format, identified by modelId and revisionId.
  */
-export interface AddDMModelOptions {
-  /**
-   * An CDF externalId of 3D model revision.
-   */
-  revisionExternalId: string;
-  /**
-   * An CDF space of the 3D model revision.
-   */
-  revisionSpace: string;
-  /**
-   * An optional local file which will be used to load the data.
-   */
-  localPath?: string;
-  /**
-   * An optional geometryFilter which will be applied to loading model.
-   */
-  geometryFilter?: GeometryFilter;
-}
+export type ClassicAddModelOptions = AddModelOptions<ClassicDataSourceType>;
 
 /**
- * @module @cognite/reveal
+ * Add model options for models of DM format, identified by revisionExternalId and revisionSpace.
  */
-export type AddCdfModelOptions = AddModelOptions | AddDMModelOptions;
+export type DMAddModelOptions = AddModelOptions<DMDataSourceType>;
 
 export type AddImage360Options = {
   /**
@@ -311,14 +290,19 @@ export type ResolutionOptions = {
  * Represents the result from {@link Cognite3DViewer.getIntersectionFromPixel}.
  * @module @cognite/reveal
  */
-export type Intersection = CadIntersection | PointCloudIntersection;
+export type Intersection<T extends DataSourceType = ClassicDataSourceType> =
+  | CadIntersection
+  | PointCloudIntersection<T>;
 
 /**
  * Represents the result from {@link Cognite3DViewer.getAnyIntersectionFromPixel}.
  * @module @cognite/reveal
  * @beta
  */
-export type AnyIntersection = CadIntersection | PointCloudIntersection | CustomObjectIntersection;
+export type AnyIntersection<T extends DataSourceType = DataSourceType> =
+  | CadIntersection
+  | PointCloudIntersection<T>
+  | CustomObjectIntersection;
 
 /**
  * @module @cognite/reveal

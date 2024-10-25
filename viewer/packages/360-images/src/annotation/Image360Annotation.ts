@@ -3,16 +3,16 @@
  */
 
 import { Color, Vector3 } from 'three';
-import { AnnotationModel } from '@cognite/sdk';
+import { ClassicDataSourceType, DataSourceType } from '@reveal/data-providers';
 
 /**
  * An annotation associated with a 360 image revision
  */
-export interface Image360Annotation {
+export interface Image360Annotation<T extends DataSourceType = ClassicDataSourceType> {
   /**
    * The underlying CDF annotation
    */
-  readonly annotation: AnnotationModel;
+  readonly annotation: T['image360AnnotationType'];
 
   /**
    * Get the individual display color of this annotation.

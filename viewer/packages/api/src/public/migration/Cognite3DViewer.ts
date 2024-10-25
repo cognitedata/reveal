@@ -48,7 +48,7 @@ import {
   ResolutionOptions,
   RenderParameters,
   AnyIntersection,
-  AddCdfModelOptions
+  AddModelOptions
 } from './types';
 import { RevealManager } from '../RevealManager';
 import { CogniteModel, Image360WithCollection } from '../types';
@@ -69,9 +69,11 @@ import {
   FlexibleCameraManager
 } from '@reveal/camera-manager';
 import {
+  AddModelOptionsWithModelRevisionId,
   CdfModelIdentifier,
   File3dFormat,
   Image360DataModelIdentifier,
+  isClassicPointCloudDataType,
   LocalModelIdentifier
 } from '@reveal/data-providers';
 import { DataSource, CdfDataSource, LocalDataSource } from '@reveal/data-source';
@@ -95,7 +97,9 @@ import {
 import { Image360ApiHelper } from '../../api-helpers/Image360ApiHelper';
 import html2canvas from 'html2canvas';
 import { AsyncSequencer, SequencerFunction } from '../../../../utilities/src/AsyncSequencer';
-import { getModelAndRevisionId, isAddDMModelOptions } from '../../utilities/utils';
+import { getModelAndRevisionId } from '../../utilities/utils';
+import { ClassicDataSourceType, DataSourceType, isClassicIdentifier } from '@reveal/data-providers';
+import assert from 'assert';
 
 type Cognite3DViewerEvents =
   | 'click'
@@ -116,9 +120,9 @@ type Cognite3DViewerEvents =
  * ```
  * @module @cognite/reveal
  */
-export class Cognite3DViewer {
+export class Cognite3DViewer<DataSourceT extends DataSourceType = ClassicDataSourceType> {
   private readonly _domElementResizeObserver: ResizeObserver;
-  private readonly _image360ApiHelper: Image360ApiHelper | undefined;
+  private readonly _image360ApiHelper: Image360ApiHelper<DataSourceT> | undefined;
 
   /**
    * Returns the rendering canvas, the DOM element where the renderer draws its output.
@@ -176,7 +180,7 @@ export class Cognite3DViewer {
   };
   private readonly _mouseHandler: InputHandler;
 
-  private readonly _models: CogniteModel[] = [];
+  private readonly _models: CogniteModel<DataSourceT>[] = [];
 
   private isDisposed = false;
 
@@ -246,7 +250,7 @@ export class Cognite3DViewer {
   /**
    * Gets a list of models currently added to the viewer.
    */
-  public get models(): CogniteModel[] {
+  public get models(): CogniteModel<DataSourceT>[] {
     return this._models.slice();
   }
 
@@ -715,7 +719,7 @@ export class Cognite3DViewer {
    * });
    * ```
    */
-  async addModel(options: AddCdfModelOptions): Promise<CogniteModel> {
+  async addModel(options: AddModelOptions<DataSourceT>): Promise<CogniteModel<DataSourceT>> {
     const modelLoadSequencer = this._addModelSequencer.getNextSequencer<void>();
     const { modelId, revisionId } = await getModelAndRevisionId(options, this._cdfSdkClient);
 
@@ -733,9 +737,13 @@ export class Cognite3DViewer {
       }
       switch (type) {
         case 'cad':
-          return this.addCadModelWithSequencer({ ...options, modelId, revisionId }, modelLoadSequencer);
+          assert(isClassicIdentifier(options));
+          return this.addCadModelWithSequencer(options, modelLoadSequencer);
         case 'pointcloud':
-          return this.addPointCloudModelWithSequencer({ ...options, modelId, revisionId }, modelLoadSequencer);
+          return this.addPointCloudModelWithSequencer(
+            { ...options, classicModelRevisionId: { modelId, revisionId } },
+            modelLoadSequencer
+          );
         default:
           await modelLoadSequencer(() => {});
           throw new Error('Model is not supported');
@@ -758,13 +766,13 @@ export class Cognite3DViewer {
    * });
    * ```
    */
-  addCadModel(options: AddCdfModelOptions): Promise<CogniteCadModel> {
+  addCadModel<T extends DataSourceT>(options: AddModelOptions<T>): Promise<CogniteCadModel> {
     const modelLoaderSequencer = this._addModelSequencer.getNextSequencer<void>();
-    return this.addCadModelWithSequencer(options, modelLoaderSequencer);
+    return this.addCadModelWithSequencer({ ...options }, modelLoaderSequencer);
   }
 
-  private async addCadModelWithSequencer(
-    options: AddCdfModelOptions,
+  private async addCadModelWithSequencer<T extends DataSourceType>(
+    options: AddModelOptions<T>,
     modelLoadSequencer: SequencerFunction<void>
   ): Promise<CogniteCadModel> {
     try {
@@ -773,11 +781,12 @@ export class Cognite3DViewer {
       const { modelId, revisionId } = await getModelAndRevisionId(options, this._cdfSdkClient);
 
       const addCadModelOptions = {
-        ...options,
-        modelId,
-        revisionId
+        ...options
       };
-      const cadNode = await this._revealManagerHelper.addCadModel(addCadModelOptions);
+      const cadNode = await this._revealManagerHelper.addCadModel({
+        ...addCadModelOptions,
+        classicModelRevisionId: { modelId, revisionId }
+      });
 
       const model3d = new CogniteCadModel(modelId, revisionId, cadNode, nodesApiClient);
       await modelLoadSequencer(() => {
@@ -807,37 +816,27 @@ export class Cognite3DViewer {
    * });
    * ```
    */
-  addPointCloudModel(options: AddCdfModelOptions): Promise<CognitePointCloudModel> {
+  async addPointCloudModel(options: AddModelOptions<DataSourceT>): Promise<CognitePointCloudModel<DataSourceT>> {
+    const classicModelRevisionId = await getModelAndRevisionId(options, this._cdfSdkClient);
     const sequencerFunction = this._addModelSequencer.getNextSequencer<void>();
-    return this.addPointCloudModelWithSequencer(options, sequencerFunction);
+    return this.addPointCloudModelWithSequencer({ ...options, classicModelRevisionId }, sequencerFunction);
   }
 
   private async addPointCloudModelWithSequencer(
-    options: AddCdfModelOptions,
+    options: AddModelOptionsWithModelRevisionId<DataSourceT>,
     modelLoadSequencer: SequencerFunction<void>
-  ) {
+  ): Promise<CognitePointCloudModel<DataSourceT>> {
     try {
       if (options.geometryFilter) {
         throw new Error('geometryFilter is not supported for point clouds');
       }
 
-      const { modelId, revisionId } = await getModelAndRevisionId(options, this._cdfSdkClient);
-
-      const addPointCloudModelOptions = {
-        ...options,
-        modelId,
-        revisionId
-      };
-      const revisionSpace = isAddDMModelOptions(options) ? options.revisionSpace : undefined;
-
-      const pointCloudNode = await this._revealManagerHelper.addPointCloudModel(
-        addPointCloudModelOptions,
-        revisionSpace
-      );
-      const model = new CognitePointCloudModel(modelId, revisionId, pointCloudNode);
+      const pointCloudNode = await this._revealManagerHelper.addPointCloudModel<DataSourceT>(options);
+      const model = new CognitePointCloudModel<DataSourceT>(options, pointCloudNode);
 
       await modelLoadSequencer(() => {
         this._models.push(model);
+
         this._sceneHandler.addPointCloudModel(pointCloudNode, pointCloudNode.modelIdentifier);
       });
 
@@ -857,7 +856,7 @@ export class Cognite3DViewer {
   async add360ImageSet(
     datasource: 'datamodels',
     dataModelIdentifier: Image360DataModelIdentifier
-  ): Promise<Image360Collection>;
+  ): Promise<Image360Collection<DataSourceT & ClassicDataSourceType>>;
   /**
    * Adds a set of 360 images to the scene from the /events API in Cognite Data Fusion.
    * @param datasource The CDF data source which holds the references to the 360 image sets.
@@ -873,21 +872,22 @@ export class Cognite3DViewer {
     datasource: 'events',
     eventFilter: { [key: string]: string },
     add360ImageOptions?: AddImage360Options
-  ): Promise<Image360Collection>;
+  ): Promise<Image360Collection<DataSourceT & ClassicDataSourceType>>;
 
   /* eslint-disable jsdoc/require-jsdoc */
   async add360ImageSet(
     datasource: 'events' | 'datamodels',
     sourceParameters: { [key: string]: string } | Image360DataModelIdentifier,
     add360ImageOptions?: AddImage360Options
-  ): Promise<Image360Collection> {
-    if (datasource !== 'events' && datasource !== 'datamodels') {
+  ): Promise<Image360Collection<DataSourceT>> {
+    if (datasource !== 'events' && datasource !== 'datamodels' && datasource !== 'coredm') {
       throw new Error(`${datasource} is an unknown datasource from 360 images`);
     }
 
     if (this._cdfSdkClient === undefined || this._image360ApiHelper === undefined) {
       throw new Error('Adding 360 image sets is only supported when connecting to Cognite Data Fusion');
     }
+
     const collectionTransform = add360ImageOptions?.collectionTransform ?? new THREE.Matrix4();
     const preMultipliedRotation = add360ImageOptions?.preMultipliedRotation ?? true;
 
@@ -908,14 +908,14 @@ export class Cognite3DViewer {
   /**
    * Returns a list of added 360 image collections.
    */
-  get360ImageCollections(): Image360Collection[] {
+  get360ImageCollections(): Image360Collection<DataSourceT>[] {
     return this._image360ApiHelper?.getImageCollections() ?? [];
   }
 
   /**
    * Returns the currently entered 360 image.
    */
-  getActive360ImageInfo(): Image360WithCollection | undefined {
+  getActive360ImageInfo(): Image360WithCollection<DataSourceT> | undefined {
     return this._image360ApiHelper?.getCurrentlyEnteredImageInfo();
   }
 
@@ -924,18 +924,20 @@ export class Cognite3DViewer {
    * @param image360Entities
    * @deprecated
    */
-  remove360Images(...image360Entities: Image360[]): Promise<void> {
+  remove360Images(...image360Entities: Image360<DataSourceT>[]): Promise<void> {
     if (this._cdfSdkClient === undefined || this._image360ApiHelper === undefined) {
       throw new Error(`Adding 360 image sets is only supported when connecting to Cognite Data Fusion`);
     }
-    return this._image360ApiHelper.remove360Images(image360Entities.map(entity => entity as Image360Entity));
+    return this._image360ApiHelper.remove360Images(
+      image360Entities.map(entity => entity as Image360Entity<DataSourceT>)
+    );
   }
 
   /**
    * Removes a previously added 360 image collection from the viewer.
    * @param imageCollection Collection to remove.
    */
-  remove360ImageSet(imageCollection: Image360Collection): void {
+  remove360ImageSet(imageCollection: Image360Collection<DataSourceT>): void {
     this._image360ApiHelper?.remove360ImageCollection(imageCollection);
   }
 
@@ -944,11 +946,14 @@ export class Cognite3DViewer {
    * @param image360 The 360 image to enter.
    * @param revision The image revision to use. If not provided the newest revision will be shown.
    */
-  enter360Image(image360: Image360, revision?: Image360Revision): Promise<void> {
+  enter360Image(image360: Image360<DataSourceT>, revision?: Image360Revision<DataSourceT>): Promise<void> {
     if (this._cdfSdkClient === undefined || this._image360ApiHelper === undefined) {
       throw new Error(`Adding 360 image sets is only supported when connecting to Cognite Data Fusion`);
     }
-    return this._image360ApiHelper.enter360Image(image360 as Image360Entity, revision as Image360RevisionEntity);
+    return this._image360ApiHelper.enter360Image(
+      image360 as Image360Entity<DataSourceT>,
+      revision as Image360RevisionEntity<DataSourceT>
+    );
   }
 
   /**
@@ -967,7 +972,7 @@ export class Cognite3DViewer {
    * .
    * @param model
    */
-  removeModel(model: CogniteModel): void {
+  removeModel(model: CogniteModel<DataSourceT>): void {
     const modelIdx = this._models.indexOf(model);
     if (modelIdx === -1) {
       throw new Error('Model is not added to viewer');
@@ -1286,7 +1291,7 @@ export class Cognite3DViewer {
    * is used as a fallback.
    * @param model The model to load camera settings from.
    */
-  loadCameraFromModel(model: CogniteModel): void {
+  loadCameraFromModel(model: CogniteModel<DataSourceT>): void {
     const config = model.getCameraConfiguration();
     if (config) {
       this._activeCameraManager.setCameraState({ position: config.position, target: config.target });
@@ -1314,11 +1319,12 @@ export class Cognite3DViewer {
    * viewer.fitCameraToModel(model, 0);
    * ```
    */
-  fitCameraToModel(model: CogniteModel, duration?: number): void {
+  fitCameraToModel(model: CogniteModel<DataSourceT>, duration?: number): void {
     const boundingBox = model.getModelBoundingBox(new THREE.Box3(), true);
     if (boundingBox.isEmpty()) {
       return;
     }
+
     this._activeCameraManager.fitCameraToBoundingBox(boundingBox, duration);
   }
 
@@ -1328,7 +1334,7 @@ export class Cognite3DViewer {
    * @param duration The duration of the animation moving the camera. Set this to 0 (zero) to disable animation.
    * @param restrictToMostGeometry If true, attempt to remove junk geometry from the boundingBox to allow setting a good camera position.
    */
-  fitCameraToModels(models?: CogniteModel[], duration?: number, restrictToMostGeometry = false): void {
+  fitCameraToModels(models?: CogniteModel<DataSourceT>[], duration?: number, restrictToMostGeometry = false): void {
     const cogniteModels = models ?? this.models;
     if (cogniteModels.length < 1) {
       return;
@@ -1629,11 +1635,11 @@ export class Cognite3DViewer {
    *   );
    * ```
    */
-  async getIntersectionFromPixel(offsetX: number, offsetY: number): Promise<null | Intersection> {
+  async getIntersectionFromPixel(offsetX: number, offsetY: number): Promise<null | Intersection<DataSourceT>> {
     if (this.isIntersecting360Icon(new THREE.Vector2(offsetX, offsetY))) {
       return null;
     }
-    return this.intersectModels(offsetX, offsetY);
+    return this.intersectModels(offsetX, offsetY) as Promise<Intersection<DataSourceT> | null>;
   }
 
   /**
@@ -1652,13 +1658,13 @@ export class Cognite3DViewer {
       stopOnHitting360Icon?: boolean;
       predicate?: (customObject: ICustomObject) => boolean;
     }
-  ): Promise<AnyIntersection | undefined> {
+  ): Promise<AnyIntersection<DataSourceT> | undefined> {
     if ((options?.stopOnHitting360Icon ?? true) && this.isIntersecting360Icon(pixelCoords)) {
       return undefined;
     }
 
     const predicate = options?.predicate;
-    let intersection: AnyIntersection | undefined = this.getCustomObjectIntersectionIfCloser(pixelCoords, {
+    let intersection: AnyIntersection<DataSourceT> | undefined = this.getCustomObjectIntersectionIfCloser(pixelCoords, {
       useDepthTest: false,
       predicate
     });
@@ -1715,16 +1721,16 @@ export class Cognite3DViewer {
   /** @private */
   private getModels(type: 'cad'): CogniteCadModel[];
   /** @private */
-  private getModels(type: 'pointcloud'): CognitePointCloudModel[];
+  private getModels(type: 'pointcloud'): CognitePointCloudModel<DataSourceT>[];
   /** @private */
-  private getModels(type: SupportedModelTypes): CogniteModel[] {
+  private getModels(type: SupportedModelTypes): CogniteModel<DataSourceT>[] {
     return this._models.filter(x => x.type === type);
   }
 
   /**
    * Creates a helper for managing viewer state.
    */
-  private createViewStateHelper(): ViewStateHelper {
+  private createViewStateHelper(): ViewStateHelper<DataSourceT> {
     if (this._cdfSdkClient === undefined) {
       throw new Error(`${this.setViewState.name}() is only supported when connecting to Cognite Data Fusion`);
     }
@@ -1787,8 +1793,8 @@ export class Cognite3DViewer {
   private async intersectModels(
     offsetX: number,
     offsetY: number,
-    options?: { asyncCADIntersection?: boolean }
-  ): Promise<null | Intersection> {
+    options?: { asyncCADIntersection?: boolean; classicPointCloudOnly?: boolean }
+  ): Promise<null | Intersection<DataSourceT>> {
     const normalizedCoords = getNormalizedPixelCoordinates(this.renderer.domElement, offsetX, offsetY);
     const input: IntersectInput = {
       normalizedCoords,
@@ -1798,7 +1804,7 @@ export class Cognite3DViewer {
       domElement: this.renderer.domElement
     };
 
-    const intersections: Intersection[] = [];
+    const intersections: Intersection<DataSourceT>[] = [];
     {
       const pointCloudModels = this.getModels('pointcloud');
       const pointCloudNodes = pointCloudModels.map(x => x.pointCloudNode);
@@ -1808,17 +1814,29 @@ export class Cognite3DViewer {
         const result = pointCloudResults[0]; // Nearest intersection
         for (const model of pointCloudModels) {
           if (model.pointCloudNode === result.pointCloudNode) {
-            const intersection: PointCloudIntersection = {
+            const isClassicData = isClassicIdentifier(model.modelIdentifier);
+
+            if (!isClassicData && options?.classicPointCloudOnly) {
+              continue;
+            }
+
+            const annotationId =
+              result.volumeMetadata !== undefined && isClassicPointCloudDataType(result.volumeMetadata)
+                ? result.volumeMetadata.annotationId
+                : 0;
+
+            const intersection: PointCloudIntersection<DataSourceT> = {
               type: 'pointcloud',
               model,
               point: result.point,
               pointIndex: result.pointIndex,
               distanceToCamera: result.distance,
-              annotationId: result.annotationId,
-              assetRef: result.assetRef,
-              volumeRef: result.volumeRef
+              annotationId,
+              assetRef: result.volumeMetadata?.assetRef,
+              volumeMetadata: result.volumeMetadata
             };
             intersections.push(intersection);
+
             break;
           }
         }

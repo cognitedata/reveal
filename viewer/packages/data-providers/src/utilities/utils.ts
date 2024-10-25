@@ -3,46 +3,41 @@
  */
 
 import { TableExpressionEqualsFilterV3 } from '@cognite/sdk/dist/src';
-import {
-  ClassicPointCloudDataType,
-  DMPointCloudDataType,
-  PointCloudDataType,
-  PointCloudObject,
-  PointCloudObjectMetadata
-} from '../pointcloud-stylable-object-providers/types';
+import { PointCloudObject, PointCloudObjectMetadata } from '../pointcloud-stylable-object-providers/types';
 import { StylableObject } from '../pointcloud-stylable-object-providers/StylableObject';
+import { ClassicDataSourceType, DMDataSourceType, DataSourceType } from '../DataSourceType';
 
-// /**
-//  * Type guard to check if a point cloud object contains data type DMPointCloudDataType
-//  * @param pointCloudObject - The object to check
-//  * @returns True if the object is of type PointCloudObject<DMPointCloudDataType>, false otherwise
-//  */
+/**
+ * Type guard to check if a point cloud object contains data type DMPointCloudDataType
+ * @param pointCloudObject - The object to check
+ * @returns True if the object is of type `PointCloudObject<DMPointCloudDataType>`, false otherwise
+ */
 export function isDMPointCloudDataTypeObject(
-  pointCloudObject: PointCloudObject<PointCloudDataType>
-): pointCloudObject is PointCloudObject<DMPointCloudDataType> {
+  pointCloudObject: PointCloudObject<DataSourceType>
+): pointCloudObject is PointCloudObject<DMDataSourceType> {
   return isDMPointCloudDataType(pointCloudObject) && hasStylableObject(pointCloudObject);
 }
 
-// /**
-//  * Type guard to check if a point cloud object contains data type ClassicPointCloudDataType
-//  * @param pointCloudObject - The object to check
-//  * @returns True if the object is of type PointCloudObject<ClassicPointCloudDataType>, false otherwise
-//  */
+/**
+ * Type guard to check if a point cloud object contains data type ClassicPointCloudDataType
+ * @param pointCloudObject - The object to check
+ * @returns True if the object is of type `PointCloudObject<ClassicPointCloudDataType>`, false otherwise
+ */
 export function isClassicPointCloudDataTypeObject(
-  pointCloudObject: PointCloudObject<PointCloudDataType>
-): pointCloudObject is PointCloudObject<ClassicPointCloudDataType> {
+  pointCloudObject: PointCloudObject<DataSourceType>
+): pointCloudObject is PointCloudObject<ClassicDataSourceType> {
   return isClassicPointCloudDataType(pointCloudObject) && hasStylableObject(pointCloudObject);
 }
 
-// /**
-//  * Type guard to check if the point cloud metadata is of type DMPointCloudDataType
-//  * @param pointCloudMetadata - The metadata object to check
-//  * @returns True if the object is of type PointCloudObjectMetadata<DMPointCloudDataType>, false otherwise
-//  */
+/**
+ * Type guard to check if the point cloud metadata is of type DMPointCloudDataType
+ * @param pointCloudMetadata - The metadata object to check
+ * @returns True if the object is of type `PointCloudObjectMetadata<DMPointCloudDataType>`, false otherwise
+ */
 export function isDMPointCloudDataType(
-  pointCloudMetadata: PointCloudObjectMetadata<PointCloudDataType>
-): pointCloudMetadata is PointCloudObjectMetadata<DMPointCloudDataType> {
-  const dmPointCloudObject = pointCloudMetadata as PointCloudObjectMetadata<DMPointCloudDataType>;
+  pointCloudMetadata: DataSourceType['pointCloudVolumeMetadata']
+): pointCloudMetadata is DMDataSourceType['pointCloudVolumeMetadata'] {
+  const dmPointCloudObject = pointCloudMetadata as PointCloudObjectMetadata<DMDataSourceType>;
   return (
     dmPointCloudObject.volumeInstanceRef !== undefined &&
     dmPointCloudObject.volumeInstanceRef.externalId !== undefined &&
@@ -50,15 +45,15 @@ export function isDMPointCloudDataType(
   );
 }
 
-// /**
-//  * Type guard to check if the point cloud metadata is of type ClassicPointCloudDataType
-//  * @param pointCloudMetadata - The metadata object to check
-//  * @returns True if the object is of type PointCloudObjectMetadata<ClassicPointCloudDataType>, false otherwise
-//  */
+/**
+ * Type guard to check if the point cloud metadata is of type ClassicPointCloudDataType
+ * @param pointCloudMetadata - The metadata object to check
+ * @returns True if the object is of type `PointCloudObjectMetadata<ClassicPointCloudDataType>`, false otherwise
+ */
 export function isClassicPointCloudDataType(
-  pointCloudMetadata: PointCloudObjectMetadata<PointCloudDataType>
-): pointCloudMetadata is PointCloudObjectMetadata<ClassicPointCloudDataType> {
-  const annotation = pointCloudMetadata as PointCloudObjectMetadata<ClassicPointCloudDataType>;
+  pointCloudMetadata: DataSourceType['pointCloudVolumeMetadata']
+): pointCloudMetadata is ClassicDataSourceType['pointCloudVolumeMetadata'] {
+  const annotation = pointCloudMetadata as PointCloudObjectMetadata<ClassicDataSourceType>;
   return annotation.annotationId !== undefined;
 }
 
@@ -81,7 +76,7 @@ export function getNodeSpaceEqualsFilter<T extends string>(space: T): TableExpre
 }
 
 function hasStylableObject(
-  obj: PointCloudObject<PointCloudDataType>
-): obj is PointCloudObject<PointCloudDataType> & { stylableObject: StylableObject } {
+  obj: PointCloudObject<DataSourceType>
+): obj is PointCloudObject<DataSourceType> & { stylableObject: StylableObject } {
   return obj.stylableObject !== undefined;
 }

@@ -10,23 +10,24 @@ import { WellKnownAsprsPointClassCodes } from './types';
 import { PointColorType, PointShape, PointSizeType } from '@reveal/rendering';
 
 import {
+  DataSourceType,
   isClassicPointCloudDataTypeObject,
   isDMPointCloudDataTypeObject,
-  PointCloudDataType,
   PointCloudObject,
   PointCloudObjectMetadata
 } from '@reveal/data-providers';
 import { ClassificationHandler } from './ClassificationHandler';
 
-import { StyledPointCloudVolumeCollection, CompletePointCloudAppearance } from '@reveal/pointcloud-styling';
+import { CompletePointCloudAppearance } from '@reveal/pointcloud-styling';
 
 import { Matrix4, Group, Box3, Color, type Camera, type Plane, type Ray, type WebGLRenderer } from 'three';
+import { StyledPointCloudVolumeCollection } from '@reveal/pointcloud-styling';
 
-export class PointCloudNode extends Group {
+export class PointCloudNode<T extends DataSourceType = DataSourceType> extends Group {
   private readonly _cameraConfiguration?: CameraConfiguration;
   private readonly _octree: PointCloudOctree;
 
-  private readonly _objectIdToAnnotationsMap: Map<number, PointCloudObject<PointCloudDataType>>;
+  private readonly _objectIdToAnnotationsMap: Map<number, PointCloudObject<T>>;
   private readonly _classificationHandler: ClassificationHandler;
 
   private _needsRedraw: boolean = false;
@@ -41,7 +42,7 @@ export class PointCloudNode extends Group {
     modelIdentifier: symbol,
     sourceTransform: Matrix4,
     octree: PointCloudOctree,
-    annotations: PointCloudObject<PointCloudDataType>[],
+    annotations: PointCloudObject<T>[],
     classificationInfo: ClassificationInfo,
     cameraConfiguration?: CameraConfiguration
   ) {
@@ -212,7 +213,7 @@ export class PointCloudNode extends Group {
     return out.copy(this._sourceTransform);
   }
 
-  get stylableObjectAnnotationMetadata(): Iterable<PointCloudObjectMetadata<PointCloudDataType>> {
+  get stylableVolumeMetadata(): Iterable<PointCloudObjectMetadata<T>> {
     return [...this._objectIdToAnnotationsMap.values()].map(a => {
       const baseObject = {
         boundingBox: a.boundingBox.clone().applyMatrix4(this._octree.matrixWorld),
@@ -234,10 +235,10 @@ export class PointCloudNode extends Group {
       } else {
         throw new Error('Unknown object type');
       }
-    }) as PointCloudObjectMetadata<PointCloudDataType>[];
+    });
   }
 
-  getStylableObjectMetadata(objectId: number): PointCloudObjectMetadata<PointCloudDataType> | undefined {
+  getStylableObjectMetadata(objectId: number): PointCloudObjectMetadata<T> | undefined {
     return this._objectIdToAnnotationsMap.get(objectId);
   }
 
@@ -259,7 +260,7 @@ export class PointCloudNode extends Group {
     this._needsRedraw = true;
   }
 
-  assignStyledPointCloudObjectCollection(styledCollection: StyledPointCloudVolumeCollection): void {
+  assignStyledPointCloudObjectCollection(styledCollection: StyledPointCloudVolumeCollection<T>): void {
     this._octree.material.objectAppearanceTexture.assignStyledObjectSet(styledCollection);
     this._needsRedraw = true;
   }
@@ -273,9 +274,9 @@ export class PointCloudNode extends Group {
   }
 }
 
-function createObjectIdToAnnotationsMap(
-  annotations: PointCloudObject<PointCloudDataType>[]
-): Map<number, PointCloudObject<PointCloudDataType>> {
+function createObjectIdToAnnotationsMap<T extends DataSourceType>(
+  annotations: PointCloudObject<T>[]
+): Map<number, PointCloudObject<T>> {
   const map = new Map();
   for (const annotation of annotations) {
     map.set(annotation.stylableObject.objectId, annotation);

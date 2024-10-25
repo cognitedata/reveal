@@ -1288,7 +1288,9 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@reveal/data-providers@workspace:packages/data-providers"
   dependencies:
+    "@reveal/cad-model": "workspace:*"
     "@reveal/logger": "workspace:*"
+    "@reveal/pointcloud-styling": "workspace:*"
     "@reveal/utilities": "workspace:*"
   languageName: unknown
   linkType: soft
@@ -1402,6 +1404,7 @@ __metadata:
     "@reveal/api": "workspace:*"
     "@reveal/cad-styling": "workspace:*"
     "@reveal/camera-manager": "workspace:*"
+    "@reveal/data-providers": "workspace:*"
     "@reveal/metrics": "workspace:*"
     "@reveal/utilities": "workspace:*"
   languageName: unknown

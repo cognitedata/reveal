@@ -16,7 +16,9 @@ import {
   DefaultCameraManager,
   CogniteModel,
   AnnotationIdPointCloudObjectCollection,
-  PointCloudDMVolumeCollection
+  PointCloudDMVolumeCollection,
+  DataSourceType,
+  isDMPointCloudModel
 } from '@cognite/reveal';
 import { DebugCameraTool, AxisGizmoTool } from '@cognite/reveal/tools';
 import * as reveal from '@cognite/reveal';
@@ -54,13 +56,13 @@ export function Viewer() {
     }
 
     const gui = new dat.GUI({ width: Math.min(500, 0.8 * window.innerWidth) });
-    let viewer: Cognite3DViewer;
+    let viewer: Cognite3DViewer<DataSourceType>;
     let cameraManager: DefaultCameraManager;
     let cameraManagers: {
       Default: DefaultCameraManager;
       Custom: CustomCameraManager;
     };
-    let pointCloudObjectsUi: PointCloudObjectStylingUI;
+    let pointCloudObjectsUi: PointCloudObjectStylingUI<DataSourceType>;
 
     async function main() {
       const project = urlParams.get('project');
@@ -123,7 +125,7 @@ export function Viewer() {
       }
 
       // Prepare viewer
-      viewer = new Cognite3DViewer(viewerOptions);
+      viewer = new Cognite3DViewer<DataSourceType>(viewerOptions);
       (window as any).viewer = viewer;
 
       // Add Stats.js overlay with FPS etc
@@ -208,7 +210,7 @@ export function Viewer() {
       initialCadBudgetUi(viewer, gui.addFolder('CAD budget'));
 
       const totalBounds = new THREE.Box3();
-      function handleModelAdded(model: CogniteModel) {
+      function handleModelAdded(model: CogniteModel<DataSourceType>) {
         const bounds = model.getModelBoundingBox();
         totalBounds.expandByPoint(bounds.min);
         totalBounds.expandByPoint(bounds.max);
@@ -429,9 +431,12 @@ export function Viewer() {
       viewer.on('click', async event => {
         const { offsetX, offsetY } = event;
         const start = performance.now();
-        const intersection = await viewer.getIntersectionFromPixel(offsetX, offsetY);
-        if (intersection !== null) {
+        const intersection = await viewer.getAnyIntersectionFromPixel(new THREE.Vector2(offsetX, offsetY));
+        if (intersection !== undefined) {
           switch (intersection.type) {
+            case 'customObject': {
+              break;
+            }
             case 'cad':
               {
                 const { treeIndex, point } = intersection;
@@ -446,19 +451,28 @@ export function Viewer() {
             case 'pointcloud':
               {
                 const { point, model } = intersection;
+
                 console.log(
                   `Clicked point assigned to the object with annotationId: ${intersection.annotationId} and assetId: ${intersection?.assetRef?.id} at`,
                   point
                 );
-                if (intersection.annotationId !== 0) {
-                  pointCloudObjectsUi.updateSelectedAnnotation(intersection.annotationId);
+                if (intersection.volumeMetadata !== undefined && 'annotationId' in intersection.volumeMetadata) {
+                  pointCloudObjectsUi.updateSelectedAnnotation(intersection.volumeMetadata.annotationId);
                   model.removeAllStyledObjectCollections();
-                  const selected = new AnnotationIdPointCloudObjectCollection([intersection.annotationId]);
+                  const selected = new AnnotationIdPointCloudObjectCollection([
+                    intersection.volumeMetadata.annotationId
+                  ]);
                   model.assignStyledObjectCollection(selected, { color: new THREE.Color('red') });
-                } else if (intersection.volumeRef !== undefined) {
+                } else if (
+                  intersection.volumeMetadata !== undefined &&
+                  'volumeInstanceRef' in intersection.volumeMetadata &&
+                  isDMPointCloudModel(model)
+                ) {
                   model.removeAllStyledObjectCollections();
-                  const selected = new PointCloudDMVolumeCollection([intersection.volumeRef.volumeInstanceRef]);
-                  model.assignStyledObjectCollection(selected, { color: new THREE.Color('red') });
+                  const selected = new PointCloudDMVolumeCollection([intersection.volumeMetadata.volumeInstanceRef]);
+                  model.assignStyledObjectCollection(selected, {
+                    color: new THREE.Color('red')
+                  });
                 } else {
                   const sphere = new THREE.Mesh(
                     new THREE.SphereGeometry(0.1),

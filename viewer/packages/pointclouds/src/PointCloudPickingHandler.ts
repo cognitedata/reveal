@@ -8,9 +8,14 @@ import { IntersectInput } from '@reveal/model-base';
 import { PointCloudNode } from './PointCloudNode';
 
 import { PickPoint, PointCloudOctree, PointCloudOctreePicker } from './potree-three-loader';
-import { AnnotationsAssetRef } from '@cognite/sdk';
 import { isPointVisibleByPlanes } from '@reveal/utilities';
-import { DMInstanceRef, isClassicPointCloudDataType, isDMPointCloudDataType } from '@reveal/data-providers';
+import {
+  ClassicDataSourceType,
+  DMDataSourceType,
+  isClassicPointCloudDataType,
+  isDMPointCloudDataType,
+  DataSourceType
+} from '@reveal/data-providers';
 import { IntersectPointCloudNodeResult } from './types';
 
 export class PointCloudPickingHandler {
@@ -29,7 +34,10 @@ export class PointCloudPickingHandler {
     this._picker.dispose();
   }
 
-  intersectPointClouds(nodes: PointCloudNode[], input: IntersectInput): IntersectPointCloudNodeResult[] {
+  intersectPointClouds(
+    nodes: PointCloudNode<DataSourceType>[],
+    input: IntersectInput
+  ): IntersectPointCloudNodeResult<DataSourceType>[] {
     const { normalizedCoords, camera } = input;
     this._normalized.set(normalizedCoords.x, normalizedCoords.y);
     this._raycaster.setFromCamera(normalizedCoords, camera);
@@ -59,41 +67,51 @@ export class PointCloudPickingHandler {
 
         const pointCloudObject = pointCloudNode.getStylableObjectMetadata(x.objectId);
 
-        let annotationId: number = 0;
-        let assetRef: AnnotationsAssetRef | undefined;
-        let pointCloudVolumeInstanceRef: DMInstanceRef | undefined;
-
-        if (pointCloudObject !== undefined) {
-          if (isClassicPointCloudDataType(pointCloudObject)) {
-            annotationId = pointCloudObject.annotationId;
-            assetRef = pointCloudObject.assetRef;
-          } else if (isDMPointCloudDataType(pointCloudObject)) {
-            pointCloudVolumeInstanceRef = pointCloudObject.volumeInstanceRef;
-            assetRef = pointCloudObject.assetRef;
-          } else {
-            throw new Error('Unknown point cloud object type');
-          }
-        }
-        const volumeRef = pointCloudVolumeInstanceRef
-          ? { annotationId, volumeInstanceRef: pointCloudVolumeInstanceRef, assetRef }
-          : undefined;
-
-        const result: IntersectPointCloudNodeResult = {
+        const baseObject = {
           distance: x.position.distanceTo(camera.position),
           point: x.position,
           pointIndex: x.pointIndex,
           pointCloudNode,
-          object: x.object,
-          annotationId,
-          volumeRef: volumeRef,
-          assetRef: assetRef
+          object: x.object
         };
-        return result;
+
+        if (pointCloudObject !== undefined) {
+          if (isClassicPointCloudDataType(pointCloudObject)) {
+            const result: IntersectPointCloudNodeResult<ClassicDataSourceType> = {
+              ...baseObject,
+              pointCloudNode: pointCloudNode as PointCloudNode<ClassicDataSourceType>,
+              volumeMetadata: {
+                annotationId: pointCloudObject.annotationId,
+                assetRef: pointCloudObject.assetRef
+              }
+            };
+
+            return result;
+          } else if (isDMPointCloudDataType(pointCloudObject)) {
+            const result: IntersectPointCloudNodeResult<DMDataSourceType> = {
+              ...baseObject,
+              pointCloudNode: pointCloudNode as PointCloudNode<DMDataSourceType>,
+              volumeMetadata: {
+                volumeInstanceRef: pointCloudObject.volumeInstanceRef,
+                assetRef: pointCloudObject.assetRef
+              }
+            };
+
+            return result;
+          } else {
+            throw new Error('Unknown point cloud object type');
+          }
+        }
+
+        return baseObject;
       });
   }
 }
 
-function determinePointCloudNode(node: THREE.Object3D, candidates: PointCloudNode[]): PointCloudNode | null {
+function determinePointCloudNode(
+  node: THREE.Object3D,
+  candidates: PointCloudNode<DataSourceType>[]
+): PointCloudNode<DataSourceType> | null {
   while (node.type === 'Points' && node.parent !== null) {
     node = node.parent;
   }

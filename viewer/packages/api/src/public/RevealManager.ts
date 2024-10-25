@@ -25,7 +25,14 @@ import { MetricsLogger } from '@reveal/metrics';
 import { assertNever, EventTrigger } from '@reveal/utilities';
 import { CameraManager } from '@reveal/camera-manager';
 
-import { ModelIdentifier } from '@reveal/data-providers';
+import {
+  ClassicModelIdentifierType,
+  DataSourceType,
+  InternalDataSourceType,
+  LocalModelIdentifierType
+} from '@reveal/data-providers';
+import { createModelIdentifier } from '@reveal/data-providers';
+import { AddModelOptionsWithModelRevisionId } from '../../../data-providers/src/utilities/internalAddModelOptions';
 
 /* eslint-disable jsdoc/require-jsdoc */
 
@@ -216,24 +223,33 @@ export class RevealManager {
     this.resetRedraw();
   }
 
-  public addModel(type: 'cad', modelIdentifier: ModelIdentifier, options?: AddCadModelOptions): Promise<CadNode>;
-  public addModel(
+  public addModel<T extends InternalDataSourceType>(
+    type: 'cad',
+    modelIdentifier: AddModelOptionsWithModelRevisionId<T>,
+    options?: AddCadModelOptions
+  ): Promise<CadNode>;
+  public addModel<T extends DataSourceType>(
     type: 'pointcloud',
-    modelIdentifier: ModelIdentifier,
-    revisionSpace?: string
-  ): Promise<PointCloudNode>;
-  public async addModel(
+    modelIdentifier: AddModelOptionsWithModelRevisionId<T>
+  ): Promise<PointCloudNode<T>>;
+  public async addModel<T extends DataSourceType>(
     type: SupportedModelTypes,
-    modelIdentifier: ModelIdentifier,
-    options?: AddCadModelOptions | string
-  ): Promise<PointCloudNode | CadNode> {
+    modelIdentifier: AddModelOptionsWithModelRevisionId<T>,
+    options?: AddCadModelOptions
+  ): Promise<PointCloudNode<T> | CadNode> {
     switch (type) {
       case 'cad': {
-        return this._cadManager.addModel(modelIdentifier, (options as AddCadModelOptions).geometryFilter);
+        return this._cadManager.addModel(
+          createModelIdentifier(modelIdentifier as ClassicModelIdentifierType | LocalModelIdentifierType),
+          (options as AddCadModelOptions).geometryFilter
+        );
       }
 
       case 'pointcloud': {
-        return this._pointCloudManager.addModel(modelIdentifier, options as string);
+        return this._pointCloudManager.addModel<T>(
+          modelIdentifier,
+          createModelIdentifier({ ...modelIdentifier, ...modelIdentifier.classicModelRevisionId })
+        );
       }
 
       default:

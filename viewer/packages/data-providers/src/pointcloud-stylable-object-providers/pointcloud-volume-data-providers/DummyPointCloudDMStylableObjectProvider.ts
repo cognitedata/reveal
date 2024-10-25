@@ -2,14 +2,12 @@
  * Copyright 2024 Cognite AS
  */
 
-import { ModelIdentifier } from '../../ModelIdentifier';
+import { DMDataSourceType, DMModelIdentifierType } from '../../DataSourceType';
 import { PointCloudStylableObjectProvider } from '../../PointCloudStylableObjectProvider';
-import { DMPointCloudDataType, PointCloudDataType, PointCloudObject } from '../types';
+import { PointCloudObject } from '../types';
 
-export class DummyPointCloudDMStylableObjectProvider implements PointCloudStylableObjectProvider<DMPointCloudDataType> {
-  async getPointCloudObjects<DMPointCloudDataType extends PointCloudDataType>(
-    _modelIdentifier: ModelIdentifier
-  ): Promise<PointCloudObject<DMPointCloudDataType>[]> {
+export class DummyPointCloudDMStylableObjectProvider implements PointCloudStylableObjectProvider<DMDataSourceType> {
+  async getPointCloudObjects(_modelIdentifier: DMModelIdentifierType): Promise<PointCloudObject<DMDataSourceType>[]> {
     return [];
   }
 }

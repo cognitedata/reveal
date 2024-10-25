@@ -24,7 +24,7 @@ import {
   ExternalId
 } from '@cognite/sdk';
 
-import { Image360DataProvider, Image360FileDescriptor } from '@reveal/data-providers';
+import { DataSourceType, Image360DataProvider, Image360FileDescriptor } from '@reveal/data-providers';
 import { Image360RevisionEntity } from '../entity/Image360RevisionEntity';
 import { Image360AnnotationFilter } from '../annotation/Image360AnnotationFilter';
 import { Image360 } from '../entity/Image360';
@@ -38,11 +38,11 @@ type Image360Events = 'image360Entered' | 'image360Exited';
  * Default implementation of {@link Image360Collection}. Used for events when entering
  * and exiting 360 image mode
  */
-export class DefaultImage360Collection implements Image360Collection {
+export class DefaultImage360Collection<T extends DataSourceType> implements Image360Collection<T> {
   /**
    * A list containing all the 360 images in this set.
    */
-  readonly image360Entities: Image360Entity[];
+  readonly image360Entities: Image360Entity<T>[];
 
   /**
    * If defined, any subsequently entered 360 images will load the revision that are closest to the target date.
@@ -100,7 +100,7 @@ export class DefaultImage360Collection implements Image360Collection {
   constructor(
     collectionId: string,
     collectionLabel: string | undefined,
-    entities: Image360Entity[],
+    entities: Image360Entity<T>[],
     icons: IconCollection,
     annotationFilter: Image360AnnotationFilter,
     image360DataProvider: Image360DataProvider,
@@ -217,7 +217,7 @@ export class DefaultImage360Collection implements Image360Collection {
     this._icons.setCullingScheme(scheme);
   }
 
-  public remove(entity: Image360Entity): void {
+  public remove(entity: Image360Entity<T>): void {
     pull(this.image360Entities, entity);
     entity.dispose();
   }
@@ -259,7 +259,9 @@ export class DefaultImage360Collection implements Image360Collection {
     const entityAnnotations = await Promise.all(entityAnnotationsPromises);
     return entityAnnotations.flat();
 
-    async function getEntityAnnotationsForAsset(entity: Image360Entity): Promise<Image360AnnotationAssetQueryResult[]> {
+    async function getEntityAnnotationsForAsset(
+      entity: Image360Entity<T>
+    ): Promise<Image360AnnotationAssetQueryResult[]> {
       const revisionPromises = entity.getRevisions().map(async revision => {
         const annotations = await getRevisionAnnotationsForAsset(revision);
 
@@ -270,7 +272,7 @@ export class DefaultImage360Collection implements Image360Collection {
       return revisionMatches.flat();
     }
 
-    async function getRevisionAnnotationsForAsset(revision: Image360RevisionEntity): Promise<Image360Annotation[]> {
+    async function getRevisionAnnotationsForAsset(revision: Image360RevisionEntity<T>): Promise<Image360Annotation[]> {
       const relevantDescriptors = revision.getDescriptors().faceDescriptors.filter(desc => imageIdSet.has(desc.fileId));
 
       if (relevantDescriptors.length === 0) {
@@ -299,7 +301,7 @@ export class DefaultImage360Collection implements Image360Collection {
     }
   }
 
-  async getAnnotationsInfo(): Promise<AssetAnnotationImage360Info[]> {
+  async getAnnotationsInfo(): Promise<AssetAnnotationImage360Info<T>[]> {
     const fileDescriptors = this.getAllFileDescriptors();
     const fileIdToEntityRevision = this.createFileIdToEntityRevisionMap();
 
@@ -322,7 +324,7 @@ export class DefaultImage360Collection implements Image360Collection {
 
           return { annotationInfo: annotation, imageEntity: entity, imageRevision: revision };
         })
-        .filter((info): info is AssetAnnotationImage360Info => info !== undefined);
+        .filter((info): info is AssetAnnotationImage360Info<T> => info !== undefined);
     }
   }
 
@@ -337,14 +339,14 @@ export class DefaultImage360Collection implements Image360Collection {
       .flat();
   }
 
-  private createFileIdToEntityRevisionMap(): Map<number, { entity: Image360; revision: Image360Revision }> {
+  private createFileIdToEntityRevisionMap(): Map<number, { entity: Image360<T>; revision: Image360Revision<T> }> {
     return this.image360Entities.reduce((map, entity) => {
       entity.getRevisions().forEach(revision => {
         const descriptors = revision.getDescriptors().faceDescriptors;
         descriptors.forEach(descriptor => map.set(descriptor.fileId, { entity, revision }));
       });
       return map;
-    }, new Map<number, { entity: Image360; revision: Image360Revision }>());
+    }, new Map<number, { entity: Image360<T>; revision: Image360Revision<T> }>());
   }
 }
 

@@ -2,17 +2,37 @@
  * Copyright 2024 Cognite AS
  */
 
-import { PointCloudAnnotationVolumeCollection } from './PointCloudObjectCollection';
 import { CompletePointCloudAppearance } from './PointCloudAppearance';
-import { PointCloudDMVolumeCollection } from './PointCloudDMVolumeCollection';
+import { ClassicDataSourceType, DataSourceType } from '@reveal/data-providers';
 
 /**
  * Represents either an PointCloudAnnotationVolumeCollection or PointCloudDMVolumeCollection
  * that is associated with an appearance.
  */
-export class StyledPointCloudVolumeCollection {
+export class StyledPointCloudVolumeCollection<T extends DataSourceType> {
+  /**
+   * Get the volume collection for this StyledPointCloudVolumeCollection
+   */
+  get volumeCollection(): T['pointCloudCollectionType'] {
+    return this.objectCollection;
+  }
+
   constructor(
-    public objectCollection: PointCloudAnnotationVolumeCollection | PointCloudDMVolumeCollection,
+    /**
+     * The volume collection this StyledPointCloudVolumeCollection represents
+     * @deprecated
+     */
+    public objectCollection: T['pointCloudCollectionType'],
+    /**
+     * The appearance applied by the current StyledPointCloudVolumeCollection
+     */
     public style: CompletePointCloudAppearance
   ) {}
 }
+
+/**
+ * Represents either an PointCloudAnnotationVolumeCollection or PointCloudDMVolumeCollection
+ * that is associated with an appearance.
+ * @deprecated USe StyledPointCoudVolumeCollection instead
+ */
+export class StyledPointCloudObjectCollection extends StyledPointCloudVolumeCollection<ClassicDataSourceType> {}

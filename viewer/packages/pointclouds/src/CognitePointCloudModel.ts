@@ -10,49 +10,59 @@ import { PointCloudNode } from './PointCloudNode';
 import { PointColorType, PointShape, PointSizeType } from '@reveal/rendering';
 
 import { SupportedModelTypes } from '@reveal/model-base';
-import { ClassicPointCloudDataType, PointCloudDataType, PointCloudObjectMetadata } from '@reveal/data-providers';
+import { ClassicDataSourceType, DataSourceType, PointCloudObjectMetadata } from '@reveal/data-providers';
 
 import {
-  PointCloudAnnotationVolumeCollection,
   applyDefaultsToPointCloudAppearance,
   PointCloudAppearance,
   CompletePointCloudAppearance,
-  PointCloudDMVolumeCollection,
-  isPointCloudObjectCollection,
-  StyledPointCloudVolumeCollection,
-  StyledPointCloudAnnotationVolumeCollection
+  StyledPointCloudVolumeCollection
 } from '@reveal/pointcloud-styling';
+import { isClassicIdentifier } from '@reveal/data-providers';
 
 /**
  * Represents a point clouds model loaded from CDF.
  * @noInheritDoc
  * @module @cognite/reveal
  */
-export class CognitePointCloudModel<T extends PointCloudDataType = ClassicPointCloudDataType> {
+export class CognitePointCloudModel<T extends DataSourceType = ClassicDataSourceType> {
   public readonly type: SupportedModelTypes = 'pointcloud';
-  public readonly modelId: number;
+
   /**
-   * The modelId of the point cloud model in Cognite Data Fusion.
+   * The modelId of the point cloud model in Cognite Data Fusion. 0 if not applicable
+   * @deprecated Use modelIdentifier instead
    */
-  public readonly revisionId: number;
+  public readonly modelId: number = 0;
   /**
-   * The revisionId of the specific model revision in Cognite Data Fusion.
+   * The revisionId of the specific model revision in Cognite Data Fusion. 0 if not applicable
+   * @deprecated Use modelIdentifier instead
+   */
+  public readonly revisionId: number = 0;
+
+  /**
+   * The identifier of this model
+   */
+  public readonly modelIdentifier: T['modelIdentifier'];
+
+  /**
+   * Point cloud node
    * @internal
    */
-  readonly pointCloudNode: PointCloudNode;
+  readonly pointCloudNode: PointCloudNode<T>;
 
-  private readonly _styledAnnotationVolumeCollections: StyledPointCloudAnnotationVolumeCollection[] = [];
-  private readonly _styledVolumeCollections: StyledPointCloudVolumeCollection[] = [];
+  private readonly _styledVolumeCollections: StyledPointCloudVolumeCollection<T>[] = [];
 
   /**
-   * @param modelId
-   * @param revisionId
+   * @param identifier
    * @param pointCloudNode
    * @internal
    */
-  constructor(modelId: number, revisionId: number, pointCloudNode: PointCloudNode) {
-    this.modelId = modelId;
-    this.revisionId = revisionId;
+  constructor(identifier: T['modelIdentifier'], pointCloudNode: PointCloudNode<T>) {
+    if (isClassicIdentifier(identifier)) {
+      this.modelId = identifier.modelId;
+      this.revisionId = identifier.revisionId;
+    }
+    this.modelIdentifier = identifier;
     this.pointCloudNode = pointCloudNode;
   }
 
@@ -304,15 +314,8 @@ export class CognitePointCloudModel<T extends PointCloudDataType = ClassicPointC
    * Gets the object collections that have been assigned a style
    * @returns All object collections and their associated style
    */
-  get styledCollections(): StyledPointCloudAnnotationVolumeCollection[] {
-    return this._styledAnnotationVolumeCollections;
-  }
 
-  /**
-   * Gets the object collections that have been assigned a style
-   * @returns All object collections and their associated style
-   */
-  get styledPointCloudVolumeCollections(): StyledPointCloudVolumeCollection[] {
+  get styledCollections(): StyledPointCloudVolumeCollection<T>[] {
     return this._styledVolumeCollections;
   }
 
@@ -329,8 +332,8 @@ export class CognitePointCloudModel<T extends PointCloudDataType = ClassicPointC
    *   });
    * ```
    */
-  get stylableObjects(): PointCloudObjectMetadata<PointCloudDataType>[] {
-    return Array.from(this.pointCloudNode.stylableObjectAnnotationMetadata);
+  get stylableObjects(): PointCloudObjectMetadata<T>[] {
+    return Array.from(this.pointCloudNode.stylableVolumeMetadata);
   }
 
   /**
@@ -340,38 +343,18 @@ export class CognitePointCloudModel<T extends PointCloudDataType = ClassicPointC
    * @param appearance The style to assign to the object collection
    */
   assignStyledObjectCollection(
-    objectCollection: PointCloudAnnotationVolumeCollection | PointCloudDMVolumeCollection,
+    objectCollection: T['pointCloudCollectionType'],
     appearance: PointCloudAppearance
   ): void {
     const fullAppearance: CompletePointCloudAppearance = applyDefaultsToPointCloudAppearance(appearance);
-
-    const updateOrCreateCollection = <T extends PointCloudAnnotationVolumeCollection | PointCloudDMVolumeCollection>(
-      collections: Array<{ objectCollection: T; style: CompletePointCloudAppearance }>,
-      CollectionClass: new (
-        objectCollection: T,
-        style: CompletePointCloudAppearance
-      ) => { objectCollection: T; style: CompletePointCloudAppearance },
-      objectCollection: T
-    ) => {
-      const index = collections.findIndex(x => x.objectCollection === objectCollection);
-      if (index !== -1) {
-        collections[index].style = fullAppearance;
-        this.pointCloudNode.assignStyledPointCloudObjectCollection(collections[index]);
-      } else {
-        const newObjectCollection = new CollectionClass(objectCollection, fullAppearance);
-        collections.push(newObjectCollection);
-        this.pointCloudNode.assignStyledPointCloudObjectCollection(newObjectCollection);
-      }
-    };
-
-    if (isPointCloudObjectCollection(objectCollection)) {
-      updateOrCreateCollection(
-        this._styledAnnotationVolumeCollections,
-        StyledPointCloudAnnotationVolumeCollection,
-        objectCollection
-      );
+    const index = this._styledVolumeCollections.findIndex(x => x.volumeCollection === objectCollection);
+    if (index !== -1) {
+      this._styledVolumeCollections[index].style = fullAppearance;
+      this.pointCloudNode.assignStyledPointCloudObjectCollection(this._styledVolumeCollections[index]);
     } else {
-      updateOrCreateCollection(this._styledVolumeCollections, StyledPointCloudVolumeCollection, objectCollection);
+      const newObjectCollection = new StyledPointCloudVolumeCollection<T>(objectCollection, fullAppearance);
+      this._styledVolumeCollections.push(newObjectCollection);
+      this.pointCloudNode.assignStyledPointCloudObjectCollection(newObjectCollection);
     }
   }
 
@@ -379,12 +362,10 @@ export class CognitePointCloudModel<T extends PointCloudDataType = ClassicPointC
    * Unassign style from an already styled object collection.
    * @param objectCollection The object collection from which to remove the style
    */
-  unassignStyledObjectCollection(
-    objectCollection: PointCloudAnnotationVolumeCollection | PointCloudDMVolumeCollection
-  ): void {
+  unassignStyledObjectCollection(objectCollection: T['pointCloudCollectionType']): void {
     const removeCollection = (
-      collections: Array<StyledPointCloudVolumeCollection | StyledPointCloudAnnotationVolumeCollection>,
-      objectCollection: PointCloudAnnotationVolumeCollection | PointCloudDMVolumeCollection
+      collections: Array<StyledPointCloudVolumeCollection<T>>,
+      objectCollection: T['pointCloudCollectionType']
     ) => {
       const index = collections.findIndex(x => x.objectCollection === objectCollection);
       if (index !== -1) {
@@ -393,24 +374,20 @@ export class CognitePointCloudModel<T extends PointCloudDataType = ClassicPointC
       return index !== -1;
     };
 
-    const styledRemoved = removeCollection(this._styledAnnotationVolumeCollections, objectCollection);
-    const combinedRemoved = removeCollection(this._styledVolumeCollections, objectCollection);
+    const removedVolume = removeCollection(this._styledVolumeCollections, objectCollection);
 
-    if (!styledRemoved && !combinedRemoved) {
+    if (!removedVolume) {
       return;
     }
 
     this.pointCloudNode.removeAllStyledPointCloudObjects();
 
-    const reassignCollections = (
-      collections: Array<StyledPointCloudVolumeCollection | StyledPointCloudAnnotationVolumeCollection>
-    ) => {
+    const reassignCollections = (collections: Array<StyledPointCloudVolumeCollection<T>>) => {
       for (const styledObjectCollection of collections) {
         this.pointCloudNode.assignStyledPointCloudObjectCollection(styledObjectCollection);
       }
     };
 
-    reassignCollections(this._styledAnnotationVolumeCollections);
     reassignCollections(this._styledVolumeCollections);
   }
 
@@ -419,7 +396,6 @@ export class CognitePointCloudModel<T extends PointCloudDataType = ClassicPointC
    */
   removeAllStyledObjectCollections(): void {
     this.pointCloudNode.removeAllStyledPointCloudObjects();
-    this._styledAnnotationVolumeCollections.splice(0);
     this._styledVolumeCollections.splice(0);
   }
 
@@ -441,8 +417,8 @@ export class CognitePointCloudModel<T extends PointCloudDataType = ClassicPointC
    * ```
    */
   traverseStylableObjects(callback: (annotationMetadata: PointCloudObjectMetadata<T>) => void): void {
-    for (const obj of this.pointCloudNode.stylableObjectAnnotationMetadata) {
-      callback(obj as PointCloudObjectMetadata<T>);
+    for (const obj of this.pointCloudNode.stylableVolumeMetadata) {
+      callback(obj);
     }
   }
 }
