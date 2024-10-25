@@ -33,7 +33,9 @@ import {
   ModelMetadataProvider,
   DummyPointCloudStylableObjectProvider,
   ModelDataProvider,
-  DummyPointCloudDMStylableObjectProvider
+  DummyPointCloudDMStylableObjectProvider,
+  AddModelOptionsWithModelRevisionId,
+  DataSourceType
 } from '../../packages/data-providers';
 import { LoadingState } from '../../packages/model-base';
 
@@ -201,9 +203,8 @@ export abstract class StreamingVisualTestFixture implements VisualTestFixture {
 
     this.updateRenderer();
 
-    const { modelDataProvider, modelIdentifier, modelMetadataProvider, cogniteClient } = await createDataProviders(
-      this._localModelUrl
-    );
+    const { modelDataProvider, modelIdentifier, modelMetadataProvider, addModelOptions, cogniteClient } =
+      await createDataProviders(this._localModelUrl);
 
     this._modelDataProvider = modelDataProvider;
 
@@ -223,7 +224,13 @@ export abstract class StreamingVisualTestFixture implements VisualTestFixture {
     const cadModelUpdateHandler = new CadModelUpdateHandler(sectorCuller, false);
     this._cadManager = new CadManager(this._materialManager, cadModelFactory, cadModelUpdateHandler);
 
-    const model = await this.addModel(modelIdentifier, modelMetadataProvider, this._cadManager, pointCloudManager);
+    const model = await this.addModel(
+      modelIdentifier,
+      addModelOptions,
+      modelMetadataProvider,
+      this._cadManager,
+      pointCloudManager
+    );
 
     const modelLoadedPromise = this.getModelLoadedPromise(model, this._cadManager, pointCloudManager);
 
@@ -373,6 +380,7 @@ export abstract class StreamingVisualTestFixture implements VisualTestFixture {
 
   private async addModel(
     modelIdentifier: ModelIdentifier,
+    addModelOptions: AddModelOptionsWithModelRevisionId<DataSourceType>,
     modelMetadataProvider: ModelMetadataProvider,
     cadManager: CadManager,
     pointCloudManager: PointCloudManager
@@ -387,7 +395,7 @@ export abstract class StreamingVisualTestFixture implements VisualTestFixture {
       this._sceneHandler.addCadModel(cadModel, cadModel.cadModelIdentifier);
       return cadModel;
     } else if (modelOutputs.includes('ept-pointcloud')) {
-      const pointCloudNode = await pointCloudManager.addModel(modelIdentifier);
+      const pointCloudNode = await pointCloudManager.addModel(addModelOptions);
       this._sceneHandler.addPointCloudModel(pointCloudNode, modelIdentifier.revealInternalId);
       return pointCloudNode;
     } else {

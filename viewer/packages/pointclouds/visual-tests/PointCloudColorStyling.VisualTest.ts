@@ -9,7 +9,10 @@ import {
 import { PointCloudFactory } from '../src/PointCloudFactory';
 import { cdfAnnotationsToObjectInfo } from '../../data-providers/src/pointcloud-stylable-object-providers/cdfAnnotationsToObjects';
 import {
+  ClassicDataSourceType,
+  ClassicModelIdentifierType,
   DMDataSourceType,
+  DMModelIdentifierType,
   DataSourceType,
   PointCloudObject,
   PointCloudStylableObjectProvider
@@ -18,11 +21,9 @@ import { Cylinder } from '../../utilities';
 import { PointCloudNode } from '../src/PointCloudNode';
 import {
   AnnotationIdPointCloudObjectCollection,
-  StyledPointCloudAnnotationVolumeCollection,
-  applyDefaultsToPointCloudAppearance
+  applyDefaultsToPointCloudAppearance,
+  StyledPointCloudVolumeCollection
 } from '../../pointcloud-styling';
-
-import { ModelIdentifier } from '@reveal/data-providers';
 
 import assert from 'assert';
 import * as THREE from 'three';
@@ -30,8 +31,8 @@ import { LocalPointClassificationsProvider } from '../src/classificationsProvide
 import { PointColorType } from '@reveal/rendering';
 import { Color } from 'three';
 
-class CustomAnnotationProvider implements PointCloudStylableObjectProvider {
-  async getPointCloudObjects(_modelIdentifier: ModelIdentifier): Promise<PointCloudObject[]> {
+class CustomAnnotationProvider implements PointCloudStylableObjectProvider<ClassicDataSourceType> {
+  async getPointCloudObjects(_modelIdentifier: ClassicModelIdentifierType): Promise<PointCloudObject[]> {
     const cdfAnnotations = [
       {
         annotationId: 123,
@@ -45,7 +46,7 @@ class CustomAnnotationProvider implements PointCloudStylableObjectProvider {
 
 class CustomDMProvider implements PointCloudStylableObjectProvider<DMDataSourceType> {
   async getPointCloudObjects<DMPointCloudDataType extends DataSourceType>(
-    _modelIdentifier: ModelIdentifier
+    _modelIdentifier: DMModelIdentifierType
   ): Promise<PointCloudObject<DMPointCloudDataType>[]> {
     const cdfAnnotations = [
       {
@@ -95,7 +96,7 @@ export default class PointCloudColorStylingVisualTest extends StreamingVisualTes
 
     model.geometryNode.pointSize = 5;
     model.geometryNode.assignStyledPointCloudObjectCollection(
-      new StyledPointCloudAnnotationVolumeCollection(objectCollection, appearance)
+      new StyledPointCloudVolumeCollection<ClassicDataSourceType>(objectCollection, appearance)
     );
     model.geometryNode.defaultAppearance = applyDefaultsToPointCloudAppearance({ visible: false });
     model.geometryNode.pointColorType = PointColorType.Height;
