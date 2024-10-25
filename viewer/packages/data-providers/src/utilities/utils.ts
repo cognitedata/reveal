@@ -10,7 +10,7 @@ import { ClassicDataSourceType, DMDataSourceType, DataSourceType } from '../Data
 /**
  * Type guard to check if a point cloud object contains data type DMPointCloudDataType
  * @param pointCloudObject - The object to check
- * @returns True if the object is of type PointCloudObject<DMPointCloudDataType>, false otherwise
+ * @returns True if the object is of type `PointCloudObject<DMPointCloudDataType>`, false otherwise
  */
 export function isDMPointCloudDataTypeObject(
   pointCloudObject: PointCloudObject<DataSourceType>
@@ -21,7 +21,7 @@ export function isDMPointCloudDataTypeObject(
 /**
  * Type guard to check if a point cloud object contains data type ClassicPointCloudDataType
  * @param pointCloudObject - The object to check
- * @returns True if the object is of type PointCloudObject<ClassicPointCloudDataType>, false otherwise
+ * @returns True if the object is of type `PointCloudObject<ClassicPointCloudDataType>`, false otherwise
  */
 export function isClassicPointCloudDataTypeObject(
   pointCloudObject: PointCloudObject<DataSourceType>
@@ -32,7 +32,7 @@ export function isClassicPointCloudDataTypeObject(
 /**
  * Type guard to check if the point cloud metadata is of type DMPointCloudDataType
  * @param pointCloudMetadata - The metadata object to check
- * @returns True if the object is of type PointCloudObjectMetadata<DMPointCloudDataType>, false otherwise
+ * @returns True if the object is of type `PointCloudObjectMetadata<DMPointCloudDataType>`, false otherwise
  */
 export function isDMPointCloudDataType(
   pointCloudMetadata: DataSourceType['pointCloudVolumeMetadata']
@@ -48,7 +48,7 @@ export function isDMPointCloudDataType(
 /**
  * Type guard to check if the point cloud metadata is of type ClassicPointCloudDataType
  * @param pointCloudMetadata - The metadata object to check
- * @returns True if the object is of type PointCloudObjectMetadata<ClassicPointCloudDataType>, false otherwise
+ * @returns True if the object is of type `PointCloudObjectMetadata<ClassicPointCloudDataType>`, false otherwise
  */
 export function isClassicPointCloudDataType(
   pointCloudMetadata: DataSourceType['pointCloudVolumeMetadata']
