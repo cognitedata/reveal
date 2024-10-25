@@ -396,7 +396,7 @@ export abstract class StreamingVisualTestFixture implements VisualTestFixture {
       return cadModel;
     } else if (modelOutputs.includes('ept-pointcloud')) {
       const pointCloudNode = await pointCloudManager.addModel(addModelOptions);
-      this._sceneHandler.addPointCloudModel(pointCloudNode, modelIdentifier.revealInternalId);
+      this._sceneHandler.addPointCloudModel(pointCloudNode, pointCloudNode.modelIdentifier);
       return pointCloudNode;
     } else {
       throw Error(`Unknown output format ${modelOutputs}`);
