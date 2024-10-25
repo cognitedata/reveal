@@ -53,7 +53,7 @@ Point cloud objects can be styled with a `PointCloudAppearance` object, containi
 To assign a style to one or more stylable objects, you must first create an instance of the abstract class `PointCloudAnnotationVolumeCollection`.
 The `AnnotationIdPointCloudObjectCollection` class can be used for CDF's Annotations, which is initialized with a list of annotation IDs corresponding to stylable objects.
 
-Or use class `PointCloudDMVolumeCollection` for CDF's CognitePointCloudVolume, which is initialized with list of point cloud volume references corresponding to stylable objects.
+The `PointCloudDMVolumeCollection` class can be used for styling with CDF's Core datamodel CognitePointCloudVolume, which is initialized with a list of DM references.
 To see all available annotation IDs or point cloud volume references associated with the model, you may use the `model.stylableObjects`.
 
 To color all stylable objects green for annotation IDs:
