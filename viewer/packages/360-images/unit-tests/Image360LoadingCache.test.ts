@@ -7,6 +7,7 @@ import { It, Mock } from 'moq.ts';
 import { Image360LoadingCache } from '../src/cache/Image360LoadingCache';
 import { Image360Entity } from '../src/entity/Image360Entity';
 import { Image360RevisionEntity } from '../src/entity/Image360RevisionEntity';
+import { DataSourceType } from '@reveal/data-providers';
 
 describe(Image360LoadingCache.name, () => {
   test('preloading entites should properly queue file loading', async () => {
@@ -18,11 +19,11 @@ describe(Image360LoadingCache.name, () => {
       fullResolutionCompleted: new DeferredPromise<void>()
     };
 
-    const revisionMock1 = new Mock<Image360RevisionEntity>()
+    const revisionMock1 = new Mock<Image360RevisionEntity<DataSourceType>>()
       .setup(p => p.loadTextures(It.IsAny()))
       .returns(deferredPromise)
       .object();
-    const entityMock1 = new Mock<Image360Entity>().object();
+    const entityMock1 = new Mock<Image360Entity<DataSourceType>>().object();
 
     entityLoadingCache.cachedPreload(entityMock1, revisionMock1);
 
@@ -47,14 +48,14 @@ describe(Image360LoadingCache.name, () => {
       lowResolutionCompleted: new DeferredPromise<void>(),
       fullResolutionCompleted: new DeferredPromise<void>()
     };
-    const revisionMock1 = new Mock<Image360RevisionEntity>()
+    const revisionMock1 = new Mock<Image360RevisionEntity<DataSourceType>>()
       .setup(p => p.loadTextures(It.IsAny()))
       .returns(deferredPromise1)
       .setup(p => p.dispose())
       .returns()
       .object();
 
-    const entityMock1 = new Mock<Image360Entity>()
+    const entityMock1 = new Mock<Image360Entity<DataSourceType>>()
       .setup(p => p.image360Visualization.visible)
       .returns(false)
       .setup(p => p.getActiveRevision())
@@ -68,12 +69,12 @@ describe(Image360LoadingCache.name, () => {
       fullResolutionCompleted: new DeferredPromise<void>()
     };
 
-    const revisionMock2 = new Mock<Image360RevisionEntity>()
+    const revisionMock2 = new Mock<Image360RevisionEntity<DataSourceType>>()
       .setup(p => p.loadTextures(It.IsAny()))
       .returns(deferredPromise2)
       .object();
 
-    const entityMock2 = new Mock<Image360Entity>()
+    const entityMock2 = new Mock<Image360Entity<DataSourceType>>()
       .setup(p => p.image360Visualization.visible)
       .returns(false)
       .object();
@@ -110,12 +111,12 @@ describe(Image360LoadingCache.name, () => {
       fullResolutionCompleted: new DeferredPromise<void>()
     };
 
-    const revisionMock1 = new Mock<Image360RevisionEntity>()
+    const revisionMock1 = new Mock<Image360RevisionEntity<DataSourceType>>()
       .setup(p => p.loadTextures(It.IsAny()))
       .returns(deferredPromise1)
       .object();
 
-    const entityMock1 = new Mock<Image360Entity>()
+    const entityMock1 = new Mock<Image360Entity<DataSourceType>>()
       .setup(p => p.image360Visualization.visible)
       .returns(true)
       .setup(p => p.getActiveRevision())
@@ -129,14 +130,14 @@ describe(Image360LoadingCache.name, () => {
       fullResolutionCompleted: new DeferredPromise<void>()
     };
 
-    const revisionMock2 = new Mock<Image360RevisionEntity>()
+    const revisionMock2 = new Mock<Image360RevisionEntity<DataSourceType>>()
       .setup(p => p.loadTextures(It.IsAny()))
       .returns(deferredPromise2)
       .setup(p => p.dispose())
       .returns()
       .object();
 
-    const entityMock2 = new Mock<Image360Entity>()
+    const entityMock2 = new Mock<Image360Entity<DataSourceType>>()
       .setup(p => p.image360Visualization.visible)
       .returns(false)
       .setup(p => p.getActiveRevision())
@@ -149,9 +150,9 @@ describe(Image360LoadingCache.name, () => {
       lowResolutionCompleted: new DeferredPromise<void>(),
       fullResolutionCompleted: new DeferredPromise<void>()
     };
-    const entityMock3 = new Mock<Image360Entity>().object();
+    const entityMock3 = new Mock<Image360Entity<DataSourceType>>().object();
 
-    const revisionMock3 = new Mock<Image360RevisionEntity>()
+    const revisionMock3 = new Mock<Image360RevisionEntity<DataSourceType>>()
       .setup(p => p.loadTextures(It.IsAny()))
       .returns(deferredPromise3)
       .object();
@@ -180,13 +181,13 @@ describe(Image360LoadingCache.name, () => {
   test('cache should handle failed downloads', async () => {
     const cacheSize = 3;
     const loadingCache = new Image360LoadingCache(cacheSize, cacheSize);
-    const entity = new Mock<Image360Entity>().object();
+    const entity = new Mock<Image360Entity<DataSourceType>>().object();
 
     const promiseToFail = {
       lowResolutionCompleted: new DeferredPromise<void>(),
       fullResolutionCompleted: new DeferredPromise<void>()
     };
-    const revisionMockToFail = new Mock<Image360RevisionEntity>()
+    const revisionMockToFail = new Mock<Image360RevisionEntity<DataSourceType>>()
       .setup(p => p.loadTextures(It.IsAny()))
       .returns(promiseToFail)
       .object();
@@ -195,7 +196,7 @@ describe(Image360LoadingCache.name, () => {
       lowResolutionCompleted: new DeferredPromise<void>(),
       fullResolutionCompleted: new DeferredPromise<void>()
     };
-    const revisionMockToAbort = new Mock<Image360RevisionEntity>()
+    const revisionMockToAbort = new Mock<Image360RevisionEntity<DataSourceType>>()
       .setup(p => p.loadTextures(It.IsAny()))
       .returns(promiseToAbort)
       .object();
@@ -204,7 +205,7 @@ describe(Image360LoadingCache.name, () => {
       lowResolutionCompleted: new DeferredPromise<void>(),
       fullResolutionCompleted: new DeferredPromise<void>()
     };
-    const revisionMockToResolve = new Mock<Image360RevisionEntity>()
+    const revisionMockToResolve = new Mock<Image360RevisionEntity<DataSourceType>>()
       .setup(p => p.loadTextures(It.IsAny()))
       .returns(promiseToResolve)
       .object();
@@ -241,7 +242,7 @@ describe(Image360LoadingCache.name, () => {
       lowResolutionCompleted: DeferredPromise<void>;
       fullResolutionCompleted: DeferredPromise<void>;
     }) => {
-      return new Mock<Image360RevisionEntity>()
+      return new Mock<Image360RevisionEntity<DataSourceType>>()
         .setup(p => p.loadTextures(It.IsAny()))
         .returns(deferredPromise)
         .setup(p => p.dispose())
@@ -267,7 +268,7 @@ describe(Image360LoadingCache.name, () => {
     };
     const revision360Mock3 = createMockRevision(deferredPromise3);
 
-    const entity = new Mock<Image360Entity>()
+    const entity = new Mock<Image360Entity<DataSourceType>>()
       .setup(p => p.image360Visualization.visible)
       .returns(false)
       .setup(p => p.getActiveRevision())

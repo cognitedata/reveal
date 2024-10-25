@@ -13,15 +13,16 @@ import { IconCullingScheme } from './icons/IconCollection';
 import { Image360RevisionEntity } from './entity/Image360RevisionEntity';
 import { Image360AnnotationFilterOptions } from './annotation/types';
 import { AsyncSequencer } from '@reveal/utilities/src/AsyncSequencer';
+import { DataSourceType } from '@reveal/data-providers';
 
-export class Image360Facade<T> {
-  private readonly _image360Collections: DefaultImage360Collection[];
+export class Image360Facade<T extends DataSourceType> {
+  private readonly _image360Collections: DefaultImage360Collection<T>[];
   private readonly _rayCaster: THREE.Raycaster;
   private readonly _image360Cache: Image360LoadingCache;
 
   private readonly _loadSequencer = new AsyncSequencer();
 
-  get collections(): DefaultImage360Collection[] {
+  get collections(): DefaultImage360Collection<T>[] {
     return this._image360Collections;
   }
 
@@ -33,7 +34,7 @@ export class Image360Facade<T> {
     this._image360Collections.forEach(collection => collection.setSelectedForAll(visible));
   }
 
-  setHoverIconVisibilityForEntity(entity: Image360Entity, visible: boolean): void {
+  setHoverIconVisibilityForEntity(entity: Image360Entity<T>, visible: boolean): void {
     this.getCollectionContainingEntity(entity).setSelectedVisibility(visible);
   }
 
@@ -54,11 +55,11 @@ export class Image360Facade<T> {
   }
 
   public async create(
-    dataProviderFilter: T,
+    dataProviderFilter: T['image360Identifier'],
     annotationFilter: Image360AnnotationFilterOptions = {},
     postTransform = new THREE.Matrix4(),
     preComputedRotation = true
-  ): Promise<DefaultImage360Collection> {
+  ): Promise<DefaultImage360Collection<T>> {
     const sequencer = this._loadSequencer.getNextSequencer();
 
     try {
@@ -78,12 +79,12 @@ export class Image360Facade<T> {
     }
   }
 
-  public removeSet(collection: DefaultImage360Collection): void {
+  public removeSet(collection: DefaultImage360Collection<T>): void {
     pull(this._image360Collections, collection);
     collection.dispose();
   }
 
-  public async delete(entity: Image360Entity): Promise<void> {
+  public async delete(entity: Image360Entity<T>): Promise<void> {
     await this._image360Cache.purge(entity);
     const collection = this.getCollectionContainingEntity(entity);
     collection.remove(entity);
@@ -93,7 +94,11 @@ export class Image360Facade<T> {
     }
   }
 
-  public preload(entity: Image360Entity, revision: Image360RevisionEntity, lockDownload?: boolean): Promise<void> {
+  public preload(
+    entity: Image360Entity<T>,
+    revision: Image360RevisionEntity<T>,
+    lockDownload?: boolean
+  ): Promise<void> {
     const annotationPromise = revision.getAnnotations();
     const cacheLoadPromise = this._image360Cache.cachedPreload(entity, revision, lockDownload);
 
@@ -104,7 +109,7 @@ export class Image360Facade<T> {
     }
   }
 
-  public getCollectionContainingEntity(entity: Image360Entity): DefaultImage360Collection {
+  public getCollectionContainingEntity(entity: Image360Entity<T>): DefaultImage360Collection<T> {
     const imageCollection = this._image360Collections.filter(collection =>
       collection.image360Entities.includes(entity)
     );
@@ -116,7 +121,7 @@ export class Image360Facade<T> {
     return imageCollection[0];
   }
 
-  public intersect(coords: THREE.Vector2, camera: THREE.Camera): Image360Entity | undefined {
+  public intersect(coords: THREE.Vector2, camera: THREE.Camera): Image360Entity<T> | undefined {
     const cameraDirection = camera.getWorldDirection(new THREE.Vector3());
     const cameraPosition = camera.position.clone();
     const collectionMatrix = new THREE.Matrix4();
@@ -143,16 +148,16 @@ export class Image360Facade<T> {
 
     return first(intersections);
 
-    function getImage360Entities(collection: DefaultImage360Collection): Image360Entity[] {
+    function getImage360Entities(collection: DefaultImage360Collection<T>): Image360Entity<T>[] {
       return collection.image360Entities;
     }
 
-    function hasVisibleIcon(entity: Image360Entity) {
+    function hasVisibleIcon(entity: Image360Entity<T>) {
       return entity.icon.getVisible() && !entity.image360Visualization.visible;
     }
 
-    function getIntersector(ray: THREE.Ray): (entity: Image360Entity) => [Image360Entity, THREE.Vector3 | null] {
-      return (entity: Image360Entity) => [entity, entity.icon.intersect(ray)];
+    function getIntersector(ray: THREE.Ray): (entity: Image360Entity<T>) => [Image360Entity<T>, THREE.Vector3 | null] {
+      return (entity: Image360Entity<T>) => [entity, entity.icon.intersect(ray)];
     }
 
     function getTransformedRay(
@@ -167,7 +172,7 @@ export class Image360Facade<T> {
     }
 
     function getWorldToModelCollectionMatrix(
-      collection: DefaultImage360Collection,
+      collection: DefaultImage360Collection<T>,
       collectionMatrix: THREE.Matrix4
     ): THREE.Matrix4 {
       collection.getModelTransformation(collectionMatrix);
@@ -176,14 +181,14 @@ export class Image360Facade<T> {
     }
 
     function hasIntersection(
-      entityIntersection: [Image360Entity, THREE.Vector3 | null]
-    ): entityIntersection is [Image360Entity, THREE.Vector3] {
+      entityIntersection: [Image360Entity<T>, THREE.Vector3 | null]
+    ): entityIntersection is [Image360Entity<T>, THREE.Vector3] {
       const intersection = entityIntersection[1];
       return intersection !== null;
     }
 
-    function intersectionToCameraSpace([entity, _]: [Image360Entity, THREE.Vector3 | null]): [
-      Image360Entity,
+    function intersectionToCameraSpace([entity, _]: [Image360Entity<T>, THREE.Vector3 | null]): [
+      Image360Entity<T>,
       THREE.Vector3
     ] {
       const entityCameraPosition = new THREE.Vector3();
@@ -191,18 +196,18 @@ export class Image360Facade<T> {
       return [entity, entityCameraPosition];
     }
 
-    function isInFrontOfCamera([_, intersectionPoint]: [Image360Entity, THREE.Vector3]): boolean {
+    function isInFrontOfCamera([_, intersectionPoint]: [Image360Entity<T>, THREE.Vector3]): boolean {
       return intersectionPoint.dot(cameraDirection) > 0 && intersectionPoint.lengthSq() > 0.00001;
     }
 
     function byDistanceToCamera(
-      [_0, a]: [Image360Entity, THREE.Vector3],
-      [_1, b]: [Image360Entity, THREE.Vector3]
+      [_0, a]: [Image360Entity<T>, THREE.Vector3],
+      [_1, b]: [Image360Entity<T>, THREE.Vector3]
     ): number {
       return a.lengthSq() - b.lengthSq();
     }
 
-    function selectEntity([entity, _]: [Image360Entity, THREE.Vector3]): Image360Entity {
+    function selectEntity([entity, _]: [Image360Entity<T>, THREE.Vector3]): Image360Entity<T> {
       return entity;
     }
   }

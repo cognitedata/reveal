@@ -6,10 +6,11 @@ import {
   IndexSet,
   NodeAppearance,
   NumericRange,
-  TreeIndexNodeCollection
+  TreeIndexNodeCollection,
+  DataSourceType
 } from '@cognite/reveal';
 import { HtmlOverlayTool } from '@cognite/reveal/tools';
-import { CogniteClient } from '@cognite/sdk/dist/src';
+import { CogniteClient } from '@cognite/sdk';
 import * as dat from 'dat.gui';
 
 type OverlayUserdata = {
@@ -21,7 +22,7 @@ type OverlayUserdata = {
 export class BulkHtmlOverlayUI {
   private readonly _activeElementsNodeAppearance: NodeAppearance = DefaultNodeAppearance.Highlighted;
 
-  private readonly _viewer: Cognite3DViewer;
+  private readonly _viewer: Cognite3DViewer<DataSourceType>;
   private readonly _model: CogniteCadModel;
   private readonly _sdk: CogniteClient;
   private readonly _overlays: HtmlOverlayTool;
@@ -32,7 +33,7 @@ export class BulkHtmlOverlayUI {
     filterValue: 'Tagged equipment'
   };
 
-  constructor(uiFolder: dat.GUI, viewer: Cognite3DViewer, model: CogniteCadModel, sdk: CogniteClient) {
+  constructor(uiFolder: dat.GUI, viewer: Cognite3DViewer<DataSourceType>, model: CogniteCadModel, sdk: CogniteClient) {
     this._viewer = viewer;
     this._model = model;
     this._sdk = sdk;
