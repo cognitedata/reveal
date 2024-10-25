@@ -3,7 +3,7 @@
  */
 
 import { useCallback, useEffect, useState, type ReactElement } from 'react';
-import { Menu } from '@cognite/cogs-lab';
+import { SelectPanel } from '@cognite/cogs-lab';
 import { useTranslation } from '../i18n/I18n';
 import { type BaseCommand } from '../../architecture/base/commands/BaseCommand';
 import styled from 'styled-components';
@@ -13,6 +13,7 @@ import { type BaseFilterItemCommand } from '../../architecture/base/commands/Bas
 export const FilterItem = ({ command }: { command: BaseFilterItemCommand }): ReactElement => {
   const { t } = useTranslation();
 
+  // @update-ui-component-pattern
   const [isChecked, setChecked] = useState<boolean>(false);
   const [isEnabled, setEnabled] = useState<boolean>(true);
   const [isVisible, setVisible] = useState<boolean>(true);
@@ -32,15 +33,17 @@ export const FilterItem = ({ command }: { command: BaseFilterItemCommand }): Rea
       command.removeEventListener(update);
     };
   }, [command]);
+  // @end
 
   if (!isVisible) {
     return <></>;
   }
   return (
-    <Menu.ItemToggled
+    <SelectPanel.Item
       key={uniqueId}
       disabled={!isEnabled}
-      toggled={isChecked}
+      checked={isChecked}
+      variant="checkbox"
       trailingContent={
         <CenteredContainer>
           {command.color !== undefined && <ColorBox backgroundColor={command.color} />}
@@ -49,15 +52,16 @@ export const FilterItem = ({ command }: { command: BaseFilterItemCommand }): Rea
       onClick={() => {
         command.invoke();
       }}
-      label={command.getLabel(t)}></Menu.ItemToggled>
+      label={command.getLabel(t)}
+    />
   );
 };
 
 const ColorBox = styled.div<{ backgroundColor: Color }>`
   width: 16px;
   height: 16px;
-  border: 1px solid black;
   display: inline-block;
+  border-radius: 4px;
   background-color: ${(props) => props.backgroundColor.getStyle()};
 `;
 

@@ -498,6 +498,10 @@ export class Cognite3DViewer<DataSourceT extends DataSourceType = ClassicDataSou
     on(event: 'cameraStop', callback: CameraStopDelegate): void;
     on(event: 'beforeSceneRendered', callback: BeforeSceneRenderedDelegate): void;
     on(event: 'sceneRendered', callback: SceneRenderedDelegate): void;
+    // @beta
+    onClick360Images(event: PointerEvent): Promise<boolean>;
+    // @beta
+    onHover360Images(event: PointerEvent): boolean;
     get pointCloudBudget(): PointCloudBudget;
     set pointCloudBudget(budget: PointCloudBudget);
     // @deprecated
@@ -1255,10 +1259,13 @@ export interface Image360Collection<T extends DataSourceType = ClassicDataSource
     // @deprecated
     getAssetIds(): Promise<IdEither[]>;
     getDefaultAnnotationStyle(): Image360AnnotationAppearance;
+    getIconsOpacity(): number;
     getIconsVisibility(): boolean;
+    getImagesOpacity(): number;
     getModelTransformation(out?: Matrix4): Matrix4;
     readonly id: string;
     readonly image360Entities: Image360<T>[];
+    isOccludedIconsVisible(): boolean;
     readonly label: string | undefined;
     off(event: 'image360Entered', callback: Image360EnteredDelegate): void;
     // (undocumented)
@@ -1268,8 +1275,11 @@ export interface Image360Collection<T extends DataSourceType = ClassicDataSource
     on(event: 'image360Exited', callback: Image360ExitedDelegate): void;
     set360IconCullingRestrictions(radius: number, pointLimit: number): void;
     setDefaultAnnotationStyle(appearance: Image360AnnotationAppearance): void;
+    setIconsOpacity(opacity: number): void;
     setIconsVisibility(visible: boolean): void;
+    setImagesOpacity(opacity: number): void;
     setModelTransformation(matrix: Matrix4): void;
+    setOccludedIconsVisible(visible: boolean): void;
     targetRevisionDate: Date | undefined;
 }
 

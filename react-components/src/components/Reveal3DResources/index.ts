@@ -22,3 +22,5 @@ export type {
   AddPointCloudResourceOptions,
   CadModelOptions
 } from './types';
+
+export { useReveal3DResourcesExpectedToLoadCount } from './Reveal3DResourcesInfoContext';

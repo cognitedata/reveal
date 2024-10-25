@@ -199,7 +199,7 @@ export interface Cognite3DViewerOptions {
   useFlexibleCameraManager?: boolean;
 
   /**
-   * Add event listerers around, default is having event listeners.
+   * Add event listeners around, default is having event listeners.
    * @beta
    */
   hasEventListeners?: boolean;

@@ -20,6 +20,10 @@ export class MockCheckableCommand extends RenderTargetCommand {
     return 'Snow';
   }
 
+  public override get isToggle(): boolean {
+    return true;
+  }
+
   public override get isChecked(): boolean {
     return this.value;
   }

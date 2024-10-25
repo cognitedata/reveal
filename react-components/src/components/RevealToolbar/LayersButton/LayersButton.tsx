@@ -9,11 +9,12 @@ import { useSyncExternalLayersState } from './useSyncExternalLayersState';
 import { SelectPanel } from '@cognite/cogs-lab';
 import { Button, ChevronRightSmallIcon, IconWrapper, LayersIcon } from '@cognite/cogs.js';
 import { type ModelHandler } from './ModelHandler';
-import { useReveal } from '../../RevealCanvas/ViewerContext';
+import { useRenderTarget, useReveal } from '../../RevealCanvas/ViewerContext';
 import { WholeLayerVisibilitySelectItem } from './WholeLayerVisibilitySelectItem';
 import { ModelLayersList } from './ModelLayersList';
 import { type DefaultLayersConfiguration, type LayersUrlStateParam } from './types';
 import { TOOLBAR_HORIZONTAL_PANEL_OFFSET } from '../../constants';
+import { CommandsUpdater } from '../../../architecture/base/reactUpdaters/CommandsUpdater';
 
 export type LayersButtonProps = {
   layersState?: LayersUrlStateParam | undefined;
@@ -28,6 +29,7 @@ export const LayersButton = ({
 }: LayersButtonProps): ReactElement => {
   const { t } = useTranslation();
   const viewer = useReveal();
+  const renderTarget = useRenderTarget();
 
   const [modelLayerHandlers, update] = useModelHandlers(
     setExternalLayersState,
@@ -43,6 +45,7 @@ export const LayersButton = ({
 
   const updateCallback = useCallback(() => {
     update(viewer.models, viewer.get360ImageCollections());
+    CommandsUpdater.update(renderTarget);
   }, [update]);
 
   return (
@@ -107,7 +110,11 @@ const ModelLayerSelection = ({
         />
       </SelectPanel.Trigger>
       <SelectPanel.Body>
-        <ModelLayersList modelLayerHandlers={modelLayerHandlers} update={updateCallback} />
+        <ModelLayersList
+          modelLayerHandlers={modelLayerHandlers}
+          update={updateCallback}
+          disabled={isDisabled}
+        />
       </SelectPanel.Body>
     </SelectPanel>
   );

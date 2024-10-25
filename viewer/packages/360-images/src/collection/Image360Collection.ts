@@ -116,6 +116,42 @@ export interface Image360Collection<T extends DataSourceType = ClassicDataSource
   setIconsVisibility(visible: boolean): void;
 
   /**
+   * Check if the occluded icons are visible
+   * @returns true is occluded icons are visible
+   */
+  isOccludedIconsVisible(): boolean;
+
+  /**
+   * Set the occluded icons visible
+   * @param visible
+   */
+  setOccludedIconsVisible(visible: boolean): void;
+
+  /**
+   * Get the opacity of the images
+   * @returns The opacity of the images
+   */
+  getImagesOpacity(): number;
+
+  /**
+   * Set the opacity of the images
+   * @param opacity The opacity of the images
+   */
+  setImagesOpacity(opacity: number): void;
+
+  /**
+   * Get the opacity of the icons
+   * @returns The opacity of the icons
+   */
+  getIconsOpacity(): number;
+
+  /**
+   * Set the opacity of the icons
+   * @param opacity The opacity of the icons
+   */
+  setIconsOpacity(opacity: number): void;
+
+  /**
    * Subscribes to events on 360 Image datasets. There are several event types:
    * 'image360Entered' - Subscribes to a event for entering 360 image mode.
    * 'image360Exited' - Subscribes to events indicating 360 image mode has exited.

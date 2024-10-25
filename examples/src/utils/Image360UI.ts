@@ -17,10 +17,8 @@ import * as dat from 'dat.gui';
 export class Image360UI {
   private viewer: Cognite3DViewer<DataSourceType>;
   private gui: dat.GUI;
-  private entities: Image360[] = [];
   private selectedEntity: Image360 | undefined;
   private _lastAnnotation: Image360Annotation | undefined = undefined;
-  private _collections: Image360Collection[] = [];
 
   private async handleIntersectionAsync(intersectionPromise: Promise<Image360AnnotationIntersection | null>) {
     const intersection = await intersectionPromise;
@@ -32,10 +30,6 @@ export class Image360UI {
     intersection.annotation.setColor(new THREE.Color(0.8, 0.8, 1.0));
     this.viewer.requestRedraw();
     this._lastAnnotation = intersection.annotation;
-  }
-
-  get collections(): Image360Collection[] {
-    return this._collections;
   }
 
   private params = {
@@ -67,14 +61,16 @@ export class Image360UI {
     radians: 0
   };
 
-  private opacity = {
-    alpha: 1
+  private images360Settings = {
+    opacity: 1
   };
 
-  private iconCulling = {
+  private icons360Setting = {
+    visible: true,
+    opacity: 1,
+    occludedIconsVisible: true,
     radius: Infinity,
-    limit: 50,
-    hideAll: false
+    limit: 50
   };
 
   private imageRevisions = {
@@ -100,8 +96,8 @@ export class Image360UI {
       });
 
     const optionsFolder = this.gui.addFolder('Add Options (Events)');
-    optionsFolder.hide();
     const optionsFolderFdm = this.gui.addFolder('Add Options (Data Models)');
+    optionsFolderFdm.hide();
     // events
     optionsFolder.add(this.params, 'siteId').name('Site ID');
 
@@ -125,36 +121,54 @@ export class Image360UI {
     this.gui.add(this.params, 'add').name('Add image set');
     this.gui.add(this.params, 'remove').name('Remove image set');
 
-    this.gui.add(this.opacity, 'alpha', 0, 1, 0.01).onChange(() => {
-      this.entities.forEach(p => (p.image360Visualization.opacity = this.opacity.alpha));
-      this.viewer.requestRedraw();
-    });
-
     gui.add(this.params, 'assetId').name('Asset ID');
     gui.add(this.params, 'findAsset').name('Find asset');
 
     this.gui
-      .add(this.iconCulling, 'radius', 0, 10000, 1)
-      .name('Culling radius')
+      .add(this.images360Settings, 'opacity', 0, 1, 0.01)
+      .name('Image opacity')
       .onChange(() => {
-        this.set360IconCullingRestrictions();
-      });
-
-    this.gui
-      .add(this.iconCulling, 'limit', 0, 10000, 1)
-      .name('Number of points')
-      .onChange(() => {
-        this.set360IconCullingRestrictions();
-      });
-
-    this.gui
-      .add(this.iconCulling, 'hideAll')
-      .name('Hide all 360 images')
-      .onChange(() => {
-        if (this._collections.length > 0) {
-          this._collections.forEach(p => p.setIconsVisibility(!this.iconCulling.hideAll));
-          this.viewer.requestRedraw();
+        for (const collection of viewer.get360ImageCollections()) {
+          collection.setImagesOpacity(this.images360Settings.opacity);
         }
+      });
+
+    this.gui
+      .add(this.icons360Setting, 'visible')
+      .name('Show all 360 images')
+      .onChange(() => {
+        for (const collection of viewer.get360ImageCollections()) {
+          collection.setIconsVisibility(this.icons360Setting.visible);
+        }
+      });
+    this.gui
+      .add(this.icons360Setting, 'opacity', 0, 1, 0.01)
+      .name('Icon opacity')
+      .onChange(() => {
+        for (const collection of viewer.get360ImageCollections()) {
+          collection.setIconsOpacity(this.icons360Setting.opacity);
+        }
+      });
+    this.gui
+      .add(this.icons360Setting, 'occludedIconsVisible')
+      .name('Set occluded icons visible')
+      .onChange(() => {
+        for (const collection of viewer.get360ImageCollections()) {
+          collection.setOccludedIconsVisible(this.icons360Setting.occludedIconsVisible);
+        }
+      });
+    this.gui
+      .add(this.icons360Setting, 'radius', 0, 10000, 1)
+      .name('Icon Culling radius')
+      .onChange(() => {
+        this.set360IconCullingRestrictions();
+      });
+
+    this.gui
+      .add(this.icons360Setting, 'limit', 0, 10000, 1)
+      .name('Icon Number of points')
+      .onChange(() => {
+        this.set360IconCullingRestrictions();
       });
 
     this.gui.add(this.params, 'saveToUrl').name('Save 360 site to URL');
@@ -164,11 +178,13 @@ export class Image360UI {
       .add(this.imageRevisions, 'targetDate')
       .name('Revision date (Unix epoch time):')
       .onChange(() => {
-        if (this.collections.length === 0) return;
-
+        const collections = this.viewer.get360ImageCollections();
+        if (collections.length === 0) {
+          return;
+        }
         const date =
           this.imageRevisions.targetDate.length > 0 ? new Date(Number(this.imageRevisions.targetDate)) : undefined;
-        this.collections.forEach(p => (p.targetRevisionDate = date));
+        collections.forEach(p => (p.targetRevisionDate = date));
         if (this.selectedEntity) viewer.enter360Image(this.selectedEntity);
       });
 
@@ -208,14 +224,11 @@ export class Image360UI {
 
     const collection = await this.addCollection();
 
-    collection.setIconsVisibility(!this.iconCulling.hideAll);
+    collection.setIconsVisibility(this.icons360Setting.visible);
     collection.on('image360Entered', (entity, _) => {
       this.selectedEntity = entity;
     });
     this.viewer.on('click', event => this.onAnnotationClicked(event));
-    this._collections.push(collection);
-    this.entities = this.entities.concat(collection.image360Entities);
-
     this.viewer.requestRedraw();
   }
 
@@ -249,16 +262,16 @@ export class Image360UI {
   }
 
   private async set360IconCullingRestrictions() {
-    if (this._collections.length > 0) {
-      this._collections.forEach(p => p.set360IconCullingRestrictions(this.iconCulling.radius, this.iconCulling.limit));
-      this.viewer.requestRedraw();
+    const collections = this.viewer.get360ImageCollections();
+    if (collections.length === 0) {
+      return;
     }
+    collections.forEach(p => p.set360IconCullingRestrictions(this.icons360Setting.radius, this.icons360Setting.limit));
+    this.viewer.requestRedraw();
   }
 
   private async removeAll360Images() {
-    this._collections.forEach(p => this.viewer.remove360ImageSet(p));
-    this.entities = [];
-    this._collections = [];
+    this.viewer.get360ImageCollections().forEach(p => this.viewer.remove360ImageSet(p));
   }
 
   private onAnnotationClicked(event: { offsetX: number; offsetY: number; button?: number }): void {
@@ -287,12 +300,12 @@ export class Image360UI {
     if (this.params.assetId.length === 0) {
       return;
     }
-
     const assetId = Number(this.params.assetId);
-
     const revisionsAndEntities = (
       await Promise.all(
-        this.collections.map(async coll => await coll.findImageAnnotations({ assetRef: { id: assetId } }))
+        this.viewer
+          .get360ImageCollections()
+          .map(async collection => await collection.findImageAnnotations({ assetRef: { id: assetId } }))
       )
     ).flat(1);
 

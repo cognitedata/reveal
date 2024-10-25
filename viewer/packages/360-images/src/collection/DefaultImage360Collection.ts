@@ -31,6 +31,7 @@ import { Image360 } from '../entity/Image360';
 import { Image360Revision } from '../entity/Image360Revision';
 import { ImageAssetLinkAnnotationInfo } from '@reveal/data-providers';
 import { Matrix4 } from 'three';
+import { DEFAULT_IMAGE_360_OPACITY } from '../entity/Image360VisualizationBox';
 
 type Image360Events = 'image360Entered' | 'image360Exited';
 
@@ -161,21 +162,45 @@ export class DefaultImage360Collection<T extends DataSourceType> implements Imag
     this._icons.set360IconCullingRestrictions(radius, pointLimit);
   }
 
-  /**
-   * Gets visibility of all 360 image icons.
-   * @returns true if all icons are visible, false if all icons are invisible
-   */
   getIconsVisibility(): boolean {
     return this._isCollectionVisible;
   }
 
-  /**
-   * Set visibility of all 360 image icons.
-   * @param visible If true all icons are made visible according to the active culling scheme. If false all icons are hidden.
-   */
-  public setIconsVisibility(visible: boolean): void {
-    this._isCollectionVisible = visible;
-    this.image360Entities.forEach(entity => entity.icon.setVisible(visible));
+  public setIconsVisibility(value: boolean): void {
+    this._isCollectionVisible = value;
+    this.image360Entities.forEach(entity => entity.icon.setVisible(value));
+    this._needsRedraw = true;
+  }
+
+  public isOccludedIconsVisible(): boolean {
+    return this._icons.isOccludedVisible();
+  }
+
+  public setOccludedIconsVisible(value: boolean): void {
+    this._icons.setOccludedVisible(value);
+    this._needsRedraw = true;
+  }
+
+  public getIconsOpacity(): number {
+    return this._icons.getOpacity();
+  }
+
+  public setIconsOpacity(value: number): void {
+    this._icons.setOpacity(value);
+    this._needsRedraw = true;
+  }
+
+  public getImagesOpacity(): number {
+    for (const entity of this.image360Entities) {
+      return entity.image360Visualization.opacity;
+    }
+    return DEFAULT_IMAGE_360_OPACITY;
+  }
+
+  public setImagesOpacity(value: number): void {
+    for (const entity of this.image360Entities) {
+      entity.image360Visualization.opacity = value;
+    }
     this._needsRedraw = true;
   }
 
@@ -209,8 +234,12 @@ export class DefaultImage360Collection<T extends DataSourceType> implements Imag
     this.image360Entities.forEach(entity => (entity.icon.selected = selected));
   }
 
-  public setSelectedVisibility(visible: boolean): void {
+  public setSelectedVisibility(visible: boolean): boolean {
+    if (this._icons.hoverSpriteVisibility == visible) {
+      return false;
+    }
     this._icons.hoverSpriteVisibility = visible;
+    return true;
   }
 
   public setCullingScheme(scheme: IconCullingScheme): void {
