@@ -51,7 +51,7 @@ Point cloud objects can be styled with a `PointCloudAppearance` object, containi
 | `visible`                  | `boolean?`                      | When false, stylable object will be invisible. Default value is `true`.               |
 
 To assign a style to one or more stylable objects, you must first create an instance of the abstract class `PointCloudAnnotationVolumeCollection`.
-Currently, class provided by Reveal is `AnnotationIdPointCloudObjectCollection` for CDF's Annotations, which is initialized with a list of annotation IDs corresponding to stylable objects.
+The `AnnotationIdPointCloudObjectCollection` class can be used for CDF's Annotations, which is initialized with a list of annotation IDs corresponding to stylable objects.
 
 Or use class `PointCloudDMVolumeCollection` for CDF's CognitePointCloudVolume, which is initialized with list of point cloud volume references corresponding to stylable objects.
 To see all available annotation IDs or point cloud volume references associated with the model, you may use the `model.stylableObjects`.
