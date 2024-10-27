@@ -33,7 +33,7 @@ export class Image360UI {
   }
 
   private params = {
-    siteId: getSiteIdFromUrl() ?? '', // For instance: helideck-site-2-jpeg
+    siteId: getSiteIdFromUrl() ?? 'helideck-site-2-jpeg', // For instance: helideck-site-2-jpeg
     space: getSpaceFromUrl() ?? '',
     add: () => this.add360ImageSet(),
     remove: () => this.remove360ImageSet(),
