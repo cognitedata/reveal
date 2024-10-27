@@ -1,8 +1,9 @@
+import { DataSourceType } from '@cognite/reveal';
 import { CognitePointCloudModel } from '@cognite/reveal';
 import dat from 'dat.gui';
 
 export class PointCloudClassificationFilterUI {
-  constructor(ui: dat.GUI, model: CognitePointCloudModel) {
+  constructor(ui: dat.GUI, model: CognitePointCloudModel<DataSourceType>) {
     const classes = model.getClasses();
     const visibility = classes.reduce((visibility, pointClass) => {
       return { ...visibility, [`${pointClass}`]: model.isClassVisible(pointClass.code) };

@@ -5,10 +5,10 @@
 import * as dat from 'dat.gui';
 
 import * as THREE from 'three';
-import { Cognite3DViewer } from '@cognite/reveal';
+import { Cognite3DViewer, DataSourceType } from '@cognite/reveal';
 
 export class Image360StylingUI {
-  constructor(viewer: Cognite3DViewer, gui: dat.GUI) {
+  constructor(viewer: Cognite3DViewer<DataSourceType>, gui: dat.GUI) {
     const state = {
       color: '#ffffff',
       visible: true

@@ -7,7 +7,9 @@
     "lint": "yarn ws:lint"
   },
   "dependencies": {
+    "@reveal/cad-model": "workspace:*",
     "@reveal/logger": "workspace:*",
+    "@reveal/pointcloud-styling": "workspace:*",
     "@reveal/utilities": "workspace:*"
   }
 }

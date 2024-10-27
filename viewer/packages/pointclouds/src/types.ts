@@ -2,6 +2,10 @@
  * Copyright 2021 Cognite AS
  */
 
+import { Object3D, Vector3 } from 'three';
+import { PointCloudNode } from './PointCloudNode';
+import { DataSourceType } from '@reveal/data-providers';
+
 /**
  * ASPRS well known point class types.
  * @see {@link http://www.asprs.org/wp-content/uploads/2019/03/LAS_1_4_r14.pdf} (page 30)
@@ -81,3 +85,30 @@ export enum WellKnownAsprsPointClassCodes {
    * Values up to and including 63 are reserved
    */
 }
+
+export type IntersectPointCloudNodeResult<T extends DataSourceType> = {
+  /**
+   * Distance from camera to intersected point.
+   */
+  distance: number;
+  /**
+   * Coordinate of the intersected point.
+   */
+  point: Vector3;
+  /**
+   * Point index in the point cloud of the intersected point.
+   */
+  pointIndex: number;
+  /**
+   * Point cloud node defining what model the point is a part of.
+   */
+  pointCloudNode: PointCloudNode<T>;
+  /**
+   * The geometry object that was intersected.
+   */
+  object: Object3D;
+  /**
+   * Volume metadata, e.g. asset reference
+   */
+  volumeMetadata?: T['pointCloudVolumeMetadata'];
+};
