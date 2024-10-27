@@ -3,10 +3,11 @@
  */
 
 import { Image360Entity } from '@reveal/360-images';
+import { Image360Action } from '../public/migration/Image360Action';
 
 export class Image360History {
   private readonly _history: Image360Entity[] = [];
-  private _currentIndex: number = -1;
+  private _currentIndex: number = -1; // Negative mean no current index (avoid empty because of harder logic)
 
   private isLegalIndex(index: number): boolean {
     return index >= 0 && index < this._history.length;
@@ -20,7 +21,14 @@ export class Image360History {
     this._currentIndex = this._history.length - 1;
   }
 
-  public forward(): Image360Entity | undefined {
+  private current(): Image360Entity | undefined {
+    if (!this.isLegalIndex(this._currentIndex)) {
+      return undefined;
+    }
+    return this._history[this._currentIndex];
+  }
+
+  private forward(): Image360Entity | undefined {
     const currentIndex = this._currentIndex + 1;
     if (!this.isLegalIndex(currentIndex)) {
       return undefined;
@@ -29,7 +37,7 @@ export class Image360History {
     return this.current();
   }
 
-  public backward(): Image360Entity | undefined {
+  private backward(): Image360Entity | undefined {
     const currentIndex = this._currentIndex - 1;
     if (!this.isLegalIndex(currentIndex)) {
       return undefined;
@@ -43,10 +51,29 @@ export class Image360History {
     this._currentIndex = -1;
   }
 
-  public current(): Image360Entity | undefined {
-    if (!this.isLegalIndex(this._currentIndex)) {
-      return undefined;
+  public canDoAction(action: Image360Action): boolean {
+    switch (action) {
+      case Image360Action.Forward:
+        return this.isLegalIndex(this._currentIndex + 1);
+      case Image360Action.Backward:
+        return this.isLegalIndex(this._currentIndex - 1);
+      case Image360Action.Enter:
+        return this.isLegalIndex(this._currentIndex);
+      default:
+        return false;
     }
-    return this._history[this._currentIndex];
+  }
+
+  public doAction(action: Image360Action): Image360Entity | undefined {
+    switch (action) {
+      case Image360Action.Forward:
+        return this.forward();
+      case Image360Action.Backward:
+        return this.backward();
+      case Image360Action.Enter:
+        return this.current();
+      default:
+        throw new Error(`Unknown movement ${action}`);
+    }
   }
 }

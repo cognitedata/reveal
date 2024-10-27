@@ -43,6 +43,7 @@ import { MetricsLogger } from '@reveal/metrics';
 import debounce from 'lodash/debounce';
 import { Image360WithCollection } from '../public/types';
 import { DEFAULT_IMAGE_360_OPACITY } from '@reveal/360-images/src/entity/Image360VisualizationBox';
+import { Image360Action } from '../public/migration/Image360Action';
 import { Image360History } from './Image360History';
 
 export class Image360ApiHelper {
@@ -81,39 +82,8 @@ export class Image360ApiHelper {
   private readonly onKeyDown = (event: KeyboardEvent) => {
     if (event.key === 'Escape') {
       this.exit360ImageForEntry(this._interactionState.currentImage360Entered);
-    } else if (event.key === 'PageUp') {
-      const entry = this._history.forward();
-      if (entry !== undefined) {
-        this.enter360ImageInternal(entry);
-      }
-    } else if (event.key === 'PageDown') {
-      const entry = this._history.backward();
-      if (entry !== undefined) {
-        this.enter360ImageInternal(entry);
-      }
     }
   };
-
-  public enterLast(): void {
-    const entry = this._history.current();
-    if (entry !== undefined) {
-      this.enter360ImageInternal(entry);
-    }
-  }
-
-  public enterForward(): void {
-    const entry = this._history.forward();
-    if (entry !== undefined) {
-      this.enter360ImageInternal(entry);
-    }
-  }
-
-  public enterBackward(): void {
-    const entry = this._history.backward();
-    if (entry !== undefined) {
-      this.enter360ImageInternal(entry);
-    }
-  }
 
   public readonly onHover = (event: MouseEvent): void => this.setHoverIcon(event.offsetX, event.offsetY);
 
@@ -261,7 +231,6 @@ export class Image360ApiHelper {
     }
 
     this._image360Facade.removeSet(collection as DefaultImage360Collection);
-
     this._needsRedraw = true;
   }
 
@@ -531,6 +500,34 @@ export class Image360ApiHelper {
         target: new Vector3(0, 0, -1).applyQuaternion(rotation).add(position)
       });
     }
+  }
+
+  public canDoAction(action: Image360Action): boolean {
+    const insideImage = this._interactionState.currentImage360Entered !== undefined;
+    if (action === Image360Action.Exit) {
+      return insideImage;
+    }
+    if (action === Image360Action.Enter) {
+      if (insideImage) {
+        return false;
+      }
+    } else {
+      if (!insideImage) {
+        return false;
+      }
+    }
+    return this._history.canDoAction(action);
+  }
+
+  public doAction(action: Image360Action): void {
+    if (!this.canDoAction(action)) {
+      return;
+    }
+    if (action === Image360Action.Exit) {
+      this.exit360Image();
+      return;
+    }
+    this._history.doAction(action);
   }
 
   public dispose(): void {

@@ -943,6 +943,28 @@ export class Cognite3DViewer {
   }
 
   /**
+   * Check if a 360 image action can be done.
+   * @param action The action to check if can be done.
+   */
+  canDo360Action(action: Image360Action): boolean {
+    if (this._cdfSdkClient === undefined || this._image360ApiHelper === undefined) {
+      return false;
+    }
+    return this._image360ApiHelper.canDoAction(action);
+  }
+
+  /**
+   * Do a 360 image action.
+   * @param action The action to do
+   */
+  do360Action(action: Image360Action): void {
+    if (this._cdfSdkClient === undefined || this._image360ApiHelper === undefined) {
+      throw new Error(`Adding 360 image sets is only supported when connecting to Cognite Data Fusion`);
+    }
+    this._image360ApiHelper.doAction(action);
+  }
+
+  /**
    * Removes a model that was previously added using {@link Cognite3DViewer.addModel},
    * {@link Cognite3DViewer.addCadModel} or {@link Cognite3DViewer.addPointCloudModel}
    * .
