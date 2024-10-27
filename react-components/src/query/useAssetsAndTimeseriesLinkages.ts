@@ -1,7 +1,7 @@
 /*!
  * Copyright 2024 Cognite AS
  */
-import { useQuery, type UseQueryResult } from '@tanstack/react-query';
+import { keepPreviousData, useQuery, type UseQueryResult } from '@tanstack/react-query';
 
 import {
   type IdEither,
@@ -50,7 +50,6 @@ export function useAssetsAndTimeseriesLinkages(
       queryKeys.timeseriesLinkedToAssets(),
       relationshipResourceTypes,
       timeseriesExternalIds,
-      assetIds.map((item) => item.id)
     ],
     queryFn: async () => {
       const assetAndTimeseriesIdsFromRelationship = await fetchLinkFromRelationshipsByTimeseries(
@@ -98,6 +97,7 @@ export function useAssetsAndTimeseriesLinkages(
 
       return assetsAndTimeseriesAll;
     },
-    enabled: timeseriesExternalIds.length > 0
+    enabled: timeseriesExternalIds.length > 0,
+    placeholderData: keepPreviousData
   });
 }
