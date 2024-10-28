@@ -443,11 +443,13 @@ export class Cognite3DViewer<DataSourceT extends DataSourceType = ClassicDataSou
     set cadBudget(budget: CadModelBudget);
     // (undocumented)
     get cameraManager(): CameraManager;
+    canDo360Action(action: Image360Action): boolean;
     get canvas(): HTMLCanvasElement;
     // @beta
     createCustomObjectIntersectInput(pixelCoords: THREE.Vector2): CustomObjectIntersectInput;
     determineModelType(modelId: number, revisionId: number): Promise<SupportedModelTypes | ''>;
     dispose(): void;
+    do360Action(action: Image360Action): void;
     get domElement(): HTMLElement;
     enter360Image(image360: Image360<DataSourceT>, revision?: Image360Revision<DataSourceT>): Promise<void>;
     exit360Image(): void;

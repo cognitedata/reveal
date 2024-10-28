@@ -3,7 +3,7 @@
  */
 
 import { Image360 } from '@reveal/360-images';
-import { Image360Action } from '../public/migration/Image360Action';
+import { Image360Action } from './Image360Action';
 
 export class Image360History {
   private readonly _history: Image360[] = [];
