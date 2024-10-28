@@ -49,7 +49,7 @@ export function useAssetsAndTimeseriesLinkages(
     queryKey: [
       queryKeys.timeseriesLinkedToAssets(),
       relationshipResourceTypes,
-      timeseriesExternalIds,
+      timeseriesExternalIds
     ],
     queryFn: async () => {
       const assetAndTimeseriesIdsFromRelationship = await fetchLinkFromRelationshipsByTimeseries(
