@@ -7,8 +7,20 @@
  * @beta
  */
 export enum Image360Action {
-  Forward, // When inside 360 image, forwards on the history list
-  Backward, // When inside 360 image, backwards on the history list
-  Enter, // When outside 360 image, go to current in the history list (where you exit from)
-  Exit // When inside 360, exit.
+  /**
+   * When inside 360 image, forwards on the history list.
+   */
+  Forward,
+  /**
+   * When inside 360 image, backwards on the history list.
+   */
+  Backward,
+  /**
+   * When outside 360 image, go to current in the history list (where you exit from).
+   */
+  Enter,
+  /**
+   * When inside 360, exit.
+   */
+  Exit
 }
