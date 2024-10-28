@@ -100,6 +100,7 @@ import { AsyncSequencer, SequencerFunction } from '../../../../utilities/src/Asy
 import { getModelAndRevisionId } from '../../utilities/utils';
 import { ClassicDataSourceType, DataSourceType, isClassicIdentifier } from '@reveal/data-providers';
 import assert from 'assert';
+import { Image360Action } from '@reveal/360-images/src/Image360Action';
 
 type Cognite3DViewerEvents =
   | 'click'
@@ -924,7 +925,7 @@ export class Cognite3DViewer<DataSourceT extends DataSourceType = ClassicDataSou
    */
   remove360Images(...image360Entities: Image360<DataSourceT>[]): Promise<void> {
     if (this._cdfSdkClient === undefined || this._image360ApiHelper === undefined) {
-      throw new Error(`Adding 360 image sets is only supported when connecting to Cognite Data Fusion`);
+      throw new Error(`Remove 360 images is only supported when connecting to Cognite Data Fusion`);
     }
     return this._image360ApiHelper.remove360Images(
       image360Entities.map(entity => entity as Image360Entity<DataSourceT>)
@@ -946,7 +947,7 @@ export class Cognite3DViewer<DataSourceT extends DataSourceType = ClassicDataSou
    */
   enter360Image(image360: Image360<DataSourceT>, revision?: Image360Revision<DataSourceT>): Promise<void> {
     if (this._cdfSdkClient === undefined || this._image360ApiHelper === undefined) {
-      throw new Error(`Adding 360 image sets is only supported when connecting to Cognite Data Fusion`);
+      throw new Error(`Enter 360 image is only supported when connecting to Cognite Data Fusion`);
     }
     return this._image360ApiHelper.enter360Image(
       image360 as Image360Entity<DataSourceT>,
@@ -959,9 +960,33 @@ export class Cognite3DViewer<DataSourceT extends DataSourceType = ClassicDataSou
    */
   exit360Image(): void {
     if (this._cdfSdkClient === undefined || this._image360ApiHelper === undefined) {
-      throw new Error(`Adding 360 image sets is only supported when connecting to Cognite Data Fusion`);
+      throw new Error(`Exit 360 image is only supported when connecting to Cognite Data Fusion`);
     }
     this._image360ApiHelper.exit360Image();
+  }
+
+  /**
+   * Check if a 360 image action can be done.
+   * @param action The action to check if can be done.
+   * @beta
+   */
+  canDo360Action(action: Image360Action): boolean {
+    if (this._cdfSdkClient === undefined || this._image360ApiHelper === undefined) {
+      return false;
+    }
+    return this._image360ApiHelper.canDoAction(action);
+  }
+
+  /**
+   * Do a 360 image action.
+   * @param action The action to do.
+   * @beta
+   */
+  async do360Action(action: Image360Action): Promise<void> {
+    if (this._cdfSdkClient === undefined || this._image360ApiHelper === undefined) {
+      throw new Error(`360 actions is only supported when connecting to Cognite Data Fusion`);
+    }
+    await this._image360ApiHelper.doAction(action);
   }
 
   /**
@@ -1698,7 +1723,7 @@ export class Cognite3DViewer<DataSourceT extends DataSourceType = ClassicDataSou
     if (this._image360ApiHelper === undefined) {
       return false;
     }
-    return this._image360ApiHelper.enter360ImageHandler({ offsetX: event.offsetX, offsetY: event.offsetY });
+    return this._image360ApiHelper.onClick({ offsetX: event.offsetX, offsetY: event.offsetY });
   }
 
   /**
@@ -1711,7 +1736,7 @@ export class Cognite3DViewer<DataSourceT extends DataSourceType = ClassicDataSou
     if (this._image360ApiHelper === undefined) {
       return false;
     }
-    this._image360ApiHelper.setHoverIconEventHandler(event);
+    this._image360ApiHelper.onHover(event);
     return true;
   }
 
