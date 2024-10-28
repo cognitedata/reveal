@@ -9,10 +9,6 @@ export class Image360History {
   private readonly _history: Image360[] = [];
   private _currentIndex: number = -1; // Negative mean no current index (avoid empty because of harder logic)
 
-  private isLegalIndex(index: number): boolean {
-    return index >= 0 && index < this._history.length;
-  }
-
   public start(history: Image360): void {
     if (this.isLegalIndex(this._currentIndex + 1)) {
       this._history.slice(this._currentIndex + 1);
@@ -28,27 +24,13 @@ export class Image360History {
     return this._history[this._currentIndex];
   }
 
-  private forward(): Image360 | undefined {
-    const currentIndex = this._currentIndex + 1;
-    if (!this.isLegalIndex(currentIndex)) {
-      return undefined;
-    }
-    this._currentIndex = currentIndex;
-    return this.current();
-  }
-
-  private backward(): Image360 | undefined {
-    const currentIndex = this._currentIndex - 1;
-    if (!this.isLegalIndex(currentIndex)) {
-      return undefined;
-    }
-    this._currentIndex = currentIndex;
-    return this.current();
-  }
-
   public clear(): void {
     this._history.splice(0, this._history.length);
     this._currentIndex = -1;
+  }
+
+  private isLegalIndex(index: number): boolean {
+    return index >= 0 && index < this._history.length;
   }
 
   public canDoAction(action: Image360Action): boolean {
@@ -65,15 +47,23 @@ export class Image360History {
   }
 
   public doAction(action: Image360Action): Image360 | undefined {
+    let currentIndex = this._currentIndex;
     switch (action) {
       case Image360Action.Forward:
-        return this.forward();
+        currentIndex++;
+        break;
       case Image360Action.Backward:
-        return this.backward();
+        currentIndex--;
+        break;
       case Image360Action.Enter:
-        return this.current();
+        break;
       default:
         throw new Error(`Unknown movement ${action}`);
     }
+    if (!this.isLegalIndex(currentIndex)) {
+      return undefined;
+    }
+    this._currentIndex = currentIndex;
+    return this.current();
   }
 }
