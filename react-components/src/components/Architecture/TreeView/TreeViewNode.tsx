@@ -1,5 +1,5 @@
 /*!
- * Copyright 2023 Cognite AS
+ * Copyright 2024 Cognite AS
  */
 
 /* eslint-disable react/prop-types */
@@ -72,6 +72,7 @@ export const TreeViewNode = ({
   const hasHover = props.hasHover ?? true;
   const hasCheckBoxes = props.hasCheckboxes ?? false;
   const hasIcons = props.hasIcons ?? false;
+  const marginLeft = level * gapToChildren + 'px';
 
   return (
     <div>
@@ -81,7 +82,7 @@ export const TreeViewNode = ({
           display: 'flex',
           gap: gapBetweenItems,
           marginTop: gapBetweenItems,
-          marginLeft: level * gapToChildren + 'px'
+          marginLeft
         }}>
         <TreeNodeCaret node={node} onClick={onExpandNode} props={props} />
         {hasCheckBoxes && <TreeNodeCheckBox node={node} onClick={onCheckNode} />}
@@ -290,13 +291,14 @@ const LoadMoreButton = ({
 }): ReactElement => {
   const gapBetweenItems = (props.gapBetweenItems ?? GAP_BETWEEN_ITEMS) + 'px';
   const gapToChildren = props.gapToChildren ?? GAP_TO_CHILDREN;
+  const marginLeft = (level + 1) * gapToChildren + 'px';
   return (
     <Button
       style={{
         gap: gapBetweenItems,
         padding: '4px',
         marginTop: gapBetweenItems,
-        marginLeft: (level + 1) * gapToChildren + 'px'
+        marginLeft
       }}
       onClick={() => {
         onClick(node);

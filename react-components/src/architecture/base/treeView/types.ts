@@ -1,5 +1,5 @@
 /*!
- * Copyright 2023 Cognite AS
+ * Copyright 2024 Cognite AS
  */
 
 import { type ITreeNode } from './ITreeNode';

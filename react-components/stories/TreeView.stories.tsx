@@ -127,7 +127,7 @@ async function loadNodes(
   return await promise;
 }
 
-function createTreeMock(lazyLoading: boolean): ITreeNode {
+function createTreeMock(lazyLoading: boolean): TreeNode {
   const root = new TreeNode();
   root.label = 'Root';
   root.isExpanded = true;

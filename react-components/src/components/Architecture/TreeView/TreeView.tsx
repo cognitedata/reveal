@@ -1,8 +1,6 @@
 /*!
- * Copyright 2023 Cognite AS
+ * Copyright 2024 Cognite AS
  */
-
-/* eslint-disable react/prop-types */
 
 import { type ReactElement } from 'react';
 import { type TreeViewProps } from './TreeViewProps';
@@ -18,7 +16,6 @@ export const TreeView = (props: TreeViewProps): ReactElement => {
   }
   return (
     <div
-      // ref={htmlRef}
       id={id}
       style={{
         backgroundColor: props.backgroundColor ?? BACKGROUND_COLOR
