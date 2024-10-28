@@ -44,6 +44,8 @@ import { MetricsLogger } from '@reveal/metrics';
 import debounce from 'lodash/debounce';
 import { Image360WithCollection } from '../public/types';
 import { DEFAULT_IMAGE_360_OPACITY } from '@reveal/360-images/src/entity/Image360VisualizationBox';
+import { Image360History } from '@reveal/360-images/src/Image360History';
+import { Image360Action } from '@reveal/360-images/src/Image360Action';
 
 export class Image360ApiHelper<DataSourceT extends DataSourceType> {
   private readonly _image360Facade: Image360Facade<DataSourceT>;
@@ -53,6 +55,7 @@ export class Image360ApiHelper<DataSourceT extends DataSourceType> {
   private _needsRedraw: boolean = false;
   private readonly _hasEventListeners: boolean;
   private readonly _inputHandler?: InputHandler;
+  private readonly _history = new Image360History();
 
   private readonly _interactionState: {
     currentImage360Hovered?: Image360Entity<DataSourceT>;
@@ -77,12 +80,9 @@ export class Image360ApiHelper<DataSourceT extends DataSourceType> {
   private readonly _onBeforeSceneRenderedEvent: EventTrigger<BeforeSceneRenderedDelegate>;
   private _cachedCameraManager: CameraManager | undefined;
 
-  private readonly exit360ImageOnEscapeKey = (event: KeyboardEvent) => this.exit360ImageOnEscape(event);
-  public readonly setHoverIconEventHandler = (event: MouseEvent): void =>
-    this.setHoverIconOnIntersect(event.offsetX, event.offsetY);
-
-  public readonly enter360ImageHandler = (event: PointerEventData): Promise<boolean> =>
-    this.enter360ImageOnIntersect(event);
+  private readonly onKeyPressed = (event: KeyboardEvent) => this.exit360ImageOnEscape(event);
+  public readonly onHover = (event: MouseEvent): void => this.setHoverIconOnIntersect(event.offsetX, event.offsetY);
+  public readonly onClick = (event: PointerEventData): Promise<boolean> => this.enter360ImageOnIntersect(event);
 
   private readonly updateHoverStateOnRenderHandler = () => {
     const lastOffset = this._interactionState.lastMousePosition;
@@ -134,9 +134,9 @@ export class Image360ApiHelper<DataSourceT extends DataSourceType> {
       this._cachedCameraManager = activeCameraManager.innerCameraManager;
     }
     if (this._hasEventListeners) {
-      domElement.addEventListener('mousemove', this.setHoverIconEventHandler);
+      domElement.addEventListener('mousemove', this.onHover);
       this._inputHandler = inputHandler;
-      this._inputHandler.on('click', this.enter360ImageHandler);
+      this._inputHandler.on('click', this.onClick);
     }
     onBeforeSceneRendered.subscribe(this.updateHoverStateOnRenderHandler);
   }
@@ -244,7 +244,8 @@ export class Image360ApiHelper<DataSourceT extends DataSourceType> {
 
   public async enter360ImageInternal(
     image360Entity: Image360Entity<DataSourceT>,
-    revision?: Image360RevisionEntity<DataSourceT>
+    revision?: Image360RevisionEntity<DataSourceT>,
+    updateHistory = true
   ): Promise<boolean> {
     const revisionToEnter = revision ?? this.findRevisionIdToEnter(image360Entity);
     if (revisionToEnter === this._interactionState.revisionSelectedForEntry) {
@@ -313,10 +314,13 @@ export class Image360ApiHelper<DataSourceT extends DataSourceType> {
       }
       this._transitionInProgress = false;
     }
-    this._domElement.addEventListener('keydown', this.exit360ImageOnEscapeKey);
+    this._domElement.addEventListener('keydown', this.onKeyPressed);
     this.applyFullResolutionTextures(revisionToEnter);
 
     imageCollection.events.image360Entered.fire(image360Entity, revisionToEnter);
+    if (updateHistory) {
+      this._history.start(image360Entity);
+    }
     return true;
   }
 
@@ -481,7 +485,7 @@ export class Image360ApiHelper<DataSourceT extends DataSourceType> {
       this._activeCameraManager.setActiveCameraManager(this._cachedCameraManager);
       setCameraTarget1MeterInFrontOfCamera(this._activeCameraManager, position, rotation);
     }
-    this._domElement.removeEventListener('keydown', this.exit360ImageOnEscapeKey);
+    this._domElement.removeEventListener('keydown', this.onKeyPressed);
 
     function setCameraTarget1MeterInFrontOfCamera(manager: CameraManager, position: Vector3, rotation: Quaternion) {
       manager.setCameraState({
@@ -491,15 +495,50 @@ export class Image360ApiHelper<DataSourceT extends DataSourceType> {
     }
   }
 
+  public canDoAction(action: Image360Action): boolean {
+    const insideImage = this._interactionState.currentImage360Entered !== undefined;
+    switch (action) {
+      case Image360Action.Exit:
+        return insideImage;
+
+      case Image360Action.Enter:
+        if (insideImage) {
+          return false;
+        }
+      default:
+        if (!insideImage) {
+          return false;
+        }
+    }
+    return this._history.canDoAction(action);
+  }
+
+  public async doAction(action: Image360Action): Promise<void> {
+    if (!this.canDoAction(action)) {
+      return;
+    }
+    switch (action) {
+      case Image360Action.Exit:
+        this.exit360Image();
+        return;
+      default:
+        const image360 = this._history.doAction(action);
+        if (image360 === undefined || !(image360 instanceof Image360Entity)) {
+          return;
+        }
+        await this.enter360ImageInternal(image360, undefined, false);
+    }
+  }
+
   public dispose(): void {
     this._onBeforeSceneRenderedEvent.unsubscribe(this.updateHoverStateOnRenderHandler);
     if (this._hasEventListeners) {
-      this._domElement.removeEventListener('mousemove', this.setHoverIconEventHandler);
+      this._domElement.removeEventListener('mousemove', this.onHover);
       if (this._inputHandler != undefined) {
-        this._inputHandler.off('click', this.enter360ImageHandler);
+        this._inputHandler.off('click', this.onClick);
       }
     }
-    this._domElement.removeEventListener('keydown', this.exit360ImageOnEscapeKey);
+    this._domElement.removeEventListener('keydown', this.onKeyPressed);
 
     if (this._stationaryCameraManager && this._cachedCameraManager) {
       if (this._activeCameraManager.innerCameraManager === this._stationaryCameraManager) {
@@ -590,7 +629,6 @@ export class Image360ApiHelper<DataSourceT extends DataSourceType> {
     if (event.key !== 'Escape') {
       return;
     }
-
     const lastEntered = this._interactionState.currentImage360Entered;
     if (lastEntered !== undefined) {
       const transitionOutDuration = 600;
