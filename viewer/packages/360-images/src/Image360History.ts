@@ -2,7 +2,7 @@
  * Copyright 2022 Cognite AS
  */
 
-import { Image360 } from '@reveal/360-images';
+import { Image360 } from './entity/Image360';
 import { Image360Action } from './Image360Action';
 
 export class Image360History {
