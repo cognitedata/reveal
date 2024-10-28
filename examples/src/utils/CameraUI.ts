@@ -1,11 +1,11 @@
 import * as THREE from 'three';
-import { Cognite3DViewer } from '@cognite/reveal';
+import { Cognite3DViewer, DataSourceType } from '@cognite/reveal';
 import dat from 'dat.gui';
 
 export class CameraUI {
-  private readonly _viewer: Cognite3DViewer;
+  private readonly _viewer: Cognite3DViewer<DataSourceType>;
 
-  constructor(viewer: Cognite3DViewer, ui: dat.GUI) {
+  constructor(viewer: Cognite3DViewer<DataSourceType>, ui: dat.GUI) {
     this._viewer = viewer;
     const params = {
       flyDuration: 5000,

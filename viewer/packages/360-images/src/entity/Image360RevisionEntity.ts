@@ -6,7 +6,8 @@ import {
   Image360DataProvider,
   Image360FileDescriptor,
   Image360Descriptor,
-  Image360Texture
+  Image360Texture,
+  DataSourceType
 } from '@reveal/data-providers';
 import { Image360Revision } from './Image360Revision';
 import { Image360VisualizationBox } from './Image360VisualizationBox';
@@ -19,7 +20,7 @@ import minBy from 'lodash/minBy';
 import { Image360AnnotationAppearance } from '../annotation/types';
 import { Image360AnnotationFilter } from '../annotation/Image360AnnotationFilter';
 
-export class Image360RevisionEntity implements Image360Revision {
+export class Image360RevisionEntity<T extends DataSourceType> implements Image360Revision<T> {
   private readonly _imageProvider: Image360DataProvider;
   private readonly _image360Descriptor: Image360Descriptor;
   private readonly _image360VisualizationBox: Image360VisualizationBox;
@@ -28,8 +29,8 @@ export class Image360RevisionEntity implements Image360Revision {
   private _onFullResolutionCompleted: Promise<void> | undefined;
   private _defaultAppearance: Image360AnnotationAppearance = {};
 
-  private _annotations: ImageAnnotationObject[] | undefined = undefined;
-  private _annotationsPromise: Promise<ImageAnnotationObject[]> | undefined;
+  private _annotations: ImageAnnotationObject<T>[] | undefined = undefined;
+  private _annotationsPromise: Promise<ImageAnnotationObject<T>[]> | undefined;
   private readonly _annotationFilterer: Image360AnnotationFilter;
 
   constructor(
@@ -54,7 +55,7 @@ export class Image360RevisionEntity implements Image360Revision {
     return this._image360Descriptor.timestamp ? new Date(this._image360Descriptor.timestamp) : undefined;
   }
 
-  async getAnnotations(): Promise<ImageAnnotationObject[]> {
+  async getAnnotations(): Promise<ImageAnnotationObject<T>[]> {
     if (this._annotations !== undefined) {
       return this._annotations;
     }
@@ -63,7 +64,7 @@ export class Image360RevisionEntity implements Image360Revision {
       return this._annotationsPromise;
     }
 
-    this._annotationsPromise = new Promise<ImageAnnotationObject[]>(async (res, _rej) => {
+    this._annotationsPromise = new Promise<ImageAnnotationObject<T>[]>(async (res, _rej) => {
       this._annotations = await this.loadAndSetAnnotations();
       res(this._annotations);
     });
@@ -71,7 +72,7 @@ export class Image360RevisionEntity implements Image360Revision {
     return this._annotationsPromise;
   }
 
-  public intersectAnnotations(raycaster: Raycaster): ImageAnnotationObject | undefined {
+  public intersectAnnotations(raycaster: Raycaster): ImageAnnotationObject<T> | undefined {
     if (this._annotations === undefined) {
       return undefined;
     }
@@ -147,7 +148,7 @@ export class Image360RevisionEntity implements Image360Revision {
     this._fullResolutionTextures = textures;
   }
 
-  private async loadAndSetAnnotations(): Promise<ImageAnnotationObject[]> {
+  private async loadAndSetAnnotations(): Promise<ImageAnnotationObject<T>[]> {
     const annotationData = await this._imageProvider.get360ImageAnnotations(this._image360Descriptor.faceDescriptors);
 
     const filteredAnnotationData = annotationData.filter(a => this._annotationFilterer.filter(a));
@@ -221,7 +222,9 @@ export class Image360RevisionEntity implements Image360Revision {
   }
 }
 
-function isDefined(obj: ImageAnnotationObject | undefined): obj is ImageAnnotationObject {
+function isDefined<T extends DataSourceType>(
+  obj: ImageAnnotationObject<T> | undefined
+): obj is ImageAnnotationObject<T> {
   return obj !== undefined && obj.getObject !== undefined;
 }
 

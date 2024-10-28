@@ -29,7 +29,7 @@ import { IPointCloudTreeGeometryNode } from './geometry/IPointCloudTreeGeometryN
 import { BinaryHeap } from './utils/BinaryHeap';
 import { Box3Helper } from './utils/box3-helper';
 import { LRU } from './utils/lru';
-import { ModelDataProvider, PointCloudObject } from '@reveal/data-providers';
+import { ModelDataProvider, StylableObject } from '@reveal/data-providers';
 import throttle from 'lodash/throttle';
 import { createVisibilityTextureData } from './utils/utils';
 
@@ -94,10 +94,10 @@ export class Potree implements IPotree {
   async loadPointCloud(
     baseUrl: string,
     fileName: string,
-    pointCloudObjects: PointCloudObject[],
+    stylableObject: StylableObject[],
     modelIdentifier: symbol
   ): Promise<PointCloudOctree> {
-    const geometry = await EptLoader.load(baseUrl, fileName, this._modelDataProvider, pointCloudObjects);
+    const geometry = await EptLoader.load(baseUrl, fileName, this._modelDataProvider, stylableObject);
     return new PointCloudOctree(this, geometry, this._materialManager.getModelMaterial(modelIdentifier));
   }
 

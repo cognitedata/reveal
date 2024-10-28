@@ -38,6 +38,7 @@ in vec3 vColor;
 float specularStrength = 1.0;
 
 void main() {
+
 	vec3 color = vColor;
 	float depth = gl_FragCoord.z;
 

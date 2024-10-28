@@ -5,7 +5,7 @@ description: Usage of the styling API for pointcloud models
 ---
 
 Cognite Data Fusion has a concept of "objects" in point clouds, represented by one or more bounding volumes for
-each object. The objects are backed by the [CDF Annotations API](https://docs.cognite.com/api/v1/#tag/Annotations).
+each object. The objects are backed by the [CDF Annotations API](https://docs.cognite.com/api/v1/#tag/Annotations) or [CDF CognitePointCloudVolume](https://docs.cognite.com/cdf/dm/dm_reference/dm_core_data_model/#cognitepointcloudvolume).
 Reveal supports styling individual objects within a point cloud.
 
 import { DemoWrapper } from '@site/docs/components/DemoWrapper';
@@ -14,14 +14,23 @@ import { DemoWrapper } from '@site/docs/components/DemoWrapper';
 
 In this context, a _stylable object_ is represented by a volume in space. Styling an object results in all points that lie within the corresponding volume to attain the assigned style.
 
-Stylable objects must be supplied separately from the model itself. Upon adding a new point cloud model to the viewer, Reveal will automatically fetch data describing the point cloud objects from CDF's Annotations API, if any are available. To get the number of fetched stylable objects, use the property `model.stylableObjectCount`, where `model` is a `CognitePointCloudModel`.
+Stylable objects must be supplied separately from the model itself. Upon adding a new point cloud model to the viewer, Reveal will automatically fetch data describing the point cloud objects from CDF's Annotations API or CDF's CognitePointCloudVolume, if any are available.
+To get the number of fetched stylable objects, use the property `model.stylableObjectCount`, where `model` is a `CognitePointCloudModel`.
 
-After the model and associated stylable objects are loaded, you may list the objects using `model.traverseStylableObjects`. This method traverses all objects as instances of `PointCloudObjectMetadata`, containing the following fields:
+After the model and associated stylable objects are loaded, you may list the objects using `model.stylableObjects`. This contains all stylable objects as instances of `PointCloudObjectMetadata`, containing the following fields for CDF's Annotations:
 
 | Field                      | Field type                      | Description                                                                           |
 |----------------------------|---------------------------------|---------------------------------------------------------------------------------------|
 | `annotationId`             | `number`                        | The ID of the CDF annotation that this stylable object corresponds to.                |
-| `assetId`                  | `number?`                       | The ID of the CDF asset associated with the annotation, if any.                       |
+| `assetRef`                 | `AnnotationsAssetRef?`          | A reference to an asset. Either the internal ID or the external ID, if any.           |
+| `boundingBox`              | `THREE.Box3`                    | The bounding box of the stylable object in Reveal space.                              |
+
+And contains following fields for CDF's `CognitePointCloudVolume`
+
+| Field                      | Field type                      | Description                                                                           |
+|----------------------------|---------------------------------|---------------------------------------------------------------------------------------|
+| `volumeInstanceRef`        | `DMInstanceRef`                 | Reference to the `CognitePointCloudVolume`. It consists of a space and an external Id.|
+| `assetRef`                 | `DMInstanceRef?`                | Reference to the `CogniteAsset`. It consists of a space and an external Id, if any.   |
 | `boundingBox`              | `THREE.Box3`                    | The bounding box of the stylable object in Reveal space.                              |
 
 To visualize all bounding boxes associated with the stylable objects:
@@ -29,7 +38,7 @@ To visualize all bounding boxes associated with the stylable objects:
 ```js runnable
 const boxGroup = new THREE.Group();
 
-model.traverseStylableObjects(obj => boxGroup.add(new THREE.Box3Helper(obj.boundingBox)));
+model.stylableObjects.forEach(obj => boxGroup.add(new THREE.Box3Helper(obj.boundingBox)));
 
 viewer.addObject3D(boxGroup);
 ```
@@ -41,17 +50,36 @@ Point cloud objects can be styled with a `PointCloudAppearance` object, containi
 | `color`                    | `THREE.Color?`                  | Override color. If all components equal to zero, the override is unused.              |
 | `visible`                  | `boolean?`                      | When false, stylable object will be invisible. Default value is `true`.               |
 
-To assign a style to one or more stylable objects, you must first create an instance of the abstract class `PointCloudObjectCollection`. Currently, the only implementation of this class provided by Reveal is `AnnotationIdPointCloudObjectCollection`, which is initialized with a list of annotation IDs corresponding to stylable objects. To see all available annotation IDs associated with the model, you may use the method `model.traverseStylableObjects`.
+To assign a style to one or more stylable objects, you must first create an instance of the abstract class `PointCloudAnnotationVolumeCollection`.
+The `AnnotationIdPointCloudObjectCollection` class can be used for CDF's Annotations, which is initialized with a list of annotation IDs corresponding to stylable objects.
 
-To color all stylable objects green:
+The `PointCloudDMVolumeCollection` class can be used for styling with CDF's Core datamodel CognitePointCloudVolume, which is initialized with a list of DM references.
+To see all available annotation IDs or point cloud volume references associated with the model, you may use the `model.stylableObjects`.
+
+To color all stylable objects green for annotation IDs:
 
 ```js runnable
 const annotationIds = [];
 
-model.traverseStylableObjects(objectMetadata => annotationIds.push(objectMetadata.annotationId));
+model.stylableObjects.forEach(objectMetadata => annotationIds.push(objectMetadata.annotationId));
 
 const objectCollection = new AnnotationIdPointCloudObjectCollection(annotationIds);
 const appearance = { color: new THREE.Color(0, 1, 0) };
+
+model.assignStyledObjectCollection(objectCollection, appearance);
+```
+
+To color all stylable objects blue for point cloud volume references:
+```jsx
+const pointCloudVolumeRefs = [];
+
+model.stylableObjects.forEach(objectMetadata => {
+  if (isDMPointCloudVolume(objectMetadata))
+    pointCloudVolumeRefs.push(objectMetadata.volumeInstanceRef);
+});
+
+const objectCollection = new PointCloudDMVolumeCollection(pointCloudVolumeRefs);
+const appearance = { color: new THREE.Color(0, 0, 1) };
 
 model.assignStyledObjectCollection(objectCollection, appearance);
 ```
@@ -65,9 +93,25 @@ It is also possible to set a default appearance for the point cloud using the `m
 ```js runnable
 const annotationIds = [];
 
-model.traverseStylableObjects(annotationMetadata => annotationIds.push(annotationMetadata.annotationId));
+model.stylableObjects.forEach(annotationMetadata => annotationIds.push(annotationMetadata.annotationId));
 
 const objectCollection = new AnnotationIdPointCloudObjectCollection(annotationIds);
+const appearance = { visible: true };
+
+model.assignStyledObjectCollection(objectCollection, appearance);
+model.setDefaultPointCloudAppearance({ visible: false });
+```
+
+For Cognite core data model point cloud model
+```jsx
+const pointCloudVolumeRefs = [];
+
+model.stylableObjects.forEach(objectMetadata => {
+  if (isDMPointCloudVolume(objectMetadata))
+    pointCloudVolumeRefs.push(objectMetadata.volumeInstanceRef);
+});
+
+const objectCollection = new PointCloudDMVolumeCollection(pointCloudVolumeRefs);
 const appearance = { visible: true };
 
 model.assignStyledObjectCollection(objectCollection, appearance);
@@ -78,7 +122,7 @@ Like in CAD styling, stylable objects that are part of multiple styled object co
 
 ## Unassigning styled object collections
 
-To reset style of an object collection, use `model.unassignStyledObjectCollection` with the previously styled `PointCloudObjectCollection` as argument. To reset all styled objects use `model.removeAllStyledCollections`
+To reset style of an object collection, use `model.unassignStyledObjectCollection` with the previously styled `PointCloudAnnotationVolumeCollection` as argument. To reset all styled objects use `model.removeAllStyledCollections`
 
 ## Reset all styled object collections
 
@@ -93,5 +137,6 @@ model.setDefaultPointCloudAppearance({ visible: true });
 ## Point cloud shapes
 
 Currently, the only supported shapes that constitute point cloud objects are cylinders and boxes. The specification for how this data is stored, can be found in the [API documentation for Retrieve Annotation](https://docs.cognite.com/api/v1/#tag/Annotations/operation/annotationsGet) under Responses -> 200 Successful retrieval -> `data` -> `pointcloud.BoundingVolume`.
+And for Cognite core data model refer CognitePointCloudVolume.
 
 Note that Reveal will visualize the shapes with a somewhat larger size than how they are stored, as to make sure that all points that lie on the surface of the objects also are included as parts of it.
