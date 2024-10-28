@@ -11,6 +11,7 @@ import { moveCameraTo } from '../utilities/moveCameraTo';
 import { Corner } from '../utilities/Corner';
 import { Cognite3DViewerToolBase } from '../Cognite3DViewerToolBase';
 import { isFlexibleCameraManager } from '@reveal/camera-manager/src/Flexible/IFlexibleCameraManager';
+import { DataSourceType } from '@reveal/data-providers';
 
 /**
  * Class for axis gizmo like the one in Blender
@@ -28,7 +29,7 @@ export class AxisGizmoTool extends Cognite3DViewerToolBase {
   private _isMouseOver = false; // Keep track of this for highlighing the gizmo
   private _inDragging = false;
 
-  private _viewer: Cognite3DViewer | undefined = undefined;
+  private _viewer: Cognite3DViewer<DataSourceType> | undefined = undefined;
   private _element: HTMLElement | undefined = undefined;
   private _canvas: HTMLCanvasElement | null = null;
   private _context: CanvasRenderingContext2D | null = null;
@@ -81,7 +82,7 @@ export class AxisGizmoTool extends Cognite3DViewerToolBase {
    * in the AxisGizmoOptions
    */
 
-  public connect(viewer: Cognite3DViewer): void {
+  public connect(viewer: Cognite3DViewer<DataSourceType>): void {
     this._viewer = viewer;
     this._element = this.createElement();
     if (!this._element) {

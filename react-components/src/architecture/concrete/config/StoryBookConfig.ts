@@ -17,12 +17,18 @@ import { ToggleMetricUnitsCommand } from '../../base/concreteCommands/ToggleMetr
 import { MeasurementTool } from '../measurements/MeasurementTool';
 import { ClipTool } from '../clipping/ClipTool';
 import { KeyboardSpeedCommand } from '../../base/concreteCommands/KeyboardSpeedCommand';
-import { ObservationsTool } from '../observations/ObservationsTool';
 import { SettingsCommand } from '../../base/concreteCommands/SettingsCommand';
 import { MockSettingsCommand } from '../../base/commands/mocks/MockSettingsCommand';
 import { MockFilterCommand } from '../../base/commands/mocks/MockFilterCommand';
 import { ToggleAllModelsVisibleCommand } from '../../base/concreteCommands/ToggleAllModelsVisibleCommand';
 import { SetOrbitOrFirstPersonModeCommand } from '../../base/concreteCommands/SetOrbitOrFirstPersonModeCommand';
+
+import { AnnotationsCreateTool } from '../annotations/commands/AnnotationsCreateTool';
+import { AnnotationsShowCommand } from '../annotations/commands/AnnotationsShowCommand';
+import { AnnotationsShowOnTopCommand } from '../annotations/commands/AnnotationsShowOnTopCommand';
+import { AnnotationsSelectTool } from '../annotations/commands/AnnotationsSelectTool';
+import { type DmsUniqueIdentifier } from '../../../data-providers';
+import { PointsOfInterestTool } from '../pointsOfInterest/PointsOfInterestTool';
 
 export class StoryBookConfig extends BaseRevealConfig {
   // ==================================================
@@ -47,17 +53,22 @@ export class StoryBookConfig extends BaseRevealConfig {
       new ToggleAllModelsVisibleCommand(),
       new ToggleMetricUnitsCommand(),
       new SettingsCommand(),
+      undefined,
+      new MeasurementTool(),
+      new ClipTool(),
+      new PointsOfInterestTool<DmsUniqueIdentifier>(),
+      undefined,
       new MockSettingsCommand(),
       new MockFilterCommand(),
       undefined,
-      new ExampleTool(),
-      new MeasurementTool(),
-      new ClipTool(),
-      new ObservationsTool(),
+      new AnnotationsSelectTool(),
+      new AnnotationsCreateTool(),
+      new AnnotationsShowCommand(),
+      new AnnotationsShowOnTopCommand(),
       undefined,
+      new ExampleTool(),
       new SetTerrainVisibleCommand(),
-      new UpdateTerrainCommand(),
-      undefined
+      new UpdateTerrainCommand()
     ];
   }
 

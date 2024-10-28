@@ -15,16 +15,23 @@ export { LocalModelDataProvider } from './src/model-data-providers/LocalModelDat
 export { LocalModelIdentifier } from './src/model-identifiers/LocalModelIdentifier';
 export { LocalModelMetadataProvider } from './src/metadata-providers/LocalModelMetadataProvider';
 export { Local360ImageProvider } from './src/image-360-data-providers/Local360ImageProvider';
-export { ModelIdentifier } from './src/ModelIdentifier';
+export { ModelIdentifier, createModelIdentifier } from './src/ModelIdentifier';
 export { ModelMetadataProvider } from './src/ModelMetadataProvider';
 export { ModelDataProvider } from './src/ModelDataProvider';
 
-export { PointCloudObjectMetadata, PointCloudObject } from './src/pointcloud-stylable-object-providers/types';
+export {
+  PointCloudObjectMetadata,
+  PointCloudObject,
+  DMInstanceRef
+} from './src/pointcloud-stylable-object-providers/types';
 export { PointCloudStylableObjectProvider } from './src/PointCloudStylableObjectProvider';
 export { StylableObject, SerializableStylableObject } from './src/pointcloud-stylable-object-providers/StylableObject';
 
 export { CdfPointCloudStylableObjectProvider } from './src/pointcloud-stylable-object-providers/CdfPointCloudStylableObjectProvider';
 export { DummyPointCloudStylableObjectProvider } from './src/pointcloud-stylable-object-providers/DummyPointCloudStylableObjectProvider';
+
+export { CdfPointCloudDMStylableObjectProvider } from './src/pointcloud-stylable-object-providers/pointcloud-volume-data-providers/CdfPointCloudDMStylableObjectProvider';
+export { DummyPointCloudDMStylableObjectProvider } from './src/pointcloud-stylable-object-providers/pointcloud-volume-data-providers/DummyPointCloudDMStylableObjectProvider';
 
 export { Image360Provider, Image360DataProvider } from './src/Image360Provider';
 export {
@@ -39,3 +46,33 @@ export {
   Image360FileDescriptor,
   ImageAssetLinkAnnotationInfo
 } from './src/types';
+
+export { fetchDMModelIdFromRevisionId } from './src/requests/fetchDMModelIdFromRevisionId';
+export {
+  isDMPointCloudVolumeObject,
+  isClassicPointCloudVolumeObject,
+  isDMPointCloudVolume,
+  isClassicPointCloudVolume
+} from './src/utilities/utils';
+
+export {
+  DataSourceType,
+  ClassicDataSourceType,
+  DMDataSourceType,
+  ClassicModelIdentifierType,
+  DMModelIdentifierType,
+  isClassicIdentifier,
+  isDMIdentifier,
+  InternalDataSourceType,
+  LocalDataSourceType,
+  LocalModelIdentifierType,
+  isLocalIdentifier,
+  GenericDataSourceType
+} from './src/DataSourceType';
+
+export {
+  LocalAddModelOptions,
+  CommonModelOptions,
+  InternalAddModelOptions,
+  AddModelOptionsWithModelRevisionId
+} from './src/utilities/internalAddModelOptions';

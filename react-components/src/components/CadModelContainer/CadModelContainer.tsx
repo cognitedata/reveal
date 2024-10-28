@@ -6,7 +6,10 @@ import { type GeometryFilter, type AddModelOptions, type CogniteCadModel } from 
 import { useReveal } from '../RevealCanvas/ViewerContext';
 import { type Matrix4 } from 'three';
 import { useRevealKeepAlive } from '../RevealKeepAlive/RevealKeepAliveContext';
-import { useReveal3DResourcesCount } from '../Reveal3DResources/Reveal3DResourcesInfoContext';
+import {
+  useReveal3DResourcesCount,
+  useThisAsExpectedResourceLoad
+} from '../Reveal3DResources/Reveal3DResourcesInfoContext';
 import { isEqual } from 'lodash';
 import { modelExists } from '../../utilities/modelExists';
 import { getViewerResourceCount } from '../../utilities/getViewerResourceCount';
@@ -38,6 +41,8 @@ export function CadModelContainer({
   const [model, setModel] = useState<CogniteCadModel | undefined>(undefined);
 
   const { modelId, revisionId, geometryFilter } = addModelOptions;
+
+  useThisAsExpectedResourceLoad();
 
   useEffect(() => {
     if (isEqual(initializingModel.current, addModelOptions)) {

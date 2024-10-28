@@ -19,6 +19,7 @@ import { HtmlOverlayTool, HtmlOverlayToolOptions } from '../HtmlOverlay/HtmlOver
 import rulerSvg from '!!raw-loader!./styles/ruler.svg';
 import { MetricsLogger } from '@reveal/metrics';
 import { FlexibleCameraManager } from '@reveal/camera-manager';
+import { DataSourceType } from '@reveal/data-providers';
 
 type MeasurementEvents = 'added' | 'started' | 'ended' | 'disposed';
 
@@ -58,7 +59,7 @@ export class MeasurementTool extends Cognite3DViewerToolBase {
   }
 
   private _options: Required<MeasurementOptions>;
-  private readonly _viewer: Cognite3DViewer;
+  private readonly _viewer: Cognite3DViewer<DataSourceType>;
   private readonly _geometryGroup = new THREE.Group();
   private readonly _measurements: MeasurementManager[];
   private _activeMeasurement: MeasurementManager | undefined;
@@ -90,7 +91,7 @@ export class MeasurementTool extends Cognite3DViewerToolBase {
     color: new THREE.Color(0xff8746)
   };
 
-  constructor(viewer: Cognite3DViewer, options?: MeasurementOptions) {
+  constructor(viewer: Cognite3DViewer<DataSourceType>, options?: MeasurementOptions) {
     super();
     this._viewer = viewer;
     this._options = {

@@ -26,7 +26,13 @@ export const Main: Story = {
   args: {
     addImage360CollectionOptions: { siteId: 'c_RC_2', transform: new Matrix4() }
   },
-  render: ({ addImage360CollectionOptions, styling }) => (
+  render: ({
+    addImage360CollectionOptions,
+    styling
+  }: {
+    addImage360CollectionOptions: AddImage360CollectionOptions;
+    styling?: ImageCollectionModelStyling;
+  }) => (
     <RevealStoryContainer color={new Color(0x4a4a4a)}>
       <Image360CollectionContainerStoryContent
         addImageCollection360Options={addImage360CollectionOptions}

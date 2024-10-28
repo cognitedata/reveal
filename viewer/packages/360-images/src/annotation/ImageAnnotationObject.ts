@@ -9,7 +9,7 @@ import {
   AnnotationsCogniteAnnotationTypesImagesAssetLink,
   AnnotationsObjectDetection
 } from '@cognite/sdk';
-import { Image360FileDescriptor } from '@reveal/data-providers';
+import { DataSourceType, Image360FileDescriptor } from '@reveal/data-providers';
 
 import {
   Color,
@@ -35,7 +35,7 @@ import { VariableWidthLine } from '@reveal/utilities';
 
 const DEFAULT_ANNOTATION_COLOR = new Color(0.8, 0.8, 0.3);
 
-export class ImageAnnotationObject implements Image360Annotation {
+export class ImageAnnotationObject<T extends DataSourceType> implements Image360Annotation<T> {
   private readonly _annotation: AnnotationModel;
 
   private readonly _mesh: Mesh;
@@ -50,7 +50,10 @@ export class ImageAnnotationObject implements Image360Annotation {
     return this._annotation;
   }
 
-  public static createAnnotationObject(annotation: AnnotationModel, face: FaceType): ImageAnnotationObject | undefined {
+  public static createAnnotationObject<StaticT extends DataSourceType>(
+    annotation: AnnotationModel,
+    face: FaceType
+  ): ImageAnnotationObject<StaticT> | undefined {
     const objectData = ImageAnnotationObject.createObjectData(annotation.annotationType, annotation.data);
 
     if (objectData === undefined) {

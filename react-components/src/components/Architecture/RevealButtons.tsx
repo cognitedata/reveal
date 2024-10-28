@@ -11,15 +11,20 @@ import { SetAxisVisibleCommand } from '../../architecture/concrete/axis/SetAxisV
 import { ClipTool } from '../../architecture/concrete/clipping/ClipTool';
 import { MeasurementTool } from '../../architecture/concrete/measurements/MeasurementTool';
 import { KeyboardSpeedCommand } from '../../architecture/base/concreteCommands/KeyboardSpeedCommand';
-import { ObservationsTool } from '../../architecture/concrete/observations/ObservationsTool';
+import { PointsOfInterestTool } from '../../architecture/concrete/pointsOfInterest/PointsOfInterestTool';
 import { createButtonFromCommandConstructor } from './CommandButtons';
 import { SettingsCommand } from '../../architecture/base/concreteCommands/SettingsCommand';
 import { PointCloudFilterCommand } from '../../architecture';
 import { SetOrbitOrFirstPersonModeCommand } from '../../architecture/base/concreteCommands/SetOrbitOrFirstPersonModeCommand';
 
+import { AnnotationsShowCommand } from '../../architecture/concrete/annotations/commands/AnnotationsShowCommand';
+import { AnnotationsShowOnTopCommand } from '../../architecture/concrete/annotations/commands/AnnotationsShowOnTopCommand';
+import { AnnotationsCreateTool } from '../../architecture/concrete/annotations/commands/AnnotationsCreateTool';
+import { AnnotationsSelectTool } from '../../architecture/concrete/annotations/commands/AnnotationsSelectTool';
+
 export class RevealButtons {
-  static Settings = (): ReactElement =>
-    createButtonFromCommandConstructor(() => new SettingsCommand());
+  static Settings = ({ include360Images = true }: { include360Images?: boolean }): ReactElement =>
+    createButtonFromCommandConstructor(() => new SettingsCommand(include360Images));
 
   static PointCloudFilter = (): ReactElement =>
     createButtonFromCommandConstructor(() => new PointCloudFilterCommand());
@@ -51,10 +56,23 @@ export class RevealButtons {
       () => new SetFlexibleControlsTypeCommand(FlexibleControlsType.FirstPerson)
     );
 
-  static Observations = (): ReactElement => {
-    return createButtonFromCommandConstructor(() => new ObservationsTool());
+  static PointsOfInterest = (): ReactElement => {
+    return createButtonFromCommandConstructor(() => new PointsOfInterestTool());
   };
 
   static KeyboardSpeed = (): ReactElement =>
     createButtonFromCommandConstructor(() => new KeyboardSpeedCommand());
+
+  // Annotations
+  static AnnotationsSelect = (): ReactElement =>
+    createButtonFromCommandConstructor(() => new AnnotationsSelectTool());
+
+  static AnnotationsCreate = (): ReactElement =>
+    createButtonFromCommandConstructor(() => new AnnotationsCreateTool());
+
+  static AnnotationsShow = (): ReactElement =>
+    createButtonFromCommandConstructor(() => new AnnotationsShowCommand());
+
+  static AnnotationsShowOnTop = (): ReactElement =>
+    createButtonFromCommandConstructor(() => new AnnotationsShowOnTopCommand());
 }

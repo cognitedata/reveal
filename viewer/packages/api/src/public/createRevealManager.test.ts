@@ -4,7 +4,12 @@
 
 import { createRevealManager } from './createRevealManager';
 
-import { ModelDataProvider, ModelMetadataProvider, PointCloudStylableObjectProvider } from '@reveal/data-providers';
+import {
+  DMDataSourceType,
+  ModelDataProvider,
+  ModelMetadataProvider,
+  PointCloudStylableObjectProvider
+} from '@reveal/data-providers';
 
 import { It, Mock, SetPropertyExpression } from 'moq.ts';
 
@@ -22,6 +27,7 @@ describe('createRevealManager', () => {
         new Mock<ModelMetadataProvider>().object(),
         new Mock<ModelDataProvider>().object(),
         new Mock<PointCloudStylableObjectProvider>().object(),
+        new Mock<PointCloudStylableObjectProvider<DMDataSourceType>>().object(),
         new Mock<IPointClassificationsProvider>().object(),
         new Mock<THREE.WebGLRenderer>()
           .setup(_ => It.Is((expression: SetPropertyExpression) => expression.name === 'info'))

@@ -3,13 +3,13 @@
  */
 
 import * as THREE from 'three';
-import { CadIntersection, Cognite3DViewer, CogniteCadModel, NumericRange } from '@cognite/reveal';
+import { CadIntersection, Cognite3DViewer, CogniteCadModel, DataSourceType, NumericRange } from '@cognite/reveal';
 
 import * as dat from 'dat.gui';
 import { TransformControls } from 'three/examples/jsm/controls/TransformControls.js';
 
 export class NodeTransformUI {
-  private viewer: Cognite3DViewer;
+  private viewer: Cognite3DViewer<DataSourceType>;
   private model: CogniteCadModel;
 
   private translation = {
@@ -40,7 +40,7 @@ export class NodeTransformUI {
 
   private _transformControls: TransformControls | undefined;
 
-  constructor(viewer: Cognite3DViewer, gui: dat.GUI, model: CogniteCadModel) {
+  constructor(viewer: Cognite3DViewer<DataSourceType>, gui: dat.GUI, model: CogniteCadModel) {
     this.viewer = viewer;
     this.model = model;
 
@@ -84,7 +84,7 @@ export class NodeTransformUI {
     this.model.setNodeTransform(new NumericRange(this.range.from, this.range.count), matrix, undefined, 'world');
   }
 
-  createAndSetupTransformTool(viewer: Cognite3DViewer, model: CogniteCadModel): TransformControls {
+  createAndSetupTransformTool(viewer: Cognite3DViewer<DataSourceType>, model: CogniteCadModel): TransformControls {
     const transformControls = new TransformControls(viewer.cameraManager.getCamera(), viewer.domElement);
     transformControls.setMode(this.attachTransformControls.mode);
     viewer.addObject3D(transformControls);

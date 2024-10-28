@@ -10,6 +10,7 @@ import { type BaseCommand } from '../../architecture/base/commands/BaseCommand';
 import { getDefaultCommand, getIcon, getTooltipPlacement } from './utilities';
 import { BaseOptionCommand } from '../../architecture/base/commands/BaseOptionCommand';
 import { LabelWithShortcut } from './LabelWithShortcut';
+import { IconComponent } from './IconComponentMapper';
 
 export const SegmentedButtons = ({
   inputCommand,
@@ -25,6 +26,7 @@ export const SegmentedButtons = ({
     []
   );
 
+  // @update-ui-component-pattern
   const [isEnabled, setEnabled] = useState(true);
   const [isVisible, setVisible] = useState(true);
   const [uniqueId, setUniqueId] = useState(0);
@@ -46,6 +48,7 @@ export const SegmentedButtons = ({
       command.removeEventListener(update);
     };
   }, [command]);
+  // @end
 
   if (!isVisible || command.children === undefined) {
     return <></>;
@@ -77,7 +80,9 @@ export const SegmentedButtons = ({
           }
         }}>
         {command.children.map((child) => (
-          <SegmentedControl.Button key={getKey(child)} icon={getIcon(child)}>
+          <SegmentedControl.Button
+            key={getKey(child)}
+            icon={<IconComponent iconName={getIcon(child)} />}>
             {child.getLabel(t)}
           </SegmentedControl.Button>
         ))}

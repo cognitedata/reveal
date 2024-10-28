@@ -1,7 +1,7 @@
-import { Cognite3DViewer } from '@cognite/reveal';
+import { Cognite3DViewer, DataSourceType } from '@cognite/reveal';
 import * as THREE from 'three';
 
-async function doFunnyButtonThing(viewer: Cognite3DViewer) {
+async function doFunnyButtonThing(viewer: Cognite3DViewer<DataSourceType>) {
   const speedFactor = 0.8;
 
   const ballGeom = new THREE.SphereGeometry(2);
@@ -32,7 +32,7 @@ async function doFunnyButtonThing(viewer: Cognite3DViewer) {
   viewer.on('sceneRendered', animateBall);
 }
 
-export function createFunnyButton(viewer: Cognite3DViewer) {
+export function createFunnyButton(viewer: Cognite3DViewer<DataSourceType>) {
   const funnyButton = document.createElement('button');
   funnyButton.innerText = 'Funny button';
   funnyButton.onclick = () => {

@@ -4,12 +4,11 @@
 
 import * as dat from 'dat.gui';
 
-import { Image360UI } from './Image360UI';
-
 import * as THREE from 'three';
+import { Cognite3DViewer, DataSourceType } from '@cognite/reveal';
 
 export class Image360StylingUI {
-  constructor(image360Ui: Image360UI, gui: dat.GUI) {
+  constructor(viewer: Cognite3DViewer<DataSourceType>, gui: dat.GUI) {
     const state = {
       color: '#ffffff',
       visible: true
@@ -17,8 +16,8 @@ export class Image360StylingUI {
 
     const actions = {
       addStyle: () => {
-        image360Ui.collections.forEach(coll =>
-          coll.setDefaultAnnotationStyle({
+        viewer.get360ImageCollections().forEach(collections =>
+          collections.setDefaultAnnotationStyle({
             color: new THREE.Color(state.color as THREE.ColorRepresentation).convertLinearToSRGB(),
             visible: state.visible
           })

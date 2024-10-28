@@ -1,6 +1,7 @@
 import { describe, expect, test } from 'vitest';
 import { render, screen } from '@testing-library/react';
-import { RevealCanvas, RevealContext } from '../../../src';
+import { RevealCanvas } from '../../../src/components/RevealCanvas';
+import { RevealContext } from '../../../src/components/RevealContext';
 import { Mock } from 'moq.ts';
 import { type CogniteClient } from '@cognite/sdk';
 import { RevealKeepAliveContext } from '../../../src/components/RevealKeepAlive/RevealKeepAliveContext';

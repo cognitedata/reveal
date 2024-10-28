@@ -3,7 +3,7 @@
  */
 
 import { DeviceDescriptor, SceneHandler } from '@reveal/utilities';
-import { Image360DataProvider } from '@reveal/data-providers';
+import { DataSourceType, Image360DataProvider } from '@reveal/data-providers';
 import { Image360 } from './Image360';
 import { Historical360ImageSet, Image360EventDescriptor } from '@reveal/data-providers/src/types';
 import { Image360RevisionEntity } from './Image360RevisionEntity';
@@ -16,14 +16,14 @@ import { Color, Matrix4, type Raycaster } from 'three';
 
 import cloneDeep from 'lodash/cloneDeep';
 
-export class Image360Entity implements Image360 {
-  private readonly _revisions: Image360RevisionEntity[];
+export class Image360Entity<T extends DataSourceType> implements Image360<T> {
+  private readonly _revisions: Image360RevisionEntity<T>[];
   private readonly _imageMetadata: Image360EventDescriptor;
   private readonly _modelTransform: Matrix4;
   private readonly _worldTransform: Matrix4;
   private readonly _image360Icon: Overlay3DIcon;
   private readonly _image360VisualizationBox: Image360VisualizationBox;
-  private _activeRevision: Image360RevisionEntity;
+  private _activeRevision: Image360RevisionEntity<T>;
   private _iconColor: Color | 'default' = 'default';
 
   /**
@@ -101,7 +101,7 @@ export class Image360Entity implements Image360 {
    * List all historical images for this entity.
    * @returns A list of available revisions.
    */
-  public getRevisions(): Image360RevisionEntity[] {
+  public getRevisions(): Image360RevisionEntity<T>[] {
     return this._revisions;
   }
 
@@ -109,11 +109,11 @@ export class Image360Entity implements Image360 {
    * Get the revision that is currently loaded for this entry.
    * @returns Returns the active revision.
    */
-  public getActiveRevision(): Image360RevisionEntity {
+  public getActiveRevision(): Image360RevisionEntity<T> {
     return this._activeRevision;
   }
 
-  public setActiveRevision(revision: Image360RevisionEntity): void {
+  public setActiveRevision(revision: Image360RevisionEntity<T>): void {
     this._activeRevision = revision;
     this._activeRevision.applyTextures();
   }
@@ -122,7 +122,7 @@ export class Image360Entity implements Image360 {
     return this._activeRevision.applyFullResolutionTextures();
   }
 
-  public getMostRecentRevision(): Image360RevisionEntity {
+  public getMostRecentRevision(): Image360RevisionEntity<T> {
     return this._revisions[0];
   }
 
@@ -130,14 +130,14 @@ export class Image360Entity implements Image360 {
    * Get the revision closest to the provided date.
    * If all revisions are undated the first available revison is returned.
    */
-  public getRevisionClosestToDate(date: Date): Image360RevisionEntity {
+  public getRevisionClosestToDate(date: Date): Image360RevisionEntity<T> {
     const dateAsNumber = date.getTime();
     const datedRevisions = this._revisions.filter(revision => revision.date !== undefined);
     const closestDatedRevision = minBy(datedRevisions, revision => Math.abs(revision.date!.getTime() - dateAsNumber));
     return closestDatedRevision ?? this.getMostRecentRevision();
   }
 
-  public intersectAnnotations(raycaster: Raycaster): ImageAnnotationObject | undefined {
+  public intersectAnnotations(raycaster: Raycaster): ImageAnnotationObject<T> | undefined {
     return this._activeRevision.intersectAnnotations(raycaster);
   }
 

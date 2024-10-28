@@ -13,6 +13,8 @@ import { BaseSettingsCommand } from '../../architecture/base/commands/BaseSettin
 import { BaseFilterCommand } from '../../architecture/base/commands/BaseFilterCommand';
 import { FilterButton } from './FilterButton';
 import { SegmentedButtons } from './SegmentedButtons';
+import { DividerCommand } from '../../architecture/base/commands/DividerCommand';
+import { SectionCommand } from '../../architecture/base/commands/SectionCommand';
 
 export function createButton(command: BaseCommand, isHorizontal = false): ReactElement {
   if (command instanceof BaseFilterCommand) {
@@ -78,7 +80,11 @@ function CommandButtonWrapper({
   command: BaseCommand | undefined;
   isHorizontal: boolean;
 }): ReactElement {
-  if (command === undefined) {
+  if (
+    command instanceof DividerCommand ||
+    command instanceof SectionCommand ||
+    command === undefined
+  ) {
     const direction = !isHorizontal ? 'horizontal' : 'vertical';
     return <Divider weight="2px" length="24px" direction={direction} />;
   }

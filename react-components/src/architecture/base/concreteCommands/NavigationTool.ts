@@ -5,6 +5,7 @@
 import { BaseTool } from '../commands/BaseTool';
 import { type IFlexibleCameraManager } from '@cognite/reveal';
 import { type TranslateKey } from '../utilities/TranslateKey';
+import { type IconName } from '../../base/utilities/IconName';
 
 /**
  * Represents a tool navigation tool used for camera manipulation.
@@ -23,7 +24,7 @@ export class NavigationTool extends BaseTool {
   // OVERRIDES
   // ==================================================
 
-  public override get icon(): string {
+  public override get icon(): IconName {
     return 'Grab';
   }
 
@@ -31,8 +32,13 @@ export class NavigationTool extends BaseTool {
     return { key: 'NAVIGATION', fallback: 'Navigation' };
   }
 
+  public override onHover(event: PointerEvent): void {
+    this.renderTarget.viewer.onHover360Images(event);
+  }
+
   public override async onClick(event: PointerEvent): Promise<void> {
-    await this.cameraManager.onClick(event);
+    if (!(await this.renderTarget.viewer.onClick360Images(event)))
+      await this.cameraManager.onClick(event);
   }
 
   public override async onDoubleClick(event: PointerEvent): Promise<void> {

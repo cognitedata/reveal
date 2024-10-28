@@ -5,7 +5,7 @@
 import * as THREE from 'three';
 import { DeviceDescriptor, SceneHandler } from '@reveal/utilities';
 import assert from 'assert';
-import { Image360Face, Image360Texture } from '@reveal/data-providers';
+import { DataSourceType, Image360Face, Image360Texture } from '@reveal/data-providers';
 import { Image360Visualization } from './Image360Visualization';
 import { ImageAnnotationObject } from '../annotation/ImageAnnotationObject';
 
@@ -15,6 +15,8 @@ type VisualizationState = {
   scale: THREE.Vector3;
   renderOrder: number;
 };
+
+export const DEFAULT_IMAGE_360_OPACITY = 1;
 
 export class Image360VisualizationBox implements Image360Visualization {
   private readonly MAX_MOBILE_IMAGE_SIZE = 1024;
@@ -29,52 +31,52 @@ export class Image360VisualizationBox implements Image360Visualization {
   private readonly _annotationsGroup: THREE.Group = new THREE.Group();
   private readonly _localTransform: THREE.Matrix4;
 
-  get opacity(): number {
-    return this._visualizationState.opacity;
-  }
-
-  set opacity(alpha: number) {
-    this._visualizationState.opacity = alpha;
-
-    this._faceMaterials.forEach(material => {
-      material.opacity = alpha;
-    });
-  }
-
   get visible(): boolean {
     return this._visualizationState.visible;
   }
 
-  set visible(isVisible: boolean) {
-    this._visualizationState.visible = isVisible;
+  set visible(value: boolean) {
+    this._visualizationState.visible = value;
 
     if (this._visualizationMesh === undefined) {
       return;
     }
-    this._visualizationMesh.visible = isVisible;
+    this._visualizationMesh.visible = value;
   }
 
-  set scale(newScale: THREE.Vector3) {
-    this._visualizationState.scale = newScale;
+  get opacity(): number {
+    return this._visualizationState.opacity;
+  }
+
+  set opacity(value: number) {
+    this._visualizationState.opacity = value;
+
+    this._faceMaterials.forEach(material => {
+      material.opacity = value;
+    });
+  }
+
+  set scale(value: THREE.Vector3) {
+    this._visualizationState.scale = value;
 
     if (this._visualizationMesh === undefined) {
       return;
     }
 
-    this._visualizationMesh.scale.copy(newScale);
+    this._visualizationMesh.scale.copy(value);
   }
 
-  set renderOrder(newRenderOrder: number) {
-    this._visualizationState.renderOrder = newRenderOrder;
+  set renderOrder(value: number) {
+    this._visualizationState.renderOrder = value;
 
     if (this._visualizationMesh === undefined) {
       return;
     }
 
-    this._visualizationMesh.renderOrder = newRenderOrder;
+    this._visualizationMesh.renderOrder = value;
   }
 
-  setAnnotations(annotations: ImageAnnotationObject[]): void {
+  setAnnotations(annotations: ImageAnnotationObject<DataSourceType>[]): void {
     this._annotationsGroup.remove(...this._annotationsGroup.children);
 
     if (annotations.length === 0) {
@@ -91,7 +93,7 @@ export class Image360VisualizationBox implements Image360Visualization {
     this._device = device;
     this._textureLoader = new THREE.TextureLoader();
     this._visualizationState = {
-      opacity: 1,
+      opacity: DEFAULT_IMAGE_360_OPACITY,
       renderOrder: 3,
       scale: new THREE.Vector3(1, 1, 1),
       visible: true

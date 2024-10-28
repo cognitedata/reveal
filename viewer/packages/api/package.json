@@ -9,6 +9,7 @@
   },
   "dependencies": {
     "@reveal/360-images": "workspace:*",
+    "@reveal/3d-overlays": "workspace:*",
     "@reveal/cad-geometry-loaders": "workspace:*",
     "@reveal/cad-model": "workspace:*",
     "@reveal/cad-parsers": "workspace:*",

@@ -16,13 +16,14 @@ import { ShowExamplesOnTopCommand } from './commands/ShowExamplesOnTopCommand';
 import { DomainObjectChange } from '../../base/domainObjectsHelpers/DomainObjectChange';
 import { type VisualDomainObject } from '../../base/domainObjects/VisualDomainObject';
 import { UndoCommand } from '../../base/concreteCommands/UndoCommand';
+import { type IconName } from '../../base/utilities/IconName';
 
 export class ExampleTool extends BaseEditTool {
   // ==================================================
   // OVERRIDES of BaseCommand
   // ==================================================
 
-  public override get icon(): string {
+  public override get icon(): IconName {
     return 'Circle';
   }
 
