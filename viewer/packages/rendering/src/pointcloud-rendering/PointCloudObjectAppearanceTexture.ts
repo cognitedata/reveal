@@ -6,25 +6,27 @@ import { generateDataTexture } from './texture-generation';
 
 import * as THREE from 'three';
 import {
-  StyledPointCloudObjectCollection,
-  PointCloudObjectCollection,
+  PointCloudAnnotationVolumeCollection,
   DefaultPointCloudAppearance,
-  CompletePointCloudAppearance
+  CompletePointCloudAppearance,
+  isPointCloudObjectCollection,
+  StyledPointCloudVolumeCollection
 } from '@reveal/pointcloud-styling';
 import { PointCloudObjectIdMaps } from './PointCloudObjectIdMaps';
+import { DataSourceType, DMInstanceRef } from '@reveal/data-providers';
 
 export class PointCloudObjectAppearanceTexture {
   private readonly _objectStyleTexture: THREE.DataTexture;
   private _needsReconstruction: boolean = true;
 
-  private readonly _styledObjectSets: StyledPointCloudObjectCollection[] = [];
+  private readonly _styledObjectSets: StyledPointCloudVolumeCollection<DataSourceType>[] = [];
 
   private _defaultAppearance: CompletePointCloudAppearance = { ...DefaultPointCloudAppearance };
 
   private readonly _width: number;
   private readonly _height: number;
 
-  private _annotationIdsToObjectId: Map<number, number> | undefined;
+  private _annotationIdsToObjectId: Map<number | DMInstanceRef, number> | undefined;
 
   constructor(width: number, height: number) {
     this._objectStyleTexture = generateDataTexture(width, height, new THREE.Color(0x0), 0x01); // Initialize with visibility bit set
@@ -51,19 +53,29 @@ export class PointCloudObjectAppearanceTexture {
     data.set(styleData, 4 * objectId);
   }
 
-  private setObjectCollectionStyle(styledObjectSet: StyledPointCloudObjectCollection): void {
+  private setObjectCollectionStyle(styledObjectSet: StyledPointCloudVolumeCollection<DataSourceType>): void {
     if (!this._annotationIdsToObjectId) {
       throw new Error('Annotation ID to Object ID map not initialized');
     }
 
-    for (const annotationId of styledObjectSet.objectCollection.getAnnotationIds()) {
-      const objectId = this._annotationIdsToObjectId.get(annotationId);
+    const objectCollection = styledObjectSet.objectCollection;
 
+    const applyStyle = (transformedObjectId: number | DMInstanceRef) => {
+      const objectId = this._annotationIdsToObjectId?.get(transformedObjectId);
       if (objectId === undefined) {
-        throw new Error('Could not find corresponding object ID for annotation ID' + annotationId);
+        throw new Error('Could not find corresponding object ID for ' + transformedObjectId);
       }
-
       this.setObjectStyle(objectId, styledObjectSet.style);
+    };
+
+    if (isPointCloudObjectCollection(objectCollection)) {
+      for (const annotationId of objectCollection.getAnnotationIds()) {
+        applyStyle(annotationId);
+      }
+    } else {
+      for (const instanceRef of objectCollection.getDataModelInstanceRefs()) {
+        applyStyle(instanceRef);
+      }
     }
   }
 
@@ -87,7 +99,7 @@ export class PointCloudObjectAppearanceTexture {
     }
   }
 
-  assignStyledObjectSet(styledCollection: StyledPointCloudObjectCollection): void {
+  assignStyledObjectSet(styledCollection: StyledPointCloudVolumeCollection<DataSourceType>): void {
     const ind = this._styledObjectSets.findIndex(s => s.objectCollection === styledCollection.objectCollection);
 
     if (ind !== -1) {
@@ -99,7 +111,7 @@ export class PointCloudObjectAppearanceTexture {
     this._needsReconstruction = true;
   }
 
-  removeStyledObjectSet(collection: PointCloudObjectCollection): void {
+  removeStyledObjectSet(collection: PointCloudAnnotationVolumeCollection): void {
     const ind = this._styledObjectSets.findIndex(s => s.objectCollection === collection);
     if (ind !== -1) {
       this._styledObjectSets.splice(ind, 1);

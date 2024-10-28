@@ -5,28 +5,36 @@ import {
   CogniteCadModel,
   Cognite3DViewer,
   CognitePointCloudModel,
-  ViewerState
+  ViewerState,
+  DataSourceType,
+  ClassicAddModelOptions
 } from '@cognite/reveal';
 
 import * as dat from 'dat.gui';
 import { isLocalUrlPointCloudModel } from './isLocalUrlPointCloudModel';
 
 export class ModelUi {
-  private readonly _viewer: Cognite3DViewer;
-  private readonly _onModelAdded: (model: CogniteModel) => void;
+  private readonly _viewer: Cognite3DViewer<DataSourceType>;
+  private readonly _onModelAdded: (model: CogniteModel<DataSourceType>) => void;
 
   private readonly _cadModels = new Array<CogniteCadModel>();
-  private readonly _pointCloudModels = new Array<CognitePointCloudModel>();
+  private readonly _pointCloudModels = new Array<CognitePointCloudModel<DataSourceType>>();
 
   private readonly _guiState: {
     modelId: number;
     revisionId: number;
     geometryFilter: { center: THREE.Vector3; size: THREE.Vector3; enabled: boolean };
+    revisionExternalId: string;
+    revisionSpace: string;
   };
 
   private readonly _geometryFilterGui: dat.GUI;
 
-  constructor(modelGui: dat.GUI, viewer: Cognite3DViewer, onModelAdded: (model: CogniteModel) => void) {
+  constructor(
+    modelGui: dat.GUI,
+    viewer: Cognite3DViewer<DataSourceType>,
+    onModelAdded: (model: CogniteModel<DataSourceType>) => void
+  ) {
     this._viewer = viewer;
     this._onModelAdded = onModelAdded;
 
@@ -41,7 +49,9 @@ export class ModelUi {
       geometryFilter:
         geometryFilter !== undefined
           ? { ...geometryFilter, enabled: true }
-          : { center: new THREE.Vector3(), size: new THREE.Vector3(), enabled: false }
+          : { center: new THREE.Vector3(), size: new THREE.Vector3(), enabled: false },
+      revisionExternalId: '',
+      revisionSpace: ''
     };
     const guiActions = {
       removeLastModel: () => {
@@ -54,7 +64,10 @@ export class ModelUi {
           revisionId: this._guiState.revisionId,
           geometryFilter: this._guiState.geometryFilter.enabled
             ? createGeometryFilterFromState(this._guiState.geometryFilter)
-            : undefined
+            : undefined,
+          revisionExternalId:
+            this._guiState.revisionExternalId.length !== 0 ? this._guiState.revisionExternalId : undefined,
+          revisionSpace: this._guiState.revisionSpace.length !== 0 ? this._guiState.revisionSpace : undefined
         }),
       fitToModel: () => {
         const model = this._cadModels[0] || this._pointCloudModels[0];
@@ -67,6 +80,8 @@ export class ModelUi {
 
     modelGui.add(this._guiState, 'modelId').name('Model ID');
     modelGui.add(this._guiState, 'revisionId').name('Revision ID');
+    modelGui.add(this._guiState, 'revisionExternalId').name('Revision External ID');
+    modelGui.add(this._guiState, 'revisionSpace').name('Revision Space');
     modelGui.add(guiActions, 'addModel').name('Load model');
     modelGui.add(guiActions, 'removeLastModel').name('Remove last model');
     modelGui.add(guiActions, 'fitToModel').name('Fit camera');
@@ -80,7 +95,7 @@ export class ModelUi {
     return this._cadModels.slice();
   }
 
-  get pointCloudModels(): CognitePointCloudModel[] {
+  get pointCloudModels(): CognitePointCloudModel<DataSourceType>[] {
     return this._pointCloudModels.slice();
   }
 
@@ -115,15 +130,25 @@ export class ModelUi {
   private async restoreModelsFromIds(urlParams: URLSearchParams) {
     const modelIdStr = urlParams.get('modelId');
     const revisionIdStr = urlParams.get('revisionId');
+    const revisionSpace = urlParams.get('revisionSpace');
+    const revisionExternalIdStr = urlParams.get('revisionExternalId');
     const modelUrl = urlParams.get('modelUrl');
-    if (modelIdStr && revisionIdStr) {
-      const modelId = Number.parseInt(modelIdStr, 10);
-      const revisionId = Number.parseInt(revisionIdStr, 10);
-      await this.addModel({
-        modelId,
-        revisionId,
-        geometryFilter: createGeometryFilterFromState(this._guiState.geometryFilter)
-      });
+    if ((modelIdStr && revisionIdStr) || (revisionSpace && revisionExternalIdStr)) {
+      const modelId = modelIdStr !== null ? Number.parseInt(modelIdStr, 10) : undefined;
+      const revisionId = revisionIdStr !== null ? Number.parseInt(revisionIdStr, 10) : undefined;
+      if (modelId !== undefined && revisionId !== undefined) {
+        await this.addModel({
+          modelId,
+          revisionId,
+          geometryFilter: createGeometryFilterFromState(this._guiState.geometryFilter)
+        });
+      } else if (revisionExternalIdStr !== null && revisionSpace !== null) {
+        await this.addModel({
+          geometryFilter: createGeometryFilterFromState(this._guiState.geometryFilter),
+          revisionExternalId: revisionExternalIdStr,
+          revisionSpace: revisionSpace
+        });
+      }
     } else if (modelUrl) {
       await this.addModel({
         modelId: -1,
@@ -134,7 +159,7 @@ export class ModelUi {
     }
   }
 
-  async addModel(options: AddModelOptions) {
+  async addModel(options: AddModelOptions<DataSourceType>) {
     try {
       const model =
         options.localPath !== undefined
@@ -160,7 +185,10 @@ export class ModelUi {
   }
 }
 
-async function addLocalModel(viewer: Cognite3DViewer, addModelOptions: AddModelOptions): Promise<CogniteModel> {
+async function addLocalModel(
+  viewer: Cognite3DViewer<DataSourceType>,
+  addModelOptions: AddModelOptions<DataSourceType>
+): Promise<CogniteModel<DataSourceType>> {
   const isPointCloud =
     addModelOptions.localPath !== undefined && (await isLocalUrlPointCloudModel(addModelOptions.localPath));
   return isPointCloud ? viewer.addPointCloudModel(addModelOptions) : viewer.addCadModel(addModelOptions);
@@ -194,7 +222,7 @@ function createGeometryFilter(input: string | null): { center: THREE.Vector3; si
 
 function initializeGeometryFilterGui(
   uiFolder: dat.GUI,
-  viewer: Cognite3DViewer,
+  viewer: Cognite3DViewer<DataSourceType>,
   geometryFilterState: { center: THREE.Vector3; size: THREE.Vector3; enabled: boolean }
 ): void {
   let geometryFilterPreview: THREE.Object3D | undefined = undefined;

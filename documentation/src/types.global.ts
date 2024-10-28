@@ -1,10 +1,10 @@
-import { Cognite3DModel, CognitePointCloudModel, Cognite3DViewer } from '@cognite/reveal';
-import CogniteClient from "@cognite/sdk/dist/src/cogniteClient";
+import { CogniteModel, CognitePointCloudModel, Cognite3DViewer } from '@cognite/reveal';
+import { type CogniteClient } from "@cognite/sdk";
 
 declare global {
   interface Window {
     viewer?: Cognite3DViewer;
-    model?: Cognite3DModel | CognitePointCloudModel;
+    model?: CogniteModel | CognitePointCloudModel;
     sdk?: CogniteClient;
   }
 }

@@ -9,7 +9,7 @@ import { Image360AnnotationAppearance } from '../annotation/types';
 import { Image360Revision } from '../entity/Image360Revision';
 import { IdEither } from '@cognite/sdk';
 import { Image360Annotation } from '../annotation/Image360Annotation';
-import { ImageAssetLinkAnnotationInfo } from '@reveal/data-providers';
+import { ClassicDataSourceType, DataSourceType, ImageAssetLinkAnnotationInfo } from '@reveal/data-providers';
 import { Matrix4 } from 'three';
 
 /**
@@ -25,7 +25,7 @@ export type Image360AnnotationAssetFilter = {
 /**
  * Asset search return type, including information about the image in which the asset is found
  */
-export type AssetAnnotationImage360Info = {
+export type AssetAnnotationImage360Info<T extends DataSourceType = ClassicDataSourceType> = {
   /**
    * Reference to the relevant asset
    */
@@ -33,11 +33,11 @@ export type AssetAnnotationImage360Info = {
   /**
    * The image entity in which the asset was found
    */
-  imageEntity: Image360;
+  imageEntity: Image360<T>;
   /**
    * The image revision in which the asset was found
    */
-  imageRevision: Image360Revision;
+  imageRevision: Image360Revision<T>;
 };
 
 /**
@@ -61,7 +61,7 @@ export type Image360AnnotationAssetQueryResult = {
 /**
  * A wrapper that represents a set of 360 images.
  */
-export interface Image360Collection {
+export interface Image360Collection<T extends DataSourceType = ClassicDataSourceType> {
   /**
    * The id of the collection.
    * @returns The id of the collection.
@@ -77,7 +77,7 @@ export interface Image360Collection {
   /**
    * A list containing all the 360 images in this set.
    */
-  readonly image360Entities: Image360[];
+  readonly image360Entities: Image360<T>[];
 
   /**
    * If defined, any subsequently entered 360 images will load the revision that are closest to the target date.
@@ -197,5 +197,5 @@ export interface Image360Collection {
    *
    * @param source What source data to pull the annotation info from
    */
-  getAnnotationsInfo(source: 'assets'): Promise<AssetAnnotationImage360Info[]>;
+  getAnnotationsInfo(source: 'assets'): Promise<AssetAnnotationImage360Info<T>[]>;
 }

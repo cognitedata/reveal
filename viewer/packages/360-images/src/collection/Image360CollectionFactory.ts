@@ -15,9 +15,10 @@ import { Overlay3DIcon } from '@reveal/3d-overlays';
 import { Historical360ImageSet } from '@reveal/data-providers/src/types';
 import { Image360AnnotationFilterOptions } from '../annotation/types';
 import { Image360AnnotationFilter } from '../annotation/Image360AnnotationFilter';
+import { GenericDataSourceType } from '@reveal/data-providers';
 
-export class Image360CollectionFactory<T> {
-  private readonly _image360DataProvider: Image360Provider<T>;
+export class Image360CollectionFactory<T extends GenericDataSourceType> {
+  private readonly _image360DataProvider: Image360Provider<T['image360Identifier']>;
   private readonly _sceneHandler: SceneHandler;
   private readonly _onBeforeSceneRendered: EventTrigger<BeforeSceneRenderedDelegate>;
   private readonly _iconsOptions: IconsOptions | undefined;
@@ -25,7 +26,7 @@ export class Image360CollectionFactory<T> {
   private readonly _setNeedsRedraw: () => void;
 
   constructor(
-    image360DataProvider: Image360Provider<T>,
+    image360DataProvider: Image360Provider<T['image360Identifier']>,
     sceneHandler: SceneHandler,
     onBeforeSceneRendered: EventTrigger<BeforeSceneRenderedDelegate>,
     setNeedsRedraw: () => void,
@@ -41,11 +42,11 @@ export class Image360CollectionFactory<T> {
   }
 
   public async create(
-    dataProviderFilter: T,
+    dataProviderFilter: T['image360Identifier'],
     postTransform: Matrix4,
     preMultipliedRotation: boolean,
     annotationFilter: Image360AnnotationFilterOptions
-  ): Promise<DefaultImage360Collection> {
+  ): Promise<DefaultImage360Collection<T>> {
     const historicalDescriptors = await this._image360DataProvider.get360ImageDescriptors(
       dataProviderFilter,
       preMultipliedRotation
@@ -83,7 +84,7 @@ export class Image360CollectionFactory<T> {
 
     const { collectionId, collectionLabel } = uniqueCollections[0];
 
-    return new DefaultImage360Collection(
+    return new DefaultImage360Collection<T>(
       collectionId,
       collectionLabel,
       entities,

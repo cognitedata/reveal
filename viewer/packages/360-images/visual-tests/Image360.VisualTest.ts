@@ -7,6 +7,9 @@ import {
   Cdf360DataModelsDescriptorProvider,
   Cdf360EventDescriptorProvider,
   Cdf360ImageProvider,
+  ClassicDataSourceType,
+  DataSourceType,
+  GenericDataSourceType,
   Local360ImageProvider
 } from '@reveal/data-providers';
 import { StreamingTestFixtureComponents } from '../../../visual-tests/test-fixtures/StreamingVisualTestFixture';
@@ -29,11 +32,9 @@ import { OctreeHelper } from 'sparse-octree';
 import { Overlay3DIcon } from '@reveal/3d-overlays';
 import { DefaultImage360Collection } from '../src/collection/DefaultImage360Collection';
 
-type CdfImage360Facade = Image360Facade<{
-  [key: string]: string;
-}>;
+type CdfImage360Facade = Image360Facade<ClassicDataSourceType>;
 
-type LocalImage360Facade = Image360Facade<unknown>;
+type LocalImage360Facade = Image360Facade<GenericDataSourceType>;
 
 export default class Image360VisualTestFixture extends StreamingVisualTestFixture {
   public async setup(testFixtureComponents: StreamingTestFixtureComponents): Promise<void> {
@@ -102,7 +103,7 @@ export default class Image360VisualTestFixture extends StreamingVisualTestFixtur
     camera: THREE.PerspectiveCamera,
     cameraControls: OrbitControls
   ) {
-    let lastClicked: Image360Entity | undefined;
+    let lastClicked: Image360Entity<DataSourceType> | undefined;
     renderer.domElement.addEventListener('click', async event => {
       const { x, y } = event;
       const ndcCoordinates = getNormalizedPixelCoordinates(renderer.domElement, x, y);
@@ -135,8 +136,8 @@ export default class Image360VisualTestFixture extends StreamingVisualTestFixtur
   }
 
   private transition360Image(
-    lastClicked: Image360Entity,
-    entity: Image360Entity,
+    lastClicked: Image360Entity<DataSourceType>,
+    entity: Image360Entity<DataSourceType>,
     camera: THREE.PerspectiveCamera,
     cameraControls: OrbitControls
   ) {
@@ -204,7 +205,7 @@ export default class Image360VisualTestFixture extends StreamingVisualTestFixtur
     });
   }
 
-  private setupGUI(entities: Image360Entity[]) {
+  private setupGUI(entities: Image360Entity<DataSourceType>[]) {
     const guiData = {
       opacity: 1.0
     };
@@ -219,7 +220,10 @@ export default class Image360VisualTestFixture extends StreamingVisualTestFixtur
     sceneHandler: SceneHandler,
     onBeforeRender: EventTrigger<BeforeSceneRenderedDelegate>,
     device: DeviceDescriptor
-  ): Promise<{ facade: CdfImage360Facade | LocalImage360Facade; collection: DefaultImage360Collection }> {
+  ): Promise<{
+    facade: CdfImage360Facade | LocalImage360Facade;
+    collection: DefaultImage360Collection<DataSourceType>;
+  }> {
     if (cogniteClient === undefined) {
       return this.setupLocal(sceneHandler, onBeforeRender, device);
     }
@@ -245,7 +249,7 @@ export default class Image360VisualTestFixture extends StreamingVisualTestFixtur
       cogniteClient: CogniteClient,
       externalId: string,
       space: string
-    ): Promise<{ facade: CdfImage360Facade; collection: DefaultImage360Collection }> {
+    ): Promise<{ facade: CdfImage360Facade; collection: DefaultImage360Collection<DataSourceType> }> {
       const cdf360EventDescriptorProvider = new Cdf360DataModelsDescriptorProvider(cogniteClient);
       const cdf360ImageProvider = new Cdf360ImageProvider(cogniteClient, cdf360EventDescriptorProvider);
       const image360Factory = new Image360CollectionFactory(
@@ -264,7 +268,7 @@ export default class Image360VisualTestFixture extends StreamingVisualTestFixtur
     async function getEvents360ImageCollection(
       cogniteClient: CogniteClient,
       siteId: string
-    ): Promise<{ facade: CdfImage360Facade; collection: DefaultImage360Collection }> {
+    ): Promise<{ facade: CdfImage360Facade; collection: DefaultImage360Collection<DataSourceType> }> {
       const cdf360EventDescriptorProvider = new Cdf360EventDescriptorProvider(cogniteClient);
       const cdf360ImageProvider = new Cdf360ImageProvider(cogniteClient, cdf360EventDescriptorProvider);
       const image360Factory = new Image360CollectionFactory(
@@ -287,7 +291,7 @@ export default class Image360VisualTestFixture extends StreamingVisualTestFixtur
     device: DeviceDescriptor
   ): Promise<{
     facade: Image360Facade<any>;
-    collection: DefaultImage360Collection;
+    collection: DefaultImage360Collection<DataSourceType>;
   }> {
     const queryString = window.location.search;
     const urlParams = new URLSearchParams(queryString);

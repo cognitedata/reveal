@@ -1,6 +1,6 @@
 import * as dat from 'dat.gui';
 import * as THREE from 'three';
-import { CogniteCadModel, Cognite3DViewer } from '@cognite/reveal';
+import { CogniteCadModel, Cognite3DViewer, DataSourceType } from '@cognite/reveal';
 import { CogniteClient, Node3D } from '@cognite/sdk';
 import { TreeIndexNodeCollection } from '@cognite/reveal';
 import { NumericRange } from '@cognite/reveal';
@@ -11,9 +11,9 @@ export class InspectNodeUI {
   private readonly _uiFolder: dat.GUI;
   private readonly _uiSubFolders: dat.GUI[] = [];
   private readonly _sdk: CogniteClient;
-  private readonly _viewer: Cognite3DViewer;
+  private readonly _viewer: Cognite3DViewer<DataSourceType>;
 
-  constructor(uiFolder: dat.GUI, sdk: CogniteClient, viewer: Cognite3DViewer) {
+  constructor(uiFolder: dat.GUI, sdk: CogniteClient, viewer: Cognite3DViewer<DataSourceType>) {
     this._uiFolder = uiFolder;
     this._sdk = sdk;
     this._viewer = viewer;
