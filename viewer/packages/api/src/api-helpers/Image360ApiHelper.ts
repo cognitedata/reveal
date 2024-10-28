@@ -244,7 +244,8 @@ export class Image360ApiHelper<DataSourceT extends DataSourceType> {
 
   public async enter360ImageInternal(
     image360Entity: Image360Entity<DataSourceT>,
-    revision?: Image360RevisionEntity<DataSourceT>
+    revision?: Image360RevisionEntity<DataSourceT>,
+    updateHistory = true
   ): Promise<boolean> {
     const revisionToEnter = revision ?? this.findRevisionIdToEnter(image360Entity);
     if (revisionToEnter === this._interactionState.revisionSelectedForEntry) {
@@ -317,7 +318,9 @@ export class Image360ApiHelper<DataSourceT extends DataSourceType> {
     this.applyFullResolutionTextures(revisionToEnter);
 
     imageCollection.events.image360Entered.fire(image360Entity, revisionToEnter);
-    this._history.start(image360Entity);
+    if (updateHistory) {
+      this._history.start(image360Entity);
+    }
     return true;
   }
 
@@ -523,7 +526,7 @@ export class Image360ApiHelper<DataSourceT extends DataSourceType> {
         if (image360 === undefined || !(image360 instanceof Image360Entity)) {
           return;
         }
-        await this.enter360Image(image360);
+        await this.enter360ImageInternal(image360, undefined, false);
     }
   }
 
@@ -626,7 +629,6 @@ export class Image360ApiHelper<DataSourceT extends DataSourceType> {
     if (event.key !== 'Escape') {
       return;
     }
-
     const lastEntered = this._interactionState.currentImage360Entered;
     if (lastEntered !== undefined) {
       const transitionOutDuration = 600;
