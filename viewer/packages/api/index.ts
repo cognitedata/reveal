@@ -6,8 +6,6 @@ export { CogniteCadModel } from '@reveal/cad-model';
 
 export { ViewerState, ModelState, ClippingPlanesState } from './src/utilities/ViewStateHelper';
 
-export { Image360Action } from './src/utilities/Image360Action';
-
 export * from './src/public/types';
 
 const REVEAL_VERSION = process.env.VERSION;

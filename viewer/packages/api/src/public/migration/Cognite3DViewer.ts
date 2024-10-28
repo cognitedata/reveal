@@ -100,7 +100,7 @@ import { AsyncSequencer, SequencerFunction } from '../../../../utilities/src/Asy
 import { getModelAndRevisionId } from '../../utilities/utils';
 import { ClassicDataSourceType, DataSourceType, isClassicIdentifier } from '@reveal/data-providers';
 import assert from 'assert';
-import { Image360Action } from '../../utilities/Image360Action';
+import { Image360Action } from '@reveal/360-images/src/Image360Action';
 
 type Cognite3DViewerEvents =
   | 'click'

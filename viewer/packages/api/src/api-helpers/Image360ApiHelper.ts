@@ -44,8 +44,8 @@ import { MetricsLogger } from '@reveal/metrics';
 import debounce from 'lodash/debounce';
 import { Image360WithCollection } from '../public/types';
 import { DEFAULT_IMAGE_360_OPACITY } from '@reveal/360-images/src/entity/Image360VisualizationBox';
-import { Image360History } from './Image360History';
-import { Image360Action } from '../utilities/Image360Action';
+import { Image360History } from '@reveal/360-images/src/Image360History';
+import { Image360Action } from '@reveal/360-images/src/Image360Action';
 
 export class Image360ApiHelper<DataSourceT extends DataSourceType> {
   private readonly _image360Facade: Image360Facade<DataSourceT>;
@@ -494,17 +494,18 @@ export class Image360ApiHelper<DataSourceT extends DataSourceType> {
 
   public canDoAction(action: Image360Action): boolean {
     const insideImage = this._interactionState.currentImage360Entered !== undefined;
-    if (action === Image360Action.Exit) {
-      return insideImage;
-    }
-    if (action === Image360Action.Enter) {
-      if (insideImage) {
-        return false;
-      }
-    } else {
-      if (!insideImage) {
-        return false;
-      }
+    switch (action) {
+      case Image360Action.Exit:
+        return insideImage;
+
+      case Image360Action.Enter:
+        if (insideImage) {
+          return false;
+        }
+      default:
+        if (!insideImage) {
+          return false;
+        }
     }
     return this._history.canDoAction(action);
   }
@@ -513,15 +514,17 @@ export class Image360ApiHelper<DataSourceT extends DataSourceType> {
     if (!this.canDoAction(action)) {
       return;
     }
-    if (action === Image360Action.Exit) {
-      this.exit360Image();
-      return;
+    switch (action) {
+      case Image360Action.Exit:
+        this.exit360Image();
+        return;
+      default:
+        const image360 = this._history.doAction(action);
+        if (image360 === undefined || !(image360 instanceof Image360Entity)) {
+          return;
+        }
+        await this.enter360Image(image360);
     }
-    const image360 = this._history.doAction(action);
-    if (image360 === undefined || !(image360 instanceof Image360Entity)) {
-      return;
-    }
-    await this.enter360Image(image360);
   }
 
   public dispose(): void {
