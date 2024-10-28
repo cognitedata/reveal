@@ -29,6 +29,8 @@ import { AnnotationsShowOnTopCommand } from '../annotations/commands/Annotations
 import { AnnotationsSelectTool } from '../annotations/commands/AnnotationsSelectTool';
 import { type DmsUniqueIdentifier } from '../../../data-providers';
 import { PointsOfInterestTool } from '../pointsOfInterest/PointsOfInterestTool';
+import { Do360ActionCommand } from '../../base/concreteCommands/image360Collection/do360ActionCommand';
+import { Image360Action } from '@cognite/reveal';
 
 export class StoryBookConfig extends BaseRevealConfig {
   // ==================================================
@@ -44,7 +46,12 @@ export class StoryBookConfig extends BaseRevealConfig {
       new SetOrbitOrFirstPersonModeCommand(),
       new FitViewCommand(),
       new SetAxisVisibleCommand(),
-      new KeyboardSpeedCommand()
+      new KeyboardSpeedCommand(),
+      undefined,
+      new Do360ActionCommand(Image360Action.Enter),
+      new Do360ActionCommand(Image360Action.Backward),
+      new Do360ActionCommand(Image360Action.Forward),
+      new Do360ActionCommand(Image360Action.Exit)
     ];
   }
 

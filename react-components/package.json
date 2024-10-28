@@ -46,7 +46,7 @@
     "@cognite/cdf-utilities": "^3.6.0",
     "@cognite/cogs-lab": "^9.0.0-alpha.113",
     "@cognite/cogs.js": "^10.25.0",
-    "@cognite/reveal": "^4.19.0",
+    "@cognite/reveal": "file:.yalc/@cognite/reveal",
     "@cognite/sdk": "^9.13.0",
     "@playwright/test": "1.48.0",
     "@storybook/addon-essentials": "8.3.5",
