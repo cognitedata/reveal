@@ -509,7 +509,7 @@ export class Image360ApiHelper<DataSourceT extends DataSourceType> {
     return this._history.canDoAction(action);
   }
 
-  public doAction(action: Image360Action): void {
+  public async doAction(action: Image360Action): Promise<void> {
     if (!this.canDoAction(action)) {
       return;
     }
@@ -517,7 +517,11 @@ export class Image360ApiHelper<DataSourceT extends DataSourceType> {
       this.exit360Image();
       return;
     }
-    this._history.doAction(action);
+    const image360 = this._history.doAction(action);
+    if (image360 === undefined || !(image360 instanceof Image360Entity)) {
+      return;
+    }
+    await this.enter360Image(image360);
   }
 
   public dispose(): void {

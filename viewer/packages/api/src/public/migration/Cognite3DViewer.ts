@@ -968,6 +968,7 @@ export class Cognite3DViewer<DataSourceT extends DataSourceType = ClassicDataSou
   /**
    * Check if a 360 image action can be done.
    * @param action The action to check if can be done.
+   * @beta
    */
   canDo360Action(action: Image360Action): boolean {
     if (this._cdfSdkClient === undefined || this._image360ApiHelper === undefined) {
@@ -979,12 +980,13 @@ export class Cognite3DViewer<DataSourceT extends DataSourceType = ClassicDataSou
   /**
    * Do a 360 image action.
    * @param action The action to do.
+   * @beta
    */
-  do360Action(action: Image360Action): void {
+  async do360Action(action: Image360Action): Promise<void> {
     if (this._cdfSdkClient === undefined || this._image360ApiHelper === undefined) {
       throw new Error(`Adding 360 image sets is only supported when connecting to Cognite Data Fusion`);
     }
-    this._image360ApiHelper.doAction(action);
+    await this._image360ApiHelper.doAction(action);
   }
 
   /**

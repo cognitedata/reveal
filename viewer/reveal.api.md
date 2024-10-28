@@ -443,13 +443,15 @@ export class Cognite3DViewer<DataSourceT extends DataSourceType = ClassicDataSou
     set cadBudget(budget: CadModelBudget);
     // (undocumented)
     get cameraManager(): CameraManager;
+    // @beta
     canDo360Action(action: Image360Action): boolean;
     get canvas(): HTMLCanvasElement;
     // @beta
     createCustomObjectIntersectInput(pixelCoords: THREE.Vector2): CustomObjectIntersectInput;
     determineModelType(modelId: number, revisionId: number): Promise<SupportedModelTypes | ''>;
     dispose(): void;
-    do360Action(action: Image360Action): void;
+    // @beta
+    do360Action(action: Image360Action): Promise<void>;
     get domElement(): HTMLElement;
     enter360Image(image360: Image360<DataSourceT>, revision?: Image360Revision<DataSourceT>): Promise<void>;
     exit360Image(): void;
@@ -1214,14 +1216,14 @@ export interface Image360<T extends DataSourceType = ClassicDataSourceType> {
     readonly transform: Matrix4;
 }
 
-// @public
+// @beta
 export enum Image360Action {
     // (undocumented)
-    Backward = 1,
+    Backward = 1,// When inside 360 image, forwards on the history list
     // (undocumented)
-    Enter = 2,
+    Enter = 2,// When inside 360 image, backwards on the history list
     // (undocumented)
-    Exit = 3,
+    Exit = 3,// When outside 360 image, go to current in the history list (where you exit from)
     // (undocumented)
     Forward = 0
 }
