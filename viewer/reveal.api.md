@@ -1215,6 +1215,18 @@ export interface Image360<T extends DataSourceType = ClassicDataSourceType> {
 }
 
 // @public
+export enum Image360Action {
+    // (undocumented)
+    Backward = 1,
+    // (undocumented)
+    Enter = 2,
+    // (undocumented)
+    Exit = 3,
+    // (undocumented)
+    Forward = 0
+}
+
+// @public
 export interface Image360Annotation<T extends DataSourceType = ClassicDataSourceType> {
     readonly annotation: T['image360AnnotationType'];
     getCenter(out?: Vector3): Vector3;
