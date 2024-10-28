@@ -9,13 +9,16 @@ import {
   AnnotationIdPointCloudObjectCollection,
   PointCloudAppearance,
   DefaultPointCloudAppearance,
-  PointCloudObjectMetadata
+  PointCloudDMVolumeCollection,
+  isDMPointCloudVolume,
+  isClassicPointCloudVolume,
+  DataSourceType
 } from '@cognite/reveal';
 import { AnnotationModel, AnnotationsBoundingVolume, AnnotationType, CogniteClient } from '@cognite/sdk';
 
-export class PointCloudObjectStylingUI {
-  private readonly _model: CognitePointCloudModel;
-  private readonly _viewer: Cognite3DViewer;
+export class PointCloudObjectStylingUI<T extends DataSourceType> {
+  private readonly _model: CognitePointCloudModel<T>;
+  private readonly _viewer: Cognite3DViewer<DataSourceType>;
   private readonly _client: CogniteClient;
 
   private _boundingBoxGroup: THREE.Group | undefined;
@@ -42,7 +45,12 @@ export class PointCloudObjectStylingUI {
   };
   private _createAnnotationsOnClick = false;
 
-  constructor(uiFolder: dat.GUI, model: CognitePointCloudModel, viewer: Cognite3DViewer, client: CogniteClient) {
+  constructor(
+    uiFolder: dat.GUI,
+    model: CognitePointCloudModel<T>,
+    viewer: Cognite3DViewer<DataSourceType>,
+    client: CogniteClient
+  ) {
     this._model = model;
     this._viewer = viewer;
     this._client = client;
@@ -72,17 +80,24 @@ export class PointCloudObjectStylingUI {
         this._model.removeAllStyledObjectCollections();
       },
       randomColors: () => {
-        model.traverseStylableObjects((object: PointCloudObjectMetadata) => {
+        model.stylableObjects.forEach(object => {
           const objectStyle = new THREE.Color(
             Math.floor(Math.random() * 255),
             Math.floor(Math.random() * 255),
             Math.floor(Math.random() * 255)
           );
-
-          const stylableObject = new AnnotationIdPointCloudObjectCollection([object.annotationId]);
-          model.assignStyledObjectCollection(stylableObject, {
-            color: objectStyle
-          });
+          if (isClassicPointCloudVolume(object)) {
+            const annotationId = object.annotationId;
+            const stylableObject = new AnnotationIdPointCloudObjectCollection([annotationId]);
+            model.assignStyledObjectCollection(stylableObject, {
+              color: objectStyle
+            });
+          } else if (isDMPointCloudVolume(object)) {
+            const stylableObject = new PointCloudDMVolumeCollection([object.volumeInstanceRef]);
+            model.assignStyledObjectCollection(stylableObject, {
+              color: objectStyle
+            });
+          }
         });
       }
     };
@@ -100,7 +115,7 @@ export class PointCloudObjectStylingUI {
       .onChange((value: boolean) => (this._createAnnotationsOnClick = value));
   }
 
-  async createModelAnnotation(position: THREE.Vector3, model: CognitePointCloudModel) {
+  async createModelAnnotation<T extends DataSourceType>(position: THREE.Vector3, model: CognitePointCloudModel<T>) {
     if (!this._createAnnotationsOnClick) return;
 
     const cdfPosition = position.clone().applyMatrix4(model.getCdfToDefaultModelTransformation().invert());
@@ -253,7 +268,11 @@ export class PointCloudObjectStylingUI {
         const numIndices = Math.min(state.count, this._model.stylableObjectCount - state.from + 1);
 
         const allAnnotationIds: number[] = [];
-        this._model.traverseStylableObjects(id => allAnnotationIds.push(id.annotationId));
+        this._model.traverseStylableObjects(volume => {
+          if ('annotationId' in volume) {
+            allAnnotationIds.push(volume.annotationId);
+          }
+        });
         const selectedIds = allAnnotationIds.slice(state.from, state.from + numIndices);
 
         const ids = state.annotationId !== 0 ? [state.annotationId] : selectedIds;

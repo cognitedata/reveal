@@ -2,14 +2,14 @@
  * Copyright 2021 Cognite AS
  */
 
-import { Cognite3DViewer } from '@cognite/reveal';
+import { Cognite3DViewer, DataSourceType } from '@cognite/reveal';
 import dat from 'dat.gui';
 
 /**
  * Creates UI controllers for controlling CAD budget relative to the initial
  * budget.
  */
-export function initialCadBudgetUi(viewer: Cognite3DViewer, uiFolder: dat.GUI) {
+export function initialCadBudgetUi(viewer: Cognite3DViewer<DataSourceType>, uiFolder: dat.GUI) {
   const state = {
     factor: 200.0
   };

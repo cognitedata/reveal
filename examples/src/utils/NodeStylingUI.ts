@@ -1,5 +1,5 @@
 import * as THREE from 'three';
-import { Cognite3DViewer } from '@cognite/reveal';
+import { Cognite3DViewer, DataSourceType } from '@cognite/reveal';
 import dat from 'dat.gui';
 
 import {
@@ -24,10 +24,15 @@ const nodeOutlineColorValues = ['NoOutline', 'White', 'Black', 'Cyan', 'Blue', '
 export class NodeStylingUI {
   private readonly _client: CogniteClient;
   private readonly _model: CogniteCadModel;
-  private readonly _viewer: Cognite3DViewer;
+  private readonly _viewer: Cognite3DViewer<DataSourceType>;
   private readonly _areaHelpers: THREE.Object3D[] = [];
 
-  constructor(uiFolder: dat.GUI, client: CogniteClient, viewer: Cognite3DViewer, model: CogniteCadModel) {
+  constructor(
+    uiFolder: dat.GUI,
+    client: CogniteClient,
+    viewer: Cognite3DViewer<DataSourceType>,
+    model: CogniteCadModel
+  ) {
     this._model = model;
     this._client = client;
     this._viewer = viewer;

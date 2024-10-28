@@ -32,10 +32,12 @@ viewer.on('click', async event => {
 ```
 
 ## Getting information about object assigned to a clicked point
-Using Cognite's Annotations API, a user can define objects within a point cloud model.
-In order to retrieve information about a clicked object, users may get the `annotationId` or the `assetRef` that is assigned to each point.
-The `annotationId` and `assetRef` are available in the `intersection` object returned from `viewer.getIntersectionFromPixel`.
-An annotation id of 0 means that the clicked point is not assigned to any object. `assetRef` will only be defined if the annotation associated with the point is linked to an asset in CDF. The objects in this point cloud example have no assets associated to them.
+Using Cognite's Annotations API or Cognite's 3D Contextualization Editor in CDF , a user can define objects within a point cloud model.
+In order to retrieve information about a clicked object, users may get the `annotationId` or the `volumeInstanceRef` or the `assetRef` that is assigned to each point.
+
+The `annotationId` and `assetRef` or `volumeInstanceRef` and `assetRef` are available in the `intersection` object returned from `viewer.getIntersectionFromPixel`.
+
+An annotation id of 0 and a volumeInstanceRef of `undefined` means that the clicked point is not assigned to any object. `assetRef` will only be defined if the annotation associated with the point is linked to an asset in CDF. The objects in this point cloud example have no assets associated to them.
 
 ```js runnable
 viewer.on('click', async event => {
@@ -44,6 +46,18 @@ viewer.on('click', async event => {
   );
   if (intersection) {
      alert(`Clicked object with annotationId ${intersection.annotationId} and assetId ${intersection.assetRef?.id}`);
+  };
+});
+```
+
+Cognite core data model point cloud volume click example
+```jsx
+viewer.on('click', async event => {
+  const intersection = await viewer.getIntersectionFromPixel(
+    event.offsetX, event.offsetY
+  );
+  if (intersection) {
+     alert(`Clicked object with point cloud volume reference externalId ${intersection.volumeInstanceRef.externalId} and assetId ${intersection.assetRef?.id}`);
   };
 });
 ```
