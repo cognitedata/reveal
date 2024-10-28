@@ -1218,13 +1218,9 @@ export interface Image360<T extends DataSourceType = ClassicDataSourceType> {
 
 // @beta
 export enum Image360Action {
-    // (undocumented)
-    Backward = 1,// When inside 360 image, forwards on the history list
-    // (undocumented)
-    Enter = 2,// When inside 360 image, backwards on the history list
-    // (undocumented)
-    Exit = 3,// When outside 360 image, go to current in the history list (where you exit from)
-    // (undocumented)
+    Backward = 1,
+    Enter = 2,
+    Exit = 3,
     Forward = 0
 }
 
