@@ -247,6 +247,30 @@ export class TreeNode implements ITreeNode {
   }
 
   // ==================================================
+  // INSTANCE METHODS: Get selection and checked nodes
+  // ==================================================
+
+  public getSelectedNodes(): TreeNode[] {
+    const nodes: TreeNode[] = [];
+    for (const child of this.getThisAndDescendants()) {
+      if (child.isSelected) {
+        nodes.push(child);
+      }
+    }
+    return nodes;
+  }
+
+  public getCheckedNodes(): TreeNode[] {
+    const nodes: TreeNode[] = [];
+    for (const child of this.getThisAndDescendants()) {
+      if (child.checkBoxState === CheckBoxState.All) {
+        nodes.push(child);
+      }
+    }
+    return nodes;
+  }
+
+  // ==================================================
   // INSTANCE METHODS: Iterators
   // ==================================================
 
