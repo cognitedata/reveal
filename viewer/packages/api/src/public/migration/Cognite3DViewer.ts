@@ -100,7 +100,7 @@ import { AsyncSequencer, SequencerFunction } from '../../../../utilities/src/Asy
 import { getModelAndRevisionId } from '../../utilities/utils';
 import { ClassicDataSourceType, DataSourceType, isClassicIdentifier } from '@reveal/data-providers';
 import assert from 'assert';
-import { Image360Action } from '../../api-helpers/Image360Action';
+import { Image360Action } from '../../utilities/Image360Action';
 
 type Cognite3DViewerEvents =
   | 'click'
@@ -978,7 +978,7 @@ export class Cognite3DViewer<DataSourceT extends DataSourceType = ClassicDataSou
 
   /**
    * Do a 360 image action.
-   * @param action The action to do
+   * @param action The action to do.
    */
   do360Action(action: Image360Action): void {
     if (this._cdfSdkClient === undefined || this._image360ApiHelper === undefined) {
