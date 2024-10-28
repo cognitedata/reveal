@@ -925,7 +925,7 @@ export class Cognite3DViewer<DataSourceT extends DataSourceType = ClassicDataSou
    */
   remove360Images(...image360Entities: Image360<DataSourceT>[]): Promise<void> {
     if (this._cdfSdkClient === undefined || this._image360ApiHelper === undefined) {
-      throw new Error(`Adding 360 image sets is only supported when connecting to Cognite Data Fusion`);
+      throw new Error(`Remove 360 images is only supported when connecting to Cognite Data Fusion`);
     }
     return this._image360ApiHelper.remove360Images(
       image360Entities.map(entity => entity as Image360Entity<DataSourceT>)
@@ -947,7 +947,7 @@ export class Cognite3DViewer<DataSourceT extends DataSourceType = ClassicDataSou
    */
   enter360Image(image360: Image360<DataSourceT>, revision?: Image360Revision<DataSourceT>): Promise<void> {
     if (this._cdfSdkClient === undefined || this._image360ApiHelper === undefined) {
-      throw new Error(`Adding 360 image sets is only supported when connecting to Cognite Data Fusion`);
+      throw new Error(`Enter 360 image is only supported when connecting to Cognite Data Fusion`);
     }
     return this._image360ApiHelper.enter360Image(
       image360 as Image360Entity<DataSourceT>,
@@ -960,7 +960,7 @@ export class Cognite3DViewer<DataSourceT extends DataSourceType = ClassicDataSou
    */
   exit360Image(): void {
     if (this._cdfSdkClient === undefined || this._image360ApiHelper === undefined) {
-      throw new Error(`Adding 360 image sets is only supported when connecting to Cognite Data Fusion`);
+      throw new Error(`Exit 360 image is only supported when connecting to Cognite Data Fusion`);
     }
     this._image360ApiHelper.exit360Image();
   }
@@ -984,7 +984,7 @@ export class Cognite3DViewer<DataSourceT extends DataSourceType = ClassicDataSou
    */
   async do360Action(action: Image360Action): Promise<void> {
     if (this._cdfSdkClient === undefined || this._image360ApiHelper === undefined) {
-      throw new Error(`Adding 360 image sets is only supported when connecting to Cognite Data Fusion`);
+      throw new Error(`360 actions is only supported when connecting to Cognite Data Fusion`);
     }
     await this._image360ApiHelper.doAction(action);
   }
