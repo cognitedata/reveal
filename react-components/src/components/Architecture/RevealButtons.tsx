@@ -64,7 +64,7 @@ export class RevealButtons {
   static KeyboardSpeed = (): ReactElement =>
     createButtonFromCommandConstructor(() => new KeyboardSpeedCommand());
 
-  static Do360Action = ({ action }: { action: Image360Action }): ReactElement =>
+  static Image360Action = ({ action }: { action: Image360Action }): ReactElement =>
     createButtonFromCommandConstructor(() => new Image360ActionCommand(action));
 
   // Annotations

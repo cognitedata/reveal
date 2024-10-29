@@ -6,6 +6,7 @@ import { BaseTool } from '../commands/BaseTool';
 import { type IFlexibleCameraManager } from '@cognite/reveal';
 import { type TranslateKey } from '../utilities/TranslateKey';
 import { type IconName } from '../../base/utilities/IconName';
+import { CommandsUpdater } from '../reactUpdaters/CommandsUpdater';
 
 /**
  * Represents a tool navigation tool used for camera manipulation.
@@ -37,8 +38,11 @@ export class NavigationTool extends BaseTool {
   }
 
   public override async onClick(event: PointerEvent): Promise<void> {
-    if (!(await this.renderTarget.viewer.onClick360Images(event)))
+    if (await this.renderTarget.viewer.onClick360Images(event))
+      CommandsUpdater.update(this._renderTarget); // Enter 360 image ok
+    else {
       await this.cameraManager.onClick(event);
+    }
   }
 
   public override async onDoubleClick(event: PointerEvent): Promise<void> {
@@ -75,6 +79,13 @@ export class NavigationTool extends BaseTool {
 
   public override onKey(event: KeyboardEvent, down: boolean): void {
     this.cameraManager.onKey(event, down);
+  }
+
+  public override onEscapeKey(): void {
+    const exited = false; // Replace with appropriate logic if needed
+    if (exited) {
+      CommandsUpdater.update(this._renderTarget); // Maybe exit 360 image
+    }
   }
 
   public override onFocusChanged(haveFocus: boolean): void {
