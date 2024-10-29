@@ -14,7 +14,7 @@ export class Image360History {
       this._images.slice(this._currentIndex + 1);
     }
     if (this.current() === image) {
-      return; // No need to add same history
+      return; // No need to add the same image twice to the end
     }
     this._images.push(image);
     this._currentIndex = this._images.length - 1;
