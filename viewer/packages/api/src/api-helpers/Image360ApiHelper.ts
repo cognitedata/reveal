@@ -82,7 +82,7 @@ export class Image360ApiHelper<DataSourceT extends DataSourceType> {
 
   private readonly onKeyPressed = (event: KeyboardEvent) => {
     if (event.key === 'Escape') {
-      this.exit360ImageOnEscape();
+      this.exit360ImageByTween();
     }
   };
   public readonly onHover = (event: MouseEvent): void => this.setHoverIconOnIntersect(event.offsetX, event.offsetY);
@@ -529,7 +529,7 @@ export class Image360ApiHelper<DataSourceT extends DataSourceType> {
     }
     switch (action) {
       case Image360Action.Exit:
-        this.exit360ImageOnEscape();
+        this.exit360ImageByTween();
         return;
       default:
         const image360 = this._history.doAction(action);
@@ -635,7 +635,7 @@ export class Image360ApiHelper<DataSourceT extends DataSourceType> {
     this._interactionState.currentImage360Hovered = entity;
   }
 
-  private async exit360ImageOnEscape(): Promise<boolean> {
+  private async exit360ImageByTween(): Promise<boolean> {
     const lastEntered = this._interactionState.currentImage360Entered;
     if (lastEntered !== undefined) {
       const transitionOutDuration = 600;
