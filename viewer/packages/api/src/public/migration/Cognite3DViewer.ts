@@ -966,17 +966,6 @@ export class Cognite3DViewer<DataSourceT extends DataSourceType = ClassicDataSou
   }
 
   /**
-   * Exit visualization of the 360 image with transition, used by the escape key.
-   * @beta
-   */
-  public async exit360ImageOnEscape(): Promise<boolean> {
-    if (this._cdfSdkClient === undefined || this._image360ApiHelper === undefined) {
-      throw new Error(`Exit 360 image is only supported when connecting to Cognite Data Fusion`);
-    }
-    return this._image360ApiHelper.exit360ImageOnEscape();
-  }
-
-  /**
    * Check if a 360 image action can be done.
    * @param action The action to check if can be done.
    * @beta

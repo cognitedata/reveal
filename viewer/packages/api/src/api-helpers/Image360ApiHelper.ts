@@ -635,7 +635,7 @@ export class Image360ApiHelper<DataSourceT extends DataSourceType> {
     this._interactionState.currentImage360Hovered = entity;
   }
 
-  public async exit360ImageOnEscape(): Promise<boolean> {
+  private async exit360ImageOnEscape(): Promise<boolean> {
     const lastEntered = this._interactionState.currentImage360Entered;
     if (lastEntered !== undefined) {
       const transitionOutDuration = 600;
