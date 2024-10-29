@@ -29,7 +29,7 @@ import { AnnotationsShowOnTopCommand } from '../annotations/commands/Annotations
 import { AnnotationsSelectTool } from '../annotations/commands/AnnotationsSelectTool';
 import { type DmsUniqueIdentifier } from '../../../data-providers';
 import { PointsOfInterestTool } from '../pointsOfInterest/PointsOfInterestTool';
-import { Do360ActionCommand } from '../../base/concreteCommands/image360Collection/do360ActionCommand';
+import { Do360ActionCommand } from '../../base/concreteCommands/image360Collection/Do360ActionCommand';
 import { Image360Action } from '@cognite/reveal';
 
 export class StoryBookConfig extends BaseRevealConfig {
