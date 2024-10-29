@@ -7,7 +7,7 @@ import { type TranslateKey } from '../../utilities/TranslateKey';
 import { type IconName } from '../../utilities/IconName';
 import { type BaseCommand } from '../../commands/BaseCommand';
 
-export class Do360ActionCommand extends RenderTargetCommand {
+export class Image360ActionCommand extends RenderTargetCommand {
   private readonly _action: Image360Action;
 
   public constructor(action: Image360Action) {
@@ -16,7 +16,7 @@ export class Do360ActionCommand extends RenderTargetCommand {
   }
 
   public override equals(other: BaseCommand): boolean {
-    if (!(other instanceof Do360ActionCommand)) {
+    if (!(other instanceof Image360ActionCommand)) {
       return false;
     }
     return this._action === other._action;

@@ -21,7 +21,7 @@ import { AnnotationsShowCommand } from '../../architecture/concrete/annotations/
 import { AnnotationsShowOnTopCommand } from '../../architecture/concrete/annotations/commands/AnnotationsShowOnTopCommand';
 import { AnnotationsCreateTool } from '../../architecture/concrete/annotations/commands/AnnotationsCreateTool';
 import { AnnotationsSelectTool } from '../../architecture/concrete/annotations/commands/AnnotationsSelectTool';
-import { Do360ActionCommand } from '../../architecture/base/concreteCommands/image360Collection/Do360ActionCommand';
+import { Image360ActionCommand } from '../../architecture/base/concreteCommands/image360Collection/Image360ActionCommand';
 
 export class RevealButtons {
   static Settings = ({ include360Images = true }: { include360Images?: boolean }): ReactElement =>
@@ -65,7 +65,7 @@ export class RevealButtons {
     createButtonFromCommandConstructor(() => new KeyboardSpeedCommand());
 
   static Do360Action = ({ action }: { action: Image360Action }): ReactElement =>
-    createButtonFromCommandConstructor(() => new Do360ActionCommand(action));
+    createButtonFromCommandConstructor(() => new Image360ActionCommand(action));
 
   // Annotations
   static AnnotationsSelect = (): ReactElement =>
