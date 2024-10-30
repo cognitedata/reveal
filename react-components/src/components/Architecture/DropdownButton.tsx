@@ -4,15 +4,7 @@
 
 import { Button, Tooltip as CogsTooltip, ChevronDownIcon, ChevronUpIcon } from '@cognite/cogs.js';
 import { Menu, Option, Select } from '@cognite/cogs-lab';
-import {
-  useCallback,
-  useEffect,
-  useMemo,
-  useState,
-  type ReactElement,
-  type SetStateAction,
-  type Dispatch
-} from 'react';
+import { useMemo, useState, type ReactElement, type SetStateAction, type Dispatch } from 'react';
 
 import { useTranslation } from '../i18n/I18n';
 import { type BaseCommand } from '../../architecture/base/commands/BaseCommand';
@@ -24,6 +16,7 @@ import { type TranslateDelegate } from '../../architecture/base/utilities/Transl
 import { DEFAULT_PADDING, OPTION_MIN_WIDTH } from './constants';
 
 import styled from 'styled-components';
+import { useOnUpdate } from './useOnUpdate';
 
 export const DropdownButton = ({
   inputCommand,
@@ -41,24 +34,16 @@ export const DropdownButton = ({
   );
 
   // @update-ui-component-pattern
-  const [isOpen, setOpen] = useState<boolean>(false);
-  const [isEnabled, setEnabled] = useState<boolean>(true);
-  const [isVisible, setVisible] = useState<boolean>(true);
-  const [uniqueId, setUniqueId] = useState<number>(0);
+  const [isOpen, setOpen] = useState(false);
+  const [isEnabled, setEnabled] = useState(true);
+  const [isVisible, setVisible] = useState(true);
+  const [uniqueId, setUniqueId] = useState(0);
 
-  const update = useCallback((command: BaseCommand) => {
+  useOnUpdate(command, () => {
     setEnabled(command.isEnabled);
     setVisible(command.isVisible);
     setUniqueId(command.uniqueId);
-  }, []);
-
-  useEffect(() => {
-    update(command);
-    command.addEventListener(update);
-    return () => {
-      command.removeEventListener(update);
-    };
-  }, [command]);
+  });
   // @end
 
   if (!isVisible) {
