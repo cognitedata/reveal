@@ -444,14 +444,12 @@ export class Cognite3DViewer<DataSourceT extends DataSourceType = ClassicDataSou
     // (undocumented)
     get cameraManager(): CameraManager;
     // @beta
-    canDo360Action(action: Image360Action): boolean;
+    canDoImage360Action(action: Image360Action): boolean;
     get canvas(): HTMLCanvasElement;
     // @beta
     createCustomObjectIntersectInput(pixelCoords: THREE.Vector2): CustomObjectIntersectInput;
     determineModelType(modelId: number, revisionId: number): Promise<SupportedModelTypes | ''>;
     dispose(): void;
-    // @beta
-    do360Action(action: Image360Action): Promise<void>;
     get domElement(): HTMLElement;
     enter360Image(image360: Image360<DataSourceT>, revision?: Image360Revision<DataSourceT>): Promise<void>;
     exit360Image(): void;
@@ -480,6 +478,8 @@ export class Cognite3DViewer<DataSourceT extends DataSourceType = ClassicDataSou
     getViewState(): ViewerState;
     // @beta
     getVisualSceneBoundingBox(): THREE.Box3;
+    // @beta
+    image360Action(action: Image360Action): Promise<void>;
     loadCameraFromModel(model: CogniteModel<DataSourceT>): void;
     get models(): CogniteModel<DataSourceT>[];
     // (undocumented)
