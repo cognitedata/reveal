@@ -529,7 +529,7 @@ export class Image360ApiHelper<DataSourceT extends DataSourceType> {
     }
     switch (action) {
       case Image360Action.Exit:
-        this.exit360ImageByTween();
+        await this.exit360ImageByTween();
         return;
       default:
         const image360 = this._history.doAction(action);
