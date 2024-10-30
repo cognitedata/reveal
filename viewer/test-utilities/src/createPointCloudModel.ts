@@ -12,14 +12,18 @@ import * as THREE from 'three';
 import { IPointCloudTreeGeometry } from '../../packages/pointclouds/src/potree-three-loader/geometry/IPointCloudTreeGeometry';
 import { DEFAULT_CLASSIFICATION, PointCloudMaterial } from '../../packages/rendering';
 import { PointCloudObjectAppearanceTexture } from '../../packages/rendering/src/pointcloud-rendering/PointCloudObjectAppearanceTexture';
+import { DataSourceType } from '../../packages/data-providers/src/DataSourceType';
 
-export function createPointCloudModel(modelId: number, revisionId: number): CognitePointCloudModel {
-  const pointCloudNode = createPointCloudNode();
+export function createPointCloudModel<T extends DataSourceType>(
+  modelId: number,
+  revisionId: number
+): CognitePointCloudModel<T> {
+  const pointCloudNode = createPointCloudNode<T>();
 
-  return new CognitePointCloudModel(modelId, revisionId, pointCloudNode);
+  return new CognitePointCloudModel<T>({ modelId, revisionId }, pointCloudNode);
 }
 
-export function createPointCloudNode(): PointCloudNode {
+export function createPointCloudNode<T extends DataSourceType>(): PointCloudNode<T> {
   const pointCloudOctree = new PointCloudOctree(
     new Mock<Potree>().object(),
     new Mock<IPointCloudTreeGeometry>()

@@ -21,3 +21,5 @@ export { Image360AnnotationIntersection } from './src/annotation/Image360Annotat
 export { Image360Annotation } from './src/annotation/Image360Annotation';
 export { DefaultImage360Collection } from './src/collection/DefaultImage360Collection';
 export { IconsOptions } from './src/icons/IconCollection';
+export { Image360History } from './src/Image360History';
+export { Image360Action } from './src/Image360Action';

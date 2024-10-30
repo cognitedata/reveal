@@ -84,20 +84,32 @@ export {
 export {
   PointCloudObjectMetadata,
   ImageAssetLinkAnnotationInfo,
-  Image360DataModelIdentifier
+  Image360DataModelIdentifier,
+  DMInstanceRef,
+  DataSourceType,
+  ClassicDataSourceType,
+  DMDataSourceType,
+  ClassicModelIdentifierType,
+  DMModelIdentifierType,
+  isDMPointCloudVolume,
+  isClassicPointCloudVolume,
+  CommonModelOptions
 } from '../packages/data-providers';
 
 export { CogniteCadModel, BoundingBoxClipper, GeometryFilter, WellKnownUnit } from '../packages/cad-model';
 
-export { CognitePointCloudModel } from '../packages/pointclouds';
+export { CognitePointCloudModel, isDMPointCloudModel, isClassicPointCloudModel } from '../packages/pointclouds';
 
 export {
   CompletePointCloudAppearance,
   PointCloudAppearance,
   PointCloudObjectCollection,
+  PointCloudAnnotationVolumeCollection,
   AnnotationIdPointCloudObjectCollection,
+  PointCloudDMVolumeCollection,
   DefaultPointCloudAppearance,
-  StyledPointCloudObjectCollection
+  StyledPointCloudObjectCollection,
+  StyledPointCloudVolumeCollection
 } from '../packages/pointcloud-styling';
 
 export {
@@ -114,7 +126,8 @@ export {
   Image360Annotation,
   Image360AnnotationAssetFilter,
   Image360AnnotationAssetQueryResult,
-  Image360AnnotationFilterOptions
+  Image360AnnotationFilterOptions,
+  Image360Action
 } from '../packages/360-images';
 
 export {

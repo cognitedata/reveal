@@ -47,6 +47,7 @@ export const FilterButton = ({
 
   command.initializeChildrenIfNeeded();
 
+  // @update-ui-component-pattern
   const [isEnabled, setEnabled] = useState<boolean>(true);
   const [isVisible, setVisible] = useState<boolean>(true);
   const [uniqueId, setUniqueId] = useState<number>(0);
@@ -81,6 +82,7 @@ export const FilterButton = ({
       command.removeEventListener(update);
     };
   }, [command]);
+  // @end
 
   const children = command.children;
   if (!isVisible || children === undefined || children.length === 0) {
@@ -210,7 +212,9 @@ const FilterDropdown = ({
             )}
           </Button>
         </SelectPanel.Trigger>
-        <SelectPanel.Body>{PanelContent}</SelectPanel.Body>
+        <SelectPanel.Body style={{ overflow: 'hidden', zindex: 2000 }}>
+          {PanelContent}
+        </SelectPanel.Body>
       </StyledSelectPanel>
     </StyledDropdownRow>
   );
@@ -233,21 +237,20 @@ const FilterSelectPanelContent = ({
 
   return (
     <>
-      <SelectPanel.Header title={label} />
-      <SelectPanel.Body label={label}>
-        <SelectPanel.Section>
-          <SelectPanel.Item
-            key={-1}
-            variant="checkbox"
-            checked={isAllChecked}
-            indeterminate={!isAllChecked && isSomeChecked}
-            onClick={() => {
-              command.toggleAllChecked();
-            }}
-            label={BaseFilterCommand.getAllString(t)}>
-            {BaseFilterCommand.getAllString(t)}
-          </SelectPanel.Item>
-        </SelectPanel.Section>
+      <SelectPanel.Section>
+        <SelectPanel.Item
+          key={-1}
+          variant="checkbox"
+          checked={isAllChecked}
+          indeterminate={!isAllChecked && isSomeChecked}
+          onClick={() => {
+            command.toggleAllChecked();
+          }}
+          label={BaseFilterCommand.getAllString(t)}>
+          {BaseFilterCommand.getAllString(t)}
+        </SelectPanel.Item>
+      </SelectPanel.Section>
+      <SelectPanel.Body label={label} style={{ maxHeight: '300px' }}>
         <SelectPanel.Section>
           {children?.map((child, _index): ReactElement => {
             return <FilterItem key={child.uniqueId} command={child} />;

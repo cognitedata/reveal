@@ -29,6 +29,8 @@ import { AnnotationsShowOnTopCommand } from '../annotations/commands/Annotations
 import { AnnotationsSelectTool } from '../annotations/commands/AnnotationsSelectTool';
 import { type DmsUniqueIdentifier } from '../../../data-providers';
 import { PointsOfInterestTool } from '../pointsOfInterest/PointsOfInterestTool';
+import { Image360ActionCommand } from '../../base/concreteCommands/image360Collection/Image360ActionCommand';
+import { Image360Action } from '@cognite/reveal';
 
 export class StoryBookConfig extends BaseRevealConfig {
   // ==================================================
@@ -44,7 +46,12 @@ export class StoryBookConfig extends BaseRevealConfig {
       new SetOrbitOrFirstPersonModeCommand(),
       new FitViewCommand(),
       new SetAxisVisibleCommand(),
-      new KeyboardSpeedCommand()
+      new KeyboardSpeedCommand(),
+      undefined,
+      new Image360ActionCommand(Image360Action.Enter),
+      new Image360ActionCommand(Image360Action.Backward),
+      new Image360ActionCommand(Image360Action.Forward),
+      new Image360ActionCommand(Image360Action.Exit)
     ];
   }
 
@@ -58,6 +65,9 @@ export class StoryBookConfig extends BaseRevealConfig {
       new ClipTool(),
       new PointsOfInterestTool<DmsUniqueIdentifier>(),
       undefined,
+      new MockSettingsCommand(),
+      new MockFilterCommand(),
+      undefined,
       new AnnotationsSelectTool(),
       new AnnotationsCreateTool(),
       new AnnotationsShowCommand(),
@@ -65,10 +75,7 @@ export class StoryBookConfig extends BaseRevealConfig {
       undefined,
       new ExampleTool(),
       new SetTerrainVisibleCommand(),
-      new UpdateTerrainCommand(),
-      undefined,
-      new MockSettingsCommand(),
-      new MockFilterCommand()
+      new UpdateTerrainCommand()
     ];
   }
 

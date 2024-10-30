@@ -5,7 +5,7 @@
 import { type ReactElement } from 'react';
 import { NavigationTool } from '../../architecture/base/concreteCommands/NavigationTool';
 import { FitViewCommand } from '../../architecture/base/concreteCommands/FitViewCommand';
-import { FlexibleControlsType } from '@cognite/reveal';
+import { FlexibleControlsType, Image360Action } from '@cognite/reveal';
 import { SetFlexibleControlsTypeCommand } from '../../architecture/base/concreteCommands/SetFlexibleControlsTypeCommand';
 import { SetAxisVisibleCommand } from '../../architecture/concrete/axis/SetAxisVisibleCommand';
 import { ClipTool } from '../../architecture/concrete/clipping/ClipTool';
@@ -21,6 +21,7 @@ import { AnnotationsShowCommand } from '../../architecture/concrete/annotations/
 import { AnnotationsShowOnTopCommand } from '../../architecture/concrete/annotations/commands/AnnotationsShowOnTopCommand';
 import { AnnotationsCreateTool } from '../../architecture/concrete/annotations/commands/AnnotationsCreateTool';
 import { AnnotationsSelectTool } from '../../architecture/concrete/annotations/commands/AnnotationsSelectTool';
+import { Image360ActionCommand } from '../../architecture/base/concreteCommands/image360Collection/Image360ActionCommand';
 
 export class RevealButtons {
   static Settings = ({ include360Images = true }: { include360Images?: boolean }): ReactElement =>
@@ -62,6 +63,20 @@ export class RevealButtons {
 
   static KeyboardSpeed = (): ReactElement =>
     createButtonFromCommandConstructor(() => new KeyboardSpeedCommand());
+
+  static Image360Button = ({ action }: { action: Image360Action }): ReactElement =>
+    createButtonFromCommandConstructor(() => new Image360ActionCommand(action));
+
+  static Image360Buttons = (): ReactElement => {
+    return (
+      <>
+        <RevealButtons.Image360Button action={Image360Action.Enter} />
+        <RevealButtons.Image360Button action={Image360Action.Backward} />
+        <RevealButtons.Image360Button action={Image360Action.Forward} />
+        <RevealButtons.Image360Button action={Image360Action.Exit} />
+      </>
+    );
+  };
 
   // Annotations
   static AnnotationsSelect = (): ReactElement =>
