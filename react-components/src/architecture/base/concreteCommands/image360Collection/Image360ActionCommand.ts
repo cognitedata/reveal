@@ -53,11 +53,11 @@ export class Image360ActionCommand extends RenderTargetCommand {
   }
 
   public override get isEnabled(): boolean {
-    return this.renderTarget.viewer.canDo360Action(this._action);
+    return this.renderTarget.viewer.canDoImage360Action(this._action);
   }
 
   public override invokeCore(): boolean {
-    void this.renderTarget.viewer.do360Action(this._action);
+    void this.renderTarget.viewer.image360Action(this._action);
     return true;
   }
 }
