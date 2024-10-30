@@ -3,7 +3,7 @@
  */
 
 import { BaseTool } from '../commands/BaseTool';
-import { Image360Action, type IFlexibleCameraManager } from '@cognite/reveal';
+import { type IFlexibleCameraManager } from '@cognite/reveal';
 import { type TranslateKey } from '../utilities/TranslateKey';
 import { type IconName } from '../../base/utilities/IconName';
 
@@ -75,14 +75,6 @@ export class NavigationTool extends BaseTool {
 
   public override onKey(event: KeyboardEvent, down: boolean): void {
     this.cameraManager.onKey(event, down);
-  }
-
-  public override onEscapeKey(): void {
-    if (this.renderTarget.viewer.canDoImage360Action(Image360Action.Exit)) {
-      void this.renderTarget.viewer.image360Action(Image360Action.Exit);
-    } else {
-      super.onEscapeKey();
-    }
   }
 
   public override onFocusChanged(haveFocus: boolean): void {
