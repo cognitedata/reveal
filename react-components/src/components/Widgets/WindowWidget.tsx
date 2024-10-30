@@ -2,7 +2,13 @@
  * Copyright 2023 Cognite AS
  */
 
-import { Button, Tooltip as CogsTooltip } from '@cognite/cogs.js';
+import {
+  Button,
+  CloseIcon,
+  Tooltip as CogsTooltip,
+  CollapseIcon,
+  ExpandIcon
+} from '@cognite/cogs.js';
 import { type ReactElement, useState, type ReactNode, useEffect, type SyntheticEvent } from 'react';
 import Widget from './Widget';
 import Draggable, { type DraggableData, type DraggableEvent } from 'react-draggable';
@@ -128,7 +134,7 @@ export const WindowWidget = ({
                 appendTo={document.body}>
                 <Button
                   type="ghost"
-                  icon={isMinimized ? 'Expand' : 'Collapse'}
+                  icon={isMinimized ? <ExpandIcon /> : <CollapseIcon />}
                   onClick={handleExpand}
                 />
               </CogsTooltip>
@@ -136,7 +142,7 @@ export const WindowWidget = ({
                 content={t('WIDGET_WINDOW_CLOSE', 'Close')}
                 placement="top"
                 appendTo={document.body}>
-                <Button type="ghost" icon="Close" onClick={handleClose} />
+                <Button type="ghost" icon=<CloseIcon /> onClick={handleClose} />
               </CogsTooltip>
             </Widget.Header>
             <WidgetBody>{!isMinimized && <WidgetContent>{children}</WidgetContent>}</WidgetBody>

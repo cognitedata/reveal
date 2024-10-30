@@ -15,7 +15,10 @@ import {
   CameraControlsOptions,
   DefaultCameraManager,
   CogniteModel,
-  AnnotationIdPointCloudObjectCollection
+  AnnotationIdPointCloudObjectCollection,
+  PointCloudDMVolumeCollection,
+  DataSourceType,
+  isDMPointCloudModel
 } from '@cognite/reveal';
 import { DebugCameraTool, AxisGizmoTool } from '@cognite/reveal/tools';
 import * as reveal from '@cognite/reveal';
@@ -53,13 +56,13 @@ export function Viewer() {
     }
 
     const gui = new dat.GUI({ width: Math.min(500, 0.8 * window.innerWidth) });
-    let viewer: Cognite3DViewer;
+    let viewer: Cognite3DViewer<DataSourceType>;
     let cameraManager: DefaultCameraManager;
     let cameraManagers: {
       Default: DefaultCameraManager;
       Custom: CustomCameraManager;
     };
-    let pointCloudObjectsUi: PointCloudObjectStylingUI;
+    let pointCloudObjectsUi: PointCloudObjectStylingUI<DataSourceType>;
 
     async function main() {
       const project = urlParams.get('project');
@@ -67,8 +70,9 @@ export function Viewer() {
       const overrideToken = urlParams.get('token');
 
       const cdfModel = urlParams.get('modelId') && urlParams.get('revisionId');
+      const dataModelId = urlParams.get('revisionExternalId') && urlParams.get('revisionSpace');
       let modelUrl = urlParams.get('modelUrl');
-      if (!modelUrl && !cdfModel) {
+      if (!modelUrl && !cdfModel && !dataModelId) {
         modelUrl = 'primitives';
         url.searchParams.set('modelUrl', modelUrl);
         window.history.pushState({}, '', url.toString());
@@ -92,7 +96,7 @@ export function Viewer() {
         antiAliasingHint: (urlParams.get('antialias') ?? undefined) as any,
         ssaoQualityHint: (urlParams.get('ssao') ?? undefined) as any,
         pointCloudEffects: {
-          pointBlending: urlParams.get('pointBlending') === 'true' ?? undefined,
+          pointBlending: urlParams.get('pointBlending') === 'true',
           edlOptions: edlEnabled
             ? {
                 strength: parseFloat(urlParams.get('edlStrength') ?? '0.5'),
@@ -121,7 +125,7 @@ export function Viewer() {
       }
 
       // Prepare viewer
-      viewer = new Cognite3DViewer(viewerOptions);
+      viewer = new Cognite3DViewer<DataSourceType>(viewerOptions);
       (window as any).viewer = viewer;
 
       // Add Stats.js overlay with FPS etc
@@ -206,7 +210,7 @@ export function Viewer() {
       initialCadBudgetUi(viewer, gui.addFolder('CAD budget'));
 
       const totalBounds = new THREE.Box3();
-      function handleModelAdded(model: CogniteModel) {
+      function handleModelAdded(model: CogniteModel<DataSourceType>) {
         const bounds = model.getModelBoundingBox();
         totalBounds.expandByPoint(bounds.min);
         totalBounds.expandByPoint(bounds.max);
@@ -389,7 +393,7 @@ export function Viewer() {
       const pointCloudUi = new PointCloudUi(viewer, gui.addFolder('Point clouds'));
       await modelUi.restoreModelsFromUrl();
       const image360Ui = new Image360UI(viewer, gui.addFolder('360 Images'));
-      new Image360StylingUI(image360Ui, gui.addFolder('360 annotation styling'));
+      new Image360StylingUI(viewer, gui.addFolder('360 annotation styling'));
 
       const controlsGui = gui.addFolder('Camera controls');
       const mouseWheelActionTypes = ['zoomToCursor', 'zoomPastCursor', 'zoomToTarget'];
@@ -427,9 +431,12 @@ export function Viewer() {
       viewer.on('click', async event => {
         const { offsetX, offsetY } = event;
         const start = performance.now();
-        const intersection = await viewer.getIntersectionFromPixel(offsetX, offsetY);
-        if (intersection !== null) {
+        const intersection = await viewer.getAnyIntersectionFromPixel(new THREE.Vector2(offsetX, offsetY));
+        if (intersection !== undefined) {
           switch (intersection.type) {
+            case 'customObject': {
+              break;
+            }
             case 'cad':
               {
                 const { treeIndex, point } = intersection;
@@ -444,15 +451,28 @@ export function Viewer() {
             case 'pointcloud':
               {
                 const { point, model } = intersection;
+
                 console.log(
                   `Clicked point assigned to the object with annotationId: ${intersection.annotationId} and assetId: ${intersection?.assetRef?.id} at`,
                   point
                 );
-                if (intersection.annotationId !== 0) {
-                  pointCloudObjectsUi.updateSelectedAnnotation(intersection.annotationId);
+                if (intersection.volumeMetadata !== undefined && 'annotationId' in intersection.volumeMetadata) {
+                  pointCloudObjectsUi.updateSelectedAnnotation(intersection.volumeMetadata.annotationId);
                   model.removeAllStyledObjectCollections();
-                  const selected = new AnnotationIdPointCloudObjectCollection([intersection.annotationId]);
+                  const selected = new AnnotationIdPointCloudObjectCollection([
+                    intersection.volumeMetadata.annotationId
+                  ]);
                   model.assignStyledObjectCollection(selected, { color: new THREE.Color('red') });
+                } else if (
+                  intersection.volumeMetadata !== undefined &&
+                  'volumeInstanceRef' in intersection.volumeMetadata &&
+                  isDMPointCloudModel(model)
+                ) {
+                  model.removeAllStyledObjectCollections();
+                  const selected = new PointCloudDMVolumeCollection([intersection.volumeMetadata.volumeInstanceRef]);
+                  model.assignStyledObjectCollection(selected, {
+                    color: new THREE.Color('red')
+                  });
                 } else {
                   const sphere = new THREE.Mesh(
                     new THREE.SphereGeometry(0.1),

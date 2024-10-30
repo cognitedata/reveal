@@ -19,6 +19,7 @@ export class PointCloudMaterialManager {
     if (this._modelsMaterialsMap.size < 1) {
       return;
     }
+
     const material = this._modelsMaterialsMap.get(modelIdentifier);
 
     if (material) {

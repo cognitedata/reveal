@@ -7,9 +7,10 @@ import { DisposedDelegate } from '@reveal/utilities';
 
 import { Cognite3DViewerToolBase } from './Cognite3DViewerToolBase';
 import { Cognite3DViewer } from '@reveal/api';
+import { DataSourceType } from '@reveal/data-providers';
 
 export class DebugCameraTool extends Cognite3DViewerToolBase {
-  private readonly _viewer: Cognite3DViewer;
+  private readonly _viewer: Cognite3DViewer<DataSourceType>;
   private readonly _onViewerDisposedHandler: DisposedDelegate;
   private _cameraHelper?: THREE.CameraHelper;
 
@@ -17,7 +18,7 @@ export class DebugCameraTool extends Cognite3DViewerToolBase {
     return this._viewer.cameraManager.getCamera();
   }
 
-  constructor(viewer: Cognite3DViewer) {
+  constructor(viewer: Cognite3DViewer<DataSourceType>) {
     super();
 
     this._onViewerDisposedHandler = this.onViewerDisposed.bind(this);

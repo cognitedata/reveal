@@ -5,13 +5,16 @@
 import { useMemo, type ReactElement } from 'react';
 import { Divider } from '@cognite/cogs.js';
 import { type BaseCommand } from '../../architecture/base/commands/BaseCommand';
-import { OptionButton } from './OptionButton';
-import { BaseOptionCommand } from '../../architecture/base/commands/BaseOptionCommand';
+import { DropdownButton } from './DropdownButton';
+import { BaseOptionCommand, OptionType } from '../../architecture/base/commands/BaseOptionCommand';
 import { CommandButton } from './CommandButton';
 import { SettingsButton } from './SettingsButton';
 import { BaseSettingsCommand } from '../../architecture/base/commands/BaseSettingsCommand';
 import { BaseFilterCommand } from '../../architecture/base/commands/BaseFilterCommand';
 import { FilterButton } from './FilterButton';
+import { SegmentedButtons } from './SegmentedButtons';
+import { DividerCommand } from '../../architecture/base/commands/DividerCommand';
+import { SectionCommand } from '../../architecture/base/commands/SectionCommand';
 
 export function createButton(command: BaseCommand, isHorizontal = false): ReactElement {
   if (command instanceof BaseFilterCommand) {
@@ -21,7 +24,14 @@ export function createButton(command: BaseCommand, isHorizontal = false): ReactE
     return <SettingsButton inputCommand={command} isHorizontal={isHorizontal} />;
   }
   if (command instanceof BaseOptionCommand) {
-    return <OptionButton inputCommand={command} isHorizontal={isHorizontal} />;
+    switch (command.optionType) {
+      case OptionType.Dropdown:
+        return <DropdownButton inputCommand={command} isHorizontal={isHorizontal} />;
+      case OptionType.Segmented:
+        return <SegmentedButtons inputCommand={command} isHorizontal={isHorizontal} />;
+      default:
+        return <></>;
+    }
   }
   return <CommandButton inputCommand={command} isHorizontal={isHorizontal} />;
 }
@@ -70,7 +80,11 @@ function CommandButtonWrapper({
   command: BaseCommand | undefined;
   isHorizontal: boolean;
 }): ReactElement {
-  if (command === undefined) {
+  if (
+    command instanceof DividerCommand ||
+    command instanceof SectionCommand ||
+    command === undefined
+  ) {
     const direction = !isHorizontal ? 'horizontal' : 'vertical';
     return <Divider weight="2px" length="24px" direction={direction} />;
   }

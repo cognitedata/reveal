@@ -9,7 +9,7 @@ import { Image360AnnotationAppearance } from '../annotation/types';
 import { Image360Revision } from '../entity/Image360Revision';
 import { IdEither } from '@cognite/sdk';
 import { Image360Annotation } from '../annotation/Image360Annotation';
-import { ImageAssetLinkAnnotationInfo } from '@reveal/data-providers';
+import { ClassicDataSourceType, DataSourceType, ImageAssetLinkAnnotationInfo } from '@reveal/data-providers';
 import { Matrix4 } from 'three';
 
 /**
@@ -25,7 +25,7 @@ export type Image360AnnotationAssetFilter = {
 /**
  * Asset search return type, including information about the image in which the asset is found
  */
-export type AssetAnnotationImage360Info = {
+export type AssetAnnotationImage360Info<T extends DataSourceType = ClassicDataSourceType> = {
   /**
    * Reference to the relevant asset
    */
@@ -33,11 +33,11 @@ export type AssetAnnotationImage360Info = {
   /**
    * The image entity in which the asset was found
    */
-  imageEntity: Image360;
+  imageEntity: Image360<T>;
   /**
    * The image revision in which the asset was found
    */
-  imageRevision: Image360Revision;
+  imageRevision: Image360Revision<T>;
 };
 
 /**
@@ -61,7 +61,7 @@ export type Image360AnnotationAssetQueryResult = {
 /**
  * A wrapper that represents a set of 360 images.
  */
-export interface Image360Collection {
+export interface Image360Collection<T extends DataSourceType = ClassicDataSourceType> {
   /**
    * The id of the collection.
    * @returns The id of the collection.
@@ -77,7 +77,7 @@ export interface Image360Collection {
   /**
    * A list containing all the 360 images in this set.
    */
-  readonly image360Entities: Image360[];
+  readonly image360Entities: Image360<T>[];
 
   /**
    * If defined, any subsequently entered 360 images will load the revision that are closest to the target date.
@@ -114,6 +114,42 @@ export interface Image360Collection {
    * @param visible If true all icons are made visible according to the active culling scheme. If false all icons are hidden.
    */
   setIconsVisibility(visible: boolean): void;
+
+  /**
+   * Check if the occluded icons are visible
+   * @returns true is occluded icons are visible
+   */
+  isOccludedIconsVisible(): boolean;
+
+  /**
+   * Set the occluded icons visible
+   * @param visible
+   */
+  setOccludedIconsVisible(visible: boolean): void;
+
+  /**
+   * Get the opacity of the images
+   * @returns The opacity of the images
+   */
+  getImagesOpacity(): number;
+
+  /**
+   * Set the opacity of the images
+   * @param opacity The opacity of the images
+   */
+  setImagesOpacity(opacity: number): void;
+
+  /**
+   * Get the opacity of the icons
+   * @returns The opacity of the icons
+   */
+  getIconsOpacity(): number;
+
+  /**
+   * Set the opacity of the icons
+   * @param opacity The opacity of the icons
+   */
+  setIconsOpacity(opacity: number): void;
 
   /**
    * Subscribes to events on 360 Image datasets. There are several event types:
@@ -159,7 +195,7 @@ export interface Image360Collection {
    * Get IDs of all CDF assets and related image/revision associated with this
    * 360 image collection through CDF annotations
    *
-   * @param assets What source data to pull the annotation info from
+   * @param source What source data to pull the annotation info from
    */
-  getAnnotationsInfo(source: 'assets'): Promise<AssetAnnotationImage360Info[]>;
+  getAnnotationsInfo(source: 'assets'): Promise<AssetAnnotationImage360Info<T>[]>;
 }

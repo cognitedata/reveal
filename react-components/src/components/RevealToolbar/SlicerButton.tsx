@@ -7,11 +7,14 @@ import { type ReactElement, useState, useEffect } from 'react';
 import { Box3, Plane, Vector3 } from 'three';
 
 import { useReveal } from '../RevealCanvas/ViewerContext';
-import { Button, Dropdown, Menu, RangeSlider, Tooltip as CogsTooltip } from '@cognite/cogs.js';
+import { Button, RangeSlider, Tooltip as CogsTooltip, SliceIcon } from '@cognite/cogs.js';
+import { Menu } from '@cognite/cogs-lab';
 
 import styled from 'styled-components';
 import { useTranslation } from '../i18n/I18n';
 import { use3dModels } from '../../hooks/use3dModels';
+import { TOOLBAR_HORIZONTAL_PANEL_OFFSET } from '../constants';
+import { offset } from '@floating-ui/dom';
 
 type SliceState = {
   minHeight: number;
@@ -25,7 +28,6 @@ export const SlicerButton = (): ReactElement => {
   const { t } = useTranslation();
   const models = use3dModels();
   const { bottom: initialBottomRatio, top: initialTopRatio } = { bottom: 0, top: 1 };
-  const [sliceActive, setSliceActive] = useState<boolean>(false);
 
   const [sliceState, setSliceState] = useState<SliceState>({
     minHeight: 0,
@@ -92,37 +94,27 @@ export const SlicerButton = (): ReactElement => {
   }
 
   return (
-    <Dropdown
-      appendTo={() => document.body}
-      onClickOutside={() => {
-        setSliceActive(false);
-      }}
-      content={
-        <StyledMenu>
-          <RangeSlider
-            min={0}
-            max={1}
-            step={0.01}
-            setValue={changeSlicingState}
-            marks={{}}
-            value={[bottomRatio, topRatio]}
-            vertical
-          />
-        </StyledMenu>
-      }
-      placement="right-end">
-      <CogsTooltip content={t('SLICE_TOOLTIP', 'Slice')} placement="right" appendTo={document.body}>
-        <Button
-          type="ghost"
-          icon="Slice"
-          aria-label="Slice models"
-          toggled={sliceActive}
-          onClick={() => {
-            setSliceActive((prevState) => !prevState);
-          }}
-        />
-      </CogsTooltip>
-    </Dropdown>
+    <StyledMenu
+      placement="right-start"
+      floatingProps={{ middleware: [offset(TOOLBAR_HORIZONTAL_PANEL_OFFSET)] }}
+      renderTrigger={(props: any) => (
+        <CogsTooltip
+          content={t('SLICE_TOOLTIP', 'Slice')}
+          placement="right"
+          appendTo={document.body}>
+          <Button {...props} type="ghost" icon=<SliceIcon /> aria-label="Slice models" />
+        </CogsTooltip>
+      )}>
+      <RangeSlider
+        min={0}
+        max={1}
+        step={0.01}
+        setValue={changeSlicingState}
+        marks={{}}
+        value={[bottomRatio, topRatio]}
+        vertical
+      />
+    </StyledMenu>
   );
 };
 
@@ -130,4 +122,5 @@ const StyledMenu = styled(Menu)`
   height: 512px;
   padding: 12px;
   min-width: 0px;
+  width: 38px;
 `;

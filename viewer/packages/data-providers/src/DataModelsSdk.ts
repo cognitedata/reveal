@@ -22,7 +22,9 @@ export class DataModelsSdk {
     query: T,
     nextCursor?: QueryNextCursors<T>
   ): Promise<QueryResult<T>> {
-    const result = await this._sdk.post(this._queryEndpoint, { data: { cursors: nextCursor, ...query } });
+    const result = await this._sdk.post<{ items: any; nextCursor: any }>(this._queryEndpoint, {
+      data: { cursors: nextCursor, ...query }
+    });
     if (result.status === 200) {
       return { ...result.data.items, nextCursor: result.data.nextCursor };
     }

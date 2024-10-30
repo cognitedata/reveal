@@ -12,6 +12,7 @@ import { DisposedDelegate, SceneRenderedDelegate, isPointVisibleByPlanes } from 
 import { assertNever, worldToViewportCoordinates } from '@reveal/utilities';
 import debounce from 'lodash/debounce';
 import { Cognite3DViewer } from '@reveal/api';
+import { DataSourceType } from '@reveal/data-providers';
 
 /**
  * Callback that is triggered whenever the 2D position of an overlay is updated
@@ -136,7 +137,7 @@ type HtmlOverlayElement = {
  * ```
  */
 export class HtmlOverlayTool extends Cognite3DViewerToolBase {
-  private readonly _viewer: Cognite3DViewer;
+  private readonly _viewer: Cognite3DViewer<DataSourceType>;
   private readonly _options: HtmlOverlayToolOptions;
   private readonly _htmlOverlays: Map<HTMLElement, HtmlOverlayElement> = new Map();
   private readonly _compositeOverlays: HTMLElement[] = [];
@@ -169,7 +170,7 @@ export class HtmlOverlayTool extends Cognite3DViewerToolBase {
     return this._viewer.canvas;
   }
 
-  constructor(viewer: Cognite3DViewer, options?: HtmlOverlayToolOptions) {
+  constructor(viewer: Cognite3DViewer<DataSourceType>, options?: HtmlOverlayToolOptions) {
     super();
 
     this._onSceneRenderedHandler = this.onSceneRendered.bind(this);

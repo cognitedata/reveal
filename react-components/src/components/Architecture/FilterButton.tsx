@@ -3,31 +3,30 @@
  */
 
 import {
-  useCallback,
-  useEffect,
   useMemo,
-  useRef,
   useState,
   type ReactElement,
-  type MouseEvent
+  type MouseEvent,
+  type Dispatch,
+  type SetStateAction
 } from 'react';
-import { Button, Dropdown, Menu, Tooltip as CogsTooltip, type IconType } from '@cognite/cogs.js';
+import { Button, ChevronDownIcon, ChevronUpIcon, Tooltip as CogsTooltip } from '@cognite/cogs.js';
+import { Menu, SelectPanel } from '@cognite/cogs-lab';
 import { useTranslation } from '../i18n/I18n';
-import { type BaseCommand } from '../../architecture/base/commands/BaseCommand';
 import { useRenderTarget } from '../RevealCanvas/ViewerContext';
-import {
-  getButtonType,
-  getDefaultCommand,
-  getFlexDirection,
-  getTooltipPlacement,
-  getIcon
-} from './utilities';
+import { getButtonType, getDefaultCommand, getTooltipPlacement, getIcon } from './utilities';
 import { LabelWithShortcut } from './LabelWithShortcut';
-import { useClickOutside } from './useClickOutside';
-import styled from 'styled-components';
 import { BaseFilterCommand } from '../../architecture/base/commands/BaseFilterCommand';
 import { FilterItem } from './FilterItem';
-import { OPTION_MIN_WIDTH, DEFAULT_PADDING } from './constants';
+import { OPTION_MIN_WIDTH, DEFAULT_PADDING, SELECT_DROPDOWN_ICON_COLOR } from './constants';
+import { type IconName } from '../../architecture/base/utilities/IconName';
+import { IconComponent } from './IconComponentMapper';
+import { TOOLBAR_HORIZONTAL_PANEL_OFFSET } from '../constants';
+
+import { offset } from '@floating-ui/dom';
+import styled from 'styled-components';
+import { type PlacementType } from './types';
+import { useOnUpdate } from './useOnUpdate';
 
 export const FilterButton = ({
   inputCommand,
@@ -39,7 +38,6 @@ export const FilterButton = ({
   usedInSettings?: boolean;
 }): ReactElement => {
   const renderTarget = useRenderTarget();
-  const { t } = useTranslation();
   const command = useMemo<BaseFilterCommand>(
     () => getDefaultCommand<BaseFilterCommand>(inputCommand, renderTarget),
     []
@@ -47,120 +45,226 @@ export const FilterButton = ({
 
   command.initializeChildrenIfNeeded();
 
-  const [isEnabled, setEnabled] = useState<boolean>(true);
-  const [isVisible, setVisible] = useState<boolean>(true);
-  const [uniqueId, setUniqueId] = useState<number>(0);
-  const [icon, setIcon] = useState<IconType | undefined>(undefined);
-  const [isOpen, setOpen] = useState<boolean>(false);
-  const [isAllChecked, setAllChecked] = useState<boolean>(false);
-  const [selectedLabel, setSelectedLabel] = useState<string>('');
+  // @update-ui-component-pattern
+  const [isEnabled, setEnabled] = useState(true);
+  const [isVisible, setVisible] = useState(true);
+  const [uniqueId, setUniqueId] = useState(0);
+  const [icon, setIcon] = useState<IconName | undefined>(undefined);
+  const [isOpen, setOpen] = useState(false);
+  const [isAllChecked, setAllChecked] = useState(false);
+  const [isSomeChecked, setSomeChecked] = useState(false);
+  const [selectedLabel, setSelectedLabel] = useState('');
 
-  const update = useCallback(
-    (command: BaseCommand) => {
-      setEnabled(command.isEnabled);
-      setVisible(command.isVisible);
-      setUniqueId(command.uniqueId);
-      setIcon(getIcon(command));
-      if (command instanceof BaseFilterCommand) {
-        setAllChecked(command.isAllChecked);
-        setSelectedLabel(command.getSelectedLabel(t));
-      }
-    },
-    [command]
-  );
+  const { t } = useTranslation();
+  const label = command.getLabel(t);
 
-  useEffect(() => {
-    update(command);
-    command.addEventListener(update);
-    return () => {
-      command.removeEventListener(update);
-    };
-  }, [command]);
-
-  const outsideAction = (): boolean => {
-    if (!isOpen) {
-      return false;
+  useOnUpdate(command, () => {
+    setEnabled(command.isEnabled);
+    setVisible(command.isVisible);
+    setUniqueId(command.uniqueId);
+    setIcon(getIcon(command));
+    if (command instanceof BaseFilterCommand) {
+      setAllChecked(command.isAllChecked);
+      setSomeChecked(command.children?.some((child) => child.isChecked) === true);
+      setSelectedLabel(command.getSelectedLabel(t));
     }
-    setOpen(false);
-    renderTarget.domElement.focus();
-    return true;
-  };
+  });
+  // @end
 
-  const menuRef = useRef<HTMLDivElement | null>(null);
-  useClickOutside(menuRef, outsideAction);
-
-  if (!isVisible) {
+  const children = command.children;
+  if (!isVisible || children === undefined || children.length === 0) {
     return <></>;
   }
   const placement = getTooltipPlacement(isHorizontal);
-  const label = usedInSettings ? undefined : command.getLabel(t);
-  const flexDirection = getFlexDirection(isHorizontal);
 
-  const children = command.children;
-  if (children === undefined || !command.hasChildren) {
-    return <></>;
-  }
-  return (
-    <Dropdown
-      visible={isOpen}
-      hideOnSelect={false}
-      appendTo={'parent'}
-      placement={usedInSettings ? 'bottom-end' : 'auto-start'}
-      content={
-        <div ref={menuRef}>
-          <Menu
-            style={{
-              minWidth: '100px',
-              overflow: 'auto',
-              flexDirection
-            }}>
-            <Menu.Item
-              key={-1}
-              toggled={isAllChecked}
-              onClick={() => {
-                command.toggleAllChecked();
-              }}>
-              {BaseFilterCommand.getAllString(t)}
-            </Menu.Item>
-            <StyledMenuItems>
-              {children.map((child, _index): ReactElement => {
-                return <FilterItem key={child.uniqueId} command={child} />;
-              })}
-            </StyledMenuItems>
-          </Menu>
-        </div>
-      }>
-      <CogsTooltip
-        content={<LabelWithShortcut label={label} command={command} />}
-        disabled={usedInSettings || label === undefined}
-        appendTo={document.body}
-        placement={placement}>
-        <Button
-          type={usedInSettings ? 'tertiary' : getButtonType(command)}
-          icon={usedInSettings ? (isOpen ? 'ChevronUp' : 'ChevronDown') : icon}
-          key={uniqueId}
-          disabled={!isEnabled}
-          toggled={isOpen}
-          iconPlacement="right"
-          aria-label={command.getLabel(t)}
-          style={{
-            minWidth: usedInSettings ? OPTION_MIN_WIDTH : undefined,
-            padding: usedInSettings ? DEFAULT_PADDING : undefined
-          }}
-          onClick={(event: MouseEvent<HTMLElement>) => {
-            setOpen(!isOpen);
-            event.stopPropagation();
-            event.preventDefault();
-          }}>
-          {usedInSettings ? selectedLabel : undefined}
-        </Button>
-      </CogsTooltip>
-    </Dropdown>
+  const PanelContent = (
+    <FilterSelectPanelContent
+      command={command}
+      isAllChecked={isAllChecked}
+      isSomeChecked={isSomeChecked}
+      label={label}
+    />
+  );
+
+  return usedInSettings ? (
+    <FilterDropdown
+      label={label}
+      selectedLabel={selectedLabel}
+      isOpen={isOpen}
+      PanelContent={PanelContent}
+    />
+  ) : (
+    <FilterMenu
+      command={command}
+      placement={placement}
+      iconName={icon}
+      label={label}
+      isOpen={isOpen}
+      setOpen={setOpen}
+      isEnabled={isEnabled}
+      uniqueId={uniqueId}
+      PanelContent={PanelContent}
+    />
   );
 };
 
-const StyledMenuItems = styled.div`
-  max-height: 300px;
-  overflow-y: auto;
-  overflow-x: hidden;
+const FilterMenu = ({
+  command,
+  isOpen,
+  setOpen,
+  label,
+  isEnabled,
+  placement,
+  iconName,
+  uniqueId,
+  PanelContent
+}: {
+  command: BaseFilterCommand;
+  isOpen: boolean;
+  setOpen: Dispatch<SetStateAction<boolean>>;
+  label: string;
+  isEnabled: boolean;
+  placement: PlacementType;
+  iconName: string | undefined;
+  uniqueId: number;
+  PanelContent: ReactElement;
+}): ReactElement => {
+  const { t } = useTranslation();
+
+  return (
+    <Menu
+      floatingProps={{ middleware: [offset(TOOLBAR_HORIZONTAL_PANEL_OFFSET)] }}
+      onOpenChange={setOpen}
+      appendTo={'parent'}
+      placement={'right-start'}
+      disableCloseOnClickInside
+      renderTrigger={(props: any) => (
+        <CogsTooltip
+          content={<LabelWithShortcut label={label} command={command} />}
+          disabled={isOpen || label === undefined}
+          appendTo={document.body}
+          placement={placement}>
+          <Button
+            type={getButtonType(command)}
+            icon={<IconComponent iconName={iconName} />}
+            key={uniqueId}
+            disabled={!isEnabled}
+            toggled={isOpen}
+            iconPlacement="left"
+            aria-label={command.getLabel(t)}
+            {...props}
+            onClick={(event: MouseEvent<HTMLElement>) => {
+              event.stopPropagation();
+              event.preventDefault();
+              props.onClick(event);
+            }}
+          />
+        </CogsTooltip>
+      )}>
+      {PanelContent}
+    </Menu>
+  );
+};
+
+const FilterDropdown = ({
+  label,
+  selectedLabel,
+  isOpen,
+  PanelContent
+}: {
+  label: string;
+  selectedLabel: string;
+  isOpen: boolean;
+  PanelContent: ReactElement;
+}): ReactElement => {
+  return (
+    <StyledDropdownRow>
+      <label>{label}</label>
+      <StyledSelectPanel appendTo="parent">
+        <SelectPanel.Trigger>
+          <Button
+            color="#000044"
+            type="tertiary"
+            style={{
+              justifyContent: 'space-between',
+              minWidth: OPTION_MIN_WIDTH,
+              paddingRight: '8px',
+              paddingLeft: '8px'
+            }}>
+            <StyledDropdownSelectionLabel>{selectedLabel}</StyledDropdownSelectionLabel>
+            {isOpen ? (
+              <ChevronUpIcon color={SELECT_DROPDOWN_ICON_COLOR} />
+            ) : (
+              <ChevronDownIcon color={SELECT_DROPDOWN_ICON_COLOR} />
+            )}
+          </Button>
+        </SelectPanel.Trigger>
+        <SelectPanel.Body style={{ overflow: 'hidden', zindex: 2000 }}>
+          {PanelContent}
+        </SelectPanel.Body>
+      </StyledSelectPanel>
+    </StyledDropdownRow>
+  );
+};
+
+const FilterSelectPanelContent = ({
+  command,
+  isAllChecked,
+  isSomeChecked,
+  label
+}: {
+  command: BaseFilterCommand;
+  label: string;
+  isAllChecked: boolean;
+  isSomeChecked: boolean;
+}): ReactElement => {
+  const { t } = useTranslation();
+
+  const children = command.children;
+
+  return (
+    <>
+      <SelectPanel.Section>
+        <SelectPanel.Item
+          key={-1}
+          variant="checkbox"
+          checked={isAllChecked}
+          indeterminate={!isAllChecked && isSomeChecked}
+          onClick={() => {
+            command.toggleAllChecked();
+          }}
+          label={BaseFilterCommand.getAllString(t)}>
+          {BaseFilterCommand.getAllString(t)}
+        </SelectPanel.Item>
+      </SelectPanel.Section>
+      <SelectPanel.Body label={label} style={{ maxHeight: '300px' }}>
+        <SelectPanel.Section>
+          {children?.map((child, _index): ReactElement => {
+            return <FilterItem key={child.uniqueId} command={child} />;
+          })}
+        </SelectPanel.Section>
+      </SelectPanel.Body>
+    </>
+  );
+};
+
+const StyledDropdownRow = styled.div`
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+  padding: ${DEFAULT_PADDING};
+`;
+
+const StyledSelectPanel = styled(SelectPanel)`
+  display: flex;
+  display-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+`;
+
+const StyledDropdownSelectionLabel = styled.label`
+  font-weight: 400;
 `;

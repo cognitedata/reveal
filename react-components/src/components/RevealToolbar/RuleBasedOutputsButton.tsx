@@ -3,7 +3,8 @@
  */
 import { useState, type ReactElement, useEffect, useCallback } from 'react';
 
-import { Button, Dropdown, Menu, Tooltip as CogsTooltip } from '@cognite/cogs.js';
+import { Button, Tooltip as CogsTooltip, ColorPaletteIcon } from '@cognite/cogs.js';
+import { Menu } from '@cognite/cogs-lab';
 
 import { RuleBasedOutputsSelector } from '../RuleBasedOutputs/RuleBasedOutputsSelector';
 import {
@@ -20,6 +21,8 @@ import { useAssetMappedNodesForRevisions } from '../CacheProvider/AssetMappingAn
 import { RuleBasedSelectionItem } from '../RuleBasedOutputs/components/RuleBasedSelectionItem';
 import { generateEmptyRuleForSelection, getRuleBasedById } from '../RuleBasedOutputs/utils';
 import { useReveal3DResourcesStylingLoading } from '../Reveal3DResources/Reveal3DResourcesInfoContext';
+import { offset } from '@floating-ui/dom';
+import { TOOLBAR_HORIZONTAL_PANEL_OFFSET } from '../constants';
 
 type RuleBasedOutputsButtonProps = {
   onRuleSetStylingChanged?: (stylings: AllRuleBasedStylingGroups | undefined) => void;
@@ -42,7 +45,8 @@ export const RuleBasedOutputsButton = ({
 
   const [isRuleLoading, setIsRuleLoading] = useState(false);
 
-  const { isLoading: isAssetMappingsLoading } = useAssetMappedNodesForRevisions(cadModels);
+  const { isLoading: isAssetMappingsLoading, isFetched: isAssetMappingsFetched } =
+    useAssetMappedNodesForRevisions(cadModels);
 
   const [newRuleSetEnabled, setNewRuleSetEnabled] = useState<RuleAndEnabled>();
   const isRuleLoadingFromContext = useReveal3DResourcesStylingLoading();
@@ -50,6 +54,8 @@ export const RuleBasedOutputsButton = ({
   const [isAllMappingsFetched, setIsAllMappingsFetched] = useState(false);
 
   const { data: ruleInstancesResult } = useFetchRuleInstances();
+
+  const disabled = isAssetMappingsLoading && !isAssetMappingsFetched;
 
   useEffect(() => {
     setRuleInstances(ruleInstancesResult);
@@ -122,52 +128,51 @@ export const RuleBasedOutputsButton = ({
   }
 
   return (
-    <>
-      <Dropdown
-        placement="right-start"
-        disabled={isAssetMappingsLoading}
-        content={
-          <Menu
-            style={{
-              maxHeight: 300,
-              overflow: 'auto',
-              marginBottom: '20px'
-            }}>
-            <Menu.Header>{t('RULESET_SELECT_HEADER', 'Select color overlay')}</Menu.Header>
-            <RuleBasedSelectionItem
-              key="no-rule-selected"
-              id="no-rule-selected"
-              label={t('RULESET_NO_SELECTION', 'No RuleSet selected')}
-              checked={currentRuleSetEnabled === undefined || emptyRuleSelected?.isEnabled}
-              onChange={onChange}
-              isLoading={isRuleLoading}
-              isEmptyRuleItem={true}
-            />
-            {ruleInstances?.map((item) => (
-              <RuleBasedSelectionItem
-                key={item?.rule?.properties.id}
-                id={item?.rule?.properties.id}
-                label={item?.rule?.properties.name}
-                checked={item?.isEnabled}
-                onChange={onChange}
-                isLoading={isRuleLoading}
-                isEmptyRuleItem={false}
-              />
-            ))}
-          </Menu>
-        }>
+    <Menu
+      placement="right-start"
+      disabled={disabled}
+      style={{
+        maxHeight: 300,
+        overflow: 'auto',
+        marginBottom: '20px'
+      }}
+      floatingProps={{ middleware: [offset(TOOLBAR_HORIZONTAL_PANEL_OFFSET)] }}
+      disableCloseOnClickInside
+      renderTrigger={(props: any) => (
         <CogsTooltip
           content={t('RULESET_SELECT_HEADER', 'Select color overlay')}
           placement="right"
           appendTo={document.body}>
           <Button
-            disabled={isAssetMappingsLoading}
-            icon="ColorPalette"
+            icon=<ColorPaletteIcon />
+            disabled={disabled}
             aria-label="Select RuleSet"
             type="ghost"
+            {...props}
           />
         </CogsTooltip>
-      </Dropdown>
+      )}>
+      <Menu.Section label={t('RULESET_SELECT_HEADER', 'Select color overlay')} />
+      <RuleBasedSelectionItem
+        key="no-rule-selected"
+        id="no-rule-selected"
+        label={t('RULESET_NO_SELECTION', 'No RuleSet selected')}
+        checked={currentRuleSetEnabled === undefined || emptyRuleSelected?.isEnabled}
+        onChange={onChange}
+        isLoading={isRuleLoading}
+        isEmptyRuleItem={true}
+      />
+      {ruleInstances?.map((item) => (
+        <RuleBasedSelectionItem
+          key={item?.rule?.properties.id}
+          id={item?.rule?.properties.id}
+          label={item?.rule?.properties.name}
+          checked={item?.isEnabled}
+          onChange={onChange}
+          isLoading={isRuleLoading}
+          isEmptyRuleItem={false}
+        />
+      ))}
       {ruleInstances !== undefined && ruleInstances?.length > 0 && (
         <RuleBasedOutputsSelector
           onRuleSetChanged={ruleSetStylingChanged}
@@ -175,6 +180,6 @@ export const RuleBasedOutputsButton = ({
           ruleSet={currentRuleSetEnabled?.rule.properties}
         />
       )}
-    </>
+    </Menu>
   );
 };

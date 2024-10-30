@@ -5,20 +5,27 @@
 import { type ReactElement } from 'react';
 import { NavigationTool } from '../../architecture/base/concreteCommands/NavigationTool';
 import { FitViewCommand } from '../../architecture/base/concreteCommands/FitViewCommand';
-import { FlexibleControlsType } from '@cognite/reveal';
+import { FlexibleControlsType, Image360Action } from '@cognite/reveal';
 import { SetFlexibleControlsTypeCommand } from '../../architecture/base/concreteCommands/SetFlexibleControlsTypeCommand';
 import { SetAxisVisibleCommand } from '../../architecture/concrete/axis/SetAxisVisibleCommand';
 import { ClipTool } from '../../architecture/concrete/clipping/ClipTool';
 import { MeasurementTool } from '../../architecture/concrete/measurements/MeasurementTool';
 import { KeyboardSpeedCommand } from '../../architecture/base/concreteCommands/KeyboardSpeedCommand';
-import { ObservationsTool } from '../../architecture/concrete/observations/ObservationsTool';
+import { PointsOfInterestTool } from '../../architecture/concrete/pointsOfInterest/PointsOfInterestTool';
 import { createButtonFromCommandConstructor } from './CommandButtons';
 import { SettingsCommand } from '../../architecture/base/concreteCommands/SettingsCommand';
 import { PointCloudFilterCommand } from '../../architecture';
+import { SetOrbitOrFirstPersonModeCommand } from '../../architecture/base/concreteCommands/SetOrbitOrFirstPersonModeCommand';
+
+import { AnnotationsShowCommand } from '../../architecture/concrete/annotations/commands/AnnotationsShowCommand';
+import { AnnotationsShowOnTopCommand } from '../../architecture/concrete/annotations/commands/AnnotationsShowOnTopCommand';
+import { AnnotationsCreateTool } from '../../architecture/concrete/annotations/commands/AnnotationsCreateTool';
+import { AnnotationsSelectTool } from '../../architecture/concrete/annotations/commands/AnnotationsSelectTool';
+import { Image360ActionCommand } from '../../architecture/base/concreteCommands/image360Collection/Image360ActionCommand';
 
 export class RevealButtons {
-  static Settings = (): ReactElement =>
-    createButtonFromCommandConstructor(() => new SettingsCommand());
+  static Settings = ({ include360Images = true }: { include360Images?: boolean }): ReactElement =>
+    createButtonFromCommandConstructor(() => new SettingsCommand(include360Images));
 
   static PointCloudFilter = (): ReactElement =>
     createButtonFromCommandConstructor(() => new PointCloudFilterCommand());
@@ -37,20 +44,50 @@ export class RevealButtons {
 
   static Clip = (): ReactElement => createButtonFromCommandConstructor(() => new ClipTool());
 
-  static SetFlexibleControlsTypeOrbit = (): ReactElement =>
+  static SetOrbitOrFirstPersonMode = (): ReactElement =>
+    createButtonFromCommandConstructor(() => new SetOrbitOrFirstPersonModeCommand());
+
+  static SetOrbitMode = (): ReactElement =>
     createButtonFromCommandConstructor(
       () => new SetFlexibleControlsTypeCommand(FlexibleControlsType.Orbit)
     );
 
-  static SetFlexibleControlsTypeFirstPerson = (): ReactElement =>
+  static SetFirstPersonMode = (): ReactElement =>
     createButtonFromCommandConstructor(
       () => new SetFlexibleControlsTypeCommand(FlexibleControlsType.FirstPerson)
     );
 
-  static Observations = (): ReactElement => {
-    return createButtonFromCommandConstructor(() => new ObservationsTool());
+  static PointsOfInterest = (): ReactElement => {
+    return createButtonFromCommandConstructor(() => new PointsOfInterestTool());
   };
 
   static KeyboardSpeed = (): ReactElement =>
     createButtonFromCommandConstructor(() => new KeyboardSpeedCommand());
+
+  static Image360Button = ({ action }: { action: Image360Action }): ReactElement =>
+    createButtonFromCommandConstructor(() => new Image360ActionCommand(action));
+
+  static Image360Buttons = (): ReactElement => {
+    return (
+      <>
+        <RevealButtons.Image360Button action={Image360Action.Enter} />
+        <RevealButtons.Image360Button action={Image360Action.Backward} />
+        <RevealButtons.Image360Button action={Image360Action.Forward} />
+        <RevealButtons.Image360Button action={Image360Action.Exit} />
+      </>
+    );
+  };
+
+  // Annotations
+  static AnnotationsSelect = (): ReactElement =>
+    createButtonFromCommandConstructor(() => new AnnotationsSelectTool());
+
+  static AnnotationsCreate = (): ReactElement =>
+    createButtonFromCommandConstructor(() => new AnnotationsCreateTool());
+
+  static AnnotationsShow = (): ReactElement =>
+    createButtonFromCommandConstructor(() => new AnnotationsShowCommand());
+
+  static AnnotationsShowOnTop = (): ReactElement =>
+    createButtonFromCommandConstructor(() => new AnnotationsShowOnTopCommand());
 }

@@ -9,7 +9,7 @@ import { type ReactElement } from 'react';
 import { RevealStoryContainer } from './utilities/RevealStoryContainer';
 import { getAddModelOptionsFromUrl } from './utilities/getAddModelOptionsFromUrl';
 import { DomainObjectPanel } from '../src/components/Architecture/DomainObjectPanel';
-import { ActiveToolToolbar, MainToolbar } from '../src/components/Architecture/Toolbar';
+import { ActiveToolToolbar, MainToolbar, TopToolbar } from '../src/components/Architecture/Toolbar';
 import { useRenderTarget } from '../src/components/RevealCanvas/ViewerContext';
 import { type AddModelOptions, type CogniteCadModel } from '@cognite/reveal';
 
@@ -26,11 +26,12 @@ export const Main: Story = {
   args: {
     addModelOptions: getAddModelOptionsFromUrl('/primitives')
   },
-  render: ({ addModelOptions }) => {
+  render: ({ addModelOptions }: { addModelOptions: AddModelOptions }) => {
     return (
       <RevealStoryContainer color={new Color(0x4a4a4a)} viewerOptions={{}}>
         <StoryContent addModelOptions={addModelOptions} />
         <MainToolbar />
+        <TopToolbar />
         <ActiveToolToolbar />
         <DomainObjectPanel />
       </RevealStoryContainer>

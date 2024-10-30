@@ -36,6 +36,9 @@ export type OverlayPointsParameters = {
   collectionOpacity?: number;
 };
 
+export const DEFAULT_OVERLAY_FRONT_OPACITY = 1;
+export const DEFAULT_OVERLAY_BACK_OPACITY = 0.5;
+
 export class OverlayPointsObject extends Group {
   private readonly _geometry: BufferGeometry;
   private readonly _frontMaterial: RawShaderMaterial;
@@ -70,7 +73,7 @@ export class OverlayPointsObject extends Group {
       radius,
       colorTint = new Color(1, 1, 1),
       depthMode = LessEqualDepth,
-      collectionOpacity = 1,
+      collectionOpacity = DEFAULT_OVERLAY_FRONT_OPACITY,
       maskTexture
     } = materialParameters;
 
@@ -89,7 +92,7 @@ export class OverlayPointsObject extends Group {
     const backMaterial = this.createIconsMaterial(
       spriteTexture,
       maskTexture,
-      0.5,
+      DEFAULT_OVERLAY_BACK_OPACITY,
       GreaterDepth,
       minPixelSize,
       maxPixelSize,
@@ -108,6 +111,27 @@ export class OverlayPointsObject extends Group {
     this._frontMaterial = frontMaterial;
     this._points = { frontPoints, backPoints };
     this._onBeforeRender = onBeforeRender;
+  }
+
+  public getOpacity(): number {
+    const frontMaterial = this._points.frontPoints.material as ShaderMaterial;
+    return frontMaterial.uniforms.collectionOpacity.value;
+    return 1;
+  }
+
+  public setOpacity(value: number): void {
+    const frontMaterial = this._points.frontPoints.material as ShaderMaterial;
+    frontMaterial.uniforms.collectionOpacity.value = value;
+    const backMaterial = this._points.backPoints.material as ShaderMaterial;
+    backMaterial.uniforms.collectionOpacity.value = value / 2;
+  }
+
+  public isBackPointsVisible(): boolean {
+    return this._points.backPoints.visible;
+  }
+
+  public setBackPointsVisible(value: boolean): void {
+    this._points.backPoints.visible = value;
   }
 
   public setPoints(points: Vector3[], colors?: Color[]): void {
@@ -168,14 +192,14 @@ export class OverlayPointsObject extends Group {
     this._geometry.dispose();
   }
 
-  private initializePoints(geometry: BufferGeometry, frontMaterial: ShaderMaterial): Points {
-    const frontPoints = createPoints(geometry, frontMaterial);
-    frontPoints.onBeforeRender = (renderer, ...rest) => {
+  private initializePoints(geometry: BufferGeometry, material: ShaderMaterial): Points {
+    const points = createPoints(geometry, material);
+    points.onBeforeRender = (renderer, ...rest) => {
       this._onBeforeRender?.(renderer, ...rest);
-      setUniforms(renderer, frontMaterial);
+      setUniforms(renderer, material);
     };
 
-    return frontPoints;
+    return points;
 
     function createPoints(geometry: BufferGeometry, material: ShaderMaterial): Points {
       const points = new Points(geometry, material);

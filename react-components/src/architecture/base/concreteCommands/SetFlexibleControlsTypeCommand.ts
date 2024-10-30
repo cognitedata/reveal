@@ -7,24 +7,27 @@ import { type RevealRenderTarget } from '../renderTarget/RevealRenderTarget';
 import { FlexibleControlsType } from '@cognite/reveal';
 import { type BaseCommand } from '../commands/BaseCommand';
 import { type TranslateKey } from '../utilities/TranslateKey';
+import { type IconName } from '../utilities/IconName';
 
 export class SetFlexibleControlsTypeCommand extends RenderTargetCommand {
   private readonly _controlsType: FlexibleControlsType;
+  private readonly _standAlone: boolean; // False if part of a group
 
   // ==================================================
   // CONSTRUCTOR
   // ==================================================
 
-  public constructor(controlsType: FlexibleControlsType) {
+  public constructor(controlsType: FlexibleControlsType, standAlone: boolean = true) {
     super();
     this._controlsType = controlsType;
+    this._standAlone = standAlone;
   }
 
   // ==================================================
   // OVERRIDES
   // ==================================================
 
-  public override get shortCutKey(): string | undefined {
+  protected override get shortCutKey(): string | undefined {
     return this._controlsType === FlexibleControlsType.Orbit ? '1' : '2';
   }
 
@@ -37,11 +40,14 @@ export class SetFlexibleControlsTypeCommand extends RenderTargetCommand {
 
   public override dispose(): void {
     super.dispose();
+    if (!this._standAlone) {
+      return; // Done by parent
+    }
     const { flexibleCameraManager } = this.renderTarget;
     flexibleCameraManager.removeControlsTypeChangeListener(this._controlsTypeChangeHandler);
   }
 
-  public override get icon(): string {
+  public override get icon(): IconName | undefined {
     switch (this._controlsType) {
       case FlexibleControlsType.FirstPerson:
         return 'Plane';
@@ -50,7 +56,7 @@ export class SetFlexibleControlsTypeCommand extends RenderTargetCommand {
       case FlexibleControlsType.OrbitInCenter:
         return 'Coordinates';
       default:
-        return 'Error';
+        return undefined;
     }
   }
 
@@ -85,6 +91,9 @@ export class SetFlexibleControlsTypeCommand extends RenderTargetCommand {
 
   public override attach(renderTarget: RevealRenderTarget): void {
     super.attach(renderTarget);
+    if (!this._standAlone) {
+      return; // Done by parent
+    }
     const { flexibleCameraManager } = renderTarget;
     flexibleCameraManager.addControlsTypeChangeListener(this._controlsTypeChangeHandler);
   }

@@ -31,4 +31,8 @@ export abstract class BaseSliderCommand extends RenderTargetCommand {
   public abstract get value(): number;
 
   public abstract set value(value: number);
+
+  public getValueLabel(): string {
+    return this.value.toString();
+  }
 }

@@ -1,6 +1,6 @@
 {
   "name": "@cognite/reveal",
-  "version": "4.17.1",
+  "version": "4.20.1",
   "description": "WebGL based 3D viewer for CAD and point clouds processed in Cognite Data Fusion.",
   "homepage": "https://github.com/cognitedata/reveal/tree/master/viewer",
   "repository": {
@@ -15,7 +15,8 @@
     "Håkon Flatval <hakon.flatval@cognite.com>",
     "Savelii Novikov <savelii.novikov@cognite.com>",
     "Pramod S <pramod.s@cognite.com>",
-    "Astrid Kløve-Graue <astrid.graue@cognite.com>"
+    "Astrid Kløve-Graue <astrid.graue@cognite.com>",
+    "Nils Petter Fremming <nils.fremming@cognite.com>"
   ],
   "sideEffects": false,
   "main": "dist/index.js",
@@ -118,7 +119,7 @@
     "jest-extended": "^4.0.2",
     "jest-image-snapshot": "^6.4.0",
     "jest-puppeteer": "^10.0.1",
-    "jsdom": "^24.0.0",
+    "jsdom": "^25.0.0",
     "moq.ts": "10.0.8",
     "nock": "^13.5.4",
     "prettier": "^3.2.5",
@@ -131,11 +132,11 @@
     "shx": "^0.3.4",
     "stats.js": "^0.17.0",
     "three": "0.166.1",
-    "ts-jest": "^29.1.2",
+    "ts-jest": "29.1.2",
     "ts-loader": "^9.5.1",
     "tsc-alias": "^1.8.8",
     "typescript": "^5.4.5",
-    "wasm-pack": "^0.12.1",
+    "wasm-pack": "^0.13.0",
     "webpack": "^5.91.0",
     "webpack-cli": "^5.1.4",
     "webpack-dev-server": "^5.0.4",
@@ -155,5 +156,5 @@
   "files": [
     "dist"
   ],
-  "packageManager": "yarn@4.3.1"
+  "packageManager": "yarn@4.5.0"
 }

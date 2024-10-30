@@ -14,7 +14,7 @@
       "groupName": "all non-major dependencies",
       "groupSlug": "all-minor-patch",
       "matchPackagePatterns": ["*"],
-      "excludePackagePatterns": ["three", "@types/three"],
+      "excludePackagePatterns": ["three", "@types/three", "ts-jest"],
       "automerge": true,
       "stabilityDays": 3,
       "internalChecksFilter": "strict",

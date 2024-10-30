@@ -28,6 +28,7 @@ import { radToDeg } from 'three/src/math/MathUtils.js';
 import { type DomainObjectChange } from '../../../base/domainObjectsHelpers/DomainObjectChange';
 import { DomainObjectTransaction } from '../../../base/undo/DomainObjectTransaction';
 import { type Transaction } from '../../../base/undo/Transaction';
+import { type IconName } from '../../../base/utilities/IconName';
 import { SolidPrimitiveRenderStyle } from '../common/SolidPrimitiveRenderStyle';
 import { type RevealRenderTarget } from '../../../base/renderTarget/RevealRenderTarget';
 
@@ -78,7 +79,7 @@ export abstract class PlaneDomainObject extends VisualDomainObject {
   // OVERRIDES
   // ==================================================
 
-  public override get icon(): string {
+  public override get icon(): IconName {
     return getIconByPrimitiveType(this.primitiveType);
   }
 

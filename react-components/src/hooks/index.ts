@@ -21,11 +21,8 @@ export type { ClickedNodeData, FdmNodeDataResult } from './useClickedNode';
 export type {
   PointCloudAnnotationMappedAssetData,
   Image360AnnotationMappedAssetData,
-  LayersUrlStateParam,
-  DefaultLayersConfiguration,
-  ThreeDModelFdmMappings,
   SelectedThreeDResourceContent,
-  SingleModelData,
+  ThreeDModelFdmMappings,
   ModelWithRevision,
   ThreeDResourceContentTypes
 } from './types';

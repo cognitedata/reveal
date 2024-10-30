@@ -79,7 +79,7 @@ export class IconCollection {
 
     const sharedTexture = this.createOuterRingsTexture();
 
-    const iconsSprites = new OverlayPointsObject(points.length, {
+    const pointsObjects = new OverlayPointsObject(points.length, {
       spriteTexture: sharedTexture,
       minPixelSize: IconCollection.MinPixelSize,
       maxPixelSize: this._maxPixelSize,
@@ -96,16 +96,16 @@ export class IconCollection {
     const octree = new IconOctree(this._icons, octreeBounds, 2);
 
     this._iconCullingScheme = 'clustered';
-    this._computeClustersEventHandler = this.setIconClustersByLOD(octree, iconsSprites);
-    this._computeProximityPointsEventHandler = this.computeProximityPoints(octree, iconsSprites);
+    this._computeClustersEventHandler = this.setIconClustersByLOD(octree, pointsObjects);
+    this._computeProximityPointsEventHandler = this.computeProximityPoints(octree, pointsObjects);
     this._activeCullingSchemeEventHandeler = this._computeClustersEventHandler;
     onBeforeSceneRendered.subscribe(this._activeCullingSchemeEventHandeler);
 
     this._sceneHandler = sceneHandler;
-    this._pointsObject = iconsSprites;
+    this._pointsObject = pointsObjects;
     this._onBeforeSceneRenderedEvent = onBeforeSceneRendered;
 
-    sceneHandler.addObject3D(iconsSprites);
+    sceneHandler.addObject3D(pointsObjects);
   }
 
   public setTransform(transform: Matrix4): void {
@@ -308,5 +308,25 @@ export class IconCollection {
       );
       context.fill();
     }
+  }
+
+  //================================================
+  // INSTANCE METHODS: Setter and getters
+  //================================================
+
+  public getOpacity(): number {
+    return this._pointsObject.getOpacity();
+  }
+
+  public setOpacity(value: number): void {
+    this._pointsObject.setOpacity(value);
+  }
+
+  public isOccludedVisible(): boolean {
+    return this._pointsObject.isBackPointsVisible();
+  }
+
+  public setOccludedVisible(value: boolean): void {
+    this._pointsObject.setBackPointsVisible(value);
   }
 }

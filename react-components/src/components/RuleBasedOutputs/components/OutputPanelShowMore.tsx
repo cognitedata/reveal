@@ -3,7 +3,7 @@
  */
 import { type ReactElement } from 'react';
 import styled from 'styled-components';
-import { Button, Flex } from '@cognite/cogs.js';
+import { AddIcon, Button, Flex, RemoveIcon } from '@cognite/cogs.js';
 import { useTranslation } from '../../i18n/I18n';
 
 type OutputPanelShowMoreProps = {
@@ -20,7 +20,7 @@ export const ShowMore = ({ onShowMore, isShowMore }: OutputPanelShowMoreProps): 
         <Button
           size="small"
           onClick={onShowMore}
-          icon={!isShowMore ? 'Add' : 'Remove'}
+          icon={!isShowMore ? <AddIcon /> : <RemoveIcon />}
           type="ghost-accent">
           {isShowMore ? t('SHOW_LESS', 'Show less') : t('SHOW_MORE', 'Show more')}
         </Button>

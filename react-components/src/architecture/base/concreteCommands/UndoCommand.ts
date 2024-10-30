@@ -2,6 +2,7 @@
  * Copyright 2024 Cognite AS
  */
 
+import { type IconName } from '../../base/utilities/IconName';
 import { RenderTargetCommand } from '../commands/RenderTargetCommand';
 import { CommandsUpdater } from '../reactUpdaters/CommandsUpdater';
 import { type TranslateKey } from '../utilities/TranslateKey';
@@ -11,7 +12,7 @@ export class UndoCommand extends RenderTargetCommand {
   // OVERRIDES
   // ==================================================
 
-  public override get icon(): string {
+  public override get icon(): IconName {
     return 'Restore';
   }
 
@@ -27,11 +28,11 @@ export class UndoCommand extends RenderTargetCommand {
     return undoManager.canUndo;
   }
 
-  public override get shortCutKey(): string | undefined {
+  protected override get shortCutKey(): string | undefined {
     return 'Z';
   }
 
-  public override get shortCutKeyOnCtrl(): boolean {
+  protected override get shortCutKeyOnCtrl(): boolean {
     return true;
   }
 

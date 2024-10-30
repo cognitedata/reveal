@@ -2,6 +2,7 @@
  * Copyright 2024 Cognite AS
  */
 
+import { type IconName } from '../utilities/IconName';
 import { type TranslateDelegate, type TranslateKey } from '../utilities/TranslateKey';
 import { clear, remove } from '../utilities/extensions/arrayExtensions';
 import { isMacOs } from '../utilities/extensions/isMacOs';
@@ -55,19 +56,19 @@ export abstract class BaseCommand {
     return this.tooltip.fallback;
   }
 
-  public get shortCutKey(): string | undefined {
+  protected get shortCutKey(): string | undefined {
     return undefined;
   }
 
-  public get shortCutKeyOnCtrl(): boolean {
+  protected get shortCutKeyOnCtrl(): boolean {
     return false;
   }
 
-  public get shortCutKeyOnAlt(): boolean {
+  protected get shortCutKeyOnAlt(): boolean {
     return false;
   }
 
-  public get shortCutKeyOnShift(): boolean {
+  protected get shortCutKeyOnShift(): boolean {
     return false;
   }
 
@@ -75,7 +76,7 @@ export abstract class BaseCommand {
     return { fallback: '' };
   }
 
-  public get icon(): string | undefined {
+  public get icon(): IconName | undefined {
     return undefined; // Means no icon
   }
 
@@ -135,6 +136,9 @@ export abstract class BaseCommand {
   }
 
   public dispose(): void {
+    for (const child of this.getChildren()) {
+      child.dispose();
+    }
     this.removeEventListeners();
   }
 
@@ -192,5 +196,14 @@ export abstract class BaseCommand {
     }
     keys.push(key);
     return keys;
+  }
+
+  public hasShortCutKey(key: string, ctrl: boolean, shift: boolean, alt: boolean): boolean {
+    return (
+      this.shortCutKey === key &&
+      this.shortCutKeyOnCtrl === ctrl &&
+      this.shortCutKeyOnShift === shift &&
+      this.shortCutKeyOnAlt === alt
+    );
   }
 }

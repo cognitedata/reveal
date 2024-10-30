@@ -2,6 +2,7 @@
  * Copyright 2024 Cognite AS
  */
 
+import { type IconName } from '../../utilities/IconName';
 import { type TranslateKey } from '../../utilities/TranslateKey';
 import { RenderTargetCommand } from '../RenderTargetCommand';
 
@@ -14,15 +15,15 @@ export class MockActionCommand extends RenderTargetCommand {
     return { fallback: 'Action' };
   }
 
-  public override get icon(): string {
+  public override get icon(): IconName {
     return 'Sun';
   }
 
-  public override get shortCutKey(): string | undefined {
+  protected override get shortCutKey(): string | undefined {
     return 'A';
   }
 
-  public override get shortCutKeyOnCtrl(): boolean {
+  protected override get shortCutKeyOnCtrl(): boolean {
     return true;
   }
 

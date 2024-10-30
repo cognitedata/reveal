@@ -51,6 +51,29 @@ async function main() {
   main();
 ```
 
+## Loading a Model
+There are two primary ways to load a 3D model into `Cognite3DViewer`, using `modelId` and `revisionId`, or using `revisionExternalId` and `revisionSpace`.
+
+### Method 1: Using `modelId` and `revisionId`
+This method invloves directly specifying the `modelId` and `revisionId` of the 3D model user wants to load.
+```jsx
+const model = await viewer.addModel({
+  modelId: 9876543210987654,
+  revisionId: 1234567890123456,
+});
+viewer.loadCameraFromModel(model);
+```
+
+### Method 2: Using `revisionExternalId` and `revisionSpace`
+This method involves specifying the `revisionExternalId` and `revisionSpace` of the 3D model. This is useful when you are working with [CDF 3D core data model](https://docs.cognite.com/cdf/dm/dm_reference/dm_core_data_model/#cognite3dmodel)
+```jsx
+const model = await viewer.addModel({
+  revisionExternalId: 'cog_3d_revision_1234567890123456',
+  revisionSpace: 'core_dm_3d_space',
+});
+viewer.loadCameraFromModel(model);
+```
+
 ## Point size
 
 You can use `pointSize` property to set the size of each rendered point in a point cloud model.

@@ -5,7 +5,7 @@ import { type ReactNode, type PropsWithChildren, type FC, type ReactElement } fr
 
 import styled, { css } from 'styled-components';
 
-import { Body, Icon, Tooltip } from '@cognite/cogs.js';
+import { Body, ComponentIcon, Tooltip } from '@cognite/cogs.js';
 
 type Props = {
   header?: string;
@@ -32,7 +32,7 @@ export const WidgetHeader: FC<PropsWithChildren<Props>> = ({
           <Cell>
             {type !== undefined && header !== undefined && (
               <Tooltip content={type}>
-                <StyledIcon size={16} type={'Component'} />
+                <StyledComponentIcon type={'Component'} />
               </Tooltip>
             )}
             <div>
@@ -100,7 +100,7 @@ const HeaderText = styled(Body)`
   white-space: nowrap;
 `;
 
-const StyledIcon = styled(Icon)`
+const StyledComponentIcon = styled(ComponentIcon)`
   height: 16px !important;
   size: 36px !important;
 `;

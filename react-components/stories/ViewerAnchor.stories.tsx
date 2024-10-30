@@ -2,7 +2,13 @@
  * Copyright 2023 Cognite AS
  */
 import type { Meta, StoryObj } from '@storybook/react';
-import { Reveal3DResources, RevealCanvas, RevealContext, withSuppressRevealEvents } from '../src';
+import {
+  type AddResourceOptions,
+  Reveal3DResources,
+  RevealCanvas,
+  RevealContext,
+  withSuppressRevealEvents
+} from '../src';
 import { Color, Vector3 } from 'three';
 import { ViewerAnchor } from '../src/';
 import { createSdkByUrlToken } from './utilities/createSdkByUrlToken';
@@ -29,7 +35,7 @@ export const Main: Story = {
       }
     ]
   },
-  render: ({ resources }) => {
+  render: ({ resources }: { resources: AddResourceOptions[] }) => {
     const position = new Vector3(25, 0, -25);
     const position2 = new Vector3();
     const SuppressedDiv = withSuppressRevealEvents(styled.div``);

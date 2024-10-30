@@ -1,7 +1,7 @@
 /*!
  * Copyright 2024 Cognite AS
  */
-import { Icon, type IconType, Body, Flex } from '@cognite/cogs.js';
+import { Body, Flex } from '@cognite/cogs.js';
 import styled from 'styled-components';
 import { useEffect, useMemo, useState, type ReactElement } from 'react';
 import {
@@ -19,6 +19,8 @@ import { withSuppressRevealEvents } from '../../higher-order-components/withSupp
 import { type TranslateDelegate } from '../../architecture/base/utilities/TranslateKey';
 import { type UnitSystem } from '../../architecture/base/renderTarget/UnitSystem';
 import { type DomainObject } from '../../architecture/base/domainObjects/DomainObject';
+import { IconComponent } from './IconComponentMapper';
+import { type IconName } from '../../architecture/base/utilities/IconName';
 
 const TEXT_SIZE = 'x-small';
 const HEADER_SIZE = 'medium';
@@ -60,7 +62,7 @@ export const DomainObjectPanel = (): ReactElement => {
     return <></>;
   }
   const unitSystem = root.unitSystem;
-  const icon = getIcon(domainObject);
+  const iconName = getIcon(domainObject);
   const header = info.header;
   const text = header?.getText(t);
   return (
@@ -75,7 +77,7 @@ export const DomainObjectPanel = (): ReactElement => {
       }}>
       <Flex justifyContent={'space-between'} alignItems={'center'}>
         <Flex gap={8}>
-          {icon !== undefined && <Icon type={icon} />}
+          {iconName !== undefined && <IconComponent iconName={iconName} type={'ghost'} />}
           {text !== undefined && <Body size={HEADER_SIZE}>{text}</Body>}
         </Flex>
         <Flex>
@@ -89,14 +91,14 @@ export const DomainObjectPanel = (): ReactElement => {
   );
 
   function addTextWithNumber(item: NumberPanelItem, unitSystem: UnitSystem): ReactElement {
-    const icon = item.icon as IconType;
+    const icon = item.icon;
     const { quantity, value } = item;
     const text = item?.getText(t);
     return (
       <tr key={JSON.stringify(item)}>
         <PaddedTh>
           {text !== undefined && <Body size={TEXT_SIZE}>{text}</Body>}
-          {icon !== undefined && <Icon type={icon} />}
+          {icon !== undefined && <IconComponent type={icon} iconName={icon} />}
         </PaddedTh>
         <></>
         <NumberTh>
@@ -130,11 +132,11 @@ function toString(info: PanelInfo, translate: TranslateDelegate, unitSystem: Uni
   return result;
 }
 
-export function getIcon(domainObject: DomainObject): IconType | undefined {
+export function getIcon(domainObject: DomainObject): IconName | undefined {
   if (domainObject.icon === undefined) {
     return undefined;
   }
-  return domainObject.icon as IconType;
+  return domainObject.icon;
 }
 
 const NumberTh = styled.th`

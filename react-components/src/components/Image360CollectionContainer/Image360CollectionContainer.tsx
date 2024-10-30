@@ -15,7 +15,10 @@ import {
   DEFAULT_IMAGE360_ICON_COUNT_LIMIT,
   DEFAULT_IMAGE360_ICON_CULLING_RADIUS
 } from './constants';
-import { useReveal3DResourcesCount } from '../Reveal3DResources/Reveal3DResourcesInfoContext';
+import {
+  useReveal3DResourcesCount,
+  useThisAsExpectedResourceLoad
+} from '../Reveal3DResources/Reveal3DResourcesInfoContext';
 import { getViewerResourceCount } from '../../utilities/getViewerResourceCount';
 
 type Image360CollectionContainerProps = {
@@ -39,6 +42,8 @@ export function Image360CollectionContainer({
   const initializingSiteId = useRef<{ siteId: string } | { externalId: string } | undefined>(
     undefined
   );
+
+  useThisAsExpectedResourceLoad();
 
   useEffect(() => {
     if (
