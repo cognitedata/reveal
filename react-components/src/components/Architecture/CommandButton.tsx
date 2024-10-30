@@ -2,7 +2,7 @@
  * Copyright 2024 Cognite AS
  */
 
-import { type ReactElement, useState, useMemo, useCallback } from 'react';
+import { type ReactElement, useState, useMemo } from 'react';
 import { useRenderTarget } from '../RevealCanvas/ViewerContext';
 import { Button, Tooltip as CogsTooltip } from '@cognite/cogs.js';
 import { useTranslation } from '../i18n/I18n';
@@ -11,7 +11,7 @@ import { getButtonType, getDefaultCommand, getIcon, getTooltipPlacement } from '
 import { LabelWithShortcut } from './LabelWithShortcut';
 import { type IconName } from '../../architecture/base/utilities/IconName';
 import { IconComponent } from './IconComponentMapper';
-import { useUpdate } from './useUpdate';
+import { useOnUpdate } from './useOnUpdate';
 
 export const CommandButton = ({
   inputCommand,
@@ -25,21 +25,19 @@ export const CommandButton = ({
   const command = useMemo<BaseCommand>(() => getDefaultCommand(inputCommand, renderTarget), []);
 
   // @update-ui-component-pattern
-  const [isChecked, setChecked] = useState<boolean>(false);
-  const [isEnabled, setEnabled] = useState<boolean>(true);
-  const [isVisible, setVisible] = useState<boolean>(true);
-  const [uniqueId, setUniqueId] = useState<number>(0);
+  const [isChecked, setChecked] = useState(false);
+  const [isEnabled, setEnabled] = useState(true);
+  const [isVisible, setVisible] = useState(true);
+  const [uniqueId, setUniqueId] = useState(0);
   const [icon, setIcon] = useState<IconName | undefined>(undefined);
 
-  const update = useCallback((command: BaseCommand) => {
+  useOnUpdate(command, () => {
     setChecked(command.isChecked);
     setEnabled(command.isEnabled);
     setVisible(command.isVisible);
     setUniqueId(command.uniqueId);
     setIcon(getIcon(command));
-  }, []);
-
-  useUpdate(command, update);
+  });
   // @end
 
   if (!isVisible) {

@@ -2,7 +2,7 @@
  * Copyright 2024 Cognite AS
  */
 
-import { type ReactElement, useState, useMemo, useCallback } from 'react';
+import { type ReactElement, useState, useMemo } from 'react';
 import { useRenderTarget } from '../RevealCanvas/ViewerContext';
 import { SegmentedControl, Tooltip as CogsTooltip } from '@cognite/cogs.js';
 import { useTranslation } from '../i18n/I18n';
@@ -11,7 +11,7 @@ import { getDefaultCommand, getIcon, getTooltipPlacement } from './utilities';
 import { BaseOptionCommand } from '../../architecture/base/commands/BaseOptionCommand';
 import { LabelWithShortcut } from './LabelWithShortcut';
 import { IconComponent } from './IconComponentMapper';
-import { useUpdate } from './useUpdate';
+import { useOnUpdate } from './useOnUpdate';
 
 export const SegmentedButtons = ({
   inputCommand,
@@ -33,16 +33,14 @@ export const SegmentedButtons = ({
   const [uniqueId, setUniqueId] = useState(0);
   const [selected, setSelected] = useState(getSelectedKey(command));
 
-  const update = useCallback((command: BaseCommand) => {
+  useOnUpdate(command, () => {
     setEnabled(command.isEnabled);
     setVisible(command.isVisible);
     setUniqueId(command.uniqueId);
     if (command instanceof BaseOptionCommand) {
       setSelected(getSelectedKey(command));
     }
-  }, []);
-
-  useUpdate(command, update);
+  });
   // @end
 
   if (!isVisible || command.children === undefined) {
