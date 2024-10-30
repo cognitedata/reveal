@@ -64,16 +64,16 @@ export class RevealButtons {
   static KeyboardSpeed = (): ReactElement =>
     createButtonFromCommandConstructor(() => new KeyboardSpeedCommand());
 
-  static Image360Action = ({ action }: { action: Image360Action }): ReactElement =>
+  static Image360Button = ({ action }: { action: Image360Action }): ReactElement =>
     createButtonFromCommandConstructor(() => new Image360ActionCommand(action));
 
-  static Image360Actions = (): ReactElement => {
+  static Image360Buttons = (): ReactElement => {
     return (
       <>
-        <RevealButtons.Image360Action action={Image360Action.Enter} />
-        <RevealButtons.Image360Action action={Image360Action.Backward} />
-        <RevealButtons.Image360Action action={Image360Action.Forward} />
-        <RevealButtons.Image360Action action={Image360Action.Exit} />
+        <RevealButtons.Image360Button action={Image360Action.Enter} />
+        <RevealButtons.Image360Button action={Image360Action.Backward} />
+        <RevealButtons.Image360Button action={Image360Action.Forward} />
+        <RevealButtons.Image360Button action={Image360Action.Exit} />
       </>
     );
   };
