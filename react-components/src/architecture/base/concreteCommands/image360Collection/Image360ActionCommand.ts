@@ -6,6 +6,7 @@ import { RenderTargetCommand } from '../../commands/RenderTargetCommand';
 import { type TranslateKey } from '../../utilities/TranslateKey';
 import { type IconName } from '../../utilities/IconName';
 import { type BaseCommand } from '../../commands/BaseCommand';
+import { CommandsUpdater } from '../../reactUpdaters/CommandsUpdater';
 
 export class Image360ActionCommand extends RenderTargetCommand {
   private readonly _action: Image360Action;
@@ -40,24 +41,26 @@ export class Image360ActionCommand extends RenderTargetCommand {
   public override get tooltip(): TranslateKey {
     switch (this._action) {
       case Image360Action.Backward:
-        return { fallback: 'Go one 360 image back' };
+        return { fallback: 'Go one 360 image back' }; // @need-translation
       case Image360Action.Forward:
-        return { fallback: 'Go one 360 image forward' };
+        return { fallback: 'Go one 360 image forward' }; // @need-translation
       case Image360Action.Enter:
-        return { fallback: 'Enter last exited 360 image' };
+        return { fallback: 'Enter last exited 360 image' }; // @need-translation
       case Image360Action.Exit:
-        return { fallback: 'Exit 360 image' };
+        return { fallback: 'Exit 360 image' }; // @need-translation
       default:
         throw new Error('Unknown action');
     }
   }
 
   public override get isEnabled(): boolean {
-    return this.renderTarget.viewer.canDo360Action(this._action);
+    return this.renderTarget.viewer.canDoImage360Action(this._action);
   }
 
   public override invokeCore(): boolean {
-    void this.renderTarget.viewer.do360Action(this._action);
-    return true;
+    void this.renderTarget.viewer.image360Action(this._action).then(() => {
+      CommandsUpdater.update(this.renderTarget);
+    });
+    return false; // Do not need another update
   }
 }
