@@ -17,14 +17,15 @@ import { DEFAULT_PADDING, OPTION_MIN_WIDTH } from './constants';
 
 import styled from 'styled-components';
 import { useOnUpdate } from './useOnUpdate';
+import { type PlacementType } from './types';
 
 export const DropdownButton = ({
   inputCommand,
-  isHorizontal = false,
+  placement,
   usedInSettings = false
 }: {
   inputCommand: BaseOptionCommand;
-  isHorizontal: boolean;
+  placement: PlacementType;
   usedInSettings?: boolean;
 }): ReactElement => {
   const renderTarget = useRenderTarget();
@@ -58,7 +59,7 @@ export const DropdownButton = ({
       isOpen={isOpen}
       setOpen={setOpen}
       isEnabled={isEnabled}
-      isHorizontal={isHorizontal}
+      placement={placement}
       uniqueId={uniqueId}
     />
   );
@@ -70,7 +71,7 @@ const DropdownElement = ({
   isOpen,
   setOpen,
   isEnabled,
-  isHorizontal,
+  placement,
   uniqueId
 }: {
   command: BaseOptionCommand;
@@ -78,14 +79,12 @@ const DropdownElement = ({
   isOpen: boolean;
   setOpen: Dispatch<SetStateAction<boolean>>;
   isEnabled: boolean;
-  isHorizontal: boolean;
+  placement: PlacementType;
   uniqueId: number;
 }): ReactElement => {
   const { t } = useTranslation();
   const label = command.getLabel(t);
   const selectedLabel = command.selectedChild?.getLabel(t);
-
-  const placement = getTooltipPlacement(isHorizontal);
 
   const OpenButtonIcon = isOpen ? ChevronUpIcon : ChevronDownIcon;
 
@@ -106,7 +105,7 @@ const DropdownElement = ({
           content={<LabelWithShortcut label={label} command={command} />}
           disabled={label === undefined}
           appendTo={document.body}
-          placement={placement}>
+          placement={getTooltipPlacement(placement)}>
           <Button
             style={{
               padding: '8px 4px'

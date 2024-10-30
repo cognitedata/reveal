@@ -34,13 +34,14 @@ import { offset } from '@floating-ui/dom';
 import { DividerCommand } from '../../architecture/base/commands/DividerCommand';
 import { SectionCommand } from '../../architecture/base/commands/SectionCommand';
 import { useOnUpdate } from './useOnUpdate';
+import { type PlacementType } from './types';
 
 export const SettingsButton = ({
   inputCommand,
-  isHorizontal = false
+  placement
 }: {
   inputCommand: BaseSettingsCommand;
-  isHorizontal: boolean;
+  placement: PlacementType;
 }): ReactElement => {
   const renderTarget = useRenderTarget();
   const { t } = useTranslation();
@@ -67,9 +68,8 @@ export const SettingsButton = ({
   if (!isVisible || !command.hasChildren) {
     return <></>;
   }
-  const placement = getTooltipPlacement(isHorizontal);
   const label = command.getLabel(t);
-  const flexDirection = getFlexDirection(isHorizontal);
+  const flexDirection = getFlexDirection(placement);
   const children = command.children;
 
   return (
@@ -91,7 +91,7 @@ export const SettingsButton = ({
           content={<LabelWithShortcut label={label} command={command} />}
           disabled={isOpen || label === undefined}
           appendTo={document.body}
-          placement={placement}>
+          placement={getTooltipPlacement(placement)}>
           <Button
             type={getButtonType(command)}
             icon={<IconComponent iconName={icon} />}
@@ -298,7 +298,7 @@ function createDropdownButton(command: BaseOptionCommand): ReactElement {
     <DropdownButton
       key={uniqueId}
       inputCommand={command}
-      isHorizontal={false}
+      placement={'bottom'}
       usedInSettings={true}
     />
   );
@@ -324,7 +324,7 @@ function createFilterButton(command: BaseFilterCommand): ReactElement {
     <FilterButton
       key={uniqueId}
       inputCommand={command}
-      isHorizontal={false}
+      placement={'bottom'}
       usedInSettings={true}
     />
   );

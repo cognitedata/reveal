@@ -12,13 +12,14 @@ import { BaseOptionCommand } from '../../architecture/base/commands/BaseOptionCo
 import { LabelWithShortcut } from './LabelWithShortcut';
 import { IconComponent } from './IconComponentMapper';
 import { useOnUpdate } from './useOnUpdate';
+import { type PlacementType } from './types';
 
 export const SegmentedButtons = ({
   inputCommand,
-  isHorizontal = false
+  placement
 }: {
   inputCommand: BaseOptionCommand;
-  isHorizontal: boolean;
+  placement: PlacementType;
 }): ReactElement => {
   const renderTarget = useRenderTarget();
   const { t } = useTranslation();
@@ -46,7 +47,6 @@ export const SegmentedButtons = ({
   if (!isVisible || command.children === undefined) {
     return <></>;
   }
-  const placement = getTooltipPlacement(isHorizontal);
   const label = command.getLabel(t);
 
   return (
@@ -54,7 +54,7 @@ export const SegmentedButtons = ({
       content={<LabelWithShortcut label={label} command={command} />}
       disabled={label === undefined}
       appendTo={document.body}
-      placement={placement}>
+      placement={getTooltipPlacement(placement)}>
       <SegmentedControl
         key={uniqueId}
         disabled={!isEnabled}
