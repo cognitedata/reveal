@@ -41,13 +41,13 @@ export class Image360ActionCommand extends RenderTargetCommand {
   public override get tooltip(): TranslateKey {
     switch (this._action) {
       case Image360Action.Backward:
-        return { fallback: 'Go one 360 image back' };
+        return { fallback: 'Go one 360 image back' }; // @need-translation
       case Image360Action.Forward:
-        return { fallback: 'Go one 360 image forward' };
+        return { fallback: 'Go one 360 image forward' }; // @need-translation
       case Image360Action.Enter:
-        return { fallback: 'Enter last exited 360 image' };
+        return { fallback: 'Enter last exited 360 image' }; // @need-translation
       case Image360Action.Exit:
-        return { fallback: 'Exit 360 image' };
+        return { fallback: 'Exit 360 image' }; // @need-translation
       default:
         throw new Error('Unknown action');
     }
