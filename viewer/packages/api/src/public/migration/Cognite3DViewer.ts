@@ -970,11 +970,11 @@ export class Cognite3DViewer<DataSourceT extends DataSourceType = ClassicDataSou
    * @param action The action to check if can be done.
    * @beta
    */
-  canDo360Action(action: Image360Action): boolean {
+  canDoImage360Action(action: Image360Action): boolean {
     if (this._cdfSdkClient === undefined || this._image360ApiHelper === undefined) {
       return false;
     }
-    return this._image360ApiHelper.canDoAction(action);
+    return this._image360ApiHelper.canDoImage360Action(action);
   }
 
   /**
@@ -982,11 +982,11 @@ export class Cognite3DViewer<DataSourceT extends DataSourceType = ClassicDataSou
    * @param action The action to do.
    * @beta
    */
-  async do360Action(action: Image360Action): Promise<void> {
+  async image360Action(action: Image360Action): Promise<void> {
     if (this._cdfSdkClient === undefined || this._image360ApiHelper === undefined) {
       throw new Error(`360 actions is only supported when connecting to Cognite Data Fusion`);
     }
-    await this._image360ApiHelper.doAction(action);
+    await this._image360ApiHelper.image360Action(action);
   }
 
   /**
@@ -1727,7 +1727,7 @@ export class Cognite3DViewer<DataSourceT extends DataSourceType = ClassicDataSou
   }
 
   /**
-   * Event function to to move the mouse.
+   * Event function to move the mouse.
    * @param event The event type.
    * @returns True if the event was handled, false otherwise.
    * @beta
