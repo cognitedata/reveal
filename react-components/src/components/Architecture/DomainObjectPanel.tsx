@@ -81,7 +81,7 @@ export const DomainObjectPanel = (): ReactElement => {
           {text !== undefined && <Body size={HEADER_SIZE}>{text}</Body>}
         </Flex>
         <Flex>
-          <CommandButtons commands={commands} isHorizontal={true} />
+          <CommandButtons commands={commands} placement={'bottom'} />
         </Flex>
       </Flex>
       <table>
