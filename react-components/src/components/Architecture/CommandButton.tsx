@@ -2,7 +2,7 @@
  * Copyright 2024 Cognite AS
  */
 
-import { type ReactElement, useState, useEffect, useMemo, useCallback } from 'react';
+import { type ReactElement, useState, useMemo, useCallback } from 'react';
 import { useRenderTarget } from '../RevealCanvas/ViewerContext';
 import { Button, Tooltip as CogsTooltip } from '@cognite/cogs.js';
 import { useTranslation } from '../i18n/I18n';
@@ -11,6 +11,7 @@ import { getButtonType, getDefaultCommand, getIcon, getTooltipPlacement } from '
 import { LabelWithShortcut } from './LabelWithShortcut';
 import { type IconName } from '../../architecture/base/utilities/IconName';
 import { IconComponent } from './IconComponentMapper';
+import { useUpdate } from './useUpdate';
 
 export const CommandButton = ({
   inputCommand,
@@ -38,13 +39,7 @@ export const CommandButton = ({
     setIcon(getIcon(command));
   }, []);
 
-  useEffect(() => {
-    update(command);
-    command.addEventListener(update);
-    return () => {
-      command.removeEventListener(update);
-    };
-  }, [command]);
+  useUpdate(command, update);
   // @end
 
   if (!isVisible) {

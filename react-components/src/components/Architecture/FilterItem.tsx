@@ -2,13 +2,14 @@
  * Copyright 2024 Cognite AS
  */
 
-import { useCallback, useEffect, useState, type ReactElement } from 'react';
+import { useCallback, useState, type ReactElement } from 'react';
 import { SelectPanel } from '@cognite/cogs-lab';
 import { useTranslation } from '../i18n/I18n';
 import { type BaseCommand } from '../../architecture/base/commands/BaseCommand';
 import styled from 'styled-components';
 import { type Color } from 'three';
 import { type BaseFilterItemCommand } from '../../architecture/base/commands/BaseFilterCommand';
+import { useUpdate } from './useUpdate';
 
 export const FilterItem = ({ command }: { command: BaseFilterItemCommand }): ReactElement => {
   const { t } = useTranslation();
@@ -26,13 +27,7 @@ export const FilterItem = ({ command }: { command: BaseFilterItemCommand }): Rea
     setUniqueId(command.uniqueId);
   }, []);
 
-  useEffect(() => {
-    update(command);
-    command.addEventListener(update);
-    return () => {
-      command.removeEventListener(update);
-    };
-  }, [command]);
+  useUpdate(command, update);
   // @end
 
   if (!isVisible) {

@@ -2,7 +2,7 @@
  * Copyright 2024 Cognite AS
  */
 
-import { type ReactElement, useState, useEffect, useMemo, useCallback } from 'react';
+import { type ReactElement, useState, useMemo, useCallback } from 'react';
 import { useRenderTarget } from '../RevealCanvas/ViewerContext';
 import { SegmentedControl, Tooltip as CogsTooltip } from '@cognite/cogs.js';
 import { useTranslation } from '../i18n/I18n';
@@ -11,6 +11,7 @@ import { getDefaultCommand, getIcon, getTooltipPlacement } from './utilities';
 import { BaseOptionCommand } from '../../architecture/base/commands/BaseOptionCommand';
 import { LabelWithShortcut } from './LabelWithShortcut';
 import { IconComponent } from './IconComponentMapper';
+import { useUpdate } from './useUpdate';
 
 export const SegmentedButtons = ({
   inputCommand,
@@ -41,13 +42,7 @@ export const SegmentedButtons = ({
     }
   }, []);
 
-  useEffect(() => {
-    update(command);
-    command.addEventListener(update);
-    return () => {
-      command.removeEventListener(update);
-    };
-  }, [command]);
+  useUpdate(command, update);
   // @end
 
   if (!isVisible || command.children === undefined) {

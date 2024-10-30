@@ -2,7 +2,7 @@
  * Copyright 2024 Cognite AS
  */
 
-import { useCallback, useEffect, useMemo, useState, type ReactElement } from 'react';
+import { useCallback, useMemo, useState, type ReactElement } from 'react';
 import { Button, Tooltip as CogsTooltip, Slider, Switch } from '@cognite/cogs.js';
 import { Menu } from '@cognite/cogs-lab';
 import { useTranslation } from '../i18n/I18n';
@@ -33,6 +33,7 @@ import { TOOLBAR_HORIZONTAL_PANEL_OFFSET } from '../constants';
 import { offset } from '@floating-ui/dom';
 import { DividerCommand } from '../../architecture/base/commands/DividerCommand';
 import { SectionCommand } from '../../architecture/base/commands/SectionCommand';
+import { useUpdate } from './useUpdate';
 
 export const SettingsButton = ({
   inputCommand,
@@ -62,13 +63,7 @@ export const SettingsButton = ({
     setIcon(getIcon(command));
   }, []);
 
-  useEffect(() => {
-    update(command);
-    command.addEventListener(update);
-    return () => {
-      command.removeEventListener(update);
-    };
-  }, [command]);
+  useUpdate(command, update);
   // @end
 
   if (!isVisible || !command.hasChildren) {
@@ -150,13 +145,7 @@ function createDivider(command: BaseCommand): ReactElement | undefined {
     setUniqueId(command.uniqueId);
   }, []);
 
-  useEffect(() => {
-    update(command);
-    command.addEventListener(update);
-    return () => {
-      command.removeEventListener(update);
-    };
-  }, [command]);
+  useUpdate(command, update);
   // @end
 
   if (!isVisible) {
@@ -175,13 +164,7 @@ function createSection(command: BaseCommand, t: TranslateDelegate): ReactElement
     setUniqueId(command.uniqueId);
   }, []);
 
-  useEffect(() => {
-    update(command);
-    command.addEventListener(update);
-    return () => {
-      command.removeEventListener(update);
-    };
-  }, [command]);
+  useUpdate(command, update);
   // @end
 
   if (!isVisible) {
@@ -205,13 +188,7 @@ function createToggle(command: BaseCommand, t: TranslateDelegate): ReactElement 
     setUniqueId(command.uniqueId);
   }, []);
 
-  useEffect(() => {
-    update(command);
-    command.addEventListener(update);
-    return () => {
-      command.removeEventListener(update);
-    };
-  }, [command]);
+  useUpdate(command, update);
   // @end
 
   if (!isVisible) {
@@ -249,13 +226,7 @@ function createButton(command: BaseCommand, t: TranslateDelegate): ReactElement 
     setIcon(getIcon(command));
   }, []);
 
-  useEffect(() => {
-    update(command);
-    command.addEventListener(update);
-    return () => {
-      command.removeEventListener(update);
-    };
-  }, [command]);
+  useUpdate(command, update);
   // @end
 
   if (!isVisible) {
@@ -296,13 +267,7 @@ function createSlider(command: BaseSliderCommand, t: TranslateDelegate): ReactEl
     }
   }, []);
 
-  useEffect(() => {
-    update(command);
-    command.addEventListener(update);
-    return () => {
-      command.removeEventListener(update);
-    };
-  }, [command]);
+  useUpdate(command, update);
   // @end
 
   if (!isVisible) {
@@ -337,13 +302,7 @@ function createDropdownButton(command: BaseOptionCommand): ReactElement {
     setUniqueId(command.uniqueId);
   }, []);
 
-  useEffect(() => {
-    update(command);
-    command.addEventListener(update);
-    return () => {
-      command.removeEventListener(update);
-    };
-  }, [command]);
+  useUpdate(command, update);
   // @end
 
   if (!isVisible) {
@@ -371,13 +330,7 @@ function createFilterButton(command: BaseFilterCommand): ReactElement {
     setUniqueId(command.uniqueId);
   }, []);
 
-  useEffect(() => {
-    update(command);
-    command.addEventListener(update);
-    return () => {
-      command.removeEventListener(update);
-    };
-  }, [command]);
+  useUpdate(command, update);
   // @end
 
   if (!isVisible) {

@@ -6,7 +6,6 @@ import { Button, Tooltip as CogsTooltip, ChevronDownIcon, ChevronUpIcon } from '
 import { Menu, Option, Select } from '@cognite/cogs-lab';
 import {
   useCallback,
-  useEffect,
   useMemo,
   useState,
   type ReactElement,
@@ -24,6 +23,7 @@ import { type TranslateDelegate } from '../../architecture/base/utilities/Transl
 import { DEFAULT_PADDING, OPTION_MIN_WIDTH } from './constants';
 
 import styled from 'styled-components';
+import { useUpdate } from './useUpdate';
 
 export const DropdownButton = ({
   inputCommand,
@@ -52,13 +52,7 @@ export const DropdownButton = ({
     setUniqueId(command.uniqueId);
   }, []);
 
-  useEffect(() => {
-    update(command);
-    command.addEventListener(update);
-    return () => {
-      command.removeEventListener(update);
-    };
-  }, [command]);
+  useUpdate(command, update);
   // @end
 
   if (!isVisible) {

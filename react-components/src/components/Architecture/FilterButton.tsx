@@ -4,7 +4,6 @@
 
 import {
   useCallback,
-  useEffect,
   useMemo,
   useState,
   type ReactElement,
@@ -29,6 +28,7 @@ import { TOOLBAR_HORIZONTAL_PANEL_OFFSET } from '../constants';
 import { offset } from '@floating-ui/dom';
 import styled from 'styled-components';
 import { type PlacementType } from './types';
+import { useUpdate } from './useUpdate';
 
 export const FilterButton = ({
   inputCommand,
@@ -75,13 +75,7 @@ export const FilterButton = ({
     [command]
   );
 
-  useEffect(() => {
-    update(command);
-    command.addEventListener(update);
-    return () => {
-      command.removeEventListener(update);
-    };
-  }, [command]);
+  useUpdate(command, update);
   // @end
 
   const children = command.children;
