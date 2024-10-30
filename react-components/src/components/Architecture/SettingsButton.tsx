@@ -24,7 +24,7 @@ import { DropdownButton } from './DropdownButton';
 import { BaseSliderCommand } from '../../architecture/base/commands/BaseSliderCommand';
 import { BaseFilterCommand } from '../../architecture/base/commands/BaseFilterCommand';
 import { FilterButton } from './FilterButton';
-import { DEFAULT_PADDING } from './constants';
+import { DEFAULT_PADDING, TOOLTIP_DELAY } from './constants';
 import { type IconName } from '../../architecture/base/utilities/IconName';
 import { IconComponent } from './IconComponentMapper';
 
@@ -91,6 +91,7 @@ export const SettingsButton = ({
           content={<LabelWithShortcut label={label} command={command} />}
           disabled={isOpen || label === undefined}
           appendTo={document.body}
+          enterDelay={TOOLTIP_DELAY}
           placement={getTooltipPlacement(placement)}>
           <Button
             type={getButtonType(command)}

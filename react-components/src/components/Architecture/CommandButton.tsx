@@ -13,6 +13,7 @@ import { type IconName } from '../../architecture/base/utilities/IconName';
 import { IconComponent } from './IconComponentMapper';
 import { useOnUpdate } from './useOnUpdate';
 import { type PlacementType } from './types';
+import { TOOLTIP_DELAY } from './constants';
 
 export const CommandButton = ({
   inputCommand,
@@ -51,6 +52,7 @@ export const CommandButton = ({
       content={<LabelWithShortcut label={label} command={command} />}
       disabled={label === undefined}
       appendTo={document.body}
+      enterDelay={TOOLTIP_DELAY}
       placement={getTooltipPlacement(placement)}>
       <Button
         type={getButtonType(command)}
