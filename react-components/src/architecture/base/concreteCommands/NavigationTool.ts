@@ -3,7 +3,7 @@
  */
 
 import { BaseTool } from '../commands/BaseTool';
-import { type IFlexibleCameraManager } from '@cognite/reveal';
+import { Image360Action, type IFlexibleCameraManager } from '@cognite/reveal';
 import { type TranslateKey } from '../utilities/TranslateKey';
 import { type IconName } from '../../base/utilities/IconName';
 import { CommandsUpdater } from '../reactUpdaters/CommandsUpdater';
@@ -38,9 +38,13 @@ export class NavigationTool extends BaseTool {
   }
 
   public override async onClick(event: PointerEvent): Promise<void> {
-    if (await this.renderTarget.viewer.onClick360Images(event))
-      CommandsUpdater.update(this._renderTarget); // Enter 360 image ok
-    else {
+    const promise = this.renderTarget.viewer.onClick360Images(event).then((isEntered) => {
+      if (isEntered) {
+        CommandsUpdater.update(this.renderTarget);
+      }
+      return isEntered;
+    });
+    if (!(await promise)) {
       await this.cameraManager.onClick(event);
     }
   }
@@ -82,9 +86,12 @@ export class NavigationTool extends BaseTool {
   }
 
   public override onEscapeKey(): void {
-    const exited = false; // Replace with appropriate logic if needed
-    if (exited) {
-      CommandsUpdater.update(this._renderTarget); // Maybe exit 360 image
+    if (this.renderTarget.viewer.canDoImage360Action(Image360Action.Exit)) {
+      void this.renderTarget.viewer.image360Action(Image360Action.Exit).then(() => {
+        CommandsUpdater.update(this.renderTarget);
+      });
+    } else {
+      super.onEscapeKey();
     }
   }
 

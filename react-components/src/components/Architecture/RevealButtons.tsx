@@ -5,7 +5,7 @@
 import { type ReactElement } from 'react';
 import { NavigationTool } from '../../architecture/base/concreteCommands/NavigationTool';
 import { FitViewCommand } from '../../architecture/base/concreteCommands/FitViewCommand';
-import { FlexibleControlsType, type Image360Action } from '@cognite/reveal';
+import { FlexibleControlsType, Image360Action } from '@cognite/reveal';
 import { SetFlexibleControlsTypeCommand } from '../../architecture/base/concreteCommands/SetFlexibleControlsTypeCommand';
 import { SetAxisVisibleCommand } from '../../architecture/concrete/axis/SetAxisVisibleCommand';
 import { ClipTool } from '../../architecture/concrete/clipping/ClipTool';
@@ -66,6 +66,17 @@ export class RevealButtons {
 
   static Image360Action = ({ action }: { action: Image360Action }): ReactElement =>
     createButtonFromCommandConstructor(() => new Image360ActionCommand(action));
+
+  static Image360Actions = (): ReactElement => {
+    return (
+      <>
+        <RevealButtons.Image360Action action={Image360Action.Enter} />
+        <RevealButtons.Image360Action action={Image360Action.Backward} />
+        <RevealButtons.Image360Action action={Image360Action.Forward} />
+        <RevealButtons.Image360Action action={Image360Action.Exit} />
+      </>
+    );
+  };
 
   // Annotations
   static AnnotationsSelect = (): ReactElement =>

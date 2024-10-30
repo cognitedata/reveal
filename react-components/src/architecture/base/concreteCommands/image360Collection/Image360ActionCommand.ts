@@ -6,6 +6,7 @@ import { RenderTargetCommand } from '../../commands/RenderTargetCommand';
 import { type TranslateKey } from '../../utilities/TranslateKey';
 import { type IconName } from '../../utilities/IconName';
 import { type BaseCommand } from '../../commands/BaseCommand';
+import { CommandsUpdater } from '../../reactUpdaters/CommandsUpdater';
 
 export class Image360ActionCommand extends RenderTargetCommand {
   private readonly _action: Image360Action;
@@ -53,11 +54,13 @@ export class Image360ActionCommand extends RenderTargetCommand {
   }
 
   public override get isEnabled(): boolean {
-    return this.renderTarget.viewer.canDo360Action(this._action);
+    return this.renderTarget.viewer.canDoImage360Action(this._action);
   }
 
   public override invokeCore(): boolean {
-    void this.renderTarget.viewer.do360Action(this._action);
-    return true;
+    void this.renderTarget.viewer.image360Action(this._action).then(() => {
+      CommandsUpdater.update(this.renderTarget);
+    });
+    return false; // Do not need another update
   }
 }
