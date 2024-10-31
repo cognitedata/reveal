@@ -15,7 +15,7 @@ export type ITreeNode = {
   get isParent(): boolean; // Returns true if this node has children (loaded or not loaded)
   get label(): string; // Returns the label
   get hasBoldLabel(): boolean; // Returns true if the label should be rendered in bold font
-  get icon(): IconName | undefined; // Returns the icon. undefined is no icon
+  get icon(): IconName; // Returns the icon. undefined is no icon
   get iconColor(): IconColor; // undefined means default color, normally black
   get isSelected(): boolean; // Returns true if it is selected
   get isEnabled(): boolean; // True for selectable or checkable

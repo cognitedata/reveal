@@ -13,7 +13,7 @@ export class TreeNode implements ITreeNode {
   // ==================================================
 
   private _label: string = '';
-  private _icon: IconName | undefined = undefined;
+  private _icon: IconName = undefined;
   private _iconColor: string | undefined = undefined;
   private _isSelected: boolean = false;
   private _checkBoxState: CheckBoxState = CheckBoxState.Hidden;
@@ -54,11 +54,11 @@ export class TreeNode implements ITreeNode {
     }
   }
 
-  public get icon(): IconName | undefined {
+  public get icon(): IconName {
     return this._icon;
   }
 
-  public set icon(value: IconName | undefined) {
+  public set icon(value: IconName) {
     if (this._icon !== value) {
       this._icon = value;
       this.update();

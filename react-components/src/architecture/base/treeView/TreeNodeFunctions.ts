@@ -46,7 +46,7 @@ export function onMultiSelectNode(node: ITreeNode): void {
 
 /**
  * Handles the independent checkbox state of a tree node.
- * Toggles the checkbox state between `All` and `None`.
+ * Toggles the checkbox state between `All` and `None`without affecting other nodes.
  *
  * @param node - The tree node whose checkbox state is to be toggled.
  */
@@ -59,18 +59,11 @@ export function onIndependentCheckNode(node: ITreeNode): void {
   } else {
     node.checkBoxState = CheckBoxState.All;
   }
-  console.log('Clicked node: ' + node.label);
-  if (node instanceof TreeNode) {
-    console.log('Check nodes');
-    for (const child of node.getRoot().getCheckedNodes()) {
-      console.log(child.label);
-    }
-  }
 }
 
 /**
  * Handles the event when a node's checkbox is clicked, toggling its state between `All` and `None`.
- * It also updates the checkbox states of all its descendants and recalculates the states of its ancestors.
+ * It also updates the checkbox states of all its descendants and ancestors.
  *
  * @param node - The tree node that was clicked.
  *
@@ -98,13 +91,6 @@ export function onDependentCheckNode(node: ITreeNode): void {
   for (const ancestor of node.getAncestors()) {
     if (ancestor.checkBoxState !== CheckBoxState.Hidden) {
       ancestor.checkBoxState = calculateCheckBoxState(ancestor);
-    }
-  }
-  console.log('Clicked node: ' + node.label);
-  if (node instanceof TreeNode) {
-    console.log('Check nodes');
-    for (const child of node.getRoot().getCheckedNodes()) {
-      console.log(child.label);
     }
   }
 }
