@@ -18,6 +18,7 @@ import { CylinderCreator } from '../../primitives/cylinder/CylinderCreator';
 import { NavigationTool } from '../../../base/concreteCommands/NavigationTool';
 import { AnnotationsSelectTool } from './AnnotationsSelectTool';
 import { type Annotation } from '../helpers/Annotation';
+import { type IconName } from '../../../base/utilities/IconName';
 
 export const ANNOTATION_RADIUS_FACTOR = 0.2;
 
@@ -42,7 +43,7 @@ export class AnnotationsCreateTool extends NavigationTool {
   // OVERRIDES of BaseCommand
   // ==================================================
 
-  public override get icon(): string {
+  public override get icon(): IconName {
     return 'Shapes';
   }
 

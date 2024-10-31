@@ -7,7 +7,7 @@ import { useRenderTarget } from '../RevealCanvas/ViewerContext';
 import { SegmentedControl, Tooltip as CogsTooltip } from '@cognite/cogs.js';
 import { useTranslation } from '../i18n/I18n';
 import { type BaseCommand } from '../../architecture/base/commands/BaseCommand';
-import { getDefaultCommand, getIcon, getTooltipPlacement } from './utilities';
+import { getDefaultCommand, getTooltipPlacement } from './utilities';
 import { BaseOptionCommand } from '../../architecture/base/commands/BaseOptionCommand';
 import { LabelWithShortcut } from './LabelWithShortcut';
 import { IconComponent } from './IconComponentMapper';
@@ -77,7 +77,7 @@ export const SegmentedButtons = ({
         {command.children.map((child) => (
           <SegmentedControl.Button
             key={getKey(child)}
-            icon={<IconComponent iconName={getIcon(child)} />}>
+            icon={<IconComponent iconName={child.icon} />}>
             {child.getLabel(t)}
           </SegmentedControl.Button>
         ))}

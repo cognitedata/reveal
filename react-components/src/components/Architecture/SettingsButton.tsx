@@ -12,8 +12,7 @@ import {
   getButtonType,
   getDefaultCommand,
   getFlexDirection,
-  getTooltipPlacement,
-  getIcon
+  getTooltipPlacement
 } from './utilities';
 import { LabelWithShortcut } from './LabelWithShortcut';
 import { type TranslateDelegate } from '../../architecture/base/utilities/TranslateKey';
@@ -55,13 +54,13 @@ export const SettingsButton = ({
   const [isEnabled, setEnabled] = useState(true);
   const [isVisible, setVisible] = useState(true);
   const [uniqueId, setUniqueId] = useState(0);
-  const [icon, setIcon] = useState<IconName | undefined>(undefined);
+  const [icon, setIcon] = useState<IconName>(undefined);
 
   useOnUpdate(command, () => {
     setEnabled(command.isEnabled);
     setVisible(command.isVisible);
     setUniqueId(command.uniqueId);
-    setIcon(getIcon(command));
+    setIcon(command.icon);
   });
   // @end
 
@@ -206,14 +205,14 @@ function createButton(command: BaseCommand, t: TranslateDelegate): ReactNode {
   const [isEnabled, setEnabled] = useState(true);
   const [isVisible, setVisible] = useState(true);
   const [uniqueId, setUniqueId] = useState(0);
-  const [icon, setIcon] = useState<IconName | undefined>(undefined);
+  const [icon, setIcon] = useState<IconName>(undefined);
 
   useOnUpdate(command, () => {
     setChecked(command.isChecked);
     setEnabled(command.isEnabled);
     setVisible(command.isVisible);
     setUniqueId(command.uniqueId);
-    setIcon(getIcon(command));
+    setIcon(command.icon);
   });
   // @end
 
