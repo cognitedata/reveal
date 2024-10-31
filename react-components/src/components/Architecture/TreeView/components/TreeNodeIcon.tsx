@@ -2,8 +2,6 @@
  * Copyright 2024 Cognite AS
  */
 
-/* eslint-disable react/prop-types */
-
 import { type ReactElement } from 'react';
 import { LoaderIcon } from '@cognite/cogs.js';
 import { IconComponentMapper } from '../../IconComponentMapper';
