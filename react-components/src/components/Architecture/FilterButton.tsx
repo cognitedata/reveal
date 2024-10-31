@@ -14,7 +14,7 @@ import { Button, ChevronDownIcon, ChevronUpIcon, Tooltip as CogsTooltip } from '
 import { Menu, SelectPanel } from '@cognite/cogs-lab';
 import { useTranslation } from '../i18n/I18n';
 import { useRenderTarget } from '../RevealCanvas/ViewerContext';
-import { getButtonType, getDefaultCommand, getTooltipPlacement, getIcon } from './utilities';
+import { getButtonType, getDefaultCommand, getTooltipPlacement } from './utilities';
 import { LabelWithShortcut } from './LabelWithShortcut';
 import { BaseFilterCommand } from '../../architecture/base/commands/BaseFilterCommand';
 import { FilterItem } from './FilterItem';
@@ -49,7 +49,7 @@ export const FilterButton = ({
   const [isEnabled, setEnabled] = useState(true);
   const [isVisible, setVisible] = useState(true);
   const [uniqueId, setUniqueId] = useState(0);
-  const [icon, setIcon] = useState<IconName | undefined>(undefined);
+  const [icon, setIcon] = useState<IconName>(undefined);
   const [isOpen, setOpen] = useState(false);
   const [isAllChecked, setAllChecked] = useState(false);
   const [isSomeChecked, setSomeChecked] = useState(false);
@@ -62,7 +62,7 @@ export const FilterButton = ({
     setEnabled(command.isEnabled);
     setVisible(command.isVisible);
     setUniqueId(command.uniqueId);
-    setIcon(getIcon(command));
+    setIcon(command.icon);
     if (command instanceof BaseFilterCommand) {
       setAllChecked(command.isAllChecked);
       setSomeChecked(command.children?.some((child) => child.isChecked) === true);

@@ -186,6 +186,10 @@ export function getRandomInt(): number {
   return Math.floor(Math.random() * Number.MAX_SAFE_INTEGER);
 }
 
+export function getRandomIntByMax(max: number): number {
+  return Math.floor(Math.random() * max);
+}
+
 export function getRandomGaussian(mean = 0, stdDev = 1): number {
   for (;;) {
     const a = Math.random();

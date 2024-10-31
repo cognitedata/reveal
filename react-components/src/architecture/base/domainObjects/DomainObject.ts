@@ -383,7 +383,7 @@ export abstract class DomainObject {
   // VIRTUAL METHODS: Others
   // ==================================================
 
-  public get icon(): IconName | undefined {
+  public get icon(): IconName {
     return undefined;
   }
 

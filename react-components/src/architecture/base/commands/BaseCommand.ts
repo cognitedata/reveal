@@ -76,7 +76,7 @@ export abstract class BaseCommand {
     return { fallback: '' };
   }
 
-  public get icon(): IconName | undefined {
+  public get icon(): IconName {
     return undefined; // Means no icon
   }
 

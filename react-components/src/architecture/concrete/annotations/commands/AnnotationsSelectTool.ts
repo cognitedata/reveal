@@ -21,6 +21,7 @@ import { AnnotationsCreateTool } from './AnnotationsCreateTool';
 import { type AnnotationIntersectInfo } from '../helpers/getClosestAnnotation';
 import { SolidDomainObject } from '../../primitives/common/SolidDomainObject';
 import { isAnnotationsOrGizmo, isGizmo } from './isGizmo';
+import { type IconName } from '../../../base/utilities/IconName';
 
 export const ANNOTATION_RADIUS_FACTOR = 0.2;
 
@@ -37,7 +38,7 @@ export class AnnotationsSelectTool extends BaseEditTool {
   // OVERRIDES of BaseCommand
   // ==================================================
 
-  public override get icon(): string {
+  public override get icon(): IconName {
     return 'Cursor';
   }
 
