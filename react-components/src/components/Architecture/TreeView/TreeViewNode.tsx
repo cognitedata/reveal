@@ -40,16 +40,9 @@ export const TreeViewNode = ({
   level: number;
   props: TreeViewProps;
 }): ReactElement => {
+  // Props
   const [hoverOverTextOrIcon, setHoverOverTextOrIcon] = useState(false);
 
-  // This force to update the component when the node changes
-  // See https://coreui.io/blog/how-to-force-a-react-component-to-re-render/
-  const [, forceUpdate] = useReducer((x) => x + 1, 0);
-  useOnTreeNodeUpdate(node, () => {
-    forceUpdate();
-  });
-
-  // Props
   const children = getChildrenAsArray(node, props.loadNodes);
   const backgroundColor = getBackgroundColor(node, hoverOverTextOrIcon);
   const color = getTextColor(node, hoverOverTextOrIcon);
@@ -59,6 +52,13 @@ export const TreeViewNode = ({
   const hasCheckBoxes = props.hasCheckboxes ?? false;
   const hasIcons = props.hasIcons ?? false;
   const marginLeft = level * gapToChildren + 'px';
+
+  // This force to update the component when the node changes
+  // See https://coreui.io/blog/how-to-force-a-react-component-to-re-render/
+  const [, forceUpdate] = useReducer((x) => x + 1, 0);
+  useOnTreeNodeUpdate(node, () => {
+    forceUpdate();
+  });
 
   return (
     <div>
@@ -99,9 +99,9 @@ export const TreeViewNode = ({
         ))}
 
       {!node.isLoadingSiblings && node.needLoadSiblings && (
-        <LoadMoreButton node={node} onClick={onLoadMore} level={level} props={props} />
+        <LoadMoreButton node={node} onClick={onLoadMore} level={level} props={{ ...props }} />
       )}
-      {node.isLoadingSiblings && <LoadingMoreLabel level={level} props={props} />}
+      {node.isLoadingSiblings && <LoadingMoreLabel level={level} {...props} />}
     </div>
   );
 

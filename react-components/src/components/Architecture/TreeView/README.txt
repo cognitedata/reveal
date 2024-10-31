@@ -10,6 +10,8 @@ How to use the TreeView:
   onCheckNode: This is called when a nod is checked
   loadNodes: This is called when the nodes need to load children or siblings.
 
+  Examples below
+
   All functions are optional.
 
   In the file TreeNodeFunctions.ts there are some default implementations 
@@ -23,7 +25,25 @@ How to use the TreeView:
 
 3. Examples of how the component can be used:
 
-   const root = createYourOwnTree();
+  function createTreeMock(lazyLoading: boolean): TreeNode {
+    const root = new TreeNode();
+    root.label = 'Root';
+    root.isExpanded = true;
+
+    for (let i = 1; i <= 100; i++) {
+      const parent = new TreeNode();
+      parent.label = 'Parent ' + i;
+      parent.isExpanded = true;
+      root.addChild(parent);
+
+      for (let j = 1; j <= 10; j++) {
+        const child = new TreeNode();
+        child.label = 'Child ' + i + '.' + j;        
+        parent.addChild(child);
+      }
+    }
+    return root;
+  }
 
   <TreeView
     root={root}

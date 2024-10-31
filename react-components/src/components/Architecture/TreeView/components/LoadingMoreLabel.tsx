@@ -13,13 +13,8 @@ import { GAP_BETWEEN_ITEMS, GAP_TO_CHILDREN, LOADING_LABEL } from '../utilities/
 // MAIN COMPONENT
 // ==================================================
 
-export const LoadingMoreLabel = ({
-  level,
-  props
-}: {
-  level: number;
-  props: TreeViewProps;
-}): ReactElement => {
+type Props = TreeViewProps & { level: number };
+export const LoadingMoreLabel = (props: Props): ReactElement => {
   const label = props.loadingLabel ?? LOADING_LABEL;
   const gapBetweenItems = (props.gapBetweenItems ?? GAP_BETWEEN_ITEMS) + 'px';
   const gapToChildren = props.gapToChildren ?? GAP_TO_CHILDREN;
@@ -28,7 +23,7 @@ export const LoadingMoreLabel = ({
       style={{
         gap: gapBetweenItems,
         marginTop: gapBetweenItems,
-        marginLeft: (level + 1) * gapToChildren + 'px'
+        marginLeft: (props.level + 1) * gapToChildren + 'px'
       }}>
       <LoaderIcon style={{ marginTop: '3px', marginRight: '5px' }} />
       <span>{label}</span>
