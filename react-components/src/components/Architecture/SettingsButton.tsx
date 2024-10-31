@@ -2,7 +2,7 @@
  * Copyright 2024 Cognite AS
  */
 
-import { useMemo, useState, type ReactElement } from 'react';
+import { type ReactNode, useMemo, useState, type ReactElement } from 'react';
 import { Button, Tooltip as CogsTooltip, Slider, Switch } from '@cognite/cogs.js';
 import { Menu } from '@cognite/cogs-lab';
 import { useTranslation } from '../i18n/I18n';
@@ -71,7 +71,6 @@ export const SettingsButton = ({
   const label = command.getLabel(t);
   const flexDirection = getFlexDirection(isHorizontal);
   const children = command.children;
-
   return (
     <Menu
       hideOnSelect={false}
@@ -104,14 +103,12 @@ export const SettingsButton = ({
           />
         </CogsTooltip>
       )}>
-      {children.map((child): ReactElement | undefined => {
-        return createMenuItem(child, t);
-      })}
+      {children.map((child) => createMenuItem(child, t))}
     </Menu>
   );
 };
 
-function createMenuItem(command: BaseCommand, t: TranslateDelegate): ReactElement | undefined {
+function createMenuItem(command: BaseCommand, t: TranslateDelegate): ReactNode {
   if (command instanceof BaseSliderCommand) {
     return createSlider(command, t);
   }
@@ -133,7 +130,7 @@ function createMenuItem(command: BaseCommand, t: TranslateDelegate): ReactElemen
   return createButton(command, t);
 }
 
-function createDivider(command: BaseCommand): ReactElement | undefined {
+function createDivider(command: BaseCommand): ReactNode {
   // @update-ui-component-pattern
   const [isVisible, setVisible] = useState(true);
   const [uniqueId, setUniqueId] = useState(0);
@@ -145,12 +142,12 @@ function createDivider(command: BaseCommand): ReactElement | undefined {
   // @end
 
   if (!isVisible) {
-    return <></>;
+    return null;
   }
   return <Menu.Divider key={uniqueId} />;
 }
 
-function createSection(command: BaseCommand, t: TranslateDelegate): ReactElement | undefined {
+function createSection(command: BaseCommand, t: TranslateDelegate): ReactNode {
   // @update-ui-component-pattern
   const [isVisible, setVisible] = useState(true);
   const [uniqueId, setUniqueId] = useState(0);
@@ -162,13 +159,13 @@ function createSection(command: BaseCommand, t: TranslateDelegate): ReactElement
   // @end
 
   if (!isVisible) {
-    return <></>;
+    return null;
   }
   const label = command.getLabel(t);
   return <Menu.Section key={uniqueId} label={label} />;
 }
 
-function createToggle(command: BaseCommand, t: TranslateDelegate): ReactElement {
+function createToggle(command: BaseCommand, t: TranslateDelegate): ReactNode {
   // @update-ui-component-pattern
   const [isChecked, setChecked] = useState(false);
   const [isEnabled, setEnabled] = useState(true);
@@ -184,7 +181,7 @@ function createToggle(command: BaseCommand, t: TranslateDelegate): ReactElement 
   // @end
 
   if (!isVisible) {
-    return <></>;
+    return null;
   }
 
   const label = command.getLabel(t);
@@ -202,7 +199,7 @@ function createToggle(command: BaseCommand, t: TranslateDelegate): ReactElement 
   );
 }
 
-function createButton(command: BaseCommand, t: TranslateDelegate): ReactElement {
+function createButton(command: BaseCommand, t: TranslateDelegate): ReactNode {
   // @update-ui-component-pattern
   const [isChecked, setChecked] = useState(false);
   const [isEnabled, setEnabled] = useState(true);
@@ -220,9 +217,10 @@ function createButton(command: BaseCommand, t: TranslateDelegate): ReactElement 
   // @end
 
   if (!isVisible) {
-    return <></>;
+    return null;
   }
   const label = command.getLabel(t);
+
   return (
     <Menu.ItemAction
       key={uniqueId}
@@ -241,7 +239,7 @@ function createButton(command: BaseCommand, t: TranslateDelegate): ReactElement 
   );
 }
 
-function createSlider(command: BaseSliderCommand, t: TranslateDelegate): ReactElement {
+function createSlider(command: BaseSliderCommand, t: TranslateDelegate): ReactNode {
   // @update-ui-component-pattern
   const [isEnabled, setEnabled] = useState(true);
   const [isVisible, setVisible] = useState(true);
@@ -259,9 +257,10 @@ function createSlider(command: BaseSliderCommand, t: TranslateDelegate): ReactEl
   // @end
 
   if (!isVisible) {
-    return <></>;
+    return null;
   }
   const label = command.getLabel(t) + ': ' + command.getValueLabel();
+
   return (
     <SliderDiv key={uniqueId}>
       <label>{label}</label>
@@ -280,7 +279,7 @@ function createSlider(command: BaseSliderCommand, t: TranslateDelegate): ReactEl
   );
 }
 
-function createDropdownButton(command: BaseOptionCommand): ReactElement {
+function createDropdownButton(command: BaseOptionCommand): ReactNode {
   // @update-ui-component-pattern
   const [isVisible, setVisible] = useState(true);
   const [uniqueId, setUniqueId] = useState(0);
@@ -292,8 +291,9 @@ function createDropdownButton(command: BaseOptionCommand): ReactElement {
   // @end
 
   if (!isVisible) {
-    return <></>;
+    return null;
   }
+
   return (
     <DropdownButton
       key={uniqueId}
@@ -304,7 +304,7 @@ function createDropdownButton(command: BaseOptionCommand): ReactElement {
   );
 }
 
-function createFilterButton(command: BaseFilterCommand): ReactElement {
+function createFilterButton(command: BaseFilterCommand): ReactNode {
   command.initializeChildrenIfNeeded();
 
   // @update-ui-component-pattern
@@ -318,7 +318,7 @@ function createFilterButton(command: BaseFilterCommand): ReactElement {
   // @end
 
   if (!isVisible) {
-    return <></>;
+    return null;
   }
   return (
     <FilterButton
