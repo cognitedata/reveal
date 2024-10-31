@@ -24,7 +24,7 @@ import { DropdownButton } from './DropdownButton';
 import { BaseSliderCommand } from '../../architecture/base/commands/BaseSliderCommand';
 import { BaseFilterCommand } from '../../architecture/base/commands/BaseFilterCommand';
 import { FilterButton } from './FilterButton';
-import { DEFAULT_PADDING } from './constants';
+import { DEFAULT_PADDING, TOOLTIP_DELAY } from './constants';
 import { type IconName } from '../../architecture/base/utilities/IconName';
 import { IconComponent } from './IconComponentMapper';
 
@@ -34,13 +34,14 @@ import { offset } from '@floating-ui/dom';
 import { DividerCommand } from '../../architecture/base/commands/DividerCommand';
 import { SectionCommand } from '../../architecture/base/commands/SectionCommand';
 import { useOnUpdate } from './useOnUpdate';
+import { type PlacementType } from './types';
 
 export const SettingsButton = ({
   inputCommand,
-  isHorizontal = false
+  placement
 }: {
   inputCommand: BaseSettingsCommand;
-  isHorizontal: boolean;
+  placement: PlacementType;
 }): ReactElement => {
   const renderTarget = useRenderTarget();
   const { t } = useTranslation();
@@ -67,9 +68,8 @@ export const SettingsButton = ({
   if (!isVisible || !command.hasChildren) {
     return <></>;
   }
-  const placement = getTooltipPlacement(isHorizontal);
   const label = command.getLabel(t);
-  const flexDirection = getFlexDirection(isHorizontal);
+  const flexDirection = getFlexDirection(placement);
   const children = command.children;
   return (
     <Menu
@@ -90,7 +90,8 @@ export const SettingsButton = ({
           content={<LabelWithShortcut label={label} command={command} />}
           disabled={isOpen || label === undefined}
           appendTo={document.body}
-          placement={placement}>
+          enterDelay={TOOLTIP_DELAY}
+          placement={getTooltipPlacement(placement)}>
           <Button
             type={getButtonType(command)}
             icon={<IconComponent iconName={icon} />}
@@ -298,7 +299,7 @@ function createDropdownButton(command: BaseOptionCommand): ReactNode {
     <DropdownButton
       key={uniqueId}
       inputCommand={command}
-      isHorizontal={false}
+      placement={'bottom'}
       usedInSettings={true}
     />
   );
@@ -324,7 +325,7 @@ function createFilterButton(command: BaseFilterCommand): ReactNode {
     <FilterButton
       key={uniqueId}
       inputCommand={command}
-      isHorizontal={false}
+      placement={'bottom'}
       usedInSettings={true}
     />
   );

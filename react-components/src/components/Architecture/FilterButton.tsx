@@ -30,11 +30,11 @@ import { useOnUpdate } from './useOnUpdate';
 
 export const FilterButton = ({
   inputCommand,
-  isHorizontal = false,
+  placement,
   usedInSettings = false
 }: {
   inputCommand: BaseFilterCommand;
-  isHorizontal: boolean;
+  placement: PlacementType;
   usedInSettings?: boolean;
 }): ReactElement => {
   const renderTarget = useRenderTarget();
@@ -75,8 +75,6 @@ export const FilterButton = ({
   if (!isVisible || children === undefined || children.length === 0) {
     return <></>;
   }
-  const placement = getTooltipPlacement(isHorizontal);
-
   const PanelContent = (
     <FilterSelectPanelContent
       command={command}
@@ -96,7 +94,7 @@ export const FilterButton = ({
   ) : (
     <FilterMenu
       command={command}
-      placement={placement}
+      placement={getTooltipPlacement(placement)}
       iconName={icon}
       label={label}
       isOpen={isOpen}

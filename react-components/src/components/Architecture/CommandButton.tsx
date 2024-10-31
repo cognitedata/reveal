@@ -12,13 +12,15 @@ import { LabelWithShortcut } from './LabelWithShortcut';
 import { type IconName } from '../../architecture/base/utilities/IconName';
 import { IconComponent } from './IconComponentMapper';
 import { useOnUpdate } from './useOnUpdate';
+import { type PlacementType } from './types';
+import { TOOLTIP_DELAY } from './constants';
 
 export const CommandButton = ({
   inputCommand,
-  isHorizontal = false
+  placement
 }: {
   inputCommand: BaseCommand;
-  isHorizontal: boolean;
+  placement: PlacementType;
 }): ReactElement => {
   const renderTarget = useRenderTarget();
   const { t } = useTranslation();
@@ -43,7 +45,6 @@ export const CommandButton = ({
   if (!isVisible) {
     return <></>;
   }
-  const placement = getTooltipPlacement(isHorizontal);
   const label = command.getLabel(t);
 
   return (
@@ -51,7 +52,8 @@ export const CommandButton = ({
       content={<LabelWithShortcut label={label} command={command} />}
       disabled={label === undefined}
       appendTo={document.body}
-      placement={placement}>
+      enterDelay={TOOLTIP_DELAY}
+      placement={getTooltipPlacement(placement)}>
       <Button
         type={getButtonType(command)}
         icon={<IconComponent iconName={icon} />}

@@ -15,12 +15,28 @@ export function getIcon(command: BaseCommand): IconName | undefined {
   return command.icon;
 }
 
-export function getFlexDirection(isHorizontal: boolean): FlexDirection {
-  return isHorizontal ? 'row' : 'column';
+export function getFlexDirection(placement: PlacementType): FlexDirection {
+  return placement === 'top' || placement === 'bottom' ? 'row' : 'column';
 }
 
-export function getTooltipPlacement(isHorizontal: boolean): PlacementType {
-  return isHorizontal ? 'top' : 'right';
+export function getDividerDirection(placement: PlacementType): string {
+  return placement === 'top' || placement === 'bottom' ? 'vertical' : 'horizontal';
+}
+
+export function getTooltipPlacement(toolbarPlacement: PlacementType): PlacementType {
+  // Try to keep the tooltip on the opposite side of the toolbar
+  switch (toolbarPlacement) {
+    case 'top':
+      return 'bottom';
+    case 'bottom':
+      return 'top';
+    case 'left':
+      return 'right';
+    case 'right':
+      return 'left';
+    default:
+      return 'top';
+  }
 }
 
 export function getButtonType(command: BaseCommand): ButtonType {

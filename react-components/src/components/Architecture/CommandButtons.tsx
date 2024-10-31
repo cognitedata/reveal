@@ -15,41 +15,44 @@ import { FilterButton } from './FilterButton';
 import { SegmentedButtons } from './SegmentedButtons';
 import { DividerCommand } from '../../architecture/base/commands/DividerCommand';
 import { SectionCommand } from '../../architecture/base/commands/SectionCommand';
+import { type PlacementType } from './types';
+import { type ButtonProp } from './RevealButtons';
+import { getDividerDirection } from './utilities';
 
-export function createButton(command: BaseCommand, isHorizontal = false): ReactElement {
+export function createButton(command: BaseCommand, placement: PlacementType): ReactElement {
   if (command instanceof BaseFilterCommand) {
-    return <FilterButton inputCommand={command} isHorizontal={isHorizontal} />;
+    return <FilterButton inputCommand={command} placement={placement} />;
   }
   if (command instanceof BaseSettingsCommand) {
-    return <SettingsButton inputCommand={command} isHorizontal={isHorizontal} />;
+    return <SettingsButton inputCommand={command} placement={placement} />;
   }
   if (command instanceof BaseOptionCommand) {
     switch (command.optionType) {
       case OptionType.Dropdown:
-        return <DropdownButton inputCommand={command} isHorizontal={isHorizontal} />;
+        return <DropdownButton inputCommand={command} placement={placement} />;
       case OptionType.Segmented:
-        return <SegmentedButtons inputCommand={command} isHorizontal={isHorizontal} />;
+        return <SegmentedButtons inputCommand={command} placement={placement} />;
       default:
         return <></>;
     }
   }
-  return <CommandButton inputCommand={command} isHorizontal={isHorizontal} />;
+  return <CommandButton inputCommand={command} placement={placement} />;
 }
 
 export function createButtonFromCommandConstructor(
   commandConstructor: () => BaseCommand,
-  isHorizontal = false
+  prop: ButtonProp
 ): ReactElement {
   const command = useMemo(commandConstructor, []);
-  return createButton(command, isHorizontal);
+  return createButton(command, prop.toolbarPlacement ?? 'left');
 }
 
 export const CommandButtons = ({
   commands,
-  isHorizontal = false
+  placement
 }: {
   commands: Array<BaseCommand | undefined>;
-  isHorizontal: boolean;
+  placement: PlacementType;
 }): ReactElement => {
   return (
     <>
@@ -57,7 +60,7 @@ export const CommandButtons = ({
         (command, index): ReactElement => (
           <CommandButtonWrapper
             command={command}
-            isHorizontal={isHorizontal}
+            placement={placement}
             key={getKey(command, index)}
           />
         )
@@ -75,18 +78,18 @@ function getKey(command: BaseCommand | undefined, index: number): number {
 
 function CommandButtonWrapper({
   command,
-  isHorizontal
+  placement
 }: {
   command: BaseCommand | undefined;
-  isHorizontal: boolean;
+  placement: PlacementType;
 }): ReactElement {
   if (
     command instanceof DividerCommand ||
     command instanceof SectionCommand ||
     command === undefined
   ) {
-    const direction = !isHorizontal ? 'horizontal' : 'vertical';
+    const direction = getDividerDirection(placement);
     return <Divider weight="2px" length="24px" direction={direction} />;
   }
-  return createButton(command, isHorizontal);
+  return createButton(command, placement);
 }
