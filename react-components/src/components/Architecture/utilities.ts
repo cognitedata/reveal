@@ -23,8 +23,9 @@ export function getDividerDirection(placement: PlacementType): string {
   return placement === 'top' || placement === 'bottom' ? 'vertical' : 'horizontal';
 }
 
-export function getTooltipPlacement(placement: PlacementType): PlacementType {
-  switch (placement) {
+export function getTooltipPlacement(toolbarPlacement: PlacementType): PlacementType {
+  // Try to keep the tooltip on the opposite side of the toolbar
+  switch (toolbarPlacement) {
     case 'top':
       return 'bottom';
     case 'bottom':
