@@ -15,12 +15,23 @@ export function getIcon(command: BaseCommand): IconName | undefined {
   return command.icon;
 }
 
-export function getFlexDirection(isHorizontal: boolean): FlexDirection {
-  return isHorizontal ? 'row' : 'column';
+export function getFlexDirection(placement: PlacementType): FlexDirection {
+  return placement === 'top' || placement === 'bottom' ? 'row' : 'column';
 }
 
-export function getTooltipPlacement(isHorizontal: boolean): PlacementType {
-  return isHorizontal ? 'top' : 'right';
+export function getTooltipPlacement(placement: PlacementType): PlacementType {
+  switch (placement) {
+    case 'top':
+      return 'bottom';
+    case 'bottom':
+      return 'top';
+    case 'left':
+      return 'right';
+    case 'right':
+      return 'left';
+    default:
+      return 'top';
+  }
 }
 
 export function getButtonType(command: BaseCommand): ButtonType {

@@ -3,8 +3,6 @@
  */
 
 import {
-  useCallback,
-  useEffect,
   useMemo,
   useState,
   type ReactElement,
@@ -15,7 +13,6 @@ import {
 import { Button, ChevronDownIcon, ChevronUpIcon, Tooltip as CogsTooltip } from '@cognite/cogs.js';
 import { Menu, SelectPanel } from '@cognite/cogs-lab';
 import { useTranslation } from '../i18n/I18n';
-import { type BaseCommand } from '../../architecture/base/commands/BaseCommand';
 import { useRenderTarget } from '../RevealCanvas/ViewerContext';
 import { getButtonType, getDefaultCommand, getTooltipPlacement, getIcon } from './utilities';
 import { LabelWithShortcut } from './LabelWithShortcut';
@@ -29,14 +26,15 @@ import { TOOLBAR_HORIZONTAL_PANEL_OFFSET } from '../constants';
 import { offset } from '@floating-ui/dom';
 import styled from 'styled-components';
 import { type PlacementType } from './types';
+import { useOnUpdate } from './useOnUpdate';
 
 export const FilterButton = ({
   inputCommand,
-  isHorizontal = false,
+  placement,
   usedInSettings = false
 }: {
   inputCommand: BaseFilterCommand;
-  isHorizontal: boolean;
+  placement: PlacementType;
   usedInSettings?: boolean;
 }): ReactElement => {
   const renderTarget = useRenderTarget();
@@ -48,48 +46,35 @@ export const FilterButton = ({
   command.initializeChildrenIfNeeded();
 
   // @update-ui-component-pattern
-  const [isEnabled, setEnabled] = useState<boolean>(true);
-  const [isVisible, setVisible] = useState<boolean>(true);
-  const [uniqueId, setUniqueId] = useState<number>(0);
+  const [isEnabled, setEnabled] = useState(true);
+  const [isVisible, setVisible] = useState(true);
+  const [uniqueId, setUniqueId] = useState(0);
   const [icon, setIcon] = useState<IconName | undefined>(undefined);
-  const [isOpen, setOpen] = useState<boolean>(false);
-  const [isAllChecked, setAllChecked] = useState<boolean>(false);
-  const [isSomeChecked, setSomeChecked] = useState<boolean>(false);
-  const [selectedLabel, setSelectedLabel] = useState<string>('');
+  const [isOpen, setOpen] = useState(false);
+  const [isAllChecked, setAllChecked] = useState(false);
+  const [isSomeChecked, setSomeChecked] = useState(false);
+  const [selectedLabel, setSelectedLabel] = useState('');
 
   const { t } = useTranslation();
   const label = command.getLabel(t);
 
-  const update = useCallback(
-    (command: BaseCommand) => {
-      setEnabled(command.isEnabled);
-      setVisible(command.isVisible);
-      setUniqueId(command.uniqueId);
-      setIcon(getIcon(command));
-      if (command instanceof BaseFilterCommand) {
-        setAllChecked(command.isAllChecked);
-        setSomeChecked(command.children?.some((child) => child.isChecked) === true);
-        setSelectedLabel(command.getSelectedLabel(t));
-      }
-    },
-    [command]
-  );
-
-  useEffect(() => {
-    update(command);
-    command.addEventListener(update);
-    return () => {
-      command.removeEventListener(update);
-    };
-  }, [command]);
+  useOnUpdate(command, () => {
+    setEnabled(command.isEnabled);
+    setVisible(command.isVisible);
+    setUniqueId(command.uniqueId);
+    setIcon(getIcon(command));
+    if (command instanceof BaseFilterCommand) {
+      setAllChecked(command.isAllChecked);
+      setSomeChecked(command.children?.some((child) => child.isChecked) === true);
+      setSelectedLabel(command.getSelectedLabel(t));
+    }
+  });
   // @end
 
   const children = command.children;
   if (!isVisible || children === undefined || children.length === 0) {
     return <></>;
   }
-  const placement = getTooltipPlacement(isHorizontal);
-
   const PanelContent = (
     <FilterSelectPanelContent
       command={command}
@@ -109,7 +94,7 @@ export const FilterButton = ({
   ) : (
     <FilterMenu
       command={command}
-      placement={placement}
+      placement={getTooltipPlacement(placement)}
       iconName={icon}
       label={label}
       isOpen={isOpen}

@@ -2,7 +2,7 @@
  * Copyright 2024 Cognite AS
  */
 
-import { useCallback, useEffect, useMemo, useState, type ReactElement } from 'react';
+import { useMemo, useState, type ReactElement } from 'react';
 import { Button, Tooltip as CogsTooltip, Slider, Switch } from '@cognite/cogs.js';
 import { Menu } from '@cognite/cogs-lab';
 import { useTranslation } from '../i18n/I18n';
@@ -33,13 +33,15 @@ import { TOOLBAR_HORIZONTAL_PANEL_OFFSET } from '../constants';
 import { offset } from '@floating-ui/dom';
 import { DividerCommand } from '../../architecture/base/commands/DividerCommand';
 import { SectionCommand } from '../../architecture/base/commands/SectionCommand';
+import { useOnUpdate } from './useOnUpdate';
+import { type PlacementType } from './types';
 
 export const SettingsButton = ({
   inputCommand,
-  isHorizontal = false
+  placement
 }: {
   inputCommand: BaseSettingsCommand;
-  isHorizontal: boolean;
+  placement: PlacementType;
 }): ReactElement => {
   const renderTarget = useRenderTarget();
   const { t } = useTranslation();
@@ -49,34 +51,25 @@ export const SettingsButton = ({
   );
 
   // @update-ui-component-pattern
-  const [isOpen, setOpen] = useState<boolean>(false);
-  const [isEnabled, setEnabled] = useState<boolean>(true);
-  const [isVisible, setVisible] = useState<boolean>(true);
-  const [uniqueId, setUniqueId] = useState<number>(0);
+  const [isOpen, setOpen] = useState(false);
+  const [isEnabled, setEnabled] = useState(true);
+  const [isVisible, setVisible] = useState(true);
+  const [uniqueId, setUniqueId] = useState(0);
   const [icon, setIcon] = useState<IconName | undefined>(undefined);
 
-  const update = useCallback((command: BaseCommand) => {
+  useOnUpdate(command, () => {
     setEnabled(command.isEnabled);
     setVisible(command.isVisible);
     setUniqueId(command.uniqueId);
     setIcon(getIcon(command));
-  }, []);
-
-  useEffect(() => {
-    update(command);
-    command.addEventListener(update);
-    return () => {
-      command.removeEventListener(update);
-    };
-  }, [command]);
+  });
   // @end
 
   if (!isVisible || !command.hasChildren) {
     return <></>;
   }
-  const placement = getTooltipPlacement(isHorizontal);
   const label = command.getLabel(t);
-  const flexDirection = getFlexDirection(isHorizontal);
+  const flexDirection = getFlexDirection(placement);
   const children = command.children;
 
   return (
@@ -98,7 +91,7 @@ export const SettingsButton = ({
           content={<LabelWithShortcut label={label} command={command} />}
           disabled={isOpen || label === undefined}
           appendTo={document.body}
-          placement={placement}>
+          placement={getTooltipPlacement(placement)}>
           <Button
             type={getButtonType(command)}
             icon={<IconComponent iconName={icon} />}
@@ -142,21 +135,13 @@ function createMenuItem(command: BaseCommand, t: TranslateDelegate): ReactElemen
 
 function createDivider(command: BaseCommand): ReactElement | undefined {
   // @update-ui-component-pattern
-  const [isVisible, setVisible] = useState<boolean>(true);
-  const [uniqueId, setUniqueId] = useState<number>(0);
+  const [isVisible, setVisible] = useState(true);
+  const [uniqueId, setUniqueId] = useState(0);
 
-  const update = useCallback((command: BaseCommand) => {
+  useOnUpdate(command, () => {
     setVisible(command.isVisible);
     setUniqueId(command.uniqueId);
-  }, []);
-
-  useEffect(() => {
-    update(command);
-    command.addEventListener(update);
-    return () => {
-      command.removeEventListener(update);
-    };
-  }, [command]);
+  });
   // @end
 
   if (!isVisible) {
@@ -167,21 +152,13 @@ function createDivider(command: BaseCommand): ReactElement | undefined {
 
 function createSection(command: BaseCommand, t: TranslateDelegate): ReactElement | undefined {
   // @update-ui-component-pattern
-  const [isVisible, setVisible] = useState<boolean>(true);
-  const [uniqueId, setUniqueId] = useState<number>(0);
+  const [isVisible, setVisible] = useState(true);
+  const [uniqueId, setUniqueId] = useState(0);
 
-  const update = useCallback((command: BaseCommand) => {
+  useOnUpdate(command, () => {
     setVisible(command.isVisible);
     setUniqueId(command.uniqueId);
-  }, []);
-
-  useEffect(() => {
-    update(command);
-    command.addEventListener(update);
-    return () => {
-      command.removeEventListener(update);
-    };
-  }, [command]);
+  });
   // @end
 
   if (!isVisible) {
@@ -193,25 +170,17 @@ function createSection(command: BaseCommand, t: TranslateDelegate): ReactElement
 
 function createToggle(command: BaseCommand, t: TranslateDelegate): ReactElement {
   // @update-ui-component-pattern
-  const [isChecked, setChecked] = useState<boolean>(false);
-  const [isEnabled, setEnabled] = useState<boolean>(true);
-  const [isVisible, setVisible] = useState<boolean>(true);
-  const [uniqueId, setUniqueId] = useState<number>(0);
+  const [isChecked, setChecked] = useState(false);
+  const [isEnabled, setEnabled] = useState(true);
+  const [isVisible, setVisible] = useState(true);
+  const [uniqueId, setUniqueId] = useState(0);
 
-  const update = useCallback((command: BaseCommand) => {
+  useOnUpdate(command, () => {
     setChecked(command.isChecked);
     setEnabled(command.isEnabled);
     setVisible(command.isVisible);
     setUniqueId(command.uniqueId);
-  }, []);
-
-  useEffect(() => {
-    update(command);
-    command.addEventListener(update);
-    return () => {
-      command.removeEventListener(update);
-    };
-  }, [command]);
+  });
   // @end
 
   if (!isVisible) {
@@ -235,27 +204,19 @@ function createToggle(command: BaseCommand, t: TranslateDelegate): ReactElement 
 
 function createButton(command: BaseCommand, t: TranslateDelegate): ReactElement {
   // @update-ui-component-pattern
-  const [isChecked, setChecked] = useState<boolean>(false);
-  const [isEnabled, setEnabled] = useState<boolean>(true);
-  const [isVisible, setVisible] = useState<boolean>(true);
-  const [uniqueId, setUniqueId] = useState<number>(0);
+  const [isChecked, setChecked] = useState(false);
+  const [isEnabled, setEnabled] = useState(true);
+  const [isVisible, setVisible] = useState(true);
+  const [uniqueId, setUniqueId] = useState(0);
   const [icon, setIcon] = useState<IconName | undefined>(undefined);
 
-  const update = useCallback((command: BaseCommand) => {
+  useOnUpdate(command, () => {
     setChecked(command.isChecked);
     setEnabled(command.isEnabled);
     setVisible(command.isVisible);
     setUniqueId(command.uniqueId);
     setIcon(getIcon(command));
-  }, []);
-
-  useEffect(() => {
-    update(command);
-    command.addEventListener(update);
-    return () => {
-      command.removeEventListener(update);
-    };
-  }, [command]);
+  });
   // @end
 
   if (!isVisible) {
@@ -282,27 +243,19 @@ function createButton(command: BaseCommand, t: TranslateDelegate): ReactElement 
 
 function createSlider(command: BaseSliderCommand, t: TranslateDelegate): ReactElement {
   // @update-ui-component-pattern
-  const [isEnabled, setEnabled] = useState<boolean>(true);
-  const [isVisible, setVisible] = useState<boolean>(true);
-  const [uniqueId, setUniqueId] = useState<number>(0);
+  const [isEnabled, setEnabled] = useState(true);
+  const [isVisible, setVisible] = useState(true);
+  const [uniqueId, setUniqueId] = useState(0);
   const [value, setValue] = useState(command.value);
 
-  const update = useCallback((command: BaseCommand) => {
+  useOnUpdate(command, () => {
     setEnabled(command.isEnabled);
     setVisible(command.isVisible);
     setUniqueId(command.uniqueId);
     if (command instanceof BaseSliderCommand) {
       setValue(command.value);
     }
-  }, []);
-
-  useEffect(() => {
-    update(command);
-    command.addEventListener(update);
-    return () => {
-      command.removeEventListener(update);
-    };
-  }, [command]);
+  });
   // @end
 
   if (!isVisible) {
@@ -329,21 +282,13 @@ function createSlider(command: BaseSliderCommand, t: TranslateDelegate): ReactEl
 
 function createDropdownButton(command: BaseOptionCommand): ReactElement {
   // @update-ui-component-pattern
-  const [isVisible, setVisible] = useState<boolean>(true);
-  const [uniqueId, setUniqueId] = useState<number>(0);
+  const [isVisible, setVisible] = useState(true);
+  const [uniqueId, setUniqueId] = useState(0);
 
-  const update = useCallback((command: BaseCommand) => {
+  useOnUpdate(command, () => {
     setVisible(command.isVisible);
     setUniqueId(command.uniqueId);
-  }, []);
-
-  useEffect(() => {
-    update(command);
-    command.addEventListener(update);
-    return () => {
-      command.removeEventListener(update);
-    };
-  }, [command]);
+  });
   // @end
 
   if (!isVisible) {
@@ -353,7 +298,7 @@ function createDropdownButton(command: BaseOptionCommand): ReactElement {
     <DropdownButton
       key={uniqueId}
       inputCommand={command}
-      isHorizontal={false}
+      placement={'bottom'}
       usedInSettings={true}
     />
   );
@@ -363,21 +308,13 @@ function createFilterButton(command: BaseFilterCommand): ReactElement {
   command.initializeChildrenIfNeeded();
 
   // @update-ui-component-pattern
-  const [isVisible, setVisible] = useState<boolean>(true);
-  const [uniqueId, setUniqueId] = useState<number>(0);
+  const [isVisible, setVisible] = useState(true);
+  const [uniqueId, setUniqueId] = useState(0);
 
-  const update = useCallback((command: BaseCommand) => {
+  useOnUpdate(command, () => {
     setVisible(command.isVisible);
     setUniqueId(command.uniqueId);
-  }, []);
-
-  useEffect(() => {
-    update(command);
-    command.addEventListener(update);
-    return () => {
-      command.removeEventListener(update);
-    };
-  }, [command]);
+  });
   // @end
 
   if (!isVisible) {
@@ -387,7 +324,7 @@ function createFilterButton(command: BaseFilterCommand): ReactElement {
     <FilterButton
       key={uniqueId}
       inputCommand={command}
-      isHorizontal={false}
+      placement={'bottom'}
       usedInSettings={true}
     />
   );

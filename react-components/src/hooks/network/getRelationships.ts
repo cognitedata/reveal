@@ -10,7 +10,7 @@ import {
 
 import { getSourceRelationships } from './getSourceRelationships';
 import { getTargetRelationships } from './getTargetRelationships';
-import { type ExtendedRelationship } from '../../data-providers/types';
+import { type ExtendedRelationshipWithSourceAndTarget } from '../../data-providers/types';
 
 type Payload = {
   resourceExternalIds: CogniteExternalId[];
@@ -23,7 +23,7 @@ type Payload = {
 export const getRelationships = async (
   sdk: CogniteClient,
   payload: Payload
-): Promise<ExtendedRelationship[]> => {
+): Promise<ExtendedRelationshipWithSourceAndTarget[]> => {
   const { resourceExternalIds, relationshipResourceTypes, ...rest } = payload;
 
   const [sourceRelationships, targetRelationships] = await Promise.all([

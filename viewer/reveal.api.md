@@ -443,6 +443,8 @@ export class Cognite3DViewer<DataSourceT extends DataSourceType = ClassicDataSou
     set cadBudget(budget: CadModelBudget);
     // (undocumented)
     get cameraManager(): CameraManager;
+    // @beta
+    canDoImage360Action(action: Image360Action): boolean;
     get canvas(): HTMLCanvasElement;
     // @beta
     createCustomObjectIntersectInput(pixelCoords: THREE.Vector2): CustomObjectIntersectInput;
@@ -476,6 +478,8 @@ export class Cognite3DViewer<DataSourceT extends DataSourceType = ClassicDataSou
     getViewState(): ViewerState;
     // @beta
     getVisualSceneBoundingBox(): THREE.Box3;
+    // @beta
+    image360Action(action: Image360Action): Promise<void>;
     loadCameraFromModel(model: CogniteModel<DataSourceT>): void;
     get models(): CogniteModel<DataSourceT>[];
     // (undocumented)
@@ -1210,6 +1214,14 @@ export interface Image360<T extends DataSourceType = ClassicDataSourceType> {
     readonly label: string | undefined;
     setIconColor(color: Color | 'default'): void;
     readonly transform: Matrix4;
+}
+
+// @beta
+export enum Image360Action {
+    Backward = 1,
+    Enter = 2,
+    Exit = 3,
+    Forward = 0
 }
 
 // @public

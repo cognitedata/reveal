@@ -126,7 +126,8 @@ export {
   Image360Annotation,
   Image360AnnotationAssetFilter,
   Image360AnnotationAssetQueryResult,
-  Image360AnnotationFilterOptions
+  Image360AnnotationFilterOptions,
+  Image360Action
 } from '../packages/360-images';
 
 export {

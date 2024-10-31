@@ -2,7 +2,7 @@
  * Copyright 2024 Cognite AS
  */
 
-import { type ReactElement, useState, useEffect, useMemo, useCallback } from 'react';
+import { type ReactElement, useState, useMemo } from 'react';
 import { useRenderTarget } from '../RevealCanvas/ViewerContext';
 import { SegmentedControl, Tooltip as CogsTooltip } from '@cognite/cogs.js';
 import { useTranslation } from '../i18n/I18n';
@@ -11,13 +11,15 @@ import { getDefaultCommand, getIcon, getTooltipPlacement } from './utilities';
 import { BaseOptionCommand } from '../../architecture/base/commands/BaseOptionCommand';
 import { LabelWithShortcut } from './LabelWithShortcut';
 import { IconComponent } from './IconComponentMapper';
+import { useOnUpdate } from './useOnUpdate';
+import { type PlacementType } from './types';
 
 export const SegmentedButtons = ({
   inputCommand,
-  isHorizontal = false
+  placement
 }: {
   inputCommand: BaseOptionCommand;
-  isHorizontal: boolean;
+  placement: PlacementType;
 }): ReactElement => {
   const renderTarget = useRenderTarget();
   const { t } = useTranslation();
@@ -32,28 +34,19 @@ export const SegmentedButtons = ({
   const [uniqueId, setUniqueId] = useState(0);
   const [selected, setSelected] = useState(getSelectedKey(command));
 
-  const update = useCallback((command: BaseCommand) => {
+  useOnUpdate(command, () => {
     setEnabled(command.isEnabled);
     setVisible(command.isVisible);
     setUniqueId(command.uniqueId);
     if (command instanceof BaseOptionCommand) {
       setSelected(getSelectedKey(command));
     }
-  }, []);
-
-  useEffect(() => {
-    update(command);
-    command.addEventListener(update);
-    return () => {
-      command.removeEventListener(update);
-    };
-  }, [command]);
+  });
   // @end
 
   if (!isVisible || command.children === undefined) {
     return <></>;
   }
-  const placement = getTooltipPlacement(isHorizontal);
   const label = command.getLabel(t);
 
   return (
@@ -61,7 +54,7 @@ export const SegmentedButtons = ({
       content={<LabelWithShortcut label={label} command={command} />}
       disabled={label === undefined}
       appendTo={document.body}
-      placement={placement}>
+      placement={getTooltipPlacement(placement)}>
       <SegmentedControl
         key={uniqueId}
         disabled={!isEnabled}
