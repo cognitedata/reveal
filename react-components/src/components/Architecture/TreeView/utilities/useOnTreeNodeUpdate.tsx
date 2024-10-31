@@ -3,7 +3,7 @@
  */
 
 import { useCallback, useEffect } from 'react';
-import { type ITreeNode } from '../../../architecture';
+import { type ITreeNode } from '../../../../architecture';
 
 export const useOnTreeNodeUpdate = (node: ITreeNode, update: () => void): void => {
   const memoizedUpdate = useCallback(update, [node]);

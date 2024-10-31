@@ -4,9 +4,9 @@
 
 import { type ReactElement } from 'react';
 import { type TreeViewProps } from './TreeViewProps';
-import { getChildrenAsArray, TreeViewNode } from './TreeViewNode';
-
-const BACKGROUND_COLOR = 'white';
+import { TreeViewNode } from './TreeViewNode';
+import { getChildrenAsArray } from './utilities/getChildrenAsArray';
+import { BACKGROUND_COLOR } from './utilities/constants';
 
 export const TreeView = (props: TreeViewProps): ReactElement => {
   const id = 'treeView';

@@ -5,34 +5,27 @@
 /* eslint-disable react/prop-types */
 
 import { type ReactElement, useState, useReducer } from 'react';
-import { Button, CaretDownIcon, CaretRightIcon, Checkbox, LoaderIcon } from '@cognite/cogs.js';
-import { IconComponentMapper } from '../IconComponentMapper';
 import { type TreeViewProps } from './TreeViewProps';
 import { type ITreeNode } from '../../../architecture/base/treeView/ITreeNode';
+import { CheckBoxState } from '../../../architecture/base/treeView/types';
+import { useOnTreeNodeUpdate } from './utilities/useOnTreeNodeUpdate';
+import { LoadingMoreLabel } from './components/LoadingMoreLabel';
+import { LoadMoreButton } from './components/LoadMoreButton';
+import { TreeNodeIcon } from './components/TreeNodeIcon';
+import { TreeViewLabel } from './components/TreeViewLabel';
+import { TreeNodeCaret } from './components/TreeNodeCaret';
+import { TreeNodeCheckBox } from './components/TreeNodeCheckBox';
+import { getChildrenAsArray } from './utilities/getChildrenAsArray';
 import {
-  CheckBoxState,
-  type LoadNodesAction,
-  type TreeNodeAction
-} from '../../../architecture/base/treeView/types';
-import { useOnTreeNodeUpdate } from './useOnTreeNodeUpdate';
-
-// ==================================================
-// CONSTANTS
-// ==================================================
-
-const TEXT_COLOR = 'black';
-const DISABLED_TEXT_COLOR = 'lightgray';
-const SELECTED_TEXT_COLOR = 'white';
-const SELECTED_BACKGROUND_COLOR = 'highlight';
-const HOVER_TEXT_COLOR = 'black';
-const HOVER_BACKGROUND_COLOR = 'lightgray';
-const CARET_COLOR = 'gray';
-const HOVER_CARET_COLOR = 'highlight';
-const CARET_SIZE = 20;
-const GAP_TO_CHILDREN = 16;
-const GAP_BETWEEN_ITEMS = 4;
-const LOADING_LABEL = 'Loading ...';
-const LOAD_MORE_LABEL = 'Load more ...';
+  DISABLED_TEXT_COLOR,
+  GAP_BETWEEN_ITEMS,
+  GAP_TO_CHILDREN,
+  HOVER_BACKGROUND_COLOR,
+  HOVER_TEXT_COLOR,
+  SELECTED_BACKGROUND_COLOR,
+  SELECTED_TEXT_COLOR,
+  TEXT_COLOR
+} from './utilities/constants';
 
 // ==================================================
 // MAIN COMPONENT
@@ -182,190 +175,3 @@ export const TreeViewNode = ({
     return props.textColor ?? TEXT_COLOR;
   }
 };
-
-// ==================================================
-// OTHER COMPONENTS
-// ==================================================
-
-const TreeNodeCheckBox = ({
-  node,
-  onClick
-}: {
-  node: ITreeNode;
-  onClick: TreeNodeAction;
-}): ReactElement => {
-  if (node.checkBoxState === CheckBoxState.Hidden) {
-    return <></>;
-  }
-  if (node.checkBoxState === CheckBoxState.Some) {
-    return (
-      <Checkbox
-        indeterminate={true}
-        defaultChecked={true}
-        checked={true}
-        disabled={!node.isEnabled}
-        onChange={() => {
-          onClick(node);
-        }}
-      />
-    );
-  }
-  const checked = node.checkBoxState === CheckBoxState.All;
-  return (
-    <Checkbox
-      checked={checked}
-      disabled={!node.isEnabled}
-      onChange={() => {
-        onClick(node);
-      }}
-    />
-  );
-};
-
-const TreeNodeCaret = ({
-  node,
-  onClick,
-  props
-}: {
-  node: ITreeNode;
-  onClick: TreeNodeAction;
-  props: TreeViewProps;
-}): ReactElement => {
-  const [isHoverOver, setHoverOver] = useState(false);
-  const color = getCaretColor(node, props, isHoverOver);
-  const size = props.caretSize ?? CARET_SIZE;
-  const sizePx = size + 'px';
-  const style = { color, marginTop: '0px', width: sizePx, height: sizePx };
-
-  if (node.isParent) {
-    const Icon = node.isExpanded ? CaretDownIcon : CaretRightIcon;
-    return (
-      <Icon
-        onClick={() => {
-          onClick(node);
-        }}
-        onMouseEnter={() => {
-          setHoverOver(true);
-        }}
-        onMouseLeave={() => {
-          setHoverOver(false);
-        }}
-        style={style}
-      />
-    );
-  }
-  return <CaretDownIcon style={style} />;
-};
-
-const TreeNodeIcon = ({
-  node,
-  color
-}: {
-  node: ITreeNode;
-  color: string | undefined;
-}): ReactElement => {
-  if (!node.isSelected && node.iconColor !== undefined) {
-    color = node.iconColor;
-  }
-  const Icon = node.isLoadingChildren ? LoaderIcon : IconComponentMapper.getIcon(node.icon);
-  return <Icon style={{ color, marginTop: '3px' }} />;
-};
-
-const LoadMoreButton = ({
-  node,
-  onClick,
-  level,
-  props
-}: {
-  node: ITreeNode;
-  onClick: TreeNodeAction;
-  level: number;
-  props: TreeViewProps;
-}): ReactElement => {
-  const gapBetweenItems = (props.gapBetweenItems ?? GAP_BETWEEN_ITEMS) + 'px';
-  const gapToChildren = props.gapToChildren ?? GAP_TO_CHILDREN;
-  const marginLeft = (level + 1) * gapToChildren + 'px';
-  return (
-    <Button
-      style={{
-        gap: gapBetweenItems,
-        padding: '4px',
-        marginTop: gapBetweenItems,
-        marginLeft
-      }}
-      onClick={() => {
-        onClick(node);
-      }}>
-      {props.loadMoreLabel ?? LOAD_MORE_LABEL}
-    </Button>
-  );
-};
-
-const LoadingMoreLabel = ({
-  level,
-  props
-}: {
-  level: number;
-  props: TreeViewProps;
-}): ReactElement => {
-  const label = props.loadingLabel ?? LOADING_LABEL;
-  const gapBetweenItems = (props.gapBetweenItems ?? GAP_BETWEEN_ITEMS) + 'px';
-  const gapToChildren = props.gapToChildren ?? GAP_TO_CHILDREN;
-  return (
-    <div
-      style={{
-        gap: gapBetweenItems,
-        marginTop: gapBetweenItems,
-        marginLeft: (level + 1) * gapToChildren + 'px'
-      }}>
-      <LoaderIcon style={{ marginTop: '3px', marginRight: '5px' }} />
-      <span>{label}</span>
-    </div>
-  );
-};
-
-const TreeViewLabel = ({
-  node,
-  props
-}: {
-  node: ITreeNode;
-  props: TreeViewProps;
-}): ReactElement => {
-  const label = node.isLoadingChildren ? (props.loadingLabel ?? LOADING_LABEL) : node.label;
-  if (node.hasBoldLabel) {
-    return <b>{label}</b>;
-  }
-  return <span>{label}</span>;
-};
-
-// ==================================================
-// FUNCTIONS
-// ==================================================
-
-export function getChildrenAsArray(
-  node: ITreeNode,
-  loadNodes: LoadNodesAction | undefined,
-  useExpanded = true
-): ITreeNode[] | undefined {
-  if (useExpanded && !node.isExpanded) {
-    return undefined;
-  }
-  if (node.getChildren(loadNodes).next().value === undefined) {
-    return undefined;
-  }
-  return Array.from(node.getChildren(loadNodes));
-}
-
-function getCaretColor(
-  node: ITreeNode,
-  props: TreeViewProps,
-  isHoverOver: boolean
-): string | undefined {
-  if (!node.isParent) {
-    return 'transparent';
-  }
-  if (isHoverOver) {
-    return props.hoverCaretColor ?? HOVER_CARET_COLOR;
-  }
-  return props.caretColor ?? CARET_COLOR;
-}
