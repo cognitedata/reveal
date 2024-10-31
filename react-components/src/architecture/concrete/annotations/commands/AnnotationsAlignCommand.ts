@@ -10,6 +10,7 @@ import { type TranslateKey } from '../../../base/utilities/TranslateKey';
 import { AnnotationsDomainObject } from '../AnnotationsDomainObject';
 import { SolidDomainObject } from '../../primitives/common/SolidDomainObject';
 import { AnnotationChangedDescription } from '../helpers/AnnotationChangedDescription';
+import { type IconName } from '../../../base/utilities/IconName';
 
 export class AlignSelectedAnnotationCommand extends RenderTargetCommand {
   private readonly _horizontal: boolean;
@@ -41,7 +42,7 @@ export class AlignSelectedAnnotationCommand extends RenderTargetCommand {
     }
   }
 
-  public override get icon(): string {
+  public override get icon(): IconName {
     return this._horizontal ? 'BorderHorizontal' : 'BorderVertical';
   }
 

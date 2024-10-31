@@ -58,7 +58,7 @@ export class SettingsCommand extends BaseSettingsCommand {
     return { key: 'SETTINGS_TOOLTIP', fallback: 'Settings' };
   }
 
-  public override get icon(): IconName | undefined {
+  public override get icon(): IconName {
     return 'Settings';
   }
 }

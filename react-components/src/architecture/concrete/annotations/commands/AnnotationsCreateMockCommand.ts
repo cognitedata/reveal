@@ -15,13 +15,14 @@ import { Changes } from '../../../base/domainObjectsHelpers/Changes';
 import { Annotation } from '../helpers/Annotation';
 import { Cylinder } from '../../../base/utilities/primitives/Cylinder';
 import { Box } from '../../../base/utilities/primitives/Box';
+import { type IconName } from '../../../base/utilities/IconName';
 
 export class AnnotationsCreateMockCommand extends InstanceCommand {
   // ==================================================
   // OVERRIDES
   // ==================================================
 
-  public override get icon(): string {
+  public override get icon(): IconName {
     return 'Bug';
   }
 

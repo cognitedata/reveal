@@ -47,7 +47,7 @@ export class SetFlexibleControlsTypeCommand extends RenderTargetCommand {
     flexibleCameraManager.removeControlsTypeChangeListener(this._controlsTypeChangeHandler);
   }
 
-  public override get icon(): IconName | undefined {
+  public override get icon(): IconName {
     switch (this._controlsType) {
       case FlexibleControlsType.FirstPerson:
         return 'Plane';

@@ -10,7 +10,7 @@ import { useTranslation } from '../i18n/I18n';
 import { type BaseCommand } from '../../architecture/base/commands/BaseCommand';
 import { useRenderTarget } from '../RevealCanvas/ViewerContext';
 import { type BaseOptionCommand } from '../../architecture/base/commands/BaseOptionCommand';
-import { getButtonType, getDefaultCommand, getTooltipPlacement, getIcon } from './utilities';
+import { getButtonType, getDefaultCommand, getTooltipPlacement } from './utilities';
 import { LabelWithShortcut } from './LabelWithShortcut';
 import { type TranslateDelegate } from '../../architecture/base/utilities/TranslateKey';
 import { DEFAULT_PADDING, OPTION_MIN_WIDTH, TOOLTIP_DELAY } from './constants';
@@ -171,7 +171,7 @@ function createMenuItem(command: BaseCommand, t: TranslateDelegate): ReactElemen
   return (
     <Menu.ItemToggled
       key={command.uniqueId}
-      icon={getIcon(command)}
+      icon={command.icon}
       disabled={!command.isEnabled}
       toggled={command.isChecked}
       iconPlacement="left"

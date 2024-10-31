@@ -17,6 +17,7 @@ import { DividerCommand } from '../../architecture/base/commands/DividerCommand'
 import { SectionCommand } from '../../architecture/base/commands/SectionCommand';
 import { type PlacementType } from './types';
 import { type ButtonProp } from './RevealButtons';
+import { getDividerDirection } from './utilities';
 
 export function createButton(command: BaseCommand, placement: PlacementType): ReactElement {
   if (command instanceof BaseFilterCommand) {

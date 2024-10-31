@@ -11,6 +11,7 @@ import { VisualDomainObject } from '../../../base/domainObjects/VisualDomainObje
 import { getIconByPrimitiveType } from '../../measurements/getIconByPrimitiveType';
 import { DomainObjectTransaction } from '../../../base/undo/DomainObjectTransaction';
 import { type Transaction } from '../../../base/undo/Transaction';
+import { type IconName } from '../../../base/utilities/IconName';
 
 export abstract class SolidDomainObject extends VisualDomainObject {
   // For focus when edit in 3D (Used when isSelected is true only)
@@ -38,7 +39,7 @@ export abstract class SolidDomainObject extends VisualDomainObject {
   // OVERRIDES of DomainObject
   // ==================================================
 
-  public override get icon(): string {
+  public override get icon(): IconName {
     return getIconByPrimitiveType(this.primitiveType);
   }
 
