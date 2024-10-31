@@ -13,7 +13,7 @@ import { type BaseOptionCommand } from '../../architecture/base/commands/BaseOpt
 import { getButtonType, getDefaultCommand, getTooltipPlacement, getIcon } from './utilities';
 import { LabelWithShortcut } from './LabelWithShortcut';
 import { type TranslateDelegate } from '../../architecture/base/utilities/TranslateKey';
-import { DEFAULT_PADDING, OPTION_MIN_WIDTH } from './constants';
+import { DEFAULT_PADDING, OPTION_MIN_WIDTH, TOOLTIP_DELAY } from './constants';
 
 import styled from 'styled-components';
 import { useOnUpdate } from './useOnUpdate';
@@ -105,6 +105,7 @@ const DropdownElement = ({
           content={<LabelWithShortcut label={label} command={command} />}
           disabled={label === undefined}
           appendTo={document.body}
+          enterDelay={TOOLTIP_DELAY}
           placement={getTooltipPlacement(placement)}>
           <Button
             style={{

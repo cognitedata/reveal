@@ -87,7 +87,7 @@ function CommandButtonWrapper({
     command instanceof SectionCommand ||
     command === undefined
   ) {
-    const direction = placement === 'left' || placement === 'right' ? 'horizontal' : 'vertical';
+    const direction = getDividerDirection(placement);
     return <Divider weight="2px" length="24px" direction={direction} />;
   }
   return createButton(command, placement);

@@ -13,6 +13,7 @@ import { LabelWithShortcut } from './LabelWithShortcut';
 import { IconComponent } from './IconComponentMapper';
 import { useOnUpdate } from './useOnUpdate';
 import { type PlacementType } from './types';
+import { TOOLTIP_DELAY } from './constants';
 
 export const SegmentedButtons = ({
   inputCommand,
@@ -54,6 +55,7 @@ export const SegmentedButtons = ({
       content={<LabelWithShortcut label={label} command={command} />}
       disabled={label === undefined}
       appendTo={document.body}
+      enterDelay={TOOLTIP_DELAY}
       placement={getTooltipPlacement(placement)}>
       <SegmentedControl
         key={uniqueId}

@@ -24,18 +24,6 @@ import { AnnotationsSelectTool } from '../../architecture/concrete/annotations/c
 import { Image360ActionCommand } from '../../architecture/base/concreteCommands/image360Collection/Image360ActionCommand';
 import { type PlacementType } from './types';
 
-export type ButtonProp = {
-  toolbarPlacement?: PlacementType;
-};
-
-export type SettingsProp = ButtonProp & {
-  include360Images?: boolean;
-};
-
-export type Image360Prop = ButtonProp & {
-  action: Image360Action;
-};
-
 export class RevealButtons {
   static Settings = (props: SettingsProp): ReactElement =>
     createButtonFromCommandConstructor(
@@ -110,3 +98,15 @@ export class RevealButtons {
   static AnnotationsShowOnTop = (prop: ButtonProp): ReactElement =>
     createButtonFromCommandConstructor(() => new AnnotationsShowOnTopCommand(), prop);
 }
+
+export type ButtonProp = {
+  toolbarPlacement?: PlacementType;
+};
+
+type SettingsProp = ButtonProp & {
+  include360Images?: boolean;
+};
+
+type Image360Prop = ButtonProp & {
+  action: Image360Action;
+};
