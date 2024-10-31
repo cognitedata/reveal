@@ -2,7 +2,7 @@
  * Copyright 2024 Cognite AS
  */
 
-import { ReactNode, useMemo, useState, type ReactElement } from 'react';
+import { type ReactNode, useMemo, useState, type ReactElement } from 'react';
 import { Button, Tooltip as CogsTooltip, Slider, Switch } from '@cognite/cogs.js';
 import { Menu } from '@cognite/cogs-lab';
 import { useTranslation } from '../i18n/I18n';
