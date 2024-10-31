@@ -19,6 +19,10 @@ export function getFlexDirection(placement: PlacementType): FlexDirection {
   return placement === 'top' || placement === 'bottom' ? 'row' : 'column';
 }
 
+export function getDividerDirection(placement: PlacementType): string {
+  return placement === 'top' || placement === 'bottom' ? 'vertical' : 'horizontal';
+}
+
 export function getTooltipPlacement(placement: PlacementType): PlacementType {
   switch (placement) {
     case 'top':
