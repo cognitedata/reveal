@@ -9,10 +9,10 @@ import { type CustomToolbarContent } from '../RevealToolbar/RevealToolbar';
 import { SettingsButton } from '../RevealToolbar/SettingsButton';
 import { HelpButton } from '../RevealToolbar/HelpButton';
 import { Divider } from '@cognite/cogs.js';
-import { SetOrbitOrFirstPersonControlsType } from '../RevealToolbar/SetFlexibleControlsType';
 import { RuleBasedOutputsButton } from '../RevealToolbar/RuleBasedOutputsButton';
 import { LayersButtonStrip } from '../RevealToolbar/LayersButton/LayersButtonsStrip';
 import { ResetCameraButton } from '../RevealToolbar/ResetCameraButton';
+import { RevealButtons } from '../Architecture';
 
 export type CustomTopbarContent = CustomToolbarContent & { topbarContent?: ReactNode };
 
@@ -28,7 +28,7 @@ const DefaultContentWrapper = (props: CustomTopbarContent): ReactElement => {
         <RuleBasedOutputsButton />
       </FlexSection>
       <FlexSection>
-        <SetOrbitOrFirstPersonControlsType orientation="horizontal" />
+        <RevealButtons.SetOrbitOrFirstPersonMode toolbarPlacement="top" />
         <Divider weight="1px" length="75%" direction="vertical" />
         <HelpButton />
         <SettingsButton
