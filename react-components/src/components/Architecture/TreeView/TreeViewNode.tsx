@@ -4,7 +4,7 @@
 
 /* eslint-disable react/prop-types */
 
-import { type ReactElement, useEffect, useState, useCallback, useReducer } from 'react';
+import { type ReactElement, useState, useReducer } from 'react';
 import { Button, CaretDownIcon, CaretRightIcon, Checkbox, LoaderIcon } from '@cognite/cogs.js';
 import { IconComponentMapper } from '../IconComponentMapper';
 import { type TreeViewProps } from './TreeViewProps';
@@ -14,6 +14,7 @@ import {
   type LoadNodesAction,
   type TreeNodeAction
 } from '../../../architecture/base/treeView/types';
+import { useOnTreeNodeUpdate } from './useOnTreeNodeUpdate';
 
 // ==================================================
 // CONSTANTS
@@ -51,17 +52,9 @@ export const TreeViewNode = ({
   // This force to update the component when the node changes
   // See https://coreui.io/blog/how-to-force-a-react-component-to-re-render/
   const [, forceUpdate] = useReducer((x) => x + 1, 0);
-  const update = useCallback((_node: ITreeNode) => {
+  useOnTreeNodeUpdate(node, () => {
     forceUpdate();
-  }, []);
-
-  useEffect(() => {
-    update(node);
-    node.addTreeNodeListener(update);
-    return () => {
-      node.removeTreeNodeListener(update);
-    };
-  }, [node]);
+  });
 
   // Props
   const children = getChildrenAsArray(node, props.loadNodes);
