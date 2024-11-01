@@ -43,7 +43,7 @@ export class MockSettingsCommand extends BaseSettingsCommand {
     return { fallback: 'Mock Settings' };
   }
 
-  public override get icon(): IconName | undefined {
+  public override get icon(): IconName {
     return 'Bug';
   }
 }

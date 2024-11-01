@@ -53,7 +53,7 @@ The this folder create the class `PointDomainObject`, extend it from `VisualDoma
 You override these methods, so it has a icon and a type name.
 
 ```typescript
-public override get icon(): string {
+public override get icon(): IconName {
   return 'Circle';
 }
 
@@ -456,7 +456,7 @@ export class ResetAllPointsCommand extends RenderTargetCommand {
     return { key: 'POINTS_RESET', fallback: 'Reset the visual style in all points' };
   }
 
-  public override get icon(): string {
+  public override get icon(): IconName {
     return 'ClearAllIcon';
   }
 
@@ -532,7 +532,7 @@ export class ShowPointsOnTopCommand extends RenderTargetCommand {
     return { key: 'POINTS_SHOW_ON_TOP', fallback: 'Show all points on top' };
   }
 
-  public override get icon(): string {
+  public override get icon(): IconName {
     return 'Flag';
   }
 

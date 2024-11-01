@@ -7,6 +7,7 @@ import { type BaseCommand } from '../../../base/commands/BaseCommand';
 import { PrimitiveType } from '../../../base/utilities/primitives/PrimitiveType';
 import { RenderTargetCommand } from '../../../base/commands/RenderTargetCommand';
 import { AnnotationsCreateTool } from './AnnotationsCreateTool';
+import { type IconName } from '../../../base/utilities/IconName';
 
 export class AnnotationsSetCreateTypeCommand extends RenderTargetCommand {
   // ==================================================
@@ -28,7 +29,7 @@ export class AnnotationsSetCreateTypeCommand extends RenderTargetCommand {
   // OVERRIDES of BaseCommand
   // ==================================================
 
-  public override get icon(): string {
+  public override get icon(): IconName {
     switch (this._primitiveType) {
       case PrimitiveType.Box:
         return 'Cube';

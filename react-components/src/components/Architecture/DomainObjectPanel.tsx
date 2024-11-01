@@ -18,9 +18,7 @@ import { CommandButtons } from './Toolbar';
 import { withSuppressRevealEvents } from '../../higher-order-components/withSuppressRevealEvents';
 import { type TranslateDelegate } from '../../architecture/base/utilities/TranslateKey';
 import { type UnitSystem } from '../../architecture/base/renderTarget/UnitSystem';
-import { type DomainObject } from '../../architecture/base/domainObjects/DomainObject';
 import { IconComponent } from './IconComponentMapper';
-import { type IconName } from '../../architecture/base/utilities/IconName';
 
 const TEXT_SIZE = 'x-small';
 const HEADER_SIZE = 'medium';
@@ -62,7 +60,7 @@ export const DomainObjectPanel = (): ReactElement => {
     return <></>;
   }
   const unitSystem = root.unitSystem;
-  const iconName = getIcon(domainObject);
+  const icon = domainObject.icon;
   const header = info.header;
   const text = header?.getText(t);
   return (
@@ -77,11 +75,11 @@ export const DomainObjectPanel = (): ReactElement => {
       }}>
       <Flex justifyContent={'space-between'} alignItems={'center'}>
         <Flex gap={8}>
-          {iconName !== undefined && <IconComponent iconName={iconName} type={'ghost'} />}
+          {icon !== undefined && <IconComponent iconName={icon} type={'ghost'} />}
           {text !== undefined && <Body size={HEADER_SIZE}>{text}</Body>}
         </Flex>
         <Flex>
-          <CommandButtons commands={commands} isHorizontal={true} />
+          <CommandButtons commands={commands} placement={'bottom'} />
         </Flex>
       </Flex>
       <table>
@@ -130,13 +128,6 @@ function toString(info: PanelInfo, translate: TranslateDelegate, unitSystem: Uni
     result += `${unitSystem.toStringWithUnit(item.value, item.quantity)}\n`;
   }
   return result;
-}
-
-export function getIcon(domainObject: DomainObject): IconName | undefined {
-  if (domainObject.icon === undefined) {
-    return undefined;
-  }
-  return domainObject.icon;
 }
 
 const NumberTh = styled.th`

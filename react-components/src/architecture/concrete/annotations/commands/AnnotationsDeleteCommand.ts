@@ -3,6 +3,7 @@
  */
 
 import { RenderTargetCommand } from '../../../base/commands/RenderTargetCommand';
+import { type IconName } from '../../../base/utilities/IconName';
 import { type TranslateKey } from '../../../base/utilities/TranslateKey';
 import { AnnotationsDomainObject } from '../AnnotationsDomainObject';
 
@@ -15,7 +16,7 @@ export class AnnotationsDeleteCommand extends RenderTargetCommand {
     return { key: 'ANNOTATIONS_DELETE', fallback: 'Delete selected annotations' };
   }
 
-  public override get icon(): string {
+  public override get icon(): IconName {
     return 'Delete';
   }
 

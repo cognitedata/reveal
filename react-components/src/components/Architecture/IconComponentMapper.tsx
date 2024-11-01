@@ -120,16 +120,15 @@ export class IconComponentMapper {
     IconComponentMapper._iconMap.set(name, icon);
   }
 
-  public static getIcon(name: IconName | undefined): IconType {
+  public static getIcon(name: IconName): IconType {
     if (name === undefined) {
       return DefaultIcon;
     }
-
     return IconComponentMapper._iconMap.get(name) ?? DefaultIcon;
   }
 }
 
-type IconComponentProps = IconProps & { iconName: IconName | undefined };
+type IconComponentProps = IconProps & { iconName: IconName };
 
 export const IconComponent = ({ iconName, ...rest }: IconComponentProps): JSX.Element => {
   const Icon = IconComponentMapper.getIcon(iconName);

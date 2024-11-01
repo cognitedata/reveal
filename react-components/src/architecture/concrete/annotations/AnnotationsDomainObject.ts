@@ -19,6 +19,7 @@ import { AnnotationChangedDescription } from './helpers/AnnotationChangedDescrip
 import { DomainObjectChange } from '../../base/domainObjectsHelpers/DomainObjectChange';
 import { AnnotationUtils } from './helpers/AnnotationUtils';
 import { Annotation } from './helpers/Annotation';
+import { type IconName } from '../../base/utilities/IconName';
 
 type GizmoDomainObject = BoxGizmoDomainObject | CylinderGizmoDomainObject;
 
@@ -89,7 +90,7 @@ export class AnnotationsDomainObject extends VisualDomainObject {
   // OVERRIDES of DomainObject
   // ==================================================
 
-  public override get icon(): string {
+  public override get icon(): IconName {
     return 'Cube';
   }
 
