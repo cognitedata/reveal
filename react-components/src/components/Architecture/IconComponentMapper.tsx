@@ -124,7 +124,6 @@ export class IconComponentMapper {
     if (name === undefined) {
       return DefaultIcon;
     }
-
     return IconComponentMapper._iconMap.get(name) ?? DefaultIcon;
   }
 }
