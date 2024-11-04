@@ -155,6 +155,7 @@ const FilterMenu = ({
               event.stopPropagation();
               event.preventDefault();
               props.onClick(event);
+              setOpen(!isOpen);
             }}
           />
         </CogsTooltip>
@@ -180,7 +181,7 @@ const FilterDropdown = ({
   return (
     <StyledDropdownRow>
       <label>{label}</label>
-      <StyledSelectPanel appendTo={'parent'} placement={'right-end'}>
+      <StyledSelectPanel appendTo={'parent'} placement={'right-end'} hideOnOutsideClick>
         <SelectPanel.Trigger>
           <Button
             color="#000044"
