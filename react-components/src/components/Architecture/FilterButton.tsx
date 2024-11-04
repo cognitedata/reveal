@@ -155,6 +155,7 @@ const FilterMenu = ({
               event.stopPropagation();
               event.preventDefault();
               props.onClick(event);
+              setOpen(!isOpen);
             }}
           />
         </CogsTooltip>
