@@ -77,9 +77,8 @@ export const SettingsButton = ({
         setOpen(open);
       }}
       floatingProps={{ middleware: [offset(TOOLBAR_HORIZONTAL_PANEL_OFFSET)] }}
-      appendTo={'parent'}
+      container={'parent'}
       placement="right-end"
-      zindex={998}
       style={{
         flexDirection,
         padding: DEFAULT_PADDING
@@ -349,5 +348,7 @@ const StyledSlider = styled(Slider)`
 `;
 
 const StyledMenu = styled(Menu)`
-  z-index: 998;
+  z-index: 998 !important;
+  max-height: 300px !important;
+  overflow-y: auto !important;
 `;
