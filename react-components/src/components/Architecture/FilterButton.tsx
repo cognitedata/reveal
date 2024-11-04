@@ -124,7 +124,7 @@ const FilterMenu = ({
   label: string;
   isEnabled: boolean;
   placement: PlacementType;
-  iconName: string | undefined;
+  iconName: IconName;
   uniqueId: number;
   PanelContent: ReactElement;
 }): ReactElement => {

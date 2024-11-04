@@ -15,10 +15,6 @@ import { type QualitySettings } from './SettingsContainer/types';
 import styled from 'styled-components';
 import { SelectSceneButton } from './SelectSceneButton';
 import { RuleBasedOutputsButton } from './RuleBasedOutputsButton';
-import {
-  SetFlexibleControlsType,
-  SetOrbitOrFirstPersonControlsType
-} from './SetFlexibleControlsType';
 import { AssetContextualizedButton } from './AssetContextualizedButton';
 import { LayersButton } from './LayersButton/LayersButton';
 
@@ -110,8 +106,6 @@ export const RevealToolbar = withSuppressRevealEvents(
   SelectSceneButton: typeof SelectSceneButton;
   RuleBasedOutputsButton: typeof RuleBasedOutputsButton;
   AssetContextualizedButton: typeof AssetContextualizedButton;
-  SetOrbitOrFirstPersonControlsType: typeof SetOrbitOrFirstPersonControlsType;
-  SetFlexibleControlsType: typeof SetFlexibleControlsType;
 };
 
 RevealToolbar.FitModelsButton = FitModelsButton;
@@ -124,5 +118,3 @@ RevealToolbar.ResetCameraButton = ResetCameraButton;
 RevealToolbar.SelectSceneButton = SelectSceneButton;
 RevealToolbar.RuleBasedOutputsButton = RuleBasedOutputsButton;
 RevealToolbar.AssetContextualizedButton = AssetContextualizedButton;
-RevealToolbar.SetOrbitOrFirstPersonControlsType = SetOrbitOrFirstPersonControlsType;
-RevealToolbar.SetFlexibleControlsType = SetFlexibleControlsType;

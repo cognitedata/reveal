@@ -3,7 +3,7 @@
  */
 
 import type { Meta, StoryObj } from '@storybook/react';
-import { Reveal3DResources, RevealTopbar, RevealCanvas, type AddResourceOptions } from '../src';
+import { Reveal3DResources, RevealCanvas, type AddResourceOptions, RevealToolbar } from '../src';
 import { Color } from 'three';
 import { useState } from 'react';
 import { RevealResourcesFitCameraOnLoad } from './utilities/with3dResoursesFitCameraOnLoad';
@@ -43,8 +43,9 @@ export const Main: Story = {
 
     return (
       <RevealStoryContext color={new Color(0x4a4a4a)}>
-        {resourceIsLoaded && <RevealTopbar topbarContent={<RuleBasedOutputsButton />} />}
-        <RevealCanvas />
+        <RevealCanvas>
+          {resourceIsLoaded && <RevealToolbar toolBarContent=<RuleBasedOutputsButton /> />}
+        </RevealCanvas>
         <RevealResourcesFitCameraOnLoad onResourcesAdded={onLoaded} resources={resources} />
       </RevealStoryContext>
     );

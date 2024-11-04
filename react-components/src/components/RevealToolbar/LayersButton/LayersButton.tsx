@@ -7,7 +7,7 @@ import { useTranslation } from '../../i18n/I18n';
 import { type UpdateModelHandlersCallback, useModelHandlers } from './useModelHandlers';
 import { useSyncExternalLayersState } from './useSyncExternalLayersState';
 import { SelectPanel } from '@cognite/cogs-lab';
-import { Button, ChevronRightSmallIcon, IconWrapper, LayersIcon } from '@cognite/cogs.js';
+import { Button, ChevronRightSmallIcon, IconWrapper, LayersIcon, Tooltip } from '@cognite/cogs.js';
 import { type ModelHandler } from './ModelHandler';
 import { useRenderTarget, useReveal } from '../../RevealCanvas/ViewerContext';
 import { WholeLayerVisibilitySelectItem } from './WholeLayerVisibilitySelectItem';
@@ -15,6 +15,7 @@ import { ModelLayersList } from './ModelLayersList';
 import { type DefaultLayersConfiguration, type LayersUrlStateParam } from './types';
 import { TOOLBAR_HORIZONTAL_PANEL_OFFSET } from '../../constants';
 import { CommandsUpdater } from '../../../architecture/base/reactUpdaters/CommandsUpdater';
+import { LabelWithShortcut } from '../../Architecture/LabelWithShortcut';
 
 export type LayersButtonProps = {
   layersState?: LayersUrlStateParam | undefined;
@@ -56,7 +57,14 @@ export const LayersButton = ({
         hideOnOutsideClick
         offset={TOOLBAR_HORIZONTAL_PANEL_OFFSET}>
         <SelectPanel.Trigger>
-          <Button icon=<LayersIcon /> type="ghost" />
+          <Tooltip
+            content={
+              <LabelWithShortcut label={t('LAYERS_FILTER_TOOLTIP', 'Filter 3D resource layers')} />
+            }
+            placement="right"
+            appendTo={document.body}>
+            <Button icon=<LayersIcon /> type="ghost" />
+          </Tooltip>
         </SelectPanel.Trigger>
         <SelectPanel.Body>
           <SelectPanel.Section>
