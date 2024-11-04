@@ -85,7 +85,14 @@ export abstract class BaseTool extends RenderTargetCommand {
     // Override this to clear any temporary objects in the tool, like the dragger
   }
 
-  public onHover(_event: PointerEvent): void {}
+  public onHover(_event: MouseEvent): void {
+    // Debounce version, fast. Use this for hover effects when not
+    // doing intersection with CAD models and other large models
+  }
+
+  public onHoverByDebounce(_event: PointerEvent): void {
+    // Debounce version. Use this when doing intersection with CAD models and other large models
+  }
 
   public async onClick(_event: PointerEvent): Promise<void> {
     await Promise.resolve();

@@ -74,6 +74,9 @@ export const SettingsButton = ({
     <StyledMenu
       hideOnSelect={false}
       onOpenChange={(open: boolean) => {
+        for (const child of children) {
+          child.update();
+        }
         setOpen(open);
       }}
       floatingProps={{ middleware: [offset(TOOLBAR_HORIZONTAL_PANEL_OFFSET)] }}
