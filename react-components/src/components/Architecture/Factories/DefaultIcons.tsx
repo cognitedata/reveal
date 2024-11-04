@@ -31,8 +31,9 @@ import {
   FlagIcon,
   FlipHorizontalIcon,
   FlipVerticalIcon,
+  FolderIcon,
   GrabIcon,
-  type IconProps,
+  LeafIcon,
   LocationIcon,
   PerspectiveAltIcon,
   PerspectiveIcon,
@@ -54,12 +55,11 @@ import {
   VectorZigzagIcon,
   View360Icon
 } from '@cognite/cogs.js';
-import { type JSX, type FC } from 'react';
-import { type IconName } from '../../architecture/base/utilities/IconName';
 
-type IconType = FC<IconProps>;
+import { type IconName } from '../../../architecture/base/utilities/IconName';
+import { type IconType } from './IconFactory';
 
-const defaultMappings: Array<[IconName, IconType]> = [
+export const DefaultIcons: Array<[IconName, IconType]> = [
   ['Angle', AngleIcon],
   ['ArrowLeft', ArrowLeftIcon],
   ['ArrowRight', ArrowRightIcon],
@@ -88,6 +88,8 @@ const defaultMappings: Array<[IconName, IconType]> = [
   ['Flag', FlagIcon],
   ['FlipHorizontal', FlipHorizontalIcon],
   ['FlipVertical', FlipVerticalIcon],
+  ['Folder', FolderIcon],
+  ['Leaf', LeafIcon],
   ['Grab', GrabIcon],
   ['Location', LocationIcon],
   ['Perspective', PerspectiveIcon],
@@ -110,27 +112,3 @@ const defaultMappings: Array<[IconName, IconType]> = [
   ['VectorZigzag', VectorZigzagIcon],
   ['View360', View360Icon]
 ];
-
-const DefaultIcon = (_iconProps: IconProps): JSX.Element => <></>;
-
-export class IconComponentMapper {
-  private static readonly _iconMap = new Map<IconName, IconType>(defaultMappings);
-
-  public static addIcon(name: IconName, icon: IconType): void {
-    IconComponentMapper._iconMap.set(name, icon);
-  }
-
-  public static getIcon(name: IconName): IconType {
-    if (name === undefined) {
-      return DefaultIcon;
-    }
-    return IconComponentMapper._iconMap.get(name) ?? DefaultIcon;
-  }
-}
-
-type IconComponentProps = IconProps & { iconName: IconName };
-
-export const IconComponent = ({ iconName, ...rest }: IconComponentProps): JSX.Element => {
-  const Icon = IconComponentMapper.getIcon(iconName);
-  return <Icon {...rest} />;
-};

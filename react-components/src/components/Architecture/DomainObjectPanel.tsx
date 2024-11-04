@@ -18,7 +18,7 @@ import { CommandButtons } from './Toolbar';
 import { withSuppressRevealEvents } from '../../higher-order-components/withSuppressRevealEvents';
 import { type TranslateDelegate } from '../../architecture/base/utilities/TranslateKey';
 import { type UnitSystem } from '../../architecture/base/renderTarget/UnitSystem';
-import { IconComponent } from './IconComponentMapper';
+import { IconComponent } from './Factories/IconFactory';
 
 const TEXT_SIZE = 'x-small';
 const HEADER_SIZE = 'medium';
