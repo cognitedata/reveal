@@ -86,7 +86,7 @@ export abstract class BaseTool extends RenderTargetCommand {
   }
 
   public onHover(_event: MouseEvent): void {
-    // Debounce version, fast. Use this for hover effects when not
+    // Fast. Use this for hover effects when not
     // doing intersection with CAD models and other large models
   }
 

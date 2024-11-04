@@ -33,9 +33,7 @@ export class NavigationTool extends BaseTool {
     return { key: 'NAVIGATION', fallback: 'Navigation' };
   }
 
-  public override onHoverByDebounce(event: PointerEvent): void {
-    this.renderTarget.viewer.onHover360Images(event);
-  }
+  public override onHoverByDebounce(_event: PointerEvent): void {}
 
   public override onHover(event: MouseEvent): void {
     this.renderTarget.viewer.onHover360Images(event as PointerEvent);
