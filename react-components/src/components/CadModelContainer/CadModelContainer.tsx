@@ -61,7 +61,9 @@ export function CadModelContainer({
         const errorReportFunction = onLoadError ?? defaultLoadErrorHandler;
         errorReportFunction(addModelOptions, error);
         setReveal3DResourceLoadFailCount((p) => p + 1);
-        return () => setReveal3DResourceLoadFailCount((p) => p - 1);
+        return () => {
+          setReveal3DResourceLoadFailCount((p) => p - 1);
+        };
       });
   }, [modelId, revisionId, geometryFilter]);
 

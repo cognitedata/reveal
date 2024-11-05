@@ -98,7 +98,9 @@ export function Image360CollectionContainer({
         const errorReportFunction = onLoadError ?? defaultLoadErrorHandler;
         errorReportFunction(addImage360CollectionOptions, error);
         setReveal3DResourceLoadFailCount((p) => p + 1);
-        return () => setReveal3DResourceLoadFailCount((p) => p - 1);
+        return () => {
+          setReveal3DResourceLoadFailCount((p) => p - 1);
+        };
       });
 
     async function getOrAdd360Collection(): Promise<Image360Collection> {
