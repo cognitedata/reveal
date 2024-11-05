@@ -172,14 +172,18 @@ export class TreeNode<T = any> implements ITreeNode {
     return this._children !== undefined && this._children.length > 0;
   }
 
+  public get parent(): TreeNode<T> | undefined {
+    return this._parent;
+  }
+
   // ==================================================
   // INSTANCE METHODS: Parent children methods
   // ==================================================
 
   // eslint-disable-next-line @typescript-eslint/prefer-return-this-type
   public getRoot(): TreeNode<T> {
-    if (this._parent !== undefined) {
-      return this._parent.getRoot();
+    if (this.parent !== undefined) {
+      return this.parent.getRoot();
     }
     return this;
   }
@@ -228,7 +232,7 @@ export class TreeNode<T = any> implements ITreeNode {
     if (siblings === undefined || siblings.length === 0) {
       return;
     }
-    const parent = this._parent;
+    const parent = this.parent;
     if (parent === undefined || parent._children === undefined) {
       return;
     }
@@ -280,7 +284,7 @@ export class TreeNode<T = any> implements ITreeNode {
     if (this.isLoadingChildren) {
       loadNodes = undefined;
     }
-    const canLoad = this.isParent && this._parent !== undefined;
+    const canLoad = this.isParent && this.parent !== undefined;
     if (canLoad && loadNodes !== undefined && this.needLoadChildren) {
       void this.loadChildren(loadNodes);
     }
@@ -309,10 +313,10 @@ export class TreeNode<T = any> implements ITreeNode {
   }
 
   public *getAncestors(): Generator<TreeNode<T>> {
-    let ancestor = this._parent;
+    let ancestor = this.parent;
     while (ancestor !== undefined) {
       yield ancestor;
-      ancestor = ancestor._parent;
+      ancestor = ancestor.parent;
     }
   }
 
