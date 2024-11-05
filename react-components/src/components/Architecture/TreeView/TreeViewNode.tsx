@@ -26,6 +26,7 @@ import {
   SELECTED_TEXT_COLOR,
   TEXT_COLOR
 } from './utilities/constants';
+import { TreeViewInfo } from './components/TreeViewInfo';
 
 // ==================================================
 // MAIN COMPONENT
@@ -51,6 +52,7 @@ export const TreeViewNode = ({
   const hasHover = props.hasHover ?? true;
   const hasCheckBoxes = props.hasCheckboxes ?? false;
   const hasIcons = props.hasIcons ?? false;
+  const hasInfo = props.hasInfo ?? false;
   const marginLeft = level * gapToChildren + 'px';
 
   // This force to update the component when the node changes
@@ -91,6 +93,7 @@ export const TreeViewNode = ({
           }}>
           {hasIcons && <TreeNodeIcon node={node} color={color} />}
           <TreeViewLabel node={node} props={props} />
+          {hasInfo && <TreeViewInfo node={node} props={props} />}
         </div>
       </div>
       {children !== undefined &&

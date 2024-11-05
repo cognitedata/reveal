@@ -25,7 +25,7 @@ export const TreeNodeCaret = ({
   props: TreeViewProps;
 }): ReactElement => {
   const [isHoverOver, setHoverOver] = useState(false);
-  const color = getCaretColor(node, props, isHoverOver);
+  const color = getColor(node, props, isHoverOver);
   const size = props.caretSize ?? CARET_SIZE;
   const sizePx = size + 'px';
   const style = { color, marginTop: '0px', width: sizePx, height: sizePx };
@@ -50,14 +50,7 @@ export const TreeNodeCaret = ({
   return <CaretDownIcon style={style} />;
 };
 
-function getCaretColor(
-  node: ITreeNode,
-  props: TreeViewProps,
-  isHoverOver: boolean
-): string | undefined {
-  if (!node.isParent) {
-    return 'transparent';
-  }
+function getColor(node: ITreeNode, props: TreeViewProps, isHoverOver: boolean): string | undefined {
   if (isHoverOver) {
     return props.hoverCaretColor ?? HOVER_CARET_COLOR;
   }
