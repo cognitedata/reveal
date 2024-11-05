@@ -14,6 +14,7 @@ import { Image360RevisionEntity } from './entity/Image360RevisionEntity';
 import { Image360AnnotationFilterOptions } from './annotation/types';
 import { AsyncSequencer } from '@reveal/utilities/src/AsyncSequencer';
 import { DataSourceType } from '@reveal/data-providers';
+import { Image360Collection } from 'api-entry-points/core';
 
 export class Image360Facade<T extends DataSourceType> {
   private readonly _image360Collections: DefaultImage360Collection<T>[];
@@ -121,7 +122,10 @@ export class Image360Facade<T extends DataSourceType> {
     return imageCollection[0];
   }
 
-  public intersect(coords: THREE.Vector2, camera: THREE.Camera): Image360Entity<T> | undefined {
+  public intersect(
+    coords: THREE.Vector2,
+    camera: THREE.Camera
+  ): [DefaultImage360Collection<T>, Image360Entity<T>] | undefined {
     const cameraDirection = camera.getWorldDirection(new THREE.Vector3());
     const cameraPosition = camera.position.clone();
     const collectionMatrix = new THREE.Matrix4();
@@ -144,6 +148,7 @@ export class Image360Facade<T extends DataSourceType> {
         .filter(isInFrontOfCamera)
         .sort(byDistanceToCamera)
         .map(selectEntity)
+        .map(entity => [collection, entity] as [Image360Collection<T>, Image360Entity<T>])
     );
 
     return first(intersections);

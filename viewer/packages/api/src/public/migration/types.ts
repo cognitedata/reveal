@@ -14,7 +14,7 @@ import { EdlOptions } from '@reveal/rendering';
 import { Cognite3DViewer } from './Cognite3DViewer';
 import { DefaultCameraManager } from '@reveal/camera-manager';
 import { CdfModelIdentifier, CommonModelOptions } from '@reveal/data-providers';
-import { Image360AnnotationFilterOptions } from '@reveal/360-images';
+import { Image360, Image360AnnotationFilterOptions, Image360Collection } from '@reveal/360-images';
 import type { Vector2, WebGLRenderTarget, WebGLRenderer, Matrix4, Vector3 } from 'three';
 import { CustomObjectIntersection } from '@reveal/utilities';
 import { ClassicDataSourceType, DataSourceType, DMDataSourceType } from '@reveal/data-providers';
@@ -295,6 +295,24 @@ export type Intersection<T extends DataSourceType = ClassicDataSourceType> =
   | PointCloudIntersection<T>;
 
 /**
+ * Represents the result from a 360 intersection test
+ */
+export type Image360IconIntersection<T extends DataSourceType = DataSourceType> = {
+  /**
+   * The intersection type.
+   */
+  type: 'image360Icon';
+  /**
+   * The image360 that was intersected
+   */
+  image360: Image360<T>;
+  /**
+   * The image360 collection that was intersected.
+   */
+  collection: Image360Collection<T>;
+};
+
+/**
  * Represents the result from {@link Cognite3DViewer.getAnyIntersectionFromPixel}.
  * @module @cognite/reveal
  * @beta
@@ -302,6 +320,7 @@ export type Intersection<T extends DataSourceType = ClassicDataSourceType> =
 export type AnyIntersection<T extends DataSourceType = DataSourceType> =
   | CadIntersection
   | PointCloudIntersection<T>
+  | Image360IconIntersection<T>
   | CustomObjectIntersection;
 
 /**

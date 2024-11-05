@@ -107,7 +107,7 @@ export default class Image360VisualTestFixture extends StreamingVisualTestFixtur
     renderer.domElement.addEventListener('click', async event => {
       const { x, y } = event;
       const ndcCoordinates = getNormalizedPixelCoordinates(renderer.domElement, x, y);
-      const entity = facade.intersect(new THREE.Vector2(ndcCoordinates.x, ndcCoordinates.y), camera);
+      const [_, entity] = facade.intersect(new THREE.Vector2(ndcCoordinates.x, ndcCoordinates.y), camera);
 
       if (entity === undefined) {
         this.render();
@@ -193,7 +193,7 @@ export default class Image360VisualTestFixture extends StreamingVisualTestFixtur
     renderer.domElement.addEventListener('mousemove', async event => {
       const { x, y } = event;
       const ndcCoordinates = getNormalizedPixelCoordinates(renderer.domElement, x, y);
-      const entity = facade.intersect(new THREE.Vector2(ndcCoordinates.x, ndcCoordinates.y), camera);
+      const [_, entity] = facade.intersect(new THREE.Vector2(ndcCoordinates.x, ndcCoordinates.y), camera);
       if (entity === undefined) {
         this.render();
         return;

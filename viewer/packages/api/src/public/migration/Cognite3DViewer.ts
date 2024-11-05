@@ -48,7 +48,8 @@ import {
   ResolutionOptions,
   RenderParameters,
   AnyIntersection,
-  AddModelOptions
+  AddModelOptions,
+  Image360IconIntersection
 } from './types';
 import { RevealManager } from '../RevealManager';
 import { CogniteModel, Image360WithCollection } from '../types';
@@ -1659,7 +1660,7 @@ export class Cognite3DViewer<DataSourceT extends DataSourceType = ClassicDataSou
    * ```
    */
   async getIntersectionFromPixel(offsetX: number, offsetY: number): Promise<null | Intersection<DataSourceT>> {
-    if (this.isIntersecting360Icon(new THREE.Vector2(offsetX, offsetY))) {
+    if (this.intersect360Icons(new THREE.Vector2(offsetX, offsetY)) !== undefined) {
       return null;
     }
     return this.intersectModels(offsetX, offsetY) as Promise<Intersection<DataSourceT> | null>;
@@ -1682,8 +1683,9 @@ export class Cognite3DViewer<DataSourceT extends DataSourceType = ClassicDataSou
       predicate?: (customObject: ICustomObject) => boolean;
     }
   ): Promise<AnyIntersection<DataSourceT> | undefined> {
-    if ((options?.stopOnHitting360Icon ?? true) && this.isIntersecting360Icon(pixelCoords)) {
-      return undefined;
+    const image360IconIntersection = this.intersect360Icons(pixelCoords);
+    if (this.intersect360Icons(pixelCoords) !== undefined) {
+      return image360IconIntersection;
     }
 
     const predicate = options?.predicate;
@@ -1740,18 +1742,17 @@ export class Cognite3DViewer<DataSourceT extends DataSourceType = ClassicDataSou
     return true;
   }
 
-  private isIntersecting360Icon(vector: THREE.Vector2): boolean {
-    if (this._image360ApiHelper === undefined) {
-      return false;
+  private intersect360Icons(vector: THREE.Vector2): Image360IconIntersection<DataSourceT> | undefined {
+    const intersectedImage = this._image360ApiHelper?.intersect360ImageIcons(vector.x, vector.y);
+    if (intersectedImage === undefined) {
+      return undefined;
     }
 
-    const image360Intersection = this._image360ApiHelper.intersect360ImageIcons(vector.x, vector.y);
-
-    if (image360Intersection !== undefined) {
-      return true;
-    }
-
-    return false;
+    return {
+      type: 'image360Icon',
+      collection: intersectedImage[0],
+      image360: intersectedImage[1]
+    };
   }
 
   /**

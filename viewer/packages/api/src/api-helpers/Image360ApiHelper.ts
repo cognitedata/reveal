@@ -568,20 +568,22 @@ export class Image360ApiHelper<DataSourceT extends DataSourceType> {
     if (this._transitionInProgress) {
       return Promise.resolve(false);
     }
-    const entity = this.intersect360ImageIcons(event.offsetX, event.offsetY);
+    const [_, entity] = this.intersect360ImageIcons(event.offsetX, event.offsetY);
     if (entity === undefined) {
       return Promise.resolve(false);
     }
     return this.enter360ImageInternal(entity);
   }
 
-  public intersect360ImageIcons(offsetX: number, offsetY: number): Image360Entity<DataSourceT> | undefined {
+  public intersect360ImageIcons(
+    offsetX: number,
+    offsetY: number
+  ): [DefaultImage360Collection<DataSourceT>, Image360Entity<DataSourceT>] | undefined {
     const ndcCoordinates = getNormalizedPixelCoordinates(this._domElement, offsetX, offsetY);
-    const entity = this._image360Facade.intersect(
+    return this._image360Facade.intersect(
       new Vector2(ndcCoordinates.x, ndcCoordinates.y),
       this._activeCameraManager.getCamera()
     );
-    return entity;
   }
 
   public intersect360ImageAnnotations(offsetX: number, offsetY: number): Image360AnnotationIntersection | undefined {
