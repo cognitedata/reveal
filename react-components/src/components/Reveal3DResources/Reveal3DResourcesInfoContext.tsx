@@ -17,6 +17,8 @@ import {
 type Reveal3DResourcesInfoContent = {
   reveal3DResourcesCount: number;
   setRevealResourcesCount: (newCount: number) => void;
+  reveal3DResourceLoadFailCount: number;
+  setReveal3DResourceLoadFailCount: Dispatch<SetStateAction<number>>;
   reveal3DResourcesExpectedToLoad: number;
   setReveal3DResourcesExpectedToLoad: Dispatch<SetStateAction<number>>;
   model3DStylingLoading: boolean;
@@ -46,8 +48,16 @@ export const useReveal3DResourcesCount = (): Pick<
   };
 };
 
-export const useReveal3DResourcesExpectedToLoadCount = (): number => {
-  return useInfoElementOfContext().reveal3DResourcesExpectedToLoad;
+export const useReveal3DResourceLoadFailCount = (): Pick<
+  Reveal3DResourcesInfoContent,
+  'reveal3DResourceLoadFailCount' | 'setReveal3DResourceLoadFailCount'
+> => {
+  return useInfoElementOfContext();
+};
+
+export const useReveal3DResourcesExpectedInViewerCount = (): number => {
+  const element = useInfoElementOfContext();
+  return element.reveal3DResourcesExpectedToLoad - element.reveal3DResourceLoadFailCount;
 };
 
 export const useThisAsExpectedResourceLoad = (): void => {
