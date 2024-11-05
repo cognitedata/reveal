@@ -311,7 +311,15 @@ export type Image360IconIntersection<T extends DataSourceType = DataSourceType> 
   /**
    * The image360 collection that was intersected.
    */
-  collection: Image360Collection<T>;
+  image360Collection: Image360Collection<T>;
+  /**
+   * Coordinate of the intersection.
+   */
+  point: Vector3;
+  /**
+   * Distance from the camera to the intersection.
+   */
+  distanceToCamera: number;
 };
 
 /**

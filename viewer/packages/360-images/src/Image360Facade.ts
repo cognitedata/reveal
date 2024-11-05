@@ -15,6 +15,8 @@ import { Image360AnnotationFilterOptions } from './annotation/types';
 import { AsyncSequencer } from '@reveal/utilities/src/AsyncSequencer';
 import { DataSourceType } from '@reveal/data-providers';
 import { Image360Collection } from 'api-entry-points/core';
+import { Image360IconIntersectionData } from './types';
+import { Vector } from 'html2canvas/dist/types/render/vector';
 
 export class Image360Facade<T extends DataSourceType> {
   private readonly _image360Collections: DefaultImage360Collection<T>[];
@@ -122,10 +124,7 @@ export class Image360Facade<T extends DataSourceType> {
     return imageCollection[0];
   }
 
-  public intersect(
-    coords: THREE.Vector2,
-    camera: THREE.Camera
-  ): [DefaultImage360Collection<T>, Image360Entity<T>] | undefined {
+  public intersect(coords: THREE.Vector2, camera: THREE.Camera): Image360IconIntersectionData<T> | undefined {
     const cameraDirection = camera.getWorldDirection(new THREE.Vector3());
     const cameraPosition = camera.position.clone();
     const collectionMatrix = new THREE.Matrix4();
@@ -147,8 +146,9 @@ export class Image360Facade<T extends DataSourceType> {
         .map(intersectionToCameraSpace)
         .filter(isInFrontOfCamera)
         .sort(byDistanceToCamera)
-        .map(selectEntity)
-        .map(entity => [collection, entity] as [Image360Collection<T>, Image360Entity<T>])
+        .map(([entity, intersectionPoint]) =>
+          createIntersection(collection, entity, intersectionPoint, camera.position)
+        )
     );
 
     return first(intersections);
@@ -212,8 +212,18 @@ export class Image360Facade<T extends DataSourceType> {
       return a.lengthSq() - b.lengthSq();
     }
 
-    function selectEntity([entity, _]: [Image360Entity<T>, THREE.Vector3]): Image360Entity<T> {
-      return entity;
+    function createIntersection(
+      image360Collection: DefaultImage360Collection<T>,
+      image360: Image360Entity<T>,
+      intersectionPoint: THREE.Vector3,
+      cameraPosition: THREE.Vector3
+    ): Image360IconIntersectionData<T> {
+      return {
+        image360,
+        image360Collection,
+        point: intersectionPoint,
+        distanceToCamera: intersectionPoint.distanceTo(cameraPosition)
+      };
     }
   }
 

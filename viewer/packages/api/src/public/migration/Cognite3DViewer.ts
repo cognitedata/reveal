@@ -1743,15 +1743,14 @@ export class Cognite3DViewer<DataSourceT extends DataSourceType = ClassicDataSou
   }
 
   private intersect360Icons(vector: THREE.Vector2): Image360IconIntersection<DataSourceT> | undefined {
-    const intersectedImage = this._image360ApiHelper?.intersect360ImageIcons(vector.x, vector.y);
-    if (intersectedImage === undefined) {
+    const iconIntersection = this._image360ApiHelper?.intersect360ImageIcons(vector.x, vector.y);
+    if (iconIntersection === undefined) {
       return undefined;
     }
 
     return {
       type: 'image360Icon',
-      collection: intersectedImage[0],
-      image360: intersectedImage[1]
+      ...iconIntersection
     };
   }
 
