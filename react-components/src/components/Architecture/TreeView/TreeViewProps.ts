@@ -19,6 +19,8 @@ export type TreeViewProps = {
   hoverBackgroundColor?: string;
   caretColor?: string;
   hoverCaretColor?: string;
+  infoColor?: string;
+  hoverInfoColor?: string;
 
   // Sizes
   gapBetweenItems?: number;
@@ -29,12 +31,15 @@ export type TreeViewProps = {
   hasHover?: boolean; // Default true, If this is set, it uses the hover color for the mouse over effect
   hasCheckboxes?: boolean; // Default is false
   hasIcons?: boolean; // Default is false
+  hasInfo?: boolean; // Default is false
   loadingLabel?: string; // Default is 'Loading...'
   loadMoreLabel?: string; // Default is 'Load more...'
+  maxLabelLength?: number;
 
   // Event handlers
   onSelectNode?: TreeNodeAction;
   onCheckNode?: TreeNodeAction;
+  onClickInfo?: TreeNodeAction;
   loadNodes?: LoadNodesAction;
 
   // The root node of the tree, the root is not rendered.
