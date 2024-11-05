@@ -40,10 +40,10 @@ export const TreeViewInfo = ({
   );
 
   function onClickInfo(node: ITreeNode): void {
-    if (props.onClickInfoBox === undefined) {
+    if (props.onClickInfo === undefined) {
       return;
     }
-    props.onClickInfoBox(node);
+    props.onClickInfo(node);
   }
 };
 

@@ -49,8 +49,11 @@ export const Main: Story = {
             onSelectNode={onSingleSelectNode}
             onCheckNode={onDependentCheckNode}
             loadNodes={loadNodes}
+            onClickInfo={onClickInfo}
             hasCheckboxes
             hasIcons
+            maxLabelLength={4}
+            hasInfo
           />
         </Container>
         <Container
@@ -171,4 +174,8 @@ function createTreeMock(lazyLoading: boolean): TreeNode {
     }
   }
   return root;
+}
+
+function onClickInfo(node: ITreeNode): void {
+  console.log('Info clicked: ' + node.label);
 }

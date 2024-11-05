@@ -93,8 +93,8 @@ export const TreeViewNode = ({
           }}>
           {hasIcons && <TreeNodeIcon node={node} color={color} />}
           <TreeViewLabel node={node} props={props} />
-          {hasInfo && <TreeViewInfo node={node} props={props} />}
         </div>
+        {hasInfo && <TreeViewInfo node={node} props={props} />}
       </div>
       {children !== undefined &&
         children.map((node, index) => (

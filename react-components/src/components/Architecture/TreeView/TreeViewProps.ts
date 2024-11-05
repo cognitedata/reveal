@@ -34,12 +34,12 @@ export type TreeViewProps = {
   hasInfo?: boolean; // Default is false
   loadingLabel?: string; // Default is 'Loading...'
   loadMoreLabel?: string; // Default is 'Load more...'
-  maxLabelLength: number;
+  maxLabelLength?: number;
 
   // Event handlers
   onSelectNode?: TreeNodeAction;
   onCheckNode?: TreeNodeAction;
-  onClickInfoBox?: TreeNodeAction;
+  onClickInfo?: TreeNodeAction;
   loadNodes?: LoadNodesAction;
 
   // The root node of the tree, the root is not rendered.
