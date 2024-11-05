@@ -5,7 +5,7 @@
 import { Vector3 } from 'three';
 import { Image360 } from './entity/Image360';
 import { Image360Revision } from './entity/Image360Revision';
-import { DataSourceType, DefaultCameraManager, Image360Collection } from 'api-entry-points/core';
+import { DataSourceType } from 'api-entry-points/core';
 import { Image360Entity } from './entity/Image360Entity';
 import { DefaultImage360Collection } from './collection/DefaultImage360Collection';
 

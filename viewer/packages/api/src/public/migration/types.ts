@@ -295,7 +295,7 @@ export type Intersection<T extends DataSourceType = ClassicDataSourceType> =
   | PointCloudIntersection<T>;
 
 /**
- * Represents the result from a 360 intersection test
+ * Represents the result from a 360 intersection test.
  * @module @cognite/reveal
  * @beta
  */
@@ -305,7 +305,7 @@ export type Image360IconIntersection<T extends DataSourceType = DataSourceType> 
    */
   type: 'image360Icon';
   /**
-   * The image360 that was intersected
+   * The image360 that was intersected.
    */
   image360: Image360<T>;
   /**

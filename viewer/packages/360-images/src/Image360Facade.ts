@@ -14,9 +14,7 @@ import { Image360RevisionEntity } from './entity/Image360RevisionEntity';
 import { Image360AnnotationFilterOptions } from './annotation/types';
 import { AsyncSequencer } from '@reveal/utilities/src/AsyncSequencer';
 import { DataSourceType } from '@reveal/data-providers';
-import { Image360Collection } from 'api-entry-points/core';
 import { Image360IconIntersectionData } from './types';
-import { Vector } from 'html2canvas/dist/types/render/vector';
 
 export class Image360Facade<T extends DataSourceType> {
   private readonly _image360Collections: DefaultImage360Collection<T>[];
