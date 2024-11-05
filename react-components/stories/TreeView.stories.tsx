@@ -176,6 +176,6 @@ function createTreeMock(lazyLoading: boolean): TreeNode {
   return root;
 }
 
-function onClickInfo(node: ITreeNode): void {
-  console.log('Info clicked: ' + node.label);
+function onClickInfo(_node: ITreeNode): void {
+  // console.log('Info clicked: ' + node.label);
 }
