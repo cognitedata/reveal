@@ -7,7 +7,7 @@ import { type IconName } from '../utilities/IconName';
 import { type ITreeNode } from './ITreeNode';
 import { CheckBoxState, type TreeNodeAction, type IconColor, type LoadNodesAction } from './types';
 
-export class TreeNode implements ITreeNode {
+export class TreeNode<T = any> implements ITreeNode {
   // ==================================================
   // INSTANCE FIELDS
   // ==================================================
@@ -24,12 +24,13 @@ export class TreeNode implements ITreeNode {
   private _isLoadingSiblings: boolean = false;
   private _needLoadChildren = false;
   private _needLoadSiblings = false;
+  public userData: T | undefined = undefined;
 
-  protected _children: TreeNode[] | undefined = undefined;
-  protected _parent: TreeNode | undefined = undefined;
+  protected _children: Array<TreeNode<T>> | undefined = undefined;
+  protected _parent: TreeNode<T> | undefined = undefined;
 
   // ==================================================
-  // INSTANCE PROPERTIES (Some are implementation of ITreeNode)
+  // INSTANCE PROPERTIES (Some are implementation of ITreeNode<T>)
   // ==================================================
 
   public get label(): string {
@@ -175,14 +176,15 @@ export class TreeNode implements ITreeNode {
   // INSTANCE METHODS: Parent children methods
   // ==================================================
 
-  public getRoot(): TreeNode {
+  // eslint-disable-next-line @typescript-eslint/prefer-return-this-type
+  public getRoot(): TreeNode<T> {
     if (this._parent !== undefined) {
       return this._parent.getRoot();
     }
     return this;
   }
 
-  public addChild(child: TreeNode): void {
+  public addChild(child: TreeNode<T>): void {
     if (this._children === undefined) {
       this._children = [];
     }
@@ -190,7 +192,7 @@ export class TreeNode implements ITreeNode {
     child._parent = this;
   }
 
-  public insertChild(index: number, child: TreeNode): void {
+  public insertChild(index: number, child: TreeNode<T>): void {
     if (this._children === undefined) {
       this._children = [];
     }
@@ -213,7 +215,7 @@ export class TreeNode implements ITreeNode {
         if (!(child instanceof TreeNode)) {
           continue;
         }
-        this.addChild(child);
+        this.addChild(child as TreeNode<T>);
       }
     }
     this.needLoadChildren = false;
@@ -240,7 +242,7 @@ export class TreeNode implements ITreeNode {
         continue;
       }
       index++;
-      parent.insertChild(index, child);
+      parent.insertChild(index, child as TreeNode<T>);
     }
     this.needLoadSiblings = false;
     parent.update();
@@ -250,8 +252,8 @@ export class TreeNode implements ITreeNode {
   // INSTANCE METHODS: Get selection and checked nodes
   // ==================================================
 
-  public getSelectedNodes(): TreeNode[] {
-    const nodes: TreeNode[] = [];
+  public getSelectedNodes(): Array<TreeNode<T>> {
+    const nodes: Array<TreeNode<T>> = [];
     for (const child of this.getThisAndDescendants()) {
       if (child.isSelected) {
         nodes.push(child);
@@ -260,8 +262,8 @@ export class TreeNode implements ITreeNode {
     return nodes;
   }
 
-  public getCheckedNodes(): TreeNode[] {
-    const nodes: TreeNode[] = [];
+  public getCheckedNodes(): Array<TreeNode<T>> {
+    const nodes: Array<TreeNode<T>> = [];
     for (const child of this.getThisAndDescendants()) {
       if (child.checkBoxState === CheckBoxState.All) {
         nodes.push(child);
@@ -274,7 +276,7 @@ export class TreeNode implements ITreeNode {
   // INSTANCE METHODS: Iterators
   // ==================================================
 
-  public *getChildren(loadNodes?: LoadNodesAction): Generator<TreeNode> {
+  public *getChildren(loadNodes?: LoadNodesAction): Generator<TreeNode<T>> {
     if (this.isLoadingChildren) {
       loadNodes = undefined;
     }
@@ -290,7 +292,7 @@ export class TreeNode implements ITreeNode {
     }
   }
 
-  public *getDescendants(): Generator<TreeNode> {
+  public *getDescendants(): Generator<TreeNode<T>> {
     for (const child of this.getChildren()) {
       yield child;
       for (const descendant of child.getDescendants()) {
@@ -299,14 +301,14 @@ export class TreeNode implements ITreeNode {
     }
   }
 
-  public *getThisAndDescendants(): Generator<TreeNode> {
+  public *getThisAndDescendants(): Generator<TreeNode<T>> {
     yield this;
     for (const descendant of this.getDescendants()) {
       yield descendant;
     }
   }
 
-  public *getAncestors(): Generator<TreeNode> {
+  public *getAncestors(): Generator<TreeNode<T>> {
     let ancestor = this._parent;
     while (ancestor !== undefined) {
       yield ancestor;

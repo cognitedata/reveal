@@ -26,7 +26,7 @@ export const TreeViewInfo = ({
   const color = getColor(props, isHoverOver);
   return (
     <Icon
-      style={{ color, marginTop: '3px' }}
+      style={{ color, marginTop: '3px', marginLeft: '6px' }}
       onClick={() => {
         onClickInfo(node);
       }}
