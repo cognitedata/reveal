@@ -7,6 +7,7 @@ import { useReveal } from '../RevealCanvas/ViewerContext';
 import { type Matrix4 } from 'three';
 import { useRevealKeepAlive } from '../RevealKeepAlive/RevealKeepAliveContext';
 import {
+  useReveal3DResourceLoadFailCount,
   useReveal3DResourcesCount,
   useThisAsExpectedResourceLoad
 } from '../Reveal3DResources/Reveal3DResourcesInfoContext';
@@ -35,6 +36,7 @@ export function CadModelContainer({
   const cachedViewerRef = useRevealKeepAlive();
   const viewer = useReveal();
   const { setRevealResourcesCount } = useReveal3DResourcesCount();
+  const { setReveal3DResourceLoadFailCount } = useReveal3DResourceLoadFailCount();
   const initializingModel = useRef<AddModelOptions | undefined>(undefined);
   const initializingModelsGeometryFilter = useRef<GeometryFilter | undefined>(undefined);
 
@@ -58,6 +60,10 @@ export function CadModelContainer({
       .catch((error) => {
         const errorReportFunction = onLoadError ?? defaultLoadErrorHandler;
         errorReportFunction(addModelOptions, error);
+        setReveal3DResourceLoadFailCount((p) => p + 1);
+        return () => {
+          setReveal3DResourceLoadFailCount((p) => p - 1);
+        };
       });
   }, [modelId, revisionId, geometryFilter]);
 
