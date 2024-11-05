@@ -23,4 +23,7 @@ export type {
   CadModelOptions
 } from './types';
 
-export { useReveal3DResourcesExpectedInViewerCount } from './Reveal3DResourcesInfoContext';
+export {
+  useReveal3DResourcesExpectedInViewerCount,
+  useReveal3DLoadedResourceCount
+} from './Reveal3DResourcesInfoContext';
