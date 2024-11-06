@@ -299,9 +299,7 @@ export class TreeNode<T = any> implements ITreeNode {
   public *getDescendants(): Generator<TreeNode<T>> {
     for (const child of this.getChildren()) {
       yield child;
-      for (const descendant of child.getDescendants()) {
-        yield descendant;
-      }
+      yield* child.getDescendants();
     }
   }
 

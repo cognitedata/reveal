@@ -8,6 +8,8 @@ import { type ReactElement } from 'react';
 import { type TreeViewProps } from '../TreeViewProps';
 import { type ITreeNode } from '../../../../architecture/base/treeView/ITreeNode';
 import { LOADING_LABEL, MAX_LABEL_LENGTH } from '../utilities/constants';
+import { Tooltip } from '@cognite/cogs.js';
+import { TOOLTIP_DELAY } from '../../constants';
 
 // ==================================================
 // MAIN COMPONENT
@@ -21,6 +23,7 @@ export const TreeViewLabel = ({
   props: TreeViewProps;
 }): ReactElement => {
   let label: string;
+  let disabledTooltip = true;
   if (node.isLoadingChildren) {
     label = props.loadingLabel ?? LOADING_LABEL;
   } else {
@@ -28,10 +31,19 @@ export const TreeViewLabel = ({
     const maxLabelLength = props.maxLabelLength ?? MAX_LABEL_LENGTH;
     if (label.length > maxLabelLength) {
       label = label.substring(0, maxLabelLength) + '...';
+      disabledTooltip = false;
     }
   }
-  if (node.hasBoldLabel) {
-    return <b>{label}</b>;
-  }
-  return <span>{label}</span>;
+  const Text = node.hasBoldLabel ? <b>{label}</b> : <span>{label}</span>;
+
+  return (
+    <Tooltip
+      content={node.label}
+      disabled={disabledTooltip}
+      appendTo={document.body}
+      enterDelay={TOOLTIP_DELAY}
+      placement={'right'}>
+      {Text}
+    </Tooltip>
+  );
 };

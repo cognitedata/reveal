@@ -47,7 +47,7 @@ export const TreeNodeCaret = ({
       />
     );
   }
-  return <CaretDownIcon style={style} />;
+  return <div style={style} />;
 };
 
 function getColor(node: ITreeNode, props: TreeViewProps, isHoverOver: boolean): string | undefined {
