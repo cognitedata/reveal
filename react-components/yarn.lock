@@ -640,7 +640,7 @@ __metadata:
     eslint-plugin-prettier: "npm:^5.1.3"
     eslint-plugin-promise: "npm:^7.0.0"
     eslint-plugin-react: "npm:^7.34.1"
-    happy-dom: "npm:^15.0.0"
+    happy-dom: "npm:^15.10.2"
     locize-cli: "npm:^8.0.1"
     lodash: "npm:^4.17.21"
     moq.ts: "npm:10.0.8"
@@ -7335,14 +7335,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"happy-dom@npm:^15.0.0":
-  version: 15.10.1
-  resolution: "happy-dom@npm:15.10.1"
+"happy-dom@npm:^15.10.2":
+  version: 15.10.2
+  resolution: "happy-dom@npm:15.10.2"
   dependencies:
     entities: "npm:^4.5.0"
     webidl-conversions: "npm:^7.0.0"
     whatwg-mimetype: "npm:^3.0.0"
-  checksum: 10/637b0330a6ed33708beb2287076bc078f31d839525b7492d1008774e28e17ba9752d1c496cc8528f94fe8fe892bc2603a751287ab06ae708afa648873f571c9f
+  checksum: 10/045caf1b2657162db8bfb27b298120795c3ea766d3b853e5aa1bb653b1b08bf6ea1f0945008afc88502b28355fc26276cf29784f220384bb0eddd902e52d73cd
   languageName: node
   linkType: hard
 
