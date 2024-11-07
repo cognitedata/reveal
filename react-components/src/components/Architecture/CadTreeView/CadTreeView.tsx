@@ -5,7 +5,6 @@
 import { useQuery } from '@tanstack/react-query';
 import { type ReactElement } from 'react';
 
-import { TreeView } from '@cognite/reveal-react-components';
 import { useSDK } from '@cognite/sdk-provider';
 
 import {
@@ -17,6 +16,7 @@ import { type ITreeNode } from '../../../architecture';
 import { Infobox, Loader } from '@cognite/cogs.js';
 import { CadTreeNode } from '../../../architecture/base/treeView/cadTreeView/CadTreeNode';
 import { type OnLoadedAction, type CadTreeViewProps } from './CadTreeViewProps';
+import { TreeView } from '../TreeView/TreeView';
 
 export function CadTreeView(props: CadTreeViewProps): ReactElement | null {
   const sdk = useSDK();

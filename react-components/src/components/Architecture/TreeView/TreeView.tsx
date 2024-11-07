@@ -12,6 +12,7 @@ export const TreeView = (props: TreeViewProps): ReactElement => {
   const id = 'treeView';
   const showRoot = props.showRoot ?? true;
   const { root } = props;
+  const childLevel = showRoot ? 1 : 0;
   const nodes = getChildrenAsArray(root, props.loadNodes, false);
   if (nodes === undefined) {
     return <></>;
@@ -24,7 +25,7 @@ export const TreeView = (props: TreeViewProps): ReactElement => {
       }}>
       {showRoot && <TreeViewNode node={root} key={-1} level={0} props={props} />}
       {nodes.map((node, index) => (
-        <TreeViewNode node={node} key={index} level={1} props={props} />
+        <TreeViewNode node={node} key={index} level={childLevel} props={props} />
       ))}
     </div>
   );
