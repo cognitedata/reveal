@@ -12,3 +12,4 @@ export type { TreeViewProps } from './TreeView/TreeViewProps';
 
 export { CadTreeView } from './CadTreeView/CadTreeView';
 export type { CadTreeViewProps } from './CadTreeView/CadTreeViewProps';
+export type { OnLoadedAction } from './CadTreeView/CadTreeViewProps';

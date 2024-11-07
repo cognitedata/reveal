@@ -111,3 +111,5 @@ export { onSingleSelectNode } from './base/treeView/TreeNodeFunctions';
 export { onMultiSelectNode } from './base/treeView/TreeNodeFunctions';
 export { onIndependentCheckNode } from './base/treeView/TreeNodeFunctions';
 export { onDependentCheckNode } from './base/treeView/TreeNodeFunctions';
+
+export { CadTreeNode } from './base/treeView/cadTreeView/CadTreeNode';

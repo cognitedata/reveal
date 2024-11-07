@@ -2,8 +2,8 @@
  * Copyright 2024 Cognite AS
  */
 
-import { TreeNode } from '../../..';
 import type { Node3D } from '@cognite/sdk';
+import { TreeNode } from '../TreeNode';
 
 export class CadTreeNode extends TreeNode {
   private readonly _nodeId: number;
