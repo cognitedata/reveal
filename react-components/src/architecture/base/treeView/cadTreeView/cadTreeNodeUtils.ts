@@ -52,9 +52,9 @@ async function loadNode3DArray(args: FetchNodesArgs): Promise<ListResponse<Node3
   if (loadChildren) {
     const response = await sdk.revisions3D.list3DNodes(id.modelId, id.revisionId, {
       ...LIST_NODES_PARAMS,
-      nodeId: node.nodeId
+      nodeId: node.id
     });
-    response.items = response.items.filter((responseNode) => responseNode.id !== node.nodeId);
+    response.items = response.items.filter((responseNode) => responseNode.id !== node.id);
     return response;
   }
   if (!(node.parent instanceof CadTreeNode)) {
@@ -62,7 +62,7 @@ async function loadNode3DArray(args: FetchNodesArgs): Promise<ListResponse<Node3
   }
   return await sdk.revisions3D.list3DNodes(id.modelId, id.revisionId, {
     ...LIST_NODES_PARAMS,
-    nodeId: node.parent?.nodeId,
+    nodeId: node.parent?.id,
     cursor: node.loadSiblingCursor
   });
 }

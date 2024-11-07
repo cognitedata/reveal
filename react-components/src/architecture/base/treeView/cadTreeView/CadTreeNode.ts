@@ -6,19 +6,19 @@ import type { Node3D } from '@cognite/sdk';
 import { TreeNode } from '../TreeNode';
 
 export class CadTreeNode extends TreeNode {
-  private readonly _nodeId: number;
+  private readonly _id: number;
   private readonly _treeIndex: number;
   private _loadSiblingCursor?: string;
 
   constructor(node: Node3D) {
     super();
-    this._nodeId = node.id;
+    this._id = node.id;
     this._treeIndex = node.treeIndex;
     this.label = node.name === '' ? node.id.toString() : node.name;
   }
 
-  public get nodeId(): number {
-    return this._nodeId;
+  public get id(): number {
+    return this._id;
   }
 
   public get treeIndex(): number {
