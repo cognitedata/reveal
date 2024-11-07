@@ -134,6 +134,8 @@ function createTreeMock(lazyLoading: boolean): TreeNode<string> {
   const root = new TreeNode<string>();
   root.label = 'Root';
   root.isExpanded = true;
+  root.checkBoxState = CheckBoxState.None;
+  root.icon = 'Snow';
 
   for (let i = 1; i <= 100; i++) {
     const parent = new TreeNode<string>();

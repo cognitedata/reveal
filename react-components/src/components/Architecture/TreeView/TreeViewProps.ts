@@ -28,6 +28,7 @@ export type TreeViewProps = {
   caretSize?: number;
 
   // Appearance
+  showRoot?: boolean; // Show root, default is true
   hasHover?: boolean; // Default true, If this is set, it uses the hover color for the mouse over effect
   hasCheckboxes?: boolean; // Default is false
   hasIcons?: boolean; // Default is false

@@ -10,7 +10,9 @@ import { BACKGROUND_COLOR } from './utilities/constants';
 
 export const TreeView = (props: TreeViewProps): ReactElement => {
   const id = 'treeView';
-  const nodes = getChildrenAsArray(props.root, props.loadNodes, false);
+  const showRoot = props.showRoot ?? true;
+  const { root } = props;
+  const nodes = getChildrenAsArray(root, props.loadNodes, false);
   if (nodes === undefined) {
     return <></>;
   }
@@ -20,8 +22,9 @@ export const TreeView = (props: TreeViewProps): ReactElement => {
       style={{
         backgroundColor: props.backgroundColor ?? BACKGROUND_COLOR
       }}>
+      {showRoot && <TreeViewNode node={root} key={-1} level={0} props={props} />}
       {nodes.map((node, index) => (
-        <TreeViewNode node={node} key={index} level={0} props={props} />
+        <TreeViewNode node={node} key={index} level={1} props={props} />
       ))}
     </div>
   );
