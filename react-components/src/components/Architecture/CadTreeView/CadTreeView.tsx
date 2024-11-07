@@ -69,14 +69,25 @@ function onLoadedNodes(
   loadedNodes: CadTreeNode[],
   onLoaded?: OnLoadedAction
 ): void {
-  if (onLoaded !== undefined) {
-    const parent = getParent(node, loadChildren);
-    for (const loadedNode of loadedNodes) {
-      onLoaded(loadedNode, parent);
-    }
+  if (onLoaded === undefined) {
+    return;
+  }
+  const parent = getParent(node, loadChildren);
+  if (parent === undefined) {
+    return;
+  }
+  for (const loadedNode of loadedNodes) {
+    onLoaded(loadedNode, parent);
   }
 }
 
-function getParent(node: CadTreeNode, loadChildren: boolean): CadTreeNode {
-  return loadChildren ? (node.parent as CadTreeNode) : node;
+function getParent(node: CadTreeNode, loadChildren: boolean): CadTreeNode | undefined {
+  if (loadChildren) {
+    return node;
+  }
+  // load siblings, get the parent of the sibling
+  if (node.parent instanceof CadTreeNode) {
+    return node.parent;
+  }
+  return undefined;
 }
