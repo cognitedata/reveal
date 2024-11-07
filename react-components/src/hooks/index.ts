@@ -21,8 +21,6 @@ export type { ClickedNodeData, FdmNodeDataResult } from './useClickedNode';
 export type {
   PointCloudAnnotationMappedAssetData,
   Image360AnnotationMappedAssetData,
-  SelectedThreeDResourceContent,
   ThreeDModelFdmMappings,
-  ModelWithRevision,
-  ThreeDResourceContentTypes
+  ModelWithRevision
 } from './types';
