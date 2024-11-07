@@ -5322,10 +5322,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"cookie@npm:0.6.0":
-  version: 0.6.0
-  resolution: "cookie@npm:0.6.0"
-  checksum: f56a7d32a07db5458e79c726b77e3c2eff655c36792f2b6c58d351fb5f61531e5b1ab7f46987150136e366c65213cbe31729e02a3eaed630c3bf7334635fb410
+"cookie@npm:0.7.1":
+  version: 0.7.1
+  resolution: "cookie@npm:0.7.1"
+  checksum: cec5e425549b3650eb5c3498a9ba3cde0b9cd419e3b36e4b92739d30b4d89e0b678b98c1ddc209ce7cf958cd3215671fd6ac47aec21f10c2a0cc68abd399d8a7
   languageName: node
   linkType: hard
 
@@ -6490,15 +6490,15 @@ __metadata:
   linkType: hard
 
 "express@npm:^4.17.3":
-  version: 4.21.0
-  resolution: "express@npm:4.21.0"
+  version: 4.21.1
+  resolution: "express@npm:4.21.1"
   dependencies:
     accepts: ~1.3.8
     array-flatten: 1.1.1
     body-parser: 1.20.3
     content-disposition: 0.5.4
     content-type: ~1.0.4
-    cookie: 0.6.0
+    cookie: 0.7.1
     cookie-signature: 1.0.6
     debug: 2.6.9
     depd: 2.0.0
@@ -6524,7 +6524,7 @@ __metadata:
     type-is: ~1.6.18
     utils-merge: 1.0.1
     vary: ~1.1.2
-  checksum: 1c5212993f665809c249bf00ab550b989d1365a5b9171cdfaa26d93ee2ef10cd8add520861ec8d5da74b3194d8374e1d9d53e85ef69b89fd9c4196b87045a5d4
+  checksum: 5ac2b26d8aeddda5564fc0907227d29c100f90c0ead2ead9d474dc5108e8fb306c2de2083c4e3ba326e0906466f2b73417dbac16961f4075ff9f03785fd940fe
   languageName: node
   linkType: hard
 
@@ -7826,8 +7826,8 @@ __metadata:
   linkType: hard
 
 "http-proxy-middleware@npm:^2.0.3":
-  version: 2.0.6
-  resolution: "http-proxy-middleware@npm:2.0.6"
+  version: 2.0.7
+  resolution: "http-proxy-middleware@npm:2.0.7"
   dependencies:
     "@types/http-proxy": ^1.17.8
     http-proxy: ^1.18.1
@@ -7839,7 +7839,7 @@ __metadata:
   peerDependenciesMeta:
     "@types/express":
       optional: true
-  checksum: 2ee85bc878afa6cbf34491e972ece0f5be0a3e5c98a60850cf40d2a9a5356e1fc57aab6cff33c1fc37691b0121c3a42602d2b1956c52577e87a5b77b62ae1c3a
+  checksum: 18caa21145917aa1054740353916e8f03f5a3a93bede9106f1f44d84f7b174df17af1c72bf5fade5cc440c2058ee813f47cbb2bdd6ae6874af1cf33e0ac575f3
   languageName: node
   linkType: hard
 
@@ -10639,10 +10639,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"path-to-regexp@npm:2.2.1":
-  version: 2.2.1
-  resolution: "path-to-regexp@npm:2.2.1"
-  checksum: b921a74e7576e25b06ad1635abf7e8125a29220d2efc2b71d74b9591f24a27e6f09078fa9a1b27516a097ea0637b7cab79d19b83d7f36a8ef3ef5422770e89d9
+"path-to-regexp@npm:3.3.0":
+  version: 3.3.0
+  resolution: "path-to-regexp@npm:3.3.0"
+  checksum: bb249d08804f7961dd44fb175466c900b893c56e909db8e2a66ec12b9d9a964af269eb7a50892c933f52b47315953dfdb4279639fbce20977c3625a9ef3055fe
   languageName: node
   linkType: hard
 
@@ -12318,7 +12318,7 @@ __metadata:
     mime-types: 2.1.18
     minimatch: 3.1.2
     path-is-inside: 1.0.2
-    path-to-regexp: 2.2.1
+    path-to-regexp: 3.3.0
     range-parser: 1.2.0
   checksum: 7a98ca9cbf8692583b6cde4deb3941cff900fa38bf16adbfccccd8430209bab781e21d9a1f61c9c03e226f9f67689893bbce25941368f3ddaf985fc3858b49dc
   languageName: node

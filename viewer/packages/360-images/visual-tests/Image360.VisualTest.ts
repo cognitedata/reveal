@@ -107,12 +107,14 @@ export default class Image360VisualTestFixture extends StreamingVisualTestFixtur
     renderer.domElement.addEventListener('click', async event => {
       const { x, y } = event;
       const ndcCoordinates = getNormalizedPixelCoordinates(renderer.domElement, x, y);
-      const entity = facade.intersect(new THREE.Vector2(ndcCoordinates.x, ndcCoordinates.y), camera);
+      const intersection = facade.intersect(new THREE.Vector2(ndcCoordinates.x, ndcCoordinates.y), camera);
 
-      if (entity === undefined) {
+      if (intersection === undefined) {
         this.render();
         return;
       }
+
+      const entity = intersection.image360;
 
       await facade.preload(entity, entity.getActiveRevision());
       entity.image360Visualization.visible = true;
@@ -193,11 +195,12 @@ export default class Image360VisualTestFixture extends StreamingVisualTestFixtur
     renderer.domElement.addEventListener('mousemove', async event => {
       const { x, y } = event;
       const ndcCoordinates = getNormalizedPixelCoordinates(renderer.domElement, x, y);
-      const entity = facade.intersect(new THREE.Vector2(ndcCoordinates.x, ndcCoordinates.y), camera);
-      if (entity === undefined) {
+      const intersection = facade.intersect(new THREE.Vector2(ndcCoordinates.x, ndcCoordinates.y), camera);
+      if (intersection === undefined) {
         this.render();
         return;
       }
+      const entity = intersection.image360;
       entity.icon.selected = true;
       await facade.preload(entity, entity.getActiveRevision());
       entity.image360Visualization.visible = false;

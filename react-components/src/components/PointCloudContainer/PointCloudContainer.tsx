@@ -8,6 +8,7 @@ import { Matrix4 } from 'three';
 import { useReveal } from '../RevealCanvas/ViewerContext';
 import { useRevealKeepAlive } from '../RevealKeepAlive/RevealKeepAliveContext';
 import {
+  useReveal3DResourceLoadFailCount,
   useReveal3DResourcesCount,
   useThisAsExpectedResourceLoad
 } from '../Reveal3DResources/Reveal3DResourcesInfoContext';
@@ -39,6 +40,7 @@ export function PointCloudContainer({
   const viewer = useReveal();
   const { modelId, revisionId } = addModelOptions;
   const { setRevealResourcesCount } = useReveal3DResourcesCount();
+  const { setReveal3DResourceLoadFailCount } = useReveal3DResourceLoadFailCount();
   const initializingModel = useRef<AddModelOptions | undefined>(undefined);
 
   useThisAsExpectedResourceLoad();
@@ -58,6 +60,10 @@ export function PointCloudContainer({
       .catch((error) => {
         const errorHandler = onLoadError ?? defaultLoadErrorHandler;
         errorHandler(addModelOptions, error);
+        setReveal3DResourceLoadFailCount((p) => p + 1);
+        return () => {
+          setReveal3DResourceLoadFailCount((p) => p - 1);
+        };
       });
   }, [modelId, revisionId]);
 

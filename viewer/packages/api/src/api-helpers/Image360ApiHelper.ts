@@ -46,6 +46,7 @@ import { Image360WithCollection } from '../public/types';
 import { DEFAULT_IMAGE_360_OPACITY } from '@reveal/360-images/src/entity/Image360VisualizationBox';
 import { Image360History } from '@reveal/360-images/src/Image360History';
 import { Image360Action } from '@reveal/360-images/src/Image360Action';
+import { Image360IconIntersectionData } from '@reveal/360-images/src/types';
 
 export class Image360ApiHelper<DataSourceT extends DataSourceType> {
   private readonly _image360Facade: Image360Facade<DataSourceT>;
@@ -568,20 +569,22 @@ export class Image360ApiHelper<DataSourceT extends DataSourceType> {
     if (this._transitionInProgress) {
       return Promise.resolve(false);
     }
-    const entity = this.intersect360ImageIcons(event.offsetX, event.offsetY);
-    if (entity === undefined) {
+    const intersection = this.intersect360ImageIcons(event.offsetX, event.offsetY);
+    if (intersection === undefined) {
       return Promise.resolve(false);
     }
-    return this.enter360ImageInternal(entity);
+    return this.enter360ImageInternal(intersection.image360);
   }
 
-  public intersect360ImageIcons(offsetX: number, offsetY: number): Image360Entity<DataSourceT> | undefined {
+  public intersect360ImageIcons(
+    offsetX: number,
+    offsetY: number
+  ): Image360IconIntersectionData<DataSourceT> | undefined {
     const ndcCoordinates = getNormalizedPixelCoordinates(this._domElement, offsetX, offsetY);
-    const entity = this._image360Facade.intersect(
+    return this._image360Facade.intersect(
       new Vector2(ndcCoordinates.x, ndcCoordinates.y),
       this._activeCameraManager.getCamera()
     );
-    return entity;
   }
 
   public intersect360ImageAnnotations(offsetX: number, offsetY: number): Image360AnnotationIntersection | undefined {
@@ -611,10 +614,12 @@ export class Image360ApiHelper<DataSourceT extends DataSourceType> {
     this._interactionState.lastMousePosition = { offsetX, offsetY };
     this._image360Facade.allIconsSelected = false;
     const ndcCoordinates = getNormalizedPixelCoordinates(this._domElement, offsetX, offsetY);
-    const entity = this._image360Facade.intersect(
+    const intersection = this._image360Facade.intersect(
       new Vector2(ndcCoordinates.x, ndcCoordinates.y),
       this._activeCameraManager.getCamera()
     );
+
+    const entity = intersection?.image360;
 
     if (entity === this._interactionState.currentImage360Hovered) {
       entity?.icon.updateHoverSpriteScale();

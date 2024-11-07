@@ -80,7 +80,7 @@ export class AnnotationsSelectTool extends BaseEditTool {
     this.deselectedAnnotationInteractive();
   }
 
-  public override async onHover(event: PointerEvent): Promise<void> {
+  public override async onHoverByDebounce(event: PointerEvent): Promise<void> {
     const intersection = this.getSpecificIntersection(event, isAnnotationsOrGizmo);
     const domainObject = AnnotationsSelectTool.getIntersectedAnnotationsDomainObject(intersection);
     const intersectInfo = getIntersectedAnnotation(intersection);

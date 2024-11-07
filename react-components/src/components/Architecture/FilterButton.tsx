@@ -89,6 +89,7 @@ export const FilterButton = ({
       label={label}
       selectedLabel={selectedLabel}
       isOpen={isOpen}
+      setOpen={setOpen}
       PanelContent={PanelContent}
     />
   ) : (
@@ -133,8 +134,7 @@ const FilterMenu = ({
     <Menu
       floatingProps={{ middleware: [offset(TOOLBAR_HORIZONTAL_PANEL_OFFSET)] }}
       onOpenChange={setOpen}
-      appendTo={'parent'}
-      placement={'right-start'}
+      placement={'right-end'}
       disableCloseOnClickInside
       renderTrigger={(props: any) => (
         <CogsTooltip
@@ -155,6 +155,7 @@ const FilterMenu = ({
               event.stopPropagation();
               event.preventDefault();
               props.onClick(event);
+              setOpen(!isOpen);
             }}
           />
         </CogsTooltip>
@@ -168,17 +169,19 @@ const FilterDropdown = ({
   label,
   selectedLabel,
   isOpen,
+  setOpen,
   PanelContent
 }: {
   label: string;
   selectedLabel: string;
   isOpen: boolean;
+  setOpen: Dispatch<SetStateAction<boolean>>;
   PanelContent: ReactElement;
 }): ReactElement => {
   return (
     <StyledDropdownRow>
       <label>{label}</label>
-      <StyledSelectPanel appendTo="parent">
+      <StyledSelectPanel appendTo={'parent'} placement={'right-end'} hideOnOutsideClick>
         <SelectPanel.Trigger>
           <Button
             color="#000044"
@@ -188,6 +191,9 @@ const FilterDropdown = ({
               minWidth: OPTION_MIN_WIDTH,
               paddingRight: '8px',
               paddingLeft: '8px'
+            }}
+            onClick={() => {
+              setOpen((prev) => !prev);
             }}>
             <StyledDropdownSelectionLabel>{selectedLabel}</StyledDropdownSelectionLabel>
             {isOpen ? (
@@ -197,9 +203,7 @@ const FilterDropdown = ({
             )}
           </Button>
         </SelectPanel.Trigger>
-        <SelectPanel.Body style={{ overflow: 'hidden', zindex: 2000 }}>
-          {PanelContent}
-        </SelectPanel.Body>
+        <SelectPanel.Body style={{ overflow: 'hidden' }}>{PanelContent}</SelectPanel.Body>
       </StyledSelectPanel>
     </StyledDropdownRow>
   );
