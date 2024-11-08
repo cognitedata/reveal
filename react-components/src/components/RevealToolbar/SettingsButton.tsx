@@ -11,6 +11,7 @@ import { useTranslation } from '../i18n/I18n';
 import { TOOLBAR_HORIZONTAL_PANEL_OFFSET } from '../constants';
 
 import { offset } from '@floating-ui/dom';
+import styled from 'styled-components';
 
 type CustomSettingsProps = {
   customSettingsContent?: ReactElement;
@@ -27,8 +28,9 @@ export const SettingsButton = ({
   const [settingsActive, setSettingsActive] = useState<boolean>(false);
 
   return (
-    <Menu
+    <StyledMenu
       placement="right"
+      container={'parent'}
       floatingProps={{ middleware: [offset(TOOLBAR_HORIZONTAL_PANEL_OFFSET)] }}
       disableCloseOnClickInside
       renderTrigger={(props: any) => (
@@ -54,6 +56,12 @@ export const SettingsButton = ({
         highQualitySettings={highQualitySettings}
       />
       {customSettingsContent ?? <></>}
-    </Menu>
+    </StyledMenu>
   );
 };
+
+const StyledMenu = styled(Menu)`
+  z-index: 998 !important;
+  max-height: 300px !important;
+  overflow-y: auto !important;
+`;

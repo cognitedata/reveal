@@ -103,10 +103,10 @@ export { getGlobalMatrix } from './concrete/annotations/helpers/getMatrixUtils';
 
 // New architecture: tree view nodes
 export type { ITreeNode } from './base/treeView/ITreeNode';
-export type { TreeNode } from './base/treeView/TreeNode';
-export type { CheckBoxState } from './base/treeView/types';
 export type { IconColor } from './base/treeView/types';
 export type { TreeNodeAction } from './base/treeView/types';
+export { TreeNode } from './base/treeView/TreeNode';
+export { CheckBoxState } from './base/treeView/types';
 export { onSingleSelectNode } from './base/treeView/TreeNodeFunctions';
 export { onMultiSelectNode } from './base/treeView/TreeNodeFunctions';
 export { onIndependentCheckNode } from './base/treeView/TreeNodeFunctions';

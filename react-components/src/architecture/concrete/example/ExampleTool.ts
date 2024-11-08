@@ -78,7 +78,7 @@ export class ExampleTool extends BaseEditTool {
     }
   }
 
-  public override async onHover(event: PointerEvent): Promise<void> {
+  public override async onHoverByDebounce(event: PointerEvent): Promise<void> {
     const intersection = await this.getIntersection(event);
     // Just set the cursor
     const domainObject = this.getIntersectedSelectableDomainObject(intersection);

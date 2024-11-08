@@ -37,7 +37,7 @@ export const ResetCameraButton = ({
   return (
     <CogsTooltip
       content={t('RESET_CAMERA_TO_HOME', 'Reset camera to home')}
-      placement="right"
+      placement="bottom"
       appendTo={document.body}>
       <Button
         type="ghost"

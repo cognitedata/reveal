@@ -49,8 +49,11 @@ export const Main: Story = {
             onSelectNode={onSingleSelectNode}
             onCheckNode={onDependentCheckNode}
             loadNodes={loadNodes}
+            onClickInfo={onClickInfo}
             hasCheckboxes
             hasIcons
+            maxLabelLength={4}
+            hasInfo
           />
         </Container>
         <Container
@@ -108,7 +111,7 @@ async function loadNodes(
       const batchSize = 10;
 
       for (let i = 0; i < batchSize && i < totalCount; i++) {
-        const child = new TreeNode();
+        const child = new TreeNode<string>();
         child.label = 'Leaf ' + getRandomIntByMax(1000);
         child.icon = i % 3 === 0 ? 'Cube' : 'CylinderHorizontal';
         child.isExpanded = false;
@@ -127,13 +130,14 @@ async function loadNodes(
   return await promise;
 }
 
-function createTreeMock(lazyLoading: boolean): TreeNode {
-  const root = new TreeNode();
+function createTreeMock(lazyLoading: boolean): TreeNode<string> {
+  const root = new TreeNode<string>();
   root.label = 'Root';
   root.isExpanded = true;
 
   for (let i = 1; i <= 100; i++) {
-    const parent = new TreeNode();
+    const parent = new TreeNode<string>();
+    parent.userData = 'Index ' + i;
     parent.label = 'Folder ' + i;
     parent.isExpanded = true;
     parent.icon = 'Snow';
@@ -144,7 +148,7 @@ function createTreeMock(lazyLoading: boolean): TreeNode {
     parent.icon = i % 2 === 0 ? 'CubeFrontRight' : 'CubeFrontLeft';
 
     for (let j = 1; j <= 10; j++) {
-      const child = new TreeNode();
+      const child = new TreeNode<string>();
       child.label = 'Child ' + i + '.' + j;
       switch (j % 3) {
         case 0:
@@ -171,4 +175,9 @@ function createTreeMock(lazyLoading: boolean): TreeNode {
     }
   }
   return root;
+}
+
+function onClickInfo(_node: ITreeNode): void {
+  // const n = _node as TreeNode<string>;
+  // console.log('Info clicked: ' + n.label + 'UserData: ' + n.userData);
 }
