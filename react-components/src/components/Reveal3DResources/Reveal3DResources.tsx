@@ -45,6 +45,7 @@ export const Reveal3DResources = ({
   instanceStyling,
   onResourcesAdded,
   onResourceLoadError,
+  onResourceIsLoaded,
   image360Settings
 }: Reveal3DResourcesProps): ReactElement => {
   const viewer = useReveal();
@@ -117,6 +118,7 @@ export const Reveal3DResources = ({
 
   const onModelLoaded = (): void => {
     onModelFailOrSucceed();
+    onResourceIsLoaded?.();
   };
 
   const onModelLoadedError = (addOptions: AddResourceOptions, error: any): void => {
