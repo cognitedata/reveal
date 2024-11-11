@@ -60,9 +60,12 @@ export class PointsOfInterestDomainObject<PoIIdType> extends VisualDomainObject 
 
     if (this._selectedPointsOfInterest !== undefined) {
       const properties = this._selectedPointsOfInterest.properties;
-      info.add({ fallback: 'X', value: properties.positionX, quantity: Quantity.Length });
-      info.add({ fallback: 'Y', value: properties.positionY, quantity: Quantity.Length });
-      info.add({ fallback: 'Z', value: properties.positionZ, quantity: Quantity.Length });
+      add('X_COORDINATE', 'X coordinate', properties.positionX, Quantity.Length);
+      add('Y_COORDINATE', 'Y coordinate', properties.positionY, Quantity.Length);
+      add('Z_COORDINATE', 'Z coordinate', properties.positionZ, Quantity.Length);
+    }
+    function add(key: string, fallback: string, value: number, quantity: Quantity): void {
+      info.add({ key, fallback, value, quantity });
     }
     return info;
   }
