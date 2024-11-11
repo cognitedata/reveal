@@ -12,7 +12,7 @@ export class SetGhostModeCommand extends RenderTargetCommand {
   // ==================================================
 
   public override get tooltip(): TranslateKey {
-    return { fallback: 'Ghost mode' }; // @need-translation
+    return { key: 'GHOST_MODE', fallback: 'Ghost mode' };
   }
 
   public override get isEnabled(): boolean {
