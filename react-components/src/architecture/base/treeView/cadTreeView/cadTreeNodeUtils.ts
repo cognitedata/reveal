@@ -12,16 +12,23 @@ export type RevisionId = {
 
 type FetchNodesArgs = {
   sdk: CogniteClient;
-  id: RevisionId;
+  revisionId: RevisionId;
   node: CadTreeNode;
   loadChildren: boolean;
 };
 
-export async function fetchTreeNodeRoot(sdk: CogniteClient, id: RevisionId): Promise<CadTreeNode> {
-  const rootNodeObjResponse = await sdk.revisions3D.list3DNodes(id.modelId, id.revisionId, {
-    depth: 0,
-    limit: 1
-  });
+export async function fetchTreeNodeRoot(
+  sdk: CogniteClient,
+  revisionId: RevisionId
+): Promise<CadTreeNode> {
+  const rootNodeObjResponse = await sdk.revisions3D.list3DNodes(
+    revisionId.modelId,
+    revisionId.revisionId,
+    {
+      depth: 0,
+      limit: 1
+    }
+  );
   const rootNode = rootNodeObjResponse.items[0];
   const cadTreeNode = new CadTreeNode(rootNode);
   cadTreeNode.needLoadChildren = true;
@@ -48,7 +55,7 @@ export async function fetchTreeNodeArray(args: FetchNodesArgs): Promise<CadTreeN
 const LIST_NODES_PARAMS: List3DNodesQuery = { depth: 1, limit: 100 } as const;
 
 async function loadNode3DArray(args: FetchNodesArgs): Promise<ListResponse<Node3D[]>> {
-  const { sdk, id, node, loadChildren } = args;
+  const { sdk, revisionId: id, node, loadChildren } = args;
   if (loadChildren) {
     const response = await sdk.revisions3D.list3DNodes(id.modelId, id.revisionId, {
       ...LIST_NODES_PARAMS,
@@ -65,4 +72,19 @@ async function loadNode3DArray(args: FetchNodesArgs): Promise<ListResponse<Node3
     nodeId: node.parent?.id,
     cursor: node.loadSiblingCursor
   });
+}
+
+type FetchAncestorsArgs = {
+  sdk: CogniteClient;
+  revisionId: RevisionId;
+  nodeId: number;
+};
+
+export async function fetchAncestors(args: FetchAncestorsArgs): Promise<Node3D[]> {
+  const data = await args.sdk.revisions3D.list3DNodeAncestors(
+    args.revisionId.modelId,
+    args.revisionId.revisionId,
+    args.nodeId
+  );
+  return data.items;
 }

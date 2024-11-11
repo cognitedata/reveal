@@ -14,13 +14,16 @@ import {
 } from '../../../architecture/base/treeView/cadTreeView/cadTreeNodeUtils';
 import { type ITreeNode } from '../../../architecture';
 import { Infobox, Loader } from '@cognite/cogs.js';
-import { CadTreeNode } from '../../../architecture/base/treeView/cadTreeView/CadTreeNode';
-import { type OnLoadedAction, type CadTreeViewProps } from './CadTreeViewProps';
+import {
+  CadTreeNode,
+  type OnLoadedAction
+} from '../../../architecture/base/treeView/cadTreeView/CadTreeNode';
+import { type CadTreeViewProps } from './CadTreeViewProps';
 import { TreeView } from '../TreeView/TreeView';
 
 export function CadTreeView(props: CadTreeViewProps): ReactElement | null {
   const sdk = useSDK();
-  const id: RevisionId = { modelId: props.modelId, revisionId: props.revisionId };
+  const revisionId: RevisionId = { modelId: props.modelId, revisionId: props.revisionId };
 
   const {
     data: root,
@@ -29,7 +32,7 @@ export function CadTreeView(props: CadTreeViewProps): ReactElement | null {
   } = useQuery({
     queryKey: ['rootNode'],
     queryFn: async () => {
-      const root = await fetchTreeNodeRoot(sdk, id);
+      const root = await fetchTreeNodeRoot(sdk, revisionId);
       if (props.onLoaded !== undefined) {
         props.onLoaded(root, undefined);
       }
@@ -54,7 +57,7 @@ export function CadTreeView(props: CadTreeViewProps): ReactElement | null {
     if (!(node instanceof CadTreeNode)) {
       return undefined;
     }
-    const args = { sdk, id, node, loadChildren };
+    const args = { sdk, revisionId, node, loadChildren };
     return await fetchTreeNodeArray(args).then((loadedNodes) => {
       onLoadedNodes(node, loadChildren, loadedNodes, props.onLoaded);
       return loadedNodes;

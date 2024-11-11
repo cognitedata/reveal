@@ -2,6 +2,7 @@
  * Copyright 2024 Cognite AS
  */
 
+import { type Class, isInstanceOf } from '../domainObjectsHelpers/Class';
 import { insert, remove } from '../utilities/extensions/arrayExtensions';
 import { type IconName } from '../utilities/IconName';
 import { type ITreeNode } from './ITreeNode';
@@ -176,6 +177,10 @@ export class TreeNode<T = any> implements ITreeNode {
     return this._parent;
   }
 
+  public get children(): Array<TreeNode<T>> | undefined {
+    return this._children;
+  }
+
   // ==================================================
   // INSTANCE METHODS: Parent children methods
   // ==================================================
@@ -303,10 +308,28 @@ export class TreeNode<T = any> implements ITreeNode {
     }
   }
 
+  public *getDescendantsByType<Type extends ITreeNode>(classType: Class<Type>): Generator<Type> {
+    for (const descendant of this.getDescendants()) {
+      if (isInstanceOf(descendant, classType)) {
+        yield descendant;
+      }
+    }
+  }
+
   public *getThisAndDescendants(): Generator<TreeNode<T>> {
     yield this;
     for (const descendant of this.getDescendants()) {
       yield descendant;
+    }
+  }
+
+  public *getThisAndDescendantsByType<Type extends ITreeNode>(
+    classType: Class<Type>
+  ): Generator<Type> {
+    for (const descendant of this.getThisAndDescendants()) {
+      if (isInstanceOf(descendant, classType)) {
+        yield descendant;
+      }
     }
   }
 
