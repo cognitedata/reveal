@@ -5,7 +5,10 @@
 import {
   type NodeAppearance,
   type AddModelOptions,
-  type Image360AnnotationAppearance
+  type Image360AnnotationAppearance,
+  type CogniteCadModel,
+  type CognitePointCloudModel,
+  type Image360Collection
 } from '@cognite/reveal';
 
 import { type Matrix4 } from 'three';
@@ -121,5 +124,7 @@ export type CommonResourceContainerProps = {
   image360Settings?: CommonImage360Settings;
   onResourcesAdded?: () => void;
   onResourceLoadError?: (failedResource: AddResourceOptions, error: any) => void;
-  onResourceIsLoaded?: () => void;
+  onResourceIsLoaded?: (
+    model: CogniteCadModel | CognitePointCloudModel | Image360Collection
+  ) => void;
 };

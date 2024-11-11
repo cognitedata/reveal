@@ -2,7 +2,12 @@
  * Copyright 2023 Cognite AS
  */
 import { useRef, type ReactElement, useState, useEffect, useMemo } from 'react';
-import { type Cognite3DViewer } from '@cognite/reveal';
+import {
+  type CogniteCadModel,
+  type CognitePointCloudModel,
+  type Image360Collection,
+  type Cognite3DViewer
+} from '@cognite/reveal';
 import { CadModelContainer } from '../CadModelContainer/CadModelContainer';
 import { PointCloudContainer } from '../PointCloudContainer/PointCloudContainer';
 import { Image360CollectionContainer } from '../Image360CollectionContainer/Image360CollectionContainer';
@@ -116,9 +121,11 @@ export const Reveal3DResources = ({
           group.style !== undefined
       ) ?? EMPTY_ARRAY;
 
-  const onModelLoaded = (): void => {
+  const onModelLoaded = (
+    model: CogniteCadModel | CognitePointCloudModel | Image360Collection
+  ): void => {
     onModelFailOrSucceed();
-    onResourceIsLoaded?.();
+    onResourceIsLoaded?.(model);
   };
 
   const onModelLoadedError = (addOptions: AddResourceOptions, error: any): void => {
