@@ -19,6 +19,8 @@ import { Set360IconsSectionCommand } from './image360Collection/Set360IconsSecti
 import { Set360IconsVisibleCommand } from './image360Collection/Set360IconsVisibleCommand';
 import { Set360IconsOpacityCommand } from './image360Collection/Set360IconsOpacityCommand';
 import { Set360IconsOccludedVisibleCommand } from './image360Collection/Set360IconsOccludedVisibleCommand';
+import { SetGhostModeCommand } from './cad/SetGhostModeCommand';
+import { CadDividerCommand } from './cad/CadDividerCommand';
 
 export class SettingsCommand extends BaseSettingsCommand {
   // ==================================================
@@ -42,6 +44,10 @@ export class SettingsCommand extends BaseSettingsCommand {
       this.add(new Set360IconsOccludedVisibleCommand());
       this.add(new Set360IconsOpacityCommand());
     }
+    // Cad models
+    this.add(new CadDividerCommand());
+    this.add(new SetGhostModeCommand());
+
     // Point clouds
     this.add(new PointCloudDividerCommand());
     this.add(new SetPointSizeCommand());
