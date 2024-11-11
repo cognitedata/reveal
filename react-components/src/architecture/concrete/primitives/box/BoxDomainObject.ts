@@ -110,13 +110,7 @@ export abstract class BoxDomainObject extends SolidDomainObject {
     }
     // I forgot to add text for rotation angle before the deadline, so I used a icon instead.
     if (box.rotation.z !== 0 && isFinished) {
-      info.add({
-        key: undefined,
-        fallback: '',
-        icon: 'Angle',
-        value: box.zRotationInDegrees,
-        quantity: Quantity.Angle
-      });
+      add('HORIZONTAL_ANGLE', 'Horizontal angle', box.zRotationInDegrees, Quantity.Angle);
     }
     return info;
 

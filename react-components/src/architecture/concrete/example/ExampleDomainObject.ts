@@ -71,13 +71,13 @@ export class ExampleDomainObject extends VisualDomainObject {
     const info = new PanelInfo();
     info.setHeader(this.typeName);
     // In production code, you should add a Key also!
-    add('X coordinate', this.center.x, Quantity.Length);
-    add('Y coordinate', this.center.y, Quantity.Length);
-    add('Z coordinate', this.center.z, Quantity.Length);
+    add('X_COORDINATE', 'X coordinate', this.center.x, Quantity.Length);
+    add('Y_COORDINATE', 'Y coordinate', this.center.y, Quantity.Length);
+    add('Z_COORDINATE', 'Z coordinate', this.center.z, Quantity.Length);
     return info;
 
-    function add(fallback: string, value: number, quantity: Quantity): void {
-      info.add({ fallback, value, quantity });
+    function add(key: string, fallback: string, value: number, quantity: Quantity): void {
+      info.add({ key, fallback, value, quantity });
     }
   }
 

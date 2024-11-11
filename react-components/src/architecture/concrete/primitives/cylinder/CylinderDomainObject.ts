@@ -69,7 +69,7 @@ export abstract class CylinderDomainObject extends SolidDomainObject {
     const hasHeight = Cylinder.isValidSize(cylinder.height);
 
     if (isFinished || hasRadius) {
-      add('MEASUREMENTS_RADIUS', 'Radius', cylinder.radius, Quantity.Length);
+      add('RADIUS', 'Radius', cylinder.radius, Quantity.Length);
     }
     if (isFinished || hasHeight) {
       add('MEASUREMENTS_HEIGHT', 'Height', cylinder.height, Quantity.Length);
