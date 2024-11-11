@@ -120,6 +120,11 @@
   "GO_BACK_360": "Go one 360 image back",
   "GO_FORWARD_360": "Go one 360 image forward",
   "ENTER_LAST_360": "Enter last exited 360 image",
-  "EXIT_360": "Exit 360 image"
-
+  "EXIT_360": "Exit 360 image",
+  "HORIZONTAL_ANGLE": "Horizontal angle",
+  "DISTANCE_TO_ORIGIN": "Distance to origin",
+  "X:COORDINATE": "X coordinate",
+  "Y_COORDINATE": "Y coordinate",
+  "Z_COORDINATE": "Z coordinate",
+  "RADIUS": "Radius"
 }
