@@ -12,7 +12,7 @@ export class Set360IconsOccludedVisibleCommand extends RenderTargetCommand {
   // ==================================================
 
   public override get tooltip(): TranslateKey {
-    return { fallback: 'X-ray' }; // @need-translation
+    return { key: 'X_RAY', fallback: 'X-ray' };
   }
 
   public override get isEnabled(): boolean {
