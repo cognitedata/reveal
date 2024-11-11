@@ -87,7 +87,7 @@ export class AnnotationsCreateTool extends NavigationTool {
     }
   }
 
-  public override async onHover(event: PointerEvent): Promise<void> {
+  public override async onHoverByDebounce(event: PointerEvent): Promise<void> {
     const { _creator: creator } = this;
     if (creator !== undefined) {
       const ray = this.getRay(event);

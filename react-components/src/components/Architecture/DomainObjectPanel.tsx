@@ -36,11 +36,9 @@ export const DomainObjectPanel = (): ReactElement => {
 
   useEffect(() => {
     DomainObjectPanelUpdater.setDomainObjectDelegate(setCurrentDomainObjectInfo);
-
-    // Set in the get string on the copy command if any
   }, [setCurrentDomainObjectInfo, commands]);
 
-  // Fore the getString to be updated
+  // Force the getString to be updated
   if (commands !== undefined && info !== undefined) {
     for (const command of commands) {
       if (command instanceof CopyToClipboardCommand)

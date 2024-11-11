@@ -71,7 +71,7 @@ export abstract class PrimitiveEditTool extends BaseEditTool {
     }
   }
 
-  public override async onHover(event: PointerEvent): Promise<void> {
+  public override async onHoverByDebounce(event: PointerEvent): Promise<void> {
     // Handle when creator is set first
     if (!this.isEdit) {
       if (this._creator !== undefined) {

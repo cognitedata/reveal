@@ -71,14 +71,17 @@ export const SettingsButton = ({
   const flexDirection = getFlexDirection(placement);
   const children = command.children;
   return (
-    <Menu
+    <StyledMenu
       hideOnSelect={false}
       onOpenChange={(open: boolean) => {
+        for (const child of children) {
+          child.update();
+        }
         setOpen(open);
       }}
       floatingProps={{ middleware: [offset(TOOLBAR_HORIZONTAL_PANEL_OFFSET)] }}
-      appendTo={'parent'}
-      placement="right-start"
+      container={'parent'}
+      placement="right-end"
       style={{
         flexDirection,
         padding: DEFAULT_PADDING
@@ -104,7 +107,7 @@ export const SettingsButton = ({
         </CogsTooltip>
       )}>
       {children.map((child) => createMenuItem(child, t))}
-    </Menu>
+    </StyledMenu>
   );
 };
 
@@ -345,4 +348,10 @@ const StyledSlider = styled(Slider)`
   float: center;
   display: flex;
   justify-content: space-around;
+`;
+
+const StyledMenu = styled(Menu)`
+  z-index: 998 !important;
+  max-height: 300px !important;
+  overflow-y: auto !important;
 `;
