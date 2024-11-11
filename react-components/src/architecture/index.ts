@@ -39,7 +39,7 @@ export { RootDomainObject } from './base/domainObjects/RootDomainObject';
 export { VisualDomainObject } from './base/domainObjects/VisualDomainObject';
 
 export { BaseRevealConfig } from './base/renderTarget/BaseRevealConfig';
-export { CommandsController } from './base/renderTarget/CommandsController';
+export { CommandsController, type ContextMenuData } from './base/renderTarget/CommandsController';
 export { DefaultRevealConfig } from './base/renderTarget/DefaultRevealConfig';
 export { RevealRenderTarget } from './base/renderTarget/RevealRenderTarget';
 export { UnitSystem } from './base/renderTarget/UnitSystem';
@@ -100,6 +100,9 @@ export { PrimitiveType } from './base/utilities/primitives/PrimitiveType';
 export { AnnotationsSelectTool } from './concrete/annotations/commands/AnnotationsSelectTool';
 export { AnnotationsCreateTool } from './concrete/annotations/commands/AnnotationsCreateTool';
 export { getGlobalMatrix } from './concrete/annotations/helpers/getMatrixUtils';
+
+// New architecture: points of interest
+export * from './concrete/pointsOfInterest';
 
 // New architecture: tree view nodes
 export type { ITreeNode } from './base/treeView/ITreeNode';

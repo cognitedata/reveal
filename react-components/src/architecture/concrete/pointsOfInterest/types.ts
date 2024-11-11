@@ -17,15 +17,23 @@ export enum PointsOfInterestStatus {
   PendingCreation
 }
 
-export type PointsOfInterest<IdType> = {
+export type PointOfInterest<IdType> = {
   properties: PointsOfInterestProperties;
   id?: IdType;
   status: PointsOfInterestStatus;
 };
 
-export function createEmptyPointsOfInterestProperties(point: Vector3): PointsOfInterestProperties {
+export function createPointsOfInterestProperties(
+  point: Vector3,
+  title?: string
+): PointsOfInterestProperties {
   const cdfPosition = point.clone().applyMatrix4(CDF_TO_VIEWER_TRANSFORMATION.clone().invert());
-  return { positionX: cdfPosition.x, positionY: cdfPosition.y, positionZ: cdfPosition.z };
+  return {
+    positionX: cdfPosition.x,
+    positionY: cdfPosition.y,
+    positionZ: cdfPosition.z,
+    title: title
+  };
 }
 
 const poiMarker = Symbol('poiMarker');
@@ -36,7 +44,7 @@ export type PointsOfInterestIntersection<PoIIdType> = Omit<
 > & {
   marker: typeof poiMarker;
   domainObject: PointsOfInterestDomainObject<PoIIdType>;
-  userData: PointsOfInterest<PoIIdType>;
+  userData: PointOfInterest<PoIIdType>;
 };
 
 export function createPointsOfInterestIntersection<PoIIdType>(
@@ -44,7 +52,7 @@ export function createPointsOfInterestIntersection<PoIIdType>(
   distanceToCamera: number,
   customObject: ICustomObject,
   domainObject: PointsOfInterestDomainObject<PoIIdType>,
-  overlay: PointsOfInterest<PoIIdType>
+  overlay: PointOfInterest<PoIIdType>
 ): PointsOfInterestIntersection<PoIIdType> {
   return {
     type: 'customObject',

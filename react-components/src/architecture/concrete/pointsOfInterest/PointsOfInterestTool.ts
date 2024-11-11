@@ -9,20 +9,33 @@ import { type BaseCommand } from '../../base/commands/BaseCommand';
 import { CreatePointsOfInterestCommand } from './CreatePointsOfInterestCommand';
 import { SavePointsOfInterestCommand } from './SavePointsOfInterestCommand';
 import { DeletePointsOfInterestCommand } from './DeletePointsOfInterestCommand';
-import { createEmptyPointsOfInterestProperties, isPointsOfInterestIntersection } from './types';
+import {
+  createPointsOfInterestProperties,
+  isPointsOfInterestIntersection,
+  PointOfInterest
+} from './types';
 import { type IconName } from '../../base/utilities/IconName';
 import { PointsOfInterestAdsProvider } from './ads/PointsOfInterestAdsProvider';
-import { type ExternalId } from '../../../data-providers/FdmSDK';
+import { Vector3 } from 'three';
+import { PointsOfInterestProvider } from './PointsOfInterestProvider';
+import { AnchoredDialogContent } from '../../base/commands/BaseTool';
+import { AnchoredDialogUpdater } from '../../base/reactUpdaters/AnchoredDialogUpdater';
 
 export class PointsOfInterestTool<PoIIdType> extends BaseEditTool {
   private _isCreating: boolean = false;
+
+  private _createPointOfInterestCommand = new CreatePointsOfInterestCommand<PoIIdType>();
+  private _deletePointOfInterestCommand = new DeletePointsOfInterestCommand<PoIIdType>();
+  private _savePointOfInterestCommand = new SavePointsOfInterestCommand<PoIIdType>();
+
+  private _anchoredDialogContent: AnchoredDialogContent | undefined;
 
   protected override canBeSelected(domainObject: VisualDomainObject): boolean {
     return domainObject instanceof PointsOfInterestDomainObject;
   }
 
   public override get icon(): IconName {
-    return 'Location';
+    return 'Waypoint';
   }
 
   public override get tooltip(): TranslateKey {
@@ -31,10 +44,22 @@ export class PointsOfInterestTool<PoIIdType> extends BaseEditTool {
 
   public override getToolbar(): Array<BaseCommand | undefined> {
     return [
-      new CreatePointsOfInterestCommand<PoIIdType>(),
-      new DeletePointsOfInterestCommand<PoIIdType>(),
-      new SavePointsOfInterestCommand<PoIIdType>()
+      this._createPointOfInterestCommand,
+      this._deletePointOfInterestCommand,
+      this._savePointOfInterestCommand
     ];
+  }
+
+  public get createPointOfInterestCommand(): CreatePointsOfInterestCommand<PoIIdType> {
+    return this._createPointOfInterestCommand;
+  }
+
+  public get deletePointsOfInterestInstances(): DeletePointsOfInterestCommand<PoIIdType> {
+    return this._deletePointOfInterestCommand;
+  }
+
+  public get savePointsOfInterestInstances(): SavePointsOfInterestCommand<PoIIdType> {
+    return this._savePointOfInterestCommand;
   }
 
   public override onActivate(): void {
@@ -42,7 +67,9 @@ export class PointsOfInterestTool<PoIIdType> extends BaseEditTool {
     let domainObject = this.getPointsOfInterestDomainObject();
     if (domainObject === undefined) {
       domainObject = new PointsOfInterestDomainObject(
-        new PointsOfInterestAdsProvider(this.rootDomainObject.sdk)
+        new PointsOfInterestAdsProvider(
+          this.rootDomainObject.sdk
+        ) as unknown as PointsOfInterestProvider<PoIIdType>
       );
       this.renderTarget.rootDomainObject.addChildInteractive(domainObject);
     }
@@ -53,6 +80,7 @@ export class PointsOfInterestTool<PoIIdType> extends BaseEditTool {
     super.onDeactivate();
     const domainObject = this.getPointsOfInterestDomainObject();
     domainObject?.setSelectedPointsOfInterest(undefined);
+    domainObject?.setVisibleInteractive(false, this.renderTarget);
   }
 
   public override async onClick(event: PointerEvent): Promise<void> {
@@ -63,7 +91,11 @@ export class PointsOfInterestTool<PoIIdType> extends BaseEditTool {
     await this.selectOverlayFromClick(event);
   }
 
-  public getPointsOfInterestDomainObject(): PointsOfInterestDomainObject<ExternalId> | undefined {
+  public override getAnchoredDialogContent(): AnchoredDialogContent | undefined {
+    return this._anchoredDialogContent;
+  }
+
+  public getPointsOfInterestDomainObject(): PointsOfInterestDomainObject<PoIIdType> | undefined {
     return this.rootDomainObject.getDescendantByType(PointsOfInterestDomainObject);
   }
 
@@ -78,6 +110,11 @@ export class PointsOfInterestTool<PoIIdType> extends BaseEditTool {
     } else {
       this.renderTarget.setNavigateCursor();
     }
+  }
+
+  public setAnchoredDialogContent(dialogContent: AnchoredDialogContent | undefined): void {
+    this._anchoredDialogContent = dialogContent;
+    AnchoredDialogUpdater.update();
   }
 
   private async selectOverlayFromClick(event: PointerEvent): Promise<void> {
@@ -98,12 +135,24 @@ export class PointsOfInterestTool<PoIIdType> extends BaseEditTool {
       await super.onClick(event);
       return;
     }
+
+    const pendingOverlay = this.createPendingPointOfInterestAtPosition(intersection.point);
+
     const domainObject = this.getPointsOfInterestDomainObject();
-    const pendingOverlay = domainObject?.addPendingPointsOfInterest(
-      createEmptyPointsOfInterestProperties(intersection.point)
-    );
     domainObject?.setSelectedPointsOfInterest(pendingOverlay);
 
     this.setIsCreating(false);
+  }
+
+  public createPendingPointOfInterestAtPosition(
+    position: Vector3,
+    title?: string
+  ): PointOfInterest<PoIIdType> | undefined {
+    const domainObject = this.getPointsOfInterestDomainObject();
+    const pendingOverlay = domainObject?.addPendingPointsOfInterest(
+      createPointsOfInterestProperties(position)
+    );
+
+    return pendingOverlay;
   }
 }

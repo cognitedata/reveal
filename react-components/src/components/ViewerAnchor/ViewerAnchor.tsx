@@ -9,7 +9,8 @@ import {
   type RefObject,
   useState,
   useCallback,
-  type CSSProperties
+  type CSSProperties,
+  ReactNode
 } from 'react';
 import { Vector2, type Vector3 } from 'three';
 
@@ -24,7 +25,7 @@ export type ViewerAnchorProps = {
   sticky?: boolean;
   stickyMargin?: number;
   style?: ViewerAnchorStyle;
-  children: ReactElement;
+  children: ReactNode;
 };
 
 export const ViewerAnchor = ({

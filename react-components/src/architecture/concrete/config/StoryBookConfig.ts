@@ -31,6 +31,7 @@ import { type DmsUniqueIdentifier } from '../../../data-providers';
 import { PointsOfInterestTool } from '../pointsOfInterest/PointsOfInterestTool';
 import { Image360ActionCommand } from '../../base/concreteCommands/image360Collection/Image360ActionCommand';
 import { Image360Action } from '@cognite/reveal';
+import { ExternalId } from '../../../data-providers/FdmSDK';
 
 export class StoryBookConfig extends BaseRevealConfig {
   // ==================================================
@@ -63,7 +64,10 @@ export class StoryBookConfig extends BaseRevealConfig {
       undefined,
       new MeasurementTool(),
       new ClipTool(),
-      new PointsOfInterestTool<DmsUniqueIdentifier>(),
+      new PointsOfInterestTool<ExternalId>(),
+      undefined,
+      new MockSettingsCommand(),
+      new MockFilterCommand(),
       undefined,
       new MockSettingsCommand(),
       new MockFilterCommand(),

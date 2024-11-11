@@ -8,6 +8,8 @@ import { type BaseDragger } from '../domainObjectsHelpers/BaseDragger';
 import { VisualDomainObject } from '../domainObjects/VisualDomainObject';
 import { type AnyIntersection } from '@cognite/reveal';
 import { DomainObjectPanelUpdater } from '../reactUpdaters/DomainObjectPanelUpdater';
+import { CommandsController } from '../renderTarget/CommandsController';
+import { PrimitiveEditTool } from '../../concrete/primitives/tools/PrimitiveEditTool';
 
 /**
  * The `BaseEditTool` class is an abstract class that extends the `NavigationTool` class.
@@ -206,4 +208,8 @@ export abstract class BaseEditTool extends NavigationTool {
     }
     return domainObject;
   }
+}
+
+export function isActiveEditTool(commandController: CommandsController): boolean {
+  return commandController.activeTool instanceof PrimitiveEditTool;
 }

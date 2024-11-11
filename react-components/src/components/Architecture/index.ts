@@ -9,3 +9,5 @@ export type { PlacementType } from './types';
 export { IconComponentMapper } from './IconComponentMapper';
 export { TreeView } from './TreeView/TreeView';
 export type { TreeViewProps } from './TreeView/TreeViewProps';
+export { PointsOfInterestSidePanel } from './pointsOfInterest/PointsOfInterestSidePanel';
+export { ToolUI } from './ToolUI';

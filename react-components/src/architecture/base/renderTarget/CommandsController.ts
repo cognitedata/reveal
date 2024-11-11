@@ -3,10 +3,22 @@
  * CommandsController: Holds the tools, the active tool and the previous tool
  */
 
-import { PointerEvents, PointerEventsTarget, getWheelEventDelta } from '@cognite/reveal';
+import {
+  AnyIntersection,
+  PointerEvents,
+  PointerEventsTarget,
+  getWheelEventDelta
+} from '@cognite/reveal';
 import { type BaseTool } from '../commands/BaseTool';
 import { type BaseCommand } from '../commands/BaseCommand';
 import { type Class, isInstanceOf } from '../domainObjectsHelpers/Class';
+import { Vector2 } from 'three';
+import { ContextMenuUpdater } from '../reactUpdaters/ContextMenuUpdater';
+
+export type ContextMenuData = {
+  position: Vector2;
+  intersection: AnyIntersection | undefined;
+};
 
 export class CommandsController extends PointerEvents {
   // ==================================================
@@ -19,6 +31,7 @@ export class CommandsController extends PointerEvents {
   private readonly _domElement: HTMLElement;
   private readonly _commands = new Set<BaseCommand>();
   private readonly _pointerEventsTarget: PointerEventsTarget;
+  private _contextMenuPosition: ContextMenuData | undefined = undefined;
 
   // ==================================================
   // CONSTRUCTOR
@@ -44,6 +57,10 @@ export class CommandsController extends PointerEvents {
 
   public get isDefaultToolActive(): boolean {
     return this.activeTool === this.defaultTool;
+  }
+
+  public get contextMenuPositionData(): ContextMenuData | undefined {
+    return this._contextMenuPosition;
   }
 
   // ================================================
@@ -159,6 +176,11 @@ export class CommandsController extends PointerEvents {
     this._activeTool = tool;
     this._activeTool.onActivate();
     return true;
+  }
+
+  public setContextMenuPositionData(data: ContextMenuData | undefined) {
+    this._contextMenuPosition = data;
+    ContextMenuUpdater.update();
   }
 
   public update(): void {

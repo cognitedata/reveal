@@ -3,7 +3,11 @@
  */
 import { type CogniteClient } from '@cognite/sdk/dist/src';
 import { type ExternalId } from '../../../../data-providers/FdmSDK';
-import { type PointsOfInterestInstance, type PointsOfInterestProperties } from '../models';
+import {
+  CommentProperties,
+  type PointsOfInterestInstance,
+  type PointsOfInterestProperties
+} from '../models';
 import { type PointsOfInterestProvider } from '../PointsOfInterestProvider';
 
 import { v4 as uuid } from 'uuid';
@@ -21,6 +25,15 @@ export class PointsOfInterestAdsProvider implements PointsOfInterestProvider<Ext
 
   private readonly _deleteUrl = (project: string): string =>
     `apps/v1/projects/${project}/storage/3d/poi/delete`;
+
+  private readonly _getCommentsUrl = (project: string): string =>
+    `apps/v1/projects/${project}/storage/3d/poi/comment/list`;
+
+  private readonly _postCommentUrl = (project: string): string =>
+    `apps/v1/projects/${project}/storage/3d/poi/comment`;
+
+  private readonly _byidsUrl = (project: string): string =>
+    `apps/v1/projects/${project}/storage/3d/poi/byids`;
 
   constructor(private readonly _sdk: CogniteClient) {}
 
@@ -83,6 +96,45 @@ export class PointsOfInterestAdsProvider implements PointsOfInterestProvider<Ext
         `An error occured while deleting points of interest: ${JSON.stringify(result.data)}, status code: ${result.status}`
       );
     }
+  }
+
+  async getPointsOfInterestComments(poiId: ExternalId): Promise<CommentProperties[]> {
+    const byidsResult = await this._sdk.post<{ items: PoIItem[] }>(
+      `${this._sdk.getBaseUrl()}/${this._byidsUrl(this._sdk.project)}`,
+      { data: { items: [{ externalId: poiId }] } }
+    );
+    console.log('ByIdsresult = ', byidsResult.data);
+
+    const result = await this._sdk.post<{ items: CommentProperties[] }>(
+      `${this._sdk.getBaseUrl()}/${this._getCommentsUrl(this._sdk.project)}`,
+      { data: { externalId: poiId } }
+    );
+
+    if (result.status !== 200) {
+      throw Error(
+        `An error occured while fetching points of interest comments: ${JSON.stringify(result.data)}, status code: ${result.status}`
+      );
+    }
+
+    return result.data.items;
+  }
+
+  async postPointsOfInterestComment(
+    poiId: ExternalId,
+    content: string
+  ): Promise<CommentProperties> {
+    const result = await this._sdk.post<{ content: string; ownerId: string }>(
+      `${this._sdk.getBaseUrl()}/${this._postCommentUrl(this._sdk.project)}`,
+      { data: { poi3dExternalId: poiId, content } }
+    );
+
+    if (result.status !== 200) {
+      throw Error(
+        `An error occured occured while posting points of interest comment: ${JSON.stringify(result.data)}, status code: ${result.status}`
+      );
+    }
+
+    return result.data;
   }
 }
 

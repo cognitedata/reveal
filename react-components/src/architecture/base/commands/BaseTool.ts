@@ -2,7 +2,7 @@
  * Copyright 2024 Cognite AS
  */
 
-import { type Ray, Raycaster, type Vector2 } from 'three';
+import { MOUSE, type Ray, Raycaster, Vector2, Vector3 } from 'three';
 import { RenderTargetCommand } from './RenderTargetCommand';
 import {
   type CustomObjectIntersection,
@@ -21,6 +21,18 @@ import { PopupStyle } from '../domainObjectsHelpers/PopupStyle';
 import { ThreeView } from '../views/ThreeView';
 import { UndoManager } from '../undo/UndoManager';
 import { CommandChanges } from '../domainObjectsHelpers/CommandChanges';
+import { CommandsUpdater } from '../reactUpdaters/CommandsUpdater';
+import { ContextMenu } from '../../../components/ContextMenu';
+import { ContextMenuUpdater } from '../reactUpdaters/ContextMenuUpdater';
+
+/**
+ * AnchorDialog
+ */
+export type AnchoredDialogContent = {
+  position: Vector3;
+  onCloseCallback: () => void;
+  contentCommands: BaseCommand[];
+};
 
 /**
  * Base class for interactions in the 3D viewer
@@ -56,6 +68,10 @@ export abstract class BaseTool extends RenderTargetCommand {
 
   public get defaultCursor(): string {
     return 'default';
+  }
+
+  public getAnchoredDialogContent(): AnchoredDialogContent | undefined {
+    return undefined;
   }
 
   public getToolbar(): Array<BaseCommand | undefined> {
@@ -94,7 +110,13 @@ export abstract class BaseTool extends RenderTargetCommand {
     // Debounce version. Use this when doing intersection with CAD models and other large models
   }
 
-  public async onClick(_event: PointerEvent): Promise<void> {
+  public async onClick(event: PointerEvent): Promise<void> {
+    if (event.button === (MOUSE.RIGHT as number)) {
+      await this.openContextMenu(event);
+    } else if (this.isContextMenuOpen()) {
+      await this.closeContextMenu();
+    }
+
     await Promise.resolve();
   }
 
@@ -139,6 +161,10 @@ export abstract class BaseTool extends RenderTargetCommand {
   public onEscapeKey(): void {}
 
   public onUndo(): void {}
+
+  public createContextMenuCommands(intersection: AnyIntersection | undefined): BaseCommand[] {
+    return [];
+  }
 
   // ==================================================
   // INSTANCE METHODS: Intersections
@@ -237,5 +263,23 @@ export abstract class BaseTool extends RenderTargetCommand {
 
   public setDefaultCursor(): void {
     this.renderTarget.cursor = this.defaultCursor;
+  }
+
+  private async openContextMenu(event: PointerEvent): Promise<void> {
+    const intersection = await this.getIntersection(event);
+
+    this._renderTarget?.commandsController.setContextMenuPositionData({
+      position: new Vector2(event.layerX, event.layerY),
+      intersection
+    });
+    ContextMenuUpdater.update();
+  }
+
+  private async closeContextMenu(): Promise<void> {
+    this._renderTarget?.commandsController.setContextMenuPositionData(undefined);
+  }
+
+  private isContextMenuOpen(): boolean {
+    return this._renderTarget?.commandsController.contextMenuPositionData !== undefined;
   }
 }
