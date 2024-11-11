@@ -111,5 +111,15 @@
   "UNDO": "Undo",
   "WIDGET_WINDOW_CLOSE": "Close",
   "WIDGET_WINDOW_EXPAND": "Expand",
-  "WIDGET_WINDOW_MINIMIZE": "Minimize"
+  "WIDGET_WINDOW_MINIMIZE": "Minimize",
+  "VISIBLE": "Visible",
+  "IMAGE_TRANSPARENCY": "Image Transparency",
+  "GHOST_MODE": "Ghost mode",
+  "MARKER TRANSPARENCY": "Marker transparency",
+  "X_REY": "X-ray",
+  "GO_BACK_360": "Go one 360 image back",
+  "GO_FORWARD_360": "Go one 360 image forward",
+  "ENTER_LAST_360": "Enter last exited 360 image",
+  "EXIT_360": "Exit 360 image"
+
 }
