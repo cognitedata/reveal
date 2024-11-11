@@ -4,11 +4,7 @@
 
 export type { Image360AnnotationAssetInfo } from './types';
 
-export {
-  useAssetMappedNodesForRevisions,
-  useGenerateAssetMappingCachePerItemFromModelCache,
-  useGenerateNode3DCache
-} from './AssetMappingAndNode3DCacheProvider';
+export { useAssetMappedNodesForRevisions } from './AssetMappingAndNode3DCacheProvider';
 export { useFdmAssetMappings } from './NodeCacheProvider';
 export {
   usePointCloudAnnotationMappingsForModels,
