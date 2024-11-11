@@ -10,6 +10,6 @@ export class Set360ImagesSectionCommand extends SectionCommand {
   }
 
   public override get tooltip(): TranslateKey {
-    return { fallback: '360 Images' }; // @need-translation
+    return { key: 'IMAGES_360', fallback: '360 images' };
   }
 }

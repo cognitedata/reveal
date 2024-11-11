@@ -121,17 +121,17 @@ export abstract class PlaneDomainObject extends VisualDomainObject {
 
     switch (this.primitiveType) {
       case PrimitiveType.PlaneX:
-        add('XCOORDINATE', 'X coordinate', this.coordinate, Quantity.Length);
+        add('X_COORDINATE', 'X coordinate', this.coordinate, Quantity.Length);
         break;
       case PrimitiveType.PlaneY:
-        add('YCOORDINATE', 'Y coordinate', this.coordinate, Quantity.Length);
+        add('Y_COORDINATE', 'Y coordinate', this.coordinate, Quantity.Length);
         break;
       case PrimitiveType.PlaneZ:
-        add('ZCOORDINATE', 'Z coordinate', this.coordinate, Quantity.Length);
+        add('Z_COORDINATE', 'Z coordinate', this.coordinate, Quantity.Length);
         break;
       case PrimitiveType.PlaneXY:
         add('DISTANCE_TO_ORIGIN', 'Distance to origin', this.coordinate, Quantity.Length);
-        add('ANGLE', 'Angle', radToDeg(this.angle), Quantity.Angle);
+        add('HORIZONTAL_ANGLE', 'Horizontal angle', radToDeg(this.angle), Quantity.Angle);
         break;
     }
     return info;
