@@ -186,7 +186,9 @@ export class LineView extends GroupThreeView<LineDomainObject> {
     }
     const material = new MeshPhongMaterial();
     updateSolidMaterial(material, domainObject, style);
-    return new Mesh(mergeGeometries(geometries, false), material);
+    const pipeMesh = new Mesh(mergeGeometries(geometries, false), material);
+    pipeMesh.renderOrder = RENDER_ORDER;
+    return pipeMesh;
   }
 
   private createLines(): Object3D | undefined {
