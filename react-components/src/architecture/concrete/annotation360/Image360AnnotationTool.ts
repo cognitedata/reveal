@@ -65,17 +65,16 @@ export class Image360AnnotationTool extends PrimitiveEditTool {
   // ==================================================
 
   public override onActivate(): void {
-    super.onActivate();
-
     for (const domainObject of this.getSelectable()) {
       // ANDERS: Get the image and set it visible
       domainObject.setVisibleInteractive(true, this.renderTarget);
     }
+    super.onActivate();
   }
 
   public override onDeactivate(): void {
-    super.onDeactivate();
     this.setAllVisible(false);
+    super.onDeactivate();
   }
 
   public override async onHoverByDebounce(event: PointerEvent): Promise<void> {

@@ -39,12 +39,4 @@ export abstract class InstanceCommand extends RenderTargetCommand {
       }
     }
   }
-
-  protected *getSelectedInstances(): Generator<DomainObject> {
-    for (const domainObject of this.getInstances()) {
-      if (domainObject.isSelected) {
-        yield domainObject;
-      }
-    }
-  }
 }

@@ -5,6 +5,7 @@
 import { InstanceCommand } from '../../base/commands/InstanceCommand';
 import { type DomainObject } from '../../base/domainObjects/DomainObject';
 import { Changes } from '../../base/domainObjectsHelpers/Changes';
+import { FocusType } from '../../base/domainObjectsHelpers/FocusType';
 import { type IconName } from '../../base/utilities/IconName';
 import { type TranslateKey } from '../../base/utilities/TranslateKey';
 import { Image360AnnotationDomainObject } from './Image360AnnotationDomainObject';
@@ -22,13 +23,16 @@ export class DeleteSelectedImage360AnnotationCommand extends InstanceCommand {
     return 'ghost-destructive';
   }
 
+  public override get shortCutKey(): string {
+    return 'DEL';
+  }
+
   public override get isEnabled(): boolean {
-    const first = this.getSelectedInstances().next().value;
-    return first !== undefined && first.canBeRemoved;
+    return this.getFirstInstance() !== undefined;
   }
 
   protected override invokeCore(): boolean {
-    const array = Array.from(this.getSelectedInstances());
+    const array = Array.from(this.getInstances());
     array.reverse();
     for (const domainObject of array) {
       this.addTransaction(domainObject.createTransaction(Changes.deleted));
@@ -38,6 +42,10 @@ export class DeleteSelectedImage360AnnotationCommand extends InstanceCommand {
   }
 
   protected override isInstance(domainObject: DomainObject): boolean {
-    return domainObject instanceof Image360AnnotationDomainObject;
+    return (
+      domainObject instanceof Image360AnnotationDomainObject &&
+      domainObject.isSelected &&
+      domainObject.focusType !== FocusType.Pending
+    );
   }
 }

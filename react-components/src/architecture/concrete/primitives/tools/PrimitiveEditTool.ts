@@ -23,7 +23,7 @@ export abstract class PrimitiveEditTool extends BaseEditTool {
 
   protected _creator: BaseCreator | undefined = undefined;
   public primitiveType: PrimitiveType;
-  public readonly defaultPrimitiveType: PrimitiveType;
+  private readonly _defaultPrimitiveType: PrimitiveType;
 
   public get isEdit(): boolean {
     return this.primitiveType === PrimitiveType.None;
@@ -36,7 +36,7 @@ export abstract class PrimitiveEditTool extends BaseEditTool {
   public constructor(primitiveType: PrimitiveType = PrimitiveType.None) {
     super();
     this.primitiveType = primitiveType;
-    this.defaultPrimitiveType = primitiveType;
+    this._defaultPrimitiveType = primitiveType;
   }
 
   // ==================================================
@@ -69,6 +69,7 @@ export abstract class PrimitiveEditTool extends BaseEditTool {
       this.setDefaultPrimitiveType();
       this._creator = undefined;
     }
+    CommandsUpdater.update(this.renderTarget);
   }
 
   public override async onHoverByDebounce(event: PointerEvent): Promise<void> {
@@ -274,10 +275,10 @@ export abstract class PrimitiveEditTool extends BaseEditTool {
   }
 
   protected setDefaultPrimitiveType(): void {
-    if (this.primitiveType === this.defaultPrimitiveType) {
+    if (this.primitiveType === this._defaultPrimitiveType) {
       return;
     }
-    this.primitiveType = this.defaultPrimitiveType;
+    this.primitiveType = this._defaultPrimitiveType;
     CommandsUpdater.update(this.renderTarget);
   }
 
