@@ -2,9 +2,9 @@
  * Copyright 2024 Cognite AS
  */
 
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect } from 'react';
 import { type BaseCommand } from '../../architecture/base/commands/BaseCommand';
-import { DomainObject } from '../../architecture';
+import { type DomainObject } from '../../architecture';
 
 export const useOnUpdate = (command: BaseCommand, update: () => void): void => {
   const memoizedUpdate = useCallback(update, [command]);
@@ -23,6 +23,8 @@ export const useOnUpdateDomainObject = (object: DomainObject, update: () => void
   useEffect(() => {
     memoizedUpdate();
     object.views.addEventListener(memoizedUpdate);
-    return () => object.views.removeEventListener(memoizedUpdate);
+    return () => {
+      object.views.removeEventListener(memoizedUpdate);
+    };
   }, [object, memoizedUpdate]);
 };

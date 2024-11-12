@@ -8,7 +8,7 @@ import { type BaseDragger } from '../domainObjectsHelpers/BaseDragger';
 import { VisualDomainObject } from '../domainObjects/VisualDomainObject';
 import { type AnyIntersection } from '@cognite/reveal';
 import { DomainObjectPanelUpdater } from '../reactUpdaters/DomainObjectPanelUpdater';
-import { CommandsController } from '../renderTarget/CommandsController';
+import { type CommandsController } from '../renderTarget/CommandsController';
 import { PrimitiveEditTool } from '../../concrete/primitives/tools/PrimitiveEditTool';
 
 /**

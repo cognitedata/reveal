@@ -1,11 +1,11 @@
 /*!
  * Copyright 2024 Cognite AS
  */
-import { ReactNode, useState, type ReactElement } from 'react';
+import { type ReactNode, useState, type ReactElement } from 'react';
 import { type Vector2 } from 'three';
 import styled from 'styled-components';
 import { useRenderTarget } from './RevealCanvas';
-import { ContextMenuData } from '../architecture/base/renderTarget/CommandsController';
+import { type ContextMenuData } from '../architecture/base/renderTarget/CommandsController';
 import { ContextMenuUpdater } from '../architecture/base/reactUpdaters/ContextMenuUpdater';
 import { withSuppressRevealEvents } from '../higher-order-components/withSuppressRevealEvents';
 
@@ -24,8 +24,6 @@ export const ContextMenu = ({
   if (contextMenuData === undefined) {
     return <></>;
   }
-
-  console.log('Rendering context menu data with position', contextMenuData.position);
 
   return (
     <StyledDiv

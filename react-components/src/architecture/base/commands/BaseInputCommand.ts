@@ -1,4 +1,7 @@
-import { TranslateDelegate, TranslateKey } from '../utilities/TranslateKey';
+/*!
+ * Copyright 2024 Cognite AS
+ */
+import { type TranslateDelegate, type TranslateKey } from '../utilities/TranslateKey';
 import { RenderTargetCommand } from './RenderTargetCommand';
 
 export class BaseInputCommand extends RenderTargetCommand {
@@ -29,6 +32,10 @@ export class BaseInputCommand extends RenderTargetCommand {
       return undefined;
     }
     return t(this._placeholder?.key, this._placeholder?.fallback);
+  }
+
+  public get onFinish(): () => void {
+    return this._onFinish;
   }
 
   public set onFinish(onFinish: () => void) {

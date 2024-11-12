@@ -4,7 +4,7 @@
  */
 
 import {
-  AnyIntersection,
+  type AnyIntersection,
   PointerEvents,
   PointerEventsTarget,
   getWheelEventDelta
@@ -12,7 +12,7 @@ import {
 import { type BaseTool } from '../commands/BaseTool';
 import { type BaseCommand } from '../commands/BaseCommand';
 import { type Class, isInstanceOf } from '../domainObjectsHelpers/Class';
-import { Vector2 } from 'three';
+import { type Vector2 } from 'three';
 import { ContextMenuUpdater } from '../reactUpdaters/ContextMenuUpdater';
 
 export type ContextMenuData = {
@@ -178,7 +178,7 @@ export class CommandsController extends PointerEvents {
     return true;
   }
 
-  public setContextMenuPositionData(data: ContextMenuData | undefined) {
+  public setContextMenuPositionData(data: ContextMenuData | undefined): void {
     this._contextMenuPosition = data;
     ContextMenuUpdater.update();
   }

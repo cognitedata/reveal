@@ -2,7 +2,7 @@
  * Copyright 2024 Cognite AS
  */
 
-import { MOUSE, type Ray, Raycaster, Vector2, Vector3 } from 'three';
+import { MOUSE, type Ray, Raycaster, Vector2, type Vector3 } from 'three';
 import { RenderTargetCommand } from './RenderTargetCommand';
 import {
   type CustomObjectIntersection,
@@ -21,8 +21,6 @@ import { PopupStyle } from '../domainObjectsHelpers/PopupStyle';
 import { ThreeView } from '../views/ThreeView';
 import { UndoManager } from '../undo/UndoManager';
 import { CommandChanges } from '../domainObjectsHelpers/CommandChanges';
-import { CommandsUpdater } from '../reactUpdaters/CommandsUpdater';
-import { ContextMenu } from '../../../components/ContextMenu';
 import { ContextMenuUpdater } from '../reactUpdaters/ContextMenuUpdater';
 
 /**
@@ -161,10 +159,6 @@ export abstract class BaseTool extends RenderTargetCommand {
   public onEscapeKey(): void {}
 
   public onUndo(): void {}
-
-  public createContextMenuCommands(intersection: AnyIntersection | undefined): BaseCommand[] {
-    return [];
-  }
 
   // ==================================================
   // INSTANCE METHODS: Intersections

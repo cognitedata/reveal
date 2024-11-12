@@ -10,7 +10,7 @@ import {
   useState,
   useCallback,
   type CSSProperties,
-  ReactNode
+  type ReactNode
 } from 'react';
 import { Vector2, type Vector3 } from 'three';
 

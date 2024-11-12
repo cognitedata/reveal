@@ -1,6 +1,9 @@
+/*!
+ * Copyright 2024 Cognite AS
+ */
 import { Comment } from '@cognite/cogs.js';
-import { BaseInputCommand } from '../../architecture/base/commands/BaseInputCommand';
-import { useState } from 'react';
+import { type BaseInputCommand } from '../../architecture/base/commands/BaseInputCommand';
+import { type ReactNode, useState } from 'react';
 import { useTranslation } from '../i18n/I18n';
 
 export const InputField = ({
@@ -8,7 +11,7 @@ export const InputField = ({
 }: {
   inputCommand: BaseInputCommand;
   placement: string;
-}) => {
+}): ReactNode => {
   const [content, setContent] = useState<string>('');
   const { t } = useTranslation();
 

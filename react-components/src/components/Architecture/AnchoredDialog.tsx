@@ -1,4 +1,7 @@
-import { ReactNode, useMemo, useState } from 'react';
+/*!
+ * Copyright 2024 Cognite AS
+ */
+import { type ReactNode, useMemo, useState } from 'react';
 import { useRenderTarget } from '../RevealCanvas';
 import { AnchoredDialogUpdater } from '../../architecture/base/reactUpdaters/AnchoredDialogUpdater';
 import { ViewerAnchor } from '../ViewerAnchor/ViewerAnchor';
