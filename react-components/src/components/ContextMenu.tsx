@@ -5,9 +5,9 @@ import { type ReactNode, useState, type ReactElement } from 'react';
 import { type Vector2 } from 'three';
 import styled from 'styled-components';
 import { useRenderTarget } from './RevealCanvas';
-import { type ContextMenuData } from '../architecture/base/renderTarget/CommandsController';
 import { ContextMenuUpdater } from '../architecture/base/reactUpdaters/ContextMenuUpdater';
 import { withSuppressRevealEvents } from '../higher-order-components/withSuppressRevealEvents';
+import { ContextMenuData } from '../architecture/base/renderTarget/ContextMenuController';
 
 export const ContextMenu = ({
   Content
@@ -19,7 +19,7 @@ export const ContextMenu = ({
   const [_update, setUpdate] = useState<number>(0);
   ContextMenuUpdater.setCounterDelegate(setUpdate);
 
-  const contextMenuData = renderTarget.commandsController.contextMenuPositionData;
+  const contextMenuData = renderTarget.contextMenuController.contextMenuPositionData;
 
   if (contextMenuData === undefined) {
     return <></>;
@@ -29,7 +29,7 @@ export const ContextMenu = ({
     <StyledDiv
       $position={contextMenuData.position}
       onClick={() => {
-        renderTarget.commandsController.setContextMenuPositionData(undefined);
+        renderTarget.contextMenuController.contextMenuPositionData = undefined;
       }}>
       <Content contextMenuData={contextMenuData} />
     </StyledDiv>

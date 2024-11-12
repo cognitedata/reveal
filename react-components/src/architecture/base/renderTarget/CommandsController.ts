@@ -3,22 +3,11 @@
  * CommandsController: Holds the tools, the active tool and the previous tool
  */
 
-import {
-  type AnyIntersection,
-  PointerEvents,
-  PointerEventsTarget,
-  getWheelEventDelta
-} from '@cognite/reveal';
+import { PointerEvents, PointerEventsTarget, getWheelEventDelta } from '@cognite/reveal';
 import { type BaseTool } from '../commands/BaseTool';
 import { type BaseCommand } from '../commands/BaseCommand';
 import { type Class, isInstanceOf } from '../domainObjectsHelpers/Class';
 import { type Vector2 } from 'three';
-import { ContextMenuUpdater } from '../reactUpdaters/ContextMenuUpdater';
-
-export type ContextMenuData = {
-  position: Vector2;
-  intersection: AnyIntersection | undefined;
-};
 
 export class CommandsController extends PointerEvents {
   // ==================================================
@@ -31,7 +20,6 @@ export class CommandsController extends PointerEvents {
   private readonly _domElement: HTMLElement;
   private readonly _commands = new Set<BaseCommand>();
   private readonly _pointerEventsTarget: PointerEventsTarget;
-  private _contextMenuPosition: ContextMenuData | undefined = undefined;
 
   // ==================================================
   // CONSTRUCTOR
@@ -57,10 +45,6 @@ export class CommandsController extends PointerEvents {
 
   public get isDefaultToolActive(): boolean {
     return this.activeTool === this.defaultTool;
-  }
-
-  public get contextMenuPositionData(): ContextMenuData | undefined {
-    return this._contextMenuPosition;
   }
 
   // ================================================
@@ -144,6 +128,16 @@ export class CommandsController extends PointerEvents {
     return this.activateDefaultTool();
   }
 
+  public getToolByType<T extends BaseTool>(classType: Class<T>): T | undefined {
+    for (const tool of this._commands) {
+      if (isInstanceOf(tool, classType)) {
+        return tool;
+      }
+    }
+
+    return undefined;
+  }
+
   public setActiveToolByType<T extends BaseTool>(classType: Class<T>): boolean {
     for (const tool of this._commands) {
       if (isInstanceOf(tool, classType)) {
@@ -176,11 +170,6 @@ export class CommandsController extends PointerEvents {
     this._activeTool = tool;
     this._activeTool.onActivate();
     return true;
-  }
-
-  public setContextMenuPositionData(data: ContextMenuData | undefined): void {
-    this._contextMenuPosition = data;
-    ContextMenuUpdater.update();
   }
 
   public update(): void {

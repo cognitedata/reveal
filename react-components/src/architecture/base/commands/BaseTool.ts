@@ -262,18 +262,27 @@ export abstract class BaseTool extends RenderTargetCommand {
   private async openContextMenu(event: PointerEvent): Promise<void> {
     const intersection = await this.getIntersection(event);
 
-    this._renderTarget?.commandsController.setContextMenuPositionData({
+    if (this._renderTarget === undefined) {
+      return;
+    }
+
+    this._renderTarget.contextMenuController.contextMenuPositionData = {
       position: new Vector2(event.layerX, event.layerY),
       intersection
-    });
+    };
+
     ContextMenuUpdater.update();
   }
 
   private async closeContextMenu(): Promise<void> {
-    this._renderTarget?.commandsController.setContextMenuPositionData(undefined);
+    if (this._renderTarget === undefined) {
+      return;
+    }
+
+    this._renderTarget.contextMenuController.contextMenuPositionData = undefined;
   }
 
   private isContextMenuOpen(): boolean {
-    return this._renderTarget?.commandsController.contextMenuPositionData !== undefined;
+    return this._renderTarget?.contextMenuController.contextMenuPositionData !== undefined;
   }
 }
