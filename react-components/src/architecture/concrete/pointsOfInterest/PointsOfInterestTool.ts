@@ -11,8 +11,8 @@ import { SavePointsOfInterestCommand } from './SavePointsOfInterestCommand';
 import { DeletePointsOfInterestCommand } from './DeletePointsOfInterestCommand';
 import { createEmptyPointsOfInterestProperties, isPointsOfInterestIntersection } from './types';
 import { type IconName } from '../../base/utilities/IconName';
-import { PointsOfInterestAdsProvider } from './ads/PointsOfInterestAdsProvider';
-import { type ExternalId } from '../../../data-providers/FdmSDK';
+import { PointsOfInterestFdmProvider } from './fdm/PointsOfInterestFdmProvider';
+import { type DmsUniqueIdentifier } from '../../../data-providers';
 
 export class PointsOfInterestTool<PoIIdType> extends BaseEditTool {
   private _isCreating: boolean = false;
@@ -42,7 +42,7 @@ export class PointsOfInterestTool<PoIIdType> extends BaseEditTool {
     let domainObject = this.getPointsOfInterestDomainObject();
     if (domainObject === undefined) {
       domainObject = new PointsOfInterestDomainObject(
-        new PointsOfInterestAdsProvider(this.rootDomainObject.sdk)
+        new PointsOfInterestFdmProvider(this.rootDomainObject.fdmSdk)
       );
       this.renderTarget.rootDomainObject.addChildInteractive(domainObject);
     }
@@ -63,7 +63,9 @@ export class PointsOfInterestTool<PoIIdType> extends BaseEditTool {
     await this.selectOverlayFromClick(event);
   }
 
-  public getPointsOfInterestDomainObject(): PointsOfInterestDomainObject<ExternalId> | undefined {
+  public getPointsOfInterestDomainObject():
+    | PointsOfInterestDomainObject<DmsUniqueIdentifier>
+    | undefined {
     return this.rootDomainObject.getDescendantByType(PointsOfInterestDomainObject);
   }
 
