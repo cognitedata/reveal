@@ -39,8 +39,7 @@ export class Image360AnnotationTool extends PrimitiveEditTool {
   }
 
   public override get isEnabled(): boolean {
-    // ANDERS: Now it works for all states
-    return true; // this.renderTarget.isInside360Image;
+    return this.renderTarget.isInside360Image;
   }
 
   public override getToolbar(): Array<BaseCommand | undefined> {
@@ -65,9 +64,18 @@ export class Image360AnnotationTool extends PrimitiveEditTool {
   // ==================================================
 
   public override onActivate(): void {
+    const selected360ImageId = this.renderTarget.viewer.getActive360ImageInfo()?.image360.id;
+    if (selected360ImageId === undefined) {
+      return;
+    }
+
     for (const domainObject of this.getSelectable()) {
-      // ANDERS: Get the image and set it visible
-      domainObject.setVisibleInteractive(true, this.renderTarget);
+      if (
+        domainObject instanceof Image360AnnotationDomainObject &&
+        domainObject.connectedImageId === selected360ImageId
+      ) {
+        domainObject.setVisibleInteractive(true, this.renderTarget);
+      }
     }
     super.onActivate();
   }

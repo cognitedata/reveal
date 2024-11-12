@@ -9,15 +9,19 @@ import { type TranslateKey } from '../../base/utilities/TranslateKey';
 import { LineDomainObject } from '../primitives/line/LineDomainObject';
 import { Color } from 'three';
 import { LineRenderStyle } from '../primitives/line/LineRenderStyle';
+import { type DirectRelationReference } from '@cognite/sdk';
 
 export class Image360AnnotationDomainObject extends LineDomainObject {
   // ==================================================
   // CONSTRUCTOR
   // ==================================================
 
-  public constructor() {
+  public connectedImageId: string | DirectRelationReference;
+
+  public constructor(connectedImageId: string | DirectRelationReference) {
     super(PrimitiveType.Polygon);
     this.color = new Color(Color.NAMES.red);
+    this.connectedImageId = connectedImageId;
   }
 
   // ==================================================
@@ -29,7 +33,7 @@ export class Image360AnnotationDomainObject extends LineDomainObject {
   }
 
   public override clone(what?: symbol): DomainObject {
-    const clone = new Image360AnnotationDomainObject();
+    const clone = new Image360AnnotationDomainObject(this.connectedImageId);
     clone.copyFrom(this, what);
     return clone;
   }
