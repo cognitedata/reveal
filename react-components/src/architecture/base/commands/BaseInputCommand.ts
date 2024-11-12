@@ -34,7 +34,7 @@ export class BaseInputCommand extends RenderTargetCommand {
     return t(this._placeholder?.key, this._placeholder?.fallback);
   }
 
-  public get onFinish(): () => void {
+  public get onFinish(): (() => void) | undefined {
     return this._onFinish;
   }
 
