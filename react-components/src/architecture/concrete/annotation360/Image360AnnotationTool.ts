@@ -5,17 +5,18 @@
 import { type BaseCreator } from '../../base/domainObjectsHelpers/BaseCreator';
 import { type TranslateKey } from '../../base/utilities/TranslateKey';
 import { PrimitiveEditTool } from '../primitives/tools/PrimitiveEditTool';
-import { AnnotationPolygonDomainObject } from './AnnotationPolygonDomainObject';
+import { Image360AnnotationDomainObject } from './Image360AnnotationDomainObject';
 import { type VisualDomainObject } from '../../base/domainObjects/VisualDomainObject';
 import { type IconName } from '../../base/utilities/IconName';
-import { AnnotationPolygonCreator } from './AnnotationPolygonCreator';
+import { Image360AnnotationCreator } from './Image360AnnotationCreator';
 import { PrimitiveType } from '../../base/utilities/primitives/PrimitiveType';
-import { AnnotationPolygonTypeCommand } from './AnnotationPolygonTypeCommand';
+import { Image360AnnotationEditTypeCommand } from './Image360AnnotationEditTypeCommand';
 import { UndoCommand } from '../../base/concreteCommands/UndoCommand';
 import { type BaseCommand } from '../../base/commands/BaseCommand';
 import { Changes } from '../../base/domainObjectsHelpers/Changes';
+import { DeleteSelectedImage360AnnotationCommand } from './DeleteSelectedImage360AnnotationCommand';
 
-export class AnnotationPolygonTool extends PrimitiveEditTool {
+export class Image360AnnotationTool extends PrimitiveEditTool {
   // ==================================================
   // CONSTRUCTOR
   // ==================================================
@@ -38,14 +39,16 @@ export class AnnotationPolygonTool extends PrimitiveEditTool {
   }
 
   public override get isEnabled(): boolean {
+    // ANDERS: Now it works for all states
     return true; // this.renderTarget.isInside360Image;
   }
 
   public override getToolbar(): Array<BaseCommand | undefined> {
     return [
-      new AnnotationPolygonTypeCommand(PrimitiveType.None),
-      new AnnotationPolygonTypeCommand(PrimitiveType.Polygon),
+      new Image360AnnotationEditTypeCommand(PrimitiveType.None),
+      new Image360AnnotationEditTypeCommand(PrimitiveType.Polygon),
       undefined, // Separator
+      new DeleteSelectedImage360AnnotationCommand(),
       new UndoCommand()
     ];
   }
@@ -65,7 +68,7 @@ export class AnnotationPolygonTool extends PrimitiveEditTool {
     super.onActivate();
 
     for (const domainObject of this.getSelectable()) {
-      // Get the image and set it visible
+      // ANDERS: Get the image and set it visible
       domainObject.setVisibleInteractive(true, this.renderTarget);
     }
   }
@@ -130,7 +133,7 @@ export class AnnotationPolygonTool extends PrimitiveEditTool {
   // ==================================================
 
   protected override canBeSelected(domainObject: VisualDomainObject): boolean {
-    return domainObject instanceof AnnotationPolygonDomainObject;
+    return domainObject instanceof Image360AnnotationDomainObject;
   }
 
   // ==================================================
@@ -138,6 +141,6 @@ export class AnnotationPolygonTool extends PrimitiveEditTool {
   // ==================================================
 
   protected override createCreator(): BaseCreator | undefined {
-    return new AnnotationPolygonCreator(this);
+    return new Image360AnnotationCreator(this);
   }
 }

@@ -3,8 +3,6 @@
  */
 
 import { type DomainObject } from '../../base/domainObjects/DomainObject';
-import { FocusType } from '../../base/domainObjectsHelpers/FocusType';
-import { PanelInfo } from '../../base/domainObjectsHelpers/PanelInfo';
 import { type RenderStyle } from '../../base/renderStyles/RenderStyle';
 import { PrimitiveType } from '../../base/utilities/primitives/PrimitiveType';
 import { type TranslateKey } from '../../base/utilities/TranslateKey';
@@ -12,7 +10,7 @@ import { LineDomainObject } from '../primitives/line/LineDomainObject';
 import { Color } from 'three';
 import { LineRenderStyle } from '../primitives/line/LineRenderStyle';
 
-export class AnnotationPolygonDomainObject extends LineDomainObject {
+export class Image360AnnotationDomainObject extends LineDomainObject {
   // ==================================================
   // CONSTRUCTOR
   // ==================================================
@@ -31,22 +29,13 @@ export class AnnotationPolygonDomainObject extends LineDomainObject {
   }
 
   public override clone(what?: symbol): DomainObject {
-    const clone = new AnnotationPolygonDomainObject();
+    const clone = new Image360AnnotationDomainObject();
     clone.copyFrom(this, what);
     return clone;
   }
 
   public override get hasPanelInfo(): boolean {
     return false;
-  }
-
-  public override getPanelInfo(): PanelInfo | undefined {
-    if (this.focusType === FocusType.Pending && this.points.length <= 1) {
-      return undefined;
-    }
-    const info = new PanelInfo();
-    info.setHeader(this.typeName);
-    return info;
   }
 
   public override createRenderStyle(): RenderStyle | undefined {

@@ -3,20 +3,17 @@
  */
 
 import { type Ray, type Vector3 } from 'three';
-import { AnnotationPolygonDomainObject } from './AnnotationPolygonDomainObject';
+import { Image360AnnotationDomainObject } from './Image360AnnotationDomainObject';
 import { type BaseTool } from '../../base/commands/BaseTool';
 import { LineCreator } from '../primitives/line/LineCreator';
 
-/**
- * Helper class for generate a LineDomainObject by clicking around
- */
-export class AnnotationPolygonCreator extends LineCreator {
+export class Image360AnnotationCreator extends LineCreator {
   // ==================================================
   // CONSTRUCTOR
   // ==================================================
 
   public constructor(tool: BaseTool) {
-    super(tool, new AnnotationPolygonDomainObject());
+    super(tool, new Image360AnnotationDomainObject());
   }
 
   // ==================================================

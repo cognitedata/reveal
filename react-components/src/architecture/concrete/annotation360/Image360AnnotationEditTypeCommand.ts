@@ -8,9 +8,9 @@ import { type IconName } from '../../base/utilities/IconName';
 import { PrimitiveType } from '../../base/utilities/primitives/PrimitiveType';
 import { type TranslateKey } from '../../base/utilities/TranslateKey';
 import { getIconByPrimitiveType } from '../../base/utilities/primitives/getIconByPrimitiveType';
-import { AnnotationPolygonTool } from './AnnotationPolygonTool';
+import { Image360AnnotationTool } from './Image360AnnotationTool';
 
-export class AnnotationPolygonTypeCommand extends RenderTargetCommand {
+export class Image360AnnotationEditTypeCommand extends RenderTargetCommand {
   private readonly _primitiveType: PrimitiveType;
 
   // ==================================================
@@ -62,7 +62,7 @@ export class AnnotationPolygonTypeCommand extends RenderTargetCommand {
   }
 
   public override equals(other: BaseCommand): boolean {
-    if (!(other instanceof AnnotationPolygonTypeCommand)) {
+    if (!(other instanceof Image360AnnotationEditTypeCommand)) {
       return false;
     }
     return this._primitiveType === other._primitiveType;
@@ -72,13 +72,13 @@ export class AnnotationPolygonTypeCommand extends RenderTargetCommand {
   // INSTANCE METHODS
   // ==================================================
 
-  private get tool(): AnnotationPolygonTool | undefined {
-    return this.getActiveTool(AnnotationPolygonTool);
+  private get tool(): Image360AnnotationTool | undefined {
+    return this.getActiveTool(Image360AnnotationTool);
   }
 }
 
 // ==================================================
-// PRIMATE FUNCTIONS
+// PRIVATE FUNCTIONS
 // ==================================================
 
 function getTooltipByPrimitiveType(primitiveType: PrimitiveType): TranslateKey {
