@@ -135,7 +135,7 @@ export class AnnotationsCreateTool extends NavigationTool {
     // Click in the "air"
     if (creator !== undefined) {
       const ray = this.getRay(event);
-      if (creator.addPoint(ray, undefined)) {
+      if (creator.addPoint(ray)) {
         this.endCreatorIfFinished(creator);
         return;
       }

@@ -2,8 +2,8 @@
  * Copyright 2024 Cognite AS
  */
 
-import { type IconName } from '../../base/utilities/IconName';
-import { PrimitiveType } from '../../base/utilities/primitives/PrimitiveType';
+import { type IconName } from '../IconName';
+import { PrimitiveType } from './PrimitiveType';
 
 export function getIconByPrimitiveType(primitiveType: PrimitiveType): IconName {
   switch (primitiveType) {
@@ -34,7 +34,7 @@ export function getIconByPrimitiveType(primitiveType: PrimitiveType): IconName {
     case PrimitiveType.HorizontalCylinder:
       return 'CylinderHorizontal';
     case PrimitiveType.None:
-      return 'Edit';
+      return 'Cursor';
     default:
       throw new Error('Unrecognized PrimitiveType');
   }

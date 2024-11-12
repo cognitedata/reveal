@@ -5,7 +5,7 @@
 import { RenderTargetCommand } from '../../../base/commands/RenderTargetCommand';
 import { type BaseCommand } from '../../../base/commands/BaseCommand';
 import { PrimitiveType } from '../../../base/utilities/primitives/PrimitiveType';
-import { getIconByPrimitiveType } from '../getIconByPrimitiveType';
+import { getIconByPrimitiveType } from '../../../base/utilities/primitives/getIconByPrimitiveType';
 import { type TranslateKey } from '../../../base/utilities/TranslateKey';
 import { MeasurementTool } from '../MeasurementTool';
 import { type IconName } from '../../../base/utilities/IconName';

@@ -21,7 +21,7 @@ export abstract class PrimitiveEditTool extends BaseEditTool {
   // INSTANCE FIELDS
   // ==================================================
 
-  private _creator: BaseCreator | undefined = undefined;
+  protected _creator: BaseCreator | undefined = undefined;
   public primitiveType: PrimitiveType;
   public readonly defaultPrimitiveType: PrimitiveType;
 
@@ -135,7 +135,7 @@ export abstract class PrimitiveEditTool extends BaseEditTool {
     // Click in the "air"
     if (creator !== undefined && !creator.preferIntersection) {
       const ray = this.getRay(event);
-      if (creator.addPoint(ray, undefined)) {
+      if (creator.addPoint(ray)) {
         this.endCreatorIfFinished(creator);
         return;
       }
@@ -273,7 +273,7 @@ export abstract class PrimitiveEditTool extends BaseEditTool {
     return undefined;
   }
 
-  private setDefaultPrimitiveType(): void {
+  protected setDefaultPrimitiveType(): void {
     if (this.primitiveType === this.defaultPrimitiveType) {
       return;
     }
@@ -281,7 +281,7 @@ export abstract class PrimitiveEditTool extends BaseEditTool {
     CommandsUpdater.update(this.renderTarget);
   }
 
-  private endCreatorIfFinished(creator: BaseCreator, force = false): void {
+  protected endCreatorIfFinished(creator: BaseCreator, force = false): void {
     if (force || creator.isFinished) {
       this.setDefaultPrimitiveType();
       this._creator = undefined;

@@ -18,7 +18,7 @@ import { Changes } from '../../../base/domainObjectsHelpers/Changes';
 import { FocusType } from '../../../base/domainObjectsHelpers/FocusType';
 import { Quantity } from '../../../base/domainObjectsHelpers/Quantity';
 import { VisualDomainObject } from '../../../base/domainObjects/VisualDomainObject';
-import { getIconByPrimitiveType } from '../../measurements/getIconByPrimitiveType';
+import { getIconByPrimitiveType } from '../../../base/utilities/primitives/getIconByPrimitiveType';
 import { type TranslateKey } from '../../../base/utilities/TranslateKey';
 import { clear } from '../../../base/utilities/extensions/arrayExtensions';
 import { type Transaction } from '../../../base/undo/Transaction';

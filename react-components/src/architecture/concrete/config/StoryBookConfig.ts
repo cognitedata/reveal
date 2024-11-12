@@ -31,6 +31,7 @@ import { type DmsUniqueIdentifier } from '../../../data-providers';
 import { PointsOfInterestTool } from '../pointsOfInterest/PointsOfInterestTool';
 import { Image360ActionCommand } from '../../base/concreteCommands/image360Collection/Image360ActionCommand';
 import { Image360Action } from '@cognite/reveal';
+import { AnnotationPolygonTool } from '../annotation360/AnnotationPolygonTool';
 
 export class StoryBookConfig extends BaseRevealConfig {
   // ==================================================
@@ -60,6 +61,7 @@ export class StoryBookConfig extends BaseRevealConfig {
       new ToggleAllModelsVisibleCommand(),
       new ToggleMetricUnitsCommand(),
       new SettingsCommand(),
+      new AnnotationPolygonTool(),
       undefined,
       new MeasurementTool(),
       new ClipTool(),

@@ -12,7 +12,7 @@ import { type PrimitivePickInfo } from '../common/PrimitivePickInfo';
 import { type BaseDragger } from '../../../base/domainObjectsHelpers/BaseDragger';
 import { CylinderDragger } from './CylinderDragger';
 import { type CreateDraggerProps } from '../../../base/domainObjects/VisualDomainObject';
-import { getIconByPrimitiveType } from '../../measurements/getIconByPrimitiveType';
+import { getIconByPrimitiveType } from '../../../base/utilities/primitives/getIconByPrimitiveType';
 import { type TranslateKey } from '../../../base/utilities/TranslateKey';
 import { Quantity } from '../../../base/domainObjectsHelpers/Quantity';
 import { PanelInfo } from '../../../base/domainObjectsHelpers/PanelInfo';

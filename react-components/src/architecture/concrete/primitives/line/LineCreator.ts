@@ -65,17 +65,7 @@ export class LineCreator extends BaseCreator {
     point: Vector3 | undefined,
     isPending: boolean
   ): boolean {
-    // Figure out where the point should be if no intersection
-
-    if (isPending && this.notPendingPointCount >= 1 && point === undefined) {
-      const lastPoint = this.lastNotPendingPoint;
-      const plane = new Plane().setFromNormalAndCoplanarPoint(ray.direction, lastPoint);
-      const newPoint = ray.intersectPlane(plane, new Vector3());
-      if (newPoint === null) {
-        return false;
-      }
-      point = newPoint;
-    }
+    point = this.transformInputPoint(ray, point, isPending);
     if (point === undefined) {
       return false;
     }
@@ -117,5 +107,27 @@ export class LineCreator extends BaseCreator {
       domainObject.notify(Changes.geometry);
     }
     return true; // Successfully
+  }
+
+  // ==================================================
+  // VIRTUAL METHODS
+  // ==================================================
+
+  protected transformInputPoint(
+    ray: Ray,
+    point: Vector3 | undefined,
+    isPending: boolean
+  ): Vector3 | undefined {
+    if (!isPending || this.notPendingPointCount === 1 || point !== undefined) {
+      return point;
+    }
+    // Figure out where the point should be if no intersection
+    const lastPoint = this.lastNotPendingPoint;
+    const plane = new Plane().setFromNormalAndCoplanarPoint(ray.direction, lastPoint);
+    const newPoint = ray.intersectPlane(plane, new Vector3());
+    if (newPoint === null) {
+      return undefined;
+    }
+    return newPoint;
   }
 }

@@ -88,7 +88,7 @@ export class NavigationTool extends BaseTool {
   }
 
   public override onEscapeKey(): void {
-    if (this.renderTarget.viewer.canDoImage360Action(Image360Action.Exit)) {
+    if (this.renderTarget.isInside360Image) {
       void this.renderTarget.viewer.image360Action(Image360Action.Exit).then(() => {
         CommandsUpdater.update(this.renderTarget);
       });
