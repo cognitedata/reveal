@@ -1,6 +1,9 @@
-import { AnyIntersection } from '@cognite/reveal';
+/*!
+ * Copyright 2024 Cognite AS
+ */
+import { type AnyIntersection } from '@cognite/reveal';
 import { ContextMenuUpdater } from '../reactUpdaters/ContextMenuUpdater';
-import { Vector2 } from 'three';
+import { type Vector2 } from 'three';
 
 export type ContextMenuData = {
   position: Vector2;

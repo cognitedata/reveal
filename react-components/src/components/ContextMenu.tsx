@@ -7,7 +7,7 @@ import styled from 'styled-components';
 import { useRenderTarget } from './RevealCanvas';
 import { ContextMenuUpdater } from '../architecture/base/reactUpdaters/ContextMenuUpdater';
 import { withSuppressRevealEvents } from '../higher-order-components/withSuppressRevealEvents';
-import { ContextMenuData } from '../architecture/base/renderTarget/ContextMenuController';
+import { type ContextMenuData } from '../architecture/base/renderTarget/ContextMenuController';
 
 export const ContextMenu = ({
   Content

@@ -7,7 +7,6 @@ import { PointerEvents, PointerEventsTarget, getWheelEventDelta } from '@cognite
 import { type BaseTool } from '../commands/BaseTool';
 import { type BaseCommand } from '../commands/BaseCommand';
 import { type Class, isInstanceOf } from '../domainObjectsHelpers/Class';
-import { type Vector2 } from 'three';
 
 export class CommandsController extends PointerEvents {
   // ==================================================
