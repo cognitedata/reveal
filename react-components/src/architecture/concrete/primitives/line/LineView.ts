@@ -201,7 +201,8 @@ export class LineView extends GroupThreeView<LineDomainObject> {
     const material = new LineBasicMaterial({
       linewidth,
       color,
-      depthTest: style.depthTest
+      depthTest: style.depthTest,
+      transparent: style.transparent
     });
     const result = new Line(geometry, material);
     result.renderOrder = RENDER_ORDER;

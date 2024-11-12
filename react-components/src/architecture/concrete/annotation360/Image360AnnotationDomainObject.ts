@@ -41,10 +41,10 @@ export class Image360AnnotationDomainObject extends LineDomainObject {
   public override createRenderStyle(): RenderStyle | undefined {
     const style = new LineRenderStyle();
     style.showLabel = false;
-    // style.lineWidth = 4;
-    // style.selectedLineWidth = style.lineWidth * 2;
-    style.pipeRadius = 0.01;
+    style.pipeRadius = 0;
     style.selectedPipeRadius = 2 * style.pipeRadius;
+    style.depthTest = false;
+    style.transparent = true; // Needed to make the line visible through other objects
     return style;
   }
 }
