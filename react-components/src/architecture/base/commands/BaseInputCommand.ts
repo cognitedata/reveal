@@ -4,35 +4,21 @@
 import { type TranslateDelegate, type TranslateKey } from '../utilities/TranslateKey';
 import { RenderTargetCommand } from './RenderTargetCommand';
 
-export class BaseInputCommand extends RenderTargetCommand {
+export abstract class BaseInputCommand extends RenderTargetCommand {
   protected _placeholder?: TranslateKey;
   protected _content?: string;
   protected _okButtonLabel?: TranslateKey;
-  protected _cancelButtonLabel?: TranslateKey;
 
   protected _onFinish?: () => void;
   protected _onCancel?: () => void;
 
-  getCancelButtonLabel(t: TranslateDelegate): string | undefined {
-    if (this._cancelButtonLabel?.key === undefined) {
-      return undefined;
-    }
-    return t(this._cancelButtonLabel?.key, this._cancelButtonLabel?.fallback);
+  public getCancelButtonLabel(_t: TranslateDelegate): string | undefined {
+    return undefined;
   }
 
-  getPostButtonLabel(t: TranslateDelegate): string | undefined {
-    if (this._okButtonLabel?.key === undefined) {
-      return undefined;
-    }
-    return t(this._okButtonLabel?.key, this._okButtonLabel?.fallback);
-  }
+  public abstract getPostButtonLabel(t: TranslateDelegate): string | undefined;
 
-  getPlaceholder(t: TranslateDelegate): string | undefined {
-    if (this._placeholder?.key === undefined) {
-      return undefined;
-    }
-    return t(this._placeholder?.key, this._placeholder?.fallback);
-  }
+  public abstract getPlaceholder(t: TranslateDelegate): string | undefined;
 
   public get onFinish(): (() => void) | undefined {
     return this._onFinish;
@@ -52,6 +38,9 @@ export class BaseInputCommand extends RenderTargetCommand {
 
   invokeWithContent(content: string): boolean {
     this._content = content;
-    return this.invoke();
+
+    const invokeResult = this.invoke();
+    this._onFinish?.();
+    return invokeResult;
   }
 }
