@@ -57,14 +57,14 @@ export class PointerEventsTarget {
 
   public addEventListeners(): void {
     this._domElement.addEventListener('pointerdown', this.onPointerDown);
-    this._domElement.addEventListener('pointermove', this.onPointerHover);
+    this._domElement.addEventListener('mousemove', this.onHover);
     window.addEventListener('pointermove', this.onPointerDrag);
     window.addEventListener('pointerup', this.onPointerUp);
   }
 
   public removeEventListeners(): void {
     this._domElement.removeEventListener('pointerdown', this.onPointerDown);
-    this._domElement.removeEventListener('pointermove', this.onPointerHover);
+    this._domElement.removeEventListener('mousemove', this.onHover);
     window.removeEventListener('pointermove', this.onPointerDrag);
     window.removeEventListener('pointerup', this.onPointerUp);
   }
@@ -92,11 +92,8 @@ export class PointerEventsTarget {
     this._isLeftDown = leftButton;
   };
 
-  private readonly onPointerHover = debounce((event: PointerEvent) => {
+  private readonly onHover = debounce((event: MouseEvent) => {
     if (!this.isEnabled) {
-      return;
-    }
-    if (!isMouse(event)) {
       return;
     }
     if (isAnyMouseButtonPressed(event)) {
@@ -177,11 +174,11 @@ export class PointerEventsTarget {
   }
 }
 
-function isAnyMouseButtonPressed(event: PointerEvent): boolean {
+function isAnyMouseButtonPressed(event: PointerEvent | MouseEvent): boolean {
   return event.buttons !== 0;
 }
 
-function isLeftMouseButton(event: PointerEvent): boolean {
+function isLeftMouseButton(event: PointerEvent | MouseEvent): boolean {
   return event.button === MOUSE.LEFT;
 }
 

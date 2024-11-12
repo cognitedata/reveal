@@ -91,7 +91,7 @@ export class InputHandler extends PointerEvents {
     return Promise.resolve();
   }
 
-  override onHover(event: PointerEvent): void {
+  override onHover(event: MouseEvent): void {
     const position = getPixelCoordinatesFromEvent(event, this._domElement);
     const firedEvent = {
       offsetX: position.x,

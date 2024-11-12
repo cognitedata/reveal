@@ -7,7 +7,7 @@
  * @beta
  */
 export class PointerEvents {
-  public onHover(_event: PointerEvent): void {}
+  public onHover(_event: MouseEvent): void {}
 
   public async onClick(_event: PointerEvent): Promise<void> {
     return Promise.resolve();
