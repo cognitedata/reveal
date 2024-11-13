@@ -7,19 +7,16 @@ import { type ReactElement } from 'react';
 
 import { useSDK } from '@cognite/sdk-provider';
 
-import {
-  fetchTreeNodeRoot,
-  fetchTreeNodeArray,
-  type RevisionId
-} from '../../../architecture/base/treeView/cadTreeView/cadTreeNodeUtils';
-import { type ITreeNode } from '../../../architecture';
+import { type OnLoadedAction, type ITreeNode } from '../../../architecture';
 import { Infobox, Loader } from '@cognite/cogs.js';
-import {
-  CadTreeNode,
-  type OnLoadedAction
-} from '../../../architecture/base/treeView/cadTreeView/CadTreeNode';
+import { CadTreeNode } from '../../../architecture/base/treeView/cadTreeView/CadTreeNode';
 import { type CadTreeViewProps } from './CadTreeViewProps';
 import { TreeView } from '../TreeView/TreeView';
+import {
+  fetchTreeNodeArray,
+  fetchTreeNodeRoot
+} from '../../../architecture/base/treeView/cadTreeView/fetchNodes';
+import { type RevisionId } from '../../../architecture/base/treeView/cadTreeView/types';
 
 export function CadTreeView(props: CadTreeViewProps): ReactElement | null {
   const sdk = useSDK();

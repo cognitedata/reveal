@@ -168,6 +168,7 @@ async function loadNodes(
   return await promise;
 }
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 function createFullTreeMock(lazyLoading: boolean): TreeNode<string> {
   const root = new TreeNode<string>();
   root.label = 'Root';

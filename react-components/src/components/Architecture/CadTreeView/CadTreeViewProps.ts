@@ -3,10 +3,8 @@
  */
 
 import { type TreeViewProps } from '../TreeView/TreeViewProps';
-import {
-  type CadTreeNode,
-  type OnLoadedAction
-} from '../../../architecture/base/treeView/cadTreeView/CadTreeNode';
+import { type CadTreeNode } from '../../../architecture/base/treeView/cadTreeView/CadTreeNode';
+import { type OnLoadedAction } from '../../../architecture/base/treeView/cadTreeView/types';
 
 export type CadTreeViewProps = Omit<TreeViewProps, 'loadNodes' | 'root'> & {
   modelId: number;

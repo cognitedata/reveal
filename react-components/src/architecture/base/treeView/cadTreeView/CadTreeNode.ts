@@ -3,14 +3,7 @@
  */
 
 import { TreeNode } from '../TreeNode';
-
-export type OnLoadedAction = (node: CadTreeNode, parent?: CadTreeNode) => void;
-
-type SubsetOfNode3D = {
-  id: number;
-  treeIndex: number;
-  name: string;
-};
+import { type OnLoadedAction, type SubsetOfNode3D } from './types';
 
 export class CadTreeNode extends TreeNode {
   private readonly _id: number;
