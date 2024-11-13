@@ -30,6 +30,9 @@ function createNode(name: string): CadTreeNode {
   return node;
 }
 
+// Note: This simulate the behavior of the real CadTreeView. Can not use it here
+// because of not connection to CDF.
+
 const meta = {
   title: 'Example/CadTreeView',
   component: CadModelContainer,
