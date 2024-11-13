@@ -54,6 +54,7 @@ export const TreeViewNode = ({
   const hasIcons = props.hasIcons ?? false;
   const hasInfo = props.hasInfo ?? false;
   const marginLeft = level * gapToChildren + 'px';
+  const id = props.getId === undefined ? 'n' : props?.getId(node);
 
   // This force to update the component when the node changes
   // See https://coreui.io/blog/how-to-force-a-react-component-to-re-render/
@@ -65,6 +66,7 @@ export const TreeViewNode = ({
   return (
     <div>
       <div
+        id={id}
         style={{
           flexDirection: 'row',
           display: 'flex',
@@ -100,7 +102,6 @@ export const TreeViewNode = ({
         children.map((node, index) => (
           <TreeViewNode node={node} key={index} level={level + 1} props={props} />
         ))}
-
       {!node.isLoadingSiblings && node.needLoadSiblings && (
         <LoadMoreButton node={node} onClick={onLoadMore} level={level} props={{ ...props }} />
       )}

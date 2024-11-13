@@ -42,6 +42,7 @@ export type TreeViewProps = {
   onCheckNode?: TreeNodeAction;
   onClickInfo?: TreeNodeAction;
   loadNodes?: LoadNodesAction;
+  getId?: (node: ITreeNode) => string;
 
   // The root node of the tree, the root is not rendered.
   root: ITreeNode;
