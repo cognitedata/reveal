@@ -182,7 +182,15 @@ export class TreeNode<T = any> implements ITreeNode {
   }
 
   // ==================================================
-  // INSTANCE METHODS: Parent children methods
+  // VIRTUAL METHODS: To be overridden
+  // ==================================================
+
+  public areEqual(child: TreeNode): boolean {
+    return this === child;
+  }
+
+  // ==================================================
+  // INSTANCE METHODS: Getters
   // ==================================================
 
   // eslint-disable-next-line @typescript-eslint/prefer-return-this-type
@@ -191,70 +199,6 @@ export class TreeNode<T = any> implements ITreeNode {
       return this.parent.getRoot();
     }
     return this;
-  }
-
-  public addChild(child: TreeNode<T>): void {
-    if (this._children === undefined) {
-      this._children = [];
-    }
-    this._children.push(child);
-    child._parent = this;
-  }
-
-  public insertChild(index: number, child: TreeNode<T>): void {
-    if (this._children === undefined) {
-      this._children = [];
-    }
-    insert(this._children, index, child);
-    child._parent = this;
-  }
-
-  private async loadChildren(loadNodes: LoadNodesAction): Promise<void> {
-    this.isLoadingChildren = true;
-    const children = await loadNodes(this, true);
-    this.isLoadingChildren = false;
-    if (children === undefined || children.length === 0) {
-      return;
-    }
-    if (this._children === undefined) {
-      this._children = [];
-    }
-    if (children !== undefined) {
-      for (const child of children) {
-        if (!(child instanceof TreeNode)) {
-          continue;
-        }
-        this.addChild(child as TreeNode<T>);
-      }
-    }
-    this.needLoadChildren = false;
-  }
-
-  public async loadSiblings(loadNodes: LoadNodesAction): Promise<void> {
-    this.isLoadingSiblings = true;
-    const siblings = await loadNodes(this, false);
-    this.isLoadingSiblings = false;
-    if (siblings === undefined || siblings.length === 0) {
-      return;
-    }
-    const parent = this.parent;
-    if (parent === undefined || parent._children === undefined) {
-      return;
-    }
-    const children = parent._children;
-    let index = children.indexOf(this);
-    if (index === undefined || index < 0) {
-      return;
-    }
-    for (const child of siblings) {
-      if (!(child instanceof TreeNode)) {
-        continue;
-      }
-      index++;
-      parent.insertChild(index, child as TreeNode<T>);
-    }
-    this.needLoadSiblings = false;
-    parent.update();
   }
 
   // ==================================================
@@ -279,6 +223,12 @@ export class TreeNode<T = any> implements ITreeNode {
       }
     }
     return nodes;
+  }
+
+  public deselectAll(): void {
+    for (const descendant of this.getThisAndDescendants()) {
+      descendant.isSelected = false;
+    }
   }
 
   // ==================================================
@@ -349,6 +299,102 @@ export class TreeNode<T = any> implements ITreeNode {
       yield ancestor;
       ancestor = ancestor.parent;
     }
+  }
+
+  public *getAncestorsByType<Type extends ITreeNode>(classType: Class<Type>): Generator<Type> {
+    let ancestor = this.parent;
+    while (ancestor !== undefined) {
+      if (!isInstanceOf(ancestor, classType)) {
+        break;
+      }
+      yield ancestor;
+      ancestor = ancestor.parent;
+    }
+  }
+
+  // ==================================================
+  // INSTANCE METHODS: Parent child relationship
+  // ==================================================
+
+  public addChild(child: TreeNode<T>): void {
+    if (this._children === undefined) {
+      this._children = [];
+    }
+    this._children.push(child);
+    child._parent = this;
+    this.update();
+  }
+
+  public insertChild(index: number, child: TreeNode<T>): void {
+    if (this._children === undefined) {
+      this._children = [];
+    }
+    insert(this._children, index, child);
+    child._parent = this;
+    this.update();
+  }
+
+  // ==================================================
+  // INSTANCE METHODS: Loading
+  // ==================================================
+
+  private async loadChildren(loadNodes: LoadNodesAction): Promise<void> {
+    this.isLoadingChildren = true;
+    const children = await loadNodes(this, true);
+    this.isLoadingChildren = false;
+    if (children === undefined || children.length === 0) {
+      return;
+    }
+    if (this._children === undefined) {
+      this._children = [];
+    }
+    if (children !== undefined) {
+      for (const child of children) {
+        if (!(child instanceof TreeNode)) {
+          continue;
+        }
+        this.addChild(child as TreeNode<T>);
+      }
+    }
+    this.needLoadChildren = false;
+  }
+
+  public async loadSiblings(loadNodes: LoadNodesAction): Promise<void> {
+    this.isLoadingSiblings = true;
+    const siblings = await loadNodes(this, false);
+    this.isLoadingSiblings = false;
+    if (siblings === undefined || siblings.length === 0) {
+      return;
+    }
+    const parent = this.parent;
+    if (parent === undefined || parent._children === undefined) {
+      return;
+    }
+    const children = parent._children;
+    let index = children.indexOf(this);
+    if (index === undefined || index < 0) {
+      return;
+    }
+    for (const child of siblings) {
+      if (!(child instanceof TreeNode)) {
+        continue;
+      }
+      // TODO: Optimize this because of O(n*m), could be O(log(n)*m)
+      if (parent.hasChild(child)) {
+        continue;
+      }
+      index++;
+      parent.insertChild(index, child as TreeNode<T>);
+    }
+    this.needLoadSiblings = false;
+    parent.update();
+  }
+
+  public hasChild(child: TreeNode): boolean {
+    if (this._children === undefined) {
+      return false;
+    }
+    return this._children.some((existingChild) => existingChild.areEqual(child));
   }
 
   // ==================================================

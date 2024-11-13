@@ -12,9 +12,15 @@ import {
   onDependentCheckNode
 } from '../src/architecture/base/treeView/TreeNodeFunctions';
 import { Button } from '@cognite/cogs.js';
-import { useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { CadTreeNode } from '../src/architecture/base/treeView/cadTreeView/CadTreeNode';
-import { getId, scrollToNode } from '../src/components/Architecture/CadTreeView/cadTreeViewUtils';
+import {
+  getId,
+  scrollToNode,
+  scrollToTreeIndex
+} from '../src/components/Architecture/CadTreeView/cadTreeViewUtils';
+import { type SubsetOfNode3D } from '../src/architecture/base/treeView/cadTreeView/types';
+import { getRandomIntByMax } from '../src/architecture/base/utilities/extensions/mathExtensions';
 
 let id = 1000;
 let treeIndex = 5000;
@@ -45,6 +51,13 @@ export const Main: Story = {
   render: () => {
     const root = createTreeMock(true);
     const myRef = useRef<HTMLDivElement>(null);
+    const [scrollPosition, _setScrollPosition] = useState(-1);
+
+    useEffect(() => {
+      if (scrollPosition !== -1) {
+        scrollToTreeIndex(myRef?.current ?? undefined, scrollPosition);
+      }
+    }, [scrollPosition]);
 
     return (
       <div>
@@ -59,6 +72,12 @@ export const Main: Story = {
             scroll(myRef?.current ?? undefined, root, false);
           }}>
           Scroll to last
+        </Button>
+        <Button
+          onClick={() => {
+            testInsert(myRef?.current ?? undefined, root);
+          }}>
+          Test Insert
         </Button>
         <Container
           ref={myRef}
@@ -115,21 +134,6 @@ async function loadNodes(
   return await promise;
 }
 
-function scroll(container: HTMLElement | undefined, root: CadTreeNode, first: boolean): void {
-  if (container === undefined) {
-    return;
-  }
-  let lastNode = root;
-  for (const node of root.getThisAndDescendantsByType(CadTreeNode)) {
-    node.isSelected = false;
-    if (!first) {
-      lastNode = node;
-    }
-  }
-  lastNode.isSelected = true;
-  scrollToNode(container, lastNode);
-}
-
 function createTreeMock(lazyLoading: boolean): CadTreeNode {
   const root = createNode('root');
 
@@ -144,4 +148,45 @@ function createTreeMock(lazyLoading: boolean): CadTreeNode {
     }
   }
   return root;
+}
+
+function scroll(container: HTMLElement | undefined, root: CadTreeNode, isFirst: boolean): void {
+  if (container === undefined) {
+    return;
+  }
+  root.deselectAll();
+  let lastNode = root;
+  if (!isFirst) {
+    for (const node of root.getThisAndDescendantsByType(CadTreeNode)) {
+      lastNode = node;
+    }
+  }
+  lastNode.isSelected = true;
+  scrollToNode(container, lastNode);
+}
+
+function testInsert(container: HTMLElement | undefined, root: CadTreeNode): void {
+  if (container === undefined) {
+    return;
+  }
+  const allNodes = Array.from(root.getDescendants());
+
+  const index = getRandomIntByMax(allNodes.length);
+  const target = allNodes[index];
+  const newNodes: SubsetOfNode3D[] = [];
+  for (const ancestor of target.getAncestorsByType(CadTreeNode)) {
+    newNodes.push({ name: ancestor.label, id: ancestor.id, treeIndex: ancestor.treeIndex });
+  }
+  newNodes.reverse();
+  const newNode = createNode('Inserted');
+  newNodes.push({ name: newNode.label, id: newNode.id, treeIndex: newNode.treeIndex });
+  root.deselectAll();
+  root.insertAncestors(newNodes);
+
+  const insertedNode = root.getDescendantByNodeId(newNode.id);
+  if (insertedNode === undefined) {
+    return;
+  }
+  scrollToTreeIndex(container, insertedNode.treeIndex);
+  insertedNode.isSelected = true;
 }

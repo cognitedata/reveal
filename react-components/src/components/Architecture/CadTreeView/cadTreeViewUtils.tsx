@@ -12,18 +12,21 @@ export function getId(node: ITreeNode): string {
   return node.treeIndex.toString();
 }
 
-export function scrollToElement(container: HTMLElement, treeIndex: number): void {
+export function scrollToTreeIndex(container: HTMLElement | undefined, treeIndex: number): void {
   scrollToId(container, treeIndex.toString());
 }
 
-export function scrollToNode(container: HTMLElement, node: CadTreeNode): void {
+export function scrollToNode(container: HTMLElement | undefined, node: CadTreeNode): void {
   for (const ancestor of node.getAncestors()) {
     ancestor.isExpanded = true;
   }
   scrollToId(container, getId(node));
 }
 
-function scrollToId(container: HTMLElement, id: string): void {
+function scrollToId(container: HTMLElement | undefined, id: string): void {
+  if (container === undefined) {
+    return;
+  }
   const element = document.getElementById(id);
   if (element === null) {
     return;

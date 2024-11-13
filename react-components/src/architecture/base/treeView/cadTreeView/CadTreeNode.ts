@@ -6,9 +6,17 @@ import { TreeNode } from '../TreeNode';
 import { type OnLoadedAction, type SubsetOfNode3D } from './types';
 
 export class CadTreeNode extends TreeNode {
+  // ==================================================
+  // INSTANCE FIELDS
+  // ==================================================
+
   private readonly _id: number;
   private readonly _treeIndex: number;
   private _loadSiblingCursor?: string;
+
+  // ==================================================
+  // CONSTRUCTORS
+  // ==================================================
 
   constructor(node: SubsetOfNode3D) {
     super();
@@ -16,6 +24,10 @@ export class CadTreeNode extends TreeNode {
     this._treeIndex = node.treeIndex;
     this.label = node.name === '' ? node.id.toString() : node.name;
   }
+
+  // ==================================================
+  // CONSTRUCTORS: Getter and setters
+  // ==================================================
 
   public get id(): number {
     return this._id;
@@ -33,6 +45,21 @@ export class CadTreeNode extends TreeNode {
     this._loadSiblingCursor = value;
     this.needLoadSiblings = value !== undefined;
   }
+
+  // ==================================================
+  // OVERRIDES
+  // ==================================================
+
+  public override areEqual(child: TreeNode): boolean {
+    if (!(child instanceof CadTreeNode)) {
+      return false;
+    }
+    return child.id === this.id && child.treeIndex === this.treeIndex;
+  }
+
+  // ==================================================
+  // INSTANCE METHODS: Access functions
+  // ==================================================
 
   public getThisOrDescendantByTreeIndex(treeIndex: number): CadTreeNode | undefined {
     for (const descendant of this.getThisAndDescendantsByType(CadTreeNode)) {
@@ -60,16 +87,27 @@ export class CadTreeNode extends TreeNode {
   }
 
   public getChildByNodeId(nodeId: number): CadTreeNode | undefined {
-    for (const descendant of this.getChildren()) {
-      if (!(descendant instanceof CadTreeNode)) {
+    for (const child of this.getChildren()) {
+      if (!(child instanceof CadTreeNode)) {
         continue;
       }
-      if (descendant.id !== nodeId) {
-        continue;
+      if (child.id === nodeId) {
+        return child;
       }
-      return descendant;
     }
   }
+
+  public getDescendantByNodeId(nodeId: number): CadTreeNode | undefined {
+    for (const descendant of this.getDescendantsByType(CadTreeNode)) {
+      if (descendant.id === nodeId) {
+        return descendant;
+      }
+    }
+  }
+
+  // ==================================================
+  // INSTANCE METHODS: Misc
+  // ==================================================
 
   public insertAncestors(newNodes: SubsetOfNode3D[], onLoaded?: OnLoadedAction): boolean {
     if (newNodes.length === 0) {
