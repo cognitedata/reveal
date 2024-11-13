@@ -33,16 +33,18 @@ export type TreeViewProps = {
   hasCheckboxes?: boolean; // Default is false
   hasIcons?: boolean; // Default is false
   hasInfo?: boolean; // Default is false
+
+  // Labels are not translated. Should be done on the app side?
   loadingLabel?: string; // Default is 'Loading...'
   loadMoreLabel?: string; // Default is 'Load more...'
-  maxLabelLength?: number;
+  maxLabelLength?: number; // Make length of label
 
   // Event handlers
-  onSelectNode?: TreeNodeAction;
-  onCheckNode?: TreeNodeAction;
-  onClickInfo?: TreeNodeAction;
-  loadNodes?: LoadNodesAction;
-  getId?: (node: ITreeNode) => string;
+  onSelectNode?: TreeNodeAction; // Called when user select a node
+  onCheckNode?: TreeNodeAction; // Called when user check a node
+  onClickInfo?: TreeNodeAction; // Called when user click the info icon
+  loadNodes?: LoadNodesAction; // Called when lazy loading
+  getId?: (node: ITreeNode) => string; // This make it possible to set the id of the component in the tree. Used for scrolling.
 
   // The root node of the tree, the root is not rendered.
   root: ITreeNode;
