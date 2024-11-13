@@ -18,6 +18,8 @@ import { SectionCommand } from '../../architecture/base/commands/SectionCommand'
 import { type PlacementType } from './types';
 import { type ButtonProp } from './RevealButtons';
 import { getDividerDirection } from './utilities';
+import { InputField } from './InputField';
+import { BaseInputCommand } from '../../architecture/base/commands/BaseInputCommand';
 
 export function createButton(command: BaseCommand, placement: PlacementType): ReactElement {
   if (command instanceof BaseFilterCommand) {
@@ -36,6 +38,11 @@ export function createButton(command: BaseCommand, placement: PlacementType): Re
         return <></>;
     }
   }
+
+  if (command instanceof BaseInputCommand) {
+    return <InputField key={command.uniqueId} inputCommand={command} placement={placement} />;
+  }
+
   return <CommandButton inputCommand={command} placement={placement} />;
 }
 
