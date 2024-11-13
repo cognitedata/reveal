@@ -8,13 +8,13 @@ import { type UseQueryResult, useQuery } from '@tanstack/react-query';
 import { useSDK } from '../RevealCanvas/SDKProvider';
 import { useRevealKeepAlive } from '../RevealKeepAlive/RevealKeepAliveContext';
 import { PointCloudAnnotationCache } from './PointCloudAnnotationCache';
-import { type PointCloudModelOptions, type TypedReveal3DModel } from '../Reveal3DResources/types';
+import { type TypedReveal3DModel } from '../Reveal3DResources/types';
 import { type AnnotationModelDataResult } from '../Reveal3DResources/useCalculatePointCloudStyling';
 import { type PointCloudAnnotationMappedAssetData } from '../../hooks/types';
 import { EMPTY_ARRAY } from '../../utilities/constants';
 import { isDefined } from '../../utilities/isDefined';
-import { type AnnotationId } from './types';
 import { type AnyIntersection } from '@cognite/reveal';
+import { useModelIdRevisionIdFromModelOptions } from '../../hooks/useModelIdRevisionIdFromModelOptions';
 
 export type PointCloudAnnotationCacheContextContent = {
   cache: PointCloudAnnotationCache;
@@ -34,57 +34,27 @@ const usePointCloudAnnotationCache = (): PointCloudAnnotationCache => {
   return content.cache;
 };
 
-export const usePointCloudAnnotationIdsForModels = (
-  models: TypedReveal3DModel[]
-): UseQueryResult<
-  Array<{
-    model: PointCloudModelOptions;
-    annotationIds: AnnotationId[];
-  }>
-> => {
-  const pointCloudAnnotationCache = usePointCloudAnnotationCache();
-
-  return useQuery({
-    queryKey: [
-      'reveal',
-      'react-components',
-      'models-pointcloud-annotationmodels',
-      ...models.map((model) => `${model.modelId}/${model.revisionId}`).sort()
-    ],
-    queryFn: async () => {
-      return await Promise.all(
-        models.map(async (model) => {
-          const annotationModel = await pointCloudAnnotationCache.getPointCloudAnnotationsForModel(
-            model.modelId,
-            model.revisionId
-          );
-          const annotationIds = annotationModel.map((annotation) => {
-            return annotation.id;
-          });
-          return { model, annotationIds };
-        })
-      );
-    },
-    staleTime: Infinity,
-    enabled: models.length > 0
-  });
-};
-
 export const usePointCloudAnnotationMappingsForModels = (
   models: TypedReveal3DModel[]
 ): UseQueryResult<AnnotationModelDataResult[]> => {
   const pointCloudAnnotationCache = usePointCloudAnnotationCache();
+  const addClassicModelOptionsResults = useModelIdRevisionIdFromModelOptions(models);
+
+  const classicModelOptions = useMemo(
+    () => addClassicModelOptionsResults.map((result) => result.data).filter(isDefined),
+    [addClassicModelOptionsResults]
+  );
 
   return useQuery({
     queryKey: [
       'reveal',
       'react-components',
       'models-pointcloud-annotations-mappings',
-      ...models.map((model) => `${model.modelId}/${model.revisionId}`).sort()
+      ...classicModelOptions.map((model) => `${model.modelId}/${model.revisionId}`).sort()
     ],
     queryFn: async () => {
       return await Promise.all(
-        models.map(async (model) => {
+        classicModelOptions.map(async (model) => {
           const annotationModel = await pointCloudAnnotationCache.getPointCloudAnnotationsForModel(
             model.modelId,
             model.revisionId
@@ -106,18 +76,24 @@ export const usePointCloudAnnotationMappingsForAssetIds = (
   assetIds: Array<string | number> | undefined
 ): UseQueryResult<PointCloudAnnotationMappedAssetData[]> => {
   const pointCloudAnnotationCache = usePointCloudAnnotationCache();
+  const addClassicModelOptionsResults = useModelIdRevisionIdFromModelOptions(models);
+
+  const classicModelOptions = useMemo(
+    () => addClassicModelOptionsResults.map((result) => result.data).filter(isDefined),
+    [addClassicModelOptionsResults]
+  );
 
   return useQuery({
     queryKey: [
       'reveal',
       'react-components',
       'all-annotation-mappings',
-      ...models.map((model) => `${model.modelId}/${model.revisionId}`).sort(),
+      ...classicModelOptions.map((model) => `${model.modelId}/${model.revisionId}`).sort(),
       ...(assetIds?.map((assetId) => assetId.toString()).sort() ?? [])
     ],
     queryFn: async () => {
       const allAnnotationMappingsPromisesResult = await Promise.all(
-        models.map(async (model) => {
+        classicModelOptions.map(async (model) => {
           const result = await fetchAnnotationsForModel(
             model.modelId,
             model.revisionId,

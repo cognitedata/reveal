@@ -5,7 +5,9 @@
 import {
   type NodeAppearance,
   type AddModelOptions,
-  type Image360AnnotationAppearance
+  type Image360AnnotationAppearance,
+  type DataSourceType,
+  type ClassicDataSourceType
 } from '@cognite/reveal';
 
 import { type Matrix4 } from 'three';
@@ -57,12 +59,12 @@ export type AddResourceOptions =
   | AddPointCloudResourceOptions
   | AddImage360CollectionOptions;
 
-export type AddPointCloudResourceOptions = AddModelOptions & {
+export type AddPointCloudResourceOptions = AddModelOptions<DataSourceType> & {
   transform?: Matrix4;
   styling?: { default?: NodeAppearance; mapped?: NodeAppearance };
 };
 
-export type AddCadResourceOptions = AddModelOptions & {
+export type AddCadResourceOptions = AddModelOptions<ClassicDataSourceType> & {
   transform?: Matrix4;
   styling?: {
     default?: NodeAppearance;
@@ -76,6 +78,12 @@ export type TypedReveal3DModel = CadModelOptions | PointCloudModelOptions;
 export type CadModelOptions = { type: 'cad' } & AddCadResourceOptions;
 
 export type PointCloudModelOptions = { type: 'pointcloud' } & AddPointCloudResourceOptions;
+
+export type CadPointCloudModelWithModelIdRevisionId = {
+  modelId: number;
+  revisionId: number;
+  modelOptions: TypedReveal3DModel;
+};
 
 export type NodeDataResult = {
   fdmNode: DmsUniqueIdentifier;

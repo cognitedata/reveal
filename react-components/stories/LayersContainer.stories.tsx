@@ -13,7 +13,7 @@ import {
 } from '../src';
 import { CogniteClient } from '@cognite/sdk';
 import { Color, Matrix4 } from 'three';
-import { type AddModelOptions } from '@cognite/reveal';
+import { type DataSourceType, type AddModelOptions } from '@cognite/reveal';
 
 const meta = {
   title: 'Example/Toolbar/LayersContainer',
@@ -44,7 +44,7 @@ export const Main: Story = {
     addModelOptions,
     transform
   }: {
-    addModelOptions: AddModelOptions;
+    addModelOptions: AddModelOptions<DataSourceType>;
     transform?: Matrix4;
   }) => (
     <RevealContext sdk={sdk} color={new Color(0x4a4a4a)}>

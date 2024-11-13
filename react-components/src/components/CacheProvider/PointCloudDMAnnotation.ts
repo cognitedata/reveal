@@ -3,7 +3,10 @@
  */
 
 import { type UseQueryResult, useQuery } from '@tanstack/react-query';
-import { type PointCloudModelOptions } from '../Reveal3DResources/types';
+import {
+  type CadPointCloudModelWithModelIdRevisionId,
+  type PointCloudModelOptions
+} from '../Reveal3DResources/types';
 import { type QueryRequest } from '@cognite/sdk';
 import {
   COGNITE_ASSET_SOURCE,
@@ -19,7 +22,6 @@ import {
 import {
   ASSET_PROPERTIES_LIST,
   type AssetProperties,
-  getModelEqualsFilter,
   getRevisionContainsAnyFilter,
   isPointCloudVolumeFilter,
   POINT_CLOUD_VOLUME_REVISIONS_OBJECT3D_PROPERTIES_LIST,
@@ -29,33 +31,38 @@ import { type PointCloudVolumeWithAsset } from './types';
 import { type FdmSDK } from '../../data-providers/FdmSDK';
 
 export const usePointCloudDMAnnotation = (
-  models: PointCloudModelOptions[]
-): UseQueryResult<PointCloudVolumeWithAsset[]> => {
+  modelsData: CadPointCloudModelWithModelIdRevisionId[]
+): UseQueryResult<
+  Array<{
+    model: PointCloudModelOptions;
+    pointCloudDMVolumeWithAsset: PointCloudVolumeWithAsset[];
+  }>
+> => {
   const fdmSdk = useFdmSdk();
   return useQuery({
     queryKey: [
       'reveal',
       'react-components',
       'models-pointcloud-dm-annotations-mappings',
-      ...models.map((model) => `${model.modelId}/${model.revisionId}`).sort()
+      ...modelsData.map((model) => `${model.modelId}/${model.revisionId}`).sort()
     ],
     queryFn: async () => {
       return await Promise.all(
-        models.map(async (model) => {
-          const annotationModel = await getPointCloudDMAnnotationsForModel(
+        modelsData.map(async (model) => {
+          const pointCloudDMVolumeWithAsset = await getPointCloudDMAnnotationsForModel(
             model.modelId,
             model.revisionId,
             fdmSdk
           );
           return {
-            model,
-            annotationModel
+            model: model.modelOptions,
+            pointCloudDMVolumeWithAsset
           };
         })
       );
     },
     staleTime: Infinity,
-    enabled: models.length > 0
+    enabled: modelsData.length > 0
   });
 };
 
@@ -63,14 +70,14 @@ const getPointCloudDMAnnotationsForModel = async (
   modelId: number,
   revisionId: number,
   fdmSdk: FdmSDK
-): Promise<any> => {
+): Promise<PointCloudVolumeWithAsset[]> => {
   const modelRef = await getDMSModelsForIds([modelId], fdmSdk);
   const revisionRef = await getDMSRevisionsForRevisionIdsAndModelRefs(
     modelRef,
     [revisionId],
     fdmSdk
   );
-  const query = getPointCloudDMAnnotationsQuery(modelRef, revisionRef);
+  const query = getPointCloudDMAnnotationsQuery(revisionRef);
 
   const response = await fdmSdk.queryNodesAndEdges<
     typeof query,
@@ -87,8 +94,9 @@ const getPointCloudDMAnnotationsForModel = async (
   >(query);
 
   const pointCloudVolumes = response.items.pointCloudVolumes.map((pointCloudVolume) => {
-    const pointCloudVolumeProperties =
-      pointCloudVolume.properties.cdf_cdm['CognitePointCloudVolume/v1'];
+    const pointCloudVolumeProperties = pointCloudVolume.properties.cdf_cdm[
+      'CognitePointCloudVolume/v1'
+    ] as PointCloudVolumeObject3DProperties;
 
     const revisionIndex = pointCloudVolumeProperties.revisions.indexOf(revisionRef[0]);
 
@@ -103,7 +111,7 @@ const getPointCloudDMAnnotationsForModel = async (
   });
 
   const assets = response.items.assets.map((asset) => {
-    const assetProperties = asset.properties.cdf_cdm['CogniteAsset/v1'];
+    const assetProperties = asset.properties.cdf_cdm['CogniteAsset/v1'] as AssetProperties;
     return {
       externalId: asset.externalId,
       space: asset.space,
@@ -115,9 +123,10 @@ const getPointCloudDMAnnotationsForModel = async (
 
   const pointCloudVolumesWithAssets = pointCloudVolumes.map((pointCloudVolume) => {
     const asset = assets.find((asset) => {
+      const assetObject3D = asset.object3D;
       return (
-        asset.object3D.space === pointCloudVolume.object3D.space &&
-        asset.object3D.externalId === pointCloudVolume.object3D.externalId
+        assetObject3D.space === pointCloudVolume.object3D.space &&
+        assetObject3D.externalId === pointCloudVolume.object3D.externalId
       );
     });
 
@@ -126,15 +135,10 @@ const getPointCloudDMAnnotationsForModel = async (
       asset
     };
   });
-  console.log('pointCloudVolumesWithAssets', pointCloudVolumesWithAssets);
-  return assets;
+  return pointCloudVolumesWithAssets;
 };
 
-const getPointCloudDMAnnotationsQuery = (
-  modelRef: DmsUniqueIdentifier[],
-  revisionRef: DmsUniqueIdentifier[]
-  // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
-) => {
+const getPointCloudDMAnnotationsQuery = (revisionRef: DmsUniqueIdentifier[]): QueryRequest => {
   return {
     with: {
       pointCloudVolumes: {
@@ -142,10 +146,6 @@ const getPointCloudDMAnnotationsQuery = (
           filter: {
             and: [
               isPointCloudVolumeFilter,
-              getModelEqualsFilter({
-                externalId: modelRef[0].externalId,
-                space: modelRef[0].space
-              }),
               getRevisionContainsAnyFilter([
                 {
                   externalId: revisionRef[0].externalId,

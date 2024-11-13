@@ -16,6 +16,7 @@ import { createSdkByUrlToken } from './utilities/createSdkByUrlToken';
 import {
   type AddModelOptions,
   type CogniteCadModel,
+  type DataSourceType,
   DefaultNodeAppearance,
   IndexSet
 } from '@cognite/reveal';
@@ -47,7 +48,7 @@ export const Main: Story = {
     transform,
     styling
   }: {
-    addModelOptions: AddModelOptions;
+    addModelOptions: AddModelOptions<DataSourceType>;
     transform?: Matrix4;
     styling?: CadModelStyling;
   }) => (

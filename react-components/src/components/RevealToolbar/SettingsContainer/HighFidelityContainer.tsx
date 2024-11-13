@@ -6,7 +6,7 @@ import { type ReactElement, useState } from 'react';
 import { Menu } from '@cognite/cogs-lab';
 import { useReveal } from '../../RevealCanvas/ViewerContext';
 import { type QualitySettings, type QualityProps } from './types';
-import { type Cognite3DViewer } from '@cognite/reveal';
+import { type DataSourceType, type Cognite3DViewer } from '@cognite/reveal';
 import { useTranslation } from '../../i18n/I18n';
 
 const defaultLowFidelitySettings: QualitySettings = {
@@ -70,7 +70,7 @@ export const HighFidelityContainer = ({
   );
 };
 
-function isLowFidelity(viewer: Cognite3DViewer): boolean {
+function isLowFidelity(viewer: Cognite3DViewer<DataSourceType>): boolean {
   return (
     viewer.cadBudget.maximumRenderCost <= defaultLowFidelitySettings.cadBudget.maximumRenderCost &&
     viewer.pointCloudBudget.numberOfPoints <=

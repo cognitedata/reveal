@@ -3,7 +3,7 @@
  */
 import type { Meta, StoryObj } from '@storybook/react';
 import { Image360CollectionContainer, Image360Details, RevealCanvas } from '../src';
-import { Color } from 'three';
+import { Color, Matrix4 } from 'three';
 import { useState } from 'react';
 import { RevealStoryContext } from './utilities/RevealStoryContainer';
 
@@ -23,7 +23,10 @@ export const Main: Story = {
       <RevealStoryContext color={new Color(0x4a4a4a)}>
         <RevealCanvas>
           <Image360CollectionContainer
-            addImage360CollectionOptions={{ siteId: 'c_RC_2' }}
+            addImage360CollectionOptions={{
+              siteId: 'xom-hcu1_north_v02',
+              transform: new Matrix4()
+            }}
             onLoad={() => {
               setLoading(false);
             }}

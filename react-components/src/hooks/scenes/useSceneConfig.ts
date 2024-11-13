@@ -32,6 +32,10 @@ import {
   type TRANSFORMATION_SOURCE
 } from './types';
 import { tryGetModelIdFromExternalId } from '../../utilities/tryGetModelIdFromExternalId';
+import {
+  getDMSModelsForIds,
+  getDMSRevisionsForRevisionIdsAndModelRefs
+} from '../../data-providers/utils/getDMSModelRevisionRefs';
 
 const DefaultScene: Scene = {
   sceneConfiguration: {
@@ -108,7 +112,7 @@ export const useSceneConfig = (
         },
         skybox: getSkybox(sceneResponse),
         groundPlanes: getGroundPlanes(sceneResponse),
-        sceneModels: getSceneModels(sceneResponse),
+        sceneModels: getSceneModels(sceneResponse, fdmSdk),
         image360Collections: getImageCollections(sceneResponse)
       };
       return scene;
@@ -135,23 +139,65 @@ function extractProperties<T>(object: Record<string, Record<string, T>>): T {
   return object[firstKey][secondKey];
 }
 
-function getSceneModels(sceneResponse: SceneResponse): CadOrPointCloudModel[] {
+async function exteractRevisionExternalIdAndSpace(
+  modelExternalId: string,
+  revisionId: number,
+  fdmSdk: FdmSDK
+): Promise<{ revisionExternalId: string; revisionSpace: string } | undefined> {
+  const isDMModel = modelExternalId.includes('cog_3d_model');
+  const modelId = tryGetModelIdFromExternalId(modelExternalId);
+  if (!isDMModel || modelId === undefined) {
+    return undefined;
+  }
+
+  const modelRef = await getDMSModelsForIds([modelId], fdmSdk);
+  const revisionRef = await getDMSRevisionsForRevisionIdsAndModelRefs(
+    modelRef,
+    [revisionId],
+    fdmSdk
+  );
+  return {
+    revisionExternalId: revisionRef[0].externalId,
+    revisionSpace: revisionRef[0].space
+  };
+}
+
+function getSceneModels(sceneResponse: SceneResponse, fdmSdk: FdmSDK): CadOrPointCloudModel[] {
   const models: CadOrPointCloudModel[] = [];
   if (sceneResponse.items.sceneModels.length > 0) {
     const sceneModels = sceneResponse.items.sceneModels;
-    sceneModels.forEach((sceneModel) => {
+    sceneModels.forEach(async (sceneModel) => {
       const sceneModelProperties = extractProperties<SceneModelsProperties>(sceneModel.properties);
-      const parsedModelId = tryGetModelIdFromExternalId(sceneModel.endNode.externalId);
-      if (parsedModelId === undefined) {
-        throw Error(`Could not parse model Id from externalId ${sceneModel.endNode.externalId}`);
+      const dMModelIndentifier = await exteractRevisionExternalIdAndSpace(
+        sceneModel.endNode.externalId,
+        sceneModelProperties.revisionId,
+        fdmSdk
+      );
+      if (dMModelIndentifier !== undefined) {
+        const model: CadOrPointCloudModel = {
+          modelIdentifier: {
+            revisionExternalId: dMModelIndentifier.revisionExternalId,
+            revisionSpace: dMModelIndentifier.revisionSpace
+          },
+          ...sceneModelProperties
+        };
+        models.push(model);
+      } else {
+        const parsedModelId = tryGetModelIdFromExternalId(sceneModel.endNode.externalId);
+        if (parsedModelId === undefined) {
+          throw Error(`Could not parse model Id from externalId ${sceneModel.endNode.externalId}`);
+        }
+
+        const model: CadOrPointCloudModel = {
+          modelIdentifier: {
+            modelId: parsedModelId,
+            revisionId: sceneModelProperties.revisionId
+          },
+          ...sceneModelProperties
+        };
+
+        models.push(model);
       }
-
-      const model: CadOrPointCloudModel = {
-        modelId: parsedModelId,
-        ...sceneModelProperties
-      };
-
-      models.push(model);
     });
   }
   return models;

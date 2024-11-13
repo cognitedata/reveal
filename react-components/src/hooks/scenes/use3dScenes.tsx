@@ -48,7 +48,7 @@ export type SceneData = {
   cameraEulerRotationX: number;
   cameraEulerRotationY: number;
   cameraEulerRotationZ: number;
-  cadModelOptions: Array<AddCadResourceOptions | AddPointCloudResourceOptions>;
+  modelOptions: Array<AddCadResourceOptions | AddPointCloudResourceOptions>;
   image360CollectionOptions: AddImage360CollectionDatamodelsOptions[];
   groundPlanes: GroundPlane[];
   skybox?: Skybox;
@@ -152,7 +152,7 @@ function createMapOfScenes(
           cameraEulerRotationX: properties.cameraEulerRotationX,
           cameraEulerRotationY: properties.cameraEulerRotationY,
           cameraEulerRotationZ: properties.cameraEulerRotationZ,
-          cadModelOptions: [],
+          modelOptions: [],
           image360CollectionOptions: [],
           groundPlanes: [],
           skybox: skyboxObject
@@ -192,7 +192,7 @@ function populateSceneMapWithModels(
       transformation: transform
     };
 
-    scenesMap[space]?.[externalId].cadModelOptions.push(newModel);
+    scenesMap[space]?.[externalId].modelOptions.push(newModel);
   });
 }
 

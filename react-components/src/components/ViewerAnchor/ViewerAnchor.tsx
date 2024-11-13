@@ -14,7 +14,7 @@ import {
 import { Vector2, type Vector3 } from 'three';
 
 import { useReveal } from '../RevealCanvas/ViewerContext';
-import { type Cognite3DViewer } from '@cognite/reveal';
+import { type DataSourceType, type Cognite3DViewer } from '@cognite/reveal';
 import { clamp } from 'lodash';
 
 type ViewerAnchorStyle = Omit<CSSProperties, 'position' | 'left' | 'top'>;
@@ -70,7 +70,7 @@ export const ViewerAnchor = ({
 
 function usePointProjection(
   position3d: Vector3,
-  viewer: Cognite3DViewer
+  viewer: Cognite3DViewer<DataSourceType>
 ): { projectedPoint: Vector2; visible: boolean } {
   const [projectedPoint, setProjectedPoint] = useState(new Vector2());
   const [visible, setVisible] = useState(false);

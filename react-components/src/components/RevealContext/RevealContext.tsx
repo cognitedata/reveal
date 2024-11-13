@@ -1,7 +1,7 @@
 /*!
  * Copyright 2024 Cognite AS
  */
-import { Cognite3DViewer, type Cognite3DViewerOptions } from '@cognite/reveal';
+import { Cognite3DViewer, type DataSourceType, type Cognite3DViewerOptions } from '@cognite/reveal';
 import { type CogniteClient } from '@cognite/sdk/dist/src';
 import { type ReactNode, useEffect, useMemo, useState, type ReactElement } from 'react';
 import { type Color } from 'three';
@@ -113,7 +113,7 @@ const useRevealFromKeepAlive = ({
   function getOrInitializeRenderTarget(): RevealRenderTarget {
     let renderTarget = revealKeepAliveData?.renderTargetRef.current;
     if (renderTarget === undefined) {
-      const viewer = new Cognite3DViewer({
+      const viewer = new Cognite3DViewer<DataSourceType>({
         ...viewerOptions,
         sdk,
         useFlexibleCameraManager: true,

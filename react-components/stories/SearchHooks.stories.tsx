@@ -38,6 +38,7 @@ import { isEqual } from 'lodash';
 import { type NodeItem } from '../src/data-providers/FdmSDK';
 import { Button, Input } from '@cognite/cogs.js';
 import { is360ImageAddOptions } from '../src/components/Reveal3DResources/typeGuards';
+import { type AddModelOptions } from '@cognite/reveal';
 
 const queryClient = new QueryClient();
 const sdk = createSdkByUrlToken();
@@ -69,7 +70,7 @@ const StoryContent = ({ resources }: { resources: AddResourceOptions[] }): React
   const { data: searchData } = useSearchMappedEquipmentFDM(
     mainSearchQuery,
     viewsToSearch,
-    filteredResources,
+    filteredResources as AddModelOptions[],
     undefined,
     100
   );
@@ -79,16 +80,24 @@ const StoryContent = ({ resources }: { resources: AddResourceOptions[] }): React
     isFetching: isAssetSearchFetching,
     hasNextPage: assetSearchHasNextPage,
     fetchNextPage: fetchAssetSearchNextPage
-  } = useSearchMappedEquipmentAssetMappings(mainSearchQuery, filteredResources, 1000, sdk);
+  } = useSearchMappedEquipmentAssetMappings(
+    mainSearchQuery,
+    filteredResources as AddModelOptions[],
+    1000,
+    sdk
+  );
 
-  const { data: allEquipment } = useAllMappedEquipmentFDM(filteredResources, viewsToSearch);
+  const { data: allEquipment } = useAllMappedEquipmentFDM(
+    filteredResources as AddModelOptions[],
+    viewsToSearch
+  );
 
   const {
     data: allAssets,
     isFetching,
     hasNextPage,
     fetchNextPage
-  } = useAllMappedEquipmentAssetMappings(filteredResources, sdk, 25);
+  } = useAllMappedEquipmentAssetMappings(filteredResources as AddModelOptions[], sdk, 25);
 
   const filtered360ImageResources = resources.filter(
     (resource): resource is AddImage360CollectionOptions => 'siteId' in resource
@@ -109,14 +118,14 @@ const StoryContent = ({ resources }: { resources: AddResourceOptions[] }): React
   );
 
   const { data: pointCloudAssetSearchData } = useSearchAssetsMappedPointCloudAnnotations(
-    filteredResources,
+    filteredResources as AddModelOptions[],
     sdk,
     mainSearchQuery
   );
 
   const { data: allPointCloudAssets } = useAllAssetsMappedPointCloudAnnotations(
     sdk,
-    filteredResources
+    filteredResources as AddModelOptions[]
   );
 
   const fetchNextPageCallback = useCallback(() => {
@@ -365,8 +374,8 @@ export const Main: Story = {
   args: {
     resources: [
       {
-        modelId: 5018365656512439,
-        revisionId: 1617304887543490,
+        revisionExternalId: 'cog_3d_revision_1617304887543490',
+        revisionSpace: 'core_dm_data_space',
         styling: {
           default: {
             color: new Color('#efefef')

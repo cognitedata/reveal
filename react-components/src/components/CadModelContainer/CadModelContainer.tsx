@@ -2,7 +2,12 @@
  * Copyright 2023 Cognite AS
  */
 import { type ReactElement, useEffect, useState, useRef } from 'react';
-import { type GeometryFilter, type AddModelOptions, type CogniteCadModel } from '@cognite/reveal';
+import {
+  type GeometryFilter,
+  type AddModelOptions,
+  type CogniteCadModel,
+  type DataSourceType
+} from '@cognite/reveal';
 import { useReveal } from '../RevealCanvas/ViewerContext';
 import { type Matrix4 } from 'three';
 import { useRevealKeepAlive } from '../RevealKeepAlive/RevealKeepAliveContext';
@@ -16,9 +21,11 @@ import { getViewerResourceCount } from '../../utilities/getViewerResourceCount';
 import { type CadModelStyling } from './types';
 import { useApplyCadModelStyling } from './useApplyCadModelStyling';
 import { isSameGeometryFilter, isSameModel } from '../../utilities/isSameModel';
+import { type AddResourceOptions } from '../Reveal3DResources';
+import { useModelIdRevisionIdFromModelOptions } from '../../hooks/useModelIdRevisionIdFromModelOptions';
 
 export type CogniteCadModelProps = {
-  addModelOptions: AddModelOptions;
+  addModelOptions: AddModelOptions<DataSourceType>;
   styling?: CadModelStyling;
   transform?: Matrix4;
   onLoad?: (model: CogniteCadModel) => void;
@@ -35,14 +42,18 @@ export function CadModelContainer({
   const cachedViewerRef = useRevealKeepAlive();
   const viewer = useReveal();
   const { setRevealResourcesCount } = useReveal3DResourcesCount();
-  const initializingModel = useRef<AddModelOptions | undefined>(undefined);
+  const initializingModel = useRef<AddModelOptions<DataSourceType> | undefined>(undefined);
   const initializingModelsGeometryFilter = useRef<GeometryFilter | undefined>(undefined);
 
   const [model, setModel] = useState<CogniteCadModel | undefined>(undefined);
 
-  const { modelId, revisionId, geometryFilter } = addModelOptions;
-
   useThisAsExpectedResourceLoad();
+
+  const [{ data: addModelOptionsResult }] = useModelIdRevisionIdFromModelOptions([addModelOptions]);
+
+  const modelId = addModelOptionsResult?.modelId;
+  const revisionId = addModelOptionsResult?.revisionId;
+  const geometryFilter = addModelOptions.geometryFilter;
 
   useEffect(() => {
     if (isEqual(initializingModel.current, addModelOptions)) {
@@ -57,7 +68,7 @@ export function CadModelContainer({
       })
       .catch((error) => {
         const errorReportFunction = onLoadError ?? defaultLoadErrorHandler;
-        errorReportFunction(addModelOptions, error);
+        errorReportFunction(addModelOptions as AddModelOptions, error);
       });
   }, [modelId, revisionId, geometryFilter]);
 
@@ -79,7 +90,7 @@ export function CadModelContainer({
   return <></>;
 
   async function addModel(
-    addModelOptions: AddModelOptions,
+    addModelOptions: AddModelOptions<DataSourceType>,
     transform?: Matrix4
   ): Promise<CogniteCadModel> {
     const cadModel = await getOrAddModel();
@@ -94,7 +105,7 @@ export function CadModelContainer({
     async function getOrAddModel(): Promise<CogniteCadModel> {
       const viewerModel = viewer.models.find(
         (model) =>
-          isSameModel(model, addModelOptions) &&
+          isSameModel(model as AddResourceOptions, addModelOptions as AddResourceOptions) &&
           isSameGeometryFilter(geometryFilter, initializingModelsGeometryFilter.current)
       );
 

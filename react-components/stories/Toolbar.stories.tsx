@@ -20,7 +20,7 @@ import { RevealStoryContainer } from './utilities/RevealStoryContainer';
 import { getAddModelOptionsFromUrl } from './utilities/getAddModelOptionsFromUrl';
 import { SetOrbitOrFirstPersonControlsType } from '../src/components/RevealToolbar/SetFlexibleControlsType';
 import { useGetCameraStateFromUrlParam } from './utilities/useGetCameraStateFromUrlParam';
-import { type AddModelOptions } from '@cognite/reveal';
+import { type DataSourceType, type AddModelOptions } from '@cognite/reveal';
 
 const meta = {
   title: 'Example/Toolbar',
@@ -93,7 +93,7 @@ export const Main: Story = {
   args: {
     addModelOptions: getAddModelOptionsFromUrl('/primitives')
   },
-  render: ({ addModelOptions }: { addModelOptions: AddModelOptions }) => (
+  render: ({ addModelOptions }: { addModelOptions: AddModelOptions<DataSourceType> }) => (
     <RevealStoryContainer color={new Color(0x4a4a4a)} viewerOptions={{}}>
       <FitToUrlCameraState />
       <CadModelContainer addModelOptions={addModelOptions} />

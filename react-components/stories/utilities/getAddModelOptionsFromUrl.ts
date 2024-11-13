@@ -1,9 +1,11 @@
 /*!
  * Copyright 2023 Cognite AS
  */
-import { type AddModelOptions } from '@cognite/reveal';
+import { type DataSourceType, type AddModelOptions } from '@cognite/reveal';
 
-export function getAddModelOptionsFromUrl(localModelUrlFallback: string): AddModelOptions {
+export function getAddModelOptionsFromUrl(
+  localModelUrlFallback: string
+): AddModelOptions<DataSourceType> {
   const modelId = new URLSearchParams(window.location.search).get('modelId');
   const revisionId = new URLSearchParams(window.location.search).get('revisionId');
   const modelUrl = new URLSearchParams(window.location.search).get('modelUrl');

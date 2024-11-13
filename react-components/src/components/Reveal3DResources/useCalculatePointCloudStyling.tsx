@@ -1,28 +1,37 @@
 /*!
  * Copyright 2024 Cognite AS
  */
-import { type NodeAppearance } from '@cognite/reveal';
+import {
+  type CognitePointCloudModel,
+  type DataSourceType,
+  isClassicPointCloudVolume,
+  isDMPointCloudVolume,
+  type DMInstanceRef,
+  type NodeAppearance,
+  isDMPointCloudModel,
+  isClassicPointCloudModel
+} from '@cognite/reveal';
 import {
   type DefaultResourceStyling,
   type PointCloudModelOptions,
-  type AssetStylingGroup
+  type AssetStylingGroup,
+  type TypedReveal3DModel,
+  type CadPointCloudModelWithModelIdRevisionId
 } from './types';
 import { useMemo } from 'react';
-import { type AnnotationIdStylingGroup } from '../PointCloudContainer/useApplyPointCloudStyling';
 import { useQuery } from '@tanstack/react-query';
 import { isSameModel } from '../../utilities/isSameModel';
-import {
-  usePointCloudAnnotationMappingsForModels,
-  usePointCloudAnnotationIdsForModels
-} from '../CacheProvider/PointCloudAnnotationCacheProvider';
+import { usePointCloudAnnotationMappingsForModels } from '../CacheProvider/PointCloudAnnotationCacheProvider';
 import { EMPTY_ARRAY } from '../../utilities/constants';
 import { type PointCloudAnnotationModel } from '../CacheProvider/types';
-import { useMappedEdgesForRevisions } from '../CacheProvider/NodeCacheProvider';
-import { usePointCloudDMAnnotation } from '../CacheProvider/PointCloudDMAnnotation';
+import { type PointCloudVolumeStylingGroup } from '../PointCloudContainer/types';
+import { useModelIdRevisionIdFromModelOptions } from '../../hooks/useModelIdRevisionIdFromModelOptions';
+import { isDefined } from '../../utilities/isDefined';
+import { useReveal } from '../RevealCanvas';
 
 export type StyledPointCloudModel = {
   model: PointCloudModelOptions;
-  styleGroups: AnnotationIdStylingGroup[];
+  styleGroups: PointCloudVolumeStylingGroup[];
 };
 
 export type AnnotationModelDataResult = {
@@ -31,27 +40,31 @@ export type AnnotationModelDataResult = {
 };
 
 export const useCalculatePointCloudStyling = (
-  models: PointCloudModelOptions[],
+  models: TypedReveal3DModel[],
   instanceGroups: AssetStylingGroup[],
   defaultResourceStyling?: DefaultResourceStyling
 ): StyledPointCloudModel[] => {
-  const styledPointCloudModels = useCalculateMappedPointCloudStyling(
-    models,
+  const pointCloudModelOptions = useMemo(
+    () => models.filter((model): model is PointCloudModelOptions => model.type === 'pointcloud'),
+    [models]
+  );
+
+  const styledPointCloudModels = useCalculateMappedPointCloudStylingFromReveal(
+    pointCloudModelOptions,
     defaultResourceStyling?.pointcloud?.mapped
   );
-  usePointCloudDMAnnotation(models);
-  // console.log(
-  //   `mappedEquipmentEdges, isFDMEquipmentMappingsLoading, isFDMEquipmentMappingsFetched, isFDMEquipmentMappingsError)`,
-  //   mappedEquipmentEdges,
-  //   isFDMEquipmentMappingsLoading,
-  //   isFDMEquipmentMappingsFetched,
-  //   isFDMEquipmentMappingsError
-  // );
-  const modelInstanceStyleGroups = useCalculateInstanceStyling(models, instanceGroups);
+  const modelInstanceStyleGroups = useCalculateInstanceStyling(
+    pointCloudModelOptions,
+    instanceGroups
+  );
 
   const combinedStyledPointCloudModels = useMemo(() => {
-    return groupStyleGroupByModel(models, [...styledPointCloudModels, ...modelInstanceStyleGroups]);
-  }, [styledPointCloudModels, modelInstanceStyleGroups]);
+    return groupStyleGroupByModel(pointCloudModelOptions, [
+      ...styledPointCloudModels,
+      ...modelInstanceStyleGroups
+    ]);
+  }, [styledPointCloudModels, modelInstanceStyleGroups, pointCloudModelOptions]);
+
   return combinedStyledPointCloudModels;
 };
 
@@ -82,7 +95,7 @@ function calculateAnnotationMappingModelStyling(
     .map((group) => {
       return getMappedStyleGroupFromAssetIds(annotationMapping, group);
     })
-    .filter((styleGroup): styleGroup is AnnotationIdStylingGroup => styleGroup !== undefined);
+    .filter((styleGroup): styleGroup is PointCloudVolumeStylingGroup => styleGroup !== undefined);
 
   return { model: annotationMapping.model, styleGroups };
 }
@@ -90,7 +103,7 @@ function calculateAnnotationMappingModelStyling(
 function getMappedStyleGroupFromAssetIds(
   annotationMapping: AnnotationModelDataResult,
   instanceGroup: AssetStylingGroup
-): AnnotationIdStylingGroup | undefined {
+): PointCloudVolumeStylingGroup | undefined {
   const uniqueAnnotationIds = new Set<number>();
   const assetIdsSet = new Set(instanceGroup.assetIds.map((id) => id));
 
@@ -106,68 +119,114 @@ function getMappedStyleGroupFromAssetIds(
 
   return matchedAnnotationModels.length > 0
     ? {
-        annotationIds: matchedAnnotationModels.map((annotationModel) => annotationModel.id),
+        pointCloudVolumes: matchedAnnotationModels.map((annotationModel) => annotationModel.id),
         style: instanceGroup.style.pointcloud ?? {}
       }
     : undefined;
 }
 
-function useCalculateMappedPointCloudStyling(
+function useCalculateMappedPointCloudStylingFromReveal(
   models: PointCloudModelOptions[],
   defaultMappedNodeAppearance?: NodeAppearance
 ): StyledPointCloudModel[] {
-  const modelsWithStyledMapped = useMemo(
-    () => getMappedPointCloudModelsOptions(),
-    [models, defaultMappedNodeAppearance]
+  const viewer = useReveal();
+  const addClassicModelOptionsResults = useModelIdRevisionIdFromModelOptions(models);
+
+  const classicModelOptions = useMemo(
+    () => addClassicModelOptionsResults.map((result) => result.data).filter(isDefined),
+    [addClassicModelOptionsResults]
   );
 
-  const { data: pointCloudStyledModelAnnotationIds } =
-    usePointCloudAnnotationIdsForModels(modelsWithStyledMapped);
+  const modelsWithModelIdAndRevision: CadPointCloudModelWithModelIdRevisionId[] = useMemo(() => {
+    return classicModelOptions.map((model, index) => ({
+      modelOptions: models[index],
+      ...model
+    }));
+  }, [classicModelOptions, models]);
 
-  const modelsMappedAnnotationIdStyleGroups = useMemo(() => {
-    if (
-      models.length === 0 ||
-      pointCloudStyledModelAnnotationIds === undefined ||
-      pointCloudStyledModelAnnotationIds.length === 0
-    ) {
+  const matchedModels = useMemo(() => {
+    return viewer.models.flatMap((viewerModel) => {
+      const model = viewerModel as CognitePointCloudModel<DataSourceType>;
+      const matchedModel = modelsWithModelIdAndRevision.find((modelData) => {
+        if (
+          isDMPointCloudModel(model) &&
+          'revisionExternalId' in modelData &&
+          'revisionSpace' in modelData
+        ) {
+          return (
+            model.modelIdentifier.revisionExternalId === modelData.revisionExternalId &&
+            model.modelIdentifier.revisionSpace === modelData.revisionSpace
+          );
+        } else if (isClassicPointCloudModel(model)) {
+          return (
+            model.modelIdentifier.modelId === modelData.modelId &&
+            model.modelIdentifier.revisionId === modelData.revisionId
+          );
+        }
+        return false;
+      });
+      return matchedModel !== undefined ? [{ viewerModel, model: matchedModel }] : [];
+    });
+  }, [modelsWithModelIdAndRevision, viewer.models]);
+
+  const pointCloudVolumesWithModel = useMemo(() => {
+    if (matchedModels.length === 0 || viewer.models.length === 0) {
+      return models
+        .filter((model): model is PointCloudModelOptions => model.type === 'pointcloud')
+        .map((model) => ({
+          model,
+          pointCloudVolumes: []
+        }));
+    }
+    return matchedModels
+      .filter(({ model }) => model.modelOptions.type === 'pointcloud')
+      .map(({ viewerModel, model }) => {
+        const pointCloudVolumes: Array<number | DMInstanceRef> = [];
+        (viewerModel as CognitePointCloudModel<DataSourceType>).stylableObjects.forEach(
+          (object) => {
+            if (isClassicPointCloudVolume(object)) {
+              pointCloudVolumes.push(object.annotationId);
+            } else if (isDMPointCloudVolume(object)) {
+              pointCloudVolumes.push(object.volumeInstanceRef);
+            }
+          }
+        );
+        return { model: model.modelOptions as PointCloudModelOptions, pointCloudVolumes };
+      });
+  }, [matchedModels, viewer.models]);
+
+  const modelsMappedVolumeStyleGroups = useMemo(() => {
+    if (models.length === 0 || pointCloudVolumesWithModel.length === 0) {
       return EMPTY_ARRAY;
     }
 
-    return pointCloudStyledModelAnnotationIds.map((pointCloudAnnotationCollection) => {
+    return pointCloudVolumesWithModel.map((pointCloudVolumeWithModel) => {
       const modelStyle =
-        pointCloudAnnotationCollection.model.styling?.mapped ?? defaultMappedNodeAppearance;
+        pointCloudVolumeWithModel.model.styling?.mapped ?? defaultMappedNodeAppearance;
 
-      const styleGroups: AnnotationIdStylingGroup[] =
+      const styleGroups: PointCloudVolumeStylingGroup[] =
         modelStyle !== undefined
-          ? [getMappedStyleGroupFromAnnotationIds([pointCloudAnnotationCollection], modelStyle)]
+          ? [getMappedStyleGroupFromPointCloudVolume([pointCloudVolumeWithModel], modelStyle)]
           : EMPTY_ARRAY;
-      return { model: pointCloudAnnotationCollection.model, styleGroups };
+      return { model: pointCloudVolumeWithModel.model, styleGroups };
     });
-  }, [modelsWithStyledMapped, pointCloudStyledModelAnnotationIds, defaultMappedNodeAppearance]);
+  }, [models, pointCloudVolumesWithModel, defaultMappedNodeAppearance]);
 
-  return modelsMappedAnnotationIdStyleGroups;
-
-  function getMappedPointCloudModelsOptions(): PointCloudModelOptions[] {
-    if (defaultMappedNodeAppearance !== undefined) {
-      return models;
-    }
-
-    return models.filter((model) => model.styling?.mapped !== undefined);
-  }
+  return modelsMappedVolumeStyleGroups;
 }
 
-function getMappedStyleGroupFromAnnotationIds(
-  annotationData: Array<{
+function getMappedStyleGroupFromPointCloudVolume(
+  pointCloudVolumeData: Array<{
     model: PointCloudModelOptions;
-    annotationIds: number[];
+    pointCloudVolumes: Array<number | DMInstanceRef>;
   }>,
   nodeAppearance: NodeAppearance
-): AnnotationIdStylingGroup {
-  const annotationIds = annotationData.flatMap((data) => {
-    return data.annotationIds;
+): PointCloudVolumeStylingGroup {
+  const pointCloudVolumes = pointCloudVolumeData.flatMap((data) => {
+    return data.pointCloudVolumes;
   });
 
-  return { annotationIds, style: nodeAppearance };
+  return { pointCloudVolumes, style: nodeAppearance };
 }
 
 function groupStyleGroupByModel(

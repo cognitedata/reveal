@@ -4,7 +4,7 @@
 
 import { type TranslateKey } from '../utilities/TranslateKey';
 import { type QualitySettings } from '../../../components/RevealToolbar/SettingsContainer/types';
-import { type Cognite3DViewer } from '@cognite/reveal';
+import { type DataSourceType, type Cognite3DViewer } from '@cognite/reveal';
 import { RenderTargetCommand } from '../commands/RenderTargetCommand';
 
 export class SetQualityCommand extends RenderTargetCommand {
@@ -81,7 +81,7 @@ export class SetQualityCommand extends RenderTargetCommand {
     return true;
   }
 
-  private isLowQuality(viewer: Cognite3DViewer): boolean {
+  private isLowQuality(viewer: Cognite3DViewer<DataSourceType>): boolean {
     const settings = this.lowQualitySettings;
     return (
       viewer.cadBudget.maximumRenderCost <= settings.cadBudget.maximumRenderCost &&
@@ -90,7 +90,7 @@ export class SetQualityCommand extends RenderTargetCommand {
   }
 }
 
-function getDefaultSettings(viewer: Cognite3DViewer): QualitySettings {
+function getDefaultSettings(viewer: Cognite3DViewer<DataSourceType>): QualitySettings {
   const settings: QualitySettings = {
     cadBudget: { ...viewer.cadBudget },
     pointCloudBudget: { ...viewer.pointCloudBudget },

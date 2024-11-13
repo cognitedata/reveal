@@ -2,7 +2,12 @@
  * Copyright 2023 Cognite AS
  */
 import { useRef, type ReactElement, useState, useEffect, useMemo } from 'react';
-import { type Cognite3DViewer } from '@cognite/reveal';
+import {
+  type DataSourceType,
+  type Cognite3DViewer,
+  type AddModelOptions,
+  type ClassicDataSourceType
+} from '@cognite/reveal';
 import { CadModelContainer } from '../CadModelContainer/CadModelContainer';
 import { PointCloudContainer } from '../PointCloudContainer/PointCloudContainer';
 import { Image360CollectionContainer } from '../Image360CollectionContainer/Image360CollectionContainer';
@@ -11,16 +16,11 @@ import {
   type TypedReveal3DModel,
   type AddResourceOptions,
   type Reveal3DResourcesProps,
-  type CadModelOptions,
-  type PointCloudModelOptions,
   type AddCadResourceOptions,
-  type AddPointCloudResourceOptions
+  type AddPointCloudResourceOptions,
+  type CadModelOptions
 } from './types';
 import { useCalculatePointCloudStyling } from './useCalculatePointCloudStyling';
-import {
-  type AnnotationIdStylingGroup,
-  type PointCloudModelStyling
-} from '../PointCloudContainer/useApplyPointCloudStyling';
 import { EMPTY_ARRAY } from '../../utilities/constants';
 import {
   isAssetMappingStylingGroup,
@@ -30,14 +30,18 @@ import {
 import { type ImageCollectionModelStyling } from '../Image360CollectionContainer/useApply360AnnotationStyling';
 import { is360ImageAddOptions } from './typeGuards';
 import { useRemoveNonReferencedModels } from './useRemoveNonReferencedModels';
-import {
-  useAssetMappedNodesForRevisions,
-  useGenerateAssetMappingCachePerItemFromModelCache,
-  useGenerateNode3DCache
-} from '../CacheProvider/AssetMappingAndNode3DCacheProvider';
 import { useCalculateCadStyling } from './useCalculateCadStyling';
 import { useReveal3DResourcesStylingLoadingSetter } from './Reveal3DResourcesInfoContext';
 import { type CadModelStyling } from '../CadModelContainer/types';
+import { type PointCloudModelStyling } from '../PointCloudContainer/types';
+import { useModelIdRevisionIdFromModelOptions } from '../../hooks/useModelIdRevisionIdFromModelOptions';
+import { isDefined } from '../../utilities/isDefined';
+import { type Image360PolygonStylingGroup } from '../Image360CollectionContainer';
+import { useAssetMappedNodesForRevisions } from '../CacheProvider';
+import {
+  useGenerateAssetMappingCachePerItemFromModelCache,
+  useGenerateNode3DCache
+} from '../CacheProvider/AssetMappingAndNode3DCacheProvider';
 
 export const Reveal3DResources = ({
   resources,
@@ -53,9 +57,41 @@ export const Reveal3DResources = ({
 
   const numModelsLoaded = useRef(0);
 
+  const cadOrPointCloudResources = useMemo(
+    () =>
+      resources.filter(
+        (resource): resource is AddCadResourceOptions | AddPointCloudResourceOptions =>
+          !is360ImageAddOptions(resource)
+      ),
+    [resources]
+  );
+
+  const addClassicModelOptionsResults = useModelIdRevisionIdFromModelOptions(
+    cadOrPointCloudResources as Array<AddModelOptions<DataSourceType>>
+  );
+  const classicModelOptions = useMemo(
+    () =>
+      addClassicModelOptionsResults
+        .map((result) => {
+          return result.data;
+        })
+        .filter(isDefined),
+    [addClassicModelOptionsResults]
+  );
+
   useEffect(() => {
-    void getTypedModels(resources, viewer, onResourceLoadError).then(setReveal3DModels);
-  }, [resources, viewer]);
+    const fetchTypedModels = async (): Promise<void> => {
+      const typedModels = await getTypedModels(
+        classicModelOptions,
+        viewer,
+        cadOrPointCloudResources,
+        onResourceLoadError
+      );
+      setReveal3DModels(typedModels);
+    };
+
+    void fetchTypedModels();
+  }, [classicModelOptions.length, cadOrPointCloudResources, viewer, onResourceLoadError]);
 
   const image360CollectionAddOptions = useMemo(() => {
     return resources
@@ -75,14 +111,6 @@ export const Reveal3DResources = ({
   useGenerateAssetMappingCachePerItemFromModelCache(cadModelOptions, assetMappings);
   useGenerateNode3DCache(cadModelOptions, assetMappings);
 
-  const pointCloudModelOptions = useMemo(
-    () =>
-      reveal3DModels.filter(
-        (model): model is PointCloudModelOptions => model.type === 'pointcloud'
-      ),
-    [reveal3DModels]
-  );
-
   const { styledModels: styledCadModelOptions, isModelMappingsLoading } = useCalculateCadStyling(
     cadModelOptions,
     instanceStyling?.filter(isCadAssetMappingStylingGroup) ?? EMPTY_ARRAY,
@@ -99,7 +127,7 @@ export const Reveal3DResources = ({
     instanceStyling?.filter(isAssetMappingStylingGroup) ?? EMPTY_ARRAY;
 
   const styledPointCloudModelOptions = useCalculatePointCloudStyling(
-    pointCloudModelOptions,
+    reveal3DModels,
     instaceStylingWithAssetMappings,
     defaultResourceStyling
   );
@@ -111,7 +139,7 @@ export const Reveal3DResources = ({
         return { assetIds: group.assetIds, style: group.style.image360 };
       })
       .filter(
-        (group): group is AnnotationIdStylingGroup & { assetIds: number[] } =>
+        (group): group is Image360PolygonStylingGroup & { assetIds: number[] } =>
           group.style !== undefined
       ) ?? EMPTY_ARRAY;
 
@@ -144,7 +172,7 @@ export const Reveal3DResources = ({
         };
         return (
           <CadModelContainer
-            key={`${model.modelId}/${model.revisionId}/${index}`}
+            key={`${index}`}
             addModelOptions={model}
             styling={cadStyling}
             transform={model.transform}
@@ -161,7 +189,7 @@ export const Reveal3DResources = ({
         };
         return (
           <PointCloudContainer
-            key={`${model.modelId}/${model.revisionId}/${index}`}
+            key={`${index}`}
             addModelOptions={model}
             styling={pcStyling}
             transform={model.transform}
@@ -200,27 +228,23 @@ export const Reveal3DResources = ({
 };
 
 async function getTypedModels(
-  resources: AddResourceOptions[],
-  viewer: Cognite3DViewer,
+  classicModelOptions: Array<AddModelOptions<DataSourceType>>,
+  viewer: Cognite3DViewer<DataSourceType>,
+  addModelOptionsArray: Array<AddModelOptions<DataSourceType>>,
   onLoadFail?: (resource: AddResourceOptions, error: any) => void
 ): Promise<TypedReveal3DModel[]> {
   const errorFunction = onLoadFail ?? defaultLoadFailHandler;
 
-  const modelTypePromises = resources
-    .filter(
-      (resource): resource is AddCadResourceOptions | AddPointCloudResourceOptions =>
-        !is360ImageAddOptions(resource)
-    )
-    .map(async (addModelOptions) => {
-      const type = await viewer
-        .determineModelType(addModelOptions.modelId, addModelOptions.revisionId)
-        .catch((error) => {
-          errorFunction(addModelOptions, error);
-          return '';
-        });
-      const typedModel = { ...addModelOptions, type };
-      return typedModel;
+  const modelTypePromises = classicModelOptions.map(async (classicModelOptions, index) => {
+    const { modelId, revisionId } = classicModelOptions as AddModelOptions<ClassicDataSourceType>;
+    const type = await viewer.determineModelType(modelId, revisionId).catch((error) => {
+      errorFunction(classicModelOptions, error);
+      return '';
     });
+
+    const typedModel = { ...addModelOptionsArray[index], type };
+    return typedModel;
+  });
 
   const resourceLoadResults = await Promise.all(modelTypePromises);
   const successfullyLoadedResources = resourceLoadResults.filter(

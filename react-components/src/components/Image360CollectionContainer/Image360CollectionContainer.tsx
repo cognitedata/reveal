@@ -3,7 +3,7 @@
  */
 import { type ReactElement, useEffect, useRef } from 'react';
 import { useReveal } from '../RevealCanvas/ViewerContext';
-import { type Image360Collection } from '@cognite/reveal';
+import { type DataSourceType, type Image360Collection } from '@cognite/reveal';
 import { useRevealKeepAlive } from '../RevealKeepAlive/RevealKeepAliveContext';
 import { type AddImage360CollectionOptions } from '../Reveal3DResources/types';
 import {
@@ -24,7 +24,7 @@ import { getViewerResourceCount } from '../../utilities/getViewerResourceCount';
 type Image360CollectionContainerProps = {
   addImage360CollectionOptions: AddImage360CollectionOptions;
   styling?: ImageCollectionModelStyling;
-  onLoad?: (image360: Image360Collection) => void;
+  onLoad?: (image360: Image360Collection<DataSourceType>) => void;
   onLoadError?: (addOptions: AddImage360CollectionOptions, error: any) => void;
 };
 
@@ -35,7 +35,7 @@ export function Image360CollectionContainer({
   onLoadError
 }: Image360CollectionContainerProps): ReactElement {
   const cachedViewerRef = useRevealKeepAlive();
-  const modelRef = useRef<Image360Collection>();
+  const modelRef = useRef<Image360Collection<DataSourceType>>();
   const viewer = useReveal();
   const { setRevealResourcesCount } = useReveal3DResourcesCount();
 
@@ -55,7 +55,7 @@ export function Image360CollectionContainer({
 
     initializingSiteId.current = addImage360CollectionOptions;
 
-    void add360Collection(addImage360CollectionOptions.transform);
+    add360Collection(addImage360CollectionOptions.transform);
     return remove360Collection;
   }, [addImage360CollectionOptions]);
 
@@ -76,8 +76,8 @@ export function Image360CollectionContainer({
 
   return <></>;
 
-  async function add360Collection(transform?: Matrix4): Promise<void> {
-    await getOrAdd360Collection()
+  function add360Collection(transform?: Matrix4): void {
+    getOrAdd360Collection()
       .then((image360Collection) => {
         if (transform !== undefined) {
           image360Collection.setModelTransformation(transform);
@@ -97,7 +97,7 @@ export function Image360CollectionContainer({
         errorReportFunction(addImage360CollectionOptions, error);
       });
 
-    async function getOrAdd360Collection(): Promise<Image360Collection> {
+    async function getOrAdd360Collection(): Promise<Image360Collection<DataSourceType>> {
       const collections = viewer.get360ImageCollections();
       const siteId =
         'siteId' in addImage360CollectionOptions
@@ -136,7 +136,7 @@ export function Image360CollectionContainer({
 }
 
 const useSetIconCulling = (
-  collection?: Image360Collection,
+  collection?: Image360Collection<DataSourceType>,
   cullingParameters?: { radius?: number; iconCountLimit?: number }
 ): void => {
   const radius = cullingParameters?.radius;
@@ -148,7 +148,7 @@ const useSetIconCulling = (
 };
 
 function setCollectionCullingOptions(
-  collection?: Image360Collection,
+  collection?: Image360Collection<DataSourceType>,
   cullingParameters?: { radius?: number; iconCountLimit?: number }
 ): void {
   collection?.set360IconCullingRestrictions(

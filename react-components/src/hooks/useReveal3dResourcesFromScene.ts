@@ -8,7 +8,12 @@ import {
   type AddResourceOptions,
   type AddImage360CollectionDatamodelsOptions
 } from '../components/Reveal3DResources/types';
-import { CDF_TO_VIEWER_TRANSFORMATION, type AddModelOptions } from '@cognite/reveal';
+import {
+  CDF_TO_VIEWER_TRANSFORMATION,
+  type ClassicDataSourceType,
+  type DMDataSourceType,
+  type AddModelOptions
+} from '@cognite/reveal';
 import { useEffect, useState } from 'react';
 import { Euler, MathUtils, Matrix4 } from 'three';
 import { type Transformation3d } from './scenes/types';
@@ -32,18 +37,25 @@ export const useReveal3dResourcesFromScene = (
     }
     const addResourceOptions: AddResourceOptions[] = [];
     scene.data.sceneModels.forEach((model) => {
-      if (isNaN(model.modelId)) {
-        throw new Error('Model id is not a number');
+      if ('modelId' in model && 'revisionId' in model) {
+        const addModelOptions: AddModelOptions<ClassicDataSourceType> = {
+          modelId: model.modelId as number,
+          revisionId: model.revisionId as number
+        };
+
+        const transform = createResourceTransformation(model);
+
+        addResourceOptions.push({ ...addModelOptions, transform });
+      } else if ('revisionExternalId' in model && 'revisionSpace' in model) {
+        const addModelOptions: AddModelOptions<DMDataSourceType> = {
+          revisionExternalId: model.revisionExternalId as string,
+          revisionSpace: model.revisionSpace as string
+        };
+
+        const transform = createResourceTransformation(model);
+
+        addResourceOptions.push({ ...addModelOptions, transform });
       }
-
-      const addModelOptions: AddModelOptions = {
-        modelId: model.modelId,
-        revisionId: model.revisionId
-      };
-
-      const transform = createResourceTransformation(model);
-
-      addResourceOptions.push({ ...addModelOptions, transform });
     });
 
     scene.data.image360Collections.forEach((collection) => {

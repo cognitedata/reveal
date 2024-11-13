@@ -1,6 +1,11 @@
 import { vi } from 'vitest';
 
-import { type Cognite3DViewer, type CogniteModel, type Image360Collection } from '@cognite/reveal';
+import {
+  type DataSourceType,
+  type Cognite3DViewer,
+  type CogniteModel,
+  type Image360Collection
+} from '@cognite/reveal';
 import { Mock, It } from 'moq.ts';
 import { cameraManagerMock } from './cameraManager';
 
@@ -12,7 +17,7 @@ export const viewerImage360CollectionsMock = vi.fn<[], Image360Collection[]>();
 export const fitCameraToVisualSceneBoundingBoxMock = vi.fn<[number?], void>();
 export const fitCameraToModelsMock = vi.fn<[CogniteModel[], number?, boolean?], void>();
 
-export const viewerMock = new Mock<Cognite3DViewer>()
+export const viewerMock = new Mock<Cognite3DViewer<DataSourceType>>()
   .setup((viewer) => {
     viewer.setBackgroundColor(It.IsAny());
   })
