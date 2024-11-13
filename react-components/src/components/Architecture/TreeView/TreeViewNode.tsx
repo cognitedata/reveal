@@ -6,8 +6,8 @@
 
 import { type ReactElement, useState, useReducer } from 'react';
 import { type TreeViewProps } from './TreeViewProps';
-import { type ITreeNode } from '../../../architecture/base/treeView/ITreeNode';
-import { CheckBoxState } from '../../../architecture/base/treeView/types';
+import { type ITreeNode } from '../../../architecture/base/treeNodes/ITreeNode';
+import { CheckBoxState } from '../../../architecture/base/treeNodes/types';
 import { useOnTreeNodeUpdate } from './utilities/useOnTreeNodeUpdate';
 import { LoadingMoreLabel } from './components/LoadingMoreLabel';
 import { LoadMoreButton } from './components/LoadMoreButton';

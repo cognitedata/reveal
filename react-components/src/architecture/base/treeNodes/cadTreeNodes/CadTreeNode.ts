@@ -23,6 +23,7 @@ export class CadTreeNode extends TreeNode {
     this._id = node.id;
     this._treeIndex = node.treeIndex;
     this.label = node.name === '' ? node.id.toString() : node.name;
+    this.needLoadChildren = node.subtreeSize > 1;
   }
 
   // ==================================================
@@ -110,6 +111,7 @@ export class CadTreeNode extends TreeNode {
   // ==================================================
 
   public insertAncestors(newNodes: SubsetOfNode3D[], onLoaded?: OnLoadedAction): boolean {
+    // Note: New nodes are always added last among the children
     if (newNodes.length === 0) {
       return false;
     }
@@ -133,7 +135,11 @@ export class CadTreeNode extends TreeNode {
       if (onLoaded !== undefined) {
         onLoaded(cadTreeNode, parent);
       }
-      cadTreeNode.needLoadChildren = true; // Maybe wrong if the loadedNode is the last
+      const lastChild = parent.getLastChild() as CadTreeNode;
+      if (lastChild !== undefined && lastChild.needLoadSiblings) {
+        cadTreeNode.loadSiblingCursor = lastChild.loadSiblingCursor;
+        lastChild.loadSiblingCursor = undefined;
+      }
       parent.addChild(cadTreeNode);
       parent = cadTreeNode;
     }

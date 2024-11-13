@@ -27,7 +27,6 @@ export async function fetchTreeNodeRoot(
   );
   const rootNode = rootNodeObjResponse.items[0];
   const cadTreeNode = new CadTreeNode(rootNode);
-  cadTreeNode.needLoadChildren = true;
   cadTreeNode.isExpanded = true;
   return cadTreeNode;
 }
@@ -36,9 +35,7 @@ export async function fetchTreeNodeArray(args: FetchNodesArgs): Promise<CadTreeN
   const data = await loadNode3DArray(args);
 
   const cadTreeNodes: CadTreeNode[] = data.items.map((node) => {
-    const cadTreeNode = new CadTreeNode(node);
-    cadTreeNode.needLoadChildren = node.subtreeSize > 1;
-    return cadTreeNode;
+    return new CadTreeNode(node);
   });
 
   if (data.nextCursor !== undefined) {

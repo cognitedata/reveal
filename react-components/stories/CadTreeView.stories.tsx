@@ -6,20 +6,16 @@ import type { Meta, StoryObj } from '@storybook/react';
 import { CadModelContainer, TreeView } from '../src';
 import { getAddModelOptionsFromUrl } from './utilities/getAddModelOptionsFromUrl';
 import styled from 'styled-components';
-import { type ITreeNode } from '../src/architecture/base/treeView/ITreeNode';
+import { type ITreeNode } from '../src/architecture/base/treeNodes/ITreeNode';
 import {
   onSingleSelectNode,
   onDependentCheckNode
-} from '../src/architecture/base/treeView/TreeNodeFunctions';
+} from '../src/architecture/base/treeNodes/TreeNodeFunctions';
 import { Button } from '@cognite/cogs.js';
-import { useEffect, useRef, useState } from 'react';
-import { CadTreeNode } from '../src/architecture/base/treeView/cadTreeView/CadTreeNode';
-import {
-  getId,
-  scrollToNode,
-  scrollToTreeIndex
-} from '../src/components/Architecture/CadTreeView/cadTreeViewUtils';
-import { type SubsetOfNode3D } from '../src/architecture/base/treeView/cadTreeView/types';
+import { useRef } from 'react';
+import { CadTreeNode } from '../src/architecture/base/treeNodes/cadTreeNodes/CadTreeNode';
+import { getId, scrollToNode } from '../src/components/Architecture/CadTreeView/cadTreeViewUtils';
+import { type SubsetOfNode3D } from '../src/architecture/base/treeNodes/cadTreeNodes/types';
 import { getRandomIntByMax } from '../src/architecture/base/utilities/extensions/mathExtensions';
 
 let id = 1000;
@@ -29,7 +25,7 @@ function createNode(name: string): CadTreeNode {
   id++;
   treeIndex++;
   name = `${name} ${id} ${treeIndex}`;
-  const node = new CadTreeNode({ id, treeIndex, name });
+  const node = new CadTreeNode({ id, treeIndex, name, subtreeSize: 1 });
   node.isExpanded = true;
   return node;
 }
@@ -51,13 +47,24 @@ export const Main: Story = {
   render: () => {
     const root = createTreeMock(true);
     const myRef = useRef<HTMLDivElement>(null);
-    const [scrollPosition, _setScrollPosition] = useState(-1);
-
-    useEffect(() => {
-      if (scrollPosition !== -1) {
-        scrollToTreeIndex(myRef?.current ?? undefined, scrollPosition);
+    const scroll = (
+      container: HTMLElement | undefined,
+      root: CadTreeNode,
+      isFirst: boolean
+    ): void => {
+      if (container === undefined) {
+        return;
       }
-    }, [scrollPosition]);
+      root.deselectAll();
+      let lastNode = root;
+      if (!isFirst) {
+        for (const node of root.getThisAndDescendantsByType(CadTreeNode)) {
+          lastNode = node;
+        }
+      }
+      lastNode.isSelected = true;
+      scrollToNode(myRef?.current ?? undefined, lastNode);
+    };
 
     return (
       <div>
@@ -75,7 +82,10 @@ export const Main: Story = {
         </Button>
         <Button
           onClick={() => {
-            testInsert(myRef?.current ?? undefined, root);
+            const insertedNode = testInsert(myRef?.current ?? undefined, root);
+            if (insertedNode !== undefined) {
+              scrollToNode(myRef?.current ?? undefined, insertedNode);
+            }
           }}>
           Test Insert
         </Button>
@@ -126,7 +136,9 @@ async function loadNodes(
       for (let i = 0; i < batchSize && i < totalCount; i++) {
         const child = createNode('loaded');
         array.push(child);
-        child.needLoadSiblings = i === batchSize - 1;
+        if (i === batchSize - 1) {
+          child.loadSiblingCursor = 'cursor';
+        }
       }
       resolve(array);
     }, 2000)
@@ -137,37 +149,28 @@ async function loadNodes(
 function createTreeMock(lazyLoading: boolean): CadTreeNode {
   const root = createNode('root');
 
-  for (let i = 1; i <= 10; i++) {
+  for (let i = 1; i <= 3; i++) {
     const parent = createNode('folder');
     root.addChild(parent);
 
-    for (let j = 1; j <= 10; j++) {
+    for (let j = 1; j <= 3; j++) {
       const child = createNode('child');
       parent.addChild(child);
-      child.needLoadChildren = lazyLoading && j === 10;
+
+      if (lazyLoading && j === 10) {
+        child.loadSiblingCursor = 'cursor';
+      }
     }
   }
   return root;
 }
 
-function scroll(container: HTMLElement | undefined, root: CadTreeNode, isFirst: boolean): void {
+function testInsert(
+  container: HTMLElement | undefined,
+  root: CadTreeNode
+): CadTreeNode | undefined {
   if (container === undefined) {
-    return;
-  }
-  root.deselectAll();
-  let lastNode = root;
-  if (!isFirst) {
-    for (const node of root.getThisAndDescendantsByType(CadTreeNode)) {
-      lastNode = node;
-    }
-  }
-  lastNode.isSelected = true;
-  scrollToNode(container, lastNode);
-}
-
-function testInsert(container: HTMLElement | undefined, root: CadTreeNode): void {
-  if (container === undefined) {
-    return;
+    return undefined;
   }
   const allNodes = Array.from(root.getDescendants());
 
@@ -175,18 +178,28 @@ function testInsert(container: HTMLElement | undefined, root: CadTreeNode): void
   const target = allNodes[index];
   const newNodes: SubsetOfNode3D[] = [];
   for (const ancestor of target.getAncestorsByType(CadTreeNode)) {
-    newNodes.push({ name: ancestor.label, id: ancestor.id, treeIndex: ancestor.treeIndex });
+    newNodes.push({
+      name: ancestor.label,
+      id: ancestor.id,
+      treeIndex: ancestor.treeIndex,
+      subtreeSize: 1
+    });
   }
   newNodes.reverse();
   const newNode = createNode('Inserted');
-  newNodes.push({ name: newNode.label, id: newNode.id, treeIndex: newNode.treeIndex });
+  newNodes.push({
+    name: newNode.label,
+    id: newNode.id,
+    treeIndex: newNode.treeIndex,
+    subtreeSize: 14
+  });
   root.deselectAll();
   root.insertAncestors(newNodes);
 
   const insertedNode = root.getDescendantByNodeId(newNode.id);
   if (insertedNode === undefined) {
-    return;
+    return undefined;
   }
-  scrollToTreeIndex(container, insertedNode.treeIndex);
   insertedNode.isSelected = true;
+  return insertedNode;
 }

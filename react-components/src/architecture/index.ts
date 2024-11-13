@@ -103,16 +103,19 @@ export { AnnotationsCreateTool } from './concrete/annotations/commands/Annotatio
 export { getGlobalMatrix } from './concrete/annotations/helpers/getMatrixUtils';
 
 // New architecture: tree view nodes
-export type { ITreeNode } from './base/treeView/ITreeNode';
-export type { IconColor } from './base/treeView/types';
-export type { TreeNodeAction } from './base/treeView/types';
-export { TreeNode } from './base/treeView/TreeNode';
-export { CheckBoxState } from './base/treeView/types';
-export { onSingleSelectNode } from './base/treeView/TreeNodeFunctions';
-export { onMultiSelectNode } from './base/treeView/TreeNodeFunctions';
-export { onIndependentCheckNode } from './base/treeView/TreeNodeFunctions';
-export { onDependentCheckNode } from './base/treeView/TreeNodeFunctions';
-export { CadTreeNode } from './base/treeView/cadTreeView/CadTreeNode';
-export type { OnLoadedAction } from './base/treeView/cadTreeView/types';
-export { forceNodeInTree } from './base/treeView/cadTreeView/forceNodeInTree';
-export type { ForceNodeInTreeArgs } from './base/treeView/cadTreeView/forceNodeInTree';
+export type { ITreeNode } from './base/treeNodes/ITreeNode';
+export { CheckBoxState } from './base/treeNodes/types';
+export type { IconColor } from './base/treeNodes/types';
+export type { TreeNodeAction } from './base/treeNodes/types';
+export { TreeNode } from './base/treeNodes/TreeNode';
+export { onSingleSelectNode } from './base/treeNodes/TreeNodeFunctions';
+export { onMultiSelectNode } from './base/treeNodes/TreeNodeFunctions';
+export { onIndependentCheckNode } from './base/treeNodes/TreeNodeFunctions';
+export { onDependentCheckNode } from './base/treeNodes/TreeNodeFunctions';
+export { CadTreeNode } from './base/treeNodes/cadTreeNodes/CadTreeNode';
+
+export type { OnLoadedAction } from './base/treeNodes/cadTreeNodes/types';
+export type { RevisionId } from './base/treeNodes/cadTreeNodes/types';
+export type { SubsetOfNode3D } from './base/treeNodes/cadTreeNodes/types';
+export { forceNodeInTree } from './base/treeNodes/cadTreeNodes/forceNodeInTree';
+export type { ForceNodeInTreeArgs } from './base/treeNodes/cadTreeNodes/forceNodeInTree';

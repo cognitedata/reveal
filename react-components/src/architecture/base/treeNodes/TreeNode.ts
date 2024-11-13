@@ -201,6 +201,13 @@ export class TreeNode<T = any> implements ITreeNode {
     return this;
   }
 
+  public getLastChild(): TreeNode<T> | undefined {
+    if (this._children === undefined) {
+      return undefined;
+    }
+    return this._children[this._children.length - 1];
+  }
+
   // ==================================================
   // INSTANCE METHODS: Get selection and checked nodes
   // ==================================================

@@ -11,4 +11,7 @@ export { TreeView } from './TreeView/TreeView';
 export type { TreeViewProps } from './TreeView/TreeViewProps';
 export { CadTreeView } from './CadTreeView/CadTreeView';
 export type { CadTreeViewProps } from './CadTreeView/CadTreeViewProps';
+export { getId } from './CadTreeView/cadTreeViewUtils';
+export { scrollToTreeIndex } from './CadTreeView/cadTreeViewUtils';
+export { scrollToNode } from './CadTreeView/cadTreeViewUtils';
 export { ToolUI } from './ToolUI';

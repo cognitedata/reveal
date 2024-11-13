@@ -6,8 +6,6 @@ import type { CogniteClient, Node3D } from '@cognite/sdk';
 import { type CadTreeNode } from './CadTreeNode';
 import { type OnLoadedAction, type RevisionId } from './types';
 
-// #region forceNodeInTree
-
 export type ForceNodeInTreeArgs = {
   sdk: CogniteClient;
   revisionId: RevisionId;
@@ -37,5 +35,3 @@ async function fetchAncestors(args: ForceNodeInTreeArgs): Promise<Node3D[]> {
   );
   return data.items;
 }
-
-// #endregion

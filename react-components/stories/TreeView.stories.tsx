@@ -7,16 +7,16 @@ import { CadModelContainer } from '../src';
 import { getAddModelOptionsFromUrl } from './utilities/getAddModelOptionsFromUrl';
 import { TreeView } from '../src/components/Architecture/TreeView/TreeView';
 import styled from 'styled-components';
-import { type ITreeNode } from '../src/architecture/base/treeView/ITreeNode';
-import { TreeNode } from '../src/architecture/base/treeView/TreeNode';
+import { type ITreeNode } from '../src/architecture/base/treeNodes/ITreeNode';
+import { TreeNode } from '../src/architecture/base/treeNodes/TreeNode';
 import { getRandomIntByMax } from '../src/architecture/base/utilities/extensions/mathExtensions';
 import {
   onSingleSelectNode,
   onDependentCheckNode,
   onIndependentCheckNode,
   onMultiSelectNode
-} from '../src/architecture/base/treeView/TreeNodeFunctions';
-import { CheckBoxState } from '../src/architecture/base/treeView/types';
+} from '../src/architecture/base/treeNodes/TreeNodeFunctions';
+import { CheckBoxState } from '../src/architecture/base/treeNodes/types';
 import { useRef } from 'react';
 
 const meta = {

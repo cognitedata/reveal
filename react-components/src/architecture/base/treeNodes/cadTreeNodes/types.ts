@@ -9,6 +9,7 @@ export type OnLoadedAction = (node: CadTreeNode, parent?: CadTreeNode) => void;
 export type SubsetOfNode3D = {
   id: number;
   treeIndex: number;
+  subtreeSize: number;
   name: string;
 };
 

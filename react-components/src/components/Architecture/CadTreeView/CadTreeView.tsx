@@ -9,14 +9,14 @@ import { useSDK } from '@cognite/sdk-provider';
 
 import { type OnLoadedAction, type ITreeNode } from '../../../architecture';
 import { Infobox, Loader } from '@cognite/cogs.js';
-import { CadTreeNode } from '../../../architecture/base/treeView/cadTreeView/CadTreeNode';
+import { CadTreeNode } from '../../../architecture/base/treeNodes/cadTreeNodes/CadTreeNode';
 import { type CadTreeViewProps } from './CadTreeViewProps';
 import { TreeView } from '../TreeView/TreeView';
 import {
   fetchTreeNodeArray,
   fetchTreeNodeRoot
-} from '../../../architecture/base/treeView/cadTreeView/fetchNodes';
-import { type RevisionId } from '../../../architecture/base/treeView/cadTreeView/types';
+} from '../../../architecture/base/treeNodes/cadTreeNodes/fetchNodes';
+import { type RevisionId } from '../../../architecture/base/treeNodes/cadTreeNodes/types';
 import { getId } from './cadTreeViewUtils';
 
 export function CadTreeView(props: CadTreeViewProps): ReactElement | null {

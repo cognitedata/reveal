@@ -2,11 +2,11 @@
  * Copyright 2024 Cognite AS
  */
 
-import { type ITreeNode } from '../../../architecture/base/treeView/ITreeNode';
+import { type ITreeNode } from '../../../architecture/base/treeNodes/ITreeNode';
 import {
   type LoadNodesAction,
   type TreeNodeAction
-} from '../../../architecture/base/treeView/types';
+} from '../../../architecture/base/treeNodes/types';
 
 export type TreeViewProps = {
   // Colors

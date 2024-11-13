@@ -3,17 +3,17 @@
  */
 
 import { type ITreeNode } from '../../../architecture';
-import { CadTreeNode } from '../../../architecture/base/treeView/cadTreeView/CadTreeNode';
+import { CadTreeNode } from '../../../architecture/base/treeNodes/cadTreeNodes/CadTreeNode';
 
 export function getId(node: ITreeNode): string {
   if (!(node instanceof CadTreeNode)) {
     return '';
   }
-  return node.treeIndex.toString();
+  return getIdByTreeIndex(node.treeIndex);
 }
 
 export function scrollToTreeIndex(container: HTMLElement | undefined, treeIndex: number): void {
-  scrollToId(container, treeIndex.toString());
+  scrollToId(container, getIdByTreeIndex(treeIndex));
 }
 
 export function scrollToNode(container: HTMLElement | undefined, node: CadTreeNode): void {
@@ -21,6 +21,10 @@ export function scrollToNode(container: HTMLElement | undefined, node: CadTreeNo
     ancestor.isExpanded = true;
   }
   scrollToId(container, getId(node));
+}
+
+function getIdByTreeIndex(treeIndex: number): string {
+  return treeIndex.toString();
 }
 
 function scrollToId(container: HTMLElement | undefined, id: string): void {

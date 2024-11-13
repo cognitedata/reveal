@@ -5,7 +5,7 @@
 import { type ReactElement } from 'react';
 import { LoaderIcon } from '@cognite/cogs.js';
 import { IconComponentMapper } from '../../IconComponentMapper';
-import { type ITreeNode } from '../../../../architecture/base/treeView/ITreeNode';
+import { type ITreeNode } from '../../../../architecture/base/treeNodes/ITreeNode';
 
 // ==================================================
 // MAIN COMPONENT

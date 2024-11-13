@@ -7,8 +7,8 @@
 import { type ReactElement } from 'react';
 import { Button } from '@cognite/cogs.js';
 import { type TreeViewProps } from '../TreeViewProps';
-import { type ITreeNode } from '../../../../architecture/base/treeView/ITreeNode';
-import { type TreeNodeAction } from '../../../../architecture/base/treeView/types';
+import { type ITreeNode } from '../../../../architecture/base/treeNodes/ITreeNode';
+import { type TreeNodeAction } from '../../../../architecture/base/treeNodes/types';
 import { GAP_BETWEEN_ITEMS, GAP_TO_CHILDREN, LOAD_MORE_LABEL } from '../utilities/constants';
 
 // ==================================================
