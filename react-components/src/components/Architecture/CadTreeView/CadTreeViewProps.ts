@@ -6,7 +6,7 @@ import { type TreeViewProps } from '../TreeView/TreeViewProps';
 import { type CadTreeNode } from '../../../architecture/base/treeView/cadTreeView/CadTreeNode';
 import { type OnLoadedAction } from '../../../architecture/base/treeView/cadTreeView/types';
 
-export type CadTreeViewProps = Omit<TreeViewProps, 'loadNodes' | 'root'> & {
+export type CadTreeViewProps = Omit<TreeViewProps, 'loadNodes' | 'root' | 'getId'> & {
   modelId: number;
   revisionId: number;
   onLoaded?: OnLoadedAction;

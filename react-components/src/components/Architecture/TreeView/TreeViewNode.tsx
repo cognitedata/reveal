@@ -35,16 +35,18 @@ import { TreeViewInfo } from './components/TreeViewInfo';
 export const TreeViewNode = ({
   node,
   level,
-  props
+  props,
+  recursive = true
 }: {
   node: ITreeNode;
   level: number;
+  recursive?: boolean;
   props: TreeViewProps;
 }): ReactElement => {
   // Props
   const [hoverOverTextOrIcon, setHoverOverTextOrIcon] = useState(false);
 
-  const children = getChildrenAsArray(node, props.loadNodes);
+  const children = recursive ? getChildrenAsArray(node, props.loadNodes) : undefined;
   const backgroundColor = getBackgroundColor(node, hoverOverTextOrIcon);
   const color = getTextColor(node, hoverOverTextOrIcon);
   const gapBetweenItems = (props.gapBetweenItems ?? GAP_BETWEEN_ITEMS) + 'px';

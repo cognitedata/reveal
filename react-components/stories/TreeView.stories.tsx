@@ -140,7 +140,7 @@ function createTreeMock(lazyLoading: boolean): TreeNode<string> {
   root.checkBoxState = CheckBoxState.None;
   root.icon = 'Snow';
 
-  for (let i = 1; i <= 5; i++) {
+  for (let i = 1; i <= 10; i++) {
     const parent = new TreeNode<string>();
     parent.userData = 'Index ' + i;
     parent.label = 'Folder ' + i;
@@ -152,7 +152,7 @@ function createTreeMock(lazyLoading: boolean): TreeNode<string> {
     if (i % 6 === 0) parent.iconColor = 'red';
     parent.icon = i % 2 === 0 ? 'CubeFrontRight' : 'CubeFrontLeft';
 
-    for (let j = 1; j <= 5; j++) {
+    for (let j = 1; j <= 10; j++) {
       const child = new TreeNode<string>();
       child.label = 'Child ' + i + '.' + j;
       switch (j % 3) {

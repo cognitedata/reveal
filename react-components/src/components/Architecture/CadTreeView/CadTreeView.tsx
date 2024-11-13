@@ -17,6 +17,7 @@ import {
   fetchTreeNodeRoot
 } from '../../../architecture/base/treeView/cadTreeView/fetchNodes';
 import { type RevisionId } from '../../../architecture/base/treeView/cadTreeView/types';
+import { getId } from './cadTreeViewUtils';
 
 export function CadTreeView(props: CadTreeViewProps): ReactElement | null {
   const sdk = useSDK();
@@ -62,7 +63,9 @@ export function CadTreeView(props: CadTreeViewProps): ReactElement | null {
       return loadedNodes;
     });
   };
-  return <TreeView key={key} root={root} loadNodes={loadNodes} hasCheckboxes {...props} />;
+  return (
+    <TreeView key={key} root={root} loadNodes={loadNodes} getId={getId} hasCheckboxes {...props} />
+  );
 }
 
 function onLoadedNodes(
@@ -92,27 +95,4 @@ function getParent(node: CadTreeNode, loadChildren: boolean): CadTreeNode | unde
     return node.parent;
   }
   return undefined;
-}
-
-export function scrollToElement(e: HTMLElement, node: CadTreeNode): void {
-  let count = 0;
-  let found = false;
-  const root = node.getRoot();
-  if (root === undefined) {
-    return;
-  }
-  for (const a of root.getAncestors()) {
-    a.isExpanded = true;
-  }
-  for (const descendant of root.getExpandedDescendants()) {
-    count++;
-    if (node === descendant) {
-      found = true;
-      break;
-    }
-  }
-  if (!found) {
-    return;
-  }
-  e.scroll({ top: count * 20, behavior: 'smooth' });
 }

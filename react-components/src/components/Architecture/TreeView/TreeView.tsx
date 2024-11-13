@@ -23,7 +23,7 @@ export const TreeView = (props: TreeViewProps): ReactElement => {
       style={{
         backgroundColor: props.backgroundColor ?? BACKGROUND_COLOR
       }}>
-      {showRoot && <TreeViewNode node={root} key={-1} level={0} props={props} />}
+      {showRoot && <TreeViewNode node={root} key={-1} level={0} props={props} recursive={false} />}
       {nodes.map((node, index) => (
         <TreeViewNode node={node} key={index} level={childLevel} props={props} />
       ))}
