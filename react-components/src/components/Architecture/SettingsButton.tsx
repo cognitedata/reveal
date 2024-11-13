@@ -2,7 +2,7 @@
  * Copyright 2024 Cognite AS
  */
 
-import { useCallback, useEffect, useMemo, useState, type ReactElement } from 'react';
+import { type ReactNode, useMemo, useState, type ReactElement } from 'react';
 import { Button, Tooltip as CogsTooltip, Slider, Switch } from '@cognite/cogs.js';
 import { Menu } from '@cognite/cogs-lab';
 import { useTranslation } from '../i18n/I18n';
@@ -12,8 +12,7 @@ import {
   getButtonType,
   getDefaultCommand,
   getFlexDirection,
-  getTooltipPlacement,
-  getIcon
+  getTooltipPlacement
 } from './utilities';
 import { LabelWithShortcut } from './LabelWithShortcut';
 import { type TranslateDelegate } from '../../architecture/base/utilities/TranslateKey';
@@ -24,7 +23,7 @@ import { DropdownButton } from './DropdownButton';
 import { BaseSliderCommand } from '../../architecture/base/commands/BaseSliderCommand';
 import { BaseFilterCommand } from '../../architecture/base/commands/BaseFilterCommand';
 import { FilterButton } from './FilterButton';
-import { DEFAULT_PADDING } from './constants';
+import { DEFAULT_PADDING, TOOLTIP_DELAY } from './constants';
 import { type IconName } from '../../architecture/base/utilities/IconName';
 import { IconComponent } from './IconComponentMapper';
 
@@ -33,13 +32,15 @@ import { TOOLBAR_HORIZONTAL_PANEL_OFFSET } from '../constants';
 import { offset } from '@floating-ui/dom';
 import { DividerCommand } from '../../architecture/base/commands/DividerCommand';
 import { SectionCommand } from '../../architecture/base/commands/SectionCommand';
+import { useOnUpdate } from './useOnUpdate';
+import { type PlacementType } from './types';
 
 export const SettingsButton = ({
   inputCommand,
-  isHorizontal = false
+  placement
 }: {
   inputCommand: BaseSettingsCommand;
-  isHorizontal: boolean;
+  placement: PlacementType;
 }): ReactElement => {
   const renderTarget = useRenderTarget();
   const { t } = useTranslation();
@@ -49,45 +50,38 @@ export const SettingsButton = ({
   );
 
   // @update-ui-component-pattern
-  const [isOpen, setOpen] = useState<boolean>(false);
-  const [isEnabled, setEnabled] = useState<boolean>(true);
-  const [isVisible, setVisible] = useState<boolean>(true);
-  const [uniqueId, setUniqueId] = useState<number>(0);
-  const [icon, setIcon] = useState<IconName | undefined>(undefined);
+  const [isOpen, setOpen] = useState(false);
+  const [isEnabled, setEnabled] = useState(true);
+  const [isVisible, setVisible] = useState(true);
+  const [uniqueId, setUniqueId] = useState(0);
+  const [icon, setIcon] = useState<IconName>(undefined);
 
-  const update = useCallback((command: BaseCommand) => {
+  useOnUpdate(command, () => {
     setEnabled(command.isEnabled);
     setVisible(command.isVisible);
     setUniqueId(command.uniqueId);
-    setIcon(getIcon(command));
-  }, []);
-
-  useEffect(() => {
-    update(command);
-    command.addEventListener(update);
-    return () => {
-      command.removeEventListener(update);
-    };
-  }, [command]);
+    setIcon(command.icon);
+  });
   // @end
 
   if (!isVisible || !command.hasChildren) {
     return <></>;
   }
-  const placement = getTooltipPlacement(isHorizontal);
   const label = command.getLabel(t);
-  const flexDirection = getFlexDirection(isHorizontal);
+  const flexDirection = getFlexDirection(placement);
   const children = command.children;
-
   return (
-    <Menu
+    <StyledMenu
       hideOnSelect={false}
       onOpenChange={(open: boolean) => {
+        for (const child of children) {
+          child.update();
+        }
         setOpen(open);
       }}
       floatingProps={{ middleware: [offset(TOOLBAR_HORIZONTAL_PANEL_OFFSET)] }}
-      appendTo={'parent'}
-      placement="right-start"
+      container={'parent'}
+      placement="right-end"
       style={{
         flexDirection,
         padding: DEFAULT_PADDING
@@ -98,7 +92,8 @@ export const SettingsButton = ({
           content={<LabelWithShortcut label={label} command={command} />}
           disabled={isOpen || label === undefined}
           appendTo={document.body}
-          placement={placement}>
+          enterDelay={TOOLTIP_DELAY}
+          placement={getTooltipPlacement(placement)}>
           <Button
             type={getButtonType(command)}
             icon={<IconComponent iconName={icon} />}
@@ -111,14 +106,12 @@ export const SettingsButton = ({
           />
         </CogsTooltip>
       )}>
-      {children.map((child): ReactElement | undefined => {
-        return createMenuItem(child, t);
-      })}
-    </Menu>
+      {children.map((child) => createMenuItem(child, t))}
+    </StyledMenu>
   );
 };
 
-function createMenuItem(command: BaseCommand, t: TranslateDelegate): ReactElement | undefined {
+function createMenuItem(command: BaseCommand, t: TranslateDelegate): ReactNode {
   if (command instanceof BaseSliderCommand) {
     return createSlider(command, t);
   }
@@ -140,82 +133,58 @@ function createMenuItem(command: BaseCommand, t: TranslateDelegate): ReactElemen
   return createButton(command, t);
 }
 
-function createDivider(command: BaseCommand): ReactElement | undefined {
+function createDivider(command: BaseCommand): ReactNode {
   // @update-ui-component-pattern
-  const [isVisible, setVisible] = useState<boolean>(true);
-  const [uniqueId, setUniqueId] = useState<number>(0);
+  const [isVisible, setVisible] = useState(true);
+  const [uniqueId, setUniqueId] = useState(0);
 
-  const update = useCallback((command: BaseCommand) => {
+  useOnUpdate(command, () => {
     setVisible(command.isVisible);
     setUniqueId(command.uniqueId);
-  }, []);
-
-  useEffect(() => {
-    update(command);
-    command.addEventListener(update);
-    return () => {
-      command.removeEventListener(update);
-    };
-  }, [command]);
+  });
   // @end
 
   if (!isVisible) {
-    return <></>;
+    return null;
   }
   return <Menu.Divider key={uniqueId} />;
 }
 
-function createSection(command: BaseCommand, t: TranslateDelegate): ReactElement | undefined {
+function createSection(command: BaseCommand, t: TranslateDelegate): ReactNode {
   // @update-ui-component-pattern
-  const [isVisible, setVisible] = useState<boolean>(true);
-  const [uniqueId, setUniqueId] = useState<number>(0);
+  const [isVisible, setVisible] = useState(true);
+  const [uniqueId, setUniqueId] = useState(0);
 
-  const update = useCallback((command: BaseCommand) => {
+  useOnUpdate(command, () => {
     setVisible(command.isVisible);
     setUniqueId(command.uniqueId);
-  }, []);
-
-  useEffect(() => {
-    update(command);
-    command.addEventListener(update);
-    return () => {
-      command.removeEventListener(update);
-    };
-  }, [command]);
+  });
   // @end
 
   if (!isVisible) {
-    return <></>;
+    return null;
   }
   const label = command.getLabel(t);
   return <Menu.Section key={uniqueId} label={label} />;
 }
 
-function createToggle(command: BaseCommand, t: TranslateDelegate): ReactElement {
+function createToggle(command: BaseCommand, t: TranslateDelegate): ReactNode {
   // @update-ui-component-pattern
-  const [isChecked, setChecked] = useState<boolean>(false);
-  const [isEnabled, setEnabled] = useState<boolean>(true);
-  const [isVisible, setVisible] = useState<boolean>(true);
-  const [uniqueId, setUniqueId] = useState<number>(0);
+  const [isChecked, setChecked] = useState(false);
+  const [isEnabled, setEnabled] = useState(true);
+  const [isVisible, setVisible] = useState(true);
+  const [uniqueId, setUniqueId] = useState(0);
 
-  const update = useCallback((command: BaseCommand) => {
+  useOnUpdate(command, () => {
     setChecked(command.isChecked);
     setEnabled(command.isEnabled);
     setVisible(command.isVisible);
     setUniqueId(command.uniqueId);
-  }, []);
-
-  useEffect(() => {
-    update(command);
-    command.addEventListener(update);
-    return () => {
-      command.removeEventListener(update);
-    };
-  }, [command]);
+  });
   // @end
 
   if (!isVisible) {
-    return <></>;
+    return null;
   }
 
   const label = command.getLabel(t);
@@ -233,35 +202,28 @@ function createToggle(command: BaseCommand, t: TranslateDelegate): ReactElement 
   );
 }
 
-function createButton(command: BaseCommand, t: TranslateDelegate): ReactElement {
+function createButton(command: BaseCommand, t: TranslateDelegate): ReactNode {
   // @update-ui-component-pattern
-  const [isChecked, setChecked] = useState<boolean>(false);
-  const [isEnabled, setEnabled] = useState<boolean>(true);
-  const [isVisible, setVisible] = useState<boolean>(true);
-  const [uniqueId, setUniqueId] = useState<number>(0);
-  const [icon, setIcon] = useState<IconName | undefined>(undefined);
+  const [isChecked, setChecked] = useState(false);
+  const [isEnabled, setEnabled] = useState(true);
+  const [isVisible, setVisible] = useState(true);
+  const [uniqueId, setUniqueId] = useState(0);
+  const [icon, setIcon] = useState<IconName>(undefined);
 
-  const update = useCallback((command: BaseCommand) => {
+  useOnUpdate(command, () => {
     setChecked(command.isChecked);
     setEnabled(command.isEnabled);
     setVisible(command.isVisible);
     setUniqueId(command.uniqueId);
-    setIcon(getIcon(command));
-  }, []);
-
-  useEffect(() => {
-    update(command);
-    command.addEventListener(update);
-    return () => {
-      command.removeEventListener(update);
-    };
-  }, [command]);
+    setIcon(command.icon);
+  });
   // @end
 
   if (!isVisible) {
-    return <></>;
+    return null;
   }
   const label = command.getLabel(t);
+
   return (
     <Menu.ItemAction
       key={uniqueId}
@@ -280,35 +242,28 @@ function createButton(command: BaseCommand, t: TranslateDelegate): ReactElement 
   );
 }
 
-function createSlider(command: BaseSliderCommand, t: TranslateDelegate): ReactElement {
+function createSlider(command: BaseSliderCommand, t: TranslateDelegate): ReactNode {
   // @update-ui-component-pattern
-  const [isEnabled, setEnabled] = useState<boolean>(true);
-  const [isVisible, setVisible] = useState<boolean>(true);
-  const [uniqueId, setUniqueId] = useState<number>(0);
+  const [isEnabled, setEnabled] = useState(true);
+  const [isVisible, setVisible] = useState(true);
+  const [uniqueId, setUniqueId] = useState(0);
   const [value, setValue] = useState(command.value);
 
-  const update = useCallback((command: BaseCommand) => {
+  useOnUpdate(command, () => {
     setEnabled(command.isEnabled);
     setVisible(command.isVisible);
     setUniqueId(command.uniqueId);
     if (command instanceof BaseSliderCommand) {
       setValue(command.value);
     }
-  }, []);
-
-  useEffect(() => {
-    update(command);
-    command.addEventListener(update);
-    return () => {
-      command.removeEventListener(update);
-    };
-  }, [command]);
+  });
   // @end
 
   if (!isVisible) {
-    return <></>;
+    return null;
   }
   const label = command.getLabel(t) + ': ' + command.getValueLabel();
+
   return (
     <SliderDiv key={uniqueId}>
       <label>{label}</label>
@@ -327,67 +282,52 @@ function createSlider(command: BaseSliderCommand, t: TranslateDelegate): ReactEl
   );
 }
 
-function createDropdownButton(command: BaseOptionCommand): ReactElement {
+function createDropdownButton(command: BaseOptionCommand): ReactNode {
   // @update-ui-component-pattern
-  const [isVisible, setVisible] = useState<boolean>(true);
-  const [uniqueId, setUniqueId] = useState<number>(0);
+  const [isVisible, setVisible] = useState(true);
+  const [uniqueId, setUniqueId] = useState(0);
 
-  const update = useCallback((command: BaseCommand) => {
+  useOnUpdate(command, () => {
     setVisible(command.isVisible);
     setUniqueId(command.uniqueId);
-  }, []);
-
-  useEffect(() => {
-    update(command);
-    command.addEventListener(update);
-    return () => {
-      command.removeEventListener(update);
-    };
-  }, [command]);
+  });
   // @end
 
   if (!isVisible) {
-    return <></>;
+    return null;
   }
+
   return (
     <DropdownButton
       key={uniqueId}
       inputCommand={command}
-      isHorizontal={false}
+      placement={'bottom'}
       usedInSettings={true}
     />
   );
 }
 
-function createFilterButton(command: BaseFilterCommand): ReactElement {
+function createFilterButton(command: BaseFilterCommand): ReactNode {
   command.initializeChildrenIfNeeded();
 
   // @update-ui-component-pattern
-  const [isVisible, setVisible] = useState<boolean>(true);
-  const [uniqueId, setUniqueId] = useState<number>(0);
+  const [isVisible, setVisible] = useState(true);
+  const [uniqueId, setUniqueId] = useState(0);
 
-  const update = useCallback((command: BaseCommand) => {
+  useOnUpdate(command, () => {
     setVisible(command.isVisible);
     setUniqueId(command.uniqueId);
-  }, []);
-
-  useEffect(() => {
-    update(command);
-    command.addEventListener(update);
-    return () => {
-      command.removeEventListener(update);
-    };
-  }, [command]);
+  });
   // @end
 
   if (!isVisible) {
-    return <></>;
+    return null;
   }
   return (
     <FilterButton
       key={uniqueId}
       inputCommand={command}
-      isHorizontal={false}
+      placement={'bottom'}
       usedInSettings={true}
     />
   );
@@ -408,4 +348,10 @@ const StyledSlider = styled(Slider)`
   float: center;
   display: flex;
   justify-content: space-around;
+`;
+
+const StyledMenu = styled(Menu)`
+  z-index: 998 !important;
+  max-height: 300px !important;
+  overflow-y: auto !important;
 `;

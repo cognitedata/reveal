@@ -383,7 +383,7 @@ export abstract class DomainObject {
   // VIRTUAL METHODS: Others
   // ==================================================
 
-  public get icon(): IconName | undefined {
+  public get icon(): IconName {
     return undefined;
   }
 
@@ -656,9 +656,7 @@ export abstract class DomainObject {
   public *getDescendants(): Generator<DomainObject> {
     for (const child of this.children) {
       yield child;
-      for (const descendant of child.getDescendants()) {
-        yield descendant;
-      }
+      yield* child.getDescendants();
     }
   }
 

@@ -10,6 +10,7 @@ import { type BaseCommand } from '../../architecture/base/commands/BaseCommand';
 import { useRenderTarget } from '../RevealCanvas/ViewerContext';
 import { ActiveToolUpdater } from '../../architecture/base/reactUpdaters/ActiveToolUpdater';
 import { type PopupStyle } from '../../architecture/base/domainObjectsHelpers/PopupStyle';
+import { type PlacementType } from './types';
 
 export const TopToolbar = (): ReactElement => {
   const renderTarget = useRenderTarget();
@@ -74,6 +75,7 @@ const ToolbarContent = ({
   if (commands.length === 0) {
     return <></>;
   }
+  const placement = getPlacement(style);
   return (
     <Container
       style={{
@@ -88,11 +90,18 @@ const ToolbarContent = ({
           flexFlow: style.flexFlow,
           padding: 2
         }}>
-        <CommandButtons commands={commands} isHorizontal={style.isHorizontal} />
+        <CommandButtons commands={commands} placement={placement} />
       </MyCustomToolbar>
     </Container>
   );
 };
+
+function getPlacement(style: PopupStyle): PlacementType {
+  if (style.isHorizontal) {
+    return style.top !== undefined ? 'top' : 'bottom';
+  }
+  return style.left !== undefined ? 'left' : 'right';
+}
 
 const Container = styled.div`
   zindex: 1000px;

@@ -3,9 +3,10 @@
  */
 
 import { BaseTool } from '../commands/BaseTool';
-import { type IFlexibleCameraManager } from '@cognite/reveal';
+import { Image360Action, type IFlexibleCameraManager } from '@cognite/reveal';
 import { type TranslateKey } from '../utilities/TranslateKey';
 import { type IconName } from '../../base/utilities/IconName';
+import { CommandsUpdater } from '../reactUpdaters/CommandsUpdater';
 
 /**
  * Represents a tool navigation tool used for camera manipulation.
@@ -32,13 +33,24 @@ export class NavigationTool extends BaseTool {
     return { key: 'NAVIGATION', fallback: 'Navigation' };
   }
 
-  public override onHover(event: PointerEvent): void {
-    this.renderTarget.viewer.onHover360Images(event);
+  public override onHoverByDebounce(_event: PointerEvent): void {}
+
+  public override onHover(event: MouseEvent): void {
+    this.renderTarget.viewer.onHover360Images(event as PointerEvent);
   }
 
   public override async onClick(event: PointerEvent): Promise<void> {
-    if (!(await this.renderTarget.viewer.onClick360Images(event)))
-      await this.cameraManager.onClick(event);
+    const promise = this.renderTarget.viewer.onClick360Images(event).then((isEntered) => {
+      if (isEntered) {
+        CommandsUpdater.update(this.renderTarget);
+      }
+      return isEntered;
+    });
+    if (await promise) {
+      return;
+    }
+    await super.onClick(event);
+    await this.cameraManager.onClick(event);
   }
 
   public override async onDoubleClick(event: PointerEvent): Promise<void> {
@@ -75,6 +87,16 @@ export class NavigationTool extends BaseTool {
 
   public override onKey(event: KeyboardEvent, down: boolean): void {
     this.cameraManager.onKey(event, down);
+  }
+
+  public override onEscapeKey(): void {
+    if (this.renderTarget.viewer.canDoImage360Action(Image360Action.Exit)) {
+      void this.renderTarget.viewer.image360Action(Image360Action.Exit).then(() => {
+        CommandsUpdater.update(this.renderTarget);
+      });
+    } else {
+      super.onEscapeKey();
+    }
   }
 
   public override onFocusChanged(haveFocus: boolean): void {

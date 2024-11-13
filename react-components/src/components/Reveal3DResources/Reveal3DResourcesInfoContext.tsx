@@ -17,6 +17,8 @@ import {
 type Reveal3DResourcesInfoContent = {
   reveal3DResourcesCount: number;
   setRevealResourcesCount: (newCount: number) => void;
+  reveal3DResourceLoadFailCount: number;
+  setReveal3DResourceLoadFailCount: Dispatch<SetStateAction<number>>;
   reveal3DResourcesExpectedToLoad: number;
   setReveal3DResourcesExpectedToLoad: Dispatch<SetStateAction<number>>;
   model3DStylingLoading: boolean;
@@ -46,8 +48,20 @@ export const useReveal3DResourcesCount = (): Pick<
   };
 };
 
-export const useReveal3DResourcesExpectedToLoadCount = (): number => {
-  return useInfoElementOfContext().reveal3DResourcesExpectedToLoad;
+export const useReveal3DResourceLoadFailCount = (): Pick<
+  Reveal3DResourcesInfoContent,
+  'reveal3DResourceLoadFailCount' | 'setReveal3DResourceLoadFailCount'
+> => {
+  return useInfoElementOfContext();
+};
+
+export const useReveal3DResourcesExpectedInViewerCount = (): number => {
+  const element = useInfoElementOfContext();
+  return element.reveal3DResourcesExpectedToLoad - element.reveal3DResourceLoadFailCount;
+};
+
+export const useReveal3DLoadedResourceCount = (): number => {
+  return useInfoElementOfContext().reveal3DResourcesCount;
 };
 
 export const useThisAsExpectedResourceLoad = (): void => {
@@ -78,10 +92,13 @@ export const Reveal3DResourcesInfoContextProvider = ({
   const [reveal3DResourcesCount, setRevealResourcesCount] = useState<number>(0);
   const [model3DStylingLoading, setModel3DStylingLoading] = useState<boolean>(false);
   const [reveal3DResourcesExpectedToLoad, setReveal3DResourcesExpectedToLoad] = useState<number>(0);
+  const [reveal3DResourceLoadFailCount, setReveal3DResourceLoadFailCount] = useState<number>(0);
   const memoedState: Reveal3DResourcesInfoContent = useMemo(
     () => ({
       reveal3DResourcesCount,
       setRevealResourcesCount,
+      reveal3DResourceLoadFailCount,
+      setReveal3DResourceLoadFailCount,
       reveal3DResourcesExpectedToLoad,
       setReveal3DResourcesExpectedToLoad,
       model3DStylingLoading,
@@ -90,6 +107,8 @@ export const Reveal3DResourcesInfoContextProvider = ({
     [
       reveal3DResourcesCount,
       setRevealResourcesCount,
+      reveal3DResourceLoadFailCount,
+      setReveal3DResourceLoadFailCount,
       reveal3DResourcesExpectedToLoad,
       setReveal3DResourcesExpectedToLoad,
       model3DStylingLoading,

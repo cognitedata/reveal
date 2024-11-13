@@ -2,7 +2,7 @@
  * Copyright 2024 Cognite AS
  */
 
-import { type Ray, Raycaster, type Vector2 } from 'three';
+import { MOUSE, type Ray, Raycaster, Vector2, type Vector3 } from 'three';
 import { RenderTargetCommand } from './RenderTargetCommand';
 import {
   type CustomObjectIntersection,
@@ -21,6 +21,16 @@ import { PopupStyle } from '../domainObjectsHelpers/PopupStyle';
 import { ThreeView } from '../views/ThreeView';
 import { UndoManager } from '../undo/UndoManager';
 import { CommandChanges } from '../domainObjectsHelpers/CommandChanges';
+import { ContextMenuUpdater } from '../reactUpdaters/ContextMenuUpdater';
+
+/**
+ * AnchorDialog
+ */
+export type AnchoredDialogContent = {
+  position: Vector3;
+  onCloseCallback: () => void;
+  contentCommands: BaseCommand[];
+};
 
 /**
  * Base class for interactions in the 3D viewer
@@ -58,6 +68,10 @@ export abstract class BaseTool extends RenderTargetCommand {
     return 'default';
   }
 
+  public getAnchoredDialogContent(): AnchoredDialogContent | undefined {
+    return undefined;
+  }
+
   public getToolbar(): Array<BaseCommand | undefined> {
     return []; // Override this to add extra buttons to a separate toolbar
   }
@@ -85,9 +99,22 @@ export abstract class BaseTool extends RenderTargetCommand {
     // Override this to clear any temporary objects in the tool, like the dragger
   }
 
-  public onHover(_event: PointerEvent): void {}
+  public onHover(_event: MouseEvent): void {
+    // Fast. Use this for hover effects when not
+    // doing intersection with CAD models and other large models
+  }
 
-  public async onClick(_event: PointerEvent): Promise<void> {
+  public onHoverByDebounce(_event: PointerEvent): void {
+    // Debounce version. Use this when doing intersection with CAD models and other large models
+  }
+
+  public async onClick(event: PointerEvent): Promise<void> {
+    if (event.button === (MOUSE.RIGHT as number)) {
+      await this.openContextMenu(event);
+    } else if (this.isContextMenuOpen()) {
+      await this.closeContextMenu();
+    }
+
     await Promise.resolve();
   }
 
@@ -230,5 +257,32 @@ export abstract class BaseTool extends RenderTargetCommand {
 
   public setDefaultCursor(): void {
     this.renderTarget.cursor = this.defaultCursor;
+  }
+
+  private async openContextMenu(event: PointerEvent): Promise<void> {
+    const intersection = await this.getIntersection(event);
+
+    if (this._renderTarget === undefined) {
+      return;
+    }
+
+    this._renderTarget.contextMenuController.contextMenuPositionData = {
+      position: new Vector2(event.layerX, event.layerY),
+      intersection
+    };
+
+    ContextMenuUpdater.update();
+  }
+
+  private async closeContextMenu(): Promise<void> {
+    if (this._renderTarget === undefined) {
+      return;
+    }
+
+    this._renderTarget.contextMenuController.contextMenuPositionData = undefined;
+  }
+
+  private isContextMenuOpen(): boolean {
+    return this._renderTarget?.contextMenuController.contextMenuPositionData !== undefined;
   }
 }

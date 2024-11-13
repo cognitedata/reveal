@@ -13,19 +13,19 @@ type PopupProps = {
 };
 
 export class PopupStyle {
-  private readonly _left?: number = undefined;
-  private readonly _right?: number = undefined;
-  private readonly _top?: number = undefined;
-  private readonly _bottom?: number = undefined;
+  public readonly left?: number = undefined;
+  public readonly right?: number = undefined;
+  public readonly top?: number = undefined;
+  public readonly bottom?: number = undefined;
   private readonly _margin: number = 8; // margin outside the popup
   private readonly _padding: number = 6; // margin inside the popup
   private readonly _horizontal: boolean = true; // Used for toolbars only
 
   public constructor(props: PopupProps) {
-    this._left = props.left;
-    this._right = props.right;
-    this._top = props.top;
-    this._bottom = props.bottom;
+    this.left = props.left;
+    this.right = props.right;
+    this.top = props.top;
+    this.bottom = props.bottom;
     if (props.margin !== undefined) {
       this._margin = props.margin;
     }
@@ -38,19 +38,19 @@ export class PopupStyle {
   }
 
   public get leftPx(): string {
-    return PopupStyle.getStringWithPx(this._left);
+    return PopupStyle.getStringWithPx(this.left);
   }
 
   public get rightPx(): string {
-    return PopupStyle.getStringWithPx(this._right);
+    return PopupStyle.getStringWithPx(this.right);
   }
 
   public get topPx(): string {
-    return PopupStyle.getStringWithPx(this._top);
+    return PopupStyle.getStringWithPx(this.top);
   }
 
   public get bottomPx(): string {
-    return PopupStyle.getStringWithPx(this._bottom);
+    return PopupStyle.getStringWithPx(this.bottom);
   }
 
   public get marginPx(): string {

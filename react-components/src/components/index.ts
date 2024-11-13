@@ -7,10 +7,10 @@ export { Image360HistoricalDetails } from './Image360HistoricalDetails/Image360H
 export { Image360Details } from './Image360Details/Image360Details';
 export { ViewerAnchor } from './ViewerAnchor/ViewerAnchor';
 export { RevealKeepAlive } from './RevealKeepAlive/RevealKeepAlive';
-export { RevealTopbar } from './RevealTopbar/RevealTopbar';
 
 export { AxisGizmo, AxisGizmoOptions } from './AxisGizmo';
 export { WindowWidget } from './Widgets/WindowWidget';
+export { ContextMenu } from './ContextMenu';
 
 export * from './Architecture';
 export * from './CadModelContainer';

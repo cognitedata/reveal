@@ -48,7 +48,8 @@ import {
   ResolutionOptions,
   RenderParameters,
   AnyIntersection,
-  AddModelOptions
+  AddModelOptions,
+  Image360IconIntersection
 } from './types';
 import { RevealManager } from '../RevealManager';
 import { CogniteModel, Image360WithCollection } from '../types';
@@ -100,6 +101,7 @@ import { AsyncSequencer, SequencerFunction } from '../../../../utilities/src/Asy
 import { getModelAndRevisionId } from '../../utilities/utils';
 import { ClassicDataSourceType, DataSourceType, isClassicIdentifier } from '@reveal/data-providers';
 import assert from 'assert';
+import { Image360Action } from '@reveal/360-images/src/Image360Action';
 
 type Cognite3DViewerEvents =
   | 'click'
@@ -924,7 +926,7 @@ export class Cognite3DViewer<DataSourceT extends DataSourceType = ClassicDataSou
    */
   remove360Images(...image360Entities: Image360<DataSourceT>[]): Promise<void> {
     if (this._cdfSdkClient === undefined || this._image360ApiHelper === undefined) {
-      throw new Error(`Adding 360 image sets is only supported when connecting to Cognite Data Fusion`);
+      throw new Error(`Remove 360 images is only supported when connecting to Cognite Data Fusion`);
     }
     return this._image360ApiHelper.remove360Images(
       image360Entities.map(entity => entity as Image360Entity<DataSourceT>)
@@ -946,7 +948,7 @@ export class Cognite3DViewer<DataSourceT extends DataSourceType = ClassicDataSou
    */
   enter360Image(image360: Image360<DataSourceT>, revision?: Image360Revision<DataSourceT>): Promise<void> {
     if (this._cdfSdkClient === undefined || this._image360ApiHelper === undefined) {
-      throw new Error(`Adding 360 image sets is only supported when connecting to Cognite Data Fusion`);
+      throw new Error(`Enter 360 image is only supported when connecting to Cognite Data Fusion`);
     }
     return this._image360ApiHelper.enter360Image(
       image360 as Image360Entity<DataSourceT>,
@@ -959,9 +961,33 @@ export class Cognite3DViewer<DataSourceT extends DataSourceType = ClassicDataSou
    */
   exit360Image(): void {
     if (this._cdfSdkClient === undefined || this._image360ApiHelper === undefined) {
-      throw new Error(`Adding 360 image sets is only supported when connecting to Cognite Data Fusion`);
+      throw new Error(`Exit 360 image is only supported when connecting to Cognite Data Fusion`);
     }
     this._image360ApiHelper.exit360Image();
+  }
+
+  /**
+   * Check if a 360 image action can be done.
+   * @param action The action to check if can be done.
+   * @beta
+   */
+  canDoImage360Action(action: Image360Action): boolean {
+    if (this._cdfSdkClient === undefined || this._image360ApiHelper === undefined) {
+      return false;
+    }
+    return this._image360ApiHelper.canDoImage360Action(action);
+  }
+
+  /**
+   * Do a 360 image action.
+   * @param action The action to do.
+   * @beta
+   */
+  async image360Action(action: Image360Action): Promise<void> {
+    if (this._cdfSdkClient === undefined || this._image360ApiHelper === undefined) {
+      throw new Error(`360 actions is only supported when connecting to Cognite Data Fusion`);
+    }
+    await this._image360ApiHelper.image360Action(action);
   }
 
   /**
@@ -1634,7 +1660,7 @@ export class Cognite3DViewer<DataSourceT extends DataSourceType = ClassicDataSou
    * ```
    */
   async getIntersectionFromPixel(offsetX: number, offsetY: number): Promise<null | Intersection<DataSourceT>> {
-    if (this.isIntersecting360Icon(new THREE.Vector2(offsetX, offsetY))) {
+    if (this.intersect360Icons(new THREE.Vector2(offsetX, offsetY)) !== undefined) {
       return null;
     }
     return this.intersectModels(offsetX, offsetY) as Promise<Intersection<DataSourceT> | null>;
@@ -1657,8 +1683,9 @@ export class Cognite3DViewer<DataSourceT extends DataSourceType = ClassicDataSou
       predicate?: (customObject: ICustomObject) => boolean;
     }
   ): Promise<AnyIntersection<DataSourceT> | undefined> {
-    if ((options?.stopOnHitting360Icon ?? true) && this.isIntersecting360Icon(pixelCoords)) {
-      return undefined;
+    const image360IconIntersection = this.intersect360Icons(pixelCoords);
+    if (this.intersect360Icons(pixelCoords) !== undefined) {
+      return image360IconIntersection;
     }
 
     const predicate = options?.predicate;
@@ -1698,11 +1725,11 @@ export class Cognite3DViewer<DataSourceT extends DataSourceType = ClassicDataSou
     if (this._image360ApiHelper === undefined) {
       return false;
     }
-    return this._image360ApiHelper.enter360ImageHandler({ offsetX: event.offsetX, offsetY: event.offsetY });
+    return this._image360ApiHelper.onClick({ offsetX: event.offsetX, offsetY: event.offsetY });
   }
 
   /**
-   * Event function to to move the mouse.
+   * Event function to move the mouse.
    * @param event The event type.
    * @returns True if the event was handled, false otherwise.
    * @beta
@@ -1711,22 +1738,20 @@ export class Cognite3DViewer<DataSourceT extends DataSourceType = ClassicDataSou
     if (this._image360ApiHelper === undefined) {
       return false;
     }
-    this._image360ApiHelper.setHoverIconEventHandler(event);
+    this._image360ApiHelper.onHover(event);
     return true;
   }
 
-  private isIntersecting360Icon(vector: THREE.Vector2): boolean {
-    if (this._image360ApiHelper === undefined) {
-      return false;
+  private intersect360Icons(vector: THREE.Vector2): Image360IconIntersection<DataSourceT> | undefined {
+    const iconIntersection = this._image360ApiHelper?.intersect360ImageIcons(vector.x, vector.y);
+    if (iconIntersection === undefined) {
+      return undefined;
     }
 
-    const image360Intersection = this._image360ApiHelper.intersect360ImageIcons(vector.x, vector.y);
-
-    if (image360Intersection !== undefined) {
-      return true;
-    }
-
-    return false;
+    return {
+      type: 'image360Icon',
+      ...iconIntersection
+    };
   }
 
   /**

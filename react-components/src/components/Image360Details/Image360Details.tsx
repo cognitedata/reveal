@@ -6,7 +6,6 @@ import { useState, type ReactElement, useCallback, useEffect } from 'react';
 import styled from 'styled-components';
 import { Image360HistoricalDetails } from '../Image360HistoricalDetails/Image360HistoricalDetails';
 import { type Image360 } from '@cognite/reveal';
-import { Button, CloseLargeIcon } from '@cognite/cogs.js';
 import { useReveal } from '../RevealCanvas/ViewerContext';
 import { useImage360Collections } from '../../hooks/useImage360Collections';
 
@@ -25,10 +24,6 @@ export function Image360Details({ appLanguage }: Image360DetailsProps): ReactEle
   const clearEnteredImage360 = useCallback((): void => {
     setEnteredEntity(undefined);
   }, [setEnteredEntity]);
-
-  const exitImage360Image = useCallback((): void => {
-    viewer.exit360Image();
-  }, [viewer]);
 
   const collections = useImage360Collections();
 
@@ -57,29 +52,11 @@ export function Image360Details({ appLanguage }: Image360DetailsProps): ReactEle
               fallbackLanguage={appLanguage}
             />
           </Image360HistoricalPanel>
-          <ExitButtonContainer>
-            <StyledExitButton icon=<CloseLargeIcon /> type="tertiary" onClick={exitImage360Image} />
-          </ExitButtonContainer>
         </>
       )}
     </>
   );
 }
-
-const StyledExitButton = styled(Button)`
-  border-radius: 8px;
-`;
-
-const ExitButtonContainer = styled.div`
-  position: absolute;
-  right: 20px;
-  top: 20px;
-  background-color: #ffffff;
-  height: 36px;
-  width: 36px;
-  border-radius: 8px;
-  outline: none;
-`;
 
 const Image360HistoricalPanel = styled.div<{ isExpanded: boolean }>`
   position: absolute;

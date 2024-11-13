@@ -12,6 +12,7 @@ import {
   BugIcon,
   CircleIcon,
   ClearAllIcon,
+  CloseLargeIcon,
   CoordinatesIcon,
   CopyIcon,
   CropIcon,
@@ -32,6 +33,7 @@ import {
   FlipVerticalIcon,
   GrabIcon,
   type IconProps,
+  InfoIcon,
   LocationIcon,
   PerspectiveAltIcon,
   PerspectiveIcon,
@@ -68,6 +70,7 @@ const defaultMappings: Array<[IconName, IconType]> = [
   ['BorderVertical', BorderVerticalIcon],
   ['Circle', CircleIcon],
   ['ClearAll', ClearAllIcon],
+  ['CloseLarge', CloseLargeIcon],
   ['Coordinates', CoordinatesIcon],
   ['Copy', CopyIcon],
   ['Crop', CropIcon],
@@ -87,6 +90,7 @@ const defaultMappings: Array<[IconName, IconType]> = [
   ['FlipHorizontal', FlipHorizontalIcon],
   ['FlipVertical', FlipVerticalIcon],
   ['Grab', GrabIcon],
+  ['Info', InfoIcon],
   ['Location', LocationIcon],
   ['Perspective', PerspectiveIcon],
   ['PerspectiveAlt', PerspectiveAltIcon],
@@ -118,16 +122,15 @@ export class IconComponentMapper {
     IconComponentMapper._iconMap.set(name, icon);
   }
 
-  public static getIcon(name: IconName | undefined): IconType {
+  public static getIcon(name: IconName): IconType {
     if (name === undefined) {
       return DefaultIcon;
     }
-
     return IconComponentMapper._iconMap.get(name) ?? DefaultIcon;
   }
 }
 
-type IconComponentProps = IconProps & { iconName: IconName | undefined };
+type IconComponentProps = IconProps & { iconName: IconName };
 
 export const IconComponent = ({ iconName, ...rest }: IconComponentProps): JSX.Element => {
   const Icon = IconComponentMapper.getIcon(iconName);

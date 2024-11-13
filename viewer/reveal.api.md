@@ -58,7 +58,7 @@ export class AnnotationIdPointCloudObjectCollection extends PointCloudAnnotation
 }
 
 // @beta
-export type AnyIntersection<T extends DataSourceType = DataSourceType> = CadIntersection | PointCloudIntersection<T> | CustomObjectIntersection;
+export type AnyIntersection<T extends DataSourceType = DataSourceType> = CadIntersection | PointCloudIntersection<T> | Image360IconIntersection<T> | CustomObjectIntersection;
 
 // @public
 export interface AreaCollection {
@@ -443,6 +443,8 @@ export class Cognite3DViewer<DataSourceT extends DataSourceType = ClassicDataSou
     set cadBudget(budget: CadModelBudget);
     // (undocumented)
     get cameraManager(): CameraManager;
+    // @beta
+    canDoImage360Action(action: Image360Action): boolean;
     get canvas(): HTMLCanvasElement;
     // @beta
     createCustomObjectIntersectInput(pixelCoords: THREE.Vector2): CustomObjectIntersectInput;
@@ -476,6 +478,8 @@ export class Cognite3DViewer<DataSourceT extends DataSourceType = ClassicDataSou
     getViewState(): ViewerState;
     // @beta
     getVisualSceneBoundingBox(): THREE.Box3;
+    // @beta
+    image360Action(action: Image360Action): Promise<void>;
     loadCameraFromModel(model: CogniteModel<DataSourceT>): void;
     get models(): CogniteModel<DataSourceT>[];
     // (undocumented)
@@ -1212,6 +1216,14 @@ export interface Image360<T extends DataSourceType = ClassicDataSourceType> {
     readonly transform: Matrix4;
 }
 
+// @beta
+export enum Image360Action {
+    Backward = 1,
+    Enter = 2,
+    Exit = 3,
+    Forward = 0
+}
+
 // @public
 export interface Image360Annotation<T extends DataSourceType = ClassicDataSourceType> {
     readonly annotation: T['image360AnnotationType'];
@@ -1294,6 +1306,15 @@ export type Image360EnteredDelegate = (image360: Image360, revision: Image360Rev
 
 // @public
 export type Image360ExitedDelegate = () => void;
+
+// @beta
+export type Image360IconIntersection<T extends DataSourceType = DataSourceType> = {
+    type: 'image360Icon';
+    image360: Image360<T>;
+    image360Collection: Image360Collection<T>;
+    point: Vector3;
+    distanceToCamera: number;
+};
 
 // @public
 export type Image360IconStyle = {

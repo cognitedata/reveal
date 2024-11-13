@@ -16,6 +16,7 @@ import {
   DEFAULT_IMAGE360_ICON_CULLING_RADIUS
 } from './constants';
 import {
+  useReveal3DResourceLoadFailCount,
   useReveal3DResourcesCount,
   useThisAsExpectedResourceLoad
 } from '../Reveal3DResources/Reveal3DResourcesInfoContext';
@@ -38,6 +39,7 @@ export function Image360CollectionContainer({
   const modelRef = useRef<Image360Collection<DataSourceType>>();
   const viewer = useReveal();
   const { setRevealResourcesCount } = useReveal3DResourcesCount();
+  const { setReveal3DResourceLoadFailCount } = useReveal3DResourceLoadFailCount();
 
   const initializingSiteId = useRef<{ siteId: string } | { externalId: string } | undefined>(
     undefined
@@ -95,6 +97,10 @@ export function Image360CollectionContainer({
       .catch((error: any) => {
         const errorReportFunction = onLoadError ?? defaultLoadErrorHandler;
         errorReportFunction(addImage360CollectionOptions, error);
+        setReveal3DResourceLoadFailCount((p) => p + 1);
+        return () => {
+          setReveal3DResourceLoadFailCount((p) => p - 1);
+        };
       });
 
     async function getOrAdd360Collection(): Promise<Image360Collection<DataSourceType>> {

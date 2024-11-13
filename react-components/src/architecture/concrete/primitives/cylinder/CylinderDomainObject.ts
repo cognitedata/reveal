@@ -21,6 +21,7 @@ import { SolidPrimitiveRenderStyle } from '../common/SolidPrimitiveRenderStyle';
 import { Cylinder } from '../../../base/utilities/primitives/Cylinder';
 import { Line3, Vector3 } from 'three';
 import { type RevealRenderTarget } from '../../../base/renderTarget/RevealRenderTarget';
+import { type IconName } from '../../../base/utilities/IconName';
 
 export abstract class CylinderDomainObject extends SolidDomainObject {
   // ==================================================
@@ -33,7 +34,7 @@ export abstract class CylinderDomainObject extends SolidDomainObject {
   // OVERRIDES of DomainObject
   // ==================================================
 
-  public override get icon(): string {
+  public override get icon(): IconName {
     return getIconByPrimitiveType(this.primitiveType);
   }
 
@@ -68,7 +69,7 @@ export abstract class CylinderDomainObject extends SolidDomainObject {
     const hasHeight = Cylinder.isValidSize(cylinder.height);
 
     if (isFinished || hasRadius) {
-      add('MEASUREMENTS_RADIUS', 'Radius', cylinder.radius, Quantity.Length);
+      add('RADIUS', 'Radius', cylinder.radius, Quantity.Length);
     }
     if (isFinished || hasHeight) {
       add('MEASUREMENTS_HEIGHT', 'Height', cylinder.height, Quantity.Length);

@@ -4,34 +4,28 @@
 
 import { Button, Tooltip as CogsTooltip, ChevronDownIcon, ChevronUpIcon } from '@cognite/cogs.js';
 import { Menu, Option, Select } from '@cognite/cogs-lab';
-import {
-  useCallback,
-  useEffect,
-  useMemo,
-  useState,
-  type ReactElement,
-  type SetStateAction,
-  type Dispatch
-} from 'react';
+import { useMemo, useState, type ReactElement, type SetStateAction, type Dispatch } from 'react';
 
 import { useTranslation } from '../i18n/I18n';
 import { type BaseCommand } from '../../architecture/base/commands/BaseCommand';
 import { useRenderTarget } from '../RevealCanvas/ViewerContext';
 import { type BaseOptionCommand } from '../../architecture/base/commands/BaseOptionCommand';
-import { getButtonType, getDefaultCommand, getTooltipPlacement, getIcon } from './utilities';
+import { getButtonType, getDefaultCommand, getTooltipPlacement } from './utilities';
 import { LabelWithShortcut } from './LabelWithShortcut';
 import { type TranslateDelegate } from '../../architecture/base/utilities/TranslateKey';
-import { DEFAULT_PADDING, OPTION_MIN_WIDTH } from './constants';
+import { DEFAULT_PADDING, OPTION_MIN_WIDTH, TOOLTIP_DELAY } from './constants';
 
 import styled from 'styled-components';
+import { useOnUpdate } from './useOnUpdate';
+import { type PlacementType } from './types';
 
 export const DropdownButton = ({
   inputCommand,
-  isHorizontal = false,
+  placement,
   usedInSettings = false
 }: {
   inputCommand: BaseOptionCommand;
-  isHorizontal: boolean;
+  placement: PlacementType;
   usedInSettings?: boolean;
 }): ReactElement => {
   const renderTarget = useRenderTarget();
@@ -41,24 +35,16 @@ export const DropdownButton = ({
   );
 
   // @update-ui-component-pattern
-  const [isOpen, setOpen] = useState<boolean>(false);
-  const [isEnabled, setEnabled] = useState<boolean>(true);
-  const [isVisible, setVisible] = useState<boolean>(true);
-  const [uniqueId, setUniqueId] = useState<number>(0);
+  const [isOpen, setOpen] = useState(false);
+  const [isEnabled, setEnabled] = useState(true);
+  const [isVisible, setVisible] = useState(true);
+  const [uniqueId, setUniqueId] = useState(0);
 
-  const update = useCallback((command: BaseCommand) => {
+  useOnUpdate(command, () => {
     setEnabled(command.isEnabled);
     setVisible(command.isVisible);
     setUniqueId(command.uniqueId);
-  }, []);
-
-  useEffect(() => {
-    update(command);
-    command.addEventListener(update);
-    return () => {
-      command.removeEventListener(update);
-    };
-  }, [command]);
+  });
   // @end
 
   if (!isVisible) {
@@ -73,7 +59,7 @@ export const DropdownButton = ({
       isOpen={isOpen}
       setOpen={setOpen}
       isEnabled={isEnabled}
-      isHorizontal={isHorizontal}
+      placement={placement}
       uniqueId={uniqueId}
     />
   );
@@ -85,7 +71,7 @@ const DropdownElement = ({
   isOpen,
   setOpen,
   isEnabled,
-  isHorizontal,
+  placement,
   uniqueId
 }: {
   command: BaseOptionCommand;
@@ -93,14 +79,12 @@ const DropdownElement = ({
   isOpen: boolean;
   setOpen: Dispatch<SetStateAction<boolean>>;
   isEnabled: boolean;
-  isHorizontal: boolean;
+  placement: PlacementType;
   uniqueId: number;
 }): ReactElement => {
   const { t } = useTranslation();
   const label = command.getLabel(t);
   const selectedLabel = command.selectedChild?.getLabel(t);
-
-  const placement = getTooltipPlacement(isHorizontal);
 
   const OpenButtonIcon = isOpen ? ChevronUpIcon : ChevronDownIcon;
 
@@ -121,7 +105,8 @@ const DropdownElement = ({
           content={<LabelWithShortcut label={label} command={command} />}
           disabled={label === undefined}
           appendTo={document.body}
-          placement={placement}>
+          enterDelay={TOOLTIP_DELAY}
+          placement={getTooltipPlacement(placement)}>
           <Button
             style={{
               padding: '8px 4px'
@@ -186,7 +171,7 @@ function createMenuItem(command: BaseCommand, t: TranslateDelegate): ReactElemen
   return (
     <Menu.ItemToggled
       key={command.uniqueId}
-      icon={getIcon(command)}
+      icon={command.icon}
       disabled={!command.isEnabled}
       toggled={command.isChecked}
       iconPlacement="left"

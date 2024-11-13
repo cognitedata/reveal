@@ -6,7 +6,10 @@ import {
   type DataSourceType,
   type Cognite3DViewer,
   type AddModelOptions,
-  type ClassicDataSourceType
+  type ClassicDataSourceType,
+  type CogniteCadModel,
+  type CognitePointCloudModel,
+  type Image360Collection
 } from '@cognite/reveal';
 import { CadModelContainer } from '../CadModelContainer/CadModelContainer';
 import { PointCloudContainer } from '../PointCloudContainer/PointCloudContainer';
@@ -49,6 +52,7 @@ export const Reveal3DResources = ({
   instanceStyling,
   onResourcesAdded,
   onResourceLoadError,
+  onResourceIsLoaded,
   image360Settings
 }: Reveal3DResourcesProps): ReactElement => {
   const viewer = useReveal();
@@ -143,8 +147,14 @@ export const Reveal3DResources = ({
           group.style !== undefined
       ) ?? EMPTY_ARRAY;
 
-  const onModelLoaded = (): void => {
+  const onModelLoaded = (
+    model:
+      | CogniteCadModel
+      | CognitePointCloudModel<DataSourceType>
+      | Image360Collection<DataSourceType>
+  ): void => {
     onModelFailOrSucceed();
+    onResourceIsLoaded?.(model);
   };
 
   const onModelLoadedError = (addOptions: AddResourceOptions, error: any): void => {

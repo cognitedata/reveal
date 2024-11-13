@@ -40,6 +40,7 @@ export { VisualDomainObject } from './base/domainObjects/VisualDomainObject';
 
 export { BaseRevealConfig } from './base/renderTarget/BaseRevealConfig';
 export { CommandsController } from './base/renderTarget/CommandsController';
+export { type ContextMenuData } from './base/renderTarget/ContextMenuController';
 export { DefaultRevealConfig } from './base/renderTarget/DefaultRevealConfig';
 export { RevealRenderTarget } from './base/renderTarget/RevealRenderTarget';
 export { UnitSystem } from './base/renderTarget/UnitSystem';
@@ -100,3 +101,14 @@ export { PrimitiveType } from './base/utilities/primitives/PrimitiveType';
 export { AnnotationsSelectTool } from './concrete/annotations/commands/AnnotationsSelectTool';
 export { AnnotationsCreateTool } from './concrete/annotations/commands/AnnotationsCreateTool';
 export { getGlobalMatrix } from './concrete/annotations/helpers/getMatrixUtils';
+
+// New architecture: tree view nodes
+export type { ITreeNode } from './base/treeView/ITreeNode';
+export type { IconColor } from './base/treeView/types';
+export type { TreeNodeAction } from './base/treeView/types';
+export { TreeNode } from './base/treeView/TreeNode';
+export { CheckBoxState } from './base/treeView/types';
+export { onSingleSelectNode } from './base/treeView/TreeNodeFunctions';
+export { onMultiSelectNode } from './base/treeView/TreeNodeFunctions';
+export { onIndependentCheckNode } from './base/treeView/TreeNodeFunctions';
+export { onDependentCheckNode } from './base/treeView/TreeNodeFunctions';

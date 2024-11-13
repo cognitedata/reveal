@@ -7,7 +7,10 @@ import {
   type AddModelOptions,
   type Image360AnnotationAppearance,
   type DataSourceType,
-  type ClassicDataSourceType
+  type ClassicDataSourceType,
+  type CogniteCadModel,
+  type CognitePointCloudModel,
+  type Image360Collection
 } from '@cognite/reveal';
 
 import { type Matrix4 } from 'three';
@@ -129,4 +132,10 @@ export type CommonResourceContainerProps = {
   image360Settings?: CommonImage360Settings;
   onResourcesAdded?: () => void;
   onResourceLoadError?: (failedResource: AddResourceOptions, error: any) => void;
+  onResourceIsLoaded?: (
+    model:
+      | CogniteCadModel
+      | CognitePointCloudModel<DataSourceType>
+      | Image360Collection<DataSourceType>
+  ) => void;
 };

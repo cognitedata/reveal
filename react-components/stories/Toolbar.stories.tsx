@@ -8,7 +8,8 @@ import {
   type QualitySettings,
   RevealToolbar,
   withSuppressRevealEvents,
-  useCameraNavigation
+  useCameraNavigation,
+  RevealButtons
 } from '../src';
 import { Color } from 'three';
 import styled from 'styled-components';
@@ -18,7 +19,6 @@ import { type ReactElement, useState, useEffect } from 'react';
 import { signalStoryReadyForScreenshot } from './utilities/signalStoryReadyForScreenshot';
 import { RevealStoryContainer } from './utilities/RevealStoryContainer';
 import { getAddModelOptionsFromUrl } from './utilities/getAddModelOptionsFromUrl';
-import { SetOrbitOrFirstPersonControlsType } from '../src/components/RevealToolbar/SetFlexibleControlsType';
 import { useGetCameraStateFromUrlParam } from './utilities/useGetCameraStateFromUrlParam';
 import { type DataSourceType, type AddModelOptions } from '@cognite/reveal';
 
@@ -105,7 +105,7 @@ export const Main: Story = {
       <MyCustomToolbar>
         <RevealToolbar.FitModelsButton />
         <ToolBar.ButtonGroup buttonGroup={exampleToolBarButtons} />
-        <SetOrbitOrFirstPersonControlsType />
+        <RevealButtons.SetOrbitOrFirstPersonMode toolbarPlacement="top" />
         <RevealToolbar.SlicerButton />
       </MyCustomToolbar>
     </RevealStoryContainer>

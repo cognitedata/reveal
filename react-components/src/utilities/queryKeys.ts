@@ -14,7 +14,8 @@ export const queryKeys = {
   timeseriesLinkedToAssets: () => [...timeseries, 'timeseries-linked-assets'] as const,
   // PointCloud Volume for CoreDM
   pointCloudDMVolume: () => [...models, 'point-cloud-dm-volume'] as const,
-  modelRevisionId: () => [...revisions, 'model-revision-id'] as const
+  modelRevisionId: () => [...revisions, 'model-revision-id'] as const,
+  timeseriesFromRelationship: () => [...timeseries, 'timeseries-relationship'] as const
 } as const;
 
 const assets: string[] = [...queryKeys.all, 'assets'];

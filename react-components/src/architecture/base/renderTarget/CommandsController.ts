@@ -55,7 +55,8 @@ export class CommandsController extends PointerEvents {
   }
 
   public override onHover(event: PointerEvent): void {
-    this.activeTool?.onHover(event);
+    // This override is actually with Debounce
+    this.activeTool?.onHoverByDebounce(event);
   }
 
   public override async onClick(event: PointerEvent): Promise<void> {
@@ -124,6 +125,16 @@ export class CommandsController extends PointerEvents {
     }
     this._defaultTool = tool;
     return this.activateDefaultTool();
+  }
+
+  public getToolByType<T extends BaseTool>(classType: Class<T>): T | undefined {
+    for (const tool of this._commands) {
+      if (isInstanceOf(tool, classType)) {
+        return tool;
+      }
+    }
+
+    return undefined;
   }
 
   public setActiveToolByType<T extends BaseTool>(classType: Class<T>): boolean {
@@ -206,6 +217,7 @@ export class CommandsController extends PointerEvents {
   public addEventListeners(): void {
     // https://www.w3schools.com/jsref/obj_mouseevent.asp
     const domElement = this._domElement;
+    domElement.addEventListener('mousemove', this._onMouseMove);
     domElement.addEventListener('keydown', this._onKeyDown);
     domElement.addEventListener('keyup', this._onKeyUp);
     domElement.addEventListener('wheel', this._onWheel);
@@ -217,6 +229,7 @@ export class CommandsController extends PointerEvents {
 
   public removeEventListeners(): void {
     const domElement = this._domElement;
+    domElement.removeEventListener('mousemove', this._onMouseMove);
     domElement.removeEventListener('keydown', this._onKeyDown);
     domElement.removeEventListener('keyup', this._onKeyUp);
     domElement.removeEventListener('wheel', this._onWheel);
@@ -232,6 +245,12 @@ export class CommandsController extends PointerEvents {
   // ==================================================
   // INSTANCE METHODS: Events
   // ==================================================
+
+  private readonly _onMouseMove = (event: MouseEvent): void => {
+    if (event.buttons === 0) {
+      this.activeTool?.onHover(event);
+    }
+  };
 
   private readonly _onKeyDown = (event: KeyboardEvent): void => {
     this.onKey(event, true);

@@ -6,21 +6,29 @@ import { type BaseCommand } from '../../architecture/base/commands/BaseCommand';
 import { type RevealRenderTarget } from '../../architecture/base/renderTarget/RevealRenderTarget';
 import { RenderTargetCommand } from '../../architecture/base/commands/RenderTargetCommand';
 import { type PlacementType, type ButtonType, type FlexDirection } from './types';
-import { type IconName } from '../../architecture/base/utilities/IconName';
 
-export function getIcon(command: BaseCommand): IconName | undefined {
-  if (command.icon === undefined) {
-    return undefined;
+export function getFlexDirection(placement: PlacementType): FlexDirection {
+  return placement === 'top' || placement === 'bottom' ? 'row' : 'column';
+}
+
+export function getDividerDirection(placement: PlacementType): string {
+  return placement === 'top' || placement === 'bottom' ? 'vertical' : 'horizontal';
+}
+
+export function getTooltipPlacement(toolbarPlacement: PlacementType): PlacementType {
+  // Try to keep the tooltip on the opposite side of the toolbar
+  switch (toolbarPlacement) {
+    case 'top':
+      return 'bottom';
+    case 'bottom':
+      return 'top';
+    case 'left':
+      return 'right';
+    case 'right':
+      return 'left';
+    default:
+      return 'top';
   }
-  return command.icon;
-}
-
-export function getFlexDirection(isHorizontal: boolean): FlexDirection {
-  return isHorizontal ? 'row' : 'column';
-}
-
-export function getTooltipPlacement(isHorizontal: boolean): PlacementType {
-  return isHorizontal ? 'top' : 'right';
 }
 
 export function getButtonType(command: BaseCommand): ButtonType {
