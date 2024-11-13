@@ -308,6 +308,16 @@ export class TreeNode<T = any> implements ITreeNode {
     }
   }
 
+  public *getExpandedDescendants(): Generator<TreeNode<T>> {
+    if (!this.isExpanded) {
+      return;
+    }
+    for (const child of this.getChildren()) {
+      yield child;
+      yield* child.getDescendants();
+    }
+  }
+
   public *getDescendantsByType<Type extends ITreeNode>(classType: Class<Type>): Generator<Type> {
     for (const descendant of this.getDescendants()) {
       if (isInstanceOf(descendant, classType)) {

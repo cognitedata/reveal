@@ -2,18 +2,22 @@
  * Copyright 2024 Cognite AS
  */
 
-import type { CogniteClient, Node3D } from '@cognite/sdk';
 import { TreeNode } from '../TreeNode';
-import { fetchAncestors, type RevisionId } from './cadTreeNodeUtils';
 
 export type OnLoadedAction = (node: CadTreeNode, parent?: CadTreeNode) => void;
+
+type SubsetOfNode3D = {
+  id: number;
+  treeIndex: number;
+  name: string;
+};
 
 export class CadTreeNode extends TreeNode {
   private readonly _id: number;
   private readonly _treeIndex: number;
   private _loadSiblingCursor?: string;
 
-  constructor(node: Node3D) {
+  constructor(node: SubsetOfNode3D) {
     super();
     this._id = node.id;
     this._treeIndex = node.treeIndex;
@@ -74,18 +78,7 @@ export class CadTreeNode extends TreeNode {
     }
   }
 
-  public async forceShowNode(args: ForceShowArgs): Promise<boolean> {
-    const cadTreeNode = this.getThisOrDescendantByNodeId(args.nodeId);
-    if (cadTreeNode !== undefined) {
-      return true;
-    }
-    await fetchAncestors(args).then((loadedNodes) => {
-      return this.insertAncestors(loadedNodes, args);
-    });
-    return true;
-  }
-
-  private insertAncestors(newNodes: Node3D[], args: ForceShowArgs): boolean {
+  public insertAncestors(newNodes: SubsetOfNode3D[], onLoaded?: OnLoadedAction): boolean {
     if (newNodes.length === 0) {
       return false;
     }
@@ -94,30 +87,25 @@ export class CadTreeNode extends TreeNode {
     if (rootNode.id !== this.id) {
       throw new Error('The root node is not the same as the current node');
     }
+
     // eslint-disable-next-line @typescript-eslint/no-this-alias
     let parent: CadTreeNode = this;
     for (let i = 1; i < newNodes.length; i++) {
+      parent.isExpanded = true;
       const newNode = newNodes[i];
       const child = parent.getChildByNodeId(newNode.id);
       if (child !== undefined) {
         parent = child; // The node exist in the tree
+        continue;
       }
       const cadTreeNode = new CadTreeNode(newNode);
-      if (args.onLoaded !== undefined) {
-        args.onLoaded(cadTreeNode, parent);
+      if (onLoaded !== undefined) {
+        onLoaded(cadTreeNode, parent);
       }
       cadTreeNode.needLoadChildren = true; // Maybe wrong if the loadedNode is the last
       parent.addChild(cadTreeNode);
       parent = cadTreeNode;
-      // TODO: Force show?????
     }
     return true;
   }
 }
-
-type ForceShowArgs = {
-  nodeId: number;
-  sdk: CogniteClient;
-  revisionId: RevisionId;
-  onLoaded?: OnLoadedAction;
-};

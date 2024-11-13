@@ -3,12 +3,16 @@
  */
 
 import { type TreeViewProps } from '../TreeView/TreeViewProps';
-import { type OnLoadedAction } from '../../../architecture/base/treeView/cadTreeView/CadTreeNode';
+import {
+  type CadTreeNode,
+  type OnLoadedAction
+} from '../../../architecture/base/treeView/cadTreeView/CadTreeNode';
 
 export type CadTreeViewProps = Omit<TreeViewProps, 'loadNodes' | 'root'> & {
   modelId: number;
   revisionId: number;
   onLoaded?: OnLoadedAction;
+  onRootSet?: (root: CadTreeNode) => void;
 };
 
 // NOTE: onLoaded() is called when node is loaded, but before is is added/inserted into the tree.

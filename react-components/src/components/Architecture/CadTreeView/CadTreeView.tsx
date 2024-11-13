@@ -24,7 +24,6 @@ import { TreeView } from '../TreeView/TreeView';
 export function CadTreeView(props: CadTreeViewProps): ReactElement | null {
   const sdk = useSDK();
   const revisionId: RevisionId = { modelId: props.modelId, revisionId: props.revisionId };
-
   const {
     data: root,
     isLoading,
@@ -35,6 +34,9 @@ export function CadTreeView(props: CadTreeViewProps): ReactElement | null {
       const root = await fetchTreeNodeRoot(sdk, revisionId);
       if (props.onLoaded !== undefined) {
         props.onLoaded(root, undefined);
+      }
+      if (props.onRootSet !== undefined) {
+        props.onRootSet(root);
       }
       return root;
     }
@@ -93,4 +95,27 @@ function getParent(node: CadTreeNode, loadChildren: boolean): CadTreeNode | unde
     return node.parent;
   }
   return undefined;
+}
+
+export function scrollToElement(e: HTMLElement, node: CadTreeNode): void {
+  let count = 0;
+  let found = false;
+  const root = node.getRoot();
+  if (root === undefined) {
+    return;
+  }
+  for (const a of root.getAncestors()) {
+    a.isExpanded = true;
+  }
+  for (const descendant of root.getExpandedDescendants()) {
+    count++;
+    if (node === descendant) {
+      found = true;
+      break;
+    }
+  }
+  if (!found) {
+    return;
+  }
+  e.scroll({ top: count * 20, behavior: 'smooth' });
 }

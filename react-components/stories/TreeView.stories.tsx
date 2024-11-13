@@ -17,6 +17,8 @@ import {
   onMultiSelectNode
 } from '../src/architecture/base/treeView/TreeNodeFunctions';
 import { CheckBoxState } from '../src/architecture/base/treeView/types';
+import { Button } from '@cognite/cogs.js';
+import { useRef } from 'react';
 
 const meta = {
   title: 'Example/TreeView',
@@ -35,15 +37,29 @@ export const Main: Story = {
   args: {
     addModelOptions: getAddModelOptionsFromUrl('/primitives')
   },
+
   render: () => {
+    const myRef = useRef<HTMLDivElement>(null);
     return (
       <div>
         <Container
+          ref={myRef}
           style={{
             left: '50px',
             width: '300px',
             height: '900px'
           }}>
+          <Button
+            onClick={() => {
+              if (myRef !== undefined && myRef.current !== null) {
+                // myRef.current.scrollIntoView({ block: 'end' });
+                // myRef.current.scrollTop = 100;
+                scrollToElement(myRef.current, root1);
+              }
+            }}>
+            Scroll
+          </Button>
+
           <TreeView
             root={root1}
             onSelectNode={onSingleSelectNode}
@@ -52,7 +68,6 @@ export const Main: Story = {
             onClickInfo={onClickInfo}
             hasCheckboxes
             hasIcons
-            maxLabelLength={4}
             hasInfo
           />
         </Container>
@@ -100,6 +115,29 @@ const Container = styled.div`
   overflow-y: auto;
 `;
 
+function scrollToElement(e: HTMLElement, node: TreeNode): void {
+  let count = 0;
+  let found = false;
+  const root = node.getRoot();
+  if (root === undefined) {
+    return;
+  }
+  for (const a of root.getAncestors()) {
+    a.isExpanded = true;
+  }
+  for (const descendant of root.getExpandedDescendants()) {
+    count++;
+    if (node === descendant) {
+      found = true;
+      break;
+    }
+  }
+  if (!found) {
+    return;
+  }
+  e.scroll({ top: count * 20, behavior: 'smooth' });
+}
+
 async function loadNodes(
   _node: ITreeNode,
   _loadChildren: boolean
@@ -128,6 +166,55 @@ async function loadNodes(
     }, 2000)
   );
   return await promise;
+}
+
+function createFullTreeMock(lazyLoading: boolean): TreeNode<string> {
+  const root = new TreeNode<string>();
+  root.label = 'Root';
+  root.isExpanded = true;
+  root.checkBoxState = CheckBoxState.None;
+  root.icon = 'Snow';
+
+  for (let i = 1; i <= 2; i++) {
+    const parent = new TreeNode<string>();
+    parent.userData = 'Index ' + i;
+    parent.label = 'Folder ' + i;
+    parent.isExpanded = true;
+    parent.icon = 'Snow';
+    parent.checkBoxState = CheckBoxState.None;
+    root.addChild(parent);
+    if (i % 8 === 0) parent.iconColor = 'blue';
+    if (i % 6 === 0) parent.iconColor = 'red';
+    parent.icon = i % 2 === 0 ? 'CubeFrontRight' : 'CubeFrontLeft';
+
+    for (let j = 1; j <= 2; j++) {
+      const child = new TreeNode<string>();
+      child.label = 'Child ' + i + '.' + j;
+      switch (j % 3) {
+        case 0:
+          child.icon = 'CylinderArbitrary';
+          break;
+        case 1:
+          child.icon = 'CylinderHorizontal';
+          break;
+        case 2:
+          child.icon = 'CylinderVertical';
+          break;
+      }
+      child.isExpanded = false;
+      child.needLoadChildren = lazyLoading;
+      child.checkBoxState = CheckBoxState.None;
+      child.isEnabled = j !== 2;
+      child.hasBoldLabel = j === 4;
+      if (j % 3 === 0) child.iconColor = 'magenta';
+      if (j % 5 === 0) child.iconColor = 'green';
+      if (j % 7 === 0) child.iconColor = 'blue';
+      if (j % 11 === 0) child.iconColor = 'red';
+
+      parent.addChild(child);
+    }
+  }
+  return root;
 }
 
 function createTreeMock(lazyLoading: boolean): TreeNode<string> {

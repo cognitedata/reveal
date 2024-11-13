@@ -3,13 +3,16 @@
  */
 
 import type { List3DNodesQuery, CogniteClient, ListResponse, Node3D } from '@cognite/sdk';
-import { CadTreeNode } from './CadTreeNode';
+import { CadTreeNode, type OnLoadedAction } from './CadTreeNode';
 
+// #region RevisionId
 export type RevisionId = {
   modelId: number;
   revisionId: number;
 };
+// #endregion
 
+// #region fetch
 type FetchNodesArgs = {
   sdk: CogniteClient;
   revisionId: RevisionId;
@@ -74,13 +77,32 @@ async function loadNode3DArray(args: FetchNodesArgs): Promise<ListResponse<Node3
   });
 }
 
+// #endregion
+
+// #region forceNodeInTree
+
 type FetchAncestorsArgs = {
   sdk: CogniteClient;
   revisionId: RevisionId;
   nodeId: number;
+  onLoaded?: OnLoadedAction;
 };
 
-export async function fetchAncestors(args: FetchAncestorsArgs): Promise<Node3D[]> {
+export async function forceNodeInTree(
+  root: CadTreeNode,
+  args: FetchAncestorsArgs
+): Promise<boolean> {
+  const cadTreeNode = root.getThisOrDescendantByNodeId(args.nodeId);
+  if (cadTreeNode !== undefined) {
+    return true;
+  }
+  await fetchAncestors(args).then((loadedNodes) => {
+    return root.insertAncestors(loadedNodes, args.onLoaded);
+  });
+  return true;
+}
+
+async function fetchAncestors(args: FetchAncestorsArgs): Promise<Node3D[]> {
   const data = await args.sdk.revisions3D.list3DNodeAncestors(
     args.revisionId.modelId,
     args.revisionId.revisionId,
@@ -88,3 +110,5 @@ export async function fetchAncestors(args: FetchAncestorsArgs): Promise<Node3D[]
   );
   return data.items;
 }
+
+// #endregion
