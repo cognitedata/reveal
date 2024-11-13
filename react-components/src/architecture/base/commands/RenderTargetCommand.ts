@@ -28,7 +28,7 @@ export abstract class RenderTargetCommand extends BaseCommand {
 
   public get renderTarget(): RevealRenderTarget {
     if (this._renderTarget === undefined) {
-      throw new Error('Render target is not set');
+      throw new Error('Render target is not set. Have you called attach() on this command?');
     }
     return this._renderTarget;
   }
