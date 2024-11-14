@@ -209,7 +209,7 @@ export class TreeNode<T = any> implements ITreeNode {
   }
 
   // ==================================================
-  // INSTANCE METHODS: Get selection and checked nodes
+  // INSTANCE METHODS: Selection and checked nodes
   // ==================================================
 
   public getSelectedNodes(): Array<TreeNode<T>> {
@@ -235,6 +235,12 @@ export class TreeNode<T = any> implements ITreeNode {
   public deselectAll(): void {
     for (const descendant of this.getThisAndDescendants()) {
       descendant.isSelected = false;
+    }
+  }
+
+  public expandAllAncestors(): void {
+    for (const ancestor of this.getAncestors()) {
+      ancestor.isExpanded = true;
     }
   }
 

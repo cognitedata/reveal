@@ -16,15 +16,19 @@ export type ForceNodeInTreeArgs = {
 export async function forceNodeInTree(
   root: CadTreeNode,
   args: ForceNodeInTreeArgs
-): Promise<boolean> {
+): Promise<CadTreeNode | undefined> {
   const cadTreeNode = root.getThisOrDescendantByNodeId(args.nodeId);
   if (cadTreeNode !== undefined) {
-    return true;
+    cadTreeNode.expandAllAncestors();
+    return cadTreeNode; // already in the tree
   }
-  await fetchAncestors(args).then((loadedNodes) => {
+  const newTreeNode = await fetchAncestors(args).then((loadedNodes) => {
     return root.insertAncestors(loadedNodes, args.onLoaded);
   });
-  return true;
+  if (newTreeNode !== undefined) {
+    newTreeNode.expandAllAncestors();
+  }
+  return newTreeNode;
 }
 
 async function fetchAncestors(args: ForceNodeInTreeArgs): Promise<Node3D[]> {

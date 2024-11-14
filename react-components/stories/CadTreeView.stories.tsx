@@ -197,12 +197,11 @@ function testInsert(
     subtreeSize: 14
   });
   root.deselectAll();
-  root.insertAncestors(newNodes);
-
-  const insertedNode = root.getDescendantByNodeId(newNode.id);
+  const insertedNode = root.insertAncestors(newNodes);
   if (insertedNode === undefined) {
     return undefined;
   }
+  insertedNode.expandAllAncestors();
   insertedNode.isSelected = true;
   return insertedNode;
 }

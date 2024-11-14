@@ -59,7 +59,7 @@ export class CadTreeNode extends TreeNode {
   }
 
   // ==================================================
-  // INSTANCE METHODS: Access functions
+  // INSTANCE METHODS: Access methods
   // ==================================================
 
   public getThisOrDescendantByTreeIndex(treeIndex: number): CadTreeNode | undefined {
@@ -110,32 +110,37 @@ export class CadTreeNode extends TreeNode {
   // INSTANCE METHODS: Misc
   // ==================================================
 
-  public insertAncestors(newNodes: SubsetOfNode3D[], onLoaded?: OnLoadedAction): boolean {
+  public insertAncestors(
+    newNodes: SubsetOfNode3D[],
+    onLoaded?: OnLoadedAction
+  ): CadTreeNode | undefined {
+    // Returns the last create node
     // Note: New nodes are always added last among the children
     if (newNodes.length === 0) {
-      return false;
+      return undefined;
     }
     // Check the first, it must be the root
     const rootNode = newNodes[0];
     if (rootNode.id !== this.id) {
       throw new Error('The root node is not the same as the current node');
     }
-
     // eslint-disable-next-line @typescript-eslint/no-this-alias
     let parent: CadTreeNode = this;
     for (let i = 1; i < newNodes.length; i++) {
-      parent.isExpanded = true;
       const newNode = newNodes[i];
+
       const child = parent.getChildByNodeId(newNode.id);
       if (child !== undefined) {
         parent = child; // The node exist in the tree
         continue;
       }
+      // Create a new node
       const cadTreeNode = new CadTreeNode(newNode);
       if (onLoaded !== undefined) {
         onLoaded(cadTreeNode, parent);
       }
       const lastChild = parent.getLastChild() as CadTreeNode;
+      // Give the cursor from the last child to the new node
       if (lastChild !== undefined && lastChild.needLoadSiblings) {
         cadTreeNode.loadSiblingCursor = lastChild.loadSiblingCursor;
         lastChild.loadSiblingCursor = undefined;
@@ -143,6 +148,6 @@ export class CadTreeNode extends TreeNode {
       parent.addChild(cadTreeNode);
       parent = cadTreeNode;
     }
-    return true;
+    return parent;
   }
 }

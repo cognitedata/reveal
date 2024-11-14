@@ -13,21 +13,21 @@ export function getId(node: ITreeNode): string {
 }
 
 export function scrollToTreeIndex(container: HTMLElement | undefined, treeIndex: number): void {
-  scrollToId(container, getIdByTreeIndex(treeIndex));
+  scrollToElementId(container, getIdByTreeIndex(treeIndex));
 }
 
 export function scrollToNode(container: HTMLElement | undefined, node: CadTreeNode): void {
   for (const ancestor of node.getAncestors()) {
     ancestor.isExpanded = true;
   }
-  scrollToId(container, getId(node));
+  scrollToElementId(container, getId(node));
 }
 
 function getIdByTreeIndex(treeIndex: number): string {
   return treeIndex.toString();
 }
 
-function scrollToId(container: HTMLElement | undefined, id: string): void {
+function scrollToElementId(container: HTMLElement | undefined, id: string): void {
   if (container === undefined) {
     return;
   }
