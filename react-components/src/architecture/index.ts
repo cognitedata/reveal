@@ -105,6 +105,7 @@ export { Image360AnnotationDomainObject } from './concrete/annotation360/Image36
 export { Image360AnnotationTool } from './concrete/annotation360/Image360AnnotationTool';
 export { Image360AnnotationCreator } from './concrete/annotation360/Image360AnnotationCreator';
 export { Image360AnnotationEditTypeCommand } from './concrete/annotation360/Image360AnnotationEditTypeCommand';
+export { DeleteSelectedImage360AnnotationCommand } from './concrete/annotation360/DeleteSelectedImage360AnnotationCommand';
 
 // New architecture: tree view nodes
 export type { ITreeNode } from './base/treeView/ITreeNode';

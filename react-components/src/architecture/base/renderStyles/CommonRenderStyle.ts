@@ -10,6 +10,4 @@ export abstract class CommonRenderStyle extends RenderStyle {
   // ==================================================
 
   public depthTest = true;
-
-  public transparent = false;
 }
