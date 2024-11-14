@@ -96,6 +96,9 @@ export class PointerEventsTarget {
     if (!this.isEnabled) {
       return;
     }
+    if (!isMouse(event)) {
+      return;
+    }
     if (isAnyMouseButtonPressed(event)) {
       return;
     }
