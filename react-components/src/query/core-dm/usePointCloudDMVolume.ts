@@ -3,53 +3,40 @@
  */
 
 import { type UseQueryResult, useQuery } from '@tanstack/react-query';
+import { type CadPointCloudModelWithModelIdRevisionId } from '../../components/Reveal3DResources/types';
 import {
-  type CadPointCloudModelWithModelIdRevisionId,
-  type PointCloudModelOptions
-} from '../Reveal3DResources/types';
-import { type QueryRequest } from '@cognite/sdk';
-import {
-  COGNITE_ASSET_SOURCE,
-  COGNITE_POINT_CLOUD_VOLUME_SOURCE,
-  COGNITE_VISUALIZABLE_SOURCE
+  type COGNITE_ASSET_SOURCE,
+  type COGNITE_POINT_CLOUD_VOLUME_SOURCE
 } from '../../data-providers/core-dm-provider/dataModels';
-import { type DmsUniqueIdentifier } from '../../data-providers';
-import { useFdmSdk } from '../RevealCanvas/SDKProvider';
+import { useFdmSdk } from '../../components/RevealCanvas/SDKProvider';
 import {
   getDMSModelsForIds,
   getDMSRevisionsForRevisionIdsAndModelRefs
 } from '../../data-providers/utils/getDMSModelRevisionRefs';
 import {
-  ASSET_PROPERTIES_LIST,
   type AssetProperties,
-  getRevisionContainsAnyFilter,
-  isPointCloudVolumeFilter,
-  POINT_CLOUD_VOLUME_REVISIONS_OBJECT3D_PROPERTIES_LIST,
   type PointCloudVolumeObject3DProperties
 } from '../../data-providers/utils/filters';
-import { type PointCloudVolumeWithAsset } from './types';
+import { type PointCloudVolumeWithAsset } from '../../components/CacheProvider/types';
 import { type FdmSDK } from '../../data-providers/FdmSDK';
+import { type DMVolumeModelDataResult } from '../../components/Reveal3DResources/useCalculatePointCloudStyling';
+import { pointCloudDMVolumesQuery } from './pointCloudDMVolumesQuery';
 
-export const usePointCloudDMAnnotation = (
+export const usePointCloudDMVolume = (
   modelsData: CadPointCloudModelWithModelIdRevisionId[]
-): UseQueryResult<
-  Array<{
-    model: PointCloudModelOptions;
-    pointCloudDMVolumeWithAsset: PointCloudVolumeWithAsset[];
-  }>
-> => {
+): UseQueryResult<DMVolumeModelDataResult[]> => {
   const fdmSdk = useFdmSdk();
   return useQuery({
     queryKey: [
       'reveal',
       'react-components',
-      'models-pointcloud-dm-annotations-mappings',
+      'models-pointcloud-dm-volumes-mappings',
       ...modelsData.map((model) => `${model.modelId}/${model.revisionId}`).sort()
     ],
     queryFn: async () => {
       return await Promise.all(
         modelsData.map(async (model) => {
-          const pointCloudDMVolumeWithAsset = await getPointCloudDMAnnotationsForModel(
+          const pointCloudDMVolumeWithAsset = await getPointCloudDMVolumesForModel(
             model.modelId,
             model.revisionId,
             fdmSdk
@@ -66,7 +53,7 @@ export const usePointCloudDMAnnotation = (
   });
 };
 
-const getPointCloudDMAnnotationsForModel = async (
+const getPointCloudDMVolumesForModel = async (
   modelId: number,
   revisionId: number,
   fdmSdk: FdmSDK
@@ -77,7 +64,7 @@ const getPointCloudDMAnnotationsForModel = async (
     [revisionId],
     fdmSdk
   );
-  const query = getPointCloudDMAnnotationsQuery(revisionRef);
+  const query = pointCloudDMVolumesQuery(revisionRef);
 
   const response = await fdmSdk.queryNodesAndEdges<
     typeof query,
@@ -136,67 +123,4 @@ const getPointCloudDMAnnotationsForModel = async (
     };
   });
   return pointCloudVolumesWithAssets;
-};
-
-const getPointCloudDMAnnotationsQuery = (revisionRef: DmsUniqueIdentifier[]): QueryRequest => {
-  return {
-    with: {
-      pointCloudVolumes: {
-        nodes: {
-          filter: {
-            and: [
-              isPointCloudVolumeFilter,
-              getRevisionContainsAnyFilter([
-                {
-                  externalId: revisionRef[0].externalId,
-                  space: revisionRef[0].space
-                }
-              ])
-            ]
-          }
-        },
-        limit: 1000
-      },
-      object3D: {
-        nodes: {
-          from: 'pointCloudVolumes',
-          through: {
-            view: COGNITE_POINT_CLOUD_VOLUME_SOURCE,
-            identifier: 'object3D'
-          },
-          direction: 'outwards'
-        },
-        limit: 1000
-      },
-      assets: {
-        nodes: {
-          from: 'object3D',
-          through: {
-            view: COGNITE_VISUALIZABLE_SOURCE,
-            identifier: 'object3D'
-          }
-        },
-        limit: 1000
-      }
-    },
-    select: {
-      pointCloudVolumes: {
-        sources: [
-          {
-            source: COGNITE_POINT_CLOUD_VOLUME_SOURCE,
-            properties: POINT_CLOUD_VOLUME_REVISIONS_OBJECT3D_PROPERTIES_LIST
-          }
-        ]
-      },
-      object3D: {},
-      assets: {
-        sources: [
-          {
-            source: COGNITE_ASSET_SOURCE,
-            properties: ASSET_PROPERTIES_LIST
-          }
-        ]
-      }
-    }
-  } as const satisfies QueryRequest;
 };

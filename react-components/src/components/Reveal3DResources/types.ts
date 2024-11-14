@@ -96,7 +96,10 @@ export type NodeDataResult = {
 
 export type FdmAssetStylingGroup = {
   fdmAssetExternalIds: DmsUniqueIdentifier[];
-  style: { cad: NodeAppearance };
+  style: {
+    cad?: NodeAppearance;
+    pointcloud?: NodeAppearance;
+  };
 };
 
 export type AssetStylingGroup = {
