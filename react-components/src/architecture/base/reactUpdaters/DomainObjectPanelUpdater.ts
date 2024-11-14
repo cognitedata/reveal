@@ -28,7 +28,10 @@ export class DomainObjectPanelUpdater {
     if (this._setDomainObject === undefined) {
       return;
     }
-    if (domainObject !== undefined && domainObject.hasPanelInfo) {
+    if (domainObject !== undefined) {
+      if (!domainObject.hasPanelInfo) {
+        return;
+      }
       this._setDomainObject({ domainObject });
     } else {
       this.hide();
@@ -43,6 +46,9 @@ export class DomainObjectPanelUpdater {
   }
 
   public static notify(domainObject: DomainObject, change: DomainObjectChange): void {
+    if (!domainObject.hasPanelInfo) {
+      return;
+    }
     if (this._setDomainObject === undefined) {
       return;
     }
