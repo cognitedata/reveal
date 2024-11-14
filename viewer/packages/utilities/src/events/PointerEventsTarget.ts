@@ -57,14 +57,14 @@ export class PointerEventsTarget {
 
   public addEventListeners(): void {
     this._domElement.addEventListener('pointerdown', this.onPointerDown);
-    this._domElement.addEventListener('pointermove', this.onHover);
+    this._domElement.addEventListener('pointermove', this.onPointerHover);
     window.addEventListener('pointermove', this.onPointerDrag);
     window.addEventListener('pointerup', this.onPointerUp);
   }
 
   public removeEventListeners(): void {
     this._domElement.removeEventListener('pointerdown', this.onPointerDown);
-    this._domElement.removeEventListener('pointermove', this.onHover);
+    this._domElement.removeEventListener('pointermove', this.onPointerHover);
     window.removeEventListener('pointermove', this.onPointerDrag);
     window.removeEventListener('pointerup', this.onPointerUp);
   }
@@ -92,7 +92,7 @@ export class PointerEventsTarget {
     this._isLeftDown = leftButton;
   };
 
-  private readonly onHover = debounce((event: PointerEvent) => {
+  private readonly onPointerHover = debounce((event: PointerEvent) => {
     if (!this.isEnabled) {
       return;
     }
