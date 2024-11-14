@@ -15,9 +15,10 @@ import { useAssetMappingForTreeIndex } from '../components/CacheProvider/AssetMa
 import { type NodeAssetMappingResult } from '../components/CacheProvider/AssetMappingAndNode3DCache';
 import { usePointCloudAnnotationMappingForAssetId } from '../components/CacheProvider/PointCloudAnnotationCacheProvider';
 import { type PointCloudAnnotationMappedAssetData } from './types';
-import { MOUSE, Vector2 } from 'three';
+import { MOUSE, Vector2, type Vector3 } from 'three';
 import { type DmsUniqueIdentifier, type Source } from '../data-providers/FdmSDK';
 import { useRenderTarget, useReveal } from '../components/RevealCanvas/ViewerContext';
+import { isActiveEditTool } from '../architecture/base/commands/BaseEditTool';
 
 export type AssetMappingDataResult = {
   cadNode: Node3D;
@@ -31,13 +32,23 @@ export type FdmNodeDataResult = {
 };
 
 export type ClickedNodeData = {
+  mouseButton?: MOUSE;
+  position?: Vector2;
   fdmResult?: FdmNodeDataResult;
   assetMappingResult?: AssetMappingDataResult;
   pointCloudAnnotationMappingResult?: PointCloudAnnotationMappedAssetData[];
   intersection: AnyIntersection | Image360AnnotationIntersection;
 };
 
-export const useClickedNodeData = (): ClickedNodeData | undefined => {
+export const useClickedNodeData = (options?: {
+  leftClick?: boolean;
+  rightClick?: boolean;
+  disableOnEditTool?: boolean;
+}): ClickedNodeData | undefined => {
+  const leftClick = options?.leftClick ?? true;
+  const rightClick = options?.rightClick ?? false;
+  const disableOnEditTool = options?.disableOnEditTool ?? true;
+
   const viewer = useReveal();
   const renderTarget = useRenderTarget();
 
@@ -47,16 +58,30 @@ export const useClickedNodeData = (): ClickedNodeData | undefined => {
     Image360AnnotationIntersection | undefined
   >(undefined);
 
+  const [position, setPosition] = useState<Vector2 | undefined>(undefined);
+  const [mouseButton, setMouseButton] = useState<MOUSE | undefined>(undefined);
+
   useEffect(() => {
     const callback = (event: PointerEventData): void => {
       void (async () => {
-        if (event.button !== MOUSE.LEFT || !renderTarget.commandsController.isDefaultToolActive) {
+        const activatedOnLeftClick = leftClick && event.button === MOUSE.LEFT;
+        const activatedOnRightClick = rightClick && event.button === MOUSE.RIGHT;
+
+        if (
+          !(activatedOnLeftClick || activatedOnRightClick) ||
+          (disableOnEditTool && isActiveEditTool(renderTarget.commandsController))
+        ) {
+          setPosition(undefined);
+          setMouseButton(undefined);
           return;
         }
 
-        const intersection = await viewer.getAnyIntersectionFromPixel(
-          new Vector2(event.offsetX, event.offsetY)
-        );
+        const position = new Vector2(event.offsetX, event.offsetY);
+
+        setPosition(position);
+        setMouseButton(event.button);
+
+        const intersection = await viewer.getAnyIntersectionFromPixel(position);
 
         const annotationIntersection = await viewer.get360AnnotationIntersectionFromPixel(
           event.offsetX,
@@ -92,6 +117,8 @@ export const useClickedNodeData = (): ClickedNodeData | undefined => {
     usePointCloudAnnotationMappingForAssetId(intersection);
 
   return useCombinedClickedNodeData(
+    mouseButton,
+    position,
     nodeDataPromises,
     assetMappingResult,
     pointCloudAssetMappingResult,
@@ -100,6 +127,8 @@ export const useClickedNodeData = (): ClickedNodeData | undefined => {
 };
 
 const useCombinedClickedNodeData = (
+  mouseButton: MOUSE | undefined,
+  position: Vector2 | undefined,
   fdmPromises: FdmNodeDataPromises | undefined,
   assetMappings: NodeAssetMappingResult | undefined,
   pointCloudAssetMappings: PointCloudAnnotationMappedAssetData[] | undefined,
@@ -123,6 +152,8 @@ const useCombinedClickedNodeData = (
           };
 
     setClickedNodeData({
+      mouseButton,
+      position,
       fdmResult: fdmData,
       assetMappingResult: assetMappingData,
       pointCloudAnnotationMappingResult: pointCloudAssetMappings,
@@ -175,3 +206,14 @@ const useFdmData = (
 
   return fdmData;
 };
+
+export function getClickedNodeDataIntersectionPosition(
+  clickedNodeData: ClickedNodeData
+): Vector3 | undefined {
+  const intersection = clickedNodeData.intersection;
+  if (intersection !== undefined && intersection.type === 'image360Annotation') {
+    return undefined;
+  }
+
+  return intersection.point;
+}

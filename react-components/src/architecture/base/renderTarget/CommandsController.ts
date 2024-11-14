@@ -127,6 +127,16 @@ export class CommandsController extends PointerEvents {
     return this.activateDefaultTool();
   }
 
+  public getToolByType<T extends BaseTool>(classType: Class<T>): T | undefined {
+    for (const tool of this._commands) {
+      if (isInstanceOf(tool, classType)) {
+        return tool;
+      }
+    }
+
+    return undefined;
+  }
+
   public setActiveToolByType<T extends BaseTool>(classType: Class<T>): boolean {
     for (const tool of this._commands) {
       if (isInstanceOf(tool, classType)) {

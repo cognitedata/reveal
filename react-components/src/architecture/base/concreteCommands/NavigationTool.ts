@@ -46,9 +46,11 @@ export class NavigationTool extends BaseTool {
       }
       return isEntered;
     });
-    if (!(await promise)) {
-      await this.cameraManager.onClick(event);
+    if (await promise) {
+      return;
     }
+    await super.onClick(event);
+    await this.cameraManager.onClick(event);
   }
 
   public override async onDoubleClick(event: PointerEvent): Promise<void> {
