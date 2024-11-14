@@ -85,7 +85,7 @@ export class RevealButtons {
     );
   };
 
-  static Image360AnnotationsButton = (prop: ButtonProp): ReactElement =>
+  static Image360AnnotationTool = (prop: ButtonProp): ReactElement =>
     createButtonFromCommandConstructor(() => new Image360AnnotationTool(), prop);
 
   // Annotations
