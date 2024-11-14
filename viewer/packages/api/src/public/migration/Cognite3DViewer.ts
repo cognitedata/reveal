@@ -1734,7 +1734,7 @@ export class Cognite3DViewer<DataSourceT extends DataSourceType = ClassicDataSou
    * @returns True if the event was handled, false otherwise.
    * @beta
    */
-  public onHover360Images(event: MouseEvent): boolean {
+  public onHover360Images(event: PointerEvent): boolean {
     if (this._image360ApiHelper === undefined) {
       return false;
     }
