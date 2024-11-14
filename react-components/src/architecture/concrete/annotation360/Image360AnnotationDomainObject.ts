@@ -32,7 +32,7 @@ export class Image360AnnotationDomainObject extends LineDomainObject {
   // ==================================================
 
   public override get typeName(): TranslateKey {
-    return { fallback: '360 annotation' };
+    return { fallback: '360 image annotation' };
   }
 
   public override clone(what?: symbol): DomainObject {
