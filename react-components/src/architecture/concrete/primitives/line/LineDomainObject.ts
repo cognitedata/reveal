@@ -49,6 +49,10 @@ export abstract class LineDomainObject extends VisualDomainObject {
     return point;
   }
 
+  public getCopyOfTransformedPoint(point: Vector3): Vector3 {
+    return point;
+  }
+
   // ==================================================
   // INSTANCE PROPERTIES
   // ==================================================

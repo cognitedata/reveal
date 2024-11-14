@@ -85,7 +85,7 @@ export class Image360AnnotationTool extends PrimitiveEditTool {
     super.onDeactivate();
   }
 
-  public override async onHoverByDebounce(event: PointerEvent): Promise<void> {
+  public override async onHover(event: PointerEvent): Promise<void> {
     if (!this.isEdit) {
       const creator = this._creator;
       if (creator === undefined) {
@@ -98,6 +98,13 @@ export class Image360AnnotationTool extends PrimitiveEditTool {
         this.setDefaultCursor();
         return;
       }
+    }
+    super.onHover(event);
+  }
+
+  public override async onHoverByDebounce(event: PointerEvent): Promise<void> {
+    if (!this.isEdit) {
+      return; // Used by onHover
     }
     await super.onHoverByDebounce(event);
   }

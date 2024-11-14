@@ -7,7 +7,7 @@ import { type RenderStyle } from '../../base/renderStyles/RenderStyle';
 import { PrimitiveType } from '../../base/utilities/primitives/PrimitiveType';
 import { type TranslateKey } from '../../base/utilities/TranslateKey';
 import { LineDomainObject } from '../primitives/line/LineDomainObject';
-import { Color } from 'three';
+import { Color, Vector3 } from 'three';
 import { LineRenderStyle } from '../primitives/line/LineRenderStyle';
 import { type DirectRelationReference } from '@cognite/sdk';
 
@@ -17,11 +17,22 @@ export class Image360AnnotationDomainObject extends LineDomainObject {
   // ==================================================
 
   public connectedImageId: string | DirectRelationReference;
+  public readonly center = new Vector3(); // The points are unit vectors from the center
 
   public constructor(connectedImageId: string | DirectRelationReference) {
     super(PrimitiveType.Polygon);
     this.color = new Color(Color.NAMES.red);
     this.connectedImageId = connectedImageId;
+  }
+
+  public override getTransformedPoint(point: Vector3): Vector3 {
+    return this.getCopyOfTransformedPoint(point);
+  }
+
+  public override getCopyOfTransformedPoint(point: Vector3): Vector3 {
+    const clone = this.center.clone();
+    clone.addScaledVector(point, 5);
+    return point;
   }
 
   // ==================================================
