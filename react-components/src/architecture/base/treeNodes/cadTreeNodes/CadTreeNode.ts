@@ -62,6 +62,22 @@ export class CadTreeNode extends TreeNode {
   // INSTANCE METHODS: Access methods
   // ==================================================
 
+  public getChildByNodeId(nodeId: number): CadTreeNode | undefined {
+    for (const child of this.getChildrenByType(CadTreeNode)) {
+      if (child.id === nodeId) {
+        return child;
+      }
+    }
+  }
+
+  public getThisOrDescendantByNodeId(nodeId: number): CadTreeNode | undefined {
+    for (const descendant of this.getThisAndDescendantsByType(CadTreeNode)) {
+      if (descendant.id === nodeId) {
+        return descendant;
+      }
+    }
+  }
+
   public getThisOrDescendantByTreeIndex(treeIndex: number): CadTreeNode | undefined {
     for (const descendant of this.getThisAndDescendantsByType(CadTreeNode)) {
       if (descendant.treeIndex === treeIndex) {
@@ -75,33 +91,6 @@ export class CadTreeNode extends TreeNode {
       const index = treeIndices.indexOf(descendant.treeIndex);
       if (index >= 0) {
         yield descendant;
-      }
-    }
-  }
-
-  public getThisOrDescendantByNodeId(nodeId: number): CadTreeNode | undefined {
-    for (const descendant of this.getThisAndDescendantsByType(CadTreeNode)) {
-      if (descendant.id === nodeId) {
-        return descendant;
-      }
-    }
-  }
-
-  public getChildByNodeId(nodeId: number): CadTreeNode | undefined {
-    for (const child of this.getChildren()) {
-      if (!(child instanceof CadTreeNode)) {
-        continue;
-      }
-      if (child.id === nodeId) {
-        return child;
-      }
-    }
-  }
-
-  public getDescendantByNodeId(nodeId: number): CadTreeNode | undefined {
-    for (const descendant of this.getDescendantsByType(CadTreeNode)) {
-      if (descendant.id === nodeId) {
-        return descendant;
       }
     }
   }

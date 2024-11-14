@@ -264,6 +264,17 @@ export class TreeNode<T = any> implements ITreeNode {
     }
   }
 
+  public *getChildrenByType<Type extends ITreeNode>(
+    classType: Class<Type>,
+    loadNodes?: LoadNodesAction
+  ): Generator<Type> {
+    for (const child of this.getChildren(loadNodes)) {
+      if (isInstanceOf(child, classType)) {
+        yield child;
+      }
+    }
+  }
+
   public *getDescendants(): Generator<TreeNode<T>> {
     for (const child of this.getChildren()) {
       yield child;

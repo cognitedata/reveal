@@ -22,13 +22,15 @@ export async function forceNodeInTree(
     cadTreeNode.expandAllAncestors();
     return cadTreeNode; // already in the tree
   }
-  const newTreeNode = await fetchAncestors(args).then((loadedNodes) => {
-    return root.insertAncestors(loadedNodes, args.onLoaded);
+  return await fetchAncestors(args).then((loadedNodes) => {
+    const newCadTreeNode = root.insertAncestors(loadedNodes, args.onLoaded);
+    if (newCadTreeNode === undefined) {
+      return undefined; // This should not happen
+    }
+    // A new now is created
+    newCadTreeNode.expandAllAncestors();
+    return newCadTreeNode;
   });
-  if (newTreeNode !== undefined) {
-    newTreeNode.expandAllAncestors();
-  }
-  return newTreeNode;
 }
 
 async function fetchAncestors(args: ForceNodeInTreeArgs): Promise<Node3D[]> {
