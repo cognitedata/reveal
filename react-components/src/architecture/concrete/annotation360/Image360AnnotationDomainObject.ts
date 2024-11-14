@@ -11,6 +11,7 @@ import { Color, Vector3 } from 'three';
 import { LineRenderStyle } from '../primitives/line/LineRenderStyle';
 import { type DirectRelationReference } from '@cognite/sdk';
 
+const DEFAULT_VECTOR_LENGTH = 5;
 export class Image360AnnotationDomainObject extends LineDomainObject {
   // ==================================================
   // CONSTRUCTOR
@@ -18,6 +19,7 @@ export class Image360AnnotationDomainObject extends LineDomainObject {
 
   public connectedImageId: string | DirectRelationReference;
   public readonly center = new Vector3(); // The points are unit vectors from the center
+  public vectorLength = DEFAULT_VECTOR_LENGTH;
 
   public constructor(connectedImageId: string | DirectRelationReference) {
     super(PrimitiveType.Polygon);
@@ -59,7 +61,7 @@ export class Image360AnnotationDomainObject extends LineDomainObject {
 
   public override getCopyOfTransformedPoint(point: Vector3, target: Vector3): Vector3 {
     target.copy(this.center);
-    target.addScaledVector(point, 5);
+    target.addScaledVector(point, this.vectorLength);
     return target;
   }
 }
