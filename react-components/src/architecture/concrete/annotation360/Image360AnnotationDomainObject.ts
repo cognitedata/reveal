@@ -25,16 +25,6 @@ export class Image360AnnotationDomainObject extends LineDomainObject {
     this.connectedImageId = connectedImageId;
   }
 
-  public override getTransformedPoint(point: Vector3): Vector3 {
-    return this.getCopyOfTransformedPoint(point, new Vector3());
-  }
-
-  public override getCopyOfTransformedPoint(point: Vector3, target: Vector3): Vector3 {
-    target.copy(this.center);
-    target.addScaledVector(point, 5);
-    return target;
-  }
-
   // ==================================================
   // OVERRIDES
   // ==================================================
@@ -61,5 +51,15 @@ export class Image360AnnotationDomainObject extends LineDomainObject {
     style.depthTest = false;
     style.transparent = true; // Needed to make the line visible through other objects
     return style;
+  }
+
+  public override getTransformedPoint(point: Vector3): Vector3 {
+    return this.getCopyOfTransformedPoint(point, new Vector3());
+  }
+
+  public override getCopyOfTransformedPoint(point: Vector3, target: Vector3): Vector3 {
+    target.copy(this.center);
+    target.addScaledVector(point, 5);
+    return target;
   }
 }

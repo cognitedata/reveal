@@ -37,33 +37,20 @@ export abstract class LineDomainObject extends VisualDomainObject {
   // INSTANCE PROPERTIES
   // ==================================================
 
-  public get pointCount(): number {
-    return this.points.length;
-  }
-
-  public get loopLength(): number {
-    return this.primitiveType === PrimitiveType.Polygon ? this.pointCount + 1 : this.pointCount;
-  }
-
-  public getTransformedPoint(point: Vector3): Vector3 {
-    return point;
-  }
-
-  public getCopyOfTransformedPoint(point: Vector3, target: Vector3): Vector3 {
-    target.copy(point);
-    return target;
-  }
-
-  // ==================================================
-  // INSTANCE PROPERTIES
-  // ==================================================
-
   public get renderStyle(): LineRenderStyle {
     return this.getRenderStyle() as LineRenderStyle;
   }
 
   public get primitiveType(): PrimitiveType {
     return this._primitiveType;
+  }
+
+  public get pointCount(): number {
+    return this.points.length;
+  }
+
+  public get loopLength(): number {
+    return this.primitiveType === PrimitiveType.Polygon ? this.pointCount + 1 : this.pointCount;
   }
 
   // ==================================================
@@ -179,6 +166,19 @@ export abstract class LineDomainObject extends VisualDomainObject {
 
   protected override createThreeView(): ThreeView | undefined {
     return new LineView();
+  }
+
+  // ==================================================
+  // VIRTUAL METHODS: To be overridden
+  // ==================================================
+
+  public getTransformedPoint(point: Vector3): Vector3 {
+    return point;
+  }
+
+  public getCopyOfTransformedPoint(point: Vector3, target: Vector3): Vector3 {
+    target.copy(point);
+    return target;
   }
 
   // ==================================================
