@@ -22,7 +22,7 @@ import { modelExists } from '../../utilities/modelExists';
 import { getViewerResourceCount } from '../../utilities/getViewerResourceCount';
 import { type PointCloudModelStyling } from './types';
 import { useModelIdRevisionIdFromModelOptions } from '../../hooks/useModelIdRevisionIdFromModelOptions';
-import { type AddResourceOptions } from '../Reveal3DResources';
+import { isClassicIdentifier, isDMIdentifier } from '../Reveal3DResources';
 import { isSameModel } from '../../utilities/isSameModel';
 
 export type CognitePointCloudModelProps = {
@@ -30,7 +30,7 @@ export type CognitePointCloudModelProps = {
   styling?: PointCloudModelStyling;
   transform?: Matrix4;
   onLoad?: (model: CognitePointCloudModel<DataSourceType>) => void;
-  onLoadError?: (options: AddModelOptions, error: any) => void;
+  onLoadError?: (options: AddModelOptions<DataSourceType>, error: any) => void;
 };
 
 export function PointCloudContainer({
@@ -72,7 +72,7 @@ export function PointCloudContainer({
       })
       .catch((error) => {
         const errorHandler = onLoadError ?? defaultLoadErrorHandler;
-        errorHandler(addModelOptions as AddModelOptions, error);
+        errorHandler(addModelOptions, error);
         setReveal3DResourceLoadFailCount((p) => p + 1);
         return () => {
           setReveal3DResourceLoadFailCount((p) => p - 1);
@@ -106,13 +106,12 @@ export function PointCloudContainer({
 
     async function getOrAddModel(): Promise<CognitePointCloudModel<DataSourceType>> {
       const viewerModel = viewer.models.find((pointCloudModel) =>
-        isSameModel(pointCloudModel as AddResourceOptions, addModelOptions as AddResourceOptions)
+        isSameModel(pointCloudModel, addModelOptions)
       );
 
       if (viewerModel !== undefined) {
         return await Promise.resolve(viewerModel as CognitePointCloudModel<DataSourceType>);
       }
-      console.log('Adding point cloud model with addModelOptions:', addModelOptions);
       return await viewer.addPointCloudModel(addModelOptions);
     }
   }
@@ -129,8 +128,14 @@ export function PointCloudContainer({
   }
 }
 
-function defaultLoadErrorHandler(addOptions: AddModelOptions, error: any): void {
-  console.warn(
-    `Failed to load (${addOptions.modelId}, ${addOptions.revisionId}): ${JSON.stringify(error)}`
-  );
+function defaultLoadErrorHandler(addOptions: AddModelOptions<DataSourceType>, error: any): void {
+  if (isClassicIdentifier(addOptions)) {
+    console.warn(
+      `Failed to load (${addOptions.modelId}, ${addOptions.revisionId}): ${JSON.stringify(error)}`
+    );
+  } else if (isDMIdentifier(addOptions)) {
+    console.warn(
+      `Failed to load (${addOptions.revisionExternalId}, ${addOptions.revisionSpace}): ${JSON.stringify(error)}`
+    );
+  }
 }

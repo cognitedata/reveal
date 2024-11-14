@@ -8,7 +8,7 @@ import {
   COGNITE_3D_REVISION_SOURCE
 } from '../../data-providers/core-dm-provider/dataModels';
 
-export const revisionodelQuery = {
+export const revisionModelQuery = {
   with: {
     revision: {
       nodes: {

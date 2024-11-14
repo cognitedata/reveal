@@ -374,8 +374,8 @@ export const Main: Story = {
   args: {
     resources: [
       {
-        revisionExternalId: 'cog_3d_revision_1617304887543490',
-        revisionSpace: 'core_dm_data_space',
+        modelId: 3544114490298106,
+        revisionId: 6405404576933316,
         styling: {
           default: {
             color: new Color('#efefef')
@@ -383,13 +383,13 @@ export const Main: Story = {
           mapped: {
             color: new Color('#c5cbff')
           }
-        }
-        // siteId: 'celanese1'
+        },
+        siteId: 'celanese1'
+      },
+      {
+        modelId: 7646043527629245,
+        revisionId: 6059566106376463
       }
-      // {
-      //   modelId: 7646043527629245,
-      //   revisionId: 6059566106376463
-      // }
     ]
   },
   render: ({ resources }: { resources: AddResourceOptions[] }) => {

@@ -23,7 +23,7 @@ export async function getModelIdAndRevisionIdFromExternalId(
   }
   const revisionProperties = result.items.revision[0].properties.cdf_cdm[
     'Cognite3DRevision/v1'
-  ] as unknown as Cognite3DRevisionProperties;
+  ] as Cognite3DRevisionProperties;
   const modelExternalId = revisionProperties.model3D.externalId;
 
   const modelId = extractNumericId(modelExternalId);

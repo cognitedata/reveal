@@ -9,7 +9,9 @@ import {
   type DMInstanceRef,
   type NodeAppearance,
   isDMPointCloudModel,
-  isClassicPointCloudModel
+  isClassicPointCloudModel,
+  type ClassicDataSourceType,
+  type AddModelOptions
 } from '@cognite/reveal';
 import {
   type DefaultResourceStyling,
@@ -39,6 +41,16 @@ export type AnnotationModelDataResult = {
   annotationModel: PointCloudAnnotationModel[];
 };
 
+type MatchedModel = {
+  viewerModel: CognitePointCloudModel<DataSourceType>;
+  model: CadPointCloudModelWithModelIdRevisionId;
+};
+
+type PointCloudVolumeWithModel = {
+  model: PointCloudModelOptions;
+  pointCloudVolumes: Array<number | DMInstanceRef>;
+};
+
 export const useCalculatePointCloudStyling = (
   models: TypedReveal3DModel[],
   instanceGroups: AssetStylingGroup[],
@@ -49,7 +61,7 @@ export const useCalculatePointCloudStyling = (
     [models]
   );
 
-  const styledPointCloudModels = useCalculateMappedPointCloudStylingFromReveal(
+  const styledPointCloudModels = useCalculateMappedPointCloudStyling(
     pointCloudModelOptions,
     defaultResourceStyling?.pointcloud?.mapped
   );
@@ -125,7 +137,7 @@ function getMappedStyleGroupFromAssetIds(
     : undefined;
 }
 
-function useCalculateMappedPointCloudStylingFromReveal(
+function useCalculateMappedPointCloudStyling(
   models: PointCloudModelOptions[],
   defaultMappedNodeAppearance?: NodeAppearance
 ): StyledPointCloudModel[] {
@@ -137,19 +149,50 @@ function useCalculateMappedPointCloudStylingFromReveal(
     [addClassicModelOptionsResults]
   );
 
-  const modelsWithModelIdAndRevision: CadPointCloudModelWithModelIdRevisionId[] = useMemo(() => {
+  const modelsWithModelIdAndRevision = useModelsWithModelIdAndRevision(models, classicModelOptions);
+
+  const pointCloudViewerModels = viewerModels.filter(
+    (model): model is CognitePointCloudModel<DataSourceType> => model.type === 'pointcloud'
+  );
+  const matchedModels = useMatchedModels(pointCloudViewerModels, modelsWithModelIdAndRevision);
+
+  const pointCloudVolumesWithModel = usePointCloudVolumesWithModel(
+    matchedModels,
+    pointCloudViewerModels,
+    models
+  );
+
+  const modelsMappedVolumeStyleGroups = useModelsMappedVolumeStyleGroups(
+    models,
+    pointCloudVolumesWithModel,
+    defaultMappedNodeAppearance
+  );
+
+  return modelsMappedVolumeStyleGroups;
+}
+
+function useModelsWithModelIdAndRevision(
+  models: PointCloudModelOptions[],
+  classicModelOptions: Array<AddModelOptions<ClassicDataSourceType>>
+): CadPointCloudModelWithModelIdRevisionId[] {
+  return useMemo(() => {
     return classicModelOptions.map((model, index) => ({
       modelOptions: models[index],
       ...model
     }));
   }, [classicModelOptions, models]);
+}
 
-  const matchedModels = useMemo(() => {
+function useMatchedModels(
+  viewerModels: Array<CognitePointCloudModel<DataSourceType>>,
+  modelsWithModelIdAndRevision: CadPointCloudModelWithModelIdRevisionId[]
+): MatchedModel[] {
+  return useMemo(() => {
     return viewerModels.flatMap((viewerModel) => {
       if (viewerModel.type !== 'pointcloud') {
         return [];
       }
-      const model = viewerModel as CognitePointCloudModel<DataSourceType>;
+      const model = viewerModel;
       const matchedModel = modelsWithModelIdAndRevision.find((modelData) => {
         if (
           isDMPointCloudModel(model) &&
@@ -170,9 +213,15 @@ function useCalculateMappedPointCloudStylingFromReveal(
       });
       return matchedModel !== undefined ? [{ viewerModel, model: matchedModel }] : [];
     });
-  }, [modelsWithModelIdAndRevision, viewerModels]);
+  }, [viewerModels, modelsWithModelIdAndRevision]);
+}
 
-  const pointCloudVolumesWithModel = useMemo(() => {
+function usePointCloudVolumesWithModel(
+  matchedModels: MatchedModel[],
+  viewerModels: Array<CognitePointCloudModel<DataSourceType>>,
+  models: PointCloudModelOptions[]
+): PointCloudVolumeWithModel[] {
+  return useMemo(() => {
     if (matchedModels.length === 0 || viewerModels.length === 0) {
       return models
         .filter((model): model is PointCloudModelOptions => model.type === 'pointcloud')
@@ -181,24 +230,26 @@ function useCalculateMappedPointCloudStylingFromReveal(
           pointCloudVolumes: []
         }));
     }
-    return matchedModels
-      .filter(({ model }) => model.modelOptions.type === 'pointcloud')
-      .map(({ viewerModel, model }) => {
-        const pointCloudVolumes: Array<number | DMInstanceRef> = [];
-        (viewerModel as CognitePointCloudModel<DataSourceType>).stylableObjects.forEach(
-          (object) => {
-            if (isClassicPointCloudVolume(object)) {
-              pointCloudVolumes.push(object.annotationId);
-            } else if (isDMPointCloudVolume(object)) {
-              pointCloudVolumes.push(object.volumeInstanceRef);
-            }
-          }
-        );
-        return { model: model.modelOptions as PointCloudModelOptions, pointCloudVolumes };
+    return matchedModels.map(({ viewerModel, model }) => {
+      const pointCloudVolumes: Array<number | DMInstanceRef> = [];
+      viewerModel.stylableObjects.forEach((object) => {
+        if (isClassicPointCloudVolume(object)) {
+          pointCloudVolumes.push(object.annotationId);
+        } else if (isDMPointCloudVolume(object)) {
+          pointCloudVolumes.push(object.volumeInstanceRef);
+        }
       });
-  }, [matchedModels, viewerModels]);
+      return { model: model.modelOptions as PointCloudModelOptions, pointCloudVolumes };
+    });
+  }, [matchedModels, viewerModels, models]);
+}
 
-  const modelsMappedVolumeStyleGroups = useMemo(() => {
+function useModelsMappedVolumeStyleGroups(
+  models: PointCloudModelOptions[],
+  pointCloudVolumesWithModel: PointCloudVolumeWithModel[],
+  defaultMappedNodeAppearance?: NodeAppearance
+): StyledPointCloudModel[] {
+  return useMemo(() => {
     if (models.length === 0 || pointCloudVolumesWithModel.length === 0) {
       return EMPTY_ARRAY;
     }
@@ -214,15 +265,10 @@ function useCalculateMappedPointCloudStylingFromReveal(
       return { model: pointCloudVolumeWithModel.model, styleGroups };
     });
   }, [models, pointCloudVolumesWithModel, defaultMappedNodeAppearance]);
-
-  return modelsMappedVolumeStyleGroups;
 }
 
 function getMappedStyleGroupFromPointCloudVolume(
-  pointCloudVolumeData: Array<{
-    model: PointCloudModelOptions;
-    pointCloudVolumes: Array<number | DMInstanceRef>;
-  }>,
+  pointCloudVolumeData: PointCloudVolumeWithModel[],
   nodeAppearance: NodeAppearance
 ): PointCloudVolumeStylingGroup {
   const pointCloudVolumes = pointCloudVolumeData.flatMap((data) => {

@@ -3,48 +3,46 @@
  */
 import type { Meta, StoryObj } from '@storybook/react';
 import { type AddResourceOptions, Reveal3DResources, RevealCanvas, RevealContext } from '../src';
-import { Color } from 'three';
+import { Color, Matrix4 } from 'three';
 import { createSdkByUrlToken } from './utilities/createSdkByUrlToken';
 import { RevealResourcesFitCameraOnLoad } from './utilities/with3dResoursesFitCameraOnLoad';
+import { IndexSet } from '@cognite/reveal';
 
 const meta = {
   title: 'Example/Reveal3DResources',
   component: Reveal3DResources,
   tags: ['autodocs']
 } satisfies Meta<typeof Reveal3DResources>;
-
 export default meta;
 type Story = StoryObj<typeof meta>;
-
 const sdk = createSdkByUrlToken();
-
 export const Main: Story = {
   args: {
     resources: [
       {
-        revisionExternalId: 'cog_3d_revision_1617304887543490',
-        revisionSpace: 'core_dm_data_space',
+        modelId: 3544114490298106,
+        revisionId: 6405404576933316,
+        transform: new Matrix4().makeTranslation(40, 0, 0),
         styling: {
-          default: {
-            color: new Color('#efefef')
-          },
-          mapped: {
-            color: new Color('#c5cbff')
-          }
+          nodeGroups: [
+            { treeIndexSet: new IndexSet([2, 4, 6, 8]), style: { color: new Color('blue') } }
+          ]
         }
+      },
+      {
+        modelId: 3544114490298106,
+        revisionId: 6405404576933316,
+        styling: { default: { color: new Color('red') } },
+        transform: new Matrix4().makeTranslation(40, 10, 0)
+      },
+      {
+        siteId: 'c_RC_2',
+        transform: new Matrix4()
+      },
+      {
+        modelId: 3865289545346058,
+        revisionId: 4160448151596909
       }
-      // {
-      //   modelId: 8849721283303651,
-      //   revisionId: 8057110773821863,
-      //   styling: {
-      //     default: {
-      //       color: new Color('#efefef')
-      //     },
-      //     mapped: {
-      //       color: new Color('#c5cbff')
-      //     }
-      //   }
-      // }
     ]
   },
   render: ({ resources }: { resources: AddResourceOptions[] }) => {
@@ -57,8 +55,7 @@ export const Main: Story = {
             opacity: 1,
             placement: 'topRight'
           }
-        }}
-        useCoreDm>
+        }}>
         <RevealCanvas>
           <RevealResourcesFitCameraOnLoad
             resources={resources}

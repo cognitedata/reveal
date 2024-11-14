@@ -3,11 +3,9 @@
  */
 
 import { type AddModelOptions, type DataSourceType, type GeometryFilter } from '@cognite/reveal';
-import { type CadModelOptions } from '../components';
-import { type ModelRevisionId } from '../components/CacheProvider/types';
-import { isDefined } from './isDefined';
+import { isClassicIdentifier, isDMIdentifier } from '../components';
 
-export type ModelOptions = {
+type ModelOptions = {
   modelId?: number;
   revisionId?: number;
   revisionExternalId?: string;
@@ -18,36 +16,19 @@ export type ModelOptions = {
 export function getAddModelOptions(
   options: AddModelOptions<DataSourceType>
 ): ModelOptions | undefined {
-  if ('modelId' in options && 'revisionId' in options) {
-    const { modelId, revisionId, geometryFilter } = options as {
-      modelId: number;
-      revisionId: number;
-      geometryFilter?: GeometryFilter;
+  if (isClassicIdentifier(options)) {
+    return {
+      modelId: options.modelId,
+      revisionId: options.revisionId,
+      geometryFilter: options.geometryFilter
     };
-    return { modelId, revisionId, geometryFilter };
-  } else if ('revisionExternalId' in options && 'revisionSpace' in options) {
-    const { revisionExternalId, revisionSpace, geometryFilter } = options as {
-      revisionExternalId: string;
-      revisionSpace: string;
-      geometryFilter?: GeometryFilter;
+  } else if (isDMIdentifier(options)) {
+    return {
+      revisionExternalId: options.revisionExternalId,
+      revisionSpace: options.revisionSpace,
+      geometryFilter: options.geometryFilter
     };
-    return { revisionExternalId, revisionSpace, geometryFilter };
   } else {
     return undefined;
   }
-}
-
-export function getModelIdRevisionId(models: CadModelOptions[]): ModelRevisionId[] {
-  return models
-    .map((model) => {
-      if ('modelId' in model && 'revisionId' in model) {
-        const { modelId, revisionId } = model as {
-          modelId: number;
-          revisionId: number;
-        };
-        return { modelId, revisionId };
-      }
-      return undefined;
-    })
-    .filter(isDefined);
 }

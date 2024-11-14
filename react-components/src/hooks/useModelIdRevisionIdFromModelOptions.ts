@@ -24,22 +24,26 @@ export const useModelIdRevisionIdFromModelOptions = (
       const { modelId, revisionId, revisionExternalId, revisionSpace } =
         addModelOptionsResult ?? {};
 
+      const queryKey = [
+        queryKeys.modelRevisionId(),
+        modelId ?? revisionExternalId ?? 'unknownModelId',
+        revisionId ?? revisionSpace ?? 'unknownRevisionId'
+      ];
+
       return {
-        queryKey: [
-          queryKeys.modelRevisionId(),
-          modelId ?? revisionExternalId ?? 'unknownModelId',
-          revisionId ?? revisionSpace ?? 'unknownRevisionId'
-        ],
+        queryKey,
         queryFn: async () => {
-          if (modelId !== undefined && revisionId !== undefined) {
+          const classicModelOption = modelId !== undefined && revisionId !== undefined;
+          if (classicModelOption) {
             return { ...addModelOptions, modelId, revisionId };
           }
-          if (
+
+          const dmModelOption =
             revisionExternalId !== undefined &&
             revisionSpace !== undefined &&
             revisionExternalId !== '' &&
-            revisionSpace !== ''
-          ) {
+            revisionSpace !== '';
+          if (dmModelOption) {
             const { modelId: modelIdResult, revisionId: revisionIdResult } =
               await getModelIdAndRevisionIdFromExternalId(
                 revisionExternalId,

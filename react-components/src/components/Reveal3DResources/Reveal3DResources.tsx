@@ -182,7 +182,7 @@ export const Reveal3DResources = ({
         };
         return (
           <CadModelContainer
-            key={`${index}`}
+            key={`${model.modelId}/${model.revisionId}/${index}`}
             addModelOptions={model}
             styling={cadStyling}
             transform={model.transform}

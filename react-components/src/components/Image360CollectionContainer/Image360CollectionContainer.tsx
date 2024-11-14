@@ -57,7 +57,7 @@ export function Image360CollectionContainer({
 
     initializingSiteId.current = addImage360CollectionOptions;
 
-    add360Collection(addImage360CollectionOptions.transform);
+    void add360Collection(addImage360CollectionOptions.transform);
     return remove360Collection;
   }, [addImage360CollectionOptions]);
 
@@ -78,8 +78,8 @@ export function Image360CollectionContainer({
 
   return <></>;
 
-  function add360Collection(transform?: Matrix4): void {
-    getOrAdd360Collection()
+  async function add360Collection(transform?: Matrix4): Promise<void> {
+    await getOrAdd360Collection()
       .then((image360Collection) => {
         if (transform !== undefined) {
           image360Collection.setModelTransformation(transform);

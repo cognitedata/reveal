@@ -6,13 +6,11 @@ import {
   PointCloudContainer,
   type PointCloudModelStyling,
   RevealCanvas,
-  RevealContext,
-  useClickedNodeData
+  RevealContext
 } from '../src';
 import { Color, Matrix4 } from 'three';
 import { createSdkByUrlToken } from './utilities/createSdkByUrlToken';
 import { type DataSourceType, type AddModelOptions } from '@cognite/reveal';
-import { type ReactElement, useEffect } from 'react';
 
 const meta = {
   title: 'Example/PrimitiveWrappers/PointCloudContainer',
@@ -51,8 +49,8 @@ const sdk = createSdkByUrlToken();
 export const Main: Story = {
   args: {
     addModelOptions: {
-      revisionExternalId: 'cog_3d_revision_1617304887543490',
-      revisionSpace: 'core_dm_data_space'
+      modelId: 3865289545346058,
+      revisionId: 4160448151596909
     },
     styling: {},
     transform: new Matrix4()
@@ -66,35 +64,14 @@ export const Main: Story = {
     transform?: Matrix4;
     styling?: PointCloudModelStyling;
   }) => (
-    <RevealContext sdk={sdk} color={new Color(0x4a4a4a)} useCoreDm>
+    <RevealContext sdk={sdk} color={new Color(0x4a4a4a)}>
       <RevealCanvas>
-        <StoryContent addModelOptions={addModelOptions} transform={transform} styling={styling} />
+        <PointCloudContainer
+          addModelOptions={addModelOptions}
+          transform={transform}
+          styling={styling}
+        />
       </RevealCanvas>
     </RevealContext>
   )
-};
-
-const StoryContent = ({
-  addModelOptions,
-  transform,
-  styling
-}: {
-  addModelOptions: AddModelOptions<DataSourceType>;
-  transform?: Matrix4;
-  styling?: PointCloudModelStyling;
-}): ReactElement => {
-  const nodeData = useClickedNodeData();
-  useEffect(() => {
-    if (nodeData?.intersection !== undefined) {
-      console.log('nodeData?.intersection', nodeData?.intersection);
-    }
-  }, [nodeData]);
-
-  return (
-    <PointCloudContainer
-      addModelOptions={addModelOptions}
-      transform={transform}
-      styling={styling}
-    />
-  );
 };

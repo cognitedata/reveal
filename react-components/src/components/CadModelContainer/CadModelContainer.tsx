@@ -22,15 +22,15 @@ import { getViewerResourceCount } from '../../utilities/getViewerResourceCount';
 import { type CadModelStyling } from './types';
 import { useApplyCadModelStyling } from './useApplyCadModelStyling';
 import { isSameGeometryFilter, isSameModel } from '../../utilities/isSameModel';
-import { type AddResourceOptions } from '../Reveal3DResources';
 import { useModelIdRevisionIdFromModelOptions } from '../../hooks/useModelIdRevisionIdFromModelOptions';
+import { isClassicIdentifier, isDMIdentifier } from '../Reveal3DResources';
 
 export type CogniteCadModelProps = {
   addModelOptions: AddModelOptions<DataSourceType>;
   styling?: CadModelStyling;
   transform?: Matrix4;
   onLoad?: (model: CogniteCadModel) => void;
-  onLoadError?: (options: AddModelOptions, error: any) => void;
+  onLoadError?: (options: AddModelOptions<DataSourceType>, error: any) => void;
 };
 
 export function CadModelContainer({
@@ -111,7 +111,7 @@ export function CadModelContainer({
     async function getOrAddModel(): Promise<CogniteCadModel> {
       const viewerModel = viewer.models.find(
         (model) =>
-          isSameModel(model as AddResourceOptions, addModelOptions as AddResourceOptions) &&
+          isSameModel(model, addModelOptions) &&
           isSameGeometryFilter(geometryFilter, initializingModelsGeometryFilter.current)
       );
 
@@ -134,8 +134,14 @@ export function CadModelContainer({
   }
 }
 
-function defaultLoadErrorHandler(addOptions: AddModelOptions, error: any): void {
-  console.warn(
-    `Failed to load (${addOptions.modelId}, ${addOptions.revisionId}): ${JSON.stringify(error)}`
-  );
+function defaultLoadErrorHandler(addOptions: AddModelOptions<DataSourceType>, error: any): void {
+  if (isClassicIdentifier(addOptions)) {
+    console.warn(
+      `Failed to load (${addOptions.modelId}, ${addOptions.revisionId}): ${JSON.stringify(error)}`
+    );
+  } else if (isDMIdentifier(addOptions)) {
+    console.warn(
+      `Failed to load (${addOptions.revisionExternalId}, ${addOptions.revisionSpace}): ${JSON.stringify(error)}`
+    );
+  }
 }

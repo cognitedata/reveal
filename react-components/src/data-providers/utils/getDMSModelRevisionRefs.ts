@@ -30,7 +30,6 @@ export async function getDMSModelsForIds(
   modelIds: number[],
   fdmSdk: FdmSDK
 ): Promise<DmsUniqueIdentifier[]> {
-  console.log('getDMSModelsForIds');
   return (
     await executeParallel(
       modelIds.map((id) => async () => await getDMSModels(id, fdmSdk)),
