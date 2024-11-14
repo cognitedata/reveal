@@ -15,6 +15,7 @@ import { Color, Matrix4, Vector3 } from 'three';
 import { createSdkByUrlToken } from './utilities/createSdkByUrlToken';
 import {
   type AddModelOptions,
+  type ClassicDataSourceType,
   type CogniteCadModel,
   type DataSourceType,
   DefaultNodeAppearance,
@@ -67,12 +68,13 @@ const Models = ({ addModelOptions }: CogniteCadModelProps): JSX.Element => {
 
   const [platformStyling, setPlatformStyling] = useState<CadModelStyling>();
 
-  const { data } = useMappedEdgesForRevisions([platformModelOptions]);
+  const { modelId, revisionId } = platformModelOptions as AddModelOptions<ClassicDataSourceType>;
+  const { data } = useMappedEdgesForRevisions([{ modelId, revisionId }]);
 
   const treeIndices = useMemo(
     () =>
       data
-        ?.get(`${platformModelOptions.modelId}/${platformModelOptions.revisionId}`)
+        ?.get(`${modelId}/${revisionId}`)
         ?.map((edgeWithNode) => edgeWithNode.connection.treeIndex),
     [data]
   );
