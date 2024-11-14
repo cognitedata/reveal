@@ -16,7 +16,18 @@ export class Image360AnnotationCreator extends LineCreator {
   public constructor(tool: BaseTool) {
     const image360Id = tool.renderTarget.viewer.getActive360ImageInfo()?.image360.id;
     assert(image360Id !== undefined, 'Image360AnnotationCreator: image360Id is undefined');
-    super(tool, new Image360AnnotationDomainObject(image360Id));
+
+    // Get the camera position in CDF coordinates
+    const { position } = tool.renderTarget.cameraManager.getCameraState();
+    assert(position !== undefined, 'Camera position unknown');
+
+    const center = position.clone();
+    center.applyMatrix4(tool.renderTarget.fromViewerMatrix);
+
+    const domainObject = new Image360AnnotationDomainObject(image360Id);
+    domainObject.center.copy(center);
+
+    super(tool, domainObject);
   }
 
   // ==================================================
@@ -37,11 +48,9 @@ export class Image360AnnotationCreator extends LineCreator {
 
   protected override transformInputPoint(
     ray: Ray,
-    point: Vector3 | undefined,
+    _point: Vector3 | undefined,
     _isPending: boolean
   ): Vector3 | undefined {
-    point = ray.origin.clone();
-    point.addScaledVector(ray.direction, 5);
-    return point;
+    return ray.direction.clone();
   }
 }

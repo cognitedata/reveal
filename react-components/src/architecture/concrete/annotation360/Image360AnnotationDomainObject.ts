@@ -26,13 +26,13 @@ export class Image360AnnotationDomainObject extends LineDomainObject {
   }
 
   public override getTransformedPoint(point: Vector3): Vector3 {
-    return this.getCopyOfTransformedPoint(point);
+    return this.getCopyOfTransformedPoint(point, new Vector3());
   }
 
-  public override getCopyOfTransformedPoint(point: Vector3): Vector3 {
-    const clone = this.center.clone();
-    clone.addScaledVector(point, 5);
-    return point;
+  public override getCopyOfTransformedPoint(point: Vector3, target: Vector3): Vector3 {
+    target.copy(this.center);
+    target.addScaledVector(point, 5);
+    return target;
   }
 
   // ==================================================

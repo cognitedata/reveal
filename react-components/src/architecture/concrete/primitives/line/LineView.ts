@@ -112,7 +112,7 @@ export class LineView extends GroupThreeView<LineDomainObject> {
     }
     const loopLength = domainObject.loopLength;
     for (let i = 0; i < loopLength; i++) {
-      thisPoint.copy(points[i % pointCount]);
+      domainObject.getCopyOfTransformedPoint(points[i % pointCount], thisPoint);
       thisPoint.applyMatrix4(CDF_TO_VIEWER_TRANSFORMATION);
 
       if (i === 0) {
@@ -162,7 +162,7 @@ export class LineView extends GroupThreeView<LineDomainObject> {
     const direction = new Vector3();
 
     for (let i = 0; i < loopLength; i++) {
-      thisPoint.copy(points[i % pointCount]);
+      domainObject.getCopyOfTransformedPoint(points[i % pointCount], thisPoint);
       thisPoint.applyMatrix4(CDF_TO_VIEWER_TRANSFORMATION);
 
       if (i > 0) {
@@ -230,8 +230,8 @@ export class LineView extends GroupThreeView<LineDomainObject> {
     const loopLength = domainObject.loopLength - 1;
     const center = new Vector3();
     for (let i = 0; i < loopLength; i++) {
-      const point1 = points[i % pointCount];
-      const point2 = points[(i + 1) % pointCount];
+      const point1 = domainObject.getTransformedPoint(points[i % pointCount]);
+      const point2 = domainObject.getTransformedPoint(points[(i + 1) % pointCount]);
       const distance = point1.distanceTo(point2);
 
       center.copy(point1).add(point2).divideScalar(2);
@@ -266,7 +266,7 @@ function createPositions(domainObject: LineDomainObject): number[] | undefined {
   const loopLength = domainObject.loopLength;
 
   for (let i = 0; i < loopLength; i++) {
-    const point = points[i % pointCount].clone();
+    const point = domainObject.getCopyOfTransformedPoint(points[i % pointCount], new Vector3());
     point.applyMatrix4(CDF_TO_VIEWER_TRANSFORMATION);
     positions.push(...point);
     if (i > 0 && i < loopLength - 1) {

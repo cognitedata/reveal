@@ -49,8 +49,9 @@ export abstract class LineDomainObject extends VisualDomainObject {
     return point;
   }
 
-  public getCopyOfTransformedPoint(point: Vector3): Vector3 {
-    return point;
+  public getCopyOfTransformedPoint(point: Vector3, target: Vector3): Vector3 {
+    target.copy(point);
+    return target;
   }
 
   // ==================================================
@@ -188,10 +189,11 @@ export abstract class LineDomainObject extends VisualDomainObject {
     let prevPoint: Vector3 | undefined;
     let sum = 0.0;
     for (const point of this.points) {
+      const transformedPoint = this.getTransformedPoint(point);
       if (prevPoint !== undefined) {
-        sum += point.distanceTo(prevPoint);
+        sum += transformedPoint.distanceTo(prevPoint);
       }
-      prevPoint = point;
+      prevPoint = transformedPoint;
     }
     return sum;
   }
@@ -208,11 +210,12 @@ export abstract class LineDomainObject extends VisualDomainObject {
     let prevPoint: Vector3 | undefined;
     let sum = 0.0;
     for (const point of this.points) {
+      const transformedPoint = this.getTransformedPoint(point);
       if (prevPoint !== undefined) {
-        sum += horizontalDistanceTo(point, prevPoint);
+        sum += horizontalDistanceTo(transformedPoint, prevPoint);
         continue;
       }
-      prevPoint = point;
+      prevPoint = transformedPoint;
     }
     return sum;
   }
@@ -221,11 +224,12 @@ export abstract class LineDomainObject extends VisualDomainObject {
     let prevPoint: Vector3 | undefined;
     let sum = 0.0;
     for (const point of this.points) {
+      const transformedPoint = this.getTransformedPoint(point);
       if (prevPoint !== undefined) {
-        sum += verticalDistanceTo(point, prevPoint);
+        sum += verticalDistanceTo(transformedPoint, prevPoint);
         continue;
       }
-      prevPoint = point;
+      prevPoint = transformedPoint;
     }
     return sum;
   }
@@ -236,12 +240,12 @@ export abstract class LineDomainObject extends VisualDomainObject {
       return 0;
     }
     let sum = 0.0;
-    const first = points[0];
+    const first = this.getTransformedPoint(points[0]);
     const p0 = new Vector3();
     const p1 = new Vector3();
 
     for (let index = 1; index <= pointCount; index++) {
-      p1.copy(points[index % pointCount]);
+      this.getCopyOfTransformedPoint(points[index % pointCount], p1);
       p1.sub(first); // Translate down to first point, to increase accuracy
       sum += getHorizontalCrossProduct(p0, p1);
       p0.copy(p1);
@@ -251,7 +255,8 @@ export abstract class LineDomainObject extends VisualDomainObject {
 
   public expandBoundingBox(boundingBox: Box3): void {
     for (const point of this.points) {
-      boundingBox.expandByPoint(point);
+      const transformedPoint = this.getTransformedPoint(point);
+      boundingBox.expandByPoint(transformedPoint);
     }
   }
 }
