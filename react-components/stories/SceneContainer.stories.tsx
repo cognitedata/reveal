@@ -8,6 +8,7 @@ import { Color } from 'three';
 import { useEffect, type ReactElement, useState } from 'react';
 import { createSdkByUrlToken } from './utilities/createSdkByUrlToken';
 import {
+  type DefaultResourceStyling,
   type DmsUniqueIdentifier,
   RevealToolbar,
   useReveal,
@@ -29,22 +30,34 @@ type Story = StoryObj<typeof meta>;
 const sdk = createSdkByUrlToken();
 
 const MyCustomToolbar = styled(withSuppressRevealEvents(ToolBar))`
-  position: absolute;
+  position: absolute !important;
   right: 20px;
   top: 70px;
 `;
 
 export const Main: Story = {
   args: {
-    sceneExternalId: 'pramod_scene',
-    sceneSpaceId: 'scene'
+    sceneExternalId: '92748157-a77e-4163-baa0-64886edad458',
+    sceneSpaceId: 'test3d',
+    defaultResourceStyling: {
+      pointcloud: {
+        default: {
+          color: new Color('#efefef')
+        },
+        mapped: {
+          color: new Color('#c5cbff')
+        }
+      }
+    }
   },
   render: ({
     sceneExternalId,
-    sceneSpaceId
+    sceneSpaceId,
+    defaultResourceStyling
   }: {
     sceneExternalId: string;
     sceneSpaceId: string;
+    defaultResourceStyling?: DefaultResourceStyling;
   }) => {
     const [selectedScene, setSelectedScene] = useState<DmsUniqueIdentifier | undefined>(undefined);
     return (
@@ -65,6 +78,7 @@ export const Main: Story = {
             selectedScene !== undefined ? selectedScene?.externalId : sceneExternalId
           }
           sceneSpaceId={selectedScene !== undefined ? selectedScene?.space : sceneSpaceId}
+          defaultResourceStyling={defaultResourceStyling}
         />
       </RevealStoryContainer>
     );
@@ -74,11 +88,13 @@ export const Main: Story = {
 type SceneContainerStoryContentProps = {
   sceneExternalId: string;
   sceneSpaceId: string;
+  defaultResourceStyling?: DefaultResourceStyling;
 };
 
 const SceneContainerStoryContent = ({
   sceneExternalId,
-  sceneSpaceId
+  sceneSpaceId,
+  defaultResourceStyling
 }: SceneContainerStoryContentProps): ReactElement => {
   const reveal = useReveal();
   const { fitCameraToSceneDefault } = useSceneDefaultCamera(sceneExternalId, sceneSpaceId);
@@ -88,7 +104,11 @@ const SceneContainerStoryContent = ({
   }, [reveal, fitCameraToSceneDefault]);
   return (
     <>
-      <SceneContainer sceneExternalId={sceneExternalId} sceneSpaceId={sceneSpaceId} />
+      <SceneContainer
+        sceneExternalId={sceneExternalId}
+        sceneSpaceId={sceneSpaceId}
+        defaultResourceStyling={defaultResourceStyling}
+      />
     </>
   );
 };

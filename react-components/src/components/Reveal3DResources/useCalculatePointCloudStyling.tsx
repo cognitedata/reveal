@@ -27,7 +27,7 @@ import { type PointCloudAnnotationModel } from '../CacheProvider/types';
 import { type PointCloudVolumeStylingGroup } from '../PointCloudContainer/types';
 import { useModelIdRevisionIdFromModelOptions } from '../../hooks/useModelIdRevisionIdFromModelOptions';
 import { isDefined } from '../../utilities/isDefined';
-import { useReveal } from '../RevealCanvas';
+import { use3dModels } from '../../hooks';
 
 export type StyledPointCloudModel = {
   model: PointCloudModelOptions;
@@ -129,7 +129,7 @@ function useCalculateMappedPointCloudStylingFromReveal(
   models: PointCloudModelOptions[],
   defaultMappedNodeAppearance?: NodeAppearance
 ): StyledPointCloudModel[] {
-  const viewer = useReveal();
+  const viewerModels = use3dModels();
   const addClassicModelOptionsResults = useModelIdRevisionIdFromModelOptions(models);
 
   const classicModelOptions = useMemo(
@@ -145,7 +145,10 @@ function useCalculateMappedPointCloudStylingFromReveal(
   }, [classicModelOptions, models]);
 
   const matchedModels = useMemo(() => {
-    return viewer.models.flatMap((viewerModel) => {
+    return viewerModels.flatMap((viewerModel) => {
+      if (viewerModel.type !== 'pointcloud') {
+        return [];
+      }
       const model = viewerModel as CognitePointCloudModel<DataSourceType>;
       const matchedModel = modelsWithModelIdAndRevision.find((modelData) => {
         if (
@@ -167,10 +170,10 @@ function useCalculateMappedPointCloudStylingFromReveal(
       });
       return matchedModel !== undefined ? [{ viewerModel, model: matchedModel }] : [];
     });
-  }, [modelsWithModelIdAndRevision, viewer.models]);
+  }, [modelsWithModelIdAndRevision, viewerModels]);
 
   const pointCloudVolumesWithModel = useMemo(() => {
-    if (matchedModels.length === 0 || viewer.models.length === 0) {
+    if (matchedModels.length === 0 || viewerModels.length === 0) {
       return models
         .filter((model): model is PointCloudModelOptions => model.type === 'pointcloud')
         .map((model) => ({
@@ -193,7 +196,7 @@ function useCalculateMappedPointCloudStylingFromReveal(
         );
         return { model: model.modelOptions as PointCloudModelOptions, pointCloudVolumes };
       });
-  }, [matchedModels, viewer.models]);
+  }, [matchedModels, viewerModels]);
 
   const modelsMappedVolumeStyleGroups = useMemo(() => {
     if (models.length === 0 || pointCloudVolumesWithModel.length === 0) {

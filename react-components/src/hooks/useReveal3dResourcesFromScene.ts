@@ -17,6 +17,7 @@ import {
 import { useEffect, useState } from 'react';
 import { Euler, MathUtils, Matrix4 } from 'three';
 import { type Transformation3d } from './scenes/types';
+import { isClassicIdentifier, isDMIdentifier } from '../components/Reveal3DResources/typeGuards';
 
 export type UseSyncSceneConfigWithViewerProps = {
   sdk: CogniteClient;
@@ -37,19 +38,19 @@ export const useReveal3dResourcesFromScene = (
     }
     const addResourceOptions: AddResourceOptions[] = [];
     scene.data.sceneModels.forEach((model) => {
-      if ('modelId' in model && 'revisionId' in model) {
+      if (isClassicIdentifier(model.modelIdentifier)) {
         const addModelOptions: AddModelOptions<ClassicDataSourceType> = {
-          modelId: model.modelId as number,
-          revisionId: model.revisionId as number
+          modelId: model.modelIdentifier.modelId,
+          revisionId: model.modelIdentifier.revisionId
         };
 
         const transform = createResourceTransformation(model);
 
         addResourceOptions.push({ ...addModelOptions, transform });
-      } else if ('revisionExternalId' in model && 'revisionSpace' in model) {
+      } else if (isDMIdentifier(model.modelIdentifier)) {
         const addModelOptions: AddModelOptions<DMDataSourceType> = {
-          revisionExternalId: model.revisionExternalId as string,
-          revisionSpace: model.revisionSpace as string
+          revisionExternalId: model.modelIdentifier.revisionExternalId,
+          revisionSpace: model.modelIdentifier.revisionSpace
         };
 
         const transform = createResourceTransformation(model);

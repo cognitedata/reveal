@@ -19,28 +19,39 @@ export const useModelIdRevisionIdFromModelOptions = (
   const fdmSdk = useFdmSdk();
 
   return useQueries({
-    queries: addModelOptionsArray.map((addModelOptions) => ({
-      queryKey: [queryKeys.modelRevisionId(), addModelOptions],
-      queryFn: async () => {
-        const addModelOptionsResult = getAddModelOptions(addModelOptions);
-        const { modelId, revisionId, revisionExternalId, revisionSpace } =
-          addModelOptionsResult ?? {};
-        if (modelId !== undefined && revisionId !== undefined) {
-          return { ...addModelOptions, modelId, revisionId };
-        }
-        if (
-          revisionExternalId !== undefined &&
-          revisionSpace !== undefined &&
-          revisionExternalId !== '' &&
-          revisionSpace !== ''
-        ) {
-          const { modelId: modelIdResult, revisionId: revisionIdResult } =
-            await getModelIdAndRevisionIdFromExternalId(revisionExternalId, revisionSpace, fdmSdk);
-          return { ...addModelOptions, modelId: modelIdResult, revisionId: revisionIdResult };
-        }
-        return addModelOptions as AddModelOptions<ClassicDataSourceType>;
-      },
-      staleTime: Infinity
-    }))
+    queries: addModelOptionsArray.map((addModelOptions) => {
+      const addModelOptionsResult = getAddModelOptions(addModelOptions);
+      const { modelId, revisionId, revisionExternalId, revisionSpace } =
+        addModelOptionsResult ?? {};
+
+      return {
+        queryKey: [
+          queryKeys.modelRevisionId(),
+          modelId ?? revisionExternalId ?? 'unknownModelId',
+          revisionId ?? revisionSpace ?? 'unknownRevisionId'
+        ],
+        queryFn: async () => {
+          if (modelId !== undefined && revisionId !== undefined) {
+            return { ...addModelOptions, modelId, revisionId };
+          }
+          if (
+            revisionExternalId !== undefined &&
+            revisionSpace !== undefined &&
+            revisionExternalId !== '' &&
+            revisionSpace !== ''
+          ) {
+            const { modelId: modelIdResult, revisionId: revisionIdResult } =
+              await getModelIdAndRevisionIdFromExternalId(
+                revisionExternalId,
+                revisionSpace,
+                fdmSdk
+              );
+            return { ...addModelOptions, modelId: modelIdResult, revisionId: revisionIdResult };
+          }
+          return addModelOptions as AddModelOptions<ClassicDataSourceType>;
+        },
+        staleTime: Infinity
+      };
+    })
   });
 };

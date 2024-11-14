@@ -112,7 +112,7 @@ export const useSceneConfig = (
         },
         skybox: getSkybox(sceneResponse),
         groundPlanes: getGroundPlanes(sceneResponse),
-        sceneModels: getSceneModels(sceneResponse, fdmSdk),
+        sceneModels: await getSceneModels(sceneResponse, fdmSdk),
         image360Collections: getImageCollections(sceneResponse)
       };
       return scene;
@@ -139,7 +139,7 @@ function extractProperties<T>(object: Record<string, Record<string, T>>): T {
   return object[firstKey][secondKey];
 }
 
-async function exteractRevisionExternalIdAndSpace(
+async function getRevisionExternalIdAndSpace(
   modelExternalId: string,
   revisionId: number,
   fdmSdk: FdmSDK
@@ -162,45 +162,68 @@ async function exteractRevisionExternalIdAndSpace(
   };
 }
 
-function getSceneModels(sceneResponse: SceneResponse, fdmSdk: FdmSDK): CadOrPointCloudModel[] {
+async function getSceneModels(
+  sceneResponse: SceneResponse,
+  fdmSdk: FdmSDK
+): Promise<CadOrPointCloudModel[]> {
   const models: CadOrPointCloudModel[] = [];
-  if (sceneResponse.items.sceneModels.length > 0) {
-    const sceneModels = sceneResponse.items.sceneModels;
-    sceneModels.forEach(async (sceneModel) => {
-      const sceneModelProperties = extractProperties<SceneModelsProperties>(sceneModel.properties);
-      const dMModelIndentifier = await exteractRevisionExternalIdAndSpace(
-        sceneModel.endNode.externalId,
-        sceneModelProperties.revisionId,
-        fdmSdk
-      );
-      if (dMModelIndentifier !== undefined) {
-        const model: CadOrPointCloudModel = {
-          modelIdentifier: {
-            revisionExternalId: dMModelIndentifier.revisionExternalId,
-            revisionSpace: dMModelIndentifier.revisionSpace
-          },
-          ...sceneModelProperties
-        };
-        models.push(model);
-      } else {
-        const parsedModelId = tryGetModelIdFromExternalId(sceneModel.endNode.externalId);
-        if (parsedModelId === undefined) {
-          throw Error(`Could not parse model Id from externalId ${sceneModel.endNode.externalId}`);
-        }
+  const sceneModels = sceneResponse.items.sceneModels;
 
-        const model: CadOrPointCloudModel = {
-          modelIdentifier: {
-            modelId: parsedModelId,
-            revisionId: sceneModelProperties.revisionId
-          },
-          ...sceneModelProperties
-        };
-
-        models.push(model);
-      }
-    });
+  if (sceneModels.length === 0) {
+    return models;
   }
+
+  const modelPromises = sceneModels.map(async (sceneModel) => {
+    const sceneModelProperties = extractProperties<SceneModelsProperties>(sceneModel.properties);
+    const dMModelIdentifier = await getRevisionExternalIdAndSpace(
+      sceneModel.endNode.externalId,
+      sceneModelProperties.revisionId,
+      fdmSdk
+    );
+
+    if (dMModelIdentifier !== undefined) {
+      return createDMModel(sceneModelProperties, dMModelIdentifier);
+    } else {
+      const parsedModelId = tryGetModelIdFromExternalId(sceneModel.endNode.externalId);
+      if (parsedModelId === undefined) {
+        throw new Error(
+          `Could not parse model Id from externalId ${sceneModel.endNode.externalId}`
+        );
+      }
+      return createClassicModel(sceneModelProperties, parsedModelId);
+    }
+  });
+
+  const resolvedModels = await Promise.all(modelPromises);
+  models.push(...resolvedModels);
+
   return models;
+}
+
+function createDMModel(
+  sceneModelProperties: SceneModelsProperties,
+  dMModelIdentifier: { revisionExternalId: string; revisionSpace: string }
+): CadOrPointCloudModel {
+  return {
+    modelIdentifier: {
+      revisionExternalId: dMModelIdentifier.revisionExternalId,
+      revisionSpace: dMModelIdentifier.revisionSpace
+    },
+    ...sceneModelProperties
+  };
+}
+
+function createClassicModel(
+  sceneModelProperties: SceneModelsProperties,
+  modelId: number
+): CadOrPointCloudModel {
+  return {
+    modelIdentifier: {
+      modelId,
+      revisionId: sceneModelProperties.revisionId
+    },
+    ...sceneModelProperties
+  };
 }
 
 function getImageCollections(sceneResponse: SceneResponse): Image360Collection[] {

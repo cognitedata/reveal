@@ -211,5 +211,5 @@ export abstract class BaseEditTool extends NavigationTool {
 }
 
 export function isActiveEditTool(commandController: CommandsController): boolean {
-  return commandController.activeTool instanceof PrimitiveEditTool;
+  return commandController.activeTool instanceof BaseEditTool;
 }
