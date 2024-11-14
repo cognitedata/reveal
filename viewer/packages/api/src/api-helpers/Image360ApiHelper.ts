@@ -86,7 +86,7 @@ export class Image360ApiHelper<DataSourceT extends DataSourceType> {
       this.exit360ImageByTween();
     }
   };
-  public readonly onHover = (event: MouseEvent): void => this.setHoverIconOnIntersect(event.offsetX, event.offsetY);
+  public readonly onHover = (event: PointerEvent): void => this.setHoverIconOnIntersect(event.offsetX, event.offsetY);
   public readonly onClick = (event: PointerEventData): Promise<boolean> => this.enter360ImageOnIntersect(event);
 
   private readonly updateHoverStateOnRenderHandler = () => {
@@ -139,7 +139,7 @@ export class Image360ApiHelper<DataSourceT extends DataSourceType> {
       this._cachedCameraManager = activeCameraManager.innerCameraManager;
     }
     if (this._hasEventListeners) {
-      domElement.addEventListener('mousemove', this.onHover);
+      domElement.addEventListener('pointermove', this.onHover);
       this._inputHandler = inputHandler;
       this._inputHandler.on('click', this.onClick);
     }
@@ -544,7 +544,7 @@ export class Image360ApiHelper<DataSourceT extends DataSourceType> {
   public dispose(): void {
     this._onBeforeSceneRenderedEvent.unsubscribe(this.updateHoverStateOnRenderHandler);
     if (this._hasEventListeners) {
-      this._domElement.removeEventListener('mousemove', this.onHover);
+      this._domElement.removeEventListener('pointermove', this.onHover);
       this._domElement.removeEventListener('keydown', this.onKeyPressed);
       if (this._inputHandler != undefined) {
         this._inputHandler.off('click', this.onClick);

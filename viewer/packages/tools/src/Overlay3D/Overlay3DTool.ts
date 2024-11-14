@@ -101,7 +101,7 @@ export class Overlay3DTool<ContentType = DefaultOverlay3DContentType> extends Co
     this._defaultOverlayColor = toolParameters?.defaultOverlayColor ?? this._defaultOverlayColor;
     this._textOverlay = new TextOverlay(viewer.domElement);
 
-    viewer.canvas.addEventListener('mousemove', this.onMouseMove);
+    viewer.canvas.addEventListener('pointermove', this.onPointerMove);
 
     viewer.on('click', this.onMouseClick);
   }
@@ -248,7 +248,7 @@ export class Overlay3DTool<ContentType = DefaultOverlay3DContentType> extends Co
    */
   dispose(): void {
     this.clear();
-    this._viewer.domElement.removeEventListener('mousemove', this.onMouseMove);
+    this._viewer.domElement.removeEventListener('pointermove', this.onPointerMove);
     this._viewer.off('click', this.onMouseClick);
     this._events.disposed.fire();
 
@@ -258,7 +258,7 @@ export class Overlay3DTool<ContentType = DefaultOverlay3DContentType> extends Co
     super.dispose();
   }
 
-  private readonly onMouseMove = (event: MouseEvent) => {
+  private readonly onPointerMove = (event: PointerEvent) => {
     const { _textOverlay: textOverlay } = this;
 
     const intersectedOverlay = this.intersectPointsMarkers({ offsetX: event.offsetX, offsetY: event.offsetY });
