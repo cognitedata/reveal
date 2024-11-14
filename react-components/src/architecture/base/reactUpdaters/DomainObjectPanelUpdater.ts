@@ -28,7 +28,7 @@ export class DomainObjectPanelUpdater {
     if (this._setDomainObject === undefined) {
       return;
     }
-    if (domainObject !== undefined) {
+    if (domainObject !== undefined && domainObject.hasPanelInfo) {
       this._setDomainObject({ domainObject });
     } else {
       this.hide();
