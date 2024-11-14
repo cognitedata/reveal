@@ -37,6 +37,22 @@ export abstract class LineDomainObject extends VisualDomainObject {
   // INSTANCE PROPERTIES
   // ==================================================
 
+  public get pointCount(): number {
+    return this.points.length;
+  }
+
+  public get loopLength(): number {
+    return this.primitiveType === PrimitiveType.Polygon ? this.pointCount + 1 : this.pointCount;
+  }
+
+  public getTransformedPoint(point: Vector3): Vector3 {
+    return point;
+  }
+
+  // ==================================================
+  // INSTANCE PROPERTIES
+  // ==================================================
+
   public get renderStyle(): LineRenderStyle {
     return this.getRenderStyle() as LineRenderStyle;
   }
@@ -81,11 +97,11 @@ export abstract class LineDomainObject extends VisualDomainObject {
     }
     switch (this.primitiveType) {
       case PrimitiveType.Line:
-        return this.points.length === 2;
+        return this.pointCount === 2;
       case PrimitiveType.Polyline:
-        return this.points.length >= 2;
+        return this.pointCount >= 2;
       case PrimitiveType.Polygon:
-        return this.points.length >= 3;
+        return this.pointCount >= 3;
       default:
         throw new Error('Unknown PrimitiveType');
     }
@@ -100,7 +116,7 @@ export abstract class LineDomainObject extends VisualDomainObject {
   }
 
   public override getPanelInfo(): PanelInfo | undefined {
-    if (this.focusType === FocusType.Pending && this.points.length <= 1) {
+    if (this.focusType === FocusType.Pending && this.pointCount <= 1) {
       return undefined;
     }
     const info = new PanelInfo();
@@ -118,7 +134,7 @@ export abstract class LineDomainObject extends VisualDomainObject {
         break;
       case PrimitiveType.Polygon:
         add('MEASUREMENTS_TOTAL_LENGTH', 'Total length', this.getTotalLength());
-        if (this.points.length > 2) {
+        if (this.pointCount > 2) {
           add(
             'MEASUREMENTS_HORIZONTAL_AREA',
             'Horizontal area',
@@ -177,11 +193,11 @@ export abstract class LineDomainObject extends VisualDomainObject {
   }
 
   public getAverageLength(): number {
-    const count = this.points.length;
-    if (count <= 1) {
+    const { pointCount } = this;
+    if (pointCount <= 1) {
       return 0;
     }
-    return this.getTotalLength() / (count - 1);
+    return this.getTotalLength() / (pointCount - 1);
   }
 
   public getHorizontalLength(): number {
@@ -211,9 +227,8 @@ export abstract class LineDomainObject extends VisualDomainObject {
   }
 
   public getHorizontalArea(): number {
-    const { points } = this;
-    const count = points.length;
-    if (count <= 2) {
+    const { points, pointCount } = this;
+    if (pointCount <= 2) {
       return 0;
     }
     let sum = 0.0;
@@ -221,8 +236,8 @@ export abstract class LineDomainObject extends VisualDomainObject {
     const p0 = new Vector3();
     const p1 = new Vector3();
 
-    for (let index = 1; index <= count; index++) {
-      p1.copy(points[index % count]);
+    for (let index = 1; index <= pointCount; index++) {
+      p1.copy(points[index % pointCount]);
       p1.sub(first); // Translate down to first point, to increase accuracy
       sum += getHorizontalCrossProduct(p0, p1);
       p0.copy(p1);

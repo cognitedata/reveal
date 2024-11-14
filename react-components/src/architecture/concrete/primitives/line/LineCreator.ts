@@ -74,7 +74,7 @@ export class LineCreator extends BaseCreator {
       domainObject.points.pop();
     }
 
-    if (this.pointCount !== domainObject.points.length) {
+    if (this.pointCount !== domainObject.pointCount) {
       // In case of undo is done
       copy(this.points, domainObject.points);
       this.lastIsPending = false;

@@ -94,9 +94,8 @@ export class LineView extends GroupThreeView<LineDomainObject> {
     if (radius <= 0) {
       return;
     }
-    const { points } = domainObject;
-    const { length } = points;
-    if (length < 2) {
+    const { points, pointCount } = domainObject;
+    if (pointCount < 2) {
       return undefined;
     }
     // Just allocate all needed objects once
@@ -111,9 +110,9 @@ export class LineView extends GroupThreeView<LineDomainObject> {
     if (closestDistance !== undefined) {
       closestFinder.minDistance = closestDistance;
     }
-    const loopLength = domainObject.primitiveType === PrimitiveType.Polygon ? length + 1 : length;
+    const loopLength = domainObject.loopLength;
     for (let i = 0; i < loopLength; i++) {
-      thisPoint.copy(points[i % length]);
+      thisPoint.copy(points[i % pointCount]);
       thisPoint.applyMatrix4(CDF_TO_VIEWER_TRANSFORMATION);
 
       if (i === 0) {
@@ -148,13 +147,12 @@ export class LineView extends GroupThreeView<LineDomainObject> {
     if (radius <= 0) {
       return;
     }
-    const { points } = domainObject;
-    const { length } = points;
-    if (length < 2) {
+    const { points, pointCount } = domainObject;
+    if (pointCount < 2) {
       return undefined;
     }
     const geometries: CylinderGeometry[] = [];
-    const loopLength = domainObject.primitiveType === PrimitiveType.Polygon ? length + 1 : length;
+    const loopLength = domainObject.loopLength;
 
     // Just allocate all needed objects once
     const prevPoint = new Vector3();
@@ -164,7 +162,7 @@ export class LineView extends GroupThreeView<LineDomainObject> {
     const direction = new Vector3();
 
     for (let i = 0; i < loopLength; i++) {
-      thisPoint.copy(points[i % length]);
+      thisPoint.copy(points[i % pointCount]);
       thisPoint.applyMatrix4(CDF_TO_VIEWER_TRANSFORMATION);
 
       if (i > 0) {
@@ -218,23 +216,22 @@ export class LineView extends GroupThreeView<LineDomainObject> {
     if (!style.showLabel) {
       return;
     }
-    const { points, rootDomainObject } = domainObject;
+    const { points, pointCount, rootDomainObject } = domainObject;
     if (rootDomainObject === undefined) {
       return;
     }
-    const { length } = points;
-    if (length < 2) {
+    if (pointCount < 2) {
       return;
     }
     const spriteHeight = this.getTextHeight(style.relativeTextSize);
     if (spriteHeight <= 0) {
       return;
     }
-    const loopLength = domainObject.primitiveType === PrimitiveType.Polygon ? length : length - 1;
+    const loopLength = domainObject.loopLength - 1;
     const center = new Vector3();
     for (let i = 0; i < loopLength; i++) {
-      const point1 = points[i % length];
-      const point2 = points[(i + 1) % length];
+      const point1 = points[i % pointCount];
+      const point2 = points[(i + 1) % pointCount];
       const distance = point1.distanceTo(point2);
 
       center.copy(point1).add(point2).divideScalar(2);
@@ -261,16 +258,15 @@ export class LineView extends GroupThreeView<LineDomainObject> {
 // ==================================================
 
 function createPositions(domainObject: LineDomainObject): number[] | undefined {
-  const { points } = domainObject;
-  const { length } = points;
-  if (length < 2) {
+  const { points, pointCount } = domainObject;
+  if (pointCount < 2) {
     return undefined;
   }
   const positions: number[] = [];
-  const loopLength = domainObject.primitiveType === PrimitiveType.Polygon ? length + 1 : length;
+  const loopLength = domainObject.loopLength;
 
   for (let i = 0; i < loopLength; i++) {
-    const point = points[i % length].clone();
+    const point = points[i % pointCount].clone();
     point.applyMatrix4(CDF_TO_VIEWER_TRANSFORMATION);
     positions.push(...point);
     if (i > 0 && i < loopLength - 1) {
