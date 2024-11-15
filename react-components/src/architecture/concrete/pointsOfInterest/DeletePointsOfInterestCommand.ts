@@ -37,7 +37,7 @@ export class DeletePointsOfInterestCommand<PoIIdType> extends PointsOfInterestCo
     }
 
     pois.removePointsOfInterest(selectedOverlay);
-    pois.setSelectedPointsOfInterest(undefined);
+    pois.setSelectedPointOfInterest(undefined);
 
     return true;
   }

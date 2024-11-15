@@ -102,6 +102,9 @@ export { AnnotationsSelectTool } from './concrete/annotations/commands/Annotatio
 export { AnnotationsCreateTool } from './concrete/annotations/commands/AnnotationsCreateTool';
 export { getGlobalMatrix } from './concrete/annotations/helpers/getMatrixUtils';
 
+// New architecture: points of interest
+export * from './concrete/pointsOfInterest';
+
 // New architecture: tree view nodes
 export type { ITreeNode } from './base/treeView/ITreeNode';
 export type { IconColor } from './base/treeView/types';

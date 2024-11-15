@@ -2,7 +2,11 @@
  * Copyright 2024 Cognite AS
  */
 import { type DmsUniqueIdentifier, type FdmSDK } from '../../../../data-providers/FdmSDK';
-import { type PointsOfInterestInstance, type PointsOfInterestProperties } from '../models';
+import {
+  type CommentProperties,
+  type PointsOfInterestInstance,
+  type PointsOfInterestProperties
+} from '../models';
 import { type PointsOfInterestProvider } from '../PointsOfInterestProvider';
 import {
   createPointsOfInterestInstances,
@@ -25,5 +29,16 @@ export class PointsOfInterestFdmProvider implements PointsOfInterestProvider<Dms
 
   async deletePointsOfInterest(ids: DmsUniqueIdentifier[]): Promise<void> {
     await deletePointsOfInterestInstances(this._fdmSdk, ids);
+  }
+
+  async getPointsOfInterestComments(_poiId: DmsUniqueIdentifier): Promise<CommentProperties[]> {
+    return await Promise.resolve([]);
+  }
+
+  async postPointsOfInterestComment(
+    _poiId: DmsUniqueIdentifier,
+    content: string
+  ): Promise<CommentProperties> {
+    return await Promise.resolve({ ownerId: 'dummy', content });
   }
 }

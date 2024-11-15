@@ -20,7 +20,7 @@ import { LayersButton } from './LayersButton/LayersButton';
 
 const StyledToolBar = styled(ToolBar)`
   position: absolute !important;
-  left: 20px;
+  left: 16px;
   top: 70px;
   width: 48px;
   padding: 6px;

@@ -23,6 +23,8 @@ import { AnnotationsCreateTool } from '../../architecture/concrete/annotations/c
 import { AnnotationsSelectTool } from '../../architecture/concrete/annotations/commands/AnnotationsSelectTool';
 import { Image360ActionCommand } from '../../architecture/base/concreteCommands/image360Collection/Image360ActionCommand';
 import { type PlacementType } from './types';
+import { type Vector3 } from 'three';
+import { InitiatePointsOfInterestCommand } from '../../architecture/concrete/pointsOfInterest/InitiatePointsOfInterestCommand';
 
 export class RevealButtons {
   static Settings = (props: SettingsProp): ReactElement =>
@@ -67,6 +69,11 @@ export class RevealButtons {
   static PointsOfInterest = (prop: ButtonProp): ReactElement => {
     return createButtonFromCommandConstructor(() => new PointsOfInterestTool(), prop);
   };
+
+  static PointsOfInterestInitiateCreationCommand = (
+    prop: { point: Vector3 } & ButtonProp
+  ): ReactElement =>
+    createButtonFromCommandConstructor(() => new InitiatePointsOfInterestCommand(prop.point), prop);
 
   static KeyboardSpeed = (prop: ButtonProp): ReactElement =>
     createButtonFromCommandConstructor(() => new KeyboardSpeedCommand(), prop);

@@ -67,10 +67,16 @@ export const useClickedNodeData = (options?: {
         const activatedOnLeftClick = leftClick && event.button === MOUSE.LEFT;
         const activatedOnRightClick = rightClick && event.button === MOUSE.RIGHT;
 
+        console.log('ACtivated on event ', event);
         if (
           !(activatedOnLeftClick || activatedOnRightClick) ||
           (disableOnEditTool && isActiveEditTool(renderTarget.commandsController))
         ) {
+          console.log(
+            'No and no',
+            disableOnEditTool,
+            isActiveEditTool(renderTarget.commandsController)
+          );
           setPosition(undefined);
           setMouseButton(undefined);
           return;

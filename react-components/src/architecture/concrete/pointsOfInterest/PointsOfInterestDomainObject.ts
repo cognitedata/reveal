@@ -8,29 +8,32 @@ import { type TranslateKey } from '../../base/utilities/TranslateKey';
 import { Changes } from '../../base/domainObjectsHelpers/Changes';
 import { PointsOfInterestCache } from './PointsOfInterestCache';
 import { PanelInfo } from '../../base/domainObjectsHelpers/PanelInfo';
-import { type PointsOfInterest, PointsOfInterestStatus } from './types';
+import { type PointOfInterest, PointsOfInterestStatus } from './types';
 import { partition, remove } from 'lodash';
-import { type PointsOfInterestProperties } from './models';
+import { type CommentProperties, type PointsOfInterestProperties } from './models';
 import { Quantity } from '../../base/domainObjectsHelpers/Quantity';
 import { type PointsOfInterestProvider } from './PointsOfInterestProvider';
 import { isDefined } from '../../../utilities/isDefined';
 
 export class PointsOfInterestDomainObject<PoIIdType> extends VisualDomainObject {
-  private _selectedPointsOfInterest: PointsOfInterest<PoIIdType> | undefined;
+  private _selectedPointsOfInterest: PointOfInterest<PoIIdType> | undefined;
   private readonly _poisCache: PointsOfInterestCache<PoIIdType>;
 
-  private _pointsOfInterest: Array<PointsOfInterest<PoIIdType>> = [];
+  private _pointsOfInterest: Array<PointOfInterest<PoIIdType>> = [];
 
   constructor(poiProvider: PointsOfInterestProvider<PoIIdType>) {
     super();
 
     this._poisCache = new PointsOfInterestCache<PoIIdType>(poiProvider);
     void this._poisCache.getFinishedOriginalLoadingPromise().then((pois) => {
-      this._pointsOfInterest = pois.map((poi) => ({
-        id: poi.id,
-        properties: poi.properties,
-        status: PointsOfInterestStatus.Default
-      }));
+      this._pointsOfInterest = [
+        ...pois.map((poi) => ({
+          id: poi.id,
+          properties: poi.properties,
+          status: PointsOfInterestStatus.Default
+        })),
+        ...this._pointsOfInterest
+      ];
       this.notify(Changes.geometry);
     });
   }
@@ -72,7 +75,7 @@ export class PointsOfInterestDomainObject<PoIIdType> extends VisualDomainObject 
 
   public addPendingPointsOfInterest(
     poiData: PointsOfInterestProperties
-  ): PointsOfInterest<PoIIdType> {
+  ): PointOfInterest<PoIIdType> {
     const newPointsOfInterest = {
       properties: poiData,
       status: PointsOfInterestStatus.PendingCreation
@@ -85,7 +88,7 @@ export class PointsOfInterestDomainObject<PoIIdType> extends VisualDomainObject 
     return newPointsOfInterest;
   }
 
-  public removePointsOfInterest(poiToDelete: PointsOfInterest<PoIIdType>): void {
+  public removePointsOfInterest(poiToDelete: PointOfInterest<PoIIdType>): void {
     if (poiToDelete.status === PointsOfInterestStatus.PendingCreation) {
       remove(this._pointsOfInterest, (poi) => poiToDelete === poi);
     } else if (this._pointsOfInterest.includes(poiToDelete)) {
@@ -95,11 +98,11 @@ export class PointsOfInterestDomainObject<PoIIdType> extends VisualDomainObject 
     this.notify(Changes.geometry);
   }
 
-  public get pois(): Array<PointsOfInterest<PoIIdType>> {
+  public get pointsOfInterest(): Array<PointOfInterest<PoIIdType>> {
     return this._pointsOfInterest;
   }
 
-  public get selectedPointsOfInterest(): PointsOfInterest<PoIIdType> | undefined {
+  public get selectedPointsOfInterest(): PointOfInterest<PoIIdType> | undefined {
     return this._selectedPointsOfInterest;
   }
 
@@ -114,7 +117,7 @@ export class PointsOfInterestDomainObject<PoIIdType> extends VisualDomainObject 
       (this._selectedPointsOfInterest.status === PointsOfInterestStatus.PendingCreation ||
         this._selectedPointsOfInterest.status === PointsOfInterestStatus.PendingDeletion)
     ) {
-      this.setSelectedPointsOfInterest(undefined);
+      this.setSelectedPointOfInterest(undefined);
     }
 
     const [toRemove, notToRemove] = partition(
@@ -148,10 +151,29 @@ export class PointsOfInterestDomainObject<PoIIdType> extends VisualDomainObject 
     this.notify(Changes.geometry);
   }
 
-  public setSelectedPointsOfInterest(poi: PointsOfInterest<PoIIdType> | undefined): void {
+  public setSelectedPointOfInterest(poi: PointOfInterest<PoIIdType> | undefined): void {
+    console.log('Setting selected to id', poi?.id);
     this._selectedPointsOfInterest = poi;
 
     this.notify(Changes.selected);
+  }
+
+  public async postCommentForPoi(
+    poi: PointOfInterest<PoIIdType>,
+    content: string
+  ): Promise<CommentProperties | undefined> {
+    if (poi.id === undefined) {
+      return undefined;
+    }
+
+    return await this._poisCache.postCommentForPoi(poi.id, content);
+  }
+
+  public async getCommentsForPoi(poi: PointOfInterest<PoIIdType>): Promise<CommentProperties[]> {
+    if (poi.id === undefined) {
+      return [];
+    }
+    return await this._poisCache.getPoiCommentsForPoi(poi.id);
   }
 
   public hasPendingPointsOfInterest(): boolean {
