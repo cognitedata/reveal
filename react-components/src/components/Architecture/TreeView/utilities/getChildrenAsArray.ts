@@ -2,8 +2,8 @@
  * Copyright 2024 Cognite AS
  */
 
-import { type ITreeNode } from '../../../../architecture/base/treeView/ITreeNode';
-import { type LoadNodesAction } from '../../../../architecture/base/treeView/types';
+import { type ITreeNode } from '../../../../architecture/base/treeNodes/ITreeNode';
+import { type LoadNodesAction } from '../../../../architecture/base/treeNodes/types';
 
 // ==================================================
 // FUNCTIONS

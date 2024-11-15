@@ -6,7 +6,7 @@
 
 import { useState, type ReactElement } from 'react';
 import { type TreeViewProps } from '../TreeViewProps';
-import { type ITreeNode } from '../../../../architecture/base/treeView/ITreeNode';
+import { type ITreeNode } from '../../../../architecture/base/treeNodes/ITreeNode';
 import { InfoIcon } from '@cognite/cogs.js';
 import { HOVER_INFO_COLOR, INFO_COLOR } from '../utilities/constants';
 

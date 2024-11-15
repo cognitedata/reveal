@@ -2,6 +2,7 @@
  * Copyright 2024 Cognite AS
  */
 
+import { type Class, isInstanceOf } from '../domainObjectsHelpers/Class';
 import { insert, remove } from '../utilities/extensions/arrayExtensions';
 import { type IconName } from '../utilities/IconName';
 import { type ITreeNode } from './ITreeNode';
@@ -176,8 +177,20 @@ export class TreeNode<T = any> implements ITreeNode {
     return this._parent;
   }
 
+  public get children(): Array<TreeNode<T>> | undefined {
+    return this._children;
+  }
+
   // ==================================================
-  // INSTANCE METHODS: Parent children methods
+  // VIRTUAL METHODS: To be overridden
+  // ==================================================
+
+  public areEqual(child: TreeNode): boolean {
+    return this === child;
+  }
+
+  // ==================================================
+  // INSTANCE METHODS: Getters
   // ==================================================
 
   // eslint-disable-next-line @typescript-eslint/prefer-return-this-type
@@ -188,12 +201,152 @@ export class TreeNode<T = any> implements ITreeNode {
     return this;
   }
 
+  public getLastChild(): TreeNode<T> | undefined {
+    if (this._children === undefined) {
+      return undefined;
+    }
+    return this._children[this._children.length - 1];
+  }
+
+  // ==================================================
+  // INSTANCE METHODS: Selection and checked nodes
+  // ==================================================
+
+  public getSelectedNodes(): Array<TreeNode<T>> {
+    const nodes: Array<TreeNode<T>> = [];
+    for (const child of this.getThisAndDescendants()) {
+      if (child.isSelected) {
+        nodes.push(child);
+      }
+    }
+    return nodes;
+  }
+
+  public getCheckedNodes(): Array<TreeNode<T>> {
+    const nodes: Array<TreeNode<T>> = [];
+    for (const child of this.getThisAndDescendants()) {
+      if (child.checkBoxState === CheckBoxState.All) {
+        nodes.push(child);
+      }
+    }
+    return nodes;
+  }
+
+  public deselectAll(): void {
+    for (const descendant of this.getThisAndDescendants()) {
+      descendant.isSelected = false;
+    }
+  }
+
+  public expandAllAncestors(): void {
+    for (const ancestor of this.getAncestors()) {
+      ancestor.isExpanded = true;
+    }
+  }
+
+  // ==================================================
+  // INSTANCE METHODS: Iterators
+  // ==================================================
+
+  public *getChildren(loadNodes?: LoadNodesAction): Generator<TreeNode<T>> {
+    if (this.isLoadingChildren) {
+      loadNodes = undefined;
+    }
+    const canLoad = this.isParent && this.parent !== undefined;
+    if (canLoad && loadNodes !== undefined && this.needLoadChildren) {
+      void this.loadChildren(loadNodes);
+    }
+    if (this._children === undefined) {
+      return;
+    }
+    for (const child of this._children) {
+      yield child;
+    }
+  }
+
+  public *getChildrenByType<Type extends ITreeNode>(
+    classType: Class<Type>,
+    loadNodes?: LoadNodesAction
+  ): Generator<Type> {
+    for (const child of this.getChildren(loadNodes)) {
+      if (isInstanceOf(child, classType)) {
+        yield child;
+      }
+    }
+  }
+
+  public *getDescendants(): Generator<TreeNode<T>> {
+    for (const child of this.getChildren()) {
+      yield child;
+      yield* child.getDescendants();
+    }
+  }
+
+  public *getExpandedDescendants(): Generator<TreeNode<T>> {
+    if (!this.isExpanded) {
+      return;
+    }
+    for (const child of this.getChildren()) {
+      yield child;
+      yield* child.getDescendants();
+    }
+  }
+
+  public *getDescendantsByType<Type extends ITreeNode>(classType: Class<Type>): Generator<Type> {
+    for (const descendant of this.getDescendants()) {
+      if (isInstanceOf(descendant, classType)) {
+        yield descendant;
+      }
+    }
+  }
+
+  public *getThisAndDescendants(): Generator<TreeNode<T>> {
+    yield this;
+    for (const descendant of this.getDescendants()) {
+      yield descendant;
+    }
+  }
+
+  public *getThisAndDescendantsByType<Type extends ITreeNode>(
+    classType: Class<Type>
+  ): Generator<Type> {
+    for (const descendant of this.getThisAndDescendants()) {
+      if (isInstanceOf(descendant, classType)) {
+        yield descendant;
+      }
+    }
+  }
+
+  public *getAncestors(): Generator<TreeNode<T>> {
+    let ancestor = this.parent;
+    while (ancestor !== undefined) {
+      yield ancestor;
+      ancestor = ancestor.parent;
+    }
+  }
+
+  public *getAncestorsByType<Type extends ITreeNode>(classType: Class<Type>): Generator<Type> {
+    let ancestor = this.parent;
+    while (ancestor !== undefined) {
+      if (!isInstanceOf(ancestor, classType)) {
+        break;
+      }
+      yield ancestor;
+      ancestor = ancestor.parent;
+    }
+  }
+
+  // ==================================================
+  // INSTANCE METHODS: Parent child relationship
+  // ==================================================
+
   public addChild(child: TreeNode<T>): void {
     if (this._children === undefined) {
       this._children = [];
     }
     this._children.push(child);
     child._parent = this;
+    this.update();
   }
 
   public insertChild(index: number, child: TreeNode<T>): void {
@@ -202,7 +355,12 @@ export class TreeNode<T = any> implements ITreeNode {
     }
     insert(this._children, index, child);
     child._parent = this;
+    this.update();
   }
+
+  // ==================================================
+  // INSTANCE METHODS: Loading
+  // ==================================================
 
   private async loadChildren(loadNodes: LoadNodesAction): Promise<void> {
     this.isLoadingChildren = true;
@@ -245,6 +403,10 @@ export class TreeNode<T = any> implements ITreeNode {
       if (!(child instanceof TreeNode)) {
         continue;
       }
+      // TODO: Optimize this because of O(n*m), could be O(log(n)*m)
+      if (parent.hasChild(child)) {
+        continue;
+      }
       index++;
       parent.insertChild(index, child as TreeNode<T>);
     }
@@ -252,70 +414,11 @@ export class TreeNode<T = any> implements ITreeNode {
     parent.update();
   }
 
-  // ==================================================
-  // INSTANCE METHODS: Get selection and checked nodes
-  // ==================================================
-
-  public getSelectedNodes(): Array<TreeNode<T>> {
-    const nodes: Array<TreeNode<T>> = [];
-    for (const child of this.getThisAndDescendants()) {
-      if (child.isSelected) {
-        nodes.push(child);
-      }
-    }
-    return nodes;
-  }
-
-  public getCheckedNodes(): Array<TreeNode<T>> {
-    const nodes: Array<TreeNode<T>> = [];
-    for (const child of this.getThisAndDescendants()) {
-      if (child.checkBoxState === CheckBoxState.All) {
-        nodes.push(child);
-      }
-    }
-    return nodes;
-  }
-
-  // ==================================================
-  // INSTANCE METHODS: Iterators
-  // ==================================================
-
-  public *getChildren(loadNodes?: LoadNodesAction): Generator<TreeNode<T>> {
-    if (this.isLoadingChildren) {
-      loadNodes = undefined;
-    }
-    const canLoad = this.isParent && this.parent !== undefined;
-    if (canLoad && loadNodes !== undefined && this.needLoadChildren) {
-      void this.loadChildren(loadNodes);
-    }
+  public hasChild(child: TreeNode): boolean {
     if (this._children === undefined) {
-      return;
+      return false;
     }
-    for (const child of this._children) {
-      yield child;
-    }
-  }
-
-  public *getDescendants(): Generator<TreeNode<T>> {
-    for (const child of this.getChildren()) {
-      yield child;
-      yield* child.getDescendants();
-    }
-  }
-
-  public *getThisAndDescendants(): Generator<TreeNode<T>> {
-    yield this;
-    for (const descendant of this.getDescendants()) {
-      yield descendant;
-    }
-  }
-
-  public *getAncestors(): Generator<TreeNode<T>> {
-    let ancestor = this.parent;
-    while (ancestor !== undefined) {
-      yield ancestor;
-      ancestor = ancestor.parent;
-    }
+    return this._children.some((existingChild) => existingChild.areEqual(child));
   }
 
   // ==================================================

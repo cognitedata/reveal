@@ -7,8 +7,8 @@
 import { type ReactElement, useState } from 'react';
 import { CaretDownIcon, CaretRightIcon } from '@cognite/cogs.js';
 import { type TreeViewProps } from '../TreeViewProps';
-import { type ITreeNode } from '../../../../architecture/base/treeView/ITreeNode';
-import { type TreeNodeAction } from '../../../../architecture/base/treeView/types';
+import { type ITreeNode } from '../../../../architecture/base/treeNodes/ITreeNode';
+import { type TreeNodeAction } from '../../../../architecture/base/treeNodes/types';
 import { CARET_COLOR, CARET_SIZE, HOVER_CARET_COLOR } from '../utilities/constants';
 
 // ==================================================

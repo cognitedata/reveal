@@ -7,16 +7,17 @@ import { CadModelContainer } from '../src';
 import { getAddModelOptionsFromUrl } from './utilities/getAddModelOptionsFromUrl';
 import { TreeView } from '../src/components/Architecture/TreeView/TreeView';
 import styled from 'styled-components';
-import { type ITreeNode } from '../src/architecture/base/treeView/ITreeNode';
-import { TreeNode } from '../src/architecture/base/treeView/TreeNode';
+import { type ITreeNode } from '../src/architecture/base/treeNodes/ITreeNode';
+import { TreeNode } from '../src/architecture/base/treeNodes/TreeNode';
 import { getRandomIntByMax } from '../src/architecture/base/utilities/extensions/mathExtensions';
 import {
   onSingleSelectNode,
   onDependentCheckNode,
   onIndependentCheckNode,
   onMultiSelectNode
-} from '../src/architecture/base/treeView/TreeNodeFunctions';
-import { CheckBoxState } from '../src/architecture/base/treeView/types';
+} from '../src/architecture/base/treeNodes/TreeNodeFunctions';
+import { CheckBoxState } from '../src/architecture/base/treeNodes/types';
+import { useRef } from 'react';
 
 const meta = {
   title: 'Example/TreeView',
@@ -35,10 +36,13 @@ export const Main: Story = {
   args: {
     addModelOptions: getAddModelOptionsFromUrl('/primitives')
   },
+
   render: () => {
+    const myRef = useRef<HTMLDivElement>(null);
     return (
       <div>
         <Container
+          ref={myRef}
           style={{
             left: '50px',
             width: '300px',
@@ -52,7 +56,6 @@ export const Main: Story = {
             onClickInfo={onClickInfo}
             hasCheckboxes
             hasIcons
-            maxLabelLength={4}
             hasInfo
           />
         </Container>
@@ -134,8 +137,10 @@ function createTreeMock(lazyLoading: boolean): TreeNode<string> {
   const root = new TreeNode<string>();
   root.label = 'Root';
   root.isExpanded = true;
+  root.checkBoxState = CheckBoxState.None;
+  root.icon = 'Snow';
 
-  for (let i = 1; i <= 100; i++) {
+  for (let i = 1; i <= 10; i++) {
     const parent = new TreeNode<string>();
     parent.userData = 'Index ' + i;
     parent.label = 'Folder ' + i;

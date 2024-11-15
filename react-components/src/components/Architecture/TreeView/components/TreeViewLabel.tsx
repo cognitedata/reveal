@@ -6,7 +6,7 @@
 
 import { type ReactElement } from 'react';
 import { type TreeViewProps } from '../TreeViewProps';
-import { type ITreeNode } from '../../../../architecture/base/treeView/ITreeNode';
+import { type ITreeNode } from '../../../../architecture/base/treeNodes/ITreeNode';
 import { LOADING_LABEL, MAX_LABEL_LENGTH } from '../utilities/constants';
 import { Tooltip } from '@cognite/cogs.js';
 import { TOOLTIP_DELAY } from '../../constants';

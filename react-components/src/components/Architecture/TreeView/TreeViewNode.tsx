@@ -6,8 +6,8 @@
 
 import { type ReactElement, useState, useReducer } from 'react';
 import { type TreeViewProps } from './TreeViewProps';
-import { type ITreeNode } from '../../../architecture/base/treeView/ITreeNode';
-import { CheckBoxState } from '../../../architecture/base/treeView/types';
+import { type ITreeNode } from '../../../architecture/base/treeNodes/ITreeNode';
+import { CheckBoxState } from '../../../architecture/base/treeNodes/types';
 import { useOnTreeNodeUpdate } from './utilities/useOnTreeNodeUpdate';
 import { LoadingMoreLabel } from './components/LoadingMoreLabel';
 import { LoadMoreButton } from './components/LoadMoreButton';
@@ -35,16 +35,18 @@ import { TreeViewInfo } from './components/TreeViewInfo';
 export const TreeViewNode = ({
   node,
   level,
-  props
+  props,
+  recursive = true
 }: {
   node: ITreeNode;
   level: number;
+  recursive?: boolean;
   props: TreeViewProps;
 }): ReactElement => {
   // Props
   const [hoverOverTextOrIcon, setHoverOverTextOrIcon] = useState(false);
 
-  const children = getChildrenAsArray(node, props.loadNodes);
+  const children = recursive ? getChildrenAsArray(node, props.loadNodes) : undefined;
   const backgroundColor = getBackgroundColor(node, hoverOverTextOrIcon);
   const color = getTextColor(node, hoverOverTextOrIcon);
   const gapBetweenItems = (props.gapBetweenItems ?? GAP_BETWEEN_ITEMS) + 'px';
@@ -54,6 +56,7 @@ export const TreeViewNode = ({
   const hasIcons = props.hasIcons ?? false;
   const hasInfo = props.hasInfo ?? false;
   const marginLeft = level * gapToChildren + 'px';
+  const id = props.getId === undefined ? 'n' : props?.getId(node);
 
   // This force to update the component when the node changes
   // See https://coreui.io/blog/how-to-force-a-react-component-to-re-render/
@@ -65,6 +68,7 @@ export const TreeViewNode = ({
   return (
     <div>
       <div
+        id={id}
         style={{
           flexDirection: 'row',
           display: 'flex',
@@ -100,7 +104,6 @@ export const TreeViewNode = ({
         children.map((node, index) => (
           <TreeViewNode node={node} key={index} level={level + 1} props={props} />
         ))}
-
       {!node.isLoadingSiblings && node.needLoadSiblings && (
         <LoadMoreButton node={node} onClick={onLoadMore} level={level} props={{ ...props }} />
       )}

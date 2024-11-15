@@ -4,8 +4,8 @@
 
 import { type ReactElement } from 'react';
 import { Checkbox } from '@cognite/cogs.js';
-import { type ITreeNode } from '../../../../architecture/base/treeView/ITreeNode';
-import { CheckBoxState, type TreeNodeAction } from '../../../../architecture/base/treeView/types';
+import { type ITreeNode } from '../../../../architecture/base/treeNodes/ITreeNode';
+import { CheckBoxState, type TreeNodeAction } from '../../../../architecture/base/treeNodes/types';
 
 export const TreeNodeCheckBox = ({
   node,
