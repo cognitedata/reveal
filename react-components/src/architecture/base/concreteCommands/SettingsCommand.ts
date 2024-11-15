@@ -31,8 +31,6 @@ export class SettingsCommand extends BaseSettingsCommand {
     super();
 
     this.add(new SetQualityCommand());
-    // Cad models
-    this.add(new CadDividerCommand());
     this.add(new SetGhostModeCommand());
 
     if (include360Images) {
