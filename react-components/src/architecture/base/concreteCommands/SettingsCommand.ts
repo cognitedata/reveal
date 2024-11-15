@@ -20,7 +20,6 @@ import { Set360IconsVisibleCommand } from './image360Collection/Set360IconsVisib
 import { Set360IconsOpacityCommand } from './image360Collection/Set360IconsOpacityCommand';
 import { Set360IconsOccludedVisibleCommand } from './image360Collection/Set360IconsOccludedVisibleCommand';
 import { SetGhostModeCommand } from './cad/SetGhostModeCommand';
-import { CadDividerCommand } from './cad/CadDividerCommand';
 
 export class SettingsCommand extends BaseSettingsCommand {
   // ==================================================
