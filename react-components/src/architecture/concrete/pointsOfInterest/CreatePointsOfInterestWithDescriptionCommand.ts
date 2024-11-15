@@ -49,8 +49,10 @@ export class CreatePointsOfInterestWithDescriptionCommand extends BaseInputComma
       createPointsOfInterestPropertiesFromPointAndTitle(this._point, this._content)
     );
 
-    void domainObject.save();
-    domainObject.setSelectedPointOfInterest(poi);
+    void domainObject.save().then(() => {
+      this.onFinish?.();
+      domainObject.setSelectedPointOfInterest(poi);
+    });
 
     return true;
   }

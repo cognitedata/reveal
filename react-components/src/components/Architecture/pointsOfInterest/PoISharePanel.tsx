@@ -8,15 +8,14 @@ import { Button, Flex, Infobox, LinkIcon, ShareIcon, Switch, TextLabel } from '@
 import { Changes } from '../../../architecture';
 import styled from 'styled-components';
 import { useOnUpdateDomainObject } from '../useOnUpdate';
+import { usePoIDomainObject } from './usePoIDomainObject';
 
-export const PoISharePanel = ({
-  poiDomainObject
-}: {
-  poiDomainObject: PointsOfInterestDomainObject<any>;
-}): ReactElement => {
+export const PoISharePanel = (): ReactElement => {
   const { t } = useTranslation();
 
-  const selectedPointOfInterest = poiDomainObject.selectedPointsOfInterest;
+  const poiDomainObject = usePoIDomainObject();
+
+  const selectedPointOfInterest = poiDomainObject?.selectedPointsOfInterest;
   const [poiVisibility, setPoiVisibility] = useState<'PUBLIC' | 'PRIVATE'>(
     selectedPointOfInterest?.properties.visibility ?? 'PRIVATE'
   );
@@ -46,12 +45,12 @@ const PoIVisibilityInfobox = ({
   poiDomainObject,
   poiVisibility
 }: {
-  poiDomainObject: PointsOfInterestDomainObject<any>;
+  poiDomainObject?: PointsOfInterestDomainObject<any>;
   poiVisibility: 'PUBLIC' | 'PRIVATE';
 }): ReactNode => {
   const { t } = useTranslation();
 
-  const selectedPointOfInterest = poiDomainObject.selectedPointsOfInterest;
+  const selectedPointOfInterest = poiDomainObject?.selectedPointsOfInterest;
   const markedPublic = poiVisibility === 'PUBLIC';
   const header = markedPublic
     ? t('POI_IS_PUBLIC', 'Point of interest is public')
@@ -60,7 +59,7 @@ const PoIVisibilityInfobox = ({
     ? t('POI_PUBLIC_DESCRIPTION', 'Point of interest is public and visible to anyone')
     : t('POI_PRIVATE_DESCRIPTION', 'Point of interest is private and only visible to you');
 
-  if (selectedPointOfInterest === undefined) {
+  if (poiDomainObject === undefined || selectedPointOfInterest === undefined) {
     return null;
   }
 

@@ -8,6 +8,7 @@ import {
   Breadcrumbs,
   Button,
   CloseIcon,
+  DeleteIcon,
   Divider,
   Flex,
   ShareIcon,
@@ -17,87 +18,58 @@ import {
 import { Dropdown } from '@cognite/cogs-lab';
 import { PoISharePanel } from './PoISharePanel';
 import styled from 'styled-components';
-import { type ReactElement, type ReactNode } from 'react';
+import { useMemo, type ReactElement, type ReactNode } from 'react';
 import { type PointOfInterest } from '../../../architecture';
 import { type CommentProperties } from '../../../architecture/concrete/pointsOfInterest/models';
-import { createButtonFromCommandConstructor } from '../CommandButtons';
+import { createButton, createButtonFromCommandConstructor } from '../CommandButtons';
 import { CreatePoICommentCommand } from '../../../architecture/concrete/pointsOfInterest/CreatePoICommentCommand';
 import { useCommentsForPoI } from './useCommentsForPoI';
+import { RevealButtons } from '../RevealButtons';
+import { useSelectedPoI } from './useSelectedPoI';
+import { usePoIDomainObject } from './usePoIDomainObject';
 
-export const PoIInfoPanelContent = ({
-  poiObject
-}: {
-  poiObject: PointsOfInterestDomainObject<any>;
-}): ReactNode => {
+export const PoIInfoPanelContent = (): ReactNode => {
   return (
     <>
-      <PanelHeader poiDomainObject={poiObject} />
-      <PanelBody poiDomainObject={poiObject} />
+      <PanelHeader />
+      <PanelBody />
     </>
   );
 };
 
-const PanelHeader = ({
-  poiDomainObject
-}: {
-  poiDomainObject: PointsOfInterestDomainObject<any> | undefined;
-}): ReactNode => {
-  const selectedPoi = poiDomainObject?.selectedPointsOfInterest;
-  if (poiDomainObject === undefined || selectedPoi === undefined) {
+const PanelHeader = (): ReactNode => {
+  const selectedPoi = useSelectedPoI();
+  if (selectedPoi === undefined) {
     return undefined;
   }
 
   return (
     <Flex direction="row" justifyContent="space-between" alignItems="center">
       <Flex direction="row" alignContent="start" gap={8}>
-        <WaypointIcon /> <TextLabel text={selectedPoi.id} />
+        <WaypointIcon /> <TextLabel text={selectedPoi.properties.title ?? selectedPoi.id} />
       </Flex>
       <Divider direction="vertical" weight="2px" />
       <Flex direction="row" justifyContent="flex-start">
-        <Dropdown
-          appendTo={document}
-          placement="bottom-end"
-          content={<PoISharePanel poiDomainObject={poiDomainObject} />}>
+        <Dropdown appendTo={document} placement="bottom-end" content={<PoISharePanel />}>
           <Button icon=<ShareIcon /> type="ghost" />
         </Dropdown>
-        <Divider direction="vertical" weight="2px" />
-        <Button
-          icon=<CloseIcon />
-          onClick={() => {
-            poiDomainObject.setSelectedPointOfInterest(undefined);
-          }}
-        />
+        <RevealButtons.DeleteSelectedPointOfInterest />
       </Flex>
     </Flex>
   );
 };
 
-const PanelBody = ({
-  poiDomainObject
-}: {
-  poiDomainObject: PointsOfInterestDomainObject<any> | undefined;
-}): ReactNode => {
-  const selectedPoi = poiDomainObject?.selectedPointsOfInterest;
-  if (poiDomainObject === undefined || selectedPoi === undefined) {
-    return undefined;
-  }
-
-  return (
-    <>
-      <h2>{selectedPoi.properties.title}</h2>
-      <CommentSection domainObject={poiDomainObject} poi={selectedPoi} />
-    </>
-  );
+const PanelBody = (): ReactNode => {
+  return <CommentSection />;
 };
 
-export const CommentSection = ({
-  domainObject,
-  poi
-}: {
-  domainObject: PointsOfInterestDomainObject<unknown>;
-  poi: PointOfInterest<unknown>;
-}): ReactElement => {
-  const comments = useCommentsForPoI(domainObject, poi);
+export const CommentSection = (): ReactNode => {
+  const poi = useSelectedPoI();
+
+  const comments = useCommentsForPoI(poi);
+  if (poi === undefined) {
+    return null;
+  }
 
   return (
     <Accordion type="ghost" title={{ key: 'COMMENTS', fallback: 'Comments' }.fallback} gap={8}>
@@ -107,7 +79,7 @@ export const CommentSection = ({
         ))}
       </Flex>
       <CommentFieldContainer>
-        <CreateCommentField poi={poi} />
+        <CreateCommentField poi={poi} refetchComments={comments.refetch} />
       </CommentFieldContainer>
     </Accordion>
   );
@@ -122,8 +94,21 @@ export const SingleCommentDisplay = ({ comment }: { comment: CommentProperties }
   );
 };
 
-export const CreateCommentField = ({ poi }: { poi: PointOfInterest<unknown> }): ReactNode => {
-  return createButtonFromCommandConstructor(() => new CreatePoICommentCommand(poi), {});
+export const CreateCommentField = ({
+  poi,
+  refetchComments
+}: {
+  poi: PointOfInterest<unknown>;
+  refetchComments: () => void;
+}): ReactNode => {
+  const command = useMemo(() => {
+    const command = new CreatePoICommentCommand(poi);
+    command.onFinish = () => {
+      refetchComments();
+    };
+    return command;
+  }, [poi]);
+  return createButton(command, 'right');
 };
 
 const CommentFieldContainer = styled.div`

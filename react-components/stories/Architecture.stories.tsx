@@ -3,7 +3,7 @@
  */
 
 import type { Meta, StoryObj } from '@storybook/react';
-import { CadModelContainer, PointsOfInterestSidePanel, RevealButtons, RevealCanvas } from '../src';
+import { CadModelContainer, RevealButtons, RevealCanvas } from '../src';
 import { Color } from 'three';
 import { type ReactNode, type ReactElement } from 'react';
 import { RevealStoryContext } from './utilities/RevealStoryContainer';
@@ -16,6 +16,7 @@ import { ContextMenu } from '../src/components/ContextMenu';
 import { Menu } from '@cognite/cogs.js';
 import { ToolUI } from '../src/components/Architecture/ToolUI';
 import { type ContextMenuData } from '../src/architecture';
+import { PointsOfInterestSidePanel } from '../src/components/Architecture/pointsOfInterest/PointsOfInterestSidePanel';
 
 const meta = {
   title: 'Example/Architecture',
@@ -71,9 +72,7 @@ const ContextMenuContent = ({
   return (
     <Menu>
       <ActionList>
-        {point !== undefined && (
-          <RevealButtons.PointsOfInterestInitiateCreationCommand point={point} />
-        )}
+        {point !== undefined && <RevealButtons.PointsOfInterestInitiateCreation point={point} />}
       </ActionList>
     </Menu>
   );

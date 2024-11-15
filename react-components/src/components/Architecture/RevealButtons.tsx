@@ -25,6 +25,8 @@ import { Image360ActionCommand } from '../../architecture/base/concreteCommands/
 import { type PlacementType } from './types';
 import { type Vector3 } from 'three';
 import { InitiatePointsOfInterestCommand } from '../../architecture/concrete/pointsOfInterest/InitiatePointsOfInterestCommand';
+import { PoIInfoPanelContent } from './pointsOfInterest';
+import { DeleteSelectedPointsOfInterestCommand } from '../../architecture/concrete/pointsOfInterest/DeletePointsOfInterestCommand';
 
 export class RevealButtons {
   static Settings = (props: SettingsProp): ReactElement =>
@@ -69,10 +71,11 @@ export class RevealButtons {
   static PointsOfInterest = (prop: ButtonProp): ReactElement =>
     createButtonFromCommandConstructor(() => new PointsOfInterestTool(), prop);
 
-  static PointsOfInterestInitiateCreationCommand = (
-    prop: { point: Vector3 } & ButtonProp
-  ): ReactElement =>
+  static PointsOfInterestInitiateCreation = (prop: { point: Vector3 } & ButtonProp): ReactElement =>
     createButtonFromCommandConstructor(() => new InitiatePointsOfInterestCommand(prop.point), prop);
+
+  static DeleteSelectedPointOfInterest = (prop: ButtonProp): ReactElement =>
+    createButtonFromCommandConstructor(() => new DeleteSelectedPointsOfInterestCommand(), prop);
 
   static KeyboardSpeed = (prop: ButtonProp): ReactElement =>
     createButtonFromCommandConstructor(() => new KeyboardSpeedCommand(), prop);

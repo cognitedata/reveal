@@ -68,13 +68,17 @@ export class PointsOfInterestCache<PoIId> {
   }
 
   public async savePointsOfInterest(
-    pois: PointsOfInterestProperties[]
+    pois: PointsOfInterestInstance<PoIId>[]
   ): Promise<Array<PointsOfInterestInstance<PoIId>>> {
     if (pois.length === 0) {
       return [];
     }
 
     return await this._poiProvider.createPointsOfInterest(pois);
+  }
+
+  public getDataProvider(): PointsOfInterestProvider<PoIId> {
+    return this._poiProvider;
   }
 }
 

@@ -11,6 +11,7 @@ import { useOnUpdate, useOnUpdateDomainObject } from '../useOnUpdate';
 import { type PointsOfInterestDomainObject } from '../../../architecture/concrete/pointsOfInterest/PointsOfInterestDomainObject';
 import { PoIInfoPanelContent } from './PoIInfoPanelContent';
 import { PoIList } from './PoIList';
+import { useSelectedPoI } from './useSelectedPoI';
 
 export const PointsOfInterestSidePanel = ({ children }: PropsWithChildren): ReactNode => {
   const renderTarget = useRenderTarget();
@@ -18,16 +19,12 @@ export const PointsOfInterestSidePanel = ({ children }: PropsWithChildren): Reac
   const tool = renderTarget.commandsController.getToolByType(PointsOfInterestTool);
 
   const [enabled, setEnabled] = useState<boolean>(tool?.isEnabled ?? false);
-  const [poiObject, setPoiObject] = useState<PointsOfInterestDomainObject<any> | undefined>(
-    tool?.getPointsOfInterestDomainObject()
-  );
 
   useOnUpdate(tool, () => {
     if (tool === undefined) {
       return;
     }
 
-    setPoiObject(tool.getPointsOfInterestDomainObject());
     setEnabled(tool.isChecked && tool.isEnabled);
   });
 
@@ -35,53 +32,30 @@ export const PointsOfInterestSidePanel = ({ children }: PropsWithChildren): Reac
     <CollapsablePanel
       sidePanelRightVisible={enabled}
       sidePanelRightWidth={500}
-      sidePanelRight={<PanelContainer poiObject={poiObject} />}>
+      sidePanelRight={<PanelContainer />}>
       {children}
     </CollapsablePanel>
   );
 };
 
-const PanelContainer = ({
-  poiObject
-}: {
-  poiObject?: PointsOfInterestDomainObject<any>;
-}): ReactNode => {
-  if (poiObject === undefined) {
-    return null;
-  }
-
+const PanelContainer = (): ReactNode => {
   return (
     <PanelContentContainer>
-      <PanelContent poiObject={poiObject} />
+      <PanelContent />
     </PanelContentContainer>
   );
 };
 
-const PanelContent = ({
-  poiObject
-}: {
-  poiObject: PointsOfInterestDomainObject<any>;
-}): ReactElement => {
-  const [selectedPoI, setSelectedPoI] = useState<PointOfInterest<any> | undefined>(
-    poiObject.selectedPointsOfInterest
-  );
-
-  useOnUpdateDomainObject(poiObject, () => {
-    setSelectedPoI(poiObject.selectedPointsOfInterest);
-  });
-
+const PanelContent = (): ReactElement => {
+  const selectedPoI = useSelectedPoI();
   if (selectedPoI !== undefined) {
-    return <PoIInfoPanelContent poiObject={poiObject} />;
+    return <PoIInfoPanelContent />;
   } else {
-    return <AllPoIInfoPanel poiObject={poiObject} />;
+    return <AllPoIInfoPanel />;
   }
 };
 
-const AllPoIInfoPanel = ({
-  poiObject
-}: {
-  poiObject: PointsOfInterestDomainObject<any>;
-}): ReactElement => {
+const AllPoIInfoPanel = (): ReactElement => {
   return <PoIList />;
 };
 

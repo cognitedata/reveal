@@ -19,7 +19,7 @@ export enum PointsOfInterestStatus {
 
 export type PointOfInterest<IdType> = {
   properties: PointsOfInterestProperties;
-  id?: IdType;
+  id: IdType;
   status: PointsOfInterestStatus;
 };
 

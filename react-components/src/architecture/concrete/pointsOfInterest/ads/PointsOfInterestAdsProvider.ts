@@ -38,18 +38,16 @@ export class PointsOfInterestAdsProvider implements PointsOfInterestProvider<Ext
   constructor(private readonly _sdk: CogniteClient) {}
 
   async createPointsOfInterest(
-    pois: PointsOfInterestProperties[]
+    pois: { id: ExternalId; properties: PointsOfInterestProperties }[]
   ): Promise<Array<PointsOfInterestInstance<ExternalId>>> {
     const result = await this._sdk.put<{ items: PoIItem[] }>(
       `${this._sdk.getBaseUrl()}/${this._createUrl(this._sdk.project)}`,
       {
         data: {
-          items: pois.map((poi) => {
-            const externalId = uuid();
-
+          items: pois.map(({ id, properties: poi }) => {
             return {
-              externalId,
-              name: externalId,
+              externalId: id,
+              name: poi.title,
               position: [poi.positionX, poi.positionY, poi.positionZ],
               sceneState: {},
               visibility: 'PRIVATE'
@@ -130,12 +128,17 @@ export class PointsOfInterestAdsProvider implements PointsOfInterestProvider<Ext
 
     return result.data;
   }
+
+  public createNewId(): ExternalId {
+    return uuid();
+  }
 }
 
 function poiItemToInstance(item: PoIItem): PointsOfInterestInstance<ExternalId> {
   return {
     id: item.externalId,
     properties: {
+      title: item.name,
       positionX: item.position[0],
       positionY: item.position[1],
       positionZ: item.position[2]

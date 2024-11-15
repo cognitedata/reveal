@@ -14,11 +14,14 @@ import {
   fetchPointsOfInterest
 } from './network';
 
+import { v4 as uuid } from 'uuid';
+import { POI_SOURCE } from './view';
+
 export class PointsOfInterestFdmProvider implements PointsOfInterestProvider<DmsUniqueIdentifier> {
   constructor(private readonly _fdmSdk: FdmSDK) {}
 
   async createPointsOfInterest(
-    pois: PointsOfInterestProperties[]
+    pois: { id: DmsUniqueIdentifier; properties: PointsOfInterestProperties }[]
   ): Promise<Array<PointsOfInterestInstance<DmsUniqueIdentifier>>> {
     return await createPointsOfInterestInstances(this._fdmSdk, pois);
   }
@@ -40,5 +43,12 @@ export class PointsOfInterestFdmProvider implements PointsOfInterestProvider<Dms
     content: string
   ): Promise<CommentProperties> {
     return await Promise.resolve({ ownerId: 'dummy', content });
+  }
+
+  createNewId(): DmsUniqueIdentifier {
+    return {
+      externalId: uuid(),
+      space: POI_SOURCE.space
+    };
   }
 }

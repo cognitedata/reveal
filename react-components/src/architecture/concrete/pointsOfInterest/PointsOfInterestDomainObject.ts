@@ -78,7 +78,8 @@ export class PointsOfInterestDomainObject<PoIIdType> extends VisualDomainObject 
   ): PointOfInterest<PoIIdType> {
     const newPointsOfInterest = {
       properties: poiData,
-      status: PointsOfInterestStatus.PendingCreation
+      status: PointsOfInterestStatus.PendingCreation,
+      id: this._poisCache.getDataProvider().createNewId()
     };
 
     this._pointsOfInterest.push(newPointsOfInterest);
@@ -125,24 +126,20 @@ export class PointsOfInterestDomainObject<PoIIdType> extends VisualDomainObject 
       (poi) => poi.status === PointsOfInterestStatus.PendingDeletion
     );
 
-    const deletePromise = this._poisCache.deletePointsOfInterest(
-      toRemove.map((poi) => poi.id).filter(isDefined)
-    );
+    const deletePromise = this._poisCache.deletePointsOfInterest(toRemove.map((poi) => poi.id));
 
     const poisToCreate = this._pointsOfInterest.filter(
       (obs) => obs.status === PointsOfInterestStatus.PendingCreation
     );
-    const newPointsOfInterest = await this._poisCache.savePointsOfInterest(
-      poisToCreate.map((obs) => obs.properties)
-    );
+    const newPointsOfInterest = await this._poisCache.savePointsOfInterest(poisToCreate);
 
     this._pointsOfInterest = notToRemove
       .filter((poi) => poi.status === PointsOfInterestStatus.Default)
       .concat(
         newPointsOfInterest.map((poi) => ({
           status: PointsOfInterestStatus.Default,
-          fdmMetadata: poi,
-          properties: poi.properties
+          properties: poi.properties,
+          id: poi.id
         }))
       );
 
@@ -161,17 +158,12 @@ export class PointsOfInterestDomainObject<PoIIdType> extends VisualDomainObject 
     poi: PointOfInterest<PoIIdType>,
     content: string
   ): Promise<CommentProperties | undefined> {
-    if (poi.id === undefined) {
-      return undefined;
-    }
-
-    return await this._poisCache.postCommentForPoi(poi.id, content);
+    const comment = await this._poisCache.postCommentForPoi(poi.id, content);
+    this.notify(Changes.addedPart);
+    return comment;
   }
 
   public async getCommentsForPoi(poi: PointOfInterest<PoIIdType>): Promise<CommentProperties[]> {
-    if (poi.id === undefined) {
-      return [];
-    }
     return await this._poisCache.getPoiCommentsForPoi(poi.id);
   }
 

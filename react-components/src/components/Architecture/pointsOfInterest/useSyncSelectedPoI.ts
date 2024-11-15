@@ -15,7 +15,7 @@ export const useSyncSelectedPoI = (
 
   useOnUpdateDomainObject(domainObject, () => {
     const internalPoi = domainObject?.selectedPointsOfInterest;
-    if (lastSelectedPoiInternal.current === internalPoi) {
+    if (lastSelectedPoiInternal.current === internalPoi || domainObject === undefined) {
       return;
     }
 
