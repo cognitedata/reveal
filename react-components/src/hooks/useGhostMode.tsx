@@ -9,7 +9,7 @@ import { SetGhostModeCommand } from '../architecture/base/concreteCommands/cad/S
 
 export const useGhostMode = (): boolean => {
   // Hook to be used in Fusion only
-  const [_isChecked, setChecked] = useState(false);
+  const [isChecked, setChecked] = useState(false);
 
   const renderTarget = useRenderTarget();
   const command = renderTarget.commandsController.getCommandByTypeRecursive(SetGhostModeCommand);
@@ -21,5 +21,5 @@ export const useGhostMode = (): boolean => {
   if (command === undefined) {
     return false;
   }
-  return command.isChecked;
+  return isChecked;
 };
