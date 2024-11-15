@@ -54,8 +54,6 @@ export const PoIList = (): ReactNode => {
       selectedRows={[selectedPoi?.id]}
       pagination={false}
       disableColumnResize
-      disableRowStripes
-      disableMultipleRowSelection
     />
   );
 };
