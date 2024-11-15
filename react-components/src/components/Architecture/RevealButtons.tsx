@@ -29,7 +29,7 @@ import { InitiatePointsOfInterestCommand } from '../../architecture/concrete/poi
 export class RevealButtons {
   static Settings = (props: SettingsProp): ReactElement =>
     createButtonFromCommandConstructor(
-      () => new SettingsCommand(props.include360Images ?? true),
+      () => new SettingsCommand(props.include360Images, props.includePoIs),
       props
     );
 
@@ -111,6 +111,7 @@ export type ButtonProp = {
 
 type SettingsProp = ButtonProp & {
   include360Images?: boolean;
+  includePoIs?: boolean;
 };
 
 type Image360Prop = ButtonProp & {
