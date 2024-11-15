@@ -31,6 +31,9 @@ export class SettingsCommand extends BaseSettingsCommand {
     super();
 
     this.add(new SetQualityCommand());
+    // Cad models
+    this.add(new CadDividerCommand());
+    this.add(new SetGhostModeCommand());
 
     if (include360Images) {
       // 360 Images
@@ -44,10 +47,6 @@ export class SettingsCommand extends BaseSettingsCommand {
       this.add(new Set360IconsOccludedVisibleCommand());
       this.add(new Set360IconsOpacityCommand());
     }
-    // Cad models
-    this.add(new CadDividerCommand());
-    this.add(new SetGhostModeCommand());
-
     // Point clouds
     this.add(new PointCloudDividerCommand());
     this.add(new SetPointSizeCommand());

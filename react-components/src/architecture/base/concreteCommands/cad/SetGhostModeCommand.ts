@@ -2,7 +2,6 @@
  * Copyright 2024 Cognite AS
  */
 
-import { type CogniteCadModel } from '@cognite/reveal';
 import { RenderTargetCommand } from '../../commands/RenderTargetCommand';
 import { type TranslateKey } from '../../utilities/TranslateKey';
 
@@ -16,7 +15,7 @@ export class SetGhostModeCommand extends RenderTargetCommand {
   }
 
   public override get isEnabled(): boolean {
-    return this.firstModel !== undefined;
+    return true;
   }
 
   public override get isToggle(): boolean {
@@ -24,26 +23,11 @@ export class SetGhostModeCommand extends RenderTargetCommand {
   }
 
   public override get isChecked(): boolean {
-    const model = this.firstModel;
-    if (model === undefined) {
-      return false;
-    }
-    const appearance = model.getDefaultNodeAppearance();
-    return appearance.renderGhosted ?? false;
+    return this.renderTarget.ghostMode;
   }
 
   protected override invokeCore(): boolean {
-    const ghosted = !this.isChecked;
-    for (const model of this.renderTarget.getCadModels()) {
-      const appearance = model.getDefaultNodeAppearance();
-      const clone = { ...appearance };
-      clone.renderGhosted = ghosted;
-      model.setDefaultNodeAppearance(clone);
-    }
+    this.renderTarget.ghostMode = !this.renderTarget.ghostMode;
     return true;
-  }
-
-  private get firstModel(): CogniteCadModel | undefined {
-    return this.renderTarget.getCadModels().next().value;
   }
 }

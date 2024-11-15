@@ -118,6 +118,13 @@ export abstract class BaseCommand {
 
   protected *getChildren(): Generator<BaseCommand> {}
 
+  public *getDescendants(): Generator<BaseCommand> {
+    for (const child of this.getChildren()) {
+      yield child;
+      yield* child.getDescendants();
+    }
+  }
+
   /*
    * Called when the command is invoked
    * Return true if successful, false otherwise

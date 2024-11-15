@@ -133,7 +133,20 @@ export class CommandsController extends PointerEvents {
         return tool;
       }
     }
+    return undefined;
+  }
 
+  public getCommandByTypeRecursive<T extends BaseCommand>(classType: Class<T>): T | undefined {
+    for (const command of this._commands) {
+      if (isInstanceOf(command, classType)) {
+        return command;
+      }
+      for (const descendant of command.getDescendants()) {
+        if (isInstanceOf(descendant, classType)) {
+          return descendant;
+        }
+      }
+    }
     return undefined;
   }
 
