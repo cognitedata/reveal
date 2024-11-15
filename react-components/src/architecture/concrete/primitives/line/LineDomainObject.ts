@@ -135,9 +135,11 @@ export abstract class LineDomainObject extends VisualDomainObject {
 
       case PrimitiveType.Polyline:
         add('MEASUREMENTS_TOTAL_LENGTH', 'Total length', this.getTotalLength());
+        add('MEASUREMENTS_HORIZONTAL_LENGTH', 'Horizontal length', this.getHorizontalLength());
         break;
       case PrimitiveType.Polygon:
         add('MEASUREMENTS_TOTAL_LENGTH', 'Total length', this.getTotalLength());
+        add('MEASUREMENTS_HORIZONTAL_LENGTH', 'Horizontal length', this.getHorizontalLength());
         if (this.isClosed) {
           add(
             'MEASUREMENTS_HORIZONTAL_AREA',

@@ -30,7 +30,7 @@
   },
   "peerDependencies": {
     "@cognite/cogs-lab": "^9.0.0-alpha.111",
-    "@cognite/reveal": "4.21.1", 
+    "@cognite/reveal": "4.21.1",
     "react": ">=18",
     "react-dom": ">=18",
     "styled-components": ">=5"
