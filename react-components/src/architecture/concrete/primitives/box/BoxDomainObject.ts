@@ -12,7 +12,7 @@ import { type PrimitivePickInfo } from '../common/PrimitivePickInfo';
 import { type BaseDragger } from '../../../base/domainObjectsHelpers/BaseDragger';
 import { BoxDragger } from './BoxDragger';
 import { type CreateDraggerProps } from '../../../base/domainObjects/VisualDomainObject';
-import { getIconByPrimitiveType } from '../../measurements/getIconByPrimitiveType';
+import { getIconByPrimitiveType } from '../../../base/utilities/primitives/getIconByPrimitiveType';
 import { type TranslateKey } from '../../../base/utilities/TranslateKey';
 import { Quantity } from '../../../base/domainObjectsHelpers/Quantity';
 import { PanelInfo } from '../../../base/domainObjectsHelpers/PanelInfo';
@@ -51,11 +51,11 @@ export abstract class BoxDomainObject extends SolidDomainObject {
   public override get typeName(): TranslateKey {
     switch (this.primitiveType) {
       case PrimitiveType.HorizontalArea:
-        return { key: 'MEASUREMENTS_HORIZONTAL_AREA', fallback: 'Horizontal area' };
+        return { key: 'HORIZONTAL_AREA', fallback: 'Horizontal area' };
       case PrimitiveType.VerticalArea:
-        return { key: 'MEASUREMENTS_VERTICAL_AREA', fallback: 'Vertical area' };
+        return { key: 'VERTICAL_AREA', fallback: 'Vertical area' };
       case PrimitiveType.Box:
-        return { key: 'MEASUREMENTS_VOLUME', fallback: 'Volume' };
+        return { key: 'VOLUME', fallback: 'Volume' };
       default:
         throw new Error('Unknown PrimitiveType');
     }
@@ -91,22 +91,22 @@ export abstract class BoxDomainObject extends SolidDomainObject {
     const hasZ = Box.isValidSize(size.z);
 
     if (isFinished || hasX) {
-      add('MEASUREMENTS_LENGTH', 'Length', size.x, Quantity.Length);
+      add('LENGTH', 'Length', size.x, Quantity.Length);
     }
     if (primitiveType !== PrimitiveType.VerticalArea && (isFinished || hasY)) {
-      add('MEASUREMENTS_DEPTH', 'Depth', size.y, Quantity.Length);
+      add('DEPTH', 'Depth', size.y, Quantity.Length);
     }
     if (primitiveType !== PrimitiveType.HorizontalArea && (isFinished || hasZ)) {
-      add('MEASUREMENTS_HEIGHT', 'Height', size.z, Quantity.Length);
+      add('HEIGHT', 'Height', size.z, Quantity.Length);
     }
     if (primitiveType !== PrimitiveType.Box && (isFinished || box.hasArea)) {
-      add('MEASUREMENTS_AREA', 'Area', this.area, Quantity.Area);
+      add('AREA', 'Area', this.area, Quantity.Area);
     }
     if (primitiveType === PrimitiveType.Box && (isFinished || box.hasHorizontalArea)) {
-      add('MEASUREMENTS_HORIZONTAL_AREA', 'Horizontal area', box.horizontalArea, Quantity.Area);
+      add('HORIZONTAL_AREA', 'Horizontal area', box.horizontalArea, Quantity.Area);
     }
     if (primitiveType === PrimitiveType.Box && (isFinished || box.hasVolume)) {
-      add('MEASUREMENTS_VOLUME', 'Volume', box.volume, Quantity.Volume);
+      add('VOLUME', 'Volume', box.volume, Quantity.Volume);
     }
     // I forgot to add text for rotation angle before the deadline, so I used a icon instead.
     if (box.rotation.z !== 0 && isFinished) {

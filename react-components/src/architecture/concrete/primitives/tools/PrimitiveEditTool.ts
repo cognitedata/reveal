@@ -21,9 +21,9 @@ export abstract class PrimitiveEditTool extends BaseEditTool {
   // INSTANCE FIELDS
   // ==================================================
 
-  private _creator: BaseCreator | undefined = undefined;
+  protected _creator: BaseCreator | undefined = undefined;
   public primitiveType: PrimitiveType;
-  public readonly defaultPrimitiveType: PrimitiveType;
+  private readonly _defaultPrimitiveType: PrimitiveType;
 
   public get isEdit(): boolean {
     return this.primitiveType === PrimitiveType.None;
@@ -36,7 +36,7 @@ export abstract class PrimitiveEditTool extends BaseEditTool {
   public constructor(primitiveType: PrimitiveType = PrimitiveType.None) {
     super();
     this.primitiveType = primitiveType;
-    this.defaultPrimitiveType = primitiveType;
+    this._defaultPrimitiveType = primitiveType;
   }
 
   // ==================================================
@@ -69,6 +69,7 @@ export abstract class PrimitiveEditTool extends BaseEditTool {
       this.setDefaultPrimitiveType();
       this._creator = undefined;
     }
+    CommandsUpdater.update(this.renderTarget);
   }
 
   public override async onHoverByDebounce(event: PointerEvent): Promise<void> {
@@ -135,7 +136,7 @@ export abstract class PrimitiveEditTool extends BaseEditTool {
     // Click in the "air"
     if (creator !== undefined && !creator.preferIntersection) {
       const ray = this.getRay(event);
-      if (creator.addPoint(ray, undefined)) {
+      if (creator.addPoint(ray)) {
         this.endCreatorIfFinished(creator);
         return;
       }
@@ -273,15 +274,15 @@ export abstract class PrimitiveEditTool extends BaseEditTool {
     return undefined;
   }
 
-  private setDefaultPrimitiveType(): void {
-    if (this.primitiveType === this.defaultPrimitiveType) {
+  protected setDefaultPrimitiveType(): void {
+    if (this.primitiveType === this._defaultPrimitiveType) {
       return;
     }
-    this.primitiveType = this.defaultPrimitiveType;
+    this.primitiveType = this._defaultPrimitiveType;
     CommandsUpdater.update(this.renderTarget);
   }
 
-  private endCreatorIfFinished(creator: BaseCreator, force = false): void {
+  protected endCreatorIfFinished(creator: BaseCreator, force = false): void {
     if (force || creator.isFinished) {
       this.setDefaultPrimitiveType();
       this._creator = undefined;
