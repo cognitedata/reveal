@@ -49,8 +49,20 @@ export abstract class LineDomainObject extends VisualDomainObject {
     return this.points.length;
   }
 
-  public get loopLength(): number {
+  public get lineSegmentCount(): number {
     return this.primitiveType === PrimitiveType.Polygon ? this.pointCount + 1 : this.pointCount;
+  }
+
+  public get firstPoint(): Vector3 {
+    return this.points[0];
+  }
+
+  public get lastPoint(): Vector3 {
+    return this.points[this.pointCount - 1];
+  }
+
+  public get isClosed(): boolean {
+    return this.primitiveType === PrimitiveType.Polygon && this.pointCount >= 3;
   }
 
   // ==================================================
@@ -126,7 +138,7 @@ export abstract class LineDomainObject extends VisualDomainObject {
         break;
       case PrimitiveType.Polygon:
         add('MEASUREMENTS_TOTAL_LENGTH', 'Total length', this.getTotalLength());
-        if (this.pointCount > 2) {
+        if (this.isClosed) {
           add(
             'MEASUREMENTS_HORIZONTAL_AREA',
             'Horizontal area',
@@ -186,7 +198,7 @@ export abstract class LineDomainObject extends VisualDomainObject {
   // ==================================================
 
   public getTotalLength(): number {
-    let prevPoint: Vector3 | undefined;
+    let prevPoint = this.isClosed ? this.getTransformedPoint(this.lastPoint) : undefined;
     let sum = 0.0;
     for (const point of this.points) {
       const transformedPoint = this.getTransformedPoint(point);
@@ -199,21 +211,20 @@ export abstract class LineDomainObject extends VisualDomainObject {
   }
 
   public getAverageLength(): number {
-    const { pointCount } = this;
-    if (pointCount <= 1) {
+    const { lineSegmentCount } = this;
+    if (lineSegmentCount <= 1) {
       return 0;
     }
-    return this.getTotalLength() / (pointCount - 1);
+    return this.getTotalLength() / lineSegmentCount;
   }
 
   public getHorizontalLength(): number {
-    let prevPoint: Vector3 | undefined;
+    let prevPoint = this.isClosed ? this.getTransformedPoint(this.lastPoint) : undefined;
     let sum = 0.0;
     for (const point of this.points) {
       const transformedPoint = this.getTransformedPoint(point);
       if (prevPoint !== undefined) {
         sum += horizontalDistanceTo(transformedPoint, prevPoint);
-        continue;
       }
       prevPoint = transformedPoint;
     }
@@ -221,13 +232,12 @@ export abstract class LineDomainObject extends VisualDomainObject {
   }
 
   public getVerticalLength(): number {
-    let prevPoint: Vector3 | undefined;
+    let prevPoint = this.isClosed ? this.getTransformedPoint(this.lastPoint) : undefined;
     let sum = 0.0;
     for (const point of this.points) {
       const transformedPoint = this.getTransformedPoint(point);
       if (prevPoint !== undefined) {
         sum += verticalDistanceTo(transformedPoint, prevPoint);
-        continue;
       }
       prevPoint = transformedPoint;
     }
@@ -236,11 +246,11 @@ export abstract class LineDomainObject extends VisualDomainObject {
 
   public getHorizontalArea(): number {
     const { points, pointCount } = this;
-    if (pointCount <= 2) {
+    if (!this.isClosed) {
       return 0;
     }
     let sum = 0.0;
-    const first = this.getTransformedPoint(points[0]);
+    const first = this.getTransformedPoint(this.firstPoint);
     const p0 = new Vector3();
     const p1 = new Vector3();
 

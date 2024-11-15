@@ -110,8 +110,8 @@ export class LineView extends GroupThreeView<LineDomainObject> {
     if (closestDistance !== undefined) {
       closestFinder.minDistance = closestDistance;
     }
-    const loopLength = domainObject.loopLength;
-    for (let i = 0; i < loopLength; i++) {
+    const segmentCount = domainObject.lineSegmentCount;
+    for (let i = 0; i < segmentCount; i++) {
       domainObject.getCopyOfTransformedPoint(points[i % pointCount], thisPoint);
       thisPoint.applyMatrix4(CDF_TO_VIEWER_TRANSFORMATION);
 
@@ -152,7 +152,7 @@ export class LineView extends GroupThreeView<LineDomainObject> {
       return undefined;
     }
     const geometries: CylinderGeometry[] = [];
-    const loopLength = domainObject.loopLength;
+    const segmentCount = domainObject.lineSegmentCount;
 
     // Just allocate all needed objects once
     const prevPoint = new Vector3();
@@ -161,7 +161,7 @@ export class LineView extends GroupThreeView<LineDomainObject> {
     const center = new Vector3();
     const direction = new Vector3();
 
-    for (let i = 0; i < loopLength; i++) {
+    for (let i = 0; i < segmentCount; i++) {
       domainObject.getCopyOfTransformedPoint(points[i % pointCount], thisPoint);
       thisPoint.applyMatrix4(CDF_TO_VIEWER_TRANSFORMATION);
 
@@ -227,9 +227,9 @@ export class LineView extends GroupThreeView<LineDomainObject> {
     if (spriteHeight <= 0) {
       return;
     }
-    const loopLength = domainObject.loopLength - 1;
+    const segmentCount = domainObject.lineSegmentCount - 1;
     const center = new Vector3();
-    for (let i = 0; i < loopLength; i++) {
+    for (let i = 0; i < segmentCount; i++) {
       const point1 = domainObject.getTransformedPoint(points[i % pointCount]);
       const point2 = domainObject.getTransformedPoint(points[(i + 1) % pointCount]);
       const distance = point1.distanceTo(point2);
@@ -263,13 +263,13 @@ function createPositions(domainObject: LineDomainObject): number[] | undefined {
     return undefined;
   }
   const positions: number[] = [];
-  const loopLength = domainObject.loopLength;
+  const segmentCount = domainObject.lineSegmentCount;
 
-  for (let i = 0; i < loopLength; i++) {
+  for (let i = 0; i < segmentCount; i++) {
     const point = domainObject.getCopyOfTransformedPoint(points[i % pointCount], new Vector3());
     point.applyMatrix4(CDF_TO_VIEWER_TRANSFORMATION);
     positions.push(...point);
-    if (i > 0 && i < loopLength - 1) {
+    if (i > 0 && i < segmentCount - 1) {
       positions.push(...point);
     }
   }
