@@ -12,7 +12,7 @@ import {
   CognitePointCloudModel,
   CogniteCadModel,
   type Image360Collection,
-  type DataSourceType
+  type DataSourceType,
   Image360Action
 } from '@cognite/reveal';
 import {
