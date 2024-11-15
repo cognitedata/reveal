@@ -19,6 +19,7 @@ import { Set360IconsSectionCommand } from './image360Collection/Set360IconsSecti
 import { Set360IconsVisibleCommand } from './image360Collection/Set360IconsVisibleCommand';
 import { Set360IconsOpacityCommand } from './image360Collection/Set360IconsOpacityCommand';
 import { Set360IconsOccludedVisibleCommand } from './image360Collection/Set360IconsOccludedVisibleCommand';
+import { SetGhostModeCommand } from './cad/SetGhostModeCommand';
 
 export class SettingsCommand extends BaseSettingsCommand {
   // ==================================================
@@ -29,6 +30,7 @@ export class SettingsCommand extends BaseSettingsCommand {
     super();
 
     this.add(new SetQualityCommand());
+    this.add(new SetGhostModeCommand());
 
     if (include360Images) {
       // 360 Images

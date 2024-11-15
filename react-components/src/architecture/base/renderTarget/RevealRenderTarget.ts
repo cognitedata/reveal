@@ -58,6 +58,7 @@ export class RevealRenderTarget {
 
   public readonly toViewerMatrix = CDF_TO_VIEWER_TRANSFORMATION.clone();
   public readonly fromViewerMatrix = CDF_TO_VIEWER_TRANSFORMATION.clone().invert();
+  public ghostMode = false;
 
   // ==================================================
   // CONSTRUCTOR

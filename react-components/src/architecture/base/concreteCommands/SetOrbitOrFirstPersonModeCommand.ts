@@ -33,6 +33,12 @@ export class SetOrbitOrFirstPersonModeCommand extends BaseOptionCommand {
     flexibleCameraManager.addControlsTypeChangeListener(this._controlsTypeChangeHandler);
   }
 
+  public override dispose(): void {
+    super.dispose();
+    const { flexibleCameraManager } = this.renderTarget;
+    flexibleCameraManager.removeControlsTypeChangeListener(this._controlsTypeChangeHandler);
+  }
+
   // ==================================================
   // INSTANCE METHODS
   // ==================================================
