@@ -85,11 +85,11 @@ export abstract class LineDomainObject extends VisualDomainObject {
   public override get typeName(): TranslateKey {
     switch (this.primitiveType) {
       case PrimitiveType.Line:
-        return { key: 'MEASUREMENTS_LINE', fallback: 'Line' };
+        return { key: 'LINE', fallback: 'Line' };
       case PrimitiveType.Polyline:
-        return { key: 'MEASUREMENTS_POLYLINE', fallback: 'Polyline' };
+        return { key: 'POLYLINE', fallback: 'Polyline' };
       case PrimitiveType.Polygon:
-        return { key: 'MEASUREMENTS_POLYGON', fallback: 'Polygon' };
+        return { key: 'POLYGON', fallback: 'Polygon' };
       default:
         throw new Error('Unknown PrimitiveType');
     }
@@ -128,25 +128,20 @@ export abstract class LineDomainObject extends VisualDomainObject {
 
     switch (this.primitiveType) {
       case PrimitiveType.Line:
-        add('MEASUREMENTS_LENGTH', 'Length', this.getTotalLength());
-        add('MEASUREMENTS_HORIZONTAL_LENGTH', 'Horizontal length', this.getHorizontalLength());
-        add('MEASUREMENTS_VERTICAL_LENGTH', 'Vertical length', this.getVerticalLength());
+        add('LENGTH', 'Length', this.getTotalLength());
+        add('HORIZONTAL_LENGTH', 'Horizontal length', this.getHorizontalLength());
+        add('VERTICAL_LENGTH', 'Vertical length', this.getVerticalLength());
         break;
 
       case PrimitiveType.Polyline:
-        add('MEASUREMENTS_TOTAL_LENGTH', 'Total length', this.getTotalLength());
-        add('MEASUREMENTS_HORIZONTAL_LENGTH', 'Horizontal length', this.getHorizontalLength());
+        add('TOTAL_LENGTH', 'Total length', this.getTotalLength());
+        add('HORIZONTAL_LENGTH', 'Horizontal length', this.getHorizontalLength());
         break;
       case PrimitiveType.Polygon:
-        add('MEASUREMENTS_TOTAL_LENGTH', 'Total length', this.getTotalLength());
-        add('MEASUREMENTS_HORIZONTAL_LENGTH', 'Horizontal length', this.getHorizontalLength());
+        add('TOTAL_LENGTH', 'Total length', this.getTotalLength());
+        add('HORIZONTAL_LENGTH', 'Horizontal length', this.getHorizontalLength());
         if (this.isClosed) {
-          add(
-            'MEASUREMENTS_HORIZONTAL_AREA',
-            'Horizontal area',
-            this.getHorizontalArea(),
-            Quantity.Area
-          );
+          add('HORIZONTAL_AREA', 'Horizontal area', this.getHorizontalArea(), Quantity.Area);
         }
         break;
 
