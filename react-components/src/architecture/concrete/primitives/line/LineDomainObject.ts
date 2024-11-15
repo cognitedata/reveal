@@ -245,18 +245,19 @@ export abstract class LineDomainObject extends VisualDomainObject {
   }
 
   public getHorizontalArea(): number {
-    const { points, pointCount } = this;
     if (!this.isClosed) {
       return 0;
     }
+    const { points, pointCount } = this;
     let sum = 0.0;
-    const first = this.getTransformedPoint(this.firstPoint);
+    const firstPoint = this.getTransformedPoint(this.firstPoint);
     const p0 = new Vector3();
     const p1 = new Vector3();
 
+    // This applies "Greens theorem" to calculate the area of a polygon
     for (let index = 1; index <= pointCount; index++) {
       this.getCopyOfTransformedPoint(points[index % pointCount], p1);
-      p1.sub(first); // Translate down to first point, to increase accuracy
+      p1.sub(firstPoint); // Translate down to first point, to increase accuracy
       sum += getHorizontalCrossProduct(p0, p1);
       p0.copy(p1);
     }
