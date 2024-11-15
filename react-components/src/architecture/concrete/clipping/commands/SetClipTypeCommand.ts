@@ -7,7 +7,7 @@ import { type BaseCommand } from '../../../base/commands/BaseCommand';
 import { PrimitiveType } from '../../../base/utilities/primitives/PrimitiveType';
 import { type TranslateKey } from '../../../base/utilities/TranslateKey';
 import { ClipTool } from '../ClipTool';
-import { getIconByPrimitiveType } from '../../measurements/getIconByPrimitiveType';
+import { getIconByPrimitiveType } from '../../../base/utilities/primitives/getIconByPrimitiveType';
 import { SliceDomainObject } from '../SliceDomainObject';
 import { type IconName } from '../../../base/utilities/IconName';
 

@@ -102,6 +102,12 @@ export { AnnotationsSelectTool } from './concrete/annotations/commands/Annotatio
 export { AnnotationsCreateTool } from './concrete/annotations/commands/AnnotationsCreateTool';
 export { getGlobalMatrix } from './concrete/annotations/helpers/getMatrixUtils';
 
+export { Image360AnnotationDomainObject } from './concrete/annotation360/Image360AnnotationDomainObject';
+export { Image360AnnotationTool } from './concrete/annotation360/Image360AnnotationTool';
+export { Image360AnnotationCreator } from './concrete/annotation360/Image360AnnotationCreator';
+export { Image360AnnotationEditTypeCommand } from './concrete/annotation360/Image360AnnotationEditTypeCommand';
+export { DeleteSelectedImage360AnnotationCommand } from './concrete/annotation360/DeleteSelectedImage360AnnotationCommand';
+
 // New architecture: tree view nodes
 export type { ITreeNode } from './base/treeView/ITreeNode';
 export type { IconColor } from './base/treeView/types';

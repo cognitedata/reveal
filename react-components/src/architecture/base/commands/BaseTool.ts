@@ -99,7 +99,7 @@ export abstract class BaseTool extends RenderTargetCommand {
     // Override this to clear any temporary objects in the tool, like the dragger
   }
 
-  public onHover(_event: MouseEvent): void {
+  public onHover(_event: PointerEvent): void {
     // Fast. Use this for hover effects when not
     // doing intersection with CAD models and other large models
   }
