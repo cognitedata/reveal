@@ -35,8 +35,8 @@ export class NavigationTool extends BaseTool {
 
   public override onHoverByDebounce(_event: PointerEvent): void {}
 
-  public override onHover(event: MouseEvent): void {
-    this.renderTarget.viewer.onHover360Images(event as PointerEvent);
+  public override onHover(event: PointerEvent): void {
+    this.renderTarget.viewer.onHover360Images(event);
   }
 
   public override async onClick(event: PointerEvent): Promise<void> {
@@ -90,7 +90,7 @@ export class NavigationTool extends BaseTool {
   }
 
   public override onEscapeKey(): void {
-    if (this.renderTarget.viewer.canDoImage360Action(Image360Action.Exit)) {
+    if (this.renderTarget.isInside360Image) {
       void this.renderTarget.viewer.image360Action(Image360Action.Exit).then(() => {
         CommandsUpdater.update(this.renderTarget);
       });

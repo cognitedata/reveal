@@ -80,9 +80,9 @@ function getTranslateKey(type: PointColorType): TranslateKey {
     case PointColorType.Rgb:
       return { key: 'RGB', fallback: 'RGB' };
     case PointColorType.Depth:
-      return { key: 'MEASUREMENTS_DEPTH', fallback: 'Depth' };
+      return { key: 'DEPTH', fallback: 'Depth' };
     case PointColorType.Height:
-      return { key: 'MEASUREMENTS_HEIGHT', fallback: 'Height' };
+      return { key: 'HEIGHT', fallback: 'Height' };
     case PointColorType.Classification:
       return { key: 'CLASSIFICATION', fallback: 'Classification' };
     case PointColorType.Intensity:

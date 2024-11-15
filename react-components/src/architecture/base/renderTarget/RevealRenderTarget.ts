@@ -13,6 +13,7 @@ import {
   CogniteCadModel,
   type Image360Collection,
   type DataSourceType
+  Image360Action
 } from '@cognite/reveal';
 import {
   Vector3,
@@ -87,6 +88,10 @@ export class RevealRenderTarget {
 
   public get viewer(): Cognite3DViewer<DataSourceType> {
     return this._viewer;
+  }
+
+  public get isInside360Image(): boolean {
+    return this._viewer.canDoImage360Action(Image360Action.Exit);
   }
 
   public get config(): BaseRevealConfig | undefined {

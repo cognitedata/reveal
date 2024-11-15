@@ -14,7 +14,7 @@ import {
   type CreateDraggerProps
 } from '../../../base/domainObjects/VisualDomainObject';
 import { PlaneDragger } from './PlaneDragger';
-import { getIconByPrimitiveType } from '../../measurements/getIconByPrimitiveType';
+import { getIconByPrimitiveType } from '../../../base/utilities/primitives/getIconByPrimitiveType';
 import { getComplementary } from '../../../base/utilities/colors/colorExtensions';
 import {
   horizontalAngle,
