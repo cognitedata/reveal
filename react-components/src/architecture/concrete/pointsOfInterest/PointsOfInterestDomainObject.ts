@@ -152,7 +152,6 @@ export class PointsOfInterestDomainObject<PoIIdType> extends VisualDomainObject 
   }
 
   public setSelectedPointOfInterest(poi: PointOfInterest<PoIIdType> | undefined): void {
-    console.log('Setting selected to id', poi?.id);
     this._selectedPointsOfInterest = poi;
 
     this.notify(Changes.selected);

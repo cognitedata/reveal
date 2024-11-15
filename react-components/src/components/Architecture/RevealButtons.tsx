@@ -66,9 +66,8 @@ export class RevealButtons {
       prop
     );
 
-  static PointsOfInterest = (prop: ButtonProp): ReactElement => {
-    return createButtonFromCommandConstructor(() => new PointsOfInterestTool(), prop);
-  };
+  static PointsOfInterest = (prop: ButtonProp): ReactElement =>
+    createButtonFromCommandConstructor(() => new PointsOfInterestTool(), prop);
 
   static PointsOfInterestInitiateCreationCommand = (
     prop: { point: Vector3 } & ButtonProp
