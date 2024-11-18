@@ -38,7 +38,7 @@ export class PointsOfInterestAdsProvider implements PointsOfInterestProvider<Ext
   constructor(private readonly _sdk: CogniteClient) {}
 
   async createPointsOfInterest(
-    pois: { id: ExternalId; properties: PointsOfInterestProperties }[]
+    pois: Array<{ id: ExternalId; properties: PointsOfInterestProperties }>
   ): Promise<Array<PointsOfInterestInstance<ExternalId>>> {
     const result = await this._sdk.put<{ items: PoiItem[] }>(
       `${this._sdk.getBaseUrl()}/${this._createUrl(this._sdk.project)}`,

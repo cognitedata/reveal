@@ -1,7 +1,8 @@
+/*!
+ * Copyright 2024 Cognite AS
+ */
 import { useState } from 'react';
-import { PointOfInterest, PointsOfInterestDomainObject } from '../../../architecture';
-import { PointsOfInterestTool } from '../../../architecture/concrete/pointsOfInterest/PointsOfInterestTool';
-import { useRenderTarget } from '../../RevealCanvas';
+import { type PointOfInterest } from '../../../architecture';
 import { useOnUpdateDomainObject } from '../useOnUpdate';
 import { usePoiDomainObject } from './usePoiDomainObject';
 

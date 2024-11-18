@@ -38,7 +38,7 @@ export class CreatePoiCommentCommand extends BaseInputCommand {
     }
 
     const domainObject = this.rootDomainObject.getDescendantByType(PointsOfInterestDomainObject);
-    domainObject?.postCommentForPoi(this._poi, this._content).then(() => {
+    void domainObject?.postCommentForPoi(this._poi, this._content).then(() => {
       this._onFinish?.();
       domainObject?.notify(Changes.addedPart);
     });

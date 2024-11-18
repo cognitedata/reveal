@@ -40,7 +40,7 @@ export class DeleteSelectedPointsOfInterestCommand<
 
     pois.removePointsOfInterest(selectedOverlay);
     pois.setSelectedPointOfInterest(undefined);
-    pois.save();
+    void pois.save();
 
     return true;
   }

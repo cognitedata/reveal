@@ -25,7 +25,6 @@ import { Image360ActionCommand } from '../../architecture/base/concreteCommands/
 import { type PlacementType } from './types';
 import { type Vector3 } from 'three';
 import { InitiatePointsOfInterestCommand } from '../../architecture/concrete/pointsOfInterest/InitiatePointsOfInterestCommand';
-import { PoiInfoPanelContent } from './pointsOfInterest';
 import { DeleteSelectedPointsOfInterestCommand } from '../../architecture/concrete/pointsOfInterest/DeletePointsOfInterestCommand';
 
 export class RevealButtons {

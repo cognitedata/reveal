@@ -1,11 +1,10 @@
 /*!
  * Copyright 2024 Cognite AS
  */
-import { type ReactElement, ReactNode, useMemo, useState } from 'react';
-import { type PointsOfInterestDomainObject } from '../../../architecture/concrete/pointsOfInterest/PointsOfInterestDomainObject';
+import { type ReactNode, useMemo, useState } from 'react';
 import { type PointOfInterest } from '../../../architecture/concrete/pointsOfInterest/types';
 import { useOnUpdateDomainObject } from '../useOnUpdate';
-import { DataGrid, DatagridColumn } from '@cognite/cogs-lab';
+import { DataGrid, type DatagridColumn } from '@cognite/cogs-lab';
 import { usePoiDomainObject } from './usePoiDomainObject';
 import { EMPTY_ARRAY } from '../../../utilities/constants';
 import { useTranslation } from '../../i18n/I18n';
@@ -31,14 +30,14 @@ export const PoiList = (): ReactNode => {
   const rowData = useMemo(
     () =>
       pois.map((poi) => ({
-        id: poi.id,
+        id: JSON.stringify(poi.id),
         name: poi.id,
         poi
       })),
     [pois]
   );
 
-  const columns: DatagridColumn<RowType>[] = [
+  const columns: Array<DatagridColumn<RowType>> = [
     {
       field: 'name',
       headerName: t('NAME', 'Name'),
@@ -57,7 +56,7 @@ export const PoiList = (): ReactNode => {
       }}
       columns={columns}
       data={rowData}
-      selectedRows={[selectedPoi?.id]}
+      selectedRows={[JSON.stringify(selectedPoi?.id)]}
       pagination={false}
       disableColumnResize
     />

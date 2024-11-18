@@ -9,7 +9,6 @@ import {
 } from '../../../../data-providers/FdmSDK';
 import { type PointsOfInterestInstance, type PointsOfInterestProperties } from '../models';
 
-import { v4 as uuid } from 'uuid';
 import { POI_SOURCE } from './view';
 import { restrictToDmsId } from '../../../../utilities/restrictToDmsId';
 
@@ -30,7 +29,7 @@ export async function fetchPointsOfInterest(
 
 export async function createPointsOfInterestInstances(
   fdmSdk: FdmSDK,
-  poiOverlays: { id: DmsUniqueIdentifier; properties: PointsOfInterestProperties }[]
+  poiOverlays: Array<{ id: DmsUniqueIdentifier; properties: PointsOfInterestProperties }>
 ): Promise<Array<PointsOfInterestInstance<DmsUniqueIdentifier>>> {
   const chunks = chunk(poiOverlays, 100);
   const resultPromises = chunks.map(async (chunk) => {

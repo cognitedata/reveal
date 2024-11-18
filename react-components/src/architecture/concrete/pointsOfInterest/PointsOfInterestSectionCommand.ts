@@ -3,7 +3,7 @@
  */
 
 import { SectionCommand } from '../../base/commands/SectionCommand';
-import { TranslateKey } from '../../base/utilities/TranslateKey';
+import { type TranslateKey } from '../../base/utilities/TranslateKey';
 
 export class PointsOfInterestSectionCommand extends SectionCommand {
   public override get isVisible(): boolean {

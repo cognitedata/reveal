@@ -13,7 +13,6 @@ import { partition, remove } from 'lodash';
 import { type CommentProperties, type PointsOfInterestProperties } from './models';
 import { Quantity } from '../../base/domainObjectsHelpers/Quantity';
 import { type PointsOfInterestProvider } from './PointsOfInterestProvider';
-import { isDefined } from '../../../utilities/isDefined';
 
 export class PointsOfInterestDomainObject<PoiIdType> extends VisualDomainObject {
   private _selectedPointsOfInterest: PointOfInterest<PoiIdType> | undefined;

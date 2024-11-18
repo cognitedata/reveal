@@ -1,11 +1,9 @@
 /*!
  * Copyright 2024 Cognite AS
  */
-import { type PointsOfInterestDomainObject } from '../../../architecture/concrete/pointsOfInterest/PointsOfInterestDomainObject';
 import {
   Accordion,
   Avatar,
-  Breadcrumbs,
   Button,
   Divider,
   Flex,
@@ -110,8 +108,4 @@ export const CreateCommentField = ({
 
 const CommentFieldContainer = styled.div`
   margin-top: 8px;
-`;
-
-const StyledBreadcrumbs = styled(Breadcrumbs)`
-  overflow: hidden;
 `;

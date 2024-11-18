@@ -21,7 +21,7 @@ export class PointsOfInterestFdmProvider implements PointsOfInterestProvider<Dms
   constructor(private readonly _fdmSdk: FdmSDK) {}
 
   async createPointsOfInterest(
-    pois: { id: DmsUniqueIdentifier; properties: PointsOfInterestProperties }[]
+    pois: Array<{ id: DmsUniqueIdentifier; properties: PointsOfInterestProperties }>
   ): Promise<Array<PointsOfInterestInstance<DmsUniqueIdentifier>>> {
     return await createPointsOfInterestInstances(this._fdmSdk, pois);
   }

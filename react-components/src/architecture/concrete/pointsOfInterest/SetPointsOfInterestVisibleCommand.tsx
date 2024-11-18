@@ -29,7 +29,7 @@ export class SetPointsOfInterestVisibleCommand<
     return true;
   }
 
-  private get poiDomainObject() {
+  private get poiDomainObject(): PointsOfInterestDomainObject<PoiIdType> | undefined {
     return this.rootDomainObject.getDescendantByType(PointsOfInterestDomainObject);
   }
 }

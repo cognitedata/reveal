@@ -12,7 +12,6 @@ import { type AnchoredDialogContent } from '../../base/commands/BaseTool';
 import { AnchoredDialogUpdater } from '../../base/reactUpdaters/AnchoredDialogUpdater';
 import { NavigationTool } from '../../base/concreteCommands/NavigationTool';
 import { CreatePointsOfInterestWithDescriptionCommand } from './CreatePointsOfInterestWithDescriptionCommand';
-import { InitiatePointsOfInterestCommand } from './InitiatePointsOfInterestCommand';
 
 export class PointsOfInterestTool<PoiIdType> extends NavigationTool {
   private _isCreating: boolean = false;
@@ -110,7 +109,7 @@ export class PointsOfInterestTool<PoiIdType> extends NavigationTool {
 
     this.setAnchoredDialogContent({
       contentCommands: [createPointCommand],
-      position: position,
+      position,
       onCloseCallback: onCancelCallback
     });
   }
@@ -133,7 +132,7 @@ export class PointsOfInterestTool<PoiIdType> extends NavigationTool {
 
   private async initiateCreatPointOfInterest(event: PointerEvent): Promise<void> {
     const intersection = await this.getIntersection(event);
-    if (!intersection || isPointsOfInterestIntersection(intersection)) {
+    if (intersection === undefined || isPointsOfInterestIntersection(intersection)) {
       this.closeCreateCommandDialog();
       return;
     }

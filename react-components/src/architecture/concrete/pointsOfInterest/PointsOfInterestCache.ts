@@ -1,11 +1,7 @@
 /*!
  * Copyright 2024 Cognite AS
  */
-import {
-  type CommentProperties,
-  type PointsOfInterestInstance,
-  type PointsOfInterestProperties
-} from './models';
+import { type CommentProperties, type PointsOfInterestInstance } from './models';
 import { type PointsOfInterestProvider } from './PointsOfInterestProvider';
 
 /**
@@ -68,7 +64,7 @@ export class PointsOfInterestCache<PoiId> {
   }
 
   public async savePointsOfInterest(
-    pois: PointsOfInterestInstance<PoiId>[]
+    pois: Array<PointsOfInterestInstance<PoiId>>
   ): Promise<Array<PointsOfInterestInstance<PoiId>>> {
     if (pois.length === 0) {
       return [];

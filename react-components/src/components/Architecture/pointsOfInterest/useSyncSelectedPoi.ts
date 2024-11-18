@@ -1,5 +1,8 @@
+/*!
+ * Copyright 2024 Cognite AS
+ */
 import { useEffect, useRef } from 'react';
-import { PointOfInterest } from '../../../architecture';
+import { type PointOfInterest } from '../../../architecture';
 import { useOnUpdateDomainObject } from '../useOnUpdate';
 import { useRenderTarget } from '../../RevealCanvas';
 import { usePoiDomainObject } from './usePoiDomainObject';
@@ -7,7 +10,7 @@ import { usePoiDomainObject } from './usePoiDomainObject';
 export const useSyncSelectedPoi = (
   selectedPoi: PointOfInterest<unknown> | undefined,
   setSelectedPoi: (poi: PointOfInterest<unknown> | undefined) => void
-) => {
+): void => {
   const renderTarget = useRenderTarget();
   const domainObject = usePoiDomainObject();
 
@@ -26,7 +29,7 @@ export const useSyncSelectedPoi = (
 
   useEffect(() => {
     domainObject?.setSelectedPointOfInterest(selectedPoi);
-    if (selectedPoi) {
+    if (selectedPoi !== undefined) {
       domainObject?.setVisibleInteractive(true, renderTarget);
     }
   }, [selectedPoi, domainObject]);
