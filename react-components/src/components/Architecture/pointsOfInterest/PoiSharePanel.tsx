@@ -1,7 +1,7 @@
 /*!
  * Copyright 2024 Cognite AS
  */
-import { type ReactElement, type ReactNode, useState } from 'react';
+import { type ReactNode, useState } from 'react';
 import { type PointsOfInterestDomainObject } from '../../../architecture/concrete/pointsOfInterest/PointsOfInterestDomainObject';
 import { useTranslation } from '../../i18n/I18n';
 import { Button, Flex, Infobox, LinkIcon, ShareIcon, Switch, TextLabel } from '@cognite/cogs.js';
@@ -10,7 +10,7 @@ import styled from 'styled-components';
 import { useOnUpdateDomainObject } from '../useOnUpdate';
 import { usePoiDomainObject } from './usePoiDomainObject';
 
-export const PoiSharePanel = (): ReactElement => {
+export const PoiSharePanel = (): ReactNode => {
   const { t } = useTranslation();
 
   const poiDomainObject = usePoiDomainObject();

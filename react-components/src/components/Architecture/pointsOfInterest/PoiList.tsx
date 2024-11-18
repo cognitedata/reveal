@@ -1,7 +1,7 @@
 /*!
  * Copyright 2024 Cognite AS
  */
-import { type ReactElement, ReactNode, useState } from 'react';
+import { type ReactElement, ReactNode, useMemo, useState } from 'react';
 import { type PointsOfInterestDomainObject } from '../../../architecture/concrete/pointsOfInterest/PointsOfInterestDomainObject';
 import { type PointOfInterest } from '../../../architecture/concrete/pointsOfInterest/types';
 import { useOnUpdateDomainObject } from '../useOnUpdate';
@@ -18,8 +18,8 @@ type RowType = {
 export const PoiList = (): ReactNode => {
   const { t } = useTranslation();
 
-  const [pois, setPois] = useState<Array<PointOfInterest<any>>>([]);
-  const [selectedPoi, setSelectedPoi] = useState<PointOfInterest<any> | undefined>(undefined);
+  const [pois, setPois] = useState<Array<PointOfInterest<unknown>>>([]);
+  const [selectedPoi, setSelectedPoi] = useState<PointOfInterest<unknown> | undefined>(undefined);
 
   const poiObject = usePoiDomainObject();
 
@@ -27,6 +27,16 @@ export const PoiList = (): ReactNode => {
     setPois([...(poiObject?.pointsOfInterest ?? EMPTY_ARRAY)]);
     setSelectedPoi(poiObject?.selectedPointsOfInterest);
   });
+
+  const rowData = useMemo(
+    () =>
+      pois.map((poi) => ({
+        id: poi.id,
+        name: poi.id,
+        poi
+      })),
+    [pois]
+  );
 
   const columns: DatagridColumn<RowType>[] = [
     {
@@ -43,14 +53,10 @@ export const PoiList = (): ReactNode => {
   return (
     <DataGrid<RowType>
       onRowClick={(row) => {
-        poiObject.setSelectedPointOfInterest(row.row.poi as PointOfInterest<any>);
+        poiObject.setSelectedPointOfInterest(row.row.poi as PointOfInterest<unknown>);
       }}
       columns={columns}
-      data={pois.map((poi) => ({
-        id: poi.id,
-        name: poi.id,
-        poi
-      }))}
+      data={rowData}
       selectedRows={[selectedPoi?.id]}
       pagination={false}
       disableColumnResize

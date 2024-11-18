@@ -7,8 +7,6 @@ import {
   Avatar,
   Breadcrumbs,
   Button,
-  CloseIcon,
-  DeleteIcon,
   Divider,
   Flex,
   ShareIcon,
@@ -18,15 +16,14 @@ import {
 import { Dropdown } from '@cognite/cogs-lab';
 import { PoiSharePanel } from './PoiSharePanel';
 import styled from 'styled-components';
-import { useMemo, type ReactElement, type ReactNode } from 'react';
+import { useMemo, type ReactNode } from 'react';
 import { type PointOfInterest } from '../../../architecture';
 import { type CommentProperties } from '../../../architecture/concrete/pointsOfInterest/models';
-import { createButton, createButtonFromCommandConstructor } from '../CommandButtons';
+import { createButton } from '../CommandButtons';
 import { CreatePoiCommentCommand } from '../../../architecture/concrete/pointsOfInterest/CreatePoiCommentCommand';
 import { useCommentsForPoi } from './useCommentsForPoi';
 import { RevealButtons } from '../RevealButtons';
 import { useSelectedPoi } from './useSelectedPoi';
-import { usePoiDomainObject } from './usePoiDomainObject';
 
 export const PoiInfoPanelContent = (): ReactNode => {
   return (
@@ -85,7 +82,7 @@ export const CommentSection = (): ReactNode => {
   );
 };
 
-export const SingleCommentDisplay = ({ comment }: { comment: CommentProperties }): ReactElement => {
+export const SingleCommentDisplay = ({ comment }: { comment: CommentProperties }): ReactNode => {
   return (
     <Flex direction="row" gap={8} alignContent="center">
       <Avatar text={comment.ownerId} />
