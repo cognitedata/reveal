@@ -19,6 +19,9 @@ import { Set360IconsSectionCommand } from './image360Collection/Set360IconsSecti
 import { Set360IconsVisibleCommand } from './image360Collection/Set360IconsVisibleCommand';
 import { Set360IconsOpacityCommand } from './image360Collection/Set360IconsOpacityCommand';
 import { Set360IconsOccludedVisibleCommand } from './image360Collection/Set360IconsOccludedVisibleCommand';
+import { SetPointsOfInterestVisibleCommand } from '../../concrete/pointsOfInterest/SetPointsOfInterestVisibleCommand';
+import { PointsOfInterestDividerCommand } from '../../concrete/pointsOfInterest/PointsOfInterestDividerCommand';
+import { PointsOfInterestSectionCommand } from '../../concrete/pointsOfInterest/PointsOfInterestSectionCommand';
 import { SetGhostModeCommand } from './cad/SetGhostModeCommand';
 
 export class SettingsCommand extends BaseSettingsCommand {
@@ -26,11 +29,17 @@ export class SettingsCommand extends BaseSettingsCommand {
   // CONSTRUCTOR
   // ==================================================
 
-  public constructor(include360Images: boolean = true) {
+  public constructor(include360Images: boolean = true, includePois: boolean = false) {
     super();
 
     this.add(new SetQualityCommand());
     this.add(new SetGhostModeCommand());
+
+    if (includePois) {
+      this.add(new PointsOfInterestDividerCommand());
+      this.add(new PointsOfInterestSectionCommand());
+      this.add(new SetPointsOfInterestVisibleCommand());
+    }
 
     if (include360Images) {
       // 360 Images

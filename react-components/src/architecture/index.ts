@@ -102,6 +102,9 @@ export { AnnotationsSelectTool } from './concrete/annotations/commands/Annotatio
 export { AnnotationsCreateTool } from './concrete/annotations/commands/AnnotationsCreateTool';
 export { getGlobalMatrix } from './concrete/annotations/helpers/getMatrixUtils';
 
+// New architecture: points of interest
+export * from './concrete/pointsOfInterest';
+
 export { Image360AnnotationDomainObject } from './concrete/annotation360/Image360AnnotationDomainObject';
 export { Image360AnnotationTool } from './concrete/annotation360/Image360AnnotationTool';
 export { Image360AnnotationCreator } from './concrete/annotation360/Image360AnnotationCreator';

@@ -40,7 +40,7 @@ export abstract class BaseInputCommand extends RenderTargetCommand {
     this._content = content;
 
     const invokeResult = this.invoke();
-    this._onFinish?.();
+    this._content = '';
     return invokeResult;
   }
 }
