@@ -17,6 +17,8 @@ export { use3dScenes } from './scenes/use3dScenes';
 export { useSceneConfig } from './scenes/useSceneConfig';
 export { useGhostMode } from './useGhostMode';
 
+export type { SceneData } from './scenes/types';
+
 export type { CameraNavigationActions } from './useCameraNavigation';
 export type { ClickedNodeData, FdmNodeDataResult } from './useClickedNode';
 export type {
