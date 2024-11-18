@@ -3,70 +3,75 @@
  */
 import { type TranslateKey } from '../../base/utilities/TranslateKey';
 import { PointsOfInterestDomainObject } from './PointsOfInterestDomainObject';
-import { BaseEditTool } from '../../base/commands/BaseEditTool';
-import { type VisualDomainObject } from '../../base/domainObjects/VisualDomainObject';
-import { type BaseCommand } from '../../base/commands/BaseCommand';
-import { CreatePointsOfInterestCommand } from './CreatePointsOfInterestCommand';
-import { SavePointsOfInterestCommand } from './SavePointsOfInterestCommand';
-import { DeletePointsOfInterestCommand } from './DeletePointsOfInterestCommand';
-import { createEmptyPointsOfInterestProperties, isPointsOfInterestIntersection } from './types';
+import { isPointsOfInterestIntersection } from './types';
 import { type IconName } from '../../base/utilities/IconName';
-import { PointsOfInterestFdmProvider } from './fdm/PointsOfInterestFdmProvider';
-import { type DmsUniqueIdentifier } from '../../../data-providers';
+import { PointsOfInterestAdsProvider } from './ads/PointsOfInterestAdsProvider';
+import { type Vector3 } from 'three';
+import { type PointsOfInterestProvider } from './PointsOfInterestProvider';
+import { type AnchoredDialogContent } from '../../base/commands/BaseTool';
+import { AnchoredDialogUpdater } from '../../base/reactUpdaters/AnchoredDialogUpdater';
+import { NavigationTool } from '../../base/concreteCommands/NavigationTool';
+import { CreatePointsOfInterestWithDescriptionCommand } from './CreatePointsOfInterestWithDescriptionCommand';
 
-export class PointsOfInterestTool<PoIIdType> extends BaseEditTool {
+export class PointsOfInterestTool<PoiIdType> extends NavigationTool {
   private _isCreating: boolean = false;
 
-  protected override canBeSelected(domainObject: VisualDomainObject): boolean {
-    return domainObject instanceof PointsOfInterestDomainObject;
-  }
+  private _anchoredDialogContent: AnchoredDialogContent | undefined;
 
   public override get icon(): IconName {
-    return 'Location';
+    return 'Waypoint';
   }
 
   public override get tooltip(): TranslateKey {
-    return { fallback: 'Show and edit points of interest' };
-  }
-
-  public override getToolbar(): Array<BaseCommand | undefined> {
-    return [
-      new CreatePointsOfInterestCommand<PoIIdType>(),
-      new DeletePointsOfInterestCommand<PoIIdType>(),
-      new SavePointsOfInterestCommand<PoIIdType>()
-    ];
+    return { fallback: 'Create point of interest' };
   }
 
   public override onActivate(): void {
     super.onActivate();
     let domainObject = this.getPointsOfInterestDomainObject();
     if (domainObject === undefined) {
-      domainObject = new PointsOfInterestDomainObject(
-        new PointsOfInterestFdmProvider(this.rootDomainObject.fdmSdk)
-      );
-      this.renderTarget.rootDomainObject.addChildInteractive(domainObject);
+      domainObject = this.initializePointsOfInterestDomainObject();
     }
     domainObject.setVisibleInteractive(true, this.renderTarget);
+    this.setIsCreating(true);
   }
 
   public override onDeactivate(): void {
     super.onDeactivate();
     const domainObject = this.getPointsOfInterestDomainObject();
-    domainObject?.setSelectedPointsOfInterest(undefined);
+    domainObject.setSelectedPointOfInterest(undefined);
+    this.setIsCreating(false);
   }
 
   public override async onClick(event: PointerEvent): Promise<void> {
     if (this._isCreating) {
-      await this.createPendingPointsOfInterest(event);
+      await this.initiateCreatPointOfInterest(event);
+      this.setIsCreating(false);
       return;
     }
     await this.selectOverlayFromClick(event);
   }
 
-  public getPointsOfInterestDomainObject():
-    | PointsOfInterestDomainObject<DmsUniqueIdentifier>
-    | undefined {
-    return this.rootDomainObject.getDescendantByType(PointsOfInterestDomainObject);
+  public override getAnchoredDialogContent(): AnchoredDialogContent | undefined {
+    return this._anchoredDialogContent;
+  }
+
+  public getPointsOfInterestDomainObject(): PointsOfInterestDomainObject<PoiIdType> {
+    const domainObject = this.rootDomainObject.getDescendantByType(PointsOfInterestDomainObject);
+    if (domainObject !== undefined) {
+      return domainObject;
+    }
+    return this.initializePointsOfInterestDomainObject();
+  }
+
+  private initializePointsOfInterestDomainObject(): PointsOfInterestDomainObject<PoiIdType> {
+    const domainObject = new PointsOfInterestDomainObject(
+      new PointsOfInterestAdsProvider(
+        this.rootDomainObject.sdk
+      ) as unknown as PointsOfInterestProvider<PoiIdType>
+    );
+    this.rootDomainObject.addChildInteractive(domainObject);
+    return domainObject;
   }
 
   public get isCreating(): boolean {
@@ -82,6 +87,38 @@ export class PointsOfInterestTool<PoIIdType> extends BaseEditTool {
     }
   }
 
+  private setAnchoredDialogContent(dialogContent: AnchoredDialogContent | undefined): void {
+    this._anchoredDialogContent = dialogContent;
+    AnchoredDialogUpdater.update();
+  }
+
+  public openCreateCommandDialog(position: Vector3): void {
+    const createPointCommand = new CreatePointsOfInterestWithDescriptionCommand(position);
+    createPointCommand.attach(this.renderTarget);
+
+    const onFinishCallback = (): void => {
+      this.closeCreateCommandDialog();
+    };
+
+    const onCancelCallback = (): void => {
+      onFinishCallback();
+    };
+
+    createPointCommand.onFinish = onFinishCallback;
+    createPointCommand.onCancel = onCancelCallback;
+
+    this.setAnchoredDialogContent({
+      contentCommands: [createPointCommand],
+      position,
+      onCloseCallback: onCancelCallback
+    });
+  }
+
+  public closeCreateCommandDialog(): void {
+    this.setAnchoredDialogContent(undefined);
+    this.renderTarget.commandsController.activateDefaultTool();
+  }
+
   private async selectOverlayFromClick(event: PointerEvent): Promise<void> {
     const intersection = await this.getIntersection(event);
 
@@ -90,22 +127,15 @@ export class PointsOfInterestTool<PoIIdType> extends BaseEditTool {
       return;
     }
 
-    intersection.domainObject.setSelectedPointsOfInterest(intersection.userData);
+    intersection.domainObject.setSelectedPointOfInterest(intersection.userData);
   }
 
-  private async createPendingPointsOfInterest(event: PointerEvent): Promise<void> {
+  private async initiateCreatPointOfInterest(event: PointerEvent): Promise<void> {
     const intersection = await this.getIntersection(event);
-
-    if (intersection === undefined) {
-      await super.onClick(event);
+    if (intersection === undefined || isPointsOfInterestIntersection(intersection)) {
+      this.closeCreateCommandDialog();
       return;
     }
-    const domainObject = this.getPointsOfInterestDomainObject();
-    const pendingOverlay = domainObject?.addPendingPointsOfInterest(
-      createEmptyPointsOfInterestProperties(intersection.point)
-    );
-    domainObject?.setSelectedPointsOfInterest(pendingOverlay);
-
-    this.setIsCreating(false);
+    this.openCreateCommandDialog(intersection.point);
   }
 }

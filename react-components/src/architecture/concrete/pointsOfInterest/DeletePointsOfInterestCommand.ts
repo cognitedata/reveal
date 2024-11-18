@@ -6,7 +6,9 @@ import { type ButtonType } from '../../../components/Architecture/types';
 import { PointsOfInterestCommand } from './PointsOfInterestCommand';
 import { type IconName } from '../../base/utilities/IconName';
 
-export class DeletePointsOfInterestCommand<PoIIdType> extends PointsOfInterestCommand<PoIIdType> {
+export class DeleteSelectedPointsOfInterestCommand<
+  PoiIdType
+> extends PointsOfInterestCommand<PoiIdType> {
   public override get icon(): IconName {
     return 'Delete';
   }
@@ -37,7 +39,8 @@ export class DeletePointsOfInterestCommand<PoIIdType> extends PointsOfInterestCo
     }
 
     pois.removePointsOfInterest(selectedOverlay);
-    pois.setSelectedPointsOfInterest(undefined);
+    pois.setSelectedPointOfInterest(undefined);
+    void pois.save();
 
     return true;
   }

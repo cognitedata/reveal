@@ -9,7 +9,6 @@ import {
 } from '../../../../data-providers/FdmSDK';
 import { type PointsOfInterestInstance, type PointsOfInterestProperties } from '../models';
 
-import { v4 as uuid } from 'uuid';
 import { POI_SOURCE } from './view';
 import { restrictToDmsId } from '../../../../utilities/restrictToDmsId';
 
@@ -30,7 +29,7 @@ export async function fetchPointsOfInterest(
 
 export async function createPointsOfInterestInstances(
   fdmSdk: FdmSDK,
-  poiOverlays: PointsOfInterestProperties[]
+  poiOverlays: Array<{ id: DmsUniqueIdentifier; properties: PointsOfInterestProperties }>
 ): Promise<Array<PointsOfInterestInstance<DmsUniqueIdentifier>>> {
   const chunks = chunk(poiOverlays, 100);
   const resultPromises = chunks.map(async (chunk) => {
@@ -75,18 +74,19 @@ async function fetchPointsOfInterestsWithIds(
   }));
 }
 
-function createPointsOfInterestInstancePayload(
-  poi: PointsOfInterestProperties
-): CreateInstanceItem<PointsOfInterestProperties> {
+function createPointsOfInterestInstancePayload(poi: {
+  id: DmsUniqueIdentifier;
+  properties: PointsOfInterestProperties;
+}): CreateInstanceItem<PointsOfInterestProperties> {
   return {
     instanceType: 'node' as const,
-    externalId: uuid(),
-    space: POI_SOURCE.space,
+    externalId: poi.id.externalId,
+    space: poi.id.space,
     sources: [
       {
         source: POI_SOURCE,
         properties: {
-          ...poi
+          ...poi.properties
         }
       }
     ]
