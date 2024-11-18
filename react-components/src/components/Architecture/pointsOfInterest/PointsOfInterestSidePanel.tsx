@@ -9,9 +9,9 @@ import { type PointOfInterest } from '../../../architecture/concrete/pointsOfInt
 import styled from 'styled-components';
 import { useOnUpdate, useOnUpdateDomainObject } from '../useOnUpdate';
 import { type PointsOfInterestDomainObject } from '../../../architecture/concrete/pointsOfInterest/PointsOfInterestDomainObject';
-import { PoIInfoPanelContent } from './PoIInfoPanelContent';
-import { PoIList } from './PoIList';
-import { useSelectedPoI } from './useSelectedPoI';
+import { PoiInfoPanelContent } from './PoiInfoPanelContent';
+import { PoiList } from './PoiList';
+import { useSelectedPoi } from './useSelectedPoi';
 
 export const PointsOfInterestSidePanel = ({ children }: PropsWithChildren): ReactNode => {
   const renderTarget = useRenderTarget();
@@ -47,16 +47,16 @@ const PanelContainer = (): ReactNode => {
 };
 
 const PanelContent = (): ReactElement => {
-  const selectedPoI = useSelectedPoI();
-  if (selectedPoI !== undefined) {
-    return <PoIInfoPanelContent />;
+  const selectedPoi = useSelectedPoi();
+  if (selectedPoi !== undefined) {
+    return <PoiInfoPanelContent />;
   } else {
-    return <AllPoIInfoPanel />;
+    return <AllPoiInfoPanel />;
   }
 };
 
-const AllPoIInfoPanel = (): ReactElement => {
-  return <PoIList />;
+const AllPoiInfoPanel = (): ReactElement => {
+  return <PoiList />;
 };
 
 const PanelContentContainer = styled.div`

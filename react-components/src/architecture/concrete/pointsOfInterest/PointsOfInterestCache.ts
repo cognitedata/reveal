@@ -12,18 +12,18 @@ import { type PointsOfInterestProvider } from './PointsOfInterestProvider';
  * A cache that takes care of loading the pois, but also buffers changes to the overlays
  * list when e.g. adding or removing pois
  */
-export class PointsOfInterestCache<PoIId> {
-  private readonly _loadedPromise: Promise<Array<PointsOfInterestInstance<PoIId>>>;
-  private readonly _poiProvider: PointsOfInterestProvider<PoIId>;
+export class PointsOfInterestCache<PoiId> {
+  private readonly _loadedPromise: Promise<Array<PointsOfInterestInstance<PoiId>>>;
+  private readonly _poiProvider: PointsOfInterestProvider<PoiId>;
 
   private readonly _poiCommentCache = new Map<string, CommentProperties[]>();
 
-  constructor(poiProvider: PointsOfInterestProvider<PoIId>) {
+  constructor(poiProvider: PointsOfInterestProvider<PoiId>) {
     this._poiProvider = poiProvider;
     this._loadedPromise = poiProvider.fetchAllPointsOfInterest();
   }
 
-  public async getPoiCommentsForPoi(id: PoIId): Promise<CommentProperties[]> {
+  public async getPoiCommentsForPoi(id: PoiId): Promise<CommentProperties[]> {
     const hashKey = createHashKey(id);
 
     const cacheElement = this._poiCommentCache.get(hashKey);
@@ -38,7 +38,7 @@ export class PointsOfInterestCache<PoIId> {
     return comments;
   }
 
-  public async postCommentForPoi(id: PoIId, content: string): Promise<CommentProperties> {
+  public async postCommentForPoi(id: PoiId, content: string): Promise<CommentProperties> {
     const comment = await this._poiProvider.postPointsOfInterestComment(id, content);
 
     const hashKey = createHashKey(id);
@@ -54,12 +54,12 @@ export class PointsOfInterestCache<PoIId> {
   }
 
   public async getFinishedOriginalLoadingPromise(): Promise<
-    Array<PointsOfInterestInstance<PoIId>>
+    Array<PointsOfInterestInstance<PoiId>>
   > {
     return await this._loadedPromise;
   }
 
-  public async deletePointsOfInterest(poiIds: PoIId[]): Promise<void> {
+  public async deletePointsOfInterest(poiIds: PoiId[]): Promise<void> {
     if (poiIds.length === 0) {
       return;
     }
@@ -68,8 +68,8 @@ export class PointsOfInterestCache<PoIId> {
   }
 
   public async savePointsOfInterest(
-    pois: PointsOfInterestInstance<PoIId>[]
-  ): Promise<Array<PointsOfInterestInstance<PoIId>>> {
+    pois: PointsOfInterestInstance<PoiId>[]
+  ): Promise<Array<PointsOfInterestInstance<PoiId>>> {
     if (pois.length === 0) {
       return [];
     }
@@ -77,7 +77,7 @@ export class PointsOfInterestCache<PoIId> {
     return await this._poiProvider.createPointsOfInterest(pois);
   }
 
-  public getDataProvider(): PointsOfInterestProvider<PoIId> {
+  public getDataProvider(): PointsOfInterestProvider<PoiId> {
     return this._poiProvider;
   }
 }

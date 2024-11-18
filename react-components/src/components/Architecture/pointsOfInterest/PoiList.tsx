@@ -6,7 +6,7 @@ import { type PointsOfInterestDomainObject } from '../../../architecture/concret
 import { type PointOfInterest } from '../../../architecture/concrete/pointsOfInterest/types';
 import { useOnUpdateDomainObject } from '../useOnUpdate';
 import { DataGrid, DatagridColumn } from '@cognite/cogs-lab';
-import { usePoIDomainObject } from './usePoIDomainObject';
+import { usePoiDomainObject } from './usePoiDomainObject';
 import { EMPTY_ARRAY } from '../../../utilities/constants';
 import { useTranslation } from '../../i18n/I18n';
 
@@ -15,13 +15,13 @@ type RowType = {
   poi: PointOfInterest<any>;
 };
 
-export const PoIList = (): ReactNode => {
+export const PoiList = (): ReactNode => {
   const { t } = useTranslation();
 
   const [pois, setPois] = useState<Array<PointOfInterest<any>>>([]);
   const [selectedPoi, setSelectedPoi] = useState<PointOfInterest<any> | undefined>(undefined);
 
-  const poiObject = usePoIDomainObject();
+  const poiObject = usePoiDomainObject();
 
   useOnUpdateDomainObject(poiObject, () => {
     setPois([...(poiObject?.pointsOfInterest ?? EMPTY_ARRAY)]);

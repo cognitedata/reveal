@@ -1,4 +1,4 @@
-export { PoIInfoPanelContent } from './PoIInfoPanelContent';
-export { useSyncSelectedPoI } from './useSyncSelectedPoI';
-export { usePoIDomainObject } from './usePoIDomainObject';
-export { PoIList } from './PoIList';
+export { PoiInfoPanelContent } from './PoiInfoPanelContent';
+export { useSyncSelectedPoi } from './useSyncSelectedPoi';
+export { usePoiDomainObject } from './usePoiDomainObject';
+export { PoiList } from './PoiList';

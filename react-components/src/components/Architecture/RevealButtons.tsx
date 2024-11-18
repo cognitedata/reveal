@@ -25,13 +25,13 @@ import { Image360ActionCommand } from '../../architecture/base/concreteCommands/
 import { type PlacementType } from './types';
 import { type Vector3 } from 'three';
 import { InitiatePointsOfInterestCommand } from '../../architecture/concrete/pointsOfInterest/InitiatePointsOfInterestCommand';
-import { PoIInfoPanelContent } from './pointsOfInterest';
+import { PoiInfoPanelContent } from './pointsOfInterest';
 import { DeleteSelectedPointsOfInterestCommand } from '../../architecture/concrete/pointsOfInterest/DeletePointsOfInterestCommand';
 
 export class RevealButtons {
   static Settings = (props: SettingsProp): ReactElement =>
     createButtonFromCommandConstructor(
-      () => new SettingsCommand(props.include360Images, props.includePoIs),
+      () => new SettingsCommand(props.include360Images, props.includePois),
       props
     );
 
@@ -114,7 +114,7 @@ export type ButtonProp = {
 
 type SettingsProp = ButtonProp & {
   include360Images?: boolean;
-  includePoIs?: boolean;
+  includePois?: boolean;
 };
 
 type Image360Prop = ButtonProp & {

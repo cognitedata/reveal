@@ -38,22 +38,22 @@ export function createPointsOfInterestPropertiesFromPointAndTitle(
 
 const poiMarker = Symbol('poiMarker');
 
-export type PointsOfInterestIntersection<PoIIdType> = Omit<
+export type PointsOfInterestIntersection<PoiIdType> = Omit<
   DomainObjectIntersection,
   'userData' | 'domainObject'
 > & {
   marker: typeof poiMarker;
-  domainObject: PointsOfInterestDomainObject<PoIIdType>;
-  userData: PointOfInterest<PoIIdType>;
+  domainObject: PointsOfInterestDomainObject<PoiIdType>;
+  userData: PointOfInterest<PoiIdType>;
 };
 
-export function createPointsOfInterestIntersection<PoIIdType>(
+export function createPointsOfInterestIntersection<PoiIdType>(
   point: Vector3,
   distanceToCamera: number,
   customObject: ICustomObject,
-  domainObject: PointsOfInterestDomainObject<PoIIdType>,
-  overlay: PointOfInterest<PoIIdType>
-): PointsOfInterestIntersection<PoIIdType> {
+  domainObject: PointsOfInterestDomainObject<PoiIdType>,
+  overlay: PointOfInterest<PoiIdType>
+): PointsOfInterestIntersection<PoiIdType> {
   return {
     type: 'customObject',
     marker: poiMarker,
@@ -65,8 +65,8 @@ export function createPointsOfInterestIntersection<PoIIdType>(
   };
 }
 
-export function isPointsOfInterestIntersection<PoIIdType>(
+export function isPointsOfInterestIntersection<PoiIdType>(
   objectIntersection: AnyIntersection
-): objectIntersection is PointsOfInterestIntersection<PoIIdType> {
-  return (objectIntersection as PointsOfInterestIntersection<PoIIdType>).marker === poiMarker;
+): objectIntersection is PointsOfInterestIntersection<PoiIdType> {
+  return (objectIntersection as PointsOfInterestIntersection<PoiIdType>).marker === poiMarker;
 }

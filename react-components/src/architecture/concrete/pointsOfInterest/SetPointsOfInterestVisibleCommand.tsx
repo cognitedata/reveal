@@ -5,11 +5,10 @@ import { VisibleState } from '../../base/domainObjectsHelpers/VisibleState';
 import { type TranslateKey } from '../../base/utilities/TranslateKey';
 import { PointsOfInterestCommand } from './PointsOfInterestCommand';
 import { PointsOfInterestDomainObject } from './PointsOfInterestDomainObject';
-import { PointsOfInterestTool } from './PointsOfInterestTool';
 
 export class SetPointsOfInterestVisibleCommand<
-  PoIIdType
-> extends PointsOfInterestCommand<PoIIdType> {
+  PoiIdType
+> extends PointsOfInterestCommand<PoiIdType> {
   public override get isToggle(): boolean {
     return true;
   }

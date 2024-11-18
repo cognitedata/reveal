@@ -7,7 +7,7 @@ import { type TranslateDelegate } from '../../base/utilities/TranslateKey';
 import { PointsOfInterestDomainObject } from './PointsOfInterestDomainObject';
 import { type PointOfInterest } from './types';
 
-export class CreatePoICommentCommand extends BaseInputCommand {
+export class CreatePoiCommentCommand extends BaseInputCommand {
   private readonly _poi: PointOfInterest<unknown>;
 
   constructor(poi: PointOfInterest<unknown>) {

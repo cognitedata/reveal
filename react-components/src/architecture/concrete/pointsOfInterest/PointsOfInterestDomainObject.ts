@@ -15,16 +15,16 @@ import { Quantity } from '../../base/domainObjectsHelpers/Quantity';
 import { type PointsOfInterestProvider } from './PointsOfInterestProvider';
 import { isDefined } from '../../../utilities/isDefined';
 
-export class PointsOfInterestDomainObject<PoIIdType> extends VisualDomainObject {
-  private _selectedPointsOfInterest: PointOfInterest<PoIIdType> | undefined;
-  private readonly _poisCache: PointsOfInterestCache<PoIIdType>;
+export class PointsOfInterestDomainObject<PoiIdType> extends VisualDomainObject {
+  private _selectedPointsOfInterest: PointOfInterest<PoiIdType> | undefined;
+  private readonly _poisCache: PointsOfInterestCache<PoiIdType>;
 
-  private _pointsOfInterest: Array<PointOfInterest<PoIIdType>> = [];
+  private _pointsOfInterest: Array<PointOfInterest<PoiIdType>> = [];
 
-  constructor(poiProvider: PointsOfInterestProvider<PoIIdType>) {
+  constructor(poiProvider: PointsOfInterestProvider<PoiIdType>) {
     super();
 
-    this._poisCache = new PointsOfInterestCache<PoIIdType>(poiProvider);
+    this._poisCache = new PointsOfInterestCache<PoiIdType>(poiProvider);
     void this._poisCache.getFinishedOriginalLoadingPromise().then((pois) => {
       this._pointsOfInterest = [
         ...pois.map((poi) => ({
@@ -43,7 +43,7 @@ export class PointsOfInterestDomainObject<PoIIdType> extends VisualDomainObject 
   }
 
   protected override createThreeView():
-    | ThreeView<PointsOfInterestDomainObject<PoIIdType>>
+    | ThreeView<PointsOfInterestDomainObject<PoiIdType>>
     | undefined {
     return new PointsOfInterestView();
   }
@@ -75,7 +75,7 @@ export class PointsOfInterestDomainObject<PoIIdType> extends VisualDomainObject 
 
   public addPendingPointsOfInterest(
     poiData: PointsOfInterestProperties
-  ): PointOfInterest<PoIIdType> {
+  ): PointOfInterest<PoiIdType> {
     const newPointsOfInterest = {
       properties: poiData,
       status: PointsOfInterestStatus.PendingCreation,
@@ -89,7 +89,7 @@ export class PointsOfInterestDomainObject<PoIIdType> extends VisualDomainObject 
     return newPointsOfInterest;
   }
 
-  public removePointsOfInterest(poiToDelete: PointOfInterest<PoIIdType>): void {
+  public removePointsOfInterest(poiToDelete: PointOfInterest<PoiIdType>): void {
     if (poiToDelete.status === PointsOfInterestStatus.PendingCreation) {
       remove(this._pointsOfInterest, (poi) => poiToDelete === poi);
     } else if (this._pointsOfInterest.includes(poiToDelete)) {
@@ -99,11 +99,11 @@ export class PointsOfInterestDomainObject<PoIIdType> extends VisualDomainObject 
     this.notify(Changes.geometry);
   }
 
-  public get pointsOfInterest(): Array<PointOfInterest<PoIIdType>> {
+  public get pointsOfInterest(): Array<PointOfInterest<PoiIdType>> {
     return this._pointsOfInterest;
   }
 
-  public get selectedPointsOfInterest(): PointOfInterest<PoIIdType> | undefined {
+  public get selectedPointsOfInterest(): PointOfInterest<PoiIdType> | undefined {
     return this._selectedPointsOfInterest;
   }
 
@@ -148,14 +148,14 @@ export class PointsOfInterestDomainObject<PoIIdType> extends VisualDomainObject 
     this.notify(Changes.geometry);
   }
 
-  public setSelectedPointOfInterest(poi: PointOfInterest<PoIIdType> | undefined): void {
+  public setSelectedPointOfInterest(poi: PointOfInterest<PoiIdType> | undefined): void {
     this._selectedPointsOfInterest = poi;
 
     this.notify(Changes.selected);
   }
 
   public async postCommentForPoi(
-    poi: PointOfInterest<PoIIdType>,
+    poi: PointOfInterest<PoiIdType>,
     content: string
   ): Promise<CommentProperties | undefined> {
     const comment = await this._poisCache.postCommentForPoi(poi.id, content);
@@ -163,7 +163,7 @@ export class PointsOfInterestDomainObject<PoIIdType> extends VisualDomainObject 
     return comment;
   }
 
-  public async getCommentsForPoi(poi: PointOfInterest<PoIIdType>): Promise<CommentProperties[]> {
+  public async getCommentsForPoi(poi: PointOfInterest<PoiIdType>): Promise<CommentProperties[]> {
     return await this._poisCache.getPoiCommentsForPoi(poi.id);
   }
 

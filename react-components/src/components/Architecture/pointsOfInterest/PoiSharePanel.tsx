@@ -8,12 +8,12 @@ import { Button, Flex, Infobox, LinkIcon, ShareIcon, Switch, TextLabel } from '@
 import { Changes } from '../../../architecture';
 import styled from 'styled-components';
 import { useOnUpdateDomainObject } from '../useOnUpdate';
-import { usePoIDomainObject } from './usePoIDomainObject';
+import { usePoiDomainObject } from './usePoiDomainObject';
 
-export const PoISharePanel = (): ReactElement => {
+export const PoiSharePanel = (): ReactElement => {
   const { t } = useTranslation();
 
-  const poiDomainObject = usePoIDomainObject();
+  const poiDomainObject = usePoiDomainObject();
 
   const selectedPointOfInterest = poiDomainObject?.selectedPointsOfInterest;
   const [poiVisibility, setPoiVisibility] = useState<'PUBLIC' | 'PRIVATE'>(
@@ -32,7 +32,7 @@ export const PoISharePanel = (): ReactElement => {
           <ShareIcon />
           <TextLabel text={t('SHARE', 'Share')} />
         </Flex>
-        <PoIVisibilityInfobox poiDomainObject={poiDomainObject} poiVisibility={poiVisibility} />
+        <PoiVisibilityInfobox poiDomainObject={poiDomainObject} poiVisibility={poiVisibility} />
         <Button icon=<LinkIcon /> disabled={poiVisibility === 'PRIVATE'}>
           {t('COPY_LINK', 'Copy link')}
         </Button>
@@ -41,7 +41,7 @@ export const PoISharePanel = (): ReactElement => {
   );
 };
 
-const PoIVisibilityInfobox = ({
+const PoiVisibilityInfobox = ({
   poiDomainObject,
   poiVisibility
 }: {

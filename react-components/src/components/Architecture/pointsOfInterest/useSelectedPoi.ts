@@ -3,18 +3,18 @@ import { PointOfInterest, PointsOfInterestDomainObject } from '../../../architec
 import { PointsOfInterestTool } from '../../../architecture/concrete/pointsOfInterest/PointsOfInterestTool';
 import { useRenderTarget } from '../../RevealCanvas';
 import { useOnUpdateDomainObject } from '../useOnUpdate';
-import { usePoIDomainObject } from './usePoIDomainObject';
+import { usePoiDomainObject } from './usePoiDomainObject';
 
-export function useSelectedPoI(): PointOfInterest<any> | undefined {
-  const poiDomainObject = usePoIDomainObject();
+export function useSelectedPoi(): PointOfInterest<any> | undefined {
+  const poiDomainObject = usePoiDomainObject();
 
-  const [selectedPoI, setSelectedPoI] = useState<PointOfInterest<any> | undefined>(
+  const [selectedPoi, setSelectedPoi] = useState<PointOfInterest<any> | undefined>(
     poiDomainObject?.selectedPointsOfInterest
   );
 
   useOnUpdateDomainObject(poiDomainObject, () => {
-    setSelectedPoI(poiDomainObject?.selectedPointsOfInterest);
+    setSelectedPoi(poiDomainObject?.selectedPointsOfInterest);
   });
 
-  return selectedPoI;
+  return selectedPoi;
 }

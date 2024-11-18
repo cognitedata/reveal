@@ -5,12 +5,12 @@ import { useQuery, type UseQueryResult } from '@tanstack/react-query';
 import { type PointOfInterest, type PointsOfInterestDomainObject } from '../../../architecture';
 import { type CommentProperties } from '../../../architecture/concrete/pointsOfInterest/models';
 import { queryKeys } from '../../../utilities/queryKeys';
-import { usePoIDomainObject } from './usePoIDomainObject';
+import { usePoiDomainObject } from './usePoiDomainObject';
 
-export function useCommentsForPoI(
+export function useCommentsForPoi(
   poi: PointOfInterest<unknown> | undefined
 ): UseQueryResult<CommentProperties[]> {
-  const domainObject = usePoIDomainObject();
+  const domainObject = usePoiDomainObject();
 
   return useQuery({
     queryKey: queryKeys.poiCommentsById(poi?.id),

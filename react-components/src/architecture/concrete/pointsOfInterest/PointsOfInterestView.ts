@@ -19,12 +19,12 @@ import { ClosestGeometryFinder } from '../../base/utilities/geometry/ClosestGeom
 import { getColorFromStatus } from './color';
 import { isPointVisibleByPlanes } from '../../base/utilities/geometry/isPointVisibleByPlanes';
 
-type PointsOfInterestCollection<PoIIdType> = Overlay3DCollection<PointOfInterest<PoIIdType>>;
+type PointsOfInterestCollection<PoiIdType> = Overlay3DCollection<PointOfInterest<PoiIdType>>;
 
-export class PointsOfInterestView<PoIIdType> extends GroupThreeView<
-  PointsOfInterestDomainObject<PoIIdType>
+export class PointsOfInterestView<PoiIdType> extends GroupThreeView<
+  PointsOfInterestDomainObject<PoiIdType>
 > {
-  private readonly _overlayCollection: PointsOfInterestCollection<PoIIdType> =
+  private readonly _overlayCollection: PointsOfInterestCollection<PoiIdType> =
     new Overlay3DCollection([]);
 
   protected override calculateBoundingBox(): Box3 {
@@ -108,7 +108,7 @@ export class PointsOfInterestView<PoIIdType> extends GroupThreeView<
     return closestFinder.getClosestGeometry();
   }
 
-  public getOverlays(): PointsOfInterestCollection<PoIIdType> {
+  public getOverlays(): PointsOfInterestCollection<PoiIdType> {
     return this._overlayCollection;
   }
 
@@ -140,10 +140,10 @@ export class PointsOfInterestView<PoIIdType> extends GroupThreeView<
   }
 }
 
-function createPointsOfInterestOverlays<PoIIdType>(
-  pois: Array<PointOfInterest<PoIIdType>>,
-  selectedPointsOfInterest: PointOfInterest<PoIIdType> | undefined
-): Array<OverlayInfo<PointOfInterest<PoIIdType>>> {
+function createPointsOfInterestOverlays<PoiIdType>(
+  pois: Array<PointOfInterest<PoiIdType>>,
+  selectedPointsOfInterest: PointOfInterest<PoiIdType> | undefined
+): Array<OverlayInfo<PointOfInterest<PoiIdType>>> {
   return pois.map((poi) => ({
     position: extractPointsOfInterestPosition(poi),
     content: poi,
@@ -151,7 +151,7 @@ function createPointsOfInterestOverlays<PoIIdType>(
   }));
 }
 
-function extractPointsOfInterestPosition<PoIIdType>(poi: PointOfInterest<PoIIdType>): Vector3 {
+function extractPointsOfInterestPosition<PoiIdType>(poi: PointOfInterest<PoiIdType>): Vector3 {
   return new Vector3(
     poi.properties.positionX,
     poi.properties.positionY,

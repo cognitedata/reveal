@@ -28,12 +28,12 @@ export class SettingsCommand extends BaseSettingsCommand {
   // CONSTRUCTOR
   // ==================================================
 
-  public constructor(include360Images: boolean = true, includePoIs: boolean = false) {
+  public constructor(include360Images: boolean = true, includePois: boolean = false) {
     super();
 
     this.add(new SetQualityCommand());
 
-    if (includePoIs) {
+    if (includePois) {
       this.add(new PointsOfInterestDividerCommand());
       this.add(new PointsOfInterestSectionCommand());
       this.add(new SetPointsOfInterestVisibleCommand());

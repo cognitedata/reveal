@@ -14,7 +14,7 @@ import { NavigationTool } from '../../base/concreteCommands/NavigationTool';
 import { CreatePointsOfInterestWithDescriptionCommand } from './CreatePointsOfInterestWithDescriptionCommand';
 import { InitiatePointsOfInterestCommand } from './InitiatePointsOfInterestCommand';
 
-export class PointsOfInterestTool<PoIIdType> extends NavigationTool {
+export class PointsOfInterestTool<PoiIdType> extends NavigationTool {
   private _isCreating: boolean = false;
 
   private _anchoredDialogContent: AnchoredDialogContent | undefined;
@@ -57,7 +57,7 @@ export class PointsOfInterestTool<PoIIdType> extends NavigationTool {
     return this._anchoredDialogContent;
   }
 
-  public getPointsOfInterestDomainObject(): PointsOfInterestDomainObject<PoIIdType> {
+  public getPointsOfInterestDomainObject(): PointsOfInterestDomainObject<PoiIdType> {
     const domainObject = this.rootDomainObject.getDescendantByType(PointsOfInterestDomainObject);
     if (domainObject !== undefined) {
       return domainObject;
@@ -65,11 +65,11 @@ export class PointsOfInterestTool<PoIIdType> extends NavigationTool {
     return this.initializePointsOfInterestDomainObject();
   }
 
-  private initializePointsOfInterestDomainObject(): PointsOfInterestDomainObject<PoIIdType> {
+  private initializePointsOfInterestDomainObject(): PointsOfInterestDomainObject<PoiIdType> {
     const domainObject = new PointsOfInterestDomainObject(
       new PointsOfInterestAdsProvider(
         this.rootDomainObject.sdk
-      ) as unknown as PointsOfInterestProvider<PoIIdType>
+      ) as unknown as PointsOfInterestProvider<PoiIdType>
     );
     this.rootDomainObject.addChildInteractive(domainObject);
     return domainObject;

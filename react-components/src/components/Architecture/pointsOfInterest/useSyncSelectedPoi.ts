@@ -1,15 +1,15 @@
-import { Dispatch, SetStateAction, useEffect, useMemo, useRef, useState } from 'react';
-import { PointOfInterest, PointsOfInterestDomainObject } from '../../../architecture';
+import { useEffect, useRef } from 'react';
+import { PointOfInterest } from '../../../architecture';
 import { useOnUpdateDomainObject } from '../useOnUpdate';
 import { useRenderTarget } from '../../RevealCanvas';
-import { usePoIDomainObject } from './usePoIDomainObject';
+import { usePoiDomainObject } from './usePoiDomainObject';
 
-export const useSyncSelectedPoI = (
+export const useSyncSelectedPoi = (
   selectedPoi: PointOfInterest<any> | undefined,
   setSelectedPoi: (poi: PointOfInterest<any> | undefined) => void
 ) => {
   const renderTarget = useRenderTarget();
-  const domainObject = usePoIDomainObject();
+  const domainObject = usePoiDomainObject();
 
   const lastSelectedPoiInternal = useRef<PointOfInterest<any> | undefined>(undefined);
 

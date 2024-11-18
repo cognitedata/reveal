@@ -11,7 +11,7 @@ import {
 import { type PointsOfInterestProvider } from '../PointsOfInterestProvider';
 
 import { v4 as uuid } from 'uuid';
-import { type PoIItem } from './types';
+import { type PoiItem } from './types';
 
 /**
  * A PoI provider using the Cognite Application Data Storage service as backing storage
@@ -40,7 +40,7 @@ export class PointsOfInterestAdsProvider implements PointsOfInterestProvider<Ext
   async createPointsOfInterest(
     pois: { id: ExternalId; properties: PointsOfInterestProperties }[]
   ): Promise<Array<PointsOfInterestInstance<ExternalId>>> {
-    const result = await this._sdk.put<{ items: PoIItem[] }>(
+    const result = await this._sdk.put<{ items: PoiItem[] }>(
       `${this._sdk.getBaseUrl()}/${this._createUrl(this._sdk.project)}`,
       {
         data: {
@@ -67,7 +67,7 @@ export class PointsOfInterestAdsProvider implements PointsOfInterestProvider<Ext
   }
 
   async fetchAllPointsOfInterest(): Promise<Array<PointsOfInterestInstance<ExternalId>>> {
-    const result = await this._sdk.post<{ items: PoIItem[] }>(
+    const result = await this._sdk.post<{ items: PoiItem[] }>(
       `${this._sdk.getBaseUrl()}/${this._listUrl(this._sdk.project)}`,
       { data: { filter: {} } }
     );
@@ -134,7 +134,7 @@ export class PointsOfInterestAdsProvider implements PointsOfInterestProvider<Ext
   }
 }
 
-function poiItemToInstance(item: PoIItem): PointsOfInterestInstance<ExternalId> {
+function poiItemToInstance(item: PoiItem): PointsOfInterestInstance<ExternalId> {
   return {
     id: item.externalId,
     properties: {

@@ -16,19 +16,19 @@ import {
   WaypointIcon
 } from '@cognite/cogs.js';
 import { Dropdown } from '@cognite/cogs-lab';
-import { PoISharePanel } from './PoISharePanel';
+import { PoiSharePanel } from './PoiSharePanel';
 import styled from 'styled-components';
 import { useMemo, type ReactElement, type ReactNode } from 'react';
 import { type PointOfInterest } from '../../../architecture';
 import { type CommentProperties } from '../../../architecture/concrete/pointsOfInterest/models';
 import { createButton, createButtonFromCommandConstructor } from '../CommandButtons';
-import { CreatePoICommentCommand } from '../../../architecture/concrete/pointsOfInterest/CreatePoICommentCommand';
-import { useCommentsForPoI } from './useCommentsForPoI';
+import { CreatePoiCommentCommand } from '../../../architecture/concrete/pointsOfInterest/CreatePoiCommentCommand';
+import { useCommentsForPoi } from './useCommentsForPoi';
 import { RevealButtons } from '../RevealButtons';
-import { useSelectedPoI } from './useSelectedPoI';
-import { usePoIDomainObject } from './usePoIDomainObject';
+import { useSelectedPoi } from './useSelectedPoi';
+import { usePoiDomainObject } from './usePoiDomainObject';
 
-export const PoIInfoPanelContent = (): ReactNode => {
+export const PoiInfoPanelContent = (): ReactNode => {
   return (
     <>
       <PanelHeader />
@@ -38,7 +38,7 @@ export const PoIInfoPanelContent = (): ReactNode => {
 };
 
 const PanelHeader = (): ReactNode => {
-  const selectedPoi = useSelectedPoI();
+  const selectedPoi = useSelectedPoi();
   if (selectedPoi === undefined) {
     return undefined;
   }
@@ -50,7 +50,7 @@ const PanelHeader = (): ReactNode => {
       </Flex>
       <Divider direction="vertical" weight="2px" />
       <Flex direction="row" justifyContent="flex-start">
-        <Dropdown appendTo={document} placement="bottom-end" content={<PoISharePanel />}>
+        <Dropdown appendTo={document} placement="bottom-end" content={<PoiSharePanel />}>
           <Button icon=<ShareIcon /> type="ghost" />
         </Dropdown>
         <RevealButtons.DeleteSelectedPointOfInterest />
@@ -64,9 +64,9 @@ const PanelBody = (): ReactNode => {
 };
 
 export const CommentSection = (): ReactNode => {
-  const poi = useSelectedPoI();
+  const poi = useSelectedPoi();
 
-  const comments = useCommentsForPoI(poi);
+  const comments = useCommentsForPoi(poi);
   if (poi === undefined) {
     return null;
   }
@@ -102,7 +102,7 @@ export const CreateCommentField = ({
   refetchComments: () => void;
 }): ReactNode => {
   const command = useMemo(() => {
-    const command = new CreatePoICommentCommand(poi);
+    const command = new CreatePoiCommentCommand(poi);
     command.onFinish = () => {
       refetchComments();
     };

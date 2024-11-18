@@ -7,8 +7,8 @@ import { PointsOfInterestCommand } from './PointsOfInterestCommand';
 import { type IconName } from '../../base/utilities/IconName';
 
 export class DeleteSelectedPointsOfInterestCommand<
-  PoIIdType
-> extends PointsOfInterestCommand<PoIIdType> {
+  PoiIdType
+> extends PointsOfInterestCommand<PoiIdType> {
   public override get icon(): IconName {
     return 'Delete';
   }

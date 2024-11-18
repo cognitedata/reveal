@@ -5,19 +5,19 @@ import { type InternalId } from '@cognite/sdk';
 import { type DmsUniqueIdentifier } from '../../../../data-providers';
 import { type Space, type ExternalId } from '../../../../data-providers/FdmSDK';
 
-export type PoIUpsertRequestPayload = {
+export type PoiUpsertRequestPayload = {
   externalId: ExternalId;
   name: string;
   description?: string;
   position: Vec3;
-  sceneState: PoISceneState;
+  sceneState: PoiSceneState;
   screenshotFile: InternalId;
   scene: DmsUniqueIdentifier;
   assetRef: { id: InternalId } | DmsUniqueIdentifier;
-  visibility: PoIVisibility;
+  visibility: PoiVisibility;
 };
 
-export type PoIItem = {
+export type PoiItem = {
   externalId: ExternalId;
   ownerId: string;
   name: string;
@@ -25,15 +25,15 @@ export type PoIItem = {
   position: Vec3;
   sceneExternalId?: ExternalId;
   sceneSpace?: Space;
-  sceneState: PoISceneState;
+  sceneState: PoiSceneState;
   assetRef: DmsUniqueIdentifier;
-  visibility: PoIVisibility;
+  visibility: PoiVisibility;
   createdTime: number;
   lastUpdatedTime: number;
 };
 
-export type PoISceneState = {
-  slicingPlanes?: PoISlicingPlane[];
+export type PoiSceneState = {
+  slicingPlanes?: PoiSlicingPlane[];
   cameraPosition?: Vec3;
   cameraTarget?: Vec3;
 };
@@ -45,14 +45,14 @@ export type Vec3 = [number, number, number];
  * The inside of the plane (the area that are kept visible) is the points where a * x + b * y + c * z + d > 0,
  * while points giving a * x + b * y + c * z + d < 0 are invisible if the clipping plane is active
  */
-export type PoISlicingPlane = {
+export type PoiSlicingPlane = {
   a: number;
   b: number;
   c: number;
   d: number;
 };
 
-export enum PoIVisibility {
+export enum PoiVisibility {
   PRIVATE = 'PRIVATE',
   PUBLIC = 'PUBLIC'
 }
