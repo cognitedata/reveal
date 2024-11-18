@@ -11,6 +11,6 @@ export class PointsOfInterestSectionCommand extends SectionCommand {
   }
 
   public override get tooltip(): TranslateKey {
-    return { key: 'POINTS_OF_INTEREST', fallback: 'Points of Interest' };
+    return { key: 'POINT_OF_INTEREST_PLURAL', fallback: 'Points of Interest' };
   }
 }

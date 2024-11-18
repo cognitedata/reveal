@@ -8,7 +8,7 @@ import {
 } from './models';
 
 export type PointsOfInterestProvider<ID> = {
-  createPointsOfInterest: (
+  upsertPointsOfInterest: (
     pois: Array<{ id: ID; properties: PointsOfInterestProperties }>
   ) => Promise<Array<PointsOfInterestInstance<ID>>>;
   fetchAllPointsOfInterest: () => Promise<Array<PointsOfInterestInstance<ID>>>;

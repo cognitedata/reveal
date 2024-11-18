@@ -25,7 +25,10 @@ export class CreatePointsOfInterestWithDescriptionCommand extends BaseInputComma
   }
 
   public override getPlaceholder(t: TranslateDelegate): string | undefined {
-    return t('POI_DESCRIPTION_PLACEHOLDER', 'Write a points of interest description');
+    return t(
+      'POINT_OF_INTEREST_DESCRIPTION_PLACEHOLDER',
+      'Write a description for the Point of Interest'
+    );
   }
 
   public override get hasData(): true {

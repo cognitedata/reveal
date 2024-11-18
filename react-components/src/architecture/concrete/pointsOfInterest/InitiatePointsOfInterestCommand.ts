@@ -24,11 +24,11 @@ export class InitiatePointsOfInterestCommand extends RenderTargetCommand {
   }
 
   public override get tooltip(): TranslateKey {
-    return { key: 'CREATE_POI', fallback: 'Create point of interest' };
+    return { key: 'POINT_OF_INTEREST_CREATE', fallback: 'Create Point of Interest' };
   }
 
   public override getLabel(t: TranslateDelegate): string {
-    return t('CREATE_POI', 'Create point of interest');
+    return t('POINT_OF_INTEREST_CREATE', 'Create Point of Interest');
   }
 
   protected override invokeCore(): boolean {

@@ -37,7 +37,7 @@ export class PointsOfInterestAdsProvider implements PointsOfInterestProvider<Ext
 
   constructor(private readonly _sdk: CogniteClient) {}
 
-  async createPointsOfInterest(
+  async upsertPointsOfInterest(
     pois: Array<{ id: ExternalId; properties: PointsOfInterestProperties }>
   ): Promise<Array<PointsOfInterestInstance<ExternalId>>> {
     const result = await this._sdk.put<{ items: PoiItem[] }>(
@@ -50,7 +50,7 @@ export class PointsOfInterestAdsProvider implements PointsOfInterestProvider<Ext
               name: poi.title,
               position: [poi.positionX, poi.positionY, poi.positionZ],
               sceneState: {},
-              visibility: 'PRIVATE'
+              visibility: poi.visibility ?? 'PRIVATE'
             };
           })
         }
@@ -141,7 +141,8 @@ function poiItemToInstance(item: PoiItem): PointsOfInterestInstance<ExternalId> 
       title: item.name,
       positionX: item.position[0],
       positionY: item.position[1],
-      positionZ: item.position[2]
+      positionZ: item.position[2],
+      visibility: item.visibility
     }
   };
 }
