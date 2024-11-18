@@ -53,11 +53,14 @@ const PoiVisibilityInfobox = ({
   const selectedPointOfInterest = poiDomainObject?.selectedPointsOfInterest;
   const markedPublic = poiVisibility === 'PUBLIC';
   const header = markedPublic
-    ? t('POI_IS_PUBLIC', 'Point of interest is public')
-    : t('POI_IS_PRIVATE', 'Point of interest is private');
+    ? t('POINT_OF_INTEREST_IS_PUBLIC', 'Point of interest is public')
+    : t('POINT_OF_INTEREST_IS_PRIVATE', 'Point of interest is private');
   const content = markedPublic
-    ? t('POI_PUBLIC_DESCRIPTION', 'Point of interest is public and visible to anyone')
-    : t('POI_PRIVATE_DESCRIPTION', 'Point of interest is private and only visible to you');
+    ? t('POINT_OF_INTEREST_PUBLIC_DESCRIPTION', 'Point of interest is public and visible to anyone')
+    : t(
+        'POINT_OF_INTEREST_PRIVATE_DESCRIPTION',
+        'Point of interest is private and only visible to you'
+      );
 
   if (poiDomainObject === undefined || selectedPointOfInterest === undefined) {
     return null;
