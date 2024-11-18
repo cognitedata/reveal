@@ -20,7 +20,7 @@ import { POI_SOURCE } from './view';
 export class PointsOfInterestFdmProvider implements PointsOfInterestProvider<DmsUniqueIdentifier> {
   constructor(private readonly _fdmSdk: FdmSDK) {}
 
-  async createPointsOfInterest(
+  async upsertPointsOfInterest(
     pois: Array<{ id: DmsUniqueIdentifier; properties: PointsOfInterestProperties }>
   ): Promise<Array<PointsOfInterestInstance<DmsUniqueIdentifier>>> {
     return await createPointsOfInterestInstances(this._fdmSdk, pois);

@@ -70,7 +70,7 @@ export class PointsOfInterestCache<PoiId> {
       return [];
     }
 
-    return await this._poiProvider.createPointsOfInterest(pois);
+    return await this._poiProvider.upsertPointsOfInterest(pois);
   }
 
   public getDataProvider(): PointsOfInterestProvider<PoiId> {

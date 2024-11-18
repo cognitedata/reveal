@@ -45,7 +45,7 @@ const PanelHeader = (): ReactNode => {
       </Flex>
       <Divider direction="vertical" weight="2px" />
       <Flex direction="row" justifyContent="flex-start">
-        <Dropdown appendTo={document} placement="bottom-end" content={<PoiSharePanel />}>
+        <Dropdown placement="bottom-end" content={<PoiSharePanel />}>
           <Button icon=<ShareIcon /> type="ghost" />
         </Dropdown>
         <RevealButtons.DeleteSelectedPointOfInterest />

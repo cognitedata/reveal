@@ -10,7 +10,11 @@ import { PointsOfInterestCache } from './PointsOfInterestCache';
 import { PanelInfo } from '../../base/domainObjectsHelpers/PanelInfo';
 import { type PointOfInterest, PointsOfInterestStatus } from './types';
 import { partition, remove } from 'lodash';
-import { type CommentProperties, type PointsOfInterestProperties } from './models';
+import {
+  type CommentProperties,
+  type PointsOfInterestProperties,
+  type PointsOfInterestInstance
+} from './models';
 import { Quantity } from '../../base/domainObjectsHelpers/Quantity';
 import { type PointsOfInterestProvider } from './PointsOfInterestProvider';
 
@@ -151,6 +155,12 @@ export class PointsOfInterestDomainObject<PoiIdType> extends VisualDomainObject 
     this._selectedPointsOfInterest = poi;
 
     this.notify(Changes.selected);
+  }
+
+  public async updatePointOfInterest(
+    poi: PointOfInterest<PoiIdType>
+  ): Promise<PointsOfInterestInstance<PoiIdType>> {
+    return (await this._poisCache.savePointsOfInterest([poi]))[0];
   }
 
   public async postCommentForPoi(
