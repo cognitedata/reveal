@@ -5,13 +5,13 @@ import { useRenderTarget } from '../../RevealCanvas';
 import { usePoiDomainObject } from './usePoiDomainObject';
 
 export const useSyncSelectedPoi = (
-  selectedPoi: PointOfInterest<any> | undefined,
-  setSelectedPoi: (poi: PointOfInterest<any> | undefined) => void
+  selectedPoi: PointOfInterest<unknown> | undefined,
+  setSelectedPoi: (poi: PointOfInterest<unknown> | undefined) => void
 ) => {
   const renderTarget = useRenderTarget();
   const domainObject = usePoiDomainObject();
 
-  const lastSelectedPoiInternal = useRef<PointOfInterest<any> | undefined>(undefined);
+  const lastSelectedPoiInternal = useRef<PointOfInterest<unknown> | undefined>(undefined);
 
   useOnUpdateDomainObject(domainObject, () => {
     const internalPoi = domainObject?.selectedPointsOfInterest;

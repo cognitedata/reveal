@@ -7,7 +7,7 @@ import { type CommentProperties } from '../../../architecture/concrete/pointsOfI
 import { queryKeys } from '../../../utilities/queryKeys';
 import { usePoiDomainObject } from './usePoiDomainObject';
 
-export function useCommentsForPoi(
+export function useCommentsForPoiQuery(
   poi: PointOfInterest<unknown> | undefined
 ): UseQueryResult<CommentProperties[]> {
   const domainObject = usePoiDomainObject();

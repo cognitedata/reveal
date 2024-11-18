@@ -2,7 +2,7 @@
  * Copyright 2024 Cognite AS
  */
 import { CollapsablePanel } from '@cognite/cogs.js';
-import { type PropsWithChildren, type ReactElement, type ReactNode, useState } from 'react';
+import { type PropsWithChildren, type ReactNode, useState } from 'react';
 import { useRenderTarget } from '../../RevealCanvas';
 import { PointsOfInterestTool } from '../../../architecture/concrete/pointsOfInterest/PointsOfInterestTool';
 import { type PointOfInterest } from '../../../architecture/concrete/pointsOfInterest/types';
@@ -46,7 +46,7 @@ const PanelContainer = (): ReactNode => {
   );
 };
 
-const PanelContent = (): ReactElement => {
+const PanelContent = (): ReactNode => {
   const selectedPoi = useSelectedPoi();
   if (selectedPoi !== undefined) {
     return <PoiInfoPanelContent />;
@@ -55,7 +55,7 @@ const PanelContent = (): ReactElement => {
   }
 };
 
-const AllPoiInfoPanel = (): ReactElement => {
+const AllPoiInfoPanel = (): ReactNode => {
   return <PoiList />;
 };
 

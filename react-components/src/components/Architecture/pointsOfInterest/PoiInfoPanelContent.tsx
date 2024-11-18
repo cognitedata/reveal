@@ -21,7 +21,7 @@ import { type PointOfInterest } from '../../../architecture';
 import { type CommentProperties } from '../../../architecture/concrete/pointsOfInterest/models';
 import { createButton } from '../CommandButtons';
 import { CreatePoiCommentCommand } from '../../../architecture/concrete/pointsOfInterest/CreatePoiCommentCommand';
-import { useCommentsForPoi } from './useCommentsForPoi';
+import { useCommentsForPoiQuery } from './useCommentsForPoiQuery';
 import { RevealButtons } from '../RevealButtons';
 import { useSelectedPoi } from './useSelectedPoi';
 
@@ -63,7 +63,7 @@ const PanelBody = (): ReactNode => {
 export const CommentSection = (): ReactNode => {
   const poi = useSelectedPoi();
 
-  const comments = useCommentsForPoi(poi);
+  const comments = useCommentsForPoiQuery(poi);
   if (poi === undefined) {
     return null;
   }

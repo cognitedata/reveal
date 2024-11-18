@@ -4,12 +4,12 @@ import { PointsOfInterestTool } from '../../../architecture/concrete/pointsOfInt
 import { useRenderTarget } from '../../RevealCanvas';
 import { useOnUpdate } from '../useOnUpdate';
 
-export function usePoiDomainObject(): PointsOfInterestDomainObject<any> | undefined {
+export function usePoiDomainObject(): PointsOfInterestDomainObject<unknown> | undefined {
   const renderTarget = useRenderTarget();
   const poiTool = renderTarget.commandsController.getToolByType(PointsOfInterestTool);
 
   const [poiDomainObject, setPoiDomainObject] = useState<
-    PointsOfInterestDomainObject<any> | undefined
+    PointsOfInterestDomainObject<unknown> | undefined
   >(undefined);
 
   useOnUpdate(poiTool, () => {
