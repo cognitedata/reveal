@@ -31,6 +31,6 @@ export class SetPointsOfInterestVisibleCommand<
   }
 
   private get poiDomainObject() {
-    return this.renderTarget.rootDomainObject.getDescendantByType(PointsOfInterestDomainObject);
+    return this.rootDomainObject.getDescendantByType(PointsOfInterestDomainObject);
   }
 }

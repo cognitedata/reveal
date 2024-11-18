@@ -71,7 +71,7 @@ export class PointsOfInterestTool<PoIIdType> extends NavigationTool {
         this.rootDomainObject.sdk
       ) as unknown as PointsOfInterestProvider<PoIIdType>
     );
-    this.renderTarget.rootDomainObject.addChildInteractive(domainObject);
+    this.rootDomainObject.addChildInteractive(domainObject);
     return domainObject;
   }
 

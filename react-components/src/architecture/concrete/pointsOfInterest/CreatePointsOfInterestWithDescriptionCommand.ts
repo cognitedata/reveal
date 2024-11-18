@@ -37,9 +37,7 @@ export class CreatePointsOfInterestWithDescriptionCommand extends BaseInputComma
       return false;
     }
 
-    const domainObject = this.renderTarget.rootDomainObject.getDescendantByType(
-      PointsOfInterestDomainObject
-    );
+    const domainObject = this.rootDomainObject.getDescendantByType(PointsOfInterestDomainObject);
 
     if (domainObject === undefined) {
       return false;
