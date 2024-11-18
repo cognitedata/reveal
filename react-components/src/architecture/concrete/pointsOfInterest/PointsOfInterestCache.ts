@@ -63,7 +63,7 @@ export class PointsOfInterestCache<PoiId> {
     await this._poiProvider.deletePointsOfInterest(poiIds);
   }
 
-  public async savePointsOfInterest(
+  public async upsertPointsOfInterest(
     pois: Array<PointsOfInterestInstance<PoiId>>
   ): Promise<Array<PointsOfInterestInstance<PoiId>>> {
     if (pois.length === 0) {

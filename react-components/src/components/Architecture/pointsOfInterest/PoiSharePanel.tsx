@@ -73,7 +73,7 @@ const PoiVisibilityInfobox = ({
           checked={markedPublic}
           onChange={(_: InputEvent, checked: boolean) => {
             selectedPointOfInterest.properties.visibility = checked ? 'PUBLIC' : 'PRIVATE';
-            void poiDomainObject.updatePointOfInterest(selectedPointOfInterest);
+            void poiDomainObject.updatePointsOfInterest([selectedPointOfInterest]);
             poiDomainObject.notify(Changes.geometry);
           }}
         />

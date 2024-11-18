@@ -134,7 +134,7 @@ export class PointsOfInterestDomainObject<PoiIdType> extends VisualDomainObject 
     const poisToCreate = this._pointsOfInterest.filter(
       (obs) => obs.status === PointsOfInterestStatus.PendingCreation
     );
-    const newPointsOfInterest = await this._poisCache.savePointsOfInterest(poisToCreate);
+    const newPointsOfInterest = await this._poisCache.upsertPointsOfInterest(poisToCreate);
 
     this._pointsOfInterest = notToRemove
       .filter((poi) => poi.status === PointsOfInterestStatus.Default)
@@ -157,10 +157,10 @@ export class PointsOfInterestDomainObject<PoiIdType> extends VisualDomainObject 
     this.notify(Changes.selected);
   }
 
-  public async updatePointOfInterest(
-    poi: PointOfInterest<PoiIdType>
-  ): Promise<PointsOfInterestInstance<PoiIdType>> {
-    return (await this._poisCache.savePointsOfInterest([poi]))[0];
+  public async updatePointsOfInterest(
+    pois: Array<PointOfInterest<PoiIdType>>
+  ): Promise<Array<PointsOfInterestInstance<PoiIdType>>> {
+    return await this._poisCache.upsertPointsOfInterest(pois);
   }
 
   public async postCommentForPoi(
