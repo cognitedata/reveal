@@ -18,7 +18,7 @@ export function useCommentsForPoiQuery(
       if (poi === undefined || domainObject === undefined) {
         return undefined;
       }
-      return await domainObject.getCommentsForPoi(poi);
+      return [...(await domainObject.getCommentsForPoi(poi))];
     },
     enabled: domainObject !== undefined && poi !== undefined
   });
