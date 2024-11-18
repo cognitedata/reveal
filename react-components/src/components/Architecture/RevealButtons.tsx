@@ -14,7 +14,7 @@ import { KeyboardSpeedCommand } from '../../architecture/base/concreteCommands/K
 import { PointsOfInterestTool } from '../../architecture/concrete/pointsOfInterest/PointsOfInterestTool';
 import { createButtonFromCommandConstructor } from './CommandButtons';
 import { SettingsCommand } from '../../architecture/base/concreteCommands/SettingsCommand';
-import { PointCloudFilterCommand } from '../../architecture';
+import { Image360AnnotationTool, PointCloudFilterCommand } from '../../architecture';
 import { SetOrbitOrFirstPersonModeCommand } from '../../architecture/base/concreteCommands/SetOrbitOrFirstPersonModeCommand';
 
 import { AnnotationsShowCommand } from '../../architecture/concrete/annotations/commands/AnnotationsShowCommand';
@@ -92,6 +92,9 @@ export class RevealButtons {
       </>
     );
   };
+
+  static Image360AnnotationTool = (prop: ButtonProp): ReactElement =>
+    createButtonFromCommandConstructor(() => new Image360AnnotationTool(), prop);
 
   // Annotations
   static AnnotationsSelect = (prop: ButtonProp): ReactElement =>

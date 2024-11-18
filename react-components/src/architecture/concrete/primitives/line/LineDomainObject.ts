@@ -18,7 +18,7 @@ import { Changes } from '../../../base/domainObjectsHelpers/Changes';
 import { FocusType } from '../../../base/domainObjectsHelpers/FocusType';
 import { Quantity } from '../../../base/domainObjectsHelpers/Quantity';
 import { VisualDomainObject } from '../../../base/domainObjects/VisualDomainObject';
-import { getIconByPrimitiveType } from '../../measurements/getIconByPrimitiveType';
+import { getIconByPrimitiveType } from '../../../base/utilities/primitives/getIconByPrimitiveType';
 import { type TranslateKey } from '../../../base/utilities/TranslateKey';
 import { clear } from '../../../base/utilities/extensions/arrayExtensions';
 import { type Transaction } from '../../../base/undo/Transaction';
@@ -45,6 +45,26 @@ export abstract class LineDomainObject extends VisualDomainObject {
     return this._primitiveType;
   }
 
+  public get pointCount(): number {
+    return this.points.length;
+  }
+
+  public get lineSegmentCount(): number {
+    return this.primitiveType === PrimitiveType.Polygon ? this.pointCount + 1 : this.pointCount;
+  }
+
+  public get firstPoint(): Vector3 {
+    return this.points[0];
+  }
+
+  public get lastPoint(): Vector3 {
+    return this.points[this.pointCount - 1];
+  }
+
+  public get isClosed(): boolean {
+    return this.primitiveType === PrimitiveType.Polygon && this.pointCount >= 3;
+  }
+
   // ==================================================
   // CONSTRUCTOR
   // ==================================================
@@ -65,11 +85,11 @@ export abstract class LineDomainObject extends VisualDomainObject {
   public override get typeName(): TranslateKey {
     switch (this.primitiveType) {
       case PrimitiveType.Line:
-        return { key: 'MEASUREMENTS_LINE', fallback: 'Line' };
+        return { key: 'LINE', fallback: 'Line' };
       case PrimitiveType.Polyline:
-        return { key: 'MEASUREMENTS_POLYLINE', fallback: 'Polyline' };
+        return { key: 'POLYLINE', fallback: 'Polyline' };
       case PrimitiveType.Polygon:
-        return { key: 'MEASUREMENTS_POLYGON', fallback: 'Polygon' };
+        return { key: 'POLYGON', fallback: 'Polygon' };
       default:
         throw new Error('Unknown PrimitiveType');
     }
@@ -81,11 +101,11 @@ export abstract class LineDomainObject extends VisualDomainObject {
     }
     switch (this.primitiveType) {
       case PrimitiveType.Line:
-        return this.points.length === 2;
+        return this.pointCount === 2;
       case PrimitiveType.Polyline:
-        return this.points.length >= 2;
+        return this.pointCount >= 2;
       case PrimitiveType.Polygon:
-        return this.points.length >= 3;
+        return this.pointCount >= 3;
       default:
         throw new Error('Unknown PrimitiveType');
     }
@@ -100,7 +120,7 @@ export abstract class LineDomainObject extends VisualDomainObject {
   }
 
   public override getPanelInfo(): PanelInfo | undefined {
-    if (this.focusType === FocusType.Pending && this.points.length <= 1) {
+    if (this.focusType === FocusType.Pending && this.pointCount <= 1) {
       return undefined;
     }
     const info = new PanelInfo();
@@ -108,23 +128,20 @@ export abstract class LineDomainObject extends VisualDomainObject {
 
     switch (this.primitiveType) {
       case PrimitiveType.Line:
-        add('MEASUREMENTS_LENGTH', 'Length', this.getTotalLength());
-        add('MEASUREMENTS_HORIZONTAL_LENGTH', 'Horizontal length', this.getHorizontalLength());
-        add('MEASUREMENTS_VERTICAL_LENGTH', 'Vertical length', this.getVerticalLength());
+        add('LENGTH', 'Length', this.getTotalLength());
+        add('HORIZONTAL_LENGTH', 'Horizontal length', this.getHorizontalLength());
+        add('VERTICAL_LENGTH', 'Vertical length', this.getVerticalLength());
         break;
 
       case PrimitiveType.Polyline:
-        add('MEASUREMENTS_TOTAL_LENGTH', 'Total length', this.getTotalLength());
+        add('TOTAL_LENGTH', 'Total length', this.getTotalLength());
+        add('HORIZONTAL_LENGTH', 'Horizontal length', this.getHorizontalLength());
         break;
       case PrimitiveType.Polygon:
-        add('MEASUREMENTS_TOTAL_LENGTH', 'Total length', this.getTotalLength());
-        if (this.points.length > 2) {
-          add(
-            'MEASUREMENTS_HORIZONTAL_AREA',
-            'Horizontal area',
-            this.getHorizontalArea(),
-            Quantity.Area
-          );
+        add('TOTAL_LENGTH', 'Total length', this.getTotalLength());
+        add('HORIZONTAL_LENGTH', 'Horizontal length', this.getHorizontalLength());
+        if (this.isClosed) {
+          add('HORIZONTAL_AREA', 'Horizontal area', this.getHorizontalArea(), Quantity.Area);
         }
         break;
 
@@ -161,69 +178,83 @@ export abstract class LineDomainObject extends VisualDomainObject {
   }
 
   // ==================================================
+  // VIRTUAL METHODS: To be overridden
+  // ==================================================
+
+  public getTransformedPoint(point: Vector3): Vector3 {
+    return point;
+  }
+
+  public getCopyOfTransformedPoint(point: Vector3, target: Vector3): Vector3 {
+    target.copy(point);
+    return target;
+  }
+
+  // ==================================================
   // INSTANCE METHODS
   // ==================================================
 
   public getTotalLength(): number {
-    let prevPoint: Vector3 | undefined;
+    let prevPoint = this.isClosed ? this.getTransformedPoint(this.lastPoint) : undefined;
     let sum = 0.0;
     for (const point of this.points) {
+      const transformedPoint = this.getTransformedPoint(point);
       if (prevPoint !== undefined) {
-        sum += point.distanceTo(prevPoint);
+        sum += transformedPoint.distanceTo(prevPoint);
       }
-      prevPoint = point;
+      prevPoint = transformedPoint;
     }
     return sum;
   }
 
   public getAverageLength(): number {
-    const count = this.points.length;
-    if (count <= 1) {
+    const { lineSegmentCount } = this;
+    if (lineSegmentCount <= 1) {
       return 0;
     }
-    return this.getTotalLength() / (count - 1);
+    return this.getTotalLength() / lineSegmentCount;
   }
 
   public getHorizontalLength(): number {
-    let prevPoint: Vector3 | undefined;
+    let prevPoint = this.isClosed ? this.getTransformedPoint(this.lastPoint) : undefined;
     let sum = 0.0;
     for (const point of this.points) {
+      const transformedPoint = this.getTransformedPoint(point);
       if (prevPoint !== undefined) {
-        sum += horizontalDistanceTo(point, prevPoint);
-        continue;
+        sum += horizontalDistanceTo(transformedPoint, prevPoint);
       }
-      prevPoint = point;
+      prevPoint = transformedPoint;
     }
     return sum;
   }
 
   public getVerticalLength(): number {
-    let prevPoint: Vector3 | undefined;
+    let prevPoint = this.isClosed ? this.getTransformedPoint(this.lastPoint) : undefined;
     let sum = 0.0;
     for (const point of this.points) {
+      const transformedPoint = this.getTransformedPoint(point);
       if (prevPoint !== undefined) {
-        sum += verticalDistanceTo(point, prevPoint);
-        continue;
+        sum += verticalDistanceTo(transformedPoint, prevPoint);
       }
-      prevPoint = point;
+      prevPoint = transformedPoint;
     }
     return sum;
   }
 
   public getHorizontalArea(): number {
-    const { points } = this;
-    const count = points.length;
-    if (count <= 2) {
+    if (!this.isClosed) {
       return 0;
     }
+    const { points, pointCount } = this;
     let sum = 0.0;
-    const first = points[0];
+    const firstPoint = this.getTransformedPoint(this.firstPoint);
     const p0 = new Vector3();
     const p1 = new Vector3();
 
-    for (let index = 1; index <= count; index++) {
-      p1.copy(points[index % count]);
-      p1.sub(first); // Translate down to first point, to increase accuracy
+    // This applies "Greens theorem" to calculate the area of a polygon
+    for (let index = 1; index <= pointCount; index++) {
+      this.getCopyOfTransformedPoint(points[index % pointCount], p1);
+      p1.sub(firstPoint); // Translate down to first point, to increase accuracy
       sum += getHorizontalCrossProduct(p0, p1);
       p0.copy(p1);
     }
@@ -232,7 +263,8 @@ export abstract class LineDomainObject extends VisualDomainObject {
 
   public expandBoundingBox(boundingBox: Box3): void {
     for (const point of this.points) {
-      boundingBox.expandByPoint(point);
+      const transformedPoint = this.getTransformedPoint(point);
+      boundingBox.expandByPoint(transformedPoint);
     }
   }
 }

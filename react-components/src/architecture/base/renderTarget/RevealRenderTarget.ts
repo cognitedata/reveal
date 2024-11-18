@@ -11,7 +11,8 @@ import {
   CDF_TO_VIEWER_TRANSFORMATION,
   CognitePointCloudModel,
   CogniteCadModel,
-  type Image360Collection
+  type Image360Collection,
+  Image360Action
 } from '@cognite/reveal';
 import {
   Vector3,
@@ -57,6 +58,7 @@ export class RevealRenderTarget {
 
   public readonly toViewerMatrix = CDF_TO_VIEWER_TRANSFORMATION.clone();
   public readonly fromViewerMatrix = CDF_TO_VIEWER_TRANSFORMATION.clone().invert();
+  public ghostMode = false;
 
   // ==================================================
   // CONSTRUCTOR
@@ -86,6 +88,10 @@ export class RevealRenderTarget {
 
   public get viewer(): Cognite3DViewer {
     return this._viewer;
+  }
+
+  public get isInside360Image(): boolean {
+    return this._viewer.canDoImage360Action(Image360Action.Exit);
   }
 
   public get config(): BaseRevealConfig | undefined {

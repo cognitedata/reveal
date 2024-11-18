@@ -15,6 +15,8 @@ export class LineRenderStyle extends PrimitiveRenderStyle {
   public selectedPipeRadius = this.pipeRadius * 2;
   public lineWidth = 1;
   public selectedLineWidth = this.lineWidth * 2;
+  public transparent = false;
+  public renderOrder?: number = undefined;
 
   // ==================================================
   // OVERRIDES of BaseStyle

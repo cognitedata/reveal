@@ -22,6 +22,7 @@ import { Set360IconsOccludedVisibleCommand } from './image360Collection/Set360Ic
 import { SetPointsOfInterestVisibleCommand } from '../../concrete/pointsOfInterest/SetPointsOfInterestVisibleCommand';
 import { PointsOfInterestDividerCommand } from '../../concrete/pointsOfInterest/PointsOfInterestDividerCommand';
 import { PointsOfInterestSectionCommand } from '../../concrete/pointsOfInterest/PointsOfInterestSectionCommand';
+import { SetGhostModeCommand } from './cad/SetGhostModeCommand';
 
 export class SettingsCommand extends BaseSettingsCommand {
   // ==================================================
@@ -32,6 +33,7 @@ export class SettingsCommand extends BaseSettingsCommand {
     super();
 
     this.add(new SetQualityCommand());
+    this.add(new SetGhostModeCommand());
 
     if (includePois) {
       this.add(new PointsOfInterestDividerCommand());

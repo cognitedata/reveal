@@ -1,6 +1,6 @@
 {
   "name": "@cognite/reveal-react-components",
-  "version": "0.65.5",
+  "version": "0.66.1",
   "exports": {
     ".": {
       "import": "./dist/index.js",
@@ -30,7 +30,7 @@
   },
   "peerDependencies": {
     "@cognite/cogs-lab": "^9.0.0-alpha.111",
-    "@cognite/reveal": "4.20.1",
+    "@cognite/reveal": "4.21.1",
     "react": ">=18",
     "react-dom": ">=18",
     "styled-components": ">=5"
@@ -46,7 +46,7 @@
     "@cognite/cdf-utilities": "^3.6.0",
     "@cognite/cogs-lab": "^9.0.0-alpha.113",
     "@cognite/cogs.js": "^10.25.0",
-    "@cognite/reveal": "^4.20.1",
+    "@cognite/reveal": "^4.21.1",
     "@cognite/sdk": "^9.13.0",
     "@playwright/test": "1.48.2",
     "@storybook/addon-essentials": "8.4.2",
