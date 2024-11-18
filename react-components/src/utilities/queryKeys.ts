@@ -8,7 +8,7 @@ export const queryKeys = {
   // ASSETS
   assetsById: (ids: IdEither[]) => [...assets, ids] as const,
   // Points of interest
-  poiCommentsById: (id: any) => [...pois, id] as const,
+  poiCommentsById: (id: unknown) => [...pois, id] as const,
   // TIMESERIES
   timeseriesById: (ids: IdEither[]) => [...timeseries, ids] as const,
   timeseriesLatestDatapoint: () => [...timeseries, 'latest-datapoints'] as const,
