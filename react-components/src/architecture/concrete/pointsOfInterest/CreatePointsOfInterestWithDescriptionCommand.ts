@@ -4,7 +4,7 @@
 import { type Vector3 } from 'three';
 import { BaseInputCommand } from '../../base/commands/BaseInputCommand';
 import { PointsOfInterestDomainObject } from './PointsOfInterestDomainObject';
-import { type TranslateDelegate } from '../../base/utilities/TranslateInput';
+import { TranslationInput, type TranslateDelegate } from '../../base/utilities/TranslateInput';
 import { createPointsOfInterestPropertiesFromPointAndTitle } from './types';
 
 export class CreatePointsOfInterestWithDescriptionCommand extends BaseInputCommand {
@@ -16,19 +16,16 @@ export class CreatePointsOfInterestWithDescriptionCommand extends BaseInputComma
     this._point = position;
   }
 
-  public override getPostButtonLabel(t: TranslateDelegate): string | undefined {
-    return t('CREATE', 'Create');
+  public override getPostButtonLabel(): TranslationInput {
+    return { key: 'CREATE' };
   }
 
-  public override getCancelButtonLabel(t: TranslateDelegate): string | undefined {
-    return t('CANCEL', 'Cancel');
+  public override getCancelButtonLabel(): TranslationInput {
+    return { key: 'CANCEL' };
   }
 
-  public override getPlaceholder(t: TranslateDelegate): string | undefined {
-    return t(
-      'POINT_OF_INTEREST_DESCRIPTION_PLACEHOLDER',
-      'Write a description for the Point of Interest'
-    );
+  public override getPlaceholder(): TranslationInput {
+    return { key: 'POINT_OF_INTEREST_DESCRIPTION_PLACEHOLDER' };
   }
 
   public override get hasData(): true {

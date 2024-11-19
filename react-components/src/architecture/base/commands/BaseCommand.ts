@@ -3,7 +3,11 @@
  */
 
 import { type IconName } from '../utilities/IconName';
-import { type TranslateDelegate, type TranslationInput } from '../utilities/TranslateInput';
+import {
+  isTranslatedString,
+  type TranslateDelegate,
+  type TranslationInput
+} from '../utilities/TranslateInput';
 import { clear, remove } from '../utilities/extensions/arrayExtensions';
 import { isMacOs } from '../utilities/extensions/isMacOs';
 
@@ -53,7 +57,11 @@ export abstract class BaseCommand {
   // =================================================
 
   public get name(): string {
-    return this.tooltip ?? '';
+    if (this.tooltip === undefined) {
+      return '';
+    }
+
+    return isTranslatedString(this.tooltip) ? this.tooltip.key : this.tooltip?.untranslated;
   }
 
   protected get shortCutKey(): string | undefined {

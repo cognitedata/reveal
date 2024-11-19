@@ -20,21 +20,21 @@ export const TouchNavigation = ({ fallbackLanguage }: TouchNavigationProps): Rea
   const { t } = useTranslation(fallbackLanguage);
   return (
     <Section
-      title={t('TOUCH_NAVIGATION_TITLE', 'Touch')}
-      subTitle={t('MOUSE_TOUCH_NAVIGATION_SUBTITLE', 'Navigate and select')}
-      description={t('TOUCH_NAVIGATION_DESCRIPTION', 'Use gestures to zoom, pan and select')}>
+      title={t({ key: 'TOUCH_NAVIGATION_TITLE' })}
+      subTitle={t({ key: 'MOUSE_TOUCH_NAVIGATION_SUBTITLE' })}
+      description={t({ key: 'TOUCH_NAVIGATION_DESCRIPTION' })}>
       <TouchNavigationInstructionGrid>
         <div>
           <TouchPan />
-          <InstructionText>{t('PAN', 'Pan')}</InstructionText>
+          <InstructionText>{t({ key: 'PAN' })}</InstructionText>
         </div>
         <TouchNavigationCombinedGridItem>
           <TouchSelect />
-          <InstructionText>{t('TOUCH_SELECT', 'Tap to select')}</InstructionText>
+          <InstructionText>{t({ key: 'TOUCH_SELECT' })}</InstructionText>
         </TouchNavigationCombinedGridItem>
         <div>
           <TouchZoom />
-          <InstructionText>{t('TOUCH_ZOOM', 'Zoom')}</InstructionText>
+          <InstructionText>{t({ key: 'TOUCH_ZOOM' })}</InstructionText>
         </div>
       </TouchNavigationInstructionGrid>
     </Section>

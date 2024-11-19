@@ -128,20 +128,20 @@ export abstract class LineDomainObject extends VisualDomainObject {
 
     switch (this.primitiveType) {
       case PrimitiveType.Line:
-        add('LENGTH', 'Length', this.getTotalLength());
-        add('HORIZONTAL_LENGTH', 'Horizontal length', this.getHorizontalLength());
-        add('VERTICAL_LENGTH', 'Vertical length', this.getVerticalLength());
+        add({ key: 'LENGTH' }, this.getTotalLength());
+        add({ key: 'HORIZONTAL_LENGTH' }, this.getHorizontalLength());
+        add({ key: 'VERTICAL_LENGTH' }, this.getVerticalLength());
         break;
 
       case PrimitiveType.Polyline:
-        add('TOTAL_LENGTH', 'Total length', this.getTotalLength());
-        add('HORIZONTAL_LENGTH', 'Horizontal length', this.getHorizontalLength());
+        add({ key: 'TOTAL_LENGTH' }, this.getTotalLength());
+        add({ key: 'HORIZONTAL_LENGTH' }, this.getHorizontalLength());
         break;
       case PrimitiveType.Polygon:
-        add('TOTAL_LENGTH', 'Total length', this.getTotalLength());
-        add('HORIZONTAL_LENGTH', 'Horizontal length', this.getHorizontalLength());
+        add({ key: 'TOTAL_LENGTH' }, this.getTotalLength());
+        add({ key: 'HORIZONTAL_LENGTH' }, this.getHorizontalLength());
         if (this.isClosed) {
-          add('HORIZONTAL_AREA', 'Horizontal area', this.getHorizontalArea(), Quantity.Area);
+          add({ key: 'HORIZONTAL_AREA' }, this.getHorizontalArea(), Quantity.Area);
         }
         break;
 
@@ -150,8 +150,12 @@ export abstract class LineDomainObject extends VisualDomainObject {
     }
     return info;
 
-    function add(key: string, fallback: string, value: number, quantity = Quantity.Length): void {
-      info.add({ key, fallback, value, quantity });
+    function add(
+      translationInput: TranslationInput,
+      value: number,
+      quantity = Quantity.Length
+    ): void {
+      info.add({ translationInput, value, quantity });
     }
   }
 

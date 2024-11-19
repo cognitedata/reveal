@@ -12,13 +12,13 @@ export abstract class BaseInputCommand extends RenderTargetCommand {
   protected _onFinish?: () => void;
   protected _onCancel?: () => void;
 
-  public getCancelButtonLabel(_t: TranslateDelegate): string | undefined {
+  public getCancelButtonLabel(): TranslationInput | undefined {
     return undefined;
   }
 
-  public abstract getPostButtonLabel(t: TranslateDelegate): string | undefined;
+  public abstract getPostButtonLabel(): TranslationInput | undefined;
 
-  public abstract getPlaceholder(t: TranslateDelegate): string | undefined;
+  public abstract getPlaceholder(): TranslationInput | undefined;
 
   public get onFinish(): (() => void) | undefined {
     return this._onFinish;

@@ -8,6 +8,7 @@ import { useTranslation } from '../i18n/I18n';
 import { useOnUpdate } from './useOnUpdate';
 import { getDefaultCommand } from './utilities';
 import { useRenderTarget } from '../RevealCanvas';
+import { TranslationInput } from '../../architecture';
 
 export const InputField = ({
   inputCommand
@@ -16,22 +17,29 @@ export const InputField = ({
   placement: string;
 }): ReactNode => {
   const { t } = useTranslation();
+  const translateIfExists = (translationInput: TranslationInput | undefined) =>
+    translationInput !== undefined ? t(translationInput) : undefined;
+
   const renderTarget = useRenderTarget();
 
   const command = useMemo(() => getDefaultCommand(inputCommand, renderTarget), [inputCommand]);
 
   const [content, setContent] = useState<string>('');
   const [enabled, setEnabled] = useState<boolean>(command.isEnabled);
-  const [postLabel, setPostLabel] = useState<string | undefined>(command.getPostButtonLabel(t));
-  const [cancelLabel, setCancelLabel] = useState<string | undefined>(
-    command.getCancelButtonLabel(t)
+  const [postLabel, setPostLabel] = useState<string | undefined>(
+    translateIfExists(command.getPostButtonLabel())
   );
-  const [placeholder, setPlaceholder] = useState<string | undefined>(command.getPlaceholder(t));
+  const [cancelLabel, setCancelLabel] = useState<string | undefined>(
+    translateIfExists(command.getCancelButtonLabel())
+  );
+  const [placeholder, setPlaceholder] = useState<string | undefined>(
+    translateIfExists(command.getPlaceholder())
+  );
 
   useOnUpdate(command, () => {
-    setPostLabel(command.getPostButtonLabel(t));
-    setCancelLabel(command.getCancelButtonLabel(t));
-    setPlaceholder(command.getPlaceholder(t));
+    setPostLabel(translateIfExists(command.getPostButtonLabel()));
+    setCancelLabel(translateIfExists(command.getCancelButtonLabel()));
+    setPlaceholder(translateIfExists(command.getPlaceholder()));
     setEnabled(command.isEnabled);
   });
 

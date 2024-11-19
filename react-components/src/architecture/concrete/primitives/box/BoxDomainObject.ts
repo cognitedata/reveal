@@ -91,36 +91,31 @@ export abstract class BoxDomainObject extends SolidDomainObject {
     const hasZ = Box.isValidSize(size.z);
 
     if (isFinished || hasX) {
-      add('LENGTH', 'Length', size.x, Quantity.Length);
+      add({ key: 'LENGTH' }, size.x, Quantity.Length);
     }
     if (primitiveType !== PrimitiveType.VerticalArea && (isFinished || hasY)) {
-      add('DEPTH', 'Depth', size.y, Quantity.Length);
+      add({ key: 'DEPTH' }, size.y, Quantity.Length);
     }
     if (primitiveType !== PrimitiveType.HorizontalArea && (isFinished || hasZ)) {
-      add('HEIGHT', 'Height', size.z, Quantity.Length);
+      add({ key: 'HEIGHT' }, size.z, Quantity.Length);
     }
     if (primitiveType !== PrimitiveType.Box && (isFinished || box.hasArea)) {
-      add('AREA', 'Area', this.area, Quantity.Area);
+      add({ key: 'AREA' }, this.area, Quantity.Area);
     }
     if (primitiveType === PrimitiveType.Box && (isFinished || box.hasHorizontalArea)) {
-      add('HORIZONTAL_AREA', 'Horizontal area', box.horizontalArea, Quantity.Area);
+      add({ key: 'HORIZONTAL_AREA' }, box.horizontalArea, Quantity.Area);
     }
     if (primitiveType === PrimitiveType.Box && (isFinished || box.hasVolume)) {
-      add('VOLUME', 'Volume', box.volume, Quantity.Volume);
+      add({ key: 'VOLUME' }, box.volume, Quantity.Volume);
     }
     // I forgot to add text for rotation angle before the deadline, so I used a icon instead.
     if (box.rotation.z !== 0 && isFinished) {
-      add('HORIZONTAL_ANGLE', 'Horizontal angle', box.zRotationInDegrees, Quantity.Angle);
+      add({ key: 'HORIZONTAL_ANGLE' }, box.zRotationInDegrees, Quantity.Angle);
     }
     return info;
 
-    function add(
-      key: string | undefined,
-      fallback: string,
-      value: number,
-      quantity: Quantity
-    ): void {
-      info.add({ key, fallback, value, quantity });
+    function add(translationInput: TranslationInput, value: number, quantity: Quantity): void {
+      info.add({ translationInput, value, quantity });
     }
   }
 

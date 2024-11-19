@@ -122,15 +122,15 @@ export abstract class BaseFilterCommand extends RenderTargetCommand {
   // ==================================================
 
   public static getAllString(translate: TranslateDelegate): string {
-    return translate('ALL', 'All');
+    return translate({ key: 'ALL' });
   }
 
   private static getNoneString(translate: TranslateDelegate): string {
-    return translate('NONE', 'None');
+    return translate({ key: 'NONE' });
   }
 
   private static getSelectedString(translate: TranslateDelegate): string {
-    return translate('SELECTED', 'Selected');
+    return translate({ key: 'SELECTED' });
   }
 }
 
