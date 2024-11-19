@@ -1,7 +1,7 @@
 /*!
  * Copyright 2024 Cognite AS
  */
-import { type TranslateKey } from '../../base/utilities/TranslateKey';
+import { TranslateDelegate, type TranslateKey } from '../../base/utilities/TranslateKey';
 import { type ButtonType } from '../../../components/Architecture/types';
 import { PointsOfInterestCommand } from './PointsOfInterestCommand';
 import { type IconName } from '../../base/utilities/IconName';
@@ -14,7 +14,7 @@ export class DeleteSelectedPointsOfInterestCommand<
   }
 
   public override get tooltip(): TranslateKey {
-    return { fallback: 'Delete point of interest' };
+    return { key: 'POINT_OF_INTEREST_DELETE_THIS', fallback: 'Delete this Point of Interest' };
   }
 
   public override get buttonType(): ButtonType {
