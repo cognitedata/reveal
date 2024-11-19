@@ -25,7 +25,7 @@ export class KeyboardSpeedCommand extends BaseOptionCommand {
   // ==================================================
 
   public override get tooltip(): TranslationInput {
-    return { key: 'SET_FLY_SPEED' };
+    return { untranslated: 'Set camera fly speed' };
   }
 }
 
