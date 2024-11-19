@@ -31,7 +31,7 @@ export const PoiList = (): ReactNode => {
     () =>
       pois.map((poi) => ({
         id: JSON.stringify(poi.id),
-        name: poi.id,
+        name: poi.properties.title ?? JSON.stringify(poi.id),
         poi
       })),
     [pois]
