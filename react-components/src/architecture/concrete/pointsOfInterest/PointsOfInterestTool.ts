@@ -23,7 +23,7 @@ export class PointsOfInterestTool<PoiIdType> extends NavigationTool {
   }
 
   public override get tooltip(): TranslateKey {
-    return { fallback: 'Create point of interest' };
+    return { key: 'POINT_OF_INTEREST_CREATE', fallback: 'Create Point of Interest' };
   }
 
   public override onActivate(): void {

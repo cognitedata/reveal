@@ -10,7 +10,11 @@ import { PointsOfInterestCache } from './PointsOfInterestCache';
 import { PanelInfo } from '../../base/domainObjectsHelpers/PanelInfo';
 import { type PointOfInterest, PointsOfInterestStatus } from './types';
 import { partition, remove } from 'lodash';
-import { type CommentProperties, type PointsOfInterestProperties } from './models';
+import {
+  type CommentProperties,
+  type PointsOfInterestProperties,
+  type PointsOfInterestInstance
+} from './models';
 import { Quantity } from '../../base/domainObjectsHelpers/Quantity';
 import { type PointsOfInterestProvider } from './PointsOfInterestProvider';
 
@@ -130,7 +134,7 @@ export class PointsOfInterestDomainObject<PoiIdType> extends VisualDomainObject 
     const poisToCreate = this._pointsOfInterest.filter(
       (obs) => obs.status === PointsOfInterestStatus.PendingCreation
     );
-    const newPointsOfInterest = await this._poisCache.savePointsOfInterest(poisToCreate);
+    const newPointsOfInterest = await this._poisCache.upsertPointsOfInterest(poisToCreate);
 
     this._pointsOfInterest = notToRemove
       .filter((poi) => poi.status === PointsOfInterestStatus.Default)
@@ -151,6 +155,12 @@ export class PointsOfInterestDomainObject<PoiIdType> extends VisualDomainObject 
     this._selectedPointsOfInterest = poi;
 
     this.notify(Changes.selected);
+  }
+
+  public async updatePointsOfInterest(
+    pois: Array<PointOfInterest<PoiIdType>>
+  ): Promise<Array<PointsOfInterestInstance<PoiIdType>>> {
+    return await this._poisCache.upsertPointsOfInterest(pois);
   }
 
   public async postCommentForPoi(

@@ -20,6 +20,11 @@ export const PoiSharePanel = (): ReactNode => {
     selectedPointOfInterest?.properties.visibility ?? 'PRIVATE'
   );
 
+  const handleShare = async (): Promise<void> => {
+    const url = window.location.href;
+    await navigator.clipboard.writeText(url);
+  };
+
   useOnUpdateDomainObject(poiDomainObject, () => {
     const visibility = selectedPointOfInterest?.properties.visibility ?? 'PRIVATE';
     setPoiVisibility(visibility);
@@ -33,8 +38,8 @@ export const PoiSharePanel = (): ReactNode => {
           <TextLabel text={t('SHARE', 'Share')} />
         </Flex>
         <PoiVisibilityInfobox poiDomainObject={poiDomainObject} poiVisibility={poiVisibility} />
-        <Button icon=<LinkIcon /> disabled={poiVisibility === 'PRIVATE'}>
-          {t('COPY_LINK', 'Copy link')}
+        <Button icon=<LinkIcon /> disabled={poiVisibility === 'PRIVATE'} onClick={handleShare}>
+          {t('COPY_URL_TO_SHARE', 'Copy URL to share')}
         </Button>
       </Flex>
     </StyledShareContainer>
@@ -53,11 +58,14 @@ const PoiVisibilityInfobox = ({
   const selectedPointOfInterest = poiDomainObject?.selectedPointsOfInterest;
   const markedPublic = poiVisibility === 'PUBLIC';
   const header = markedPublic
-    ? t('POI_IS_PUBLIC', 'Point of interest is public')
-    : t('POI_IS_PRIVATE', 'Point of interest is private');
+    ? t('POINT_OF_INTEREST_IS_PUBLIC', 'Point of interest is public')
+    : t('POINT_OF_INTEREST_IS_PRIVATE', 'Point of interest is private');
   const content = markedPublic
-    ? t('POI_PUBLIC_DESCRIPTION', 'Point of interest is public and visible to anyone')
-    : t('POI_PRIVATE_DESCRIPTION', 'Point of interest is private and only visible to you');
+    ? t('POINT_OF_INTEREST_PUBLIC_DESCRIPTION', 'Point of interest is public and visible to anyone')
+    : t(
+        'POINT_OF_INTEREST_PRIVATE_DESCRIPTION',
+        'Point of interest is private and only visible to you'
+      );
 
   if (poiDomainObject === undefined || selectedPointOfInterest === undefined) {
     return null;
@@ -70,6 +78,7 @@ const PoiVisibilityInfobox = ({
           checked={markedPublic}
           onChange={(_: InputEvent, checked: boolean) => {
             selectedPointOfInterest.properties.visibility = checked ? 'PUBLIC' : 'PRIVATE';
+            void poiDomainObject.updatePointsOfInterest([selectedPointOfInterest]);
             poiDomainObject.notify(Changes.geometry);
           }}
         />
@@ -91,5 +100,6 @@ const StyledShareContainer = styled.div`
   padding: 16px;
   width: fit-content;
   max-width: fit-content;
+  min-width: 400px;
   box-shadow: var(--cogs-elevation--overlay);
 `;
