@@ -10,6 +10,7 @@ import { LineDomainObject } from '../primitives/line/LineDomainObject';
 import { Color, Vector3 } from 'three';
 import { LineRenderStyle } from '../primitives/line/LineRenderStyle';
 import { type DirectRelationReference } from '@cognite/sdk';
+import { createTriangleIndexesFromVectors } from './createTriangleIndexesFromVectors';
 
 const DEFAULT_VECTOR_LENGTH = 5;
 export class Image360AnnotationDomainObject extends LineDomainObject {
@@ -42,7 +43,7 @@ export class Image360AnnotationDomainObject extends LineDomainObject {
   }
 
   public override get hasPanelInfo(): boolean {
-    return false;
+    return true;
   }
 
   public override createRenderStyle(): RenderStyle | undefined {
@@ -52,6 +53,7 @@ export class Image360AnnotationDomainObject extends LineDomainObject {
     style.selectedPipeRadius = 2 * style.pipeRadius;
     style.depthTest = false;
     style.transparent = true; // Needed to make the line visible through other objects
+    style.showSolid = true;
     return style;
   }
 
@@ -63,5 +65,9 @@ export class Image360AnnotationDomainObject extends LineDomainObject {
     target.copy(this.center);
     target.addScaledVector(point, this.vectorLength);
     return target;
+  }
+
+  public override getTriangleIndexes(): number[] | undefined {
+    return createTriangleIndexesFromVectors(this.points);
   }
 }

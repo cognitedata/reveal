@@ -39,7 +39,7 @@ export class CylinderGizmoDomainObject extends CylinderDomainObject {
   public override createRenderStyle(): RenderStyle | undefined {
     const style = new SolidPrimitiveRenderStyle();
     style.showLabel = false;
-    style.opacity = 0.3333;
+    style.solidOpacity = 0.3333;
     return style;
   }
 

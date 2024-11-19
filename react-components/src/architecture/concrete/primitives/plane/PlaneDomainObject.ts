@@ -100,8 +100,8 @@ export abstract class PlaneDomainObject extends VisualDomainObject {
 
   public override createRenderStyle(): RenderStyle | undefined {
     const style = new SolidPrimitiveRenderStyle();
-    style.selectedOpacity = 0.5;
-    style.opacity = style.selectedOpacity / 2;
+    style.selectedSolidOpacity = 0.5;
+    style.solidOpacity = style.selectedSolidOpacity / 2;
     style.lineWidth = 1;
     style.selectedLineWidth = 2;
     return style;
