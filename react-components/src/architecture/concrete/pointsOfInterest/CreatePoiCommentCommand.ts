@@ -3,7 +3,7 @@
  */
 import { BaseInputCommand } from '../../base/commands/BaseInputCommand';
 import { Changes } from '../../base/domainObjectsHelpers/Changes';
-import { type TranslateDelegate } from '../../base/utilities/TranslateKey';
+import { type TranslateDelegate } from '../../base/utilities/TranslateInput';
 import { PointsOfInterestDomainObject } from './PointsOfInterestDomainObject';
 import { type PointOfInterest } from './types';
 

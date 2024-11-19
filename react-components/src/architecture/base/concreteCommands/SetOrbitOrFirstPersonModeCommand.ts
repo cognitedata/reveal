@@ -4,7 +4,7 @@
 
 import { type RevealRenderTarget } from '../renderTarget/RevealRenderTarget';
 import { FlexibleControlsType } from '@cognite/reveal';
-import { type TranslateKey } from '../utilities/TranslateKey';
+import { type TranslationInput } from '../utilities/TranslateInput';
 import { BaseOptionCommand, OptionType } from '../commands/BaseOptionCommand';
 import { SetFlexibleControlsTypeCommand } from './SetFlexibleControlsTypeCommand';
 
@@ -23,8 +23,8 @@ export class SetOrbitOrFirstPersonModeCommand extends BaseOptionCommand {
   // OVERRIDES
   // ==================================================
 
-  public override get tooltip(): TranslateKey {
-    return { key: 'CONTROLS_TYPE_TOOLTIP', fallback: 'Set Camera to Orbit or Fly mode' };
+  public override get tooltip(): TranslationInput {
+    return { key: 'CONTROLS_TYPE_TOOLTIP' };
   }
 
   public override attach(renderTarget: RevealRenderTarget): void {

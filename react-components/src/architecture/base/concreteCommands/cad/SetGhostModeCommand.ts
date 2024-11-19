@@ -3,15 +3,15 @@
  */
 
 import { RenderTargetCommand } from '../../commands/RenderTargetCommand';
-import { type TranslateKey } from '../../utilities/TranslateKey';
+import { type TranslationInput } from '../../utilities/TranslateInput';
 
 export class SetGhostModeCommand extends RenderTargetCommand {
   // ==================================================
   // OVERRIDES
   // ==================================================
 
-  public override get tooltip(): TranslateKey {
-    return { key: 'GHOST_MODE', fallback: 'Ghost mode' };
+  public override get tooltip(): TranslationInput {
+    return { key: 'GHOST_MODE' };
   }
 
   public override get isEnabled(): boolean {

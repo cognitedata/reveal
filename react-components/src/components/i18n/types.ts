@@ -3,6 +3,7 @@
  */
 
 import { type ReactNode } from 'react';
+import { TranslationInput } from '../../architecture';
 
 export type Translations = Record<string, string>;
 
@@ -13,5 +14,5 @@ export type I18nProps = {
 
 export type I18nContent = {
   currentLanguage: string;
-  t: (key: string, fallback?: string) => string;
+  t: (translationInput: TranslationInput) => string;
 };

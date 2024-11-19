@@ -4,7 +4,7 @@
 
 import { BaseOptionCommand } from '../BaseOptionCommand';
 import { RenderTargetCommand } from '../RenderTargetCommand';
-import { type TranslateKey } from '../../utilities/TranslateKey';
+import { type TranslationInput } from '../../utilities/TranslateInput';
 
 enum MockEnum {
   Red = 'Red',
@@ -30,8 +30,8 @@ export class MockEnumOptionCommand extends BaseOptionCommand {
   // OVERRIDES
   // ==================================================
 
-  public override get tooltip(): TranslateKey {
-    return { fallback: 'Enum option' };
+  public override get tooltip(): TranslationInput {
+    return { untranslated: 'Enum option' };
   }
 }
 
@@ -47,8 +47,8 @@ class OptionItemCommand extends RenderTargetCommand {
     this._value = value;
   }
 
-  public override get tooltip(): TranslateKey {
-    return { fallback: this._value.toString() };
+  public override get tooltip(): TranslationInput {
+    return { untranslated: this._value.toString() };
   }
 
   public override get isChecked(): boolean {

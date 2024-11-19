@@ -3,7 +3,7 @@
  */
 
 import { RenderTargetCommand } from './RenderTargetCommand';
-import { type TranslateDelegate } from '../utilities/TranslateKey';
+import { type TranslateDelegate } from '../utilities/TranslateInput';
 import { type Color } from 'three';
 import { type BaseCommand } from './BaseCommand';
 import { CommandsUpdater } from '../reactUpdaters/CommandsUpdater';

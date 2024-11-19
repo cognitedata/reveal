@@ -5,7 +5,7 @@
 import { type DomainObject } from '../../base/domainObjects/DomainObject';
 import { type RenderStyle } from '../../base/renderStyles/RenderStyle';
 import { PrimitiveType } from '../../base/utilities/primitives/PrimitiveType';
-import { type TranslateKey } from '../../base/utilities/TranslateKey';
+import { type TranslationInput } from '../../base/utilities/TranslateInput';
 import { LineDomainObject } from '../primitives/line/LineDomainObject';
 import { Color, Vector3 } from 'three';
 import { LineRenderStyle } from '../primitives/line/LineRenderStyle';
@@ -31,8 +31,8 @@ export class Image360AnnotationDomainObject extends LineDomainObject {
   // OVERRIDES
   // ==================================================
 
-  public override get typeName(): TranslateKey {
-    return { fallback: '360 image annotation' };
+  public override get typeName(): TranslationInput {
+    return { untranslated: '360 image annotation' };
   }
 
   public override clone(what?: symbol): DomainObject {

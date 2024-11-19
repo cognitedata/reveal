@@ -3,7 +3,7 @@
  */
 
 import { Changes } from '../../../base/domainObjectsHelpers/Changes';
-import { type TranslateKey } from '../../../base/utilities/TranslateKey';
+import { type TranslationInput } from '../../../base/utilities/TranslateInput';
 import { PrimitiveType } from '../../../base/utilities/primitives/PrimitiveType';
 import { type SliceDomainObject } from '../SliceDomainObject';
 import { DomainObjectCommand } from '../../../base/commands/DomainObjectCommand';
@@ -14,8 +14,8 @@ export class FlipSliceCommand extends DomainObjectCommand<SliceDomainObject> {
   // OVERRIDES
   // ==================================================
 
-  public override get tooltip(): TranslateKey {
-    return { key: 'SLICE_FLIP', fallback: 'Flip side' };
+  public override get tooltip(): TranslationInput {
+    return { key: 'SLICE_FLIP' };
   }
 
   public override get icon(): IconName {

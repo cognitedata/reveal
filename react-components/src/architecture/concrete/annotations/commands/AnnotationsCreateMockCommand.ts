@@ -3,7 +3,7 @@
  */
 
 import { type DomainObject } from '../../../base/domainObjects/DomainObject';
-import { type TranslateKey } from '../../../base/utilities/TranslateKey';
+import { type TranslationInput } from '../../../base/utilities/TranslateInput';
 import { AnnotationsDomainObject } from '../AnnotationsDomainObject';
 import { Euler, Matrix4, Vector3 } from 'three';
 import { InstanceCommand } from '../../../base/commands/InstanceCommand';
@@ -26,8 +26,8 @@ export class AnnotationsCreateMockCommand extends InstanceCommand {
     return 'Bug';
   }
 
-  public override get tooltip(): TranslateKey {
-    return { fallback: 'Create a mock annotation' };
+  public override get tooltip(): TranslationInput {
+    return { untranslated: 'Create a mock annotation' };
   }
 
   public override get isEnabled(): boolean {

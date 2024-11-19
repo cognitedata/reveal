@@ -3,7 +3,7 @@
  */
 
 import { type IconName } from '../utilities/IconName';
-import { type TranslateDelegate, type TranslateKey } from '../utilities/TranslateKey';
+import { type TranslateDelegate, type TranslationInput } from '../utilities/TranslateInput';
 import { clear, remove } from '../utilities/extensions/arrayExtensions';
 import { isMacOs } from '../utilities/extensions/isMacOs';
 
@@ -53,7 +53,7 @@ export abstract class BaseCommand {
   // =================================================
 
   public get name(): string {
-    return this.tooltip.fallback;
+    return this.tooltip ?? '';
   }
 
   protected get shortCutKey(): string | undefined {
@@ -72,8 +72,8 @@ export abstract class BaseCommand {
     return false;
   }
 
-  public get tooltip(): TranslateKey {
-    return { fallback: '' };
+  public get tooltip(): TranslationInput | undefined {
+    return undefined;
   }
 
   public get icon(): IconName {

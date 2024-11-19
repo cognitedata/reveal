@@ -5,7 +5,7 @@
 import { type RevealRenderTarget } from '../renderTarget/RevealRenderTarget';
 import { UnitSystem } from '../renderTarget/UnitSystem';
 import { DomainObject } from './DomainObject';
-import { type TranslateKey } from '../utilities/TranslateKey';
+import { type TranslationInput } from '../utilities/TranslateInput';
 import { type CogniteClient } from '@cognite/sdk/dist/src';
 import { FdmSDK } from '../../../data-providers/FdmSDK';
 
@@ -51,8 +51,8 @@ export class RootDomainObject extends DomainObject {
   // OVERRIDES
   // ==================================================
 
-  public override get typeName(): TranslateKey {
-    return { fallback: 'Root' };
+  public override get typeName(): TranslationInput {
+    return { untranslated: 'Root' };
   }
 
   public override clone(what?: symbol): DomainObject {

@@ -20,7 +20,7 @@ import { PopupStyle } from '../domainObjectsHelpers/PopupStyle';
 import { RootDomainObject } from './RootDomainObject';
 import { CommandsUpdater } from '../reactUpdaters/CommandsUpdater';
 import { DomainObjectPanelUpdater } from '../reactUpdaters/DomainObjectPanelUpdater';
-import { type TranslateKey } from '../utilities/TranslateKey';
+import { type TranslationInput } from '../utilities/TranslateInput';
 import { DeleteDomainObjectCommand } from '../concreteCommands/DeleteDomainObjectCommand';
 import { CopyToClipboardCommand } from '../concreteCommands/CopyToClipboardCommand';
 import { type BaseCommand } from '../commands/BaseCommand';
@@ -88,7 +88,7 @@ export abstract class DomainObject {
   // INSTANCE/VIRTUAL PROPERTIES
   // ==================================================
 
-  public abstract get typeName(): TranslateKey; // to be overridden
+  public abstract get typeName(): TranslationInput; // to be overridden
 
   public get path(): string {
     return `${this.parent !== undefined ? this.parent.path : ''}\\${this.name}`;

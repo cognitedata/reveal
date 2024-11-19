@@ -13,7 +13,7 @@ import { type BaseDragger } from '../../../base/domainObjectsHelpers/BaseDragger
 import { BoxDragger } from './BoxDragger';
 import { type CreateDraggerProps } from '../../../base/domainObjects/VisualDomainObject';
 import { getIconByPrimitiveType } from '../../../base/utilities/primitives/getIconByPrimitiveType';
-import { type TranslateKey } from '../../../base/utilities/TranslateKey';
+import { type TranslationInput } from '../../../base/utilities/TranslateInput';
 import { Quantity } from '../../../base/domainObjectsHelpers/Quantity';
 import { PanelInfo } from '../../../base/domainObjectsHelpers/PanelInfo';
 import { type IconName } from '../../../base/utilities/IconName';
@@ -48,14 +48,14 @@ export abstract class BoxDomainObject extends SolidDomainObject {
     return getIconByPrimitiveType(this.primitiveType);
   }
 
-  public override get typeName(): TranslateKey {
+  public override get typeName(): TranslationInput {
     switch (this.primitiveType) {
       case PrimitiveType.HorizontalArea:
-        return { key: 'HORIZONTAL_AREA', fallback: 'Horizontal area' };
+        return { key: 'HORIZONTAL_AREA' };
       case PrimitiveType.VerticalArea:
-        return { key: 'VERTICAL_AREA', fallback: 'Vertical area' };
+        return { key: 'VERTICAL_AREA' };
       case PrimitiveType.Box:
-        return { key: 'VOLUME', fallback: 'Volume' };
+        return { key: 'VOLUME' };
       default:
         throw new Error('Unknown PrimitiveType');
     }

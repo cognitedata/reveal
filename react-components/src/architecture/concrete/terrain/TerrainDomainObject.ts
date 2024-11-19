@@ -8,7 +8,7 @@ import { type RegularGrid2 } from './geometry/RegularGrid2';
 import { type RenderStyle } from '../../base/renderStyles/RenderStyle';
 import { type ThreeView } from '../../base/views/ThreeView';
 import { TerrainThreeView } from './TerrainThreeView';
-import { type TranslateKey } from '../../base/utilities/TranslateKey';
+import { type TranslationInput } from '../../base/utilities/TranslateInput';
 
 export class TerrainDomainObject extends VisualDomainObject {
   // ==================================================
@@ -37,8 +37,8 @@ export class TerrainDomainObject extends VisualDomainObject {
   // OVERRIDES of DomainObject
   // ==================================================
 
-  public override get typeName(): TranslateKey {
-    return { fallback: 'Terrain' };
+  public override get typeName(): TranslationInput {
+    return { untranslated: 'Terrain' };
   }
 
   public override createRenderStyle(): RenderStyle | undefined {

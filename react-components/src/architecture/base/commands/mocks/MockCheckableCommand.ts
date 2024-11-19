@@ -3,7 +3,7 @@
  */
 
 import { type IconName } from '../../utilities/IconName';
-import { type TranslateKey } from '../../utilities/TranslateKey';
+import { type TranslationInput } from '../../utilities/TranslateInput';
 import { RenderTargetCommand } from '../RenderTargetCommand';
 
 export class MockCheckableCommand extends RenderTargetCommand {
@@ -12,8 +12,8 @@ export class MockCheckableCommand extends RenderTargetCommand {
   // OVERRIDES
   // ==================================================
 
-  public override get tooltip(): TranslateKey {
-    return { fallback: 'Checkable action' };
+  public override get tooltip(): TranslationInput {
+    return { untranslated: 'Checkable action' };
   }
 
   public override get icon(): IconName {

@@ -4,7 +4,7 @@
 import { type Vector3 } from 'three';
 import { BaseInputCommand } from '../../base/commands/BaseInputCommand';
 import { PointsOfInterestDomainObject } from './PointsOfInterestDomainObject';
-import { type TranslateDelegate } from '../../base/utilities/TranslateKey';
+import { type TranslateDelegate } from '../../base/utilities/TranslateInput';
 import { createPointsOfInterestPropertiesFromPointAndTitle } from './types';
 
 export class CreatePointsOfInterestWithDescriptionCommand extends BaseInputCommand {

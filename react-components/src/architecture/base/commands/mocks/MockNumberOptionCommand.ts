@@ -4,7 +4,7 @@
 
 import { BaseOptionCommand } from '../BaseOptionCommand';
 import { RenderTargetCommand } from '../RenderTargetCommand';
-import { type TranslateKey } from '../../utilities/TranslateKey';
+import { type TranslationInput } from '../../utilities/TranslateInput';
 
 export class MockNumberOptionCommand extends BaseOptionCommand {
   public value = 1;
@@ -24,8 +24,8 @@ export class MockNumberOptionCommand extends BaseOptionCommand {
   // OVERRIDES
   // ==================================================
 
-  public override get tooltip(): TranslateKey {
-    return { fallback: 'Number option' };
+  public override get tooltip(): TranslationInput {
+    return { untranslated: 'Number option' };
   }
 }
 
@@ -41,8 +41,8 @@ class OptionItemCommand extends RenderTargetCommand {
     this._value = value;
   }
 
-  public override get tooltip(): TranslateKey {
-    return { fallback: this._value.toString() };
+  public override get tooltip(): TranslationInput {
+    return { untranslated: this._value.toString() };
   }
 
   public override get isChecked(): boolean {

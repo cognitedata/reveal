@@ -6,7 +6,7 @@ import { type BaseCommand } from '../../../base/commands/BaseCommand';
 import { RenderTargetCommand } from '../../../base/commands/RenderTargetCommand';
 import { Changes } from '../../../base/domainObjectsHelpers/Changes';
 import { DomainObjectChange } from '../../../base/domainObjectsHelpers/DomainObjectChange';
-import { type TranslateKey } from '../../../base/utilities/TranslateKey';
+import { type TranslationInput } from '../../../base/utilities/TranslateInput';
 import { AnnotationsDomainObject } from '../AnnotationsDomainObject';
 import { SolidDomainObject } from '../../primitives/common/SolidDomainObject';
 import { AnnotationChangedDescription } from '../helpers/AnnotationChangedDescription';
@@ -28,16 +28,14 @@ export class AlignSelectedAnnotationCommand extends RenderTargetCommand {
   // OVERRIDES
   // ==================================================
 
-  public override get tooltip(): TranslateKey {
+  public override get tooltip(): TranslationInput {
     if (this._horizontal) {
       return {
-        key: 'ANNOTATIONS_ALIGN_HORIZONTALLY',
-        fallback: 'Align selected annotation horizontally'
+        untranslated: 'Align selected annotation horizontally'
       };
     } else {
       return {
-        key: 'ANNOTATIONS_ALIGN_VERTICALLY',
-        fallback: 'Align selected annotation vertically'
+        untranslated: 'Align selected annotation vertically'
       };
     }
   }

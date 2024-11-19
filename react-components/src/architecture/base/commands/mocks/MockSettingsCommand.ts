@@ -2,7 +2,7 @@
  * Copyright 2024 Cognite AS
  */
 
-import { type TranslateKey } from '../../utilities/TranslateKey';
+import { type TranslationInput } from '../../utilities/TranslateInput';
 import { type IconName } from '../../utilities/IconName';
 
 import { BaseSettingsCommand } from '../BaseSettingsCommand';
@@ -39,8 +39,8 @@ export class MockSettingsCommand extends BaseSettingsCommand {
   // OVERRIDES
   // ==================================================
 
-  public override get tooltip(): TranslateKey {
-    return { fallback: 'Mock Settings' };
+  public override get tooltip(): TranslationInput {
+    return { untranslated: 'Mock Settings' };
   }
 
   public override get icon(): IconName {

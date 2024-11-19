@@ -4,7 +4,7 @@
 import { VisualDomainObject } from '../../base/domainObjects/VisualDomainObject';
 import { type ThreeView } from '../../base/views/ThreeView';
 import { PointsOfInterestView } from './PointsOfInterestView';
-import { type TranslateKey } from '../../base/utilities/TranslateKey';
+import { type TranslationInput } from '../../base/utilities/TranslateInput';
 import { Changes } from '../../base/domainObjectsHelpers/Changes';
 import { PointsOfInterestCache } from './PointsOfInterestCache';
 import { PanelInfo } from '../../base/domainObjectsHelpers/PanelInfo';
@@ -41,8 +41,8 @@ export class PointsOfInterestDomainObject<PoiIdType> extends VisualDomainObject 
     });
   }
 
-  public override get typeName(): TranslateKey {
-    return { fallback: PointsOfInterestDomainObject.name };
+  public override get typeName(): TranslationInput {
+    return { untranslated: PointsOfInterestDomainObject.name };
   }
 
   protected override createThreeView():

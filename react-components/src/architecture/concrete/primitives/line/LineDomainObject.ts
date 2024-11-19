@@ -19,7 +19,7 @@ import { FocusType } from '../../../base/domainObjectsHelpers/FocusType';
 import { Quantity } from '../../../base/domainObjectsHelpers/Quantity';
 import { VisualDomainObject } from '../../../base/domainObjects/VisualDomainObject';
 import { getIconByPrimitiveType } from '../../../base/utilities/primitives/getIconByPrimitiveType';
-import { type TranslateKey } from '../../../base/utilities/TranslateKey';
+import { type TranslationInput } from '../../../base/utilities/TranslateInput';
 import { clear } from '../../../base/utilities/extensions/arrayExtensions';
 import { type Transaction } from '../../../base/undo/Transaction';
 import { DomainObjectTransaction } from '../../../base/undo/DomainObjectTransaction';
@@ -82,14 +82,14 @@ export abstract class LineDomainObject extends VisualDomainObject {
     return getIconByPrimitiveType(this.primitiveType);
   }
 
-  public override get typeName(): TranslateKey {
+  public override get typeName(): TranslationInput {
     switch (this.primitiveType) {
       case PrimitiveType.Line:
-        return { key: 'LINE', fallback: 'Line' };
+        return { key: 'LINE' };
       case PrimitiveType.Polyline:
-        return { key: 'POLYLINE', fallback: 'Polyline' };
+        return { key: 'POLYLINE' };
       case PrimitiveType.Polygon:
-        return { key: 'POLYGON', fallback: 'Polygon' };
+        return { key: 'POLYGON' };
       default:
         throw new Error('Unknown PrimitiveType');
     }

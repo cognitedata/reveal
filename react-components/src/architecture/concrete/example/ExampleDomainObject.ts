@@ -16,7 +16,7 @@ import { PopupStyle } from '../../base/domainObjectsHelpers/PopupStyle';
 import { type BaseDragger } from '../../base/domainObjectsHelpers/BaseDragger';
 import { ExampleDragger } from './ExampleDragger';
 import { Quantity } from '../../base/domainObjectsHelpers/Quantity';
-import { type TranslateKey } from '../../base/utilities/TranslateKey';
+import { type TranslationInput } from '../../base/utilities/TranslateInput';
 import { type Transaction } from '../../base/undo/Transaction';
 import { type DomainObject } from '../../base/domainObjects/DomainObject';
 import { Changes } from '../../base/domainObjectsHelpers/Changes';
@@ -47,8 +47,8 @@ export class ExampleDomainObject extends VisualDomainObject {
     return 'Circle';
   }
 
-  public override get typeName(): TranslateKey {
-    return { fallback: 'Example' };
+  public override get typeName(): TranslationInput {
+    return { untranslated: 'Example' };
   }
 
   public override get canBeRemoved(): boolean {
