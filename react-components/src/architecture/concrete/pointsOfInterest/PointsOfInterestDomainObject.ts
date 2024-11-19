@@ -4,10 +4,9 @@
 import { VisualDomainObject } from '../../base/domainObjects/VisualDomainObject';
 import { type ThreeView } from '../../base/views/ThreeView';
 import { PointsOfInterestView } from './PointsOfInterestView';
-import { type TranslateKey } from '../../base/utilities/TranslateKey';
+import { type TranslationInput } from '../../base/utilities/TranslateInput';
 import { Changes } from '../../base/domainObjectsHelpers/Changes';
 import { PointsOfInterestCache } from './PointsOfInterestCache';
-import { PanelInfo } from '../../base/domainObjectsHelpers/PanelInfo';
 import { type PointOfInterest, PointsOfInterestStatus } from './types';
 import { partition, remove } from 'lodash';
 import {
@@ -15,7 +14,6 @@ import {
   type PointsOfInterestProperties,
   type PointsOfInterestInstance
 } from './models';
-import { Quantity } from '../../base/domainObjectsHelpers/Quantity';
 import { type PointsOfInterestProvider } from './PointsOfInterestProvider';
 
 export class PointsOfInterestDomainObject<PoiIdType> extends VisualDomainObject {
@@ -41,8 +39,8 @@ export class PointsOfInterestDomainObject<PoiIdType> extends VisualDomainObject 
     });
   }
 
-  public override get typeName(): TranslateKey {
-    return { fallback: PointsOfInterestDomainObject.name };
+  public override get typeName(): TranslationInput {
+    return { untranslated: PointsOfInterestDomainObject.name };
   }
 
   protected override createThreeView():
@@ -53,27 +51,6 @@ export class PointsOfInterestDomainObject<PoiIdType> extends VisualDomainObject 
 
   public override get canBeRemoved(): boolean {
     return false;
-  }
-
-  public override get hasPanelInfo(): boolean {
-    return true;
-  }
-
-  public override getPanelInfo(): PanelInfo | undefined {
-    const info = new PanelInfo();
-    const header = { fallback: 'PointsOfInterest' };
-    info.setHeader(header);
-
-    if (this._selectedPointsOfInterest !== undefined) {
-      const properties = this._selectedPointsOfInterest.properties;
-      add('X_COORDINATE', 'X coordinate', properties.positionX, Quantity.Length);
-      add('Y_COORDINATE', 'Y coordinate', properties.positionY, Quantity.Length);
-      add('Z_COORDINATE', 'Z coordinate', properties.positionZ, Quantity.Length);
-    }
-    function add(key: string, fallback: string, value: number, quantity: Quantity): void {
-      info.add({ key, fallback, value, quantity });
-    }
-    return info;
   }
 
   public addPendingPointsOfInterest(

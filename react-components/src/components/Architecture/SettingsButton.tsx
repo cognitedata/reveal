@@ -15,7 +15,7 @@ import {
   getTooltipPlacement
 } from './utilities';
 import { LabelWithShortcut } from './LabelWithShortcut';
-import { type TranslateDelegate } from '../../architecture/base/utilities/TranslateKey';
+import { type TranslateDelegate } from '../../architecture/base/utilities/TranslateInput';
 import styled from 'styled-components';
 import { type BaseSettingsCommand } from '../../architecture/base/commands/BaseSettingsCommand';
 import { BaseOptionCommand } from '../../architecture/base/commands/BaseOptionCommand';

@@ -7,12 +7,12 @@ import { type DomainObject } from '../../base/domainObjects/DomainObject';
 import { Changes } from '../../base/domainObjectsHelpers/Changes';
 import { FocusType } from '../../base/domainObjectsHelpers/FocusType';
 import { type IconName } from '../../base/utilities/IconName';
-import { type TranslateKey } from '../../base/utilities/TranslateKey';
+import { type TranslationInput } from '../../base/utilities/TranslateInput';
 import { Image360AnnotationDomainObject } from './Image360AnnotationDomainObject';
 
 export class DeleteSelectedImage360AnnotationCommand extends InstanceCommand {
-  public override get tooltip(): TranslateKey {
-    return { fallback: 'Remove selected polygon' };
+  public override get tooltip(): TranslationInput {
+    return { untranslated: 'Remove selected polygon' };
   }
 
   public override get icon(): IconName {

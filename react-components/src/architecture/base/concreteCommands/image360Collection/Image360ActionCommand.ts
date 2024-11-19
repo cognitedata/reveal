@@ -3,7 +3,7 @@
  */
 import { Image360Action } from '@cognite/reveal';
 import { RenderTargetCommand } from '../../commands/RenderTargetCommand';
-import { type TranslateKey } from '../../utilities/TranslateKey';
+import { type TranslationInput } from '../../utilities/TranslateInput';
 import { type IconName } from '../../utilities/IconName';
 import { type BaseCommand } from '../../commands/BaseCommand';
 import { CommandsUpdater } from '../../reactUpdaters/CommandsUpdater';
@@ -38,16 +38,16 @@ export class Image360ActionCommand extends RenderTargetCommand {
     }
   }
 
-  public override get tooltip(): TranslateKey {
+  public override get tooltip(): TranslationInput {
     switch (this._action) {
       case Image360Action.Backward:
-        return { key: 'GO_BACK_360', fallback: 'Go one 360 image back' };
+        return { key: 'GO_BACK_360' };
       case Image360Action.Forward:
-        return { key: 'GO_FORWARD_360', fallback: 'Go one 360 image forward' };
+        return { key: 'GO_FORWARD_360' };
       case Image360Action.Enter:
-        return { key: 'ENTER_LAST_360', fallback: 'Enter last exited 360 image' };
+        return { key: 'ENTER_LAST_360' };
       case Image360Action.Exit:
-        return { key: 'EXIT_360', fallback: 'Exit 360 image' };
+        return { key: 'EXIT_360' };
       default:
         throw new Error('Unknown action');
     }

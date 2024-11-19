@@ -5,7 +5,7 @@
 import { type IconName } from '../../base/utilities/IconName';
 import { RenderTargetCommand } from '../commands/RenderTargetCommand';
 import { CommandsUpdater } from '../reactUpdaters/CommandsUpdater';
-import { type TranslateKey } from '../utilities/TranslateKey';
+import { type TranslationInput } from '../utilities/TranslateInput';
 
 export class UndoCommand extends RenderTargetCommand {
   // ==================================================
@@ -16,8 +16,8 @@ export class UndoCommand extends RenderTargetCommand {
     return 'Restore';
   }
 
-  public override get tooltip(): TranslateKey {
-    return { key: 'UNDO', fallback: 'Undo' };
+  public override get tooltip(): TranslationInput {
+    return { key: 'UNDO' };
   }
 
   public override get isEnabled(): boolean {

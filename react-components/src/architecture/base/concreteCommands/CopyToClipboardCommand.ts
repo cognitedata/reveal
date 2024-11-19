@@ -4,7 +4,7 @@
 
 import { type IconName } from '../../base/utilities/IconName';
 import { BaseCommand } from '../commands/BaseCommand';
-import { type TranslateKey } from '../utilities/TranslateKey';
+import { type TranslationInput } from '../utilities/TranslateInput';
 
 type GetStringDelegate = () => string;
 
@@ -24,8 +24,8 @@ export class CopyToClipboardCommand extends BaseCommand {
   // OVERRIDES
   // ==================================================
 
-  public override get tooltip(): TranslateKey {
-    return { key: 'COPY_TO_CLIPBOARD', fallback: 'Copy to clipboard' };
+  public override get tooltip(): TranslationInput {
+    return { key: 'COPY_TO_CLIPBOARD' };
   }
 
   public override get icon(): IconName {

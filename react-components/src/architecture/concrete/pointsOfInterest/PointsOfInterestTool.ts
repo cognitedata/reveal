@@ -1,7 +1,7 @@
 /*!
  * Copyright 2024 Cognite AS
  */
-import { type TranslateKey } from '../../base/utilities/TranslateKey';
+import { type TranslationInput } from '../../base/utilities/TranslateInput';
 import { PointsOfInterestDomainObject } from './PointsOfInterestDomainObject';
 import { isPointsOfInterestIntersection } from './types';
 import { type IconName } from '../../base/utilities/IconName';
@@ -22,8 +22,8 @@ export class PointsOfInterestTool<PoiIdType> extends NavigationTool {
     return 'Waypoint';
   }
 
-  public override get tooltip(): TranslateKey {
-    return { key: 'POINT_OF_INTEREST_CREATE', fallback: 'Create Point of Interest' };
+  public override get tooltip(): TranslationInput {
+    return { key: 'POINT_OF_INTEREST_CREATE' };
   }
 
   public override onActivate(): void {

@@ -3,7 +3,7 @@
  */
 import { BaseInputCommand } from '../../base/commands/BaseInputCommand';
 import { Changes } from '../../base/domainObjectsHelpers/Changes';
-import { type TranslateDelegate } from '../../base/utilities/TranslateKey';
+import { type TranslationInput } from '../../base/utilities/TranslateInput';
 import { PointsOfInterestDomainObject } from './PointsOfInterestDomainObject';
 import { type PointOfInterest } from './types';
 
@@ -20,16 +20,16 @@ export class CreatePoiCommentCommand extends BaseInputCommand {
     return true;
   }
 
-  public override getPostButtonLabel(t: TranslateDelegate): string | undefined {
-    return t('SEND', 'Send');
+  public override getPostButtonLabel(): TranslationInput {
+    return { key: 'SEND' };
   }
 
-  public override getCancelButtonLabel(t: TranslateDelegate): string | undefined {
-    return t('CANCEL', 'Cancel');
+  public override getCancelButtonLabel(): TranslationInput {
+    return { key: 'CANCEL' };
   }
 
-  public override getPlaceholder(t: TranslateDelegate): string | undefined {
-    return t('COMMENT_PLACEHOLDER', 'Write a comment');
+  public override getPlaceholder(): TranslationInput {
+    return { key: 'COMMENT_PLACEHOLDER' };
   }
 
   public override invokeCore(): boolean {

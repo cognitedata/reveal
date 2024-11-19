@@ -40,7 +40,7 @@ export const PoiList = (): ReactNode => {
   const columns: Array<DatagridColumn<RowType>> = [
     {
       field: 'name',
-      headerName: t('NAME', 'Name'),
+      headerName: t({ key: 'NAME' }),
       flex: 3
     }
   ];

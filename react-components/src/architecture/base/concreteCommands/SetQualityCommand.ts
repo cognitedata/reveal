@@ -2,7 +2,7 @@
  * Copyright 2024 Cognite AS
  */
 
-import { type TranslateKey } from '../utilities/TranslateKey';
+import { type TranslationInput } from '../utilities/TranslateInput';
 import { type QualitySettings } from '../../../components/RevealToolbar/SettingsContainer/types';
 import { type Cognite3DViewer } from '@cognite/reveal';
 import { RenderTargetCommand } from '../commands/RenderTargetCommand';
@@ -60,8 +60,8 @@ export class SetQualityCommand extends RenderTargetCommand {
   // OVERRIDES
   // ==================================================
 
-  public override get tooltip(): TranslateKey {
-    return { key: 'HIGH_FIDELITY', fallback: 'High Fidelity' };
+  public override get tooltip(): TranslationInput {
+    return { key: 'HIGH_FIDELITY' };
   }
 
   public override get isToggle(): boolean {

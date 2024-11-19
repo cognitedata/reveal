@@ -15,14 +15,12 @@ type AssetContextualizedButtonProps = {
 
 const tooltipMapping = {
   true: {
-    key: 'CONTEXTUALIZED_ASSETS_LOADING_TOOLTIP',
-    default: 'Loading contextualized assets'
+    key: 'CONTEXTUALIZED_ASSETS_LOADING_TOOLTIP'
   },
   false: {
-    key: 'CONTEXTUALIZED_ASSETS_TOOLTIP',
-    default: 'Show contextualized assets'
+    key: 'CONTEXTUALIZED_ASSETS_TOOLTIP'
   }
-};
+} as const;
 
 export const AssetContextualizedButton = ({
   setEnableMappedStyling
@@ -42,10 +40,7 @@ export const AssetContextualizedButton = ({
   }, [enableContextualizedStyling, setEnableMappedStyling]);
 
   return (
-    <CogsTooltip
-      content={t(tooltip.key, tooltip.default)}
-      placement="right"
-      appendTo={document.body}>
+    <CogsTooltip content={t(tooltip)} placement="right" appendTo={document.body}>
       <Button
         type="ghost"
         icon=<AssetsIcon />
