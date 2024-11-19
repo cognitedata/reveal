@@ -86,6 +86,7 @@
   "PAN": "Pan",
   "PARABOLOID": "Paraboloid",
   "POINT_OF_INTEREST_CREATE": "Create Point of Interest",
+  "POINT_OF_INTEREST_DELETE_THIS": "Delete this Point of Interest",
   "POINT_OF_INTEREST_DESCRIPTION_PLACEHOLDER": "Write a description for the Point of Interest",
   "POINT_OF_INTEREST_IS_PRIVATE": "Point of Interest is private",
   "POINT_OF_INTEREST_IS_PUBLIC": "Point of Interest is public",
