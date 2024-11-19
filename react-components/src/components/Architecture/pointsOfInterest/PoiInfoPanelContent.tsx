@@ -50,7 +50,7 @@ const PanelHeader = (): ReactNode => {
       <Divider direction="vertical" weight="2px" />
       <Flex direction="row" justifyContent="flex-start">
         <Dropdown placement="bottom-end" content={<PoiSharePanel />}>
-          <Tooltip placement="top-end" appendTo="parent" content={t('SHARE', 'Share')}>
+          <Tooltip placement="top-end" appendTo={document.body} content={t('SHARE', 'Share')}>
             <Button icon=<ShareIcon /> type="ghost" />
           </Tooltip>
         </Dropdown>
