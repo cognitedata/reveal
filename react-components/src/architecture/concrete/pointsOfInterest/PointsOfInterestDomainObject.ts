@@ -7,7 +7,6 @@ import { PointsOfInterestView } from './PointsOfInterestView';
 import { type TranslationInput } from '../../base/utilities/TranslateInput';
 import { Changes } from '../../base/domainObjectsHelpers/Changes';
 import { PointsOfInterestCache } from './PointsOfInterestCache';
-import { PanelInfo } from '../../base/domainObjectsHelpers/PanelInfo';
 import { type PointOfInterest, PointsOfInterestStatus } from './types';
 import { partition, remove } from 'lodash';
 import {
@@ -15,7 +14,6 @@ import {
   type PointsOfInterestProperties,
   type PointsOfInterestInstance
 } from './models';
-import { Quantity } from '../../base/domainObjectsHelpers/Quantity';
 import { type PointsOfInterestProvider } from './PointsOfInterestProvider';
 
 export class PointsOfInterestDomainObject<PoiIdType> extends VisualDomainObject {

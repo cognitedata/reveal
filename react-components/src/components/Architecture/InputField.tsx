@@ -8,7 +8,7 @@ import { useTranslation } from '../i18n/I18n';
 import { useOnUpdate } from './useOnUpdate';
 import { getDefaultCommand } from './utilities';
 import { useRenderTarget } from '../RevealCanvas';
-import { TranslationInput } from '../../architecture';
+import { type TranslationInput } from '../../architecture';
 
 export const InputField = ({
   inputCommand
@@ -17,7 +17,7 @@ export const InputField = ({
   placement: string;
 }): ReactNode => {
   const { t } = useTranslation();
-  const translateIfExists = (translationInput: TranslationInput | undefined) =>
+  const translateIfExists = (translationInput: TranslationInput | undefined): string | undefined =>
     translationInput !== undefined ? t(translationInput) : undefined;
 
   const renderTarget = useRenderTarget();

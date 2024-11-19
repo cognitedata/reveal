@@ -1,7 +1,7 @@
 /*!
  * Copyright 2024 Cognite AS
  */
-import { type TranslateDelegate, type TranslationInput } from '../utilities/TranslateInput';
+import { type TranslationInput } from '../utilities/TranslateInput';
 import { RenderTargetCommand } from './RenderTargetCommand';
 
 export abstract class BaseInputCommand extends RenderTargetCommand {
