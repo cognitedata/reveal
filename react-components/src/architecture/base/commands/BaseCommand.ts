@@ -179,11 +179,7 @@ export abstract class BaseCommand {
   // ==================================================
 
   public getLabel(translate: TranslateDelegate): string {
-    const { key, fallback } = this.tooltip;
-    if (key === undefined) {
-      return fallback;
-    }
-    return translate(key, fallback);
+    return translate(this.tooltip ?? { untranslated: '' });
   }
 
   public getShortCutKeys(): string[] | undefined {

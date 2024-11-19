@@ -3,7 +3,7 @@
  */
 
 import { type ReactNode } from 'react';
-import { TranslationInput } from '../../architecture';
+import { type TranslationInput } from '../../architecture';
 
 export type Translations = Record<string, string>;
 

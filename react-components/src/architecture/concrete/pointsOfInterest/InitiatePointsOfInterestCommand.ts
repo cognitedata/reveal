@@ -3,7 +3,7 @@
  */
 import { type Vector3 } from 'three';
 import { type IconName } from '../../base/utilities/IconName';
-import { type TranslateDelegate, type TranslationInput } from '../../base/utilities/TranslateInput';
+import { type TranslationInput } from '../../base/utilities/TranslateInput';
 import { RenderTargetCommand } from '../../base/commands/RenderTargetCommand';
 import { PointsOfInterestTool } from './PointsOfInterestTool';
 

@@ -72,19 +72,15 @@ export abstract class CylinderDomainObject extends SolidDomainObject {
       add({ key: 'RADIUS' }, cylinder.radius, Quantity.Length);
     }
     if (isFinished || hasHeight) {
-      add({ key: 'HEIGHT'}, cylinder.height, Quantity.Length);
+      add({ key: 'HEIGHT' }, cylinder.height, Quantity.Length);
     }
     if (isFinished || (hasRadius && hasHeight)) {
-      add({ key: 'AREA'}, cylinder.area, Quantity.Area);
-      add({ key: 'VOLUME'}, cylinder.volume, Quantity.Volume);
+      add({ key: 'AREA' }, cylinder.area, Quantity.Area);
+      add({ key: 'VOLUME' }, cylinder.volume, Quantity.Volume);
     }
     return info;
 
-    function add(
-      translationInput
-      value: number,
-      quantity: Quantity
-    ): void {
+    function add(translationInput: TranslationInput, value: number, quantity: Quantity): void {
       info.add({ translationInput, value, quantity });
     }
   }

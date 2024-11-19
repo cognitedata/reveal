@@ -5,7 +5,7 @@ import { useEffect, createContext, useContext, useState, type ReactElement } fro
 
 import { type I18nProps, type I18nContent, type Translations } from './types';
 import { getLanguage } from './utils';
-import { TranslationInput } from '../../architecture';
+import { type TranslationInput } from '../../architecture';
 import { isTranslatedString } from '../../architecture/base/utilities/TranslateInput';
 
 import english from '../../common/i18n/en/reveal-react-components.json';
