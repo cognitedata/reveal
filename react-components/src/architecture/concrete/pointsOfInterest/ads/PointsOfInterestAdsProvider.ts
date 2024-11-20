@@ -12,6 +12,8 @@ import { type PointsOfInterestProvider } from '../PointsOfInterestProvider';
 
 import { v4 as uuid } from 'uuid';
 import { type PoiItem } from './types';
+import { isDefined } from '../../../../utilities/isDefined';
+import { uniq } from 'lodash';
 
 /**
  * A PoI provider using the Cognite Application Data Storage service as backing storage
@@ -108,6 +110,13 @@ export class PointsOfInterestAdsProvider implements PointsOfInterestProvider<Ext
       );
     }
 
+    const userIdNameMap = await this.createUserMap(result.data.map((comment) => comment.ownerId));
+
+    result.data.forEach((comment) => {
+      const name = userIdNameMap.get(comment.ownerId) ?? 'Unknown';
+      comment.ownerId = name;
+    });
+
     return result.data;
   }
 
@@ -131,6 +140,20 @@ export class PointsOfInterestAdsProvider implements PointsOfInterestProvider<Ext
 
   public createNewId(): ExternalId {
     return uuid();
+  }
+
+  private async createUserMap(userIds: string[]): Promise<Map<string, string | undefined>> {
+    const uniqueUserIds = uniq(userIds);
+
+    const profiles = await this._sdk.profiles.retrieve(
+      uniqueUserIds.map((id) => ({ userIdentifier: id }))
+    );
+
+    const idNamePairs = profiles
+      .filter(isDefined)
+      .map((profile) => [profile.userIdentifier, profile.displayName ?? undefined] as const);
+
+    return new Map(idNamePairs);
   }
 }
 
