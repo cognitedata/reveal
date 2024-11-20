@@ -15,12 +15,16 @@ import { createTriangleIndexesFromVectors } from './createTriangleIndexesFromVec
 const DEFAULT_VECTOR_LENGTH = 5;
 export class Image360AnnotationDomainObject extends LineDomainObject {
   // ==================================================
-  // CONSTRUCTOR
+  // INSTANCE FIELDS
   // ==================================================
 
   public connectedImageId: string | DirectRelationReference;
   public readonly center = new Vector3(); // The points are unit vectors from the center
   public vectorLength = DEFAULT_VECTOR_LENGTH;
+
+  // ==================================================
+  // CONSTRUCTOR
+  // ==================================================
 
   public constructor(connectedImageId: string | DirectRelationReference) {
     super(PrimitiveType.Polygon);
@@ -40,6 +44,13 @@ export class Image360AnnotationDomainObject extends LineDomainObject {
     const clone = new Image360AnnotationDomainObject(this.connectedImageId);
     clone.copyFrom(this, what);
     return clone;
+  }
+
+  public override copyFrom(domainObject: Image360AnnotationDomainObject, what?: symbol): void {
+    super.copyFrom(domainObject, what);
+    this.connectedImageId = domainObject.connectedImageId;
+    this.center.copy(domainObject.center);
+    this.vectorLength = domainObject.vectorLength;
   }
 
   public override get hasPanelInfo(): boolean {
