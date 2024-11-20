@@ -43,7 +43,7 @@ export class Image360AnnotationDomainObject extends LineDomainObject {
   }
 
   public override get hasPanelInfo(): boolean {
-    return true;
+    return false;
   }
 
   public override createRenderStyle(): RenderStyle | undefined {
