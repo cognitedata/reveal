@@ -5,11 +5,10 @@
 import { type RenderStyle } from '../../../base/renderStyles/RenderStyle';
 import { type ThreeView } from '../../../base/views/ThreeView';
 import { LineView } from './LineView';
-import { type Box3, Vector3 } from 'three';
+import { type Box3, type Vector3 } from 'three';
 import { PrimitiveType } from '../../../base/utilities/primitives/PrimitiveType';
 import { LineRenderStyle } from './LineRenderStyle';
 import {
-  getHorizontalCrossProduct,
   horizontalDistanceTo,
   verticalDistanceTo
 } from '../../../base/utilities/extensions/vectorExtensions';
@@ -24,6 +23,7 @@ import { clear } from '../../../base/utilities/extensions/arrayExtensions';
 import { type Transaction } from '../../../base/undo/Transaction';
 import { DomainObjectTransaction } from '../../../base/undo/DomainObjectTransaction';
 import { type IconName } from '../../../base/utilities/IconName';
+import { Vector3ArrayUtils } from '../../../base/utilities/primitives/PointsUtils';
 
 export abstract class LineDomainObject extends VisualDomainObject {
   // ==================================================
@@ -194,6 +194,10 @@ export abstract class LineDomainObject extends VisualDomainObject {
     return target;
   }
 
+  public getTriangleIndexes(): number[] | undefined {
+    return undefined;
+  }
+
   // ==================================================
   // INSTANCE METHODS
   // ==================================================
@@ -249,20 +253,8 @@ export abstract class LineDomainObject extends VisualDomainObject {
     if (!this.isClosed) {
       return 0;
     }
-    const { points, pointCount } = this;
-    let sum = 0.0;
-    const firstPoint = this.getTransformedPoint(this.firstPoint);
-    const p0 = new Vector3();
-    const p1 = new Vector3();
-
-    // This applies "Greens theorem" to calculate the area of a polygon
-    for (let index = 1; index <= pointCount; index++) {
-      this.getCopyOfTransformedPoint(points[index % pointCount], p1);
-      p1.sub(firstPoint); // Translate down to first point, to increase accuracy
-      sum += getHorizontalCrossProduct(p0, p1);
-      p0.copy(p1);
-    }
-    return Math.abs(sum) / 2;
+    const transformedPoints = this.points.map((point) => this.getTransformedPoint(point));
+    return Math.abs(Vector3ArrayUtils.getSignedHorizontalArea(transformedPoints));
   }
 
   public expandBoundingBox(boundingBox: Box3): void {

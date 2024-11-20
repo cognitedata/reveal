@@ -9,14 +9,6 @@ import { Changes } from '../domainObjectsHelpers/Changes';
 import { type IconName } from '../../base/utilities/IconName';
 
 export class DeleteDomainObjectCommand extends DomainObjectCommand<DomainObject> {
-  // ==================================================
-  // INSTANCE PROPERTIES
-  // ==================================================
-
-  // ==================================================
-  // OVERRIDES
-  // ==================================================
-
   public override get tooltip(): TranslationInput {
     return { key: 'DELETE' };
   }
