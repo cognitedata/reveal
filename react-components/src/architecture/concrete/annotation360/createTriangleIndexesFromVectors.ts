@@ -36,7 +36,7 @@ export function createTriangleIndexesFromVectors(vectors: Vector3[]): number[] |
   linkedList = removeEqualAndColinearPoints(linkedList);
   return createIndexedTrianglesFromLinkedList(linkedList);
 
-  // Some local function here:
+  // Local function:
 
   function* orderedIndexes(count: number, reverse: boolean): Generator<number> {
     if (reverse) {
