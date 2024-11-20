@@ -13,7 +13,7 @@ import { type BaseDragger } from '../../../base/domainObjectsHelpers/BaseDragger
 import { BoxDragger } from './BoxDragger';
 import { type CreateDraggerProps } from '../../../base/domainObjects/VisualDomainObject';
 import { getIconByPrimitiveType } from '../../../base/utilities/primitives/getIconByPrimitiveType';
-import { type TranslateKey } from '../../../base/utilities/TranslateKey';
+import { type TranslationInput } from '../../../base/utilities/TranslateInput';
 import { Quantity } from '../../../base/domainObjectsHelpers/Quantity';
 import { PanelInfo } from '../../../base/domainObjectsHelpers/PanelInfo';
 import { type IconName } from '../../../base/utilities/IconName';
@@ -48,14 +48,14 @@ export abstract class BoxDomainObject extends SolidDomainObject {
     return getIconByPrimitiveType(this.primitiveType);
   }
 
-  public override get typeName(): TranslateKey {
+  public override get typeName(): TranslationInput {
     switch (this.primitiveType) {
       case PrimitiveType.HorizontalArea:
-        return { key: 'HORIZONTAL_AREA', fallback: 'Horizontal area' };
+        return { key: 'HORIZONTAL_AREA' };
       case PrimitiveType.VerticalArea:
-        return { key: 'VERTICAL_AREA', fallback: 'Vertical area' };
+        return { key: 'VERTICAL_AREA' };
       case PrimitiveType.Box:
-        return { key: 'VOLUME', fallback: 'Volume' };
+        return { key: 'VOLUME' };
       default:
         throw new Error('Unknown PrimitiveType');
     }
@@ -91,36 +91,31 @@ export abstract class BoxDomainObject extends SolidDomainObject {
     const hasZ = Box.isValidSize(size.z);
 
     if (isFinished || hasX) {
-      add('LENGTH', 'Length', size.x, Quantity.Length);
+      add({ key: 'LENGTH' }, size.x, Quantity.Length);
     }
     if (primitiveType !== PrimitiveType.VerticalArea && (isFinished || hasY)) {
-      add('DEPTH', 'Depth', size.y, Quantity.Length);
+      add({ key: 'DEPTH' }, size.y, Quantity.Length);
     }
     if (primitiveType !== PrimitiveType.HorizontalArea && (isFinished || hasZ)) {
-      add('HEIGHT', 'Height', size.z, Quantity.Length);
+      add({ key: 'HEIGHT' }, size.z, Quantity.Length);
     }
     if (primitiveType !== PrimitiveType.Box && (isFinished || box.hasArea)) {
-      add('AREA', 'Area', this.area, Quantity.Area);
+      add({ key: 'AREA' }, this.area, Quantity.Area);
     }
     if (primitiveType === PrimitiveType.Box && (isFinished || box.hasHorizontalArea)) {
-      add('HORIZONTAL_AREA', 'Horizontal area', box.horizontalArea, Quantity.Area);
+      add({ key: 'HORIZONTAL_AREA' }, box.horizontalArea, Quantity.Area);
     }
     if (primitiveType === PrimitiveType.Box && (isFinished || box.hasVolume)) {
-      add('VOLUME', 'Volume', box.volume, Quantity.Volume);
+      add({ key: 'VOLUME' }, box.volume, Quantity.Volume);
     }
     // I forgot to add text for rotation angle before the deadline, so I used a icon instead.
     if (box.rotation.z !== 0 && isFinished) {
-      add('HORIZONTAL_ANGLE', 'Horizontal angle', box.zRotationInDegrees, Quantity.Angle);
+      add({ key: 'HORIZONTAL_ANGLE' }, box.zRotationInDegrees, Quantity.Angle);
     }
     return info;
 
-    function add(
-      key: string | undefined,
-      fallback: string,
-      value: number,
-      quantity: Quantity
-    ): void {
-      info.add({ key, fallback, value, quantity });
+    function add(translationInput: TranslationInput, value: number, quantity: Quantity): void {
+      info.add({ translationInput, value, quantity });
     }
   }
 

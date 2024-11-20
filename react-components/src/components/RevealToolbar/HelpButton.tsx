@@ -34,7 +34,7 @@ export const HelpButton = ({ fallbackLanguage }: HelpButtonProps): ReactElement 
           <TouchNavigation fallbackLanguage={fallbackLanguage} />
         </StyledContainer>
       }>
-      <CogsTooltip content={t('HELP_TOOLTIP', 'Help')} placement="right" appendTo={document.body}>
+      <CogsTooltip content={t({ key: 'HELP_TOOLTIP' })} placement="right" appendTo={document.body}>
         <Button
           type="ghost"
           icon={<HelpIcon />}

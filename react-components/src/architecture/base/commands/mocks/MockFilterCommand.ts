@@ -4,15 +4,15 @@
 
 import { Color } from 'three';
 import { BaseFilterCommand, BaseFilterItemCommand } from '../BaseFilterCommand';
-import { type TranslateKey } from '../../utilities/TranslateKey';
+import { type TranslationInput } from '../../utilities/TranslateInput';
 
 export class MockFilterCommand extends BaseFilterCommand {
   // ==================================================
   // OVERRIDES
   // ==================================================
 
-  public override get tooltip(): TranslateKey {
-    return { fallback: 'Mock Filter' };
+  public override get tooltip(): TranslationInput {
+    return { untranslated: 'Mock Filter' };
   }
 
   protected override createChildren(): FilterItemCommand[] {
@@ -56,8 +56,8 @@ class FilterItemCommand extends BaseFilterItemCommand {
   // OVERRIDES
   // ==================================================
 
-  public override get tooltip(): TranslateKey {
-    return { fallback: this._name };
+  public override get tooltip(): TranslationInput {
+    return { untranslated: this._name };
   }
 
   public override get isChecked(): boolean {

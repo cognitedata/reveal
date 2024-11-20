@@ -4,7 +4,7 @@
 
 import { CDF_TO_VIEWER_TRANSFORMATION, type AnyIntersection } from '@cognite/reveal';
 import { type VisualDomainObject } from '../../../base/domainObjects/VisualDomainObject';
-import { type TranslateKey } from '../../../base/utilities/TranslateKey';
+import { type TranslationInput } from '../../../base/utilities/TranslateInput';
 import { AnnotationsDomainObject } from '../AnnotationsDomainObject';
 import { BaseEditTool } from '../../../base/commands/BaseEditTool';
 import { isDomainObjectIntersection } from '../../../base/domainObjectsHelpers/DomainObjectIntersection';
@@ -42,8 +42,8 @@ export class AnnotationsSelectTool extends BaseEditTool {
     return 'Cursor';
   }
 
-  public override get tooltip(): TranslateKey {
-    return { key: 'ANNOTATIONS_EDIT', fallback: 'Edit annotations' };
+  public override get tooltip(): TranslationInput {
+    return { untranslated: 'Edit annotations' };
   }
 
   // ==================================================

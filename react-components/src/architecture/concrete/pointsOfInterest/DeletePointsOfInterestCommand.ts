@@ -1,18 +1,20 @@
 /*!
  * Copyright 2024 Cognite AS
  */
-import { type TranslateKey } from '../../base/utilities/TranslateKey';
+import { type TranslationInput } from '../../base/utilities/TranslateInput';
 import { type ButtonType } from '../../../components/Architecture/types';
 import { PointsOfInterestCommand } from './PointsOfInterestCommand';
 import { type IconName } from '../../base/utilities/IconName';
 
-export class DeletePointsOfInterestCommand<PoIIdType> extends PointsOfInterestCommand<PoIIdType> {
+export class DeleteSelectedPointsOfInterestCommand<
+  PoiIdType
+> extends PointsOfInterestCommand<PoiIdType> {
   public override get icon(): IconName {
     return 'Delete';
   }
 
-  public override get tooltip(): TranslateKey {
-    return { fallback: 'Delete point of interest' };
+  public override get tooltip(): TranslationInput {
+    return { key: 'POINT_OF_INTEREST_DELETE_THIS' };
   }
 
   public override get buttonType(): ButtonType {
@@ -37,7 +39,8 @@ export class DeletePointsOfInterestCommand<PoIIdType> extends PointsOfInterestCo
     }
 
     pois.removePointsOfInterest(selectedOverlay);
-    pois.setSelectedPointsOfInterest(undefined);
+    pois.setSelectedPointOfInterest(undefined);
+    void pois.save();
 
     return true;
   }

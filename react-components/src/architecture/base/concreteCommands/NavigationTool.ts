@@ -4,7 +4,7 @@
 
 import { BaseTool } from '../commands/BaseTool';
 import { Image360Action, type IFlexibleCameraManager } from '@cognite/reveal';
-import { type TranslateKey } from '../utilities/TranslateKey';
+import { type TranslationInput } from '../utilities/TranslateInput';
 import { type IconName } from '../../base/utilities/IconName';
 import { CommandsUpdater } from '../reactUpdaters/CommandsUpdater';
 
@@ -29,8 +29,8 @@ export class NavigationTool extends BaseTool {
     return 'Grab';
   }
 
-  public override get tooltip(): TranslateKey {
-    return { key: 'NAVIGATION', fallback: 'Navigation' };
+  public override get tooltip(): TranslationInput {
+    return { untranslated: 'Navigation' };
   }
 
   public override onHoverByDebounce(_event: PointerEvent): void {}

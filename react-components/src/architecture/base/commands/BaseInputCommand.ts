@@ -1,24 +1,24 @@
 /*!
  * Copyright 2024 Cognite AS
  */
-import { type TranslateDelegate, type TranslateKey } from '../utilities/TranslateKey';
+import { type TranslationInput } from '../utilities/TranslateInput';
 import { RenderTargetCommand } from './RenderTargetCommand';
 
 export abstract class BaseInputCommand extends RenderTargetCommand {
-  protected _placeholder?: TranslateKey;
+  protected _placeholder?: TranslationInput;
   protected _content?: string;
-  protected _okButtonLabel?: TranslateKey;
+  protected _okButtonLabel?: TranslationInput;
 
   protected _onFinish?: () => void;
   protected _onCancel?: () => void;
 
-  public getCancelButtonLabel(_t: TranslateDelegate): string | undefined {
+  public getCancelButtonLabel(): TranslationInput | undefined {
     return undefined;
   }
 
-  public abstract getPostButtonLabel(t: TranslateDelegate): string | undefined;
+  public abstract getPostButtonLabel(): TranslationInput | undefined;
 
-  public abstract getPlaceholder(t: TranslateDelegate): string | undefined;
+  public abstract getPlaceholder(): TranslationInput | undefined;
 
   public get onFinish(): (() => void) | undefined {
     return this._onFinish;
@@ -40,7 +40,7 @@ export abstract class BaseInputCommand extends RenderTargetCommand {
     this._content = content;
 
     const invokeResult = this.invoke();
-    this._onFinish?.();
+    this._content = '';
     return invokeResult;
   }
 }

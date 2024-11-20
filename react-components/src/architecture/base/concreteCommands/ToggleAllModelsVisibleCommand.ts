@@ -4,15 +4,15 @@
 
 import { RenderTargetCommand } from '../commands/RenderTargetCommand';
 import { type IconName } from '../utilities/IconName';
-import { type TranslateKey } from '../utilities/TranslateKey';
+import { type TranslationInput } from '../utilities/TranslateInput';
 
 export class ToggleAllModelsVisibleCommand extends RenderTargetCommand {
   // ==================================================
   // OVERRIDES
   // ==================================================
 
-  public override get tooltip(): TranslateKey {
-    return { fallback: 'Show or hide all models' };
+  public override get tooltip(): TranslationInput {
+    return { untranslated: 'Show or hide all models' };
   }
 
   public override get icon(): IconName {

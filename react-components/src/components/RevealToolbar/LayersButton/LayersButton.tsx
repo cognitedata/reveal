@@ -58,9 +58,7 @@ export const LayersButton = ({
         offset={TOOLBAR_HORIZONTAL_PANEL_OFFSET}>
         <SelectPanel.Trigger>
           <Tooltip
-            content={
-              <LabelWithShortcut label={t('LAYERS_FILTER_TOOLTIP', 'Filter 3D resource layers')} />
-            }
+            content={<LabelWithShortcut label={t({ key: 'LAYERS_FILTER_TOOLTIP' })} />}
             placement="right"
             appendTo={document.body}>
             <Button icon=<LayersIcon /> type="ghost" />
@@ -69,17 +67,17 @@ export const LayersButton = ({
         <SelectPanel.Body>
           <SelectPanel.Section>
             <ModelLayerSelection
-              label={t('CAD_MODELS', 'CAD models')}
+              label={t({ key: 'CAD_MODELS' })}
               modelLayerHandlers={modelLayerHandlers.cadHandlers}
               update={updateCallback}
             />
             <ModelLayerSelection
-              label={t('POINT_CLOUDS', 'Pointclouds')}
+              label={t({ key: 'POINT_CLOUDS' })}
               modelLayerHandlers={modelLayerHandlers.pointCloudHandlers}
               update={updateCallback}
             />
             <ModelLayerSelection
-              label={t('360_IMAGES', '360 images')}
+              label={t({ key: 'IMAGES_360' })}
               modelLayerHandlers={modelLayerHandlers.image360Handlers}
               update={updateCallback}
             />

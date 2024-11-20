@@ -16,7 +16,7 @@ import { PopupStyle } from '../../base/domainObjectsHelpers/PopupStyle';
 import { type BaseDragger } from '../../base/domainObjectsHelpers/BaseDragger';
 import { ExampleDragger } from './ExampleDragger';
 import { Quantity } from '../../base/domainObjectsHelpers/Quantity';
-import { type TranslateKey } from '../../base/utilities/TranslateKey';
+import { type TranslationInput } from '../../base/utilities/TranslateInput';
 import { type Transaction } from '../../base/undo/Transaction';
 import { type DomainObject } from '../../base/domainObjects/DomainObject';
 import { Changes } from '../../base/domainObjectsHelpers/Changes';
@@ -47,8 +47,8 @@ export class ExampleDomainObject extends VisualDomainObject {
     return 'Circle';
   }
 
-  public override get typeName(): TranslateKey {
-    return { fallback: 'Example' };
+  public override get typeName(): TranslationInput {
+    return { untranslated: 'Example' };
   }
 
   public override get canBeRemoved(): boolean {
@@ -71,13 +71,13 @@ export class ExampleDomainObject extends VisualDomainObject {
     const info = new PanelInfo();
     info.setHeader(this.typeName);
     // In production code, you should add a Key also!
-    add('X_COORDINATE', 'X coordinate', this.center.x, Quantity.Length);
-    add('Y_COORDINATE', 'Y coordinate', this.center.y, Quantity.Length);
-    add('Z_COORDINATE', 'Z coordinate', this.center.z, Quantity.Length);
+    add({ key: 'X_COORDINATE' }, this.center.x, Quantity.Length);
+    add({ key: 'Y_COORDINATE' }, this.center.y, Quantity.Length);
+    add({ key: 'Z_COORDINATE' }, this.center.z, Quantity.Length);
     return info;
 
-    function add(key: string, fallback: string, value: number, quantity: Quantity): void {
-      info.add({ key, fallback, value, quantity });
+    function add(translationInput: TranslationInput, value: number, quantity: Quantity): void {
+      info.add({ translationInput, value, quantity });
     }
   }
 

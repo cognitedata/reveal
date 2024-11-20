@@ -65,7 +65,7 @@ export const HighFidelityContainer = ({
   return (
     <Menu.ItemToggled
       toggled={active}
-      label={t('HIGH_FIDELITY', 'High Fidelity')}
+      label={t({ key: 'HIGH_FIDELITY' })}
       onClick={onClick}></Menu.ItemToggled>
   );
 };

@@ -2,14 +2,14 @@
  * Copyright 2024 Cognite AS
  */
 import { SectionCommand } from '../../commands/SectionCommand';
-import { type TranslateKey } from '../../utilities/TranslateKey';
+import { type TranslationInput } from '../../utilities/TranslateInput';
 
 export class Set360IconsSectionCommand extends SectionCommand {
   public override get isVisible(): boolean {
     return this.renderTarget.get360ImageCollections().next().value !== undefined;
   }
 
-  public override get tooltip(): TranslateKey {
-    return { key: 'MARKERS_360', fallback: '360 Markers' };
+  public override get tooltip(): TranslationInput {
+    return { key: 'MARKERS_360' };
   }
 }
