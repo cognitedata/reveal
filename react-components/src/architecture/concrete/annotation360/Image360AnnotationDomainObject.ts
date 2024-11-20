@@ -65,6 +65,7 @@ export class Image360AnnotationDomainObject extends LineDomainObject {
     style.depthTest = false;
     style.transparent = true; // Needed to make the line visible through other objects
     style.showSolid = true;
+    style.renderOrder = 100;
     return style;
   }
 

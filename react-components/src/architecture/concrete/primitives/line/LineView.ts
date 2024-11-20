@@ -40,7 +40,6 @@ import { BoxView } from '../box/BoxView';
 import { PrimitiveUtils } from '../../../base/utilities/primitives/PrimitiveUtils';
 
 const CYLINDER_DEFAULT_AXIS = new Vector3(0, 1, 0);
-const RENDER_ORDER = 100;
 const SOLID_NAME = 'Solid';
 
 export class LineView extends GroupThreeView<LineDomainObject> {
@@ -241,7 +240,9 @@ export class LineView extends GroupThreeView<LineDomainObject> {
       side: DoubleSide
     });
     const result = new Mesh(geometry, material);
-    result.renderOrder = RENDER_ORDER;
+    if (style.renderOrder !== undefined) {
+      result.renderOrder = style.renderOrder;
+    }
     result.name = SOLID_NAME;
     return result;
   }
@@ -262,7 +263,9 @@ export class LineView extends GroupThreeView<LineDomainObject> {
       transparent: style.transparent
     });
     const result = new Line(geometry, material);
-    result.renderOrder = RENDER_ORDER;
+    if (style.renderOrder !== undefined) {
+      result.renderOrder = style.renderOrder;
+    }
     return result;
   }
 
