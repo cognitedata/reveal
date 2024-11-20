@@ -3,7 +3,7 @@
  */
 
 import { type IconName } from '../../utilities/IconName';
-import { type TranslateKey } from '../../utilities/TranslateKey';
+import { type TranslationInput } from '../../utilities/TranslateInput';
 import { RenderTargetCommand } from '../RenderTargetCommand';
 
 export class MockActionCommand extends RenderTargetCommand {
@@ -11,8 +11,8 @@ export class MockActionCommand extends RenderTargetCommand {
   // OVERRIDES
   // ==================================================
 
-  public override get tooltip(): TranslateKey {
-    return { fallback: 'Action' };
+  public override get tooltip(): TranslationInput {
+    return { untranslated: 'Action' };
   }
 
   public override get icon(): IconName {

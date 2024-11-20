@@ -8,7 +8,7 @@ import { BoxFace } from '../primitives/common/BoxFace';
 import { BoxDomainObject } from '../primitives/box/BoxDomainObject';
 import { Color, type Plane } from 'three';
 import { type RenderStyle } from '../../base/renderStyles/RenderStyle';
-import { type TranslateKey } from '../../base/utilities/TranslateKey';
+import { type TranslationInput } from '../../base/utilities/TranslateInput';
 import { ApplyClipCommand } from './commands/ApplyClipCommand';
 import { FocusType } from '../../base/domainObjectsHelpers/FocusType';
 import { type DomainObject } from '../../base/domainObjects/DomainObject';
@@ -33,8 +33,8 @@ export class CropBoxDomainObject extends BoxDomainObject {
     return 'Crop';
   }
 
-  public override get typeName(): TranslateKey {
-    return { key: 'CROP_BOX', fallback: 'Crop box' };
+  public override get typeName(): TranslationInput {
+    return { key: 'CROP_BOX' };
   }
 
   public override createRenderStyle(): RenderStyle | undefined {

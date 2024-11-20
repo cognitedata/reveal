@@ -5,6 +5,10 @@ import { useEffect, createContext, useContext, useState, type ReactElement } fro
 
 import { type I18nProps, type I18nContent, type Translations } from './types';
 import { getLanguage } from './utils';
+import { type TranslationInput } from '../../architecture';
+import { isTranslatedString } from '../../architecture/base/utilities/TranslateInput';
+
+import english from '../../common/i18n/en/reveal-react-components.json';
 
 const I18nContext = createContext<I18nContent | null>(null);
 
@@ -56,15 +60,15 @@ const useTranslationContent = (
     });
   }, [currentLanguage]);
 
-  const translate = (key: string, fallback?: string): string => {
-    if (translations[key] !== undefined) {
-      return translations[key];
+  const translate = (input: TranslationInput): string => {
+    if (isTranslatedString(input)) {
+      if (translations[input.key] !== undefined) {
+        return translations[input.key];
+      }
+      return english[input.key];
     }
-    // Fallback to the key itself if translation is not found
-    if (fallback !== undefined) {
-      return fallback;
-    }
-    return key;
+
+    return input.untranslated;
   };
 
   return { currentLanguage, t: translate };

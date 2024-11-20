@@ -3,7 +3,7 @@
  */
 import { type Vector3 } from 'three';
 import { type IconName } from '../../base/utilities/IconName';
-import { type TranslateDelegate, type TranslateKey } from '../../base/utilities/TranslateKey';
+import { type TranslationInput } from '../../base/utilities/TranslateInput';
 import { RenderTargetCommand } from '../../base/commands/RenderTargetCommand';
 import { PointsOfInterestTool } from './PointsOfInterestTool';
 
@@ -23,12 +23,8 @@ export class InitiatePointsOfInterestCommand extends RenderTargetCommand {
     return 'Waypoint';
   }
 
-  public override get tooltip(): TranslateKey {
-    return { key: 'POINT_OF_INTEREST_CREATE', fallback: 'Create Point of Interest' };
-  }
-
-  public override getLabel(t: TranslateDelegate): string {
-    return t('POINT_OF_INTEREST_CREATE', 'Create Point of Interest');
+  public override get tooltip(): TranslationInput {
+    return { key: 'POINT_OF_INTEREST_CREATE' };
   }
 
   protected override invokeCore(): boolean {

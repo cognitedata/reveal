@@ -31,7 +31,7 @@ export const PoiList = (): ReactNode => {
     () =>
       pois.map((poi) => ({
         id: JSON.stringify(poi.id),
-        name: poi.id,
+        name: poi.properties.title ?? JSON.stringify(poi.id),
         poi
       })),
     [pois]
@@ -40,7 +40,7 @@ export const PoiList = (): ReactNode => {
   const columns: Array<DatagridColumn<RowType>> = [
     {
       field: 'name',
-      headerName: t('NAME', 'Name'),
+      headerName: t({ key: 'NAME' }),
       flex: 3
     }
   ];

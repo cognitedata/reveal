@@ -2,7 +2,7 @@
  * Copyright 2024 Cognite AS
  */
 
-import { type TranslateKey } from '../../utilities/TranslateKey';
+import { type TranslationInput } from '../../utilities/TranslateInput';
 import { BaseSliderCommand } from '../../commands/BaseSliderCommand';
 
 const DEFAULT_POINT_SIZE = 2;
@@ -23,8 +23,8 @@ export class SetPointSizeCommand extends BaseSliderCommand {
   // OVERRIDES
   // ==================================================
 
-  public override get tooltip(): TranslateKey {
-    return { key: 'POINT_SIZE', fallback: 'Point size' };
+  public override get tooltip(): TranslationInput {
+    return { key: 'POINT_SIZE' };
   }
 
   public override get isEnabled(): boolean {

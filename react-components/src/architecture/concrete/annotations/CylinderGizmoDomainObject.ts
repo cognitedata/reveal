@@ -4,7 +4,7 @@
 
 import { Color } from 'three';
 import { type RenderStyle } from '../../base/renderStyles/RenderStyle';
-import { type TranslateKey } from '../../base/utilities/TranslateKey';
+import { type TranslationInput } from '../../base/utilities/TranslateInput';
 import { type DomainObject } from '../../base/domainObjects/DomainObject';
 import { type DomainObjectChange } from '../../base/domainObjectsHelpers/DomainObjectChange';
 import { Changes } from '../../base/domainObjectsHelpers/Changes';
@@ -32,8 +32,8 @@ export class CylinderGizmoDomainObject extends CylinderDomainObject {
   // OVERRIDES of DomainObject
   // ==================================================
 
-  public override get typeName(): TranslateKey {
-    return { key: 'CYLINDER', fallback: 'Cylinder' };
+  public override get typeName(): TranslationInput {
+    return { key: 'CYLINDER' };
   }
 
   public override createRenderStyle(): RenderStyle | undefined {

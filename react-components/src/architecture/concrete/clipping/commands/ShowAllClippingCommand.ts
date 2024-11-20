@@ -5,7 +5,7 @@
 import { type IconName } from '../../../base/utilities/IconName';
 import { InstanceCommand } from '../../../base/commands/InstanceCommand';
 import { type DomainObject } from '../../../base/domainObjects/DomainObject';
-import { type TranslateKey } from '../../../base/utilities/TranslateKey';
+import { type TranslationInput } from '../../../base/utilities/TranslateInput';
 import { CropBoxDomainObject } from '../CropBoxDomainObject';
 import { SliceDomainObject } from '../SliceDomainObject';
 
@@ -14,10 +14,9 @@ export class ShowAllClippingCommand extends InstanceCommand {
   // OVERRIDES
   // ==================================================
 
-  public override get tooltip(): TranslateKey {
+  public override get tooltip(): TranslationInput {
     return {
-      key: 'CLIP_SHOW_SELECTED_ONLY',
-      fallback: 'Show/hide slicing planes and crop boxes that are not selected'
+      key: 'CLIP_SHOW_SELECTED_ONLY'
     };
   }
 

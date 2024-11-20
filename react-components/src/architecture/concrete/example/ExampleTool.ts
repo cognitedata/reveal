@@ -11,7 +11,7 @@ import { DeleteAllExamplesCommand } from './commands/DeleteAllExamplesCommand';
 import { ShowAllExamplesCommand } from './commands/ShowAllExamplesCommand';
 import { clamp } from 'lodash';
 import { type HSL } from 'three';
-import { type TranslateKey } from '../../base/utilities/TranslateKey';
+import { type TranslationInput } from '../../base/utilities/TranslateInput';
 import { ShowExamplesOnTopCommand } from './commands/ShowExamplesOnTopCommand';
 import { DomainObjectChange } from '../../base/domainObjectsHelpers/DomainObjectChange';
 import { type VisualDomainObject } from '../../base/domainObjects/VisualDomainObject';
@@ -27,8 +27,8 @@ export class ExampleTool extends BaseEditTool {
     return 'Circle';
   }
 
-  public override get tooltip(): TranslateKey {
-    return { fallback: 'Create or edit a single point' };
+  public override get tooltip(): TranslationInput {
+    return { untranslated: 'Create or edit a single point' };
   }
 
   // ==================================================

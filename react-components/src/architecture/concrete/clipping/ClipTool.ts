@@ -4,7 +4,7 @@
 
 import { type BaseCommand } from '../../base/commands/BaseCommand';
 import { type BaseCreator } from '../../base/domainObjectsHelpers/BaseCreator';
-import { type TranslateKey } from '../../base/utilities/TranslateKey';
+import { type TranslationInput } from '../../base/utilities/TranslateInput';
 import { PrimitiveEditTool } from '../primitives/tools/PrimitiveEditTool';
 import { PrimitiveType } from '../../base/utilities/primitives/PrimitiveType';
 import { BoxCreator } from '../primitives/box/BoxCreator';
@@ -37,8 +37,8 @@ export class ClipTool extends PrimitiveEditTool {
     return 'Crop';
   }
 
-  public override get tooltip(): TranslateKey {
-    return { key: 'CLIP_TOOL', fallback: 'Create, edit crop boxes, and slice planes' };
+  public override get tooltip(): TranslationInput {
+    return { key: 'CLIP_TOOL' };
   }
 
   public override getToolbar(): Array<BaseCommand | undefined> {
