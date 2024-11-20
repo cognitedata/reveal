@@ -106,6 +106,7 @@ export class LineCreator extends BaseCreator {
       this.removePendingPoint();
       domainObject.notify(Changes.geometry);
     }
+    domainObject.setFocusInteractive(FocusType.Focus);
     return true; // Successfully
   }
 

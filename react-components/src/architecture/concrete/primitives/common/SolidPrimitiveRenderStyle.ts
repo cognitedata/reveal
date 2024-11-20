@@ -21,10 +21,11 @@ export class SolidPrimitiveRenderStyle extends PrimitiveRenderStyle {
   public lineColor = BLACK_COLOR.clone();
   public selectedLineColor = WHITE_COLOR.clone();
 
+  // Solid
   public showSolid = true;
-  public opacityUse = true;
-  public selectedOpacity = 0.5;
-  public opacity = this.selectedOpacity / 4;
+  public solidOpacityUse = true;
+  public selectedSolidOpacity = 0.5;
+  public solidOpacity = this.selectedSolidOpacity / 4;
 
   // ==================================================
   // OVERRIDES of BaseStyle
@@ -38,11 +39,11 @@ export class SolidPrimitiveRenderStyle extends PrimitiveRenderStyle {
   // INSTANCE METHODS
   // ==================================================
 
-  public getOpacity(isSelected: boolean): number {
-    if (!this.opacityUse) {
+  public getSolidOpacity(isSelected: boolean): number {
+    if (!this.solidOpacityUse) {
       return 1;
     }
-    return isSelected ? this.selectedOpacity : this.opacity;
+    return isSelected ? this.selectedSolidOpacity : this.solidOpacity;
   }
 
   public getLineWidth(isSelected: boolean): number {
