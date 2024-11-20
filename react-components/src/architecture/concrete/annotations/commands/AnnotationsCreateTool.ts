@@ -68,7 +68,7 @@ export class AnnotationsCreateTool extends NavigationTool {
 
   public override onDeactivate(): void {
     super.onDeactivate();
-    this.onEscapeKey();
+    this.escape();
   }
 
   public override clearDragging(): void {
@@ -77,13 +77,7 @@ export class AnnotationsCreateTool extends NavigationTool {
   }
 
   public override onEscapeKey(): void {
-    if (this._creator !== undefined && this._creator.onEscapeKey()) {
-      this.endCreatorIfFinished(this._creator, true);
-      this.setSelectTool();
-      this.deselectedAnnotationInteractive();
-    } else {
-      this._creator = undefined;
-    }
+    this.escape();
   }
 
   public override async onHoverByDebounce(event: PointerEvent): Promise<void> {
@@ -217,6 +211,16 @@ export class AnnotationsCreateTool extends NavigationTool {
   // ==================================================
   // INSTANCE METHODS
   // ==================================================
+
+  public escape(): void {
+    if (this._creator !== undefined && this._creator.escape()) {
+      this.endCreatorIfFinished(this._creator, true);
+      this.setSelectTool();
+      this.deselectedAnnotationInteractive();
+    } else {
+      this._creator = undefined;
+    }
+  }
 
   private getSelectedAnnotationsDomainObject(): AnnotationsDomainObject | undefined {
     return this.rootDomainObject.getSelectedDescendantByType(AnnotationsDomainObject);

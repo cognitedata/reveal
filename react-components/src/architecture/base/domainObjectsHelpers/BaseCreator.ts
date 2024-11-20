@@ -120,7 +120,7 @@ export abstract class BaseCreator {
    *
    * @returns {boolean} Returns true if the pending object is created successfully, false if it is removed
    */
-  public onEscapeKey(): boolean {
+  public escape(): boolean {
     if (this.notPendingPointCount >= this.minimumPointCount) {
       return true; // Successfully
     }
