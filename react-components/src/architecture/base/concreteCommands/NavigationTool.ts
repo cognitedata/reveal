@@ -4,7 +4,7 @@
 
 import { BaseTool } from '../commands/BaseTool';
 import { Image360Action, type IFlexibleCameraManager } from '@cognite/reveal';
-import { type TranslateKey } from '../utilities/TranslateKey';
+import { type TranslationInput } from '../utilities/TranslateInput';
 import { type IconName } from '../../base/utilities/IconName';
 import { CommandsUpdater } from '../reactUpdaters/CommandsUpdater';
 
@@ -29,14 +29,14 @@ export class NavigationTool extends BaseTool {
     return 'Grab';
   }
 
-  public override get tooltip(): TranslateKey {
-    return { key: 'NAVIGATION', fallback: 'Navigation' };
+  public override get tooltip(): TranslationInput {
+    return { untranslated: 'Navigation' };
   }
 
   public override onHoverByDebounce(_event: PointerEvent): void {}
 
-  public override onHover(event: MouseEvent): void {
-    this.renderTarget.viewer.onHover360Images(event as PointerEvent);
+  public override onHover(event: PointerEvent): void {
+    this.renderTarget.viewer.onHover360Images(event);
   }
 
   public override async onClick(event: PointerEvent): Promise<void> {
@@ -46,9 +46,11 @@ export class NavigationTool extends BaseTool {
       }
       return isEntered;
     });
-    if (!(await promise)) {
-      await this.cameraManager.onClick(event);
+    if (await promise) {
+      return;
     }
+    await super.onClick(event);
+    await this.cameraManager.onClick(event);
   }
 
   public override async onDoubleClick(event: PointerEvent): Promise<void> {
@@ -88,7 +90,7 @@ export class NavigationTool extends BaseTool {
   }
 
   public override onEscapeKey(): void {
-    if (this.renderTarget.viewer.canDoImage360Action(Image360Action.Exit)) {
+    if (this.renderTarget.isInside360Image) {
       void this.renderTarget.viewer.image360Action(Image360Action.Exit).then(() => {
         CommandsUpdater.update(this.renderTarget);
       });

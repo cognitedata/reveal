@@ -5,7 +5,7 @@
 import { type IconName } from '../../base/utilities/IconName';
 import { RenderTargetCommand } from '../commands/RenderTargetCommand';
 import { Changes } from '../domainObjectsHelpers/Changes';
-import { type TranslateKey } from '../utilities/TranslateKey';
+import { type TranslationInput } from '../utilities/TranslateInput';
 
 export class ToggleMetricUnitsCommand extends RenderTargetCommand {
   // ==================================================
@@ -16,8 +16,8 @@ export class ToggleMetricUnitsCommand extends RenderTargetCommand {
     return 'RulerAlternative';
   }
 
-  public override get tooltip(): TranslateKey {
-    return { key: 'TOGGLE_METRIC_UNITS', fallback: 'm/ft' }; // Note: m/ft do not need to be translated!
+  public override get tooltip(): TranslationInput {
+    return { untranslated: 'm/ft' }; // Note: m/ft do not need to be translated!
   }
 
   public override get isToggle(): boolean {

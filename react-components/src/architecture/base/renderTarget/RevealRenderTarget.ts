@@ -11,7 +11,8 @@ import {
   CDF_TO_VIEWER_TRANSFORMATION,
   CognitePointCloudModel,
   CogniteCadModel,
-  type Image360Collection
+  type Image360Collection,
+  Image360Action
 } from '@cognite/reveal';
 import {
   Vector3,
@@ -35,6 +36,7 @@ import { getBoundingBoxFromPlanes } from '../utilities/geometry/getBoundingBoxFr
 import { Changes } from '../domainObjectsHelpers/Changes';
 import { type CogniteClient } from '@cognite/sdk/dist/src';
 import { type BaseTool } from '../commands/BaseTool';
+import { ContextMenuController } from './ContextMenuController';
 
 const DIRECTIONAL_LIGHT_NAME = 'DirectionalLight';
 
@@ -46,6 +48,7 @@ export class RevealRenderTarget {
   private readonly _viewer: Cognite3DViewer;
   private readonly _commandsController: CommandsController;
   private readonly _rootDomainObject: RootDomainObject;
+  private readonly _contextmenuController: ContextMenuController;
   private _ambientLight: AmbientLight | undefined;
   private _directionalLight: DirectionalLight | undefined;
   private _clippedBoundingBox: Box3 | undefined;
@@ -55,6 +58,7 @@ export class RevealRenderTarget {
 
   public readonly toViewerMatrix = CDF_TO_VIEWER_TRANSFORMATION.clone();
   public readonly fromViewerMatrix = CDF_TO_VIEWER_TRANSFORMATION.clone().invert();
+  public ghostMode = false;
 
   // ==================================================
   // CONSTRUCTOR
@@ -69,6 +73,7 @@ export class RevealRenderTarget {
     }
     this._commandsController = new CommandsController(this.domElement);
     this._commandsController.addEventListeners();
+    this._contextmenuController = new ContextMenuController();
     this._rootDomainObject = new RootDomainObject(this, sdk);
 
     this.initializeLights();
@@ -83,6 +88,10 @@ export class RevealRenderTarget {
 
   public get viewer(): Cognite3DViewer {
     return this._viewer;
+  }
+
+  public get isInside360Image(): boolean {
+    return this._viewer.canDoImage360Action(Image360Action.Exit);
   }
 
   public get config(): BaseRevealConfig | undefined {
@@ -103,6 +112,10 @@ export class RevealRenderTarget {
 
   public get commandsController(): CommandsController {
     return this._commandsController;
+  }
+
+  public get contextMenuController(): ContextMenuController {
+    return this._contextmenuController;
   }
 
   public get cursor(): string {

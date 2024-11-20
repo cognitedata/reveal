@@ -16,7 +16,7 @@ import { useTranslation } from '../i18n/I18n';
 import { CopyToClipboardCommand } from '../../architecture/base/concreteCommands/CopyToClipboardCommand';
 import { CommandButtons } from './Toolbar';
 import { withSuppressRevealEvents } from '../../higher-order-components/withSuppressRevealEvents';
-import { type TranslateDelegate } from '../../architecture/base/utilities/TranslateKey';
+import { type TranslateDelegate } from '../../architecture/base/utilities/TranslateInput';
 import { type UnitSystem } from '../../architecture/base/renderTarget/UnitSystem';
 import { IconComponent } from './Factories/IconFactory';
 

@@ -17,35 +17,43 @@ export enum PointsOfInterestStatus {
   PendingCreation
 }
 
-export type PointsOfInterest<IdType> = {
+export type PointOfInterest<IdType> = {
   properties: PointsOfInterestProperties;
-  id?: IdType;
+  id: IdType;
   status: PointsOfInterestStatus;
 };
 
-export function createEmptyPointsOfInterestProperties(point: Vector3): PointsOfInterestProperties {
+export function createPointsOfInterestPropertiesFromPointAndTitle(
+  point: Vector3,
+  title?: string
+): PointsOfInterestProperties {
   const cdfPosition = point.clone().applyMatrix4(CDF_TO_VIEWER_TRANSFORMATION.clone().invert());
-  return { positionX: cdfPosition.x, positionY: cdfPosition.y, positionZ: cdfPosition.z };
+  return {
+    positionX: cdfPosition.x,
+    positionY: cdfPosition.y,
+    positionZ: cdfPosition.z,
+    title
+  };
 }
 
 const poiMarker = Symbol('poiMarker');
 
-export type PointsOfInterestIntersection<PoIIdType> = Omit<
+export type PointsOfInterestIntersection<PoiIdType> = Omit<
   DomainObjectIntersection,
   'userData' | 'domainObject'
 > & {
   marker: typeof poiMarker;
-  domainObject: PointsOfInterestDomainObject<PoIIdType>;
-  userData: PointsOfInterest<PoIIdType>;
+  domainObject: PointsOfInterestDomainObject<PoiIdType>;
+  userData: PointOfInterest<PoiIdType>;
 };
 
-export function createPointsOfInterestIntersection<PoIIdType>(
+export function createPointsOfInterestIntersection<PoiIdType>(
   point: Vector3,
   distanceToCamera: number,
   customObject: ICustomObject,
-  domainObject: PointsOfInterestDomainObject<PoIIdType>,
-  overlay: PointsOfInterest<PoIIdType>
-): PointsOfInterestIntersection<PoIIdType> {
+  domainObject: PointsOfInterestDomainObject<PoiIdType>,
+  overlay: PointOfInterest<PoiIdType>
+): PointsOfInterestIntersection<PoiIdType> {
   return {
     type: 'customObject',
     marker: poiMarker,
@@ -57,8 +65,8 @@ export function createPointsOfInterestIntersection<PoIIdType>(
   };
 }
 
-export function isPointsOfInterestIntersection<PoIIdType>(
+export function isPointsOfInterestIntersection<PoiIdType>(
   objectIntersection: AnyIntersection
-): objectIntersection is PointsOfInterestIntersection<PoIIdType> {
-  return (objectIntersection as PointsOfInterestIntersection<PoIIdType>).marker === poiMarker;
+): objectIntersection is PointsOfInterestIntersection<PoiIdType> {
+  return (objectIntersection as PointsOfInterestIntersection<PoiIdType>).marker === poiMarker;
 }

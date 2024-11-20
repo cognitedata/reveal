@@ -5,7 +5,7 @@ import { Color } from 'three';
 import { assertNever } from '../../../utilities/assertNever';
 import { PointsOfInterestStatus } from './types';
 
-export const DEFAULT_OVERLAY_COLOR = new Color('#3333AA');
+export const DEFAULT_OVERLAY_COLOR = new Color('#C945DB');
 export const PENDING_OVERLAY_COLOR = new Color('#33AA33');
 export const PENDING_DELETION_OVERLAY_COLOR = new Color('#AA3333');
 

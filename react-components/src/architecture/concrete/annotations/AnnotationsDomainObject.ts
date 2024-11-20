@@ -5,7 +5,7 @@
 import { VisualDomainObject } from '../../base/domainObjects/VisualDomainObject';
 import { type RenderStyle } from '../../base/renderStyles/RenderStyle';
 import { type ThreeView } from '../../base/views/ThreeView';
-import { type TranslateKey } from '../../base/utilities/TranslateKey';
+import { type TranslationInput } from '../../base/utilities/TranslateInput';
 import { AnnotationsView } from './AnnotationsView';
 import { AnnotationsRenderStyle } from './AnnotationsRenderStyle';
 import { FocusType } from '../../base/domainObjectsHelpers/FocusType';
@@ -94,8 +94,8 @@ export class AnnotationsDomainObject extends VisualDomainObject {
     return 'Cube';
   }
 
-  public override get typeName(): TranslateKey {
-    return { fallback: 'Annotations' };
+  public override get typeName(): TranslationInput {
+    return { untranslated: 'Annotations' };
   }
 
   public override createRenderStyle(): RenderStyle | undefined {

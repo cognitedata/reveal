@@ -12,7 +12,7 @@ import { useRenderTarget } from '../RevealCanvas/ViewerContext';
 import { type BaseOptionCommand } from '../../architecture/base/commands/BaseOptionCommand';
 import { getButtonType, getDefaultCommand, getTooltipPlacement } from './utilities';
 import { LabelWithShortcut } from './LabelWithShortcut';
-import { type TranslateDelegate } from '../../architecture/base/utilities/TranslateKey';
+import { type TranslateDelegate } from '../../architecture/base/utilities/TranslateInput';
 import { DEFAULT_PADDING, OPTION_MIN_WIDTH, TOOLTIP_DELAY } from './constants';
 
 import styled from 'styled-components';

@@ -136,11 +136,7 @@ export abstract class BaseCreator {
     return this.notPendingPointCount >= this.maximumPointCount;
   }
 
-  public addPoint(
-    ray: Ray,
-    intersection: AnyIntersection | undefined,
-    isPending: boolean = false
-  ): boolean {
+  public addPoint(ray: Ray, intersection?: AnyIntersection, isPending: boolean = false): boolean {
     const point = intersection?.point.clone();
     this.convertToCdfCoords(ray, point);
     return this.addPointCore(ray, point, isPending);

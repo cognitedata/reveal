@@ -21,18 +21,15 @@ export const KeyboardNavigation = ({ fallbackLanguage }: KeyboardNavigationProps
   const { t } = useTranslation(fallbackLanguage);
   return (
     <Section
-      title={t('KEYBOARD_NAVIGATION_TITLE', 'Keyboard')}
-      subTitle={t('KEYBOARD_NAVIGATION_SUBTITLE', 'Move and look around')}
-      description={t(
-        'KEYBOARD_NAVIGATION_DESCRIPTION',
-        'Click and hold to move.\nYou can also use mouse in conjunction with keys.'
-      )}>
+      title={t({ key: 'KEYBOARD_NAVIGATION_TITLE' })}
+      subTitle={t({ key: 'KEYBOARD_NAVIGATION_SUBTITLE' })}
+      description={t({ key: 'KEYBOARD_NAVIGATION_DESCRIPTION' })}>
       <Flex gap={8} style={{ paddingTop: 12 }}>
         <Flex direction="column">
           <KeyboardNavigationInstructionGrid>
-            <InstructionText> {t('KEYBOARD_DOWN', 'Down')} </InstructionText>
-            <InstructionText>{t('KEYBOARD_FORWARD', 'Forward')}</InstructionText>
-            <InstructionText>{t('KEYBOARD_UP', 'Up')}</InstructionText>
+            <InstructionText> {t({ key: 'KEYBOARD_DOWN' })} </InstructionText>
+            <InstructionText>{t({ key: 'KEYBOARD_FORWARD' })}</InstructionText>
+            <InstructionText>{t({ key: 'KEYBOARD_UP' })}</InstructionText>
             <QWEASDKeysNavigation.Q />
             <QWEASDKeysNavigation.W />
             <QWEASDKeysNavigation.E />
@@ -41,21 +38,21 @@ export const KeyboardNavigation = ({ fallbackLanguage }: KeyboardNavigationProps
             <QWEASDKeysNavigation.A />
             <QWEASDKeysNavigation.S style={{ marginLeft: 6 }} />
             <QWEASDKeysNavigation.D style={{ marginLeft: 6 }} />
-            <InstructionText>{t('KEYBOARD_LEFT', 'Left')}</InstructionText>
-            <InstructionText>{t('KEYBOARD_BACK', 'Back')}</InstructionText>
-            <InstructionText>{t('KEYBOARD_RIGHT', 'Right')}</InstructionText>
+            <InstructionText>{t({ key: 'KEYBOARD_LEFT' })}</InstructionText>
+            <InstructionText>{t({ key: 'KEYBOARD_BACK' })}</InstructionText>
+            <InstructionText>{t({ key: 'KEYBOARD_RIGHT' })}</InstructionText>
           </KeyboardNavigationInstructionGrid>
         </Flex>
         <ArrowKeyboardNavigationInstructionGrid>
-          <InstructionText>{t('KEYBOARD_LOOK_UP', 'Look Up')}</InstructionText>
-          <InstructionText>{t('KEYBOARD_LOOK_LEFT', 'Look Left')}</InstructionText>
+          <InstructionText>{t({ key: 'KEYBOARD_LOOK_UP' })}</InstructionText>
+          <InstructionText>{t({ key: 'KEYBOARD_LOOK_LEFT' })}</InstructionText>
           <ArrowKeysNavigation.Up />
-          <InstructionText>{t('KEYBOARD_LOOK_RIGHT', 'Look Right')}</InstructionText>
+          <InstructionText>{t({ key: 'KEYBOARD_LOOK_RIGHT' })}</InstructionText>
           <ArrowKeysNavigation.Left />
           <ArrowKeysNavigation.Down />
           <ArrowKeysNavigation.Right />
           <br />
-          <InstructionText>{t('KEYBOARD_LOOK_DOWN', 'Look Down')}</InstructionText>
+          <InstructionText>{t({ key: 'KEYBOARD_LOOK_DOWN' })}</InstructionText>
         </ArrowKeyboardNavigationInstructionGrid>
       </Flex>
     </Section>

@@ -5,7 +5,7 @@
 import { PointColorType } from '@cognite/reveal';
 import { BaseOptionCommand } from '../../commands/BaseOptionCommand';
 import { RenderTargetCommand } from '../../commands/RenderTargetCommand';
-import { type TranslateKey } from '../../utilities/TranslateKey';
+import { type TranslationInput } from '../../utilities/TranslateInput';
 
 const DEFAULT_OPTIONS: PointColorType[] = [
   PointColorType.Rgb,
@@ -31,8 +31,8 @@ export class SetPointColorTypeCommand extends BaseOptionCommand {
   // OVERRIDES
   // ==================================================
 
-  public override get tooltip(): TranslateKey {
-    return { key: 'POINT_COLOR', fallback: 'Point color' };
+  public override get tooltip(): TranslationInput {
+    return { key: 'POINT_COLOR' };
   }
 
   public override get isEnabled(): boolean {
@@ -50,7 +50,7 @@ class OptionItemCommand extends RenderTargetCommand {
     this._value = value;
   }
 
-  public override get tooltip(): TranslateKey {
+  public override get tooltip(): TranslationInput {
     return getTranslateKey(this._value);
   }
 
@@ -75,23 +75,23 @@ class OptionItemCommand extends RenderTargetCommand {
 // PRIVATE FUNCTIONS
 // ==================================================
 
-function getTranslateKey(type: PointColorType): TranslateKey {
+function getTranslateKey(type: PointColorType): TranslationInput {
   switch (type) {
     case PointColorType.Rgb:
-      return { key: 'RGB', fallback: 'RGB' };
+      return { key: 'RGB' };
     case PointColorType.Depth:
-      return { key: 'MEASUREMENTS_DEPTH', fallback: 'Depth' };
+      return { key: 'DEPTH' };
     case PointColorType.Height:
-      return { key: 'MEASUREMENTS_HEIGHT', fallback: 'Height' };
+      return { key: 'HEIGHT' };
     case PointColorType.Classification:
-      return { key: 'CLASSIFICATION', fallback: 'Classification' };
+      return { key: 'CLASSIFICATION' };
     case PointColorType.Intensity:
-      return { key: 'INTENSITY', fallback: 'Intensity' };
+      return { key: 'INTENSITY' };
     case PointColorType.LevelOfDetail:
-      return { fallback: 'LevelOfDetail' };
+      return { untranslated: 'LevelOfDetail' };
     case PointColorType.PointIndex:
-      return { fallback: 'PointIndex' };
+      return { untranslated: 'PointIndex' };
     default:
-      return { fallback: 'Unknown' };
+      return { untranslated: 'Unknown' };
   }
 }

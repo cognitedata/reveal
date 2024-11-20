@@ -40,6 +40,7 @@ export { VisualDomainObject } from './base/domainObjects/VisualDomainObject';
 
 export { BaseRevealConfig } from './base/renderTarget/BaseRevealConfig';
 export { CommandsController } from './base/renderTarget/CommandsController';
+export { type ContextMenuData } from './base/renderTarget/ContextMenuController';
 export { DefaultRevealConfig } from './base/renderTarget/DefaultRevealConfig';
 export { RevealRenderTarget } from './base/renderTarget/RevealRenderTarget';
 export { UnitSystem } from './base/renderTarget/UnitSystem';
@@ -81,8 +82,8 @@ export { TrianglesBuffers } from './base/utilities/geometry/TrianglesBuffers';
 export { getNextColor } from './base/utilities/colors/getNextColor';
 export { getNextColorByIndex } from './base/utilities/colors/getNextColor';
 export { getResizeCursor } from './base/utilities/geometry/getResizeCursor';
-export type { TranslateDelegate } from './base/utilities/TranslateKey';
-export type { TranslateKey } from './base/utilities/TranslateKey';
+export type { TranslateDelegate } from './base/utilities/TranslateInput';
+export type { TranslationInput } from './base/utilities/TranslateInput';
 
 // New architecture: views
 export { BaseView } from './base/views/BaseView';
@@ -100,6 +101,15 @@ export { PrimitiveType } from './base/utilities/primitives/PrimitiveType';
 export { AnnotationsSelectTool } from './concrete/annotations/commands/AnnotationsSelectTool';
 export { AnnotationsCreateTool } from './concrete/annotations/commands/AnnotationsCreateTool';
 export { getGlobalMatrix } from './concrete/annotations/helpers/getMatrixUtils';
+
+// New architecture: points of interest
+export * from './concrete/pointsOfInterest';
+
+export { Image360AnnotationDomainObject } from './concrete/annotation360/Image360AnnotationDomainObject';
+export { Image360AnnotationTool } from './concrete/annotation360/Image360AnnotationTool';
+export { Image360AnnotationCreator } from './concrete/annotation360/Image360AnnotationCreator';
+export { Image360AnnotationEditTypeCommand } from './concrete/annotation360/Image360AnnotationEditTypeCommand';
+export { DeleteSelectedImage360AnnotationCommand } from './concrete/annotation360/DeleteSelectedImage360AnnotationCommand';
 
 // New architecture: tree view nodes
 export type { ITreeNode } from './base/treeView/ITreeNode';

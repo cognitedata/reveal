@@ -54,7 +54,8 @@ import {
   SyncIcon,
   VectorLineIcon,
   VectorZigzagIcon,
-  View360Icon
+  View360Icon,
+  WaypointIcon
 } from '@cognite/cogs.js';
 
 import { type IconName } from '../../../architecture/base/utilities/IconName';
@@ -112,5 +113,6 @@ export const DefaultIcons: Array<[IconName, IconType]> = [
   ['Sync', SyncIcon],
   ['VectorLine', VectorLineIcon],
   ['VectorZigzag', VectorZigzagIcon],
-  ['View360', View360Icon]
+  ['View360', View360Icon],
+  ['Waypoint', WaypointIcon]
 ];

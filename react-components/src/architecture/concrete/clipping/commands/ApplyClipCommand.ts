@@ -4,7 +4,7 @@
 
 import { type Plane } from 'three';
 import { RenderTargetCommand } from '../../../base/commands/RenderTargetCommand';
-import { type TranslateKey } from '../../../base/utilities/TranslateKey';
+import { type TranslationInput } from '../../../base/utilities/TranslateInput';
 import { CropBoxDomainObject } from '../CropBoxDomainObject';
 import { SliceDomainObject } from '../SliceDomainObject';
 import { type RootDomainObject } from '../../../base/domainObjects/RootDomainObject';
@@ -16,10 +16,9 @@ export class ApplyClipCommand extends RenderTargetCommand {
   // OVERRIDES
   // ==================================================
 
-  public override get tooltip(): TranslateKey {
+  public override get tooltip(): TranslationInput {
     return {
-      key: 'CLIP_APPLY',
-      fallback: 'Apply selected crop box to a model. Otherwise, apply to all slice planes'
+      key: 'CLIP_APPLY'
     };
   }
 

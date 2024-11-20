@@ -9,12 +9,8 @@ import { useMemo } from 'react';
 import { type EdgeItem, FdmSDK, type NodeItem } from '../../data-providers/FdmSDK';
 import { Euler, MathUtils, Matrix4 } from 'three';
 import { CDF_TO_VIEWER_TRANSFORMATION } from '@cognite/reveal';
-import { type GroundPlane, type Skybox } from '../../components/SceneContainer/sceneTypes';
-import {
-  type AddCadResourceOptions,
-  type AddPointCloudResourceOptions,
-  type AddImage360CollectionDatamodelsOptions
-} from '../../components/Reveal3DResources/types';
+import { type GroundPlane } from '../../components/SceneContainer/sceneTypes';
+import { type AddImage360CollectionDatamodelsOptions } from '../../components/Reveal3DResources/types';
 import {
   type Cdf3dImage360CollectionProperties,
   type Cdf3dRevisionProperties,
@@ -29,6 +25,7 @@ import {
   revisionSourceWithProperties,
   type SCENE_SOURCE,
   type SceneConfigurationProperties,
+  type SceneData,
   sceneSourceWithProperties,
   type SkyboxProperties,
   type Transformation3d,
@@ -39,20 +36,6 @@ import { tryGetModelIdFromExternalId } from '../../utilities/tryGetModelIdFromEx
 
 export type Space = string;
 export type ExternalId = string;
-
-export type SceneData = {
-  name: string;
-  cameraTranslationX: number;
-  cameraTranslationY: number;
-  cameraTranslationZ: number;
-  cameraEulerRotationX: number;
-  cameraEulerRotationY: number;
-  cameraEulerRotationZ: number;
-  cadModelOptions: Array<AddCadResourceOptions | AddPointCloudResourceOptions>;
-  image360CollectionOptions: AddImage360CollectionDatamodelsOptions[];
-  groundPlanes: GroundPlane[];
-  skybox?: Skybox;
-};
 
 type Use3dScenesQueryResult = {
   scenes: Array<NodeItem<SceneConfigurationProperties>>;

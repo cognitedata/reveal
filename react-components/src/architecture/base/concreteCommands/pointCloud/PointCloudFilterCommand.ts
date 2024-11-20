@@ -3,7 +3,7 @@
  */
 
 import { type CognitePointCloudModel, type WellKnownAsprsPointClassCodes } from '@cognite/reveal';
-import { type TranslateKey } from '../../utilities/TranslateKey';
+import { type TranslationInput } from '../../utilities/TranslateInput';
 import { type Color } from 'three';
 import { BaseFilterCommand, BaseFilterItemCommand } from '../../commands/BaseFilterCommand';
 import { type RevealRenderTarget } from '../../renderTarget/RevealRenderTarget';
@@ -20,8 +20,8 @@ export class PointCloudFilterCommand extends BaseFilterCommand {
   // OVERRIDES
   // ==================================================
 
-  public override get tooltip(): TranslateKey {
-    return { key: 'POINT_FILTER', fallback: 'Point filter' };
+  public override get tooltip(): TranslationInput {
+    return { key: 'POINTS_FILTER' };
   }
 
   public override get isEnabled(): boolean {
@@ -127,8 +127,8 @@ export class FilterItemCommand extends BaseFilterItemCommand {
   // OVERRIDES
   // ==================================================
 
-  public override get tooltip(): TranslateKey {
-    return { fallback: this._pointClass.displayName };
+  public override get tooltip(): TranslationInput {
+    return { untranslated: this._pointClass.displayName };
   }
 
   public override get isChecked(): boolean {

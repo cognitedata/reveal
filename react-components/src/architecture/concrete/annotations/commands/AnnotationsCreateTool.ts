@@ -2,7 +2,7 @@
  * Copyright 2024 Cognite AS
  */
 
-import { type TranslateKey } from '../../../base/utilities/TranslateKey';
+import { type TranslationInput } from '../../../base/utilities/TranslateInput';
 import { AnnotationsDomainObject } from '../AnnotationsDomainObject';
 import { UndoCommand } from '../../../base/concreteCommands/UndoCommand';
 import { type BaseCommand } from '../../../base/commands/BaseCommand';
@@ -47,10 +47,9 @@ export class AnnotationsCreateTool extends NavigationTool {
     return 'Shapes';
   }
 
-  public override get tooltip(): TranslateKey {
+  public override get tooltip(): TranslationInput {
     return {
-      key: 'ANNOTATIONS_CREATE',
-      fallback: 'Create new annotation. Select type of annotation in the toolbar below.'
+      untranslated: 'Create new annotation. Select type of annotation in the toolbar below.'
     };
   }
 
@@ -135,7 +134,7 @@ export class AnnotationsCreateTool extends NavigationTool {
     // Click in the "air"
     if (creator !== undefined) {
       const ray = this.getRay(event);
-      if (creator.addPoint(ray, undefined)) {
+      if (creator.addPoint(ray)) {
         this.endCreatorIfFinished(creator);
         return;
       }

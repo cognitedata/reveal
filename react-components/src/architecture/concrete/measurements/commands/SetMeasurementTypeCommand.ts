@@ -5,8 +5,8 @@
 import { RenderTargetCommand } from '../../../base/commands/RenderTargetCommand';
 import { type BaseCommand } from '../../../base/commands/BaseCommand';
 import { PrimitiveType } from '../../../base/utilities/primitives/PrimitiveType';
-import { getIconByPrimitiveType } from '../getIconByPrimitiveType';
-import { type TranslateKey } from '../../../base/utilities/TranslateKey';
+import { getIconByPrimitiveType } from '../../../base/utilities/primitives/getIconByPrimitiveType';
+import { type TranslationInput } from '../../../base/utilities/TranslateInput';
 import { MeasurementTool } from '../MeasurementTool';
 import { type IconName } from '../../../base/utilities/IconName';
 
@@ -30,7 +30,7 @@ export class SetMeasurementTypeCommand extends RenderTargetCommand {
     return getIconByPrimitiveType(this._primitiveType);
   }
 
-  public override get tooltip(): TranslateKey {
+  public override get tooltip(): TranslationInput {
     return getTooltipByPrimitiveType(this._primitiveType);
   }
 
@@ -81,39 +81,31 @@ export class SetMeasurementTypeCommand extends RenderTargetCommand {
 // PRIMATE FUNCTIONS
 // ==================================================
 
-function getTooltipByPrimitiveType(primitiveType: PrimitiveType): TranslateKey {
+function getTooltipByPrimitiveType(primitiveType: PrimitiveType): TranslationInput {
   switch (primitiveType) {
     case PrimitiveType.Line:
       return {
-        key: 'MEASUREMENTS_ADD_LINE',
-        fallback: 'Measure distance between two points. Click at the start point and the end point.'
+        key: 'MEASUREMENTS_ADD_LINE'
       };
     case PrimitiveType.Polyline:
       return {
-        key: 'MEASUREMENTS_ADD_POLYLINE',
-        fallback:
-          'Measure the length of a continuous polyline. Click at any number of points and end with Esc.'
+        key: 'MEASUREMENTS_ADD_POLYLINE'
       };
     case PrimitiveType.Polygon:
       return {
-        key: 'MEASUREMENTS_ADD_POLYGON',
-        fallback: 'Measure an area of a polygon. Click at least 3 points and end with Esc.'
+        key: 'MEASUREMENTS_ADD_POLYGON'
       };
     case PrimitiveType.VerticalArea:
       return {
-        key: 'MEASUREMENTS_ADD_VERTICAL_AREA',
-        fallback: 'Measure rectangular vertical Area. Click at two points in a vertical plan.'
+        key: 'MEASUREMENTS_ADD_VERTICAL_AREA'
       };
     case PrimitiveType.HorizontalArea:
       return {
-        key: 'MEASUREMENTS_ADD_HORIZONTAL_AREA',
-        fallback: 'Measure rectangular horizontal Area. Click at three points in a horizontal plan.'
+        key: 'MEASUREMENTS_ADD_HORIZONTAL_AREA'
       };
     case PrimitiveType.Box:
       return {
-        key: 'MEASUREMENTS_ADD_VOLUME',
-        fallback:
-          'Measure volume of a box. Click at three points in a horizontal plan and the fourth to give it height.'
+        key: 'MEASUREMENTS_ADD_VOLUME'
       };
     default:
       throw new Error('Unknown PrimitiveType');

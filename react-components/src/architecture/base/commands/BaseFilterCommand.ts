@@ -3,7 +3,7 @@
  */
 
 import { RenderTargetCommand } from './RenderTargetCommand';
-import { type TranslateDelegate } from '../utilities/TranslateKey';
+import { type TranslateDelegate } from '../utilities/TranslateInput';
 import { type Color } from 'three';
 import { type BaseCommand } from './BaseCommand';
 import { CommandsUpdater } from '../reactUpdaters/CommandsUpdater';
@@ -122,15 +122,15 @@ export abstract class BaseFilterCommand extends RenderTargetCommand {
   // ==================================================
 
   public static getAllString(translate: TranslateDelegate): string {
-    return translate('ALL', 'All');
+    return translate({ key: 'ALL' });
   }
 
   private static getNoneString(translate: TranslateDelegate): string {
-    return translate('NONE', 'None');
+    return translate({ key: 'NONE' });
   }
 
   private static getSelectedString(translate: TranslateDelegate): string {
-    return translate('SELECTED', 'Selected');
+    return translate({ key: 'SELECTED' });
   }
 }
 

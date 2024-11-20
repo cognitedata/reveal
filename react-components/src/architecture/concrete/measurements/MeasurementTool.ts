@@ -6,7 +6,7 @@ import { type BaseCommand } from '../../base/commands/BaseCommand';
 import { type BaseCreator } from '../../base/domainObjectsHelpers/BaseCreator';
 import { ShowMeasurementsOnTopCommand } from './commands/ShowMeasurementsOnTopCommand';
 import { SetMeasurementTypeCommand } from './commands/SetMeasurementTypeCommand';
-import { type TranslateKey } from '../../base/utilities/TranslateKey';
+import { type TranslationInput } from '../../base/utilities/TranslateInput';
 import { PrimitiveEditTool } from '../primitives/tools/PrimitiveEditTool';
 import { MeasureLineDomainObject } from './MeasureLineDomainObject';
 import { MeasureBoxDomainObject } from './MeasureBoxDomainObject';
@@ -28,8 +28,8 @@ export class MeasurementTool extends PrimitiveEditTool {
     return 'Ruler';
   }
 
-  public override get tooltip(): TranslateKey {
-    return { key: 'MEASUREMENTS', fallback: 'Measurements' };
+  public override get tooltip(): TranslationInput {
+    return { key: 'MEASUREMENTS' };
   }
 
   public override getToolbar(): Array<BaseCommand | undefined> {

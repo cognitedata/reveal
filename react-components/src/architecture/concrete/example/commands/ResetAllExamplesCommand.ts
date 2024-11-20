@@ -4,7 +4,7 @@
 
 import { ExampleDomainObject } from '../ExampleDomainObject';
 import { Changes } from '../../../base/domainObjectsHelpers/Changes';
-import { type TranslateKey } from '../../../base/utilities/TranslateKey';
+import { type TranslationInput } from '../../../base/utilities/TranslateInput';
 import { type DomainObject } from '../../../base/domainObjects/DomainObject';
 import { InstanceCommand } from '../../../base/commands/InstanceCommand';
 import { type IconName } from '../../../base/utilities/IconName';
@@ -14,8 +14,8 @@ export class ResetAllExamplesCommand extends InstanceCommand {
   // OVERRIDES
   // ==================================================
 
-  public override get tooltip(): TranslateKey {
-    return { fallback: 'Reset the visual style for all examples to default' };
+  public override get tooltip(): TranslationInput {
+    return { untranslated: 'Reset the visual style for all examples to default' };
   }
 
   public override get icon(): IconName {

@@ -2,7 +2,7 @@
  * Copyright 2024 Cognite AS
  */
 
-import { type TranslateKey } from '../../utilities/TranslateKey';
+import { type TranslationInput } from '../../utilities/TranslateInput';
 import { RenderTargetCommand } from '../RenderTargetCommand';
 
 export class MockToggleCommand extends RenderTargetCommand {
@@ -11,8 +11,8 @@ export class MockToggleCommand extends RenderTargetCommand {
   // OVERRIDES
   // ==================================================
 
-  public override get tooltip(): TranslateKey {
-    return { fallback: 'Boolean' };
+  public override get tooltip(): TranslationInput {
+    return { untranslated: 'Boolean' };
   }
 
   public override get isToggle(): boolean {
