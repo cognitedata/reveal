@@ -11,8 +11,10 @@ import { Color, Vector3 } from 'three';
 import { LineRenderStyle } from '../primitives/line/LineRenderStyle';
 import { type DirectRelationReference } from '@cognite/sdk';
 import { createTriangleIndexesFromVectors } from './createTriangleIndexesFromVectors';
+import { type AnnotationIdentifier, type AssetIdentifier, type AnnotationStatus } from './types';
 
 const DEFAULT_VECTOR_LENGTH = 5;
+
 export class Image360AnnotationDomainObject extends LineDomainObject {
   // ==================================================
   // INSTANCE FIELDS
@@ -21,6 +23,9 @@ export class Image360AnnotationDomainObject extends LineDomainObject {
   public connectedImageId: string | DirectRelationReference;
   public readonly center = new Vector3(); // The points are unit vectors from the center
   public vectorLength = DEFAULT_VECTOR_LENGTH;
+  public annotationIdentifier?: AnnotationIdentifier;
+  public assetRef?: AssetIdentifier;
+  public status: AnnotationStatus = 'pending';
 
   // ==================================================
   // CONSTRUCTOR
@@ -51,6 +56,10 @@ export class Image360AnnotationDomainObject extends LineDomainObject {
     this.connectedImageId = domainObject.connectedImageId;
     this.center.copy(domainObject.center);
     this.vectorLength = domainObject.vectorLength;
+
+    this.annotationIdentifier = domainObject.annotationIdentifier;
+    this.assetRef = domainObject.assetRef;
+    this.status = domainObject.status;
   }
 
   public override get hasPanelInfo(): boolean {
