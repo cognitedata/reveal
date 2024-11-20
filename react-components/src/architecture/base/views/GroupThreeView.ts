@@ -81,40 +81,7 @@ export abstract class GroupThreeView<DomainObjectType extends DomainObject = Dom
     intersectInput: CustomObjectIntersectInput,
     closestDistance: number | undefined
   ): undefined | CustomObjectIntersection {
-    const intersection = intersectInput.raycaster.intersectObject(this.object, true);
-    if (intersection === undefined || intersection.length === 0) {
-      return undefined;
-    }
-    const { point, distance } = intersection[0];
-    if (closestDistance !== undefined && closestDistance < distance) {
-      return undefined;
-    }
-    const { domainObject } = this;
-
-    if (domainObject instanceof VisualDomainObject) {
-      if (domainObject.useClippingInIntersection && !intersectInput.isVisible(point)) {
-        return undefined;
-      }
-    } else {
-      if (!intersectInput.isVisible(point)) {
-        return undefined;
-      }
-    }
-    const customObjectIntersection: DomainObjectIntersection = {
-      type: 'customObject',
-      point,
-      distanceToCamera: distance,
-      userData: intersection[0],
-      customObject: this,
-      domainObject
-    };
-    if (this.shouldPickBoundingBox) {
-      const boundingBox = this.boundingBox;
-      if (!boundingBox.isEmpty()) {
-        customObjectIntersection.boundingBox = this.boundingBox;
-      }
-    }
-    return customObjectIntersection;
+    return this.intersectObjectIfCloser(this.object, intersectInput, closestDistance);
   }
 
   // ==================================================
@@ -236,6 +203,47 @@ export abstract class GroupThreeView<DomainObjectType extends DomainObject = Dom
     }
     disposeMaterials(child);
     this._group.remove(child);
+  }
+
+  protected intersectObjectIfCloser(
+    object: Object3D,
+    intersectInput: CustomObjectIntersectInput,
+    closestDistance: number | undefined
+  ): undefined | CustomObjectIntersection {
+    const intersection = intersectInput.raycaster.intersectObject(object, true);
+    if (intersection === undefined || intersection.length === 0) {
+      return undefined;
+    }
+    const { point, distance } = intersection[0];
+    if (closestDistance !== undefined && closestDistance < distance) {
+      return undefined;
+    }
+    const { domainObject } = this;
+
+    if (domainObject instanceof VisualDomainObject) {
+      if (domainObject.useClippingInIntersection && !intersectInput.isVisible(point)) {
+        return undefined;
+      }
+    } else {
+      if (!intersectInput.isVisible(point)) {
+        return undefined;
+      }
+    }
+    const customObjectIntersection: DomainObjectIntersection = {
+      type: 'customObject',
+      point,
+      distanceToCamera: distance,
+      userData: intersection[0],
+      customObject: this,
+      domainObject
+    };
+    if (this.shouldPickBoundingBox) {
+      const boundingBox = this.boundingBox;
+      if (!boundingBox.isEmpty()) {
+        customObjectIntersection.boundingBox = this.boundingBox;
+      }
+    }
+    return customObjectIntersection;
   }
 }
 

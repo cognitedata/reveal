@@ -137,6 +137,7 @@ export class Image360AnnotationTool extends PrimitiveEditTool {
         domainObject.setVisibleInteractive(true);
         this.addTransaction(domainObject.createTransaction(Changes.added));
         this._creator = creator;
+        return;
       }
     }
     await super.onClick(event);
