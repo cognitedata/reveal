@@ -28,7 +28,7 @@ export class Image360AnnotationDomainObject extends LineDomainObject {
 
   public constructor(connectedImageId: string | DirectRelationReference) {
     super(PrimitiveType.Polygon);
-    this.color = new Color(Color.NAMES.red);
+    this.color = new Color(Color.NAMES.yellow);
     this.connectedImageId = connectedImageId;
   }
 
