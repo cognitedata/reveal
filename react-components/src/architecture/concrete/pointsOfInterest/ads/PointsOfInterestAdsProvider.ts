@@ -13,6 +13,7 @@ import { type PointsOfInterestProvider } from '../PointsOfInterestProvider';
 import { v4 as uuid } from 'uuid';
 import { type PoiItem } from './types';
 import { isDefined } from '../../../../utilities/isDefined';
+import { uniq } from 'lodash';
 
 /**
  * A PoI provider using the Cognite Application Data Storage service as backing storage
@@ -142,8 +143,10 @@ export class PointsOfInterestAdsProvider implements PointsOfInterestProvider<Ext
   }
 
   private async createUserMap(userIds: string[]): Promise<Map<string, string | undefined>> {
+    const uniqueUserIds = uniq(userIds);
+
     const profiles = await this._sdk.profiles.retrieve(
-      userIds.map((id) => ({ userIdentifier: id }))
+      uniqueUserIds.map((id) => ({ userIdentifier: id }))
     );
 
     const idNamePairs = profiles
