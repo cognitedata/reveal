@@ -6,21 +6,27 @@ import { Quaternion, type Vector2Like, Vector3 } from 'three';
 import { Vector3ArrayUtils } from '../../base/utilities/primitives/PointsUtils';
 
 const DOWN_VECTOR = new Vector3(0, 0, -1);
+const MIN_ANGLE = Math.PI / 1000;
 
 export function createTriangleIndexesFromVectors(vectors: Vector3[]): number[] | undefined {
   if (vectors.length < 3) {
     return undefined;
   }
-  const center = Vector3ArrayUtils.getCenter(vectors);
+  const dominateVector = Vector3ArrayUtils.getCenter(vectors);
+  dominateVector.normalize();
 
   // Rotate to down, so the center of the vectors points down.
   // Then the z value is about -1 for all vectors.
   // We will use only x and y in the ear cutting, and z is ignored.
-  const axis = new Vector3().crossVectors(center, DOWN_VECTOR).normalize();
-  const angle = center.angleTo(DOWN_VECTOR);
-  const quaternion = new Quaternion().setFromAxisAngle(axis, angle);
+  let rotatedVectors = vectors;
+  const angle = dominateVector.angleTo(DOWN_VECTOR);
 
-  const rotatedVectors = vectors.map((vector) => vector.clone().applyQuaternion(quaternion));
+  // Do not need to rotate if the dominate vector is pointing up or down
+  if (!isAlmostUpOrDown(angle)) {
+    const axis = new Vector3().crossVectors(dominateVector, DOWN_VECTOR).normalize();
+    const quaternion = new Quaternion().setFromAxisAngle(axis, angle);
+    rotatedVectors = vectors.map((vector) => vector.clone().applyQuaternion(quaternion));
+  }
   const area = Vector3ArrayUtils.getSignedHorizontalArea(rotatedVectors);
   if (area === 0) {
     return undefined;
@@ -36,7 +42,11 @@ export function createTriangleIndexesFromVectors(vectors: Vector3[]): number[] |
   linkedList = removeEqualAndColinearPoints(linkedList);
   return createIndexedTrianglesFromLinkedList(linkedList);
 
-  // Local function:
+  // Local functions:
+
+  function isAlmostUpOrDown(angle: number): boolean {
+    return angle < MIN_ANGLE || angle > Math.PI - MIN_ANGLE;
+  }
 
   function* orderedIndexes(count: number, reverse: boolean): Generator<number> {
     if (reverse) {
