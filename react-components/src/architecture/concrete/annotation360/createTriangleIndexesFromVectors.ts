@@ -5,6 +5,8 @@
 import { Quaternion, type Vector2Like, Vector3 } from 'three';
 import { Vector3ArrayUtils } from '../../base/utilities/primitives/PointsUtils';
 
+const DOWN_VECTOR = new Vector3(0, 0, -1);
+
 export function createTriangleIndexesFromVectors(vectors: Vector3[]): number[] | undefined {
   if (vectors.length < 3) {
     return undefined;
@@ -14,20 +16,19 @@ export function createTriangleIndexesFromVectors(vectors: Vector3[]): number[] |
   // Rotate to down, so the center of the vectors points down.
   // Then the z value is about -1 for all vectors.
   // We will use only x and y in the ear cutting, and z is ignored.
-  const down = new Vector3(0, 0, -1);
-  const axis = new Vector3().crossVectors(center, down).normalize();
-  const angle = center.angleTo(down);
+  const axis = new Vector3().crossVectors(center, DOWN_VECTOR).normalize();
+  const angle = center.angleTo(DOWN_VECTOR);
   const quaternion = new Quaternion().setFromAxisAngle(axis, angle);
 
-  const transformed = vectors.map((vector) => vector.clone().applyQuaternion(quaternion));
-  const area = Vector3ArrayUtils.getSignedHorizontalArea(transformed);
+  const rotatedVectors = vectors.map((vector) => vector.clone().applyQuaternion(quaternion));
+  const area = Vector3ArrayUtils.getSignedHorizontalArea(rotatedVectors);
   if (area === 0) {
     return undefined;
   }
   // The ear cutting algorithm
   let linkedList: Point | undefined;
-  for (const index of orderedIndexes(transformed.length, area < 0)) {
-    linkedList = insertPointInLinkedList(index, transformed[index], linkedList);
+  for (const index of orderedIndexes(rotatedVectors.length, area < 0)) {
+    linkedList = insertPointInLinkedList(index, rotatedVectors[index], linkedList);
   }
   if (linkedList === undefined) {
     return undefined;
@@ -35,7 +36,7 @@ export function createTriangleIndexesFromVectors(vectors: Vector3[]): number[] |
   linkedList = removeEqualAndColinearPoints(linkedList);
   return createIndexedTrianglesFromLinkedList(linkedList);
 
-  // Some local functions here:
+  // Some local function here:
 
   function* orderedIndexes(count: number, reverse: boolean): Generator<number> {
     if (reverse) {
