@@ -71,7 +71,7 @@ export const Reveal3DResources = ({
   );
 
   const addClassicModelOptionsResults = useModelIdRevisionIdFromModelOptions(
-    cadOrPointCloudResources as Array<AddModelOptions<DataSourceType>>
+    cadOrPointCloudResources as Array<AddModelOptions<ClassicDataSourceType>>
   );
   const classicModelOptions = useMemo(
     () =>
@@ -115,9 +115,12 @@ export const Reveal3DResources = ({
   useGenerateAssetMappingCachePerItemFromModelCache(cadModelOptions, assetMappings);
   useGenerateNode3DCache(cadModelOptions, assetMappings);
 
+  const instaceStylingWithAssetMappings =
+    instanceStyling?.filter(isCadAssetMappingStylingGroup) ?? EMPTY_ARRAY;
+
   const { styledModels: styledCadModelOptions, isModelMappingsLoading } = useCalculateCadStyling(
     cadModelOptions,
-    instanceStyling?.filter(isCadAssetMappingStylingGroup) ?? EMPTY_ARRAY,
+    instaceStylingWithAssetMappings,
     defaultResourceStyling
   );
 
@@ -126,9 +129,6 @@ export const Reveal3DResources = ({
   useEffect(() => {
     setModel3DStylingLoading(isModelMappingsLoading);
   }, [isModelMappingsLoading]);
-
-  const instaceStylingWithAssetMappings =
-    instanceStyling?.filter(isAssetMappingStylingGroup) ?? EMPTY_ARRAY;
 
   const styledPointCloudModelOptions = useCalculatePointCloudStyling(
     reveal3DModels,
@@ -238,7 +238,7 @@ export const Reveal3DResources = ({
 };
 
 async function getTypedModels(
-  classicModelOptions: Array<AddModelOptions<DataSourceType>>,
+  classicModelOptions: Array<AddModelOptions<ClassicDataSourceType>>,
   viewer: Cognite3DViewer<DataSourceType>,
   addModelOptionsArray: Array<AddModelOptions<DataSourceType>>,
   onLoadFail?: (resource: AddResourceOptions, error: any) => void
@@ -246,13 +246,17 @@ async function getTypedModels(
   const errorFunction = onLoadFail ?? defaultLoadFailHandler;
 
   const modelTypePromises = classicModelOptions.map(async (classicModelOptions, index) => {
-    const { modelId, revisionId } = classicModelOptions as AddModelOptions<ClassicDataSourceType>;
+    const { modelId, revisionId } = classicModelOptions;
     const type = await viewer.determineModelType(modelId, revisionId).catch((error) => {
       errorFunction(classicModelOptions, error);
       return '';
     });
 
-    const typedModel = { ...addModelOptionsArray[index], type };
+    const typedModel = {
+      ...addModelOptionsArray[index],
+      type,
+      ...(type === 'cad' && { modelId, revisionId })
+    };
     return typedModel;
   });
 

@@ -26,8 +26,8 @@ export const useModelIdRevisionIdFromModelOptions = (
 
       const queryKey = [
         queryKeys.modelRevisionId(),
-        modelId ?? revisionExternalId ?? 'unknownModelId',
-        revisionId ?? revisionSpace ?? 'unknownRevisionId'
+        modelId ?? revisionExternalId,
+        revisionId ?? revisionSpace
       ];
 
       return {

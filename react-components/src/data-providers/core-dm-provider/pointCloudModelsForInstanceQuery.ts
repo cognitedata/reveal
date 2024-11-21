@@ -2,10 +2,10 @@
  * Copyright 2024 Cognite AS
  */
 import { type QueryRequest } from '@cognite/sdk';
-import { cogniteCadNodeSourceWithProperties } from './cogniteCadNodeSourceWithProperties';
-import { COGNITE_CAD_NODE_SOURCE, COGNITE_VISUALIZABLE_SOURCE } from './dataModels';
+import { COGNITE_POINT_CLOUD_VOLUME_SOURCE, COGNITE_VISUALIZABLE_SOURCE } from './dataModels';
+import { POINT_CLOUD_VOLUME_REVISIONS_OBJECT3D_PROPERTIES_LIST } from '../utils/filters';
 
-export const cadModelsForInstanceQuery = {
+export const pointCloudModelsForInstanceQuery = {
   with: {
     asset: {
       nodes: {
@@ -37,14 +37,21 @@ export const cadModelsForInstanceQuery = {
         direction: 'outwards'
       }
     },
-    cad_nodes: {
+    pointcloud_volumes: {
       nodes: {
         from: 'object_3ds',
-        through: { view: COGNITE_CAD_NODE_SOURCE, identifier: 'object3D' }
+        through: { view: COGNITE_POINT_CLOUD_VOLUME_SOURCE, identifier: 'object3D' }
       }
     }
   },
   select: {
-    cad_nodes: { sources: cogniteCadNodeSourceWithProperties }
+    pointcloud_volumes: {
+      sources: [
+        {
+          source: COGNITE_POINT_CLOUD_VOLUME_SOURCE,
+          properties: POINT_CLOUD_VOLUME_REVISIONS_OBJECT3D_PROPERTIES_LIST
+        }
+      ]
+    }
   }
 } as const satisfies Omit<QueryRequest, 'parameters' | 'cursor'>;

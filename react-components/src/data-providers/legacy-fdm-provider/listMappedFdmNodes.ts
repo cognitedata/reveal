@@ -6,7 +6,7 @@ import { type FdmSDK, type InstanceFilter, type NodeItem, type Source } from '..
 import { createMappedEquipmentQuery } from './createMappedEquipmentQuery';
 import { chunk, isEqual } from 'lodash';
 import { removeEmptyProperties } from '../../utilities/removeEmptyProperties';
-import { type QueryRequest } from '@cognite/sdk/dist/src';
+import { type QueryRequest } from '@cognite/sdk';
 
 export async function listMappedFdmNodes(
   fdmSdk: FdmSDK,

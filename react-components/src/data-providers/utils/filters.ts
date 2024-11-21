@@ -27,7 +27,12 @@ export const isPointCloudVolumeFilter = {
   hasData: [COGNITE_POINT_CLOUD_VOLUME_SOURCE]
 } as const satisfies HasExistingDataFilterV3;
 
+export const POINT_CLOUD_VOLUME_MODEL_REFERENCE = ['model3D'] as const satisfies Array<
+  keyof PointCloudVolumeModelProperties
+>;
+
 export const POINT_CLOUD_VOLUME_REVISIONS_REFERENCE = [
+  ...POINT_CLOUD_VOLUME_MODEL_REFERENCE,
   'revisions',
   'volumeReferences'
 ] as const satisfies Array<keyof PointCloudVolumeRevisionProperties>;
@@ -43,7 +48,11 @@ export const POINT_CLOUD_VOLUME_REVISIONS_OBJECT3D_PROPERTIES_LIST = [
   'object3D'
 ] as const satisfies Array<keyof PointCloudVolumeObject3DProperties>;
 
-export type PointCloudVolumeRevisionProperties = {
+export type PointCloudVolumeModelProperties = {
+  model3D: DmsUniqueIdentifier;
+};
+
+export type PointCloudVolumeRevisionProperties = PointCloudVolumeModelProperties & {
   revisions: DmsUniqueIdentifier[];
   volumeReferences: string[];
 };
@@ -57,8 +66,8 @@ export type PointCloudVolumeObject3DProperties = PointCloudVolumeRevisionVolumeP
   object3D: DmsUniqueIdentifier;
 };
 
-export function getModelEqualsFilter<T extends DmsUniqueIdentifier>(
-  model3DReference: T
+export function getModelEqualsFilter(
+  model3DReference: DmsUniqueIdentifier
 ): TableExpressionEqualsFilterV3 {
   return {
     equals: {
@@ -72,8 +81,8 @@ export function getModelEqualsFilter<T extends DmsUniqueIdentifier>(
   } as const satisfies TableExpressionEqualsFilterV3;
 }
 
-export function getRevisionContainsAnyFilter<T extends DmsUniqueIdentifier>(
-  revisionReferences: T[]
+export function getRevisionContainsAnyFilter(
+  revisionReferences: DmsUniqueIdentifier[]
 ): TableExpressionContainsAnyFilterV3 {
   return {
     containsAny: {

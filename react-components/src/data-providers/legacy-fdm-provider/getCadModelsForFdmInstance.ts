@@ -5,7 +5,7 @@ import { type TaggedAddCadResourceOptions } from '../../components/Reveal3DResou
 import { type DmsUniqueIdentifier, type FdmSDK } from '../FdmSDK';
 import { type InModel3dEdgeProperties, SYSTEM_3D_EDGE_SOURCE } from './dataModels';
 import { isDefined } from '../../utilities/isDefined';
-import { type QueryRequest } from '@cognite/sdk/dist/src';
+import { type QueryRequest } from '@cognite/sdk';
 
 export async function getCadModelsForFdmInstance(
   sdk: FdmSDK,

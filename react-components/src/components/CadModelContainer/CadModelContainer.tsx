@@ -6,7 +6,7 @@ import {
   type GeometryFilter,
   type AddModelOptions,
   type CogniteCadModel,
-  type DataSourceType
+  type ClassicDataSourceType
 } from '@cognite/reveal';
 import { useReveal } from '../RevealCanvas/ViewerContext';
 import { type Matrix4 } from 'three';
@@ -23,14 +23,13 @@ import { type CadModelStyling } from './types';
 import { useApplyCadModelStyling } from './useApplyCadModelStyling';
 import { isSameGeometryFilter, isSameModel } from '../../utilities/isSameModel';
 import { useModelIdRevisionIdFromModelOptions } from '../../hooks/useModelIdRevisionIdFromModelOptions';
-import { isClassicIdentifier, isDMIdentifier } from '../Reveal3DResources';
 
 export type CogniteCadModelProps = {
-  addModelOptions: AddModelOptions<DataSourceType>;
+  addModelOptions: AddModelOptions<ClassicDataSourceType>;
   styling?: CadModelStyling;
   transform?: Matrix4;
   onLoad?: (model: CogniteCadModel) => void;
-  onLoadError?: (options: AddModelOptions<DataSourceType>, error: any) => void;
+  onLoadError?: (options: AddModelOptions<ClassicDataSourceType>, error: any) => void;
 };
 
 export function CadModelContainer({
@@ -44,7 +43,7 @@ export function CadModelContainer({
   const viewer = useReveal();
   const { setRevealResourcesCount } = useReveal3DResourcesCount();
   const { setReveal3DResourceLoadFailCount } = useReveal3DResourceLoadFailCount();
-  const initializingModel = useRef<AddModelOptions<DataSourceType> | undefined>(undefined);
+  const initializingModel = useRef<AddModelOptions<ClassicDataSourceType> | undefined>(undefined);
   const initializingModelsGeometryFilter = useRef<GeometryFilter | undefined>(undefined);
 
   const [model, setModel] = useState<CogniteCadModel | undefined>(undefined);
@@ -58,19 +57,22 @@ export function CadModelContainer({
   const geometryFilter = addModelOptions.geometryFilter;
 
   useEffect(() => {
-    if (isEqual(initializingModel.current, addModelOptions)) {
+    if (
+      isEqual(initializingModel.current, addModelOptionsResult) ||
+      addModelOptionsResult === undefined
+    ) {
       return;
     }
 
-    initializingModel.current = addModelOptions;
-    addModel(addModelOptions, transform)
+    initializingModel.current = addModelOptionsResult;
+    addModel(addModelOptionsResult, transform)
       .then((model) => {
         onLoad?.(model);
         setRevealResourcesCount(getViewerResourceCount(viewer));
       })
       .catch((error) => {
         const errorReportFunction = onLoadError ?? defaultLoadErrorHandler;
-        errorReportFunction(addModelOptions as AddModelOptions, error);
+        errorReportFunction(addModelOptionsResult, error);
         setReveal3DResourceLoadFailCount((p) => p + 1);
         return () => {
           setReveal3DResourceLoadFailCount((p) => p - 1);
@@ -96,7 +98,7 @@ export function CadModelContainer({
   return <></>;
 
   async function addModel(
-    addModelOptions: AddModelOptions<DataSourceType>,
+    addModelOptions: AddModelOptions,
     transform?: Matrix4
   ): Promise<CogniteCadModel> {
     const cadModel = await getOrAddModel();
@@ -134,14 +136,11 @@ export function CadModelContainer({
   }
 }
 
-function defaultLoadErrorHandler(addOptions: AddModelOptions<DataSourceType>, error: any): void {
-  if (isClassicIdentifier(addOptions)) {
-    console.warn(
-      `Failed to load (${addOptions.modelId}, ${addOptions.revisionId}): ${JSON.stringify(error)}`
-    );
-  } else if (isDMIdentifier(addOptions)) {
-    console.warn(
-      `Failed to load (${addOptions.revisionExternalId}, ${addOptions.revisionSpace}): ${JSON.stringify(error)}`
-    );
-  }
+function defaultLoadErrorHandler(
+  addOptions: AddModelOptions<ClassicDataSourceType>,
+  error: any
+): void {
+  console.warn(
+    `Failed to load (${addOptions.modelId}, ${addOptions.revisionId}): ${JSON.stringify(error)}`
+  );
 }

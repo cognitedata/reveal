@@ -1,7 +1,7 @@
 /*!
  * Copyright 2024 Cognite AS
  */
-import { type AddModelOptions } from '@cognite/reveal';
+import { type AddModelOptions, type DataSourceType } from '@cognite/reveal';
 import { type FdmCadConnection } from '../../components/CacheProvider/types';
 import { type Fdm3dDataProvider } from '../Fdm3dDataProvider';
 import {
@@ -21,7 +21,8 @@ import { listAllMappedFdmNodes, listMappedFdmNodes } from './listMappedFdmNodes'
 import { filterNodesByMappedTo3d } from './filterNodesByMappedTo3d';
 import { getCadModelsForFdmInstance } from './getCadModelsForFdmInstance';
 import { getCadConnectionsForRevision } from './getCadConnectionsForRevision';
-import { type CogniteClient, type Node3D } from '@cognite/sdk/dist/src';
+import { type CogniteClient, type Node3D } from '@cognite/sdk';
+import { isClassicIdentifier } from '../../components';
 
 export class LegacyFdm3dDataProvider implements Fdm3dDataProvider {
   readonly _fdmSdk: FdmSDK;
@@ -59,26 +60,38 @@ export class LegacyFdm3dDataProvider implements Fdm3dDataProvider {
   }
 
   async listMappedFdmNodes(
-    models: AddModelOptions[],
+    models: Array<AddModelOptions<DataSourceType>>,
     sourcesToSearch: Source[],
     instanceFilter: InstanceFilter | undefined,
     limit: number
   ): Promise<NodeItem[]> {
+    const isClassicModels = models.every((model) => isClassicIdentifier(model));
+    if (!isClassicModels) {
+      return [];
+    }
     return await listMappedFdmNodes(this._fdmSdk, models, sourcesToSearch, instanceFilter, limit);
   }
 
   async listAllMappedFdmNodes(
-    models: AddModelOptions[],
+    models: Array<AddModelOptions<DataSourceType>>,
     sourcesToSearch: Source[]
   ): Promise<NodeItem[]> {
+    const isClassicModels = models.every((model) => isClassicIdentifier(model));
+    if (!isClassicModels) {
+      return [];
+    }
     return await listAllMappedFdmNodes(this._fdmSdk, models, sourcesToSearch);
   }
 
   async filterNodesByMappedTo3d(
     nodes: InstancesWithView[],
-    models: AddModelOptions[],
+    models: Array<AddModelOptions<DataSourceType>>,
     spacesToSearch: string[]
   ): Promise<InstancesWithView[]> {
+    const isClassicModels = models.every((model) => isClassicIdentifier(model));
+    if (!isClassicModels) {
+      return [];
+    }
     return await filterNodesByMappedTo3d(this._fdmSdk, nodes, models, spacesToSearch);
   }
 
@@ -89,8 +102,12 @@ export class LegacyFdm3dDataProvider implements Fdm3dDataProvider {
   }
 
   async getCadConnectionsForRevisions(
-    modelOptions: AddModelOptions[]
+    modelOptions: Array<AddModelOptions<DataSourceType>>
   ): Promise<FdmCadConnection[]> {
+    const isClassicModels = modelOptions.every((model) => isClassicIdentifier(model));
+    if (!isClassicModels) {
+      return [];
+    }
     return await getCadConnectionsForRevision(modelOptions, this._fdmSdk, this._cogniteClient);
   }
 }
