@@ -167,7 +167,6 @@ const SceneContainerStoryContent = ({
     viewsToSearch
   );
 
-
   const {
     data: allAssets,
     isFetching,

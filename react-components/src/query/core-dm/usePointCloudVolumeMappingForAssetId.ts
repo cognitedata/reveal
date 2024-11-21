@@ -8,7 +8,6 @@ import {
 } from '@cognite/reveal';
 import { useQuery, type UseQueryResult } from '@tanstack/react-query';
 import { usePointCloudDMVolume } from './usePointCloudDMVolume';
-import { use3dModels } from '../../hooks';
 import { useMemo } from 'react';
 import { useModelIdRevisionIdFromModelOptions } from '../../hooks/useModelIdRevisionIdFromModelOptions';
 import { isDefined } from '../../utilities/isDefined';

@@ -15,9 +15,7 @@ import { Color, Matrix4, Vector3 } from 'three';
 import { createSdkByUrlToken } from './utilities/createSdkByUrlToken';
 import {
   type AddModelOptions,
-  type ClassicDataSourceType,
   type CogniteCadModel,
-  type DataSourceType,
   DefaultNodeAppearance,
   IndexSet
 } from '@cognite/reveal';
@@ -49,7 +47,7 @@ export const Main: Story = {
     transform,
     styling
   }: {
-    addModelOptions: AddModelOptions<DataSourceType>;
+    addModelOptions: AddModelOptions;
     transform?: Matrix4;
     styling?: CadModelStyling;
   }) => (
@@ -68,7 +66,7 @@ const Models = ({ addModelOptions }: CogniteCadModelProps): JSX.Element => {
 
   const [platformStyling, setPlatformStyling] = useState<CadModelStyling>();
 
-  const { modelId, revisionId } = platformModelOptions as AddModelOptions<ClassicDataSourceType>;
+  const { modelId, revisionId } = platformModelOptions;
   const { data } = useMappedEdgesForRevisions([{ modelId, revisionId }]);
 
   const treeIndices = useMemo(

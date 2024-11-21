@@ -26,7 +26,6 @@ import {
 import { useCalculatePointCloudStyling } from './useCalculatePointCloudStyling';
 import { EMPTY_ARRAY } from '../../utilities/constants';
 import {
-  isAssetMappingStylingGroup,
   isCadAssetMappingStylingGroup,
   isImage360AssetStylingGroup
 } from '../../utilities/StylingGroupUtils';

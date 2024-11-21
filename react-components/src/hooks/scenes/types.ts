@@ -30,7 +30,7 @@ export type SceneData = {
   cameraEulerRotationX: number;
   cameraEulerRotationY: number;
   cameraEulerRotationZ: number;
-  cadModelOptions: Array<AddCadResourceOptions | AddPointCloudResourceOptions>;
+  modelOptions: Array<AddCadResourceOptions | AddPointCloudResourceOptions>;
   image360CollectionOptions: AddImage360CollectionDatamodelsOptions[];
   groundPlanes: GroundPlane[];
   skybox?: Skybox;
