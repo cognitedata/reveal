@@ -21,6 +21,7 @@ import { type PointCloudVolumeWithAsset } from '../../components/CacheProvider/t
 import { type FdmSDK } from '../../data-providers/FdmSDK';
 import { type DMVolumeModelDataResult } from '../../components/Reveal3DResources/useCalculatePointCloudStyling';
 import { pointCloudDMVolumesQuery } from './pointCloudDMVolumesQuery';
+import { queryKeys } from '../../utilities/queryKeys';
 
 export const usePointCloudDMVolume = (
   modelsData: CadPointCloudModelWithModelIdRevisionId[]
@@ -28,9 +29,7 @@ export const usePointCloudDMVolume = (
   const fdmSdk = useFdmSdk();
   return useQuery({
     queryKey: [
-      'reveal',
-      'react-components',
-      'models-pointcloud-dm-volumes-mappings',
+      queryKeys.pointCloudDMVolumeMappings(),
       ...modelsData.map((model) => `${model.modelId}/${model.revisionId}`).sort()
     ],
     queryFn: async () => {

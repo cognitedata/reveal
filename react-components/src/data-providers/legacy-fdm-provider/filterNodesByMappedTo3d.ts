@@ -18,7 +18,7 @@ import {
 } from './dataModels';
 import { getDMSModels } from './getDMSModels';
 import { type FdmKey } from '../../components/CacheProvider/types';
-import { type QueryRequest } from '@cognite/sdk/dist/src';
+import { type QueryRequest } from '@cognite/sdk';
 import { getDirectRelationProperties } from '../utils/getDirectRelationProperties';
 
 export async function filterNodesByMappedTo3d(

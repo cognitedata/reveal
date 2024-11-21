@@ -5,7 +5,7 @@ import {
   type QueryRequest,
   type QueryTableExpressionV3,
   type SourceSelectorV3
-} from '@cognite/sdk/dist/src';
+} from '@cognite/sdk';
 import { cogniteObject3dSourceWithProperties } from './cogniteObject3dSourceWithProperties';
 import {
   COGNITE_CAD_NODE_SOURCE,

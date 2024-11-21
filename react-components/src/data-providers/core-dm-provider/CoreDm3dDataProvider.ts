@@ -1,7 +1,7 @@
 /*!
  * Copyright 2024 Cognite AS
  */
-import { type AddModelOptions } from '@cognite/reveal';
+import { type DataSourceType, type AddModelOptions } from '@cognite/reveal';
 import { type FdmCadConnection } from '../../components/CacheProvider/types';
 import { type Fdm3dDataProvider } from '../Fdm3dDataProvider';
 import {
@@ -28,6 +28,7 @@ import { getCadModelsForInstance } from './getCadModelsForInstance';
 import { getCadConnectionsForRevisions } from './getCadConnectionsForRevisions';
 import { zip } from 'lodash';
 import { restrictToDmsId } from '../../utilities/restrictToDmsId';
+import { isClassicIdentifier, isDMIdentifier } from '../../components';
 
 const MAX_PARALLEL_QUERIES = 2;
 
@@ -133,17 +134,12 @@ export class CoreDm3dFdm3dDataProvider implements Fdm3dDataProvider {
   }
 
   async listMappedFdmNodes(
-    models: AddModelOptions[],
+    models: Array<AddModelOptions<DataSourceType>>,
     sourcesToSearch: Source[],
     instanceFilter: InstanceFilter | undefined,
     limit: number
   ): Promise<NodeItem[]> {
-    const modelRefs = await this.getDMSModelsForIds(models.map((model) => model.modelId));
-
-    const revisionRefs = await this.getDMSRevisionsForRevisionIdsAndModelRefs(
-      modelRefs,
-      models.map((model) => model.revisionId)
-    );
+    const revisionRefs = await this.getRevisionRefs(models);
 
     return await listMappedFdmNodes(
       revisionRefs,
@@ -155,31 +151,21 @@ export class CoreDm3dFdm3dDataProvider implements Fdm3dDataProvider {
   }
 
   async listAllMappedFdmNodes(
-    models: AddModelOptions[],
+    models: Array<AddModelOptions<DataSourceType>>,
     sourcesToSearch: Source[],
     instanceFilter: InstanceFilter | undefined
   ): Promise<NodeItem[]> {
-    const modelRefs = await this.getDMSModelsForIds(models.map((model) => model.modelId));
-
-    const revisionRefs = await this.getDMSRevisionsForRevisionIdsAndModelRefs(
-      modelRefs,
-      models.map((model) => model.revisionId)
-    );
+    const revisionRefs = await this.getRevisionRefs(models);
 
     return await listAllMappedFdmNodes(revisionRefs, sourcesToSearch, instanceFilter, this._fdmSdk);
   }
 
   async filterNodesByMappedTo3d(
     nodes: InstancesWithView[],
-    models: AddModelOptions[],
+    models: Array<AddModelOptions<DataSourceType>>,
     spacesToSearch: string[]
   ): Promise<InstancesWithView[]> {
-    const modelRefs = await this.getDMSModelsForIds(models.map((model) => model.modelId));
-
-    const revisionRefs = await this.getDMSRevisionsForRevisionIdsAndModelRefs(
-      modelRefs,
-      models.map((model) => model.revisionId)
-    );
+    const revisionRefs = await this.getRevisionRefs(models);
 
     return await filterNodesByMappedTo3d(nodes, revisionRefs, spacesToSearch, this._fdmSdk);
   }
@@ -191,8 +177,12 @@ export class CoreDm3dFdm3dDataProvider implements Fdm3dDataProvider {
   }
 
   async getCadConnectionsForRevisions(
-    modelOptions: AddModelOptions[]
+    modelOptions: Array<AddModelOptions<DataSourceType>>
   ): Promise<FdmCadConnection[]> {
+    const isClassicModels = modelOptions.every((model) => isClassicIdentifier(model));
+    if (!isClassicModels) {
+      return [];
+    }
     const modelRefs = await this.getDMSModelsForIds(modelOptions.map((model) => model.modelId));
 
     const revisionRefs = await this.getDMSRevisionsForRevisionIdsAndModelRefs(
@@ -206,5 +196,30 @@ export class CoreDm3dFdm3dDataProvider implements Fdm3dDataProvider {
     );
 
     return await getCadConnectionsForRevisions(modelRevisions, this._fdmSdk);
+  }
+
+  async getRevisionRefs(
+    models: Array<AddModelOptions<DataSourceType>>
+  ): Promise<DmsUniqueIdentifier[]> {
+    const revisionRefs: DmsUniqueIdentifier[] = [];
+    const isClassicModels = models.every((model) => isClassicIdentifier(model));
+    const isDMModels = models.every((model) => isDMIdentifier(model));
+    if (isClassicModels) {
+      const modelRefs = await this.getDMSModelsForIds(models.map((model) => model.modelId));
+
+      revisionRefs.push(
+        ...(await this.getDMSRevisionsForRevisionIdsAndModelRefs(
+          modelRefs,
+          models.map((model) => model.revisionId)
+        ))
+      );
+    } else if (isDMModels) {
+      revisionRefs.push(
+        ...models.map((model) => {
+          return { externalId: model.revisionExternalId, space: model.revisionSpace };
+        })
+      );
+    }
+    return revisionRefs;
   }
 }

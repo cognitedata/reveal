@@ -35,7 +35,7 @@ import { CommandsUpdater } from '../reactUpdaters/CommandsUpdater';
 import { Range3 } from '../utilities/geometry/Range3';
 import { getBoundingBoxFromPlanes } from '../utilities/geometry/getBoundingBoxFromPlanes';
 import { Changes } from '../domainObjectsHelpers/Changes';
-import { type CogniteClient } from '@cognite/sdk/dist/src';
+import { type CogniteClient } from '@cognite/sdk';
 import { type BaseTool } from '../commands/BaseTool';
 import { ContextMenuController } from './ContextMenuController';
 

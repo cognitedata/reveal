@@ -43,9 +43,7 @@ import { type AddModelOptions } from '@cognite/reveal';
 const queryClient = new QueryClient();
 const sdk = createSdkByUrlToken();
 const viewsToSearch = [
-  { externalId: 'Equipment', space: 'fdx-boys', version: 'e040583320d31a' },
-  { externalId: 'WorkOrderMultiple', space: 'fdx-boys', version: 'e040583320d31a' },
-  { externalId: 'WorkOrderSingle', space: 'fdx-boys', version: 'e040583320d31a' }
+  { externalId: 'Cdf3dConnectionProperties', space: 'cdf_3d_schema', version: '1' }
 ];
 
 type Equipment = {
@@ -60,7 +58,7 @@ const StoryContent = ({ resources }: { resources: AddResourceOptions[] }): React
   const [mainSearchQuery, setMainSearchQuery] = useState<string>('');
   const [searchMethod, setSearchMethod] = useState<
     'allFdm' | 'allAssets' | 'fdmSearch' | 'assetSearch'
-  >('assetSearch');
+  >('allFdm');
 
   const filteredResources = resources.filter(
     (resource): resource is AddCadResourceOptions | AddPointCloudResourceOptions =>
@@ -91,6 +89,7 @@ const StoryContent = ({ resources }: { resources: AddResourceOptions[] }): React
     filteredResources as AddModelOptions[],
     viewsToSearch
   );
+  console.log('allEquipment:', allEquipment);
 
   const {
     data: allAssets,
@@ -373,22 +372,22 @@ type Story = StoryObj<typeof meta>;
 export const Main: Story = {
   args: {
     resources: [
+      // {
+      //   modelId: 3544114490298106,
+      //   revisionId: 6405404576933316,
+      //   styling: {
+      //     default: {
+      //       color: new Color('#efefef')
+      //     },
+      //     mapped: {
+      //       color: new Color('#c5cbff')
+      //     }
+      //   },
+      //   siteId: 'celanese1'
+      // },
       {
-        modelId: 3544114490298106,
-        revisionId: 6405404576933316,
-        styling: {
-          default: {
-            color: new Color('#efefef')
-          },
-          mapped: {
-            color: new Color('#c5cbff')
-          }
-        },
-        siteId: 'celanese1'
-      },
-      {
-        modelId: 7646043527629245,
-        revisionId: 6059566106376463
+        modelId: 7848789582129513,
+        revisionId: 1871031176419082
       }
     ]
   },

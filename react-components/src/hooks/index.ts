@@ -15,6 +15,7 @@ export { useSceneDefaultCamera } from './useSceneDefaultCamera';
 export { useSkyboxFromScene } from './useSkyboxFromScene';
 export { use3dScenes } from './scenes/use3dScenes';
 export { useSceneConfig } from './scenes/useSceneConfig';
+export { useActiveReveal3dResources } from './useActiveReveal3dResources';
 
 export type { CameraNavigationActions } from './useCameraNavigation';
 export type { ClickedNodeData, FdmNodeDataResult } from './useClickedNode';

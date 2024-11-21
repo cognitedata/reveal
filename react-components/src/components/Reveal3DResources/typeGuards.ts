@@ -38,7 +38,12 @@ export function isClassicIdentifier(
   addOptions: AddResourceOptions
 ): addOptions is AddPointCloudResourceOptions & AddModelOptions<ClassicDataSourceType> {
   const castOptions = addOptions as AddModelOptions<ClassicDataSourceType>;
-  return castOptions.modelId !== undefined && castOptions.revisionId !== undefined;
+  return (
+    castOptions.modelId !== undefined &&
+    castOptions.revisionId !== undefined &&
+    castOptions.modelId !== 0 &&
+    castOptions.revisionId !== 0
+  );
 }
 
 export function isDMIdentifier(
