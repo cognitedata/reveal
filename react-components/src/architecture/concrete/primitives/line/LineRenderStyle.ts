@@ -18,11 +18,28 @@ export class LineRenderStyle extends PrimitiveRenderStyle {
   public transparent = false;
   public renderOrder?: number = undefined;
 
+  // Solid
+  public showSolid = false;
+  public solidOpacityUse = true;
+  public selectedSolidOpacity = 0.5;
+  public solidOpacity = this.selectedSolidOpacity / 2;
+
   // ==================================================
   // OVERRIDES of BaseStyle
   // ==================================================
 
   public override clone(): RenderStyle {
     return cloneDeep<LineRenderStyle>(this);
+  }
+
+  // ==================================================
+  // INSTANCE METHODS
+  // ==================================================
+
+  public getSolidOpacity(isSelected: boolean): number {
+    if (!this.solidOpacityUse) {
+      return 1;
+    }
+    return isSelected ? this.selectedSolidOpacity : this.solidOpacity;
   }
 }

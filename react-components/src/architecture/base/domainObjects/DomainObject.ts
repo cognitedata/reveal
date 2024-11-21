@@ -814,8 +814,8 @@ export abstract class DomainObject {
 
   public addChildInteractive(child: DomainObject, insertFirst = false): void {
     this.addChild(child, insertFirst);
-    child.notify(Changes.added);
     this.notify(Changes.childAdded);
+    child.notify(Changes.added);
   }
 
   private remove(): boolean {
