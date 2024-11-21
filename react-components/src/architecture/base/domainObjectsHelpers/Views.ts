@@ -20,14 +20,8 @@ export class Views {
   // INSTANCE FIELDS
   // ==================================================
 
-  public _notifyParentListeners: boolean = false;
   private readonly _views: BaseView[] = [];
   private readonly _listeners: NotifyDelegate[] = [];
-
-  // eslint-disable-next-line accessor-pairs
-  public set notifyParentListeners(value: boolean) {
-    this._notifyParentListeners = value;
-  }
 
   // ==================================================
   // VIRTUAL METHODS:
@@ -43,8 +37,9 @@ export class Views {
     for (const listener of this._listeners) {
       listener(domainObject, change);
     }
-    if (this._notifyParentListeners && domainObject.parent !== undefined) {
-      for (const listener of domainObject.parent.views._listeners) {
+    const root = domainObject.root;
+    if (root !== undefined && root !== domainObject) {
+      for (const listener of root.views._listeners) {
         listener(domainObject, change);
       }
     }
