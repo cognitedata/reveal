@@ -5,7 +5,7 @@
 import { Color } from 'three';
 import { PlaneDomainObject } from '../primitives/plane/PlaneDomainObject';
 import { PrimitiveType } from '../../base/utilities/primitives/PrimitiveType';
-import { type TranslateKey } from '../../base/utilities/TranslateKey';
+import { type TranslationInput } from '../../base/utilities/TranslateInput';
 import { type BaseCommand } from '../../base/commands/BaseCommand';
 import { FlipSliceCommand } from './commands/FlipSliceCommand';
 import { ApplyClipCommand } from './commands/ApplyClipCommand';
@@ -29,16 +29,16 @@ export class SliceDomainObject extends PlaneDomainObject {
   // OVERRIDES
   // ==================================================
 
-  public override get typeName(): TranslateKey {
+  public override get typeName(): TranslationInput {
     switch (this.primitiveType) {
       case PrimitiveType.PlaneX:
-        return { key: 'SLICE_X', fallback: 'Vertical slice along Y-axis' };
+        return { key: 'SLICE_X' };
       case PrimitiveType.PlaneY:
-        return { key: 'SLICE_Y', fallback: 'Vertical slice along X-axis' };
+        return { key: 'SLICE_Y' };
       case PrimitiveType.PlaneZ:
-        return { key: 'SLICE_Z', fallback: 'Horizontal slice' };
+        return { key: 'SLICE_Z' };
       case PrimitiveType.PlaneXY:
-        return { key: 'SLICE_XY', fallback: 'Vertical slice' };
+        return { key: 'SLICE_XY' };
       default:
         throw new Error('Unknown PrimitiveType');
     }

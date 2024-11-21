@@ -2,7 +2,7 @@
  * Copyright 2024 Cognite AS
  */
 
-import { type TranslateKey } from '../../utilities/TranslateKey';
+import { type TranslationInput } from '../../utilities/TranslateInput';
 import { FractionSliderCommand } from '../../commands/FractionSliderCommand';
 import { type DataSourceType, type Image360Collection } from '@cognite/reveal';
 
@@ -11,8 +11,8 @@ export class Set360ImagesOpacityCommand extends FractionSliderCommand {
   // OVERRIDES
   // ==================================================
 
-  public override get tooltip(): TranslateKey {
-    return { key: 'IMAGE_TRANSPARENCY', fallback: 'Image Transparency' };
+  public override get tooltip(): TranslationInput {
+    return { key: 'IMAGE_TRANSPARENCY' };
   }
 
   public override get isEnabled(): boolean {

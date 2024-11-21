@@ -6,7 +6,7 @@ import { RenderTargetCommand } from '../commands/RenderTargetCommand';
 import { type RevealRenderTarget } from '../renderTarget/RevealRenderTarget';
 import { FlexibleControlsType } from '@cognite/reveal';
 import { type BaseCommand } from '../commands/BaseCommand';
-import { type TranslateKey } from '../utilities/TranslateKey';
+import { type TranslationInput } from '../utilities/TranslateInput';
 import { type IconName } from '../utilities/IconName';
 
 export class SetFlexibleControlsTypeCommand extends RenderTargetCommand {
@@ -60,16 +60,16 @@ export class SetFlexibleControlsTypeCommand extends RenderTargetCommand {
     }
   }
 
-  public override get tooltip(): TranslateKey {
+  public override get tooltip(): TranslationInput {
     switch (this._controlsType) {
       case FlexibleControlsType.FirstPerson:
-        return { key: 'CONTROLS_TYPE_FIRST_PERSON', fallback: 'Fly' };
+        return { key: 'CONTROLS_TYPE_FIRST_PERSON' };
       case FlexibleControlsType.Orbit:
-        return { key: 'CONTROLS_TYPE_ORBIT', fallback: 'Orbit' };
+        return { key: 'CONTROLS_TYPE_ORBIT' };
       case FlexibleControlsType.OrbitInCenter:
-        return { key: 'CONTROLS_TYPE_ORBIT_IN_CENTER', fallback: 'Center Orbit' };
+        return { key: 'CONTROLS_TYPE_ORBIT_IN_CENTER' };
       default:
-        return super.tooltip;
+        return super.tooltip ?? { untranslated: '' };
     }
   }
 

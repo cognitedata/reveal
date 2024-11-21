@@ -4,15 +4,15 @@
 
 import { type Image360Collection, type DataSourceType } from '@cognite/reveal';
 import { RenderTargetCommand } from '../../commands/RenderTargetCommand';
-import { type TranslateKey } from '../../utilities/TranslateKey';
+import { type TranslationInput } from '../../utilities/TranslateInput';
 
 export class Set360IconsOccludedVisibleCommand extends RenderTargetCommand {
   // ==================================================
   // OVERRIDES
   // ==================================================
 
-  public override get tooltip(): TranslateKey {
-    return { key: 'X_RAY', fallback: 'X-ray' };
+  public override get tooltip(): TranslationInput {
+    return { key: 'X_RAY' };
   }
 
   public override get isEnabled(): boolean {

@@ -3,6 +3,12 @@
  */
 import { type SourceSelectorV3 } from '@cognite/sdk';
 import { type DmsUniqueIdentifier } from '../../data-providers/FdmSDK';
+import {
+  type AddCadResourceOptions,
+  type AddImage360CollectionDatamodelsOptions,
+  type AddPointCloudResourceOptions
+} from '../../components';
+import { type GroundPlane, type Skybox } from '../../components/SceneContainer/sceneTypes';
 
 export type Transformation3d = {
   translationX: number;
@@ -14,6 +20,20 @@ export type Transformation3d = {
   scaleX: number;
   scaleY: number;
   scaleZ: number;
+};
+
+export type SceneData = {
+  name: string;
+  cameraTranslationX: number;
+  cameraTranslationY: number;
+  cameraTranslationZ: number;
+  cameraEulerRotationX: number;
+  cameraEulerRotationY: number;
+  cameraEulerRotationZ: number;
+  cadModelOptions: Array<AddCadResourceOptions | AddPointCloudResourceOptions>;
+  image360CollectionOptions: AddImage360CollectionDatamodelsOptions[];
+  groundPlanes: GroundPlane[];
+  skybox?: Skybox;
 };
 
 export type SceneModelsProperties = Transformation3d & {

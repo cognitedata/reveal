@@ -4,14 +4,19 @@
 
 /* eslint-disable @typescript-eslint/consistent-type-imports */
 import {
+  BufferGeometry,
   CylinderGeometry,
+  DoubleSide,
+  Float32BufferAttribute,
   FrontSide,
   Line,
   LineBasicMaterial,
   Mesh,
+  MeshBasicMaterial,
   MeshPhongMaterial,
   Object3D,
   Quaternion,
+  Uint32BufferAttribute,
   Vector3
 } from 'three';
 import { LineDomainObject } from './LineDomainObject';
@@ -35,7 +40,7 @@ import { BoxView } from '../box/BoxView';
 import { PrimitiveUtils } from '../../../base/utilities/primitives/PrimitiveUtils';
 
 const CYLINDER_DEFAULT_AXIS = new Vector3(0, 1, 0);
-const RENDER_ORDER = 100;
+const SOLID_NAME = 'Solid';
 
 export class LineView extends GroupThreeView<LineDomainObject> {
   // ==================================================
@@ -78,6 +83,7 @@ export class LineView extends GroupThreeView<LineDomainObject> {
   protected override addChildren(): void {
     this.addChild(this.createPipe());
     this.addChild(this.createLines()); // Create a line so it can be seen from long distance
+    this.addChild(this.createSolid()); // Create a line so it can be seen from long distance
     this.addLabels();
   }
 
@@ -89,6 +95,18 @@ export class LineView extends GroupThreeView<LineDomainObject> {
     if (domainObject.focusType === FocusType.Pending) {
       return undefined; // Should never be picked
     }
+    const solid = this._group.getObjectByName(SOLID_NAME);
+    if (solid !== undefined) {
+      const objectIntersection = this.intersectObjectIfCloser(
+        solid,
+        intersectInput,
+        closestDistance
+      );
+      if (objectIntersection !== undefined) {
+        return objectIntersection;
+      }
+    }
+
     // Implement the intersection logic here, because of bug in tree.js
     const radius = getSelectRadius(domainObject, style);
     if (radius <= 0) {
@@ -106,7 +124,6 @@ export class LineView extends GroupThreeView<LineDomainObject> {
     const radiusSquared = square(radius);
     const ray = intersectInput.raycaster.ray;
     const closestFinder = new ClosestGeometryFinder<DomainObjectIntersection>(ray.origin);
-
     if (closestDistance !== undefined) {
       closestFinder.minDistance = closestDistance;
     }
@@ -191,6 +208,45 @@ export class LineView extends GroupThreeView<LineDomainObject> {
     return pipeMesh;
   }
 
+  private createSolid(): Object3D | undefined {
+    const { domainObject, style } = this;
+    if (!style.showSolid) {
+      return undefined;
+    }
+    const { points, pointCount } = domainObject;
+    if (pointCount < 3) {
+      return undefined;
+    }
+    const positions: number[] = [];
+    for (let i = 0; i < domainObject.pointCount; i++) {
+      const point = domainObject.getCopyOfTransformedPoint(points[i], new Vector3());
+      point.applyMatrix4(CDF_TO_VIEWER_TRANSFORMATION);
+      positions.push(...point);
+    }
+    const indices = domainObject.getTriangleIndexes();
+    if (indices === undefined) {
+      return undefined;
+    }
+    const color = domainObject.getColorByColorType(style.colorType);
+    const geometry = new BufferGeometry();
+    geometry.setAttribute('position', new Float32BufferAttribute(positions, 3));
+    geometry.setIndex(new Uint32BufferAttribute(indices, 1));
+
+    const material = new MeshBasicMaterial({
+      color,
+      depthTest: style.depthTest,
+      transparent: true,
+      opacity: style.getSolidOpacity(domainObject.isSelected),
+      side: DoubleSide
+    });
+    const result = new Mesh(geometry, material);
+    if (style.renderOrder !== undefined) {
+      result.renderOrder = style.renderOrder;
+    }
+    result.name = SOLID_NAME;
+    return result;
+  }
+
   private createLines(): Object3D | undefined {
     const { domainObject, style } = this;
     const positions = createPositions(domainObject);
@@ -207,7 +263,9 @@ export class LineView extends GroupThreeView<LineDomainObject> {
       transparent: style.transparent
     });
     const result = new Line(geometry, material);
-    result.renderOrder = RENDER_ORDER;
+    if (style.renderOrder !== undefined) {
+      result.renderOrder = style.renderOrder;
+    }
     return result;
   }
 

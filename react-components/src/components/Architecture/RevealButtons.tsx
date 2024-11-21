@@ -23,11 +23,14 @@ import { AnnotationsCreateTool } from '../../architecture/concrete/annotations/c
 import { AnnotationsSelectTool } from '../../architecture/concrete/annotations/commands/AnnotationsSelectTool';
 import { Image360ActionCommand } from '../../architecture/base/concreteCommands/image360Collection/Image360ActionCommand';
 import { type PlacementType } from './types';
+import { type Vector3 } from 'three';
+import { InitiatePointsOfInterestCommand } from '../../architecture/concrete/pointsOfInterest/InitiatePointsOfInterestCommand';
+import { DeleteSelectedPointsOfInterestCommand } from '../../architecture/concrete/pointsOfInterest/DeletePointsOfInterestCommand';
 
 export class RevealButtons {
   static Settings = (props: SettingsProp): ReactElement =>
     createButtonFromCommandConstructor(
-      () => new SettingsCommand(props.include360Images ?? true),
+      () => new SettingsCommand(props.include360Images, props.includePois),
       props
     );
 
@@ -64,9 +67,14 @@ export class RevealButtons {
       prop
     );
 
-  static PointsOfInterest = (prop: ButtonProp): ReactElement => {
-    return createButtonFromCommandConstructor(() => new PointsOfInterestTool(), prop);
-  };
+  static PointsOfInterest = (prop: ButtonProp): ReactElement =>
+    createButtonFromCommandConstructor(() => new PointsOfInterestTool(), prop);
+
+  static PointsOfInterestInitiateCreation = (prop: { point: Vector3 } & ButtonProp): ReactElement =>
+    createButtonFromCommandConstructor(() => new InitiatePointsOfInterestCommand(prop.point), prop);
+
+  static DeleteSelectedPointOfInterest = (prop: ButtonProp): ReactElement =>
+    createButtonFromCommandConstructor(() => new DeleteSelectedPointsOfInterestCommand(), prop);
 
   static KeyboardSpeed = (prop: ButtonProp): ReactElement =>
     createButtonFromCommandConstructor(() => new KeyboardSpeedCommand(), prop);
@@ -108,6 +116,7 @@ export type ButtonProp = {
 
 type SettingsProp = ButtonProp & {
   include360Images?: boolean;
+  includePois?: boolean;
 };
 
 type Image360Prop = ButtonProp & {

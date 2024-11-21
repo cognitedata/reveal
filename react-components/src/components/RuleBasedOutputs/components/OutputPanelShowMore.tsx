@@ -22,7 +22,7 @@ export const ShowMore = ({ onShowMore, isShowMore }: OutputPanelShowMoreProps): 
           onClick={onShowMore}
           icon={!isShowMore ? <AddIcon /> : <RemoveIcon />}
           type="ghost-accent">
-          {isShowMore ? t('SHOW_LESS', 'Show less') : t('SHOW_MORE', 'Show more')}
+          {isShowMore ? t({ key: 'SHOW_LESS' }) : t({ key: 'SHOW_MORE' })}
         </Button>
       </Flex>
     </StyledOutputItem>

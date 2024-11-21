@@ -21,7 +21,7 @@ import {
   rotateHorizontal
 } from '../../../base/utilities/extensions/vectorExtensions';
 import { forceBetween0AndPi } from '../../../base/utilities/extensions/mathExtensions';
-import { type TranslateKey } from '../../../base/utilities/TranslateKey';
+import { type TranslationInput } from '../../../base/utilities/TranslateInput';
 import { PanelInfo } from '../../../base/domainObjectsHelpers/PanelInfo';
 import { Quantity } from '../../../base/domainObjectsHelpers/Quantity';
 import { radToDeg } from 'three/src/math/MathUtils.js';
@@ -83,16 +83,16 @@ export abstract class PlaneDomainObject extends VisualDomainObject {
     return getIconByPrimitiveType(this.primitiveType);
   }
 
-  public override get typeName(): TranslateKey {
+  public override get typeName(): TranslationInput {
     switch (this.primitiveType) {
       case PrimitiveType.PlaneX:
-        return { fallback: 'Vertical plane along Y-axis' };
+        return { untranslated: 'Vertical plane along Y-axis' };
       case PrimitiveType.PlaneY:
-        return { fallback: 'Vertical plane along X-axis' };
+        return { untranslated: 'Vertical plane along X-axis' };
       case PrimitiveType.PlaneZ:
-        return { fallback: 'Horizontal plane' };
+        return { untranslated: 'Horizontal plane' };
       case PrimitiveType.PlaneXY:
-        return { fallback: 'Vertical plane' };
+        return { untranslated: 'Vertical plane' };
       default:
         throw new Error('Unknown PrimitiveType');
     }
@@ -100,8 +100,8 @@ export abstract class PlaneDomainObject extends VisualDomainObject {
 
   public override createRenderStyle(): RenderStyle | undefined {
     const style = new SolidPrimitiveRenderStyle();
-    style.selectedOpacity = 0.5;
-    style.opacity = style.selectedOpacity / 2;
+    style.selectedSolidOpacity = 0.5;
+    style.solidOpacity = style.selectedSolidOpacity / 2;
     style.lineWidth = 1;
     style.selectedLineWidth = 2;
     return style;
@@ -121,23 +121,23 @@ export abstract class PlaneDomainObject extends VisualDomainObject {
 
     switch (this.primitiveType) {
       case PrimitiveType.PlaneX:
-        add('X_COORDINATE', 'X coordinate', this.coordinate, Quantity.Length);
+        add({ key: 'X_COORDINATE' }, this.coordinate, Quantity.Length);
         break;
       case PrimitiveType.PlaneY:
-        add('Y_COORDINATE', 'Y coordinate', this.coordinate, Quantity.Length);
+        add({ key: 'Y_COORDINATE' }, this.coordinate, Quantity.Length);
         break;
       case PrimitiveType.PlaneZ:
-        add('Z_COORDINATE', 'Z coordinate', this.coordinate, Quantity.Length);
+        add({ key: 'Z_COORDINATE' }, this.coordinate, Quantity.Length);
         break;
       case PrimitiveType.PlaneXY:
-        add('DISTANCE_TO_ORIGIN', 'Distance to origin', this.coordinate, Quantity.Length);
-        add('HORIZONTAL_ANGLE', 'Horizontal angle', radToDeg(this.angle), Quantity.Angle);
+        add({ key: 'DISTANCE_TO_ORIGIN' }, this.coordinate, Quantity.Length);
+        add({ key: 'HORIZONTAL_ANGLE' }, radToDeg(this.angle), Quantity.Angle);
         break;
     }
     return info;
 
-    function add(key: string, fallback: string, value: number, quantity: Quantity): void {
-      info.add({ key, fallback, value, quantity });
+    function add(translationInput: TranslationInput, value: number, quantity: Quantity): void {
+      info.add({ translationInput, value, quantity });
     }
   }
 

@@ -28,16 +28,16 @@ export const Image360HistoricalPanel = ({
 
   return (
     <Container isExpanded={revisionDetailsExpanded}>
-      <Tooltip content={t('IMAGES_360_DETAILS_TOOLTIP', '360 Image historical details')}>
+      <Tooltip content={t({ key: 'IMAGES_360_DETAILS_TOOLTIP' })}>
         <StyledToolBar onClick={onDetailsClick} isExpanded={revisionDetailsExpanded}>
           {!revisionDetailsExpanded && (
             <StyledButton type="tertiary">
-              {t('IMAGES_360_DETAILS', '360 Details')}
+              {t({ key: 'IMAGES_360_DETAILS' })}
               <CounterChip counter={revisionCount} label={' Historic'} />
             </StyledButton>
           )}
           {revisionDetailsExpanded && (
-            <StyledButton type="tertiary">{t('IMAGES_360_DETAILS', '360 Details')}</StyledButton>
+            <StyledButton type="tertiary">{t({ key: 'IMAGES_360_DETAILS' })}</StyledButton>
           )}
         </StyledToolBar>
       </Tooltip>

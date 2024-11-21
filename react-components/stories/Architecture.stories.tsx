@@ -3,15 +3,24 @@
  */
 
 import type { Meta, StoryObj } from '@storybook/react';
-import { CadModelContainer } from '../src';
+import { CadModelContainer, RevealButtons, RevealCanvas } from '../src';
 import { Color } from 'three';
-import { type ReactElement } from 'react';
-import { RevealStoryContainer } from './utilities/RevealStoryContainer';
+import { type ReactNode, type ReactElement } from 'react';
+import { RevealStoryContext } from './utilities/RevealStoryContainer';
 import { getAddModelOptionsFromUrl } from './utilities/getAddModelOptionsFromUrl';
-import { DomainObjectPanel } from '../src/components/Architecture/DomainObjectPanel';
-import { ActiveToolToolbar, MainToolbar, TopToolbar } from '../src/components/Architecture/Toolbar';
+import { MainToolbar, TopToolbar } from '../src/components/Architecture/Toolbar';
 import { useRenderTarget } from '../src/components/RevealCanvas/ViewerContext';
-import { type DataSourceType, type AddModelOptions, type CogniteCadModel } from '@cognite/reveal';
+import {
+  type AddModelOptions,
+  type CogniteCadModel,
+  type ClassicDataSourceType
+} from '@cognite/reveal';
+import { ActionList } from '@cognite/cogs-lab';
+import { ContextMenu } from '../src/components/ContextMenu';
+import { Menu } from '@cognite/cogs.js';
+import { ToolUI } from '../src/components/Architecture/ToolUI';
+import { type ContextMenuData } from '../src/architecture';
+import { PointsOfInterestSidePanel } from '../src/components/Architecture/pointsOfInterest/PointsOfInterestSidePanel';
 
 const meta = {
   title: 'Example/Architecture',
@@ -24,26 +33,28 @@ type Story = StoryObj<typeof meta>;
 
 export const Main: Story = {
   args: {
-    addModelOptions: getAddModelOptionsFromUrl('/primitives')
+    addModelOptions: getAddModelOptionsFromUrl(
+      '/primitives'
+    ) as AddModelOptions<ClassicDataSourceType>
   },
-  render: ({ addModelOptions }: { addModelOptions: AddModelOptions<DataSourceType> }) => {
+  render: ({ addModelOptions }: { addModelOptions: AddModelOptions }) => {
     return (
-      <RevealStoryContainer color={new Color(0x4a4a4a)} viewerOptions={{}}>
-        <StoryContent addModelOptions={addModelOptions} />
+      <RevealStoryContext color={new Color(0x4a4a4a)} viewerOptions={{}}>
+        <PointsOfInterestSidePanel>
+          <RevealCanvas>
+            <StoryContent addModelOptions={addModelOptions} />
+          </RevealCanvas>
+        </PointsOfInterestSidePanel>
         <MainToolbar />
         <TopToolbar />
-        <ActiveToolToolbar />
-        <DomainObjectPanel />
-      </RevealStoryContainer>
+        <ToolUI />
+        <ContextMenu Content={ContextMenuContent} />
+      </RevealStoryContext>
     );
   }
 };
 
-function StoryContent({
-  addModelOptions
-}: {
-  addModelOptions: AddModelOptions<DataSourceType>;
-}): ReactElement {
+function StoryContent({ addModelOptions }: { addModelOptions: AddModelOptions }): ReactElement {
   const renderTarget = useRenderTarget();
   return (
     <>
@@ -56,3 +67,19 @@ function StoryContent({
     </>
   );
 }
+
+const ContextMenuContent = ({
+  contextMenuData
+}: {
+  contextMenuData: ContextMenuData;
+}): ReactNode => {
+  const point = contextMenuData.intersection?.point;
+
+  return (
+    <Menu>
+      <ActionList>
+        {point !== undefined && <RevealButtons.PointsOfInterestInitiateCreation point={point} />}
+      </ActionList>
+    </Menu>
+  );
+};

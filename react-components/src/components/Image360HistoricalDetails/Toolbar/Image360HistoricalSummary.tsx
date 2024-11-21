@@ -79,7 +79,7 @@ export const Image360HistoricalSummary = forwardRef(
         <StyledFlex direction="column">
           <StyledSubFlex>{stationName}</StyledSubFlex>
           <StyledDetail>
-            {t('IMAGES_360_STATION', 'Station :')} {stationId}
+            {t({ key: 'IMAGES_360_STATION' })} {stationId}
           </StyledDetail>
         </StyledFlex>
 

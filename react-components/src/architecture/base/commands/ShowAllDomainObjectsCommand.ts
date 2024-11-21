@@ -3,7 +3,7 @@
  */
 
 import { type IconName } from '../../base/utilities/IconName';
-import { type TranslateKey } from '../utilities/TranslateKey';
+import { type TranslationInput } from '../utilities/TranslateInput';
 import { InstanceCommand } from './InstanceCommand';
 
 export abstract class ShowAllDomainObjectsCommand extends InstanceCommand {
@@ -11,8 +11,8 @@ export abstract class ShowAllDomainObjectsCommand extends InstanceCommand {
   // OVERRIDES
   // ==================================================
 
-  public override get tooltip(): TranslateKey {
-    return { fallback: 'Show or hide' };
+  public override get tooltip(): TranslationInput {
+    return { untranslated: 'Show or hide' };
   }
 
   public override get icon(): IconName {

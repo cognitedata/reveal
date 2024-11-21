@@ -2,7 +2,7 @@
  * Copyright 2024 Cognite AS
  */
 
-import { type TranslateKey } from '../../utilities/TranslateKey';
+import { type TranslationInput } from '../../utilities/TranslateInput';
 import { FractionSliderCommand } from '../FractionSliderCommand';
 
 export class MockSliderCommand extends FractionSliderCommand {
@@ -12,8 +12,8 @@ export class MockSliderCommand extends FractionSliderCommand {
   // OVERRIDES
   // ==================================================
 
-  public override get tooltip(): TranslateKey {
-    return { fallback: 'Slider' };
+  public override get tooltip(): TranslationInput {
+    return { untranslated: 'Slider' };
   }
 
   public override get value(): number {

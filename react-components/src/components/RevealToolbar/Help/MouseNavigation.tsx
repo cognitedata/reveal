@@ -21,33 +21,28 @@ export const MouseNavigation = ({ fallbackLanguage }: MouseNavigationProps): Rea
   const { t } = useTranslation(fallbackLanguage);
   return (
     <Section
-      title={t('MOUSE_NAVIGATION_TITLE', 'Mouse')}
-      subTitle={t('MOUSE_TOUCH_NAVIGATION_SUBTITLE', 'Navigate and select')}
-      description={t(
-        'MOUSE_NAVIGATION_DESCRIPTION',
-        'Click and drag to rotate, and pan the view. Use mouse wheel to zoom the view. Left click to select'
-      )}>
+      title={t({ key: 'MOUSE_NAVIGATION_TITLE' })}
+      subTitle={t({ key: 'MOUSE_TOUCH_NAVIGATION_SUBTITLE' })}
+      description={t({ key: 'MOUSE_NAVIGATION_DESCRIPTION' })}>
       <MouseNavigationInstructionGrid>
-        <InstructionText>{t('MOUSE_ZOOM', 'Zoom / scroll')}</InstructionText>
+        <InstructionText>{t({ key: 'MOUSE_ZOOM' })}</InstructionText>
         <InstructionText
           style={{ marginBottom: 30, textAlign: 'right', width: 'max-content', maxWidth: '100px' }}>
-          {t('MOUSE_ROTATE', 'Rotate')}
-          <InstructionDetail>{t('MOUSE_INSTRUCTIONS', 'Click+drag')}</InstructionDetail>
+          {t({ key: 'MOUSE_ROTATE' })}
+          <InstructionDetail>{t({ key: 'MOUSE_INSTRUCTIONS' })}</InstructionDetail>
         </InstructionText>
         <MouseNavigationCombinedGridItem>
           <StyledMouse />
         </MouseNavigationCombinedGridItem>
         <InstructionText
           style={{ marginBottom: 30, textAlign: 'left', width: 'max-content', maxWidth: '100px' }}>
-          {t('PAN', 'Pan')}
-          <InstructionDetail>{t('MOUSE_INSTRUCTIONS', 'Click+drag')}</InstructionDetail>
+          {t({ key: 'PAN' })}
+          <InstructionDetail>{t({ key: 'MOUSE_INSTRUCTIONS' })}</InstructionDetail>
         </InstructionText>
         <InstructionText
           style={{ marginTop: -50, textAlign: 'right', width: 'max-content', maxWidth: '100px' }}>
-          {t('MOUSE_SELECT', 'Select Objects')}
-          <InstructionDetail>
-            {t('MOUSE_SELECT_INSTRUCTION', 'Click on interactive objects')}
-          </InstructionDetail>
+          {t({ key: 'MOUSE_SELECT' })}
+          <InstructionDetail>{t({ key: 'MOUSE_SELECT_INSTRUCTION' })}</InstructionDetail>
         </InstructionText>
       </MouseNavigationInstructionGrid>
     </Section>

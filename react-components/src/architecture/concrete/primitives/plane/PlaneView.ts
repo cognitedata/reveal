@@ -309,7 +309,7 @@ function updateSolidMaterial(
   material.polygonOffsetFactor = 1;
   material.polygonOffsetUnits = 4.0;
   material.color = color;
-  material.opacity = style.getOpacity(domainObject.isSelected);
+  material.opacity = style.getSolidOpacity(domainObject.isSelected);
   material.transparent = true;
   material.emissive = color;
   material.emissiveIntensity = 0.2;
