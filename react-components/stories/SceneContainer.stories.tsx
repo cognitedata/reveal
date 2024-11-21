@@ -167,7 +167,6 @@ const SceneContainerStoryContent = ({
     viewsToSearch
   );
 
-  console.log('allEquipment:', allEquipment);
 
   const {
     data: allAssets,

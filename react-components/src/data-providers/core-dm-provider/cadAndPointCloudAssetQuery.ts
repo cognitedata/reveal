@@ -3,7 +3,7 @@
  */
 
 import { type QueryRequest } from '@cognite/sdk';
-import { type Source, type InstanceFilter, type DmsUniqueIdentifier } from '../FdmSDK';
+import { type Source, type InstanceFilter } from '../FdmSDK';
 import { cogniteAssetSourceWithProperties } from './cogniteAssetSourceWithProperties';
 import {
   COGNITE_CAD_NODE_SOURCE,
@@ -11,11 +11,9 @@ import {
   COGNITE_POINT_CLOUD_VOLUME_SOURCE,
   CORE_DM_3D_CONTAINER_SPACE
 } from './dataModels';
-import { getRevisionContainsAnyFilter, isPointCloudVolumeFilter } from '../utils/filters';
 
 export function cadAndPointCloudAssetQuery(
   sourcesToSearch: Source[],
-  revisionRef: DmsUniqueIdentifier[],
   filter: InstanceFilter | undefined,
   limit: number
 ): QueryRequest {
@@ -46,9 +44,7 @@ export function cadAndPointCloudAssetQuery(
       },
       pointcloud_volumes: {
         nodes: {
-          filter: {
-            and: [isPointCloudVolumeFilter, getRevisionContainsAnyFilter(revisionRef)]
-          }
+          filter: containsPointCloudRevisionFilter
         },
         limit
       },
@@ -87,6 +83,17 @@ export function cadAndPointCloudAssetQuery(
 const containsCadRevisionFilter: InstanceFilter = {
   containsAny: {
     property: [CORE_DM_3D_CONTAINER_SPACE, COGNITE_CAD_NODE_SOURCE.externalId, 'revisions'],
+    values: { parameter: 'revisionRefs' }
+  }
+} as const;
+
+const containsPointCloudRevisionFilter: InstanceFilter = {
+  containsAny: {
+    property: [
+      CORE_DM_3D_CONTAINER_SPACE,
+      COGNITE_POINT_CLOUD_VOLUME_SOURCE.externalId,
+      'revisions'
+    ],
     values: { parameter: 'revisionRefs' }
   }
 } as const;

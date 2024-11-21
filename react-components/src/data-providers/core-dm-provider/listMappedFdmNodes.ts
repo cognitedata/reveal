@@ -20,7 +20,7 @@ export async function listAllMappedFdmNodes(
 ): Promise<NodeItem[]> {
   const filter = makeSureNonEmptyFilterForRequest(instancesFilter);
 
-  const rawQuery = cadAndPointCloudAssetQuery(sourcesToSearch, revisionRefs, filter, 10000);
+  const rawQuery = cadAndPointCloudAssetQuery(sourcesToSearch, filter, 10000);
 
   const query = {
     ...rawQuery,
@@ -44,13 +44,12 @@ export async function listMappedFdmNodes(
 ): Promise<NodeItem[]> {
   const filter = makeSureNonEmptyFilterForRequest(instancesFilter);
 
-  const rawQuery = cadAndPointCloudAssetQuery(sourcesToSearch, revisionRefs, filter, limit);
+  const rawQuery = cadAndPointCloudAssetQuery(sourcesToSearch, filter, limit);
 
   const query = {
     ...rawQuery,
     parameters: { revisionRefs }
   };
-  console.log('RevisionRefs in appedNode fetching:', revisionRefs);
 
   const queryResult = await fdmSdk.queryNodesAndEdges<
     typeof query,

@@ -89,7 +89,6 @@ const StoryContent = ({ resources }: { resources: AddResourceOptions[] }): React
     filteredResources as AddModelOptions[],
     viewsToSearch
   );
-  console.log('allEquipment:', allEquipment);
 
   const {
     data: allAssets,
@@ -372,19 +371,19 @@ type Story = StoryObj<typeof meta>;
 export const Main: Story = {
   args: {
     resources: [
-      // {
-      //   modelId: 3544114490298106,
-      //   revisionId: 6405404576933316,
-      //   styling: {
-      //     default: {
-      //       color: new Color('#efefef')
-      //     },
-      //     mapped: {
-      //       color: new Color('#c5cbff')
-      //     }
-      //   },
-      //   siteId: 'celanese1'
-      // },
+      {
+        modelId: 3544114490298106,
+        revisionId: 6405404576933316,
+        styling: {
+          default: {
+            color: new Color('#efefef')
+          },
+          mapped: {
+            color: new Color('#c5cbff')
+          }
+        },
+        siteId: 'celanese1'
+      },
       {
         modelId: 7848789582129513,
         revisionId: 1871031176419082

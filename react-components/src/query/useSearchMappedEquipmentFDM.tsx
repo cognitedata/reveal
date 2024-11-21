@@ -61,7 +61,6 @@ export const useSearchMappedEquipmentFDM = (
       if (models.length === 0) {
         return [];
       }
-      console.log('models in search mapped equipment:', models);
       const sources = createSourcesFromViews(viewsToSearch);
       const chunkedSources = chunk(sources, 10);
       if (chunkedSources.length === 0) {
@@ -144,7 +143,6 @@ export const useAllMappedEquipmentFDM = (
     queryKey: ['reveal', 'react-components', 'all-mapped-equipment-fdm', viewsToSearch, models],
     queryFn: async () => {
       const viewSources = createSourcesFromViews(viewsToSearch);
-      console.log('models in all mapped equipment:', models);
 
       return await fdmDataProvider.listAllMappedFdmNodes(models, viewSources, undefined);
     },

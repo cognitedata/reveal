@@ -32,6 +32,9 @@ export const useActiveReveal3dResources = (
   >([]);
 
   const visibleModels = useMemo(() => {
+    if (layerState === undefined) {
+      return [];
+    }
     return models.filter((m) => m.visible);
   }, [models, layerState]);
 
