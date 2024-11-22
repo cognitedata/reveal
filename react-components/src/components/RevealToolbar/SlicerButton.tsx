@@ -120,7 +120,9 @@ export const SlicerButton = (): ReactElement => {
 
 const StyledMenu = styled(Menu)`
   height: 512px;
-  padding: 12px;
-  min-width: 0px;
-  width: 38px;
+  width: 32px !important;
+  max-width: 32px !important;
+  min-width: 32px !important;
+  padding: 12px 8px 12px 8px !important;
+  overflow: hidden;
 `;
