@@ -92,4 +92,5 @@ const Image360HistoricalPanel = styled.div<{ isExpanded: boolean }>`
   min-width: 100%;
   transition: transform 0.25s ease-in-out;
   transform: ${({ isExpanded }) => (isExpanded ? 'translateY(0)' : 'translateY(100%)')};
+  z-index: 100;
 `;

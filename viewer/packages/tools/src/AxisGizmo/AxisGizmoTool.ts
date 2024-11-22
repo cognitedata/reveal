@@ -444,7 +444,7 @@ function initializeStyle(element: HTMLElement, options: AxisGizmoOptions) {
     return;
   }
   style.position = 'absolute';
-  style.zIndex = '1000';
+  style.zIndex = '1';
   style.width = style.height = options.size + 'px';
   const xMargin = options.xMargin + 'px';
   const yMargin = options.yMargin + 'px';
