@@ -44,7 +44,7 @@ export abstract class PrimitiveEditTool extends BaseEditTool {
   // ==================================================
 
   public override onDeactivate(): void {
-    this.onEscapeKey();
+    this.escape();
     super.onDeactivate();
   }
 
@@ -63,13 +63,12 @@ export abstract class PrimitiveEditTool extends BaseEditTool {
   }
 
   public override onEscapeKey(): void {
-    if (this._creator !== undefined && this._creator.onEscapeKey()) {
-      this.endCreatorIfFinished(this._creator, true);
-    } else {
-      this.setDefaultPrimitiveType();
-      this._creator = undefined;
-    }
+    const wasEdit = this.isEdit;
+    this.escape();
     CommandsUpdater.update(this.renderTarget);
+    if (wasEdit) {
+      super.onEscapeKey();
+    }
   }
 
   public override async onHoverByDebounce(event: PointerEvent): Promise<void> {
@@ -222,6 +221,15 @@ export abstract class PrimitiveEditTool extends BaseEditTool {
   // INSTANCE METHODS
   // ==================================================
 
+  public escape(): void {
+    if (this._creator !== undefined && this._creator.escape()) {
+      this.endCreatorIfFinished(this._creator, true);
+    } else {
+      this.setDefaultPrimitiveType();
+      this._creator = undefined;
+    }
+  }
+
   private setFocus(domainObject: VisualDomainObject, intersection: CustomObjectIntersection): void {
     if (domainObject instanceof SolidDomainObject) {
       const pickInfo = intersection.userData as PrimitivePickInfo;
@@ -274,12 +282,13 @@ export abstract class PrimitiveEditTool extends BaseEditTool {
     return undefined;
   }
 
-  protected setDefaultPrimitiveType(): void {
+  protected setDefaultPrimitiveType(): boolean {
     if (this.primitiveType === this._defaultPrimitiveType) {
-      return;
+      return false;
     }
     this.primitiveType = this._defaultPrimitiveType;
     CommandsUpdater.update(this.renderTarget);
+    return true;
   }
 
   protected endCreatorIfFinished(creator: BaseCreator, force = false): void {
