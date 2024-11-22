@@ -16,10 +16,6 @@ type NotifyDelegate = (domainObject: DomainObject, change: DomainObjectChange) =
  * listeners about changes.
  */
 export class Views {
-  // ==================================================
-  // INSTANCE FIELDS
-  // ==================================================
-
   private readonly _views: BaseView[] = [];
   private readonly _listeners: NotifyDelegate[] = [];
 
@@ -69,10 +65,6 @@ export class Views {
     }
     clear(this._views);
   }
-
-  // ==================================================
-  // INSTANCE METHODS: Event listeners admin
-  // ==================================================
 
   public addEventListener(listener: NotifyDelegate): void {
     this._listeners.push(listener);
