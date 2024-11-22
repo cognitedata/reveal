@@ -136,10 +136,7 @@ export function CadModelContainer({
   }
 }
 
-function defaultLoadErrorHandler(
-  addOptions: AddModelOptions<ClassicDataSourceType>,
-  error: any
-): void {
+function defaultLoadErrorHandler(addOptions: AddModelOptions, error: any): void {
   console.warn(
     `Failed to load (${addOptions.modelId}, ${addOptions.revisionId}): ${JSON.stringify(error)}`
   );

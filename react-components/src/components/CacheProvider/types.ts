@@ -78,7 +78,7 @@ export type ChunkInCacheTypes<ObjectType> = {
   chunkNotInCache: number[];
 };
 
-export type PointCloudVolume = {
+type PointCloudVolume = {
   externalId: string;
   space: string;
   volumeReference: string;

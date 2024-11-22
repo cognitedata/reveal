@@ -30,7 +30,7 @@ import {
   useNodesForAssets
 } from '../CacheProvider/AssetMappingAndNode3DCacheProvider';
 import {
-  isAssetMappingStylingGroup,
+  isClassicAssetMappingStylingGroup,
   isFdmAssetStylingGroup
 } from '../../utilities/StylingGroupUtils';
 import { type ThreeDModelFdmMappings } from '../../hooks/types';
@@ -198,7 +198,7 @@ function useCalculateInstanceStyling(
   );
 
   const assetIdsFromInstanceGroups = instanceGroups
-    .filter(isAssetMappingStylingGroup)
+    .filter(isClassicAssetMappingStylingGroup)
     .flatMap((instanceGroup) => instanceGroup.assetIds);
 
   const {
@@ -247,7 +247,7 @@ function useAssetMappingInstanceStyleGroups(
 
     return models.map((model, index) => {
       return calculateAssetMappingCadModelStyling(
-        instanceGroups.filter(isAssetMappingStylingGroup),
+        instanceGroups.filter(isClassicAssetMappingStylingGroup),
         modelAssetMappings[index].assetToNodeMap,
         model
       );

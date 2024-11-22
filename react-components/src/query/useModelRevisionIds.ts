@@ -6,11 +6,14 @@ import { use3dModels } from '../hooks';
 import { type ModelRevisionId } from '../components/CacheProvider/types';
 import { CognitePointCloudModel, type DataSourceType, isDMPointCloudModel } from '@cognite/reveal';
 import { isClassicIdentifier, isDMIdentifier } from '../components';
+import { getModelIdAndRevisionIdFromExternalId } from '../hooks/network/getModelIdAndRevisionIdFromExternalId';
+import { useFdmSdk } from '../components/RevealCanvas/SDKProvider';
 
 export type ModelRevisionIdAndType = ModelRevisionId & { type: 'cad' | 'pointcloud' };
 
 export const useModelRevisionIds = (): ModelRevisionIdAndType[] => {
   const viewerModels = use3dModels();
+  const fdmSdk = useFdmSdk();
 
   const dmModels: Array<CognitePointCloudModel<DataSourceType>> = useMemo(() => {
     return viewerModels.filter(
@@ -26,30 +29,25 @@ export const useModelRevisionIds = (): ModelRevisionIdAndType[] => {
       return [];
     }
     const modelRevisionIds: ModelRevisionIdAndType[] = [];
-    dmModels.forEach((model) => {
+    dmModels.forEach(async (model) => {
       if (isClassicIdentifier(model.modelIdentifier)) {
         modelRevisionIds.push({
           modelId: model.modelIdentifier.modelId,
           revisionId: model.modelIdentifier.revisionId,
           type: model.type
         });
-      } else if (
-        isDMIdentifier(model.modelIdentifier) &&
-        'classicModelRevisionId' in model.modelIdentifier
-      ) {
-        const classicModelRevisionId = model.modelIdentifier.classicModelRevisionId;
-        if (
-          typeof classicModelRevisionId === 'object' &&
-          classicModelRevisionId !== null &&
-          'modelId' in classicModelRevisionId &&
-          'revisionId' in classicModelRevisionId
-        ) {
-          modelRevisionIds.push({
-            modelId: classicModelRevisionId.modelId as number,
-            revisionId: classicModelRevisionId.revisionId as number,
-            type: model.type
-          });
-        }
+      } else if (isDMIdentifier(model.modelIdentifier)) {
+        const { modelId, revisionId } = await getModelIdAndRevisionIdFromExternalId(
+          model.modelIdentifier.revisionExternalId,
+          model.modelIdentifier.revisionSpace,
+          fdmSdk
+        );
+
+        modelRevisionIds.push({
+          modelId,
+          revisionId,
+          type: model.type
+        });
       }
     });
     return modelRevisionIds;

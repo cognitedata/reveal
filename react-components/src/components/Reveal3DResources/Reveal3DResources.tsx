@@ -19,31 +19,28 @@ import {
   type TypedReveal3DModel,
   type AddResourceOptions,
   type Reveal3DResourcesProps,
-  type AddCadResourceOptions,
-  type AddPointCloudResourceOptions,
   type CadModelOptions
 } from './types';
 import { useCalculatePointCloudStyling } from './useCalculatePointCloudStyling';
 import { EMPTY_ARRAY } from '../../utilities/constants';
 import {
-  isCadAssetMappingStylingGroup,
+  isAssetMappingStylingGroup,
   isImage360AssetStylingGroup
 } from '../../utilities/StylingGroupUtils';
 import { type ImageCollectionModelStyling } from '../Image360CollectionContainer/useApply360AnnotationStyling';
-import { is360ImageAddOptions } from './typeGuards';
+import { is360ImageAddOptions, isClassicIdentifier } from './typeGuards';
 import { useRemoveNonReferencedModels } from './useRemoveNonReferencedModels';
 import { useCalculateCadStyling } from './useCalculateCadStyling';
 import { useReveal3DResourcesStylingLoadingSetter } from './Reveal3DResourcesInfoContext';
 import { type CadModelStyling } from '../CadModelContainer/types';
 import { type PointCloudModelStyling } from '../PointCloudContainer/types';
-import { useModelIdRevisionIdFromModelOptions } from '../../hooks/useModelIdRevisionIdFromModelOptions';
-import { isDefined } from '../../utilities/isDefined';
 import { type Image360PolygonStylingGroup } from '../Image360CollectionContainer';
 import { useAssetMappedNodesForRevisions } from '../CacheProvider';
 import {
   useGenerateAssetMappingCachePerItemFromModelCache,
   useGenerateNode3DCache
 } from '../CacheProvider/AssetMappingAndNode3DCacheProvider';
+import { useCadOrPointCloudResources } from './useCadOrPointCloudResources';
 
 export const Reveal3DResources = ({
   resources,
@@ -55,32 +52,12 @@ export const Reveal3DResources = ({
   image360Settings
 }: Reveal3DResourcesProps): ReactElement => {
   const viewer = useReveal();
-
   const [reveal3DModels, setReveal3DModels] = useState<TypedReveal3DModel[]>([]);
-
   const numModelsLoaded = useRef(0);
 
-  const cadOrPointCloudResources = useMemo(
-    () =>
-      resources.filter(
-        (resource): resource is AddCadResourceOptions | AddPointCloudResourceOptions =>
-          !is360ImageAddOptions(resource)
-      ),
-    [resources]
-  );
+  useRemoveNonReferencedModels(resources, viewer);
 
-  const addClassicModelOptionsResults = useModelIdRevisionIdFromModelOptions(
-    cadOrPointCloudResources as Array<AddModelOptions<ClassicDataSourceType>>
-  );
-  const classicModelOptions = useMemo(
-    () =>
-      addClassicModelOptionsResults
-        .map((result) => {
-          return result.data;
-        })
-        .filter(isDefined),
-    [addClassicModelOptionsResults]
-  );
+  const { classicModelOptions, cadOrPointCloudResources } = useCadOrPointCloudResources(resources);
 
   useEffect(() => {
     const fetchTypedModels = async (): Promise<void> => {
@@ -102,8 +79,6 @@ export const Reveal3DResources = ({
       .map((options) => ({ ...image360Settings, ...options }));
   }, [resources, image360Settings]);
 
-  useRemoveNonReferencedModels(resources, viewer);
-
   const cadModelOptions = useMemo(
     () => reveal3DModels.filter((model): model is CadModelOptions => model.type === 'cad'),
     [reveal3DModels]
@@ -115,7 +90,7 @@ export const Reveal3DResources = ({
   useGenerateNode3DCache(cadModelOptions, assetMappings);
 
   const instaceStylingWithAssetMappings =
-    instanceStyling?.filter(isCadAssetMappingStylingGroup) ?? EMPTY_ARRAY;
+    instanceStyling?.filter(isAssetMappingStylingGroup) ?? EMPTY_ARRAY;
 
   const { styledModels: styledCadModelOptions, isModelMappingsLoading } = useCalculateCadStyling(
     cadModelOptions,
@@ -196,9 +171,15 @@ export const Reveal3DResources = ({
           defaultStyle,
           groups: styleGroups
         };
+        let key;
+        if (isClassicIdentifier(model)) {
+          key = `${model.modelId}/${model.revisionId}/${index}`;
+        } else {
+          key = `${model.revisionExternalId}/${model.revisionSpace}/${index}`;
+        }
         return (
           <PointCloudContainer
-            key={`${index}`}
+            key={key}
             addModelOptions={model}
             styling={pcStyling}
             transform={model.transform}

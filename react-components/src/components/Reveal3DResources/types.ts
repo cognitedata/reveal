@@ -17,6 +17,11 @@ import { type Matrix4 } from 'three';
 import { type DmsUniqueIdentifier, type Source } from '../../data-providers/FdmSDK';
 import { type CogniteInternalId, type Node3D } from '@cognite/sdk';
 import { type TreeIndexStylingGroup } from '../CadModelContainer/types';
+import {
+  type PointCloudAnnotationModel,
+  type PointCloudVolumeWithAsset
+} from '../CacheProvider/types';
+import { type PointCloudVolumeStylingGroup } from '../PointCloudContainer';
 
 export type AddImage360CollectionOptions =
   | AddImage360CollectionEventsOptions
@@ -141,4 +146,19 @@ export type CommonResourceContainerProps = {
       | CognitePointCloudModel<DataSourceType>
       | Image360Collection<DataSourceType>
   ) => void;
+};
+
+export type StyledPointCloudModel = {
+  model: PointCloudModelOptions;
+  styleGroups: PointCloudVolumeStylingGroup[];
+};
+
+export type AnnotationModelDataResult = {
+  model: PointCloudModelOptions;
+  annotationModel: PointCloudAnnotationModel[];
+};
+
+export type DMVolumeModelDataResult = {
+  model: PointCloudModelOptions;
+  pointCloudDMVolumeWithAsset: PointCloudVolumeWithAsset[];
 };

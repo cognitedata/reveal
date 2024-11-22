@@ -3,7 +3,10 @@
  */
 
 import { type UseQueryResult, useQuery } from '@tanstack/react-query';
-import { type CadPointCloudModelWithModelIdRevisionId } from '../../components/Reveal3DResources/types';
+import {
+  type DMVolumeModelDataResult,
+  type CadPointCloudModelWithModelIdRevisionId
+} from '../../components/Reveal3DResources/types';
 import {
   type COGNITE_ASSET_SOURCE,
   type COGNITE_POINT_CLOUD_VOLUME_SOURCE
@@ -19,7 +22,6 @@ import {
 } from '../../data-providers/utils/filters';
 import { type PointCloudVolumeWithAsset } from '../../components/CacheProvider/types';
 import { type FdmSDK } from '../../data-providers/FdmSDK';
-import { type DMVolumeModelDataResult } from '../../components/Reveal3DResources/useCalculatePointCloudStyling';
 import { pointCloudDMVolumesQuery } from './pointCloudDMVolumesQuery';
 import { queryKeys } from '../../utilities/queryKeys';
 

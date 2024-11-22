@@ -8,13 +8,16 @@ import { type UseQueryResult, useQuery } from '@tanstack/react-query';
 import { useSDK } from '../RevealCanvas/SDKProvider';
 import { useRevealKeepAlive } from '../RevealKeepAlive/RevealKeepAliveContext';
 import { PointCloudAnnotationCache } from './PointCloudAnnotationCache';
-import { type TypedReveal3DModel } from '../Reveal3DResources/types';
-import { type AnnotationModelDataResult } from '../Reveal3DResources/useCalculatePointCloudStyling';
+import {
+  type AnnotationModelDataResult,
+  type TypedReveal3DModel
+} from '../Reveal3DResources/types';
 import { type PointCloudAnnotationMappedAssetData } from '../../hooks/types';
 import { EMPTY_ARRAY } from '../../utilities/constants';
 import { isDefined } from '../../utilities/isDefined';
 import { type AnyIntersection } from '@cognite/reveal';
 import { useModelIdRevisionIdFromModelOptions } from '../../hooks/useModelIdRevisionIdFromModelOptions';
+import { queryKeys } from '../../utilities/queryKeys';
 
 export type PointCloudAnnotationCacheContextContent = {
   cache: PointCloudAnnotationCache;
@@ -47,9 +50,7 @@ export const usePointCloudAnnotationMappingsForModels = (
 
   return useQuery({
     queryKey: [
-      'reveal',
-      'react-components',
-      'models-pointcloud-annotations-mappings',
+      queryKeys.pointCloudAnnotationMappings(),
       ...classicModelOptions.map((model) => `${model.modelId}/${model.revisionId}`).sort()
     ],
     queryFn: async () => {
@@ -85,9 +86,7 @@ export const usePointCloudAnnotationMappingsForAssetIds = (
 
   return useQuery({
     queryKey: [
-      'reveal',
-      'react-components',
-      'all-annotation-mappings',
+      queryKeys.pointCloudAnnotationForAssetIds(),
       ...classicModelOptions.map((model) => `${model.modelId}/${model.revisionId}`).sort(),
       ...(assetIds?.map((assetId) => assetId.toString()).sort() ?? [])
     ],
@@ -125,13 +124,7 @@ export const usePointCloudAnnotationMappingForAssetId = (
     : [undefined, undefined, undefined];
 
   return useQuery({
-    queryKey: [
-      'reveal',
-      'react-components',
-      'asset-annotation-mapping-for-a-model',
-      `${modelId}/${revisionId}`,
-      assetId
-    ],
+    queryKey: [queryKeys.pointCloudAnnotationForAssetId(), `${modelId}/${revisionId}`, assetId],
     queryFn: async () => {
       if (modelId === undefined || revisionId === undefined || assetId === undefined) {
         return EMPTY_ARRAY;

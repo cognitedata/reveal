@@ -14,6 +14,12 @@ export const queryKeys = {
   timeseriesLatestDatapoint: () => [...timeseries, 'latest-datapoints'] as const,
   // TIMESERIES RELATIONSHIPS WITH ASSETS
   timeseriesLinkedToAssets: () => [...timeseries, 'timeseries-linked-assets'] as const,
+  // Point Cloud Annotations
+  pointCloudAnnotationMappings: () => [...models, 'point-cloud-annotation-mappings'] as const,
+  pointCloudAnnotationForAssetIds: () =>
+    [...models, ...assets, 'point-cloud-all-annotations'] as const,
+  pointCloudAnnotationForAssetId: () =>
+    [...models, ...assets, 'asset-annotation-mapping-for-a-model'] as const,
   // PointCloud Volume for CoreDM
   pointCloudDMVolumeMappings: () => [...models, 'point-cloud-dm-volume-mappings'] as const,
   pointCloudDMVolumeAssetMappings: () =>
