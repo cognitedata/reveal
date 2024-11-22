@@ -23,10 +23,6 @@ export class Views {
   private readonly _views: BaseView[] = [];
   private readonly _listeners: NotifyDelegate[] = [];
 
-  // ==================================================
-  // VIRTUAL METHODS:
-  // ==================================================
-
   /**
    * Notifies the listeners and views about a change in the domain object.
    * The should be called from DomainObject class only
@@ -47,10 +43,6 @@ export class Views {
       view.update(change);
     }
   }
-
-  // ==================================================
-  // INSTANCE METHODS: Views admin
-  // ==================================================
 
   public *getByType<T extends BaseView>(classType: Class<T>): Generator<T> {
     for (const view of this._views) {

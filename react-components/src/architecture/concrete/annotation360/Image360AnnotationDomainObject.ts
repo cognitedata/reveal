@@ -62,10 +62,6 @@ export class Image360AnnotationDomainObject extends LineDomainObject {
     this.status = domainObject.status;
   }
 
-  public override get hasPanelInfo(): boolean {
-    return false;
-  }
-
   public override createRenderStyle(): RenderStyle | undefined {
     const style = new LineRenderStyle();
     style.showLabel = false;
