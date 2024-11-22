@@ -15,6 +15,8 @@ import { UndoCommand } from '../../base/concreteCommands/UndoCommand';
 import { type BaseCommand } from '../../base/commands/BaseCommand';
 import { Changes } from '../../base/domainObjectsHelpers/Changes';
 import { DeleteSelectedImage360AnnotationCommand } from './DeleteSelectedImage360AnnotationCommand';
+import { Image360AnnotationFolder } from './Image360AnnotationFolder';
+import { type DomainObject } from '../../base/domainObjects/DomainObject';
 
 export class Image360AnnotationTool extends PrimitiveEditTool {
   // ==================================================
@@ -157,5 +159,16 @@ export class Image360AnnotationTool extends PrimitiveEditTool {
 
   protected override createCreator(): BaseCreator | undefined {
     return new Image360AnnotationCreator(this);
+  }
+
+  protected override getOrCreateParent(): DomainObject {
+    const root = this.rootDomainObject;
+    const folder = root.getDescendantByType(Image360AnnotationFolder);
+    if (folder !== undefined) {
+      return folder;
+    }
+    const newFolder = new Image360AnnotationFolder();
+    root.addChildInteractive(newFolder);
+    return newFolder;
   }
 }
