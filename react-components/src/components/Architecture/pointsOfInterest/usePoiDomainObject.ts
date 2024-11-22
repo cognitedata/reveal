@@ -3,9 +3,8 @@
  */
 import { useState } from 'react';
 import { PointsOfInterestDomainObject } from '../../../architecture';
-import { PointsOfInterestTool } from '../../../architecture/concrete/pointsOfInterest/PointsOfInterestTool';
 import { useRenderTarget } from '../../RevealCanvas';
-import { useOnUpdate, useOnUpdateDomainObject } from '../useOnUpdate';
+import { useOnUpdateDomainObject } from '../useOnUpdate';
 
 export function usePoiDomainObject(): PointsOfInterestDomainObject<unknown> | undefined {
   const renderTarget = useRenderTarget();

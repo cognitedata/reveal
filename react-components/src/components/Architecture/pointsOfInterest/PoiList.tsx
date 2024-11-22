@@ -57,7 +57,7 @@ export const PoiList = ({ onRowClick }: PoiListProps): ReactNode => {
     <DataGrid<RowType>
       onRowClick={(row) => {
         poiObject.setSelectedPointOfInterest(row.row.poi as PointOfInterest<unknown>);
-        onRowClick?.(row.row.poi);
+        onRowClick?.(row.row.poi as PointOfInterest<unknown>);
       }}
       columns={columns}
       data={rowData}

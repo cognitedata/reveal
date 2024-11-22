@@ -12,7 +12,7 @@ import { type AnchoredDialogContent } from '../../base/commands/BaseTool';
 import { AnchoredDialogUpdater } from '../../base/reactUpdaters/AnchoredDialogUpdater';
 import { NavigationTool } from '../../base/concreteCommands/NavigationTool';
 import { CreatePointsOfInterestWithDescriptionCommand } from './CreatePointsOfInterestWithDescriptionCommand';
-import { RevealRenderTarget } from '../../base/renderTarget/RevealRenderTarget';
+import { type RevealRenderTarget } from '../../base/renderTarget/RevealRenderTarget';
 
 export class PointsOfInterestTool<PoiIdType> extends NavigationTool {
   private _isCreating: boolean = false;
