@@ -76,7 +76,7 @@ export class SetClipTypeCommand extends RenderTargetCommand {
     if (tool === undefined) {
       return false;
     }
-    tool.onEscapeKey();
+    tool.escape();
     tool.clearDragging();
     if (tool.primitiveType === this._primitiveType) {
       tool.primitiveType = PrimitiveType.None;

@@ -96,7 +96,7 @@ export class LineCreator extends BaseCreator {
     return true;
   }
 
-  public override onEscapeKey(): boolean {
+  public override escape(): boolean {
     const domainObject = this._domainObject;
     if (this.notPendingPointCount < this.minimumPointCount) {
       domainObject.removeInteractive();
