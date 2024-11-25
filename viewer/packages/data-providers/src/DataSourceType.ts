@@ -2,7 +2,7 @@
  * Copyright 2024 Cognite AS
  */
 import { AnnotationModel, AnnotationsAssetRef } from '@cognite/sdk';
-import { Image360DataModelIdentifier } from './image-360-data-providers/descriptor-providers/datamodels/Cdf360DataModelsDescriptorProvider';
+import { Image360DataModelIdentifier } from './image-360-data-providers/descriptor-providers/datamodels/system-space/Cdf360DataModelsDescriptorProvider';
 import { DMInstanceRef } from './pointcloud-stylable-object-providers/types';
 import { PointCloudAnnotationVolumeCollection, PointCloudDMVolumeCollection } from '@reveal/pointcloud-styling';
 

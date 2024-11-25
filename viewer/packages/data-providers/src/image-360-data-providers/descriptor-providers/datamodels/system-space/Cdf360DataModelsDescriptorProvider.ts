@@ -10,11 +10,11 @@ import {
   Image360FileDescriptor,
   InstanceIdentifier,
   QueryNextCursors
-} from '../../../types';
+} from '../../../../types';
 import { Cdf360FdmQuery, get360CollectionQuery } from './get360CollectionQuery';
 import assert from 'assert';
 import { Euler, Matrix4 } from 'three';
-import { DataModelsSdk } from '../../../DataModelsSdk';
+import { DataModelsSdk } from '../../../../DataModelsSdk';
 import chunk from 'lodash/chunk';
 import zip from 'lodash/zip';
 import groupBy from 'lodash/groupBy';
@@ -24,6 +24,7 @@ import partition from 'lodash/partition';
  * An identifier uniquely determining an instance of a Cognite Data Model
  */
 export type Image360DataModelIdentifier = {
+  source?: 'dm' | 'cdm'; // Optional to not break the existing API. The default value is 'dm'.
   space: string;
   image360CollectionExternalId: string;
 };

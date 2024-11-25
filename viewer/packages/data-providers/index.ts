@@ -9,7 +9,7 @@ export { Cdf360EventDescriptorProvider } from './src/image-360-data-providers/de
 export {
   Cdf360DataModelsDescriptorProvider,
   Image360DataModelIdentifier
-} from './src/image-360-data-providers/descriptor-providers/datamodels/Cdf360DataModelsDescriptorProvider';
+} from './src/image-360-data-providers/descriptor-providers/datamodels/system-space/Cdf360DataModelsDescriptorProvider';
 export { Cdf360CombinedDescriptorProvider } from './src/image-360-data-providers/descriptor-providers/Cdf360CombinedDescriptorProvider';
 export { LocalModelDataProvider } from './src/model-data-providers/LocalModelDataProvider';
 export { LocalModelIdentifier } from './src/model-identifiers/LocalModelIdentifier';
