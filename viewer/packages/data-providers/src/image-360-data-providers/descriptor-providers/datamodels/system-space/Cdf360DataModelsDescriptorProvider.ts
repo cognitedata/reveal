@@ -161,15 +161,21 @@ export class Cdf360DataModelsDescriptorProvider implements Image360DescriptorPro
     collectionLabel: string,
     imageFileDescriptors: { image: ImageInstanceResult; fileDescriptors: FileInfo[] }[]
   ): Historical360ImageSet {
-    const mainImageProps = imageFileDescriptors[0].image.properties.cdf_360_image_schema['Image360/v1'];
+    const mainImagePropsArray = imageFileDescriptors.map(
+      descriptor => descriptor.image.properties.cdf_360_image_schema['Image360/v1']
+    );
+
     const id = imageFileDescriptors[0].image.externalId;
+
     return {
       collectionId,
       collectionLabel,
       id,
-      imageRevisions: imageFileDescriptors.map(p => this.getImageRevision(mainImageProps, p.fileDescriptors)),
-      label: mainImageProps.label as string,
-      transform: this.getRevisionTransform(mainImageProps as any)
+      imageRevisions: imageFileDescriptors.map((p, index) =>
+        this.getImageRevision(mainImagePropsArray[index], p.fileDescriptors)
+      ),
+      label: mainImagePropsArray[0].label as string,
+      transform: this.getRevisionTransform(mainImagePropsArray[0] as any)
     };
   }
 

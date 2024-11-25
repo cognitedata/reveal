@@ -106,10 +106,17 @@ export { getGlobalMatrix } from './concrete/annotations/helpers/getMatrixUtils';
 export * from './concrete/pointsOfInterest';
 
 export { Image360AnnotationDomainObject } from './concrete/annotation360/Image360AnnotationDomainObject';
+export { Image360AnnotationFolder } from './concrete/annotation360/Image360AnnotationFolder';
 export { Image360AnnotationTool } from './concrete/annotation360/Image360AnnotationTool';
 export { Image360AnnotationCreator } from './concrete/annotation360/Image360AnnotationCreator';
 export { Image360AnnotationEditTypeCommand } from './concrete/annotation360/Image360AnnotationEditTypeCommand';
 export { DeleteSelectedImage360AnnotationCommand } from './concrete/annotation360/DeleteSelectedImage360AnnotationCommand';
+
+export type { LegacyIdentifier } from './concrete/annotation360/types';
+export type { FdmIdentifier } from './concrete/annotation360/types';
+export type { AnnotationIdentifier } from './concrete/annotation360/types';
+export type { AssetIdentifier } from './concrete/annotation360/types';
+export type { AnnotationStatus } from './concrete/annotation360/types';
 
 // New architecture: tree view nodes
 export type { ITreeNode } from './base/treeView/ITreeNode';

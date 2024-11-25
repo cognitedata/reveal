@@ -25,7 +25,7 @@ import { BaseFilterCommand } from '../../architecture/base/commands/BaseFilterCo
 import { FilterButton } from './FilterButton';
 import { DEFAULT_PADDING, TOOLTIP_DELAY } from './constants';
 import { type IconName } from '../../architecture/base/utilities/IconName';
-import { IconComponent } from './IconComponentMapper';
+import { IconComponent } from './Factories/IconFactory';
 
 import { TOOLBAR_HORIZONTAL_PANEL_OFFSET } from '../constants';
 

@@ -10,7 +10,7 @@ import { type BaseCommand } from '../../architecture/base/commands/BaseCommand';
 import { getButtonType, getDefaultCommand, getTooltipPlacement } from './utilities';
 import { LabelWithShortcut } from './LabelWithShortcut';
 import { type IconName } from '../../architecture/base/utilities/IconName';
-import { IconComponent } from './IconComponentMapper';
+import { IconComponent } from './Factories/IconFactory';
 import { useOnUpdate } from './useOnUpdate';
 import { type PlacementType } from './types';
 import { TOOLTIP_DELAY } from './constants';
