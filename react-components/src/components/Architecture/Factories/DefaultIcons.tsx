@@ -91,7 +91,6 @@ export const DefaultIcons: Array<[IconName, IconType]> = [
   ['FlipHorizontal', FlipHorizontalIcon],
   ['FlipVertical', FlipVerticalIcon],
   ['Folder', FolderIcon],
-  ['Leaf', LeafIcon],
   ['Grab', GrabIcon],
   ['Info', InfoIcon],
   ['Location', LocationIcon],
