@@ -43,10 +43,6 @@ export class BoxGizmoDomainObject extends BoxDomainObject {
     return style;
   }
 
-  public override get hasPanelInfo(): boolean {
-    return true;
-  }
-
   public override clone(what?: symbol): DomainObject {
     const clone = new BoxGizmoDomainObject();
     clone.copyFrom(this, what);

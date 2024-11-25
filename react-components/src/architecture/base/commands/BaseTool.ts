@@ -24,15 +24,6 @@ import { CommandChanges } from '../domainObjectsHelpers/CommandChanges';
 import { ContextMenuUpdater } from '../reactUpdaters/ContextMenuUpdater';
 
 /**
- * AnchorDialog
- */
-export type AnchoredDialogContent = {
-  position: Vector3;
-  onCloseCallback: () => void;
-  contentCommands: BaseCommand[];
-};
-
-/**
  * Base class for interactions in the 3D viewer
  * Provides common functionality and virtual methods to be overridden by derived classes.
  */
@@ -286,3 +277,12 @@ export abstract class BaseTool extends RenderTargetCommand {
     return this._renderTarget?.contextMenuController.contextMenuPositionData !== undefined;
   }
 }
+
+/**
+ * AnchorDialog
+ */
+export type AnchoredDialogContent = {
+  position: Vector3;
+  onCloseCallback: () => void;
+  contentCommands: BaseCommand[];
+};
