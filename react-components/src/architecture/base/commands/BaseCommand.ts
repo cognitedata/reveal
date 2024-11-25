@@ -3,7 +3,11 @@
  */
 
 import { type IconName } from '../utilities/IconName';
-import { type TranslateDelegate, type TranslateKey } from '../utilities/TranslateKey';
+import {
+  isTranslatedString,
+  type TranslateDelegate,
+  type TranslationInput
+} from '../utilities/TranslateInput';
 import { clear, remove } from '../utilities/extensions/arrayExtensions';
 import { isMacOs } from '../utilities/extensions/isMacOs';
 
@@ -53,7 +57,10 @@ export abstract class BaseCommand {
   // =================================================
 
   public get name(): string {
-    return this.tooltip.fallback;
+    if (this.tooltip === undefined) {
+      return '';
+    }
+    return isTranslatedString(this.tooltip) ? this.tooltip.key : this.tooltip?.untranslated;
   }
 
   protected get shortCutKey(): string | undefined {
@@ -72,8 +79,8 @@ export abstract class BaseCommand {
     return false;
   }
 
-  public get tooltip(): TranslateKey {
-    return { fallback: '' };
+  public get tooltip(): TranslationInput | undefined {
+    return undefined;
   }
 
   public get icon(): IconName {
@@ -179,11 +186,7 @@ export abstract class BaseCommand {
   // ==================================================
 
   public getLabel(translate: TranslateDelegate): string {
-    const { key, fallback } = this.tooltip;
-    if (key === undefined) {
-      return fallback;
-    }
-    return translate(key, fallback);
+    return translate(this.tooltip ?? { untranslated: '' });
   }
 
   public getShortCutKeys(): string[] | undefined {

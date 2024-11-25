@@ -2,7 +2,7 @@
  * Copyright 2024 Cognite AS
  */
 
-import { type TranslateKey } from '../../../base/utilities/TranslateKey';
+import { type TranslationInput } from '../../../base/utilities/TranslateInput';
 import { AnnotationsDomainObject } from '../AnnotationsDomainObject';
 import { UndoCommand } from '../../../base/concreteCommands/UndoCommand';
 import { type BaseCommand } from '../../../base/commands/BaseCommand';
@@ -47,10 +47,9 @@ export class AnnotationsCreateTool extends NavigationTool {
     return 'Shapes';
   }
 
-  public override get tooltip(): TranslateKey {
+  public override get tooltip(): TranslationInput {
     return {
-      key: 'ANNOTATIONS_CREATE',
-      fallback: 'Create new annotation. Select type of annotation in the toolbar below.'
+      untranslated: 'Create new annotation. Select type of annotation in the toolbar below.'
     };
   }
 
@@ -69,7 +68,7 @@ export class AnnotationsCreateTool extends NavigationTool {
 
   public override onDeactivate(): void {
     super.onDeactivate();
-    this.onEscapeKey();
+    this.escape();
   }
 
   public override clearDragging(): void {
@@ -78,13 +77,7 @@ export class AnnotationsCreateTool extends NavigationTool {
   }
 
   public override onEscapeKey(): void {
-    if (this._creator !== undefined && this._creator.onEscapeKey()) {
-      this.endCreatorIfFinished(this._creator, true);
-      this.setSelectTool();
-      this.deselectedAnnotationInteractive();
-    } else {
-      this._creator = undefined;
-    }
+    this.escape();
   }
 
   public override async onHoverByDebounce(event: PointerEvent): Promise<void> {
@@ -218,6 +211,16 @@ export class AnnotationsCreateTool extends NavigationTool {
   // ==================================================
   // INSTANCE METHODS
   // ==================================================
+
+  public escape(): void {
+    if (this._creator !== undefined && this._creator.escape()) {
+      this.endCreatorIfFinished(this._creator, true);
+      this.setSelectTool();
+      this.deselectedAnnotationInteractive();
+    } else {
+      this._creator = undefined;
+    }
+  }
 
   private getSelectedAnnotationsDomainObject(): AnnotationsDomainObject | undefined {
     return this.rootDomainObject.getSelectedDescendantByType(AnnotationsDomainObject);

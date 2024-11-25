@@ -13,7 +13,7 @@ import { type BaseDragger } from '../../../base/domainObjectsHelpers/BaseDragger
 import { CylinderDragger } from './CylinderDragger';
 import { type CreateDraggerProps } from '../../../base/domainObjects/VisualDomainObject';
 import { getIconByPrimitiveType } from '../../../base/utilities/primitives/getIconByPrimitiveType';
-import { type TranslateKey } from '../../../base/utilities/TranslateKey';
+import { type TranslationInput } from '../../../base/utilities/TranslateInput';
 import { Quantity } from '../../../base/domainObjectsHelpers/Quantity';
 import { PanelInfo } from '../../../base/domainObjectsHelpers/PanelInfo';
 import { SolidDomainObject } from '../common/SolidDomainObject';
@@ -38,8 +38,8 @@ export abstract class CylinderDomainObject extends SolidDomainObject {
     return getIconByPrimitiveType(this.primitiveType);
   }
 
-  public override get typeName(): TranslateKey {
-    return { key: 'MEASUREMENTS_CYLINDER', fallback: 'Cylinder' };
+  public override get typeName(): TranslationInput {
+    return { key: 'CYLINDER' };
   }
 
   public override createRenderStyle(): RenderStyle | undefined {
@@ -69,24 +69,19 @@ export abstract class CylinderDomainObject extends SolidDomainObject {
     const hasHeight = Cylinder.isValidSize(cylinder.height);
 
     if (isFinished || hasRadius) {
-      add('RADIUS', 'Radius', cylinder.radius, Quantity.Length);
+      add({ key: 'RADIUS' }, cylinder.radius, Quantity.Length);
     }
     if (isFinished || hasHeight) {
-      add('HEIGHT', 'Height', cylinder.height, Quantity.Length);
+      add({ key: 'HEIGHT' }, cylinder.height, Quantity.Length);
     }
     if (isFinished || (hasRadius && hasHeight)) {
-      add('AREA', 'Area', cylinder.area, Quantity.Area);
-      add('VOLUME', 'Volume', cylinder.volume, Quantity.Volume);
+      add({ key: 'AREA' }, cylinder.area, Quantity.Area);
+      add({ key: 'VOLUME' }, cylinder.volume, Quantity.Volume);
     }
     return info;
 
-    function add(
-      key: string | undefined,
-      fallback: string,
-      value: number,
-      quantity: Quantity
-    ): void {
-      info.add({ key, fallback, value, quantity });
+    function add(translationInput: TranslationInput, value: number, quantity: Quantity): void {
+      info.add({ translationInput, value, quantity });
     }
   }
 

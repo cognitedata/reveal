@@ -2,7 +2,8 @@
  * Copyright 2024 Cognite AS
  */
 
-import { type TranslateKey } from '../utilities/TranslateKey';
+import { type IconName } from '../utilities/IconName';
+import { type TranslationInput } from '../utilities/TranslateInput';
 import { DomainObject } from './DomainObject';
 
 export class FolderDomainObject extends DomainObject {
@@ -10,8 +11,12 @@ export class FolderDomainObject extends DomainObject {
   // OVERRIDES of DomainObject
   // ==================================================
 
-  public override get typeName(): TranslateKey {
-    return { fallback: 'Folder' };
+  public override get typeName(): TranslationInput {
+    return { untranslated: 'Folder' };
+  }
+
+  public override get icon(): IconName {
+    return 'Folder';
   }
 
   // ==================================================

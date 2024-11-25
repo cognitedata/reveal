@@ -127,8 +127,8 @@ export const WindowWidget = ({
               <CogsTooltip
                 content={
                   isMinimized
-                    ? t('WIDGET_WINDOW_EXPAND', 'Expand')
-                    : t('WIDGET_WINDOW_MINIMIZE', 'Minimize')
+                    ? t({ key: 'WIDGET_WINDOW_EXPAND' })
+                    : t({ key: 'WIDGET_WINDOW_MINIMIZE' })
                 }
                 placement="top"
                 appendTo={document.body}>
@@ -139,7 +139,7 @@ export const WindowWidget = ({
                 />
               </CogsTooltip>
               <CogsTooltip
-                content={t('WIDGET_WINDOW_CLOSE', 'Close')}
+                content={t({ key: 'WIDGET_WINDOW_CLOSE' })}
                 placement="top"
                 appendTo={document.body}>
                 <Button type="ghost" icon=<CloseIcon /> onClick={handleClose} />

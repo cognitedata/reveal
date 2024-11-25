@@ -5,7 +5,7 @@
 import { type IconName } from '../../../base/utilities/IconName';
 import { ShowDomainObjectsOnTopCommand } from '../../../base/commands/ShowDomainObjectsOnTopCommand';
 import { type DomainObject } from '../../../base/domainObjects/DomainObject';
-import { type TranslateKey } from '../../../base/utilities/TranslateKey';
+import { type TranslationInput } from '../../../base/utilities/TranslateInput';
 import { MeasureBoxDomainObject } from '../MeasureBoxDomainObject';
 import { MeasureLineDomainObject } from '../MeasureLineDomainObject';
 
@@ -18,8 +18,8 @@ export class ShowMeasurementsOnTopCommand extends ShowDomainObjectsOnTopCommand 
     return 'EyeShow';
   }
 
-  public override get tooltip(): TranslateKey {
-    return { key: 'MEASUREMENTS_SHOW_ON_TOP', fallback: 'Show all measurements on top' };
+  public override get tooltip(): TranslationInput {
+    return { key: 'MEASUREMENTS_SHOW_ON_TOP' };
   }
 
   protected override isInstance(domainObject: DomainObject): boolean {

@@ -99,7 +99,7 @@ export const SlicerButton = (): ReactElement => {
       floatingProps={{ middleware: [offset(TOOLBAR_HORIZONTAL_PANEL_OFFSET)] }}
       renderTrigger={(props: any) => (
         <CogsTooltip
-          content={t('SLICE_TOOLTIP', 'Slice')}
+          content={t({ key: 'SLICE_TOOLTIP' })}
           placement="right"
           appendTo={document.body}>
           <Button {...props} type="ghost" icon=<SliceIcon /> aria-label="Slice models" />
@@ -120,7 +120,9 @@ export const SlicerButton = (): ReactElement => {
 
 const StyledMenu = styled(Menu)`
   height: 512px;
-  padding: 12px;
-  min-width: 0px;
-  width: 38px;
+  width: 32px !important;
+  max-width: 32px !important;
+  min-width: 32px !important;
+  padding: 12px 8px 12px 8px !important;
+  overflow: hidden;
 `;

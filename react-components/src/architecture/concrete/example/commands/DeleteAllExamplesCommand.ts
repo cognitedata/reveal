@@ -6,7 +6,7 @@ import { type IconName } from '../../../base/utilities/IconName';
 import { InstanceCommand } from '../../../base/commands/InstanceCommand';
 import { type DomainObject } from '../../../base/domainObjects/DomainObject';
 import { Changes } from '../../../base/domainObjectsHelpers/Changes';
-import { type TranslateKey } from '../../../base/utilities/TranslateKey';
+import { type TranslationInput } from '../../../base/utilities/TranslateInput';
 import { ExampleDomainObject } from '../ExampleDomainObject';
 
 export class DeleteAllExamplesCommand extends InstanceCommand {
@@ -14,8 +14,8 @@ export class DeleteAllExamplesCommand extends InstanceCommand {
   // OVERRIDES
   // ==================================================
 
-  public override get tooltip(): TranslateKey {
-    return { fallback: 'Remove all examples' };
+  public override get tooltip(): TranslationInput {
+    return { untranslated: 'Remove all examples' };
   }
 
   public override get icon(): IconName {

@@ -4,7 +4,7 @@
 
 import { BaseOptionCommand } from '../commands/BaseOptionCommand';
 import { RenderTargetCommand } from '../commands/RenderTargetCommand';
-import { type TranslateKey } from '../utilities/TranslateKey';
+import { type TranslationInput } from '../utilities/TranslateInput';
 
 const DEFAULT_OPTIONS = [0.5, 1, 2, 5, 10, 20];
 
@@ -24,8 +24,8 @@ export class KeyboardSpeedCommand extends BaseOptionCommand {
   // OVERRIDES
   // ==================================================
 
-  public override get tooltip(): TranslateKey {
-    return { key: 'FLY_SPEED', fallback: 'Set camera fly speed' };
+  public override get tooltip(): TranslationInput {
+    return { untranslated: 'Set camera fly speed' };
   }
 }
 
@@ -38,8 +38,8 @@ class OptionItemCommand extends RenderTargetCommand {
     this._value = value;
   }
 
-  public override get tooltip(): TranslateKey {
-    return { fallback: `${this._value.toString()}x` };
+  public override get tooltip(): TranslationInput {
+    return { untranslated: `${this._value.toString()}x` };
   }
 
   public override get isChecked(): boolean {

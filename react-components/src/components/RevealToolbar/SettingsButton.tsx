@@ -35,7 +35,7 @@ export const SettingsButton = ({
       disableCloseOnClickInside
       renderTrigger={(props: any) => (
         <CogsTooltip
-          content={t('SETTINGS_TOOLTIP', 'Settings')}
+          content={t({ key: 'SETTINGS_TOOLTIP' })}
           placement="right"
           disabled={settingsActive}
           appendTo={document.body}>

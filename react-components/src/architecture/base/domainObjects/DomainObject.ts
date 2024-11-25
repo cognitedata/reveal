@@ -20,7 +20,7 @@ import { PopupStyle } from '../domainObjectsHelpers/PopupStyle';
 import { RootDomainObject } from './RootDomainObject';
 import { CommandsUpdater } from '../reactUpdaters/CommandsUpdater';
 import { DomainObjectPanelUpdater } from '../reactUpdaters/DomainObjectPanelUpdater';
-import { type TranslateKey } from '../utilities/TranslateKey';
+import { isTranslatedString, type TranslationInput } from '../utilities/TranslateInput';
 import { DeleteDomainObjectCommand } from '../concreteCommands/DeleteDomainObjectCommand';
 import { CopyToClipboardCommand } from '../concreteCommands/CopyToClipboardCommand';
 import { type BaseCommand } from '../commands/BaseCommand';
@@ -88,7 +88,7 @@ export abstract class DomainObject {
   // INSTANCE/VIRTUAL PROPERTIES
   // ==================================================
 
-  public abstract get typeName(): TranslateKey; // to be overridden
+  public abstract get typeName(): TranslationInput; // to be overridden
 
   public get path(): string {
     return `${this.parent !== undefined ? this.parent.path : ''}\\${this.name}`;
@@ -799,10 +799,10 @@ export abstract class DomainObject {
 
   public addChild(child: DomainObject, insertFirst = false): void {
     if (child.hasParent) {
-      throw Error(`The child ${child.typeName.fallback} already has a parent`);
+      throw Error(`The child ${child.getTypeName()} already has a parent`);
     }
     if (child === this) {
-      throw Error(`Trying to add illegal child ${child.typeName.fallback}`);
+      throw Error(`Trying to add illegal child ${child.getTypeName()}`);
     }
     if (insertFirst) {
       this._children.unshift(child);
@@ -814,14 +814,14 @@ export abstract class DomainObject {
 
   public addChildInteractive(child: DomainObject, insertFirst = false): void {
     this.addChild(child, insertFirst);
-    child.notify(Changes.added);
     this.notify(Changes.childAdded);
+    child.notify(Changes.added);
   }
 
   private remove(): boolean {
     const { childIndex } = this;
     if (childIndex === undefined) {
-      throw Error(`The child ${this.typeName.fallback} is not child of it's parent`);
+      throw Error(`The child ${this.getTypeName()} is not child of it's parent`);
     }
     clear(this._children);
     this.removeCore();
@@ -885,7 +885,7 @@ export abstract class DomainObject {
   }
 
   private generateNewName(): string {
-    let result = this.typeName.fallback;
+    let result = this.getTypeName();
     if (!this.canChangeName) {
       return result;
     }
@@ -903,6 +903,14 @@ export abstract class DomainObject {
     }
     result += ` ${childIndex + 1}`;
     return result;
+  }
+
+  private getTypeName(): string {
+    if (isTranslatedString(this.typeName)) {
+      return this.typeName.key;
+    } else {
+      return this.typeName.untranslated;
+    }
   }
 
   // ==================================================

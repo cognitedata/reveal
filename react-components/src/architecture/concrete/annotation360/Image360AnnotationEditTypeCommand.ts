@@ -6,7 +6,7 @@ import { type BaseCommand } from '../../base/commands/BaseCommand';
 import { RenderTargetCommand } from '../../base/commands/RenderTargetCommand';
 import { type IconName } from '../../base/utilities/IconName';
 import { PrimitiveType } from '../../base/utilities/primitives/PrimitiveType';
-import { type TranslateKey } from '../../base/utilities/TranslateKey';
+import { type TranslationInput } from '../../base/utilities/TranslateInput';
 import { getIconByPrimitiveType } from '../../base/utilities/primitives/getIconByPrimitiveType';
 import { Image360AnnotationTool } from './Image360AnnotationTool';
 
@@ -30,7 +30,7 @@ export class Image360AnnotationEditTypeCommand extends RenderTargetCommand {
     return getIconByPrimitiveType(this._primitiveType);
   }
 
-  public override get tooltip(): TranslateKey {
+  public override get tooltip(): TranslationInput {
     return getTooltipByPrimitiveType(this._primitiveType);
   }
 
@@ -51,7 +51,7 @@ export class Image360AnnotationEditTypeCommand extends RenderTargetCommand {
     if (tool === undefined) {
       return false;
     }
-    tool.onEscapeKey();
+    tool.escape();
     tool.clearDragging();
     if (tool.primitiveType === this._primitiveType) {
       tool.primitiveType = PrimitiveType.None;
@@ -81,15 +81,15 @@ export class Image360AnnotationEditTypeCommand extends RenderTargetCommand {
 // PRIVATE FUNCTIONS
 // ==================================================
 
-function getTooltipByPrimitiveType(primitiveType: PrimitiveType): TranslateKey {
+function getTooltipByPrimitiveType(primitiveType: PrimitiveType): TranslationInput {
   switch (primitiveType) {
     case PrimitiveType.Polygon:
       return {
-        fallback: 'Create polygon. Click at least 3 points and end with Esc.'
+        untranslated: 'Create polygon. Click at least 3 points and end with Esc.'
       };
     default:
       return {
-        fallback: 'Select polygon.'
+        untranslated: 'Select polygon.'
       };
   }
 }

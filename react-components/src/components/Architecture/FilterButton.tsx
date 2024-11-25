@@ -20,7 +20,7 @@ import { BaseFilterCommand } from '../../architecture/base/commands/BaseFilterCo
 import { FilterItem } from './FilterItem';
 import { OPTION_MIN_WIDTH, DEFAULT_PADDING, SELECT_DROPDOWN_ICON_COLOR } from './constants';
 import { type IconName } from '../../architecture/base/utilities/IconName';
-import { IconComponent } from './IconComponentMapper';
+import { IconComponent } from './Factories/IconFactory';
 import { TOOLBAR_HORIZONTAL_PANEL_OFFSET } from '../constants';
 
 import { offset } from '@floating-ui/dom';

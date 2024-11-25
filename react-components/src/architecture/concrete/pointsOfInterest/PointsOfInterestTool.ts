@@ -1,7 +1,7 @@
 /*!
  * Copyright 2024 Cognite AS
  */
-import { type TranslateKey } from '../../base/utilities/TranslateKey';
+import { type TranslationInput } from '../../base/utilities/TranslateInput';
 import { PointsOfInterestDomainObject } from './PointsOfInterestDomainObject';
 import { isPointsOfInterestIntersection } from './types';
 import { type IconName } from '../../base/utilities/IconName';
@@ -12,6 +12,7 @@ import { type AnchoredDialogContent } from '../../base/commands/BaseTool';
 import { AnchoredDialogUpdater } from '../../base/reactUpdaters/AnchoredDialogUpdater';
 import { NavigationTool } from '../../base/concreteCommands/NavigationTool';
 import { CreatePointsOfInterestWithDescriptionCommand } from './CreatePointsOfInterestWithDescriptionCommand';
+import { type RevealRenderTarget } from '../../base/renderTarget/RevealRenderTarget';
 
 export class PointsOfInterestTool<PoiIdType> extends NavigationTool {
   private _isCreating: boolean = false;
@@ -22,8 +23,8 @@ export class PointsOfInterestTool<PoiIdType> extends NavigationTool {
     return 'Waypoint';
   }
 
-  public override get tooltip(): TranslateKey {
-    return { key: 'POINT_OF_INTEREST_CREATE', fallback: 'Create Point of Interest' };
+  public override get tooltip(): TranslationInput {
+    return { key: 'POINT_OF_INTEREST_CREATE' };
   }
 
   public override onActivate(): void {
@@ -52,19 +53,28 @@ export class PointsOfInterestTool<PoiIdType> extends NavigationTool {
     await this.selectOverlayFromClick(event);
   }
 
+  public override attach(renderTarget: RevealRenderTarget): void {
+    super.attach(renderTarget);
+    this.initializePointsOfInterestDomainObject();
+  }
+
   public override getAnchoredDialogContent(): AnchoredDialogContent | undefined {
     return this._anchoredDialogContent;
   }
 
   public getPointsOfInterestDomainObject(): PointsOfInterestDomainObject<PoiIdType> {
-    const domainObject = this.rootDomainObject.getDescendantByType(PointsOfInterestDomainObject);
-    if (domainObject !== undefined) {
-      return domainObject;
-    }
     return this.initializePointsOfInterestDomainObject();
   }
 
-  private initializePointsOfInterestDomainObject(): PointsOfInterestDomainObject<PoiIdType> {
+  public initializePointsOfInterestDomainObject(): PointsOfInterestDomainObject<PoiIdType> {
+    const oldPoiDomainObject = this.rootDomainObject.getDescendantByType(
+      PointsOfInterestDomainObject
+    );
+
+    if (oldPoiDomainObject !== undefined) {
+      return oldPoiDomainObject;
+    }
+
     const domainObject = new PointsOfInterestDomainObject(
       new PointsOfInterestAdsProvider(
         this.rootDomainObject.sdk

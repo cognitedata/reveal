@@ -11,10 +11,14 @@ import { useTranslation } from '../../i18n/I18n';
 
 type RowType = {
   id: string;
-  poi: PointOfInterest<any>;
+  poi: PointOfInterest<unknown>;
 };
 
-export const PoiList = (): ReactNode => {
+export type PoiListProps = {
+  onRowClick?: (poi: PointOfInterest<unknown>) => void;
+};
+
+export const PoiList = ({ onRowClick }: PoiListProps): ReactNode => {
   const { t } = useTranslation();
 
   const [pois, setPois] = useState<Array<PointOfInterest<unknown>>>([]);
@@ -40,7 +44,7 @@ export const PoiList = (): ReactNode => {
   const columns: Array<DatagridColumn<RowType>> = [
     {
       field: 'name',
-      headerName: t('NAME', 'Name'),
+      headerName: t({ key: 'NAME' }),
       flex: 3
     }
   ];
@@ -53,6 +57,7 @@ export const PoiList = (): ReactNode => {
     <DataGrid<RowType>
       onRowClick={(row) => {
         poiObject.setSelectedPointOfInterest(row.row.poi as PointOfInterest<unknown>);
+        onRowClick?.(row.row.poi as PointOfInterest<unknown>);
       }}
       columns={columns}
       data={rowData}

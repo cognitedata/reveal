@@ -5,7 +5,7 @@
 import { type IconName } from '../../../base/utilities/IconName';
 import { type BaseCommand } from '../../../base/commands/BaseCommand';
 import { RenderTargetCommand } from '../../../base/commands/RenderTargetCommand';
-import { type TranslateKey } from '../../../base/utilities/TranslateKey';
+import { type TranslationInput } from '../../../base/utilities/TranslateInput';
 import { CropBoxDomainObject } from '../CropBoxDomainObject';
 import { SliceDomainObject } from '../SliceDomainObject';
 import { ApplyClipCommand } from './ApplyClipCommand';
@@ -26,16 +26,14 @@ export class NextOrPrevClippingCommand extends RenderTargetCommand {
   // OVERRIDES
   // ==================================================
 
-  public override get tooltip(): TranslateKey {
+  public override get tooltip(): TranslationInput {
     if (this._next) {
       return {
-        key: 'CLIP_NEXT',
-        fallback: 'Set next crop box or slicing plane as global clipping'
+        key: 'CLIP_NEXT'
       };
     } else {
       return {
-        key: 'CLIP_PREV',
-        fallback: 'Set previous crop box or slicing plane as global clipping'
+        key: 'CLIP_PREV'
       };
     }
   }

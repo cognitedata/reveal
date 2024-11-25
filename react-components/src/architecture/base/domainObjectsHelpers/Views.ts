@@ -16,16 +16,8 @@ type NotifyDelegate = (domainObject: DomainObject, change: DomainObjectChange) =
  * listeners about changes.
  */
 export class Views {
-  // ==================================================
-  // INSTANCE FIELDS
-  // ==================================================
-
   private readonly _views: BaseView[] = [];
   private readonly _listeners: NotifyDelegate[] = [];
-
-  // ==================================================
-  // VIRTUAL METHODS:
-  // ==================================================
 
   /**
    * Notifies the listeners and views about a change in the domain object.
@@ -37,14 +29,16 @@ export class Views {
     for (const listener of this._listeners) {
       listener(domainObject, change);
     }
+    const root = domainObject.root;
+    if (root !== undefined && root !== domainObject) {
+      for (const listener of root.views._listeners) {
+        listener(domainObject, change);
+      }
+    }
     for (const view of this._views) {
       view.update(change);
     }
   }
-
-  // ==================================================
-  // INSTANCE METHODS: Views admin
-  // ==================================================
 
   public *getByType<T extends BaseView>(classType: Class<T>): Generator<T> {
     for (const view of this._views) {
@@ -71,10 +65,6 @@ export class Views {
     }
     clear(this._views);
   }
-
-  // ==================================================
-  // INSTANCE METHODS: Event listeners admin
-  // ==================================================
 
   public addEventListener(listener: NotifyDelegate): void {
     this._listeners.push(listener);

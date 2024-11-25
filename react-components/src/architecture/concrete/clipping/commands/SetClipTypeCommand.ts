@@ -5,7 +5,7 @@
 import { RenderTargetCommand } from '../../../base/commands/RenderTargetCommand';
 import { type BaseCommand } from '../../../base/commands/BaseCommand';
 import { PrimitiveType } from '../../../base/utilities/primitives/PrimitiveType';
-import { type TranslateKey } from '../../../base/utilities/TranslateKey';
+import { type TranslationInput } from '../../../base/utilities/TranslateInput';
 import { ClipTool } from '../ClipTool';
 import { getIconByPrimitiveType } from '../../../base/utilities/primitives/getIconByPrimitiveType';
 import { SliceDomainObject } from '../SliceDomainObject';
@@ -31,7 +31,7 @@ export class SetClipTypeCommand extends RenderTargetCommand {
     return getIconByPrimitiveType(this._primitiveType);
   }
 
-  public override get tooltip(): TranslateKey {
+  public override get tooltip(): TranslationInput {
     return getTooltipByPrimitiveType(this._primitiveType);
   }
 
@@ -76,7 +76,7 @@ export class SetClipTypeCommand extends RenderTargetCommand {
     if (tool === undefined) {
       return false;
     }
-    tool.onEscapeKey();
+    tool.escape();
     tool.clearDragging();
     if (tool.primitiveType === this._primitiveType) {
       tool.primitiveType = PrimitiveType.None;
@@ -106,33 +106,27 @@ export class SetClipTypeCommand extends RenderTargetCommand {
 // PRIMATE FUNCTIONS
 // ==================================================
 
-function getTooltipByPrimitiveType(primitiveType: PrimitiveType): TranslateKey {
+function getTooltipByPrimitiveType(primitiveType: PrimitiveType): TranslationInput {
   switch (primitiveType) {
     case PrimitiveType.PlaneX:
       return {
-        key: 'ADD_SLICE_X',
-        fallback: 'Add vertical slice along Y-axis. Select a point.'
+        key: 'ADD_SLICE_X'
       };
     case PrimitiveType.PlaneY:
       return {
-        key: 'ADD_SLICE_Y',
-        fallback: 'Add vertical slice along X-axis. Select a point.'
+        key: 'ADD_SLICE_Y'
       };
     case PrimitiveType.PlaneZ:
       return {
-        key: 'ADD_SLICE_Z',
-        fallback: 'Add horizontal slice. Select a point.'
+        key: 'ADD_SLICE_Z'
       };
     case PrimitiveType.PlaneXY:
       return {
-        key: 'ADD_SLICE_XY',
-        fallback: 'Add vertical slice. Select two points.'
+        key: 'ADD_SLICE_XY'
       };
     case PrimitiveType.Box:
       return {
-        key: 'ADD_CROP_BOX',
-        fallback:
-          'Create crop box. Select three points in a horizontal plane, then select a fourth point for height.'
+        key: 'ADD_CROP_BOX'
       };
     default:
       throw new Error('Unknown PrimitiveType');

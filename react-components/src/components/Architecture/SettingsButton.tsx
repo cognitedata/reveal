@@ -15,7 +15,7 @@ import {
   getTooltipPlacement
 } from './utilities';
 import { LabelWithShortcut } from './LabelWithShortcut';
-import { type TranslateDelegate } from '../../architecture/base/utilities/TranslateKey';
+import { type TranslateDelegate } from '../../architecture/base/utilities/TranslateInput';
 import styled from 'styled-components';
 import { type BaseSettingsCommand } from '../../architecture/base/commands/BaseSettingsCommand';
 import { BaseOptionCommand } from '../../architecture/base/commands/BaseOptionCommand';
@@ -25,7 +25,7 @@ import { BaseFilterCommand } from '../../architecture/base/commands/BaseFilterCo
 import { FilterButton } from './FilterButton';
 import { DEFAULT_PADDING, TOOLTIP_DELAY } from './constants';
 import { type IconName } from '../../architecture/base/utilities/IconName';
-import { IconComponent } from './IconComponentMapper';
+import { IconComponent } from './Factories/IconFactory';
 
 import { TOOLBAR_HORIZONTAL_PANEL_OFFSET } from '../constants';
 

@@ -82,9 +82,7 @@ export const RuleBasedOutputsButton = ({
 
   const onChange = useCallback(
     (data: string | undefined): void => {
-      const emptySelection = generateEmptyRuleForSelection(
-        t('RULESET_NO_SELECTION', 'No RuleSet selected')
-      );
+      const emptySelection = generateEmptyRuleForSelection(t({ key: 'RULESET_NO_SELECTION' }));
 
       ruleInstances?.forEach((item) => {
         if (item === undefined) return;
@@ -140,7 +138,7 @@ export const RuleBasedOutputsButton = ({
       disableCloseOnClickInside
       renderTrigger={(props: any) => (
         <CogsTooltip
-          content={t('RULESET_SELECT_HEADER', 'Select color overlay')}
+          content={t({ key: 'RULESET_SELECT_HEADER' })}
           placement="right"
           appendTo={document.body}>
           <Button
@@ -152,11 +150,11 @@ export const RuleBasedOutputsButton = ({
           />
         </CogsTooltip>
       )}>
-      <Menu.Section label={t('RULESET_SELECT_HEADER', 'Select color overlay')} />
+      <Menu.Section label={t({ key: 'RULESET_SELECT_HEADER' })} />
       <RuleBasedSelectionItem
         key="no-rule-selected"
         id="no-rule-selected"
-        label={t('RULESET_NO_SELECTION', 'No RuleSet selected')}
+        label={t({ key: 'RULESET_NO_SELECTION' })}
         checked={currentRuleSetEnabled === undefined || emptyRuleSelected?.isEnabled}
         onChange={onChange}
         isLoading={isRuleLoading}

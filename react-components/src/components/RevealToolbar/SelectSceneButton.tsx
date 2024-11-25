@@ -48,15 +48,13 @@ export const SelectSceneButton = ({
       appendTo={document.body}
       floatingProps={{ middleware: [offset(TOOLBAR_HORIZONTAL_PANEL_OFFSET)] }}
       renderTrigger={(props: any) => (
-        <CogsTooltip content={t('SCENE_SELECT_HEADER', 'Select 3D location')}>
+        <CogsTooltip content={t({ key: 'SCENE_SELECT_HEADER' })}>
           <Button icon=<WorldIcon /> aria-label="Select 3D location" type="ghost" {...props}>
             {orientation === 'horizontal' && sceneName}
           </Button>
         </CogsTooltip>
       )}>
-      {orientation === 'none' && (
-        <Menu.Header>{t('SCENE_SELECT_HEADER', 'Select 3D location')}</Menu.Header>
-      )}
+      {orientation === 'none' && <Menu.Header>{t({ key: 'SCENE_SELECT_HEADER' })}</Menu.Header>}
       <SceneList selectedScene={selectedScene} onSceneChange={setSceneAndUpdateName} />
     </StyledMenu>
   );

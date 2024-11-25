@@ -1,6 +1,6 @@
 {
   "name": "@cognite/reveal-react-components",
-  "version": "0.67.3",
+  "version": "0.69.0",
   "exports": {
     ".": {
       "import": "./dist/index.js",
@@ -48,19 +48,19 @@
     "@cognite/cogs.js": "^10.25.0",
     "@cognite/reveal": "^4.21.1",
     "@cognite/sdk": "^9.13.0",
-    "@playwright/test": "1.48.2",
-    "@storybook/addon-essentials": "8.4.2",
-    "@storybook/addon-interactions": "8.4.2",
-    "@storybook/addon-links": "8.4.2",
-    "@storybook/blocks": "8.4.2",
-    "@storybook/react": "8.4.2",
-    "@storybook/react-vite": "8.4.2",
-    "@storybook/test": "8.4.2",
+    "@playwright/test": "1.49.0",
+    "@storybook/addon-essentials": "8.4.5",
+    "@storybook/addon-interactions": "8.4.5",
+    "@storybook/addon-links": "8.4.5",
+    "@storybook/blocks": "8.4.5",
+    "@storybook/react": "8.4.5",
+    "@storybook/react-vite": "8.4.5",
+    "@storybook/test": "8.4.5",
     "@tanstack/react-query-devtools": "^5.32.0",
     "@testing-library/react": "^16.0.0",
     "@tippyjs/react": "4.2.6",
     "@types/lodash": "^4.17.0",
-    "@types/node": "^20.12.7",
+    "@types/node": "^22.0.0",
     "@types/react": "^18.3.1",
     "@types/react-dom": "^18.3.0",
     "@types/react-resizable": "^3.0.7",
@@ -80,7 +80,7 @@
     "happy-dom": "^15.0.0",
     "locize-cli": "^8.0.1",
     "moq.ts": "10.0.8",
-    "playwright": "1.48.2",
+    "playwright": "1.49.0",
     "prettier": "^3.2.5",
     "prop-types": "^15.8.1",
     "react": "^18.3.1",
@@ -99,11 +99,11 @@
     "vite-plugin-externalize-deps": "^0.8.0",
     "vitest": "^1.5.3"
   },
-  "packageManager": "yarn@4.5.1",
+  "packageManager": "yarn@4.5.2",
   "files": [
     "dist"
   ],
   "resolutions": {
-    "@mui/base": "5.0.0-beta.61"
+    "@mui/base": "5.0.0-beta.62"
   }
 }

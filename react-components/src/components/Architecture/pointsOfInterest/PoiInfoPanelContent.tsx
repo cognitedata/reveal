@@ -50,7 +50,7 @@ const PanelHeader = (): ReactNode => {
       <Divider direction="vertical" weight="2px" />
       <Flex direction="row" justifyContent="flex-start">
         <Dropdown placement="bottom-end" content={<PoiSharePanel />}>
-          <Tooltip placement="top-end" appendTo={document.body} content={t('SHARE', 'Share')}>
+          <Tooltip placement="top-end" appendTo={document.body} content={t({ key: 'SHARE' })}>
             <Button icon=<ShareIcon /> type="ghost" />
           </Tooltip>
         </Dropdown>
@@ -75,7 +75,7 @@ export const CommentSection = (): ReactNode => {
   }
 
   return (
-    <Accordion type="ghost" title={t('COMMENTS', 'Comments')} gap={8}>
+    <Accordion type="ghost" title={t({ key: 'COMMENTS' })} gap={8}>
       <Flex direction="column" gap={8}>
         {comments.data?.map((comment) => (
           <SingleCommentDisplay key={`${comment.ownerId}/${comment.content}`} comment={comment} />

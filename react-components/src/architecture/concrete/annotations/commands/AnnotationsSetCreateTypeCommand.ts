@@ -2,7 +2,7 @@
  * Copyright 2024 Cognite AS
  */
 
-import { type TranslateKey } from '../../../base/utilities/TranslateKey';
+import { type TranslationInput } from '../../../base/utilities/TranslateInput';
 import { type BaseCommand } from '../../../base/commands/BaseCommand';
 import { PrimitiveType } from '../../../base/utilities/primitives/PrimitiveType';
 import { RenderTargetCommand } from '../../../base/commands/RenderTargetCommand';
@@ -42,7 +42,7 @@ export class AnnotationsSetCreateTypeCommand extends RenderTargetCommand {
     }
   }
 
-  public override get tooltip(): TranslateKey {
+  public override get tooltip(): TranslationInput {
     return getTooltipByPrimitiveType(this._primitiveType);
   }
 
@@ -63,7 +63,7 @@ export class AnnotationsSetCreateTypeCommand extends RenderTargetCommand {
     if (tool === undefined) {
       return false;
     }
-    tool.onEscapeKey();
+    tool.escape();
     tool.clearDragging();
     if (this.isChecked) {
       tool.primitiveType = PrimitiveType.None;
@@ -93,23 +93,20 @@ export class AnnotationsSetCreateTypeCommand extends RenderTargetCommand {
 // PRIMATE FUNCTIONS
 // ==================================================
 
-function getTooltipByPrimitiveType(primitiveType: PrimitiveType): TranslateKey {
+function getTooltipByPrimitiveType(primitiveType: PrimitiveType): TranslationInput {
   switch (primitiveType) {
     case PrimitiveType.Box:
       return {
-        key: 'ANNOTATIONS_CREATE_BOX',
-        fallback: 'Create a new box annotation'
+        untranslated: 'Create a new box annotation'
       };
     case PrimitiveType.HorizontalCylinder:
       return {
-        key: 'ANNOTATIONS_CREATE_HORIZONTAL_CYLINDER',
-        fallback:
+        untranslated:
           'Create a new horizontal cylinder annotation. Click two times to get the center endpoints, the third defines the radius.'
       };
     case PrimitiveType.VerticalCylinder:
       return {
-        key: 'ANNOTATIONS_CREATE_VERTICAL_CYLINDER',
-        fallback:
+        untranslated:
           'Create a new vertical cylinder annotation. Click two times to get the center endpoints, the third defines the radius.'
       };
     default:

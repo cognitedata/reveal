@@ -35,11 +35,11 @@ export const PoiSharePanel = (): ReactNode => {
       <Flex direction="column" gap={8}>
         <Flex direction="row" gap={16}>
           <ShareIcon />
-          <TextLabel text={t('SHARE', 'Share')} />
+          <TextLabel text={t({ key: 'SHARE' })} />
         </Flex>
         <PoiVisibilityInfobox poiDomainObject={poiDomainObject} poiVisibility={poiVisibility} />
         <Button icon=<LinkIcon /> disabled={poiVisibility === 'PRIVATE'} onClick={handleShare}>
-          {t('COPY_URL_TO_SHARE', 'Copy URL to share')}
+          {t({ key: 'COPY_URL_TO_SHARE' })}
         </Button>
       </Flex>
     </StyledShareContainer>
@@ -58,14 +58,11 @@ const PoiVisibilityInfobox = ({
   const selectedPointOfInterest = poiDomainObject?.selectedPointsOfInterest;
   const markedPublic = poiVisibility === 'PUBLIC';
   const header = markedPublic
-    ? t('POINT_OF_INTEREST_IS_PUBLIC', 'Point of interest is public')
-    : t('POINT_OF_INTEREST_IS_PRIVATE', 'Point of interest is private');
+    ? t({ key: 'POINT_OF_INTEREST_IS_PUBLIC' })
+    : t({ key: 'POINT_OF_INTEREST_IS_PRIVATE' });
   const content = markedPublic
-    ? t('POINT_OF_INTEREST_PUBLIC_DESCRIPTION', 'Point of interest is public and visible to anyone')
-    : t(
-        'POINT_OF_INTEREST_PRIVATE_DESCRIPTION',
-        'Point of interest is private and only visible to you'
-      );
+    ? t({ key: 'POINT_OF_INTEREST_PUBLIC_DESCRIPTION' })
+    : t({ key: 'POINT_OF_INTEREST_PRIVATE_DESCRIPTION' });
 
   if (poiDomainObject === undefined || selectedPointOfInterest === undefined) {
     return null;

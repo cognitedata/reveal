@@ -3,7 +3,7 @@
  */
 
 import { type BaseCreator } from '../../base/domainObjectsHelpers/BaseCreator';
-import { type TranslateKey } from '../../base/utilities/TranslateKey';
+import { type TranslationInput } from '../../base/utilities/TranslateInput';
 import { PrimitiveEditTool } from '../primitives/tools/PrimitiveEditTool';
 import { Image360AnnotationDomainObject } from './Image360AnnotationDomainObject';
 import { type VisualDomainObject } from '../../base/domainObjects/VisualDomainObject';
@@ -15,6 +15,8 @@ import { UndoCommand } from '../../base/concreteCommands/UndoCommand';
 import { type BaseCommand } from '../../base/commands/BaseCommand';
 import { Changes } from '../../base/domainObjectsHelpers/Changes';
 import { DeleteSelectedImage360AnnotationCommand } from './DeleteSelectedImage360AnnotationCommand';
+import { Image360AnnotationFolder } from './Image360AnnotationFolder';
+import { type DomainObject } from '../../base/domainObjects/DomainObject';
 
 export class Image360AnnotationTool extends PrimitiveEditTool {
   // ==================================================
@@ -34,8 +36,8 @@ export class Image360AnnotationTool extends PrimitiveEditTool {
     return 'Polygon';
   }
 
-  public override get tooltip(): TranslateKey {
-    return { fallback: 'Create or delete annotation polygon' };
+  public override get tooltip(): TranslationInput {
+    return { untranslated: 'Create or delete annotation polygon' };
   }
 
   public override get isEnabled(): boolean {
@@ -137,6 +139,7 @@ export class Image360AnnotationTool extends PrimitiveEditTool {
         domainObject.setVisibleInteractive(true);
         this.addTransaction(domainObject.createTransaction(Changes.added));
         this._creator = creator;
+        return;
       }
     }
     await super.onClick(event);
@@ -156,5 +159,16 @@ export class Image360AnnotationTool extends PrimitiveEditTool {
 
   protected override createCreator(): BaseCreator | undefined {
     return new Image360AnnotationCreator(this);
+  }
+
+  protected override getOrCreateParent(): DomainObject {
+    const root = this.rootDomainObject;
+    const folder = root.getDescendantByType(Image360AnnotationFolder);
+    if (folder !== undefined) {
+      return folder;
+    }
+    const newFolder = new Image360AnnotationFolder();
+    root.addChildInteractive(newFolder);
+    return newFolder;
   }
 }

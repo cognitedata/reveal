@@ -5,7 +5,7 @@
 import { BoxDomainObject } from '../primitives/box/BoxDomainObject';
 import { Color } from 'three';
 import { type RenderStyle } from '../../base/renderStyles/RenderStyle';
-import { type TranslateKey } from '../../base/utilities/TranslateKey';
+import { type TranslationInput } from '../../base/utilities/TranslateInput';
 import { type DomainObject } from '../../base/domainObjects/DomainObject';
 import { type DomainObjectChange } from '../../base/domainObjectsHelpers/DomainObjectChange';
 import { Changes } from '../../base/domainObjectsHelpers/Changes';
@@ -32,19 +32,15 @@ export class BoxGizmoDomainObject extends BoxDomainObject {
   // OVERRIDES of DomainObject
   // ==================================================
 
-  public override get typeName(): TranslateKey {
-    return { key: 'BOX', fallback: 'Box' };
+  public override get typeName(): TranslationInput {
+    return { key: 'BOX' };
   }
 
   public override createRenderStyle(): RenderStyle | undefined {
     const style = new SolidPrimitiveRenderStyle();
     style.showLabel = false;
-    style.opacity = 0.3333;
+    style.solidOpacity = 0.3333;
     return style;
-  }
-
-  public override get hasPanelInfo(): boolean {
-    return true;
   }
 
   public override clone(what?: symbol): DomainObject {
