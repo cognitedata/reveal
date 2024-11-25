@@ -4,7 +4,7 @@
 import type { Meta, StoryObj } from '@storybook/react';
 import { CadModelContainer, type CadModelStyling, useCameraNavigation } from '../src';
 import { Color, Matrix4 } from 'three';
-import { type DataSourceType, type AddModelOptions } from '@cognite/reveal';
+import { type AddModelOptions } from '@cognite/reveal';
 import { RevealStoryContainer } from './utilities/RevealStoryContainer';
 import { getAddModelOptionsFromUrl } from './utilities/getAddModelOptionsFromUrl';
 import { useRef, type ReactElement } from 'react';
@@ -42,7 +42,7 @@ export const Main: Story = {
     transform,
     styling
   }: {
-    addModelOptions: AddModelOptions<DataSourceType>;
+    addModelOptions: AddModelOptions;
     transform?: Matrix4;
     styling?: CadModelStyling;
   }) => {
@@ -59,7 +59,7 @@ export const Main: Story = {
 };
 
 type CadModelContainerStoryContentProps = {
-  addModelOptions: AddModelOptions<DataSourceType>;
+  addModelOptions: AddModelOptions;
   transform?: Matrix4;
   styling?: CadModelStyling;
 };
