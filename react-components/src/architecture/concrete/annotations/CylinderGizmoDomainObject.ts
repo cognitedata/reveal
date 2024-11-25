@@ -43,10 +43,6 @@ export class CylinderGizmoDomainObject extends CylinderDomainObject {
     return style;
   }
 
-  public override get hasPanelInfo(): boolean {
-    return true;
-  }
-
   public override clone(what?: symbol): DomainObject {
     const clone = new CylinderGizmoDomainObject();
     clone.copyFrom(this, what);
