@@ -45,6 +45,10 @@ export class Image360AnnotationDomainObject extends LineDomainObject {
     return { untranslated: '360 image annotation' };
   }
 
+  public override get hasPanelInfo(): boolean {
+    return false;
+  }
+
   public override clone(what?: symbol): DomainObject {
     const clone = new Image360AnnotationDomainObject(this.connectedImageId);
     clone.copyFrom(this, what);
