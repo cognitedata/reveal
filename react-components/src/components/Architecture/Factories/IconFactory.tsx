@@ -13,15 +13,15 @@ const DefaultIcon = (_iconProps: IconProps): JSX.Element => <></>;
 
 export class IconFactory {
   private static readonly _icons = new Map<IconName, IconType>(DefaultIcons);
-  public static install(nameName: IconName, iconType: IconType): void {
-    IconFactory._icons.set(nameName, iconType);
+  public static install(iconName: IconName, iconType: IconType): void {
+    IconFactory._icons.set(iconName, iconType);
   }
 
-  public static getIcon(nameName: IconName): IconType {
-    if (nameName === undefined) {
+  public static getIcon(iconName: IconName): IconType {
+    if (iconName === undefined) {
       return DefaultIcon;
     }
-    return IconFactory._icons.get(nameName) ?? DefaultIcon;
+    return IconFactory._icons.get(iconName) ?? DefaultIcon;
   }
 }
 
