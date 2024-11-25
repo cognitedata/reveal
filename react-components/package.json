@@ -99,7 +99,7 @@
     "vite-plugin-externalize-deps": "^0.8.0",
     "vitest": "^1.5.3"
   },
-  "packageManager": "yarn@4.5.1",
+  "packageManager": "yarn@4.5.2",
   "files": [
     "dist"
   ],
