@@ -4,7 +4,7 @@
 
 import { type ReactElement } from 'react';
 import { LoaderIcon } from '@cognite/cogs.js';
-import { IconComponentMapper } from '../../IconComponentMapper';
+import { IconFactory } from '../../Factories/IconFactory';
 import { type ITreeNode } from '../../../../architecture/base/treeView/ITreeNode';
 
 // ==================================================
@@ -21,6 +21,6 @@ export const TreeNodeIcon = ({
   if (!node.isSelected && node.iconColor !== undefined) {
     color = node.iconColor;
   }
-  const Icon = node.isLoadingChildren ? LoaderIcon : IconComponentMapper.getIcon(node.icon);
+  const Icon = node.isLoadingChildren ? LoaderIcon : IconFactory.getIcon(node.icon);
   return <Icon style={{ color, marginTop: '3px' }} />;
 };
