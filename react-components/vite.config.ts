@@ -27,7 +27,19 @@ export default defineConfig(({ command, mode }) => {
       sourcemap: command === 'build'
     },
     test: {
-      include: ['tests/unit-tests/**/*.{test,spec}.?(c|m)[jt]s?(x)']
+      include: ['tests/unit-tests/**/*.{test,spec}.?(c|m)[jt]s?(x)'],
+      server: {
+        deps: {
+          inline: [
+            '@cognite/cogs-lab',
+            '@cognite/cogs.js',
+            '@cognite/cogs-core',
+            '@mui',
+            '@cognite/cogs-utils',
+            'lodash'
+          ]
+        }
+      }
     }
   };
 });
