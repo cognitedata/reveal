@@ -43,7 +43,9 @@ import { type AddModelOptions } from '@cognite/reveal';
 const queryClient = new QueryClient();
 const sdk = createSdkByUrlToken();
 const viewsToSearch = [
-  { externalId: 'Cdf3dConnectionProperties', space: 'cdf_3d_schema', version: '1' }
+  { externalId: 'Equipment', space: 'fdx-boys', version: 'e040583320d31a' },
+  { externalId: 'WorkOrderMultiple', space: 'fdx-boys', version: 'e040583320d31a' },
+  { externalId: 'WorkOrderSingle', space: 'fdx-boys', version: 'e040583320d31a' }
 ];
 
 type Equipment = {
@@ -385,8 +387,8 @@ export const Main: Story = {
         siteId: 'celanese1'
       },
       {
-        modelId: 7848789582129513,
-        revisionId: 1871031176419082
+        modelId: 7646043527629245,
+        revisionId: 6059566106376463
       }
     ]
   },

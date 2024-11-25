@@ -89,12 +89,12 @@ export const Reveal3DResources = ({
   useGenerateAssetMappingCachePerItemFromModelCache(cadModelOptions, assetMappings);
   useGenerateNode3DCache(cadModelOptions, assetMappings);
 
-  const instaceStylingWithAssetMappings =
+  const instanceStylingWithAssetMappings =
     instanceStyling?.filter(isAssetMappingStylingGroup) ?? EMPTY_ARRAY;
 
   const { styledModels: styledCadModelOptions, isModelMappingsLoading } = useCalculateCadStyling(
     cadModelOptions,
-    instaceStylingWithAssetMappings,
+    instanceStylingWithAssetMappings,
     defaultResourceStyling
   );
 
@@ -106,7 +106,7 @@ export const Reveal3DResources = ({
 
   const styledPointCloudModelOptions = useCalculatePointCloudStyling(
     reveal3DModels,
-    instaceStylingWithAssetMappings,
+    instanceStylingWithAssetMappings,
     defaultResourceStyling
   );
 
