@@ -93,6 +93,7 @@ export const DefaultIcons: Array<[IconName, IconType]> = [
   ['Folder', FolderIcon],
   ['Grab', GrabIcon],
   ['Info', InfoIcon],
+  ['Leaf', LeafIcon],
   ['Location', LocationIcon],
   ['Perspective', PerspectiveIcon],
   ['PerspectiveAlt', PerspectiveAltIcon],
