@@ -1297,6 +1297,7 @@ export interface Image360Collection<T extends DataSourceType = ClassicDataSource
 
 // @public
 export type Image360DataModelIdentifier = {
+    source?: 'dm' | 'cdm';
     space: string;
     image360CollectionExternalId: string;
 };
