@@ -32,7 +32,7 @@ export const PoiList = ({ onRowClick, filter, pageLimit = Infinity }: PoiListPro
 
   const poiObject = usePoiDomainObject();
 
-  const [currentLimit, setCurrentLimit] = useState<number>(pageLimit ?? Infinity);
+  const [currentLimit, setCurrentLimit] = useState<number>(pageLimit);
 
   useOnUpdateDomainObject(poiObject, () => {
     setPois([...(poiObject?.pointsOfInterest ?? EMPTY_ARRAY)]);
