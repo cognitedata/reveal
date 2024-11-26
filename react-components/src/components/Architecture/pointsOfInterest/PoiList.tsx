@@ -3,16 +3,14 @@
  */
 import { type ReactNode, useCallback, useMemo, useState } from 'react';
 import { type PointOfInterest } from '../../../architecture/concrete/pointsOfInterest/types';
-import { useOnUpdateDomainObject } from '../useOnUpdate';
 import { DataGrid, type DatagridColumn } from '@cognite/cogs-lab';
-import { usePoiDomainObject } from './usePoiDomainObject';
-import { EMPTY_ARRAY } from '../../../utilities/constants';
 import { useTranslation } from '../../i18n/I18n';
 import { Button, Flex } from '@cognite/cogs.js';
 import { take } from 'lodash';
 import { useFilterPointsOfInterest } from './useFilterPointsOfInterest';
 import { usePointsOfInterest } from './usePointsOfInterest';
 import { useSelectedPoi } from './useSelectedPoi';
+import { usePoiDomainObject } from './usePoiDomainObject';
 
 type RowType = {
   id: string;
@@ -46,7 +44,7 @@ export type PoiListProps = {
   /**
    * Manually specify values to show in the list. `filter` is not applied if this is specified
    */
-  values?: PointOfInterest<unknown>[];
+  values?: Array<PointOfInterest<unknown>>;
 };
 
 /**
@@ -69,6 +67,8 @@ export const PoiList = ({
   const relevantPois = values ?? filteredPois;
 
   const hasMoreData = relevantPois.length > currentLimit;
+
+  const poiObject = usePoiDomainObject();
 
   const rowData = useMemo(
     () =>
@@ -96,15 +96,11 @@ export const PoiList = ({
     setCurrentLimit((lastLimit) => Math.min(relevantPois.length, lastLimit + pageLimit));
   }, [relevantPois, setCurrentLimit, hasMoreData, pageLimit]);
 
-  if (poiObject === undefined) {
-    return undefined;
-  }
-
   return (
     <Flex direction="column" alignContent="center">
       <DataGrid<RowType>
         onRowClick={(row) => {
-          poiObject.setSelectedPointOfInterest(row.row.poi as PointOfInterest<unknown>);
+          poiObject?.setSelectedPointOfInterest(row.row.poi as PointOfInterest<unknown>);
           onRowClick?.(row.row.poi as PointOfInterest<unknown>);
         }}
         columns={columns}
