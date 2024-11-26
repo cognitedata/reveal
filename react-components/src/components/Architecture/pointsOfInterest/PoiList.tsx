@@ -39,23 +39,23 @@ export const PoiList = ({
   const poiObject = usePoiDomainObject();
 
   const [currentLimit, setCurrentLimit] = useState<number>(pageLimit ?? Infinity);
-  const hasMoreData = pois.length > currentLimit;
 
   useOnUpdateDomainObject(poiObject, () => {
     setPois([...(poiObject?.pointsOfInterest ?? EMPTY_ARRAY)]);
     setSelectedPoi(poiObject?.selectedPointsOfInterest);
   });
 
+  const relevantPois = useMemo(() => pois.filter((poi) => filterPoi(poi, filter)), [pois, filter]);
+  const hasMoreData = relevantPois.length > currentLimit;
+
   const rowData = useMemo(
     () =>
-      take(pois, currentLimit)
-        .filter((poi) => filterPoi(poi, filter))
-        .map((poi) => ({
-          id: JSON.stringify(poi.id),
-          name: poi.properties.title ?? JSON.stringify(poi.id),
-          poi
-        })),
-    [pois, currentLimit, filter]
+      take(relevantPois, currentLimit).map((poi) => ({
+        id: JSON.stringify(poi.id),
+        name: poi.properties.title ?? JSON.stringify(poi.id),
+        poi
+      })),
+    [relevantPois, currentLimit, filter]
   );
 
   const columns: Array<DatagridColumn<RowType>> = [
@@ -71,8 +71,8 @@ export const PoiList = ({
       return;
     }
 
-    setCurrentLimit((lastLimit) => Math.min(pois.length, lastLimit + pageLimit));
-  }, [pois, setCurrentLimit, hasMoreData, pageLimit]);
+    setCurrentLimit((lastLimit) => Math.min(relevantPois.length, lastLimit + pageLimit));
+  }, [relevantPois, setCurrentLimit, hasMoreData, pageLimit]);
 
   if (poiObject === undefined) {
     return undefined;
@@ -107,8 +107,10 @@ function filterPoi(poi: PointOfInterest<unknown>, filter: PoiFilter | undefined)
     return true;
   }
 
+  const lowerCaseContainsFilter = filter.contains.toLowerCase();
+
   return (
-    poi.properties.title?.includes(filter.contains) ||
-    JSON.stringify(poi.id).includes(filter.contains)
+    poi.properties.title?.toLowerCase().includes(lowerCaseContainsFilter) ||
+    JSON.stringify(poi.id).toLowerCase().includes(lowerCaseContainsFilter)
   );
 }
