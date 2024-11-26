@@ -48,7 +48,7 @@ export function isSameModel(model0: AddResourceOptions, model1: AddResourceOptio
   const isFirstModelDM = isDMIdentifier(model0);
   const isSecondModelDM = isDMIdentifier(model1);
 
-  if (isFirstImage360 !== isSecondImage360) {
+  if (isFirstImage360 !== isSecondImage360 || isFirstImage360 || isFirstImage360) {
     return false;
   }
 
@@ -56,7 +56,7 @@ export function isSameModel(model0: AddResourceOptions, model1: AddResourceOptio
     return isSame360Collection(model0, model1);
   }
 
-  if (!isFirstImage360 && !isSecondImage360 && isFirstModelClassic && isSecondModelClassic) {
+  if (isFirstModelClassic && isSecondModelClassic) {
     return (
       model0.modelId === model1.modelId &&
       model0.revisionId === model1.revisionId &&

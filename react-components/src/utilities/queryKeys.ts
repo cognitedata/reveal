@@ -26,6 +26,8 @@ export const queryKeys = {
     [...models, ...assets, 'point-cloud-dm-volume-asset-mappings'] as const,
   pointCloudDMVolumeSearch: () =>
     [...query, ...views, ...instancesFilter, limit, 'point-cloud-dm-volume-search'] as const,
+  pointCloudDMModelIdRevisionIds: () =>
+    [...models, 'point-cloud-dm-model-id-revision-ids'] as const,
   modelRevisionId: () => [...revisions, 'model-revision-id'] as const,
   timeseriesFromRelationship: () => [...timeseries, 'timeseries-relationship'] as const
 } as const;

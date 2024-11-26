@@ -70,8 +70,8 @@ async function getModelsForDmsInstance(
   fdmSdk: FdmSDK,
   fdm3dDataProvider: Fdm3dDataProvider
 ): Promise<TaggedAddResourceOptions[]> {
-  const cadModelsPromise = await fdm3dDataProvider.getCadModelsForInstance(instance);
-  const pointCloudModelsPromise = await getPointCloudModelsForAssetInstance(instance, fdmSdk);
+  const cadModelsPromise = fdm3dDataProvider.getCadModelsForInstance(instance);
+  const pointCloudModelsPromise = getPointCloudModelsForAssetInstance(instance, fdmSdk);
 
   const results = (await Promise.all([cadModelsPromise, pointCloudModelsPromise])).flat();
 

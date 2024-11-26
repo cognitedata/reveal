@@ -21,13 +21,13 @@ export async function getRevisionExternalIdAndSpace(
   }
 
   const modelRef = await getDMSModelsForIds([modelId], fdmSdk);
-  const revisionRef = await getDMSRevisionsForRevisionIdsAndModelRefs(
+  const revisionRefs = await getDMSRevisionsForRevisionIdsAndModelRefs(
     modelRef,
     [revisionId],
     fdmSdk
   );
   return {
-    revisionExternalId: revisionRef[0].externalId,
-    revisionSpace: revisionRef[0].space
+    revisionExternalId: revisionRefs[0].externalId,
+    revisionSpace: revisionRefs[0].space
   };
 }

@@ -13,16 +13,17 @@ import {
 import { useFdmSdk } from '../components/RevealCanvas/SDKProvider';
 import { isClassicIdentifier, isDMIdentifier } from '../components';
 import { type FdmSDK } from '../data-providers/FdmSDK';
+import { EMPTY_ARRAY } from '../utilities/constants';
 
 export const useModelIdRevisionIdFromModelOptions = (
-  addModelOptionsArray: Array<AddModelOptions<DataSourceType>>
+  addModelOptionsArray: Array<AddModelOptions<DataSourceType>> | undefined
 ): Array<UseQueryResult<AddModelOptions<ClassicDataSourceType>>> => {
   const fdmSdk = useFdmSdk();
 
   return useQueries({
-    queries: addModelOptionsArray.map((addModelOptions) =>
-      createQueryConfig(addModelOptions, fdmSdk)
-    )
+    queries:
+      addModelOptionsArray?.map((addModelOptions) => createQueryConfig(addModelOptions, fdmSdk)) ??
+      EMPTY_ARRAY
   });
 };
 

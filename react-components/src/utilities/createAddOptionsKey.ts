@@ -10,17 +10,30 @@ import {
 import { type TaggedAddResourceOptions } from '../components/Reveal3DResources/types';
 
 export function createAddOptionsKey(model: TaggedAddResourceOptions): string {
-  if (model.type === 'cad') {
-    return `${model.type}-${model.addOptions.modelId}-${model.addOptions.revisionId}`;
-  } else if (model.type === 'pointcloud' && isClassicIdentifier(model.addOptions)) {
-    return `${model.type}-${model.addOptions.modelId}-${model.addOptions.revisionId}`;
-  } else if (model.type === 'pointcloud' && isDMIdentifier(model.addOptions)) {
-    return `${model.type}-${model.addOptions.revisionExternalId}-${model.addOptions.revisionSpace}`;
-  } else if (model.type === 'image360' && is360ImageDataModelAddOptions(model.addOptions)) {
-    return `${model.type}-${model.addOptions.externalId}/${model.addOptions.space}`;
-  } else if (model.type === 'image360' && is360ImageEventsAddOptions(model.addOptions)) {
-    return `${model.type}-${model.addOptions.siteId}`;
-  } else {
-    throw Error('Unrecognized add option type');
+  const { type, addOptions } = model;
+
+  switch (type) {
+    case 'cad':
+      return `${type}-${addOptions.modelId}-${addOptions.revisionId}`;
+    case 'pointcloud':
+      if (isClassicIdentifier(addOptions)) {
+        return `${type}-${addOptions.modelId}-${addOptions.revisionId}`;
+      }
+      if (isDMIdentifier(addOptions)) {
+        return `${type}-${addOptions.revisionExternalId}-${addOptions.revisionSpace}`;
+      }
+      break;
+    case 'image360':
+      if (is360ImageDataModelAddOptions(addOptions)) {
+        return `${type}-${addOptions.externalId}/${addOptions.space}`;
+      }
+      if (is360ImageEventsAddOptions(addOptions)) {
+        return `${type}-${addOptions.siteId}`;
+      }
+      break;
+    default:
+      throw new Error('Unrecognized add option type');
   }
+
+  throw new Error('Unrecognized add option type');
 }

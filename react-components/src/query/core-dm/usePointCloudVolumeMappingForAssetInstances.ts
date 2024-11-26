@@ -7,28 +7,29 @@ import {
   type DMInstanceRef
 } from '@cognite/reveal';
 import { useQuery, type UseQueryResult } from '@tanstack/react-query';
-import { usePointCloudDMVolume } from './usePointCloudDMVolume';
+import { usePointCloudDMVolumes } from './usePointCloudDMVolumes';
 import { useMemo } from 'react';
 import { useModelIdRevisionIdFromModelOptions } from '../../hooks/useModelIdRevisionIdFromModelOptions';
 import { isDefined } from '../../utilities/isDefined';
 import {
   type PointCloudModelOptions,
-  type CadPointCloudModelWithModelIdRevisionId
+  type CadOrPointCloudModelWithModelIdRevisionId
 } from '../../components/Reveal3DResources/types';
 import { type DmsUniqueIdentifier } from '../../data-providers';
 import { queryKeys } from '../../utilities/queryKeys';
 import { type AssetProperties } from '../../data-providers/utils/filters';
-import { useModelRevisionIds } from '../useModelRevisionIds';
+import { useModelRevisionIdsForPointCloudModels } from '../useModelRevisionIdsForPointCloudModels';
+import { EMPTY_ARRAY } from '../../utilities/constants';
 
 export type PointCloudVolumeMappedAssetData = {
   volumeInstanceRef: DMInstanceRef;
   asset: DMInstanceRef & AssetProperties;
 };
 
-export const usePointCloudVolumeMappingForAssetId = (
+export const usePointCloudVolumeMappingForAssetInstances = (
   assetInstanceRefs: DmsUniqueIdentifier[]
 ): UseQueryResult<PointCloudVolumeMappedAssetData[]> => {
-  const models = useModelRevisionIds();
+  const { data: models } = useModelRevisionIdsForPointCloudModels();
   const addClassicModelOptionsResults = useModelIdRevisionIdFromModelOptions(models);
 
   const classicModelOptions = useMemo(
@@ -40,7 +41,7 @@ export const usePointCloudVolumeMappingForAssetId = (
     models as PointCloudModelOptions[],
     classicModelOptions
   );
-  const { data: pointCloudVolumeResults, isLoading } = usePointCloudDMVolume(
+  const { data: pointCloudVolumeResults, isLoading } = usePointCloudDMVolumes(
     modelsWithModelIdAndRevision
   );
 
@@ -52,32 +53,34 @@ export const usePointCloudVolumeMappingForAssetId = (
     ],
     queryFn: async () => {
       if (modelsWithModelIdAndRevision.length === 0 || assetInstanceRefs.length === 0) {
-        return [];
+        return EMPTY_ARRAY;
       }
-      const result: PointCloudVolumeMappedAssetData[] = [];
 
-      pointCloudVolumeResults?.forEach((pointCloudVolumeDataResult) => {
-        pointCloudVolumeDataResult.pointCloudDMVolumeWithAsset.forEach(
-          (pointCloudDMVolumeWithAsset) => {
-            if (
+      const result: PointCloudVolumeMappedAssetData[] =
+        pointCloudVolumeResults?.flatMap((pointCloudVolumeDataResult) =>
+          pointCloudVolumeDataResult.pointCloudDMVolumeWithAsset
+            .filter((pointCloudDMVolumeWithAsset) =>
               assetInstanceRefs.some(
                 (assetInstance) =>
                   pointCloudDMVolumeWithAsset.asset !== undefined &&
                   assetInstance.externalId === pointCloudDMVolumeWithAsset.asset.externalId &&
                   assetInstance.space === pointCloudDMVolumeWithAsset.asset.space
               )
-            ) {
-              result.push({
+            )
+            .map((pointCloudDMVolumeWithAsset) => {
+              if (pointCloudDMVolumeWithAsset.asset === undefined) {
+                return undefined;
+              }
+              return {
                 volumeInstanceRef: {
                   externalId: pointCloudDMVolumeWithAsset.externalId,
                   space: pointCloudDMVolumeWithAsset.space
                 },
-                asset: pointCloudDMVolumeWithAsset.asset as DMInstanceRef & AssetProperties
-              });
-            }
-          }
-        );
-      });
+                asset: pointCloudDMVolumeWithAsset.asset
+              };
+            })
+            .filter(isDefined)
+        ) ?? EMPTY_ARRAY;
 
       return result;
     },
@@ -93,7 +96,7 @@ export const usePointCloudVolumeMappingForAssetId = (
 function useModelsWithModelIdAndRevision(
   models: PointCloudModelOptions[],
   classicModelOptions: Array<AddModelOptions<ClassicDataSourceType>>
-): CadPointCloudModelWithModelIdRevisionId[] {
+): CadOrPointCloudModelWithModelIdRevisionId[] {
   return useMemo(() => {
     return classicModelOptions.map((model, index) => ({
       modelOptions: models[index],

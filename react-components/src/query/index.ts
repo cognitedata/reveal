@@ -31,7 +31,7 @@ export { useTimeseriesByIdsQuery } from './useTimeseriesByIdsQuery';
 export { useTimeseriesLatestDatapointQuery } from './useTimeseriesLatestDatapointQuery';
 export { useFetchTimeseriesFromRelationshipByAsset } from './useFetchTimeseriesFromRelationshipByAsset';
 export { useAssetsAndTimeseriesLinkages } from './useAssetsAndTimeseriesLinkages';
-export { usePointCloudVolumeMappingForAssetId } from './core-dm/usePointCloudVolumeMappingForAssetId';
+export { usePointCloudVolumeMappingForAssetInstances as usePointCloudVolumeMappingForAssetId } from './core-dm/usePointCloudVolumeMappingForAssetInstances';
 
 export type {
   ModelMappings,
@@ -40,4 +40,4 @@ export type {
   ModelAssetPage
 } from './useSearchMappedEquipmentAssetMappings';
 export type { InstancesWithView } from './useSearchMappedEquipmentFDM';
-export type { PointCloudVolumeMappedAssetData } from './core-dm/usePointCloudVolumeMappingForAssetId';
+export type { PointCloudVolumeMappedAssetData } from './core-dm/usePointCloudVolumeMappingForAssetInstances';

@@ -87,7 +87,7 @@ export type CadModelOptions = { type: 'cad' } & AddCadResourceOptions;
 
 export type PointCloudModelOptions = { type: 'pointcloud' } & AddPointCloudResourceOptions;
 
-export type CadPointCloudModelWithModelIdRevisionId = {
+export type CadOrPointCloudModelWithModelIdRevisionId = {
   modelId: number;
   revisionId: number;
   modelOptions: TypedReveal3DModel;

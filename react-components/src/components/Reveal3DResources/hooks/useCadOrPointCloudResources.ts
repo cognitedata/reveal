@@ -4,14 +4,14 @@
 
 import { type AddModelOptions, type ClassicDataSourceType } from '@cognite/reveal';
 import { useMemo } from 'react';
-import { useModelIdRevisionIdFromModelOptions } from '../../hooks/useModelIdRevisionIdFromModelOptions';
-import { isDefined } from '../../utilities/isDefined';
-import { is360ImageAddOptions } from './typeGuards';
+import { useModelIdRevisionIdFromModelOptions } from '../../../hooks/useModelIdRevisionIdFromModelOptions';
+import { isDefined } from '../../../utilities/isDefined';
+import { is360ImageAddOptions } from '../typeGuards';
 import {
   type AddResourceOptions,
   type AddCadResourceOptions,
   type AddPointCloudResourceOptions
-} from './types';
+} from '../types';
 
 export const useCadOrPointCloudResources = (
   resources: AddResourceOptions[]

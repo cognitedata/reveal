@@ -16,7 +16,7 @@ import {
   ASSET_PROPERTIES_LIST
 } from '../../data-providers/utils/filters';
 
-export const pointCloudDMVolumesQuery = (revisionRef: DmsUniqueIdentifier[]): QueryRequest => {
+export const pointCloudDMVolumesQuery = (revisionRefs: DmsUniqueIdentifier[]): QueryRequest => {
   return {
     with: {
       pointCloudVolumes: {
@@ -26,8 +26,8 @@ export const pointCloudDMVolumesQuery = (revisionRef: DmsUniqueIdentifier[]): Qu
               isPointCloudVolumeFilter,
               getRevisionContainsAnyFilter([
                 {
-                  externalId: revisionRef[0].externalId,
-                  space: revisionRef[0].space
+                  externalId: revisionRefs[0].externalId,
+                  space: revisionRefs[0].space
                 }
               ])
             ]

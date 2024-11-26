@@ -3,42 +3,29 @@
  */
 
 import {
-  type AddModelOptions,
-  type ClassicDataSourceType,
   type CognitePointCloudModel,
   type DataSourceType,
   isDMPointCloudModel,
   isClassicPointCloudModel
 } from '@cognite/reveal';
 import { useMemo } from 'react';
-import { isDMIdentifier } from './typeGuards';
-import { type PointCloudModelOptions, type CadPointCloudModelWithModelIdRevisionId } from './types';
+import { EMPTY_ARRAY } from '../../../utilities/constants';
+import { isDMIdentifier } from '../typeGuards';
+import { type CadOrPointCloudModelWithModelIdRevisionId } from '../types';
 
-type MatchedModel = {
+type MatchedPointCloudModel = {
   viewerModel: CognitePointCloudModel<DataSourceType>;
-  model: CadPointCloudModelWithModelIdRevisionId;
+  model: CadOrPointCloudModelWithModelIdRevisionId;
 };
 
-export function useModelsWithModelIdAndRevision(
-  models: PointCloudModelOptions[],
-  classicModelOptions: Array<AddModelOptions<ClassicDataSourceType>>
-): CadPointCloudModelWithModelIdRevisionId[] {
-  return useMemo(() => {
-    return classicModelOptions.map((model, index) => ({
-      modelOptions: models[index],
-      ...model
-    }));
-  }, [classicModelOptions, models]);
-}
-
-export function useMatchedModels(
+export function useMatchedPointCloudModels(
   viewerModels: Array<CognitePointCloudModel<DataSourceType>>,
-  modelsWithModelIdAndRevision: CadPointCloudModelWithModelIdRevisionId[]
-): MatchedModel[] {
+  modelsWithModelIdAndRevision: CadOrPointCloudModelWithModelIdRevisionId[]
+): MatchedPointCloudModel[] {
   return useMemo(() => {
     return viewerModels.flatMap((viewerModel) => {
       if (viewerModel.type !== 'pointcloud') {
-        return [];
+        return EMPTY_ARRAY;
       }
       const model = viewerModel;
       const matchedModel = modelsWithModelIdAndRevision.find((modelData) => {
@@ -55,7 +42,7 @@ export function useMatchedModels(
         }
         return false;
       });
-      return matchedModel !== undefined ? [{ viewerModel, model: matchedModel }] : [];
+      return matchedModel !== undefined ? [{ viewerModel, model: matchedModel }] : EMPTY_ARRAY;
     });
   }, [viewerModels, modelsWithModelIdAndRevision]);
 }

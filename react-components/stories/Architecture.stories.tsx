@@ -10,11 +10,7 @@ import { RevealStoryContext } from './utilities/RevealStoryContainer';
 import { getAddModelOptionsFromUrl } from './utilities/getAddModelOptionsFromUrl';
 import { MainToolbar, TopToolbar } from '../src/components/Architecture/Toolbar';
 import { useRenderTarget } from '../src/components/RevealCanvas/ViewerContext';
-import {
-  type AddModelOptions,
-  type CogniteCadModel,
-  type ClassicDataSourceType
-} from '@cognite/reveal';
+import { type AddModelOptions, type CogniteCadModel } from '@cognite/reveal';
 import { ActionList } from '@cognite/cogs-lab';
 import { ContextMenu } from '../src/components/ContextMenu';
 import { Menu } from '@cognite/cogs.js';
@@ -33,9 +29,7 @@ type Story = StoryObj<typeof meta>;
 
 export const Main: Story = {
   args: {
-    addModelOptions: getAddModelOptionsFromUrl(
-      '/primitives'
-    ) as AddModelOptions<ClassicDataSourceType>
+    addModelOptions: getAddModelOptionsFromUrl('/primitives')
   },
   render: ({ addModelOptions }: { addModelOptions: AddModelOptions }) => {
     return (

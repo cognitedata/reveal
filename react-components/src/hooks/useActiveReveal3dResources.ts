@@ -1,7 +1,7 @@
 /*!
  * Copyright 2024 Cognite AS
  */
-import { useState, useEffect, useMemo } from 'react';
+import { useQuery } from '@tanstack/react-query';
 import { use3dModels } from '../hooks/use3dModels';
 import { useImage360Collections } from '../hooks/useImage360Collections';
 import { useFdmSdk } from '../components/RevealCanvas/SDKProvider';
@@ -15,6 +15,8 @@ import {
 } from '@cognite/reveal';
 import { getModelIdAndRevisionIdFromExternalId } from './network/getModelIdAndRevisionIdFromExternalId';
 import { type LayersUrlStateParam } from '../components';
+import { useMemo } from 'react';
+import { EMPTY_ARRAY } from '../utilities/constants';
 
 export const useActiveReveal3dResources = (
   layerState: LayersUrlStateParam | undefined
@@ -26,20 +28,19 @@ export const useActiveReveal3dResources = (
   const image360Collections = useImage360Collections();
   const fdmSdk = useFdmSdk();
 
-  const [filteredModels, setFilteredModels] = useState<AddModelOptions[]>([]);
-  const [filteredImage360Collections, setFilteredImage360Collections] = useState<
-    Array<Image360Collection<DataSourceType>>
-  >([]);
-
   const visibleModels = useMemo(() => {
     if (layerState === undefined) {
-      return [];
+      return EMPTY_ARRAY;
     }
     return models.filter((m) => m.visible);
   }, [models, layerState]);
 
-  useEffect(() => {
-    const fetchFilteredModels = async (): Promise<void> => {
+  const filteredModelsQuery = useQuery({
+    queryKey: [
+      'visible-3d-models',
+      visibleModels.map((model) => `${model.modelId}/${model.revisionId}`).sort()
+    ],
+    queryFn: async () => {
       const modelPromises = visibleModels.map(async (model) => {
         if (model.type === 'pointcloud' && isDMPointCloudModel(model as CognitePointCloudModel)) {
           const pointCloudModel = model as CognitePointCloudModel<DMDataSourceType>;
@@ -60,19 +61,28 @@ export const useActiveReveal3dResources = (
         };
       });
 
-      const resolvedModels = await Promise.all(modelPromises);
-      setFilteredModels(resolvedModels);
-    };
+      return await Promise.all(modelPromises);
+    },
+    enabled: visibleModels.length > 0,
+    staleTime: Infinity
+  });
 
-    void fetchFilteredModels();
-  }, [visibleModels, fdmSdk]);
+  const filteredImage360CollectionsQuery = useQuery({
+    queryKey: [
+      'visible-image360-collections',
+      image360Collections.map((image360Collection) => `${image360Collection.id}`).sort()
+    ],
+    queryFn: async () => {
+      return image360Collections.filter((image360Collection) =>
+        image360Collection.getIconsVisibility()
+      );
+    },
+    enabled: image360Collections.length > 0,
+    staleTime: Infinity
+  });
 
-  useEffect(() => {
-    const visibleImage360Collections = image360Collections.filter((c) => c.getIconsVisibility());
-    setFilteredImage360Collections(visibleImage360Collections);
-  }, [image360Collections]);
-
-  return useMemo(() => {
-    return { models: filteredModels, image360Collections: filteredImage360Collections };
-  }, [filteredModels, filteredImage360Collections]);
+  return {
+    models: filteredModelsQuery.data ?? EMPTY_ARRAY,
+    image360Collections: filteredImage360CollectionsQuery.data ?? EMPTY_ARRAY
+  };
 };

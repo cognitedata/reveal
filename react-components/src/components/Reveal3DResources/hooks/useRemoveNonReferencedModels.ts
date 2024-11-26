@@ -7,16 +7,16 @@ import {
   type CogniteModel,
   type Image360Collection
 } from '@cognite/reveal';
-import { type AddResourceOptions } from './types';
+import { type AddResourceOptions } from '../types';
 import {
   is360ImageAddOptions,
   is360ImageDataModelAddOptions,
   is360ImageEventsAddOptions
-} from './typeGuards';
+} from '../typeGuards';
 import { useEffect } from 'react';
-import { isSameModel } from '../../utilities/isSameModel';
-import { useReveal3DResourcesCount } from './Reveal3DResourcesInfoContext';
-import { getViewerResourceCount } from '../../utilities/getViewerResourceCount';
+import { isSameModel } from '../../../utilities/isSameModel';
+import { useReveal3DResourcesCount } from '../Reveal3DResourcesInfoContext';
+import { getViewerResourceCount } from '../../../utilities/getViewerResourceCount';
 
 export function useRemoveNonReferencedModels(
   addOptions: AddResourceOptions[],

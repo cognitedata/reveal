@@ -5,7 +5,7 @@
 import { type UseQueryResult, useQuery } from '@tanstack/react-query';
 import {
   type DMVolumeModelDataResult,
-  type CadPointCloudModelWithModelIdRevisionId
+  type CadOrPointCloudModelWithModelIdRevisionId
 } from '../../components/Reveal3DResources/types';
 import {
   type COGNITE_ASSET_SOURCE,
@@ -25,8 +25,8 @@ import { type FdmSDK } from '../../data-providers/FdmSDK';
 import { pointCloudDMVolumesQuery } from './pointCloudDMVolumesQuery';
 import { queryKeys } from '../../utilities/queryKeys';
 
-export const usePointCloudDMVolume = (
-  modelsData: CadPointCloudModelWithModelIdRevisionId[]
+export const usePointCloudDMVolumes = (
+  modelsData: CadOrPointCloudModelWithModelIdRevisionId[]
 ): UseQueryResult<DMVolumeModelDataResult[]> => {
   const fdmSdk = useFdmSdk();
   return useQuery({
@@ -60,12 +60,12 @@ const getPointCloudDMVolumesForModel = async (
   fdmSdk: FdmSDK
 ): Promise<PointCloudVolumeWithAsset[]> => {
   const modelRef = await getDMSModelsForIds([modelId], fdmSdk);
-  const revisionRef = await getDMSRevisionsForRevisionIdsAndModelRefs(
+  const revisionRefs = await getDMSRevisionsForRevisionIdsAndModelRefs(
     modelRef,
     [revisionId],
     fdmSdk
   );
-  const query = pointCloudDMVolumesQuery(revisionRef);
+  const query = pointCloudDMVolumesQuery(revisionRefs);
 
   const response = await fdmSdk.queryNodesAndEdges<
     typeof query,
@@ -86,12 +86,12 @@ const getPointCloudDMVolumesForModel = async (
       'CognitePointCloudVolume/v1'
     ] as PointCloudVolumeObject3DProperties;
 
-    const revisionIndex = pointCloudVolumeProperties.revisions.indexOf(revisionRef[0]);
+    const revisionIndex = pointCloudVolumeProperties.revisions.indexOf(revisionRefs[0]);
 
     return {
       externalId: pointCloudVolume.externalId,
       space: pointCloudVolume.space,
-      volumeReference: pointCloudVolumeProperties.volumeReferences.at(revisionIndex) ?? 'unknown',
+      volumeReference: pointCloudVolumeProperties.volumeReferences?.[revisionIndex],
       object3D: pointCloudVolumeProperties.object3D,
       volumeType: pointCloudVolumeProperties.volumeType,
       volume: pointCloudVolumeProperties.volume

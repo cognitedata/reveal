@@ -4,8 +4,7 @@
 
 import {
   type HasExistingDataFilterV3,
-  type TableExpressionContainsAnyFilterV3,
-  type TableExpressionEqualsFilterV3
+  type TableExpressionContainsAnyFilterV3
 } from '@cognite/sdk';
 import {
   COGNITE_POINT_CLOUD_VOLUME_SOURCE,
@@ -65,21 +64,6 @@ export type PointCloudVolumeRevisionVolumeProperties = PointCloudVolumeRevisionP
 export type PointCloudVolumeObject3DProperties = PointCloudVolumeRevisionVolumeProperties & {
   object3D: DmsUniqueIdentifier;
 };
-
-export function getModelEqualsFilter(
-  model3DReference: DmsUniqueIdentifier
-): TableExpressionEqualsFilterV3 {
-  return {
-    equals: {
-      property: [
-        CORE_DM_3D_CONTAINER_SPACE,
-        COGNITE_POINT_CLOUD_VOLUME_SOURCE.externalId,
-        'model3D'
-      ],
-      value: model3DReference
-    }
-  } as const satisfies TableExpressionEqualsFilterV3;
-}
 
 export function getRevisionContainsAnyFilter(
   revisionReferences: DmsUniqueIdentifier[]

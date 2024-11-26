@@ -19,20 +19,21 @@ import {
   type FdmAssetStylingGroup,
   type AnnotationModelDataResult,
   type StyledPointCloudModel
-} from './types';
+} from '../types';
 import { useMemo } from 'react';
-import { isSameModel } from '../../utilities/isSameModel';
-import { usePointCloudAnnotationMappingsForModels } from '../CacheProvider/PointCloudAnnotationCacheProvider';
-import { EMPTY_ARRAY } from '../../utilities/constants';
-import { type PointCloudVolumeStylingGroup } from '../PointCloudContainer/types';
-import { useModelIdRevisionIdFromModelOptions } from '../../hooks/useModelIdRevisionIdFromModelOptions';
-import { isDefined } from '../../utilities/isDefined';
-import { use3dModels } from '../../hooks';
+import { isSameModel } from '../../../utilities/isSameModel';
+import { usePointCloudAnnotationMappingsForModels } from '../../CacheProvider/PointCloudAnnotationCacheProvider';
+import { EMPTY_ARRAY } from '../../../utilities/constants';
+import { type PointCloudVolumeStylingGroup } from '../../PointCloudContainer/types';
+import { useModelIdRevisionIdFromModelOptions } from '../../../hooks/useModelIdRevisionIdFromModelOptions';
+import { isDefined } from '../../../utilities/isDefined';
+import { use3dModels } from '../../../hooks';
 import {
   isClassicAssetMappingStylingGroup,
   isFdmAssetStylingGroup
-} from '../../utilities/StylingGroupUtils';
-import { useModelsWithModelIdAndRevision, useMatchedModels } from './utils';
+} from '../../../utilities/StylingGroupUtils';
+import { useModelsWithModelIdAndRevision } from './useModelsWithModelIdAndRevision';
+import { useMatchedPointCloudModels } from './useMatchedPointCloudModels';
 
 type PointCloudVolumeWithModel = {
   model: PointCloudModelOptions;
@@ -138,7 +139,7 @@ function useVolumeMappingInstanceStyleGroups(
   instanceGroups: Array<FdmAssetStylingGroup | AssetStylingGroup>
 ): StyledPointCloudModel[] {
   return useMemo(() => {
-    if (dmVolumeMappings === undefined || dmVolumeMappings.length === 0) {
+    if (dmVolumeMappings.length === 0) {
       return EMPTY_ARRAY;
     }
     return dmVolumeMappings.map((dmVolumeMapping) => {
@@ -155,7 +156,7 @@ function calculateVolumeMappingModelStyling(
   dmVolumeMapping: PointCloudVolumeWithModel
 ): StyledPointCloudModel {
   const styleGroups = instanceGroups
-    .map((group) => getDMMappedStyleGroupFromAssetIds(dmVolumeMapping, group))
+    .map((group) => getDMMappedStyleGroupFromAssetInstances(dmVolumeMapping, group))
     .filter((styleGroup): styleGroup is PointCloudVolumeStylingGroup => styleGroup !== undefined);
 
   return { model: dmVolumeMapping.model, styleGroups };
@@ -188,7 +189,7 @@ function getMappedStyleGroupFromAssetIds(
   };
 }
 
-function getDMMappedStyleGroupFromAssetIds(
+function getDMMappedStyleGroupFromAssetInstances(
   dmVolumeMapping: PointCloudVolumeWithModel,
   instanceGroup: FdmAssetStylingGroup
 ): PointCloudVolumeStylingGroup | undefined {
@@ -255,7 +256,10 @@ function usePointCloudVolumesWithModel(
   const pointCloudViewerModels = viewerModels.filter(
     (model): model is CognitePointCloudModel<DataSourceType> => model.type === 'pointcloud'
   );
-  const matchedModels = useMatchedModels(pointCloudViewerModels, modelsWithModelIdAndRevision);
+  const matchedModels = useMatchedPointCloudModels(
+    pointCloudViewerModels,
+    modelsWithModelIdAndRevision
+  );
 
   return useMemo(() => {
     if (matchedModels.length === 0 || pointCloudViewerModels.length === 0) {
@@ -263,27 +267,29 @@ function usePointCloudVolumesWithModel(
         .filter((model): model is PointCloudModelOptions => model.type === 'pointcloud')
         .map((model) => ({
           model,
-          pointCloudVolumes: []
+          pointCloudVolumes: EMPTY_ARRAY
         }));
     }
     return matchedModels.map(({ viewerModel, model }) => {
-      const pointCloudVolumesWithAsset: Array<{
-        pointCloudVolume: number | DMInstanceRef;
-        asset: number | string | DMInstanceRef | undefined;
-      }> = [];
-      viewerModel.stylableObjects.forEach((object) => {
+      const pointCloudVolumesWithAsset = viewerModel.stylableObjects.reduce<
+        Array<{
+          pointCloudVolume: number | DMInstanceRef;
+          asset: number | string | DMInstanceRef | undefined;
+        }>
+      >((acc, object) => {
         if (isClassicPointCloudVolume(object)) {
-          pointCloudVolumesWithAsset.push({
+          acc.push({
             pointCloudVolume: object.annotationId,
             asset: object.assetRef?.id ?? object.assetRef?.externalId
           });
         } else if (isDMPointCloudVolume(object)) {
-          pointCloudVolumesWithAsset.push({
+          acc.push({
             pointCloudVolume: object.volumeInstanceRef,
             asset: object.assetRef
           });
         }
-      });
+        return acc;
+      }, []);
       const pointCloudVolumes = pointCloudVolumesWithAsset.map((data) => data.pointCloudVolume);
       const asset = pointCloudVolumesWithAsset.map((data) => data.asset);
       return { model: model.modelOptions as PointCloudModelOptions, pointCloudVolumes, asset };

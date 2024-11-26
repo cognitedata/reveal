@@ -33,6 +33,7 @@ import {
 } from './types';
 import { tryGetModelIdFromExternalId } from '../../utilities/tryGetModelIdFromExternalId';
 import { getRevisionExternalIdAndSpace } from '../network/getRevisionExternalIdAndSpace';
+import { EMPTY_ARRAY } from '../../utilities/constants';
 
 const DefaultScene: Scene = {
   sceneConfiguration: {
@@ -140,11 +141,10 @@ async function getSceneModels(
   sceneResponse: SceneResponse,
   fdmSdk: FdmSDK
 ): Promise<CadOrPointCloudModel[]> {
-  const models: CadOrPointCloudModel[] = [];
   const sceneModels = sceneResponse.items.sceneModels;
 
   if (sceneModels.length === 0) {
-    return models;
+    return EMPTY_ARRAY;
   }
 
   const modelPromises = sceneModels.map(async (sceneModel) => {
@@ -168,10 +168,7 @@ async function getSceneModels(
     }
   });
 
-  const resolvedModels = await Promise.all(modelPromises);
-  models.push(...resolvedModels);
-
-  return models;
+  return await Promise.all(modelPromises);
 }
 
 function getImageCollections(sceneResponse: SceneResponse): Image360Collection[] {

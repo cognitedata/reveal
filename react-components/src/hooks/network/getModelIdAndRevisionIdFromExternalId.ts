@@ -29,7 +29,7 @@ export async function getModelIdAndRevisionIdFromExternalId(
   const modelId = extractNumericId(modelExternalId);
   const revisionId = extractNumericId(revisionExternalId);
 
-  if (modelId === null || revisionId === null) {
+  if (modelId === undefined || revisionId === undefined) {
     throw new Error(
       `No numeric ID found in external ID ${modelExternalId} or ${revisionExternalId}`
     );
@@ -38,13 +38,15 @@ export async function getModelIdAndRevisionIdFromExternalId(
   return { modelId, revisionId };
 }
 
-function extractNumericId(externalId: string): number | null {
+function extractNumericId(externalId: string): number | undefined {
   const lastUnderscoreIndex = externalId.lastIndexOf('_');
   if (lastUnderscoreIndex === -1) {
-    return null;
+    return undefined;
   }
   const numericPart = externalId.slice(lastUnderscoreIndex + 1);
-  return numericPart.length > 0 && !isNaN(Number(numericPart)) ? parseInt(numericPart, 10) : null;
+  return numericPart.length > 0 && !isNaN(Number(numericPart))
+    ? parseInt(numericPart, 10)
+    : undefined;
 }
 
 function getModelIdQuery(revisionExternalId: string, space: string): QueryRequest {

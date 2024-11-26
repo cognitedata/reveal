@@ -21,7 +21,7 @@ import {
   type Reveal3DResourcesProps,
   type CadModelOptions
 } from './types';
-import { useCalculatePointCloudStyling } from './useCalculatePointCloudStyling';
+import { useCalculatePointCloudStyling } from './hooks/useCalculatePointCloudStyling';
 import { EMPTY_ARRAY } from '../../utilities/constants';
 import {
   isAssetMappingStylingGroup,
@@ -29,8 +29,8 @@ import {
 } from '../../utilities/StylingGroupUtils';
 import { type ImageCollectionModelStyling } from '../Image360CollectionContainer/useApply360AnnotationStyling';
 import { is360ImageAddOptions, isClassicIdentifier } from './typeGuards';
-import { useRemoveNonReferencedModels } from './useRemoveNonReferencedModels';
-import { useCalculateCadStyling } from './useCalculateCadStyling';
+import { useRemoveNonReferencedModels } from './hooks/useRemoveNonReferencedModels';
+import { useCalculateCadStyling } from './hooks/useCalculateCadStyling';
 import { useReveal3DResourcesStylingLoadingSetter } from './Reveal3DResourcesInfoContext';
 import { type CadModelStyling } from '../CadModelContainer/types';
 import { type PointCloudModelStyling } from '../PointCloudContainer/types';
@@ -40,7 +40,7 @@ import {
   useGenerateAssetMappingCachePerItemFromModelCache,
   useGenerateNode3DCache
 } from '../CacheProvider/AssetMappingAndNode3DCacheProvider';
-import { useCadOrPointCloudResources } from './useCadOrPointCloudResources';
+import { useCadOrPointCloudResources } from './hooks/useCadOrPointCloudResources';
 
 export const Reveal3DResources = ({
   resources,
