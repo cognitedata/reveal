@@ -1,7 +1,7 @@
 /*!
  * Copyright 2024 Cognite AS
  */
-import { ReactElement, type ReactNode, useCallback, useMemo, useState } from 'react';
+import { type ReactNode, useCallback, useMemo, useState } from 'react';
 import { type PointOfInterest } from '../../../architecture/concrete/pointsOfInterest/types';
 import { useOnUpdateDomainObject } from '../useOnUpdate';
 import { DataGrid, type DatagridColumn } from '@cognite/cogs-lab';
@@ -110,7 +110,7 @@ function filterPoi(poi: PointOfInterest<unknown>, filter: PoiFilter | undefined)
   const lowerCaseContainsFilter = filter.contains.toLowerCase();
 
   return (
-    poi.properties.title?.toLowerCase().includes(lowerCaseContainsFilter) ||
+    poi.properties.title?.toLowerCase().includes(lowerCaseContainsFilter) === true ||
     JSON.stringify(poi.id).toLowerCase().includes(lowerCaseContainsFilter)
   );
 }
