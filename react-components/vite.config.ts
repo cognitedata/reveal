@@ -28,6 +28,7 @@ export default defineConfig(({ command, mode }) => {
     },
     test: {
       include: ['tests/unit-tests/**/*.{test,spec}.?(c|m)[jt]s?(x)'],
+      // Need to add E5 modules to be loaded as inlined dependencies to be able to import them in tests.
       server: {
         deps: {
           inline: [
