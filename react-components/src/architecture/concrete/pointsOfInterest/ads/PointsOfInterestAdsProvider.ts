@@ -143,6 +143,10 @@ export class PointsOfInterestAdsProvider implements PointsOfInterestProvider<Ext
   }
 
   private async createUserMap(userIds: string[]): Promise<Map<string, string | undefined>> {
+    if (userIds.length === 0) {
+      return new Map();
+    }
+
     const uniqueUserIds = uniq(userIds);
 
     const profiles = await this._sdk.profiles.retrieve(
