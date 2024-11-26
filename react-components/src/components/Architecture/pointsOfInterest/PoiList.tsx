@@ -10,36 +10,64 @@ import { EMPTY_ARRAY } from '../../../utilities/constants';
 import { useTranslation } from '../../i18n/I18n';
 import { Button, Flex } from '@cognite/cogs.js';
 import { take } from 'lodash';
+import { useFilterPointsOfInterest } from './useFilterPointsOfInterest';
+import { usePointsOfInterest } from './usePointsOfInterest';
+import { useSelectedPoi } from './useSelectedPoi';
 
 type RowType = {
   id: string;
   poi: PointOfInterest<unknown>;
 };
 
-export type PoiFilter = { contains: string };
-
-export type PoiListProps = {
-  onRowClick?: (poi: PointOfInterest<unknown>) => void;
-  filter?: PoiFilter;
-  pageLimit?: number;
+/**
+ * A filter for Points of interests
+ */
+export type PoiFilter = {
+  /**
+   * Checks if the PoI title or ID contains the string
+   */
+  contains: string;
 };
 
-export const PoiList = ({ onRowClick, filter, pageLimit = Infinity }: PoiListProps): ReactNode => {
+export type PoiListProps = {
+  /**
+   * Callback to be called when a row is clicked. (The selected point of interest will be changed implicitly)
+   */
+  onRowClick?: (poi: PointOfInterest<unknown>) => void;
+  /**
+   * A filter to be applied to the points of interest. Not used if `values` are specified
+   */
+  filter?: PoiFilter;
+  /**
+   * The max number of PoIs to show before the user must click "show more", loading the same
+   * amount of PoIs again
+   */
+  pageLimit?: number;
+  /**
+   * Manually specify values to show in the list. `filter` is not applied if this is specified
+   */
+  values?: PointOfInterest<unknown>[];
+};
+
+/**
+ * A list for visualizing points of interest (Pois)
+ */
+export const PoiList = ({
+  onRowClick,
+  filter,
+  pageLimit = Infinity,
+  values
+}: PoiListProps): ReactNode => {
   const { t } = useTranslation();
 
-  const [pois, setPois] = useState<Array<PointOfInterest<unknown>>>([]);
-  const [selectedPoi, setSelectedPoi] = useState<PointOfInterest<unknown> | undefined>(undefined);
-
-  const poiObject = usePoiDomainObject();
+  const pois = usePointsOfInterest();
+  const selectedPoi = useSelectedPoi();
 
   const [currentLimit, setCurrentLimit] = useState<number>(pageLimit);
 
-  useOnUpdateDomainObject(poiObject, () => {
-    setPois([...(poiObject?.pointsOfInterest ?? EMPTY_ARRAY)]);
-    setSelectedPoi(poiObject?.selectedPointsOfInterest);
-  });
+  const filteredPois = useFilterPointsOfInterest(pois, filter);
+  const relevantPois = values ?? filteredPois;
 
-  const relevantPois = useMemo(() => pois.filter((poi) => filterPoi(poi, filter)), [pois, filter]);
   const hasMoreData = relevantPois.length > currentLimit;
 
   const rowData = useMemo(
@@ -91,16 +119,3 @@ export const PoiList = ({ onRowClick, filter, pageLimit = Infinity }: PoiListPro
     </Flex>
   );
 };
-
-function filterPoi(poi: PointOfInterest<unknown>, filter: PoiFilter | undefined): boolean {
-  if (filter === undefined) {
-    return true;
-  }
-
-  const lowerCaseContainsFilter = filter.contains.toLowerCase();
-
-  return (
-    poi.properties.title?.toLowerCase().includes(lowerCaseContainsFilter) === true ||
-    JSON.stringify(poi.id).toLowerCase().includes(lowerCaseContainsFilter)
-  );
-}
