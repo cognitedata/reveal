@@ -1,24 +1,16 @@
 /*!
  * Copyright 2024 Cognite AS
  */
-import {
-  type AddModelOptions,
-  type ClassicDataSourceType,
-  type DMInstanceRef
-} from '@cognite/reveal';
+import { type DMInstanceRef } from '@cognite/reveal';
 import { useQuery, type UseQueryResult } from '@tanstack/react-query';
 import { usePointCloudDMVolumes } from './usePointCloudDMVolumes';
 import { useMemo } from 'react';
 import { useModelIdRevisionIdFromModelOptions } from '../../hooks/useModelIdRevisionIdFromModelOptions';
 import { isDefined } from '../../utilities/isDefined';
-import {
-  type PointCloudModelOptions,
-  type CadOrPointCloudModelWithModelIdRevisionId
-} from '../../components/Reveal3DResources/types';
 import { type DmsUniqueIdentifier } from '../../data-providers';
 import { queryKeys } from '../../utilities/queryKeys';
-import { type AssetProperties } from '../../data-providers/utils/filters';
-import { useModelRevisionIdsForPointCloudModels } from '../useModelRevisionIdsForPointCloudModels';
+import { type AssetProperties } from '../../data-providers/core-dm-provider/utils/filters';
+import { usePointCloudModelRevisionIdsFromReveal } from '../usePointCloudModelRevisionIdsFromReveal';
 import { EMPTY_ARRAY } from '../../utilities/constants';
 
 export type PointCloudVolumeMappedAssetData = {
@@ -29,30 +21,23 @@ export type PointCloudVolumeMappedAssetData = {
 export const usePointCloudVolumeMappingForAssetInstances = (
   assetInstanceRefs: DmsUniqueIdentifier[]
 ): UseQueryResult<PointCloudVolumeMappedAssetData[]> => {
-  const { data: models } = useModelRevisionIdsForPointCloudModels();
+  const { data: models } = usePointCloudModelRevisionIdsFromReveal();
   const addClassicModelOptionsResults = useModelIdRevisionIdFromModelOptions(models);
 
   const classicModelOptions = useMemo(
     () => addClassicModelOptionsResults.map((result) => result.data).filter(isDefined),
     [addClassicModelOptionsResults]
   );
-
-  const modelsWithModelIdAndRevision = useModelsWithModelIdAndRevision(
-    models as PointCloudModelOptions[],
-    classicModelOptions
-  );
-  const { data: pointCloudVolumeResults, isLoading } = usePointCloudDMVolumes(
-    modelsWithModelIdAndRevision
-  );
+  const { data: pointCloudVolumeResults, isLoading } = usePointCloudDMVolumes(classicModelOptions);
 
   return useQuery({
     queryKey: [
       queryKeys.pointCloudDMVolumeAssetMappings(),
-      modelsWithModelIdAndRevision.map((model) => `${model.modelId}/${model.revisionId}`).sort(),
+      classicModelOptions.map((model) => `${model.modelId}/${model.revisionId}`).sort(),
       assetInstanceRefs
     ],
     queryFn: async () => {
-      if (modelsWithModelIdAndRevision.length === 0 || assetInstanceRefs.length === 0) {
+      if (classicModelOptions.length === 0 || assetInstanceRefs.length === 0) {
         return EMPTY_ARRAY;
       }
 
@@ -62,14 +47,13 @@ export const usePointCloudVolumeMappingForAssetInstances = (
             .filter((pointCloudDMVolumeWithAsset) =>
               assetInstanceRefs.some(
                 (assetInstance) =>
-                  pointCloudDMVolumeWithAsset.assetInstance !== undefined &&
-                  assetInstance.externalId ===
-                    pointCloudDMVolumeWithAsset.assetInstance.externalId &&
-                  assetInstance.space === pointCloudDMVolumeWithAsset.assetInstance.space
+                  pointCloudDMVolumeWithAsset.dmAsset !== undefined &&
+                  assetInstance.externalId === pointCloudDMVolumeWithAsset.dmAsset.externalId &&
+                  assetInstance.space === pointCloudDMVolumeWithAsset.dmAsset.space
               )
             )
             .map((pointCloudDMVolumeWithAsset) => {
-              if (pointCloudDMVolumeWithAsset.assetInstance === undefined) {
+              if (pointCloudDMVolumeWithAsset.dmAsset === undefined) {
                 return undefined;
               }
               return {
@@ -77,7 +61,7 @@ export const usePointCloudVolumeMappingForAssetInstances = (
                   externalId: pointCloudDMVolumeWithAsset.externalId,
                   space: pointCloudDMVolumeWithAsset.space
                 },
-                asset: pointCloudDMVolumeWithAsset.assetInstance
+                asset: pointCloudDMVolumeWithAsset.dmAsset
               };
             })
             .filter(isDefined)
@@ -93,15 +77,3 @@ export const usePointCloudVolumeMappingForAssetInstances = (
       !isLoading
   });
 };
-
-function useModelsWithModelIdAndRevision(
-  models: PointCloudModelOptions[],
-  classicModelOptions: Array<AddModelOptions<ClassicDataSourceType>>
-): CadOrPointCloudModelWithModelIdRevisionId[] {
-  return useMemo(() => {
-    return classicModelOptions.map((model, index) => ({
-      modelOptions: models[index],
-      ...model
-    }));
-  }, [classicModelOptions, models]);
-}

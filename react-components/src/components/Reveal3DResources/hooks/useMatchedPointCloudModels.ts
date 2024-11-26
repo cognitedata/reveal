@@ -6,21 +6,22 @@ import {
   type CognitePointCloudModel,
   type DataSourceType,
   isDMPointCloudModel,
-  isClassicPointCloudModel
+  isClassicPointCloudModel,
+  type AddModelOptions,
+  type ClassicDataSourceType
 } from '@cognite/reveal';
 import { useMemo } from 'react';
 import { EMPTY_ARRAY } from '../../../utilities/constants';
 import { isDMIdentifier } from '../typeGuards';
-import { type CadOrPointCloudModelWithModelIdRevisionId } from '../types';
 
 type MatchedPointCloudModel = {
   viewerModel: CognitePointCloudModel<DataSourceType>;
-  model: CadOrPointCloudModelWithModelIdRevisionId;
+  model: AddModelOptions<ClassicDataSourceType>;
 };
 
 export function useMatchedPointCloudModels(
   viewerModels: Array<CognitePointCloudModel<DataSourceType>>,
-  modelsWithModelIdAndRevision: CadOrPointCloudModelWithModelIdRevisionId[]
+  classicModelOptions: Array<AddModelOptions<ClassicDataSourceType>>
 ): MatchedPointCloudModel[] {
   return useMemo(() => {
     return viewerModels.flatMap((viewerModel) => {
@@ -28,21 +29,21 @@ export function useMatchedPointCloudModels(
         return EMPTY_ARRAY;
       }
       const model = viewerModel;
-      const matchedModel = modelsWithModelIdAndRevision.find((modelData) => {
-        if (isDMPointCloudModel(model) && isDMIdentifier(modelData)) {
+      const matchedModel = classicModelOptions.find((modelOption) => {
+        if (isDMPointCloudModel(model) && isDMIdentifier(modelOption)) {
           return (
-            model.modelIdentifier.revisionExternalId === modelData.revisionExternalId &&
-            model.modelIdentifier.revisionSpace === modelData.revisionSpace
+            model.modelIdentifier.revisionExternalId === modelOption.revisionExternalId &&
+            model.modelIdentifier.revisionSpace === modelOption.revisionSpace
           );
         } else if (isClassicPointCloudModel(model)) {
           return (
-            model.modelIdentifier.modelId === modelData.modelId &&
-            model.modelIdentifier.revisionId === modelData.revisionId
+            model.modelIdentifier.modelId === modelOption.modelId &&
+            model.modelIdentifier.revisionId === modelOption.revisionId
           );
         }
         return false;
       });
       return matchedModel !== undefined ? [{ viewerModel, model: matchedModel }] : EMPTY_ARRAY;
     });
-  }, [viewerModels, modelsWithModelIdAndRevision]);
+  }, [viewerModels, classicModelOptions]);
 }

@@ -18,7 +18,7 @@ import { getModelKeys } from '../utilities/getModelKeys';
 
 type PointCloudModelRevisionIdAndType = ModelRevisionId & { type: 'pointcloud' };
 
-export const useModelRevisionIdsForPointCloudModels = (): UseQueryResult<
+export const usePointCloudModelRevisionIdsFromReveal = (): UseQueryResult<
   PointCloudModelRevisionIdAndType[]
 > => {
   const viewerModels = use3dModels();

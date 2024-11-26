@@ -14,7 +14,7 @@ import {
   getRevisionContainsAnyFilter,
   POINT_CLOUD_VOLUME_REVISIONS_OBJECT3D_PROPERTIES_LIST,
   ASSET_PROPERTIES_LIST
-} from '../../data-providers/utils/filters';
+} from '../../data-providers/core-dm-provider/utils/filters';
 
 export const pointCloudDMVolumesQuery = (revisionRefs: DmsUniqueIdentifier[]): QueryRequest => {
   return {

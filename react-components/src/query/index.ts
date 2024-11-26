@@ -31,7 +31,7 @@ export { useTimeseriesByIdsQuery } from './useTimeseriesByIdsQuery';
 export { useTimeseriesLatestDatapointQuery } from './useTimeseriesLatestDatapointQuery';
 export { useFetchTimeseriesFromRelationshipByAsset } from './useFetchTimeseriesFromRelationshipByAsset';
 export { useAssetsAndTimeseriesLinkages } from './useAssetsAndTimeseriesLinkages';
-export { usePointCloudVolumeMappingForAssetInstances as usePointCloudVolumeMappingForAssetId } from './core-dm/usePointCloudVolumeMappingForAssetInstances';
+export { usePointCloudVolumeMappingForAssetInstances } from './core-dm/usePointCloudVolumeMappingForAssetInstances';
 
 export type {
   ModelMappings,

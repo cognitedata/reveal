@@ -3,10 +3,7 @@
  */
 
 import { type UseQueryResult, useQuery } from '@tanstack/react-query';
-import {
-  type DMVolumeModelDataResult,
-  type CadOrPointCloudModelWithModelIdRevisionId
-} from '../../components/Reveal3DResources/types';
+import { type DMVolumeModelDataResult } from '../../components/Reveal3DResources/types';
 import {
   type COGNITE_ASSET_SOURCE,
   type COGNITE_POINT_CLOUD_VOLUME_SOURCE
@@ -19,38 +16,39 @@ import {
 import {
   type AssetProperties,
   type PointCloudVolumeObject3DProperties
-} from '../../data-providers/utils/filters';
+} from '../../data-providers/core-dm-provider/utils/filters';
 import { type PointCloudVolumeWithAsset } from '../../components/CacheProvider/types';
 import { type FdmSDK } from '../../data-providers/FdmSDK';
 import { pointCloudDMVolumesQuery } from './pointCloudDMVolumesQuery';
 import { queryKeys } from '../../utilities/queryKeys';
+import { type AddModelOptions, type ClassicDataSourceType } from '@cognite/reveal';
 
 export const usePointCloudDMVolumes = (
-  modelsData: CadOrPointCloudModelWithModelIdRevisionId[]
+  modelOptions: Array<AddModelOptions<ClassicDataSourceType>>
 ): UseQueryResult<DMVolumeModelDataResult[]> => {
   const fdmSdk = useFdmSdk();
   return useQuery({
     queryKey: [
       queryKeys.pointCloudDMVolumeMappings(),
-      ...modelsData.map((model) => `${model.modelId}/${model.revisionId}`).sort()
+      ...modelOptions.map((model) => `${model.modelId}/${model.revisionId}`).sort()
     ],
     queryFn: async () => {
       return await Promise.all(
-        modelsData.map(async (model) => {
+        modelOptions.map(async (model) => {
           const pointCloudDMVolumeWithAsset = await getPointCloudDMVolumesForModel(
             model.modelId,
             model.revisionId,
             fdmSdk
           );
           return {
-            model: model.modelOptions,
+            model,
             pointCloudDMVolumeWithAsset
           };
         })
       );
     },
     staleTime: Infinity,
-    enabled: modelsData.length > 0
+    enabled: modelOptions.length > 0
   });
 };
 
@@ -120,7 +118,7 @@ const getPointCloudDMVolumesForModel = async (
 
     return {
       ...pointCloudVolume,
-      asset
+      dmAsset: asset
     };
   });
   return pointCloudVolumesWithAssets;

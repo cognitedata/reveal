@@ -5,7 +5,7 @@ import { type TaggedAddResourceOptions } from '../../components';
 import { type COGNITE_POINT_CLOUD_VOLUME_SOURCE } from '../../data-providers/core-dm-provider/dataModels';
 import { pointCloudModelsForInstanceQuery } from '../../data-providers/core-dm-provider/pointCloudModelsForInstanceQuery';
 import { type DmsUniqueIdentifier, type FdmSDK } from '../../data-providers/FdmSDK';
-import { type PointCloudVolumeObject3DProperties } from '../../data-providers/utils/filters';
+import { type PointCloudVolumeObject3DProperties } from '../../data-providers/core-dm-provider/utils/filters';
 
 export const getPointCloudModelsForAssetInstance = async (
   assetInstance: DmsUniqueIdentifier,

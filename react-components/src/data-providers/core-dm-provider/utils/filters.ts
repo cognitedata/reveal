@@ -6,11 +6,8 @@ import {
   type HasExistingDataFilterV3,
   type TableExpressionContainsAnyFilterV3
 } from '@cognite/sdk';
-import {
-  COGNITE_POINT_CLOUD_VOLUME_SOURCE,
-  CORE_DM_3D_CONTAINER_SPACE
-} from '../core-dm-provider/dataModels';
-import { type DmsUniqueIdentifier } from '../FdmSDK';
+import { COGNITE_POINT_CLOUD_VOLUME_SOURCE, CORE_DM_3D_CONTAINER_SPACE } from '../dataModels';
+import { type DmsUniqueIdentifier } from '../../FdmSDK';
 
 export type AssetProperties = {
   object3D: DmsUniqueIdentifier;

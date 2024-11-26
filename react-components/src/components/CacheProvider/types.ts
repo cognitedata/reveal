@@ -88,7 +88,7 @@ type PointCloudVolume = {
 };
 
 export type PointCloudVolumeWithAsset = PointCloudVolume & {
-  assetInstance?: {
+  dmAsset?: {
     externalId: string;
     space: string;
     object3D: DmsUniqueIdentifier;

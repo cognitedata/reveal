@@ -3,7 +3,7 @@
  */
 import { type QueryRequest } from '@cognite/sdk';
 import { COGNITE_POINT_CLOUD_VOLUME_SOURCE, COGNITE_VISUALIZABLE_SOURCE } from './dataModels';
-import { POINT_CLOUD_VOLUME_REVISIONS_OBJECT3D_PROPERTIES_LIST } from '../utils/filters';
+import { POINT_CLOUD_VOLUME_REVISIONS_OBJECT3D_PROPERTIES_LIST } from './utils/filters';
 
 export const pointCloudModelsForInstanceQuery = {
   with: {
