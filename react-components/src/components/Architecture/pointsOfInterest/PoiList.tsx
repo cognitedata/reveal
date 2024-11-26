@@ -92,11 +92,7 @@ export const PoiList = ({
         disableColumnResize
       />
       <Flex direction="row" gap={16} justifyContent="center" alignContent="center">
-        {hasMoreData && (
-          <Button type="tertiary" onClick={handleShowMoreCallback}>
-            {t({ key: 'SHOW_MORE' })}
-          </Button>
-        )}
+        {hasMoreData && <Button onClick={handleShowMoreCallback}>{t({ key: 'SHOW_MORE' })}</Button>}
       </Flex>
     </Flex>
   );
