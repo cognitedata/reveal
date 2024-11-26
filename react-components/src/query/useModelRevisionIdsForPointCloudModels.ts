@@ -14,6 +14,7 @@ import { getModelIdAndRevisionIdFromExternalId } from '../hooks/network/getModel
 import { useFdmSdk } from '../components/RevealCanvas/SDKProvider';
 import { useQuery, type UseQueryResult } from '@tanstack/react-query';
 import { queryKeys } from '../utilities/queryKeys';
+import { getModelKeys } from '../utilities/getModelKeys';
 
 type PointCloudModelRevisionIdAndType = ModelRevisionId & { type: 'pointcloud' };
 
@@ -32,15 +33,9 @@ export const useModelRevisionIdsForPointCloudModels = (): UseQueryResult<
       .filter(isDMPointCloudModel);
   }, [viewerModels]);
 
-  const queryKey = [
-    queryKeys.pointCloudDMModelIdRevisionIds(),
-    dmModels
-      .map(
-        (model) =>
-          `${model.modelIdentifier.revisionExternalId}-${model.modelIdentifier.revisionSpace}`
-      )
-      .sort()
-  ];
+  const modelKeys = useMemo(() => getModelKeys(dmModels), [dmModels]);
+
+  const queryKey = [queryKeys.pointCloudDMModelIdRevisionIds(), modelKeys];
 
   const queryFn = async (): Promise<PointCloudModelRevisionIdAndType[]> => {
     const modelRevisionIds: PointCloudModelRevisionIdAndType[] = await Promise.all(

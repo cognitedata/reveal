@@ -14,6 +14,7 @@ import { useFdmSdk } from '../components/RevealCanvas/SDKProvider';
 import { isClassicIdentifier, isDMIdentifier } from '../components';
 import { type FdmSDK } from '../data-providers/FdmSDK';
 import { EMPTY_ARRAY } from '../utilities/constants';
+import { getModelKeys } from '../utilities/getModelKeys';
 
 export const useModelIdRevisionIdFromModelOptions = (
   addModelOptionsArray: Array<AddModelOptions<DataSourceType>> | undefined
@@ -31,9 +32,10 @@ const createQueryConfig = (
   addModelOptions: AddModelOptions<DataSourceType>,
   fdmSdk: FdmSDK
 ): UseQueryOptions<AddModelOptions<ClassicDataSourceType>> => {
+  const modelKeys = getModelKeys([addModelOptions]);
   if (isClassicIdentifier(addModelOptions)) {
     return {
-      queryKey: [queryKeys.modelRevisionId(), addModelOptions.modelId, addModelOptions.revisionId],
+      queryKey: [queryKeys.modelRevisionId(), modelKeys],
       queryFn: async () => await Promise.resolve(addModelOptions),
       staleTime: Infinity
     };
@@ -41,11 +43,7 @@ const createQueryConfig = (
 
   if (isDMIdentifier(addModelOptions)) {
     return {
-      queryKey: [
-        queryKeys.modelRevisionId(),
-        addModelOptions.revisionExternalId,
-        addModelOptions.revisionSpace
-      ],
+      queryKey: [queryKeys.modelRevisionId(), modelKeys],
       queryFn: async () => {
         const { modelId, revisionId } = await getModelIdAndRevisionIdFromExternalId(
           addModelOptions.revisionExternalId,
@@ -63,7 +61,7 @@ const createQueryConfig = (
   }
 
   return {
-    queryKey: [queryKeys.modelRevisionId(), 'unknown', 'unknown'],
+    queryKey: [queryKeys.modelRevisionId(), modelKeys],
     queryFn: async () => await Promise.reject(new Error('Unknown identifier type')),
     staleTime: Infinity
   };

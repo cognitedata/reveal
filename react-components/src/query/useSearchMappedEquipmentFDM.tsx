@@ -15,7 +15,7 @@ import { type DataSourceType, type AddModelOptions } from '@cognite/reveal';
 import { isEqual, uniq, chunk } from 'lodash';
 import { type Fdm3dDataProvider } from '../data-providers/Fdm3dDataProvider';
 import { removeEmptyProperties } from '../utilities/removeEmptyProperties';
-import { isClassicIdentifier, isDMIdentifier } from '../components';
+import { getModelKeys } from '../utilities/getModelKeys';
 
 export type InstancesWithView = { view: Source; instances: NodeItem[] };
 
@@ -37,14 +37,7 @@ export const useSearchMappedEquipmentFDM = (
     () => uniq(viewsToSearch.map((view) => view.space)),
     [viewsToSearch]
   );
-  const modelKeys = models.map((model) => {
-    if (isClassicIdentifier(model)) {
-      return `${model.modelId}/${model.revisionId}`;
-    } else if (isDMIdentifier(model)) {
-      return `${model.revisionExternalId}/${model.revisionSpace}`;
-    }
-    return '';
-  });
+  const modelKeys = useMemo(() => getModelKeys(models), [models]);
 
   return useQuery({
     queryKey: [

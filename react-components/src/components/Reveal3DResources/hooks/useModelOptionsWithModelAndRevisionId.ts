@@ -9,7 +9,7 @@ import {
   type CadOrPointCloudModelWithModelIdRevisionId
 } from '../types';
 
-export function useModelsWithModelIdAndRevision(
+export function useModelOptionsWithModelAndRevisionId(
   models: PointCloudModelOptions[],
   classicModelOptions: Array<AddModelOptions<ClassicDataSourceType>>
 ): CadOrPointCloudModelWithModelIdRevisionId[] {
