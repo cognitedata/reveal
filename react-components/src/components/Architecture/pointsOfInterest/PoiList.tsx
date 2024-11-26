@@ -24,14 +24,8 @@ export type PoiListProps = {
   pageLimit?: number;
 };
 
-export const PoiList = ({
-  onRowClick,
-  filter,
-  pageLimit: inputPageLimit
-}: PoiListProps): ReactNode => {
+export const PoiList = ({ onRowClick, filter, pageLimit = Infinity }: PoiListProps): ReactNode => {
   const { t } = useTranslation();
-
-  const pageLimit = inputPageLimit ?? Infinity;
 
   const [pois, setPois] = useState<Array<PointOfInterest<unknown>>>([]);
   const [selectedPoi, setSelectedPoi] = useState<PointOfInterest<unknown> | undefined>(undefined);
