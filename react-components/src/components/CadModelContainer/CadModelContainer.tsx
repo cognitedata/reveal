@@ -22,7 +22,6 @@ import { getViewerResourceCount } from '../../utilities/getViewerResourceCount';
 import { type CadModelStyling } from './types';
 import { useApplyCadModelStyling } from './useApplyCadModelStyling';
 import { isSameGeometryFilter, isSameModel } from '../../utilities/isSameModel';
-import { useModelIdRevisionIdFromModelOptions } from '../../hooks/useModelIdRevisionIdFromModelOptions';
 
 export type CogniteCadModelProps = {
   addModelOptions: AddModelOptions<ClassicDataSourceType>;
@@ -49,30 +48,22 @@ export function CadModelContainer({
   const [model, setModel] = useState<CogniteCadModel | undefined>(undefined);
 
   useThisAsExpectedResourceLoad();
-
-  const [{ data: addModelOptionsResult }] = useModelIdRevisionIdFromModelOptions([addModelOptions]);
-
-  const modelId = addModelOptionsResult?.modelId;
-  const revisionId = addModelOptionsResult?.revisionId;
-  const geometryFilter = addModelOptions.geometryFilter;
+  const { modelId, revisionId, geometryFilter } = addModelOptions;
 
   useEffect(() => {
-    if (
-      isEqual(initializingModel.current, addModelOptionsResult) ||
-      addModelOptionsResult === undefined
-    ) {
+    if (isEqual(initializingModel.current, addModelOptions) || addModelOptions === undefined) {
       return;
     }
 
-    initializingModel.current = addModelOptionsResult;
-    addModel(addModelOptionsResult, transform)
+    initializingModel.current = addModelOptions;
+    addModel(addModelOptions, transform)
       .then((model) => {
         onLoad?.(model);
         setRevealResourcesCount(getViewerResourceCount(viewer));
       })
       .catch((error) => {
         const errorReportFunction = onLoadError ?? defaultLoadErrorHandler;
-        errorReportFunction(addModelOptionsResult, error);
+        errorReportFunction(addModelOptions, error);
         setReveal3DResourceLoadFailCount((p) => p + 1);
         return () => {
           setReveal3DResourceLoadFailCount((p) => p - 1);

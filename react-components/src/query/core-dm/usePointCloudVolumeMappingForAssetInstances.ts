@@ -62,13 +62,14 @@ export const usePointCloudVolumeMappingForAssetInstances = (
             .filter((pointCloudDMVolumeWithAsset) =>
               assetInstanceRefs.some(
                 (assetInstance) =>
-                  pointCloudDMVolumeWithAsset.asset !== undefined &&
-                  assetInstance.externalId === pointCloudDMVolumeWithAsset.asset.externalId &&
-                  assetInstance.space === pointCloudDMVolumeWithAsset.asset.space
+                  pointCloudDMVolumeWithAsset.assetInstance !== undefined &&
+                  assetInstance.externalId ===
+                    pointCloudDMVolumeWithAsset.assetInstance.externalId &&
+                  assetInstance.space === pointCloudDMVolumeWithAsset.assetInstance.space
               )
             )
             .map((pointCloudDMVolumeWithAsset) => {
-              if (pointCloudDMVolumeWithAsset.asset === undefined) {
+              if (pointCloudDMVolumeWithAsset.assetInstance === undefined) {
                 return undefined;
               }
               return {
@@ -76,7 +77,7 @@ export const usePointCloudVolumeMappingForAssetInstances = (
                   externalId: pointCloudDMVolumeWithAsset.externalId,
                   space: pointCloudDMVolumeWithAsset.space
                 },
-                asset: pointCloudDMVolumeWithAsset.asset
+                asset: pointCloudDMVolumeWithAsset.assetInstance
               };
             })
             .filter(isDefined)

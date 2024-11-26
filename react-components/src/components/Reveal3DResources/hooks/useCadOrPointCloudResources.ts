@@ -2,10 +2,7 @@
  * Copyright 2024 Cognite AS
  */
 
-import { type AddModelOptions, type ClassicDataSourceType } from '@cognite/reveal';
 import { useMemo } from 'react';
-import { useModelIdRevisionIdFromModelOptions } from '../../../hooks/useModelIdRevisionIdFromModelOptions';
-import { isDefined } from '../../../utilities/isDefined';
 import { is360ImageAddOptions } from '../typeGuards';
 import {
   type AddResourceOptions,
@@ -15,11 +12,8 @@ import {
 
 export const useCadOrPointCloudResources = (
   resources: AddResourceOptions[]
-): {
-  classicModelOptions: Array<AddModelOptions<ClassicDataSourceType>>;
-  cadOrPointCloudResources: Array<AddCadResourceOptions | AddPointCloudResourceOptions>;
-} => {
-  const cadOrPointCloudResources = useMemo(
+): Array<AddCadResourceOptions | AddPointCloudResourceOptions> => {
+  return useMemo(
     () =>
       resources.filter(
         (resource): resource is AddCadResourceOptions | AddPointCloudResourceOptions =>
@@ -27,15 +21,4 @@ export const useCadOrPointCloudResources = (
       ),
     [resources]
   );
-
-  const addClassicModelOptionsResults = useModelIdRevisionIdFromModelOptions(
-    cadOrPointCloudResources as Array<AddModelOptions<ClassicDataSourceType>>
-  );
-
-  const classicModelOptions = useMemo(
-    () => addClassicModelOptionsResults.map(({ data }) => data).filter(isDefined),
-    [addClassicModelOptionsResults]
-  );
-
-  return { classicModelOptions, cadOrPointCloudResources };
 };

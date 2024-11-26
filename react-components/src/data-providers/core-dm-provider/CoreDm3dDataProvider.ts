@@ -202,25 +202,22 @@ export class CoreDm3dFdm3dDataProvider implements Fdm3dDataProvider {
   async getRevisionRefs(
     models: Array<AddModelOptions<DataSourceType>>
   ): Promise<DmsUniqueIdentifier[]> {
-    const revisionRefs: DmsUniqueIdentifier[] = [];
     const isClassicModels = models.every((model) => isClassicIdentifier(model));
     const isDMModels = models.every((model) => isDMIdentifier(model));
+
     if (isClassicModels) {
       const modelRefs = await this.getDMSModelsForIds(models.map((model) => model.modelId));
-
-      revisionRefs.push(
-        ...(await this.getDMSRevisionsForRevisionIdsAndModelRefs(
-          modelRefs,
-          models.map((model) => model.revisionId)
-        ))
+      return await this.getDMSRevisionsForRevisionIdsAndModelRefs(
+        modelRefs,
+        models.map((model) => model.revisionId)
       );
     } else if (isDMModels) {
-      revisionRefs.push(
-        ...models.map((model) => {
-          return { externalId: model.revisionExternalId, space: model.revisionSpace };
-        })
-      );
+      return models.map((model) => ({
+        externalId: model.revisionExternalId,
+        space: model.revisionSpace
+      }));
     }
-    return revisionRefs;
+
+    return EMPTY_ARRAY;
   }
 }

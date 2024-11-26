@@ -41,6 +41,7 @@ import {
   useGenerateNode3DCache
 } from '../CacheProvider/AssetMappingAndNode3DCacheProvider';
 import { useCadOrPointCloudResources } from './hooks/useCadOrPointCloudResources';
+import { useClassicModelOptions } from './hooks/useClassicModelOptions';
 
 export const Reveal3DResources = ({
   resources,
@@ -57,7 +58,8 @@ export const Reveal3DResources = ({
 
   useRemoveNonReferencedModels(resources, viewer);
 
-  const { classicModelOptions, cadOrPointCloudResources } = useCadOrPointCloudResources(resources);
+  const cadOrPointCloudResources = useCadOrPointCloudResources(resources);
+  const classicModelOptions = useClassicModelOptions(cadOrPointCloudResources);
 
   useEffect(() => {
     const fetchTypedModels = async (): Promise<void> => {
