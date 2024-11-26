@@ -24,7 +24,7 @@ import partition from 'lodash/partition';
  * An identifier uniquely determining an instance of a Cognite Data Model
  */
 export type Image360DataModelIdentifier = {
-  source?: 'dm' | 'cdm'; // Optional to not break the existing API. The default value is 'dm'.
+  source?: 'dm' | 'cdm'; // If nothing is specified, it is assumed to be 'dm'
   space: string;
   image360CollectionExternalId: string;
 };

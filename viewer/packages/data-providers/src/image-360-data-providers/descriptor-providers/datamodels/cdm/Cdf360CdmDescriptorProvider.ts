@@ -148,7 +148,8 @@ export class Cdf360CdmDescriptorProvider implements Image360DescriptorProvider<I
       fileInfos.push(...batchFileInfos);
     }
 
-    return chunk(fileInfos, 6);
+    const numImagesInCubemap = 6;
+    return chunk(fileInfos, numImagesInCubemap);
   }
 
   private getHistorical360ImageSet(
@@ -156,15 +157,20 @@ export class Cdf360CdmDescriptorProvider implements Image360DescriptorProvider<I
     collectionLabel: string,
     imageFileDescriptors: { image: ImageInstanceResult; fileDescriptors: FileInfo[] }[]
   ): Historical360ImageSet {
-    const mainImageProps = imageFileDescriptors[0].image.properties.cdf_cdm['Cognite360Image/v1'];
+    const mainImagePropsArray = imageFileDescriptors.map(
+      descriptor => descriptor.image.properties.cdf_cdm['Cognite360Image/v1']
+    );
+
     const id = imageFileDescriptors[0].image.externalId;
     return {
       collectionId,
       collectionLabel,
       id,
-      imageRevisions: imageFileDescriptors.map(p => this.getImageRevision(mainImageProps, p.fileDescriptors)),
+      imageRevisions: imageFileDescriptors.map((p, index) =>
+        this.getImageRevision(mainImagePropsArray[index], p.fileDescriptors)
+      ),
       label: '',
-      transform: this.getRevisionTransform(mainImageProps as any)
+      transform: this.getRevisionTransform(mainImagePropsArray[0] as any)
     };
   }
 

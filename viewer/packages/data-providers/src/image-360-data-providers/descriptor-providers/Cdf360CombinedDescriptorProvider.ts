@@ -42,10 +42,10 @@ export class Cdf360CombinedDescriptorProvider
     preMultipliedRotation: boolean
   ): Promise<Historical360ImageSet[]> {
     if (Cdf360CombinedDescriptorProvider.isFdmIdentifier(metadataFilter)) {
-      if (metadataFilter.source === 'dm') {
-        return this._fdmProvider.get360ImageDescriptors(metadataFilter, preMultipliedRotation);
-      } else {
+      if (metadataFilter.source === 'cdm') {
         return this._cdmProvider.get360ImageDescriptors(metadataFilter, preMultipliedRotation);
+      } else {
+        return this._fdmProvider.get360ImageDescriptors(metadataFilter, preMultipliedRotation);
       }
     } else {
       return this._eventProvider.get360ImageDescriptors(metadataFilter, preMultipliedRotation);
