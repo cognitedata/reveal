@@ -54,4 +54,4 @@ export const pointCloudModelsForInstanceQuery = {
       ]
     }
   }
-} as const satisfies Omit<QueryRequest, 'parameters' | 'cursor'>;
+} as const satisfies QueryRequest;

@@ -17,8 +17,6 @@ export function cadAndPointCloudAssetQuery(
   filter: InstanceFilter | undefined,
   limit: number
 ): QueryRequest {
-  // This return value throws away useful type information about the result, but I haven't found a way to
-  // make the full type easily expressible
   return {
     with: {
       cad_nodes: {
@@ -77,7 +75,7 @@ export function cadAndPointCloudAssetQuery(
         ]
       }
     }
-  } as const satisfies Omit<QueryRequest, 'parameters' | 'cursors'>;
+  } as const satisfies QueryRequest;
 }
 
 const containsCadRevisionFilter: InstanceFilter = {
