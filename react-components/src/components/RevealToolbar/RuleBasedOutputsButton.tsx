@@ -1,7 +1,7 @@
 /*!
  * Copyright 2024 Cognite AS
  */
-import { useState, type ReactElement, useEffect, useCallback } from 'react';
+import { useState, type ReactElement, useEffect, useCallback, useMemo } from 'react';
 
 import { Button, Tooltip as CogsTooltip, ColorPaletteIcon } from '@cognite/cogs.js';
 import { Menu } from '@cognite/cogs-lab';
@@ -17,7 +17,10 @@ import { useTranslation } from '../i18n/I18n';
 import { useFetchRuleInstances } from '../RuleBasedOutputs/hooks/useFetchRuleInstances';
 import { use3dModels } from '../../hooks/use3dModels';
 import { type CadModelOptions } from '../Reveal3DResources/types';
-import { useAssetMappedNodesForRevisions } from '../CacheProvider/AssetMappingAndNode3DCacheProvider';
+import {
+  useAssetMappedNodesForRevisions,
+  useGenerateCadAssetMappingsCache
+} from '../CacheProvider/AssetMappingAndNode3DCacheProvider';
 import { RuleBasedSelectionItem } from '../RuleBasedOutputs/components/RuleBasedSelectionItem';
 import { generateEmptyRuleForSelection, getRuleBasedById } from '../RuleBasedOutputs/utils';
 import { useReveal3DResourcesStylingLoading } from '../Reveal3DResources/Reveal3DResourcesInfoContext';
@@ -45,8 +48,24 @@ export const RuleBasedOutputsButton = ({
 
   const [isRuleLoading, setIsRuleLoading] = useState(false);
 
-  const { isLoading: isAssetMappingsLoading, isFetched: isAssetMappingsFetched } =
-    useAssetMappedNodesForRevisions(cadModels);
+  const {
+    data: assetMappings,
+    isLoading: isAssetMappingsLoading,
+    isFetched: isAssetMappingsFetched
+  } = useAssetMappedNodesForRevisions(cadModels);
+
+  const disabled = isAssetMappingsLoading && !isAssetMappingsFetched;
+
+  // generate a cadModelOptions from cadModels only with modelId, revisionId, transform and type
+  const cadModelOptions: CadModelOptions[] = useMemo(() => {
+    return cadModels.map((model) => ({
+      modelId: model.modelId,
+      revisionId: model.revisionId,
+      type: model.type
+    }));
+  }, [cadModels]);
+
+  useGenerateCadAssetMappingsCache(!disabled, assetMappings, cadModelOptions);
 
   const [newRuleSetEnabled, setNewRuleSetEnabled] = useState<RuleAndEnabled>();
   const isRuleLoadingFromContext = useReveal3DResourcesStylingLoading();
@@ -54,8 +73,6 @@ export const RuleBasedOutputsButton = ({
   const [isAllMappingsFetched, setIsAllMappingsFetched] = useState(false);
 
   const { data: ruleInstancesResult } = useFetchRuleInstances();
-
-  const disabled = isAssetMappingsLoading && !isAssetMappingsFetched;
 
   useEffect(() => {
     setRuleInstances(ruleInstancesResult);
@@ -121,6 +138,12 @@ export const RuleBasedOutputsButton = ({
     if (onRuleSetStylingChanged !== undefined) onRuleSetStylingChanged(allStylingGroups);
   };
 
+  const contentTooltip = useMemo(() => {
+    return disabled
+      ? t({ key: 'RULESET_SELECT_HEADER_LOADING' })
+      : t({ key: 'RULESET_SELECT_HEADER' });
+  }, [disabled]);
+
   if (ruleInstances === undefined || ruleInstances.length === 0) {
     return <></>;
   }
@@ -137,12 +160,9 @@ export const RuleBasedOutputsButton = ({
       floatingProps={{ middleware: [offset(TOOLBAR_HORIZONTAL_PANEL_OFFSET)] }}
       disableCloseOnClickInside
       renderTrigger={(props: any) => (
-        <CogsTooltip
-          content={t({ key: 'RULESET_SELECT_HEADER' })}
-          placement="right"
-          appendTo={document.body}>
+        <CogsTooltip content={contentTooltip} placement="right" appendTo={document.body}>
           <Button
-            icon=<ColorPaletteIcon />
+            icon={<ColorPaletteIcon />}
             disabled={disabled}
             aria-label="Select RuleSet"
             type="ghost"

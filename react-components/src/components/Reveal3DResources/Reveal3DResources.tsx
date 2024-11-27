@@ -68,7 +68,12 @@ export const Reveal3DResources = ({
   useRemoveNonReferencedModels(resources, viewer);
 
   const cadModelOptions = useMemo(
-    () => reveal3DModels.filter((model): model is CadModelOptions => model.type === 'cad'),
+    () =>
+      reveal3DModels
+        .filter((model): model is CadModelOptions => model.type === 'cad')
+        .map((model) => {
+          return { modelId: model.modelId, revisionId: model.revisionId, type: model.type };
+        }),
     [reveal3DModels]
   );
 

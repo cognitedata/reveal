@@ -6,32 +6,31 @@ import { type ModelAssetIdKey } from './types';
 import { type AssetMapping } from './AssetMappingAndNode3DCache';
 
 export class AssetMappingPerAssetIdCache {
-  private readonly _assetIdsToAssetMappings = new Map<ModelAssetIdKey, Promise<AssetMapping[]>>();
+  private readonly _assetIdsToAssetMappings = new Map<ModelAssetIdKey, AssetMapping[]>();
 
   public setAssetIdsToAssetMappingCacheItem(
     key: ModelAssetIdKey,
-    item: Promise<Array<Required<AssetMapping3D>>>
+    item: Array<Required<AssetMapping3D>>
   ): void {
-    this._assetIdsToAssetMappings.set(key, Promise.resolve(item));
+    this._assetIdsToAssetMappings.set(key, item);
   }
 
-  public async getAssetIdsToAssetMappingCacheItem(
-    key: ModelAssetIdKey
-  ): Promise<AssetMapping[] | undefined> {
-    return await this._assetIdsToAssetMappings.get(key);
+  public getAssetIdsToAssetMappingCacheItem(key: ModelAssetIdKey): AssetMapping[] | undefined {
+    return this._assetIdsToAssetMappings.get(key);
   }
 
-  public async setAssetMappingsCacheItem(key: ModelAssetIdKey, item: AssetMapping): Promise<void> {
+  public setAssetMappingsCacheItem(key: ModelAssetIdKey, item: AssetMapping): void {
     const currentAssetMappings = this.getAssetIdsToAssetMappingCacheItem(key);
-    this.setAssetIdsToAssetMappingCacheItem(
-      key,
-      currentAssetMappings.then((value) => {
-        if (value === undefined) {
-          return [item];
-        }
-        value.push(item);
-        return value;
-      })
-    );
+    let assetMappings: Array<Required<AssetMapping3D>> | undefined = currentAssetMappings;
+
+    if (assetMappings === undefined) {
+      assetMappings = [item];
+    } else if (
+      assetMappings.find((assetMapping) => assetMapping.nodeId === item.nodeId) === undefined
+    ) {
+      assetMappings.push(item);
+    }
+
+    this.setAssetIdsToAssetMappingCacheItem(key, assetMappings);
   }
 }
