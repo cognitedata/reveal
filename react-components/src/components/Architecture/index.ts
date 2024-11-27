@@ -4,7 +4,7 @@
 
 export { RevealButtons } from './RevealButtons';
 export type { PlacementType } from './types';
-export { IconComponentMapper } from './IconComponentMapper';
+export { IconFactory } from './Factories/IconFactory';
 export { TreeView } from './TreeView/TreeView';
 export type { TreeViewProps } from './TreeView/TreeViewProps';
 export { ToolUI } from './ToolUI';

@@ -60,7 +60,6 @@ export abstract class BaseCommand {
     if (this.tooltip === undefined) {
       return '';
     }
-
     return isTranslatedString(this.tooltip) ? this.tooltip.key : this.tooltip?.untranslated;
   }
 
