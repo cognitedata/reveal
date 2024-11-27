@@ -82,7 +82,9 @@ export const CommentSection = (): ReactNode => {
       title={t({ key: 'COMMENTS' })}
       gap={8}
       expanded={open}
-      onChange={(expanded: boolean) => setOpen(expanded)}>
+      onChange={(expanded: boolean) => {
+        setOpen(expanded);
+      }}>
       <Flex direction="column" gap={8}>
         {comments.data?.map((comment) => (
           <SingleCommentDisplay key={`${comment.ownerId}/${comment.content}`} comment={comment} />
