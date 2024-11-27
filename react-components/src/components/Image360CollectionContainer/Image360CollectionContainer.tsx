@@ -49,7 +49,7 @@ export function Image360CollectionContainer({
 
   useEffect(() => {
     if (
-      addImage360CollectionOptions.source === 'events' &&
+      'siteId' in addImage360CollectionOptions &&
       initializingSiteId.current === addImage360CollectionOptions
     ) {
       return;
@@ -106,7 +106,7 @@ export function Image360CollectionContainer({
     async function getOrAdd360Collection(): Promise<Image360Collection> {
       const collections = viewer.get360ImageCollections();
       const siteId =
-        addImage360CollectionOptions.source === 'events'
+        'siteId' in addImage360CollectionOptions
           ? addImage360CollectionOptions.siteId
           : addImage360CollectionOptions.externalId;
       const collection = collections.find((collection) => collection.id === siteId);
@@ -114,7 +114,7 @@ export function Image360CollectionContainer({
         return collection;
       }
 
-      if (addImage360CollectionOptions.source === 'events') {
+      if ('siteId' in addImage360CollectionOptions) {
         return await viewer.add360ImageSet(
           'events',
           { site_id: siteId },
@@ -122,7 +122,6 @@ export function Image360CollectionContainer({
         );
       } else {
         return await viewer.add360ImageSet('datamodels', {
-          source: addImage360CollectionOptions.source,
           image360CollectionExternalId: addImage360CollectionOptions.externalId,
           space: addImage360CollectionOptions.space
         });
