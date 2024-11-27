@@ -61,7 +61,7 @@ export const pointCloudDMVolumesQuery = (revisionRefs: DmsUniqueIdentifier[]) =>
         sources: [
           {
             source: COGNITE_POINT_CLOUD_VOLUME_SOURCE,
-            properties: ['*']
+            properties: ['volumeReferences', 'object3D', 'revisions', 'volumeType', 'volume']
           }
         ]
       },
@@ -70,7 +70,7 @@ export const pointCloudDMVolumesQuery = (revisionRefs: DmsUniqueIdentifier[]) =>
         sources: [
           {
             source: COGNITE_ASSET_SOURCE,
-            properties: ['*']
+            properties: ['object3D', 'name', 'description']
           }
         ]
       }

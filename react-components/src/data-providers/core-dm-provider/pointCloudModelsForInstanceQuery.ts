@@ -48,7 +48,7 @@ export const pointCloudModelsForInstanceQuery = {
       sources: [
         {
           source: COGNITE_POINT_CLOUD_VOLUME_SOURCE,
-          properties: ['*']
+          properties: ['revisions']
         }
       ]
     }

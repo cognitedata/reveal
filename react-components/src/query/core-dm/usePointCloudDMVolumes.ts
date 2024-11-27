@@ -18,7 +18,7 @@ import {
   type PointCloudVolumeObject3DProperties
 } from '../../data-providers/core-dm-provider/utils/filters';
 import { type PointCloudVolumeWithAsset } from '../../components/CacheProvider/types';
-import { type DmsUniqueIdentifier, type FdmSDK } from '../../data-providers/FdmSDK';
+import { type FdmSDK } from '../../data-providers/FdmSDK';
 import { pointCloudDMVolumesQuery } from './pointCloudDMVolumesQuery';
 import { queryKeys } from '../../utilities/queryKeys';
 import { type AddModelOptions, type ClassicDataSourceType } from '@cognite/reveal';
@@ -84,17 +84,15 @@ const getPointCloudDMVolumesForModel = async (
     const pointCloudVolumeProperties =
       pointCloudVolume.properties.cdf_cdm['CognitePointCloudVolume/v1'];
 
-    const revisionIndex = (pointCloudVolumeProperties.revisions as DmsUniqueIdentifier[]).indexOf(
-      revisionRefs[0]
-    );
+    const revisionIndex = pointCloudVolumeProperties.revisions.indexOf(revisionRefs[0]);
 
     return {
       externalId: pointCloudVolume.externalId,
       space: pointCloudVolume.space,
-      volumeReference: (pointCloudVolumeProperties.volumeReferences as string[])?.[revisionIndex],
-      object3D: pointCloudVolumeProperties.object3D as DmsUniqueIdentifier,
-      volumeType: pointCloudVolumeProperties.volumeType as string,
-      volume: pointCloudVolumeProperties.volume as number[]
+      volumeReference: pointCloudVolumeProperties.volumeReferences?.[revisionIndex],
+      object3D: pointCloudVolumeProperties.object3D,
+      volumeType: pointCloudVolumeProperties.volumeType,
+      volume: pointCloudVolumeProperties.volume
     };
   });
 
@@ -103,7 +101,7 @@ const getPointCloudDMVolumesForModel = async (
     return {
       externalId: asset.externalId,
       space: asset.space,
-      object3D: assetProperties.object3D as DmsUniqueIdentifier,
+      object3D: assetProperties.object3D,
       name: assetProperties.name,
       description: assetProperties.description
     };
@@ -120,7 +118,7 @@ const getPointCloudDMVolumesForModel = async (
 
     return {
       ...pointCloudVolume,
-      asset
+      dmAsset: asset
     };
   });
   return pointCloudVolumesWithAssets;
