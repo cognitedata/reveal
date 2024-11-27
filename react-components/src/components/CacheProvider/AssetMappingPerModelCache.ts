@@ -1,7 +1,7 @@
 /*!
  * Copyright 2024 Cognite AS
  */
-import { type CogniteClient, type AssetMapping3D } from '@cognite/sdk/dist/src';
+import { type CogniteClient, type AssetMapping3D } from '@cognite/sdk';
 import { type ModelId, type RevisionId, type ModelRevisionKey } from './types';
 import { type AssetMapping } from './AssetMappingAndNode3DCache';
 import { isValidAssetMapping } from './utils';

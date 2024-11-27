@@ -12,6 +12,7 @@ import {
   CognitePointCloudModel,
   CogniteCadModel,
   type Image360Collection,
+  type DataSourceType,
   Image360Action
 } from '@cognite/reveal';
 import {
@@ -34,7 +35,7 @@ import { CommandsUpdater } from '../reactUpdaters/CommandsUpdater';
 import { Range3 } from '../utilities/geometry/Range3';
 import { getBoundingBoxFromPlanes } from '../utilities/geometry/getBoundingBoxFromPlanes';
 import { Changes } from '../domainObjectsHelpers/Changes';
-import { type CogniteClient } from '@cognite/sdk/dist/src';
+import { type CogniteClient } from '@cognite/sdk';
 import { type BaseTool } from '../commands/BaseTool';
 import { ContextMenuController } from './ContextMenuController';
 
@@ -45,7 +46,7 @@ export class RevealRenderTarget {
   // INSTANCE FIELDS
   // ==================================================
 
-  private readonly _viewer: Cognite3DViewer;
+  private readonly _viewer: Cognite3DViewer<DataSourceType>;
   private readonly _commandsController: CommandsController;
   private readonly _rootDomainObject: RootDomainObject;
   private readonly _contextmenuController: ContextMenuController;
@@ -64,7 +65,7 @@ export class RevealRenderTarget {
   // CONSTRUCTOR
   // ==================================================
 
-  constructor(viewer: Cognite3DViewer, sdk: CogniteClient) {
+  constructor(viewer: Cognite3DViewer<DataSourceType>, sdk: CogniteClient) {
     this._viewer = viewer;
 
     const cameraManager = this.cameraManager;
@@ -86,7 +87,7 @@ export class RevealRenderTarget {
   // INSTANCE PROPERTIES
   // ==================================================
 
-  public get viewer(): Cognite3DViewer {
+  public get viewer(): Cognite3DViewer<DataSourceType> {
     return this._viewer;
   }
 
@@ -167,7 +168,7 @@ export class RevealRenderTarget {
   // INSTANCE METHODS: Get models from the viewer
   // ==================================================
 
-  public *getPointClouds(): Generator<CognitePointCloudModel> {
+  public *getPointClouds(): Generator<CognitePointCloudModel<DataSourceType>> {
     for (const model of this.viewer.models) {
       if (model instanceof CognitePointCloudModel) {
         yield model;
@@ -183,7 +184,7 @@ export class RevealRenderTarget {
     }
   }
 
-  public *get360ImageCollections(): Generator<Image360Collection> {
+  public *get360ImageCollections(): Generator<Image360Collection<DataSourceType>> {
     for (const collection of this.viewer.get360ImageCollections()) {
       yield collection;
     }

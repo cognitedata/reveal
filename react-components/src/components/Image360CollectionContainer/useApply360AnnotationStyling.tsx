@@ -6,7 +6,8 @@ import {
   type Cognite3DViewer,
   type Image360Collection,
   type Image360Annotation,
-  type Image360AnnotationAppearance
+  type Image360AnnotationAppearance,
+  type DataSourceType
 } from '@cognite/reveal';
 import { Color } from 'three';
 import { image360CollectionExists } from '../../utilities/modelExists';
@@ -30,7 +31,7 @@ const defaultStyling: Image360AnnotationAppearance = {
 };
 
 export const useApply360AnnotationStyling = (
-  imageCollection?: Image360Collection,
+  imageCollection?: Image360Collection<DataSourceType>,
   styling?: ImageCollectionModelStyling
 ): void => {
   const viewer = useReveal();
@@ -83,9 +84,9 @@ export const useApply360AnnotationStyling = (
 };
 
 async function applyStyling(
-  imageCollection: Image360Collection,
+  imageCollection: Image360Collection<DataSourceType>,
   styling: AnnotationIdStylingGroup[],
-  viewer: Cognite3DViewer,
+  viewer: Cognite3DViewer<DataSourceType>,
   applyDefaultAnnotationStyling: () => void,
   setLastStyledImageAnnotations: (annotations: Image360Annotation[]) => void,
   signal: AbortSignal

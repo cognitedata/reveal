@@ -6,35 +6,35 @@ import {
   type CadModelOptions,
   type DefaultResourceStyling,
   type FdmAssetStylingGroup
-} from './types';
+} from '../types';
 import { NumericRange, type NodeAppearance, IndexSet } from '@cognite/reveal';
 import { type Node3D, type CogniteExternalId, type AssetMapping3D } from '@cognite/sdk';
 import {
   useFdmAssetMappings,
   useMappedEdgesForRevisions
-} from '../CacheProvider/NodeCacheProvider';
+} from '../../CacheProvider/NodeCacheProvider';
 import { useMemo } from 'react';
 import {
   type NodeId,
   type FdmConnectionWithNode,
   type AssetId,
   type ModelRevisionAssetNodesResult
-} from '../CacheProvider/types';
+} from '../../CacheProvider/types';
 import {
   type CadStylingGroup,
   type NodeStylingGroup,
   type TreeIndexStylingGroup
-} from '../CadModelContainer/types';
+} from '../../CadModelContainer/types';
 import {
   useAssetMappedNodesForRevisions,
   useNodesForAssets
-} from '../CacheProvider/AssetMappingAndNode3DCacheProvider';
+} from '../../CacheProvider/AssetMappingAndNode3DCacheProvider';
 import {
-  isAssetMappingStylingGroup,
+  isClassicAssetMappingStylingGroup,
   isFdmAssetStylingGroup
-} from '../../utilities/StylingGroupUtils';
-import { type ThreeDModelFdmMappings } from '../../hooks/types';
-import { isSameModel } from '../../utilities/isSameModel';
+} from '../../../utilities/StylingGroupUtils';
+import { type ThreeDModelFdmMappings } from '../../../hooks/types';
+import { isSameModel } from '../../../utilities/isSameModel';
 
 type ModelStyleGroup = {
   model: CadModelOptions;
@@ -198,7 +198,7 @@ function useCalculateInstanceStyling(
   );
 
   const assetIdsFromInstanceGroups = instanceGroups
-    .filter(isAssetMappingStylingGroup)
+    .filter(isClassicAssetMappingStylingGroup)
     .flatMap((instanceGroup) => instanceGroup.assetIds);
 
   const {
@@ -247,7 +247,7 @@ function useAssetMappingInstanceStyleGroups(
 
     return models.map((model, index) => {
       return calculateAssetMappingCadModelStyling(
-        instanceGroups.filter(isAssetMappingStylingGroup),
+        instanceGroups.filter(isClassicAssetMappingStylingGroup),
         modelAssetMappings[index].assetToNodeMap,
         model
       );

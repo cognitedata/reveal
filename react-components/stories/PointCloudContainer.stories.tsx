@@ -10,7 +10,7 @@ import {
 } from '../src';
 import { Color, Matrix4 } from 'three';
 import { createSdkByUrlToken } from './utilities/createSdkByUrlToken';
-import { type AddModelOptions } from '@cognite/reveal';
+import { type DataSourceType, type AddModelOptions } from '@cognite/reveal';
 
 const meta = {
   title: 'Example/PrimitiveWrappers/PointCloudContainer',
@@ -60,7 +60,7 @@ export const Main: Story = {
     transform,
     styling
   }: {
-    addModelOptions: AddModelOptions;
+    addModelOptions: AddModelOptions<DataSourceType>;
     transform?: Matrix4;
     styling?: PointCloudModelStyling;
   }) => (

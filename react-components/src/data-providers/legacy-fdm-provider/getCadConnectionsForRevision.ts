@@ -10,7 +10,7 @@ import {
   SYSTEM_SPACE_3D_SCHEMA
 } from './dataModels';
 import { fdmEdgesToCadConnections } from './fdmEdgesToCadConnections';
-import { type CogniteClient } from '@cognite/sdk/dist/src';
+import { type CogniteClient } from '@cognite/sdk';
 
 export async function getCadConnectionsForRevision(
   modelOptions: AddModelOptions[],

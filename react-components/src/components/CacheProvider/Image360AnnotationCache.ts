@@ -6,6 +6,7 @@ import { type Asset, type CogniteClient } from '@cognite/sdk';
 import { type Image360AnnotationAssetInfo } from './types';
 import { getAssetIdOrExternalIdFromImage360Annotation } from './utils';
 import {
+  type DataSourceType,
   type AssetAnnotationImage360Info,
   type Cognite3DViewer,
   type Image360Collection
@@ -15,10 +16,10 @@ import { isDefined } from '../../utilities/isDefined';
 
 export class Image360AnnotationCache {
   private readonly _sdk: CogniteClient;
-  private readonly _viewer: Cognite3DViewer | undefined;
+  private readonly _viewer: Cognite3DViewer<DataSourceType> | undefined;
   private readonly _annotationToAssetMappings = new Map<string, Image360AnnotationAssetInfo[]>();
 
-  constructor(sdk: CogniteClient, viewer: Cognite3DViewer | undefined) {
+  constructor(sdk: CogniteClient, viewer: Cognite3DViewer<DataSourceType> | undefined) {
     this._sdk = sdk;
     this._viewer = viewer;
   }
@@ -47,7 +48,7 @@ export class Image360AnnotationCache {
     const image360Collections = this._viewer.get360ImageCollections();
 
     const annotationsInfoPromise = await Promise.all(
-      image360Collections.map(async (image360Collection: Image360Collection) => {
+      image360Collections.map(async (image360Collection: Image360Collection<DataSourceType>) => {
         const annotations = await image360Collection.getAnnotationsInfo('assets');
         return annotations;
       })
@@ -71,7 +72,7 @@ export class Image360AnnotationCache {
   }
 
   private async getAssetWithAnnotationsMapped(
-    assetAnnotationImage360Infos: AssetAnnotationImage360Info[],
+    assetAnnotationImage360Infos: Array<AssetAnnotationImage360Info<DataSourceType>>,
     assets: Map<number, Asset>
   ): Promise<Image360AnnotationAssetInfo[]> {
     const assetsWithAnnotationsPromises = assetAnnotationImage360Infos

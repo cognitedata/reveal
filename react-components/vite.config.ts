@@ -27,7 +27,20 @@ export default defineConfig(({ command, mode }) => {
       sourcemap: command === 'build'
     },
     test: {
-      include: ['tests/unit-tests/**/*.{test,spec}.?(c|m)[jt]s?(x)']
+      include: ['tests/unit-tests/**/*.{test,spec}.?(c|m)[jt]s?(x)'],
+      // Need to add E5 modules as inlined dependencies to be able to import them in tests.
+      server: {
+        deps: {
+          inline: [
+            '@cognite/cogs-lab',
+            '@cognite/cogs.js',
+            '@cognite/cogs-core',
+            '@mui',
+            '@cognite/cogs-utils',
+            'lodash'
+          ]
+        }
+      }
     }
   };
 });

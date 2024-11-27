@@ -2,7 +2,7 @@
  * Copyright 2024 Cognite AS
  */
 
-import { type Image360Collection } from '@cognite/reveal';
+import { type DataSourceType, type Image360Collection } from '@cognite/reveal';
 import { RenderTargetCommand } from '../../commands/RenderTargetCommand';
 import { type TranslationInput } from '../../utilities/TranslateInput';
 
@@ -35,7 +35,7 @@ export class Set360IconsVisibleCommand extends RenderTargetCommand {
     return true;
   }
 
-  private get firstCollection(): Image360Collection | undefined {
+  private get firstCollection(): Image360Collection<DataSourceType> | undefined {
     return this.renderTarget.get360ImageCollections().next().value;
   }
 }
