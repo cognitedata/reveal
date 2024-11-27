@@ -18,7 +18,7 @@ import {
   type PointCloudVolumeObject3DProperties
 } from '../../data-providers/core-dm-provider/utils/filters';
 import { type PointCloudVolumeWithAsset } from '../../components/CacheProvider/types';
-import { type FdmSDK } from '../../data-providers/FdmSDK';
+import { type DmsUniqueIdentifier, type FdmSDK } from '../../data-providers/FdmSDK';
 import { pointCloudDMVolumesQuery } from './pointCloudDMVolumesQuery';
 import { queryKeys } from '../../utilities/queryKeys';
 import { type AddModelOptions, type ClassicDataSourceType } from '@cognite/reveal';
@@ -80,28 +80,29 @@ const getPointCloudDMVolumesForModel = async (
   >(query);
 
   const pointCloudVolumes = response.items.pointCloudVolumes.map((pointCloudVolume) => {
-    const pointCloudVolumeProperties = pointCloudVolume.properties.cdf_cdm[
-      'CognitePointCloudVolume/v1'
-    ] as PointCloudVolumeObject3DProperties;
+    const pointCloudVolumeProperties =
+      pointCloudVolume.properties.cdf_cdm['CognitePointCloudVolume/v1'];
 
-    const revisionIndex = pointCloudVolumeProperties.revisions.indexOf(revisionRefs[0]);
+    const revisionIndex = (pointCloudVolumeProperties.revisions as DmsUniqueIdentifier[]).indexOf(
+      revisionRefs[0]
+    );
 
     return {
       externalId: pointCloudVolume.externalId,
       space: pointCloudVolume.space,
-      volumeReference: pointCloudVolumeProperties.volumeReferences?.[revisionIndex],
-      object3D: pointCloudVolumeProperties.object3D,
-      volumeType: pointCloudVolumeProperties.volumeType,
-      volume: pointCloudVolumeProperties.volume
+      volumeReference: (pointCloudVolumeProperties.volumeReferences as string[])?.[revisionIndex],
+      object3D: pointCloudVolumeProperties.object3D as DmsUniqueIdentifier,
+      volumeType: pointCloudVolumeProperties.volumeType as string,
+      volume: pointCloudVolumeProperties.volume as number[]
     };
   });
 
   const assets = response.items.assets.map((asset) => {
-    const assetProperties = asset.properties.cdf_cdm['CogniteAsset/v1'] as AssetProperties;
+    const assetProperties = asset.properties.cdf_cdm['CogniteAsset/v1'];
     return {
       externalId: asset.externalId,
       space: asset.space,
-      object3D: assetProperties.object3D,
+      object3D: assetProperties.object3D as DmsUniqueIdentifier,
       name: assetProperties.name,
       description: assetProperties.description
     };
@@ -118,7 +119,7 @@ const getPointCloudDMVolumesForModel = async (
 
     return {
       ...pointCloudVolume,
-      dmAsset: asset
+      asset
     };
   });
   return pointCloudVolumesWithAssets;

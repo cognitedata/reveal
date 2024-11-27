@@ -11,12 +11,11 @@ import {
 } from '../../data-providers/core-dm-provider/dataModels';
 import {
   isPointCloudVolumeFilter,
-  getRevisionContainsAnyFilter,
-  POINT_CLOUD_VOLUME_REVISIONS_OBJECT3D_PROPERTIES_LIST,
-  ASSET_PROPERTIES_LIST
+  getRevisionContainsAnyFilter
 } from '../../data-providers/core-dm-provider/utils/filters';
 
-export const pointCloudDMVolumesQuery = (revisionRefs: DmsUniqueIdentifier[]): QueryRequest => {
+// eslint-disable-next-line @typescript-eslint/explicit-function-return-type
+export const pointCloudDMVolumesQuery = (revisionRefs: DmsUniqueIdentifier[]) => {
   return {
     with: {
       pointCloudVolumes: {
@@ -62,7 +61,7 @@ export const pointCloudDMVolumesQuery = (revisionRefs: DmsUniqueIdentifier[]): Q
         sources: [
           {
             source: COGNITE_POINT_CLOUD_VOLUME_SOURCE,
-            properties: POINT_CLOUD_VOLUME_REVISIONS_OBJECT3D_PROPERTIES_LIST
+            properties: ['*']
           }
         ]
       },
@@ -71,7 +70,7 @@ export const pointCloudDMVolumesQuery = (revisionRefs: DmsUniqueIdentifier[]): Q
         sources: [
           {
             source: COGNITE_ASSET_SOURCE,
-            properties: ASSET_PROPERTIES_LIST
+            properties: ['*']
           }
         ]
       }

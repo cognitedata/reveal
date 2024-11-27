@@ -34,8 +34,8 @@ export const getPointCloudModelsForAssetInstance = async (
   return results.items.pointcloud_volumes.flatMap((pointCloudVolume) => {
     const pointCloudVolumeProperties = pointCloudVolume.properties.cdf_cdm[
       'CognitePointCloudVolume/v1'
-    ] as PointCloudVolumeObject3DProperties;
-    return pointCloudVolumeProperties.revisions.map((revision) => ({
+    ] as { revisions: DmsUniqueIdentifier[] };
+    return pointCloudVolumeProperties.revisions.map((revision: DmsUniqueIdentifier) => ({
       type: 'pointcloud',
       addOptions: {
         revisionExternalId: revision.externalId,

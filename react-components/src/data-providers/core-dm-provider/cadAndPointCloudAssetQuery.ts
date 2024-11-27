@@ -12,11 +12,12 @@ import {
   CORE_DM_3D_CONTAINER_SPACE
 } from './dataModels';
 
+// eslint-disable-next-line @typescript-eslint/explicit-function-return-type
 export function cadAndPointCloudAssetQuery(
   sourcesToSearch: Source[],
   filter: InstanceFilter | undefined,
   limit: number
-): QueryRequest {
+) {
   return {
     with: {
       cad_nodes: {
@@ -75,7 +76,7 @@ export function cadAndPointCloudAssetQuery(
         ]
       }
     }
-  } as const satisfies QueryRequest;
+  } as const satisfies Omit<QueryRequest, 'parameters' | 'cursors'>;
 }
 
 const containsCadRevisionFilter: InstanceFilter = {

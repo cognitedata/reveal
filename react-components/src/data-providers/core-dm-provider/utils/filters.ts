@@ -23,42 +23,12 @@ export const isPointCloudVolumeFilter = {
   hasData: [COGNITE_POINT_CLOUD_VOLUME_SOURCE]
 } as const satisfies HasExistingDataFilterV3;
 
-export const POINT_CLOUD_VOLUME_MODEL_REFERENCE = ['model3D'] as const satisfies Array<
-  keyof PointCloudVolumeModelProperties
->;
-
-export const POINT_CLOUD_VOLUME_REVISIONS_REFERENCE = [
-  ...POINT_CLOUD_VOLUME_MODEL_REFERENCE,
-  'revisions',
-  'volumeReferences'
-] as const satisfies Array<keyof PointCloudVolumeRevisionProperties>;
-
-export const POINT_CLOUD_VOLUME_REVISIONS_PROPERTIES_LIST = [
-  ...POINT_CLOUD_VOLUME_REVISIONS_REFERENCE,
-  'volumeType',
-  'volume'
-] as const satisfies Array<keyof PointCloudVolumeRevisionVolumeProperties>;
-
-export const POINT_CLOUD_VOLUME_REVISIONS_OBJECT3D_PROPERTIES_LIST = [
-  ...POINT_CLOUD_VOLUME_REVISIONS_PROPERTIES_LIST,
-  'object3D'
-] as const satisfies Array<keyof PointCloudVolumeObject3DProperties>;
-
-export type PointCloudVolumeModelProperties = {
-  model3D: DmsUniqueIdentifier;
-};
-
-export type PointCloudVolumeRevisionProperties = PointCloudVolumeModelProperties & {
+export type PointCloudVolumeObject3DProperties = {
   revisions: DmsUniqueIdentifier[];
+  model3D: DmsUniqueIdentifier;
   volumeReferences: string[];
-};
-
-export type PointCloudVolumeRevisionVolumeProperties = PointCloudVolumeRevisionProperties & {
   volumeType: string;
   volume: number[];
-};
-
-export type PointCloudVolumeObject3DProperties = PointCloudVolumeRevisionVolumeProperties & {
   object3D: DmsUniqueIdentifier;
 };
 
