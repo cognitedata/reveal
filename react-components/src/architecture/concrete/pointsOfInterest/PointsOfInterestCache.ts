@@ -1,11 +1,9 @@
 /*!
  * Copyright 2024 Cognite AS
  */
-import { FdmKey } from '../../../components/CacheProvider/types';
-import { DmsUniqueIdentifier } from '../../../data-providers';
+import { type DmsUniqueIdentifier } from '../../../data-providers';
 import { type CommentProperties, type PointsOfInterestInstance } from './models';
 import { type PointsOfInterestProvider } from './PointsOfInterestProvider';
-import { PointOfInterest } from './types';
 
 /**
  * A cache that takes care of loading the pois, but also buffers changes to the overlays

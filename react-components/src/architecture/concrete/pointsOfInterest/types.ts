@@ -10,7 +10,7 @@ import { type PointsOfInterestProperties } from './models';
 import { type Vector3 } from 'three';
 import { type DomainObjectIntersection } from '../../base/domainObjectsHelpers/DomainObjectIntersection';
 import { type PointsOfInterestDomainObject } from './PointsOfInterestDomainObject';
-import { DmsUniqueIdentifier } from '../../../data-providers';
+import { type DmsUniqueIdentifier } from '../../../data-providers';
 
 export enum PointsOfInterestStatus {
   Default,

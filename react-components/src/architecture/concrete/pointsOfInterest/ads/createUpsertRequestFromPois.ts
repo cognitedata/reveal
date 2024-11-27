@@ -1,13 +1,9 @@
-import { DmsUniqueIdentifier } from '../../../../data-providers';
-import { ExternalId } from '../../../../data-providers/FdmSDK';
-import { VisibleState } from '../../../base/domainObjectsHelpers/VisibleState';
-import {
-  PointsOfInterestInstance,
-  PointsOfInterestProperties,
-  PoiVisibility,
-  SceneState
-} from '../models';
-import { PointOfInterest } from '../types';
+/*!
+ * Copyright 2024 Cognite AS
+ */
+import { type DmsUniqueIdentifier } from '../../../../data-providers';
+import { type ExternalId } from '../../../../data-providers/FdmSDK';
+import { type PointsOfInterestInstance, type PoiVisibility, type SceneState } from '../models';
 
 type PoiUpsertObject = {
   externalId: ExternalId;
@@ -23,7 +19,7 @@ type PoiUpsertRequest = {
 };
 
 export function createUpsertRequestFromPois(
-  pois: PointsOfInterestInstance<ExternalId>[]
+  pois: Array<PointsOfInterestInstance<ExternalId>>
 ): PoiUpsertRequest {
   return {
     items: pois.map(({ id, properties: poi }) => ({

@@ -6,7 +6,7 @@ import { BaseInputCommand } from '../../base/commands/BaseInputCommand';
 import { PointsOfInterestDomainObject } from './PointsOfInterestDomainObject';
 import { type TranslationInput } from '../../base/utilities/TranslateInput';
 import { createPointsOfInterestPropertiesFromPointAndTitle } from './types';
-import { DmsUniqueIdentifier } from '../../../data-providers';
+import { type DmsUniqueIdentifier } from '../../../data-providers';
 
 export class CreatePointsOfInterestWithDescriptionCommand extends BaseInputCommand {
   private readonly _point: Vector3;

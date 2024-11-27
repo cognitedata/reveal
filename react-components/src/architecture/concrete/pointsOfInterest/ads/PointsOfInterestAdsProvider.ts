@@ -2,7 +2,7 @@
  * Copyright 2024 Cognite AS
  */
 import { type CogniteClient } from '@cognite/sdk/dist/src';
-import { DmsUniqueIdentifier, type ExternalId } from '../../../../data-providers/FdmSDK';
+import { type DmsUniqueIdentifier, type ExternalId } from '../../../../data-providers/FdmSDK';
 import {
   type CommentProperties,
   type PointsOfInterestInstance,

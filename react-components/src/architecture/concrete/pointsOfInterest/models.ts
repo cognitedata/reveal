@@ -2,7 +2,7 @@
  * Copyright 2024 Cognite AS
  */
 
-import { DmsUniqueIdentifier } from '../../../data-providers';
+import { type DmsUniqueIdentifier } from '../../../data-providers';
 
 export type PoiVisibility = 'PUBLIC' | 'PRIVATE';
 

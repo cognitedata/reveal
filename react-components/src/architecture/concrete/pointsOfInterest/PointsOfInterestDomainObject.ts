@@ -15,7 +15,7 @@ import {
   type PointsOfInterestInstance
 } from './models';
 import { type PointsOfInterestProvider } from './PointsOfInterestProvider';
-import { DmsUniqueIdentifier } from '../../../data-providers';
+import { type DmsUniqueIdentifier } from '../../../data-providers';
 
 export class PointsOfInterestDomainObject<PoiIdType> extends VisualDomainObject {
   private _selectedPointsOfInterest: PointOfInterest<PoiIdType> | undefined;
@@ -118,7 +118,6 @@ export class PointsOfInterestDomainObject<PoiIdType> extends VisualDomainObject 
       (obs) => obs.status === PointsOfInterestStatus.PendingCreation
     );
 
-    console.log('Trying to upsert points: ', poisToCreate);
     const newPointsOfInterest = await this._poisCache.upsertPointsOfInterest(poisToCreate);
 
     this._pointsOfInterest = notToRemove
@@ -183,8 +182,6 @@ export class PointsOfInterestDomainObject<PoiIdType> extends VisualDomainObject 
     }
 
     this._currentScene = scene;
-    console.log('Setting current scene', scene);
-
     this._pointsOfInterest = [];
 
     if (scene === undefined) {
