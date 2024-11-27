@@ -18,7 +18,8 @@ import { type TreeIndexStylingGroup } from '../CadModelContainer/types';
 
 export type AddImage360CollectionOptions =
   | AddImage360CollectionEventsOptions
-  | AddImage360CollectionDatamodelsOptions;
+  | AddImage360CollectionDatamodelsOptions
+  | AddImage360CollectionCdmOptions;
 
 export type CommonImage360CollectionAddOptions = {
   transform?: Matrix4;
@@ -26,14 +27,21 @@ export type CommonImage360CollectionAddOptions = {
 };
 
 export type AddImage360CollectionEventsOptions = {
+  source: 'events';
   siteId: string;
 } & CommonImage360CollectionAddOptions;
 
 export type AddImage360CollectionDatamodelsOptions = {
+  source: 'dm';
   externalId: string;
   space: string;
 } & CommonImage360CollectionAddOptions;
 
+export type AddImage360CollectionCdmOptions = {
+  source: 'cdm';
+  externalId: string;
+  space: string;
+} & CommonImage360CollectionAddOptions;
 export type FdmPropertyType<NodeType> = Record<string, Record<string, NodeType>>;
 
 export type TaggedAddImage360CollectionOptions = {

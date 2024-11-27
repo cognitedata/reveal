@@ -600,7 +600,7 @@ __metadata:
     "@cognite/cdf-utilities": "npm:^3.6.0"
     "@cognite/cogs-lab": "npm:^9.0.0-alpha.113"
     "@cognite/cogs.js": "npm:^10.25.0"
-    "@cognite/reveal": "npm:^4.21.1"
+    "@cognite/reveal": "npm:^4.22.0"
     "@cognite/sdk": "npm:^9.13.0"
     "@playwright/test": "npm:1.49.0"
     "@storybook/addon-essentials": "npm:8.4.5"
@@ -664,9 +664,9 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@cognite/reveal@npm:^4.21.1":
-  version: 4.21.1
-  resolution: "@cognite/reveal@npm:4.21.1"
+"@cognite/reveal@npm:^4.22.0":
+  version: 4.22.0
+  resolution: "@cognite/reveal@npm:4.22.0"
   dependencies:
     "@rajesh896/broprint.js": "npm:^2.1.1"
     "@tweenjs/tween.js": "npm:^25.0.0"
@@ -686,7 +686,7 @@ __metadata:
   peerDependencies:
     "@cognite/sdk": ^7.16.0 || ^8.0.0
     three: 0.166.1
-  checksum: 10/18a9296d8424159e06e37600ade5b8e474f96d37c64c6662d82581f4f5d6ec39dc130d7fb4e7128cb7a0a2f30fb9625d079038fa3a44a3e963381a1f5d734d14
+  checksum: 10/e81aa8885dea219fa842a7846c038416480fc967d0c4d66dadfa9bc5f31279f52ee9a143f3c2f0d2a26341e345c799bf6a5dac612643615244a68ec0d6d099ba
   languageName: node
   linkType: hard
 
@@ -11417,21 +11417,21 @@ __metadata:
 
 "typescript@patch:typescript@npm%3A5.4.2#optional!builtin<compat/typescript>":
   version: 5.4.2
-  resolution: "typescript@patch:typescript@npm%3A5.4.2#optional!builtin<compat/typescript>::version=5.4.2&hash=5adc0c"
+  resolution: "typescript@patch:typescript@npm%3A5.4.2#optional!builtin<compat/typescript>::version=5.4.2&hash=d69c25"
   bin:
     tsc: bin/tsc
     tsserver: bin/tsserver
-  checksum: 10/f5f9a4133c2670761f0166eae5b3bafbc4a3fc24f0f42a93c9c893d9e9d6e66ea066969c5e7483fa66b4ae0e99125592553f3b92fd3599484de8be13b0615176
+  checksum: 10/ef4fc2994cc0219dc9ada94c92106ba8d44cbfd7a0328ed6f8d730311caf66e114cdfa07fbc6f369bfc0fc182d9493851b3bf1644c06fc5818690b19ee960d72
   languageName: node
   linkType: hard
 
 "typescript@patch:typescript@npm%3A^5.4.5#optional!builtin<compat/typescript>":
   version: 5.6.3
-  resolution: "typescript@patch:typescript@npm%3A5.6.3#optional!builtin<compat/typescript>::version=5.6.3&hash=8c6c40"
+  resolution: "typescript@patch:typescript@npm%3A5.6.3#optional!builtin<compat/typescript>::version=5.6.3&hash=d69c25"
   bin:
     tsc: bin/tsc
     tsserver: bin/tsserver
-  checksum: 10/00504c01ee42d470c23495426af07512e25e6546bce7e24572e72a9ca2e6b2e9bea63de4286c3cfea644874da1467dcfca23f4f98f7caf20f8b03c0213bb6837
+  checksum: 10/dc4bec403cd33a204b655b1152a096a08e7bad2c931cb59ef8ff26b6f2aa541bf98f09fc157958a60c921b1983a8dde9a85b692f9de60fa8f574fd131e3ae4dd
   languageName: node
   linkType: hard
 
