@@ -2,7 +2,7 @@
  * Copyright 2024 Cognite AS
  */
 import { type CogniteClient } from '@cognite/sdk/dist/src';
-import { type ExternalId } from '../../../../data-providers/FdmSDK';
+import { DmsUniqueIdentifier, type ExternalId } from '../../../../data-providers/FdmSDK';
 import {
   type CommentProperties,
   type PointsOfInterestInstance,
@@ -14,6 +14,7 @@ import { v4 as uuid } from 'uuid';
 import { type PoiItem } from './types';
 import { isDefined } from '../../../../utilities/isDefined';
 import { uniq } from 'lodash';
+import { createUpsertRequestFromPois } from './createUpsertRequestFromPois';
 
 /**
  * A PoI provider using the Cognite Application Data Storage service as backing storage
@@ -42,20 +43,12 @@ export class PointsOfInterestAdsProvider implements PointsOfInterestProvider<Ext
   async upsertPointsOfInterest(
     pois: Array<{ id: ExternalId; properties: PointsOfInterestProperties }>
   ): Promise<Array<PointsOfInterestInstance<ExternalId>>> {
+    const upsertRequestData = createUpsertRequestFromPois(pois);
+
     const result = await this._sdk.put<{ items: PoiItem[] }>(
       `${this._sdk.getBaseUrl()}/${this._createUrl(this._sdk.project)}`,
       {
-        data: {
-          items: pois.map(({ id, properties: poi }) => {
-            return {
-              externalId: id,
-              name: poi.title,
-              position: [poi.positionX, poi.positionY, poi.positionZ],
-              sceneState: {},
-              visibility: poi.visibility ?? 'PRIVATE'
-            };
-          })
-        }
+        data: upsertRequestData
       }
     );
 
@@ -68,10 +61,12 @@ export class PointsOfInterestAdsProvider implements PointsOfInterestProvider<Ext
     return result.data.items.map(poiItemToInstance);
   }
 
-  async fetchAllPointsOfInterest(): Promise<Array<PointsOfInterestInstance<ExternalId>>> {
+  async fetchPointsOfInterest(
+    scene?: DmsUniqueIdentifier
+  ): Promise<Array<PointsOfInterestInstance<ExternalId>>> {
     const result = await this._sdk.post<{ items: PoiItem[] }>(
       `${this._sdk.getBaseUrl()}/${this._listUrl(this._sdk.project)}`,
-      { data: { filter: {} } }
+      { data: { filter: { scene } } }
     );
 
     if (result.status !== 200) {

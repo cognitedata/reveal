@@ -7,6 +7,7 @@ import { useReveal3dResourcesFromScene } from '../../hooks/useReveal3dResourcesF
 import { useGroundPlaneFromScene } from '../../hooks/useGroundPlaneFromScene';
 import { useSkyboxFromScene } from '../../hooks/useSkyboxFromScene';
 import { Reveal3DResources } from '../Reveal3DResources/Reveal3DResources';
+import { useLoadPoisForScene } from '../Architecture/pointsOfInterest/useLoadPoisForScene';
 
 export type SceneContainerProps = {
   sceneExternalId: string;
@@ -22,6 +23,7 @@ export function SceneContainer({
 
   useGroundPlaneFromScene(sceneExternalId, sceneSpaceId);
   useSkyboxFromScene(sceneExternalId, sceneSpaceId);
+  useLoadPoisForScene(sceneExternalId, sceneSpaceId);
 
   return <Reveal3DResources resources={resourceOptions} {...rest} />;
 }

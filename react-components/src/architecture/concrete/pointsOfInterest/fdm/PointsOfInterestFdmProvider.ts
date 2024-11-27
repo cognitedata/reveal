@@ -26,8 +26,11 @@ export class PointsOfInterestFdmProvider implements PointsOfInterestProvider<Dms
     return await createPointsOfInterestInstances(this._fdmSdk, pois);
   }
 
-  async fetchAllPointsOfInterest(): Promise<Array<PointsOfInterestInstance<DmsUniqueIdentifier>>> {
-    return await fetchPointsOfInterest(this._fdmSdk);
+  async fetchPointsOfInterest(
+    scene?: DmsUniqueIdentifier
+  ): Promise<Array<PointsOfInterestInstance<DmsUniqueIdentifier>>> {
+    throw Error('Not implemented:  Fdm PoI scene filter');
+    // return await fetchPointsOfInterest(this._fdmSdk);
   }
 
   async deletePointsOfInterest(ids: DmsUniqueIdentifier[]): Promise<void> {
