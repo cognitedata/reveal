@@ -47,6 +47,7 @@ import { DEFAULT_IMAGE_360_OPACITY } from '@reveal/360-images/src/entity/Image36
 import { Image360History } from '@reveal/360-images/src/Image360History';
 import { Image360Action } from '@reveal/360-images/src/Image360Action';
 import { Image360IconIntersectionData } from '@reveal/360-images/src/types';
+import { Cdf360CdmDescriptorProvider } from '@reveal/data-providers/src/image-360-data-providers/descriptor-providers/datamodels/cdm/Cdf360CdmDescriptorProvider';
 
 export class Image360ApiHelper<DataSourceT extends DataSourceType> {
   private readonly _image360Facade: Image360Facade<DataSourceT>;
@@ -110,9 +111,11 @@ export class Image360ApiHelper<DataSourceT extends DataSourceType> {
     this._hasEventListeners = hasEventListeners ?? true;
     const image360EventDescriptorProvider = new Cdf360EventDescriptorProvider(cogniteClient);
     const image360DataModelsDescriptorProvider = new Cdf360DataModelsDescriptorProvider(cogniteClient);
+    const image360CdmDescriptorProvider = new Cdf360CdmDescriptorProvider(cogniteClient);
     const combinedDescriptorProvider = new Cdf360CombinedDescriptorProvider(
       image360DataModelsDescriptorProvider,
-      image360EventDescriptorProvider
+      image360EventDescriptorProvider,
+      image360CdmDescriptorProvider
     );
 
     const setNeedsRedraw: () => void = () => (this._needsRedraw = true);
