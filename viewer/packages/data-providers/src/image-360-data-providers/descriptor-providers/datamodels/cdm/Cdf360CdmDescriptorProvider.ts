@@ -33,6 +33,12 @@ type ExhaustedQueryResult = {
   stations: QueryResult['stations'];
 };
 
+type CoreDmFileResponse = {
+  data: {
+    items: FileInfo[];
+  };
+};
+
 export class Cdf360CdmDescriptorProvider implements Image360DescriptorProvider<Image360DataModelIdentifier> {
   private readonly _dmsSdk: DataModelsSdk;
   private readonly _cogniteSdk: CogniteClient;
@@ -240,12 +246,6 @@ export class Cdf360CdmDescriptorProvider implements Image360DescriptorProvider<I
     }
   }
 }
-
-type CoreDmFileResponse = {
-  data: {
-    items: FileInfo[];
-  };
-};
 
 async function getCdmFiles(sdk: CogniteClient, identifiers: DirectRelationReference[]) {
   const url = `${sdk.getBaseUrl()}/api/v1/projects/${sdk.project}/files/byids`;
