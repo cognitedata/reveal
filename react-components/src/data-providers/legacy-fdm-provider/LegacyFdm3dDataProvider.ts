@@ -66,22 +66,30 @@ export class LegacyFdm3dDataProvider implements Fdm3dDataProvider {
     instanceFilter: InstanceFilter | undefined,
     limit: number
   ): Promise<NodeItem[]> {
-    const isClassicModels = models.every((model) => isClassicIdentifier(model));
-    if (!isClassicModels) {
+    const classicModels = models.filter((model) => isClassicIdentifier(model));
+
+    if (classicModels.length === 0) {
       return EMPTY_ARRAY;
     }
-    return await listMappedFdmNodes(this._fdmSdk, models, sourcesToSearch, instanceFilter, limit);
+    return await listMappedFdmNodes(
+      this._fdmSdk,
+      classicModels,
+      sourcesToSearch,
+      instanceFilter,
+      limit
+    );
   }
 
   async listAllMappedFdmNodes(
     models: Array<AddModelOptions<DataSourceType>>,
     sourcesToSearch: Source[]
   ): Promise<NodeItem[]> {
-    const isClassicModels = models.every((model) => isClassicIdentifier(model));
-    if (!isClassicModels) {
+    const classicModels = models.filter((model) => isClassicIdentifier(model));
+
+    if (classicModels.length === 0) {
       return EMPTY_ARRAY;
     }
-    return await listAllMappedFdmNodes(this._fdmSdk, models, sourcesToSearch);
+    return await listAllMappedFdmNodes(this._fdmSdk, classicModels, sourcesToSearch);
   }
 
   async filterNodesByMappedTo3d(
@@ -89,11 +97,12 @@ export class LegacyFdm3dDataProvider implements Fdm3dDataProvider {
     models: Array<AddModelOptions<DataSourceType>>,
     spacesToSearch: string[]
   ): Promise<InstancesWithView[]> {
-    const isClassicModels = models.every((model) => isClassicIdentifier(model));
-    if (!isClassicModels) {
+    const classicModels = models.filter((model) => isClassicIdentifier(model));
+
+    if (classicModels.length === 0) {
       return EMPTY_ARRAY;
     }
-    return await filterNodesByMappedTo3d(this._fdmSdk, nodes, models, spacesToSearch);
+    return await filterNodesByMappedTo3d(this._fdmSdk, nodes, classicModels, spacesToSearch);
   }
 
   async getCadModelsForInstance(
@@ -105,10 +114,11 @@ export class LegacyFdm3dDataProvider implements Fdm3dDataProvider {
   async getCadConnectionsForRevisions(
     modelOptions: Array<AddModelOptions<DataSourceType>>
   ): Promise<FdmCadConnection[]> {
-    const isClassicModels = modelOptions.every((model) => isClassicIdentifier(model));
-    if (!isClassicModels) {
+    const classicModels = modelOptions.filter((model) => isClassicIdentifier(model));
+
+    if (classicModels.length === 0) {
       return EMPTY_ARRAY;
     }
-    return await getCadConnectionsForRevision(modelOptions, this._fdmSdk, this._cogniteClient);
+    return await getCadConnectionsForRevision(classicModels, this._fdmSdk, this._cogniteClient);
   }
 }
