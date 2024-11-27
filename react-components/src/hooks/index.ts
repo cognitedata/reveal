@@ -15,10 +15,10 @@ export { useSceneDefaultCamera } from './useSceneDefaultCamera';
 export { useSkyboxFromScene } from './useSkyboxFromScene';
 export { use3dScenes } from './scenes/use3dScenes';
 export { useSceneConfig } from './scenes/useSceneConfig';
+export { useActiveReveal3dResources } from './useActiveReveal3dResources';
 export { useGhostMode } from './useGhostMode';
 
 export type { SceneData } from './scenes/types';
-
 export type { CameraNavigationActions } from './useCameraNavigation';
 export type { ClickedNodeData, FdmNodeDataResult } from './useClickedNode';
 export type {

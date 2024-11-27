@@ -1,7 +1,7 @@
 /*!
  * Copyright 2024 Cognite AS
  */
-import { type CogniteClient, type Asset } from '@cognite/sdk/dist/src';
+import { type CogniteClient, type Asset } from '@cognite/sdk';
 import { uniqBy, chunk } from 'lodash';
 import { isDefined } from '../../utilities/isDefined';
 import { type AnnotationId, type PointCloudAnnotationModel } from './types';

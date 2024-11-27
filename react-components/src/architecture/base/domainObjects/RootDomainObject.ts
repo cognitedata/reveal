@@ -5,9 +5,9 @@
 import { type RevealRenderTarget } from '../renderTarget/RevealRenderTarget';
 import { UnitSystem } from '../renderTarget/UnitSystem';
 import { DomainObject } from './DomainObject';
-import { type TranslationInput } from '../utilities/TranslateInput';
-import { type CogniteClient } from '@cognite/sdk/dist/src';
+import { type CogniteClient } from '@cognite/sdk';
 import { FdmSDK } from '../../../data-providers/FdmSDK';
+import { type TranslationInput } from '../utilities/TranslateInput';
 
 export class RootDomainObject extends DomainObject {
   // ==================================================

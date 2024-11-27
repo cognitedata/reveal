@@ -2,6 +2,7 @@
  * Copyright 2024 Cognite AS
  */
 import {
+  type DataSourceType,
   type CogniteCadModel,
   type CogniteModel,
   type CognitePointCloudModel,
@@ -10,7 +11,7 @@ import {
 
 export abstract class ModelHandler {
   protected constructor(
-    protected model: CogniteModel | Image360Collection,
+    protected model: CogniteModel<DataSourceType> | Image360Collection<DataSourceType>,
     public readonly name: string
   ) {}
 
@@ -50,7 +51,7 @@ export class CadModelHandler extends ModelHandler {
 
 export class PointCloudModelHandler extends ModelHandler {
   constructor(
-    private readonly _pointCloudModel: CognitePointCloudModel,
+    private readonly _pointCloudModel: CognitePointCloudModel<DataSourceType>,
     name: string | undefined
   ) {
     super(
@@ -78,8 +79,10 @@ export class PointCloudModelHandler extends ModelHandler {
 
 export class Image360CollectionHandler extends ModelHandler {
   constructor(
-    private readonly _image360Collection: Image360Collection,
-    private readonly _isCurrentlyEntered: (collection: Image360Collection) => boolean,
+    private readonly _image360Collection: Image360Collection<DataSourceType>,
+    private readonly _isCurrentlyEntered: (
+      collection: Image360Collection<DataSourceType>
+    ) => boolean,
     private readonly _exit360Image: () => void
   ) {
     super(_image360Collection, _image360Collection.label ?? _image360Collection.id);

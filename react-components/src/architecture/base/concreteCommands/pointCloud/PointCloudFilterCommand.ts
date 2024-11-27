@@ -2,7 +2,11 @@
  * Copyright 2024 Cognite AS
  */
 
-import { type CognitePointCloudModel, type WellKnownAsprsPointClassCodes } from '@cognite/reveal';
+import {
+  type DataSourceType,
+  type CognitePointCloudModel,
+  type WellKnownAsprsPointClassCodes
+} from '@cognite/reveal';
 import { type TranslationInput } from '../../utilities/TranslateInput';
 import { type Color } from 'three';
 import { BaseFilterCommand, BaseFilterItemCommand } from '../../commands/BaseFilterCommand';
@@ -92,7 +96,7 @@ export class PointCloudFilterCommand extends BaseFilterCommand {
   // INSTANCE METHODS
   // ==================================================
 
-  private getPointCloud(): CognitePointCloudModel | undefined {
+  private getPointCloud(): CognitePointCloudModel<DataSourceType> | undefined {
     if (this._modelId === undefined || this._revisionId === undefined) {
       return undefined;
     }
@@ -159,7 +163,7 @@ export class FilterItemCommand extends BaseFilterItemCommand {
   // INSTANCE METHODS
   // ==================================================
 
-  private getPointCloud(): CognitePointCloudModel | undefined {
+  private getPointCloud(): CognitePointCloudModel<DataSourceType> | undefined {
     for (const pointCloud of this.renderTarget.getPointClouds()) {
       if (this._modelId === pointCloud.modelId && this._revisionId === pointCloud.revisionId) {
         return pointCloud;
@@ -198,7 +202,7 @@ export class PointClass {
 
 function getFirstPointCloudWithClasses(
   renderTarget: RevealRenderTarget
-): CognitePointCloudModel | undefined {
+): CognitePointCloudModel<DataSourceType> | undefined {
   for (const pointCloud of renderTarget.getPointClouds()) {
     const classes = pointCloud.getClasses();
     if (classes === undefined || classes.length === 0) {
@@ -209,7 +213,7 @@ function getFirstPointCloudWithClasses(
   return undefined;
 }
 
-function isAllClassesVisible(pointCloud: CognitePointCloudModel): boolean {
+function isAllClassesVisible(pointCloud: CognitePointCloudModel<DataSourceType>): boolean {
   const classes = pointCloud.getClasses();
   if (classes === undefined || classes.length === 0) {
     return false;

@@ -3,18 +3,37 @@
  */
 import {
   is360ImageDataModelAddOptions,
-  is360ImageEventsAddOptions
+  is360ImageEventsAddOptions,
+  isClassicIdentifier,
+  isDMIdentifier
 } from '../components/Reveal3DResources/typeGuards';
 import { type TaggedAddResourceOptions } from '../components/Reveal3DResources/types';
 
 export function createAddOptionsKey(model: TaggedAddResourceOptions): string {
-  if (model.type === 'cad' || model.type === 'pointcloud') {
-    return `${model.type}-${model.addOptions.modelId}-${model.addOptions.revisionId}`;
-  } else if (model.type === 'image360' && is360ImageDataModelAddOptions(model.addOptions)) {
-    return `${model.type}-${model.addOptions.externalId}/${model.addOptions.space}`;
-  } else if (model.type === 'image360' && is360ImageEventsAddOptions(model.addOptions)) {
-    return `${model.type}-${model.addOptions.siteId}`;
-  } else {
-    throw Error('Unrecognized add option type');
+  const { type, addOptions } = model;
+
+  switch (type) {
+    case 'cad':
+      return `${type}-${addOptions.modelId}-${addOptions.revisionId}`;
+    case 'pointcloud':
+      if (isClassicIdentifier(addOptions)) {
+        return `${type}-${addOptions.modelId}-${addOptions.revisionId}`;
+      }
+      if (isDMIdentifier(addOptions)) {
+        return `${type}-${addOptions.revisionExternalId}-${addOptions.revisionSpace}`;
+      }
+      break;
+    case 'image360':
+      if (is360ImageDataModelAddOptions(addOptions)) {
+        return `${type}-${addOptions.externalId}/${addOptions.space}`;
+      }
+      if (is360ImageEventsAddOptions(addOptions)) {
+        return `${type}-${addOptions.siteId}`;
+      }
+      break;
+    default:
+      throw new Error('Unrecognized add option type');
   }
+
+  throw new Error('Unrecognized add option type');
 }

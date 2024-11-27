@@ -7,7 +7,7 @@ import { RevealCanvas } from '../../src/components/RevealCanvas/RevealCanvas';
 import { type FdmNodeCache } from '../../src/components/CacheProvider/FdmNodeCache';
 import { type AssetMappingAndNode3DCache } from '../../src/components/CacheProvider/AssetMappingAndNode3DCache';
 import { type CogniteClient } from '@cognite/sdk';
-import { Cognite3DViewer } from '@cognite/reveal';
+import { Cognite3DViewer, type DataSourceType } from '@cognite/reveal';
 import { createSdkByUrlToken } from './createSdkByUrlToken';
 import { type PointCloudAnnotationCache } from '../../src/components/CacheProvider/PointCloudAnnotationCache';
 import {
@@ -21,7 +21,7 @@ import { StoryBookConfig } from '../../src/architecture/concrete/config/StoryBoo
 
 type RevealStoryContainerProps = Omit<RevealContextProps, 'sdk'> & {
   sdk?: CogniteClient;
-  viewer?: Cognite3DViewer;
+  viewer?: Cognite3DViewer<DataSourceType>;
 };
 
 export const RevealStoryContext = ({
@@ -41,7 +41,7 @@ export const RevealStoryContext = ({
 
   const renderTarget = useMemo(() => {
     if (viewer === undefined) {
-      viewer = new Cognite3DViewer({
+      viewer = new Cognite3DViewer<DataSourceType>({
         ...rest.viewerOptions,
         sdk: sdkInstance,
         // @ts-expect-error use local models

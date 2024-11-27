@@ -1,21 +1,26 @@
 /*!
  * Copyright 2024 Cognite AS
  */
-import { type Cognite3DViewer, type CogniteModel, type Image360Collection } from '@cognite/reveal';
-import { type AddResourceOptions } from './types';
+import {
+  type DataSourceType,
+  type Cognite3DViewer,
+  type CogniteModel,
+  type Image360Collection
+} from '@cognite/reveal';
+import { type AddResourceOptions } from '../types';
 import {
   is360ImageAddOptions,
   is360ImageDataModelAddOptions,
   is360ImageEventsAddOptions
-} from './typeGuards';
+} from '../typeGuards';
 import { useEffect } from 'react';
-import { isSameModel } from '../../utilities/isSameModel';
-import { useReveal3DResourcesCount } from './Reveal3DResourcesInfoContext';
-import { getViewerResourceCount } from '../../utilities/getViewerResourceCount';
+import { isSameModel } from '../../../utilities/isSameModel';
+import { useReveal3DResourcesCount } from '../Reveal3DResourcesInfoContext';
+import { getViewerResourceCount } from '../../../utilities/getViewerResourceCount';
 
 export function useRemoveNonReferencedModels(
   addOptions: AddResourceOptions[],
-  viewer: Cognite3DViewer
+  viewer: Cognite3DViewer<DataSourceType>
 ): void {
   const { setRevealResourcesCount } = useReveal3DResourcesCount();
   useEffect(() => {
@@ -36,8 +41,8 @@ export function useRemoveNonReferencedModels(
 
 function findNonReferencedModels(
   addOptions: AddResourceOptions[],
-  viewer: Cognite3DViewer
-): CogniteModel[] {
+  viewer: Cognite3DViewer<DataSourceType>
+): Array<CogniteModel<DataSourceType>> {
   const models = viewer.models;
   const addOptionsSet = new Set(addOptions.filter((model) => !is360ImageAddOptions(model)));
 
@@ -72,8 +77,8 @@ function findNonReferencedModels(
 
 function findNonReferencedCollections(
   addOptions: AddResourceOptions[],
-  viewer: Cognite3DViewer
-): Image360Collection[] {
+  viewer: Cognite3DViewer<DataSourceType>
+): Array<Image360Collection<DataSourceType>> {
   const image360CollectionAddOptions = addOptions.filter(is360ImageAddOptions);
 
   const collections = viewer.get360ImageCollections();

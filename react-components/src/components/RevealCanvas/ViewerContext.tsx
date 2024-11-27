@@ -1,7 +1,7 @@
 /*!
  * Copyright 2023 Cognite AS
  */
-import { type Cognite3DViewer } from '@cognite/reveal';
+import { type DataSourceType, type Cognite3DViewer } from '@cognite/reveal';
 import { createContext, type ReactElement, type ReactNode, useContext } from 'react';
 import { type RevealRenderTarget } from '../../architecture/base/renderTarget/RevealRenderTarget';
 import { type CameraStateParameters, useCameraStateControl } from './hooks/useCameraStateControl';
@@ -40,7 +40,7 @@ const ViewerControls = ({
   return null;
 };
 
-export const useReveal = (): Cognite3DViewer => {
+export const useReveal = (): Cognite3DViewer<DataSourceType> => {
   const renderTarget = useRenderTarget();
   return renderTarget.viewer;
 };
