@@ -15,7 +15,7 @@ import {
 import { Dropdown } from '@cognite/cogs-lab';
 import { PoiSharePanel } from './PoiSharePanel';
 import styled from 'styled-components';
-import { useMemo, type ReactNode } from 'react';
+import { useMemo, useState, type ReactNode } from 'react';
 import { type PointOfInterest } from '../../../architecture';
 import { type CommentProperties } from '../../../architecture/concrete/pointsOfInterest/models';
 import { createButton } from '../CommandButtons';
@@ -69,13 +69,20 @@ export const CommentSection = (): ReactNode => {
 
   const poi = useSelectedPoi();
 
+  const [open, setOpen] = useState<boolean>(true);
+
   const comments = useCommentsForPoiQuery(poi);
   if (poi === undefined) {
     return null;
   }
 
   return (
-    <Accordion type="ghost" title={t({ key: 'COMMENTS' })} gap={8}>
+    <Accordion
+      type="ghost"
+      title={t({ key: 'COMMENTS' })}
+      gap={8}
+      expanded={open}
+      onChange={(expanded: boolean) => setOpen(expanded)}>
       <Flex direction="column" gap={8}>
         {comments.data?.map((comment) => (
           <SingleCommentDisplay key={`${comment.ownerId}/${comment.content}`} comment={comment} />

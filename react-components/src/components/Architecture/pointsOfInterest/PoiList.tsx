@@ -108,6 +108,7 @@ export const PoiList = ({
         selectedRows={[JSON.stringify(selectedPoi?.id)]}
         pagination={false}
         disableColumnResize
+        disableRowStripes
       />
       <Flex direction="row" gap={16} justifyContent="center" alignContent="center">
         {hasMoreData && <Button onClick={handleShowMoreCallback}>{t({ key: 'SHOW_MORE' })}</Button>}
