@@ -15,18 +15,27 @@ export const queryKeys = {
   // TIMESERIES RELATIONSHIPS WITH ASSETS
   timeseriesLinkedToAssets: () => [...timeseries, 'timeseries-linked-assets'] as const,
   // Point Cloud Annotations
-  pointCloudAnnotationMappings: () => [...models, 'point-cloud-annotation-mappings'] as const,
-  pointCloudAnnotationForAssetIds: () =>
-    [...models, ...assets, 'point-cloud-all-annotations'] as const,
-  pointCloudAnnotationForAssetId: () =>
-    [...models, ...assets, 'asset-annotation-mapping-for-a-model'] as const,
+  pointCloudAnnotationMappings: (modelKeys: string[]) =>
+    [...models, 'point-cloud-annotation-mappings', modelKeys] as const,
+  pointCloudAnnotationForAssetIds: (modelKeys: string[], assetIdKeys: string[]) =>
+    [...models, ...assets, 'point-cloud-all-annotations', modelKeys, assetIdKeys] as const,
+  pointCloudAnnotationForAssetId: (modelKey: string, assetId: string) =>
+    [...models, ...assets, 'asset-annotation-mapping-for-a-model', modelKey, assetId] as const,
   // PointCloud Volume for CoreDM
-  pointCloudDMVolumeMappings: () => [...models, 'point-cloud-dm-volume-mappings'] as const,
-  pointCloudDMVolumeAssetMappings: () =>
-    [...models, ...assetInstanceRefs, 'point-cloud-dm-volume-asset-mappings'] as const,
-  pointCloudDMModelIdRevisionIds: () =>
-    [...models, 'point-cloud-dm-model-id-revision-ids'] as const,
-  modelRevisionId: () => [...revisions, 'model-revision-id'] as const,
+  pointCloudDMVolumeMappings: (modelKeys: string[]) =>
+    [...models, 'point-cloud-dm-volume-mappings', modelKeys] as const,
+  pointCloudDMVolumeAssetMappings: (modelKeys: string[], assetInstanceKeys: string[]) =>
+    [
+      ...models,
+      ...assetInstanceRefs,
+      'point-cloud-dm-volume-asset-mappings',
+      modelKeys,
+      assetInstanceKeys
+    ] as const,
+  pointCloudDMModelIdRevisionIds: (modelKeys: string[]) =>
+    [...models, 'point-cloud-dm-model-id-revision-ids', modelKeys] as const,
+  modelRevisionId: (revisionKeys: string[]) =>
+    [...revisions, 'model-revision-id', revisionKeys] as const,
   timeseriesFromRelationship: () => [...timeseries, 'timeseries-relationship'] as const
 } as const;
 

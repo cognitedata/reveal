@@ -50,8 +50,9 @@ export const usePointCloudAnnotationMappingsForModels = (
 
   return useQuery({
     queryKey: [
-      queryKeys.pointCloudAnnotationMappings(),
-      ...classicModelOptions.map((model) => `${model.modelId}/${model.revisionId}`).sort()
+      queryKeys.pointCloudAnnotationMappings(
+        classicModelOptions.map((model) => `${model.modelId}/${model.revisionId}`).sort()
+      )
     ],
     queryFn: async () => {
       return await Promise.all(
@@ -86,9 +87,10 @@ export const usePointCloudAnnotationMappingsForAssetIds = (
 
   return useQuery({
     queryKey: [
-      queryKeys.pointCloudAnnotationForAssetIds(),
-      ...classicModelOptions.map((model) => `${model.modelId}/${model.revisionId}`).sort(),
-      ...(assetIds?.map((assetId) => assetId.toString()).sort() ?? [])
+      queryKeys.pointCloudAnnotationForAssetIds(
+        classicModelOptions.map((model) => `${model.modelId}/${model.revisionId}`).sort(),
+        assetIds?.map((assetId) => assetId.toString()).sort() ?? []
+      )
     ],
     queryFn: async () => {
       const allAnnotationMappingsPromisesResult = await Promise.all(
@@ -124,7 +126,12 @@ export const usePointCloudAnnotationMappingForAssetId = (
     : [undefined, undefined, undefined];
 
   return useQuery({
-    queryKey: [queryKeys.pointCloudAnnotationForAssetId(), `${modelId}/${revisionId}`, assetId],
+    queryKey: [
+      queryKeys.pointCloudAnnotationForAssetId(
+        `${modelId}/${revisionId}`,
+        assetId?.toString() ?? ''
+      )
+    ],
     queryFn: async () => {
       if (modelId === undefined || revisionId === undefined || assetId === undefined) {
         return EMPTY_ARRAY;

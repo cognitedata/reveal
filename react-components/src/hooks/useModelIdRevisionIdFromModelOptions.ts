@@ -35,7 +35,7 @@ const createQueryConfig = (
   const modelKeys = getModelKeys([addModelOptions]);
   if (isClassicIdentifier(addModelOptions)) {
     return {
-      queryKey: [queryKeys.modelRevisionId(), modelKeys],
+      queryKey: [queryKeys.modelRevisionId(modelKeys)],
       queryFn: async () => await Promise.resolve(addModelOptions),
       staleTime: Infinity
     };
@@ -43,7 +43,7 @@ const createQueryConfig = (
 
   if (isDMIdentifier(addModelOptions)) {
     return {
-      queryKey: [queryKeys.modelRevisionId(), modelKeys],
+      queryKey: [queryKeys.modelRevisionId(modelKeys)],
       queryFn: async () => {
         const { modelId, revisionId } = await getModelIdAndRevisionIdFromExternalId(
           addModelOptions.revisionExternalId,
@@ -61,7 +61,7 @@ const createQueryConfig = (
   }
 
   return {
-    queryKey: [queryKeys.modelRevisionId(), modelKeys],
+    queryKey: [queryKeys.modelRevisionId(modelKeys)],
     queryFn: async () => await Promise.reject(new Error('Unknown identifier type')),
     staleTime: Infinity
   };

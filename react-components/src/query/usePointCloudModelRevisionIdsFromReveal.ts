@@ -35,7 +35,7 @@ export const usePointCloudModelRevisionIdsFromReveal = (): UseQueryResult<
 
   const modelKeys = useMemo(() => getModelKeys(dmModels), [dmModels]);
 
-  const queryKey = [queryKeys.pointCloudDMModelIdRevisionIds(), modelKeys];
+  const queryKey = [queryKeys.pointCloudDMModelIdRevisionIds(modelKeys)];
 
   const queryFn = async (): Promise<PointCloudModelRevisionIdAndType[]> => {
     const modelRevisionIds: PointCloudModelRevisionIdAndType[] = await Promise.all(

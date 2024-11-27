@@ -29,8 +29,9 @@ export const usePointCloudDMVolumes = (
   const fdmSdk = useFdmSdk();
   return useQuery({
     queryKey: [
-      queryKeys.pointCloudDMVolumeMappings(),
-      ...modelOptions.map((model) => `${model.modelId}/${model.revisionId}`).sort()
+      queryKeys.pointCloudDMVolumeMappings(
+        modelOptions.map((model) => `${model.modelId}/${model.revisionId}`).sort()
+      )
     ],
     queryFn: async () => {
       return await Promise.all(

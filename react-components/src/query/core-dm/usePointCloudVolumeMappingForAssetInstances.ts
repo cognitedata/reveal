@@ -32,9 +32,12 @@ export const usePointCloudVolumeMappingForAssetInstances = (
 
   return useQuery({
     queryKey: [
-      queryKeys.pointCloudDMVolumeAssetMappings(),
-      classicModelOptions.map((model) => `${model.modelId}/${model.revisionId}`).sort(),
-      assetInstanceRefs
+      queryKeys.pointCloudDMVolumeAssetMappings(
+        classicModelOptions.map((model) => `${model.modelId}/${model.revisionId}`).sort(),
+        assetInstanceRefs
+          .map((assetInstance) => `${assetInstance.space}/${assetInstance.externalId}`)
+          .sort()
+      )
     ],
     queryFn: async () => {
       if (classicModelOptions.length === 0 || assetInstanceRefs.length === 0) {
