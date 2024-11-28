@@ -6,7 +6,6 @@ import { AssetMappingAndNode3DCache } from '../../../components/CacheProvider/As
 import { DomainObject } from '../../base/domainObjects/DomainObject';
 import { type TranslationInput } from '../../base/utilities/TranslateInput';
 import { FdmNodeCache } from '../../../components/CacheProvider/FdmNodeCache';
-import { FdmSdkContext } from '../../../components/RevealCanvas/FdmDataProviderContext';
 import { FdmSDK } from '../../../data-providers/FdmSDK';
 import { type Fdm3dDataProvider } from '../../../data-providers/Fdm3dDataProvider';
 import { PointCloudAnnotationCache } from '../../../components/CacheProvider/PointCloudAnnotationCache';

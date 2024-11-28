@@ -1,9 +1,8 @@
 /*!
  * Copyright 2024 Cognite AS
  */
-import { useMemo, useState } from 'react';
+import { useMemo } from 'react';
 import { CachesDomainObject } from '../../architecture/concrete/caches/CachesDomainObject';
-import { useOnUpdateDomainObject } from '../Architecture/useOnUpdate';
 import { useRenderTarget } from '../RevealCanvas';
 import { type AssetMappingAndNode3DCache } from './AssetMappingAndNode3DCache';
 import { type FdmNodeCache } from './FdmNodeCache';

@@ -5,9 +5,7 @@ import React, { useContext, createContext, useMemo } from 'react';
 import { type CogniteClient } from '@cognite/sdk';
 import { FdmSdkContext } from './FdmDataProviderContext';
 import { FdmSDK } from '../../data-providers/FdmSDK';
-import { LegacyFdm3dDataProvider } from '../../data-providers/legacy-fdm-provider/LegacyFdm3dDataProvider';
 import { type Fdm3dDataProvider } from '../../data-providers/Fdm3dDataProvider';
-import { CoreDm3dFdm3dDataProvider } from '../../data-providers/core-dm-provider/CoreDm3dDataProvider';
 
 const SdkContext = createContext<CogniteClient | null>(null);
 

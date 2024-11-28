@@ -2,16 +2,11 @@
  * Copyright 2024 Cognite AS
  */
 
-import { type ReactElement, type ReactNode, createContext, useContext, useMemo } from 'react';
-
 import { type UseQueryResult, useQuery } from '@tanstack/react-query';
-import { useRevealKeepAlive } from '../components/RevealKeepAlive/RevealKeepAliveContext';
-import { Image360AnnotationCache } from '../components/CacheProvider/Image360AnnotationCache';
 import {
   type Image360AnnotationAssetInfo,
   type Image360AnnotationModel
 } from '../components/CacheProvider/types';
-import { useSDK } from '../components/RevealCanvas/SDKProvider';
 import { useImage360AnnotationCache } from '../components/CacheProvider/CacheProvider';
 
 export type Image360AnnotationDataResult = {

@@ -78,7 +78,7 @@ export const RevealContext = (props: RevealContextProps): ReactElement => {
   );
 };
 
-const useFdm3dDataProvider = (useCoreDm: boolean, sdk: CogniteClient) => {
+const useFdm3dDataProvider = (useCoreDm: boolean, sdk: CogniteClient): Fdm3dDataProvider => {
   return useMemo(() => {
     const fdmSdk = new FdmSDK(sdk);
 

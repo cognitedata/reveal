@@ -17,14 +17,11 @@ import { MOUSE, Vector2, type Vector3 } from 'three';
 import { type DmsUniqueIdentifier, type Source } from '../data-providers/FdmSDK';
 import { useRenderTarget, useReveal } from '../components/RevealCanvas/ViewerContext';
 import { isActiveEditTool } from '../architecture/base/commands/BaseEditTool';
-<<<<<<< Updated upstream
 import {
   type PointCloudVolumeAssetWithViews,
   usePointCloudVolumeMappingForIntersection
 } from '../query/core-dm/usePointCloudVolumeMappingForAssetInstances';
-=======
 import { useAssetMappingForTreeIndex, useFdm3dNodeDataPromises } from './cad';
->>>>>>> Stashed changes
 
 export type AssetMappingDataResult = {
   cadNode: Node3D;

@@ -2,18 +2,11 @@
  * Copyright 2023 Cognite AS
  */
 
-import { FdmNodeCache } from '../../components/CacheProvider/FdmNodeCache';
 import { type UseQueryResult, useQuery } from '@tanstack/react-query';
-import {
-  type FdmNodeDataPromises,
-  type ModelRevisionToConnectionMap
-} from '../../components/CacheProvider/types';
-import assert from 'assert';
 import { type DmsUniqueIdentifier } from '../../data-providers/FdmSDK';
 import { type CadModelOptions } from '../../components/Reveal3DResources/types';
 import { type ThreeDModelFdmMappings } from '../types';
 import { DEFAULT_QUERY_STALE_TIME } from '../../utilities/constants';
-import { type AnyIntersection } from '@cognite/reveal';
 import { useFdmNodeCache } from '../../components/CacheProvider/CacheProvider';
 
 export const useFdmAssetMappings = (
