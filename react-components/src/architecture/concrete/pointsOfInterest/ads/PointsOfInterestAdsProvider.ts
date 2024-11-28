@@ -41,7 +41,7 @@ export class PointsOfInterestAdsProvider implements PointsOfInterestProvider<Ext
   constructor(private readonly _sdk: CogniteClient) {}
 
   async upsertPointsOfInterest(
-    pois: Array<{ id: ExternalId; properties: PointsOfInterestProperties }>
+    pois: Array<PointsOfInterestInstance<ExternalId>>
   ): Promise<Array<PointsOfInterestInstance<ExternalId>>> {
     const upsertRequestData = createUpsertRequestFromPois(pois);
 

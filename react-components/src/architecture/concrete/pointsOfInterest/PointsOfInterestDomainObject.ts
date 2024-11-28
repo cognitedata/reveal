@@ -32,17 +32,6 @@ export class PointsOfInterestDomainObject<PoiIdType> extends VisualDomainObject 
   constructor(poiProvider: PointsOfInterestProvider<PoiIdType>) {
     super();
     this._poisCache = new PointsOfInterestCache<PoiIdType>(poiProvider);
-    /*     void this._poisCache.getFinishedOriginalLoadingPromise().then((pois) => {
-      this._pointsOfInterest = [
-        ...pois.map((poi) => ({
-          id: poi.id,
-          properties: poi.properties,
-          status: PointsOfInterestStatus.Default
-        })),
-        ...this._pointsOfInterest
-      ];
-      this.notify(Changes.geometry);
-    }); */
   }
 
   public override get typeName(): TranslationInput {
