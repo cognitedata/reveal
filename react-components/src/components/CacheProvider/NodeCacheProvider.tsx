@@ -10,7 +10,7 @@ import { type FdmNodeDataPromises, type ModelRevisionToConnectionMap } from './t
 
 import assert from 'assert';
 import { type DmsUniqueIdentifier } from '../../data-providers/FdmSDK';
-import { type TypedReveal3DModel } from '../Reveal3DResources/types';
+import { type CadModelOptions } from '../Reveal3DResources/types';
 import { type ThreeDModelFdmMappings } from '../../hooks/types';
 import { DEFAULT_QUERY_STALE_TIME } from '../../utilities/constants';
 import { useRevealKeepAlive } from '../RevealKeepAlive/RevealKeepAliveContext';
@@ -87,7 +87,7 @@ export const useFdm3dNodeDataPromises = (
 
 export const useFdmAssetMappings = (
   fdmAssetExternalIds: DmsUniqueIdentifier[],
-  models: TypedReveal3DModel[]
+  models: CadModelOptions[]
 ): UseQueryResult<ThreeDModelFdmMappings[]> => {
   const nodeCacheContent = useFdmNodeCache();
 

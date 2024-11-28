@@ -6,7 +6,7 @@ import { Body, Flex } from '@cognite/cogs.js';
 import React, { forwardRef, useEffect, useRef } from 'react';
 import styled from 'styled-components';
 import { Thumbnail } from '../utils/Thumbnail';
-import { type Cognite3DViewer, type Image360 } from '@cognite/reveal';
+import { type DataSourceType, type Cognite3DViewer, type Image360 } from '@cognite/reveal';
 // Using named import to avoid react component creation error when default import is used.
 import { uniqueId } from 'lodash';
 import { useTranslation } from '../../i18n/I18n';
@@ -21,7 +21,7 @@ export type Image360RevisionDetails = {
 export type Image360HistoricalSummaryProps = {
   stationId?: string;
   stationName?: string;
-  viewer?: Cognite3DViewer;
+  viewer?: Cognite3DViewer<DataSourceType>;
   revisionCollection: Image360RevisionDetails[];
   activeRevision: number;
   setActiveRevision: (index: number) => void;

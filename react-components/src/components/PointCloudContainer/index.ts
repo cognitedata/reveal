@@ -3,4 +3,4 @@
  */
 
 export { PointCloudContainer } from './PointCloudContainer';
-export type { PointCloudModelStyling, AnnotationIdStylingGroup } from './useApplyPointCloudStyling';
+export type { PointCloudModelStyling, PointCloudVolumeStylingGroup } from './types';

@@ -2,7 +2,7 @@
  * Copyright 2023 Cognite AS
  */
 
-import { type Cognite3DViewer, type Image360 } from '@cognite/reveal';
+import { type DataSourceType, type Cognite3DViewer, type Image360 } from '@cognite/reveal';
 import { type ReactElement, useEffect, useRef, useState } from 'react';
 import { Image360HistoricalPanel } from './Panel/Image360HistoricalPanel';
 import { Image360HistoricalSummary } from './Toolbar/Image360HistoricalSummary';
@@ -11,7 +11,7 @@ import styled from 'styled-components';
 import { uniqueId } from 'lodash';
 
 export type Image360HistoricalDetailsProps = {
-  viewer: Cognite3DViewer;
+  viewer: Cognite3DViewer<DataSourceType>;
   image360Entity?: Image360;
   onExpand?: (isExpanded: boolean) => void;
   fallbackLanguage?: string;

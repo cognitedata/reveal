@@ -21,9 +21,8 @@ function filterPoi(poi: PointOfInterest<unknown>, filter: PoiFilter | undefined)
   }
 
   const lowerCaseContainsFilter = filter.contains.toLowerCase();
+  const titleContainsFilter = poi.properties.title?.toLowerCase().includes(lowerCaseContainsFilter);
+  const idContainsFilter = JSON.stringify(poi.id).toLowerCase().includes(lowerCaseContainsFilter);
 
-  return (
-    poi.properties.title?.toLowerCase().includes(lowerCaseContainsFilter) === true ||
-    JSON.stringify(poi.id).toLowerCase().includes(lowerCaseContainsFilter)
-  );
+  return titleContainsFilter || idContainsFilter;
 }

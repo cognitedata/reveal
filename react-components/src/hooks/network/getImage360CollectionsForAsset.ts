@@ -1,7 +1,7 @@
 /*!
  * Copyright 2024 Cognite AS
  */
-import { type AnnotationsAssetRef, type CogniteClient, type IdEither } from '@cognite/sdk/dist/src';
+import { type AnnotationsAssetRef, type CogniteClient, type IdEither } from '@cognite/sdk';
 import { uniq } from 'lodash';
 import { isDefined } from '../../utilities/isDefined';
 import { type TaggedAddImage360CollectionOptions } from '../../components/Reveal3DResources/types';

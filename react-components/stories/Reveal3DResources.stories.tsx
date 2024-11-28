@@ -13,12 +13,9 @@ const meta = {
   component: Reveal3DResources,
   tags: ['autodocs']
 } satisfies Meta<typeof Reveal3DResources>;
-
 export default meta;
 type Story = StoryObj<typeof meta>;
-
 const sdk = createSdkByUrlToken();
-
 export const Main: Story = {
   args: {
     resources: [

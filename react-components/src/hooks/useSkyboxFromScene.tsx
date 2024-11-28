@@ -7,7 +7,7 @@ import { useSceneConfig } from './scenes/useSceneConfig';
 import * as THREE from 'three';
 import { useQuery } from '@tanstack/react-query';
 import { useSDK } from '../components/RevealCanvas/SDKProvider';
-import { type Cognite3DViewer, CustomObject } from '@cognite/reveal';
+import { type Cognite3DViewer, CustomObject, type DataSourceType } from '@cognite/reveal';
 import { useReveal } from '../components/RevealCanvas/ViewerContext';
 
 export const useSkyboxFromScene = (sceneExternalId: string, sceneSpaceId: string): void => {
@@ -57,7 +57,7 @@ export const useSkyboxFromScene = (sceneExternalId: string, sceneSpaceId: string
 
 function initializeSkybox(
   texture: THREE.Texture,
-  viewer: Cognite3DViewer
+  viewer: Cognite3DViewer<DataSourceType>
 ): [THREE.Object3D, () => void] {
   const skyboxRadius = 10;
   const skyboxGeometry = new THREE.SphereGeometry(skyboxRadius, 20, 20);
