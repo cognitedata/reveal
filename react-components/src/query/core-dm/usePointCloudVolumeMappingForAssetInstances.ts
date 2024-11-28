@@ -1,21 +1,28 @@
 /*!
  * Copyright 2024 Cognite AS
  */
-import { type DMInstanceRef } from '@cognite/reveal';
+import { type AnyIntersection, type DMInstanceRef } from '@cognite/reveal';
 import { useQuery, type UseQueryResult } from '@tanstack/react-query';
 import { usePointCloudDMVolumes } from './usePointCloudDMVolumes';
 import { useMemo } from 'react';
 import { useModelIdRevisionIdFromModelOptions } from '../../hooks/useModelIdRevisionIdFromModelOptions';
 import { isDefined } from '../../utilities/isDefined';
-import { type DmsUniqueIdentifier } from '../../data-providers';
+import { type Source, type DmsUniqueIdentifier } from '../../data-providers';
 import { queryKeys } from '../../utilities/queryKeys';
 import { type AssetProperties } from '../../data-providers/core-dm-provider/utils/filters';
 import { usePointCloudModelRevisionIdsFromReveal } from '../usePointCloudModelRevisionIdsFromReveal';
 import { EMPTY_ARRAY } from '../../utilities/constants';
+import { useFdmSdk } from '../../components/RevealCanvas/SDKProvider';
+import { inspectNodes } from '../../components/CacheProvider/requests';
 
 export type PointCloudVolumeMappedAssetData = {
   volumeInstanceRef: DMInstanceRef;
   asset: DMInstanceRef & AssetProperties;
+};
+
+export type PointCloudVolumeAssetWithViews = {
+  views: Source[];
+  assetInstance: DMInstanceRef;
 };
 
 export const usePointCloudVolumeMappingForAssetInstances = (
@@ -78,5 +85,58 @@ export const usePointCloudVolumeMappingForAssetInstances = (
       pointCloudVolumeResults.length > 0 &&
       assetInstanceRefs.length > 0 &&
       !isLoading
+  });
+};
+
+export const usePointCloudVolumeMappingForIntersection = (
+  intersection: AnyIntersection | undefined
+): UseQueryResult<PointCloudVolumeAssetWithViews[]> => {
+  const fdmSdk = useFdmSdk();
+  const isPointCloudIntersection =
+    intersection?.type === 'pointcloud' &&
+    intersection.volumeMetadata !== undefined &&
+    'assetRef' in intersection.volumeMetadata &&
+    'volumeInstanceRef' in intersection.volumeMetadata;
+  const assetInstanceRefs = useMemo<DMInstanceRef[]>(() => {
+    if (isPointCloudIntersection) {
+      const assetRef = intersection.volumeMetadata?.assetRef;
+      if (assetRef !== undefined && 'externalId' in assetRef) {
+        return [assetRef as DMInstanceRef];
+      }
+    }
+    return [];
+  }, [isPointCloudIntersection, intersection]);
+
+  const { data: volumeMappings, isLoading } =
+    usePointCloudVolumeMappingForAssetInstances(assetInstanceRefs);
+
+  return useQuery({
+    queryKey: [
+      queryKeys.pointCloudDMVolumeAssetMappingsWithViews(
+        assetInstanceRefs
+          .map((assetInstance) => `${assetInstance.externalId}/${assetInstance.space}`)
+          .sort()
+      )
+    ],
+    queryFn: async () => {
+      if (volumeMappings === undefined || volumeMappings.length === 0) {
+        return EMPTY_ARRAY;
+      }
+      const result: PointCloudVolumeAssetWithViews[] = await Promise.all(
+        volumeMappings.map(async (volumeMapping) => {
+          const assetInstance = {
+            externalId: volumeMapping.asset.externalId,
+            space: volumeMapping.asset.space
+          };
+          const nodeInspectionResults = await inspectNodes(fdmSdk, [assetInstance]);
+          return {
+            views: nodeInspectionResults.items[0].inspectionResults.involvedViews,
+            assetInstance: volumeMapping.asset
+          };
+        })
+      );
+      return result;
+    },
+    enabled: volumeMappings !== undefined && volumeMappings.length > 0 && !isLoading
   });
 };
