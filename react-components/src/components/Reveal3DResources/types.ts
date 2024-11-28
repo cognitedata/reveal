@@ -6,6 +6,8 @@ import {
   type NodeAppearance,
   type AddModelOptions,
   type Image360AnnotationAppearance,
+  type DataSourceType,
+  type ClassicDataSourceType,
   type CogniteCadModel,
   type CognitePointCloudModel,
   type Image360Collection
@@ -15,6 +17,11 @@ import { type Matrix4 } from 'three';
 import { type DmsUniqueIdentifier, type Source } from '../../data-providers/FdmSDK';
 import { type CogniteInternalId, type Node3D } from '@cognite/sdk';
 import { type TreeIndexStylingGroup } from '../CadModelContainer/types';
+import {
+  type PointCloudAnnotationModel,
+  type PointCloudVolumeWithAsset
+} from '../CacheProvider/types';
+import { type PointCloudVolumeStylingGroup } from '../PointCloudContainer';
 
 export type AddImage360CollectionOptions =
   | AddImage360CollectionEventsOptions
@@ -60,12 +67,12 @@ export type AddResourceOptions =
   | AddPointCloudResourceOptions
   | AddImage360CollectionOptions;
 
-export type AddPointCloudResourceOptions = AddModelOptions & {
+export type AddPointCloudResourceOptions = AddModelOptions<DataSourceType> & {
   transform?: Matrix4;
   styling?: { default?: NodeAppearance; mapped?: NodeAppearance };
 };
 
-export type AddCadResourceOptions = AddModelOptions & {
+export type AddCadResourceOptions = AddModelOptions<ClassicDataSourceType> & {
   transform?: Matrix4;
   styling?: {
     default?: NodeAppearance;
@@ -88,7 +95,10 @@ export type NodeDataResult = {
 
 export type FdmAssetStylingGroup = {
   fdmAssetExternalIds: DmsUniqueIdentifier[];
-  style: { cad: NodeAppearance };
+  style: {
+    cad?: NodeAppearance;
+    pointcloud?: NodeAppearance;
+  };
 };
 
 export type AssetStylingGroup = {
@@ -125,6 +135,24 @@ export type CommonResourceContainerProps = {
   onResourcesAdded?: () => void;
   onResourceLoadError?: (failedResource: AddResourceOptions, error: any) => void;
   onResourceIsLoaded?: (
-    model: CogniteCadModel | CognitePointCloudModel | Image360Collection
+    model:
+      | CogniteCadModel
+      | CognitePointCloudModel<DataSourceType>
+      | Image360Collection<DataSourceType>
   ) => void;
+};
+
+export type StyledPointCloudModel = {
+  model: PointCloudModelOptions;
+  styleGroups: PointCloudVolumeStylingGroup[];
+};
+
+export type AnnotationModelDataResult = {
+  model: PointCloudModelOptions;
+  annotationModel: PointCloudAnnotationModel[];
+};
+
+export type DMVolumeModelDataResult = {
+  model: PointCloudModelOptions;
+  pointCloudDMVolumeWithAsset: PointCloudVolumeWithAsset[];
 };

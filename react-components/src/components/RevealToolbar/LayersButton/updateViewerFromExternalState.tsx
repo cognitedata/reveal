@@ -2,6 +2,7 @@
  * Copyright 2024 Cognite AS
  */
 import {
+  type DataSourceType,
   type Cognite3DViewer,
   type CogniteCadModel,
   type CognitePointCloudModel
@@ -10,7 +11,7 @@ import { type LayersUrlStateParam } from './types';
 
 export function updateViewerFromExternalState(
   layersState: LayersUrlStateParam | undefined,
-  viewer: Cognite3DViewer
+  viewer: Cognite3DViewer<DataSourceType>
 ): void {
   if (layersState === undefined) {
     return;
@@ -18,7 +19,7 @@ export function updateViewerFromExternalState(
 
   const cadModels = viewer.models.filter((model): model is CogniteCadModel => model.type === 'cad');
   const pointCloudModels = viewer.models.filter(
-    (model): model is CognitePointCloudModel => model.type === 'pointcloud'
+    (model): model is CognitePointCloudModel<DataSourceType> => model.type === 'pointcloud'
   );
   const image360Collections = viewer.get360ImageCollections();
 

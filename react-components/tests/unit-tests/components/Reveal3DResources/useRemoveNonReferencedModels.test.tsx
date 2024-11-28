@@ -3,7 +3,7 @@ import React, { type JSX } from 'react';
 
 import { renderHook } from '@testing-library/react';
 
-import { useRemoveNonReferencedModels } from '../../../../src/components/Reveal3DResources/useRemoveNonReferencedModels';
+import { useRemoveNonReferencedModels } from '../../../../src/components/Reveal3DResources/hooks/useRemoveNonReferencedModels';
 
 import {
   viewerImage360CollectionsMock,

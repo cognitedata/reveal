@@ -9,7 +9,7 @@ import { Color } from 'three';
 import { type ReactNode, useState, type ReactElement } from 'react';
 import { WindowWidget } from '../src/components/Widgets/WindowWidget';
 import { Button } from '@cognite/cogs.js';
-import { type AddModelOptions } from '@cognite/reveal';
+import { type DataSourceType, type AddModelOptions } from '@cognite/reveal';
 
 const meta = {
   title: 'Example/SplitWindow',
@@ -35,7 +35,7 @@ export const Main: Story = {
       revisionId: 4160448151596909
     }
   },
-  render: ({ addModelOptions }: { addModelOptions: AddModelOptions }) => {
+  render: ({ addModelOptions }: { addModelOptions: AddModelOptions<DataSourceType> }) => {
     const [isWindowWidgetVisible, setIsWindowWidgetVisible] = useState(true);
     const handleClose = (): void => {
       setIsWindowWidgetVisible(false);

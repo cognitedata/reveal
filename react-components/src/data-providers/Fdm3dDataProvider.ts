@@ -8,7 +8,7 @@ import {
   type DmsUniqueIdentifier,
   type ViewItem
 } from './FdmSDK';
-import { type AddModelOptions } from '@cognite/reveal';
+import { type DataSourceType, type AddModelOptions } from '@cognite/reveal';
 import { type InstancesWithView } from '../query/useSearchMappedEquipmentFDM';
 import { type FdmCadConnection } from '../components/CacheProvider/types';
 import { type TaggedAddResourceOptions } from '../components/Reveal3DResources/types';
@@ -28,25 +28,27 @@ export type Fdm3dDataProvider = {
   ) => Promise<FdmCadConnection[]>;
 
   listMappedFdmNodes: (
-    models: AddModelOptions[],
+    models: Array<AddModelOptions<DataSourceType>>,
     sourcesToSearch: Source[],
     instancesFilter: InstanceFilter | undefined,
     limit: number
   ) => Promise<NodeItem[]>;
 
   listAllMappedFdmNodes: (
-    models: AddModelOptions[],
+    models: Array<AddModelOptions<DataSourceType>>,
     sourcesToSearch: Source[],
     instanceFilter: InstanceFilter | undefined
   ) => Promise<NodeItem[]>;
 
   filterNodesByMappedTo3d: (
     nodes: InstancesWithView[],
-    models: AddModelOptions[],
+    models: Array<AddModelOptions<DataSourceType>>,
     spacesToSearch: string[]
   ) => Promise<InstancesWithView[]>;
 
   getCadModelsForInstance: (instance: DmsUniqueIdentifier) => Promise<TaggedAddResourceOptions[]>;
 
-  getCadConnectionsForRevisions: (modelOptions: AddModelOptions[]) => Promise<FdmCadConnection[]>;
+  getCadConnectionsForRevisions: (
+    modelOptions: Array<AddModelOptions<DataSourceType>>
+  ) => Promise<FdmCadConnection[]>;
 };
