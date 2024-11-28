@@ -1,7 +1,10 @@
-import { useQuery, UseQueryResult } from '@tanstack/react-query';
+/*!
+ * Copyright 2024 Cognite AS
+ */
+import { useQuery, type UseQueryResult } from '@tanstack/react-query';
 import { fetchAncestorNodesForTreeIndex } from '../../components/CacheProvider/requests';
-import { AnyIntersection } from '@cognite/reveal';
-import { NodeAssetMappingResult } from '../../components/CacheProvider/AssetMappingAndNode3DCache';
+import { type AnyIntersection } from '@cognite/reveal';
+import { type NodeAssetMappingResult } from '../../components/CacheProvider/AssetMappingAndNode3DCache';
 import { useSDK } from '../../components/RevealCanvas/SDKProvider';
 import { useAssetMappingAndNode3DCache } from '../../components/CacheProvider/CacheProvider';
 

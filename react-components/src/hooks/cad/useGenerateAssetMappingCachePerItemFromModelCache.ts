@@ -1,6 +1,9 @@
+/*!
+ * Copyright 2024 Cognite AS
+ */
 import { useMemo } from 'react';
-import { CadModelOptions } from '../../components';
-import { ModelWithAssetMappings } from './ModelWithAssetMappings';
+import { type CadModelOptions } from '../../components';
+import { type ModelWithAssetMappings } from './ModelWithAssetMappings';
 import { useAssetMappingAndNode3DCache } from '../../components/CacheProvider/CacheProvider';
 
 export const useGenerateAssetMappingCachePerItemFromModelCache = (

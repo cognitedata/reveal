@@ -1,5 +1,8 @@
-import { useQuery, UseQueryResult } from '@tanstack/react-query';
-import { ModelRevisionToConnectionMap } from '../../components/CacheProvider/types';
+/*!
+ * Copyright 2024 Cognite AS
+ */
+import { useQuery, type UseQueryResult } from '@tanstack/react-query';
+import { type ModelRevisionToConnectionMap } from '../../components/CacheProvider/types';
 import { useFdmNodeCache } from '../../components/CacheProvider/CacheProvider';
 
 export const useMappedEdgesForRevisions = (

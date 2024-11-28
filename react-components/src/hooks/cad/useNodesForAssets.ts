@@ -1,9 +1,12 @@
-import { CogniteInternalId } from '@cognite/sdk/dist/src';
+/*!
+ * Copyright 2024 Cognite AS
+ */
+import { type CogniteInternalId } from '@cognite/sdk/dist/src';
 import {
-  ModelRevisionAssetNodesResult,
-  ModelRevisionId
+  type ModelRevisionAssetNodesResult,
+  type ModelRevisionId
 } from '../../components/CacheProvider/types';
-import { useQuery, UseQueryResult } from '@tanstack/react-query';
+import { useQuery, type UseQueryResult } from '@tanstack/react-query';
 import { useAssetMappingAndNode3DCache } from '../../components/CacheProvider/CacheProvider';
 
 export const useNodesForAssets = (

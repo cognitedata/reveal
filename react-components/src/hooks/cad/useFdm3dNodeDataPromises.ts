@@ -1,6 +1,9 @@
-import { AnyIntersection } from '@cognite/reveal';
-import { FdmNodeDataPromises } from '../../components/CacheProvider/types';
-import { useQuery, UseQueryResult } from '@tanstack/react-query';
+/*!
+ * Copyright 2024 Cognite AS
+ */
+import { type AnyIntersection } from '@cognite/reveal';
+import { type FdmNodeDataPromises } from '../../components/CacheProvider/types';
+import { useQuery, type UseQueryResult } from '@tanstack/react-query';
 import { useFdmNodeCache } from '../../components/CacheProvider/CacheProvider';
 import assert from 'assert';
 

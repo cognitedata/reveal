@@ -143,7 +143,7 @@ export type CommonImage360Settings = {
 
 export type CommonResourceContainerProps = {
   defaultResourceStyling?: DefaultResourceStyling;
-  instanceStyling?: Array<InstanceStylingGroup>;
+  instanceStyling?: InstanceStylingGroup[];
   image360Settings?: CommonImage360Settings;
   onResourcesAdded?: () => void;
   onResourceLoadError?: (failedResource: AddResourceOptions, error: any) => void;

@@ -1,10 +1,13 @@
+/*!
+ * Copyright 2024 Cognite AS
+ */
 import { useMemo } from 'react';
 import { usePointCloudAnnotationCache } from '../../components/CacheProvider/CacheProvider';
-import { TypedReveal3DModel } from '../../components/Reveal3DResources/types';
+import { type TypedReveal3DModel } from '../../components/Reveal3DResources/types';
 import { isDefined } from '../../utilities/isDefined';
-import { PointCloudAnnotationMappedAssetData } from '../types';
+import { type PointCloudAnnotationMappedAssetData } from '../types';
 import { useModelIdRevisionIdFromModelOptions } from '../useModelIdRevisionIdFromModelOptions';
-import { useQuery, UseQueryResult } from '@tanstack/react-query';
+import { useQuery, type UseQueryResult } from '@tanstack/react-query';
 import { queryKeys } from '../../utilities/queryKeys';
 import { fetchAnnotationsForModel } from './fetchAnnotationsForModel';
 import { EMPTY_ARRAY } from '../../utilities/constants';

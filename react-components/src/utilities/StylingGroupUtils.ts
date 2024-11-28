@@ -6,7 +6,7 @@ import {
   type FdmAssetStylingGroup,
   type AssetStylingGroup,
   type Image360AssetStylingGroup,
-  InstanceStylingGroup
+  type InstanceStylingGroup
 } from '../components/Reveal3DResources/types';
 
 export function isFdmAssetStylingGroup(

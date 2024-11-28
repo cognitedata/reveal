@@ -1,14 +1,17 @@
-import { CogniteClient } from '@cognite/sdk/dist/src';
+/*!
+ * Copyright 2024 Cognite AS
+ */
+import { type CogniteClient } from '@cognite/sdk/dist/src';
 import { AssetMappingAndNode3DCache } from '../../../components/CacheProvider/AssetMappingAndNode3DCache';
 import { DomainObject } from '../../base/domainObjects/DomainObject';
-import { TranslationInput } from '../../base/utilities/TranslateInput';
+import { type TranslationInput } from '../../base/utilities/TranslateInput';
 import { FdmNodeCache } from '../../../components/CacheProvider/FdmNodeCache';
 import { FdmSdkContext } from '../../../components/RevealCanvas/FdmDataProviderContext';
 import { FdmSDK } from '../../../data-providers/FdmSDK';
-import { Fdm3dDataProvider } from '../../../data-providers/Fdm3dDataProvider';
+import { type Fdm3dDataProvider } from '../../../data-providers/Fdm3dDataProvider';
 import { PointCloudAnnotationCache } from '../../../components/CacheProvider/PointCloudAnnotationCache';
 import { Image360AnnotationCache } from '../../../components/CacheProvider/Image360AnnotationCache';
-import { Cognite3DViewer, DataSourceType } from '@cognite/reveal';
+import { type Cognite3DViewer, type DataSourceType } from '@cognite/reveal';
 
 export class CachesDomainObject extends DomainObject {
   private readonly _assetMappingAndNode3dCache: AssetMappingAndNode3DCache;

@@ -1,7 +1,10 @@
-import { useQuery, UseQueryResult } from '@tanstack/react-query';
+/*!
+ * Copyright 2024 Cognite AS
+ */
+import { useQuery, type UseQueryResult } from '@tanstack/react-query';
 import {
-  AnnotationModelDataResult,
-  TypedReveal3DModel
+  type AnnotationModelDataResult,
+  type TypedReveal3DModel
 } from '../../components/Reveal3DResources/types';
 import { usePointCloudAnnotationCache } from '../../components/CacheProvider/CacheProvider';
 import { useModelIdRevisionIdFromModelOptions } from '../useModelIdRevisionIdFromModelOptions';

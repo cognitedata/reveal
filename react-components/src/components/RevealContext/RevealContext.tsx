@@ -18,7 +18,7 @@ import { CoreDm3dFdm3dDataProvider } from '../../data-providers/core-dm-provider
 import { LegacyFdm3dDataProvider } from '../../data-providers/legacy-fdm-provider/LegacyFdm3dDataProvider';
 import { FdmSDK } from '../../data-providers/FdmSDK';
 import { CachesDomainObject } from '../../architecture/concrete/caches/CachesDomainObject';
-import { Fdm3dDataProvider } from '../../data-providers/Fdm3dDataProvider';
+import { type Fdm3dDataProvider } from '../../data-providers/Fdm3dDataProvider';
 
 export type RevealContextProps = {
   color?: Color;

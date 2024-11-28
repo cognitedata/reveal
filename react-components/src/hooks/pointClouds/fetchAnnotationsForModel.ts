@@ -1,6 +1,9 @@
-import { PointCloudAnnotationCache } from '../../components/CacheProvider/PointCloudAnnotationCache';
+/*!
+ * Copyright 2024 Cognite AS
+ */
+import { type PointCloudAnnotationCache } from '../../components/CacheProvider/PointCloudAnnotationCache';
 import { isDefined } from '../../utilities/isDefined';
-import { PointCloudAnnotationMappedAssetData } from '../types';
+import { type PointCloudAnnotationMappedAssetData } from '../types';
 
 export const fetchAnnotationsForModel = async (
   modelId: number | undefined,

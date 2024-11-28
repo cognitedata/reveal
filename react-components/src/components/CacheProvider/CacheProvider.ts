@@ -1,11 +1,14 @@
+/*!
+ * Copyright 2024 Cognite AS
+ */
 import { useMemo, useState } from 'react';
 import { CachesDomainObject } from '../../architecture/concrete/caches/CachesDomainObject';
 import { useOnUpdateDomainObject } from '../Architecture/useOnUpdate';
 import { useRenderTarget } from '../RevealCanvas';
-import { AssetMappingAndNode3DCache } from './AssetMappingAndNode3DCache';
-import { FdmNodeCache } from './FdmNodeCache';
-import { PointCloudAnnotationCache } from './PointCloudAnnotationCache';
-import { Image360AnnotationCache } from './Image360AnnotationCache';
+import { type AssetMappingAndNode3DCache } from './AssetMappingAndNode3DCache';
+import { type FdmNodeCache } from './FdmNodeCache';
+import { type PointCloudAnnotationCache } from './PointCloudAnnotationCache';
+import { type Image360AnnotationCache } from './Image360AnnotationCache';
 
 const useCacheObject = (): CachesDomainObject => {
   const revealRenderTarget = useRenderTarget();
