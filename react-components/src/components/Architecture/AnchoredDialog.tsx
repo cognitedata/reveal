@@ -21,13 +21,11 @@ export const AnchoredDialog = (): ReactNode => {
   const isSomeEnabled = dialogContent?.contentCommands.some((command) => command.isEnabled);
 
   useEffect(() => {
-    if (dialogContent?.customListeners === undefined) return;
-    dialogContent.customListeners.forEach((listener) => {
+    dialogContent?.customListeners?.forEach((listener) => {
       window.addEventListener(listener.eventName, listener.callback, true);
     });
     return () => {
-      if (dialogContent?.customListeners === undefined) return;
-      dialogContent.customListeners.forEach((listener) => {
+      dialogContent?.customListeners?.forEach((listener) => {
         window.removeEventListener(listener.eventName, listener.callback, true);
       });
     };
@@ -37,11 +35,7 @@ export const AnchoredDialog = (): ReactNode => {
     return undefined;
   }
 
-  if (renderTarget === undefined) {
-    return <></>;
-  }
-
-  if (activeTool === undefined) {
+  if (renderTarget === undefined || activeTool === undefined) {
     return <></>;
   }
 

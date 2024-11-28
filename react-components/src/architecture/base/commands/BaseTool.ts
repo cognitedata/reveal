@@ -282,7 +282,7 @@ export abstract class BaseTool extends RenderTargetCommand {
  * AnchorDialog
  */
 
-type CustomListener = { eventName: string; callback: (event: Event) => void };
+export type CustomListener = { eventName: string; callback: (event: Event) => void };
 
 export type AnchoredDialogContent = {
   position: Vector3;
