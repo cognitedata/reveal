@@ -160,7 +160,12 @@ function poiItemToInstance(item: PoiItem): PointsOfInterestInstance<ExternalId> 
       positionX: item.position[0],
       positionY: item.position[1],
       positionZ: item.position[2],
-      visibility: item.visibility
+      visibility: item.visibility,
+      scene: {
+        externalId: item.sceneExternalId ?? 'dummy-scene-external-id',
+        space: item.sceneSpace ?? 'dummy-scene-space'
+      },
+      sceneState: item.sceneState
     }
   };
 }
