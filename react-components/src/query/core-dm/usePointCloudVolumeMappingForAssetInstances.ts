@@ -14,6 +14,7 @@ import { usePointCloudModelRevisionIdsFromReveal } from '../usePointCloudModelRe
 import { EMPTY_ARRAY } from '../../utilities/constants';
 import { useFdmSdk } from '../../components/RevealCanvas/SDKProvider';
 import { inspectNodes } from '../../components/CacheProvider/requests';
+import { isPointCloudVolumeIntersection } from './typeGuards';
 
 export type PointCloudVolumeMappedAssetData = {
   volumeInstanceRef: DMInstanceRef;
@@ -92,20 +93,16 @@ export const usePointCloudVolumeMappingForIntersection = (
   intersection: AnyIntersection | undefined
 ): UseQueryResult<PointCloudVolumeAssetWithViews[]> => {
   const fdmSdk = useFdmSdk();
-  const isPointCloudIntersection =
-    intersection?.type === 'pointcloud' &&
-    intersection.volumeMetadata !== undefined &&
-    'assetRef' in intersection.volumeMetadata &&
-    'volumeInstanceRef' in intersection.volumeMetadata;
-  const assetInstanceRefs = useMemo<DMInstanceRef[]>(() => {
-    if (isPointCloudIntersection) {
+
+  const assetInstanceRefs = useMemo(() => {
+    if (isPointCloudVolumeIntersection(intersection)) {
       const assetRef = intersection.volumeMetadata?.assetRef;
-      if (assetRef !== undefined && 'externalId' in assetRef) {
-        return [assetRef as DMInstanceRef];
+      if (assetRef !== undefined) {
+        return [assetRef];
       }
     }
     return [];
-  }, [isPointCloudIntersection, intersection]);
+  }, [intersection]);
 
   const { data: volumeMappings, isLoading } =
     usePointCloudVolumeMappingForAssetInstances(assetInstanceRefs);
