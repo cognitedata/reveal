@@ -3,11 +3,7 @@
  */
 import { type CogniteClient } from '@cognite/sdk/dist/src';
 import { type DmsUniqueIdentifier, type ExternalId } from '../../../../data-providers/FdmSDK';
-import {
-  type CommentProperties,
-  type PointsOfInterestInstance,
-  type PointsOfInterestProperties
-} from '../models';
+import { type CommentProperties, type PointsOfInterestInstance } from '../models';
 import { type PointsOfInterestProvider } from '../PointsOfInterestProvider';
 
 import { v4 as uuid } from 'uuid';
