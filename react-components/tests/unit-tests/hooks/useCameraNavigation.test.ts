@@ -90,9 +90,7 @@ describe('useCameraNavigation', () => {
       mappings: new Map([['model1', [{ id: 1 }, { id: 2 }]]])
     };
 
-    fdmNodeCacheContentMock.cache.getMappingsForFdmInstances = vi
-      .fn()
-      .mockResolvedValue([mockMappings]);
+    fdmNodeCacheContentMock.getMappingsForFdmInstances = vi.fn().mockResolvedValue([mockMappings]);
 
     const { result } = renderHook(() => useCameraNavigation());
 
@@ -111,9 +109,7 @@ describe('useCameraNavigation', () => {
     };
     viewerModelsMock.mockReturnValue(mockModels);
 
-    fdmNodeCacheContentMock.cache.getMappingsForFdmInstances = vi
-      .fn()
-      .mockResolvedValue([mockMappings]);
+    fdmNodeCacheContentMock.getMappingsForFdmInstances = vi.fn().mockResolvedValue([mockMappings]);
 
     const { result } = renderHook(() => useCameraNavigation());
 

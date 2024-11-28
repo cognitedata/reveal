@@ -9,10 +9,7 @@ import {
 } from '../types';
 import { NumericRange, type NodeAppearance, IndexSet } from '@cognite/reveal';
 import { type Node3D, type CogniteExternalId, type AssetMapping3D } from '@cognite/sdk';
-import {
-  useFdmAssetMappings,
-  useMappedEdgesForRevisions
-} from '../../CacheProvider/NodeCacheProvider';
+import { useFdmAssetMappings } from '../../../hooks/cad/useFdmAssetMappings';
 import { useMemo } from 'react';
 import {
   type NodeId,
@@ -26,15 +23,16 @@ import {
   type TreeIndexStylingGroup
 } from '../../CadModelContainer/types';
 import {
-  useAssetMappedNodesForRevisions,
-  useNodesForAssets
-} from '../../CacheProvider/AssetMappingAndNode3DCacheProvider';
-import {
   isClassicAssetMappingStylingGroup,
   isFdmAssetStylingGroup
 } from '../../../utilities/StylingGroupUtils';
 import { type ThreeDModelFdmMappings } from '../../../hooks/types';
 import { isSameModel } from '../../../utilities/isSameModel';
+import {
+  useAssetMappedNodesForRevisions,
+  useMappedEdgesForRevisions,
+  useNodesForAssets
+} from '../../../hooks/cad';
 
 type ModelStyleGroup = {
   model: CadModelOptions;

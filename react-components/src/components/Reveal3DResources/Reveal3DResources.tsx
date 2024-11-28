@@ -31,12 +31,12 @@ import { useReveal3DResourcesStylingLoadingSetter } from './Reveal3DResourcesInf
 import { type CadModelStyling } from '../CadModelContainer/types';
 import { type PointCloudModelStyling } from '../PointCloudContainer/types';
 import { type Image360PolygonStylingGroup } from '../Image360CollectionContainer';
-import { useAssetMappedNodesForRevisions } from '../CacheProvider';
+import { useTypedModels } from './hooks/useTypedModels';
 import {
+  useAssetMappedNodesForRevisions,
   useGenerateAssetMappingCachePerItemFromModelCache,
   useGenerateNode3DCache
-} from '../CacheProvider/AssetMappingAndNode3DCacheProvider';
-import { useTypedModels } from './hooks/useTypedModels';
+} from '../../hooks/cad';
 
 export const Reveal3DResources = ({
   resources,

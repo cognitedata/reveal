@@ -122,6 +122,11 @@ export type Image360AssetStylingGroup = {
   style: { image360?: Image360AnnotationAppearance };
 };
 
+export type InstanceStylingGroup =
+  | FdmAssetStylingGroup
+  | AssetStylingGroup
+  | Image360AssetStylingGroup;
+
 export type DefaultResourceStyling = {
   cad?: { default?: NodeAppearance; mapped?: NodeAppearance };
   pointcloud?: { default: NodeAppearance; mapped?: NodeAppearance };
@@ -138,7 +143,7 @@ export type CommonImage360Settings = {
 
 export type CommonResourceContainerProps = {
   defaultResourceStyling?: DefaultResourceStyling;
-  instanceStyling?: Array<FdmAssetStylingGroup | AssetStylingGroup | Image360AssetStylingGroup>;
+  instanceStyling?: Array<InstanceStylingGroup>;
   image360Settings?: CommonImage360Settings;
   onResourcesAdded?: () => void;
   onResourceLoadError?: (failedResource: AddResourceOptions, error: any) => void;

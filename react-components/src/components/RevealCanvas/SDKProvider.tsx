@@ -14,14 +14,14 @@ const SdkContext = createContext<CogniteClient | null>(null);
 SdkContext.displayName = 'CogniteSdkProvider';
 FdmSdkContext.displayName = 'FdmSdkProvider';
 
-type Props = { sdk: CogniteClient; useCoreDm?: boolean; children: any };
+type SDKProviderProps = { sdk: CogniteClient; fdm3dDataProvider: Fdm3dDataProvider; children: any };
 
-export function SDKProvider({ sdk, children, useCoreDm }: Props): React.ReactElement {
+export function SDKProvider({
+  sdk,
+  children,
+  fdm3dDataProvider
+}: SDKProviderProps): React.ReactElement {
   const fdmSdk = useMemo(() => new FdmSDK(sdk), [sdk]);
-  const fdm3dDataProvider =
-    (useCoreDm ?? false)
-      ? new CoreDm3dFdm3dDataProvider([], fdmSdk)
-      : new LegacyFdm3dDataProvider(fdmSdk, sdk);
   const content = useMemo(() => ({ fdmSdk, fdm3dDataProvider }), [fdmSdk, fdm3dDataProvider]);
 
   return (

@@ -5,27 +5,30 @@
 import {
   type FdmAssetStylingGroup,
   type AssetStylingGroup,
-  type Image360AssetStylingGroup
+  type Image360AssetStylingGroup,
+  InstanceStylingGroup
 } from '../components/Reveal3DResources/types';
 
-export function isFdmAssetStylingGroup(instanceGroup: any): instanceGroup is FdmAssetStylingGroup {
-  return instanceGroup.fdmAssetExternalIds !== undefined && instanceGroup.style !== undefined;
+export function isFdmAssetStylingGroup(
+  instanceGroup: InstanceStylingGroup
+): instanceGroup is FdmAssetStylingGroup {
+  return (instanceGroup as FdmAssetStylingGroup).fdmAssetExternalIds !== undefined;
 }
 
 export function isClassicAssetMappingStylingGroup(
-  instanceGroup: any
+  instanceGroup: InstanceStylingGroup
 ): instanceGroup is AssetStylingGroup {
-  return instanceGroup.assetIds !== undefined && instanceGroup.style !== undefined;
+  return (instanceGroup as AssetStylingGroup).assetIds !== undefined;
 }
 
 export function isImage360AssetStylingGroup(
-  instanceGroup: any
+  instanceGroup: InstanceStylingGroup
 ): instanceGroup is Image360AssetStylingGroup {
-  return instanceGroup.assetIds !== undefined && instanceGroup.style !== undefined;
+  return (instanceGroup as Image360AssetStylingGroup).assetIds !== undefined;
 }
 
 export function isAssetMappingStylingGroup(
-  instanceGroup: any
+  instanceGroup: InstanceStylingGroup
 ): instanceGroup is FdmAssetStylingGroup | AssetStylingGroup {
   return isClassicAssetMappingStylingGroup(instanceGroup) || isFdmAssetStylingGroup(instanceGroup);
 }

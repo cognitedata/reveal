@@ -6,8 +6,8 @@ import { useCallback, useState, type ReactElement } from 'react';
 import { AssetsIcon, Button, Tooltip as CogsTooltip } from '@cognite/cogs.js';
 import { useTranslation } from '../i18n/I18n';
 import { use3dModels } from '../../hooks/use3dModels';
-import { useAssetMappedNodesForRevisions } from '../CacheProvider/AssetMappingAndNode3DCacheProvider';
 import { type CadModelOptions } from '../Reveal3DResources/types';
+import { useAssetMappedNodesForRevisions } from '../../hooks/cad';
 
 type AssetContextualizedButtonProps = {
   setEnableMappedStyling: (enabled: boolean) => void;

@@ -5,7 +5,7 @@
 import { CogniteCadModel, type CogniteModel, type DataSourceType } from '@cognite/reveal';
 import { type AssetMapping3D } from '@cognite/sdk';
 import { useMemo } from 'react';
-import { type ModelWithAssetMappings } from '../components/CacheProvider/AssetMappingAndNode3DCacheProvider';
+import { type ModelWithAssetMappings } from './cad/ModelWithAssetMappings';
 import { isDefined } from '../utilities/isDefined';
 
 export const useCreateAssetMappingsMapPerModel = (
