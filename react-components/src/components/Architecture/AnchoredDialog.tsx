@@ -1,7 +1,7 @@
 /*!
  * Copyright 2024 Cognite AS
  */
-import { type ReactNode, useMemo, useState } from 'react';
+import { type ReactNode, useEffect, useMemo, useState } from 'react';
 import { useRenderTarget } from '../RevealCanvas';
 import { AnchoredDialogUpdater } from '../../architecture/base/reactUpdaters/AnchoredDialogUpdater';
 import { ViewerAnchor } from '../ViewerAnchor/ViewerAnchor';
@@ -16,19 +16,27 @@ export const AnchoredDialog = (): ReactNode => {
   AnchoredDialogUpdater.setCounterDelegate(setActiveToolUpdater);
 
   const renderTarget = useRenderTarget();
-  if (renderTarget === undefined) {
-    return <></>;
-  }
   const activeTool = renderTarget.commandsController.activeTool;
-  if (activeTool === undefined) {
-    return <></>;
-  }
-
-  const dialogContent = useMemo(() => activeTool.getAnchoredDialogContent(), [activeToolUpdate]);
+  const dialogContent = useMemo(() => activeTool?.getAnchoredDialogContent(), [activeToolUpdate]);
   const isSomeEnabled = dialogContent?.contentCommands.some((command) => command.isEnabled);
+
+  useEffect(() => {
+    dialogContent?.customListeners?.forEach((listener) => {
+      window.addEventListener(listener.eventName, listener.callback, true);
+    });
+    return () => {
+      dialogContent?.customListeners?.forEach((listener) => {
+        window.removeEventListener(listener.eventName, listener.callback, true);
+      });
+    };
+  }, [dialogContent]);
 
   if (dialogContent === undefined || isSomeEnabled !== true) {
     return undefined;
+  }
+
+  if (renderTarget === undefined || activeTool === undefined) {
+    return <></>;
   }
 
   return (
