@@ -103,7 +103,14 @@ export class PointsOfInterestTool<PoiIdType> extends NavigationTool {
   }
 
   public openCreateCommandDialog(position: Vector3): void {
-    const createPointCommand = new CreatePointsOfInterestWithDescriptionCommand(position);
+    const poiObject = this.getPointsOfInterestDomainObject();
+
+    const scene = poiObject?.getScene();
+    if (scene === undefined) {
+      return;
+    }
+
+    const createPointCommand = new CreatePointsOfInterestWithDescriptionCommand(position, scene);
     createPointCommand.attach(this.renderTarget);
 
     const onFinishCallback = (): void => {
