@@ -66,6 +66,7 @@ const KeepAliveMockScenario = (): ReactElement => {
                         transform: new Matrix4().makeTranslation(40, 10, 0)
                       },
                       {
+                        source: 'events',
                         siteId: 'c_RC_2'
                       },
                       {

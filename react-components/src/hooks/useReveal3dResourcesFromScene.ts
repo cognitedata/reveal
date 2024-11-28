@@ -8,10 +8,16 @@ import {
   type AddResourceOptions,
   type AddImage360CollectionDatamodelsOptions
 } from '../components/Reveal3DResources/types';
-import { CDF_TO_VIEWER_TRANSFORMATION, type AddModelOptions } from '@cognite/reveal';
+import {
+  CDF_TO_VIEWER_TRANSFORMATION,
+  type ClassicDataSourceType,
+  type DMDataSourceType,
+  type AddModelOptions
+} from '@cognite/reveal';
 import { useEffect, useState } from 'react';
 import { Euler, MathUtils, Matrix4 } from 'three';
 import { type Transformation3d } from './scenes/types';
+import { isClassicIdentifier, isDMIdentifier } from '../components/Reveal3DResources/typeGuards';
 
 export type UseSyncSceneConfigWithViewerProps = {
   sdk: CogniteClient;
@@ -32,23 +38,31 @@ export const useReveal3dResourcesFromScene = (
     }
     const addResourceOptions: AddResourceOptions[] = [];
     scene.data.sceneModels.forEach((model) => {
-      if (isNaN(model.modelId)) {
-        throw new Error('Model id is not a number');
+      if (isClassicIdentifier(model.modelIdentifier)) {
+        const addModelOptions: AddModelOptions<ClassicDataSourceType> = {
+          modelId: model.modelIdentifier.modelId,
+          revisionId: model.modelIdentifier.revisionId
+        };
+
+        const transform = createResourceTransformation(model);
+
+        addResourceOptions.push({ ...addModelOptions, transform });
+      } else if (isDMIdentifier(model.modelIdentifier)) {
+        const addModelOptions: AddModelOptions<DMDataSourceType> = {
+          revisionExternalId: model.modelIdentifier.revisionExternalId,
+          revisionSpace: model.modelIdentifier.revisionSpace
+        };
+
+        const transform = createResourceTransformation(model);
+
+        addResourceOptions.push({ ...addModelOptions, transform });
       }
-
-      const addModelOptions: AddModelOptions = {
-        modelId: model.modelId,
-        revisionId: model.revisionId
-      };
-
-      const transform = createResourceTransformation(model);
-
-      addResourceOptions.push({ ...addModelOptions, transform });
     });
 
     scene.data.image360Collections.forEach((collection) => {
       const transform = createResourceTransformation(collection);
       const addModelOptions: AddImage360CollectionDatamodelsOptions = {
+        source: 'dm',
         externalId: collection.image360CollectionExternalId,
         space: collection.image360CollectionSpace
       };

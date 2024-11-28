@@ -1,24 +1,39 @@
-import { describe, expect, test, vi, beforeEach } from 'vitest';
+import { describe, expect, test } from 'vitest';
 
 import { Matrix4 } from 'three';
 import { isSameModel } from '../../../src/utilities/isSameModel';
 import { cloneDeep } from 'lodash';
+import { type AddImage360CollectionOptions } from '../../../src';
 
 describe(isSameModel.name, () => {
   const model0 = { modelId: 1, revisionId: 2, transform: new Matrix4().makeRotationX(1) };
   const model1 = { modelId: 3, revisionId: 4, transform: new Matrix4().makeRotationY(2) };
   const model2 = { modelId: 1, revisionId: 2, transform: new Matrix4().makeRotationZ(3) };
 
-  const image360Event0 = { siteId: 'site0', transform: new Matrix4().makeRotationZ(3) };
-  const image360Event1 = { siteId: 'site1', transform: new Matrix4().makeRotationX(4) };
-  const image360Event2 = { siteId: 'site0', transform: new Matrix4().makeRotationZ(5) };
+  const image360Event0: AddImage360CollectionOptions = {
+    source: 'events',
+    siteId: 'site0',
+    transform: new Matrix4().makeRotationZ(3)
+  };
+  const image360Event1: AddImage360CollectionOptions = {
+    source: 'events',
+    siteId: 'site1',
+    transform: new Matrix4().makeRotationX(4)
+  };
+  const image360Event2: AddImage360CollectionOptions = {
+    source: 'events',
+    siteId: 'site0',
+    transform: new Matrix4().makeRotationZ(5)
+  };
 
-  const image360Fdm0 = {
+  const image360Fdm0: AddImage360CollectionOptions = {
+    source: 'dm',
     externalId: 'id0',
     space: 'space0',
     transform: new Matrix4().makeRotationY(5)
   };
-  const image360Fdm1 = {
+  const image360Fdm1: AddImage360CollectionOptions = {
+    source: 'dm',
     externalId: 'id1',
     space: 'space0',
     transform: new Matrix4().makeRotationY(5)

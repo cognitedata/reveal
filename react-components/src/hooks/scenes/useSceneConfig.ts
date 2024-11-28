@@ -32,6 +32,8 @@ import {
   type TRANSFORMATION_SOURCE
 } from './types';
 import { tryGetModelIdFromExternalId } from '../../utilities/tryGetModelIdFromExternalId';
+import { getRevisionExternalIdAndSpace } from '../network/getRevisionExternalIdAndSpace';
+import { EMPTY_ARRAY } from '../../utilities/constants';
 
 const DefaultScene: Scene = {
   sceneConfiguration: {
@@ -108,7 +110,7 @@ export const useSceneConfig = (
         },
         skybox: getSkybox(sceneResponse),
         groundPlanes: getGroundPlanes(sceneResponse),
-        sceneModels: getSceneModels(sceneResponse),
+        sceneModels: await getSceneModels(sceneResponse, fdmSdk),
         image360Collections: getImageCollections(sceneResponse)
       };
       return scene;
@@ -135,26 +137,38 @@ function extractProperties<T>(object: Record<string, Record<string, T>>): T {
   return object[firstKey][secondKey];
 }
 
-function getSceneModels(sceneResponse: SceneResponse): CadOrPointCloudModel[] {
-  const models: CadOrPointCloudModel[] = [];
-  if (sceneResponse.items.sceneModels.length > 0) {
-    const sceneModels = sceneResponse.items.sceneModels;
-    sceneModels.forEach((sceneModel) => {
-      const sceneModelProperties = extractProperties<SceneModelsProperties>(sceneModel.properties);
+async function getSceneModels(
+  sceneResponse: SceneResponse,
+  fdmSdk: FdmSDK
+): Promise<CadOrPointCloudModel[]> {
+  const sceneModels = sceneResponse.items.sceneModels;
+
+  if (sceneModels.length === 0) {
+    return EMPTY_ARRAY;
+  }
+
+  const modelPromises = sceneModels.map(async (sceneModel) => {
+    const sceneModelProperties = extractProperties<SceneModelsProperties>(sceneModel.properties);
+    const dmModelIdentifier = await getRevisionExternalIdAndSpace(
+      sceneModel.endNode.externalId,
+      sceneModelProperties.revisionId,
+      fdmSdk
+    );
+
+    if (dmModelIdentifier !== undefined) {
+      return createDMModel(sceneModelProperties, dmModelIdentifier);
+    } else {
       const parsedModelId = tryGetModelIdFromExternalId(sceneModel.endNode.externalId);
       if (parsedModelId === undefined) {
-        throw Error(`Could not parse model Id from externalId ${sceneModel.endNode.externalId}`);
+        throw new Error(
+          `Could not parse model Id from externalId ${sceneModel.endNode.externalId}`
+        );
       }
+      return createClassicModel(sceneModelProperties, parsedModelId);
+    }
+  });
 
-      const model: CadOrPointCloudModel = {
-        modelId: parsedModelId,
-        ...sceneModelProperties
-      };
-
-      models.push(model);
-    });
-  }
-  return models;
+  return await Promise.all(modelPromises);
 }
 
 function getImageCollections(sceneResponse: SceneResponse): Image360Collection[] {
@@ -222,5 +236,31 @@ function getSkybox(sceneResponse: SceneResponse): Skybox | undefined {
     label,
     isSpherical,
     file
+  };
+}
+
+function createDMModel(
+  sceneModelProperties: SceneModelsProperties,
+  dMModelIdentifier: { revisionExternalId: string; revisionSpace: string }
+): CadOrPointCloudModel {
+  return {
+    modelIdentifier: {
+      revisionExternalId: dMModelIdentifier.revisionExternalId,
+      revisionSpace: dMModelIdentifier.revisionSpace
+    },
+    ...sceneModelProperties
+  };
+}
+
+function createClassicModel(
+  sceneModelProperties: SceneModelsProperties,
+  modelId: number
+): CadOrPointCloudModel {
+  return {
+    modelIdentifier: {
+      modelId,
+      revisionId: sceneModelProperties.revisionId
+    },
+    ...sceneModelProperties
   };
 }

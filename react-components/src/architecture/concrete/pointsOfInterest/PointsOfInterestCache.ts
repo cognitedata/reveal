@@ -1,6 +1,7 @@
 /*!
  * Copyright 2024 Cognite AS
  */
+import { type DmsUniqueIdentifier } from '../../../data-providers';
 import { type CommentProperties, type PointsOfInterestInstance } from './models';
 import { type PointsOfInterestProvider } from './PointsOfInterestProvider';
 
@@ -9,14 +10,12 @@ import { type PointsOfInterestProvider } from './PointsOfInterestProvider';
  * list when e.g. adding or removing pois
  */
 export class PointsOfInterestCache<PoiId> {
-  private readonly _loadedPromise: Promise<Array<PointsOfInterestInstance<PoiId>>>;
   private readonly _poiProvider: PointsOfInterestProvider<PoiId>;
 
   private readonly _poiCommentCache = new Map<string, CommentProperties[]>();
 
   constructor(poiProvider: PointsOfInterestProvider<PoiId>) {
     this._poiProvider = poiProvider;
-    this._loadedPromise = poiProvider.fetchAllPointsOfInterest();
   }
 
   public async getPoiCommentsForPoi(id: PoiId): Promise<CommentProperties[]> {
@@ -49,10 +48,10 @@ export class PointsOfInterestCache<PoiId> {
     return comment;
   }
 
-  public async getFinishedOriginalLoadingPromise(): Promise<
-    Array<PointsOfInterestInstance<PoiId>>
-  > {
-    return await this._loadedPromise;
+  public async fetchPoisForScene(
+    sceneId: DmsUniqueIdentifier
+  ): Promise<Array<PointsOfInterestInstance<PoiId>>> {
+    return await this._poiProvider.fetchPointsOfInterest(sceneId);
   }
 
   public async deletePointsOfInterest(poiIds: PoiId[]): Promise<void> {

@@ -12,7 +12,9 @@ export function isFdmAssetStylingGroup(instanceGroup: any): instanceGroup is Fdm
   return instanceGroup.fdmAssetExternalIds !== undefined && instanceGroup.style !== undefined;
 }
 
-export function isAssetMappingStylingGroup(instanceGroup: any): instanceGroup is AssetStylingGroup {
+export function isClassicAssetMappingStylingGroup(
+  instanceGroup: any
+): instanceGroup is AssetStylingGroup {
   return instanceGroup.assetIds !== undefined && instanceGroup.style !== undefined;
 }
 
@@ -22,8 +24,8 @@ export function isImage360AssetStylingGroup(
   return instanceGroup.assetIds !== undefined && instanceGroup.style !== undefined;
 }
 
-export function isCadAssetMappingStylingGroup(
+export function isAssetMappingStylingGroup(
   instanceGroup: any
 ): instanceGroup is FdmAssetStylingGroup | AssetStylingGroup {
-  return isAssetMappingStylingGroup(instanceGroup) || isFdmAssetStylingGroup(instanceGroup);
+  return isClassicAssetMappingStylingGroup(instanceGroup) || isFdmAssetStylingGroup(instanceGroup);
 }

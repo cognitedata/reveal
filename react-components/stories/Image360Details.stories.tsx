@@ -23,7 +23,7 @@ export const Main: Story = {
       <RevealStoryContext color={new Color(0x4a4a4a)}>
         <RevealCanvas>
           <Image360CollectionContainer
-            addImage360CollectionOptions={{ siteId: 'c_RC_2' }}
+            addImage360CollectionOptions={{ source: 'events', siteId: 'c_RC_2' }}
             onLoad={() => {
               setLoading(false);
             }}

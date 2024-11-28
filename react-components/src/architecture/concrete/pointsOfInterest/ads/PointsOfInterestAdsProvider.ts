@@ -2,18 +2,15 @@
  * Copyright 2024 Cognite AS
  */
 import { type CogniteClient } from '@cognite/sdk/dist/src';
-import { type ExternalId } from '../../../../data-providers/FdmSDK';
-import {
-  type CommentProperties,
-  type PointsOfInterestInstance,
-  type PointsOfInterestProperties
-} from '../models';
+import { type DmsUniqueIdentifier, type ExternalId } from '../../../../data-providers/FdmSDK';
+import { type CommentProperties, type PointsOfInterestInstance } from '../models';
 import { type PointsOfInterestProvider } from '../PointsOfInterestProvider';
 
 import { v4 as uuid } from 'uuid';
 import { type PoiItem } from './types';
 import { isDefined } from '../../../../utilities/isDefined';
 import { uniq } from 'lodash';
+import { createUpsertRequestFromPois } from './createUpsertRequestFromPois';
 
 /**
  * A PoI provider using the Cognite Application Data Storage service as backing storage
@@ -40,22 +37,14 @@ export class PointsOfInterestAdsProvider implements PointsOfInterestProvider<Ext
   constructor(private readonly _sdk: CogniteClient) {}
 
   async upsertPointsOfInterest(
-    pois: Array<{ id: ExternalId; properties: PointsOfInterestProperties }>
+    pois: Array<PointsOfInterestInstance<ExternalId>>
   ): Promise<Array<PointsOfInterestInstance<ExternalId>>> {
+    const upsertRequestData = createUpsertRequestFromPois(pois);
+
     const result = await this._sdk.put<{ items: PoiItem[] }>(
       `${this._sdk.getBaseUrl()}/${this._createUrl(this._sdk.project)}`,
       {
-        data: {
-          items: pois.map(({ id, properties: poi }) => {
-            return {
-              externalId: id,
-              name: poi.title,
-              position: [poi.positionX, poi.positionY, poi.positionZ],
-              sceneState: {},
-              visibility: poi.visibility ?? 'PRIVATE'
-            };
-          })
-        }
+        data: upsertRequestData
       }
     );
 
@@ -68,10 +57,12 @@ export class PointsOfInterestAdsProvider implements PointsOfInterestProvider<Ext
     return result.data.items.map(poiItemToInstance);
   }
 
-  async fetchAllPointsOfInterest(): Promise<Array<PointsOfInterestInstance<ExternalId>>> {
+  async fetchPointsOfInterest(
+    scene?: DmsUniqueIdentifier
+  ): Promise<Array<PointsOfInterestInstance<ExternalId>>> {
     const result = await this._sdk.post<{ items: PoiItem[] }>(
       `${this._sdk.getBaseUrl()}/${this._listUrl(this._sdk.project)}`,
-      { data: { filter: {} } }
+      { data: { filter: { scene } } }
     );
 
     if (result.status !== 200) {
@@ -143,6 +134,10 @@ export class PointsOfInterestAdsProvider implements PointsOfInterestProvider<Ext
   }
 
   private async createUserMap(userIds: string[]): Promise<Map<string, string | undefined>> {
+    if (userIds.length === 0) {
+      return new Map();
+    }
+
     const uniqueUserIds = uniq(userIds);
 
     const profiles = await this._sdk.profiles.retrieve(
@@ -165,7 +160,12 @@ function poiItemToInstance(item: PoiItem): PointsOfInterestInstance<ExternalId> 
       positionX: item.position[0],
       positionY: item.position[1],
       positionZ: item.position[2],
-      visibility: item.visibility
+      visibility: item.visibility,
+      scene: {
+        externalId: item.sceneExternalId ?? 'dummy-scene-external-id',
+        space: item.sceneSpace ?? 'dummy-scene-space'
+      },
+      sceneState: item.sceneState
     }
   };
 }

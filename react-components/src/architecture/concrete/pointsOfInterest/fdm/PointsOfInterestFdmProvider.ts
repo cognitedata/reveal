@@ -8,11 +8,7 @@ import {
   type PointsOfInterestProperties
 } from '../models';
 import { type PointsOfInterestProvider } from '../PointsOfInterestProvider';
-import {
-  createPointsOfInterestInstances,
-  deletePointsOfInterestInstances,
-  fetchPointsOfInterest
-} from './network';
+import { createPointsOfInterestInstances, deletePointsOfInterestInstances } from './network';
 
 import { v4 as uuid } from 'uuid';
 import { POI_SOURCE } from './view';
@@ -26,8 +22,11 @@ export class PointsOfInterestFdmProvider implements PointsOfInterestProvider<Dms
     return await createPointsOfInterestInstances(this._fdmSdk, pois);
   }
 
-  async fetchAllPointsOfInterest(): Promise<Array<PointsOfInterestInstance<DmsUniqueIdentifier>>> {
-    return await fetchPointsOfInterest(this._fdmSdk);
+  async fetchPointsOfInterest(
+    _scene?: DmsUniqueIdentifier
+  ): Promise<Array<PointsOfInterestInstance<DmsUniqueIdentifier>>> {
+    throw Error('Not implemented:  Fdm PoI scene filter');
+    // return await fetchPointsOfInterest(this._fdmSdk);
   }
 
   async deletePointsOfInterest(ids: DmsUniqueIdentifier[]): Promise<void> {

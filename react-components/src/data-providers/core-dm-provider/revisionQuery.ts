@@ -1,7 +1,7 @@
 /*!
  * Copyright 2024 Cognite AS
  */
-import { type QueryRequest } from '@cognite/sdk/dist/src';
+import { type QueryRequest } from '@cognite/sdk';
 import { COGNITE_3D_REVISION_SOURCE, CORE_DM_3D_CONTAINER_SPACE } from './dataModels';
 import { cogniteCadRevisionSourceWithProperties } from './cogniteCadRevisionSourceWithProperties';
 

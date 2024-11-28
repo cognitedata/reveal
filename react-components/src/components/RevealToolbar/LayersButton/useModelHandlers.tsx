@@ -11,6 +11,7 @@ import {
 } from 'react';
 import { type ModelLayerHandlers } from './LayersButtonsStrip';
 import {
+  type DataSourceType,
   type Cognite3DViewer,
   type CogniteCadModel,
   type CogniteModel,
@@ -24,8 +25,8 @@ import { type DefaultLayersConfiguration, type LayersUrlStateParam } from './typ
 import { use3DModelName } from '../../../query/use3DModelName';
 
 export type UpdateModelHandlersCallback = (
-  models: CogniteModel[],
-  image360Collections: Image360Collection[]
+  models: Array<CogniteModel<DataSourceType>>,
+  image360Collections: Array<Image360Collection<DataSourceType>>
 ) => void;
 
 export const useModelHandlers = (
@@ -53,7 +54,10 @@ export const useModelHandlers = (
   }, [models, modelNames.data, image360Collections, viewer]);
 
   const update = useCallback(
-    (models: CogniteModel[], image360Collections: Image360Collection[]) => {
+    (
+      models: Array<CogniteModel<DataSourceType>>,
+      image360Collections: Array<Image360Collection<DataSourceType>>
+    ) => {
       const newModelHandlers = createHandlers(models, modelNames.data, image360Collections, viewer);
       setModelHandlers(newModelHandlers);
       const newExternalState = createExternalStateFromLayers(newModelHandlers);
@@ -68,13 +72,14 @@ export const useModelHandlers = (
 };
 
 function createHandlers(
-  models: CogniteModel[],
+  models: Array<CogniteModel<DataSourceType>>,
   modelNames: Array<string | undefined> | undefined,
-  image360Collections: Image360Collection[],
-  viewer: Cognite3DViewer
+  image360Collections: Array<Image360Collection<DataSourceType>>,
+  viewer: Cognite3DViewer<DataSourceType>
 ): ModelLayerHandlers {
-  const is360CollectionCurrentlyEntered = (collection: Image360Collection): boolean =>
-    viewer.getActive360ImageInfo()?.image360Collection === collection;
+  const is360CollectionCurrentlyEntered = (
+    collection: Image360Collection<DataSourceType>
+  ): boolean => viewer.getActive360ImageInfo()?.image360Collection === collection;
   const exit360Image = (): void => {
     viewer.exit360Image();
   };

@@ -26,9 +26,20 @@ export type SceneConfiguration = {
   updatedAt?: string;
 };
 
-export type CadOrPointCloudModel = Transformation3d & {
+export type ClassicModelIdentifier = {
   modelId: number;
   revisionId: number;
+};
+
+export type DMModelIdenfitier = {
+  revisionExternalId: string;
+  revisionSpace: string;
+};
+
+export type ModelIdentifier = ClassicModelIdentifier | DMModelIdenfitier;
+
+export type CadOrPointCloudModel = Transformation3d & {
+  modelIdentifier: ModelIdentifier;
 };
 
 export type Image360Collection = Transformation3d & {

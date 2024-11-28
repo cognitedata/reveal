@@ -1,10 +1,10 @@
 import { describe, expect, test, vi, beforeEach, beforeAll, afterAll } from 'vitest';
 import { use3dModels } from '../../../src/hooks/use3dModels';
-import { CogniteCadModel, type CogniteModel } from '@cognite/reveal';
+import { type CogniteCadModel, type CogniteModel } from '@cognite/reveal';
 import { renderHook } from '@testing-library/react';
 
 import { viewerMock, viewerModelsMock } from '../fixtures/viewer';
-import { cadMock, cadModelOptions } from '../fixtures/cadModel';
+import { cadMock } from '../fixtures/cadModel';
 import { Mock } from 'moq.ts';
 import { Matrix4 } from 'three';
 

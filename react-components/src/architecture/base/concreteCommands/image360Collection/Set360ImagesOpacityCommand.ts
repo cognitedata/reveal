@@ -4,7 +4,7 @@
 
 import { type TranslationInput } from '../../utilities/TranslateInput';
 import { FractionSliderCommand } from '../../commands/FractionSliderCommand';
-import { type Image360Collection } from '@cognite/reveal';
+import { type DataSourceType, type Image360Collection } from '@cognite/reveal';
 
 export class Set360ImagesOpacityCommand extends FractionSliderCommand {
   // ==================================================
@@ -29,7 +29,7 @@ export class Set360ImagesOpacityCommand extends FractionSliderCommand {
     }
   }
 
-  private get firstCollection(): Image360Collection | undefined {
+  private get firstCollection(): Image360Collection<DataSourceType> | undefined {
     return this.renderTarget.get360ImageCollections().next().value;
   }
 }

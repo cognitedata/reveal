@@ -2,13 +2,19 @@
  * Copyright 2024 Cognite AS
  */
 
+import { type DmsUniqueIdentifier } from '../../../data-providers';
+
+export type PoiVisibility = 'PUBLIC' | 'PRIVATE';
+
+export type SceneState = Record<string, unknown>;
+
 export type PointsOfInterestProperties = {
   // "ID as the node appears in the Source system"
   //  sourceId?: string;
   // "Name of the source system node comes from"
   // source?: string;
   // "Title or name of the node"
-  title?: string;
+  title: string;
   // "Long description of the node"
   // description?: string;
   // "Text based labels for generic use"
@@ -37,10 +43,12 @@ export type PointsOfInterestProperties = {
   positionX: number;
   positionY: number;
   positionZ: number;
+  scene: DmsUniqueIdentifier;
   // "Comments"
   // comments?: CommentProperties[];
+  sceneState: SceneState;
   // Visibility
-  visibility?: 'PUBLIC' | 'PRIVATE';
+  visibility?: PoiVisibility;
 };
 
 export type CommentProperties = {

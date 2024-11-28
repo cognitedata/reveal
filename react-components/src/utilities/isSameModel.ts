@@ -4,23 +4,15 @@
 import { type GeometryFilter } from '@cognite/reveal';
 import {
   type AddImage360CollectionOptions,
-  type AddResourceOptions,
-  type CadModelOptions
+  type AddResourceOptions
 } from '../components/Reveal3DResources/types';
 import { Matrix4 } from 'three';
 import {
   is360ImageAddOptions,
-  is360ImageEventsAddOptions
+  is360ImageEventsAddOptions,
+  isClassicIdentifier,
+  isDMIdentifier
 } from '../components/Reveal3DResources/typeGuards';
-
-export function isSameCadModel(model0: CadModelOptions, model1: CadModelOptions): boolean {
-  return (
-    model0.modelId === model1.modelId &&
-    model0.revisionId === model1.revisionId &&
-    isSameTransform(model0.transform, model1.transform) &&
-    isSameGeometryFilter(model0.geometryFilter, model1.geometryFilter)
-  );
-}
 
 export function isSameGeometryFilter(
   filter0: GeometryFilter | undefined,
@@ -51,6 +43,10 @@ export function isSameGeometryFilter(
 export function isSameModel(model0: AddResourceOptions, model1: AddResourceOptions): boolean {
   const isFirstImage360 = is360ImageAddOptions(model0);
   const isSecondImage360 = is360ImageAddOptions(model1);
+  const isFirstModelClassic = isClassicIdentifier(model0);
+  const isSecondModelClassic = isClassicIdentifier(model1);
+  const isFirstModelDM = isDMIdentifier(model0);
+  const isSecondModelDM = isDMIdentifier(model1);
 
   if (isFirstImage360 !== isSecondImage360) {
     return false;
@@ -60,10 +56,18 @@ export function isSameModel(model0: AddResourceOptions, model1: AddResourceOptio
     return isSame360Collection(model0, model1);
   }
 
-  if (!isFirstImage360 && !isSecondImage360) {
+  if (isFirstModelClassic && isSecondModelClassic) {
     return (
       model0.modelId === model1.modelId &&
       model0.revisionId === model1.revisionId &&
+      isSameTransform(model0.transform, model1.transform)
+    );
+  }
+
+  if (isFirstModelDM && isSecondModelDM) {
+    return (
+      model0.revisionExternalId === model1.revisionExternalId &&
+      model0.revisionSpace === model1.revisionSpace &&
       isSameTransform(model0.transform, model1.transform)
     );
   }

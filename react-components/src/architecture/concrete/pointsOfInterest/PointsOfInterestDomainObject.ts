@@ -15,28 +15,23 @@ import {
   type PointsOfInterestInstance
 } from './models';
 import { type PointsOfInterestProvider } from './PointsOfInterestProvider';
+import { type DmsUniqueIdentifier } from '../../../data-providers';
 
 export class PointsOfInterestDomainObject<PoiIdType> extends VisualDomainObject {
   private _selectedPointsOfInterest: PointOfInterest<PoiIdType> | undefined;
   private readonly _poisCache: PointsOfInterestCache<PoiIdType>;
 
+  /* TODO: get this scene from some central place inside the architecture,
+     when available
+     Håkon Flatval, 2024-11-27
+  */
+  private _currentScene: DmsUniqueIdentifier | undefined = undefined;
+
   private _pointsOfInterest: Array<PointOfInterest<PoiIdType>> = [];
 
   constructor(poiProvider: PointsOfInterestProvider<PoiIdType>) {
     super();
-
     this._poisCache = new PointsOfInterestCache<PoiIdType>(poiProvider);
-    void this._poisCache.getFinishedOriginalLoadingPromise().then((pois) => {
-      this._pointsOfInterest = [
-        ...pois.map((poi) => ({
-          id: poi.id,
-          properties: poi.properties,
-          status: PointsOfInterestStatus.Default
-        })),
-        ...this._pointsOfInterest
-      ];
-      this.notify(Changes.geometry);
-    });
   }
 
   public override get typeName(): TranslationInput {
@@ -111,6 +106,7 @@ export class PointsOfInterestDomainObject<PoiIdType> extends VisualDomainObject 
     const poisToCreate = this._pointsOfInterest.filter(
       (obs) => obs.status === PointsOfInterestStatus.PendingCreation
     );
+
     const newPointsOfInterest = await this._poisCache.upsertPointsOfInterest(poisToCreate);
 
     this._pointsOfInterest = notToRemove
@@ -163,5 +159,31 @@ export class PointsOfInterestDomainObject<PoiIdType> extends VisualDomainObject 
     return this._pointsOfInterest.some(
       (pois) => pois.status === PointsOfInterestStatus.PendingDeletion
     );
+  }
+
+  public getScene(): DmsUniqueIdentifier | undefined {
+    return this._currentScene;
+  }
+
+  public async setCurrentScene(scene: DmsUniqueIdentifier | undefined): Promise<void> {
+    if (scene === this._currentScene) {
+      return;
+    }
+
+    this._currentScene = scene;
+    this._pointsOfInterest = [];
+
+    if (scene === undefined) {
+      return;
+    }
+
+    const newPois = await this._poisCache.fetchPoisForScene(scene);
+    this._pointsOfInterest = newPois.map((poi) => ({
+      id: poi.id,
+      properties: poi.properties,
+      status: PointsOfInterestStatus.Default
+    }));
+
+    this.notify(Changes.geometry);
   }
 }

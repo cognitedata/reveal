@@ -2,9 +2,9 @@ import { Mock } from 'moq.ts';
 import { type FdmNodeCache } from '../../../src/components/CacheProvider/FdmNodeCache';
 import { type FdmNodeCacheContent } from '../../../src/components/CacheProvider/NodeCacheProvider';
 import { type DmsUniqueIdentifier } from '../../../src/data-providers/FdmSDK';
-import { type TypedReveal3DModel } from '../../../src/components/Reveal3DResources/types';
 import { type Node3D } from '@cognite/sdk';
 import {
+  type ModelRevisionId,
   type FdmCadConnection,
   type FdmConnectionWithNode
 } from '../../../src/components/CacheProvider/types';
@@ -53,13 +53,15 @@ const fdmNodeCacheMock = new Mock<FdmNodeCache>()
     };
   })
   .setup((instance) => instance.getMappingsForFdmInstances)
-  .returns(async (fdmAssetExternalIds: DmsUniqueIdentifier[], models: TypedReveal3DModel[]) => {
-    return models.map((model) => ({
-      modelId: model.modelId,
-      revisionId: model.revisionId,
-      mappings: new Map(fdmAssetExternalIds.map((id) => [JSON.stringify(id), [] as Node3D[]]))
-    }));
-  });
+  .returns(
+    async (fdmAssetExternalIds: DmsUniqueIdentifier[], modelRevisionIds: ModelRevisionId[]) => {
+      return modelRevisionIds.map((model) => ({
+        modelId: model.modelId,
+        revisionId: model.revisionId,
+        mappings: new Map(fdmAssetExternalIds.map((id) => [JSON.stringify(id), [] as Node3D[]]))
+      }));
+    }
+  );
 
 const fdmNodeCacheContentMock: FdmNodeCacheContent = {
   cache: fdmNodeCacheMock.object()
