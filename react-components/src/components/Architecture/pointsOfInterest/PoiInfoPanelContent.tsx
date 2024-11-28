@@ -5,6 +5,7 @@ import {
   Accordion,
   Avatar,
   Button,
+  CloseIcon,
   Divider,
   Flex,
   ShareIcon,
@@ -24,6 +25,7 @@ import { useCommentsForPoiQuery } from './useCommentsForPoiQuery';
 import { RevealButtons } from '../RevealButtons';
 import { useSelectedPoi } from './useSelectedPoi';
 import { useTranslation } from '../../i18n/I18n';
+import { usePoiDomainObject } from './usePoiDomainObject';
 
 export const PoiInfoPanelContent = (): ReactNode => {
   return (
@@ -36,6 +38,8 @@ export const PoiInfoPanelContent = (): ReactNode => {
 
 const PanelHeader = (): ReactNode => {
   const { t } = useTranslation();
+
+  const poiDomainObject = usePoiDomainObject();
 
   const selectedPoi = useSelectedPoi();
   if (selectedPoi === undefined) {
@@ -55,6 +59,11 @@ const PanelHeader = (): ReactNode => {
           </Tooltip>
         </Dropdown>
         <RevealButtons.DeleteSelectedPointOfInterest toolbarPlacement={'top'} />
+        <Button
+          icon=<CloseIcon />
+          type="ghost"
+          onClick={() => poiDomainObject?.setSelectedPointOfInterest(undefined)}
+        />
       </Flex>
     </Flex>
   );
