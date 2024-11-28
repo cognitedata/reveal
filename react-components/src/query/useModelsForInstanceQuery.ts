@@ -4,7 +4,7 @@
 import { type UseQueryResult, useQuery } from '@tanstack/react-query';
 import { getCadModelsForAsset } from '../hooks/network/getCadModelsForAsset';
 import { getPointCloudModelsForAsset } from '../hooks/network/getPointCloudModelsForAsset';
-import { useFdm3dDataProvider, useSDK } from '../components/RevealCanvas/SDKProvider';
+import { useFdm3dDataProvider, useFdmSdk, useSDK } from '../components/RevealCanvas/SDKProvider';
 import { type CogniteClient } from '@cognite/sdk';
 import { type TaggedAddResourceOptions } from '../components/Reveal3DResources/types';
 import { getImage360CollectionsForAsset } from '../hooks/network/getImage360CollectionsForAsset';
@@ -16,12 +16,17 @@ import {
 } from '../data-providers/types';
 import { uniqBy } from 'lodash';
 import { createAddOptionsKey } from '../utilities/createAddOptionsKey';
+import { type Fdm3dDataProvider } from '../data-providers/Fdm3dDataProvider';
+import { type DmsUniqueIdentifier } from '../data-providers';
+import { getPointCloudModelsForAssetInstance } from '../hooks/network/getPointCloudModelsForAssetInstance';
+import { type FdmSDK } from '../data-providers/FdmSDK';
 
 export const useModelsForInstanceQuery = (
   instance: InstanceReference | undefined
 ): UseQueryResult<TaggedAddResourceOptions[]> => {
   const cogniteClient = useSDK();
   const fdm3dDataProvider = useFdm3dDataProvider();
+  const fdmSdk = useFdmSdk();
 
   return useQuery({
     queryKey: ['reveal', 'react-components', 'models-for-instance', instance],
@@ -35,7 +40,7 @@ export const useModelsForInstanceQuery = (
       }
 
       if (isDmsInstance(instance)) {
-        return await fdm3dDataProvider.getCadModelsForInstance(instance);
+        return await getModelsForDmsInstance(instance, fdmSdk, fdm3dDataProvider);
       }
     },
     enabled: instance !== undefined
@@ -56,6 +61,19 @@ async function getModelsForAssetInstance(
   const results = (
     await Promise.all([cadModelsPromise, pointCloudModelsPromise, image360CollectionsPromise])
   ).flat();
+
+  return uniqBy(results, createAddOptionsKey);
+}
+
+async function getModelsForDmsInstance(
+  instance: DmsUniqueIdentifier,
+  fdmSdk: FdmSDK,
+  fdm3dDataProvider: Fdm3dDataProvider
+): Promise<TaggedAddResourceOptions[]> {
+  const cadModelsPromise = fdm3dDataProvider.getCadModelsForInstance(instance);
+  const pointCloudModelsPromise = getPointCloudModelsForAssetInstance(instance, fdmSdk);
+
+  const results = (await Promise.all([cadModelsPromise, pointCloudModelsPromise])).flat();
 
   return uniqBy(results, createAddOptionsKey);
 }

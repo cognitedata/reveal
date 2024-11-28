@@ -135,7 +135,7 @@ function createMapOfScenes(
           cameraEulerRotationX: properties.cameraEulerRotationX,
           cameraEulerRotationY: properties.cameraEulerRotationY,
           cameraEulerRotationZ: properties.cameraEulerRotationZ,
-          cadModelOptions: [],
+          modelOptions: [],
           image360CollectionOptions: [],
           groundPlanes: [],
           skybox: skyboxObject
@@ -149,10 +149,10 @@ function createMapOfScenes(
 }
 
 function populateSceneMapWithModels(
-  scene360Images: Array<EdgeItem<Record<string, Record<string, Cdf3dRevisionProperties>>>>,
+  sceneModels: Array<EdgeItem<Record<string, Record<string, Cdf3dRevisionProperties>>>>,
   scenesMap: Record<Space, Record<ExternalId, SceneData>>
 ): void {
-  scene360Images.forEach((edge) => {
+  sceneModels.forEach((edge) => {
     const { space, externalId } = edge.startNode;
 
     const properties = Object.values(Object.values(edge.properties)[0])[0];
@@ -175,7 +175,7 @@ function populateSceneMapWithModels(
       transformation: transform
     };
 
-    scenesMap[space]?.[externalId].cadModelOptions.push(newModel);
+    scenesMap[space]?.[externalId].modelOptions.push(newModel);
   });
 }
 
@@ -195,6 +195,7 @@ function populateSceneMapWith360Images(
     const properties = Object.values(Object.values(edge.properties)[0])[0];
     const transform = createTransformFromEdge(properties);
     const newImage360Collection: AddImage360CollectionDatamodelsOptions = {
+      source: 'dm',
       externalId: properties.image360CollectionExternalId,
       space: properties.image360CollectionSpace,
       transform

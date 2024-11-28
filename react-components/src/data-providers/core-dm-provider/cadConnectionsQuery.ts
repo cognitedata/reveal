@@ -1,7 +1,7 @@
 /*!
  * Copyright 2024 Cognite AS
  */
-import { type QueryRequest } from '@cognite/sdk/dist/src';
+import { type QueryRequest } from '@cognite/sdk';
 import { cogniteAssetSourceWithProperties } from './cogniteAssetSourceWithProperties';
 import { cogniteCadNodeSourceWithProperties } from './cogniteCadNodeSourceWithProperties';
 import {

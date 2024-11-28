@@ -1,7 +1,7 @@
 /*!
  * Copyright 2024 Cognite AS
  */
-import { type AnnotationsAssetRef, type CogniteClient, type IdEither } from '@cognite/sdk/dist/src';
+import { type AnnotationsAssetRef, type CogniteClient, type IdEither } from '@cognite/sdk';
 import { uniq } from 'lodash';
 import { isDefined } from '../../utilities/isDefined';
 import { type TaggedAddImage360CollectionOptions } from '../../components/Reveal3DResources/types';
@@ -25,7 +25,10 @@ export async function getImage360CollectionsForAsset(
 
   const siteIds = uniq(fileInfos.map((fileInfo) => fileInfo?.metadata?.site_id)).filter(isDefined);
 
-  return siteIds.map((siteId) => ({ type: 'image360', addOptions: { siteId } }));
+  return siteIds.map((siteId) => ({
+    type: 'image360',
+    addOptions: { source: 'events', siteId }
+  }));
 }
 
 function isIdEither(ref: AnnotationsAssetRef): ref is IdEither {

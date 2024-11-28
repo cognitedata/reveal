@@ -1,7 +1,7 @@
 /*!
  * Copyright 2024 Cognite AS
  */
-import { type SourceSelectorV3 } from '@cognite/sdk/dist/src';
+import { type SourceSelectorV3 } from '@cognite/sdk';
 import { type DmsUniqueIdentifier } from '../../data-providers/FdmSDK';
 import {
   type AddCadResourceOptions,
@@ -30,7 +30,7 @@ export type SceneData = {
   cameraEulerRotationX: number;
   cameraEulerRotationY: number;
   cameraEulerRotationZ: number;
-  cadModelOptions: Array<AddCadResourceOptions | AddPointCloudResourceOptions>;
+  modelOptions: Array<AddCadResourceOptions | AddPointCloudResourceOptions>;
   image360CollectionOptions: AddImage360CollectionDatamodelsOptions[];
   groundPlanes: GroundPlane[];
   skybox?: Skybox;

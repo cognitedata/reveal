@@ -1725,7 +1725,10 @@ export class Cognite3DViewer<DataSourceT extends DataSourceType = ClassicDataSou
     if (this._image360ApiHelper === undefined) {
       return false;
     }
-    return this._image360ApiHelper.onClick({ offsetX: event.offsetX, offsetY: event.offsetY });
+
+    const position = this.getPixelCoordinatesFromEvent(event);
+
+    return this._image360ApiHelper.onClick({ offsetX: position.x, offsetY: position.y });
   }
 
   /**

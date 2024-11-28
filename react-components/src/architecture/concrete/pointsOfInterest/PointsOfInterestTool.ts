@@ -10,11 +10,11 @@ import { type Vector3 } from 'three';
 import { type PointsOfInterestProvider } from './PointsOfInterestProvider';
 import { type AnchoredDialogContent } from '../../base/commands/BaseTool';
 import { AnchoredDialogUpdater } from '../../base/reactUpdaters/AnchoredDialogUpdater';
-import { NavigationTool } from '../../base/concreteCommands/NavigationTool';
 import { CreatePointsOfInterestWithDescriptionCommand } from './CreatePointsOfInterestWithDescriptionCommand';
 import { type RevealRenderTarget } from '../../base/renderTarget/RevealRenderTarget';
+import { BaseEditTool } from '../../base/commands/BaseEditTool';
 
-export class PointsOfInterestTool<PoiIdType> extends NavigationTool {
+export class PointsOfInterestTool<PoiIdType> extends BaseEditTool {
   private _isCreating: boolean = false;
 
   private _anchoredDialogContent: AnchoredDialogContent | undefined;
@@ -111,7 +111,14 @@ export class PointsOfInterestTool<PoiIdType> extends NavigationTool {
   }
 
   public openCreateCommandDialog(position: Vector3): void {
-    const createPointCommand = new CreatePointsOfInterestWithDescriptionCommand(position);
+    const poiObject = this.getPointsOfInterestDomainObject();
+
+    const scene = poiObject?.getScene();
+    if (scene === undefined) {
+      return;
+    }
+
+    const createPointCommand = new CreatePointsOfInterestWithDescriptionCommand(position, scene);
     createPointCommand.attach(this.renderTarget);
 
     const customListeners = [

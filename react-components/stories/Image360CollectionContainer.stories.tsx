@@ -24,7 +24,7 @@ type Story = StoryObj<typeof meta>;
 
 export const Main: Story = {
   args: {
-    addImage360CollectionOptions: { siteId: 'c_RC_2', transform: new Matrix4() }
+    addImage360CollectionOptions: { source: 'events', siteId: 'c_RC_2', transform: new Matrix4() }
   },
   render: ({
     addImage360CollectionOptions,

@@ -5,6 +5,7 @@ import {
   Accordion,
   Avatar,
   Button,
+  CloseIcon,
   Divider,
   Flex,
   ShareIcon,
@@ -15,7 +16,7 @@ import {
 import { Dropdown } from '@cognite/cogs-lab';
 import { PoiSharePanel } from './PoiSharePanel';
 import styled from 'styled-components';
-import { useMemo, type ReactNode } from 'react';
+import { useMemo, useState, type ReactNode } from 'react';
 import { type PointOfInterest } from '../../../architecture';
 import { type CommentProperties } from '../../../architecture/concrete/pointsOfInterest/models';
 import { createButton } from '../CommandButtons';
@@ -24,6 +25,7 @@ import { useCommentsForPoiQuery } from './useCommentsForPoiQuery';
 import { RevealButtons } from '../RevealButtons';
 import { useSelectedPoi } from './useSelectedPoi';
 import { useTranslation } from '../../i18n/I18n';
+import { usePoiDomainObject } from './usePoiDomainObject';
 
 export const PoiInfoPanelContent = (): ReactNode => {
   return (
@@ -36,6 +38,8 @@ export const PoiInfoPanelContent = (): ReactNode => {
 
 const PanelHeader = (): ReactNode => {
   const { t } = useTranslation();
+
+  const poiDomainObject = usePoiDomainObject();
 
   const selectedPoi = useSelectedPoi();
   if (selectedPoi === undefined) {
@@ -55,6 +59,11 @@ const PanelHeader = (): ReactNode => {
           </Tooltip>
         </Dropdown>
         <RevealButtons.DeleteSelectedPointOfInterest toolbarPlacement={'top'} />
+        <Button
+          icon=<CloseIcon />
+          type="ghost"
+          onClick={() => poiDomainObject?.setSelectedPointOfInterest(undefined)}
+        />
       </Flex>
     </Flex>
   );
@@ -69,13 +78,22 @@ export const CommentSection = (): ReactNode => {
 
   const poi = useSelectedPoi();
 
+  const [open, setOpen] = useState<boolean>(true);
+
   const comments = useCommentsForPoiQuery(poi);
   if (poi === undefined) {
     return null;
   }
 
   return (
-    <Accordion type="ghost" title={t({ key: 'COMMENTS' })} gap={8}>
+    <Accordion
+      type="ghost"
+      title={t({ key: 'COMMENTS' })}
+      gap={8}
+      expanded={open}
+      onChange={(expanded: boolean) => {
+        setOpen(expanded);
+      }}>
       <Flex direction="column" gap={8}>
         {comments.data?.map((comment) => (
           <SingleCommentDisplay key={`${comment.ownerId}/${comment.content}`} comment={comment} />

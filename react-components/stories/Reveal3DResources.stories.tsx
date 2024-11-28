@@ -13,12 +13,9 @@ const meta = {
   component: Reveal3DResources,
   tags: ['autodocs']
 } satisfies Meta<typeof Reveal3DResources>;
-
 export default meta;
 type Story = StoryObj<typeof meta>;
-
 const sdk = createSdkByUrlToken();
-
 export const Main: Story = {
   args: {
     resources: [
@@ -39,6 +36,7 @@ export const Main: Story = {
         transform: new Matrix4().makeTranslation(40, 10, 0)
       },
       {
+        source: 'events',
         siteId: 'c_RC_2',
         transform: new Matrix4()
       },

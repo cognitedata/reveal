@@ -11,17 +11,18 @@ import {
 } from '../data-providers/FdmSDK';
 import { useFdm3dDataProvider, useFdmSdk } from '../components/RevealCanvas/SDKProvider';
 import { type UseQueryResult, useQuery } from '@tanstack/react-query';
-import { type AddModelOptions } from '@cognite/reveal';
+import { type DataSourceType, type AddModelOptions } from '@cognite/reveal';
 import { isEqual, uniq, chunk } from 'lodash';
 import { type Fdm3dDataProvider } from '../data-providers/Fdm3dDataProvider';
 import { removeEmptyProperties } from '../utilities/removeEmptyProperties';
+import { getModelKeys } from '../utilities/getModelKeys';
 
 export type InstancesWithView = { view: Source; instances: NodeItem[] };
 
 export const useSearchMappedEquipmentFDM = (
   query: string,
   viewsToSearch: SimpleSource[],
-  models: AddModelOptions[],
+  models: Array<AddModelOptions<DataSourceType>>,
   instancesFilter: InstanceFilter | undefined,
   limit: number = 100
 ): UseQueryResult<InstancesWithView[]> => {
@@ -36,6 +37,7 @@ export const useSearchMappedEquipmentFDM = (
     () => uniq(viewsToSearch.map((view) => view.space)),
     [viewsToSearch]
   );
+  const modelKeys = useMemo(() => getModelKeys(models), [models]);
 
   return useQuery({
     queryKey: [
@@ -43,7 +45,7 @@ export const useSearchMappedEquipmentFDM = (
       'react-components',
       'search-mapped-fdm',
       query,
-      models,
+      modelKeys,
       viewsToSearch,
       instancesFilter,
       limit
@@ -84,7 +86,7 @@ const searchNodesWithViewsAndModels = async (
   query: string,
   spacesToSearch: string[],
   sourcesToSearch: Source[],
-  models: AddModelOptions[],
+  models: Array<AddModelOptions<DataSourceType>>,
   instancesFilter: InstanceFilter | undefined,
   fdmSdk: FdmSDK,
   fdmDataProvider: Fdm3dDataProvider,
