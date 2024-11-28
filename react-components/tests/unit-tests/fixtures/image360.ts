@@ -1,7 +1,9 @@
 import { type Image360Collection } from '@cognite/reveal';
 import { Mock } from 'moq.ts';
+import { type AddImage360CollectionOptions } from '../../../src';
 
-export const image360Options = {
+export const image360Options: AddImage360CollectionOptions = {
+  source: 'events',
   siteId: 'siteId'
 };
 

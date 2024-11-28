@@ -62,6 +62,7 @@ export const useReveal3dResourcesFromScene = (
     scene.data.image360Collections.forEach((collection) => {
       const transform = createResourceTransformation(collection);
       const addModelOptions: AddImage360CollectionDatamodelsOptions = {
+        source: 'dm',
         externalId: collection.image360CollectionExternalId,
         space: collection.image360CollectionSpace
       };
