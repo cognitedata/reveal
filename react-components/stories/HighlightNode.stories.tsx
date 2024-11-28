@@ -64,6 +64,7 @@ export const Main: Story = {
         }
       },
       {
+        source: 'events',
         siteId: 'celanese1'
       }
     ]
