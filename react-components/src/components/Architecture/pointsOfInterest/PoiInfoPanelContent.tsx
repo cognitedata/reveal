@@ -61,6 +61,7 @@ const PanelHeader = (): ReactNode => {
         <RevealButtons.DeleteSelectedPointOfInterest toolbarPlacement={'top'} />
         <Button
           icon=<CloseIcon />
+          type="ghost"
           onClick={() => poiDomainObject?.setSelectedPointOfInterest(undefined)}
         />
       </Flex>
