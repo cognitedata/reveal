@@ -19,6 +19,10 @@ import { MOUSE, Vector2, type Vector3 } from 'three';
 import { type DmsUniqueIdentifier, type Source } from '../data-providers/FdmSDK';
 import { useRenderTarget, useReveal } from '../components/RevealCanvas/ViewerContext';
 import { isActiveEditTool } from '../architecture/base/commands/BaseEditTool';
+import {
+  type PointCloudVolumeAssetWithViews,
+  usePointCloudVolumeMappingForIntersection
+} from '../query/core-dm/usePointCloudVolumeMappingForAssetInstances';
 
 export type AssetMappingDataResult = {
   cadNode: Node3D;
@@ -37,6 +41,7 @@ export type ClickedNodeData = {
   fdmResult?: FdmNodeDataResult;
   assetMappingResult?: AssetMappingDataResult;
   pointCloudAnnotationMappingResult?: PointCloudAnnotationMappedAssetData[];
+  pointCloudVolumeAssetMappingResult?: PointCloudVolumeAssetWithViews[];
   intersection: AnyIntersection | Image360AnnotationIntersection;
 };
 
@@ -116,12 +121,16 @@ export const useClickedNodeData = (options?: {
   const { data: pointCloudAssetMappingResult } =
     usePointCloudAnnotationMappingForAssetId(intersection);
 
+  const { data: pointCloudAssetMappingVolumeResult } =
+    usePointCloudVolumeMappingForIntersection(intersection);
+
   return useCombinedClickedNodeData(
     mouseButton,
     position,
     nodeDataPromises,
     assetMappingResult,
     pointCloudAssetMappingResult,
+    pointCloudAssetMappingVolumeResult,
     annotationIntersection ?? intersection
   );
 };
@@ -132,6 +141,7 @@ const useCombinedClickedNodeData = (
   fdmPromises: FdmNodeDataPromises | undefined,
   assetMappings: NodeAssetMappingResult | undefined,
   pointCloudAssetMappings: PointCloudAnnotationMappedAssetData[] | undefined,
+  pointCloudVolumeAssetMappings: PointCloudVolumeAssetWithViews[] | undefined,
   intersection: AnyIntersection | Image360AnnotationIntersection | undefined
 ): ClickedNodeData | undefined => {
   const [clickedNodeData, setClickedNodeData] = useState<ClickedNodeData | undefined>();
@@ -157,9 +167,16 @@ const useCombinedClickedNodeData = (
       fdmResult: fdmData,
       assetMappingResult: assetMappingData,
       pointCloudAnnotationMappingResult: pointCloudAssetMappings,
+      pointCloudVolumeAssetMappingResult: pointCloudVolumeAssetMappings,
       intersection
     });
-  }, [intersection, fdmData, assetMappings?.node, pointCloudAssetMappings]);
+  }, [
+    intersection,
+    fdmData,
+    assetMappings?.node,
+    pointCloudAssetMappings,
+    pointCloudVolumeAssetMappings
+  ]);
 
   return clickedNodeData;
 };
