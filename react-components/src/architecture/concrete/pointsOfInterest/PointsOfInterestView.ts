@@ -25,7 +25,7 @@ export class PointsOfInterestView<PoiIdType> extends GroupThreeView<
   PointsOfInterestDomainObject<PoiIdType>
 > {
   private readonly _overlayCollection: PointsOfInterestCollection<PoiIdType> =
-    new Overlay3DCollection([]);
+    new Overlay3DCollection([], { maxPointSize: 32 });
 
   protected override calculateBoundingBox(): Box3 {
     const boundingBox = new Box3().makeEmpty();

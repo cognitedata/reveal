@@ -10,11 +10,11 @@ import { type Vector3 } from 'three';
 import { type PointsOfInterestProvider } from './PointsOfInterestProvider';
 import { type AnchoredDialogContent } from '../../base/commands/BaseTool';
 import { AnchoredDialogUpdater } from '../../base/reactUpdaters/AnchoredDialogUpdater';
-import { NavigationTool } from '../../base/concreteCommands/NavigationTool';
 import { CreatePointsOfInterestWithDescriptionCommand } from './CreatePointsOfInterestWithDescriptionCommand';
 import { type RevealRenderTarget } from '../../base/renderTarget/RevealRenderTarget';
+import { BaseEditTool } from '../../base/commands/BaseEditTool';
 
-export class PointsOfInterestTool<PoiIdType> extends NavigationTool {
+export class PointsOfInterestTool<PoiIdType> extends BaseEditTool {
   private _isCreating: boolean = false;
 
   private _anchoredDialogContent: AnchoredDialogContent | undefined;
