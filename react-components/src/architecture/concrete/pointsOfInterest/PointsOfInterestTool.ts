@@ -23,6 +23,14 @@ export class PointsOfInterestTool<PoiIdType> extends NavigationTool {
     return 'Waypoint';
   }
 
+  public override get shortCutKey(): string {
+    return 'P';
+  }
+
+  public override onEscapeKey(): void {
+    this.closeCreateCommandDialog();
+  }
+
   public override get tooltip(): TranslationInput {
     return { key: 'POINT_OF_INTEREST_CREATE' };
   }
@@ -106,6 +114,17 @@ export class PointsOfInterestTool<PoiIdType> extends NavigationTool {
     const createPointCommand = new CreatePointsOfInterestWithDescriptionCommand(position);
     createPointCommand.attach(this.renderTarget);
 
+    const customListeners = [
+      {
+        eventName: 'keydown',
+        callback: (event: Event): void => {
+          if (event instanceof KeyboardEvent && event.key === 'Escape') {
+            this.onEscapeKey();
+          }
+        }
+      }
+    ];
+
     const onFinishCallback = (): void => {
       this.closeCreateCommandDialog();
     };
@@ -120,7 +139,8 @@ export class PointsOfInterestTool<PoiIdType> extends NavigationTool {
     this.setAnchoredDialogContent({
       contentCommands: [createPointCommand],
       position,
-      onCloseCallback: onCancelCallback
+      onCloseCallback: onCancelCallback,
+      customListeners
     });
   }
 
