@@ -60,7 +60,7 @@ const PanelHeader = (): ReactNode => {
         </Dropdown>
         <RevealButtons.DeleteSelectedPointOfInterest toolbarPlacement={'top'} />
         <Button
-          icon=<CloseIcon />
+          icon={<CloseIcon />}
           type="ghost"
           onClick={() => poiDomainObject?.setSelectedPointOfInterest(undefined)}
         />
@@ -85,6 +85,7 @@ export const CommentSection = (): ReactNode => {
     return null;
   }
 
+  console.log(' TEST comments', comments);
   return (
     <Accordion
       type="ghost"

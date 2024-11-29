@@ -7,7 +7,7 @@ import { PointsOfInterestStatus } from './types';
 
 export const DEFAULT_OVERLAY_COLOR = new Color('#C945DB');
 export const PENDING_OVERLAY_COLOR = new Color('#33AA33');
-export const SELECTED_COLOR = new Color('##6464FF');
+export const SELECTED_COLOR = new Color('#5151ce');
 export const PENDING_DELETION_OVERLAY_COLOR = new Color('#AA3333');
 
 export function convertToSelectedColor(color: Color): Color {
