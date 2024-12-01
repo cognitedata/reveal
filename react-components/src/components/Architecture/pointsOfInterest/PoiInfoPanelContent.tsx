@@ -60,7 +60,7 @@ const PanelHeader = (): ReactNode => {
         </Dropdown>
         <RevealButtons.DeleteSelectedPointOfInterest toolbarPlacement={'top'} />
         <Button
-          icon=<CloseIcon />
+          icon={<CloseIcon />}
           type="ghost"
           onClick={() => poiDomainObject?.setSelectedPointOfInterest(undefined)}
         />
