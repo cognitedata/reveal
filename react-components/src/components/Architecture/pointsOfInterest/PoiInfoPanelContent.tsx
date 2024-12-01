@@ -85,7 +85,6 @@ export const CommentSection = (): ReactNode => {
     return null;
   }
 
-  console.log(' TEST comments', comments);
   return (
     <Accordion
       type="ghost"
