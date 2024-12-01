@@ -3,9 +3,14 @@
  */
 
 import { type ReactElement } from 'react';
+
+import { type PlacementType } from './types';
+import { type Vector3 } from 'three';
+
+import { FlexibleControlsType, Image360Action } from '@cognite/reveal';
+
 import { NavigationTool } from '../../architecture/base/concreteCommands/NavigationTool';
 import { FitViewCommand } from '../../architecture/base/concreteCommands/FitViewCommand';
-import { FlexibleControlsType, Image360Action } from '@cognite/reveal';
 import { SetFlexibleControlsTypeCommand } from '../../architecture/base/concreteCommands/SetFlexibleControlsTypeCommand';
 import { SetAxisVisibleCommand } from '../../architecture/concrete/axis/SetAxisVisibleCommand';
 import { ClipTool } from '../../architecture/concrete/clipping/ClipTool';
@@ -14,7 +19,6 @@ import { KeyboardSpeedCommand } from '../../architecture/base/concreteCommands/K
 import { PointsOfInterestTool } from '../../architecture/concrete/pointsOfInterest/PointsOfInterestTool';
 import { createButtonFromCommandConstructor } from './CommandButtons';
 import { SettingsCommand } from '../../architecture/base/concreteCommands/SettingsCommand';
-import { Image360AnnotationTool, PointCloudFilterCommand } from '../../architecture';
 import { SetOrbitOrFirstPersonModeCommand } from '../../architecture/base/concreteCommands/SetOrbitOrFirstPersonModeCommand';
 
 import { AnnotationsShowCommand } from '../../architecture/concrete/annotations/commands/AnnotationsShowCommand';
@@ -22,10 +26,13 @@ import { AnnotationsShowOnTopCommand } from '../../architecture/concrete/annotat
 import { AnnotationsCreateTool } from '../../architecture/concrete/annotations/commands/AnnotationsCreateTool';
 import { AnnotationsSelectTool } from '../../architecture/concrete/annotations/commands/AnnotationsSelectTool';
 import { Image360ActionCommand } from '../../architecture/base/concreteCommands/image360Collection/Image360ActionCommand';
-import { type PlacementType } from './types';
-import { type Vector3 } from 'three';
 import { InitiatePointsOfInterestCommand } from '../../architecture/concrete/pointsOfInterest/InitiatePointsOfInterestCommand';
 import { DeleteSelectedPointsOfInterestCommand } from '../../architecture/concrete/pointsOfInterest/DeletePointsOfInterestCommand';
+
+import { Image360AnnotationCreateTool } from '../../architecture/concrete/annotation360/Image360AnnotationCreateTool';
+import { Image360AnnotationSelectTool } from '../../architecture/concrete/annotation360/Image360AnnotationSelectTool';
+import { PointCloudFilterCommand } from '../../architecture/base/concreteCommands/pointCloud/PointCloudFilterCommand';
+import { UndoCommand } from '../../architecture/base/concreteCommands/UndoCommand';
 
 export class RevealButtons {
   static Settings = (props: SettingsProp): ReactElement =>
@@ -51,6 +58,9 @@ export class RevealButtons {
 
   static Clip = (prop: ButtonProp): ReactElement =>
     createButtonFromCommandConstructor(() => new ClipTool(), prop);
+
+  static Undo = (prop: ButtonProp): ReactElement =>
+    createButtonFromCommandConstructor(() => new UndoCommand(), prop);
 
   static SetOrbitOrFirstPersonMode = (prop: ButtonProp): ReactElement =>
     createButtonFromCommandConstructor(() => new SetOrbitOrFirstPersonModeCommand(), prop);
@@ -93,10 +103,14 @@ export class RevealButtons {
     );
   };
 
-  static Image360AnnotationTool = (prop: ButtonProp): ReactElement =>
-    createButtonFromCommandConstructor(() => new Image360AnnotationTool(), prop);
+  // 2D Annotations (Image360 Polygon)
+  static Image360AnnotationCreateTool = (prop: ButtonProp): ReactElement =>
+    createButtonFromCommandConstructor(() => new Image360AnnotationCreateTool(), prop);
 
-  // Annotations
+  static Image360AnnotationSelectTool = (prop: ButtonProp): ReactElement =>
+    createButtonFromCommandConstructor(() => new Image360AnnotationSelectTool(), prop);
+
+  // 3D Annotations
   static AnnotationsSelect = (prop: ButtonProp): ReactElement =>
     createButtonFromCommandConstructor(() => new AnnotationsSelectTool(), prop);
 

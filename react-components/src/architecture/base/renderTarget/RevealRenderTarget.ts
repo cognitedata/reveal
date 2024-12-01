@@ -95,6 +95,10 @@ export class RevealRenderTarget {
     return this._viewer.canDoImage360Action(Image360Action.Exit);
   }
 
+  public get active360ImageId(): string | undefined {
+    return this._viewer.getActive360ImageInfo()?.image360.id;
+  }
+
   public get config(): BaseRevealConfig | undefined {
     return this._config;
   }

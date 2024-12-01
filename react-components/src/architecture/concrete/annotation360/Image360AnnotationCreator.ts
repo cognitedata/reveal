@@ -7,6 +7,7 @@ import { Image360AnnotationDomainObject } from './Image360AnnotationDomainObject
 import { type BaseTool } from '../../base/commands/BaseTool';
 import { LineCreator } from '../primitives/line/LineCreator';
 import assert from 'assert';
+import { EDIT_WITHOUT_IMAGE } from './constants';
 
 export class Image360AnnotationCreator extends LineCreator {
   // ==================================================
@@ -14,8 +15,8 @@ export class Image360AnnotationCreator extends LineCreator {
   // ==================================================
 
   public constructor(tool: BaseTool) {
-    const image360Id = tool.renderTarget.viewer.getActive360ImageInfo()?.image360.id;
-    assert(image360Id !== undefined, 'Image360AnnotationCreator: image360Id is undefined');
+    const imageId = EDIT_WITHOUT_IMAGE ? '' : tool.renderTarget.active360ImageId;
+    assert(imageId !== undefined, 'Image360AnnotationCreator: image360Id is undefined');
 
     // Get the camera position in CDF coordinates
     const { position } = tool.renderTarget.cameraManager.getCameraState();
@@ -24,7 +25,7 @@ export class Image360AnnotationCreator extends LineCreator {
     const center = position.clone();
     center.applyMatrix4(tool.renderTarget.fromViewerMatrix);
 
-    const domainObject = new Image360AnnotationDomainObject(image360Id);
+    const domainObject = new Image360AnnotationDomainObject(imageId);
     domainObject.center.copy(center);
 
     super(tool, domainObject);
