@@ -75,7 +75,6 @@ export abstract class BaseTool extends RenderTargetCommand {
 
   public onActivate(): void {
     this.update(CommandChanges.active);
-
     this.setDefaultCursor();
     this.clearDragging();
     ActiveToolUpdater.update();
