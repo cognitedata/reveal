@@ -55,7 +55,7 @@ const PanelHeader = (): ReactNode => {
       <Flex direction="row" justifyContent="flex-start">
         <Dropdown placement="bottom-end" content={<PoiSharePanel />}>
           <Tooltip placement="top-end" appendTo={document.body} content={t({ key: 'SHARE' })}>
-            <Button icon=<ShareIcon /> type="ghost" />
+            <Button icon={<ShareIcon />} type="ghost" />
           </Tooltip>
         </Dropdown>
         <RevealButtons.DeleteSelectedPointOfInterest toolbarPlacement={'top'} />

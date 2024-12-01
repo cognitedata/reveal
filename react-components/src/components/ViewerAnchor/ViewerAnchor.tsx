@@ -5,7 +5,6 @@
 import {
   useEffect,
   useRef,
-  type ReactElement,
   type RefObject,
   useState,
   useCallback,
@@ -34,7 +33,7 @@ export const ViewerAnchor = ({
   style: inputStyle,
   sticky,
   stickyMargin: inputStickyMargin
-}: ViewerAnchorProps): ReactElement => {
+}: ViewerAnchorProps): ReactNode => {
   const viewer = useReveal();
 
   const stickyMargin = inputStickyMargin ?? 0;
