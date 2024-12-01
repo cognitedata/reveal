@@ -21,7 +21,11 @@ import { getDividerDirection } from './utilities';
 import { InputField } from './InputField';
 import { BaseInputCommand } from '../../architecture/base/commands/BaseInputCommand';
 
-export function createButton(command: BaseCommand, placement: PlacementType): ReactElement {
+export function createButton(
+  command: BaseCommand,
+  placement: PlacementType,
+  callback?: (data: unknown) => void
+): ReactElement {
   if (command instanceof BaseFilterCommand) {
     return <FilterButton inputCommand={command} placement={placement} />;
   }
@@ -43,7 +47,7 @@ export function createButton(command: BaseCommand, placement: PlacementType): Re
     return <InputField key={command.uniqueId} inputCommand={command} placement={placement} />;
   }
 
-  return <CommandButton inputCommand={command} placement={placement} />;
+  return <CommandButton inputCommand={command} placement={placement} callback={callback} />;
 }
 
 export function createButtonFromCommandConstructor(
@@ -51,7 +55,7 @@ export function createButtonFromCommandConstructor(
   prop: ButtonProp
 ): ReactElement {
   const command = useMemo(commandConstructor, []);
-  return createButton(command, prop.toolbarPlacement ?? 'left');
+  return createButton(command, prop.toolbarPlacement ?? 'left', prop.callback);
 }
 
 export const CommandButtons = ({

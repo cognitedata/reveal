@@ -17,10 +17,12 @@ import { TOOLTIP_DELAY } from './constants';
 
 export const CommandButton = ({
   inputCommand,
-  placement
+  placement,
+  callback
 }: {
   inputCommand: BaseCommand;
   placement: PlacementType;
+  callback?: (data: unknown) => void;
 }): ReactElement => {
   const renderTarget = useRenderTarget();
   const { t } = useTranslation();
@@ -39,6 +41,7 @@ export const CommandButton = ({
     setVisible(command.isVisible);
     setUniqueId(command.uniqueId);
     setIcon(command.icon);
+    callback?.(command.isChecked);
   });
   // @end
 

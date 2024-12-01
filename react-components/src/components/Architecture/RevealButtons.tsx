@@ -112,6 +112,7 @@ export class RevealButtons {
 
 export type ButtonProp = {
   toolbarPlacement?: PlacementType;
+  callback?: (data: unknown) => void;
 };
 
 type SettingsProp = ButtonProp & {
