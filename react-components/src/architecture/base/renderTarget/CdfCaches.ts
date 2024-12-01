@@ -16,6 +16,8 @@ export class CdfCaches {
   private readonly _pointCloudAnnotationCache: PointCloudAnnotationCache;
   private readonly _image360AnnotationCache: Image360AnnotationCache;
 
+  private readonly _cogniteClient: CogniteClient;
+
   constructor(
     cdfClient: CogniteClient,
     fdm3dDataProvider: Fdm3dDataProvider,
@@ -27,6 +29,8 @@ export class CdfCaches {
     this._fdmNodeCache = new FdmNodeCache(cdfClient, fdmClient, fdm3dDataProvider);
     this._pointCloudAnnotationCache = new PointCloudAnnotationCache(cdfClient);
     this._image360AnnotationCache = new Image360AnnotationCache(cdfClient, viewer);
+
+    this._cogniteClient = cdfClient;
   }
 
   public get assetMappingAndNode3dCache(): AssetMappingAndNode3DCache {
@@ -43,5 +47,9 @@ export class CdfCaches {
 
   public get image360Cache(): Image360AnnotationCache {
     return this._image360AnnotationCache;
+  }
+
+  public get cogniteClient(): CogniteClient {
+    return this._cogniteClient;
   }
 }

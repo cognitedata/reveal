@@ -13,6 +13,7 @@ import { AnchoredDialogUpdater } from '../../base/reactUpdaters/AnchoredDialogUp
 import { CreatePointsOfInterestWithDescriptionCommand } from './CreatePointsOfInterestWithDescriptionCommand';
 import { type RevealRenderTarget } from '../../base/renderTarget/RevealRenderTarget';
 import { BaseEditTool } from '../../base/commands/BaseEditTool';
+import { getInstancesFromClick } from '../../../utilities/getInstancesFromClick';
 
 export class PointsOfInterestTool<PoiIdType> extends BaseEditTool {
   private _isCreating: boolean = false;
@@ -173,6 +174,9 @@ export class PointsOfInterestTool<PoiIdType> extends BaseEditTool {
       this.closeCreateCommandDialog();
       return;
     }
+
+    const instances = await getInstancesFromClick(this.renderTarget, event);
+
     this.openCreateCommandDialog(intersection.point);
   }
 }

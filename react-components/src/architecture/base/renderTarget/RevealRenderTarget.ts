@@ -38,6 +38,7 @@ import { Changes } from '../domainObjectsHelpers/Changes';
 import { type CogniteClient } from '@cognite/sdk';
 import { type BaseTool } from '../commands/BaseTool';
 import { ContextMenuController } from './ContextMenuController';
+import { InstanceStylingController } from './InstanceStylingController';
 import { type CdfCaches } from './CdfCaches';
 
 const DIRECTIONAL_LIGHT_NAME = 'DirectionalLight';
@@ -52,6 +53,8 @@ export class RevealRenderTarget {
   private readonly _rootDomainObject: RootDomainObject;
   private readonly _contextmenuController: ContextMenuController;
   private readonly _cdfCaches: CdfCaches;
+  private readonly _instanceStylingController: InstanceStylingController;
+
   private _ambientLight: AmbientLight | undefined;
   private _directionalLight: DirectionalLight | undefined;
   private _clippedBoundingBox: Box3 | undefined;
@@ -78,6 +81,7 @@ export class RevealRenderTarget {
     this._commandsController.addEventListeners();
     this._contextmenuController = new ContextMenuController();
     this._cdfCaches = cdfCaches;
+    this._instanceStylingController = new InstanceStylingController();
     this._rootDomainObject = new RootDomainObject(this, sdk);
 
     this.initializeLights();
@@ -124,6 +128,10 @@ export class RevealRenderTarget {
 
   public get cdfCaches(): CdfCaches {
     return this._cdfCaches;
+  }
+
+  public get instanceStylingController(): InstanceStylingController {
+    return this._instanceStylingController;
   }
 
   public get cursor(): string {
