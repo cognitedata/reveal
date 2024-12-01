@@ -36,11 +36,21 @@ export class NavigationTool extends BaseTool {
   public override onHoverByDebounce(_event: PointerEvent): void {}
 
   public override onHover(event: PointerEvent): void {
-    this.onNavigationHover(event);
+    this.renderTarget.viewer.onHover360Images(event);
   }
 
   public override async onClick(event: PointerEvent): Promise<void> {
-    await this.onNavigationClick(event);
+    const promise = this.renderTarget.viewer.onClick360Images(event).then((isEntered) => {
+      if (isEntered) {
+        CommandsUpdater.update(this.renderTarget);
+      }
+      return isEntered;
+    });
+    if (await promise) {
+      return;
+    }
+    await super.onClick(event);
+    await this.cameraManager.onClick(event);
   }
 
   public override async onDoubleClick(event: PointerEvent): Promise<void> {
@@ -91,28 +101,5 @@ export class NavigationTool extends BaseTool {
 
   public override onFocusChanged(haveFocus: boolean): void {
     this.cameraManager.onFocusChanged(haveFocus);
-  }
-
-  // ==================================================
-  // INSTANCE METHODS
-  // ==================================================
-
-  protected async onNavigationClick(event: PointerEvent): Promise<void> {
-    const promise = this.renderTarget.viewer.onClick360Images(event).then((isEntered) => {
-      if (isEntered) {
-        CommandsUpdater.update(this.renderTarget);
-      }
-      return isEntered;
-    });
-    if (await promise) {
-      return;
-    }
-    await super.onClick(event);
-    await this.cameraManager.onClick(event);
-  }
-
-  protected onNavigationHover(event: PointerEvent): void {
-    this.renderTarget.viewer.onHover360Images(event);
-    super.onHover(event);
   }
 }
