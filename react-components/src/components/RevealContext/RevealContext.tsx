@@ -17,7 +17,7 @@ import { type CameraStateParameters } from '../RevealCanvas/hooks/useCameraState
 import { CoreDm3dFdm3dDataProvider } from '../../data-providers/core-dm-provider/CoreDm3dDataProvider';
 import { LegacyFdm3dDataProvider } from '../../data-providers/legacy-fdm-provider/LegacyFdm3dDataProvider';
 import { FdmSDK } from '../../data-providers/FdmSDK';
-import { CachesDomainObject } from '../../architecture/concrete/caches/CachesDomainObject';
+import { CdfCaches } from '../../architecture/base/renderTarget/CdfCaches';
 import { type Fdm3dDataProvider } from '../../data-providers/Fdm3dDataProvider';
 
 export type RevealContextProps = {
@@ -123,9 +123,10 @@ const useRevealFromKeepAlive = (
         useFlexibleCameraManager: true,
         hasEventListeners: false
       });
-      renderTarget = new RevealRenderTarget(viewer, sdk);
-      renderTarget.rootDomainObject.addChildInteractive(
-        new CachesDomainObject(sdk, fdm3dDataProvider, viewer)
+      renderTarget = new RevealRenderTarget(
+        viewer,
+        sdk,
+        new CdfCaches(sdk, fdm3dDataProvider, viewer)
       );
       if (revealKeepAliveData !== undefined) {
         revealKeepAliveData.renderTargetRef.current = renderTarget;

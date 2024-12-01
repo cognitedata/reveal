@@ -1,28 +1,16 @@
 /*!
  * Copyright 2024 Cognite AS
  */
-import { useMemo } from 'react';
-import { CachesDomainObject } from '../../architecture/concrete/caches/CachesDomainObject';
+import { type CdfCaches } from '../../architecture/base/renderTarget/CdfCaches';
 import { useRenderTarget } from '../RevealCanvas';
 import { type AssetMappingAndNode3DCache } from './AssetMappingAndNode3DCache';
 import { type FdmNodeCache } from './FdmNodeCache';
 import { type PointCloudAnnotationCache } from './PointCloudAnnotationCache';
 import { type Image360AnnotationCache } from './Image360AnnotationCache';
 
-const useCacheObject = (): CachesDomainObject => {
+const useCacheObject = (): CdfCaches => {
   const revealRenderTarget = useRenderTarget();
-  const cacheObj = useMemo<CachesDomainObject>(() => {
-    const cachesDomainObject =
-      revealRenderTarget.rootDomainObject.getDescendantByType(CachesDomainObject);
-
-    if (cachesDomainObject === undefined) {
-      throw Error('CachesDomainObject was not yet initialized in RevealRenderTarget');
-    }
-
-    return cachesDomainObject;
-  }, [revealRenderTarget]);
-
-  return cacheObj;
+  return revealRenderTarget.cdfCaches;
 };
 
 export const useFdmNodeCache = (): FdmNodeCache => {

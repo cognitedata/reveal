@@ -3,8 +3,6 @@
  */
 import { type CogniteClient } from '@cognite/sdk/dist/src';
 import { AssetMappingAndNode3DCache } from '../../../components/CacheProvider/AssetMappingAndNode3DCache';
-import { DomainObject } from '../../base/domainObjects/DomainObject';
-import { type TranslationInput } from '../../base/utilities/TranslateInput';
 import { FdmNodeCache } from '../../../components/CacheProvider/FdmNodeCache';
 import { FdmSDK } from '../../../data-providers/FdmSDK';
 import { type Fdm3dDataProvider } from '../../../data-providers/Fdm3dDataProvider';
@@ -12,7 +10,7 @@ import { PointCloudAnnotationCache } from '../../../components/CacheProvider/Poi
 import { Image360AnnotationCache } from '../../../components/CacheProvider/Image360AnnotationCache';
 import { type Cognite3DViewer, type DataSourceType } from '@cognite/reveal';
 
-export class CachesDomainObject extends DomainObject {
+export class CdfCaches {
   private readonly _assetMappingAndNode3dCache: AssetMappingAndNode3DCache;
   private readonly _fdmNodeCache: FdmNodeCache;
   private readonly _pointCloudAnnotationCache: PointCloudAnnotationCache;
@@ -23,17 +21,12 @@ export class CachesDomainObject extends DomainObject {
     fdm3dDataProvider: Fdm3dDataProvider,
     viewer: Cognite3DViewer<DataSourceType>
   ) {
-    super();
     const fdmClient = new FdmSDK(cdfClient);
 
     this._assetMappingAndNode3dCache = new AssetMappingAndNode3DCache(cdfClient);
     this._fdmNodeCache = new FdmNodeCache(cdfClient, fdmClient, fdm3dDataProvider);
     this._pointCloudAnnotationCache = new PointCloudAnnotationCache(cdfClient);
     this._image360AnnotationCache = new Image360AnnotationCache(cdfClient, viewer);
-  }
-
-  public override get typeName(): TranslationInput {
-    return { untranslated: 'Caches' };
   }
 
   public get assetMappingAndNode3dCache(): AssetMappingAndNode3DCache {
