@@ -5,6 +5,7 @@
   "ADD_SLICE_Y": "Add vertical slice along X-axis. Select a point.",
   "ADD_SLICE_Z": "Add horizontal slice. Select a point.",
   "ALL": "All",
+  "ASSET": "Asset",
   "BOX": "Box",
   "CAD_MODELS": "CAD models",
   "CANCEL": "Cancel",

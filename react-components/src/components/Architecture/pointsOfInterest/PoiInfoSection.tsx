@@ -28,7 +28,7 @@ export const PoiInfoSection = (): ReactNode => {
       </Flex>
       {selectedPoi.properties.instanceRef && (
         <Flex direction="column">
-          <TextLabel text={t({ untranslated: 'ASSET' })} />
+          <TextLabel text={t({ key: 'ASSET' })} />
           <AssetLabel instance={selectedPoi.properties.instanceRef} />
         </Flex>
       )}
