@@ -38,6 +38,7 @@ import { Changes } from '../domainObjectsHelpers/Changes';
 import { type CogniteClient } from '@cognite/sdk';
 import { type BaseTool } from '../commands/BaseTool';
 import { ContextMenuController } from './ContextMenuController';
+import { type Class } from '../domainObjectsHelpers/Class';
 
 const DIRECTIONAL_LIGHT_NAME = 'DirectionalLight';
 
@@ -226,6 +227,10 @@ export class RevealRenderTarget {
     tool.attach(this);
     this.commandsController.add(tool);
     return this.commandsController.setDefaultTool(tool);
+  }
+
+  public setActiveToolByType<T extends BaseTool>(classType: Class<T>): boolean {
+    return this.commandsController.setActiveToolByType(classType);
   }
 
   public setConfig(config: BaseRevealConfig): void {
