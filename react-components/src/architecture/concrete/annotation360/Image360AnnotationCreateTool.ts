@@ -55,17 +55,6 @@ export class Image360AnnotationCreateTool extends PrimitiveEditTool {
   // OVERRIDES of BaseTool
   // ==================================================
 
-  public override onActivate(): void {
-    const imageId = this.renderTarget.active360ImageId;
-    if (imageId !== undefined) {
-      for (const domainObject of this.getSelectableByType(Image360AnnotationDomainObject)) {
-        const visible = domainObject.connectedImageId === imageId;
-        domainObject.setVisibleInteractive(visible, this.renderTarget);
-      }
-    }
-    super.onActivate();
-  }
-
   public override onDeactivate(): void {
     super.onDeactivate();
     this.escape();

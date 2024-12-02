@@ -50,17 +50,6 @@ export class Image360AnnotationSelectTool extends BaseEditTool {
     return 'default';
   }
 
-  public override onActivate(): void {
-    const imageId = this.renderTarget.active360ImageId;
-    if (imageId !== undefined) {
-      for (const domainObject of this.getSelectableByType(Image360AnnotationDomainObject)) {
-        const visible = domainObject.connectedImageId === imageId;
-        domainObject.setVisibleInteractive(visible, this.renderTarget);
-      }
-    }
-    super.onActivate();
-  }
-
   public override async onClick(event: PointerEvent): Promise<void> {
     const intersection = await this.getIntersection(event);
     if (intersection !== undefined) {
@@ -90,5 +79,17 @@ export class Image360AnnotationSelectTool extends BaseEditTool {
 
   protected override canBeSelected(domainObject: VisualDomainObject): boolean {
     return domainObject instanceof Image360AnnotationDomainObject;
+  }
+
+  // ==================================================
+  // INSTANCE METHODS
+  // ==================================================
+
+  public setImage360AnnotationsVisible(): void {
+    const imageId = this.renderTarget.active360ImageId;
+    for (const domainObject of this.getSelectableByType(Image360AnnotationDomainObject)) {
+      const visible = imageId !== undefined && domainObject.connectedImageId === imageId;
+      domainObject.setVisibleInteractive(visible, this.renderTarget);
+    }
   }
 }
