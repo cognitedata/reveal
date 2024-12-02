@@ -10,6 +10,7 @@ import { PoiExternalInstanceRef } from './types';
 type PoiUpsertObject = {
   externalId: ExternalId;
   name: string;
+  description: string;
   position: [number, number, number];
   sceneState: SceneState;
   scene: DmsUniqueIdentifier;
@@ -27,7 +28,8 @@ export function createUpsertRequestFromPois(
   return {
     items: pois.map(({ id, properties: poi }) => ({
       externalId: id,
-      name: poi.title,
+      name: poi.name ?? '',
+      description: poi.description ?? '',
       position: [poi.positionX, poi.positionY, poi.positionZ],
       sceneState: {},
       scene: poi.scene,

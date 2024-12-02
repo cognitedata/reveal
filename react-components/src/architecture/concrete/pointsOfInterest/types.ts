@@ -27,7 +27,7 @@ export type PointOfInterest<IdType> = {
 export function createPointsOfInterestPropertiesFromPointAndTitle(
   point: Vector3,
   scene: DmsUniqueIdentifier,
-  title: string,
+  contents: string[],
   associatedInstance: InstanceReference | undefined
 ): PointsOfInterestProperties {
   const cdfPosition = point.clone().applyMatrix4(CDF_TO_VIEWER_TRANSFORMATION.clone().invert());
@@ -37,7 +37,8 @@ export function createPointsOfInterestPropertiesFromPointAndTitle(
     positionZ: cdfPosition.z,
     scene,
     sceneState: {},
-    title,
+    name: contents[0],
+    description: contents[1],
     instanceRef: associatedInstance
   };
 }
