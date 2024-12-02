@@ -1,6 +1,5 @@
 import { Mock } from 'moq.ts';
 import { type FdmNodeCache } from '../../../src/components/CacheProvider/FdmNodeCache';
-import { type FdmNodeCacheContent } from '../../../src/components/CacheProvider/NodeCacheProvider';
 import { type DmsUniqueIdentifier } from '../../../src/data-providers/FdmSDK';
 import { type Node3D } from '@cognite/sdk';
 import {
@@ -63,8 +62,6 @@ const fdmNodeCacheMock = new Mock<FdmNodeCache>()
     }
   );
 
-const fdmNodeCacheContentMock: FdmNodeCacheContent = {
-  cache: fdmNodeCacheMock.object()
-};
+const fdmNodeCacheContentMock = fdmNodeCacheMock.object();
 
 export { fdmNodeCacheContentMock };

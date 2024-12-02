@@ -17,12 +17,12 @@ import { useTranslation } from '../i18n/I18n';
 import { useFetchRuleInstances } from '../RuleBasedOutputs/hooks/useFetchRuleInstances';
 import { use3dModels } from '../../hooks/use3dModels';
 import { type CadModelOptions } from '../Reveal3DResources/types';
-import { useAssetMappedNodesForRevisions } from '../CacheProvider/AssetMappingAndNode3DCacheProvider';
 import { RuleBasedSelectionItem } from '../RuleBasedOutputs/components/RuleBasedSelectionItem';
 import { generateEmptyRuleForSelection, getRuleBasedById } from '../RuleBasedOutputs/utils';
 import { useReveal3DResourcesStylingLoading } from '../Reveal3DResources/Reveal3DResourcesInfoContext';
 import { offset } from '@floating-ui/dom';
 import { TOOLBAR_HORIZONTAL_PANEL_OFFSET } from '../constants';
+import { useAssetMappedNodesForRevisions } from '../../hooks/cad';
 
 type RuleBasedOutputsButtonProps = {
   onRuleSetStylingChanged?: (stylings: AllRuleBasedStylingGroups | undefined) => void;

@@ -15,9 +15,9 @@ import {
 } from '@tanstack/react-query';
 import { useSDK } from '../components/RevealCanvas/SDKProvider';
 import { getAssetsList } from '../hooks/network/getAssetsList';
-import { useAssetMappedNodesForRevisions } from '../components/CacheProvider/AssetMappingAndNode3DCacheProvider';
 import { isDefined } from '../utilities/isDefined';
 import { uniqBy } from 'lodash';
+import { useAssetMappedNodesForRevisions } from '../hooks/cad';
 
 export type ModelMappings = {
   model: AddModelOptions;

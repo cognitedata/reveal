@@ -4,20 +4,20 @@
 import { useRef, type ReactElement, useMemo } from 'react';
 import { RevealKeepAliveContext } from '../../src/components/RevealKeepAlive/RevealKeepAliveContext';
 import { RevealCanvas } from '../../src/components/RevealCanvas/RevealCanvas';
-import { type FdmNodeCache } from '../../src/components/CacheProvider/FdmNodeCache';
-import { type AssetMappingAndNode3DCache } from '../../src/components/CacheProvider/AssetMappingAndNode3DCache';
 import { type CogniteClient } from '@cognite/sdk';
 import { Cognite3DViewer, type DataSourceType } from '@cognite/reveal';
 import { createSdkByUrlToken } from './createSdkByUrlToken';
-import { type PointCloudAnnotationCache } from '../../src/components/CacheProvider/PointCloudAnnotationCache';
 import {
   RevealContext,
   type RevealContextProps
 } from '../../src/components/RevealContext/RevealContext';
-import { type Image360AnnotationCache } from '../../src/components/CacheProvider/Image360AnnotationCache';
 import { type SceneIdentifiers } from '../../src/components/SceneContainer/sceneTypes';
 import { RevealRenderTarget } from '../../src/architecture/base/renderTarget/RevealRenderTarget';
 import { StoryBookConfig } from '../../src/architecture/concrete/config/StoryBookConfig';
+import { FdmSDK } from '../../src/data-providers/FdmSDK';
+import { CoreDm3dFdm3dDataProvider } from '../../src/data-providers/core-dm-provider/CoreDm3dDataProvider';
+import { LegacyFdm3dDataProvider } from '../../src/data-providers/legacy-fdm-provider/LegacyFdm3dDataProvider';
+import { CdfCaches } from '../../src/architecture/base/renderTarget/CdfCaches';
 
 type RevealStoryContainerProps = Omit<RevealContextProps, 'sdk'> & {
   sdk?: CogniteClient;
@@ -51,7 +51,19 @@ export const RevealStoryContext = ({
       });
     }
 
-    const renderTarget = new RevealRenderTarget(viewer, sdkInstance);
+    const fdmSdk = new FdmSDK(sdkInstance);
+
+    const fdm3dDataProvider =
+      (rest.useCoreDm ?? false)
+        ? new CoreDm3dFdm3dDataProvider([], fdmSdk)
+        : new LegacyFdm3dDataProvider(fdmSdk, sdkInstance);
+
+    const renderTarget = new RevealRenderTarget(
+      viewer,
+      sdkInstance,
+      new CdfCaches(sdkInstance, fdm3dDataProvider, viewer)
+    );
+
     renderTarget.setConfig(new StoryBookConfig());
     return renderTarget;
   }, [viewer]);
@@ -59,20 +71,13 @@ export const RevealStoryContext = ({
   const renderTargetRef = useRef<RevealRenderTarget | undefined>(renderTarget);
   const isRevealContainerMountedRef = useRef<boolean>(true);
   const sceneLoadedRef = useRef<SceneIdentifiers>();
-  const fdmNodeCache = useRef<FdmNodeCache | undefined>();
-  const assetMappingCache = useRef<AssetMappingAndNode3DCache | undefined>();
-  const pointCloudAnnotationCache = useRef<PointCloudAnnotationCache | undefined>();
-  const image360AnnotationCache = useRef<Image360AnnotationCache | undefined>();
+
   return (
     <RevealKeepAliveContext.Provider
       value={{
         renderTargetRef,
         isRevealContainerMountedRef,
-        sceneLoadedRef,
-        fdmNodeCache,
-        assetMappingCache,
-        pointCloudAnnotationCache,
-        image360AnnotationCache
+        sceneLoadedRef
       }}>
       <RevealContext sdk={sdkInstance} {...rest}>
         {children}

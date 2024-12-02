@@ -20,7 +20,7 @@ import { chunk, maxBy } from 'lodash';
 import assert from 'assert';
 import { isValidAssetMapping } from './utils';
 import { modelRevisionNodesAssetToKey, createModelRevisionKey } from './idAndKeyTranslation';
-import { type ModelWithAssetMappings } from './AssetMappingAndNode3DCacheProvider';
+import { type ModelWithAssetMappings } from '../../hooks/cad/ModelWithAssetMappings';
 import { AssetMappingPerAssetIdCache } from './AssetMappingPerAssetIdCache';
 import { AssetMappingPerNodeIdCache } from './AssetMappingPerNodeIdCache';
 import { Node3DPerNodeIdCache } from './Node3DPerNodeIdCache';

@@ -22,7 +22,6 @@ import {
 } from '../types';
 import { useMemo } from 'react';
 import { isSameModel } from '../../../utilities/isSameModel';
-import { usePointCloudAnnotationMappingsForModels } from '../../CacheProvider/PointCloudAnnotationCacheProvider';
 import { EMPTY_ARRAY } from '../../../utilities/constants';
 import { type PointCloudVolumeStylingGroup } from '../../PointCloudContainer/types';
 import { useModelIdRevisionIdFromModelOptions } from '../../../hooks/useModelIdRevisionIdFromModelOptions';
@@ -34,6 +33,7 @@ import {
 } from '../../../utilities/StylingGroupUtils';
 import { useMatchedPointCloudModels } from './useMatchedPointCloudModels';
 import { createFdmKey } from '../../CacheProvider/idAndKeyTranslation';
+import { usePointCloudAnnotationMappingsForModels } from '../../../hooks/pointClouds';
 
 type PointCloudVolumeWithModel = {
   model: PointCloudModelOptions;
