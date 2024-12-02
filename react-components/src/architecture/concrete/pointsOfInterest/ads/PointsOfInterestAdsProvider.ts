@@ -181,7 +181,7 @@ function poiItemToInstance(item: PoiItem): PointsOfInterestInstance<ExternalId> 
 function poiExternalInstanceRefToInstanceReference(
   instance: PoiExternalInstanceRef | undefined
 ): InstanceReference | undefined {
-  if (instance == undefined) {
+  if (instance === undefined) {
     return undefined;
   }
 

@@ -1,11 +1,11 @@
 /*!
  * Copyright 2024 Cognite AS
  */
-import { InstanceReference, type DmsUniqueIdentifier } from '../../../../data-providers';
+import { type InstanceReference, type DmsUniqueIdentifier } from '../../../../data-providers';
 import { type ExternalId } from '../../../../data-providers/FdmSDK';
 import { isAssetInstance } from '../../../../data-providers/types';
 import { type PointsOfInterestInstance, type PoiVisibility, type SceneState } from '../models';
-import { PoiExternalInstanceRef } from './types';
+import { type PoiExternalInstanceRef } from './types';
 
 type PoiUpsertObject = {
   externalId: ExternalId;
