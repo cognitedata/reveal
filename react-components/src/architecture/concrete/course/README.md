@@ -62,7 +62,8 @@ public override get typeName(): string {
 }
 ```
 
-Use any icons you like on the https://zeroheight.com/37d494d9d/p/99acc1-system-icons
+Use any icons you like on the https://zeroheight.com/37d494d9d/p/99acc1-system-icons. But you have to check with DefaultIcons is the icon is installed,
+because Cogs changed the way icons was loaded into the app.You can also use `IconFactory.install()` to install any icon you will like without changing the DefaultIcons.
 
 > **&#9432; Try it out:**
 > Compile it. At this moment you should be finished with your first version of the `PointDomainObject`. We will add more functionality it later.
@@ -71,16 +72,17 @@ Use any icons you like on the https://zeroheight.com/37d494d9d/p/99acc1-system-i
 
 In order to visualize it, you have to create 2 classes.
 
-- `PointRenderStyle`, which is the parameters for visualization and should be extended from `RenderStyle`.
+- `PointRenderStyle`, which is the parameters for visualization and should be extended from `CommonRenderStyle`.
 - `PointView`, which is the view itself, and should be extended from `GroupThreeView`.
 
-Put some fields into the `PointRenderStyle`: `radius`, `opacity` and `depthTest` (boolean). You may add others later. Note that the radius is a part of the style rather than the data. This is because a specific radius is just one way of showing the point. The data is the point in (x, y, z) coordinates itself.
+Put some fields into the `PointRenderStyle`: `radius`, `opacity`. You may add others later. Note that the radius is a part of the style rather than the data. This is because a specific radius is just one way of showing the point. The data is the point in (x, y, z) coordinates itself.
 
 In the `PointView`, you can relay a lot of the the default implementation in `GroupThreeView`, but you have to create the visualization code yourself. This is done in the `addChildren` method. Here we add Three.js objects to the view. For those who are not familiar with Three.js, here is a suggested implementation:
 
 ```typescript
 protected override addChildren(): void {
-    const { domainObject, style } = this;
+    const { domainObject, style, renderTarget } = this;
+
     const geometry = new SphereGeometry(style.radius, 32, 16);
     const material = new MeshPhongMaterial({
       color: domainObject.color,
@@ -99,15 +101,11 @@ protected override addChildren(): void {
 }
 ```
 
-You may also override `intersectIfCloser` and `calculateBoundingBox`, but the base class uses the objects created by `addChildren` for the default implementation. But `intersectIfCloser` should often be overridden due to sloppy intersection algorithms in Three.js or if you for instance has labels which is not part of the 3D object itself.
+You may also override `intersectIfCloser` and `calculateBoundingBox`, but the base class uses the objects created by `addChildren` for the default implementation. But `intersectIfCloser` should often be overridden due to sloppy intersection algorithms in `Three.js` or if you for instance has labels which is not part of the 3D object itself.
 
-It is also nice to add some convenience properties to the view for reuse:
+It is also nice to add a convenience property to the view for reuse:
 
 ```typescript
-public override get domainObject(): PointDomainObject {
-  return super.domainObject as PointDomainObject;
-}
-
 protected override get style(): PointRenderStyle {
   return super.style as PointRenderStyle;
 }
@@ -123,7 +121,7 @@ Here you implement the user interaction in the 3D viewer. Make a class called `P
 
 The framework let you only have one tool active at the same time. The default tool is `NavigateTool`, which is the basic camera navigation. By clicking at your `PointTool`, this will be active and the `NavigateTool` will be deactivated. You can have as many tools as you like.
 
-First you have to override 2 functions to get the tooltip and the icon on the button. Look in `BaseCommand` for `get icon` and `get tooltip`. `BaseCommand` is the base class of all the command and tools and let you override methods to be used by React. Use any icons you like on the https://zeroheight.com/37d494d9d/p/99acc1-system-icons. The tooltip should return a `TranslateKey`, which is ready for translation.
+First you have to override 2 functions to get the tooltip and the icon on the button. Look in `BaseCommand` for `get icon` and `get tooltip`. `BaseCommand` is the base class of all the command and tools and let you override methods to be used by React. The tooltip should return a `TranslationInput`, which is ready for translation, but you do not need translation for this, so set 'untranslated' only.
 
 Then you have to make some functionality. The simplest I can think about is to create your
 `PointDomainObject` by clicking at something. Lets do that by overriding `onClick`.
@@ -234,16 +232,12 @@ Professional applications uses a context dependent cursor. To do this override `
 
 ## Implement delete functionality
 
-To do this you override `onKey(...)`. Here is the skeleton of the method show. Fill in the rest by get the selected and remove it.
+To do this you override `onDeleteKey()`. Here is the skeleton of the method show. Fill in the rest by get the selected and remove it.
 
 ```typescript
-  public override onKey(event: KeyboardEvent, down: boolean): void {
-    if (down && event.key === 'Delete') {
-      const domainObject = this.getSelected();
-      // Fill in here.....
-      return;
-    }
-    super.onKey(event, down);
+  public override onDeleteKey(): void {
+    const domainObject = this.getSelected();
+    // Fill inn the rest
   }
 ```
 
@@ -265,12 +259,12 @@ The next method generate the info for the panel. Note that the key is the transl
 public override getPanelInfo(): PanelInfo | undefined {
     const info = new PanelInfo();
     info.setHeader('NAME', this.name);
-    add('X', 'X coordinate', this.center.x, Quantity.Length);
+    add({ key: 'X_COORDINATE' }, this.center.x, Quantity.Length);
     // Fill in rest here like Y, Z and length to origin for instance
     return info;
 
-    function add(key: string, fallback: string, value: number, quantity: Quantity): void {
-      info.add({ key, fallback, value, quantity });
+    function add(translationInput: TranslationInput, value: number, quantity: Quantity): void {
+      info.add({ translationInput, fallback, value, quantity });
     }
   }
 ```
@@ -314,7 +308,7 @@ export class PointDragger extends BaseDragger {
   // INSTANCE FIELDS
   // ==================================================
 
-  private readonly _domainObject: PointDomainObject;
+  private readonly _domainObject: ExampleDomainObject;
   private readonly _center: Vector3;
   private readonly _plane: Plane;
   private readonly _offset: Vector3; // Correction for picking the sphere other places than in the center
@@ -323,8 +317,8 @@ export class PointDragger extends BaseDragger {
   // CONSTRUCTOR
   // ==================================================
 
-  public constructor(props: CreateDraggerProps, domainObject: PointDomainObject) {
-    super(props);
+  public constructor(props: CreateDraggerProps, domainObject: ExampleDomainObject) {
+    super(props, domainObject);
     this._domainObject = domainObject;
     this._center = this._domainObject.center.clone();
     this._plane = new Plane().setFromNormalAndCoplanarPoint(this.ray.direction, this._center);
@@ -354,8 +348,12 @@ export class PointDragger extends BaseDragger {
     if (planeIntersection.equals(this._center)) {
       return false; // No change
     }
+    if (this.transaction === undefined) {
+      this.transaction = this._domainObject.createTransaction(Changes.geometry);
+    }
     this._domainObject.center.copy(planeIntersection);
-    this.domainObject.notify(Changes.geometry); // Tells the domain object that the geometry has been changed
+    this.domainObject.notify(Changes.dragging);
+
     return true;
   }
 }
@@ -365,11 +363,9 @@ You have to tell the `PointDomainObject` to use this dragger. Then override `cre
 
 > **&#9432; Try it out:** Compile this code. Are you able to move the points?
 
-When this is done, only one thing is missing. You have to indicate in `onHover` the the point can be moved. Change from `setDefaultCursor` or `setMoveCursor`. You must also `setMoveCursor` in the end of `onClick` since `onHover` is not called before you release and move the mouse.
+When this is done, only one thing is missing. You have to indicate in `onHoverByDebounce` the the point can be moved. Change from `setDefaultCursor` or `setMoveCursor`. You must also `setMoveCursor` in the end of `onClick` since `onHover` is not called before you release and move the mouse.
 
 > **&#9432; Try it out:** Do you see the move cursor?
-
-Undo dragging is missing from the architecture. It is not hard to implement within this framework and I have a pattern for this that covers most cases. It could be generally made within `BaseEditTool`.
 
 ## Playing with the color and the render style
 
@@ -393,9 +389,11 @@ Then you must override the onWheel. Here is the implementation:
       return;
     }
     // Change radius
-    const factor = 1 - Math.sign(delta) * 0.1;
-    domainObject.renderStyle.radius *= factor;
-    domainObject.notify(new DomainObjectChange(Changes.renderStyle, 'radius'));
+      this.addTransaction(domainObject.createTransaction(Changes.renderStyle));
+
+      const factor = 1 - Math.sign(delta) * 0.1;
+      domainObject.renderStyle.radius *= factor;
+      domainObject.notify(new DomainObjectChange(Changes.renderStyle, 'radius'));
   }
 ```
 
@@ -403,6 +401,8 @@ And you can even to some more playing by using this code:
 
 ```typescript
 // Change color
+this.addTransaction(domainObject.createTransaction(Changes.color));
+
 let hsl: HSL = { h: 0, s: 0, l: 0 };
 hsl = domainObject.color.getHSL(hsl);
 hsl.h = (hsl.h + Math.sign(delta) * 0.02) % 1;
@@ -412,6 +412,8 @@ domainObject.notify(Changes.color);
 
 ```typescript
 // Change opacity
+this.addTransaction(domainObject.createTransaction(Changes.renderStyle));
+
 const opacity = domainObject.renderStyle.opacity + Math.sign(delta) * 0.05;
 domainObject.renderStyle.opacity = clamp(opacity, 0.2, 1);
 domainObject.notify(new DomainObjectChange(Changes.renderStyle, 'opacity'));
@@ -422,7 +424,7 @@ You can bind the the different changes to shift and control key to make it flexi
 ```typescript
 if (event.shiftKey) {
   //..... paste code here
-} else if (event.ctrlKey) {
+} else if (event.ctrlKey || event.metaKey) {
   // .... paste code here
 } else {
   // .... paste code here
@@ -471,7 +473,8 @@ export class ResetAllPointsCommand extends RenderTargetCommand {
 
 Please implement `get isEnabled()` so the button is not enable if you don't have any `PointDomainObjects` in the system.
 
-Make a similar `DeleteAllPointsCommand`. When deleting object by a collection, remember to iterate in reverse order. I have done it in this way (maybe it can be done simpler?)
+Make a similar `DeleteAllPointsCommand`. When deleting object by a collection, it is often good to convert it to array first, so the iterator works properly.
+I have done it in this way (maybe it can be done simpler?)
 
 ```typescript
   const array = Array.from(.....)
@@ -495,11 +498,23 @@ public override getToolbar(): Array<BaseCommand | undefined> {
 
 > **&#9432; Try it out:** Activate your tool and notice the toolbar after you have created some domain objects. Test them.
 
-When it is working, now you are now ready to make a `ShowAllPointCommand`. This should hide all point if they are shown and show them if the are hidden. To determine if they are visible or hidden, you can for instance do this:
+In the architecture there are base class for command operating on a set of similar `DomainObjects`.
+This is called `InstanceCommand` and can be used to implement both `ResetAllPointsCommand` and `DeleteAllPointsCommand` to avoid repetitive code. When using this you have to
+override:
+
+```typescript
+  protected override isInstance(domainObject: DomainObject): boolean {
+    return domainObject instanceof PointDomainObject;
+  }
+```
+
+You can the use `this.getInstances()` and `this.getFirstInstance()` to filter out domainObject for the operation.
+
+Now you are now ready to make a `ShowAllPointCommand` . Inherit from `InstanceCommand`. This should hide all point if they are shown and show them if the are hidden. To determine if they are visible or hidden, you can for instance do this:
 
 ```typescript
   private isAnyVisible(): boolean {
-    for (const descendant of this.rootDomainObject.getDescendantsByType(PointDomainObject)) {
+    for (const descendant of this.getInstances()) {
       if (descendant.isVisible(this.renderTarget)) {
         return true;
       }
@@ -516,65 +531,28 @@ Add it to the list in `getToolbar()` and test it.
 
 ## The final touch - manipulate the DepthTest
 
-Here you should try another feature that is in the architecture. Override the method `useDepthTest` in the `PointView`. Let it return true only if `depthTest` in the style is true. The default implementation returns true.
+Here you should try another feature that is in the architecture. Override the method `useDepthTest` in the `PointView`.
+Let it return true only if `depthTest` in the style is true. The default implementation returns true.
 
 We should now investigate how the mouse picking responds on this. Keep in mind that the general intersection is implemented in Reveal, not in this framework!
 
-The class above toggle the `depthTest` on all `PointDomainObject`s. In order get the current value of the `depthTest`, simply take the first visible it can find. This is done in the `getDepthTest()`. Create a file and copy this code.
+You can reuse a class, `ShowDomainObjectsOnTopCommand` (open the source code for this), to toggle the `depthTest` on all `PointDomainObject`s.
+In order get the current value of the `depthTest`, it simply take the first visible it can find. This is done in the `getDepthTest()`.
+Create a file and copy this code.
 
 ```typescript
-export class ShowPointsOnTopCommand extends RenderTargetCommand {
+export class ShowExamplesOnTopCommand extends ShowDomainObjectsOnTopCommand {
   // ==================================================
   // OVERRIDES
   // ==================================================
 
-  public override get tooltip(): TranslateKey {
-    return { key: 'POINTS_SHOW_ON_TOP', fallback: 'Show all points on top' };
+  public override get tooltip(): TranslationInput {
+    return { untranslated: 'Show all examples on top' };
   }
 
-  public override get icon(): IconName {
-    return 'Flag';
+  protected override isInstance(domainObject: DomainObject): boolean {
+    return domainObject instanceof ExampleDomainObject;
   }
-
-  public override get isEnabled(): boolean {
-    return this.getFirstVisible() !== undefined;
-  }
-
-  public override get isChecked(): boolean {
-    return !this.getDepthTest();
-  }
-
-  protected override invokeCore(): boolean {
-    const depthTest = this.getDepthTest();
-    for (const domainObject of this.rootDomainObject.getDescendantsByType(PointDomainObject)) {
-      const style = domainObject.renderStyle;
-      style.depthTest = !depthTest;
-      domainObject.notify(Changes.renderStyle);
-    }
-    return true;
-  }
-
-  // ==================================================
-  // INSTANCE METHODS
-  // ==================================================
-
-  private getDepthTest(): boolean {
-    const domainObject = this.getFirstVisible();
-    if (domainObject === undefined) {
-      return false;
-    }
-    return domainObject.renderStyle.depthTest;
-  }
-
-  private getFirstVisible(): PointDomainObject | undefined {
-    for (const descendant of this.rootDomainObject.getDescendantsByType(PointDomainObject)) {
-      if (descendant.isVisible(this.renderTarget)) {
-        return descendant;
-      }
-    }
-    return undefined;
-  }
-}
 ```
 
 Finally add `ShowPointsOnTopCommand` to the list in `getToolbar()` in the `PointTool`.
@@ -589,7 +567,7 @@ Lets check if your code is clean when it comes to dependencies. Ask yourself:
 2. How many references do I have to the `PointView`.
 3. How many references do I have from files in the directory I work in to the rest of the system. Please count them.
 
-> &#9432; If you have done all exercises until now you are finished. You will receive a diploma for your effort and attention after I have tested it on your PC. You are now able to use this architecture and hopefully get some good ideas to use similar architecture elsewhere.
+> &#9432; If you have done all exercises until now you are finished. You are now able to use this architecture and hopefully get some good ideas to use similar architecture elsewhere.
 
 # More advanced exercises
 
@@ -634,6 +612,7 @@ This is more challenging, but should be done if number of points typically is la
   be return with the `CustomObjectIntersection`. You can use the field `userData` to have the index
   of the closest intersected point.
 - None of this is particularly hard in this architecture.
+- This is done in `AnnotationsDomainObject` (3D annotations)
 
 ## Focus on hover
 
@@ -641,6 +620,7 @@ Focus is when you mark the object behind the mouse when hover. You can easily cr
 
 ## Multi selection
 
-Normally in other application you can expand or turn off selection with the control key. This should also work well in this framework. You will need to do some minor adjustments in the `PointTool` code, for instance check the `event.ctrlKey` in the `onClick` method . The panel is implemented so it shows the last selected regardless of how many object you have selected.
+Normally in other application you can expand or turn off selection with the control key. This should also work well in this framework. You will need to do some minor adjustments in the `PointTool` code, for instance check the `event.ctrlKey` in the `onClick` method.
+The panel is implemented so it shows the last selected regardless of how many object you have selected.
 
 You must also use the `BaseEditTool.getAllSelected` instead of the `BaseEditTool.getSelected`.
