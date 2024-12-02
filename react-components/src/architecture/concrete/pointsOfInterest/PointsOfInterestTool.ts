@@ -49,6 +49,7 @@ export class PointsOfInterestTool<PoiIdType> extends BaseEditTool {
     }
     domainObject.setVisibleInteractive(true, this.renderTarget);
     this.setIsCreating(true);
+    this.setCursor('copy');
   }
 
   public override onDeactivate(): void {
@@ -56,6 +57,7 @@ export class PointsOfInterestTool<PoiIdType> extends BaseEditTool {
     const domainObject = this.getPointsOfInterestDomainObject();
     domainObject.setSelectedPointOfInterest(undefined);
     this.setIsCreating(false);
+    this.setCursor('default');
     this.setAssignedInstance(undefined);
   }
 

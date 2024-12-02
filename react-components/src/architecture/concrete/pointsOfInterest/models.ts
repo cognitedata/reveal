@@ -22,7 +22,7 @@ export type PointsOfInterestProperties = {
   // "Visibility of node (PUBLIC, PRIVATE, PROTECTED)"
   // visibility?: string;
   // "Who created this node?"
-  // createdBy?: string;
+  ownerId?: string;
   // "Who was the last person to update this node?"
   // updatedBy?: string;
   // "Is this item archived, and therefore hidden from most UIs?"
@@ -38,6 +38,8 @@ export type PointsOfInterestProperties = {
   // priority?: string;
   // "The observation type (Malfunction report, Maintenance request, etc.)"
   // type?: string;
+  // Create time
+  createdTime?: number;
   // "3D position" */
   positionX: number;
   positionY: number;

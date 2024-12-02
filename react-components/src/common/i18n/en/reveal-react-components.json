@@ -29,6 +29,8 @@
   "CREATE": "Create",
   "CROP_BOX": "Crop box",
   "CYLINDER": "Cylinder",
+  "DESCRIPTION": "Description",
+  "DESCRIPTION_PLACEHOLDER": "This is the description",
   "DELETE": "Delete",
   "FIT_VIEW_TOOLTIP": "Fit view",
   "HELP_TOOLTIP": "Help",
