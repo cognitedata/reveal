@@ -32,8 +32,6 @@ export const PoiHeader = (): ReactNode => {
     return undefined;
   }
 
-  // {selectedPoi.properties.title ?? selectedPoi.id}
-
   return (
     <Flex direction="column" gap={8}>
       <Flex direction="row" justifyContent="space-between" alignItems="center">
