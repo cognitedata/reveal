@@ -1,7 +1,7 @@
 /*!
  * Copyright 2024 Cognite AS
  */
-import { Comment, Flex, Input } from '@cognite/cogs.js';
+import { Button, Comment, Flex, Input } from '@cognite/cogs.js';
 import { type BaseSyntheticEvent, type ReactNode, useCallback, useMemo, useState } from 'react';
 import { useTranslation } from '../i18n/I18n';
 import { useOnUpdate } from './useOnUpdate';
@@ -12,6 +12,7 @@ import {
   type FieldContent,
   type CustomBaseInputCommand
 } from '../../architecture/base/commands/CustomBaseInputCommand';
+import styled from 'styled-components';
 
 export const CustomInputField = ({
   inputCommand
@@ -35,10 +36,15 @@ export const CustomInputField = ({
   );
 
   const initialContents = useMemo(() => {
-    return command.contents.map((fieldContent) => ({
-      type: fieldContent.type,
-      content: fieldContent.content
-    }));
+    return command.contents.map((fieldContent) => {
+      if (fieldContent.type === 'submitButtons') {
+        return { type: fieldContent.type, content: undefined };
+      }
+      if (fieldContent.type === 'customInput') {
+        return { type: fieldContent.type, content: fieldContent.content };
+      }
+      return { type: fieldContent.type, content: fieldContent.content };
+    });
   }, [command]);
 
   const [contents, setContents] = useState<FieldContent[]>(initialContents);
@@ -83,12 +89,54 @@ export const CustomInputField = ({
         />
       );
     }
-    if (fieldContent.type === 'commentWithButtons') {
+    if (fieldContent.type === 'comment') {
+      const message = contents?.[index]?.type === 'comment' ? contents[index].content : '';
       return (
         <Comment
           key={index}
           placeholder={placeholders?.[index]}
-          message={contents?.[index]?.content ?? ''}
+          message={message}
+          setMessage={(data) => {
+            handleSetContents(index, data);
+          }}
+        />
+      );
+    }
+    if (fieldContent.type === 'customInput') {
+      return fieldContent.content;
+    }
+    if (fieldContent.type === 'submitButtons') {
+      return (
+        <Flex key={index} gap={8}>
+          <Button
+            type="secondary"
+            disabled={!enabled}
+            onClick={() => {
+              command.onCancel?.();
+              setContents([]);
+            }}>
+            {cancelLabel}
+          </Button>
+          <Button
+            type="primary"
+            disabled={!enabled}
+            onClick={() => {
+              command.invokeWithContent(contents ?? []);
+              setContents([]);
+            }}>
+            {postLabel}
+          </Button>
+        </Flex>
+      );
+    }
+    if (fieldContent.type === 'commentWithButtons') {
+      const message =
+        contents?.[index]?.type === 'commentWithButtons' ? contents[index].content : '';
+      return (
+        <Comment
+          key={index}
+          placeholder={placeholders?.[index]}
+          message={message}
           setMessage={(data) => {
             handleSetContents(index, data);
           }}
@@ -109,8 +157,13 @@ export const CustomInputField = ({
   });
 
   return (
-    <Flex direction="column" gap={8}>
+    <StyledFlex direction="column" gap={8}>
       {fields}
-    </Flex>
+    </StyledFlex>
   );
 };
+
+const StyledFlex = styled(Flex)`
+  padding: 8px;
+  min-height: 200px;
+`;
