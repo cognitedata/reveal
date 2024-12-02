@@ -10,7 +10,7 @@ import { queryKeys } from '../../utilities/queryKeys';
 import { usePointCloudAnnotationCache } from '../../components/CacheProvider/CacheProvider';
 import { fetchAnnotationsForModel } from './fetchAnnotationsForModel';
 
-export const usePointCloudAnnotationMappingForAssetId = (
+export const usePointCloudAnnotationMappingForIntersection = (
   intersection: AnyIntersection | undefined
 ): UseQueryResult<PointCloudAnnotationMappedAssetData[]> => {
   const pointCloudAnnotationCache = usePointCloudAnnotationCache();
