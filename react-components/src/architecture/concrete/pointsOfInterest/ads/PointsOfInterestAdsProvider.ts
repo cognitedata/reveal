@@ -156,7 +156,8 @@ function poiItemToInstance(item: PoiItem): PointsOfInterestInstance<ExternalId> 
   return {
     id: item.externalId,
     properties: {
-      title: item.name,
+      name: item.name,
+      description: item.description,
       positionX: item.position[0],
       positionY: item.position[1],
       positionZ: item.position[2],

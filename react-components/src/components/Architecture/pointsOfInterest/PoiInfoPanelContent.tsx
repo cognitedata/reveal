@@ -49,7 +49,7 @@ const PanelHeader = (): ReactNode => {
   return (
     <Flex direction="row" justifyContent="space-between" alignItems="center">
       <Flex direction="row" alignContent="start" gap={8}>
-        <WaypointIcon /> <TextLabel text={selectedPoi.properties.title ?? selectedPoi.id} />
+        <WaypointIcon /> <TextLabel text={selectedPoi.properties.name ?? selectedPoi.id} />
       </Flex>
       <Divider direction="vertical" weight="2px" />
       <Flex direction="row" justifyContent="flex-start">
