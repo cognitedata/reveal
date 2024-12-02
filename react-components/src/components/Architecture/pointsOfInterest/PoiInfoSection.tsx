@@ -19,7 +19,7 @@ export const PoiInfoSection = (): ReactNode => {
     <InfoSectionContainer direction="column" justifyContent="space-between" gap={8}>
       <Flex direction="column">
         <TextLabel text={t({ key: 'TITLE' })} />
-        <Input placeholder={t({ key: 'TITLE_PLACEHOLDER' })} value={name} fullWidth />
+        <Input value={name} fullWidth />
       </Flex>
       <Flex direction="column">
         <TextLabel text={t({ key: 'DESCRIPTION' })} />

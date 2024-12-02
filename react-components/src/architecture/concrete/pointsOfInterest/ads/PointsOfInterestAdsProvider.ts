@@ -13,10 +13,9 @@ import {
   type PoiExternalInstanceRef,
   type PoiItem
 } from './types';
-import { isDefined } from '../../../../utilities/isDefined';
-import { uniq } from 'lodash';
 import { createUpsertRequestFromPois } from './createUpsertRequestFromPois';
 import { type InstanceReference } from '../../../../data-providers';
+import { createUserMap } from './createUserMap';
 
 /**
  * A PoI provider using the Cognite Application Data Storage service as backing storage
@@ -60,9 +59,15 @@ export class PointsOfInterestAdsProvider implements PointsOfInterestProvider<Ext
       );
     }
 
-    return await Promise.all(
-      result.data.items.map(async (item) => await poiItemToInstance(item, this._sdk))
-    );
+    const userIds = result.data.items.map((item) => item.ownerId);
+    const userIdNameMap = await createUserMap(this._sdk, userIds);
+
+    result.data.items.forEach((item) => {
+      const name = userIdNameMap.get(item.ownerId) ?? 'Unknown';
+      item.ownerId = name;
+    });
+
+    return result.data.items.map(poiItemToInstance);
   }
 
   async fetchPointsOfInterest(
@@ -78,10 +83,15 @@ export class PointsOfInterestAdsProvider implements PointsOfInterestProvider<Ext
         `An error occured while fetching points of interest: ${JSON.stringify(result.data)}, status code: ${result.status}`
       );
     }
+    const userIds = result.data.items.map((item) => item.ownerId);
+    const userIdNameMap = await createUserMap(this._sdk, userIds);
 
-    return await Promise.all(
-      result.data.items.map(async (item) => await poiItemToInstance(item, this._sdk))
-    );
+    result.data.items.forEach((item) => {
+      const name = userIdNameMap.get(item.ownerId) ?? 'Unknown';
+      item.ownerId = name;
+    });
+
+    return result.data.items.map(poiItemToInstance);
   }
 
   async deletePointsOfInterest(poiIds: ExternalId[]): Promise<void> {
@@ -111,7 +121,10 @@ export class PointsOfInterestAdsProvider implements PointsOfInterestProvider<Ext
       );
     }
 
-    const userIdNameMap = await this.createUserMap(result.data.map((comment) => comment.ownerId));
+    const userIdNameMap = await createUserMap(
+      this._sdk,
+      result.data.map((comment) => comment.ownerId)
+    );
 
     result.data.forEach((comment) => {
       const name = userIdNameMap.get(comment.ownerId) ?? 'Unknown';
@@ -136,7 +149,7 @@ export class PointsOfInterestAdsProvider implements PointsOfInterestProvider<Ext
       );
     }
 
-    const userIdNameMap = await this.createUserMap([result.data.ownerId]);
+    const userIdNameMap = await createUserMap(this._sdk, [result.data.ownerId]);
 
     const name = userIdNameMap.get(result.data.ownerId) ?? 'Unknown';
     result.data.ownerId = name;
@@ -147,37 +160,15 @@ export class PointsOfInterestAdsProvider implements PointsOfInterestProvider<Ext
   public createNewId(): ExternalId {
     return uuid();
   }
-
-  private async createUserMap(userIds: string[]): Promise<Map<string, string | undefined>> {
-    if (userIds.length === 0) {
-      return new Map();
-    }
-
-    const uniqueUserIds = uniq(userIds);
-
-    const profiles = await this._sdk.profiles.retrieve(
-      uniqueUserIds.map((id) => ({ userIdentifier: id }))
-    );
-
-    const idNamePairs = profiles
-      .filter(isDefined)
-      .map((profile) => [profile.userIdentifier, profile.displayName ?? undefined] as const);
-
-    return new Map(idNamePairs);
-  }
 }
 
-async function poiItemToInstance(
-  item: PoiItem,
-  sdk: CogniteClient
-): Promise<PointsOfInterestInstance<ExternalId>> {
-  const userName = await getUserName(item.ownerId, sdk);
+function poiItemToInstance(item: PoiItem): PointsOfInterestInstance<ExternalId> {
   return {
     id: item.externalId,
     properties: {
       name: item.name,
       description: item.description,
-      ownerId: userName,
+      ownerId: item.ownerId,
       createdTime: item.createdTime,
       positionX: item.position[0],
       positionY: item.position[1],
@@ -191,14 +182,6 @@ async function poiItemToInstance(
       sceneState: item.sceneState
     }
   };
-
-  async function getUserName(ownerId: string, sdk: CogniteClient): Promise<string | undefined> {
-    const profiles = await sdk.profiles.retrieve([{ userIdentifier: ownerId }]);
-
-    const name = profiles.filter(isDefined).map((profile) => profile.displayName ?? undefined);
-
-    return name[0];
-  }
 }
 
 function poiExternalInstanceRefToInstanceReference(
