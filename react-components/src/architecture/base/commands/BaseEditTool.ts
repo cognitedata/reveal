@@ -32,6 +32,10 @@ export abstract class BaseEditTool extends NavigationTool {
     return 'crosshair';
   }
 
+  public override setCursor(value: string): void {
+    this.renderTarget.cursor = value;
+  }
+
   public override clearDragging(): void {
     super.clearDragging();
     this._dragger = undefined;

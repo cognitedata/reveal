@@ -250,6 +250,10 @@ export abstract class BaseTool extends RenderTargetCommand {
     this.renderTarget.cursor = this.defaultCursor;
   }
 
+  public setCursor(cursor: string): void {
+    this.renderTarget.cursor = cursor;
+  }
+
   private async openContextMenu(event: PointerEvent): Promise<void> {
     const intersection = await this.getIntersection(event);
 
