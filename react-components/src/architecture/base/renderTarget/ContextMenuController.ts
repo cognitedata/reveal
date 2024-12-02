@@ -6,6 +6,7 @@ import { ContextMenuUpdater } from '../reactUpdaters/ContextMenuUpdater';
 import { type Vector2 } from 'three';
 
 export type ContextMenuData = {
+  clickEvent: PointerEvent;
   position: Vector2;
   intersection: AnyIntersection | undefined;
 };

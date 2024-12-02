@@ -10,7 +10,6 @@ import {
   useClickedNodeData,
   useCameraNavigation,
   type AddResourceOptions,
-  type FdmAssetStylingGroup,
   RevealContext
 } from '../src';
 import { Color } from 'three';
@@ -19,10 +18,7 @@ import { type CadIntersection, DefaultNodeAppearance } from '@cognite/reveal';
 import { createSdkByUrlToken } from './utilities/createSdkByUrlToken';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import { RevealResourcesFitCameraOnLoad } from './utilities/with3dResoursesFitCameraOnLoad';
-import {
-  type Image360AssetStylingGroup,
-  type AssetStylingGroup
-} from '../src/components/Reveal3DResources/types';
+import { type InstanceStylingGroup } from '../src/components/Reveal3DResources/types';
 import { type AnnotationsCogniteAnnotationTypesImagesAssetLink } from '@cognite/sdk';
 
 const meta = {
@@ -82,9 +78,7 @@ export const Main: Story = {
 };
 
 const StoryContent = ({ resources }: { resources: AddResourceOptions[] }): ReactElement => {
-  const [stylingGroups, setStylingGroups] = useState<
-    Array<FdmAssetStylingGroup | AssetStylingGroup | Image360AssetStylingGroup>
-  >([]);
+  const [stylingGroups, setStylingGroups] = useState<InstanceStylingGroup[]>([]);
   const cameraNavigation = useCameraNavigation();
   const nodeData = useClickedNodeData();
 

@@ -7,10 +7,16 @@ import { type CommentProperties, type PointsOfInterestInstance } from '../models
 import { type PointsOfInterestProvider } from '../PointsOfInterestProvider';
 
 import { v4 as uuid } from 'uuid';
-import { type PoiItem } from './types';
+import {
+  type PoiExternalAssetRef,
+  type PoiExternalDMRef,
+  type PoiExternalInstanceRef,
+  type PoiItem
+} from './types';
 import { isDefined } from '../../../../utilities/isDefined';
 import { uniq } from 'lodash';
 import { createUpsertRequestFromPois } from './createUpsertRequestFromPois';
+import { type InstanceReference } from '../../../../data-providers';
 
 /**
  * A PoI provider using the Cognite Application Data Storage service as backing storage
@@ -130,6 +136,11 @@ export class PointsOfInterestAdsProvider implements PointsOfInterestProvider<Ext
       );
     }
 
+    const userIdNameMap = await this.createUserMap([result.data.ownerId]);
+
+    const name = userIdNameMap.get(result.data.ownerId) ?? 'Unknown';
+    result.data.ownerId = name;
+
     return result.data;
   }
 
@@ -176,6 +187,7 @@ async function poiItemToInstance(
         externalId: item.sceneExternalId ?? 'dummy-scene-external-id',
         space: item.sceneSpace ?? 'dummy-scene-space'
       },
+      instanceRef: poiExternalInstanceRefToInstanceReference(item?.assetRef),
       sceneState: item.sceneState
     }
   };
@@ -187,4 +199,30 @@ async function poiItemToInstance(
 
     return name[0];
   }
+}
+
+function poiExternalInstanceRefToInstanceReference(
+  instance: PoiExternalInstanceRef | undefined
+): InstanceReference | undefined {
+  if (instance === undefined) {
+    return undefined;
+  }
+
+  if (isPoiAssetRef(instance)) {
+    return { assetId: instance.id };
+  } else if (isPoiDMRef(instance)) {
+    return { externalId: instance.externalId, space: instance.instanceSpace };
+  }
+  throw Error('Unrecognized PoI external reference type');
+}
+
+function isPoiAssetRef(instance: PoiExternalInstanceRef): instance is PoiExternalAssetRef {
+  return (instance as PoiExternalAssetRef).id !== undefined;
+}
+
+function isPoiDMRef(instance: PoiExternalInstanceRef): instance is PoiExternalDMRef {
+  return (
+    (instance as PoiExternalDMRef).externalId !== undefined &&
+    (instance as PoiExternalDMRef).instanceSpace !== undefined
+  );
 }

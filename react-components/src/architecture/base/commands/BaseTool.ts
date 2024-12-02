@@ -262,6 +262,7 @@ export abstract class BaseTool extends RenderTargetCommand {
     }
 
     this._renderTarget.contextMenuController.contextMenuPositionData = {
+      clickEvent: event,
       position: new Vector2(event.layerX, event.layerY),
       intersection
     };
