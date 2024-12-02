@@ -18,8 +18,8 @@ import { type DmsUniqueIdentifier, type Source } from '../data-providers/FdmSDK'
 import { useRenderTarget, useReveal } from '../components/RevealCanvas/ViewerContext';
 import { isActiveEditTool } from '../architecture/base/commands/BaseEditTool';
 import {
-  type PointCloudVolumeAssetWithViews,
-  usePointCloudVolumeMappingForIntersection
+  type PointCloudFdmVolumeMappingWithViews,
+  usePointCloudFdmVolumeMappingForIntersection
 } from '../query/core-dm/usePointCloudVolumeMappingForAssetInstances';
 import { useAssetMappingForTreeIndex, useFdm3dNodeDataPromises } from './cad';
 
@@ -40,7 +40,7 @@ export type ClickedNodeData = {
   fdmResult?: FdmNodeDataResult;
   assetMappingResult?: AssetMappingDataResult;
   pointCloudAnnotationMappingResult?: PointCloudAnnotationMappedAssetData[];
-  pointCloudVolumeAssetMappingResult?: PointCloudVolumeAssetWithViews[];
+  pointCloudFdmVolumeMappingResult?: PointCloudFdmVolumeMappingWithViews[];
   intersection: AnyIntersection | Image360AnnotationIntersection;
 };
 
@@ -58,7 +58,7 @@ export const useClickedNodeData = (options?: {
 
   const [intersection, setIntersection] = useState<AnyIntersection | undefined>(undefined);
 
-  const [annotationIntersection, setAnnotationIntersection] = useState<
+  const [image360AnnotationIntersection, setImage360AnnotationIntersection] = useState<
     Image360AnnotationIntersection | undefined
   >(undefined);
 
@@ -99,9 +99,9 @@ export const useClickedNodeData = (options?: {
         }
 
         if (annotationIntersection !== null) {
-          setAnnotationIntersection(annotationIntersection);
+          setImage360AnnotationIntersection(annotationIntersection);
         } else {
-          setAnnotationIntersection(undefined);
+          setImage360AnnotationIntersection(undefined);
         }
       })();
     };
@@ -117,20 +117,20 @@ export const useClickedNodeData = (options?: {
 
   const { data: assetMappingResult } = useAssetMappingForTreeIndex(intersection);
 
-  const { data: pointCloudAssetMappingResult } =
+  const { data: pointCloudAnnotationMappingResult } =
     usePointCloudAnnotationMappingForIntersection(intersection);
 
-  const { data: pointCloudAssetMappingVolumeResult } =
-    usePointCloudVolumeMappingForIntersection(intersection);
+  const { data: pointCloudFdmVolumeMappingResult } =
+    usePointCloudFdmVolumeMappingForIntersection(intersection);
 
   return useCombinedClickedNodeData(
     mouseButton,
     position,
     nodeDataPromises,
     assetMappingResult,
-    pointCloudAssetMappingResult,
-    pointCloudAssetMappingVolumeResult,
-    annotationIntersection ?? intersection
+    pointCloudAnnotationMappingResult,
+    pointCloudFdmVolumeMappingResult,
+    image360AnnotationIntersection ?? intersection
   );
 };
 
@@ -140,7 +140,7 @@ const useCombinedClickedNodeData = (
   fdmPromises: FdmNodeDataPromises | undefined,
   assetMappings: NodeAssetMappingResult | undefined,
   pointCloudAssetMappings: PointCloudAnnotationMappedAssetData[] | undefined,
-  pointCloudVolumeAssetMappings: PointCloudVolumeAssetWithViews[] | undefined,
+  pointCloudFdmVolumeMappings: PointCloudFdmVolumeMappingWithViews[] | undefined,
   intersection: AnyIntersection | Image360AnnotationIntersection | undefined
 ): ClickedNodeData | undefined => {
   const [clickedNodeData, setClickedNodeData] = useState<ClickedNodeData | undefined>();
@@ -166,7 +166,7 @@ const useCombinedClickedNodeData = (
       fdmResult: fdmData,
       assetMappingResult: assetMappingData,
       pointCloudAnnotationMappingResult: pointCloudAssetMappings,
-      pointCloudVolumeAssetMappingResult: pointCloudVolumeAssetMappings,
+      pointCloudFdmVolumeMappingResult: pointCloudFdmVolumeMappings,
       intersection
     });
   }, [
@@ -174,7 +174,7 @@ const useCombinedClickedNodeData = (
     fdmData,
     assetMappings?.node,
     pointCloudAssetMappings,
-    pointCloudVolumeAssetMappings
+    pointCloudFdmVolumeMappings
   ]);
 
   return clickedNodeData;

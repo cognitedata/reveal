@@ -36,7 +36,7 @@ export const usePointCloudDMVolumes = (
     queryFn: async () => {
       return await Promise.all(
         modelOptions.map(async (model) => {
-          const pointCloudDMVolumeWithAsset = await getPointCloudDMVolumesForModel(
+          const pointCloudDMVolumeWithAsset = await fetchPointCloudDMVolumesForModel(
             model.modelId,
             model.revisionId,
             fdmSdk
@@ -53,7 +53,7 @@ export const usePointCloudDMVolumes = (
   });
 };
 
-const getPointCloudDMVolumesForModel = async (
+const fetchPointCloudDMVolumesForModel = async (
   modelId: number,
   revisionId: number,
   fdmSdk: FdmSDK
