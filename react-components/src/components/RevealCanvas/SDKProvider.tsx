@@ -5,22 +5,21 @@ import React, { useContext, createContext, useMemo } from 'react';
 import { type CogniteClient } from '@cognite/sdk';
 import { FdmSdkContext } from './FdmDataProviderContext';
 import { FdmSDK } from '../../data-providers/FdmSDK';
-import { type Fdm3dDataProvider } from '../../data-providers/Fdm3dDataProvider';
 
 const SdkContext = createContext<CogniteClient | null>(null);
 
 SdkContext.displayName = 'CogniteSdkProvider';
 FdmSdkContext.displayName = 'FdmSdkProvider';
 
-type SDKProviderProps = { sdk: CogniteClient; fdm3dDataProvider: Fdm3dDataProvider; children: any };
+type SDKProviderProps = { sdk: CogniteClient; children: any };
 
-export function SDKProvider({
-  sdk,
-  children,
-  fdm3dDataProvider
-}: SDKProviderProps): React.ReactElement {
-  const fdmSdk = useMemo(() => new FdmSDK(sdk), [sdk]);
-  const content = useMemo(() => ({ fdmSdk, fdm3dDataProvider }), [fdmSdk, fdm3dDataProvider]);
+export function SDKProvider({ sdk, children }: SDKProviderProps): React.ReactElement {
+  const content = useMemo(
+    () => ({
+      fdmSdk: new FdmSDK(sdk)
+    }),
+    [sdk]
+  );
 
   return (
     <SdkContext.Provider value={sdk}>
@@ -52,15 +51,4 @@ export const useFdmSdk = (): FdmSDK => {
     );
   }
   return fdmProvider.fdmSdk;
-};
-
-export const useFdm3dDataProvider = (): Fdm3dDataProvider => {
-  const fdmProvider = useContext(FdmSdkContext);
-  if (fdmProvider === null) {
-    throw new Error(
-      `FdmSdkContext not found, add '<SDKProvider value={sdk}>' around your component/app`
-    );
-  }
-
-  return fdmProvider.fdm3dDataProvider;
 };
