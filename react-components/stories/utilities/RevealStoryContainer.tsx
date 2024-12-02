@@ -58,11 +58,9 @@ export const RevealStoryContext = ({
         ? new CoreDm3dFdm3dDataProvider([], fdmSdk)
         : new LegacyFdm3dDataProvider(fdmSdk, sdkInstance);
 
-    const renderTarget = new RevealRenderTarget(
-      viewer,
-      sdkInstance,
-      new CdfCaches(sdkInstance, fdm3dDataProvider, viewer)
-    );
+    const renderTarget = new RevealRenderTarget(viewer, sdkInstance, {
+      coreDmOnly: rest.useCoreDm
+    });
 
     renderTarget.setConfig(new StoryBookConfig());
     return renderTarget;

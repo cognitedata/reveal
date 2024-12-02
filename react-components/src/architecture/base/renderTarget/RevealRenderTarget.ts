@@ -40,9 +40,13 @@ import { type BaseTool } from '../commands/BaseTool';
 import { ContextMenuController } from './ContextMenuController';
 import { InstanceStylingController } from './InstanceStylingController';
 import { type Class } from '../domainObjectsHelpers/Class';
-import { type CdfCaches } from './CdfCaches';
+import { CdfCaches } from './CdfCaches';
 
 const DIRECTIONAL_LIGHT_NAME = 'DirectionalLight';
+
+export type RevealRenderTargetOptions = {
+  coreDmOnly?: boolean;
+};
 
 export class RevealRenderTarget {
   // ==================================================
@@ -71,17 +75,23 @@ export class RevealRenderTarget {
   // CONSTRUCTOR
   // ==================================================
 
-  constructor(viewer: Cognite3DViewer<DataSourceType>, sdk: CogniteClient, cdfCaches: CdfCaches) {
+  constructor(
+    viewer: Cognite3DViewer<DataSourceType>,
+    sdk: CogniteClient,
+    options?: RevealRenderTargetOptions
+  ) {
     this._viewer = viewer;
+
+    const coreDmOnly = options?.coreDmOnly ?? false;
 
     const cameraManager = this.cameraManager;
     if (!isFlexibleCameraManager(cameraManager)) {
       throw new Error('Can not use RevealRenderTarget without the FlexibleCameraManager');
     }
+    this._cdfCaches = new CdfCaches(sdk, viewer, { coreDmOnly });
     this._commandsController = new CommandsController(this.domElement);
     this._commandsController.addEventListeners();
     this._contextmenuController = new ContextMenuController();
-    this._cdfCaches = cdfCaches;
     this._instanceStylingController = new InstanceStylingController();
     this._rootDomainObject = new RootDomainObject(this, sdk);
 

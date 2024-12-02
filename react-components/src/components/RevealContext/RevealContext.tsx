@@ -79,19 +79,15 @@ export const RevealContext = (props: RevealContextProps): ReactElement => {
 };
 
 const useFdm3dDataProvider = (useCoreDm: boolean, sdk: CogniteClient): Fdm3dDataProvider => {
-  return useMemo(() => {
-    const fdmSdk = new FdmSDK(sdk);
-
-    return useCoreDm
-      ? new CoreDm3dFdm3dDataProvider([], fdmSdk)
-      : new LegacyFdm3dDataProvider(fdmSdk, sdk);
-  }, [sdk, useCoreDm]);
+  return useMemo(() => {}, [sdk, useCoreDm]);
 };
 
-const useRevealFromKeepAlive = (
-  { color, sdk, viewerOptions }: RevealContextProps,
-  fdm3dDataProvider: Fdm3dDataProvider
-): RevealRenderTarget | null => {
+const useRevealFromKeepAlive = ({
+  color,
+  sdk,
+  viewerOptions,
+  useCoreDm
+}: RevealContextProps): RevealRenderTarget | null => {
   const revealKeepAliveData = useRevealKeepAlive();
 
   // Double bookkeeping to satisfy test
@@ -123,11 +119,7 @@ const useRevealFromKeepAlive = (
         useFlexibleCameraManager: true,
         hasEventListeners: false
       });
-      renderTarget = new RevealRenderTarget(
-        viewer,
-        sdk,
-        new CdfCaches(sdk, fdm3dDataProvider, viewer)
-      );
+      renderTarget = new RevealRenderTarget(viewer, sdk, { coreDmOnly: useCoreDm });
       if (revealKeepAliveData !== undefined) {
         revealKeepAliveData.renderTargetRef.current = renderTarget;
       }
