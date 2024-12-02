@@ -13,9 +13,17 @@ import { AnchoredDialogUpdater } from '../../base/reactUpdaters/AnchoredDialogUp
 import { CreatePointsOfInterestWithDescriptionCommand } from './CreatePointsOfInterestWithDescriptionCommand';
 import { type RevealRenderTarget } from '../../base/renderTarget/RevealRenderTarget';
 import { BaseEditTool } from '../../base/commands/BaseEditTool';
+import { getInstancesFromClick } from '../../../utilities/getInstancesFromClick';
+import { type InstanceReference } from '../../../data-providers';
+import { DefaultNodeAppearance } from '@cognite/reveal';
+import { isAssetInstance } from '../../../data-providers/types';
+
+const ASSIGNED_INSTANCE_STYLING_SYMBOL = Symbol('poi3d-assigned-instance-styling');
 
 export class PointsOfInterestTool<PoiIdType> extends BaseEditTool {
   private _isCreating: boolean = false;
+
+  private _assignedInstance: InstanceReference | undefined;
 
   private _anchoredDialogContent: AnchoredDialogContent | undefined;
 
@@ -50,11 +58,12 @@ export class PointsOfInterestTool<PoiIdType> extends BaseEditTool {
     const domainObject = this.getPointsOfInterestDomainObject();
     domainObject.setSelectedPointOfInterest(undefined);
     this.setIsCreating(false);
+    this.setAssignedInstance(undefined);
   }
 
   public override async onClick(event: PointerEvent): Promise<void> {
     if (this._isCreating) {
-      await this.initiateCreatPointOfInterest(event);
+      await this.initiateCreatePointOfInterest(event);
       this.setIsCreating(false);
       return;
     }
@@ -102,6 +111,32 @@ export class PointsOfInterestTool<PoiIdType> extends BaseEditTool {
       this.renderTarget.setCrosshairCursor();
     } else {
       this.renderTarget.setNavigateCursor();
+    }
+  }
+
+  private setAssignedInstance(instance: InstanceReference | undefined): void {
+    this._assignedInstance = instance;
+
+    if (instance === undefined) {
+      this.renderTarget.instanceStylingController.setStylingGroup(
+        ASSIGNED_INSTANCE_STYLING_SYMBOL,
+        undefined
+      );
+      return;
+    }
+
+    const modelStyle = DefaultNodeAppearance.Highlighted;
+
+    if (isAssetInstance(instance)) {
+      this.renderTarget.instanceStylingController.setStylingGroup(
+        ASSIGNED_INSTANCE_STYLING_SYMBOL,
+        { assetIds: [instance.assetId], style: { cad: modelStyle, pointcloud: modelStyle } }
+      );
+    } else {
+      this.renderTarget.instanceStylingController.setStylingGroup(
+        ASSIGNED_INSTANCE_STYLING_SYMBOL,
+        { fdmAssetExternalIds: [instance], style: { cad: modelStyle, pointcloud: modelStyle } }
+      );
     }
   }
 
@@ -167,12 +202,19 @@ export class PointsOfInterestTool<PoiIdType> extends BaseEditTool {
     intersection.domainObject.setSelectedPointOfInterest(intersection.userData);
   }
 
-  private async initiateCreatPointOfInterest(event: PointerEvent): Promise<void> {
+  private async initiateCreatePointOfInterest(event: PointerEvent): Promise<void> {
     const intersection = await this.getIntersection(event);
     if (intersection === undefined || isPointsOfInterestIntersection(intersection)) {
       this.closeCreateCommandDialog();
       return;
     }
+
     this.openCreateCommandDialog(intersection.point);
+
+    const instances = await getInstancesFromClick(this.renderTarget, event);
+
+    if (instances !== undefined && instances.length !== 0) {
+      this.setAssignedInstance(instances[0]);
+    }
   }
 }

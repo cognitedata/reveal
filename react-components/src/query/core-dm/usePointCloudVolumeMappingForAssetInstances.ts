@@ -21,14 +21,14 @@ export type PointCloudVolumeMappedAssetData = {
   asset: DMInstanceRef & AssetProperties;
 };
 
-export type PointCloudVolumeAssetWithViews = {
+export type PointCloudFdmVolumeMappingWithViews = {
   views: Source[];
   assetInstance: DMInstanceRef;
 };
 
 export const usePointCloudVolumeMappingForAssetInstances = (
   assetInstanceRefs: DmsUniqueIdentifier[]
-): UseQueryResult<PointCloudVolumeMappedAssetData[]> => {
+): PointCloudVolumeMappedAssetData[] => {
   const { data: models } = usePointCloudModelRevisionIdsFromReveal();
   const addClassicModelOptionsResults = useModelIdRevisionIdFromModelOptions(models);
 
@@ -36,62 +36,46 @@ export const usePointCloudVolumeMappingForAssetInstances = (
     () => addClassicModelOptionsResults.map((result) => result.data).filter(isDefined),
     [addClassicModelOptionsResults]
   );
-  const { data: pointCloudVolumeResults, isLoading } = usePointCloudDMVolumes(classicModelOptions);
+  const { data: pointCloudVolumeResults } = usePointCloudDMVolumes(classicModelOptions);
 
-  return useQuery({
-    queryKey: [
-      queryKeys.pointCloudDMVolumeAssetMappings(
-        classicModelOptions.map((model) => `${model.modelId}/${model.revisionId}`).sort(),
-        assetInstanceRefs
-          .map((assetInstance) => `${assetInstance.space}/${assetInstance.externalId}`)
-          .sort()
-      )
-    ],
-    queryFn: async () => {
-      if (classicModelOptions.length === 0 || assetInstanceRefs.length === 0) {
-        return EMPTY_ARRAY;
-      }
+  return useMemo(() => {
+    if (classicModelOptions.length === 0 || assetInstanceRefs.length === 0) {
+      return EMPTY_ARRAY;
+    }
 
-      const result: PointCloudVolumeMappedAssetData[] =
-        pointCloudVolumeResults?.flatMap((pointCloudVolumeDataResult) =>
-          pointCloudVolumeDataResult.pointCloudDMVolumeWithAsset
-            .filter((pointCloudDMVolumeWithAsset) =>
-              assetInstanceRefs.some(
-                (assetInstance) =>
-                  pointCloudDMVolumeWithAsset.dmAsset !== undefined &&
-                  assetInstance.externalId === pointCloudDMVolumeWithAsset.dmAsset.externalId &&
-                  assetInstance.space === pointCloudDMVolumeWithAsset.dmAsset.space
-              )
+    const result: PointCloudVolumeMappedAssetData[] =
+      pointCloudVolumeResults?.flatMap((pointCloudVolumeDataResult) =>
+        pointCloudVolumeDataResult.pointCloudDMVolumeWithAsset
+          .filter((pointCloudDMVolumeWithAsset) =>
+            assetInstanceRefs.some(
+              (assetInstance) =>
+                pointCloudDMVolumeWithAsset.dmAsset !== undefined &&
+                assetInstance.externalId === pointCloudDMVolumeWithAsset.dmAsset.externalId &&
+                assetInstance.space === pointCloudDMVolumeWithAsset.dmAsset.space
             )
-            .map((pointCloudDMVolumeWithAsset) => {
-              if (pointCloudDMVolumeWithAsset.dmAsset === undefined) {
-                return undefined;
-              }
-              return {
-                volumeInstanceRef: {
-                  externalId: pointCloudDMVolumeWithAsset.externalId,
-                  space: pointCloudDMVolumeWithAsset.space
-                },
-                asset: pointCloudDMVolumeWithAsset.dmAsset
-              };
-            })
-            .filter(isDefined)
-        ) ?? EMPTY_ARRAY;
+          )
+          .map((pointCloudDMVolumeWithAsset) => {
+            if (pointCloudDMVolumeWithAsset.dmAsset === undefined) {
+              return undefined;
+            }
+            return {
+              volumeInstanceRef: {
+                externalId: pointCloudDMVolumeWithAsset.externalId,
+                space: pointCloudDMVolumeWithAsset.space
+              },
+              asset: pointCloudDMVolumeWithAsset.dmAsset
+            };
+          })
+          .filter(isDefined)
+      ) ?? EMPTY_ARRAY;
 
-      return result;
-    },
-    staleTime: Infinity,
-    enabled:
-      pointCloudVolumeResults !== undefined &&
-      pointCloudVolumeResults.length > 0 &&
-      assetInstanceRefs.length > 0 &&
-      !isLoading
-  });
+    return result;
+  }, [classicModelOptions, assetInstanceRefs]);
 };
 
-export const usePointCloudVolumeMappingForIntersection = (
+export const usePointCloudFdmVolumeMappingForIntersection = (
   intersection: AnyIntersection | undefined
-): UseQueryResult<PointCloudVolumeAssetWithViews[]> => {
+): UseQueryResult<PointCloudFdmVolumeMappingWithViews[]> => {
   const fdmSdk = useFdmSdk();
 
   const assetInstanceRefs = useMemo(() => {
@@ -104,8 +88,7 @@ export const usePointCloudVolumeMappingForIntersection = (
     return [];
   }, [intersection]);
 
-  const { data: volumeMappings, isLoading } =
-    usePointCloudVolumeMappingForAssetInstances(assetInstanceRefs);
+  const volumeMappings = usePointCloudVolumeMappingForAssetInstances(assetInstanceRefs);
 
   return useQuery({
     queryKey: [
@@ -119,7 +102,7 @@ export const usePointCloudVolumeMappingForIntersection = (
       if (volumeMappings === undefined || volumeMappings.length === 0) {
         return EMPTY_ARRAY;
       }
-      const result: PointCloudVolumeAssetWithViews[] = await Promise.all(
+      const result: PointCloudFdmVolumeMappingWithViews[] = await Promise.all(
         volumeMappings.map(async (volumeMapping) => {
           const assetInstance = {
             externalId: volumeMapping.asset.externalId,
@@ -134,6 +117,6 @@ export const usePointCloudVolumeMappingForIntersection = (
       );
       return result;
     },
-    enabled: volumeMappings !== undefined && volumeMappings.length > 0 && !isLoading
+    enabled: volumeMappings !== undefined && volumeMappings.length > 0
   });
 };
