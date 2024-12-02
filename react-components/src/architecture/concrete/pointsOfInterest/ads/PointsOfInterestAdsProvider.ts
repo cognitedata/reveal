@@ -132,6 +132,11 @@ export class PointsOfInterestAdsProvider implements PointsOfInterestProvider<Ext
       );
     }
 
+    const userIdNameMap = await this.createUserMap([result.data.ownerId]);
+
+    const name = userIdNameMap.get(result.data.ownerId) ?? 'Unknown';
+    result.data.ownerId = name;
+
     return result.data;
   }
 
