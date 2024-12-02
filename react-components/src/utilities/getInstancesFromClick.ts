@@ -24,6 +24,7 @@ export async function getInstancesFromClick(
 ): Promise<InstanceReference[] | undefined> {
   const viewer = renderTarget.viewer;
   const caches = renderTarget.cdfCaches;
+  const coreDmOnly = caches.coreDmOnly;
 
   const pixelCoordinates = viewer.getPixelCoordinatesFromEvent(event);
   const intersection = await viewer.getAnyIntersectionFromPixel(pixelCoordinates);
@@ -36,7 +37,7 @@ export async function getInstancesFromClick(
   const has360Asset =
     image360AnnotationData !== undefined && is360ImageAnnotation(image360AnnotationData);
 
-  if (has360Asset && image360AnnotationData.assetRef.id !== undefined) {
+  if (!coreDmOnly && has360Asset && image360AnnotationData.assetRef.id !== undefined) {
     return [{ assetId: image360AnnotationData.assetRef.id }];
   }
 
@@ -73,6 +74,10 @@ async function getPointCloudAnnotationMappingsFromIntersection(
   intersection: PointCloudIntersection,
   caches: CdfCaches
 ): Promise<InstanceReference[]> {
+  if (caches.coreDmOnly) {
+    return [];
+  }
+
   if (intersection.volumeMetadata?.assetRef?.id !== undefined) {
     return [{ assetId: intersection.volumeMetadata.assetRef.id }];
   }
@@ -129,6 +134,10 @@ async function getAssetMappingPromise(
   intersection: CadIntersection,
   caches: CdfCaches
 ): Promise<InstanceReference[]> {
+  if (caches.coreDmOnly) {
+    return [];
+  }
+
   const ancestors = await fetchAncestorNodesForTreeIndex(
     intersection.model.modelId,
     intersection.model.revisionId,
