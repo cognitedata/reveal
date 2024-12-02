@@ -9,8 +9,8 @@ import { VisualDomainObject } from '../domainObjects/VisualDomainObject';
 import { type AnyIntersection } from '@cognite/reveal';
 import { DomainObjectPanelUpdater } from '../reactUpdaters/DomainObjectPanelUpdater';
 import { type CommandsController } from '../renderTarget/CommandsController';
-import { DomainObject } from '../domainObjects/DomainObject';
-import { Class, isInstanceOf } from '../domainObjectsHelpers/Class';
+import { type DomainObject } from '../domainObjects/DomainObject';
+import { type Class, isInstanceOf } from '../domainObjectsHelpers/Class';
 
 /**
  * The `BaseEditTool` class is an abstract class that extends the `NavigationTool` class.
