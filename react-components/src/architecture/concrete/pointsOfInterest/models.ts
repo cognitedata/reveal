@@ -14,9 +14,9 @@ export type PointsOfInterestProperties = {
   // "Name of the source system node comes from"
   // source?: string;
   // "Title or name of the node"
-  title: string;
+  name: string;
   // "Long description of the node"
-  // description?: string;
+  description?: string;
   // "Text based labels for generic use"
   // labels?: string[];
   // "Visibility of node (PUBLIC, PRIVATE, PROTECTED)"

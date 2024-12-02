@@ -54,9 +54,7 @@ export class PointsOfInterestAdsProvider implements PointsOfInterestProvider<Ext
       );
     }
 
-    return await Promise.all(
-      result.data.items.map(async (item) => await poiItemToInstance(item, this._sdk))
-    );
+    return result.data.items.map(poiItemToInstance);
   }
 
   async fetchPointsOfInterest(
@@ -73,9 +71,7 @@ export class PointsOfInterestAdsProvider implements PointsOfInterestProvider<Ext
       );
     }
 
-    return await Promise.all(
-      result.data.items.map(async (item) => await poiItemToInstance(item, this._sdk))
-    );
+    return result.data.items.map(poiItemToInstance);
   }
 
   async deletePointsOfInterest(poiIds: ExternalId[]): Promise<void> {
@@ -156,17 +152,12 @@ export class PointsOfInterestAdsProvider implements PointsOfInterestProvider<Ext
   }
 }
 
-async function poiItemToInstance(
-  item: PoiItem,
-  sdk: CogniteClient
-): Promise<PointsOfInterestInstance<ExternalId>> {
-  const userIdNameMap = await getUserName(item.ownerId, sdk);
+function poiItemToInstance(item: PoiItem): PointsOfInterestInstance<ExternalId> {
   return {
     id: item.externalId,
     properties: {
-      title: item.name,
-      ownerId: userIdNameMap,
-      createdTime: item.createdTime,
+      name: item.name,
+      description: item.description,
       positionX: item.position[0],
       positionY: item.position[1],
       positionZ: item.position[2],
@@ -178,12 +169,4 @@ async function poiItemToInstance(
       sceneState: item.sceneState
     }
   };
-
-  async function getUserName(ownerId: string, sdk: CogniteClient): Promise<string | undefined> {
-    const profiles = await sdk.profiles.retrieve([{ userIdentifier: ownerId }]);
-
-    const name = profiles.filter(isDefined).map((profile) => profile.displayName ?? undefined);
-
-    return name[0];
-  }
 }
