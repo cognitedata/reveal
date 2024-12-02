@@ -25,7 +25,7 @@ export abstract class PrimitiveEditTool extends BaseEditTool {
   public primitiveType: PrimitiveType;
   private readonly _defaultPrimitiveType: PrimitiveType;
 
-  public get isEdit(): boolean {
+  public get isSelectMode(): boolean {
     return this.primitiveType === PrimitiveType.None;
   }
 
@@ -63,17 +63,17 @@ export abstract class PrimitiveEditTool extends BaseEditTool {
   }
 
   public override onEscapeKey(): void {
-    const wasEdit = this.isEdit;
+    const wasSelectMode = this.isSelectMode;
     this.escape();
     CommandsUpdater.update(this.renderTarget);
-    if (wasEdit) {
+    if (wasSelectMode) {
       super.onEscapeKey();
     }
   }
 
   public override async onHoverByDebounce(event: PointerEvent): Promise<void> {
     // Handle when creator is set first
-    if (!this.isEdit) {
+    if (!this.isSelectMode) {
       if (this._creator !== undefined) {
         const { _creator: creator } = this;
         if (!creator.preferIntersection) {
@@ -118,7 +118,7 @@ export abstract class PrimitiveEditTool extends BaseEditTool {
     const domainObject = this.getIntersectedSelectableDomainObject(intersection);
     if (!isDomainObjectIntersection(intersection) || domainObject === undefined) {
       this.defocusAll();
-      if (this.isEdit || intersection === undefined) {
+      if (this.isSelectMode || intersection === undefined) {
         this.renderTarget.setNavigateCursor();
       } else {
         this.setDefaultCursor();
