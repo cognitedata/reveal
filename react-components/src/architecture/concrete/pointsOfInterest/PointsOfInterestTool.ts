@@ -16,14 +16,12 @@ import { BaseEditTool } from '../../base/commands/BaseEditTool';
 import { getInstancesFromClick } from '../../../utilities/getInstancesFromClick';
 import { type InstanceReference } from '../../../data-providers';
 import { DefaultNodeAppearance } from '@cognite/reveal';
-import { isAssetInstance } from '../../../data-providers/types';
+import { createInstanceStyleGroup } from '../../../components/Reveal3DResources/instanceStyleTranslation';
 
 const ASSIGNED_INSTANCE_STYLING_SYMBOL = Symbol('poi3d-assigned-instance-styling');
 
 export class PointsOfInterestTool<PoiIdType> extends BaseEditTool {
   private _isCreating: boolean = false;
-
-  private _assignedInstance: InstanceReference | undefined;
 
   private _anchoredDialogContent: AnchoredDialogContent | undefined;
 
@@ -115,8 +113,6 @@ export class PointsOfInterestTool<PoiIdType> extends BaseEditTool {
   }
 
   private setAssignedInstance(instance: InstanceReference | undefined): void {
-    this._assignedInstance = instance;
-
     if (instance === undefined) {
       this.renderTarget.instanceStylingController.setStylingGroup(
         ASSIGNED_INSTANCE_STYLING_SYMBOL,
@@ -125,19 +121,12 @@ export class PointsOfInterestTool<PoiIdType> extends BaseEditTool {
       return;
     }
 
-    const modelStyle = DefaultNodeAppearance.Highlighted;
+    const stylingGroup = createInstanceStyleGroup([instance], DefaultNodeAppearance.Highlighted);
 
-    if (isAssetInstance(instance)) {
-      this.renderTarget.instanceStylingController.setStylingGroup(
-        ASSIGNED_INSTANCE_STYLING_SYMBOL,
-        { assetIds: [instance.assetId], style: { cad: modelStyle, pointcloud: modelStyle } }
-      );
-    } else {
-      this.renderTarget.instanceStylingController.setStylingGroup(
-        ASSIGNED_INSTANCE_STYLING_SYMBOL,
-        { fdmAssetExternalIds: [instance], style: { cad: modelStyle, pointcloud: modelStyle } }
-      );
-    }
+    this.renderTarget.instanceStylingController.setStylingGroup(
+      ASSIGNED_INSTANCE_STYLING_SYMBOL,
+      stylingGroup
+    );
   }
 
   private setAnchoredDialogContent(dialogContent: AnchoredDialogContent | undefined): void {
