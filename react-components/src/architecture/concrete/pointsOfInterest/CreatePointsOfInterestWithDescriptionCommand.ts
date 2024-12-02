@@ -5,7 +5,8 @@ import { type Vector3 } from 'three';
 import { PointsOfInterestDomainObject } from './PointsOfInterestDomainObject';
 import { type TranslationInput } from '../../base/utilities/TranslateInput';
 import { createPointsOfInterestPropertiesFromPointAndTitle } from './types';
-import { type DmsUniqueIdentifier } from '../../../data-providers';
+import { type InstanceReference, type DmsUniqueIdentifier } from '../../../data-providers';
+
 import {
   CustomBaseInputCommand,
   type FieldContent
@@ -14,6 +15,8 @@ import {
 export class CreatePointsOfInterestWithDescriptionCommand extends CustomBaseInputCommand {
   private readonly _point: Vector3;
   private readonly _scene: DmsUniqueIdentifier;
+
+  private _associatedInstance: InstanceReference | undefined;
 
   private readonly poisPlaceholders: TranslationInput[] = [
     { key: 'NAME' },
@@ -32,6 +35,14 @@ export class CreatePointsOfInterestWithDescriptionCommand extends CustomBaseInpu
     this._scene = scene;
     this._placeholders = this.poisPlaceholders;
     this._contents = this.poiContents;
+  }
+
+  public get associatedInstance(): InstanceReference | undefined {
+    return this._associatedInstance;
+  }
+
+  public set associatedInstance(instance: InstanceReference | undefined) {
+    this._associatedInstance = instance;
   }
 
   public override getPostButtonLabel(): TranslationInput {
@@ -71,7 +82,8 @@ export class CreatePointsOfInterestWithDescriptionCommand extends CustomBaseInpu
       createPointsOfInterestPropertiesFromPointAndTitle(
         this._point,
         this._scene,
-        this._contents.map((content) => content.content)
+        this._contents.map((content) => content.content),
+        this._associatedInstance
       )
     );
 
