@@ -149,6 +149,12 @@ export class PointsOfInterestDomainObject<PoiIdType> extends VisualDomainObject 
     return await this._poisCache.getPoiCommentsForPoi(poi.id);
   }
 
+  public async getPoiById(
+    poiId: PoiIdType
+  ): Promise<PointsOfInterestInstance<PoiIdType> | undefined> {
+    return await this._poisCache.getPoiById(poiId);
+  }
+
   public hasPendingPointsOfInterest(): boolean {
     return this._pointsOfInterest.some(
       (poi) => poi.status === PointsOfInterestStatus.PendingCreation

@@ -54,6 +54,10 @@ export class PointsOfInterestCache<PoiId> {
     return await this._poiProvider.fetchPointsOfInterest(sceneId);
   }
 
+  public async getPoiById(id: PoiId): Promise<PointsOfInterestInstance<PoiId> | undefined> {
+    return await this._poiProvider.getPointOfInterestById(id);
+  }
+
   public async deletePointsOfInterest(poiIds: PoiId[]): Promise<void> {
     if (poiIds.length === 0) {
       return;

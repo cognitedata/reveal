@@ -101,12 +101,32 @@ export class PointsOfInterestAdsProvider implements PointsOfInterestProvider<Ext
       );
     }
 
+    console.log('TEST Sresult.data', result.data);
     const userIdNameMap = await this.createUserMap(result.data.map((comment) => comment.ownerId));
 
     result.data.forEach((comment) => {
       const name = userIdNameMap.get(comment.ownerId) ?? 'Unknown';
       comment.ownerId = name;
     });
+
+    return result.data;
+  }
+
+  async getPointOfInterestById(poiId: ExternalId): Promise<PointsOfInterestInstance<ExternalId>> {
+    const result = await this._sdk.post<PointsOfInterestInstance<ExternalId>>(
+      `${this._sdk.getBaseUrl()}/${this._byidsUrl(this._sdk.project)}`,
+      {
+        data: { items: [{ externalId: poiId }] }
+      }
+    );
+
+    if (result.status !== 200) {
+      throw Error(
+        `An error occured while fetching point of interest by id: ${JSON.stringify(result.data)}, status code: ${result.status}`
+      );
+    }
+
+    console.log('TEST getPointOfInterestById ', result.data);
 
     return result.data;
   }

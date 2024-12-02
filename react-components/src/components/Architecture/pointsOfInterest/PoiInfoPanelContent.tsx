@@ -16,7 +16,7 @@ import {
 import { Dropdown } from '@cognite/cogs-lab';
 import { PoiSharePanel } from './PoiSharePanel';
 import styled from 'styled-components';
-import { useMemo, useState, type ReactNode } from 'react';
+import { useEffect, useMemo, useState, type ReactNode } from 'react';
 import { type PointOfInterest } from '../../../architecture';
 import { type CommentProperties } from '../../../architecture/concrete/pointsOfInterest/models';
 import { createButton } from '../CommandButtons';
@@ -42,6 +42,16 @@ const PanelHeader = (): ReactNode => {
   const poiDomainObject = usePoiDomainObject();
 
   const selectedPoi = useSelectedPoi();
+
+  useEffect(() => {
+
+    async function fetchPoi(): Promise<void> {
+      const poiData = await poiDomainObject?.getPoiById(selectedPoi?.id);
+      console.log('TEST poiData', selectedPoi, poiData);
+    }
+    void fetchPoi();
+  }, [selectedPoi]);
+
   if (selectedPoi === undefined) {
     return undefined;
   }

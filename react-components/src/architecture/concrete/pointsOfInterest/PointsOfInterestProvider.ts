@@ -16,6 +16,7 @@ export type PointsOfInterestProvider<ID> = {
     scene?: DmsUniqueIdentifier
   ) => Promise<Array<PointsOfInterestInstance<ID>>>;
   getPointsOfInterestComments: (poiId: ID) => Promise<CommentProperties[]>;
+  getPointOfInterestById: (poiId: ID) => Promise<PointsOfInterestInstance<ID>>;
   postPointsOfInterestComment: (poiId: ID, content: string) => Promise<CommentProperties>;
   deletePointsOfInterest: (poiIds: ID[]) => Promise<void>;
   createNewId: () => ID;
