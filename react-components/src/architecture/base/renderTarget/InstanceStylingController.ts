@@ -18,7 +18,6 @@ export class InstanceStylingController {
     }
 
     this._stylingMap.set(symbol, group);
-    console.log('FIRE!');
     this.fireChangeEvent();
   }
 
@@ -35,6 +34,8 @@ export class InstanceStylingController {
   }
 
   private fireChangeEvent(): void {
-    this._eventHandlers.forEach((f) => f());
+    this._eventHandlers.forEach((f) => {
+      f();
+    });
   }
 }

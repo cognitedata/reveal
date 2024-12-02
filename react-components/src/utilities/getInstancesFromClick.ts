@@ -3,22 +3,20 @@
  */
 
 import {
-  CadIntersection,
-  ClassicDataSourceType,
-  Cognite3DViewer,
-  DataSourceType,
-  DMDataSourceType,
-  PointCloudIntersection
+  type CadIntersection,
+  type ClassicDataSourceType,
+  type DataSourceType,
+  type DMDataSourceType,
+  type PointCloudIntersection
 } from '@cognite/reveal';
-import { InstanceReference } from '../data-providers';
-import { CdfCaches } from '../architecture/base/renderTarget/CdfCaches';
+import { type InstanceReference } from '../data-providers';
+import { type CdfCaches } from '../architecture/base/renderTarget/CdfCaches';
 import { fetchAncestorNodesForTreeIndex } from '../components/CacheProvider/requests';
 import { EMPTY_ARRAY } from './constants';
 import { fetchAnnotationsForModel } from '../hooks/pointClouds/fetchAnnotationsForModel';
 import { isDMIdentifier } from '../components';
 import { is360ImageAnnotation } from './is360ImageAnnotation';
-import { assertNever } from './assertNever';
-import { RevealRenderTarget } from '../architecture';
+import { type RevealRenderTarget } from '../architecture';
 
 export async function getInstancesFromClick(
   renderTarget: RevealRenderTarget,
@@ -47,9 +45,9 @@ export async function getInstancesFromClick(
   }
 
   if (intersection.type === 'cad') {
-    return getInstancesFromCadIntersection(intersection, caches);
+    return await getInstancesFromCadIntersection(intersection, caches);
   } else if (intersection.type === 'pointcloud') {
-    return getInstancesFromPointCloudIntersection(intersection, caches);
+    return await getInstancesFromPointCloudIntersection(intersection, caches);
   }
 
   return undefined;
@@ -60,11 +58,11 @@ async function getInstancesFromPointCloudIntersection(
   caches: CdfCaches
 ): Promise<InstanceReference[]> {
   if (isDMIdentifier(intersection.model.modelIdentifier)) {
-    return getPointCloudFdmInstancesFromIntersection(
+    return await getPointCloudFdmInstancesFromIntersection(
       intersection as PointCloudIntersection<DMDataSourceType>
     );
   } else {
-    return getPointCloudAnnotationMappingsFromIntersection(
+    return await getPointCloudAnnotationMappingsFromIntersection(
       intersection as PointCloudIntersection<ClassicDataSourceType>,
       caches
     );

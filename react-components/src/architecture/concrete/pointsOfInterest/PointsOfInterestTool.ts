@@ -14,7 +14,7 @@ import { CreatePointsOfInterestWithDescriptionCommand } from './CreatePointsOfIn
 import { type RevealRenderTarget } from '../../base/renderTarget/RevealRenderTarget';
 import { BaseEditTool } from '../../base/commands/BaseEditTool';
 import { getInstancesFromClick } from '../../../utilities/getInstancesFromClick';
-import { InstanceReference } from '../../../data-providers';
+import { type InstanceReference } from '../../../data-providers';
 import { DefaultNodeAppearance } from '@cognite/reveal';
 import { isAssetInstance } from '../../../data-providers/types';
 

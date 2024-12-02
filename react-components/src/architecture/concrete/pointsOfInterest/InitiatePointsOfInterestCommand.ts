@@ -6,7 +6,6 @@ import { type IconName } from '../../base/utilities/IconName';
 import { type TranslationInput } from '../../base/utilities/TranslateInput';
 import { RenderTargetCommand } from '../../base/commands/RenderTargetCommand';
 import { PointsOfInterestTool } from './PointsOfInterestTool';
-import { getInstancesFromClick } from '../../../utilities/getInstancesFromClick';
 
 export class InitiatePointsOfInterestCommand extends RenderTargetCommand {
   private readonly _position: Vector3;
