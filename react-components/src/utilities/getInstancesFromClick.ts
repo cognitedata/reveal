@@ -58,7 +58,7 @@ async function getInstancesFromPointCloudIntersection(
   caches: CdfCaches
 ): Promise<InstanceReference[]> {
   if (isDMIdentifier(intersection.model.modelIdentifier)) {
-    return await getPointCloudFdmInstancesFromIntersection(
+    return getPointCloudFdmInstancesFromIntersection(
       intersection as PointCloudIntersection<DMDataSourceType>
     );
   } else {
@@ -92,9 +92,9 @@ async function getPointCloudAnnotationMappingsFromIntersection(
   return annotations?.map((annotation) => ({ assetId: annotation.asset.id })) ?? EMPTY_ARRAY;
 }
 
-async function getPointCloudFdmInstancesFromIntersection(
+function getPointCloudFdmInstancesFromIntersection(
   intersection: PointCloudIntersection<DMDataSourceType>
-): Promise<InstanceReference[]> {
+): InstanceReference[] {
   return intersection.volumeMetadata?.assetRef === undefined
     ? EMPTY_ARRAY
     : [intersection.volumeMetadata.assetRef];
