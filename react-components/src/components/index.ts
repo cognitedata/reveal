@@ -21,5 +21,5 @@ export * from './RevealCanvas';
 export * from './RevealContext';
 export * from './RevealToolbar';
 export * from './SceneContainer';
-export * from './CacheProvider';
 export * from './RuleBasedOutputs';
+export * from './CacheProvider';

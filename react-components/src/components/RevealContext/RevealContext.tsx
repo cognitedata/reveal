@@ -7,17 +7,18 @@ import { type ReactNode, useEffect, useMemo, useState, type ReactElement } from 
 import { type Color } from 'three';
 import { I18nContextProvider } from '../i18n/I18n';
 import { ViewerContextProvider } from '../RevealCanvas/ViewerContext';
-import { NodeCacheProvider } from '../CacheProvider/NodeCacheProvider';
-import { AssetMappingAndNode3DCacheProvider } from '../CacheProvider/AssetMappingAndNode3DCacheProvider';
-import { PointCloudAnnotationCacheProvider } from '../CacheProvider/PointCloudAnnotationCacheProvider';
 import { Reveal3DResourcesInfoContextProvider } from '../Reveal3DResources/Reveal3DResourcesInfoContext';
 import { SDKProvider } from '../RevealCanvas/SDKProvider';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { useRevealKeepAlive } from '../RevealKeepAlive/RevealKeepAliveContext';
-import { Image360AnnotationCacheProvider } from '../CacheProvider/Image360AnnotationCacheProvider';
 import { RevealRenderTarget } from '../../architecture/base/renderTarget/RevealRenderTarget';
 import { LoadedSceneProvider } from '../SceneContainer/LoadedSceneContext';
 import { type CameraStateParameters } from '../RevealCanvas/hooks/useCameraStateControl';
+import { CoreDm3dFdm3dDataProvider } from '../../data-providers/core-dm-provider/CoreDm3dDataProvider';
+import { LegacyFdm3dDataProvider } from '../../data-providers/legacy-fdm-provider/LegacyFdm3dDataProvider';
+import { FdmSDK } from '../../data-providers/FdmSDK';
+import { CdfCaches } from '../../architecture/base/renderTarget/CdfCaches';
+import { type Fdm3dDataProvider } from '../../data-providers/Fdm3dDataProvider';
 
 export type RevealContextProps = {
   color?: Color;
@@ -41,7 +42,9 @@ export type RevealContextProps = {
 };
 
 export const RevealContext = (props: RevealContextProps): ReactElement => {
-  const viewer = useRevealFromKeepAlive(props);
+  const fdm3dDataProvider = useFdm3dDataProvider(props.useCoreDm ?? false, props.sdk);
+
+  const renderTarget = useRevealFromKeepAlive(props, fdm3dDataProvider);
 
   const queryClient = useMemo(() => {
     return new QueryClient({
@@ -53,28 +56,20 @@ export const RevealContext = (props: RevealContextProps): ReactElement => {
     });
   }, []);
 
-  if (viewer === null) return <></>;
+  if (renderTarget === null) return <></>;
 
   return (
-    <SDKProvider sdk={props.sdk} useCoreDm={props.useCoreDm}>
+    <SDKProvider sdk={props.sdk} fdm3dDataProvider={fdm3dDataProvider}>
       <QueryClientProvider client={queryClient}>
         <I18nContextProvider appLanguage={props.appLanguage}>
           <LoadedSceneProvider>
             <ViewerContextProvider
               cameraState={props.cameraState}
               setCameraState={props.setCameraState}
-              value={viewer}>
-              <NodeCacheProvider>
-                <AssetMappingAndNode3DCacheProvider>
-                  <PointCloudAnnotationCacheProvider>
-                    <Image360AnnotationCacheProvider>
-                      <Reveal3DResourcesInfoContextProvider>
-                        {props.children}
-                      </Reveal3DResourcesInfoContextProvider>
-                    </Image360AnnotationCacheProvider>
-                  </PointCloudAnnotationCacheProvider>
-                </AssetMappingAndNode3DCacheProvider>
-              </NodeCacheProvider>
+              value={renderTarget}>
+              <Reveal3DResourcesInfoContextProvider>
+                {props.children}
+              </Reveal3DResourcesInfoContextProvider>
             </ViewerContextProvider>
           </LoadedSceneProvider>
         </I18nContextProvider>
@@ -83,11 +78,20 @@ export const RevealContext = (props: RevealContextProps): ReactElement => {
   );
 };
 
-const useRevealFromKeepAlive = ({
-  color,
-  sdk,
-  viewerOptions
-}: RevealContextProps): RevealRenderTarget | null => {
+const useFdm3dDataProvider = (useCoreDm: boolean, sdk: CogniteClient): Fdm3dDataProvider => {
+  return useMemo(() => {
+    const fdmSdk = new FdmSDK(sdk);
+
+    return useCoreDm
+      ? new CoreDm3dFdm3dDataProvider([], fdmSdk)
+      : new LegacyFdm3dDataProvider(fdmSdk, sdk);
+  }, [sdk, useCoreDm]);
+};
+
+const useRevealFromKeepAlive = (
+  { color, sdk, viewerOptions }: RevealContextProps,
+  fdm3dDataProvider: Fdm3dDataProvider
+): RevealRenderTarget | null => {
   const revealKeepAliveData = useRevealKeepAlive();
 
   // Double bookkeeping to satisfy test
@@ -119,7 +123,11 @@ const useRevealFromKeepAlive = ({
         useFlexibleCameraManager: true,
         hasEventListeners: false
       });
-      renderTarget = new RevealRenderTarget(viewer, sdk);
+      renderTarget = new RevealRenderTarget(
+        viewer,
+        sdk,
+        new CdfCaches(sdk, fdm3dDataProvider, viewer)
+      );
       if (revealKeepAliveData !== undefined) {
         revealKeepAliveData.renderTargetRef.current = renderTarget;
       }

@@ -4,8 +4,8 @@
 
 import { type CameraState, type CogniteCadModel } from '@cognite/reveal';
 import { useReveal } from '../components/RevealCanvas/ViewerContext';
-import { useFdmNodeCache } from '../components/CacheProvider/NodeCacheProvider';
 import { Box3 } from 'three';
+import { useFdmNodeCache } from '../components/CacheProvider/CacheProvider';
 
 export type CameraNavigationActions = {
   fitCameraToVisualSceneBoundingBox: (duration?: number) => void;
@@ -61,7 +61,7 @@ export const useCameraNavigation = (): CameraNavigationActions => {
     }));
 
     const modelMappings = (
-      await fdmNodeCache.cache.getMappingsForFdmInstances(instances, modelsRevisionIds)
+      await fdmNodeCache.getMappingsForFdmInstances(instances, modelsRevisionIds)
     ).find((model) => model.mappings.size > 0);
 
     const nodeIds = [...(modelMappings?.mappings.values() ?? [])].flat().map((node) => node.id);

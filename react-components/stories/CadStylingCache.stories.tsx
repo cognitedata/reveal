@@ -20,7 +20,7 @@ import {
   IndexSet
 } from '@cognite/reveal';
 import { useEffect, useMemo, useState, type JSX } from 'react';
-import { useMappedEdgesForRevisions } from '../src/components/CacheProvider/NodeCacheProvider';
+import { useMappedEdgesForRevisions } from '../src/hooks/cad';
 
 const meta = {
   title: 'Example/CadStylingCache',

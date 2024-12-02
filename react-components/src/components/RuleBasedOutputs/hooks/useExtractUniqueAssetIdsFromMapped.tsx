@@ -3,7 +3,7 @@
  */
 
 import { type InternalId } from '@cognite/sdk';
-import { type ModelWithAssetMappings } from '../../CacheProvider/AssetMappingAndNode3DCacheProvider';
+import { type ModelWithAssetMappings } from '../../../hooks/cad/ModelWithAssetMappings';
 import { useMemo } from 'react';
 import { uniqBy } from 'lodash';
 

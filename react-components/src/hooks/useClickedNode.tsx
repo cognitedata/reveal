@@ -8,12 +8,10 @@ import {
   type AnyIntersection
 } from '@cognite/reveal';
 import { useEffect, useState } from 'react';
-import { useFdm3dNodeDataPromises } from '../components/CacheProvider/NodeCacheProvider';
 import { type CogniteInternalId, type Node3D } from '@cognite/sdk';
 import { type FdmNodeDataPromises } from '../components/CacheProvider/types';
-import { useAssetMappingForTreeIndex } from '../components/CacheProvider/AssetMappingAndNode3DCacheProvider';
 import { type NodeAssetMappingResult } from '../components/CacheProvider/AssetMappingAndNode3DCache';
-import { usePointCloudAnnotationMappingForAssetId } from '../components/CacheProvider/PointCloudAnnotationCacheProvider';
+import { usePointCloudAnnotationMappingForIntersection } from './pointClouds/usePointCloudAnnotationMappingForIntersection';
 import { type PointCloudAnnotationMappedAssetData } from './types';
 import { MOUSE, Vector2, type Vector3 } from 'three';
 import { type DmsUniqueIdentifier, type Source } from '../data-providers/FdmSDK';
@@ -23,6 +21,7 @@ import {
   type PointCloudVolumeAssetWithViews,
   usePointCloudVolumeMappingForIntersection
 } from '../query/core-dm/usePointCloudVolumeMappingForAssetInstances';
+import { useAssetMappingForTreeIndex, useFdm3dNodeDataPromises } from './cad';
 
 export type AssetMappingDataResult = {
   cadNode: Node3D;
@@ -119,7 +118,7 @@ export const useClickedNodeData = (options?: {
   const { data: assetMappingResult } = useAssetMappingForTreeIndex(intersection);
 
   const { data: pointCloudAssetMappingResult } =
-    usePointCloudAnnotationMappingForAssetId(intersection);
+    usePointCloudAnnotationMappingForIntersection(intersection);
 
   const { data: pointCloudAssetMappingVolumeResult } =
     usePointCloudVolumeMappingForIntersection(intersection);

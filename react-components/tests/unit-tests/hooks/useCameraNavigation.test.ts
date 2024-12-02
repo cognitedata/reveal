@@ -5,9 +5,11 @@ import { cadMock, nodeBoundingBox } from '../fixtures/cadModel';
 import { act, renderHook } from '@testing-library/react';
 import { fdmNodeCacheContentMock } from '../fixtures/fdmNodeCache';
 import { Vector3 } from 'three';
+import { renderTargetMock } from '../fixtures/renderTarget';
 
 vi.mock('../../../src/components/RevealCanvas/ViewerContext', () => ({
-  useReveal: () => viewerMock
+  useReveal: () => viewerMock,
+  useRenderTarget: () => renderTargetMock
 }));
 
 vi.mock('../../../src/components/CacheProvider/NodeCacheProvider', () => ({
@@ -90,9 +92,7 @@ describe('useCameraNavigation', () => {
       mappings: new Map([['model1', [{ id: 1 }, { id: 2 }]]])
     };
 
-    fdmNodeCacheContentMock.cache.getMappingsForFdmInstances = vi
-      .fn()
-      .mockResolvedValue([mockMappings]);
+    fdmNodeCacheContentMock.getMappingsForFdmInstances = vi.fn().mockResolvedValue([mockMappings]);
 
     const { result } = renderHook(() => useCameraNavigation());
 
@@ -111,9 +111,7 @@ describe('useCameraNavigation', () => {
     };
     viewerModelsMock.mockReturnValue(mockModels);
 
-    fdmNodeCacheContentMock.cache.getMappingsForFdmInstances = vi
-      .fn()
-      .mockResolvedValue([mockMappings]);
+    fdmNodeCacheContentMock.getMappingsForFdmInstances = vi.fn().mockResolvedValue([mockMappings]);
 
     const { result } = renderHook(() => useCameraNavigation());
 
