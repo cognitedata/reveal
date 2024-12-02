@@ -174,8 +174,8 @@ function poiItemToInstance(item: PoiItem): PointsOfInterestInstance<ExternalId> 
       positionZ: item.position[2],
       visibility: item.visibility,
       scene: {
-        externalId: item.sceneExternalId ?? 'dummy-scene-external-id',
-        space: item.sceneSpace ?? 'dummy-scene-space'
+        externalId: item.scene?.externalId ?? 'dummy-scene-external-id',
+        space: item.scene?.space ?? 'dummy-scene-space'
       },
       instanceRef: poiExternalInstanceRefToInstanceReference(item?.assetRef),
       sceneState: item.sceneState
