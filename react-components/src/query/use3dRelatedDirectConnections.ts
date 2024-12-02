@@ -33,7 +33,7 @@ export function use3dRelatedDirectConnections(
       const instanceContent = (
         await fdmSdk.getByExternalIds<Record<string, unknown>>(
           [{ instanceType: 'node', externalId: instance.externalId, space: instance.space }],
-          view
+          view !== undefined ? [view] : undefined
         )
       ).items[0];
 
