@@ -171,15 +171,19 @@ function poiItemToInstance(item: PoiItem): PointsOfInterestInstance<ExternalId> 
         externalId: item.sceneExternalId ?? 'dummy-scene-external-id',
         space: item.sceneSpace ?? 'dummy-scene-space'
       },
-      instanceRef: poiExternalInstanceRefToInstanceReference(item.assetRef),
+      instanceRef: poiExternalInstanceRefToInstanceReference(item?.assetRef),
       sceneState: item.sceneState
     }
   };
 }
 
 function poiExternalInstanceRefToInstanceReference(
-  instance: PoiExternalInstanceRef
-): InstanceReference {
+  instance: PoiExternalInstanceRef | undefined
+): InstanceReference | undefined {
+  if (instance == undefined) {
+    return undefined;
+  }
+
   if (isPoiAssetRef(instance)) {
     return { assetId: instance.id };
   } else if (isPoiDMRef(instance)) {

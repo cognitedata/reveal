@@ -29,7 +29,7 @@ export type PoiItem = {
   sceneExternalId?: ExternalId;
   sceneSpace?: Space;
   sceneState: PoiSceneState;
-  assetRef: PoiExternalInstanceRef;
+  assetRef?: PoiExternalInstanceRef;
   visibility: PoiVisibility;
   createdTime: number;
   lastUpdatedTime: number;
