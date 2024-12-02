@@ -117,7 +117,7 @@ export const useClickedNodeData = (options?: {
 
   const { data: assetMappingResult } = useAssetMappingForTreeIndex(intersection);
 
-  const { data: pointCloudAssetMappingResult } =
+  const { data: pointCloudAnnotationMappingResult } =
     usePointCloudAnnotationMappingForIntersection(intersection);
 
   const { data: pointCloudFdmVolumeMappingResult } =
