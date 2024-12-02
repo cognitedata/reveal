@@ -38,6 +38,7 @@ import { Changes } from '../domainObjectsHelpers/Changes';
 import { type CogniteClient } from '@cognite/sdk';
 import { type BaseTool } from '../commands/BaseTool';
 import { ContextMenuController } from './ContextMenuController';
+import { type Class } from '../domainObjectsHelpers/Class';
 import { type CdfCaches } from './CdfCaches';
 
 const DIRECTIONAL_LIGHT_NAME = 'DirectionalLight';
@@ -96,6 +97,10 @@ export class RevealRenderTarget {
 
   public get isInside360Image(): boolean {
     return this._viewer.canDoImage360Action(Image360Action.Exit);
+  }
+
+  public get active360ImageId(): string | undefined {
+    return this._viewer.getActive360ImageInfo()?.image360.id;
   }
 
   public get config(): BaseRevealConfig | undefined {
@@ -229,6 +234,10 @@ export class RevealRenderTarget {
     tool.attach(this);
     this.commandsController.add(tool);
     return this.commandsController.setDefaultTool(tool);
+  }
+
+  public setActiveToolByType<T extends BaseTool>(classType: Class<T>): boolean {
+    return this.commandsController.setActiveToolByType(classType);
   }
 
   public setConfig(config: BaseRevealConfig): void {

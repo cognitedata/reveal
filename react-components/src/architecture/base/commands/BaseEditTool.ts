@@ -9,6 +9,8 @@ import { VisualDomainObject } from '../domainObjects/VisualDomainObject';
 import { type AnyIntersection } from '@cognite/reveal';
 import { DomainObjectPanelUpdater } from '../reactUpdaters/DomainObjectPanelUpdater';
 import { type CommandsController } from '../renderTarget/CommandsController';
+import { type DomainObject } from '../domainObjects/DomainObject';
+import { type Class, isInstanceOf } from '../domainObjectsHelpers/Class';
 
 /**
  * The `BaseEditTool` class is an abstract class that extends the `NavigationTool` class.
@@ -141,10 +143,17 @@ export abstract class BaseEditTool extends NavigationTool {
   protected *getSelectable(): Generator<VisualDomainObject> {
     const { rootDomainObject } = this;
     for (const domainObject of rootDomainObject.getDescendantsByType(VisualDomainObject)) {
-      if (!this.canBeSelected(domainObject)) {
-        continue;
+      if (this.canBeSelected(domainObject)) {
+        yield domainObject;
       }
-      yield domainObject;
+    }
+  }
+
+  protected *getSelectableByType<T extends DomainObject>(classType: Class<T>): Generator<T> {
+    for (const domainObject of this.getSelectable()) {
+      if (isInstanceOf(domainObject, classType)) {
+        yield domainObject;
+      }
     }
   }
 

@@ -31,7 +31,8 @@ import { PointsOfInterestTool } from '../pointsOfInterest/PointsOfInterestTool';
 import { Image360ActionCommand } from '../../base/concreteCommands/image360Collection/Image360ActionCommand';
 import { Image360Action } from '@cognite/reveal';
 import { type ExternalId } from '../../../data-providers/FdmSDK';
-import { Image360AnnotationTool } from '../annotation360/Image360AnnotationTool';
+import { Image360AnnotationSelectTool } from '../annotation360/Image360AnnotationSelectTool';
+import { Image360AnnotationCreateTool } from '../annotation360/Image360AnnotationCreateTool';
 
 export class StoryBookConfig extends BaseRevealConfig {
   // ==================================================
@@ -61,7 +62,9 @@ export class StoryBookConfig extends BaseRevealConfig {
       new ToggleAllModelsVisibleCommand(),
       new ToggleMetricUnitsCommand(),
       new SettingsCommand(),
-      new Image360AnnotationTool(),
+      undefined,
+      new Image360AnnotationSelectTool(),
+      new Image360AnnotationCreateTool(),
       undefined,
       new MeasurementTool(),
       new ClipTool(),
