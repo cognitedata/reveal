@@ -20,6 +20,8 @@ import { type ButtonProp } from './RevealButtons';
 import { getDividerDirection } from './utilities';
 import { InputField } from './InputField';
 import { BaseInputCommand } from '../../architecture/base/commands/BaseInputCommand';
+import { CustomBaseInputCommand } from '../../architecture/base/commands/CustomBaseInputCommand';
+import { CustomInputField } from './CustomInputField';
 
 export function createButton(command: BaseCommand, placement: PlacementType): ReactElement {
   if (command instanceof BaseFilterCommand) {
@@ -41,6 +43,10 @@ export function createButton(command: BaseCommand, placement: PlacementType): Re
 
   if (command instanceof BaseInputCommand) {
     return <InputField key={command.uniqueId} inputCommand={command} placement={placement} />;
+  }
+
+  if (command instanceof CustomBaseInputCommand) {
+    return <CustomInputField key={command.uniqueId} inputCommand={command} placement={placement} />;
   }
 
   return <CommandButton inputCommand={command} placement={placement} />;
