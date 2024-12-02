@@ -1,0 +1,1 @@
+export { AssetLabel } from './AssetLabel';

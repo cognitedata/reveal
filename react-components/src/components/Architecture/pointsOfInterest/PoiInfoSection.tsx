@@ -7,6 +7,7 @@ import { type ReactNode } from 'react';
 import { useTranslation } from '../../i18n/I18n';
 import { useSelectedPoi } from './useSelectedPoi';
 import styled from 'styled-components';
+import { AssetLabel } from '../../AssetLabel';
 
 export const PoiInfoSection = (): ReactNode => {
   const { t } = useTranslation();
@@ -25,6 +26,12 @@ export const PoiInfoSection = (): ReactNode => {
         <TextLabel text={t({ key: 'DESCRIPTION' })} />
         <Input placeholder={t({ key: 'DESCRIPTION_PLACEHOLDER' })} value={description} fullWidth />
       </Flex>
+      {selectedPoi.properties.instanceRef && (
+        <Flex direction="column">
+          <TextLabel text={t({ untranslated: 'ASSET' })} />
+          <AssetLabel instance={selectedPoi.properties.instanceRef} />
+        </Flex>
+      )}
     </InfoSectionContainer>
   );
 };

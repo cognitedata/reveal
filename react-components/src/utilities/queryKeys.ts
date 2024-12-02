@@ -2,11 +2,14 @@
  * Copyright 2024 Cognite AS
  */
 import { type IdEither } from '@cognite/sdk';
+import { DmsUniqueIdentifier } from '../data-providers';
 
 export const queryKeys = {
   all: ['cdf'] as const,
   // ASSETS
   assetsById: (ids: IdEither[]) => [...assets, ids] as const,
+  // DM nodes
+  dmNodesById: (ids: DmsUniqueIdentifier[]) => [...dm, ids] as const,
   // Points of interest
   poiCommentsById: (id: unknown) => [...pois, id] as const,
   // TIMESERIES
@@ -42,6 +45,7 @@ export const queryKeys = {
 } as const;
 
 const assets: string[] = [...queryKeys.all, 'assets'];
+const dm: string[] = [...queryKeys.all, 'dm'];
 const assetInstanceRefs: string[] = [...queryKeys.all, 'asset-instance-refs'];
 
 const pois: string[] = [...queryKeys.all, 'pois'];
