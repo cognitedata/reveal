@@ -26,8 +26,7 @@ export type PoiItem = {
   name: string;
   description?: string;
   position: Vec3;
-  sceneExternalId?: ExternalId;
-  sceneSpace?: Space;
+  scene?: DmsUniqueIdentifier;
   sceneState: PoiSceneState;
   assetRef?: PoiExternalInstanceRef;
   visibility: PoiVisibility;
