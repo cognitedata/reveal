@@ -72,7 +72,12 @@ const ContextMenuContent = ({
   return (
     <Menu>
       <ActionList>
-        {point !== undefined && <RevealButtons.PointsOfInterestInitiateCreation point={point} />}
+        {point !== undefined && (
+          <RevealButtons.PointsOfInterestInitiateCreation
+            point={point}
+            clickEvent={contextMenuData.clickEvent}
+          />
+        )}
       </ActionList>
     </Menu>
   );

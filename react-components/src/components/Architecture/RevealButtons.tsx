@@ -80,8 +80,13 @@ export class RevealButtons {
   static PointsOfInterest = (prop: ButtonProp): ReactElement =>
     createButtonFromCommandConstructor(() => new PointsOfInterestTool(), prop);
 
-  static PointsOfInterestInitiateCreation = (prop: { point: Vector3 } & ButtonProp): ReactElement =>
-    createButtonFromCommandConstructor(() => new InitiatePointsOfInterestCommand(prop.point), prop);
+  static PointsOfInterestInitiateCreation = (
+    prop: { point: Vector3; clickEvent: PointerEvent } & ButtonProp
+  ): ReactElement =>
+    createButtonFromCommandConstructor(
+      () => new InitiatePointsOfInterestCommand(prop.point, prop.clickEvent),
+      prop
+    );
 
   static DeleteSelectedPointOfInterest = (prop: ButtonProp): ReactElement =>
     createButtonFromCommandConstructor(() => new DeleteSelectedPointsOfInterestCommand(), prop);

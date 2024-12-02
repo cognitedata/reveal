@@ -16,14 +16,12 @@ import { BaseEditTool } from '../../base/commands/BaseEditTool';
 import { getInstancesFromClick } from '../../../utilities/getInstancesFromClick';
 import { type InstanceReference } from '../../../data-providers';
 import { DefaultNodeAppearance } from '@cognite/reveal';
-import { isAssetInstance } from '../../../data-providers/types';
+import { createInstanceStyleGroup } from '../../../components/Reveal3DResources/instanceStyleTranslation';
 
 const ASSIGNED_INSTANCE_STYLING_SYMBOL = Symbol('poi3d-assigned-instance-styling');
 
 export class PointsOfInterestTool<PoiIdType> extends BaseEditTool {
   private _isCreating: boolean = false;
-
-  private _assignedInstance: InstanceReference | undefined;
 
   private _anchoredDialogContent: AnchoredDialogContent | undefined;
 
@@ -117,8 +115,6 @@ export class PointsOfInterestTool<PoiIdType> extends BaseEditTool {
   }
 
   private setAssignedInstance(instance: InstanceReference | undefined): void {
-    this._assignedInstance = instance;
-
     if (instance === undefined) {
       this.renderTarget.instanceStylingController.setStylingGroup(
         ASSIGNED_INSTANCE_STYLING_SYMBOL,
@@ -127,19 +123,12 @@ export class PointsOfInterestTool<PoiIdType> extends BaseEditTool {
       return;
     }
 
-    const modelStyle = DefaultNodeAppearance.Highlighted;
+    const stylingGroup = createInstanceStyleGroup([instance], DefaultNodeAppearance.Highlighted);
 
-    if (isAssetInstance(instance)) {
-      this.renderTarget.instanceStylingController.setStylingGroup(
-        ASSIGNED_INSTANCE_STYLING_SYMBOL,
-        { assetIds: [instance.assetId], style: { cad: modelStyle, pointcloud: modelStyle } }
-      );
-    } else {
-      this.renderTarget.instanceStylingController.setStylingGroup(
-        ASSIGNED_INSTANCE_STYLING_SYMBOL,
-        { fdmAssetExternalIds: [instance], style: { cad: modelStyle, pointcloud: modelStyle } }
-      );
-    }
+    this.renderTarget.instanceStylingController.setStylingGroup(
+      ASSIGNED_INSTANCE_STYLING_SYMBOL,
+      stylingGroup
+    );
   }
 
   private setAnchoredDialogContent(dialogContent: AnchoredDialogContent | undefined): void {
@@ -147,7 +136,7 @@ export class PointsOfInterestTool<PoiIdType> extends BaseEditTool {
     AnchoredDialogUpdater.update();
   }
 
-  public openCreateCommandDialog(position: Vector3): void {
+  public openCreateCommandDialog(position: Vector3, clickEvent: PointerEvent): void {
     const poiObject = this.getPointsOfInterestDomainObject();
 
     const scene = poiObject?.getScene();
@@ -186,6 +175,15 @@ export class PointsOfInterestTool<PoiIdType> extends BaseEditTool {
       onCloseCallback: onCancelCallback,
       customListeners
     });
+
+    void getInstancesFromClick(this.renderTarget, clickEvent).then((instances) => {
+      if (instances !== undefined && instances.length !== 0) {
+        const selectedInstance = instances[0];
+
+        this.setAssignedInstance(selectedInstance);
+        createPointCommand.associatedInstance = selectedInstance;
+      }
+    });
   }
 
   public closeCreateCommandDialog(): void {
@@ -211,12 +209,6 @@ export class PointsOfInterestTool<PoiIdType> extends BaseEditTool {
       return;
     }
 
-    this.openCreateCommandDialog(intersection.point);
-
-    const instances = await getInstancesFromClick(this.renderTarget, event);
-
-    if (instances !== undefined && instances.length !== 0) {
-      this.setAssignedInstance(instances[0]);
-    }
+    this.openCreateCommandDialog(intersection.point, event);
   }
 }

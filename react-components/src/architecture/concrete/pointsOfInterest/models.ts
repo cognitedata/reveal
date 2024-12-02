@@ -2,7 +2,7 @@
  * Copyright 2024 Cognite AS
  */
 
-import { type DmsUniqueIdentifier } from '../../../data-providers';
+import { type InstanceReference, type DmsUniqueIdentifier } from '../../../data-providers';
 
 export type PoiVisibility = 'PUBLIC' | 'PRIVATE';
 
@@ -30,7 +30,6 @@ export type PointsOfInterestProperties = {
   // "The status of the observation (draft, completed, sent)"
   // status?: string;
   // "External ID of the associated CDF Asset"
-  // asset?: DmsUniqueIdentifier;
   // "List of associated files"
   // files?: DmsUniqueIdentifier[];
   // "description of how the observation was troubleshooted"
@@ -46,6 +45,7 @@ export type PointsOfInterestProperties = {
   positionY: number;
   positionZ: number;
   scene: DmsUniqueIdentifier;
+  instanceRef?: InstanceReference;
   // "Comments"
   // comments?: CommentProperties[];
   sceneState: SceneState;
