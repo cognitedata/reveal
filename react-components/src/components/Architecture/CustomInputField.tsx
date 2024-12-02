@@ -33,6 +33,7 @@ export const CustomInputField = ({
   const [cancelLabel, setCancelLabel] = useState<string | undefined>(
     translateIfExists(command.getCancelButtonLabel())
   );
+  const [postButtonDisabled, setPostButtonDisabled] = useState(true);
 
   const initialContents = useMemo(() => {
     return command.contents.map((fieldContent) => ({
@@ -65,6 +66,12 @@ export const CustomInputField = ({
       const newContents = contents !== undefined ? [...contents] : [];
       newContents[index].content = newContents[index] !== undefined ? data : '';
       setContents(newContents);
+
+      const isAnyTextContentEmpty = command.contents.some(
+        (fieldContent, index) =>
+          fieldContent.type === 'text' && (newContents[index]?.content ?? '').trim() === ''
+      );
+      setPostButtonDisabled(isAnyTextContentEmpty);
     },
     [contents, setContents]
   );
@@ -97,7 +104,7 @@ export const CustomInputField = ({
             setContents([]);
           }}
           postButtonText={postLabel}
-          postButtonDisabled={!enabled}
+          postButtonDisabled={postButtonDisabled || !enabled}
           cancelButtonText={cancelLabel}
           cancelButtonDisabled={false}
           onCancel={command.onCancel}
