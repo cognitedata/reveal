@@ -1,5 +1,8 @@
-import { ReactElement, useMemo } from 'react';
-import { InstanceReference } from '../../data-providers';
+/*!
+ * Copyright 2024 Cognite AS
+ */
+import { type ReactElement, useMemo } from 'react';
+import { type InstanceReference } from '../../data-providers';
 import { isAssetInstance, isDmsInstance } from '../../data-providers/types';
 import { useAssetsByIdsQuery } from '../../query';
 import { EMPTY_ARRAY } from '../../utilities/constants';

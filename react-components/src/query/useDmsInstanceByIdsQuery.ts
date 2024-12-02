@@ -6,13 +6,13 @@ import { useQuery, type UseQueryResult } from '@tanstack/react-query';
 import { type IdEither, type Asset } from '@cognite/sdk';
 
 import { queryKeys } from '../utilities/queryKeys';
-import { DmsUniqueIdentifier, FdmNode, Source } from '../data-providers/FdmSDK';
+import { type DmsUniqueIdentifier, type FdmNode, type Source } from '../data-providers/FdmSDK';
 import { useFdmSdk } from '../components/RevealCanvas/SDKProvider';
 
 export const useDmInstancesByIds = (
   ids: DmsUniqueIdentifier[],
   sources: Source[]
-): UseQueryResult<FdmNode<Record<string, any>>[]> => {
+): UseQueryResult<Array<FdmNode<Record<string, any>>>> => {
   const fdmSdk = useFdmSdk();
   return useQuery({
     queryKey: queryKeys.dmNodesById(ids),

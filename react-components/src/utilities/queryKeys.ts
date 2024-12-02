@@ -2,7 +2,7 @@
  * Copyright 2024 Cognite AS
  */
 import { type IdEither } from '@cognite/sdk';
-import { DmsUniqueIdentifier } from '../data-providers';
+import { type DmsUniqueIdentifier } from '../data-providers';
 
 export const queryKeys = {
   all: ['cdf'] as const,
