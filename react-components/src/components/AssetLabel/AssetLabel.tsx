@@ -15,12 +15,13 @@ const nameableSources = [COGNITE_DESCRIBABLE_SOURCE];
 export type AssetLabelProps = { instance: InstanceReference };
 
 export const AssetLabel = ({ instance }: { instance: InstanceReference }): ReactElement => {
-  const assetIds = useMemo(
-    () => (isAssetInstance(instance) ? [{ id: instance.assetId }] : EMPTY_ARRAY),
+  const [assetIds, fdmIds] = useMemo(
+    () => [
+      isAssetInstance(instance) ? [{ id: instance.assetId }] : EMPTY_ARRAY,
+      isDmsInstance(instance) ? [instance] : EMPTY_ARRAY
+    ],
     [instance]
   );
-
-  const fdmIds = useMemo(() => (isDmsInstance(instance) ? [instance] : EMPTY_ARRAY), [instance]);
 
   const { data: assets } = useAssetsByIdsQuery(assetIds);
   const { data: fdmNodes } = useDmInstancesByIds(fdmIds, nameableSources);

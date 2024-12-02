@@ -26,7 +26,7 @@ export const PoiInfoSection = (): ReactNode => {
         <TextLabel text={t({ key: 'DESCRIPTION' })} />
         <Input placeholder={t({ key: 'DESCRIPTION_PLACEHOLDER' })} value={description} fullWidth />
       </Flex>
-      {selectedPoi.properties.instanceRef && (
+      {selectedPoi.properties.instanceRef !== undefined && (
         <Flex direction="column">
           <TextLabel text={t({ key: 'ASSET' })} />
           <AssetLabel instance={selectedPoi.properties.instanceRef} />
