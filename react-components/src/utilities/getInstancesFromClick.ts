@@ -51,6 +51,8 @@ export async function getInstancesFromClick(
   } else if (intersection.type === 'pointcloud') {
     return getInstancesFromPointCloudIntersection(intersection, caches);
   }
+
+  return undefined;
 }
 
 async function getInstancesFromPointCloudIntersection(
