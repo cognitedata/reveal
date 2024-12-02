@@ -164,6 +164,5 @@ export const CustomInputField = ({
 };
 
 const StyledFlex = styled(Flex)`
-  padding: 8px;
-  min-height: 200px;
+  padding: 6px;
 `;

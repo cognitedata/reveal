@@ -11,7 +11,7 @@ import { type Vector3 } from 'three';
 import { type DomainObjectIntersection } from '../../base/domainObjectsHelpers/DomainObjectIntersection';
 import { type PointsOfInterestDomainObject } from './PointsOfInterestDomainObject';
 import { type InstanceReference, type DmsUniqueIdentifier } from '../../../data-providers';
-import { ReactNode } from 'react';
+import { type ReactNode } from 'react';
 
 export enum PointsOfInterestStatus {
   Default,
