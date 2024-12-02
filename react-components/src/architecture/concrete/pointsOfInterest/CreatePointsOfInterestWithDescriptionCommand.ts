@@ -6,17 +6,27 @@ import { BaseInputCommand } from '../../base/commands/BaseInputCommand';
 import { PointsOfInterestDomainObject } from './PointsOfInterestDomainObject';
 import { type TranslationInput } from '../../base/utilities/TranslateInput';
 import { createPointsOfInterestPropertiesFromPointAndTitle } from './types';
-import { type DmsUniqueIdentifier } from '../../../data-providers';
+import { type InstanceReference, type DmsUniqueIdentifier } from '../../../data-providers';
 
 export class CreatePointsOfInterestWithDescriptionCommand extends BaseInputCommand {
   private readonly _point: Vector3;
   private readonly _scene: DmsUniqueIdentifier;
+
+  private _associatedInstance: InstanceReference | undefined;
 
   constructor(position: Vector3, scene: DmsUniqueIdentifier) {
     super();
 
     this._point = position;
     this._scene = scene;
+  }
+
+  public get associatedInstance(): InstanceReference | undefined {
+    return this._associatedInstance;
+  }
+
+  public set associatedInstance(instance: InstanceReference | undefined) {
+    this._associatedInstance = instance;
   }
 
   public override getPostButtonLabel(): TranslationInput {
@@ -49,7 +59,12 @@ export class CreatePointsOfInterestWithDescriptionCommand extends BaseInputComma
     }
 
     const poi = domainObject.addPendingPointsOfInterest(
-      createPointsOfInterestPropertiesFromPointAndTitle(this._point, this._scene, this._content)
+      createPointsOfInterestPropertiesFromPointAndTitle(
+        this._point,
+        this._scene,
+        this._content,
+        this._associatedInstance
+      )
     );
 
     void domainObject.save().then(() => {

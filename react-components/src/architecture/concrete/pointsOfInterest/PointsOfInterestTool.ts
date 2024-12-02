@@ -145,7 +145,7 @@ export class PointsOfInterestTool<PoiIdType> extends BaseEditTool {
     AnchoredDialogUpdater.update();
   }
 
-  public openCreateCommandDialog(position: Vector3): void {
+  public openCreateCommandDialog(position: Vector3, clickEvent: PointerEvent): void {
     const poiObject = this.getPointsOfInterestDomainObject();
 
     const scene = poiObject?.getScene();
@@ -184,6 +184,15 @@ export class PointsOfInterestTool<PoiIdType> extends BaseEditTool {
       onCloseCallback: onCancelCallback,
       customListeners
     });
+
+    void getInstancesFromClick(this.renderTarget, clickEvent).then((instances) => {
+      if (instances !== undefined && instances.length !== 0) {
+        const selectedInstance = instances[0];
+
+        this.setAssignedInstance(selectedInstance);
+        createPointCommand.associatedInstance = selectedInstance;
+      }
+    });
   }
 
   public closeCreateCommandDialog(): void {
@@ -209,12 +218,6 @@ export class PointsOfInterestTool<PoiIdType> extends BaseEditTool {
       return;
     }
 
-    this.openCreateCommandDialog(intersection.point);
-
-    const instances = await getInstancesFromClick(this.renderTarget, event);
-
-    if (instances !== undefined && instances.length !== 0) {
-      this.setAssignedInstance(instances[0]);
-    }
+    this.openCreateCommandDialog(intersection.point, event);
   }
 }

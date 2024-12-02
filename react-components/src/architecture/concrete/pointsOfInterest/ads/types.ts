@@ -1,9 +1,12 @@
 /*!
  * Copyright 2024 Cognite AS
  */
-import { type InternalId } from '@cognite/sdk';
 import { type DmsUniqueIdentifier } from '../../../../data-providers';
 import { type Space, type ExternalId } from '../../../../data-providers/FdmSDK';
+
+export type PoiExternalAssetRef = { id: number };
+export type PoiExternalDMRef = { externalId: ExternalId; instanceSpace: Space };
+export type PoiExternalInstanceRef = PoiExternalAssetRef | PoiExternalDMRef;
 
 export type PoiUpsertRequestPayload = {
   externalId: ExternalId;
@@ -11,9 +14,9 @@ export type PoiUpsertRequestPayload = {
   description?: string;
   position: Vec3;
   sceneState: PoiSceneState;
-  screenshotFile: InternalId;
+  screenshotFile: number;
   scene: DmsUniqueIdentifier;
-  assetRef: { id: InternalId } | DmsUniqueIdentifier;
+  assetRef: PoiExternalInstanceRef;
   visibility: PoiVisibility;
 };
 
@@ -26,7 +29,7 @@ export type PoiItem = {
   sceneExternalId?: ExternalId;
   sceneSpace?: Space;
   sceneState: PoiSceneState;
-  assetRef: DmsUniqueIdentifier;
+  assetRef: PoiExternalInstanceRef;
   visibility: PoiVisibility;
   createdTime: number;
   lastUpdatedTime: number;
