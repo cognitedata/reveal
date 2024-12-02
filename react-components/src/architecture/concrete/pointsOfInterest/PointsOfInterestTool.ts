@@ -63,7 +63,7 @@ export class PointsOfInterestTool<PoiIdType> extends BaseEditTool {
 
   public override async onClick(event: PointerEvent): Promise<void> {
     if (this._isCreating) {
-      await this.initiateCreatPointOfInterest(event);
+      await this.initiateCreatePointOfInterest(event);
       this.setIsCreating(false);
       return;
     }
@@ -202,7 +202,7 @@ export class PointsOfInterestTool<PoiIdType> extends BaseEditTool {
     intersection.domainObject.setSelectedPointOfInterest(intersection.userData);
   }
 
-  private async initiateCreatPointOfInterest(event: PointerEvent): Promise<void> {
+  private async initiateCreatePointOfInterest(event: PointerEvent): Promise<void> {
     const intersection = await this.getIntersection(event);
     if (intersection === undefined || isPointsOfInterestIntersection(intersection)) {
       this.closeCreateCommandDialog();
