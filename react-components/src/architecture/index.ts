@@ -90,7 +90,7 @@ export { BaseView } from './base/views/BaseView';
 export { GroupThreeView } from './base/views/GroupThreeView';
 export { ThreeView } from './base/views/ThreeView';
 
-// New architecture: annotations
+// New architecture: 3D annotations
 export { AnnotationsDomainObject } from './concrete/annotations/AnnotationsDomainObject';
 export { AnnotationsRenderStyle } from './concrete/annotations/AnnotationsRenderStyle';
 export { Annotation } from './concrete/annotations/helpers/Annotation';
@@ -102,15 +102,15 @@ export { AnnotationsSelectTool } from './concrete/annotations/commands/Annotatio
 export { AnnotationsCreateTool } from './concrete/annotations/commands/AnnotationsCreateTool';
 export { getGlobalMatrix } from './concrete/annotations/helpers/getMatrixUtils';
 
-// New architecture: points of interest
-export * from './concrete/pointsOfInterest';
-
+// New architecture: 2D Annotations (Image360 Polygon)
 export { Image360AnnotationDomainObject } from './concrete/annotation360/Image360AnnotationDomainObject';
 export { Image360AnnotationFolder } from './concrete/annotation360/Image360AnnotationFolder';
-export { Image360AnnotationTool } from './concrete/annotation360/Image360AnnotationTool';
-export { Image360AnnotationCreator } from './concrete/annotation360/Image360AnnotationCreator';
-export { Image360AnnotationEditTypeCommand } from './concrete/annotation360/Image360AnnotationEditTypeCommand';
+export { Image360AnnotationSelectTool } from './concrete/annotation360/Image360AnnotationSelectTool';
+export { Image360AnnotationCreateTool } from './concrete/annotation360/Image360AnnotationCreateTool';
 export { DeleteSelectedImage360AnnotationCommand } from './concrete/annotation360/DeleteSelectedImage360AnnotationCommand';
+
+// New architecture: points of interest
+export * from './concrete/pointsOfInterest';
 
 export type { LegacyIdentifier } from './concrete/annotation360/types';
 export type { FdmIdentifier } from './concrete/annotation360/types';

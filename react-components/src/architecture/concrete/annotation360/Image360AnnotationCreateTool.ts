@@ -10,22 +10,20 @@ import { type VisualDomainObject } from '../../base/domainObjects/VisualDomainOb
 import { type IconName } from '../../base/utilities/IconName';
 import { Image360AnnotationCreator } from './Image360AnnotationCreator';
 import { PrimitiveType } from '../../base/utilities/primitives/PrimitiveType';
-import { Image360AnnotationEditTypeCommand } from './Image360AnnotationEditTypeCommand';
-import { UndoCommand } from '../../base/concreteCommands/UndoCommand';
-import { type BaseCommand } from '../../base/commands/BaseCommand';
 import { Changes } from '../../base/domainObjectsHelpers/Changes';
-import { DeleteSelectedImage360AnnotationCommand } from './DeleteSelectedImage360AnnotationCommand';
 import { Image360AnnotationFolder } from './Image360AnnotationFolder';
 import { type DomainObject } from '../../base/domainObjects/DomainObject';
+import { CommandsUpdater } from '../../base/reactUpdaters/CommandsUpdater';
+import { Image360AnnotationSelectTool } from './Image360AnnotationSelectTool';
+import { EDIT_WITHOUT_IMAGE } from './constants';
 
-export class Image360AnnotationTool extends PrimitiveEditTool {
+export class Image360AnnotationCreateTool extends PrimitiveEditTool {
   // ==================================================
   // CONSTRUCTOR
   // ==================================================
 
   public constructor() {
-    super();
-    this.primitiveType = PrimitiveType.Polygon;
+    super(PrimitiveType.Polygon);
   }
 
   // ==================================================
@@ -37,21 +35,13 @@ export class Image360AnnotationTool extends PrimitiveEditTool {
   }
 
   public override get tooltip(): TranslationInput {
-    return { untranslated: 'Create or delete annotation polygon' };
+    return {
+      untranslated: 'Create 360 annotation polygons. Click at least 3 points and end with Esc.'
+    };
   }
 
   public override get isEnabled(): boolean {
-    return this.renderTarget.isInside360Image;
-  }
-
-  public override getToolbar(): Array<BaseCommand | undefined> {
-    return [
-      new Image360AnnotationEditTypeCommand(PrimitiveType.None),
-      new Image360AnnotationEditTypeCommand(PrimitiveType.Polygon),
-      undefined, // Separator
-      new DeleteSelectedImage360AnnotationCommand(),
-      new UndoCommand()
-    ];
+    return EDIT_WITHOUT_IMAGE ? true : this.renderTarget.isInside360Image;
   }
 
   public override update(): void {
@@ -65,84 +55,63 @@ export class Image360AnnotationTool extends PrimitiveEditTool {
   // OVERRIDES of BaseTool
   // ==================================================
 
-  public override onActivate(): void {
-    const selected360ImageId = this.renderTarget.viewer.getActive360ImageInfo()?.image360.id;
-    if (selected360ImageId === undefined) {
-      return;
-    }
-
-    for (const domainObject of this.getSelectable()) {
-      if (
-        domainObject instanceof Image360AnnotationDomainObject &&
-        domainObject.connectedImageId === selected360ImageId
-      ) {
-        domainObject.setVisibleInteractive(true, this.renderTarget);
-      }
-    }
-    super.onActivate();
+  public override onDeactivate(): void {
+    super.onDeactivate();
+    this.escape();
   }
 
-  public override onDeactivate(): void {
-    this.setAllVisible(false);
-    super.onDeactivate();
+  public override onEscapeKey(): void {
+    this.escape();
+    this.setSelectTool();
   }
 
   public override async onHover(event: PointerEvent): Promise<void> {
-    if (!this.isEdit) {
-      const creator = this._creator;
-      if (creator === undefined) {
-        this.setDefaultCursor();
-        return;
-      }
-      // Hover in the "air"
-      const ray = this.getRay(event);
-      if (creator.addPoint(ray, undefined, true)) {
-        this.setDefaultCursor();
-        return;
-      }
+    const creator = this._creator;
+    if (creator === undefined) {
+      this.setDefaultCursor();
+      return;
+    }
+    // Hover in the "air"
+    const ray = this.getRay(event);
+    if (creator.addPoint(ray, undefined, true)) {
+      this.setDefaultCursor();
+      return;
     }
     super.onHover(event);
   }
 
-  public override async onHoverByDebounce(event: PointerEvent): Promise<void> {
-    if (!this.isEdit) {
-      return; // Used by onHover
-    }
-    await super.onHoverByDebounce(event);
+  public override async onHoverByDebounce(_event: PointerEvent): Promise<void> {
+    await Promise.resolve();
+    // Used by onHover
   }
 
   public override async onClick(event: PointerEvent): Promise<void> {
-    if (!this.isEdit) {
-      let creator = this._creator;
-      if (creator !== undefined) {
-        const ray = this.getRay(event);
-        if (creator.addPoint(ray)) {
-          this.endCreatorIfFinished(creator);
-        }
-        return;
-      } else {
-        creator = this.createCreator();
-        if (creator === undefined) {
-          await super.onClick(event);
-          return;
-        }
-        const ray = this.getRay(event);
-        if (!creator.addPoint(ray)) {
-          return;
-        }
-        const { domainObject } = creator;
-        this.deselectAll();
-
-        const parent = this.getOrCreateParent();
-        parent.addChildInteractive(domainObject);
-        domainObject.setSelectedInteractive(true);
-        domainObject.setVisibleInteractive(true);
-        this.addTransaction(domainObject.createTransaction(Changes.added));
-        this._creator = creator;
+    let creator = this._creator;
+    if (creator !== undefined) {
+      const ray = this.getRay(event);
+      if (creator.addPoint(ray)) {
+        this.endCreatorIfFinished(creator);
+      }
+    } else {
+      creator = this.createCreator();
+      if (creator === undefined) {
+        await super.onClick(event);
         return;
       }
+      const ray = this.getRay(event);
+      if (!creator.addPoint(ray)) {
+        return;
+      }
+      const { domainObject } = creator;
+      this.deselectAll();
+
+      const parent = this.getOrCreateParent();
+      parent.addChildInteractive(domainObject);
+      domainObject.setSelectedInteractive(true);
+      domainObject.setVisibleInteractive(true);
+      this.addTransaction(domainObject.createTransaction(Changes.added));
+      this._creator = creator;
     }
-    await super.onClick(event);
   }
 
   // ==================================================
@@ -170,5 +139,15 @@ export class Image360AnnotationTool extends PrimitiveEditTool {
     const newFolder = new Image360AnnotationFolder();
     root.addChildInteractive(newFolder);
     return newFolder;
+  }
+
+  // ==================================================
+  // OVERRIDES of PrimitiveEditTool
+  // ==================================================
+
+  private setSelectTool(): void {
+    if (this.renderTarget.commandsController.setActiveToolByType(Image360AnnotationSelectTool)) {
+      CommandsUpdater.update(this.renderTarget);
+    }
   }
 }
