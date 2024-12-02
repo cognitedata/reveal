@@ -14,11 +14,6 @@ import { useRevealKeepAlive } from '../RevealKeepAlive/RevealKeepAliveContext';
 import { RevealRenderTarget } from '../../architecture/base/renderTarget/RevealRenderTarget';
 import { LoadedSceneProvider } from '../SceneContainer/LoadedSceneContext';
 import { type CameraStateParameters } from '../RevealCanvas/hooks/useCameraStateControl';
-import { CoreDm3dFdm3dDataProvider } from '../../data-providers/core-dm-provider/CoreDm3dDataProvider';
-import { LegacyFdm3dDataProvider } from '../../data-providers/legacy-fdm-provider/LegacyFdm3dDataProvider';
-import { FdmSDK } from '../../data-providers/FdmSDK';
-import { CdfCaches } from '../../architecture/base/renderTarget/CdfCaches';
-import { type Fdm3dDataProvider } from '../../data-providers/Fdm3dDataProvider';
 
 export type RevealContextProps = {
   color?: Color;
@@ -42,9 +37,7 @@ export type RevealContextProps = {
 };
 
 export const RevealContext = (props: RevealContextProps): ReactElement => {
-  const fdm3dDataProvider = useFdm3dDataProvider(props.useCoreDm ?? false, props.sdk);
-
-  const renderTarget = useRevealFromKeepAlive(props, fdm3dDataProvider);
+  const renderTarget = useRevealFromKeepAlive(props);
 
   const queryClient = useMemo(() => {
     return new QueryClient({
@@ -59,7 +52,7 @@ export const RevealContext = (props: RevealContextProps): ReactElement => {
   if (renderTarget === null) return <></>;
 
   return (
-    <SDKProvider sdk={props.sdk} fdm3dDataProvider={fdm3dDataProvider}>
+    <SDKProvider sdk={props.sdk}>
       <QueryClientProvider client={queryClient}>
         <I18nContextProvider appLanguage={props.appLanguage}>
           <LoadedSceneProvider>
@@ -76,10 +69,6 @@ export const RevealContext = (props: RevealContextProps): ReactElement => {
       </QueryClientProvider>
     </SDKProvider>
   );
-};
-
-const useFdm3dDataProvider = (useCoreDm: boolean, sdk: CogniteClient): Fdm3dDataProvider => {
-  return useMemo(() => {}, [sdk, useCoreDm]);
 };
 
 const useRevealFromKeepAlive = ({

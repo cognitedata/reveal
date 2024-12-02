@@ -10,6 +10,7 @@ import { Image360AnnotationCache } from '../../../components/CacheProvider/Image
 import { type Cognite3DViewer, type DataSourceType } from '@cognite/reveal';
 import { CoreDm3dFdm3dDataProvider } from '../../../data-providers/core-dm-provider/CoreDm3dDataProvider';
 import { LegacyFdm3dDataProvider } from '../../../data-providers/legacy-fdm-provider/LegacyFdm3dDataProvider';
+import { type Fdm3dDataProvider } from '../../../data-providers/Fdm3dDataProvider';
 
 export type CdfCachesOptions = {
   coreDmOnly: boolean;
@@ -20,9 +21,11 @@ export class CdfCaches {
   private readonly _fdmNodeCache: FdmNodeCache;
   private readonly _pointCloudAnnotationCache: PointCloudAnnotationCache;
   private readonly _image360AnnotationCache: Image360AnnotationCache;
+
   private readonly _coreDmOnly: boolean;
 
   private readonly _cogniteClient: CogniteClient;
+  private readonly _fdm3dDataProvider: Fdm3dDataProvider;
 
   constructor(
     cdfClient: CogniteClient,
@@ -41,6 +44,7 @@ export class CdfCaches {
     this._image360AnnotationCache = new Image360AnnotationCache(cdfClient, viewer);
 
     this._cogniteClient = cdfClient;
+    this._fdm3dDataProvider = fdm3dDataProvider;
     this._coreDmOnly = coreDmOnly;
   }
 
@@ -62,6 +66,10 @@ export class CdfCaches {
 
   public get cogniteClient(): CogniteClient {
     return this._cogniteClient;
+  }
+
+  public get fdm3dDataProvider(): Fdm3dDataProvider {
+    return this._fdm3dDataProvider;
   }
 
   public get coreDmOnly(): boolean {

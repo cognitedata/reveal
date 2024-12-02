@@ -2,7 +2,6 @@
  * Copyright 2024 Cognite AS
  */
 import { type FdmSDK } from '../../data-providers/FdmSDK';
-import { type Fdm3dDataProvider } from '../../data-providers/Fdm3dDataProvider';
 import { createContext } from 'react';
 
 /**
@@ -12,7 +11,6 @@ import { createContext } from 'react';
  */
 export type FdmDataProviderContextContent = {
   fdmSdk: FdmSDK;
-  fdm3dDataProvider: Fdm3dDataProvider;
 };
 
 export const FdmSdkContext = createContext<FdmDataProviderContextContent | null>(null);

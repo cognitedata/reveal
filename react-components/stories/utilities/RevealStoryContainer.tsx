@@ -14,10 +14,6 @@ import {
 import { type SceneIdentifiers } from '../../src/components/SceneContainer/sceneTypes';
 import { RevealRenderTarget } from '../../src/architecture/base/renderTarget/RevealRenderTarget';
 import { StoryBookConfig } from '../../src/architecture/concrete/config/StoryBookConfig';
-import { FdmSDK } from '../../src/data-providers/FdmSDK';
-import { CoreDm3dFdm3dDataProvider } from '../../src/data-providers/core-dm-provider/CoreDm3dDataProvider';
-import { LegacyFdm3dDataProvider } from '../../src/data-providers/legacy-fdm-provider/LegacyFdm3dDataProvider';
-import { CdfCaches } from '../../src/architecture/base/renderTarget/CdfCaches';
 
 type RevealStoryContainerProps = Omit<RevealContextProps, 'sdk'> & {
   sdk?: CogniteClient;
@@ -50,13 +46,6 @@ export const RevealStoryContext = ({
         useFlexibleCameraManager: true
       });
     }
-
-    const fdmSdk = new FdmSDK(sdkInstance);
-
-    const fdm3dDataProvider =
-      (rest.useCoreDm ?? false)
-        ? new CoreDm3dFdm3dDataProvider([], fdmSdk)
-        : new LegacyFdm3dDataProvider(fdmSdk, sdkInstance);
 
     const renderTarget = new RevealRenderTarget(viewer, sdkInstance, {
       coreDmOnly: rest.useCoreDm

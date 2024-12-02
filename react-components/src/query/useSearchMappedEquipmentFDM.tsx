@@ -9,13 +9,14 @@ import {
   type InstanceFilter,
   type SimpleSource
 } from '../data-providers/FdmSDK';
-import { useFdm3dDataProvider, useFdmSdk } from '../components/RevealCanvas/SDKProvider';
+import { useFdmSdk } from '../components/RevealCanvas/SDKProvider';
 import { type UseQueryResult, useQuery } from '@tanstack/react-query';
 import { type DataSourceType, type AddModelOptions } from '@cognite/reveal';
 import { isEqual, uniq, chunk } from 'lodash';
 import { type Fdm3dDataProvider } from '../data-providers/Fdm3dDataProvider';
 import { removeEmptyProperties } from '../utilities/removeEmptyProperties';
 import { getModelKeys } from '../utilities/getModelKeys';
+import { useFdm3dDataProvider } from '../components/CacheProvider/CacheProvider';
 
 export type InstancesWithView = { view: Source; instances: NodeItem[] };
 
