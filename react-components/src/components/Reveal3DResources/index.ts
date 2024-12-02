@@ -9,6 +9,7 @@ export type {
   AssetStylingGroup,
   DefaultResourceStyling,
   Image360AssetStylingGroup,
+  InstanceStylingGroup,
   CommonImage360Settings,
   TaggedAddCadResourceOptions,
   TaggedAddPointCloudResourceOptions,
