@@ -6,6 +6,7 @@ import { Flex, Input, TextLabel } from '@cognite/cogs.js';
 import { type ReactNode } from 'react';
 import { useTranslation } from '../../i18n/I18n';
 import { useSelectedPoi } from './useSelectedPoi';
+import styled from 'styled-components';
 
 export const PoiInfoSection = (): ReactNode => {
   const { t } = useTranslation();
@@ -13,17 +14,21 @@ export const PoiInfoSection = (): ReactNode => {
   if (selectedPoi === undefined) {
     return undefined;
   }
-  const { title } = selectedPoi.properties;
+  const { name, description } = selectedPoi.properties;
   return (
-    <Flex direction="column" justifyContent="space-between" gap={8}>
+    <InfoSectionContainer direction="column" justifyContent="space-between" gap={8}>
       <Flex direction="column">
         <TextLabel text={t({ key: 'TITLE' })} />
-        <Input placeholder={t({ key: 'TITLE_PLACEHOLDER' })} value={title} fullWidth />
+        <Input placeholder={t({ key: 'TITLE_PLACEHOLDER' })} value={name} fullWidth />
       </Flex>
       <Flex direction="column">
         <TextLabel text={t({ key: 'DESCRIPTION' })} />
-        <Input placeholder={t({ key: 'DESCRIPTION_PLACEHOLDER' })} value={title} fullWidth />
+        <Input placeholder={t({ key: 'DESCRIPTION_PLACEHOLDER' })} value={description} fullWidth />
       </Flex>
-    </Flex>
+    </InfoSectionContainer>
   );
 };
+
+const InfoSectionContainer = styled(Flex)`
+  margin-top: 16px;
+`;

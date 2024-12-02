@@ -2,8 +2,8 @@
  * Copyright 2024 Cognite AS
  */
 
-import { Accordion, Flex, Avatar } from '@cognite/cogs.js';
-import { type ReactNode, useState, useMemo } from 'react';
+import { Flex, Avatar, TextLabel } from '@cognite/cogs.js';
+import { type ReactNode, useMemo } from 'react';
 import { type PointOfInterest } from '../../../architecture';
 import { CreatePoiCommentCommand } from '../../../architecture/concrete/pointsOfInterest/CreatePoiCommentCommand';
 import { type CommentProperties } from '../../../architecture/concrete/pointsOfInterest/models';
@@ -18,36 +18,27 @@ export const PoiCommentSection = (): ReactNode => {
 
   const poi = useSelectedPoi();
 
-  const [open, setOpen] = useState<boolean>(true);
-
   const comments = useCommentsForPoiQuery(poi);
   if (poi === undefined) {
     return null;
   }
 
   return (
-    <Accordion
-      type="ghost"
-      title={t({ key: 'COMMENTS' })}
-      expanded={open}
-      onChange={(expanded: boolean) => {
-        setOpen(expanded);
-      }}>
+    <Flex direction="column" justifyContent="space-between" gap={8}>
+      <TextLabel text={t({ key: 'COMMENTS' })} />
       <Flex direction="column" gap={8}>
         {comments.data?.map((comment) => (
           <SingleCommentDisplay key={`${comment.ownerId}/${comment.content}`} comment={comment} />
         ))}
       </Flex>
-      <CommentFieldContainer>
-        <CreateCommentField poi={poi} refetchComments={comments.refetch} />
-      </CommentFieldContainer>
-    </Accordion>
+      <StyledCreateCommentField poi={poi} refetchComments={comments.refetch} />
+    </Flex>
   );
 };
 
 export const SingleCommentDisplay = ({ comment }: { comment: CommentProperties }): ReactNode => {
   return (
-    <Flex direction="row" gap={8} alignContent="center">
+    <Flex direction="row" gap={8} alignContent="center" alignItems="center">
       <Avatar text={comment.ownerId} />
       {comment.content}
     </Flex>
@@ -71,6 +62,6 @@ export const CreateCommentField = ({
   return createButton(command, 'right');
 };
 
-const CommentFieldContainer = styled.div`
+const StyledCreateCommentField = styled(CreateCommentField)`
   margin-top: 8px;
 `;

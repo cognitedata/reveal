@@ -80,7 +80,9 @@ export const CreatePoiOwnerField = ({
     <Flex direction="row" alignItems="center" gap={8}>
       <Avatar size="x-small" text={ownerId} />
       <Divider direction="vertical" weight="2px" />
-      <TextLabel text={createTime} />
+      <Flex alignItems="center">
+        <TextLabel text={createTime} />
+      </Flex>
     </Flex>
   );
 };
