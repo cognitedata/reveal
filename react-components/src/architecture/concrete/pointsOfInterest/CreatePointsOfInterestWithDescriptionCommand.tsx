@@ -11,6 +11,7 @@ import {
   CustomBaseInputCommand,
   type FieldContent
 } from '../../base/commands/CustomBaseInputCommand';
+import { InstanceLabel } from '../../../components/InstanceLabel';
 
 export class CreatePointsOfInterestWithDescriptionCommand extends CustomBaseInputCommand {
   private readonly _point: Vector3;
@@ -25,7 +26,9 @@ export class CreatePointsOfInterestWithDescriptionCommand extends CustomBaseInpu
 
   private readonly poiContents: FieldContent[] = [
     { type: 'text', content: '' },
-    { type: 'commentWithButtons', content: '' }
+    { type: 'comment', content: '' },
+    { type: 'customInput', content: '' },
+    { type: 'submitButtons', content: undefined }
   ];
 
   constructor(position: Vector3, scene: DmsUniqueIdentifier) {
@@ -43,6 +46,18 @@ export class CreatePointsOfInterestWithDescriptionCommand extends CustomBaseInpu
 
   public set associatedInstance(instance: InstanceReference | undefined) {
     this._associatedInstance = instance;
+  }
+
+  public setCustomInputAsInstanceReference = (input: InstanceReference): void => {
+    this.poiContents.forEach((content) => {
+      if (content.type === 'customInput') {
+        content.content = <InstanceLabel instance={input} />;
+      }
+    });
+  };
+
+  public override get contents(): FieldContent[] {
+    return this._contents ?? [];
   }
 
   public override getPostButtonLabel(): TranslationInput {

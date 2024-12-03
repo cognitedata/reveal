@@ -11,6 +11,7 @@ import { type Vector3 } from 'three';
 import { type DomainObjectIntersection } from '../../base/domainObjectsHelpers/DomainObjectIntersection';
 import { type PointsOfInterestDomainObject } from './PointsOfInterestDomainObject';
 import { type InstanceReference, type DmsUniqueIdentifier } from '../../../data-providers';
+import { type ReactNode } from 'react';
 
 export enum PointsOfInterestStatus {
   Default,
@@ -27,7 +28,7 @@ export type PointOfInterest<IdType> = {
 export function createPointsOfInterestPropertiesFromPointAndTitle(
   point: Vector3,
   scene: DmsUniqueIdentifier,
-  contents: string[],
+  contents: ReactNode[],
   associatedInstance: InstanceReference | undefined
 ): PointsOfInterestProperties {
   const cdfPosition = point.clone().applyMatrix4(CDF_TO_VIEWER_TRANSFORMATION.clone().invert());
@@ -37,8 +38,8 @@ export function createPointsOfInterestPropertiesFromPointAndTitle(
     positionZ: cdfPosition.z,
     scene,
     sceneState: {},
-    name: contents[0],
-    description: contents[1],
+    name: contents[0] as string,
+    description: contents[1] as string,
     instanceRef: associatedInstance
   };
 }
