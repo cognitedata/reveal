@@ -428,11 +428,11 @@ export class FdmSDK {
 
   public async getByExternalIds<PropertyType>(
     queries: Array<{ instanceType: InstanceType; externalId: string; space: string }>,
-    source?: Source
+    sources?: Source[]
   ): Promise<ExternalIdsResultList<PropertyType>> {
     const data: any = { items: queries, includeTyping: true };
-    if (source !== null) {
-      data.sources = [{ source }];
+    if (sources !== undefined) {
+      data.sources = sources.map((source) => ({ source }));
     }
 
     const result = await this._sdk.post(this._byIdsEndpoint, { data });

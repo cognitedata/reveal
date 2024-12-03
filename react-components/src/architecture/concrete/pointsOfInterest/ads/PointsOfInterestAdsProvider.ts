@@ -7,10 +7,15 @@ import { type CommentProperties, type PointsOfInterestInstance } from '../models
 import { type PointsOfInterestProvider } from '../PointsOfInterestProvider';
 
 import { v4 as uuid } from 'uuid';
-import { type PoiItem } from './types';
-import { isDefined } from '../../../../utilities/isDefined';
-import { uniq } from 'lodash';
+import {
+  type PoiExternalAssetRef,
+  type PoiExternalDMRef,
+  type PoiExternalInstanceRef,
+  type PoiItem
+} from './types';
 import { createUpsertRequestFromPois } from './createUpsertRequestFromPois';
+import { type InstanceReference } from '../../../../data-providers';
+import { createUserMap } from './createUserMap';
 
 /**
  * A PoI provider using the Cognite Application Data Storage service as backing storage
@@ -54,6 +59,14 @@ export class PointsOfInterestAdsProvider implements PointsOfInterestProvider<Ext
       );
     }
 
+    const userIds = result.data.items.map((item) => item.ownerId);
+    const userIdNameMap = await createUserMap(this._sdk, userIds);
+
+    result.data.items.forEach((item) => {
+      const name = userIdNameMap.get(item.ownerId) ?? 'Unknown';
+      item.ownerId = name;
+    });
+
     return result.data.items.map(poiItemToInstance);
   }
 
@@ -70,6 +83,13 @@ export class PointsOfInterestAdsProvider implements PointsOfInterestProvider<Ext
         `An error occured while fetching points of interest: ${JSON.stringify(result.data)}, status code: ${result.status}`
       );
     }
+    const userIds = result.data.items.map((item) => item.ownerId);
+    const userIdNameMap = await createUserMap(this._sdk, userIds);
+
+    result.data.items.forEach((item) => {
+      const name = userIdNameMap.get(item.ownerId) ?? 'Unknown';
+      item.ownerId = name;
+    });
 
     return result.data.items.map(poiItemToInstance);
   }
@@ -101,7 +121,10 @@ export class PointsOfInterestAdsProvider implements PointsOfInterestProvider<Ext
       );
     }
 
-    const userIdNameMap = await this.createUserMap(result.data.map((comment) => comment.ownerId));
+    const userIdNameMap = await createUserMap(
+      this._sdk,
+      result.data.map((comment) => comment.ownerId)
+    );
 
     result.data.forEach((comment) => {
       const name = userIdNameMap.get(comment.ownerId) ?? 'Unknown';
@@ -126,29 +149,16 @@ export class PointsOfInterestAdsProvider implements PointsOfInterestProvider<Ext
       );
     }
 
+    const userIdNameMap = await createUserMap(this._sdk, [result.data.ownerId]);
+
+    const name = userIdNameMap.get(result.data.ownerId) ?? 'Unknown';
+    result.data.ownerId = name;
+
     return result.data;
   }
 
   public createNewId(): ExternalId {
     return uuid();
-  }
-
-  private async createUserMap(userIds: string[]): Promise<Map<string, string | undefined>> {
-    if (userIds.length === 0) {
-      return new Map();
-    }
-
-    const uniqueUserIds = uniq(userIds);
-
-    const profiles = await this._sdk.profiles.retrieve(
-      uniqueUserIds.map((id) => ({ userIdentifier: id }))
-    );
-
-    const idNamePairs = profiles
-      .filter(isDefined)
-      .map((profile) => [profile.userIdentifier, profile.displayName ?? undefined] as const);
-
-    return new Map(idNamePairs);
   }
 }
 
@@ -156,16 +166,46 @@ function poiItemToInstance(item: PoiItem): PointsOfInterestInstance<ExternalId> 
   return {
     id: item.externalId,
     properties: {
-      title: item.name,
+      name: item.name,
+      description: item.description,
+      ownerId: item.ownerId,
+      createdTime: item.createdTime,
       positionX: item.position[0],
       positionY: item.position[1],
       positionZ: item.position[2],
       visibility: item.visibility,
       scene: {
-        externalId: item.sceneExternalId ?? 'dummy-scene-external-id',
-        space: item.sceneSpace ?? 'dummy-scene-space'
+        externalId: item.scene?.externalId ?? 'dummy-scene-external-id',
+        space: item.scene?.space ?? 'dummy-scene-space'
       },
+      instanceRef: poiExternalInstanceRefToInstanceReference(item?.assetRef),
       sceneState: item.sceneState
     }
   };
+}
+
+function poiExternalInstanceRefToInstanceReference(
+  instance: PoiExternalInstanceRef | undefined
+): InstanceReference | undefined {
+  if (instance === undefined) {
+    return undefined;
+  }
+
+  if (isPoiAssetRef(instance)) {
+    return { assetId: instance.id };
+  } else if (isPoiDMRef(instance)) {
+    return { externalId: instance.externalId, space: instance.instanceSpace };
+  }
+  throw Error('Unrecognized PoI external reference type');
+}
+
+function isPoiAssetRef(instance: PoiExternalInstanceRef): instance is PoiExternalAssetRef {
+  return (instance as PoiExternalAssetRef).id !== undefined;
+}
+
+function isPoiDMRef(instance: PoiExternalInstanceRef): instance is PoiExternalDMRef {
+  return (
+    (instance as PoiExternalDMRef).externalId !== undefined &&
+    (instance as PoiExternalDMRef).instanceSpace !== undefined
+  );
 }

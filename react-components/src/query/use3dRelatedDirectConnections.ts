@@ -3,10 +3,11 @@
  */
 
 import { type UseQueryResult, useQuery } from '@tanstack/react-query';
-import { useFdm3dDataProvider, useFdmSdk } from '../components/RevealCanvas/SDKProvider';
+import { useFdmSdk } from '../components/RevealCanvas/SDKProvider';
 import { type Source, type DmsUniqueIdentifier } from '../data-providers/FdmSDK';
 import assert from 'assert';
 import { type FdmInstanceWithView } from '../data-providers/types';
+import { useFdm3dDataProvider } from '../components/CacheProvider/CacheProvider';
 
 export function use3dRelatedDirectConnections(
   instance: DmsUniqueIdentifier | undefined
@@ -32,7 +33,7 @@ export function use3dRelatedDirectConnections(
       const instanceContent = (
         await fdmSdk.getByExternalIds<Record<string, unknown>>(
           [{ instanceType: 'node', externalId: instance.externalId, space: instance.space }],
-          view
+          view !== undefined ? [view] : undefined
         )
       ).items[0];
 

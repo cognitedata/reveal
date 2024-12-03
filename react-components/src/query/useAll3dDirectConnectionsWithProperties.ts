@@ -68,7 +68,7 @@ export function useAll3dDirectConnectionsWithProperties(
       const instancesContent = await Promise.all(
         instancesDataChunks.flatMap((chunk) => {
           return uniqueViews.map(async (view) => {
-            return await fdmSdk.getByExternalIds(chunk, view);
+            return await fdmSdk.getByExternalIds(chunk, view !== undefined ? [view] : undefined);
           });
         })
       );
