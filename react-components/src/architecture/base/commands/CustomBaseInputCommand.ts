@@ -61,33 +61,29 @@ export abstract class CustomBaseInputCommand extends RenderTargetCommand {
     this._contents = contents;
 
     const invokeResult = this.invoke();
-    this._contents = this._contents.map((content) => {
-      if (content.type === 'text' || content.type === 'comment') {
-        return {
-          type: content.type,
-          content: ''
-        };
-      }
-      if (content.type === 'commentWithButtons') {
-        return {
-          type: content.type,
-          content: ''
-        };
-      }
-      if (content.type === 'customInput') {
-        return {
-          type: content.type,
-          content: undefined
-        };
-      }
-      if (content.type === 'submitButtons') {
-        return {
-          type: content.type,
-          content: undefined
-        };
-      }
-      return content;
-    });
+    this._contents = clearFieldContents(this._contents);
     return invokeResult;
   }
+}
+
+function clearFieldContents(contents: FieldContent[]): FieldContent[] {
+  return contents.map((content) => {
+    if (
+      content.type === 'text' ||
+      content.type === 'comment' ||
+      content.type === 'commentWithButtons'
+    ) {
+      return {
+        type: content.type,
+        content: ''
+      };
+    }
+    if (content.type === 'customInput' || content.type === 'submitButtons') {
+      return {
+        type: content.type,
+        content: undefined
+      };
+    }
+    return content;
+  });
 }
