@@ -75,7 +75,9 @@ export const CustomInputField = ({
 
       const isAnyTextContentEmpty = command.contents.some(
         (fieldContent, index) =>
-          fieldContent.type === 'text' && (newContents[index]?.content ?? '').trim() === ''
+          fieldContent.type === 'text' &&
+          typeof newContents[index]?.content === 'string' &&
+          newContents[index].content.trim() === ''
       );
       setPostButtonDisabled(isAnyTextContentEmpty);
     },
