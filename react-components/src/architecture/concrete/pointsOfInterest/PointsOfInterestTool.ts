@@ -182,6 +182,7 @@ export class PointsOfInterestTool<PoiIdType> extends BaseEditTool {
 
         this.setAssignedInstance(selectedInstance);
         createPointCommand.associatedInstance = selectedInstance;
+        createPointCommand.setCustomInputAsInstanceReference(selectedInstance);
       }
     });
   }

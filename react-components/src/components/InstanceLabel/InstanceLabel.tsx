@@ -8,13 +8,15 @@ import { useAssetsByIdsQuery } from '../../query';
 import { EMPTY_ARRAY } from '../../utilities/constants';
 import { useDmInstancesByIds } from '../../query/useDmsInstanceByIdsQuery';
 import { COGNITE_DESCRIBABLE_SOURCE } from '../../data-providers/core-dm-provider/dataModels';
-import { HexagonIcon, Input } from '@cognite/cogs.js';
+import { HexagonIcon, Input, Tooltip } from '@cognite/cogs.js';
 
 const nameableSources = [COGNITE_DESCRIBABLE_SOURCE];
 
-export type AssetLabelProps = { instance: InstanceReference };
+const MAX_LABEL_LENGTH = 20;
 
-export const AssetLabel = ({ instance }: { instance: InstanceReference }): ReactElement => {
+export type InstanceLabelProps = { instance: InstanceReference };
+
+export const InstanceLabel = ({ instance }: { instance: InstanceReference }): ReactElement => {
   const [assetIds, fdmIds] = useMemo(
     () => [
       isAssetInstance(instance) ? [{ id: instance.assetId }] : EMPTY_ARRAY,
@@ -46,5 +48,16 @@ export const AssetLabel = ({ instance }: { instance: InstanceReference }): React
     return 'Unknown';
   }, [assets, fdmNodes]);
 
-  return <Input icon={<HexagonIcon />} value={labelText} disabled />;
+  const labelTextString = labelText?.toString();
+  const isLargeLabel =
+    labelTextString?.length !== undefined && labelTextString.length > MAX_LABEL_LENGTH;
+  const label = isLargeLabel
+    ? `${labelTextString?.slice(0, MAX_LABEL_LENGTH)}...`
+    : labelTextString;
+
+  return (
+    <Tooltip disabled={!isLargeLabel} key={labelTextString} content={labelTextString}>
+      <Input icon={<HexagonIcon />} value={label} disabled />
+    </Tooltip>
+  );
 };

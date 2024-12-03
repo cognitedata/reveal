@@ -1,13 +1,23 @@
 /*!
  * Copyright 2024 Cognite AS
  */
+import { type ReactNode } from 'react';
 import { type TranslationInput } from '../utilities/TranslateInput';
 import { RenderTargetCommand } from './RenderTargetCommand';
 
-export type FieldContent = {
-  type: 'text' | 'commentWithButtons';
-  content: string;
-};
+export type FieldContent =
+  | {
+      type: 'text' | 'commentWithButtons' | 'comment';
+      content: string;
+    }
+  | {
+      type: 'customInput';
+      content: ReactNode;
+    }
+  | {
+      type: 'submitButtons';
+      content: undefined;
+    };
 
 export abstract class CustomBaseInputCommand extends RenderTargetCommand {
   protected _placeholders?: TranslationInput[];
@@ -51,7 +61,33 @@ export abstract class CustomBaseInputCommand extends RenderTargetCommand {
     this._contents = contents;
 
     const invokeResult = this.invoke();
-    this._contents = this._contents.map((content) => ({ type: content.type, content: '' }));
+    this._contents = this._contents.map((content) => {
+      if (content.type === 'text' || content.type === 'comment') {
+        return {
+          type: content.type,
+          content: ''
+        };
+      }
+      if (content.type === 'commentWithButtons') {
+        return {
+          type: content.type,
+          content: ''
+        };
+      }
+      if (content.type === 'customInput') {
+        return {
+          type: content.type,
+          content: undefined
+        };
+      }
+      if (content.type === 'submitButtons') {
+        return {
+          type: content.type,
+          content: undefined
+        };
+      }
+      return content;
+    });
     return invokeResult;
   }
 }
