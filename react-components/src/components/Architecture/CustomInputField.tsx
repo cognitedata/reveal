@@ -1,7 +1,7 @@
 /*!
  * Copyright 2024 Cognite AS
  */
-import { Button, Comment, Flex, Input } from '@cognite/cogs.js';
+import { Button, Comment, Flex, Input, Textarea } from '@cognite/cogs.js';
 import { type BaseSyntheticEvent, type ReactNode, useCallback, useMemo, useState } from 'react';
 import { useTranslation } from '../i18n/I18n';
 import { useOnUpdate } from './useOnUpdate';
@@ -99,12 +99,12 @@ export const CustomInputField = ({
     if (fieldContent.type === 'comment') {
       const message = contents?.[index]?.type === 'comment' ? contents[index].content : '';
       return (
-        <Comment
+        <Textarea
           key={index}
           placeholder={placeholders?.[index]}
           message={message}
-          setMessage={(data) => {
-            handleSetContents(index, data);
+          onChange={(data: BaseSyntheticEvent) => {
+            handleSetContents(index, data.target.value as string);
           }}
         />
       );
