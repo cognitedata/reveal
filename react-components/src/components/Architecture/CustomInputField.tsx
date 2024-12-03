@@ -73,11 +73,9 @@ export const CustomInputField = ({
       newContents[index].content = newContents[index] !== undefined ? data : '';
       setContents(newContents);
 
-      const isAnyTextContentEmpty = command.contents.some(
-        (fieldContent, index) =>
-          fieldContent.type === 'text' &&
-          typeof newContents[index]?.content === 'string' &&
-          newContents[index].content.trim() === ''
+      const isAnyTextContentEmpty = newContents.some(
+        (fieldContent) =>
+          fieldContent.type === 'text' && (fieldContent?.content ?? '').trim() === ''
       );
       setPostButtonDisabled(isAnyTextContentEmpty);
     },
@@ -128,7 +126,7 @@ export const CustomInputField = ({
           </Button>
           <Button
             type="primary"
-            disabled={!enabled}
+            disabled={postButtonDisabled || !enabled}
             onClick={() => {
               command.invokeWithContent(contents ?? []);
               setContents([]);
