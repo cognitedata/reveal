@@ -80,7 +80,6 @@ export const FilterButton = ({
       command={command}
       isAllChecked={isAllChecked}
       isSomeChecked={isSomeChecked}
-      label={label}
     />
   );
 
@@ -181,7 +180,7 @@ const FilterDropdown = ({
   return (
     <StyledDropdownRow>
       <label>{label}</label>
-      <StyledSelectPanel appendTo={'parent'} placement={'right-end'} hideOnOutsideClick>
+      <StyledSelectPanel placement={'right-end'} hideOnOutsideClick>
         <SelectPanel.Trigger>
           <Button
             color="#000044"
@@ -212,11 +211,9 @@ const FilterDropdown = ({
 const FilterSelectPanelContent = ({
   command,
   isAllChecked,
-  isSomeChecked,
-  label
+  isSomeChecked
 }: {
   command: BaseFilterCommand;
-  label: string;
   isAllChecked: boolean;
   isSomeChecked: boolean;
 }): ReactElement => {
@@ -239,7 +236,7 @@ const FilterSelectPanelContent = ({
           {BaseFilterCommand.getAllString(t)}
         </SelectPanel.Item>
       </SelectPanel.Section>
-      <SelectPanel.Body label={label} style={{ maxHeight: '300px' }}>
+      <SelectPanel.Body style={{ maxHeight: '300px' }}>
         <SelectPanel.Section>
           {children?.map((child, _index): ReactElement => {
             return <FilterItem key={child.uniqueId} command={child} />;

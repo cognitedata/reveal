@@ -3,10 +3,10 @@
  */
 import { type AddModelOptions } from '@cognite/reveal';
 
-export function getAddModelOptionsFromUrl(localModelUrlFallback: string): AddModelOptions {
+export function getAddModelOptionsFromUrl(_localModelUrlFallback: string): AddModelOptions {
   const modelId = new URLSearchParams(window.location.search).get('modelId');
   const revisionId = new URLSearchParams(window.location.search).get('revisionId');
-  const modelUrl = new URLSearchParams(window.location.search).get('modelUrl');
+  const _modelUrl = new URLSearchParams(window.location.search).get('modelUrl');
 
   if (modelId !== null && revisionId !== null) {
     return {
@@ -16,8 +16,8 @@ export function getAddModelOptionsFromUrl(localModelUrlFallback: string): AddMod
   }
 
   return {
-    modelId: -1,
-    revisionId: -1,
-    localPath: modelUrl ?? localModelUrlFallback
+    modelId: 3544114490298106,
+    revisionId: 6405404576933316
+    // localPath: modelUrl ?? localModelUrlFallback
   };
 }
