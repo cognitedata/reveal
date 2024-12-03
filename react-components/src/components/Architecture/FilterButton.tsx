@@ -180,7 +180,7 @@ const FilterDropdown = ({
   return (
     <StyledDropdownRow>
       <label>{label}</label>
-      <StyledSelectPanel placement={'right-end'} hideOnOutsideClick>
+      <StyledSelectPanel appendTo={document.body} placement={'right-end'} hideOnOutsideClick>
         <SelectPanel.Trigger>
           <Button
             color="#000044"
