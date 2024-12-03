@@ -13,6 +13,7 @@ import {
 } from '../../base/commands/CustomBaseInputCommand';
 import { InstanceLabel } from '../../../components/InstanceLabel';
 import { isUndefined } from 'lodash';
+import { isDefined } from '../../../utilities/isDefined';
 
 export class CreatePointsOfInterestWithDescriptionCommand extends CustomBaseInputCommand {
   private readonly _point: Vector3;
@@ -96,11 +97,15 @@ export class CreatePointsOfInterestWithDescriptionCommand extends CustomBaseInpu
 
     const filteredContents = filterContentsAsString(this._contents);
 
+    const poiName = filteredContents[0];
+    const poiDescription = filteredContents[1];
+
     const poi = domainObject.addPendingPointsOfInterest(
       createPointsOfInterestPropertiesFromPointAndTitle(
         this._point,
         this._scene,
-        filteredContents,
+        poiName,
+        poiDescription,
         this._associatedInstance
       )
     );
@@ -126,5 +131,5 @@ function filterContentsAsString(contents: FieldContent[]): string[] {
       }
       return undefined;
     })
-    .filter((content) => !isUndefined(content));
+    .filter((content) => isDefined(content));
 }
