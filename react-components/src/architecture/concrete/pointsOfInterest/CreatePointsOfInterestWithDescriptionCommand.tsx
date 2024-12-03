@@ -12,7 +12,6 @@ import {
   type FieldContent
 } from '../../base/commands/CustomBaseInputCommand';
 import { InstanceLabel } from '../../../components/InstanceLabel';
-import { isUndefined } from 'lodash';
 import { isDefined } from '../../../utilities/isDefined';
 
 export class CreatePointsOfInterestWithDescriptionCommand extends CustomBaseInputCommand {
