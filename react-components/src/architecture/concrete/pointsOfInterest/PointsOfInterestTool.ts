@@ -13,6 +13,12 @@ import { AnchoredDialogUpdater } from '../../base/reactUpdaters/AnchoredDialogUp
 import { CreatePointsOfInterestWithDescriptionCommand } from './CreatePointsOfInterestWithDescriptionCommand';
 import { type RevealRenderTarget } from '../../base/renderTarget/RevealRenderTarget';
 import { BaseEditTool } from '../../base/commands/BaseEditTool';
+import { getInstancesFromClick } from '../../../utilities/getInstancesFromClick';
+import { type InstanceReference } from '../../../data-providers';
+import { DefaultNodeAppearance } from '@cognite/reveal';
+import { createInstanceStyleGroup } from '../../../components/Reveal3DResources/instanceStyleTranslation';
+
+const ASSIGNED_INSTANCE_STYLING_SYMBOL = Symbol('poi3d-assigned-instance-styling');
 
 export class PointsOfInterestTool<PoiIdType> extends BaseEditTool {
   private _isCreating: boolean = false;
@@ -43,6 +49,7 @@ export class PointsOfInterestTool<PoiIdType> extends BaseEditTool {
     }
     domainObject.setVisibleInteractive(true, this.renderTarget);
     this.setIsCreating(true);
+    this.setCursor('copy');
   }
 
   public override onDeactivate(): void {
@@ -50,11 +57,13 @@ export class PointsOfInterestTool<PoiIdType> extends BaseEditTool {
     const domainObject = this.getPointsOfInterestDomainObject();
     domainObject.setSelectedPointOfInterest(undefined);
     this.setIsCreating(false);
+    this.setCursor('default');
+    this.setAssignedInstance(undefined);
   }
 
   public override async onClick(event: PointerEvent): Promise<void> {
     if (this._isCreating) {
-      await this.initiateCreatPointOfInterest(event);
+      await this.initiateCreatePointOfInterest(event);
       this.setIsCreating(false);
       return;
     }
@@ -105,12 +114,29 @@ export class PointsOfInterestTool<PoiIdType> extends BaseEditTool {
     }
   }
 
+  private setAssignedInstance(instance: InstanceReference | undefined): void {
+    if (instance === undefined) {
+      this.renderTarget.instanceStylingController.setStylingGroup(
+        ASSIGNED_INSTANCE_STYLING_SYMBOL,
+        undefined
+      );
+      return;
+    }
+
+    const stylingGroup = createInstanceStyleGroup([instance], DefaultNodeAppearance.Highlighted);
+
+    this.renderTarget.instanceStylingController.setStylingGroup(
+      ASSIGNED_INSTANCE_STYLING_SYMBOL,
+      stylingGroup
+    );
+  }
+
   private setAnchoredDialogContent(dialogContent: AnchoredDialogContent | undefined): void {
     this._anchoredDialogContent = dialogContent;
     AnchoredDialogUpdater.update();
   }
 
-  public openCreateCommandDialog(position: Vector3): void {
+  public openCreateCommandDialog(position: Vector3, clickEvent: PointerEvent): void {
     const poiObject = this.getPointsOfInterestDomainObject();
 
     const scene = poiObject?.getScene();
@@ -149,6 +175,16 @@ export class PointsOfInterestTool<PoiIdType> extends BaseEditTool {
       onCloseCallback: onCancelCallback,
       customListeners
     });
+
+    void getInstancesFromClick(this.renderTarget, clickEvent).then((instances) => {
+      if (instances !== undefined && instances.length !== 0) {
+        const selectedInstance = instances[0];
+
+        this.setAssignedInstance(selectedInstance);
+        createPointCommand.associatedInstance = selectedInstance;
+        createPointCommand.setCustomInputAsInstanceReference(selectedInstance);
+      }
+    });
   }
 
   public closeCreateCommandDialog(): void {
@@ -167,12 +203,13 @@ export class PointsOfInterestTool<PoiIdType> extends BaseEditTool {
     intersection.domainObject.setSelectedPointOfInterest(intersection.userData);
   }
 
-  private async initiateCreatPointOfInterest(event: PointerEvent): Promise<void> {
+  private async initiateCreatePointOfInterest(event: PointerEvent): Promise<void> {
     const intersection = await this.getIntersection(event);
     if (intersection === undefined || isPointsOfInterestIntersection(intersection)) {
       this.closeCreateCommandDialog();
       return;
     }
-    this.openCreateCommandDialog(intersection.point);
+
+    this.openCreateCommandDialog(intersection.point, event);
   }
 }

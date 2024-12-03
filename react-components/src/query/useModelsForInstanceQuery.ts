@@ -4,7 +4,7 @@
 import { type UseQueryResult, useQuery } from '@tanstack/react-query';
 import { getCadModelsForAsset } from '../hooks/network/getCadModelsForAsset';
 import { getPointCloudModelsForAsset } from '../hooks/network/getPointCloudModelsForAsset';
-import { useFdm3dDataProvider, useFdmSdk, useSDK } from '../components/RevealCanvas/SDKProvider';
+import { useFdmSdk, useSDK } from '../components/RevealCanvas/SDKProvider';
 import { type CogniteClient } from '@cognite/sdk';
 import { type TaggedAddResourceOptions } from '../components/Reveal3DResources/types';
 import { getImage360CollectionsForAsset } from '../hooks/network/getImage360CollectionsForAsset';
@@ -20,6 +20,7 @@ import { type Fdm3dDataProvider } from '../data-providers/Fdm3dDataProvider';
 import { type DmsUniqueIdentifier } from '../data-providers';
 import { getPointCloudModelsForAssetInstance } from '../hooks/network/getPointCloudModelsForAssetInstance';
 import { type FdmSDK } from '../data-providers/FdmSDK';
+import { useFdm3dDataProvider } from '../components/CacheProvider/CacheProvider';
 
 export const useModelsForInstanceQuery = (
   instance: InstanceReference | undefined

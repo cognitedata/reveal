@@ -16,6 +16,12 @@ import {
 } from './models';
 import { type PointsOfInterestProvider } from './PointsOfInterestProvider';
 import { type DmsUniqueIdentifier } from '../../../data-providers';
+import { createInstanceStyleGroup } from '../../../components/Reveal3DResources/instanceStyleTranslation';
+import { DefaultNodeAppearance } from '@cognite/reveal';
+
+const SELECTED_ASSOCIATED_POI_INSTANCE_STYLING_SYMBOL = Symbol(
+  'poi3d-selected-associated-instance-styling'
+);
 
 export class PointsOfInterestDomainObject<PoiIdType> extends VisualDomainObject {
   private _selectedPointsOfInterest: PointOfInterest<PoiIdType> | undefined;
@@ -127,7 +133,31 @@ export class PointsOfInterestDomainObject<PoiIdType> extends VisualDomainObject 
   public setSelectedPointOfInterest(poi: PointOfInterest<PoiIdType> | undefined): void {
     this._selectedPointsOfInterest = poi;
 
+    this.setAssociatedInstanceStyle(poi);
+
     this.notify(Changes.selected);
+  }
+
+  private setAssociatedInstanceStyle(poi: PointOfInterest<PoiIdType> | undefined): void {
+    const instanceStylingController = this.rootDomainObject?.renderTarget.instanceStylingController;
+
+    if (poi?.properties.instanceRef === undefined) {
+      instanceStylingController?.setStylingGroup(
+        SELECTED_ASSOCIATED_POI_INSTANCE_STYLING_SYMBOL,
+        undefined
+      );
+      return;
+    }
+
+    const stylingGroup = createInstanceStyleGroup(
+      [poi.properties.instanceRef],
+      DefaultNodeAppearance.Highlighted
+    );
+
+    instanceStylingController?.setStylingGroup(
+      SELECTED_ASSOCIATED_POI_INSTANCE_STYLING_SYMBOL,
+      stylingGroup
+    );
   }
 
   public async updatePointsOfInterest(

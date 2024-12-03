@@ -12,9 +12,13 @@ import { useImage360Collections } from '../../hooks/useImage360Collections';
 
 type Image360DetailsProps = {
   appLanguage?: string;
+  enableExitButton?: boolean;
 };
 
-export function Image360Details({ appLanguage }: Image360DetailsProps): ReactElement {
+export function Image360Details({
+  appLanguage,
+  enableExitButton = true
+}: Image360DetailsProps): ReactElement {
   const viewer = useReveal();
   const [enteredEntity, setEnteredEntity] = useState<Image360 | undefined>();
   const [is360HistoricalPanelExpanded, setIs360HistoricalPanelExpanded] = useState<boolean>(false);
@@ -57,9 +61,15 @@ export function Image360Details({ appLanguage }: Image360DetailsProps): ReactEle
               fallbackLanguage={appLanguage}
             />
           </Image360HistoricalPanel>
-          <ExitButtonContainer>
-            <StyledExitButton icon=<CloseLargeIcon /> type="tertiary" onClick={exitImage360Image} />
-          </ExitButtonContainer>
+          {enableExitButton && (
+            <ExitButtonContainer>
+              <StyledExitButton
+                icon=<CloseLargeIcon />
+                type="tertiary"
+                onClick={exitImage360Image}
+              />
+            </ExitButtonContainer>
+          )}
         </>
       )}
     </>

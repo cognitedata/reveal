@@ -9,10 +9,12 @@ import { PointsOfInterestTool } from './PointsOfInterestTool';
 
 export class InitiatePointsOfInterestCommand extends RenderTargetCommand {
   private readonly _position: Vector3;
+  private readonly _pointerEvent: PointerEvent;
 
-  constructor(position: Vector3) {
+  constructor(position: Vector3, clickEvent: PointerEvent) {
     super();
     this._position = position;
+    this._pointerEvent = clickEvent;
   }
 
   public override get hasData(): boolean {
@@ -35,7 +37,7 @@ export class InitiatePointsOfInterestCommand extends RenderTargetCommand {
     }
 
     this.renderTarget.commandsController.setActiveTool(poiTool);
-    poiTool.openCreateCommandDialog(this._position);
+    poiTool.openCreateCommandDialog(this._position, this._pointerEvent);
 
     return true;
   }

@@ -250,6 +250,10 @@ export abstract class BaseTool extends RenderTargetCommand {
     this.renderTarget.cursor = this.defaultCursor;
   }
 
+  public setCursor(cursor: string): void {
+    this.renderTarget.cursor = cursor;
+  }
+
   private async openContextMenu(event: PointerEvent): Promise<void> {
     const intersection = await this.getIntersection(event);
 
@@ -258,6 +262,7 @@ export abstract class BaseTool extends RenderTargetCommand {
     }
 
     this._renderTarget.contextMenuController.contextMenuPositionData = {
+      clickEvent: event,
       position: new Vector2(event.layerX, event.layerY),
       intersection
     };

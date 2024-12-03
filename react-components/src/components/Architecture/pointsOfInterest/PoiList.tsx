@@ -74,7 +74,7 @@ export const PoiList = ({
     () =>
       take(relevantPois, currentLimit).map((poi) => ({
         id: JSON.stringify(poi.id),
-        name: poi.properties.title ?? JSON.stringify(poi.id),
+        name: poi.properties.name ?? JSON.stringify(poi.id),
         poi
       })),
     [relevantPois, currentLimit, filter]

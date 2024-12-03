@@ -2,7 +2,7 @@
  * Copyright 2024 Cognite AS
  */
 
-import { type DmsUniqueIdentifier } from '../../../data-providers';
+import { type InstanceReference, type DmsUniqueIdentifier } from '../../../data-providers';
 
 export type PoiVisibility = 'PUBLIC' | 'PRIVATE';
 
@@ -14,15 +14,15 @@ export type PointsOfInterestProperties = {
   // "Name of the source system node comes from"
   // source?: string;
   // "Title or name of the node"
-  title: string;
+  name: string;
   // "Long description of the node"
-  // description?: string;
+  description?: string;
   // "Text based labels for generic use"
   // labels?: string[];
   // "Visibility of node (PUBLIC, PRIVATE, PROTECTED)"
   // visibility?: string;
   // "Who created this node?"
-  // createdBy?: string;
+  ownerId?: string;
   // "Who was the last person to update this node?"
   // updatedBy?: string;
   // "Is this item archived, and therefore hidden from most UIs?"
@@ -30,7 +30,6 @@ export type PointsOfInterestProperties = {
   // "The status of the observation (draft, completed, sent)"
   // status?: string;
   // "External ID of the associated CDF Asset"
-  // asset?: DmsUniqueIdentifier;
   // "List of associated files"
   // files?: DmsUniqueIdentifier[];
   // "description of how the observation was troubleshooted"
@@ -39,11 +38,14 @@ export type PointsOfInterestProperties = {
   // priority?: string;
   // "The observation type (Malfunction report, Maintenance request, etc.)"
   // type?: string;
+  // Create time
+  createdTime?: number;
   // "3D position" */
   positionX: number;
   positionY: number;
   positionZ: number;
   scene: DmsUniqueIdentifier;
+  instanceRef?: InstanceReference;
   // "Comments"
   // comments?: CommentProperties[];
   sceneState: SceneState;
