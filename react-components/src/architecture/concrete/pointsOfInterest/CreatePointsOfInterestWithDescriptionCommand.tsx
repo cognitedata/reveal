@@ -12,6 +12,7 @@ import {
   type FieldContent
 } from '../../base/commands/CustomBaseInputCommand';
 import { InstanceLabel } from '../../../components/InstanceLabel';
+import { isDefined } from '../../../utilities/isDefined';
 
 export class CreatePointsOfInterestWithDescriptionCommand extends CustomBaseInputCommand {
   private readonly _point: Vector3;
@@ -93,11 +94,17 @@ export class CreatePointsOfInterestWithDescriptionCommand extends CustomBaseInpu
       return false;
     }
 
+    const filteredContents = filterContentsAsString(this._contents);
+
+    const poiName = filteredContents[0];
+    const poiDescription = filteredContents[1];
+
     const poi = domainObject.addPendingPointsOfInterest(
       createPointsOfInterestPropertiesFromPointAndTitle(
         this._point,
         this._scene,
-        this._contents.map((content) => content.content),
+        poiName,
+        poiDescription,
         this._associatedInstance
       )
     );
@@ -109,4 +116,19 @@ export class CreatePointsOfInterestWithDescriptionCommand extends CustomBaseInpu
 
     return true;
   }
+}
+
+function filterContentsAsString(contents: FieldContent[]): string[] {
+  return contents
+    .map((content) => {
+      if (
+        content.type === 'text' ||
+        content.type === 'comment' ||
+        content.type === 'commentWithButtons'
+      ) {
+        return content.content;
+      }
+      return undefined;
+    })
+    .filter((content) => isDefined(content));
 }
