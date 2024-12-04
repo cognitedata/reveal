@@ -83,7 +83,7 @@ const StoryContent = ({ resources }: { resources: AddResourceOptions[] }): React
   const nodeData = useClickedNodeData();
 
   useEffect(() => {
-    if (nodeData?.fdmResult !== undefined) {
+    if (nodeData?.fdmResult !== undefined && nodeData?.fdmResult !== null) {
       setStylingGroups([
         {
           fdmAssetExternalIds: [
@@ -100,7 +100,10 @@ const StoryContent = ({ resources }: { resources: AddResourceOptions[] }): React
         nodeData.fdmResult.fdmNodes[0].externalId,
         nodeData.fdmResult.fdmNodes[0].space
       );
-    } else if (nodeData?.assetMappingResult !== undefined) {
+    } else if (
+      nodeData?.assetMappingResult !== undefined &&
+      nodeData?.assetMappingResult !== null
+    ) {
       setStylingGroups([
         {
           assetIds: nodeData.assetMappingResult.assetIds,
@@ -112,7 +115,10 @@ const StoryContent = ({ resources }: { resources: AddResourceOptions[] }): React
         (nodeData.intersection as CadIntersection).model.revisionId,
         nodeData.assetMappingResult.cadNode.id
       );
-    } else if (nodeData?.pointCloudAnnotationMappingResult !== undefined) {
+    } else if (
+      nodeData?.pointCloudAnnotationMappingResult !== undefined &&
+      nodeData.pointCloudAnnotationMappingResult !== null
+    ) {
       setStylingGroups([
         {
           assetIds: [nodeData.pointCloudAnnotationMappingResult[0].asset.id],
