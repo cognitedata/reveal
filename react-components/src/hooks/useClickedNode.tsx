@@ -7,7 +7,7 @@ import {
   type Image360AnnotationIntersection,
   type AnyIntersection
 } from '@cognite/reveal';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { type CogniteInternalId, type Node3D } from '@cognite/sdk';
 import { type FdmNodeDataPromises } from '../components/CacheProvider/types';
 import { type NodeAssetMappingResult } from '../components/CacheProvider/AssetMappingAndNode3DCache';
@@ -22,6 +22,7 @@ import {
   usePointCloudFdmVolumeMappingForIntersection
 } from '../query/core-dm/usePointCloudVolumeMappingForAssetInstances';
 import { useAssetMappingForTreeIndex, useFdm3dNodeDataPromises } from './cad';
+import { UseQueryResult } from '@tanstack/react-query';
 
 export type AssetMappingDataResult = {
   cadNode: Node3D;
@@ -31,16 +32,40 @@ export type AssetMappingDataResult = {
 export type FdmNodeDataResult = {
   fdmNodes: DmsUniqueIdentifier[];
   cadNode: Node3D;
-  views?: Source[][];
+  /**
+   * A value of `undefined` means it's not yet finished evaluating.
+   * A value of `null` means there was no result
+   */
+  views?: Source[][] | null;
 };
 
 export type ClickedNodeData = {
   mouseButton?: MOUSE;
   position?: Vector2;
-  fdmResult?: FdmNodeDataResult;
-  assetMappingResult?: AssetMappingDataResult;
-  pointCloudAnnotationMappingResult?: PointCloudAnnotationMappedAssetData[];
-  pointCloudFdmVolumeMappingResult?: PointCloudFdmVolumeMappingWithViews[];
+
+  /**
+   * A value of `undefined` means it's not yet finished evaluating.
+   * A value of `null` means there was no result
+   */
+  fdmResult?: FdmNodeDataResult | null;
+
+  /**
+   * A value of `undefined` means it's not yet finished evaluating.
+   * A value of `null` means there was no result
+   */
+  assetMappingResult?: AssetMappingDataResult | null;
+
+  /**
+   * A value of `undefined` means it's not yet finished evaluating.
+   * A value of `null` means there was no result
+   */
+  pointCloudAnnotationMappingResult?: PointCloudAnnotationMappedAssetData[] | null;
+
+  /**
+   * A value of `undefined` means it's not yet finished evaluating.
+   * A value of `null` means there was no result
+   */
+  pointCloudFdmVolumeMappingResult?: PointCloudFdmVolumeMappingWithViews[] | null;
   intersection: AnyIntersection | Image360AnnotationIntersection;
 };
 
@@ -117,10 +142,10 @@ export const useClickedNodeData = (options?: {
 
   const { data: assetMappingResult } = useAssetMappingForTreeIndex(intersection);
 
-  const { data: pointCloudAnnotationMappingResult } =
+  const pointCloudAnnotationMappingResult =
     usePointCloudAnnotationMappingForIntersection(intersection);
 
-  const { data: pointCloudFdmVolumeMappingResult } =
+  const pointCloudFdmVolumeMappingResult =
     usePointCloudFdmVolumeMappingForIntersection(intersection);
 
   return useCombinedClickedNodeData(
@@ -139,28 +164,49 @@ const useCombinedClickedNodeData = (
   position: Vector2 | undefined,
   fdmPromises: FdmNodeDataPromises | undefined,
   assetMappings: NodeAssetMappingResult | undefined,
-  pointCloudAssetMappings: PointCloudAnnotationMappedAssetData[] | undefined,
-  pointCloudFdmVolumeMappings: PointCloudFdmVolumeMappingWithViews[] | undefined,
+  pointCloudAssetMappingsResult: UseQueryResult<PointCloudAnnotationMappedAssetData[]>,
+  pointCloudFdmVolumeMappingsResult: UseQueryResult<PointCloudFdmVolumeMappingWithViews[]>,
   intersection: AnyIntersection | Image360AnnotationIntersection | undefined
 ): ClickedNodeData | undefined => {
-  const [clickedNodeData, setClickedNodeData] = useState<ClickedNodeData | undefined>();
   const fdmData = useFdmData(fdmPromises);
 
-  useEffect(() => {
+  return useMemo(() => {
     if (intersection === undefined) {
-      setClickedNodeData(undefined);
-      return;
+      return undefined;
     }
 
     const assetMappingData =
-      assetMappings?.node === undefined
+      assetMappings === undefined
         ? undefined
-        : {
-            cadNode: assetMappings.node,
-            assetIds: assetMappings.mappings.map((mapping) => mapping.assetId)
-          };
+        : assetMappings.node === undefined
+          ? null
+          : {
+              cadNode: assetMappings.node,
+              assetIds: assetMappings.mappings.map((mapping) => mapping.assetId)
+            };
 
-    setClickedNodeData({
+    console.log(
+      'Point cloud asset mappings: ',
+      pointCloudAssetMappingsResult,
+      ', fdm mappings = ',
+      pointCloudFdmVolumeMappingsResult
+    );
+
+    const pointCloudAssetMappings = pointCloudAssetMappingsResult.isFetching
+      ? undefined
+      : pointCloudAssetMappingsResult.data === undefined ||
+          pointCloudAssetMappingsResult.data.length === 0
+        ? null
+        : pointCloudAssetMappingsResult.data;
+
+    const pointCloudFdmVolumeMappings = pointCloudFdmVolumeMappingsResult.isFetching
+      ? undefined
+      : pointCloudFdmVolumeMappingsResult.data === undefined ||
+          pointCloudFdmVolumeMappingsResult.data.length === 0
+        ? null
+        : pointCloudFdmVolumeMappingsResult.data;
+
+    return {
       mouseButton,
       position,
       fdmResult: fdmData,
@@ -168,22 +214,22 @@ const useCombinedClickedNodeData = (
       pointCloudAnnotationMappingResult: pointCloudAssetMappings,
       pointCloudFdmVolumeMappingResult: pointCloudFdmVolumeMappings,
       intersection
-    });
+    };
   }, [
     intersection,
     fdmData,
     assetMappings?.node,
-    pointCloudAssetMappings,
-    pointCloudFdmVolumeMappings
+    pointCloudAssetMappingsResult.data,
+    pointCloudAssetMappingsResult.isFetching,
+    pointCloudFdmVolumeMappingsResult.data,
+    pointCloudFdmVolumeMappingsResult.isFetching
   ]);
-
-  return clickedNodeData;
 };
 
 const useFdmData = (
   fdmPromises: FdmNodeDataPromises | undefined
-): FdmNodeDataResult | undefined => {
-  const [fdmData, setFdmData] = useState<FdmNodeDataResult | undefined>();
+): FdmNodeDataResult | undefined | null => {
+  const [fdmData, setFdmData] = useState<FdmNodeDataResult | undefined | null>();
 
   useEffect(() => {
     if (fdmPromises === undefined) {
@@ -197,18 +243,24 @@ const useFdmData = (
       const cadAndFdmNodes = await promises.cadAndFdmNodesPromise;
 
       if (cadAndFdmNodes === undefined || cadAndFdmNodes.fdmIds.length === 0) {
-        setFdmData(undefined);
+        setFdmData(null);
         return;
       }
 
       setFdmData({
         fdmNodes: cadAndFdmNodes.fdmIds,
-        cadNode: cadAndFdmNodes.cadNode
+        cadNode: cadAndFdmNodes.cadNode,
+        views: undefined
       });
 
       const views = await promises.viewsPromise;
 
       if (views === undefined || views.length === 0) {
+        setFdmData({
+          fdmNodes: cadAndFdmNodes.fdmIds,
+          cadNode: cadAndFdmNodes.cadNode,
+          views: null
+        });
         return;
       }
 
