@@ -22,7 +22,7 @@ import {
   usePointCloudFdmVolumeMappingForIntersection
 } from '../query/core-dm/usePointCloudVolumeMappingForAssetInstances';
 import { useAssetMappingForTreeIndex, useFdm3dNodeDataPromises } from './cad';
-import { UseQueryResult } from '@tanstack/react-query';
+import { type UseQueryResult } from '@tanstack/react-query';
 
 export type AssetMappingDataResult = {
   cadNode: Node3D;
