@@ -57,7 +57,7 @@ export function Image360CollectionContainer({
     const cleanupCallbackPromise = add360Collection(addImage360CollectionOptions.transform);
     return () => {
       remove360Collection();
-      cleanupCallbackPromise.then((callback) => callback?.());
+      void cleanupCallbackPromise.then((callback) => callback?.());
     };
   }, [addImage360CollectionOptions]);
 
@@ -78,7 +78,7 @@ export function Image360CollectionContainer({
 
   return <></>;
 
-  async function add360Collection(transform?: Matrix4): Promise<void | (() => void)> {
+  async function add360Collection(transform?: Matrix4): Promise<undefined | (() => void)> {
     return await getOrAdd360Collection()
       .then((image360Collection) => {
         if (transform !== undefined) {
@@ -93,6 +93,7 @@ export function Image360CollectionContainer({
         modelRef.current = image360Collection;
         onLoad?.(image360Collection);
         setRevealResourcesCount(getViewerResourceCount(viewer));
+        return undefined;
       })
       .catch((error: any) => {
         const errorReportFunction = onLoadError ?? defaultLoadErrorHandler;

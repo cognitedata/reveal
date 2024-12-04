@@ -69,7 +69,7 @@ export function CadModelContainer({
       });
 
     return () => {
-      cleanupCallbackPromise.then((callback) => callback?.());
+      void cleanupCallbackPromise.then((callback) => callback?.());
     };
   }, [modelId, revisionId, geometryFilter]);
 

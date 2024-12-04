@@ -10,8 +10,7 @@ import {
   type ReactNode,
   useMemo,
   type Dispatch,
-  type SetStateAction,
-  useEffect
+  type SetStateAction
 } from 'react';
 
 type Reveal3DResourcesInfoContent = {

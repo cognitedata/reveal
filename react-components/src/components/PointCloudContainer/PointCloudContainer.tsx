@@ -77,7 +77,7 @@ export function PointCloudContainer({
       });
 
     return () => {
-      cleanupCallbackPromise.then((callback) => callback?.());
+      void cleanupCallbackPromise.then((callback) => callback?.());
     };
   }, [modelId, revisionId]);
 

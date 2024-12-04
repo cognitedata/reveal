@@ -6,7 +6,7 @@ import { CadModelContainer } from '../CadModelContainer/CadModelContainer';
 import { PointCloudContainer } from '../PointCloudContainer/PointCloudContainer';
 import { Image360CollectionContainer } from '../Image360CollectionContainer/Image360CollectionContainer';
 import { useReveal } from '../RevealCanvas/ViewerContext';
-import { type Reveal3DResourcesProps, type CadModelOptions, AddResourceOptions } from './types';
+import { type Reveal3DResourcesProps, type CadModelOptions } from './types';
 import { useCalculatePointCloudStyling } from './hooks/useCalculatePointCloudStyling';
 import { EMPTY_ARRAY } from '../../utilities/constants';
 import {
@@ -17,13 +17,7 @@ import { type ImageCollectionModelStyling } from '../Image360CollectionContainer
 import { is360ImageAddOptions, isClassicIdentifier } from './typeGuards';
 import { useRemoveNonReferencedModels } from './hooks/useRemoveNonReferencedModels';
 import { useCalculateCadStyling } from './hooks/useCalculateCadStyling';
-import {
-  useReveal3DResourceLoadFailCount,
-  useReveal3DResourcesCount,
-  useReveal3DResourcesExpectedInViewerCount,
-  useReveal3DResourcesSetExpectedToLoadCount,
-  useReveal3DResourcesStylingLoadingSetter
-} from './Reveal3DResourcesInfoContext';
+import { useReveal3DResourcesStylingLoadingSetter } from './Reveal3DResourcesInfoContext';
 import { type CadModelStyling } from '../CadModelContainer/types';
 import { type PointCloudModelStyling } from '../PointCloudContainer/types';
 import { type Image360PolygonStylingGroup } from '../Image360CollectionContainer';
@@ -33,6 +27,8 @@ import {
   useGenerateAssetMappingCachePerItemFromModelCache,
   useGenerateNode3DCache
 } from '../../hooks/cad';
+import { useCallCallbackOnFinishedLoading } from './hooks/useCallCallbackOnFinishedLoading';
+import { useSetExpectedLoadCount } from './hooks/useSetExpectedLoadCount';
 
 export const Reveal3DResources = ({
   resources,
@@ -172,27 +168,3 @@ export const Reveal3DResources = ({
     </>
   );
 };
-
-function useSetExpectedLoadCount(resources: AddResourceOptions[]): void {
-  const setExpectedToLoadCount = useReveal3DResourcesSetExpectedToLoadCount();
-  const { setRevealResourcesCount } = useReveal3DResourcesCount();
-
-  useEffect(() => {
-    setExpectedToLoadCount(resources.length);
-  }, [resources, setRevealResourcesCount]);
-}
-
-function useCallCallbackOnFinishedLoading(
-  resources: AddResourceOptions[],
-  onResourcesAdded: (() => void) | undefined
-): void {
-  const loadedCount = useReveal3DResourcesCount().reveal3DResourcesCount;
-  const expectedLoadCount = useReveal3DResourcesExpectedInViewerCount();
-  const { reveal3DResourceLoadFailCount } = useReveal3DResourceLoadFailCount();
-
-  useEffect(() => {
-    if (loadedCount === resources.length - reveal3DResourceLoadFailCount) {
-      onResourcesAdded?.();
-    }
-  }, [loadedCount, expectedLoadCount]);
-}
