@@ -1,7 +1,7 @@
 /*!
  * Copyright 2023 Cognite AS
  */
-import { ReactNode, type ReactElement } from 'react';
+import { type ReactNode } from 'react';
 import { type CommonResourceContainerProps } from '../Reveal3DResources/types';
 import { useReveal3dResourcesFromScene } from '../../hooks/useReveal3dResourcesFromScene';
 import { useGroundPlaneFromScene } from '../../hooks/useGroundPlaneFromScene';

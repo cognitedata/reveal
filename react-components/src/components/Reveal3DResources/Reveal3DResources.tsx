@@ -1,22 +1,12 @@
 /*!
  * Copyright 2023 Cognite AS
  */
-import { useRef, type ReactElement, useEffect, useMemo } from 'react';
-import {
-  type DataSourceType,
-  type CogniteCadModel,
-  type CognitePointCloudModel,
-  type Image360Collection
-} from '@cognite/reveal';
+import { type ReactElement, useEffect, useMemo } from 'react';
 import { CadModelContainer } from '../CadModelContainer/CadModelContainer';
 import { PointCloudContainer } from '../PointCloudContainer/PointCloudContainer';
 import { Image360CollectionContainer } from '../Image360CollectionContainer/Image360CollectionContainer';
 import { useReveal } from '../RevealCanvas/ViewerContext';
-import {
-  type AddResourceOptions,
-  type Reveal3DResourcesProps,
-  type CadModelOptions
-} from './types';
+import { type Reveal3DResourcesProps, type CadModelOptions } from './types';
 import { useCalculatePointCloudStyling } from './hooks/useCalculatePointCloudStyling';
 import { EMPTY_ARRAY } from '../../utilities/constants';
 import {
@@ -117,10 +107,6 @@ export const Reveal3DResources = ({
         (group): group is Image360PolygonStylingGroup & { assetIds: number[] } =>
           group.style !== undefined
       ) ?? EMPTY_ARRAY;
-
-  const onModelLoadedError = (addOptions: AddResourceOptions, error: any): void => {
-    onResourceLoadError?.(addOptions, error);
-  };
 
   return (
     <>

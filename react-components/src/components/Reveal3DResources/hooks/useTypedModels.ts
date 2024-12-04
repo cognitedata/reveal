@@ -11,8 +11,8 @@ import {
 import {
   type TypedReveal3DModel,
   type AddResourceOptions,
-  AddPointCloudResourceOptions,
-  AddCadResourceOptions
+  type AddPointCloudResourceOptions,
+  type AddCadResourceOptions
 } from '../types';
 import { useCadOrPointCloudResources } from './useCadOrPointCloudResources';
 import { useClassicModelOptions } from './useClassicModelOptions';
@@ -72,7 +72,7 @@ const getTypedModels = async (
 
 function useRegisterFailedResources(
   typeResult: UseQueryResult<TypedReveal3DModel[]>,
-  cadOrPointCloudResources: (AddCadResourceOptions | AddPointCloudResourceOptions)[]
+  cadOrPointCloudResources: Array<AddCadResourceOptions | AddPointCloudResourceOptions>
 ): void {
   const { setReveal3DResourceLoadFailCount } = useReveal3DResourceLoadFailCount();
 
@@ -84,7 +84,9 @@ function useRegisterFailedResources(
     const numResourcesFailed = cadOrPointCloudResources.length - typeResult.data.length;
 
     setReveal3DResourceLoadFailCount((p) => p + numResourcesFailed);
-    return () => setReveal3DResourceLoadFailCount((p) => p - numResourcesFailed);
+    return () => {
+      setReveal3DResourceLoadFailCount((p) => p - numResourcesFailed);
+    };
   }, [typeResult.data, typeResult.isLoading, cadOrPointCloudResources]);
 }
 
