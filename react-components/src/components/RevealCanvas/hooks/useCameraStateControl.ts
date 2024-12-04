@@ -12,10 +12,6 @@ export const useCameraStateControl = (
   externalCameraState?: CameraStateParameters,
   setCameraState?: (cameraState?: CameraStateParameters) => void
 ): void => {
-  console.log('Camera state control called with external cam state', externalCameraState);
-
-  const initialExternalCameraState = useRef(externalCameraState);
-
   const lastSetExternalState = useRef<CameraStateParameters | undefined>(
     externalCameraState === undefined
       ? undefined
@@ -27,12 +23,7 @@ export const useCameraStateControl = (
 
   useSetInternalCameraStateOnExternalUpdate(externalCameraState, lastSetExternalState);
 
-  useSetExternalCameraStateOnCameraMove(
-    setCameraState,
-    externalCameraState,
-    initialExternalCameraState,
-    lastSetExternalState
-  );
+  useSetExternalCameraStateOnCameraMove(setCameraState, externalCameraState, lastSetExternalState);
 };
 
 const useSetInternalCameraStateOnExternalUpdate = (
@@ -48,7 +39,6 @@ const useSetInternalCameraStateOnExternalUpdate = (
     ) {
       return;
     }
-    console.log('Setting internal state to external: ', externalCameraState);
 
     reveal.cameraManager.setCameraState(externalCameraState);
   }, [externalCameraState]);
@@ -57,19 +47,11 @@ const useSetInternalCameraStateOnExternalUpdate = (
 const useSetExternalCameraStateOnCameraMove = (
   setCameraState: ((cameraState?: CameraStateParameters) => void) | undefined,
   externalCameraState: CameraStateParameters | undefined,
-  initialExternalCameraState: MutableRefObject<CameraStateParameters | undefined>,
   lastSetExternalState: MutableRefObject<CameraStateParameters | undefined>
 ): void => {
   const reveal = useReveal();
   useEffect(() => {
     const updateStateOnCameraStop = (): void => {
-      if (initialExternalCameraState.current !== undefined) {
-        reveal.cameraManager.setCameraState(initialExternalCameraState.current);
-        initialExternalCameraState.current = undefined;
-        console.log('Set with initial camera state');
-        return;
-      }
-
       const currentCameraManagerState = reveal.cameraManager.getCameraState();
 
       if (
@@ -83,8 +65,6 @@ const useSetExternalCameraStateOnCameraMove = (
         position: currentCameraManagerState.position.clone(),
         target: currentCameraManagerState.target.clone()
       };
-
-      console.log('Setting external camera state: ', currentCameraManagerState);
 
       setCameraState?.(currentCameraManagerState);
     };
