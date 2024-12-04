@@ -58,6 +58,7 @@ export function CadModelContainer({
       .then((model) => {
         onLoad?.(model);
         setRevealResourcesCount(getViewerResourceCount(viewer));
+        return removeModel;
       })
       .catch((error) => {
         const errorReportFunction = onLoadError ?? defaultLoadErrorHandler;
@@ -69,7 +70,7 @@ export function CadModelContainer({
       });
 
     return () => {
-      void cleanupCallbackPromise.then((callback) => callback?.());
+      void cleanupCallbackPromise.then((callback) => callback());
     };
   }, [modelId, revisionId, geometryFilter]);
 
@@ -80,13 +81,6 @@ export function CadModelContainer({
   }, [transform, model]);
 
   useApplyCadModelStyling(model, styling);
-
-  useEffect(
-    () => () => {
-      removeModel(model);
-    },
-    [model]
-  );
 
   return <></>;
 
@@ -118,7 +112,7 @@ export function CadModelContainer({
     }
   }
 
-  function removeModel(model: CogniteCadModel | undefined): void {
+  function removeModel(): void {
     if (!modelExists(model, viewer)) return;
 
     if (cachedViewerRef !== undefined && !cachedViewerRef.isRevealContainerMountedRef.current)

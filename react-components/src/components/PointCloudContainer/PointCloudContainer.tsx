@@ -66,6 +66,7 @@ export function PointCloudContainer({
       .then((pointCloudModel: CognitePointCloudModel<DataSourceType>) => {
         onLoad?.(pointCloudModel);
         setRevealResourcesCount(getViewerResourceCount(viewer));
+        return removeModel;
       })
       .catch((error) => {
         const errorHandler = onLoadError ?? defaultLoadErrorHandler;
@@ -77,7 +78,7 @@ export function PointCloudContainer({
       });
 
     return () => {
-      void cleanupCallbackPromise.then((callback) => callback?.());
+      void cleanupCallbackPromise.then((callback) => callback());
     };
   }, [modelId, revisionId]);
 
@@ -88,8 +89,6 @@ export function PointCloudContainer({
   }, [transform, model]);
 
   useApplyPointCloudStyling(model, styling);
-
-  useEffect(() => removeModel, [model]);
 
   return <></>;
 
