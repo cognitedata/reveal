@@ -60,18 +60,13 @@ export const useReveal3DResourcesExpectedInViewerCount = (): number => {
   return element.reveal3DResourcesExpectedToLoad - element.reveal3DResourceLoadFailCount;
 };
 
-export const useReveal3DLoadedResourceCount = (): number => {
-  return useInfoElementOfContext().reveal3DResourcesCount;
+export const useReveal3DResourcesSetExpectedToLoadCount = (): Dispatch<SetStateAction<number>> => {
+  const element = useInfoElementOfContext();
+  return element.setReveal3DResourcesExpectedToLoad;
 };
 
-export const useThisAsExpectedResourceLoad = (): void => {
-  const element = useInfoElementOfContext();
-  useEffect(() => {
-    element.setReveal3DResourcesExpectedToLoad((prev) => prev + 1);
-    return () => {
-      element.setReveal3DResourcesExpectedToLoad((prev) => prev - 1);
-    };
-  }, []);
+export const useReveal3DLoadedResourceCount = (): number => {
+  return useInfoElementOfContext().reveal3DResourcesCount;
 };
 
 export const useReveal3DResourcesStylingLoading = (): boolean => {

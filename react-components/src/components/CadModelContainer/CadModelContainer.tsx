@@ -13,8 +13,7 @@ import { type Matrix4 } from 'three';
 import { useRevealKeepAlive } from '../RevealKeepAlive/RevealKeepAliveContext';
 import {
   useReveal3DResourceLoadFailCount,
-  useReveal3DResourcesCount,
-  useThisAsExpectedResourceLoad
+  useReveal3DResourcesCount
 } from '../Reveal3DResources/Reveal3DResourcesInfoContext';
 import { isEqual } from 'lodash';
 import { modelExists } from '../../utilities/modelExists';
@@ -47,7 +46,6 @@ export function CadModelContainer({
 
   const [model, setModel] = useState<CogniteCadModel | undefined>(undefined);
 
-  useThisAsExpectedResourceLoad();
   const { modelId, revisionId, geometryFilter } = addModelOptions;
 
   useEffect(() => {

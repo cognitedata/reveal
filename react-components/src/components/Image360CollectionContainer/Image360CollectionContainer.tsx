@@ -17,8 +17,7 @@ import {
 } from './constants';
 import {
   useReveal3DResourceLoadFailCount,
-  useReveal3DResourcesCount,
-  useThisAsExpectedResourceLoad
+  useReveal3DResourcesCount
 } from '../Reveal3DResources/Reveal3DResourcesInfoContext';
 import { getViewerResourceCount } from '../../utilities/getViewerResourceCount';
 
@@ -44,8 +43,6 @@ export function Image360CollectionContainer({
   const initializingSiteId = useRef<{ siteId: string } | { externalId: string } | undefined>(
     undefined
   );
-
-  useThisAsExpectedResourceLoad();
 
   useEffect(() => {
     if (

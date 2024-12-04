@@ -13,8 +13,7 @@ import { useReveal } from '../RevealCanvas/ViewerContext';
 import { useRevealKeepAlive } from '../RevealKeepAlive/RevealKeepAliveContext';
 import {
   useReveal3DResourceLoadFailCount,
-  useReveal3DResourcesCount,
-  useThisAsExpectedResourceLoad
+  useReveal3DResourcesCount
 } from '../Reveal3DResources/Reveal3DResourcesInfoContext';
 import { cloneDeep, isEqual } from 'lodash';
 import { useApplyPointCloudStyling } from './useApplyPointCloudStyling';
@@ -46,8 +45,6 @@ export function PointCloudContainer({
   const { setRevealResourcesCount } = useReveal3DResourcesCount();
   const { setReveal3DResourceLoadFailCount } = useReveal3DResourceLoadFailCount();
   const initializingModel = useRef<AddModelOptions<DataSourceType> | undefined>(undefined);
-
-  useThisAsExpectedResourceLoad();
 
   const [{ data: addModelOptionsResult }] = useModelIdRevisionIdFromModelOptions([addModelOptions]);
 
