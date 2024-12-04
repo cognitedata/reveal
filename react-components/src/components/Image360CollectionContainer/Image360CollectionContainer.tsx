@@ -56,7 +56,9 @@ export function Image360CollectionContainer({
 
     const cleanupCallbackPromise = add360Collection(addImage360CollectionOptions.transform);
     return () => {
-      void cleanupCallbackPromise.then((callback) => callback());
+      void cleanupCallbackPromise.then((callback) => {
+        callback();
+      });
     };
   }, [addImage360CollectionOptions]);
 
