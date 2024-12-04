@@ -54,8 +54,11 @@ export function Image360CollectionContainer({
 
     initializingSiteId.current = addImage360CollectionOptions;
 
-    void add360Collection(addImage360CollectionOptions.transform);
-    return remove360Collection;
+    const cleanupCallbackPromise = add360Collection(addImage360CollectionOptions.transform);
+    return () => {
+      remove360Collection();
+      cleanupCallbackPromise.then((callback) => callback?.());
+    };
   }, [addImage360CollectionOptions]);
 
   useApply360AnnotationStyling(modelRef.current, styling);
@@ -75,8 +78,8 @@ export function Image360CollectionContainer({
 
   return <></>;
 
-  async function add360Collection(transform?: Matrix4): Promise<void> {
-    await getOrAdd360Collection()
+  async function add360Collection(transform?: Matrix4): Promise<void | (() => void)> {
+    return await getOrAdd360Collection()
       .then((image360Collection) => {
         if (transform !== undefined) {
           image360Collection.setModelTransformation(transform);

@@ -54,7 +54,7 @@ export function CadModelContainer({
     }
 
     initializingModel.current = addModelOptions;
-    addModel(addModelOptions, transform)
+    const cleanupCallbackPromise = addModel(addModelOptions, transform)
       .then((model) => {
         onLoad?.(model);
         setRevealResourcesCount(getViewerResourceCount(viewer));
@@ -67,6 +67,10 @@ export function CadModelContainer({
           setReveal3DResourceLoadFailCount((p) => p - 1);
         };
       });
+
+    return () => {
+      cleanupCallbackPromise.then((callback) => callback?.());
+    };
   }, [modelId, revisionId, geometryFilter]);
 
   useEffect(() => {

@@ -62,7 +62,7 @@ export function PointCloudContainer({
 
     initializingModel.current = cloneDeep(addModelOptions);
 
-    addModel(addModelOptions, transform)
+    const cleanupCallbackPromise = addModel(addModelOptions, transform)
       .then((pointCloudModel: CognitePointCloudModel<DataSourceType>) => {
         onLoad?.(pointCloudModel);
         setRevealResourcesCount(getViewerResourceCount(viewer));
@@ -75,6 +75,10 @@ export function PointCloudContainer({
           setReveal3DResourceLoadFailCount((p) => p - 1);
         };
       });
+
+    return () => {
+      cleanupCallbackPromise.then((callback) => callback?.());
+    };
   }, [modelId, revisionId]);
 
   useEffect(() => {
