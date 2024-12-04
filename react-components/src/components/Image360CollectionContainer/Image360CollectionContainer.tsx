@@ -17,8 +17,7 @@ import {
 } from './constants';
 import {
   useReveal3DResourceLoadFailCount,
-  useReveal3DResourcesCount,
-  useThisAsExpectedResourceLoad
+  useReveal3DResourcesCount
 } from '../Reveal3DResources/Reveal3DResourcesInfoContext';
 import { getViewerResourceCount } from '../../utilities/getViewerResourceCount';
 
@@ -45,8 +44,6 @@ export function Image360CollectionContainer({
     undefined
   );
 
-  useThisAsExpectedResourceLoad();
-
   useEffect(() => {
     if (
       addImage360CollectionOptions.source === 'events' &&
@@ -57,8 +54,12 @@ export function Image360CollectionContainer({
 
     initializingSiteId.current = addImage360CollectionOptions;
 
-    void add360Collection(addImage360CollectionOptions.transform);
-    return remove360Collection;
+    const cleanupCallbackPromise = add360Collection(addImage360CollectionOptions.transform);
+    return () => {
+      void cleanupCallbackPromise.then((callback) => {
+        callback();
+      });
+    };
   }, [addImage360CollectionOptions]);
 
   useApply360AnnotationStyling(modelRef.current, styling);
@@ -78,8 +79,8 @@ export function Image360CollectionContainer({
 
   return <></>;
 
-  async function add360Collection(transform?: Matrix4): Promise<void> {
-    await getOrAdd360Collection()
+  async function add360Collection(transform?: Matrix4): Promise<() => void> {
+    return await getOrAdd360Collection()
       .then((image360Collection) => {
         if (transform !== undefined) {
           image360Collection.setModelTransformation(transform);
@@ -93,6 +94,7 @@ export function Image360CollectionContainer({
         modelRef.current = image360Collection;
         onLoad?.(image360Collection);
         setRevealResourcesCount(getViewerResourceCount(viewer));
+        return remove360Collection;
       })
       .catch((error: any) => {
         const errorReportFunction = onLoadError ?? defaultLoadErrorHandler;

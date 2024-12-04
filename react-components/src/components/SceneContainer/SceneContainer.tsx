@@ -1,7 +1,7 @@
 /*!
  * Copyright 2023 Cognite AS
  */
-import { type ReactElement } from 'react';
+import { type ReactNode } from 'react';
 import { type CommonResourceContainerProps } from '../Reveal3DResources/types';
 import { useReveal3dResourcesFromScene } from '../../hooks/useReveal3dResourcesFromScene';
 import { useGroundPlaneFromScene } from '../../hooks/useGroundPlaneFromScene';
@@ -18,12 +18,12 @@ export function SceneContainer({
   sceneExternalId,
   sceneSpaceId,
   ...rest
-}: SceneContainerProps): ReactElement {
+}: SceneContainerProps): ReactNode {
   const resourceOptions = useReveal3dResourcesFromScene(sceneExternalId, sceneSpaceId);
 
   useGroundPlaneFromScene(sceneExternalId, sceneSpaceId);
   useSkyboxFromScene(sceneExternalId, sceneSpaceId);
   useLoadPoisForScene(sceneExternalId, sceneSpaceId);
 
-  return <Reveal3DResources resources={resourceOptions} {...rest} />;
+  return resourceOptions.length > 0 && <Reveal3DResources resources={resourceOptions} {...rest} />;
 }

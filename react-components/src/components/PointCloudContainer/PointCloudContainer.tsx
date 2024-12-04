@@ -13,8 +13,7 @@ import { useReveal } from '../RevealCanvas/ViewerContext';
 import { useRevealKeepAlive } from '../RevealKeepAlive/RevealKeepAliveContext';
 import {
   useReveal3DResourceLoadFailCount,
-  useReveal3DResourcesCount,
-  useThisAsExpectedResourceLoad
+  useReveal3DResourcesCount
 } from '../Reveal3DResources/Reveal3DResourcesInfoContext';
 import { cloneDeep, isEqual } from 'lodash';
 import { useApplyPointCloudStyling } from './useApplyPointCloudStyling';
@@ -47,8 +46,6 @@ export function PointCloudContainer({
   const { setReveal3DResourceLoadFailCount } = useReveal3DResourceLoadFailCount();
   const initializingModel = useRef<AddModelOptions<DataSourceType> | undefined>(undefined);
 
-  useThisAsExpectedResourceLoad();
-
   const [{ data: addModelOptionsResult }] = useModelIdRevisionIdFromModelOptions([addModelOptions]);
 
   const modelId = addModelOptionsResult?.modelId;
@@ -65,10 +62,11 @@ export function PointCloudContainer({
 
     initializingModel.current = cloneDeep(addModelOptions);
 
-    addModel(addModelOptions, transform)
+    const cleanupCallbackPromise = addModel(addModelOptions, transform)
       .then((pointCloudModel: CognitePointCloudModel<DataSourceType>) => {
         onLoad?.(pointCloudModel);
         setRevealResourcesCount(getViewerResourceCount(viewer));
+        return removeModel;
       })
       .catch((error) => {
         const errorHandler = onLoadError ?? defaultLoadErrorHandler;
@@ -78,6 +76,12 @@ export function PointCloudContainer({
           setReveal3DResourceLoadFailCount((p) => p - 1);
         };
       });
+
+    return () => {
+      void cleanupCallbackPromise.then((callback) => {
+        callback();
+      });
+    };
   }, [modelId, revisionId]);
 
   useEffect(() => {
@@ -87,8 +91,6 @@ export function PointCloudContainer({
   }, [transform, model]);
 
   useApplyPointCloudStyling(model, styling);
-
-  useEffect(() => removeModel, [model]);
 
   return <></>;
 

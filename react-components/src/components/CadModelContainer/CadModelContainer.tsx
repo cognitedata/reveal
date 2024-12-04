@@ -13,8 +13,7 @@ import { type Matrix4 } from 'three';
 import { useRevealKeepAlive } from '../RevealKeepAlive/RevealKeepAliveContext';
 import {
   useReveal3DResourceLoadFailCount,
-  useReveal3DResourcesCount,
-  useThisAsExpectedResourceLoad
+  useReveal3DResourcesCount
 } from '../Reveal3DResources/Reveal3DResourcesInfoContext';
 import { isEqual } from 'lodash';
 import { modelExists } from '../../utilities/modelExists';
@@ -47,7 +46,6 @@ export function CadModelContainer({
 
   const [model, setModel] = useState<CogniteCadModel | undefined>(undefined);
 
-  useThisAsExpectedResourceLoad();
   const { modelId, revisionId, geometryFilter } = addModelOptions;
 
   useEffect(() => {
@@ -56,10 +54,11 @@ export function CadModelContainer({
     }
 
     initializingModel.current = addModelOptions;
-    addModel(addModelOptions, transform)
+    const cleanupCallbackPromise = addModel(addModelOptions, transform)
       .then((model) => {
         onLoad?.(model);
         setRevealResourcesCount(getViewerResourceCount(viewer));
+        return removeModel;
       })
       .catch((error) => {
         const errorReportFunction = onLoadError ?? defaultLoadErrorHandler;
@@ -69,6 +68,12 @@ export function CadModelContainer({
           setReveal3DResourceLoadFailCount((p) => p - 1);
         };
       });
+
+    return () => {
+      void cleanupCallbackPromise.then((callback) => {
+        callback();
+      });
+    };
   }, [modelId, revisionId, geometryFilter]);
 
   useEffect(() => {
@@ -78,13 +83,6 @@ export function CadModelContainer({
   }, [transform, model]);
 
   useApplyCadModelStyling(model, styling);
-
-  useEffect(
-    () => () => {
-      removeModel(model);
-    },
-    [model]
-  );
 
   return <></>;
 
@@ -116,7 +114,7 @@ export function CadModelContainer({
     }
   }
 
-  function removeModel(model: CogniteCadModel | undefined): void {
+  function removeModel(): void {
     if (!modelExists(model, viewer)) return;
 
     if (cachedViewerRef !== undefined && !cachedViewerRef.isRevealContainerMountedRef.current)

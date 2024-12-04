@@ -1,22 +1,12 @@
 /*!
  * Copyright 2023 Cognite AS
  */
-import { useRef, type ReactElement, useEffect, useMemo } from 'react';
-import {
-  type DataSourceType,
-  type CogniteCadModel,
-  type CognitePointCloudModel,
-  type Image360Collection
-} from '@cognite/reveal';
+import { type ReactElement, useEffect, useMemo } from 'react';
 import { CadModelContainer } from '../CadModelContainer/CadModelContainer';
 import { PointCloudContainer } from '../PointCloudContainer/PointCloudContainer';
 import { Image360CollectionContainer } from '../Image360CollectionContainer/Image360CollectionContainer';
 import { useReveal } from '../RevealCanvas/ViewerContext';
-import {
-  type AddResourceOptions,
-  type Reveal3DResourcesProps,
-  type CadModelOptions
-} from './types';
+import { type Reveal3DResourcesProps, type CadModelOptions } from './types';
 import { useCalculatePointCloudStyling } from './hooks/useCalculatePointCloudStyling';
 import { EMPTY_ARRAY } from '../../utilities/constants';
 import {
@@ -37,6 +27,8 @@ import {
   useGenerateAssetMappingCachePerItemFromModelCache,
   useGenerateNode3DCache
 } from '../../hooks/cad';
+import { useCallCallbackOnFinishedLoading } from './hooks/useCallCallbackOnFinishedLoading';
+import { useSetExpectedLoadCount } from './hooks/useSetExpectedLoadCount';
 
 export const Reveal3DResources = ({
   resources,
@@ -48,11 +40,13 @@ export const Reveal3DResources = ({
   image360Settings
 }: Reveal3DResourcesProps): ReactElement => {
   const viewer = useReveal();
-  const numModelsLoaded = useRef(0);
 
   useRemoveNonReferencedModels(resources, viewer);
 
   const { data: reveal3DModels } = useTypedModels(viewer, resources, onResourceLoadError);
+
+  useSetExpectedLoadCount(resources);
+  useCallCallbackOnFinishedLoading(resources, onResourcesAdded);
 
   const image360CollectionAddOptions = useMemo(() => {
     return resources
@@ -104,34 +98,6 @@ export const Reveal3DResources = ({
           group.style !== undefined
       ) ?? EMPTY_ARRAY;
 
-  const onModelLoaded = (
-    model:
-      | CogniteCadModel
-      | CognitePointCloudModel<DataSourceType>
-      | Image360Collection<DataSourceType>
-  ): void => {
-    onModelFailOrSucceed();
-    onResourceIsLoaded?.(model);
-  };
-
-  const onModelLoadedError = (addOptions: AddResourceOptions, error: any): void => {
-    onResourceLoadError?.(addOptions, error);
-    onModelFailOrSucceed();
-  };
-
-  const onModelFailOrSucceed = (): void => {
-    if (reveal3DModels === undefined) {
-      return;
-    }
-    numModelsLoaded.current += 1;
-
-    const expectedTotalLoadCount = reveal3DModels.length + image360CollectionAddOptions.length;
-
-    if (numModelsLoaded.current === expectedTotalLoadCount && onResourcesAdded !== undefined) {
-      onResourcesAdded();
-    }
-  };
-
   return (
     <>
       {styledCadModelOptions.map(({ styleGroups, model }, index) => {
@@ -146,7 +112,7 @@ export const Reveal3DResources = ({
             addModelOptions={model}
             styling={cadStyling}
             transform={model.transform}
-            onLoad={onModelLoaded}
+            onLoad={onResourceIsLoaded}
             onLoadError={onResourceLoadError}
           />
         );
@@ -169,8 +135,8 @@ export const Reveal3DResources = ({
             addModelOptions={model}
             styling={pcStyling}
             transform={model.transform}
-            onLoad={onModelLoaded}
-            onLoadError={onModelLoadedError}
+            onLoad={onResourceIsLoaded}
+            onLoadError={onResourceLoadError}
           />
         );
       })}
@@ -192,8 +158,8 @@ export const Reveal3DResources = ({
               key={key}
               addImage360CollectionOptions={addModelOption}
               styling={image360Styling}
-              onLoad={onModelLoaded}
-              onLoadError={onModelLoadedError}
+              onLoad={onResourceIsLoaded}
+              onLoadError={onResourceLoadError}
             />
           );
         }
