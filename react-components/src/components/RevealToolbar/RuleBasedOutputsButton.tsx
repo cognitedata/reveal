@@ -128,7 +128,6 @@ export const RuleBasedOutputsButton = ({
   return (
     <Menu
       placement="right-start"
-      disabled={disabled}
       style={{
         maxHeight: 300,
         overflow: 'auto',

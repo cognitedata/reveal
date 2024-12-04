@@ -30,7 +30,6 @@ export const SettingsButton = ({
   return (
     <StyledMenu
       placement="right"
-      container={'parent'}
       floatingProps={{ middleware: [offset(TOOLBAR_HORIZONTAL_PANEL_OFFSET)] }}
       disableCloseOnClickInside
       renderTrigger={(props: any) => (
