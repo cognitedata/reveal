@@ -185,14 +185,6 @@ const useCombinedClickedNodeData = (
               assetIds: assetMappings.mappings.map((mapping) => mapping.assetId)
             };
 
-    function normalizeListDataResult<T>(result: UseQueryResult<T[]>): T[] | undefined | null {
-      return result.isFetching
-        ? undefined
-        : result.data === undefined || result.data.length === 0
-          ? null
-          : result.data;
-    }
-
     const pointCloudAssetMappings = normalizeListDataResult(pointCloudAssetMappingsResult);
     const pointCloudFdmVolumeMappings = normalizeListDataResult(pointCloudFdmVolumeMappingsResult);
 
@@ -214,6 +206,14 @@ const useCombinedClickedNodeData = (
     pointCloudFdmVolumeMappingsResult.data,
     pointCloudFdmVolumeMappingsResult.isFetching
   ]);
+
+  function normalizeListDataResult<T>(result: UseQueryResult<T[]>): T[] | undefined | null {
+    return result.isFetching
+      ? undefined
+      : result.data === undefined || result.data.length === 0
+        ? null
+        : result.data;
+  }
 };
 
 const useFdmData = (
