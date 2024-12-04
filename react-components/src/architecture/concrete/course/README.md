@@ -57,8 +57,8 @@ public override get icon(): IconName {
   return 'Circle';
 }
 
-public override get typeName(): string {
-  return 'Point';
+public override get typeName(): TranslationInput {
+  return { untranslated: 'Example' };
 }
 ```
 
@@ -79,9 +79,16 @@ Put some fields into the `PointRenderStyle`: `radius`, `opacity`. You may add ot
 
 In the `PointView`, you can relay a lot of the the default implementation in `GroupThreeView`, but you have to create the visualization code yourself. This is done in the `addChildren` method. Here we add Three.js objects to the view. For those who are not familiar with Three.js, here is a suggested implementation:
 
+It is also nice to add a convenience property to the view for reuse:
+
 ```typescript
-protected override addChildren(): void {
-    const { domainObject, style, renderTarget } = this;
+
+  protected override get style(): PointRenderStyle {
+    return super.style as PointRenderStyle;
+  }
+
+  protected override addChildren(): void {
+    const { domainObject, style } = this;
 
     const geometry = new SphereGeometry(style.radius, 32, 16);
     const material = new MeshPhongMaterial({
@@ -102,14 +109,6 @@ protected override addChildren(): void {
 ```
 
 You may also override `intersectIfCloser` and `calculateBoundingBox`, but the base class uses the objects created by `addChildren` for the default implementation. But `intersectIfCloser` should often be overridden due to sloppy intersection algorithms in `Three.js` or if you for instance has labels which is not part of the 3D object itself.
-
-It is also nice to add a convenience property to the view for reuse:
-
-```typescript
-protected override get style(): PointRenderStyle {
-  return super.style as PointRenderStyle;
-}
-```
 
 Then you have to tell the `PointDomainObject` which view and render style it should use. The you go back the the domain object implementation and override two methods, `createRenderStyle` and `createThreeView`.
 
@@ -212,10 +211,10 @@ For large objects, where `addChildren` takes more time, you cannot do this. For 
 
 ## Implement context dependent cursor
 
-Professional applications uses a context dependent cursor. To do this override `onHover`. This will have 3 states, one for picking on a `PointDomainObject`, one for picking on any other object, and one for nothing.
+Professional applications uses a context dependent cursor. To do this override `onHoverByDebounce`. This will have 3 states, one for picking on a `PointDomainObject`, one for picking on any other object, and one for nothing.
 
 ```typescript
-  public override async onHover(event: PointerEvent): Promise<void> {
+  public override async onHoverByDebounce(event: PointerEvent): Promise<void> {
     const intersection = await this.getIntersection(event);
     // Just set the cursor
     if (this.getIntersectedSelectableDomainObject(intersection) !== undefined) {
@@ -258,13 +257,13 @@ The next method generate the info for the panel. Note that the key is the transl
 ```typescript
 public override getPanelInfo(): PanelInfo | undefined {
     const info = new PanelInfo();
-    info.setHeader('NAME', this.name);
-    add({ key: 'X_COORDINATE' }, this.center.x, Quantity.Length);
+    info.setHeader(this.typeName);
+    add({ key: 'X:COORDINATE' }, this.center.x, Quantity.Length);
     // Fill in rest here like Y, Z and length to origin for instance
     return info;
 
     function add(translationInput: TranslationInput, value: number, quantity: Quantity): void {
-      info.add({ translationInput, fallback, value, quantity });
+      info.add({ translationInput, value, quantity });
     }
   }
 ```
@@ -317,7 +316,7 @@ export class PointDragger extends BaseDragger {
   // CONSTRUCTOR
   // ==================================================
 
-  public constructor(props: CreateDraggerProps, domainObject: ExampleDomainObject) {
+  public constructor(props: CreateDraggerProps, domainObject: PointDomainObject) {
     super(props, domainObject);
     this._domainObject = domainObject;
     this._center = this._domainObject.center.clone();
@@ -363,7 +362,7 @@ You have to tell the `PointDomainObject` to use this dragger. Then override `cre
 
 > **&#9432; Try it out:** Compile this code. Are you able to move the points?
 
-When this is done, only one thing is missing. You have to indicate in `onHoverByDebounce` the the point can be moved. Change from `setDefaultCursor` or `setMoveCursor`. You must also `setMoveCursor` in the end of `onClick` since `onHover` is not called before you release and move the mouse.
+When this is done, only one thing is missing. You have to indicate in `onHoverByDebounce` the the point can be moved. Change from `setDefaultCursor` or `setMoveCursor`. You must also `setMoveCursor` in the end of `onClick` since `onHoverByDebounce` is not called before you release and move the mouse.
 
 > **&#9432; Try it out:** Do you see the move cursor?
 
@@ -454,8 +453,8 @@ export class ResetAllPointsCommand extends RenderTargetCommand {
   // OVERRIDES
   // ==================================================
 
-  public override get tooltip(): TranslateKey {
-    return { key: 'POINTS_RESET', fallback: 'Reset the visual style in all points' };
+  public override get tooltip(): TranslationInput {
+    return { untranslated: 'Reset the visual style in all points' };
   }
 
   public override get icon(): IconName {
@@ -478,7 +477,6 @@ I have done it in this way (maybe it can be done simpler?)
 
 ```typescript
   const array = Array.from(.....)
-  array.reverse();
     for (const domainObject of array)
       // Remove the domainObject here
 ```
