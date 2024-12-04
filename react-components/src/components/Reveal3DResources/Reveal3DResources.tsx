@@ -27,7 +27,12 @@ import { type ImageCollectionModelStyling } from '../Image360CollectionContainer
 import { is360ImageAddOptions, isClassicIdentifier } from './typeGuards';
 import { useRemoveNonReferencedModels } from './hooks/useRemoveNonReferencedModels';
 import { useCalculateCadStyling } from './hooks/useCalculateCadStyling';
-import { useReveal3DResourcesStylingLoadingSetter } from './Reveal3DResourcesInfoContext';
+import {
+  useReveal3DResourceLoadFailCount,
+  useReveal3DResourcesCount,
+  useReveal3DResourcesExpectedInViewerCount,
+  useReveal3DResourcesStylingLoadingSetter
+} from './Reveal3DResourcesInfoContext';
 import { type CadModelStyling } from '../CadModelContainer/types';
 import { type PointCloudModelStyling } from '../PointCloudContainer/types';
 import { type Image360PolygonStylingGroup } from '../Image360CollectionContainer';
@@ -48,11 +53,20 @@ export const Reveal3DResources = ({
   image360Settings
 }: Reveal3DResourcesProps): ReactElement => {
   const viewer = useReveal();
-  const numModelsLoaded = useRef(0);
 
   useRemoveNonReferencedModels(resources, viewer);
 
   const { data: reveal3DModels } = useTypedModels(viewer, resources, onResourceLoadError);
+
+  const loadedCount = useReveal3DResourcesCount().reveal3DResourcesCount;
+  const expectedLoadCount = useReveal3DResourcesExpectedInViewerCount();
+  const { reveal3DResourceLoadFailCount } = useReveal3DResourceLoadFailCount();
+
+  useEffect(() => {
+    if (loadedCount === resources.length - reveal3DResourceLoadFailCount) {
+      onResourcesAdded?.();
+    }
+  }, [loadedCount, expectedLoadCount]);
 
   const image360CollectionAddOptions = useMemo(() => {
     return resources
@@ -104,32 +118,8 @@ export const Reveal3DResources = ({
           group.style !== undefined
       ) ?? EMPTY_ARRAY;
 
-  const onModelLoaded = (
-    model:
-      | CogniteCadModel
-      | CognitePointCloudModel<DataSourceType>
-      | Image360Collection<DataSourceType>
-  ): void => {
-    onModelFailOrSucceed();
-    onResourceIsLoaded?.(model);
-  };
-
   const onModelLoadedError = (addOptions: AddResourceOptions, error: any): void => {
     onResourceLoadError?.(addOptions, error);
-    onModelFailOrSucceed();
-  };
-
-  const onModelFailOrSucceed = (): void => {
-    if (reveal3DModels === undefined) {
-      return;
-    }
-    numModelsLoaded.current += 1;
-
-    const expectedTotalLoadCount = reveal3DModels.length + image360CollectionAddOptions.length;
-
-    if (numModelsLoaded.current === expectedTotalLoadCount && onResourcesAdded !== undefined) {
-      onResourcesAdded();
-    }
   };
 
   return (
@@ -146,7 +136,7 @@ export const Reveal3DResources = ({
             addModelOptions={model}
             styling={cadStyling}
             transform={model.transform}
-            onLoad={onModelLoaded}
+            onLoad={onResourceIsLoaded}
             onLoadError={onResourceLoadError}
           />
         );
@@ -169,8 +159,8 @@ export const Reveal3DResources = ({
             addModelOptions={model}
             styling={pcStyling}
             transform={model.transform}
-            onLoad={onModelLoaded}
-            onLoadError={onModelLoadedError}
+            onLoad={onResourceIsLoaded}
+            onLoadError={onResourceLoadError}
           />
         );
       })}
@@ -192,8 +182,8 @@ export const Reveal3DResources = ({
               key={key}
               addImage360CollectionOptions={addModelOption}
               styling={image360Styling}
-              onLoad={onModelLoaded}
-              onLoadError={onModelLoadedError}
+              onLoad={onResourceIsLoaded}
+              onLoadError={onResourceLoadError}
             />
           );
         }
