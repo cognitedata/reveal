@@ -27,7 +27,11 @@ export const ResetCameraButton = ({
     if (viewer.get360ImageCollections() !== undefined) {
       viewer.exit360Image();
     }
-    if (sceneExternalId !== undefined && sceneSpaceId !== undefined) {
+    if (
+      sceneExternalId !== undefined &&
+      sceneSpaceId !== undefined &&
+      resetToDefaultSceneCamera !== undefined
+    ) {
       resetToDefaultSceneCamera.fitCameraToSceneDefault();
       return;
     }

@@ -98,10 +98,13 @@ const SceneContainerStoryContent = ({
   defaultResourceStyling
 }: SceneContainerStoryContentProps): ReactElement => {
   const reveal = useReveal();
-  const { fitCameraToSceneDefault } = useSceneDefaultCamera(sceneExternalId, sceneSpaceId);
+  const cameraToSceneDefault = useSceneDefaultCamera(sceneExternalId, sceneSpaceId);
   useEffect(() => {
-    fitCameraToSceneDefault();
-  }, [reveal, fitCameraToSceneDefault]);
+    if (cameraToSceneDefault === undefined) {
+      return;
+    }
+    cameraToSceneDefault.fitCameraToSceneDefault();
+  }, [reveal, cameraToSceneDefault]);
   return (
     <>
       <SceneContainer
