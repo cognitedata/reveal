@@ -8,28 +8,26 @@ import { Vector3, Quaternion, Euler, MathUtils, Matrix4 } from 'three';
 import { CDF_TO_VIEWER_TRANSFORMATION } from '@cognite/reveal';
 import { type SceneConfiguration } from '../components/SceneContainer/sceneTypes';
 import { useReveal } from '../components/RevealCanvas/ViewerContext';
+import { use3dModels } from './use3dModels';
 
 export const useSceneDefaultCamera = (
   sceneExternalId: string | undefined,
   sceneSpaceId: string | undefined
-): { fitCameraToSceneDefault: () => void; isFetched: boolean } => {
-  const { data } = useSceneConfig(sceneExternalId, sceneSpaceId);
+): { fitCameraToSceneDefault: () => void } | undefined => {
+  const { data, isFetched } = useSceneConfig(sceneExternalId, sceneSpaceId);
   const viewer = useReveal();
+  const models = use3dModels();
 
   return useMemo(() => {
     if (data === null) {
       return {
         fitCameraToSceneDefault: () => {
-          viewer.fitCameraToModels(viewer.models);
-        },
-        isFetched: true
+          viewer.fitCameraToModels(models, 0, true);
+        }
       };
     }
-    if (data === undefined) {
-      return {
-        fitCameraToSceneDefault: () => {},
-        isFetched: false
-      };
+    if (data === undefined || !isFetched) {
+      return undefined;
     }
 
     const cameraNotSet =
@@ -47,17 +45,16 @@ export const useSceneDefaultCamera = (
     if (cameraNotSet) {
       return {
         fitCameraToSceneDefault: () => {
-          if (viewer.models.length === 0) {
+          if (models.length === 0) {
             // If no models are loaded, set a default camera position
             // This is the same default position that have been used in SceneBuilder
             const position = new Vector3(-100, 200, 400);
             const target = new Vector3();
             viewer.cameraManager.setCameraState({ position, target });
           } else {
-            viewer.fitCameraToModels(viewer.models);
+            viewer.fitCameraToModels(models, 0, true);
           }
-        },
-        isFetched: false
+        }
       };
     }
 
@@ -89,10 +86,9 @@ export const useSceneDefaultCamera = (
           const quaternion = getLookAtRotation(position, target);
           viewer.cameraManager.setCameraState({ position, rotation: quaternion });
         }
-      },
-      isFetched: true
+      }
     };
-  }, [viewer, data?.sceneConfiguration]);
+  }, [viewer, data, isFetched, models]);
 };
 
 function extractCameraTarget(scene: SceneConfiguration): Vector3 {

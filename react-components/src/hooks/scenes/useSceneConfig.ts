@@ -115,6 +115,7 @@ export const useSceneConfig = (
       };
       return scene;
     },
+    enabled: sceneExternalId !== undefined && sceneSpace !== undefined,
     staleTime: Infinity
   });
 };
