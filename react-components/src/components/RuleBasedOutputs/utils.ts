@@ -25,7 +25,12 @@ import {
   type FdmRuleTrigger,
   type FdmInstanceNodeWithConnectionAndProperties
 } from './types';
-import { NumericRange, TreeIndexNodeCollection, type NodeAppearance } from '@cognite/reveal';
+import {
+  DefaultNodeAppearance,
+  NumericRange,
+  TreeIndexNodeCollection,
+  type NodeAppearance
+} from '@cognite/reveal';
 import { type AssetMapping3D, type Asset, type Datapoints } from '@cognite/sdk';
 import {
   type FdmAssetStylingGroup,
@@ -450,13 +455,13 @@ const applyAssetMappingsNodeStyles = (
   }
   ruleOutputAndStyleIndex.styleIndex.updateSet(nodeIndexSet);
 
-  const nodeAppearance: NodeAppearance = {
+  const nodeAppearance = createRuleStyling({
     color: new Color(outputSelected.fill)
-  };
+  });
 
   const assetStylingGroup: AssetStylingGroup = {
     assetIds,
-    style: { cad: nodeAppearance }
+    style: { cad: nodeAppearance, pointcloud: nodeAppearance }
   };
 
   const stylingGroup: AssetStylingGroupAndStyleIndex = {
@@ -475,9 +480,9 @@ const applyFdmMappingsNodeStyles = (
     ruleOutputParams: outputSelected
   };
 
-  const nodeAppearance: NodeAppearance = {
+  const nodeAppearance = createRuleStyling({
     color: new Color(outputSelected.fill)
-  };
+  });
 
   const fdmAssetExternalIds: DmsUniqueIdentifier[] = [];
 
@@ -501,7 +506,7 @@ const applyFdmMappingsNodeStyles = (
 
   const fdmStylingGroup: FdmAssetStylingGroup = {
     fdmAssetExternalIds,
-    style: { cad: nodeAppearance }
+    style: { cad: nodeAppearance, pointcloud: nodeAppearance }
   };
 
   const stylingGroup: FdmStylingGroupAndStyleIndex = {
@@ -510,6 +515,10 @@ const applyFdmMappingsNodeStyles = (
   };
   return stylingGroup;
 };
+
+function createRuleStyling(appearance: NodeAppearance): NodeAppearance {
+  return { renderGhosted: false, visible: true, ...appearance };
+}
 
 const isMetadataTrigger = (
   trigger: MetadataRuleTrigger | TimeseriesRuleTrigger | FdmRuleTrigger
