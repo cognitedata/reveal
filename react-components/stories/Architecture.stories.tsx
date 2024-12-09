@@ -3,7 +3,7 @@
  */
 
 import type { Meta, StoryObj } from '@storybook/react';
-import { CadModelContainer, RevealButtons, RevealCanvas } from '../src';
+import { CadModelContainer, PointCloudContainer, RevealButtons, RevealCanvas } from '../src';
 import { Color } from 'three';
 import { type ReactNode, type ReactElement } from 'react';
 import { RevealStoryContext } from './utilities/RevealStoryContainer';
@@ -32,11 +32,15 @@ export const Main: Story = {
     addModelOptions: getAddModelOptionsFromUrl('/primitives')
   },
   render: ({ addModelOptions }: { addModelOptions: AddModelOptions }) => {
+    const pointCloudModelOptions = getAddModelOptionsFromUrl('/pointcloud');
     return (
       <RevealStoryContext color={new Color(0x4a4a4a)} viewerOptions={{}}>
         <PointsOfInterestSidePanel>
           <RevealCanvas>
-            <StoryContent addModelOptions={addModelOptions} />
+            <StoryContent
+              cadModelOptions={addModelOptions}
+              pointCloudModelOptions={pointCloudModelOptions}
+            />
           </RevealCanvas>
         </PointsOfInterestSidePanel>
         <MainToolbar />
@@ -48,16 +52,23 @@ export const Main: Story = {
   }
 };
 
-function StoryContent({ addModelOptions }: { addModelOptions: AddModelOptions }): ReactElement {
+function StoryContent({
+  cadModelOptions,
+  pointCloudModelOptions
+}: {
+  cadModelOptions: AddModelOptions;
+  pointCloudModelOptions: AddModelOptions;
+}): ReactElement {
   const renderTarget = useRenderTarget();
   return (
     <>
       <CadModelContainer
-        addModelOptions={addModelOptions}
+        addModelOptions={cadModelOptions}
         onLoad={(_model: CogniteCadModel) => {
           renderTarget.onStartup();
         }}
       />
+      <PointCloudContainer addModelOptions={pointCloudModelOptions} />
     </>
   );
 }
