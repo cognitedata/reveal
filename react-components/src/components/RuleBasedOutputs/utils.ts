@@ -25,12 +25,7 @@ import {
   type FdmRuleTrigger,
   type FdmInstanceNodeWithConnectionAndProperties
 } from './types';
-import {
-  DefaultNodeAppearance,
-  NumericRange,
-  TreeIndexNodeCollection,
-  type NodeAppearance
-} from '@cognite/reveal';
+import { NumericRange, TreeIndexNodeCollection, type NodeAppearance } from '@cognite/reveal';
 import { type AssetMapping3D, type Asset, type Datapoints } from '@cognite/sdk';
 import {
   type FdmAssetStylingGroup,
