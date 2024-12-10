@@ -1,0 +1,23 @@
+{
+  "useBlackFilter": true,
+  "useIntensityFilter": true,
+  "minIntensity": -1,
+  "useDistanceFilter": false,
+  "maxDistance": 30.0,
+  "useDensityFilter": false,
+  "filterVoxelSize": 0.01,
+  "minNumberOfPointsInVoxel": 1,
+  "densityFilterMethod": 2,
+  "colorFilterMethod": 1,
+  "outlierFilterType": 1,
+  "separationDistance": 5.0,
+  "minNumberOfPointsInOneCluster": 100,
+  "generateTiles": false,
+  "tileSize": 5.0,
+  "rotationAngleInDegrees": 0.0,
+  "excludeBoundingBoxes": [],
+  "excludeCylinders": [],
+  "classificationMethod": "",
+  "runFilteringInParallel": true,
+  "extractPhotosphereImages": false
+}
