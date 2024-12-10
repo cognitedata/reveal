@@ -51,11 +51,7 @@ export const LayersButton = ({
 
   return (
     <>
-      <SelectPanel
-        placement="right"
-        appendTo={'parent'}
-        hideOnOutsideClick
-        offset={TOOLBAR_HORIZONTAL_PANEL_OFFSET}>
+      <SelectPanel placement="right" hideOnOutsideClick offset={TOOLBAR_HORIZONTAL_PANEL_OFFSET}>
         <SelectPanel.Trigger>
           <Tooltip
             content={<LabelWithShortcut label={t({ key: 'LAYERS_FILTER_TOOLTIP' })} />}
@@ -105,11 +101,7 @@ const ModelLayerSelection = ({
   }, [update]);
 
   return (
-    <SelectPanel
-      placement="right"
-      appendTo={'parent'}
-      hideOnOutsideClick={true}
-      openOnHover={!isDisabled}>
+    <SelectPanel placement="right" hideOnOutsideClick={true} openOnHover={!isDisabled}>
       <SelectPanel.Trigger>
         <WholeLayerVisibilitySelectItem
           label={label}
