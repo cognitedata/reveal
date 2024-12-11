@@ -11,12 +11,14 @@ import { MouseNavigation } from './Help/MouseNavigation';
 import { TouchNavigation } from './Help/TouchNavigation';
 import { KeyboardNavigation } from './Help/KeyboardNavigation';
 import { useTranslation } from '../i18n/I18n';
+import { type PlacementType } from '../Architecture';
 
 export type HelpButtonProps = {
   fallbackLanguage?: string;
+  placement?: PlacementType;
 };
 
-export const HelpButton = ({ fallbackLanguage }: HelpButtonProps): ReactElement => {
+export const HelpButton = ({ fallbackLanguage, placement }: HelpButtonProps): ReactElement => {
   const { t } = useTranslation(fallbackLanguage);
   const [helpActive, setHelpActive] = useState<boolean>(false);
 
@@ -26,7 +28,7 @@ export const HelpButton = ({ fallbackLanguage }: HelpButtonProps): ReactElement 
       onClickOutside={() => {
         setHelpActive(false);
       }}
-      placement="right"
+      placement={placement ?? 'right'}
       content={
         <StyledContainer>
           <MouseNavigation fallbackLanguage={fallbackLanguage} />
@@ -34,7 +36,10 @@ export const HelpButton = ({ fallbackLanguage }: HelpButtonProps): ReactElement 
           <TouchNavigation fallbackLanguage={fallbackLanguage} />
         </StyledContainer>
       }>
-      <CogsTooltip content={t({ key: 'HELP_TOOLTIP' })} placement="right" appendTo={document.body}>
+      <CogsTooltip
+        content={t({ key: 'HELP_TOOLTIP' })}
+        placement={'right'}
+        appendTo={document.body}>
         <Button
           type="ghost"
           icon={<HelpIcon />}
@@ -53,9 +58,10 @@ const StyledContainer = styled.div`
   background-color: #516efa;
   border-radius: 4px;
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
   gap: 24px;
   padding: 16px;
-  // Width of help panel content sums to 1000. Would probably be better if it scaled to screen size
-  max-width: 1000px;
+  width: fit-content;
+  max-height: 20vw;
+  overflow-y: auto;
 `;
