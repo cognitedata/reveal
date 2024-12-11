@@ -408,7 +408,7 @@ export class Potree implements IPotree {
 
         // Hide any previously visible nodes. We will later show only the needed ones.
         if (isTreeNode(pointCloud.root)) {
-          pointCloud.hideDescendants(pointCloud.root!.sceneNode);
+          pointCloud.hideDescendants(pointCloud.root.sceneNode);
         }
       }
 
