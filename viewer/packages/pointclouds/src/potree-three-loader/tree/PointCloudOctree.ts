@@ -27,11 +27,9 @@ export class PointCloudOctree extends PointCloudTree {
    */
   minNodePixelSize: number = DEFAULT_MIN_NODE_PIXEL_SIZE;
   root: IPointCloudTreeNodeBase | undefined = undefined;
-  boundingBoxNodes: Object3D[] = [];
   visibleNodes: IPointCloudTreeNode[] = [];
   visibleGeometry: IPointCloudTreeGeometryNode[] = [];
   numVisiblePoints: number = 0;
-  showBoundingBox: boolean = false;
   private readonly visibleBounds: Box3 = new Box3();
   private picker: PointCloudOctreePicker | undefined;
 
@@ -145,28 +143,6 @@ export class PointCloudOctree extends PointCloudTree {
         bounds.expandByPoint(node.boundingBox.max);
       }
     }
-  }
-
-  updateBoundingBoxes(): void {
-    if (!this.showBoundingBox || !this.parent) {
-      return;
-    }
-
-    let bbRoot: any = this.parent.getObjectByName('bbroot');
-    if (!bbRoot) {
-      bbRoot = new Object3D();
-      bbRoot.name = 'bbroot';
-      this.parent.add(bbRoot);
-    }
-
-    const visibleBoxes: (Object3D | null)[] = [];
-    for (const node of this.visibleNodes) {
-      if (node.boundingBoxNode !== undefined && node.isLeafNode) {
-        visibleBoxes.push(node.boundingBoxNode);
-      }
-    }
-
-    bbRoot.children = visibleBoxes;
   }
 
   updateMatricesForDescendants(): void {
