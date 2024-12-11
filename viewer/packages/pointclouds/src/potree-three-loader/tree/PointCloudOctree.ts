@@ -27,11 +27,9 @@ export class PointCloudOctree extends PointCloudTree {
    */
   minNodePixelSize: number = DEFAULT_MIN_NODE_PIXEL_SIZE;
   root: IPointCloudTreeNodeBase | undefined = undefined;
-  boundingBoxNodes: Object3D[] = [];
   visibleNodes: IPointCloudTreeNode[] = [];
   visibleGeometry: IPointCloudTreeGeometryNode[] = [];
   numVisiblePoints: number = 0;
-  showBoundingBox: boolean = false;
   private readonly visibleBounds: Box3 = new Box3();
   private picker: PointCloudOctreePicker | undefined;
 
