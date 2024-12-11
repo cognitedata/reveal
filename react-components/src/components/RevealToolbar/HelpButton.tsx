@@ -56,6 +56,5 @@ const StyledContainer = styled.div`
   flex-direction: row;
   gap: 24px;
   padding: 16px;
-  width: fit-content;
-  max-width: fit-content;
+  max-width: 1000px;
 `;
