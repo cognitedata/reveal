@@ -28,7 +28,7 @@ export const HelpButton = ({ fallbackLanguage, placement }: HelpButtonProps): Re
       onClickOutside={() => {
         setHelpActive(false);
       }}
-      placement={'right' ?? placement}
+      placement={placement ?? 'right'}
       content={
         <StyledContainer>
           <MouseNavigation fallbackLanguage={fallbackLanguage} />
@@ -38,7 +38,7 @@ export const HelpButton = ({ fallbackLanguage, placement }: HelpButtonProps): Re
       }>
       <CogsTooltip
         content={t({ key: 'HELP_TOOLTIP' })}
-        placement={'right' ?? placement}
+        placement={placement ?? 'right'}
         appendTo={document.body}>
         <Button
           type="ghost"
