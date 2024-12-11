@@ -11,7 +11,7 @@ import { MouseNavigation } from './Help/MouseNavigation';
 import { TouchNavigation } from './Help/TouchNavigation';
 import { KeyboardNavigation } from './Help/KeyboardNavigation';
 import { useTranslation } from '../i18n/I18n';
-import { PlacementType } from '../Architecture';
+import { type PlacementType } from '../Architecture';
 
 export type HelpButtonProps = {
   fallbackLanguage?: string;
@@ -38,7 +38,7 @@ export const HelpButton = ({ fallbackLanguage, placement }: HelpButtonProps): Re
       }>
       <CogsTooltip
         content={t({ key: 'HELP_TOOLTIP' })}
-        placement={placement ?? 'right'}
+        placement={'right'}
         appendTo={document.body}>
         <Button
           type="ghost"
