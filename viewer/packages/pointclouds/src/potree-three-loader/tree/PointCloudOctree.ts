@@ -147,28 +147,6 @@ export class PointCloudOctree extends PointCloudTree {
     }
   }
 
-  updateBoundingBoxes(): void {
-    if (!this.showBoundingBox || !this.parent) {
-      return;
-    }
-
-    let bbRoot: any = this.parent.getObjectByName('bbroot');
-    if (!bbRoot) {
-      bbRoot = new Object3D();
-      bbRoot.name = 'bbroot';
-      this.parent.add(bbRoot);
-    }
-
-    const visibleBoxes: (Object3D | null)[] = [];
-    for (const node of this.visibleNodes) {
-      if (node.boundingBoxNode !== undefined && node.isLeafNode) {
-        visibleBoxes.push(node.boundingBoxNode);
-      }
-    }
-
-    bbRoot.children = visibleBoxes;
-  }
-
   updateMatricesForDescendants(): void {
     this.traverseVisible(node => node.matrixWorld.multiplyMatrices(this.matrixWorld, node.matrix));
   }

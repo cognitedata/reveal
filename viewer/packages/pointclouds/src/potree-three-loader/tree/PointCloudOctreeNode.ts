@@ -1,4 +1,4 @@
-import { Box3, BufferGeometry, EventDispatcher, Object3D, Points, Sphere } from 'three';
+import { Box3, BufferGeometry, EventDispatcher, Points, Sphere } from 'three';
 import { IPointCloudTreeGeometryNode } from '../geometry/IPointCloudTreeGeometryNode';
 import { IPointCloudTreeNode } from './IPointCloudTreeNode';
 import { IPointCloudTreeNodeBase } from './IPointCloudTreeNodeBase';
@@ -7,7 +7,6 @@ export class PointCloudOctreeNode extends EventDispatcher implements IPointCloud
   geometryNode: IPointCloudTreeGeometryNode;
   sceneNode: Points;
   pcIndex: number | undefined = undefined;
-  boundingBoxNode?: Object3D | undefined = undefined;
   readonly children: (IPointCloudTreeNodeBase | null)[];
   readonly loaded = true;
   readonly isTreeNode: boolean = true;

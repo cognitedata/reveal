@@ -27,7 +27,6 @@ import { IPointCloudTreeNodeBase } from './tree/IPointCloudTreeNodeBase';
 import { IPointCloudTreeNode } from './tree/IPointCloudTreeNode';
 import { IPointCloudTreeGeometryNode } from './geometry/IPointCloudTreeGeometryNode';
 import { BinaryHeap } from './utils/BinaryHeap';
-import { Box3Helper } from './utils/box3-helper';
 import { LRU } from './utils/lru';
 import { ModelDataProvider, StylableObject } from '@reveal/data-providers';
 import throttle from 'lodash/throttle';
@@ -47,7 +46,7 @@ type VisibilityUpdateInfo = {
   exceededMaxLoadsToGPU: boolean;
   nodeLoadFailed: boolean;
   numVisiblePoints: number;
-  unloadedGeometry: IPointCloudTreeGeometryNode[];
+  notLoadedGeometry: IPointCloudTreeGeometryNode[];
   visibleNodes: IPointCloudTreeNodeBase[];
   priorityQueue: BinaryHeap<QueueItem>;
 };
@@ -146,7 +145,6 @@ export class Potree implements IPotree {
 
       pointCloud.material.updateMaterial(octreeMaterialParams, visibilityTextureData, camera);
       pointCloud.updateVisibleBounds();
-      pointCloud.updateBoundingBoxes();
     }
 
     this.lru.freeMemory();
@@ -201,7 +199,7 @@ export class Potree implements IPotree {
         if (node.loaded && updateInfo.loadedToGPUThisFrame >= MAX_LOADS_TO_GPU) {
           updateInfo.exceededMaxLoadsToGPU = true;
         }
-        updateInfo.unloadedGeometry.push(node);
+        updateInfo.notLoadedGeometry.push(node);
         pointCloud.visibleGeometry.push(node);
       } else {
         updateInfo.nodeLoadFailed = true;
@@ -254,7 +252,7 @@ export class Potree implements IPotree {
       exceededMaxLoadsToGPU: false,
       nodeLoadFailed: false,
       numVisiblePoints: 0,
-      unloadedGeometry: [],
+      notLoadedGeometry: [],
       visibleNodes: [],
       priorityQueue
     };
@@ -287,11 +285,11 @@ export class Potree implements IPotree {
       this.updateVisibilityForNode(node, updateInfo, queueItem, sceneParams);
     } // end priority queue loop
 
-    const numNodesToLoad = Math.min(this.maxNumNodesLoading, updateInfo.unloadedGeometry.length);
+    const numNodesToLoad = Math.min(this.maxNumNodesLoading, updateInfo.notLoadedGeometry.length);
     const nodeLoadPromises: Promise<void>[] = [];
     for (let i = 0; i < numNodesToLoad; i++) {
       nodeLoadPromises.push(
-        updateInfo.unloadedGeometry[i].load().then(() => {
+        updateInfo.notLoadedGeometry[i].load().then(() => {
           this._throttledUpdateFunc(pointClouds, camera, renderer);
         })
       );
@@ -314,8 +312,6 @@ export class Potree implements IPotree {
 
     visibleNodes.push(node);
     pointCloud.visibleNodes.push(node);
-
-    this.updateBoundingBoxVisibility(pointCloud, node);
   }
 
   private updateChildVisibility(
@@ -364,21 +360,6 @@ export class Potree implements IPotree {
     }
   }
 
-  private updateBoundingBoxVisibility(pointCloud: PointCloudOctree, node: IPointCloudTreeNode): void {
-    if (pointCloud.showBoundingBox && !node.boundingBoxNode) {
-      const boxHelper = new Box3Helper(node.boundingBox);
-      boxHelper.matrixAutoUpdate = false;
-      pointCloud.boundingBoxNodes.push(boxHelper);
-      node.boundingBoxNode = boxHelper;
-      node.boundingBoxNode.matrix.copy(pointCloud.matrixWorld);
-    } else if (pointCloud.showBoundingBox && node.boundingBoxNode) {
-      node.boundingBoxNode.visible = true;
-      node.boundingBoxNode.matrix.copy(pointCloud.matrixWorld);
-    } else if (!pointCloud.showBoundingBox && node.boundingBoxNode) {
-      node.boundingBoxNode.visible = false;
-    }
-  }
-
   private readonly updateVisibilityStructures = (() => {
     const frustumMatrix = new Matrix4();
     const inverseWorldMatrix = new Matrix4();
@@ -420,18 +401,14 @@ export class Potree implements IPotree {
         cameraMatrix.identity().multiply(inverseWorldMatrix).multiply(camera.matrixWorld);
         cameraPositions.push(new Vector3().setFromMatrixPosition(cameraMatrix));
 
-        if (pointCloud.visible && pointCloud.root !== null) {
+        if (pointCloud.visible && pointCloud.root !== undefined) {
           const weight = Number.MAX_VALUE;
-          priorityQueue.push(new QueueItem(i, weight, pointCloud.root!));
+          priorityQueue.push(new QueueItem(i, weight, pointCloud.root));
         }
 
         // Hide any previously visible nodes. We will later show only the needed ones.
         if (isTreeNode(pointCloud.root)) {
           pointCloud.hideDescendants(pointCloud.root!.sceneNode);
-        }
-
-        for (const boundingBoxNode of pointCloud.boundingBoxNodes) {
-          boundingBoxNode.visible = false;
         }
       }
 

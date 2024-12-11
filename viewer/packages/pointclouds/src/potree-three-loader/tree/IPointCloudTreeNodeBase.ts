@@ -12,8 +12,6 @@ export interface IPointCloudTreeNodeBase {
   numPoints: number;
   isTreeNode: boolean;
 
-  boundingBoxNode?: THREE.Object3D;
-
   readonly children: Array<IPointCloudTreeNodeBase | null>;
   readonly isLeafNode: boolean;
 
