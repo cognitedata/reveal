@@ -56,6 +56,6 @@ const StyledContainer = styled.div`
   flex-direction: row;
   gap: 24px;
   padding: 16px;
-  width: fit-content;
-  max-width: fit-content;
+  // Width of help panel content sums to 1000. Would probably be better if it scaled to screen size
+  max-width: 1000px;
 `;
