@@ -39,15 +39,15 @@
     "styled-components": "6.1.13"
   },
   "devDependencies": {
-    "@types/react": "18.3.12",
+    "@types/react": "18.3.14",
     "copyfiles": "2.4.1",
-    "docusaurus-plugin-typedoc": "1.0.5",
+    "docusaurus-plugin-typedoc": "1.1.1",
     "replace": "1.2.2",
     "rimraf": "6.0.1",
-    "typedoc": "0.26.11",
-    "typedoc-plugin-markdown": "4.2.10",
+    "typedoc": "0.27.4",
+    "typedoc-plugin-markdown": "4.3.2",
     "typedoc-plugin-no-inherit": "1.4.0",
-    "typescript": "5.6.3"
+    "typescript": "5.7.2"
   },
   "browserslist": {
     "production": [
