@@ -2,15 +2,15 @@
  * Copyright 2024 Cognite AS
  */
 import {
-  type CadLayersUrlStateParam,
-  type Image360LayersUrlStateParam,
-  type PointCloudLayersUrlStateParam
+  type CadLayersStateParam,
+  type Image360LayersStateParam,
+  type PointCloudLayersStateParam
 } from '../../../hooks/types';
 
-export type LayersUrlStateParam = {
-  image360Layers?: Image360LayersUrlStateParam[];
-  cadLayers?: CadLayersUrlStateParam[];
-  pointCloudLayers?: PointCloudLayersUrlStateParam[];
+export type LayersStateParam = {
+  image360Layers?: Image360LayersStateParam[];
+  cadLayers?: CadLayersStateParam[];
+  pointCloudLayers?: PointCloudLayersStateParam[];
 };
 
 export type DefaultLayersConfiguration = {

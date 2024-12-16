@@ -12,14 +12,14 @@ import { type ModelHandler } from './ModelHandler';
 import { useRenderTarget, useReveal } from '../../RevealCanvas/ViewerContext';
 import { WholeLayerVisibilitySelectItem } from './WholeLayerVisibilitySelectItem';
 import { ModelLayersList } from './ModelLayersList';
-import { type DefaultLayersConfiguration, type LayersUrlStateParam } from './types';
+import { type DefaultLayersConfiguration, type LayersStateParam } from './types';
 import { TOOLBAR_HORIZONTAL_PANEL_OFFSET } from '../../constants';
 import { CommandsUpdater } from '../../../architecture/base/reactUpdaters/CommandsUpdater';
 import { LabelWithShortcut } from '../../Architecture/LabelWithShortcut';
 
 export type LayersButtonProps = {
-  layersState?: LayersUrlStateParam | undefined;
-  setLayersState?: Dispatch<SetStateAction<LayersUrlStateParam | undefined>> | undefined;
+  layersState?: LayersStateParam | undefined;
+  setLayersState?: Dispatch<SetStateAction<LayersStateParam | undefined>> | undefined;
   defaultLayerConfiguration?: DefaultLayersConfiguration | undefined;
 };
 
@@ -61,7 +61,7 @@ export const LayersButton = ({
             content={<LabelWithShortcut label={t({ key: 'LAYERS_FILTER_TOOLTIP' })} />}
             placement="right"
             appendTo={document.body}>
-            <Button icon=<LayersIcon /> type="ghost" />
+            <Button icon={<LayersIcon />} type="ghost" />
           </Tooltip>
         </SelectPanel.Trigger>
         <SelectPanel.Body>

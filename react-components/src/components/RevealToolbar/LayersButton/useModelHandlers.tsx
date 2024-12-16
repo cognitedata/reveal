@@ -21,7 +21,7 @@ import {
 import { CadModelHandler, Image360CollectionHandler, PointCloudModelHandler } from './ModelHandler';
 import { use3dModels } from '../../../hooks/use3dModels';
 import { useReveal } from '../../RevealCanvas/ViewerContext';
-import { type DefaultLayersConfiguration, type LayersUrlStateParam } from './types';
+import { type DefaultLayersConfiguration, type LayersStateParam } from './types';
 import { use3DModelName } from '../../../query/use3DModelName';
 
 export type UpdateModelHandlersCallback = (
@@ -30,7 +30,7 @@ export type UpdateModelHandlersCallback = (
 ) => void;
 
 export const useModelHandlers = (
-  setExternalLayersState: Dispatch<SetStateAction<LayersUrlStateParam | undefined>> | undefined,
+  setExternalLayersState: Dispatch<SetStateAction<LayersStateParam | undefined>> | undefined,
   defaultLayersConfig: DefaultLayersConfiguration | undefined
 ): [ModelLayerHandlers, UpdateModelHandlersCallback] => {
   const models = use3dModels();
@@ -111,7 +111,7 @@ function createHandlers(
   };
 }
 
-function createExternalStateFromLayers(modelHandlers: ModelLayerHandlers): LayersUrlStateParam {
+function createExternalStateFromLayers(modelHandlers: ModelLayerHandlers): LayersStateParam {
   return {
     cadLayers: modelHandlers.cadHandlers.map((cadHandler, handlerIndex) => ({
       applied: cadHandler.visible(),

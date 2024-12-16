@@ -7,10 +7,10 @@ import {
   type CogniteCadModel,
   type CognitePointCloudModel
 } from '@cognite/reveal';
-import { type LayersUrlStateParam } from './types';
+import { type LayersStateParam } from './types';
 
 export function updateViewerFromExternalState(
-  layersState: LayersUrlStateParam | undefined,
+  layersState: LayersStateParam | undefined,
   viewer: Cognite3DViewer<DataSourceType>
 ): void {
   if (layersState === undefined) {

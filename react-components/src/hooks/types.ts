@@ -15,18 +15,18 @@ export type Model3DEdgeProperties = {
   revisionNodeId: number;
 };
 
-export type Image360LayersUrlStateParam = {
+export type Image360LayersStateParam = {
   siteId: string;
   applied: boolean;
 };
 
-export type CadLayersUrlStateParam = {
+export type CadLayersStateParam = {
   revisionId: number;
   applied: boolean;
   index: number;
 };
 
-export type PointCloudLayersUrlStateParam = {
+export type PointCloudLayersStateParam = {
   revisionId: number;
   applied: boolean;
   index: number;

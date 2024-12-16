@@ -14,12 +14,12 @@ import {
   isDMPointCloudModel
 } from '@cognite/reveal';
 import { getModelIdAndRevisionIdFromExternalId } from './network/getModelIdAndRevisionIdFromExternalId';
-import { type LayersUrlStateParam } from '../components';
+import { type LayersStateParam } from '../components';
 import { useMemo } from 'react';
 import { EMPTY_ARRAY } from '../utilities/constants';
 
 export const useActiveReveal3dResources = (
-  layerState: LayersUrlStateParam | undefined
+  layerState: LayersStateParam | undefined
 ): {
   models: AddModelOptions[];
   image360Collections: Array<Image360Collection<DataSourceType>>;

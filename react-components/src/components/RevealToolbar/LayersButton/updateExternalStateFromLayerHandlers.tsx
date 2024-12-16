@@ -2,12 +2,12 @@
  * Copyright 2024 Cognite AS
  */
 import { type Dispatch, type SetStateAction } from 'react';
-import { type LayersUrlStateParam } from './types';
+import { type LayersStateParam } from './types';
 import { type ModelLayerHandlers } from './LayersButtonsStrip';
 
 export function updateExternalStateFromLayerHandlers(
   modelLayerHandlers: ModelLayerHandlers,
-  setExternalLayersState: Dispatch<SetStateAction<LayersUrlStateParam | undefined>> | undefined
+  setExternalLayersState: Dispatch<SetStateAction<LayersStateParam | undefined>> | undefined
 ): void {
   const newState = {
     cadLayers: modelLayerHandlers.cadHandlers.map((handler, index) => ({

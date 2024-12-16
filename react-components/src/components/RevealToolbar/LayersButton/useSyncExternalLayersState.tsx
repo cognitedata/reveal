@@ -3,7 +3,7 @@
  */
 import { useReveal } from '../../RevealCanvas';
 import { type Dispatch, type SetStateAction, useEffect, useRef } from 'react';
-import { type LayersUrlStateParam } from './types';
+import { type LayersStateParam } from './types';
 import { updateExternalStateFromLayerHandlers } from './updateExternalStateFromLayerHandlers';
 import { updateViewerFromExternalState } from './updateViewerFromExternalState';
 import { type ModelLayerHandlers } from './LayersButtonsStrip';
@@ -11,8 +11,8 @@ import { type UpdateModelHandlersCallback } from './useModelHandlers';
 
 export const useSyncExternalLayersState = (
   modelLayerHandlers: ModelLayerHandlers,
-  externalLayersState: LayersUrlStateParam | undefined,
-  setExternalLayersState: Dispatch<SetStateAction<LayersUrlStateParam | undefined>> | undefined,
+  externalLayersState: LayersStateParam | undefined,
+  setExternalLayersState: Dispatch<SetStateAction<LayersStateParam | undefined>> | undefined,
   update: UpdateModelHandlersCallback
 ): void => {
   const lastExternalState = useRef(externalLayersState);
@@ -44,7 +44,7 @@ export const useSyncExternalLayersState = (
 
 function areLayerStatesConsistent(
   handlers: ModelLayerHandlers,
-  externalState: LayersUrlStateParam | undefined
+  externalState: LayersStateParam | undefined
 ): boolean {
   if (externalState === undefined) {
     return (

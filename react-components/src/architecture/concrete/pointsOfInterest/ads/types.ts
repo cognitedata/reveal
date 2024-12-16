@@ -1,6 +1,8 @@
 /*!
  * Copyright 2024 Cognite AS
  */
+import { Measurement } from '@cognite/reveal/tools';
+import { InstanceStylingGroup, type LayersStateParam } from '../../../../components';
 import { type DmsUniqueIdentifier } from '../../../../data-providers';
 import { type Space, type ExternalId } from '../../../../data-providers/FdmSDK';
 
@@ -38,6 +40,9 @@ export type PoiSceneState = {
   slicingPlanes?: PoiSlicingPlane[];
   cameraPosition?: Vec3;
   cameraTarget?: Vec3;
+  layersState?: LayersStateParam;
+  measurements?: Measurement[];
+  stylings?: InstanceStylingGroup[];
 };
 
 export type Vec3 = [number, number, number];
