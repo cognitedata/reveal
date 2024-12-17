@@ -37,6 +37,8 @@ import { tryGetModelIdFromExternalId } from '../../utilities/tryGetModelIdFromEx
 export type Space = string;
 export type ExternalId = string;
 
+const SCENE_QUERY_LIMIT = 100;
+
 type Use3dScenesQueryResult = {
   scenes: Array<NodeItem<SceneConfigurationProperties>>;
   sceneModels: Array<EdgeItem<Record<string, Record<string, Cdf3dRevisionProperties>>>>;
@@ -66,12 +68,9 @@ export const use3dScenes = (
     };
     let hasMore = true;
     let cursor: string | undefined;
-    let scenesQuery = createGetScenesQuery();
-    const limit = 100;
-    const scenesLimit = scenesQuery.with.scenes.limit;
 
     while (hasMore) {
-      scenesQuery = createGetScenesQuery(limit, cursor);
+      const scenesQuery = createGetScenesQuery(SCENE_QUERY_LIMIT, cursor);
       const response = await fdmSdk.queryNodesAndEdges<
         typeof scenesQuery,
         [
@@ -95,7 +94,7 @@ export const use3dScenes = (
       allScenes.sceneSkybox.push(...response.items.sceneSkybox);
 
       cursor = response.nextCursor?.scenes;
-      hasMore = scenesLimit === response.items.scenes.length && cursor !== undefined;
+      hasMore = SCENE_QUERY_LIMIT === response.items.scenes.length && cursor !== undefined;
     }
 
     const scenesMap = createMapOfScenes(allScenes.scenes, allScenes.sceneSkybox);
