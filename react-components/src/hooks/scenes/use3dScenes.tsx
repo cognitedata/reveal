@@ -303,7 +303,7 @@ function fixModelScale(modelProps: Transformation3d): Transformation3d {
 }
 
 /* eslint-disable @typescript-eslint/explicit-function-return-type */
-function createGetScenesQuery(limit: number = 100, sceneCursor?: string) {
+function createGetScenesQuery(limit: number = SCENE_QUERY_LIMIT, sceneCursor?: string) {
   return {
     with: {
       scenes: {
