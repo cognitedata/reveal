@@ -56,40 +56,58 @@ export const use3dScenes = (
   const fdmSdk = useMemo(() => new FdmSDK(sdk), [sdk]);
 
   const queryFunction: QueryFunction<Record<Space, Record<ExternalId, SceneData>>> = async () => {
-    const scenesQuery = createGetScenesQuery();
+    const allScenes: Use3dScenesQueryResult = {
+      scenes: [],
+      sceneModels: [],
+      scene360Collections: [],
+      sceneGroundPlanes: [],
+      sceneGroundPlaneEdges: [],
+      sceneSkybox: []
+    };
+    let hasMore = true;
+    let cursor: string | undefined;
+    let scenesQuery = createGetScenesQuery();
+    const limit = 100;
+    const scenesLimit = scenesQuery.with.scenes.limit;
 
-    try {
-      const queryResult: Use3dScenesQueryResult = (
-        await fdmSdk.queryNodesAndEdges<
-          typeof scenesQuery,
-          [
-            { source: typeof SCENE_SOURCE; properties: SceneConfigurationProperties },
-            { source: typeof TRANSFORMATION_SOURCE; properties: Transformation3d },
-            { source: typeof ENVIRONMENT_MAP_SOURCE; properties: SkyboxProperties },
-            {
-              source: typeof IMAGE_360_COLLECTION_SOURCE;
-              properties: Cdf3dImage360CollectionProperties;
-            },
-            { source: typeof REVISION_SOURCE; properties: Cdf3dRevisionProperties },
-            { source: typeof GROUND_PLANE_SOURCE; properties: GroundPlaneProperties }
-          ]
-        >(scenesQuery)
-      ).items;
+    while (hasMore) {
+      scenesQuery = createGetScenesQuery(limit, cursor);
+      const response = await fdmSdk.queryNodesAndEdges<
+        typeof scenesQuery,
+        [
+          { source: typeof SCENE_SOURCE; properties: SceneConfigurationProperties },
+          { source: typeof TRANSFORMATION_SOURCE; properties: Transformation3d },
+          { source: typeof ENVIRONMENT_MAP_SOURCE; properties: SkyboxProperties },
+          {
+            source: typeof IMAGE_360_COLLECTION_SOURCE;
+            properties: Cdf3dImage360CollectionProperties;
+          },
+          { source: typeof REVISION_SOURCE; properties: Cdf3dRevisionProperties },
+          { source: typeof GROUND_PLANE_SOURCE; properties: GroundPlaneProperties }
+        ]
+      >(scenesQuery);
 
-      const scenesMap = createMapOfScenes(queryResult.scenes, queryResult.sceneSkybox);
-      populateSceneMapWithModels(queryResult.sceneModels, scenesMap);
-      populateSceneMapWith360Images(queryResult.scene360Collections, scenesMap);
-      populateSceneMapWithGroundplanes(
-        queryResult.sceneGroundPlanes,
-        queryResult.sceneGroundPlaneEdges,
-        scenesMap
-      );
+      allScenes.scenes.push(...response.items.scenes);
+      allScenes.sceneModels.push(...response.items.sceneModels);
+      allScenes.scene360Collections.push(...response.items.scene360Collections);
+      allScenes.sceneGroundPlanes.push(...response.items.sceneGroundPlanes);
+      allScenes.sceneGroundPlaneEdges.push(...response.items.sceneGroundPlaneEdges);
+      allScenes.sceneSkybox.push(...response.items.sceneSkybox);
 
-      return scenesMap;
-    } catch (error) {
-      console.warn("Scene space doesn't exist or has no scenes with 3D models");
-      return {};
+      cursor = response.nextCursor?.scenes;
+      hasMore = scenesLimit === response.items.scenes.length && cursor !== undefined;
     }
+
+    const scenesMap = createMapOfScenes(allScenes.scenes, allScenes.sceneSkybox);
+    populateSceneMapWithModels(allScenes.sceneModels, scenesMap);
+    populateSceneMapWith360Images(allScenes.scene360Collections, scenesMap);
+    populateSceneMapWithGroundplanes(
+      allScenes.sceneGroundPlanes,
+      allScenes.sceneGroundPlaneEdges,
+      scenesMap
+    );
+
+    return scenesMap;
   };
 
   return useQuery<Record<Space, Record<ExternalId, SceneData>>>({
@@ -286,7 +304,7 @@ function fixModelScale(modelProps: Transformation3d): Transformation3d {
 }
 
 /* eslint-disable @typescript-eslint/explicit-function-return-type */
-function createGetScenesQuery(limit: number = 100) {
+function createGetScenesQuery(limit: number = 100, sceneCursor?: string) {
   return {
     with: {
       scenes: {
@@ -319,7 +337,7 @@ function createGetScenesQuery(limit: number = 100) {
             }
           }
         },
-        limit
+        limit: 10000
       },
       scene360Collections: {
         edges: {
@@ -336,7 +354,7 @@ function createGetScenesQuery(limit: number = 100) {
             }
           }
         },
-        limit
+        limit: 10000
       },
       sceneSkybox: {
         nodes: {
@@ -352,7 +370,7 @@ function createGetScenesQuery(limit: number = 100) {
           },
           direction: 'outwards'
         },
-        limit
+        limit: 10000
       },
       sceneGroundPlaneEdges: {
         edges: {
@@ -369,14 +387,14 @@ function createGetScenesQuery(limit: number = 100) {
             }
           }
         },
-        limit
+        limit: 10000
       },
       sceneGroundPlanes: {
         nodes: {
           from: 'sceneGroundPlaneEdges',
           chainTo: 'destination'
         },
-        limit
+        limit: 10000
       }
     },
     select: {
@@ -398,6 +416,7 @@ function createGetScenesQuery(limit: number = 100) {
       sceneGroundPlanes: {
         sources: groundPlaneSourceWithProperties
       }
-    }
-  } as const satisfies Omit<QueryRequest, 'cursor' | 'parameters'>;
+    },
+    cursors: sceneCursor !== undefined ? { scenes: sceneCursor } : undefined
+  } as const satisfies Omit<QueryRequest, 'parameters'>;
 }
