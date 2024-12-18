@@ -115,10 +115,10 @@ export function RuleBasedOutputsSelector({
 
           const flatAssetsMappingsList = flatAssetsMappingsListPerModel.get(model) ?? [];
 
-          if (flatAssetsMappingsList.length === 0) return [];
+          if (flatAssetsMappingsList.length === 0 && fdmMappings?.length === 0) return [];
 
           const mappingsStylings = await initializeRuleBasedOutputs({
-            assetMappings: flatAssetsMappingsList ?? [],
+            assetMappings: flatAssetsMappingsList,
             fdmMappings: fdmMappings ?? [],
             contextualizedAssetNodes,
             ruleSet,
