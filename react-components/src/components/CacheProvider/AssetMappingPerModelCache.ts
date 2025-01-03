@@ -1,7 +1,7 @@
 /*!
  * Copyright 2024 Cognite AS
  */
-import { type CogniteClient, type AssetMapping3D } from '@cognite/sdk';
+import { type CogniteClient } from '@cognite/sdk';
 import { type ModelId, type RevisionId, type ModelRevisionKey } from './types';
 import { type AssetMapping } from './AssetMappingAndNode3DCache';
 import { isValidAssetMapping } from './utils';
@@ -18,7 +18,7 @@ export class AssetMappingPerModelCache {
 
   public setModelToAssetMappingCacheItems(
     key: ModelRevisionKey,
-    assetMappings: Promise<Array<Required<AssetMapping3D>>>
+    assetMappings: Promise<AssetMapping[]>
   ): void {
     this._modelToAssetMappings.set(key, assetMappings);
   }
@@ -44,10 +44,23 @@ export class AssetMappingPerModelCache {
     modelId: ModelId,
     revisionId: RevisionId
   ): Promise<AssetMapping[]> {
+    const filterQuery = {
+      limit: 1000,
+      getDmsInstances: true
+    };
+
     const assetMapping3D = await this._sdk.assetMappings3D
-      .list(modelId, revisionId, { limit: 1000 })
+      .list(modelId, revisionId, filterQuery)
       .autoPagingToArray({ limit: Infinity });
 
-    return assetMapping3D.filter(isValidAssetMapping);
+    const mappings = assetMapping3D.filter(isValidAssetMapping).map((mapping) => {
+      const newMapping = {
+        ...mapping,
+        assetId: mapping.assetId,
+        assetInstanceId: mapping.assetInstanceId
+      };
+      return newMapping;
+    });
+    return mappings as AssetMapping[];
   }
 }

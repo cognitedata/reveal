@@ -142,10 +142,17 @@ export const useAllMappedEquipmentAssetMappings = (
           return { mappings: { items: [] }, model };
         }
 
-        const mappings = await sdk.assetMappings3D.filter(model.modelId, model.revisionId, {
+        const filterQuery = {
           cursor: nextCursor === 'start' ? undefined : nextCursor,
-          limit
-        });
+          limit: 1000,
+          getDmsInstances: true
+        };
+
+        const mappings = await sdk.assetMappings3D.filter(
+          model.modelId,
+          model.revisionId,
+          filterQuery
+        );
 
         return { mappings, model };
       });
@@ -193,11 +200,18 @@ export const useMappingsForAssetIds = (
           return { mappings: { items: [] }, model };
         }
 
-        const mappings = await sdk.assetMappings3D.filter(model.modelId, model.revisionId, {
+        const filterQuery = {
           cursor: nextCursor === 'start' ? undefined : nextCursor,
           limit: 1000,
-          filter: { assetIds }
-        });
+          filter: { assetIds },
+          getDmsInstances: true
+        };
+
+        const mappings = await sdk.assetMappings3D.filter(
+          model.modelId,
+          model.revisionId,
+          filterQuery
+        );
 
         return { mappings, model };
       });
