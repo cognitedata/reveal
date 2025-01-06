@@ -173,16 +173,15 @@ export class FdmNodeCache {
     });
 
     if (fetchViews) {
-      await this.fetchAllViewsForCachedRevisions(modelRevisionIds);
+      await this.fetchAllViewsForCachedRevisions(cachedRevisionIds);
     }
 
     const cachedConnections = cachedRevisionIds.map((id) =>
       this.getCachedConnectionsForRevision(id)
     );
 
-    const nonCachedOrAllRevisionIds = fetchViews ? modelRevisionIds : nonCachedRevisionIds;
     const revisionToConnectionsMap = await this.getAndCacheRevisionToConnectionsMap(
-      nonCachedOrAllRevisionIds,
+      nonCachedRevisionIds,
       fetchViews
     );
 

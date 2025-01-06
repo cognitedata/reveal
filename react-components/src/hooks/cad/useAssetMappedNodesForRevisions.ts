@@ -2,16 +2,17 @@
  * Copyright 2024 Cognite AS
  */
 import { useQuery, type UseQueryResult } from '@tanstack/react-query';
-import { useRenderTarget, type CadModelOptions } from '../../components';
+import { type CadModelOptions } from '../../components';
 import { type ModelWithAssetMappings } from './ModelWithAssetMappings';
 import { useAssetMappingAndNode3DCache } from '../../components/CacheProvider/CacheProvider';
+import { useIsCoreDmOnly } from '../useIsCoreDmOnly';
 
 export const useAssetMappedNodesForRevisions = (
   cadModels: CadModelOptions[]
 ): UseQueryResult<ModelWithAssetMappings[]> => {
   const assetMappingAndNode3DCache = useAssetMappingAndNode3DCache();
 
-  const coreDmOnly = useRenderTarget().cdfCaches.coreDmOnly;
+  const isCoreDmOnly = useIsCoreDmOnly();
 
   return useQuery({
     queryKey: [
@@ -30,6 +31,6 @@ export const useAssetMappedNodesForRevisions = (
       return await Promise.all(fetchPromises);
     },
     staleTime: Infinity,
-    enabled: cadModels.length > 0 && !coreDmOnly
+    enabled: cadModels.length > 0 && !isCoreDmOnly
   });
 };

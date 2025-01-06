@@ -301,9 +301,9 @@ export class RevisionFdmNodeCache {
     );
 
     allConnectionsWithoutView.forEach((fdmConnectionWithNode, ind) => {
-      const connectionWithView = {
+      const connectionWithView: FdmConnectionWithNode = {
         ...fdmConnectionWithNode,
-        view: nodeInspectionResults.items[ind].inspectionResults.involvedViews[0]
+        views: [nodeInspectionResults.items[ind].inspectionResults.involvedViews[0]]
       };
 
       this.insertTreeIndexMappings(connectionWithView.cadNode.treeIndex, connectionWithView);
