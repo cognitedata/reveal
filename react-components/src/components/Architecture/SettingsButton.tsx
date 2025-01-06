@@ -201,14 +201,12 @@ function createToggle(command: BaseCommand, t: TranslateDelegate): ReactNode {
 
 function createButton(command: BaseCommand, t: TranslateDelegate): ReactNode {
   // @update-ui-component-pattern
-  const [isChecked, setChecked] = useState(false);
   const [isEnabled, setEnabled] = useState(true);
   const [isVisible, setVisible] = useState(true);
   const [uniqueId, setUniqueId] = useState(0);
   const [icon, setIcon] = useState<IconName>(undefined);
 
   useOnUpdate(command, () => {
-    setChecked(command.isChecked);
     setEnabled(command.isEnabled);
     setVisible(command.isVisible);
     setUniqueId(command.uniqueId);
@@ -231,7 +229,6 @@ function createButton(command: BaseCommand, t: TranslateDelegate): ReactNode {
       label={label}
       onClick={() => {
         command.invoke();
-        setChecked(command.isChecked);
       }}
     />
   );

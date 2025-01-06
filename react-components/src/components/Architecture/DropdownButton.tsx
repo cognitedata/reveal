@@ -18,7 +18,6 @@ import { DEFAULT_PADDING, OPTION_MIN_WIDTH, TOOLTIP_DELAY } from './constants';
 import styled from 'styled-components';
 import { useOnUpdate } from './useOnUpdate';
 import { type PlacementType } from './types';
-import { IconComponent } from './Factories/IconFactory';
 
 export const DropdownButton = ({
   inputCommand,
