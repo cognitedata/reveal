@@ -17,10 +17,7 @@ export const FitModelsButton = (): ReactElement => {
   }, []);
 
   return (
-    <CogsTooltip
-      content={t({ key: 'FIT_VIEW_TOOLTIP' })}
-      placement="right"
-      appendTo={document.body}>
+    <CogsTooltip content={t({ key: 'FIT_VIEW_TOOLTIP' })} placement="right">
       <Button
         type="ghost"
         icon=<ExpandAlternativeIcon />
