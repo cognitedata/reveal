@@ -24,7 +24,6 @@ export const HelpButton = ({ fallbackLanguage, placement }: HelpButtonProps): Re
 
   return (
     <Dropdown
-      appendTo={document.body}
       onClickOutside={() => {
         setHelpActive(false);
       }}
@@ -36,10 +35,7 @@ export const HelpButton = ({ fallbackLanguage, placement }: HelpButtonProps): Re
           <TouchNavigation fallbackLanguage={fallbackLanguage} />
         </StyledContainer>
       }>
-      <CogsTooltip
-        content={t({ key: 'HELP_TOOLTIP' })}
-        placement={'right'}
-        appendTo={document.body}>
+      <CogsTooltip content={t({ key: 'HELP_TOOLTIP' })} placement={'right'}>
         <Button
           type="ghost"
           icon={<HelpIcon />}

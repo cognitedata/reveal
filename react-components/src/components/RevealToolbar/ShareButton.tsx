@@ -15,10 +15,7 @@ export const ShareButton = (): ReactElement => {
   };
 
   return (
-    <CogsTooltip
-      content={t({ key: 'COPY_URL_TO_SHARE' })}
-      placement="right"
-      appendTo={document.body}>
+    <CogsTooltip content={t({ key: 'COPY_URL_TO_SHARE' })} placement="right">
       <Button icon=<ShareIcon /> type="ghost" aria-label="share-button" onClick={handleShare} />
     </CogsTooltip>
   );

@@ -59,8 +59,7 @@ export const LayersButton = ({
         <SelectPanel.Trigger>
           <Tooltip
             content={<LabelWithShortcut label={t({ key: 'LAYERS_FILTER_TOOLTIP' })} />}
-            placement="right"
-            appendTo={document.body}>
+            placement="right">
             <Button icon=<LayersIcon /> type="ghost" />
           </Tooltip>
         </SelectPanel.Trigger>

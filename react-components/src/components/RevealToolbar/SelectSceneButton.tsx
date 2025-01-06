@@ -3,7 +3,8 @@
  */
 import { useCallback, useState, type ReactElement } from 'react';
 
-import { Button, Menu, Tooltip as CogsTooltip, WorldIcon } from '@cognite/cogs.js';
+import { Button, Tooltip as CogsTooltip, WorldIcon } from '@cognite/cogs.js';
+import { Menu } from '@cognite/cogs-lab';
 import { use3dScenes } from '../../hooks/scenes/use3dScenes';
 import { useTranslation } from '../i18n/I18n';
 import { type DmsUniqueIdentifier } from '../../data-providers/FdmSDK';
@@ -45,7 +46,6 @@ export const SelectSceneButton = ({
   return (
     <StyledMenu
       placement="right-start"
-      appendTo={document.body}
       floatingProps={{ middleware: [offset(TOOLBAR_HORIZONTAL_PANEL_OFFSET)] }}
       renderTrigger={(props: any) => (
         <CogsTooltip content={t({ key: 'SCENE_SELECT_HEADER' })}>
@@ -54,7 +54,7 @@ export const SelectSceneButton = ({
           </Button>
         </CogsTooltip>
       )}>
-      {orientation === 'none' && <Menu.Header>{t({ key: 'SCENE_SELECT_HEADER' })}</Menu.Header>}
+      {orientation === 'none' && <Menu.Section label={t({ key: 'SCENE_SELECT_HEADER' })} />}
       <SceneList selectedScene={selectedScene} onSceneChange={setSceneAndUpdateName} />
     </StyledMenu>
   );

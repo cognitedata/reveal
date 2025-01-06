@@ -40,7 +40,7 @@ export const AssetContextualizedButton = ({
   }, [enableContextualizedStyling, setEnableMappedStyling]);
 
   return (
-    <CogsTooltip content={t(tooltip)} placement="right" appendTo={document.body}>
+    <CogsTooltip content={t(tooltip)} placement="right">
       <Button
         type="ghost"
         icon=<AssetsIcon />
