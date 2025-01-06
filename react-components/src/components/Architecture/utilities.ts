@@ -11,7 +11,7 @@ export function getFlexDirection(placement: PlacementType): FlexDirection {
   return placement === 'top' || placement === 'bottom' ? 'row' : 'column';
 }
 
-export function getDividerDirection(placement: PlacementType): string {
+export function getDividerDirection(placement: PlacementType): 'horizontal' | 'vertical' {
   return placement === 'top' || placement === 'bottom' ? 'vertical' : 'horizontal';
 }
 

@@ -18,6 +18,7 @@ import { DEFAULT_PADDING, OPTION_MIN_WIDTH, TOOLTIP_DELAY } from './constants';
 import styled from 'styled-components';
 import { useOnUpdate } from './useOnUpdate';
 import { type PlacementType } from './types';
+import { IconComponent } from './Factories/IconFactory';
 
 export const DropdownButton = ({
   inputCommand,
@@ -97,9 +98,8 @@ const DropdownElement = ({
       onOpenChange={(open: boolean) => {
         setOpen(open);
       }}
-      hideOnSelect={true}
-      appendTo={'parent'}
       placement={'bottom-start'}
+      disableCloseOnClickInside
       renderTrigger={(props: any) => (
         <CogsTooltip
           content={<LabelWithShortcut label={label} command={command} />}
@@ -170,10 +170,8 @@ function createMenuItem(command: BaseCommand, t: TranslateDelegate): ReactElemen
   return (
     <Menu.ItemToggled
       key={command.uniqueId}
-      icon={command.icon}
       disabled={!command.isEnabled}
       toggled={command.isChecked}
-      iconPlacement="left"
       label={command.getLabel(t)}
       onClick={() => {
         command.invoke();

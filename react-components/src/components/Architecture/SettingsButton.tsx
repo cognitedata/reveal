@@ -72,7 +72,6 @@ export const SettingsButton = ({
   const children = command.children;
   return (
     <StyledMenu
-      hideOnSelect={false}
       onOpenChange={(open: boolean) => {
         for (const child of children) {
           child.update();
@@ -80,7 +79,6 @@ export const SettingsButton = ({
         setOpen(open);
       }}
       floatingProps={{ middleware: [offset(TOOLBAR_HORIZONTAL_PANEL_OFFSET)] }}
-      container={'parent'}
       placement="right-end"
       style={{
         flexDirection,
@@ -227,9 +225,7 @@ function createButton(command: BaseCommand, t: TranslateDelegate): ReactNode {
     <Menu.ItemAction
       key={uniqueId}
       disabled={!isEnabled}
-      toggled={isChecked}
       icon={<IconComponent iconName={icon} />}
-      iconPlacement="left"
       style={{ padding: DEFAULT_PADDING }}
       shortcutKeys={command.getShortCutKeys()}
       label={label}
