@@ -6,7 +6,7 @@ import * as THREE from 'three';
 import {
   Cdf360DataModelsDescriptorProvider,
   Cdf360EventDescriptorProvider,
-  Cdf360ImageProvider,
+  Cdf360ImageAnnotationProvider,
   ClassicDataSourceType,
   DataSourceType,
   GenericDataSourceType,
@@ -254,7 +254,7 @@ export default class Image360VisualTestFixture extends StreamingVisualTestFixtur
       space: string
     ): Promise<{ facade: CdfImage360Facade; collection: DefaultImage360Collection<DataSourceType> }> {
       const cdf360EventDescriptorProvider = new Cdf360DataModelsDescriptorProvider(cogniteClient);
-      const cdf360ImageProvider = new Cdf360ImageProvider(cogniteClient, cdf360EventDescriptorProvider);
+      const cdf360ImageProvider = new Cdf360ImageAnnotationProvider(cogniteClient, cdf360EventDescriptorProvider);
       const image360Factory = new Image360CollectionFactory(
         cdf360ImageProvider,
         sceneHandler,
@@ -273,7 +273,7 @@ export default class Image360VisualTestFixture extends StreamingVisualTestFixtur
       siteId: string
     ): Promise<{ facade: CdfImage360Facade; collection: DefaultImage360Collection<DataSourceType> }> {
       const cdf360EventDescriptorProvider = new Cdf360EventDescriptorProvider(cogniteClient);
-      const cdf360ImageProvider = new Cdf360ImageProvider(cogniteClient, cdf360EventDescriptorProvider);
+      const cdf360ImageProvider = new Cdf360ImageAnnotationProvider(cogniteClient, cdf360EventDescriptorProvider);
       const image360Factory = new Image360CollectionFactory(
         cdf360ImageProvider,
         sceneHandler,

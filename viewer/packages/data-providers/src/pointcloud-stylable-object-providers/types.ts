@@ -3,17 +3,11 @@
  */
 
 import { StylableObject } from './StylableObject';
-import { IShape } from '@reveal/utilities';
+import { DMInstanceRef, IShape } from '@reveal/utilities';
 
 import { Box3 } from 'three';
-import { AnnotationsAssetRef, DirectRelationReference } from '@cognite/sdk';
+import { AnnotationsAssetRef } from '@cognite/sdk';
 import { ClassicDataSourceType, DataSourceType } from '../DataSourceType';
-
-/**
- * @public
- * CDF Data model instance reference
- */
-export type DMInstanceRef = DirectRelationReference;
 
 type VolumeAnnotation = {
   annotationId: number;

@@ -2,13 +2,12 @@
  * Copyright 2023 Cognite AS
  */
 
-import { CogniteClient, ExternalId, FileInfo } from '@cognite/sdk';
+import { CogniteClient, FileInfo } from '@cognite/sdk';
 import {
   Historical360ImageSet,
   Image360Descriptor,
   Image360DescriptorProvider,
   Image360FileDescriptor,
-  InstanceIdentifier,
   QueryNextCursors
 } from '../../../../types';
 import { Cdf360FdmQuery, get360CollectionQuery } from './get360CollectionQuery';
@@ -19,12 +18,24 @@ import chunk from 'lodash/chunk';
 import zip from 'lodash/zip';
 import groupBy from 'lodash/groupBy';
 import partition from 'lodash/partition';
+import { ClassicDataSourceType } from 'api-entry-points/core';
+import { DMInstanceRef, dmInstanceRefToKey } from '@reveal/utilities';
+import { DMInstanceKey } from '@reveal/utilities/src/fdm/toKey';
 
 /**
  * An identifier uniquely determining an instance of a Cognite Data Model
  */
-export type Image360DataModelIdentifier = {
-  source?: 'dm' | 'cdm'; // If nothing is specified, it is assumed to be 'dm'
+export type Image360DataModelIdentifier = Image360CoreDataModelIdentifier | Image360LegacyDataModelIdentifier;
+
+export type Image360LegacyDataModelIdentifier = {
+  source: 'dm';
+} & Image360BaseIdentifier;
+
+export type Image360CoreDataModelIdentifier = {
+  source: 'cdm';
+} & Image360BaseIdentifier;
+
+export type Image360BaseIdentifier = {
   space: string;
   image360CollectionExternalId: string;
 };
@@ -41,8 +52,8 @@ type ExhaustedQueryResult = {
   stations: QueryResult['stations'];
 };
 
-export class Cdf360DataModelsDescriptorProvider implements Image360DescriptorProvider<Image360DataModelIdentifier> {
-  private readonly _dmsSdk: DataModelsSdk;
+export class Cdf360DataModelsDescriptorProvider implements Image360DescriptorProvider<ClassicDataSourceType> {
+  readonly _dmsSdk: DataModelsSdk;
   private readonly _cogniteSdk: CogniteClient;
 
   constructor(sdk: CogniteClient) {
@@ -53,7 +64,7 @@ export class Cdf360DataModelsDescriptorProvider implements Image360DescriptorPro
   public async get360ImageDescriptors(
     collectionIdentifier: Image360DataModelIdentifier,
     _: boolean
-  ): Promise<Historical360ImageSet[]> {
+  ): Promise<Historical360ImageSet<ClassicDataSourceType>[]> {
     const { image_collection, images } = await this.queryCollection(collectionIdentifier);
 
     if (image_collection.length === 0) {
@@ -81,8 +92,8 @@ export class Cdf360DataModelsDescriptorProvider implements Image360DescriptorPro
     });
 
     const groups = groupBy(imagesWithStation, imageResult => {
-      const station = imageResult.image.properties.cdf_360_image_schema['Image360/v1'].station as InstanceIdentifier;
-      return `${station.externalId}-${station.space}`;
+      const station = imageResult.image.properties.cdf_360_image_schema['Image360/v1'].station as DMInstanceRef;
+      return dmInstanceRefToKey(station);
     });
 
     return Object.values(groups)
@@ -136,12 +147,12 @@ export class Cdf360DataModelsDescriptorProvider implements Image360DescriptorPro
   private async getFileDescriptors(images: ImageResult) {
     const imageProps = images.map(image => image.properties.cdf_360_image_schema['Image360/v1']);
     const cubeMapExternalIds = imageProps.flatMap(imageProp => [
-      { externalId: imageProp.cubeMapFront } as ExternalId,
-      { externalId: imageProp.cubeMapBack } as ExternalId,
-      { externalId: imageProp.cubeMapLeft } as ExternalId,
-      { externalId: imageProp.cubeMapRight } as ExternalId,
-      { externalId: imageProp.cubeMapTop } as ExternalId,
-      { externalId: imageProp.cubeMapBottom } as ExternalId
+      { externalId: imageProp.cubeMapFront },
+      { externalId: imageProp.cubeMapBack },
+      { externalId: imageProp.cubeMapLeft },
+      { externalId: imageProp.cubeMapRight },
+      { externalId: imageProp.cubeMapTop },
+      { externalId: imageProp.cubeMapBottom }
     ]);
     const externalIdBatches = chunk(chunk(cubeMapExternalIds, 1000), 15);
 
@@ -160,7 +171,7 @@ export class Cdf360DataModelsDescriptorProvider implements Image360DescriptorPro
     collectionId: string,
     collectionLabel: string,
     imageFileDescriptors: { image: ImageInstanceResult; fileDescriptors: FileInfo[] }[]
-  ): Historical360ImageSet {
+  ): Historical360ImageSet<ClassicDataSourceType> {
     const mainImagePropsArray = imageFileDescriptors.map(
       descriptor => descriptor.image.properties.cdf_360_image_schema['Image360/v1']
     );
@@ -172,15 +183,20 @@ export class Cdf360DataModelsDescriptorProvider implements Image360DescriptorPro
       collectionLabel,
       id,
       imageRevisions: imageFileDescriptors.map((p, index) =>
-        this.getImageRevision(mainImagePropsArray[index], p.fileDescriptors)
+        this.getImageRevision(dmInstanceRefToKey(p.image), mainImagePropsArray[index], p.fileDescriptors)
       ),
       label: mainImagePropsArray[0].label as string,
       transform: this.getRevisionTransform(mainImagePropsArray[0] as any)
     };
   }
 
-  private getImageRevision(imageProps: ImageResultProperties, fileInfos: FileInfo[]): Image360Descriptor {
+  private getImageRevision(
+    revisionId: DMInstanceKey,
+    imageProps: ImageResultProperties,
+    fileInfos: FileInfo[]
+  ): Image360Descriptor<ClassicDataSourceType> {
     return {
+      id: revisionId,
       faceDescriptors: getFaceDescriptors(),
       timestamp: imageProps.timeTaken as string
     };

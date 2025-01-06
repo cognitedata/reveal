@@ -11,16 +11,8 @@ import { IdEither } from '@cognite/sdk';
 import { Image360Annotation } from '../annotation/Image360Annotation';
 import { ClassicDataSourceType, DataSourceType, ImageAssetLinkAnnotationInfo } from '@reveal/data-providers';
 import { Matrix4 } from 'three';
-
-/**
- * Filter for finding annotations related to an asset
- */
-export type Image360AnnotationAssetFilter = {
-  /**
-   * Reference to the wanted asset
-   */
-  assetRef: IdEither;
-};
+import { AnnotationInfoType, ImageDMAnnotationInfo } from '@reveal/data-providers/src/types';
+import { DMInstanceRef } from '@reveal/utilities';
 
 /**
  * Asset search return type, including information about the image in which the asset is found
@@ -29,7 +21,7 @@ export type AssetAnnotationImage360Info<T extends DataSourceType = ClassicDataSo
   /**
    * Reference to the relevant asset
    */
-  annotationInfo: ImageAssetLinkAnnotationInfo;
+  annotationInfo: AnnotationInfoType<T>;
   /**
    * The image entity in which the asset was found
    */
@@ -43,19 +35,19 @@ export type AssetAnnotationImage360Info<T extends DataSourceType = ClassicDataSo
 /**
  * Result item from an asset annotation query
  */
-export type Image360AnnotationAssetQueryResult = {
+export type Image360AnnotationAssetQueryResult<T extends DataSourceType = ClassicDataSourceType> = {
   /**
    * The Image360 to which the result annotation belongs
    */
-  image: Image360;
+  image: Image360<T>;
   /**
    * The image revision to which the result annotation belongs
    */
-  revision: Image360Revision;
+  revision: Image360Revision<T>;
   /**
    * The found annotation
    */
-  annotation: Image360Annotation;
+  annotation: Image360Annotation<T>;
 };
 
 /**
@@ -158,7 +150,7 @@ export interface Image360Collection<T extends DataSourceType = ClassicDataSource
    * @param event The event type.
    * @param callback Callback to be called when the event is fired.
    */
-  on(event: 'image360Entered', callback: Image360EnteredDelegate): void;
+  on(event: 'image360Entered', callback: Image360EnteredDelegate<T>): void;
   on(event: 'image360Exited', callback: Image360ExitedDelegate): void;
 
   /**
@@ -166,7 +158,7 @@ export interface Image360Collection<T extends DataSourceType = ClassicDataSource
    * @param event The event type.
    * @param callback Callback function to be unsubscribed.
    */
-  off(event: 'image360Entered', callback: Image360EnteredDelegate): void;
+  off(event: 'image360Entered', callback: Image360EnteredDelegate<T>): void;
   off(event: 'image360Exited', callback: Image360ExitedDelegate): void;
 
   /**
@@ -182,7 +174,7 @@ export interface Image360Collection<T extends DataSourceType = ClassicDataSource
   /**
    * Find 360 images associated with an asset through CDF annotations
    */
-  findImageAnnotations(filter: Image360AnnotationAssetFilter): Promise<Image360AnnotationAssetQueryResult[]>;
+  findImageAnnotations(filter: Image360AnnotationInstanceFilter<T>): Promise<Image360AnnotationAssetQueryResult<T>[]>;
 
   /**
    * Get IDs of all CDF assets associated with this 360 image collection through CDF annotations

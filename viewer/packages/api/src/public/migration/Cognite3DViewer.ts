@@ -1767,7 +1767,7 @@ export class Cognite3DViewer<DataSourceT extends DataSourceType = ClassicDataSou
   async get360AnnotationIntersectionFromPixel(
     offsetX: number,
     offsetY: number
-  ): Promise<null | Image360AnnotationIntersection> {
+  ): Promise<null | Image360AnnotationIntersection<DataSourceT>> {
     return this._image360ApiHelper?.intersect360ImageAnnotations(offsetX, offsetY) ?? null;
   }
 

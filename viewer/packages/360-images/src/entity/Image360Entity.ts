@@ -5,7 +5,11 @@
 import { DeviceDescriptor, SceneHandler } from '@reveal/utilities';
 import { DataSourceType, Image360DataProvider } from '@reveal/data-providers';
 import { Image360 } from './Image360';
-import { Historical360ImageSet, Image360EventDescriptor } from '@reveal/data-providers/src/types';
+import {
+  Historical360ImageSet,
+  Image360RevisionDescriptor,
+  Image360RevisionId
+} from '@reveal/data-providers/src/types';
 import { Image360RevisionEntity } from './Image360RevisionEntity';
 import minBy from 'lodash/minBy';
 import { Image360VisualizationBox } from './Image360VisualizationBox';
@@ -18,7 +22,7 @@ import cloneDeep from 'lodash/cloneDeep';
 
 export class Image360Entity<T extends DataSourceType> implements Image360<T> {
   private readonly _revisions: Image360RevisionEntity<T>[];
-  private readonly _imageMetadata: Image360EventDescriptor;
+  private readonly _imageMetadata: Image360RevisionDescriptor<T>;
   private readonly _modelTransform: Matrix4;
   private readonly _worldTransform: Matrix4;
   private readonly _image360Icon: Overlay3DIcon;
@@ -56,7 +60,7 @@ export class Image360Entity<T extends DataSourceType> implements Image360<T> {
    * Get Id of 360 image entity.
    * @returns Station Id
    */
-  get id(): string {
+  get id(): Image360RevisionId<T> {
     return this._imageMetadata.id;
   }
 
@@ -69,9 +73,9 @@ export class Image360Entity<T extends DataSourceType> implements Image360<T> {
   }
 
   constructor(
-    image360Metadata: Historical360ImageSet,
+    image360Metadata: Historical360ImageSet<T>,
     sceneHandler: SceneHandler,
-    imageProvider: Image360DataProvider,
+    imageProvider: Image360DataProvider<T>,
     annotationFilterer: Image360AnnotationFilter,
     transform: Matrix4,
     icon: Overlay3DIcon,
@@ -87,7 +91,13 @@ export class Image360Entity<T extends DataSourceType> implements Image360<T> {
 
     this._revisions = image360Metadata.imageRevisions.map(
       descriptor =>
-        new Image360RevisionEntity(imageProvider, descriptor, this._image360VisualizationBox, annotationFilterer)
+        new Image360RevisionEntity<T>(
+          descriptor.id,
+          imageProvider,
+          descriptor,
+          this._image360VisualizationBox,
+          annotationFilterer
+        )
     );
     this._activeRevision = this.getMostRecentRevision();
   }

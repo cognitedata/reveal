@@ -3,7 +3,7 @@
  */
 
 import { CogniteClient, FileInfo } from '@cognite/sdk';
-import { Cdf360CdmDescriptorProvider } from './Cdf360CdmDescriptorProvider';
+import { Cdm360ImageDescriptorProvider } from './Cdm360ImageDescriptorProvider';
 import { It, Mock } from 'moq.ts';
 
 const mock = {
@@ -206,7 +206,7 @@ const mock = {
   }
 };
 
-describe(Cdf360CdmDescriptorProvider.name, () => {
+describe(Cdm360ImageDescriptorProvider.name, () => {
   test('MyTest', async () => {
     const sdkMock = new Mock<CogniteClient>()
       .setup(instance =>
@@ -236,7 +236,7 @@ describe(Cdf360CdmDescriptorProvider.name, () => {
       .setup(instance => instance.getBaseUrl())
       .returns('https://example.com');
 
-    const provider = new Cdf360CdmDescriptorProvider(sdkMock.object());
+    const provider = new Cdm360ImageDescriptorProvider(sdkMock.object());
 
     const descriptors = await provider.get360ImageDescriptors(
       {

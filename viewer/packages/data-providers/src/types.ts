@@ -1,15 +1,14 @@
 /*!
  * Copyright 2021 Cognite AS
  */
-import {
-  AnnotationModel,
-  AnnotationsCogniteAnnotationTypesImagesAssetLink,
-  CogniteInternalId,
-  IdEither
-} from '@cognite/sdk';
+import { AnnotationModel, AnnotationsCogniteAnnotationTypesImagesAssetLink, IdEither } from '@cognite/sdk';
 import * as THREE from 'three';
+import { ClassicDataSourceType, DataSourceType, DMDataSourceType } from './DataSourceType';
+import { DefaultImage360Collection, Image360AnnotationAssetQueryResult } from '@reveal/360-images';
+import { DMInstanceRef } from 'api-entry-points/core';
+import { FdmImage360Annotation } from './image-360-data-providers/cdm/types';
 
-export type Image360AnnotationFilterDelegate = (annotation: AnnotationModel) => boolean;
+export type Image360AnnotationFilterDelegate<T extends DataSourceType> = (annotation: AnnotationInfoType<T>) => boolean;
 
 export interface JsonFileProvider {
   getJsonFile(baseUrl: string, fileName: string): Promise<any>;
@@ -19,13 +18,42 @@ export interface BinaryFileProvider {
   getBinaryFile(baseUrl: string, fileName: string, abortSignal?: AbortSignal): Promise<ArrayBuffer>;
 }
 
-export interface Image360AnnotationProvider {
-  get360ImageAnnotations(descriptors: Image360FileDescriptor[]): Promise<AnnotationModel[]>;
-  getFilesByAssetRef(assetId: IdEither): Promise<CogniteInternalId[]>;
+export type Image360RevisionId<T extends DataSourceType> = T extends DMDataSourceType ? DMInstanceRef : string;
+
+export type Image360AnnotationSpecifier<T extends DataSourceType> = {
+  revisionId: Image360RevisionId<T>;
+  fileDescriptors: Image360FileDescriptor[];
+};
+
+/**
+ * Filter for finding linked annotations in either a classic 360 collection or a new one
+ */
+export type InstanceReference<T extends DataSourceType> = T extends ClassicDataSourceType ? IdEither : DMInstanceRef;
+
+/**
+ * The info contained in an annotation
+ */
+export type AnnotationInfoType<T extends DataSourceType> = T extends ClassicDataSourceType
+  ? ImageAssetLinkAnnotationInfo
+  : FdmImage360Annotation;
+
+export interface Image360AnnotationProvider<T extends DataSourceType> {
+  get360ImageAnnotations(annotationSpecifier: Image360AnnotationSpecifier<T>): Promise<T['image360AnnotationType'][]>;
+  findImageAnnotationsForInstance(
+    instanceFilter: InstanceReference<T>,
+    collection: DefaultImage360Collection<T>
+  ): Promise<Image360AnnotationAssetQueryResult<T>[]>;
+  get360ImageAssets(
+    collection: DefaultImage360Collection<T>,
+    annotationFilter: Image360AnnotationFilterDelegate<T>
+  ): Promise<InstanceReference<T>[]>;
 }
 
-export interface Image360DescriptorProvider<T> {
-  get360ImageDescriptors(metadataFilter: T, preMultipliedRotation: boolean): Promise<Historical360ImageSet[]>;
+export interface Image360DescriptorProvider<T extends DataSourceType> {
+  get360ImageDescriptors(
+    metadataFilter: T['image360Identifier'],
+    preMultipliedRotation: boolean
+  ): Promise<Historical360ImageSet<T>[]>;
 }
 
 export interface Image360FileProvider {
@@ -50,24 +78,18 @@ export type ImageAssetLinkAnnotationInfo = Omit<AnnotationModel, 'data'> & {
   data: AnnotationsCogniteAnnotationTypesImagesAssetLink;
 };
 
-export interface Image360AssetProvider {
-  get360ImageAssets(
-    image360FileDescriptors: Image360FileDescriptor[],
-    annotationFilter: Image360AnnotationFilterDelegate
-  ): Promise<ImageAssetLinkAnnotationInfo[]>;
-}
-
-export type Historical360ImageSet = Image360EventDescriptor & {
-  imageRevisions: Image360Descriptor[];
+export type Historical360ImageSet<T extends DataSourceType> = Image360RevisionDescriptor<T> & {
+  imageRevisions: Image360Descriptor<T>[];
 };
 
-export type Image360Descriptor = {
+export type Image360Descriptor<T extends DataSourceType> = {
+  id: Image360RevisionId<T>;
   timestamp?: number | string;
   faceDescriptors: Image360FileDescriptor[];
 };
 
-export type Image360EventDescriptor = {
-  id: string;
+export type Image360RevisionDescriptor<T extends DataSourceType> = {
+  id: Image360RevisionId<T>;
   label: string | undefined;
   collectionId: string;
   collectionLabel: string | undefined;
@@ -110,21 +132,16 @@ type InstanceType = 'node' | 'edge';
 
 export type Item = {
   instanceType: InstanceType;
-} & InstanceIdentifier;
+} & DMInstanceRef;
 
 export type Source = {
   type: 'view';
   version: string;
-} & InstanceIdentifier;
-
-export type InstanceIdentifier = {
-  space: string;
-  externalId: string;
-};
+} & DMInstanceRef;
 
 export type EdgeItem = {
-  startNode: InstanceIdentifier;
-  endNode: InstanceIdentifier;
+  startNode: DMInstanceRef;
+  endNode: DMInstanceRef;
 };
 
 export type Query = {
@@ -183,7 +200,7 @@ type MainSourceProperties<T extends Query, K extends SelectKey<T>> = Sources<T, 
 type ResultExpressionProperties<T extends Query, K extends SelectKey<T>> = {
   [V in MainSource<T, K>['space']]: {
     [Q in `${MainSource<T, K>['externalId']}/${MainSource<T, K>['version']}`]: {
-      [B in MainSourceProperties<T, K>[number]]: string | number | InstanceIdentifier;
+      [B in MainSourceProperties<T, K>[number]]: string | number | DMInstanceRef;
     };
   };
 };

@@ -7,7 +7,7 @@ import { AnnotationModel, AnnotationsObjectDetection } from '@cognite/sdk';
 import { Mock, It } from 'moq.ts';
 import { ImageAnnotationObject } from '../src/annotation/ImageAnnotationObject';
 import { Image360RevisionEntity } from '../src/entity/Image360RevisionEntity';
-import { Image360DataProvider, Image360Descriptor } from '@reveal/data-providers';
+import { ClassicDataSourceType, Image360DataProvider, Image360Descriptor } from '@reveal/data-providers';
 import { Image360VisualizationBox } from '../src/entity/Image360VisualizationBox';
 import { SceneHandler } from '@reveal/utilities';
 
@@ -58,7 +58,8 @@ describe(Image360RevisionEntity.name, () => {
       } as AnnotationModel
     ];
 
-    const imageDescriptor: Image360Descriptor = {
+    const imageDescriptor: Image360Descriptor<ClassicDataSourceType> = {
+      id: 'someDescriptorId',
       faceDescriptors: [{ fileId: 1, face: 'front', mimeType: 'image/jpeg' }]
     };
     const createImage360VisualizationBox = () =>

@@ -5,7 +5,7 @@ import { CogniteClient, CogniteEvent, EventFilter, FileFilterProps, FileInfo, Me
 import {
   Historical360ImageSet,
   Image360DescriptorProvider,
-  Image360EventDescriptor,
+  Image360RevisionDescriptor,
   Image360FileDescriptor
 } from '../../../types';
 import { Log } from '@reveal/logger';
@@ -14,6 +14,7 @@ import range from 'lodash/range';
 import groupBy from 'lodash/groupBy';
 import orderBy from 'lodash/orderBy';
 import { MathUtils, Matrix4, Vector3 } from 'three';
+import { ClassicDataSourceType } from 'api-entry-points/core';
 
 type Event360Metadata = Event360Filter & Event360TransformationData;
 
@@ -30,7 +31,7 @@ type Event360Filter = {
   station_name?: string;
 };
 
-export class Cdf360EventDescriptorProvider implements Image360DescriptorProvider<Metadata> {
+export class Cdf360EventDescriptorProvider implements Image360DescriptorProvider<ClassicDataSourceType> {
   private readonly _client: CogniteClient;
   constructor(client: CogniteClient) {
     this._client = client;
@@ -39,7 +40,7 @@ export class Cdf360EventDescriptorProvider implements Image360DescriptorProvider
   public async get360ImageDescriptors(
     metadataFilter: Metadata,
     preMultipliedRotation: boolean
-  ): Promise<Historical360ImageSet[]> {
+  ): Promise<Historical360ImageSet<ClassicDataSourceType>[]> {
     const [events, files] = await Promise.all([
       this.listEvents({ metadata: metadataFilter }),
       this.listFiles({ metadata: metadataFilter, uploaded: true })
@@ -64,7 +65,7 @@ export class Cdf360EventDescriptorProvider implements Image360DescriptorProvider
     files: Map<string, FileInfo[]>,
     events: CogniteEvent[],
     preMultipliedRotation: boolean
-  ): Historical360ImageSet[] {
+  ): Historical360ImageSet<ClassicDataSourceType>[] {
     const eventDescriptors = events
       .map(event => event.metadata)
       .filter((metadata): metadata is Event360Metadata => !!metadata)
@@ -87,6 +88,7 @@ export class Cdf360EventDescriptorProvider implements Image360DescriptorProvider
           .map(imageSetInfo => {
             const timestamp = imageSetInfo[0].metadata?.timestamp;
             return {
+              id: eventDescriptor.id,
               timestamp: timestamp ? Number(timestamp) : undefined,
               faceDescriptors: imageSetInfo.map(imageInfo => {
                 return {
@@ -160,7 +162,10 @@ export class Cdf360EventDescriptorProvider implements Image360DescriptorProvider
     }
   }
 
-  private parseEventMetadata(eventMetadata: Event360Metadata, preMultipliedRotation: boolean): Image360EventDescriptor {
+  private parseEventMetadata(
+    eventMetadata: Event360Metadata,
+    preMultipliedRotation: boolean
+  ): Image360RevisionDescriptor<ClassicDataSourceType> {
     return {
       collectionId: eventMetadata.site_id,
       collectionLabel: eventMetadata.site_name,

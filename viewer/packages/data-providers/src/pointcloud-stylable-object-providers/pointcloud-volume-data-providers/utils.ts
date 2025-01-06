@@ -4,7 +4,7 @@
 
 import { TableExpressionContainsAnyFilterV3 } from '@cognite/sdk';
 import { COGNITE_POINT_CLOUD_VOLUME_SOURCE, CORE_DM_3D_CONTAINER_SPACE } from '../../utilities/constants';
-import { DMInstanceRef } from '../types';
+import { DMInstanceRef } from '@reveal/utilities';
 
 export function getRevisionContainsAnyFilter(revisionReferences: DMInstanceRef[]): TableExpressionContainsAnyFilterV3 {
   return {
