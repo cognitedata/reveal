@@ -37,8 +37,7 @@ export const SettingsButton = ({
         <CogsTooltip
           content={t({ key: 'SETTINGS_TOOLTIP' })}
           placement="right"
-          disabled={settingsActive}
-          appendTo={document.body}>
+          disabled={settingsActive}>
           <Button
             icon=<SettingsIcon />
             type="ghost"

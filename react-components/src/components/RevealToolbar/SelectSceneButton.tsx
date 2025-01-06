@@ -45,7 +45,6 @@ export const SelectSceneButton = ({
   return (
     <StyledMenu
       placement="right-start"
-      appendTo={document.body}
       floatingProps={{ middleware: [offset(TOOLBAR_HORIZONTAL_PANEL_OFFSET)] }}
       renderTrigger={(props: any) => (
         <CogsTooltip content={t({ key: 'SCENE_SELECT_HEADER' })}>

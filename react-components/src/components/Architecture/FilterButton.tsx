@@ -140,7 +140,6 @@ const FilterMenu = ({
         <CogsTooltip
           content={<LabelWithShortcut label={label} command={command} />}
           disabled={isOpen || label === undefined}
-          appendTo={document.body}
           placement={placement}>
           <Button
             type={getButtonType(command)}

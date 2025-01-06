@@ -483,20 +483,21 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@cognite/cogs-core@npm:^10.25.0, @cognite/cogs-core@npm:^10.25.2":
-  version: 10.25.2
-  resolution: "@cognite/cogs-core@npm:10.25.2"
+"@cognite/cogs-core@npm:^10.36.0":
+  version: 10.36.0
+  resolution: "@cognite/cogs-core@npm:10.36.0"
   dependencies:
-    "@cognite/cogs-icons": "npm:^10.25.2"
-    "@cognite/cogs-utils": "npm:^10.25.2"
+    "@cognite/cogs-icons": "npm:^10.36.0"
+    "@cognite/cogs-utils": "npm:^10.36.0"
     "@emotion/react": "npm:^11.11.3"
     "@emotion/styled": "npm:^11.11.0"
     "@mui/base": "npm:^5.0.0-beta.33"
     "@mui/joy": "npm:5.0.0-beta.48"
+    "@mui/material": "npm:^5.15.5"
+    "@mui/utils": "npm:^5.15.6"
     "@mui/x-date-pickers": "npm:^6.19.3"
     "@mui/x-date-pickers-pro": "npm:^6.19.3"
     "@mui/x-license-pro": "npm:^6.10.2"
-    "@react-hook/resize-observer": "npm:^2.0.0"
     "@tippyjs/react": "npm:4.2.6"
     classnames: "npm:^2.5.1"
     color: "npm:4.2.3"
@@ -504,22 +505,22 @@ __metadata:
     csstype: "npm:2.6.10"
     dayjs: "npm:^1.11.7"
     framer-motion: "npm:^11.0.3"
-    fuse.js: "npm:^7.0.0"
+    lodash: "npm:4.17.21"
     rc-slider: "npm:9.5.4"
     react-select: "npm:3.2.0"
-    tippy.js: "npm:6.3.7"
+    react-transition-group: "npm:^4.4.5"
     tslib: "npm:^2.6.2"
   peerDependencies:
     "@types/react": ^18
     react: ^18
     react-dom: ^18
-  checksum: 10/8858af1936bff310e648c2223c1d26994e0b468d975beb826d3f080758aba6d5d0d6c8fd29331fc78dfa849c66badb8c97fd850fd32c4d5a01c50682b15dc977
+  checksum: 10/83162e9ded22fa4bc6c4b68ec4496f7d6532090843a7a2580951c0a76ad9b380cfe2562b93a9f92bcbf071c9c7dac2f3c8dedea2954135509a1f3745633196d3
   languageName: node
   linkType: hard
 
-"@cognite/cogs-icons@npm:^10.25.0, @cognite/cogs-icons@npm:^10.25.2":
-  version: 10.25.2
-  resolution: "@cognite/cogs-icons@npm:10.25.2"
+"@cognite/cogs-icons@npm:^10.36.0":
+  version: 10.36.0
+  resolution: "@cognite/cogs-icons@npm:10.36.0"
   dependencies:
     classnames: "npm:^2.5.1"
     core-js: "npm:^3.6.5"
@@ -528,18 +529,18 @@ __metadata:
     "@types/react": ^18
     react: ^18
     react-dom: ^18
-  checksum: 10/fc18c32244963804cb9a65a8d53a27b8c45cf0f25395945e9a0040d867850c3105afb5768a108df2b04ba9c8778e2efb9ac8f9865a1fc38bd7e0e5bf15afc44c
+  checksum: 10/97880728be6f74bbc62f48d0b304381e9bae143f7a475264ea9ac699eb867dc5686d34b6493e78fcb77c8514004aadd8a15e080a340efcda3a79ec8bf3883b73
   languageName: node
   linkType: hard
 
-"@cognite/cogs-lab@npm:^9.0.0-alpha.113":
-  version: 9.0.0-alpha.113
-  resolution: "@cognite/cogs-lab@npm:9.0.0-alpha.113"
+"@cognite/cogs-lab@npm:^9.0.0-alpha.153":
+  version: 9.0.0-alpha.153
+  resolution: "@cognite/cogs-lab@npm:9.0.0-alpha.153"
   dependencies:
     "@babel/runtime": "npm:^7.23.2"
-    "@cognite/cogs-core": "npm:^10.25.2"
-    "@cognite/cogs-icons": "npm:^10.25.2"
-    "@cognite/cogs-utils": "npm:^10.25.2"
+    "@cognite/cogs-core": "npm:^10.36.0"
+    "@cognite/cogs-icons": "npm:^10.36.0"
+    "@cognite/cogs-utils": "npm:^10.36.0"
     "@floating-ui/react": "npm:^0.26.6"
     "@mui/base": "npm:^5.0.0-beta.33"
     "@mui/material": "npm:^5.15.5"
@@ -553,18 +554,19 @@ __metadata:
     filesize: "npm:^10.1.0"
     framer-motion: "npm:11.4.0"
     lodash: "npm:4.17.21"
-    nanoid: "npm:5.0.7"
     react-toastify: "npm:9.1.3"
     tslib: "npm:^2.6.2"
   peerDependencies:
+    "@types/react": ^18
     react: ^18
-  checksum: 10/a1848ba5eca0d13f2457e0bcff81c4e97ecf071c43b78579e7eb00f834c3a391d147aa61c37e7a961cfcea6a589e8db69310aea509dfbeffd656723fc944dea3
+    react-dom: ^18
+  checksum: 10/8f9315c01c516d86e3cbaddcf21c1a44e7860338c291f165f98c4476edb9ba78a0fae8415a04c0d5d564ebf6cd0c2039f2c9a6c4a8b56f48b5c0a5c9d4b31cd1
   languageName: node
   linkType: hard
 
-"@cognite/cogs-utils@npm:^10.25.0, @cognite/cogs-utils@npm:^10.25.2":
-  version: 10.25.2
-  resolution: "@cognite/cogs-utils@npm:10.25.2"
+"@cognite/cogs-utils@npm:^10.36.0":
+  version: 10.36.0
+  resolution: "@cognite/cogs-utils@npm:10.36.0"
   dependencies:
     "@babel/runtime": "npm:^7.23.2"
     "@testing-library/react": "npm:16.0.1"
@@ -576,19 +578,21 @@ __metadata:
     resize-observer-polyfill: "npm:1.5.1"
     tslib: "npm:^2.6.2"
   peerDependencies:
+    "@types/react": ^18
     react: ^18
-  checksum: 10/5751a513792e9a2be3b91ba4274d391e4f883825b5a38ec0a450118029b86f9c01fa573134abef03a68b1594a8104786d5b235165b1056313a485d2455c38e83
+    react-dom: ^18
+  checksum: 10/501c6112d1e99437cfd918b736fba0f3d195d078daee414df1f31e88a81b09a237f18e2f6eacfac1eae69d043df217f85a4ab168add9e87c46505ceec46178d9
   languageName: node
   linkType: hard
 
-"@cognite/cogs.js@npm:^10.25.0":
-  version: 10.25.0
-  resolution: "@cognite/cogs.js@npm:10.25.0"
+"@cognite/cogs.js@npm:^10.36.0":
+  version: 10.36.0
+  resolution: "@cognite/cogs.js@npm:10.36.0"
   dependencies:
-    "@cognite/cogs-core": "npm:^10.25.0"
-    "@cognite/cogs-icons": "npm:^10.25.0"
-    "@cognite/cogs-utils": "npm:^10.25.0"
-  checksum: 10/377679fcce2f29e62162a1211efa9f1b76d5a187e30c3eef3cc44b12d0f1300dd2c6d39caa5df9490f9e05469a224630180148680cd1a8dfa274871c85343f51
+    "@cognite/cogs-core": "npm:^10.36.0"
+    "@cognite/cogs-icons": "npm:^10.36.0"
+    "@cognite/cogs-utils": "npm:^10.36.0"
+  checksum: 10/fc594de37a676d3b8463b23529678e2a775a28300f8ca85f930901a0be2c7ff79b8166c25a86d1ffe97cd0ee00e80c03005975c2073c06d90ae24a0e652df309
   languageName: node
   linkType: hard
 
@@ -598,8 +602,8 @@ __metadata:
   dependencies:
     "@cognite/cdf-i18n-utils": "npm:^0.7.5"
     "@cognite/cdf-utilities": "npm:^3.6.0"
-    "@cognite/cogs-lab": "npm:^9.0.0-alpha.113"
-    "@cognite/cogs.js": "npm:^10.25.0"
+    "@cognite/cogs-lab": "npm:^9.0.0-alpha.153"
+    "@cognite/cogs.js": "npm:^10.36.0"
     "@cognite/reveal": "npm:^4.22.0"
     "@cognite/sdk": "npm:^9.13.0"
     "@playwright/test": "npm:1.49.0"
@@ -656,7 +660,7 @@ __metadata:
     vite-plugin-externalize-deps: "npm:^0.8.0"
     vitest: "npm:^1.5.3"
   peerDependencies:
-    "@cognite/cogs-lab": ^9.0.0-alpha.111
+    "@cognite/cogs-lab": ^9.0.0-alpha.153
     "@cognite/reveal": 4.21.1
     react: ">=18"
     react-dom: ">=18"
@@ -2168,7 +2172,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@react-hook/resize-observer@npm:2.0.2, @react-hook/resize-observer@npm:^2.0.0":
+"@react-hook/resize-observer@npm:2.0.2":
   version: 2.0.2
   resolution: "@react-hook/resize-observer@npm:2.0.2"
   dependencies:
@@ -6475,13 +6479,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"fuse.js@npm:^7.0.0":
-  version: 7.0.0
-  resolution: "fuse.js@npm:7.0.0"
-  checksum: 10/d75d35f2d61afa85b8248f9cbfc7d4df29ae47ea574a15ad5c3c2a41930c5ed78668346295508b59ec4929fcb1a5cd6d9a8c649b5a3bc8b18e515f4e4cb9809d
-  languageName: node
-  linkType: hard
-
 "gensync@npm:^1.0.0-beta.2":
   version: 1.0.0-beta.2
   resolution: "gensync@npm:1.0.0-beta.2"
@@ -8444,15 +8441,6 @@ __metadata:
   version: 1.0.0
   resolution: "murmurhash-js@npm:1.0.0"
   checksum: 10/875a24e0dd7870e51a7f73906e158fb06de50478669629746a35955cb0a00b6bb797f6b5a2884ee4ec4feefb9c5c27b74190f561eb72530ffc1c5d7c5429f49a
-  languageName: node
-  linkType: hard
-
-"nanoid@npm:5.0.7":
-  version: 5.0.7
-  resolution: "nanoid@npm:5.0.7"
-  bin:
-    nanoid: bin/nanoid.js
-  checksum: 10/25ab0b0cf9082ae6747f0f55cec930e6c1cc5975103aa3a5fda44be5720eff57d9b25a8a9850274bfdde8def964b49bf03def71c6aa7ad1cba32787819b79f60
   languageName: node
   linkType: hard
 
@@ -11173,7 +11161,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"tippy.js@npm:6.3.7, tippy.js@npm:^6.3.1":
+"tippy.js@npm:^6.3.1":
   version: 6.3.7
   resolution: "tippy.js@npm:6.3.7"
   dependencies:

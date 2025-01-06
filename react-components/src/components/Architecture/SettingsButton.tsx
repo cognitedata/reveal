@@ -91,7 +91,6 @@ export const SettingsButton = ({
         <CogsTooltip
           content={<LabelWithShortcut label={label} command={command} />}
           disabled={isOpen || label === undefined}
-          appendTo={document.body}
           enterDelay={TOOLTIP_DELAY}
           placement={getTooltipPlacement(placement)}>
           <Button
