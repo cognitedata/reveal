@@ -8,7 +8,10 @@ export { Cdf360ImageAnnotationProvider } from './src/image-360-data-providers/Cd
 export { Cdf360EventDescriptorProvider } from './src/image-360-data-providers/descriptor-providers/events/Cdf360EventDescriptorProvider';
 export {
   Cdf360DataModelsDescriptorProvider,
-  Image360DataModelIdentifier
+  Image360DataModelIdentifier,
+  Image360CoreDataModelIdentifier,
+  Image360LegacyDataModelIdentifier,
+  Image360BaseIdentifier
 } from './src/image-360-data-providers/descriptor-providers/datamodels/system-space/Cdf360DataModelsDescriptorProvider';
 export {
   isClassic360Identifier,

@@ -23,18 +23,27 @@ import { DMInstanceRef, dmInstanceRefToKey } from '@reveal/utilities';
 import { DMInstanceKey } from '@reveal/utilities/src/fdm/toKey';
 
 /**
- * An identifier uniquely determining an instance of a Cognite Data Model
+ * An identifier uniquely determining a datamodel-based instance of a Cognite 360 image collection
  */
 export type Image360DataModelIdentifier = Image360CoreDataModelIdentifier | Image360LegacyDataModelIdentifier;
 
+/**
+ * An Identifier uniquely determining a legacy datamodel-based instance of a Cognite 360 image collection
+ */
 export type Image360LegacyDataModelIdentifier = {
   source: 'dm';
 } & Image360BaseIdentifier;
 
+/**
+ * An Identifier uniquely determining a CoreDM-based instance of a Cognite 360 image collection
+ */
 export type Image360CoreDataModelIdentifier = {
   source: 'cdm';
 } & Image360BaseIdentifier;
 
+/**
+ * Common properties for the Image360 Datamodel identifiers
+ */
 export type Image360BaseIdentifier = {
   space: string;
   image360CollectionExternalId: string;

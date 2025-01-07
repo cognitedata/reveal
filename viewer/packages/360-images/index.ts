@@ -6,6 +6,7 @@ export { Image360, Image360IconStyle } from './src/entity/Image360';
 export { Image360Revision } from './src/entity/Image360Revision';
 export {
   Image360Collection,
+  Image360AnnotationAssetFilter,
   Image360AnnotationAssetQueryResult,
   AssetAnnotationImage360Info
 } from './src/collection/Image360Collection';

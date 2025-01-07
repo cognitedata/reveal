@@ -13,9 +13,23 @@ import { ClassicDataSourceType, DataSourceType } from '@reveal/data-providers';
 import { Matrix4 } from 'three';
 import { ImageAssetLinkAnnotationInfo, InstanceReference } from '@reveal/data-providers/src/types';
 
+/**
+ * Annotation type that may be linked to assets. Only relevant for classic annotations, where some
+ * annotation types are visible in Reveal, but not linkable to assets
+ */
 export type InstanceLinkable360ImageAnnotationType<T extends DataSourceType> = T extends ClassicDataSourceType
   ? ImageAssetLinkAnnotationInfo
   : T['image360AnnotationType'];
+
+/**
+ * Filter for finding annotations related to an asset
+ */
+export type Image360AnnotationAssetFilter<T extends DataSourceType = ClassicDataSourceType> = {
+  /**
+   * Reference to the wanted asset
+   */
+  assetRef: InstanceReference<T>;
+};
 
 /**
  * Asset search return type, including information about the image in which the asset is found
@@ -177,7 +191,7 @@ export interface Image360Collection<T extends DataSourceType = ClassicDataSource
   /**
    * Find 360 images associated with an asset through CDF annotations
    */
-  findImageAnnotations(filter: InstanceReference<T>): Promise<Image360AnnotationAssetQueryResult<T>[]>;
+  findImageAnnotations(filter: Image360AnnotationAssetFilter<T>): Promise<Image360AnnotationAssetQueryResult<T>[]>;
 
   /**
    * Get IDs of all CDF assets associated with this 360 image collection through CDF annotations

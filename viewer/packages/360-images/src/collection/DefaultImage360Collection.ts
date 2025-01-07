@@ -7,6 +7,7 @@ import pull from 'lodash/pull';
 import cloneDeep from 'lodash/cloneDeep';
 import {
   AssetAnnotationImage360Info,
+  Image360AnnotationAssetFilter,
   Image360AnnotationAssetQueryResult,
   Image360Collection
 } from './Image360Collection';
@@ -275,8 +276,8 @@ export class DefaultImage360Collection<T extends DataSourceType> implements Imag
     );
   }
 
-  findImageAnnotations(filter: InstanceReference<T>): Promise<Image360AnnotationAssetQueryResult<T>[]> {
-    return this._image360DataProvider.findImageAnnotationsForInstance(filter, this);
+  findImageAnnotations(filter: Image360AnnotationAssetFilter<T>): Promise<Image360AnnotationAssetQueryResult<T>[]> {
+    return this._image360DataProvider.findImageAnnotationsForInstance(filter.assetRef, this);
   }
 
   async getAssetIds(): Promise<InstanceReference<T>[]> {

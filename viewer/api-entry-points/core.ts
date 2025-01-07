@@ -86,6 +86,9 @@ export {
   PointCloudObjectMetadata,
   ImageAssetLinkAnnotationInfo,
   Image360DataModelIdentifier,
+  Image360BaseIdentifier,
+  Image360CoreDataModelIdentifier,
+  Image360LegacyDataModelIdentifier,
   DataSourceType,
   ClassicDataSourceType,
   DMDataSourceType,
@@ -124,7 +127,7 @@ export {
   Image360AnnotationIntersection,
   Image360AnnotationAppearance,
   Image360Annotation,
-  Image360AnnotationFilter as Image360AnnotationAssetFilter,
+  Image360AnnotationAssetFilter,
   Image360AnnotationAssetQueryResult,
   Image360AnnotationFilterOptions,
   Image360Action

@@ -1243,8 +1243,8 @@ export type Image360AnnotationAppearance = {
 };
 
 // @public
-export type Image360AnnotationAssetFilter = {
-    assetRef: IdEither;
+export type Image360AnnotationAssetFilter<T extends DataSourceType = ClassicDataSourceType> = {
+    assetRef: InstanceReference<T>;
 };
 
 // @public
@@ -1274,7 +1274,7 @@ export type Image360BaseIdentifier = {
 
 // @public
 export interface Image360Collection<T extends DataSourceType = ClassicDataSourceType> {
-    findImageAnnotations(filter: InstanceReference<T>): Promise<Image360AnnotationAssetQueryResult<T>[]>;
+    findImageAnnotations(filter: Image360AnnotationAssetFilter<T>): Promise<Image360AnnotationAssetQueryResult<T>[]>;
     getAnnotationsInfo(source: 'assets'): Promise<AssetAnnotationImage360Info<T>[]>;
     // @deprecated
     getAssetIds(): Promise<IdEither[]>;
