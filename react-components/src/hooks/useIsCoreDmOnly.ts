@@ -4,5 +4,7 @@
 import { useRenderTarget } from '../components';
 
 export function useIsCoreDmOnly(): boolean {
-  return useRenderTarget().cdfCaches.coreDmOnly;
+  const renderTarget = useRenderTarget();
+  const isCoreDmOnly = renderTarget.cdfCaches.coreDmOnly;
+  return isCoreDmOnly ?? false;
 }
