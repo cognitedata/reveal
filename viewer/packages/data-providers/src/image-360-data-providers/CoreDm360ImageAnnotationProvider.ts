@@ -90,7 +90,7 @@ export class CoreDm360ImageAnnotationProvider implements Image360AnnotationProvi
 
     return annotations
       .map(annotation => {
-        const revisionKey = dmInstanceRefToKey(annotation.connectedImageId as DMInstanceRef);
+        const revisionKey = dmInstanceRefToKey(annotation.connectedImageId);
         const entityRevisionPair = revisionIdToEntityAndRevisionMap.get(revisionKey);
 
         if (entityRevisionPair === undefined) {

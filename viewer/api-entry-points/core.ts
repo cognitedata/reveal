@@ -84,7 +84,7 @@ export {
 
 export {
   PointCloudObjectMetadata,
-  FdmImage360Annotation,
+  CoreDmImage360Annotation,
   ImageAssetLinkAnnotationInfo,
   Image360DataModelIdentifier,
   Image360BaseIdentifier,

@@ -1,12 +1,12 @@
 import { Euler, Quaternion, Spherical, Vector3 } from 'three';
 import { getImage360Map } from './getImage360Map';
-import { FdmImage360Annotation } from './types';
+import { CoreDmImage360Annotation } from './types';
 import { getObject3dAssetMap } from './getObject3dAssetMap';
 import { GetImage360AnnotationsFromCollectionResponse } from './fetchCoreDm360AnnotationsForCollection';
 
 export function transformAnnotations(
   queryResponse: GetImage360AnnotationsFromCollectionResponse
-): FdmImage360Annotation[] {
+): CoreDmImage360Annotation[] {
   const object3dAssetMap = getObject3dAssetMap(queryResponse);
 
   const image360Map = getImage360Map(queryResponse);
@@ -17,12 +17,6 @@ export function transformAnnotations(
     const connectedImage = image360Map[annotation.endNode.externalId][annotation.endNode.space];
 
     const properties = annotation.properties['cdf_cdm']['Cognite360ImageAnnotation/v1'];
-
-    const image360Position = new Vector3(
-      connectedImage.translationX,
-      connectedImage.translationY,
-      connectedImage.translationZ
-    );
 
     const euler = new Euler(
       connectedImage.eulerRotationX,
@@ -57,9 +51,7 @@ export function transformAnnotations(
         externalId: connectedAsset.externalId,
         space: connectedAsset.space
       },
-      polygon: transformedVectors,
-      imagePosition: image360Position,
-      uniqueId: Math.floor(Math.random() * 1000000000)
-    } satisfies FdmImage360Annotation;
+      polygon: transformedVectors
+    } satisfies CoreDmImage360Annotation;
   });
 }

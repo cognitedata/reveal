@@ -7,15 +7,35 @@ import {
 } from './sources';
 import { DMInstanceRef } from '@reveal/utilities';
 
-export type FdmImage360Annotation = {
+/**
+ * Data contained in a single CoreDM-based annotation
+ */
+export type CoreDmImage360Annotation = {
+  /**
+   * The source type of the annotation. Always 'dm'
+   */
   sourceType: 'dm';
-  annotationIdentifier?: DMInstanceRef;
+  /**
+   * The DM identifier for this annotation
+   */
+  annotationIdentifier: DMInstanceRef;
+  /**
+   * The DM identifier for the asset instance connected to this
+   * annotation, if any
+   */
   assetRef?: DMInstanceRef;
+  /**
+   * The Polygon outlining the annotation inside the 360 image
+   */
   polygon: Vector3[];
+  /**
+   * The status of the annotation
+   */
   status: 'suggested' | 'approved';
-  connectedImageId: DMInstanceRef | string;
-  uniqueId: number; // Used to identify the annotation in the Architecture. TODO: Should have something much better here
-  imagePosition?: Vector3;
+  /**
+   * The DM ID of the CdfImage360 to which this annotation is associated
+   */
+  connectedImageId: DMInstanceRef;
 };
 
 export type Image360AnnotationViewReferenceAndProperties = [

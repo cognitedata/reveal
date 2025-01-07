@@ -15,7 +15,7 @@ import { Image360AnnotationAppearance } from './types';
 type FaceType = Image360FileDescriptor['face'];
 
 import { VariableWidthLine } from '@reveal/utilities';
-import { FdmImage360Annotation } from '@reveal/data-providers/src/image-360-data-providers/cdm/types';
+import { CoreDmImage360Annotation } from '@reveal/data-providers/src/image-360-data-providers/cdm/types';
 import { Mesh3dAnnotationGeometryData } from './geometry/Mesh3dAnnotationGeometryData';
 import { isAnnotationAssetLink, isAnnotationsObjectDetection, isCoreDmImage360Annotation } from './typeGuards';
 
@@ -99,7 +99,7 @@ export class ImageAnnotationObject<T extends DataSourceType> implements Image360
   }
 
   private static createFdmAnnotationData(
-    fdmAnnotation: FdmImage360Annotation
+    fdmAnnotation: CoreDmImage360Annotation
   ): ImageAnnotationObjectGeometryData | undefined {
     return new Mesh3dAnnotationGeometryData(fdmAnnotation.polygon);
   }

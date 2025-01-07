@@ -4,7 +4,7 @@
 import { AnnotationModel, AnnotationsAssetRef } from '@cognite/sdk';
 import { Image360DataModelIdentifier } from './image-360-data-providers/descriptor-providers/datamodels/system-space/Cdf360DataModelsDescriptorProvider';
 import { PointCloudAnnotationVolumeCollection, PointCloudDMVolumeCollection } from '@reveal/pointcloud-styling';
-import { FdmImage360Annotation } from './image-360-data-providers/cdm/types';
+import { CoreDmImage360Annotation } from './image-360-data-providers/cdm/types';
 import { DMInstanceRef } from '@reveal/utilities';
 import { ImageAssetLinkAnnotationInfo } from './types';
 
@@ -79,7 +79,7 @@ export type DMDataSourceType = {
   /**
    * Type of CoreDM 360 image annotations (to be defined)
    */
-  image360AnnotationType: FdmImage360Annotation;
+  image360AnnotationType: CoreDmImage360Annotation;
   /**
    * Marker to make this type inconstructable
    */

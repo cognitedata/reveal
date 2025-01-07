@@ -783,6 +783,16 @@ export type CommonModelOptions = {
 export type CompletePointCloudAppearance = Required<PointCloudAppearance>;
 
 // @public
+export type CoreDmImage360Annotation = {
+    sourceType: 'dm';
+    annotationIdentifier: DMInstanceRef;
+    assetRef?: DMInstanceRef;
+    polygon: Vector3[];
+    status: 'suggested' | 'approved';
+    connectedImageId: DMInstanceRef;
+};
+
+// @public
 export enum Corner {
     // (undocumented)
     BottomLeft = 2,
@@ -939,7 +949,7 @@ export type DMDataSourceType = {
     pointCloudCollectionType: PointCloudDMVolumeCollection;
     modelIdentifier: DMModelIdentifierType;
     image360Identifier: Image360DataModelIdentifier;
-    image360AnnotationType: FdmImage360Annotation;
+    image360AnnotationType: CoreDmImage360Annotation;
     _never: never;
 };
 
@@ -1211,7 +1221,7 @@ export interface Image360<T extends DataSourceType = ClassicDataSourceType> {
     getActiveRevision(): Image360Revision<T>;
     getIconColor(): Color | 'default';
     getRevisions(): Image360Revision<T>[];
-    readonly id: Image360RevisionId<T>;
+    readonly id: Image360Id<T>;
     readonly image360Visualization: Image360Visualization;
     readonly label: string | undefined;
     setIconColor(color: Color | 'default'): void;
@@ -1332,6 +1342,9 @@ export type Image360IconStyle = {
 };
 
 // @public
+export type Image360Id<T extends DataSourceType> = Image360RevisionId<T>;
+
+// @public
 export type Image360LegacyDataModelIdentifier = {
     source: 'dm';
 } & Image360BaseIdentifier;
@@ -1342,6 +1355,9 @@ export interface Image360Revision<T extends DataSourceType = ClassicDataSourceTy
     getAnnotations(): Promise<Image360Annotation<T>[]>;
     getPreviewThumbnailUrl(): Promise<string | undefined>;
 }
+
+// @public
+export type Image360RevisionId<T extends DataSourceType> = T extends DMDataSourceType ? DMInstanceRef : string;
 
 // @public
 export interface Image360Visualization {
@@ -1400,6 +1416,12 @@ export class IndexSet {
     // (undocumented)
     unionWith(otherSet: IndexSet): IndexSet;
 }
+
+// @public
+export type InstanceLinkable360ImageAnnotationType<T extends DataSourceType> = T extends ClassicDataSourceType ? ImageAssetLinkAnnotationInfo : T['image360AnnotationType'];
+
+// @public
+export type InstanceReference<T extends DataSourceType> = T extends ClassicDataSourceType ? IdEither : DMInstanceRef;
 
 // @public
 export type Intersection<T extends DataSourceType = ClassicDataSourceType> = CadIntersection | PointCloudIntersection<T>;
