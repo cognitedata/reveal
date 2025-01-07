@@ -13,7 +13,6 @@ import { Camera } from 'three';
 import { CogniteClient } from '@cognite/sdk';
 import { CogniteInternalId } from '@cognite/sdk';
 import { Color } from 'three';
-import { DirectRelationReference } from '@cognite/sdk';
 import { EventDispatcher } from 'three';
 import { IdEither } from '@cognite/sdk';
 import { ListResponse } from '@cognite/sdk';
