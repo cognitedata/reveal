@@ -1,3 +1,6 @@
+/*!
+ * Copyright 2025 Cognite AS
+ */
 import { Vector2, Vector3 } from 'three';
 
 export function convertPointsTo3d(points: Vector2[]): Vector3[] {

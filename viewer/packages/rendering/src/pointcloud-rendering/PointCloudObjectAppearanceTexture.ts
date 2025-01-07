@@ -14,7 +14,6 @@ import {
 } from '@reveal/pointcloud-styling';
 import { PointCloudObjectIdMaps } from './PointCloudObjectIdMaps';
 import { DataSourceType } from '@reveal/data-providers';
-import { DMInstanceRef } from '@reveal/utilities';
 import { DMInstanceKey, dmInstanceRefToKey } from '@reveal/utilities/src/fdm/toKey';
 
 export class PointCloudObjectAppearanceTexture {

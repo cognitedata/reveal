@@ -1,3 +1,6 @@
+/*!
+ * Copyright 2025 Cognite AS
+ */
 import { Euler, Quaternion, Spherical, Vector3 } from 'three';
 import { getImage360Map } from './getImage360Map';
 import { CoreDmImage360Annotation } from './types';

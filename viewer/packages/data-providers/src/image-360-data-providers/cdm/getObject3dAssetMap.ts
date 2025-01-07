@@ -1,7 +1,12 @@
+/*!
+ * Copyright 2025 Cognite AS
+ */
 import { DMInstanceRef } from '@reveal/utilities';
 import { GetImage360AnnotationsFromCollectionResponse } from './fetchCoreDm360AnnotationsForCollection';
 
-export function getObject3dAssetMap(queryResponse: GetImage360AnnotationsFromCollectionResponse) {
+export function getObject3dAssetMap(
+  queryResponse: GetImage360AnnotationsFromCollectionResponse
+): Record<string, Record<string, DMInstanceRef & { name: string }>> {
   // TODO: Could probably be simplified by using lodash groupBy
   return queryResponse.items.assets.reduce(
     (acc, asset) => {

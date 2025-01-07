@@ -20,7 +20,7 @@ import zip from 'lodash/zip';
 import groupBy from 'lodash/groupBy';
 import partition from 'lodash/partition';
 import { Image360DataModelIdentifier } from '../system-space/Cdf360DataModelsDescriptorProvider';
-import { ClassicDataSourceType, DMDataSourceType, DMInstanceRef } from 'api-entry-points/core';
+import { DMDataSourceType, DMInstanceRef } from 'api-entry-points/core';
 
 type QueryResult = Awaited<ReturnType<typeof DataModelsSdk.prototype.queryNodesAndEdges<Cdf360FdmQuery>>>;
 

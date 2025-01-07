@@ -6,7 +6,6 @@ import { Image360DataModelIdentifier } from './image-360-data-providers/descript
 import { PointCloudAnnotationVolumeCollection, PointCloudDMVolumeCollection } from '@reveal/pointcloud-styling';
 import { CoreDmImage360Annotation } from './image-360-data-providers/cdm/types';
 import { DMInstanceRef } from '@reveal/utilities';
-import { ImageAssetLinkAnnotationInfo } from './types';
 
 /**
  * Model identifier for classic CDF models, referenced by modelId and revisionId

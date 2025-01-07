@@ -1,7 +1,10 @@
-import { zipWith } from 'lodash';
+/*!
+ * Copyright 2025 Cognite AS
+ */
+import zipWith from 'lodash/zipWith';
 import { Image360Face, Image360FileDescriptor, Image360FileProvider } from '../types';
 import { CdfImageFileProvider } from './CdfImageFileProvider';
-import { CogniteClient } from '@cognite/sdk/dist/src';
+import { CogniteClient, InternalId } from '@cognite/sdk/dist/src';
 
 export class Cdf360ImageFileProvider implements Image360FileProvider {
   private readonly _imageFileProvider: CdfImageFileProvider;
@@ -33,7 +36,7 @@ export class Cdf360ImageFileProvider implements Image360FileProvider {
   }
 }
 
-export function getFileIds(image360FaceDescriptors: Image360FileDescriptor[]) {
+export function getFileIds(image360FaceDescriptors: Image360FileDescriptor[]): InternalId[] {
   return image360FaceDescriptors.map(image360FaceDescriptor => {
     return { id: image360FaceDescriptor.fileId };
   });

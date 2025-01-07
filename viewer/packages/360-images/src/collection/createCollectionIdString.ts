@@ -1,3 +1,6 @@
+/*!
+ * Copyright 2025 Cognite AS
+ */
 import { DataSourceType } from '@reveal/data-providers';
 import {
   isCoreDmImage360Identifier,

@@ -1,3 +1,6 @@
+/*!
+ * Copyright 2025 Cognite AS
+ */
 import { Vector3 } from 'three';
 import { AssetSimpleProperties, CoreDmImage360AnnotationProperties, CoreDmImage360Properties } from './properties';
 import {

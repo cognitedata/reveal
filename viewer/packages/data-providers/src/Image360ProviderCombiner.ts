@@ -1,3 +1,6 @@
+/*!
+ * Copyright 2025 Cognite AS
+ */
 import { Image360Provider } from './Image360Provider';
 import { DataSourceType } from './DataSourceType';
 import {

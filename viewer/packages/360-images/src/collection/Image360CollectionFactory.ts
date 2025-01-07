@@ -16,7 +16,6 @@ import { Historical360ImageSet } from '@reveal/data-providers/src/types';
 import { Image360AnnotationFilterOptions } from '../annotation/types';
 import { Image360AnnotationFilter } from '../annotation/Image360AnnotationFilter';
 import { getImage360ProviderFromMap, Image360ProviderMap } from '@reveal/data-providers/src/Image360Provider';
-import { isImage360SourceType } from '../typeGuards';
 
 export class Image360CollectionFactory {
   private readonly _image360ProviderMap: Image360ProviderMap;

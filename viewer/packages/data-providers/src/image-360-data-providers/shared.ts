@@ -1,3 +1,6 @@
+/*!
+ * Copyright 2025 Cognite AS
+ */
 import { Image360RevisionId, ImageAssetLinkAnnotationInfo } from '../types';
 import { ClassicDataSourceType, DataSourceType } from '../DataSourceType';
 import { Image360DataModelIdentifier } from 'api-entry-points/core';

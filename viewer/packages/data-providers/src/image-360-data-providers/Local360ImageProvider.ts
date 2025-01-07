@@ -9,10 +9,9 @@ import {
   Image360AnnotationSpecifier,
   Image360Face,
   Image360FileDescriptor,
-  ImageAssetLinkAnnotationInfo,
   InstanceReference
 } from '../types';
-import { AnnotationModel, CogniteInternalId, IdEither } from '@cognite/sdk';
+import { CogniteInternalId, IdEither } from '@cognite/sdk';
 import { ClassicDataSourceType } from '../DataSourceType';
 import {
   AssetAnnotationImage360Info,

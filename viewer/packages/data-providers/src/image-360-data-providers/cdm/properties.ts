@@ -1,3 +1,6 @@
+/*!
+ * Copyright 2025 Cognite AS
+ */
 import type { DirectRelationReference } from '@cognite/sdk';
 
 export type AssetSimpleProperties = {

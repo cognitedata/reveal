@@ -1,3 +1,6 @@
+/*!
+ * Copyright 2025 Cognite AS
+ */
 import { ViewReference } from '@cognite/sdk';
 import { CORE_DM_SPACE } from '../../utilities/constants';
 

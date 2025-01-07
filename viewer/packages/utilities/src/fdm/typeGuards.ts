@@ -1,3 +1,6 @@
+/*!
+ * Copyright 2025 Cognite AS
+ */
 import { DMInstanceRef } from './types';
 
 export function isDmIdentifier(id: any): id is DMInstanceRef {

@@ -1,3 +1,6 @@
+/*!
+ * Copyright 2025 Cognite AS
+ */
 import { CogniteClient, FileLink, IdEither } from '@cognite/sdk';
 
 export class CdfImageFileProvider {
@@ -7,7 +10,7 @@ export class CdfImageFileProvider {
     this._client = sdk;
   }
 
-  public async getFileBuffers(fileIds: { id: number }[], abortSignal?: AbortSignal) {
+  public async getFileBuffers(fileIds: { id: number }[], abortSignal?: AbortSignal): Promise<ArrayBuffer[]> {
     const fileLinks = await this.getDownloadUrls(fileIds, abortSignal);
     return Promise.all(
       fileLinks

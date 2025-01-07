@@ -1,3 +1,6 @@
+/*!
+ * Copyright 2025 Cognite AS
+ */
 import { DMDataSourceType } from '../DataSourceType';
 import {
   Image360AnnotationFilterDelegate,
@@ -17,7 +20,7 @@ import { fetchCoreDm360AnnotationsForRevision } from './cdm/fetchCoreDm360Annota
 import { CogniteClient } from '@cognite/sdk/dist/src';
 import { fetchAnnotationsForInstance } from './cdm/fetchAnnotationsForInstance';
 import { fetchCoreDm360AnnotationsForCollection } from './cdm/fetchCoreDm360AnnotationsForCollection';
-import { DMInstanceKey, DMInstanceRef, dmInstanceRefToKey } from '@reveal/utilities';
+import { DMInstanceKey, dmInstanceRefToKey } from '@reveal/utilities';
 
 export class CoreDm360ImageAnnotationProvider implements Image360AnnotationProvider<DMDataSourceType> {
   private readonly _client: CogniteClient;
@@ -29,7 +32,7 @@ export class CoreDm360ImageAnnotationProvider implements Image360AnnotationProvi
   async getRelevant360ImageAnnotations(
     annotationSpecifier: Image360AnnotationSpecifier<DMDataSourceType>
   ): Promise<DMDataSourceType['image360AnnotationType'][]> {
-    return await fetchCoreDm360AnnotationsForRevision(annotationSpecifier.revisionId, this._client);
+    return fetchCoreDm360AnnotationsForRevision(annotationSpecifier.revisionId, this._client);
   }
 
   async findImageAnnotationsForInstance(

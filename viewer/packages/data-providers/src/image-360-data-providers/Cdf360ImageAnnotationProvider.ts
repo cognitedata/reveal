@@ -10,7 +10,6 @@ import {
   IdEither,
   CogniteInternalId,
   AnnotationsCogniteAnnotationTypesImagesAssetLink,
-  AnnotationData,
   AnnotationFilterProps,
   AnnotationsAssetRef,
   InternalId,
@@ -20,7 +19,6 @@ import {
   Image360AnnotationFilterDelegate,
   Image360AnnotationProvider,
   Image360AnnotationSpecifier,
-  ImageAssetLinkAnnotationInfo,
   InstanceReference
 } from '../types';
 import { ClassicDataSourceType } from '../DataSourceType';
@@ -32,7 +30,6 @@ import {
   Image360Entity,
   Image360RevisionEntity
 } from '@reveal/360-images';
-import { isAnnotationAssetLink } from '@reveal/360-images/src/annotation/typeGuards';
 import { isImageAssetLinkAnnotation } from './shared';
 import { InstanceLinkable360ImageAnnotationType } from '@reveal/360-images/src/collection/Image360Collection';
 

@@ -1,3 +1,6 @@
+/*!
+ * Copyright 2025 Cognite AS
+ */
 import { CogniteClient, QueryRequest } from '@cognite/sdk';
 import { DMInstanceRef } from '@reveal/utilities';
 import { queryNodesAndEdges } from './queryNodesAndEdges';

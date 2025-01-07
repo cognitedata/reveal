@@ -1,3 +1,6 @@
+/*!
+ * Copyright 2025 Cognite AS
+ */
 import { HasExistingDataFilterV3, TableExpressionDataModelsBoolFilter } from '@cognite/sdk';
 import { CORE_DM_CONTAINER_SPACE } from './constants';
 import { CORE_DM_3D_REVISION_VIEW_REFERENCE, CORE_DM_IMAGE_360_VIEW_REFERENCE } from './sources';

@@ -30,9 +30,9 @@ export class Image360RevisionEntity<T extends DataSourceType> implements Image36
   private _onFullResolutionCompleted: Promise<void> | undefined;
   private _defaultAppearance: Image360AnnotationAppearance = {};
 
-  private _identifier: Image360RevisionId<T>;
+  private readonly _identifier: Image360RevisionId<T>;
 
-  private _annotations: ImageAnnotationObject<T>[] | undefined = undefined;
+  private readonly _annotations: ImageAnnotationObject<T>[] | undefined = undefined;
   private _annotationsPromise: Promise<ImageAnnotationObject<T>[]> | undefined;
   private readonly _annotationFilterer: Image360AnnotationFilter;
 

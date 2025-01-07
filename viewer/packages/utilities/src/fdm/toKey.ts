@@ -1,3 +1,6 @@
+/*!
+ * Copyright 2025 Cognite AS
+ */
 import { DMExternalId, DMInstanceRef, DMSpace } from './types';
 
 export type DMInstanceKey = `${DMSpace}/${DMExternalId}`;

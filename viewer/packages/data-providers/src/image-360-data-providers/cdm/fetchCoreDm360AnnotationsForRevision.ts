@@ -1,3 +1,6 @@
+/*!
+ * Copyright 2025 Cognite AS
+ */
 import { CogniteClient, QueryRequest } from '@cognite/sdk';
 import { transformAnnotations } from './transformCdmAnnotations';
 import {
@@ -13,10 +16,13 @@ import {
 import { isCoreDmImage360Filter } from './queryFilters';
 import { getNodeExternalIdEqualsFilter, getNodeSpaceEqualsFilter } from '../../utilities/utils';
 import { queryNodesAndEdges } from './queryNodesAndEdges';
-import { Image360AnnotationViewReferenceAndProperties } from './types';
+import { CoreDmImage360Annotation, Image360AnnotationViewReferenceAndProperties } from './types';
 import { DMInstanceRef } from '@reveal/utilities';
 
-export async function fetchCoreDm360AnnotationsForRevision(revision: DMInstanceRef, sdk: CogniteClient) {
+export async function fetchCoreDm360AnnotationsForRevision(
+  revision: DMInstanceRef,
+  sdk: CogniteClient
+): Promise<CoreDmImage360Annotation[]> {
   const query = getImage360AnnotationsByRevisionQuery(revision);
 
   const selectFunction = (result: GetImage360FromRevisionResponse) => transformAnnotations(result);

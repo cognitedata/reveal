@@ -1,3 +1,6 @@
+/*!
+ * Copyright 2025 Cognite AS
+ */
 import { CogniteClient, QueryRequest } from '@cognite/sdk/dist/src';
 import { getNodeExternalIdEqualsFilter, getNodeSpaceEqualsFilter } from '../../utilities/utils';
 import { isCoreDmImage360CollectionFilter } from './queryFilters';
@@ -13,14 +16,13 @@ import {
   CORE_DM_IMAGE_360_VIEW_REFERENCE
 } from './sources';
 import { transformAnnotations } from './transformCdmAnnotations';
-import { Image360AnnotationViewReferenceAndProperties } from './types';
+import { CoreDmImage360Annotation, Image360AnnotationViewReferenceAndProperties } from './types';
 import { DMInstanceRef } from '@reveal/utilities';
 
-/**
- * NB: Is this file actually used?
- * If not, purge before merge
- */
-export async function fetchCoreDm360AnnotationsForCollection(collectionIdentifier: DMInstanceRef, sdk: CogniteClient) {
+export async function fetchCoreDm360AnnotationsForCollection(
+  collectionIdentifier: DMInstanceRef,
+  sdk: CogniteClient
+): Promise<CoreDmImage360Annotation[]> {
   const query = getImage360AnnotationsQuery(collectionIdentifier);
 
   const selectFunction = (result: GetImage360AnnotationsFromCollectionResponse) => transformAnnotations(result);
