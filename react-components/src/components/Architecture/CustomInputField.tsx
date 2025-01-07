@@ -82,12 +82,12 @@ export const CustomInputField = ({
     [contents, setContents]
   );
 
-  const fields = command.contents.map((fieldContent, index) => {
+  const fields = contents.map((fieldContent, index) => {
     if (fieldContent.type === 'text') {
       return (
         <Input
           key={index}
-          value={contents?.[index]?.content ?? ''}
+          value={fieldContent.content}
           disabled={!enabled}
           onChange={(data: BaseSyntheticEvent) => {
             handleSetContents(index, data.target.value as string);
@@ -97,12 +97,11 @@ export const CustomInputField = ({
       );
     }
     if (fieldContent.type === 'comment') {
-      const message = contents?.[index]?.type === 'comment' ? contents[index].content : '';
       return (
         <Textarea
           key={index}
           placeholder={placeholders?.[index]}
-          message={message}
+          value={fieldContent.content}
           onChange={(data: BaseSyntheticEvent) => {
             handleSetContents(index, data.target.value as string);
           }}
@@ -137,13 +136,11 @@ export const CustomInputField = ({
       );
     }
     if (fieldContent.type === 'commentWithButtons') {
-      const message =
-        contents?.[index]?.type === 'commentWithButtons' ? contents[index].content : '';
       return (
         <Comment
           key={index}
           placeholder={placeholders?.[index]}
-          message={message}
+          message={fieldContent.content}
           setMessage={(data) => {
             handleSetContents(index, data);
           }}

@@ -97,14 +97,12 @@ const DropdownElement = ({
       onOpenChange={(open: boolean) => {
         setOpen(open);
       }}
-      hideOnSelect={true}
-      appendTo={'parent'}
       placement={'bottom-start'}
+      disableCloseOnClickInside
       renderTrigger={(props: any) => (
         <CogsTooltip
           content={<LabelWithShortcut label={label} command={command} />}
           disabled={label === undefined}
-          appendTo={document.body}
           enterDelay={TOOLTIP_DELAY}
           placement={getTooltipPlacement(placement)}>
           <Button
@@ -171,10 +169,8 @@ function createMenuItem(command: BaseCommand, t: TranslateDelegate): ReactElemen
   return (
     <Menu.ItemToggled
       key={command.uniqueId}
-      icon={command.icon}
       disabled={!command.isEnabled}
       toggled={command.isChecked}
-      iconPlacement="left"
       label={command.getLabel(t)}
       onClick={() => {
         command.invoke();

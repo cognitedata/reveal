@@ -273,7 +273,7 @@ export class RevisionFdmNodeCache {
       return connectionsAndNodes.map((connection) => connection.connection);
     }
     const modelInstances = await this._modelInstances;
-    if (modelInstances === undefined) {
+    if (modelInstances === undefined || modelInstances.length === 0) {
       return [];
     }
 
