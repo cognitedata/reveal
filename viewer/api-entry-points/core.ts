@@ -84,11 +84,14 @@ export {
 
 export {
   PointCloudObjectMetadata,
+  FdmImage360Annotation,
   ImageAssetLinkAnnotationInfo,
   Image360DataModelIdentifier,
   Image360BaseIdentifier,
   Image360CoreDataModelIdentifier,
   Image360LegacyDataModelIdentifier,
+  Image360Id,
+  Image360RevisionId,
   DataSourceType,
   ClassicDataSourceType,
   DMDataSourceType,
@@ -96,7 +99,8 @@ export {
   DMModelIdentifierType,
   isDMPointCloudVolume,
   isClassicPointCloudVolume,
-  CommonModelOptions
+  CommonModelOptions,
+  InstanceReference
 } from '../packages/data-providers';
 
 export { CogniteCadModel, BoundingBoxClipper, GeometryFilter, WellKnownUnit } from '../packages/cad-model';
@@ -130,7 +134,8 @@ export {
   Image360AnnotationAssetFilter,
   Image360AnnotationAssetQueryResult,
   Image360AnnotationFilterOptions,
-  Image360Action
+  Image360Action,
+  InstanceLinkable360ImageAnnotationType
 } from '../packages/360-images';
 
 export {

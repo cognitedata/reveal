@@ -23,6 +23,7 @@ export interface BinaryFileProvider {
   getBinaryFile(baseUrl: string, fileName: string, abortSignal?: AbortSignal): Promise<ArrayBuffer>;
 }
 
+export type Image360Id<T extends DataSourceType> = Image360RevisionId<T>;
 export type Image360RevisionId<T extends DataSourceType> = T extends DMDataSourceType ? DMInstanceRef : string;
 
 export type Image360AnnotationSpecifier<T extends DataSourceType> = {

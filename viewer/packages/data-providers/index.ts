@@ -20,6 +20,7 @@ export {
   isFdm360ImageCollectionIdentifier,
   isImageAssetLinkAnnotation
 } from './src/image-360-data-providers/shared';
+export { FdmImage360Annotation } from './src/image-360-data-providers/cdm/types';
 export { LocalModelDataProvider } from './src/model-data-providers/LocalModelDataProvider';
 export { LocalModelIdentifier } from './src/model-identifiers/LocalModelIdentifier';
 export { LocalModelMetadataProvider } from './src/metadata-providers/LocalModelMetadataProvider';
@@ -49,7 +50,10 @@ export {
   Image360Face,
   Image360Texture,
   Image360FileDescriptor,
-  ImageAssetLinkAnnotationInfo
+  ImageAssetLinkAnnotationInfo,
+  InstanceReference,
+  Image360Id,
+  Image360RevisionId
 } from './src/types';
 
 export { fetchDMModelIdFromRevisionId } from './src/requests/fetchDMModelIdFromRevisionId';
