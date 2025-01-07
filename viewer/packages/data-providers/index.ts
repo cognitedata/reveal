@@ -14,7 +14,8 @@ export {
   isClassic360Identifier,
   isCoreDmImage360Identifier,
   isLegacyDM360Identifier,
-  isFdm360ImageCollectionIdentifier
+  isFdm360ImageCollectionIdentifier,
+  isImageAssetLinkAnnotation
 } from './src/image-360-data-providers/shared';
 export { LocalModelDataProvider } from './src/model-data-providers/LocalModelDataProvider';
 export { LocalModelIdentifier } from './src/model-identifiers/LocalModelIdentifier';

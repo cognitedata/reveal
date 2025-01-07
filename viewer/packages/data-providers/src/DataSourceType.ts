@@ -47,7 +47,7 @@ export type ClassicDataSourceType = {
    * Type of classic 360 annotations
    */
 
-  image360AnnotationType: ImageAssetLinkAnnotationInfo;
+  image360AnnotationType: AnnotationModel;
   /**
    * Marker to make this type inconstructable
    */
