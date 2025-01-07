@@ -4,11 +4,16 @@
 import { AnnotationModel, AnnotationsCogniteAnnotationTypesImagesAssetLink, IdEither } from '@cognite/sdk';
 import * as THREE from 'three';
 import { ClassicDataSourceType, DataSourceType, DMDataSourceType } from './DataSourceType';
-import { DefaultImage360Collection, Image360AnnotationAssetQueryResult } from '@reveal/360-images';
+import {
+  AssetAnnotationImage360Info,
+  DefaultImage360Collection,
+  Image360AnnotationAssetQueryResult
+} from '@reveal/360-images';
 import { DMInstanceRef } from 'api-entry-points/core';
-import { FdmImage360Annotation } from './image-360-data-providers/cdm/types';
 
-export type Image360AnnotationFilterDelegate<T extends DataSourceType> = (annotation: AnnotationInfoType<T>) => boolean;
+export type Image360AnnotationFilterDelegate<T extends DataSourceType> = (
+  annotation: T['image360AnnotationType']
+) => boolean;
 
 export interface JsonFileProvider {
   getJsonFile(baseUrl: string, fileName: string): Promise<any>;
@@ -30,23 +35,18 @@ export type Image360AnnotationSpecifier<T extends DataSourceType> = {
  */
 export type InstanceReference<T extends DataSourceType> = T extends ClassicDataSourceType ? IdEither : DMInstanceRef;
 
-/**
- * The info contained in an annotation
- */
-export type AnnotationInfoType<T extends DataSourceType> = T extends ClassicDataSourceType
-  ? ImageAssetLinkAnnotationInfo
-  : FdmImage360Annotation;
-
 export interface Image360AnnotationProvider<T extends DataSourceType> {
-  get360ImageAnnotations(annotationSpecifier: Image360AnnotationSpecifier<T>): Promise<T['image360AnnotationType'][]>;
+  getRelevant360ImageAnnotations(
+    annotationSpecifier: Image360AnnotationSpecifier<T>
+  ): Promise<T['image360AnnotationType'][]>;
   findImageAnnotationsForInstance(
     instanceFilter: InstanceReference<T>,
     collection: DefaultImage360Collection<T>
   ): Promise<Image360AnnotationAssetQueryResult<T>[]>;
-  get360ImageAssets(
+  getAllImage360AnnotationInfos(
     collection: DefaultImage360Collection<T>,
     annotationFilter: Image360AnnotationFilterDelegate<T>
-  ): Promise<InstanceReference<T>[]>;
+  ): Promise<AssetAnnotationImage360Info<T>[]>;
 }
 
 export interface Image360DescriptorProvider<T extends DataSourceType> {

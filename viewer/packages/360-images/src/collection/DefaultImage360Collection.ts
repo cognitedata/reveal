@@ -8,27 +8,20 @@ import cloneDeep from 'lodash/cloneDeep';
 import {
   AssetAnnotationImage360Info,
   Image360AnnotationAssetQueryResult,
-  Image360AnnotationInstanceFilter,
   Image360Collection
 } from './Image360Collection';
 import { Image360Entity } from '../entity/Image360Entity';
 import { Image360EnteredDelegate, Image360ExitedDelegate } from '../types';
 import { IconCollection, IconCullingScheme } from '../icons/IconCollection';
 import { Image360AnnotationAppearance } from '../annotation/types';
-import { IdEither } from '@cognite/sdk';
 
-import { DataSourceType, Image360DataProvider, Image360FileDescriptor } from '@reveal/data-providers';
+import { DataSourceType, Image360FileDescriptor, Image360Provider } from '@reveal/data-providers';
 import { Image360AnnotationFilter } from '../annotation/Image360AnnotationFilter';
-import { Image360 } from '../entity/Image360';
-import { Image360Revision } from '../entity/Image360Revision';
-import { ImageAssetLinkAnnotationInfo } from '@reveal/data-providers';
 import { Matrix4 } from 'three';
 import { DEFAULT_IMAGE_360_OPACITY } from '../entity/Image360VisualizationBox';
-import {
-  isCoreDmImage360Identifier,
-  isLegacyDM360Identifier
-} from '@reveal/data-providers/src/image-360-data-providers/shared';
-import { Image360AnnotationProvider } from '@reveal/data-providers/src/types';
+import { Image360AnnotationProvider, InstanceReference } from '@reveal/data-providers/src/types';
+import { createCollectionIdString } from './createCollectionIdString';
+import { getInstanceIdFromAnnotation } from '../annotation/getInstanceId';
 
 type Image360Events = 'image360Entered' | 'image360Exited';
 
@@ -56,7 +49,7 @@ export class DefaultImage360Collection<T extends DataSourceType> implements Imag
   private readonly _annotationFilter: Image360AnnotationFilter;
 
   private readonly _events = {
-    image360Entered: new EventTrigger<Image360EnteredDelegate<DataSourceType>>(),
+    image360Entered: new EventTrigger<Image360EnteredDelegate<T>>(),
     image360Exited: new EventTrigger<Image360ExitedDelegate>()
   };
   private readonly _icons: IconCollection;
@@ -92,7 +85,7 @@ export class DefaultImage360Collection<T extends DataSourceType> implements Imag
    * The events from the image collection.
    */
   get events(): {
-    image360Entered: EventTrigger<Image360EnteredDelegate<DataSourceType>>;
+    image360Entered: EventTrigger<Image360EnteredDelegate<T>>;
     image360Exited: EventTrigger<Image360ExitedDelegate>;
   } {
     return this._events;
@@ -108,7 +101,7 @@ export class DefaultImage360Collection<T extends DataSourceType> implements Imag
     entities: Image360Entity<T>[],
     icons: IconCollection,
     annotationFilter: Image360AnnotationFilter,
-    image360DataProvider: Image360DataProvider<T>,
+    image360DataProvider: Image360Provider<T>,
     setNeedsRedraw: () => void
   ) {
     this._collectionId = identifier;
@@ -144,10 +137,10 @@ export class DefaultImage360Collection<T extends DataSourceType> implements Imag
    * @param event `Image360Events` event
    * @param callback Callback to 360 image events
    */
-  public on(event: Image360Events, callback: Image360EnteredDelegate<T> | Image360ExitedDelegate): void {
+  public on(event: Image360Events, callback: Image360EnteredDelegate<T>): void {
     switch (event) {
       case 'image360Entered':
-        this._events.image360Entered.subscribe(callback as Image360EnteredDelegate);
+        this._events.image360Entered.subscribe(callback as Image360EnteredDelegate<T>);
         break;
       case 'image360Exited':
         this._events.image360Exited.subscribe(callback as Image360ExitedDelegate);
@@ -224,7 +217,7 @@ export class DefaultImage360Collection<T extends DataSourceType> implements Imag
   public off(event: Image360Events, callback: Image360EnteredDelegate<T> | Image360ExitedDelegate): void {
     switch (event) {
       case 'image360Entered':
-        this._events.image360Entered.unsubscribe(callback as Image360EnteredDelegate<DataSourceType>);
+        this._events.image360Entered.unsubscribe(callback as Image360EnteredDelegate<T>);
         break;
       case 'image360Exited':
         this._events.image360Exited.unsubscribe(callback as Image360ExitedDelegate);
@@ -282,46 +275,24 @@ export class DefaultImage360Collection<T extends DataSourceType> implements Imag
     );
   }
 
-  findImageAnnotations(filter: Image360AnnotationInstanceFilter<T>): Promise<Image360AnnotationAssetQueryResult<T>[]> {
+  findImageAnnotations(filter: InstanceReference<T>): Promise<Image360AnnotationAssetQueryResult<T>[]> {
     return this._image360DataProvider.findImageAnnotationsForInstance(filter, this);
   }
 
-  async getAssetIds(): Promise<IdEither[]> {
-    const annotations = await this._image360DataProvider.get360ImageAssets(this, annotation =>
+  async getAssetIds(): Promise<InstanceReference<T>[]> {
+    const annotations = await this._image360DataProvider.getAllImage360AnnotationInfos(this, annotation =>
       this._annotationFilter.filter(annotation)
     );
 
-    return annotations.map(annotation => annotation.data.assetRef).filter(isIdEither);
-
-    function isIdEither(idEither: any | undefined): idEither is IdEither {
-      return idEither?.id !== undefined || idEither?.externalId !== undefined;
-    }
+    return annotations
+      .map(annotationInfo => getInstanceIdFromAnnotation(annotationInfo.annotationInfo))
+      .filter(result => result !== undefined);
   }
 
   async getAnnotationsInfo(): Promise<AssetAnnotationImage360Info<T>[]> {
-    const fileIdToEntityRevision = this.createFileIdToEntityRevisionMap();
-
-    const annotations = await this._image360DataProvider.get360ImageAssets(this, annotation =>
+    return this._image360DataProvider.getAllImage360AnnotationInfos(this, annotation =>
       this._annotationFilter.filter(annotation)
     );
-
-    return pairAnnotationsWithEntityAndRevision(annotations);
-
-    function pairAnnotationsWithEntityAndRevision(annotations: Image360AnnotationInstanceFilter<T>[]) {
-      return annotations
-        .map(annotation => {
-          const entityRevisionObject = fileIdToEntityRevision.get(annotation.annotatedResourceId);
-
-          if (entityRevisionObject === undefined) {
-            return undefined;
-          }
-
-          const { entity, revision } = entityRevisionObject;
-
-          return { annotationInfo: annotation, imageEntity: entity, imageRevision: revision };
-        })
-        .filter(info => info !== undefined);
-    }
   }
 
   public getAllFileDescriptors(): Image360FileDescriptor[] {
@@ -333,15 +304,5 @@ export class DefaultImage360Collection<T extends DataSourceType> implements Imag
           .flat()
       )
       .flat();
-  }
-
-  private createFileIdToEntityRevisionMap(): Map<number, { entity: Image360<T>; revision: Image360Revision<T> }> {
-    return this.image360Entities.reduce((map, entity) => {
-      entity.getRevisions().forEach(revision => {
-        const descriptors = revision.getDescriptors().faceDescriptors;
-        descriptors.forEach(descriptor => map.set(descriptor.fileId, { entity, revision }));
-      });
-      return map;
-    }, new Map<number, { entity: Image360<T>; revision: Image360Revision<T> }>());
   }
 }

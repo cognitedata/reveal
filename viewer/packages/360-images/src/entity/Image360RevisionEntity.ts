@@ -3,11 +3,11 @@
  */
 
 import {
-  Image360DataProvider,
   Image360FileDescriptor,
   Image360Descriptor,
   Image360Texture,
-  DataSourceType
+  DataSourceType,
+  Image360Provider
 } from '@reveal/data-providers';
 import { Image360Revision } from './Image360Revision';
 import { Image360VisualizationBox } from './Image360VisualizationBox';
@@ -22,7 +22,7 @@ import { isCoreDmImage360Annotation } from '../annotation/typeGuards';
 import { Image360RevisionId } from '@reveal/data-providers/src/types';
 
 export class Image360RevisionEntity<T extends DataSourceType> implements Image360Revision<T> {
-  private readonly _imageProvider: Image360DataProvider<T>;
+  private readonly _imageProvider: Image360Provider<T>;
   private readonly _image360Descriptor: Image360Descriptor<T>;
   private readonly _image360VisualizationBox: Image360VisualizationBox;
   private _previewTextures: Image360Texture[];
@@ -38,7 +38,7 @@ export class Image360RevisionEntity<T extends DataSourceType> implements Image36
 
   constructor(
     identifier: Image360RevisionId<T>,
-    imageProvider: Image360DataProvider<T>,
+    imageProvider: Image360Provider<T>,
     image360Descriptor: Image360Descriptor<T>,
     image360VisualizationBox: Image360VisualizationBox,
     annotationFilterer: Image360AnnotationFilter
@@ -158,7 +158,7 @@ export class Image360RevisionEntity<T extends DataSourceType> implements Image36
   }
 
   private async loadAndSetAnnotations(): Promise<ImageAnnotationObject<T>[]> {
-    const annotationData = await this._imageProvider.get360ImageAnnotations({
+    const annotationData = await this._imageProvider.getRelevant360ImageAnnotations({
       revisionId: this._image360Descriptor.id,
       fileDescriptors: this._image360Descriptor.faceDescriptors
     });

@@ -19,7 +19,7 @@ import { Image360IconIntersectionData } from './types';
 export class Image360Facade<T extends DataSourceType> {
   private readonly _image360Collections: DefaultImage360Collection<T>[];
   private readonly _rayCaster: THREE.Raycaster;
-  private readonly _image360Cache: Image360LoadingCache;
+  private readonly _image360Cache: Image360LoadingCache<T>;
 
   private readonly _loadSequencer = new AsyncSequencer();
 
@@ -56,7 +56,7 @@ export class Image360Facade<T extends DataSourceType> {
   }
 
   public async create<Image360CollectionSourceType extends DataSourceType>(
-    dataProviderFilter: Image360CollectionSourceType['image360Identifier'],
+    collectionIdentifier: Image360CollectionSourceType['image360Identifier'],
     annotationFilter: Image360AnnotationFilterOptions = {},
     postTransform = new THREE.Matrix4(),
     preComputedRotation = true
@@ -65,7 +65,7 @@ export class Image360Facade<T extends DataSourceType> {
 
     try {
       const image360Collection = await this._entityFactory.create<T>(
-        dataProviderFilter,
+        collectionIdentifier,
         postTransform,
         preComputedRotation,
         annotationFilter

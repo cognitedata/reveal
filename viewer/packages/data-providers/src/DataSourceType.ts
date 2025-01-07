@@ -6,6 +6,7 @@ import { Image360DataModelIdentifier } from './image-360-data-providers/descript
 import { PointCloudAnnotationVolumeCollection, PointCloudDMVolumeCollection } from '@reveal/pointcloud-styling';
 import { FdmImage360Annotation } from './image-360-data-providers/cdm/types';
 import { DMInstanceRef } from '@reveal/utilities';
+import { ImageAssetLinkAnnotationInfo } from './types';
 
 /**
  * Model identifier for classic CDF models, referenced by modelId and revisionId
@@ -46,7 +47,7 @@ export type ClassicDataSourceType = {
    * Type of classic 360 annotations
    */
 
-  image360AnnotationType: AnnotationModel;
+  image360AnnotationType: ImageAssetLinkAnnotationInfo;
   /**
    * Marker to make this type inconstructable
    */

@@ -3,7 +3,7 @@
  */
 
 import { DeviceDescriptor, SceneHandler } from '@reveal/utilities';
-import { DataSourceType, Image360DataProvider } from '@reveal/data-providers';
+import { DataSourceType, Image360Provider } from '@reveal/data-providers';
 import { Image360 } from './Image360';
 import {
   Historical360ImageSet,
@@ -75,7 +75,7 @@ export class Image360Entity<T extends DataSourceType> implements Image360<T> {
   constructor(
     image360Metadata: Historical360ImageSet<T>,
     sceneHandler: SceneHandler,
-    imageProvider: Image360DataProvider<T>,
+    imageProvider: Image360Provider<T>,
     annotationFilterer: Image360AnnotationFilter,
     transform: Matrix4,
     icon: Overlay3DIcon,

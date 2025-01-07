@@ -20,7 +20,7 @@ import zip from 'lodash/zip';
 import groupBy from 'lodash/groupBy';
 import partition from 'lodash/partition';
 import { Image360DataModelIdentifier } from '../system-space/Cdf360DataModelsDescriptorProvider';
-import { ClassicDataSourceType, DMDataSourceType } from 'api-entry-points/core';
+import { ClassicDataSourceType, DMDataSourceType, DMInstanceRef } from 'api-entry-points/core';
 
 type QueryResult = Awaited<ReturnType<typeof DataModelsSdk.prototype.queryNodesAndEdges<Cdf360FdmQuery>>>;
 
@@ -80,7 +80,7 @@ export class Cdf360CdmDescriptorProvider implements Image360DescriptorProvider<D
     });
 
     const groups = groupBy(imagesWithStation, imageResult => {
-      const station = imageResult.image.properties.cdf_cdm['Cognite360Image/v1'].station360 as InstanceIdentifier;
+      const station = imageResult.image.properties.cdf_cdm['Cognite360Image/v1'].station360 as DMInstanceRef;
       return `${station.externalId}-${station.space}`;
     });
 
@@ -163,12 +163,12 @@ export class Cdf360CdmDescriptorProvider implements Image360DescriptorProvider<D
     collectionId: string,
     collectionLabel: string,
     imageFileDescriptors: { image: ImageInstanceResult; fileDescriptors: FileInfo[] }[]
-  ): Historical360ImageSet<ClassicDataSourceType> {
+  ): Historical360ImageSet<DMDataSourceType> {
     const mainImagePropsArray = imageFileDescriptors.map(
       descriptor => descriptor.image.properties.cdf_cdm['Cognite360Image/v1']
     );
 
-    const id = imageFileDescriptors[0].image.externalId;
+    const id = imageFileDescriptors[0].image;
     return {
       collectionId,
       collectionLabel,
@@ -189,7 +189,7 @@ export class Cdf360CdmDescriptorProvider implements Image360DescriptorProvider<D
     revisionId: Image360RevisionId<DMDataSourceType>,
     imageProps: ImageResultProperties,
     fileInfos: FileInfo[]
-  ): Image360Descriptor<ClassicDataSourceType> {
+  ): Image360Descriptor<DMDataSourceType> {
     return {
       id: revisionId,
       faceDescriptors: getFaceDescriptors(),

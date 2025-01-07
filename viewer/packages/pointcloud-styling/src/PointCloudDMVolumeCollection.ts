@@ -2,7 +2,7 @@
  * Copyright 2024 Cognite AS
  */
 
-import { DMInstanceRef } from '@reveal/data-providers';
+import { DMInstanceRef } from '@reveal/utilities';
 
 /**
  * A simple PointCloudDMVolumeCollection that consists of an explicitly provided list of data model instance.

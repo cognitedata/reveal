@@ -50,12 +50,12 @@ import { Image360WithCollection } from '../public/types';
 import { DEFAULT_IMAGE_360_OPACITY } from '@reveal/360-images';
 import { Image360History } from '@reveal/360-images';
 import { Image360Action } from '@reveal/360-images';
-import { Cdm360ImageDescriptorProvider } from '@reveal/data-providers/src/image-360-data-providers/descriptor-providers/datamodels/cdm/Cdm360ImageDescriptorProvider';
 import { Image360ProviderCombiner } from '@reveal/data-providers/src/Image360ProviderCombiner';
 import { Cdf360ImageFileProvider } from '@reveal/data-providers/src/image-360-data-providers/CdfImage360FileProvider';
-import { CoreDm360ImageAnnotationProvider } from '@reveal/data-providers/src/image-360-data-providers/CoreDm360ImageProvider';
+import { CoreDm360ImageAnnotationProvider } from '@reveal/data-providers/src/image-360-data-providers/CoreDm360ImageAnnotationProvider';
 import { isFdm360ImageCollectionIdentifier } from '@reveal/data-providers/src/image-360-data-providers/shared';
 import { createCollectionIdString } from '@reveal/360-images';
+import { Cdf360CdmDescriptorProvider } from '@reveal/data-providers/src/image-360-data-providers/descriptor-providers/datamodels/cdm/Cdf360CdmDescriptorProvider';
 
 export class Image360ApiHelper<DataSourceT extends DataSourceType> {
   private readonly _image360Facade: Image360Facade<DataSourceT>;
@@ -119,7 +119,7 @@ export class Image360ApiHelper<DataSourceT extends DataSourceType> {
     this._hasEventListeners = hasEventListeners ?? true;
     const image360EventDescriptorProvider = new Cdf360EventDescriptorProvider(cogniteClient);
     const image360DataModelsDescriptorProvider = new Cdf360DataModelsDescriptorProvider(cogniteClient);
-    const image360CdmDescriptorProvider = new Cdm360ImageDescriptorProvider(cogniteClient);
+    const image360CdmDescriptorProvider = new Cdf360CdmDescriptorProvider(cogniteClient);
 
     const cdm360ImageAnnotationProvider = new CoreDm360ImageAnnotationProvider(cogniteClient);
     const cdf360ImageAnnotationProvider = new Cdf360ImageAnnotationProvider(cogniteClient);

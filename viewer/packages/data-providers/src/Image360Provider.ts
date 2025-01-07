@@ -15,11 +15,11 @@ export type Image360ProviderMap = Map<
 export function getImage360ProviderFromMap<T extends DataSourceType>(
   identifier: T['image360Identifier'],
   providerMap: Image360ProviderMap
-): Image360Provider<DataSourceType> {
+): Image360Provider<T> {
   if (isFdm360ImageCollectionIdentifier(identifier)) {
-    return providerMap.get(identifier.source) as Image360Provider<T>;
+    return providerMap.get(identifier.source) as unknown as Image360Provider<T>;
   } else {
-    return providerMap.get('event') as Image360Provider<T>;
+    return providerMap.get('event') as unknown as Image360Provider<T>;
   }
 }
 

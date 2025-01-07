@@ -10,6 +10,12 @@ export {
   Cdf360DataModelsDescriptorProvider,
   Image360DataModelIdentifier
 } from './src/image-360-data-providers/descriptor-providers/datamodels/system-space/Cdf360DataModelsDescriptorProvider';
+export {
+  isClassic360Identifier,
+  isCoreDmImage360Identifier,
+  isLegacyDM360Identifier,
+  isFdm360ImageCollectionIdentifier
+} from './src/image-360-data-providers/shared';
 export { LocalModelDataProvider } from './src/model-data-providers/LocalModelDataProvider';
 export { LocalModelIdentifier } from './src/model-identifiers/LocalModelIdentifier';
 export { LocalModelMetadataProvider } from './src/metadata-providers/LocalModelMetadataProvider';

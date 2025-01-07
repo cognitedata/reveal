@@ -14,7 +14,11 @@ import {
 } from '../types';
 import { AnnotationModel, CogniteInternalId, IdEither } from '@cognite/sdk';
 import { ClassicDataSourceType } from '../DataSourceType';
-import { DefaultImage360Collection, Image360AnnotationAssetQueryResult } from '@reveal/360-images';
+import {
+  AssetAnnotationImage360Info,
+  DefaultImage360Collection,
+  Image360AnnotationAssetQueryResult
+} from '@reveal/360-images';
 
 type Local360ImagesDescriptor = {
   translation: {
@@ -86,9 +90,9 @@ export class Local360ImageProvider implements Image360Provider<ClassicDataSource
     });
   }
 
-  get360ImageAnnotations(
+  getRelevant360ImageAnnotations(
     _annotationSpecifier: Image360AnnotationSpecifier<ClassicDataSourceType>
-  ): Promise<AnnotationModel[]> {
+  ): Promise<ClassicDataSourceType['image360AnnotationType'][]> {
     // Not supported for local models
     return Promise.resolve([]);
   }
@@ -125,10 +129,10 @@ export class Local360ImageProvider implements Image360Provider<ClassicDataSource
     return Promise.resolve([]);
   }
 
-  get360ImageAssets(
+  getAllImage360AnnotationInfos(
     _collection: DefaultImage360Collection<ClassicDataSourceType>,
     _annotationFilter: Image360AnnotationFilterDelegate<ClassicDataSourceType>
-  ): Promise<ImageAssetLinkAnnotationInfo[]> {
+  ): Promise<AssetAnnotationImage360Info[]> {
     return Promise.resolve([]);
   }
 }

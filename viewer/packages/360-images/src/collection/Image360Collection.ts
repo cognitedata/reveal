@@ -9,10 +9,9 @@ import { Image360AnnotationAppearance } from '../annotation/types';
 import { Image360Revision } from '../entity/Image360Revision';
 import { IdEither } from '@cognite/sdk';
 import { Image360Annotation } from '../annotation/Image360Annotation';
-import { ClassicDataSourceType, DataSourceType, ImageAssetLinkAnnotationInfo } from '@reveal/data-providers';
+import { ClassicDataSourceType, DataSourceType } from '@reveal/data-providers';
 import { Matrix4 } from 'three';
-import { AnnotationInfoType, ImageDMAnnotationInfo } from '@reveal/data-providers/src/types';
-import { DMInstanceRef } from '@reveal/utilities';
+import { InstanceReference } from '@reveal/data-providers/src/types';
 
 /**
  * Asset search return type, including information about the image in which the asset is found
@@ -21,7 +20,7 @@ export type AssetAnnotationImage360Info<T extends DataSourceType = ClassicDataSo
   /**
    * Reference to the relevant asset
    */
-  annotationInfo: AnnotationInfoType<T>;
+  annotationInfo: T['image360AnnotationType'];
   /**
    * The image entity in which the asset was found
    */
@@ -174,7 +173,7 @@ export interface Image360Collection<T extends DataSourceType = ClassicDataSource
   /**
    * Find 360 images associated with an asset through CDF annotations
    */
-  findImageAnnotations(filter: Image360AnnotationInstanceFilter<T>): Promise<Image360AnnotationAssetQueryResult<T>[]>;
+  findImageAnnotations(filter: InstanceReference<T>): Promise<Image360AnnotationAssetQueryResult<T>[]>;
 
   /**
    * Get IDs of all CDF assets associated with this 360 image collection through CDF annotations

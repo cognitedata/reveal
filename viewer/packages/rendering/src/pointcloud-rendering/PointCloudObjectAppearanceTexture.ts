@@ -13,7 +13,9 @@ import {
   StyledPointCloudVolumeCollection
 } from '@reveal/pointcloud-styling';
 import { PointCloudObjectIdMaps } from './PointCloudObjectIdMaps';
-import { DataSourceType, DMInstanceRef } from '@reveal/data-providers';
+import { DataSourceType } from '@reveal/data-providers';
+import { DMInstanceRef } from '@reveal/utilities';
+import { DMInstanceKey, dmInstanceRefToKey } from '@reveal/utilities/src/fdm/toKey';
 
 export class PointCloudObjectAppearanceTexture {
   private readonly _objectStyleTexture: THREE.DataTexture;
@@ -26,7 +28,7 @@ export class PointCloudObjectAppearanceTexture {
   private readonly _width: number;
   private readonly _height: number;
 
-  private _annotationIdsToObjectId: Map<number | DMInstanceRef, number> | undefined;
+  private _annotationIdsToObjectId: Map<number | DMInstanceKey, number> | undefined;
 
   constructor(width: number, height: number) {
     this._objectStyleTexture = generateDataTexture(width, height, new THREE.Color(0x0), 0x01); // Initialize with visibility bit set
@@ -60,7 +62,7 @@ export class PointCloudObjectAppearanceTexture {
 
     const objectCollection = styledObjectSet.objectCollection;
 
-    const applyStyle = (transformedObjectId: number | DMInstanceRef) => {
+    const applyStyle = (transformedObjectId: number | DMInstanceKey) => {
       const objectId = this._annotationIdsToObjectId?.get(transformedObjectId);
       if (objectId === undefined) {
         throw new Error('Could not find corresponding object ID for ' + transformedObjectId);
@@ -74,7 +76,7 @@ export class PointCloudObjectAppearanceTexture {
       }
     } else {
       for (const instanceRef of objectCollection.getDataModelInstanceRefs()) {
-        applyStyle(instanceRef);
+        applyStyle(dmInstanceRefToKey(instanceRef));
       }
     }
   }

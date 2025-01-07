@@ -10,7 +10,7 @@ import {
 import { PointCloudObject, PointCloudObjectMetadata } from '../pointcloud-stylable-object-providers/types';
 import { StylableObject } from '../pointcloud-stylable-object-providers/StylableObject';
 import { ClassicDataSourceType, DMDataSourceType, DataSourceType } from '../DataSourceType';
-import { InstanceIdentifier } from '@reveal/utilities';
+import { DMInstanceRef } from '@reveal/utilities';
 
 /**
  * Type guard to check if a point cloud object contains data type DMDataSourceType
@@ -89,7 +89,7 @@ export function getInParameterListFilter(property: string[], parameter: string):
   } as const satisfies TableExpressionInFilterV3;
 }
 
-export function getIdInListFilter(parameters: InstanceIdentifier[]): TableExpressionDataModelsBoolFilter {
+export function getIdInListFilter(parameters: DMInstanceRef[]): TableExpressionDataModelsBoolFilter {
   return {
     or: parameters.map(param => ({
       and: [

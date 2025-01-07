@@ -2,7 +2,7 @@
  * Copyright 2023 Cognite AS
  */
 
-import { CogniteClient, FileInfo } from '@cognite/sdk';
+import { CogniteClient, ExternalId, FileInfo } from '@cognite/sdk';
 import {
   Historical360ImageSet,
   Image360Descriptor,
@@ -147,12 +147,12 @@ export class Cdf360DataModelsDescriptorProvider implements Image360DescriptorPro
   private async getFileDescriptors(images: ImageResult) {
     const imageProps = images.map(image => image.properties.cdf_360_image_schema['Image360/v1']);
     const cubeMapExternalIds = imageProps.flatMap(imageProp => [
-      { externalId: imageProp.cubeMapFront },
-      { externalId: imageProp.cubeMapBack },
-      { externalId: imageProp.cubeMapLeft },
-      { externalId: imageProp.cubeMapRight },
-      { externalId: imageProp.cubeMapTop },
-      { externalId: imageProp.cubeMapBottom }
+      { externalId: imageProp.cubeMapFront } as ExternalId,
+      { externalId: imageProp.cubeMapBack } as ExternalId,
+      { externalId: imageProp.cubeMapLeft } as ExternalId,
+      { externalId: imageProp.cubeMapRight } as ExternalId,
+      { externalId: imageProp.cubeMapTop } as ExternalId,
+      { externalId: imageProp.cubeMapBottom } as ExternalId
     ]);
     const externalIdBatches = chunk(chunk(cubeMapExternalIds, 1000), 15);
 
