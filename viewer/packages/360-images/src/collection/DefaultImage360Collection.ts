@@ -285,7 +285,7 @@ export class DefaultImage360Collection<T extends DataSourceType> implements Imag
     );
 
     return annotations
-      .map(annotationInfo => getInstanceIdFromAnnotation(annotationInfo.annotationInfo))
+      .map(annotationInfo => getInstanceIdFromAnnotation<T>(annotationInfo.annotationInfo))
       .filter(result => result !== undefined);
   }
 

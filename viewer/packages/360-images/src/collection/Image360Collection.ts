@@ -11,7 +11,11 @@ import { IdEither } from '@cognite/sdk';
 import { Image360Annotation } from '../annotation/Image360Annotation';
 import { ClassicDataSourceType, DataSourceType } from '@reveal/data-providers';
 import { Matrix4 } from 'three';
-import { InstanceReference } from '@reveal/data-providers/src/types';
+import { ImageAssetLinkAnnotationInfo, InstanceReference } from '@reveal/data-providers/src/types';
+
+export type InstanceLinkable360ImageAnnotationType<T extends DataSourceType> = T extends ClassicDataSourceType
+  ? ImageAssetLinkAnnotationInfo
+  : T['image360AnnotationType'];
 
 /**
  * Asset search return type, including information about the image in which the asset is found
@@ -20,7 +24,7 @@ export type AssetAnnotationImage360Info<T extends DataSourceType = ClassicDataSo
   /**
    * Reference to the relevant asset
    */
-  annotationInfo: T['image360AnnotationType'];
+  annotationInfo: InstanceLinkable360ImageAnnotationType<T>;
   /**
    * The image entity in which the asset was found
    */
