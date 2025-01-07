@@ -128,7 +128,6 @@ export const RuleBasedOutputsButton = ({
   return (
     <Menu
       placement="right-start"
-      disabled={disabled}
       style={{
         maxHeight: 300,
         overflow: 'auto',
@@ -137,10 +136,7 @@ export const RuleBasedOutputsButton = ({
       floatingProps={{ middleware: [offset(TOOLBAR_HORIZONTAL_PANEL_OFFSET)] }}
       disableCloseOnClickInside
       renderTrigger={(props: any) => (
-        <CogsTooltip
-          content={t({ key: 'RULESET_SELECT_HEADER' })}
-          placement="right"
-          appendTo={document.body}>
+        <CogsTooltip content={t({ key: 'RULESET_SELECT_HEADER' })} placement="right">
           <Button
             icon=<ColorPaletteIcon />
             disabled={disabled}

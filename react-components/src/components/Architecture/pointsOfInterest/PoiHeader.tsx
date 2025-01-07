@@ -41,7 +41,7 @@ export const PoiHeader = (): ReactNode => {
         <Divider direction="vertical" weight="2px" />
         <Flex direction="row" justifyContent="flex-start">
           <Dropdown placement="bottom-end" content={<PoiSharePanel />}>
-            <Tooltip placement="top-end" appendTo={document.body} content={t({ key: 'SHARE' })}>
+            <Tooltip placement="top-end" content={t({ key: 'SHARE' })}>
               <Button icon={<ShareIcon />} type="ghost" />
             </Tooltip>
           </Dropdown>

@@ -30,15 +30,13 @@ export const SettingsButton = ({
   return (
     <StyledMenu
       placement="right"
-      container={'parent'}
       floatingProps={{ middleware: [offset(TOOLBAR_HORIZONTAL_PANEL_OFFSET)] }}
       disableCloseOnClickInside
       renderTrigger={(props: any) => (
         <CogsTooltip
           content={t({ key: 'SETTINGS_TOOLTIP' })}
           placement="right"
-          disabled={settingsActive}
-          appendTo={document.body}>
+          disabled={settingsActive}>
           <Button
             icon=<SettingsIcon />
             type="ghost"
