@@ -1267,6 +1267,12 @@ export type Image360AnnotationIntersection<T extends DataSourceType = ClassicDat
 };
 
 // @public
+export type Image360BaseIdentifier = {
+    space: string;
+    image360CollectionExternalId: string;
+};
+
+// @public
 export interface Image360Collection<T extends DataSourceType = ClassicDataSourceType> {
     findImageAnnotations(filter: InstanceReference<T>): Promise<Image360AnnotationAssetQueryResult<T>[]>;
     getAnnotationsInfo(source: 'assets'): Promise<AssetAnnotationImage360Info<T>[]>;
@@ -1298,6 +1304,11 @@ export interface Image360Collection<T extends DataSourceType = ClassicDataSource
 }
 
 // @public
+export type Image360CoreDataModelIdentifier = {
+    source: 'cdm';
+} & Image360BaseIdentifier;
+
+// @public
 export type Image360DataModelIdentifier = Image360CoreDataModelIdentifier | Image360LegacyDataModelIdentifier;
 
 // @public
@@ -1319,6 +1330,11 @@ export type Image360IconIntersection<T extends DataSourceType = DataSourceType> 
 export type Image360IconStyle = {
     color?: Color;
 };
+
+// @public
+export type Image360LegacyDataModelIdentifier = {
+    source: 'dm';
+} & Image360BaseIdentifier;
 
 // @public
 export interface Image360Revision<T extends DataSourceType = ClassicDataSourceType> {
