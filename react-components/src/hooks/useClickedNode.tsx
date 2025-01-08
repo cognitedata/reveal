@@ -13,7 +13,7 @@ import { type FdmNodeDataPromises } from '../components/CacheProvider/types';
 import { type NodeAssetMappingResult } from '../components/CacheProvider/AssetMappingAndNode3DCache';
 import { usePointCloudAnnotationMappingForIntersection } from './pointClouds/usePointCloudAnnotationMappingForIntersection';
 import { type PointCloudAnnotationMappedAssetData } from './types';
-import { MOUSE, Ray, Vector2, type Vector3 } from 'three';
+import { MOUSE, Vector2, type Vector3 } from 'three';
 import { type DmsUniqueIdentifier, type Source } from '../data-providers/FdmSDK';
 import { useRenderTarget, useReveal } from '../components/RevealCanvas/ViewerContext';
 import { isActiveEditTool } from '../architecture/base/commands/BaseEditTool';
@@ -42,10 +42,7 @@ export type FdmNodeDataResult = {
 export type ClickedNodeData = {
   mouseButton?: MOUSE;
   position?: Vector2;
-  /**
-   * A ray traced forward in the clicked direction in viewer coordinates
-   */
-  ray?: Ray;
+
   /**
    * A value of `undefined` means it's not yet finished evaluating.
    * A value of `null` means there was no result
@@ -91,7 +88,6 @@ export const useClickedNodeData = (options?: {
   >(undefined);
 
   const [position, setPosition] = useState<Vector2 | undefined>(undefined);
-  const [ray, setRay] = useState<Ray | undefined>(undefined);
   const [mouseButton, setMouseButton] = useState<MOUSE | undefined>(undefined);
 
   useEffect(() => {
@@ -110,8 +106,6 @@ export const useClickedNodeData = (options?: {
         }
 
         const position = new Vector2(event.offsetX, event.offsetY);
-        const intersectInput = viewer.createCustomObjectIntersectInput(position);
-        setRay(intersectInput.raycaster.ray);
 
         setPosition(position);
         setMouseButton(event.button);
@@ -157,7 +151,6 @@ export const useClickedNodeData = (options?: {
   return useCombinedClickedNodeData(
     mouseButton,
     position,
-    ray,
     nodeDataPromises,
     assetMappingResult,
     pointCloudAnnotationMappingResult,
@@ -169,7 +162,6 @@ export const useClickedNodeData = (options?: {
 const useCombinedClickedNodeData = (
   mouseButton: MOUSE | undefined,
   position: Vector2 | undefined,
-  ray: Ray | undefined,
   fdmPromises: FdmNodeDataPromises | undefined,
   assetMappings: NodeAssetMappingResult | undefined,
   pointCloudAssetMappingsResult: UseQueryResult<PointCloudAnnotationMappedAssetData[]>,
@@ -199,7 +191,6 @@ const useCombinedClickedNodeData = (
     return {
       mouseButton,
       position,
-      ray,
       fdmResult: fdmData,
       assetMappingResult: assetMappingData,
       pointCloudAnnotationMappingResult: pointCloudAssetMappings,
@@ -208,7 +199,6 @@ const useCombinedClickedNodeData = (
     };
   }, [
     intersection,
-    ray,
     fdmData,
     assetMappings?.node,
     pointCloudAssetMappingsResult.data,
