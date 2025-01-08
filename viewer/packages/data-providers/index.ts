@@ -20,11 +20,8 @@ export {
   isFdm360ImageCollectionIdentifier,
   isImageAssetLinkAnnotation
 } from './src/image-360-data-providers/shared';
-export { Cdf360CdmDescriptorProvider } from './src/image-360-data-providers/descriptor-providers/datamodels/cdm/Cdf360CdmDescriptorProvider';
-export { CoreDm360ImageAnnotationProvider } from './src/image-360-data-providers/CoreDm360ImageAnnotationProvider';
 export { CoreDmImage360Annotation } from './src/image-360-data-providers/cdm/types';
 export { LocalModelDataProvider } from './src/model-data-providers/LocalModelDataProvider';
-export { Image360ProviderCombiner } from './src/Image360ProviderCombiner';
 export { LocalModelIdentifier } from './src/model-identifiers/LocalModelIdentifier';
 export { LocalModelMetadataProvider } from './src/metadata-providers/LocalModelMetadataProvider';
 export { Local360ImageProvider } from './src/image-360-data-providers/Local360ImageProvider';
@@ -69,18 +66,10 @@ export {
 
 export {
   DataSourceType,
-  ExportedDataSourceType,
   ClassicDataSourceType,
-  CoreDMDataSourceType,
+  DMDataSourceType,
   ClassicModelIdentifierType,
   DMModelIdentifierType,
-  DMDataSourceType,
-  DMCadAndPointCloudDataSourceType,
-  ClassicCadAndPointCloudDataSourceType,
-  DMImage360AnnotationIdentifierDataSourceType,
-  DMImage360DataSourceType,
-  DMImage360IdentifierDataSourceType,
-  ClassicImage360DataSourceType,
   isClassicIdentifier,
   isDMIdentifier,
   InternalDataSourceType,

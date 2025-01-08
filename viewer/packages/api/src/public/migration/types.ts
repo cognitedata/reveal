@@ -17,7 +17,7 @@ import { CdfModelIdentifier, CommonModelOptions } from '@reveal/data-providers';
 import { Image360, Image360AnnotationFilterOptions, Image360Collection } from '@reveal/360-images';
 import type { Vector2, WebGLRenderTarget, WebGLRenderer, Matrix4, Vector3 } from 'three';
 import { CustomObjectIntersection } from '@reveal/utilities';
-import { ClassicDataSourceType, DataSourceType, CoreDMDataSourceType } from '@reveal/data-providers';
+import { ClassicDataSourceType, DataSourceType, DMDataSourceType } from '@reveal/data-providers';
 
 /**
  * Callback to monitor loaded requests and progress.
@@ -219,7 +219,7 @@ export type ClassicAddModelOptions = AddModelOptions<ClassicDataSourceType>;
 /**
  * Add model options for models of DM format, identified by revisionExternalId and revisionSpace.
  */
-export type DMAddModelOptions = AddModelOptions<CoreDMDataSourceType>;
+export type DMAddModelOptions = AddModelOptions<DMDataSourceType>;
 
 export type AddImage360Options = {
   /**

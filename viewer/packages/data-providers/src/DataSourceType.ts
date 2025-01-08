@@ -18,15 +18,11 @@ export type ClassicModelIdentifierType = { modelId: number; revisionId: number }
 export type DMModelIdentifierType = { revisionExternalId: string; revisionSpace: string };
 
 export type LocalModelIdentifierType = { localPath: string };
-/**
- * Data source type for Classic models
- */
-export type ClassicDataSourceType = ClassicCadAndPointCloudDataSourceType & ClassicImage360DataSourceType;
 
 /**
- * Data source type for classic CAD and Point cloud models
+ * Data source type for classic models
  */
-export type ClassicCadAndPointCloudDataSourceType = {
+export type ClassicDataSourceType = {
   /**
    * The classic point cloud model identifier associated with the object which include modelId and revisionId.
    */
@@ -41,12 +37,6 @@ export type ClassicCadAndPointCloudDataSourceType = {
    * Point cloud volume collection type
    */
   pointCloudCollectionType: PointCloudAnnotationVolumeCollection;
-};
-
-/**
- * Classic data source type for 360 images
- */
-export type ClassicImage360DataSourceType = {
   /**
    * Identifier type for Event- or DM-based 360 images
    */
@@ -57,16 +47,16 @@ export type ClassicImage360DataSourceType = {
    */
 
   image360AnnotationType: AnnotationModel;
+  /**
+   * Marker to make this type inconstructable
+   */
+  _never: never;
 };
 
 /**
- * DM data source type for Cad and point cloud models
+ * Data source type for DM models
  */
-export type DMCadAndPointCloudDataSourceType = {
-  /**
-   * The DM point cloud model identifier associated with the object, consisting of revision externalId and revision space
-   */
-  modelIdentifier: DMModelIdentifierType;
+export type DMDataSourceType = {
   /**
    * The CDF point cloud volume metadata containing reference associated with the object which includes externalId, space
    * and asset reference if any.
@@ -76,45 +66,24 @@ export type DMCadAndPointCloudDataSourceType = {
    * Point cloud volume collection type
    */
   pointCloudCollectionType: PointCloudDMVolumeCollection;
-};
+  /**
+   * The DM point cloud model identifier associated with the object, consisting of revision externalId and revision space
+   */
+  modelIdentifier: DMModelIdentifierType;
 
-/**
- * Data source type for DM 360 images
- */
-export type DMImage360DataSourceType = DMImage360IdentifierDataSourceType &
-  DMImage360AnnotationIdentifierDataSourceType;
-
-/**
- * Image360 DM identifier part of data source type
- */
-export type DMImage360IdentifierDataSourceType = {
   /**
    * Identifier type for DM 360 collections
    */
   image360Identifier: Image360DataModelIdentifier;
-};
-
-/**
- * Image360 DM identifier part of data source type
- */
-export type DMImage360AnnotationIdentifierDataSourceType = {
   /**
    * Type of CoreDM 360 image annotations (to be defined)
    */
   image360AnnotationType: CoreDmImage360Annotation;
+  /**
+   * Marker to make this type inconstructable
+   */
+  _never: never;
 };
-
-/**
- * Data source type for DM data types
- * @deprecated Use CoreDMDataSourceType
- */
-export type DMDataSourceType = DMCadAndPointCloudDataSourceType &
-  DMImage360IdentifierDataSourceType & { image360AnnotationType: never };
-
-/**
- * Data source type for Core DM data types
- */
-export type CoreDMDataSourceType = DMCadAndPointCloudDataSourceType & DMImage360DataSourceType;
 
 /**
  * Data source type for local models
@@ -129,13 +98,7 @@ export type LocalDataSourceType = {
 /**
  * Common data source type
  */
-export type DataSourceType = ClassicDataSourceType | CoreDMDataSourceType;
-
-/**
- * Common data source type
- * @deprecated Use FullDataSourceType
- */
-export type ExportedDataSourceType = ClassicDataSourceType | DMDataSourceType;
+export type DataSourceType = ClassicDataSourceType | DMDataSourceType;
 
 /**
  * A DataSourceType used internally to allow for flexibility and generic testing

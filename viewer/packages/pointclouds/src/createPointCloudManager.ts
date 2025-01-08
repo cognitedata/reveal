@@ -8,7 +8,7 @@ import { PointCloudMetadataRepository } from './PointCloudMetadataRepository';
 import * as THREE from 'three';
 
 import {
-  CoreDMDataSourceType,
+  DMDataSourceType,
   ModelDataProvider,
   ModelMetadataProvider,
   PointCloudStylableObjectProvider
@@ -24,7 +24,7 @@ export function createPointCloudManager(
   modelDataProvider: ModelDataProvider,
   pointCloudStylableObjectProvider: PointCloudStylableObjectProvider,
   classificationsProvider: IPointClassificationsProvider,
-  pointCloudDMProvider: PointCloudStylableObjectProvider<CoreDMDataSourceType>,
+  pointCloudDMProvider: PointCloudStylableObjectProvider<DMDataSourceType>,
   pointCloudMaterialManager: PointCloudMaterialManager,
   scene: THREE.Scene,
   renderer: THREE.WebGLRenderer

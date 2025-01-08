@@ -11,7 +11,7 @@ import { PickPoint, PointCloudOctree, PointCloudOctreePicker } from './potree-th
 import { isPointVisibleByPlanes } from '@reveal/utilities';
 import {
   ClassicDataSourceType,
-  CoreDMDataSourceType,
+  DMDataSourceType,
   isClassicPointCloudVolume,
   isDMPointCloudVolume,
   DataSourceType
@@ -88,9 +88,9 @@ export class PointCloudPickingHandler {
 
             return result;
           } else if (isDMPointCloudVolume(pointCloudObject)) {
-            const result: IntersectPointCloudNodeResult<CoreDMDataSourceType> = {
+            const result: IntersectPointCloudNodeResult<DMDataSourceType> = {
               ...baseObject,
-              pointCloudNode: pointCloudNode as PointCloudNode<CoreDMDataSourceType>,
+              pointCloudNode: pointCloudNode as PointCloudNode<DMDataSourceType>,
               volumeMetadata: {
                 volumeInstanceRef: pointCloudObject.volumeInstanceRef,
                 assetRef: pointCloudObject.assetRef

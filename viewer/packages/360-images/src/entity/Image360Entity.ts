@@ -59,17 +59,8 @@ export class Image360Entity<T extends DataSourceType> implements Image360<T> {
   /**
    * Get Id of 360 image entity.
    * @returns Station Id
-   * @deprecated Use `identifier`
    */
-  get id(): string {
-    return JSON.stringify(this._imageMetadata.id);
-  }
-
-  /**
-   * Get Id of 360 image entity.
-   * @returns Station Id
-   */
-  get identifier(): Image360RevisionId<T> {
+  get id(): Image360RevisionId<T> {
     return this._imageMetadata.id;
   }
 

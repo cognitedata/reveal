@@ -2,7 +2,7 @@
  * Copyright 2022 Cognite AS
  */
 
-import { ClassicDataSourceType, CoreDMDataSourceType } from '@reveal/data-providers';
+import { ClassicDataSourceType, DMDataSourceType } from '@reveal/data-providers';
 import { createPointCloudModel } from '../../../test-utilities/src/createPointCloudModel';
 import { CognitePointCloudModel } from './CognitePointCloudModel';
 import { AnnotationIdPointCloudObjectCollection, PointCloudDMVolumeCollection } from '@reveal/pointcloud-styling';
@@ -11,7 +11,7 @@ import { Color, Matrix4 } from 'three';
 
 describe(CognitePointCloudModel.name, () => {
   let classicModel: CognitePointCloudModel<ClassicDataSourceType>;
-  let dmModel: CognitePointCloudModel<CoreDMDataSourceType>;
+  let dmModel: CognitePointCloudModel<DMDataSourceType>;
 
   beforeEach(() => {
     classicModel = createPointCloudModel(1, 2);

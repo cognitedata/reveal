@@ -1,7 +1,7 @@
 /*!
  * Copyright 2025 Cognite AS
  */
-import { CoreDMDataSourceType } from '../DataSourceType';
+import { DMDataSourceType } from '../DataSourceType';
 import {
   Image360AnnotationFilterDelegate,
   Image360AnnotationProvider,
@@ -17,12 +17,12 @@ import {
 } from '@reveal/360-images';
 import { isSameImage360RevisionId } from './shared';
 import { fetchCoreDm360AnnotationsForRevision } from './cdm/fetchCoreDm360AnnotationsForRevision';
-import { CogniteClient } from '@cognite/sdk';
+import { CogniteClient } from '@cognite/sdk/dist/src';
 import { fetchAnnotationsForInstance } from './cdm/fetchAnnotationsForInstance';
 import { fetchCoreDm360AnnotationsForCollection } from './cdm/fetchCoreDm360AnnotationsForCollection';
 import { DMInstanceKey, dmInstanceRefToKey } from '@reveal/utilities';
 
-export class CoreDm360ImageAnnotationProvider implements Image360AnnotationProvider<CoreDMDataSourceType> {
+export class CoreDm360ImageAnnotationProvider implements Image360AnnotationProvider<DMDataSourceType> {
   private readonly _client: CogniteClient;
 
   constructor(client: CogniteClient) {
@@ -30,22 +30,22 @@ export class CoreDm360ImageAnnotationProvider implements Image360AnnotationProvi
   }
 
   async getRelevant360ImageAnnotations(
-    annotationSpecifier: Image360AnnotationSpecifier<CoreDMDataSourceType>
-  ): Promise<CoreDMDataSourceType['image360AnnotationType'][]> {
+    annotationSpecifier: Image360AnnotationSpecifier<DMDataSourceType>
+  ): Promise<DMDataSourceType['image360AnnotationType'][]> {
     return fetchCoreDm360AnnotationsForRevision(annotationSpecifier.revisionId, this._client);
   }
 
   async findImageAnnotationsForInstance(
-    instanceFilter: InstanceReference<CoreDMDataSourceType>,
-    collection: DefaultImage360Collection<CoreDMDataSourceType>
-  ): Promise<Image360AnnotationAssetQueryResult<CoreDMDataSourceType>[]> {
+    instanceFilter: InstanceReference<DMDataSourceType>,
+    collection: DefaultImage360Collection<DMDataSourceType>
+  ): Promise<Image360AnnotationAssetQueryResult<DMDataSourceType>[]> {
     const relatedRevisionsAndAnnotations = await fetchAnnotationsForInstance(instanceFilter, this._client);
     const entities = collection.image360Entities;
     return (await Promise.all(entities.map(getRevisionAnnotationsForEntity))).flat();
 
     async function getRevisionAnnotationsForEntity(
-      entity: Image360Entity<CoreDMDataSourceType>
-    ): Promise<Image360AnnotationAssetQueryResult<CoreDMDataSourceType>[]> {
+      entity: Image360Entity<DMDataSourceType>
+    ): Promise<Image360AnnotationAssetQueryResult<DMDataSourceType>[]> {
       const revisions = entity
         .getRevisions()
         .filter(
@@ -58,9 +58,9 @@ export class CoreDm360ImageAnnotationProvider implements Image360AnnotationProvi
     }
 
     async function getAnnotationInfoForRevision(
-      entity: Image360Entity<CoreDMDataSourceType>,
-      revision: Image360RevisionEntity<CoreDMDataSourceType>
-    ): Promise<Image360AnnotationAssetQueryResult<CoreDMDataSourceType>[]> {
+      entity: Image360Entity<DMDataSourceType>,
+      revision: Image360RevisionEntity<DMDataSourceType>
+    ): Promise<Image360AnnotationAssetQueryResult<DMDataSourceType>[]> {
       const annotations = await revision.getAnnotations();
       return annotations.map(annotation => ({
         image: entity,
@@ -71,9 +71,9 @@ export class CoreDm360ImageAnnotationProvider implements Image360AnnotationProvi
   }
 
   async getAllImage360AnnotationInfos(
-    collection: DefaultImage360Collection<CoreDMDataSourceType>,
-    annotationFilter: Image360AnnotationFilterDelegate<CoreDMDataSourceType>
-  ): Promise<AssetAnnotationImage360Info<CoreDMDataSourceType>[]> {
+    collection: DefaultImage360Collection<DMDataSourceType>,
+    annotationFilter: Image360AnnotationFilterDelegate<DMDataSourceType>
+  ): Promise<AssetAnnotationImage360Info<DMDataSourceType>[]> {
     const annotations = (
       await fetchCoreDm360AnnotationsForCollection(
         { externalId: collection.collectionId.image360CollectionExternalId, space: collection.collectionId.space },
@@ -84,7 +84,7 @@ export class CoreDm360ImageAnnotationProvider implements Image360AnnotationProvi
     const entities = collection.image360Entities;
     const revisionIdToEntityAndRevisionMap = new Map<
       DMInstanceKey,
-      [Image360Entity<CoreDMDataSourceType>, Image360RevisionEntity<CoreDMDataSourceType>]
+      [Image360Entity<DMDataSourceType>, Image360RevisionEntity<DMDataSourceType>]
     >(
       entities.flatMap(entity =>
         entity.getRevisions().map(revision => [dmInstanceRefToKey(revision.identifier), [entity, revision]])

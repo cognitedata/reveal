@@ -7,13 +7,13 @@ import {
   AnnotationsObjectDetection,
   AnnotationType
 } from '@cognite/sdk';
-import { CoreDMDataSourceType, DataSourceType } from '@reveal/data-providers';
+import { DataSourceType, DMDataSourceType } from '@reveal/data-providers';
 import { isDmIdentifier } from '@reveal/utilities';
 
 export function isCoreDmImage360Annotation(
   annotation: DataSourceType['image360AnnotationType']
-): annotation is CoreDMDataSourceType['image360AnnotationType'] {
-  const castAnnotation = annotation as CoreDMDataSourceType['image360AnnotationType'];
+): annotation is DMDataSourceType['image360AnnotationType'] {
+  const castAnnotation = annotation as DMDataSourceType['image360AnnotationType'];
   const dmsIdentifier = castAnnotation.annotationIdentifier;
   return dmsIdentifier !== undefined && isDmIdentifier(dmsIdentifier);
 }

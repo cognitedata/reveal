@@ -11,7 +11,7 @@ import { cdfAnnotationsToObjectInfo } from '../../data-providers/src/pointcloud-
 import {
   ClassicDataSourceType,
   ClassicModelIdentifierType,
-  CoreDMDataSourceType,
+  DMDataSourceType,
   DMModelIdentifierType,
   DataSourceType,
   PointCloudObject,
@@ -44,7 +44,7 @@ class CustomAnnotationProvider implements PointCloudStylableObjectProvider<Class
   }
 }
 
-class CustomDMProvider implements PointCloudStylableObjectProvider<CoreDMDataSourceType> {
+class CustomDMProvider implements PointCloudStylableObjectProvider<DMDataSourceType> {
   async getPointCloudObjects<DMPointCloudDataType extends DataSourceType>(
     _modelIdentifier: DMModelIdentifierType
   ): Promise<PointCloudObject<DMPointCloudDataType>[]> {
