@@ -40,9 +40,14 @@ export interface Image360<T extends DataSourceType = ClassicDataSourceType> {
   /**
    * Get Id of 360 image entity.
    * @returns Station Id
+   * @deprecated Use `identifier`
    */
-  readonly id: Image360Id<T>;
-
+  readonly id: string;
+  /**
+   * Get Id of 360 image entity.
+   * @returns Station Id
+   */
+  readonly identifier: Image360Id<T>;
   /**
    * Get label of 360 image entity.
    * @returns Station label

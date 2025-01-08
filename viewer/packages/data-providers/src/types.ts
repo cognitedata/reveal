@@ -3,7 +3,7 @@
  */
 import { AnnotationModel, AnnotationsCogniteAnnotationTypesImagesAssetLink, IdEither } from '@cognite/sdk';
 import * as THREE from 'three';
-import { ClassicDataSourceType, DataSourceType, DMDataSourceType } from './DataSourceType';
+import { ClassicDataSourceType, CoreDMDataSourceType, DataSourceType } from './DataSourceType';
 import {
   AssetAnnotationImage360Info,
   DefaultImage360Collection,
@@ -30,7 +30,7 @@ export type Image360Id<T extends DataSourceType> = Image360RevisionId<T>;
 /**
  * An ID identifiying a single Image360 revision within a collection
  */
-export type Image360RevisionId<T extends DataSourceType> = T extends DMDataSourceType ? DMInstanceRef : string;
+export type Image360RevisionId<T extends DataSourceType> = T extends CoreDMDataSourceType ? DMInstanceRef : string;
 
 export type Image360AnnotationSpecifier<T extends DataSourceType> = {
   revisionId: Image360RevisionId<T>;

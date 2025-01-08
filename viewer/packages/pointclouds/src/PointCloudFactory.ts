@@ -9,7 +9,7 @@ import { Potree } from './potree-three-loader';
 import { DEFAULT_POINT_CLOUD_METADATA_FILE } from './constants';
 import {
   ClassicDataSourceType,
-  DMDataSourceType,
+  CoreDMDataSourceType,
   DataSourceType,
   PointCloudStylableObjectProvider,
   isDMIdentifier
@@ -24,14 +24,14 @@ import { ModelIdentifier } from '@reveal/data-providers/src/ModelIdentifier';
 export class PointCloudFactory {
   private readonly _potreeInstance: Potree;
   private readonly _pointCloudObjectProvider: PointCloudStylableObjectProvider<ClassicDataSourceType>;
-  private readonly _pointCloudDMProvider: PointCloudStylableObjectProvider<DMDataSourceType>;
+  private readonly _pointCloudDMProvider: PointCloudStylableObjectProvider<CoreDMDataSourceType>;
   private readonly _classificationsProvider: IPointClassificationsProvider;
   private readonly _pointCloudMaterialManager: PointCloudMaterialManager;
 
   constructor(
     potreeInstance: Potree,
     pointCloudObjectProvider: PointCloudStylableObjectProvider,
-    pointCloudDMProvider: PointCloudStylableObjectProvider<DMDataSourceType>,
+    pointCloudDMProvider: PointCloudStylableObjectProvider<CoreDMDataSourceType>,
     classificationsProvider: IPointClassificationsProvider,
     pointCloudMaterialManager: PointCloudMaterialManager
   ) {

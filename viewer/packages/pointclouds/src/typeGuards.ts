@@ -4,7 +4,7 @@
 import {
   ClassicDataSourceType,
   DataSourceType,
-  DMDataSourceType,
+  CoreDMDataSourceType,
   isClassicIdentifier,
   isDMIdentifier
 } from '@reveal/data-providers';
@@ -17,7 +17,7 @@ import { CognitePointCloudModel } from './CognitePointCloudModel';
  */
 export function isDMPointCloudModel(
   model: CognitePointCloudModel<DataSourceType>
-): model is CognitePointCloudModel<DMDataSourceType> {
+): model is CognitePointCloudModel<CoreDMDataSourceType> {
   return isDMIdentifier(model.modelIdentifier);
 }
 

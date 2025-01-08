@@ -6,10 +6,10 @@ import {
   TableExpressionDataModelsBoolFilter,
   TableExpressionEqualsFilterV3,
   TableExpressionInFilterV3
-} from '@cognite/sdk/dist/src';
+} from '@cognite/sdk';
 import { PointCloudObject, PointCloudObjectMetadata } from '../pointcloud-stylable-object-providers/types';
 import { StylableObject } from '../pointcloud-stylable-object-providers/StylableObject';
-import { ClassicDataSourceType, DMDataSourceType, DataSourceType } from '../DataSourceType';
+import { ClassicDataSourceType, CoreDMDataSourceType, DataSourceType } from '../DataSourceType';
 import { DMInstanceRef } from '@reveal/utilities';
 
 /**
@@ -19,7 +19,7 @@ import { DMInstanceRef } from '@reveal/utilities';
  */
 export function isDMPointCloudVolumeObject(
   pointCloudObject: PointCloudObject<DataSourceType>
-): pointCloudObject is PointCloudObject<DMDataSourceType> {
+): pointCloudObject is PointCloudObject<CoreDMDataSourceType> {
   return isDMPointCloudVolume(pointCloudObject) && hasStylableObject(pointCloudObject);
 }
 
@@ -41,8 +41,8 @@ export function isClassicPointCloudVolumeObject(
  */
 export function isDMPointCloudVolume(
   pointCloudMetadata: DataSourceType['pointCloudVolumeMetadata']
-): pointCloudMetadata is DMDataSourceType['pointCloudVolumeMetadata'] {
-  const dmPointCloudObject = pointCloudMetadata as PointCloudObjectMetadata<DMDataSourceType>;
+): pointCloudMetadata is CoreDMDataSourceType['pointCloudVolumeMetadata'] {
+  const dmPointCloudObject = pointCloudMetadata as PointCloudObjectMetadata<CoreDMDataSourceType>;
   return (
     dmPointCloudObject.volumeInstanceRef !== undefined &&
     dmPointCloudObject.volumeInstanceRef.externalId !== undefined &&

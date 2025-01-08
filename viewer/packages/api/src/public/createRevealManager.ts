@@ -20,7 +20,7 @@ import {
   PointCloudStylableObjectProvider,
   DummyPointCloudStylableObjectProvider,
   CdfPointCloudDMStylableObjectProvider,
-  DMDataSourceType,
+  CoreDMDataSourceType,
   DummyPointCloudDMStylableObjectProvider
 } from '@reveal/data-providers';
 import { createPointCloudManager } from '@reveal/pointclouds';
@@ -134,7 +134,7 @@ export function createRevealManager(
   modelMetadataProvider: ModelMetadataProvider,
   modelDataProvider: ModelDataProvider,
   annotationProvider: PointCloudStylableObjectProvider,
-  pointCloudDMProvider: PointCloudStylableObjectProvider<DMDataSourceType>,
+  pointCloudDMProvider: PointCloudStylableObjectProvider<CoreDMDataSourceType>,
   pointClassificationsProvider: IPointClassificationsProvider,
   renderer: THREE.WebGLRenderer,
   sceneHandler: SceneHandler,

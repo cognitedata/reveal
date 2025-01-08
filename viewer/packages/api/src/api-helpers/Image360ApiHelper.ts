@@ -20,14 +20,18 @@ import {
   Image360IconIntersectionData
 } from '@reveal/360-images';
 import {
+  Cdf360CdmDescriptorProvider,
   Cdf360DataModelsDescriptorProvider,
   Cdf360EventDescriptorProvider,
   Cdf360ImageAnnotationProvider,
   ClassicDataSourceType,
+  CoreDm360ImageAnnotationProvider,
+  CoreDMDataSourceType,
   DataSourceType,
-  DMDataSourceType,
   Image360DataModelIdentifier,
-  Image360Provider
+  Image360Provider,
+  Image360ProviderCombiner,
+  isFdm360ImageCollectionIdentifier
 } from '@reveal/data-providers';
 import {
   BeforeSceneRenderedDelegate,
@@ -50,12 +54,8 @@ import { Image360WithCollection } from '../public/types';
 import { DEFAULT_IMAGE_360_OPACITY } from '@reveal/360-images';
 import { Image360History } from '@reveal/360-images';
 import { Image360Action } from '@reveal/360-images';
-import { Image360ProviderCombiner } from '@reveal/data-providers/src/Image360ProviderCombiner';
 import { Cdf360ImageFileProvider } from '@reveal/data-providers/src/image-360-data-providers/CdfImage360FileProvider';
-import { CoreDm360ImageAnnotationProvider } from '@reveal/data-providers/src/image-360-data-providers/CoreDm360ImageAnnotationProvider';
-import { isFdm360ImageCollectionIdentifier } from '@reveal/data-providers/src/image-360-data-providers/shared';
 import { createCollectionIdString } from '@reveal/360-images';
-import { Cdf360CdmDescriptorProvider } from '@reveal/data-providers/src/image-360-data-providers/descriptor-providers/datamodels/cdm/Cdf360CdmDescriptorProvider';
 
 export class Image360ApiHelper<DataSourceT extends DataSourceType> {
   private readonly _image360Facade: Image360Facade<DataSourceT>;
@@ -146,7 +146,7 @@ export class Image360ApiHelper<DataSourceT extends DataSourceType> {
 
     const image360ProviderMap = new Map<
       Image360CollectionSourceType,
-      Image360Provider<DMDataSourceType> | Image360Provider<ClassicDataSourceType>
+      Image360Provider<CoreDMDataSourceType> | Image360Provider<ClassicDataSourceType>
     >([
       ['event', eventBased360ImageProvider],
       ['dm', legacyDm360ImageProvider],

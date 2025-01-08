@@ -7,7 +7,7 @@ import { createRevealManager } from './createRevealManager';
 import { RevealManager, LoadingStateChangeListener } from './RevealManager';
 
 import {
-  DMDataSourceType,
+  CoreDMDataSourceType,
   ModelDataProvider,
   ModelMetadataProvider,
   PointCloudStylableObjectProvider
@@ -33,7 +33,7 @@ describe('RevealManager', () => {
     .setup(p => p.getPointCloudObjects(It.IsAny()))
     .returns(Promise.resolve([]))
     .object();
-  const pointCloudVolumeDMProvider = new Mock<PointCloudStylableObjectProvider<DMDataSourceType>>()
+  const pointCloudVolumeDMProvider = new Mock<PointCloudStylableObjectProvider<CoreDMDataSourceType>>()
     .setup(p => p.getPointCloudObjects(It.IsAny()))
     .returns(Promise.resolve([]))
     .object();

@@ -20,7 +20,8 @@ import zip from 'lodash/zip';
 import groupBy from 'lodash/groupBy';
 import partition from 'lodash/partition';
 import { Image360DataModelIdentifier } from '../system-space/Cdf360DataModelsDescriptorProvider';
-import { DMDataSourceType, DMInstanceRef } from 'api-entry-points/core';
+import { CoreDMDataSourceType } from '@reveal/data-providers/src/DataSourceType';
+import { DMInstanceRef } from '@reveal/utilities';
 
 type QueryResult = Awaited<ReturnType<typeof DataModelsSdk.prototype.queryNodesAndEdges<Cdf360FdmQuery>>>;
 
@@ -40,7 +41,7 @@ type CoreDmFileResponse = {
   };
 };
 
-export class Cdf360CdmDescriptorProvider implements Image360DescriptorProvider<DMDataSourceType> {
+export class Cdf360CdmDescriptorProvider implements Image360DescriptorProvider<CoreDMDataSourceType> {
   private readonly _dmsSdk: DataModelsSdk;
   private readonly _cogniteSdk: CogniteClient;
 
@@ -52,7 +53,7 @@ export class Cdf360CdmDescriptorProvider implements Image360DescriptorProvider<D
   public async get360ImageDescriptors(
     collectionIdentifier: Image360DataModelIdentifier,
     _: boolean
-  ): Promise<Historical360ImageSet<DMDataSourceType>[]> {
+  ): Promise<Historical360ImageSet<CoreDMDataSourceType>[]> {
     const { image_collection, images } = await this.queryCollection(collectionIdentifier);
 
     if (image_collection.length === 0) {
@@ -163,7 +164,7 @@ export class Cdf360CdmDescriptorProvider implements Image360DescriptorProvider<D
     collectionId: string,
     collectionLabel: string,
     imageFileDescriptors: { image: ImageInstanceResult; fileDescriptors: FileInfo[] }[]
-  ): Historical360ImageSet<DMDataSourceType> {
+  ): Historical360ImageSet<CoreDMDataSourceType> {
     const mainImagePropsArray = imageFileDescriptors.map(
       descriptor => descriptor.image.properties.cdf_cdm['Cognite360Image/v1']
     );
@@ -186,10 +187,10 @@ export class Cdf360CdmDescriptorProvider implements Image360DescriptorProvider<D
   }
 
   private getImageRevision(
-    revisionId: Image360RevisionId<DMDataSourceType>,
+    revisionId: Image360RevisionId<CoreDMDataSourceType>,
     imageProps: ImageResultProperties,
     fileInfos: FileInfo[]
-  ): Image360Descriptor<DMDataSourceType> {
+  ): Image360Descriptor<CoreDMDataSourceType> {
     return {
       id: revisionId,
       faceDescriptors: getFaceDescriptors(),
