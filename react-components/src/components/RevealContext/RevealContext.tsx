@@ -33,6 +33,7 @@ export type RevealContextProps = {
     | 'pointCloudEffects'
     | 'enableEdges'
     | 'onLoading'
+    | 'logMetrics'
   >;
 };
 
