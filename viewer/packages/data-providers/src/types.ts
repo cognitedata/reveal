@@ -9,7 +9,7 @@ import {
   DefaultImage360Collection,
   Image360AnnotationAssetQueryResult
 } from '@reveal/360-images';
-import { DMInstanceRef } from 'api-entry-points/core';
+import { DMInstanceRef } from '@reveal/utilities';
 
 export type Image360AnnotationFilterDelegate<T extends DataSourceType> = (
   annotation: T['image360AnnotationType']

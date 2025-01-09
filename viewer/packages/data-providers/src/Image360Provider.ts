@@ -17,7 +17,8 @@ export function getImage360ProviderFromMap<T extends DataSourceType>(
   providerMap: Image360ProviderMap
 ): Image360Provider<T> {
   if (isFdm360ImageCollectionIdentifier(identifier)) {
-    return providerMap.get(identifier.source) as unknown as Image360Provider<T>;
+    const source = identifier.source ?? 'dm';
+    return providerMap.get(source) as unknown as Image360Provider<T>;
   } else {
     return providerMap.get('event') as unknown as Image360Provider<T>;
   }

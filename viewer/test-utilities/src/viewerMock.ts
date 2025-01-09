@@ -11,7 +11,7 @@ import { Camera, PerspectiveCamera, Vector3, WebGLRenderer } from 'three';
 import { jest } from '@jest/globals';
 import { Mock } from 'moq.ts';
 import { autoMockWebGLRenderer } from './autoMockWebGLRenderer';
-import { DataSourceType } from '@reveal/data-providers';
+import { DataSourceType } from '../../packages/data-providers/src/DataSourceType';
 
 export function mockViewer(): Cognite3DViewer<DataSourceType> {
   return mockViewerComponents().viewer;

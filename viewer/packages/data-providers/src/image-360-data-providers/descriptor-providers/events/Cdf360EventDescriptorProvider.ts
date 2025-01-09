@@ -14,7 +14,7 @@ import range from 'lodash/range';
 import groupBy from 'lodash/groupBy';
 import orderBy from 'lodash/orderBy';
 import { MathUtils, Matrix4, Vector3 } from 'three';
-import { ClassicDataSourceType } from 'api-entry-points/core';
+import { ClassicDataSourceType } from '@reveal/data-providers';
 
 type Event360Metadata = Event360Filter & Event360TransformationData;
 
