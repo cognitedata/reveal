@@ -32,18 +32,17 @@ export class Image360RevisionEntity<T extends DataSourceType> implements Image36
 
   private readonly _identifier: Image360RevisionId<T>;
 
-  private readonly _annotations: ImageAnnotationObject<T>[] | undefined = undefined;
+  private _annotations: ImageAnnotationObject<T>[] | undefined;
   private _annotationsPromise: Promise<ImageAnnotationObject<T>[]> | undefined;
   private readonly _annotationFilterer: Image360AnnotationFilter;
 
   constructor(
-    identifier: Image360RevisionId<T>,
     imageProvider: Image360Provider<T>,
     image360Descriptor: Image360Descriptor<T>,
     image360VisualizationBox: Image360VisualizationBox,
     annotationFilterer: Image360AnnotationFilter
   ) {
-    this._identifier = identifier;
+    this._identifier = image360Descriptor.id;
     this._imageProvider = imageProvider;
     this._image360Descriptor = image360Descriptor;
     this._image360VisualizationBox = image360VisualizationBox;
@@ -174,7 +173,7 @@ export class Image360RevisionEntity<T extends DataSourceType> implements Image36
 
     this._image360VisualizationBox.setAnnotations(annotationObjects);
     this.propagateDefaultAppearanceToAnnotations();
-
+    this._annotations = annotationObjects;
     return annotationObjects;
   }
 

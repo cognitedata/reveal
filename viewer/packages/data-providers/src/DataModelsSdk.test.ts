@@ -2,8 +2,8 @@
  * Copyright 2023 Cognite AS
  */
 
+import { DMInstanceRef } from '@reveal/utilities';
 import { DataModelsSdk } from './DataModelsSdk';
-import { DMInstanceRef } from './types';
 
 describe(DataModelsSdk.name, () => {
   test('Types from queryNodesAndEdges result, given a constant query, should follow DMS spec', async () => {

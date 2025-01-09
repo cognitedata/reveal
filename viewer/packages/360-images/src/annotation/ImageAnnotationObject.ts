@@ -143,7 +143,7 @@ export class ImageAnnotationObject<T extends DataSourceType> implements Image360
   }
 
   private initializeTransform(face: FaceType | undefined, normalizationTransform: Matrix4): void {
-    if (face == undefined) {
+    if (face === undefined) {
       return;
     }
 

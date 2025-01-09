@@ -91,13 +91,7 @@ export class Image360Entity<T extends DataSourceType> implements Image360<T> {
 
     this._revisions = image360Metadata.imageRevisions.map(
       descriptor =>
-        new Image360RevisionEntity<T>(
-          descriptor.id,
-          imageProvider,
-          descriptor,
-          this._image360VisualizationBox,
-          annotationFilterer
-        )
+        new Image360RevisionEntity<T>(imageProvider, descriptor, this._image360VisualizationBox, annotationFilterer)
     );
     this._activeRevision = this.getMostRecentRevision();
   }

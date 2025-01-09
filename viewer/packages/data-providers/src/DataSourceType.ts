@@ -92,6 +92,8 @@ export type LocalDataSourceType = {
   modelIdentifier: LocalModelIdentifierType;
   pointCloudVolumeMetadata: any;
   pointCloudCollectionType: any;
+  image360Identifier: string;
+  image360AnnotationType: string;
   _never: never;
 };
 
@@ -107,8 +109,8 @@ export type GenericDataSourceType = {
   modelIdentifier: any;
   pointCloudVolumeMetadata: any;
   pointCloudCollectionType: any;
-  image360Identifier: any;
-  image360AnnotationType: any;
+  image360Identifier: string;
+  image360AnnotationType: string;
   _never: never;
 };
 

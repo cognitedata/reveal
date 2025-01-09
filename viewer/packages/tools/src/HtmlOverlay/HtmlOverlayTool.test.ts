@@ -15,11 +15,12 @@ import { Cognite3DViewer } from '@reveal/api';
 
 import { jest } from '@jest/globals';
 import { fakeGetBoundingClientRect, mockViewerComponents } from '../../../../test-utilities';
+import { DataSourceType } from '@reveal/data-providers';
 
 const TIMER_ADVANCE_MS = 50;
 describe(HtmlOverlayTool.name, () => {
   let canvasContainer: HTMLElement;
-  let viewer: Cognite3DViewer;
+  let viewer: Cognite3DViewer<DataSourceType>;
   let renderer: THREE.WebGLRenderer;
 
   beforeEach(() => {

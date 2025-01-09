@@ -9,9 +9,10 @@ import { Cognite3DViewer } from '@reveal/api';
 import { Vector3 } from 'three';
 
 import { mockViewer } from '../../../../test-utilities';
+import { DataSourceType } from '@reveal/data-providers';
 
 describe(MeasurementTool.name, () => {
-  let viewer: Cognite3DViewer;
+  let viewer: Cognite3DViewer<DataSourceType>;
 
   beforeEach(() => {
     viewer = mockViewer();
