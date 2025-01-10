@@ -98,14 +98,11 @@ export const SlicerButton = (): ReactElement => {
       placement="right-start"
       floatingProps={{ middleware: [offset(TOOLBAR_HORIZONTAL_PANEL_OFFSET)] }}
       renderTrigger={(props: any) => (
-        <CogsTooltip
-          content={t({ key: 'SLICE_TOOLTIP' })}
-          placement="right"
-          appendTo={document.body}>
+        <CogsTooltip content={t({ key: 'SLICE_TOOLTIP' })} placement="right">
           <Button {...props} type="ghost" icon=<SliceIcon /> aria-label="Slice models" />
         </CogsTooltip>
       )}>
-      <RangeSlider
+      <StyledRangeSlider
         min={0}
         max={1}
         step={0.01}
@@ -125,4 +122,21 @@ const StyledMenu = styled(Menu)`
   min-width: 32px !important;
   padding: 12px 8px 12px 8px !important;
   overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+
+  .cogs-v10.cogs-slider .rc-slider-rail {
+    height: 100% !important;
+    width: 4px !important;
+`;
+
+const StyledRangeSlider = styled(RangeSlider)`
+  height: 100% !important;
+  width: 4px !important;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+}
 `;

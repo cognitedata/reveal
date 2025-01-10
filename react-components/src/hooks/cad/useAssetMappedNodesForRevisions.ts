@@ -5,11 +5,14 @@ import { useQuery, type UseQueryResult } from '@tanstack/react-query';
 import { type CadModelOptions } from '../../components';
 import { type ModelWithAssetMappings } from './ModelWithAssetMappings';
 import { useAssetMappingAndNode3DCache } from '../../components/CacheProvider/CacheProvider';
+import { useIsCoreDmOnly } from '../useIsCoreDmOnly';
 
 export const useAssetMappedNodesForRevisions = (
   cadModels: CadModelOptions[]
 ): UseQueryResult<ModelWithAssetMappings[]> => {
   const assetMappingAndNode3DCache = useAssetMappingAndNode3DCache();
+
+  const isCoreDmOnly = useIsCoreDmOnly();
 
   return useQuery({
     queryKey: [
@@ -28,6 +31,6 @@ export const useAssetMappedNodesForRevisions = (
       return await Promise.all(fetchPromises);
     },
     staleTime: Infinity,
-    enabled: cadModels.length > 0
+    enabled: cadModels.length > 0 && !isCoreDmOnly
   });
 };

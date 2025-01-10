@@ -51,7 +51,6 @@ export const CommandButton = ({
     <CogsTooltip
       content={<LabelWithShortcut label={label} command={command} />}
       disabled={label === undefined}
-      appendTo={document.body}
       enterDelay={TOOLTIP_DELAY}
       placement={getTooltipPlacement(placement)}>
       <Button
