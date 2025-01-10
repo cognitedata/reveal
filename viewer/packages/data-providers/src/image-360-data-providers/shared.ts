@@ -29,7 +29,7 @@ export function isLegacyDM360Identifier(
   return (
     (id as Image360DataModelIdentifier).image360CollectionExternalId !== undefined &&
     (id as Image360DataModelIdentifier).space !== undefined &&
-    (id as Image360DataModelIdentifier).source === 'dm'
+    ((id as Image360DataModelIdentifier).source === 'dm' || (id as Image360DataModelIdentifier).source === undefined)
   );
 }
 

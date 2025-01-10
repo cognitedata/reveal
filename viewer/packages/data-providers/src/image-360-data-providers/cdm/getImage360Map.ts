@@ -4,9 +4,10 @@
 import { DMInstanceRef } from '@reveal/utilities';
 import { GetImage360AnnotationsFromCollectionResponse } from './fetchCoreDm360AnnotationsForCollection';
 import { CoreDmImage360Properties } from './properties';
+import { GetImage360FromRevisionResponse } from './fetchCoreDm360AnnotationsForRevision';
 
 export function getImage360Map(
-  queryResponse: GetImage360AnnotationsFromCollectionResponse
+  queryResponse: GetImage360AnnotationsFromCollectionResponse | GetImage360FromRevisionResponse
 ): Record<string, Record<string, DMInstanceRef & CoreDmImage360Properties>> {
   return queryResponse.items.images.reduce(
     (acc, image) => {

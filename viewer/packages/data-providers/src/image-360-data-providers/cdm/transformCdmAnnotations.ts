@@ -6,9 +6,10 @@ import { getImage360Map } from './getImage360Map';
 import { CoreDmImage360Annotation } from './types';
 import { getObject3dAssetMap } from './getObject3dAssetMap';
 import { GetImage360AnnotationsFromCollectionResponse } from './fetchCoreDm360AnnotationsForCollection';
+import { GetImage360FromRevisionResponse } from './fetchCoreDm360AnnotationsForRevision';
 
 export function transformAnnotations(
-  queryResponse: GetImage360AnnotationsFromCollectionResponse
+  queryResponse: GetImage360AnnotationsFromCollectionResponse | GetImage360FromRevisionResponse
 ): CoreDmImage360Annotation[] {
   const object3dAssetMap = getObject3dAssetMap(queryResponse);
 

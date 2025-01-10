@@ -88,7 +88,6 @@ function getImage360AnnotationsByRevisionQuery(revisionReference: DMInstanceRef)
       }
     },
     select: {
-      collection: {},
       images: {
         sources: [
           {
