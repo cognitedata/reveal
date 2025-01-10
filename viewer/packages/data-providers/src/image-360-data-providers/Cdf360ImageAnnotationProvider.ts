@@ -31,7 +31,7 @@ import {
   Image360RevisionEntity
 } from '@reveal/360-images';
 import { isImageAssetLinkAnnotation } from './shared';
-import { InstanceLinkable360ImageAnnotationType } from '@reveal/360-images/src/collection/Image360Collection';
+import { InstanceLinkable360ImageAnnotationType } from '@reveal/360-images';
 
 export class Cdf360ImageAnnotationProvider implements Image360AnnotationProvider<ClassicDataSourceType> {
   private readonly _client: CogniteClient;
@@ -88,12 +88,10 @@ export class Cdf360ImageAnnotationProvider implements Image360AnnotationProvider
   ): Promise<ClassicDataSourceType['image360AnnotationType'][]> {
     const fileIds = annotationSpecifier.fileDescriptors.map(o => ({ id: o.fileId }));
 
-    return (
-      await this.listFileAnnotations({
-        annotatedResourceType: 'file',
-        annotatedResourceIds: fileIds
-      })
-    ).filter(isImageAssetLinkAnnotation);
+    return await this.listFileAnnotations({
+      annotatedResourceType: 'file',
+      annotatedResourceIds: fileIds
+    });
   }
 
   private async getFilesByAssetRef(assetRef: IdEither): Promise<CogniteInternalId[]> {

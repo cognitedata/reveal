@@ -196,7 +196,7 @@ export interface Image360Collection<T extends DataSourceType = ClassicDataSource
   /**
    * Get IDs of all CDF assets associated with this 360 image collection through CDF annotations
    *
-   * @deprecated Use {@link Image360Collection.getAnnotationsInfo}
+   * @deprecated Use {@link Image360Collection['getAnnotationsInfo']}
    */
   getAssetIds(): Promise<IdEither[]>;
 
