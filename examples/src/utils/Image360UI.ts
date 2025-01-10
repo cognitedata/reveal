@@ -18,15 +18,17 @@ export class Image360UI {
   private viewer: Cognite3DViewer<DataSourceType>;
   private gui: dat.GUI;
   private selectedEntity: Image360 | undefined;
-  private _lastAnnotation: Image360Annotation | undefined = undefined;
+  private _lastAnnotation: Image360Annotation<DataSourceType> | undefined = undefined;
 
-  private async handleIntersectionAsync(intersectionPromise: Promise<Image360AnnotationIntersection | null>) {
+  private async handleIntersectionAsync(
+    intersectionPromise: Promise<Image360AnnotationIntersection<DataSourceType> | null>
+  ) {
     const intersection = await intersectionPromise;
     if (intersection === null) {
       return;
     }
 
-    console.log('Clicked annotation with data: ', intersection.annotation.annotation.data);
+    console.log('Clicked annotation with data: ', intersection.annotation.annotation);
     intersection.annotation.setColor(new THREE.Color(0.8, 0.8, 1.0));
     this.viewer.requestRedraw();
     this._lastAnnotation = intersection.annotation;
