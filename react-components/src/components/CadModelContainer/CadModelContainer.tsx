@@ -21,6 +21,7 @@ import { getViewerResourceCount } from '../../utilities/getViewerResourceCount';
 import { type CadModelStyling } from './types';
 import { useApplyCadModelStyling } from './useApplyCadModelStyling';
 import { isSameGeometryFilter, isSameModel } from '../../utilities/isSameModel';
+import { AddResourceOptions } from '../Reveal3DResources';
 
 export type CogniteCadModelProps = {
   addModelOptions: AddModelOptions<ClassicDataSourceType>;
@@ -100,11 +101,13 @@ export function CadModelContainer({
     return cadModel;
 
     async function getOrAddModel(): Promise<CogniteCadModel> {
-      const viewerModel = viewer.models.find(
-        (model) =>
-          isSameModel(model, addModelOptions) &&
+      const viewerModel = viewer.models.find((model) => {
+        const cadModel = { ...model, transform: model.getModelTransformation() };
+        return (
+          isSameModel(cadModel, addModelOptions) &&
           isSameGeometryFilter(geometryFilter, initializingModelsGeometryFilter.current)
-      );
+        );
+      });
 
       if (viewerModel !== undefined) {
         return await Promise.resolve(viewerModel as CogniteCadModel);

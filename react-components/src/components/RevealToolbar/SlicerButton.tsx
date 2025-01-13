@@ -121,11 +121,11 @@ const StyledMenu = styled(Menu)`
   max-width: 32px !important;
   min-width: 32px !important;
   padding: 12px 8px 12px 8px !important;
-  overflow: hidden;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
+  overflow: hidden !important;
+  display: flex !important;
+  flex-direction: column !important;
+  justify-content: center !important;
+  align-items: center !important;
 
   .cogs-v10.cogs-slider .rc-slider-rail {
     height: 100% !important;
@@ -135,8 +135,8 @@ const StyledMenu = styled(Menu)`
 const StyledRangeSlider = styled(RangeSlider)`
   height: 100% !important;
   width: 4px !important;
-  display: flex;
-  flex-direction: row;
-  justify-content: center;
+  display: flex !important;
+  flex-direction: row !important;
+  justify-content: center !important;
 }
 `;
