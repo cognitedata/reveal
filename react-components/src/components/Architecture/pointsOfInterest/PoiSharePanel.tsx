@@ -73,7 +73,7 @@ const PoiVisibilityInfobox = ({
       <Flex direction="row" gap={16} alignItems="center">
         <Switch
           checked={markedPublic}
-          onChange={(_, nextValue: boolean | undefined) => {
+          onChange={(_: any, nextValue: boolean | undefined) => {
             selectedPointOfInterest.properties.visibility =
               nextValue === true ? 'PUBLIC' : 'PRIVATE';
             void poiDomainObject.updatePointsOfInterest([selectedPointOfInterest]);

@@ -63,6 +63,7 @@ export const Reveal3DResources = ({
 
   const { data: assetMappings } = useAssetMappedNodesForRevisions(cadModelOptions);
 
+  console.log('TEST Reveal3DResources assetMappings', assetMappings);
   useGenerateAssetMappingCachePerItemFromModelCache(cadModelOptions, assetMappings);
   useGenerateNode3DCache(cadModelOptions, assetMappings);
 

@@ -128,45 +128,120 @@ export const useAllMappedEquipmentAssetMappings = (
       ...models.map((model) => [model.modelId, model.revisionId])
     ],
     queryFn: async ({ pageParam }) => {
-      const currentPagesOfAssetMappingsPromises = models.map(async (model) => {
-        const nextCursors = pageParam as Array<{
-          cursor: string | 'start' | undefined;
-          model: AddModelOptions;
-        }>;
-        const nextCursor = nextCursors.find(
-          (nextCursor) =>
-            nextCursor.model.modelId === model.modelId &&
-            nextCursor.model.revisionId === model.revisionId
-        )?.cursor;
-        if (nextCursor === undefined) {
-          return { mappings: { items: [] }, model };
-        }
+      const mappedAssetsClassic = fetchAllMappedEquipmentAssetMappingsClassic(
+        sdk,
+        models,
+        pageParam
+      );
 
-        const filterQuery = {
-          cursor: nextCursor === 'start' ? undefined : nextCursor,
-          limit: 1000,
-          getDmsInstances: true
-        };
+      const mappedAssetsCoreDms = fetchAllMappedEquipmentAssetMappingsCoreDms(
+        sdk,
+        models,
+        pageParam
+      );
 
-        const mappings = await sdk.assetMappings3D.filter(
-          model.modelId,
-          model.revisionId,
-          filterQuery
-        );
+      const allMappedAssets = await Promise.all([mappedAssetsClassic, mappedAssetsCoreDms]);
 
-        return { mappings, model };
-      });
-
-      const currentPagesOfAssetMappings = await Promise.all(currentPagesOfAssetMappingsPromises);
-
-      const modelsAssets = await getAssetsFromAssetMappings(sdk, currentPagesOfAssetMappings);
-
-      return modelsAssets;
+      return allMappedAssets.flat();
     },
     initialPageParam: models.map((model) => ({ cursor: 'start', model })),
     staleTime: Infinity,
     getNextPageParam
   });
+};
+
+const fetchAllMappedEquipmentAssetMappingsClassic = async (
+  sdk: CogniteClient,
+  models: AddModelOptions[],
+  pageParam: Array<{
+    cursor: string | undefined;
+    model: AddModelOptions;
+  }>
+): Promise<ModelMappingsWithAssets[]> => {
+  const currentPagesOfAssetMappingsClassicPromises = models.map(async (model) => {
+    const nextCursors = pageParam as Array<{
+      cursor: string | 'start' | undefined;
+      model: AddModelOptions;
+    }>;
+    const nextCursor = nextCursors.find(
+      (nextCursor) =>
+        nextCursor.model.modelId === model.modelId &&
+        nextCursor.model.revisionId === model.revisionId
+    )?.cursor;
+    if (nextCursor === undefined) {
+      return { mappings: { items: [] }, model };
+    }
+
+    const filterQueryClassic = {
+      cursor: nextCursor === 'start' ? undefined : nextCursor,
+      limit: 1000
+    };
+
+    const mappings = await sdk.assetMappings3D.filter(
+      model.modelId,
+      model.revisionId,
+      filterQueryClassic
+    );
+
+    return { mappings, model };
+  });
+
+  const currentPagesOfAssetMappingsClassic = await Promise.all(
+    currentPagesOfAssetMappingsClassicPromises
+  );
+
+  const modelsAssets = await getAssetsFromAssetMappings(sdk, currentPagesOfAssetMappingsClassic);
+
+  return modelsAssets;
+};
+
+const fetchAllMappedEquipmentAssetMappingsCoreDms = async (
+  sdk: CogniteClient,
+  models: AddModelOptions[],
+  pageParam: Array<{
+    cursor: string | undefined;
+    model: AddModelOptions;
+  }>
+): Promise<ModelMappingsWithAssets[]> => {
+  const currentPagesOfAssetMappingsCoreDmsPromises = models.map(async (model) => {
+    const nextCursors = pageParam as Array<{
+      cursor: string | 'start' | undefined;
+      model: AddModelOptions;
+    }>;
+    const nextCursor = nextCursors.find(
+      (nextCursor) =>
+        nextCursor.model.modelId === model.modelId &&
+        nextCursor.model.revisionId === model.revisionId
+    )?.cursor;
+    if (nextCursor === undefined) {
+      return { mappings: { items: [] }, model };
+    }
+
+    const filterQueryCoreDms = {
+      cursor: nextCursor === 'start' ? undefined : nextCursor,
+      limit: 1000,
+      getDmsInstances: true
+    };
+
+    const mappings = await sdk.assetMappings3D.filter(
+      model.modelId,
+      model.revisionId,
+      filterQueryCoreDms
+    );
+
+    return { mappings, model };
+  });
+
+  const currentPagesOfAssetMappingsCoreDms = await Promise.all(
+    currentPagesOfAssetMappingsCoreDmsPromises
+  );
+
+  const modelsAssets = await getAssetsFromAssetMappingsCoreDms(
+    sdk,
+    currentPagesOfAssetMappingsCoreDms
+  );
+
+  return modelsAssets;
 };
 
 export const useMappingsForAssetIds = (
@@ -200,20 +275,33 @@ export const useMappingsForAssetIds = (
           return { mappings: { items: [] }, model };
         }
 
-        const filterQuery = {
+        const filterQueryClassic = {
+          cursor: nextCursor === 'start' ? undefined : nextCursor,
+          limit: 1000,
+          filter: { assetIds }
+        };
+
+        const filterQueryCoreDms = {
           cursor: nextCursor === 'start' ? undefined : nextCursor,
           limit: 1000,
           filter: { assetIds },
           getDmsInstances: true
         };
 
-        const mappings = await sdk.assetMappings3D.filter(
+        const mappingsClassic = await sdk.assetMappings3D.filter(
           model.modelId,
           model.revisionId,
-          filterQuery
+          filterQueryClassic
         );
 
-        return { mappings, model };
+        const mappingsCoreDms = await sdk.assetMappings3D.filter(
+          model.modelId,
+          model.revisionId,
+          filterQueryCoreDms
+        );
+
+        const allMappings = mappingsClassic.items.concat(mappingsCoreDms.items);
+        return { mappings: { items: allMappings }, model };
       });
 
       const currentPagesOfAssetMappings = await Promise.all(currentPagesOfAssetMappingsPromises);
@@ -262,4 +350,11 @@ async function getAssetsFromAssetMappings(
   const mappingsWithAssets = await Promise.all(mappingsWithAssetsPromises);
 
   return mappingsWithAssets;
+}
+
+async function getAssetsFromAssetMappingsCoreDms(
+  sdk: CogniteClient,
+  modelsMappings: Array<{ model: AddModelOptions; mappings: ListResponse<AssetMapping3D[]> }>
+): Promise<ModelMappingsWithAssets[]> {
+  return [] as ModelMappingsWithAssets[];
 }

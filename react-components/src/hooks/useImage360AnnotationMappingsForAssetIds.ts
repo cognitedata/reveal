@@ -8,6 +8,7 @@ import {
   type Image360AnnotationModel
 } from '../components/CacheProvider/types';
 import { useImage360AnnotationCache } from '../components/CacheProvider/CacheProvider';
+import { isDefined } from '../utilities/isDefined';
 
 export type Image360AnnotationDataResult = {
   siteId: string;
@@ -25,7 +26,10 @@ export const useImage360AnnotationMappingsForAssetIds = (
       'reveal',
       'react-components',
       'image360-annotations-info',
-      ...(assetIds?.map((assetId) => assetId.toString()).sort() ?? []),
+      ...(assetIds
+        ?.filter((assetId) => isDefined(assetId))
+        .map((assetId) => assetId.toString())
+        .sort() ?? []),
       ...(siteIds?.map((siteId) => siteId).sort() ?? [])
     ],
     queryFn: async () => {

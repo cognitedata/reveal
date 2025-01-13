@@ -24,11 +24,16 @@ export const usePointCloudAnnotationMappingsForAssetIds = (
     [addClassicModelOptionsResults]
   );
 
+  console.log(' TEST usePointCloudAnnotationMappingsForAssetIds', assetIds);
+
   return useQuery({
     queryKey: [
       queryKeys.pointCloudAnnotationForAssetIds(
         classicModelOptions.map((model) => `${model.modelId}/${model.revisionId}`).sort(),
-        assetIds?.map((assetId) => assetId.toString()).sort() ?? []
+        assetIds
+          ?.filter((assetId) => isDefined(assetId))
+          .map((assetId) => assetId.toString())
+          .sort() ?? []
       )
     ],
     queryFn: async () => {

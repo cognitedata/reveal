@@ -11,6 +11,7 @@ import { getImage360CollectionsForAsset } from '../hooks/network/getImage360Coll
 import {
   type AssetInstanceReference,
   type InstanceReference,
+  isAssetCoreDmsInstance,
   isAssetInstance,
   isDmsInstance
 } from '../data-providers/types';
@@ -36,12 +37,22 @@ export const useModelsForInstanceQuery = (
         return undefined;
       }
 
+      console.log('TEST useModelsForInstanceQuery', instance);
+
       if (isAssetInstance(instance)) {
         return await getModelsForAssetInstance(instance, cogniteClient);
       }
 
       if (isDmsInstance(instance)) {
         return await getModelsForDmsInstance(instance, fdmSdk, fdm3dDataProvider);
+      }
+
+      if (isAssetCoreDmsInstance(instance)) {
+        return await getModelsForCoreDmsInstance(
+          instance.assetInstanceId,
+          fdmSdk,
+          fdm3dDataProvider
+        );
       }
     },
     enabled: instance !== undefined
@@ -67,6 +78,19 @@ async function getModelsForAssetInstance(
 }
 
 async function getModelsForDmsInstance(
+  instance: DmsUniqueIdentifier,
+  fdmSdk: FdmSDK,
+  fdm3dDataProvider: Fdm3dDataProvider
+): Promise<TaggedAddResourceOptions[]> {
+  const cadModelsPromise = fdm3dDataProvider.getCadModelsForInstance(instance);
+  const pointCloudModelsPromise = getPointCloudModelsForAssetInstance(instance, fdmSdk);
+
+  const results = (await Promise.all([cadModelsPromise, pointCloudModelsPromise])).flat();
+
+  return uniqBy(results, createAddOptionsKey);
+}
+
+async function getModelsForCoreDmsInstance(
   instance: DmsUniqueIdentifier,
   fdmSdk: FdmSDK,
   fdm3dDataProvider: Fdm3dDataProvider

@@ -16,8 +16,11 @@ export class Node3DPerNodeIdCache {
 
   private readonly _nodeIdsToNode3D = new Map<ModelTreeIndexKey, Promise<Node3D>>();
 
-  constructor(sdk: CogniteClient) {
+  private isCoreDmOnly: boolean;
+
+  constructor(sdk: CogniteClient, coreDmOnly: boolean) {
     this._sdk = sdk;
+    this.isCoreDmOnly = coreDmOnly;
   }
 
   private async splitChunkInCacheNode3D(

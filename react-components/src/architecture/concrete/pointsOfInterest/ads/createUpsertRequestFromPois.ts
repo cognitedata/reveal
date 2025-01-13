@@ -3,7 +3,11 @@
  */
 import { type InstanceReference, type DmsUniqueIdentifier } from '../../../../data-providers';
 import { type ExternalId } from '../../../../data-providers/FdmSDK';
-import { isAssetInstance } from '../../../../data-providers/types';
+import {
+  isAssetCoreDmsInstance,
+  isAssetInstance,
+  isDmsInstance
+} from '../../../../data-providers/types';
 import { type PointsOfInterestInstance, type PoiVisibility, type SceneState } from '../models';
 import { type PoiExternalInstanceRef } from './types';
 
@@ -48,7 +52,12 @@ function instanceReferenceToPoiExternalInstanceReference(
 
   if (isAssetInstance(instanceRef)) {
     return { id: instanceRef.assetId };
-  } else {
+  } else if (isDmsInstance(instanceRef)) {
     return { externalId: instanceRef.externalId, instanceSpace: instanceRef.space };
+  } else if (isAssetCoreDmsInstance(instanceRef)) {
+    return {
+      externalId: instanceRef.assetInstanceId.externalId,
+      instanceSpace: instanceRef.assetInstanceId.space
+    };
   }
 }
