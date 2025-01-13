@@ -9,7 +9,6 @@ import {
   Cdf360ImageAnnotationProvider,
   ClassicDataSourceType,
   DataSourceType,
-  GenericDataSourceType,
   Local360ImageProvider
 } from '@reveal/data-providers';
 import { StreamingTestFixtureComponents } from '../../../visual-tests/test-fixtures/StreamingVisualTestFixture';
@@ -34,7 +33,7 @@ import { DefaultImage360Collection } from '../src/collection/DefaultImage360Coll
 
 type CdfImage360Facade = Image360Facade<ClassicDataSourceType>;
 
-type LocalImage360Facade = Image360Facade<GenericDataSourceType>;
+type LocalImage360Facade = Image360Facade<DataSourceType>;
 
 export default class Image360VisualTestFixture extends StreamingVisualTestFixture {
   public async setup(testFixtureComponents: StreamingTestFixtureComponents): Promise<void> {
