@@ -2,15 +2,10 @@
  * Copyright 2024 Cognite AS
  */
 
-import {
-  TableExpressionDataModelsBoolFilter,
-  TableExpressionEqualsFilterV3,
-  TableExpressionInFilterV3
-} from '@cognite/sdk/dist/src';
+import { TableExpressionEqualsFilterV3 } from '@cognite/sdk/dist/src';
 import { PointCloudObject, PointCloudObjectMetadata } from '../pointcloud-stylable-object-providers/types';
 import { StylableObject } from '../pointcloud-stylable-object-providers/StylableObject';
 import { ClassicDataSourceType, DMDataSourceType, DataSourceType } from '../DataSourceType';
-import { DMInstanceRef } from '@reveal/utilities';
 
 /**
  * Type guard to check if a point cloud object contains data type DMDataSourceType
@@ -62,6 +57,12 @@ export function isClassicPointCloudVolume(
   return annotation.annotationId !== undefined;
 }
 
+function hasStylableObject(
+  obj: PointCloudObject<DataSourceType>
+): obj is PointCloudObject<DataSourceType> & { stylableObject: StylableObject } {
+  return obj.stylableObject !== undefined;
+}
+
 export function getNodeExternalIdEqualsFilter<T extends string>(externalId: T): TableExpressionEqualsFilterV3 {
   return {
     equals: {
@@ -78,40 +79,4 @@ export function getNodeSpaceEqualsFilter<T extends string>(space: T): TableExpre
       value: space
     }
   } as const satisfies TableExpressionEqualsFilterV3;
-}
-
-export function getInParameterListFilter(property: string[], parameter: string): TableExpressionInFilterV3 {
-  return {
-    in: {
-      property,
-      values: { parameter }
-    }
-  } as const satisfies TableExpressionInFilterV3;
-}
-
-export function getIdInListFilter(parameters: DMInstanceRef[]): TableExpressionDataModelsBoolFilter {
-  return {
-    or: parameters.map(param => ({
-      and: [
-        {
-          equals: {
-            property: ['node', 'externalId'],
-            value: param.externalId
-          }
-        },
-        {
-          equals: {
-            property: ['node', 'space'],
-            value: param.space
-          }
-        }
-      ]
-    }))
-  };
-}
-
-function hasStylableObject(
-  obj: PointCloudObject<DataSourceType>
-): obj is PointCloudObject<DataSourceType> & { stylableObject: StylableObject } {
-  return obj.stylableObject !== undefined;
 }

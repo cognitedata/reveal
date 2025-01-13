@@ -67,7 +67,7 @@ function getImage360AnnotationsForInstanceQuery(instance: DMInstanceRef) {
       annotation_dges: {
         edges: {
           from: 'object3ds',
-          direction: 'outwards', // ?????????
+          direction: 'outwards',
           filter: {
             hasData: [CORE_DM_IMAGE_360_ANNOTATION_VIEW_REFERENCE]
           }

@@ -8,7 +8,6 @@ import { GetImage360FromRevisionResponse } from './fetchCoreDm360AnnotationsForR
 export function getObject3dAssetMap(
   queryResponse: GetImage360AnnotationsFromCollectionResponse | GetImage360FromRevisionResponse
 ): Record<string, Record<string, DMInstanceRef & { name: string }>> {
-  // TODO: Could probably be simplified by using lodash groupBy
   return queryResponse.items.assets.reduce(
     (acc, asset) => {
       const properties = asset.properties['cdf_cdm']['CogniteAsset/v1'];
