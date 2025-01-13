@@ -1319,7 +1319,9 @@ export type Image360CoreDataModelIdentifier = {
 } & Image360BaseIdentifier;
 
 // @public
-export type Image360DataModelIdentifier = Image360CoreDataModelIdentifier | Image360LegacyDataModelIdentifier;
+export type Image360DataModelIdentifier = Image360BaseIdentifier & {
+    source?: 'dm' | 'cdm';
+};
 
 // @public
 export type Image360EnteredDelegate<T extends DataSourceType = ClassicDataSourceType> = (image360: Image360<T>, revision: Image360Revision<T>) => void;
