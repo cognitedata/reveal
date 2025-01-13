@@ -130,6 +130,15 @@ const StyledMenu = styled(Menu)`
   .cogs-v10.cogs-slider .rc-slider-rail {
     height: 100% !important;
     width: 4px !important;
+  }
+
+  .cogs-v10.cogs-slider .rc-slider-track {
+    left: auto !important;
+  }
+
+  .cogs-v10.cogs-slider .rc-slider-handle {
+    margin-left: 0.75px !important;
+  }
 `;
 
 const StyledRangeSlider = styled(RangeSlider)`
