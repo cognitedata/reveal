@@ -9,6 +9,8 @@ import {
   Cdf360ImageAnnotationProvider,
   ClassicDataSourceType,
   DataSourceType,
+  Image360Provider,
+  Image360ProviderMap,
   Local360ImageProvider
 } from '@reveal/data-providers';
 import { StreamingTestFixtureComponents } from '../../../visual-tests/test-fixtures/StreamingVisualTestFixture';
@@ -30,10 +32,11 @@ import { IconOctree } from '@reveal/3d-overlays';
 import { OctreeHelper } from 'sparse-octree';
 import { Overlay3DIcon } from '@reveal/3d-overlays';
 import { DefaultImage360Collection } from '../src/collection/DefaultImage360Collection';
+import { Image360CollectionSourceType } from '../src/types';
+import { Image360ProviderCombiner } from '@reveal/data-providers/src/Image360ProviderCombiner';
+import { Cdf360ImageFileProvider } from '@reveal/data-providers/src/image-360-data-providers/CdfImage360FileProvider';
 
-type CdfImage360Facade = Image360Facade<ClassicDataSourceType>;
-
-type LocalImage360Facade = Image360Facade<DataSourceType>;
+type TestImage360Facade = Image360Facade<DataSourceType>;
 
 export default class Image360VisualTestFixture extends StreamingVisualTestFixture {
   public async setup(testFixtureComponents: StreamingTestFixtureComponents): Promise<void> {
@@ -98,7 +101,7 @@ export default class Image360VisualTestFixture extends StreamingVisualTestFixtur
 
   private setupMouseClickEventHandler(
     renderer: THREE.WebGLRenderer,
-    facade: CdfImage360Facade | LocalImage360Facade,
+    facade: TestImage360Facade,
     camera: THREE.PerspectiveCamera,
     cameraControls: OrbitControls
   ) {
@@ -188,7 +191,7 @@ export default class Image360VisualTestFixture extends StreamingVisualTestFixtur
 
   private setupMouseMoveEventHandler(
     renderer: THREE.WebGLRenderer,
-    facade: CdfImage360Facade | LocalImage360Facade,
+    facade: TestImage360Facade,
     camera: THREE.PerspectiveCamera
   ) {
     renderer.domElement.addEventListener('mousemove', async event => {
@@ -223,7 +226,7 @@ export default class Image360VisualTestFixture extends StreamingVisualTestFixtur
     onBeforeRender: EventTrigger<BeforeSceneRenderedDelegate>,
     device: DeviceDescriptor
   ): Promise<{
-    facade: CdfImage360Facade | LocalImage360Facade;
+    facade: TestImage360Facade;
     collection: DefaultImage360Collection<DataSourceType>;
   }> {
     if (cogniteClient === undefined) {
@@ -237,25 +240,36 @@ export default class Image360VisualTestFixture extends StreamingVisualTestFixtur
     const externalId = urlParams.get('externalId');
     const space = urlParams.get('space');
 
+    const cdf360EventDescriptorProvider = new Cdf360EventDescriptorProvider(cogniteClient);
+    const cdf360AnnotationProvider = new Cdf360ImageAnnotationProvider(cogniteClient);
+
+    const cdf360DMDescriptorProvider = new Cdf360DataModelsDescriptorProvider(cogniteClient);
+    const cdf360ImageProvider = new Cdf360ImageAnnotationProvider(cogniteClient);
+
+    const fileProvider = new Cdf360ImageFileProvider(cogniteClient);
+
+    const providerMap = new Map<Image360CollectionSourceType, Image360Provider<ClassicDataSourceType>>([
+      ['event', new Image360ProviderCombiner(cdf360EventDescriptorProvider, fileProvider, cdf360AnnotationProvider)],
+      ['dm', new Image360ProviderCombiner(cdf360DMDescriptorProvider, fileProvider, cdf360AnnotationProvider)]
+    ]);
+
     if (externalId !== null && space !== null) {
-      return getDM360ImageCollection(cogniteClient, externalId, space);
+      return getDM360ImageCollection(providerMap, externalId, space);
     }
 
     if (siteId !== null) {
-      return getEvents360ImageCollection(cogniteClient, siteId);
+      return getEvents360ImageCollection(providerMap, siteId);
     }
 
     return this.setupLocal(sceneHandler, onBeforeRender, device);
 
     async function getDM360ImageCollection(
-      cogniteClient: CogniteClient,
+      providerMap: Image360ProviderMap,
       externalId: string,
       space: string
-    ): Promise<{ facade: CdfImage360Facade; collection: DefaultImage360Collection<DataSourceType> }> {
-      const cdf360EventDescriptorProvider = new Cdf360DataModelsDescriptorProvider(cogniteClient);
-      const cdf360ImageProvider = new Cdf360ImageAnnotationProvider(cogniteClient, cdf360EventDescriptorProvider);
+    ): Promise<{ facade: TestImage360Facade; collection: DefaultImage360Collection<DataSourceType> }> {
       const image360Factory = new Image360CollectionFactory(
-        cdf360ImageProvider,
+        providerMap,
         sceneHandler,
         onBeforeRender,
         () => {},
@@ -268,13 +282,11 @@ export default class Image360VisualTestFixture extends StreamingVisualTestFixtur
     }
 
     async function getEvents360ImageCollection(
-      cogniteClient: CogniteClient,
+      providerMap: Image360ProviderMap,
       siteId: string
-    ): Promise<{ facade: CdfImage360Facade; collection: DefaultImage360Collection<DataSourceType> }> {
-      const cdf360EventDescriptorProvider = new Cdf360EventDescriptorProvider(cogniteClient);
-      const cdf360ImageProvider = new Cdf360ImageAnnotationProvider(cogniteClient, cdf360EventDescriptorProvider);
+    ): Promise<{ facade: TestImage360Facade; collection: DefaultImage360Collection<DataSourceType> }> {
       const image360Factory = new Image360CollectionFactory(
-        cdf360ImageProvider,
+        providerMap,
         sceneHandler,
         onBeforeRender,
         () => {},
@@ -299,7 +311,10 @@ export default class Image360VisualTestFixture extends StreamingVisualTestFixtur
     const urlParams = new URLSearchParams(queryString);
     const modelUrl = urlParams.get('modelUrl') ?? 'primitives';
     const dataProvider = new Local360ImageProvider(`${window.location.origin}/${modelUrl}`);
-    const image360Factory = new Image360CollectionFactory(dataProvider, sceneHandler, onBeforeRender, () => {}, device);
+    const providerMap = new Map<Image360CollectionSourceType, Image360Provider<ClassicDataSourceType>>([
+      ['event', dataProvider]
+    ]);
+    const image360Factory = new Image360CollectionFactory(providerMap, sceneHandler, onBeforeRender, () => {}, device);
     const image360Facade = new Image360Facade(image360Factory);
     const collection = await image360Facade.create({});
 
