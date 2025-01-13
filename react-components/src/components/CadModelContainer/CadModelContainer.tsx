@@ -100,11 +100,13 @@ export function CadModelContainer({
     return cadModel;
 
     async function getOrAddModel(): Promise<CogniteCadModel> {
-      const viewerModel = viewer.models.find(
-        (model) =>
-          isSameModel(model, addModelOptions) &&
+      const viewerModel = viewer.models.find((model) => {
+        const cadModel = { ...model, transform: model.getModelTransformation() };
+        return (
+          isSameModel(cadModel, addModelOptions) &&
           isSameGeometryFilter(geometryFilter, initializingModelsGeometryFilter.current)
-      );
+        );
+      });
 
       if (viewerModel !== undefined) {
         return await Promise.resolve(viewerModel as CogniteCadModel);
