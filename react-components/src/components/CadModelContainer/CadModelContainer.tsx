@@ -21,7 +21,6 @@ import { getViewerResourceCount } from '../../utilities/getViewerResourceCount';
 import { type CadModelStyling } from './types';
 import { useApplyCadModelStyling } from './useApplyCadModelStyling';
 import { isSameGeometryFilter, isSameModel } from '../../utilities/isSameModel';
-import { AddResourceOptions } from '../Reveal3DResources';
 
 export type CogniteCadModelProps = {
   addModelOptions: AddModelOptions<ClassicDataSourceType>;
