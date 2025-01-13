@@ -44,7 +44,7 @@ export class AssetMappingAndNode3DCache {
 
   private readonly _amountOfAssetIdsChunks = 1;
 
-  private isCoreDmOnly = false;
+  private readonly isCoreDmOnly = false;
 
   constructor(sdk: CogniteClient, coreDmOnly: boolean) {
     this._sdk = sdk;
@@ -165,7 +165,7 @@ export class AssetMappingAndNode3DCache {
 
   public async getAssetMappingsForModel(
     modelId: ModelId,
-    revisionId: RevisionId,
+    revisionId: RevisionId
   ): Promise<AssetMapping[]> {
     const key = createModelRevisionKey(modelId, revisionId);
     const cachedResult = await this.modelToAssetMappingsCache.getModelToAssetMappingCacheItems(key);
@@ -227,7 +227,8 @@ export class AssetMappingAndNode3DCache {
     modelId: ModelId,
     revisionId: RevisionId
   ): Promise<AssetMapping3D[]> {
-    let assetMapping3D: AssetMapping3D[] = [];
+    let assetMapping3DClassic: AssetMapping3D[] = [];
+    let assetMapping3DDms: AssetMapping3D[] = [];
 
     if (currentChunk.length === 0) {
       return [];
@@ -235,7 +236,14 @@ export class AssetMappingAndNode3DCache {
     const filter =
       filterType === 'nodeIds' ? { nodeIds: currentChunk } : { assetIds: currentChunk };
 
-    assetMapping3D = await this._sdk.assetMappings3D
+    assetMapping3DClassic = await this._sdk.assetMappings3D
+      .filter(modelId, revisionId, {
+        limit: 1000,
+        filter
+      })
+      .autoPagingToArray({ limit: Infinity });
+
+    assetMapping3DDms = await this._sdk.assetMappings3D
       .filter(modelId, revisionId, {
         limit: 1000,
         filter,
@@ -243,9 +251,17 @@ export class AssetMappingAndNode3DCache {
       })
       .autoPagingToArray({ limit: Infinity });
 
-    console.log('TEST fetchAssetMappingsRequest filter assetMapping3D', filter, assetMapping3D);
+    console.log(
+      'TEST fetchAssetMappingsRequest filter assetMapping3D',
+      filter,
+      assetMapping3DClassic,
+      assetMapping3DDms
+    );
+
+    const allAssetMappings = assetMapping3DClassic.concat(assetMapping3DDms);
+
     await Promise.all(
-      assetMapping3D
+      allAssetMappings
         .map(async (item) => {
           if (item.assetId === undefined) return;
           const mapping: AssetMapping = {
@@ -274,7 +290,7 @@ export class AssetMappingAndNode3DCache {
       }
     });
 
-    return assetMapping3D.filter(isValidAssetMapping);
+    return allAssetMappings.filter(isValidAssetMapping);
   }
 
   private async fetchMappingsInQueue(
@@ -361,6 +377,8 @@ export class AssetMappingAndNode3DCache {
     );
 
     const allAssetMappings = chunkInCache.concat(assetMappings);
+
+    console.log(' TEST getAssetMappingsForNodes allAssetMappings', allAssetMappings);
     return allAssetMappings;
   }
 

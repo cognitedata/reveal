@@ -151,5 +151,9 @@ async function getAssetMappingPromise(
     ancestors
   );
 
-  return nodeAssetResult.mappings.map((mapping) => ({ assetId: mapping.assetId }));
+  const mappedAssetsResults = nodeAssetResult.mappings.map((mapping) => ({
+    assetId: mapping.assetId,
+    assetInstanceId: mapping.assetInstanceId
+  }));
+  return mappedAssetsResults;
 }
