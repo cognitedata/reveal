@@ -88,7 +88,7 @@ export class Cdf360ImageAnnotationProvider implements Image360AnnotationProvider
   ): Promise<ClassicDataSourceType['image360AnnotationType'][]> {
     const fileIds = annotationSpecifier.fileDescriptors.map(o => ({ id: o.fileId }));
 
-    return await this.listFileAnnotations({
+    return this.listFileAnnotations({
       annotatedResourceType: 'file',
       annotatedResourceIds: fileIds
     });

@@ -2,24 +2,28 @@
  * Copyright 2025 Cognite AS
  */
 import { Image360RevisionId, ImageAssetLinkAnnotationInfo } from '../types';
-import { ClassicDataSourceType, DataSourceType } from '../DataSourceType';
-import { Image360DataModelIdentifier } from 'api-entry-points/core';
+import { DataSourceType } from '../DataSourceType';
 import {
   AnnotationData,
   AnnotationModel,
   AnnotationsCogniteAnnotationTypesImagesAssetLink,
   Metadata
-} from '@cognite/sdk/dist/src';
-import { Image360LegacyDataModelIdentifier } from './descriptor-providers/datamodels/system-space/Cdf360DataModelsDescriptorProvider';
+} from '@cognite/sdk';
+import {
+  Image360DataModelIdentifier,
+  Image360LegacyDataModelIdentifier
+} from './descriptor-providers/datamodels/system-space/Cdf360DataModelsDescriptorProvider';
 import { isDmIdentifier } from '@reveal/utilities';
 
-export function isClassicMetadata360Identifier(id: DataSourceType['image360Identifier']): id is Metadata {
+export function isClassicMetadata360Identifier(
+  id: DataSourceType['image360Identifier']
+): id is Metadata & { site_id: string } {
   return (id as Metadata).site_id !== undefined;
 }
 
 export function isClassic360Identifier(
   id: DataSourceType['image360Identifier']
-): id is ClassicDataSourceType['image360Identifier'] {
+): id is (Metadata & { site_id: string }) | Image360DataModelIdentifier {
   return isLegacyDM360Identifier(id) || isClassicMetadata360Identifier(id);
 }
 

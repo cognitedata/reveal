@@ -9,6 +9,7 @@ import {
   Cdf360ImageAnnotationProvider,
   ClassicDataSourceType,
   DataSourceType,
+  DMDataSourceType,
   Image360Provider,
   Image360ProviderMap,
   Local360ImageProvider
@@ -244,11 +245,13 @@ export default class Image360VisualTestFixture extends StreamingVisualTestFixtur
     const cdf360AnnotationProvider = new Cdf360ImageAnnotationProvider(cogniteClient);
 
     const cdf360DMDescriptorProvider = new Cdf360DataModelsDescriptorProvider(cogniteClient);
-    const cdf360ImageProvider = new Cdf360ImageAnnotationProvider(cogniteClient);
 
     const fileProvider = new Cdf360ImageFileProvider(cogniteClient);
 
-    const providerMap = new Map<Image360CollectionSourceType, Image360Provider<ClassicDataSourceType>>([
+    const providerMap = new Map<
+      Image360CollectionSourceType,
+      Image360Provider<ClassicDataSourceType> | Image360Provider<DMDataSourceType>
+    >([
       ['event', new Image360ProviderCombiner(cdf360EventDescriptorProvider, fileProvider, cdf360AnnotationProvider)],
       ['dm', new Image360ProviderCombiner(cdf360DMDescriptorProvider, fileProvider, cdf360AnnotationProvider)]
     ]);

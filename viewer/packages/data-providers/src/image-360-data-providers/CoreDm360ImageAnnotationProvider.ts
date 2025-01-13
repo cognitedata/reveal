@@ -8,10 +8,10 @@ import {
   Image360AnnotationSpecifier,
   InstanceReference
 } from '../types';
-import { Image360AnnotationAssetQueryResult } from 'api-entry-points/core';
 import {
   AssetAnnotationImage360Info,
   DefaultImage360Collection,
+  Image360AnnotationAssetQueryResult,
   Image360Entity,
   Image360RevisionEntity
 } from '@reveal/360-images';

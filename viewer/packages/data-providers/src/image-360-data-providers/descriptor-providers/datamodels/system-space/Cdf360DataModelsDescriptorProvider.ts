@@ -18,9 +18,9 @@ import chunk from 'lodash/chunk';
 import zip from 'lodash/zip';
 import groupBy from 'lodash/groupBy';
 import partition from 'lodash/partition';
-import { ClassicDataSourceType } from 'api-entry-points/core';
 import { DMInstanceRef, dmInstanceRefToKey } from '@reveal/utilities';
 import { DMInstanceKey } from '@reveal/utilities/src/fdm/toKey';
+import { ClassicDataSourceType } from '../../../../DataSourceType';
 
 /**
  * An identifier uniquely determining a datamodel-based instance of a Cognite 360 image collection

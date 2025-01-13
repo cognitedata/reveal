@@ -18,7 +18,8 @@ export {
   isCoreDmImage360Identifier,
   isLegacyDM360Identifier,
   isFdm360ImageCollectionIdentifier,
-  isImageAssetLinkAnnotation
+  isImageAssetLinkAnnotation,
+  isClassicMetadata360Identifier
 } from './src/image-360-data-providers/shared';
 export { CoreDmImage360Annotation } from './src/image-360-data-providers/cdm/types';
 export { LocalModelDataProvider } from './src/model-data-providers/LocalModelDataProvider';

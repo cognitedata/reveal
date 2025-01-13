@@ -1289,6 +1289,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@reveal/data-providers@workspace:packages/data-providers"
   dependencies:
+    "@reveal/360-images": "workspace:*"
     "@reveal/cad-model": "workspace:*"
     "@reveal/data-providers": "workspace:*"
     "@reveal/logger": "workspace:*"
