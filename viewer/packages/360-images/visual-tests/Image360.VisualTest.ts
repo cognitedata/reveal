@@ -35,7 +35,7 @@ import { Overlay3DIcon } from '@reveal/3d-overlays';
 import { DefaultImage360Collection } from '../src/collection/DefaultImage360Collection';
 import { Image360CollectionSourceType } from '../src/types';
 import { Image360ProviderCombiner } from '@reveal/data-providers/src/Image360ProviderCombiner';
-import { Cdf360ImageFileProvider } from '@reveal/data-providers/src/image-360-data-providers/CdfImage360FileProvider';
+import { Cdf360ImageFileProvider } from '@reveal/data-providers/src/image-360-data-providers/Cdf360ImageFileProvider';
 
 type TestImage360Facade = Image360Facade<DataSourceType>;
 

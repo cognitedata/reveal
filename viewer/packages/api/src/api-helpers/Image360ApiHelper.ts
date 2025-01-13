@@ -17,17 +17,26 @@ import {
   Image360AnnotationIntersection,
   Image360AnnotationFilterOptions,
   Image360CollectionSourceType,
-  Image360IconIntersectionData
+  Image360IconIntersectionData,
+  Image360History,
+  createCollectionIdString,
+  DEFAULT_IMAGE_360_OPACITY,
+  Image360Action
 } from '@reveal/360-images';
 import {
+  Cdf360CdmDescriptorProvider,
   Cdf360DataModelsDescriptorProvider,
   Cdf360EventDescriptorProvider,
   Cdf360ImageAnnotationProvider,
+  Cdf360ImageFileProvider,
   ClassicDataSourceType,
+  CoreDm360ImageAnnotationProvider,
   DataSourceType,
   DMDataSourceType,
   Image360DataModelIdentifier,
-  Image360Provider
+  Image360Provider,
+  Image360ProviderCombiner,
+  isFdm360ImageCollectionIdentifier
 } from '@reveal/data-providers';
 import {
   BeforeSceneRenderedDelegate,
@@ -47,15 +56,6 @@ import {
 import { MetricsLogger } from '@reveal/metrics';
 import debounce from 'lodash/debounce';
 import { Image360WithCollection } from '../public/types';
-import { DEFAULT_IMAGE_360_OPACITY } from '@reveal/360-images';
-import { Image360History } from '@reveal/360-images';
-import { Image360Action } from '@reveal/360-images';
-import { Image360ProviderCombiner } from '@reveal/data-providers/src/Image360ProviderCombiner';
-import { Cdf360ImageFileProvider } from '@reveal/data-providers/src/image-360-data-providers/CdfImage360FileProvider';
-import { CoreDm360ImageAnnotationProvider } from '@reveal/data-providers/src/image-360-data-providers/CoreDm360ImageAnnotationProvider';
-import { isFdm360ImageCollectionIdentifier } from '@reveal/data-providers/src/image-360-data-providers/shared';
-import { createCollectionIdString } from '@reveal/360-images';
-import { Cdf360CdmDescriptorProvider } from '@reveal/data-providers/src/image-360-data-providers/descriptor-providers/datamodels/cdm/Cdf360CdmDescriptorProvider';
 
 export class Image360ApiHelper<DataSourceT extends DataSourceType> {
   private readonly _image360Facade: Image360Facade<DataSourceT>;

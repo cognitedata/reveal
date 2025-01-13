@@ -6,6 +6,9 @@ export { CdfModelIdentifier } from './src/model-identifiers/CdfModelIdentifier';
 export { CdfModelMetadataProvider } from './src/metadata-providers/CdfModelMetadataProvider';
 export { Cdf360ImageAnnotationProvider } from './src/image-360-data-providers/Cdf360ImageAnnotationProvider';
 export { Cdf360EventDescriptorProvider } from './src/image-360-data-providers/descriptor-providers/events/Cdf360EventDescriptorProvider';
+export { CoreDm360ImageAnnotationProvider } from './src/image-360-data-providers/CoreDm360ImageAnnotationProvider';
+export { Cdf360CdmDescriptorProvider } from './src/image-360-data-providers/descriptor-providers/datamodels/cdm/Cdf360CdmDescriptorProvider';
+export { Cdf360ImageFileProvider } from './src/image-360-data-providers/Cdf360ImageFileProvider';
 export {
   Cdf360DataModelsDescriptorProvider,
   Image360DataModelIdentifier,
@@ -41,6 +44,7 @@ export { CdfPointCloudDMStylableObjectProvider } from './src/pointcloud-stylable
 export { DummyPointCloudDMStylableObjectProvider } from './src/pointcloud-stylable-object-providers/pointcloud-volume-data-providers/DummyPointCloudDMStylableObjectProvider';
 
 export { Image360Provider, Image360ProviderMap, getImage360ProviderFromMap } from './src/Image360Provider';
+export { Image360ProviderCombiner } from './src/Image360ProviderCombiner';
 export {
   BinaryFileProvider,
   JsonFileProvider,
