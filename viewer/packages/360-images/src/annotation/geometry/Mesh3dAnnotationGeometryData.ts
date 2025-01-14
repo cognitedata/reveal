@@ -20,7 +20,7 @@ export class Mesh3dAnnotationGeometryData implements ImageAnnotationObjectGeomet
   createGeometry(points: Vector3[]): BufferGeometry {
     const positions: number[] = [];
     points.forEach(position => {
-      position.clone().applyMatrix4(CDF_TO_VIEWER_TRANSFORMATION);
+      position.applyMatrix4(CDF_TO_VIEWER_TRANSFORMATION);
       positions.push(...position);
     });
 
@@ -43,7 +43,7 @@ export class Mesh3dAnnotationGeometryData implements ImageAnnotationObjectGeomet
   }
 
   getNormalizationMatrix(): Matrix4 {
-    return new Matrix4().makeTranslation(0, 0, 0.5);
+    return new Matrix4().identity();
   }
 
   getOutlinePoints(): Vector3[] {

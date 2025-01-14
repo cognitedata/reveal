@@ -3,7 +3,7 @@
  */
 
 import { AnnotationsCogniteAnnotationTypesImagesAssetLink, AnnotationsObjectDetection } from '@cognite/sdk';
-import { DataSourceType, Image360FileDescriptor } from '@reveal/data-providers';
+import { CoreDmImage360Annotation, DataSourceType, Image360FileDescriptor } from '@reveal/data-providers';
 
 import { Color, Matrix4, Vector3, Mesh, MeshBasicMaterial, DoubleSide, Object3D, Group, Raycaster } from 'three';
 import { ImageAnnotationObjectGeometryData } from './geometry/ImageAnnotationGeometryData';
@@ -15,7 +15,6 @@ import { Image360AnnotationAppearance } from './types';
 type FaceType = Image360FileDescriptor['face'];
 
 import { VariableWidthLine } from '@reveal/utilities';
-import { CoreDmImage360Annotation } from '@reveal/data-providers/src/image-360-data-providers/cdm/types';
 import { Mesh3dAnnotationGeometryData } from './geometry/Mesh3dAnnotationGeometryData';
 import { isAnnotationAssetLink, isAnnotationsObjectDetection, isCoreDmImage360Annotation } from './typeGuards';
 
@@ -83,8 +82,7 @@ export class ImageAnnotationObject<T extends DataSourceType> implements Image360
   private static createAssetLinkAnnotationData(
     assetLink: AnnotationsCogniteAnnotationTypesImagesAssetLink
   ): ImageAnnotationObjectGeometryData | undefined {
-    // TODO: Use AssetLink region type from SDK when available (2023-15-05)
-    const objectRegion = (assetLink as any).objectRegion;
+    const objectRegion = assetLink.objectRegion;
     if (objectRegion === undefined) {
       return new BoxAnnotationGeometryData(assetLink.textRegion);
     }
@@ -143,16 +141,11 @@ export class ImageAnnotationObject<T extends DataSourceType> implements Image360
   }
 
   private initializeTransform(face: FaceType | undefined, normalizationTransform: Matrix4): void {
-    if (face === undefined) {
-      return;
-    }
-
-    const rotationMatrix = this.getRotationFromFace(face);
+    const rotationMatrix = face === undefined ? new Matrix4().identity() : this.getRotationFromFace(face);
 
     const transformation = rotationMatrix.clone().multiply(normalizationTransform);
     this._objectGroup.matrix = transformation;
     this._objectGroup.matrixAutoUpdate = false;
-    this._objectGroup.updateWorldMatrix(false, true);
   }
 
   public getObject(): Object3D {
