@@ -7,6 +7,7 @@ import { Image360Revision } from './Image360Revision';
 import { Image360Visualization } from './Image360Visualization';
 
 import { Color, type Matrix4 } from 'three';
+import { Image360Id } from '@reveal/data-providers/src/types';
 
 /**
  * Image360 icon style
@@ -40,7 +41,7 @@ export interface Image360<T extends DataSourceType = ClassicDataSourceType> {
    * Get Id of 360 image entity.
    * @returns Station Id
    */
-  readonly id: string;
+  readonly id: Image360Id<T>;
 
   /**
    * Get label of 360 image entity.

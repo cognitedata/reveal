@@ -14,7 +14,7 @@ import {
   COGNITE_VISUALIZABLE_SOURCE,
   COGNITE_ASSET_SOURCE
 } from '../../utilities/constants';
-import { DMInstanceRef } from '../types';
+import { DMInstanceRef } from '@reveal/utilities';
 
 const getDMPointCloudVolumeQuery = (revisionRef: DMInstanceRef) => {
   return {

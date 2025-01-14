@@ -8,7 +8,7 @@ import {
   Image360Descriptor,
   Image360DescriptorProvider,
   Image360FileDescriptor,
-  InstanceIdentifier,
+  Image360RevisionId,
   QueryNextCursors
 } from '../../../../types';
 import { Cdf360FdmQuery, get360CollectionQuery } from './get360CdmCollectionQuery';
@@ -20,6 +20,8 @@ import zip from 'lodash/zip';
 import groupBy from 'lodash/groupBy';
 import partition from 'lodash/partition';
 import { Image360DataModelIdentifier } from '../system-space/Cdf360DataModelsDescriptorProvider';
+import { DMDataSourceType } from '../../../../DataSourceType';
+import { DMInstanceRef } from '@reveal/utilities';
 
 type QueryResult = Awaited<ReturnType<typeof DataModelsSdk.prototype.queryNodesAndEdges<Cdf360FdmQuery>>>;
 
@@ -39,7 +41,7 @@ type CoreDmFileResponse = {
   };
 };
 
-export class Cdf360CdmDescriptorProvider implements Image360DescriptorProvider<Image360DataModelIdentifier> {
+export class Cdf360CdmDescriptorProvider implements Image360DescriptorProvider<DMDataSourceType> {
   private readonly _dmsSdk: DataModelsSdk;
   private readonly _cogniteSdk: CogniteClient;
 
@@ -51,7 +53,7 @@ export class Cdf360CdmDescriptorProvider implements Image360DescriptorProvider<I
   public async get360ImageDescriptors(
     collectionIdentifier: Image360DataModelIdentifier,
     _: boolean
-  ): Promise<Historical360ImageSet[]> {
+  ): Promise<Historical360ImageSet<DMDataSourceType>[]> {
     const { image_collection, images } = await this.queryCollection(collectionIdentifier);
 
     if (image_collection.length === 0) {
@@ -79,7 +81,7 @@ export class Cdf360CdmDescriptorProvider implements Image360DescriptorProvider<I
     });
 
     const groups = groupBy(imagesWithStation, imageResult => {
-      const station = imageResult.image.properties.cdf_cdm['Cognite360Image/v1'].station360 as InstanceIdentifier;
+      const station = imageResult.image.properties.cdf_cdm['Cognite360Image/v1'].station360 as DMInstanceRef;
       return `${station.externalId}-${station.space}`;
     });
 
@@ -162,26 +164,35 @@ export class Cdf360CdmDescriptorProvider implements Image360DescriptorProvider<I
     collectionId: string,
     collectionLabel: string,
     imageFileDescriptors: { image: ImageInstanceResult; fileDescriptors: FileInfo[] }[]
-  ): Historical360ImageSet {
+  ): Historical360ImageSet<DMDataSourceType> {
     const mainImagePropsArray = imageFileDescriptors.map(
       descriptor => descriptor.image.properties.cdf_cdm['Cognite360Image/v1']
     );
 
-    const id = imageFileDescriptors[0].image.externalId;
+    const id = imageFileDescriptors[0].image;
     return {
       collectionId,
       collectionLabel,
       id,
       imageRevisions: imageFileDescriptors.map((p, index) =>
-        this.getImageRevision(mainImagePropsArray[index], p.fileDescriptors)
+        this.getImageRevision(
+          { externalId: p.image.externalId, space: p.image.space },
+          mainImagePropsArray[index],
+          p.fileDescriptors
+        )
       ),
       label: '',
       transform: this.getRevisionTransform(mainImagePropsArray[0] as any)
     };
   }
 
-  private getImageRevision(imageProps: ImageResultProperties, fileInfos: FileInfo[]): Image360Descriptor {
+  private getImageRevision(
+    revisionId: Image360RevisionId<DMDataSourceType>,
+    imageProps: ImageResultProperties,
+    fileInfos: FileInfo[]
+  ): Image360Descriptor<DMDataSourceType> {
     return {
+      id: revisionId,
       faceDescriptors: getFaceDescriptors(),
       timestamp: imageProps.takenAt as string
     };

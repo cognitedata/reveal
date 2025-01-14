@@ -18,7 +18,7 @@ export class DataModelsSdk {
     this._sdk = sdk;
   }
 
-  public async queryNodesAndEdges<const T extends Query>(
+  public async queryNodesAndEdges<T extends Query>(
     query: T,
     nextCursor?: QueryNextCursors<T>
   ): Promise<QueryResult<T>> {
@@ -30,4 +30,12 @@ export class DataModelsSdk {
     }
     throw new Error(`Failed to fetch instances. Status: ${result.status}`);
   }
+}
+
+export function queryNodesAndEdges<T extends Query>(
+  dmsSdk: DataModelsSdk,
+  query: T,
+  nextCursor?: QueryNextCursors<T>
+): Promise<QueryResult<T>> {
+  return dmsSdk.queryNodesAndEdges<T>(query, nextCursor);
 }

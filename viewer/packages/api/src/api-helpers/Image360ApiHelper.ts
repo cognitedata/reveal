@@ -15,15 +15,28 @@ import {
   Image360RevisionEntity,
   DefaultImage360Collection,
   Image360AnnotationIntersection,
-  Image360AnnotationFilterOptions
+  Image360AnnotationFilterOptions,
+  Image360CollectionSourceType,
+  Image360IconIntersectionData,
+  Image360History,
+  createCollectionIdString,
+  DEFAULT_IMAGE_360_OPACITY,
+  Image360Action
 } from '@reveal/360-images';
 import {
-  Cdf360CombinedDescriptorProvider,
+  Cdf360CdmDescriptorProvider,
   Cdf360DataModelsDescriptorProvider,
   Cdf360EventDescriptorProvider,
-  Cdf360ImageProvider,
+  Cdf360ImageAnnotationProvider,
+  Cdf360ImageFileProvider,
+  ClassicDataSourceType,
+  CoreDm360ImageAnnotationProvider,
   DataSourceType,
-  Image360DataModelIdentifier
+  DMDataSourceType,
+  Image360DataModelIdentifier,
+  Image360Provider,
+  Image360ProviderCombiner,
+  isFdm360ImageCollectionIdentifier
 } from '@reveal/data-providers';
 import {
   BeforeSceneRenderedDelegate,
@@ -43,11 +56,6 @@ import {
 import { MetricsLogger } from '@reveal/metrics';
 import debounce from 'lodash/debounce';
 import { Image360WithCollection } from '../public/types';
-import { DEFAULT_IMAGE_360_OPACITY } from '@reveal/360-images/src/entity/Image360VisualizationBox';
-import { Image360History } from '@reveal/360-images/src/Image360History';
-import { Image360Action } from '@reveal/360-images/src/Image360Action';
-import { Image360IconIntersectionData } from '@reveal/360-images/src/types';
-import { Cdf360CdmDescriptorProvider } from '@reveal/data-providers/src/image-360-data-providers/descriptor-providers/datamodels/cdm/Cdf360CdmDescriptorProvider';
 
 export class Image360ApiHelper<DataSourceT extends DataSourceType> {
   private readonly _image360Facade: Image360Facade<DataSourceT>;
@@ -112,18 +120,44 @@ export class Image360ApiHelper<DataSourceT extends DataSourceType> {
     const image360EventDescriptorProvider = new Cdf360EventDescriptorProvider(cogniteClient);
     const image360DataModelsDescriptorProvider = new Cdf360DataModelsDescriptorProvider(cogniteClient);
     const image360CdmDescriptorProvider = new Cdf360CdmDescriptorProvider(cogniteClient);
-    const combinedDescriptorProvider = new Cdf360CombinedDescriptorProvider(
-      image360DataModelsDescriptorProvider,
+
+    const cdm360ImageAnnotationProvider = new CoreDm360ImageAnnotationProvider(cogniteClient);
+    const cdf360ImageAnnotationProvider = new Cdf360ImageAnnotationProvider(cogniteClient);
+
+    const cdfFileProvider = new Cdf360ImageFileProvider(cogniteClient);
+
+    const eventBased360ImageProvider = new Image360ProviderCombiner(
       image360EventDescriptorProvider,
-      image360CdmDescriptorProvider
+      cdfFileProvider,
+      cdf360ImageAnnotationProvider
     );
+
+    const legacyDm360ImageProvider = new Image360ProviderCombiner(
+      image360DataModelsDescriptorProvider,
+      cdfFileProvider,
+      cdf360ImageAnnotationProvider
+    );
+
+    const cdm360ImageProvider = new Image360ProviderCombiner(
+      image360CdmDescriptorProvider,
+      cdfFileProvider,
+      cdm360ImageAnnotationProvider
+    );
+
+    const image360ProviderMap = new Map<
+      Image360CollectionSourceType,
+      Image360Provider<DMDataSourceType> | Image360Provider<ClassicDataSourceType>
+    >([
+      ['event', eventBased360ImageProvider],
+      ['dm', legacyDm360ImageProvider],
+      ['cdm', cdm360ImageProvider]
+    ]);
 
     const setNeedsRedraw: () => void = () => (this._needsRedraw = true);
 
-    const image360DataProvider = new Cdf360ImageProvider(cogniteClient, combinedDescriptorProvider);
     const device = determineCurrentDevice();
-    const image360EntityFactory = new Image360CollectionFactory<DataSourceT>(
-      image360DataProvider,
+    const image360EntityFactory = new Image360CollectionFactory(
+      image360ProviderMap,
       sceneHandler,
       onBeforeSceneRendered,
       setNeedsRedraw,
@@ -177,13 +211,13 @@ export class Image360ApiHelper<DataSourceT extends DataSourceType> {
     return imageCollection;
 
     function validateIds(image360Facade: Image360Facade<DataSourceT>) {
-      if (!Cdf360CombinedDescriptorProvider.isFdmIdentifier(collectionIdentifier)) {
-        const id: string | undefined = collectionIdentifier.site_id;
+      if (!isFdm360ImageCollectionIdentifier(collectionIdentifier)) {
+        const id = createCollectionIdString(collectionIdentifier);
         if (id === undefined) {
           throw new Error('Image set filter must contain site_id');
         }
         if (image360Facade.collections.map(collection => collection.id).includes(id)) {
-          throw new Error(`Image set with id=${id} has already been added`);
+          throw new Error(`Image set with id=${collectionIdentifier} has already been added`);
         }
       } else {
         if (
@@ -203,7 +237,7 @@ export class Image360ApiHelper<DataSourceT extends DataSourceType> {
     return [...this._image360Facade.collections];
   }
 
-  public async remove360Images(entities: Image360[]): Promise<void> {
+  public async remove360Images(entities: Image360<DataSourceT>[]): Promise<void> {
     if (
       this._interactionState.currentImage360Entered !== undefined &&
       entities.includes(this._interactionState.currentImage360Entered)
@@ -590,7 +624,10 @@ export class Image360ApiHelper<DataSourceT extends DataSourceType> {
     );
   }
 
-  public intersect360ImageAnnotations(offsetX: number, offsetY: number): Image360AnnotationIntersection | undefined {
+  public intersect360ImageAnnotations(
+    offsetX: number,
+    offsetY: number
+  ): Image360AnnotationIntersection<DataSourceT> | undefined {
     const currentEntity = this._interactionState.currentImage360Entered;
 
     if (currentEntity === undefined) {

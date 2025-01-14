@@ -9,7 +9,8 @@ import {
   Image360Collection,
   Image360Annotation,
   Image360AnnotationIntersection,
-  DataSourceType
+  DataSourceType,
+  Image360DataModelIdentifier
 } from '@cognite/reveal';
 
 import * as dat from 'dat.gui';
@@ -18,15 +19,17 @@ export class Image360UI {
   private viewer: Cognite3DViewer<DataSourceType>;
   private gui: dat.GUI;
   private selectedEntity: Image360 | undefined;
-  private _lastAnnotation: Image360Annotation | undefined = undefined;
+  private _lastAnnotation: Image360Annotation<DataSourceType> | undefined = undefined;
 
-  private async handleIntersectionAsync(intersectionPromise: Promise<Image360AnnotationIntersection | null>) {
+  private async handleIntersectionAsync(
+    intersectionPromise: Promise<Image360AnnotationIntersection<DataSourceType> | null>
+  ) {
     const intersection = await intersectionPromise;
     if (intersection === null) {
       return;
     }
 
-    console.log('Clicked annotation with data: ', intersection.annotation.annotation.data);
+    console.log('Clicked annotation with data: ', intersection.annotation.annotation);
     intersection.annotation.setColor(new THREE.Color(0.8, 0.8, 1.0));
     this.viewer.requestRedraw();
     this._lastAnnotation = intersection.annotation;
@@ -41,6 +44,7 @@ export class Image360UI {
     removeAll: () => this.removeAll360Images(),
     saveToUrl: () => this.saveImage360SiteToUrl(),
     assetId: '',
+    image360DmSource: 'cdm' as Image360DataModelIdentifier['source'],
     findAsset: () => this.findAsset()
   };
 
@@ -117,6 +121,7 @@ export class Image360UI {
     // data models
     optionsFolderFdm.add(this.params, 'siteId').name('External ID');
     optionsFolderFdm.add(this.params, 'space').name('Space');
+    optionsFolderFdm.add(this.params, 'image360DmSource', ['cdm', 'dm']).name('Source');
 
     this.gui.add(this.params, 'add').name('Add image set');
     this.gui.add(this.params, 'remove').name('Remove image set');
@@ -236,7 +241,8 @@ export class Image360UI {
     if (this.dataSource.type === 'dataModels') {
       return this.viewer.add360ImageSet('datamodels', {
         image360CollectionExternalId: this.params.siteId,
-        space: this.params.space
+        space: this.params.space,
+        source: this.params.image360DmSource
       });
     }
 

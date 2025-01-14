@@ -2,15 +2,16 @@
  * Copyright 2023 Cognite AS
  */
 
-import { BufferGeometry, Matrix4, Shape, ShapeGeometry, Vector2 } from 'three';
+import { BufferGeometry, Matrix4, Shape, ShapeGeometry, Vector2, Vector3 } from 'three';
 
 import { AnnotationsPolygon } from '@cognite/sdk';
 
-import { ImageAnnotationObjectData } from './ImageAnnotationData';
+import { ImageAnnotationObjectGeometryData } from './ImageAnnotationGeometryData';
+import { convertPointsTo3d } from './utils';
 
-export class PolygonAnnotationData implements ImageAnnotationObjectData {
+export class PolygonAnnotationGeometryData implements ImageAnnotationObjectGeometryData {
   private readonly _geometry: ShapeGeometry;
-  private readonly _outlinePoints: Vector2[];
+  private readonly _outlinePoints: Vector3[];
 
   constructor(polygon: AnnotationsPolygon) {
     this._geometry = this.createGeometry(polygon);
@@ -39,11 +40,11 @@ export class PolygonAnnotationData implements ImageAnnotationObjectData {
     return new Matrix4().makeTranslation(0, 0, 0.5);
   }
 
-  getOutlinePoints(): Vector2[] {
+  getOutlinePoints(): Vector3[] {
     return this._outlinePoints;
   }
 }
 
-function getBoundPoints(polygon: AnnotationsPolygon): Vector2[] {
-  return polygon.vertices.map(v => new Vector2(0.5 - v.x, 0.5 - v.y));
+function getBoundPoints(polygon: AnnotationsPolygon): Vector3[] {
+  return convertPointsTo3d(polygon.vertices.map(v => new Vector2(0.5 - v.x, 0.5 - v.y)));
 }

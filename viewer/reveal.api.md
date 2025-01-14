@@ -13,7 +13,6 @@ import { Camera } from 'three';
 import { CogniteClient } from '@cognite/sdk';
 import { CogniteInternalId } from '@cognite/sdk';
 import { Color } from 'three';
-import { DirectRelationReference } from '@cognite/sdk';
 import { EventDispatcher } from 'three';
 import { IdEither } from '@cognite/sdk';
 import { ListResponse } from '@cognite/sdk';
@@ -72,7 +71,7 @@ export interface AreaCollection {
 
 // @public
 export type AssetAnnotationImage360Info<T extends DataSourceType = ClassicDataSourceType> = {
-    annotationInfo: ImageAssetLinkAnnotationInfo;
+    annotationInfo: InstanceLinkable360ImageAnnotationType<T>;
     imageEntity: Image360<T>;
     imageRevision: Image360Revision<T>;
 };
@@ -457,7 +456,7 @@ export class Cognite3DViewer<DataSourceT extends DataSourceType = ClassicDataSou
     fitCameraToModel(model: CogniteModel<DataSourceT>, duration?: number): void;
     fitCameraToModels(models?: CogniteModel<DataSourceT>[], duration?: number, restrictToMostGeometry?: boolean): void;
     fitCameraToVisualSceneBoundingBox(duration?: number): void;
-    get360AnnotationIntersectionFromPixel(offsetX: number, offsetY: number): Promise<null | Image360AnnotationIntersection>;
+    get360AnnotationIntersectionFromPixel(offsetX: number, offsetY: number): Promise<null | Image360AnnotationIntersection<DataSourceT>>;
     get360ImageCollections(): Image360Collection<DataSourceT>[];
     getActive360ImageInfo(): Image360WithCollection<DataSourceT> | undefined;
     // @beta
@@ -784,6 +783,16 @@ export type CommonModelOptions = {
 export type CompletePointCloudAppearance = Required<PointCloudAppearance>;
 
 // @public
+export type CoreDmImage360Annotation = {
+    sourceType: 'dm';
+    annotationIdentifier: DMInstanceRef;
+    assetRef?: DMInstanceRef;
+    polygon: Vector3[];
+    status: 'suggested' | 'approved';
+    connectedImageId: DMInstanceRef;
+};
+
+// @public
 export enum Corner {
     // (undocumented)
     BottomLeft = 2,
@@ -940,12 +949,15 @@ export type DMDataSourceType = {
     pointCloudCollectionType: PointCloudDMVolumeCollection;
     modelIdentifier: DMModelIdentifierType;
     image360Identifier: Image360DataModelIdentifier;
-    image360AnnotationType: never;
+    image360AnnotationType: CoreDmImage360Annotation;
     _never: never;
 };
 
 // @public
-export type DMInstanceRef = DirectRelationReference;
+export type DMInstanceRef = {
+    externalId: string;
+    space: string;
+};
 
 // @public
 export type DMModelIdentifierType = {
@@ -1209,7 +1221,7 @@ export interface Image360<T extends DataSourceType = ClassicDataSourceType> {
     getActiveRevision(): Image360Revision<T>;
     getIconColor(): Color | 'default';
     getRevisions(): Image360Revision<T>[];
-    readonly id: string;
+    readonly id: Image360Id<T>;
     readonly image360Visualization: Image360Visualization;
     readonly label: string | undefined;
     setIconColor(color: Color | 'default'): void;
@@ -1241,15 +1253,15 @@ export type Image360AnnotationAppearance = {
 };
 
 // @public
-export type Image360AnnotationAssetFilter = {
-    assetRef: IdEither;
+export type Image360AnnotationAssetFilter<T extends DataSourceType = ClassicDataSourceType> = {
+    assetRef: InstanceReference<T>;
 };
 
 // @public
-export type Image360AnnotationAssetQueryResult = {
-    image: Image360;
-    revision: Image360Revision;
-    annotation: Image360Annotation;
+export type Image360AnnotationAssetQueryResult<T extends DataSourceType = ClassicDataSourceType> = {
+    image: Image360<T>;
+    revision: Image360Revision<T>;
+    annotation: Image360Annotation<T>;
 };
 
 // @public
@@ -1258,15 +1270,21 @@ export type Image360AnnotationFilterOptions = {
 };
 
 // @public
-export type Image360AnnotationIntersection = {
+export type Image360AnnotationIntersection<T extends DataSourceType = ClassicDataSourceType> = {
     type: 'image360Annotation';
-    annotation: Image360Annotation;
+    annotation: Image360Annotation<T>;
     direction: Vector3;
 };
 
 // @public
+export type Image360BaseIdentifier = {
+    space: string;
+    image360CollectionExternalId: string;
+};
+
+// @public
 export interface Image360Collection<T extends DataSourceType = ClassicDataSourceType> {
-    findImageAnnotations(filter: Image360AnnotationAssetFilter): Promise<Image360AnnotationAssetQueryResult[]>;
+    findImageAnnotations(filter: Image360AnnotationAssetFilter<T>): Promise<Image360AnnotationAssetQueryResult<T>[]>;
     getAnnotationsInfo(source: 'assets'): Promise<AssetAnnotationImage360Info<T>[]>;
     // @deprecated
     getAssetIds(): Promise<IdEither[]>;
@@ -1279,10 +1297,10 @@ export interface Image360Collection<T extends DataSourceType = ClassicDataSource
     readonly image360Entities: Image360<T>[];
     isOccludedIconsVisible(): boolean;
     readonly label: string | undefined;
-    off(event: 'image360Entered', callback: Image360EnteredDelegate): void;
+    off(event: 'image360Entered', callback: Image360EnteredDelegate<T>): void;
     // (undocumented)
     off(event: 'image360Exited', callback: Image360ExitedDelegate): void;
-    on(event: 'image360Entered', callback: Image360EnteredDelegate): void;
+    on(event: 'image360Entered', callback: Image360EnteredDelegate<T>): void;
     // (undocumented)
     on(event: 'image360Exited', callback: Image360ExitedDelegate): void;
     set360IconCullingRestrictions(radius: number, pointLimit: number): void;
@@ -1296,14 +1314,17 @@ export interface Image360Collection<T extends DataSourceType = ClassicDataSource
 }
 
 // @public
-export type Image360DataModelIdentifier = {
+export type Image360CoreDataModelIdentifier = {
+    source: 'cdm';
+} & Image360BaseIdentifier;
+
+// @public
+export type Image360DataModelIdentifier = Image360BaseIdentifier & {
     source?: 'dm' | 'cdm';
-    space: string;
-    image360CollectionExternalId: string;
 };
 
 // @public
-export type Image360EnteredDelegate = (image360: Image360, revision: Image360Revision) => void;
+export type Image360EnteredDelegate<T extends DataSourceType = ClassicDataSourceType> = (image360: Image360<T>, revision: Image360Revision<T>) => void;
 
 // @public
 export type Image360ExitedDelegate = () => void;
@@ -1323,11 +1344,22 @@ export type Image360IconStyle = {
 };
 
 // @public
+export type Image360Id<T extends DataSourceType> = Image360RevisionId<T>;
+
+// @public
+export type Image360LegacyDataModelIdentifier = {
+    source: 'dm';
+} & Image360BaseIdentifier;
+
+// @public
 export interface Image360Revision<T extends DataSourceType = ClassicDataSourceType> {
     readonly date: Date | undefined;
     getAnnotations(): Promise<Image360Annotation<T>[]>;
     getPreviewThumbnailUrl(): Promise<string | undefined>;
 }
+
+// @public
+export type Image360RevisionId<T extends DataSourceType> = T extends DMDataSourceType ? DMInstanceRef : string;
 
 // @public
 export interface Image360Visualization {
@@ -1386,6 +1418,12 @@ export class IndexSet {
     // (undocumented)
     unionWith(otherSet: IndexSet): IndexSet;
 }
+
+// @public
+export type InstanceLinkable360ImageAnnotationType<T extends DataSourceType> = T extends ClassicDataSourceType ? ImageAssetLinkAnnotationInfo : T['image360AnnotationType'];
+
+// @public
+export type InstanceReference<T extends DataSourceType> = T extends ClassicDataSourceType ? IdEither : DMInstanceRef;
 
 // @public
 export type Intersection<T extends DataSourceType = ClassicDataSourceType> = CadIntersection | PointCloudIntersection<T>;
