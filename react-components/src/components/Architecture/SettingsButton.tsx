@@ -72,7 +72,6 @@ export const SettingsButton = ({
   const children = command.children;
   return (
     <StyledMenu
-      hideOnSelect={false}
       onOpenChange={(open: boolean) => {
         for (const child of children) {
           child.update();
@@ -80,7 +79,6 @@ export const SettingsButton = ({
         setOpen(open);
       }}
       floatingProps={{ middleware: [offset(TOOLBAR_HORIZONTAL_PANEL_OFFSET)] }}
-      container={'parent'}
       placement="right-end"
       style={{
         flexDirection,
@@ -91,7 +89,6 @@ export const SettingsButton = ({
         <CogsTooltip
           content={<LabelWithShortcut label={label} command={command} />}
           disabled={isOpen || label === undefined}
-          appendTo={document.body}
           enterDelay={TOOLTIP_DELAY}
           placement={getTooltipPlacement(placement)}>
           <Button
@@ -204,14 +201,12 @@ function createToggle(command: BaseCommand, t: TranslateDelegate): ReactNode {
 
 function createButton(command: BaseCommand, t: TranslateDelegate): ReactNode {
   // @update-ui-component-pattern
-  const [isChecked, setChecked] = useState(false);
   const [isEnabled, setEnabled] = useState(true);
   const [isVisible, setVisible] = useState(true);
   const [uniqueId, setUniqueId] = useState(0);
   const [icon, setIcon] = useState<IconName>(undefined);
 
   useOnUpdate(command, () => {
-    setChecked(command.isChecked);
     setEnabled(command.isEnabled);
     setVisible(command.isVisible);
     setUniqueId(command.uniqueId);
@@ -228,15 +223,12 @@ function createButton(command: BaseCommand, t: TranslateDelegate): ReactNode {
     <Menu.ItemAction
       key={uniqueId}
       disabled={!isEnabled}
-      toggled={isChecked}
       icon={<IconComponent iconName={icon} />}
-      iconPlacement="left"
       style={{ padding: DEFAULT_PADDING }}
       shortcutKeys={command.getShortCutKeys()}
       label={label}
       onClick={() => {
         command.invoke();
-        setChecked(command.isChecked);
       }}
     />
   );

@@ -86,7 +86,7 @@ export const KeyboardNavigationInstructionGrid = styled.div`
 
 export const ArrowKeyboardNavigationInstructionGrid = styled.div`
   display: grid;
-  grid-template-columns: 2fr 1fr 1.5fr;
+  grid-template-columns: 1fr 1fr 1fr;
   gap: 8px;
   padding-left: 12px;
   width: fit-content;

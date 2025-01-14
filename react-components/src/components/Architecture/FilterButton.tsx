@@ -140,7 +140,6 @@ const FilterMenu = ({
         <CogsTooltip
           content={<LabelWithShortcut label={label} command={command} />}
           disabled={isOpen || label === undefined}
-          appendTo={document.body}
           placement={placement}>
           <Button
             type={getButtonType(command)}
@@ -239,8 +238,8 @@ const FilterSelectPanelContent = ({
           {BaseFilterCommand.getAllString(t)}
         </SelectPanel.Item>
       </SelectPanel.Section>
-      <SelectPanel.Body label={label} style={{ maxHeight: '300px' }}>
-        <SelectPanel.Section>
+      <SelectPanel.Body style={{ maxHeight: '300px' }}>
+        <SelectPanel.Section title={label}>
           {children?.map((child, _index): ReactElement => {
             return <FilterItem key={child.uniqueId} command={child} />;
           })}

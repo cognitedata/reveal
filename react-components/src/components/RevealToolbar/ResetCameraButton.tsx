@@ -39,10 +39,7 @@ export const ResetCameraButton = ({
   }, [sceneExternalId, sceneSpaceId, cameraNavigation, resetToDefaultSceneCamera, viewer]);
 
   return (
-    <CogsTooltip
-      content={t({ key: 'RESET_CAMERA_TO_HOME' })}
-      placement="bottom"
-      appendTo={document.body}>
+    <CogsTooltip content={t({ key: 'RESET_CAMERA_TO_HOME' })} placement="bottom">
       <Button
         type="ghost"
         icon=<HomeIcon />
