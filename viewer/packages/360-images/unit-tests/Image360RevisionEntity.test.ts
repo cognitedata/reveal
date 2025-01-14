@@ -7,7 +7,13 @@ import { AnnotationModel, AnnotationsObjectDetection } from '@cognite/sdk';
 import { Mock, It } from 'moq.ts';
 import { ImageAnnotationObject } from '../src/annotation/ImageAnnotationObject';
 import { Image360RevisionEntity } from '../src/entity/Image360RevisionEntity';
-import { ClassicDataSourceType, Image360Descriptor, Image360Provider } from '@reveal/data-providers';
+import {
+  ClassicDataSourceType,
+  DataSourceType,
+  DMDataSourceType,
+  Image360Descriptor,
+  Image360Provider
+} from '@reveal/data-providers';
 import { Image360VisualizationBox } from '../src/entity/Image360VisualizationBox';
 import { SceneHandler } from '@reveal/utilities';
 
@@ -45,6 +51,20 @@ const annotationFixture1 = {
   }
 } as AnnotationModel;
 
+const dmAnnotationFixture = {
+  sourceType: 'dm',
+  annotationIdentifier: { externalId: 'anAnnotation', space: 'aSpace' },
+  assetRef: { externalId: 'anAsset', space: 'anotherSpace' },
+  polygon: [
+    new Vector3(5, -5, 1).normalize(),
+    new Vector3(5, -1, 1).normalize(),
+    new Vector3(1, -1, 1).normalize(),
+    new Vector3(1, -5, 1).normalize()
+  ],
+  status: 'approved',
+  connectedImageId: { externalId: 'anImage', space: 'aThirdSpace' }
+} as DMDataSourceType['image360AnnotationType'];
+
 const annotations: AnnotationModel[] = [annotationFixture0, annotationFixture1];
 
 const raycaster = new Raycaster();
@@ -60,7 +80,11 @@ describe(Image360RevisionEntity.name, () => {
   test('.annotation returns input annotation', () => {
     const annotation = createAnnotationMock('an annotation');
 
-    const annotationObject = ImageAnnotationObject.createAnnotationObject(annotation, 'front');
+    const annotationObject = ImageAnnotationObject.createAnnotationObject(
+      annotation,
+      'front',
+      new Matrix4().identity()
+    );
 
     const retrievedAnnotation = annotationObject?.annotation;
 
@@ -95,6 +119,15 @@ describe(Image360RevisionEntity.name, () => {
     annotationObjects.forEach(a => a.dispose());
     reverseAnnotationObjects.forEach(a => a.dispose());
   });
+
+  test('Intersect intersects DM mesh annotation', async () => {
+    const revision = createRevisionWithDMAnnotations([dmAnnotationFixture]);
+    await revision.getAnnotations();
+    const intersectedAnnotation = revision.intersectAnnotations(raycaster);
+    expect(intersectedAnnotation!.annotation.annotationIdentifier.externalId).toBe(
+      dmAnnotationFixture.annotationIdentifier.externalId
+    );
+  });
 });
 
 function createAnnotationMock(label: string): AnnotationModel {
@@ -106,11 +139,28 @@ function createAnnotationMock(label: string): AnnotationModel {
     .object();
 }
 
-function createMockDataProvider(annotations: AnnotationModel[]): Image360Provider<ClassicDataSourceType> {
-  return new Mock<Image360Provider<ClassicDataSourceType>>()
+function createMockDataProvider<T extends DataSourceType>(
+  annotations: T['image360AnnotationType'][]
+): Image360Provider<T> {
+  return new Mock<Image360Provider<T>>()
     .setup(p => p.getRelevant360ImageAnnotations(It.IsAny()))
     .returnsAsync(annotations)
     .object();
+}
+
+function createRevisionWithDMAnnotations(
+  annotations: DMDataSourceType['image360AnnotationType'][]
+): Image360RevisionEntity<DMDataSourceType> {
+  const imageDescriptor: Image360Descriptor<DMDataSourceType> = {
+    id: { externalId: 'someDescriptorId', space: 'someSpace' },
+    faceDescriptors: [{ fileId: 1, face: 'front', mimeType: 'image/jpeg' }]
+  };
+  return new Image360RevisionEntity<DMDataSourceType>(
+    createMockDataProvider(annotations),
+    imageDescriptor,
+    createImage360VisualizationBox(),
+    new Image360AnnotationFilter({})
+  );
 }
 
 function createRevisionWithAnnotations(annotations: AnnotationModel[]): Image360RevisionEntity<ClassicDataSourceType> {
@@ -118,8 +168,6 @@ function createRevisionWithAnnotations(annotations: AnnotationModel[]): Image360
     id: 'someDescriptorId',
     faceDescriptors: [{ fileId: 1, face: 'front', mimeType: 'image/jpeg' }]
   };
-  const createImage360VisualizationBox = () =>
-    new Image360VisualizationBox(new Matrix4().identity(), new SceneHandler(), { deviceType: 'desktop' });
 
   return new Image360RevisionEntity<ClassicDataSourceType>(
     createMockDataProvider(annotations),
@@ -127,4 +175,8 @@ function createRevisionWithAnnotations(annotations: AnnotationModel[]): Image360
     createImage360VisualizationBox(),
     new Image360AnnotationFilter({})
   );
+}
+
+function createImage360VisualizationBox() {
+  return new Image360VisualizationBox(new Matrix4().identity(), new SceneHandler(), { deviceType: 'desktop' });
 }
