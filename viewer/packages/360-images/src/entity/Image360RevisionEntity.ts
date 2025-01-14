@@ -167,7 +167,11 @@ export class Image360RevisionEntity<T extends DataSourceType> implements Image36
     const annotationObjects = filteredAnnotationData
       .map(data => {
         const faceDescriptor = getAssociatedFaceDescriptor(data, this._image360Descriptor);
-        return ImageAnnotationObject.createAnnotationObject(data, faceDescriptor?.face);
+        return ImageAnnotationObject.createAnnotationObject(
+          data,
+          faceDescriptor?.face,
+          this._image360VisualizationBox.getTransform()
+        );
       })
       .filter(isDefined);
 

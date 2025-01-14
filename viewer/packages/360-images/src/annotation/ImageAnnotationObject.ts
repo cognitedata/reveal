@@ -15,7 +15,7 @@ import { Image360AnnotationAppearance } from './types';
 type FaceType = Image360FileDescriptor['face'];
 
 import { VariableWidthLine } from '@reveal/utilities';
-import { Mesh3dAnnotationGeometryData } from './geometry/Mesh3dAnnotationGeometryData';
+import { DmMesh3dAnnotationGeometryData } from './geometry/DmMesh3dAnnotationGeometryData';
 import { isAnnotationAssetLink, isAnnotationsObjectDetection, isCoreDmImage360Annotation } from './typeGuards';
 
 const DEFAULT_ANNOTATION_COLOR = new Color(0.8, 0.8, 0.3);
@@ -37,9 +37,10 @@ export class ImageAnnotationObject<T extends DataSourceType> implements Image360
 
   public static createAnnotationObject<StaticT extends DataSourceType>(
     annotation: StaticT['image360AnnotationType'],
-    face: FaceType | undefined
+    face: FaceType | undefined,
+    visualizationBoxTransform: Matrix4
   ): ImageAnnotationObject<StaticT> | undefined {
-    const objectData = ImageAnnotationObject.createObjectData(annotation);
+    const objectData = ImageAnnotationObject.createObjectData(annotation, visualizationBoxTransform);
 
     if (objectData === undefined) {
       return undefined;
@@ -49,10 +50,11 @@ export class ImageAnnotationObject<T extends DataSourceType> implements Image360
   }
 
   private static createObjectData<StaticT extends DataSourceType>(
-    annotation: StaticT['image360AnnotationType']
+    annotation: StaticT['image360AnnotationType'],
+    visualizationBoxTransform: Matrix4
   ): ImageAnnotationObjectGeometryData | undefined {
     if (isCoreDmImage360Annotation(annotation)) {
-      return this.createFdmAnnotationData(annotation);
+      return this.createFdmAnnotationData(annotation, visualizationBoxTransform);
     }
 
     const annotationType = annotation.annotationType;
@@ -97,9 +99,10 @@ export class ImageAnnotationObject<T extends DataSourceType> implements Image360
   }
 
   private static createFdmAnnotationData(
-    fdmAnnotation: CoreDmImage360Annotation
+    fdmAnnotation: CoreDmImage360Annotation,
+    visualizationBoxTransform: Matrix4
   ): ImageAnnotationObjectGeometryData | undefined {
-    return new Mesh3dAnnotationGeometryData(fdmAnnotation.polygon);
+    return new DmMesh3dAnnotationGeometryData(fdmAnnotation.polygon, visualizationBoxTransform);
   }
 
   private constructor(

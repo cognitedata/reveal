@@ -8,13 +8,16 @@ import { ImageAnnotationObjectGeometryData } from './ImageAnnotationGeometryData
 import { CDF_TO_VIEWER_TRANSFORMATION } from '@reveal/utilities';
 import { createTriangleIndexesFromVectors } from './createTriangleIndexesFromVectors';
 
-export class Mesh3dAnnotationGeometryData implements ImageAnnotationObjectGeometryData {
+export class DmMesh3dAnnotationGeometryData implements ImageAnnotationObjectGeometryData {
   private readonly _geometry: BufferGeometry;
   private readonly _outlinePoints: Vector3[];
+  private readonly _inverseVisualizationBoxTransform: Matrix4;
 
-  constructor(positions: Vector3[]) {
+  constructor(positions: Vector3[], visualizationBoxTransform: Matrix4) {
     this._geometry = this.createGeometry(positions);
     this._outlinePoints = positions;
+
+    this._inverseVisualizationBoxTransform = new Matrix4().extractRotation(visualizationBoxTransform).invert();
   }
 
   createGeometry(points: Vector3[]): BufferGeometry {
@@ -43,7 +46,7 @@ export class Mesh3dAnnotationGeometryData implements ImageAnnotationObjectGeomet
   }
 
   getNormalizationMatrix(): Matrix4 {
-    return new Matrix4().identity();
+    return this._inverseVisualizationBoxTransform;
   }
 
   getOutlinePoints(): Vector3[] {

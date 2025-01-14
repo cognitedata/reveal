@@ -11,6 +11,7 @@ import { ImageAnnotationObject } from '../annotation/ImageAnnotationObject';
 
 type VisualizationState = {
   opacity: number;
+  visible: boolean;
   scale: THREE.Vector3;
   renderOrder: number;
 };
@@ -20,7 +21,6 @@ export const DEFAULT_IMAGE_360_OPACITY = 1;
 export class Image360VisualizationBox implements Image360Visualization {
   private readonly MAX_MOBILE_IMAGE_SIZE = 1024;
   private readonly _worldTransform: THREE.Matrix4;
-  private _visualizationGroup = new THREE.Group();
   private _visualizationMesh: THREE.Mesh | undefined;
   private _faceMaterials: THREE.MeshBasicMaterial[] = [];
   private readonly _sceneHandler: SceneHandler;
@@ -32,11 +32,16 @@ export class Image360VisualizationBox implements Image360Visualization {
   private readonly _localTransform: THREE.Matrix4;
 
   get visible(): boolean {
-    return this._visualizationGroup.visible;
+    return this._visualizationState.visible;
   }
 
   set visible(value: boolean) {
-    this._visualizationGroup.visible = value;
+    this._visualizationState.visible = value;
+
+    if (this._visualizationMesh === undefined) {
+      return;
+    }
+    this._visualizationMesh.visible = value;
   }
 
   get opacity(): number {
@@ -90,7 +95,8 @@ export class Image360VisualizationBox implements Image360Visualization {
     this._visualizationState = {
       opacity: DEFAULT_IMAGE_360_OPACITY,
       renderOrder: 3,
-      scale: new THREE.Vector3(1, 1, 1)
+      scale: new THREE.Vector3(1, 1, 1),
+      visible: true
     };
   }
 
@@ -128,21 +134,22 @@ export class Image360VisualizationBox implements Image360Visualization {
     visualizationMesh.position.setFromMatrixPosition(this._worldTransform);
     visualizationMesh.rotation.setFromRotationMatrix(this._worldTransform);
     visualizationMesh.scale.copy(this._visualizationState.scale);
-
-    this._visualizationGroup.add(visualizationMesh);
-    this._visualizationGroup.add(this._annotationsGroup);
-
-    this._annotationsGroup.position.setFromMatrixPosition(this._worldTransform);
+    visualizationMesh.visible = this._visualizationState.visible;
+    visualizationMesh.add(this._annotationsGroup);
     this.setAnnotationsVisibility(false);
     this._visualizationMesh = visualizationMesh;
 
-    this._sceneHandler.addObject3D(this._visualizationGroup);
+    this._sceneHandler.addObject3D(this._visualizationMesh);
 
     function getFaceTexture(face: Image360Face['face']) {
       const texture = textures.find(p => p.face === face);
       assert(texture !== undefined);
       return texture.texture;
     }
+  }
+
+  public getTransform(): THREE.Matrix4 {
+    return this._worldTransform;
   }
 
   public loadFaceTextures(faces: Image360Face[]): Promise<Image360Texture[]> {
@@ -175,8 +182,7 @@ export class Image360VisualizationBox implements Image360Visualization {
     if (this._visualizationMesh === undefined) {
       return;
     }
-
-    this._sceneHandler.removeObject3D(this._visualizationGroup);
+    this._sceneHandler.removeObject3D(this._visualizationMesh);
     const imageContainerMaterial = this._visualizationMesh.material;
     const materials =
       imageContainerMaterial instanceof THREE.Material ? [imageContainerMaterial] : imageContainerMaterial;
