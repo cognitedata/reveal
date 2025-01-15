@@ -18,7 +18,7 @@ import { getAssetsList } from '../hooks/network/getAssetsList';
 import { isDefined } from '../utilities/isDefined';
 import { uniqBy } from 'lodash';
 import { useAssetMappedNodesForRevisions } from '../hooks/cad';
-import { useMemo, useState } from 'react';
+import { useMemo, useRef } from 'react';
 
 export type ModelMappings = {
   model: AddModelOptions;
@@ -58,7 +58,7 @@ export const useSearchMappedEquipmentAssetMappings = (
     );
   }, [assetMappingList]);
 
-  const [unmappedAssetIds, setUnmappedAssetIds] = useState(new Set<number>());
+  const unmappedAssetIdsRef = useRef(new Set<number>());
 
   const queryKey = useMemo(
     () => [
@@ -83,7 +83,7 @@ export const useSearchMappedEquipmentAssetMappings = (
 
     const fetchedAssets = assetsResponse.items.filter(isDefined);
     const filteredSearchedAssets = fetchedAssets.filter(
-      (asset) => assetIds.has(asset.id) && !unmappedAssetIds.has(asset.id)
+      (asset) => assetIds.has(asset.id) && !unmappedAssetIdsRef.current.has(asset.id)
     );
 
     const uniqueAssets = uniqBy(
@@ -95,13 +95,11 @@ export const useSearchMappedEquipmentAssetMappings = (
       return { assets: uniqueAssets, nextCursor: assetsResponse.nextCursor };
     }
 
-    const newUnmappedAssetIds = new Set(unmappedAssetIds);
     fetchedAssets.forEach((asset) => {
       if (!assetIds.has(asset.id)) {
-        newUnmappedAssetIds.add(asset.id);
+        unmappedAssetIdsRef.current.add(asset.id);
       }
     });
-    setUnmappedAssetIds(newUnmappedAssetIds);
 
     return await fetchAssets(assetsResponse.nextCursor, uniqueAssets);
   };
