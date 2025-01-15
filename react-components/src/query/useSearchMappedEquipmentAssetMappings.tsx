@@ -16,8 +16,8 @@ import {
 import { useSDK } from '../components/RevealCanvas/SDKProvider';
 import { getAssetsList } from '../hooks/network/getAssetsList';
 import { isDefined } from '../utilities/isDefined';
-import { uniqBy } from 'lodash';
 import { useAssetMappedNodesForRevisions } from '../hooks/cad';
+import { useMemo } from 'react';
 
 export type ModelMappings = {
   model: AddModelOptions;
@@ -48,53 +48,68 @@ export const useSearchMappedEquipmentAssetMappings = (
   const { data: assetMappingList, isFetched: isAssetMappingNodesFetched } =
     useAssetMappedNodesForRevisions(models.map((model) => ({ ...model, type: 'cad' })));
 
-  return useInfiniteQuery({
-    queryKey: [
+  const mapped3dAssetIds = useMemo(() => {
+    if (assetMappingList === undefined) return new Set<number>();
+    return new Set(
+      assetMappingList.flatMap((mapping) =>
+        mapping.assetMappings.map((assetMapping) => assetMapping.assetId)
+      )
+    );
+  }, [assetMappingList]);
+
+  const queryKey = useMemo(
+    () => [
       'reveal',
       'react-components',
       'search-mapped-asset-mappings',
       query,
-      limit,
       ...models.map((model) => [model.modelId, model.revisionId])
     ],
+    [query, models]
+  );
+
+  const fetchAssets = async (
+    cursor: string | undefined,
+    accumulatedAssets: Asset[],
+    mappedSearchedAssetIds: Set<number>
+  ): Promise<{ assets: Asset[]; nextCursor: string | undefined }> => {
+    const searchedAssetsResponse = await getAssetsList(sdk, {
+      query,
+      limit: 1000,
+      cursor
+    });
+
+    const filteredSearchedAssets = searchedAssetsResponse.items.filter(isDefined);
+    const filteredMappedSearchedAssets = filteredSearchedAssets.filter(
+      (asset) => mapped3dAssetIds.has(asset.id) && !mappedSearchedAssetIds.has(asset.id)
+    );
+
+    accumulatedAssets.push(...filteredMappedSearchedAssets);
+
+    if (accumulatedAssets.length >= limit || searchedAssetsResponse.nextCursor === undefined) {
+      return { assets: accumulatedAssets, nextCursor: searchedAssetsResponse.nextCursor };
+    }
+
+    filteredMappedSearchedAssets.forEach((asset) => {
+      mappedSearchedAssetIds.add(asset.id);
+    });
+
+    return await fetchAssets(
+      searchedAssetsResponse.nextCursor,
+      accumulatedAssets,
+      mappedSearchedAssetIds
+    );
+  };
+
+  return useInfiniteQuery({
+    queryKey,
     queryFn: async ({ pageParam }: { pageParam: string | undefined }) => {
       if (query === '' || assetMappingList === undefined) {
         return { assets: [], nextCursor: undefined };
       }
+      const mappedSearchedAssetIds = new Set<number>();
 
-      const fetchAssets = async (
-        cursor: string | undefined,
-        accumulatedAssets: Asset[]
-      ): Promise<{ assets: Asset[]; nextCursor: string | undefined }> => {
-        const assetsResponse = await getAssetsList(sdk, {
-          query,
-          limit,
-          cursor
-        });
-
-        const fetchedAssets = assetsResponse.items.filter(isDefined);
-        const filteredSearchedAssets = assetMappingList.flatMap((mapping) => {
-          return mapping.assetMappings
-            .filter((assetMapping) =>
-              fetchedAssets.some((asset) => asset.id === assetMapping.assetId)
-            )
-            .map((assetMapping) => fetchedAssets.find((asset) => asset.id === assetMapping.assetId))
-            .filter(isDefined);
-        });
-
-        const uniqueAssets = uniqBy(
-          [...accumulatedAssets, ...filteredSearchedAssets],
-          (asset) => asset.id
-        );
-
-        if (uniqueAssets.length >= limit || assetsResponse.nextCursor === undefined) {
-          return { assets: uniqueAssets, nextCursor: assetsResponse.nextCursor };
-        }
-
-        return await fetchAssets(assetsResponse.nextCursor, uniqueAssets);
-      };
-
-      const { assets, nextCursor } = await fetchAssets(pageParam, []);
+      const { assets, nextCursor } = await fetchAssets(pageParam, [], mappedSearchedAssetIds);
 
       return {
         assets,
