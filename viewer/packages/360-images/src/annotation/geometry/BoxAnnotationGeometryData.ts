@@ -2,16 +2,17 @@
  * Copyright 2023 Cognite AS
  */
 
-import { ImageAnnotationObjectData } from './ImageAnnotationData';
+import { ImageAnnotationObjectGeometryData } from './ImageAnnotationGeometryData';
 
-import { BufferGeometry, Matrix4, PlaneGeometry, Vector2 } from 'three';
+import { BufferGeometry, Matrix4, PlaneGeometry, Vector2, Vector3 } from 'three';
 
 import { AnnotationsBoundingBox } from '@cognite/sdk';
+import { convertPointsTo3d } from './utils';
 
-export class BoxAnnotationData implements ImageAnnotationObjectData {
+export class BoxAnnotationGeometryData implements ImageAnnotationObjectGeometryData {
   private readonly _geometry: PlaneGeometry;
   private readonly _initialTranslation: Matrix4;
-  private readonly _outline: Vector2[];
+  private readonly _outline: Vector3[];
 
   constructor(annotationsBox: AnnotationsBoundingBox) {
     this._geometry = this.createGeometry(annotationsBox);
@@ -36,17 +37,19 @@ export class BoxAnnotationData implements ImageAnnotationObjectData {
     return this._initialTranslation;
   }
 
-  getOutlinePoints(): Vector2[] {
+  getOutlinePoints(): Vector3[] {
     return this._outline;
   }
 }
 
-function getBoundPoints(box: AnnotationsBoundingBox): Vector2[] {
+function getBoundPoints(box: AnnotationsBoundingBox): Vector3[] {
   const span = { x: (box.xMax - box.xMin) / 2, y: (box.yMax - box.yMin) / 2 };
-  return [
+  const points = [
     new Vector2(-span.x, -span.y),
     new Vector2(-span.x, span.y),
     new Vector2(span.x, span.y),
     new Vector2(span.x, -span.y)
   ];
+
+  return convertPointsTo3d(points);
 }

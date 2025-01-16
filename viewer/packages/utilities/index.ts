@@ -83,5 +83,7 @@ export { CDF_TO_VIEWER_TRANSFORMATION } from './src/constants';
 
 export * from './src/workers/workerize-transferable';
 
+export * from './src/fdm';
+
 export * from './src/shapes';
 export * from './src/linalg';

@@ -2,7 +2,7 @@
  * Copyright 2022 Cognite AS
  */
 
-import { ClassicDataSourceType, DMInstanceRef } from '@reveal/data-providers';
+import { ClassicDataSourceType } from '@reveal/data-providers';
 import { PointCloudObjectAppearanceTexture } from './PointCloudObjectAppearanceTexture';
 import {
   AnnotationIdPointCloudObjectCollection,
@@ -11,6 +11,7 @@ import {
 } from '@reveal/pointcloud-styling';
 
 import { Color } from 'three';
+import { DMInstanceKey, DMInstanceRef, dmInstanceRefToKey } from '@reveal/utilities';
 
 const textureWidth = 10;
 const textureHeight = 10;
@@ -77,7 +78,7 @@ describe(PointCloudObjectAppearanceTexture.name, () => {
     const stylableObjectSet = new StyledPointCloudVolumeCollection(objectSet, { color, visible: true });
 
     const objectsMaps = {
-      annotationToObjectIds: new Map<DMInstanceRef, number>([[volumeIntanceRef, objectId]]),
+      annotationToObjectIds: new Map<DMInstanceKey, number>([[dmInstanceRefToKey(volumeIntanceRef), objectId]]),
       objectToAnnotationIds: new Map<number, DMInstanceRef>([[objectId, volumeIntanceRef]])
     };
 
@@ -150,7 +151,7 @@ describe(PointCloudObjectAppearanceTexture.name, () => {
     });
 
     const objectsMaps = {
-      annotationToObjectIds: new Map<DMInstanceRef, number>([[volumeIntanceRef, objectId]]),
+      annotationToObjectIds: new Map<DMInstanceKey, number>([[dmInstanceRefToKey(volumeIntanceRef), objectId]]),
       objectToAnnotationIds: new Map<number, DMInstanceRef>([[objectId, volumeIntanceRef]])
     };
 

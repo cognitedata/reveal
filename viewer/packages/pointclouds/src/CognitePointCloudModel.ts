@@ -222,7 +222,7 @@ export class CognitePointCloudModel<T extends DataSourceType = ClassicDataSource
 
   /**
    * Sets the size of each rendered point in the point cloud.
-   * @default `1`
+   * @default `2`
    */
   set pointSize(size: number) {
     this.pointCloudNode.pointSize = size;

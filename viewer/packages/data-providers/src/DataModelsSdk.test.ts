@@ -2,8 +2,8 @@
  * Copyright 2023 Cognite AS
  */
 
+import { DMInstanceRef } from '@reveal/utilities';
 import { DataModelsSdk } from './DataModelsSdk';
-import { InstanceIdentifier } from './types';
 
 describe(DataModelsSdk.name, () => {
   test('Types from queryNodesAndEdges result, given a constant query, should follow DMS spec', async () => {
@@ -77,7 +77,7 @@ describe(DataModelsSdk.name, () => {
     type QueryResultProp = QueryResult['b'][number]['properties']['TestSpaceB']['bExternalIdOne/1']['bPropOne'] extends
       | string
       | number
-      | InstanceIdentifier
+      | DMInstanceRef
       ? true
       : false;
     expect<QueryResultProp>(true).toBeTrue();

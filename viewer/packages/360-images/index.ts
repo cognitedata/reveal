@@ -8,6 +8,7 @@ export {
   Image360Collection,
   Image360AnnotationAssetFilter,
   Image360AnnotationAssetQueryResult,
+  InstanceLinkable360ImageAnnotationType,
   AssetAnnotationImage360Info
 } from './src/collection/Image360Collection';
 export { Image360Facade } from './src/Image360Facade';
@@ -21,5 +22,9 @@ export { Image360AnnotationIntersection } from './src/annotation/Image360Annotat
 export { Image360Annotation } from './src/annotation/Image360Annotation';
 export { DefaultImage360Collection } from './src/collection/DefaultImage360Collection';
 export { IconsOptions } from './src/icons/IconCollection';
-export { Image360History } from './src/Image360History';
+export { Image360CollectionSourceType, Image360IconIntersectionData } from './src/types';
+export { Image360AnnotationFilter } from './src/annotation/Image360AnnotationFilter';
+export { DEFAULT_IMAGE_360_OPACITY } from './src/entity/Image360VisualizationBox';
 export { Image360Action } from './src/Image360Action';
+export { Image360History } from './src/Image360History';
+export { createCollectionIdString } from './src/collection/createCollectionIdString';

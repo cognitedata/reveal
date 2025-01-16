@@ -4,7 +4,7 @@
 
 import { HasExistingDataFilterV3 } from '@cognite/sdk';
 import { COGNITE_POINT_CLOUD_VOLUME_SOURCE } from '../../utilities/constants';
-import { DMInstanceRef } from '../types';
+import { DMInstanceRef } from '@reveal/utilities';
 
 export type AssetProperties = {
   object3D: DMInstanceRef;

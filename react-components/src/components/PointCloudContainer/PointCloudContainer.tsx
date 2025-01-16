@@ -107,9 +107,13 @@ export function PointCloudContainer({
     return pointCloudModel;
 
     async function getOrAddModel(): Promise<CognitePointCloudModel<DataSourceType>> {
-      const viewerModel = viewer.models.find((pointCloudModel) =>
-        isSameModel(pointCloudModel, addModelOptions)
-      );
+      const viewerModel = viewer.models.find((pointCloudModel) => {
+        const pointCloudModelClone = {
+          ...pointCloudModel,
+          transform: pointCloudModel.getModelTransformation()
+        };
+        return isSameModel(pointCloudModelClone, addModelOptions);
+      });
 
       if (viewerModel !== undefined) {
         return await Promise.resolve(viewerModel as CognitePointCloudModel<DataSourceType>);

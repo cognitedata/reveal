@@ -57,6 +57,12 @@ export function isClassicPointCloudVolume(
   return annotation.annotationId !== undefined;
 }
 
+function hasStylableObject(
+  obj: PointCloudObject<DataSourceType>
+): obj is PointCloudObject<DataSourceType> & { stylableObject: StylableObject } {
+  return obj.stylableObject !== undefined;
+}
+
 export function getNodeExternalIdEqualsFilter<T extends string>(externalId: T): TableExpressionEqualsFilterV3 {
   return {
     equals: {
@@ -73,10 +79,4 @@ export function getNodeSpaceEqualsFilter<T extends string>(space: T): TableExpre
       value: space
     }
   } as const satisfies TableExpressionEqualsFilterV3;
-}
-
-function hasStylableObject(
-  obj: PointCloudObject<DataSourceType>
-): obj is PointCloudObject<DataSourceType> & { stylableObject: StylableObject } {
-  return obj.stylableObject !== undefined;
 }
