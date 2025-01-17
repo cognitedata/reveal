@@ -59,8 +59,7 @@ export class Image360AnnotationCache {
 
     const annotationsInfoPromise = await Promise.all(
       image360Collections.map(async (image360Collection: Image360Collection<DataSourceType>) => {
-        const annotations = await image360Collection.getAnnotationsInfo('assets');
-        return annotations;
+        return image360Collection.getAnnotationsInfo('assets');
       })
     );
 
