@@ -1,7 +1,9 @@
-import { Image360Annotation } from '@cognite/reveal';
-import { Image360AnnotationId } from './types';
+/*!
+ * Copyright 2025 Cognite AS
+ */
+import { type Image360AnnotationId } from './types';
 import { isClassicImage360AnnotationId, isDMImage360AnnotationId } from './typeGuards';
-import { DmsUniqueIdentifier } from '../../data-providers';
+import { type DmsUniqueIdentifier } from '../../data-providers';
 import { isSameDmsId } from '../instanceIds';
 
 export function isSameImage360AnnotationId(
@@ -16,6 +18,6 @@ export function isSameImage360AnnotationId(
   );
 }
 
-export function isSameDMAnnotationId(id0: DmsUniqueIdentifier, id1: DmsUniqueIdentifier) {
+export function isSameDMAnnotationId(id0: DmsUniqueIdentifier, id1: DmsUniqueIdentifier): boolean {
   return isSameDmsId(id0, id1);
 }

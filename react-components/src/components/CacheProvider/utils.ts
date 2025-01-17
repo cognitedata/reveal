@@ -16,7 +16,7 @@ import {
   type InstanceReferenceKey
 } from '../../utilities/instanceIds/toKey';
 import { createFdmKey } from './idAndKeyTranslation';
-import { DmsUniqueIdentifier } from '../../data-providers';
+import { type DmsUniqueIdentifier } from '../../data-providers';
 
 export function getInstanceReferenceFromPointCloudAnnotation(
   annotation: AnnotationModel

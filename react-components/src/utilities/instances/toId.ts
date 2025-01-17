@@ -1,6 +1,9 @@
+/*!
+ * Copyright 2025 Cognite AS
+ */
 import { assertNever } from '../assertNever';
-import { InstanceReference } from '../instanceIds';
-import { AssetInstance } from './AssetInstance';
+import { type InstanceReference } from '../instanceIds';
+import { type AssetInstance } from './AssetInstance';
 import { isClassicAsset, isDmAsset } from './typeGuards';
 
 export function getAssetInstanceReference(instance: AssetInstance): InstanceReference {

@@ -4,7 +4,7 @@
 import { type ExternalId, type IdEither, type InternalId } from '@cognite/sdk';
 import { type DmsUniqueIdentifier } from '../../data-providers';
 import { isDmsInstance, isExternalId, isIdEither, isInternalId } from './typeGuards';
-import { InstanceReference } from './types';
+import { type InstanceReference } from './types';
 
 export function isSameAssetReference(id0: InstanceReference, id1: InstanceReference): boolean {
   return (

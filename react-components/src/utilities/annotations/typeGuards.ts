@@ -1,11 +1,14 @@
+/*!
+ * Copyright 2025 Cognite AS
+ */
 import {
-  AnnotationData,
-  AnnotationModel,
-  AnnotationsCogniteAnnotationTypesImagesAssetLink
+  type AnnotationData,
+  type AnnotationModel,
+  type AnnotationsCogniteAnnotationTypesImagesAssetLink
 } from '@cognite/sdk';
-import { DmsUniqueIdentifier } from '../../data-providers';
-import { Image360AnnotationContent, Image360AnnotationId } from './types';
-import { CoreDmImage360Annotation } from '@cognite/reveal';
+import { type DmsUniqueIdentifier } from '../../data-providers';
+import { type Image360AnnotationContent, type Image360AnnotationId } from './types';
+import { type CoreDmImage360Annotation } from '@cognite/reveal';
 
 export function isClassicImage360AnnotationId(
   annotationId: Image360AnnotationId
