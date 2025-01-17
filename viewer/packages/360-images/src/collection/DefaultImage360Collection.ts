@@ -16,7 +16,13 @@ import { Image360EnteredDelegate, Image360ExitedDelegate } from '../types';
 import { IconCollection, IconCullingScheme } from '../icons/IconCollection';
 import { Image360AnnotationAppearance } from '../annotation/types';
 
-import { DataSourceType, Image360FileDescriptor, Image360Provider } from '@reveal/data-providers';
+import {
+  ClassicDataSourceType,
+  DataSourceType,
+  DMDataSourceType,
+  Image360FileDescriptor,
+  Image360Provider
+} from '@reveal/data-providers';
 import { Image360AnnotationFilter } from '../annotation/Image360AnnotationFilter';
 import { Matrix4 } from 'three';
 import { DEFAULT_IMAGE_360_OPACITY } from '../entity/Image360VisualizationBox';
@@ -281,7 +287,7 @@ export class DefaultImage360Collection<T extends DataSourceType> implements Imag
   }
 
   async getAssetIds(): Promise<InstanceReference<T>[]> {
-    const annotations = await this._image360DataProvider.getAllImage360AnnotationInfos(this, annotation =>
+    const annotations = await this._image360DataProvider.getAllImage360AnnotationInfos('all', this, annotation =>
       this._annotationFilter.filter(annotation)
     );
 
@@ -290,8 +296,17 @@ export class DefaultImage360Collection<T extends DataSourceType> implements Imag
       .filter(result => result !== undefined);
   }
 
-  async getAnnotationsInfo(): Promise<AssetAnnotationImage360Info<T>[]> {
-    return this._image360DataProvider.getAllImage360AnnotationInfos(this, annotation =>
+  getAnnotationsInfo(source: 'assets'): Promise<AssetAnnotationImage360Info<ClassicDataSourceType>[]>;
+  getAnnotationsInfo(source: 'cdm'): Promise<AssetAnnotationImage360Info<DMDataSourceType>[]>;
+  getAnnotationsInfo(source: 'all'): Promise<AssetAnnotationImage360Info<DataSourceType>[]>;
+  async getAnnotationsInfo(
+    source: 'assets' | 'cdm' | 'all'
+  ): Promise<
+    | AssetAnnotationImage360Info<ClassicDataSourceType>[]
+    | AssetAnnotationImage360Info<DMDataSourceType>[]
+    | AssetAnnotationImage360Info<DataSourceType>[]
+  > {
+    return this._image360DataProvider.getAllImage360AnnotationInfos(source, this, annotation =>
       this._annotationFilter.filter(annotation)
     );
   }

@@ -21,7 +21,7 @@ import {
   Image360AnnotationSpecifier,
   InstanceReference
 } from '../types';
-import { ClassicDataSourceType } from '../DataSourceType';
+import { ClassicDataSourceType, DataSourceType, DMDataSourceType } from '../DataSourceType';
 import {
   AssetAnnotationImage360Info,
   DefaultImage360Collection,
@@ -111,10 +111,33 @@ export class Cdf360ImageAnnotationProvider implements Image360AnnotationProvider
     return response.map((a: AnnotationsAssetRef) => a.id).filter((id): id is number => id !== undefined);
   }
 
-  public async getAllImage360AnnotationInfos(
+  getAllImage360AnnotationInfos(
+    source: 'assets',
     collection: DefaultImage360Collection<ClassicDataSourceType>,
     annotationFilter: Image360AnnotationFilterDelegate<ClassicDataSourceType>
-  ): Promise<AssetAnnotationImage360Info<ClassicDataSourceType>[]> {
+  ): Promise<AssetAnnotationImage360Info<ClassicDataSourceType>[]>;
+  getAllImage360AnnotationInfos(
+    source: 'cdm',
+    collection: DefaultImage360Collection<ClassicDataSourceType>,
+    annotationFilter: Image360AnnotationFilterDelegate<ClassicDataSourceType>
+  ): Promise<AssetAnnotationImage360Info<DMDataSourceType>[]>;
+  getAllImage360AnnotationInfos(
+    source: 'all',
+    collection: DefaultImage360Collection<ClassicDataSourceType>,
+    annotationFilter: Image360AnnotationFilterDelegate<ClassicDataSourceType>
+  ): Promise<AssetAnnotationImage360Info<DataSourceType>[]>;
+  public async getAllImage360AnnotationInfos(
+    source: 'all' | 'assets' | 'cdm',
+    collection: DefaultImage360Collection<ClassicDataSourceType>,
+    annotationFilter: Image360AnnotationFilterDelegate<ClassicDataSourceType>
+  ): Promise<
+    | AssetAnnotationImage360Info<ClassicDataSourceType>[]
+    | AssetAnnotationImage360Info<DMDataSourceType>[]
+    | AssetAnnotationImage360Info<DataSourceType>[]
+  > {
+    if (source === 'cdm') {
+      return [];
+    }
     const fileIdToEntityRevision = this.createFileIdToEntityRevisionMap(collection);
     const annotations = await this.fetchAllAnnotations(collection, annotationFilter);
 
