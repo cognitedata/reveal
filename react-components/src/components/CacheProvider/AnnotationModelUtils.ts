@@ -65,6 +65,10 @@ async function fetchAssetsForDmsIds(
   dmsIds: DmsUniqueIdentifier[],
   sdk: CogniteClient
 ): Promise<Array<FdmNode<AssetProperties>>> {
+  if (dmsIds.length === 0) {
+    return [];
+  }
+
   const fdmSdk = new FdmSDK(sdk);
 
   const response = await fdmSdk.getByExternalIds<AssetProperties>(
