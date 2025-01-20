@@ -201,14 +201,23 @@ export interface Image360Collection<T extends DataSourceType = ClassicDataSource
   getAssetIds(): Promise<IdEither[]>;
 
   /**
-   * Get IDs of all CDF assets and related image/revision associated with this
-   * 360 image collection through CDF annotations
-   *
-   * @param source What source data to pull the annotation info from
+   * Fetches annotations from all available sources
+   */
+  getAnnotationsInfo(source: 'all'): Promise<AssetAnnotationImage360Info<DataSourceType>[]>;
+  /**
+   * Fetches annotations from the CDF Annotation APIs, which are linked to CDF assets
    */
   getAnnotationsInfo(source: 'assets'): Promise<AssetAnnotationImage360Info<ClassicDataSourceType>[]>;
+  /**
+   * Fetches annotations from the CDF Core Data Model
+   */
   getAnnotationsInfo(source: 'cdm'): Promise<AssetAnnotationImage360Info<DMDataSourceType>[]>;
-  getAnnotationsInfo(source: 'all'): Promise<AssetAnnotationImage360Info<DataSourceType>[]>;
+  /**
+   * Get info of assets and annotations associated with this
+   * 360 image collection through various sources
+   *
+   * @param source What source data to pull the annotation info from. Must be `'asset'`, `'cdm'` or `'all'`
+   */
   getAnnotationsInfo(
     source: 'assets' | 'cdm' | 'all'
   ): Promise<
