@@ -39,7 +39,7 @@ export type AddImage360CollectionEventsOptions = {
 } & CommonImage360CollectionAddOptions;
 
 export type AddImage360CollectionDatamodelsOptions = {
-  source: 'dm';
+  source: 'cdm' | 'dm';
   externalId: string;
   space: string;
 } & CommonImage360CollectionAddOptions;
