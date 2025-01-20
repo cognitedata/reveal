@@ -2,7 +2,7 @@
  * Copyright 2025 Cognite AS
  */
 import { Image360Provider } from './Image360Provider';
-import { DataSourceType } from './DataSourceType';
+import { ClassicDataSourceType, DataSourceType, DMDataSourceType } from './DataSourceType';
 import {
   Historical360ImageSet,
   Image360AnnotationFilterDelegate,
@@ -70,9 +70,29 @@ export class Image360ProviderCombiner<T extends DataSourceType> implements Image
   }
 
   getAllImage360AnnotationInfos(
+    source: 'assets',
     collection: DefaultImage360Collection<T>,
     annotationFilter: Image360AnnotationFilterDelegate<T>
-  ): Promise<AssetAnnotationImage360Info<T>[]> {
-    return this._annotationProvider.getAllImage360AnnotationInfos(collection, annotationFilter);
+  ): Promise<AssetAnnotationImage360Info<ClassicDataSourceType>[]>;
+  getAllImage360AnnotationInfos(
+    source: 'cdm',
+    collection: DefaultImage360Collection<T>,
+    annotationFilter: Image360AnnotationFilterDelegate<T>
+  ): Promise<AssetAnnotationImage360Info<DMDataSourceType>[]>;
+  getAllImage360AnnotationInfos(
+    source: 'all',
+    collection: DefaultImage360Collection<T>,
+    annotationFilter: Image360AnnotationFilterDelegate<T>
+  ): Promise<AssetAnnotationImage360Info<DataSourceType>[]>;
+  getAllImage360AnnotationInfos(
+    source: 'all' | 'assets' | 'cdm',
+    collection: DefaultImage360Collection<T>,
+    annotationFilter: Image360AnnotationFilterDelegate<T>
+  ): Promise<
+    | AssetAnnotationImage360Info<ClassicDataSourceType>[]
+    | AssetAnnotationImage360Info<DMDataSourceType>[]
+    | AssetAnnotationImage360Info<DataSourceType>[]
+  > {
+    return this._annotationProvider.getAllImage360AnnotationInfos(source, collection, annotationFilter);
   }
 }

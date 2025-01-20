@@ -9,9 +9,9 @@ import { Image360AnnotationAppearance } from '../annotation/types';
 import { Image360Revision } from '../entity/Image360Revision';
 import { IdEither } from '@cognite/sdk';
 import { Image360Annotation } from '../annotation/Image360Annotation';
-import { ClassicDataSourceType, DataSourceType } from '@reveal/data-providers';
+import { ClassicDataSourceType, DataSourceType, DMDataSourceType } from '@reveal/data-providers';
 import { Matrix4 } from 'three';
-import { ImageAssetLinkAnnotationInfo, InstanceReference } from '@reveal/data-providers/src/types';
+import { ImageAssetLinkAnnotationInfo, InstanceReference } from '@reveal/data-providers';
 
 /**
  * Annotation type that may be linked to assets. Only relevant for classic annotations, where some
@@ -201,10 +201,28 @@ export interface Image360Collection<T extends DataSourceType = ClassicDataSource
   getAssetIds(): Promise<IdEither[]>;
 
   /**
-   * Get IDs of all CDF assets and related image/revision associated with this
-   * 360 image collection through CDF annotations
-   *
-   * @param source What source data to pull the annotation info from
+   * Fetches annotations from all available sources
    */
-  getAnnotationsInfo(source: 'assets'): Promise<AssetAnnotationImage360Info<T>[]>;
+  getAnnotationsInfo(source: 'all'): Promise<AssetAnnotationImage360Info<DataSourceType>[]>;
+  /**
+   * Fetches annotations from the CDF Annotation APIs, which are linked to CDF assets
+   */
+  getAnnotationsInfo(source: 'assets'): Promise<AssetAnnotationImage360Info<ClassicDataSourceType>[]>;
+  /**
+   * Fetches annotations from the CDF Core Data Model
+   */
+  getAnnotationsInfo(source: 'cdm'): Promise<AssetAnnotationImage360Info<DMDataSourceType>[]>;
+  /**
+   * Get info of assets and annotations associated with this
+   * 360 image collection through various sources
+   *
+   * @param source What source data to pull the annotation info from. Must be `'asset'`, `'cdm'` or `'all'`
+   */
+  getAnnotationsInfo(
+    source: 'assets' | 'cdm' | 'all'
+  ): Promise<
+    | AssetAnnotationImage360Info<ClassicDataSourceType>[]
+    | AssetAnnotationImage360Info<DMDataSourceType>
+    | AssetAnnotationImage360Info<DataSourceType>[]
+  >;
 }

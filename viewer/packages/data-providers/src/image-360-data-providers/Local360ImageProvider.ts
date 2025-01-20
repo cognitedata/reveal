@@ -12,7 +12,7 @@ import {
   InstanceReference
 } from '../types';
 import { CogniteInternalId, IdEither } from '@cognite/sdk';
-import { ClassicDataSourceType } from '../DataSourceType';
+import { ClassicDataSourceType, DataSourceType, DMDataSourceType } from '../DataSourceType';
 import {
   AssetAnnotationImage360Info,
   DefaultImage360Collection,
@@ -129,9 +129,29 @@ export class Local360ImageProvider implements Image360Provider<ClassicDataSource
   }
 
   getAllImage360AnnotationInfos(
+    source: 'assets',
+    collection: DefaultImage360Collection<ClassicDataSourceType>,
+    annotationFilter: Image360AnnotationFilterDelegate<ClassicDataSourceType>
+  ): Promise<AssetAnnotationImage360Info<ClassicDataSourceType>[]>;
+  getAllImage360AnnotationInfos(
+    source: 'cdm',
+    collection: DefaultImage360Collection<ClassicDataSourceType>,
+    annotationFilter: Image360AnnotationFilterDelegate<ClassicDataSourceType>
+  ): Promise<AssetAnnotationImage360Info<DMDataSourceType>[]>;
+  getAllImage360AnnotationInfos(
+    source: 'all',
+    collection: DefaultImage360Collection<ClassicDataSourceType>,
+    annotationFilter: Image360AnnotationFilterDelegate<ClassicDataSourceType>
+  ): Promise<AssetAnnotationImage360Info<DataSourceType>[]>;
+  public async getAllImage360AnnotationInfos(
+    _source: 'all' | 'assets' | 'cdm',
     _collection: DefaultImage360Collection<ClassicDataSourceType>,
     _annotationFilter: Image360AnnotationFilterDelegate<ClassicDataSourceType>
-  ): Promise<AssetAnnotationImage360Info[]> {
+  ): Promise<
+    | AssetAnnotationImage360Info<ClassicDataSourceType>[]
+    | AssetAnnotationImage360Info<DMDataSourceType>[]
+    | AssetAnnotationImage360Info<DataSourceType>[]
+  > {
     return Promise.resolve([]);
   }
 }
