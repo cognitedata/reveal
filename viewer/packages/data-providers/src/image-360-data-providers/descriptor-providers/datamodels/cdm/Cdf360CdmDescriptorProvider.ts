@@ -85,11 +85,13 @@ export class Cdf360CdmDescriptorProvider implements Image360DescriptorProvider<D
       return `${station.externalId}-${station.space}`;
     });
 
-    return Object.values(groups)
+    const ret = Object.values(groups)
       .concat(imagesWithoutStation.map(p => [p]))
-      .map(imageWithFileDescriptors =>
-        this.getHistorical360ImageSet(collectionId, collectionLabel, imageWithFileDescriptors)
-      );
+      .map(imageWithFileDescriptors => {
+        return this.getHistorical360ImageSet(collectionId, collectionLabel, imageWithFileDescriptors);
+      });
+
+    return ret;
   }
 
   private async queryCollection({
