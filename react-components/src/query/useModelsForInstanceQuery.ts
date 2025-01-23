@@ -38,6 +38,10 @@ export const useModelsForInstanceQuery = (
       if (isDmsInstance(instance)) {
         return await getModelsForDmsInstance(instance, fdmSdk, fdm3dDataProvider);
       }
+
+      throw Error(
+        `Can not fetch models for instance: ${JSON.stringify(instance)}. InternalId or DMS ID required`
+      );
     },
     enabled: instance !== undefined
   });
