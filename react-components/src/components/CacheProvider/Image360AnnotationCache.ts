@@ -2,7 +2,7 @@
  * Copyright 2024 Cognite AS
  */
 
-import { type Asset, type CogniteClient } from '@cognite/sdk';
+import { type CogniteClient } from '@cognite/sdk';
 import { type Image360AnnotationAssetInfo } from './types';
 import {
   getAssetIdKeyForImage360Annotation,
@@ -14,18 +14,16 @@ import {
   type AssetAnnotationImage360Info,
   type Cognite3DViewer,
   type Image360Collection,
-  Image360Annotation
+  type Image360Annotation
 } from '@cognite/reveal';
 import { fetchAssetsForAssetReferences } from './AnnotationModelUtils';
 import { isDefined } from '../../utilities/isDefined';
 import { assetInstanceToKey } from '../../utilities/assetInstanceToKey';
-import { type AssetProperties } from '../../data-providers/core-dm-provider/utils/filters';
 import { type InstanceReference } from '../../utilities/instanceIds';
 import { createInstanceReferenceKey } from '../../utilities/instanceIds/toKey';
 import { uniqBy } from 'lodash';
-import { type FdmNode } from '../../data-providers/FdmSDK';
 import { type AssetInstance } from '../../utilities/instances';
-import { Vector3 } from 'three';
+import { type Vector3 } from 'three';
 
 export class Image360AnnotationCache {
   private readonly _sdk: CogniteClient;
@@ -94,7 +92,7 @@ export class Image360AnnotationCache {
         const idRef = getAssetIdKeyForImage360Annotation(assetAnnotationImageInfo.annotationInfo);
         return idRef !== undefined && assets.has(idRef);
       })
-      .map((info) => createAnnotationInfoWithAsset(info, assets));
+      .map(async (info) => await createAnnotationInfoWithAsset(info, assets));
 
     const assetsWithAnnotations = (await Promise.all(assetsWithAnnotationsPromises)).filter(
       isDefined

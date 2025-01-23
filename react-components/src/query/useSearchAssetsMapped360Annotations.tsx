@@ -104,13 +104,11 @@ async function getAssetMapped360Annotations(
 ): Promise<Image360AnnotationMappedAssetData[]> {
   const [classicSiteIds, _dmCollectionIds] = partition(siteIds, (id) => typeof id === 'string');
 
-  return ([] as Image360AnnotationMappedAssetData[]).concat(
-    await getClassicAssetMapped360Annotations(classicSiteIds, sdk, image360AnnotationFilterOptions)
+  return await getClassicAssetMapped360Annotations(
+    classicSiteIds,
+    sdk,
+    image360AnnotationFilterOptions
   );
-  // TODO: Implement DM AssetMapped 360 annotations too
-  /* .concat(
-      await getDmAssetMapped360Annotations(dmCollectionIds, sdk, image360AnnotationFilterOptions)
-    ); */
 }
 
 async function getClassicAssetMapped360Annotations(
@@ -154,8 +152,8 @@ async function get360AnnotationAssets(
     uniqueAnnotationMapping.map((mapping) => mapping.assetReference),
     sdk
   );
-  const flatAssets = assets.flat();
-  return getAssetsWithAnnotations(flatAssets, filteredAnnotationMappings);
+
+  return getAssetsWithAnnotations(assets, filteredAnnotationMappings);
 }
 
 function getAssetsWithAnnotations(

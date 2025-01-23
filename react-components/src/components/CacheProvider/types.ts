@@ -2,16 +2,14 @@
  * Copyright 2023 Cognite AS
  */
 import {
-  type Asset,
   type AnnotationModel,
   type AnnotationsBoundingVolume,
   type Node3D,
   type AnnotationsCogniteAnnotationTypesImagesAssetLink
 } from '@cognite/sdk';
-import { type FdmNode, type Source, type DmsUniqueIdentifier } from '../../data-providers/FdmSDK';
+import { type Source, type DmsUniqueIdentifier } from '../../data-providers/FdmSDK';
 import { type AssetAnnotationImage360Info, type DataSourceType } from '@cognite/reveal';
 import { type Vector3 } from 'three';
-import { type AssetProperties } from '../../data-providers/core-dm-provider/utils/filters';
 import { type AssetInstance } from '../../utilities/instances';
 
 export type FdmCadConnection = {
