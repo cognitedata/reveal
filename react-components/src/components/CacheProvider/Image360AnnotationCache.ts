@@ -17,12 +17,13 @@ import {
 } from '@cognite/reveal';
 import { fetchAssetsForAssetReferences } from './AnnotationModelUtils';
 import { isDefined } from '../../utilities/isDefined';
-import { assetInstanceToKey } from '../../utilities/assetInstancetoKey';
+import { assetInstanceToKey } from '../../utilities/assetInstanceToKey';
 import { type AssetProperties } from '../../data-providers/core-dm-provider/utils/filters';
 import { type InstanceReference } from '../../utilities/instanceIds';
 import { createInstanceReferenceKey } from '../../utilities/instanceIds/toKey';
 import { uniqBy } from 'lodash';
 import { type FdmNode } from '../../data-providers/FdmSDK';
+import { AssetInstance } from '../../utilities/instances';
 
 export class Image360AnnotationCache {
   private readonly _sdk: CogniteClient;
@@ -84,7 +85,7 @@ export class Image360AnnotationCache {
 
   private async getAssetWithAnnotationsMapped(
     assetAnnotationImage360Infos: Array<AssetAnnotationImage360Info<DataSourceType>>,
-    assets: Map<string, Asset | FdmNode<AssetProperties>>
+    assets: Map<string, AssetInstance>
   ): Promise<Image360AnnotationAssetInfo[]> {
     const assetsWithAnnotationsPromises = assetAnnotationImage360Infos
       .filter((assetAnnotationImageInfo) => {
