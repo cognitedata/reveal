@@ -12,7 +12,7 @@ import { type FdmNode, type Source, type DmsUniqueIdentifier } from '../../data-
 import { type AssetAnnotationImage360Info, type DataSourceType } from '@cognite/reveal';
 import { type Vector3 } from 'three';
 import { type AssetProperties } from '../../data-providers/core-dm-provider/utils/filters';
-import { AssetInstance } from '../../utilities/instances';
+import { type AssetInstance } from '../../utilities/instances';
 
 export type FdmCadConnection = {
   instance: DmsUniqueIdentifier;

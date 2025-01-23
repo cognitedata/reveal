@@ -15,7 +15,7 @@ import {
 } from '../../data-providers/core-dm-provider/dataModels';
 import { type InstanceReference, isIdEither } from '../../utilities/instanceIds';
 import { isSameIdEither } from '../../utilities/instanceIds/equality';
-import { AssetInstance } from '../../utilities/instances';
+import { type AssetInstance } from '../../utilities/instances';
 
 export async function fetchPointCloudAnnotationAssets(
   annotations: PointCloudAnnotationModel[],
@@ -54,10 +54,10 @@ export async function fetchPointCloudAnnotationAssets(
 export async function fetchAssetsForAssetReferences(
   assetIds: InstanceReference[],
   sdk: CogniteClient
-): Promise<Array<AssetInstance>> {
+): Promise<AssetInstance[]> {
   const [classicIds, dmIds] = partition(assetIds, isIdEither);
 
-  return ([] as Array<AssetInstance>)
+  return ([] as AssetInstance[])
     .concat(await fetchAssetsForAssetIds(classicIds, sdk))
     .concat(await fetchAssetsForDmsIds(dmIds, sdk));
 }

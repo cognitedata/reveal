@@ -13,7 +13,8 @@ import {
   type DataSourceType,
   type AssetAnnotationImage360Info,
   type Cognite3DViewer,
-  type Image360Collection
+  type Image360Collection,
+  Image360Annotation
 } from '@cognite/reveal';
 import { fetchAssetsForAssetReferences } from './AnnotationModelUtils';
 import { isDefined } from '../../utilities/isDefined';
@@ -23,7 +24,8 @@ import { type InstanceReference } from '../../utilities/instanceIds';
 import { createInstanceReferenceKey } from '../../utilities/instanceIds/toKey';
 import { uniqBy } from 'lodash';
 import { type FdmNode } from '../../data-providers/FdmSDK';
-import { AssetInstance } from '../../utilities/instances';
+import { type AssetInstance } from '../../utilities/instances';
+import { Vector3 } from 'three';
 
 export class Image360AnnotationCache {
   private readonly _sdk: CogniteClient;
@@ -92,37 +94,7 @@ export class Image360AnnotationCache {
         const idRef = getAssetIdKeyForImage360Annotation(assetAnnotationImageInfo.annotationInfo);
         return idRef !== undefined && assets.has(idRef);
       })
-      .map(async (assetAnnotationImageInfo) => {
-        const idRef = getAssetIdKeyForImage360Annotation(assetAnnotationImageInfo.annotationInfo);
-        if (idRef === undefined) {
-          return undefined;
-        }
-        const asset = assets.get(idRef);
-        if (asset === undefined) {
-          return undefined;
-        }
-        const transform = assetAnnotationImageInfo.imageEntity.transform;
-        const revisionAnnotations = await assetAnnotationImageInfo.imageRevision.getAnnotations();
-
-        const annotationIdKey = getIdKeyForImage360Annotation(
-          assetAnnotationImageInfo.annotationInfo
-        );
-        const correspondingRevisionAnnotation = revisionAnnotations.find((revisionAnnotation) => {
-          return getIdKeyForImage360Annotation(revisionAnnotation.annotation) === annotationIdKey;
-        });
-
-        if (correspondingRevisionAnnotation === undefined) {
-          return undefined;
-        }
-
-        const centerPosition = correspondingRevisionAnnotation.getCenter().applyMatrix4(transform);
-
-        return {
-          asset,
-          assetAnnotationImage360Info: assetAnnotationImageInfo,
-          position: centerPosition
-        };
-      });
+      .map((info) => createAnnotationInfoWithAsset(info, assets));
 
     const assetsWithAnnotations = (await Promise.all(assetsWithAnnotationsPromises)).filter(
       isDefined
@@ -130,4 +102,47 @@ export class Image360AnnotationCache {
 
     return assetsWithAnnotations;
   }
+}
+
+async function createAnnotationInfoWithAsset(
+  assetAnnotationImageInfo: AssetAnnotationImage360Info<DataSourceType>,
+  assets: Map<string, AssetInstance>
+): Promise<Image360AnnotationAssetInfo | undefined> {
+  const idRef = getAssetIdKeyForImage360Annotation(assetAnnotationImageInfo.annotationInfo);
+  if (idRef === undefined) {
+    return undefined;
+  }
+  const asset = assets.get(idRef);
+  if (asset === undefined) {
+    return undefined;
+  }
+  const revisionAnnotations = await assetAnnotationImageInfo.imageRevision.getAnnotations();
+
+  const annotationIdKey = getIdKeyForImage360Annotation(assetAnnotationImageInfo.annotationInfo);
+  const correspondingRevisionAnnotation = revisionAnnotations.find((revisionAnnotation) => {
+    return getIdKeyForImage360Annotation(revisionAnnotation.annotation) === annotationIdKey;
+  });
+
+  if (correspondingRevisionAnnotation === undefined) {
+    return undefined;
+  }
+
+  const centerPosition = getAnnotationCenterPosition(
+    assetAnnotationImageInfo,
+    correspondingRevisionAnnotation
+  );
+
+  return {
+    asset,
+    assetAnnotationImage360Info: assetAnnotationImageInfo,
+    position: centerPosition
+  };
+}
+
+function getAnnotationCenterPosition(
+  assetAnnotationImageInfo: AssetAnnotationImage360Info<DataSourceType>,
+  revisionAnnotation: Image360Annotation<DataSourceType>
+): Vector3 {
+  const transform = assetAnnotationImageInfo.imageEntity.transform;
+  return revisionAnnotation.getCenter().applyMatrix4(transform);
 }
