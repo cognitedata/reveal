@@ -13,7 +13,7 @@ import { type CdfCaches } from '../architecture/base/renderTarget/CdfCaches';
 import { fetchAncestorNodesForTreeIndex } from '../components/CacheProvider/requests';
 import { EMPTY_ARRAY } from './constants';
 import { fetchAnnotationsForModel } from '../hooks/pointClouds/fetchAnnotationsForModel';
-import { isDMIdentifier } from '../components';
+import { isDM3DModelIdentifier } from '../components';
 import { type RevealRenderTarget } from '../architecture';
 import { getInstanceReferenceFromImage360Annotation } from '../components/CacheProvider/utils';
 import { type InstanceReference, isIdEither } from './instanceIds';
@@ -61,7 +61,7 @@ async function getInstancesFromPointCloudIntersection(
   intersection: PointCloudIntersection<DataSourceType>,
   caches: CdfCaches
 ): Promise<InstanceReference[]> {
-  if (isDMIdentifier(intersection.model.modelIdentifier)) {
+  if (isDM3DModelIdentifier(intersection.model.modelIdentifier)) {
     return getPointCloudFdmInstancesFromIntersection(
       intersection as PointCloudIntersection<DMDataSourceType>
     );
