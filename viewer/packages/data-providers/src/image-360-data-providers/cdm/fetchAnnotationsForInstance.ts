@@ -59,12 +59,12 @@ function getImage360AnnotationsForInstanceQuery(instance: DMInstanceRef) {
       },
       object3ds: {
         nodes: {
-          from: 'instance_objects',
+          from: 'instance_object',
           through: { view: COGNITE_VISUALIZABLE_SOURCE, identifier: 'object3D' },
           direction: 'outwards'
         }
       },
-      annotation_dges: {
+      annotation_edges: {
         edges: {
           from: 'object3ds',
           direction: 'outwards',
