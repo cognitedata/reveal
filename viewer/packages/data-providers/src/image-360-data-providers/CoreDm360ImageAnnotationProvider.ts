@@ -48,11 +48,10 @@ export class CoreDm360ImageAnnotationProvider implements Image360AnnotationProvi
     ): Promise<Image360AnnotationAssetQueryResult<DMDataSourceType>[]> {
       const revisions = entity
         .getRevisions()
-        .filter(
-          revision =>
-            relatedRevisionsAndAnnotations.imageRevisionIds.find(foundRevisionId =>
-              isSameImage360RevisionId(revision.identifier, foundRevisionId)
-            ) !== undefined
+        .filter(revision =>
+          relatedRevisionsAndAnnotations.imageRevisionIds.some(foundRevisionId =>
+            isSameImage360RevisionId(revision.identifier, foundRevisionId)
+          )
         );
       return (
         await Promise.all(
@@ -68,7 +67,7 @@ export class CoreDm360ImageAnnotationProvider implements Image360AnnotationProvi
     ): Promise<Image360AnnotationAssetQueryResult<DMDataSourceType>[]> {
       const annotations = await revision.getAnnotations();
       const filteredAnnotations = annotations.filter(annotation =>
-        relatedRevisionsAndAnnotations.annotationIds.find(relatedRevisionAnnotationId =>
+        relatedRevisionsAndAnnotations.annotationIds.some(relatedRevisionAnnotationId =>
           isSameDMIdentifier(relatedRevisionAnnotationId, annotation.annotation.annotationIdentifier)
         )
       );
