@@ -122,10 +122,16 @@ export type Image360AssetStylingGroup = {
   style: { image360?: Image360AnnotationAppearance };
 };
 
+export type Image360DMAssetStylingGroup = {
+  assetRefs: DmsUniqueIdentifier[];
+  style: { image360?: Image360AnnotationAppearance };
+};
+
 export type InstanceStylingGroup =
   | FdmAssetStylingGroup
   | AssetStylingGroup
-  | Image360AssetStylingGroup;
+  | Image360AssetStylingGroup
+  | Image360DMAssetStylingGroup;
 
 export type DefaultResourceStyling = {
   cad?: { default?: NodeAppearance; mapped?: NodeAppearance };
