@@ -1,7 +1,7 @@
 /*!
  * Copyright 2025 Cognite AS
  */
-import { ClassicDataSourceType, DataSourceType, DMDataSourceType } from '../DataSourceType';
+import { ClassicDataSourceType, DataSourceType, DMDataSourceType, isSameDMIdentifier } from '../DataSourceType';
 import {
   Image360AnnotationFilterDelegate,
   Image360AnnotationProvider,
@@ -18,7 +18,7 @@ import {
 import { isSameImage360RevisionId } from './shared';
 import { fetchCoreDm360AnnotationsForRevision } from './cdm/fetchCoreDm360AnnotationsForRevision';
 import { CogniteClient } from '@cognite/sdk/dist/src';
-import { fetchAnnotationsForInstance } from './cdm/fetchAnnotationsForInstance';
+import { fetchAnnotationsForInstance, Image360AnnotationsForInstanceResult } from './cdm/fetchAnnotationsForInstance';
 import { fetchCoreDm360AnnotationsForCollection } from './cdm/fetchCoreDm360AnnotationsForCollection';
 import { DMInstanceKey, dmInstanceRefToKey } from '@reveal/utilities';
 
@@ -54,15 +54,25 @@ export class CoreDm360ImageAnnotationProvider implements Image360AnnotationProvi
               isSameImage360RevisionId(revision.identifier, foundRevisionId)
             ) !== undefined
         );
-      return (await Promise.all(revisions.map(revision => getAnnotationInfoForRevision(entity, revision)))).flat();
+      return (
+        await Promise.all(
+          revisions.map(revision => getAnnotationInfoForRevision(entity, revision, relatedRevisionsAndAnnotations))
+        )
+      ).flat();
     }
 
     async function getAnnotationInfoForRevision(
       entity: Image360Entity<DMDataSourceType>,
-      revision: Image360RevisionEntity<DMDataSourceType>
+      revision: Image360RevisionEntity<DMDataSourceType>,
+      relatedRevisionsAndAnnotations: Image360AnnotationsForInstanceResult
     ): Promise<Image360AnnotationAssetQueryResult<DMDataSourceType>[]> {
       const annotations = await revision.getAnnotations();
-      return annotations.map(annotation => ({
+      const filteredAnnotations = annotations.filter(annotation =>
+        relatedRevisionsAndAnnotations.annotationIds.find(relatedRevisionAnnotationId =>
+          isSameDMIdentifier(relatedRevisionAnnotationId, annotation.annotation.annotationIdentifier)
+        )
+      );
+      return filteredAnnotations.map(annotation => ({
         image: entity,
         revision,
         annotation

@@ -141,3 +141,7 @@ export function isDMIdentifier(identifier: InternalModelIdentifier): identifier 
 export function isLocalIdentifier(identifier: InternalModelIdentifier): identifier is LocalModelIdentifierType {
   return (identifier as LocalModelIdentifierType).localPath !== undefined;
 }
+
+export function isSameDMIdentifier(id0: DMInstanceRef, id1: DMInstanceRef): boolean {
+  return id0.externalId === id1.externalId && id0.space === id1.space;
+}
