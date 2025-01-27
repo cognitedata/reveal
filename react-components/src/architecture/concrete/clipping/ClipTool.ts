@@ -20,7 +20,7 @@ import { UndoCommand } from '../../base/concreteCommands/UndoCommand';
 import { NextOrPrevClippingCommand } from './commands/NextClippingCommand';
 import { type IconName } from '../../base/utilities/IconName';
 import { ClipFolder } from './ClipFolder';
-import { DomainObject } from '../../base/domainObjects/DomainObject';
+import { type DomainObject } from '../../base/domainObjects/DomainObject';
 
 export class ClipTool extends PrimitiveEditTool {
   // ==================================================
