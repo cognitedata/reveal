@@ -10,6 +10,7 @@ import { type AssetProperties } from '../../data-providers/core-dm-provider/util
 import { type DmsUniqueIdentifier } from '../../data-providers';
 import { type FdmNode, FdmSDK } from '../../data-providers/FdmSDK';
 import {
+  COGNITE_ASSET_SOURCE,
   COGNITE_ASSET_VIEW_VERSION_KEY,
   CORE_DM_SPACE
 } from '../../data-providers/core-dm-provider/dataModels';
@@ -73,7 +74,8 @@ async function fetchAssetsForDmsIds(
   const fdmSdk = new FdmSDK(sdk);
 
   const response = await fdmSdk.getByExternalIds<AssetProperties>(
-    dmsIds.map((id) => ({ ...id, instanceType: 'node' as const }))
+    dmsIds.map((id) => ({ ...id, instanceType: 'node' as const })),
+    [COGNITE_ASSET_SOURCE]
   );
 
   return response.items.map((item) => ({
