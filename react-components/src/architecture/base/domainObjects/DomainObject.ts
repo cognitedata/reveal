@@ -83,7 +83,6 @@ export abstract class DomainObject {
     DomainObject._counter++;
     this._uniqueId = DomainObject._counter;
   }
-
   // ==================================================
   // INSTANCE/VIRTUAL PROPERTIES
   // ==================================================
@@ -252,6 +251,10 @@ export abstract class DomainObject {
   // ==================================================
   // VIRTUAL METHODS: Appearance in the tree view
   // ==================================================
+
+  public get isVisibleInTree(): boolean {
+    return true; // to be overridden
+  }
 
   public get canBeRemoved(): boolean {
     return true; // to be overridden
