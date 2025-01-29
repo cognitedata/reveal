@@ -9,7 +9,7 @@ import {
 
 import { useEffect, type ReactElement, useState, useRef } from 'react';
 import { type Matrix4 } from 'three';
-import { useReveal } from '../RevealCanvas/ViewerContext';
+import { useRenderTarget } from '../RevealCanvas/ViewerContext';
 import { useRevealKeepAlive } from '../RevealKeepAlive/RevealKeepAliveContext';
 import {
   useReveal3DResourceLoadFailCount,
@@ -41,7 +41,8 @@ export function PointCloudContainer({
 }: CognitePointCloudModelProps): ReactElement {
   const cachedViewerRef = useRevealKeepAlive();
   const [model, setModel] = useState<CognitePointCloudModel<DataSourceType> | undefined>(undefined);
-  const viewer = useReveal();
+  const renderTarget = useRenderTarget();
+  const viewer = renderTarget.viewer;
   const { setRevealResourcesCount } = useReveal3DResourcesCount();
   const { setReveal3DResourceLoadFailCount } = useReveal3DResourceLoadFailCount();
   const initializingModel = useRef<AddModelOptions<DataSourceType> | undefined>(undefined);
@@ -118,7 +119,10 @@ export function PointCloudContainer({
       if (viewerModel !== undefined) {
         return await Promise.resolve(viewerModel as CognitePointCloudModel<DataSourceType>);
       }
-      return await viewer.addPointCloudModel(addModelOptions);
+      return await viewer.addPointCloudModel(addModelOptions).then((model) => {
+        renderTarget.addRevealModel(model);
+        return model;
+      });
     }
   }
 
@@ -128,7 +132,7 @@ export function PointCloudContainer({
     if (cachedViewerRef !== undefined && !cachedViewerRef.isRevealContainerMountedRef.current)
       return;
 
-    viewer.removeModel(model);
+    renderTarget.removeRevealModel(model);
     setRevealResourcesCount(getViewerResourceCount(viewer));
     setModel(undefined);
   }

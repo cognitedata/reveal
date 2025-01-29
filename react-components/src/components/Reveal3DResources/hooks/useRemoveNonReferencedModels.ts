@@ -17,23 +17,29 @@ import { useEffect } from 'react';
 import { isSameModel } from '../../../utilities/isSameModel';
 import { useReveal3DResourcesCount } from '../Reveal3DResourcesInfoContext';
 import { getViewerResourceCount } from '../../../utilities/getViewerResourceCount';
+import { type RevealRenderTarget } from '../../../architecture';
 
 export function useRemoveNonReferencedModels(
   addOptions: AddResourceOptions[],
-  viewer: Cognite3DViewer<DataSourceType>
+  renderTarget: RevealRenderTarget
 ): void {
   const { setRevealResourcesCount } = useReveal3DResourcesCount();
   useEffect(() => {
+    const viewer = renderTarget.viewer;
     const nonReferencedModels = findNonReferencedModels(addOptions, viewer);
 
+    // REMOVE
     nonReferencedModels.forEach((model) => {
       viewer.removeModel(model);
+      renderTarget.removeRevealModel(model);
     });
 
     const nonReferencedCollections = findNonReferencedCollections(addOptions, viewer);
 
     nonReferencedCollections.forEach((collection) => {
+      // REMOVE
       viewer.remove360ImageSet(collection);
+      renderTarget.removeRevealModel(collection);
     });
     setRevealResourcesCount(getViewerResourceCount(viewer));
   }, [addOptions]);

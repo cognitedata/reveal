@@ -1,14 +1,14 @@
 /*!
- * Copyright 2024 Cognite AS
+ * Copyright 2025 Cognite AS
  */
 
 import { type PointCloudRenderStyle } from './PointCloudRenderStyle';
-import { type DomainObjectChange } from '../../base/domainObjectsHelpers/DomainObjectChange';
-import { Changes } from '../../base/domainObjectsHelpers/Changes';
+import { type DomainObjectChange } from '../../domainObjectsHelpers/DomainObjectChange';
+import { Changes } from '../../domainObjectsHelpers/Changes';
 import { type PointCloudDomainObject } from './PointCloudDomainObject';
-import { ThreeView } from '../../base/views/ThreeView';
+import { ThreeView } from '../../views/ThreeView';
 import { Box3 } from 'three';
-import { type CognitePointCloudModel, type DataSourceType } from '@cognite/reveal';
+import { type PointCloud } from '../RevealTypes';
 
 export class PointCloudThreeView extends ThreeView<PointCloudDomainObject> {
   // ==================================================
@@ -19,9 +19,9 @@ export class PointCloudThreeView extends ThreeView<PointCloudDomainObject> {
     return super.style as PointCloudRenderStyle;
   }
 
-  public get pointCloud(): CognitePointCloudModel<DataSourceType> | undefined {
+  private get model(): PointCloud | undefined {
     const domainObject = this.domainObject;
-    return domainObject.pointCloud;
+    return domainObject.model;
   }
 
   // ==================================================
@@ -36,7 +36,7 @@ export class PointCloudThreeView extends ThreeView<PointCloudDomainObject> {
   }
 
   public override onShow(): void {
-    const pointCloud = this.pointCloud;
+    const pointCloud = this.model;
     if (pointCloud === undefined) {
       return;
     }
@@ -45,7 +45,7 @@ export class PointCloudThreeView extends ThreeView<PointCloudDomainObject> {
   }
 
   public override onHide(): void {
-    const pointCloud = this.pointCloud;
+    const pointCloud = this.model;
     if (pointCloud === undefined) {
       return;
     }
@@ -58,7 +58,7 @@ export class PointCloudThreeView extends ThreeView<PointCloudDomainObject> {
   // ==================================================
 
   protected override calculateBoundingBox(): Box3 {
-    const pointCloud = this.pointCloud;
+    const pointCloud = this.model;
     if (pointCloud === undefined) {
       return new Box3().makeEmpty();
     }

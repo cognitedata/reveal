@@ -1,13 +1,13 @@
 /*!
- * Copyright 2024 Cognite AS
+ * Copyright 2025 Cognite AS
  */
 
-import { type CogniteCadModel } from '@cognite/reveal';
-import { VisualDomainObject } from '../../base/domainObjects/VisualDomainObject';
-import { type RenderStyle } from '../../base/renderStyles/RenderStyle';
-import { type IconName } from '../../base/utilities/IconName';
-import { type TranslationInput } from '../../base/utilities/TranslateInput';
-import { type ThreeView } from '../../base/views/ThreeView';
+import { VisualDomainObject } from '../../domainObjects/VisualDomainObject';
+import { type RenderStyle } from '../../renderStyles/RenderStyle';
+import { type IconName } from '../../utilities/IconName';
+import { type TranslationInput } from '../../utilities/TranslateInput';
+import { type ThreeView } from '../../views/ThreeView';
+import { type CadModel } from '../RevealTypes';
 import { CadRenderStyle } from './CadRenderStyle';
 import { CadThreeView } from './CadThreeView';
 
@@ -16,34 +16,24 @@ export class CadDomainObject extends VisualDomainObject {
   // INSTANCE FIELDS
   // ==================================================
 
-  readonly modelId: number;
-  readonly revisionId: number;
+  private readonly _model: CadModel;
 
   // ==================================================
   // INSTANCE PROPERTIES
   // ==================================================
 
-  public get model(): CogniteCadModel | undefined {
-    const root = this.rootDomainObject;
-    if (root === undefined) {
-      return undefined;
-    }
-    for (const model of root.renderTarget.getCadModels()) {
-      if (model.modelId === this.modelId && model.revisionId === this.revisionId) {
-        return model;
-      }
-    }
-    return undefined;
+  public get model(): CadModel | undefined {
+    return this._model;
   }
 
   // ==================================================
   // CONSTRUCTORS
   // ==================================================
 
-  public constructor(modelId: number, revisionId: number) {
+  public constructor(model: CadModel) {
     super();
-    this.modelId = modelId;
-    this.revisionId = revisionId;
+    this._model = model;
+    console.log('CadDomainObject constructor');
   }
 
   // ==================================================

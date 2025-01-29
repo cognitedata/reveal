@@ -1,42 +1,38 @@
 /*!
- * Copyright 2024 Cognite AS
+ * Copyright 2025 Cognite AS
  */
 
-import { type CognitePointCloudModel, type DataSourceType } from '@cognite/reveal';
-import { VisualDomainObject } from '../../base/domainObjects/VisualDomainObject';
-import { type RenderStyle } from '../../base/renderStyles/RenderStyle';
-import { type IconName } from '../../base/utilities/IconName';
-import { type TranslationInput } from '../../base/utilities/TranslateInput';
-import { type ThreeView } from '../../base/views/ThreeView';
+import { VisualDomainObject } from '../../domainObjects/VisualDomainObject';
+import { type RenderStyle } from '../../renderStyles/RenderStyle';
+import { type IconName } from '../../utilities/IconName';
+import { type TranslationInput } from '../../utilities/TranslateInput';
+import { type ThreeView } from '../../views/ThreeView';
 import { PointCloudRenderStyle } from './PointCloudRenderStyle';
 import { PointCloudThreeView } from './PointCloudThreeView';
-
-type PointCloud = CognitePointCloudModel<DataSourceType>;
+import { type PointCloud } from '../RevealTypes';
 
 export class PointCloudDomainObject extends VisualDomainObject {
+  // ==================================================
+  // INSTANCE FIELDS
+  // ==================================================
+
+  readonly _model: PointCloud;
+
   // ==================================================
   // INSTANCE PROPERTIES
   // ==================================================
 
-  public get pointCloud(): PointCloud | undefined {
-    const root = this.rootDomainObject;
-    if (root === undefined) {
-      return undefined;
-    }
-    for (const pointCloud of root.renderTarget.getPointClouds()) {
-      if (pointCloud !== undefined) {
-        return pointCloud;
-      }
-    }
-    return undefined;
+  public get model(): PointCloud | undefined {
+    return this._model;
   }
-
   // ==================================================
   // CONSTRUCTORS
   // ==================================================
 
-  public constructor() {
+  public constructor(model: PointCloud) {
     super();
+    this._model = model;
+    console.log('PointCloudDomainObject constructor');
   }
 
   // ==================================================

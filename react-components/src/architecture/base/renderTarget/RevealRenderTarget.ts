@@ -9,11 +9,10 @@ import {
   type Cognite3DViewer,
   type IFlexibleCameraManager,
   CDF_TO_VIEWER_TRANSFORMATION,
-  CognitePointCloudModel,
   CogniteCadModel,
-  type Image360Collection,
-  type DataSourceType,
-  Image360Action
+  CognitePointCloudModel,
+  Image360Action,
+  type DataSourceType
 } from '@cognite/reveal';
 import {
   Vector3,
@@ -42,6 +41,15 @@ import { InstanceStylingController } from './InstanceStylingController';
 import { type Class } from '../domainObjectsHelpers/Class';
 import { CdfCaches } from './CdfCaches';
 import { type DmsUniqueIdentifier } from '../../../data-providers';
+import { CadDomainObject } from '../revealDomainObject/cad/CadDomainObject';
+import { PointCloudDomainObject } from '../revealDomainObject/pointCloud/PointCloudDomainObject';
+import { Image360CollectionDomainObject } from '../revealDomainObject/Image360Collection/Image360CollectionDomainObject';
+import {
+  type RevealModel,
+  type CadModel,
+  type Image360Model,
+  type PointCloud
+} from '../revealDomainObject/RevealTypes';
 
 const DIRECTIONAL_LIGHT_NAME = 'DirectionalLight';
 
@@ -199,7 +207,7 @@ export class RevealRenderTarget {
   // INSTANCE METHODS: Get models from the viewer
   // ==================================================
 
-  public *getPointClouds(): Generator<CognitePointCloudModel<DataSourceType>> {
+  public *getPointClouds(): Generator<PointCloud> {
     for (const model of this.viewer.models) {
       if (model instanceof CognitePointCloudModel) {
         yield model;
@@ -207,7 +215,7 @@ export class RevealRenderTarget {
     }
   }
 
-  public *getCadModels(): Generator<CogniteCadModel> {
+  public *getCadModels(): Generator<CadModel> {
     for (const model of this.viewer.models) {
       if (model instanceof CogniteCadModel) {
         yield model;
@@ -215,9 +223,53 @@ export class RevealRenderTarget {
     }
   }
 
-  public *get360ImageCollections(): Generator<Image360Collection<DataSourceType>> {
+  public *get360ImageCollections(): Generator<Image360Model> {
     for (const collection of this.viewer.get360ImageCollections()) {
       yield collection;
+    }
+  }
+
+  // ==================================================
+  // INSTANCE METHODS: Add models to the viewer
+  // ==================================================
+
+  addRevealModel(model: RevealModel): void {
+    let domainObject: DomainObject;
+    if (model instanceof CogniteCadModel) {
+      domainObject = new CadDomainObject(model);
+    } else if (model instanceof CognitePointCloudModel) {
+      domainObject = new PointCloudDomainObject(model);
+    } else {
+      domainObject = new Image360CollectionDomainObject(model);
+    }
+    this.rootDomainObject.addChildInteractive(domainObject);
+  }
+
+  removeRevealModel(model: RevealModel): void {
+    if (model instanceof CogniteCadModel) {
+      this.viewer.removeModel(model);
+      for (const child of this.rootDomainObject.getChildrenByType(CadDomainObject)) {
+        if (child.model === model) {
+          child.removeInteractive();
+          break;
+        }
+      }
+    } else if (model instanceof CognitePointCloudModel) {
+      this.viewer.removeModel(model);
+      for (const child of this.rootDomainObject.getChildrenByType(PointCloudDomainObject)) {
+        if (child.model === model) {
+          child.removeInteractive();
+          break;
+        }
+      }
+    } else {
+      this.viewer.remove360ImageSet(model);
+      for (const child of this.rootDomainObject.getChildrenByType(Image360CollectionDomainObject)) {
+        if (child.model === model) {
+          child.removeInteractive();
+          break;
+        }
+      }
     }
   }
 
