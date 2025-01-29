@@ -33,7 +33,6 @@ export class Image360CollectionDomainObject extends VisualDomainObject {
   public constructor(model: Image360Model) {
     super();
     this._model = model;
-    console.log('Image360CollectionDomainObject constructor');
   }
 
   // ==================================================

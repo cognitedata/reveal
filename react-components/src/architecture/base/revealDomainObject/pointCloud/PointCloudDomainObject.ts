@@ -32,7 +32,6 @@ export class PointCloudDomainObject extends VisualDomainObject {
   public constructor(model: PointCloud) {
     super();
     this._model = model;
-    console.log('PointCloudDomainObject constructor');
   }
 
   // ==================================================

@@ -2,12 +2,12 @@
  * Copyright 2025 Cognite AS
  */
 
+import { type CogniteCadModel } from '@cognite/reveal';
 import { VisualDomainObject } from '../../domainObjects/VisualDomainObject';
 import { type RenderStyle } from '../../renderStyles/RenderStyle';
 import { type IconName } from '../../utilities/IconName';
 import { type TranslationInput } from '../../utilities/TranslateInput';
 import { type ThreeView } from '../../views/ThreeView';
-import { type CadModel } from '../RevealTypes';
 import { CadRenderStyle } from './CadRenderStyle';
 import { CadThreeView } from './CadThreeView';
 
@@ -16,13 +16,13 @@ export class CadDomainObject extends VisualDomainObject {
   // INSTANCE FIELDS
   // ==================================================
 
-  private readonly _model: CadModel;
+  private readonly _model: CogniteCadModel;
 
   // ==================================================
   // INSTANCE PROPERTIES
   // ==================================================
 
-  public get model(): CadModel | undefined {
+  public get model(): CogniteCadModel | undefined {
     return this._model;
   }
 
@@ -30,10 +30,9 @@ export class CadDomainObject extends VisualDomainObject {
   // CONSTRUCTORS
   // ==================================================
 
-  public constructor(model: CadModel) {
+  public constructor(model: CogniteCadModel) {
     super();
     this._model = model;
-    console.log('CadDomainObject constructor');
   }
 
   // ==================================================

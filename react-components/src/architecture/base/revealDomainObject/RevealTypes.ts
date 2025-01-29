@@ -11,6 +11,5 @@ import {
 
 export type PointCloud = CognitePointCloudModel<DataSourceType>;
 export type Image360Model = Image360Collection<DataSourceType>;
-export type CadModel = CogniteCadModel;
 
-export type RevealModel = PointCloud | Image360Model | CadModel;
+export type RevealModel = PointCloud | Image360Model | CogniteCadModel;

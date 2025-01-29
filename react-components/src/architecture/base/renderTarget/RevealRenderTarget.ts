@@ -46,7 +46,6 @@ import { PointCloudDomainObject } from '../revealDomainObject/pointCloud/PointCl
 import { Image360CollectionDomainObject } from '../revealDomainObject/Image360Collection/Image360CollectionDomainObject';
 import {
   type RevealModel,
-  type CadModel,
   type Image360Model,
   type PointCloud
 } from '../revealDomainObject/RevealTypes';
@@ -215,7 +214,7 @@ export class RevealRenderTarget {
     }
   }
 
-  public *getCadModels(): Generator<CadModel> {
+  public *getCadModels(): Generator<CogniteCadModel> {
     for (const model of this.viewer.models) {
       if (model instanceof CogniteCadModel) {
         yield model;

@@ -8,7 +8,7 @@ import { Changes } from '../../domainObjectsHelpers/Changes';
 import { type CadDomainObject } from './CadDomainObject';
 import { ThreeView } from '../../views/ThreeView';
 import { Box3 } from 'three';
-import { type CadModel } from '../RevealTypes';
+import { type CogniteCadModel } from '@cognite/reveal';
 
 export class CadThreeView extends ThreeView<CadDomainObject> {
   // ==================================================
@@ -19,7 +19,7 @@ export class CadThreeView extends ThreeView<CadDomainObject> {
     return super.style as CadRenderStyle;
   }
 
-  public get model(): CadModel | undefined {
+  public get model(): CogniteCadModel | undefined {
     const domainObject = this.domainObject;
     return domainObject.model;
   }
