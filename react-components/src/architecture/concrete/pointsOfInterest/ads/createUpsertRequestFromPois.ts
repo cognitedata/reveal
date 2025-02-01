@@ -6,6 +6,7 @@ import { type ExternalId } from '../../../../data-providers/FdmSDK';
 import {
   type InstanceReference,
   isDmsInstance,
+  isHybridAssetCoreDmsInstance,
   isInternalId
 } from '../../../../utilities/instanceIds';
 import { type PointsOfInterestInstance, type PoiVisibility, type SceneState } from '../models';
