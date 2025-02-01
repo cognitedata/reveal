@@ -24,8 +24,6 @@ export const usePointCloudAnnotationMappingsForAssetIds = (
     [addClassicModelOptionsResults]
   );
 
-  console.log(' TEST usePointCloudAnnotationMappingsForAssetIds', assetIds);
-
   return useQuery({
     queryKey: [
       queryKeys.pointCloudAnnotationForAssetIds(

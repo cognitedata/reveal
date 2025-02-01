@@ -11,7 +11,7 @@ import { getImage360CollectionsForAsset } from '../hooks/network/getImage360Coll
 import {
   type AssetInstanceReference,
   type InstanceReference,
-  isAssetCoreDmsInstance,
+  isHybridAssetCoreDmsInstance,
   isAssetInstance,
   isDmsInstance
 } from '../data-providers/types';
@@ -37,8 +37,6 @@ export const useModelsForInstanceQuery = (
         return undefined;
       }
 
-      console.log('TEST useModelsForInstanceQuery', instance);
-
       if (isAssetInstance(instance)) {
         return await getModelsForAssetInstance(instance, cogniteClient);
       }
@@ -47,7 +45,7 @@ export const useModelsForInstanceQuery = (
         return await getModelsForDmsInstance(instance, fdmSdk, fdm3dDataProvider);
       }
 
-      if (isAssetCoreDmsInstance(instance)) {
+      if (isHybridAssetCoreDmsInstance(instance)) {
         return await getModelsForCoreDmsInstance(
           instance.assetInstanceId,
           fdmSdk,

@@ -57,6 +57,8 @@ export type FdmKey = `${string}/${string}`;
 export type ModelTreeIndexKey = `${ModelId}/${RevisionId}/${TreeIndex}`;
 export type ModelAssetIdKey = `${ModelId}/${RevisionId}/${AssetId}`;
 
+export type ModelDMSUniqueInstanceKey = `${ModelId}/${RevisionId}/${string}/${string}`;
+
 export type ModelRevisionToConnectionMap = Map<ModelRevisionKey, FdmConnectionWithNode[]>;
 
 export type PointCloudAnnotationModel = AnnotationModel & { data: AnnotationsBoundingVolume };
@@ -75,7 +77,8 @@ export type AnnotationId = number;
 
 export type ChunkInCacheTypes<ObjectType> = {
   chunkInCache: ObjectType[];
-  chunkNotInCache: number[];
+  chunkNotInCacheIdClassic?: number[];
+  chunkNotInCacheIdDMS?: DmsUniqueIdentifier[];
 };
 
 type PointCloudVolume = {

@@ -6,13 +6,20 @@ import {
   type FdmAssetStylingGroup,
   type AssetStylingGroup,
   type Image360AssetStylingGroup,
-  type InstanceStylingGroup
+  type InstanceStylingGroup,
+  type HybridFdmAssetStylingGroup
 } from '../components/Reveal3DResources/types';
 
 export function isFdmAssetStylingGroup(
   instanceGroup: InstanceStylingGroup
 ): instanceGroup is FdmAssetStylingGroup {
   return (instanceGroup as FdmAssetStylingGroup).fdmAssetExternalIds !== undefined;
+}
+
+export function isHybridFdmAssetStylingGroup(
+  instanceGroup: InstanceStylingGroup
+): instanceGroup is HybridFdmAssetStylingGroup {
+  return (instanceGroup as HybridFdmAssetStylingGroup).hybridFdmAssetExternalIds !== undefined;
 }
 
 export function isClassicAssetMappingStylingGroup(
@@ -30,5 +37,9 @@ export function isImage360AssetStylingGroup(
 export function isAssetMappingStylingGroup(
   instanceGroup: InstanceStylingGroup
 ): instanceGroup is FdmAssetStylingGroup | AssetStylingGroup {
-  return isClassicAssetMappingStylingGroup(instanceGroup) || isFdmAssetStylingGroup(instanceGroup);
+  return (
+    isClassicAssetMappingStylingGroup(instanceGroup) ||
+    isFdmAssetStylingGroup(instanceGroup) ||
+    isHybridFdmAssetStylingGroup(instanceGroup)
+  );
 }

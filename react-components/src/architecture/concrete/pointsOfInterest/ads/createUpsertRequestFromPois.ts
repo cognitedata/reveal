@@ -4,7 +4,7 @@
 import { type InstanceReference, type DmsUniqueIdentifier } from '../../../../data-providers';
 import { type ExternalId } from '../../../../data-providers/FdmSDK';
 import {
-  isAssetCoreDmsInstance,
+  isHybridAssetCoreDmsInstance,
   isAssetInstance,
   isDmsInstance
 } from '../../../../data-providers/types';
@@ -54,7 +54,7 @@ function instanceReferenceToPoiExternalInstanceReference(
     return { id: instanceRef.assetId };
   } else if (isDmsInstance(instanceRef)) {
     return { externalId: instanceRef.externalId, instanceSpace: instanceRef.space };
-  } else if (isAssetCoreDmsInstance(instanceRef)) {
+  } else if (isHybridAssetCoreDmsInstance(instanceRef)) {
     return {
       externalId: instanceRef.assetInstanceId.externalId,
       instanceSpace: instanceRef.assetInstanceId.space

@@ -49,14 +49,10 @@ export class AssetMappingPerModelCache {
     revisionId: RevisionId
   ): Promise<AssetMapping[]> {
     const assetMappingsClassic = await this.fetchAssetMappingsForModelClassic(modelId, revisionId);
-    const assetMappingsCoreDms = await this.fetchAssetMappingsForModelCoreDms(modelId, revisionId);
+    const assetMappingsHybrid = await this.fetchAssetMappingsForModelCoreDms(modelId, revisionId);
 
-    console.log('TEST fetchAssetMappingsForModel assetMappingsClassic', assetMappingsClassic);
-    console.log('TEST fetchAssetMappingsForModel assetMappingsCoreDms', assetMappingsCoreDms);
+    const allAssetMappings = assetMappingsClassic.concat(assetMappingsHybrid);
 
-    const allAssetMappings = assetMappingsClassic.concat(assetMappingsCoreDms);
-
-    console.log('TEST fetchAssetMappingsForModel allAssetMappings', allAssetMappings);
     return allAssetMappings;
   }
 
@@ -113,7 +109,6 @@ export class AssetMappingPerModelCache {
           assetId: mapping.assetId,
           assetInstanceId: mapping.assetInstanceId
         };
-        console.log('TEST fetchAssetMappingsForModelCoreDms newMapping', newMapping);
         return newMapping;
       })
       .filter((mapping) => isDefined(mapping));

@@ -85,7 +85,6 @@ export class AssetNodeCollection extends NodeCollection {
       assetId: filter.assetId,
       intersectsBoundingBox: mapBoundingBoxToCdf(filter.boundingBox),
       limit: 1000,
-      getDmsInstances: true
     };
 
     this._indexSet = fetchResultHelper.indexSet;

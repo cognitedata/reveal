@@ -29,7 +29,7 @@ export function isDmsInstance(instance: InstanceReference): instance is DmsUniqu
   return 'externalId' in instance && 'space' in instance;
 }
 
-export function isAssetCoreDmsInstance(
+export function isHybridAssetCoreDmsInstance(
   instance: InstanceReference
 ): instance is AssetCoreDmsInstanceReference {
   return 'assetInstanceId' in instance && isDmsInstance(instance.assetInstanceId);
