@@ -8,6 +8,9 @@ import {
   type Image360AnnotationModel
 } from '../components/CacheProvider/types';
 import { useImage360AnnotationCache } from '../components/CacheProvider/CacheProvider';
+import { getAssetIdKeyForImage360Annotation } from '../components/CacheProvider/utils';
+import { type InstanceReference } from '../utilities/instanceIds';
+import { createInstanceReferenceKey } from '../utilities/instanceIds/toKey';
 import { isDefined } from '../utilities/isDefined';
 
 export type Image360AnnotationDataResult = {
@@ -15,8 +18,8 @@ export type Image360AnnotationDataResult = {
   annotationModel: Image360AnnotationModel[];
 };
 
-export const useImage360AnnotationMappingsForAssetIds = (
-  assetIds: Array<string | number> | undefined,
+export const useImage360AnnotationMappingsForInstanceReferences = (
+  assetIds: InstanceReference[] | undefined,
   siteIds: string[] | undefined
 ): UseQueryResult<Image360AnnotationAssetInfo[]> => {
   const image360AnnotationCache = useImage360AnnotationCache();
@@ -41,9 +44,15 @@ export const useImage360AnnotationMappingsForAssetIds = (
       ) {
         return [];
       }
+      const assetIdSet = new Set(assetIds.map(createInstanceReferenceKey));
+
       const annotationAssetInfo = await image360AnnotationCache.getReveal360Annotations(siteIds);
       const filteredAnnotationAssetInfo = annotationAssetInfo.filter((annotationInfo) => {
-        return assetIds.includes(annotationInfo.asset.id);
+        const annotationAssetKey = getAssetIdKeyForImage360Annotation(
+          annotationInfo.assetAnnotationImage360Info.annotationInfo
+        );
+
+        return annotationAssetKey !== undefined && assetIdSet.has(annotationAssetKey);
       });
       return filteredAnnotationAssetInfo;
     },

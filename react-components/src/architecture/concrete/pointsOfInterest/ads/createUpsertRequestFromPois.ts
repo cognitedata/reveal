@@ -1,13 +1,13 @@
 /*!
  * Copyright 2024 Cognite AS
  */
-import { type InstanceReference, type DmsUniqueIdentifier } from '../../../../data-providers';
+import { type DmsUniqueIdentifier } from '../../../../data-providers';
 import { type ExternalId } from '../../../../data-providers/FdmSDK';
 import {
-  isHybridAssetCoreDmsInstance,
-  isAssetInstance,
-  isDmsInstance
-} from '../../../../data-providers/types';
+  type InstanceReference,
+  isDmsInstance,
+  isInternalId
+} from '../../../../utilities/instanceIds';
 import { type PointsOfInterestInstance, type PoiVisibility, type SceneState } from '../models';
 import { type PoiExternalInstanceRef } from './types';
 
@@ -50,8 +50,8 @@ function instanceReferenceToPoiExternalInstanceReference(
     return undefined;
   }
 
-  if (isAssetInstance(instanceRef)) {
-    return { id: instanceRef.assetId };
+  if (isInternalId(instanceRef)) {
+    return instanceRef;
   } else if (isDmsInstance(instanceRef)) {
     return { externalId: instanceRef.externalId, instanceSpace: instanceRef.space };
   } else if (isHybridAssetCoreDmsInstance(instanceRef)) {
@@ -60,4 +60,6 @@ function instanceReferenceToPoiExternalInstanceReference(
       instanceSpace: instanceRef.assetInstanceId.space
     };
   }
+
+  return undefined;
 }

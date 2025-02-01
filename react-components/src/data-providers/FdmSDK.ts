@@ -193,11 +193,18 @@ export type ViewItem = {
   implements: Source[];
 };
 
-export type ViewsData = { items: ViewItem[] };
-
-export type DataModelListResponse = {
-  items: Array<{ views: Source[] }>;
+export type ListResponse<T> = {
+  items: T[];
 };
+
+
+export type ListResponseWithNextCursor<T> = ListResponse<T> & {
+  nextCursor?: string;
+};
+
+export type ViewItemListResponse = ListResponse<ViewItem>;
+
+export type DataModelListResponse = ListResponse<{ views: Source[] }>;
 
 export class FdmSDK {
   private readonly _sdk: CogniteClient;
@@ -235,7 +242,7 @@ export class FdmSDK {
     space: string,
     includeInheritedProperties: boolean = true
   ): Promise<{ views: ViewItem[] }> {
-    const result = await this._sdk.get(this._listViewsEndpoint, {
+    const result = await this._sdk.get<ViewItemListResponse>(this._listViewsEndpoint, {
       params: {
         includeInheritedProperties,
         space
@@ -243,8 +250,7 @@ export class FdmSDK {
     });
 
     if (result.status === 200) {
-      const data = result.data as { items: ViewItem[] };
-      return { views: data.items };
+      return { views: result.data.items };
     }
     throw new Error(`Failed to list views. Status: ${result.status}`);
   }
@@ -305,14 +311,14 @@ export class FdmSDK {
       limit
     };
 
-    const result = await this._sdk.post(this._searchEndpoint, { data });
+    const result = await this._sdk.post<
+      ListResponse<EdgeItem<PropertiesType>> | ListResponse<NodeItem<PropertiesType>>
+    >(this._searchEndpoint, { data });
 
     if (result.status === 200) {
-      const data = result.data as {
-        items: Array<EdgeItem<PropertiesType>> | Array<NodeItem<PropertiesType>>;
-      };
-      hoistInstanceProperties(searchedView, data.items);
-      return { instances: data.items };
+      hoistInstanceProperties(searchedView, result.data.items);
+
+      return { instances: result.data.items };
     }
     throw new Error(`Failed to search for instances. Status: ${result.status}`);
   }
@@ -345,7 +351,7 @@ export class FdmSDK {
   ): Promise<{ instances: Array<EdgeItem<PropertiesType>>; nextCursor?: string }>;
 
   // eslint-disable-next-line no-dupe-class-members
-  public async filterInstances<PropertiesType = Record<string, any>>(
+  public async filterInstances<PropertiesType extends Record<string, any> = Record<string, any>>(
     filter: InstanceFilter | undefined,
     instanceType: InstanceType,
     source: Source,
@@ -362,25 +368,22 @@ export class FdmSDK {
       data.cursor = cursor;
     }
 
-    const result = await this._sdk.post(this._listEndpoint, { data });
+    const result = await this._sdk.post<
+      | ListResponseWithNextCursor<EdgeItem<PropertiesType>>
+      | ListResponseWithNextCursor<NodeItem<PropertiesType>>
+    >(this._listEndpoint, { data });
 
     if (result.status !== 200) {
       throw new Error(`Failed to fetch instances. Status: ${result.status}`);
     }
 
-    const dataResult = result.data as {
-      nextCursor: string | undefined;
-      items: Array<EdgeItem<Record<string, any>> | NodeItem<Record<string, any>>>;
-    } & {
-      nextCursor: string | undefined;
-      items: Array<EdgeItem<PropertiesType> | FdmNode<PropertiesType>>;
-    };
+    const typedResult = result.data.items;
 
     hoistInstanceProperties(source, dataResult.items);
 
     return {
-      instances: dataResult.items,
-      nextCursor: dataResult.nextCursor
+      instances: result.data.items as Array<EdgeItem<PropertiesType> | FdmNode<PropertiesType>>,
+      nextCursor: result.data.nextCursor
     };
   }
 
@@ -531,8 +534,8 @@ export class FdmSDK {
     throw new Error(`Failed to fetch instances`);
   }
 
-  public async getViewsByIds(views: Source[]): Promise<ViewsData> {
-    const result = await this._sdk.post<ViewsData>(this._viewsByIdEndpoint, {
+  public async getViewsByIds(views: Source[]): Promise<ViewItemListResponse> {
+    const result = await this._sdk.post<ViewItemListResponse>(this._viewsByIdEndpoint, {
       data: {
         items: views.map((view) => ({
           externalId: view.externalId,

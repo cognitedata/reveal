@@ -35,6 +35,13 @@ export const useActiveReveal3dResources = (
     return models.filter((m) => m.visible);
   }, [models, layerState]);
 
+  const filteredImage360Collections = useMemo(() => {
+    if (layerState === undefined) {
+      return EMPTY_ARRAY;
+    }
+    return image360Collections.filter((c) => c.getIconsVisibility());
+  }, [image360Collections, layerState]);
+
   const filteredModelsQuery = useQuery({
     queryKey: [
       'visible-3d-models',
@@ -67,22 +74,8 @@ export const useActiveReveal3dResources = (
     staleTime: Infinity
   });
 
-  const filteredImage360CollectionsQuery = useQuery({
-    queryKey: [
-      'visible-image360-collections',
-      image360Collections.map((image360Collection) => `${image360Collection.id}`).sort()
-    ],
-    queryFn: async () => {
-      return image360Collections.filter((image360Collection) =>
-        image360Collection.getIconsVisibility()
-      );
-    },
-    enabled: image360Collections.length > 0,
-    staleTime: Infinity
-  });
-
   return {
     models: filteredModelsQuery.data ?? EMPTY_ARRAY,
-    image360Collections: filteredImage360CollectionsQuery.data ?? EMPTY_ARRAY
+    image360Collections: filteredImage360Collections
   };
 };

@@ -3,20 +3,18 @@
  */
 import { type NodeAppearance } from '@cognite/reveal';
 import { type InstanceStylingGroup } from '.';
-import { type InstanceReference } from '../../data-providers';
+import { type InstanceReference, isDmsInstance, isInternalId } from '../../utilities/instanceIds';
 import {
   isHybridAssetCoreDmsInstance,
-  isAssetInstance,
-  isDmsInstance
 } from '../../data-providers/types';
 
 export function createInstanceStyleGroup(
   instances: InstanceReference[],
   style: NodeAppearance
 ): InstanceStylingGroup {
-  if (instances.every(isAssetInstance)) {
+  if (instances.every(isInternalId)) {
     return {
-      assetIds: instances.map((instance) => instance.assetId),
+      assetIds: instances.map((instance) => instance.id),
       style: { cad: style, pointcloud: style, image360: style }
     };
   } else if (instances.every(isDmsInstance)) {

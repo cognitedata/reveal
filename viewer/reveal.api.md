@@ -1285,7 +1285,10 @@ export type Image360BaseIdentifier = {
 // @public
 export interface Image360Collection<T extends DataSourceType = ClassicDataSourceType> {
     findImageAnnotations(filter: Image360AnnotationAssetFilter<T>): Promise<Image360AnnotationAssetQueryResult<T>[]>;
-    getAnnotationsInfo(source: 'assets'): Promise<AssetAnnotationImage360Info<T>[]>;
+    getAnnotationsInfo(source: 'all'): Promise<AssetAnnotationImage360Info<DataSourceType>[]>;
+    getAnnotationsInfo(source: 'assets'): Promise<AssetAnnotationImage360Info<ClassicDataSourceType>[]>;
+    getAnnotationsInfo(source: 'cdm'): Promise<AssetAnnotationImage360Info<DMDataSourceType>[]>;
+    getAnnotationsInfo(source: 'assets' | 'cdm' | 'all'): Promise<AssetAnnotationImage360Info<ClassicDataSourceType>[] | AssetAnnotationImage360Info<DMDataSourceType> | AssetAnnotationImage360Info<DataSourceType>[]>;
     // @deprecated
     getAssetIds(): Promise<IdEither[]>;
     getDefaultAnnotationStyle(): Image360AnnotationAppearance;

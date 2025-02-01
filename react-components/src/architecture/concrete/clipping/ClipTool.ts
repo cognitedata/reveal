@@ -19,6 +19,8 @@ import { SliceDomainObject } from './SliceDomainObject';
 import { UndoCommand } from '../../base/concreteCommands/UndoCommand';
 import { NextOrPrevClippingCommand } from './commands/NextClippingCommand';
 import { type IconName } from '../../base/utilities/IconName';
+import { ClipFolder } from './ClipFolder';
+import { type DomainObject } from '../../base/domainObjects/DomainObject';
 
 export class ClipTool extends PrimitiveEditTool {
   // ==================================================
@@ -83,6 +85,16 @@ export class ClipTool extends PrimitiveEditTool {
   // ==================================================
   // OVERRIDES of PrimitiveEditTool
   // ==================================================
+
+  protected override getOrCreateParent(): DomainObject {
+    const parent = this.rootDomainObject.getDescendantByType(ClipFolder);
+    if (parent !== undefined) {
+      return parent;
+    }
+    const newParent = new ClipFolder();
+    this.renderTarget.rootDomainObject.addChildInteractive(newParent);
+    return newParent;
+  }
 
   protected override createCreator(): BaseCreator | undefined {
     switch (this.primitiveType) {

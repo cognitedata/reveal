@@ -42,6 +42,10 @@ export async function listMappedFdmNodes(
   limit: number,
   fdmSdk: FdmSDK
 ): Promise<NodeItem[]> {
+  if (revisionRefs.length === 0) {
+    return [];
+  }
+
   const filter = makeSureNonEmptyFilterForRequest(instancesFilter);
 
   const rawQuery = cadAndPointCloudAssetQuery(sourcesToSearch, filter, limit);

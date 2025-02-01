@@ -50,10 +50,31 @@ export interface Image360AnnotationProvider<T extends DataSourceType> {
     instanceFilter: InstanceReference<T>,
     collection: DefaultImage360Collection<T>
   ): Promise<Image360AnnotationAssetQueryResult<T>[]>;
+
   getAllImage360AnnotationInfos(
+    source: 'assets',
     collection: DefaultImage360Collection<T>,
     annotationFilter: Image360AnnotationFilterDelegate<T>
-  ): Promise<AssetAnnotationImage360Info<T>[]>;
+  ): Promise<AssetAnnotationImage360Info<ClassicDataSourceType>[]>;
+  getAllImage360AnnotationInfos(
+    source: 'cdm',
+    collection: DefaultImage360Collection<T>,
+    annotationFilter: Image360AnnotationFilterDelegate<T>
+  ): Promise<AssetAnnotationImage360Info<DMDataSourceType>[]>;
+  getAllImage360AnnotationInfos(
+    source: 'all',
+    collection: DefaultImage360Collection<T>,
+    annotationFilter: Image360AnnotationFilterDelegate<T>
+  ): Promise<AssetAnnotationImage360Info<DataSourceType>[]>;
+  getAllImage360AnnotationInfos(
+    source: 'assets' | 'cdm' | 'all',
+    collection: DefaultImage360Collection<T>,
+    annotationFilter: Image360AnnotationFilterDelegate<T>
+  ): Promise<
+    | AssetAnnotationImage360Info<ClassicDataSourceType>[]
+    | AssetAnnotationImage360Info<DMDataSourceType>[]
+    | AssetAnnotationImage360Info<DataSourceType>[]
+  >;
 }
 
 export interface Image360DescriptorProvider<T extends DataSourceType> {

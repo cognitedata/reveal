@@ -39,7 +39,7 @@ export type AddImage360CollectionEventsOptions = {
 } & CommonImage360CollectionAddOptions;
 
 export type AddImage360CollectionDatamodelsOptions = {
-  source: 'dm';
+  source: 'cdm' | 'dm';
   externalId: string;
   space: string;
 } & CommonImage360CollectionAddOptions;
@@ -130,11 +130,17 @@ export type Image360AssetStylingGroup = {
   style: { image360?: Image360AnnotationAppearance };
 };
 
+export type Image360DMAssetStylingGroup = {
+  assetRefs: DmsUniqueIdentifier[];
+  style: { image360?: Image360AnnotationAppearance };
+};
+
 export type InstanceStylingGroup =
   | FdmAssetStylingGroup
   | AssetStylingGroup
+  | HybridFdmAssetStylingGroup
   | Image360AssetStylingGroup
-  | HybridFdmAssetStylingGroup;
+  | Image360DMAssetStylingGroup;
 
 export type DefaultResourceStyling = {
   cad?: { default?: NodeAppearance; mapped?: NodeAppearance };

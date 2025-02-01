@@ -10,30 +10,20 @@ import {
   type Relationship,
   type Asset
 } from '@cognite/sdk';
-import { type DmsUniqueIdentifier, type Source } from './FdmSDK';
-
-export type FdmInstanceWithView = DmsUniqueIdentifier & { view: Source };
-
-export type AssetInstanceReference = { assetId: number };
-export type AssetCoreDmsInstanceReference = { assetInstanceId: DmsUniqueIdentifier };
-export type InstanceReference =
-  | AssetInstanceReference
-  | DmsUniqueIdentifier
-  | AssetCoreDmsInstanceReference;
-
-export function isAssetInstance(instance: InstanceReference): instance is AssetInstanceReference {
-  return 'assetId' in instance;
-}
-
-export function isDmsInstance(instance: InstanceReference): instance is DmsUniqueIdentifier {
-  return 'externalId' in instance && 'space' in instance;
-}
 
 export function isHybridAssetCoreDmsInstance(
   instance: InstanceReference
 ): instance is AssetCoreDmsInstanceReference {
   return 'assetInstanceId' in instance && isDmsInstance(instance.assetInstanceId);
 }
+
+export type FdmInstanceWithView = DmsUniqueIdentifier & { view: Source };
+export type AssetInstanceReference = { assetId: number };
+export type AssetCoreDmsInstanceReference = { assetInstanceId: DmsUniqueIdentifier };
+export type InstanceReference =
+  | AssetInstanceReference
+  | DmsUniqueIdentifier
+  | AssetCoreDmsInstanceReference;
 
 export type RelationshipsFilterInternal = {
   labels?: string[];
