@@ -11,20 +11,6 @@ import {
   type Asset
 } from '@cognite/sdk';
 
-export function isHybridAssetCoreDmsInstance(
-  instance: InstanceReference
-): instance is AssetCoreDmsInstanceReference {
-  return 'assetInstanceId' in instance && isDmsInstance(instance.assetInstanceId);
-}
-
-export type FdmInstanceWithView = DmsUniqueIdentifier & { view: Source };
-export type AssetInstanceReference = { assetId: number };
-export type AssetCoreDmsInstanceReference = { assetInstanceId: DmsUniqueIdentifier };
-export type InstanceReference =
-  | AssetInstanceReference
-  | DmsUniqueIdentifier
-  | AssetCoreDmsInstanceReference;
-
 export type RelationshipsFilterInternal = {
   labels?: string[];
 };

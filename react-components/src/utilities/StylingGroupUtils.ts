@@ -7,7 +7,7 @@ import {
   type AssetStylingGroup,
   type Image360AssetStylingGroup,
   type InstanceStylingGroup,
-  type Image360DMAssetStylingGroup
+  type Image360DMAssetStylingGroup,
   type HybridFdmAssetStylingGroup
 } from '../components/Reveal3DResources/types';
 

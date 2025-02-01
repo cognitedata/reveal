@@ -3,11 +3,12 @@
  */
 import { type NodeAppearance } from '@cognite/reveal';
 import { type InstanceStylingGroup } from '.';
-import { type InstanceReference, isDmsInstance, isInternalId } from '../../utilities/instanceIds';
 import {
+  type InstanceReference,
+  isDmsInstance,
   isHybridAssetCoreDmsInstance,
-} from '../../data-providers/types';
-
+  isInternalId
+} from '../../utilities/instanceIds';
 export function createInstanceStyleGroup(
   instances: InstanceReference[],
   style: NodeAppearance
