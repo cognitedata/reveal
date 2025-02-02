@@ -409,7 +409,7 @@ export const useMappingsForAssetIds = (
           filter: { assetIds }
         };
 
-        const filterQueryCoreDms = {
+        const filterQueryHybrid = {
           cursor: nextCursor === 'start' ? undefined : nextCursor,
           limit: 1000,
           filter: { assetIds },
@@ -422,13 +422,13 @@ export const useMappingsForAssetIds = (
           filterQueryClassic
         );
 
-        const mappingsCoreDms = await sdk.assetMappings3D.filter(
+        const mappingsHybrid = await sdk.assetMappings3D.filter(
           model.modelId,
           model.revisionId,
-          filterQueryCoreDms
+          filterQueryHybrid
         );
 
-        const allMappings = mappingsClassic.items.concat(mappingsCoreDms.items);
+        const allMappings = mappingsClassic.items.concat(mappingsHybrid.items);
         return { mappings: { items: allMappings }, model };
       });
 

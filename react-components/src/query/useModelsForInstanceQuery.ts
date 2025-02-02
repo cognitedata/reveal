@@ -46,11 +46,7 @@ export const useModelsForInstanceQuery = (
       }
 
       if (isHybridAssetCoreDmsInstance(instance)) {
-        return await getModelsForCoreDmsInstance(
-          instance.assetInstanceId,
-          fdmSdk,
-          fdm3dDataProvider
-        );
+        return await getModelsForDmsInstance(instance.assetInstanceId, fdmSdk, fdm3dDataProvider);
       }
 
       throw Error(
@@ -77,19 +73,6 @@ async function getModelsForAssetInstance(
 }
 
 async function getModelsForDmsInstance(
-  instance: DmsUniqueIdentifier,
-  fdmSdk: FdmSDK,
-  fdm3dDataProvider: Fdm3dDataProvider
-): Promise<TaggedAddResourceOptions[]> {
-  const cadModelsPromise = fdm3dDataProvider.getCadModelsForInstance(instance);
-  const pointCloudModelsPromise = getPointCloudModelsForAssetInstance(instance, fdmSdk);
-
-  const results = (await Promise.all([cadModelsPromise, pointCloudModelsPromise])).flat();
-
-  return uniqBy(results, createAddOptionsKey);
-}
-
-async function getModelsForCoreDmsInstance(
   instance: DmsUniqueIdentifier,
   fdmSdk: FdmSDK,
   fdm3dDataProvider: Fdm3dDataProvider

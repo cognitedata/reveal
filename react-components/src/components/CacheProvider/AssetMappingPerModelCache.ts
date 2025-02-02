@@ -49,7 +49,7 @@ export class AssetMappingPerModelCache {
     revisionId: RevisionId
   ): Promise<AssetMapping[]> {
     const assetMappingsClassic = await this.fetchAssetMappingsForModelClassic(modelId, revisionId);
-    const assetMappingsHybrid = await this.fetchAssetMappingsForModelCoreDms(modelId, revisionId);
+    const assetMappingsHybrid = await this.fetchAssetMappingsForModelHybrid(modelId, revisionId);
 
     const allAssetMappings = assetMappingsClassic.concat(assetMappingsHybrid);
 
@@ -77,19 +77,19 @@ export class AssetMappingPerModelCache {
     });
   }
 
-  private async fetchAssetMappingsForModelCoreDms(
+  private async fetchAssetMappingsForModelHybrid(
     modelId: ModelId,
     revisionId: RevisionId
   ): Promise<AssetMapping[]> {
     if (this.isCoreDmOnly) return [];
 
-    const filterQuery = {
+    const filterQueryHybrid = {
       limit: 1000,
       getDmsInstances: true
     };
 
     const assetMappings = await this._sdk.assetMappings3D
-      .list(modelId, revisionId, filterQuery)
+      .list(modelId, revisionId, filterQueryHybrid)
       .autoPagingToArray({ limit: Infinity });
 
     const requests = assetMappings.map((mapping) => ({ id: mapping.nodeId }));
