@@ -41,9 +41,6 @@ import { InstanceStylingController } from './InstanceStylingController';
 import { type Class } from '../domainObjectsHelpers/Class';
 import { CdfCaches } from './CdfCaches';
 import { type DmsUniqueIdentifier } from '../../../data-providers';
-import { CadDomainObject } from '../revealDomainObject/cad/CadDomainObject';
-import { PointCloudDomainObject } from '../revealDomainObject/pointCloud/PointCloudDomainObject';
-import { Image360CollectionDomainObject } from '../revealDomainObject/Image360Collection/Image360CollectionDomainObject';
 import {
   type RevealModel,
   type Image360Model,
@@ -233,43 +230,11 @@ export class RevealRenderTarget {
   // ==================================================
 
   addRevealModel(model: RevealModel): void {
-    let domainObject: DomainObject;
-    if (model instanceof CogniteCadModel) {
-      domainObject = new CadDomainObject(model);
-    } else if (model instanceof CognitePointCloudModel) {
-      domainObject = new PointCloudDomainObject(model);
-    } else {
-      domainObject = new Image360CollectionDomainObject(model);
-    }
-    this.rootDomainObject.addChildInteractive(domainObject);
+    this.rootDomainObject.addRevealModel(model);
   }
 
   removeRevealModel(model: RevealModel): void {
-    if (model instanceof CogniteCadModel) {
-      this.viewer.removeModel(model);
-      for (const child of this.rootDomainObject.getChildrenByType(CadDomainObject)) {
-        if (child.model === model) {
-          child.removeInteractive();
-          break;
-        }
-      }
-    } else if (model instanceof CognitePointCloudModel) {
-      this.viewer.removeModel(model);
-      for (const child of this.rootDomainObject.getChildrenByType(PointCloudDomainObject)) {
-        if (child.model === model) {
-          child.removeInteractive();
-          break;
-        }
-      }
-    } else {
-      this.viewer.remove360ImageSet(model);
-      for (const child of this.rootDomainObject.getChildrenByType(Image360CollectionDomainObject)) {
-        if (child.model === model) {
-          child.removeInteractive();
-          break;
-        }
-      }
-    }
+    this.rootDomainObject.removeRevealModel(model);
   }
 
   // ==================================================

@@ -50,6 +50,11 @@ export class PointCloudDomainObject extends VisualDomainObject {
     return new PointCloudRenderStyle();
   }
 
+  protected override removeCore(): void {
+    super.removeCore();
+    this.rootDomainObject?.renderTarget?.viewer?.removeModel(this._model);
+  }
+
   // ==================================================
   // OVERRIDES of VisualDomainObject
   // ==================================================

@@ -51,6 +51,11 @@ export class Image360CollectionDomainObject extends VisualDomainObject {
     return new Image360CollectionRenderStyle();
   }
 
+  protected override removeCore(): void {
+    super.removeCore();
+    this.rootDomainObject?.renderTarget?.viewer?.remove360ImageSet(this._model);
+  }
+
   // ==================================================
   // OVERRIDES of VisualDomainObject
   // ==================================================
