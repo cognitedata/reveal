@@ -40,11 +40,11 @@ export class Image360CollectionDomainObject extends VisualDomainObject {
   // ==================================================
 
   public override get typeName(): TranslationInput {
-    return { untranslated: 'Cad' };
+    return { untranslated: 'Image360' };
   }
 
   public override get icon(): IconName {
-    return 'Cubes';
+    return 'View360';
   }
 
   public override createRenderStyle(): RenderStyle | undefined {

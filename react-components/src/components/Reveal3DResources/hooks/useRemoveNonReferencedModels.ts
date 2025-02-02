@@ -28,17 +28,13 @@ export function useRemoveNonReferencedModels(
     const viewer = renderTarget.viewer;
     const nonReferencedModels = findNonReferencedModels(addOptions, viewer);
 
-    // REMOVE
     nonReferencedModels.forEach((model) => {
-      viewer.removeModel(model);
       renderTarget.removeRevealModel(model);
     });
 
     const nonReferencedCollections = findNonReferencedCollections(addOptions, viewer);
 
     nonReferencedCollections.forEach((collection) => {
-      // REMOVE
-      viewer.remove360ImageSet(collection);
       renderTarget.removeRevealModel(collection);
     });
     setRevealResourcesCount(getViewerResourceCount(viewer));

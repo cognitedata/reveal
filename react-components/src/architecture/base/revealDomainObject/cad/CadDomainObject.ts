@@ -40,7 +40,7 @@ export class CadDomainObject extends VisualDomainObject {
   // ==================================================
 
   public override get typeName(): TranslationInput {
-    return { untranslated: 'Cad' };
+    return { untranslated: 'CAD' };
   }
 
   public override get icon(): IconName {
