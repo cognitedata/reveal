@@ -121,14 +121,15 @@ export abstract class DomainObject {
     return this._label; // The label for UI
   }
 
-  public makeLabel(translate: TranslateDelegate): void {
+  public updateLabel(translate: TranslateDelegate): void {
     this._label = this.getLabel(translate);
   }
 
   /**
    * Generates a label for the domain object using the provided translation delegate.
-   * The label is constructed based on the object's type name, index, and label extension.
-   * This function must be called before the label is used in UI.
+   * If the name is provided, the label is set to the name, else
+   * the label is constructed based on the object's type name, index, and label extension.
+   * The label is used in UI
    *
    * @param translate - A delegate function used to translate the type name.
    *
