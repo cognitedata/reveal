@@ -117,14 +117,3 @@ export type { FdmIdentifier } from './concrete/annotation360/types';
 export type { AnnotationIdentifier } from './concrete/annotation360/types';
 export type { AssetIdentifier } from './concrete/annotation360/types';
 export type { AnnotationStatus } from './concrete/annotation360/types';
-
-// New architecture: tree view nodes
-export type { ITreeNode } from './base/treeView/ITreeNode';
-export type { IconColor } from './base/treeView/types';
-export type { TreeNodeAction } from './base/treeView/types';
-export { TreeNode } from './base/treeView/TreeNode';
-export { CheckBoxState } from './base/treeView/types';
-export { onSingleSelectNode } from './base/treeView/TreeNodeFunctions';
-export { onMultiSelectNode } from './base/treeView/TreeNodeFunctions';
-export { onIndependentCheckNode } from './base/treeView/TreeNodeFunctions';
-export { onDependentCheckNode } from './base/treeView/TreeNodeFunctions';
