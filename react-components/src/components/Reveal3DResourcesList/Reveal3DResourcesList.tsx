@@ -15,11 +15,13 @@ import { handleModelClick, handleRevisionSelect, onSearchInputChange } from './u
 type Reveal3DResourcesListProps = {
   sdk: CogniteClient;
   modelType?: string;
+  onRevisionSelect?: (modelId: number, revisionId: number) => void;
 };
 
 export function Reveal3DResourcesList({
   sdk,
-  modelType
+  modelType,
+  onRevisionSelect
 }: Reveal3DResourcesListProps): ReactElement {
   const { data: modelsWithRevision, isLoading: isItemsLoading } = useAllResourcesList(sdk);
   const [selectedModel, setSelectedModel] = useState<ModelWithRevisionInfo | undefined>(undefined);
@@ -39,6 +41,15 @@ export function Reveal3DResourcesList({
   const filteredAndSearchedModels = filteredModels?.filter((model) =>
     model.displayName.toLowerCase().includes(searchQuery.toLowerCase())
   );
+
+  const handleRevisionSelectWithCallback = (revisionId: number) => {
+    if (selectedModel !== undefined) {
+      handleRevisionSelect(revisionId, selectedModel, setSelectedRevisions);
+      if (onRevisionSelect) {
+        onRevisionSelect(selectedModel.id, revisionId);
+      }
+    }
+  };
 
   return (
     <Reveal3DResourcesListContainer>
@@ -95,9 +106,7 @@ export function Reveal3DResourcesList({
                   isRevisionsLoading={isRevisionsLoading}
                   selectedModel={selectedModel}
                   selectedRevisions={selectedRevisions}
-                  handleRevisionSelect={(revisionId) => {
-                    handleRevisionSelect(revisionId, selectedModel, setSelectedRevisions);
-                  }}
+                  handleRevisionSelect={handleRevisionSelectWithCallback}
                 />
               )}
             </>

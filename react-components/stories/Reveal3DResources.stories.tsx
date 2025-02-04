@@ -55,6 +55,11 @@ export const Main: Story = {
     ]
   },
   render: ({ resources }: { resources: AddResourceOptions[] }) => {
+    const handleRevisionSelect = (modelId: number, revisionId: number): void => {
+      console.log('Selected modelId:', modelId);
+      console.log('Selected revisionId:', revisionId);
+    };
+
     return (
       <RevealContext
         sdk={sdk}
@@ -74,7 +79,11 @@ export const Main: Story = {
               );
             }}
           />
-          <StyledReveal3DResourcesList sdk={sdk} modelType={'CAD'} />
+          <StyledReveal3DResourcesList
+            sdk={sdk}
+            modelType={'CAD'}
+            onRevisionSelect={handleRevisionSelect}
+          />
         </RevealCanvas>
       </RevealContext>
     );
