@@ -19,6 +19,7 @@ import { withSuppressRevealEvents } from '../../higher-order-components/withSupp
 import { type TranslateDelegate } from '../../architecture/base/utilities/TranslateInput';
 import { type UnitSystem } from '../../architecture/base/renderTarget/UnitSystem';
 import { IconComponent } from './Factories/IconFactory';
+import { type DomainObject } from '../../architecture';
 
 const TEXT_SIZE = 'x-small';
 const HEADER_SIZE = 'medium';
@@ -42,7 +43,7 @@ export const DomainObjectPanel = (): ReactElement => {
   if (commands !== undefined && info !== undefined) {
     for (const command of commands) {
       if (command instanceof CopyToClipboardCommand)
-        command.getString = () => toString(info, t, unitSystem);
+        command.getString = () => toString(domainObject, info, t, unitSystem);
     }
   }
 
@@ -59,8 +60,7 @@ export const DomainObjectPanel = (): ReactElement => {
   }
   const unitSystem = root.unitSystem;
   const icon = domainObject.icon;
-  const header = info.header;
-  const text = header?.getText(t);
+  const label = domainObject.getLabel(t);
   return (
     <Container
       style={{
@@ -74,7 +74,7 @@ export const DomainObjectPanel = (): ReactElement => {
       <Flex justifyContent={'space-between'} alignItems={'center'}>
         <Flex gap={8}>
           {icon !== undefined && <IconComponent iconName={icon} type={'ghost'} />}
-          {text !== undefined && <Body size={HEADER_SIZE}>{text}</Body>}
+          {label !== undefined && <Body size={HEADER_SIZE}>{label}</Body>}
         </Flex>
         <Flex>
           <CommandButtons commands={commands} placement={'bottom'} />
@@ -108,12 +108,16 @@ export const DomainObjectPanel = (): ReactElement => {
   }
 };
 
-function toString(info: PanelInfo, translate: TranslateDelegate, unitSystem: UnitSystem): string {
+function toString(
+  domainObject: DomainObject | undefined,
+  info: PanelInfo,
+  translate: TranslateDelegate,
+  unitSystem: UnitSystem
+): string {
   let result = '';
 
   {
-    const { header } = info;
-    const text = header?.getText(translate);
+    const text = domainObject?.getLabel(translate);
     if (text !== undefined) {
       result += `${text}\n`;
     }
