@@ -1,7 +1,7 @@
 /*!
  * Copyright 2022 Cognite AS
  */
-import * as THREE from 'three';
+import { Camera, Matrix4, Ray, Raycaster, Vector2, Vector3 } from 'three';
 import pull from 'lodash/pull';
 
 import { Image360Entity } from './entity/Image360Entity';
@@ -18,7 +18,7 @@ import { ClosestGeometryFinder } from '@reveal/utilities';
 
 export class Image360Facade<T extends DataSourceType> {
   private readonly _image360Collections: DefaultImage360Collection<T>[];
-  private readonly _rayCaster: THREE.Raycaster;
+  private readonly _rayCaster: Raycaster;
   private readonly _image360Cache: Image360LoadingCache<T>;
 
   private readonly _loadSequencer = new AsyncSequencer();
@@ -51,14 +51,14 @@ export class Image360Facade<T extends DataSourceType> {
 
   constructor(private readonly _entityFactory: Image360CollectionFactory) {
     this._image360Collections = [];
-    this._rayCaster = new THREE.Raycaster();
+    this._rayCaster = new Raycaster();
     this._image360Cache = new Image360LoadingCache();
   }
 
   public async create<Image360CollectionSourceType extends DataSourceType>(
     collectionIdentifier: Image360CollectionSourceType['image360Identifier'],
     annotationFilter: Image360AnnotationFilterOptions = {},
-    postTransform = new THREE.Matrix4(),
+    postTransform = new Matrix4(),
     preComputedRotation = true
   ): Promise<DefaultImage360Collection<T>> {
     const sequencer = this._loadSequencer.getNextSequencer();
@@ -122,16 +122,17 @@ export class Image360Facade<T extends DataSourceType> {
     return imageCollection[0];
   }
 
-  public intersect(coords: THREE.Vector2, camera: THREE.Camera): Image360IconIntersectionData<T> | undefined {
-    const modelMatrix = new THREE.Matrix4();
-    const invModelMatrix = new THREE.Matrix4();
-    const intersection = new THREE.Vector3();
+  public intersect(coords: Vector2, camera: Camera): Image360IconIntersectionData<T> | undefined {
+    const modelMatrix = new Matrix4();
+    const invModelMatrix = new Matrix4();
+    const intersection = new Vector3();
 
     const closestFinder = new ClosestGeometryFinder<Image360IconIntersectionData<T>>(camera.position);
     for (const collection of this._image360Collections) {
       collection.getModelTransformation(modelMatrix);
       invModelMatrix.copy(modelMatrix).invert();
 
+      // The ray is in model coordinates
       const modelRay = getTransformedRay(this._rayCaster, coords, camera, invModelMatrix);
 
       for (const entity of collection.image360Entities) {
@@ -161,19 +162,14 @@ export class Image360Facade<T extends DataSourceType> {
     }
     return closestFinder.getClosestGeometry();
 
-    function isInRayDirection(position: THREE.Vector3, ray: THREE.Ray): boolean {
-      const direction = new THREE.Vector3().subVectors(position, camera.position);
+    function isInRayDirection(position: Vector3, ray: Ray): boolean {
+      const direction = new Vector3().subVectors(position, camera.position);
       return direction.dot(ray.direction) > 0 && direction.lengthSq() > 0.00001;
     }
     function hasVisibleIcon(entity: Image360Entity<T>) {
       return entity.icon.getVisible() && !entity.image360Visualization.visible;
     }
-    function getTransformedRay(
-      rayCaster: THREE.Raycaster,
-      coords: THREE.Vector2,
-      camera: THREE.Camera,
-      matrix: THREE.Matrix4
-    ): THREE.Ray {
+    function getTransformedRay(rayCaster: Raycaster, coords: Vector2, camera: Camera, matrix: Matrix4): Ray {
       rayCaster.setFromCamera(coords, camera);
       rayCaster.ray.applyMatrix4(matrix);
       return rayCaster.ray;
