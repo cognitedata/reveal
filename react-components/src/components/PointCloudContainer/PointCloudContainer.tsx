@@ -23,6 +23,7 @@ import { type PointCloudModelStyling } from './types';
 import { useModelIdRevisionIdFromModelOptions } from '../../hooks/useModelIdRevisionIdFromModelOptions';
 import { isClassicIdentifier, isDMIdentifier } from '../Reveal3DResources';
 import { isSameModel } from '../../utilities/isSameModel';
+import { RevealModelsUtils } from '../../architecture/concrete/reveal/RevealModelsUtils';
 
 export type CognitePointCloudModelProps = {
   addModelOptions: AddModelOptions<DataSourceType>;
@@ -120,7 +121,7 @@ export function PointCloudContainer({
         return await Promise.resolve(viewerModel as CognitePointCloudModel<DataSourceType>);
       }
       return await viewer.addPointCloudModel(addModelOptions).then((model) => {
-        renderTarget.addRevealModel(model);
+        RevealModelsUtils.add(renderTarget, model);
         return model;
       });
     }
@@ -132,7 +133,7 @@ export function PointCloudContainer({
     if (cachedViewerRef !== undefined && !cachedViewerRef.isRevealContainerMountedRef.current)
       return;
 
-    renderTarget.removeRevealModel(model);
+    RevealModelsUtils.remove(renderTarget, model);
     setRevealResourcesCount(getViewerResourceCount(viewer));
     setModel(undefined);
   }

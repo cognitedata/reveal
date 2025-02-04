@@ -3,7 +3,7 @@
  */
 
 import { cloneDeep } from 'lodash';
-import { RenderStyle } from '../../renderStyles/RenderStyle';
+import { RenderStyle } from '../../../base/renderStyles/RenderStyle';
 
 export class PointCloudRenderStyle extends RenderStyle {
   public override clone(): RenderStyle {

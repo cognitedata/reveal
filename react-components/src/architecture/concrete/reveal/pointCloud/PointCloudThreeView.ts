@@ -3,11 +3,11 @@
  */
 
 import { type PointCloudRenderStyle } from './PointCloudRenderStyle';
-import { type DomainObjectChange } from '../../domainObjectsHelpers/DomainObjectChange';
-import { Changes } from '../../domainObjectsHelpers/Changes';
 import { type PointCloudDomainObject } from './PointCloudDomainObject';
-import { ThreeView } from '../../views/ThreeView';
 import { Box3 } from 'three';
+import { ThreeView } from '../../../base/views/ThreeView';
+import { type DomainObjectChange } from '../../../base/domainObjectsHelpers/DomainObjectChange';
+import { Changes } from '../../../base/domainObjectsHelpers/Changes';
 import { type PointCloud } from '../RevealTypes';
 
 export class PointCloudThreeView extends ThreeView<PointCloudDomainObject> {

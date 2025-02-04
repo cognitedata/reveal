@@ -2,34 +2,35 @@
  * Copyright 2025 Cognite AS
  */
 
-import { VisualDomainObject } from '../../domainObjects/VisualDomainObject';
-import { type RenderStyle } from '../../renderStyles/RenderStyle';
-import { type IconName } from '../../utilities/IconName';
-import { type TranslationInput } from '../../utilities/TranslateInput';
-import { type ThreeView } from '../../views/ThreeView';
-import { PointCloudRenderStyle } from './PointCloudRenderStyle';
-import { PointCloudThreeView } from './PointCloudThreeView';
-import { type PointCloud } from '../RevealTypes';
+import { type CogniteCadModel } from '@cognite/reveal';
+import { CadRenderStyle } from './CadRenderStyle';
+import { CadThreeView } from './CadThreeView';
+import { VisualDomainObject } from '../../../base/domainObjects/VisualDomainObject';
+import { type TranslationInput } from '../../../base/utilities/TranslateInput';
+import { type IconName } from '../../../base/utilities/IconName';
+import { type RenderStyle } from '../../../base/renderStyles/RenderStyle';
+import { type ThreeView } from '../../../base/views/ThreeView';
 
-export class PointCloudDomainObject extends VisualDomainObject {
+export class CadDomainObject extends VisualDomainObject {
   // ==================================================
   // INSTANCE FIELDS
   // ==================================================
 
-  readonly _model: PointCloud;
+  private readonly _model: CogniteCadModel;
 
   // ==================================================
   // INSTANCE PROPERTIES
   // ==================================================
 
-  public get model(): PointCloud | undefined {
+  public get model(): CogniteCadModel | undefined {
     return this._model;
   }
+
   // ==================================================
   // CONSTRUCTORS
   // ==================================================
 
-  public constructor(model: PointCloud) {
+  public constructor(model: CogniteCadModel) {
     super();
     this._model = model;
   }
@@ -39,15 +40,15 @@ export class PointCloudDomainObject extends VisualDomainObject {
   // ==================================================
 
   public override get typeName(): TranslationInput {
-    return { untranslated: 'PointCloud' };
+    return { untranslated: 'CAD' };
   }
 
   public override get icon(): IconName {
-    return 'PointCloud';
+    return 'Cubes';
   }
 
   public override createRenderStyle(): RenderStyle | undefined {
-    return new PointCloudRenderStyle();
+    return new CadRenderStyle();
   }
 
   protected override removeCore(): void {
@@ -60,6 +61,6 @@ export class PointCloudDomainObject extends VisualDomainObject {
   // ==================================================
 
   protected override createThreeView(): ThreeView | undefined {
-    return new PointCloudThreeView();
+    return new CadThreeView();
   }
 }

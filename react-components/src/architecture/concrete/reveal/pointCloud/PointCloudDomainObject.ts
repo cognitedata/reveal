@@ -2,35 +2,34 @@
  * Copyright 2025 Cognite AS
  */
 
-import { VisualDomainObject } from '../../domainObjects/VisualDomainObject';
-import { type RenderStyle } from '../../renderStyles/RenderStyle';
-import { type IconName } from '../../utilities/IconName';
-import { type TranslationInput } from '../../utilities/TranslateInput';
-import { type ThreeView } from '../../views/ThreeView';
-import { type Image360Model } from '../RevealTypes';
-import { Image360CollectionRenderStyle } from './Image360CollectionRenderStyle';
-import { Image360CollectionThreeView } from './Image360CollectionThreeView';
+import { VisualDomainObject } from '../../../base/domainObjects/VisualDomainObject';
+import { type RenderStyle } from '../../../base/renderStyles/RenderStyle';
+import { type IconName } from '../../../base/utilities/IconName';
+import { type TranslationInput } from '../../../base/utilities/TranslateInput';
+import { type ThreeView } from '../../../base/views/ThreeView';
+import { type PointCloud } from '../RevealTypes';
+import { PointCloudRenderStyle } from './PointCloudRenderStyle';
+import { PointCloudThreeView } from './PointCloudThreeView';
 
-export class Image360CollectionDomainObject extends VisualDomainObject {
+export class PointCloudDomainObject extends VisualDomainObject {
   // ==================================================
   // INSTANCE FIELDS
   // ==================================================
 
-  readonly _model: Image360Model;
+  readonly _model: PointCloud;
 
   // ==================================================
   // INSTANCE PROPERTIES
   // ==================================================
 
-  public get model(): Image360Model | undefined {
+  public get model(): PointCloud | undefined {
     return this._model;
   }
-
   // ==================================================
   // CONSTRUCTORS
   // ==================================================
 
-  public constructor(model: Image360Model) {
+  public constructor(model: PointCloud) {
     super();
     this._model = model;
   }
@@ -40,20 +39,20 @@ export class Image360CollectionDomainObject extends VisualDomainObject {
   // ==================================================
 
   public override get typeName(): TranslationInput {
-    return { untranslated: 'Image360' };
+    return { untranslated: 'PointCloud' };
   }
 
   public override get icon(): IconName {
-    return 'View360';
+    return 'PointCloud';
   }
 
   public override createRenderStyle(): RenderStyle | undefined {
-    return new Image360CollectionRenderStyle();
+    return new PointCloudRenderStyle();
   }
 
   protected override removeCore(): void {
     super.removeCore();
-    this.rootDomainObject?.renderTarget?.viewer?.remove360ImageSet(this._model);
+    this.rootDomainObject?.renderTarget?.viewer?.removeModel(this._model);
   }
 
   // ==================================================
@@ -61,6 +60,6 @@ export class Image360CollectionDomainObject extends VisualDomainObject {
   // ==================================================
 
   protected override createThreeView(): ThreeView | undefined {
-    return new Image360CollectionThreeView();
+    return new PointCloudThreeView();
   }
 }

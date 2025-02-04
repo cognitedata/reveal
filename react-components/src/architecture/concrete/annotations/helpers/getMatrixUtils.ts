@@ -5,7 +5,7 @@
 import { CognitePointCloudModel, type DataSourceType, type Cognite3DViewer } from '@cognite/reveal';
 
 import { type Matrix4 } from 'three';
-import { type PointCloud } from '../../../base/revealDomainObject/RevealTypes';
+import { type PointCloud } from '../../reveal/RevealTypes';
 
 export const getGlobalMatrix = (args: {
   modelId: number;

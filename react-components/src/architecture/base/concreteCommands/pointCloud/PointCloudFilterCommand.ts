@@ -7,7 +7,7 @@ import { type TranslationInput } from '../../utilities/TranslateInput';
 import { type Color } from 'three';
 import { BaseFilterCommand, BaseFilterItemCommand } from '../../commands/BaseFilterCommand';
 import { type RevealRenderTarget } from '../../renderTarget/RevealRenderTarget';
-import { type PointCloud } from '../../revealDomainObject/RevealTypes';
+import { type PointCloud } from '../../../concrete/reveal/RevealTypes';
 
 export class PointCloudFilterCommand extends BaseFilterCommand {
   // ==================================================

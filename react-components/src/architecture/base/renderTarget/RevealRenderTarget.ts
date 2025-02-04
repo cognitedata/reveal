@@ -41,11 +41,7 @@ import { InstanceStylingController } from './InstanceStylingController';
 import { type Class } from '../domainObjectsHelpers/Class';
 import { CdfCaches } from './CdfCaches';
 import { type DmsUniqueIdentifier } from '../../../data-providers';
-import {
-  type RevealModel,
-  type Image360Model,
-  type PointCloud
-} from '../revealDomainObject/RevealTypes';
+import { type Image360Model, type PointCloud } from '../../concrete/reveal/RevealTypes';
 
 const DIRECTIONAL_LIGHT_NAME = 'DirectionalLight';
 
@@ -223,18 +219,6 @@ export class RevealRenderTarget {
     for (const collection of this.viewer.get360ImageCollections()) {
       yield collection;
     }
-  }
-
-  // ==================================================
-  // INSTANCE METHODS: Add models to the viewer
-  // ==================================================
-
-  addRevealModel(model: RevealModel): void {
-    this.rootDomainObject.addRevealModel(model);
-  }
-
-  removeRevealModel(model: RevealModel): void {
-    this.rootDomainObject.removeRevealModel(model);
   }
 
   // ==================================================

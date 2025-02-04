@@ -4,7 +4,7 @@
 
 import { type TranslationInput } from '../../utilities/TranslateInput';
 import { FractionSliderCommand } from '../../commands/FractionSliderCommand';
-import { type Image360Model } from '../../revealDomainObject/RevealTypes';
+import { type Image360Model } from '../../../concrete/reveal/RevealTypes';
 
 export class Set360IconsOpacityCommand extends FractionSliderCommand {
   // ==================================================

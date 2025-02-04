@@ -20,6 +20,7 @@ import {
   useReveal3DResourcesCount
 } from '../Reveal3DResources/Reveal3DResourcesInfoContext';
 import { getViewerResourceCount } from '../../utilities/getViewerResourceCount';
+import { RevealModelsUtils } from '../../architecture/concrete/reveal/RevealModelsUtils';
 
 type Image360CollectionContainerProps = {
   addImage360CollectionOptions: AddImage360CollectionOptions;
@@ -121,7 +122,7 @@ export function Image360CollectionContainer({
         return await viewer
           .add360ImageSet('events', { site_id: siteId }, { preMultipliedRotation: false })
           .then((model) => {
-            renderTarget.addRevealModel(model);
+            RevealModelsUtils.add(renderTarget, model);
             return model;
           });
       } else {
@@ -132,7 +133,7 @@ export function Image360CollectionContainer({
             space: addImage360CollectionOptions.space
           })
           .then((model) => {
-            renderTarget.addRevealModel(model);
+            RevealModelsUtils.add(renderTarget, model);
             return model;
           });
       }
@@ -145,7 +146,7 @@ export function Image360CollectionContainer({
     if (cachedViewerRef !== undefined && !cachedViewerRef.isRevealContainerMountedRef.current)
       return;
 
-    renderTarget.removeRevealModel(modelRef.current);
+    RevealModelsUtils.remove(renderTarget, modelRef.current);
     setRevealResourcesCount(getViewerResourceCount(viewer));
     modelRef.current = undefined;
   }

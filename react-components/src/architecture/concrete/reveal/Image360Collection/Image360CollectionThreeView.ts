@@ -3,11 +3,11 @@
  */
 
 import { type Image360CollectionRenderStyle } from './Image360CollectionRenderStyle';
-import { type DomainObjectChange } from '../../domainObjectsHelpers/DomainObjectChange';
-import { Changes } from '../../domainObjectsHelpers/Changes';
 import { type Image360CollectionDomainObject } from './Image360CollectionDomainObject';
-import { ThreeView } from '../../views/ThreeView';
 import { Box3, Vector3 } from 'three';
+import { ThreeView } from '../../../base/views/ThreeView';
+import { type DomainObjectChange } from '../../../base/domainObjectsHelpers/DomainObjectChange';
+import { Changes } from '../../../base/domainObjectsHelpers/Changes';
 import { type Image360Model } from '../RevealTypes';
 
 export class Image360CollectionThreeView extends ThreeView<Image360CollectionDomainObject> {

@@ -3,12 +3,12 @@
  */
 
 import { type CadRenderStyle } from './CadRenderStyle';
-import { type DomainObjectChange } from '../../domainObjectsHelpers/DomainObjectChange';
-import { Changes } from '../../domainObjectsHelpers/Changes';
 import { type CadDomainObject } from './CadDomainObject';
-import { ThreeView } from '../../views/ThreeView';
 import { Box3 } from 'three';
 import { type CogniteCadModel } from '@cognite/reveal';
+import { ThreeView } from '../../../base/views/ThreeView';
+import { type DomainObjectChange } from '../../../base/domainObjectsHelpers/DomainObjectChange';
+import { Changes } from '../../../base/domainObjectsHelpers/Changes';
 
 export class CadThreeView extends ThreeView<CadDomainObject> {
   // ==================================================

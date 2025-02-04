@@ -21,6 +21,7 @@ import { getViewerResourceCount } from '../../utilities/getViewerResourceCount';
 import { type CadModelStyling } from './types';
 import { useApplyCadModelStyling } from './useApplyCadModelStyling';
 import { isSameGeometryFilter, isSameModel } from '../../utilities/isSameModel';
+import { RevealModelsUtils } from '../../architecture/concrete/reveal/RevealModelsUtils';
 
 export type CogniteCadModelProps = {
   addModelOptions: AddModelOptions<ClassicDataSourceType>;
@@ -115,7 +116,7 @@ export function CadModelContainer({
       initializingModelsGeometryFilter.current = geometryFilter;
 
       return await viewer.addCadModel(addModelOptions).then((model) => {
-        renderTarget.addRevealModel(model);
+        RevealModelsUtils.add(renderTarget, model);
         return model;
       });
     }
@@ -127,7 +128,7 @@ export function CadModelContainer({
     if (cachedViewerRef !== undefined && !cachedViewerRef.isRevealContainerMountedRef.current)
       return;
 
-    renderTarget.removeRevealModel(model);
+    RevealModelsUtils.remove(renderTarget, model);
     setRevealResourcesCount(getViewerResourceCount(viewer));
   }
 }

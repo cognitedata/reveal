@@ -2,27 +2,27 @@
  * Copyright 2025 Cognite AS
  */
 
-import { type CogniteCadModel } from '@cognite/reveal';
-import { VisualDomainObject } from '../../domainObjects/VisualDomainObject';
-import { type RenderStyle } from '../../renderStyles/RenderStyle';
-import { type IconName } from '../../utilities/IconName';
-import { type TranslationInput } from '../../utilities/TranslateInput';
-import { type ThreeView } from '../../views/ThreeView';
-import { CadRenderStyle } from './CadRenderStyle';
-import { CadThreeView } from './CadThreeView';
+import { VisualDomainObject } from '../../../base/domainObjects/VisualDomainObject';
+import { type RenderStyle } from '../../../base/renderStyles/RenderStyle';
+import { type IconName } from '../../../base/utilities/IconName';
+import { type TranslationInput } from '../../../base/utilities/TranslateInput';
+import { type ThreeView } from '../../../base/views/ThreeView';
+import { type Image360Model } from '../RevealTypes';
+import { Image360CollectionRenderStyle } from './Image360CollectionRenderStyle';
+import { Image360CollectionThreeView } from './Image360CollectionThreeView';
 
-export class CadDomainObject extends VisualDomainObject {
+export class Image360CollectionDomainObject extends VisualDomainObject {
   // ==================================================
   // INSTANCE FIELDS
   // ==================================================
 
-  private readonly _model: CogniteCadModel;
+  readonly _model: Image360Model;
 
   // ==================================================
   // INSTANCE PROPERTIES
   // ==================================================
 
-  public get model(): CogniteCadModel | undefined {
+  public get model(): Image360Model | undefined {
     return this._model;
   }
 
@@ -30,7 +30,7 @@ export class CadDomainObject extends VisualDomainObject {
   // CONSTRUCTORS
   // ==================================================
 
-  public constructor(model: CogniteCadModel) {
+  public constructor(model: Image360Model) {
     super();
     this._model = model;
   }
@@ -40,20 +40,20 @@ export class CadDomainObject extends VisualDomainObject {
   // ==================================================
 
   public override get typeName(): TranslationInput {
-    return { untranslated: 'CAD' };
+    return { untranslated: 'Image360' };
   }
 
   public override get icon(): IconName {
-    return 'Cubes';
+    return 'View360';
   }
 
   public override createRenderStyle(): RenderStyle | undefined {
-    return new CadRenderStyle();
+    return new Image360CollectionRenderStyle();
   }
 
   protected override removeCore(): void {
     super.removeCore();
-    this.rootDomainObject?.renderTarget?.viewer?.removeModel(this._model);
+    this.rootDomainObject?.renderTarget?.viewer?.remove360ImageSet(this._model);
   }
 
   // ==================================================
@@ -61,6 +61,6 @@ export class CadDomainObject extends VisualDomainObject {
   // ==================================================
 
   protected override createThreeView(): ThreeView | undefined {
-    return new CadThreeView();
+    return new Image360CollectionThreeView();
   }
 }

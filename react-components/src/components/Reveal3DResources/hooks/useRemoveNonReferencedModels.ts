@@ -18,6 +18,7 @@ import { isSameModel } from '../../../utilities/isSameModel';
 import { useReveal3DResourcesCount } from '../Reveal3DResourcesInfoContext';
 import { getViewerResourceCount } from '../../../utilities/getViewerResourceCount';
 import { type RevealRenderTarget } from '../../../architecture';
+import { RevealModelsUtils } from '../../../architecture/concrete/reveal/RevealModelsUtils';
 
 export function useRemoveNonReferencedModels(
   addOptions: AddResourceOptions[],
@@ -29,13 +30,13 @@ export function useRemoveNonReferencedModels(
     const nonReferencedModels = findNonReferencedModels(addOptions, viewer);
 
     nonReferencedModels.forEach((model) => {
-      renderTarget.removeRevealModel(model);
+      RevealModelsUtils.remove(renderTarget, model);
     });
 
     const nonReferencedCollections = findNonReferencedCollections(addOptions, viewer);
 
-    nonReferencedCollections.forEach((collection) => {
-      renderTarget.removeRevealModel(collection);
+    nonReferencedCollections.forEach((model) => {
+      RevealModelsUtils.remove(renderTarget, model);
     });
     setRevealResourcesCount(getViewerResourceCount(viewer));
   }, [addOptions]);
