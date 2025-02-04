@@ -149,14 +149,13 @@ export class Image360Facade<T extends DataSourceType> {
         }
         // Now transform the intersection to viewer coordinates
         intersection.applyMatrix4(modelMatrix);
-        if (!closestFinder.isClosest(intersection)) {
-          continue;
-        }
-        closestFinder.setClosestGeometry({
-          image360: entity,
-          image360Collection: collection,
-          point: intersection.clone(),
-          distanceToCamera: closestFinder.minDistance
+        closestFinder.addLazy(intersection, () => {
+          return {
+            image360: entity,
+            image360Collection: collection,
+            point: intersection.clone(),
+            distanceToCamera: closestFinder.minDistance
+          };
         });
       }
     }
