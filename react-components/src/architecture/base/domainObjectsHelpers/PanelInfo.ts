@@ -14,13 +14,7 @@ type PanelItemProps = {
 };
 
 export class PanelInfo {
-  public header?: PanelItem;
   public readonly items: NumberPanelItem[] = [];
-
-  public setHeader(translationInput: TranslationInput): void {
-    this.header = new PanelItem(translationInput);
-  }
-
   public add(props: PanelItemProps): void {
     const item = new NumberPanelItem(props);
     this.items.push(item);

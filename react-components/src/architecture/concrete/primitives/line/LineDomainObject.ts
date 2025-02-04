@@ -124,8 +124,6 @@ export abstract class LineDomainObject extends VisualDomainObject {
       return undefined;
     }
     const info = new PanelInfo();
-    info.setHeader(this.typeName);
-
     switch (this.primitiveType) {
       case PrimitiveType.Line:
         add({ key: 'LENGTH' }, this.getTotalLength());
