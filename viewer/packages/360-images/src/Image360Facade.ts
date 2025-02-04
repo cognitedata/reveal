@@ -126,8 +126,8 @@ export class Image360Facade<T extends DataSourceType> {
     const modelMatrix = new Matrix4();
     const invModelMatrix = new Matrix4();
     const intersection = new Vector3();
-
     const closestFinder = new ClosestGeometryFinder<Image360IconIntersectionData<T>>(camera.position);
+
     for (const collection of this._image360Collections) {
       collection.getModelTransformation(modelMatrix);
       invModelMatrix.copy(modelMatrix).invert();
