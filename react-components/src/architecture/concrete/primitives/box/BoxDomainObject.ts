@@ -79,8 +79,6 @@ export abstract class BoxDomainObject extends SolidDomainObject {
 
   public override getPanelInfo(): PanelInfo | undefined {
     const info = new PanelInfo();
-    info.setHeader(this.typeName);
-
     const { primitiveType } = this;
     const isFinished = this.focusType !== FocusType.Pending;
     const { box } = this;
