@@ -2,21 +2,11 @@
  * Copyright 2023 Cognite AS
  */
 import type { Meta, StoryObj } from '@storybook/react';
-import {
-  type AddResourceOptions,
-  Reveal3DResources,
-  RevealCanvas,
-  RevealContext,
-  withSuppressRevealEvents
-} from '../src';
+import { type AddResourceOptions, Reveal3DResources, RevealCanvas, RevealContext } from '../src';
 import { Color, Matrix4 } from 'three';
 import { createSdkByUrlToken } from './utilities/createSdkByUrlToken';
 import { RevealResourcesFitCameraOnLoad } from './utilities/with3dResoursesFitCameraOnLoad';
 import { IndexSet } from '@cognite/reveal';
-import { Reveal3DResourcesList } from '../src/components/Reveal3DResourcesList/Reveal3DResourcesList';
-import styled from 'styled-components';
-import { useState } from 'react';
-import { type ModelWithRevisionInfo } from '../src/hooks/network/types';
 
 const meta = {
   title: 'Example/Reveal3DResources',
@@ -57,17 +47,6 @@ export const Main: Story = {
     ]
   },
   render: ({ resources }: { resources: AddResourceOptions[] }) => {
-    const [selectedModel, setSelectedModel] = useState<ModelWithRevisionInfo | undefined>(
-      undefined
-    );
-    const [selectedRevisions, setSelectedRevisions] = useState<Record<number, number | undefined>>(
-      {}
-    );
-    const handleRevisionSelect = (modelId: number, revisionId: number): void => {
-      console.log('Selected modelId:', modelId);
-      console.log('Selected revisionId:', revisionId);
-    };
-
     return (
       <RevealContext
         sdk={sdk}
@@ -87,23 +66,8 @@ export const Main: Story = {
               );
             }}
           />
-          <StyledReveal3DResourcesList
-            sdk={sdk}
-            modelType={'CAD'}
-            onRevisionSelect={handleRevisionSelect}
-            selectedModel={selectedModel}
-            setSelectedModel={setSelectedModel}
-            selectedRevisions={selectedRevisions}
-            setSelectedRevisions={setSelectedRevisions}
-          />
         </RevealCanvas>
       </RevealContext>
     );
   }
 };
-
-const StyledReveal3DResourcesList = styled(withSuppressRevealEvents(Reveal3DResourcesList))`
-  position: absolute !important;
-  top: 30px !important;
-  left: 100px !important;
-`;
