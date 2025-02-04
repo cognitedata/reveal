@@ -161,17 +161,19 @@ export class Image360Facade<T extends DataSourceType> {
     }
     return closestFinder.getClosestGeometry();
 
-    function isInRayDirection(position: Vector3, ray: Ray): boolean {
-      const direction = new Vector3().subVectors(position, camera.position);
-      return direction.dot(ray.direction) > 0 && direction.lengthSq() > 0.00001;
-    }
-    function hasVisibleIcon(entity: Image360Entity<T>) {
-      return entity.icon.getVisible() && !entity.image360Visualization.visible;
-    }
     function getTransformedRay(rayCaster: Raycaster, coords: Vector2, camera: Camera, matrix: Matrix4): Ray {
       rayCaster.setFromCamera(coords, camera);
       rayCaster.ray.applyMatrix4(matrix);
       return rayCaster.ray;
+    }
+
+    function isInRayDirection(position: Vector3, ray: Ray): boolean {
+      const direction = new Vector3().subVectors(position, camera.position);
+      return direction.dot(ray.direction) > 0 && direction.lengthSq() > 0.00001;
+    }
+
+    function hasVisibleIcon(entity: Image360Entity<T>) {
+      return entity.icon.getVisible() && !entity.image360Visualization.visible;
     }
   }
 
