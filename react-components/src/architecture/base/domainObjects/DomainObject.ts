@@ -28,12 +28,13 @@ import { type Transaction } from '../undo/Transaction';
 import { type IconName } from '../../base/utilities/IconName';
 import { ToggleMetricUnitsCommand } from '../concreteCommands/ToggleMetricUnitsCommand';
 import { ChangedDescription } from '../domainObjectsHelpers/ChangedDescription';
+import { type TreeNodeType } from '../../../advanced-tree-view';
 
 /**
  * Represents an abstract base class for domain objects.
  * @abstract
  */
-export abstract class DomainObject {
+export abstract class DomainObject implements TreeNodeType {
   // ==================================================
   // INSTANCE FIELDS
   // ==================================================
