@@ -131,14 +131,13 @@ export class Image360Facade<T extends DataSourceType> {
     for (const collection of this._image360Collections) {
       collection.getModelTransformation(modelMatrix);
       invModelMatrix.copy(modelMatrix).invert();
-
-      // The ray is in model coordinates
+      // Create a ray in in model coordinates to do intersection on
       const modelRay = getTransformedRay(this._rayCaster, coords, camera, invModelMatrix);
-
       for (const entity of collection.image360Entities) {
         if (!hasVisibleIcon(entity)) {
           continue;
         }
+
         if (!entity.icon.intersect(modelRay)) {
           continue;
         }
