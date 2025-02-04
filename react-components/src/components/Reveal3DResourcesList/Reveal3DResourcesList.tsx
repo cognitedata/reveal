@@ -16,19 +16,23 @@ type Reveal3DResourcesListProps = {
   sdk: CogniteClient;
   modelType?: string;
   onRevisionSelect?: (modelId: number, revisionId: number) => void;
+  selectedModel: ModelWithRevisionInfo | undefined;
+  setSelectedModel: (model: ModelWithRevisionInfo | undefined) => void;
+  selectedRevisions: Record<number, number | undefined>;
+  setSelectedRevisions: (revisions: Record<number, number | undefined>) => void;
 };
 
 export function Reveal3DResourcesList({
   sdk,
   modelType,
-  onRevisionSelect
+  onRevisionSelect,
+  selectedModel,
+  setSelectedModel,
+  selectedRevisions,
+  setSelectedRevisions
 }: Reveal3DResourcesListProps): ReactElement {
   const { data: modelsWithRevision, isLoading: isItemsLoading } = useAllResourcesList(sdk);
-  const [selectedModel, setSelectedModel] = useState<ModelWithRevisionInfo | undefined>(undefined);
   const [revisions, setRevisions] = useState<Array<{ id: number; createdTime: Date }>>([]);
-  const [selectedRevisions, setSelectedRevisions] = useState<Record<number, number | undefined>>(
-    {}
-  );
   const [currentPage, setCurrentPage] = useState(1);
   const [isRevisionsLoading, setIsRevisionsLoading] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
@@ -42,10 +46,10 @@ export function Reveal3DResourcesList({
     model.displayName.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
-  const handleRevisionSelectWithCallback = (revisionId: number) => {
+  const handleRevisionSelectWithCallback = (revisionId: number): void => {
     if (selectedModel !== undefined) {
       handleRevisionSelect(revisionId, selectedModel, setSelectedRevisions);
-      if (onRevisionSelect) {
+      if (onRevisionSelect !== undefined) {
         onRevisionSelect(selectedModel.id, revisionId);
       }
     }

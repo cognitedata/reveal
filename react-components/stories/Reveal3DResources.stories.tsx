@@ -15,6 +15,8 @@ import { RevealResourcesFitCameraOnLoad } from './utilities/with3dResoursesFitCa
 import { IndexSet } from '@cognite/reveal';
 import { Reveal3DResourcesList } from '../src/components/Reveal3DResourcesList/Reveal3DResourcesList';
 import styled from 'styled-components';
+import { useState } from 'react';
+import { type ModelWithRevisionInfo } from '../src/hooks/network/types';
 
 const meta = {
   title: 'Example/Reveal3DResources',
@@ -55,6 +57,12 @@ export const Main: Story = {
     ]
   },
   render: ({ resources }: { resources: AddResourceOptions[] }) => {
+    const [selectedModel, setSelectedModel] = useState<ModelWithRevisionInfo | undefined>(
+      undefined
+    );
+    const [selectedRevisions, setSelectedRevisions] = useState<Record<number, number | undefined>>(
+      {}
+    );
     const handleRevisionSelect = (modelId: number, revisionId: number): void => {
       console.log('Selected modelId:', modelId);
       console.log('Selected revisionId:', revisionId);
@@ -83,6 +91,10 @@ export const Main: Story = {
             sdk={sdk}
             modelType={'CAD'}
             onRevisionSelect={handleRevisionSelect}
+            selectedModel={selectedModel}
+            setSelectedModel={setSelectedModel}
+            selectedRevisions={selectedRevisions}
+            setSelectedRevisions={setSelectedRevisions}
           />
         </RevealCanvas>
       </RevealContext>

@@ -30,6 +30,4 @@ export {
   useReveal3DLoadedResourceCount
 } from './Reveal3DResourcesInfoContext';
 
-export { useRemoveNonReferencedModels } from './hooks/useRemoveNonReferencedModels';
-
 export { isClassicIdentifier, isDMIdentifier } from './typeGuards';
