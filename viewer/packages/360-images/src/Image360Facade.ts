@@ -2,7 +2,6 @@
  * Copyright 2022 Cognite AS
  */
 import * as THREE from 'three';
-import first from 'lodash/first';
 import pull from 'lodash/pull';
 
 import { Image360Entity } from './entity/Image360Entity';
@@ -15,6 +14,7 @@ import { Image360AnnotationFilterOptions } from './annotation/types';
 import { AsyncSequencer } from '@reveal/utilities/src/AsyncSequencer';
 import { DataSourceType } from '@reveal/data-providers';
 import { Image360IconIntersectionData } from './types';
+import { ClosestGeometryFinder } from '@reveal/utilities';
 
 export class Image360Facade<T extends DataSourceType> {
   private readonly _image360Collections: DefaultImage360Collection<T>[];
@@ -123,107 +123,60 @@ export class Image360Facade<T extends DataSourceType> {
   }
 
   public intersect(coords: THREE.Vector2, camera: THREE.Camera): Image360IconIntersectionData<T> | undefined {
-    const cameraDirection = camera.getWorldDirection(new THREE.Vector3());
-    const cameraPosition = camera.position.clone();
-    const collectionMatrix = new THREE.Matrix4();
+    const modelMatrix = new THREE.Matrix4();
+    const invModelMatrix = new THREE.Matrix4();
+    const intersection = new THREE.Vector3();
 
-    const intersections = this._image360Collections.flatMap(collection =>
-      getImage360Entities(collection)
-        .filter(hasVisibleIcon)
-        .map(
-          getIntersector(
-            getTransformedRay(
-              this._rayCaster,
-              coords,
-              camera,
-              getWorldToModelCollectionMatrix(collection, collectionMatrix)
-            )
-          )
-        )
-        .filter(hasIntersection)
-        .map(intersectionToCameraSpace)
-        .filter(isInFrontOfCamera)
-        .sort(byDistanceToCamera)
-        .map(([entity, intersectionPoint]) =>
-          createIntersection(collection, entity, intersectionPoint, camera.position)
-        )
-    );
+    const closestFinder = new ClosestGeometryFinder<Image360IconIntersectionData<T>>(camera.position);
+    for (const collection of this._image360Collections) {
+      collection.getModelTransformation(modelMatrix);
+      invModelMatrix.copy(modelMatrix).invert();
 
-    return first(intersections);
+      const modelRay = getTransformedRay(this._rayCaster, coords, camera, invModelMatrix);
 
-    function getImage360Entities(collection: DefaultImage360Collection<T>): Image360Entity<T>[] {
-      return collection.image360Entities;
+      for (const entity of collection.image360Entities) {
+        if (!hasVisibleIcon(entity)) {
+          continue;
+        }
+        if (!entity.icon.intersect(modelRay)) {
+          continue;
+        }
+        // The intersection is in model coordinates
+        intersection.setFromMatrixPosition(entity.transform);
+        if (!isInRayDirection(intersection, modelRay)) {
+          continue;
+        }
+        // Now transform the intersection to viewer coordinates
+        intersection.applyMatrix4(modelMatrix);
+        if (!closestFinder.isClosest(intersection)) {
+          continue;
+        }
+        closestFinder.setClosestGeometry({
+          image360: entity,
+          image360Collection: collection,
+          point: intersection.clone(),
+          distanceToCamera: closestFinder.minDistance
+        });
+      }
     }
+    return closestFinder.getClosestGeometry();
 
+    function isInRayDirection(position: THREE.Vector3, ray: THREE.Ray): boolean {
+      const direction = new THREE.Vector3().subVectors(position, camera.position);
+      return direction.dot(ray.direction) > 0 && direction.lengthSq() > 0.00001;
+    }
     function hasVisibleIcon(entity: Image360Entity<T>) {
       return entity.icon.getVisible() && !entity.image360Visualization.visible;
     }
-
-    function getIntersector(ray: THREE.Ray): (entity: Image360Entity<T>) => [Image360Entity<T>, THREE.Vector3 | null] {
-      return (entity: Image360Entity<T>) => [entity, entity.icon.intersect(ray)];
-    }
-
     function getTransformedRay(
       rayCaster: THREE.Raycaster,
       coords: THREE.Vector2,
       camera: THREE.Camera,
-      transform: THREE.Matrix4
+      matrix: THREE.Matrix4
     ): THREE.Ray {
       rayCaster.setFromCamera(coords, camera);
-      rayCaster.ray.applyMatrix4(transform);
+      rayCaster.ray.applyMatrix4(matrix);
       return rayCaster.ray;
-    }
-
-    function getWorldToModelCollectionMatrix(
-      collection: DefaultImage360Collection<T>,
-      collectionMatrix: THREE.Matrix4
-    ): THREE.Matrix4 {
-      collection.getModelTransformation(collectionMatrix);
-      collectionMatrix.invert();
-      return collectionMatrix;
-    }
-
-    function hasIntersection(
-      entityIntersection: [Image360Entity<T>, THREE.Vector3 | null]
-    ): entityIntersection is [Image360Entity<T>, THREE.Vector3] {
-      const intersection = entityIntersection[1];
-      return intersection !== null;
-    }
-
-    function intersectionToCameraSpace([entity, _]: [Image360Entity<T>, THREE.Vector3 | null]): [
-      Image360Entity<T>,
-      THREE.Vector3
-    ] {
-      const entityCameraPosition = new THREE.Vector3();
-      entityCameraPosition.setFromMatrixPosition(entity.transform).sub(cameraPosition);
-      return [entity, entityCameraPosition];
-    }
-
-    function isInFrontOfCamera([_, intersectionPoint]: [Image360Entity<T>, THREE.Vector3]): boolean {
-      return intersectionPoint.dot(cameraDirection) > 0 && intersectionPoint.lengthSq() > 0.00001;
-    }
-
-    function byDistanceToCamera(
-      [_0, a]: [Image360Entity<T>, THREE.Vector3],
-      [_1, b]: [Image360Entity<T>, THREE.Vector3]
-    ): number {
-      return a.lengthSq() - b.lengthSq();
-    }
-
-    function createIntersection(
-      image360Collection: DefaultImage360Collection<T>,
-      image360: Image360Entity<T>,
-      intersectionPoint: THREE.Vector3,
-      cameraPosition: THREE.Vector3
-    ): Image360IconIntersectionData<T> {
-      const matrix = image360Collection.getModelTransformation();
-      const point = intersectionPoint.clone().add(cameraPosition).applyMatrix4(matrix);
-      return {
-        image360,
-        image360Collection,
-        point,
-        distanceToCamera: point.distanceTo(cameraPosition)
-      };
     }
   }
 
