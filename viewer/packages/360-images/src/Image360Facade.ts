@@ -137,7 +137,6 @@ export class Image360Facade<T extends DataSourceType> {
         if (!hasVisibleIcon(entity)) {
           continue;
         }
-
         if (!entity.icon.intersect(modelRay)) {
           continue;
         }
