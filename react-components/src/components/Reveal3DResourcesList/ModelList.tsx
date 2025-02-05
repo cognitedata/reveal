@@ -4,10 +4,11 @@
 import { SelectPanel } from '@cognite/cogs-lab';
 import { EmptyState, FindIllustration, Flex, Tooltip } from '@cognite/cogs.js';
 import { type ReactElement } from 'react';
-import { MAX_LABEL_LENGTH } from '../Architecture/TreeView/utilities/constants';
 import { type ModelWithRevisionInfo } from '../../hooks/network/types';
 import { useTranslation } from '../i18n/I18n';
 import { type TranslationInput } from '../../architecture';
+
+const MAX_LABEL_LENGTH = 25;
 
 type ModelListProps = {
   modelType: string | undefined;
