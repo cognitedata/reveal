@@ -41,7 +41,6 @@ export class RootDomainObject extends DomainObject {
 
   public constructor(renderTarget: RevealRenderTarget, sdk: CogniteClient) {
     super();
-    this.name = 'Root';
     this._renderTarget = renderTarget;
     this._sdk = sdk;
     this._fdmSdk = new FdmSDK(sdk);
@@ -51,8 +50,12 @@ export class RootDomainObject extends DomainObject {
   // OVERRIDES
   // ==================================================
 
+  public override get hasIndexOnLabel(): boolean {
+    return false;
+  }
+
   public override get typeName(): TranslationInput {
-    return { untranslated: 'Root' };
+    return { key: 'SCENE' };
   }
 
   public override clone(what?: symbol): DomainObject {
