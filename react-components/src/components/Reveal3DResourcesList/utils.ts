@@ -6,14 +6,29 @@ import { getRevisions } from '../../hooks/network/getRevisions';
 import { type ModelWithRevisionInfo } from '../../hooks/network/types';
 import { type CogniteClient } from '@cognite/sdk';
 
-export const handleModelClick = async (
-  modelData: ModelWithRevisionInfo,
-  setSelectedModel: (model: ModelWithRevisionInfo) => void,
-  setCurrentPage: (page: number) => void,
-  setIsRevisionsLoading: (loading: boolean) => void,
-  setRevisions: (revisions: Array<{ id: number; createdTime: Date }>) => void,
-  sdk: CogniteClient
-): Promise<void> => {
+type HandleModelClickParams = {
+  modelData: ModelWithRevisionInfo;
+  setSelectedModel: (model: ModelWithRevisionInfo) => void;
+  setCurrentPage: (page: number) => void;
+  setIsRevisionsLoading: (loading: boolean) => void;
+  setRevisions: (revisions: Array<{ id: number; createdTime: Date }>) => void;
+  sdk: CogniteClient;
+};
+
+type HandleRevisionSelectParams = {
+  revisionId: number;
+  selectedModel: ModelWithRevisionInfo;
+  setSelectedRevisions: (revisions: Record<number, number | undefined>) => void;
+};
+
+export const handleModelClick = async ({
+  modelData,
+  setSelectedModel,
+  setCurrentPage,
+  setIsRevisionsLoading,
+  setRevisions,
+  sdk
+}: HandleModelClickParams): Promise<void> => {
   setSelectedModel(modelData);
   setCurrentPage(2);
   setIsRevisionsLoading(true);
@@ -27,11 +42,11 @@ export const handleModelClick = async (
   setIsRevisionsLoading(false);
 };
 
-export const handleRevisionSelect = (
-  revisionId: number,
-  selectedModel: ModelWithRevisionInfo,
-  setSelectedRevisions: (revisions: Record<number, number | undefined>) => void
-): void => {
+export const handleRevisionSelect = ({
+  revisionId,
+  selectedModel,
+  setSelectedRevisions
+}: HandleRevisionSelectParams): void => {
   setSelectedRevisions({
     [selectedModel.id]: revisionId
   });

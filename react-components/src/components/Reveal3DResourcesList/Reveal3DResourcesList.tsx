@@ -51,7 +51,11 @@ export function Reveal3DResourcesList({
 
   const handleRevisionSelectWithCallback = (revisionId: number): void => {
     if (selectedModel !== undefined) {
-      handleRevisionSelect(revisionId, selectedModel, setSelectedRevisions);
+      handleRevisionSelect({
+        revisionId,
+        selectedModel,
+        setSelectedRevisions
+      });
       if (onRevisionSelect !== undefined) {
         onRevisionSelect(selectedModel.id, revisionId);
       }
@@ -90,14 +94,14 @@ export function Reveal3DResourcesList({
                     models={filteredAndSearchedModels}
                     selectedRevisions={selectedRevisions}
                     handleModelClick={async (modelData) => {
-                      await handleModelClick(
+                      await handleModelClick({
                         modelData,
                         setSelectedModel,
                         setCurrentPage,
                         setIsRevisionsLoading,
                         setRevisions,
                         sdk
-                      );
+                      });
                     }}
                   />
                 ) : (
