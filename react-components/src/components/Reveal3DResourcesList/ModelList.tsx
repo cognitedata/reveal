@@ -2,7 +2,7 @@
  * Copyright 2025 Cognite AS
  */
 import { SelectPanel } from '@cognite/cogs-lab';
-import { EmptyState, FindIllustration, Tooltip } from '@cognite/cogs.js';
+import { EmptyState, FindIllustration, Flex, Tooltip } from '@cognite/cogs.js';
 import { type ReactElement } from 'react';
 import { MAX_LABEL_LENGTH } from '../Architecture/TreeView/utilities/constants';
 import { type ModelWithRevisionInfo } from '../../hooks/network/types';
@@ -29,7 +29,14 @@ export const ModelList = ({
   if (models === undefined || models.length === 0) {
     return (
       <SelectPanel.Section title={t({ key: 'NO_MODELS_FOUND' })}>
-        <EmptyState title={t({ key: 'NO_MODELS_FOUND' })} illustration={<FindIllustration />} />
+        <Flex
+          justifyContent="center"
+          style={{
+            maxWidth: '320px',
+            padding: '20px 8px'
+          }}>
+          <EmptyState title={t({ key: 'NO_MODELS_FOUND' })} illustration={<FindIllustration />} />
+        </Flex>
       </SelectPanel.Section>
     );
   }

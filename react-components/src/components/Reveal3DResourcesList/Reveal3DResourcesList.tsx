@@ -2,7 +2,7 @@
  * Copyright 2025 Cognite AS
  */
 import { SelectPanel } from '@cognite/cogs-lab';
-import { LoaderIcon, EmptyState, FindIllustration } from '@cognite/cogs.js';
+import { LoaderIcon, EmptyState, FindIllustration, Flex } from '@cognite/cogs.js';
 import { type ReactElement, useState } from 'react';
 import { useAllResourcesList } from './hooks/useAllResourcesList';
 import { type CogniteClient } from '@cognite/sdk';
@@ -23,6 +23,7 @@ type Reveal3DResourcesListProps = {
   setSelectedRevisions: (revisions: Record<number, number | undefined>) => void;
 };
 
+// Currently supports only Cad, point cloud from classic source type
 export function Reveal3DResourcesList({
   sdk,
   modelType,
@@ -100,12 +101,7 @@ export function Reveal3DResourcesList({
                     }}
                   />
                 ) : (
-                  <EmptyState
-                    illustration={<FindIllustration />}
-                    size="small"
-                    title={'Try Again'}
-                    description={`No results for query "${searchQuery}"`}
-                  />
+                  <EmptyStateResources />
                 ))}
               {currentPage === 2 && selectedModel !== undefined && (
                 <RevisionList
@@ -122,6 +118,25 @@ export function Reveal3DResourcesList({
         <SelectPanel.Footer />
       </SelectPanel>
     </Reveal3DResourcesListContainer>
+  );
+}
+
+function EmptyStateResources(): ReactElement {
+  const { t } = useTranslation();
+  return (
+    <Flex
+      justifyContent="center"
+      style={{
+        maxWidth: '320px',
+        padding: '20px 8px'
+      }}>
+      <EmptyState
+        illustration={<FindIllustration />}
+        size="small"
+        title={t({ key: 'TRY_AGAIN' })}
+        description={t({ key: 'NO_RESULTS' })}
+      />
+    </Flex>
   );
 }
 
