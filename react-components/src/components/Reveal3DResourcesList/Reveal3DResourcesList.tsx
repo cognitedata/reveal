@@ -11,6 +11,7 @@ import { type ModelWithRevisionInfo } from '../../hooks/network/types';
 import { ModelList } from './ModelList';
 import { RevisionList } from './RevisionList';
 import { handleModelClick, handleRevisionSelect, onSearchInputChange } from './utils';
+import { useTranslation } from '../i18n/I18n';
 
 type Reveal3DResourcesListProps = {
   sdk: CogniteClient;
@@ -31,6 +32,7 @@ export function Reveal3DResourcesList({
   selectedRevisions,
   setSelectedRevisions
 }: Reveal3DResourcesListProps): ReactElement {
+  const { t } = useTranslation();
   const { data: modelsWithRevision, isLoading: isItemsLoading } = useAllResourcesList(sdk);
   const [revisions, setRevisions] = useState<Array<{ id: number; createdTime: Date }>>([]);
   const [currentPage, setCurrentPage] = useState(1);
@@ -58,7 +60,7 @@ export function Reveal3DResourcesList({
   return (
     <Reveal3DResourcesListContainer>
       <SelectPanel visible>
-        <SelectPanel.Header title={'3D Resources'}>
+        <SelectPanel.Header title={t({ key: 'RESOURCES_3D' })}>
           {currentPage !== 1 && (
             <SelectPanel.BackButton
               onClick={(_) => {
@@ -83,6 +85,7 @@ export function Reveal3DResourcesList({
               {currentPage === 1 &&
                 (filteredAndSearchedModels !== undefined && filteredAndSearchedModels.length > 0 ? (
                   <ModelList
+                    modelType={modelType}
                     models={filteredAndSearchedModels}
                     selectedRevisions={selectedRevisions}
                     handleModelClick={async (modelData) => {

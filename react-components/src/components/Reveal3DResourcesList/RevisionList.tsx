@@ -5,6 +5,7 @@ import { SelectPanel } from '@cognite/cogs-lab';
 import { LoaderIcon } from '@cognite/cogs.js';
 import { type ReactElement } from 'react';
 import { type ModelWithRevisionInfo } from '../../hooks/network/types';
+import { useTranslation } from '../i18n/I18n';
 
 export const RevisionList = ({
   revisions,
@@ -19,8 +20,9 @@ export const RevisionList = ({
   selectedRevisions: Record<number, number | undefined>;
   handleRevisionSelect: (revisionId: number) => void;
 }): ReactElement => {
+  const { t } = useTranslation();
   return (
-    <SelectPanel.Section title="Revisions">
+    <SelectPanel.Section title={t({ key: 'REVISIONS' })}>
       {isRevisionsLoading ? (
         <LoaderIcon />
       ) : (
