@@ -7,13 +7,9 @@ export type { GetIconFromIconNameFn } from './view/advanced-tree-view-props';
 export type { TreeNodeType } from './model/tree-node-type';
 export type { ILazyLoader } from './model/i-lazy-loader';
 export { TreeNode } from './model/tree-node';
-export type {
-  IconName,
-  IconColor,
-  CheckboxState,
-  TreeNodeAction,
-  OnNodeLoadedAction
-} from './model/types';
+export type { IconName, IconColor, TreeNodeAction, OnNodeLoadedAction } from './model/types';
+
+export { CheckboxState } from './model/types'; // AAA
 
 export {
   scrollToNode,
