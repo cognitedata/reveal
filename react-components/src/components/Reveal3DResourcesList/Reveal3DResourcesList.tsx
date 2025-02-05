@@ -13,7 +13,7 @@ import { RevisionList } from './RevisionList';
 import { handleModelClick, handleRevisionSelect, onSearchInputChange } from './utils';
 import { useTranslation } from '../i18n/I18n';
 
-type Reveal3DResourcesListProps = {
+export type Reveal3DResourcesListProps = {
   sdk: CogniteClient;
   modelType?: string;
   onRevisionSelect?: (modelId: number, revisionId: number) => void;
