@@ -17,6 +17,7 @@ export * from './CadModelContainer';
 export * from './Image360CollectionContainer';
 export * from './PointCloudContainer';
 export * from './Reveal3DResources';
+export * from './Reveal3DResourcesList';
 export * from './RevealCanvas';
 export * from './RevealContext';
 export * from './RevealToolbar';
