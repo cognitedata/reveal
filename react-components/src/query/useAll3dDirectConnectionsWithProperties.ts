@@ -102,7 +102,7 @@ export function useAll3dDirectConnectionsWithProperties(
       const flatInstancesContent = cleanInstancesContent.flatMap((instanceContent) => {
         return instanceContent.items.map((item) => {
           return {
-            item: item,
+            item,
             typing: instanceContent.typing
           };
         });
@@ -116,7 +116,12 @@ export function useAll3dDirectConnectionsWithProperties(
             return await fdmSdk.inspectInstances({
               inspectionOperations: { involvedViews: {} },
               items: instances.map((data) => {
-                return { instanceType: data.item.instanceType, externalId: data.item.externalId, space: data.item.space }})
+                return {
+                  instanceType: data.item.instanceType,
+                  externalId: data.item.externalId,
+                  space: data.item.space
+                };
+              })
             });
           };
         }),
