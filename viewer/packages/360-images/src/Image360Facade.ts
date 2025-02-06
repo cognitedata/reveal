@@ -216,11 +216,13 @@ export class Image360Facade<T extends DataSourceType> {
       intersectionPoint: THREE.Vector3,
       cameraPosition: THREE.Vector3
     ): Image360IconIntersectionData<T> {
+      const matrix = image360Collection.getModelTransformation();
+      const point = intersectionPoint.clone().add(cameraPosition).applyMatrix4(matrix);
       return {
         image360,
         image360Collection,
-        point: intersectionPoint,
-        distanceToCamera: intersectionPoint.distanceTo(cameraPosition)
+        point,
+        distanceToCamera: point.distanceTo(cameraPosition)
       };
     }
   }
