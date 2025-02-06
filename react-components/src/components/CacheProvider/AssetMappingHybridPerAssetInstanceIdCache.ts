@@ -1,8 +1,7 @@
 /*!
  * Copyright 2024 Cognite AS
  */
-import { type ModelDMSUniqueInstanceKey } from './types';
-import { type AssetMapping } from './AssetMappingAndNode3DCache';
+import { type AssetMapping, type ModelDMSUniqueInstanceKey } from './types';
 
 export class AssetMappingHybridPerAssetInstanceIdCache {
   private readonly _assetInstanceIdsToHybridAssetMappings = new Map<
@@ -14,7 +13,7 @@ export class AssetMappingHybridPerAssetInstanceIdCache {
     key: ModelDMSUniqueInstanceKey,
     item: Promise<AssetMapping[]>
   ): void {
-    this._assetInstanceIdsToHybridAssetMappings.set(key, Promise.resolve(item));
+    this._assetInstanceIdsToHybridAssetMappings.set(key, item);
   }
 
   public async getAssetInstanceIdsToHybridAssetMappingCacheItem(
@@ -27,16 +26,11 @@ export class AssetMappingHybridPerAssetInstanceIdCache {
     key: ModelDMSUniqueInstanceKey,
     item: AssetMapping
   ): Promise<void> {
-    const currentAssetMappings = this.getAssetInstanceIdsToHybridAssetMappingCacheItem(key);
-    this.setAssetInstanceIdsToHybridAssetMappingCacheItem(
-      key,
-      currentAssetMappings.then((value) => {
-        if (value === undefined) {
-          return [item];
-        }
-        value.push(item);
-        return value;
-      })
-    );
+    const currentAssetMappings = await this.getAssetInstanceIdsToHybridAssetMappingCacheItem(key);
+    if (currentAssetMappings === undefined) {
+      this.setAssetInstanceIdsToHybridAssetMappingCacheItem(key, Promise.resolve([item]));
+      return;
+    }
+    currentAssetMappings.push(item);
   }
 }

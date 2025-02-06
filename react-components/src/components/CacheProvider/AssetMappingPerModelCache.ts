@@ -1,9 +1,8 @@
 /*!
  * Copyright 2024 Cognite AS
  */
-import { type AssetMapping3D, type CogniteClient } from '@cognite/sdk';
-import { type ModelId, type RevisionId, type ModelRevisionKey } from './types';
-import { type AssetMapping } from './AssetMappingAndNode3DCache';
+import { type CogniteClient } from '@cognite/sdk';
+import { type ModelId, type RevisionId, type ModelRevisionKey, AssetMapping } from './types';
 import { isValidAssetMapping } from './utils';
 import { createModelRevisionKey } from './idAndKeyTranslation';
 import { isDefined } from '../../utilities/isDefined';
@@ -69,11 +68,10 @@ export class AssetMappingPerModelCache {
       .autoPagingToArray({ limit: Infinity });
 
     return assetMappings.filter(isValidAssetMapping).map((mapping) => {
-      const newMapping = {
+      return {
         ...mapping,
         assetId: mapping.assetId
       };
-      return newMapping;
     });
   }
 
@@ -101,7 +99,7 @@ export class AssetMappingPerModelCache {
         const nodeFound = nodes.find((node) => node.id === mapping.nodeId);
         if (nodeFound === undefined) return undefined;
 
-        const newMapping: NonNullable<AssetMapping3D> = {
+        const newMapping: NonNullable<AssetMapping> = {
           ...mapping,
           nodeId: mapping.nodeId,
           treeIndex: nodeFound.treeIndex,

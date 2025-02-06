@@ -4,13 +4,12 @@
 
 import {
   type CogniteClient,
-  type AssetMapping3D,
   type Node3D,
   type CogniteInternalId,
   type AssetMappings3DAssetFilter,
   type AssetMappings3DNodeFilter,
   type AssetMappings3DTreeIndexFilter,
-  CogniteExternalId
+  type CogniteExternalId
 } from '@cognite/sdk';
 import {
   type ModelTreeIndexKey,
@@ -19,7 +18,9 @@ import {
   type RevisionId,
   type ChunkInCacheTypes,
   type ModelAssetIdKey,
-  type ModelDMSUniqueInstanceKey
+  type ModelDMSUniqueInstanceKey,
+  type NodeAssetMappingResult,
+  type AssetMapping
 } from './types';
 import { chunk, maxBy } from 'lodash';
 import assert from 'assert';
@@ -38,24 +39,7 @@ import { AssetMappingPerModelCache } from './AssetMappingPerModelCache';
 import { isDefined } from '../../utilities/isDefined';
 import { type DmsUniqueIdentifier } from '../../data-providers';
 import { AssetMappingHybridPerAssetInstanceIdCache } from './AssetMappingHybridPerAssetInstanceIdCache';
-
-export type NodeAssetMappingResult = { node?: Node3D; mappings: AssetMapping[] };
-
-export type AssetMapping = AssetMapping3D;
-
-export type FilterTypes =
-  | (Partial<
-      AssetMappings3DAssetFilter | AssetMappings3DNodeFilter | AssetMappings3DTreeIndexFilter
-    > & {
-      nodeIds: Array<number | DmsUniqueIdentifier>;
-      assetIds?: undefined;
-    })
-  | (Partial<
-      AssetMappings3DAssetFilter | AssetMappings3DNodeFilter | AssetMappings3DTreeIndexFilter
-    > & {
-      assetIds: Array<number | DmsUniqueIdentifier>;
-      nodeIds?: undefined;
-    });
+import { isDmsInstance } from '../../utilities/instanceIds';
 
 export class AssetMappingAndNode3DCache {
   private readonly _sdk: CogniteClient;
@@ -178,18 +162,18 @@ export class AssetMappingAndNode3DCache {
   public async getNodesForAssetInstancesInHybridMappings(
     modelId: ModelId,
     revisionId: RevisionId,
-    assetMappings: AssetMapping[],
+    assetMappings: AssetMapping[]
   ): Promise<Map<CogniteExternalId, Node3D[]>> {
-
     const nodes = await this.nodeIdsToNode3DCache.getNodesForNodeIds(
       modelId,
       revisionId,
-      assetMappings.map((assetMapping) => assetMapping.nodeId)
+      assetMappings.map(({ nodeId }) => nodeId)
     );
 
     return nodes.reduce((acc, node, index) => {
-      if (assetMappings[index].assetInstanceId === undefined) return acc;
-      const key = createFdmKey(assetMappings[index].assetInstanceId);
+      const instanceId = assetMappings[index].assetInstanceId;
+      if (instanceId === undefined) return acc;
+      const key = createFdmKey(instanceId);
       if (key === undefined) return acc;
       const nodesForAsset = acc.get(key);
 
@@ -295,7 +279,7 @@ export class AssetMappingAndNode3DCache {
           } else {
             chunkNotCachedClassic.push(id);
           }
-        } else if (typeof id !== 'number' && 'space' in id && 'externalId' in id) {
+        } else if (typeof id !== 'number' && isDmsInstance(id)) {
           const key = createModelDMSUniqueInstanceKey(modelId, revisionId, id.space, id.externalId);
           const cachedResult = await this.getHybridItemCacheResult(key);
           if (cachedResult !== undefined) {
@@ -357,17 +341,13 @@ export class AssetMappingAndNode3DCache {
     type: string,
     ids: Array<number | DmsUniqueIdentifier>
   ): AssetMappings3DAssetFilter | AssetMappings3DNodeFilter | AssetMappings3DTreeIndexFilter {
-    const filter:
-      | AssetMappings3DAssetFilter
-      | AssetMappings3DNodeFilter
-      | AssetMappings3DTreeIndexFilter =
-      type === 'nodeIds'
-        ? { nodeIds: ids.filter((id): id is number => typeof id === 'number') }
-        : type === 'assetIds'
-          ? { assetIds: ids.filter((id): id is number => typeof id === 'number') }
-          : { assetIds: [] };
-
-    return filter;
+    if (type === 'nodeIds') {
+      return { nodeIds: ids.filter((id): id is number => typeof id === 'number') };
+    }
+    if (type === 'assetIds') {
+      return { assetIds: ids.filter((id): id is number => typeof id === 'number') };
+    }
+    return { assetIds: [] };
   }
 
   private async fetchAssetMappingsRequest(
@@ -375,8 +355,8 @@ export class AssetMappingAndNode3DCache {
     filterType: string,
     modelId: ModelId,
     revisionId: RevisionId
-  ): Promise<AssetMapping3D[]> {
-    let assetMapping3DClassic: AssetMapping3D[] = [];
+  ): Promise<AssetMapping[]> {
+    let assetMapping3DClassic: AssetMapping[] = [];
 
     if (currentChunk.length === 0) {
       return [];
@@ -417,8 +397,8 @@ export class AssetMappingAndNode3DCache {
   private async fetchHybridAssetMappingsRequest(
     modelId: ModelId,
     revisionId: RevisionId
-  ): Promise<AssetMapping3D[]> {
-    let assetMapping3DHybrid: AssetMapping3D[] = [];
+  ): Promise<AssetMapping[]> {
+    let assetMapping3DHybrid: AssetMapping[] = [];
 
     assetMapping3DHybrid = await this._sdk.assetMappings3D
       .filter(modelId, revisionId, {
@@ -448,18 +428,6 @@ export class AssetMappingAndNode3DCache {
           keyAssetInstanceId,
           mapping
         );
-
-        /*         const key = createModelDMSUniqueInstanceKey(
-          modelId,
-          revisionId,
-          item.assetInstanceId.space,
-          item.assetInstanceId.externalId
-        );
-        const cachedResult = await this.getHybridItemCacheResult(key);
-
-        if (cachedResult === undefined) {
-          this.setHybridItemCacheResult(key, [item]);
-        } */
       })
     ]);
 
@@ -472,8 +440,8 @@ export class AssetMappingAndNode3DCache {
     filterType: string,
     modelId: ModelId,
     revisionId: RevisionId,
-    assetMappingsList: AssetMapping3D[]
-  ): Promise<AssetMapping3D[]> {
+    assetMappingsList: AssetMapping[]
+  ): Promise<AssetMapping[]> {
     const assetMappings = await this.fetchAssetMappingsRequest(
       idChunks[index],
       filterType,

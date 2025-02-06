@@ -73,9 +73,7 @@ export async function fetchAssetsForAssetReferences(
   );
 
   const combinedClassicAssets = classicAssetIds.concat(
-    assetIdReference.map((assetId) => {
-      return { id: assetId.assetId };
-    })
+    assetIdReference.map((assetId) => ({ id: assetId.assetId }))
   );
 
   return ([] as AssetInstance[])
