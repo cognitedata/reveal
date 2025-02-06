@@ -133,7 +133,7 @@ export function useAll3dDirectConnectionsWithProperties(
       const instanceItemsAndTyping: FdmInstanceWithPropertiesAndTyping[] =
         cleanRelatedObjectInspectionsResult
           .flatMap((inspectionResult) =>
-            inspectionResult?.items.flatMap((inspectionResultItem) =>
+            inspectionResult.items.flatMap((inspectionResultItem) =>
               cleanInstancesContent.flatMap((instanceContent) => {
                 const node: FdmInstanceWithPropertiesAndTyping = {
                   items: instanceContent.items.filter(
