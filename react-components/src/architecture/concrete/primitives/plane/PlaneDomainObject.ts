@@ -117,8 +117,6 @@ export abstract class PlaneDomainObject extends VisualDomainObject {
 
   public override getPanelInfo(): PanelInfo | undefined {
     const info = new PanelInfo();
-    info.setHeader(this.typeName);
-
     switch (this.primitiveType) {
       case PrimitiveType.PlaneX:
         add({ key: 'X:COORDINATE' }, this.coordinate, Quantity.Length);

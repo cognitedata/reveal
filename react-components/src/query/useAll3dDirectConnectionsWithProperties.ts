@@ -13,6 +13,10 @@ import {
 } from '../components/RuleBasedOutputs/types';
 import { useMemo } from 'react';
 import { createFdmKey } from '../components/CacheProvider/idAndKeyTranslation';
+import { executeParallel } from '../utilities/executeParallel';
+import { isDefined } from '../utilities/isDefined';
+
+const MAX_PARALLEL_QUERIES = 4;
 
 export function useAll3dDirectConnectionsWithProperties(
   connectionWithNodeAndView: FdmConnectionWithNode[]
@@ -65,41 +69,72 @@ export function useAll3dDirectConnectionsWithProperties(
 
       const instancesDataChunks = chunk(instancesData, 1000);
 
-      const instancesContent = await Promise.all(
-        instancesDataChunks.flatMap((chunk) => {
-          return uniqueViews.map(async (view) => {
-            return await fdmSdk.getByExternalIds(chunk, view !== undefined ? [view] : undefined);
+      const instancesContentFlat = instancesDataChunks
+        .flatMap((chunk) => {
+          return uniqueViews.map((view) => {
+            return { chunk, view };
           });
         })
+        .flat()
+        .filter(isDefined);
+
+      const instancesContent = await executeParallel(
+        instancesContentFlat.map((content) => async () => {
+          const data = await fdmSdk.getByExternalIds(
+            content.chunk,
+            content.view !== undefined ? [content.view] : undefined
+          );
+
+          return {
+            items: data.items,
+            typing: data.typing
+          };
+        }),
+        MAX_PARALLEL_QUERIES
       );
+
+      const cleanInstancesContent = instancesContent.filter(isDefined).flat();
 
       if (instancesContent === undefined) {
         return [];
       }
 
-      const instancesContentChunks = chunk(instancesContent, 1000);
+      const flatInstancesContent = cleanInstancesContent.flatMap((instanceContent) => {
+        return instanceContent.items.map((item) => {
+          return {
+            item,
+            typing: instanceContent.typing
+          };
+        });
+      });
 
-      const relatedObjectInspectionsResult = await Promise.all(
-        instancesContentChunks.flatMap((instances) =>
-          instances.flatMap(async (item) => {
-            const items = item.items.map((fdmId) => ({
-              space: fdmId.space,
-              externalId: fdmId.externalId,
-              instanceType
-            }));
+      const instancesContentChunks = chunk(flatInstancesContent, 1000);
+
+      const relatedObjectInspectionsResult = await executeParallel(
+        instancesContentChunks.flatMap((instances) => {
+          return async () => {
             return await fdmSdk.inspectInstances({
               inspectionOperations: { involvedViews: {} },
-              items
+              items: instances.map((data) => {
+                return {
+                  instanceType: data.item.instanceType,
+                  externalId: data.item.externalId,
+                  space: data.item.space
+                };
+              })
             });
-          })
-        )
+          };
+        }),
+        MAX_PARALLEL_QUERIES
       );
 
+      const cleanRelatedObjectInspectionsResult = relatedObjectInspectionsResult.filter(isDefined);
+
       const instanceItemsAndTyping: FdmInstanceWithPropertiesAndTyping[] =
-        relatedObjectInspectionsResult
+        cleanRelatedObjectInspectionsResult
           .flatMap((inspectionResult) =>
             inspectionResult.items.flatMap((inspectionResultItem) =>
-              instancesContent.flatMap((instanceContent) => {
+              cleanInstancesContent.flatMap((instanceContent) => {
                 const node: FdmInstanceWithPropertiesAndTyping = {
                   items: instanceContent.items.filter(
                     (item) =>

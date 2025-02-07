@@ -7,6 +7,10 @@ import { type TranslationInput } from '../../base/utilities/TranslateInput';
 
 export class MeasurementFolder extends FolderDomainObject {
   public override get typeName(): TranslationInput {
-    return { untranslated: 'Measurements' };
+    return { key: 'MEASUREMENTS' };
+  }
+
+  public override get hasIndexOnLabel(): boolean {
+    return false;
   }
 }

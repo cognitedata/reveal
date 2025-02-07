@@ -1684,7 +1684,7 @@ export class Cognite3DViewer<DataSourceT extends DataSourceType = ClassicDataSou
     }
   ): Promise<AnyIntersection<DataSourceT> | undefined> {
     const image360IconIntersection = this.intersect360Icons(pixelCoords);
-    if (this.intersect360Icons(pixelCoords) !== undefined) {
+    if (image360IconIntersection !== undefined) {
       return image360IconIntersection;
     }
 
