@@ -26,6 +26,7 @@ export type {
   Image360AnnotationMappedAssetData,
   ThreeDModelFdmMappings
 } from './types';
+export type { ModelWithRevisionInfo } from './network/types';
 
 export * from './cad';
 export * from './pointClouds';
