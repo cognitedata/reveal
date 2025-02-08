@@ -145,10 +145,10 @@ const PaddedTh = styled.th`
 `;
 
 const Container = withSuppressRevealEvents(styled.div`
-  zindex: 1000px;
+  z-index: 1000;
   position: absolute;
   display: block;
-  border-radius: 10px;
+  border-radius: 6px;
   flex-direction: column;
   overflow: hidden;
   background-color: white;

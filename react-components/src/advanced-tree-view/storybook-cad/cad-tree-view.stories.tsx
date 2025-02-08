@@ -110,11 +110,11 @@ const StyledButton = styled(Button)`
 `;
 
 const Container = styled.div`
-  zindex: 1000;
+  z-index: 1000;
   padding: 16px;
   display: flex;
   height: 600px;
-  border-radius: 10px;
+  border-radius: 6px;
   box-shadow: 0px 1px 8px #4f52681a;
   overflow-x: auto;
   overflow-y: auto;
