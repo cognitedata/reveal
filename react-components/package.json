@@ -47,7 +47,7 @@
     "@cognite/cogs-lab": "^9.0.0-alpha.153",
     "@cognite/cogs.js": "^10.36.0",
     "@cognite/reveal": "^4.23.2",
-    "@cognite/sdk": "^9.13.0",
+    "@cognite/sdk": "^10.0.0",
     "@playwright/test": "1.49.0",
     "@storybook/addon-essentials": "8.4.5",
     "@storybook/addon-interactions": "8.4.5",
