@@ -397,6 +397,7 @@ function getMappedStyleGroupFromAssetMappings(
 ): TreeIndexStylingGroup {
   const indexSet = new IndexSet();
   assetMappings.forEach((assetMapping) => {
+    if (assetMapping.treeIndex === undefined || assetMapping.subtreeSize === undefined) return;
     const range = new NumericRange(assetMapping.treeIndex, assetMapping.subtreeSize);
     indexSet.addRange(range);
   });

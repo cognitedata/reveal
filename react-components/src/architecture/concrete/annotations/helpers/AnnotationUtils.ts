@@ -5,7 +5,7 @@
 import {
   type CogniteClient,
   type AnnotationChangeById,
-  type AnnotationsCogniteAnnotationTypesPrimitivesGeometry3DGeometry as AnnotationGeometry,
+  type AnnotationsTypesPrimitivesGeometry3DGeometry as AnnotationGeometry,
   type AnnotationsCylinder,
   type AnnotationsBox,
   type AnnotationCreate,
@@ -154,10 +154,10 @@ function createPrimitives(cdfGeometries: AnnotationGeometry[]): Primitive[] {
 
 function createPrimitive(cdfGeometry: AnnotationGeometry): Primitive | undefined {
   if (cdfGeometry.box !== undefined) {
-    return createBox(cdfGeometry.box);
+    return createBox(cdfGeometry.box as AnnotationsBox);
   }
   if (cdfGeometry.cylinder !== undefined) {
-    return createCylinder(cdfGeometry.cylinder);
+    return createCylinder(cdfGeometry.cylinder as AnnotationsCylinder);
   }
   return undefined;
 }

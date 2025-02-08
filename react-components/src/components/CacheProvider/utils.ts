@@ -3,7 +3,7 @@
  */
 
 import {
-  type AnnotationsCogniteAnnotationTypesImagesAssetLink,
+  type AnnotationsTypesImagesAssetLink,
   type AnnotationModel,
   type AnnotationsBoundingVolume,
   type AssetMapping3D,
@@ -34,7 +34,7 @@ export function getInstanceReferenceFromImage360Annotation(
   if (isCoreDmImage360Annotation(annotation)) {
     return annotation.assetRef;
   } else {
-    const annotationData = annotation.data as AnnotationsCogniteAnnotationTypesImagesAssetLink;
+    const annotationData = annotation.data as AnnotationsTypesImagesAssetLink;
     const assetRef = annotationData.assetRef;
     return assetRef !== undefined && isIdEither(assetRef as IdEither)
       ? (assetRef as IdEither)

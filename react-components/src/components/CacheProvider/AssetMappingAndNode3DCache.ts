@@ -91,7 +91,7 @@ export class AssetMappingAndNode3DCache {
 
     const relevantMappings = allClassicNodeMappings
       .concat(allHybridNodeMappings)
-      .filter((mapping) => searchTreeIndices.has(mapping.treeIndex));
+      .filter((mapping) => mapping.treeIndex && searchTreeIndices.has(mapping.treeIndex));
 
     if (relevantMappings.length === 0) {
       return { mappings: [] };
@@ -205,6 +205,8 @@ export class AssetMappingAndNode3DCache {
     }
     assetMappingsPerModel.forEach(async (modelMapping) => {
       modelMapping.assetMappings.forEach(async (item) => {
+        const keyNodeId = modelRevisionNodesAssetToKey(modelId, revisionId, item.nodeId);
+        await this.nodeIdsToAssetMappingCache.setAssetMappingsCacheItem(keyNodeId, item);
         if (item.assetId !== undefined) {
           const key = modelRevisionNodesAssetToKey(modelId, revisionId, item.assetId);
           await this.assetIdsToAssetMappingCache.setAssetMappingsCacheItem(key, item);
@@ -281,7 +283,7 @@ export class AssetMappingAndNode3DCache {
           }
         } else if (typeof id !== 'number' && isDmsInstance(id)) {
           const key = createModelDMSUniqueInstanceKey(modelId, revisionId, id.space, id.externalId);
-          const cachedResult = await this.getHybridItemCacheResult(key);
+          const cachedResult = await this.assetInstanceIdsToAssetMappingCache.getHybridItemCacheResult(key);
           if (cachedResult !== undefined) {
             chunkInCache.push(...cachedResult);
           } else {
@@ -305,14 +307,6 @@ export class AssetMappingAndNode3DCache {
     return type === 'nodeIds'
       ? await this.nodeIdsToAssetMappingCache.getNodeIdsToAssetMappingCacheItem(key)
       : await this.assetIdsToAssetMappingCache.getAssetIdsToAssetMappingCacheItem(key);
-  }
-
-  public async getHybridItemCacheResult(
-    key: ModelDMSUniqueInstanceKey
-  ): Promise<AssetMapping[] | undefined> {
-    return await this.assetInstanceIdsToAssetMappingCache.getAssetInstanceIdsToHybridAssetMappingCacheItem(
-      key
-    );
   }
 
   public setItemCacheResult(
@@ -392,46 +386,6 @@ export class AssetMappingAndNode3DCache {
     ]);
 
     return assetMapping3DClassic.filter(isValidAssetMapping);
-  }
-
-  private async fetchHybridAssetMappingsRequest(
-    modelId: ModelId,
-    revisionId: RevisionId
-  ): Promise<AssetMapping[]> {
-    let assetMapping3DHybrid: AssetMapping[] = [];
-
-    assetMapping3DHybrid = await this._sdk.assetMappings3D
-      .filter(modelId, revisionId, {
-        limit: 1000,
-        filter: undefined,
-        getDmsInstances: true
-      })
-      .autoPagingToArray({ limit: Infinity });
-
-    await Promise.all([
-      assetMapping3DHybrid.map(async (item) => {
-        if (item.assetInstanceId === undefined) return;
-        const mapping: AssetMapping = {
-          ...item,
-          assetId: item.assetId,
-          assetInstanceId: item.assetInstanceId
-        };
-        const keyNodeId = modelRevisionNodesAssetToKey(modelId, revisionId, item.nodeId);
-        const keyAssetInstanceId = createModelDMSUniqueInstanceKey(
-          modelId,
-          revisionId,
-          item.assetInstanceId.space,
-          item.assetInstanceId.externalId
-        );
-        await this.nodeIdsToAssetMappingCache.setAssetMappingsCacheItem(keyNodeId, mapping);
-        await this.assetInstanceIdsToAssetMappingCache.setHybridAssetMappingsCacheItem(
-          keyAssetInstanceId,
-          mapping
-        );
-      })
-    ]);
-
-    return assetMapping3DHybrid.filter(isValidAssetMapping);
   }
 
   private async fetchMappingsInQueue(
@@ -579,14 +533,5 @@ export class AssetMappingAndNode3DCache {
     );
     const allAssetMappings = chunkInCache.concat(assetMappings);
     return allAssetMappings;
-  }
-
-  private async getHybridAssetMappingsForAssetInstances(
-    modelId: ModelId,
-    revisionId: RevisionId
-  ): Promise<AssetMapping[]> {
-    const hybridAssetMappings = await this.fetchHybridAssetMappingsRequest(modelId, revisionId);
-
-    return hybridAssetMappings;
   }
 }

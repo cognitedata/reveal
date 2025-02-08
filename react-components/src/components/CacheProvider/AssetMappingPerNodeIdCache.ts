@@ -1,8 +1,7 @@
 /*!
  * Copyright 2024 Cognite AS
  */
-import { type ModelTreeIndexKey } from './types';
-import { type AssetMapping } from './AssetMappingAndNode3DCache';
+import { type AssetMapping, type ModelTreeIndexKey } from './types';
 
 export class AssetMappingPerNodeIdCache {
   private readonly _nodeIdsToAssetMappings = new Map<ModelTreeIndexKey, Promise<AssetMapping[]>>();

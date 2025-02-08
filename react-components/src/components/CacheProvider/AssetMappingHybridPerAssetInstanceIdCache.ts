@@ -33,4 +33,10 @@ export class AssetMappingHybridPerAssetInstanceIdCache {
     }
     currentAssetMappings.push(item);
   }
+
+  public async getHybridItemCacheResult(
+    key: ModelDMSUniqueInstanceKey
+  ): Promise<AssetMapping[] | undefined> {
+    return await this.getAssetInstanceIdsToHybridAssetMappingCacheItem(key);
+  }
 }
