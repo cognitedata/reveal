@@ -13,6 +13,7 @@ import { type DomainObjectChange } from '../../base/domainObjectsHelpers/DomainO
 import { Changes } from '../../base/domainObjectsHelpers/Changes';
 import { FocusType } from '../../base/domainObjectsHelpers/FocusType';
 import { type DomainObject } from '../../base/domainObjects/DomainObject';
+import { getRoot } from '../../base/domainObjects/getRoot';
 
 export class SliceDomainObject extends PlaneDomainObject {
   // ==================================================
@@ -85,7 +86,7 @@ export class SliceDomainObject extends PlaneDomainObject {
 
   private updateClippingPlanes(): void {
     // Update the clipping planes if necessary
-    const root = this.rootDomainObject;
+    const root = getRoot(this);
     if (root === undefined) {
       return;
     }

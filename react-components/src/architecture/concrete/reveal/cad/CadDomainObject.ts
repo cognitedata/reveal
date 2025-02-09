@@ -10,6 +10,7 @@ import { type TranslationInput } from '../../../base/utilities/TranslateInput';
 import { type IconName } from '../../../base/utilities/IconName';
 import { type RenderStyle } from '../../../base/renderStyles/RenderStyle';
 import { type ThreeView } from '../../../base/views/ThreeView';
+import { getRenderTarget } from '../../../base/domainObjects/getRoot';
 
 export class CadDomainObject extends VisualDomainObject {
   // ==================================================
@@ -53,7 +54,7 @@ export class CadDomainObject extends VisualDomainObject {
 
   protected override removeCore(): void {
     super.removeCore();
-    this.rootDomainObject?.renderTarget?.viewer?.removeModel(this._model);
+    getRenderTarget(this)?.viewer?.removeModel(this._model);
   }
 
   // ==================================================

@@ -20,6 +20,7 @@ import { DomainObjectChange } from '../../base/domainObjectsHelpers/DomainObject
 import { AnnotationUtils } from './helpers/AnnotationUtils';
 import { Annotation } from './helpers/Annotation';
 import { type IconName } from '../../base/utilities/IconName';
+import { getRoot } from '../../base/domainObjects/getRoot';
 
 type GizmoDomainObject = BoxGizmoDomainObject | CylinderGizmoDomainObject;
 
@@ -306,11 +307,11 @@ export class AnnotationsDomainObject extends VisualDomainObject {
   // ==================================================
 
   public fetch(modelId: number): boolean {
-    const rootDomainObject = this.rootDomainObject;
-    if (rootDomainObject === undefined) {
+    const root = getRoot(this);
+    if (root === undefined) {
       return false;
     }
-    void AnnotationUtils.fetchAllAnnotations(rootDomainObject.sdk, modelId).then((_annotations) => {
+    void AnnotationUtils.fetchAllAnnotations(root.sdk, modelId).then((_annotations) => {
       // this.annotations = annotations;
       this.setSelectedInteractive(true);
       this.setVisibleInteractive(true);

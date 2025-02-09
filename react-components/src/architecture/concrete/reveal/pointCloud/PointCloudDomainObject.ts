@@ -2,6 +2,7 @@
  * Copyright 2025 Cognite AS
  */
 
+import { getRenderTarget } from '../../../base/domainObjects/getRoot';
 import { VisualDomainObject } from '../../../base/domainObjects/VisualDomainObject';
 import { type RenderStyle } from '../../../base/renderStyles/RenderStyle';
 import { type IconName } from '../../../base/utilities/IconName';
@@ -52,7 +53,7 @@ export class PointCloudDomainObject extends VisualDomainObject {
 
   protected override removeCore(): void {
     super.removeCore();
-    this.rootDomainObject?.renderTarget?.viewer?.removeModel(this._model);
+    getRenderTarget(this)?.viewer?.removeModel(this._model);
   }
 
   // ==================================================

@@ -14,6 +14,7 @@ import { FocusType } from '../../base/domainObjectsHelpers/FocusType';
 import { type DomainObject } from '../../base/domainObjects/DomainObject';
 import { type IconName } from '../../base/utilities/IconName';
 import { SolidPrimitiveRenderStyle } from '../primitives/common/SolidPrimitiveRenderStyle';
+import { getRoot } from '../../base/domainObjects/getRoot';
 
 export class CropBoxDomainObject extends BoxDomainObject {
   // ==================================================
@@ -77,7 +78,7 @@ export class CropBoxDomainObject extends BoxDomainObject {
   // ==================================================
 
   public setThisAsGlobalCropBox(): void {
-    const root = this.rootDomainObject;
+    const root = getRoot(this);
     if (root === undefined) {
       return;
     }
@@ -91,7 +92,7 @@ export class CropBoxDomainObject extends BoxDomainObject {
   }
 
   private createClippingPlanes(): Plane[] {
-    const root = this.rootDomainObject;
+    const root = getRoot(this);
     if (root === undefined) {
       return [];
     }
@@ -105,7 +106,7 @@ export class CropBoxDomainObject extends BoxDomainObject {
 
   private updateClippingPlanes(change: DomainObjectChange): void {
     // Update the clipping planes if necessary
-    const root = this.rootDomainObject;
+    const root = getRoot(this);
     if (root === undefined) {
       return;
     }
