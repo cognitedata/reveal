@@ -9,13 +9,13 @@ import {
   Overlay3DCollection,
   type OverlayInfo,
   type CustomObjectIntersectInput,
-  type CustomObjectIntersection
+  type CustomObjectIntersection,
+  ClosestGeometryFinder
 } from '@cognite/reveal';
 import { type DomainObjectIntersection } from '../../base/domainObjectsHelpers/DomainObjectIntersection';
 import { Changes } from '../../base/domainObjectsHelpers/Changes';
 import { type DomainObjectChange } from '../../base/domainObjectsHelpers/DomainObjectChange';
 import { createPointsOfInterestIntersection, type PointOfInterest } from './types';
-import { ClosestGeometryFinder } from '../../base/utilities/geometry/ClosestGeometryFinder';
 import { getColorFromStatus } from './color';
 import { isPointVisibleByPlanes } from '../../base/utilities/geometry/isPointVisibleByPlanes';
 
