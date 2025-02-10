@@ -17,7 +17,9 @@ export const useExtractUniqueAssetIdsFromMapped = (
         id: item.assetId
       };
     });
-    const uniqueAssetIds = uniqBy(assetIds, (assetId) => assetId.id);
+    const uniqueAssetIds = uniqBy(assetIds, (assetId) => assetId.id).filter(
+      (assetId) => assetId.id !== undefined
+    );
     return uniqueAssetIds;
   }, [assetMappings]);
 };
