@@ -65,6 +65,10 @@ export class CylinderGizmoDomainObject extends CylinderDomainObject {
     return [new CopyToClipboardCommand(), new ToggleMetricUnitsCommand()];
   }
 
+  public override get isVisibleInTree(): boolean {
+    return false;
+  }
+
   // ==================================================
   // OVERRIDES of VisualDomainObject
   // ==================================================

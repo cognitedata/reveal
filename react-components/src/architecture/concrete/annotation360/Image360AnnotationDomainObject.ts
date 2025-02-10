@@ -12,6 +12,7 @@ import { LineRenderStyle } from '../primitives/line/LineRenderStyle';
 import { createTriangleIndexesFromVectors } from './createTriangleIndexesFromVectors';
 import { type AnnotationIdentifier, type AssetIdentifier, type AnnotationStatus } from './types';
 import { type DmsUniqueIdentifier } from '../../../data-providers';
+import { type IconName } from '../../base/utilities/IconName';
 
 const DEFAULT_VECTOR_LENGTH = 5;
 
@@ -33,13 +34,31 @@ export class Image360AnnotationDomainObject extends LineDomainObject {
 
   public constructor(connectedImageId: string | DmsUniqueIdentifier) {
     super(PrimitiveType.Polygon);
-    this.color = new Color(Color.NAMES.yellow);
     this.connectedImageId = connectedImageId;
   }
 
   // ==================================================
   // OVERRIDES
   // ==================================================
+
+  public override get icon(): IconName {
+    return 'Polygon';
+  }
+
+  public override get color(): Color {
+    switch (this.status) {
+      case 'suggested':
+        return new Color(Color.NAMES.yellow);
+      case 'saved':
+        return new Color('0xd46ae2');
+      case 'pending':
+        return new Color('0x4da6ff');
+      case 'deleted':
+        return new Color(Color.NAMES.red);
+      default:
+        return new Color(Color.NAMES.gray);
+    }
+  }
 
   public override get typeName(): TranslationInput {
     return { untranslated: '360 image annotation' };

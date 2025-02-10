@@ -6,6 +6,7 @@ import { type DmsUniqueIdentifier } from '../data-providers';
 
 export const queryKeys = {
   all: ['cdf'] as const,
+  all3DResources: () => [...queryKeys.all, 'all-3d-resources'] as const,
   // ASSETS
   assetsById: (ids: IdEither[]) => [...assets, ids] as const,
   // DM nodes

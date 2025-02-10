@@ -60,8 +60,6 @@ export abstract class CylinderDomainObject extends SolidDomainObject {
 
   public override getPanelInfo(): PanelInfo | undefined {
     const info = new PanelInfo();
-    info.setHeader(this.typeName);
-
     const { cylinder } = this;
 
     const isFinished = this.focusType !== FocusType.Pending;

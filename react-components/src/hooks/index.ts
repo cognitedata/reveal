@@ -28,6 +28,7 @@ export type {
   DmImage360AnnotationMappedData,
   ThreeDModelFdmMappings
 } from './types';
+export type { ModelWithRevisionInfo } from './network/types';
 
 export * from './cad';
 export * from './pointClouds';

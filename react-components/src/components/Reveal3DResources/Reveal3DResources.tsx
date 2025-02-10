@@ -9,10 +9,7 @@ import { useReveal } from '../RevealCanvas/ViewerContext';
 import { type Reveal3DResourcesProps, type CadModelOptions } from './types';
 import { useCalculatePointCloudStyling } from './hooks/useCalculatePointCloudStyling';
 import { EMPTY_ARRAY } from '../../utilities/constants';
-import {
-  isAssetMappingStylingGroup,
-  isImage360AssetStylingGroup
-} from '../../utilities/StylingGroupUtils';
+import { isAssetMappingStylingGroup } from '../../utilities/StylingGroupUtils';
 import { type ImageCollectionModelStyling } from '../Image360CollectionContainer/useApply360AnnotationStyling';
 import { is360ImageAddOptions, isClassicIdentifier } from './typeGuards';
 import { useRemoveNonReferencedModels } from './hooks/useRemoveNonReferencedModels';
@@ -20,7 +17,6 @@ import { useCalculateCadStyling } from './hooks/useCalculateCadStyling';
 import { useReveal3DResourcesStylingLoadingSetter } from './Reveal3DResourcesInfoContext';
 import { type CadModelStyling } from '../CadModelContainer/types';
 import { type PointCloudModelStyling } from '../PointCloudContainer/types';
-import { type Image360PolygonStylingGroup } from '../Image360CollectionContainer';
 import { useTypedModels } from './hooks/useTypedModels';
 import {
   useAssetMappedNodesForRevisions,
@@ -29,6 +25,7 @@ import {
 } from '../../hooks/cad';
 import { useCallCallbackOnFinishedLoading } from './hooks/useCallCallbackOnFinishedLoading';
 import { useSetExpectedLoadCount } from './hooks/useSetExpectedLoadCount';
+import { useCalculateImage360Styling } from './hooks/useCalculateImage360Styling';
 
 export const Reveal3DResources = ({
   resources,
@@ -87,16 +84,7 @@ export const Reveal3DResources = ({
     defaultResourceStyling
   );
 
-  const image360StyledGroup =
-    instanceStyling
-      ?.filter(isImage360AssetStylingGroup)
-      .map((group) => {
-        return { assetIds: group.assetIds, style: group.style.image360 };
-      })
-      .filter(
-        (group): group is Image360PolygonStylingGroup & { assetIds: number[] } =>
-          group.style !== undefined
-      ) ?? EMPTY_ARRAY;
+  const image360StyledGroup = useCalculateImage360Styling(instanceStyling);
 
   return (
     <>
