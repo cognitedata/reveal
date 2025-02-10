@@ -31,7 +31,6 @@ export class CadTreeNode extends TreeNode {
   // ==================================================
 
   public override get id(): string {
-    // AAA
     return CadTreeNode.treeIndexToString(this.treeIndex);
   }
 

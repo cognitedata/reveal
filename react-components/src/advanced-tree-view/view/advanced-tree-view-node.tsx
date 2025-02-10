@@ -52,8 +52,8 @@ export const AdvancedTreeViewNode = ({
   const backgroundColor = getBackgroundColor(inputNode, isHover);
   const hasHover = props.hasHover ?? true;
   const hasCheckboxes = props.hasCheckboxes ?? true;
-  const hasInfo = props.onClickInfo !== undefined && inputNode.hasInfoIcon !== false; // AAA
-  const isLoadingChildren = inputNode.isLoadingChildren === true; // AAA
+  const hasInfo = props.onClickInfo !== undefined && inputNode.hasInfoIcon !== false;
+  const isLoadingChildren = inputNode.isLoadingChildren === true;
   const hasLoadMore =
     inputNode.isLoadingSiblings === false &&
     inputNode.needLoadSiblings === true &&

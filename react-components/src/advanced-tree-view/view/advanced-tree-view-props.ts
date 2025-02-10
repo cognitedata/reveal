@@ -39,4 +39,4 @@ export type AdvancedTreeViewProps = {
  * so the data model can be independent on JXS.
  */
 
-export type GetIconFromIconNameFn = (icon: IconName) => FC<IconProps>; // AAA
+export type GetIconFromIconNameFn = (icon: IconName) => FC<IconProps>;

@@ -27,19 +27,15 @@ export function createSimpleMock(args: SimpleMockArgs): TreeNode {
 
   for (const node of root.getThisAndDescendants()) {
     if (args.hasColors === true) {
-      // AAA
       node.iconColor = getRandomColor();
     }
     if (args.hasBoldLabels === true) {
-      // AAA
       node.hasBoldLabel = Math.random() < 0.5;
     }
     if (args.hasDisabledCheckboxes === true) {
-      // AAA
       node.isCheckboxEnabled = Math.random() < 0.5;
     }
     if (args.hasCheckboxes === true) {
-      // AAA
       node.checkboxState = CheckboxState.None;
     }
     node.icon = node.isParent ? 'Folder' : 'Snow';

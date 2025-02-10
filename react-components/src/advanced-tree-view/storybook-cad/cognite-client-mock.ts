@@ -65,7 +65,6 @@ export class CogniteClientMock implements ICogniteClient {
   }
 
   public getRandomNodeId(): number {
-    // AAA
     const nodes = new Array<CadTreeNode>();
     for (const descendant of TREE.getThisAndDescendants()) {
       if (descendant instanceof CadTreeNode) {

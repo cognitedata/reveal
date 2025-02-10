@@ -2,7 +2,7 @@
  * Copyright 2025 Cognite AS
  */
 import { type ILazyLoader } from './i-lazy-loader';
-import { type TreeNodeAction, type CheckboxState, type IconColor, type IconName } from './types'; // AAA
+import { type TreeNodeAction, type CheckboxState, type IconColor, type IconName } from './types';
 
 export type TreeNodeType = {
   id: string; // Returns the unique id of the node
@@ -16,7 +16,7 @@ export type TreeNodeType = {
   // Optional Appearance
   isParent: boolean; // Returns true if this node has children (loaded or not loaded)
   hasBoldLabel?: boolean; // Returns true if the label should be rendered in bold font
-  hasInfoIcon?: boolean; // Returns true if the info icon should be rendered // AAA
+  hasInfoIcon?: boolean; // Returns true if the info icon should be rendered
   icon?: IconName; // Returns the icon, undefined is no icon
   iconColor?: IconColor; // undefined means default color, normally black
   isCheckboxEnabled?: boolean; // True if checkbox is enabled

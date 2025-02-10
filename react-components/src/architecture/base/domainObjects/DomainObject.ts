@@ -118,6 +118,10 @@ export abstract class DomainObject implements TreeNodeType {
     return this.color.getHexString();
   }
 
+  public get hasBoldLabel(): boolean {
+    return false;
+  }
+
   public get checkboxState(): CheckboxState | undefined {
     switch (this.getVisibleState()) {
       case VisibleState.All:

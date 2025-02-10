@@ -9,7 +9,7 @@ export type { ILazyLoader } from './model/i-lazy-loader';
 export { TreeNode } from './model/tree-node';
 export type { IconName, IconColor, TreeNodeAction, OnNodeLoadedAction } from './model/types';
 
-export { CheckboxState } from './model/types'; // AAA
+export { CheckboxState } from './model/types';
 
 export {
   scrollToNode,

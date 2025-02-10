@@ -9,7 +9,6 @@ export const useOnTreeNodeUpdate = (node: TreeNodeType | undefined, update: () =
   const memoizedUpdate = useCallback(update, [node]);
   useEffect(() => {
     if (node === undefined) {
-      // AAA
       return;
     }
     memoizedUpdate();
