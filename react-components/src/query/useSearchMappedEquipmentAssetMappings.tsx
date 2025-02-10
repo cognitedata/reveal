@@ -23,31 +23,11 @@ import { type InstancesWithView, useSearchMappedEquipmentFDM } from './useSearch
 import { COGNITE_ASSET_SOURCE, type SimpleSource } from '../data-providers';
 import { useMemo } from 'react';
 import { type ModelWithAssetMappings } from '../hooks/cad/ModelWithAssetMappings';
-
-export type ModelMappings = {
-  model: AddModelOptions;
-  mappings: ListResponse<AssetMapping3D[]>;
-};
-
-export type ModelMappingsWithAssets = ModelMappings & {
-  assets: Asset[];
-};
-
-export type AssetPage = {
-  assets: Asset[];
-  nextCursor: string | undefined;
-};
-
-export type ModelAssetPage = {
-  modelsAssets: ModelMappingsWithAssets[];
-  nextCursor: string | undefined;
-};
-
-export type CoreAssetWithModelAndMappings = {
-  model: AddModelOptions;
-  asset: NodeDefinition;
-  mappings: AssetMapping3D[];
-};
+import {
+  type AssetPage,
+  type ModelMappingsWithAssets,
+  type NodeDefinitionWithModelAndMappings
+} from './types';
 
 const defaultViewsToSearch: SimpleSource = {
   space: COGNITE_ASSET_SOURCE.space,
@@ -226,7 +206,7 @@ export const useAllMappedEquipmentAssetMappingsHybrid = (
   limit: number = 1000,
   assetMappingList: ModelWithAssetMappings[],
   userSdk?: CogniteClient
-): UseQueryResult<CoreAssetWithModelAndMappings[]> => {
+): UseQueryResult<NodeDefinitionWithModelAndMappings[]> => {
   const sdk = useSDK(userSdk);
 
   const assetsFromHybridMappings = useMemo(() => {
@@ -312,7 +292,7 @@ const fetchAllMappedEquipmentAssetMappingsHybrid = async ({
   sdk: CogniteClient;
   viewToSearch?: SimpleSource | undefined;
   assetMappingList: ModelWithAssetMappings[];
-}): Promise<CoreAssetWithModelAndMappings[]> => {
+}): Promise<NodeDefinitionWithModelAndMappings[]> => {
   const filteredViewsToSearch = viewToSearch ?? defaultViewsToSearch;
   const instances = assetMappingList.flatMap((mapping) =>
     mapping.assetMappings.map((item) => item.assetInstanceId).filter(isDefined)
@@ -338,7 +318,7 @@ const fetchAllMappedEquipmentAssetMappingsHybrid = async ({
     }))
   });
 
-  const modelsWithCoreAssetsAndMappings: CoreAssetWithModelAndMappings[] = [];
+  const modelsWithCoreAssetsAndMappings: NodeDefinitionWithModelAndMappings[] = [];
 
   assetMappingList.forEach((mapping) => {
     allEquipment?.items.forEach((equipment) => {
