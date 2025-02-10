@@ -27,6 +27,7 @@ export class TreeNode implements TreeNodeType {
   private _isExpanded: boolean = false;
   private _isCheckboxEnabled: boolean = true;
   private _hasBoldLabel: boolean = false;
+  private _hasInfoIcon: boolean = false; // AAA
   private _isLoadingChildren: boolean = false;
   private _isLoadingSiblings: boolean = false;
   private _needLoadChildren = false;
@@ -86,6 +87,19 @@ export class TreeNode implements TreeNodeType {
   public set iconColor(value: IconColor) {
     if (this._iconColor !== value) {
       this._iconColor = value;
+      this.update();
+    }
+  }
+
+  public get hasInfoIcon(): boolean {
+    // AAA
+    return this._hasInfoIcon;
+  }
+
+  public set hasInfoIcon(value: boolean) {
+    // AAA
+    if (this._hasInfoIcon !== value) {
+      this._hasInfoIcon = value;
       this.update();
     }
   }

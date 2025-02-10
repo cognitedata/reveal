@@ -16,6 +16,7 @@ export type TreeNodeType = {
   // Optional Appearance
   isParent: boolean; // Returns true if this node has children (loaded or not loaded)
   hasBoldLabel?: boolean; // Returns true if the label should be rendered in bold font
+  hasInfoIcon?: boolean; // Returns true if the info icon should be rendered // AAA
   icon?: IconName; // Returns the icon, undefined is no icon
   iconColor?: IconColor; // undefined means default color, normally black
   isCheckboxEnabled?: boolean; // True if checkbox is enabled
