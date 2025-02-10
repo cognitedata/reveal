@@ -47,6 +47,7 @@ import { type SolidPrimitiveRenderStyle } from '../common/SolidPrimitiveRenderSt
 import { LineMaterial } from 'three/examples/jsm/lines/LineMaterial.js';
 import { Wireframe } from 'three/examples/jsm/lines/Wireframe.js';
 import { Box } from '../../../base/utilities/primitives/Box';
+import { getRoot } from '../../../base/domainObjects/getRoot';
 
 const RELATIVE_RESIZE_RADIUS = 0.15;
 const RELATIVE_ROTATION_RADIUS = new Range1(0.6, 0.75);
@@ -270,15 +271,15 @@ export class BoxView extends GroupThreeView<BoxDomainObject> {
     if (!domainObject.canRotateComponent(face.index)) {
       return undefined;
     }
-    const { rootDomainObject } = domainObject;
-    if (rootDomainObject === undefined) {
+    const root = getRoot(domainObject);
+    if (root === undefined) {
       return undefined;
     }
     const degrees = domainObject.box.getRotationInDegrees(face.index);
     if (degrees === 0) {
       return undefined; // Not show when about 0
     }
-    const text = rootDomainObject.unitSystem.toStringWithUnit(degrees, Quantity.Angle);
+    const text = root.unitSystem.toStringWithUnit(degrees, Quantity.Angle);
     const sprite = BoxView.createSprite(text, this.style, spriteHeight);
     if (sprite === undefined) {
       return undefined;
@@ -368,8 +369,8 @@ export class BoxView extends GroupThreeView<BoxDomainObject> {
 
   private addLabels(matrix: Matrix4): void {
     const { domainObject, style } = this;
-    const { rootDomainObject } = domainObject;
-    if (rootDomainObject === undefined) {
+    const root = getRoot(domainObject);
+    if (root === undefined) {
       return undefined;
     }
     const spriteHeight = this.getTextHeight(style.relativeTextSize);
@@ -380,7 +381,7 @@ export class BoxView extends GroupThreeView<BoxDomainObject> {
         this._sprites.push(undefined);
         continue;
       }
-      const text = rootDomainObject.unitSystem.toStringWithUnit(size, Quantity.Length);
+      const text = root.unitSystem.toStringWithUnit(size, Quantity.Length);
       const sprite = BoxView.createSprite(text, style, spriteHeight);
       if (sprite === undefined) {
         this._sprites.push(undefined);

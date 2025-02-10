@@ -12,6 +12,7 @@ import {
 } from '../../../base/domainObjects/VisualDomainObject';
 import { FocusType } from '../../../base/domainObjectsHelpers/FocusType';
 import { getClosestPointOnLine } from '../../../base/utilities/extensions/rayExtensions';
+import { getRoot } from '../../../base/domainObjects/getRoot';
 
 /**
  * The `PlaneDragger` class represents a utility for dragging and manipulating a plane in a 3D space.
@@ -38,7 +39,7 @@ export class PlaneDragger extends BaseDragger {
     this._domainObject = domainObject;
     this._plane = this._domainObject.plane.clone();
 
-    const root = this._domainObject.rootDomainObject;
+    const root = getRoot(this._domainObject);
     if (root === undefined) {
       return;
     }

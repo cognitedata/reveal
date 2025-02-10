@@ -20,6 +20,7 @@ import { type TranslateDelegate } from '../../architecture/base/utilities/Transl
 import { type UnitSystem } from '../../architecture/base/renderTarget/UnitSystem';
 import { IconComponent } from './Factories/IconFactory';
 import { type DomainObject } from '../../architecture';
+import { getRoot } from '../../architecture/base/domainObjects/getRoot';
 
 const TEXT_SIZE = 'x-small';
 const HEADER_SIZE = 'medium';
@@ -33,11 +34,26 @@ export const DomainObjectPanel = (): ReactElement => {
   const commands = useMemo(() => domainObject?.getPanelToolbar(), [domainObject]);
   const info = domainObject?.getPanelInfo();
   const style = domainObject?.getPanelInfoStyle();
-  const root = domainObject?.rootDomainObject;
 
   useEffect(() => {
     DomainObjectPanelUpdater.setDomainObjectDelegate(setCurrentDomainObjectInfo);
   }, [setCurrentDomainObjectInfo, commands]);
+
+  const { t } = useTranslation();
+
+  if (
+    domainObject === undefined ||
+    info === undefined ||
+    commands === undefined ||
+    style === undefined
+  ) {
+    return <></>;
+  }
+  const root = getRoot(domainObject);
+  if (root === undefined) {
+    return <></>;
+  }
+  const unitSystem = root.unitSystem;
 
   // Force the getString to be updated
   if (commands !== undefined && info !== undefined) {
@@ -47,18 +63,6 @@ export const DomainObjectPanel = (): ReactElement => {
     }
   }
 
-  const { t } = useTranslation();
-
-  if (
-    domainObject === undefined ||
-    root === undefined ||
-    info === undefined ||
-    commands === undefined ||
-    style === undefined
-  ) {
-    return <></>;
-  }
-  const unitSystem = root.unitSystem;
   const icon = domainObject.icon;
   const label = domainObject.getLabel(t);
   return (

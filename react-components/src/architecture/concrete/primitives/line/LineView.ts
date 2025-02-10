@@ -38,6 +38,7 @@ import { square } from '../../../base/utilities/extensions/mathExtensions';
 import { Quantity } from '../../../base/domainObjectsHelpers/Quantity';
 import { BoxView } from '../box/BoxView';
 import { PrimitiveUtils } from '../../../base/utilities/primitives/PrimitiveUtils';
+import { getRoot } from '../../../base/domainObjects/getRoot';
 
 const CYLINDER_DEFAULT_AXIS = new Vector3(0, 1, 0);
 const SOLID_NAME = 'Solid';
@@ -274,10 +275,11 @@ export class LineView extends GroupThreeView<LineDomainObject> {
     if (!style.showLabel) {
       return;
     }
-    const { points, pointCount, rootDomainObject } = domainObject;
-    if (rootDomainObject === undefined) {
+    const root = getRoot(domainObject);
+    if (root === undefined) {
       return;
     }
+    const { points, pointCount } = domainObject;
     if (pointCount < 2) {
       return;
     }
@@ -295,7 +297,7 @@ export class LineView extends GroupThreeView<LineDomainObject> {
       center.copy(point1).add(point2).divideScalar(2);
       center.applyMatrix4(CDF_TO_VIEWER_TRANSFORMATION);
 
-      const text = rootDomainObject.unitSystem.toStringWithUnit(distance, Quantity.Length);
+      const text = root.unitSystem.toStringWithUnit(distance, Quantity.Length);
       const sprite = BoxView.createSprite(text, style, spriteHeight);
       if (sprite === undefined) {
         continue;
