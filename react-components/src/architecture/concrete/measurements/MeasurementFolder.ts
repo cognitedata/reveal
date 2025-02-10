@@ -9,8 +9,4 @@ export class MeasurementFolder extends FolderDomainObject {
   public override get typeName(): TranslationInput {
     return { key: 'MEASUREMENTS' };
   }
-
-  public override get hasIndexOnLabel(): boolean {
-    return false;
-  }
 }

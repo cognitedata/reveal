@@ -9,8 +9,4 @@ export class ClipFolder extends FolderDomainObject {
   public override get typeName(): TranslationInput {
     return { key: 'CROP_BOXES_AND_CLIPPING_PLANES' };
   }
-
-  public override get hasIndexOnLabel(): boolean {
-    return false;
-  }
 }

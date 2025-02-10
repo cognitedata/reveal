@@ -5,6 +5,7 @@ import { type ReactElement } from 'react';
 import { ActiveToolToolbar } from './Toolbar';
 import { DomainObjectPanel } from './DomainObjectPanel';
 import { AnchoredDialog } from './AnchoredDialog';
+import { TreeViewContainer } from './TreeViewContainer';
 
 export const ToolUI = (): ReactElement => {
   return (
@@ -12,6 +13,7 @@ export const ToolUI = (): ReactElement => {
       <ActiveToolToolbar />
       <DomainObjectPanel />
       <AnchoredDialog />
+      <TreeViewContainer />
     </>
   );
 };

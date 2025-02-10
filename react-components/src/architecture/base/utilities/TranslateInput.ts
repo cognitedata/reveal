@@ -18,7 +18,7 @@ export function isEmpty(input: TranslationInput): boolean {
   return input.untranslated === '';
 }
 
-export type TranslateDelegate = (key: TranslationInput) => string;
+export type TranslateDelegate = (input: TranslationInput) => string;
 
 export function isTranslatedString(input: TranslationInput): input is TranslatedString {
   const key = (input as TranslatedString).key;

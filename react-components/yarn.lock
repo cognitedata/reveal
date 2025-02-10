@@ -606,6 +606,7 @@ __metadata:
     "@cognite/cogs.js": "npm:^10.36.0"
     "@cognite/reveal": "npm:^4.23.2"
     "@cognite/sdk": "npm:^9.13.0"
+    "@cognite/signals": "npm:^0.0.4"
     "@playwright/test": "npm:1.49.0"
     "@storybook/addon-essentials": "npm:8.4.5"
     "@storybook/addon-interactions": "npm:8.4.5"
@@ -726,6 +727,17 @@ __metadata:
     geojson: "npm:^0.5.0"
     lodash: "npm:^4.17.11"
   checksum: 10/f7599115d5816d77426d613538259e5da801b10b039f16372b3e5e5dd6dd1670f540380564e0252b6293bd47ce04b2f7a289c496cad6b2129e4101c2d5706087
+  languageName: node
+  linkType: hard
+
+"@cognite/signals@npm:^0.0.4":
+  version: 0.0.4
+  resolution: "@cognite/signals@npm:0.0.4"
+  dependencies:
+    "@preact/signals-core": "npm:^1.8.0"
+  peerDependencies:
+    react: 18.3.1
+  checksum: 10/3e88bbcd5801e717bc118a4b6380b7230d130d035f25946f5a6e72c8cdcae6402d75e160b40290a2cbd99cbda00f2c84ee57f8f33d06dbe0eea4a85f1435df8f
   languageName: node
   linkType: hard
 
@@ -2128,6 +2140,13 @@ __metadata:
   version: 2.11.8
   resolution: "@popperjs/core@npm:2.11.8"
   checksum: 10/ddd16090cde777aaf102940f05d0274602079a95ad9805bd20bc55dcc7c3a2ba1b99dd5c73e5cc2753c3d31250ca52a67d58059459d7d27debb983a9f552936c
+  languageName: node
+  linkType: hard
+
+"@preact/signals-core@npm:^1.8.0":
+  version: 1.8.0
+  resolution: "@preact/signals-core@npm:1.8.0"
+  checksum: 10/480c1aaf1bce6f8bd5544eec9fd92a70ccdfffa24c23d99aa8e3c13783cc6b06ec0a3d90578c5fd368d06121cbe0f8fbe81368aa45ddba11d8a28af15410a9dc
   languageName: node
   linkType: hard
 

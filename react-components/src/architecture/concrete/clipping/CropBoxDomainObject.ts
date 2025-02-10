@@ -66,6 +66,18 @@ export class CropBoxDomainObject extends BoxDomainObject {
     return false;
   }
 
+  public override get hasBoldLabel(): boolean {
+    const root = this.rootDomainObject;
+    if (root === undefined) {
+      return false;
+    }
+    const renderTarget = root.renderTarget;
+    if (!renderTarget.isGlobalClippingActive) {
+      return false;
+    }
+    return renderTarget.isGlobalCropBox(this);
+  }
+
   public override clone(what?: symbol): DomainObject {
     const clone = new CropBoxDomainObject();
     clone.copyFrom(this, what);

@@ -18,6 +18,7 @@ import { type PointsOfInterestProvider } from './PointsOfInterestProvider';
 import { type DmsUniqueIdentifier } from '../../../data-providers';
 import { createInstanceStyleGroup } from '../../../components/Reveal3DResources/instanceStyleTranslation';
 import { DefaultNodeAppearance } from '@cognite/reveal';
+import { type IconName } from '../../base/utilities/IconName';
 
 const SELECTED_ASSOCIATED_POI_INSTANCE_STYLING_SYMBOL = Symbol(
   'poi3d-selected-associated-instance-styling'
@@ -41,7 +42,19 @@ export class PointsOfInterestDomainObject<PoiIdType> extends VisualDomainObject 
   }
 
   public override get typeName(): TranslationInput {
-    return { untranslated: PointsOfInterestDomainObject.name };
+    return { key: 'POINT_OF_INTEREST_PLURAL' };
+  }
+
+  public override get icon(): IconName {
+    return 'Waypoint';
+  }
+
+  public override get hasIconColor(): boolean {
+    return false;
+  }
+
+  public override get hasIndexOnLabel(): boolean {
+    return false;
   }
 
   protected override createThreeView():

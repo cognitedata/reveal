@@ -137,6 +137,7 @@ export class Image360AnnotationCreateTool extends PrimitiveEditTool {
       return folder;
     }
     const newFolder = new Image360AnnotationFolder();
+    newFolder.isExpanded = true;
     root.addChildInteractive(newFolder);
     return newFolder;
   }
