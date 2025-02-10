@@ -8,9 +8,9 @@ import { useMemo } from 'react';
 import { uniqBy } from 'lodash';
 import { isDefined } from '../../../utilities/isDefined';
 
-export const useExtractUniqueAssetIdsFromMapped = (
+export const useExtractUniqueAssetIdsFromMapped: (
   assetMappings: ModelWithAssetMappings[] | undefined
-): InternalId[] => {
+) => InternalId[] = (assetMappings: ModelWithAssetMappings[] | undefined) => {
   return useMemo(() => {
     const mappings = assetMappings?.map((item) => item.assetMappings).flat() ?? [];
     const assetIds: InternalId[] = mappings
