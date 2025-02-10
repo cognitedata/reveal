@@ -10,8 +10,10 @@ import {
 } from '@cognite/reveal';
 import { useEffect, useMemo, useState } from 'react';
 import { type CogniteInternalId, type Node3D } from '@cognite/sdk';
-import { type FdmNodeDataPromises } from '../components/CacheProvider/types';
-import { type NodeAssetMappingResult } from '../components/CacheProvider/AssetMappingAndNode3DCache';
+import {
+  type NodeAssetMappingResult,
+  type FdmNodeDataPromises
+} from '../components/CacheProvider/types';
 import { usePointCloudAnnotationMappingForIntersection } from './pointClouds/usePointCloudAnnotationMappingForIntersection';
 import { type PointCloudAnnotationMappedAssetData } from './types';
 import { MOUSE, Vector2, type Vector3 } from 'three';
@@ -141,7 +143,8 @@ export const useClickedNodeData = (options?: {
 
   const { data: nodeDataPromises } = useFdm3dNodeDataPromises(intersection);
 
-  const { data: assetMappingResult } = useAssetMappingForTreeIndex(intersection);
+  const { data: assetMappingResult }: { data: NodeAssetMappingResult | undefined } =
+    useAssetMappingForTreeIndex(intersection);
 
   const pointCloudAnnotationMappingResult =
     usePointCloudAnnotationMappingForIntersection(intersection);
