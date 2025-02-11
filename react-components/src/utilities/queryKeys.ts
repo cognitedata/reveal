@@ -42,7 +42,31 @@ export const queryKeys = {
     [...assets, 'point-cloud-dm-volume-asset-mappings-with-views', assetRefKeys] as const,
   modelRevisionId: (revisionKeys: string[]) =>
     [...revisions, 'model-revision-id', revisionKeys] as const,
-  timeseriesFromRelationship: () => [...timeseries, 'timeseries-relationship'] as const
+  timeseriesFromRelationship: () => [...timeseries, 'timeseries-relationship'] as const,
+  searchedMappedCoreAssetsForHybridMappings: (
+    query: string,
+    limit: number,
+    assetIdentifiersKeys: string[],
+    models: string[]
+  ) =>
+    [
+      'search-mapped-core-assets-for-hybrid-mappings',
+      query,
+      limit,
+      assetIdentifiersKeys,
+      models
+    ] as const,
+  allMappedCoreAssetsForHybridMappings: (
+    assetsFromHybridMappingsKeys: string[],
+    models: string[],
+    limit: number
+  ) =>
+    [
+      'all-mapped-core-assets-for-hybrid-mappings',
+      assetsFromHybridMappingsKeys,
+      models,
+      limit
+    ] as const
 } as const;
 
 const assets: string[] = [...queryKeys.all, 'assets'];

@@ -11,7 +11,7 @@ import {
   type AddCadResourceOptions,
   type AddPointCloudResourceOptions,
   useSearchMappedEquipmentFDM,
-  useSearchMappedEquipmentAssetMappings,
+  useSearchMappedEquipmentAssetMappingsClassic,
   useAllMappedEquipmentFDM,
   useAllMappedEquipmentAssetMappings,
   type AddImage360CollectionOptions,
@@ -19,7 +19,8 @@ import {
   useAllAssetsMapped360Annotations,
   useSearchAssetsMappedPointCloudAnnotations,
   useAllAssetsMappedPointCloudAnnotations,
-  type AddResourceOptions
+  type AddResourceOptions,
+  useAssetMappedNodesForRevisions
 } from '../../src';
 import { is360ImageAddOptions } from '../../src/components/Reveal3DResources/typeGuards';
 import { type CogniteClient } from '@cognite/sdk';
@@ -71,6 +72,11 @@ const SearchComponent: React.FC<SearchComponentProps> = ({
   );
   const filteredViewsToSearch = viewsToSearch ?? defaultViewsToSearch;
 
+  const { data: allAssetMappingList, isFetched: isAssetMappingNodesFetched } =
+    useAssetMappedNodesForRevisions(
+      (filteredResources as AddCadResourceOptions[]).map((model) => ({ ...model, type: 'cad' }))
+    );
+
   const { data: searchData } = useSearchMappedEquipmentFDM(
     mainSearchQuery,
     filteredViewsToSearch,
@@ -84,10 +90,12 @@ const SearchComponent: React.FC<SearchComponentProps> = ({
     isFetching: isAssetSearchFetching,
     hasNextPage: assetSearchHasNextPage,
     fetchNextPage: fetchAssetSearchNextPage
-  } = useSearchMappedEquipmentAssetMappings(
+  } = useSearchMappedEquipmentAssetMappingsClassic(
     mainSearchQuery,
     filteredResources as AddModelOptions[],
     1000,
+    allAssetMappingList ?? [],
+    isAssetMappingNodesFetched,
     sdk
   );
 
@@ -136,11 +144,7 @@ const SearchComponent: React.FC<SearchComponentProps> = ({
     if (searchMethod !== 'allAssets' && searchMethod !== 'assetSearch') return;
     if (searchMethod === 'allAssets' && isFetching === false && hasNextPage === true) {
       void fetchNextPage();
-    } else if (
-      searchMethod === 'assetSearch' &&
-      isAssetSearchFetching === false &&
-      assetSearchHasNextPage === true
-    ) {
+    } else if (searchMethod === 'assetSearch' && !isAssetSearchFetching && assetSearchHasNextPage) {
       void fetchAssetSearchNextPage();
     }
   }, [
@@ -177,7 +181,7 @@ const SearchComponent: React.FC<SearchComponentProps> = ({
       const transformedAssets =
         allAssets?.pages
           .flat()
-          .map((mapping: { assets: any }) => mapping.assets)
+          .map((mapping: { assets: AssetInstance }) => mapping.assets)
           .flat() ?? [];
 
       const all360ImageAssets =
@@ -203,7 +207,7 @@ const SearchComponent: React.FC<SearchComponentProps> = ({
 
       const transformedAssetsSearch = assetSearchData?.pages
         .flat()
-        .map((mapping: { assets: any }) => mapping.assets)
+        .map((mapping: { assets: AssetInstance }) => mapping.assets)
         .flat();
 
       const assetImage360SearchData =
