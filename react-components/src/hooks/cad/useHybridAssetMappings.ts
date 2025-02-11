@@ -10,6 +10,12 @@ import { DEFAULT_QUERY_STALE_TIME } from '../../utilities/constants';
 import { useAssetMappingAndNode3DCache } from '../../components/CacheProvider/CacheProvider';
 import { useAssetMappedNodesForRevisions } from './useAssetMappedNodesForRevisions';
 import { isDefined } from '../../utilities/isDefined';
+import {
+  createFdmKey,
+  createModelRevisionKey
+} from '../../components/CacheProvider/idAndKeyTranslation';
+import { useMemo } from 'react';
+import { queryKeys } from '../../utilities/queryKeys';
 
 export const useHybridAssetMappings = (
   hybridFdmAssetExternalIds: DmsUniqueIdentifier[],
@@ -21,12 +27,14 @@ export const useHybridAssetMappings = (
   const relevantHybridAssetMappings = modelWithAssetMappings?.map((data) => {
     const mappings = data.assetMappings.filter(
       (assetMapping) =>
-        assetMapping.assetInstanceId !== undefined &&
-        hybridFdmAssetExternalIds.find(
-          (id) =>
-            id.externalId === assetMapping.assetInstanceId?.externalId &&
-            id.space === assetMapping.assetInstanceId?.space
-        ) !== undefined
+        isDefined(assetMapping.assetInstanceId) &&
+        isDefined(
+          hybridFdmAssetExternalIds.find(
+            (id) =>
+              id.externalId === assetMapping.assetInstanceId?.externalId &&
+              id.space === assetMapping.assetInstanceId?.space
+          )
+        )
     );
     return {
       model: data.model,
@@ -34,14 +42,18 @@ export const useHybridAssetMappings = (
     };
   });
 
+  const hybridFdmAssetExternalIdsKeys = useMemo(
+    () => hybridFdmAssetExternalIds.map(createFdmKey).sort(),
+    [hybridFdmAssetExternalIds]
+  );
+
+  const modelKeys = useMemo(
+    () => models.map((model) => createModelRevisionKey(model.modelId, model.revisionId)),
+    [models]
+  );
+
   return useQuery({
-    queryKey: [
-      'reveal',
-      'react-components',
-      'hybrid-asset-mappings',
-      hybridFdmAssetExternalIds.map((id) => `${id.space}/${id.externalId}`).sort(),
-      models.map((model) => [model.modelId, model.revisionId])
-    ],
+    queryKey: queryKeys.hybridAssetMappingsFromFdm(hybridFdmAssetExternalIdsKeys, modelKeys),
     queryFn: async () => {
       const modelAndNodeMapPromises = models.map(async (model) => {
         const mappingsPerModel =

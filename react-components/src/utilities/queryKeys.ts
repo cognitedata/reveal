@@ -66,7 +66,9 @@ export const queryKeys = {
       assetsFromHybridMappingsKeys,
       models,
       limit
-    ] as const
+    ] as const,
+  hybridAssetMappingsFromFdm: (hybridFdmAssetExternalIdsKeys: string[], modelKeys: string[]) =>
+    ['hybrid-asset-mappings-from-fdm', hybridFdmAssetExternalIdsKeys, modelKeys] as const
 } as const;
 
 const assets: string[] = [...queryKeys.all, 'assets'];
