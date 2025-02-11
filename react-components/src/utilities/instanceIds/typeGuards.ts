@@ -11,7 +11,9 @@ import {
 
 export function isIdEither(instance: InstanceReference): instance is IdEither {
   return (
-    ((instance as ExternalId).externalId !== undefined || (instance as InternalId).id !== undefined) && !isDmsInstance(instance)
+    ((instance as ExternalId).externalId !== undefined ||
+      (instance as InternalId).id !== undefined) &&
+    !isDmsInstance(instance)
   );
 }
 

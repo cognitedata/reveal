@@ -91,7 +91,9 @@ export class AssetMappingAndNode3DCache {
 
     const relevantMappings = allClassicNodeMappings
       .concat(allHybridNodeMappings)
-      .filter((mapping) => mapping.treeIndex && searchTreeIndices.has(mapping.treeIndex));
+      .filter(
+        (mapping) => mapping.treeIndex !== undefined && searchTreeIndices.has(mapping.treeIndex)
+      );
 
     if (relevantMappings.length === 0) {
       return { mappings: [] };
@@ -283,7 +285,8 @@ export class AssetMappingAndNode3DCache {
           }
         } else if (typeof id !== 'number' && isDmsInstance(id)) {
           const key = createModelDMSUniqueInstanceKey(modelId, revisionId, id.space, id.externalId);
-          const cachedResult = await this.assetInstanceIdsToAssetMappingCache.getHybridItemCacheResult(key);
+          const cachedResult =
+            await this.assetInstanceIdsToAssetMappingCache.getHybridItemCacheResult(key);
           if (cachedResult !== undefined) {
             chunkInCache.push(...cachedResult);
           } else {

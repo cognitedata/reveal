@@ -154,10 +154,10 @@ function createPrimitives(cdfGeometries: AnnotationGeometry[]): Primitive[] {
 
 function createPrimitive(cdfGeometry: AnnotationGeometry): Primitive | undefined {
   if (cdfGeometry.box !== undefined) {
-    return createBox(cdfGeometry.box as AnnotationsBox);
+    return createBox(cdfGeometry.box);
   }
   if (cdfGeometry.cylinder !== undefined) {
-    return createCylinder(cdfGeometry.cylinder as AnnotationsCylinder);
+    return createCylinder(cdfGeometry.cylinder);
   }
   return undefined;
 }

@@ -31,7 +31,7 @@ export const useImage360AnnotationMappingsForInstanceReferences = (
       'image360-annotations-info',
       ...(assetIds
         ?.filter((assetId) => isDefined(assetId))
-        .map((assetId) => assetId.toString())
+        .map((assetId) => assetId)
         .sort() ?? []),
       ...(siteIds?.map((siteId) => siteId).sort() ?? [])
     ],

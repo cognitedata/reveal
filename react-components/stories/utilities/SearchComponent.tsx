@@ -134,9 +134,13 @@ const SearchComponent: React.FC<SearchComponentProps> = ({
 
   const fetchNextPageCallback = useCallback(() => {
     if (searchMethod !== 'allAssets' && searchMethod !== 'assetSearch') return;
-    if (searchMethod === 'allAssets' && !isFetching && hasNextPage) {
+    if (searchMethod === 'allAssets' && isFetching === false && hasNextPage === true) {
       void fetchNextPage();
-    } else if (searchMethod === 'assetSearch' && !isAssetSearchFetching && assetSearchHasNextPage) {
+    } else if (
+      searchMethod === 'assetSearch' &&
+      isAssetSearchFetching === false &&
+      assetSearchHasNextPage === true
+    ) {
       void fetchAssetSearchNextPage();
     }
   }, [
@@ -173,7 +177,7 @@ const SearchComponent: React.FC<SearchComponentProps> = ({
       const transformedAssets =
         allAssets?.pages
           .flat()
-          .map((mapping) => mapping.assets)
+          .map((mapping: { assets: any }) => mapping.assets)
           .flat() ?? [];
 
       const all360ImageAssets =
@@ -185,7 +189,7 @@ const SearchComponent: React.FC<SearchComponentProps> = ({
       ];
 
       const filteredAssets =
-        combinedAssets.filter((assetMappings) =>
+        combinedAssets.filter((assetMappings: AssetInstance) =>
           matchAssetWithQuery(assetMappings, mainSearchQuery)
         ) ?? [];
 
@@ -199,7 +203,7 @@ const SearchComponent: React.FC<SearchComponentProps> = ({
 
       const transformedAssetsSearch = assetSearchData?.pages
         .flat()
-        .map((mapping) => mapping.assets)
+        .map((mapping: { assets: any }) => mapping.assets)
         .flat();
 
       const assetImage360SearchData =
@@ -211,7 +215,7 @@ const SearchComponent: React.FC<SearchComponentProps> = ({
         ...(pointCloudAssetSearchData ?? [])
       ];
 
-      const searchedEquipment: Equipment[] = combinedAssetSearchData.map((asset) =>
+      const searchedEquipment: Equipment[] = combinedAssetSearchData.map((asset: AssetInstance) =>
         assetInstanceToEquipment(asset)
       );
 
@@ -298,7 +302,7 @@ const SearchComponent: React.FC<SearchComponentProps> = ({
         </Button>
         <Button
           size="small"
-          loading={isFetching || isAssetSearchFetching}
+          loading={isFetching === true || isAssetSearchFetching}
           onClick={fetchNextPageCallback}>
           Load More
         </Button>

@@ -2,7 +2,7 @@
  * Copyright 2024 Cognite AS
  */
 import { type CogniteClient } from '@cognite/sdk';
-import { type ModelId, type RevisionId, type ModelRevisionKey, AssetMapping } from './types';
+import { type ModelId, type RevisionId, type ModelRevisionKey, type AssetMapping } from './types';
 import { isValidAssetMapping } from './utils';
 import { createModelRevisionKey } from './idAndKeyTranslation';
 import { isDefined } from '../../utilities/isDefined';

@@ -197,7 +197,6 @@ export type ListResponse<T> = {
   items: T[];
 };
 
-
 export type ListResponseWithNextCursor<T> = ListResponse<T> & {
   nextCursor?: string;
 };
