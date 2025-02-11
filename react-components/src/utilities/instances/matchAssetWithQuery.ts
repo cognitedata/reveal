@@ -6,10 +6,8 @@ import { isClassicAsset } from './typeGuards';
 
 export function matchAssetWithQuery(assetInstance: AssetInstance, query: string): boolean {
   if (isClassicAsset(assetInstance)) {
-    const instance = assetInstance;
-    const isInName = instance.name.toLowerCase().includes(query.toLowerCase());
-    const isInDescription = instance.description?.toLowerCase().includes(query.toLowerCase());
-
+    const isInName = assetInstance.name.toLowerCase().includes(query.toLowerCase());
+    const isInDescription = assetInstance.description?.toLowerCase().includes(query.toLowerCase());
     return isInName || isInDescription === true;
   } else {
     const isInName = assetInstance.properties.name.toLowerCase().includes(query.toLowerCase());
