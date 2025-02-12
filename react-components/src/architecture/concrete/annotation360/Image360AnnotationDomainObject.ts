@@ -50,9 +50,9 @@ export class Image360AnnotationDomainObject extends LineDomainObject {
       case 'suggested':
         return new Color(Color.NAMES.yellow);
       case 'saved':
-        return new Color('0xd46ae2');
+        return new Color(0xd46ae2);
       case 'pending':
-        return new Color('0x4da6ff');
+        return new Color(0x4da6ff);
       case 'deleted':
         return new Color(Color.NAMES.red);
       default:
