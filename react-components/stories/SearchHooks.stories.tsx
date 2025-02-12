@@ -3,7 +3,13 @@
  */
 
 import type { Meta, StoryObj } from '@storybook/react';
-import { RevealCanvas, RevealToolbar, type AddResourceOptions, RevealContext } from '../src';
+import {
+  RevealCanvas,
+  RevealToolbar,
+  type AddResourceOptions,
+  RevealContext,
+  type Source
+} from '../src';
 import { Color } from 'three';
 import { type ReactElement } from 'react';
 import { createSdkByUrlToken } from './utilities/createSdkByUrlToken';
@@ -14,10 +20,10 @@ import SearchComponent from './utilities/SearchComponent';
 
 const queryClient = new QueryClient();
 const sdk = createSdkByUrlToken();
-const viewsToSearch = [
-  { externalId: 'Equipment', space: 'fdx-boys', version: '2540f607085286' },
-  { externalId: 'WorkOrderMultiple', space: 'fdx-boys', version: '88e3ae4e99df70' },
-  { externalId: 'WorkOrderSingle', space: 'fdx-boys', version: 'd7a3a49b8d473d' }
+const viewsToSearch: Source[] = [
+  { externalId: 'Equipment', space: 'fdx-boys', version: '2540f607085286', type: 'view' },
+  { externalId: 'WorkOrderMultiple', space: 'fdx-boys', version: '88e3ae4e99df70', type: 'view' },
+  { externalId: 'WorkOrderSingle', space: 'fdx-boys', version: 'd7a3a49b8d473d', type: 'view' }
 ];
 
 const StoryContent = ({ resources }: { resources: AddResourceOptions[] }): ReactElement => {
