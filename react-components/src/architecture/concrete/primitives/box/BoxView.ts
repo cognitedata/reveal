@@ -547,7 +547,6 @@ export class BoxView extends GroupThreeView<BoxDomainObject> {
         return FocusType.Rotation;
       }
     }
-    // }
     return FocusType.Body;
   }
 
