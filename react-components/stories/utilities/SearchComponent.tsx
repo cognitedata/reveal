@@ -13,7 +13,7 @@ import {
   useSearchMappedEquipmentFDM,
   useSearchMappedEquipmentAssetMappingsClassic,
   useAllMappedEquipmentFDM,
-  useAllMappedEquipmentAssetMappings,
+  useAllMappedEquipmentAssetMappingsClassic,
   type AddImage360CollectionOptions,
   useSearchAssetsMapped360Annotations,
   useAllAssetsMapped360Annotations,
@@ -33,10 +33,10 @@ type SearchComponentProps = {
   sceneExternalId?: string;
   sceneSpaceId?: string;
   resources?: AddResourceOptions[];
-  viewsToSearch?: Source[] | SimpleSource[];
+  viewsToSearch?: Source[];
 };
 
-const defaultViewsToSearch = [
+const defaultViewsToSearch: Source[] = [
   { externalId: 'CognitePointCloudVolume', space: 'cdf_cdm', version: 'v1', type: 'view' }
 ];
 
@@ -109,7 +109,7 @@ const SearchComponent: React.FC<SearchComponentProps> = ({
     isFetching,
     hasNextPage,
     fetchNextPage
-  } = useAllMappedEquipmentAssetMappings(filteredResources as AddModelOptions[], sdk, 25);
+  } = useAllMappedEquipmentAssetMappingsClassic(filteredResources as AddModelOptions[], sdk, 25);
 
   const filtered360ImageResources = resources.filter(
     (resource): resource is AddImage360CollectionOptions => 'siteId' in resource
@@ -142,7 +142,7 @@ const SearchComponent: React.FC<SearchComponentProps> = ({
 
   const fetchNextPageCallback = useCallback(() => {
     if (searchMethod !== 'allAssets' && searchMethod !== 'assetSearch') return;
-    if (searchMethod === 'allAssets' && isFetching === false && hasNextPage === true) {
+    if (searchMethod === 'allAssets' && !isFetching && hasNextPage) {
       void fetchNextPage();
     } else if (searchMethod === 'assetSearch' && !isAssetSearchFetching && assetSearchHasNextPage) {
       void fetchAssetSearchNextPage();
@@ -181,7 +181,7 @@ const SearchComponent: React.FC<SearchComponentProps> = ({
       const transformedAssets =
         allAssets?.pages
           .flat()
-          .map((mapping: { assets: AssetInstance }) => mapping.assets)
+          .map((mapping) => mapping.assets)
           .flat() ?? [];
 
       const all360ImageAssets =
@@ -207,7 +207,7 @@ const SearchComponent: React.FC<SearchComponentProps> = ({
 
       const transformedAssetsSearch = assetSearchData?.pages
         .flat()
-        .map((mapping: { assets: AssetInstance }) => mapping.assets)
+        .map((mapping) => mapping.assets)
         .flat();
 
       const assetImage360SearchData =
@@ -306,7 +306,7 @@ const SearchComponent: React.FC<SearchComponentProps> = ({
         </Button>
         <Button
           size="small"
-          loading={isFetching === true || isAssetSearchFetching}
+          loading={isFetching || isAssetSearchFetching}
           onClick={fetchNextPageCallback}>
           Load More
         </Button>
