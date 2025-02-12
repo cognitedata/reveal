@@ -81,6 +81,7 @@ function getRevisionsImage360Annotations<const Prefix extends string>(
   const edgesResultExpression = `${prefix}_360_annotation_edges`;
   const imagesResultExpession = `${prefix}_360_image_nodes`;
 
+  // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
   return {
     [edgesResultExpression]: {
       edges: {
