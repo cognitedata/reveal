@@ -33,7 +33,7 @@ export function createWantedSectorMock(id: number = 1): IMock<WantedSector> {
 }
 
 export function createBinaryFileProviderMock(): IMock<BinaryFileProvider> {
-  const fileBuffer = fs.readFileSync(__dirname + '/test.glb');
+  const fileBuffer = fs.readFileSync(__dirname + '/test.glb') as Buffer<ArrayBuffer>;
   return new Mock<BinaryFileProvider>()
     .setup(p => p.getBinaryFile(defaultBaseUrl, It.IsAny(), It.IsAny()))
     .returnsAsync(fileBuffer.buffer);
