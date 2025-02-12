@@ -6,6 +6,7 @@ import { type CadModelOptions } from '..';
 import { isSameModel } from '../../../utilities/isSameModel';
 import { type ModelStyleGroup, type StyledModel } from '../types';
 import { extractDefaultStyles } from './utils/extractDefaultStyles';
+import { EMPTY_ARRAY } from '../../../utilities/constants';
 
 export function useJoinStylingGroups(
   models: CadModelOptions[],
@@ -19,7 +20,7 @@ export function useJoinStylingGroups(
     return models.map((model) => {
       const mappedStyleGroup =
         modelsMappedStyleGroups.find((typedModel) => isSameModel(typedModel.model, model))
-          ?.styleGroup ?? [];
+          ?.styleGroup ?? EMPTY_ARRAY;
       const instanceStyleGroups = modelInstanceStyleGroups
         .filter((typedModel) => isSameModel(typedModel.model, model))
         .flatMap((typedModel) => typedModel.styleGroup);

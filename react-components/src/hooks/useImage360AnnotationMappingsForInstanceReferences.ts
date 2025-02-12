@@ -12,6 +12,7 @@ import { getAssetIdKeyForImage360Annotation } from '../components/CacheProvider/
 import { type InstanceReference } from '../utilities/instanceIds';
 import { createInstanceReferenceKey } from '../utilities/instanceIds/toKey';
 import { isDefined } from '../utilities/isDefined';
+import { EMPTY_ARRAY } from '../utilities/constants';
 
 export type Image360AnnotationDataResult = {
   siteId: string;
@@ -24,16 +25,16 @@ export const useImage360AnnotationMappingsForInstanceReferences = (
 ): UseQueryResult<Image360AnnotationAssetInfo[]> => {
   const image360AnnotationCache = useImage360AnnotationCache();
 
+  const sortedAssetIds = (assetIds ?? EMPTY_ARRAY)?.filter(isDefined).map(String).sort();
+  const sortedSiteIds = (siteIds ?? EMPTY_ARRAY)?.filter(isDefined).map(String).sort();
+
   return useQuery({
     queryKey: [
       'reveal',
       'react-components',
       'image360-annotations-info',
-      ...(assetIds
-        ?.filter((assetId) => isDefined(assetId))
-        .map((assetId) => assetId)
-        .sort() ?? []),
-      ...(siteIds?.map((siteId) => siteId).sort() ?? [])
+      sortedAssetIds,
+      sortedSiteIds
     ],
     queryFn: async () => {
       if (

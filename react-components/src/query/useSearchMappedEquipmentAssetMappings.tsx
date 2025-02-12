@@ -14,7 +14,7 @@ import { useSDK } from '../components/RevealCanvas/SDKProvider';
 import { getAssetsList } from '../hooks/network/getAssetsList';
 import { isDefined } from '../utilities/isDefined';
 import { type InstancesWithView, useSearchMappedEquipmentFDM } from './useSearchMappedEquipmentFDM';
-import { COGNITE_ASSET_SOURCE, type SimpleSource } from '../data-providers';
+import { COGNITE_ASSET_SOURCE, type Source } from '../data-providers';
 import { useMemo } from 'react';
 import { type ModelWithAssetMappings } from '../hooks/cad/ModelWithAssetMappings';
 import {
@@ -125,7 +125,7 @@ export const useSearchMappedEquipmentAssetMappingsClassic = (
 
 export const useSearchMappedEquipmentAssetMappingsHybrid = (
   query: string,
-  viewsToSearch: SimpleSource[],
+  viewsToSearch: Source[],
   models: AddModelOptions[],
   limit: number = 1000,
   assetMappingList: ModelWithAssetMappings[],

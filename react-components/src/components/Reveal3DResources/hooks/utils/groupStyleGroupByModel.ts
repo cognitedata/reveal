@@ -1,9 +1,8 @@
 /*!
  * Copyright 2025 Cognite AS
  */
-import { type CadModelOptions } from '../..';
+import { type CadModelOptions, type ModelStyleGroup } from '../../types';
 import { isSameModel } from '../../../../utilities/isSameModel';
-import { type ModelStyleGroup } from '../../types';
 
 export function groupStyleGroupByModel(
   models: CadModelOptions[],

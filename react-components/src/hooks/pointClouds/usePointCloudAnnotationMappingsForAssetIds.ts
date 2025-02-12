@@ -23,15 +23,13 @@ export const usePointCloudAnnotationMappingsForAssetIds = (
     () => addClassicModelOptionsResults.map((result) => result.data).filter(isDefined),
     [addClassicModelOptionsResults]
   );
+  const sortedAssetIds = (assetIds ?? EMPTY_ARRAY)?.filter(isDefined).map(String).sort();
 
   return useQuery({
     queryKey: [
       queryKeys.pointCloudAnnotationForAssetIds(
         classicModelOptions.map((model) => `${model.modelId}/${model.revisionId}`).sort(),
-        assetIds
-          ?.filter((assetId) => isDefined(assetId))
-          .map((assetId) => assetId.toString())
-          .sort() ?? []
+        sortedAssetIds
       )
     ],
     queryFn: async () => {

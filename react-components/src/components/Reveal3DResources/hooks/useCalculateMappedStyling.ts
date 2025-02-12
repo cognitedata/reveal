@@ -10,6 +10,7 @@ import { getMappedStyleGroupFromAssetMappings } from './utils/getMappedStyleGrou
 import { getMappedStyleGroupFromFdm } from './utils/getMappedStyleGroupFromFdm';
 import { getMappedCadModelsOptions } from './utils/getMappedCadModelsOptions';
 import { groupStyleGroupByModel } from './utils/groupStyleGroupByModel';
+import { EMPTY_ARRAY } from '../../../utilities/constants';
 
 export function useCalculateMappedStyling(
   models: CadModelOptions[],
@@ -45,11 +46,12 @@ export function useCalculateMappedStyling(
     }
 
     return modelsRevisionsWithMappedEquipment.map((model) => {
-      const fdmData = mappedEquipmentEdges?.get(`${model.modelId}/${model.revisionId}`) ?? [];
+      const fdmData =
+        mappedEquipmentEdges?.get(`${model.modelId}/${model.revisionId}`) ?? EMPTY_ARRAY;
       const modelStyle = model.styling?.mapped ?? defaultMappedNodeAppearance;
 
       const styleGroup =
-        modelStyle !== undefined ? [getMappedStyleGroupFromFdm(fdmData, modelStyle)] : [];
+        modelStyle !== undefined ? [getMappedStyleGroupFromFdm(fdmData, modelStyle)] : EMPTY_ARRAY;
       return { model, styleGroup };
     });
   }, [
@@ -95,12 +97,14 @@ export function useCalculateMappedStyling(
     [modelsMappedAssetStyleGroups, modelsMappedFdmStyleGroups]
   );
 
+  const isModelMappingsLoading =
+    (!isFDMEquipmentMappingsError &&
+      isFDMEquipmentMappingsLoading &&
+      !isFDMEquipmentMappingsFetched) ||
+    (!isAssetMappingsError && isAssetMappingsLoading && !isAssetMappingsFetched);
+
   return {
     combinedMappedStyleGroups,
-    isModelMappingsLoading:
-      (!isFDMEquipmentMappingsError &&
-        isFDMEquipmentMappingsLoading &&
-        !isFDMEquipmentMappingsFetched) ||
-      (!isAssetMappingsError && isAssetMappingsLoading && !isAssetMappingsFetched)
+    isModelMappingsLoading
   };
 }

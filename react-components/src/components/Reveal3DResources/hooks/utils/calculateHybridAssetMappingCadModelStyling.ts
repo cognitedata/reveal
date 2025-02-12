@@ -3,7 +3,7 @@
  */
 import { IndexSet } from '@cognite/reveal';
 import { type Node3D } from '@cognite/sdk';
-import { type HybridFdmAssetStylingGroup, type CadModelOptions } from '../..';
+import { type HybridFdmAssetStylingGroup, type CadModelOptions } from '../../types';
 import { type ThreeDModelFdmMappings } from '../../../../hooks';
 import { createFdmKey } from '../../../CacheProvider/idAndKeyTranslation';
 import { type NodeId } from '../../../CacheProvider/types';

@@ -17,12 +17,13 @@ import { type Fdm3dDataProvider } from '../data-providers/Fdm3dDataProvider';
 import { removeEmptyProperties } from '../utilities/removeEmptyProperties';
 import { getModelKeys } from '../utilities/getModelKeys';
 import { useFdm3dDataProvider } from '../components/CacheProvider/CacheProvider';
+import { EMPTY_ARRAY } from '../utilities/constants';
 
 export type InstancesWithView = { view: Source; instances: NodeItem[] };
 
 export const useSearchMappedEquipmentFDM = (
   query: string,
-  viewsToSearch: SimpleSource[],
+  viewsToSearch: Source[],
   models: Array<AddModelOptions<DataSourceType>>,
   instancesFilter: InstanceFilter | undefined,
   limit: number = 100
@@ -61,7 +62,7 @@ export const useSearchMappedEquipmentFDM = (
         chunkedSources.push([]);
       }
 
-      const queryResults: InstancesWithView[] = [];
+      const queryResults: InstancesWithView[] = EMPTY_ARRAY;
 
       for (const sourceChunk of chunkedSources) {
         const chunkResult = await searchNodesWithViewsAndModels(
@@ -107,13 +108,13 @@ const searchNodesWithViewsAndModels = async (
       instances:
         transformedResults.find(
           (result) => result.view.externalId === view.externalId && result.view.space === view.space
-        )?.instances ?? []
+        )?.instances ?? EMPTY_ARRAY
     }));
 
     return combinedWithOtherViews;
   }
 
-  const searchResults: InstancesWithView[] = [];
+  const searchResults: InstancesWithView[] = EMPTY_ARRAY;
 
   for (const view of sourcesToSearch) {
     const result = await fdmSdk.searchInstances(view, query, 'node', limit, instancesFilter);

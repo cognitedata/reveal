@@ -2,7 +2,7 @@
  * Copyright 2025 Cognite AS
  */
 import { type CogniteExternalId, type Node3D } from '@cognite/sdk';
-import { type CadModelOptions } from '../..';
+import { type CadModelOptions } from '../../types';
 import { type ThreeDModelFdmMappings } from '../../../../hooks';
 import { type NodeId } from '../../../CacheProvider/types';
 import { mergeMapsWithDeduplicatedNodes } from './mergeMapsWithDeduplicatedNodes';

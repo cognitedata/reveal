@@ -2,7 +2,7 @@
  * Copyright 2025 Cognite AS
  */
 import { type NodeAppearance } from '@cognite/reveal';
-import { type CadModelOptions } from '../..';
+import { type CadModelOptions } from '../../types';
 
 export function getMappedCadModelsOptions(
   defaultMappedNodeAppearance: NodeAppearance | undefined,

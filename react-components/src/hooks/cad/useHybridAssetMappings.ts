@@ -58,16 +58,12 @@ export const useHybridAssetMappings = (
       const modelAndNodeMapPromises = models.map(async (model) => {
         const mappingsPerModel =
           relevantHybridAssetMappings
-            ?.map((data) => {
-              if (
-                data.model.modelId !== model.modelId &&
-                data.model.revisionId !== model.revisionId
-              )
-                return undefined;
-              return data.mappings;
-            })
-            .flat()
-            .filter(isDefined) ?? [];
+            ?.filter(
+              (data) =>
+                data.model.modelId === model.modelId && data.model.revisionId === model.revisionId
+            )
+            .map((data) => data.mappings)
+            .flat() ?? [];
 
         const nodeMap = await assetMappingAndNode3DCache.getNodesForAssetInstancesInHybridMappings(
           model.modelId,

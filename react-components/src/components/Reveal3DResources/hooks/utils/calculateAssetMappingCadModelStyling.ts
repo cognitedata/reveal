@@ -3,9 +3,8 @@
  */
 import { IndexSet, NumericRange } from '@cognite/reveal';
 import { type Node3D } from '@cognite/sdk';
-import { type AssetStylingGroup, type CadModelOptions } from '../..';
+import { type AssetStylingGroup, type CadModelOptions, type ModelStyleGroup } from '../../types';
 import { type AssetId } from '../../../CacheProvider/types';
-import { type ModelStyleGroup } from '../../types';
 
 export function calculateAssetMappingCadModelStyling(
   stylingGroups: AssetStylingGroup[],
