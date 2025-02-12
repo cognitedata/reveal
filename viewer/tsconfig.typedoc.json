@@ -1,6 +1,6 @@
 {
   "compilerOptions": {
-    "target": "es2022",
+    "target": "es2019",
     "module": "esnext",
     "moduleResolution": "node",
     "lib": [
@@ -8,6 +8,7 @@
       "dom",
       "webworker"
     ],
+    "target": "ES2019",
     "esModuleInterop": true,
     "skipLibCheck": true,
     "resolveJsonModule": true,
