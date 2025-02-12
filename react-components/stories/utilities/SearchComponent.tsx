@@ -4,7 +4,7 @@
 import { Button, Input } from '@cognite/cogs.js';
 import { isEqual } from 'lodash';
 import React, { useCallback, useMemo, useState } from 'react';
-import { type Source, type NodeItem, type SimpleSource } from '../../src/data-providers/FdmSDK';
+import { type Source, type NodeItem } from '../../src/data-providers/FdmSDK';
 import { type AddModelOptions } from '@cognite/reveal';
 import {
   useReveal3dResourcesFromScene,
