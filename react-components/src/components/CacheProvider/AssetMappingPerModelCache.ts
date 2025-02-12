@@ -109,7 +109,7 @@ export class AssetMappingPerModelCache {
         };
         return newMapping;
       })
-      .filter((mapping) => isDefined(mapping));
+      .filter(isDefined);
   }
 
   private async getNode3DInfoFromNodeIds(
