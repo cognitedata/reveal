@@ -59,7 +59,7 @@ type InstanceBatch = {
  */
 type BatchBuffer = {
   mesh: InstancedMesh;
-  buffer: DynamicDefragmentedBuffer<Uint8Array>;
+  buffer: DynamicDefragmentedBuffer<Uint8Array<ArrayBuffer>>;
 };
 
 /**
@@ -190,7 +190,7 @@ export class MultiBufferBatchingManager implements DrawCallBatchingManager {
 
     const length = interleavedBufferView.byteLength;
     const offset = interleavedBufferView.byteOffset;
-    const interleavedAttributesView = new Uint8Array(interleavedBufferView.buffer, offset, length);
+    const interleavedAttributesView = new Uint8Array<ArrayBuffer>(interleavedBufferView.buffer, offset, length);
 
     const { batchId, bufferIsReallocated, updateRange } = batchBuffer.buffer.add(interleavedAttributesView);
 
@@ -352,7 +352,7 @@ export class MultiBufferBatchingManager implements DrawCallBatchingManager {
 
   private createDefragmentedBufferGeometry(
     bufferGeometry: BufferGeometry,
-    defragmentedAttributeBuffer: DynamicDefragmentedBuffer<Uint8Array>
+    defragmentedAttributeBuffer: DynamicDefragmentedBuffer<Uint8Array<ArrayBuffer>>
   ): BufferGeometry {
     const instanceBufferGeometry = GeometryBufferUtils.copyGeometryWithBufferAttributes(bufferGeometry);
     const instanceAttributes = GeometryBufferUtils.getAttributes(bufferGeometry, InterleavedBufferAttribute);

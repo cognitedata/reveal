@@ -33,7 +33,7 @@ export function filterGeometryOutsideClipBox(
   }
 
   const interleavedAttributes = getAttributes(geometryBuffer, THREE.InterleavedBufferAttribute);
-  let newArray: Uint8Array | undefined;
+  let newArray: Uint8Array<ArrayBuffer> | undefined;
 
   switch (type) {
     case RevealGeometryCollectionType.BoxCollection:
@@ -81,8 +81,8 @@ export function filterGeometryOutsideClipBox(
 }
 
 const _views = new Map<number, TypedArrayConstructor>([
-  [1, Uint8Array],
-  [4, Float32Array]
+  [1, Uint8Array<ArrayBuffer>],
+  [4, Float32Array<ArrayBuffer>]
 ]);
 
 const epsilon = 1e-4;
@@ -102,7 +102,7 @@ function getAttributes<T extends THREE.BufferAttribute | THREE.InterleavedBuffer
 }
 
 function createNewBufferGeometry(
-  array: Uint8Array,
+  array: Uint8Array<ArrayBuffer>,
   oldGeometryBuffer: THREE.BufferGeometry,
   interleavedAttributeMap: Map<string, THREE.InterleavedBufferAttribute>
 ) {
@@ -145,7 +145,7 @@ function filterWithCallback(
     out: THREE.Box3
   ) => THREE.Box3,
   clipBox: THREE.Box3
-): Uint8Array {
+): Uint8Array<ArrayBuffer> {
   const firstInterleavedAttribute = interleavedAttributeMap.values().next().value as THREE.InterleavedBufferAttribute;
   const typedArray = firstInterleavedAttribute.array as TypedArray;
   const sharedArray = new Uint8Array(typedArray.buffer, typedArray.byteOffset, typedArray.byteLength);
@@ -164,7 +164,7 @@ function filterOnInstanceMatrixAndBoundingBox(
   interleavedAttributeMap: Map<string, THREE.InterleavedBufferAttribute>,
   untransformedBoundingBox: THREE.Box3,
   clipBox: THREE.Box3
-): Uint8Array {
+): Uint8Array<ArrayBuffer> {
   const computeBoundingBoxCallback = (
     index: number,
     elementSize: number,
@@ -192,7 +192,7 @@ function filterOnCenterAndRadius(
   clipBox: THREE.Box3,
   radiusAAttributeName: string,
   radiusBAttributeName: string
-): Uint8Array {
+): Uint8Array<ArrayBuffer> {
   const computeBoundingBoxCallback = (
     index: number,
     elementSize: number,
@@ -223,7 +223,7 @@ function filterOnCenterAndRadius(
 function filterOnVertexAttributes(
   interleavedAttributeMap: Map<string, THREE.InterleavedBufferAttribute>,
   clipBox: THREE.Box3
-): Uint8Array {
+): Uint8Array<ArrayBuffer> {
   const computeBoundingBoxCallback = (
     index: number,
     elementSize: number,
@@ -264,7 +264,7 @@ const filterOnTorusAttributesVars = {
 function filterOnTorusAttributes(
   interleavedAttributeMap: Map<string, THREE.InterleavedBufferAttribute>,
   clipBox: THREE.Box3
-): Uint8Array {
+): Uint8Array<ArrayBuffer> {
   const { boundingBox } = filterOnTorusAttributesVars;
 
   const computeBoundingBoxCallback = (
@@ -302,7 +302,7 @@ const filterOnEllipsoidAttributesVars = {
 function filterOnEllipsoidAttributes(
   interleavedAttributeMap: Map<string, THREE.InterleavedBufferAttribute>,
   clipBox: THREE.Box3
-): Uint8Array {
+): Uint8Array<ArrayBuffer> {
   const { center } = filterOnEllipsoidAttributesVars;
 
   const computeBoundingBoxCallback = (
@@ -327,76 +327,76 @@ function filterOnEllipsoidAttributes(
 function filterBoxCollection(
   interleavedAttributeMap: Map<string, THREE.InterleavedBufferAttribute>,
   clipBox: THREE.Box3
-): Uint8Array {
+): Uint8Array<ArrayBuffer> {
   return filterOnInstanceMatrixAndBoundingBox(interleavedAttributeMap, unitBoundingBox, clipBox);
 }
 
 function filterCircleCollection(
   interleavedAttributeMap: Map<string, THREE.InterleavedBufferAttribute>,
   clipBox: THREE.Box3
-): Uint8Array {
+): Uint8Array<ArrayBuffer> {
   return filterOnInstanceMatrixAndBoundingBox(interleavedAttributeMap, quadBoundingBox, clipBox);
 }
 
 function filterConeCollection(
   interleavedAttributeMap: Map<string, THREE.InterleavedBufferAttribute>,
   clipBox: THREE.Box3
-): Uint8Array {
+): Uint8Array<ArrayBuffer> {
   return filterOnCenterAndRadius(interleavedAttributeMap, clipBox, 'a_radiusA', 'a_radiusB');
 }
 
 function filterEccentricConeCollection(
   interleavedAttributeMap: Map<string, THREE.InterleavedBufferAttribute>,
   clipBox: THREE.Box3
-): Uint8Array {
+): Uint8Array<ArrayBuffer> {
   return filterOnCenterAndRadius(interleavedAttributeMap, clipBox, 'a_radiusA', 'a_radiusB');
 }
 
 function filterEllipsoidCollection(
   interleavedAttributeMap: Map<string, THREE.InterleavedBufferAttribute>,
   clipBox: THREE.Box3
-): Uint8Array {
+): Uint8Array<ArrayBuffer> {
   return filterOnEllipsoidAttributes(interleavedAttributeMap, clipBox);
 }
 
 function filterGeneralCylinderCollection(
   interleavedAttributeMap: Map<string, THREE.InterleavedBufferAttribute>,
   clipBox: THREE.Box3
-): Uint8Array {
+): Uint8Array<ArrayBuffer> {
   return filterOnCenterAndRadius(interleavedAttributeMap, clipBox, 'a_radius', 'a_radius');
 }
 
 function filterGeneralRingCollection(
   interleavedAttributeMap: Map<string, THREE.InterleavedBufferAttribute>,
   clipBox: THREE.Box3
-): Uint8Array {
+): Uint8Array<ArrayBuffer> {
   return filterOnInstanceMatrixAndBoundingBox(interleavedAttributeMap, quadBoundingBox, clipBox);
 }
 
 function filterQuadCollection(
   interleavedAttributeMap: Map<string, THREE.InterleavedBufferAttribute>,
   clipBox: THREE.Box3
-): Uint8Array {
+): Uint8Array<ArrayBuffer> {
   return filterOnInstanceMatrixAndBoundingBox(interleavedAttributeMap, quadBoundingBox, clipBox);
 }
 
 function filterTorusCollection(
   interleavedAttributeMap: Map<string, THREE.InterleavedBufferAttribute>,
   clipBox: THREE.Box3
-): Uint8Array {
+): Uint8Array<ArrayBuffer> {
   return filterOnTorusAttributes(interleavedAttributeMap, clipBox);
 }
 
 function filterTrapeziumCollection(
   interleavedAttributeMap: Map<string, THREE.InterleavedBufferAttribute>,
   clipBox: THREE.Box3
-): Uint8Array {
+): Uint8Array<ArrayBuffer> {
   return filterOnVertexAttributes(interleavedAttributeMap, clipBox);
 }
 
 function filterNutCollection(
   interleavedAttributeMap: Map<string, THREE.InterleavedBufferAttribute>,
   clipBox: THREE.Box3
-): Uint8Array {
+): Uint8Array<ArrayBuffer> {
   return filterOnInstanceMatrixAndBoundingBox(interleavedAttributeMap, unitBoundingBox, clipBox);
 }

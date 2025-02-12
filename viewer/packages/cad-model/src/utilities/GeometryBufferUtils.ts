@@ -14,8 +14,8 @@ import {
 
 export class GeometryBufferUtils {
   private static readonly TypedArrayViews = new Map<number, TypedArrayConstructor>([
-    [1, Uint8Array],
-    [4, Float32Array]
+    [1, Uint8Array<ArrayBuffer>],
+    [4, Float32Array<ArrayBuffer>]
   ]);
 
   public static getAttributes<T extends BufferAttribute | InterleavedBufferAttribute>(
@@ -47,7 +47,7 @@ export class GeometryBufferUtils {
       attribute: InterleavedBufferAttribute;
     }[],
     bufferGeometry: BufferGeometry,
-    backingBuffer: ArrayBufferLike
+    backingBuffer: ArrayBuffer
   ): void {
     instanceAttributes.forEach(instanceAttribute => {
       const { name, attribute } = instanceAttribute;
@@ -71,17 +71,17 @@ export class GeometryBufferUtils {
     });
   }
 
-  public static getInstanceAttributesSharedView(geometry: BufferGeometry): TypedArray {
+  public static getInstanceAttributesSharedView(geometry: BufferGeometry): TypedArray<ArrayBuffer> {
     const instanceAttributes = GeometryBufferUtils.getAttributes(geometry, InterleavedBufferAttribute);
 
     assert(instanceAttributes.length > 0);
 
-    const interleavedBufferView = instanceAttributes[0].attribute.array as TypedArray;
+    const interleavedBufferView = instanceAttributes[0].attribute.array as TypedArray<ArrayBuffer>;
 
     for (let i = 1; i < instanceAttributes.length; i++) {
       const instanceAttributeBufferView = instanceAttributes[i].attribute.array;
       assert(
-        interleavedBufferView.buffer === (instanceAttributeBufferView as TypedArray).buffer,
+        interleavedBufferView.buffer === (instanceAttributeBufferView as TypedArray<ArrayBuffer>).buffer,
         'Instance attributes must be interleaved'
       );
     }
