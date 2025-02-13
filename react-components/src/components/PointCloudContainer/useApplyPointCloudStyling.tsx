@@ -49,7 +49,7 @@ function applyStyling(
     model.removeAllStyledObjectCollections();
   }
   for (const group of styling) {
-    if (group.pointCloudVolumes.length === 0) {
+    if (group.pointCloudVolumes === undefined || group.pointCloudVolumes.length === 0) {
       continue;
     }
     if (isPointCloudVolumesAnnotation(group.pointCloudVolumes)) {

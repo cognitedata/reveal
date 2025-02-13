@@ -354,6 +354,7 @@ export class AssetMappingAndNode3DCache {
     revisionId: RevisionId
   ): Promise<AssetMapping[]> {
     let assetMapping3DClassic: AssetMapping[] = [];
+    let assetMapping3DHybrid: AssetMapping[] = [];
 
     if (currentChunk.length === 0) {
       return [];
@@ -367,7 +368,34 @@ export class AssetMappingAndNode3DCache {
       })
       .autoPagingToArray({ limit: Infinity });
 
+    if (filterType === 'nodeIds') {
+      const filterHybrid = {
+        getDmsInstances: true
+      };
+      assetMapping3DHybrid = await this._sdk.assetMappings3D
+        .list(modelId, revisionId, filterHybrid)
+        .autoPagingToArray({ limit: Infinity });
+    }
+
     await Promise.all([
+      this.extractAndSetClassicAssetMappingsCacheItem(modelId, revisionId, assetMapping3DClassic),
+      this.extractAndSetHybridAssetMappingsCacheItem(
+        modelId,
+        revisionId,
+        assetMapping3DHybrid,
+        currentChunk
+      )
+    ]);
+
+    return assetMapping3DClassic.concat(assetMapping3DHybrid).filter(isValidAssetMapping);
+  }
+
+  private async extractAndSetClassicAssetMappingsCacheItem(
+    modelId: ModelId,
+    revisionId: RevisionId,
+    assetMapping3DClassic: AssetMapping[]
+  ): Promise<void> {
+    await Promise.all(
       assetMapping3DClassic
         .map(async (item) => {
           if (item.assetId === undefined) return;
@@ -386,9 +414,36 @@ export class AssetMappingAndNode3DCache {
           await this.nodeIdsToAssetMappingCache.setAssetMappingsCacheItem(keyNodeId, mapping);
         })
         .filter((item) => isDefined(item))
-    ]);
+    );
+  }
 
-    return assetMapping3DClassic.filter(isValidAssetMapping);
+  private async extractAndSetHybridAssetMappingsCacheItem(
+    modelId: ModelId,
+    revisionId: RevisionId,
+    assetMapping3DHybrid: AssetMapping[],
+    currentChunk: number[]
+  ): Promise<void> {
+    await Promise.all(
+      assetMapping3DHybrid.map(async (item) => {
+        if (item.assetInstanceId === undefined) return;
+        if (currentChunk.find((id) => id === item.nodeId) === undefined) return;
+        const mapping: AssetMapping = {
+          ...item,
+          assetId: item.assetId,
+          assetInstanceId: item.assetInstanceId
+        };
+        const key = createModelDMSUniqueInstanceKey(
+          modelId,
+          revisionId,
+          item.assetInstanceId.space,
+          item.assetInstanceId.externalId
+        );
+        await this.assetInstanceIdsToAssetMappingCache.setHybridAssetMappingsCacheItem(
+          key,
+          mapping
+        );
+      })
+    );
   }
 
   private async fetchMappingsInQueue(

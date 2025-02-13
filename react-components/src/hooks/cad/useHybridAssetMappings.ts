@@ -6,7 +6,7 @@ import { type UseQueryResult, useQuery } from '@tanstack/react-query';
 import { type DmsUniqueIdentifier } from '../../data-providers/FdmSDK';
 import { type CadModelOptions } from '../../components/Reveal3DResources/types';
 import { type ThreeDModelFdmMappings } from '../types';
-import { DEFAULT_QUERY_STALE_TIME, EMPTY_ARRAY } from '../../utilities/constants';
+import { DEFAULT_QUERY_STALE_TIME } from '../../utilities/constants';
 import { useAssetMappingAndNode3DCache } from '../../components/CacheProvider/CacheProvider';
 import { useAssetMappedNodesForRevisions } from './useAssetMappedNodesForRevisions';
 import { isDefined } from '../../utilities/isDefined';
@@ -16,6 +16,7 @@ import {
 } from '../../components/CacheProvider/idAndKeyTranslation';
 import { useMemo } from 'react';
 import { queryKeys } from '../../utilities/queryKeys';
+import { createEmptyArray } from '../../utilities/createEmptyArray';
 
 export const useHybridAssetMappings = (
   hybridFdmAssetExternalIds: DmsUniqueIdentifier[],
@@ -63,7 +64,7 @@ export const useHybridAssetMappings = (
                 data.model.modelId === model.modelId && data.model.revisionId === model.revisionId
             )
             .map((data) => data.mappings)
-            .flat() ?? EMPTY_ARRAY;
+            .flat() ?? createEmptyArray();
 
         const nodeMap = await assetMappingAndNode3DCache.getNodesForAssetInstancesInHybridMappings(
           model.modelId,

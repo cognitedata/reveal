@@ -26,10 +26,12 @@ import {
 } from '../query/core-dm/usePointCloudVolumeMappingForAssetInstances';
 import { useAssetMappingForTreeIndex, useFdm3dNodeDataPromises } from './cad';
 import { type UseQueryResult } from '@tanstack/react-query';
+import { isDefined } from '../utilities/isDefined';
 
 export type AssetMappingDataResult = {
   cadNode: Node3D;
   assetIds: CogniteInternalId[];
+  assetInstanceIds?: DmsUniqueIdentifier[];
 };
 
 export type FdmNodeDataResult = {
@@ -179,15 +181,7 @@ const useCombinedClickedNodeData = (
       return undefined;
     }
 
-    const assetMappingData =
-      assetMappings === undefined
-        ? undefined
-        : assetMappings.node === undefined
-          ? null
-          : {
-              cadNode: assetMappings.node,
-              assetIds: assetMappings.mappings.map((mapping) => mapping.assetId)
-            };
+    const assetMappingData = getNodeData(assetMappings);
 
     const pointCloudAssetMappings = normalizeListDataResult(pointCloudAssetMappingsResult);
     const pointCloudFdmVolumeMappings = normalizeListDataResult(pointCloudFdmVolumeMappingsResult);
@@ -218,6 +212,22 @@ const useCombinedClickedNodeData = (
         ? null
         : result.data;
   }
+};
+
+const getNodeData = (
+  assetMappings: NodeAssetMappingResult | undefined
+): AssetMappingDataResult | undefined | null => {
+  return assetMappings === undefined
+    ? undefined
+    : assetMappings.node === undefined
+      ? null
+      : {
+          cadNode: assetMappings.node,
+          assetIds: assetMappings.mappings.map((mapping) => mapping.assetId).filter(isDefined),
+          assetInstanceIds: assetMappings.mappings
+            .map((mapping) => mapping.assetInstanceId)
+            .filter(isDefined)
+        };
 };
 
 const useFdmData = (
