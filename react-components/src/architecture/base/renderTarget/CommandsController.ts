@@ -181,7 +181,7 @@ export class CommandsController extends PointerEvents {
     }
     if (prevActiveTool !== undefined) {
       this._activeTool(undefined);
-      prevActiveTool?.onDeactivate();
+      prevActiveTool.onDeactivate();
       this._previousTool = prevActiveTool;
     }
     this._activeTool(tool);
