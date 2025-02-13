@@ -114,11 +114,7 @@ export function CadModelContainer({
         return await Promise.resolve(viewerModel as CogniteCadModel);
       }
       initializingModelsGeometryFilter.current = geometryFilter;
-
-      return await viewer.addCadModel(addModelOptions).then((model) => {
-        RevealModelsUtils.add(renderTarget, model);
-        return model;
-      });
+      return await RevealModelsUtils.addModel(renderTarget, addModelOptions);
     }
   }
 

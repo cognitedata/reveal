@@ -117,26 +117,10 @@ export function Image360CollectionContainer({
       if (collection !== undefined) {
         return collection;
       }
-
-      if (addImage360CollectionOptions.source === 'events') {
-        return await viewer
-          .add360ImageSet('events', { site_id: siteId }, { preMultipliedRotation: false })
-          .then((model) => {
-            RevealModelsUtils.add(renderTarget, model);
-            return model;
-          });
-      } else {
-        return await viewer
-          .add360ImageSet('datamodels', {
-            source: addImage360CollectionOptions.source,
-            image360CollectionExternalId: addImage360CollectionOptions.externalId,
-            space: addImage360CollectionOptions.space
-          })
-          .then((model) => {
-            RevealModelsUtils.add(renderTarget, model);
-            return model;
-          });
-      }
+      return await RevealModelsUtils.addImage360Collection(
+        renderTarget,
+        addImage360CollectionOptions
+      );
     }
   }
 

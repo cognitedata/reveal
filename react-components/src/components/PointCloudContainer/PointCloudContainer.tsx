@@ -120,10 +120,7 @@ export function PointCloudContainer({
       if (viewerModel !== undefined) {
         return await Promise.resolve(viewerModel as CognitePointCloudModel<DataSourceType>);
       }
-      return await viewer.addPointCloudModel(addModelOptions).then((model) => {
-        RevealModelsUtils.add(renderTarget, model);
-        return model;
-      });
+      return await RevealModelsUtils.addPointCloud(renderTarget, addModelOptions);
     }
   }
 

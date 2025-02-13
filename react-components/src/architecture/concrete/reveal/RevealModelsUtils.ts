@@ -3,13 +3,20 @@
  */
 
 import { type DomainObject } from '../../base/domainObjects/DomainObject';
-import { CogniteCadModel, CognitePointCloudModel } from '@cognite/reveal';
+import {
+  type AddModelOptions,
+  CogniteCadModel,
+  CognitePointCloudModel,
+  type DataSourceType,
+  type Image360Collection
+} from '@cognite/reveal';
 import { CadDomainObject } from './cad/CadDomainObject';
 import { PointCloudDomainObject } from './pointCloud/PointCloudDomainObject';
 import { Image360CollectionDomainObject } from './Image360Collection/Image360CollectionDomainObject';
 import { type RevealModel } from './RevealTypes';
 import { type RootDomainObject } from '../../base/domainObjects/RootDomainObject';
 import { type RevealRenderTarget } from '../../base/renderTarget/RevealRenderTarget';
+import { type AddImage360CollectionOptions } from '../../..';
 
 export class RevealModelsUtils {
   public static getByRevealModel(
@@ -38,20 +45,66 @@ export class RevealModelsUtils {
     return undefined;
   }
 
-  public static add(renderTarget: RevealRenderTarget, model: RevealModel): void {
+  public static async addModel(
+    renderTarget: RevealRenderTarget,
+    options: AddModelOptions
+  ): Promise<CogniteCadModel> {
     const root = renderTarget.rootDomainObject;
     if (root === undefined) {
       throw new Error('Root domain object is not set');
     }
-    let domainObject: DomainObject;
-    if (model instanceof CogniteCadModel) {
-      domainObject = new CadDomainObject(model);
-    } else if (model instanceof CognitePointCloudModel) {
-      domainObject = new PointCloudDomainObject(model);
-    } else {
-      domainObject = new Image360CollectionDomainObject(model);
+    return await renderTarget.viewer.addCadModel(options).then((model) => {
+      const domainObject = new CadDomainObject(model);
+      root.addChildInteractive(domainObject);
+      return model;
+    });
+  }
+
+  public static async addPointCloud(
+    renderTarget: RevealRenderTarget,
+    options: AddModelOptions<DataSourceType>
+  ): Promise<CognitePointCloudModel<DataSourceType>> {
+    const root = renderTarget.rootDomainObject;
+    if (root === undefined) {
+      throw new Error('Root domain object is not set');
     }
-    root.addChildInteractive(domainObject);
+    return await renderTarget.viewer.addPointCloudModel(options).then((model) => {
+      const domainObject = new PointCloudDomainObject(model);
+      root.addChildInteractive(domainObject);
+      return model;
+    });
+  }
+
+  public static async addImage360Collection(
+    renderTarget: RevealRenderTarget,
+    options: AddImage360CollectionOptions
+  ): Promise<Image360Collection<DataSourceType>> {
+    const root = renderTarget.rootDomainObject;
+    if (root === undefined) {
+      throw new Error('Root domain object is not set');
+    }
+
+    if (options.source === 'events') {
+      return await renderTarget.viewer
+        .add360ImageSet('events', { site_id: options.siteId }, { preMultipliedRotation: false })
+        .then((model) => {
+          const domainObject = new Image360CollectionDomainObject(model);
+          root.addChildInteractive(domainObject);
+          return model;
+        });
+    } else {
+      return await renderTarget.viewer
+        .add360ImageSet('datamodels', {
+          source: options.source,
+          image360CollectionExternalId: options.externalId,
+          space: options.space
+        })
+        .then((model) => {
+          const domainObject = new Image360CollectionDomainObject(model);
+          root.addChildInteractive(domainObject);
+          return model;
+        });
+    }
   }
 
   public static remove(renderTarget: RevealRenderTarget, model: RevealModel): void {
