@@ -11,7 +11,7 @@ export class DomainObjectPanelUpdater {
   // STATIC FIELDS
   // ==================================================
 
-  public static readonly domainObject = signal<DomainObject | undefined>();
+  public static readonly selectedDomainObject = signal<DomainObject | undefined>();
   public static readonly update = signal(0); // This increment by one when something happens with the domain object
 
   // ==================================================
@@ -23,14 +23,14 @@ export class DomainObjectPanelUpdater {
       if (!domainObject.hasPanelInfo) {
         return;
       }
-      this.domainObject(domainObject);
+      this.selectedDomainObject(domainObject);
     } else {
       this.hide();
     }
   }
 
   public static hide(): void {
-    this.domainObject(undefined);
+    this.selectedDomainObject(undefined);
   }
 
   public static notify(domainObject: DomainObject, change: DomainObjectChange): void {

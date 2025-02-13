@@ -24,7 +24,7 @@ const HEADER_SIZE = 'medium';
 
 export const DomainObjectPanel = (): ReactElement => {
   useSignalValue(DomainObjectPanelUpdater.update);
-  const domainObject = useSignalValue(DomainObjectPanelUpdater.domainObject);
+  const domainObject = useSignalValue(DomainObjectPanelUpdater.selectedDomainObject);
   const commands = useMemo(() => domainObject?.getPanelToolbar(), [domainObject]);
   const { t } = useTranslation();
 
