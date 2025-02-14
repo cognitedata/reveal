@@ -3,7 +3,7 @@
  */
 
 import * as THREE from 'three';
-import { createRenderTriangle, WebGLRendererStateHelper } from '@reveal/utilities';
+import { createRenderTriangle, WebGLRendererStateHelper, createUint8View } from '@reveal/utilities';
 import { CadMaterialManager } from '../CadMaterialManager';
 import { RenderMode } from '../rendering/RenderMode';
 import { CogniteColors, RevealColors, StyledTreeIndexSets } from './types';
@@ -20,7 +20,6 @@ import { blitShaders, depthBlendBlitShaders, pointCloudShaders } from '../render
 import { NodeOutlineColor } from '@reveal/cad-styling';
 import { DEFAULT_EDL_NEIGHBOURS_COUNT } from '../pointcloud-rendering/constants';
 import { shouldApplyEdl } from '../render-pipeline-providers/pointCloudParameterUtils';
-import { createUint8View } from '@reveal/utilities/src/bufferUtils';
 
 export const unitOrthographicCamera = new THREE.OrthographicCamera(-1, 1, 1, -1, -1, 1);
 

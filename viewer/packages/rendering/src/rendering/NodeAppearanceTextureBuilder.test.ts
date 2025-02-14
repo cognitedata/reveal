@@ -9,12 +9,11 @@ import { NodeAppearanceTextureBuilder } from './NodeAppearanceTextureBuilder';
 
 import { TreeIndexNodeCollection, NodeAppearanceProvider } from '@reveal/cad-styling';
 
-import { IndexSet } from '@reveal/utilities';
+import { IndexSet, createUint8View } from '@reveal/utilities';
 
 import { Color } from 'three';
 
 import { jest } from '@jest/globals';
-import { createUint8View } from '@reveal/utilities/src/bufferUtils';
 
 function toByteTuple(color: Color): [number, number, number] {
   return color.toArray().map(c => Math.round(c * 255)) as [number, number, number];

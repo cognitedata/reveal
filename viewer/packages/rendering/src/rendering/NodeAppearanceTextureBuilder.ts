@@ -4,9 +4,8 @@
 
 import * as THREE from 'three';
 
-import { IndexSet, determinePowerOfTwoDimensions, NumericRange } from '@reveal/utilities';
+import { IndexSet, determinePowerOfTwoDimensions, NumericRange, createUint8View } from '@reveal/utilities';
 import { NodeAppearanceProvider, NodeAppearance, DefaultNodeAppearance } from '@reveal/cad-styling';
-import { createUint8View } from '@reveal/utilities/src/bufferUtils';
 
 export class NodeAppearanceTextureBuilder {
   private _defaultAppearance: NodeAppearance = {};

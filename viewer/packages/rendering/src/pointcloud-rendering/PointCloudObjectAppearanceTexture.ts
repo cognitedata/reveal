@@ -14,8 +14,7 @@ import {
 } from '@reveal/pointcloud-styling';
 import { PointCloudObjectIdMaps } from './PointCloudObjectIdMaps';
 import { DataSourceType } from '@reveal/data-providers';
-import { DMInstanceKey, dmInstanceRefToKey } from '@reveal/utilities/src/fdm/toKey';
-import { createUint8View } from '@reveal/utilities/src/bufferUtils';
+import { DMInstanceKey, dmInstanceRefToKey, createUint8View } from '@reveal/utilities';
 
 export class PointCloudObjectAppearanceTexture {
   private readonly _objectStyleTexture: THREE.DataTexture;

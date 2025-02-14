@@ -11,8 +11,7 @@ import {
 } from '@reveal/pointcloud-styling';
 
 import { Color } from 'three';
-import { DMInstanceKey, DMInstanceRef, dmInstanceRefToKey } from '@reveal/utilities';
-import { createUint8View } from '@reveal/utilities/src/bufferUtils';
+import { DMInstanceKey, DMInstanceRef, dmInstanceRefToKey, createUint8View } from '@reveal/utilities';
 
 const textureWidth = 10;
 const textureHeight = 10;
