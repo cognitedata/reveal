@@ -26,7 +26,7 @@ import { CylinderUtils } from '../../base/utilities/primitives/CylinderUtils';
 import { BoxUtils } from '../../base/utilities/primitives/BoxUtils';
 import { AnnotationChangedDescription } from './helpers/AnnotationChangedDescription';
 import { ALL_STATUSES, Status } from './helpers/Status';
-import { isPartOfBoxVisibleByPlanes } from '../../base/utilities/geometry/isPointVisibleByPlanes';
+import { isPartOfBoxVisibleByPlanes } from '../../base/utilities/geometry/isBoxVisibleByPlanes';
 import { type Annotation } from './helpers/Annotation';
 import { Cylinder } from '../../base/utilities/primitives/Cylinder';
 
