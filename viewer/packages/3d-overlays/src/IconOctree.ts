@@ -44,6 +44,10 @@ export class IconOctree<ContentType = DefaultOverlay3DContentType> extends Point
     const root = this.findNodesByLevel(0)[0];
     const selectedNodes = new Set<PointOctant<Overlay3DIcon>>();
 
+    if (root === undefined) {
+      return selectedNodes;
+    }
+
     const nodesToProcess = [root];
 
     while (nodesToProcess.length > 0) {
