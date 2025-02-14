@@ -2,30 +2,14 @@
  * Copyright 2023 Cognite AS
  */
 import { type ReactElement, useEffect, useMemo } from 'react';
-import { CadModelContainer } from '../CadModelContainer/CadModelContainer';
-import { PointCloudContainer } from '../PointCloudContainer/PointCloudContainer';
-import { Image360CollectionContainer } from '../Image360CollectionContainer/Image360CollectionContainer';
-import { useReveal } from '../RevealCanvas/ViewerContext';
 import { type Reveal3DResourcesProps, type CadModelOptions } from './types';
-import { useCalculatePointCloudStyling } from './hooks/useCalculatePointCloudStyling';
 import { EMPTY_ARRAY } from '../../utilities/constants';
 import { isAssetMappingStylingGroup } from '../../utilities/StylingGroupUtils';
 import { type ImageCollectionModelStyling } from '../Image360CollectionContainer/useApply360AnnotationStyling';
 import { is360ImageAddOptions, isClassicIdentifier } from './typeGuards';
-import { useRemoveNonReferencedModels } from './hooks/useRemoveNonReferencedModels';
-import { useCalculateCadStyling } from './hooks/useCalculateCadStyling';
-import { useReveal3DResourcesStylingLoadingSetter } from './Reveal3DResourcesInfoContext';
 import { type CadModelStyling } from '../CadModelContainer/types';
 import { type PointCloudModelStyling } from '../PointCloudContainer/types';
-import { useTypedModels } from './hooks/useTypedModels';
-import {
-  useAssetMappedNodesForRevisions,
-  useGenerateAssetMappingCachePerItemFromModelCache,
-  useGenerateNode3DCache
-} from '../../hooks/cad';
-import { useCallCallbackOnFinishedLoading } from './hooks/useCallCallbackOnFinishedLoading';
-import { useSetExpectedLoadCount } from './hooks/useSetExpectedLoadCount';
-import { useCalculateImage360Styling } from './hooks/useCalculateImage360Styling';
+import { use3DResourcesViewModel } from './Reveal3DResources.viewmodel';
 
 export const Reveal3DResources = ({
   resources,
@@ -36,6 +20,24 @@ export const Reveal3DResources = ({
   onResourceIsLoaded,
   image360Settings
 }: Reveal3DResourcesProps): ReactElement => {
+  const {
+    useAssetMappedNodesForRevisions,
+    useCalculateCadStyling,
+    useCalculateImage360Styling,
+    useCalculatePointCloudStyling,
+    useCallCallbackOnFinishedLoading,
+    useGenerateAssetMappingCachePerItemFromModelCache,
+    useGenerateNode3DCache,
+    useReveal,
+    useRemoveNonReferencedModels,
+    useReveal3DResourcesStylingLoadingSetter,
+    useSetExpectedLoadCount,
+    useTypedModels,
+    CadModelContainer,
+    Image360CollectionContainer,
+    PointCloudContainer
+  } = use3DResourcesViewModel();
+
   const viewer = useReveal();
 
   useRemoveNonReferencedModels(resources, viewer);
