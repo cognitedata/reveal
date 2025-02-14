@@ -16,7 +16,11 @@ import {
 import { type Matrix4 } from 'three';
 import { type DmsUniqueIdentifier, type Source } from '../../data-providers/FdmSDK';
 import { type CogniteInternalId, type Node3D } from '@cognite/sdk';
-import { type TreeIndexStylingGroup } from '../CadModelContainer/types';
+import {
+  type CadStylingGroup,
+  type NodeStylingGroup,
+  type TreeIndexStylingGroup
+} from '../CadModelContainer/types';
 import {
   type PointCloudAnnotationModel,
   type PointCloudVolumeWithAsset
@@ -109,6 +113,14 @@ export type FdmAssetStylingGroup = {
   };
 };
 
+export type HybridFdmAssetStylingGroup = {
+  hybridFdmAssetExternalIds: DmsUniqueIdentifier[];
+  style: {
+    cad?: NodeAppearance;
+    pointcloud?: NodeAppearance;
+  };
+};
+
 export type AssetStylingGroup = {
   assetIds: CogniteInternalId[];
   style: {
@@ -130,6 +142,7 @@ export type Image360DMAssetStylingGroup = {
 export type InstanceStylingGroup =
   | FdmAssetStylingGroup
   | AssetStylingGroup
+  | HybridFdmAssetStylingGroup
   | Image360AssetStylingGroup
   | Image360DMAssetStylingGroup;
 
@@ -174,4 +187,24 @@ export type AnnotationModelDataResult = {
 export type DMVolumeModelDataResult = {
   model: PointCloudModelOptions;
   pointCloudDMVolumeWithAsset: PointCloudVolumeWithAsset[];
+};
+
+export type ModelStyleGroup = {
+  model: CadModelOptions;
+  styleGroup: Array<NodeStylingGroup | TreeIndexStylingGroup>;
+};
+
+export type ModelStyleGroupWithMappingsFetched = {
+  combinedMappedStyleGroups: ModelStyleGroup[];
+  isModelMappingsLoading: boolean;
+};
+
+export type StyledModelWithMappingsFetched = {
+  styledModels: StyledModel[];
+  isModelMappingsLoading: boolean;
+};
+
+export type StyledModel = {
+  model: CadModelOptions;
+  styleGroups: CadStylingGroup[];
 };

@@ -4,22 +4,23 @@
 import { Button, Input } from '@cognite/cogs.js';
 import { isEqual } from 'lodash';
 import React, { useCallback, useMemo, useState } from 'react';
-import { type Source, type NodeItem, type SimpleSource } from '../../src/data-providers/FdmSDK';
+import { type Source, type NodeItem } from '../../src/data-providers/FdmSDK';
 import { type AddModelOptions } from '@cognite/reveal';
 import {
   useReveal3dResourcesFromScene,
   type AddCadResourceOptions,
   type AddPointCloudResourceOptions,
   useSearchMappedEquipmentFDM,
-  useSearchMappedEquipmentAssetMappings,
+  useSearchMappedEquipmentAssetMappingsClassic,
   useAllMappedEquipmentFDM,
-  useAllMappedEquipmentAssetMappings,
+  useAllMappedEquipmentAssetMappingsClassic,
   type AddImage360CollectionOptions,
   useSearchAssetsMapped360Annotations,
   useAllAssetsMapped360Annotations,
   useSearchAssetsMappedPointCloudAnnotations,
   useAllAssetsMappedPointCloudAnnotations,
-  type AddResourceOptions
+  type AddResourceOptions,
+  useAssetMappedNodesForRevisions
 } from '../../src';
 import { is360ImageAddOptions } from '../../src/components/Reveal3DResources/typeGuards';
 import { type CogniteClient } from '@cognite/sdk';
@@ -32,10 +33,10 @@ type SearchComponentProps = {
   sceneExternalId?: string;
   sceneSpaceId?: string;
   resources?: AddResourceOptions[];
-  viewsToSearch?: Source[] | SimpleSource[];
+  viewsToSearch?: Source[];
 };
 
-const defaultViewsToSearch = [
+const defaultViewsToSearch: Source[] = [
   { externalId: 'CognitePointCloudVolume', space: 'cdf_cdm', version: 'v1', type: 'view' }
 ];
 
@@ -71,6 +72,11 @@ const SearchComponent: React.FC<SearchComponentProps> = ({
   );
   const filteredViewsToSearch = viewsToSearch ?? defaultViewsToSearch;
 
+  const { data: allAssetMappingList, isFetched: isAssetMappingNodesFetched } =
+    useAssetMappedNodesForRevisions(
+      (filteredResources as AddCadResourceOptions[]).map((model) => ({ ...model, type: 'cad' }))
+    );
+
   const { data: searchData } = useSearchMappedEquipmentFDM(
     mainSearchQuery,
     filteredViewsToSearch,
@@ -84,10 +90,12 @@ const SearchComponent: React.FC<SearchComponentProps> = ({
     isFetching: isAssetSearchFetching,
     hasNextPage: assetSearchHasNextPage,
     fetchNextPage: fetchAssetSearchNextPage
-  } = useSearchMappedEquipmentAssetMappings(
+  } = useSearchMappedEquipmentAssetMappingsClassic(
     mainSearchQuery,
     filteredResources as AddModelOptions[],
     1000,
+    allAssetMappingList ?? [],
+    isAssetMappingNodesFetched,
     sdk
   );
 
@@ -101,7 +109,7 @@ const SearchComponent: React.FC<SearchComponentProps> = ({
     isFetching,
     hasNextPage,
     fetchNextPage
-  } = useAllMappedEquipmentAssetMappings(filteredResources as AddModelOptions[], sdk, 25);
+  } = useAllMappedEquipmentAssetMappingsClassic(filteredResources as AddModelOptions[], sdk, 25);
 
   const filtered360ImageResources = resources.filter(
     (resource): resource is AddImage360CollectionOptions => 'siteId' in resource
@@ -185,7 +193,7 @@ const SearchComponent: React.FC<SearchComponentProps> = ({
       ];
 
       const filteredAssets =
-        combinedAssets.filter((assetMappings) =>
+        combinedAssets.filter((assetMappings: AssetInstance) =>
           matchAssetWithQuery(assetMappings, mainSearchQuery)
         ) ?? [];
 
@@ -211,7 +219,7 @@ const SearchComponent: React.FC<SearchComponentProps> = ({
         ...(pointCloudAssetSearchData ?? [])
       ];
 
-      const searchedEquipment: Equipment[] = combinedAssetSearchData.map((asset) =>
+      const searchedEquipment: Equipment[] = combinedAssetSearchData.map((asset: AssetInstance) =>
         assetInstanceToEquipment(asset)
       );
 

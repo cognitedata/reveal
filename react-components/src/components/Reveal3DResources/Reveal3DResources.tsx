@@ -8,7 +8,6 @@ import { Image360CollectionContainer } from '../Image360CollectionContainer/Imag
 import { useReveal } from '../RevealCanvas/ViewerContext';
 import { type Reveal3DResourcesProps, type CadModelOptions } from './types';
 import { useCalculatePointCloudStyling } from './hooks/useCalculatePointCloudStyling';
-import { EMPTY_ARRAY } from '../../utilities/constants';
 import { isAssetMappingStylingGroup } from '../../utilities/StylingGroupUtils';
 import { type ImageCollectionModelStyling } from '../Image360CollectionContainer/useApply360AnnotationStyling';
 import { is360ImageAddOptions, isClassicIdentifier } from './typeGuards';
@@ -26,6 +25,7 @@ import {
 import { useCallCallbackOnFinishedLoading } from './hooks/useCallCallbackOnFinishedLoading';
 import { useSetExpectedLoadCount } from './hooks/useSetExpectedLoadCount';
 import { useCalculateImage360Styling } from './hooks/useCalculateImage360Styling';
+import { createEmptyArray } from '../../utilities/createEmptyArray';
 
 export const Reveal3DResources = ({
   resources,
@@ -53,7 +53,7 @@ export const Reveal3DResources = ({
 
   const cadModelOptions = useMemo(() => {
     if (reveal3DModels === undefined) {
-      return EMPTY_ARRAY;
+      return createEmptyArray();
     }
     return reveal3DModels.filter((model): model is CadModelOptions => model.type === 'cad');
   }, [reveal3DModels]);
@@ -64,7 +64,7 @@ export const Reveal3DResources = ({
   useGenerateNode3DCache(cadModelOptions, assetMappings);
 
   const instanceStylingWithAssetMappings =
-    instanceStyling?.filter(isAssetMappingStylingGroup) ?? EMPTY_ARRAY;
+    instanceStyling?.filter(isAssetMappingStylingGroup) ?? createEmptyArray();
 
   const { styledModels: styledCadModelOptions, isModelMappingsLoading } = useCalculateCadStyling(
     cadModelOptions,
@@ -79,7 +79,7 @@ export const Reveal3DResources = ({
   }, [isModelMappingsLoading]);
 
   const styledPointCloudModelOptions = useCalculatePointCloudStyling(
-    reveal3DModels ?? EMPTY_ARRAY,
+    reveal3DModels ?? createEmptyArray(),
     instanceStylingWithAssetMappings,
     defaultResourceStyling
   );
