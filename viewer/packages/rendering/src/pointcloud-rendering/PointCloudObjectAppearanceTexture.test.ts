@@ -12,6 +12,7 @@ import {
 
 import { Color } from 'three';
 import { DMInstanceKey, DMInstanceRef, dmInstanceRefToKey } from '@reveal/utilities';
+import { createUint8View } from '@reveal/utilities/src/bufferUtils';
 
 const textureWidth = 10;
 const textureHeight = 10;
@@ -51,18 +52,18 @@ describe(PointCloudObjectAppearanceTexture.name, () => {
     appearanceTexture.onBeforeRender();
 
     const rawTexture = appearanceTexture.objectStyleTexture;
-    const resultRgb = rawTexture.image.data.slice(4 * objectId, 4 * (objectId + 1));
+    const resultRgb = createUint8View(rawTexture.image.data).slice(4 * objectId, 4 * (objectId + 1));
 
     expect([...resultRgb.values()]).toEqual([...colorBytes, 1]);
 
     // Check that all other objects are unchanged
-    for (let i = 0; i < rawTexture.image.data.length; i += 4) {
+    for (let i = 0; i < rawTexture.image.data.byteLength; i += 4) {
       // Ignore the modified object
       if (i >= 4 * objectId && i < 4 * (objectId + 1)) {
         continue;
       }
 
-      const data = rawTexture.image.data.slice(i, i + 4);
+      const data = createUint8View(rawTexture.image.data).slice(i, i + 4);
       expect([...data.values()]).toStrictEqual([0, 0, 0, 1]);
     }
   });
@@ -88,18 +89,18 @@ describe(PointCloudObjectAppearanceTexture.name, () => {
     appearanceTexture.onBeforeRender();
 
     const rawTexture = appearanceTexture.objectStyleTexture;
-    const resultRgb = rawTexture.image.data.slice(4 * objectId, 4 * (objectId + 1));
+    const resultRgb = createUint8View(rawTexture.image.data).slice(4 * objectId, 4 * (objectId + 1));
 
     expect([...resultRgb.values()]).toEqual([...colorBytes, 1]);
 
     // Check that all other objects are unchanged
-    for (let i = 0; i < rawTexture.image.data.length; i += 4) {
+    for (let i = 0; i < rawTexture.image.data.byteLength; i += 4) {
       // Ignore the modified object
       if (i >= 4 * objectId && i < 4 * (objectId + 1)) {
         continue;
       }
 
-      const data = rawTexture.image.data.slice(i, i + 4);
+      const data = createUint8View(rawTexture.image.data).slice(i, i + 4);
       expect([...data.values()]).toStrictEqual([0, 0, 0, 1]);
     }
   });
@@ -125,17 +126,17 @@ describe(PointCloudObjectAppearanceTexture.name, () => {
     appearanceTexture.onBeforeRender();
 
     const rawTexture = appearanceTexture.objectStyleTexture;
-    const resultRgb = rawTexture.image.data.slice(4 * objectId, 4 * (objectId + 1));
+    const resultRgb = createUint8View(rawTexture.image.data).slice(4 * objectId, 4 * (objectId + 1));
 
     expect([...resultRgb.values()]).toEqual([0, 0, 0, 0]);
 
-    for (let i = 0; i < rawTexture.image.data.length; i += 4) {
+    for (let i = 0; i < rawTexture.image.data.byteLength; i += 4) {
       // Ignore the modified object
       if (i >= 4 * objectId && i < 4 * (objectId + 1)) {
         continue;
       }
 
-      const data = rawTexture.image.data.slice(i, i + 4);
+      const data = createUint8View(rawTexture.image.data).slice(i, i + 4);
       expect([...data.values()]).toStrictEqual([0, 0, 0, 1]);
     }
   });
@@ -161,17 +162,17 @@ describe(PointCloudObjectAppearanceTexture.name, () => {
     appearanceTexture.onBeforeRender();
 
     const rawTexture = appearanceTexture.objectStyleTexture;
-    const resultRgb = rawTexture.image.data.slice(4 * objectId, 4 * (objectId + 1));
+    const resultRgb = createUint8View(rawTexture.image.data).slice(4 * objectId, 4 * (objectId + 1));
 
     expect([...resultRgb.values()]).toEqual([0, 0, 0, 0]);
 
-    for (let i = 0; i < rawTexture.image.data.length; i += 4) {
+    for (let i = 0; i < rawTexture.image.data.byteLength; i += 4) {
       // Ignore the modified object
       if (i >= 4 * objectId && i < 4 * (objectId + 1)) {
         continue;
       }
 
-      const data = rawTexture.image.data.slice(i, i + 4);
+      const data = createUint8View(rawTexture.image.data).slice(i, i + 4);
       expect([...data.values()]).toStrictEqual([0, 0, 0, 1]);
     }
   });

@@ -6,6 +6,7 @@ import * as THREE from 'three';
 
 import { IndexSet, determinePowerOfTwoDimensions, NumericRange } from '@reveal/utilities';
 import { NodeAppearanceProvider, NodeAppearance, DefaultNodeAppearance } from '@reveal/cad-styling';
+import { createUint8View } from '@reveal/utilities/src/bufferUtils';
 
 export class NodeAppearanceTextureBuilder {
   private _defaultAppearance: NodeAppearance = {};
@@ -29,7 +30,7 @@ export class NodeAppearanceTextureBuilder {
 
     this._overrideColorPerTreeIndexTexture = allocateOverrideColorPerTreeIndexTexture(treeIndexCount);
     this._overrideColorDefaultAppearanceRgba = new Uint8ClampedArray(
-      this._overrideColorPerTreeIndexTexture.image.data.length
+      this._overrideColorPerTreeIndexTexture.image.data.buffer.byteLength
     );
     this._regularNodesTreeIndices = new IndexSet();
     this._ghostedNodesTreeIndices = new IndexSet();
@@ -107,7 +108,7 @@ export class NodeAppearanceTextureBuilder {
       return;
     }
 
-    const rgba = this._overrideColorPerTreeIndexTexture.image.data;
+    const rgba = createUint8View(this._overrideColorPerTreeIndexTexture.image.data);
     this.populateTexture(rgba);
     this.populateNodeSets(rgba);
 
@@ -195,7 +196,7 @@ export class NodeAppearanceTextureBuilder {
       return;
     }
 
-    combineRGBA(this._overrideColorPerTreeIndexTexture.image.data, treeIndices, style);
+    combineRGBA(createUint8View(this._overrideColorPerTreeIndexTexture.image.data), treeIndices, style);
   }
 
   private handleStylesChanged() {
