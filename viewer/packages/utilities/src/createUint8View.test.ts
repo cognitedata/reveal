@@ -1,3 +1,6 @@
+/*!
+ * Copyright 2025 Cognite AS
+ */
 import { createUint8View } from './createUint8View';
 
 describe(createUint8View.name, () => {
