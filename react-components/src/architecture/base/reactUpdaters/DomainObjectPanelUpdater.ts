@@ -2,59 +2,48 @@
  * Copyright 2024 Cognite AS
  */
 
+import { signal } from '@cognite/signals';
 import { type DomainObject } from '../domainObjects/DomainObject';
 import { Changes } from '../domainObjectsHelpers/Changes';
 import { type DomainObjectChange } from '../domainObjectsHelpers/DomainObjectChange';
-
-export type DomainObjectInfo = { domainObject: DomainObject };
-export type SetDomainObjectInfoDelegate = (domainObjectInfo?: DomainObjectInfo) => void;
-
 export class DomainObjectPanelUpdater {
   // ==================================================
   // STATIC FIELDS
   // ==================================================
 
-  private static _setDomainObject: SetDomainObjectInfoDelegate | undefined = undefined;
+  public static readonly selectedDomainObject = signal<DomainObject | undefined>();
+  public static readonly update = signal(0); // This increment by one when something happens with the domain object
 
   // ==================================================
   // STATIC METHODS
   // ==================================================
 
-  public static setDomainObjectDelegate(value: SetDomainObjectInfoDelegate | undefined): void {
-    this._setDomainObject = value;
-  }
-
   public static show(domainObject: DomainObject | undefined): void {
-    if (this._setDomainObject === undefined) {
-      return;
-    }
     if (domainObject !== undefined) {
       if (!domainObject.hasPanelInfo) {
         return;
       }
-      this._setDomainObject({ domainObject });
+      this.selectedDomainObject(domainObject);
     } else {
       this.hide();
     }
   }
 
   public static hide(): void {
-    if (this._setDomainObject === undefined) {
-      return;
-    }
-    this._setDomainObject(undefined);
+    this.selectedDomainObject(undefined);
   }
 
   public static notify(domainObject: DomainObject, change: DomainObjectChange): void {
     if (!domainObject.hasPanelInfo) {
       return;
     }
-    if (this._setDomainObject === undefined) {
-      return;
-    }
     if (domainObject.isSelected) {
       if (change.isChanged(Changes.deleted)) {
         this.hide();
+        return;
+      }
+      if (change.isChanged(Changes.selected)) {
+        this.show(domainObject);
       }
       if (
         change.isChanged(
@@ -65,7 +54,7 @@ export class DomainObjectPanelUpdater {
           Changes.unit
         )
       ) {
-        this.show(domainObject);
+        this.update(this.update() + 1); // Force update
       }
     } else {
       if (change.isChanged(Changes.selected)) {

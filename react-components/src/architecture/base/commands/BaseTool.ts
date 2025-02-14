@@ -16,7 +16,6 @@ import {
 } from '../domainObjectsHelpers/DomainObjectIntersection';
 import { type DomainObject } from '../domainObjects/DomainObject';
 import { type BaseCommand } from './BaseCommand';
-import { ActiveToolUpdater } from '../reactUpdaters/ActiveToolUpdater';
 import { PopupStyle } from '../domainObjectsHelpers/PopupStyle';
 import { ThreeView } from '../views/ThreeView';
 import { UndoManager } from '../undo/UndoManager';
@@ -77,13 +76,11 @@ export abstract class BaseTool extends RenderTargetCommand {
     this.update(CommandChanges.active);
     this.setDefaultCursor();
     this.clearDragging();
-    ActiveToolUpdater.update();
   }
 
   public onDeactivate(): void {
     this.update(CommandChanges.deactive);
     this.clearDragging();
-    ActiveToolUpdater.update();
   }
 
   public clearDragging(): void {

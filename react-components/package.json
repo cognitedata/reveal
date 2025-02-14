@@ -37,6 +37,7 @@
   },
   "dependencies": {
     "@cognite/cogs.js": "^10.36.0",
+    "@cognite/signals": "^0.0.4",
     "@tanstack/react-query": "^5.32.0",
     "assert": "^2.1.0",
     "lodash": "^4.17.21"
@@ -45,7 +46,6 @@
     "@cognite/cdf-i18n-utils": "^0.7.5",
     "@cognite/cdf-utilities": "^3.6.0",
     "@cognite/cogs-lab": "^9.0.0-alpha.153",
-    "@cognite/cogs.js": "^10.36.0",
     "@cognite/reveal": "^4.23.2",
     "@cognite/sdk": "^9.13.0",
     "@playwright/test": "1.49.0",

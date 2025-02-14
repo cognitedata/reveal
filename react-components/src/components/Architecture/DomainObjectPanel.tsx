@@ -3,11 +3,8 @@
  */
 import { Body, Flex } from '@cognite/cogs.js';
 import styled from 'styled-components';
-import { useEffect, useMemo, useState, type ReactElement } from 'react';
-import {
-  DomainObjectPanelUpdater,
-  type DomainObjectInfo
-} from '../../architecture/base/reactUpdaters/DomainObjectPanelUpdater';
+import { useMemo, type ReactElement } from 'react';
+import { DomainObjectPanelUpdater } from '../../architecture/base/reactUpdaters/DomainObjectPanelUpdater';
 import {
   type PanelInfo,
   type NumberPanelItem
@@ -21,46 +18,33 @@ import { type UnitSystem } from '../../architecture/base/renderTarget/UnitSystem
 import { IconComponent } from './Factories/IconFactory';
 import { type DomainObject } from '../../architecture';
 import { getRoot } from '../../architecture/base/domainObjects/getRoot';
+import { useSignalValue } from '@cognite/signals/react';
 
 const TEXT_SIZE = 'x-small';
 const HEADER_SIZE = 'medium';
 
 export const DomainObjectPanel = (): ReactElement => {
-  const [currentDomainObjectInfo, setCurrentDomainObjectInfo] = useState<
-    DomainObjectInfo | undefined
-  >();
-
-  const domainObject = currentDomainObjectInfo?.domainObject;
+  useSignalValue(DomainObjectPanelUpdater.update);
+  const domainObject = useSignalValue(DomainObjectPanelUpdater.selectedDomainObject);
   const commands = useMemo(() => domainObject?.getPanelToolbar(), [domainObject]);
-  const info = domainObject?.getPanelInfo();
-  const style = domainObject?.getPanelInfoStyle();
-
-  useEffect(() => {
-    DomainObjectPanelUpdater.setDomainObjectDelegate(setCurrentDomainObjectInfo);
-  }, [setCurrentDomainObjectInfo, commands]);
-
   const { t } = useTranslation();
 
-  if (
-    domainObject === undefined ||
-    info === undefined ||
-    commands === undefined ||
-    style === undefined
-  ) {
+  if (domainObject === undefined || commands === undefined) {
     return <></>;
   }
+  const info = domainObject.getPanelInfo();
+  const style = domainObject.getPanelInfoStyle();
   const root = getRoot(domainObject);
-  if (root === undefined) {
+
+  if (root === undefined || info === undefined || style === undefined) {
     return <></>;
   }
   const unitSystem = root.unitSystem;
 
   // Force the getString to be updated
-  if (commands !== undefined && info !== undefined) {
-    for (const command of commands) {
-      if (command instanceof CopyToClipboardCommand)
-        command.getString = () => toString(domainObject, info, t, unitSystem);
-    }
+  for (const command of commands) {
+    if (command instanceof CopyToClipboardCommand)
+      command.getString = () => toString(domainObject, info, t, unitSystem);
   }
 
   const icon = domainObject.icon;
@@ -119,7 +103,6 @@ function toString(
   unitSystem: UnitSystem
 ): string {
   let result = '';
-
   {
     const text = domainObject?.getLabel(translate);
     if (text !== undefined) {
