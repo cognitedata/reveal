@@ -1,7 +1,16 @@
+/*!
+ * Copyright 2025 Cognite AS
+ */
 import { describe, expect, test, vi, beforeEach } from 'vitest';
 import { cadMock, cadModelOptions } from '../../../../../tests/unit-tests/fixtures/cadModel';
-import { image360ClassicMock, image360ClassicOptions } from '../../../../../tests/unit-tests/fixtures/image360';
-import { pointCloudMock, pointCloudModelOptions } from '../../../../../tests/unit-tests/fixtures/pointCloud';
+import {
+  image360ClassicMock,
+  image360ClassicOptions
+} from '../../../../../tests/unit-tests/fixtures/image360';
+import {
+  pointCloudMock,
+  pointCloudModelOptions
+} from '../../../../../tests/unit-tests/fixtures/pointCloud';
 import { renderTargetMock } from '../../../../../tests/unit-tests/fixtures/renderTarget';
 import { viewerMock } from '../../../../../tests/unit-tests/fixtures/viewer';
 import { sdkMock } from '../../../../../tests/unit-tests/fixtures/sdk';
@@ -65,13 +74,20 @@ describe('RevealModelsUtils', () => {
     const add360ImageSetMock = vi.fn().mockResolvedValue(image360ClassicMock);
     viewerMock.add360ImageSet = add360ImageSetMock;
 
-    const result = await RevealModelsUtils.addImage360Collection(renderTargetMock, image360ClassicOptions);
+    const result = await RevealModelsUtils.addImage360Collection(
+      renderTargetMock,
+      image360ClassicOptions
+    );
     expect(result).toBe(image360ClassicMock);
     const siteId =
       image360ClassicOptions.source === 'events'
         ? image360ClassicOptions.siteId
         : image360ClassicOptions.externalId;
-    expect(add360ImageSetMock).toHaveBeenCalledWith('events', { site_id: siteId }, { preMultipliedRotation: false });
+    expect(add360ImageSetMock).toHaveBeenCalledWith(
+      'events',
+      { site_id: siteId },
+      { preMultipliedRotation: false }
+    );
   });
 
   test('remove the model from the root domain object', () => {
