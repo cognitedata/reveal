@@ -20,32 +20,17 @@ export const Reveal3DResources = ({
   onResourceIsLoaded,
   image360Settings
 }: Reveal3DResourcesProps): ReactElement => {
-  const {
-    useAssetMappedNodesForRevisions,
-    useCalculateCadStyling,
-    useCalculateImage360Styling,
-    useCalculatePointCloudStyling,
-    useCallCallbackOnFinishedLoading,
-    useGenerateAssetMappingCachePerItemFromModelCache,
-    useGenerateNode3DCache,
-    useReveal,
-    useRemoveNonReferencedModels,
-    useReveal3DResourcesStylingLoadingSetter,
-    useSetExpectedLoadCount,
-    useTypedModels,
-    CadModelContainer,
-    Image360CollectionContainer,
-    PointCloudContainer
-  } = use3DResourcesViewModel();
+  const { CadModelContainer, Image360CollectionContainer, PointCloudContainer, ...hooks } =
+    use3DResourcesViewModel();
 
-  const viewer = useReveal();
+  const viewer = hooks.useReveal();
 
-  useRemoveNonReferencedModels(resources, viewer);
+  hooks.useRemoveNonReferencedModels(resources, viewer);
 
-  const { data: reveal3DModels } = useTypedModels(viewer, resources, onResourceLoadError);
+  const { data: reveal3DModels } = hooks.useTypedModels(viewer, resources, onResourceLoadError);
 
-  useSetExpectedLoadCount(resources);
-  useCallCallbackOnFinishedLoading(resources, onResourcesAdded);
+  hooks.useSetExpectedLoadCount(resources);
+  hooks.useCallCallbackOnFinishedLoading(resources, onResourcesAdded);
 
   const image360CollectionAddOptions = useMemo(() => {
     return resources
@@ -60,33 +45,34 @@ export const Reveal3DResources = ({
     return reveal3DModels.filter((model): model is CadModelOptions => model.type === 'cad');
   }, [reveal3DModels]);
 
-  const { data: assetMappings } = useAssetMappedNodesForRevisions(cadModelOptions);
+  const { data: assetMappings } = hooks.useAssetMappedNodesForRevisions(cadModelOptions);
 
-  useGenerateAssetMappingCachePerItemFromModelCache(cadModelOptions, assetMappings);
-  useGenerateNode3DCache(cadModelOptions, assetMappings);
+  hooks.useGenerateAssetMappingCachePerItemFromModelCache(cadModelOptions, assetMappings);
+  hooks.useGenerateNode3DCache(cadModelOptions, assetMappings);
 
   const instanceStylingWithAssetMappings =
     instanceStyling?.filter(isAssetMappingStylingGroup) ?? EMPTY_ARRAY;
 
-  const { styledModels: styledCadModelOptions, isModelMappingsLoading } = useCalculateCadStyling(
-    cadModelOptions,
-    instanceStylingWithAssetMappings,
-    defaultResourceStyling
-  );
+  const { styledModels: styledCadModelOptions, isModelMappingsLoading } =
+    hooks.useCalculateCadStyling(
+      cadModelOptions,
+      instanceStylingWithAssetMappings,
+      defaultResourceStyling
+    );
 
-  const setModel3DStylingLoading = useReveal3DResourcesStylingLoadingSetter();
+  const setModel3DStylingLoading = hooks.useReveal3DResourcesStylingLoadingSetter();
 
   useEffect(() => {
     setModel3DStylingLoading(isModelMappingsLoading);
   }, [isModelMappingsLoading]);
 
-  const styledPointCloudModelOptions = useCalculatePointCloudStyling(
+  const styledPointCloudModelOptions = hooks.useCalculatePointCloudStyling(
     reveal3DModels ?? EMPTY_ARRAY,
     instanceStylingWithAssetMappings,
     defaultResourceStyling
   );
 
-  const image360StyledGroup = useCalculateImage360Styling(instanceStyling);
+  const image360StyledGroup = hooks.useCalculateImage360Styling(instanceStyling);
 
   return (
     <>
