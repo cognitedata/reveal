@@ -40,7 +40,7 @@ export type {
   ModelMappingsWithAssets,
   AssetPage,
   ModelAssetPage,
-  NodeDefinitionWithModelAndMappings
+  NodeDefinitionWithModelAndMappings,
+  InstancesWithView
 } from './types';
-export type { InstancesWithView } from './useSearchMappedEquipmentFDM';
 export type { PointCloudVolumeMappedAssetData } from './core-dm/usePointCloudVolumeMappingForAssetInstances';

@@ -8,6 +8,7 @@ import {
   type Asset,
   type NodeDefinition
 } from '@cognite/sdk';
+import { type NodeItem, type Source } from '../data-providers/FdmSDK';
 
 export type ModelMappings = {
   model: AddModelOptions;
@@ -33,3 +34,5 @@ export type NodeDefinitionWithModelAndMappings = {
   asset: NodeDefinition;
   mappings: AssetMapping3D[];
 };
+
+export type InstancesWithView = { view: Source; instances: NodeItem[] };

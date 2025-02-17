@@ -2,7 +2,7 @@
  * Copyright 2023 Cognite AS
  */
 import { type AddModelOptions } from '@cognite/reveal';
-import { type Asset, type CogniteClient } from '@cognite/sdk';
+import { type UnitDMSUniqueIdentifier, type Asset, type CogniteClient } from '@cognite/sdk';
 import {
   type UseInfiniteQueryResult,
   useInfiniteQuery,
@@ -10,10 +10,10 @@ import {
   useQuery,
   type UseQueryResult
 } from '@tanstack/react-query';
-import { useSDK } from '../components/RevealCanvas/SDKProvider';
+import { useFdmSdk, useSDK } from '../components/RevealCanvas/SDKProvider';
 import { getAssetsList } from '../hooks/network/getAssetsList';
 import { isDefined } from '../utilities/isDefined';
-import { type InstancesWithView, useSearchMappedEquipmentFDM } from './useSearchMappedEquipmentFDM';
+import { type InstancesWithView } from './useSearchMappedEquipmentFDM';
 import { COGNITE_ASSET_SOURCE, type Source } from '../data-providers';
 import { useMemo } from 'react';
 import { type ModelWithAssetMappings } from '../hooks/cad/ModelWithAssetMappings';
@@ -32,6 +32,7 @@ import {
   createFdmKey,
   createModelRevisionKey
 } from '../components/CacheProvider/idAndKeyTranslation';
+import { createEmptyArray } from '../utilities/createEmptyArray';
 
 export const useSearchMappedEquipmentAssetMappingsClassic = (
   query: string,
@@ -130,7 +131,9 @@ export const useSearchMappedEquipmentAssetMappingsHybrid = (
   limit: number = 1000,
   assetMappingList: ModelWithAssetMappings[],
   isAssetMappingNodesFetched: boolean
-): UseQueryResult<InstancesWithView[], Error> => {
+): UseQueryResult<InstancesWithView[]> => {
+  const fdmSdk = useFdmSdk();
+
   const mapped3dCDMAssetIdentifiers = useMemo(() => {
     if (assetMappingList === undefined) return [];
     return assetMappingList.flatMap((mapping) =>
@@ -146,6 +149,7 @@ export const useSearchMappedEquipmentAssetMappingsHybrid = (
     () => models.map((model) => createModelRevisionKey(model.modelId, model.revisionId)),
     [models]
   );
+
   return useQuery({
     queryKey: queryKeys.searchedMappedCoreAssetsForHybridMappings(
       query,
@@ -158,14 +162,18 @@ export const useSearchMappedEquipmentAssetMappingsHybrid = (
         return [];
       }
 
-      const { data: searchData } = useSearchMappedEquipmentFDM(
-        query,
-        viewsToSearch,
-        models,
-        undefined,
-        limit
-      );
-      return searchData;
+      const searchResults: InstancesWithView[] = createEmptyArray();
+
+      for (const view of viewsToSearch) {
+        const result = await fdmSdk.searchInstances(view, query, 'node', limit, undefined);
+
+        searchResults.push({
+          view,
+          instances: result.instances
+        });
+      }
+
+      return connectMappedInstancesWithSearchResult(searchResults, mapped3dCDMAssetIdentifiers);
     },
     staleTime: Infinity,
     enabled:
@@ -328,4 +336,23 @@ function getNextPageParam(
     return undefined;
   }
   return nextCursors;
+}
+
+function connectMappedInstancesWithSearchResult(
+  searchResults: InstancesWithView[],
+  mapped3dCDMAssetIdentifiers: UnitDMSUniqueIdentifier[]
+): InstancesWithView[] {
+  const filteredResults = searchResults.map((result) => {
+    const filteredInstances = result.instances.filter((instance) =>
+      mapped3dCDMAssetIdentifiers.find(
+        (mappedItem) =>
+          mappedItem.space === instance.space && mappedItem.externalId === instance.externalId
+      )
+    );
+    return {
+      view: result.view,
+      instances: filteredInstances
+    };
+  });
+  return filteredResults;
 }
