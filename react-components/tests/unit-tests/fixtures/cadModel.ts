@@ -1,4 +1,4 @@
-import { type CogniteCadModel } from '@cognite/reveal';
+import { CogniteCadModel } from '@cognite/reveal';
 import { It, Mock } from 'moq.ts';
 import { Box3, Matrix4, Vector3 } from 'three';
 
@@ -18,4 +18,5 @@ export const cadMock = new Mock<CogniteCadModel>()
   .returns(new Matrix4())
   .setup(async (p) => await p.getBoundingBoxesByNodeIds(It.IsAny()))
   .returns(Promise.resolve([nodeBoundingBox]))
+  .prototypeof(CogniteCadModel.prototype)
   .object();
