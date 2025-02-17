@@ -2,7 +2,7 @@
  * Copyright 2024 Cognite AS
  */
 import { type AddModelOptions, type DataSourceType } from '@cognite/reveal';
-import { isClassicIdentifier, isDMIdentifier } from '../components';
+import { isClassicIdentifier, isDMIdentifier } from '../components/Reveal3DResources/typeGuards';
 
 export const getModelKeys = (models: Array<AddModelOptions<DataSourceType>>): string[] => {
   return models.map((model) => {
