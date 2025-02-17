@@ -312,7 +312,7 @@ export class RevealRenderTarget {
   // EVENT HANDLERS
   // ==================================================
 
-  cameraChangeHandler = (_position: Vector3, _target: Vector3): void => {
+  private readonly cameraChangeHandler = (_position: Vector3, _target: Vector3): void => {
     const light = this._directionalLight;
     if (light === undefined) {
       return;
