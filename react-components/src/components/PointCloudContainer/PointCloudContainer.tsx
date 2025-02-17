@@ -21,8 +21,8 @@ import { modelExists } from '../../utilities/modelExists';
 import { getViewerResourceCount } from '../../utilities/getViewerResourceCount';
 import { type PointCloudModelStyling } from './types';
 import { useModelIdRevisionIdFromModelOptions } from '../../hooks/useModelIdRevisionIdFromModelOptions';
-import { isClassicIdentifier, isDMIdentifier } from '../Reveal3DResources';
 import { isSameModel } from '../../utilities/isSameModel';
+import { isClassicIdentifier, isDMIdentifier } from '../Reveal3DResources/typeGuards';
 
 export type CognitePointCloudModelProps = {
   addModelOptions: AddModelOptions<DataSourceType>;
