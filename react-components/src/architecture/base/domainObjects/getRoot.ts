@@ -2,7 +2,7 @@
  * Copyright 2025 Cognite AS
  */
 
-import { RootDomainObject } from './RootDomainObject';
+import { type RootDomainObject } from './RootDomainObject';
 import { type DomainObject } from './DomainObject';
 import { type RevealRenderTarget } from '../renderTarget/RevealRenderTarget';
 
@@ -14,7 +14,7 @@ import { type RevealRenderTarget } from '../renderTarget/RevealRenderTarget';
  */
 export function getRoot(domainObject: DomainObject): RootDomainObject | undefined {
   const root = domainObject.root;
-  return root instanceof RootDomainObject ? root : undefined;
+  return root as RootDomainObject;
 }
 
 /**
