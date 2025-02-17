@@ -358,7 +358,6 @@ export abstract class DomainObject {
       }
     }
     if (this.hasPanelInfo) {
-      // Update the DomainObjectPanel if any
       DomainObjectPanelUpdater.notify(this, change);
     }
   }
