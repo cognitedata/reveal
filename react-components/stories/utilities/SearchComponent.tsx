@@ -20,7 +20,9 @@ import {
   useSearchAssetsMappedPointCloudAnnotations,
   useAllAssetsMappedPointCloudAnnotations,
   type AddResourceOptions,
-  useAssetMappedNodesForRevisions
+  useAssetMappedNodesForRevisions,
+  useAllMappedEquipmentAssetMappingsHybrid,
+  useSearchMappedEquipmentAssetMappingsHybrid
 } from '../../src';
 import { is360ImageAddOptions } from '../../src/components/Reveal3DResources/typeGuards';
 import { type CogniteClient } from '@cognite/sdk';
@@ -37,7 +39,8 @@ type SearchComponentProps = {
 };
 
 const defaultViewsToSearch: Source[] = [
-  { externalId: 'CognitePointCloudVolume', space: 'cdf_cdm', version: 'v1', type: 'view' }
+  { externalId: 'CognitePointCloudVolume', space: 'cdf_cdm', version: 'v1', type: 'view' },
+  { externalId: 'CogniteAsset', space: 'cdf_cdm', version: 'v1', type: 'view' }
 ];
 
 type Equipment = {
@@ -63,7 +66,7 @@ const SearchComponent: React.FC<SearchComponentProps> = ({
   const [tempSearchQuery, setTempSearchQuery] = useState<string>('');
   const [mainSearchQuery, setMainSearchQuery] = useState<string>('');
   const [searchMethod, setSearchMethod] = useState<
-    'allFdm' | 'allAssets' | 'fdmSearch' | 'assetSearch'
+    'allFdm' | 'allAssets' | 'fdmSearch' | 'assetSearch' | 'hybridSearch' | 'allHybrid'
   >('allFdm');
 
   const filteredResources = resources.filter(
@@ -110,6 +113,22 @@ const SearchComponent: React.FC<SearchComponentProps> = ({
     hasNextPage,
     fetchNextPage
   } = useAllMappedEquipmentAssetMappingsClassic(filteredResources as AddModelOptions[], sdk, 25);
+
+  const { data: allAssetMappingsDataHybrid } = useAllMappedEquipmentAssetMappingsHybrid(
+    (filteredResources as AddCadResourceOptions[]).map((model) => ({ ...model, type: 'cad' })),
+    1000,
+    allAssetMappingList ?? [],
+    sdk
+  );
+
+  const { data: assetSearchDataHybrid } = useSearchMappedEquipmentAssetMappingsHybrid(
+    mainSearchQuery,
+    filteredViewsToSearch,
+    (filteredResources as AddCadResourceOptions[]).map((model) => ({ ...model, type: 'cad' })),
+    1000,
+    allAssetMappingList ?? [],
+    isAssetMappingNodesFetched
+  );
 
   const filtered360ImageResources = resources.filter(
     (resource): resource is AddImage360CollectionOptions => 'siteId' in resource
@@ -243,6 +262,36 @@ const SearchComponent: React.FC<SearchComponentProps> = ({
         .flat();
 
       return searchedEquipment;
+    } else if (searchMethod === 'allHybrid') {
+      const transformedAssets = allAssetMappingsDataHybrid?.map((mapping) => mapping.asset) ?? [];
+
+      const transformedIntoNodeItems: NodeItem[] = transformedAssets.map((item) => {
+        return {
+          externalId: item.externalId,
+          space: item.space,
+          version: item.version,
+          instanceType: item.instanceType,
+          createdTime: item.createdTime,
+          lastUpdatedTime: item.lastUpdatedTime,
+          properties: item.properties ?? {}
+        };
+      });
+      return transformedIntoNodeItems;
+    } else if (searchMethod === 'hybridSearch') {
+      if (assetSearchDataHybrid === undefined || assetSearchDataHybrid.length === 0) {
+        return [];
+      }
+      const searchedEquipment: Equipment[] = assetSearchDataHybrid.flatMap((searchResult) => {
+        return searchResult.instances.map((instance) => {
+          return {
+            view: searchResult.view.externalId,
+            externalId: instance.externalId,
+            space: instance.space,
+            properties: instance.properties
+          };
+        });
+      });
+      return searchedEquipment;
     } else {
       return [];
     }
@@ -254,6 +303,8 @@ const SearchComponent: React.FC<SearchComponentProps> = ({
     all360ImageAssetAnnotationMappings,
     assetSearchData,
     assetAnnotationImage360SearchData,
+    allAssetMappingList,
+    assetSearchDataHybrid,
     searchMethod
   ]);
 
@@ -287,6 +338,22 @@ const SearchComponent: React.FC<SearchComponentProps> = ({
             setSearchMethod('fdmSearch');
           }}>
           FDM search hook
+        </Button>
+        <Button
+          size="small"
+          type={searchMethod === 'allHybrid' ? 'primary' : 'secondary'}
+          onClick={() => {
+            setSearchMethod('allHybrid');
+          }}>
+          All Hybrid asset mappings search
+        </Button>
+        <Button
+          size="small"
+          type={searchMethod === 'hybridSearch' ? 'primary' : 'secondary'}
+          onClick={() => {
+            setSearchMethod('hybridSearch');
+          }}>
+          Hybrid Asset mappings search hook
         </Button>
         <Button
           size="small"
