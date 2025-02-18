@@ -33,7 +33,7 @@ export abstract class VisualDomainObject extends DomainObject {
   public override getVisibleState(renderTarget?: RevealRenderTarget): VisibleState {
     // If renderTarget is not provided, use the renderTarget of the rootDomainObject
     if (renderTarget === undefined) {
-      renderTarget = this.rootDomainObject?.renderTarget;
+      renderTarget = getRenderTarget(this);
       if (renderTarget === undefined) {
         return VisibleState.Disabled;
       }
