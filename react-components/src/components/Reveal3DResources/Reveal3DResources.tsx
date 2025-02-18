@@ -23,9 +23,10 @@ export const Reveal3DResources = ({
   const { CadModelContainer, Image360CollectionContainer, PointCloudContainer, ...hooks } =
     use3DResourcesViewModel();
 
+  const renderTarget = hooks.useRenderTarget();
   const viewer = hooks.useReveal();
 
-  hooks.useRemoveNonReferencedModels(resources, viewer);
+  hooks.useRemoveNonReferencedModels(resources, renderTarget);
 
   const { data: reveal3DModels } = hooks.useTypedModels(viewer, resources, onResourceLoadError);
 

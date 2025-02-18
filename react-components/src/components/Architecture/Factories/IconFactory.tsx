@@ -2,12 +2,11 @@
  * Copyright 2024 Cognite AS
  */
 
-import { type JSX, type FC } from 'react';
+import { type JSX } from 'react';
 import { type IconName } from '../../../architecture/base/utilities/IconName';
 import { type IconProps } from '@cognite/cogs.js';
 import { DefaultIcons } from './DefaultIcons';
-
-export type IconType = FC<IconProps>;
+import { type IconType } from './IconType';
 
 const DefaultIcon = (_iconProps: IconProps): JSX.Element => <></>;
 

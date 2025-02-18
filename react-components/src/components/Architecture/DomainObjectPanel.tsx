@@ -17,6 +17,7 @@ import { type TranslateDelegate } from '../../architecture/base/utilities/Transl
 import { type UnitSystem } from '../../architecture/base/renderTarget/UnitSystem';
 import { IconComponent } from './Factories/IconFactory';
 import { type DomainObject } from '../../architecture';
+import { getRoot } from '../../architecture/base/domainObjects/getRoot';
 import { useSignalValue } from '@cognite/signals/react';
 
 const TEXT_SIZE = 'x-small';
@@ -33,18 +34,19 @@ export const DomainObjectPanel = (): ReactElement => {
   }
   const info = domainObject.getPanelInfo();
   const style = domainObject.getPanelInfoStyle();
-  const root = domainObject.rootDomainObject;
+  const root = getRoot(domainObject);
 
   if (root === undefined || info === undefined || style === undefined) {
     return <></>;
   }
+  const unitSystem = root.unitSystem;
+
   // Force the getString to be updated
   for (const command of commands) {
     if (command instanceof CopyToClipboardCommand)
       command.getString = () => toString(domainObject, info, t, unitSystem);
   }
 
-  const unitSystem = root.unitSystem;
   const icon = domainObject.icon;
   const label = domainObject.getLabel(t);
   return (
@@ -101,7 +103,6 @@ function toString(
   unitSystem: UnitSystem
 ): string {
   let result = '';
-
   {
     const text = domainObject?.getLabel(translate);
     if (text !== undefined) {

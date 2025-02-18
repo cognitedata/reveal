@@ -31,6 +31,7 @@ import { type Transaction } from '../../../base/undo/Transaction';
 import { type IconName } from '../../../base/utilities/IconName';
 import { SolidPrimitiveRenderStyle } from '../common/SolidPrimitiveRenderStyle';
 import { type RevealRenderTarget } from '../../../base/renderTarget/RevealRenderTarget';
+import { getRoot } from '../../../base/domainObjects/getRoot';
 
 const ORIGIN = new Vector3(0, 0, 0);
 
@@ -214,7 +215,7 @@ export abstract class PlaneDomainObject extends VisualDomainObject {
   }
 
   public makeFlippingConsistent(): void {
-    const root = this.rootDomainObject;
+    const root = getRoot(this);
     if (root === undefined) {
       return;
     }
