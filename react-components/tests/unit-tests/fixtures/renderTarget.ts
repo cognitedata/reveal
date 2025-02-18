@@ -1,9 +1,14 @@
 import { Mock } from 'moq.ts';
-import { CommandsController, RevealRenderTarget, RootDomainObject } from '../../../src/architecture';
-import { CdfCaches } from '../../../src/architecture/base/renderTarget/CdfCaches';
+import {
+  type CommandsController,
+  type RevealRenderTarget,
+  RootDomainObject
+} from '../../../src/architecture';
+import { type CdfCaches } from '../../../src/architecture/base/renderTarget/CdfCaches';
 import { fdmNodeCacheContentMock } from './fdmNodeCache';
 import { sdkMock } from './sdk';
 import { vi } from 'vitest';
+import { viewerMock } from './viewer';
 
 const cdfCachesMock = new Mock<CdfCaches>()
   .setup((p) => p.fdmNodeCache)
@@ -21,13 +26,16 @@ const commandsControllerMock = new Mock<CommandsController>()
   .returns(vi.fn())
   .object();
 
-const rootDomainObjectMock = new RootDomainObject({} as RevealRenderTarget, sdkMock);
+export function createRenderTargetMock(): RevealRenderTarget {
+  const mock = new Mock<RevealRenderTarget>()
+    .setup((p) => p.viewer)
+    .returns(viewerMock)
+    .setup((p) => p.cdfCaches)
+    .returns(cdfCachesMock)
+    .setup((p) => p.commandsController)
+    .returns(commandsControllerMock);
 
-export const renderTargetMock = new Mock<RevealRenderTarget>()
-  .setup((p) => p.cdfCaches)
-  .returns(cdfCachesMock)
-  .setup((p) => p.commandsController)
-  .returns(commandsControllerMock)
-  .setup((p) => p.rootDomainObject)
-  .returns(rootDomainObjectMock)
-  .object();
+  const root = new RootDomainObject(mock.object(), sdkMock);
+  mock.setup((p) => p.rootDomainObject).returns(root);
+  return mock.object();
+}

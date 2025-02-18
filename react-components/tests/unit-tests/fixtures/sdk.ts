@@ -1,5 +1,5 @@
 import { Mock } from 'moq.ts';
-import { CogniteClient } from '@cognite/sdk';
+import { type CogniteClient } from '@cognite/sdk';
 
 export const sdkMock = new Mock<CogniteClient>()
   .setup((p) => p.getBaseUrl())

@@ -6,7 +6,7 @@ import {
   type FdmCadConnection,
   type FdmConnectionWithNode
 } from '../../../src/components/CacheProvider/types';
-import { DmsUniqueIdentifier } from '../../../src/data-providers';
+import { type DmsUniqueIdentifier } from '../../../src/data-providers';
 
 const fdmNodeCacheMock = new Mock<FdmNodeCache>()
   .setup((instance) => instance.getAllMappingExternalIds)

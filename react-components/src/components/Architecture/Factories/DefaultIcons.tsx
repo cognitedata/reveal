@@ -60,7 +60,7 @@ import {
 } from '@cognite/cogs.js';
 
 import { type IconName } from '../../../architecture/base/utilities/IconName';
-import { type IconType } from './IconFactory';
+import { type IconType } from './IconType';
 
 export const DefaultIcons: Array<[IconName, IconType]> = [
   ['Angle', AngleIcon],

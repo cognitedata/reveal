@@ -8,7 +8,7 @@ import { PrimitiveType } from '../../base/utilities/primitives/PrimitiveType';
 import { type TranslationInput } from '../../base/utilities/TranslateInput';
 import { type BaseCommand } from '../../base/commands/BaseCommand';
 import { FlipSliceCommand } from './commands/FlipSliceCommand';
-import { ApplyClipCommand } from './commands/ApplyClipCommand';
+import { setClippingPlanes } from './commands/setClippingPlanes';
 import { type DomainObjectChange } from '../../base/domainObjectsHelpers/DomainObjectChange';
 import { Changes } from '../../base/domainObjectsHelpers/Changes';
 import { FocusType } from '../../base/domainObjectsHelpers/FocusType';
@@ -97,6 +97,6 @@ export class SliceDomainObject extends PlaneDomainObject {
     if (renderTarget.isGlobalCropBoxActive) {
       return;
     }
-    ApplyClipCommand.setClippingPlanes(root);
+    setClippingPlanes(root);
   }
 }

@@ -14,6 +14,9 @@ import { type RevealRenderTarget } from '../renderTarget/RevealRenderTarget';
  */
 export function getRoot(domainObject: DomainObject): RootDomainObject | undefined {
   const root = domainObject.root;
+  if (!root.isRoot) {
+    return undefined;
+  }
   return root as RootDomainObject;
 }
 

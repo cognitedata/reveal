@@ -640,6 +640,11 @@ export abstract class DomainObject {
     return this.parent === undefined ? this : this.parent.root;
   }
 
+  public get isRoot(): boolean {
+    // Returns true if it is RootDomainObject (To fix a cyclic dependency)
+    return false;
+  }
+
   public get hasParent(): boolean {
     return this._parent !== undefined;
   }

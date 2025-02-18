@@ -58,6 +58,10 @@ export class RootDomainObject extends DomainObject {
     return { key: 'SCENE' };
   }
 
+  public override get isRoot(): boolean {
+    return true;
+  }
+
   public override clone(what?: symbol): DomainObject {
     const clone = new RootDomainObject(this.renderTarget, this.sdk);
     clone.copyFrom(this, what);

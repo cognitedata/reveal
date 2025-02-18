@@ -2,7 +2,7 @@
  * Copyright 2025 Cognite AS
  */
 import { createContext } from 'react';
-import { useReveal } from '../RevealCanvas';
+import { useRenderTarget, useReveal } from '../RevealCanvas';
 import { useRemoveNonReferencedModels } from './hooks/useRemoveNonReferencedModels';
 
 import { useCalculatePointCloudStyling } from './hooks/useCalculatePointCloudStyling';
@@ -24,6 +24,7 @@ import { Image360CollectionContainer } from '../Image360CollectionContainer';
 export type Reveal3DResourcesDependencies = {
   // Hooks
   useReveal: typeof useReveal;
+  useRenderTarget: typeof useRenderTarget;
   useRemoveNonReferencedModels: typeof useRemoveNonReferencedModels;
   useTypedModels: typeof useTypedModels;
   useSetExpectedLoadCount: typeof useSetExpectedLoadCount;
@@ -45,6 +46,7 @@ export type Reveal3DResourcesDependencies = {
 export const Reveal3DResourcesContext = createContext<Reveal3DResourcesDependencies>({
   // Hooks
   useReveal,
+  useRenderTarget,
   useRemoveNonReferencedModels,
   useTypedModels,
   useSetExpectedLoadCount,

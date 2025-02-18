@@ -1,4 +1,8 @@
-import { ClassicDataSourceType, DMDataSourceType, type Image360Collection } from '@cognite/reveal';
+import {
+  type ClassicDataSourceType,
+  type DMDataSourceType,
+  type Image360Collection
+} from '@cognite/reveal';
 import { Mock } from 'moq.ts';
 import { type AddImage360CollectionOptions } from '../../../src';
 
@@ -11,14 +15,18 @@ export const image360DmOptions: AddImage360CollectionOptions = {
   source: 'cdm',
   externalId: 'testImage360ExternalId',
   space: 'testImage360Space'
+};
+
+export function createImage360ClassicMock(): Image360Collection<ClassicDataSourceType> {
+  return new Mock<Image360Collection<ClassicDataSourceType>>()
+    .setup((p) => p.id)
+    .returns('siteId')
+    .object();
 }
 
-export const image360ClassicMock = new Mock<Image360Collection<ClassicDataSourceType>>()
-  .setup((p) => p.id)
-  .returns(image360ClassicOptions.siteId)
-  .object();
-
-  export const image360DmMock = new Mock<Image360Collection<DMDataSourceType>>()
-  .setup((p) => p.id)
-  .returns(image360DmOptions.externalId)
-  .object();
+export function createImage360DmMock(): Image360Collection<DMDataSourceType> {
+  return new Mock<Image360Collection<DMDataSourceType>>()
+    .setup((p) => p.id)
+    .returns('testImage360ExternalId')
+    .object();
+}
