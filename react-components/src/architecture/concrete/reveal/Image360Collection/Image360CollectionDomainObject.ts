@@ -48,6 +48,10 @@ export class Image360CollectionDomainObject extends VisualDomainObject {
     return 'View360';
   }
 
+  public override get hasIconColor(): boolean {
+    return false;
+  }
+
   public override createRenderStyle(): RenderStyle | undefined {
     return new Image360CollectionRenderStyle();
   }

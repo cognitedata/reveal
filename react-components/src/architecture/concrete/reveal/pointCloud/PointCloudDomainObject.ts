@@ -47,6 +47,10 @@ export class PointCloudDomainObject extends VisualDomainObject {
     return 'PointCloud';
   }
 
+  public override get hasIconColor(): boolean {
+    return false;
+  }
+
   public override createRenderStyle(): RenderStyle | undefined {
     return new PointCloudRenderStyle();
   }
