@@ -11,6 +11,7 @@ import { type BaseDragger } from '../domainObjectsHelpers/BaseDragger';
 import { type Vector3, type Ray } from 'three';
 import { FocusType } from '../domainObjectsHelpers/FocusType';
 import { Changes } from '../domainObjectsHelpers/Changes';
+import { getRenderTarget } from './getRoot';
 
 /**
  * Represents a visual domain object that can be rendered and manipulated in a three-dimensional space.
@@ -55,7 +56,7 @@ export abstract class VisualDomainObject extends DomainObject {
     topLevel = true
   ): boolean {
     if (renderTarget === undefined) {
-      renderTarget = this.rootDomainObject?.renderTarget;
+      renderTarget = getRenderTarget(this);
       if (renderTarget === undefined) {
         return false;
       }

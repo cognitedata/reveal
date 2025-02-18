@@ -1,6 +1,6 @@
 {
   "name": "@cognite/reveal-react-components",
-  "version": "0.75.2",
+  "version": "0.75.3",
   "exports": {
     ".": {
       "import": "./dist/index.js",
@@ -31,6 +31,7 @@
   "peerDependencies": {
     "@cognite/cogs-lab": "^9.0.0-alpha.153",
     "@cognite/reveal": "4.23.2",
+    "@cognite/signals": "^0.0.4",
     "react": ">=18",
     "react-dom": ">=18",
     "styled-components": ">=5"
@@ -46,7 +47,6 @@
     "@cognite/cdf-i18n-utils": "^0.7.5",
     "@cognite/cdf-utilities": "^3.6.0",
     "@cognite/cogs-lab": "^9.0.0-alpha.153",
-    "@cognite/cogs.js": "^10.36.0",
     "@cognite/reveal": "^4.23.2",
     "@cognite/sdk": "^9.13.0",
     "@cognite/signals": "^0.0.4",
@@ -72,14 +72,14 @@
     "core-js": "^3.6.5",
     "eslint": "^8.57.0",
     "eslint-config-love": "47.0.0",
-    "eslint-config-prettier": "^9.1.0",
+    "eslint-config-prettier": "^10.0.0",
     "eslint-plugin-header": "^3.1.1",
     "eslint-plugin-import": "^2.29.1",
     "eslint-plugin-n": "^17.4.0",
     "eslint-plugin-prettier": "^5.1.3",
     "eslint-plugin-promise": "^7.0.0",
     "eslint-plugin-react": "^7.34.1",
-    "happy-dom": "^15.0.0",
+    "happy-dom": "^16.0.0",
     "locize-cli": "^8.0.1",
     "moq.ts": "10.0.8",
     "playwright": "1.49.0",

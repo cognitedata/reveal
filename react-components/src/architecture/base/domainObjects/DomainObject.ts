@@ -16,7 +16,6 @@ import { ColorType } from '../domainObjectsHelpers/ColorType';
 import { Views } from '../domainObjectsHelpers/Views';
 import { type PanelInfo } from '../domainObjectsHelpers/PanelInfo';
 import { PopupStyle } from '../domainObjectsHelpers/PopupStyle';
-import { RootDomainObject } from './RootDomainObject';
 import { CommandsUpdater } from '../reactUpdaters/CommandsUpdater';
 import { DomainObjectPanelUpdater } from '../reactUpdaters/DomainObjectPanelUpdater';
 import {
@@ -39,6 +38,7 @@ import {
   type TreeNodeType
 } from '../../../advanced-tree-view';
 import { translate } from '../../../components/i18n/Translator';
+import { getRenderTarget } from './getRoot';
 
 /**
  * Represents an abstract base class for domain objects.
@@ -411,14 +411,14 @@ export abstract class DomainObject implements TreeNodeType {
         Changes.childDeleted
       )
     ) {
-      if (this.root instanceof RootDomainObject) {
+      const renderTarget = getRenderTarget(this);
+      if (renderTarget !== undefined) {
         // Update all the command buttons (in the toolbars).
         // This goes fast and will not slow the system down.
-        CommandsUpdater.update(this.root.renderTarget);
+        CommandsUpdater.update(renderTarget);
       }
     }
     if (this.hasPanelInfo) {
-      // Update the DomainObjectPanel if any
       DomainObjectPanelUpdater.notify(this, change);
     }
     this.updateTreeNodeListeners();
@@ -552,7 +552,7 @@ export abstract class DomainObject implements TreeNodeType {
   public getVisibleState(renderTarget?: RevealRenderTarget): VisibleState {
     // If renderTarget is not provided, use the renderTarget of the rootDomainObject
     if (renderTarget === undefined) {
-      renderTarget = this.rootDomainObject?.renderTarget;
+      renderTarget = getRenderTarget(this);
       if (renderTarget === undefined) {
         return VisibleState.Disabled;
       }
@@ -600,7 +600,7 @@ export abstract class DomainObject implements TreeNodeType {
   ): boolean {
     // If renderTarget is not provided, use the renderTarget of the rootDomainObject
     if (renderTarget === undefined) {
-      renderTarget = this.rootDomainObject?.renderTarget;
+      renderTarget = getRenderTarget(this);
       if (renderTarget === undefined) {
         return false;
       }
@@ -709,10 +709,9 @@ export abstract class DomainObject implements TreeNodeType {
     return this.parent === undefined ? this : this.parent.root;
   }
 
-  public get rootDomainObject(): RootDomainObject | undefined {
-    // Returns a RootDomainObject only if the root is a RootDomainObject, otherwise undefined
-    const root = this.root;
-    return root instanceof RootDomainObject ? root : undefined;
+  public get isRoot(): boolean {
+    // Returns true if it is RootDomainObject (To fix a cyclic dependency)
+    return false;
   }
 
   public get hasParent(): boolean {

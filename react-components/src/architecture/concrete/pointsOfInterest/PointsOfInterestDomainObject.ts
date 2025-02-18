@@ -19,6 +19,7 @@ import { type DmsUniqueIdentifier } from '../../../data-providers';
 import { createInstanceStyleGroup } from '../../../components/Reveal3DResources/instanceStyleTranslation';
 import { DefaultNodeAppearance } from '@cognite/reveal';
 import { type IconName } from '../../base/utilities/IconName';
+import { getRenderTarget, getRoot } from '../../base/domainObjects/getRoot';
 
 const SELECTED_ASSOCIATED_POI_INSTANCE_STYLING_SYMBOL = Symbol(
   'poi3d-selected-associated-instance-styling'
@@ -102,11 +103,14 @@ export class PointsOfInterestDomainObject<PoiIdType> extends VisualDomainObject 
   }
 
   public async save(): Promise<void> {
-    const fdmSdk = this.rootDomainObject?.fdmSdk;
-    if (fdmSdk === undefined) {
-      return fdmSdk;
+    const root = getRoot(this);
+    if (root === undefined) {
+      return undefined;
     }
-
+    const fdmSdk = root.fdmSdk;
+    if (fdmSdk === undefined) {
+      return undefined;
+    }
     if (
       this._selectedPointsOfInterest !== undefined &&
       (this._selectedPointsOfInterest.status === PointsOfInterestStatus.PendingCreation ||
@@ -152,7 +156,7 @@ export class PointsOfInterestDomainObject<PoiIdType> extends VisualDomainObject 
   }
 
   private setAssociatedInstanceStyle(poi: PointOfInterest<PoiIdType> | undefined): void {
-    const instanceStylingController = this.rootDomainObject?.renderTarget.instanceStylingController;
+    const instanceStylingController = getRenderTarget(this)?.instanceStylingController;
 
     if (poi?.properties.instanceRef === undefined) {
       instanceStylingController?.setStylingGroup(

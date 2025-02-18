@@ -2,10 +2,10 @@
  * Copyright 2024 Cognite AS
  */
 
+import { type CogniteClient } from '@cognite/sdk';
 import { type RevealRenderTarget } from '../renderTarget/RevealRenderTarget';
 import { UnitSystem } from '../renderTarget/UnitSystem';
 import { DomainObject } from './DomainObject';
-import { type CogniteClient } from '@cognite/sdk';
 import { FdmSDK } from '../../../data-providers/FdmSDK';
 import { type TranslationInput } from '../utilities/TranslateInput';
 import { type IconName } from '../utilities/IconName';
@@ -67,6 +67,10 @@ export class RootDomainObject extends DomainObject {
 
   public override get hasIndexOnLabel(): boolean {
     return false;
+  }
+
+  public override get isRoot(): boolean {
+    return true;
   }
 
   public override clone(what?: symbol): DomainObject {

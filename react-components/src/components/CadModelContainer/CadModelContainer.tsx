@@ -8,7 +8,7 @@ import {
   type CogniteCadModel,
   type ClassicDataSourceType
 } from '@cognite/reveal';
-import { useReveal } from '../RevealCanvas/ViewerContext';
+import { useRenderTarget } from '../RevealCanvas/ViewerContext';
 import { type Matrix4 } from 'three';
 import { useRevealKeepAlive } from '../RevealKeepAlive/RevealKeepAliveContext';
 import {
@@ -21,6 +21,7 @@ import { getViewerResourceCount } from '../../utilities/getViewerResourceCount';
 import { type CadModelStyling } from './types';
 import { useApplyCadModelStyling } from './useApplyCadModelStyling';
 import { isSameGeometryFilter, isSameModel } from '../../utilities/isSameModel';
+import { RevealModelsUtils } from '../../architecture/concrete/reveal/RevealModelsUtils';
 
 export type CogniteCadModelProps = {
   addModelOptions: AddModelOptions<ClassicDataSourceType>;
@@ -38,7 +39,8 @@ export function CadModelContainer({
   onLoadError
 }: CogniteCadModelProps): ReactElement {
   const cachedViewerRef = useRevealKeepAlive();
-  const viewer = useReveal();
+  const renderTarget = useRenderTarget();
+  const viewer = renderTarget.viewer;
   const { setRevealResourcesCount } = useReveal3DResourcesCount();
   const { setReveal3DResourceLoadFailCount } = useReveal3DResourceLoadFailCount();
   const initializingModel = useRef<AddModelOptions<ClassicDataSourceType> | undefined>(undefined);
@@ -112,7 +114,7 @@ export function CadModelContainer({
         return await Promise.resolve(viewerModel as CogniteCadModel);
       }
       initializingModelsGeometryFilter.current = geometryFilter;
-      return await viewer.addCadModel(addModelOptions);
+      return await RevealModelsUtils.addModel(renderTarget, addModelOptions);
     }
   }
 
@@ -122,7 +124,7 @@ export function CadModelContainer({
     if (cachedViewerRef !== undefined && !cachedViewerRef.isRevealContainerMountedRef.current)
       return;
 
-    viewer.removeModel(model);
+    RevealModelsUtils.remove(renderTarget, model);
     setRevealResourcesCount(getViewerResourceCount(viewer));
   }
 }
