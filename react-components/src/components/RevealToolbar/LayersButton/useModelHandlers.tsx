@@ -39,7 +39,10 @@ export const useModelHandlers = (
 ): [Signal<ModelLayerHandlers>, Signal<() => void>] => {
   const models = use3dModels();
   const viewer = useReveal();
-  const image360Collections = useMemo(() => viewer.get360ImageCollections(), [viewer]);
+  const image360Collections = useMemo(
+    () => viewer.get360ImageCollections(),
+    [viewer, viewer.get360ImageCollections().length]
+  );
 
   const modelIds = useMemo(() => models.map((model) => model.modelId), [models]);
   const modelNames = use3DModelName(modelIds);
