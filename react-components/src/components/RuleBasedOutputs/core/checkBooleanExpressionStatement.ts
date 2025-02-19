@@ -4,7 +4,7 @@
 
 import { type FdmPropertyType } from '../../Reveal3DResources/types';
 import { type Expression, type TriggerTypeData } from '../types';
-import { getFdmPropertyTrigger } from '../utils';
+import { getFdmPropertyTrigger } from './getFdmPropertyTrigger';
 
 export const checkBooleanExpressionStatement = (
   triggerTypeData: TriggerTypeData[],

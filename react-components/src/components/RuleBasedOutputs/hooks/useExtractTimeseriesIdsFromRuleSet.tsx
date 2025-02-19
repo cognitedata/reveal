@@ -4,8 +4,8 @@
 
 import { useMemo } from 'react';
 import { type RuleOutputSet } from '../types';
-import { traverseExpressionToGetTimeseries } from '../utils';
 import { isDefined } from '../../../utilities/isDefined';
+import { traverseExpressionToGetTimeseries } from '../core/traverseExpressionToGetTimeseries';
 
 export const useExtractTimeseriesIdsFromRuleSet = (ruleSet: RuleOutputSet): string[] => {
   return useMemo(() => {
