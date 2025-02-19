@@ -3,14 +3,14 @@
  */
 import { ToolBar } from '@cognite/cogs.js';
 import styled from 'styled-components';
-import { useMemo, useState, type ReactElement } from 'react';
+import { useMemo, type ReactElement } from 'react';
 import { withSuppressRevealEvents } from '../../higher-order-components/withSuppressRevealEvents';
 import { CommandButtons } from './CommandButtons';
 import { type BaseCommand } from '../../architecture/base/commands/BaseCommand';
 import { useRenderTarget } from '../RevealCanvas/ViewerContext';
-import { ActiveToolUpdater } from '../../architecture/base/reactUpdaters/ActiveToolUpdater';
 import { type PopupStyle } from '../../architecture/base/domainObjectsHelpers/PopupStyle';
 import { type PlacementType } from './types';
+import { useSignalValue } from '@cognite/signals/react';
 
 export const TopToolbar = (): ReactElement => {
   const renderTarget = useRenderTarget();
@@ -47,15 +47,11 @@ export const MainToolbar = (): ReactElement => {
 };
 
 export const ActiveToolToolbar = (): ReactElement => {
-  //
-  const [_activeToolUpdater, setActiveToolUpdater] = useState<number>(0);
-  ActiveToolUpdater.setCounterDelegate(setActiveToolUpdater);
-
   const renderTarget = useRenderTarget();
   if (renderTarget === undefined) {
     return <></>;
   }
-  const activeTool = renderTarget.commandsController.activeTool;
+  const activeTool = useSignalValue(renderTarget.commandsController.activeToolSignal);
   if (activeTool === undefined) {
     return <></>;
   }

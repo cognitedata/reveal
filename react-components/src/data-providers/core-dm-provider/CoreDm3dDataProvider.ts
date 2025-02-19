@@ -28,7 +28,7 @@ import { getCadModelsForInstance } from './getCadModelsForInstance';
 import { getCadConnectionsForRevisions } from './getCadConnectionsForRevisions';
 import { zip } from 'lodash';
 import { restrictToDmsId } from '../../utilities/restrictToDmsId';
-import { isClassicIdentifier, isDMIdentifier } from '../../components';
+import { isClassicIdentifier, isDMIdentifier } from '../../components/Reveal3DResources/typeGuards';
 import { EMPTY_ARRAY } from '../../utilities/constants';
 
 const MAX_PARALLEL_QUERIES = 2;

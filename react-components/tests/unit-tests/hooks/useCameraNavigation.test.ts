@@ -5,7 +5,9 @@ import { cadMock, nodeBoundingBox } from '../fixtures/cadModel';
 import { act, renderHook } from '@testing-library/react';
 import { fdmNodeCacheContentMock } from '../fixtures/fdmNodeCache';
 import { Vector3 } from 'three';
-import { renderTargetMock } from '../fixtures/renderTarget';
+import { createRenderTargetMock } from '../fixtures/renderTarget';
+
+const renderTargetMock = createRenderTargetMock();
 
 vi.mock('../../../src/components/RevealCanvas/ViewerContext', () => ({
   useReveal: () => viewerMock,

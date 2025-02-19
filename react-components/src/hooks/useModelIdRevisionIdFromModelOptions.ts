@@ -11,10 +11,10 @@ import {
   type DataSourceType
 } from '@cognite/reveal';
 import { useFdmSdk } from '../components/RevealCanvas/SDKProvider';
-import { isClassicIdentifier, isDMIdentifier } from '../components';
 import { type FdmSDK } from '../data-providers/FdmSDK';
 import { EMPTY_ARRAY } from '../utilities/constants';
 import { getModelKeys } from '../utilities/getModelKeys';
+import { isClassicIdentifier, isDMIdentifier } from '../components/Reveal3DResources/typeGuards';
 
 export const useModelIdRevisionIdFromModelOptions = (
   addModelOptionsArray: Array<AddModelOptions<DataSourceType>> | undefined
