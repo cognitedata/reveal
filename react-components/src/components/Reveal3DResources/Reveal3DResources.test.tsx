@@ -116,7 +116,6 @@ describe(Reveal3DResources.name, () => {
       wrapper
     });
     expect(PointCloudContainer).toHaveBeenCalledTimes(3);
-    screen.debug();
   });
 
   it('should mount Image360Containers if resource is passed', () => {
@@ -141,6 +140,5 @@ describe(Reveal3DResources.name, () => {
       wrapper
     });
     expect(Image360CollectionContainer).toHaveBeenCalledTimes(1);
-    screen.debug();
   });
 });
