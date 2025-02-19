@@ -35,7 +35,7 @@ export abstract class VisualDomainObject extends DomainObject {
     if (this.getViewByTarget(renderTarget) !== undefined) {
       return VisibleState.All;
     }
-    if (this.canCreateThreeView()) {
+    if (canCreateThreeView(this)) {
       if (this.canBeSetVisibleNow(renderTarget)) {
         return VisibleState.None;
       }
@@ -74,23 +74,6 @@ export abstract class VisualDomainObject extends DomainObject {
   // ==================================================
   // VIRTUAL METHODS
   // ==================================================
-
-  /**
-   * Factory methods to create its own three view for visualization in three.js
-   */
-  protected createThreeView(): ThreeView | undefined {
-    return createThreeView(this);
-  }
-
-  /**
-   * Determines whether the visual domain object can create a three view.
-   * It may have a state when it can not create a view because of other dependencies
-   *
-   * @returns A boolean value indicating whether the visual domain object can create a three view.
-   */
-  protected canCreateThreeView(): boolean {
-    return canCreateThreeView(this);
-  }
 
   /**
    * Factory method to create a dragger to interpret the mouse dragging operation
@@ -152,10 +135,7 @@ export abstract class VisualDomainObject extends DomainObject {
       if (view !== undefined) {
         return false;
       }
-      if (!this.canCreateThreeView()) {
-        return false;
-      }
-      view = this.createThreeView();
+      view = createThreeView(this);
       if (view === undefined) {
         return false;
       }
