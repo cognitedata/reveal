@@ -9,7 +9,7 @@ import { canCreateThreeView, createThreeView, installThreeView } from './ThreeVi
 import { ThreeView } from './ThreeView';
 import { Box3 } from 'three';
 
-describe('ViewFactory', () => {
+describe('ThreeViewFactory', () => {
   beforeAll(() => {
     installThreeView(FooDomainObject, FooView);
     installThreeView(BarDomainObject, BarView);
