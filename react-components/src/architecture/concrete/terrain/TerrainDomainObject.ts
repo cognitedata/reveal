@@ -6,8 +6,6 @@ import { VisualDomainObject } from '../../base/domainObjects/VisualDomainObject'
 import { TerrainRenderStyle } from './TerrainRenderStyle';
 import { type RegularGrid2 } from './geometry/RegularGrid2';
 import { type RenderStyle } from '../../base/renderStyles/RenderStyle';
-import { type ThreeView } from '../../base/views/ThreeView';
-import { TerrainThreeView } from './TerrainThreeView';
 import { type TranslationInput } from '../../base/utilities/TranslateInput';
 
 export class TerrainDomainObject extends VisualDomainObject {
@@ -68,13 +66,5 @@ export class TerrainDomainObject extends VisualDomainObject {
     ) {
       style.increment = zRange.getBestIncrement(20);
     }
-  }
-
-  // ==================================================
-  // OVERRIDES of VisualDomainObject
-  // ==================================================
-
-  protected override createThreeView(): ThreeView | undefined {
-    return new TerrainThreeView();
   }
 }

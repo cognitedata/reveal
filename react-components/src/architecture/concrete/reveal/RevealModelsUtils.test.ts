@@ -102,6 +102,8 @@ describe('RevealModelsUtils', () => {
     const model = createCadMock();
     const removeFn = vi.fn().mockResolvedValue(model);
     viewerMock.removeModel = removeFn;
+    const addFn = vi.fn().mockResolvedValue(model);
+    viewerMock.addCadModel = addFn;
 
     // Add model
     await RevealModelsUtils.addModel(renderTargetMock, cadModelOptions);
@@ -118,6 +120,8 @@ describe('RevealModelsUtils', () => {
     const model = createPointCloudMock();
     const removeFn = vi.fn().mockResolvedValue(model);
     viewerMock.removeModel = removeFn;
+    const addFn = vi.fn().mockResolvedValue(model);
+    viewerMock.addPointCloudModel = addFn;
 
     // Add model
     await RevealModelsUtils.addPointCloud(renderTargetMock, pointCloudModelOptions);
@@ -130,10 +134,12 @@ describe('RevealModelsUtils', () => {
     expect(removeFn).toHaveBeenCalledWith(model);
   });
 
-  test('should remove the PointCloud model', async () => {
+  test('should remove the Image360Collection model', async () => {
     const model = createImage360ClassicMock();
     const removeFn = vi.fn().mockResolvedValue(model);
     viewerMock.remove360ImageSet = removeFn;
+    const addFn = vi.fn().mockResolvedValue(model);
+    viewerMock.add360ImageSet = addFn;
 
     // Add model
     await RevealModelsUtils.addImage360Collection(renderTargetMock, image360ClassicOptions);

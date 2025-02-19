@@ -3,8 +3,6 @@
  */
 
 import { type RenderStyle } from '../../../base/renderStyles/RenderStyle';
-import { type ThreeView } from '../../../base/views/ThreeView';
-import { PlaneView } from './PlaneView';
 import { type Color, Plane, Vector3 } from 'three';
 import { Changes } from '../../../base/domainObjectsHelpers/Changes';
 import { PrimitiveType } from '../../../base/utilities/primitives/PrimitiveType';
@@ -146,10 +144,6 @@ export abstract class PlaneDomainObject extends VisualDomainObject {
     if (change.isChanged(Changes.added)) {
       this.makeFlippingConsistent();
     }
-  }
-
-  protected override createThreeView(): ThreeView | undefined {
-    return new PlaneView();
   }
 
   public override createTransaction(changed: symbol): Transaction {
