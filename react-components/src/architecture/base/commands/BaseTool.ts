@@ -21,6 +21,7 @@ import { ThreeView } from '../views/ThreeView';
 import { UndoManager } from '../undo/UndoManager';
 import { CommandChanges } from '../domainObjectsHelpers/CommandChanges';
 import { ContextMenuUpdater } from '../reactUpdaters/ContextMenuUpdater';
+import { getToolbar, type Toolbar } from './factory/ToolbarFactory';
 
 /**
  * Base class for interactions in the 3D viewer
@@ -60,10 +61,6 @@ export abstract class BaseTool extends RenderTargetCommand {
 
   public getAnchoredDialogContent(): AnchoredDialogContent | undefined {
     return undefined;
-  }
-
-  public getToolbar(): Array<BaseCommand | undefined> {
-    return []; // Override this to add extra buttons to a separate toolbar
   }
 
   public getToolbarStyle(): PopupStyle {
@@ -215,6 +212,10 @@ export abstract class BaseTool extends RenderTargetCommand {
   // ==================================================
   // INSTANCE METHODS: Getters
   // ==================================================
+
+  public getToolbar(): Toolbar | undefined {
+    return getToolbar(this);
+  }
 
   protected getRaycaster(event: PointerEvent | WheelEvent): Raycaster {
     const { renderTarget } = this;

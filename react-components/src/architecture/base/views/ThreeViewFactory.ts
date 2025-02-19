@@ -6,7 +6,7 @@ import { type DomainObject } from '../domainObjects/DomainObject';
 import { type Class } from '../domainObjectsHelpers/Class';
 import { type ThreeView } from './ThreeView';
 
-export type ThreeViewCreator = () => ThreeView;
+type ThreeViewCreator = () => ThreeView;
 
 /**
  * Determines if a Three.js view can be created for the given domain object.
@@ -15,7 +15,7 @@ export type ThreeViewCreator = () => ThreeView;
  * @returns `true` if a Three.js view can be created, otherwise `false`.
  */
 export function canCreateThreeView(domainObject: DomainObject): boolean {
-  let domainObjectType: Class<DomainObject> | undefined = getDomainObjectClassOf(domainObject);
+  let domainObjectType: Class<DomainObject> | undefined = getClassOf(domainObject);
   while (domainObjectType !== undefined) {
     if (_products.has(domainObjectType)) {
       return true;
@@ -32,7 +32,7 @@ export function canCreateThreeView(domainObject: DomainObject): boolean {
  * @returns A ThreeView instance if creation is successful, otherwise undefined.
  */
 export function createThreeView(domainObject: DomainObject): ThreeView | undefined {
-  let domainObjectType: Class<DomainObject> | undefined = getDomainObjectClassOf(domainObject);
+  let domainObjectType: Class<DomainObject> | undefined = getClassOf(domainObject);
   while (domainObjectType !== undefined) {
     const product = _products.get(domainObjectType);
     if (product !== undefined) {
@@ -71,7 +71,7 @@ export function installThreeViewCreator(
 
 const _products = new Map<Class<DomainObject>, ThreeViewCreator>();
 
-function getDomainObjectClassOf(domainObject: DomainObject): Class<DomainObject> {
+function getClassOf(domainObject: DomainObject): Class<DomainObject> {
   return domainObject.constructor as Class<DomainObject>;
 }
 

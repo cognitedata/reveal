@@ -55,7 +55,10 @@ export const ActiveToolToolbar = (): ReactElement => {
   if (activeTool === undefined) {
     return <></>;
   }
-  const commands = useMemo(() => activeTool.getToolbar(), [activeTool]);
+  const commands = activeTool.getToolbar();
+  if (commands === undefined) {
+    return <></>;
+  }
   const style = activeTool.getToolbarStyle();
   return <ToolbarContent commands={commands} style={style} />;
 };
