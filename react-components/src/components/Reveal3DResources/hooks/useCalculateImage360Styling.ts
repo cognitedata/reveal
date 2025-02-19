@@ -12,7 +12,7 @@ import {
 import { type Image360PolygonStylingGroup } from '../../Image360CollectionContainer';
 import { type InstanceStylingGroup } from '../types';
 
-type Image360StyledGroup = Image360PolygonStylingGroup & {
+export type Image360StyledGroup = Image360PolygonStylingGroup & {
   assetRefs: number[];
 };
 
