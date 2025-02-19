@@ -5,14 +5,19 @@
 import { describe, expect, test, beforeAll } from 'vitest';
 import { DomainObject } from '../domainObjects/DomainObject';
 import { type TranslationInput } from '../utilities/TranslateInput';
-import { canCreateThreeView, createThreeView, installThreeView } from './ThreeViewFactory';
+import {
+  canCreateThreeView,
+  createThreeView,
+  installThreeView,
+  installThreeViewCreator
+} from './ThreeViewFactory';
 import { ThreeView } from './ThreeView';
 import { Box3 } from 'three';
 
 describe('ThreeViewFactory', () => {
   beforeAll(() => {
     installThreeView(FooDomainObject, FooView);
-    installThreeView(BarDomainObject, BarView);
+    installThreeViewCreator(BarDomainObject, () => new BarView()); // Just a different way of installing
     installThreeView(AnotherBarDomainObject, BarView);
   });
 
