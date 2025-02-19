@@ -3,11 +3,6 @@
  */
 
 import styled from 'styled-components';
-import {
-  type CadModelHandler,
-  type Image360CollectionHandler,
-  type PointCloudModelHandler
-} from './ModelHandler';
 import { ModelLayersButton } from './ModelLayersButton';
 
 import { useCallback, type ReactElement } from 'react';
@@ -16,12 +11,7 @@ import { useModelHandlers } from './useModelHandlers';
 import { useSyncExternalLayersState } from './useSyncExternalLayersState';
 import { type LayersButtonProps } from './LayersButton';
 import { useReveal } from '../../RevealCanvas/ViewerContext';
-
-export type ModelLayerHandlers = {
-  cadHandlers: CadModelHandler[];
-  pointCloudHandlers: PointCloudModelHandler[];
-  image360Handlers: Image360CollectionHandler[];
-};
+import { useSignalValue } from '@cognite/signals/react';
 
 export const LayersButtonStrip = ({
   layersState: externalLayersState,
@@ -33,10 +23,10 @@ export const LayersButtonStrip = ({
     setExternalLayersState,
     defaultLayerConfiguration
   );
-  const { cadHandlers, pointCloudHandlers, image360Handlers } = modelLayerHandlers;
+  const { cadHandlers, pointCloudHandlers, image360Handlers } = useSignalValue(modelLayerHandlers);
 
   useSyncExternalLayersState(
-    modelLayerHandlers,
+    useSignalValue(modelLayerHandlers),
     externalLayersState,
     setExternalLayersState,
     update

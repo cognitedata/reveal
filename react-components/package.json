@@ -81,6 +81,7 @@
     "eslint-plugin-react": "^7.34.1",
     "happy-dom": "^16.0.0",
     "locize-cli": "^8.0.1",
+    "madge": "^8.0.0",
     "moq.ts": "10.0.8",
     "playwright": "1.49.0",
     "prettier": "^3.2.5",

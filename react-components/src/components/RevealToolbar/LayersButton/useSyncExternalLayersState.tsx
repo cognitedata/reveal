@@ -3,10 +3,9 @@
  */
 import { useReveal } from '../../RevealCanvas';
 import { type Dispatch, type SetStateAction, useEffect, useRef } from 'react';
-import { type LayersUrlStateParam } from './types';
+import { type LayersUrlStateParam, type ModelLayerHandlers } from './types';
 import { updateExternalStateFromLayerHandlers } from './updateExternalStateFromLayerHandlers';
 import { updateViewerFromExternalState } from './updateViewerFromExternalState';
-import { type ModelLayerHandlers } from './LayersButtonsStrip';
 import { type UpdateModelHandlersCallback } from './useModelHandlers';
 
 export const useSyncExternalLayersState = (

@@ -3,19 +3,17 @@
  */
 
 import { type Dispatch, type SetStateAction, useCallback, type ReactElement } from 'react';
-import { useTranslation } from '../../i18n/I18n';
-import { type UpdateModelHandlersCallback, useModelHandlers } from './useModelHandlers';
-import { useSyncExternalLayersState } from './useSyncExternalLayersState';
 import { SelectPanel } from '@cognite/cogs-lab';
 import { Button, ChevronRightSmallIcon, IconWrapper, LayersIcon, Tooltip } from '@cognite/cogs.js';
-import { type ModelHandler } from './ModelHandler';
-import { useRenderTarget, useReveal } from '../../RevealCanvas/ViewerContext';
+import { useTranslation } from '../../i18n/I18n';
 import { WholeLayerVisibilitySelectItem } from './WholeLayerVisibilitySelectItem';
 import { ModelLayersList } from './ModelLayersList';
-import { type DefaultLayersConfiguration, type LayersUrlStateParam } from './types';
 import { TOOLBAR_HORIZONTAL_PANEL_OFFSET } from '../../constants';
-import { CommandsUpdater } from '../../../architecture/base/reactUpdaters/CommandsUpdater';
 import { LabelWithShortcut } from '../../Architecture/LabelWithShortcut';
+import { LayersButtonViewModel } from './LayersButton.viewmodel';
+import { useSignalValue } from '@cognite/signals/react';
+import { type LayersUrlStateParam, type DefaultLayersConfiguration } from './types';
+import { type ModelHandler } from './ModelHandler';
 
 export type LayersButtonProps = {
   layersState?: LayersUrlStateParam | undefined;
@@ -29,25 +27,14 @@ export const LayersButton = ({
   defaultLayerConfiguration
 }: LayersButtonProps): ReactElement => {
   const { t } = useTranslation();
-  const viewer = useReveal();
-  const renderTarget = useRenderTarget();
-
-  const [modelLayerHandlers, update] = useModelHandlers(
+  const viewModel = new LayersButtonViewModel(
     setExternalLayersState,
-    defaultLayerConfiguration
+    defaultLayerConfiguration,
+    externalLayersState
   );
 
-  useSyncExternalLayersState(
-    modelLayerHandlers,
-    externalLayersState,
-    setExternalLayersState,
-    update
-  );
-
-  const updateCallback = useCallback(() => {
-    update(viewer.models, viewer.get360ImageCollections());
-    CommandsUpdater.update(renderTarget);
-  }, [update]);
+  const modelLayerHandlers = useSignalValue(viewModel.modelLayerHandlers);
+  const updateCallback = useSignalValue(viewModel.updateCallback);
 
   return (
     <>
@@ -60,7 +47,7 @@ export const LayersButton = ({
           <Tooltip
             content={<LabelWithShortcut label={t({ key: 'LAYERS_FILTER_TOOLTIP' })} />}
             placement="right">
-            <Button icon=<LayersIcon /> type="ghost" />
+            <Button icon={<LayersIcon />} type="ghost" />
           </Tooltip>
         </SelectPanel.Trigger>
         <SelectPanel.Body>
@@ -94,13 +81,12 @@ const ModelLayerSelection = ({
 }: {
   label: string;
   modelLayerHandlers: ModelHandler[];
-  update: UpdateModelHandlersCallback;
+  update: () => void;
 }): ReactElement => {
   const isDisabled = modelLayerHandlers.length === 0;
 
-  const viewer = useReveal();
   const updateCallback = useCallback(() => {
-    update(viewer.models, viewer.get360ImageCollections());
+    update();
   }, [update]);
 
   return (
