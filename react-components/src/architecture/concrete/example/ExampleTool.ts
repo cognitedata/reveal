@@ -3,19 +3,13 @@
  */
 
 import { ExampleDomainObject } from './ExampleDomainObject';
-import { type BaseCommand } from '../../base/commands/BaseCommand';
 import { BaseEditTool } from '../../base/commands/BaseEditTool';
 import { Changes } from '../../base/domainObjectsHelpers/Changes';
-import { ResetAllExamplesCommand } from './commands/ResetAllExamplesCommand';
-import { DeleteAllExamplesCommand } from './commands/DeleteAllExamplesCommand';
-import { ShowAllExamplesCommand } from './commands/ShowAllExamplesCommand';
 import { clamp } from 'lodash';
 import { type HSL } from 'three';
 import { type TranslationInput } from '../../base/utilities/TranslateInput';
-import { ShowExamplesOnTopCommand } from './commands/ShowExamplesOnTopCommand';
 import { DomainObjectChange } from '../../base/domainObjectsHelpers/DomainObjectChange';
 import { type VisualDomainObject } from '../../base/domainObjects/VisualDomainObject';
-import { UndoCommand } from '../../base/concreteCommands/UndoCommand';
 import { type IconName } from '../../base/utilities/IconName';
 
 export class ExampleTool extends BaseEditTool {
@@ -116,16 +110,6 @@ export class ExampleTool extends BaseEditTool {
 
     this.addTransaction(domainObject.createTransaction(Changes.added));
     this.renderTarget.cursor = domainObject.getEditToolCursor(this.renderTarget);
-  }
-
-  public override getToolbar(): Array<BaseCommand | undefined> {
-    return [
-      new UndoCommand(),
-      new ResetAllExamplesCommand(),
-      new ShowAllExamplesCommand(),
-      new DeleteAllExamplesCommand(),
-      new ShowExamplesOnTopCommand()
-    ];
   }
 
   // ==================================================
