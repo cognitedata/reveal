@@ -12,6 +12,7 @@ import { type Vector3, type Ray } from 'three';
 import { FocusType } from '../domainObjectsHelpers/FocusType';
 import { Changes } from '../domainObjectsHelpers/Changes';
 import { getRenderTarget } from './getRoot';
+import { canCreateThreeView, createThreeView } from '../views/ThreeViewFactory';
 
 /**
  * Represents a visual domain object that can be rendered and manipulated in a three-dimensional space.
@@ -77,7 +78,9 @@ export abstract class VisualDomainObject extends DomainObject {
   /**
    * Factory methods to create its own three view for visualization in three.js
    */
-  protected abstract createThreeView(): ThreeView | undefined;
+  protected createThreeView(): ThreeView | undefined {
+    return createThreeView(this);
+  }
 
   /**
    * Determines whether the visual domain object can create a three view.
@@ -86,7 +89,7 @@ export abstract class VisualDomainObject extends DomainObject {
    * @returns A boolean value indicating whether the visual domain object can create a three view.
    */
   protected canCreateThreeView(): boolean {
-    return true;
+    return canCreateThreeView(this);
   }
 
   /**

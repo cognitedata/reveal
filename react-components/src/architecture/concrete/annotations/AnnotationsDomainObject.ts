@@ -4,9 +4,7 @@
 
 import { VisualDomainObject } from '../../base/domainObjects/VisualDomainObject';
 import { type RenderStyle } from '../../base/renderStyles/RenderStyle';
-import { type ThreeView } from '../../base/views/ThreeView';
 import { type TranslationInput } from '../../base/utilities/TranslateInput';
-import { AnnotationsView } from './AnnotationsView';
 import { AnnotationsRenderStyle } from './AnnotationsRenderStyle';
 import { FocusType } from '../../base/domainObjectsHelpers/FocusType';
 import { Changes } from '../../base/domainObjectsHelpers/Changes';
@@ -101,14 +99,6 @@ export class AnnotationsDomainObject extends VisualDomainObject {
 
   public override createRenderStyle(): RenderStyle | undefined {
     return new AnnotationsRenderStyle();
-  }
-
-  // ==================================================
-  // OVERRIDES of VisualDomainObject
-  // ==================================================
-
-  protected override createThreeView(): ThreeView | undefined {
-    return new AnnotationsView();
   }
 
   // ==================================================

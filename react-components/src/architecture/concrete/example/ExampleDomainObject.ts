@@ -4,8 +4,6 @@
 
 import { ExampleRenderStyle } from './ExampleRenderStyle';
 import { type RenderStyle } from '../../base/renderStyles/RenderStyle';
-import { type ThreeView } from '../../base/views/ThreeView';
-import { ExampleView } from './ExampleView';
 import { PanelInfo } from '../../base/domainObjectsHelpers/PanelInfo';
 import {
   type CreateDraggerProps,
@@ -98,14 +96,6 @@ export class ExampleDomainObject extends VisualDomainObject {
     if (what === undefined || what === Changes.geometry) {
       this.center.copy(domainObject.center);
     }
-  }
-
-  // ==================================================
-  // OVERRIDES of VisualDomainObject
-  // ==================================================
-
-  protected override createThreeView(): ThreeView | undefined {
-    return new ExampleView();
   }
 
   // ==================================================
