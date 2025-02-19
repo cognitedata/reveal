@@ -34,7 +34,7 @@ export const LayersButtonStrip = ({
 
   const viewer = useReveal();
   const updateCallback = useCallback(() => {
-    update(viewer.models, viewer.get360ImageCollections());
+    update();
   }, [viewer, update]);
 
   return (
