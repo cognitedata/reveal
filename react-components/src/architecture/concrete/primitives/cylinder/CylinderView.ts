@@ -45,6 +45,7 @@ import { Wireframe } from 'three/examples/jsm/lines/Wireframe.js';
 import { clear } from '../../../base/utilities/extensions/arrayExtensions';
 import { Quantity } from '../../../base/domainObjectsHelpers/Quantity';
 import { PrimitiveType } from '../../../base/utilities/primitives/PrimitiveType';
+import { getRoot } from '../../../base/domainObjects/getRoot';
 
 const RELATIVE_RESIZE_RADIUS = 0.2;
 const RELATIVE_MAX_RADIUS = 0.9;
@@ -293,11 +294,8 @@ export class CylinderView extends GroupThreeView<CylinderDomainObject> {
   }
 
   private addLabels(matrix: Matrix4): void {
-    const { domainObject, style } = this;
-    const { rootDomainObject } = domainObject;
-    if (rootDomainObject === undefined) {
-      return undefined;
-    }
+    const { style } = this;
+
     const spriteHeight = this.getTextHeight(style.relativeTextSize);
     clear(this._sprites);
     this.addChild(this.createRadiusLabel(matrix, spriteHeight, TOP_FACE));
@@ -316,13 +314,13 @@ export class CylinderView extends GroupThreeView<CylinderDomainObject> {
       return undefined;
     }
     const { domainObject } = this;
-    const { rootDomainObject } = domainObject;
-    if (rootDomainObject === undefined) {
-      return undefined;
-    }
     const radius = domainObject.cylinder.radius;
     if (radius === 0) {
       return undefined; // Not show when about 0
+    }
+    const rootDomainObject = getRoot(domainObject);
+    if (rootDomainObject === undefined) {
+      return undefined;
     }
     const text = rootDomainObject.unitSystem.toStringWithUnit(radius, Quantity.Length);
     const sprite = BoxView.createSprite(text, this.style, spriteHeight);
