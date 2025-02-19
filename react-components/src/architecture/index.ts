@@ -3,6 +3,7 @@
  */
 
 import { installThreeViews } from './installThreeViews';
+import { installToolbars } from './installToolbars';
 
 // New architecture: commands
 export type { CommandUpdateDelegate } from './base/commands/BaseCommand';
@@ -122,3 +123,4 @@ export type { AssetIdentifier } from './concrete/annotation360/types';
 export type { AnnotationStatus } from './concrete/annotation360/types';
 
 installThreeViews();
+installToolbars();
