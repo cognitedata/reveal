@@ -6,7 +6,7 @@ import { type Class } from '../../domainObjectsHelpers/Class';
 import { type BaseCommand } from '../BaseCommand';
 import { type BaseTool } from '../BaseTool';
 
-type Toolbar = Array<BaseCommand | undefined>;
+export type Toolbar = Array<BaseCommand | undefined>;
 
 /**
  * Determines if a toolbar can be created for the given tool.
@@ -36,10 +36,7 @@ export function getToolbar(tool: BaseTool): Toolbar | undefined {
  * @param toolType - The class of the tool for which the toolbar creator is being installed.
  * @param creator - The toolbar creator to be installed.
  */
-export function installToolbar(
-  toolType: Class<BaseTool>,
-  toolbar: Array<BaseCommand | undefined>
-): void {
+export function installToolbar(toolType: Class<BaseTool>, toolbar: Toolbar): void {
   _toolbar.set(toolType, toolbar);
 }
 

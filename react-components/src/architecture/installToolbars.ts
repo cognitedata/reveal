@@ -27,12 +27,14 @@ import { ShowMeasurementsOnTopCommand } from './concrete/measurements/commands/S
 import { UndoCommand } from './base/concreteCommands/UndoCommand';
 
 export function installToolbars(): void {
+  const separator = undefined;
+
   installToolbar(AnnotationsCreateTool, [
     new AnnotationsSelectTool(),
     new AnnotationsSetCreateTypeCommand(PrimitiveType.Box),
     new AnnotationsSetCreateTypeCommand(PrimitiveType.HorizontalCylinder),
     new AnnotationsSetCreateTypeCommand(PrimitiveType.VerticalCylinder),
-    undefined,
+    separator,
     new UndoCommand()
   ]);
 
@@ -42,7 +44,7 @@ export function installToolbars(): void {
     new AlignSelectedAnnotationCommand(true),
     new AlignSelectedAnnotationCommand(false),
     new AnnotationsCreateMockCommand(),
-    undefined,
+    separator,
     new UndoCommand()
   ]);
 
@@ -52,7 +54,7 @@ export function installToolbars(): void {
     new SetClipTypeCommand(PrimitiveType.PlaneZ),
     new SetClipTypeCommand(PrimitiveType.PlaneXY),
     new SetClipTypeCommand(PrimitiveType.Box),
-    undefined, // Separator
+    separator,
     new UndoCommand(),
     new ApplyClipCommand(),
     new NextOrPrevClippingCommand(false),
@@ -76,7 +78,7 @@ export function installToolbars(): void {
     new SetMeasurementTypeCommand(PrimitiveType.HorizontalArea),
     new SetMeasurementTypeCommand(PrimitiveType.VerticalArea),
     new SetMeasurementTypeCommand(PrimitiveType.Box),
-    undefined, // Separator
+    separator,
     new UndoCommand(),
     new ShowMeasurementsOnTopCommand()
   ]);
