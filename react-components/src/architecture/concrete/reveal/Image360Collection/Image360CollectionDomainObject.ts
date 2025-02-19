@@ -7,10 +7,8 @@ import { VisualDomainObject } from '../../../base/domainObjects/VisualDomainObje
 import { type RenderStyle } from '../../../base/renderStyles/RenderStyle';
 import { type IconName } from '../../../base/utilities/IconName';
 import { type TranslationInput } from '../../../base/utilities/TranslateInput';
-import { type ThreeView } from '../../../base/views/ThreeView';
 import { type Image360Model } from '../RevealTypes';
 import { Image360CollectionRenderStyle } from './Image360CollectionRenderStyle';
-import { Image360CollectionThreeView } from './Image360CollectionThreeView';
 
 export class Image360CollectionDomainObject extends VisualDomainObject {
   // ==================================================
@@ -59,13 +57,5 @@ export class Image360CollectionDomainObject extends VisualDomainObject {
   protected override removeCore(): void {
     super.removeCore();
     getRenderTarget(this)?.viewer?.remove360ImageSet(this._model);
-  }
-
-  // ==================================================
-  // OVERRIDES of VisualDomainObject
-  // ==================================================
-
-  protected override createThreeView(): ThreeView | undefined {
-    return new Image360CollectionThreeView();
   }
 }

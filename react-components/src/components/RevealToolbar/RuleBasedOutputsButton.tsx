@@ -18,11 +18,12 @@ import { useFetchRuleInstances } from '../RuleBasedOutputs/hooks/useFetchRuleIns
 import { use3dModels } from '../../hooks/use3dModels';
 import { type CadModelOptions } from '../Reveal3DResources/types';
 import { RuleBasedSelectionItem } from '../RuleBasedOutputs/components/RuleBasedSelectionItem';
-import { generateEmptyRuleForSelection, getRuleBasedById } from '../RuleBasedOutputs/utils';
 import { useReveal3DResourcesStylingLoading } from '../Reveal3DResources/Reveal3DResourcesInfoContext';
 import { offset } from '@floating-ui/dom';
 import { TOOLBAR_HORIZONTAL_PANEL_OFFSET } from '../constants';
 import { useAssetMappedNodesForRevisions } from '../../hooks/cad';
+import { generateEmptyRuleForSelection } from '../RuleBasedOutputs/core/generateEmptyRuleForSelection';
+import { getRuleBasedById } from '../RuleBasedOutputs/core/getRuleBasedById';
 
 type RuleBasedOutputsButtonProps = {
   onRuleSetStylingChanged?: (stylings: AllRuleBasedStylingGroups | undefined) => void;
