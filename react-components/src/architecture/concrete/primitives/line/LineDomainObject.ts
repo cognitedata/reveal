@@ -3,8 +3,6 @@
  */
 
 import { type RenderStyle } from '../../../base/renderStyles/RenderStyle';
-import { type ThreeView } from '../../../base/views/ThreeView';
-import { LineView } from './LineView';
 import { type Box3, type Vector3 } from 'three';
 import { PrimitiveType } from '../../../base/utilities/primitives/PrimitiveType';
 import { LineRenderStyle } from './LineRenderStyle';
@@ -169,14 +167,6 @@ export abstract class LineDomainObject extends VisualDomainObject {
         this.points.push(point.clone());
       }
     }
-  }
-
-  // ==================================================
-  // OVERRIDES of VisualDomainObject
-  // ==================================================
-
-  protected override createThreeView(): ThreeView | undefined {
-    return new LineView();
   }
 
   // ==================================================

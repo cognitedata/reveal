@@ -3,8 +3,6 @@
  */
 
 import { type RenderStyle } from '../../../base/renderStyles/RenderStyle';
-import { type ThreeView } from '../../../base/views/ThreeView';
-import { PlaneView } from './PlaneView';
 import { type Color, Plane, Vector3 } from 'three';
 import { Changes } from '../../../base/domainObjectsHelpers/Changes';
 import { PrimitiveType } from '../../../base/utilities/primitives/PrimitiveType';
@@ -31,6 +29,7 @@ import { type Transaction } from '../../../base/undo/Transaction';
 import { type IconName } from '../../../base/utilities/IconName';
 import { SolidPrimitiveRenderStyle } from '../common/SolidPrimitiveRenderStyle';
 import { type RevealRenderTarget } from '../../../base/renderTarget/RevealRenderTarget';
+import { getRoot } from '../../../base/domainObjects/getRoot';
 
 const ORIGIN = new Vector3(0, 0, 0);
 
@@ -147,10 +146,6 @@ export abstract class PlaneDomainObject extends VisualDomainObject {
     }
   }
 
-  protected override createThreeView(): ThreeView | undefined {
-    return new PlaneView();
-  }
-
   public override createTransaction(changed: symbol): Transaction {
     return new DomainObjectTransaction(this, changed);
   }
@@ -214,7 +209,7 @@ export abstract class PlaneDomainObject extends VisualDomainObject {
   }
 
   public makeFlippingConsistent(): void {
-    const root = this.rootDomainObject;
+    const root = getRoot(this);
     if (root === undefined) {
       return;
     }

@@ -51,7 +51,7 @@ export abstract class Transaction {
     if (domainObject === undefined) {
       return false;
     }
-    this.undoCore(domainObject, root.renderTarget);
+    this.undoCore(domainObject, renderTarget);
     return true;
   }
 }

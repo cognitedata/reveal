@@ -3,8 +3,6 @@
  */
 
 import { type RenderStyle } from '../../../base/renderStyles/RenderStyle';
-import { type ThreeView } from '../../../base/views/ThreeView';
-import { CylinderView } from './CylinderView';
 import { Changes } from '../../../base/domainObjectsHelpers/Changes';
 import { FocusType } from '../../../base/domainObjectsHelpers/FocusType';
 import { PrimitiveType } from '../../../base/utilities/primitives/PrimitiveType';
@@ -120,10 +118,6 @@ export abstract class CylinderDomainObject extends SolidDomainObject {
   // ==================================================
   // OVERRIDES of VisualDomainObject
   // ==================================================
-
-  protected override createThreeView(): ThreeView | undefined {
-    return new CylinderView();
-  }
 
   public override getEditToolCursor(
     renderTarget: RevealRenderTarget,

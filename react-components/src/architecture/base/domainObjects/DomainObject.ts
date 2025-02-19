@@ -16,7 +16,6 @@ import { ColorType } from '../domainObjectsHelpers/ColorType';
 import { Views } from '../domainObjectsHelpers/Views';
 import { type PanelInfo } from '../domainObjectsHelpers/PanelInfo';
 import { PopupStyle } from '../domainObjectsHelpers/PopupStyle';
-import { RootDomainObject } from './RootDomainObject';
 import { CommandsUpdater } from '../reactUpdaters/CommandsUpdater';
 import { DomainObjectPanelUpdater } from '../reactUpdaters/DomainObjectPanelUpdater';
 import {
@@ -31,6 +30,7 @@ import { type Transaction } from '../undo/Transaction';
 import { type IconName } from '../../base/utilities/IconName';
 import { ToggleMetricUnitsCommand } from '../concreteCommands/ToggleMetricUnitsCommand';
 import { ChangedDescription } from '../domainObjectsHelpers/ChangedDescription';
+import { getRenderTarget } from './getRoot';
 
 /**
  * Represents an abstract base class for domain objects.
@@ -351,14 +351,14 @@ export abstract class DomainObject {
         Changes.childDeleted
       )
     ) {
-      if (this.root instanceof RootDomainObject) {
+      const renderTarget = getRenderTarget(this);
+      if (renderTarget !== undefined) {
         // Update all the command buttons (in the toolbars).
         // This goes fast and will not slow the system down.
-        CommandsUpdater.update(this.root.renderTarget);
+        CommandsUpdater.update(renderTarget);
       }
     }
     if (this.hasPanelInfo) {
-      // Update the DomainObjectPanel if any
       DomainObjectPanelUpdater.notify(this, change);
     }
   }
@@ -531,7 +531,7 @@ export abstract class DomainObject {
     topLevel = true // When calling this from outside, this value should always be true
   ): boolean {
     if (renderTarget === undefined) {
-      renderTarget = this.rootDomainObject?.renderTarget;
+      renderTarget = getRenderTarget(this);
       if (renderTarget === undefined) {
         return false;
       }
@@ -640,10 +640,9 @@ export abstract class DomainObject {
     return this.parent === undefined ? this : this.parent.root;
   }
 
-  public get rootDomainObject(): RootDomainObject | undefined {
-    // Returns a RootDomainObject only if the root is a RootDomainObject, otherwise undefined
-    const root = this.root;
-    return root instanceof RootDomainObject ? root : undefined;
+  public get isRoot(): boolean {
+    // Returns true if it is RootDomainObject (To fix a cyclic dependency)
+    return false;
   }
 
   public get hasParent(): boolean {

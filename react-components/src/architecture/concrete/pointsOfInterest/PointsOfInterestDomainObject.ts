@@ -2,8 +2,6 @@
  * Copyright 2024 Cognite AS
  */
 import { VisualDomainObject } from '../../base/domainObjects/VisualDomainObject';
-import { type ThreeView } from '../../base/views/ThreeView';
-import { PointsOfInterestView } from './PointsOfInterestView';
 import { type TranslationInput } from '../../base/utilities/TranslateInput';
 import { Changes } from '../../base/domainObjectsHelpers/Changes';
 import { PointsOfInterestCache } from './PointsOfInterestCache';
@@ -18,6 +16,7 @@ import { type PointsOfInterestProvider } from './PointsOfInterestProvider';
 import { type DmsUniqueIdentifier } from '../../../data-providers';
 import { createInstanceStyleGroup } from '../../../components/Reveal3DResources/instanceStyleTranslation';
 import { DefaultNodeAppearance } from '@cognite/reveal';
+import { getRenderTarget, getRoot } from '../../base/domainObjects/getRoot';
 
 const SELECTED_ASSOCIATED_POI_INSTANCE_STYLING_SYMBOL = Symbol(
   'poi3d-selected-associated-instance-styling'
@@ -42,12 +41,6 @@ export class PointsOfInterestDomainObject<PoiIdType> extends VisualDomainObject 
 
   public override get typeName(): TranslationInput {
     return { untranslated: PointsOfInterestDomainObject.name };
-  }
-
-  protected override createThreeView():
-    | ThreeView<PointsOfInterestDomainObject<PoiIdType>>
-    | undefined {
-    return new PointsOfInterestView();
   }
 
   public override get canBeRemoved(): boolean {
@@ -89,11 +82,14 @@ export class PointsOfInterestDomainObject<PoiIdType> extends VisualDomainObject 
   }
 
   public async save(): Promise<void> {
-    const fdmSdk = this.rootDomainObject?.fdmSdk;
-    if (fdmSdk === undefined) {
-      return fdmSdk;
+    const root = getRoot(this);
+    if (root === undefined) {
+      return undefined;
     }
-
+    const fdmSdk = root.fdmSdk;
+    if (fdmSdk === undefined) {
+      return undefined;
+    }
     if (
       this._selectedPointsOfInterest !== undefined &&
       (this._selectedPointsOfInterest.status === PointsOfInterestStatus.PendingCreation ||
@@ -139,7 +135,7 @@ export class PointsOfInterestDomainObject<PoiIdType> extends VisualDomainObject 
   }
 
   private setAssociatedInstanceStyle(poi: PointOfInterest<PoiIdType> | undefined): void {
-    const instanceStylingController = this.rootDomainObject?.renderTarget.instanceStylingController;
+    const instanceStylingController = getRenderTarget(this)?.instanceStylingController;
 
     if (poi?.properties.instanceRef === undefined) {
       instanceStylingController?.setStylingGroup(

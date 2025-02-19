@@ -6,10 +6,10 @@ import {
   type FdmCadConnection,
   type FdmConnectionWithNode
 } from '../../../src/components/CacheProvider/types';
-import { DmsUniqueIdentifier } from '../../../src/data-providers';
+import { type DmsUniqueIdentifier } from '../../../src/data-providers';
 
 const fdmNodeCacheMock = new Mock<FdmNodeCache>()
-  .setup((instance) => instance.getAllMappingExternalIds)
+  .setup((instance) => instance.getAllMappingExternalIds.bind(instance))
   .returns(
     async (
       modelRevisionIds: Array<{ modelId: number; revisionId: number }>,
@@ -40,7 +40,7 @@ const fdmNodeCacheMock = new Mock<FdmNodeCache>()
       );
     }
   )
-  .setup((instance) => instance.getClosestParentDataPromises)
+  .setup((instance) => instance.getClosestParentDataPromises.bind(instance))
   .returns((modelId: number, revisionId: number, treeIndex: number) => {
     return {
       modelId,
@@ -51,7 +51,7 @@ const fdmNodeCacheMock = new Mock<FdmNodeCache>()
       viewsPromise: Promise.resolve([])
     };
   })
-  .setup((instance) => instance.getMappingsForFdmInstances)
+  .setup((instance) => instance.getMappingsForFdmInstances.bind(instance))
   .returns(
     async (fdmAssetExternalIds: DmsUniqueIdentifier[], modelRevisionIds: ModelRevisionId[]) => {
       return modelRevisionIds.map((model) => ({

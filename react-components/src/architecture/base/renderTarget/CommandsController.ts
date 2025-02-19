@@ -7,13 +7,14 @@ import { PointerEvents, PointerEventsTarget, getWheelEventDelta } from '@cognite
 import { type BaseTool } from '../commands/BaseTool';
 import { type BaseCommand } from '../commands/BaseCommand';
 import { type Class, isInstanceOf } from '../domainObjectsHelpers/Class';
+import { type Signal, signal } from '@cognite/signals';
 
 export class CommandsController extends PointerEvents {
   // ==================================================
   // INSTANCE FIELDS
   // ==================================================
 
-  private _activeTool: BaseTool | undefined;
+  private readonly _activeTool = signal<BaseTool | undefined>();
   private _defaultTool: BaseTool | undefined;
   private _previousTool: BaseTool | undefined;
   private readonly _domElement: HTMLElement;
@@ -35,6 +36,10 @@ export class CommandsController extends PointerEvents {
   // ==================================================
 
   public get activeTool(): BaseTool | undefined {
+    return this._activeTool();
+  }
+
+  public get activeToolSignal(): Signal<BaseTool | undefined> {
     return this._activeTool;
   }
 
@@ -170,17 +175,17 @@ export class CommandsController extends PointerEvents {
     if (tool === undefined) {
       return false;
     }
-    const prevActiveTool = this._activeTool;
+    const prevActiveTool = this.activeTool;
     if (prevActiveTool === tool) {
       return false;
     }
     if (prevActiveTool !== undefined) {
-      this._activeTool = undefined;
+      this._activeTool(undefined);
       prevActiveTool.onDeactivate();
       this._previousTool = prevActiveTool;
     }
-    this._activeTool = tool;
-    this._activeTool.onActivate();
+    this._activeTool(tool);
+    this._activeTool()?.onActivate();
     return true;
   }
 

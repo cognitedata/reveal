@@ -8,7 +8,7 @@ import { type TranslationInput } from '../../base/utilities/TranslateInput';
 import { type DomainObject } from '../../base/domainObjects/DomainObject';
 import { type DomainObjectChange } from '../../base/domainObjectsHelpers/DomainObjectChange';
 import { Changes } from '../../base/domainObjectsHelpers/Changes';
-import { AnnotationsDomainObject } from './AnnotationsDomainObject';
+import { type AnnotationsDomainObject } from './AnnotationsDomainObject';
 import { CylinderDomainObject } from '../primitives/cylinder/CylinderDomainObject';
 import { SolidDomainObject } from '../primitives/common/SolidDomainObject';
 import { SolidPrimitiveRenderStyle } from '../primitives/common/SolidPrimitiveRenderStyle';
@@ -98,7 +98,7 @@ export class CylinderGizmoDomainObject extends CylinderDomainObject {
   }
 
   private updateSelectedAnnotationFromThis(inDragging: boolean): boolean {
-    const annotationDomainObject = this.getAncestorByType(AnnotationsDomainObject);
+    const annotationDomainObject = this.parent as AnnotationsDomainObject;
     if (annotationDomainObject === undefined) {
       return false;
     }
