@@ -1,9 +1,17 @@
-import { Asset, AssetMapping3D, Datapoints } from "@cognite/sdk/";
-import { AssetIdsAndTimeseries } from "../../../data-providers/types";
-import { AssetStylingGroupAndStyleIndex, ColorRuleOutput, Expression, TriggerTypeData } from "../types";
-import { generateTimeseriesAndDatapointsFromTheAsset } from "./generateTimeseriesAndDatapointsFromTheAsset";
-import { traverseExpression } from "./traverseExpression";
-import { applyAssetMappingsNodeStyles } from "./applyAssetMappingsNodeStyles";
+/*!
+ * Copyright 2025 Cognite AS
+ */
+import { type Asset, type AssetMapping3D, type Datapoints } from '@cognite/sdk/';
+import { type AssetIdsAndTimeseries } from '../../../data-providers/types';
+import {
+  type AssetStylingGroupAndStyleIndex,
+  type ColorRuleOutput,
+  type Expression,
+  type TriggerTypeData
+} from '../types';
+import { generateTimeseriesAndDatapointsFromTheAsset } from './generateTimeseriesAndDatapointsFromTheAsset';
+import { traverseExpression } from './traverseExpression';
+import { applyAssetMappingsNodeStyles } from './applyAssetMappingsNodeStyles';
 
 export const analyzeAssetMappingsAgainstExpression = async ({
   contextualizedAssetNodes,

@@ -1,4 +1,7 @@
-import { RuleAndEnabled } from "../types";
+/*!
+ * Copyright 2025 Cognite AS
+ */
+import { type RuleAndEnabled } from '../types';
 
 export const getRuleBasedById = (
   id: string | undefined,

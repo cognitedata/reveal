@@ -1,7 +1,16 @@
-import { isDefined } from "../../../utilities/isDefined";
-import { ColorRuleOutput, Expression, FdmInstanceNodeWithConnectionAndProperties, FdmStylingGroupAndStyleIndex, TriggerTypeData } from "../types";
-import { applyFdmMappingsNodeStyles } from "./applyFdmMappingsNodeStyles";
-import { traverseExpression } from "./traverseExpression";
+/*!
+ * Copyright 2025 Cognite AS
+ */
+import { isDefined } from '../../../utilities/isDefined';
+import {
+  type ColorRuleOutput,
+  type Expression,
+  type FdmInstanceNodeWithConnectionAndProperties,
+  type FdmStylingGroupAndStyleIndex,
+  type TriggerTypeData
+} from '../types';
+import { applyFdmMappingsNodeStyles } from './applyFdmMappingsNodeStyles';
+import { traverseExpression } from './traverseExpression';
 
 export const analyzeFdmMappingsAgainstExpression = async ({
   fdmMappings,

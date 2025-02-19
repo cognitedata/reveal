@@ -1,9 +1,17 @@
-import { NumericRange, TreeIndexNodeCollection } from "@cognite/reveal";
-import { ColorRuleOutput, FdmInstanceNodeWithConnectionAndProperties, FdmStylingGroupAndStyleIndex, RuleAndStyleIndex } from "../types";
-import { createRuleStyling } from "./createRuleStyling";
-import { Color } from "three";
-import { DmsUniqueIdentifier } from "../../../data-providers";
-import { FdmAssetStylingGroup } from "../../Reveal3DResources";
+/*!
+ * Copyright 2025 Cognite AS
+ */
+import { NumericRange, TreeIndexNodeCollection } from '@cognite/reveal';
+import {
+  type ColorRuleOutput,
+  type FdmInstanceNodeWithConnectionAndProperties,
+  type FdmStylingGroupAndStyleIndex,
+  type RuleAndStyleIndex
+} from '../types';
+import { createRuleStyling } from './createRuleStyling';
+import { Color } from 'three';
+import { type DmsUniqueIdentifier } from '../../../data-providers';
+import { type FdmAssetStylingGroup } from '../../Reveal3DResources';
 
 export const applyFdmMappingsNodeStyles = (
   treeNodes: FdmInstanceNodeWithConnectionAndProperties[],

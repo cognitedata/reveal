@@ -1,4 +1,7 @@
-import { ColorRuleOutput, RuleOutput } from "../types";
+/*!
+ * Copyright 2025 Cognite AS
+ */
+import { type ColorRuleOutput, type RuleOutput } from '../types';
 
 export const getRuleOutputFromTypeSelected = (
   outputs: RuleOutput[],

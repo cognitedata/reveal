@@ -1,12 +1,22 @@
-import { Asset, AssetMapping3D, Datapoints } from "@cognite/sdk/";
-import { AllMappingStylingGroupAndStyleIndex, ColorRuleOutput, FdmInstanceNodeWithConnectionAndProperties, Rule, RuleOutput, RuleOutputSet } from "../types";
-import { AssetIdsAndTimeseries } from "../../../data-providers/types";
-import { isDefined } from "../../../utilities/isDefined";
-import { analyzeAssetMappingsAgainstExpression } from "./analyzeAssetMappingsAgainstExpression";
-import { analyzeFdmMappingsAgainstExpression } from "./analyzeFdmMappingsAgainstExpression";
-import { getRuleOutputFromTypeSelected } from "./getRuleOutputFromTypeSelected";
-import { forEachExpression } from "./forEachExpression";
-import { convertExpressionStringMetadataKeyToLowerCase } from "./convertExpressionStringMetadataKeyToLowerCase";
+/*!
+ * Copyright 2025 Cognite AS
+ */
+import { type Asset, type AssetMapping3D, type Datapoints } from '@cognite/sdk/';
+import {
+  type AllMappingStylingGroupAndStyleIndex,
+  type ColorRuleOutput,
+  type FdmInstanceNodeWithConnectionAndProperties,
+  type Rule,
+  type RuleOutput,
+  type RuleOutputSet
+} from '../types';
+import { type AssetIdsAndTimeseries } from '../../../data-providers/types';
+import { isDefined } from '../../../utilities/isDefined';
+import { analyzeAssetMappingsAgainstExpression } from './analyzeAssetMappingsAgainstExpression';
+import { analyzeFdmMappingsAgainstExpression } from './analyzeFdmMappingsAgainstExpression';
+import { getRuleOutputFromTypeSelected } from './getRuleOutputFromTypeSelected';
+import { forEachExpression } from './forEachExpression';
+import { convertExpressionStringMetadataKeyToLowerCase } from './convertExpressionStringMetadataKeyToLowerCase';
 
 export const generateRuleBasedOutputs = async ({
   contextualizedAssetNodes,

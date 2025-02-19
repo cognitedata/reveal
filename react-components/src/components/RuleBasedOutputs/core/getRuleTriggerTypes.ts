@@ -1,5 +1,8 @@
-import { RuleWithOutputs, TriggerType } from "../types";
-import { getExpressionTriggerTypes } from "./getExpressionTriggerTypes";
+/*!
+ * Copyright 2025 Cognite AS
+ */
+import { type RuleWithOutputs, type TriggerType } from '../types';
+import { getExpressionTriggerTypes } from './getExpressionTriggerTypes';
 
 export function getRuleTriggerTypes(ruleWithOutput: RuleWithOutputs): TriggerType[] | undefined {
   if (ruleWithOutput.rule.expression === undefined) return;

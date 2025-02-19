@@ -1,7 +1,10 @@
-import { Asset, Datapoints } from "@cognite/sdk/";
-import { AssetIdsAndTimeseries } from "../../../data-providers/types";
-import { TimeseriesAndDatapoints } from "../types";
-import { isDefined } from "../../../utilities/isDefined";
+/*!
+ * Copyright 2025 Cognite AS
+ */
+import { type Asset, type Datapoints } from '@cognite/sdk/';
+import { type AssetIdsAndTimeseries } from '../../../data-providers/types';
+import { type TimeseriesAndDatapoints } from '../types';
+import { isDefined } from '../../../utilities/isDefined';
 
 export const generateTimeseriesAndDatapointsFromTheAsset = ({
   contextualizedAssetNode,

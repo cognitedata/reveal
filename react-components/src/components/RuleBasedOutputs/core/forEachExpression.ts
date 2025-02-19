@@ -1,5 +1,8 @@
-import { assertNever } from "../../../utilities/assertNever";
-import { Expression } from "../types";
+/*!
+ * Copyright 2025 Cognite AS
+ */
+import { assertNever } from '../../../utilities/assertNever';
+import { type Expression } from '../types';
 
 export function forEachExpression(
   expression: Expression,

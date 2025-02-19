@@ -2,7 +2,7 @@
  * Copyright 2024 Cognite AS
  */
 
-import { FdmRuleTrigger, MetadataRuleTrigger, TimeseriesRuleTrigger } from "./types";
+import { type FdmRuleTrigger, type MetadataRuleTrigger, type TimeseriesRuleTrigger } from './types';
 
 export const isMetadataTrigger = (
   trigger: MetadataRuleTrigger | TimeseriesRuleTrigger | FdmRuleTrigger

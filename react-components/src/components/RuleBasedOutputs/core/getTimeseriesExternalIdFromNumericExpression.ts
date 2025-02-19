@@ -1,5 +1,8 @@
-import { isFdmTrigger, isMetadataTrigger } from "../typeGuards";
-import { NumericExpression } from "../types";
+/*!
+ * Copyright 2025 Cognite AS
+ */
+import { isFdmTrigger, isMetadataTrigger } from '../typeGuards';
+import { type NumericExpression } from '../types';
 
 export const getTimeseriesExternalIdFromNumericExpression = (
   expression: NumericExpression

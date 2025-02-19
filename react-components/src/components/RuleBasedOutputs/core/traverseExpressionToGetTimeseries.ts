@@ -1,7 +1,10 @@
-import { uniq } from "lodash";
-import { isDefined } from "../../../utilities/isDefined";
-import { Expression } from "../types";
-import { getTimeseriesExternalIdFromNumericExpression } from "./getTimeseriesExternalIdFromNumericExpression";
+/*!
+ * Copyright 2025 Cognite AS
+ */
+import { uniq } from 'lodash';
+import { isDefined } from '../../../utilities/isDefined';
+import { type Expression } from '../types';
+import { getTimeseriesExternalIdFromNumericExpression } from './getTimeseriesExternalIdFromNumericExpression';
 
 export const traverseExpressionToGetTimeseries = (
   expressions: Expression[] | undefined

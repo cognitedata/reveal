@@ -1,8 +1,11 @@
-import { Expression, TriggerTypeData } from "../types";
-import { checkBooleanExpressionStatement } from "./checkBooleanExpressionStatement";
-import { checkDatetimeExpressionStatement } from "./checkDatetimeExpressionStatement";
-import { checkNumericExpressionStatement } from "./checkNumericExpressionStatement";
-import { checkStringExpressionStatement } from "./checkStringExpressionStatement";
+/*!
+ * Copyright 2025 Cognite AS
+ */
+import { type Expression, type TriggerTypeData } from '../types';
+import { checkBooleanExpressionStatement } from './checkBooleanExpressionStatement';
+import { checkDatetimeExpressionStatement } from './checkDatetimeExpressionStatement';
+import { checkNumericExpressionStatement } from './checkNumericExpressionStatement';
+import { checkStringExpressionStatement } from './checkStringExpressionStatement';
 
 export const traverseExpression = (
   triggerTypeData: TriggerTypeData[],

@@ -1,5 +1,8 @@
-import { FdmPropertyType } from "../../Reveal3DResources/types";
-import { FdmRuleTrigger } from "../types";
+/*!
+ * Copyright 2025 Cognite AS
+ */
+import { type FdmPropertyType } from '../../Reveal3DResources/types';
+import { type FdmRuleTrigger } from '../types';
 
 export function getFdmPropertyTrigger<T>(
   fdmPropertyTrigger: FdmPropertyType<unknown> | undefined,

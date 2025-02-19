@@ -1,5 +1,13 @@
-import { TriggerTypeData, MetadataRuleTrigger, TimeseriesRuleTrigger, FdmRuleTrigger } from "../types";
-import { getTriggerTimeseriesNumericData } from "./getTriggerTimeseriesNumericData";
+/*!
+ * Copyright 2025 Cognite AS
+ */
+import {
+  type TriggerTypeData,
+  type MetadataRuleTrigger,
+  type TimeseriesRuleTrigger,
+  type FdmRuleTrigger
+} from '../types';
+import { getTriggerTimeseriesNumericData } from './getTriggerTimeseriesNumericData';
 
 export const getTriggerNumericData = (
   triggerTypeData: TriggerTypeData[],

@@ -1,5 +1,8 @@
-import { assertNever } from "../../../utilities/assertNever";
-import { Expression, TriggerType } from "../types";
+/*!
+ * Copyright 2025 Cognite AS
+ */
+import { assertNever } from '../../../utilities/assertNever';
+import { type Expression, type TriggerType } from '../types';
 
 export function getExpressionTriggerTypes(expression: Expression): TriggerType[] {
   if (expression.type === 'and' || expression.type === 'or') {

@@ -1,4 +1,7 @@
-import { TriggerTypeData, TimeseriesRuleTrigger } from "../types";
+/*!
+ * Copyright 2025 Cognite AS
+ */
+import { type TriggerTypeData, type TimeseriesRuleTrigger } from '../types';
 
 export const getTriggerTimeseriesNumericData = (
   triggerTypeData: TriggerTypeData,
