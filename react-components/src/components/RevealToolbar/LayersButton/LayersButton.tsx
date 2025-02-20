@@ -8,7 +8,7 @@ import { Button, LayersIcon, Tooltip } from '@cognite/cogs.js';
 import { useTranslation } from '../../i18n/I18n';
 import { TOOLBAR_HORIZONTAL_PANEL_OFFSET } from '../../constants';
 import { LabelWithShortcut } from '../../Architecture/LabelWithShortcut';
-import { useLayersButtonViewModel } from './useLayersButtonViewModel';
+import { useLayersButtonViewModel } from './LayersButton.viewmodel';
 import { useSignalValue } from '@cognite/signals/react';
 import { type LayersUrlStateParam, type DefaultLayersConfiguration } from './types';
 

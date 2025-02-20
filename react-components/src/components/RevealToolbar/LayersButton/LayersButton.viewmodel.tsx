@@ -1,21 +1,24 @@
 /*!
  * Copyright 2025 Cognite AS
  */
-import { type ReactElement, type Dispatch, type SetStateAction, useContext } from 'react';
+import { type ReactElement, useContext, type Dispatch, type SetStateAction } from 'react';
 import { LayersButtonContext } from './LayersButton.context';
-import { type ModelHandler } from './ModelHandler';
-import { type DefaultLayersConfiguration, type LayersUrlStateParam } from './types';
+import {
+  type ModelLayerHandlers,
+  type DefaultLayersConfiguration,
+  type LayersUrlStateParam
+} from './types';
 import { type Signal } from '@cognite/signals';
+import { type ModelHandler } from './ModelHandler';
 
-export class LayersButtonViewModel {
-  public modelLayerHandlers: Signal<{
-    cadHandlers: ModelHandler[];
-    pointCloudHandlers: ModelHandler[];
-    image360Handlers: ModelHandler[];
-  }>;
-
-  public updateCallback: Signal<() => void>;
-  public ModelLayerSelection: ({
+export function useLayersButtonViewModel(
+  setExternalLayersState: Dispatch<SetStateAction<LayersUrlStateParam | undefined>> | undefined,
+  defaultLayerConfiguration: DefaultLayersConfiguration | undefined,
+  externalLayersState: LayersUrlStateParam | undefined
+): {
+  modelLayerHandlers: Signal<ModelLayerHandlers>;
+  updateCallback: Signal<() => void>;
+  ModelLayerSelection: ({
     label,
     modelLayerHandlers,
     update
@@ -24,28 +27,25 @@ export class LayersButtonViewModel {
     modelLayerHandlers: ModelHandler[];
     update: () => void;
   }) => ReactElement;
+} {
+  const { useModelHandlers, useSyncExternalLayersState, ModelLayerSelection } =
+    useContext(LayersButtonContext);
 
-  constructor(
-    setExternalLayersState: Dispatch<SetStateAction<LayersUrlStateParam | undefined>> | undefined,
-    defaultLayerConfiguration: DefaultLayersConfiguration | undefined,
-    externalLayersState: LayersUrlStateParam | undefined
-  ) {
-    const { useModelHandlers, useSyncExternalLayersState, ModelLayerSelection } =
-      useContext(LayersButtonContext);
+  const [modelLayerHandlers, update] = useModelHandlers(
+    setExternalLayersState,
+    defaultLayerConfiguration
+  );
 
-    const [modelLayerHandlers, update] = useModelHandlers(
-      setExternalLayersState,
-      defaultLayerConfiguration
-    );
+  useSyncExternalLayersState(
+    modelLayerHandlers(),
+    externalLayersState,
+    setExternalLayersState,
+    update()
+  );
 
-    useSyncExternalLayersState(
-      modelLayerHandlers(),
-      externalLayersState,
-      setExternalLayersState,
-      update()
-    );
-    this.modelLayerHandlers = modelLayerHandlers;
-    this.updateCallback = update;
-    this.ModelLayerSelection = ModelLayerSelection;
-  }
+  return {
+    modelLayerHandlers,
+    updateCallback: update,
+    ModelLayerSelection
+  };
 }
