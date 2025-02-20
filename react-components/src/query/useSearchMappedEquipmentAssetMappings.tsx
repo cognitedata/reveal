@@ -150,11 +150,14 @@ export const useSearchMappedEquipmentAssetMappingsHybrid = (
     [models]
   );
 
+  const viewKeys = useMemo(() => viewsToSearch.map(createFdmKey), [viewsToSearch]);
+
   return useQuery({
     queryKey: queryKeys.searchedMappedCoreAssetsForHybridMappings(
       query,
       limit,
       assetIdentifiersKeys,
+      viewKeys,
       modelKeys
     ),
     queryFn: async () => {

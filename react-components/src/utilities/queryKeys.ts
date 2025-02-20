@@ -47,6 +47,7 @@ export const queryKeys = {
     query: string,
     limit: number,
     assetIdentifiersKeys: string[],
+    viewKeys: string[],
     models: string[]
   ) =>
     [
@@ -54,6 +55,7 @@ export const queryKeys = {
       query,
       limit,
       assetIdentifiersKeys,
+      viewKeys,
       models
     ] as const,
   allMappedCoreAssetsForHybridMappings: (
