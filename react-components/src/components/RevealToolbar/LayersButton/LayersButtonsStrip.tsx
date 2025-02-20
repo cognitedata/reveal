@@ -7,8 +7,8 @@ import { ModelLayersButton } from './ModelLayersButton';
 
 import { useCallback, type ReactElement } from 'react';
 import { useTranslation } from '../../i18n/I18n';
-import { useModelHandlers } from './useModelHandlers';
-import { useSyncExternalLayersState } from './useSyncExternalLayersState';
+import { useModelHandlers } from './hooks/useModelHandlers';
+import { useSyncExternalLayersState } from './hooks/useSyncExternalLayersState';
 import { type LayersButtonProps } from './LayersButton';
 import { useReveal } from '../../RevealCanvas/ViewerContext';
 import { useSignalValue } from '@cognite/signals/react';

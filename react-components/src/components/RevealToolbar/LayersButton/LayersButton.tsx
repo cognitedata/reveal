@@ -2,7 +2,7 @@
  * Copyright 2024 Cognite AS
  */
 
-import { type Dispatch, type SetStateAction, useCallback, type ReactElement } from 'react';
+import { type Dispatch, type SetStateAction, useCallback, useMemo, type ReactElement } from 'react';
 import { SelectPanel } from '@cognite/cogs-lab';
 import { Button, ChevronRightSmallIcon, IconWrapper, LayersIcon, Tooltip } from '@cognite/cogs.js';
 import { useTranslation } from '../../i18n/I18n';
@@ -27,10 +27,14 @@ export const LayersButton = ({
   defaultLayerConfiguration
 }: LayersButtonProps): ReactElement => {
   const { t } = useTranslation();
-  const viewModel = new LayersButtonViewModel(
-    setExternalLayersState,
-    defaultLayerConfiguration,
-    externalLayersState
+  const viewModel = useMemo(
+    () =>
+      new LayersButtonViewModel(
+        setExternalLayersState,
+        defaultLayerConfiguration,
+        externalLayersState
+      ),
+    [setExternalLayersState, defaultLayerConfiguration, externalLayersState]
   );
 
   const modelLayerHandlers = useSignalValue(viewModel.modelLayerHandlers);

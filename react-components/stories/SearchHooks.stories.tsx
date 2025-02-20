@@ -53,22 +53,22 @@ type Story = StoryObj<typeof meta>;
 export const Main: Story = {
   args: {
     resources: [
+      // {
+      //   modelId: 5653798104332258,
+      //   revisionId: 5045518244111296,
+      //   styling: {
+      //     default: {
+      //       color: new Color('#efefef')
+      //     },
+      //     mapped: {
+      //       color: new Color('#c5cbff')
+      //     }
+      //   },
+      //   siteId: 'celanese1'
+      // },
       {
-        modelId: 3544114490298106,
-        revisionId: 6405404576933316,
-        styling: {
-          default: {
-            color: new Color('#efefef')
-          },
-          mapped: {
-            color: new Color('#c5cbff')
-          }
-        },
-        siteId: 'celanese1'
-      },
-      {
-        modelId: 7646043527629245,
-        revisionId: 6059566106376463
+        modelId: 5653798104332258,
+        revisionId: 5045518244111296
       }
     ]
   },
