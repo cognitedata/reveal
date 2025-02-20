@@ -82,6 +82,8 @@ export { isPointVisibleByPlanes } from './src/three/isPointVisibleByPlanes';
 
 export { CDF_TO_VIEWER_TRANSFORMATION } from './src/constants';
 
+export { createUint8View } from './src/createUint8View';
+
 export * from './src/workers/workerize-transferable';
 
 export * from './src/fdm';

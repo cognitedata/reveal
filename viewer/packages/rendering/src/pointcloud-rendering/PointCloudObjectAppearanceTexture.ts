@@ -14,7 +14,7 @@ import {
 } from '@reveal/pointcloud-styling';
 import { PointCloudObjectIdMaps } from './PointCloudObjectIdMaps';
 import { DataSourceType } from '@reveal/data-providers';
-import { DMInstanceKey, dmInstanceRefToKey } from '@reveal/utilities/src/fdm/toKey';
+import { DMInstanceKey, dmInstanceRefToKey, createUint8View } from '@reveal/utilities';
 
 export class PointCloudObjectAppearanceTexture {
   private readonly _objectStyleTexture: THREE.DataTexture;
@@ -48,7 +48,7 @@ export class PointCloudObjectAppearanceTexture {
   }
 
   private setObjectStyle(objectId: number, appearance: CompletePointCloudAppearance): void {
-    const data = this._objectStyleTexture.image.data;
+    const data = createUint8View(this._objectStyleTexture.image.data);
 
     const styleData = this.appearanceToRgba(appearance);
     data.set(styleData, 4 * objectId);
@@ -84,7 +84,7 @@ export class PointCloudObjectAppearanceTexture {
     const styleData = this.appearanceToRgba(this._defaultAppearance);
 
     for (let i = 0; i < this._width * this._height; i++) {
-      this._objectStyleTexture.image.data.set(styleData, 4 * i);
+      createUint8View(this._objectStyleTexture.image.data).set(styleData, 4 * i);
     }
   }
 
