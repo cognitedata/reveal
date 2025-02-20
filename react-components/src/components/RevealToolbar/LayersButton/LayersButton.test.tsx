@@ -1,114 +1,83 @@
 /*!
  * Copyright 2025 Cognite AS
  */
-import { describe, expect, test, vi, beforeEach } from 'vitest';
-import { render } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
+import { describe, expect, it, vi } from 'vitest';
+import type { PropsWithChildren, ReactElement } from 'react';
 import { LayersButton } from './LayersButton';
-import { LayersButtonViewModel } from './LayersButton.viewmodel';
-import { useSignalValue } from '@cognite/signals/react';
-import { type LayersUrlStateParam, type DefaultLayersConfiguration } from './types';
-import { useTranslation } from '../../i18n/I18n';
+import type { LayersButtonProps } from './LayersButton';
+import { LayersButtonContext, type LayersButtonDependencies } from './LayersButton.context';
 
-vi.mock('@cognite/signals/react', () => ({
-  useSignalValue: vi.fn()
-}));
-
-vi.mock('./LayersButton.viewmodel', () => ({
-  LayersButtonViewModel: vi.fn()
-}));
-
-describe('LayersButton', () => {
-  const mockSetLayersState = vi.fn();
-  const mockDefaultLayerConfiguration: DefaultLayersConfiguration = {
-    cad: true,
-    pointcloud: true,
-    image360: true
-  };
-  const mockLayersState: LayersUrlStateParam = {
-    cadLayers: [{ applied: true, revisionId: 1, index: 0 }],
-    pointCloudLayers: [{ applied: true, revisionId: 2, index: 0 }],
-    image360Layers: [{ applied: true, siteId: 'site1', index: 0 }]
+describe(LayersButton.name, () => {
+  const defaultProps: LayersButtonProps = {
+    layersState: {
+      cadLayers: [{ revisionId: 456, applied: true, index: 0 }],
+      pointCloudLayers: [{ revisionId: 123, applied: true, index: 0 }],
+      image360Layers: [{ siteId: 'site-id', applied: true }]
+    },
+    setLayersState: vi.fn(),
+    defaultLayerConfiguration: undefined
   };
 
-  const mockModelLayerHandlers = {
-    cadHandlers: [{ visible: vi.fn().mockReturnValue(true), setVisibility: vi.fn() }],
-    pointCloudHandlers: [{ visible: vi.fn().mockReturnValue(true), setVisibility: vi.fn() }],
-    image360Handlers: [{ visible: vi.fn().mockReturnValue(true), setVisibility: vi.fn() }]
+  const defaultDependencies: LayersButtonDependencies = {
+    useModelHandlers: vi.fn(() => [
+      vi.fn(() => ({
+        cadHandlers: [],
+        pointCloudHandlers: [],
+        image360Handlers: []
+      })) as any,
+      vi.fn() as any
+    ]),
+    useSyncExternalLayersState: vi.fn(),
+    ModelLayerSelection: vi.fn(({ label }) => <div>{label}</div>)
   };
 
-  const mockUpdateCallback = vi.fn();
-
-  beforeEach(() => {
-    vi.resetAllMocks();
-    (useSignalValue as vi.Mock).mockImplementation((signal) => signal?.value);
-    (LayersButtonViewModel as vi.Mock).mockImplementation(() => ({
-      modelLayerHandlers: { value: mockModelLayerHandlers },
-      updateCallback: { value: mockUpdateCallback }
-    }));
-    (useTranslation as vi.Mock).mockImplementation(() => ({
-      t: (key: string) => key
-    }));
-  });
-
-  test('renders LayersButton component and verifies ModelLayersList is called three times', () => {
-    render(
-      <LayersButton
-        layersState={mockLayersState}
-        setLayersState={mockSetLayersState}
-        defaultLayerConfiguration={mockDefaultLayerConfiguration}
-      />
+  it('renders without crashing', () => {
+    const wrapper = ({ children }: PropsWithChildren): ReactElement => (
+      <LayersButtonContext.Provider value={defaultDependencies}>
+        {children}
+      </LayersButtonContext.Provider>
     );
-
-    const button = screen.getByText('CAD models');
-    console.log(button);
-    // fireEvent.click(button[2]);
-
-    // expect(ModelLayersList).toHaveBeenCalledTimes(3);
-    // expect(getAllByText('CAD models')).toBeInTheDocument();
+    render(<LayersButton {...defaultProps} />, { wrapper });
+    screen.debug();
   });
 
-  // test('toggles visibility of CAD models', () => {
-  //   render(
-  //     <LayersButton
-  //       layersState={mockLayersState}
-  //       setLayersState={mockSetLayersState}
-  //       defaultLayerConfiguration={mockDefaultLayerConfiguration}
-  //     />
-  //   );
+  it('should update viewer models visibility when layersState changes', () => {
+    const setLayersState = vi.fn();
+    const layersState = {
+      cadLayers: [{ revisionId: 456, applied: true, index: 0 }],
+      pointCloudLayers: [{ revisionId: 123, applied: true, index: 0 }],
+      image360: [{ siteId: 'site-id', applied: true }]
+    };
+    const viewModel = {
+      modelLayerHandlers: {
+        cadHandlers: [{ setVisible: vi.fn() }],
+        pointCloudHandlers: [{ setVisible: vi.fn() }],
+        image360Handlers: [{ setVisible: vi.fn() }]
+      },
+      updateCallback: vi.fn(),
+      ModelLayerSelection: vi.fn(({ label }) => <div>{label}</div>)
+    };
 
-  //   const cadModelsButton = screen.getByText('CAD_MODELS');
-  //   fireEvent.click(cadModelsButton);
+    const wrapper = ({ children }: PropsWithChildren): ReactElement => (
+      <LayersButtonContext.Provider value={defaultDependencies}>
+        {children}
+      </LayersButtonContext.Provider>
+    );
+    render(<LayersButton layersState={layersState} setLayersState={setLayersState} />, { wrapper });
 
-  //   expect(mockSetLayersState).toHaveBeenCalled();
-  // });
+    // Change layersState
+    const newLayersState = {
+      cadLayers: [{ revisionId: 456, applied: false, index: 0 }],
+      pointCloudLayers: [{ revisionId: 123, applied: true, index: 0 }],
+      image360: [{ siteId: 'site-id', applied: false }]
+    };
+    setLayersState(newLayersState);
 
-  // test('toggles visibility of PointCloud models', () => {
-  //   render(
-  //     <LayersButton
-  //       layersState={mockLayersState}
-  //       setLayersState={mockSetLayersState}
-  //       defaultLayerConfiguration={mockDefaultLayerConfiguration}
-  //     />
-  //   );
-
-  //   const pointCloudModelsButton = screen.getByText('POINT_CLOUDS');
-  //   fireEvent.click(pointCloudModelsButton);
-
-  //   expect(mockSetLayersState).toHaveBeenCalled();
-  // });
-
-  // test('toggles visibility of Image360 models', () => {
-  //   render(
-  //     <LayersButton
-  //       layersState={mockLayersState}
-  //       setLayersState={mockSetLayersState}
-  //       defaultLayerConfiguration={mockDefaultLayerConfiguration}
-  //     />
-  //   );
-
-  //   const image360ModelsButton = screen.getByText('IMAGES_360');
-  //   fireEvent.click(image360ModelsButton);
-
-  //   expect(mockSetLayersState).toHaveBeenCalled();
-  // });
+    expect(viewModel.modelLayerHandlers.cadHandlers[0].setVisible).toHaveBeenCalledWith(false);
+    expect(viewModel.modelLayerHandlers.pointCloudHandlers[0].setVisible).toHaveBeenCalledWith(
+      true
+    );
+    expect(viewModel.modelLayerHandlers.image360Handlers[0].setVisible).toHaveBeenCalledWith(false);
+  });
 });
