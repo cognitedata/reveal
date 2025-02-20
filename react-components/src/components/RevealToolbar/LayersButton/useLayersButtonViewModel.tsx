@@ -43,12 +43,9 @@ export function useLayersButtonViewModel(
     update()
   );
 
-  const modelLayerHandlersSignal = useMemo(() => modelLayerHandlers, [modelLayerHandlers]);
-  const updateCallbackSignal = useMemo(() => update, [update]);
-
   return {
-    modelLayerHandlers: modelLayerHandlersSignal,
-    updateCallback: updateCallbackSignal,
+    modelLayerHandlers,
+    updateCallback: update,
     ModelLayerSelection
   };
 }
