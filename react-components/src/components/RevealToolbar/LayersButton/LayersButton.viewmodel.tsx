@@ -30,7 +30,8 @@ export class LayersButtonViewModel {
     defaultLayerConfiguration: DefaultLayersConfiguration | undefined,
     externalLayersState: LayersUrlStateParam | undefined
   ) {
-    const { useModelHandlers, useSyncExternalLayersState, ModelLayerSelection } = useContext(LayersButtonContext);
+    const { useModelHandlers, useSyncExternalLayersState, ModelLayerSelection } =
+      useContext(LayersButtonContext);
 
     const [modelLayerHandlers, update] = useModelHandlers(
       setExternalLayersState,

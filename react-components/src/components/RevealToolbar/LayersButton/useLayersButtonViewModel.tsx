@@ -1,7 +1,7 @@
 /*!
  * Copyright 2025 Cognite AS
  */
-import { type ReactElement, useContext, useMemo, type Dispatch, type SetStateAction } from 'react';
+import { type ReactElement, useContext, type Dispatch, type SetStateAction } from 'react';
 import { LayersButtonContext } from './LayersButton.context';
 import {
   type ModelLayerHandlers,
