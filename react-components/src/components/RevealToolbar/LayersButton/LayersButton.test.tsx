@@ -44,11 +44,7 @@ describe(LayersButton.name, () => {
 
   it('should update viewer models visibility when layersState changes', () => {
     const setLayersState = vi.fn();
-    const layersState = {
-      cadLayers: [{ revisionId: 456, applied: true, index: 0 }],
-      pointCloudLayers: [{ revisionId: 123, applied: true, index: 0 }],
-      image360: [{ siteId: 'site-id', applied: true }]
-    };
+
     const viewModel = {
       modelLayerHandlers: {
         cadHandlers: [{ setVisible: vi.fn() }],
@@ -64,7 +60,7 @@ describe(LayersButton.name, () => {
         {children}
       </LayersButtonContext.Provider>
     );
-    render(<LayersButton layersState={layersState} setLayersState={setLayersState} />, { wrapper });
+    render(<LayersButton {...defaultProps} />, { wrapper });
 
     // Change layersState
     const newLayersState = {
