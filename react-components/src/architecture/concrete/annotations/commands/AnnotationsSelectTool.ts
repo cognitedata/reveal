@@ -10,14 +10,8 @@ import { BaseEditTool } from '../../../base/commands/BaseEditTool';
 import { isDomainObjectIntersection } from '../../../base/domainObjectsHelpers/DomainObjectIntersection';
 import { FocusType } from '../../../base/domainObjectsHelpers/FocusType';
 import { type DomainObject } from '../../../base/domainObjects/DomainObject';
-import { UndoCommand } from '../../../base/concreteCommands/UndoCommand';
-import { type BaseCommand } from '../../../base/commands/BaseCommand';
-import { AnnotationsCreateMockCommand } from './AnnotationsCreateMockCommand';
 import { type BaseDragger } from '../../../base/domainObjectsHelpers/BaseDragger';
 import { type PrimitivePickInfo } from '../../primitives/common/PrimitivePickInfo';
-import { AnnotationsDeleteCommand } from './AnnotationsDeleteCommand';
-import { AlignSelectedAnnotationCommand } from './AnnotationsAlignCommand';
-import { AnnotationsCreateTool } from './AnnotationsCreateTool';
 import { type AnnotationIntersectInfo } from '../helpers/getClosestAnnotation';
 import { SolidDomainObject } from '../../primitives/common/SolidDomainObject';
 import { isAnnotationsOrGizmo, isGizmo } from './isGizmo';
@@ -125,18 +119,6 @@ export class AnnotationsSelectTool extends BaseEditTool {
       this.deselectedAnnotationInteractive();
     }
     await super.onClick(event);
-  }
-
-  public override getToolbar(): Array<BaseCommand | undefined> {
-    return [
-      new AnnotationsCreateTool(),
-      new AnnotationsDeleteCommand(),
-      new AlignSelectedAnnotationCommand(true),
-      new AlignSelectedAnnotationCommand(false),
-      new AnnotationsCreateMockCommand(),
-      undefined,
-      new UndoCommand()
-    ];
   }
 
   protected override async createDragger(event: PointerEvent): Promise<BaseDragger | undefined> {
