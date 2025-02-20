@@ -1,8 +1,10 @@
-import { type Asset } from '@cognite/sdk/dist/src';
+import { type AssetMapping3D, type Datapoints, type Asset } from '@cognite/sdk/';
 import {
   type TriggerTypeData,
-  type FdmTyping
+  type FdmTyping,
+  type ColorRuleOutput
 } from '../../../src/components/RuleBasedOutputs/types';
+import { type AssetIdsAndTimeseries } from '../../../src/data-providers/types';
 
 const triggerDataFDMBoolean: TriggerTypeData = {
   type: 'fdm',
@@ -184,3 +186,91 @@ export const triggerTypeData3: TriggerTypeData[] = [
   triggerDataMetadata,
   triggerDataTimeseries
 ];
+
+export const contextualizedAssetNodes: Asset[] = [
+  {
+    id: 1,
+    name: 'Asset 1',
+    rootId: 0,
+    lastUpdatedTime: new Date(),
+    createdTime: new Date(),
+    metadata: {
+      mockedProperty1: 'valueA',
+      mockedProperty2: '20'
+    }
+  },
+  {
+    id: 2,
+    name: 'Asset 2',
+    rootId: 0,
+    lastUpdatedTime: new Date(),
+    createdTime: new Date(),
+    metadata: {
+      mockedProperty1: 'valueB',
+      mockedProperty2: '1'
+    }
+  }
+];
+
+export const assetIdsAndTimeseries: AssetIdsAndTimeseries[] = [
+  {
+    assetIds: { id: 1 },
+    timeseries: {
+      id: 101,
+      externalId: 'timeseries-1',
+      name: 'timeseries-1',
+      isString: false,
+      isStep: false,
+      description: 'description',
+      lastUpdatedTime: new Date(),
+      createdTime: new Date()
+    }
+  },
+  {
+    assetIds: { id: 2 },
+    timeseries: {
+      id: 102,
+      externalId: 'timeseries-2',
+      name: 'timeseries-2',
+      isString: false,
+      isStep: false,
+      description: 'description',
+      lastUpdatedTime: new Date(),
+      createdTime: new Date()
+    }
+  }
+];
+export const timeseriesDatapoints: Datapoints[] = [
+  {
+    id: 101,
+    externalId: 'timeseries-1',
+    datapoints: [{ timestamp: new Date(), value: 42 }],
+    isString: false
+  },
+  {
+    id: 102,
+    externalId: 'timeseries-2',
+    datapoints: [{ timestamp: new Date(), value: 43 }],
+    isString: false
+  }
+];
+export const assetMappings: AssetMapping3D[] = [
+  {
+    assetId: 1,
+    treeIndex: 0,
+    subtreeSize: 1,
+    nodeId: 2
+  },
+  {
+    assetId: 2,
+    treeIndex: 1,
+    subtreeSize: 1,
+    nodeId: 1
+  }
+];
+export const outputSelected: ColorRuleOutput = {
+  type: 'color',
+  fill: '#ff0000',
+  outline: '#000000',
+  externalId: 'some-external-id'
+};
