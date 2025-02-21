@@ -56,6 +56,9 @@ export class RevealModelsUtils {
     return await renderTarget.viewer.addCadModel(options).then((model) => {
       const domainObject = new CadDomainObject(model);
       root.addChildInteractive(domainObject);
+      if (model.visible) {
+        domainObject.setVisibleInteractive(true);
+      }
       return model;
     });
   }
@@ -71,6 +74,9 @@ export class RevealModelsUtils {
     return await renderTarget.viewer.addPointCloudModel(options).then((model) => {
       const domainObject = new PointCloudDomainObject(model);
       root.addChildInteractive(domainObject);
+      if (model.visible) {
+        domainObject.setVisibleInteractive(true);
+      }
       return model;
     });
   }
@@ -90,6 +96,9 @@ export class RevealModelsUtils {
         .then((model) => {
           const domainObject = new Image360CollectionDomainObject(model);
           root.addChildInteractive(domainObject);
+          if (model.getIconsVisibility()) {
+            domainObject.setVisibleInteractive(true);
+          }
           return model;
         });
     } else {
@@ -102,6 +111,9 @@ export class RevealModelsUtils {
         .then((model) => {
           const domainObject = new Image360CollectionDomainObject(model);
           root.addChildInteractive(domainObject);
+          if (model.getIconsVisibility()) {
+            domainObject.setVisibleInteractive(true);
+          }
           return model;
         });
     }

@@ -21,6 +21,14 @@ export class AxisDomainObject extends VisualDomainObject {
     return 'Axis3D';
   }
 
+  public override get hasIconColor(): boolean {
+    return false;
+  }
+
+  public override get hasIndexOnLabel(): boolean {
+    return false;
+  }
+
   public override createRenderStyle(): RenderStyle | undefined {
     return new AxisRenderStyle();
   }

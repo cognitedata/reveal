@@ -68,6 +68,7 @@ export class ClipTool extends PrimitiveEditTool {
       return parent;
     }
     const newParent = new ClipFolder();
+    newParent.isExpanded = true;
     this.renderTarget.rootDomainObject.addChildInteractive(newParent);
     return newParent;
   }
