@@ -17,15 +17,19 @@ import {
   type CognitePointCloudModel,
   type Image360Collection
 } from '@cognite/reveal';
-import { CadModelHandler, Image360CollectionHandler, PointCloudModelHandler } from './ModelHandler';
-import { use3dModels } from '../../../hooks/use3dModels';
-import { useReveal } from '../../RevealCanvas/ViewerContext';
+import {
+  CadModelHandler,
+  Image360CollectionHandler,
+  PointCloudModelHandler
+} from '../ModelHandler';
+import { use3dModels } from '../../../../hooks/use3dModels';
+import { useReveal } from '../../../RevealCanvas/ViewerContext';
 import {
   type DefaultLayersConfiguration,
   type LayersUrlStateParam,
   type ModelLayerHandlers
-} from './types';
-import { use3DModelName } from '../../../query/use3DModelName';
+} from '../types';
+import { use3DModelName } from '../../../../query/use3DModelName';
 import { type Signal, signal } from '@cognite/signals';
 
 export type UpdateModelHandlersCallback = (
