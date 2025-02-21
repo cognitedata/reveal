@@ -4,11 +4,8 @@
 
 import { type TranslationInput } from '../../../base/utilities/TranslateInput';
 import { AnnotationsDomainObject } from '../AnnotationsDomainObject';
-import { UndoCommand } from '../../../base/concreteCommands/UndoCommand';
-import { type BaseCommand } from '../../../base/commands/BaseCommand';
 import { PrimitiveType } from '../../../base/utilities/primitives/PrimitiveType';
 import { CommandsUpdater } from '../../../base/reactUpdaters/CommandsUpdater';
-import { AnnotationsSetCreateTypeCommand } from './AnnotationsSetCreateTypeCommand';
 import { type BaseCreator } from '../../../base/domainObjectsHelpers/BaseCreator';
 import { BoxCreator } from '../../primitives/box/BoxCreator';
 import { BoxGizmoDomainObject } from '../BoxGizmoDomainObject';
@@ -167,17 +164,6 @@ export class AnnotationsCreateTool extends NavigationTool {
       return;
     }
     this.renderTarget.cursor = 'move';
-  }
-
-  public override getToolbar(): Array<BaseCommand | undefined> {
-    return [
-      new AnnotationsSelectTool(),
-      new AnnotationsSetCreateTypeCommand(PrimitiveType.Box),
-      new AnnotationsSetCreateTypeCommand(PrimitiveType.HorizontalCylinder),
-      new AnnotationsSetCreateTypeCommand(PrimitiveType.VerticalCylinder),
-      undefined,
-      new UndoCommand()
-    ];
   }
 
   // ==================================================

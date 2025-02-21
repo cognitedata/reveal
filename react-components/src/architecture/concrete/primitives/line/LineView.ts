@@ -19,7 +19,7 @@ import {
   Uint32BufferAttribute,
   Vector3
 } from 'three';
-import { LineDomainObject } from './LineDomainObject';
+import { type LineDomainObject } from './LineDomainObject';
 import { DomainObjectChange } from '../../../base/domainObjectsHelpers/DomainObjectChange';
 import { Changes } from '../../../base/domainObjectsHelpers/Changes';
 import { LineRenderStyle } from './LineRenderStyle';

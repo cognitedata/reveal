@@ -1,9 +1,12 @@
+/*!
+ * Copyright 2025 Cognite AS
+ */
 import { describe, expect, test } from 'vitest';
 
 import { Matrix4 } from 'three';
-import { isSameModel } from '../../../src/utilities/isSameModel';
 import { cloneDeep } from 'lodash';
-import { type AddImage360CollectionOptions } from '../../../src';
+import { isSameModel } from './isSameModel';
+import type { AddImage360CollectionOptions } from '../components/Reveal3DResources/types';
 
 describe(isSameModel.name, () => {
   const model0 = { modelId: 1, revisionId: 2, transform: new Matrix4().makeRotationX(1) };

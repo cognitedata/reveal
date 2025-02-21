@@ -3,8 +3,6 @@
  */
 
 import { type RenderStyle } from '../../../base/renderStyles/RenderStyle';
-import { type ThreeView } from '../../../base/views/ThreeView';
-import { BoxView } from './BoxView';
 import { Changes } from '../../../base/domainObjectsHelpers/Changes';
 import { FocusType } from '../../../base/domainObjectsHelpers/FocusType';
 import { PrimitiveType } from '../../../base/utilities/primitives/PrimitiveType';
@@ -122,14 +120,6 @@ export abstract class BoxDomainObject extends SolidDomainObject {
     if (what === undefined || what === Changes.geometry) {
       this.box.copy(domainObject.box);
     }
-  }
-
-  // ==================================================
-  // OVERRIDES of VisualDomainObject
-  // ==================================================
-
-  protected override createThreeView(): ThreeView | undefined {
-    return new BoxView();
   }
 
   public override getEditToolCursor(

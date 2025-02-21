@@ -1,20 +1,23 @@
+/*!
+ * Copyright 2025 Cognite AS
+ */
 import { describe, expect, test, vi, beforeEach, beforeAll, afterAll } from 'vitest';
-import { use3dModels } from '../../../src/hooks/use3dModels';
 import { type CogniteCadModel, type CogniteModel } from '@cognite/reveal';
 import { renderHook } from '@testing-library/react';
 
-import { viewerMock, viewerModelsMock } from '../fixtures/viewer';
-import { cadMock } from '../fixtures/cadModel';
 import { Mock } from 'moq.ts';
 import { Matrix4 } from 'three';
+import { cadMock } from '../../tests/tests-utilities/fixtures/cadModel';
+import { viewerMock, viewerModelsMock } from '../../tests/tests-utilities/fixtures/viewer';
+import { use3dModels } from './use3dModels';
 
 const mockResourceCount = { reveal3DResourcesCount: 2 };
 
-vi.mock('../../../src/components/RevealCanvas/ViewerContext', () => ({
+vi.mock('../components/RevealCanvas/ViewerContext', () => ({
   useReveal: () => viewerMock
 }));
 
-vi.mock('../../../src/components/Reveal3DResources/Reveal3DResourcesInfoContext', () => ({
+vi.mock('../components/Reveal3DResources/Reveal3DResourcesInfoContext', () => ({
   useReveal3DResourcesCount: () => mockResourceCount
 }));
 

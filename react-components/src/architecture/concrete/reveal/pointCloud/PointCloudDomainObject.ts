@@ -7,10 +7,8 @@ import { VisualDomainObject } from '../../../base/domainObjects/VisualDomainObje
 import { type RenderStyle } from '../../../base/renderStyles/RenderStyle';
 import { type IconName } from '../../../base/utilities/IconName';
 import { type TranslationInput } from '../../../base/utilities/TranslateInput';
-import { type ThreeView } from '../../../base/views/ThreeView';
 import { type PointCloud } from '../RevealTypes';
 import { PointCloudRenderStyle } from './PointCloudRenderStyle';
-import { PointCloudThreeView } from './PointCloudThreeView';
 
 export class PointCloudDomainObject extends VisualDomainObject {
   // ==================================================
@@ -54,13 +52,5 @@ export class PointCloudDomainObject extends VisualDomainObject {
   protected override removeCore(): void {
     super.removeCore();
     getRenderTarget(this)?.viewer?.removeModel(this._model);
-  }
-
-  // ==================================================
-  // OVERRIDES of VisualDomainObject
-  // ==================================================
-
-  protected override createThreeView(): ThreeView | undefined {
-    return new PointCloudThreeView();
   }
 }

@@ -1,11 +1,14 @@
+/*!
+ * Copyright 2025 Cognite AS
+ */
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { renderHook, waitFor } from '@testing-library/react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { type CogniteClient, type Asset, type Timeseries } from '@cognite/sdk';
-import { type ExtendedRelationshipWithSourceAndTarget } from '../../../src/data-providers/types';
-import { getResourceRelationship } from '../../../src/hooks/network/getResourceRelationship';
-import { useFetchTimeseriesFromRelationshipByAsset } from '../../../src/query/useFetchTimeseriesFromRelationshipByAsset';
-import { useSDK } from '../../../src/components/RevealCanvas/SDKProvider';
+import { useSDK } from '../components/RevealCanvas/SDKProvider';
+import type { ExtendedRelationshipWithSourceAndTarget } from '../data-providers/types';
+import { getResourceRelationship } from '../hooks/network/getResourceRelationship';
+import { useFetchTimeseriesFromRelationshipByAsset } from './useFetchTimeseriesFromRelationshipByAsset';
 
 const sdk = {
   post: vi.fn().mockResolvedValue({ data: {} }),
@@ -111,8 +114,8 @@ const wrapper = ({ children }: { children: any }): any => (
   <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
 );
 
-vi.mock('../../../src/hooks/network/getResourceRelationship');
-vi.mock('../../../src/components/RevealCanvas/SDKProvider');
+vi.mock('../hooks/network/getResourceRelationship');
+vi.mock('../components/RevealCanvas/SDKProvider');
 
 vi.mocked(useSDK).mockReturnValue(sdk);
 

@@ -2,8 +2,6 @@
  * Copyright 2024 Cognite AS
  */
 import { VisualDomainObject } from '../../base/domainObjects/VisualDomainObject';
-import { type ThreeView } from '../../base/views/ThreeView';
-import { PointsOfInterestView } from './PointsOfInterestView';
 import { type TranslationInput } from '../../base/utilities/TranslateInput';
 import { Changes } from '../../base/domainObjectsHelpers/Changes';
 import { PointsOfInterestCache } from './PointsOfInterestCache';
@@ -43,12 +41,6 @@ export class PointsOfInterestDomainObject<PoiIdType> extends VisualDomainObject 
 
   public override get typeName(): TranslationInput {
     return { untranslated: PointsOfInterestDomainObject.name };
-  }
-
-  protected override createThreeView():
-    | ThreeView<PointsOfInterestDomainObject<PoiIdType>>
-    | undefined {
-    return new PointsOfInterestView();
   }
 
   public override get canBeRemoved(): boolean {

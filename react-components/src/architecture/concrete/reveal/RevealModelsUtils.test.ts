@@ -2,17 +2,20 @@
  * Copyright 2025 Cognite AS
  */
 import { describe, expect, test, vi, beforeEach } from 'vitest';
-import { cadModelOptions, createCadMock } from '../../../../tests/unit-tests/fixtures/cadModel';
+import {
+  cadModelOptions,
+  createCadMock
+} from '../../../../tests/tests-utilities/fixtures/cadModel';
 import {
   createImage360ClassicMock,
   image360ClassicOptions
-} from '../../../../tests/unit-tests/fixtures/image360';
+} from '../../../../tests/tests-utilities/fixtures/image360';
 import {
   createPointCloudMock,
   pointCloudModelOptions
-} from '../../../../tests/unit-tests/fixtures/pointCloud';
-import { createRenderTargetMock } from '../../../../tests/unit-tests/fixtures/renderTarget';
-import { viewerMock } from '../../../../tests/unit-tests/fixtures/viewer';
+} from '../../../../tests/tests-utilities/fixtures/pointCloud';
+import { createRenderTargetMock } from '../../../../tests/tests-utilities/fixtures/renderTarget';
+import { viewerMock } from '../../../../tests/tests-utilities/fixtures/viewer';
 import { CadDomainObject } from './cad/CadDomainObject';
 import { Image360CollectionDomainObject } from './Image360Collection/Image360CollectionDomainObject';
 import { PointCloudDomainObject } from './pointCloud/PointCloudDomainObject';
@@ -102,6 +105,8 @@ describe('RevealModelsUtils', () => {
     const model = createCadMock();
     const removeFn = vi.fn().mockResolvedValue(model);
     viewerMock.removeModel = removeFn;
+    const addFn = vi.fn().mockResolvedValue(model);
+    viewerMock.addCadModel = addFn;
 
     // Add model
     await RevealModelsUtils.addModel(renderTargetMock, cadModelOptions);
@@ -118,6 +123,8 @@ describe('RevealModelsUtils', () => {
     const model = createPointCloudMock();
     const removeFn = vi.fn().mockResolvedValue(model);
     viewerMock.removeModel = removeFn;
+    const addFn = vi.fn().mockResolvedValue(model);
+    viewerMock.addPointCloudModel = addFn;
 
     // Add model
     await RevealModelsUtils.addPointCloud(renderTargetMock, pointCloudModelOptions);
@@ -130,10 +137,12 @@ describe('RevealModelsUtils', () => {
     expect(removeFn).toHaveBeenCalledWith(model);
   });
 
-  test('should remove the PointCloud model', async () => {
+  test('should remove the Image360Collection model', async () => {
     const model = createImage360ClassicMock();
     const removeFn = vi.fn().mockResolvedValue(model);
     viewerMock.remove360ImageSet = removeFn;
+    const addFn = vi.fn().mockResolvedValue(model);
+    viewerMock.add360ImageSet = addFn;
 
     // Add model
     await RevealModelsUtils.addImage360Collection(renderTargetMock, image360ClassicOptions);

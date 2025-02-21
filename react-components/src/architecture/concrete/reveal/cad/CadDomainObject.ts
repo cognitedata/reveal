@@ -4,12 +4,10 @@
 
 import { type CogniteCadModel } from '@cognite/reveal';
 import { CadRenderStyle } from './CadRenderStyle';
-import { CadThreeView } from './CadThreeView';
 import { VisualDomainObject } from '../../../base/domainObjects/VisualDomainObject';
 import { type TranslationInput } from '../../../base/utilities/TranslateInput';
 import { type IconName } from '../../../base/utilities/IconName';
 import { type RenderStyle } from '../../../base/renderStyles/RenderStyle';
-import { type ThreeView } from '../../../base/views/ThreeView';
 import { getRenderTarget } from '../../../base/domainObjects/getRoot';
 
 export class CadDomainObject extends VisualDomainObject {
@@ -55,13 +53,5 @@ export class CadDomainObject extends VisualDomainObject {
   protected override removeCore(): void {
     super.removeCore();
     getRenderTarget(this)?.viewer?.removeModel(this._model);
-  }
-
-  // ==================================================
-  // OVERRIDES of VisualDomainObject
-  // ==================================================
-
-  protected override createThreeView(): ThreeView | undefined {
-    return new CadThreeView();
   }
 }
