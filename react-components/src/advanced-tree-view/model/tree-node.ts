@@ -217,7 +217,6 @@ export class TreeNode implements TreeNodeType {
   // INSTANCE METHODS: Getters
   // ==================================================
 
-  // eslint-disable-next-line @typescript-eslint/prefer-return-this-type
   public getRoot(): TreeNode {
     if (this.parent !== undefined) {
       return this.parent.getRoot();

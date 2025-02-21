@@ -155,7 +155,6 @@ export class CadNodesLoader implements ILazyLoader {
     if (cdfRoot.id !== root.nodeId) {
       throw new Error('The root node is not the same as the current node');
     }
-    // eslint-disable-next-line @typescript-eslint/no-this-alias
     let parent = root;
     for (let i = 1; i < newCdfNodes.length; i++) {
       const cdfNode = newCdfNodes[i];
