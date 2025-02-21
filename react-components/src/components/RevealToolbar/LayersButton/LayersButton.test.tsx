@@ -2,7 +2,7 @@
  * Copyright 2025 Cognite AS
  */
 import { render, screen } from '@testing-library/react';
-import { describe, expect, it, vi } from 'vitest';
+import { describe, expect, test, vi } from 'vitest';
 import type { PropsWithChildren, ReactElement } from 'react';
 import { LayersButton } from './LayersButton';
 import type { LayersButtonProps } from './LayersButton';
@@ -32,7 +32,7 @@ describe(LayersButton.name, () => {
     ModelLayerSelection: vi.fn(({ label }) => <div>{label}</div>)
   };
 
-  it('renders without crashing', () => {
+  test('renders without crashing', () => {
     const wrapper = ({ children }: PropsWithChildren): ReactElement => (
       <LayersButtonContext.Provider value={defaultDependencies}>
         {children}
@@ -42,7 +42,7 @@ describe(LayersButton.name, () => {
     screen.debug();
   });
 
-  it('should update viewer models visibility when layersState changes', () => {
+  test('should update viewer models visibility when layersState changes', () => {
     const setLayersState = vi.fn();
 
     const viewModel = {
