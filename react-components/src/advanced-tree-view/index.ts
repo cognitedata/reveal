@@ -2,8 +2,7 @@
  * Copyright 2025 Cognite AS
  */
 export { AdvancedTreeView } from './view/advanced-tree-view';
-export type { AdvancedTreeViewProps } from './view/advanced-tree-view-props';
-export type { GetIconFromIconNameFn } from './view/advanced-tree-view-props';
+export type { AdvancedTreeViewProps, GetIconFromIconNameFn } from './view/advanced-tree-view-props';
 export type { TreeNodeType } from './model/tree-node-type';
 export type { ILazyLoader } from './model/i-lazy-loader';
 export { TreeNode } from './model/tree-node';

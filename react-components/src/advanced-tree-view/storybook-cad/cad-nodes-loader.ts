@@ -1,7 +1,7 @@
 /*!
  * Copyright 2025 Cognite AS
  */
-import type { Node3D } from '@cognite/sdk';
+import { type Node3D } from '@cognite/sdk';
 
 import { type TreeNodeType, type ILazyLoader } from '..';
 
