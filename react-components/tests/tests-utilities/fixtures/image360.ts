@@ -4,6 +4,7 @@ import {
   type Image360Collection
 } from '@cognite/reveal';
 import { Mock } from 'moq.ts';
+import { vi } from 'vitest';
 import { type AddImage360CollectionOptions } from '../../../src';
 
 export const image360ClassicOptions: AddImage360CollectionOptions = {
@@ -17,10 +18,21 @@ export const image360DmOptions: AddImage360CollectionOptions = {
   space: 'testImage360Space'
 };
 
+export const getIconsVisibiltyMock = vi.fn<[], boolean>();
+export const setIconsVisibilityMock = vi.fn<[boolean], void>();
+
 export function createImage360ClassicMock(): Image360Collection<ClassicDataSourceType> {
+  setIconsVisibilityMock.mockImplementation((visible) => {
+    getIconsVisibiltyMock.mockReturnValue(visible);
+  });
+
   return new Mock<Image360Collection<ClassicDataSourceType>>()
     .setup((p) => p.id)
     .returns('siteId')
+    .setup((p) => p.getIconsVisibility)
+    .returns(getIconsVisibiltyMock)
+    .setup((p) => p.setIconsVisibility)
+    .returns(setIconsVisibilityMock)
     .object();
 }
 

@@ -14,7 +14,7 @@ import { FocusType } from '../../base/domainObjectsHelpers/FocusType';
 import { type DomainObject } from '../../base/domainObjects/DomainObject';
 import { type IconName } from '../../base/utilities/IconName';
 import { SolidPrimitiveRenderStyle } from '../primitives/common/SolidPrimitiveRenderStyle';
-import { getRoot } from '../../base/domainObjects/getRoot';
+import { getRenderTarget, getRoot } from '../../base/domainObjects/getRoot';
 
 export class CropBoxDomainObject extends BoxDomainObject {
   // ==================================================
@@ -65,6 +65,17 @@ export class CropBoxDomainObject extends BoxDomainObject {
 
   public override get useClippingInIntersection(): boolean {
     return false;
+  }
+
+  public override get hasBoldLabel(): boolean {
+    const renderTarget = getRenderTarget(this);
+    if (renderTarget === undefined) {
+      return false;
+    }
+    if (!renderTarget.isGlobalClippingActive) {
+      return false;
+    }
+    return renderTarget.isGlobalCropBox(this);
   }
 
   public override clone(what?: symbol): DomainObject {
