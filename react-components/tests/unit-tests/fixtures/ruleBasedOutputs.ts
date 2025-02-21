@@ -2,7 +2,9 @@ import { type AssetMapping3D, type Datapoints, type Asset } from '@cognite/sdk/'
 import {
   type TriggerTypeData,
   type FdmTyping,
-  type ColorRuleOutput
+  type ColorRuleOutput,
+  Expression,
+  FdmInstanceNodeWithConnectionAndProperties
 } from '../../../src/components/RuleBasedOutputs/types';
 import { type AssetIdsAndTimeseries } from '../../../src/data-providers/types';
 
@@ -273,4 +275,108 @@ export const outputSelected: ColorRuleOutput = {
   fill: '#ff0000',
   outline: '#000000',
   externalId: 'some-external-id'
+};
+
+export const mockedFdmInstanceNodeWithConnectionAndProperties: FdmInstanceNodeWithConnectionAndProperties[] =
+  [
+    {
+      cadNode: {
+        treeIndex: 0,
+        subtreeSize: 1,
+        id: 0,
+        parentId: 0,
+        depth: 0,
+        name: 'node-1'
+      },
+      connection: {
+        instance: { space: 'space-1', externalId: 'externalId-1' },
+        modelId: 12121212,
+        revisionId: 12121212,
+        treeIndex: 0
+      },
+      instanceType: 'node',
+      version: 0,
+      space: 'space-1',
+      externalId: 'externalId-1',
+      createdTime: 0,
+      lastUpdatedTime: 0,
+      deletedTime: 0,
+      items: [
+        {
+          instanceType: 'node',
+          version: 1,
+          space: 'space-1',
+          externalId: 'externalId-1',
+          createdTime: 1212121212,
+          lastUpdatedTime: 1212121212,
+          properties: {
+            'space-1': {
+              'externalId-property/1': { mockedProperty: true }
+            }
+          }
+        }
+      ],
+      typing: {}
+    } satisfies FdmInstanceNodeWithConnectionAndProperties,
+    {
+      cadNode: {
+        treeIndex: 1,
+        subtreeSize: 1,
+        id: 1,
+        parentId: 0,
+        depth: 0,
+        name: 'node-2'
+      },
+      connection: {
+        instance: { space: 'space-2', externalId: 'externalId-2' },
+        modelId: 12121212,
+        revisionId: 12121212,
+        treeIndex: 1
+      },
+      instanceType: 'node',
+      version: 0,
+      space: 'space-2',
+      externalId: 'externalId-2',
+      createdTime: 0,
+      lastUpdatedTime: 0,
+      deletedTime: 0,
+      items: [
+        {
+          instanceType: 'node',
+          version: 1,
+          space: 'space-2',
+          externalId: 'externalId-2',
+          createdTime: 1212121212,
+          lastUpdatedTime: 1212121212,
+          properties: {
+            'space-1': {
+              'externalId-property/1': { mockedProperty: false }
+            }
+          }
+        }
+      ],
+      typing: {}
+    } satisfies FdmInstanceNodeWithConnectionAndProperties
+  ];
+export const mockedExpressionFdmMappingBoolean: Expression = {
+  type: 'booleanExpression',
+  condition: {
+    type: 'equals',
+    parameter: false
+  },
+  trigger: {
+    type: 'fdm',
+    key: {
+      property: 'mockedProperty',
+      space: 'space-1',
+      externalId: 'externalId-1',
+      view: {
+        type: 'view',
+        version: '1',
+        space: 'space-1',
+        externalId: 'externalId-property'
+      },
+      typing: {}
+    }
+  }
 };

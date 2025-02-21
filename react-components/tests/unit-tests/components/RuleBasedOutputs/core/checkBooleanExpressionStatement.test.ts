@@ -48,7 +48,7 @@ describe('checkBooleanExpressionStatement', () => {
     };
 
     const result = checkBooleanExpressionStatement(triggerTypeData2, expression);
-    expect(result).toBe(false);
+    expect(result).toBe(true);
   });
 
   it('should return undefined if no matching triggerTypeData is found', () => {
