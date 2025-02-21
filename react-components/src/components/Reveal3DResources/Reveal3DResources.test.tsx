@@ -1,7 +1,7 @@
 /*!
  * Copyright 2025 Cognite AS
  */
-import { render, screen } from '@testing-library/react';
+import { render } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
 import type { PropsWithChildren, ReactElement } from 'react';
 import { Reveal3DResources } from './Reveal3DResources';
@@ -50,7 +50,6 @@ describe(Reveal3DResources.name, () => {
       </Reveal3DResourcesContext.Provider>
     );
     render(<Reveal3DResources {...defaultProps} />, { wrapper });
-    screen.debug();
   });
 
   it('should mount CadModelContainer if styling is resolved', () => {
@@ -81,7 +80,6 @@ describe(Reveal3DResources.name, () => {
       wrapper
     });
     expect(CadModelContainer).toHaveBeenCalledTimes(2);
-    screen.debug();
   });
 
   it('should mount PointCloudContainer if styling is resolved', () => {
