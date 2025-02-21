@@ -2,19 +2,20 @@
  * Copyright 2025 Cognite AS
  */
 import { describe, expect, test, vi, beforeEach } from 'vitest';
-import { cadModelOptions, createCadMock } from '../../../../tests/unit-tests/fixtures/cadModel';
+import {
+  cadModelOptions,
+  createCadMock
+} from '../../../../tests/tests-utilities/fixtures/cadModel';
 import {
   createImage360ClassicMock,
-  getIconsVisibiltyMock,
-  image360ClassicOptions,
-  setIconsVisibilityMock
-} from '../../../../tests/unit-tests/fixtures/image360';
+  image360ClassicOptions
+} from '../../../../tests/tests-utilities/fixtures/image360';
 import {
   createPointCloudMock,
   pointCloudModelOptions
-} from '../../../../tests/unit-tests/fixtures/pointCloud';
-import { createRenderTargetMock } from '../../../../tests/unit-tests/fixtures/renderTarget';
-import { viewerMock } from '../../../../tests/unit-tests/fixtures/viewer';
+} from '../../../../tests/tests-utilities/fixtures/pointCloud';
+import { createRenderTargetMock } from '../../../../tests/tests-utilities/fixtures/renderTarget';
+import { viewerMock } from '../../../../tests/tests-utilities/fixtures/viewer';
 import { CadDomainObject } from './cad/CadDomainObject';
 import { Image360CollectionDomainObject } from './Image360Collection/Image360CollectionDomainObject';
 import { PointCloudDomainObject } from './pointCloud/PointCloudDomainObject';

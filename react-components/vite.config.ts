@@ -27,10 +27,7 @@ export default defineConfig(({ command }) => {
       sourcemap: command === 'build'
     },
     test: {
-      include: [
-        'tests/unit-tests/**/*.{test,spec}.?(c|m)[jt]s?(x)',
-        'src/**/*.{test,spec}.?(c|m)[jt]s?(x)'
-      ],
+      include: ['src/**/*.{test,spec}.?(c|m)[jt]s?(x)'],
       reporters: ['default'],
       coverage: {
         reportsDirectory: '../coverage/reveal-react-components',
