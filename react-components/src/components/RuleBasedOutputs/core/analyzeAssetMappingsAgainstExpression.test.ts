@@ -1,13 +1,16 @@
+/*!
+ * Copyright 2025 Cognite AS
+ */
 import { describe, it, expect } from 'vitest';
-import { analyzeAssetMappingsAgainstExpression } from '../../../../../src/components/RuleBasedOutputs/core/analyzeAssetMappingsAgainstExpression';
-import { type Expression } from '../../../../../src/components/RuleBasedOutputs/types';
+import { analyzeAssetMappingsAgainstExpression } from './analyzeAssetMappingsAgainstExpression';
+import { type Expression } from '../types';
 import {
   contextualizedAssetNodes,
   assetIdsAndTimeseries,
   timeseriesDatapoints,
   assetMappings,
   outputSelected
-} from '../../../fixtures/ruleBasedOutputs';
+} from '../../../../tests/tests-utilities/fixtures/ruleBasedOutputs';
 
 describe('analyzeAssetMappingsAgainstExpression', () => {
   it('should analyze asset mappings against numeric expression and return styling group and style index', async () => {

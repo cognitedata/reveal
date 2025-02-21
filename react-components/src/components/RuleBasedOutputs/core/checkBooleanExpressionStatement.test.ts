@@ -1,8 +1,10 @@
+/*!
+ * Copyright 2025 Cognite AS
+ */
 import { describe, it, expect } from 'vitest';
-import { checkBooleanExpressionStatement } from '../../../../../src/components/RuleBasedOutputs/core/checkBooleanExpressionStatement';
-import { type Expression } from '../../../../../src/components/RuleBasedOutputs/types';
-import { triggerTypeData2 } from '../../../fixtures/ruleBasedOutputs';
-
+import { type Expression } from '../types';
+import { checkBooleanExpressionStatement } from './checkBooleanExpressionStatement';
+import { triggerTypeData2 } from '../../../../tests/tests-utilities/fixtures/ruleBasedOutputs';
 
 describe('checkBooleanExpressionStatement', () => {
   it('should return true for equals condition in fdm', () => {

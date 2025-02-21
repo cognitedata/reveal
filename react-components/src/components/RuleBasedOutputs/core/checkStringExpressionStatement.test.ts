@@ -2,13 +2,9 @@
  * Copyright 2025 Cognite AS
  */
 import { describe, it, expect } from 'vitest';
-import {
-  type FdmTyping,
-  type StringExpression,
-  type TriggerTypeData
-} from '../../../../../src/components/RuleBasedOutputs/types';
-import { checkStringExpressionStatement } from '../../../../../src/components/RuleBasedOutputs/core/checkStringExpressionStatement';
+import { type FdmTyping, type StringExpression, type TriggerTypeData } from '../types';
 import { type Asset } from '@cognite/sdk';
+import { checkStringExpressionStatement } from './checkStringExpressionStatement';
 
 describe('checkStringExpressionStatement', () => {
   const triggerTypeData: TriggerTypeData[] = [

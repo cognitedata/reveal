@@ -3,12 +3,8 @@
  */
 import { describe, it, expect } from 'vitest';
 import { type Asset } from '@cognite/sdk';
-import {
-  type FdmTyping,
-  type NumericExpression,
-  type TriggerTypeData
-} from '../../../../../src/components/RuleBasedOutputs/types';
-import { checkNumericExpressionStatement } from '../../../../../src/components/RuleBasedOutputs/core/checkNumericExpressionStatement';
+import { type FdmTyping, type NumericExpression, type TriggerTypeData } from '../types';
+import { checkNumericExpressionStatement } from './checkNumericExpressionStatement';
 
 describe('checkNumericExpressionStatement', () => {
   const triggerTypeData: TriggerTypeData[] = [

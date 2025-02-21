@@ -1,7 +1,10 @@
+/*!
+ * Copyright 2025 Cognite AS
+ */
 import { describe, it, expect } from 'vitest';
-import { checkDatetimeExpressionStatement } from '../../../../../src/components/RuleBasedOutputs/core/checkDatetimeExpressionStatement';
-import { type DatetimeExpression } from '../../../../../src/components/RuleBasedOutputs/types';
-import { triggerTypeData3 } from '../../../fixtures/ruleBasedOutputs';
+import { type DatetimeExpression } from '../types';
+import { checkDatetimeExpressionStatement } from './checkDatetimeExpressionStatement';
+import { triggerTypeData3 } from '../../../../tests/tests-utilities/fixtures/ruleBasedOutputs';
 
 describe('checkDatetimeExpressionStatement', () => {
   it('should return true for before condition', () => {

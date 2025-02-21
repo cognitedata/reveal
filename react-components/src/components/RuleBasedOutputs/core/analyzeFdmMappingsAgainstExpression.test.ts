@@ -1,10 +1,13 @@
+/*!
+ * Copyright 2025 Cognite AS
+ */
 import { describe, it, expect } from 'vitest';
-import { analyzeFdmMappingsAgainstExpression } from '../../../../../src/components/RuleBasedOutputs/core/analyzeFdmMappingsAgainstExpression';
+import { analyzeFdmMappingsAgainstExpression } from './analyzeFdmMappingsAgainstExpression';
 import {
-  mockedExpressionFdmMappingBoolean,
   mockedFdmInstanceNodeWithConnectionAndProperties,
+  mockedExpressionFdmMappingBoolean,
   outputSelected
-} from '../../../fixtures/ruleBasedOutputs';
+} from '../../../../tests/tests-utilities/fixtures/ruleBasedOutputs';
 
 describe('analyzeFdmMappingsAgainstExpression', () => {
   it('should analyze FDM mappings against expression and return styling group and style index', async () => {
