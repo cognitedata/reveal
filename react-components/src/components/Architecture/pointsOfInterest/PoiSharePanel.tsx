@@ -38,7 +38,7 @@ export const PoiSharePanel = (): ReactNode => {
           <TextLabel text={t({ key: 'SHARE' })} />
         </Flex>
         <PoiVisibilityInfobox poiDomainObject={poiDomainObject} poiVisibility={poiVisibility} />
-        <Button icon=<LinkIcon /> disabled={poiVisibility === 'PRIVATE'} onClick={handleShare}>
+        <Button icon={<LinkIcon />} disabled={poiVisibility === 'PRIVATE'} onClick={handleShare}>
           {t({ key: 'COPY_URL_TO_SHARE' })}
         </Button>
       </Flex>

@@ -64,7 +64,7 @@ export function Image360Details({
           {enableExitButton && (
             <ExitButtonContainer>
               <StyledExitButton
-                icon=<CloseLargeIcon />
+                icon={<CloseLargeIcon />}
                 type="tertiary"
                 onClick={exitImage360Image}
               />

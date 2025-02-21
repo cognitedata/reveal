@@ -49,7 +49,7 @@ export const SelectSceneButton = ({
       floatingProps={{ middleware: [offset(TOOLBAR_HORIZONTAL_PANEL_OFFSET)] }}
       renderTrigger={(props: any) => (
         <CogsTooltip content={t({ key: 'SCENE_SELECT_HEADER' })}>
-          <Button icon=<WorldIcon /> aria-label="Select 3D location" type="ghost" {...props}>
+          <Button icon={<WorldIcon />} aria-label="Select 3D location" type="ghost" {...props}>
             {orientation === 'horizontal' && sceneName}
           </Button>
         </CogsTooltip>

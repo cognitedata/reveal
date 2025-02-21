@@ -139,7 +139,7 @@ export const RuleBasedOutputsButton = ({
       renderTrigger={(props: any) => (
         <CogsTooltip content={t({ key: 'RULESET_SELECT_HEADER' })} placement="right">
           <Button
-            icon=<ColorPaletteIcon />
+            icon={<ColorPaletteIcon />}
             disabled={disabled}
             aria-label="Select RuleSet"
             type="ghost"

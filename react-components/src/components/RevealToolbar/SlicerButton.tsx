@@ -99,7 +99,7 @@ export const SlicerButton = (): ReactElement => {
       floatingProps={{ middleware: [offset(TOOLBAR_HORIZONTAL_PANEL_OFFSET)] }}
       renderTrigger={(props: any) => (
         <CogsTooltip content={t({ key: 'SLICE_TOOLTIP' })} placement="right">
-          <Button {...props} type="ghost" icon=<SliceIcon /> aria-label="Slice models" />
+          <Button {...props} type="ghost" icon={<SliceIcon />} aria-label="Slice models" />
         </CogsTooltip>
       )}>
       <StyledRangeSlider
