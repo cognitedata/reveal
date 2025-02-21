@@ -404,6 +404,66 @@ export const mockedExpressionFdmMappingString: Expression = {
   }
 };
 
+export const mockedExpressionAssetMappingString1: Expression = {
+  type: 'stringExpression',
+  condition: {
+    type: 'contains',
+    parameter: 'valueA'
+  },
+  trigger: {
+    type: 'metadata',
+    key: 'mockedProperty'
+  }
+};
+
+export const mockedExpressionAssetMappingString2: Expression = {
+  type: 'stringExpression',
+  condition: {
+    type: 'equals',
+    parameter: 'valueA'
+  },
+  trigger: {
+    type: 'metadata',
+    key: 'mockedProperty'
+  }
+};
+
+
+export const mockedExpressionAssetMappingNumeric: Expression = {
+  type: 'numericExpression',
+  condition: {
+    type: 'greaterThan',
+    parameters: [42]
+  },
+  trigger: {
+    type: 'metadata',
+    key: 'mockedProperty2'
+  }
+};
+
+export const mockedExpressionFdmMappingDatetime: Expression = {
+  type: 'datetimeExpression',
+  condition: {
+    type: 'before',
+    parameter: '2025-02-20T12:00:00Z'
+  },
+  trigger: {
+    type: 'fdm',
+    key: {
+      property: 'mockedProperty',
+      space: 'space-1',
+      externalId: 'externalId-1',
+      view: {
+        type: 'view',
+        version: '1',
+        space: 'space-1',
+        externalId: 'externalId-property'
+      },
+      typing: {}
+    }
+  }
+};
+
 export const mockedTreeNodes: AssetMapping3D[] = [
   {
     assetId: 1,
