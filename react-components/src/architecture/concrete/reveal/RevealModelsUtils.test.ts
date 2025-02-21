@@ -151,12 +151,6 @@ describe('RevealModelsUtils', () => {
     let domainObject = RevealModelsUtils.getByRevealModel(root, model);
     expect(domainObject).not.toBe(undefined);
 
-    setIconsVisibilityMock.mockImplementation((visible) => {
-      getIconsVisibiltyMock.mockReturnValue(visible);
-    });
-    model.setIconsVisibility(false);
-    expect(model.getIconsVisibility()).toEqual(false);
-
     RevealModelsUtils.remove(renderTargetMock, model);
     domainObject = RevealModelsUtils.getByRevealModel(root, model);
     expect(domainObject).toBe(undefined);

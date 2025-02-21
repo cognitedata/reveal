@@ -22,6 +22,10 @@ export const getIconsVisibiltyMock = vi.fn<[], boolean>();
 export const setIconsVisibilityMock = vi.fn<[boolean], void>();
 
 export function createImage360ClassicMock(): Image360Collection<ClassicDataSourceType> {
+  setIconsVisibilityMock.mockImplementation((visible) => {
+    getIconsVisibiltyMock.mockReturnValue(visible);
+  });
+
   return new Mock<Image360Collection<ClassicDataSourceType>>()
     .setup((p) => p.id)
     .returns('siteId')
