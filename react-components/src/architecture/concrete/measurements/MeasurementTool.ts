@@ -89,6 +89,7 @@ export class MeasurementTool extends PrimitiveEditTool {
       return parent;
     }
     const newParent = new MeasurementFolder();
+    newParent.isExpanded = true;
     this.renderTarget.rootDomainObject.addChildInteractive(newParent);
     return newParent;
   }

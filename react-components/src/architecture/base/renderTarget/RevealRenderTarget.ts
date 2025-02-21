@@ -95,6 +95,7 @@ export class RevealRenderTarget {
     this._contextmenuController = new ContextMenuController();
     this._instanceStylingController = new InstanceStylingController();
     this._rootDomainObject = new RootDomainObject(this, sdk);
+    this._rootDomainObject.isExpanded = true;
 
     this.initializeLights();
     this._viewer.on('cameraChange', this.cameraChangeHandler);

@@ -46,6 +46,10 @@ export class CadDomainObject extends VisualDomainObject {
     return 'Cubes';
   }
 
+  public override get hasIconColor(): boolean {
+    return false;
+  }
+
   public override createRenderStyle(): RenderStyle | undefined {
     return new CadRenderStyle();
   }
