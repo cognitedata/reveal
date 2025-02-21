@@ -3,8 +3,8 @@ import {
   type TriggerTypeData,
   type FdmTyping,
   type ColorRuleOutput,
-  Expression,
-  FdmInstanceNodeWithConnectionAndProperties
+  type Expression,
+  type FdmInstanceNodeWithConnectionAndProperties
 } from '../../../src/components/RuleBasedOutputs/types';
 import { type AssetIdsAndTimeseries } from '../../../src/data-providers/types';
 
@@ -363,6 +363,29 @@ export const mockedExpressionFdmMappingBoolean: Expression = {
   condition: {
     type: 'equals',
     parameter: false
+  },
+  trigger: {
+    type: 'fdm',
+    key: {
+      property: 'mockedProperty',
+      space: 'space-1',
+      externalId: 'externalId-1',
+      view: {
+        type: 'view',
+        version: '1',
+        space: 'space-1',
+        externalId: 'externalId-property'
+      },
+      typing: {}
+    }
+  }
+};
+
+export const mockedExpressionFdmMappingString: Expression = {
+  type: 'stringExpression',
+  condition: {
+    type: 'contains',
+    parameter: 'value'
   },
   trigger: {
     type: 'fdm',
