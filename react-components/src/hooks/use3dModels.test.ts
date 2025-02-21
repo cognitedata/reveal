@@ -13,11 +13,11 @@ import { use3dModels } from './use3dModels';
 
 const mockResourceCount = { reveal3DResourcesCount: 2 };
 
-vi.mock('../../../src/components/RevealCanvas/ViewerContext', () => ({
+vi.mock('../components/RevealCanvas/ViewerContext', () => ({
   useReveal: () => viewerMock
 }));
 
-vi.mock('../../../src/components/Reveal3DResources/Reveal3DResourcesInfoContext', () => ({
+vi.mock('../components/Reveal3DResources/Reveal3DResourcesInfoContext', () => ({
   useReveal3DResourcesCount: () => mockResourceCount
 }));
 

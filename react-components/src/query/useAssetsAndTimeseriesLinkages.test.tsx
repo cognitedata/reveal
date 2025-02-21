@@ -89,9 +89,9 @@ const wrapper = ({ children }: { children: any }): any => (
   <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
 );
 
-vi.mock('../../../src/hooks/network/fetchLinkFromRelationshipsByTimeseries');
-vi.mock('../../../src/hooks/network/getAssetsByIds');
-vi.mock('../../../src/components/RevealCanvas/SDKProvider');
+vi.mock('../hooks/network/fetchLinkFromRelationshipsByTimeseries');
+vi.mock('../hooks/network/getAssetsByIds');
+vi.mock('../components/RevealCanvas/SDKProvider');
 
 vi.mocked(fetchLinkFromRelationshipsByTimeseries).mockResolvedValue(mockAssetsAndTimeseries);
 vi.mocked(getAssetsByIds).mockResolvedValue(mockAssets);

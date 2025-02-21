@@ -12,12 +12,12 @@ import { useCameraNavigation } from './useCameraNavigation';
 
 const renderTargetMock = createRenderTargetMock();
 
-vi.mock('../../../src/components/RevealCanvas/ViewerContext', () => ({
+vi.mock('../components/RevealCanvas/ViewerContext', () => ({
   useReveal: () => viewerMock,
   useRenderTarget: () => renderTargetMock
 }));
 
-vi.mock('../../../src/components/CacheProvider/NodeCacheProvider', () => ({
+vi.mock('../components/CacheProvider/NodeCacheProvider', () => ({
   useFdmNodeCache: () => fdmNodeCacheContentMock
 }));
 

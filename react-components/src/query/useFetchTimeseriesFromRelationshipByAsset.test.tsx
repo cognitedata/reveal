@@ -114,8 +114,8 @@ const wrapper = ({ children }: { children: any }): any => (
   <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
 );
 
-vi.mock('../../../src/hooks/network/getResourceRelationship');
-vi.mock('../../../src/components/RevealCanvas/SDKProvider');
+vi.mock('../hooks/network/getResourceRelationship');
+vi.mock('../components/RevealCanvas/SDKProvider');
 
 vi.mocked(useSDK).mockReturnValue(sdk);
 

@@ -10,7 +10,7 @@ import { cameraManagerGlobalCameraEvents } from '../../../../tests/unit-tests/fi
 import { viewerMock } from '../../../../tests/unit-tests/fixtures/viewer';
 import { useCameraStateControl, type CameraStateParameters } from './useCameraStateControl';
 
-vi.mock('../../../../../src/components/RevealCanvas/ViewerContext', () => ({
+vi.mock('../ViewerContext', () => ({
   useReveal: () => viewerMock
 }));
 
