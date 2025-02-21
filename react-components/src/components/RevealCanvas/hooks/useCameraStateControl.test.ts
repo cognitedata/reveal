@@ -6,8 +6,8 @@ import { describe, expect, test, vi, beforeEach, beforeAll, afterAll } from 'vit
 import { renderHook } from '@testing-library/react';
 
 import { Vector3 } from 'three';
-import { cameraManagerGlobalCameraEvents } from '../../../../tests/unit-tests/fixtures/cameraManager';
-import { viewerMock } from '../../../../tests/unit-tests/fixtures/viewer';
+import { cameraManagerGlobalCameraEvents } from '../../../../tests/tests-utilities/fixtures/cameraManager';
+import { viewerMock } from '../../../../tests/tests-utilities/fixtures/viewer';
 import { useCameraStateControl, type CameraStateParameters } from './useCameraStateControl';
 
 vi.mock('../ViewerContext', () => ({

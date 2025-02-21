@@ -7,8 +7,8 @@ import { renderHook } from '@testing-library/react';
 
 import { Mock } from 'moq.ts';
 import { Matrix4 } from 'three';
-import { cadMock } from '../../tests/unit-tests/fixtures/cadModel';
-import { viewerMock, viewerModelsMock } from '../../tests/unit-tests/fixtures/viewer';
+import { cadMock } from '../../tests/tests-utilities/fixtures/cadModel';
+import { viewerMock, viewerModelsMock } from '../../tests/tests-utilities/fixtures/viewer';
 import { use3dModels } from './use3dModels';
 
 const mockResourceCount = { reveal3DResourcesCount: 2 };

@@ -14,21 +14,21 @@ import {
   viewerImage360CollectionsMock,
   viewerModelsMock,
   viewerRemoveModelsMock
-} from '../../../../tests/unit-tests/fixtures/viewer';
-import { createRenderTargetMock } from '../../../../tests/unit-tests/fixtures/renderTarget';
+} from '../../../../tests/tests-utilities/fixtures/viewer';
+import { createRenderTargetMock } from '../../../../tests/tests-utilities/fixtures/renderTarget';
 import {
   cadMock,
   cadModelOptions,
   createCadMock
-} from '../../../../tests/unit-tests/fixtures/cadModel';
+} from '../../../../tests/tests-utilities/fixtures/cadModel';
 import {
   createImage360ClassicMock,
   image360ClassicOptions
-} from '../../../../tests/unit-tests/fixtures/image360';
+} from '../../../../tests/tests-utilities/fixtures/image360';
 import {
   createPointCloudMock,
   pointCloudModelOptions
-} from '../../../../tests/unit-tests/fixtures/pointCloud';
+} from '../../../../tests/tests-utilities/fixtures/pointCloud';
 
 describe(useRemoveNonReferencedModels.name, () => {
   beforeEach(() => {
