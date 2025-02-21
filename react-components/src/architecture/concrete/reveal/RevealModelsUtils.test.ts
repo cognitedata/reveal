@@ -5,7 +5,9 @@ import { describe, expect, test, vi, beforeEach } from 'vitest';
 import { cadModelOptions, createCadMock } from '../../../../tests/unit-tests/fixtures/cadModel';
 import {
   createImage360ClassicMock,
-  image360ClassicOptions
+  getIconsVisibiltyMock,
+  image360ClassicOptions,
+  setIconsVisibilityMock
 } from '../../../../tests/unit-tests/fixtures/image360';
 import {
   createPointCloudMock,
@@ -145,6 +147,12 @@ describe('RevealModelsUtils', () => {
     await RevealModelsUtils.addImage360Collection(renderTargetMock, image360ClassicOptions);
     let domainObject = RevealModelsUtils.getByRevealModel(root, model);
     expect(domainObject).not.toBe(undefined);
+
+    setIconsVisibilityMock.mockImplementation((visible) => {
+      getIconsVisibiltyMock.mockReturnValue(visible);
+    });
+    model.setIconsVisibility(false);
+    expect(model.getIconsVisibility()).toEqual(false);
 
     RevealModelsUtils.remove(renderTargetMock, model);
     domainObject = RevealModelsUtils.getByRevealModel(root, model);

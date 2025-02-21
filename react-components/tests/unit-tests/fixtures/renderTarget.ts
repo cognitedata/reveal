@@ -33,7 +33,9 @@ export function createRenderTargetMock(): RevealRenderTarget {
     .setup((p) => p.cdfCaches)
     .returns(cdfCachesMock)
     .setup((p) => p.commandsController)
-    .returns(commandsControllerMock);
+    .returns(commandsControllerMock)
+    .setup((p) => p.invalidate.bind(p))
+    .returns(vi.fn());
 
   const root = new RootDomainObject(mock.object(), sdkMock);
   mock.setup((p) => p.rootDomainObject).returns(root);
