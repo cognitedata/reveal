@@ -1,20 +1,23 @@
+/*!
+ * Copyright 2025 Cognite AS
+ */
 import { describe, expect, test, vi, beforeEach, beforeAll, afterAll } from 'vitest';
-import { useCameraNavigation } from '../../../src/hooks/useCameraNavigation';
-import { viewerMock, viewerModelsMock } from '../fixtures/viewer';
-import { cadMock, nodeBoundingBox } from '../fixtures/cadModel';
 import { act, renderHook } from '@testing-library/react';
-import { fdmNodeCacheContentMock } from '../fixtures/fdmNodeCache';
 import { Vector3 } from 'three';
-import { createRenderTargetMock } from '../fixtures/renderTarget';
+import { cadMock, nodeBoundingBox } from '../../tests/tests-utilities/fixtures/cadModel';
+import { fdmNodeCacheContentMock } from '../../tests/tests-utilities/fixtures/fdmNodeCache';
+import { createRenderTargetMock } from '../../tests/tests-utilities/fixtures/renderTarget';
+import { viewerMock, viewerModelsMock } from '../../tests/tests-utilities/fixtures/viewer';
+import { useCameraNavigation } from './useCameraNavigation';
 
 const renderTargetMock = createRenderTargetMock();
 
-vi.mock('../../../src/components/RevealCanvas/ViewerContext', () => ({
+vi.mock('../components/RevealCanvas/ViewerContext', () => ({
   useReveal: () => viewerMock,
   useRenderTarget: () => renderTargetMock
 }));
 
-vi.mock('../../../src/components/CacheProvider/NodeCacheProvider', () => ({
+vi.mock('../components/CacheProvider/NodeCacheProvider', () => ({
   useFdmNodeCache: () => fdmNodeCacheContentMock
 }));
 

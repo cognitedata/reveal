@@ -1,15 +1,16 @@
+/*!
+ * Copyright 2025 Cognite AS
+ */
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { renderHook, waitFor } from '@testing-library/react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import { useAssetsAndTimeseriesLinkages } from '../../../src/query/useAssetsAndTimeseriesLinkages';
 import { type CogniteClient, type Asset, type Timeseries } from '@cognite/sdk';
-import { fetchLinkFromRelationshipsByTimeseries } from '../../../src/hooks/network/fetchLinkFromRelationshipsByTimeseries';
-import { getAssetsByIds } from '../../../src/hooks/network/getAssetsByIds';
-import {
-  type AssetAndTimeseries,
-  type AssetAndTimeseriesIds
-} from '../../../src/data-providers/types';
-import { useSDK } from '../../../src/components/RevealCanvas/SDKProvider';
+import { useSDK } from '../components/RevealCanvas/SDKProvider';
+import type { AssetAndTimeseries } from '../data-providers';
+import type { AssetAndTimeseriesIds } from '../data-providers/types';
+import { fetchLinkFromRelationshipsByTimeseries } from '../hooks/network/fetchLinkFromRelationshipsByTimeseries';
+import { getAssetsByIds } from '../hooks/network/getAssetsByIds';
+import { useAssetsAndTimeseriesLinkages } from './useAssetsAndTimeseriesLinkages';
 
 const sdk = {
   post: vi.fn().mockResolvedValue({ data: {} }),
@@ -88,9 +89,9 @@ const wrapper = ({ children }: { children: any }): any => (
   <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
 );
 
-vi.mock('../../../src/hooks/network/fetchLinkFromRelationshipsByTimeseries');
-vi.mock('../../../src/hooks/network/getAssetsByIds');
-vi.mock('../../../src/components/RevealCanvas/SDKProvider');
+vi.mock('../hooks/network/fetchLinkFromRelationshipsByTimeseries');
+vi.mock('../hooks/network/getAssetsByIds');
+vi.mock('../components/RevealCanvas/SDKProvider');
 
 vi.mocked(fetchLinkFromRelationshipsByTimeseries).mockResolvedValue(mockAssetsAndTimeseries);
 vi.mocked(getAssetsByIds).mockResolvedValue(mockAssets);
