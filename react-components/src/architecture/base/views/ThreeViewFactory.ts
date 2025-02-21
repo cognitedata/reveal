@@ -15,12 +15,10 @@ type ThreeViewCreator = () => ThreeView;
  * @returns `true` if a Three.js view can be created, otherwise `false`.
  */
 export function canCreateThreeView(domainObject: DomainObject): boolean {
-  let domainObjectType: Class<DomainObject> | undefined = getClassOf(domainObject);
-  while (domainObjectType !== undefined) {
+  for (const domainObjectType of getClassesOf(domainObject)) {
     if (_products.has(domainObjectType)) {
       return true;
     }
-    domainObjectType = getSuperClassOf(domainObjectType);
   }
   return false;
 }
@@ -32,13 +30,11 @@ export function canCreateThreeView(domainObject: DomainObject): boolean {
  * @returns A ThreeView instance if creation is successful, otherwise undefined.
  */
 export function createThreeView(domainObject: DomainObject): ThreeView | undefined {
-  let domainObjectType: Class<DomainObject> | undefined = getClassOf(domainObject);
-  while (domainObjectType !== undefined) {
+  for (const domainObjectType of getClassesOf(domainObject)) {
     const product = _products.get(domainObjectType);
     if (product !== undefined) {
       return product();
     }
-    domainObjectType = getSuperClassOf(domainObjectType);
   }
   return undefined;
 }
@@ -71,10 +67,22 @@ export function installThreeViewCreator(
 
 const _products = new Map<Class<DomainObject>, ThreeViewCreator>();
 
-function getClassOf(domainObject: DomainObject): Class<DomainObject> {
-  return domainObject.constructor as Class<DomainObject>;
-}
+export function* getClassesOf(domainObject: DomainObject): Generator<Class<DomainObject>> {
+  let classType = getClassOf(domainObject);
+  while (true) {
+    yield classType;
+    const superClassType = getSuperClassOf(classType);
+    if (superClassType === undefined) {
+      return;
+    }
+    classType = superClassType;
+  }
 
-function getSuperClassOf(domainObjectType: Class<DomainObject>): Class<DomainObject> | undefined {
-  return Object.getPrototypeOf(domainObjectType.prototype)?.constructor ?? undefined;
+  function getClassOf(domainObject: DomainObject): Class<DomainObject> {
+    return domainObject.constructor as Class<DomainObject>;
+  }
+
+  function getSuperClassOf(domainObjectType: Class<DomainObject>): Class<DomainObject> | undefined {
+    return Object.getPrototypeOf(domainObjectType.prototype)?.constructor ?? undefined;
+  }
 }
