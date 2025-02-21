@@ -380,3 +380,18 @@ export const mockedExpressionFdmMappingBoolean: Expression = {
     }
   }
 };
+
+export const mockedTreeNodes: AssetMapping3D[] = [
+  {
+    assetId: 1,
+    treeIndex: 0,
+    subtreeSize: 1,
+    nodeId: 0
+  } satisfies AssetMapping3D,
+  {
+    assetId: 2,
+    treeIndex: 1,
+    subtreeSize: 1,
+    nodeId: 0
+  } satisfies AssetMapping3D
+];

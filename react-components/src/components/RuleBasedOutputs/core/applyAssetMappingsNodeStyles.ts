@@ -27,6 +27,7 @@ export const applyAssetMappingsNodeStyles = (
   const assetIds: number[] = [];
 
   for (const node of treeNodes) {
+    if (node.treeIndex === undefined || node.subtreeSize === undefined) continue;
     const range = new NumericRange(node.treeIndex, node.subtreeSize);
     nodeIndexSet.addRange(range);
 
