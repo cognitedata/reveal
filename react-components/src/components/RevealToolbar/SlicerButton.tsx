@@ -147,5 +147,4 @@ const StyledRangeSlider = styled(RangeSlider)`
   display: flex !important;
   flex-direction: row !important;
   justify-content: center !important;
-}
 `;
