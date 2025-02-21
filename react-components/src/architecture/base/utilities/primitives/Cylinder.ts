@@ -26,6 +26,10 @@ export class Cylinder extends Primitive {
   private readonly _axis = new Vector3();
   private readonly _size = new Vector3();
 
+  public get endCapArea(): number {
+    return Math.PI * this.radius * this.radius;
+  }
+
   // ==================================================
   // OVERRIDES of Primitive
   // ==================================================
@@ -35,7 +39,7 @@ export class Cylinder extends Primitive {
   }
 
   public override get area(): number {
-    return 2 * Math.PI * this.radius * this.height;
+    return 2 * Math.PI * this.radius * this.height + 2 * this.endCapArea;
   }
 
   public override get volume(): number {
