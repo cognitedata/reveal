@@ -1,14 +1,14 @@
+/*!
+ * Copyright 2025 Cognite AS
+ */
 import { describe, expect, test, vi, beforeEach, beforeAll, afterAll } from 'vitest';
 
 import { renderHook } from '@testing-library/react';
 
-import { viewerMock } from '../../../fixtures/viewer';
-import {
-  type CameraStateParameters,
-  useCameraStateControl
-} from '../../../../../src/components/RevealCanvas/hooks/useCameraStateControl';
 import { Vector3 } from 'three';
-import { cameraManagerGlobalCameraEvents } from '../../../fixtures/cameraManager';
+import { cameraManagerGlobalCameraEvents } from '../../../../tests/unit-tests/fixtures/cameraManager';
+import { viewerMock } from '../../../../tests/unit-tests/fixtures/viewer';
+import { useCameraStateControl, type CameraStateParameters } from './useCameraStateControl';
 
 vi.mock('../../../../../src/components/RevealCanvas/ViewerContext', () => ({
   useReveal: () => viewerMock
@@ -55,7 +55,7 @@ describe(useCameraStateControl.name, () => {
   });
 
   test('calls internal cameraStop delegates but not external setter on applying external camera state', () => {
-    const setter = vi.fn<[CameraStateParameters | undefined], void>();
+    const setter = vi.fn<[CameraStateParameters | undefined], undefined>();
 
     const { rerender } = renderHook(
       ({ position }: { position: Vector3 }) => {
@@ -76,7 +76,7 @@ describe(useCameraStateControl.name, () => {
   });
 
   test('provided setter is called after updating camera state internally', () => {
-    const setter = vi.fn<[CameraStateParameters | undefined], void>();
+    const setter = vi.fn<[CameraStateParameters | undefined], undefined>();
 
     const { rerender } = renderHook(() => {
       useCameraStateControl(

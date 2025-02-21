@@ -1,11 +1,14 @@
+/*!
+ * Copyright 2025 Cognite AS
+ */
 import { describe, expect, test, vi, beforeEach, beforeAll, afterAll } from 'vitest';
-import { useCameraNavigation } from '../../../src/hooks/useCameraNavigation';
-import { viewerMock, viewerModelsMock } from '../fixtures/viewer';
-import { cadMock, nodeBoundingBox } from '../fixtures/cadModel';
 import { act, renderHook } from '@testing-library/react';
-import { fdmNodeCacheContentMock } from '../fixtures/fdmNodeCache';
 import { Vector3 } from 'three';
-import { createRenderTargetMock } from '../fixtures/renderTarget';
+import { cadMock, nodeBoundingBox } from '../../tests/unit-tests/fixtures/cadModel';
+import { fdmNodeCacheContentMock } from '../../tests/unit-tests/fixtures/fdmNodeCache';
+import { createRenderTargetMock } from '../../tests/unit-tests/fixtures/renderTarget';
+import { viewerMock, viewerModelsMock } from '../../tests/unit-tests/fixtures/viewer';
+import { useCameraNavigation } from './useCameraNavigation';
 
 const renderTargetMock = createRenderTargetMock();
 

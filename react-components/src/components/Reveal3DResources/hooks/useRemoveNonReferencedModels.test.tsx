@@ -1,3 +1,6 @@
+/*!
+ * Copyright 2025 Cognite AS
+ */
 import { describe, expect, test, vi, beforeEach } from 'vitest';
 import React, { type JSX } from 'react';
 
@@ -5,17 +8,27 @@ import { renderHook } from '@testing-library/react';
 
 import { useRemoveNonReferencedModels } from '../../../../src/components/Reveal3DResources/hooks/useRemoveNonReferencedModels';
 
+import { Reveal3DResourcesInfoContextProvider } from '../../../../src/components/Reveal3DResources/Reveal3DResourcesInfoContext';
+import { EMPTY_ARRAY } from '../../../../src/utilities/constants';
 import {
   viewerImage360CollectionsMock,
   viewerModelsMock,
   viewerRemoveModelsMock
-} from '../../fixtures/viewer';
-import { Reveal3DResourcesInfoContextProvider } from '../../../../src/components/Reveal3DResources/Reveal3DResourcesInfoContext';
-import { cadMock, cadModelOptions, createCadMock } from '../../fixtures/cadModel';
-import { createPointCloudMock, pointCloudModelOptions } from '../../fixtures/pointCloud';
-import { EMPTY_ARRAY } from '../../../../src/utilities/constants';
-import { createRenderTargetMock } from '../../fixtures/renderTarget';
-import { createImage360ClassicMock, image360ClassicOptions } from '../../fixtures/image360';
+} from '../../../../tests/unit-tests/fixtures/viewer';
+import { createRenderTargetMock } from '../../../../tests/unit-tests/fixtures/renderTarget';
+import {
+  cadMock,
+  cadModelOptions,
+  createCadMock
+} from '../../../../tests/unit-tests/fixtures/cadModel';
+import {
+  createImage360ClassicMock,
+  image360ClassicOptions
+} from '../../../../tests/unit-tests/fixtures/image360';
+import {
+  createPointCloudMock,
+  pointCloudModelOptions
+} from '../../../../tests/unit-tests/fixtures/pointCloud';
 
 describe(useRemoveNonReferencedModels.name, () => {
   beforeEach(() => {
