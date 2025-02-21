@@ -3,7 +3,7 @@ import {
   type DMDataSourceType,
   type Image360Collection
 } from '@cognite/reveal';
-import { Mock, It } from 'moq.ts';
+import { Mock } from 'moq.ts';
 import { vi } from 'vitest';
 import { type AddImage360CollectionOptions } from '../../../src';
 

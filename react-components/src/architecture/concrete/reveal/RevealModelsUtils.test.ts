@@ -8,7 +8,9 @@ import {
 } from '../../../../tests/tests-utilities/fixtures/cadModel';
 import {
   createImage360ClassicMock,
-  image360ClassicOptions
+  getIconsVisibiltyMock,
+  image360ClassicOptions,
+  setIconsVisibilityMock
 } from '../../../../tests/tests-utilities/fixtures/image360';
 import {
   createPointCloudMock,
