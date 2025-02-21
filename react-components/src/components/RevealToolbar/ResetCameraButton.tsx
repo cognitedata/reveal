@@ -42,7 +42,7 @@ export const ResetCameraButton = ({
     <CogsTooltip content={t({ key: 'RESET_CAMERA_TO_HOME' })} placement="bottom">
       <Button
         type="ghost"
-        icon=<HomeIcon />
+        icon={<HomeIcon />}
         aria-label="Reset camera to home"
         onClick={resetCameraToHomePosition}
       />

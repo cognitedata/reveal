@@ -138,7 +138,7 @@ export const WindowWidget = ({
                 />
               </CogsTooltip>
               <CogsTooltip content={t({ key: 'WIDGET_WINDOW_CLOSE' })} placement="top">
-                <Button type="ghost" icon=<CloseIcon /> onClick={handleClose} />
+                <Button type="ghost" icon={<CloseIcon />} onClick={handleClose} />
               </CogsTooltip>
             </Widget.Header>
             <WidgetBody>{!isMinimized && <WidgetContent>{children}</WidgetContent>}</WidgetBody>

@@ -30,6 +30,8 @@ export default defineConfig(({ command }) => {
     test: {
       include: ['src/**/*.{test,spec}.?(c|m)[jt]s?(x)'],
       reporters: ['default'],
+      isolate: false,
+      css: false,
       coverage: {
         reportsDirectory: '../coverage/reveal-react-components',
         exclude: [
