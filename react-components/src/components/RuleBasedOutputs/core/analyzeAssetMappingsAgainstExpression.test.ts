@@ -18,7 +18,7 @@ describe('analyzeAssetMappingsAgainstExpression', () => {
       type: 'numericExpression',
       trigger: {
         type: 'metadata',
-        key: 'mockedProperty2'
+        key: 'mockedproperty2'
       },
       condition: {
         type: 'greaterThan',
@@ -44,7 +44,7 @@ describe('analyzeAssetMappingsAgainstExpression', () => {
       type: 'stringExpression',
       trigger: {
         type: 'metadata',
-        key: 'mockedProperty1'
+        key: 'mockedproperty1'
       },
       condition: {
         type: 'contains',

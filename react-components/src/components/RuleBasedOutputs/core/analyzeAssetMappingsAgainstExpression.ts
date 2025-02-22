@@ -66,7 +66,6 @@ export const analyzeAssetMappingsAgainstExpression = async ({
     }
 
     const finalGlobalOutputResult = traverseExpression(triggerData, [expression]);
-
     if (finalGlobalOutputResult[0] ?? false) {
       const nodesFromThisAsset = assetMappings.filter(
         (item) => item.assetId === contextualizedAssetNode.id
@@ -75,7 +74,6 @@ export const analyzeAssetMappingsAgainstExpression = async ({
       allAssetMappingsTreeNodes.push(nodesFromThisAsset);
     }
   }
-
   const filteredAllAssetMappingsTreeNodes = allAssetMappingsTreeNodes.flat();
   return applyAssetMappingsNodeStyles(filteredAllAssetMappingsTreeNodes, outputSelected);
 };

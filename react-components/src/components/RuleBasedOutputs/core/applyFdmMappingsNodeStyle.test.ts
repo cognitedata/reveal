@@ -23,9 +23,9 @@ describe('applyFdmMappingsNodeStyles', () => {
       { space: 'space-1', externalId: 'externalId-1' },
       { space: 'space-2', externalId: 'externalId-2' }
     ]);
-    expect(result.fdmStylingGroup.style.cad?.color?.getHex()).toBe(new Color('#ff0000').getHex());
+    expect(result.fdmStylingGroup.style.cad?.color?.getHex()).toBe(new Color('#ffff00').getHex());
     expect(result.fdmStylingGroup.style.pointcloud?.color?.getHex()).toBe(
-      new Color('#ff0000').getHex()
+      new Color('#ffff00').getHex()
     );
   });
 

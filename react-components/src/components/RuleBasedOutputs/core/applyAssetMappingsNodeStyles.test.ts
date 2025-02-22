@@ -7,19 +7,19 @@ import { NumericRange, TreeIndexNodeCollection } from '@cognite/reveal';
 import { Color } from 'three';
 import { applyAssetMappingsNodeStyles } from './applyAssetMappingsNodeStyles';
 import {
-  mockedTreeNodes,
+  mockedAssetMappings,
   outputSelected
 } from '../../../../tests/tests-utilities/fixtures/ruleBasedOutputs';
 
 describe('applyAssetMappingsNodeStyles', () => {
   it('should apply asset mappings node styles and return styling group and style index', () => {
-    const result = applyAssetMappingsNodeStyles(mockedTreeNodes, outputSelected);
+    const result = applyAssetMappingsNodeStyles(mockedAssetMappings, outputSelected);
 
     expect(result).toBeDefined();
     expect(result.assetStylingGroup.assetIds).toEqual([1, 2]);
-    expect(result.assetStylingGroup.style.cad?.color?.getHex()).toBe(new Color('#ff0000').getHex());
+    expect(result.assetStylingGroup.style.cad?.color?.getHex()).toBe(new Color('#ffff00').getHex());
     expect(result.assetStylingGroup.style.pointcloud?.color?.getHex()).toBe(
-      new Color('#ff0000').getHex()
+      new Color('#ffff00').getHex()
     );
   });
 

@@ -4,7 +4,9 @@ import {
   type FdmTyping,
   type ColorRuleOutput,
   type Expression,
-  type FdmInstanceNodeWithConnectionAndProperties
+  type FdmInstanceNodeWithConnectionAndProperties,
+  type RuleOutputSet,
+  type Rule
 } from '../../../src/components/RuleBasedOutputs/types';
 import { type AssetIdsAndTimeseries } from '../../../src/data-providers/types';
 
@@ -197,8 +199,8 @@ export const contextualizedAssetNodes: Asset[] = [
     lastUpdatedTime: new Date(),
     createdTime: new Date(),
     metadata: {
-      mockedProperty1: 'valueA',
-      mockedProperty2: '20'
+      mockedproperty1: 'valueA',
+      mockedproperty2: '20'
     }
   },
   {
@@ -208,8 +210,8 @@ export const contextualizedAssetNodes: Asset[] = [
     lastUpdatedTime: new Date(),
     createdTime: new Date(),
     metadata: {
-      mockedProperty1: 'valueB',
-      mockedProperty2: '1'
+      mockedproperty1: 'valueB',
+      mockedroperty2: '1'
     }
   }
 ];
@@ -272,7 +274,7 @@ export const assetMappings: AssetMapping3D[] = [
 ];
 export const outputSelected: ColorRuleOutput = {
   type: 'color',
-  fill: '#ff0000',
+  fill: '#ffff00',
   outline: '#000000',
   externalId: 'some-external-id'
 };
@@ -428,7 +430,6 @@ export const mockedExpressionAssetMappingString2: Expression = {
   }
 };
 
-
 export const mockedExpressionAssetMappingNumeric: Expression = {
   type: 'numericExpression',
   condition: {
@@ -464,7 +465,17 @@ export const mockedExpressionFdmMappingDatetime: Expression = {
   }
 };
 
-export const mockedTreeNodes: AssetMapping3D[] = [
+export const mockedExpressionMultipleAnd: Expression = {
+  type: 'and',
+  expressions: [mockedExpressionAssetMappingString1, mockedExpressionFdmMappingBoolean]
+};
+
+export const mockedExpressionMultipleOr: Expression = {
+  type: 'or',
+  expressions: [mockedExpressionAssetMappingString1, mockedExpressionFdmMappingBoolean]
+};
+
+export const mockedAssetMappings: AssetMapping3D[] = [
   {
     assetId: 1,
     treeIndex: 0,
@@ -478,3 +489,39 @@ export const mockedTreeNodes: AssetMapping3D[] = [
     nodeId: 0
   } satisfies AssetMapping3D
 ];
+
+export const mockedRuleSet: RuleOutputSet = {
+  rulesWithOutputs: [
+    {
+      rule: {
+        expression: mockedExpressionFdmMappingBoolean,
+        type: 'rule',
+        id: 'mockedId',
+        name: 'ruleName'
+      } satisfies Rule,
+      outputs: [outputSelected]
+    }
+  ],
+  id: '',
+  name: '',
+  createdAt: 0,
+  createdBy: 'mockingtest'
+};
+
+export const mockedRuleSetMultiple: RuleOutputSet = {
+  rulesWithOutputs: [
+    {
+      rule: {
+        expression: mockedExpressionMultipleAnd,
+        type: 'rule',
+        id: 'mockedId',
+        name: 'ruleName'
+      } satisfies Rule,
+      outputs: [outputSelected]
+    }
+  ],
+  id: '',
+  name: '',
+  createdAt: 0,
+  createdBy: 'mockingtest'
+};
