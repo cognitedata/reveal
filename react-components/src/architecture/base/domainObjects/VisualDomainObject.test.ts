@@ -54,7 +54,7 @@ describe('VisualDomainObject', () => {
   });
 });
 
-describe('VisualDomainObject with no view installed', () => {
+describe('VisualDomainObject when no view installed', () => {
   let renderTarget: RevealRenderTarget;
   beforeAll(() => {
     renderTarget = createRenderTargetMock();
@@ -90,6 +90,21 @@ describe('VisualDomainObject with view installed', () => {
     shouldBeAllVisible(domainObject, renderTarget);
   });
 
+  test('should set visible twice', () => {
+    const domainObject = new MyDomainObject();
+    domainObject.setVisibleInteractive(true, renderTarget);
+    domainObject.setVisibleInteractive(true, renderTarget);
+    shouldBeAllVisible(domainObject, renderTarget);
+  });
+
+  test('should set not visible twice', () => {
+    const domainObject = new MyDomainObject();
+    domainObject.setVisibleInteractive(true, renderTarget);
+    domainObject.setVisibleInteractive(false, renderTarget);
+    domainObject.setVisibleInteractive(false, renderTarget);
+    shouldBeNoneVisible(domainObject, renderTarget);
+  });
+
   test('should toggle visible', () => {
     const domainObject = new MyDomainObject();
     domainObject.setVisibleInteractive(true, renderTarget);
@@ -107,10 +122,7 @@ describe('VisualDomainObject with view installed', () => {
   test('hierarchy should set visible state on parent by children', () => {
     const folder = createSmallHierarchy();
     folder.getChild(0).toggleVisibleInteractive(renderTarget);
-
-    expect(folder.isVisible(renderTarget)).toBe(true);
-    expect(folder.getVisibleState(renderTarget)).toBe(VisibleState.Some);
-
+    shouldBeSomeVisible(folder, renderTarget);
     folder.getChild(1).toggleVisibleInteractive(renderTarget);
     shouldBeAllVisible(folder, renderTarget);
   });
@@ -189,7 +201,14 @@ function shouldBeDisabledVisible(
 function shouldBeAllVisible(domainObject: DomainObject, renderTarget: RevealRenderTarget): void {
   expect(domainObject.isVisible(renderTarget)).toBe(true);
   expect(domainObject.getVisibleState(renderTarget)).toBe(VisibleState.All);
+
   if (domainObject instanceof VisualDomainObject) {
     expect(domainObject.getViewByTarget(renderTarget)).instanceOf(MyThreeView);
   }
+}
+
+function shouldBeSomeVisible(domainObject: DomainObject, renderTarget: RevealRenderTarget): void {
+  expect(domainObject.isVisible(renderTarget)).toBe(true);
+  expect(domainObject.getVisibleState(renderTarget)).toBe(VisibleState.Some);
+  expect(domainObject).not.instanceOf(VisualDomainObject);
 }

@@ -18,6 +18,8 @@ describe('RootDomainObject', () => {
     const domainObject = new RootDomainObject(renderTarget, sdkMock);
     expect(domainObject.renderTarget).toBe(renderTarget);
     expect(domainObject.sdk).toBe(sdkMock);
+    expect(domainObject.fdmSdk).toBeDefined();
+    expect(domainObject.typeName).toBeDefined();
     expect(domainObject.icon).toBeDefined();
     expect(domainObject.hasIconColor).toBe(false);
     expect(domainObject.hasIndexOnLabel).toBe(false);
