@@ -1,16 +1,16 @@
 import { type AssetMapping3D, type Datapoints, type Asset } from '@cognite/sdk/';
 import {
   type TriggerTypeData,
-  type FdmTyping,
   type ColorRuleOutput,
   type Expression,
   type FdmInstanceNodeWithConnectionAndProperties,
   type RuleOutputSet,
-  type Rule
+  type FdmRuleTrigger,
+  type NumericExpression
 } from '../../../src/components/RuleBasedOutputs/types';
 import { type AssetIdsAndTimeseries } from '../../../src/data-providers/types';
 
-const triggerDataFDMBoolean: TriggerTypeData = {
+export const triggerDataFDMBoolean: TriggerTypeData = {
   type: 'fdm',
   instanceNode: {
     items: [
@@ -35,11 +35,11 @@ const triggerDataFDMBoolean: TriggerTypeData = {
     createdTime: 0,
     lastUpdatedTime: 0,
     deletedTime: 0,
-    typing: {} satisfies FdmTyping
+    typing: {}
   }
 };
 
-const triggerDataMetadata: TriggerTypeData = {
+export const triggerDataMetadata: TriggerTypeData = {
   type: 'metadata',
   asset: {
     metadata: {
@@ -49,7 +49,7 @@ const triggerDataMetadata: TriggerTypeData = {
   } as unknown as Asset
 };
 
-const triggerDataFdmNumeric: TriggerTypeData = {
+export const triggerDataFdmNumeric: TriggerTypeData = {
   type: 'fdm',
   instanceNode: {
     items: [
@@ -74,11 +74,11 @@ const triggerDataFdmNumeric: TriggerTypeData = {
     createdTime: 0,
     lastUpdatedTime: 0,
     deletedTime: 0,
-    typing: {} satisfies FdmTyping
+    typing: {}
   }
 };
 
-const triggerDataTimeseries: TriggerTypeData = {
+export const triggerDataTimeseries: TriggerTypeData = {
   type: 'timeseries',
   timeseries: {
     timeseriesWithDatapoints: [
@@ -138,13 +138,13 @@ const triggerDataTimeseries: TriggerTypeData = {
       rootId: 1,
       name: 'asset-1',
       id: 1,
-      lastUpdatedTime: 1212121212,
-      createdTime: 1212121212
+      lastUpdatedTime: new Date(),
+      createdTime: new Date()
     } as unknown as Asset
   }
 };
 
-const triggerDataFdmDatetime: TriggerTypeData = {
+export const triggerDataFdmDatetime: TriggerTypeData = {
   type: 'fdm',
   instanceNode: {
     items: [
@@ -279,6 +279,47 @@ export const outputSelected: ColorRuleOutput = {
   externalId: 'some-external-id'
 };
 
+export const mockedFdmInstanceNodeWithConnectionAndPropertiesDatetime: FdmInstanceNodeWithConnectionAndProperties =
+  {
+    cadNode: {
+      treeIndex: 0,
+      subtreeSize: 1,
+      id: 0,
+      parentId: 0,
+      depth: 0,
+      name: 'node-1'
+    },
+    connection: {
+      instance: { space: 'space-1', externalId: 'externalId-1' },
+      modelId: 12121212,
+      revisionId: 12121212,
+      treeIndex: 0
+    },
+    instanceType: 'node',
+    version: 0,
+    space: 'space-1',
+    externalId: 'externalId-1',
+    createdTime: 0,
+    lastUpdatedTime: 0,
+    deletedTime: 0,
+    items: [
+      {
+        instanceType: 'node',
+        version: 1,
+        space: 'space-1',
+        externalId: 'externalId-1',
+        createdTime: 1212121212,
+        lastUpdatedTime: 1212121212,
+        properties: {
+          'space-1': {
+            'externalId-property/1': { mockedProperty: '2025-02-19T12:00:00Z' }
+          }
+        }
+      }
+    ],
+    typing: {}
+  };
+
 export const mockedFdmInstanceNodeWithConnectionAndProperties: FdmInstanceNodeWithConnectionAndProperties[] =
   [
     {
@@ -319,7 +360,7 @@ export const mockedFdmInstanceNodeWithConnectionAndProperties: FdmInstanceNodeWi
         }
       ],
       typing: {}
-    } satisfies FdmInstanceNodeWithConnectionAndProperties,
+    },
     {
       cadNode: {
         treeIndex: 1,
@@ -358,8 +399,9 @@ export const mockedFdmInstanceNodeWithConnectionAndProperties: FdmInstanceNodeWi
         }
       ],
       typing: {}
-    } satisfies FdmInstanceNodeWithConnectionAndProperties
+    }
   ];
+
 export const mockedExpressionFdmMappingBoolean: Expression = {
   type: 'booleanExpression',
   condition: {
@@ -442,6 +484,33 @@ export const mockedExpressionAssetMappingNumeric: Expression = {
   }
 };
 
+export const mockedExpressionAssetMappingNumericTimeseries: NumericExpression = {
+  type: 'numericExpression',
+  condition: {
+    type: 'greaterThan',
+    parameters: [42]
+  },
+  trigger: {
+    type: 'timeseries',
+    externalId: 'timeseries-1'
+  }
+};
+
+export const mockedExpressionFdmMappingNumeric: NumericExpression = {
+  type: 'numericExpression',
+  trigger: {
+    type: 'fdm',
+    key: {
+      space: 'space-1',
+      view: { space: 'space-1', externalId: 'view-1', version: '1', type: 'view' },
+      property: 'mockedProperty',
+      externalId: '',
+      typing: {}
+    }
+  },
+  condition: { type: 'greaterThan', parameters: [10] }
+};
+
 export const mockedExpressionFdmMappingDatetime: Expression = {
   type: 'datetimeExpression',
   condition: {
@@ -481,13 +550,13 @@ export const mockedAssetMappings: AssetMapping3D[] = [
     treeIndex: 0,
     subtreeSize: 1,
     nodeId: 0
-  } satisfies AssetMapping3D,
+  },
   {
     assetId: 2,
     treeIndex: 1,
     subtreeSize: 1,
     nodeId: 0
-  } satisfies AssetMapping3D
+  }
 ];
 
 export const mockedRuleSet: RuleOutputSet = {
@@ -498,7 +567,7 @@ export const mockedRuleSet: RuleOutputSet = {
         type: 'rule',
         id: 'mockedId',
         name: 'ruleName'
-      } satisfies Rule,
+      },
       outputs: [outputSelected]
     }
   ],
@@ -516,7 +585,7 @@ export const mockedRuleSetMultiple: RuleOutputSet = {
         type: 'rule',
         id: 'mockedId',
         name: 'ruleName'
-      } satisfies Rule,
+      },
       outputs: [outputSelected]
     }
   ],
@@ -524,4 +593,15 @@ export const mockedRuleSetMultiple: RuleOutputSet = {
   name: '',
   createdAt: 0,
   createdBy: 'mockingtest'
+};
+
+export const mockedTrigger: FdmRuleTrigger = {
+  type: 'fdm',
+  key: {
+    space: 'space-1',
+    view: { space: 'space-1', externalId: 'view-1', version: '1', type: 'view' },
+    property: 'mockedProperty',
+    externalId: '',
+    typing: {}
+  }
 };
