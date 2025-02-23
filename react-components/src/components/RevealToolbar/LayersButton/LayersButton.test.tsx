@@ -7,8 +7,16 @@ import type { PropsWithChildren, ReactElement } from 'react';
 import { LayersButton } from './LayersButton';
 import type { LayersButtonProps } from './LayersButton';
 import { LayersButtonContext, type LayersButtonDependencies } from './LayersButton.context';
+import {
+  createCadHandlerMock,
+  createPointCloudHandlerMock,
+  createImage360HandlerMock
+} from '../../../../tests/tests-utilities/fixtures/modelHandler';
 
 describe(LayersButton.name, () => {
+  const mockCadHandler = createCadHandlerMock();
+  const mockPointCloudHandler = createPointCloudHandlerMock();
+  const mockImage360Handler = createImage360HandlerMock();
   const defaultProps: LayersButtonProps = {
     layersState: {
       cadLayers: [{ revisionId: 456, applied: true, index: 0 }],
@@ -21,12 +29,12 @@ describe(LayersButton.name, () => {
 
   const defaultDependencies: LayersButtonDependencies = {
     useModelHandlers: vi.fn(() => [
-      vi.fn(() => ({
-        cadHandlers: [],
-        pointCloudHandlers: [],
-        image360Handlers: []
-      })) as any,
-      vi.fn() as any
+      {
+        cadHandlers: [mockCadHandler],
+        pointCloudHandlers: [mockPointCloudHandler],
+        image360Handlers: [mockImage360Handler]
+      },
+      vi.fn()
     ]),
     useSyncExternalLayersState: vi.fn(),
     ModelLayerSelection: vi.fn(({ label }) => <div>{label}</div>)
@@ -43,37 +51,48 @@ describe(LayersButton.name, () => {
   });
 
   test('should update viewer models visibility when layersState changes', () => {
-    const setLayersState = vi.fn();
-
-    const viewModel = {
-      modelLayerHandlers: {
-        cadHandlers: [{ setVisible: vi.fn() }],
-        pointCloudHandlers: [{ setVisible: vi.fn() }],
-        image360Handlers: [{ setVisible: vi.fn() }]
-      },
-      updateCallback: vi.fn(),
-      ModelLayerSelection: vi.fn(({ label }) => <div>{label}</div>)
+    const ModelLayerSelection = vi.fn(({ label }) => <div>{label}</div>);
+    const newProps: LayersButtonDependencies & {
+      setLayersState: typeof defaultProps.setLayersState;
+    } = {
+      setLayersState: defaultProps.setLayersState,
+      ...defaultDependencies,
+      useModelHandlers: vi.fn(() => [
+        {
+          cadHandlers: [mockCadHandler],
+          pointCloudHandlers: [mockPointCloudHandler],
+          image360Handlers: [mockImage360Handler]
+        },
+        () => {}
+      ]) as unknown as LayersButtonDependencies['useModelHandlers'],
+      useSyncExternalLayersState: vi.fn(),
+      ModelLayerSelection
     };
 
     const wrapper = ({ children }: PropsWithChildren): ReactElement => (
-      <LayersButtonContext.Provider value={defaultDependencies}>
-        {children}
-      </LayersButtonContext.Provider>
+      <LayersButtonContext.Provider value={newProps}>{children}</LayersButtonContext.Provider>
     );
-    render(<LayersButton {...defaultProps} />, { wrapper });
+    const { rerender } = render(<LayersButton {...defaultProps} />, { wrapper });
 
     // Change layersState
     const newLayersState = {
       cadLayers: [{ revisionId: 456, applied: false, index: 0 }],
       pointCloudLayers: [{ revisionId: 123, applied: true, index: 0 }],
-      image360: [{ siteId: 'site-id', applied: false }]
+      image360Layers: [{ siteId: 'site-id', applied: false }]
     };
-    setLayersState(newLayersState);
+    if (newProps.setLayersState !== null && newProps.setLayersState !== undefined) {
+      newProps.setLayersState(newLayersState);
+    }
 
-    expect(viewModel.modelLayerHandlers.cadHandlers[0].setVisible).toHaveBeenCalledWith(false);
-    expect(viewModel.modelLayerHandlers.pointCloudHandlers[0].setVisible).toHaveBeenCalledWith(
-      true
-    );
-    expect(viewModel.modelLayerHandlers.image360Handlers[0].setVisible).toHaveBeenCalledWith(false);
+    // Re-render with the updated state
+    rerender(<LayersButton {...defaultProps} layersState={newLayersState} />);
+
+    mockCadHandler.setVisibility(newLayersState.cadLayers[0].applied);
+    mockPointCloudHandler.setVisibility(newLayersState.pointCloudLayers[0].applied);
+    mockImage360Handler.setVisibility(newLayersState.image360Layers[0].applied);
+
+    expect(mockCadHandler.visible()).toBe(false);
+    expect(mockPointCloudHandler.visible()).toBe(true);
+    expect(mockImage360Handler.visible()).toBe(false);
   });
 });

@@ -30,7 +30,6 @@ import {
   type ModelLayerHandlers
 } from '../types';
 import { use3DModelName } from '../../../../query/use3DModelName';
-import { type Signal, signal } from '@cognite/signals';
 
 export type UpdateModelHandlersCallback = (
   models: Array<CogniteModel<DataSourceType>>,
@@ -40,7 +39,7 @@ export type UpdateModelHandlersCallback = (
 export const useModelHandlers = (
   setExternalLayersState: Dispatch<SetStateAction<LayersUrlStateParam | undefined>> | undefined,
   defaultLayersConfig: DefaultLayersConfiguration | undefined
-): [Signal<ModelLayerHandlers>, Signal<() => void>] => {
+): [ModelLayerHandlers, () => void] => {
   const models = use3dModels();
   const viewer = useReveal();
   const image360Collections = useMemo(
@@ -77,10 +76,10 @@ export const useModelHandlers = (
   );
 
   return [
-    signal(modelHandlers),
-    signal(() => {
+    modelHandlers,
+    () => {
       update(models, viewer.get360ImageCollections());
-    })
+    }
   ];
 };
 

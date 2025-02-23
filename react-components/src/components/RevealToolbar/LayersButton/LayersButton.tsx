@@ -9,7 +9,6 @@ import { useTranslation } from '../../i18n/I18n';
 import { TOOLBAR_HORIZONTAL_PANEL_OFFSET } from '../../constants';
 import { LabelWithShortcut } from '../../Architecture/LabelWithShortcut';
 import { useLayersButtonViewModel } from './LayersButton.viewmodel';
-import { useSignalValue } from '@cognite/signals/react';
 import { type LayersUrlStateParam, type DefaultLayersConfiguration } from './types';
 
 export type LayersButtonProps = {
@@ -30,9 +29,6 @@ export const LayersButton = ({
     externalLayersState
   );
 
-  const modelLayerHandlersValue = useSignalValue(modelLayerHandlers);
-  const updateCallbackValue = useSignalValue(updateCallback);
-
   return (
     <>
       <SelectPanel
@@ -51,18 +47,18 @@ export const LayersButton = ({
           <SelectPanel.Section>
             <ModelLayerSelection
               label={t({ key: 'CAD_MODELS' })}
-              modelLayerHandlers={modelLayerHandlersValue.cadHandlers}
-              update={updateCallbackValue}
+              modelLayerHandlers={modelLayerHandlers.cadHandlers}
+              update={updateCallback}
             />
             <ModelLayerSelection
               label={t({ key: 'POINT_CLOUDS' })}
-              modelLayerHandlers={modelLayerHandlersValue.pointCloudHandlers}
-              update={updateCallbackValue}
+              modelLayerHandlers={modelLayerHandlers.pointCloudHandlers}
+              update={updateCallback}
             />
             <ModelLayerSelection
               label={t({ key: 'IMAGES_360' })}
-              modelLayerHandlers={modelLayerHandlersValue.image360Handlers}
-              update={updateCallbackValue}
+              modelLayerHandlers={modelLayerHandlers.image360Handlers}
+              update={updateCallback}
             />
           </SelectPanel.Section>
         </SelectPanel.Body>

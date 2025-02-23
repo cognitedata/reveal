@@ -8,7 +8,6 @@ import {
   type DefaultLayersConfiguration,
   type LayersUrlStateParam
 } from './types';
-import { type Signal } from '@cognite/signals';
 import { type ModelHandler } from './ModelHandler';
 
 export function useLayersButtonViewModel(
@@ -16,8 +15,8 @@ export function useLayersButtonViewModel(
   defaultLayerConfiguration: DefaultLayersConfiguration | undefined,
   externalLayersState: LayersUrlStateParam | undefined
 ): {
-  modelLayerHandlers: Signal<ModelLayerHandlers>;
-  updateCallback: Signal<() => void>;
+  modelLayerHandlers: ModelLayerHandlers;
+  updateCallback: () => void;
   ModelLayerSelection: ({
     label,
     modelLayerHandlers,
@@ -37,10 +36,10 @@ export function useLayersButtonViewModel(
   );
 
   useSyncExternalLayersState(
-    modelLayerHandlers(),
+    modelLayerHandlers,
     externalLayersState,
     setExternalLayersState,
-    update()
+    update
   );
 
   return {
