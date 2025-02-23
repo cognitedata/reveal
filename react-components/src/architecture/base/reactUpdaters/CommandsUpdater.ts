@@ -18,6 +18,10 @@ export class CommandsUpdater {
   private static _idleCallbackId: number = -1;
   private static _renderTarget: RevealRenderTarget | undefined = undefined;
 
+  public static get needUpdate(): boolean {
+    return this._idleCallbackId >= 0;
+  }
+
   public static update(renderTarget: RevealRenderTarget | undefined): void {
     if (renderTarget === undefined) {
       return; // If this is not given, we do not know which target to update
