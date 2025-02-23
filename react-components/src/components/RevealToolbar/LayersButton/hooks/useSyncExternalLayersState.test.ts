@@ -19,7 +19,7 @@ vi.mock('../../../RevealCanvas/ViewerContext', () => ({
   useRenderTarget: () => renderTargetMock
 }));
 
-describe('useSyncExternalLayersState', () => {
+describe(useSyncExternalLayersState.name, () => {
   const mockCadHandler = createCadHandlerMock();
   const mockPointCloudHandler = createPointCloudHandlerMock();
   const mockImage360Handler = createImage360HandlerMock();

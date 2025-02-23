@@ -38,7 +38,7 @@ vi.mock('../../../RevealCanvas/SDKProvider', () => ({
   useSDK: () => sdkMock
 }));
 
-describe('useModelHandlers', () => {
+describe(useModelHandlers.name, () => {
   beforeEach(() => {
     vi.resetAllMocks();
   });

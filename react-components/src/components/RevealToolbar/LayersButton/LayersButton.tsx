@@ -40,7 +40,11 @@ export const LayersButton = ({
           <Tooltip
             content={<LabelWithShortcut label={t({ key: 'LAYERS_FILTER_TOOLTIP' })} />}
             placement="right">
-            <Button icon={<LayersIcon />} type="ghost" />
+            <Button
+              icon={<LayersIcon />}
+              type="ghost"
+              aria-label={t({ key: 'LAYERS_FILTER_TOOLTIP' })}
+            />
           </Tooltip>
         </SelectPanel.Trigger>
         <SelectPanel.Body>
