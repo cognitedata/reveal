@@ -40,8 +40,8 @@ export const useModelHandlers = (
   setExternalLayersState: Dispatch<SetStateAction<LayersUrlStateParam | undefined>> | undefined,
   defaultLayersConfig: DefaultLayersConfiguration | undefined
 ): [ModelLayerHandlers, () => void] => {
-  const models = use3dModels();
   const viewer = useReveal();
+  const models = use3dModels();
   const image360Collections = useMemo(
     () => viewer.get360ImageCollections(),
     [viewer, viewer.get360ImageCollections().length]
