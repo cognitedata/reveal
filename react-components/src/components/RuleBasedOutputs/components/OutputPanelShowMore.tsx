@@ -18,6 +18,7 @@ export const ShowMore = ({ onShowMore, isShowMore }: OutputPanelShowMoreProps): 
     <StyledOutputItem $showMore={isShowMore} key={'rule-based-panel-show-more'}>
       <Flex justifyContent="center" gap={8}>
         <Button
+          data-testid="show-more-button"
           size="small"
           onClick={onShowMore}
           icon={!isShowMore ? <AddIcon /> : <RemoveIcon />}

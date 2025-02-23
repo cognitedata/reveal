@@ -6,7 +6,7 @@ import { Menu } from '@cognite/cogs-lab';
 import { type ReactElement } from 'react';
 import styled from 'styled-components';
 
-type RuleBasedSelectionItemProps = {
+export type RuleBasedSelectionItemProps = {
   onChange: (value: string | undefined) => void;
   label: string;
   id: string;
@@ -26,6 +26,7 @@ export const RuleBasedSelectionItem = ({
 }: RuleBasedSelectionItemProps): ReactElement => {
   return (
     <Menu.ItemToggled
+      data-testid="rule-based-selection-item"
       onClick={() => {
         onChange(id);
       }}
@@ -34,9 +35,11 @@ export const RuleBasedSelectionItem = ({
       key={key}
       trailingContent={
         <StyledFlex justifyContent="space-between" alignItems="center" gap={8}>
-          {!isEmptyRuleItem && isLoading && checked === true && <LoaderIcon />}
+          {!isEmptyRuleItem && isLoading && checked === true && (
+            <LoaderIcon data-testid="rule-based-loader-icon" />
+          )}
           <RightFlex gap={4} alignItems="center">
-            <ColorPaletteIcon />
+            <ColorPaletteIcon data-testid="rule-based-color-pallete-icon" />
           </RightFlex>
         </StyledFlex>
       }></Menu.ItemToggled>

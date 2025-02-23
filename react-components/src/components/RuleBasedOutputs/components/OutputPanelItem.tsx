@@ -13,8 +13,13 @@ type OutputPanelItemProps = {
 export const OutputPanelItem = ({ index, output }: OutputPanelItemProps): ReactElement => {
   return (
     <StyledOutputItem key={index}>
-      <StyledBulletColor $backgroundColor={output.type === 'color' ? output.fill : ''} />
-      <StyledLabel>{output.label ?? (output.type === 'color' ? output.fill : '')}</StyledLabel>
+      <StyledBulletColor
+        data-testid="rule-based-output-panel-bullet-color"
+        $backgroundColor={output.type === 'color' ? output.fill : ''}
+      />
+      <StyledLabel data-testid="rule-based-output-panel-label">
+        {output.label ?? (output.type === 'color' ? output.fill : '')}
+      </StyledLabel>
     </StyledOutputItem>
   );
 };
