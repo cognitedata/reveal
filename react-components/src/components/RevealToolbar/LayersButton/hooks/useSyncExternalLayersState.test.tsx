@@ -4,20 +4,12 @@
 import { describe, expect, test, vi, beforeEach } from 'vitest';
 import { useSyncExternalLayersState } from './useSyncExternalLayersState';
 import { renderHook } from '@testing-library/react';
-import { viewerMock } from '../../../../../tests/tests-utilities/fixtures/viewer';
-import { createRenderTargetMock } from '../../../../../tests/tests-utilities/fixtures/renderTarget';
 import {
   createCadHandlerMock,
   createPointCloudHandlerMock,
   createImage360HandlerMock
 } from '../../../../../tests/tests-utilities/fixtures/modelHandler';
-
-const renderTargetMock = createRenderTargetMock();
-
-vi.mock('../../../RevealCanvas/ViewerContext', () => ({
-  useReveal: () => viewerMock,
-  useRenderTarget: () => renderTargetMock
-}));
+import { wrapper } from '../../../../../tests/tests-utilities/fixtures/wrapper';
 
 describe(useSyncExternalLayersState.name, () => {
   const mockCadHandler = createCadHandlerMock();
@@ -37,14 +29,17 @@ describe(useSyncExternalLayersState.name, () => {
     const setExternalLayersState = vi.fn();
     const update = vi.fn();
 
-    renderHook(() => {
-      useSyncExternalLayersState(
-        modelLayerHandlers,
-        externalLayersState,
-        setExternalLayersState,
-        update
-      );
-    });
+    renderHook(
+      () => {
+        useSyncExternalLayersState(
+          modelLayerHandlers,
+          externalLayersState,
+          setExternalLayersState,
+          update
+        );
+      },
+      { wrapper }
+    );
 
     expect(update).toHaveBeenCalled();
   });

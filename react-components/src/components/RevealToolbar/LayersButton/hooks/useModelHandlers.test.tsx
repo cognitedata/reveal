@@ -6,36 +6,17 @@ import { useModelHandlers } from './useModelHandlers';
 import { renderHook } from '@testing-library/react';
 import {
   viewerImage360CollectionsMock,
-  viewerMock,
   viewerModelsMock
 } from '../../../../../tests/tests-utilities/fixtures/viewer';
-import { createRenderTargetMock } from '../../../../../tests/tests-utilities/fixtures/renderTarget';
 import { type CogniteModel } from '@cognite/reveal';
 import { cadMock } from '../../../../../tests/tests-utilities/fixtures/cadModel';
 import { createImage360ClassicMock } from '../../../../../tests/tests-utilities/fixtures/image360';
-import { sdkMock } from '../../../../../tests/tests-utilities/fixtures/sdk';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { wrapper } from '../../../../../tests/tests-utilities/fixtures/wrapper';
 
-const queryClient = new QueryClient();
-
-const wrapper = ({ children }: { children: any }): any => (
-  <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
-);
-
-const renderTargetMock = createRenderTargetMock();
 const mockResourceCount = { reveal3DResourcesCount: 2 };
-
-vi.mock('../../../RevealCanvas/ViewerContext', () => ({
-  useReveal: () => viewerMock,
-  useRenderTarget: () => renderTargetMock
-}));
 
 vi.mock('../../../../components/Reveal3DResources/Reveal3DResourcesInfoContext', () => ({
   useReveal3DResourcesCount: () => mockResourceCount
-}));
-
-vi.mock('../../../RevealCanvas/SDKProvider', () => ({
-  useSDK: () => sdkMock
 }));
 
 describe(useModelHandlers.name, () => {
