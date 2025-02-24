@@ -32,6 +32,25 @@ describe('applyAssetMappingsNodeStyles', () => {
     expect(result.assetStylingGroup.assetIds).toEqual([]);
   });
 
+  it('should handle treeNodes with undefined treeIndex or subtreeSize', () => {
+    const treeNodes: AssetMapping3D[] = [
+      {
+        assetId: 1,
+        subtreeSize: 1,
+        nodeId: 0
+      } satisfies AssetMapping3D,
+      {
+        assetId: 2,
+        treeIndex: 1,
+        nodeId: 0
+      } satisfies AssetMapping3D
+    ];
+    const result = applyAssetMappingsNodeStyles(treeNodes, outputSelected);
+
+    expect(result).toBeDefined();
+    expect(result.assetStylingGroup.assetIds).toEqual([]);
+  });
+
   it('should correctly update the nodeIndexSet', () => {
     const treeNodes: AssetMapping3D[] = [
       {
