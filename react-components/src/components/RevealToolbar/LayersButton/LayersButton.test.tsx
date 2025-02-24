@@ -1,7 +1,7 @@
 /*!
  * Copyright 2025 Cognite AS
  */
-import { render, screen } from '@testing-library/react';
+import { render } from '@testing-library/react';
 import { describe, expect, test, vi } from 'vitest';
 import type { PropsWithChildren, ReactElement } from 'react';
 import { LayersButton } from './LayersButton';
