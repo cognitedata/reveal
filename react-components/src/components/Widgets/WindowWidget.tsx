@@ -2,33 +2,18 @@
  * Copyright 2023 Cognite AS
  */
 
-import {
-  Button,
-  CloseIcon,
-  Tooltip as CogsTooltip,
-  CollapseIcon,
-  ExpandIcon
-} from '@cognite/cogs.js';
-import { type ReactElement, useState, type ReactNode, useEffect, type SyntheticEvent } from 'react';
+import { Button, CloseIcon, Tooltip as CogsTooltip } from '@cognite/cogs.js';
+import { type ReactElement, type ReactNode } from 'react';
 import Widget from './Widget';
-import Draggable, { type DraggableData, type DraggableEvent } from 'react-draggable';
-import { ResizableBox, type ResizeCallbackData } from 'react-resizable';
+import Draggable from 'react-draggable';
+import { ResizableBox } from 'react-resizable';
 import 'react-resizable/css/styles.css';
-import {
-  WIDGET_HEIGHT_FACTOR,
-  WIDGET_INSIDE_WINDOW_MIN_HEIGHT,
-  WIDGET_WIDTH_FACTOR,
-  WIDGET_WINDOW_MIN_HEIGHT,
-  WIDGET_WINDOW_MIN_WIDTH,
-  WIDGET_WINDOW_X_OFFSET,
-  WIDGET_WINDOW_Y_OFFSET
-} from './constants';
-import { useTranslation } from '../i18n/I18n';
+import { WIDGET_INSIDE_WINDOW_MIN_HEIGHT, WIDGET_WINDOW_MIN_WIDTH } from './constants';
 import { withSuppressRevealEvents } from '../../higher-order-components/withSuppressRevealEvents';
 import { StyledComponent, WidgetBody, WidgetContent } from './elements';
-import { useReveal } from '../RevealCanvas/ViewerContext';
+import { useWindowWidgetProperties } from './WindowWidget.viewmodel';
 
-type WindowWidgetProps = {
+export type WindowWidgetProps = {
   title?: string;
   subtitle?: string;
   header?: string;
@@ -49,58 +34,24 @@ export const WindowWidget = ({
   onClose,
   onResize
 }: WindowWidgetProps): ReactElement => {
-  const { t } = useTranslation();
-  const [isMinimized, setIsMinimized] = useState(false);
-  const [position, setPosition] = useState({ x: 0, y: 0 });
-  const viewer = useReveal();
-  const parentContainerElement = viewer.domElement;
+  const {
+    isMinimized,
+    handleDrag,
+    position,
+    size,
+    handleResize,
+    expandTooltip,
+    ExpandCollapseIcon,
+    handleExpand,
+    handleClose,
+    parentSize,
+    closeTooltip,
+    enable
+  } = useWindowWidgetProperties({ onResize, onClose });
 
-  const size = useParentResize(parentContainerElement, isMinimized, onResize);
-
-  if (parentContainerElement === undefined) {
+  if (!enable) {
     return <></>;
   }
-
-  const handleExpand = (): void => {
-    if (!isMinimized) {
-      setPosition({ x: 0, y: 0 });
-    }
-    setIsMinimized((prev) => !prev);
-  };
-
-  const handleClose = (): void => {
-    onClose?.();
-  };
-
-  const handleDrag = (event: DraggableEvent, data: DraggableData): void => {
-    event.stopPropagation();
-
-    const { x, y, node } = data;
-    const { left, top, width } = node.getBoundingClientRect();
-    const {
-      width: parentWidth,
-      height: parentHeight,
-      left: parentLeft,
-      top: parentTop
-    } = parentContainerElement.getBoundingClientRect();
-
-    if (
-      left + width - WIDGET_WINDOW_X_OFFSET < parentLeft ||
-      top < parentTop ||
-      left + WIDGET_WINDOW_X_OFFSET > parentLeft + parentWidth ||
-      top + WIDGET_WINDOW_Y_OFFSET > parentTop + parentHeight
-    ) {
-      // Prevent moving beyond the canvas
-      return;
-    }
-
-    setPosition({ x, y });
-  };
-
-  const handleResize = (_event: SyntheticEvent, data: ResizeCallbackData): void => {
-    const { size } = data;
-    onResize?.(size.width, size.height);
-  };
 
   return (
     <WidgetComponent
@@ -118,26 +69,16 @@ export const WindowWidget = ({
           width={size.width}
           height={size.height}
           minConstraints={[WIDGET_WINDOW_MIN_WIDTH, WIDGET_INSIDE_WINDOW_MIN_HEIGHT]}
-          maxConstraints={[parentContainerElement.clientWidth, parentContainerElement.clientHeight]}
+          maxConstraints={[parentSize.x, parentSize.y]}
           resizeHandles={isMinimized ? [] : ['se', 'ne', 'e', 's']}
           onResize={handleResize}>
           <Widget>
             <Widget.Header title={title} type={type} header={header} subtitle={subtitle}>
               {headerElement !== undefined && headerElement}
-              <CogsTooltip
-                content={
-                  isMinimized
-                    ? t({ key: 'WIDGET_WINDOW_EXPAND' })
-                    : t({ key: 'WIDGET_WINDOW_MINIMIZE' })
-                }
-                placement="top">
-                <Button
-                  type="ghost"
-                  icon={isMinimized ? <ExpandIcon /> : <CollapseIcon />}
-                  onClick={handleExpand}
-                />
+              <CogsTooltip content={expandTooltip} placement="top">
+                <Button type="ghost" icon={ExpandCollapseIcon} onClick={handleExpand} />
               </CogsTooltip>
-              <CogsTooltip content={t({ key: 'WIDGET_WINDOW_CLOSE' })} placement="top">
+              <CogsTooltip content={closeTooltip} placement="top">
                 <Button type="ghost" icon=<CloseIcon /> onClick={handleClose} />
               </CogsTooltip>
             </Widget.Header>
@@ -147,44 +88,6 @@ export const WindowWidget = ({
       </Draggable>
     </WidgetComponent>
   );
-};
-
-const useParentResize = (
-  parentContainerElement: HTMLElement | undefined,
-  isMinimized: boolean,
-  onResize?: (width: number, height: number) => void
-): {
-  width: number;
-  height: number;
-} => {
-  const [size, setSize] = useState({ width: 0, height: 0 });
-
-  useEffect(() => {
-    if (parentContainerElement === undefined) {
-      return;
-    }
-    const updateSize = (): void => {
-      const parentWidth = parentContainerElement.clientWidth;
-      const parentHeight = parentContainerElement.clientHeight;
-
-      const width = isMinimized ? WIDGET_WINDOW_MIN_WIDTH : parentWidth * WIDGET_WIDTH_FACTOR;
-      const height = isMinimized ? WIDGET_WINDOW_MIN_HEIGHT : parentHeight * WIDGET_HEIGHT_FACTOR;
-      setSize({ width, height });
-
-      onResize?.(width, height);
-    };
-
-    updateSize();
-
-    const resizeObserver = new ResizeObserver(updateSize);
-    resizeObserver.observe(parentContainerElement);
-
-    return () => {
-      resizeObserver.disconnect();
-    };
-  }, [isMinimized, parentContainerElement]);
-
-  return size;
 };
 
 const WidgetComponent = withSuppressRevealEvents(StyledComponent);
