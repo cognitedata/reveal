@@ -13,6 +13,7 @@ import { type CdfCaches } from '../architecture/base/renderTarget/CdfCaches';
 import { fetchAncestorNodesForTreeIndex } from '../components/CacheProvider/requests';
 import { EMPTY_ARRAY } from './constants';
 import { fetchAnnotationsForModel } from '../hooks/pointClouds/fetchAnnotationsForModel';
+
 import { isDM3DModelIdentifier } from '../components';
 import { type RevealRenderTarget } from '../architecture';
 import { getInstanceReferenceFromImage360Annotation } from '../components/CacheProvider/utils';

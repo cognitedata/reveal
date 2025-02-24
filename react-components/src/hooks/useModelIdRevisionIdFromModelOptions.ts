@@ -11,7 +11,9 @@ import {
   type DataSourceType
 } from '@cognite/reveal';
 import { useFdmSdk } from '../components/RevealCanvas/SDKProvider';
+
 import { isClassicIdentifier, isDM3DModelIdentifier } from '../components';
+
 import { type FdmSDK } from '../data-providers/FdmSDK';
 import { EMPTY_ARRAY } from '../utilities/constants';
 import { getModelKeys } from '../utilities/getModelKeys';

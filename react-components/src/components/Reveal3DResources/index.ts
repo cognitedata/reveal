@@ -29,5 +29,4 @@ export {
   useReveal3DResourcesExpectedInViewerCount,
   useReveal3DLoadedResourceCount
 } from './Reveal3DResourcesInfoContext';
-
 export { isClassicIdentifier, isDM3DModelIdentifier } from './typeGuards';

@@ -1,6 +1,6 @@
 {
   "name": "@cognite/reveal-react-components",
-  "version": "0.75.2",
+  "version": "0.75.3",
   "exports": {
     ".": {
       "import": "./dist/index.js",
@@ -21,6 +21,7 @@
     "tsc": "tsc",
     "lint": "eslint . --cache",
     "test": "vitest run --dom",
+    "test:coverage": "vitest run --dom --coverage",
     "test:playwright": "playwright test",
     "test:watch": "vitest watch --dom",
     "pull-keys": "cdf-i18n-utils-cli pull-keys-from-remote --namespace reveal-react-components --path ./src/common/i18n && yarn sort-keys",
@@ -31,12 +32,14 @@
   "peerDependencies": {
     "@cognite/cogs-lab": "^9.0.0-alpha.153",
     "@cognite/reveal": "4.23.2",
+    "@cognite/signals": "^0.0.4",
     "react": ">=18",
     "react-dom": ">=18",
     "styled-components": ">=5"
   },
   "dependencies": {
     "@cognite/cogs.js": "^10.36.0",
+    "@cognite/signals": "^0.0.4",
     "@tanstack/react-query": "^5.32.0",
     "assert": "^2.1.0",
     "lodash": "^4.17.21"
@@ -45,9 +48,9 @@
     "@cognite/cdf-i18n-utils": "^0.7.5",
     "@cognite/cdf-utilities": "^3.6.0",
     "@cognite/cogs-lab": "^9.0.0-alpha.153",
-    "@cognite/cogs.js": "^10.36.0",
     "@cognite/reveal": "^4.23.2",
     "@cognite/sdk": "^9.13.0",
+    "@cognite/signals": "^0.0.4",
     "@playwright/test": "1.49.0",
     "@storybook/addon-essentials": "8.4.5",
     "@storybook/addon-interactions": "8.4.5",
@@ -67,17 +70,18 @@
     "@types/three": "0.165.0",
     "@typescript-eslint/eslint-plugin": "^7.8.0",
     "@vitejs/plugin-react": "^4.2.1",
+    "@vitest/coverage-v8": "^1.5.3",
     "core-js": "^3.6.5",
     "eslint": "^8.57.0",
     "eslint-config-love": "47.0.0",
-    "eslint-config-prettier": "^9.1.0",
+    "eslint-config-prettier": "^10.0.0",
     "eslint-plugin-header": "^3.1.1",
     "eslint-plugin-import": "^2.29.1",
     "eslint-plugin-n": "^17.4.0",
     "eslint-plugin-prettier": "^5.1.3",
     "eslint-plugin-promise": "^7.0.0",
     "eslint-plugin-react": "^7.34.1",
-    "happy-dom": "^15.0.0",
+    "happy-dom": "^16.0.0",
     "locize-cli": "^8.0.1",
     "moq.ts": "10.0.8",
     "playwright": "1.49.0",

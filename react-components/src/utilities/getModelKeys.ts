@@ -2,6 +2,7 @@
  * Copyright 2024 Cognite AS
  */
 import { type AddModelOptions, type DataSourceType } from '@cognite/reveal';
+
 import {
   type AddImage360CollectionDatamodelsOptions,
   isClassicIdentifier,
