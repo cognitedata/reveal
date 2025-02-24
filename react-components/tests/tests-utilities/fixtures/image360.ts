@@ -29,9 +29,9 @@ export function createImage360ClassicMock(): Image360Collection<ClassicDataSourc
   return new Mock<Image360Collection<ClassicDataSourceType>>()
     .setup((p) => p.id)
     .returns('siteId')
-    .setup((p) => p.getIconsVisibility.bind(p))
+    .setup((p) => p.getIconsVisibility)
     .returns(getIconsVisibiltyMock)
-    .setup((p) => p.setIconsVisibility.bind(p))
+    .setup((p) => p.setIconsVisibility)
     .returns(setIconsVisibilityMock)
     .object();
 }
