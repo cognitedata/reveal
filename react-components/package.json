@@ -60,7 +60,6 @@
     "@storybook/react-vite": "8.4.5",
     "@storybook/test": "8.4.5",
     "@tanstack/react-query-devtools": "^5.32.0",
-    "@testing-library/jest-dom": "^6.6.3",
     "@testing-library/react": "^16.0.0",
     "@tippyjs/react": "4.2.6",
     "@types/lodash": "^4.17.0",
