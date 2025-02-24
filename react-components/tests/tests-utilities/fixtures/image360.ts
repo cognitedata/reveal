@@ -18,19 +18,19 @@ export const image360DmOptions: AddImage360CollectionOptions = {
   space: 'testImage360Space'
 };
 
-export const getIconsVisibiltyMock = vi.fn<Image360Collection['getIconsVisibility']>();
+export const getIconsVisibilityMock = vi.fn<Image360Collection['getIconsVisibility']>();
 export const setIconsVisibilityMock = vi.fn<Image360Collection['setIconsVisibility']>();
 
 export function createImage360ClassicMock(): Image360Collection<ClassicDataSourceType> {
   setIconsVisibilityMock.mockImplementation((visible) => {
-    getIconsVisibiltyMock.mockReturnValue(visible);
+    getIconsVisibilityMock.mockReturnValue(visible);
   });
 
   return new Mock<Image360Collection<ClassicDataSourceType>>()
     .setup((p) => p.id)
     .returns('siteId')
     .setup((p) => p.getIconsVisibility)
-    .returns(getIconsVisibiltyMock)
+    .returns(getIconsVisibilityMock)
     .setup((p) => p.setIconsVisibility)
     .returns(setIconsVisibilityMock)
     .object();
