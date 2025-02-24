@@ -20,7 +20,8 @@
     "stories/**/*",
     "tests/**/*",
     "vite.config.ts",
-    "playwright.config.ts"
+    "playwright.config.ts",
+    "setupTests.ts"
   ],
   "exclude": [
     "node_modules",

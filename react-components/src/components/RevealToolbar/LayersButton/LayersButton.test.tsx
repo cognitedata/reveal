@@ -2,6 +2,7 @@
  * Copyright 2025 Cognite AS
  */
 import { render, screen } from '@testing-library/react';
+import '@testing-library/jest-dom/vitest';
 import { describe, expect, test, vi } from 'vitest';
 import type { PropsWithChildren, ReactElement } from 'react';
 import { LayersButton } from './LayersButton';
@@ -47,7 +48,9 @@ describe(LayersButton.name, () => {
       </LayersButtonContext.Provider>
     );
     render(<LayersButton {...defaultProps} />, { wrapper });
-    screen.debug();
+
+    // Validate the presence of specific UI elements
+    expect(screen.getByRole('button', { name: 'Filter 3D resource layers' })).toBeInTheDocument();
   });
 
   test('should update viewer models visibility when layersState changes', () => {
