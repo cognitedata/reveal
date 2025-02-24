@@ -1,12 +1,11 @@
 /*!
  * Copyright 2025 Cognite AS
  */
-import { type ReactElement, type SyntheticEvent, useCallback, useContext, useMemo } from 'react';
+import { type SyntheticEvent, useCallback, useContext, useMemo } from 'react';
 import { type DraggableData, type DraggableEvent } from 'react-draggable';
 import { type ResizeCallbackData } from 'react-resizable';
 import { WindowWidgetContext, type WindowWidgetProperties } from './WindowWidget.context';
 import { Vector2 } from 'three';
-import { CollapseIcon, ExpandIcon } from '@cognite/cogs.js';
 import { useSignalValue } from '@cognite/signals/react';
 import { useValueAsSignal } from '../../utilities/signals/useValueAsSignal';
 import { useDispatchableModel } from '../../utilities/mvvm';
@@ -15,13 +14,12 @@ export type WindowWidgetViewProperties = {
   isMinimized: boolean;
   size: Vector2;
   position: Vector2;
+  parentSize: Vector2;
   handleDrag?: (event: DraggableEvent, data: DraggableData) => void;
   handleResize?: (event: SyntheticEvent, data: ResizeCallbackData) => void;
   handleClose?: () => void;
   expandTooltip: string;
   handleExpand: () => void;
-  ExpandCollapseIcon: ReactElement;
-  parentSize: Vector2;
   closeTooltip?: string;
   enable: boolean;
 };
@@ -82,8 +80,6 @@ export function useWindowWidgetProperties({
     onClose?.();
   };
 
-  const ExpandCollapseIcon = isMinimized ? <ExpandIcon /> : <CollapseIcon />;
-
   return {
     isMinimized,
     size,
@@ -100,7 +96,6 @@ export function useWindowWidgetProperties({
       () => new Vector2(parentContainerElement.clientWidth, parentContainerElement.clientHeight),
       [parentContainerElement]
     ),
-    ExpandCollapseIcon,
     closeTooltip
   };
 }
