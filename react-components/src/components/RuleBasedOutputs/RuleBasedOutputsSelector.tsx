@@ -9,7 +9,6 @@ import {
   type AllMappingStylingGroupAndStyleIndex,
   type FdmInstanceNodeWithConnectionAndProperties
 } from './types';
-import { generateRuleBasedOutputs } from './utils';
 import { use3dModels } from '../../hooks/use3dModels';
 import { type Datapoints, type Asset, type AssetMapping3D } from '@cognite/sdk';
 import { isDefined } from '../../utilities/isDefined';
@@ -23,6 +22,7 @@ import { useConvertAssetMetadatasToLowerCase } from './hooks/useConvertAssetMeta
 import { useExtractTimeseriesIdsFromRuleSet } from './hooks/useExtractTimeseriesIdsFromRuleSet';
 import { useAll3dDirectConnectionsWithProperties } from '../../query/useAll3dDirectConnectionsWithProperties';
 import { useAssetMappedNodesForRevisions, useMappedEdgesForRevisions } from '../../hooks/cad';
+import { generateRuleBasedOutputs } from './core/generateRuleBasedOutputs';
 
 const ruleSetStylingCache = new Map<string, AllMappingStylingGroupAndStyleIndex[]>();
 

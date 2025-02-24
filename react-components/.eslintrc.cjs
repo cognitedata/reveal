@@ -55,6 +55,12 @@ module.exports = {
           ]
         ]
       }
+    },
+    {
+      files: ['src/**/*.spec.ts', 'src/**/*.spec.tsx', 'src/**/*.test.ts', 'src/**/*.test.tsx'],
+      rules: {
+        "@typescript-eslint/unbound-method": 'off'
+      }
     }
   ]
 };

@@ -22,8 +22,8 @@ import { filterNodesByMappedTo3d } from './filterNodesByMappedTo3d';
 import { getCadModelsForFdmInstance } from './getCadModelsForFdmInstance';
 import { getCadConnectionsForRevision } from './getCadConnectionsForRevision';
 import { type CogniteClient, type Node3D } from '@cognite/sdk';
-import { isClassicIdentifier } from '../../components';
 import { EMPTY_ARRAY } from '../../utilities/constants';
+import { isClassicIdentifier } from '../../components/Reveal3DResources/typeGuards';
 
 export class LegacyFdm3dDataProvider implements Fdm3dDataProvider {
   readonly _fdmSdk: FdmSDK;

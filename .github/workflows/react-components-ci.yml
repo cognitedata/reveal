@@ -82,9 +82,14 @@ jobs:
       - name: Unit tests
         working-directory: react-components
         continue-on-error: false
-        run: yarn run test
+        run: yarn run test:coverage
         env:
           NPM_TOKEN: ${{ secrets.NPM_PUBLISH_TOKEN }}
+
+      - name: Upload coverage reports to Codecov
+        uses: codecov/codecov-action@v5
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
 
       - name: Install playwright browsers
         working-directory: react-components

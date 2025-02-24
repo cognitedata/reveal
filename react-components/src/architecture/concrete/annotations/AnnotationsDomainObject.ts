@@ -4,9 +4,7 @@
 
 import { VisualDomainObject } from '../../base/domainObjects/VisualDomainObject';
 import { type RenderStyle } from '../../base/renderStyles/RenderStyle';
-import { type ThreeView } from '../../base/views/ThreeView';
 import { type TranslationInput } from '../../base/utilities/TranslateInput';
-import { AnnotationsView } from './AnnotationsView';
 import { AnnotationsRenderStyle } from './AnnotationsRenderStyle';
 import { FocusType } from '../../base/domainObjectsHelpers/FocusType';
 import { Changes } from '../../base/domainObjectsHelpers/Changes';
@@ -20,6 +18,7 @@ import { DomainObjectChange } from '../../base/domainObjectsHelpers/DomainObject
 import { AnnotationUtils } from './helpers/AnnotationUtils';
 import { Annotation } from './helpers/Annotation';
 import { type IconName } from '../../base/utilities/IconName';
+import { getRoot } from '../../base/domainObjects/getRoot';
 
 type GizmoDomainObject = BoxGizmoDomainObject | CylinderGizmoDomainObject;
 
@@ -100,14 +99,6 @@ export class AnnotationsDomainObject extends VisualDomainObject {
 
   public override createRenderStyle(): RenderStyle | undefined {
     return new AnnotationsRenderStyle();
-  }
-
-  // ==================================================
-  // OVERRIDES of VisualDomainObject
-  // ==================================================
-
-  protected override createThreeView(): ThreeView | undefined {
-    return new AnnotationsView();
   }
 
   // ==================================================
@@ -306,11 +297,11 @@ export class AnnotationsDomainObject extends VisualDomainObject {
   // ==================================================
 
   public fetch(modelId: number): boolean {
-    const rootDomainObject = this.rootDomainObject;
-    if (rootDomainObject === undefined) {
+    const root = getRoot(this);
+    if (root === undefined) {
       return false;
     }
-    void AnnotationUtils.fetchAllAnnotations(rootDomainObject.sdk, modelId).then((_annotations) => {
+    void AnnotationUtils.fetchAllAnnotations(root.sdk, modelId).then((_annotations) => {
       // this.annotations = annotations;
       this.setSelectedInteractive(true);
       this.setVisibleInteractive(true);
