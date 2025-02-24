@@ -26,7 +26,6 @@ export const checkNumericExpressionStatement = (
     ? getTriggerNumericData(triggerTypeData, trigger)
     : undefined;
 
-
   const fdmItemsTrigger =
     isFdmTrigger && currentTriggerData.instanceNode.items[0] !== undefined
       ? currentTriggerData.instanceNode.items[0]
