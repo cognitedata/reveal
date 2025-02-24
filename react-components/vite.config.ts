@@ -4,6 +4,7 @@ import react from '@vitejs/plugin-react';
 import dts from 'vite-plugin-dts';
 import { externalizeDeps } from 'vite-plugin-externalize-deps';
 import { exec } from 'node:child_process';
+import { coverageConfigDefaults } from 'vitest/config';
 
 export default defineConfig(({ command }) => {
   return {
@@ -31,7 +32,13 @@ export default defineConfig(({ command }) => {
       reporters: ['default'],
       coverage: {
         reportsDirectory: '../coverage/reveal-react-components',
-        exclude: ['src/**/*.spec.ts', 'src/**/*.spec.tsx', 'src/**/*.test.ts', 'src/**/*.test.tsx']
+        exclude: [
+          ...coverageConfigDefaults.exclude,
+          'src/**/*.spec.ts',
+          'src/**/*.spec.tsx',
+          'src/**/*.test.ts',
+          'src/**/*.test.tsx'
+        ]
       },
       // Need to add E5 modules as inlined dependencies to be able to import them in tests.
       server: {
