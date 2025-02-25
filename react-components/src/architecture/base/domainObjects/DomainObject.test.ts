@@ -77,7 +77,7 @@ describe('DomainObject', () => {
     const domainObject = new ChildDomainObject();
     const color = domainObject.color;
     const isGreyScale = color.r === color.g && color.r === color.b;
-    const rgbSum = color.r + color.g + color.r;
+    const rgbSum = color.r + color.g + color.b;
     expect(isGreyScale).toBe(false);
     expect(rgbSum).greaterThan(0);
     expect(rgbSum).lessThan(3);
