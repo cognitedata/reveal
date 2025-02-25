@@ -26,8 +26,8 @@ export function expectEqualEuler(a: Euler, b: Euler): void {
 }
 
 export function expectEqualBox3(a: Box3, b: Box3): void {
-  expect(equalsVector3(a.min, b.min)).toBe(true);
-  expect(equalsVector3(a.max, b.max)).toBe(true);
+  expectEqualVector3(a.min, b.min);
+  expectEqualVector3(a.max, b.max);
 }
 
 export function expectEqualMatrix4(a: Matrix4, b: Matrix4): void {

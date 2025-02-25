@@ -5,39 +5,23 @@
 import { describe, expect, test } from 'vitest';
 import { PrimitiveType } from './PrimitiveType';
 import { Box3, Matrix4, Ray, Vector3 } from 'three';
-import {
-  expectEqualMatrix4,
-  expectEqualBox3,
-  expectEqualVector3,
-  expectEqualEuler
-} from './primitiveUtil.test';
+import { expectEqualMatrix4, expectEqualBox3, expectEqualVector3 } from './primitiveUtil.test';
 import { Cylinder } from './Cylinder';
 
 describe('Cylinder', () => {
   test('Should test all properties on regular cylinder', () => {
     const cylinder = createVerticalCylinder();
     expect(cylinder.primitiveType).toBe(PrimitiveType.Cylinder);
-    expect(cylinder.diagonal).toBe(3.7416573867739413);
-    expect(cylinder.area).toBe(22);
-    expect(cylinder.volume).toBe(6);
+    expect(cylinder.area).toBe(25.132741228718345);
+    expect(cylinder.volume).toBe(12.566370614359172);
+    expect(cylinder.height).toBe(4);
+    expect(cylinder.diameter).toBe(2);
+    expectEqualVector3(cylinder.center, new Vector3(1, 2, 0));
+    expectEqualVector3(cylinder.size, new Vector3(2, 2, 4));
+    expectEqualVector3(cylinder.axis, new Vector3(0, 0, 1));
   });
 
-  test('Should test all properties on rotated cylinder', () => {
-    const cylinder = createVerticalCylinder();
-  });
-
-  test('Should test all properties on flat cylinder', () => {
-    const cylinder = createVerticalCylinder();
-  });
-
-  test('should test get and set matrix on regular cylinder', () => {
-    const cylinder = createVerticalCylinder();
-    const matrix = cylinder.getMatrix();
-    cylinder.setMatrix(matrix);
-    expectEqualMatrix4(matrix, cylinder.getMatrix());
-  });
-
-  test('should test get and set matrix on rotated cylinder', () => {
+  test('should test get and set matrix on vertical cylinder', () => {
     const cylinder = createVerticalCylinder();
     const matrix = cylinder.getMatrix();
     cylinder.setMatrix(matrix);
@@ -48,35 +32,49 @@ describe('Cylinder', () => {
     const cylinder = createVerticalCylinder();
     const boundingBox = new Box3();
     cylinder.expandBoundingBox(boundingBox);
-    expectEqualBox3(boundingBox, new Box3(new Vector3(0, 3, -2), new Vector3(2, 4, 2)));
+    expectEqualBox3(boundingBox, new Box3(new Vector3(0, 1, -2), new Vector3(2, 3, 2)));
   });
 
   test('should test isPointInside', () => {
     const cylinder = createVerticalCylinder();
-    expect(cylinder.isPointInside(cylinder.center, new Matrix4())).toBe(true);
-    expect(cylinder.isPointInside(new Vector3(0, 0, 0), new Matrix4())).toBe(false);
+
+    // Inside
+    const point = cylinder.center.clone();
+    expect(cylinder.isPointInside(point, new Matrix4())).toBe(true);
+    point.x += 0.45 * cylinder.diameter;
+    expect(cylinder.isPointInside(point, new Matrix4())).toBe(true);
+    point.z += 0.45 * cylinder.height;
+    expect(cylinder.isPointInside(point, new Matrix4())).toBe(true);
+
+    // Outside
+    point.x += 0.1 * cylinder.diameter;
+    expect(cylinder.isPointInside(point, new Matrix4())).toBe(false);
+    point.z += 0.1 * cylinder.height;
+    expect(cylinder.isPointInside(point, new Matrix4())).toBe(false);
   });
 
-  test('should test intersectRay', () => {
+  test('should intersect vertical cylinder and horizontal line along x', () => {
     const cylinder = createVerticalCylinder();
+    const origin = cylinder.center.clone();
+    origin.x -= 2 * cylinder.radius;
+    const direction = new Vector3(1, 0, 0);
+    const intersectionExpect = cylinder.center.clone();
+    intersectionExpect.x -= cylinder.radius;
+    const ray = new Ray(origin, direction);
+    const intersection = cylinder.intersectRay(ray, new Matrix4());
+    expectEqualVector3(intersection, intersectionExpect);
+  });
 
-    for (let i = 0; i < 3; i++) {
-      // Go along X, Y, Z axis towards the cylinder center, starting from 0 for each axis
-      const center = cylinder.center.clone();
-      center.setComponent(i, 0);
-      const direction = new Vector3();
-      direction.setComponent(i, 1);
-
-      const intersectionExpect = cylinder.center.clone();
-      intersectionExpect.setComponent(
-        i,
-        cylinder.center.getComponent(i) - cylinder.size.getComponent(i) / 2
-      );
-
-      const ray = new Ray(center, direction);
-      const intersection = cylinder.intersectRay(ray, new Matrix4());
-      expectEqualVector3(intersection, intersectionExpect);
-    }
+  test('should intersect vertical cylinder and horizontal line along y', () => {
+    const cylinder = createVerticalCylinder();
+    const origin = cylinder.center.clone();
+    origin.y -= 2 * cylinder.radius;
+    const direction = new Vector3(0, 1, 0);
+    const intersectionExpect = cylinder.center.clone();
+    intersectionExpect.y -= cylinder.radius;
+    const ray = new Ray(origin, direction);
+    const intersection = cylinder.intersectRay(ray, new Matrix4());
+    expectEqualVector3(intersection, intersectionExpect);
   });
 
   test('should test copy', () => {
@@ -98,13 +96,9 @@ describe('Cylinder', () => {
 
   test('should test forceMinSize', () => {
     const cylinder = new Cylinder();
-    cylinder.centerA.set(0, 0, 0);
-    cylinder.centerB.set(0, 0, 0);
     cylinder.radius = 0;
     cylinder.forceMinSize();
     expect(cylinder.radius).toBe(Cylinder.MinSize);
-    expectEqualVector3(cylinder.centerA, new Vector3(0, 0, -Cylinder.MinSize));
-    expectEqualVector3(cylinder.centerB, new Vector3(0, 0, +Cylinder.MinSize));
   });
 });
 

@@ -12,7 +12,6 @@ import {
   expectEqualVector3,
   expectEqualEuler
 } from './primitiveUtil.test';
-import { isVoidExpression } from 'typescript';
 
 describe('Box', () => {
   test('Should test all properties on regular box', () => {
@@ -34,6 +33,27 @@ describe('Box', () => {
     expect(box.getRotationAngleByComponent(0)).toBe(0);
     expect(box.getRotationAngleByComponent(1)).toBe(0);
     expect(box.getRotationAngleByComponent(2)).toBe(0);
+  });
+
+  test('Should test all properties on rotated box', () => {
+    const box = createRotatedBox();
+    expect(box.primitiveType).toBe(PrimitiveType.Box);
+    expect(box.diagonal).toBe(3.7416573867739413);
+    expect(box.area).toBe(22);
+    expect(box.volume).toBe(6);
+    expect(box.hasHorizontalArea).toBe(true);
+    expect(box.hasArea).toBe(true);
+    expect(box.hasVolume).toBe(true);
+    expect(box.horizontalArea).toBe(2);
+    expect(box.hasXYRotation).toBe(true);
+    expect(box.zRotationInDegrees).not.toBe(0);
+
+    expect(box.getRotationInDegrees(0)).not.toBe(0);
+    expect(box.getRotationInDegrees(1)).not.toBe(0);
+    expect(box.getRotationInDegrees(2)).not.toBe(0);
+    expect(box.getRotationAngleByComponent(0)).not.toBe(0);
+    expect(box.getRotationAngleByComponent(1)).not.toBe(0);
+    expect(box.getRotationAngleByComponent(2)).not.toBe(0);
   });
 
   test('Should test all properties on flat box', () => {

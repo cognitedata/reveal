@@ -70,14 +70,22 @@ export class Cylinder extends Primitive {
   public override isPointInside(point: Vector3, globalMatrix: Matrix4): boolean {
     const { centerA, centerB } = this.getCenters(globalMatrix);
     const center = new Vector3().addVectors(centerA, centerB).divideScalar(2);
-    const vector = centerB.sub(centerA);
+    const vector = centerA.sub(centerB);
+    vector.normalize();
+
     const diff = center.sub(point);
     const dot = vector.dot(diff);
     vector.multiplyScalar(dot);
     vector.sub(diff);
 
     const distanceToAxis = vector.length();
-    return distanceToAxis <= this.radius;
+    if (distanceToAxis > this.radius) {
+      return false;
+    }
+    if (Math.abs(dot) > this.height / 2) {
+      return false;
+    }
+    return true;
   }
 
   public override intersectRay(ray: Ray, globalMatrix: Matrix4): Vector3 | undefined {
