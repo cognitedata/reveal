@@ -1,6 +1,8 @@
 name: React Components CI
 
 on:
+  push:
+    branches: [master]
   pull_request:
     branches:
       - "**"
@@ -11,7 +13,7 @@ jobs:
     permissions:
       pull-requests: read
     outputs:
-      should-run: ${{ steps.filter.outputs.should-run }}
+      should-run: ${{ github.event_name != 'pull_request' || steps.filter.outputs.should-run }}
     steps:
       # For pull requests it's not necessary to checkout the code
       - uses: dorny/paths-filter@v3
