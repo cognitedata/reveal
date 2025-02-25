@@ -55,7 +55,7 @@ describe(useCameraStateControl.name, () => {
   });
 
   test('calls internal cameraStop delegates but not external setter on applying external camera state', () => {
-    const setter = vi.fn<[CameraStateParameters | undefined], undefined>();
+    const setter = vi.fn<(cameraState?: CameraStateParameters) => void>();
 
     const { rerender } = renderHook(
       ({ position }: { position: Vector3 }) => {
@@ -76,7 +76,7 @@ describe(useCameraStateControl.name, () => {
   });
 
   test('provided setter is called after updating camera state internally', () => {
-    const setter = vi.fn<[CameraStateParameters | undefined], undefined>();
+    const setter = vi.fn<(cameraState?: CameraStateParameters) => void>();
 
     const { rerender } = renderHook(() => {
       useCameraStateControl(
