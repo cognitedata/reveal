@@ -1,41 +1,20 @@
 import { vi } from 'vitest';
 
-import {
-  type DataSourceType,
-  type Cognite3DViewer,
-  type CogniteModel,
-  type Image360Collection,
-  type AddModelOptions,
-  type CogniteCadModel,
-  type CognitePointCloudModel,
-  type Image360DataModelIdentifier,
-  type ClassicDataSourceType
-} from '@cognite/reveal';
+import type { DataSourceType, Cognite3DViewer } from '@cognite/reveal';
 import { Mock, It } from 'moq.ts';
 import { cameraManagerMock } from './cameraManager';
 
 const domElement = document.createElement('div').appendChild(document.createElement('canvas'));
 
-export const viewerModelsMock = vi.fn<[], Array<CogniteModel<DataSourceType>>>();
-export const viewerRemoveModelsMock = vi.fn<[CogniteModel<DataSourceType>], void>();
-export const viewerAddCadModelMock = vi.fn<
-  [options: AddModelOptions<DataSourceType>],
-  Promise<CogniteCadModel>
->();
-export const viewerAddPointCloudModelMock = vi.fn<
-  [options: AddModelOptions<DataSourceType>],
-  Promise<CognitePointCloudModel>
->();
-export const viewerAdd360ImageSetMock = vi.fn<
-  [datasource: string, dataModelIdentifier: Image360DataModelIdentifier],
-  Promise<Image360Collection<DataSourceType & ClassicDataSourceType>>
->();
-export const viewerImage360CollectionsMock = vi.fn<[], Array<Image360Collection<DataSourceType>>>();
-export const fitCameraToVisualSceneBoundingBoxMock = vi.fn<[number?], void>();
-export const fitCameraToModelsMock = vi.fn<
-  [Array<CogniteModel<DataSourceType>>, number?, boolean?],
-  void
->();
+export const viewerModelsMock = vi.fn<() => Cognite3DViewer['models']>();
+export const viewerRemoveModelsMock = vi.fn<Cognite3DViewer['removeModel']>();
+export const viewerAddCadModelMock = vi.fn<Cognite3DViewer['addCadModel']>();
+export const viewerAddPointCloudModelMock = vi.fn<Cognite3DViewer['addPointCloudModel']>();
+export const viewerAdd360ImageSetMock = vi.fn();
+export const viewerImage360CollectionsMock = vi.fn<Cognite3DViewer['get360ImageCollections']>();
+export const fitCameraToVisualSceneBoundingBoxMock =
+  vi.fn<Cognite3DViewer['fitCameraToVisualSceneBoundingBox']>();
+export const fitCameraToModelsMock = vi.fn<Cognite3DViewer['fitCameraToModels']>();
 
 export const viewerMock = new Mock<Cognite3DViewer<DataSourceType>>()
   .setup((viewer) => {
@@ -46,8 +25,8 @@ export const viewerMock = new Mock<Cognite3DViewer<DataSourceType>>()
   .returns(domElement)
   .setup((p) => p.models)
   .callback(viewerModelsMock)
-  .setup((p) => p.get360ImageCollections())
-  .callback(viewerImage360CollectionsMock)
+  .setup((p) => p.get360ImageCollections)
+  .returns(viewerImage360CollectionsMock)
   .setup((p) => p.removeModel)
   .returns(viewerRemoveModelsMock)
   .setup((p) => p.addCadModel)
