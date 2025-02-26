@@ -11,148 +11,158 @@ import {
   expectEqualBox3,
   expectEqualVector3,
   expectEqualEuler
-} from './primitiveUtil.test';
+} from '../../../../../tests/tests-utilities/primitives/primitiveTestUtil';
 
 describe('Box', () => {
-  test('Should test all properties on regular box', () => {
-    const box = createRegularBox();
-    expect(box.primitiveType).toBe(PrimitiveType.Box);
-    expect(box.diagonal).toBe(3.7416573867739413);
-    expect(box.area).toBe(22);
-    expect(box.volume).toBe(6);
-    expect(box.hasHorizontalArea).toBe(true);
-    expect(box.hasArea).toBe(true);
-    expect(box.hasVolume).toBe(true);
-    expect(box.horizontalArea).toBe(2);
-    expect(box.hasXYRotation).toBe(false);
-    expect(box.zRotationInDegrees).toBe(0);
-
-    expect(box.getRotationInDegrees(0)).toBe(0);
-    expect(box.getRotationInDegrees(1)).toBe(0);
-    expect(box.getRotationInDegrees(2)).toBe(0);
-    expect(box.getRotationAngleByComponent(0)).toBe(0);
-    expect(box.getRotationAngleByComponent(1)).toBe(0);
-    expect(box.getRotationAngleByComponent(2)).toBe(0);
+  test('Should test setter and getter on base class', () => {
+    const primitive = createRegularBox();
+    primitive.confidence = 0.5;
+    expect(primitive.confidence).toBe(0.5);
+    primitive.label = 'box';
+    expect(primitive.label).toBe('box');
   });
 
-  test('Should test all properties on rotated box', () => {
-    const box = createRotatedBox();
-    expect(box.primitiveType).toBe(PrimitiveType.Box);
-    expect(box.diagonal).toBe(3.7416573867739413);
-    expect(box.area).toBe(22);
-    expect(box.volume).toBe(6);
-    expect(box.hasHorizontalArea).toBe(true);
-    expect(box.hasArea).toBe(true);
-    expect(box.hasVolume).toBe(true);
-    expect(box.horizontalArea).toBe(2);
-    expect(box.hasXYRotation).toBe(true);
-    expect(box.zRotationInDegrees).not.toBe(0);
+  test('Should test all properties on regular primitive', () => {
+    const primitive = createRegularBox();
+    expect(primitive.primitiveType).toBe(PrimitiveType.Box);
+    expect(primitive.diagonal).toBe(3.7416573867739413);
+    expect(primitive.area).toBe(22);
+    expect(primitive.volume).toBe(6);
+    expect(primitive.hasHorizontalArea).toBe(true);
+    expect(primitive.hasArea).toBe(true);
+    expect(primitive.hasVolume).toBe(true);
+    expect(primitive.horizontalArea).toBe(2);
+    expect(primitive.hasXYRotation).toBe(false);
+    expect(primitive.zRotationInDegrees).toBe(0);
 
-    expect(box.getRotationInDegrees(0)).not.toBe(0);
-    expect(box.getRotationInDegrees(1)).not.toBe(0);
-    expect(box.getRotationInDegrees(2)).not.toBe(0);
-    expect(box.getRotationAngleByComponent(0)).not.toBe(0);
-    expect(box.getRotationAngleByComponent(1)).not.toBe(0);
-    expect(box.getRotationAngleByComponent(2)).not.toBe(0);
+    expect(primitive.getRotationInDegrees(0)).toBe(0);
+    expect(primitive.getRotationInDegrees(1)).toBe(0);
+    expect(primitive.getRotationInDegrees(2)).toBe(0);
+    expect(primitive.getRotationAngleByComponent(0)).toBe(0);
+    expect(primitive.getRotationAngleByComponent(1)).toBe(0);
+    expect(primitive.getRotationAngleByComponent(2)).toBe(0);
   });
 
-  test('Should test all properties on flat box', () => {
-    const box = createFlatBox();
-    expect(box.hasHorizontalArea).toBe(true);
-    expect(box.hasArea).toBe(true);
-    expect(box.hasVolume).toBe(false);
-    expect(box.horizontalArea).toBe(2);
+  test('Should test all properties on rotated primitive', () => {
+    const primitive = createRotatedBox();
+    expect(primitive.primitiveType).toBe(PrimitiveType.Box);
+    expect(primitive.diagonal).toBe(3.7416573867739413);
+    expect(primitive.area).toBe(22);
+    expect(primitive.volume).toBe(6);
+    expect(primitive.hasHorizontalArea).toBe(true);
+    expect(primitive.hasArea).toBe(true);
+    expect(primitive.hasVolume).toBe(true);
+    expect(primitive.horizontalArea).toBe(2);
+    expect(primitive.hasXYRotation).toBe(true);
+    expect(primitive.zRotationInDegrees).not.toBe(0);
+
+    expect(primitive.getRotationInDegrees(0)).not.toBe(0);
+    expect(primitive.getRotationInDegrees(1)).not.toBe(0);
+    expect(primitive.getRotationInDegrees(2)).not.toBe(0);
+    expect(primitive.getRotationAngleByComponent(0)).not.toBe(0);
+    expect(primitive.getRotationAngleByComponent(1)).not.toBe(0);
+    expect(primitive.getRotationAngleByComponent(2)).not.toBe(0);
   });
 
-  test('should test get and set matrix on regular box', () => {
-    const box = createRegularBox();
-    const matrix = box.getMatrix();
-    box.setMatrix(matrix);
-    expectEqualMatrix4(matrix, box.getMatrix());
+  test('Should test all properties on flat primitive', () => {
+    const primitive = createFlatBox();
+    expect(primitive.hasHorizontalArea).toBe(true);
+    expect(primitive.hasArea).toBe(true);
+    expect(primitive.hasVolume).toBe(false);
+    expect(primitive.horizontalArea).toBe(2);
   });
 
-  test('should test get and set matrix on rotated box', () => {
-    const box = createRotatedBox();
-    const matrix = box.getMatrix();
-    box.setMatrix(matrix);
-    expectEqualMatrix4(matrix, box.getMatrix());
+  test('should test get and set matrix on regular primitive', () => {
+    const primitive = createRegularBox();
+    const matrix = primitive.getMatrix();
+    primitive.setMatrix(matrix);
+    expectEqualMatrix4(matrix, primitive.getMatrix());
+  });
+
+  test('should test get and set matrix on rotated primitive', () => {
+    const primitive = createRotatedBox();
+    const matrix = primitive.getMatrix();
+    primitive.setMatrix(matrix);
+    expectEqualMatrix4(matrix, primitive.getMatrix());
   });
 
   test('should test expandBoundingBox', () => {
-    const box = createRegularBox();
-    const boundingBox = new Box3();
-    box.expandBoundingBox(boundingBox);
+    const primitive = createRegularBox();
+    const boundingBox = primitive.getBoundingBox();
     expectEqualBox3(boundingBox, new Box3(new Vector3(3.5, 4, 4.5), new Vector3(4.5, 6, 7.5)));
   });
 
   test('should test isPointInside', () => {
-    const box = createRegularBox();
-    expect(box.isPointInside(box.center, new Matrix4())).toBe(true);
-    expect(box.isPointInside(new Vector3(0, 0, 0), new Matrix4())).toBe(false);
+    const primitive = createRegularBox();
+    expect(primitive.isPointInside(primitive.center, new Matrix4())).toBe(true);
+    expect(primitive.isPointInside(new Vector3(0, 0, 0), new Matrix4())).toBe(false);
   });
 
   test('should test intersectRay', () => {
-    const box = createRegularBox();
+    const primitive = createRegularBox();
 
     for (let i = 0; i < 3; i++) {
-      // Go along X, Y, Z axis towards the box center, starting from 0 for each axis
-      const center = box.center.clone();
+      // Go along X, Y, Z axis towards the primitive center, starting from 0 for each axis
+      const center = primitive.center.clone();
       center.setComponent(i, 0);
       const direction = new Vector3();
       direction.setComponent(i, 1);
 
-      const intersectionExpect = box.center.clone();
-      intersectionExpect.setComponent(i, box.center.getComponent(i) - box.size.getComponent(i) / 2);
+      const intersectionExpect = primitive.center.clone();
+      intersectionExpect.setComponent(
+        i,
+        primitive.center.getComponent(i) - primitive.size.getComponent(i) / 2
+      );
 
       const ray = new Ray(center, direction);
-      const intersection = box.intersectRay(ray, new Matrix4());
+      const intersection = primitive.intersectRay(ray, new Matrix4());
       expectEqualVector3(intersection, intersectionExpect);
     }
   });
 
   test('should test copy', () => {
-    const box = createRotatedBox();
+    const primitive = createRotatedBox();
     const other = new Box();
-    expect(other.copy(box)).toStrictEqual(box);
+    expect(other.copy(primitive)).toStrictEqual(primitive);
   });
 
   test('should test clear', () => {
-    const box = createRotatedBox();
-    box.clear();
-    expectEqualVector3(box.center, new Vector3());
-    expectEqualVector3(box.size, new Vector3(Box.MinSize, Box.MinSize, Box.MinSize));
-    expectEqualEuler(box.rotation, new Euler(0, 0, 0));
+    const primitive = createRotatedBox();
+    primitive.clear();
+    expectEqualVector3(primitive.center, new Vector3());
+    expectEqualVector3(primitive.size, new Vector3(Box.MinSize, Box.MinSize, Box.MinSize));
+    expectEqualEuler(primitive.rotation, new Euler(0, 0, 0));
   });
 
   test('should test forceMinSize', () => {
-    const box = new Box();
-    box.size.set(0, 0, 0);
-    box.forceMinSize();
-    expectEqualVector3(box.size, new Vector3(Box.MinSize, Box.MinSize, Box.MinSize));
-    expect(box.hasHorizontalArea).toBe(false);
-    expect(box.hasArea).toBe(false);
-    expect(box.hasVolume).toBe(false);
+    const primitive = new Box();
+    primitive.size.set(0, 0, 0);
+    primitive.forceMinSize();
+    expectEqualVector3(primitive.size, new Vector3(Box.MinSize, Box.MinSize, Box.MinSize));
+    expect(primitive.hasHorizontalArea).toBe(false);
+    expect(primitive.hasArea).toBe(false);
+    expect(primitive.hasVolume).toBe(false);
   });
 });
 
 function createRegularBox(): Box {
-  const box = new Box();
-  box.size.set(1, 2, 3);
-  box.center.set(4, 5, 6);
-  return box;
+  const primitive = new Box();
+  primitive.size.set(1, 2, 3);
+  primitive.center.set(4, 5, 6);
+  return primitive;
 }
 
 function createRotatedBox(): Box {
-  const box = new Box();
-  box.size.set(1, 2, 3);
-  box.center.set(4, 5, 6);
-  box.rotation.set(0.1, 0.2, 0.3);
-  return box;
+  const primitive = new Box();
+  primitive.size.set(1, 2, 3);
+  primitive.center.set(4, 5, 6);
+  primitive.rotation.set(0.1, 0.2, 0.3);
+  return primitive;
 }
 
 function createFlatBox(): Box {
-  const box = new Box();
-  box.size.set(1, 2, Box.MinSize);
-  box.center.set(4, 5, 6);
-  return box;
+  const primitive = new Box();
+  primitive.size.set(1, 2, Box.MinSize);
+  primitive.center.set(4, 5, 6);
+  return primitive;
 }
