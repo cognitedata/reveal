@@ -7,31 +7,34 @@ import { type Box3, type Euler, type Matrix4, type Vector3 } from 'three';
 
 const EPSILON = 0.0001;
 
-export function expectEqualVector3(a: Vector3 | undefined, b: Vector3 | undefined): void {
-  const equals = equalsVector3(a, b);
+export function expectEqualVector3(
+  actual: Vector3 | undefined,
+  expected: Vector3 | undefined
+): void {
+  const equals = equalsVector3(actual, expected);
   if (!equals) {
-    expect(a).toStrictEqual(b);
+    expect(actual).toStrictEqual(expected);
   } else {
     expect(equals).toBe(true);
   }
 }
 
-export function expectEqualEuler(a: Euler, b: Euler): void {
-  const equals = equalsEuler(a, b);
+export function expectEqualEuler(actual: Euler, expected: Euler): void {
+  const equals = equalsEuler(actual, expected);
   if (!equals) {
-    expect(a).toStrictEqual(b);
+    expect(actual).toStrictEqual(expected);
   } else {
     expect(equals).toBe(true);
   }
 }
 
-export function expectEqualBox3(a: Box3, b: Box3): void {
-  expectEqualVector3(a.min, b.min);
-  expectEqualVector3(a.max, b.max);
+export function expectEqualBox3(actual: Box3, expected: Box3): void {
+  expectEqualVector3(actual.min, expected.min);
+  expectEqualVector3(actual.max, expected.max);
 }
 
-export function expectEqualMatrix4(a: Matrix4, b: Matrix4): void {
-  expect(equalsMatrix4(a, b)).toBe(true);
+export function expectEqualMatrix4(actual: Matrix4, expected: Matrix4): void {
+  expect(equalsMatrix4(actual, expected)).toBe(true);
 }
 
 export function equalsVector3(
@@ -54,9 +57,6 @@ export function equalsVector3(
 }
 
 export function equalsEuler(a: Euler, b: Euler, epsilon = EPSILON): boolean {
-  if (a === undefined && b === undefined) {
-    return true;
-  }
   if (!almostEquals(a.x, b.x, epsilon)) {
     return false;
   }

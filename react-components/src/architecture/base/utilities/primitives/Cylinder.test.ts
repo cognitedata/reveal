@@ -32,6 +32,24 @@ describe('Cylinder', () => {
     expectEqualMatrix4(matrix, primitive.getMatrix());
   });
 
+  test('should test getScaledMatrix', () => {
+    const primitive = createVerticalCylinder();
+    const actual = primitive.getScaledMatrix(primitive.size);
+    const expected = new Matrix4().compose(
+      primitive.center,
+      primitive.getQuaternion(),
+      primitive.size
+    );
+    expectEqualMatrix4(actual, expected);
+  });
+
+  test('should test getRotationMatrix', () => {
+    const primitive = createVerticalCylinder();
+    const actual = primitive.getRotationMatrix();
+    const expected = new Matrix4().makeRotationFromQuaternion(primitive.getQuaternion());
+    expectEqualMatrix4(actual, expected);
+  });
+
   test('should test expandBoundingBox', () => {
     const primitive = createVerticalCylinder();
     const boundingBox = primitive.getBoundingBox();

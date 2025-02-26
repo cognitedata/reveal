@@ -5,7 +5,7 @@
 import { describe, expect, test } from 'vitest';
 import { Box } from './Box';
 import { PrimitiveType } from './PrimitiveType';
-import { Box3, Euler, Matrix4, Ray, Vector3 } from 'three';
+import { Box3, Euler, Matrix4, Quaternion, Ray, Vector3 } from 'three';
 import {
   expectEqualMatrix4,
   expectEqualBox3,
@@ -74,16 +74,35 @@ describe('Box', () => {
 
   test('should test get and set matrix on regular primitive', () => {
     const primitive = createRegularBox();
-    const matrix = primitive.getMatrix();
-    primitive.setMatrix(matrix);
-    expectEqualMatrix4(matrix, primitive.getMatrix());
+    const actual = primitive.getMatrix();
+    primitive.setMatrix(actual);
+    expectEqualMatrix4(actual, primitive.getMatrix());
+  });
+
+  test('should test getScaledMatrix', () => {
+    const primitive = createRotatedBox();
+    const actual = primitive.getScaledMatrix(primitive.size);
+
+    const expected = new Matrix4().compose(
+      primitive.center,
+      new Quaternion().setFromEuler(primitive.rotation),
+      primitive.size
+    );
+    expectEqualMatrix4(actual, expected);
+  });
+
+  test('should test getRotationMatrix', () => {
+    const primitive = createRotatedBox();
+    const actual = primitive.getRotationMatrix();
+    const expected = new Matrix4().makeRotationFromEuler(primitive.rotation);
+    expectEqualMatrix4(actual, expected);
   });
 
   test('should test get and set matrix on rotated primitive', () => {
     const primitive = createRotatedBox();
-    const matrix = primitive.getMatrix();
-    primitive.setMatrix(matrix);
-    expectEqualMatrix4(matrix, primitive.getMatrix());
+    const actual = primitive.getMatrix();
+    primitive.setMatrix(actual);
+    expectEqualMatrix4(actual, primitive.getMatrix());
   });
 
   test('should test expandBoundingBox', () => {
