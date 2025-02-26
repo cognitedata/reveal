@@ -12,6 +12,7 @@ import {
   createPointCloudHandlerMock,
   createImage360HandlerMock
 } from '../../../../tests/tests-utilities/fixtures/modelHandler';
+import { type ModelLayerHandlers } from './types';
 
 describe(LayersButton.name, () => {
   const mockCadHandler = createCadHandlerMock();
@@ -28,7 +29,7 @@ describe(LayersButton.name, () => {
   };
 
   const defaultDependencies: LayersButtonDependencies = {
-    useModelHandlers: vi.fn(() => [
+    useModelHandlers: vi.fn((): [ModelLayerHandlers, () => void] => [
       {
         cadHandlers: [mockCadHandler],
         pointCloudHandlers: [mockPointCloudHandler],

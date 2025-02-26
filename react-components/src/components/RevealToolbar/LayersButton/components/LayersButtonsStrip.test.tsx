@@ -24,6 +24,7 @@ import { type CogniteModel } from '@cognite/reveal';
 import { cadMock } from '../../../../../tests/tests-utilities/fixtures/cadModel';
 import { createImage360ClassicMock } from '../../../../../tests/tests-utilities/fixtures/image360';
 import { LayersButtonStrip } from './LayersButtonsStrip';
+import { type ModelLayerHandlers } from '../types';
 
 const queryClient = new QueryClient();
 const renderTargetMock = createRenderTargetMock();
@@ -53,7 +54,7 @@ describe(LayersButtonStrip.name, () => {
   };
 
   const defaultDependencies: LayersButtonDependencies = {
-    useModelHandlers: vi.fn(() => [
+    useModelHandlers: vi.fn((): [ModelLayerHandlers, () => void] => [
       {
         cadHandlers: [mockCadHandler],
         pointCloudHandlers: [mockPointCloudHandler],
