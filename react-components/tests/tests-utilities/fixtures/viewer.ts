@@ -62,4 +62,6 @@ export const viewerMock = new Mock<Cognite3DViewer<DataSourceType>>()
   .returns(fitCameraToVisualSceneBoundingBoxMock)
   .setup((p) => p.fitCameraToModels)
   .returns(fitCameraToModelsMock)
+  .setup((p) => p.requestRedraw)
+  .returns(vi.fn())
   .object();

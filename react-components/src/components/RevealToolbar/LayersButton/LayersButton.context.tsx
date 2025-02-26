@@ -4,7 +4,7 @@
 import { createContext } from 'react';
 import { useModelHandlers } from './hooks/useModelHandlers';
 import { useSyncExternalLayersState } from './hooks/useSyncExternalLayersState';
-import { ModelLayerSelection } from './ModelLayerSelection';
+import { ModelLayerSelection } from './components/ModelLayerSelection';
 
 export type LayersButtonDependencies = {
   useModelHandlers: typeof useModelHandlers;

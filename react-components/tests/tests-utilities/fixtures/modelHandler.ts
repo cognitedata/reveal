@@ -6,19 +6,12 @@ import {
   type Image360CollectionHandler
 } from '../../../src/components/RevealToolbar/LayersButton/ModelHandler';
 
-export const setCadVisibilityMock = vi.fn<[boolean], void>();
-export const cadVisibleMock = vi.fn<[], boolean>();
-
-export const setPointCloudVisibilityMock = vi.fn<[boolean], void>();
-export const pointCloudVisibleMock = vi.fn<[], boolean>();
-
-export const setImage360VisibilityMock = vi.fn<[boolean], void>();
-export const image360VisibleMock = vi.fn<[], boolean>();
-
 export function createCadHandlerMock(): CadModelHandler {
-  setCadVisibilityMock.mockImplementation((visible) => {
+  const cadVisibleMock = vi.fn<[], boolean>();
+  const setCadVisibilityMock = vi.fn<[boolean], void>().mockImplementation((visible) => {
     cadVisibleMock.mockReturnValue(visible);
   });
+
   return new Mock<CadModelHandler>()
     .setup((p) => p.getRevisionId)
     .returns(() => 456)
@@ -34,7 +27,8 @@ export function createCadHandlerMock(): CadModelHandler {
 }
 
 export function createPointCloudHandlerMock(): PointCloudModelHandler {
-  setPointCloudVisibilityMock.mockImplementation((visible) => {
+  const pointCloudVisibleMock = vi.fn<[], boolean>();
+  const setPointCloudVisibilityMock = vi.fn<[boolean], void>().mockImplementation((visible) => {
     pointCloudVisibleMock.mockReturnValue(visible);
   });
   return new Mock<PointCloudModelHandler>()
@@ -52,7 +46,8 @@ export function createPointCloudHandlerMock(): PointCloudModelHandler {
 }
 
 export function createImage360HandlerMock(): Image360CollectionHandler {
-  setImage360VisibilityMock.mockImplementation((visible) => {
+  const image360VisibleMock = vi.fn<[], boolean>();
+  const setImage360VisibilityMock = vi.fn<[boolean], void>().mockImplementation((visible) => {
     image360VisibleMock.mockReturnValue(visible);
   });
   return new Mock<Image360CollectionHandler>()

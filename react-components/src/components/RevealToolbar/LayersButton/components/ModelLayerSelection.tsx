@@ -5,7 +5,7 @@
 import { SelectPanel } from '@cognite/cogs-lab';
 import { IconWrapper, ChevronRightSmallIcon } from '@cognite/cogs.js';
 import { type ReactElement, useCallback } from 'react';
-import { type ModelHandler } from './ModelHandler';
+import { type ModelHandler } from '../ModelHandler';
 import { ModelLayersList } from './ModelLayersList';
 import { WholeLayerVisibilitySelectItem } from './WholeLayerVisibilitySelectItem';
 
