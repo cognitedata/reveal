@@ -18,6 +18,7 @@ jobs:
       # For pull requests it's not necessary to checkout the code
       - uses: dorny/paths-filter@v3
         id: filter
+        if: ${{ github.event_name == 'pull_request' }}
         with:
           filters: |
             should-run:
