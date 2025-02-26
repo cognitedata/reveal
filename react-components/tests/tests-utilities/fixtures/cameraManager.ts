@@ -1,20 +1,16 @@
 import { type CameraManager, type CameraManagerEventType, type CameraState } from '@cognite/reveal';
 import { remove } from 'lodash';
 import { Mock } from 'moq.ts';
-import { type Box3, type Vector3 } from 'three';
 
 import { vi, type Mock as viMock } from 'vitest';
 
-export const cameraManagerGlobalCameraEvents: Record<
-  CameraManagerEventType,
-  Array<viMock<[Vector3, Vector3], void>>
-> = {
+export const cameraManagerGlobalCameraEvents: Record<CameraManagerEventType, viMock[]> = {
   cameraChange: [],
   cameraStop: []
 };
 
 const cameraManagerGlobalCurrentCameraState: CameraState = {};
-export const fitCameraToBoundingBoxMock = vi.fn<[Box3], void>();
+export const fitCameraToBoundingBoxMock = vi.fn<CameraManager['fitCameraToBoundingBox']>();
 
 export const cameraManagerMock = new Mock<CameraManager>()
   .setup((p) => p.on)
