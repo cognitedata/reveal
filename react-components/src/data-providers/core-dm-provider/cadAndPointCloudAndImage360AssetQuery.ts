@@ -16,14 +16,14 @@ import {
   COGNITE_3D_REVISION_SOURCE
 } from './dataModels';
 
-const containsCadRevisionFilter: InstanceFilter = {
+const containsCadRevisionFilter = {
   containsAny: {
     property: [CORE_DM_3D_CONTAINER_SPACE, COGNITE_CAD_NODE_SOURCE.externalId, 'revisions'],
     values: { parameter: 'revisionRefs' }
   }
-} as const;
+} as const satisfies InstanceFilter;
 
-const containsPointCloudRevisionFilter: InstanceFilter = {
+const containsPointCloudRevisionFilter = {
   containsAny: {
     property: [
       CORE_DM_3D_CONTAINER_SPACE,
@@ -32,7 +32,7 @@ const containsPointCloudRevisionFilter: InstanceFilter = {
     ],
     values: { parameter: 'revisionRefs' }
   }
-} as const;
+} as const satisfies InstanceFilter;
 
 function containsImage360CollectionFilter(revisionRefs: DmsUniqueIdentifier[]): InstanceFilter {
   return {
@@ -151,10 +151,6 @@ export function cadAndPointCloudAndImage36AssetQuery(
           ...sourcesToSearch.map((source) => ({ source, properties: ['*'] }))
         ]
       },
-      image360_collections: {},
-      image360_revisions: {},
-      image360_annotations: {},
-      image360_object3ds: {},
       image360_assets: {
         sources: [
           ...cogniteAssetSourceWithProperties,
