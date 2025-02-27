@@ -70,32 +70,91 @@ describe('Cylinder', () => {
     // Outside
     point.x += 0.1 * primitive.diameter;
     expect(primitive.isPointInside(point, new Matrix4())).toBe(false);
+    point.x -= 0.1 * primitive.diameter;
     point.z += 0.1 * primitive.height;
     expect(primitive.isPointInside(point, new Matrix4())).toBe(false);
   });
 
-  test('should intersect vertical primitive and horizontal line along x', () => {
+  test('should intersect vertical primitive and some horizontal line', () => {
     const primitive = createVerticalCylinder();
-    const origin = primitive.center.clone();
-    origin.x -= 2 * primitive.radius;
-    const direction = new Vector3(1, 0, 0);
-    const intersectionExpect = primitive.center.clone();
-    intersectionExpect.x -= primitive.radius;
-    const ray = new Ray(origin, direction);
-    const intersection = primitive.intersectRay(ray, new Matrix4());
-    expectEqualVector3(intersection, intersectionExpect);
-  });
 
-  test('should intersect vertical primitive and horizontal line along y', () => {
-    const primitive = createVerticalCylinder();
-    const origin = primitive.center.clone();
-    origin.y -= 2 * primitive.radius;
-    const direction = new Vector3(0, 1, 0);
-    const intersectionExpect = primitive.center.clone();
-    intersectionExpect.y -= primitive.radius;
-    const ray = new Ray(origin, direction);
-    const intersection = primitive.intersectRay(ray, new Matrix4());
-    expectEqualVector3(intersection, intersectionExpect);
+    for (const xDirection of [-1, 0, 1]) {
+      for (const yDirection of [-1, 0, 1]) {
+        if (xDirection === 0 && yDirection === 0) {
+          continue;
+        }
+        horizontalIntersection(primitive, xDirection, yDirection, 0);
+        horizontalIntersection(primitive, xDirection, yDirection, 0.9);
+        horizontalIntersection(primitive, xDirection, yDirection, 1.1, false);
+      }
+    }
+
+    for (const zDirection of [-1, 1]) {
+      verticalIntersection(primitive, zDirection, 0, 0);
+      verticalIntersection(primitive, zDirection, 0.5, 0);
+      verticalIntersection(primitive, zDirection, 0, 0.5);
+      verticalIntersection(primitive, zDirection, 0.5, -0.5);
+      verticalIntersection(primitive, zDirection, -0.5, -0.5);
+      verticalIntersection(primitive, zDirection, 1, 1, false);
+      verticalIntersection(primitive, zDirection, 1, -1, false);
+    }
+
+    function horizontalIntersection(
+      primitive: Cylinder,
+      xDirection: number,
+      yDirection: number,
+      zOffset: number,
+      expectIntersection = true
+    ): void {
+      const direction = new Vector3(xDirection, yDirection, 0);
+      direction.normalize();
+
+      const origin = primitive.center.clone();
+      origin.z += (zOffset * primitive.height) / 2;
+      origin.addScaledVector(direction, -2 * primitive.radius);
+
+      const expectedIntersection = primitive.center.clone();
+      expectedIntersection.z += (zOffset * primitive.height) / 2;
+      expectedIntersection.addScaledVector(direction, -primitive.radius);
+
+      const ray = new Ray(origin, direction);
+      const actualIntersection = primitive.intersectRay(ray, new Matrix4());
+      if (!expectIntersection) {
+        expect(actualIntersection).toBeUndefined();
+        return;
+      }
+      expectEqualVector3(actualIntersection, expectedIntersection);
+    }
+
+    function verticalIntersection(
+      primitive: Cylinder,
+      zDirection: number,
+      xOffset: number,
+      yOffset: number,
+      expectIntersection = true
+    ): void {
+      const direction = new Vector3(0, 0, zDirection);
+      direction.normalize();
+
+      const origin = primitive.center.clone();
+
+      origin.x += xOffset * primitive.radius;
+      origin.y += yOffset * primitive.radius;
+      origin.z += -zDirection * primitive.height;
+
+      const expectedIntersection = primitive.center.clone();
+      expectedIntersection.x += xOffset * primitive.radius;
+      expectedIntersection.y += yOffset * primitive.radius;
+      expectedIntersection.z += (-zDirection * primitive.height) / 2;
+
+      const ray = new Ray(origin, direction);
+      const actualIntersection = primitive.intersectRay(ray, new Matrix4());
+      if (!expectIntersection) {
+        expect(actualIntersection).toBeUndefined();
+        return;
+      }
+      expectEqualVector3(actualIntersection, expectedIntersection);
+    }
   });
 
   test('should test copy', () => {
