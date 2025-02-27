@@ -6,8 +6,10 @@ import { getDirectRelationProperties } from '../utils/getDirectRelationPropertie
 import {
   type Cognite3DObjectProperties,
   type COGNITE_3D_OBJECT_SOURCE,
+  COGNITE_ASSET_VIEW_VERSION_KEY,
   type COGNITE_CAD_NODE_SOURCE,
   COGNITE_CAD_NODE_VIEW_VERSION_KEY,
+  COGNITE_IMAGE_360_ANNOTATION_SOURCE,
   type COGNITE_POINT_CLOUD_VOLUME_SOURCE,
   COGNITE_POINT_CLOUD_VOLUME_VIEW_VERSION_KEY,
   CORE_DM_SPACE
@@ -27,6 +29,10 @@ export async function filterNodesByMappedTo3d(
   _spacesToSearch: string[],
   fdmSdk: FdmSDK
 ): Promise<InstancesWithView[]> {
+  if (nodes.length === 0 || revisionRefs.length === 0) {
+    return [];
+  }
+
   const connectionData = await fetchConnectionData(nodes, revisionRefs, fdmSdk);
 
   const object3dKeys: Set<FdmKey> = createRelevantObject3dKeys(connectionData);
@@ -41,9 +47,8 @@ export async function filterNodesByMappedTo3d(
     return {
       view: viewWithNodes.view,
       instances: viewWithNodes.instances.filter((instance) => {
-        const object3dId = instance.properties.object3D as unknown as
-          | DmsUniqueIdentifier
-          | undefined;
+        const object3dId = instance.properties[CORE_DM_SPACE][COGNITE_ASSET_VIEW_VERSION_KEY]
+          .object3D as DmsUniqueIdentifier;
         if (!isString(object3dId?.externalId) || !isString(object3dId?.space)) {
           return false;
         }
