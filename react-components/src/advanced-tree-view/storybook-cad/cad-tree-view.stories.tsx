@@ -33,8 +33,8 @@ type Story = StoryObj<typeof AdvancedTreeView>;
 
 export default meta;
 
-const stk = new CogniteClientMock();
-const baseLoader = new CadNodesLoader(stk, { revisionId: 1, modelId: 1 }, 10);
+const sdk = new CogniteClientMock();
+const baseLoader = new CadNodesLoader(sdk, { revisionId: 1, modelId: 1 }, 10);
 
 export const base: Story = {
   name: 'base',
@@ -51,7 +51,7 @@ export const base: Story = {
   }
 };
 
-const loader = new CadNodesLoader(stk, { revisionId: 1, modelId: 1 }, 10);
+const loader = new CadNodesLoader(sdk, { revisionId: 1, modelId: 1 }, 10);
 
 export const Main: Story = {
   name: 'main',
@@ -80,7 +80,7 @@ export const Main: Story = {
         <StyledButton
           size="small"
           onClick={async () => {
-            const nodeId = stk.getRandomNodeId();
+            const nodeId = sdk.getRandomNodeId();
             await loader.forceNodeInTree(nodeId).then((selectedNode) => {
               if (selectedNode === undefined) {
                 return;
