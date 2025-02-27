@@ -1,4 +1,4 @@
-import { NodeItem } from '../../../../src/data-providers/FdmSDK';
+import type { NodeItem } from '../../../../src/data-providers/FdmSDK';
 
 export const modelInstanceFixture0: NodeItem = {
   externalId: 'model0ExternalId',
