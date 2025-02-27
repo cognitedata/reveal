@@ -188,22 +188,18 @@ export function createCheck3dConnectedEquipmentQuery(
       ...getRevisionsImage360Annotations('indirect', 'indirect_nodes_object_3ds', revisionRefs)
     },
     select: {
-      indirectly_referenced_edges: {},
-      initial_nodes_object_3ds: { sources: cogniteObject3dSourceWithProperties },
       initial_nodes_cad_nodes: {
         sources: cadNodeSourceWithProperties
       },
       initial_nodes_point_cloud_volumes: { sources: pointCloudVolumeSourceWithProperties },
       initial_360_annotation_edges: { sources: cogniteImage360AnnotationSourceWithProperties },
       initial_360_image_nodes: { sources: cogniteImage360SourceWithProperties },
-      direct_nodes_object_3ds: { sources: cogniteObject3dSourceWithProperties },
       direct_nodes_cad_nodes: {
         sources: cadNodeSourceWithProperties
       },
       direct_nodes_point_cloud_volumes: { sources: pointCloudVolumeSourceWithProperties },
       direct_360_annotation_edges: { sources: cogniteImage360AnnotationSourceWithProperties },
       direct_360_image_nodes: { sources: cogniteImage360SourceWithProperties },
-      indirect_nodes_object_3ds: { sources: cogniteObject3dSourceWithProperties },
       indirect_nodes_cad_nodes: {
         sources: cadNodeSourceWithProperties
       },

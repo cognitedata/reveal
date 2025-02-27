@@ -60,16 +60,6 @@ export function getIdKeyForImage360Annotation(
   }
 }
 
-export function getIdForImage360Annotation(
-  annotation: DataSourceType['image360AnnotationType']
-): DmsUniqueIdentifier | number {
-  if (isCoreDmImage360Annotation(annotation)) {
-    return annotation.annotationIdentifier;
-  } else {
-    return annotation.id;
-  }
-}
-
 // TODO: Implement this in Reveal instead
 function isCoreDmImage360Annotation(
   annotation: DataSourceType['image360AnnotationType']

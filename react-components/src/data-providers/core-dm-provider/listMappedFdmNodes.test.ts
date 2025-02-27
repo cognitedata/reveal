@@ -1,8 +1,11 @@
+/*!
+ * Copyright 2025 Cognite AS
+ */
 import { describe, expect, it, vi } from 'vitest';
 import { listMappedFdmNodes } from './listMappedFdmNodes';
 import { Mock, It } from 'moq.ts';
-import { DmsUniqueIdentifier, FdmSDK } from '../FdmSDK';
-import { cadAndPointCloudAndImage36AssetQuery } from './cadAndPointCloudAndImage360AssetQuery';
+import { type DmsUniqueIdentifier, type FdmSDK } from '../FdmSDK';
+import { type cadAndPointCloudAndImage36AssetQuery } from './cadAndPointCloudAndImage360AssetQuery';
 import { deepEqual } from 'assert';
 import { isEqual } from 'lodash';
 
@@ -18,7 +21,7 @@ const assetNode0 = {
   version: 1,
   createdTime: 9000,
   lastUpdatedTime: 900,
-  properties: { cdf_cdm: { ['CogniteAsset/v1']: { object3D: object3dIdentifier } } }
+  properties: { cdf_cdm: { 'CogniteAsset/v1': { object3D: object3dIdentifier } } }
 };
 
 const assetNode1 = {
@@ -28,7 +31,7 @@ const assetNode1 = {
   version: 1,
   createdTime: 9000,
   lastUpdatedTime: 900,
-  properties: { cdf_cdm: { ['CogniteAsset/v1']: { object3D: object3dIdentifier } } }
+  properties: { cdf_cdm: { 'CogniteAsset/v1': { object3D: object3dIdentifier } } }
 };
 
 const assetNode2 = {
@@ -38,7 +41,7 @@ const assetNode2 = {
   version: 1,
   createdTime: 9000,
   lastUpdatedTime: 900,
-  properties: { cdf_cdm: { ['CogniteAsset/v1']: { object3D: object3dIdentifier } } }
+  properties: { cdf_cdm: { 'CogniteAsset/v1': { object3D: object3dIdentifier } } }
 };
 
 describe(listMappedFdmNodes.name, () => {
@@ -53,7 +56,7 @@ describe(listMappedFdmNodes.name, () => {
 
   it('lists nothing when network request returns empty result', async () => {
     const fdmSdkMock = new Mock<FdmSDK>()
-      .setup((p) => p.queryNodesAndEdges(It.IsAny()))
+      .setup(async (p) => await p.queryNodesAndEdges(It.IsAny()))
       .returns(
         Promise.resolve({ items: { cad_assets: [], pointcloud_assets: [], image360_assets: [] } })
       )
@@ -66,21 +69,22 @@ describe(listMappedFdmNodes.name, () => {
 
   it('sends model identifiers in query, and correctly returns all results', async () => {
     const fdmSdkMock = new Mock<FdmSDK>()
-      .setup((p) =>
-        p.queryNodesAndEdges(
-          It.Is(
-            (
-              query: ReturnType<typeof cadAndPointCloudAndImage36AssetQuery> & {
-                parameters: { revisionRefs: DmsUniqueIdentifier[] };
-              }
-            ) =>
-              isEqual(query.parameters.revisionRefs, [
-                modelIdentifier0,
-                modelIdentifier1,
-                modelIdentifier2
-              ])
+      .setup(
+        async (p) =>
+          await p.queryNodesAndEdges(
+            It.Is(
+              (
+                query: ReturnType<typeof cadAndPointCloudAndImage36AssetQuery> & {
+                  parameters: { revisionRefs: DmsUniqueIdentifier[] };
+                }
+              ) =>
+                isEqual(query.parameters.revisionRefs, [
+                  modelIdentifier0,
+                  modelIdentifier1,
+                  modelIdentifier2
+                ])
+            )
           )
-        )
       )
       .returns(
         Promise.resolve({

@@ -1,3 +1,6 @@
+/*!
+ * Copyright 2025 Cognite AS
+ */
 import { AnnotationModel } from '@cognite/sdk';
 import {
   classic360AnnotationFixture,

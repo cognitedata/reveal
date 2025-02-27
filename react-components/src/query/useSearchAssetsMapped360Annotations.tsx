@@ -27,7 +27,7 @@ import { createInstanceReferenceKey } from '../utilities/instanceIds/toKey';
 import { isIdEither } from '../utilities/instanceIds';
 import { isSameIdEither } from '../utilities/instanceIds/equality';
 import { matchAssetWithQuery } from '../utilities/instances/matchAssetWithQuery';
-import { isClassicImage360AssetAnnotationData } from '../utilities/annotations';
+import { isClassicImage360AssetAnnotationData } from '../utilities/image360Annotations';
 
 export const useAllAssetsMapped360Annotations = (
   sdk: CogniteClient,

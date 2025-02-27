@@ -1,9 +1,12 @@
+/*!
+ * Copyright 2025 Cognite AS
+ */
 import { describe, expect, it } from 'vitest';
 import { filterNodesByMappedTo3d } from './filterNodesByMappedTo3d';
 import { Mock, It } from 'moq.ts';
-import { DmsUniqueIdentifier, FdmSDK } from '../FdmSDK';
-import { InstancesWithView } from '../../query';
-import { createCheck3dConnectedEquipmentQuery } from './check3dConnectedEquipmentQuery';
+import { type DmsUniqueIdentifier, type FdmSDK } from '../FdmSDK';
+import { type InstancesWithView } from '../../query';
+import { type createCheck3dConnectedEquipmentQuery } from './check3dConnectedEquipmentQuery';
 import { isEqual } from 'lodash';
 import {
   cadNodeInstanceFixture0,
@@ -80,16 +83,17 @@ describe(filterNodesByMappedTo3d.name, () => {
 
   it('queries API with revisions and returns valid connections from request results', async () => {
     const fdmSdkMock = new Mock<FdmSDK>()
-      .setup((p) =>
-        p.queryAllNodesAndEdges(
-          It.Is(
-            (
-              query: ReturnType<typeof createCheck3dConnectedEquipmentQuery> & {
-                parameters: { revisionRefs: DmsUniqueIdentifier[] };
-              }
-            ) => isEqual(query.parameters.revisionRefs, [modelIdentifier])
+      .setup(
+        async (p) =>
+          await p.queryAllNodesAndEdges(
+            It.Is(
+              (
+                query: ReturnType<typeof createCheck3dConnectedEquipmentQuery> & {
+                  parameters: { revisionRefs: DmsUniqueIdentifier[] };
+                }
+              ) => isEqual(query.parameters.revisionRefs, [modelIdentifier])
+            )
           )
-        )
       )
       .returns(
         Promise.resolve({

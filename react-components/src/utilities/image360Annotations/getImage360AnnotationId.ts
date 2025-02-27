@@ -1,6 +1,9 @@
+/*!
+ * Copyright 2025 Cognite AS
+ */
 import { assertNever } from '../assertNever';
 import { isClassicImage360Annotation, isDMImage360Annotation } from './typeGuards';
-import { Image360AnnotationContent, Image360AnnotationId } from './types';
+import { type Image360AnnotationContent, type Image360AnnotationId } from './types';
 
 export function getImage360AnnotationId(
   annotation: Image360AnnotationContent
