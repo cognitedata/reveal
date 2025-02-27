@@ -1,14 +1,9 @@
 /*!
  * Copyright 2025 Cognite AS
  */
-import { assertNever } from '../assertNever';
 import { type InstanceReference, isIdEither } from '../instanceIds';
-import {
-  isClassicImage360Annotation,
-  isClassicImage360AssetAnnotationData,
-  isDMImage360Annotation
-} from './typeGuards';
-import { type Image360AnnotationContent, type Image360AnnotationId } from './types';
+import { isClassicImage360Annotation, isClassicImage360AssetAnnotationData } from './typeGuards';
+import { type Image360AnnotationContent } from './types';
 
 export function getImage360AnnotationAssetRef(
   annotation: Image360AnnotationContent

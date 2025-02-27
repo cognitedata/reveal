@@ -1,12 +1,11 @@
 /*!
  * Copyright 2025 Cognite AS
  */
-import { describe, expect, it, vi } from 'vitest';
+import { describe, expect, it } from 'vitest';
 import { listMappedFdmNodes } from './listMappedFdmNodes';
 import { Mock, It } from 'moq.ts';
 import { type DmsUniqueIdentifier, type FdmSDK } from '../FdmSDK';
 import { type cadAndPointCloudAndImage36AssetQuery } from './cadAndPointCloudAndImage360AssetQuery';
-import { deepEqual } from 'assert';
 import { isEqual } from 'lodash';
 
 const modelIdentifier0 = { externalId: 'model0', space: 'space0' };
@@ -45,8 +44,6 @@ const assetNode2 = {
 };
 
 describe(listMappedFdmNodes.name, () => {
-  const fdmSdkMock = new Mock<FdmSDK>().setup((p) => p.queryNodesAndEdges);
-
   it('lists nothing when no revisions are input', async () => {
     const fdmSdkMock = new Mock<FdmSDK>();
 

@@ -6,7 +6,6 @@ import {
   type QueryTableExpressionV3,
   type SourceSelectorV3
 } from '@cognite/sdk';
-import { cogniteObject3dSourceWithProperties } from './cogniteObject3dSourceWithProperties';
 import {
   COGNITE_CAD_NODE_SOURCE,
   COGNITE_IMAGE_360_ANNOTATION_SOURCE,
