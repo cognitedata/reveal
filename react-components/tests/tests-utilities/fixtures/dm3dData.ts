@@ -3,10 +3,9 @@ import {
   COGNITE_IMAGE_360_ANNOTATION_SOURCE,
   COGNITE_IMAGE_360_SOURCE,
   COGNITE_POINT_CLOUD_VOLUME_VIEW_VERSION_KEY,
-  CogniteCADNodeProperties,
   CORE_DM_SPACE
 } from '../../../src/data-providers/core-dm-provider/dataModels';
-import { DmsUniqueIdentifier, EdgeItem, NodeItem } from '../../../src/data-providers/FdmSDK';
+import type { DmsUniqueIdentifier, EdgeItem, NodeItem } from '../../../src/data-providers/FdmSDK';
 import { restrictToDmsId } from '../../../src/utilities/restrictToDmsId';
 
 export const object3DInstanceFixtures = Array.from(Array(10).keys()).map((n) => ({

@@ -1,4 +1,4 @@
-import { CoreDmImage360Annotation, ImageAssetLinkAnnotationInfo } from '@cognite/reveal';
+import type { CoreDmImage360Annotation, ImageAssetLinkAnnotationInfo } from '@cognite/reveal';
 import { Vector3 } from 'three';
 
 export const classic360AnnotationFixture: ImageAssetLinkAnnotationInfo = {
