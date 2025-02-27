@@ -87,19 +87,21 @@ describe(LayersButtonStrip.name, () => {
     const mockImage360Collection = createImage360ClassicMock();
     viewerImage360CollectionsMock.mockReturnValue([mockImage360Collection]);
     const ModelLayerSelection = vi.fn(({ label }) => <div>{label}</div>);
+    const useModelHandlers = vi.fn((): [ModelLayerHandlers, () => void] => [
+      {
+        cadHandlers: [mockCadHandler],
+        pointCloudHandlers: [mockPointCloudHandler],
+        image360Handlers: [mockImage360Handler]
+      },
+      vi.fn()
+    ]);
+
     const newProps: LayersButtonDependencies & {
       setLayersState: typeof defaultProps.setLayersState;
     } = {
       setLayersState: defaultProps.setLayersState,
       ...defaultDependencies,
-      useModelHandlers: vi.fn(() => [
-        {
-          cadHandlers: [mockCadHandler],
-          pointCloudHandlers: [mockPointCloudHandler],
-          image360Handlers: [mockImage360Handler]
-        },
-        () => {}
-      ]) as unknown as LayersButtonDependencies['useModelHandlers'],
+      useModelHandlers,
       useSyncExternalLayersState: vi.fn(),
       ModelLayerSelection
     };
