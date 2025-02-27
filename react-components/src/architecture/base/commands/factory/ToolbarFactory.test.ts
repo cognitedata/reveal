@@ -25,7 +25,7 @@ describe('ToolbarFactory', () => {
   test('should test get toolbar', () => {
     const tool = new FooTool();
     const toolBar = getToolbar(tool);
-    expect(toolBar).not.toBe(undefined);
+    expect(toolBar).toBeDefined();
     if (toolBar !== undefined) {
       expect(toolBar.length).toEqual(2);
     }
@@ -33,7 +33,7 @@ describe('ToolbarFactory', () => {
 
   test('should test can not get toolbar', () => {
     const tool = new BarTool();
-    expect(getToolbar(tool)).toBe(undefined);
+    expect(getToolbar(tool)).toBeUndefined();
   });
 });
 
