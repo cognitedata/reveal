@@ -99,6 +99,7 @@ export class Cylinder extends Primitive {
     const ba = new Vector3().subVectors(centerB, centerA);
     const baRd = ba.dot(rayDirection);
 
+    // Inspired by : https://github.com/nhocki/Ray-Tracer/blob/master/objects/Cylinder.cpp
     // Check the intersection with cap A
     if (baRd > 0) {
       const baCa = ba.dot(centerA);
