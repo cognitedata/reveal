@@ -4,30 +4,14 @@
 import { describe, expect, it } from 'vitest';
 import { CoreDm3dFdm3dDataProvider } from './CoreDm3dDataProvider';
 import { Mock, It, type IMock } from 'moq.ts';
-import { type FdmSDK, type NodeItem } from '../FdmSDK';
+import { type FdmSDK } from '../FdmSDK';
 import { restrictToDmsId } from '../../utilities/restrictToDmsId';
 import { beforeEach } from 'node:test';
 import { type AddImage360CollectionDatamodelsOptions } from '../../components';
-
-const modelInstance: NodeItem = {
-  externalId: 'modelExternalId',
-  space: 'space0',
-  createdTime: 0,
-  lastUpdatedTime: 0,
-  instanceType: 'node',
-  version: 1,
-  properties: {}
-} as const;
-
-const revisionInstance: NodeItem = {
-  externalId: 'revisionExternalId',
-  space: 'space0',
-  createdTime: 0,
-  lastUpdatedTime: 0,
-  instanceType: 'node',
-  version: 1,
-  properties: {}
-} as const;
+import {
+  modelInstanceFixture0,
+  revisionInstanceFixture0
+} from '../../../tests/tests-utilities/fixtures/dm/model3dData';
 
 const image360CollectionId: AddImage360CollectionDatamodelsOptions = {
   externalId: 'image360Collection0',
@@ -50,7 +34,7 @@ describe(CoreDm3dFdm3dDataProvider.name, () => {
 
     const result = await coreDmProvider.getDMSModels(modelId0);
 
-    expect(result).toEqual([restrictToDmsId(modelInstance)]);
+    expect(result).toEqual([restrictToDmsId(modelInstanceFixture0)]);
   });
 
   it('should fetch revision ref for classic input model options', async () => {
@@ -60,7 +44,7 @@ describe(CoreDm3dFdm3dDataProvider.name, () => {
       { modelId: modelId0, revisionId: revisionId0 }
     ]);
 
-    expect(result).toEqual([restrictToDmsId(revisionInstance)]);
+    expect(result).toEqual([restrictToDmsId(revisionInstanceFixture0)]);
   });
 
   it('should return the input ID when input is CoreDM image360 options', async () => {
@@ -84,7 +68,7 @@ function createFdmSdkMock(): IMock<FdmSDK> {
           )
         )
     )
-    .returns(Promise.resolve({ items: { models: [modelInstance] } }))
+    .returns(Promise.resolve({ items: { models: [modelInstanceFixture0] } }))
     .setup(
       async (p) =>
         await p.queryNodesAndEdges(
@@ -94,5 +78,5 @@ function createFdmSdkMock(): IMock<FdmSDK> {
           )
         )
     )
-    .returns(Promise.resolve({ items: { revision: [revisionInstance] } }));
+    .returns(Promise.resolve({ items: { revision: [revisionInstanceFixture0] } }));
 }
