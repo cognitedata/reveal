@@ -12,7 +12,7 @@ module.exports = {
   parserOptions: {
     ecmaVersion: 'latest',
     sourceType: 'module',
-    project: './tsconfig.json',
+    project: ['./tsconfig.build.json', './tsconfig.test.json'],
     tsconfigRootDir: __dirname
   },
   plugins: ['react', 'prettier', 'header'],
@@ -57,11 +57,17 @@ module.exports = {
       }
     },
     {
-      files: ['src/**/*.spec.ts', 'src/**/*.spec.tsx', 'src/**/*.test.ts', 'src/**/*.test.tsx', 'tests/tests-utilities/**/*.ts'],
+      files: [
+        'src/**/*.spec.ts',
+        'src/**/*.spec.tsx',
+        'src/**/*.test.ts',
+        'src/**/*.test.tsx',
+        'tests/tests-utilities/**/*.ts'
+      ],
       rules: {
-        "@typescript-eslint/unbound-method": 'off',
+        '@typescript-eslint/unbound-method': 'off',
         '@typescript-eslint/no-non-null-assertion': 'off',
-        '@typescript-eslint/no-unsafe-argument': 'off',
+        '@typescript-eslint/no-unsafe-argument': 'off'
       }
     }
   ]
