@@ -3,5 +3,5 @@
  */
 export * from './types';
 export * from './typeGuards';
-export * from './getId';
+export * from './getImage360AnnotationAssetRef';
 export * from './equality';

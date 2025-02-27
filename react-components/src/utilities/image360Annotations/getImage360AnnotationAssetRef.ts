@@ -10,18 +10,6 @@ import {
 } from './typeGuards';
 import { type Image360AnnotationContent, type Image360AnnotationId } from './types';
 
-export function getAnnotationId(annotation: Image360AnnotationContent): Image360AnnotationId {
-  if (isClassicImage360Annotation(annotation)) {
-    return annotation.id;
-  } else if (isDMImage360Annotation(annotation)) {
-    return {
-      externalId: annotation.annotationIdentifier.externalId,
-      space: annotation.annotationIdentifier.space
-    };
-  }
-  assertNever(annotation);
-}
-
 export function getImage360AnnotationAssetRef(
   annotation: Image360AnnotationContent
 ): InstanceReference | undefined {
@@ -32,6 +20,4 @@ export function getImage360AnnotationAssetRef(
   } else {
     return annotation.assetRef;
   }
-
-  return undefined;
 }
