@@ -32,7 +32,7 @@ describe('DomainObjectChange', () => {
 
   test('should return false on change', () => {
     const change = new DomainObjectChange(Changes.renderStyle, 'radius');
-    expect(change.isFieldNameChanged(Changes.renderStyle, 'diameter')).toBe(false);
+    expect(change.isFieldNameChanged(Changes.renderStyle, 'notExistingField')).toBe(false);
     expect(change.isFieldNameChanged(Changes.color)).toBe(false);
   });
 

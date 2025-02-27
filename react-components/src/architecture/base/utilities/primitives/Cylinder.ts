@@ -71,6 +71,7 @@ export class Cylinder extends Primitive {
     const { centerA, centerB } = this.getCenters(globalMatrix);
     const center = new Vector3().addVectors(centerA, centerB).divideScalar(2);
     const vector = centerA.sub(centerB);
+    const height = vector.length();
     vector.normalize();
 
     const diff = center.sub(point);
@@ -79,10 +80,12 @@ export class Cylinder extends Primitive {
     vector.sub(diff);
 
     const distanceToAxis = vector.length();
+    // Check distance to axis
     if (distanceToAxis > this.radius) {
       return false;
     }
-    if (Math.abs(dot) > this.height / 2) {
+    // Check if it is inside along axis
+    if (Math.abs(dot) > height / 2) {
       return false;
     }
     return true;
