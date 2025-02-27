@@ -38,16 +38,13 @@ import { EMPTY_ARRAY } from '../../utilities/constants';
 const MAX_PARALLEL_QUERIES = 2;
 
 export class CoreDm3dFdm3dDataProvider implements Fdm3dDataProvider {
-  readonly _fdmSdk: FdmSDK;
+  private readonly _fdmSdk: FdmSDK;
 
-  readonly _relevant3dSpaces: DmsUniqueIdentifier[];
+  private readonly _revisionIdToDMSIdentifier = new Map<number, DmsUniqueIdentifier>();
+  private readonly _modelIdToDMSIdentifier = new Map<number, DmsUniqueIdentifier[]>();
 
-  readonly _revisionIdToDMSIdentifier = new Map<number, DmsUniqueIdentifier>();
-  readonly _modelIdToDMSIdentifier = new Map<number, DmsUniqueIdentifier[]>();
-
-  constructor(relevant3dSpaces: DmsUniqueIdentifier[], fdmSdk: FdmSDK) {
+  constructor(fdmSdk: FdmSDK) {
     this._fdmSdk = fdmSdk;
-    this._relevant3dSpaces = relevant3dSpaces;
   }
 
   is3dView(view: ViewItem): boolean {
