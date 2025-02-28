@@ -17,7 +17,7 @@ import { analyzeFdmMappingsAgainstExpression } from './analyzeFdmMappingsAgainst
 import { getRuleOutputFromTypeSelected } from './getRuleOutputFromTypeSelected';
 import { forEachExpression } from './forEachExpression';
 import { convertExpressionStringMetadataKeyToLowerCase } from './convertExpressionStringMetadataKeyToLowerCase';
-import { CdfAssetMapping } from '../../CacheProvider/types';
+import { type CdfAssetMapping } from '../../CacheProvider/types';
 
 export const generateRuleBasedOutputs = async ({
   contextualizedAssetNodes,

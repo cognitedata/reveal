@@ -10,7 +10,7 @@ import { NumericRange, TreeIndexNodeCollection } from '@cognite/reveal';
 import { type AssetStylingGroup } from '../../Reveal3DResources';
 import { Color } from 'three';
 import { createRuleStyling } from './createRuleStyling';
-import { CdfAssetMapping } from '../../CacheProvider/types';
+import { type CdfAssetMapping } from '../../CacheProvider/types';
 
 export const applyAssetMappingsNodeStyles = (
   treeNodes: CdfAssetMapping[],

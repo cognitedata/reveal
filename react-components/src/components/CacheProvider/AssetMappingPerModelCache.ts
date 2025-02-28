@@ -2,7 +2,12 @@
  * Copyright 2024 Cognite AS
  */
 import { type CogniteClient } from '@cognite/sdk';
-import { type ModelId, type RevisionId, type ModelRevisionKey, CdfAssetMapping } from './types';
+import {
+  type ModelId,
+  type RevisionId,
+  type ModelRevisionKey,
+  type CdfAssetMapping
+} from './types';
 import { isValidAssetMapping } from './utils';
 import { createModelRevisionKey } from './idAndKeyTranslation';
 
@@ -17,7 +22,7 @@ export class AssetMappingPerModelCache {
 
   public setModelToAssetMappingCacheItems(
     key: ModelRevisionKey,
-    assetMappings: Promise<Array<CdfAssetMapping>>
+    assetMappings: Promise<CdfAssetMapping[]>
   ): void {
     this._modelToAssetMappings.set(key, assetMappings);
   }

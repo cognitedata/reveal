@@ -3,7 +3,7 @@
  */
 
 import {
-  AnnotationsTypesImagesAssetLink,
+  type AnnotationsTypesImagesAssetLink,
   type AnnotationModel,
   type AnnotationsBoundingVolume,
   type AssetMapping3D,
@@ -17,7 +17,7 @@ import {
 } from '../../utilities/instanceIds/toKey';
 import { createFdmKey } from './idAndKeyTranslation';
 import { type DmsUniqueIdentifier } from '../../data-providers';
-import { CdfAssetMapping } from './types';
+import { type CdfAssetMapping } from './types';
 
 export function getInstanceReferenceFromPointCloudAnnotation(
   annotation: AnnotationModel

@@ -12,7 +12,7 @@ import {
 import { generateTimeseriesAndDatapointsFromTheAsset } from './generateTimeseriesAndDatapointsFromTheAsset';
 import { traverseExpression } from './traverseExpression';
 import { applyAssetMappingsNodeStyles } from './applyAssetMappingsNodeStyles';
-import { CdfAssetMapping } from '../../CacheProvider/types';
+import { type CdfAssetMapping } from '../../CacheProvider/types';
 
 export const analyzeAssetMappingsAgainstExpression = async ({
   contextualizedAssetNodes,

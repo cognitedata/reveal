@@ -2,12 +2,7 @@
  * Copyright 2023 Cognite AS
  */
 
-import {
-  type CogniteClient,
-  type AssetMapping3D,
-  type Node3D,
-  type CogniteInternalId
-} from '@cognite/sdk';
+import { type CogniteClient, type Node3D, type CogniteInternalId } from '@cognite/sdk';
 import {
   type ModelTreeIndexKey,
   type AssetId,
@@ -15,7 +10,7 @@ import {
   type RevisionId,
   type ChunkInCacheTypes,
   type ModelAssetIdKey,
-  CdfAssetMapping
+  type CdfAssetMapping
 } from './types';
 import { chunk, maxBy } from 'lodash';
 import assert from 'assert';
@@ -176,7 +171,7 @@ export class AssetMappingAndNode3DCache {
     revisionId: RevisionId,
     type: string
   ): Promise<ChunkInCacheTypes<CdfAssetMapping>> {
-    const chunkInCache: Array<CdfAssetMapping> = [];
+    const chunkInCache: CdfAssetMapping[] = [];
     const chunkNotCached: number[] = [];
 
     await Promise.all(
@@ -266,7 +261,7 @@ export class AssetMappingAndNode3DCache {
     filterType: string,
     modelId: ModelId,
     revisionId: RevisionId,
-    assetMappingsList: Array<CdfAssetMapping>
+    assetMappingsList: CdfAssetMapping[]
   ): Promise<CdfAssetMapping[]> {
     const assetMappings = await this.fetchAssetMappingsRequest(
       idChunks[index],

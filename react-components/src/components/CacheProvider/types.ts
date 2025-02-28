@@ -2,9 +2,8 @@
  * Copyright 2023 Cognite AS
  */
 import {
-  AnnotationsTypesImagesAssetLink,
-  AssetMapping3D,
-  CogniteInternalId,
+  type AnnotationsTypesImagesAssetLink,
+  type CogniteInternalId,
   type AnnotationModel,
   type AnnotationsBoundingVolume,
   type Node3D

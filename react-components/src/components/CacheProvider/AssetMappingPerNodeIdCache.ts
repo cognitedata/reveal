@@ -11,7 +11,7 @@ export class AssetMappingPerNodeIdCache {
 
   public setNodeIdsToAssetMappingCacheItem(
     key: ModelTreeIndexKey,
-    item: Promise<Array<CdfAssetMapping>>
+    item: Promise<CdfAssetMapping[]>
   ): void {
     this._nodeIdsToAssetMappings.set(key, Promise.resolve(item));
   }
