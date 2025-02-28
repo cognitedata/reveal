@@ -23,7 +23,7 @@ const modelId0 = 1234;
 const revisionId0 = 5678;
 
 describe(CoreDm3dFdm3dDataProvider.name, () => {
-  let fdmSdkMock = createFdmSdkMock();
+  let fdmSdkMock: IMock<FdmSDK>;
 
   beforeEach(() => {
     fdmSdkMock = createFdmSdkMock();
