@@ -7,7 +7,7 @@ import {
   isClassicIdentifier,
   isDM3DModelIdentifier
 } from '../components/Reveal3DResources/typeGuards';
-import { AddImage360CollectionDatamodelsOptions } from '../components/Reveal3DResources/types';
+import { type AddImage360CollectionDatamodelsOptions } from '../components/Reveal3DResources/types';
 
 export const getModelKeys = (
   models: Array<AddModelOptions<DataSourceType> | AddImage360CollectionDatamodelsOptions>
