@@ -1,12 +1,11 @@
 /*!
  * Copyright 2025 Cognite AS
  */
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, beforeEach } from 'vitest';
 import { CoreDm3dFdm3dDataProvider } from './CoreDm3dDataProvider';
 import { Mock, It, type IMock } from 'moq.ts';
 import { type FdmSDK } from '../FdmSDK';
 import { restrictToDmsId } from '../../utilities/restrictToDmsId';
-import { beforeEach } from 'node:test';
 import { type AddImage360CollectionDatamodelsOptions } from '../../components';
 import {
   modelInstanceFixture0,
