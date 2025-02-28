@@ -3,7 +3,7 @@
  */
 import { render } from '@testing-library/react';
 import { describe, expect, test, vi } from 'vitest';
-import type { PropsWithChildren, ReactElement } from 'react';
+import type { ReactElement, ReactNode } from 'react';
 import { LayersButton } from './LayersButton';
 import type { LayersButtonProps } from './LayersButton';
 import { LayersButtonContext, type LayersButtonDependencies } from './LayersButton.context';
@@ -41,13 +41,20 @@ describe(LayersButton.name, () => {
     ModelLayerSelection: vi.fn(({ label }) => <div>{label}</div>)
   };
 
-  test('renders without crashing', () => {
-    const wrapper = ({ children }: PropsWithChildren): ReactElement => (
-      <LayersButtonContext.Provider value={defaultDependencies}>
-        {children}
-      </LayersButtonContext.Provider>
+  const wrapper = (props: {
+    children: ReactNode;
+    dependencies?: LayersButtonDependencies;
+  }): ReactElement => {
+    const { children, dependencies = defaultDependencies } = props;
+    return (
+      <LayersButtonContext.Provider value={dependencies}>{children}</LayersButtonContext.Provider>
     );
-    const { getByRole } = render(<LayersButton {...defaultProps} />, { wrapper });
+  };
+
+  test('renders without crashing', () => {
+    const { getByRole } = render(<LayersButton {...defaultProps} />, {
+      wrapper: ({ children }: { children: ReactNode }) => wrapper({ children })
+    });
 
     // Validate the presence of specific UI elements
     expect(
@@ -62,22 +69,21 @@ describe(LayersButton.name, () => {
     } = {
       setLayersState: defaultProps.setLayersState,
       ...defaultDependencies,
-      useModelHandlers: vi.fn(() => [
+      useModelHandlers: vi.fn((): [ModelLayerHandlers, () => void] => [
         {
           cadHandlers: [mockCadHandler],
           pointCloudHandlers: [mockPointCloudHandler],
           image360Handlers: [mockImage360Handler]
         },
         () => {}
-      ]) as unknown as LayersButtonDependencies['useModelHandlers'],
+      ]),
       useSyncExternalLayersState: vi.fn(),
       ModelLayerSelection
     };
 
-    const wrapper = ({ children }: PropsWithChildren): ReactElement => (
-      <LayersButtonContext.Provider value={newProps}>{children}</LayersButtonContext.Provider>
-    );
-    const { rerender } = render(<LayersButton {...defaultProps} />, { wrapper });
+    const { rerender } = render(<LayersButton {...defaultProps} />, {
+      wrapper: ({ children }) => wrapper({ children, dependencies: newProps })
+    });
 
     // Change layersState
     const newLayersState = {
@@ -85,7 +91,7 @@ describe(LayersButton.name, () => {
       pointCloudLayers: [{ revisionId: 123, applied: true, index: 0 }],
       image360Layers: [{ siteId: 'site-id', applied: false }]
     };
-    if (newProps.setLayersState !== null && newProps.setLayersState !== undefined) {
+    if (newProps.setLayersState !== undefined) {
       newProps.setLayersState(newLayersState);
     }
 

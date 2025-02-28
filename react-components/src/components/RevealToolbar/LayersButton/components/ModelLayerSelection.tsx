@@ -9,15 +9,19 @@ import { type ModelHandler } from '../ModelHandler';
 import { ModelLayersList } from './ModelLayersList';
 import { WholeLayerVisibilitySelectItem } from './WholeLayerVisibilitySelectItem';
 
+type UpdateCallback = () => void;
+
+type ModelLayerSelectionProps = {
+  label: string;
+  modelLayerHandlers: ModelHandler[];
+  update: UpdateCallback;
+};
+
 export const ModelLayerSelection = ({
   label,
   modelLayerHandlers,
   update
-}: {
-  label: string;
-  modelLayerHandlers: ModelHandler[];
-  update: () => void;
-}): ReactElement => {
+}: ModelLayerSelectionProps): ReactElement => {
   const isDisabled = modelLayerHandlers.length === 0;
 
   const updateCallback = useCallback(() => {

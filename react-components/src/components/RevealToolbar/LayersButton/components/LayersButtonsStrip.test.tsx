@@ -25,11 +25,12 @@ import { cadMock } from '../../../../../tests/tests-utilities/fixtures/cadModel'
 import { createImage360ClassicMock } from '../../../../../tests/tests-utilities/fixtures/image360';
 import { LayersButtonStrip } from './LayersButtonsStrip';
 import { type ModelLayerHandlers } from '../types';
+import { type ReactNode, type ReactElement } from 'react';
 
 const queryClient = new QueryClient();
 const renderTargetMock = createRenderTargetMock();
 
-export const wrapper = ({ children }: { children: any }): any => (
+const wrapper = ({ children }: { children: ReactNode }): ReactElement => (
   <SDKProvider sdk={sdkMock}>
     <QueryClientProvider client={queryClient}>
       <ViewerContextProvider value={renderTargetMock}>
