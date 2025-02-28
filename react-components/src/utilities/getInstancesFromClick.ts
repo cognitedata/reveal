@@ -14,7 +14,7 @@ import { fetchAncestorNodesForTreeIndex } from '../components/CacheProvider/requ
 import { EMPTY_ARRAY } from './constants';
 import { fetchAnnotationsForModel } from '../hooks/pointClouds/fetchAnnotationsForModel';
 
-import { isDM3DModelIdentifier } from '../components';
+import { isDM3DModelIdentifier } from '../components/Reveal3DResources/typeGuards';
 import { type RevealRenderTarget } from '../architecture';
 import { getInstanceReferenceFromImage360Annotation } from '../components/CacheProvider/utils';
 import { type InstanceReference, isIdEither } from './instanceIds';

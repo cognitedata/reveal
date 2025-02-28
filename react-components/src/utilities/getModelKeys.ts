@@ -4,10 +4,10 @@
 import { type AddModelOptions, type DataSourceType } from '@cognite/reveal';
 
 import {
-  type AddImage360CollectionDatamodelsOptions,
   isClassicIdentifier,
   isDM3DModelIdentifier
-} from '../components';
+} from '../components/Reveal3DResources/typeGuards';
+import { AddImage360CollectionDatamodelsOptions } from '../components/Reveal3DResources/types';
 
 export const getModelKeys = (
   models: Array<AddModelOptions<DataSourceType> | AddImage360CollectionDatamodelsOptions>

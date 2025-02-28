@@ -21,7 +21,7 @@ import { modelExists } from '../../utilities/modelExists';
 import { getViewerResourceCount } from '../../utilities/getViewerResourceCount';
 import { type PointCloudModelStyling } from './types';
 import { useModelIdRevisionIdFromModelOptions } from '../../hooks/useModelIdRevisionIdFromModelOptions';
-import { isClassicIdentifier, isDM3DModelIdentifier } from '../Reveal3DResources';
+import { isClassicIdentifier, isDM3DModelIdentifier } from '../Reveal3DResources/typeGuards';
 import { isSameModel } from '../../utilities/isSameModel';
 import { RevealModelsUtils } from '../../architecture/concrete/reveal/RevealModelsUtils';
 

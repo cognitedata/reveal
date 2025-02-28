@@ -18,6 +18,10 @@ import {
   type AddImage360CollectionDatamodelsOptions,
   type TaggedAddResourceOptions
 } from '../../components/Reveal3DResources/types';
+import {
+  isClassicIdentifier,
+  isDM3DModelIdentifier
+} from '../../components/Reveal3DResources/typeGuards';
 import { COGNITE_3D_OBJECT_SOURCE } from './dataModels';
 import { getDMSModels } from './getDMSModels';
 import { getEdgeConnected3dInstances } from './getEdgeConnected3dInstances';
@@ -32,7 +36,6 @@ import { getCadModelsForInstance } from './getCadModelsForInstance';
 import { getCadConnectionsForRevisions } from './getCadConnectionsForRevisions';
 import { partition, zip } from 'lodash';
 import { restrictToDmsId } from '../../utilities/restrictToDmsId';
-import { isClassicIdentifier, isDM3DModelIdentifier } from '../../components';
 import { EMPTY_ARRAY } from '../../utilities/constants';
 
 const MAX_PARALLEL_QUERIES = 2;
