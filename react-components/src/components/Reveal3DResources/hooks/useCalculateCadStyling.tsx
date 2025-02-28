@@ -15,7 +15,8 @@ import {
   type NodeId,
   type FdmConnectionWithNode,
   type AssetId,
-  type ModelRevisionAssetNodesResult
+  type ModelRevisionAssetNodesResult,
+  CdfAssetMapping
 } from '../../CacheProvider/types';
 import {
   type CadStylingGroup,
@@ -345,7 +346,7 @@ function getMappedStyleGroupFromFdm(
 }
 
 function getMappedStyleGroupFromAssetMappings(
-  assetMappings: AssetMapping3D[],
+  assetMappings: CdfAssetMapping[],
   nodeAppearance: NodeAppearance
 ): TreeIndexStylingGroup {
   const indexSet = new IndexSet();

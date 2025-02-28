@@ -1,7 +1,7 @@
 /*!
  * Copyright 2025 Cognite AS
  */
-import { type Asset, type AssetMapping3D, type Datapoints } from '@cognite/sdk/';
+import { type Asset, type Datapoints } from '@cognite/sdk/';
 import {
   type AllMappingStylingGroupAndStyleIndex,
   type ColorRuleOutput,
@@ -17,6 +17,7 @@ import { analyzeFdmMappingsAgainstExpression } from './analyzeFdmMappingsAgainst
 import { getRuleOutputFromTypeSelected } from './getRuleOutputFromTypeSelected';
 import { forEachExpression } from './forEachExpression';
 import { convertExpressionStringMetadataKeyToLowerCase } from './convertExpressionStringMetadataKeyToLowerCase';
+import { CdfAssetMapping } from '../../CacheProvider/types';
 
 export const generateRuleBasedOutputs = async ({
   contextualizedAssetNodes,
@@ -27,7 +28,7 @@ export const generateRuleBasedOutputs = async ({
   timeseriesDatapoints
 }: {
   contextualizedAssetNodes: Asset[];
-  assetMappings: AssetMapping3D[];
+  assetMappings: CdfAssetMapping[];
   fdmMappings: FdmInstanceNodeWithConnectionAndProperties[];
   ruleSet: RuleOutputSet;
   assetIdsAndTimeseries: AssetIdsAndTimeseries[];

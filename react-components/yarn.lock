@@ -611,7 +611,7 @@ __metadata:
     "@cognite/cogs-lab": "npm:^9.0.0-alpha.153"
     "@cognite/cogs.js": "npm:^10.36.0"
     "@cognite/reveal": "npm:^4.23.2"
-    "@cognite/sdk": "npm:^9.13.0"
+    "@cognite/sdk": "npm:^10.0.0"
     "@cognite/signals": "npm:^0.0.4"
     "@playwright/test": "npm:1.49.0"
     "@storybook/addon-essentials": "npm:8.4.5"
@@ -670,6 +670,7 @@ __metadata:
   peerDependencies:
     "@cognite/cogs-lab": ^9.0.0-alpha.153
     "@cognite/reveal": 4.23.2
+    "@cognite/sdk": ^10.0.0
     "@cognite/signals": ^0.0.4
     react: ">=18"
     react-dom: ">=18"
@@ -716,6 +717,16 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@cognite/sdk-core@npm:^5.0.0":
+  version: 5.0.0
+  resolution: "@cognite/sdk-core@npm:5.0.0"
+  dependencies:
+    cross-fetch: "npm:^3.1.8"
+    lodash: "npm:^4.17.21"
+  checksum: 10/37986c5840eedfe0637dacf432c8c5b6cfdfa7b744544e7552eab6b1ef283f762774449bcffd2b2592f448901601da9f6793399fc5ec726f96fa1867210d658e
+  languageName: node
+  linkType: hard
+
 "@cognite/sdk-provider@npm:^2.0.6":
   version: 2.0.6
   resolution: "@cognite/sdk-provider@npm:2.0.6"
@@ -726,7 +737,19 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@cognite/sdk@npm:^9.13.0, @cognite/sdk@npm:^9.6.0":
+"@cognite/sdk@npm:^10.0.0":
+  version: 10.0.0
+  resolution: "@cognite/sdk@npm:10.0.0"
+  dependencies:
+    "@cognite/sdk-core": "npm:^5.0.0"
+    "@types/geojson": "npm:^7946.0.14"
+    geojson: "npm:^0.5.0"
+    lodash: "npm:^4.17.21"
+  checksum: 10/17ef6fd9f39bf19cbfc545140f8a003a400b621f54d2a800b255f7b6f54935b63c23e647c826990e9b4d78a9a56c18c0ae1ecec3155594d0f4c2624df038c4bc
+  languageName: node
+  linkType: hard
+
+"@cognite/sdk@npm:^9.6.0":
   version: 9.13.0
   resolution: "@cognite/sdk@npm:9.13.0"
   dependencies:
@@ -3052,6 +3075,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/geojson@npm:^7946.0.14":
+  version: 7946.0.16
+  resolution: "@types/geojson@npm:7946.0.16"
+  checksum: 10/34d07421bdd60e7b99fa265441d17ac6e9aef48e3ce22d04324127d0de1daf7fbaa0bd3be1cece2092eb6995f21da84afa5231e24621a2910ff7340bc98f496f
+  languageName: node
+  linkType: hard
+
 "@types/geojson@npm:^7946.0.8":
   version: 7946.0.13
   resolution: "@types/geojson@npm:7946.0.13"
@@ -4983,6 +5013,15 @@ __metadata:
   dependencies:
     node-fetch: "npm:^2.6.12"
   checksum: 10/ac8c4ca87d2ac0e17a19b6a293a67ee8934881aee5ec9a5a8323c30e9a9a60a0f5291d3c0d633ec2a2f970cbc60978d628804dfaf03add92d7e720b6d37f392c
+  languageName: node
+  linkType: hard
+
+"cross-fetch@npm:^3.1.8":
+  version: 3.2.0
+  resolution: "cross-fetch@npm:3.2.0"
+  dependencies:
+    node-fetch: "npm:^2.7.0"
+  checksum: 10/e4ab1d390a5b6ca8bb0605f028af2ffc1127d2e407b954654949f506d04873c4863ece264662c074865d7874060e35f938cec74fe7b5736d46d545e2685f6aec
   languageName: node
   linkType: hard
 
@@ -8555,7 +8594,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"node-fetch@npm:2.7.0, node-fetch@npm:^2.6.12, node-fetch@npm:^2.6.7":
+"node-fetch@npm:2.7.0, node-fetch@npm:^2.6.12, node-fetch@npm:^2.6.7, node-fetch@npm:^2.7.0":
   version: 2.7.0
   resolution: "node-fetch@npm:2.7.0"
   dependencies:

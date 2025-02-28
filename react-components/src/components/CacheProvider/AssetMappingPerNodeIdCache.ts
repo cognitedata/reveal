@@ -1,29 +1,30 @@
 /*!
  * Copyright 2024 Cognite AS
  */
-import { type AssetMapping3D } from '@cognite/sdk';
-import { type ModelTreeIndexKey } from './types';
-import { type AssetMapping } from './AssetMappingAndNode3DCache';
+import { type ModelTreeIndexKey, type CdfAssetMapping } from './types';
 
 export class AssetMappingPerNodeIdCache {
-  private readonly _nodeIdsToAssetMappings = new Map<ModelTreeIndexKey, Promise<AssetMapping[]>>();
+  private readonly _nodeIdsToAssetMappings = new Map<
+    ModelTreeIndexKey,
+    Promise<CdfAssetMapping[]>
+  >();
 
   public setNodeIdsToAssetMappingCacheItem(
     key: ModelTreeIndexKey,
-    item: Promise<Array<Required<AssetMapping3D>>>
+    item: Promise<Array<CdfAssetMapping>>
   ): void {
     this._nodeIdsToAssetMappings.set(key, Promise.resolve(item));
   }
 
   public async getNodeIdsToAssetMappingCacheItem(
     key: ModelTreeIndexKey
-  ): Promise<AssetMapping[] | undefined> {
+  ): Promise<CdfAssetMapping[] | undefined> {
     return await this._nodeIdsToAssetMappings.get(key);
   }
 
   public async setAssetMappingsCacheItem(
     key: ModelTreeIndexKey,
-    item: AssetMapping
+    item: CdfAssetMapping
   ): Promise<void> {
     const currentAssetMappings = this.getNodeIdsToAssetMappingCacheItem(key);
     this.setNodeIdsToAssetMappingCacheItem(

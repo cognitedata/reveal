@@ -10,7 +10,7 @@ import {
   type FdmInstanceNodeWithConnectionAndProperties
 } from './types';
 import { use3dModels } from '../../hooks/use3dModels';
-import { type Datapoints, type Asset, type AssetMapping3D } from '@cognite/sdk';
+import { type Datapoints, type Asset } from '@cognite/sdk';
 import { isDefined } from '../../utilities/isDefined';
 import { type AssetIdsAndTimeseries } from '../../data-providers/types';
 import { useAssetsAndTimeseriesLinkageDataQuery } from '../../query/useAssetsAndTimeseriesLinkageDataQuery';
@@ -23,6 +23,7 @@ import { useExtractTimeseriesIdsFromRuleSet } from './hooks/useExtractTimeseries
 import { useAll3dDirectConnectionsWithProperties } from '../../query/useAll3dDirectConnectionsWithProperties';
 import { useAssetMappedNodesForRevisions, useMappedEdgesForRevisions } from '../../hooks/cad';
 import { generateRuleBasedOutputs } from './core/generateRuleBasedOutputs';
+import { CdfAssetMapping } from '../CacheProvider/types';
 
 const ruleSetStylingCache = new Map<string, AllMappingStylingGroupAndStyleIndex[]>();
 
@@ -162,7 +163,7 @@ async function initializeRuleBasedOutputs({
   assetIdsAndTimeseries,
   timeseriesDatapoints
 }: {
-  assetMappings: AssetMapping3D[];
+  assetMappings: CdfAssetMapping[];
   fdmMappings: FdmInstanceNodeWithConnectionAndProperties[];
   contextualizedAssetNodes: Asset[];
   ruleSet: RuleOutputSet;
