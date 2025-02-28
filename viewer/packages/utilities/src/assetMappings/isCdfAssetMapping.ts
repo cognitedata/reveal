@@ -1,3 +1,6 @@
+/*!
+ * Copyright 2025 Cognite AS
+ */
 import { AssetMapping3D } from '@cognite/sdk';
 import { CdfAssetMapping } from './types';
 

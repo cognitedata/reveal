@@ -1,3 +1,6 @@
+/*!
+ * Copyright 2025 Cognite AS
+ */
 import { isCdfAssetMapping } from './isCdfAssetMapping';
 
 describe(isCdfAssetMapping.name, () => {
