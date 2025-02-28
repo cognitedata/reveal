@@ -16,6 +16,7 @@ import {
 } from '../../../base/domainObjects/VisualDomainObject';
 import { Vector3Pool } from '@cognite/reveal';
 import { Cylinder } from '../../../base/utilities/primitives/Cylinder';
+import { PrimitiveType } from '../../../base/utilities/primitives/PrimitiveType';
 
 /**
  * The `CylinderDragger` class represents a utility for dragging and manipulating a cylinder in a 3D space.
@@ -140,9 +141,10 @@ export class CylinderDragger extends BaseDragger {
   private moveFace(ray: Ray, isShiftPressed: boolean): boolean {
     if (this._face.index !== 2) {
       return this.moveRadius(ray, isShiftPressed);
-    } else {
-      return this.moveEndCaps(ray, isShiftPressed);
+    } else if (this._domainObject.primitiveType === PrimitiveType.HorizontalCircle) {
+      return this.moveAlongAxis(ray);
     }
+    return this.moveEndCaps(ray, isShiftPressed);
   }
 
   private moveRadius(ray: Ray, isShiftPressed: boolean): boolean {
@@ -186,11 +188,32 @@ export class CylinderDragger extends BaseDragger {
     const { centerA, centerB } = cylinder;
 
     const axis = newVector3().subVectors(centerA, centerB).normalize().multiplyScalar(newHeight);
+
     if (this._face.face === 2) {
       centerB.subVectors(centerA, axis);
     } else {
       centerA.addVectors(centerB, axis);
     }
+    return true;
+  }
+
+  private moveAlongAxis(ray: Ray): boolean {
+    // Take find closest point between the ray and the line perpendicular to the end face.
+    // The distance from this point to the face is the change.
+    const pointOnSegment = newVector3();
+    getClosestPointOnLine(ray, this._normal, this.point, pointOnSegment);
+    const delta = this._planeOfFace.distanceToPoint(pointOnSegment);
+    const originalCylinder = this._originalCylinder;
+    const { cylinder } = this._domainObject;
+    cylinder.copy(originalCylinder);
+    const { centerA, centerB } = cylinder;
+
+    const axis = newVector3().subVectors(centerA, centerB).normalize().multiplyScalar(delta);
+    if (this._face.face === 2) {
+      axis.negate();
+    }
+    centerA.add(axis);
+    centerB.add(axis);
     return true;
   }
 
