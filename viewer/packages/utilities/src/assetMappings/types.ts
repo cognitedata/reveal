@@ -1,4 +1,4 @@
-import { CogniteInternalId } from '@cognite/sdk';
+import { CogniteInternalId, UnitDMSUniqueIdentifier } from '@cognite/sdk';
 
 /**
  * A CAD asset mapping that is guaranteed to contain treeIndex and subtreeSize. The only CAD asset
@@ -21,4 +21,8 @@ export type CdfAssetMapping = {
    * The id of the asset mapped to the node
    */
   assetId: CogniteInternalId;
+  /**
+   * The ID of the associated Cognite Asset instance from Core Data Model.
+   */
+  assetInstanceId?: UnitDMSUniqueIdentifier;
 };
