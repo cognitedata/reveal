@@ -18,6 +18,7 @@ import { SDKProvider } from '../../../RevealCanvas/SDKProvider';
 import { ViewerContextProvider } from '../../../RevealCanvas/ViewerContext';
 import {
   viewerImage360CollectionsMock,
+  viewerMock,
   viewerModelsMock
 } from '../../../../../tests/tests-utilities/fixtures/viewer';
 import { type CogniteModel } from '@cognite/reveal';
@@ -64,6 +65,8 @@ describe(LayersButtonStrip.name, () => {
       vi.fn()
     ]),
     useSyncExternalLayersState: vi.fn(),
+    useReveal: vi.fn(() => viewerMock),
+    use3dModels: vi.fn(() => [cadMock, cadMock]),
     ModelLayerSelection: vi.fn(({ label }) => <div>{label}</div>)
   };
 

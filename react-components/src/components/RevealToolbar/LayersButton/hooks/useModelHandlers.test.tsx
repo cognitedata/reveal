@@ -6,18 +6,13 @@ import { useModelHandlers } from './useModelHandlers';
 import { renderHook } from '@testing-library/react';
 import {
   viewerImage360CollectionsMock,
+  viewerMock,
   viewerModelsMock
 } from '../../../../../tests/tests-utilities/fixtures/viewer';
 import { type CogniteModel } from '@cognite/reveal';
 import { cadMock } from '../../../../../tests/tests-utilities/fixtures/cadModel';
 import { createImage360ClassicMock } from '../../../../../tests/tests-utilities/fixtures/image360';
 import { wrapper } from '../../../../../tests/tests-utilities/fixtures/wrapper';
-
-const mockResourceCount = { reveal3DResourcesCount: 2 };
-
-vi.mock('../../../../components/Reveal3DResources/Reveal3DResourcesInfoContext', () => ({
-  useReveal3DResourcesCount: () => mockResourceCount
-}));
 
 describe(useModelHandlers.name, () => {
   beforeEach(() => {
@@ -30,7 +25,10 @@ describe(useModelHandlers.name, () => {
     const mockImage360Collection = createImage360ClassicMock();
     viewerImage360CollectionsMock.mockReturnValue([mockImage360Collection]);
 
-    const { result } = renderHook(() => useModelHandlers(undefined, undefined), { wrapper });
+    const { result } = renderHook(
+      () => useModelHandlers(undefined, undefined, viewerMock, mockModels),
+      { wrapper }
+    );
 
     const [modelHandlers, update] = result.current;
 

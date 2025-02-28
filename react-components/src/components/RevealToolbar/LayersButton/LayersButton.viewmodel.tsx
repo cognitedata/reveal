@@ -29,12 +29,19 @@ export function useLayersButtonViewModel(
   defaultLayerConfiguration: DefaultLayersConfiguration | undefined,
   externalLayersState: LayersUrlStateParam | undefined
 ): UseLayersButtonViewModelResult {
-  const { useModelHandlers, useSyncExternalLayersState, ModelLayerSelection } =
-    useContext(LayersButtonContext);
+  const {
+    useModelHandlers,
+    useSyncExternalLayersState,
+    ModelLayerSelection,
+    use3dModels,
+    useReveal
+  } = useContext(LayersButtonContext);
 
   const [modelLayerHandlers, update] = useModelHandlers(
     setExternalLayersState,
-    defaultLayerConfiguration
+    defaultLayerConfiguration,
+    useReveal(),
+    use3dModels()
   );
 
   useSyncExternalLayersState(

@@ -13,6 +13,8 @@ import {
   createImage360HandlerMock
 } from '../../../../tests/tests-utilities/fixtures/modelHandler';
 import { type ModelLayerHandlers } from './types';
+import { cadMock } from '../../../../tests/tests-utilities/fixtures/cadModel';
+import { viewerMock } from '../../../../tests/tests-utilities/fixtures/viewer';
 
 describe(LayersButton.name, () => {
   const mockCadHandler = createCadHandlerMock();
@@ -37,6 +39,8 @@ describe(LayersButton.name, () => {
       },
       vi.fn()
     ]),
+    useReveal: vi.fn(() => viewerMock),
+    use3dModels: vi.fn(() => [cadMock, cadMock]),
     useSyncExternalLayersState: vi.fn(),
     ModelLayerSelection: vi.fn(({ label }) => <div>{label}</div>)
   };

@@ -22,8 +22,6 @@ import {
   Image360CollectionHandler,
   PointCloudModelHandler
 } from '../ModelHandler';
-import { use3dModels } from '../../../../hooks/use3dModels';
-import { useReveal } from '../../../RevealCanvas/ViewerContext';
 import {
   type DefaultLayersConfiguration,
   type LayersUrlStateParam,
@@ -38,10 +36,10 @@ export type UpdateModelHandlersCallback = (
 
 export const useModelHandlers = (
   setExternalLayersState: Dispatch<SetStateAction<LayersUrlStateParam | undefined>> | undefined,
-  defaultLayersConfig: DefaultLayersConfiguration | undefined
+  defaultLayersConfig: DefaultLayersConfiguration | undefined,
+  viewer: Cognite3DViewer<DataSourceType>,
+  models: Array<CogniteModel<DataSourceType>>
 ): [ModelLayerHandlers, () => void] => {
-  const viewer = useReveal();
-  const models = use3dModels();
   const image360Collections = useMemo(
     () => viewer.get360ImageCollections(),
     [viewer, viewer.get360ImageCollections().length]
