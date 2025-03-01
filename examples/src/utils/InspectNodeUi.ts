@@ -91,7 +91,7 @@ export class InspectNodeUI {
           }
         });
 
-        this._viewer.addObject3D(gizmo);
+        this._viewer.addObject3D(gizmo.getHelper());
         this._viewer.addObject3D(draggable);
 
         gizmo.attach(draggable);
