@@ -17,9 +17,14 @@ export const ViewerContextProvider = ({
   children
 }: ViewerContextProviderProps): ReactElement => {
   useEffect(() => {
-    (window as any).viewer = value?.viewer;
-    return () => ((window as any).viewer = undefined);
+    window.renderTarget = value ?? undefined;
+    window.viewer = value?.viewer;
+    return () => {
+      window.renderTarget = undefined;
+      window.viewer = undefined;
+    };
   }, [value]);
+
   return <ViewerContext.Provider value={value}>{children}</ViewerContext.Provider>;
 };
 
