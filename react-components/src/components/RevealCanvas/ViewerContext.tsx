@@ -5,7 +5,6 @@ import { type DataSourceType, type Cognite3DViewer } from '@cognite/reveal';
 import { createContext, type ReactElement, type ReactNode, useContext, useEffect } from 'react';
 import { type RevealRenderTarget } from '../../architecture/base/renderTarget/RevealRenderTarget';
 import { remove } from 'lodash';
-import { RenderTarget } from 'three';
 
 const ViewerContext = createContext<RevealRenderTarget | null>(null);
 
@@ -37,7 +36,7 @@ export const useRenderTarget = (): RevealRenderTarget => {
   return renderTarget;
 };
 
-function useAddRenderTargetToWindowList(renderTarget: RevealRenderTarget | undefined) {
+function useAddRenderTargetToWindowList(renderTarget: RevealRenderTarget | undefined): void {
   useEffect(() => {
     if (renderTarget === undefined) {
       return;
@@ -57,7 +56,9 @@ function useAddRenderTargetToWindowList(renderTarget: RevealRenderTarget | undef
   }, [renderTarget]);
 }
 
-function useExposeRenderTargetAndViewerSingletons(renderTarget: RevealRenderTarget | undefined) {
+function useExposeRenderTargetAndViewerSingletons(
+  renderTarget: RevealRenderTarget | undefined
+): void {
   useEffect(() => {
     if (
       renderTarget === undefined ||
