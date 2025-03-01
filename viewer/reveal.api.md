@@ -6,8 +6,8 @@
 
 import { AnnotationModel } from '@cognite/sdk';
 import { AnnotationsAssetRef } from '@cognite/sdk';
-import { AnnotationsCogniteAnnotationTypesImagesAssetLink } from '@cognite/sdk';
 import { AnnotationStatus } from '@cognite/sdk';
+import { AnnotationsTypesImagesAssetLink } from '@cognite/sdk';
 import { Box3 } from 'three';
 import { Camera } from 'three';
 import { CogniteClient } from '@cognite/sdk';
@@ -1390,7 +1390,7 @@ export type Image360WithCollection<T extends DataSourceType = ClassicDataSourceT
 
 // @public
 export type ImageAssetLinkAnnotationInfo = Omit<AnnotationModel, 'data'> & {
-    data: AnnotationsCogniteAnnotationTypesImagesAssetLink;
+    data: AnnotationsTypesImagesAssetLink;
 };
 
 // @public (undocumented)

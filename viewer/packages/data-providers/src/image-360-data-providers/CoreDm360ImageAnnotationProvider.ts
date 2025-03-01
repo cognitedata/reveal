@@ -17,7 +17,7 @@ import {
 } from '@reveal/360-images';
 import { isSameImage360RevisionId } from './shared';
 import { fetchCoreDm360AnnotationsForRevision } from './cdm/fetchCoreDm360AnnotationsForRevision';
-import { CogniteClient } from '@cognite/sdk/dist/src';
+import { CogniteClient } from '@cognite/sdk';
 import { fetchAnnotationsForInstance, Image360AnnotationsForInstanceResult } from './cdm/fetchAnnotationsForInstance';
 import { fetchCoreDm360AnnotationsForCollection } from './cdm/fetchCoreDm360AnnotationsForCollection';
 import { DMInstanceKey, dmInstanceRefToKey } from '@reveal/utilities';

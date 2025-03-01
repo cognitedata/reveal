@@ -9,11 +9,11 @@ import {
   CogniteClient,
   IdEither,
   CogniteInternalId,
-  AnnotationsCogniteAnnotationTypesImagesAssetLink,
   AnnotationFilterProps,
   AnnotationsAssetRef,
   InternalId,
-  ExternalId
+  ExternalId,
+  AnnotationsTypesImagesAssetLink
 } from '@cognite/sdk';
 import {
   Image360AnnotationFilterDelegate,
@@ -77,7 +77,7 @@ export class Cdf360ImageAnnotationProvider implements Image360AnnotationProvider
       const annotations = await revision.getAnnotations();
 
       return annotations.filter(a => {
-        const assetLink = a.annotation.data as AnnotationsCogniteAnnotationTypesImagesAssetLink;
+        const assetLink = a.annotation.data as AnnotationsTypesImagesAssetLink;
         return assetLink.assetRef !== undefined && matchesAssetRef(assetLink, asset);
       });
     }
@@ -208,7 +208,7 @@ export class Cdf360ImageAnnotationProvider implements Image360AnnotationProvider
   }
 }
 
-function matchesAssetRef(assetLink: AnnotationsCogniteAnnotationTypesImagesAssetLink, matchRef: IdEither): boolean {
+function matchesAssetRef(assetLink: AnnotationsTypesImagesAssetLink, matchRef: IdEither): boolean {
   return (
     ((matchRef as InternalId).id !== undefined && assetLink.assetRef.id === (matchRef as InternalId).id) ||
     ((matchRef as ExternalId).externalId !== undefined &&

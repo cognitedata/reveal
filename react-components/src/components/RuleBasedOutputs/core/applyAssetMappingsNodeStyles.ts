@@ -1,7 +1,6 @@
 /*!
  * Copyright 2025 Cognite AS
  */
-import { type AssetMapping3D } from '@cognite/sdk/';
 import {
   type AssetStylingGroupAndStyleIndex,
   type ColorRuleOutput,
@@ -11,9 +10,10 @@ import { NumericRange, TreeIndexNodeCollection } from '@cognite/reveal';
 import { type AssetStylingGroup } from '../../Reveal3DResources';
 import { Color } from 'three';
 import { createRuleStyling } from './createRuleStyling';
+import { type CdfAssetMapping } from '../../CacheProvider/types';
 
 export const applyAssetMappingsNodeStyles = (
-  treeNodes: AssetMapping3D[],
+  treeNodes: CdfAssetMapping[],
   outputSelected: ColorRuleOutput
 ): AssetStylingGroupAndStyleIndex => {
   const ruleOutputAndStyleIndex: RuleAndStyleIndex = {

@@ -3,9 +3,9 @@
  */
 
 import { type CadModelOptions } from '../../components/Reveal3DResources/types';
-import { type AssetMapping } from '../../components/CacheProvider/AssetMappingAndNode3DCache';
+import { type CdfAssetMapping } from '../../components/CacheProvider/types';
 
 export type ModelWithAssetMappings = {
   model: CadModelOptions;
-  assetMappings: AssetMapping[];
+  assetMappings: CdfAssetMapping[];
 };
