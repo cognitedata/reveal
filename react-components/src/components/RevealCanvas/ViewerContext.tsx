@@ -4,6 +4,8 @@
 import { type DataSourceType, type Cognite3DViewer } from '@cognite/reveal';
 import { createContext, type ReactElement, type ReactNode, useContext, useEffect } from 'react';
 import { type RevealRenderTarget } from '../../architecture/base/renderTarget/RevealRenderTarget';
+import { remove } from 'lodash';
+import { RenderTarget } from 'three';
 
 const ViewerContext = createContext<RevealRenderTarget | null>(null);
 
@@ -16,14 +18,8 @@ export const ViewerContextProvider = ({
   value,
   children
 }: ViewerContextProviderProps): ReactElement => {
-  useEffect(() => {
-    window.renderTarget = value ?? undefined;
-    window.viewer = value?.viewer;
-    return () => {
-      window.renderTarget = undefined;
-      window.viewer = undefined;
-    };
-  }, [value]);
+  useExposeRenderTargetAndViewerSingletons(value ?? undefined);
+  useAddRenderTargetToWindowList(value ?? undefined);
 
   return <ViewerContext.Provider value={value}>{children}</ViewerContext.Provider>;
 };
@@ -40,3 +36,48 @@ export const useRenderTarget = (): RevealRenderTarget => {
   }
   return renderTarget;
 };
+
+function useAddRenderTargetToWindowList(renderTarget: RevealRenderTarget | undefined) {
+  useEffect(() => {
+    if (renderTarget === undefined) {
+      return;
+    }
+
+    if (window.renderTargets === undefined) {
+      window.renderTargets = [renderTarget];
+    } else {
+      window.renderTargets.push(renderTarget);
+    }
+
+    return () => {
+      if (window.renderTargets !== undefined) {
+        remove(window.renderTargets, (element) => element === renderTarget);
+      }
+    };
+  }, [renderTarget]);
+}
+
+function useExposeRenderTargetAndViewerSingletons(renderTarget: RevealRenderTarget | undefined) {
+  useEffect(() => {
+    if (
+      renderTarget === undefined ||
+      window.renderTarget !== undefined ||
+      window.viewer !== undefined
+    ) {
+      return;
+    }
+
+    window.renderTarget = renderTarget;
+    window.viewer = renderTarget.viewer;
+
+    return () => {
+      if (window.renderTarget?.viewer === renderTarget.viewer) {
+        window.viewer = undefined;
+      }
+
+      if (window.renderTarget === renderTarget) {
+        window.renderTarget = undefined;
+      }
+    };
+  }, [renderTarget]);
+}
