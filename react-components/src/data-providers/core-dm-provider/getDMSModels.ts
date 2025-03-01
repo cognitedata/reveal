@@ -4,6 +4,7 @@
 import { type QueryRequest } from '@cognite/sdk';
 import { type DmsUniqueIdentifier, type FdmSDK } from '../FdmSDK';
 import { type Cognite3DModelProperties, COGNITE_3D_MODEL_SOURCE } from './dataModels';
+import { restrictToDmsId } from '../../utilities/restrictToDmsId';
 
 export async function getDMSModels(
   modelId: number,
@@ -43,5 +44,5 @@ export async function getDMSModels(
     [{ source: typeof COGNITE_3D_MODEL_SOURCE; properties: Cognite3DModelProperties }]
   >(query);
 
-  return result.items.models;
+  return result.items.models.map(restrictToDmsId);
 }
