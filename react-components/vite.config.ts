@@ -29,6 +29,7 @@ export default defineConfig(({ command }) => {
     },
     test: {
       include: ['src/**/*.{test,spec}.?(c|m)[jt]s?(x)'],
+      environment: 'happy-dom',
       reporters: ['default'],
       coverage: {
         reportsDirectory: '../coverage/reveal-react-components',
@@ -37,7 +38,8 @@ export default defineConfig(({ command }) => {
           'src/**/*.spec.ts',
           'src/**/*.spec.tsx',
           'src/**/*.test.ts',
-          'src/**/*.test.tsx'
+          'src/**/*.test.tsx',
+          '**/*.stories.tsx'
         ]
       },
       // Need to add E5 modules as inlined dependencies to be able to import them in tests.

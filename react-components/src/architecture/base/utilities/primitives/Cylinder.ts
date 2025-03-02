@@ -74,46 +74,70 @@ export class Cylinder extends Primitive {
   public override isPointInside(point: Vector3, globalMatrix: Matrix4): boolean {
     const { centerA, centerB } = this.getCenters(globalMatrix);
     const center = new Vector3().addVectors(centerA, centerB).divideScalar(2);
-    const vector = centerB.sub(centerA);
+    const vector = centerA.sub(centerB);
+    const height = vector.length();
+    vector.normalize();
+
     const diff = center.sub(point);
     const dot = vector.dot(diff);
     vector.multiplyScalar(dot);
     vector.sub(diff);
 
     const distanceToAxis = vector.length();
-    return distanceToAxis <= this.radius;
+    // Check distance to axis
+    if (distanceToAxis > this.radius) {
+      return false;
+    }
+    // Check if it is inside along axis
+    if (Math.abs(dot) > height / 2) {
+      return false;
+    }
+    return true;
   }
 
   public override intersectRay(ray: Ray, globalMatrix: Matrix4): Vector3 | undefined {
     const { centerA, centerB } = this.getCenters(globalMatrix);
-
+    const { radius } = this;
     const rayOrigin = ray.origin;
     const rayDirection = ray.direction;
     const ba = new Vector3().subVectors(centerB, centerA);
-    const oc = new Vector3().subVectors(rayOrigin, centerA);
-    const baba = ba.dot(ba);
-    const bard = ba.dot(rayDirection);
-    const baoc = ba.dot(oc);
-    const k2 = baba - bard * bard;
-    const k1 = baba * oc.dot(rayDirection) - baoc * bard;
-    const k0 = baba * oc.dot(oc) - baoc * baoc - this.radius * this.radius * baba;
-    const discriminant = k1 * k1 - k2 * k0;
+    const baRd = ba.dot(rayDirection);
 
+    // Inspired by : https://github.com/nhocki/Ray-Tracer/blob/master/objects/Cylinder.cpp
+    // Check the intersection with cap A
+    if (baRd > 0) {
+      const baCa = ba.dot(centerA);
+      const t = (baCa - ba.dot(rayOrigin)) / baRd;
+      const intersection = ray.at(t, new Vector3());
+      if (intersection.distanceTo(centerA) <= radius) {
+        return intersection;
+      }
+    }
+    // Check the intersection with cap B
+    if (baRd < 0) {
+      const baCb = ba.dot(centerB);
+      const t = (baCb - ba.dot(rayOrigin)) / baRd;
+      const intersection = ray.at(t, new Vector3());
+      if (intersection.distanceTo(centerB) <= radius) {
+        return intersection;
+      }
+    }
+    // Body
+    const oc = new Vector3().subVectors(rayOrigin, centerA);
+    const baBa = ba.dot(ba);
+    const baOc = ba.dot(oc);
+    const k2 = baBa - baRd * baRd;
+    const k1 = baBa * oc.dot(rayDirection) - baOc * baRd;
+    const k0 = baBa * oc.dot(oc) - baOc * baOc - radius * radius * baBa;
+    const discriminant = k1 * k1 - k2 * k0;
     if (discriminant < 0.0) {
       return undefined;
     }
     const sqrtH = Math.sqrt(discriminant);
     const t = (-k1 - sqrtH) / k2;
-
-    // body
-    const y = baoc + t * bard;
-    if (y > 0.0 && y < baba) {
-      return new Vector3().addVectors(rayOrigin, rayDirection.clone().multiplyScalar(t));
-    }
-    // caps
-    const t2 = ((y < 0.0 ? 0.0 : baba) - baoc) / bard;
-    if (Math.abs(k1 + k2 * t2) < sqrtH) {
-      return new Vector3().addVectors(rayOrigin, rayDirection.clone().multiplyScalar(t2));
+    const y = baOc + t * baRd;
+    if (y > 0.0 && y < baBa) {
+      return ray.at(t, new Vector3());
     }
     return undefined;
   }
@@ -155,7 +179,7 @@ export class Cylinder extends Primitive {
     return matrix.compose(this.center, this.getQuaternion(), scale);
   }
 
-  private getQuaternion(): Quaternion {
+  public getQuaternion(): Quaternion {
     const quaternion = new Quaternion();
     return quaternion.setFromUnitVectors(UP_AXIS, this.axis);
   }
