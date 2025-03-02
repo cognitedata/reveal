@@ -2,7 +2,7 @@
  * Copyright 2025 Cognite AS
  */
 
-import { EMPTY_ARRAY } from '../../../utilities/constants';
+import { createEmptyArray } from '../../../utilities/createEmptyArray';
 import { isDefined } from '../../../utilities/isDefined';
 import {
   isImage360AssetMappingStylingGroup,
@@ -20,7 +20,7 @@ export const useCalculateImage360Styling = (
   instanceStyling: InstanceStylingGroup[] | undefined
 ): Image360StyledGroup[] => {
   if (instanceStyling === undefined || instanceStyling.length === 0) {
-    return EMPTY_ARRAY;
+    return createEmptyArray();
   }
 
   return instanceStyling

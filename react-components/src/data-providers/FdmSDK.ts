@@ -376,9 +376,7 @@ export class FdmSDK {
       throw new Error(`Failed to fetch instances. Status: ${result.status}`);
     }
 
-    const typedResult = result.data.items;
-
-    hoistInstanceProperties(source, typedResult);
+    hoistInstanceProperties(source, result.data.items);
 
     return {
       instances: result.data.items as Array<EdgeItem<PropertiesType> | FdmNode<PropertiesType>>,
