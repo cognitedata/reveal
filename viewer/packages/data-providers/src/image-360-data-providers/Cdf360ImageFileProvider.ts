@@ -4,7 +4,7 @@
 import zipWith from 'lodash/zipWith';
 import { Image360Face, Image360FileDescriptor, Image360FileProvider } from '../types';
 import { CdfImageFileProvider } from './CdfImageFileProvider';
-import { CogniteClient, InternalId } from '@cognite/sdk/dist/src';
+import { CogniteClient, InternalId } from '@cognite/sdk';
 
 export class Cdf360ImageFileProvider implements Image360FileProvider {
   private readonly _imageFileProvider: CdfImageFileProvider;

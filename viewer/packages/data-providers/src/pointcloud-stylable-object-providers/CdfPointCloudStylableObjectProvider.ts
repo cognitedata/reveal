@@ -6,7 +6,7 @@ import {
   CogniteClient,
   AnnotationData,
   AnnotationsBoundingVolume,
-  AnnotationsCogniteAnnotationTypesPrimitivesGeometry3DGeometry as AnnotationsGeometry
+  AnnotationsTypesPrimitivesGeometry3DGeometry as AnnotationsGeometry
 } from '@cognite/sdk';
 import { IShape, Box, Cylinder } from '@reveal/utilities';
 import assert from 'assert';

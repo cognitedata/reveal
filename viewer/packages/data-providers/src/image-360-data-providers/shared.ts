@@ -3,12 +3,7 @@
  */
 import { Image360RevisionId, ImageAssetLinkAnnotationInfo } from '../types';
 import { DataSourceType } from '../DataSourceType';
-import {
-  AnnotationData,
-  AnnotationModel,
-  AnnotationsCogniteAnnotationTypesImagesAssetLink,
-  Metadata
-} from '@cognite/sdk';
+import { AnnotationData, AnnotationModel, AnnotationsTypesImagesAssetLink, Metadata } from '@cognite/sdk';
 import {
   Image360DataModelIdentifier,
   Image360LegacyDataModelIdentifier
@@ -69,9 +64,7 @@ export function isImageAssetLinkAnnotation(annotation: AnnotationModel): annotat
   return isAssetLinkAnnotationData(annotation.data);
 }
 
-function isAssetLinkAnnotationData(
-  annotationData: AnnotationData
-): annotationData is AnnotationsCogniteAnnotationTypesImagesAssetLink {
-  const data = annotationData as AnnotationsCogniteAnnotationTypesImagesAssetLink;
+function isAssetLinkAnnotationData(annotationData: AnnotationData): annotationData is AnnotationsTypesImagesAssetLink {
+  const data = annotationData as AnnotationsTypesImagesAssetLink;
   return data.text !== undefined && data.textRegion !== undefined && data.assetRef !== undefined;
 }
