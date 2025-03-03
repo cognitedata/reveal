@@ -44,7 +44,7 @@ const assetNode2 = {
 };
 
 describe(listMappedFdmNodes.name, () => {
-  it('lists nothing when no revisions are input', async () => {
+  it('returns empty array when no revisions are provided', async () => {
     const fdmSdkMock = new Mock<FdmSDK>();
 
     const result = await listMappedFdmNodes([], [], undefined, 1000, fdmSdkMock.object());
