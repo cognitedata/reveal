@@ -4,10 +4,10 @@
 
 import { Button } from '@cognite/cogs.js';
 import { SelectPanel } from '@cognite/cogs-lab';
-import { type ModelHandler } from './ModelHandler';
+import { type ModelHandler } from '../ModelHandler';
 import { type ReactElement } from 'react';
-import { IconComponent } from '../../Architecture/Factories/IconFactory';
-import { type IconName } from '../../../architecture/base/utilities/IconName';
+import { IconComponent } from '../../../Architecture/Factories/IconFactory';
+import { type IconName } from '../../../../architecture/base/utilities/IconName';
 import { ModelLayersList } from './ModelLayersList';
 
 export const ModelLayersButton = ({
