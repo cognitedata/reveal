@@ -7,14 +7,14 @@ import {
   Vector2,
   Vector4,
   type WebGLCapabilities,
-  // type WebGLColorBuffer,
-  // type WebGLDepthBuffer,
+  type WebGLColorBuffer,
+  type WebGLDepthBuffer,
   type WebGLExtensions,
   type WebGLInfo,
   type WebGLRenderLists,
   type WebGLRenderer,
-  type WebGLState
-  // type WebGLStencilBuffer
+  type WebGLState,
+  type WebGLStencilBuffer
 } from 'three';
 
 export type AutoMockOverrides = {
@@ -82,21 +82,23 @@ function autoMockGLCapabilities() {
 }
 
 function autoMockGLState() {
-  const depthBuffer = new Mock<{ setTest: (depthTest: boolean) => void; setMask: (depthMask: boolean) => void }>();
+  const depthBuffer = new Mock<WebGLDepthBuffer>();
   depthBuffer
     .setup(instance => instance.setTest(It.IsAny()))
     .returns()
     .setup(instance => instance.setMask(It.IsAny()))
     .returns();
+  const stencilBuffer = new Mock<WebGLStencilBuffer>();
+  const colorBuffer = new Mock<WebGLColorBuffer>();
 
   const webglState = new Mock<WebGLState>();
 
   webglState
     .setup(instance => instance.buffers)
     .returns({
-      color: new Mock<any>().object() as any,
-      depth: depthBuffer.object() as any,
-      stencil: new Mock<any>().object() as any
+      color: colorBuffer.object(),
+      depth: depthBuffer.object(),
+      stencil: stencilBuffer.object()
     })
     .setup(instance => instance.reset())
     .returns();
