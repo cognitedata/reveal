@@ -18,14 +18,15 @@ import { CopyToClipboardCommand } from '../../base/concreteCommands/CopyToClipbo
 import { ToggleMetricUnitsCommand } from '../../base/concreteCommands/ToggleMetricUnitsCommand';
 import { Cylinder } from '../../base/utilities/primitives/Cylinder';
 import { Annotation } from './helpers/Annotation';
+import { PrimitiveType } from '../../base/utilities/primitives/PrimitiveType';
 
 export class CylinderGizmoDomainObject extends CylinderDomainObject {
   // ==================================================
   // CONSTRUCTOR
   // ==================================================
 
-  public constructor() {
-    super();
+  public constructor(primitiveType: PrimitiveType = PrimitiveType.Cylinder) {
+    super(primitiveType);
     this.color = new Color(Color.NAMES.white);
   }
   // ==================================================
