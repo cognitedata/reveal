@@ -33,7 +33,7 @@ __metadata:
     "@types/react": "npm:18.3.12"
     "@types/react-dom": "npm:18.3.1"
     "@types/stats.js": "npm:^0.17.0"
-    "@types/three": "npm:^0.173.0"
+    "@types/three": "npm:^0.174.0"
     buffer: "npm:^6.0.3"
     css-loader: "npm:^7.0.0"
     dat.gui: "npm:^0.7.7"
@@ -45,7 +45,7 @@ __metadata:
     react-dom: "npm:18.3.1"
     stats.js: "npm:0.17.0"
     styled-components: "npm:6.1.13"
-    three: "npm:0.173.0"
+    three: "npm:0.174.0"
     ts-loader: "npm:9.5.1"
     typescript: "npm:^5.0.4"
     webpack: "npm:^5.76.0"
@@ -520,9 +520,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/three@npm:^0.173.0":
-  version: 0.173.0
-  resolution: "@types/three@npm:0.173.0"
+"@types/three@npm:^0.174.0":
+  version: 0.174.0
+  resolution: "@types/three@npm:0.174.0"
   dependencies:
     "@tweenjs/tween.js": "npm:~23.1.3"
     "@types/stats.js": "npm:*"
@@ -530,7 +530,7 @@ __metadata:
     "@webgpu/types": "npm:*"
     fflate: "npm:~0.8.2"
     meshoptimizer: "npm:~0.18.1"
-  checksum: 10/2030a7038f6912b2514561589facfad4e98f66e435657ea2d46817d82dafc7bd215bc52448a4b8553f946f1c2d968e997200ddcf52a52a5740335d958fb4458d
+  checksum: 10/5fd26de34c58f50658bbf84191aa33c766cc93df1427c8a84b817155ee6e4919141407090d4ee15c9c2de8e5f2ea5b4c177e701ee8583149bcc0c3f8c1bded04
   languageName: node
   linkType: hard
 
@@ -4083,10 +4083,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"three@npm:0.173.0":
-  version: 0.173.0
-  resolution: "three@npm:0.173.0"
-  checksum: 10/ba839ca592d7d290b536cd8fc0dfcba67382e97920bb7b3204027d68250448f23d7c08139e247a001dd5dc97a982e5c16ea3352bb4a5d05a986bf8def167619e
+"three@npm:0.174.0":
+  version: 0.174.0
+  resolution: "three@npm:0.174.0"
+  checksum: 10/d02d33aaacc56f60c38a2466f29c96c0afa8bddc5e284f8b4a474ef7d917c8c6d4557403521c6f9bc3c49a96719872074f5cf02c3cb6f1e0a85f901da5b92ac8
   languageName: node
   linkType: hard
 
