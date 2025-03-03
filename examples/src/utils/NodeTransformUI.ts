@@ -87,7 +87,7 @@ export class NodeTransformUI {
   createAndSetupTransformTool(viewer: Cognite3DViewer<DataSourceType>, model: CogniteCadModel): TransformControls {
     const transformControls = new TransformControls(viewer.cameraManager.getCamera(), viewer.domElement);
     transformControls.setMode(this.attachTransformControls.mode);
-    viewer.addObject3D(transformControls);
+    viewer.addObject3D(transformControls.getHelper());
     return transformControls;
   }
 

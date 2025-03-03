@@ -82,13 +82,17 @@ function autoMockGLCapabilities() {
 }
 
 function autoMockGLState() {
-  const colorBuffer = new Mock<WebGLColorBuffer>();
   const depthBuffer = new Mock<WebGLDepthBuffer>();
-  depthBuffer.setup(instance => instance.setTest(It.IsAny())).returns();
-  depthBuffer.setup(instance => instance.setMask(It.IsAny())).returns();
+  depthBuffer
+    .setup(instance => instance.setTest(It.IsAny()))
+    .returns()
+    .setup(instance => instance.setMask(It.IsAny()))
+    .returns();
   const stencilBuffer = new Mock<WebGLStencilBuffer>();
+  const colorBuffer = new Mock<WebGLColorBuffer>();
 
   const webglState = new Mock<WebGLState>();
+
   webglState
     .setup(instance => instance.buffers)
     .returns({
@@ -98,6 +102,7 @@ function autoMockGLState() {
     })
     .setup(instance => instance.reset())
     .returns();
+
   return webglState;
 }
 
