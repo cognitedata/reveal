@@ -11,7 +11,7 @@ import {
   COGNITE_CAD_NODE_VIEW_VERSION_KEY,
   type COGNITE_POINT_CLOUD_VOLUME_SOURCE,
   COGNITE_POINT_CLOUD_VOLUME_VIEW_VERSION_KEY,
-  CogniteAssetProperties,
+  type CogniteAssetProperties,
   CORE_DM_SPACE
 } from './dataModels';
 import { type EdgeItem, type DmsUniqueIdentifier, type FdmSDK } from '../FdmSDK';
@@ -29,7 +29,7 @@ export async function filterNodesByMappedTo3d(
   revisionRefs: DmsUniqueIdentifier[],
   _spacesToSearch: string[],
   fdmSdk: FdmSDK
-): Promise<InstancesWithView<CogniteAssetProperties>[]> {
+): Promise<Array<InstancesWithView<CogniteAssetProperties>>> {
   if (nodes.length === 0 || revisionRefs.length === 0) {
     return [];
   }

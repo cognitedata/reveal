@@ -1,7 +1,10 @@
-import { NodeItem } from '../../FdmSDK';
+/*!
+ * Copyright 2025 Cognite AS
+ */
+import { type NodeItem } from '../../FdmSDK';
 import {
   COGNITE_ASSET_VIEW_VERSION_KEY,
-  CogniteAssetProperties,
+  type CogniteAssetProperties,
   CORE_DM_SPACE
 } from '../dataModels';
 

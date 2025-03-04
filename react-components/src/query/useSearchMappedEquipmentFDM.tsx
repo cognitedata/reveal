@@ -21,7 +21,7 @@ import { type AddImage360CollectionDatamodelsOptions } from '../components/Revea
 
 export type InstancesWithView<PropertyType = Record<string, unknown>> = {
   view: Source;
-  instances: NodeItem<PropertyType>[];
+  instances: Array<NodeItem<PropertyType>>;
 };
 
 export const useSearchMappedEquipmentFDM = (
