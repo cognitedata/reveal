@@ -19,7 +19,10 @@ import { getModelKeys } from '../utilities/getModelKeys';
 import { useFdm3dDataProvider } from '../components/CacheProvider/CacheProvider';
 import { type AddImage360CollectionDatamodelsOptions } from '../components/Reveal3DResources/types';
 
-export type InstancesWithView = { view: Source; instances: NodeItem[] };
+export type InstancesWithView<PropertyType = Record<string, unknown>> = {
+  view: Source;
+  instances: NodeItem<PropertyType>[];
+};
 
 export const useSearchMappedEquipmentFDM = (
   query: string,

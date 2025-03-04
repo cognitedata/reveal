@@ -11,6 +11,7 @@ import {
   COGNITE_CAD_NODE_VIEW_VERSION_KEY,
   type COGNITE_POINT_CLOUD_VOLUME_SOURCE,
   COGNITE_POINT_CLOUD_VOLUME_VIEW_VERSION_KEY,
+  CogniteAssetProperties,
   CORE_DM_SPACE
 } from './dataModels';
 import { type EdgeItem, type DmsUniqueIdentifier, type FdmSDK } from '../FdmSDK';
@@ -21,13 +22,14 @@ import { isString } from 'lodash';
 import { type QueryResult } from '../utils/queryNodesAndEdges';
 import { createCheck3dConnectedEquipmentQuery } from './check3dConnectedEquipmentQuery';
 import { restrictToDmsId } from '../../utilities/restrictToDmsId';
+import { isCoreDmAssetNode } from './utils/typeGuards';
 
 export async function filterNodesByMappedTo3d(
   nodes: InstancesWithView[],
   revisionRefs: DmsUniqueIdentifier[],
   _spacesToSearch: string[],
   fdmSdk: FdmSDK
-): Promise<InstancesWithView[]> {
+): Promise<InstancesWithView<CogniteAssetProperties>[]> {
   if (nodes.length === 0 || revisionRefs.length === 0) {
     return [];
   }
@@ -36,27 +38,19 @@ export async function filterNodesByMappedTo3d(
 
   const object3dKeys: Set<FdmKey> = createRelevantObject3dKeys(connectionData);
 
-  const result = nodes.map((viewWithNodes) => {
-    if (viewWithNodes.view.externalId !== 'CogniteAsset') {
-      return {
-        view: viewWithNodes.view,
-        instances: []
-      };
-    }
+  return nodes.map((viewWithNodes) => {
     return {
       view: viewWithNodes.view,
-      instances: viewWithNodes.instances.filter((instance) => {
-        const object3dId = instance.properties[CORE_DM_SPACE][COGNITE_ASSET_VIEW_VERSION_KEY]
-          .object3D as DmsUniqueIdentifier;
-        if (!isString(object3dId?.externalId) || !isString(object3dId?.space)) {
+      instances: viewWithNodes.instances.filter(isCoreDmAssetNode).filter((instance) => {
+        const object3dId =
+          instance.properties[CORE_DM_SPACE][COGNITE_ASSET_VIEW_VERSION_KEY].object3D;
+        if (!isString(object3dId.externalId) || !isString(object3dId.space)) {
           return false;
         }
         return object3dKeys.has(createFdmKey(object3dId));
       })
     };
   });
-
-  return result;
 }
 
 function createRelevantObject3dKeys(
