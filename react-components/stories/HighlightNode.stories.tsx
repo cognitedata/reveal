@@ -59,10 +59,6 @@ export const Main: Story = {
             color: new Color('#c5cbff')
           }
         }
-      },
-      {
-        source: 'events',
-        siteId: 'celanese1'
       }
     ]
   },
