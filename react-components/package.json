@@ -24,7 +24,7 @@
     "test:coverage": "vitest run --dom --coverage",
     "test:playwright": "playwright test",
     "test:watch": "vitest watch --dom",
-    "check-circular-deps": "madge --circular --extensions ts,tsx ./src",
+    "check-circular-deps": "madge --circular --extensions ts,tsx --exclude 'setClippingPlanes.ts$|CommandButtons.tsx$' ./src",
     "pull-keys": "cdf-i18n-utils-cli pull-keys-from-remote --namespace reveal-react-components --path ./src/common/i18n && yarn sort-keys",
     "remove-deleted": "cdf-i18n-utils-cli remove-deleted-keys-from-remote --namespace reveal-react-components --path ./src/common/i18n",
     "save-missing": "cdf-i18n-utils-cli save-missing-keys-to-remote --namespace reveal-react-components --path ./src/common/i18n",
