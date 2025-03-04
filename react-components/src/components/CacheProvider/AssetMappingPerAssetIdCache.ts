@@ -1,16 +1,14 @@
 /*!
  * Copyright 2024 Cognite AS
  */
-import { type AssetMapping3D } from '@cognite/sdk';
-import { type ModelAssetIdKey } from './types';
-import { type AssetMapping } from './AssetMappingAndNode3DCache';
+import { type AssetMapping, type ModelAssetIdKey } from './types';
 
 export class AssetMappingPerAssetIdCache {
   private readonly _assetIdsToAssetMappings = new Map<ModelAssetIdKey, Promise<AssetMapping[]>>();
 
   public setAssetIdsToAssetMappingCacheItem(
     key: ModelAssetIdKey,
-    item: Promise<Array<Required<AssetMapping3D>>>
+    item: Promise<AssetMapping[]>
   ): void {
     this._assetIdsToAssetMappings.set(key, Promise.resolve(item));
   }
