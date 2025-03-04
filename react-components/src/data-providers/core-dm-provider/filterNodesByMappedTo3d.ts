@@ -23,6 +23,7 @@ import { type QueryResult } from '../utils/queryNodesAndEdges';
 import { createCheck3dConnectedEquipmentQuery } from './check3dConnectedEquipmentQuery';
 import { restrictToDmsId } from '../../utilities/restrictToDmsId';
 import { isCoreDmAssetNode } from './utils/typeGuards';
+import { EdgeDefinition, NodeOrEdge } from '@cognite/sdk';
 
 export async function filterNodesByMappedTo3d(
   nodes: InstancesWithView[],
@@ -86,7 +87,7 @@ function createRelevantObject3dKeys(
       ...connectionData.items.initial_360_annotation_edges,
       ...connectionData.items.direct_360_annotation_edges,
       ...connectionData.items.indirect_360_annotation_edges
-    ] as unknown[] as EdgeItem[]
+    ] as NodeOrEdge[] as EdgeItem[]
   ).filter((edge) => relevant360NodeKeys.has(createFdmKey(edge.endNode)));
 
   const image360Object3dList = relevant360AnnotationEdges.map((edge) =>
