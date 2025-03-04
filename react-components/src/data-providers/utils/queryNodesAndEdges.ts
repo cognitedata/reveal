@@ -6,7 +6,9 @@ import type {
   NodeDefinition,
   NodeOrEdge,
   CogniteClient,
-  QueryRequest
+  QueryRequest,
+  QueryNodeTableExpressionV3,
+  QueryEdgeTableExpressionV3
 } from '@cognite/sdk';
 
 // This function should be removed once the SDK is updated to include the function
@@ -23,9 +25,6 @@ export async function queryNodesAndEdges<
 
 type SELECT = 'select';
 type WITH = 'with';
-type LIMIT = 'limit';
-type NODES = 'nodes';
-type EDGES = 'edges';
 type PROPERTIES = 'properties';
 type SOURCES = 'sources';
 type SOURCE = 'source';
@@ -37,12 +36,11 @@ type ALLPROPERTIES = '*';
 export type InstanceType<
   TQueryRequest extends QueryRequest,
   SelectKey extends keyof TQueryRequest[SELECT]
-> =
-  Exclude<keyof TQueryRequest[WITH][SelectKey], LIMIT> extends NODES
-    ? Omit<NodeDefinition, PROPERTIES>
-    : Exclude<keyof TQueryRequest[WITH][SelectKey], LIMIT> extends EDGES
-      ? Omit<EdgeDefinition, PROPERTIES>
-      : Omit<NodeOrEdge, PROPERTIES>;
+> = TQueryRequest[WITH][SelectKey] extends QueryNodeTableExpressionV3
+  ? Omit<NodeDefinition, PROPERTIES>
+  : TQueryRequest[WITH][SelectKey] extends QueryEdgeTableExpressionV3
+    ? Omit<EdgeDefinition, PROPERTIES>
+    : Omit<NodeOrEdge, PROPERTIES>;
 
 export type TypedSourceProperty<
   SelectSource extends NonNullable<

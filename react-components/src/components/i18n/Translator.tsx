@@ -4,8 +4,8 @@
 
 import { type Translations } from './types';
 import { getLanguage } from './utils';
-import { type TranslationInput } from '../../architecture';
 import {
+  type TranslationInput,
   isTranslatedString,
   type TranslationKey
 } from '../../architecture/base/utilities/TranslateInput';

@@ -16,16 +16,13 @@ import {
   type InstanceReferenceKey
 } from '../../utilities/instanceIds/toKey';
 import { createFdmKey } from './idAndKeyTranslation';
-import { type DmsUniqueIdentifier } from '../../data-providers';
 
 export function getInstanceReferenceFromPointCloudAnnotation(
   annotation: AnnotationModel
 ): IdEither | undefined {
   const annotationData = annotation.data as AnnotationsBoundingVolume;
   const assetRef = annotationData.assetRef;
-  return assetRef !== undefined && isIdEither(annotationData.assetRef as IdEither)
-    ? (assetRef as IdEither)
-    : undefined;
+  return assetRef !== undefined && isIdEither(assetRef) ? assetRef : undefined;
 }
 
 export function getInstanceReferenceFromImage360Annotation(
@@ -57,16 +54,6 @@ export function getIdKeyForImage360Annotation(
 ): string | number {
   if (isCoreDmImage360Annotation(annotation)) {
     return createFdmKey(annotation.annotationIdentifier);
-  } else {
-    return annotation.id;
-  }
-}
-
-export function getIdForImage360Annotation(
-  annotation: DataSourceType['image360AnnotationType']
-): DmsUniqueIdentifier | number {
-  if (isCoreDmImage360Annotation(annotation)) {
-    return annotation.annotationIdentifier;
   } else {
     return annotation.id;
   }

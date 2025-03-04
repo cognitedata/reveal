@@ -17,13 +17,17 @@ import { type Fdm3dDataProvider } from '../data-providers/Fdm3dDataProvider';
 import { removeEmptyProperties } from '../utilities/removeEmptyProperties';
 import { getModelKeys } from '../utilities/getModelKeys';
 import { useFdm3dDataProvider } from '../components/CacheProvider/CacheProvider';
+import { type AddImage360CollectionDatamodelsOptions } from '../components/Reveal3DResources/types';
 
-export type InstancesWithView = { view: Source; instances: NodeItem[] };
+export type InstancesWithView<PropertyType = Record<string, unknown>> = {
+  view: Source;
+  instances: Array<NodeItem<PropertyType>>;
+};
 
 export const useSearchMappedEquipmentFDM = (
   query: string,
   viewsToSearch: SimpleSource[],
-  models: Array<AddModelOptions<DataSourceType>>,
+  models: Array<AddModelOptions<DataSourceType> | AddImage360CollectionDatamodelsOptions>,
   instancesFilter: InstanceFilter | undefined,
   limit: number = 100
 ): UseQueryResult<InstancesWithView[]> => {
@@ -87,7 +91,7 @@ const searchNodesWithViewsAndModels = async (
   query: string,
   spacesToSearch: string[],
   sourcesToSearch: Source[],
-  models: Array<AddModelOptions<DataSourceType>>,
+  models: Array<AddModelOptions<DataSourceType> | AddImage360CollectionDatamodelsOptions>,
   instancesFilter: InstanceFilter | undefined,
   fdmSdk: FdmSDK,
   fdmDataProvider: Fdm3dDataProvider,
