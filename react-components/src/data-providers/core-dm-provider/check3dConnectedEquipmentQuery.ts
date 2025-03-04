@@ -2,6 +2,8 @@
  * Copyright 2024 Cognite AS
  */
 import {
+  type QueryEdgeTableExpressionV3,
+  type QueryNodeTableExpressionV3,
   type QueryRequest,
   type QueryTableExpressionV3,
   type SourceSelectorV3
@@ -67,52 +69,43 @@ function getRevisionsPointCloudVolumes(object3dTableName: string): QueryTableExp
   };
 }
 
-type Image360ConnectionExpressions<Prefix extends string> = Record<
-  `${Prefix}_360_annotation_edges` | `${Prefix}_360_image_nodes`,
-  QueryTableExpressionV3
->;
-
-function getRevisionsImage360Annotations<const Prefix extends string>(
-  prefix: Prefix,
-  object3dTableName: string,
-  revisionRefs: DmsUniqueIdentifier[]
-): Image360ConnectionExpressions<Prefix> {
-  const edgesResultExpression = `${prefix}_360_annotation_edges`;
-  const imagesResultExpession = `${prefix}_360_image_nodes`;
-
-  // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+function getRevisionImage360AnnotationEdges(object3dTableName: string): QueryEdgeTableExpressionV3 {
   return {
-    [edgesResultExpression]: {
-      edges: {
-        from: object3dTableName,
-        direction: 'outwards',
-        filter: { hasData: [COGNITE_IMAGE_360_ANNOTATION_SOURCE] }
-      }
-    },
-    [imagesResultExpession]: {
-      nodes: {
-        from: edgesResultExpression,
-        chainTo: 'destination',
-        filter: {
-          and: [
-            {
-              hasData: [COGNITE_IMAGE_360_SOURCE]
-            },
-            {
-              in: {
-                property: [
-                  COGNITE_IMAGE_360_SOURCE.space,
-                  `${COGNITE_IMAGE_360_SOURCE.externalId}/${COGNITE_IMAGE_360_SOURCE.version}`,
-                  'collection360'
-                ],
-                values: revisionRefs
-              }
+    edges: {
+      from: object3dTableName,
+      direction: 'outwards',
+      filter: { hasData: [COGNITE_IMAGE_360_ANNOTATION_SOURCE] }
+    }
+  };
+}
+
+function getRevisionImage360Images(
+  annotationEdgeTableName: string,
+  revisionRefs: DmsUniqueIdentifier[]
+): QueryNodeTableExpressionV3 {
+  return {
+    nodes: {
+      from: annotationEdgeTableName,
+      chainTo: 'destination',
+      filter: {
+        and: [
+          {
+            hasData: [COGNITE_IMAGE_360_SOURCE]
+          },
+          {
+            in: {
+              property: [
+                COGNITE_IMAGE_360_SOURCE.space,
+                `${COGNITE_IMAGE_360_SOURCE.externalId}/${COGNITE_IMAGE_360_SOURCE.version}`,
+                'collection360'
+              ],
+              values: revisionRefs
             }
-          ]
-        }
+          }
+        ]
       }
     }
-  } as Image360ConnectionExpressions<Prefix>;
+  };
 }
 
 function getObject3dRelation(visualizableTableName: string): QueryTableExpressionV3 {
@@ -174,39 +167,61 @@ export function createCheck3dConnectedEquipmentQuery(
       initial_nodes_object_3ds: getObject3dRelation('initial_nodes'),
       initial_nodes_cad_nodes: getRevisionsCadNodeFromObject3D('initial_nodes_object_3ds'),
       initial_nodes_point_cloud_volumes: getRevisionsPointCloudVolumes('initial_nodes_object_3ds'),
-      ...getRevisionsImage360Annotations('initial', 'initial_nodes_object_3ds', revisionRefs),
+      initial_edges_360_image_annotations:
+        getRevisionImage360AnnotationEdges('initial_nodes_object3ds'),
+      initial_nodes_360_images: getRevisionImage360Images(
+        'initial_edges_360_image_annotations',
+        revisionRefs
+      ),
       direct_nodes_object_3ds: getObject3dRelation('directly_referenced_nodes'),
       direct_nodes_cad_nodes: getRevisionsCadNodeFromObject3D('direct_nodes_object_3ds'),
       direct_nodes_point_cloud_volumes: getRevisionsPointCloudVolumes('direct_nodes_object_3ds'),
-      ...getRevisionsImage360Annotations('direct', 'direct_nodes_object_3ds', revisionRefs),
+      direct_edges_360_image_annotations:
+        getRevisionImage360AnnotationEdges('direct_nodes_object_3ds'),
+      direct_nodes_360_images: getRevisionImage360Images(
+        'direct_edges_360_image_annotations',
+        revisionRefs
+      ),
       indirect_nodes_object_3ds: getObject3dRelation('indirectly_referenced_nodes'),
       indirect_nodes_cad_nodes: getRevisionsCadNodeFromObject3D('indirect_nodes_object_3ds'),
       indirect_nodes_point_cloud_volumes: getRevisionsPointCloudVolumes(
         'indirect_nodes_object_3ds'
       ),
-      ...getRevisionsImage360Annotations('indirect', 'indirect_nodes_object_3ds', revisionRefs)
+      indirect_edges_360_image_annotations: getRevisionImage360AnnotationEdges(
+        'indirect_nodes_object_3ds'
+      ),
+      indirect_nodes_360_images: getRevisionImage360Images(
+        'indirect_edges_360_image_annotations',
+        revisionRefs
+      )
     },
     select: {
       initial_nodes_cad_nodes: {
         sources: cadNodeSourceWithProperties
       },
       initial_nodes_point_cloud_volumes: { sources: pointCloudVolumeSourceWithProperties },
-      initial_360_annotation_edges: { sources: cogniteImage360AnnotationSourceWithProperties },
-      initial_360_image_nodes: { sources: cogniteImage360SourceWithProperties },
+      initial_edges_360_image_annotations: {
+        sources: cogniteImage360AnnotationSourceWithProperties
+      },
+      initial_nodes_360_images: { sources: cogniteImage360SourceWithProperties },
       direct_nodes_cad_nodes: {
         sources: cadNodeSourceWithProperties
       },
       direct_nodes_point_cloud_volumes: { sources: pointCloudVolumeSourceWithProperties },
-      direct_360_annotation_edges: { sources: cogniteImage360AnnotationSourceWithProperties },
-      direct_360_image_nodes: { sources: cogniteImage360SourceWithProperties },
+      direct_edges_360_image_annotations: {
+        sources: cogniteImage360AnnotationSourceWithProperties
+      },
+      direct_nodes_360_images: { sources: cogniteImage360SourceWithProperties },
       indirect_nodes_cad_nodes: {
         sources: cadNodeSourceWithProperties
       },
       indirect_nodes_point_cloud_volumes: {
         sources: pointCloudVolumeSourceWithProperties
       },
-      indirect_360_annotation_edges: { sources: cogniteImage360AnnotationSourceWithProperties },
-      indirect_360_image_nodes: { sources: cogniteImage360SourceWithProperties }
+      indirect_edges_360_image_annotations: {
+        sources: cogniteImage360AnnotationSourceWithProperties
+      },
+      indirect_nodes_360_images: { sources: cogniteImage360SourceWithProperties }
     }
   } as const satisfies Omit<QueryRequest, 'parameters' | 'cursor'>;
 }

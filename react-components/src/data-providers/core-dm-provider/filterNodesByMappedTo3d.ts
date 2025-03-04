@@ -14,7 +14,7 @@ import {
   type CogniteAssetProperties,
   CORE_DM_SPACE
 } from './dataModels';
-import { type EdgeItem, type DmsUniqueIdentifier, type FdmSDK } from '../FdmSDK';
+import { type DmsUniqueIdentifier, type FdmSDK } from '../FdmSDK';
 import { type FdmKey } from '../../components/CacheProvider/types';
 import { createFdmKey } from '../../components/CacheProvider/idAndKeyTranslation';
 import { type PromiseType } from '../utils/typeUtils';
@@ -23,7 +23,6 @@ import { type QueryResult } from '../utils/queryNodesAndEdges';
 import { createCheck3dConnectedEquipmentQuery } from './check3dConnectedEquipmentQuery';
 import { restrictToDmsId } from '../../utilities/restrictToDmsId';
 import { isCoreDmAssetNode } from './utils/typeGuards';
-import { EdgeDefinition, NodeOrEdge } from '@cognite/sdk';
 
 export async function filterNodesByMappedTo3d(
   nodes: InstancesWithView[],
@@ -76,19 +75,17 @@ function createRelevantObject3dKeys(
 
   const relevant360NodeKeys = new Set<FdmKey>(
     [
-      ...connectionData.items.initial_360_image_nodes,
-      ...connectionData.items.direct_360_image_nodes,
-      ...connectionData.items.indirect_360_image_nodes
+      ...connectionData.items.initial_nodes_360_images,
+      ...connectionData.items.direct_nodes_360_images,
+      ...connectionData.items.indirect_nodes_360_images
     ].map(createFdmKey)
   );
 
-  const relevant360AnnotationEdges = (
-    [
-      ...connectionData.items.initial_360_annotation_edges,
-      ...connectionData.items.direct_360_annotation_edges,
-      ...connectionData.items.indirect_360_annotation_edges
-    ] as NodeOrEdge[] as EdgeItem[]
-  ).filter((edge) => relevant360NodeKeys.has(createFdmKey(edge.endNode)));
+  const relevant360AnnotationEdges = [
+    ...connectionData.items.initial_edges_360_image_annotations,
+    ...connectionData.items.direct_edges_360_image_annotations,
+    ...connectionData.items.indirect_edges_360_image_annotations
+  ].filter((edge) => relevant360NodeKeys.has(createFdmKey(edge.endNode)));
 
   const image360Object3dList = relevant360AnnotationEdges.map((edge) =>
     createFdmKey(edge.startNode)
