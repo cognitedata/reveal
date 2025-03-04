@@ -12,6 +12,12 @@ import { type InstanceReference } from '../../utilities/instanceIds';
 import { type PointCloudAnnotationModel } from './types';
 import { sdkMock, retrieveMock, postMock } from '../../../tests/tests-utilities/fixtures/sdk';
 import { createAssetMock, createDMAssetMock } from '../../../tests/tests-utilities/fixtures/assets';
+import { type ExternalIdsResultList } from '../../data-providers/FdmSDK';
+import { type AssetProperties } from '../../data-providers/core-dm-provider/utils/filters';
+import {
+  CORE_DM_SPACE,
+  COGNITE_ASSET_VIEW_VERSION_KEY
+} from '../../data-providers/core-dm-provider/dataModels';
 
 describe('AnnotationModelUtils', () => {
   let assets: Asset[];
@@ -59,39 +65,53 @@ describe('AnnotationModelUtils', () => {
 
   describe('fetchAssetsForAssetReferences', () => {
     test('should fetch assets for given asset references', async () => {
-      const dmAssets: Asset[] = [
-        createDMAssetMock('asset-external-id1', 'asset-1'),
-        createDMAssetMock('asset-external-id2', 'asset-2')
-      ];
+      const dmAssets: ExternalIdsResultList<AssetProperties> =
+        createDMAssetMock('asset-external-id1');
       const assetReferences: InstanceReference[] = [
         { id: 1 },
         { id: 2 },
         { externalId: 'asset-external-id1', space: 'asset-space' }
       ];
-      const assetInstances = [{ id: 1 }, { id: 2 }];
       retrieveMock.mockResolvedValueOnce(assets);
-      postMock.mockResolvedValueOnce({ data: { items: dmAssets }, status: 200, headers: {} });
+      postMock.mockResolvedValueOnce({ data: dmAssets, status: 200, headers: {} });
 
       const result = await fetchAssetsForAssetReferences(assetReferences, sdkMock);
+      const dmExpectedAssets = dmAssets.items.map((item) => ({
+        ...item,
+        properties: item.properties[CORE_DM_SPACE][COGNITE_ASSET_VIEW_VERSION_KEY]
+      }));
+      const expectedAssets = [...assets, ...dmExpectedAssets];
 
-      expect(result).toEqual(assetInstances);
+      expect(result).toEqual(expectedAssets);
     });
   });
 
-  // describe('fetchPointCloudAnnotationAssets', () => {
-  //   test('should fetch assets for given point cloud annotations', async () => {
-  //     const annotations: PointCloudAnnotationModel[] = [{ id: 1, assetId: { id: 1 } }, { id: 2, assetId: { id: 2 } }];
-  //     const assets: Asset[] = [
-  //       { id: 1, rootId: 0, name: 'Asset 1', lastUpdatedTime: new Date(), createdTime: new Date() },
-  //       { id: 2, rootId: 0, name: 'Asset 2', lastUpdatedTime: new Date(), createdTime: new Date() }
-  //     ];
-  //     retrieveMock.mockResolvedValueOnce(assets);
+  describe('fetchPointCloudAnnotationAssets', () => {
+    test('should fetch assets for given point cloud annotations', async () => {
+      const annotations: PointCloudAnnotationModel[] = [
+        {
+          id: 1,
+          createdTime: new Date(),
+          lastUpdatedTime: new Date(),
+          status: 'approved',
+          annotatedResourceType: 'threedmodel',
+          annotatedResourceId: 1,
+          annotationType: 'pointCloud',
+          creatingApp: 'testApp',
+          creatingAppVersion: '1.0',
+          creatingUser: 'testUser',
+          data: {
+            assetRef: { id: 1 },
+            region: [{ box: { matrix: [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1] } }]
+          }
+        }
+      ];
+      retrieveMock.mockResolvedValueOnce(assets);
 
-  //     const result = await fetchPointCloudAnnotationAssets(annotations, sdkMock);
+      const result = await fetchPointCloudAnnotationAssets(annotations, sdkMock);
 
-  //     expect(result.size).toBe(2);
-  //     expect(result.get(1)).toEqual({ id: 1 });
-  //     expect(result.get(2)).toEqual({ id: 2 });
-  //   });
-  // });
+      expect(result.size).toBe(1);
+      expect(result.get(1)).toEqual(assets[0]);
+    });
+  });
 });

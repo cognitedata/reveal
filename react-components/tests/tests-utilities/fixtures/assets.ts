@@ -1,7 +1,7 @@
 import { type Asset } from '@cognite/sdk';
 import { Mock } from 'moq.ts';
 import { type AssetProperties } from '../../../src/data-providers/core-dm-provider/utils/filters';
-import { type FdmNode } from '../../../src/data-providers/FdmSDK';
+import { type ExternalIdsResultList, type NodeItem } from '../../../src/data-providers/FdmSDK';
 
 export function createAssetMock(id: number, name?: string, description?: string): Asset {
   return new Mock<Asset>()
@@ -32,23 +32,30 @@ export function createAssetMock(id: number, name?: string, description?: string)
     .object();
 }
 
-export function createDMAssetMock(externalId: string, space: string): FdmNode<AssetProperties> {
-  return new Mock<FdmNode<AssetProperties>>()
-    .setup((p) => p.externalId)
-    .returns(externalId)
-    .setup((p) => p.space)
-    .returns(space)
-    .setup((p) => p.createdTime)
-    .returns(new Date())
-    .setup((p) => p.lastUpdatedTime)
-    .returns(new Date())
-    .setup((p) => p.instanceType)
-    .returns('node')
-    .setup((p) => p.properties)
-    .returns({
-      name: 'name',
-      description: 'description',
-      object3D: { id: 1, type: 'object3D' }
-    })
-    .object();
+export function createDMAssetMock(externalId: string): ExternalIdsResultList<AssetProperties> {
+  const nodeItem: NodeItem<AssetProperties> = {
+    instanceType: 'node',
+    version: 0,
+    space: 'asset-space',
+    externalId,
+    createdTime: 123456,
+    lastUpdatedTime: 987654,
+    properties: {
+      cdf_cdm: {
+        'CogniteAsset/v1': {
+          name: 'asset-1',
+          object3D: {
+            externalId: 'object3d-external-id-1',
+            space: 'object3d-space-1'
+          },
+          description: 'asset-1'
+        }
+      }
+    }
+  };
+
+  return {
+    items: [nodeItem],
+    typing: {}
+  };
 }

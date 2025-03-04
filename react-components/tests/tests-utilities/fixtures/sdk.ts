@@ -1,26 +1,13 @@
 import { Mock } from 'moq.ts';
 import {
-  type Asset as BaseAsset,
   type AssetsAPI,
   type CogniteClient,
   type HttpResponse,
   type HttpRequestOptions
 } from '@cognite/sdk';
 import { vi } from 'vitest';
-
-type Asset = {
-  properties?: {
-    cdf_cdm: {
-      'cognite-asset-view'?: {
-        id: number;
-        name: string;
-        rootId: number;
-        lastUpdatedTime: Date;
-        createdTime: Date;
-      };
-    };
-  };
-} & BaseAsset;
+import { type AssetProperties } from '../../../src/data-providers/core-dm-provider/utils/filters';
+import { type ExternalIdsResultList, type NodeItem } from '../../../src/data-providers/FdmSDK';
 
 export const retrieveMock = vi.fn<AssetsAPI['retrieve']>(async (assetIds) => {
   return await Promise.resolve(
@@ -34,53 +21,39 @@ export const retrieveMock = vi.fn<AssetsAPI['retrieve']>(async (assetIds) => {
   );
 });
 
-export const postMock = vi.fn<() => Promise<HttpResponse<{ items: Asset[] }>>>(async () => {
-  const dmAssets: Asset[] = [
-    {
-      id: 1,
-      name: 'asset-1',
-      rootId: 0,
-      lastUpdatedTime: new Date(),
-      createdTime: new Date(),
+export const postMock = vi.fn<() => Promise<HttpResponse<ExternalIdsResultList<AssetProperties>>>>(
+  async () => {
+    const nodeItem: NodeItem<AssetProperties> = {
+      instanceType: 'node',
+      version: 0,
+      space: 'asset-space',
+      externalId: 'asset-external-id1',
+      createdTime: 123456,
+      lastUpdatedTime: 987654,
       properties: {
-        'core-dm': {
-          'cognite-asset-view': {
-            id: 1,
+        cdf_cdm: {
+          'CogniteAsset/v1': {
             name: 'asset-1',
-            rootId: 0,
-            lastUpdatedTime: new Date(),
-            createdTime: new Date()
+            object3D: {
+              externalId: 'object3d-external-id-1',
+              space: 'object3d-space-1'
+            },
+            description: 'asset-1'
           }
         }
       }
-    },
-    {
-      id: 2,
-      name: 'asset-2',
-      rootId: 0,
-      lastUpdatedTime: new Date(),
-      createdTime: new Date(),
-      properties: {
-        'core-dm': {
-          'cognite-asset-view': {
-            id: 2,
-            name: 'asset-2',
-            rootId: 0,
-            lastUpdatedTime: new Date(),
-            createdTime: new Date()
-          }
-        }
-      }
-    }
-  ];
+    };
 
-  const response: HttpResponse<{ items: Asset[] }> = {
-    data: { items: dmAssets },
-    status: 200,
-    headers: {}
-  };
-  return response;
-});
+    return {
+      data: {
+        items: [nodeItem],
+        typing: {}
+      },
+      status: 200,
+      headers: {}
+    };
+  }
+);
 
 export const assetRetrieveMock = new Mock<AssetsAPI>()
   .setup((p) => p.retrieve)

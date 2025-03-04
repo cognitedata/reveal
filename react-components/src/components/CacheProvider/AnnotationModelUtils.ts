@@ -57,9 +57,6 @@ export async function fetchAssetsForAssetReferences(
   sdk: CogniteClient
 ): Promise<AssetInstance[]> {
   const [classicIds, dmIds] = partition(assetIds, isIdEither);
-  console.log('classicIds', classicIds);
-  console.log('dmIds', dmIds);
-
   return ([] as AssetInstance[])
     .concat(await fetchAssetsForAssetIds(classicIds, sdk))
     .concat(await fetchAssetsForDmsIds(dmIds, sdk));
@@ -78,11 +75,6 @@ async function fetchAssetsForDmsIds(
   const response = await fdmSdk.getByExternalIds<AssetProperties>(
     dmsIds.map((id) => ({ ...id, instanceType: 'node' as const })),
     [COGNITE_ASSET_SOURCE]
-  );
-
-  console.log(
-    'response',
-    response.items.map((item) => item.properties)
   );
 
   return response.items.map((item) => ({
