@@ -18,11 +18,7 @@ import {
 } from './dataModels';
 import { type DmsUniqueIdentifier } from '..';
 import { hasIdFilter } from './utils/filters';
-import { cogniteImage360AnnotationSourceWithProperties } from './cogniteImage360AnnotationSourceWithProperties';
-import {
-  cogniteImage360SourceWithOnlyCollection360,
-  cogniteImage360SourceWithProperties
-} from './cogniteImage360SourceWithProperties';
+import { cogniteImage360SourceWithOnlyCollection360 } from './cogniteImage360SourceWithProperties';
 
 const pointCloudVolumeSourceWithProperties = [
   {
@@ -203,17 +199,13 @@ export function createCheck3dConnectedEquipmentQuery(
         sources: cadNodeSourceWithProperties
       },
       initial_nodes_point_cloud_volumes: { sources: pointCloudVolumeSourceWithProperties },
-      initial_edges_360_image_annotations: {
-        sources: []
-      },
+      initial_edges_360_image_annotations: {},
       initial_nodes_360_images: { sources: cogniteImage360SourceWithOnlyCollection360 },
       direct_nodes_cad_nodes: {
         sources: cadNodeSourceWithProperties
       },
       direct_nodes_point_cloud_volumes: { sources: pointCloudVolumeSourceWithProperties },
-      direct_edges_360_image_annotations: {
-        sources: []
-      },
+      direct_edges_360_image_annotations: {},
       direct_nodes_360_images: { sources: cogniteImage360SourceWithOnlyCollection360 },
       indirect_nodes_cad_nodes: {
         sources: cadNodeSourceWithProperties
@@ -221,9 +213,7 @@ export function createCheck3dConnectedEquipmentQuery(
       indirect_nodes_point_cloud_volumes: {
         sources: pointCloudVolumeSourceWithProperties
       },
-      indirect_edges_360_image_annotations: {
-        sources: []
-      },
+      indirect_edges_360_image_annotations: {},
       indirect_nodes_360_images: { sources: cogniteImage360SourceWithOnlyCollection360 }
     }
   } as const satisfies Omit<QueryRequest, 'parameters' | 'cursor'>;

@@ -24,7 +24,7 @@ import {
   pointCloudVolumeInstanceFixture2
 } from '../../../tests/tests-utilities/fixtures/dm/object3dData';
 import { COGNITE_ASSET_VIEW_VERSION_KEY, CORE_DM_SPACE } from './dataModels';
-import { QueryResult } from '../utils/queryNodesAndEdges';
+import { type QueryResult } from '../utils/queryNodesAndEdges';
 
 const modelIdentifier = { externalId: 'model0', space: 'space0' };
 
