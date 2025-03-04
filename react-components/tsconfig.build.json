@@ -4,6 +4,7 @@
     "rootDir": "./src"
   },
   "include": ["src/**/*.js", "src/**/*.jsx", "src/**/*.ts", "src/**/*.tsx"],
+  "files": [],
   "exclude": [
     "src/**/*.stories.tsx",
     "src/**/*.test.tsx",

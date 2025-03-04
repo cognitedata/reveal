@@ -10,6 +10,7 @@
       "@testing-library/jest-dom"
     ]
   },
+  "files": ["src/global.d.ts"],
   "include": [
     "src/**/*.stories.tsx",
     "src/**/*.test.tsx",
