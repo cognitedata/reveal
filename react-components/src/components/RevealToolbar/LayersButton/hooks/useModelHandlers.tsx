@@ -9,7 +9,6 @@ import {
   useMemo,
   useState
 } from 'react';
-import { type ModelLayerHandlers } from './LayersButtonsStrip';
 import {
   type DataSourceType,
   type Cognite3DViewer,
@@ -18,11 +17,17 @@ import {
   type CognitePointCloudModel,
   type Image360Collection
 } from '@cognite/reveal';
-import { CadModelHandler, Image360CollectionHandler, PointCloudModelHandler } from './ModelHandler';
-import { use3dModels } from '../../../hooks/use3dModels';
-import { useReveal } from '../../RevealCanvas/ViewerContext';
-import { type DefaultLayersConfiguration, type LayersUrlStateParam } from './types';
-import { use3DModelName } from '../../../query/use3DModelName';
+import {
+  CadModelHandler,
+  Image360CollectionHandler,
+  PointCloudModelHandler
+} from '../ModelHandler';
+import {
+  type DefaultLayersConfiguration,
+  type LayersUrlStateParam,
+  type ModelLayerHandlers
+} from '../types';
+import { use3DModelName } from '../../../../query/use3DModelName';
 
 export type UpdateModelHandlersCallback = (
   models: Array<CogniteModel<DataSourceType>>,
@@ -31,10 +36,10 @@ export type UpdateModelHandlersCallback = (
 
 export const useModelHandlers = (
   setExternalLayersState: Dispatch<SetStateAction<LayersUrlStateParam | undefined>> | undefined,
-  defaultLayersConfig: DefaultLayersConfiguration | undefined
-): [ModelLayerHandlers, UpdateModelHandlersCallback] => {
-  const models = use3dModels();
-  const viewer = useReveal();
+  defaultLayersConfig: DefaultLayersConfiguration | undefined,
+  viewer: Cognite3DViewer<DataSourceType>,
+  models: Array<CogniteModel<DataSourceType>>
+): [ModelLayerHandlers, () => void] => {
   const image360Collections = useMemo(
     () => viewer.get360ImageCollections(),
     [viewer, viewer.get360ImageCollections().length]
@@ -65,10 +70,15 @@ export const useModelHandlers = (
       setExternalLayersState?.(newExternalState);
       viewer.requestRedraw();
     },
-    [setExternalLayersState, models, modelNames.data]
+    [setExternalLayersState, models, modelNames.data, viewer]
   );
 
-  return [modelHandlers, update];
+  return [
+    modelHandlers,
+    () => {
+      update(models, viewer.get360ImageCollections());
+    }
+  ];
 };
 
 function createHandlers(
