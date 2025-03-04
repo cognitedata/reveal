@@ -52,7 +52,8 @@ describe('Box', () => {
     expect(primitive.hasHorizontalArea).toBe(true);
     expect(primitive.hasArea).toBe(true);
     expect(primitive.hasVolume).toBe(true);
-    expect(primitive.horizontalArea).toBe(2);
+    expect(primitive.horizontalArea).toBe(3);
+    expect(primitive.verticalArea).toBe(2);
     expect(primitive.hasXYRotation).toBe(true);
     expect(primitive.zRotationInDegrees).not.toBe(0);
 

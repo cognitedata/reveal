@@ -99,6 +99,10 @@ export class Box extends Primitive {
     return this.size.x * this.size.y;
   }
 
+  public get verticalArea(): number {
+    return this.size.x * this.size.z;
+  }
+
   public get hasXYRotation(): boolean {
     return this.rotation.x !== 0 || this.rotation.y !== 0;
   }
