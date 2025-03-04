@@ -10,7 +10,7 @@ import {
 } from './AnnotationModelUtils';
 import { type InstanceReference } from '../../utilities/instanceIds';
 import { type PointCloudAnnotationModel } from './types';
-import { sdkMock, retrieveMock, postMock } from '../../../tests/tests-utilities/fixtures/sdk';
+import { sdkMock, retrieveMock } from '../../../tests/tests-utilities/fixtures/sdk';
 import { createAssetMock, createDMAssetMock } from '../../../tests/tests-utilities/fixtures/assets';
 import { type ExternalIdsResultList } from '../../data-providers/FdmSDK';
 import { type AssetProperties } from '../../data-providers/core-dm-provider/utils/filters';
@@ -41,16 +41,8 @@ describe('AnnotationModelUtils', () => {
       const assetIds: IdEither[] = [];
       const result = await fetchAssetsForAssetIds(assetIds, sdkMock);
 
+      expect(retrieveMock).not.toHaveBeenCalledWith(assetIds, { ignoreUnknownIds: true });
       expect(result).toEqual([]);
-    });
-
-    test('should handle assets for duplicate asset IDs', async () => {
-      const assetIds: IdEither[] = [{ id: 1 }, { id: 1 }];
-      const nonDuplicateAssets: Asset[] = [createAssetMock(1)];
-      retrieveMock.mockResolvedValueOnce(nonDuplicateAssets);
-      const result = await fetchAssetsForAssetIds(assetIds, sdkMock);
-
-      expect(result).toEqual(nonDuplicateAssets);
     });
 
     test('should handle assets for duplicate asset IDs correctly', async () => {
@@ -59,6 +51,7 @@ describe('AnnotationModelUtils', () => {
       retrieveMock.mockResolvedValueOnce(nonDuplicateAssets);
       const result = await fetchAssetsForAssetIds(assetIds, sdkMock);
 
+      expect(retrieveMock).toHaveBeenCalledWith([assetIds[0]], { ignoreUnknownIds: true });
       expect(result).toEqual(nonDuplicateAssets);
     });
   });
@@ -69,25 +62,27 @@ describe('AnnotationModelUtils', () => {
         createDMAssetMock('asset-external-id1');
       const assetReferences: InstanceReference[] = [
         { id: 1 },
-        { id: 2 },
         { externalId: 'asset-external-id1', space: 'asset-space' }
       ];
-      retrieveMock.mockResolvedValueOnce(assets);
-      postMock.mockResolvedValueOnce({ data: dmAssets, status: 200, headers: {} });
+      retrieveMock.mockResolvedValueOnce([assets[0]]);
 
       const result = await fetchAssetsForAssetReferences(assetReferences, sdkMock);
       const dmExpectedAssets = dmAssets.items.map((item) => ({
         ...item,
         properties: item.properties[CORE_DM_SPACE][COGNITE_ASSET_VIEW_VERSION_KEY]
       }));
-      const expectedAssets = [...assets, ...dmExpectedAssets];
+      const expectedAssets = [assets[0], ...dmExpectedAssets];
 
+      expect(retrieveMock).toHaveBeenCalledWith([assetReferences[0]], {
+        ignoreUnknownIds: true
+      });
       expect(result).toEqual(expectedAssets);
     });
   });
 
   describe('fetchPointCloudAnnotationAssets', () => {
     test('should fetch assets for given point cloud annotations', async () => {
+      const assetRef = { id: 1 };
       const annotations: PointCloudAnnotationModel[] = [
         {
           id: 1,
@@ -101,7 +96,7 @@ describe('AnnotationModelUtils', () => {
           creatingAppVersion: '1.0',
           creatingUser: 'testUser',
           data: {
-            assetRef: { id: 1 },
+            assetRef,
             region: [{ box: { matrix: [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1] } }]
           }
         }
@@ -110,11 +105,15 @@ describe('AnnotationModelUtils', () => {
 
       const result = await fetchPointCloudAnnotationAssets(annotations, sdkMock);
 
+      expect(retrieveMock).toHaveBeenCalledWith([assetRef], {
+        ignoreUnknownIds: true
+      });
       expect(result.size).toBe(1);
       expect(result.get(1)).toEqual(assets[0]);
     });
 
     test('should fetch asset for given point cloud annotations containing multiple annotation with same asset', async () => {
+      const assetRef = { id: 1 };
       const annotations: PointCloudAnnotationModel[] = [
         {
           id: 1,
@@ -128,7 +127,7 @@ describe('AnnotationModelUtils', () => {
           creatingAppVersion: '1.0',
           creatingUser: 'testUser',
           data: {
-            assetRef: { id: 1 },
+            assetRef,
             region: [{ box: { matrix: [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1] } }]
           }
         },
@@ -144,7 +143,7 @@ describe('AnnotationModelUtils', () => {
           creatingAppVersion: '1.0',
           creatingUser: 'testUser',
           data: {
-            assetRef: { id: 1 },
+            assetRef,
             region: [{ box: { matrix: [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1] } }]
           }
         }
@@ -153,6 +152,9 @@ describe('AnnotationModelUtils', () => {
 
       const result = await fetchPointCloudAnnotationAssets(annotations, sdkMock);
 
+      expect(retrieveMock).toHaveBeenCalledWith([assetRef], {
+        ignoreUnknownIds: true
+      });
       expect(result.size).toBe(2);
       expect(result.get(1)).toEqual(assets[0]);
     });
