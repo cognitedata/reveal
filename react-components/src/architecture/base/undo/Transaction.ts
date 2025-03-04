@@ -13,7 +13,7 @@ export abstract class Transaction {
 
   public readonly uniqueId: number;
   public readonly changed: symbol;
-  protected readonly parentUniqueId: number;
+  protected readonly parentUniqueId: number | undefined;
   public readonly timeStamp = Date.now();
 
   // ==================================================
@@ -25,10 +25,9 @@ export abstract class Transaction {
     this.changed = changed;
 
     const parent = domainObject.parent;
-    if (parent === undefined) {
-      throw new Error('Parent is undefined');
+    if (parent !== undefined) {
+      this.parentUniqueId = parent.uniqueId;
     }
-    this.parentUniqueId = parent.uniqueId;
   }
 
   // ==================================================
@@ -47,6 +46,9 @@ export abstract class Transaction {
   public undo(renderTarget: RevealRenderTarget): boolean {
     const root = renderTarget.rootDomainObject;
     const uniqueId = this.changed === Changes.deleted ? this.parentUniqueId : this.uniqueId;
+    if (uniqueId === undefined) {
+      return false;
+    }
     const domainObject = root.getThisOrDescendantByUniqueId(uniqueId);
     if (domainObject === undefined) {
       return false;
