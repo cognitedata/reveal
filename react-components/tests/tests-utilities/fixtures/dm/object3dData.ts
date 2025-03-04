@@ -1,7 +1,9 @@
 import {
   COGNITE_CAD_NODE_VIEW_VERSION_KEY,
   COGNITE_IMAGE_360_ANNOTATION_SOURCE,
+  COGNITE_IMAGE_360_ANNOTATION_VIEW_VERSION_KEY,
   COGNITE_IMAGE_360_SOURCE,
+  COGNITE_IMAGE_360_VIEW_VERSION_KEY,
   COGNITE_POINT_CLOUD_VOLUME_VIEW_VERSION_KEY,
   CORE_DM_SPACE
 } from '../../../../src/data-providers/core-dm-provider/dataModels';
@@ -137,7 +139,7 @@ export const image360InstanceFixture0 = {
   lastUpdatedTime: 0,
   properties: {
     [COGNITE_IMAGE_360_SOURCE.space]: {
-      [`${COGNITE_IMAGE_360_SOURCE.externalId}/${COGNITE_IMAGE_360_SOURCE.version}`]: {
+      [COGNITE_IMAGE_360_VIEW_VERSION_KEY]: {
         collection360: image360Collection0
       }
     }
@@ -153,7 +155,7 @@ export const image360InstanceFixture1 = {
   lastUpdatedTime: 0,
   properties: {
     [COGNITE_IMAGE_360_SOURCE.space]: {
-      [`${COGNITE_IMAGE_360_SOURCE.externalId}/${COGNITE_IMAGE_360_SOURCE.version}`]: {
+      [COGNITE_IMAGE_360_VIEW_VERSION_KEY]: {
         collection360: image360Collection1
       }
     }
@@ -169,7 +171,7 @@ export const image360InstanceFixture2 = {
   lastUpdatedTime: 0,
   properties: {
     [COGNITE_IMAGE_360_SOURCE.space]: {
-      [`${COGNITE_IMAGE_360_SOURCE.externalId}/${COGNITE_IMAGE_360_SOURCE.version}`]: {
+      [COGNITE_IMAGE_360_VIEW_VERSION_KEY]: {
         collection360: image360Collection2
       }
     }
@@ -185,7 +187,14 @@ export const image360AnnotationEdgeInstanceFixture0 = {
   lastUpdatedTime: 0,
   instanceType: 'edge',
   version: 1,
-  properties: {},
+  properties: {
+    [CORE_DM_SPACE]: {
+      [COGNITE_IMAGE_360_ANNOTATION_VIEW_VERSION_KEY]: {
+        name: 'image360AnnotationEdge0',
+        description: 'An annotation edge'
+      }
+    }
+  },
   type: restrictToDmsId(COGNITE_IMAGE_360_ANNOTATION_SOURCE)
 } as const satisfies EdgeItem;
 

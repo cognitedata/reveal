@@ -9,6 +9,7 @@ import {
   COGNITE_ASSET_VIEW_VERSION_KEY,
   type COGNITE_CAD_NODE_SOURCE,
   COGNITE_CAD_NODE_VIEW_VERSION_KEY,
+  COGNITE_IMAGE_360_SOURCE,
   type COGNITE_POINT_CLOUD_VOLUME_SOURCE,
   COGNITE_POINT_CLOUD_VOLUME_VIEW_VERSION_KEY,
   type CogniteAssetProperties,
@@ -100,6 +101,10 @@ type SelectSourcesType = [
   {
     source: typeof COGNITE_POINT_CLOUD_VOLUME_SOURCE;
     properties: { object3D: DmsUniqueIdentifier };
+  },
+  {
+    source: typeof COGNITE_IMAGE_360_SOURCE;
+    properties: { collection360: DmsUniqueIdentifier };
   }
 ];
 

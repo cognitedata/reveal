@@ -19,7 +19,10 @@ import {
 import { type DmsUniqueIdentifier } from '..';
 import { hasIdFilter } from './utils/filters';
 import { cogniteImage360AnnotationSourceWithProperties } from './cogniteImage360AnnotationSourceWithProperties';
-import { cogniteImage360SourceWithProperties } from './cogniteImage360SourceWithProperties';
+import {
+  cogniteImage360SourceWithOnlyCollection360,
+  cogniteImage360SourceWithProperties
+} from './cogniteImage360SourceWithProperties';
 
 const pointCloudVolumeSourceWithProperties = [
   {
@@ -201,17 +204,17 @@ export function createCheck3dConnectedEquipmentQuery(
       },
       initial_nodes_point_cloud_volumes: { sources: pointCloudVolumeSourceWithProperties },
       initial_edges_360_image_annotations: {
-        sources: cogniteImage360AnnotationSourceWithProperties
+        sources: []
       },
-      initial_nodes_360_images: { sources: cogniteImage360SourceWithProperties },
+      initial_nodes_360_images: { sources: cogniteImage360SourceWithOnlyCollection360 },
       direct_nodes_cad_nodes: {
         sources: cadNodeSourceWithProperties
       },
       direct_nodes_point_cloud_volumes: { sources: pointCloudVolumeSourceWithProperties },
       direct_edges_360_image_annotations: {
-        sources: cogniteImage360AnnotationSourceWithProperties
+        sources: []
       },
-      direct_nodes_360_images: { sources: cogniteImage360SourceWithProperties },
+      direct_nodes_360_images: { sources: cogniteImage360SourceWithOnlyCollection360 },
       indirect_nodes_cad_nodes: {
         sources: cadNodeSourceWithProperties
       },
@@ -219,9 +222,9 @@ export function createCheck3dConnectedEquipmentQuery(
         sources: pointCloudVolumeSourceWithProperties
       },
       indirect_edges_360_image_annotations: {
-        sources: cogniteImage360AnnotationSourceWithProperties
+        sources: []
       },
-      indirect_nodes_360_images: { sources: cogniteImage360SourceWithProperties }
+      indirect_nodes_360_images: { sources: cogniteImage360SourceWithOnlyCollection360 }
     }
   } as const satisfies Omit<QueryRequest, 'parameters' | 'cursor'>;
 }
