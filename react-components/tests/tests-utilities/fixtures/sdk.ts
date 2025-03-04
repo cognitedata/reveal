@@ -74,4 +74,6 @@ export const sdkMock = new Mock<CogniteClient>()
       options?: HttpRequestOptions
     ) => Promise<HttpResponse<T>>
   )
+  .setup((p) => p.models3D.retrieve)
+  .returns(async () => ({ name: 'Model Name', id: 1, createdTime: new Date() }))
   .object();
