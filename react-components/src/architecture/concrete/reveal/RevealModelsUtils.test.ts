@@ -111,11 +111,11 @@ describe('RevealModelsUtils', () => {
     // Add model
     await RevealModelsUtils.addModel(renderTargetMock, cadModelOptions);
     let domainObject = RevealModelsUtils.getByRevealModel(root, model);
-    expect(domainObject).not.toBe(undefined);
+    expect(domainObject).toBeDefined();
 
     RevealModelsUtils.remove(renderTargetMock, model);
     domainObject = RevealModelsUtils.getByRevealModel(root, model);
-    expect(domainObject).toBe(undefined);
+    expect(domainObject).toBeUndefined();
     expect(removeFn).toHaveBeenCalledWith(model);
   });
 
@@ -129,11 +129,11 @@ describe('RevealModelsUtils', () => {
     // Add model
     await RevealModelsUtils.addPointCloud(renderTargetMock, pointCloudModelOptions);
     let domainObject = RevealModelsUtils.getByRevealModel(root, model);
-    expect(domainObject).not.toBe(undefined);
+    expect(domainObject).toBeDefined();
 
     RevealModelsUtils.remove(renderTargetMock, model);
     domainObject = RevealModelsUtils.getByRevealModel(root, model);
-    expect(domainObject).toBe(undefined);
+    expect(domainObject).toBeUndefined();
     expect(removeFn).toHaveBeenCalledWith(model);
   });
 
@@ -147,11 +147,11 @@ describe('RevealModelsUtils', () => {
     // Add model
     await RevealModelsUtils.addImage360Collection(renderTargetMock, image360ClassicOptions);
     let domainObject = RevealModelsUtils.getByRevealModel(root, model);
-    expect(domainObject).not.toBe(undefined);
+    expect(domainObject).toBeDefined();
 
     RevealModelsUtils.remove(renderTargetMock, model);
     domainObject = RevealModelsUtils.getByRevealModel(root, model);
-    expect(domainObject).toBe(undefined);
+    expect(domainObject).toBeUndefined();
     expect(removeFn).toHaveBeenCalledWith(model);
   });
 });

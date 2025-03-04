@@ -21,6 +21,8 @@ export function createCadMock(): CogniteCadModel {
     .returns(new Matrix4())
     .setup(async (p) => await p.getBoundingBoxesByNodeIds(It.IsAny()))
     .returns(Promise.resolve([nodeBoundingBox]))
+    .setup((p) => p.visible)
+    .returns(true)
     .prototypeof(CogniteCadModel.prototype)
     .object();
 }
