@@ -100,6 +100,7 @@ export class Box extends Primitive {
   }
 
   public get verticalArea(): number {
+    // If vertical area the size.y is not set
     return this.size.x * this.size.z;
   }
 
