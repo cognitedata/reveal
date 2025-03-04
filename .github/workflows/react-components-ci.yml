@@ -61,6 +61,13 @@ jobs:
         env:
           NPM_TOKEN: ${{ secrets.NPM_READONLY_TOKEN }}
 
+      - name: Check circular dependencies
+        working-directory: react-components
+        continue-on-error: false
+        run: yarn run check-circular-deps
+        env:
+          NPM_TOKEN: ${{ secrets.NPM_READONLY_TOKEN }}
+
       - name: Check types
         working-directory: react-components
         continue-on-error: false
