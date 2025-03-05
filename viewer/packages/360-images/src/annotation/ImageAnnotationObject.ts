@@ -2,7 +2,7 @@
  * Copyright 2023 Cognite AS
  */
 
-import { AnnotationsObjectDetection, AnnotationsTypesImagesAssetLink } from '@cognite/sdk';
+import { AnnotationsCogniteAnnotationTypesImagesAssetLink, AnnotationsObjectDetection } from '@cognite/sdk';
 import { CoreDmImage360Annotation, DataSourceType, Image360FileDescriptor } from '@reveal/data-providers';
 
 import { Color, Matrix4, Vector3, Mesh, MeshBasicMaterial, DoubleSide, Object3D, Group, Raycaster } from 'three';
@@ -82,7 +82,7 @@ export class ImageAnnotationObject<T extends DataSourceType> implements Image360
   }
 
   private static createAssetLinkAnnotationData(
-    assetLink: AnnotationsTypesImagesAssetLink
+    assetLink: AnnotationsCogniteAnnotationTypesImagesAssetLink
   ): ImageAnnotationObjectGeometryData | undefined {
     const objectRegion = assetLink.objectRegion;
     if (objectRegion === undefined) {

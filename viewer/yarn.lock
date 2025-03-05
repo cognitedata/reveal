@@ -451,7 +451,7 @@ __metadata:
   resolution: "@cognite/reveal@workspace:."
   dependencies:
     "@azure/msal-browser": "npm:^3.13.0"
-    "@cognite/sdk": "npm:^10.0.0"
+    "@cognite/sdk": "npm:^9.12.0"
     "@microsoft/api-extractor": "npm:^7.43.1"
     "@rajesh896/broprint.js": "npm:^2.1.1"
     "@tweenjs/tween.js": "npm:^25.0.0"
@@ -528,30 +528,30 @@ __metadata:
     whatwg-fetch: "npm:^3.6.20"
     workerize-loader: "npm:^2.0.2"
   peerDependencies:
-    "@cognite/sdk": ^10.0.0
+    "@cognite/sdk": ^7.16.0 || ^8.0.0
     three: 0.174.0
   languageName: unknown
   linkType: soft
 
-"@cognite/sdk-core@npm:^5.0.0":
-  version: 5.0.0
-  resolution: "@cognite/sdk-core@npm:5.0.0"
+"@cognite/sdk-core@npm:^4.10.6":
+  version: 4.10.6
+  resolution: "@cognite/sdk-core@npm:4.10.6"
   dependencies:
-    cross-fetch: "npm:^3.1.8"
-    lodash: "npm:^4.17.21"
-  checksum: 10/37986c5840eedfe0637dacf432c8c5b6cfdfa7b744544e7552eab6b1ef283f762774449bcffd2b2592f448901601da9f6793399fc5ec726f96fa1867210d658e
+    cross-fetch: "npm:^3.0.4"
+    lodash: "npm:^4.17.11"
+  checksum: 10/3eb04a86921d8312718b482dfcb302728254a225d143f2f1e9ccf608d04e7aec39afbfae1828a270cf442d64aa0e59e89bbe916fe8a9a6a1b703d53dc417eb03
   languageName: node
   linkType: hard
 
-"@cognite/sdk@npm:^10.0.0":
-  version: 10.0.0
-  resolution: "@cognite/sdk@npm:10.0.0"
+"@cognite/sdk@npm:^9.12.0":
+  version: 9.16.1
+  resolution: "@cognite/sdk@npm:9.16.1"
   dependencies:
-    "@cognite/sdk-core": "npm:^5.0.0"
-    "@types/geojson": "npm:^7946.0.14"
+    "@cognite/sdk-core": "npm:^4.10.6"
+    "@types/geojson": "npm:^7946.0.8"
     geojson: "npm:^0.5.0"
-    lodash: "npm:^4.17.21"
-  checksum: 10/17ef6fd9f39bf19cbfc545140f8a003a400b621f54d2a800b255f7b6f54935b63c23e647c826990e9b4d78a9a56c18c0ae1ecec3155594d0f4c2624df038c4bc
+    lodash: "npm:^4.17.11"
+  checksum: 10/f473dc60ca740e7726afaef580e94be9bd47936716ee73dc3ec05c9a2e84facbe6428ad47f4c0b810c236e0c4f9147feaaffe40685e14fa75f39219bca943daa
   languageName: node
   linkType: hard
 
@@ -1839,10 +1839,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/geojson@npm:^7946.0.14":
-  version: 7946.0.16
-  resolution: "@types/geojson@npm:7946.0.16"
-  checksum: 10/34d07421bdd60e7b99fa265441d17ac6e9aef48e3ce22d04324127d0de1daf7fbaa0bd3be1cece2092eb6995f21da84afa5231e24621a2910ff7340bc98f496f
+"@types/geojson@npm:^7946.0.8":
+  version: 7946.0.14
+  resolution: "@types/geojson@npm:7946.0.14"
+  checksum: 10/ae511bee6488ae3bd5a3a3347aedb0371e997b14225b8983679284e22fa4ebd88627c6e3ff8b08bf4cc35068cb29310c89427311ffc9322c255615821a922e71
   languageName: node
   linkType: hard
 
@@ -3777,12 +3777,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"cross-fetch@npm:^3.1.8":
-  version: 3.2.0
-  resolution: "cross-fetch@npm:3.2.0"
+"cross-fetch@npm:^3.0.4":
+  version: 3.1.8
+  resolution: "cross-fetch@npm:3.1.8"
   dependencies:
-    node-fetch: "npm:^2.7.0"
-  checksum: 10/e4ab1d390a5b6ca8bb0605f028af2ffc1127d2e407b954654949f506d04873c4863ece264662c074865d7874060e35f938cec74fe7b5736d46d545e2685f6aec
+    node-fetch: "npm:^2.6.12"
+  checksum: 10/ac8c4ca87d2ac0e17a19b6a293a67ee8934881aee5ec9a5a8323c30e9a9a60a0f5291d3c0d633ec2a2f970cbc60978d628804dfaf03add92d7e720b6d37f392c
   languageName: node
   linkType: hard
 
@@ -7372,7 +7372,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"lodash@npm:^4.17.20, lodash@npm:^4.17.21, lodash@npm:^4.17.4, lodash@npm:~4.17.15":
+"lodash@npm:^4.17.11, lodash@npm:^4.17.20, lodash@npm:^4.17.21, lodash@npm:^4.17.4, lodash@npm:~4.17.15":
   version: 4.17.21
   resolution: "lodash@npm:4.17.21"
   checksum: 10/c08619c038846ea6ac754abd6dd29d2568aa705feb69339e836dfa8d8b09abbb2f859371e86863eda41848221f9af43714491467b5b0299122431e202bb0c532
@@ -7895,7 +7895,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"node-fetch@npm:^2.7.0":
+"node-fetch@npm:^2.6.12":
   version: 2.7.0
   resolution: "node-fetch@npm:2.7.0"
   dependencies:

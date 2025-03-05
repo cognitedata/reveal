@@ -2,7 +2,7 @@
  * Copyright 2024 Cognite AS
  */
 
-import { TableExpressionEqualsFilterV3 } from '@cognite/sdk';
+import { TableExpressionEqualsFilterV3 } from '@cognite/sdk/dist/src';
 import { PointCloudObject, PointCloudObjectMetadata } from '../pointcloud-stylable-object-providers/types';
 import { StylableObject } from '../pointcloud-stylable-object-providers/StylableObject';
 import { ClassicDataSourceType, DMDataSourceType, DataSourceType } from '../DataSourceType';

@@ -3,8 +3,8 @@
  */
 import {
   AnnotationData,
+  AnnotationsCogniteAnnotationTypesImagesAssetLink,
   AnnotationsObjectDetection,
-  AnnotationsTypesImagesAssetLink,
   AnnotationType
 } from '@cognite/sdk';
 import { DataSourceType, DMDataSourceType } from '@reveal/data-providers';
@@ -33,7 +33,7 @@ export function isAnnotationsObjectDetection(
 export function isAnnotationAssetLink(
   annotationType: AnnotationType,
   annotation: AnnotationData
-): annotation is AnnotationsTypesImagesAssetLink {
-  const link = annotation as AnnotationsTypesImagesAssetLink;
+): annotation is AnnotationsCogniteAnnotationTypesImagesAssetLink {
+  const link = annotation as AnnotationsCogniteAnnotationTypesImagesAssetLink;
   return annotationType === 'images.AssetLink' && link.text !== undefined && link.textRegion !== undefined;
 }

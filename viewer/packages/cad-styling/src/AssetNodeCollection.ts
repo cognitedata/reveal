@@ -16,7 +16,6 @@ import { AssetMapping3D, CogniteClient } from '@cognite/sdk';
 
 import cloneDeep from 'lodash/cloneDeep';
 import { CdfModelNodeCollectionDataProvider } from './CdfModelNodeCollectionDataProvider';
-import { isCdfAssetMapping } from '@reveal/utilities';
 
 /**
  * Represents a set of nodes associated with an [asset in Cognite Fusion]{@link https://docs.cognite.com/api/v1/#tag/Assets}
@@ -60,10 +59,7 @@ export class AssetNodeCollection extends NodeCollection {
       this._fetchResultHelper.interrupt();
     }
     const fetchResultHelper = new PopulateIndexSetFromPagedResponseHelper<AssetMapping3D>(
-      assetMappings =>
-        assetMappings
-          .filter(isCdfAssetMapping)
-          .map(mapping => new NumericRange(mapping.treeIndex, mapping.subtreeSize)),
+      assetMappings => assetMappings.map(mapping => new NumericRange(mapping.treeIndex, mapping.subtreeSize)),
       mappings => this.fetchBoundingBoxesForAssetMappings(mappings),
       () => this.notifyChanged()
     );
