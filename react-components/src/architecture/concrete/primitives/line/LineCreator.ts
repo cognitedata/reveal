@@ -11,6 +11,8 @@ import { type DomainObject } from '../../../base/domainObjects/DomainObject';
 import { FocusType } from '../../../base/domainObjectsHelpers/FocusType';
 import { type LineDomainObject } from './LineDomainObject';
 import { type UndoManager } from '../../../base/undo/UndoManager';
+import { getRenderTarget } from '../../../base/domainObjects/getRoot';
+import { CommandsUpdater } from '../../../base/reactUpdaters/CommandsUpdater';
 
 /**
  * Helper class for generate a LineDomainObject by clicking around
@@ -85,9 +87,12 @@ export class LineCreator extends BaseCreator {
 
     if (!isPending && domainObject.hasParent && this._undoManager !== undefined) {
       const exists = this._undoManager.hasUniqueId(domainObject.uniqueId);
-      this._undoManager.addTransaction(
+      const needsUpdate = this._undoManager.addTransaction(
         domainObject.createTransaction(exists ? Changes.geometry : Changes.added)
       );
+      if (needsUpdate) {
+        CommandsUpdater.update(getRenderTarget(domainObject));
+      }
     }
     copy(domainObject.points, this.points);
 

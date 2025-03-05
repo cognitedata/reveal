@@ -15,12 +15,11 @@ import { FocusType } from '../../../base/domainObjectsHelpers/FocusType';
  * Helper class for generate a BoxDomainObject by clicking around
  */
 describe('BoxCreator', () => {
-  test('Create Box', () => {
+  test('Create Box by mimics the user clicking 4 times', () => {
     const domainObject = new MeasureBoxDomainObject(PrimitiveType.Box);
     const creator = new BoxCreator(domainObject);
     expect(domainObject.focusType).toBe(FocusType.Pending);
 
-    // This mimics the user clicking around
     click(creator, new Vector3(0, 0, 1), false, new Vector3(0, 0, 0));
     click(creator, new Vector3(1, 0, 1), false);
     click(creator, new Vector3(1, 1, 1), false);
@@ -32,12 +31,11 @@ describe('BoxCreator', () => {
     expect(domainObject.focusType).toBe(FocusType.Focus);
   });
 
-  test('Create HorizontalArea', () => {
+  test('Create HorizontalArea by mimics the user clicking 3 times', () => {
     const domainObject = new MeasureBoxDomainObject(PrimitiveType.HorizontalArea);
     const creator = new BoxCreator(domainObject);
     expect(domainObject.focusType).toBe(FocusType.Pending);
 
-    // This mimics the user clicking around
     click(creator, new Vector3(0, 0, 1), false, new Vector3(0, 0, 0));
     click(creator, new Vector3(1, 0, 1), false);
     click(creator, new Vector3(1, 1, 1), true);
@@ -48,12 +46,11 @@ describe('BoxCreator', () => {
     expect(domainObject.focusType).toBe(FocusType.Focus);
   });
 
-  test('Create VerticalArea', () => {
+  test('Create VerticalArea  by mimics the user clicking 2 times', () => {
     const domainObject = new MeasureBoxDomainObject(PrimitiveType.VerticalArea);
     const creator = new BoxCreator(domainObject);
     expect(domainObject.focusType).toBe(FocusType.Pending);
 
-    // This mimics the user clicking around
     click(creator, new Vector3(0, 0, 1), false, new Vector3(0, 0, 0));
     click(creator, new Vector3(1, 0, 1), true, new Vector3(2, 0, 4));
 
