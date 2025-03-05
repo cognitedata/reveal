@@ -41,7 +41,3 @@ export function createRenderTargetMock(): RevealRenderTarget {
   mock.setup((p) => p.rootDomainObject).returns(root);
   return mock.object();
 }
-
-export function createRenderTargetMock2(): RevealRenderTarget {
-  return new RevealRenderTarget(viewerMock, sdkMock);
-}
