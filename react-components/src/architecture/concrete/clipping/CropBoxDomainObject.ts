@@ -9,11 +9,12 @@ import { BoxDomainObject } from '../primitives/box/BoxDomainObject';
 import { Color, type Plane } from 'three';
 import { type RenderStyle } from '../../base/renderStyles/RenderStyle';
 import { type TranslationInput } from '../../base/utilities/TranslateInput';
-import { ApplyClipCommand } from './commands/ApplyClipCommand';
+import { setClippingPlanes } from './commands/setClippingPlanes';
 import { FocusType } from '../../base/domainObjectsHelpers/FocusType';
 import { type DomainObject } from '../../base/domainObjects/DomainObject';
 import { type IconName } from '../../base/utilities/IconName';
 import { SolidPrimitiveRenderStyle } from '../primitives/common/SolidPrimitiveRenderStyle';
+import { getRenderTarget, getRoot } from '../../base/domainObjects/getRoot';
 
 export class CropBoxDomainObject extends BoxDomainObject {
   // ==================================================
@@ -66,6 +67,17 @@ export class CropBoxDomainObject extends BoxDomainObject {
     return false;
   }
 
+  public override get hasBoldLabel(): boolean {
+    const renderTarget = getRenderTarget(this);
+    if (renderTarget === undefined) {
+      return false;
+    }
+    if (!renderTarget.isGlobalClippingActive) {
+      return false;
+    }
+    return renderTarget.isGlobalCropBox(this);
+  }
+
   public override clone(what?: symbol): DomainObject {
     const clone = new CropBoxDomainObject();
     clone.copyFrom(this, what);
@@ -77,13 +89,13 @@ export class CropBoxDomainObject extends BoxDomainObject {
   // ==================================================
 
   public setThisAsGlobalCropBox(): void {
-    const root = this.rootDomainObject;
+    const root = getRoot(this);
     if (root === undefined) {
       return;
     }
     if (this.focusType === FocusType.Pending) {
       // Fallback to default. Do not use any pending objects in clipping
-      ApplyClipCommand.setClippingPlanes(root);
+      setClippingPlanes(root);
       return;
     }
     const planes = this.createClippingPlanes();
@@ -91,7 +103,7 @@ export class CropBoxDomainObject extends BoxDomainObject {
   }
 
   private createClippingPlanes(): Plane[] {
-    const root = this.rootDomainObject;
+    const root = getRoot(this);
     if (root === undefined) {
       return [];
     }
@@ -105,7 +117,7 @@ export class CropBoxDomainObject extends BoxDomainObject {
 
   private updateClippingPlanes(change: DomainObjectChange): void {
     // Update the clipping planes if necessary
-    const root = this.rootDomainObject;
+    const root = getRoot(this);
     if (root === undefined) {
       return;
     }
@@ -119,7 +131,7 @@ export class CropBoxDomainObject extends BoxDomainObject {
         change.isChanged(Changes.deleted) ||
         (change.isChanged(Changes.selected) && !this.isSelected)
       ) {
-        ApplyClipCommand.setClippingPlanes(root);
+        setClippingPlanes(root);
         return;
       }
     }

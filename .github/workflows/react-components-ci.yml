@@ -1,6 +1,8 @@
 name: React Components CI
 
 on:
+  push:
+    branches: [master]
   pull_request:
     branches:
       - "**"
@@ -11,11 +13,12 @@ jobs:
     permissions:
       pull-requests: read
     outputs:
-      should-run: ${{ steps.filter.outputs.should-run }}
+      should-run: ${{ github.event_name != 'pull_request' || steps.filter.outputs.should-run }}
     steps:
       # For pull requests it's not necessary to checkout the code
       - uses: dorny/paths-filter@v3
         id: filter
+        if: ${{ github.event_name == 'pull_request' }}
         with:
           filters: |
             should-run:
@@ -58,10 +61,17 @@ jobs:
         env:
           NPM_TOKEN: ${{ secrets.NPM_READONLY_TOKEN }}
 
-      - name: Check types
+      - name: Check circular dependencies
         working-directory: react-components
         continue-on-error: false
-        run: yarn run tsc --noEmit
+        run: yarn run check-circular-deps
+        env:
+          NPM_TOKEN: ${{ secrets.NPM_READONLY_TOKEN }}
+
+      - name: Typecheck source code
+        working-directory: react-components
+        continue-on-error: false
+        run: yarn run typecheck:source
         env:
           NPM_TOKEN: ${{ secrets.NPM_READONLY_TOKEN }}
 
@@ -79,12 +89,24 @@ jobs:
         env:
           NPM_TOKEN: ${{ secrets.NPM_PUBLISH_TOKEN }}
 
+      - name: Typecheck test code
+        working-directory: react-components
+        continue-on-error: false
+        run: yarn run typecheck:test
+        env:
+          NPM_TOKEN: ${{ secrets.NPM_READONLY_TOKEN }}
+
       - name: Unit tests
         working-directory: react-components
         continue-on-error: false
-        run: yarn run test
+        run: yarn run test:coverage
         env:
           NPM_TOKEN: ${{ secrets.NPM_PUBLISH_TOKEN }}
+
+      - name: Upload coverage reports to Codecov
+        uses: codecov/codecov-action@v5
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
 
       - name: Install playwright browsers
         working-directory: react-components

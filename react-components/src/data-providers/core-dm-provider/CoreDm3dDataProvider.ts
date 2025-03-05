@@ -1,7 +1,7 @@
 /*!
  * Copyright 2024 Cognite AS
  */
-import { type DataSourceType, type AddModelOptions } from '@cognite/reveal';
+import { type DataSourceType, type AddModelOptions, type DMDataSourceType } from '@cognite/reveal';
 import { type FdmCadConnection } from '../../components/CacheProvider/types';
 import { type Fdm3dDataProvider } from '../Fdm3dDataProvider';
 import {
@@ -13,7 +13,15 @@ import {
   type ViewItem
 } from '../FdmSDK';
 import { type InstancesWithView } from '../../query/useSearchMappedEquipmentFDM';
-import { type TaggedAddResourceOptions } from '../../components/Reveal3DResources/types';
+import {
+  type ClassicAdd3DModelOptions,
+  type AddImage360CollectionDatamodelsOptions,
+  type TaggedAddResourceOptions
+} from '../../components/Reveal3DResources/types';
+import {
+  isClassicIdentifier,
+  isDM3DModelIdentifier
+} from '../../components/Reveal3DResources/typeGuards';
 import { COGNITE_3D_OBJECT_SOURCE } from './dataModels';
 import { getDMSModels } from './getDMSModels';
 import { getEdgeConnected3dInstances } from './getEdgeConnected3dInstances';
@@ -26,24 +34,20 @@ import { executeParallel } from '../../utilities/executeParallel';
 import { filterNodesByMappedTo3d } from './filterNodesByMappedTo3d';
 import { getCadModelsForInstance } from './getCadModelsForInstance';
 import { getCadConnectionsForRevisions } from './getCadConnectionsForRevisions';
-import { zip } from 'lodash';
+import { partition, zip } from 'lodash';
 import { restrictToDmsId } from '../../utilities/restrictToDmsId';
-import { isClassicIdentifier, isDMIdentifier } from '../../components';
 import { EMPTY_ARRAY } from '../../utilities/constants';
 
 const MAX_PARALLEL_QUERIES = 2;
 
 export class CoreDm3dFdm3dDataProvider implements Fdm3dDataProvider {
-  readonly _fdmSdk: FdmSDK;
+  private readonly _fdmSdk: FdmSDK;
 
-  readonly _relevant3dSpaces: DmsUniqueIdentifier[];
+  private readonly _revisionIdToDMSIdentifier = new Map<number, DmsUniqueIdentifier>();
+  private readonly _modelIdToDMSIdentifier = new Map<number, DmsUniqueIdentifier[]>();
 
-  readonly _revisionIdToDMSIdentifier = new Map<number, DmsUniqueIdentifier>();
-  readonly _modelIdToDMSIdentifier = new Map<number, DmsUniqueIdentifier[]>();
-
-  constructor(relevant3dSpaces: DmsUniqueIdentifier[], fdmSdk: FdmSDK) {
+  constructor(fdmSdk: FdmSDK) {
     this._fdmSdk = fdmSdk;
-    this._relevant3dSpaces = relevant3dSpaces;
   }
 
   is3dView(view: ViewItem): boolean {
@@ -135,7 +139,7 @@ export class CoreDm3dFdm3dDataProvider implements Fdm3dDataProvider {
   }
 
   async listMappedFdmNodes(
-    models: Array<AddModelOptions<DataSourceType>>,
+    models: Array<AddModelOptions<DataSourceType> | AddImage360CollectionDatamodelsOptions>,
     sourcesToSearch: Source[],
     instanceFilter: InstanceFilter | undefined,
     limit: number
@@ -152,7 +156,7 @@ export class CoreDm3dFdm3dDataProvider implements Fdm3dDataProvider {
   }
 
   async listAllMappedFdmNodes(
-    models: Array<AddModelOptions<DataSourceType>>,
+    models: Array<AddModelOptions<DataSourceType> | AddImage360CollectionDatamodelsOptions>,
     sourcesToSearch: Source[],
     instanceFilter: InstanceFilter | undefined
   ): Promise<NodeItem[]> {
@@ -163,7 +167,7 @@ export class CoreDm3dFdm3dDataProvider implements Fdm3dDataProvider {
 
   async filterNodesByMappedTo3d(
     nodes: InstancesWithView[],
-    models: Array<AddModelOptions<DataSourceType>>,
+    models: Array<AddModelOptions<DataSourceType> | AddImage360CollectionDatamodelsOptions>,
     spacesToSearch: string[]
   ): Promise<InstancesWithView[]> {
     const revisionRefs = await this.getRevisionRefs(models);
@@ -200,24 +204,32 @@ export class CoreDm3dFdm3dDataProvider implements Fdm3dDataProvider {
   }
 
   async getRevisionRefs(
-    models: Array<AddModelOptions<DataSourceType>>
+    models: Array<AddModelOptions<DataSourceType> | AddImage360CollectionDatamodelsOptions>
   ): Promise<DmsUniqueIdentifier[]> {
-    const isClassicModels = models.every((model) => isClassicIdentifier(model));
-    const isDMModels = models.every((model) => isDMIdentifier(model));
+    const [classicModels, dmsModels] = partition(models, isClassicIdentifier) as [
+      ClassicAdd3DModelOptions[],
+      Array<AddModelOptions<DMDataSourceType> | AddImage360CollectionDatamodelsOptions>
+    ];
 
-    if (isClassicModels) {
-      const modelRefs = await this.getDMSModelsForIds(models.map((model) => model.modelId));
-      return await this.getDMSRevisionsForRevisionIdsAndModelRefs(
-        modelRefs,
-        models.map((model) => model.revisionId)
-      );
-    } else if (isDMModels) {
-      return models.map((model) => ({
-        externalId: model.revisionExternalId,
-        space: model.revisionSpace
-      }));
-    }
+    const dmModelRefsFromClassicIds = await this.getDMSModelsForIds(
+      classicModels.map((model) => model.modelId)
+    );
+    const classicResults = await this.getDMSRevisionsForRevisionIdsAndModelRefs(
+      dmModelRefsFromClassicIds,
+      classicModels.map((model) => model.revisionId)
+    );
 
-    return EMPTY_ARRAY;
+    const dmResults = dmsModels.map((model) => {
+      if (isDM3DModelIdentifier(model)) {
+        return {
+          externalId: model.revisionExternalId,
+          space: model.revisionSpace
+        };
+      } else {
+        return { externalId: model.externalId, space: model.space };
+      }
+    });
+
+    return classicResults.concat(dmResults);
   }
 }

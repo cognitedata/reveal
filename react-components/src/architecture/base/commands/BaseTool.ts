@@ -16,12 +16,12 @@ import {
 } from '../domainObjectsHelpers/DomainObjectIntersection';
 import { type DomainObject } from '../domainObjects/DomainObject';
 import { type BaseCommand } from './BaseCommand';
-import { ActiveToolUpdater } from '../reactUpdaters/ActiveToolUpdater';
 import { PopupStyle } from '../domainObjectsHelpers/PopupStyle';
 import { ThreeView } from '../views/ThreeView';
 import { UndoManager } from '../undo/UndoManager';
 import { CommandChanges } from '../domainObjectsHelpers/CommandChanges';
 import { ContextMenuUpdater } from '../reactUpdaters/ContextMenuUpdater';
+import { getToolbar, type Toolbar } from './factory/ToolbarFactory';
 
 /**
  * Base class for interactions in the 3D viewer
@@ -63,10 +63,6 @@ export abstract class BaseTool extends RenderTargetCommand {
     return undefined;
   }
 
-  public getToolbar(): Array<BaseCommand | undefined> {
-    return []; // Override this to add extra buttons to a separate toolbar
-  }
-
   public getToolbarStyle(): PopupStyle {
     // Override this to place the toolbar
     // Default lower left corner
@@ -77,13 +73,11 @@ export abstract class BaseTool extends RenderTargetCommand {
     this.update(CommandChanges.active);
     this.setDefaultCursor();
     this.clearDragging();
-    ActiveToolUpdater.update();
   }
 
   public onDeactivate(): void {
     this.update(CommandChanges.deactive);
     this.clearDragging();
-    ActiveToolUpdater.update();
   }
 
   public clearDragging(): void {
@@ -218,6 +212,10 @@ export abstract class BaseTool extends RenderTargetCommand {
   // ==================================================
   // INSTANCE METHODS: Getters
   // ==================================================
+
+  public getToolbar(): Toolbar | undefined {
+    return getToolbar(this);
+  }
 
   protected getRaycaster(event: PointerEvent | WheelEvent): Raycaster {
     const { renderTarget } = this;

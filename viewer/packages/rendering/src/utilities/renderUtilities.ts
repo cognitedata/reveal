@@ -3,7 +3,7 @@
  */
 
 import * as THREE from 'three';
-import { createRenderTriangle, WebGLRendererStateHelper } from '@reveal/utilities';
+import { createRenderTriangle, WebGLRendererStateHelper, createUint8View } from '@reveal/utilities';
 import { CadMaterialManager } from '../CadMaterialManager';
 import { RenderMode } from '../rendering/RenderMode';
 import { CogniteColors, RevealColors, StyledTreeIndexSets } from './types';
@@ -159,13 +159,14 @@ function getEDLNeighbourPoints(neighbourCount: number): Float32Array {
 function createOutlineColorTexture(): THREE.DataTexture {
   const outlineColorBuffer = new Uint8Array(8 * 4);
   const outlineColorTexture = new THREE.DataTexture(outlineColorBuffer, 8, 1);
-  setOutlineColor(outlineColorTexture.image.data, NodeOutlineColor.Black, CogniteColors.Black);
-  setOutlineColor(outlineColorTexture.image.data, NodeOutlineColor.White, CogniteColors.White);
-  setOutlineColor(outlineColorTexture.image.data, NodeOutlineColor.Cyan, CogniteColors.Cyan);
-  setOutlineColor(outlineColorTexture.image.data, NodeOutlineColor.Blue, CogniteColors.Blue);
-  setOutlineColor(outlineColorTexture.image.data, NodeOutlineColor.Green, RevealColors.Green);
-  setOutlineColor(outlineColorTexture.image.data, NodeOutlineColor.Red, RevealColors.Red);
-  setOutlineColor(outlineColorTexture.image.data, NodeOutlineColor.Orange, CogniteColors.Orange);
+  const colorTextureView = createUint8View(outlineColorTexture.image.data);
+  setOutlineColor(colorTextureView, NodeOutlineColor.Black, CogniteColors.Black);
+  setOutlineColor(colorTextureView, NodeOutlineColor.White, CogniteColors.White);
+  setOutlineColor(colorTextureView, NodeOutlineColor.Cyan, CogniteColors.Cyan);
+  setOutlineColor(colorTextureView, NodeOutlineColor.Blue, CogniteColors.Blue);
+  setOutlineColor(colorTextureView, NodeOutlineColor.Green, RevealColors.Green);
+  setOutlineColor(colorTextureView, NodeOutlineColor.Red, RevealColors.Red);
+  setOutlineColor(colorTextureView, NodeOutlineColor.Orange, CogniteColors.Orange);
   outlineColorTexture.needsUpdate = true;
   return outlineColorTexture;
 }

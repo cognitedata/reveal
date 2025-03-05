@@ -13,6 +13,7 @@ import { type DomainObject } from '../domainObjects/DomainObject';
 import { Quantity } from './Quantity';
 import { round, roundIncrement } from '../utilities/extensions/mathExtensions';
 import { Changes } from './Changes';
+import { getRoot } from '../domainObjects/getRoot';
 
 /**
  * The `BaseDragger` class represents a utility for dragging and manipulating any object in 3D space.
@@ -53,7 +54,7 @@ export abstract class BaseDragger {
     this.point = props.point;
     this.ray = props.ray;
 
-    const root = domainObject.rootDomainObject;
+    const root = getRoot(domainObject);
     if (root !== undefined) {
       this._unitSystem = root.unitSystem;
     }

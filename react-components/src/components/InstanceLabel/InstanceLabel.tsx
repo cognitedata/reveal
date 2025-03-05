@@ -2,12 +2,12 @@
  * Copyright 2024 Cognite AS
  */
 import { type ReactElement, useMemo } from 'react';
-import { useAssetsByIdsQuery } from '../../query';
 import { EMPTY_ARRAY } from '../../utilities/constants';
-import { useDmInstancesByIds } from '../../query/useDmsInstanceByIdsQuery';
 import { COGNITE_DESCRIBABLE_SOURCE } from '../../data-providers/core-dm-provider/dataModels';
 import { HexagonIcon, Input, Tooltip } from '@cognite/cogs.js';
 import { type InstanceReference, isDmsInstance, isIdEither } from '../../utilities/instanceIds';
+import { useAssetsByIdsQuery } from '../../query/useAssetsByIdsQuery';
+import { useDmInstancesByIds } from '../../query/useDmsInstanceByIdsQuery';
 
 const nameableSources = [COGNITE_DESCRIBABLE_SOURCE];
 

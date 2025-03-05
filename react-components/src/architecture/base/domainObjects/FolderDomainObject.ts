@@ -15,6 +15,14 @@ export class FolderDomainObject extends DomainObject {
     return { untranslated: 'Folder' };
   }
 
+  public override get hasIconColor(): boolean {
+    return false;
+  }
+
+  public override get hasIndexOnLabel(): boolean {
+    return false;
+  }
+
   public override get icon(): IconName {
     return 'Folder';
   }

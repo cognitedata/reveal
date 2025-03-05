@@ -2,7 +2,7 @@
  * Copyright 2023 Cognite AS
  */
 import { type ReactElement, useEffect, useRef } from 'react';
-import { useReveal } from '../RevealCanvas/ViewerContext';
+import { useRenderTarget } from '../RevealCanvas/ViewerContext';
 import { type DataSourceType, type Image360Collection } from '@cognite/reveal';
 import { useRevealKeepAlive } from '../RevealKeepAlive/RevealKeepAliveContext';
 import { type AddImage360CollectionOptions } from '../Reveal3DResources/types';
@@ -20,6 +20,7 @@ import {
   useReveal3DResourcesCount
 } from '../Reveal3DResources/Reveal3DResourcesInfoContext';
 import { getViewerResourceCount } from '../../utilities/getViewerResourceCount';
+import { RevealModelsUtils } from '../../architecture/concrete/reveal/RevealModelsUtils';
 
 type Image360CollectionContainerProps = {
   addImage360CollectionOptions: AddImage360CollectionOptions;
@@ -36,7 +37,8 @@ export function Image360CollectionContainer({
 }: Image360CollectionContainerProps): ReactElement {
   const cachedViewerRef = useRevealKeepAlive();
   const modelRef = useRef<Image360Collection<DataSourceType>>();
-  const viewer = useReveal();
+  const renderTarget = useRenderTarget();
+  const viewer = renderTarget.viewer;
   const { setRevealResourcesCount } = useReveal3DResourcesCount();
   const { setReveal3DResourceLoadFailCount } = useReveal3DResourceLoadFailCount();
 
@@ -115,20 +117,10 @@ export function Image360CollectionContainer({
       if (collection !== undefined) {
         return collection;
       }
-
-      if (addImage360CollectionOptions.source === 'events') {
-        return await viewer.add360ImageSet(
-          'events',
-          { site_id: siteId },
-          { preMultipliedRotation: false }
-        );
-      } else {
-        return await viewer.add360ImageSet('datamodels', {
-          source: addImage360CollectionOptions.source,
-          image360CollectionExternalId: addImage360CollectionOptions.externalId,
-          space: addImage360CollectionOptions.space
-        });
-      }
+      return await RevealModelsUtils.addImage360Collection(
+        renderTarget,
+        addImage360CollectionOptions
+      );
     }
   }
 
@@ -138,7 +130,7 @@ export function Image360CollectionContainer({
     if (cachedViewerRef !== undefined && !cachedViewerRef.isRevealContainerMountedRef.current)
       return;
 
-    viewer.remove360ImageSet(modelRef.current);
+    RevealModelsUtils.remove(renderTarget, modelRef.current);
     setRevealResourcesCount(getViewerResourceCount(viewer));
     modelRef.current = undefined;
   }
