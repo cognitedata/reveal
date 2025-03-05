@@ -35,8 +35,8 @@ const sdk = new CogniteClient({
 export const Main: Story = {
   args: {
     addModelOptions: {
-      modelId: 1791160622840317,
-      revisionId: 498427137020189
+      modelId: 3807217268457110,
+      revisionId: 3228479948927774
     },
     transform: new Matrix4().makeTranslation(0, 10, 0)
   },

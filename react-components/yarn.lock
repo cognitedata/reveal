@@ -630,7 +630,7 @@ __metadata:
     "@types/react": "npm:^18.3.1"
     "@types/react-dom": "npm:^18.3.0"
     "@types/react-resizable": "npm:^3.0.7"
-    "@types/three": "npm:0.165.0"
+    "@types/three": "npm:^0.166.0"
     "@typescript-eslint/eslint-plugin": "npm:^7.8.0"
     "@vitejs/plugin-react": "npm:^4.2.1"
     "@vitest/coverage-v8": "npm:^3.0.6"
@@ -660,7 +660,7 @@ __metadata:
     storybook: "npm:^8.3.5"
     style-loader: "npm:^4.0.0"
     styled-components: "npm:^6.1.10"
-    three: "npm:0.165.0"
+    three: "npm:0.166.1"
     ts-loader: "npm:^9.5.1"
     typescript: "npm:^5.4.5"
     vite: "npm:^5.2.10"
@@ -2985,10 +2985,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@tweenjs/tween.js@npm:~23.1.1":
-  version: 23.1.2
-  resolution: "@tweenjs/tween.js@npm:23.1.2"
-  checksum: 10/ca7f62b1059917ebddf1e7e9d7361b87e945bfc21b3c840dd34b1ebfe7d90d87d0dd10ebfa88e2233fe4887cf260b9e1a45134573b599c905af45853b39ae0b8
+"@tweenjs/tween.js@npm:~23.1.2":
+  version: 23.1.3
+  resolution: "@tweenjs/tween.js@npm:23.1.3"
+  checksum: 10/10ecaf311c975162459bd016ef7eb1f3118a257050c4886de9737dee823fc829100a0887f3fc298f7a5577140eac054f9609b823eb0748ca7b653ec85ffba75e
   languageName: node
   linkType: hard
 
@@ -3215,16 +3215,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/three@npm:0.165.0":
-  version: 0.165.0
-  resolution: "@types/three@npm:0.165.0"
+"@types/three@npm:^0.166.0":
+  version: 0.166.0
+  resolution: "@types/three@npm:0.166.0"
   dependencies:
-    "@tweenjs/tween.js": "npm:~23.1.1"
+    "@tweenjs/tween.js": "npm:~23.1.2"
     "@types/stats.js": "npm:*"
     "@types/webxr": "npm:*"
     fflate: "npm:~0.8.2"
     meshoptimizer: "npm:~0.18.1"
-  checksum: 10/c9374ceed25ba6b26953ba935a937fa57f5de564c6afc61d528760246c0aeed939a74b8b973670d3e879f8df2936ff02fa6b81f412d22edfa1ba1085b8b3d2d8
+  checksum: 10/5e929d5870305fdb99420447006cf51119508c9f5a9d496a092dac6aaf0d1ef757bb04fd12f2585fab71699e8a25ceea5228f51befbe54c7c6dd0206c1631a06
   languageName: node
   linkType: hard
 
@@ -11175,10 +11175,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"three@npm:0.165.0":
-  version: 0.165.0
-  resolution: "three@npm:0.165.0"
-  checksum: 10/43e39b55fdacdf64f68cf305ca199dc94b2d00c301e0acefe611ead35ba85521f05725a7a71cf790d2dd39816f59cfeb0b00245c62037bc7cb5c383dba280364
+"three@npm:0.166.1":
+  version: 0.166.1
+  resolution: "three@npm:0.166.1"
+  checksum: 10/10f36702ab0f6b7f03a45f46437157a00ece42a1760d70b1c24db5e8d3f02b7b522a117377e7c8ad7ec504e2008a8776ccb4fa16512d455d431b66390f23a2ed
   languageName: node
   linkType: hard
 
