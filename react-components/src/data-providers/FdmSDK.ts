@@ -584,10 +584,7 @@ export class FdmSDK {
 
 function hoistInstanceProperties(
   source: Source,
-  instances: Array<
-    | EdgeItem<Record<string, Record<string, Record<string, unknown>>>>
-    | NodeItem<Record<string, Record<string, unknown>>>
-  >
+  instances: Array<EdgeItem<Record<string, unknown>> | NodeItem<Record<string, unknown>>>
 ): void {
   if (source === undefined) {
     return;
@@ -595,7 +592,10 @@ function hoistInstanceProperties(
   const propertyKey = `${source.externalId}/${source.version}`;
 
   instances.forEach((instance) => {
-    const deepProperties = instance.properties[source.space][propertyKey];
+    const deepProperties = (instance.properties?.[source.space] as Record<string, unknown>)?.[
+      propertyKey
+    ] as Record<string, unknown>;
+
     if (deepProperties !== undefined) {
       Object.entries(deepProperties).reduce(
         (
