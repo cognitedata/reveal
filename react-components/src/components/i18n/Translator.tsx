@@ -5,6 +5,7 @@
 import { type Translations } from './types';
 import { getLanguage } from './utils';
 import {
+  type TranslationInput,
   isTranslatedString,
   type TranslationInput,
   type TranslationKey
