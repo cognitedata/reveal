@@ -1,7 +1,7 @@
 import { Mock } from 'moq.ts';
 import {
   type CommandsController,
-  type RevealRenderTarget,
+  RevealRenderTarget,
   RootDomainObject
 } from '../../../src/architecture';
 import { type CdfCaches } from '../../../src/architecture/base/renderTarget/CdfCaches';
@@ -40,4 +40,8 @@ export function createRenderTargetMock(): RevealRenderTarget {
   const root = new RootDomainObject(mock.object(), sdkMock);
   mock.setup((p) => p.rootDomainObject).returns(root);
   return mock.object();
+}
+
+export function createRenderTargetMock2(): RevealRenderTarget {
+  return new RevealRenderTarget(viewerMock, sdkMock);
 }
