@@ -7,7 +7,6 @@ import { getLanguage } from './utils';
 import {
   type TranslationInput,
   isTranslatedString,
-  type TranslationInput,
   type TranslationKey
 } from '../../architecture/base/utilities/TranslateInput';
 
