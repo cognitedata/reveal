@@ -68,10 +68,10 @@ jobs:
         env:
           NPM_TOKEN: ${{ secrets.NPM_READONLY_TOKEN }}
 
-      - name: Check types
+      - name: Typecheck source code
         working-directory: react-components
         continue-on-error: false
-        run: yarn run tsc --noEmit
+        run: yarn run typecheck:source
         env:
           NPM_TOKEN: ${{ secrets.NPM_READONLY_TOKEN }}
 
@@ -88,6 +88,13 @@ jobs:
         run: yarn run build-storybook
         env:
           NPM_TOKEN: ${{ secrets.NPM_PUBLISH_TOKEN }}
+
+      - name: Typecheck test code
+        working-directory: react-components
+        continue-on-error: false
+        run: yarn run typecheck:test
+        env:
+          NPM_TOKEN: ${{ secrets.NPM_READONLY_TOKEN }}
 
       - name: Unit tests
         working-directory: react-components
