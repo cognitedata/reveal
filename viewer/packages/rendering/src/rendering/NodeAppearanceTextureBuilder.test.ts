@@ -9,7 +9,7 @@ import { NodeAppearanceTextureBuilder } from './NodeAppearanceTextureBuilder';
 
 import { TreeIndexNodeCollection, NodeAppearanceProvider } from '@reveal/cad-styling';
 
-import { IndexSet } from '@reveal/utilities';
+import { IndexSet, createUint8View } from '@reveal/utilities';
 
 import { Color } from 'three';
 
@@ -272,5 +272,5 @@ describe('NodeAppearanceTextureBuilder', () => {
 });
 
 function texelsOf(texture: THREE.DataTexture): number[] | undefined {
-  return Array.from(texture.image.data);
+  return Array.from(createUint8View(texture.image.data));
 }
