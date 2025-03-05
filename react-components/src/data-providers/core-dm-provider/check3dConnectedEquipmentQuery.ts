@@ -166,8 +166,9 @@ export function createCheck3dConnectedEquipmentQuery(
       initial_nodes_object_3ds: getObject3dRelation('initial_nodes'),
       initial_nodes_cad_nodes: getRevisionsCadNodeFromObject3D('initial_nodes_object_3ds'),
       initial_nodes_point_cloud_volumes: getRevisionsPointCloudVolumes('initial_nodes_object_3ds'),
-      initial_edges_360_image_annotations:
-        getRevisionImage360AnnotationEdges('initial_nodes_object3ds'),
+      initial_edges_360_image_annotations: getRevisionImage360AnnotationEdges(
+        'initial_nodes_object_3ds'
+      ),
       initial_nodes_360_images: getRevisionImage360Images(
         'initial_edges_360_image_annotations',
         revisionRefs
