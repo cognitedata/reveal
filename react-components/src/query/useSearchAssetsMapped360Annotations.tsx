@@ -27,7 +27,7 @@ import { createInstanceReferenceKey } from '../utilities/instanceIds/toKey';
 import { isIdEither } from '../utilities/instanceIds';
 import { isSameIdEither } from '../utilities/instanceIds/equality';
 import { matchAssetWithQuery } from '../utilities/instances/matchAssetWithQuery';
-import { isClassicImage360AssetAnnotationData } from '../utilities/annotations';
+import { isClassicImage360AssetAnnotationData } from '../utilities/image360Annotations';
 
 export const useAllAssetsMapped360Annotations = (
   sdk: CogniteClient,
@@ -133,12 +133,12 @@ async function get360AnnotationAssets(
     .map((annotation) => {
       const assetReference = (annotation as ImageAssetLinkAnnotationInfo).data.assetRef;
 
-      if (!isIdEither(assetReference as IdEither)) {
+      if (!isIdEither(assetReference)) {
         return undefined;
       }
 
       return {
-        assetReference: assetReference as IdEither,
+        assetReference,
         annotationId: annotation.id
       };
     })
