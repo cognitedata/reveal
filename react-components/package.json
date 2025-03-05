@@ -19,6 +19,8 @@
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build --test",
     "tsc": "tsc",
+    "typecheck:source": "tsc --noEmit --project tsconfig.build.json",
+    "typecheck:test": "tsc --noEmit --project tsconfig.test.json",
     "lint": "eslint . --cache",
     "test": "vitest run --dom",
     "test:coverage": "vitest run --dom --coverage",
