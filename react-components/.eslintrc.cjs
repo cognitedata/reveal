@@ -55,6 +55,14 @@ module.exports = {
           ]
         ]
       }
+    },
+    {
+      files: ['src/**/*.spec.ts', 'src/**/*.spec.tsx', 'src/**/*.test.ts', 'src/**/*.test.tsx', 'tests/tests-utilities/**/*.ts'],
+      rules: {
+        "@typescript-eslint/unbound-method": 'off',
+        '@typescript-eslint/no-non-null-assertion': 'off',
+        '@typescript-eslint/no-unsafe-argument': 'off',
+      }
     }
   ]
 };

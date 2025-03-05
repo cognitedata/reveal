@@ -13,7 +13,10 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { useRevealKeepAlive } from '../RevealKeepAlive/RevealKeepAliveContext';
 import { RevealRenderTarget } from '../../architecture/base/renderTarget/RevealRenderTarget';
 import { LoadedSceneProvider } from '../SceneContainer/LoadedSceneContext';
-import { type CameraStateParameters } from '../RevealCanvas/hooks/useCameraStateControl';
+import {
+  useCameraStateControl,
+  type CameraStateParameters
+} from '../RevealCanvas/hooks/useCameraStateControl';
 
 export type RevealContextProps = {
   color?: Color;
@@ -57,10 +60,12 @@ export const RevealContext = (props: RevealContextProps): ReactElement => {
       <QueryClientProvider client={queryClient}>
         <I18nContextProvider appLanguage={props.appLanguage}>
           <LoadedSceneProvider>
-            <ViewerContextProvider
-              cameraState={props.cameraState}
-              setCameraState={props.setCameraState}
-              value={renderTarget}>
+            <ViewerContextProvider value={renderTarget}>
+              <ViewerControls
+                cameraState={props.cameraState}
+                setCameraState={props.setCameraState}
+              />
+
               <Reveal3DResourcesInfoContextProvider>
                 {props.children}
               </Reveal3DResourcesInfoContextProvider>
@@ -70,6 +75,17 @@ export const RevealContext = (props: RevealContextProps): ReactElement => {
       </QueryClientProvider>
     </SDKProvider>
   );
+};
+
+const ViewerControls = ({
+  cameraState,
+  setCameraState
+}: {
+  cameraState?: CameraStateParameters;
+  setCameraState?: (cameraState?: CameraStateParameters) => void;
+}): ReactNode => {
+  useCameraStateControl(cameraState, setCameraState);
+  return null;
 };
 
 const useRevealFromKeepAlive = ({

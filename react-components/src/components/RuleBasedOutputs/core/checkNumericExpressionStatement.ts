@@ -4,7 +4,8 @@
 
 import { type FdmPropertyType } from '../../Reveal3DResources/types';
 import { type NumericExpression, type TriggerTypeData } from '../types';
-import { getFdmPropertyTrigger, getTriggerNumericData } from '../utils';
+import { getFdmPropertyTrigger } from './getFdmPropertyTrigger';
+import { getTriggerNumericData } from './getTriggerNumericData';
 
 export const checkNumericExpressionStatement = (
   triggerTypeData: TriggerTypeData[],

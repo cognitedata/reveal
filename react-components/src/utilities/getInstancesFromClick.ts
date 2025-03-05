@@ -13,11 +13,11 @@ import { type CdfCaches } from '../architecture/base/renderTarget/CdfCaches';
 import { fetchAncestorNodesForTreeIndex } from '../components/CacheProvider/requests';
 import { EMPTY_ARRAY } from './constants';
 import { fetchAnnotationsForModel } from '../hooks/pointClouds/fetchAnnotationsForModel';
-import { isDMIdentifier } from '../components';
 import { type RevealRenderTarget } from '../architecture';
 import { getInstanceReferenceFromImage360Annotation } from '../components/CacheProvider/utils';
 import { type InstanceReference, isIdEither } from './instanceIds';
 import { type IdEither } from '@cognite/sdk';
+import { isDMIdentifier } from '../components/Reveal3DResources/typeGuards';
 
 export async function getInstancesFromClick(
   renderTarget: RevealRenderTarget,

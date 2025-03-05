@@ -2,20 +2,14 @@
  * Copyright 2024 Cognite AS
  */
 
-import { type Dispatch, type SetStateAction, useCallback, type ReactElement } from 'react';
-import { useTranslation } from '../../i18n/I18n';
-import { type UpdateModelHandlersCallback, useModelHandlers } from './useModelHandlers';
-import { useSyncExternalLayersState } from './useSyncExternalLayersState';
+import { type Dispatch, type SetStateAction, type ReactElement } from 'react';
 import { SelectPanel } from '@cognite/cogs-lab';
-import { Button, ChevronRightSmallIcon, IconWrapper, LayersIcon, Tooltip } from '@cognite/cogs.js';
-import { type ModelHandler } from './ModelHandler';
-import { useRenderTarget, useReveal } from '../../RevealCanvas/ViewerContext';
-import { WholeLayerVisibilitySelectItem } from './WholeLayerVisibilitySelectItem';
-import { ModelLayersList } from './ModelLayersList';
-import { type DefaultLayersConfiguration, type LayersUrlStateParam } from './types';
+import { Button, LayersIcon, Tooltip } from '@cognite/cogs.js';
+import { useTranslation } from '../../i18n/I18n';
 import { TOOLBAR_HORIZONTAL_PANEL_OFFSET } from '../../constants';
-import { CommandsUpdater } from '../../../architecture/base/reactUpdaters/CommandsUpdater';
 import { LabelWithShortcut } from '../../Architecture/LabelWithShortcut';
+import { useLayersButtonViewModel } from './LayersButton.viewmodel';
+import { type LayersUrlStateParam, type DefaultLayersConfiguration } from './types';
 
 export type LayersButtonProps = {
   layersState?: LayersUrlStateParam | undefined;
@@ -29,25 +23,11 @@ export const LayersButton = ({
   defaultLayerConfiguration
 }: LayersButtonProps): ReactElement => {
   const { t } = useTranslation();
-  const viewer = useReveal();
-  const renderTarget = useRenderTarget();
-
-  const [modelLayerHandlers, update] = useModelHandlers(
+  const { modelLayerHandlers, updateCallback, ModelLayerSelection } = useLayersButtonViewModel(
     setExternalLayersState,
-    defaultLayerConfiguration
+    defaultLayerConfiguration,
+    externalLayersState
   );
-
-  useSyncExternalLayersState(
-    modelLayerHandlers,
-    externalLayersState,
-    setExternalLayersState,
-    update
-  );
-
-  const updateCallback = useCallback(() => {
-    update(viewer.models, viewer.get360ImageCollections());
-    CommandsUpdater.update(renderTarget);
-  }, [update]);
 
   return (
     <>
@@ -60,7 +40,11 @@ export const LayersButton = ({
           <Tooltip
             content={<LabelWithShortcut label={t({ key: 'LAYERS_FILTER_TOOLTIP' })} />}
             placement="right">
-            <Button icon=<LayersIcon /> type="ghost" />
+            <Button
+              icon={<LayersIcon />}
+              type="ghost"
+              aria-label={t({ key: 'LAYERS_FILTER_TOOLTIP' })}
+            />
           </Tooltip>
         </SelectPanel.Trigger>
         <SelectPanel.Body>
@@ -84,51 +68,5 @@ export const LayersButton = ({
         </SelectPanel.Body>
       </SelectPanel>
     </>
-  );
-};
-
-const ModelLayerSelection = ({
-  label,
-  modelLayerHandlers,
-  update
-}: {
-  label: string;
-  modelLayerHandlers: ModelHandler[];
-  update: UpdateModelHandlersCallback;
-}): ReactElement => {
-  const isDisabled = modelLayerHandlers.length === 0;
-
-  const viewer = useReveal();
-  const updateCallback = useCallback(() => {
-    update(viewer.models, viewer.get360ImageCollections());
-  }, [update]);
-
-  return (
-    <SelectPanel
-      placement="right"
-      appendTo={'parent'}
-      hideOnOutsideClick={true}
-      openOnHover={!isDisabled}>
-      <SelectPanel.Trigger>
-        <WholeLayerVisibilitySelectItem
-          label={label}
-          modelLayerHandlers={modelLayerHandlers}
-          update={updateCallback}
-          trailingContent={
-            <IconWrapper size={16}>
-              <ChevronRightSmallIcon />
-            </IconWrapper>
-          }
-          disabled={isDisabled}
-        />
-      </SelectPanel.Trigger>
-      <SelectPanel.Body>
-        <ModelLayersList
-          modelLayerHandlers={modelLayerHandlers}
-          update={updateCallback}
-          disabled={isDisabled}
-        />
-      </SelectPanel.Body>
-    </SelectPanel>
   );
 };
