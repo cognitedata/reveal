@@ -15,6 +15,8 @@ export function createPointCloudMock(): CognitePointCloudModel {
     .returns(pointCloudModelOptions.revisionId)
     .setup((p) => p.getModelTransformation())
     .returns(new Matrix4())
+    .setup((p) => p.visible)
+    .returns(true)
     .prototypeof(CognitePointCloudModel.prototype)
     .object();
 }

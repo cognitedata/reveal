@@ -1,12 +1,11 @@
 /*!
  * Copyright 2024 Cognite AS
  */
-import { useReveal } from '../../RevealCanvas';
+import { useReveal } from '../../../RevealCanvas';
 import { type Dispatch, type SetStateAction, useEffect, useRef } from 'react';
-import { type LayersUrlStateParam } from './types';
-import { updateExternalStateFromLayerHandlers } from './updateExternalStateFromLayerHandlers';
-import { updateViewerFromExternalState } from './updateViewerFromExternalState';
-import { type ModelLayerHandlers } from './LayersButtonsStrip';
+import { type LayersUrlStateParam, type ModelLayerHandlers } from '../types';
+import { updateExternalStateFromLayerHandlers } from '../updateExternalStateFromLayerHandlers';
+import { updateViewerFromExternalState } from '../updateViewerFromExternalState';
 import { type UpdateModelHandlersCallback } from './useModelHandlers';
 
 export const useSyncExternalLayersState = (
