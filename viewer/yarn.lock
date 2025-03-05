@@ -451,7 +451,7 @@ __metadata:
   resolution: "@cognite/reveal@workspace:."
   dependencies:
     "@azure/msal-browser": "npm:^3.13.0"
-    "@cognite/sdk": "npm:^10.0.0"
+    "@cognite/sdk": "npm:10.0.0"
     "@microsoft/api-extractor": "npm:^7.43.1"
     "@rajesh896/broprint.js": "npm:^2.1.1"
     "@tweenjs/tween.js": "npm:^25.0.0"
@@ -543,7 +543,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@cognite/sdk@npm:^10.0.0":
+"@cognite/sdk@npm:10.0.0":
   version: 10.0.0
   resolution: "@cognite/sdk@npm:10.0.0"
   dependencies:
