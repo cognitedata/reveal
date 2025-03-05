@@ -592,7 +592,9 @@ function hoistInstanceProperties(
   const propertyKey = `${source.externalId}/${source.version}`;
   instances.forEach((instance) => {
     if (instance.properties[source.space][propertyKey] !== undefined) {
-      instance.properties = instance.properties[source.space][propertyKey];
+      Object.entries(instance.properties[source.space][propertyKey]).forEach(
+        ([propName, propValue]) => (instance.properties[propName] = propValue)
+      );
     }
   });
 }
