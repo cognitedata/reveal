@@ -13,7 +13,7 @@ import {
   type IconProps,
   PlaceholderIcon,
   SnowIcon
-} from '@cognite/cogs-icons';
+} from '@cognite/cogs.js';
 
 import {
   onMultiSelectNode,
