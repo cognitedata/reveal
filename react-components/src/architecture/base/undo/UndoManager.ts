@@ -12,11 +12,13 @@ export class UndoManager {
   // INSTANCE METHODS
   // =================================================
 
-  public addTransaction(transaction: Transaction | undefined): void {
+  public addTransaction(transaction: Transaction | undefined): boolean {
     if (transaction === undefined) {
-      return;
+      return false;
     }
+    const couldUndo = this.canUndo;
     this._transactions.push(transaction);
+    return couldUndo !== this.canUndo;
   }
 
   public undo(renderTarget: RevealRenderTarget): boolean {
