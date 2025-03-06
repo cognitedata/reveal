@@ -10,7 +10,7 @@ export default defineConfig(({ command }) => {
   return {
     plugins: [
       react(),
-      dts({ include: ['src'] }),
+      dts({ tsconfigPath: './tsconfig.build.json' }),
       externalizeDeps({
         devDeps: true
       }),
