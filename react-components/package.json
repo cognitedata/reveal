@@ -49,7 +49,7 @@
     "@cognite/cdf-i18n-utils": "^0.7.5",
     "@cognite/cdf-utilities": "^3.6.0",
     "@cognite/cogs-lab": "^9.0.0-alpha.153",
-    "@cognite/reveal": "^4.23.2",
+    "@cognite/reveal": "4.24.0",
     "@cognite/sdk": "^10.0.0",
     "@cognite/signals": "^0.0.4",
     "@playwright/test": "1.49.0",
