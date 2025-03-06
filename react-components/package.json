@@ -37,7 +37,7 @@
     "@cognite/signals": "^0.0.4",
     "react": ">=18",
     "react-dom": ">=18",
-    "styled-components": ">=5"
+    "styled-components": "^6.1.12"
   },
   "dependencies": {
     "@cognite/cogs-lab": "^9.0.0-alpha.153",
@@ -96,7 +96,7 @@
     "react-router-dom": "^6.23.0",
     "storybook": "^8.3.5",
     "style-loader": "^4.0.0",
-    "styled-components": "^6.1.10",
+    "styled-components": "^6.1.12",
     "three": "0.166.1",
     "ts-loader": "^9.5.1",
     "typescript": "^5.4.5",
