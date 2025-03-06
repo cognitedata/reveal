@@ -669,6 +669,7 @@ __metadata:
   peerDependencies:
     "@cognite/cogs-lab": ^9.0.0-alpha.153
     "@cognite/reveal": 4.23.2
+    "@cognite/signals": ^0.0.4
     react: ">=18"
     react-dom: ">=18"
     styled-components: ">=5"
