@@ -39,7 +39,6 @@ import {
 } from '../../../advanced-tree-view';
 import { translate } from '../../../components/i18n/Translator';
 import { getRenderTarget } from './getRoot';
-import { DomainObjectTransaction } from '../undo/DomainObjectTransaction';
 
 /**
  * Represents an abstract base class for domain objects.
@@ -427,8 +426,8 @@ export abstract class DomainObject implements TreeNodeType {
    * @param changed - A symbol representing the changes made to the domain object.
    * @returns A Transaction object if the transaction was created successfully, otherwise undefined.
    */
-  public createTransaction(changed: symbol): Transaction {
-    return new DomainObjectTransaction(this, changed);
+  public createTransaction(_changed: symbol): Transaction | undefined {
+    return undefined;
   }
 
   /**

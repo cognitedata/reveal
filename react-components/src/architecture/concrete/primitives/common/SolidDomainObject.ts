@@ -10,6 +10,8 @@ import { type PrimitiveType } from '../../../base/utilities/primitives/Primitive
 import { VisualDomainObject } from '../../../base/domainObjects/VisualDomainObject';
 import { getIconByPrimitiveType } from '../../../base/utilities/primitives/getIconByPrimitiveType';
 import { type IconName } from '../../../base/utilities/IconName';
+import { DomainObjectTransaction } from '../../../base/undo/DomainObjectTransaction';
+import { type Transaction } from '../../../base/undo/Transaction';
 
 export abstract class SolidDomainObject extends VisualDomainObject {
   // For focus when edit in 3D (Used when isSelected is true only)
@@ -39,6 +41,10 @@ export abstract class SolidDomainObject extends VisualDomainObject {
 
   public override get icon(): IconName {
     return getIconByPrimitiveType(this.primitiveType);
+  }
+
+  public override createTransaction(changed: symbol): Transaction {
+    return new DomainObjectTransaction(this, changed);
   }
 
   // ==================================================

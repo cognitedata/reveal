@@ -20,6 +20,8 @@ import { type TranslationInput } from '../../../base/utilities/TranslateInput';
 import { clear } from '../../../base/utilities/extensions/arrayExtensions';
 import { type IconName } from '../../../base/utilities/IconName';
 import { Vector3ArrayUtils } from '../../../base/utilities/primitives/PointsUtils';
+import { DomainObjectTransaction } from '../../../base/undo/DomainObjectTransaction';
+import { type Transaction } from '../../../base/undo/Transaction';
 
 export abstract class LineDomainObject extends VisualDomainObject {
   // ==================================================
@@ -151,6 +153,10 @@ export abstract class LineDomainObject extends VisualDomainObject {
     ): void {
       info.add({ translationInput, value, quantity });
     }
+  }
+
+  public override createTransaction(changed: symbol): Transaction {
+    return new DomainObjectTransaction(this, changed);
   }
 
   public override copyFrom(domainObject: LineDomainObject, what?: symbol): void {

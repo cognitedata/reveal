@@ -19,6 +19,8 @@ import { type DomainObject } from '../../base/domainObjects/DomainObject';
 import { Changes } from '../../base/domainObjectsHelpers/Changes';
 import { type IconName } from '../../base/utilities/IconName';
 import { type RevealRenderTarget } from '../../base/renderTarget/RevealRenderTarget';
+import { type Transaction } from '../../base/undo/Transaction';
+import { DomainObjectTransaction } from '../../base/undo/DomainObjectTransaction';
 
 export class ExampleDomainObject extends VisualDomainObject {
   // ==================================================
@@ -77,6 +79,10 @@ export class ExampleDomainObject extends VisualDomainObject {
 
   public override getPanelInfoStyle(): PopupStyle {
     return new PopupStyle({ bottom: 50, left: 0 });
+  }
+
+  public override createTransaction(changed: symbol): Transaction {
+    return new DomainObjectTransaction(this, changed);
   }
 
   public override clone(what?: symbol): DomainObject {
