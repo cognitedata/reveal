@@ -18,8 +18,6 @@ import { VisualDomainObject } from '../../../base/domainObjects/VisualDomainObje
 import { getIconByPrimitiveType } from '../../../base/utilities/primitives/getIconByPrimitiveType';
 import { type TranslationInput } from '../../../base/utilities/TranslateInput';
 import { clear } from '../../../base/utilities/extensions/arrayExtensions';
-import { type Transaction } from '../../../base/undo/Transaction';
-import { DomainObjectTransaction } from '../../../base/undo/DomainObjectTransaction';
 import { type IconName } from '../../../base/utilities/IconName';
 import { Vector3ArrayUtils } from '../../../base/utilities/primitives/PointsUtils';
 
@@ -153,10 +151,6 @@ export abstract class LineDomainObject extends VisualDomainObject {
     ): void {
       info.add({ translationInput, value, quantity });
     }
-  }
-
-  public override createTransaction(changed: symbol): Transaction {
-    return new DomainObjectTransaction(this, changed);
   }
 
   public override copyFrom(domainObject: LineDomainObject, what?: symbol): void {

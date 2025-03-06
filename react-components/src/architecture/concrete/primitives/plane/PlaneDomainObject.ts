@@ -24,8 +24,6 @@ import { PanelInfo } from '../../../base/domainObjectsHelpers/PanelInfo';
 import { Quantity } from '../../../base/domainObjectsHelpers/Quantity';
 import { radToDeg } from 'three/src/math/MathUtils.js';
 import { type DomainObjectChange } from '../../../base/domainObjectsHelpers/DomainObjectChange';
-import { DomainObjectTransaction } from '../../../base/undo/DomainObjectTransaction';
-import { type Transaction } from '../../../base/undo/Transaction';
 import { type IconName } from '../../../base/utilities/IconName';
 import { SolidPrimitiveRenderStyle } from '../common/SolidPrimitiveRenderStyle';
 import { type RevealRenderTarget } from '../../../base/renderTarget/RevealRenderTarget';
@@ -144,10 +142,6 @@ export abstract class PlaneDomainObject extends VisualDomainObject {
     if (change.isChanged(Changes.added)) {
       this.makeFlippingConsistent();
     }
-  }
-
-  public override createTransaction(changed: symbol): Transaction {
-    return new DomainObjectTransaction(this, changed);
   }
 
   public override copyFrom(domainObject: PlaneDomainObject, what?: symbol): void {

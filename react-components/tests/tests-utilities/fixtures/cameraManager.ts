@@ -1,6 +1,7 @@
 import { type CameraManager, type CameraManagerEventType, type CameraState } from '@cognite/reveal';
 import { remove } from 'lodash';
 import { Mock } from 'moq.ts';
+import { PerspectiveCamera } from 'three';
 
 import { vi, type Mock as viMock } from 'vitest';
 
@@ -36,6 +37,8 @@ export const cameraManagerMock = new Mock<CameraManager>()
   })
   .setup((p) => p.getCameraState())
   .returns(cameraManagerGlobalCurrentCameraState as Required<CameraState>)
+  .setup((p) => p.getCamera)
+  .returns(() => new PerspectiveCamera())
   .setup((p) => p.fitCameraToBoundingBox)
   .returns(fitCameraToBoundingBoxMock)
   .object();
