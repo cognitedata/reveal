@@ -1,7 +1,7 @@
 import { Mock } from 'moq.ts';
 import {
   type CommandsController,
-  RevealRenderTarget,
+  type RevealRenderTarget,
   RootDomainObject
 } from '../../../src/architecture';
 import { type CdfCaches } from '../../../src/architecture/base/renderTarget/CdfCaches';
