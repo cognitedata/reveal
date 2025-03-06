@@ -27,6 +27,7 @@ describe('BoxDomainObject', () => {
       expect(domainObject.icon?.length).greaterThan(0);
       expect(isEmpty(domainObject.typeName)).toBe(false);
       expect(domainObject.renderStyle).instanceOf(SolidPrimitiveRenderStyle);
+      expect(domainObject.createTransaction(Changes.geometry)).instanceOf(DomainObjectTransaction);
     }
   });
 
