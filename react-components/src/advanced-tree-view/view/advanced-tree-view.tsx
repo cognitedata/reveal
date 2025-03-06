@@ -3,7 +3,7 @@
  */
 import { useState, type ReactElement } from 'react';
 
-import { Loader } from '@cognite/cogs-core';
+import { Loader } from '@cognite/cogs.js';
 
 import { getChildrenAsArray } from '../model/get-children-as-array';
 
