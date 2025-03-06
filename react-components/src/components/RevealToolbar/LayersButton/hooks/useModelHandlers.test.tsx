@@ -13,11 +13,12 @@ import { type CogniteModel } from '@cognite/reveal';
 import { cadMock, createCadMock } from '../../../../../tests/tests-utilities/fixtures/cadModel';
 import { createImage360ClassicMock } from '../../../../../tests/tests-utilities/fixtures/image360';
 import { wrapper } from '../../../../../tests/tests-utilities/fixtures/wrapper';
-import { LayersUrlStateParam } from '../types';
-import { Dispatch, SetStateAction } from 'react';
+import { type LayersUrlStateParam } from '../types';
+import { type Dispatch, type SetStateAction } from 'react';
 import { createPointCloudMock } from '../../../../../tests/tests-utilities/fixtures/pointCloud';
-import { use3DModelName } from '../../../../query';
-import { UseQueryResult } from '@tanstack/react-query';
+import { type use3DModelName } from '../../../../query';
+import { type UseQueryResult } from '@tanstack/react-query';
+import { Mock } from 'moq.ts';
 
 const mocks = vi.hoisted(() => ({
   use3DModelName: vi.fn<typeof use3DModelName>()
@@ -33,10 +34,14 @@ describe(useModelHandlers.name, () => {
   });
 
   test('returns model handlers and update callback', () => {
-    const nameReturnValue = ['model0', 'model1'];
-    mocks.use3DModelName.mockReturnValue({ data: nameReturnValue } as UseQueryResult<
-      Array<string | undefined>
-    >);
+    const nameReturnValue: UseQueryResult<Array<string | undefined>> = new Mock<
+      UseQueryResult<Array<string | undefined>>
+    >()
+      .setup((p) => p.data)
+      .returns(['model0', 'model1'])
+      .object();
+
+    mocks.use3DModelName.mockReturnValue(nameReturnValue);
 
     const mockModels: CogniteModel[] = [cadMock, cadMock];
     viewerModelsMock.mockReturnValue(mockModels);
@@ -55,10 +60,14 @@ describe(useModelHandlers.name, () => {
   });
 
   test('calling update updates external layer state', () => {
-    const nameReturnValue = ['model0', 'model1', 'model2', 'model3'];
-    mocks.use3DModelName.mockReturnValue({ data: nameReturnValue } as UseQueryResult<
-      Array<string | undefined>
-    >);
+    const nameReturnValue: UseQueryResult<Array<string | undefined>> = new Mock<
+      UseQueryResult<Array<string | undefined>>
+    >()
+      .setup((p) => p.data)
+      .returns(['model0', 'model1', 'model2', 'model3'])
+      .object();
+
+    mocks.use3DModelName.mockReturnValue(nameReturnValue);
 
     const cadMock0 = createCadMock({ visible: true });
     const cadMock1 = createCadMock({ visible: false });

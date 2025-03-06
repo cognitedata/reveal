@@ -1,12 +1,12 @@
-import { beforeEach, describe, expect, Mock, test, vi } from 'vitest';
+import { beforeEach, describe, expect, type Mock, test, vi } from 'vitest';
 import { updateExternalStateFromLayerHandlers } from './updateExternalStateFromLayerHandlers';
 import {
   createCadHandlerMock,
   createImage360HandlerMock,
   createPointCloudHandlerMock
 } from '../../../../tests/tests-utilities/fixtures/modelHandler';
-import { LayersUrlStateParam } from './types';
-import { Dispatch, SetStateAction } from 'react';
+import { type LayersUrlStateParam } from './types';
+import { type Dispatch, type SetStateAction } from 'react';
 
 describe(updateExternalStateFromLayerHandlers.name, () => {
   let setLayerStateMock: Mock<Dispatch<SetStateAction<LayersUrlStateParam | undefined>>>;
