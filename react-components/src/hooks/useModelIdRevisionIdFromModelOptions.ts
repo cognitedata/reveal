@@ -11,10 +11,15 @@ import {
   type DataSourceType
 } from '@cognite/reveal';
 import { useFdmSdk } from '../components/RevealCanvas/SDKProvider';
+
+import {
+  isClassicIdentifier,
+  isDM3DModelIdentifier
+} from '../components/Reveal3DResources/typeGuards';
+
 import { type FdmSDK } from '../data-providers/FdmSDK';
 import { EMPTY_ARRAY } from '../utilities/constants';
 import { getModelKeys } from '../utilities/getModelKeys';
-import { isClassicIdentifier, isDMIdentifier } from '../components/Reveal3DResources/typeGuards';
 
 export const useModelIdRevisionIdFromModelOptions = (
   addModelOptionsArray: Array<AddModelOptions<DataSourceType>> | undefined
@@ -41,7 +46,7 @@ const createQueryConfig = (
     };
   }
 
-  if (isDMIdentifier(addModelOptions)) {
+  if (isDM3DModelIdentifier(addModelOptions)) {
     return {
       queryKey: [queryKeys.modelRevisionId(modelKeys)],
       queryFn: async () => {

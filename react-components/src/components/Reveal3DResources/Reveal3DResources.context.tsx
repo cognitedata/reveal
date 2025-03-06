@@ -18,7 +18,7 @@ import { useCallCallbackOnFinishedLoading } from './hooks/useCallCallbackOnFinis
 import { useSetExpectedLoadCount } from './hooks/useSetExpectedLoadCount';
 import { useCalculateImage360Styling } from './hooks/useCalculateImage360Styling';
 import { CadModelContainer } from '../CadModelContainer';
-import { PointCloudContainer } from '../PointCloudContainer';
+import { PointCloudContainer } from '../PointCloudContainer/PointCloudContainer';
 import { Image360CollectionContainer } from '../Image360CollectionContainer';
 
 export type Reveal3DResourcesDependencies = {

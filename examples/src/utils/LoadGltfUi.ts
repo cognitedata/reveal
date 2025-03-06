@@ -29,7 +29,7 @@ export class LoadGltfUi {
       .name('Show gizmos?')
       .onChange(value => {
         this._gizmos.forEach(gizmo => {
-          gizmo.visible = value;
+          gizmo.getHelper().visible = value;
         });
         this._viewer.requestRedraw();
       });
@@ -92,9 +92,9 @@ export class LoadGltfUi {
 
   private attachTransformControls(object: THREE.Object3D): void {
     const gizmo = new TransformControls(this._viewer.cameraManager.getCamera(), this._viewer.canvas);
-    gizmo.visible = this._params.transformGizmosVisible;
+    gizmo.getHelper().visible = this._params.transformGizmosVisible;
     gizmo.attach(object);
-    this._viewer.addObject3D(gizmo);
+    this._viewer.addObject3D(gizmo.getHelper());
     this._gizmos.push(gizmo);
 
     gizmo.addEventListener('change', () => {

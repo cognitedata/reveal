@@ -7,7 +7,7 @@ import styled from 'styled-components';
 
 import { type Meta, type StoryObj } from '@storybook/react';
 
-import { Button } from '@cognite/cogs-core';
+import { Button } from '@cognite/cogs.js';
 
 import {
   AdvancedTreeView,
