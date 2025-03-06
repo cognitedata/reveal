@@ -33,14 +33,14 @@
     "sort-keys": "cdf-i18n-utils-cli sort-local-keys --namespace reveal-react-components --path ./src/common/i18n"
   },
   "peerDependencies": {
-    "@cognite/cogs-lab": "^9.0.0-alpha.153",
     "@cognite/reveal": "4.23.2",
     "@cognite/signals": "^0.0.4",
     "react": ">=18",
     "react-dom": ">=18",
-    "styled-components": ">=5"
+    "styled-components": "^6.1.12"
   },
   "dependencies": {
+    "@cognite/cogs-lab": "^9.0.0-alpha.153",
     "@cognite/cogs.js": "^10.36.0",
     "@floating-ui/dom": "^1.0.0",
     "@tanstack/react-query": "^5.32.0",
@@ -52,7 +52,6 @@
   "devDependencies": {
     "@cognite/cdf-i18n-utils": "^0.7.5",
     "@cognite/cdf-utilities": "^3.6.0",
-    "@cognite/cogs-lab": "^9.0.0-alpha.153",
     "@cognite/reveal": "^4.23.2",
     "@cognite/sdk": "^9.13.0",
     "@cognite/signals": "^0.0.4",
@@ -97,7 +96,7 @@
     "react-router-dom": "^6.23.0",
     "storybook": "^8.3.5",
     "style-loader": "^4.0.0",
-    "styled-components": "^6.1.10",
+    "styled-components": "^6.1.12",
     "three": "0.166.1",
     "ts-loader": "^9.5.1",
     "typescript": "^5.4.5",
@@ -109,8 +108,5 @@
   "packageManager": "yarn@4.5.2",
   "files": [
     "dist"
-  ],
-  "resolutions": {
-    "@mui/base": "5.0.0-beta.62"
-  }
+  ]
 }
