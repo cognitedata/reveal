@@ -3,7 +3,7 @@
  */
 import { type ReactElement, useState } from 'react';
 
-import { CaretDownIcon, CaretRightIcon } from '@cognite/cogs-icons';
+import { CaretDownIcon, CaretRightIcon } from '@cognite/cogs.js';
 
 import { type TreeNodeType } from '../../model/tree-node-type';
 import { type TreeNodeAction } from '../../model/types';
