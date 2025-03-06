@@ -27,10 +27,10 @@ export function getIconByPrimitiveType(primitiveType: PrimitiveType): IconName {
       return 'Perspective';
     case PrimitiveType.Box:
       return 'Cube';
-    case PrimitiveType.Cylinder:
-      return 'CylinderArbitrary';
     case PrimitiveType.HorizontalCircle:
       return 'Circle';
+    case PrimitiveType.Cylinder:
+      return 'CylinderArbitrary';
     case PrimitiveType.VerticalCylinder:
       return 'CylinderVertical';
     case PrimitiveType.HorizontalCylinder:
