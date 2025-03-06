@@ -82,12 +82,6 @@ export class RevealRenderTarget {
     options?: RevealRenderTargetOptions
   ) {
     this._viewer = viewer;
-
-    const cameraManager = this.cameraManager;
-    if (!isFlexibleCameraManager(cameraManager)) {
-      throw new Error('Can not use RevealRenderTarget without the FlexibleCameraManager');
-    }
-
     const coreDmOnly = options?.coreDmOnly ?? false;
     this._cdfCaches = new CdfCaches(sdk, viewer, { coreDmOnly });
     this._commandsController = new CommandsController(this.domElement);

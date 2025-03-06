@@ -87,6 +87,7 @@ export { createUint8View } from './src/createUint8View';
 export * from './src/workers/workerize-transferable';
 
 export * from './src/fdm';
+export * from './src/assetMappings';
 
 export * from './src/shapes';
 export * from './src/linalg';
