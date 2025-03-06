@@ -44,14 +44,12 @@ export const useModelHandlers = (
     () => viewer.get360ImageCollections(),
     [viewer, viewer.get360ImageCollections().length]
   );
-
   const modelIds = useMemo(() => models.map((model) => model.modelId), [models]);
   const modelNames = use3DModelName(modelIds);
 
   const [modelHandlers, setModelHandlers] = useState(
     createHandlers(models, modelNames.data, image360Collections, viewer)
   );
-
   useEffect(() => {
     const newHandlers = createHandlers(models, modelNames.data, image360Collections, viewer);
     setDefaultConfigOnNewHandlers(newHandlers, modelHandlers, defaultLayersConfig);
@@ -68,6 +66,7 @@ export const useModelHandlers = (
       const newExternalState = createExternalStateFromLayers(newModelHandlers);
 
       setExternalLayersState?.(newExternalState);
+
       viewer.requestRedraw();
     },
     [setExternalLayersState, models, modelNames.data, viewer]
