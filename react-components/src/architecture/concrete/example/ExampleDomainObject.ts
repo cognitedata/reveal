@@ -15,12 +15,12 @@ import { type BaseDragger } from '../../base/domainObjectsHelpers/BaseDragger';
 import { ExampleDragger } from './ExampleDragger';
 import { Quantity } from '../../base/domainObjectsHelpers/Quantity';
 import { type TranslationInput } from '../../base/utilities/TranslateInput';
-import { type Transaction } from '../../base/undo/Transaction';
 import { type DomainObject } from '../../base/domainObjects/DomainObject';
 import { Changes } from '../../base/domainObjectsHelpers/Changes';
-import { DomainObjectTransaction } from '../../base/undo/DomainObjectTransaction';
 import { type IconName } from '../../base/utilities/IconName';
 import { type RevealRenderTarget } from '../../base/renderTarget/RevealRenderTarget';
+import { type Transaction } from '../../base/undo/Transaction';
+import { DomainObjectTransaction } from '../../base/undo/DomainObjectTransaction';
 
 export class ExampleDomainObject extends VisualDomainObject {
   // ==================================================
