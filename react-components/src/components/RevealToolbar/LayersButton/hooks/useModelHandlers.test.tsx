@@ -28,14 +28,8 @@ describe(useModelHandlers.name, () => {
   });
 
   test('returns model handlers and update callback', () => {
-    const nameReturnValue: UseQueryResult<Array<string | undefined>> = new Mock<
-      UseQueryResult<Array<string | undefined>>
-    >()
-      .setup((p) => p.data)
-      .returns(['model0', 'model1'])
-      .object();
-
-    use3DModelNameMock.mockReturnValue(nameReturnValue);
+    const mockNameQueryResult = createUseQueryModelNameResult(['model0', 'model1']);
+    use3DModelNameMock.mockReturnValue(mockNameQueryResult);
 
     const mockModels: CogniteModel[] = [cadMock, cadMock];
     viewerModelsMock.mockReturnValue(mockModels);
@@ -54,14 +48,13 @@ describe(useModelHandlers.name, () => {
   });
 
   test('calling update updates external layer state', () => {
-    const nameReturnValue: UseQueryResult<Array<string | undefined>> = new Mock<
-      UseQueryResult<Array<string | undefined>>
-    >()
-      .setup((p) => p.data)
-      .returns(['model0', 'model1', 'model2', 'model3'])
-      .object();
-
-    use3DModelNameMock.mockReturnValue(nameReturnValue);
+    const mockNameQueryResult = createUseQueryModelNameResult([
+      'model0',
+      'model1',
+      'model2',
+      'model3'
+    ]);
+    use3DModelNameMock.mockReturnValue(mockNameQueryResult);
 
     const cadMock0 = createCadMock({ visible: true });
     const cadMock1 = createCadMock({ visible: false });
@@ -116,3 +109,12 @@ describe(useModelHandlers.name, () => {
     );
   });
 });
+
+function createUseQueryModelNameResult(
+  modelNames: Array<string | undefined>
+): UseQueryResult<Array<string | undefined>, unknown> {
+  return new Mock<UseQueryResult<Array<string | undefined>>>()
+    .setup((p) => p.data)
+    .returns(['model0', 'model1'])
+    .object();
+}
