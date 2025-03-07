@@ -86,7 +86,6 @@ describe(useModelHandlers.name, () => {
     update();
 
     expect(setExternalState).toHaveBeenCalledOnce();
-
     const returnedObject = setExternalState.mock.calls[0][0] as LayersUrlStateParam | undefined;
 
     expect(returnedObject).toBeDefined();
@@ -115,6 +114,6 @@ function createUseQueryModelNameResult(
 ): UseQueryResult<Array<string | undefined>, unknown> {
   return new Mock<UseQueryResult<Array<string | undefined>>>()
     .setup((p) => p.data)
-    .returns(['model0', 'model1'])
+    .returns(modelNames)
     .object();
 }
