@@ -9,6 +9,7 @@ import { useCallback, useContext, type ReactElement } from 'react';
 import { useTranslation } from '../../../i18n/I18n';
 import { type LayersButtonProps } from '../LayersButton';
 import { LayersButtonContext } from '../LayersButton.context';
+import { use3DModelName } from '../../../../query';
 
 export const LayersButtonStrip = ({
   layersState: externalLayersState,
@@ -27,7 +28,8 @@ export const LayersButtonStrip = ({
     setExternalLayersState,
     defaultLayerConfiguration,
     viewer,
-    models
+    models,
+    use3DModelName
   );
   const { cadHandlers, pointCloudHandlers, image360Handlers } = modelLayerHandlers;
 

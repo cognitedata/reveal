@@ -20,13 +20,7 @@ import { type use3DModelName } from '../../../../query';
 import { type UseQueryResult } from '@tanstack/react-query';
 import { Mock } from 'moq.ts';
 
-const mocks = vi.hoisted(() => ({
-  use3DModelName: vi.fn<typeof use3DModelName>()
-}));
-
-vi.mock('../../../../query/use3DModelName', () => {
-  return { use3DModelName: mocks.use3DModelName };
-});
+const use3DModelNameMock = vi.fn<typeof use3DModelName>();
 
 describe(useModelHandlers.name, () => {
   beforeEach(() => {
@@ -41,7 +35,7 @@ describe(useModelHandlers.name, () => {
       .returns(['model0', 'model1'])
       .object();
 
-    mocks.use3DModelName.mockReturnValue(nameReturnValue);
+    use3DModelNameMock.mockReturnValue(nameReturnValue);
 
     const mockModels: CogniteModel[] = [cadMock, cadMock];
     viewerModelsMock.mockReturnValue(mockModels);
@@ -49,7 +43,7 @@ describe(useModelHandlers.name, () => {
     viewerImage360CollectionsMock.mockReturnValue([mockImage360Collection]);
 
     const { result } = renderHook(
-      () => useModelHandlers(undefined, undefined, viewerMock, mockModels),
+      () => useModelHandlers(undefined, undefined, viewerMock, mockModels, use3DModelNameMock),
       { wrapper }
     );
 
@@ -67,7 +61,7 @@ describe(useModelHandlers.name, () => {
       .returns(['model0', 'model1', 'model2', 'model3'])
       .object();
 
-    mocks.use3DModelName.mockReturnValue(nameReturnValue);
+    use3DModelNameMock.mockReturnValue(nameReturnValue);
 
     const cadMock0 = createCadMock({ visible: true });
     const cadMock1 = createCadMock({ visible: false });
@@ -89,7 +83,8 @@ describe(useModelHandlers.name, () => {
     const setExternalState = vi.fn<Dispatch<SetStateAction<LayersUrlStateParam | undefined>>>();
 
     const { result } = renderHook(
-      () => useModelHandlers(setExternalState, undefined, viewerMock, mockModels),
+      () =>
+        useModelHandlers(setExternalState, undefined, viewerMock, mockModels, use3DModelNameMock),
       { wrapper }
     );
 
