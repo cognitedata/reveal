@@ -6,15 +6,20 @@ import {
   type Image360CollectionHandler
 } from '../../../src/components/RevealToolbar/LayersButton/ModelHandler';
 
-export function createCadHandlerMock(): CadModelHandler {
+export function createCadHandlerMock(parameters?: {
+  revisionId?: number;
+  visible?: boolean;
+}): CadModelHandler {
   const cadVisibleMock = vi.fn<() => boolean>();
+  cadVisibleMock.mockReturnValue(parameters?.visible ?? true);
+
   const setCadVisibilityMock = vi.fn().mockImplementation((visible: boolean) => {
     cadVisibleMock.mockReturnValue(visible);
   });
 
   return new Mock<CadModelHandler>()
     .setup((p) => p.getRevisionId)
-    .returns(() => 456)
+    .returns(() => parameters?.revisionId ?? 456)
     .setup((p) => p.visible)
     .returns(() => cadVisibleMock())
     .setup((p) => p.setVisibility)
@@ -26,14 +31,19 @@ export function createCadHandlerMock(): CadModelHandler {
     .object();
 }
 
-export function createPointCloudHandlerMock(): PointCloudModelHandler {
+export function createPointCloudHandlerMock(parameters?: {
+  revisionId?: number;
+  visible?: boolean;
+}): PointCloudModelHandler {
   const pointCloudVisibleMock = vi.fn<() => boolean>();
+  pointCloudVisibleMock.mockReturnValue(parameters?.visible ?? true);
+
   const setPointCloudVisibilityMock = vi.fn().mockImplementation((visible: boolean) => {
     pointCloudVisibleMock.mockReturnValue(visible);
   });
   return new Mock<PointCloudModelHandler>()
     .setup((p) => p.getRevisionId)
-    .returns(() => 123)
+    .returns(() => parameters?.revisionId ?? 123)
     .setup((p) => p.visible)
     .returns(() => pointCloudVisibleMock())
     .setup((p) => p.setVisibility)
@@ -45,14 +55,19 @@ export function createPointCloudHandlerMock(): PointCloudModelHandler {
     .object();
 }
 
-export function createImage360HandlerMock(): Image360CollectionHandler {
+export function createImage360HandlerMock(parameters?: {
+  siteId?: string;
+  visible?: boolean;
+}): Image360CollectionHandler {
   const image360VisibleMock = vi.fn<() => boolean>();
+  image360VisibleMock.mockReturnValue(parameters?.visible ?? true);
+
   const setImage360VisibilityMock = vi.fn().mockImplementation((visible: boolean) => {
     image360VisibleMock.mockReturnValue(visible);
   });
   return new Mock<Image360CollectionHandler>()
     .setup((p) => p.getSiteId)
-    .returns(() => 'site-id')
+    .returns(() => parameters?.siteId ?? 'site-id')
     .setup((p) => p.visible)
     .returns(() => image360VisibleMock())
     .setup((p) => p.setVisibility)

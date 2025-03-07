@@ -9,6 +9,7 @@ import {
   type LayersUrlStateParam
 } from './types';
 import { type ModelHandler } from './ModelHandler';
+import { use3DModelName } from '../../../query';
 
 type UpdateCallback = () => void;
 
@@ -37,11 +38,15 @@ export function useLayersButtonViewModel(
     useReveal
   } = useContext(LayersButtonContext);
 
+  const viewer = useReveal();
+  const models = use3dModels();
+
   const [modelLayerHandlers, update] = useModelHandlers(
     setExternalLayersState,
     defaultLayerConfiguration,
-    useReveal(),
-    use3dModels()
+    viewer,
+    models,
+    use3DModelName
   );
 
   useSyncExternalLayersState(

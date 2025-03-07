@@ -5,13 +5,11 @@
 import styled from 'styled-components';
 import { ModelLayersButton } from './ModelLayersButton';
 
-import { useCallback, type ReactElement } from 'react';
+import { useCallback, useContext, type ReactElement } from 'react';
 import { useTranslation } from '../../../i18n/I18n';
-import { useModelHandlers } from '../hooks/useModelHandlers';
-import { useSyncExternalLayersState } from '../hooks/useSyncExternalLayersState';
 import { type LayersButtonProps } from '../LayersButton';
-import { useReveal } from '../../../RevealCanvas/ViewerContext';
-import { use3dModels } from '../../../../hooks/use3dModels';
+import { LayersButtonContext } from '../LayersButton.context';
+import { use3DModelName } from '../../../../query/use3DModelName';
 
 export const LayersButtonStrip = ({
   layersState: externalLayersState,
@@ -19,13 +17,19 @@ export const LayersButtonStrip = ({
   defaultLayerConfiguration
 }: LayersButtonProps): ReactElement => {
   const { t } = useTranslation();
+
+  const { useModelHandlers, useSyncExternalLayersState, use3dModels, useReveal } =
+    useContext(LayersButtonContext);
+
   const viewer = useReveal();
   const models = use3dModels();
+
   const [modelLayerHandlers, update] = useModelHandlers(
     setExternalLayersState,
     defaultLayerConfiguration,
     viewer,
-    models
+    models,
+    use3DModelName
   );
   const { cadHandlers, pointCloudHandlers, image360Handlers } = modelLayerHandlers;
 
