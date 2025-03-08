@@ -79,10 +79,10 @@ export class ClipTool extends PrimitiveEditTool {
       case PrimitiveType.PlaneY:
       case PrimitiveType.PlaneZ:
       case PrimitiveType.PlaneXY:
-        return new PlaneCreator(this, new SliceDomainObject(this.primitiveType));
+        return new PlaneCreator(new SliceDomainObject(this.primitiveType));
 
       case PrimitiveType.Box:
-        return new BoxCreator(this, new CropBoxDomainObject());
+        return new BoxCreator(new CropBoxDomainObject());
       default:
         return undefined;
     }

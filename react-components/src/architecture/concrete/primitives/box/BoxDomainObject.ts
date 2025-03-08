@@ -172,14 +172,14 @@ export abstract class BoxDomainObject extends SolidDomainObject {
   // ==================================================
 
   public get area(): number {
-    const { size } = this.box;
+    const { box } = this;
     switch (this.primitiveType) {
       case PrimitiveType.HorizontalArea:
-        return size.x * size.y;
+        return box.horizontalArea;
       case PrimitiveType.VerticalArea:
-        return size.x * size.z;
+        return box.verticalArea;
       case PrimitiveType.Box: {
-        return this.box.area;
+        return box.area;
       }
       default:
         throw new Error('Unknown MeasureType type');
