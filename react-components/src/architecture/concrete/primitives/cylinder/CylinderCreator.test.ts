@@ -66,9 +66,7 @@ function click(
 }
 
 function getRay(origin: Vector3): Ray {
-  const direction = new Vector3(1, 0, 0);
-  direction.normalize();
-  const ray = new Ray(origin, direction);
+  const ray = new Ray(origin, new Vector3(1, 0, 0));
   ray.applyMatrix4(CDF_TO_VIEWER_TRANSFORMATION);
   return ray;
 }
