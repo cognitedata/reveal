@@ -8,7 +8,6 @@ import { BaseCreator } from '../../../base/domainObjectsHelpers/BaseCreator';
 import { FocusType } from '../../../base/domainObjectsHelpers/FocusType';
 import { Changes } from '../../../base/domainObjectsHelpers/Changes';
 import { type DomainObject } from '../../../base/domainObjects/DomainObject';
-import { type BaseTool } from '../../../base/commands/BaseTool';
 import { type CylinderDomainObject } from './CylinderDomainObject';
 import { Cylinder } from '../../../base/utilities/primitives/Cylinder';
 
@@ -34,12 +33,11 @@ export class CylinderCreator extends BaseCreator {
   // ==================================================
 
   public constructor(
-    tool: BaseTool,
     domainObject: CylinderDomainObject,
     primitiveType?: PrimitiveType,
     isReversedClickOrder = false
   ) {
-    super(tool);
+    super();
     this._primitiveType = primitiveType ?? domainObject.primitiveType;
     this._domainObject = domainObject;
     this._domainObject.focusType = FocusType.Pending;

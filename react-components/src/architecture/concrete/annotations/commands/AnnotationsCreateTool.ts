@@ -102,7 +102,7 @@ export class AnnotationsCreateTool extends NavigationTool {
         this.renderTarget.setNavigateCursor();
         return;
       }
-      if (creator.addPoint(ray, intersection, true)) {
+      if (creator.addPoint(ray, intersection.point, true)) {
         this.setDefaultCursor();
         return;
       }
@@ -137,7 +137,7 @@ export class AnnotationsCreateTool extends NavigationTool {
     }
     if (creator !== undefined) {
       const ray = this.getRay(event);
-      if (creator.addPoint(ray, intersection)) {
+      if (creator.addPoint(ray, intersection.point)) {
         this.endCreatorIfFinished(creator);
       }
       return;
@@ -150,7 +150,7 @@ export class AnnotationsCreateTool extends NavigationTool {
         return;
       }
       const ray = this.getRay(event);
-      if (creator.addPoint(ray, intersection)) {
+      if (creator.addPoint(ray, intersection.point)) {
         const gizmo = creator.domainObject;
         gizmo.setSelectedInteractive(true);
         gizmo.setVisibleInteractive(true, renderTarget);
@@ -179,14 +179,14 @@ export class AnnotationsCreateTool extends NavigationTool {
         if (!(gizmo instanceof BoxGizmoDomainObject)) {
           return undefined;
         }
-        return new BoxCreator(this, gizmo);
+        return new BoxCreator(gizmo);
       }
       case PrimitiveType.HorizontalCylinder:
       case PrimitiveType.VerticalCylinder: {
         if (!(gizmo instanceof CylinderGizmoDomainObject)) {
           return undefined;
         }
-        return new CylinderCreator(this, gizmo, this.primitiveType, true);
+        return new CylinderCreator(gizmo, this.primitiveType, true);
       }
       default:
         return undefined;
