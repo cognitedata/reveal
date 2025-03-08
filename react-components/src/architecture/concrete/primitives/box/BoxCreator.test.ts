@@ -11,9 +11,7 @@ import { CDF_TO_VIEWER_TRANSFORMATION } from '@cognite/reveal';
 import { expectEqualVector3 } from '../../../../../tests/tests-utilities/primitives/primitiveTestUtil';
 import { Box } from '../../../base/utilities/primitives/Box';
 import { FocusType } from '../../../base/domainObjectsHelpers/FocusType';
-/**
- * Helper class for generate a BoxDomainObject by clicking around
- */
+
 describe('BoxCreator', () => {
   test('Create Box by mimics the user clicking 4 times', () => {
     const domainObject = new MeasureBoxDomainObject(PrimitiveType.Box);
