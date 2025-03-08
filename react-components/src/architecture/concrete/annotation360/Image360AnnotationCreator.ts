@@ -31,7 +31,7 @@ export class Image360AnnotationCreator extends LineCreator {
     const domainObject = new Image360AnnotationDomainObject(imageId);
     domainObject.center.copy(center);
 
-    super(tool, domainObject);
+    super(domainObject);
   }
 
   // ==================================================
