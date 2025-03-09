@@ -309,7 +309,6 @@ export class FdmSDK {
       properties,
       limit
     };
-
     const result = await this._sdk.post<
       ListResponse<EdgeItem<PropertiesType>> | ListResponse<NodeItem<PropertiesType>>
     >(this._searchEndpoint, { data });

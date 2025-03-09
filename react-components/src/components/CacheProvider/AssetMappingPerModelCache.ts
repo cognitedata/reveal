@@ -38,7 +38,6 @@ export class AssetMappingPerModelCache {
   ): Promise<AssetMapping[]> {
     const key = createModelRevisionKey(modelId, revisionId);
     const assetMappings = this.fetchAssetMappingsForModel(modelId, revisionId);
-
     this.setModelToAssetMappingCacheItems(key, assetMappings);
     return await assetMappings;
   }
@@ -94,7 +93,7 @@ export class AssetMappingPerModelCache {
 
     const nodes = await this.getNode3DInfoFromNodeIds(modelId, revisionId, requests);
 
-    return assetMappings
+    const mappings = assetMappings
       .map((mapping) => {
         const nodeFound = nodes.find((node) => node.id === mapping.nodeId);
         if (nodeFound === undefined) return undefined;
@@ -110,6 +109,7 @@ export class AssetMappingPerModelCache {
         return newMapping;
       })
       .filter(isDefined);
+    return mappings;
   }
 
   private async getNode3DInfoFromNodeIds(

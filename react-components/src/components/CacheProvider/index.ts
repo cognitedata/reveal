@@ -6,3 +6,6 @@ export {
   type NodeAssetMappingResult,
   type AssetMapping
 } from './types';
+
+export { useAssetMappingAndNode3DCache } from './CacheProvider';
+export { AssetMappingAndNode3DCache } from './AssetMappingAndNode3DCache';

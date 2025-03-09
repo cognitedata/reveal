@@ -98,6 +98,7 @@ export const fetchAllMappedEquipmentAssetMappingsHybrid = async ({
           item.assetInstanceId?.externalId === equipment.externalId &&
           item.assetInstanceId?.space === equipment.space
       );
+
       if (mappingsFound.length > 0) {
         const assetNode: NodeDefinition = {
           space: equipment.space,

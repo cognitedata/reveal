@@ -14,7 +14,7 @@ import { useFdmSdk, useSDK } from '../components/RevealCanvas/SDKProvider';
 import { getAssetsList } from '../hooks/network/getAssetsList';
 import { isDefined } from '../utilities/isDefined';
 import { type InstancesWithView } from './useSearchMappedEquipmentFDM';
-import { COGNITE_ASSET_SOURCE, type Source } from '../data-providers';
+import { COGNITE_ASSET_SOURCE, NodeItem, type Source } from '../data-providers';
 import { useMemo } from 'react';
 import { type ModelWithAssetMappings } from '../hooks/cad/ModelWithAssetMappings';
 import {
@@ -167,7 +167,7 @@ export const useSearchMappedEquipmentAssetMappingsHybrid = (
 
       const searchResults: InstancesWithView[] = createEmptyArray();
 
-      for (const view of viewsToSearch) {
+      for await (const view of viewsToSearch) {
         const result = await fdmSdk.searchInstances(view, query, 'node', limit, undefined);
 
         searchResults.push({
@@ -175,7 +175,6 @@ export const useSearchMappedEquipmentAssetMappingsHybrid = (
           instances: result.instances
         });
       }
-
       return connectMappedInstancesWithSearchResult(searchResults, mapped3dCDMAssetIdentifiers);
     },
     staleTime: Infinity,
@@ -253,7 +252,8 @@ export const useAllMappedEquipmentAssetMappingsHybrid = (
 
       return mappedHybridAssets;
     },
-    staleTime: Infinity
+    staleTime: Infinity,
+    enabled: assetsFromHybridMappingsKeys !== undefined && assetsFromHybridMappingsKeys.length > 0
   });
 };
 
@@ -357,5 +357,6 @@ function connectMappedInstancesWithSearchResult(
       instances: filteredInstances
     };
   });
+
   return filteredResults;
 }

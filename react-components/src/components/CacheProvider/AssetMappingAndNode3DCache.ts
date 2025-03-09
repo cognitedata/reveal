@@ -236,7 +236,15 @@ export class AssetMappingAndNode3DCache {
       return cachedResult;
     }
 
-    return await this.modelToAssetMappingsCache.fetchAndCacheMappingsForModel(modelId, revisionId);
+    const assetMappigns = await this.modelToAssetMappingsCache.fetchAndCacheMappingsForModel(
+      modelId,
+      revisionId
+    );
+
+    if (cachedResult !== undefined) {
+      return cachedResult;
+    }
+    return assetMappigns;
   }
 
   private async splitChunkInCacheAssetMappings(
