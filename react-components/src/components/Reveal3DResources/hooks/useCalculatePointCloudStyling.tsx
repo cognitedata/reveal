@@ -22,7 +22,6 @@ import {
 } from '../types';
 import { useMemo } from 'react';
 import { isSameModel } from '../../../utilities/isSameModel';
-import { EMPTY_ARRAY } from '../../../utilities/constants';
 import { type PointCloudVolumeStylingGroup } from '../../PointCloudContainer/types';
 import { useModelIdRevisionIdFromModelOptions } from '../../../hooks/useModelIdRevisionIdFromModelOptions';
 import { isDefined } from '../../../utilities/isDefined';
@@ -34,6 +33,7 @@ import {
 import { useMatchedPointCloudModels } from './useMatchedPointCloudModels';
 import { createFdmKey } from '../../CacheProvider/idAndKeyTranslation';
 import { usePointCloudAnnotationMappingsForModels } from '../../../hooks/pointClouds';
+import { createEmptyArray } from '../../../utilities/createEmptyArray';
 
 type PointCloudVolumeWithModel = {
   model: PointCloudModelOptions;
@@ -109,7 +109,7 @@ function useAnnotationMappingInstanceStyleGroups(
 ): StyledPointCloudModel[] {
   return useMemo(() => {
     if (annotationMappings === undefined || annotationMappings.length === 0) {
-      return EMPTY_ARRAY;
+      return createEmptyArray();
     }
     return annotationMappings.map((annotationMapping) => {
       return calculateAnnotationMappingModelStyling(
@@ -140,7 +140,7 @@ function useVolumeMappingInstanceStyleGroups(
 ): StyledPointCloudModel[] {
   return useMemo(() => {
     if (dmVolumeMappings.length === 0) {
-      return EMPTY_ARRAY;
+      return createEmptyArray();
     }
     return dmVolumeMappings.map((dmVolumeMapping) => {
       return calculateVolumeMappingModelStyling(
@@ -261,7 +261,7 @@ function usePointCloudVolumesWithModel(
     if (matchedPointCloudModels.length === 0 || pointCloudViewerModels.length === 0) {
       return models.map((model) => ({
         model,
-        pointCloudVolumes: EMPTY_ARRAY
+        pointCloudVolumes: createEmptyArray()
       }));
     }
     return matchedPointCloudModels.map(({ viewerModel, model }) => {
@@ -298,7 +298,7 @@ function useModelsMappedVolumeStyleGroups(
 ): StyledPointCloudModel[] {
   return useMemo(() => {
     if (models.length === 0 || pointCloudVolumesWithModel.length === 0) {
-      return EMPTY_ARRAY;
+      return createEmptyArray();
     }
 
     return pointCloudVolumesWithModel.map((pointCloudVolumeWithModel) => {
@@ -308,7 +308,7 @@ function useModelsMappedVolumeStyleGroups(
       const styleGroups: PointCloudVolumeStylingGroup[] =
         modelStyle !== undefined
           ? [getMappedStyleGroupFromPointCloudVolume([pointCloudVolumeWithModel], modelStyle)]
-          : EMPTY_ARRAY;
+          : createEmptyArray();
       return { model: pointCloudVolumeWithModel.model, styleGroups };
     });
   }, [models, pointCloudVolumesWithModel, defaultMappedNodeAppearance]);

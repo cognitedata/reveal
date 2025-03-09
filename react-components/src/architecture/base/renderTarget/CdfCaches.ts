@@ -1,7 +1,7 @@
 /*!
  * Copyright 2024 Cognite AS
  */
-import { type CogniteClient } from '@cognite/sdk/dist/src';
+import { type CogniteClient } from '@cognite/sdk';
 import { AssetMappingAndNode3DCache } from '../../../components/CacheProvider/AssetMappingAndNode3DCache';
 import { FdmNodeCache } from '../../../components/CacheProvider/FdmNodeCache';
 import { FdmSDK } from '../../../data-providers/FdmSDK';
@@ -38,7 +38,7 @@ export class CdfCaches {
       ? new CoreDm3dFdm3dDataProvider(fdmClient)
       : new LegacyFdm3dDataProvider(fdmClient, cdfClient);
 
-    this._assetMappingAndNode3dCache = new AssetMappingAndNode3DCache(cdfClient);
+    this._assetMappingAndNode3dCache = new AssetMappingAndNode3DCache(cdfClient, coreDmOnly);
     this._fdmNodeCache = new FdmNodeCache(cdfClient, fdmClient, fdm3dDataProvider);
     this._pointCloudAnnotationCache = new PointCloudAnnotationCache(cdfClient);
     this._image360AnnotationCache = new Image360AnnotationCache(cdfClient, viewer);
