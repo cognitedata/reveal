@@ -9,7 +9,9 @@ import {
   type InstanceReference
 } from './types';
 
-export function isIdEither(instance: InstanceReference): instance is IdEither {
+export type AnnotationAssetRef = { id?: number; externalId?: string };
+
+export function isIdEither(instance: InstanceReference | AnnotationAssetRef): instance is IdEither {
   return (
     ((instance as ExternalId).externalId !== undefined ||
       (instance as InternalId).id !== undefined) &&
@@ -17,11 +19,11 @@ export function isIdEither(instance: InstanceReference): instance is IdEither {
   );
 }
 
-export function isExternalId(idEither: InstanceReference): idEither is ExternalId {
+export function isExternalId(idEither: IdEither | AnnotationAssetRef): idEither is ExternalId {
   return 'externalId' in idEither && !('space' in idEither);
 }
 
-export function isInternalId(idEither: InstanceReference): idEither is InternalId {
+export function isInternalId(idEither: IdEither | AnnotationAssetRef): idEither is InternalId {
   return 'id' in idEither;
 }
 

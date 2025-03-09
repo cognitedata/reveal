@@ -35,7 +35,7 @@ export class CdfCaches {
     const fdmClient = new FdmSDK(cdfClient);
 
     const fdm3dDataProvider = coreDmOnly
-      ? new CoreDm3dFdm3dDataProvider([], fdmClient)
+      ? new CoreDm3dFdm3dDataProvider(fdmClient)
       : new LegacyFdm3dDataProvider(fdmClient, cdfClient);
 
     this._assetMappingAndNode3dCache = new AssetMappingAndNode3DCache(cdfClient, coreDmOnly);

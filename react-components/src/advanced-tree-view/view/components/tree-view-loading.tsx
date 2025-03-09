@@ -3,8 +3,7 @@
  */
 import { type ReactElement } from 'react';
 
-import { Body } from '@cognite/cogs-core';
-import { LoaderIcon } from '@cognite/cogs-icons';
+import { Body, LoaderIcon } from '@cognite/cogs.js';
 
 import { type AdvancedTreeViewProps } from '../advanced-tree-view-props';
 import { HORIZONTAL_SPACING, INDENTATION, LOADING_LABEL, VERTICAL_SPACING } from '../constants';

@@ -79,10 +79,11 @@ export type AddResourceOptions =
   | AddPointCloudResourceOptions
   | AddImage360CollectionOptions;
 
-export type AddPointCloudResourceOptions = AddModelOptions<DataSourceType> & {
-  transform?: Matrix4;
-  styling?: { default?: NodeAppearance; mapped?: NodeAppearance };
-};
+export type AddPointCloudResourceOptions<T extends DataSourceType = DataSourceType> =
+  AddModelOptions<T> & {
+    transform?: Matrix4;
+    styling?: { default?: NodeAppearance; mapped?: NodeAppearance };
+  };
 
 export type AddCadResourceOptions = AddModelOptions<ClassicDataSourceType> & {
   transform?: Matrix4;
@@ -92,6 +93,10 @@ export type AddCadResourceOptions = AddModelOptions<ClassicDataSourceType> & {
     nodeGroups?: TreeIndexStylingGroup[];
   };
 };
+
+export type ClassicAdd3DModelOptions =
+  | AddCadResourceOptions
+  | AddPointCloudResourceOptions<ClassicDataSourceType>;
 
 export type TypedReveal3DModel = CadModelOptions | PointCloudModelOptions;
 

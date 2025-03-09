@@ -3,7 +3,7 @@
  */
 import { type ReactElement } from 'react';
 
-import { Checkbox } from '@cognite/cogs-core';
+import { Checkbox } from '@cognite/cogs.js';
 
 import { type TreeNodeType } from '../../model/tree-node-type';
 import { CheckboxState, type TreeNodeAction } from '../../model/types';

@@ -451,7 +451,7 @@ __metadata:
   resolution: "@cognite/reveal@workspace:."
   dependencies:
     "@azure/msal-browser": "npm:^3.13.0"
-    "@cognite/sdk": "npm:^9.12.0"
+    "@cognite/sdk": "npm:^10.0.0"
     "@microsoft/api-extractor": "npm:^7.43.1"
     "@rajesh896/broprint.js": "npm:^2.1.1"
     "@tweenjs/tween.js": "npm:^25.0.0"
@@ -468,7 +468,7 @@ __metadata:
     "@types/random-seed": "npm:^0.3.5"
     "@types/skmeans": "npm:^0.11.7"
     "@types/stats": "npm:^0.16.30"
-    "@types/three": "npm:^0.166.0"
+    "@types/three": "npm:^0.174.0"
     "@typescript-eslint/eslint-plugin": "npm:^7.7.1"
     "@typescript-eslint/parser": "npm:^7.7.1"
     assert: "npm:^2.1.0"
@@ -515,7 +515,7 @@ __metadata:
     skmeans: "npm:^0.11.3"
     sparse-octree: "npm:^7.1.8"
     stats.js: "npm:^0.17.0"
-    three: "npm:0.166.1"
+    three: "npm:0.174.0"
     ts-jest: "npm:29.1.2"
     ts-loader: "npm:^9.5.1"
     tsc-alias: "npm:^1.8.8"
@@ -528,30 +528,30 @@ __metadata:
     whatwg-fetch: "npm:^3.6.20"
     workerize-loader: "npm:^2.0.2"
   peerDependencies:
-    "@cognite/sdk": ^7.16.0 || ^8.0.0
-    three: 0.166.1
+    "@cognite/sdk": ^10.0.0
+    three: 0.174.0
   languageName: unknown
   linkType: soft
 
-"@cognite/sdk-core@npm:^4.10.6":
-  version: 4.10.6
-  resolution: "@cognite/sdk-core@npm:4.10.6"
+"@cognite/sdk-core@npm:^5.0.0":
+  version: 5.0.0
+  resolution: "@cognite/sdk-core@npm:5.0.0"
   dependencies:
-    cross-fetch: "npm:^3.0.4"
-    lodash: "npm:^4.17.11"
-  checksum: 10/3eb04a86921d8312718b482dfcb302728254a225d143f2f1e9ccf608d04e7aec39afbfae1828a270cf442d64aa0e59e89bbe916fe8a9a6a1b703d53dc417eb03
+    cross-fetch: "npm:^3.1.8"
+    lodash: "npm:^4.17.21"
+  checksum: 10/37986c5840eedfe0637dacf432c8c5b6cfdfa7b744544e7552eab6b1ef283f762774449bcffd2b2592f448901601da9f6793399fc5ec726f96fa1867210d658e
   languageName: node
   linkType: hard
 
-"@cognite/sdk@npm:^9.12.0":
-  version: 9.16.1
-  resolution: "@cognite/sdk@npm:9.16.1"
+"@cognite/sdk@npm:^10.0.0":
+  version: 10.0.0
+  resolution: "@cognite/sdk@npm:10.0.0"
   dependencies:
-    "@cognite/sdk-core": "npm:^4.10.6"
-    "@types/geojson": "npm:^7946.0.8"
+    "@cognite/sdk-core": "npm:^5.0.0"
+    "@types/geojson": "npm:^7946.0.14"
     geojson: "npm:^0.5.0"
-    lodash: "npm:^4.17.11"
-  checksum: 10/f473dc60ca740e7726afaef580e94be9bd47936716ee73dc3ec05c9a2e84facbe6428ad47f4c0b810c236e0c4f9147feaaffe40685e14fa75f39219bca943daa
+    lodash: "npm:^4.17.21"
+  checksum: 10/17ef6fd9f39bf19cbfc545140f8a003a400b621f54d2a800b255f7b6f54935b63c23e647c826990e9b4d78a9a56c18c0ae1ecec3155594d0f4c2624df038c4bc
   languageName: node
   linkType: hard
 
@@ -1657,7 +1657,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@tweenjs/tween.js@npm:~23.1.2":
+"@tweenjs/tween.js@npm:~23.1.3":
   version: 23.1.3
   resolution: "@tweenjs/tween.js@npm:23.1.3"
   checksum: 10/10ecaf311c975162459bd016ef7eb1f3118a257050c4886de9737dee823fc829100a0887f3fc298f7a5577140eac054f9609b823eb0748ca7b653ec85ffba75e
@@ -1839,10 +1839,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/geojson@npm:^7946.0.8":
-  version: 7946.0.14
-  resolution: "@types/geojson@npm:7946.0.14"
-  checksum: 10/ae511bee6488ae3bd5a3a3347aedb0371e997b14225b8983679284e22fa4ebd88627c6e3ff8b08bf4cc35068cb29310c89427311ffc9322c255615821a922e71
+"@types/geojson@npm:^7946.0.14":
+  version: 7946.0.16
+  resolution: "@types/geojson@npm:7946.0.16"
+  checksum: 10/34d07421bdd60e7b99fa265441d17ac6e9aef48e3ce22d04324127d0de1daf7fbaa0bd3be1cece2092eb6995f21da84afa5231e24621a2910ff7340bc98f496f
   languageName: node
   linkType: hard
 
@@ -2140,16 +2140,17 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/three@npm:^0.166.0":
-  version: 0.166.0
-  resolution: "@types/three@npm:0.166.0"
+"@types/three@npm:^0.174.0":
+  version: 0.174.0
+  resolution: "@types/three@npm:0.174.0"
   dependencies:
-    "@tweenjs/tween.js": "npm:~23.1.2"
+    "@tweenjs/tween.js": "npm:~23.1.3"
     "@types/stats.js": "npm:*"
     "@types/webxr": "npm:*"
+    "@webgpu/types": "npm:*"
     fflate: "npm:~0.8.2"
     meshoptimizer: "npm:~0.18.1"
-  checksum: 10/5e929d5870305fdb99420447006cf51119508c9f5a9d496a092dac6aaf0d1ef757bb04fd12f2585fab71699e8a25ceea5228f51befbe54c7c6dd0206c1631a06
+  checksum: 10/5fd26de34c58f50658bbf84191aa33c766cc93df1427c8a84b817155ee6e4919141407090d4ee15c9c2de8e5f2ea5b4c177e701ee8583149bcc0c3f8c1bded04
   languageName: node
   linkType: hard
 
@@ -2494,6 +2495,13 @@ __metadata:
     "@webassemblyjs/ast": "npm:1.12.1"
     "@xtuc/long": "npm:4.2.2"
   checksum: 10/1a6a4b6bc4234f2b5adbab0cb11a24911b03380eb1cab6fb27a2250174a279fdc6aa2f5a9cf62dd1f6d4eb39f778f488e8ff15b9deb0670dee5c5077d46cf572
+  languageName: node
+  linkType: hard
+
+"@webgpu/types@npm:*":
+  version: 0.1.54
+  resolution: "@webgpu/types@npm:0.1.54"
+  checksum: 10/558dfbe3700bddf89478db3ad24be8ec9d6dc37e34d99c0369e5f8cc6631f3908f3e5ee91225aea342d4543bef90f052c97760bf07e820636de5f70020d71fe5
   languageName: node
   linkType: hard
 
@@ -3769,12 +3777,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"cross-fetch@npm:^3.0.4":
-  version: 3.1.8
-  resolution: "cross-fetch@npm:3.1.8"
+"cross-fetch@npm:^3.1.8":
+  version: 3.2.0
+  resolution: "cross-fetch@npm:3.2.0"
   dependencies:
-    node-fetch: "npm:^2.6.12"
-  checksum: 10/ac8c4ca87d2ac0e17a19b6a293a67ee8934881aee5ec9a5a8323c30e9a9a60a0f5291d3c0d633ec2a2f970cbc60978d628804dfaf03add92d7e720b6d37f392c
+    node-fetch: "npm:^2.7.0"
+  checksum: 10/e4ab1d390a5b6ca8bb0605f028af2ffc1127d2e407b954654949f506d04873c4863ece264662c074865d7874060e35f938cec74fe7b5736d46d545e2685f6aec
   languageName: node
   linkType: hard
 
@@ -7364,7 +7372,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"lodash@npm:^4.17.11, lodash@npm:^4.17.20, lodash@npm:^4.17.21, lodash@npm:^4.17.4, lodash@npm:~4.17.15":
+"lodash@npm:^4.17.20, lodash@npm:^4.17.21, lodash@npm:^4.17.4, lodash@npm:~4.17.15":
   version: 4.17.21
   resolution: "lodash@npm:4.17.21"
   checksum: 10/c08619c038846ea6ac754abd6dd29d2568aa705feb69339e836dfa8d8b09abbb2f859371e86863eda41848221f9af43714491467b5b0299122431e202bb0c532
@@ -7887,7 +7895,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"node-fetch@npm:^2.6.12":
+"node-fetch@npm:^2.7.0":
   version: 2.7.0
   resolution: "node-fetch@npm:2.7.0"
   dependencies:
@@ -9945,10 +9953,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"three@npm:0.166.1":
-  version: 0.166.1
-  resolution: "three@npm:0.166.1"
-  checksum: 10/10f36702ab0f6b7f03a45f46437157a00ece42a1760d70b1c24db5e8d3f02b7b522a117377e7c8ad7ec504e2008a8776ccb4fa16512d455d431b66390f23a2ed
+"three@npm:0.174.0":
+  version: 0.174.0
+  resolution: "three@npm:0.174.0"
+  checksum: 10/d02d33aaacc56f60c38a2466f29c96c0afa8bddc5e284f8b4a474ef7d917c8c6d4557403521c6f9bc3c49a96719872074f5cf02c3cb6f1e0a85f901da5b92ac8
   languageName: node
   linkType: hard
 

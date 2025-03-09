@@ -96,9 +96,7 @@ export abstract class RenderTargetCommand extends BaseCommand {
     if (undoManager === undefined) {
       return;
     }
-    const couldUndo = undoManager.canUndo;
-    undoManager.addTransaction(transaction);
-    if (couldUndo !== undoManager.canUndo) {
+    if (undoManager.addTransaction(transaction)) {
       CommandsUpdater.update(this.renderTarget); // This refresh the undo button!
     }
   }

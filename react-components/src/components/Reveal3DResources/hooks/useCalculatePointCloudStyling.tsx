@@ -25,7 +25,7 @@ import { isSameModel } from '../../../utilities/isSameModel';
 import { type PointCloudVolumeStylingGroup } from '../../PointCloudContainer/types';
 import { useModelIdRevisionIdFromModelOptions } from '../../../hooks/useModelIdRevisionIdFromModelOptions';
 import { isDefined } from '../../../utilities/isDefined';
-import { use3dModels } from '../../../hooks';
+import { use3dModels } from '../../../hooks/use3dModels';
 import {
   isClassicAssetMappingStylingGroup,
   isFdmAssetStylingGroup

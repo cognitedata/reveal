@@ -69,8 +69,7 @@ export const Main: Story = {
           mapped: {
             color: new Color('#c5cbff')
           }
-        },
-        siteId: 'celanese1'
+        }
       },
       {
         modelId: 7646043527629245,

@@ -1,6 +1,6 @@
 {
   "name": "@cognite/reveal",
-  "version": "4.23.4",
+  "version": "4.24.0",
   "description": "WebGL based 3D viewer for CAD and point clouds processed in Cognite Data Fusion.",
   "homepage": "https://github.com/cognitedata/reveal/tree/master/viewer",
   "repository": {
@@ -81,7 +81,7 @@
   },
   "devDependencies": {
     "@azure/msal-browser": "^3.13.0",
-    "@cognite/sdk": "^9.12.0",
+    "@cognite/sdk": "^10.0.0",
     "@microsoft/api-extractor": "^7.43.1",
     "@types/dat.gui": "^0.7.13",
     "@types/gl": "^6.0.5",
@@ -96,7 +96,7 @@
     "@types/random-seed": "^0.3.5",
     "@types/skmeans": "^0.11.7",
     "@types/stats": "^0.16.30",
-    "@types/three": "^0.166.0",
+    "@types/three": "^0.174.0",
     "@typescript-eslint/eslint-plugin": "^7.7.1",
     "@typescript-eslint/parser": "^7.7.1",
     "concurrently": "^9.0.0",
@@ -131,7 +131,7 @@
     "resize-observer-polyfill": "^1.5.1",
     "shx": "^0.3.4",
     "stats.js": "^0.17.0",
-    "three": "0.166.1",
+    "three": "0.174.0",
     "ts-jest": "29.1.2",
     "ts-loader": "^9.5.1",
     "tsc-alias": "^1.8.8",
@@ -145,8 +145,8 @@
     "workerize-loader": "^2.0.2"
   },
   "peerDependencies": {
-    "@cognite/sdk": "^7.16.0 || ^8.0.0",
-    "three": "0.166.1"
+    "@cognite/sdk": "^10.0.0",
+    "three": "0.174.0"
   },
   "glslify": {
     "transform": [

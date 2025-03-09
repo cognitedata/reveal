@@ -10,11 +10,9 @@ import { type PrimitivePickInfo } from '../common/PrimitivePickInfo';
 import { type BaseDragger } from '../../../base/domainObjectsHelpers/BaseDragger';
 import { BoxDragger } from './BoxDragger';
 import { type CreateDraggerProps } from '../../../base/domainObjects/VisualDomainObject';
-import { getIconByPrimitiveType } from '../../../base/utilities/primitives/getIconByPrimitiveType';
 import { type TranslationInput } from '../../../base/utilities/TranslateInput';
 import { Quantity } from '../../../base/domainObjectsHelpers/Quantity';
 import { PanelInfo } from '../../../base/domainObjectsHelpers/PanelInfo';
-import { type IconName } from '../../../base/utilities/IconName';
 import { SolidDomainObject } from '../common/SolidDomainObject';
 import { SolidPrimitiveRenderStyle } from '../common/SolidPrimitiveRenderStyle';
 import { Box } from '../../../base/utilities/primitives/Box';
@@ -41,10 +39,6 @@ export abstract class BoxDomainObject extends SolidDomainObject {
   // ==================================================
   // OVERRIDES of DomainObject
   // ==================================================
-
-  public override get icon(): IconName {
-    return getIconByPrimitiveType(this.primitiveType);
-  }
 
   public override get typeName(): TranslationInput {
     switch (this.primitiveType) {
@@ -178,14 +172,14 @@ export abstract class BoxDomainObject extends SolidDomainObject {
   // ==================================================
 
   public get area(): number {
-    const { size } = this.box;
+    const { box } = this;
     switch (this.primitiveType) {
       case PrimitiveType.HorizontalArea:
-        return size.x * size.y;
+        return box.horizontalArea;
       case PrimitiveType.VerticalArea:
-        return size.x * size.z;
+        return box.verticalArea;
       case PrimitiveType.Box: {
-        return this.box.area;
+        return box.area;
       }
       default:
         throw new Error('Unknown MeasureType type');

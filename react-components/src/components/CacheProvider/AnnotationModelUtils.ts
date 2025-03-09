@@ -2,7 +2,7 @@
  * Copyright 2024 Cognite AS
  */
 import { type CogniteClient, type Asset, type IdEither } from '@cognite/sdk';
-import { uniqBy, chunk } from 'lodash';
+import { uniqBy, chunk, partition, uniqWith } from 'lodash';
 import { isDefined } from '../../utilities/isDefined';
 import { type AnnotationId, type PointCloudAnnotationModel } from './types';
 import { getInstanceReferenceFromPointCloudAnnotation } from './utils';
@@ -106,8 +106,9 @@ export async function fetchAssetsForAssetIds(
   assetIds: IdEither[],
   sdk: CogniteClient
 ): Promise<Asset[]> {
+  const uniqueAssetIds = uniqWith(assetIds, isSameIdEither);
   const assetsResult = await Promise.all(
-    chunk(assetIds, 1000).map(async (assetIdsChunck) => {
+    chunk(uniqueAssetIds, 1000).map(async (assetIdsChunck) => {
       const retrievedAssets = await sdk.assets.retrieve(assetIdsChunck, { ignoreUnknownIds: true });
       return retrievedAssets;
     })
