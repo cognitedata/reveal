@@ -16,6 +16,8 @@ import {
   addView,
   createIntersectInput
 } from '../../../../../tests/tests-utilities/primitives/viewUtil';
+import { isDomainObjectIntersection } from '../../../base/domainObjectsHelpers/DomainObjectIntersection';
+import { PrimitivePickInfo } from '../common/PrimitivePickInfo';
 
 describe('CylinderView', () => {
   let domainObject: CylinderDomainObject;
@@ -90,6 +92,11 @@ describe('CylinderView', () => {
     expectEqualVector3(intersection.point, domainObject.cylinder.centerA);
     expect(intersection.customObject).toBe(view);
     expect(intersection.distanceToCamera).toBe(1);
+    expect(intersection.userData).instanceOf(PrimitivePickInfo);
+
+    if (isDomainObjectIntersection(intersection)) {
+      expect(intersection.domainObject).toBe(domainObject);
+    }
   });
 
   test('should not intersect when point is hidden', () => {
