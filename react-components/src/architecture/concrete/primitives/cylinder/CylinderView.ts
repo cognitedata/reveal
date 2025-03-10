@@ -53,7 +53,7 @@ const RELATIVE_ROTATION_RADIUS = new Range1(0.4, 0.7);
 const CIRCULAR_SEGMENTS = 32;
 const RENDER_ORDER = 100;
 const TOP_FACE = new BoxFace(2);
-const BOTTOM_FACE = new BoxFace(2);
+const BOTTOM_FACE = new BoxFace(5);
 
 export class CylinderView extends GroupThreeView<CylinderDomainObject> {
   // ==================================================
