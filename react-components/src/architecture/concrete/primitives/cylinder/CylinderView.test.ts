@@ -2,7 +2,7 @@
  * Copyright 2024 Cognite AS
  */
 
-import { beforeEach, describe, expect, test, vi } from 'vitest';
+import { beforeEach, describe, expect, test } from 'vitest';
 import { CylinderView } from './CylinderView';
 import { createFullRenderTargetMock } from '../../../../../tests/tests-utilities/fixtures/createFullRenderTargetMock';
 import { Object3D, PerspectiveCamera, Raycaster, Vector2, Vector3 } from 'three';
