@@ -3,7 +3,7 @@
  */
 import { Comment } from '@cognite/cogs.js';
 import { type BaseInputCommand } from '../../architecture/base/commands/BaseInputCommand';
-import { type ReactNode, useMemo, useState } from 'react';
+import { type ReactNode, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from '../i18n/I18n';
 import { useOnUpdate } from './useOnUpdate';
 import { getDefaultCommand } from './utilities';
@@ -37,10 +37,11 @@ export const InputField = ({
   );
 
   useOnUpdate(command, () => {
+    setContent(command.content);
+    setEnabled(command.isEnabled);
     setPostLabel(translateIfExists(command.getPostButtonLabel()));
     setCancelLabel(translateIfExists(command.getCancelButtonLabel()));
     setPlaceholder(translateIfExists(command.getPlaceholder()));
-    setEnabled(command.isEnabled);
   });
 
   return (
@@ -48,9 +49,11 @@ export const InputField = ({
       key={command.uniqueId}
       placeholder={placeholder}
       message={content}
-      setMessage={setContent}
+      setMessage={(content) => {
+        command.content = content;
+      }}
       onPostMessage={() => {
-        command.invokeWithContent(content);
+        command.invoke();
         setContent('');
       }}
       postButtonText={postLabel}
