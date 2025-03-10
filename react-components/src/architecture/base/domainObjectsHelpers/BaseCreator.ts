@@ -4,9 +4,10 @@
 
 import { type Vector3, type Ray } from 'three';
 import { replaceLast } from '../utilities/extensions/arrayExtensions';
-import { type AnyIntersection } from '@cognite/reveal';
+import { CDF_TO_VIEWER_TRANSFORMATION } from '@cognite/reveal';
 import { type DomainObject } from '../domainObjects/DomainObject';
-import { type BaseTool } from '../commands/BaseTool';
+
+const fromViewerMatrix = CDF_TO_VIEWER_TRANSFORMATION.clone().invert();
 
 /**
  * Helper class for create a domain object by clicking around
@@ -18,15 +19,6 @@ export abstract class BaseCreator {
 
   private readonly _points: Vector3[] = []; // Clicked points
   private _lastIsPending: boolean = false; // If true, the last point is hover and not confirmed.
-  protected readonly _tool: BaseTool; // The tool that created this creator
-
-  // ==================================================
-  // CONSTRUCTOR
-  // ==================================================
-
-  protected constructor(tool: BaseTool) {
-    this._tool = tool;
-  }
 
   // ==================================================
   // INSTANCE PROPERTIES
@@ -136,8 +128,8 @@ export abstract class BaseCreator {
     return this.notPendingPointCount >= this.maximumPointCount;
   }
 
-  public addPoint(ray: Ray, intersection?: AnyIntersection, isPending: boolean = false): boolean {
-    const point = intersection?.point.clone();
+  public addPoint(ray: Ray, point?: Vector3, isPending: boolean = false): boolean {
+    point = point?.clone();
     this.convertToCdfCoords(ray, point);
     return this.addPointCore(ray, point, isPending);
   }
@@ -159,10 +151,9 @@ export abstract class BaseCreator {
   }
 
   private convertToCdfCoords(ray: Ray, point: Vector3 | undefined): void {
-    const matrix = this._tool.renderTarget.fromViewerMatrix;
-    ray.applyMatrix4(matrix);
+    ray.applyMatrix4(fromViewerMatrix);
     if (point !== undefined) {
-      point.applyMatrix4(matrix);
+      point.applyMatrix4(fromViewerMatrix);
     }
   }
 }

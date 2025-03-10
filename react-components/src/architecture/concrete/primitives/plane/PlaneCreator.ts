@@ -10,7 +10,6 @@ import { Changes } from '../../../base/domainObjectsHelpers/Changes';
 import { type DomainObject } from '../../../base/domainObjects/DomainObject';
 import { type PlaneDomainObject } from './PlaneDomainObject';
 import { rotatePiHalf } from '../../../base/utilities/extensions/vectorExtensions';
-import { type BaseTool } from '../../../base/commands/BaseTool';
 
 /**
  * Helper class for generate a PlaneDomainObject by clicking around
@@ -26,8 +25,8 @@ export class PlaneCreator extends BaseCreator {
   // CONSTRUCTOR
   // ==================================================
 
-  public constructor(tool: BaseTool, domainObject: PlaneDomainObject) {
-    super(tool);
+  public constructor(domainObject: PlaneDomainObject) {
+    super();
     this._domainObject = domainObject;
     this._domainObject.focusType = FocusType.Pending;
   }

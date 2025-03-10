@@ -7,20 +7,19 @@ import { Changes } from '../domainObjectsHelpers/Changes';
 import { UndoManager } from './UndoManager';
 import { MeasureBoxDomainObject } from '../../concrete/measurements/MeasureBoxDomainObject';
 import { PrimitiveType } from '../utilities/primitives/PrimitiveType';
-import { expectEqualVector3 } from '../../../../tests/tests-utilities/primitives/primitiveTestUtil';
 import { type BoxDomainObject } from '../../concrete/primitives/box/BoxDomainObject';
-import { RevealRenderTarget } from '../renderTarget/RevealRenderTarget';
+import { type RevealRenderTarget } from '../renderTarget/RevealRenderTarget';
 import { type RootDomainObject } from '../domainObjects/RootDomainObject';
 import { Box } from '../utilities/primitives/Box';
-import { viewerMock } from '../../../../tests/tests-utilities/fixtures/viewer';
-import { sdkMock } from '../../../../tests/tests-utilities/fixtures/sdk';
+import { expectEqualVector3 } from '../../../../tests/tests-utilities/primitives/primitiveTestUtil';
+import { createFullRenderTargetMock } from '../../../../tests/tests-utilities/fixtures/createFullRenderTargetMock';
 
 describe('UndoManager', () => {
   let renderTarget: RevealRenderTarget;
   let root: RootDomainObject;
   let manager: UndoManager;
   beforeEach(() => {
-    renderTarget = createRenderTargetMock();
+    renderTarget = createFullRenderTargetMock();
     root = renderTarget.rootDomainObject;
     manager = new UndoManager();
   });
@@ -115,9 +114,4 @@ function createBoxDomainObject(): BoxDomainObject {
   box.size.set(1, 2, 3);
   box.center.set(4, 5, 6);
   return domainObject;
-}
-
-function createRenderTargetMock(): RevealRenderTarget {
-  const renderTarget = new RevealRenderTarget(viewerMock, sdkMock);
-  return renderTarget;
 }

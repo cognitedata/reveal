@@ -99,12 +99,12 @@ export class MeasurementTool extends PrimitiveEditTool {
       case PrimitiveType.Line:
       case PrimitiveType.Polyline:
       case PrimitiveType.Polygon:
-        return new LineCreator(this, new MeasureLineDomainObject(this.primitiveType));
+        return new LineCreator(new MeasureLineDomainObject(this.primitiveType), this.undoManager);
 
       case PrimitiveType.HorizontalArea:
       case PrimitiveType.VerticalArea:
       case PrimitiveType.Box:
-        return new BoxCreator(this, new MeasureBoxDomainObject(this.primitiveType));
+        return new BoxCreator(new MeasureBoxDomainObject(this.primitiveType));
       default:
         return undefined;
     }
