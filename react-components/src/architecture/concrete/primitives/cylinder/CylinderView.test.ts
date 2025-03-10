@@ -119,6 +119,7 @@ function expectChildrenLength(view: GroupThreeView, expected: number): void {
 class MockCylinderDomainObject extends CylinderDomainObject {
   public constructor() {
     super();
+    // Vertical cylinder with center at (0,0)
     this.cylinder.radius = 2;
     this.cylinder.centerA.set(0, 0, 1);
     this.cylinder.centerB.set(0, 0, -1);
