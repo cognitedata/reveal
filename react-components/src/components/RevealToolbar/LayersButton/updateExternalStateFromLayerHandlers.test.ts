@@ -1,4 +1,4 @@
-import { beforeEach, describe, expect, type Mock, test, vi } from 'vitest';
+import { describe, expect, test, vi } from 'vitest';
 import { updateExternalStateFromLayerHandlers } from './updateExternalStateFromLayerHandlers';
 import {
   createCadHandlerMock,
