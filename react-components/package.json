@@ -1,6 +1,6 @@
 {
   "name": "@cognite/reveal-react-components",
-  "version": "0.75.5",
+  "version": "0.75.6",
   "exports": {
     ".": {
       "import": "./dist/index.js",
@@ -33,9 +33,8 @@
     "sort-keys": "cdf-i18n-utils-cli sort-local-keys --namespace reveal-react-components --path ./src/common/i18n"
   },
   "peerDependencies": {
-    "@cognite/reveal": "4.23.2",
+    "@cognite/reveal": "4.24.0",
     "@cognite/sdk": "^10.0.0",
-    "@cognite/signals": "^0.0.4",
     "react": ">=18",
     "react-dom": ">=18",
     "styled-components": "^6.1.12"
@@ -43,6 +42,7 @@
   "dependencies": {
     "@cognite/cogs-lab": "^9.0.0-alpha.153",
     "@cognite/cogs.js": "^10.36.0",
+    "@cognite/signals": "^0.0.4",
     "@floating-ui/dom": "^1.0.0",
     "@tanstack/react-query": "^5.32.0",
     "assert": "^2.1.0",
@@ -55,7 +55,6 @@
     "@cognite/cdf-utilities": "^3.6.0",
     "@cognite/reveal": "4.24.0",
     "@cognite/sdk": "^10.0.0",
-    "@cognite/signals": "^0.0.4",
     "@playwright/test": "1.49.0",
     "@storybook/addon-essentials": "8.4.5",
     "@storybook/addon-interactions": "8.4.5",
