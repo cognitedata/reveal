@@ -9,13 +9,9 @@ import { type LayersUrlStateParam } from './types';
 import { type Dispatch, type SetStateAction } from 'react';
 
 describe(updateExternalStateFromLayerHandlers.name, () => {
-  let setLayerStateMock: Mock<Dispatch<SetStateAction<LayersUrlStateParam | undefined>>>;
-
-  beforeEach(() => {
-    setLayerStateMock = vi.fn<Dispatch<SetStateAction<LayersUrlStateParam | undefined>>>();
-  });
-
   test('outputs correct state for all layers', () => {
+    const setLayerStateMock = vi.fn<Dispatch<SetStateAction<LayersUrlStateParam | undefined>>>();
+
     const cadHandlerMock0 = createCadHandlerMock({ revisionId: 123, visible: true });
     const cadHandlerMock1 = createCadHandlerMock({ revisionId: 234, visible: false });
 
