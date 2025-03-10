@@ -4,21 +4,15 @@
 import { render } from '@testing-library/react';
 import { describe, expect, test, vi } from 'vitest';
 import type { LayersButtonProps } from '../LayersButton';
-import { type LayersButtonDependencies } from '../LayersButton.context';
+import { LayersButtonContext, type LayersButtonDependencies } from '../LayersButton.context';
 import {
   createCadHandlerMock,
   createPointCloudHandlerMock,
   createImage360HandlerMock
 } from '../../../../../tests/tests-utilities/fixtures/modelHandler';
-import { Reveal3DResourcesInfoContextProvider } from '../../../Reveal3DResources/Reveal3DResourcesInfoContext';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { createRenderTargetMock } from '../../../../../tests/tests-utilities/fixtures/renderTarget';
-import { sdkMock } from '../../../../../tests/tests-utilities/fixtures/sdk';
-import { SDKProvider } from '../../../RevealCanvas/SDKProvider';
-import { ViewerContextProvider } from '../../../RevealCanvas/ViewerContext';
 import {
-  viewerImage360CollectionsMock,
   viewerMock,
+  viewerImage360CollectionsMock,
   viewerModelsMock
 } from '../../../../../tests/tests-utilities/fixtures/viewer';
 import { type CogniteModel } from '@cognite/reveal';
@@ -27,49 +21,43 @@ import { createImage360ClassicMock } from '../../../../../tests/tests-utilities/
 import { LayersButtonStrip } from './LayersButtonsStrip';
 import { type ModelLayerHandlers } from '../types';
 import { type ReactNode, type ReactElement } from 'react';
+import { ModelLayerSelection } from './ModelLayerSelection';
 
-const queryClient = new QueryClient();
-const renderTargetMock = createRenderTargetMock();
+const mockCadHandler = createCadHandlerMock();
+const mockPointCloudHandler = createPointCloudHandlerMock();
+const mockImage360Handler = createImage360HandlerMock();
+const defaultProps: LayersButtonProps = {
+  layersState: {
+    cadLayers: [{ revisionId: 456, applied: true, index: 0 }],
+    pointCloudLayers: [{ revisionId: 123, applied: true, index: 0 }],
+    image360Layers: [{ siteId: 'site-id', applied: true }]
+  },
+  setLayersState: vi.fn(),
+  defaultLayerConfiguration: undefined
+};
+
+const defaultDependencies: LayersButtonDependencies = {
+  useModelHandlers: vi.fn((): [ModelLayerHandlers, () => void] => [
+    {
+      cadHandlers: [mockCadHandler],
+      pointCloudHandlers: [mockPointCloudHandler],
+      image360Handlers: [mockImage360Handler]
+    },
+    vi.fn()
+  ]),
+  useSyncExternalLayersState: vi.fn(),
+  useReveal: vi.fn(() => viewerMock),
+  use3dModels: vi.fn(() => [cadMock, cadMock]),
+  ModelLayerSelection
+};
 
 const wrapper = ({ children }: { children: ReactNode }): ReactElement => (
-  <SDKProvider sdk={sdkMock}>
-    <QueryClientProvider client={queryClient}>
-      <ViewerContextProvider value={renderTargetMock}>
-        <Reveal3DResourcesInfoContextProvider>{children}</Reveal3DResourcesInfoContextProvider>
-      </ViewerContextProvider>
-    </QueryClientProvider>
-  </SDKProvider>
+  <LayersButtonContext.Provider value={defaultDependencies}>
+    {children}
+  </LayersButtonContext.Provider>
 );
 
 describe(LayersButtonStrip.name, () => {
-  const mockCadHandler = createCadHandlerMock();
-  const mockPointCloudHandler = createPointCloudHandlerMock();
-  const mockImage360Handler = createImage360HandlerMock();
-  const defaultProps: LayersButtonProps = {
-    layersState: {
-      cadLayers: [{ revisionId: 456, applied: true, index: 0 }],
-      pointCloudLayers: [{ revisionId: 123, applied: true, index: 0 }],
-      image360Layers: [{ siteId: 'site-id', applied: true }]
-    },
-    setLayersState: vi.fn(),
-    defaultLayerConfiguration: undefined
-  };
-
-  const defaultDependencies: LayersButtonDependencies = {
-    useModelHandlers: vi.fn((): [ModelLayerHandlers, () => void] => [
-      {
-        cadHandlers: [mockCadHandler],
-        pointCloudHandlers: [mockPointCloudHandler],
-        image360Handlers: [mockImage360Handler]
-      },
-      vi.fn()
-    ]),
-    useSyncExternalLayersState: vi.fn(),
-    useReveal: vi.fn(() => viewerMock),
-    use3dModels: vi.fn(() => [cadMock, cadMock]),
-    ModelLayerSelection: vi.fn(({ label }) => <div>{label}</div>)
-  };
-
   test('renders without crashing', () => {
     const mockModels: CogniteModel[] = [cadMock, cadMock];
     viewerModelsMock.mockReturnValue(mockModels);
@@ -110,7 +98,7 @@ describe(LayersButtonStrip.name, () => {
       ModelLayerSelection
     };
 
-    const { rerender } = render(<LayersButtonStrip {...defaultProps} />, {
+    const { rerender } = render(<LayersButtonStrip {...newProps} />, {
       wrapper
     });
 

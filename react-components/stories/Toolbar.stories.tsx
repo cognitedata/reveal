@@ -21,6 +21,7 @@ import { RevealStoryContainer } from './utilities/RevealStoryContainer';
 import { getAddModelOptionsFromUrl } from './utilities/getAddModelOptionsFromUrl';
 import { useGetCameraStateFromUrlParam } from './utilities/useGetCameraStateFromUrlParam';
 import { type AddModelOptions } from '@cognite/reveal';
+import { LayersButtonStrip } from '../src/components/RevealToolbar/LayersButton/components/LayersButtonsStrip';
 
 const meta = {
   title: 'Example/Toolbar',
@@ -102,6 +103,9 @@ export const Main: Story = {
         lowFidelitySettings={exampleLowQualitySettings}
         highFidelitySettings={exampleHighQualitySettings}
       />
+      <TopToolBar>
+        <LayersButtonStrip />
+      </TopToolBar>
       <MyCustomToolbar>
         <RevealToolbar.FitModelsButton />
         <ToolBar.ButtonGroup buttonGroup={exampleToolBarButtons} />
@@ -111,6 +115,20 @@ export const Main: Story = {
     </RevealStoryContainer>
   )
 };
+
+export const TopToolBar = styled(withSuppressRevealEvents(ToolBar)).attrs({
+  direction: 'horizontal'
+})`
+  position: absolute;
+  top: 20px;
+  left: 50%;
+  transform: translate(-50%, 0%);
+  height: 48px;
+  padding: 6px;
+  gap: 8px;
+  border-radius: 8px;
+  border: 1px solid rgba(83, 88, 127, 0.24);
+`;
 
 function FitToUrlCameraState(): ReactElement {
   const getCameraState = useGetCameraStateFromUrlParam();
