@@ -1,16 +1,18 @@
 /*!
- * Copyright 2024 Cognite AS
+ * Copyright 2025 Cognite AS
  */
 
 import { describe, expect, test } from 'vitest';
 import { MeasureBoxDomainObject } from '../../measurements/MeasureBoxDomainObject';
 import { BoxCreator } from './BoxCreator';
 import { PrimitiveType } from '../../../base/utilities/primitives/PrimitiveType';
-import { Ray, Vector3 } from 'three';
-import { CDF_TO_VIEWER_TRANSFORMATION } from '@cognite/reveal';
+import { Vector3 } from 'three';
 import { expectEqualVector3 } from '../../../../../tests/tests-utilities/primitives/primitiveTestUtil';
 import { Box } from '../../../base/utilities/primitives/Box';
 import { FocusType } from '../../../base/domainObjectsHelpers/FocusType';
+import { click } from '../../../../../tests/tests-utilities/architecture/baseCreatorUtil';
+
+const direction = new Vector3(1, 0, -1);
 
 describe('BoxCreator', () => {
   test('Create Box by mimics the user clicking 4 times', () => {
@@ -18,10 +20,10 @@ describe('BoxCreator', () => {
     const creator = new BoxCreator(domainObject);
     expect(domainObject.focusType).toBe(FocusType.Pending);
 
-    click(creator, new Vector3(0, 0, 1), false, new Vector3(0, 0, 0));
-    click(creator, new Vector3(1, 0, 1), false);
-    click(creator, new Vector3(1, 1, 1), false);
-    click(creator, new Vector3(2, 1, 1), true);
+    click(creator, new Vector3(0, 0, 1), direction, false, new Vector3(0, 0, 0));
+    click(creator, new Vector3(1, 0, 1), direction, false);
+    click(creator, new Vector3(1, 1, 1), direction, false);
+    click(creator, new Vector3(2, 1, 1), direction, true);
 
     expect(creator.domainObject).toBe(domainObject);
     expectEqualVector3(domainObject.box.size, new Vector3(2, 1, 1));
@@ -34,9 +36,9 @@ describe('BoxCreator', () => {
     const creator = new BoxCreator(domainObject);
     expect(domainObject.focusType).toBe(FocusType.Pending);
 
-    click(creator, new Vector3(0, 0, 1), false, new Vector3(0, 0, 0));
-    click(creator, new Vector3(1, 0, 1), false);
-    click(creator, new Vector3(1, 1, 1), true);
+    click(creator, new Vector3(0, 0, 1), direction, false, new Vector3(0, 0, 0));
+    click(creator, new Vector3(1, 0, 1), direction, false);
+    click(creator, new Vector3(1, 1, 1), direction, true);
 
     expect(creator.domainObject).toBe(domainObject);
     expectEqualVector3(domainObject.box.size, new Vector3(2, 1, Box.MinSize));
@@ -49,8 +51,8 @@ describe('BoxCreator', () => {
     const creator = new BoxCreator(domainObject);
     expect(domainObject.focusType).toBe(FocusType.Pending);
 
-    click(creator, new Vector3(0, 0, 1), false, new Vector3(0, 0, 0));
-    click(creator, new Vector3(1, 0, 1), true, new Vector3(2, 0, 4));
+    click(creator, new Vector3(0, 0, 1), direction, false, new Vector3(0, 0, 0));
+    click(creator, new Vector3(1, 0, 1), direction, true, new Vector3(2, 0, 4));
 
     expect(creator.domainObject).toBe(domainObject);
     expectEqualVector3(domainObject.box.size, new Vector3(2, Box.MinSize, 4));
@@ -58,25 +60,3 @@ describe('BoxCreator', () => {
     expect(domainObject.focusType).toBe(FocusType.Focus);
   });
 });
-
-function click(
-  creator: BoxCreator,
-  origin: Vector3,
-  isFinished: boolean,
-  startPoint?: Vector3
-): void {
-  const ray = getRay(origin);
-  if (startPoint !== undefined) {
-    startPoint.applyMatrix4(CDF_TO_VIEWER_TRANSFORMATION);
-  }
-  creator.addPoint(ray, startPoint);
-  expect(creator.isFinished).toBe(isFinished);
-}
-
-function getRay(origin: Vector3): Ray {
-  const direction = new Vector3(1, 0, -1);
-  direction.normalize();
-  const ray = new Ray(origin, direction);
-  ray.applyMatrix4(CDF_TO_VIEWER_TRANSFORMATION);
-  return ray;
-}

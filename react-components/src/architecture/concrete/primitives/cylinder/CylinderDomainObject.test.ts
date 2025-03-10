@@ -10,6 +10,7 @@ import { Quantity } from '../../../base/domainObjectsHelpers/Quantity';
 import { CylinderDomainObject } from './CylinderDomainObject';
 import { Cylinder } from '../../../base/utilities/primitives/Cylinder';
 import { type DomainObject } from '../../../base/domainObjects/DomainObject';
+import { Changes } from '../../../base/domainObjectsHelpers/Changes';
 
 describe('CylinderDomainObject', () => {
   test('Should be empty', () => {
@@ -23,8 +24,8 @@ describe('CylinderDomainObject', () => {
       expect(domainObject.cylinder).toBeDefined();
       expect(domainObject.icon?.length).greaterThan(0);
       expect(isEmpty(domainObject.typeName)).toBe(false);
-      expect(domainObject.renderStyle).instanceOf(SolidPrimitiveRenderStyle);
-      // expect(domainObject.createTransaction(Changes.geometry)).instanceOf(DomainObjectTransaction);
+      expect(domainObject.renderStyle).toBeInstanceOf(SolidPrimitiveRenderStyle);
+      expect(domainObject.createTransaction(Changes.geometry)).toBeDefined();
     }
   });
 
@@ -32,8 +33,8 @@ describe('CylinderDomainObject', () => {
     const domainObject = createCylinderDomainObject(PrimitiveType.Cylinder);
     const clone = domainObject.clone();
 
-    expect(clone).instanceOf(MockCylinderDomainObject);
     expect(clone).not.toBe(domainObject);
+    expect(clone).toBeInstanceOf(MockCylinderDomainObject);
     if (!(clone instanceof MockCylinderDomainObject)) {
       return;
     }

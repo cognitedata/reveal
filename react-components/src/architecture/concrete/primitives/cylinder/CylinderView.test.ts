@@ -1,5 +1,5 @@
 /*!
- * Copyright 2024 Cognite AS
+ * Copyright 2025 Cognite AS
  */
 
 import { beforeEach, describe, expect, test } from 'vitest';
@@ -14,8 +14,9 @@ import { CDF_TO_VIEWER_TRANSFORMATION, type CustomObjectIntersectInput } from '@
 import { expectEqualVector3 } from '../../../../../tests/tests-utilities/primitives/primitiveTestUtil';
 import {
   addView,
-  createIntersectInput
-} from '../../../../../tests/tests-utilities/primitives/viewUtil';
+  createIntersectInput,
+  expectChildrenLength
+} from '../../../../../tests/tests-utilities/architecture/viewUtil';
 import { isDomainObjectIntersection } from '../../../base/domainObjectsHelpers/DomainObjectIntersection';
 import { PrimitivePickInfo } from '../common/PrimitivePickInfo';
 
@@ -27,17 +28,14 @@ describe('CylinderView', () => {
     domainObject = new MockCylinderDomainObject();
     view = new CylinderView();
     addView(domainObject, view);
+    expectChildrenLength(view, 2);
   });
 
   test('should have object', () => {
     expect(view.object).toBeInstanceOf(Object3D);
-    expectChildrenLength(view, 2);
   });
 
   test('should changed when focus change', () => {
-    expect(view.object).toBeInstanceOf(Object3D);
-    expectChildrenLength(view, 2);
-
     domainObject.setFocusInteractive(FocusType.Face);
     expectChildrenLength(view, 6);
 
@@ -58,8 +56,6 @@ describe('CylinderView', () => {
   });
 
   test('should changed when render style change', () => {
-    expectChildrenLength(view, 2);
-
     domainObject.renderStyle.showLines = false;
     view.update(new DomainObjectChange(Changes.renderStyle));
     expectChildrenLength(view, 1);
@@ -74,8 +70,6 @@ describe('CylinderView', () => {
   });
 
   test('should changed when selection change', () => {
-    expectChildrenLength(view, 2);
-
     domainObject.isSelected = true;
     view.update(new DomainObjectChange(Changes.selected));
     expectChildrenLength(view, 2);
@@ -92,7 +86,7 @@ describe('CylinderView', () => {
     expectEqualVector3(intersection.point, domainObject.cylinder.centerA);
     expect(intersection.customObject).toBe(view);
     expect(intersection.distanceToCamera).toBe(1);
-    expect(intersection.userData).instanceOf(PrimitivePickInfo);
+    expect(intersection.userData).toBeInstanceOf(PrimitivePickInfo);
 
     if (isDomainObjectIntersection(intersection)) {
       expect(intersection.domainObject).toBe(domainObject);
@@ -111,10 +105,6 @@ describe('CylinderView', () => {
     expect(intersection).toBeUndefined();
   });
 });
-
-function expectChildrenLength(view: GroupThreeView, expected: number): void {
-  expect(view.object.children.length).toBe(expected);
-}
 
 class MockCylinderDomainObject extends CylinderDomainObject {
   public constructor() {

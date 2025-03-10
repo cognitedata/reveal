@@ -1,15 +1,17 @@
 /*!
- * Copyright 2024 Cognite AS
+ * Copyright 2025 Cognite AS
  */
 
 import { describe, expect, test } from 'vitest';
 import { CylinderCreator } from './CylinderCreator';
-import { Ray, Vector3 } from 'three';
-import { CDF_TO_VIEWER_TRANSFORMATION } from '@cognite/reveal';
+import { Vector3 } from 'three';
 import { expectEqualVector3 } from '../../../../../tests/tests-utilities/primitives/primitiveTestUtil';
 import { FocusType } from '../../../base/domainObjectsHelpers/FocusType';
 import { CylinderDomainObject } from './CylinderDomainObject';
 import { type DomainObject } from '../../../base/domainObjects/DomainObject';
+import { click } from '../../../../../tests/tests-utilities/architecture/baseCreatorUtil';
+
+const direction = new Vector3(1, 0, 0);
 
 describe('CylinderCreator', () => {
   test('Create vertical cylinder by mimics the user clicking 3 times', () => {
@@ -20,9 +22,9 @@ describe('CylinderCreator', () => {
     const dx = 5;
     const radius = 3;
 
-    click(creator, new Vector3(dx, 0, 0), false, new Vector3(dx, 0, 0));
-    click(creator, new Vector3(dx, 0, 2), false);
-    click(creator, new Vector3(dx, radius, 2), true);
+    click(creator, new Vector3(dx, 0, 0), direction, false, new Vector3(dx, 0, 0));
+    click(creator, new Vector3(dx, 0, 2), direction, false);
+    click(creator, new Vector3(dx, radius, 2), direction, true);
 
     expect(creator.domainObject).toBe(domainObject);
     expectEqualVector3(domainObject.cylinder.centerA, new Vector3(dx, 0, 0));
@@ -39,9 +41,9 @@ describe('CylinderCreator', () => {
     const dz = 5;
     const radius = 3;
 
-    click(creator, new Vector3(0, 0, dz), false, new Vector3(0, 0, dz));
-    click(creator, new Vector3(0, 2, dz), false);
-    click(creator, new Vector3(0, 2, radius + dz), true);
+    click(creator, new Vector3(0, 0, dz), direction, false, new Vector3(0, 0, dz));
+    click(creator, new Vector3(0, 2, dz), direction, false);
+    click(creator, new Vector3(0, 2, radius + dz), direction, true);
 
     expect(creator.domainObject).toBe(domainObject);
     expectEqualVector3(domainObject.cylinder.centerA, new Vector3(0, 0, dz));
@@ -50,26 +52,6 @@ describe('CylinderCreator', () => {
     expect(domainObject.focusType).toBe(FocusType.Focus);
   });
 });
-
-function click(
-  creator: CylinderCreator,
-  origin: Vector3,
-  isFinished: boolean,
-  startPoint?: Vector3
-): void {
-  const ray = getRay(origin);
-  if (startPoint !== undefined) {
-    startPoint.applyMatrix4(CDF_TO_VIEWER_TRANSFORMATION);
-  }
-  creator.addPoint(ray, startPoint);
-  expect(creator.isFinished).toBe(isFinished);
-}
-
-function getRay(origin: Vector3): Ray {
-  const ray = new Ray(origin, new Vector3(1, 0, 0));
-  ray.applyMatrix4(CDF_TO_VIEWER_TRANSFORMATION);
-  return ray;
-}
 
 class MockCylinderDomainObject extends CylinderDomainObject {
   public constructor() {

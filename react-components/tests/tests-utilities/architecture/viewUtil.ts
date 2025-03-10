@@ -3,9 +3,14 @@
  */
 
 import { CDF_TO_VIEWER_TRANSFORMATION, type CustomObjectIntersectInput } from '@cognite/reveal';
-import { type DomainObject, type ThreeView } from '../../../src/architecture';
+import { type GroupThreeView, type DomainObject, type ThreeView } from '../../../src/architecture';
 import { createFullRenderTargetMock } from '../fixtures/createFullRenderTargetMock';
 import { PerspectiveCamera, Raycaster, Vector2, type Vector3 } from 'three';
+import { expect } from 'vitest';
+
+export function expectChildrenLength(view: GroupThreeView, expected: number): void {
+  expect(view.object.children.length).toBe(expected);
+}
 
 export function addView(domainObject: DomainObject, view: ThreeView): void {
   const renderTarget = createFullRenderTargetMock();
