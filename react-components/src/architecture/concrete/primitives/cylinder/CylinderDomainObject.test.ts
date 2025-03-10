@@ -80,23 +80,23 @@ function createCylinder(): Cylinder {
   const primitive = new Cylinder();
   primitive.radius = 1;
   primitive.centerA.set(1, 2, 3);
-  primitive.centerA.set(4, 5, 6);
+  primitive.centerB.set(4, 5, 6);
   return primitive;
 }
 
 function createHorizontalCylinder(): Cylinder {
   const primitive = new Cylinder();
   primitive.radius = 1;
-  primitive.centerA.set(1, 2, 3);
-  primitive.centerA.set(4, 5, 6);
+  primitive.centerA.set(0, 0, 3);
+  primitive.centerB.set(2, 0, 3);
   return primitive;
 }
 
 function createVerticalCylinder(): Cylinder {
   const primitive = new Cylinder();
   primitive.radius = 1;
-  primitive.centerA.set(1, 2, 3);
-  primitive.centerA.set(4, 5, 6);
+  primitive.centerA.set(3, 0, 0);
+  primitive.centerB.set(3, 0, 2);
   return primitive;
 }
 
