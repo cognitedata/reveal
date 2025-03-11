@@ -26,8 +26,4 @@ export class MeasureCylinderDomainObject extends CylinderDomainObject {
     clone.copyFrom(this, what);
     return clone;
   }
-
-  public override get canRotate(): boolean {
-    return false;
-  }
 }

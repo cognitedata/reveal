@@ -119,7 +119,7 @@ export class CylinderView extends GroupThreeView<CylinderDomainObject> {
       }
     }
     if (showMarkers(focusType)) {
-      if (domainObject.canRotate) {
+      if (domainObject.canMoveCaps) {
         this.addChild(this.createRotationRing(matrix, TOP_FACE));
         this.addChild(this.createRotationRing(matrix, BOTTOM_FACE));
       }
@@ -379,7 +379,7 @@ export class CylinderView extends GroupThreeView<CylinderDomainObject> {
       if (relativeDistance < RELATIVE_RESIZE_RADIUS) {
         return FocusType.Face;
       }
-      if (domainObject.canRotate && RELATIVE_ROTATION_RADIUS.isInside(relativeDistance)) {
+      if (domainObject.canMoveCaps && RELATIVE_ROTATION_RADIUS.isInside(relativeDistance)) {
         return FocusType.Rotation;
       }
       if (

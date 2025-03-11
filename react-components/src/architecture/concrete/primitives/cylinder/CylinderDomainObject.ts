@@ -155,16 +155,12 @@ export abstract class CylinderDomainObject extends SolidDomainObject {
   }
 
   // ==================================================
-  // VIRTUAL METHODS
-  // ==================================================
-
-  public get canRotate(): boolean {
-    return true;
-  }
-
-  // ==================================================
   // INSTANCE METHODS
   // ==================================================
+
+  public get canMoveCaps(): boolean {
+    return this.primitiveType === PrimitiveType.Cylinder;
+  }
 
   public expandBoundingBox(boundingBox: Box3): void {
     this.cylinder.expandBoundingBox(boundingBox);
