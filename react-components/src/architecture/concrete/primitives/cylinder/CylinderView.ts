@@ -12,7 +12,8 @@ import {
   type Matrix4,
   RingGeometry,
   CircleGeometry,
-  type Material
+  type Material,
+  type Sprite
 } from 'three';
 import { type CylinderDomainObject } from './CylinderDomainObject';
 import { type DomainObjectChange } from '../../../base/domainObjectsHelpers/DomainObjectChange';
@@ -34,13 +35,17 @@ import {
   updateWireframeMaterial,
   updateLineSegmentsMaterial,
   updateMarkerMaterial,
-  updateSolidMaterial
+  updateSolidMaterial,
+  BoxView
 } from '../box/BoxView';
 import { type SolidPrimitiveRenderStyle } from '../common/SolidPrimitiveRenderStyle';
 import { CylinderUtils } from '../../../base/utilities/primitives/CylinderUtils';
 import { LineMaterial } from 'three/examples/jsm/lines/LineMaterial.js';
 import { Wireframe } from 'three/examples/jsm/lines/Wireframe.js';
 import { PrimitiveType } from '../../../base/utilities/primitives/PrimitiveType';
+import { clear } from '../../../base/utilities/extensions/arrayExtensions';
+import { getRoot } from '../../../base/domainObjects/getRoot';
+import { Quantity } from '../../../base/domainObjectsHelpers/Quantity';
 
 const RELATIVE_RESIZE_RADIUS = 0.2;
 const RELATIVE_MAX_RADIUS = 0.9;
@@ -51,6 +56,12 @@ const TOP_FACE = new BoxFace(2);
 const BOTTOM_FACE = new BoxFace(5);
 
 export class CylinderView extends GroupThreeView<CylinderDomainObject> {
+  // ==================================================
+  // INSTANCE FIELDS
+  // ==================================================
+
+  private readonly _sprites: Array<Sprite | undefined> = [];
+
   // ==================================================
   // INSTANCE PROPERTIES
   // ==================================================
@@ -113,6 +124,9 @@ export class CylinderView extends GroupThreeView<CylinderDomainObject> {
         this.addChild(this.createRotationRing(matrix, BOTTOM_FACE));
       }
       this.addEdgeCircles(matrix);
+    }
+    if (style.showLabel) {
+      this.addLabels(matrix);
     }
   }
 
@@ -307,8 +321,50 @@ export class CylinderView extends GroupThreeView<CylinderDomainObject> {
   }
 
   // ==================================================
-  // INSTANCE METHODS: For picking
+  // INSTANCE METHODS: Creating labels
   // ==================================================
+
+  private addLabels(matrix: Matrix4): void {
+    const { style } = this;
+
+    const spriteHeight = this.getTextHeight(style.relativeTextSize);
+    clear(this._sprites);
+    this.addChild(this.createRadiusLabel(matrix, spriteHeight, TOP_FACE));
+  }
+
+  private getTextHeight(relativeTextSize: number): number {
+    return relativeTextSize * 2 * this.domainObject.cylinder.radius;
+  }
+
+  private createRadiusLabel(
+    matrix: Matrix4,
+    spriteHeight: number,
+    face: BoxFace
+  ): Sprite | undefined {
+    if (!this.isFaceVisible(face)) {
+      return undefined;
+    }
+    const { domainObject } = this;
+    const radius = domainObject.cylinder.radius;
+    if (radius === 0) {
+      return undefined; // Not show when about 0
+    }
+    const rootDomainObject = getRoot(domainObject);
+    if (rootDomainObject === undefined) {
+      return undefined;
+    }
+    const text = rootDomainObject.unitSystem.toStringWithUnit(radius, Quantity.Length);
+    const sprite = BoxView.createSprite(text, this.style, spriteHeight);
+    if (sprite === undefined) {
+      return undefined;
+    }
+    const faceCenter = face.getCenter(newVector3());
+    faceCenter.applyMatrix4(matrix);
+    faceCenter.y += (1.1 * spriteHeight) / 2;
+
+    sprite.position.copy(faceCenter);
+    return sprite;
+  }
 
   private getPickedFocusType(realPosition: Vector3, face: BoxFace): FocusType {
     const { domainObject } = this;
