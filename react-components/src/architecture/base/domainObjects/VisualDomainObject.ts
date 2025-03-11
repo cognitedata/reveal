@@ -11,6 +11,8 @@ import { type BaseDragger } from '../domainObjectsHelpers/BaseDragger';
 import { type Vector3, type Ray } from 'three';
 import { FocusType } from '../domainObjectsHelpers/FocusType';
 import { Changes } from '../domainObjectsHelpers/Changes';
+import { getRenderTarget } from './getRoot';
+import { canCreateThreeView, createThreeView } from '../views/ThreeViewFactory';
 
 /**
  * Represents a visual domain object that can be rendered and manipulated in a three-dimensional space.
@@ -29,11 +31,18 @@ export abstract class VisualDomainObject extends DomainObject {
   // OVERRIDES of DomainObject
   // ==================================================
 
-  public override getVisibleState(renderTarget: RevealRenderTarget): VisibleState {
+  public override getVisibleState(renderTarget?: RevealRenderTarget): VisibleState {
+    // If renderTarget is not provided, use the renderTarget of the rootDomainObject
+    if (renderTarget === undefined) {
+      renderTarget = getRenderTarget(this);
+      if (renderTarget === undefined) {
+        return VisibleState.Disabled;
+      }
+    }
     if (this.getViewByTarget(renderTarget) !== undefined) {
       return VisibleState.All;
     }
-    if (this.canCreateThreeView()) {
+    if (canCreateThreeView(this)) {
       if (this.canBeSetVisibleNow(renderTarget)) {
         return VisibleState.None;
       }
@@ -48,7 +57,7 @@ export abstract class VisualDomainObject extends DomainObject {
     topLevel = true
   ): boolean {
     if (renderTarget === undefined) {
-      renderTarget = this.rootDomainObject?.renderTarget;
+      renderTarget = getRenderTarget(this);
       if (renderTarget === undefined) {
         return false;
       }
@@ -72,21 +81,6 @@ export abstract class VisualDomainObject extends DomainObject {
   // ==================================================
   // VIRTUAL METHODS
   // ==================================================
-
-  /**
-   * Factory methods to create its own three view for visualization in three.js
-   */
-  protected abstract createThreeView(): ThreeView | undefined;
-
-  /**
-   * Determines whether the visual domain object can create a three view.
-   * It may have a state when it can not create a view because of other dependencies
-   *
-   * @returns A boolean value indicating whether the visual domain object can create a three view.
-   */
-  protected canCreateThreeView(): boolean {
-    return true;
-  }
 
   /**
    * Factory method to create a dragger to interpret the mouse dragging operation
@@ -148,10 +142,7 @@ export abstract class VisualDomainObject extends DomainObject {
       if (view !== undefined) {
         return false;
       }
-      if (!this.canCreateThreeView()) {
-        return false;
-      }
-      view = this.createThreeView();
+      view = createThreeView(this);
       if (view === undefined) {
         return false;
       }

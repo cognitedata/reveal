@@ -13,7 +13,10 @@ import {
   type ViewItem
 } from '../FdmSDK';
 import { type InstancesWithView } from '../../query/useSearchMappedEquipmentFDM';
-import { type TaggedAddResourceOptions } from '../../components/Reveal3DResources/types';
+import {
+  type AddImage360CollectionDatamodelsOptions,
+  type TaggedAddResourceOptions
+} from '../../components/Reveal3DResources/types';
 import { getEdgeConnected3dInstances } from './getEdgeConnected3dInstances';
 import { getFdmConnectionsForNodes } from './getFdmConnectionsForNodeIds';
 import { getDMSModels } from './getDMSModels';
@@ -22,8 +25,8 @@ import { filterNodesByMappedTo3d } from './filterNodesByMappedTo3d';
 import { getCadModelsForFdmInstance } from './getCadModelsForFdmInstance';
 import { getCadConnectionsForRevision } from './getCadConnectionsForRevision';
 import { type CogniteClient, type Node3D } from '@cognite/sdk';
-import { isClassicIdentifier } from '../../components';
 import { EMPTY_ARRAY } from '../../utilities/constants';
+import { isClassicIdentifier } from '../../components/Reveal3DResources/typeGuards';
 
 export class LegacyFdm3dDataProvider implements Fdm3dDataProvider {
   readonly _fdmSdk: FdmSDK;
@@ -61,7 +64,7 @@ export class LegacyFdm3dDataProvider implements Fdm3dDataProvider {
   }
 
   async listMappedFdmNodes(
-    models: Array<AddModelOptions<DataSourceType>>,
+    models: Array<AddModelOptions<DataSourceType> | AddImage360CollectionDatamodelsOptions>,
     sourcesToSearch: Source[],
     instanceFilter: InstanceFilter | undefined,
     limit: number
@@ -81,7 +84,7 @@ export class LegacyFdm3dDataProvider implements Fdm3dDataProvider {
   }
 
   async listAllMappedFdmNodes(
-    models: Array<AddModelOptions<DataSourceType>>,
+    models: Array<AddModelOptions<DataSourceType> | AddImage360CollectionDatamodelsOptions>,
     sourcesToSearch: Source[]
   ): Promise<NodeItem[]> {
     const classicModels = models.filter((model) => isClassicIdentifier(model));
@@ -94,7 +97,7 @@ export class LegacyFdm3dDataProvider implements Fdm3dDataProvider {
 
   async filterNodesByMappedTo3d(
     nodes: InstancesWithView[],
-    models: Array<AddModelOptions<DataSourceType>>,
+    models: Array<AddModelOptions<DataSourceType> | AddImage360CollectionDatamodelsOptions>,
     spacesToSearch: string[]
   ): Promise<InstancesWithView[]> {
     const classicModels = models.filter((model) => isClassicIdentifier(model));

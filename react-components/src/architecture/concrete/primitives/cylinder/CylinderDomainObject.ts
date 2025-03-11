@@ -3,8 +3,6 @@
  */
 
 import { type RenderStyle } from '../../../base/renderStyles/RenderStyle';
-import { type ThreeView } from '../../../base/views/ThreeView';
-import { CylinderView } from './CylinderView';
 import { Changes } from '../../../base/domainObjectsHelpers/Changes';
 import { FocusType } from '../../../base/domainObjectsHelpers/FocusType';
 import { type PrimitiveType } from '../../../base/utilities/primitives/PrimitiveType';
@@ -12,7 +10,6 @@ import { type PrimitivePickInfo } from '../common/PrimitivePickInfo';
 import { type BaseDragger } from '../../../base/domainObjectsHelpers/BaseDragger';
 import { CylinderDragger } from './CylinderDragger';
 import { type CreateDraggerProps } from '../../../base/domainObjects/VisualDomainObject';
-import { getIconByPrimitiveType } from '../../../base/utilities/primitives/getIconByPrimitiveType';
 import { type TranslationInput } from '../../../base/utilities/TranslateInput';
 import { Quantity } from '../../../base/domainObjectsHelpers/Quantity';
 import { PanelInfo } from '../../../base/domainObjectsHelpers/PanelInfo';
@@ -21,7 +18,6 @@ import { SolidPrimitiveRenderStyle } from '../common/SolidPrimitiveRenderStyle';
 import { Cylinder } from '../../../base/utilities/primitives/Cylinder';
 import { Line3, Vector3 } from 'three';
 import { type RevealRenderTarget } from '../../../base/renderTarget/RevealRenderTarget';
-import { type IconName } from '../../../base/utilities/IconName';
 
 export abstract class CylinderDomainObject extends SolidDomainObject {
   // ==================================================
@@ -33,10 +29,6 @@ export abstract class CylinderDomainObject extends SolidDomainObject {
   // ==================================================
   // OVERRIDES of DomainObject
   // ==================================================
-
-  public override get icon(): IconName {
-    return getIconByPrimitiveType(this.primitiveType);
-  }
 
   public override get typeName(): TranslationInput {
     return { key: 'CYLINDER' };
@@ -93,10 +85,6 @@ export abstract class CylinderDomainObject extends SolidDomainObject {
   // ==================================================
   // OVERRIDES of VisualDomainObject
   // ==================================================
-
-  protected override createThreeView(): ThreeView | undefined {
-    return new CylinderView();
-  }
 
   public override getEditToolCursor(
     renderTarget: RevealRenderTarget,

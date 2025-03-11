@@ -4,11 +4,23 @@
 
 import { useEffect } from 'react';
 import { useSceneConfig } from './scenes/useSceneConfig';
-import * as THREE from 'three';
 import { useQuery } from '@tanstack/react-query';
 import { useSDK } from '../components/RevealCanvas/SDKProvider';
 import { type Cognite3DViewer, CustomObject, type DataSourceType } from '@cognite/reveal';
 import { useReveal } from '../components/RevealCanvas/ViewerContext';
+import {
+  TextureLoader,
+  type Texture,
+  type Object3D,
+  SphereGeometry,
+  MeshBasicMaterial,
+  BackSide,
+  Mesh,
+  Box3,
+  type WebGLRenderer,
+  type Scene,
+  type PerspectiveCamera
+} from 'three';
 
 export const useSkyboxFromScene = (sceneExternalId: string, sceneSpaceId: string): void => {
   const scene = useSceneConfig(sceneExternalId, sceneSpaceId);
@@ -31,7 +43,7 @@ export const useSkyboxFromScene = (sceneExternalId: string, sceneSpaceId: string
 
       const skyboxUrl = skyBoxUrls[0].downloadUrl;
       try {
-        const texture = await new THREE.TextureLoader().loadAsync(skyboxUrl);
+        const texture = await new TextureLoader().loadAsync(skyboxUrl);
         return texture;
       } catch (error) {
         console.error('Failed to load skybox texture');
@@ -56,26 +68,26 @@ export const useSkyboxFromScene = (sceneExternalId: string, sceneSpaceId: string
 };
 
 function initializeSkybox(
-  texture: THREE.Texture,
+  texture: Texture,
   viewer: Cognite3DViewer<DataSourceType>
-): [THREE.Object3D, () => void] {
+): [Object3D, () => void] {
   const skyboxRadius = 10;
-  const skyboxGeometry = new THREE.SphereGeometry(skyboxRadius, 20, 20);
-  const skyboxMaterial = new THREE.MeshBasicMaterial({
-    side: THREE.BackSide,
+  const skyboxGeometry = new SphereGeometry(skyboxRadius, 20, 20);
+  const skyboxMaterial = new MeshBasicMaterial({
+    side: BackSide,
     map: texture
   });
 
   skyboxMaterial.depthWrite = false;
-  const skyboxMesh = new THREE.Mesh(skyboxGeometry, skyboxMaterial);
+  const skyboxMesh = new Mesh(skyboxGeometry, skyboxMaterial);
   skyboxMesh.renderOrder = -2;
   skyboxMesh.frustumCulled = false;
-  (skyboxMesh as any).boundingBox = new THREE.Box3().makeEmpty();
+  (skyboxMesh as any).boundingBox = new Box3().makeEmpty();
 
   const onBeforeRender = (
-    _renderer: THREE.WebGLRenderer,
-    _scene: THREE.Scene,
-    camera: THREE.PerspectiveCamera
+    _renderer: WebGLRenderer,
+    _scene: Scene,
+    camera: PerspectiveCamera
   ): void => {
     skyboxMesh.position.copy(camera.position);
     skyboxMesh.updateMatrix();
@@ -91,9 +103,9 @@ function initializeSkybox(
   };
 
   const onAfterRender = (
-    _renderer: THREE.WebGLRenderer,
-    _scene: THREE.Scene,
-    camera: THREE.PerspectiveCamera
+    _renderer: WebGLRenderer,
+    _scene: Scene,
+    camera: PerspectiveCamera
   ): void => {
     camera.near = (camera as any).lastNear;
     camera.far = (camera as any).lastFar;

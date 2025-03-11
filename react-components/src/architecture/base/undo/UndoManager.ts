@@ -12,11 +12,19 @@ export class UndoManager {
   // INSTANCE METHODS
   // =================================================
 
-  public addTransaction(transaction: Transaction | undefined): void {
+  /**
+   * Adds a transaction to the undo manager.
+   *
+   * @param transaction - The transaction to be added. If undefined, the transaction will not be added.
+   * @returns A boolean indicating whether the ability to undo has changed as a result of adding the transaction.
+   */
+  public addTransaction(transaction: Transaction | undefined): boolean {
     if (transaction === undefined) {
-      return;
+      return false;
     }
+    const couldUndo = this.canUndo;
     this._transactions.push(transaction);
+    return couldUndo !== this.canUndo;
   }
 
   public undo(renderTarget: RevealRenderTarget): boolean {

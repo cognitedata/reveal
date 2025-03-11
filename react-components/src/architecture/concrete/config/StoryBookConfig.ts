@@ -33,6 +33,7 @@ import { Image360Action } from '@cognite/reveal';
 import { type ExternalId } from '../../../data-providers/FdmSDK';
 import { Image360AnnotationSelectTool } from '../annotation360/Image360AnnotationSelectTool';
 import { Image360AnnotationCreateTool } from '../annotation360/Image360AnnotationCreateTool';
+import { ShowTreeViewCommand } from '../../base/concreteCommands/ShowTreeViewCommand';
 
 export class StoryBookConfig extends BaseRevealConfig {
   // ==================================================
@@ -59,6 +60,7 @@ export class StoryBookConfig extends BaseRevealConfig {
 
   public override createMainToolbar(): Array<BaseCommand | undefined> {
     return [
+      new ShowTreeViewCommand(),
       new ToggleAllModelsVisibleCommand(),
       new ToggleMetricUnitsCommand(),
       new SettingsCommand(),
@@ -69,9 +71,6 @@ export class StoryBookConfig extends BaseRevealConfig {
       new MeasurementTool(),
       new ClipTool(),
       new PointsOfInterestTool<ExternalId>(),
-      undefined,
-      new MockSettingsCommand(),
-      new MockFilterCommand(),
       undefined,
       new MockSettingsCommand(),
       new MockFilterCommand(),

@@ -2,10 +2,7 @@
  * Copyright 2024 Cognite AS
  */
 
-import { type BaseCommand } from '../../base/commands/BaseCommand';
 import { type BaseCreator } from '../../base/domainObjectsHelpers/BaseCreator';
-import { ShowMeasurementsOnTopCommand } from './commands/ShowMeasurementsOnTopCommand';
-import { SetMeasurementTypeCommand } from './commands/SetMeasurementTypeCommand';
 import { type TranslationInput } from '../../base/utilities/TranslateInput';
 import { PrimitiveEditTool } from '../primitives/tools/PrimitiveEditTool';
 import { MeasureLineDomainObject } from './MeasureLineDomainObject';
@@ -15,7 +12,6 @@ import { BoxCreator } from '../primitives/box/BoxCreator';
 import { LineCreator } from '../primitives/line/LineCreator';
 import { type VisualDomainObject } from '../../base/domainObjects/VisualDomainObject';
 import { CDF_TO_VIEWER_TRANSFORMATION } from '@cognite/reveal';
-import { UndoCommand } from '../../base/concreteCommands/UndoCommand';
 import { type IconName } from '../../base/utilities/IconName';
 import { Box3 } from 'three';
 import { type DomainObject } from '../../base/domainObjects/DomainObject';
@@ -32,20 +28,6 @@ export class MeasurementTool extends PrimitiveEditTool {
 
   public override get tooltip(): TranslationInput {
     return { key: 'MEASUREMENTS' };
-  }
-
-  public override getToolbar(): Array<BaseCommand | undefined> {
-    return [
-      new SetMeasurementTypeCommand(PrimitiveType.Line),
-      new SetMeasurementTypeCommand(PrimitiveType.Polyline),
-      new SetMeasurementTypeCommand(PrimitiveType.Polygon),
-      new SetMeasurementTypeCommand(PrimitiveType.HorizontalArea),
-      new SetMeasurementTypeCommand(PrimitiveType.VerticalArea),
-      new SetMeasurementTypeCommand(PrimitiveType.Box),
-      undefined, // Separator
-      new UndoCommand(),
-      new ShowMeasurementsOnTopCommand()
-    ];
   }
 
   // ==================================================
@@ -107,6 +89,7 @@ export class MeasurementTool extends PrimitiveEditTool {
       return parent;
     }
     const newParent = new MeasurementFolder();
+    newParent.isExpanded = true;
     this.renderTarget.rootDomainObject.addChildInteractive(newParent);
     return newParent;
   }
@@ -116,12 +99,12 @@ export class MeasurementTool extends PrimitiveEditTool {
       case PrimitiveType.Line:
       case PrimitiveType.Polyline:
       case PrimitiveType.Polygon:
-        return new LineCreator(this, new MeasureLineDomainObject(this.primitiveType));
+        return new LineCreator(new MeasureLineDomainObject(this.primitiveType), this.undoManager);
 
       case PrimitiveType.HorizontalArea:
       case PrimitiveType.VerticalArea:
       case PrimitiveType.Box:
-        return new BoxCreator(this, new MeasureBoxDomainObject(this.primitiveType));
+        return new BoxCreator(new MeasureBoxDomainObject(this.primitiveType));
       default:
         return undefined;
     }

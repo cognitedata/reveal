@@ -2,42 +2,25 @@
  * Copyright 2023 Cognite AS
  */
 import { type DataSourceType, type Cognite3DViewer } from '@cognite/reveal';
-import { createContext, type ReactElement, type ReactNode, useContext } from 'react';
+import { createContext, type ReactElement, type ReactNode, useContext, useEffect } from 'react';
 import { type RevealRenderTarget } from '../../architecture/base/renderTarget/RevealRenderTarget';
-import { type CameraStateParameters, useCameraStateControl } from './hooks/useCameraStateControl';
+import { remove } from 'lodash';
 
 const ViewerContext = createContext<RevealRenderTarget | null>(null);
 
 export type ViewerContextProviderProps = {
-  cameraState?: CameraStateParameters;
-  setCameraState?: (cameraState?: CameraStateParameters) => void;
   value: RevealRenderTarget | null;
   children: ReactNode;
 };
 
 export const ViewerContextProvider = ({
-  cameraState,
-  setCameraState,
   value,
   children
 }: ViewerContextProviderProps): ReactElement => {
-  return (
-    <ViewerContext.Provider value={value}>
-      <ViewerControls cameraState={cameraState} setCameraState={setCameraState} />
-      {children}
-    </ViewerContext.Provider>
-  );
-};
+  useExposeRenderTargetAndViewerSingletons(value ?? undefined);
+  useAddRenderTargetToWindowList(value ?? undefined);
 
-const ViewerControls = ({
-  cameraState,
-  setCameraState
-}: {
-  cameraState?: CameraStateParameters;
-  setCameraState?: (cameraState?: CameraStateParameters) => void;
-}): ReactNode => {
-  useCameraStateControl(cameraState, setCameraState);
-  return null;
+  return <ViewerContext.Provider value={value}>{children}</ViewerContext.Provider>;
 };
 
 export const useReveal = (): Cognite3DViewer<DataSourceType> => {
@@ -52,3 +35,50 @@ export const useRenderTarget = (): RevealRenderTarget => {
   }
   return renderTarget;
 };
+
+function useAddRenderTargetToWindowList(renderTarget: RevealRenderTarget | undefined): void {
+  useEffect(() => {
+    if (renderTarget === undefined) {
+      return;
+    }
+
+    if (window.renderTargets === undefined) {
+      window.renderTargets = [renderTarget];
+    } else {
+      window.renderTargets.push(renderTarget);
+    }
+
+    return () => {
+      if (window.renderTargets !== undefined) {
+        remove(window.renderTargets, (element) => element === renderTarget);
+      }
+    };
+  }, [renderTarget]);
+}
+
+function useExposeRenderTargetAndViewerSingletons(
+  renderTarget: RevealRenderTarget | undefined
+): void {
+  useEffect(() => {
+    if (
+      renderTarget === undefined ||
+      window.renderTarget !== undefined ||
+      window.viewer !== undefined
+    ) {
+      return;
+    }
+
+    window.renderTarget = renderTarget;
+    window.viewer = renderTarget.viewer;
+
+    return () => {
+      if (window.renderTarget?.viewer === renderTarget.viewer) {
+        window.viewer = undefined;
+      }
+
+      if (window.renderTarget === renderTarget) {
+        window.renderTarget = undefined;
+      }
+    };
+  }, [renderTarget]);
+}
