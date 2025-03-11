@@ -8,7 +8,6 @@ import { Object3D, Vector3 } from 'three';
 import { type CylinderDomainObject } from './CylinderDomainObject';
 import { FocusType } from '../../../base/domainObjectsHelpers/FocusType';
 import { Changes } from '../../../base/domainObjectsHelpers/Changes';
-import { type GroupThreeView } from '../../../base/views/GroupThreeView';
 import { DomainObjectChange } from '../../../base/domainObjectsHelpers/DomainObjectChange';
 import { CDF_TO_VIEWER_TRANSFORMATION, type CustomObjectIntersectInput } from '@cognite/reveal';
 import { expectEqualVector3 } from '../../../../../tests/tests-utilities/primitives/primitiveTestUtil';
@@ -24,7 +23,7 @@ import { PrimitiveType } from '../../../base/utilities/primitives/PrimitiveType'
 
 describe('CylinderView', () => {
   let domainObject: CylinderDomainObject;
-  let view: GroupThreeView;
+  let view: CylinderView;
 
   beforeEach(() => {
     domainObject = createCylinderDomainObject();

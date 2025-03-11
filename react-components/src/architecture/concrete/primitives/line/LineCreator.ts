@@ -49,18 +49,20 @@ export class LineCreator extends BaseCreator {
   }
 
   public override get minimumPointCount(): number {
-    return 2;
+    switch (this._domainObject.primitiveType) {
+      case PrimitiveType.Polygon:
+        return 3;
+      default:
+        return 2;
+    }
   }
 
   public override get maximumPointCount(): number {
     switch (this._domainObject.primitiveType) {
       case PrimitiveType.Line:
         return 2;
-      case PrimitiveType.Polyline:
-      case PrimitiveType.Polygon:
-        return Number.MAX_SAFE_INTEGER;
       default:
-        throw new Error('Unknown primitiveType');
+        return Number.MAX_SAFE_INTEGER;
     }
   }
 
