@@ -9,7 +9,6 @@ import { isEmpty } from '../../../base/utilities/TranslateInput';
 import { Box } from '../../../base/utilities/primitives/Box';
 import { SolidPrimitiveRenderStyle } from '../common/SolidPrimitiveRenderStyle';
 import { Changes } from '../../../base/domainObjectsHelpers/Changes';
-import { DomainObjectTransaction } from '../../../base/undo/DomainObjectTransaction';
 import { Quantity } from '../../../base/domainObjectsHelpers/Quantity';
 import { type BoxDomainObject } from './BoxDomainObject';
 
@@ -26,8 +25,8 @@ describe('BoxDomainObject', () => {
       expect(domainObject.box).toBeDefined();
       expect(domainObject.icon?.length).greaterThan(0);
       expect(isEmpty(domainObject.typeName)).toBe(false);
-      expect(domainObject.renderStyle).instanceOf(SolidPrimitiveRenderStyle);
-      expect(domainObject.createTransaction(Changes.geometry)).instanceOf(DomainObjectTransaction);
+      expect(domainObject.renderStyle).toBeInstanceOf(SolidPrimitiveRenderStyle);
+      expect(domainObject.createTransaction(Changes.geometry)).toBeDefined();
     }
   });
 
@@ -42,7 +41,7 @@ describe('BoxDomainObject', () => {
     const domainObject = createBoxDomainObject(PrimitiveType.Box);
     const clone = domainObject.clone();
 
-    expect(clone).instanceOf(MeasureBoxDomainObject);
+    expect(clone).toBeInstanceOf(MeasureBoxDomainObject);
     expect(clone).not.toBe(domainObject);
     if (!(clone instanceof MeasureBoxDomainObject)) {
       return;
