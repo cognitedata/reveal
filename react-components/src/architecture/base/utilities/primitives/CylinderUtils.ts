@@ -7,10 +7,12 @@ import { type BufferGeometry, CylinderGeometry } from 'three';
 import { PrimitiveUtils } from './PrimitiveUtils';
 
 const RADIUS = 0.5;
+const SEGMENTS_BETWEEN_CIRCLES = 5;
+const TOTAL_SEGMENTS = SEGMENTS_BETWEEN_CIRCLES * 6;
 
 export class CylinderUtils {
   public static createUnitGeometry(): CylinderGeometry {
-    return new CylinderGeometry(RADIUS, RADIUS, 1);
+    return new CylinderGeometry(RADIUS, RADIUS, 1, TOTAL_SEGMENTS);
   }
 
   public static createLineSegmentsGeometry(): LineSegmentsGeometry {
@@ -20,24 +22,23 @@ export class CylinderUtils {
 
   public static createPositions(): number[] {
     // Define cylinder properties
-    const segmentsBetweenCircles = 4;
-    const totalSegments = segmentsBetweenCircles * 6;
-    const angleIncrement = (2 * Math.PI) / totalSegments;
+    const angleIncrement = (2 * Math.PI) / TOTAL_SEGMENTS;
 
     // Define the positions for the top and bottom circles of the cylinder
     const positions: number[] = [];
+    const startAngle = 0;
 
     // Bottom circle positions
-    for (let i = 0; i <= totalSegments; i++) {
-      const angle = i * angleIncrement;
+    for (let i = 0; i <= TOTAL_SEGMENTS; i++) {
+      const angle = i * angleIncrement + startAngle;
       positions.push(RADIUS * Math.sin(angle)); // x-coordinate
       positions.push(RADIUS * Math.cos(angle)); // y-coordinate
       positions.push(-RADIUS); // z-coordinate (fixed for bottom circle)
     }
 
     // Top circle positions
-    for (let i = 0; i <= totalSegments; i++) {
-      const angle = i * angleIncrement;
+    for (let i = 0; i <= TOTAL_SEGMENTS; i++) {
+      const angle = i * angleIncrement + startAngle;
       positions.push(RADIUS * Math.sin(angle)); // x-coordinate
       positions.push(RADIUS * Math.cos(angle)); // y-coordinate
       positions.push(RADIUS); // z-coordinate (fixed for top circle)
@@ -47,17 +48,17 @@ export class CylinderUtils {
     const indices: number[] = [];
 
     // Indices for the bottom circle
-    for (let i = 0; i < totalSegments; i++) {
+    for (let i = 0; i < TOTAL_SEGMENTS; i++) {
       indices.push(i, i + 1);
     }
     // Indices for the top circle
-    const topCircleOffset = 1 + totalSegments;
-    for (let i = 0; i < totalSegments; i++) {
+    const topCircleOffset = 1 + TOTAL_SEGMENTS;
+    for (let i = 0; i < TOTAL_SEGMENTS; i++) {
       indices.push(i + topCircleOffset, i + 1 + topCircleOffset);
     }
 
     // Indices connecting top and bottom circles
-    for (let i = 0; i < totalSegments; i += segmentsBetweenCircles) {
+    for (let i = 0; i < TOTAL_SEGMENTS; i += SEGMENTS_BETWEEN_CIRCLES) {
       indices.push(i, i + topCircleOffset);
     }
     // This is maybe a silly solution, but I will keep it like this because

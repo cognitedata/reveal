@@ -83,7 +83,7 @@
   "MEASUREMENTS_ADD_VERTICAL_AREA": "Measure rectangular vertical Area. Click at two points in a vertical plan.",
   "MEASUREMENTS_ADD_VOLUME": "Measure volume of a box. Click at three points in a horizontal plan and the fourth to give it height.",
   "MEASUREMENTS_ADD_CIRCLE": "Measure horizontal circle. Click first at the center and second to define the radius.",
-  "MEASUREMENTS_ADD_CYLINDER": "'Measure vertical cylinder. Click first at the center, second to define the radius and third for the height",
+  "MEASUREMENTS_ADD_CYLINDER": "Measure vertical cylinder. Click first at the center, second to define the radius and third for the height",
   "MEASUREMENTS_SHOW_ON_TOP": "Show all measurements on top",
   "MEASUREMENTS_TOOLTIP": "Distance measuring tool",
   "MOUSE_INSTRUCTIONS": "Click+drag",
