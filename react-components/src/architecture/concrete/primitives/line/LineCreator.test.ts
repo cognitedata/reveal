@@ -5,11 +5,12 @@
 import { describe, expect, test } from 'vitest';
 import { LineCreator } from './LineCreator';
 import { PrimitiveType } from '../../../base/utilities/primitives/PrimitiveType';
-import { Ray, Vector3 } from 'three';
-import { CDF_TO_VIEWER_TRANSFORMATION } from '@cognite/reveal';
+import { Vector3 } from 'three';
 import { FocusType } from '../../../base/domainObjectsHelpers/FocusType';
 import { MeasureLineDomainObject } from '../../measurements/MeasureLineDomainObject';
 import { FolderDomainObject } from '../../../base/domainObjects/FolderDomainObject';
+import { type BaseCreator } from '../../../base/domainObjectsHelpers/BaseCreator';
+import { click } from '../../../../../tests/tests-utilities/architecture/baseCreatorUtil';
 
 describe('LineCreator', () => {
   test('create Line by mimics the user clicking 2 times', () => {
@@ -17,8 +18,8 @@ describe('LineCreator', () => {
     const creator = new LineCreator(domainObject);
     expect(domainObject.focusType).toBe(FocusType.Pending);
     const points = [new Vector3(0, 0, 1), new Vector3(1, 0, 1)];
-    click(creator, points[0], false);
-    click(creator, points[1], true);
+    clickMe(creator, points[0], false);
+    clickMe(creator, points[1], true);
     expect(creator.domainObject).toBe(domainObject);
     expect(domainObject.points).toStrictEqual(points);
     expect(domainObject.focusType).toBe(FocusType.Focus);
@@ -35,7 +36,7 @@ describe('LineCreator', () => {
       new Vector3(2, 1, 2)
     ];
     for (const point of points) {
-      click(creator, point, false);
+      clickMe(creator, point, false);
     }
     expect(creator.escape()).toBe(true);
 
@@ -44,7 +45,7 @@ describe('LineCreator', () => {
     expect(domainObject.focusType).toBe(FocusType.Focus);
   });
 
-  test('try to polygon with to few points', () => {
+  test('try to create Polygon with too few points', () => {
     const domainObject = new MeasureLineDomainObject(PrimitiveType.Polygon);
     const folder = new FolderDomainObject();
     folder.addChild(domainObject);
@@ -54,23 +55,16 @@ describe('LineCreator', () => {
 
     const points = [new Vector3(0, 0, 1), new Vector3(0, 1, 1)];
     for (const point of points) {
-      click(creator, point, false);
+      clickMe(creator, point, false);
     }
     expect(creator.escape()).toBe(false);
-
     expect(domainObject.hasParent).toBe(false);
   });
 });
 
-function click(creator: LineCreator, point: Vector3, isFinished: boolean): void {
+function clickMe(creator: BaseCreator, point: Vector3, isFinished: boolean): void {
   const direction = new Vector3(0, 0, -1);
   point = point.clone();
   const origin = point.clone().addScaledVector(direction, -1);
-  const ray = new Ray(origin, direction);
-  ray.applyMatrix4(CDF_TO_VIEWER_TRANSFORMATION);
-  if (point !== undefined) {
-    point.applyMatrix4(CDF_TO_VIEWER_TRANSFORMATION);
-  }
-  creator.addPoint(ray, point);
-  expect(creator.isFinished).toBe(isFinished);
+  click(creator, origin, direction, isFinished, point);
 }

@@ -62,7 +62,7 @@ describe('LineDomainObject', () => {
   test('should polyline or polygon have geometry', () => {
     for (const primitiveType of [PrimitiveType.Polyline, PrimitiveType.Polygon]) {
       const isPolygon = primitiveType === PrimitiveType.Polygon;
-      const domainObject = createDomainObject(primitiveType);
+      const domainObject = createLineDomainObject(primitiveType);
       expect(domainObject.pointCount).toBe(4);
       expect(domainObject.lineSegmentCount).toBe(isPolygon ? 4 : 3);
       expect(domainObject.isClosed).toBe(isPolygon);
@@ -79,7 +79,7 @@ describe('LineDomainObject', () => {
   });
 
   test('should be cloned', () => {
-    const domainObject = createDomainObject(PrimitiveType.Box);
+    const domainObject = createLineDomainObject(PrimitiveType.Box);
     const clone = domainObject.clone();
 
     expect(clone).toBeInstanceOf(MeasureLineDomainObject);
@@ -104,7 +104,7 @@ describe('LineDomainObject', () => {
     testMe(PrimitiveType.Polygon, Quantity.Area, 1);
 
     function testMe(primitiveType: PrimitiveType, quantity: Quantity, expectedItems: number): void {
-      const domainObject = createDomainObject(primitiveType);
+      const domainObject = createLineDomainObject(primitiveType);
       const info = domainObject.getPanelInfo();
       expect(info).toBeDefined();
       if (info === undefined) {
@@ -115,7 +115,7 @@ describe('LineDomainObject', () => {
   });
 });
 
-function createDomainObject(primitiveType: PrimitiveType): LineDomainObject {
+function createLineDomainObject(primitiveType: PrimitiveType): LineDomainObject {
   const domainObject = new MeasureLineDomainObject(primitiveType);
   switch (primitiveType) {
     case PrimitiveType.Line:
