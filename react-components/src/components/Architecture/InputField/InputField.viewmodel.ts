@@ -14,7 +14,9 @@ export function useInputFieldViewModel(inputCommand: BaseInputCommand) {
 
   const command = useMemo(() => getDefaultCommand(inputCommand, renderTarget), [inputCommand]);
 
-  const [enabled, setEnabled] = useState<boolean>(command.isEnabled);
+  const [reactLocalTextFieldContent, setReactLocalTextFieldContent] = useState<string>('');
+
+  const [postButtonEnabled, setPostButtonEnabled] = useState<boolean>(command.isEnabled);
 
   const [postLabel, setPostLabel] = useState<string | undefined>(
     translateIfExists(command.getPostButtonLabel(), t)
@@ -27,8 +29,8 @@ export function useInputFieldViewModel(inputCommand: BaseInputCommand) {
   );
 
   useOnUpdate(command, () => {
-    setContent(command.content);
-    setEnabled(command.isEnabled);
+    setReactLocalTextFieldContent(command.content);
+    setPostButtonEnabled(command.isEnabled);
     setPostLabel(translateIfExists(command.getPostButtonLabel(), t));
     setCancelLabel(translateIfExists(command.getCancelButtonLabel(), t));
     setPlaceholder(translateIfExists(command.getPlaceholder(), t));
@@ -49,9 +51,9 @@ export function useInputFieldViewModel(inputCommand: BaseInputCommand) {
   return {
     key: command.uniqueId,
     placeholder,
-    content: command.content,
+    content: reactLocalTextFieldContent,
     setContent,
-    postButtonEnabled: command.isEnabled,
+    postButtonEnabled,
     onPostMessage,
     postLabel,
     cancelLabel,
