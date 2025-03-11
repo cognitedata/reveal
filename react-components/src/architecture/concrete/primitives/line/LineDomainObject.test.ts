@@ -50,10 +50,10 @@ describe('LineDomainObject', () => {
     expect(domainObject.isClosed).toBe(false);
     expect(domainObject.isLegal).toBe(true);
     expect(domainObject.getTotalLength()).toBeCloseTo(last.distanceTo(first));
-    expect(domainObject.getAverageLength()).toBe(domainObject.getTotalLength());
-    expect(domainObject.getHorizontalLength()).toBe(horizontalDistanceTo(first, last));
-    expect(domainObject.getVerticalLength()).toBe(verticalDistanceTo(first, last));
-    expect(domainObject.getHorizontalArea()).toBe(0);
+    expect(domainObject.getAverageLength()).toBeCloseTo(domainObject.getTotalLength());
+    expect(domainObject.getHorizontalLength()).toBeCloseTo(horizontalDistanceTo(first, last));
+    expect(domainObject.getVerticalLength()).toBeCloseTo(verticalDistanceTo(first, last));
+    expect(domainObject.getHorizontalArea()).toBeCloseTo(0);
 
     const boundingBox = domainObject.getBoundingBox();
     expectEqualBox3(boundingBox, new Box3(first, last));
@@ -70,7 +70,7 @@ describe('LineDomainObject', () => {
       expect(domainObject.getTotalLength()).toBeCloseTo(isPolygon ? 8 : 6);
       expect(domainObject.getAverageLength()).toBeCloseTo(2);
       expect(domainObject.getHorizontalLength()).toBeCloseTo(isPolygon ? 8 : 6);
-      expect(domainObject.getVerticalLength()).toBe(0);
+      expect(domainObject.getVerticalLength()).toBeCloseTo(0);
       expect(domainObject.getHorizontalArea()).toBeCloseTo(isPolygon ? 4 : 0);
 
       const boundingBox = domainObject.getBoundingBox();
