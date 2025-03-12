@@ -4,16 +4,16 @@ import { equalsIgnoreCase, equalsIgnoreCaseAndSpace, isEmpty } from './stringExt
 describe('StringExtensions', () => {
   describe('isEmpty', () => {
     test('should empty string be be empty', () => {
-      expect(isEmpty('')).toEqual(true);
+      expect(isEmpty('')).toBe(true);
     });
     test('should undefined be empty', () => {
-      expect(isEmpty(undefined)).toEqual(true);
+      expect(isEmpty(undefined)).toBe(true);
     });
     test('should be null be empty', () => {
-      expect(isEmpty(null)).toEqual(true);
+      expect(isEmpty(null)).toBe(true);
     });
     test('should string not be empty', () => {
-      expect(isEmpty('abc')).toEqual(false);
+      expect(isEmpty('abc')).toBe(false);
     });
   });
 
@@ -52,7 +52,7 @@ describe('StringExtensions', () => {
       expect(equalsIgnoreCaseAndSpace('abc', 'abd')).toBe(false);
     });
     test('should be not equal when one is empty', () => {
-      //expect(equalsIgnoreCaseAndSpace('abc', '')).toBe(false);
+      expect(equalsIgnoreCaseAndSpace('abc', '')).toBe(false);
     });
     test('should be not equal when different case', () => {
       expect(equalsIgnoreCaseAndSpace('abc', 'ABD')).toBe(false);

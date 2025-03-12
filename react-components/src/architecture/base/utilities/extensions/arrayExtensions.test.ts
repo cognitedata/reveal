@@ -11,7 +11,7 @@ import {
   swap
 } from './arrayExtensions';
 
-describe('Arrays', () => {
+describe('ArrayExtensions', () => {
   describe('clear', () => {
     test('should clear array in place', () => {
       const array = [1, 2, 3];
