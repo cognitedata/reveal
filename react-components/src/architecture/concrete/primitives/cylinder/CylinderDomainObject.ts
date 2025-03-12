@@ -5,7 +5,7 @@
 import { type RenderStyle } from '../../../base/renderStyles/RenderStyle';
 import { Changes } from '../../../base/domainObjectsHelpers/Changes';
 import { FocusType } from '../../../base/domainObjectsHelpers/FocusType';
-import { type PrimitiveType } from '../../../base/utilities/primitives/PrimitiveType';
+import { PrimitiveType } from '../../../base/utilities/primitives/PrimitiveType';
 import { type PrimitivePickInfo } from '../common/PrimitivePickInfo';
 import { type BaseDragger } from '../../../base/domainObjectsHelpers/BaseDragger';
 import { CylinderDragger } from './CylinderDragger';
@@ -16,7 +16,7 @@ import { PanelInfo } from '../../../base/domainObjectsHelpers/PanelInfo';
 import { SolidDomainObject } from '../common/SolidDomainObject';
 import { SolidPrimitiveRenderStyle } from '../common/SolidPrimitiveRenderStyle';
 import { Cylinder } from '../../../base/utilities/primitives/Cylinder';
-import { Line3, Vector3 } from 'three';
+import { type Box3, Line3, Vector3 } from 'three';
 import { type RevealRenderTarget } from '../../../base/renderTarget/RevealRenderTarget';
 
 export abstract class CylinderDomainObject extends SolidDomainObject {
@@ -25,13 +25,32 @@ export abstract class CylinderDomainObject extends SolidDomainObject {
   // ==================================================
 
   public readonly cylinder = new Cylinder();
+  private readonly _primitiveType: PrimitiveType;
+
+  // ==================================================
+  // CONSTRUCTOR
+  // ==================================================
+
+  protected constructor(primitiveType: PrimitiveType = PrimitiveType.Cylinder) {
+    super();
+    this._primitiveType = primitiveType;
+  }
 
   // ==================================================
   // OVERRIDES of DomainObject
   // ==================================================
 
   public override get typeName(): TranslationInput {
-    return { key: 'CYLINDER' };
+    switch (this.primitiveType) {
+      case PrimitiveType.HorizontalCylinder:
+      case PrimitiveType.VerticalCylinder:
+      case PrimitiveType.Cylinder:
+        return { key: 'CYLINDER' };
+      case PrimitiveType.HorizontalCircle:
+        return { key: 'CIRCLE' };
+      default:
+        throw new Error('Unknown PrimitiveType');
+    }
   }
 
   public override createRenderStyle(): RenderStyle | undefined {
@@ -54,18 +73,26 @@ export abstract class CylinderDomainObject extends SolidDomainObject {
     const info = new PanelInfo();
     const { cylinder } = this;
 
-    const isFinished = this.focusType !== FocusType.Pending;
     const hasRadius = Cylinder.isValidSize(cylinder.radius);
-    const hasHeight = Cylinder.isValidSize(cylinder.height);
+    const hasHeight =
+      Cylinder.isValidSize(cylinder.height) &&
+      this.primitiveType !== PrimitiveType.HorizontalCircle;
 
-    if (isFinished || hasRadius) {
+    if (hasRadius) {
       add({ key: 'RADIUS' }, cylinder.radius, Quantity.Length);
+      add({ key: 'DIAMETER' }, cylinder.diameter, Quantity.Length);
     }
-    if (isFinished || hasHeight) {
+    if (hasHeight) {
       add({ key: 'HEIGHT' }, cylinder.height, Quantity.Length);
     }
-    if (isFinished || (hasRadius && hasHeight)) {
-      add({ key: 'AREA' }, cylinder.area, Quantity.Area);
+    if (hasRadius) {
+      if (this.primitiveType === PrimitiveType.HorizontalCircle) {
+        add({ key: 'AREA' }, cylinder.endCapArea, Quantity.Area);
+      } else {
+        add({ key: 'AREA' }, cylinder.area, Quantity.Area);
+      }
+    }
+    if (hasRadius && hasHeight) {
       add({ key: 'VOLUME' }, cylinder.volume, Quantity.Volume);
     }
     return info;
@@ -119,11 +146,23 @@ export abstract class CylinderDomainObject extends SolidDomainObject {
   // ==================================================
 
   public override get primitiveType(): PrimitiveType {
-    return this.cylinder.primitiveType;
+    return this._primitiveType;
   }
 
   public override clear(): void {
     super.clear();
     this.cylinder.clear();
+  }
+
+  // ==================================================
+  // INSTANCE METHODS
+  // ==================================================
+
+  public get canMoveCaps(): boolean {
+    return this.primitiveType === PrimitiveType.Cylinder;
+  }
+
+  public expandBoundingBox(boundingBox: Box3): void {
+    this.cylinder.expandBoundingBox(boundingBox);
   }
 }

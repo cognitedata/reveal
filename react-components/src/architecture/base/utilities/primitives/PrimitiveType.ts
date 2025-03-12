@@ -11,6 +11,7 @@ export enum PrimitiveType {
   VerticalArea,
   Box,
   Cylinder,
+  HorizontalCircle,
   HorizontalCylinder,
   VerticalCylinder,
   PlaneX,
