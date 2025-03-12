@@ -7,10 +7,10 @@ import { PrimitiveType } from '../../../base/utilities/primitives/PrimitiveType'
 import { isEmpty } from '../../../base/utilities/TranslateInput';
 import { SolidPrimitiveRenderStyle } from '../common/SolidPrimitiveRenderStyle';
 import { Quantity } from '../../../base/domainObjectsHelpers/Quantity';
-import { CylinderDomainObject } from './CylinderDomainObject';
+import { type CylinderDomainObject } from './CylinderDomainObject';
 import { Cylinder } from '../../../base/utilities/primitives/Cylinder';
-import { type DomainObject } from '../../../base/domainObjects/DomainObject';
 import { Changes } from '../../../base/domainObjectsHelpers/Changes';
+import { MeasureCylinderDomainObject } from '../../measurements/MeasureCylinderDomainObject';
 
 describe('CylinderDomainObject', () => {
   test('Should be empty', () => {
@@ -20,7 +20,7 @@ describe('CylinderDomainObject', () => {
       PrimitiveType.VerticalCylinder
     ]) {
       const domainObject = createCylinderDomainObject(primitiveType);
-      expect(domainObject.primitiveType).toBe(PrimitiveType.Cylinder);
+      expect(domainObject.primitiveType).toBe(primitiveType);
       expect(domainObject.cylinder).toBeDefined();
       expect(domainObject.icon?.length).greaterThan(0);
       expect(isEmpty(domainObject.typeName)).toBe(false);
@@ -34,8 +34,8 @@ describe('CylinderDomainObject', () => {
     const clone = domainObject.clone();
 
     expect(clone).not.toBe(domainObject);
-    expect(clone).toBeInstanceOf(MockCylinderDomainObject);
-    if (!(clone instanceof MockCylinderDomainObject)) {
+    expect(clone).toBeInstanceOf(MeasureCylinderDomainObject);
+    if (!(clone instanceof MeasureCylinderDomainObject)) {
       return;
     }
     expect(clone.cylinder).toStrictEqual(domainObject.cylinder);
@@ -46,7 +46,7 @@ describe('CylinderDomainObject', () => {
   });
 
   test('Should create info', () => {
-    testMe(PrimitiveType.Cylinder, Quantity.Length, 2);
+    testMe(PrimitiveType.Cylinder, Quantity.Length, 3);
     testMe(PrimitiveType.Cylinder, Quantity.Area, 1);
     testMe(PrimitiveType.Cylinder, Quantity.Volume, 1);
 
@@ -63,7 +63,7 @@ describe('CylinderDomainObject', () => {
 });
 
 function createCylinderDomainObject(primitiveType: PrimitiveType): CylinderDomainObject {
-  const domainObject = new MockCylinderDomainObject();
+  const domainObject = new MeasureCylinderDomainObject(primitiveType);
   switch (primitiveType) {
     case PrimitiveType.HorizontalCylinder:
       domainObject.cylinder.copy(createHorizontalCylinder());
@@ -99,16 +99,4 @@ function createVerticalCylinder(): Cylinder {
   primitive.centerA.set(3, 0, 0);
   primitive.centerB.set(3, 0, 2);
   return primitive;
-}
-
-class MockCylinderDomainObject extends CylinderDomainObject {
-  public constructor() {
-    super();
-  }
-
-  public override clone(what?: symbol): DomainObject {
-    const clone = new MockCylinderDomainObject();
-    clone.copyFrom(this, what);
-    return clone;
-  }
 }

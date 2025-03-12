@@ -40,11 +40,15 @@ import { type SolidPrimitiveRenderStyle } from '../common/SolidPrimitiveRenderSt
 import { CylinderUtils } from '../../../base/utilities/primitives/CylinderUtils';
 import { LineMaterial } from 'three/examples/jsm/lines/LineMaterial.js';
 import { Wireframe } from 'three/examples/jsm/lines/Wireframe.js';
+import { PrimitiveType } from '../../../base/utilities/primitives/PrimitiveType';
 
 const RELATIVE_RESIZE_RADIUS = 0.2;
+const RELATIVE_MAX_RADIUS = 0.9;
 const RELATIVE_ROTATION_RADIUS = new Range1(0.4, 0.7);
 const CIRCULAR_SEGMENTS = 32;
 const RENDER_ORDER = 100;
+const TOP_FACE = new BoxFace(2);
+const BOTTOM_FACE = new BoxFace(5);
 
 export class CylinderView extends GroupThreeView<CylinderDomainObject> {
   // ==================================================
@@ -104,8 +108,10 @@ export class CylinderView extends GroupThreeView<CylinderDomainObject> {
       }
     }
     if (showMarkers(focusType)) {
-      this.addChild(this.createRotationRing(matrix, new BoxFace(2)));
-      this.addChild(this.createRotationRing(matrix, new BoxFace(5)));
+      if (domainObject.canMoveCaps) {
+        this.addChild(this.createRotationRing(matrix, TOP_FACE));
+        this.addChild(this.createRotationRing(matrix, BOTTOM_FACE));
+      }
       this.addEdgeCircles(matrix);
     }
   }
@@ -317,8 +323,16 @@ export class CylinderView extends GroupThreeView<CylinderDomainObject> {
       if (relativeDistance < RELATIVE_RESIZE_RADIUS) {
         return FocusType.Face;
       }
-      if (RELATIVE_ROTATION_RADIUS.isInside(relativeDistance)) {
+      if (domainObject.canMoveCaps && RELATIVE_ROTATION_RADIUS.isInside(relativeDistance)) {
         return FocusType.Rotation;
+      }
+      if (
+        relativeDistance > RELATIVE_MAX_RADIUS &&
+        domainObject.primitiveType === PrimitiveType.HorizontalCircle
+      ) {
+        // This makes it possible to pick the face at the edges, so the radius can be changed
+        face.face = 0;
+        return FocusType.Face;
       }
       return FocusType.Body;
     }
