@@ -21,6 +21,7 @@ export function equalsIgnoreCaseAndSpace(value1: string, value2: string): boolea
       continue;
     }
     const lowerChar1 = char1.toLowerCase();
+    let found = false;
     for (; j < length2; j++) {
       const char2 = value2.charAt(j);
       if (isSpace(char2)) {
@@ -29,8 +30,12 @@ export function equalsIgnoreCaseAndSpace(value1: string, value2: string): boolea
       const lowerChar2 = char2.toLowerCase();
       if (lowerChar2 === lowerChar1) {
         j++;
+        found = true;
         break;
       }
+      return false;
+    }
+    if (!found) {
       return false;
     }
   }
