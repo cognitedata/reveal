@@ -26,11 +26,10 @@ export class CylinderUtils {
 
     // Define the positions for the top and bottom circles of the cylinder
     const positions: number[] = [];
-    const startAngle = 0;
 
     // Bottom circle positions
     for (let i = 0; i <= TOTAL_SEGMENTS; i++) {
-      const angle = i * angleIncrement + startAngle;
+      const angle = i * angleIncrement;
       positions.push(RADIUS * Math.sin(angle)); // x-coordinate
       positions.push(RADIUS * Math.cos(angle)); // y-coordinate
       positions.push(-RADIUS); // z-coordinate (fixed for bottom circle)
@@ -38,7 +37,7 @@ export class CylinderUtils {
 
     // Top circle positions
     for (let i = 0; i <= TOTAL_SEGMENTS; i++) {
-      const angle = i * angleIncrement + startAngle;
+      const angle = i * angleIncrement;
       positions.push(RADIUS * Math.sin(angle)); // x-coordinate
       positions.push(RADIUS * Math.cos(angle)); // y-coordinate
       positions.push(RADIUS); // z-coordinate (fixed for top circle)

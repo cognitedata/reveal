@@ -43,9 +43,6 @@ import { CylinderUtils } from '../../../base/utilities/primitives/CylinderUtils'
 import { LineMaterial } from 'three/examples/jsm/lines/LineMaterial.js';
 import { Wireframe } from 'three/examples/jsm/lines/Wireframe.js';
 import { PrimitiveType } from '../../../base/utilities/primitives/PrimitiveType';
-import { clear } from '../../../base/utilities/extensions/arrayExtensions';
-import { getRoot } from '../../../base/domainObjects/getRoot';
-import { Quantity } from '../../../base/domainObjectsHelpers/Quantity';
 
 const RELATIVE_RESIZE_RADIUS = 0.2;
 const RELATIVE_MAX_RADIUS = 0.9;
