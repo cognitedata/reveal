@@ -5,7 +5,7 @@
 import { beforeEach, describe, expect, test } from 'vitest';
 import { CylinderView } from './CylinderView';
 import { Object3D, Vector3 } from 'three';
-import { CylinderDomainObject } from './CylinderDomainObject';
+import { type CylinderDomainObject } from './CylinderDomainObject';
 import { FocusType } from '../../../base/domainObjectsHelpers/FocusType';
 import { Changes } from '../../../base/domainObjectsHelpers/Changes';
 import { DomainObjectChange } from '../../../base/domainObjectsHelpers/DomainObjectChange';
@@ -18,13 +18,15 @@ import {
 } from '../../../../../tests/tests-utilities/architecture/viewUtil';
 import { isDomainObjectIntersection } from '../../../base/domainObjectsHelpers/DomainObjectIntersection';
 import { PrimitivePickInfo } from '../common/PrimitivePickInfo';
+import { MeasureCylinderDomainObject } from '../../measurements/MeasureCylinderDomainObject';
+import { PrimitiveType } from '../../../base/utilities/primitives/PrimitiveType';
 
 describe('CylinderView', () => {
   let domainObject: CylinderDomainObject;
   let view: CylinderView;
 
   beforeEach(() => {
-    domainObject = new MockCylinderDomainObject();
+    domainObject = createCylinderDomainObject();
     view = new CylinderView();
     addView(domainObject, view);
     expectChildrenLength(view, 2);
@@ -36,19 +38,19 @@ describe('CylinderView', () => {
 
   test('should changed when focus change', () => {
     domainObject.setFocusInteractive(FocusType.Face);
-    expectChildrenLength(view, 6);
+    expectChildrenLength(view, 4);
 
     domainObject.setFocusInteractive(FocusType.Pending);
     expectChildrenLength(view, 2);
 
     domainObject.setFocusInteractive(FocusType.Rotation);
-    expectChildrenLength(view, 6);
+    expectChildrenLength(view, 4);
 
     domainObject.setFocusInteractive(FocusType.Body);
-    expectChildrenLength(view, 6);
+    expectChildrenLength(view, 4);
 
     domainObject.setFocusInteractive(FocusType.Focus);
-    expectChildrenLength(view, 6);
+    expectChildrenLength(view, 4);
 
     domainObject.setFocusInteractive(FocusType.None);
     expectChildrenLength(view, 2);
@@ -105,14 +107,13 @@ describe('CylinderView', () => {
   });
 });
 
-class MockCylinderDomainObject extends CylinderDomainObject {
-  public constructor() {
-    super();
-    // Vertical cylinder with center at (0,0)
-    this.cylinder.radius = 2;
-    this.cylinder.centerA.set(0, 0, 1);
-    this.cylinder.centerB.set(0, 0, -1);
-  }
+function createCylinderDomainObject(): CylinderDomainObject {
+  const domainObject = new MeasureCylinderDomainObject(PrimitiveType.VerticalCylinder);
+  // Vertical cylinder with center at (0,0)
+  domainObject.cylinder.radius = 2;
+  domainObject.cylinder.centerA.set(0, 0, 1);
+  domainObject.cylinder.centerB.set(0, 0, -1);
+  return domainObject;
 }
 
 function createLookingDownIntersectInput(isVisible = true): CustomObjectIntersectInput {

@@ -16,6 +16,8 @@ import { type IconName } from '../../base/utilities/IconName';
 import { Box3 } from 'three';
 import { type DomainObject } from '../../base/domainObjects/DomainObject';
 import { MeasurementFolder } from './MeasurementFolder';
+import { MeasureCylinderDomainObject } from './MeasureCylinderDomainObject';
+import { CylinderCreator } from '../primitives/cylinder/CylinderCreator';
 
 export class MeasurementTool extends PrimitiveEditTool {
   // ==================================================
@@ -44,14 +46,11 @@ export class MeasurementTool extends PrimitiveEditTool {
     const sceneBoundingBox = this.renderTarget.clippedVisualSceneBoundingBox;
     const boundingBox = new Box3();
     for (const domainObject of this.getSelectable()) {
-      if (domainObject instanceof MeasureBoxDomainObject) {
-        boundingBox.makeEmpty();
-        domainObject.box.expandBoundingBox(boundingBox);
-        boundingBox.applyMatrix4(CDF_TO_VIEWER_TRANSFORMATION);
-        if (!sceneBoundingBox.intersectsBox(boundingBox)) {
-          continue;
-        }
-      } else if (domainObject instanceof MeasureLineDomainObject) {
+      if (
+        domainObject instanceof MeasureBoxDomainObject ||
+        domainObject instanceof MeasureLineDomainObject ||
+        domainObject instanceof MeasureCylinderDomainObject
+      ) {
         boundingBox.makeEmpty();
         domainObject.expandBoundingBox(boundingBox);
         boundingBox.applyMatrix4(CDF_TO_VIEWER_TRANSFORMATION);
@@ -75,7 +74,8 @@ export class MeasurementTool extends PrimitiveEditTool {
   protected override canBeSelected(domainObject: VisualDomainObject): boolean {
     return (
       domainObject instanceof MeasureBoxDomainObject ||
-      domainObject instanceof MeasureLineDomainObject
+      domainObject instanceof MeasureLineDomainObject ||
+      domainObject instanceof MeasureCylinderDomainObject
     );
   }
 
@@ -105,6 +105,11 @@ export class MeasurementTool extends PrimitiveEditTool {
       case PrimitiveType.VerticalArea:
       case PrimitiveType.Box:
         return new BoxCreator(new MeasureBoxDomainObject(this.primitiveType));
+
+      case PrimitiveType.VerticalCylinder:
+      case PrimitiveType.HorizontalCircle:
+        return new CylinderCreator(new MeasureCylinderDomainObject(this.primitiveType));
+
       default:
         return undefined;
     }
