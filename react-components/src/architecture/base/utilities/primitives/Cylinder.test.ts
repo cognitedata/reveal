@@ -170,8 +170,8 @@ describe('Cylinder', () => {
     const primitive = createVerticalCylinder();
     primitive.clear();
     expect(primitive.radius).toBe(Cylinder.MinSize);
-    expectEqualVector3(primitive.centerA, new Vector3(0, 0, -Cylinder.MinSize));
-    expectEqualVector3(primitive.centerB, new Vector3(0, 0, +Cylinder.MinSize));
+    expectEqualVector3(primitive.centerA, new Vector3(0, 0, -Cylinder.MinSize / 2));
+    expectEqualVector3(primitive.centerB, new Vector3(0, 0, +Cylinder.MinSize / 2));
   });
 
   test('should test forceMinSize', () => {

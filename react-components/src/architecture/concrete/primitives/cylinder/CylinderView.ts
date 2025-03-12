@@ -13,7 +13,8 @@ import {
   RingGeometry,
   CircleGeometry,
   type Material,
-  type Sprite
+  type Sprite,
+  type PerspectiveCamera
 } from 'three';
 import { type CylinderDomainObject } from './CylinderDomainObject';
 import { type DomainObjectChange } from '../../../base/domainObjectsHelpers/DomainObjectChange';
@@ -36,13 +37,17 @@ import {
   updateLineSegmentsMaterial,
   updateMarkerMaterial,
   updateSolidMaterial,
-  BoxView
+  createSprite
 } from '../box/BoxView';
 import { type SolidPrimitiveRenderStyle } from '../common/SolidPrimitiveRenderStyle';
 import { CylinderUtils } from '../../../base/utilities/primitives/CylinderUtils';
 import { LineMaterial } from 'three/examples/jsm/lines/LineMaterial.js';
 import { Wireframe } from 'three/examples/jsm/lines/Wireframe.js';
 import { PrimitiveType } from '../../../base/utilities/primitives/PrimitiveType';
+import { getRoot } from '../../../base/domainObjects/getRoot';
+import { Quantity } from '../../../base/domainObjectsHelpers/Quantity';
+import { UnitSystem } from '../../../base/renderTarget/UnitSystem';
+import { Cylinder } from '../../../base/utilities/primitives/Cylinder';
 
 const RELATIVE_RESIZE_RADIUS = 0.2;
 const RELATIVE_MAX_RADIUS = 0.9;
@@ -57,7 +62,8 @@ export class CylinderView extends GroupThreeView<CylinderDomainObject> {
   // INSTANCE FIELDS
   // ==================================================
 
-  private readonly _sprites: Array<Sprite | undefined> = [];
+  private _radiusSprite: Sprite | undefined;
+  private _heightSprite: Sprite | undefined;
 
   // ==================================================
   // INSTANCE PROPERTIES
@@ -86,6 +92,18 @@ export class CylinderView extends GroupThreeView<CylinderDomainObject> {
       this.invalidateBoundingBox();
       this.invalidateRenderTarget();
     }
+  }
+
+  // ==================================================
+  // OVERRIDES of ThreeView
+  // ==================================================
+
+  public override beforeRender(camera: PerspectiveCamera): void {
+    super.beforeRender(camera);
+    if (this.isEmpty) {
+      return;
+    }
+    this.updateLabels(camera);
   }
 
   // ==================================================
@@ -122,8 +140,10 @@ export class CylinderView extends GroupThreeView<CylinderDomainObject> {
       }
       this.addEdgeCircles(matrix);
     }
+    this._radiusSprite = undefined;
+    this._heightSprite = undefined;
     if (style.showLabel) {
-      this.addLabels(matrix);
+      this.addLabels();
     }
   }
 
@@ -318,49 +338,97 @@ export class CylinderView extends GroupThreeView<CylinderDomainObject> {
   }
 
   // ==================================================
-  // INSTANCE METHODS: Creating labels
+  // INSTANCE METHODS: Labels
   // ==================================================
 
-  private addLabels(matrix: Matrix4): void {
-    const { style } = this;
-
-    const spriteHeight = this.getTextHeight(style.relativeTextSize);
-    clear(this._sprites);
-    this.addChild(this.createRadiusLabel(matrix, spriteHeight, TOP_FACE));
+  private addLabels(): void {
+    this._radiusSprite = undefined;
+    this._radiusSprite = undefined;
+    const type = this.domainObject.primitiveType;
+    if (type === PrimitiveType.VerticalCylinder || type === PrimitiveType.HorizontalCircle) {
+      this._radiusSprite = this.createRadiusLabel();
+      if (this._radiusSprite !== undefined) {
+        this.addChild(this._radiusSprite);
+      }
+    }
+    if (type === PrimitiveType.VerticalCylinder) {
+      this._heightSprite = this.createHeightLabel();
+      if (this._heightSprite !== undefined) {
+        this.addChild(this._heightSprite);
+      }
+    }
   }
 
-  private getTextHeight(relativeTextSize: number): number {
+  private getRadiusTextHeight(relativeTextSize: number): number {
     return relativeTextSize * 2 * this.domainObject.cylinder.radius;
   }
 
-  private createRadiusLabel(
-    matrix: Matrix4,
-    spriteHeight: number,
-    face: BoxFace
-  ): Sprite | undefined {
-    if (!this.isFaceVisible(face)) {
-      return undefined;
-    }
-    const { domainObject } = this;
+  private getHeightTextHeight(relativeTextSize: number): number {
+    return relativeTextSize * this.domainObject.cylinder.height;
+  }
+
+  private createRadiusLabel(): Sprite | undefined {
+    const { style, domainObject } = this;
     const radius = domainObject.cylinder.radius;
-    if (radius === 0) {
+    if (!Cylinder.isValidSize(radius)) {
       return undefined; // Not show when about 0
     }
-    const rootDomainObject = getRoot(domainObject);
-    if (rootDomainObject === undefined) {
-      return undefined;
-    }
-    const text = rootDomainObject.unitSystem.toStringWithUnit(radius, Quantity.Length);
-    const sprite = BoxView.createSprite(text, this.style, spriteHeight);
-    if (sprite === undefined) {
-      return undefined;
-    }
-    const faceCenter = face.getCenter(newVector3());
-    faceCenter.applyMatrix4(matrix);
-    faceCenter.y += (1.1 * spriteHeight) / 2;
+    const spriteHeight = this.getRadiusTextHeight(style.relativeTextSize);
+    const unitSystem = this.getUnitSystem();
+    const text = unitSystem.toStringWithUnit(radius, Quantity.Length);
+    return createSprite(text, this.style, spriteHeight);
+  }
 
-    sprite.position.copy(faceCenter);
-    return sprite;
+  private createHeightLabel(): Sprite | undefined {
+    const { domainObject, style } = this;
+    const height = domainObject.cylinder.height;
+    if (!Cylinder.isValidSize(height * 0.99)) {
+      return undefined; // Not show when about 0
+    }
+    const spriteHeight = this.getHeightTextHeight(style.relativeTextSize);
+    const unitSystem = this.getUnitSystem();
+    const text = unitSystem.toStringWithUnit(height, Quantity.Length);
+    return createSprite(text, this.style, spriteHeight);
+  }
+
+  private updateLabels(camera: PerspectiveCamera): void {
+    if (this._radiusSprite === undefined && this._heightSprite === undefined) {
+      return;
+    }
+    const { domainObject, style } = this;
+    const matrix = this.getMatrix();
+    const radius = domainObject.cylinder.radius;
+
+    const topCenter = TOP_FACE.getCenter(newVector3());
+    const bottomCenter = BOTTOM_FACE.getCenter(newVector3());
+    topCenter.applyMatrix4(matrix);
+    bottomCenter.applyMatrix4(matrix);
+    const axis = newVector3().subVectors(topCenter, bottomCenter).normalize();
+
+    const cameraPosition = camera.getWorldPosition(newVector3());
+    const cameraDirection = newVector3().subVectors(topCenter, cameraPosition).normalize();
+    const radialDirection = newVector3().crossVectors(cameraDirection, axis).normalize();
+
+    if (this._radiusSprite !== undefined) {
+      const spriteHeight = this.getRadiusTextHeight(style.relativeTextSize);
+      const position = newVector3(topCenter).addScaledVector(radialDirection, radius / 2);
+
+      adjustLabel(position, spriteHeight); // To avoid Z-fighting
+      this._radiusSprite.position.copy(position);
+      this._radiusSprite.visible = cameraDirection.y <= 0;
+    }
+    if (this._heightSprite !== undefined) {
+      const forwardDirection = newVector3().crossVectors(radialDirection, axis).normalize();
+      const center = newVector3().addVectors(topCenter, bottomCenter).multiplyScalar(0.5);
+      center.addScaledVector(forwardDirection, radius);
+
+      this._heightSprite.position.copy(center);
+      this._heightSprite.visible = true;
+    }
+
+    function adjustLabel(point: Vector3, spriteHeight: number): void {
+      point.y += (1.1 * spriteHeight) / 2;
+    }
   }
 
   private getPickedFocusType(realPosition: Vector3, face: BoxFace): FocusType {
@@ -372,28 +440,32 @@ export class CylinderView extends GroupThreeView<CylinderDomainObject> {
     const planePoint = face.getPlanePoint(scaledPositionAtFace);
     const relativeDistance = planePoint.length() / 2;
 
-    if (face.index === 2) {
-      if (relativeDistance < RELATIVE_RESIZE_RADIUS) {
-        return FocusType.Face;
-      }
-      if (domainObject.canMoveCaps && RELATIVE_ROTATION_RADIUS.isInside(relativeDistance)) {
-        return FocusType.Rotation;
-      }
-      if (
-        relativeDistance > RELATIVE_MAX_RADIUS &&
-        domainObject.primitiveType === PrimitiveType.HorizontalCircle
-      ) {
-        // This makes it possible to pick the face at the edges, so the radius can be changed
-        face.face = 0;
-        return FocusType.Face;
-      }
-      return FocusType.Body;
+    if (!this.isFaceVisible(face)) {
+      return FocusType.Face;
     }
-    return FocusType.Face;
+    if (relativeDistance < RELATIVE_RESIZE_RADIUS) {
+      return FocusType.Face;
+    }
+    if (domainObject.canMoveCaps && RELATIVE_ROTATION_RADIUS.isInside(relativeDistance)) {
+      return FocusType.Rotation;
+    }
+    if (
+      relativeDistance > RELATIVE_MAX_RADIUS &&
+      domainObject.primitiveType === PrimitiveType.HorizontalCircle
+    ) {
+      // This makes it possible to pick the face at the edges, so the radius can be changed
+      face.face = 0;
+      return FocusType.Face;
+    }
+    return FocusType.Body;
   }
 
   private isFaceVisible(face: BoxFace): boolean {
     return face.index === 2; // Z Face visible only
+  }
+
+  private getUnitSystem(): UnitSystem {
+    return getRoot(this.domainObject)?.unitSystem ?? new UnitSystem();
   }
 }
 

@@ -36,7 +36,7 @@ import { DomainObjectIntersection } from '../../../base/domainObjectsHelpers/Dom
 import { ClosestGeometryFinder } from '../../../base/utilities/geometry/ClosestGeometryFinder';
 import { square } from '../../../base/utilities/extensions/mathExtensions';
 import { Quantity } from '../../../base/domainObjectsHelpers/Quantity';
-import { BoxView } from '../box/BoxView';
+import { createSprite } from '../box/BoxView';
 import { PrimitiveUtils } from '../../../base/utilities/primitives/PrimitiveUtils';
 import { getRoot } from '../../../base/domainObjects/getRoot';
 import { UnitSystem } from '../../../base/renderTarget/UnitSystem';
@@ -303,7 +303,7 @@ export class LineView extends GroupThreeView<LineDomainObject> {
         center.applyMatrix4(CDF_TO_VIEWER_TRANSFORMATION);
 
         const text = unitSystem.toStringWithUnit(distance, Quantity.Length);
-        const sprite = BoxView.createSprite(text, style, spriteHeight);
+        const sprite = createSprite(text, style, spriteHeight);
         if (sprite !== undefined) {
           adjustLabel(center, domainObject, style, spriteHeight);
           sprite.position.copy(center);

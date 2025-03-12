@@ -18,8 +18,8 @@ export class Cylinder extends Primitive {
   // ==================================================
 
   public radius = Cylinder.MinSize;
-  public readonly centerA = new Vector3(0, 0, -Cylinder.MinSize);
-  public readonly centerB = new Vector3(0, 0, +Cylinder.MinSize);
+  public readonly centerA = new Vector3(0, 0, -Cylinder.MinSize / 2);
+  public readonly centerB = new Vector3(0, 0, +Cylinder.MinSize / 2);
 
   // Redundant variable, calculated when needed
   private readonly _center = new Vector3();
@@ -205,8 +205,8 @@ export class Cylinder extends Primitive {
 
   public clear(): void {
     this.radius = Cylinder.MinSize;
-    this.centerA.set(0, 0, -Cylinder.MinSize);
-    this.centerB.set(0, 0, +Cylinder.MinSize);
+    this.centerA.set(0, 0, -Cylinder.MinSize / 2);
+    this.centerB.set(0, 0, +Cylinder.MinSize / 2);
   }
 
   public forceMinSize(): void {

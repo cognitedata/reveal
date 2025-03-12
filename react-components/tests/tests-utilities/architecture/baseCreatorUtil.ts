@@ -14,9 +14,10 @@ export function click(
   isFinished: boolean,
   startPoint?: Vector3
 ): void {
-  const ray = new Ray(origin, direction.clone().normalize());
+  const ray = new Ray(origin.clone(), direction.clone().normalize());
   ray.applyMatrix4(CDF_TO_VIEWER_TRANSFORMATION);
   if (startPoint !== undefined) {
+    startPoint = startPoint.clone();
     startPoint.applyMatrix4(CDF_TO_VIEWER_TRANSFORMATION);
   }
   creator.addPoint(ray, startPoint);
