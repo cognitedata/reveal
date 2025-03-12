@@ -21,9 +21,9 @@ export function isEqual(x: number, y: number): boolean {
 }
 
 export function isAbsEqual(x: number, y: number, tolerance: number): boolean {
-  let error = x - y;
+  const error = x - y;
   if (error < 0) {
-    error = -error;
+    return error > tolerance;
   }
   return error < tolerance;
 }
@@ -46,14 +46,7 @@ export function isInteger(value: number): boolean {
 }
 
 export function isIncrement(value: number, increment: number): boolean {
-  if (increment === 0) {
-    return false;
-  }
   return isInteger(value / increment);
-}
-
-export function isOdd(value: number): boolean {
-  return value % 2 !== 0;
 }
 
 export function isEven(value: number): boolean {
@@ -193,8 +186,8 @@ export function getRandomInt(): number {
   return Math.floor(Math.random() * Number.MAX_SAFE_INTEGER);
 }
 
-export function getRandomIntByMax(exclusiveMax: number): number {
-  return Math.floor(Math.random() * exclusiveMax);
+export function getRandomIntByMax(max: number): number {
+  return Math.floor(Math.random() * max);
 }
 
 export function getRandomGaussian(mean = 0, stdDev = 1): number {
