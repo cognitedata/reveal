@@ -191,15 +191,15 @@ describe('MathExtensions', () => {
     expect(forceAngleAround0(-2 * Math.PI)).toBe(0);
   });
 
-  test('should get a random integer numbers', () => {
-    expect(isInteger(getRandomInt())).toBe(true);
-    expect(isInteger(getRandomInt())).toBe(true);
-  });
-
   test('should compare', () => {
     expect(compare(3, 4)).toBe(-1);
     expect(compare(4, 3)).toBe(1);
     expect(compare(3, 3)).toBe(0);
+  });
+
+  test('should get a random integer numbers', () => {
+    expect(isInteger(getRandomInt())).toBe(true);
+    expect(isInteger(getRandomInt())).toBe(true);
   });
 
   test('should get a random integer numbers less than max', () => {
