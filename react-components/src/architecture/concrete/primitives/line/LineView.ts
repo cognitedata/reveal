@@ -26,6 +26,7 @@ import { LineRenderStyle } from './LineRenderStyle';
 import { GroupThreeView } from '../../../base/views/GroupThreeView';
 import {
   CDF_TO_VIEWER_TRANSFORMATION,
+  ClosestGeometryFinder,
   CustomObjectIntersectInput,
   CustomObjectIntersection
 } from '@cognite/reveal';
@@ -33,7 +34,6 @@ import { PrimitiveType } from '../../../base/utilities/primitives/PrimitiveType'
 import { mergeGeometries } from 'three/examples/jsm/utils/BufferGeometryUtils.js';
 import { FocusType } from '../../../base/domainObjectsHelpers/FocusType';
 import { DomainObjectIntersection } from '../../../base/domainObjectsHelpers/DomainObjectIntersection';
-import { ClosestGeometryFinder } from '../../../base/utilities/geometry/ClosestGeometryFinder';
 import { square } from '../../../base/utilities/extensions/mathExtensions';
 import { Quantity } from '../../../base/domainObjectsHelpers/Quantity';
 import { createSprite } from '../box/BoxView';
