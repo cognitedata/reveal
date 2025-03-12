@@ -1,5 +1,14 @@
 import { describe, expect, test } from 'vitest';
 import {
+  ceil,
+  compare,
+  floor,
+  forceAngleAround0,
+  forceBetween0AndPi,
+  forceBetween0AndTwoPi,
+  getRandomGaussian,
+  getRandomInt,
+  getRandomIntByMax,
   isAbsEqual,
   isBetween,
   isEqual,
@@ -8,6 +17,8 @@ import {
   isInteger,
   isOdd,
   isZero,
+  round,
+  roundIncrement,
   square
 } from './mathExtensions';
 
@@ -111,11 +122,108 @@ describe('MathExtensions', () => {
     });
   });
 
-  describe('square', () => {
-    test('should be square', () => {
-      expect(square(0)).toBe(0);
-      expect(square(2)).toBe(4);
-      expect(square(-2)).toBe(4);
-    });
+  test('should be square', () => {
+    expect(square(0)).toBe(0);
+    expect(square(2)).toBe(4);
+    expect(square(-2)).toBe(4);
+  });
+
+  test('should round increment', () => {
+    expect(roundIncrement(1.22)).toBe(2);
+    expect(roundIncrement(2.22)).toBe(2.5);
+    expect(roundIncrement(2.66)).toBe(5);
+    expect(roundIncrement(5.1)).toBe(10);
+
+    expect(roundIncrement(12.2)).toBe(20);
+    expect(roundIncrement(22.2)).toBe(25);
+    expect(roundIncrement(26.6)).toBe(50);
+    expect(roundIncrement(51)).toBe(100);
+
+    expect(roundIncrement(0.122)).toBe(0.2);
+    expect(roundIncrement(0.222)).toBe(0.25);
+    expect(roundIncrement(0.266)).toBe(0.5);
+    expect(roundIncrement(0.51)).toBe(1);
+  });
+
+  test('should round', () => {
+    expect(round(0.22, 2)).toBe(0);
+    expect(round(1.22, 1)).toBe(1);
+    expect(round(3.22, 2)).toBe(4);
+  });
+
+  test('should ceil', () => {
+    expect(ceil(0.22, 2)).toBe(2);
+    expect(ceil(1.22, 1)).toBe(2);
+    expect(ceil(3.22, 2)).toBe(4);
+  });
+
+  test('should floor', () => {
+    expect(floor(0.22, 2)).toBe(0);
+    expect(floor(1.22, 1)).toBe(1);
+    expect(floor(3.22, 2)).toBe(2);
+  });
+
+  test('should force angles between 0 and 2*Pi', () => {
+    expect(forceBetween0AndTwoPi(0)).toBe(0);
+    expect(forceBetween0AndTwoPi(Math.PI)).toBe(Math.PI);
+    expect(forceBetween0AndTwoPi(-Math.PI)).toBe(Math.PI);
+    expect(forceBetween0AndTwoPi(2 * Math.PI)).toBe(0);
+    expect(forceBetween0AndTwoPi(3 * Math.PI)).toBe(Math.PI);
+  });
+
+  test('should force angles between 0 and Pi', () => {
+    expect(forceBetween0AndPi(0)).toBe(0);
+    expect(forceBetween0AndPi(Math.PI)).toBe(0);
+    expect(forceBetween0AndPi(-Math.PI)).toBe(0);
+    expect(forceBetween0AndPi(Math.PI / 2)).toBe(Math.PI / 2);
+    expect(forceBetween0AndPi(-Math.PI / 2)).toBe(Math.PI / 2);
+    expect(forceBetween0AndPi(2 * Math.PI)).toBe(0);
+  });
+
+  test('should force angles between -Pi and Pi', () => {
+    expect(forceAngleAround0(0)).toBe(0);
+    expect(forceAngleAround0(Math.PI)).toBe(-Math.PI);
+    expect(forceAngleAround0(-Math.PI)).toBe(-Math.PI);
+    expect(forceAngleAround0(Math.PI / 2)).toBe(Math.PI / 2);
+    expect(forceAngleAround0((3 * Math.PI) / 2)).toBe(-Math.PI / 2);
+    expect(forceAngleAround0(-Math.PI / 2)).toBe(-Math.PI / 2);
+    expect(forceAngleAround0(2 * Math.PI)).toBe(0);
+    expect(forceAngleAround0(-2 * Math.PI)).toBe(0);
+  });
+
+  test('should get a random integer numbers', () => {
+    expect(isInteger(getRandomInt())).toBe(true);
+    expect(isInteger(getRandomInt())).toBe(true);
+  });
+
+  test('should get a random integer numbers less than max', () => {
+    const exclusiveMax = 10;
+    for (let i = 0; i < 10; i++) {
+      const value = getRandomIntByMax(exclusiveMax);
+      expect(isInteger(value)).toBe(true);
+      expect(value).toBeGreaterThanOrEqual(0);
+      expect(value).toBeLessThan(exclusiveMax);
+    }
+  });
+
+  test('should get random numbers from gaussian distribution', () => {
+    const expectedMean = -23;
+    const expectedStdDev = 2;
+    const n = 100;
+    let sum = 0;
+    let sumSquared = 0;
+    for (let i = 0; i < n; i++) {
+      const value = getRandomGaussian(expectedMean, expectedStdDev);
+      sum += value;
+      sumSquared += value * value;
+    }
+    const actualMean = sum / n;
+    const actualStdDev = Math.sqrt((sumSquared - sum * actualMean) / n);
+
+    // give a quite a bit of wiggle room so it never fails
+    expect(actualMean).toBeGreaterThan(expectedMean - expectedStdDev);
+    expect(actualMean).toBeLessThan(expectedMean + expectedStdDev);
+    expect(actualStdDev).toBeGreaterThan(expectedStdDev - 0.5);
+    expect(actualStdDev).toBeLessThan(expectedStdDev + 0.5);
   });
 });
