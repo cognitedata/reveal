@@ -196,6 +196,12 @@ describe('MathExtensions', () => {
     expect(isInteger(getRandomInt())).toBe(true);
   });
 
+  test('should compare', () => {
+    expect(compare(3, 4)).toBe(-1);
+    expect(compare(4, 3)).toBe(1);
+    expect(compare(3, 3)).toBe(0);
+  });
+
   test('should get a random integer numbers less than max', () => {
     const exclusiveMax = 10;
     for (let i = 0; i < 10; i++) {
