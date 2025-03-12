@@ -163,13 +163,13 @@ export class CylinderCreator extends BaseCreator {
       centerA.copy(this.firstPoint);
       centerB.copy(this.firstPoint);
       if (this._primitiveType === PrimitiveType.HorizontalCylinder) {
-        centerA.x -= Cylinder.MinSize / 2;
-        centerA.y -= Cylinder.MinSize / 2;
-        centerB.x += Cylinder.MinSize / 2;
-        centerB.y += Cylinder.MinSize / 2;
+        centerA.x -= Cylinder.HalfMinSize;
+        centerA.y -= Cylinder.HalfMinSize;
+        centerB.x += Cylinder.HalfMinSize;
+        centerB.y += Cylinder.HalfMinSize;
       } else {
-        centerA.z -= Cylinder.MinSize / 2;
-        centerB.z += Cylinder.MinSize / 2;
+        centerA.z -= Cylinder.HalfMinSize;
+        centerB.z += Cylinder.HalfMinSize;
       }
     } else if (this.pointCount - 1 === this._otherCenterOrder) {
       const { centerA, centerB } = cylinder;

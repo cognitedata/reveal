@@ -87,8 +87,8 @@ function createCylinderDomainObject(primitiveType: PrimitiveType): CylinderDomai
 function createHorizontalCircle(): Cylinder {
   const primitive = new Cylinder();
   primitive.radius = 1;
-  primitive.centerA.set(1, 2, 3 + Cylinder.MinSize / 2);
-  primitive.centerB.set(1, 2, 3 - Cylinder.MinSize / 2);
+  primitive.centerA.set(1, 2, 3 + Cylinder.HalfMinSize);
+  primitive.centerB.set(1, 2, 3 - Cylinder.HalfMinSize);
   return primitive;
 }
 
