@@ -10,6 +10,7 @@ import { FocusType } from '../../../base/domainObjectsHelpers/FocusType';
 import { click } from '../../../../../tests/tests-utilities/architecture/baseCreatorUtil';
 import { MeasureCylinderDomainObject } from '../../measurements/MeasureCylinderDomainObject';
 import { PrimitiveType } from '../../../base/utilities/primitives/PrimitiveType';
+import { swap } from '../../../base/utilities/extensions/arrayExtensions';
 
 const direction = new Vector3(1, 0, 0);
 
@@ -46,7 +47,7 @@ describe('CylinderCreator', () => {
       const centerB = new Vector3(dx, 0, 2);
       const points = [centerA, centerB, new Vector3(dx, radius, 2)];
       if (!reverseOrder) {
-        [points[1], points[2]] = [points[2], points[1]];
+        swap(points, 1, 2);
       }
       click(creator, points[0], direction, false, centerA);
       click(creator, points[1], direction, false);
@@ -73,7 +74,7 @@ describe('CylinderCreator', () => {
       const centerB = new Vector3(0, 2, dz);
       const points = [centerA, centerB, new Vector3(0, 2, radius + dz)];
       if (!reverseOrder) {
-        [points[1], points[2]] = [points[2], points[1]];
+        swap(points, 1, 2);
       }
       click(creator, points[0], direction, false, centerA);
       click(creator, points[1], direction, false);
