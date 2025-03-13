@@ -12,14 +12,15 @@ const UP_AXIS = new Vector3(0, 0, 1);
 
 export class Cylinder extends Primitive {
   public static MinSize = 0.01;
+  public static HalfMinSize = Cylinder.MinSize * 0.5;
 
   // ==================================================
   // INSTANCE FIELDS
   // ==================================================
 
   public radius = Cylinder.MinSize;
-  public readonly centerA = new Vector3(0, 0, -Cylinder.MinSize);
-  public readonly centerB = new Vector3(0, 0, +Cylinder.MinSize);
+  public readonly centerA = new Vector3(0, 0, -Cylinder.HalfMinSize);
+  public readonly centerB = new Vector3(0, 0, +Cylinder.HalfMinSize);
 
   // Redundant variable, calculated when needed
   private readonly _center = new Vector3();
@@ -205,8 +206,8 @@ export class Cylinder extends Primitive {
 
   public clear(): void {
     this.radius = Cylinder.MinSize;
-    this.centerA.set(0, 0, -Cylinder.MinSize);
-    this.centerB.set(0, 0, +Cylinder.MinSize);
+    this.centerA.set(0, 0, -Cylinder.HalfMinSize);
+    this.centerB.set(0, 0, +Cylinder.HalfMinSize);
   }
 
   public forceMinSize(): void {

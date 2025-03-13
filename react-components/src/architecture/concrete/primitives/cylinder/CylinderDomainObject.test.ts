@@ -17,7 +17,8 @@ describe('CylinderDomainObject', () => {
     for (const primitiveType of [
       PrimitiveType.Cylinder,
       PrimitiveType.HorizontalCylinder,
-      PrimitiveType.VerticalCylinder
+      PrimitiveType.VerticalCylinder,
+      PrimitiveType.HorizontalCircle
     ]) {
       const domainObject = createCylinderDomainObject(primitiveType);
       expect(domainObject.primitiveType).toBe(primitiveType);
@@ -50,6 +51,9 @@ describe('CylinderDomainObject', () => {
     testMe(PrimitiveType.Cylinder, Quantity.Area, 1);
     testMe(PrimitiveType.Cylinder, Quantity.Volume, 1);
 
+    testMe(PrimitiveType.HorizontalCircle, Quantity.Length, 2);
+    testMe(PrimitiveType.HorizontalCircle, Quantity.Area, 1);
+
     function testMe(primitiveType: PrimitiveType, quantity: Quantity, expectedItems: number): void {
       const domainObject = createCylinderDomainObject(primitiveType);
       const info = domainObject.getPanelInfo();
@@ -65,6 +69,9 @@ describe('CylinderDomainObject', () => {
 function createCylinderDomainObject(primitiveType: PrimitiveType): CylinderDomainObject {
   const domainObject = new MeasureCylinderDomainObject(primitiveType);
   switch (primitiveType) {
+    case PrimitiveType.HorizontalCircle:
+      domainObject.cylinder.copy(createHorizontalCircle());
+      break;
     case PrimitiveType.HorizontalCylinder:
       domainObject.cylinder.copy(createHorizontalCylinder());
       break;
@@ -75,6 +82,14 @@ function createCylinderDomainObject(primitiveType: PrimitiveType): CylinderDomai
       domainObject.cylinder.copy(createCylinder());
   }
   return domainObject;
+}
+
+function createHorizontalCircle(): Cylinder {
+  const primitive = new Cylinder();
+  primitive.radius = 1;
+  primitive.centerA.set(1, 2, 3 + Cylinder.HalfMinSize);
+  primitive.centerB.set(1, 2, 3 - Cylinder.HalfMinSize);
+  return primitive;
 }
 
 function createCylinder(): Cylinder {
