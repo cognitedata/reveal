@@ -14,6 +14,25 @@ import { PrimitiveType } from '../../../base/utilities/primitives/PrimitiveType'
 const direction = new Vector3(1, 0, 0);
 
 describe('CylinderCreator', () => {
+  test('Create horizontal circle by mimics the user clicking 2 times', () => {
+    const domainObject = new MeasureCylinderDomainObject(PrimitiveType.HorizontalCircle);
+    const creator = new CylinderCreator(domainObject, undefined);
+    expect(domainObject.focusType).toBe(FocusType.Pending);
+
+    const dx = 5;
+    const radius = 3;
+
+    const center = new Vector3(dx, 0, 0);
+    const points = [center, new Vector3(dx, radius, 2)];
+    click(creator, points[0], direction, false, center);
+    click(creator, points[1], direction, true);
+
+    expect(creator.domainObject).toBe(domainObject);
+    expectEqualVector3(domainObject.cylinder.center, center);
+    expect(domainObject.cylinder.radius).toBeCloseTo(radius);
+    expect(domainObject.focusType).toBe(FocusType.Focus);
+  });
+
   test('Create vertical cylinder by mimics the user clicking 3 times', () => {
     const domainObject = new MeasureCylinderDomainObject(PrimitiveType.VerticalCylinder);
     for (const reverseOrder of [false, true]) {
@@ -23,17 +42,19 @@ describe('CylinderCreator', () => {
       const dx = 5;
       const radius = 3;
 
-      const points = [new Vector3(dx, 0, 0), new Vector3(dx, 0, 2), new Vector3(dx, radius, 2)];
+      const centerA = new Vector3(dx, 0, 0);
+      const centerB = new Vector3(dx, 0, 2);
+      const points = [centerA, centerB, new Vector3(dx, radius, 2)];
       if (!reverseOrder) {
         [points[1], points[2]] = [points[2], points[1]];
       }
-      click(creator, points[0], direction, false, new Vector3(dx, 0, 0));
+      click(creator, points[0], direction, false, centerA);
       click(creator, points[1], direction, false);
       click(creator, points[2], direction, true);
 
       expect(creator.domainObject).toBe(domainObject);
-      expectEqualVector3(domainObject.cylinder.centerA, new Vector3(dx, 0, 0));
-      expectEqualVector3(domainObject.cylinder.centerB, new Vector3(dx, 0, 2));
+      expectEqualVector3(domainObject.cylinder.centerA, centerA);
+      expectEqualVector3(domainObject.cylinder.centerB, centerB);
       expect(domainObject.cylinder.radius).toBeCloseTo(radius);
       expect(domainObject.focusType).toBe(FocusType.Focus);
     }
@@ -48,17 +69,19 @@ describe('CylinderCreator', () => {
       const dz = 5;
       const radius = 3;
 
-      const points = [new Vector3(0, 0, dz), new Vector3(0, 2, dz), new Vector3(0, 2, radius + dz)];
+      const centerA = new Vector3(0, 0, dz);
+      const centerB = new Vector3(0, 2, dz);
+      const points = [centerA, centerB, new Vector3(0, 2, radius + dz)];
       if (!reverseOrder) {
         [points[1], points[2]] = [points[2], points[1]];
       }
-      click(creator, points[0], direction, false, new Vector3(0, 0, dz));
+      click(creator, points[0], direction, false, centerA);
       click(creator, points[1], direction, false);
       click(creator, points[2], direction, true);
 
       expect(creator.domainObject).toBe(domainObject);
-      expectEqualVector3(domainObject.cylinder.centerA, new Vector3(0, 0, dz));
-      expectEqualVector3(domainObject.cylinder.centerB, new Vector3(0, 2, dz));
+      expectEqualVector3(domainObject.cylinder.centerA, centerA);
+      expectEqualVector3(domainObject.cylinder.centerB, centerB);
       expect(domainObject.cylinder.radius).toBeCloseTo(radius);
       expect(domainObject.focusType).toBe(FocusType.Focus);
     }
