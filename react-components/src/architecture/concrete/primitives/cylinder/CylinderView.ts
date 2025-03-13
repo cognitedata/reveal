@@ -56,15 +56,10 @@ const CIRCULAR_SEGMENTS = 32;
 const RENDER_ORDER = 100;
 const TOP_FACE = new BoxFace(2);
 const BOTTOM_FACE = new BoxFace(5);
+const HEIGHT_LABEL = 'HeightLabel';
+const RADIUS_LABEL = 'RadiusLabel';
 
 export class CylinderView extends GroupThreeView<CylinderDomainObject> {
-  // ==================================================
-  // INSTANCE FIELDS
-  // ==================================================
-
-  private _radiusSprite: Sprite | undefined;
-  private _heightSprite: Sprite | undefined;
-
   // ==================================================
   // INSTANCE PROPERTIES
   // ==================================================
@@ -140,8 +135,6 @@ export class CylinderView extends GroupThreeView<CylinderDomainObject> {
       }
       this.addEdgeCircles(matrix);
     }
-    this._radiusSprite = undefined;
-    this._heightSprite = undefined;
     if (style.showLabel) {
       this.addLabels();
     }
@@ -342,60 +335,60 @@ export class CylinderView extends GroupThreeView<CylinderDomainObject> {
   // ==================================================
 
   private addLabels(): void {
-    this._radiusSprite = undefined;
-    this._radiusSprite = undefined;
     const type = this.domainObject.primitiveType;
     if (type === PrimitiveType.VerticalCylinder || type === PrimitiveType.HorizontalCircle) {
-      this._radiusSprite = this.createRadiusLabel();
-      if (this._radiusSprite !== undefined) {
-        this.addChild(this._radiusSprite);
-      }
+      this.addChild(this.createRadiusLabel(RADIUS_LABEL));
     }
     if (type === PrimitiveType.VerticalCylinder) {
-      this._heightSprite = this.createHeightLabel();
-      if (this._heightSprite !== undefined) {
-        this.addChild(this._heightSprite);
-      }
+      this.addChild(this.createHeightLabel(HEIGHT_LABEL));
     }
   }
 
-  private getRadiusTextHeight(relativeTextSize: number): number {
-    return relativeTextSize * 2 * this.domainObject.cylinder.radius;
+  private createRadiusLabel(name: string): Sprite | undefined {
+    const value = this.domainObject.cylinder.radius;
+    if (!Cylinder.isValidSize(value)) {
+      return undefined; // Not show when about 0
+    }
+    const labelHeight = this.getRadiusLabelHeight();
+    return this.createLabel(name, value, labelHeight);
   }
 
-  private getHeightTextHeight(relativeTextSize: number): number {
-    return relativeTextSize * this.domainObject.cylinder.height;
+  private createHeightLabel(name: string): Sprite | undefined {
+    const value = this.domainObject.cylinder.height;
+    if (!Cylinder.isValidSize(value * 0.99)) {
+      return undefined; // Not show when about 0
+    }
+    const labelHeight = this.getHeightLabelHeight();
+    return this.createLabel(name, value, labelHeight);
   }
 
-  private createRadiusLabel(): Sprite | undefined {
+  private getRadiusLabelHeight(): number {
     const { style, domainObject } = this;
-    const radius = domainObject.cylinder.radius;
-    if (!Cylinder.isValidSize(radius)) {
-      return undefined; // Not show when about 0
-    }
-    const spriteHeight = this.getRadiusTextHeight(style.relativeTextSize);
-    const unitSystem = this.getUnitSystem();
-    const text = unitSystem.toStringWithUnit(radius, Quantity.Length);
-    return createSprite(text, this.style, spriteHeight);
+    return style.relativeTextSize * 2 * domainObject.cylinder.radius;
   }
 
-  private createHeightLabel(): Sprite | undefined {
-    const { domainObject, style } = this;
-    const height = domainObject.cylinder.height;
-    if (!Cylinder.isValidSize(height * 0.99)) {
-      return undefined; // Not show when about 0
-    }
-    const spriteHeight = this.getHeightTextHeight(style.relativeTextSize);
+  private getHeightLabelHeight(): number {
+    const { style, domainObject } = this;
+    return style.relativeTextSize * domainObject.cylinder.height;
+  }
+
+  private createLabel(name: string, value: number, labelHeight: number): Sprite | undefined {
     const unitSystem = this.getUnitSystem();
-    const text = unitSystem.toStringWithUnit(height, Quantity.Length);
-    return createSprite(text, this.style, spriteHeight);
+    const text = unitSystem.toStringWithUnit(value, Quantity.Length);
+    const sprite = createSprite(text, this.style, labelHeight);
+    if (sprite !== undefined) {
+      sprite.name = name;
+    }
+    return sprite;
   }
 
   private updateLabels(camera: PerspectiveCamera): void {
-    if (this._radiusSprite === undefined && this._heightSprite === undefined) {
+    const radiusLabel = this._group.getObjectByName(RADIUS_LABEL);
+    const heightLabel = this._group.getObjectByName(HEIGHT_LABEL);
+    if (radiusLabel === undefined && heightLabel === undefined) {
       return;
     }
-    const { domainObject, style } = this;
+    const { domainObject } = this;
     const matrix = this.getMatrix();
     const radius = domainObject.cylinder.radius;
 
@@ -409,25 +402,25 @@ export class CylinderView extends GroupThreeView<CylinderDomainObject> {
     const cameraDirection = newVector3().subVectors(topCenter, cameraPosition).normalize();
     const radialDirection = newVector3().crossVectors(cameraDirection, axis).normalize();
 
-    if (this._radiusSprite !== undefined) {
-      const spriteHeight = this.getRadiusTextHeight(style.relativeTextSize);
+    if (radiusLabel !== undefined) {
+      const labelHeight = this.getRadiusLabelHeight();
       const position = newVector3(topCenter).addScaledVector(radialDirection, radius / 2);
 
-      adjustLabel(position, spriteHeight); // To avoid Z-fighting
-      this._radiusSprite.position.copy(position);
-      this._radiusSprite.visible = cameraDirection.y <= 0;
+      adjustLabel(position, labelHeight); // To avoid Z-fighting
+      radiusLabel.position.copy(position);
+      radiusLabel.visible = cameraDirection.y <= 0; // Show only when top cap is visible
     }
-    if (this._heightSprite !== undefined) {
+    if (heightLabel !== undefined) {
       const forwardDirection = newVector3().crossVectors(radialDirection, axis).normalize();
       const center = newVector3().addVectors(topCenter, bottomCenter).multiplyScalar(0.5);
       center.addScaledVector(forwardDirection, radius);
 
-      this._heightSprite.position.copy(center);
-      this._heightSprite.visible = true;
+      heightLabel.position.copy(center);
+      heightLabel.visible = true;
     }
 
-    function adjustLabel(point: Vector3, spriteHeight: number): void {
-      point.y += (1.1 * spriteHeight) / 2;
+    function adjustLabel(point: Vector3, labelHeight: number): void {
+      point.y += (1.1 * labelHeight) / 2;
     }
   }
 
