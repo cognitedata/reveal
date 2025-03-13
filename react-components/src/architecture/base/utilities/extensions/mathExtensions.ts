@@ -21,11 +21,7 @@ export function isEqual(x: number, y: number): boolean {
 }
 
 export function isAbsEqual(x: number, y: number, tolerance: number): boolean {
-  let error = x - y;
-  if (error < 0) {
-    error = -error;
-  }
-  return error < tolerance;
+  return Math.abs(x - y) < tolerance;
 }
 
 export function isRelativeEqual(x: number, y: number, tolerance: number): boolean {
