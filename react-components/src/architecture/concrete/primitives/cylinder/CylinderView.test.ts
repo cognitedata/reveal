@@ -29,11 +29,11 @@ describe('CylinderView', () => {
     domainObject = createCylinderDomainObject();
     view = new CylinderView();
     addView(domainObject, view);
-    expectChildrenLength(view, 2);
   });
 
   test('should have object', () => {
     expect(view.object).toBeInstanceOf(Object3D);
+    expectChildrenLength(view, 2);
   });
 
   test('should changed when focus change', () => {

@@ -30,11 +30,11 @@ describe('BoxView', () => {
     domainObject = createBoxDomainObject();
     view = new BoxView();
     addView(domainObject, view);
-    expectChildrenLength(view, 2);
   });
 
   test('should have object', () => {
     expect(view.object).toBeInstanceOf(Object3D);
+    expectChildrenLength(view, 2);
   });
 
   test('should changed when focus change', () => {
