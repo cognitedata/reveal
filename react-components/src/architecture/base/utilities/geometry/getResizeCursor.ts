@@ -2,9 +2,18 @@
  * Copyright 2024 Cognite AS
  */
 
+/**
+ * Returns the appropriate CSS cursor value based on the given octant.
+ *
+ * The octant is a number from 0 to 7 that represents a direction for resizing.
+ * The function maps these octants to corresponding CSS cursor values.
+ *
+ * @param octant - A number from 0 to 7 representing the direction for resizing.
+ * @returns The CSS cursor value as a string, or `undefined` if the octant is not valid.
+ *
+ * @see https://developer.mozilla.org/en-US/docs/Web/CSS/cursor
+ */
 export function getResizeCursor(octant: number): string | undefined {
-  // https://developer.mozilla.org/en-US/docs/Web/CSS/cursor
-
   switch (octant) {
     case 2:
     case 6:
