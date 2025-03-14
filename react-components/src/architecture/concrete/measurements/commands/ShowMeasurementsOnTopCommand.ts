@@ -8,6 +8,7 @@ import { type DomainObject } from '../../../base/domainObjects/DomainObject';
 import { type TranslationInput } from '../../../base/utilities/TranslateInput';
 import { MeasureBoxDomainObject } from '../MeasureBoxDomainObject';
 import { MeasureLineDomainObject } from '../MeasureLineDomainObject';
+import { MeasureCylinderDomainObject } from '../MeasureCylinderDomainObject';
 
 export class ShowMeasurementsOnTopCommand extends ShowDomainObjectsOnTopCommand {
   // ==================================================
@@ -25,7 +26,8 @@ export class ShowMeasurementsOnTopCommand extends ShowDomainObjectsOnTopCommand 
   protected override isInstance(domainObject: DomainObject): boolean {
     return (
       domainObject instanceof MeasureBoxDomainObject ||
-      domainObject instanceof MeasureLineDomainObject
+      domainObject instanceof MeasureLineDomainObject ||
+      domainObject instanceof MeasureCylinderDomainObject
     );
   }
 }

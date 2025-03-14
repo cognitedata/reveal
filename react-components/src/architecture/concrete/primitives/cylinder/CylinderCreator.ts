@@ -3,7 +3,7 @@
  */
 
 import { Plane, type Ray, Vector3 } from 'three';
-import { type PrimitiveType } from '../../../base/utilities/primitives/PrimitiveType';
+import { PrimitiveType } from '../../../base/utilities/primitives/PrimitiveType';
 import { BaseCreator } from '../../../base/domainObjectsHelpers/BaseCreator';
 import { FocusType } from '../../../base/domainObjectsHelpers/FocusType';
 import { Changes } from '../../../base/domainObjectsHelpers/Changes';
@@ -21,18 +21,32 @@ export class CylinderCreator extends BaseCreator {
   // ==================================================
 
   private readonly _domainObject: CylinderDomainObject;
-  private readonly _isHorizontal;
   private _radius = Cylinder.MinSize;
+  private readonly _primitiveType: PrimitiveType;
+
+  // Click order for the points (point 0 is always center)
+  private readonly _radiusOrder: number = 1;
+  private readonly _otherCenterOrder: number = 2;
 
   // ==================================================
   // CONSTRUCTOR
   // ==================================================
 
-  public constructor(domainObject: CylinderDomainObject, isHorizontal: boolean) {
+  public constructor(
+    domainObject: CylinderDomainObject,
+    primitiveType?: PrimitiveType,
+    isReversedClickOrder = false
+  ) {
     super();
+    this._primitiveType = primitiveType ?? domainObject.primitiveType;
     this._domainObject = domainObject;
     this._domainObject.focusType = FocusType.Pending;
-    this._isHorizontal = isHorizontal;
+
+    // Click order for the points (Used for 3D annotations)
+    if (isReversedClickOrder) {
+      this._radiusOrder = 2;
+      this._otherCenterOrder = 1;
+    }
   }
 
   // ==================================================
@@ -48,6 +62,9 @@ export class CylinderCreator extends BaseCreator {
   }
 
   public override get maximumPointCount(): number {
+    if (this._domainObject.primitiveType === PrimitiveType.HorizontalCircle) {
+      return 2;
+    }
     return 3;
   }
 
@@ -57,13 +74,13 @@ export class CylinderCreator extends BaseCreator {
     isPending: boolean
   ): boolean {
     const domainObject = this._domainObject;
-    point = this.recalculatePoint(point, ray, domainObject.primitiveType);
+    point = this.recalculatePoint(point, ray);
     if (point === undefined) {
       return false;
     }
     this.addRawPoint(point, isPending);
-
     this.rebuild();
+
     domainObject.notify(Changes.geometry);
     if (this.isFinished) {
       domainObject.setFocusInteractive(FocusType.Focus);
@@ -75,15 +92,12 @@ export class CylinderCreator extends BaseCreator {
   // INSTANCE METHODS
   // ==================================================
 
-  private recalculatePoint(
-    point: Vector3 | undefined,
-    ray: Ray,
-    _primitiveType: PrimitiveType
-  ): Vector3 | undefined {
+  private recalculatePoint(point: Vector3 | undefined, ray: Ray): Vector3 | undefined {
     // Recalculate the point anyway for >= 1 points
     // This makes it more natural and you can pick in empty space
-    if (this.notPendingPointCount === 1) {
-      if (this._isHorizontal) {
+    if (this.notPendingPointCount === this._otherCenterOrder) {
+      // Calculate the other center point
+      if (this._primitiveType === PrimitiveType.HorizontalCylinder) {
         if (point === undefined) {
           const plane = new Plane().setFromNormalAndCoplanarPoint(UP_VECTOR, this.firstPoint);
           const newPoint = ray.intersectPlane(plane, new Vector3());
@@ -107,9 +121,20 @@ export class CylinderCreator extends BaseCreator {
           return point;
         }
       }
-    } else if (this.notPendingPointCount === 2) {
+    } else if (this.notPendingPointCount === this._radiusOrder) {
+      // Calculate the radius
       const { center, axis } = this._domainObject.cylinder;
 
+      if (this._radiusOrder === 1) {
+        // When radius is the second point, we can calculate it from the intersection with the plane
+        const plane = new Plane().setFromNormalAndCoplanarPoint(axis, center);
+        const pointOnRay = ray.intersectPlane(plane, new Vector3());
+        if (pointOnRay !== null) {
+          this._radius = pointOnRay?.distanceTo(center);
+          this._radius = Math.max(this._radius, Cylinder.MinSize);
+          return pointOnRay;
+        }
+      }
       const lineLength = ray.origin.distanceTo(center) * 100;
       const v0 = center.clone().addScaledVector(axis, -lineLength);
       const v1 = center.clone().addScaledVector(axis, +lineLength);
@@ -124,8 +149,8 @@ export class CylinderCreator extends BaseCreator {
 
   /**
    * Create the cylinder by adding points. The first point will make a centerA.
-   * The second point will give the centerB.
-   * The third will give radius. The radius is already calculated in the recalculatePoint
+   * The second/third point will give the centerB.
+   * The third/second will give radius. The radius is already calculated in the recalculatePoint
    */
 
   private rebuild(): void {
@@ -137,18 +162,22 @@ export class CylinderCreator extends BaseCreator {
       const { centerA, centerB } = cylinder;
       centerA.copy(this.firstPoint);
       centerB.copy(this.firstPoint);
-      const smallVector = new Vector3(Cylinder.MinSize, 0, 0);
-      centerA.sub(smallVector);
-      centerB.add(smallVector);
-      cylinder.forceMinSize();
-    }
-    if (this.pointCount === 2) {
+      if (this._primitiveType === PrimitiveType.HorizontalCylinder) {
+        centerA.x -= Cylinder.HalfMinSize;
+        centerA.y -= Cylinder.HalfMinSize;
+        centerB.x += Cylinder.HalfMinSize;
+        centerB.y += Cylinder.HalfMinSize;
+      } else {
+        centerA.z -= Cylinder.HalfMinSize;
+        centerB.z += Cylinder.HalfMinSize;
+      }
+    } else if (this.pointCount - 1 === this._otherCenterOrder) {
       const { centerA, centerB } = cylinder;
       centerA.copy(this.firstPoint);
       centerB.copy(this.lastPoint);
-      cylinder.forceMinSize();
-    } else {
+    } else if (this.pointCount - 1 === this._radiusOrder) {
       cylinder.radius = this._radius;
     }
+    cylinder.forceMinSize();
   }
 }

@@ -16,10 +16,10 @@ describe('Cylinder', () => {
   test('Should test all properties on regular primitive', () => {
     const primitive = createVerticalCylinder();
     expect(primitive.primitiveType).toBe(PrimitiveType.Cylinder);
-    expect(primitive.area).toBe(25.132741228718345);
-    expect(primitive.volume).toBe(12.566370614359172);
-    expect(primitive.height).toBe(4);
-    expect(primitive.diameter).toBe(2);
+    expect(primitive.area).toBeCloseTo(31.41592653589793);
+    expect(primitive.volume).toBeCloseTo(12.566370614359172);
+    expect(primitive.height).toBeCloseTo(4);
+    expect(primitive.diameter).toBeCloseTo(2);
     expectEqualVector3(primitive.center, new Vector3(1, 2, 0));
     expectEqualVector3(primitive.size, new Vector3(2, 2, 4));
     expectEqualVector3(primitive.axis, new Vector3(0, 0, 1));
@@ -170,8 +170,8 @@ describe('Cylinder', () => {
     const primitive = createVerticalCylinder();
     primitive.clear();
     expect(primitive.radius).toBe(Cylinder.MinSize);
-    expectEqualVector3(primitive.centerA, new Vector3(0, 0, -Cylinder.MinSize));
-    expectEqualVector3(primitive.centerB, new Vector3(0, 0, +Cylinder.MinSize));
+    expectEqualVector3(primitive.centerA, new Vector3(0, 0, -Cylinder.HalfMinSize));
+    expectEqualVector3(primitive.centerB, new Vector3(0, 0, +Cylinder.HalfMinSize));
   });
 
   test('should test forceMinSize', () => {

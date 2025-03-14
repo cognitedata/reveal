@@ -78,7 +78,6 @@ export { Transaction } from './base/undo/Transaction';
 export { UndoManager } from './base/undo/UndoManager';
 
 // New architecture: utilities
-export { ClosestGeometryFinder } from './base/utilities/geometry/ClosestGeometryFinder';
 export { Index2 } from './base/utilities/geometry/Index2';
 export { Range1 } from './base/utilities/geometry/Range1';
 export { Range3 } from './base/utilities/geometry/Range3';
