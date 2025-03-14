@@ -5,8 +5,8 @@
 import { describe, test, expect, beforeAll } from 'vitest';
 import { RootDomainObject } from './RootDomainObject';
 import { type RevealRenderTarget } from '../renderTarget/RevealRenderTarget';
-import { createRenderTargetMock } from '../../../../tests/tests-utilities/fixtures/renderTarget';
-import { sdkMock } from '../../../../tests/tests-utilities/fixtures/sdk';
+import { createRenderTargetMock } from '#test-utils/fixtures/renderTarget';
+import { sdkMock } from '#test-utils/fixtures/sdk';
 
 describe('RootDomainObject', () => {
   let renderTarget: RevealRenderTarget;

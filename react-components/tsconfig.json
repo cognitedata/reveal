@@ -13,6 +13,9 @@
     "isolatedModules": true,
     "moduleResolution": "bundler",
     "allowSyntheticDefaultImports": true,
-    "noImplicitOverride": true
+    "noImplicitOverride": true,
+    "resolvePackageJsonImports": true,
+    "resolvePackageJsonExports": true,
+    "rootDir": ".",
   }
 }

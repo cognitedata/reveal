@@ -18,8 +18,10 @@
     "src/**/*.stories.ts",
     "src/**/*.test.ts",
     "src/**/*.spec.ts",
-    "stories/**/*",
-    "tests/**/*",
+    "stories/**/*.ts",
+    "stories/**/*.tsx",
+    "tests/**/*.ts",
+    "tests/**/*.tsx",
     "vite.config.ts",
     "playwright.config.ts"
   ]
