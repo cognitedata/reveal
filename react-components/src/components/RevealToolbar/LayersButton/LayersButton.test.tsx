@@ -1,7 +1,7 @@
 /*!
  * Copyright 2025 Cognite AS
  */
-import { render } from '@testing-library/react';
+import { act, render, screen } from '@testing-library/react';
 import { describe, expect, test, vi } from 'vitest';
 import type { ReactElement, ReactNode } from 'react';
 import { LayersButton } from './LayersButton';
@@ -58,13 +58,34 @@ describe(LayersButton.name, () => {
 
   test('renders without crashing', () => {
     const { getByRole } = render(<LayersButton {...defaultProps} />, {
-      wrapper: ({ children }: { children: ReactNode }) => wrapper({ children })
+      wrapper
     });
 
     // Validate the presence of specific UI elements
     expect(
       getByRole('button', { name: 'Filter 3D resource layers' }).className.includes('cogs-button')
     ).toBe(true);
+  });
+
+  test('Layers drop down should mount under the same parent as button', async () => {
+    render(
+      <div data-test-id="layers-button">
+        <LayersButton {...defaultProps} />
+      </div>,
+      {
+        wrapper
+      }
+    );
+
+    // find button with aria-label Filter 3D resource layers and click it
+    const button = screen.getByRole('button', { name: 'Filter 3D resource layers' });
+    await act(async () => {
+      button.click();
+    });
+
+    const cadModels = screen.getByText('CAD models');
+
+    expect(cadModels.closest('[data-test-id="layers-button"]')).not.toBeNull();
   });
 
   test('should update viewer models visibility when layersState changes', () => {
@@ -87,7 +108,7 @@ describe(LayersButton.name, () => {
     };
 
     const { rerender } = render(<LayersButton {...defaultProps} />, {
-      wrapper: ({ children }) => wrapper({ children, dependencies: newProps })
+      wrapper
     });
 
     // Change layersState
