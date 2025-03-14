@@ -9,7 +9,7 @@ import {
   expectEqualMatrix4,
   expectEqualBox3,
   expectEqualVector3
-} from '../../../../../tests/tests-utilities/primitives/primitiveTestUtil';
+} from '#test-utils/primitives/primitiveTestUtil';
 import { Cylinder } from './Cylinder';
 
 describe('Cylinder', () => {
