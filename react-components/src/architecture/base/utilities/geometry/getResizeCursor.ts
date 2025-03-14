@@ -2,10 +2,10 @@
  * Copyright 2024 Cognite AS
  */
 
-export function getResizeCursor(octdir: number): string | undefined {
+export function getResizeCursor(octant: number): string | undefined {
   // https://developer.mozilla.org/en-US/docs/Web/CSS/cursor
 
-  switch (octdir) {
+  switch (octant) {
     case 2:
     case 6:
       return 'ns-resize';
