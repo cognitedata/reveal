@@ -14,8 +14,6 @@
     "moduleResolution": "bundler",
     "allowSyntheticDefaultImports": true,
     "noImplicitOverride": true,
-    "resolvePackageJsonImports": true,
-    "resolvePackageJsonExports": true,
     "rootDir": ".",
   }
 }
