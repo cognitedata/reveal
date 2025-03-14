@@ -31,7 +31,12 @@ export const postMock = vi.fn<
     options?: HttpRequestOptions
   ) => Promise<HttpResponse<ExternalIdsResultList<AssetProperties>>>
 >(async (_path, options) => {
-  const assetRef = options?.data.items[0] as DmsUniqueIdentifier;
+  const assetRef = (options?.data as { items: DmsUniqueIdentifier[] | undefined } | undefined)
+    ?.items?.[0];
+  if (assetRef === undefined) {
+    throw Error('Did not find asset ref in post body');
+  }
+
   const nodeItem: NodeItem<AssetProperties> = {
     instanceType: 'node',
     version: 0,
