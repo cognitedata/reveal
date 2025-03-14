@@ -77,7 +77,6 @@ describe(LayersButton.name, () => {
       }
     );
 
-    // find button with aria-label Filter 3D resource layers and click it
     const button = screen.getByRole('button', { name: 'Filter 3D resource layers' });
     await act(async () => {
       button.click();
