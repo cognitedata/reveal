@@ -2,18 +2,9 @@
  * Copyright 2025 Cognite AS
  */
 import { describe, expect, test, vi, beforeEach } from 'vitest';
-import {
-  cadModelOptions,
-  createCadMock
-} from '#test-utils/fixtures/cadModel';
-import {
-  createImage360ClassicMock,
-  image360ClassicOptions
-} from '#test-utils/fixtures/image360';
-import {
-  createPointCloudMock,
-  pointCloudModelOptions
-} from '#test-utils/fixtures/pointCloud';
+import { cadModelOptions, createCadMock } from '#test-utils/fixtures/cadModel';
+import { createImage360ClassicMock, image360ClassicOptions } from '#test-utils/fixtures/image360';
+import { createPointCloudMock, pointCloudModelOptions } from '#test-utils/fixtures/pointCloud';
 import { createRenderTargetMock } from '#test-utils/fixtures/renderTarget';
 import { viewerMock } from '#test-utils/fixtures/viewer';
 import { CadDomainObject } from './cad/CadDomainObject';
