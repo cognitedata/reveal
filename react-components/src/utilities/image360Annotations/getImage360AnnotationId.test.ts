@@ -4,7 +4,7 @@
 import {
   classic360AnnotationFixture,
   coreDm360AnnotationFixture
-} from '../../../tests/tests-utilities/fixtures/image360Annotations';
+} from '#test-utils/fixtures/image360Annotations';
 import { describe, it, expect } from 'vitest';
 import { getImage360AnnotationId } from './getImage360AnnotationId';
 

@@ -10,7 +10,7 @@ import { FocusType } from '../../../base/domainObjectsHelpers/FocusType';
 import { MeasureLineDomainObject } from '../../measurements/MeasureLineDomainObject';
 import { FolderDomainObject } from '../../../base/domainObjects/FolderDomainObject';
 import { type BaseCreator } from '../../../base/domainObjectsHelpers/BaseCreator';
-import { click } from '../../../../../tests/tests-utilities/architecture/baseCreatorUtil';
+import { click } from '#test-utils/architecture/baseCreatorUtil';
 
 describe('LineCreator', () => {
   test('create Line by mimics the user clicking 2 times', () => {

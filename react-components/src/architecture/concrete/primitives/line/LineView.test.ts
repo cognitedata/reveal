@@ -5,7 +5,7 @@
 import { beforeEach, describe, expect, test } from 'vitest';
 import { Object3D, Vector3 } from 'three';
 import { CDF_TO_VIEWER_TRANSFORMATION, type CustomObjectIntersectInput } from '@cognite/reveal';
-import { expectEqualVector3 } from '../../../../../tests/tests-utilities/primitives/primitiveTestUtil';
+import { expectEqualVector3 } from '#test-utils/primitives/primitiveTestUtil';
 import { isDomainObjectIntersection } from '../../../base/domainObjectsHelpers/DomainObjectIntersection';
 import { LineView } from './LineView';
 import { type LineDomainObject } from './LineDomainObject';
@@ -15,7 +15,7 @@ import {
   addView,
   createIntersectInput,
   expectChildrenLength
-} from '../../../../../tests/tests-utilities/architecture/viewUtil';
+} from '#test-utils/architecture/viewUtil';
 import { MeasureLineDomainObject } from '../../measurements/MeasureLineDomainObject';
 
 describe('LineView', () => {

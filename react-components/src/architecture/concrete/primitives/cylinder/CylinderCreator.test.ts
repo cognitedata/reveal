@@ -5,9 +5,9 @@
 import { describe, expect, test } from 'vitest';
 import { CylinderCreator } from './CylinderCreator';
 import { Vector3 } from 'three';
-import { expectEqualVector3 } from '../../../../../tests/tests-utilities/primitives/primitiveTestUtil';
+import { expectEqualVector3 } from '#test-utils/primitives/primitiveTestUtil';
 import { FocusType } from '../../../base/domainObjectsHelpers/FocusType';
-import { click } from '../../../../../tests/tests-utilities/architecture/baseCreatorUtil';
+import { click } from '#test-utils/architecture/baseCreatorUtil';
 import { MeasureCylinderDomainObject } from '../../measurements/MeasureCylinderDomainObject';
 import { PrimitiveType } from '../../../base/utilities/primitives/PrimitiveType';
 

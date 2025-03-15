@@ -10,7 +10,7 @@ import { type AddImage360CollectionDatamodelsOptions } from '../../components';
 import {
   modelInstanceFixture0,
   revisionInstanceFixture0
-} from '../../../tests/tests-utilities/fixtures/dm/model3dData';
+} from '#test-utils/fixtures/dm/model3dData';
 
 const image360CollectionId: AddImage360CollectionDatamodelsOptions = {
   externalId: 'image360Collection0',

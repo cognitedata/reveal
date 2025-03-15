@@ -4,7 +4,7 @@ import {
   createCadHandlerMock,
   createImage360HandlerMock,
   createPointCloudHandlerMock
-} from '../../../../tests/tests-utilities/fixtures/modelHandler';
+} from '#test-utils/fixtures/modelHandler';
 import { type LayersUrlStateParam } from './types';
 import { type Dispatch, type SetStateAction } from 'react';
 
