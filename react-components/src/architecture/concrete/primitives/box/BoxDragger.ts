@@ -12,7 +12,7 @@ import {
   forceBetween0AndTwoPi,
   round
 } from '../../../base/utilities/extensions/mathExtensions';
-import { getAbsMaxComponentIndex } from '../../../base/utilities/extensions/vectorExtensions';
+import { getAbsMaxComponent } from '../../../base/utilities/extensions/vectorExtensions';
 import { PrimitiveType } from '../../../base/utilities/primitives/PrimitiveType';
 import { getClosestPointOnLine } from '../../../base/utilities/extensions/rayExtensions';
 import { type BoxDomainObject } from './BoxDomainObject';
@@ -145,7 +145,7 @@ export class BoxDragger extends BaseDragger {
     if (isShiftPressed) {
       const invRotationMatrix = this._rotationMatrix.clone().invert();
       deltaCenter.applyMatrix4(invRotationMatrix);
-      const maxIndex = getAbsMaxComponentIndex(deltaCenter);
+      const maxIndex = getAbsMaxComponent(deltaCenter);
       for (let index = 0; index < 3; index++) {
         if (index === maxIndex) {
           continue;
