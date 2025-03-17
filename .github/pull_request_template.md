@@ -47,6 +47,7 @@ https://cognitedata.atlassian.net/browse/
 - [ ] I am happy with this implementation.
 - [ ] I have performed a self-review of my own code.
 - [ ] I have added unit and visuals tests to prove that my feature works to the best of my ability.
+- [ ] I have added documentation to new and changed elements; both public and internally shared ones
 - [ ] I have refactored the code for testability, readability and extendibility to the best of my ability.
 - [ ] I have listed the JIRA tasks covering remaining work or tech debt related to this PR in the description.
 - [ ] I have noted down and am currently tracking any technical debt introduced in this PR.
