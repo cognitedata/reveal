@@ -28,7 +28,7 @@ export async function listAllMappedFdmNodes(
     sourcesToSearch,
     revisionRefs,
     filter,
-    10000
+    1000
   );
 
   const query = {

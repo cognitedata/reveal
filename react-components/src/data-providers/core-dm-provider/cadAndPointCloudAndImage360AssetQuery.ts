@@ -139,6 +139,8 @@ export function cadAndPointCloudAndImage36AssetQuery(
       }
     },
     select: {
+      cad_nodes: {},
+      cad_object_3d : {},
       cad_assets: {
         sources: [
           ...cogniteAssetSourceWithProperties,
