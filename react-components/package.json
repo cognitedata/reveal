@@ -7,6 +7,9 @@
       "types": "./dist/index.d.ts"
     }
   },
+  "imports": {
+    "#test-utils/*": "./tests/tests-utilities/*.ts"
+  },
   "types": "./dist/index.d.ts",
   "type": "module",
   "author": {

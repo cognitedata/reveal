@@ -6,7 +6,7 @@ import { getImage360AnnotationAssetRef } from './getImage360AnnotationAssetRef';
 import {
   classic360AnnotationFixture,
   coreDm360AnnotationFixture
-} from '../../../tests/tests-utilities/fixtures/image360Annotations';
+} from '#test-utils/fixtures/image360Annotations';
 
 describe(getImage360AnnotationAssetRef.name, () => {
   it('gets image360 annotation ref from classic annotation', () => {

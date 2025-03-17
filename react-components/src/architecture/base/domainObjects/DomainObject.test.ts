@@ -15,7 +15,7 @@ import { cloneDeep } from 'lodash';
 import { ColorType } from '../domainObjectsHelpers/ColorType';
 import { BLACK_COLOR, WHITE_COLOR } from '../utilities/colors/colorExtensions';
 import { ChangedDescription } from '../domainObjectsHelpers/ChangedDescription';
-import { createRenderTargetMock } from '../../../../tests/tests-utilities/fixtures/renderTarget';
+import { createRenderTargetMock } from '#test-utils/fixtures/renderTarget';
 import { CommandsUpdater } from '../reactUpdaters/CommandsUpdater';
 import { DomainObjectPanelUpdater } from '../reactUpdaters/DomainObjectPanelUpdater';
 
