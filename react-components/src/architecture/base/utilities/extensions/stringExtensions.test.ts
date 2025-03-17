@@ -52,10 +52,17 @@ describe('StringExtensions', () => {
       expect(equalsIgnoreCaseAndSpace('abc', 'abd')).toBe(false);
     });
     test('should be not equal when one is empty', () => {
+      expect(equalsIgnoreCaseAndSpace('', 'abc')).toBe(false);
       expect(equalsIgnoreCaseAndSpace('abc', '')).toBe(false);
     });
     test('should be not equal when different case', () => {
       expect(equalsIgnoreCaseAndSpace('abc', 'ABD')).toBe(false);
+    });
+    test('should be not equal when different size', () => {
+      expect(equalsIgnoreCaseAndSpace('a', 'abc')).toBe(false);
+      expect(equalsIgnoreCaseAndSpace('abc', 'a')).toBe(false);
+      expect(equalsIgnoreCaseAndSpace('a', 'a b c')).toBe(false);
+      expect(equalsIgnoreCaseAndSpace('a b c', 'a')).toBe(false);
     });
   });
 });
