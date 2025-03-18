@@ -11,28 +11,5 @@ export function equalsIgnoreCase(value1: string, value2: string): boolean {
 }
 
 export function equalsIgnoreCaseAndSpace(value1: string, value2: string): boolean {
-  const isSpace = (s: string): boolean => s === ' ';
-  const { length: length1 } = value1;
-  const { length: length2 } = value2;
-
-  for (let i = 0, j = 0; i < length1; i++) {
-    const char1 = value1.charAt(i);
-    if (isSpace(char1)) {
-      continue;
-    }
-    const lowerChar1 = char1.toLowerCase();
-    for (; j < length2; j++) {
-      const char2 = value2.charAt(j);
-      if (isSpace(char2)) {
-        continue;
-      }
-      const lowerChar2 = char2.toLowerCase();
-      if (lowerChar2 === lowerChar1) {
-        j++;
-        break;
-      }
-      return false;
-    }
-  }
-  return true;
+  return equalsIgnoreCase(value1.replace(' ', ''), value2.replace(' ', ''));
 }
