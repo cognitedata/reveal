@@ -280,7 +280,7 @@ export class BoxView extends GroupThreeView<BoxDomainObject> {
       return undefined; // Not show when about 0
     }
     const text = root.unitSystem.toStringWithUnit(degrees, Quantity.Angle);
-    const sprite = BoxView.createSprite(text, this.style, spriteHeight);
+    const sprite = createSprite(text, this.style, spriteHeight);
     if (sprite === undefined) {
       return undefined;
     }
@@ -299,7 +299,7 @@ export class BoxView extends GroupThreeView<BoxDomainObject> {
     if (!this.isFaceVisible(face)) {
       return undefined;
     }
-    const sprite = BoxView.createSprite('Pending', this.style, spriteHeight);
+    const sprite = createSprite('Pending', this.style, spriteHeight);
     if (sprite === undefined) {
       return undefined;
     }
@@ -382,7 +382,7 @@ export class BoxView extends GroupThreeView<BoxDomainObject> {
         continue;
       }
       const text = root.unitSystem.toStringWithUnit(size, Quantity.Length);
-      const sprite = BoxView.createSprite(text, style, spriteHeight);
+      const sprite = createSprite(text, style, spriteHeight);
       if (sprite === undefined) {
         this._sprites.push(undefined);
         continue;
@@ -548,7 +548,6 @@ export class BoxView extends GroupThreeView<BoxDomainObject> {
         return FocusType.Rotation;
       }
     }
-    // }
     return FocusType.Body;
   }
 
@@ -589,26 +588,6 @@ export class BoxView extends GroupThreeView<BoxDomainObject> {
         return face.index === 2; // Z face visible
     }
     return true;
-  }
-
-  // ==================================================
-  // STATIC METHODS
-  // ==================================================
-
-  public static createSprite(
-    text: string,
-    style: PrimitiveRenderStyle,
-    height: number
-  ): Sprite | undefined {
-    const result = createSpriteWithText(text, height, style.labelColor, style.labelBgColor);
-    if (result === undefined) {
-      return undefined;
-    }
-    result.material.transparent = true;
-    result.material.opacity = style.labelOpacity;
-    result.material.depthTest = style.depthTest;
-    result.renderOrder = RENDER_ORDER;
-    return result;
   }
 }
 
@@ -748,6 +727,22 @@ export function rotateEdgeCircle(mesh: Mesh, face: BoxFace, rotationMatrix: Matr
       mesh.rotateX(Math.PI / 2);
       break;
   }
+}
+
+export function createSprite(
+  text: string,
+  style: PrimitiveRenderStyle,
+  height: number
+): Sprite | undefined {
+  const result = createSpriteWithText(text, height, style.labelColor, style.labelBgColor);
+  if (result === undefined) {
+    return undefined;
+  }
+  result.material.transparent = true;
+  result.material.opacity = style.labelOpacity;
+  result.material.depthTest = style.depthTest;
+  result.renderOrder = RENDER_ORDER;
+  return result;
 }
 
 // ==================================================

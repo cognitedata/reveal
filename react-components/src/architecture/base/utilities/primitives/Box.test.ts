@@ -11,7 +11,7 @@ import {
   expectEqualBox3,
   expectEqualVector3,
   expectEqualEuler
-} from '../../../../../tests/tests-utilities/primitives/primitiveTestUtil';
+} from '#test-utils/primitives/primitiveTestUtil';
 
 describe('Box', () => {
   test('Should test setter and getter on base class', () => {
@@ -53,6 +53,7 @@ describe('Box', () => {
     expect(primitive.hasArea).toBe(true);
     expect(primitive.hasVolume).toBe(true);
     expect(primitive.horizontalArea).toBe(2);
+    expect(primitive.verticalArea).toBe(3);
     expect(primitive.hasXYRotation).toBe(true);
     expect(primitive.zRotationInDegrees).not.toBe(0);
 

@@ -3,9 +3,9 @@
  */
 
 import { type Matrix4, type Ray, type Vector3 } from 'three';
-import { ClosestGeometryFinder } from '../../../base/utilities/geometry/ClosestGeometryFinder';
 import { type Annotation } from './Annotation';
 import { type Primitive } from '../../../base/utilities/primitives/Primitive';
+import { ClosestGeometryFinder } from '@cognite/reveal';
 
 export function getClosestAnnotation(
   annotations: Generator<Annotation>,

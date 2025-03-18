@@ -102,7 +102,7 @@ export abstract class PrimitiveEditTool extends BaseEditTool {
           return;
         }
         const ray = this.getRay(event);
-        if (creator.addPoint(ray, intersection, true)) {
+        if (creator.addPoint(ray, intersection.point, true)) {
           this.setDefaultCursor();
           return;
         }
@@ -147,7 +147,7 @@ export abstract class PrimitiveEditTool extends BaseEditTool {
     }
     if (creator !== undefined) {
       const ray = this.getRay(event);
-      if (creator.addPoint(ray, intersection)) {
+      if (creator.addPoint(ray, intersection.point)) {
         this.endCreatorIfFinished(creator);
       }
       return;
@@ -165,7 +165,7 @@ export abstract class PrimitiveEditTool extends BaseEditTool {
         return;
       }
       const ray = this.getRay(event);
-      if (!creator.addPoint(ray, intersection)) {
+      if (!creator.addPoint(ray, intersection.point)) {
         return;
       }
       const { domainObject } = creator;
@@ -309,7 +309,7 @@ export abstract class PrimitiveEditTool extends BaseEditTool {
       return false;
     }
     const ray = this.getRay(event);
-    if (!creator.addPoint(ray, intersection, true)) {
+    if (!creator.addPoint(ray, intersection.point, true)) {
       return false;
     }
     const { domainObject } = creator;

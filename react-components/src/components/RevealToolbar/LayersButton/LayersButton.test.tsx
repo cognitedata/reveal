@@ -7,14 +7,15 @@ import type { ReactElement, ReactNode } from 'react';
 import { LayersButton } from './LayersButton';
 import type { LayersButtonProps } from './LayersButton';
 import { LayersButtonContext, type LayersButtonDependencies } from './LayersButton.context';
+
+import { type ModelLayerHandlers } from './types';
+import { cadMock } from '#test-utils/fixtures/cadModel';
+import { viewerMock } from '#test-utils/fixtures/viewer';
 import {
   createCadHandlerMock,
   createPointCloudHandlerMock,
   createImage360HandlerMock
-} from '../../../../tests/tests-utilities/fixtures/modelHandler';
-import { type ModelLayerHandlers } from './types';
-import { cadMock } from '../../../../tests/tests-utilities/fixtures/cadModel';
-import { viewerMock } from '../../../../tests/tests-utilities/fixtures/viewer';
+} from '#test-utils/fixtures/modelHandler';
 
 describe(LayersButton.name, () => {
   const mockCadHandler = createCadHandlerMock();

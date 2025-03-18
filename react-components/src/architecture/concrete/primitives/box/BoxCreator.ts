@@ -16,7 +16,6 @@ import { FocusType } from '../../../base/domainObjectsHelpers/FocusType';
 import { Changes } from '../../../base/domainObjectsHelpers/Changes';
 import { type DomainObject } from '../../../base/domainObjects/DomainObject';
 import { type BoxDomainObject } from './BoxDomainObject';
-import { type BaseTool } from '../../../base/commands/BaseTool';
 
 const UP_VECTOR = new Vector3(0, 0, 1);
 /**
@@ -33,8 +32,8 @@ export class BoxCreator extends BaseCreator {
   // CONSTRUCTOR
   // ==================================================
 
-  public constructor(tool: BaseTool, domainObject: BoxDomainObject) {
-    super(tool);
+  public constructor(domainObject: BoxDomainObject) {
+    super();
     this._domainObject = domainObject;
     this._domainObject.focusType = FocusType.Pending;
   }

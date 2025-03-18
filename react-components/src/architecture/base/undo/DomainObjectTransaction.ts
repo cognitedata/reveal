@@ -10,7 +10,7 @@ import { type RevealRenderTarget } from '../renderTarget/RevealRenderTarget';
 /**
  * Represents an generic transaction used for undo.
  * It implements undo transaction for added, deleted, name, color, geometry
- * and renderstyle changes.
+ * and render style changes.
  */
 export class DomainObjectTransaction extends Transaction {
   // ==================================================

@@ -4,7 +4,7 @@
 /* eslint-disable react/prop-types */
 import { useState, type ReactElement } from 'react';
 
-import { InfoIcon } from '@cognite/cogs-icons';
+import { InfoIcon } from '@cognite/cogs.js';
 
 import { type TreeNodeType } from '../../model/tree-node-type';
 import { type AdvancedTreeViewProps } from '../advanced-tree-view-props';
