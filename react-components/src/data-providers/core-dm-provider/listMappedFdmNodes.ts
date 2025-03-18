@@ -36,10 +36,11 @@ export async function listAllMappedFdmNodes(
     parameters: { revisionRefs }
   };
 
+  const initialCursorType = Object.keys(rawQuery.with)[0];
   const queryResult = await fdmSdk.queryAllNodesAndEdges<
     typeof query,
     [{ source: typeof COGNITE_ASSET_SOURCE; properties: CogniteAssetProperties }]
-  >(query);
+  >(query, initialCursorType);
 
   return queryResult.items.cad_assets.concat(queryResult.items.pointcloud_assets);
 }

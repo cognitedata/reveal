@@ -71,7 +71,8 @@ export function cadAndPointCloudAndImage36AssetQuery(
           from: 'cad_nodes',
           through: { view: COGNITE_CAD_NODE_SOURCE, identifier: 'object3D' },
           direction: 'outwards'
-        }
+        },
+        limit
       },
       cad_assets: {
         nodes: {
@@ -79,7 +80,8 @@ export function cadAndPointCloudAndImage36AssetQuery(
           through: { view: COGNITE_ASSET_SOURCE, identifier: 'object3D' },
           direction: 'inwards',
           filter
-        }
+        },
+        limit
       },
       pointcloud_volumes: {
         nodes: {
