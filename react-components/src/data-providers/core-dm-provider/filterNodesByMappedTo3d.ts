@@ -148,7 +148,5 @@ async function fetchConnectionData(
     parameters
   };
 
-  const initialCursorType = Object.keys(rawQuery.with)[0];
-  console.log('TEST fetchConnectionData initialCursorType ', initialCursorType);
-  return await fdmSdk.queryAllNodesAndEdges<typeof query, SelectSourcesType>(query, initialCursorType);
+  return await fdmSdk.queryAllNodesAndEdges<typeof query, SelectSourcesType>(query);
 }
