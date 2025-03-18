@@ -556,7 +556,7 @@ export class FdmSDK {
     let result = await queryNodesAndEdges<TQueryRequest, TypedSelectSources>(query, this._sdk);
     let items = result.items;
     while (result.nextCursor !== undefined && Object.keys(result.nextCursor).length !== 0) {
-      const cursors = initialCursorType ? {
+      const cursors = initialCursorType && result.nextCursor[initialCursorType] ? {
         [initialCursorType]: result.nextCursor[initialCursorType]
       } : result.nextCursor;
       const newQuery = { ...query, cursors: cursors };
