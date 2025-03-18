@@ -10,7 +10,7 @@ import {
   type SimpleSource
 } from '../data-providers/FdmSDK';
 import { useFdmSdk } from '../components/RevealCanvas/SDKProvider';
-import { type UseQueryResult, useQuery } from '@tanstack/react-query';
+import { UseInfiniteQueryResult, type UseQueryResult, useInfiniteQuery, useQuery } from '@tanstack/react-query';
 import { type DataSourceType, type AddModelOptions } from '@cognite/reveal';
 import { isEqual, uniq, chunk } from 'lodash';
 import { type Fdm3dDataProvider } from '../data-providers/Fdm3dDataProvider';
@@ -19,6 +19,7 @@ import { getModelKeys } from '../utilities/getModelKeys';
 import { useFdm3dDataProvider } from '../components/CacheProvider/CacheProvider';
 import { type AddImage360CollectionDatamodelsOptions } from '../components/Reveal3DResources/types';
 import { cadCogniteAssetsInstanceFilterWithtHasDataQuery } from '../data-providers/core-dm-provider/cadAssetsInstanceFilterWithtHasDataQuery';
+import { AllMappedInfiniteQueryCursorType, AllMappedInfiniteQueryType } from '../data-providers/core-dm-provider/types';
 
 export type InstancesWithView<PropertyType = Record<string, unknown>> = {
   view: Source;
@@ -136,17 +137,25 @@ export const useAllMappedEquipmentFDM = (
   models: AddModelOptions[],
   viewsToSearch: SimpleSource[],
   enabled: boolean = true
-): UseQueryResult<NodeItem[]> => {
+): UseInfiniteQueryResult<AllMappedInfiniteQueryType> => {
   const fdmDataProvider = useFdm3dDataProvider();
 
-  return useQuery({
+  return useInfiniteQuery({
     queryKey: ['reveal', 'react-components', 'all-mapped-equipment-fdm', viewsToSearch, models],
-    queryFn: async () => {
+    queryFn: async ({ pageParam }: { pageParam?: AllMappedInfiniteQueryCursorType | undefined }) => {
       const viewSources = createSourcesFromViews(viewsToSearch);
 
       const assetFilterForAllMapped = cadCogniteAssetsInstanceFilterWithtHasDataQuery(viewSources);
-      return await fdmDataProvider.listAllMappedFdmNodes(models, viewSources, assetFilterForAllMapped);
+      const { items, nextCursor } = await fdmDataProvider.listAllMappedFdmNodes(models, viewSources, assetFilterForAllMapped, pageParam);
+      return {
+        items,
+        nextCursor
+      };
     },
+    getNextPageParam: (lastPage) => {
+      return lastPage.nextCursor ?? undefined;
+    },
+    initialPageParam: 0,
     staleTime: Infinity,
     enabled
   });

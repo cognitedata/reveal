@@ -16,6 +16,7 @@ import {
   type TaggedAddResourceOptions
 } from '../components/Reveal3DResources/types';
 import { type Node3D } from '@cognite/sdk';
+import { AllMappedInfiniteQueryCursorType } from './core-dm-provider/types';
 
 export type Fdm3dDataProvider = {
   is3dView: (view: ViewItem) => boolean;
@@ -40,8 +41,9 @@ export type Fdm3dDataProvider = {
   listAllMappedFdmNodes: (
     models: Array<AddModelOptions<DataSourceType> | AddImage360CollectionDatamodelsOptions>,
     sourcesToSearch: Source[],
-    instanceFilter: InstanceFilter | undefined
-  ) => Promise<NodeItem[]>;
+    instanceFilter: InstanceFilter | undefined,
+    pageParam?: AllMappedInfiniteQueryCursorType
+  ) => Promise<{ items: NodeItem[], nextCursor: AllMappedInfiniteQueryCursorType | undefined }>;
 
   filterNodesByMappedTo3d: (
     nodes: InstancesWithView[],

@@ -37,6 +37,7 @@ import { getCadConnectionsForRevisions } from './getCadConnectionsForRevisions';
 import { partition, zip } from 'lodash';
 import { restrictToDmsId } from '../../utilities/restrictToDmsId';
 import { EMPTY_ARRAY } from '../../utilities/constants';
+import { AllMappedInfiniteQueryCursorType } from './types';
 
 const MAX_PARALLEL_QUERIES = 2;
 
@@ -158,11 +159,12 @@ export class CoreDm3dFdm3dDataProvider implements Fdm3dDataProvider {
   async listAllMappedFdmNodes(
     models: Array<AddModelOptions<DataSourceType> | AddImage360CollectionDatamodelsOptions>,
     sourcesToSearch: Source[],
-    instanceFilter: InstanceFilter | undefined
-  ): Promise<NodeItem[]> {
+    instanceFilter: InstanceFilter | undefined,
+    pageParam?: AllMappedInfiniteQueryCursorType
+  ): Promise<{ items: NodeItem[], nextCursor: AllMappedInfiniteQueryCursorType | undefined }> {
     const revisionRefs = await this.getRevisionRefs(models);
 
-    return await listAllMappedFdmNodes(revisionRefs, sourcesToSearch, instanceFilter, this._fdmSdk);
+    return await listAllMappedFdmNodes(revisionRefs, sourcesToSearch, instanceFilter, this._fdmSdk, pageParam);
   }
 
   async filterNodesByMappedTo3d(

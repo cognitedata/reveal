@@ -11,15 +11,20 @@ import {
 } from '../FdmSDK';
 import { type COGNITE_ASSET_SOURCE, type CogniteAssetProperties } from './dataModels';
 import { cadAndPointCloudAndImage36AssetQuery } from './cadAndPointCloudAndImage360AssetQuery';
+import { AllMappedInfiniteQueryCursorType } from './types';
 
 export async function listAllMappedFdmNodes(
   revisionRefs: DmsUniqueIdentifier[],
   sourcesToSearch: Source[],
   instancesFilter: InstanceFilter | undefined,
-  fdmSdk: FdmSDK
-): Promise<NodeItem[]> {
+  fdmSdk: FdmSDK,
+  pageParam?: AllMappedInfiniteQueryCursorType
+): Promise<{ items: NodeItem[], nextCursor: {} | undefined }> {
   if (revisionRefs.length === 0) {
-    return [];
+    return {
+      items: [],
+      nextCursor: undefined
+    };
   }
 
   const filter = makeSureNonEmptyFilterForRequest(instancesFilter);
@@ -41,7 +46,11 @@ export async function listAllMappedFdmNodes(
     [{ source: typeof COGNITE_ASSET_SOURCE; properties: CogniteAssetProperties }]
   >(query);
 
-  return queryResult.items.cad_assets.concat(queryResult.items.pointcloud_assets);
+  const items = queryResult.items.cad_assets.concat(queryResult.items.pointcloud_assets);
+  return {
+    items,
+    nextCursor: queryResult.nextCursor
+  }
 }
 
 export async function listMappedFdmNodes(
