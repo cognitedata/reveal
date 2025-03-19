@@ -10,7 +10,7 @@ import {
   type Source
 } from '../FdmSDK';
 import { COGNITE_CAD_NODE_SOURCE, type COGNITE_ASSET_SOURCE, type CogniteAssetProperties } from './dataModels';
-import { cadAndPointCloudAndImage36AssetQuery } from './cadAndPointCloudAndImage360AssetQuery';
+import { cadAssetQuery, image360AssetsQuery, pointCloudsAssetsQuery } from './cadAndPointCloudAndImage360AssetQuery';
 import { uniqBy } from 'lodash';
 
 export async function listAllMappedFdmNodes(
@@ -23,28 +23,16 @@ export async function listAllMappedFdmNodes(
     return [];
   }
 
+  const limit = 1000;
   const filter = makeSureNonEmptyFilterForRequest(instancesFilter);
 
-  const rawQuery = cadAndPointCloudAndImage36AssetQuery(
-    sourcesToSearch,
-    revisionRefs,
-    filter,
-    1000
-  );
+  const cadAssets = await queryCadAssets(sourcesToSearch, revisionRefs, filter, fdmSdk, limit);
+  const pointCloudsAssets = await queryPointCloudsAssets(sourcesToSearch, revisionRefs, filter, fdmSdk, limit);
+  const image360Assets = await queryImage360Assets(sourcesToSearch, revisionRefs, fdmSdk, limit);
 
-  const query = {
-    ...rawQuery,
-    parameters: { revisionRefs }
-  };
-
-  const initialCursorType = Object.keys(rawQuery.with)[0];
-  const queryResult = await fdmSdk.queryAllNodesAndEdges<
-    typeof query,
-    [{ source: typeof COGNITE_ASSET_SOURCE; properties: CogniteAssetProperties }]
-  >(query, initialCursorType);
-
-  const filteredCadAssets = filterCadAssetsBasedOnObject3DFromCadNodes(sourcesToSearch, queryResult.items.cad_assets, queryResult.items.cad_nodes);
-  const allAssets = filteredCadAssets.concat(queryResult.items.pointcloud_assets);
+  const allAssets = cadAssets
+    .concat(pointCloudsAssets)
+    .concat(image360Assets);
   return allAssets;
 }
 
@@ -61,26 +49,75 @@ export async function listMappedFdmNodes(
 
   const filter = makeSureNonEmptyFilterForRequest(instancesFilter);
 
-  const rawQuery = cadAndPointCloudAndImage36AssetQuery(
+  const cadAssets = await queryCadAssets(sourcesToSearch, revisionRefs, filter, fdmSdk, limit);
+  const pointCloudsAssets = await queryPointCloudsAssets(sourcesToSearch, revisionRefs, filter, fdmSdk, limit);
+  const image360Assets = await queryImage360Assets(sourcesToSearch, revisionRefs, fdmSdk, limit);
+
+  return cadAssets
+    .concat(pointCloudsAssets)
+    .concat(image360Assets);
+}
+
+export async function queryCadAssets(sourcesToSearch : Source[], revisionRefs: DmsUniqueIdentifier[], filter: InstanceFilter | undefined, fdmSdk: FdmSDK, limit: number) {
+  const rawQueryCAD = cadAssetQuery(
     sourcesToSearch,
-    revisionRefs,
     filter,
     limit
   );
 
-  const query = {
-    ...rawQuery,
+  const queryCAD = {
+    ...rawQueryCAD,
     parameters: { revisionRefs }
   };
 
-  const queryResult = await fdmSdk.queryNodesAndEdges<
-    typeof query,
+  const queryResultCAD = await fdmSdk.queryAllNodesAndEdges<
+    typeof queryCAD,
     [{ source: typeof COGNITE_ASSET_SOURCE; properties: CogniteAssetProperties }]
-  >(query);
+  >(queryCAD, ['cad_nodes']);
 
-  return queryResult.items.cad_assets
-    .concat(queryResult.items.pointcloud_assets)
-    .concat(queryResult.items.image360_assets);
+  const filteredCadAssets = filterCadAssetsBasedOnObject3DFromCadNodes(sourcesToSearch, queryResultCAD.items.cad_assets, queryResultCAD.items.cad_nodes);
+
+  return filteredCadAssets;
+}
+
+export async function queryPointCloudsAssets(sourcesToSearch : Source[], revisionRefs: DmsUniqueIdentifier[], filter: InstanceFilter | undefined, fdmSdk: FdmSDK, limit: number) {
+  const rawQueryPointClouds = pointCloudsAssetsQuery(
+    sourcesToSearch,
+    filter,
+    limit
+  )
+
+  const queryPointClouds = {
+    ...rawQueryPointClouds,
+    parameters: { revisionRefs }
+  };
+
+  const queryResultPointClouds = await fdmSdk.queryAllNodesAndEdges<
+    typeof queryPointClouds,
+    [{ source: typeof COGNITE_ASSET_SOURCE; properties: CogniteAssetProperties }]
+  >(queryPointClouds, ['pointcloud_volumes']);
+
+  return queryResultPointClouds.items.pointcloud_assets;
+}
+
+export async function queryImage360Assets(sourcesToSearch : Source[], revisionRefs: DmsUniqueIdentifier[], fdmSdk: FdmSDK, limit: number) {
+  const rawQueryImage360 = image360AssetsQuery(
+    sourcesToSearch,
+    revisionRefs,
+    limit
+  );
+
+  const queryImage360 = {
+    ...rawQueryImage360,
+    parameters: { revisionRefs }
+  };
+
+  const queryResultImage360 = await fdmSdk.queryAllNodesAndEdges<
+    typeof queryImage360,
+    [{ source: typeof COGNITE_ASSET_SOURCE; properties: CogniteAssetProperties }]
+  >(queryImage360, ['image360_collections']);
+
+  return queryResultImage360.items.image360_assets;
 }
 
 export function filterCadAssetsBasedOnObject3DFromCadNodes(
@@ -104,9 +141,9 @@ export function filterCadAssetsBasedOnObject3DFromCadNodes(
           filteredAssets.push(asset);
         }
       });
+    });
   });
-});
 
-const uniqAssets = uniqBy(filteredAssets, (asset) => `${asset.space}-${asset.externalId}` );
-return uniqAssets;
+  const uniqAssets = uniqBy(filteredAssets, (asset) => `${asset.space}-${asset.externalId}` );
+  return uniqAssets;
 }

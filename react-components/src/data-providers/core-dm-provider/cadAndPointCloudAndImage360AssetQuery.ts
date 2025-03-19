@@ -170,3 +170,147 @@ export function cadAndPointCloudAndImage36AssetQuery(
     }
   } as const satisfies Omit<QueryRequest, 'parameters' | 'cursors'>;
 }
+
+export function cadAssetQuery(
+  sourcesToSearch: Source[],
+  filter: InstanceFilter | undefined,
+  limit: number
+) {
+  return {
+    with: {
+      cad_nodes: {
+        nodes: {
+          filter: containsCadRevisionFilter
+        },
+        limit
+      },
+      cad_object_3d: {
+        nodes: {
+          from: 'cad_nodes',
+          through: { view: COGNITE_CAD_NODE_SOURCE, identifier: 'object3D' },
+          direction: 'outwards'
+        },
+        limit
+      },
+      cad_assets: {
+        nodes: {
+          from: 'cad_object_3d',
+          through: { view: COGNITE_ASSET_SOURCE, identifier: 'object3D' },
+          direction: 'inwards',
+          filter
+        },
+        limit
+      },
+    },
+    select: {
+      cad_nodes: {
+        sources: [
+          {
+            source: COGNITE_CAD_NODE_SOURCE,
+            properties: ['*']
+          }
+        ]
+      },
+      cad_assets: {
+        sources: [
+          ...cogniteAssetSourceWithProperties,
+          ...sourcesToSearch.map((source) => ({ source, properties: ['*'] }))
+        ]
+      }
+    }
+  } as const satisfies Omit<QueryRequest, 'parameters' | 'cursors'>;
+}
+
+export function pointCloudsAssetsQuery (
+  sourcesToSearch: Source[],
+  filter: InstanceFilter | undefined,
+  limit: number
+) {
+  return {
+    with: {
+      pointcloud_volumes: {
+        nodes: {
+          filter: containsPointCloudRevisionFilter
+        },
+        limit
+      },
+      pointcloud_object_3d: {
+        nodes: {
+          from: 'pointcloud_volumes',
+          through: { view: COGNITE_POINT_CLOUD_VOLUME_SOURCE, identifier: 'object3D' },
+          direction: 'outwards'
+        }
+      },
+      pointcloud_assets: {
+        nodes: {
+          from: 'pointcloud_object_3d',
+          through: { view: COGNITE_ASSET_SOURCE, identifier: 'object3D' },
+          filter
+        }
+      },
+    },
+    select: {
+      pointcloud_assets: {
+        sources: [
+          ...cogniteAssetSourceWithProperties,
+          ...sourcesToSearch.map((source) => ({ source, properties: ['*'] }))
+        ]
+      }
+    }
+  } as const satisfies Omit<QueryRequest, 'parameters' | 'cursors'>;
+}
+
+export function image360AssetsQuery (
+  sourcesToSearch: Source[],
+  revisionRefs: DmsUniqueIdentifier[],
+  limit: number
+) {
+  return {
+    with: {
+      image360_collections: {
+        nodes: {
+          filter: containsImage360CollectionFilter(revisionRefs)
+        },
+        limit
+      },
+      image360_revisions: {
+        nodes: {
+          from: 'image360_collections',
+          through: { view: COGNITE_IMAGE_360_SOURCE, identifier: 'collection360' },
+          direction: 'inwards'
+        },
+        limit
+      },
+      image360_annotations: {
+        edges: {
+          from: 'image360_revisions',
+          direction: 'inwards',
+          filter: { hasData: [COGNITE_IMAGE_360_ANNOTATION_SOURCE] }
+        }
+      },
+      image360_object3ds: {
+        nodes: {
+          from: 'image360_annotations',
+          chainTo: 'destination',
+          filter: { hasData: [COGNITE_3D_OBJECT_SOURCE] }
+        }
+      },
+      image360_assets: {
+        nodes: {
+          from: 'image360_object3ds',
+          through: { view: COGNITE_ASSET_SOURCE, identifier: 'object3D' },
+          direction: 'inwards',
+          filter: { hasData: [COGNITE_ASSET_SOURCE] }
+        }
+      }
+    },
+    select: {
+      image360_assets: {
+        sources: [
+          ...cogniteAssetSourceWithProperties,
+          ...sourcesToSearch.map((source) => ({ source, properties: ['*'] }))
+        ]
+      }
+    }
+  } as const satisfies Omit<QueryRequest, 'parameters' | 'cursors'>;
+}

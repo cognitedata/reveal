@@ -42,12 +42,6 @@ export async function filterNodesByMappedTo3d(
   const viewsData = await fdmSdk.getViewsByIds(nodes.map((node) => node.view));
 
   const result = nodes.map(async (viewWithNodes) => {
-    const viewType = viewsData.items.find((view) => view.externalId === viewWithNodes.view.externalId && view.space === viewWithNodes.view.space);
-
-    if (!viewType?.implements.some((type) => type.externalId === COGNITE_ASSET_SOURCE.externalId && type.space === COGNITE_ASSET_SOURCE.space)) {
-      return undefined;
-    }
-
     const spaceFromView = viewWithNodes.view.space;
     const externalIdFromView = viewWithNodes.view.externalId;
     const assetVersion = viewWithNodes.view.version;
@@ -66,6 +60,7 @@ export async function filterNodesByMappedTo3d(
   });
 
   const data = await Promise.all(result);
+
   return data.filter(isDefined) as Array<InstancesWithView<CogniteAssetProperties>>;
 }
 
