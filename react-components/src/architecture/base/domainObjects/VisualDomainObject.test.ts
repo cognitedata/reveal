@@ -8,7 +8,7 @@ import { type TranslationInput } from '../utilities/TranslateInput';
 import { installThreeView } from '../views/ThreeViewFactory';
 import { ThreeView } from '../views/ThreeView';
 import { Box3 } from 'three';
-import { createRenderTargetMock } from '../../../../tests/tests-utilities/fixtures/renderTarget';
+import { createRenderTargetMock } from '#test-utils/fixtures/renderTarget';
 import { type RevealRenderTarget } from '../renderTarget/RevealRenderTarget';
 import { VisibleState } from '../domainObjectsHelpers/VisibleState';
 import { FocusType } from '../domainObjectsHelpers/FocusType';

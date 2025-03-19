@@ -24,7 +24,7 @@ import {
 } from 'three';
 import { CommandsController } from './CommandsController';
 import { RootDomainObject } from '../domainObjects/RootDomainObject';
-import { getOctDir } from '../utilities/extensions/vectorExtensions';
+import { getOctant } from '../utilities/extensions/vectorExtensions';
 import { getResizeCursor } from '../utilities/geometry/getResizeCursor';
 import { type DomainObject } from '../domainObjects/DomainObject';
 import { type AxisGizmoTool } from '@cognite/reveal/tools';
@@ -419,6 +419,6 @@ export class RevealRenderTarget {
     }
     const screenVector = screenPoint2?.sub(screenPoint1).normalize();
     screenVector.y = -screenVector.y; // Flip y axis so the x-y axis is mathematically correct
-    return getResizeCursor(getOctDir(screenVector));
+    return getResizeCursor(getOctant(screenVector));
   }
 }

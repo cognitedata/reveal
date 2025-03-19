@@ -10,8 +10,8 @@ import {
 } from './AnnotationModelUtils';
 import { type InstanceReference } from '../../utilities/instanceIds';
 import { type PointCloudAnnotationModel } from './types';
-import { sdkMock, retrieveMock } from '../../../tests/tests-utilities/fixtures/sdk';
-import { createAssetMock, createDMAssetMock } from '../../../tests/tests-utilities/fixtures/assets';
+import { sdkMock, retrieveMock } from '#test-utils/fixtures/sdk';
+import { createAssetMock, createDMAssetMock } from '#test-utils/fixtures/assets';
 import { type ExternalIdsResultList } from '../../data-providers/FdmSDK';
 import { type AssetProperties } from '../../data-providers/core-dm-provider/utils/filters';
 import {

@@ -10,7 +10,7 @@ import { Quantity } from '../../../base/domainObjectsHelpers/Quantity';
 import { type LineDomainObject } from './LineDomainObject';
 import { MeasureLineDomainObject } from '../../measurements/MeasureLineDomainObject';
 import { Box3, Vector3 } from 'three';
-import { expectEqualBox3 } from '../../../../../tests/tests-utilities/primitives/primitiveTestUtil';
+import { expectEqualBox3 } from '#test-utils/primitives/primitiveTestUtil';
 import {
   horizontalDistanceTo,
   verticalDistanceTo
