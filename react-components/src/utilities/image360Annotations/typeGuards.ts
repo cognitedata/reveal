@@ -4,7 +4,7 @@
 import {
   type AnnotationData,
   type AnnotationModel,
-  type AnnotationsCogniteAnnotationTypesImagesAssetLink
+  type AnnotationsTypesImagesAssetLink
 } from '@cognite/sdk';
 import { type DmsUniqueIdentifier } from '../../data-providers';
 import { type Image360AnnotationContent, type Image360AnnotationId } from './types';
@@ -36,8 +36,8 @@ export function isClassicImage360Annotation(
 
 export function isClassicImage360AssetAnnotationData(
   annotationData: AnnotationData
-): annotationData is AnnotationsCogniteAnnotationTypesImagesAssetLink {
-  const data = annotationData as AnnotationsCogniteAnnotationTypesImagesAssetLink;
+): annotationData is AnnotationsTypesImagesAssetLink {
+  const data = annotationData as AnnotationsTypesImagesAssetLink;
   return data.text !== undefined && data.textRegion !== undefined && data.assetRef !== undefined;
 }
 
