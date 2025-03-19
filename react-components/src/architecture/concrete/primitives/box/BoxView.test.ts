@@ -10,12 +10,12 @@ import { FocusType } from '../../../base/domainObjectsHelpers/FocusType';
 import { Changes } from '../../../base/domainObjectsHelpers/Changes';
 import { DomainObjectChange } from '../../../base/domainObjectsHelpers/DomainObjectChange';
 import { CDF_TO_VIEWER_TRANSFORMATION, type CustomObjectIntersectInput } from '@cognite/reveal';
-import { expectEqualVector3 } from '../../../../../tests/tests-utilities/primitives/primitiveTestUtil';
+import { expectEqualVector3 } from '#test-utils/primitives/primitiveTestUtil';
 import {
   addView,
   createIntersectInput,
   expectChildrenLength
-} from '../../../../../tests/tests-utilities/architecture/viewUtil';
+} from '#test-utils/architecture/viewUtil';
 import { isDomainObjectIntersection } from '../../../base/domainObjectsHelpers/DomainObjectIntersection';
 import { PrimitivePickInfo } from '../common/PrimitivePickInfo';
 import { MeasureBoxDomainObject } from '../../measurements/MeasureBoxDomainObject';
