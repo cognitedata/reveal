@@ -12,7 +12,7 @@ import {
 import { type CogniteModel } from '@cognite/reveal';
 import { cadMock, createCadMock } from '#test-utils/fixtures/cadModel';
 import { createImage360ClassicMock } from '#test-utils/fixtures/image360';
-import { wrapper } from '#test-utils/fixtures/wrapper';
+import { wrapper } from '#test-components/fixtures/wrapper';
 import { type LayersUrlStateParam } from '../types';
 import { type Dispatch, type SetStateAction } from 'react';
 import { createPointCloudMock } from '#test-utils/fixtures/pointCloud';
