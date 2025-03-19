@@ -141,8 +141,14 @@ export function cadAndPointCloudAndImage36AssetQuery(
       }
     },
     select: {
-      cad_nodes: {},
-      cad_object_3d : {},
+      cad_nodes: {
+        sources: [
+          {
+            source: COGNITE_CAD_NODE_SOURCE,
+            properties: ['*']
+          }
+        ]
+      },
       cad_assets: {
         sources: [
           ...cogniteAssetSourceWithProperties,
