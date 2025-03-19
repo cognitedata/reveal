@@ -1,3 +1,6 @@
+/*!
+ * Copyright 2025 Cognite AS
+ */
 import { Mock } from 'moq.ts';
 import { CadNode } from './CadNode';
 import { SectorRepository } from '@reveal/sector-loader';

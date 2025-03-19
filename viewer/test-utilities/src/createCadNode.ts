@@ -1,3 +1,6 @@
+/*!
+ * Copyright 2025 Cognite AS
+ */
 import { CadNode } from '../../packages/cad-model';
 import { SectorRepository } from '../../packages/sector-loader';
 import { Mock } from 'moq.ts';
@@ -9,7 +12,7 @@ export function createCadNode(
   depth: number = 3,
   children: number = 3,
   overrides?: { sectorRepository?: SectorRepository }
-) {
+): CadNode {
   const materialManager = new CadMaterialManager();
   const cadRoot = generateV9SectorTree(depth, children);
   const cadMetadata = createCadModelMetadata(9, cadRoot);
