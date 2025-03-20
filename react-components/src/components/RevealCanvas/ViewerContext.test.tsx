@@ -5,7 +5,7 @@ import { describe, test, expect, beforeEach } from 'vitest';
 import { useRenderTarget, useReveal, ViewerContextProvider } from './ViewerContext';
 import { type Cognite3DViewer, type DataSourceType } from '@cognite/reveal';
 import { cleanup, render } from '@testing-library/react';
-import { createRenderTargetMock } from '../../../tests/tests-utilities/fixtures/renderTarget';
+import { createRenderTargetMock } from '#test-utils/fixtures/renderTarget';
 import { type RevealRenderTarget } from '../../architecture';
 import { type ReactElement } from 'react';
 

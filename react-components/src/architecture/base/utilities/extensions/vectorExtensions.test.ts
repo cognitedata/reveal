@@ -10,7 +10,7 @@ import {
   rotatePiHalf,
   verticalDistanceTo
 } from './vectorExtensions';
-import { expectEqualVector3 } from '../../../../../tests/tests-utilities/primitives/primitiveTestUtil';
+import { expectEqualVector3 } from '#test-utils/primitives/primitiveTestUtil';
 
 describe('vectorExtensions', () => {
   test('should calculate horizontal angle', () => {

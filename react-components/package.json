@@ -8,7 +8,8 @@
     }
   },
   "imports": {
-    "#test-utils/*": "./tests/tests-utilities/*.ts"
+    "#test-utils/*": "./tests/tests-utilities/*.ts",
+    "#test-components/*": "./tests/tests-utilities/*.tsx"
   },
   "types": "./dist/index.d.ts",
   "type": "module",
