@@ -22,7 +22,7 @@ import {
   pointCloudVolumeInstanceFixture0,
   pointCloudVolumeInstanceFixture1,
   pointCloudVolumeInstanceFixture2
-} from '../../../tests/tests-utilities/fixtures/dm/object3dData';
+} from '#test-utils/fixtures/dm/object3dData';
 import { COGNITE_ASSET_VIEW_VERSION_KEY, CORE_DM_SPACE } from './dataModels';
 import { type QueryResult } from '../utils/queryNodesAndEdges';
 

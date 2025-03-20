@@ -7,11 +7,11 @@ import {
   viewerImage360CollectionsMock,
   viewerMock,
   viewerModelsMock
-} from '../../../../tests/tests-utilities/fixtures/viewer';
+} from '#test-utils/fixtures/viewer';
 import { type CogniteModel } from '@cognite/reveal';
-import { cadMock } from '../../../../tests/tests-utilities/fixtures/cadModel';
-import { createImage360ClassicMock } from '../../../../tests/tests-utilities/fixtures/image360';
-import { createPointCloudMock } from '../../../../tests/tests-utilities/fixtures/pointCloud';
+import { cadMock } from '#test-utils/fixtures/cadModel';
+import { createImage360ClassicMock } from '#test-utils/fixtures/image360';
+import { createPointCloudMock } from '#test-utils/fixtures/pointCloud';
 
 describe(updateViewerFromExternalState.name, () => {
   beforeEach(() => {

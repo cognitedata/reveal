@@ -8,8 +8,8 @@ import {
   createCadHandlerMock,
   createPointCloudHandlerMock,
   createImage360HandlerMock
-} from '../../../../../tests/tests-utilities/fixtures/modelHandler';
-import { wrapper } from '../../../../../tests/tests-utilities/fixtures/wrapper';
+} from '#test-utils/fixtures/modelHandler';
+import { wrapper } from '#test-components/fixtures/wrapper';
 
 describe(useSyncExternalLayersState.name, () => {
   const mockCadHandler = createCadHandlerMock();

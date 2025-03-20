@@ -11,8 +11,8 @@ import { type BoxDomainObject } from '../../concrete/primitives/box/BoxDomainObj
 import { type RevealRenderTarget } from '../renderTarget/RevealRenderTarget';
 import { type RootDomainObject } from '../domainObjects/RootDomainObject';
 import { Box } from '../utilities/primitives/Box';
-import { expectEqualVector3 } from '../../../../tests/tests-utilities/primitives/primitiveTestUtil';
-import { createFullRenderTargetMock } from '../../../../tests/tests-utilities/fixtures/createFullRenderTargetMock';
+import { expectEqualVector3 } from '#test-utils/primitives/primitiveTestUtil';
+import { createFullRenderTargetMock } from '#test-utils/fixtures/createFullRenderTargetMock';
 
 describe('UndoManager', () => {
   let renderTarget: RevealRenderTarget;

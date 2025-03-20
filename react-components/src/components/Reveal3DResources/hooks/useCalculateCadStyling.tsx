@@ -8,14 +8,15 @@ import {
   type FdmAssetStylingGroup
 } from '../types';
 import { NumericRange, type NodeAppearance, IndexSet } from '@cognite/reveal';
-import { type Node3D, type CogniteExternalId, type AssetMapping3D } from '@cognite/sdk';
+import { type Node3D, type CogniteExternalId } from '@cognite/sdk';
 import { useFdmAssetMappings } from '../../../hooks/cad/useFdmAssetMappings';
 import { useMemo } from 'react';
 import {
   type NodeId,
   type FdmConnectionWithNode,
   type AssetId,
-  type ModelRevisionAssetNodesResult
+  type ModelRevisionAssetNodesResult,
+  type CdfAssetMapping
 } from '../../CacheProvider/types';
 import {
   type CadStylingGroup,
@@ -345,7 +346,7 @@ function getMappedStyleGroupFromFdm(
 }
 
 function getMappedStyleGroupFromAssetMappings(
-  assetMappings: AssetMapping3D[],
+  assetMappings: CdfAssetMapping[],
   nodeAppearance: NodeAppearance
 ): TreeIndexStylingGroup {
   const indexSet = new IndexSet();

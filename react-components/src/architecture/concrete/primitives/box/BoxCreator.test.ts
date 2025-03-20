@@ -7,10 +7,10 @@ import { MeasureBoxDomainObject } from '../../measurements/MeasureBoxDomainObjec
 import { BoxCreator } from './BoxCreator';
 import { PrimitiveType } from '../../../base/utilities/primitives/PrimitiveType';
 import { Vector3 } from 'three';
-import { expectEqualVector3 } from '../../../../../tests/tests-utilities/primitives/primitiveTestUtil';
+import { expectEqualVector3 } from '#test-utils/primitives/primitiveTestUtil';
 import { Box } from '../../../base/utilities/primitives/Box';
 import { FocusType } from '../../../base/domainObjectsHelpers/FocusType';
-import { click } from '../../../../../tests/tests-utilities/architecture/baseCreatorUtil';
+import { click } from '#test-utils/architecture/baseCreatorUtil';
 
 const direction = new Vector3(1, 0, -1);
 

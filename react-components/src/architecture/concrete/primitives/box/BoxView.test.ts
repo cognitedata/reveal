@@ -3,9 +3,9 @@
  */
 
 import { beforeEach, describe, expect, test } from 'vitest';
-import { CylinderView } from './CylinderView';
+import { BoxView } from './BoxView';
 import { Object3D, Vector3 } from 'three';
-import { type CylinderDomainObject } from './CylinderDomainObject';
+import { type BoxDomainObject } from './BoxDomainObject';
 import { FocusType } from '../../../base/domainObjectsHelpers/FocusType';
 import { Changes } from '../../../base/domainObjectsHelpers/Changes';
 import { DomainObjectChange } from '../../../base/domainObjectsHelpers/DomainObjectChange';
@@ -18,16 +18,17 @@ import {
 } from '#test-utils/architecture/viewUtil';
 import { isDomainObjectIntersection } from '../../../base/domainObjectsHelpers/DomainObjectIntersection';
 import { PrimitivePickInfo } from '../common/PrimitivePickInfo';
-import { MeasureCylinderDomainObject } from '../../measurements/MeasureCylinderDomainObject';
+import { MeasureBoxDomainObject } from '../../measurements/MeasureBoxDomainObject';
 import { PrimitiveType } from '../../../base/utilities/primitives/PrimitiveType';
+import { BoxFace } from '../common/BoxFace';
 
-describe('CylinderView', () => {
-  let domainObject: CylinderDomainObject;
-  let view: CylinderView;
+describe('BoxView', () => {
+  let domainObject: BoxDomainObject;
+  let view: BoxView;
 
   beforeEach(() => {
-    domainObject = createCylinderDomainObject();
-    view = new CylinderView();
+    domainObject = createBoxDomainObject();
+    view = new BoxView();
     addView(domainObject, view);
   });
 
@@ -37,20 +38,22 @@ describe('CylinderView', () => {
   });
 
   test('should changed when focus change', () => {
-    domainObject.setFocusInteractive(FocusType.Face);
-    expectChildrenLength(view, 4);
+    const face = new BoxFace(1);
+
+    domainObject.setFocusInteractive(FocusType.Face, face);
+    expectChildrenLength(view, 10);
 
     domainObject.setFocusInteractive(FocusType.Pending);
     expectChildrenLength(view, 2);
 
-    domainObject.setFocusInteractive(FocusType.Rotation);
-    expectChildrenLength(view, 4);
+    domainObject.setFocusInteractive(FocusType.Rotation, face);
+    expectChildrenLength(view, 10);
 
-    domainObject.setFocusInteractive(FocusType.Body);
-    expectChildrenLength(view, 4);
+    domainObject.setFocusInteractive(FocusType.Body, face);
+    expectChildrenLength(view, 10);
 
     domainObject.setFocusInteractive(FocusType.Focus);
-    expectChildrenLength(view, 4);
+    expectChildrenLength(view, 10);
 
     domainObject.setFocusInteractive(FocusType.None);
     expectChildrenLength(view, 2);
@@ -68,6 +71,14 @@ describe('CylinderView', () => {
     domainObject.renderStyle.showSolid = false;
     view.update(new DomainObjectChange(Changes.renderStyle));
     expectChildrenLength(view, 1);
+
+    domainObject.renderStyle.showSolid = true;
+    view.update(new DomainObjectChange(Changes.renderStyle));
+    expectChildrenLength(view, 2);
+
+    domainObject.renderStyle.showLabel = false;
+    view.update(new DomainObjectChange(Changes.renderStyle));
+    expectChildrenLength(view, 2);
   });
 
   test('should changed when selection change', () => {
@@ -84,7 +95,7 @@ describe('CylinderView', () => {
       return;
     }
     intersection.point.applyMatrix4(CDF_TO_VIEWER_TRANSFORMATION.invert());
-    expectEqualVector3(intersection.point, domainObject.cylinder.centerA);
+    expectEqualVector3(intersection.point, new Vector3(0, 0, 1));
     expect(intersection.customObject).toBe(view);
     expect(intersection.distanceToCamera).toBe(1);
     expect(intersection.userData).toBeInstanceOf(PrimitivePickInfo);
@@ -107,17 +118,15 @@ describe('CylinderView', () => {
   });
 });
 
-function createCylinderDomainObject(): CylinderDomainObject {
-  const domainObject = new MeasureCylinderDomainObject(PrimitiveType.VerticalCylinder);
-  // Vertical cylinder with center at (0,0)
-  domainObject.cylinder.radius = 2;
-  domainObject.cylinder.centerA.set(0, 0, 1);
-  domainObject.cylinder.centerB.set(0, 0, -1);
+function createBoxDomainObject(): BoxDomainObject {
+  const domainObject = new MeasureBoxDomainObject(PrimitiveType.Box);
+  domainObject.box.size.set(2, 2, 2);
+  domainObject.box.center.set(0, 0, 0);
   return domainObject;
 }
 
 function createLookingDownIntersectInput(isVisible = true): CustomObjectIntersectInput {
-  // Looking down towards centerA with distance 1
+  // Looking down towards center with distance 1
   const origin = new Vector3(0, 0, 2);
   const direction = new Vector3(0, 0, -1);
   return createIntersectInput(origin, direction, isVisible);

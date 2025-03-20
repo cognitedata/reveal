@@ -1,7 +1,7 @@
 /*!
  * Copyright 2025 Cognite AS
  */
-import { type Asset, type AssetMapping3D, type Datapoints } from '@cognite/sdk/';
+import { type Asset, type Datapoints } from '@cognite/sdk/';
 import { type AssetIdsAndTimeseries } from '../../../data-providers/types';
 import {
   type AssetStylingGroupAndStyleIndex,
@@ -12,6 +12,7 @@ import {
 import { generateTimeseriesAndDatapointsFromTheAsset } from './generateTimeseriesAndDatapointsFromTheAsset';
 import { traverseExpression } from './traverseExpression';
 import { applyAssetMappingsNodeStyles } from './applyAssetMappingsNodeStyles';
+import { type CdfAssetMapping } from '../../CacheProvider/types';
 
 export const analyzeAssetMappingsAgainstExpression = async ({
   contextualizedAssetNodes,
@@ -24,11 +25,11 @@ export const analyzeAssetMappingsAgainstExpression = async ({
   contextualizedAssetNodes: Asset[];
   assetIdsAndTimeseries: AssetIdsAndTimeseries[];
   timeseriesDatapoints: Datapoints[] | undefined;
-  assetMappings: AssetMapping3D[];
+  assetMappings: CdfAssetMapping[];
   expression: Expression;
   outputSelected: ColorRuleOutput;
 }): Promise<AssetStylingGroupAndStyleIndex> => {
-  const allAssetMappingsTreeNodes: AssetMapping3D[][] = [];
+  const allAssetMappingsTreeNodes: CdfAssetMapping[][] = [];
 
   for (const contextualizedAssetNode of contextualizedAssetNodes) {
     const triggerData: TriggerTypeData[] = [];

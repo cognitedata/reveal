@@ -4,10 +4,10 @@
 import { describe, expect, test, vi, beforeEach, beforeAll, afterAll } from 'vitest';
 import { act, renderHook } from '@testing-library/react';
 import { Vector3 } from 'three';
-import { cadMock, nodeBoundingBox } from '../../tests/tests-utilities/fixtures/cadModel';
-import { fdmNodeCacheContentMock } from '../../tests/tests-utilities/fixtures/fdmNodeCache';
-import { createRenderTargetMock } from '../../tests/tests-utilities/fixtures/renderTarget';
-import { viewerMock, viewerModelsMock } from '../../tests/tests-utilities/fixtures/viewer';
+import { cadMock, nodeBoundingBox } from '#test-utils/fixtures/cadModel';
+import { fdmNodeCacheContentMock } from '#test-utils/fixtures/fdmNodeCache';
+import { createRenderTargetMock } from '#test-utils/fixtures/renderTarget';
+import { viewerMock, viewerModelsMock } from '#test-utils/fixtures/viewer';
 import { useCameraNavigation } from './useCameraNavigation';
 
 const renderTargetMock = createRenderTargetMock();
