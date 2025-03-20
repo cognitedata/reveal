@@ -233,8 +233,8 @@ export class CadManager {
    * @param budget The budget to calculate cache size by
    */
   private setCacheSizeForModel(model: CadNode, budget: CadModelBudget) {
-    // This gives cache size of 500 on desktop on default budget
-    const REPOSITORY_CACHE_SIZE_TO_BUDGET_RATIO = 500 / defaultDesktopCadModelBudget.maximumRenderCost;
+    // This gives cache size of 300 on desktop on default budget
+    const REPOSITORY_CACHE_SIZE_TO_BUDGET_RATIO = 300 / defaultDesktopCadModelBudget.maximumRenderCost;
     model.setCacheSize(Math.floor(REPOSITORY_CACHE_SIZE_TO_BUDGET_RATIO * budget.maximumRenderCost));
   }
 
