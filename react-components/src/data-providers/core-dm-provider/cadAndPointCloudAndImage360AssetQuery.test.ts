@@ -1,9 +1,9 @@
 import { describe, it, expect } from 'vitest';
 import {
   cadAndPointCloudAndImage36AssetQuery,
-  cadAssetQuery,
-  pointCloudsAssetsQuery,
-  image360AssetsQuery
+  cadAssetQueryPayload,
+  pointCloudsAssetsQueryPayload,
+  image360AssetsQueryPayload
 } from './cadAndPointCloudAndImage360AssetQuery';
 import { type Source, type InstanceFilter, type DmsUniqueIdentifier } from '../../data-providers/FdmSDK';
 import { cogniteAssetSourceWithProperties } from './cogniteAssetSourceWithProperties';
@@ -59,7 +59,7 @@ describe(cadAndPointCloudAndImage36AssetQuery.name, () => {
   });
 
   it('should generate a query for CAD assets', () => {
-    const result = cadAssetQuery(sourcesToSearch, filter, limit);
+    const result = cadAssetQueryPayload(sourcesToSearch, filter, limit);
 
     expect(result).toBeDefined();
     expect(result.with).toHaveProperty('cad_nodes');
@@ -70,7 +70,7 @@ describe(cadAndPointCloudAndImage36AssetQuery.name, () => {
   });
 
   it('should generate a query for PointCloud assets', () => {
-    const result = pointCloudsAssetsQuery(sourcesToSearch, filter, limit);
+    const result = pointCloudsAssetsQueryPayload(sourcesToSearch, filter, limit);
 
     expect(result).toBeDefined();
     expect(result.with).toHaveProperty('pointcloud_volumes');
@@ -80,7 +80,7 @@ describe(cadAndPointCloudAndImage36AssetQuery.name, () => {
   });
 
   it('should generate a query for Image360 assets', () => {
-    const result = image360AssetsQuery(sourcesToSearch, revisionRefs, limit);
+    const result = image360AssetsQueryPayload(sourcesToSearch, revisionRefs, limit);
 
     expect(result).toBeDefined();
     expect(result.with).toHaveProperty('image360_collections');

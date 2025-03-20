@@ -2,23 +2,42 @@
  * Copyright 2024 Cognite AS
  */
 
+import { isDefined } from "../../utilities/isDefined";
 import { InstanceFilter, Source } from "../FdmSDK";
 import { COGNITE_ASSET_SOURCE } from "./dataModels";
 
 export function cadCogniteAssetsInstanceFilterWithtHasDataQuery(
   sourcesToSearch: Source[],
 ): InstanceFilter {
+
+  const hasDataList = sourcesToSearch.map((sourceToSearch) => {
+    return {
+      type: "view" as const,
+      externalId: sourceToSearch.externalId,
+      space: sourceToSearch.space,
+      version: sourceToSearch.version,
+    };
+  });
+
+  const customExistPropertyList = sourcesToSearch.map((sourceToSearch) => {
+    if (sourceToSearch.externalId === COGNITE_ASSET_SOURCE.externalId && sourceToSearch.space === COGNITE_ASSET_SOURCE.space) {
+      return undefined;
+    }
+    return {
+      exists: {
+        property: [
+          sourceToSearch.space,
+          `${sourceToSearch.externalId}/${sourceToSearch.version}`,
+          'object3D',
+        ],
+      }
+    };
+  }).filter(isDefined);
+
   return {
     and: [
       {
-        hasData: [
-          {
-            type: 'view',
-            externalId: sourcesToSearch[0]?.externalId,
-            space: sourcesToSearch[0]?.space,
-            version: sourcesToSearch[0]?.version,
-          },
-        ],
+        hasData: hasDataList,
       },
       {
         exists: {
@@ -29,15 +48,7 @@ export function cadCogniteAssetsInstanceFilterWithtHasDataQuery(
           ],
         },
       },
-      {
-        exists: {
-          property: [
-            sourcesToSearch[0]?.space,
-            `${sourcesToSearch[0]?.externalId}/${sourcesToSearch[0]?.version}`,
-            'object3D',
-          ],
-        },
-      },
+      ...customExistPropertyList,
     ],
   };
 

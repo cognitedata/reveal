@@ -1,0 +1,24 @@
+import { Source } from '../../../../src';
+import { COGNITE_ASSET_SOURCE } from '../../../../src/data-providers/core-dm-provider/dataModels';
+
+export const simpleSourcesFixtures: Source[] = [
+  {
+    type: 'view',
+    externalId: 'externalId1',
+    space: 'space1',
+    version: 'v1'
+  },
+  {
+    type: 'view',
+    externalId: 'externalId2',
+    space: 'space2',
+    version: 'v1'
+  }
+];
+
+export const cogniteAssetSourceFixture: Source = {
+  type: 'view',
+  externalId: COGNITE_ASSET_SOURCE.externalId,
+  space: COGNITE_ASSET_SOURCE.space,
+  version: COGNITE_ASSET_SOURCE.version
+};

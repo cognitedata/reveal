@@ -10,7 +10,7 @@ import {
   type Source
 } from '../FdmSDK';
 import { COGNITE_CAD_NODE_SOURCE, type COGNITE_ASSET_SOURCE, type CogniteAssetProperties } from './dataModels';
-import { cadAssetQuery, image360AssetsQuery, pointCloudsAssetsQuery } from './cadAndPointCloudAndImage360AssetQuery';
+import { cadAssetQueryPayload, image360AssetsQueryPayload, pointCloudsAssetsQueryPayload } from './cadAndPointCloudAndImage360AssetQuery';
 import { uniqBy } from 'lodash';
 
 export async function listAllMappedFdmNodes(
@@ -59,7 +59,7 @@ export async function listMappedFdmNodes(
 }
 
 export async function queryCadAssets(sourcesToSearch : Source[], revisionRefs: DmsUniqueIdentifier[], filter: InstanceFilter | undefined, fdmSdk: FdmSDK, limit: number) {
-  const rawQueryCAD = cadAssetQuery(
+  const rawQueryCAD = cadAssetQueryPayload(
     sourcesToSearch,
     filter,
     limit
@@ -81,7 +81,7 @@ export async function queryCadAssets(sourcesToSearch : Source[], revisionRefs: D
 }
 
 export async function queryPointCloudsAssets(sourcesToSearch : Source[], revisionRefs: DmsUniqueIdentifier[], filter: InstanceFilter | undefined, fdmSdk: FdmSDK, limit: number) {
-  const rawQueryPointClouds = pointCloudsAssetsQuery(
+  const rawQueryPointClouds = pointCloudsAssetsQueryPayload(
     sourcesToSearch,
     filter,
     limit
@@ -101,7 +101,7 @@ export async function queryPointCloudsAssets(sourcesToSearch : Source[], revisio
 }
 
 export async function queryImage360Assets(sourcesToSearch : Source[], revisionRefs: DmsUniqueIdentifier[], fdmSdk: FdmSDK, limit: number) {
-  const rawQueryImage360 = image360AssetsQuery(
+  const rawQueryImage360 = image360AssetsQueryPayload(
     sourcesToSearch,
     revisionRefs,
     limit

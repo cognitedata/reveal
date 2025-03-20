@@ -171,7 +171,7 @@ export function cadAndPointCloudAndImage36AssetQuery(
   } as const satisfies Omit<QueryRequest, 'parameters' | 'cursors'>;
 }
 
-export function cadAssetQuery(
+export function cadAssetQueryPayload(
   sourcesToSearch: Source[],
   filter: InstanceFilter | undefined,
   limit: number
@@ -221,7 +221,7 @@ export function cadAssetQuery(
   } as const satisfies Omit<QueryRequest, 'parameters' | 'cursors'>;
 }
 
-export function pointCloudsAssetsQuery (
+export function pointCloudsAssetsQueryPayload (
   sourcesToSearch: Source[],
   filter: InstanceFilter | undefined,
   limit: number
@@ -260,7 +260,7 @@ export function pointCloudsAssetsQuery (
   } as const satisfies Omit<QueryRequest, 'parameters' | 'cursors'>;
 }
 
-export function image360AssetsQuery (
+export function image360AssetsQueryPayload (
   sourcesToSearch: Source[],
   revisionRefs: DmsUniqueIdentifier[],
   limit: number
