@@ -6,7 +6,7 @@ import { CadModelMetadataRepository } from './CadModelMetadataRepository';
 import { BlobOutputMetadata, File3dFormat, ModelDataProvider, ModelMetadataProvider } from '@reveal/data-providers';
 
 import * as THREE from 'three';
-import { createV9SceneSectorMetadata } from '../../../../test-utilities';
+import { createV9SceneSectorMetadata, createMockModelIdentifier } from '../../../../test-utilities';
 import { CadSceneRootMetadata } from './parsers/types';
 
 export interface ModelId {
@@ -22,7 +22,8 @@ describe(CadModelMetadataRepository.name, () => {
 
     const cadModelMetadataRepository = new CadModelMetadataRepository(mockedMetadataProvider, mockedModelDataProvider);
 
-    const cadModelMetadata = await cadModelMetadataRepository.loadData({ revealInternalId: Symbol('some_model_id') });
+    const mockIdentifier = createMockModelIdentifier();
+    const cadModelMetadata = await cadModelMetadataRepository.loadData(mockIdentifier.object());
 
     expect(cadModelMetadata.formatVersion).toBe(9);
   });
