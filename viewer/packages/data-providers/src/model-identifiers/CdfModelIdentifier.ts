@@ -23,6 +23,10 @@ export class CdfModelIdentifier implements ModelIdentifier {
     return `${CdfModelIdentifier.name} (${String(this.revealInternalId)})`;
   }
 
+  /**
+   * Returns a identifier in a serialized form, which uniquely identifies
+   * the model in CDF
+   */
   public sourceModelIdentifier(): string {
     return `Cdf-classic: ${this.modelId}/${this.revisionId}`;
   }
