@@ -24,7 +24,6 @@ export class CadModelMetadataRepository implements MetadataRepository<Promise<Ca
   private readonly _modelDataProvider: ModelDataProvider;
   private readonly _cadSceneParser: CadMetadataParser;
   private readonly _blobFileName: string;
-  private _currentModelIdentifier = 0;
 
   constructor(
     modelMetadataProvider: ModelMetadataProvider,
@@ -51,7 +50,7 @@ export class CadModelMetadataRepository implements MetadataRepository<Promise<Ca
     const cameraConfiguration = await modelCameraPromise;
 
     return {
-      modelIdentifier: `${this._currentModelIdentifier++}`, // TODO 2021-10-03 larsmoa: Change to ModelIdentifier
+      modelIdentifier: modelIdentifier.sourceModelIdentifier(),
       modelBaseUrl: blobBaseUrl,
       // Clip box is not loaded, it must be set elsewhere
       geometryClipBox: null,
