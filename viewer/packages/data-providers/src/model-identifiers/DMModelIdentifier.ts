@@ -25,4 +25,8 @@ export class DMModelIdentifier extends CdfModelIdentifier {
   public toString(): string {
     return `${DMModelIdentifier.name} (${String(this.revealInternalId)})`;
   }
+
+  public sourceModelIdentifier(): string {
+    return `DMS: ${this.revisionSpace}/${this.revisionExternalId}`;
+  }
 }

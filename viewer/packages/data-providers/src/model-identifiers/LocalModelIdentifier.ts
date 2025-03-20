@@ -20,4 +20,8 @@ export class LocalModelIdentifier implements ModelIdentifier {
   public toString(): string {
     return `${LocalModelIdentifier.name} (${this.localPath})`;
   }
+
+  public sourceModelIdentifier(): string {
+    return `local: ${this.localPath}`;
+  }
 }

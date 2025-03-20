@@ -1,7 +1,7 @@
 /*!
  * Copyright 2021 Cognite AS
  */
-import { ModelIdentifier } from '../..';
+import { ModelIdentifier } from '../ModelIdentifier';
 
 /**
  * Identifies a 3D model stored in CDF by the combination of a modelId, a revisionId
@@ -21,5 +21,9 @@ export class CdfModelIdentifier implements ModelIdentifier {
 
   public toString(): string {
     return `${CdfModelIdentifier.name} (${String(this.revealInternalId)})`;
+  }
+
+  public sourceModelIdentifier(): string {
+    return `Cdf-classic: ${this.modelId}/${this.revisionId}`;
   }
 }

@@ -23,6 +23,12 @@ export interface ModelIdentifier {
    * Unique ID of the model.
    */
   readonly revealInternalId: symbol;
+
+  /**
+   * Returns a identifier in a serialized form, which uniquely identifies
+   * the model from the data source
+   */
+  sourceModelIdentifier(): string;
 }
 
 export function createModelIdentifier(
