@@ -5,7 +5,7 @@
 import {
   type CogniteClient,
   type AnnotationChangeById,
-  type AnnotationsCogniteAnnotationTypesPrimitivesGeometry3DGeometry as AnnotationGeometry,
+  type AnnotationsTypesPrimitivesGeometry3DGeometry as AnnotationGeometry,
   type AnnotationsCylinder,
   type AnnotationsBox,
   type AnnotationCreate,
