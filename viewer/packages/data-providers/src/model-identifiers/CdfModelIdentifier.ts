@@ -28,6 +28,6 @@ export class CdfModelIdentifier implements ModelIdentifier {
    * the model in CDF
    */
   public sourceModelIdentifier(): string {
-    return `Cdf-classic: ${this.modelId}/${this.revisionId}`;
+    return `cdf-classic: ${this.modelId}/${this.revisionId}`;
   }
 }

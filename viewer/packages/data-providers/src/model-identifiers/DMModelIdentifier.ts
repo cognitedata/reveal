@@ -27,6 +27,6 @@ export class DMModelIdentifier extends CdfModelIdentifier {
   }
 
   public sourceModelIdentifier(): string {
-    return `DMS: ${this.revisionSpace}/${this.revisionExternalId}`;
+    return `cdf-dm: ${this.revisionSpace}/${this.revisionExternalId}`;
   }
 }
