@@ -41,7 +41,6 @@ import { PrimitiveUtils } from '../../../base/utilities/primitives/PrimitiveUtil
 import { getRoot } from '../../../base/domainObjects/getRoot';
 import { UnitSystem } from '../../../base/renderTarget/UnitSystem';
 import { VisualDomainObject } from '../../../base/domainObjects/VisualDomainObject';
-import { Image360AnnotationDomainObject } from '../../annotation360/Image360AnnotationDomainObject';
 
 const CYLINDER_DEFAULT_AXIS = new Vector3(0, 1, 0);
 const SOLID_NAME = 'Solid';
@@ -88,7 +87,9 @@ export class LineView extends GroupThreeView<LineDomainObject> {
     this.addChild(this.createPipe());
     this.addChild(this.createLines()); // Create a line so it can be seen from long distance
     this.addChild(this.createSolid());
-    this.addLabels();
+    if (this.style.addLabels) {
+      this.addLabels();
+    }
   }
 
   public override intersectIfCloser(
@@ -285,10 +286,6 @@ export class LineView extends GroupThreeView<LineDomainObject> {
 
   private addLabels(): void {
     const { domainObject, style } = this;
-
-    if (domainObject instanceof Image360AnnotationDomainObject) {
-      return;
-    }
 
     let spriteHeight = this.getTextHeight(style.relativeTextSize);
     if (spriteHeight <= 0) {
