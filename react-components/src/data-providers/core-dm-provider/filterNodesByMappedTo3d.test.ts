@@ -4,7 +4,7 @@
 import { describe, expect, it } from 'vitest';
 import { filterNodesByMappedTo3d } from './filterNodesByMappedTo3d';
 import { Mock, It } from 'moq.ts';
-import { type DmsUniqueIdentifier, type FdmSDK } from '../FdmSDK';
+import { type ViewItemListResponse, type DmsUniqueIdentifier, type FdmSDK } from '../FdmSDK';
 import { type InstancesWithView } from '../../query';
 import { type createCheck3dConnectedEquipmentQuery } from './check3dConnectedEquipmentQuery';
 import { isEqual } from 'lodash';
@@ -113,13 +113,25 @@ describe(filterNodesByMappedTo3d.name, () => {
             indirect_nodes_360_images: [image360InstanceFixture2]
           }
         } as const satisfies QueryResult<ReturnType<typeof createCheck3dConnectedEquipmentQuery>>)
-      );
+      )
+      .setup(async (p) => await p.getViewsByIds(It.IsAny()))
+      .returns(
+        Promise.resolve({
+          items: [
+            {
+              externalId: 'CogniteAsset',
+              version: 'v1',
+              space: 'cdf_cdm',
+            }
+          ]
+        } as ViewItemListResponse)
+      ).object();
 
     const result = await filterNodesByMappedTo3d(
       instancesWithView,
       [modelIdentifier],
       [],
-      fdmSdkMock.object()
+      fdmSdkMock
     );
 
     expect(result).toEqual([

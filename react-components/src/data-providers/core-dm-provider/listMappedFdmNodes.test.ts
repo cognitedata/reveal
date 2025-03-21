@@ -167,6 +167,7 @@ describe(listMappedFdmNodes.name, async () => {
     const result = await queryImage360Assets(
       [cogniteAssetSourceFixture],
       revisionRefs,
+      undefined,
       fdmSdkMock,
       1000
     );
