@@ -286,7 +286,6 @@ export class LineView extends GroupThreeView<LineDomainObject> {
 
   private addLabels(): void {
     const { domainObject, style } = this;
-
     let spriteHeight = this.getTextHeight(style.relativeTextSize);
     if (spriteHeight <= 0) {
       spriteHeight = 1;
