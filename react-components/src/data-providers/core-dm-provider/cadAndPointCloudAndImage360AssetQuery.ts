@@ -263,6 +263,7 @@ export function pointCloudsAssetsQueryPayload (
 export function image360AssetsQueryPayload (
   sourcesToSearch: Source[],
   revisionRefs: DmsUniqueIdentifier[],
+  filter: InstanceFilter | undefined,
   limit: number
 ) {
   return {
@@ -300,7 +301,7 @@ export function image360AssetsQueryPayload (
           from: 'image360_object3ds',
           through: { view: COGNITE_ASSET_SOURCE, identifier: 'object3D' },
           direction: 'inwards',
-          filter: { hasData: [COGNITE_ASSET_SOURCE] }
+          filter
         }
       }
     },

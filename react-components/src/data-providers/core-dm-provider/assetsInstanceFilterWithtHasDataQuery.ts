@@ -6,7 +6,7 @@ import { isDefined } from "../../utilities/isDefined";
 import { InstanceFilter, Source } from "../FdmSDK";
 import { COGNITE_ASSET_SOURCE } from "./dataModels";
 
-export function cadCogniteAssetsInstanceFilterWithtHasDataQuery(
+export function assetsInstanceFilterWithtHasDataQuery(
   sourcesToSearch: Source[],
 ): InstanceFilter {
 

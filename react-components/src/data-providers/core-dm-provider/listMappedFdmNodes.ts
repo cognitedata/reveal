@@ -28,7 +28,7 @@ export async function listAllMappedFdmNodes(
 
   const cadAssets = await queryCadAssets(sourcesToSearch, revisionRefs, filter, fdmSdk, limit);
   const pointCloudsAssets = await queryPointCloudsAssets(sourcesToSearch, revisionRefs, filter, fdmSdk, limit);
-  const image360Assets = await queryImage360Assets(sourcesToSearch, revisionRefs, fdmSdk, limit);
+  const image360Assets = await queryImage360Assets(sourcesToSearch, revisionRefs, filter, fdmSdk, limit);
 
   const allAssets = cadAssets
     .concat(pointCloudsAssets)
@@ -51,7 +51,7 @@ export async function listMappedFdmNodes(
 
   const cadAssets = await queryCadAssets(sourcesToSearch, revisionRefs, filter, fdmSdk, limit);
   const pointCloudsAssets = await queryPointCloudsAssets(sourcesToSearch, revisionRefs, filter, fdmSdk, limit);
-  const image360Assets = await queryImage360Assets(sourcesToSearch, revisionRefs, fdmSdk, limit);
+  const image360Assets = await queryImage360Assets(sourcesToSearch, revisionRefs, filter, fdmSdk, limit);
 
   return cadAssets
     .concat(pointCloudsAssets)
@@ -100,10 +100,11 @@ export async function queryPointCloudsAssets(sourcesToSearch : Source[], revisio
   return queryResultPointClouds.items.pointcloud_assets;
 }
 
-export async function queryImage360Assets(sourcesToSearch : Source[], revisionRefs: DmsUniqueIdentifier[], fdmSdk: FdmSDK, limit: number) {
+export async function queryImage360Assets(sourcesToSearch : Source[], revisionRefs: DmsUniqueIdentifier[], filter: InstanceFilter | undefined, fdmSdk: FdmSDK, limit: number) {
   const rawQueryImage360 = image360AssetsQueryPayload(
     sourcesToSearch,
     revisionRefs,
+    filter,
     limit
   );
 
