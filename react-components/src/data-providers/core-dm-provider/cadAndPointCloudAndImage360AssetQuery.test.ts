@@ -94,7 +94,7 @@ describe(cadAndPointCloudAndImage36AssetQuery.name, () => {
   });
 
   it('should generate a query for Image360 assets', () => {
-    const result = image360AssetsQueryPayload(sourcesToSearch, revisionRefs, limit);
+    const result = image360AssetsQueryPayload(sourcesToSearch, revisionRefs, filter, limit);
 
     expect(result).toBeDefined();
     expect(result.with).toHaveProperty('image360_collections');
