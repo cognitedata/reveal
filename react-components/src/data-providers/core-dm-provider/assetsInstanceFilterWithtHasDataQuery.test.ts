@@ -7,7 +7,6 @@ import { validInstanceFiltersForMappedAssetsQueryPayload } from '../../../tests/
 
 describe(assetsInstanceFilterWithtHasDataQuery.name, () => {
   it('should generate a valid instance filter with the provided sources', () => {
-
     const result = assetsInstanceFilterWithtHasDataQuery(simpleSourcesFixtures);
 
     expect(result).toEqual(validInstanceFiltersForMappedAssetsQueryPayload);
@@ -83,11 +82,7 @@ describe(assetsInstanceFilterWithtHasDataQuery.name, () => {
         },
         {
           exists: {
-            property: [
-              'space1',
-              'externalId1/v1',
-              'object3D'
-            ]
+            property: ['space1', 'externalId1/v1', 'object3D']
           }
         }
       ]
