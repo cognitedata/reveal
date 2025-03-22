@@ -6,7 +6,7 @@ import { getDirectRelationProperties } from '../utils/getDirectRelationPropertie
 import {
   type Cognite3DObjectProperties,
   type COGNITE_3D_OBJECT_SOURCE,
-  COGNITE_ASSET_VIEW_VERSION_KEY,
+  COGNITE_ASSET_SOURCE,
   type COGNITE_CAD_NODE_SOURCE,
   COGNITE_CAD_NODE_VIEW_VERSION_KEY,
   type COGNITE_IMAGE_360_SOURCE,
@@ -23,7 +23,7 @@ import { isString } from 'lodash';
 import { type QueryResult } from '../utils/queryNodesAndEdges';
 import { createCheck3dConnectedEquipmentQuery } from './check3dConnectedEquipmentQuery';
 import { restrictToDmsId } from '../../utilities/restrictToDmsId';
-import { isCoreDmAssetNode } from './utils/typeGuards';
+import { isDefined } from '../../utilities/isDefined';
 
 export async function filterNodesByMappedTo3d(
   nodes: InstancesWithView[],
@@ -39,12 +39,18 @@ export async function filterNodesByMappedTo3d(
 
   const object3dKeys: Set<FdmKey> = createRelevantObject3dKeys(connectionData);
 
-  return nodes.map((viewWithNodes) => {
+  const viewsData = await fdmSdk.getViewsByIds(nodes.map((node) => node.view));
+
+  const result = nodes.map(async (viewWithNodes) => {
+    const spaceFromView = viewWithNodes.view.space;
+    const externalIdFromView = viewWithNodes.view.externalId;
+    const assetVersion = viewWithNodes.view.version;
+    const assetExternalIdWithVersion = `${externalIdFromView}/${assetVersion}`;
     return {
       view: viewWithNodes.view,
-      instances: viewWithNodes.instances.filter(isCoreDmAssetNode).filter((instance) => {
+      instances: viewWithNodes.instances.filter((instance) => {
         const object3dId =
-          instance.properties[CORE_DM_SPACE][COGNITE_ASSET_VIEW_VERSION_KEY].object3D;
+          instance.properties[spaceFromView][assetExternalIdWithVersion].object3D as DmsUniqueIdentifier;
         if (!isString(object3dId.externalId) || !isString(object3dId.space)) {
           return false;
         }
@@ -52,6 +58,10 @@ export async function filterNodesByMappedTo3d(
       })
     };
   });
+
+  const data = await Promise.all(result);
+
+  return data.filter(isDefined) as Array<InstancesWithView<CogniteAssetProperties>>;
 }
 
 function createRelevantObject3dKeys(

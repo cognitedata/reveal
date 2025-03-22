@@ -18,6 +18,7 @@ import { removeEmptyProperties } from '../utilities/removeEmptyProperties';
 import { getModelKeys } from '../utilities/getModelKeys';
 import { useFdm3dDataProvider } from '../components/CacheProvider/CacheProvider';
 import { type AddImage360CollectionDatamodelsOptions } from '../components/Reveal3DResources/types';
+import { assetsInstanceFilterWithtHasDataQuery } from '../data-providers/core-dm-provider/assetsInstanceFilterWithtHasDataQuery';
 
 export type InstancesWithView<PropertyType = Record<string, unknown>> = {
   view: Source;
@@ -132,8 +133,9 @@ const searchNodesWithViewsAndModels = async (
 };
 
 export const useAllMappedEquipmentFDM = (
-  models: AddModelOptions[],
-  viewsToSearch: SimpleSource[]
+  models: Array<AddModelOptions<DataSourceType> | AddImage360CollectionDatamodelsOptions>,
+  viewsToSearch: SimpleSource[],
+  enabled: boolean = true
 ): UseQueryResult<NodeItem[]> => {
   const fdmDataProvider = useFdm3dDataProvider();
 
@@ -142,9 +144,11 @@ export const useAllMappedEquipmentFDM = (
     queryFn: async () => {
       const viewSources = createSourcesFromViews(viewsToSearch);
 
-      return await fdmDataProvider.listAllMappedFdmNodes(models, viewSources, undefined);
+      const assetFilterForAllMapped = assetsInstanceFilterWithtHasDataQuery(viewSources);
+      return await fdmDataProvider.listAllMappedFdmNodes(models, viewSources, assetFilterForAllMapped);
     },
-    staleTime: Infinity
+    staleTime: Infinity,
+    enabled
   });
 };
 
