@@ -5,7 +5,11 @@ import {
   pointCloudsAssetsQueryPayload,
   image360AssetsQueryPayload
 } from './cadAndPointCloudAndImage360AssetQuery';
-import { type Source, type InstanceFilter, type DmsUniqueIdentifier } from '../../data-providers/FdmSDK';
+import {
+  type Source,
+  type InstanceFilter,
+  type DmsUniqueIdentifier
+} from '../../data-providers/FdmSDK';
 import { cogniteAssetSourceWithProperties } from './cogniteAssetSourceWithProperties';
 
 describe(cadAndPointCloudAndImage36AssetQuery.name, () => {
@@ -21,7 +25,12 @@ describe(cadAndPointCloudAndImage36AssetQuery.name, () => {
   const limit = 10;
 
   it('should generate a query for CAD, PointCloud, and Image360 assets', () => {
-    const result = cadAndPointCloudAndImage36AssetQuery(sourcesToSearch, revisionRefs, filter, limit);
+    const result = cadAndPointCloudAndImage36AssetQuery(
+      sourcesToSearch,
+      revisionRefs,
+      filter,
+      limit
+    );
 
     expect(result).toBeDefined();
     expect(result.with).toHaveProperty('cad_nodes');
@@ -33,7 +42,12 @@ describe(cadAndPointCloudAndImage36AssetQuery.name, () => {
   });
 
   it('should include the correct sources in the select clause', () => {
-    const result = cadAndPointCloudAndImage36AssetQuery(sourcesToSearch, revisionRefs, filter, limit);
+    const result = cadAndPointCloudAndImage36AssetQuery(
+      sourcesToSearch,
+      revisionRefs,
+      filter,
+      limit
+    );
 
     expect(result.select.cad_assets.sources).toEqual(
       expect.arrayContaining([
@@ -90,5 +104,4 @@ describe(cadAndPointCloudAndImage36AssetQuery.name, () => {
     expect(result.with).toHaveProperty('image360_assets');
     expect(result.select).toHaveProperty('image360_assets');
   });
-
 });

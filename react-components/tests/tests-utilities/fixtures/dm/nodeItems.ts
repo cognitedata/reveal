@@ -1,5 +1,5 @@
-import { COGNITE_CAD_NODE_SOURCE } from "../../../../src/data-providers/core-dm-provider/dataModels";
-import { NodeItem } from "../../../../src/data-providers/FdmSDK";
+import { COGNITE_CAD_NODE_SOURCE } from '../../../../src/data-providers/core-dm-provider/dataModels';
+import { type NodeItem } from '../../../../src/data-providers/FdmSDK';
 
 export const object3dIdentifierFixture = { externalId: 'object3d_0', space: 'space0' };
 

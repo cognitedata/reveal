@@ -122,10 +122,19 @@ describe(filterNodesByMappedTo3d.name, () => {
               externalId: 'CogniteAsset',
               version: 'v1',
               space: 'cdf_cdm',
+              createdTime: 123,
+              lastUpdatedTime: 124,
+              writable: true,
+              usedFor: 'usedFor',
+              isGlobal: true,
+              properties: {},
+              name: 'name',
+              implements: []
             }
           ]
-        } as ViewItemListResponse)
-      ).object();
+        } as const satisfies ViewItemListResponse)
+      )
+      .object();
 
     const result = await filterNodesByMappedTo3d(
       instancesWithView,
