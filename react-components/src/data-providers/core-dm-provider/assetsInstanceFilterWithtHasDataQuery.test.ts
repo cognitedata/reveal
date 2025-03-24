@@ -35,7 +35,7 @@ describe(assetsInstanceFilterWithtHasDataQuery.name, () => {
     });
   });
 
-  it('should exclude COGNITE_ASSET_SOURCE from customExistPropertyList', () => {
+  it('should exclude CogniteAsset Source from the created list that has the existing properties for the filter', () => {
     const sourcesToSearch: Source[] = [
       {
         type: 'view',
