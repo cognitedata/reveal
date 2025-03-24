@@ -16,9 +16,3 @@ export const simpleSourcesFixtures: Source[] = [
   }
 ];
 
-export const cogniteAssetSourceFixture: Source = {
-  type: 'view',
-  externalId: COGNITE_ASSET_SOURCE.externalId,
-  space: COGNITE_ASSET_SOURCE.space,
-  version: COGNITE_ASSET_SOURCE.version
-};
