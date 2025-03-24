@@ -107,6 +107,7 @@ jobs:
         uses: codecov/codecov-action@v5
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
+          flags: react-components
 
       - name: Install playwright browsers
         working-directory: react-components
