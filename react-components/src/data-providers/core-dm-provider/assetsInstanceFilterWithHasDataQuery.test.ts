@@ -1,13 +1,13 @@
 import { describe, it, expect } from 'vitest';
-import { assetsInstanceFilterWithtHasDataQuery } from './assetsInstanceFilterWithtHasDataQuery';
+import { assetsInstanceFilterWithHasDataQuery } from './assetsInstanceFilterWithHasDataQuery';
 import { type Source } from '../FdmSDK';
 import { COGNITE_ASSET_SOURCE } from './dataModels';
 import { simpleSourcesFixtures } from '../../../tests/tests-utilities/fixtures/dm/sources';
 import { validInstanceFiltersForMappedAssetsQueryPayload } from '../../../tests/tests-utilities/fixtures/dm/instanceFiltersForQueryPayload';
 
-describe(assetsInstanceFilterWithtHasDataQuery.name, () => {
+describe(assetsInstanceFilterWithHasDataQuery.name, () => {
   it('should generate a valid instance filter with the provided sources', () => {
-    const result = assetsInstanceFilterWithtHasDataQuery(simpleSourcesFixtures);
+    const result = assetsInstanceFilterWithHasDataQuery(simpleSourcesFixtures);
 
     expect(result).toEqual(validInstanceFiltersForMappedAssetsQueryPayload);
   });
@@ -15,7 +15,7 @@ describe(assetsInstanceFilterWithtHasDataQuery.name, () => {
   it('should handle an empty sourcesToSearch array', () => {
     const sourcesToSearch: Source[] = [];
 
-    const result = assetsInstanceFilterWithtHasDataQuery(sourcesToSearch);
+    const result = assetsInstanceFilterWithHasDataQuery(sourcesToSearch);
 
     expect(result).toEqual({
       and: [
@@ -51,7 +51,7 @@ describe(assetsInstanceFilterWithtHasDataQuery.name, () => {
       }
     ];
 
-    const result = assetsInstanceFilterWithtHasDataQuery(sourcesToSearch);
+    const result = assetsInstanceFilterWithHasDataQuery(sourcesToSearch);
 
     expect(result).toEqual({
       and: [
