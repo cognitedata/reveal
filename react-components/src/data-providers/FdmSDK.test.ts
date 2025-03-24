@@ -1,4 +1,4 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { describe, it, expect, vi, beforeEach, Mock as viMock } from 'vitest';
 import { FdmSDK } from './FdmSDK';
 import { sdkMock } from '../../tests/tests-utilities/fixtures/sdk';
 import { type QueryRequest } from '@cognite/sdk';
@@ -36,7 +36,7 @@ describe('FdmSDK.queryAllNodesAndEdges', () => {
   });
 
   it('should return results when there is no nextCursor', async () => {
-    (queryNodesAndEdges as vi.Mock).mockResolvedValueOnce({
+    (queryNodesAndEdges as viMock).mockResolvedValueOnce({
       items: { cad_assets: [{ externalId: 'asset1', space: 'space1' }] },
       nextCursor: undefined
     });
@@ -48,7 +48,7 @@ describe('FdmSDK.queryAllNodesAndEdges', () => {
   });
 
   it('should handle multiple pages of results with nextCursor', async () => {
-    (queryNodesAndEdges as vi.Mock)
+    (queryNodesAndEdges as viMock)
       .mockResolvedValueOnce({
         items: { cad_assets: [{ externalId: 'asset1', space: 'space1' }] },
         nextCursor: { cad_assets: 'cursor1' }
@@ -58,7 +58,7 @@ describe('FdmSDK.queryAllNodesAndEdges', () => {
         nextCursor: undefined
       });
 
-    (mergeQueryResults as vi.Mock).mockImplementation(
+    (mergeQueryResults as viMock).mockImplementation(
       (items1: { cad_assets: any[] }, items2: { cad_assets: any[] }) => ({
         cad_assets: [...items1.cad_assets, ...items2.cad_assets]
       })
@@ -79,7 +79,7 @@ describe('FdmSDK.queryAllNodesAndEdges', () => {
   it('should handle initialCursorTypes filtering nextCursor', async () => {
     const initialCursorTypes = ['cad_assets'];
 
-    (queryNodesAndEdges as vi.Mock)
+    (queryNodesAndEdges as viMock)
       .mockResolvedValueOnce({
         items: { cad_assets: [{ externalId: 'asset1', space: 'space1' }] },
         nextCursor: { cad_assets: 'cursor1', cad_nodes: 'cursor2' }
@@ -89,7 +89,7 @@ describe('FdmSDK.queryAllNodesAndEdges', () => {
         nextCursor: undefined
       });
 
-    (mergeQueryResults as vi.Mock).mockImplementation(
+    (mergeQueryResults as viMock).mockImplementation(
       (items1: { cad_assets: any[] }, items2: { cad_assets: any[] }) => ({
         cad_assets: [...items1.cad_assets, ...items2.cad_assets]
       })
@@ -108,7 +108,7 @@ describe('FdmSDK.queryAllNodesAndEdges', () => {
   });
 
   it('should handle empty nextCursor and stop querying', async () => {
-    (queryNodesAndEdges as vi.Mock).mockResolvedValueOnce({
+    (queryNodesAndEdges as viMock).mockResolvedValueOnce({
       items: { cad_assets: [{ externalId: 'asset1', space: 'space1' }] },
       nextCursor: {}
     });
@@ -120,7 +120,7 @@ describe('FdmSDK.queryAllNodesAndEdges', () => {
   });
 
   it('should handle errors during querying', async () => {
-    (queryNodesAndEdges as vi.Mock).mockRejectedValueOnce(new Error('Query failed'));
+    (queryNodesAndEdges as viMock).mockRejectedValueOnce(new Error('Query failed'));
 
     await expect(fdmSdkMock.queryAllNodesAndEdges(mockQuery)).rejects.toThrow('Query failed');
     expect(queryNodesAndEdges).toHaveBeenCalledTimes(1);
