@@ -12,9 +12,7 @@ import {
 import { Mock, It } from 'moq.ts';
 import { type DmsUniqueIdentifier, type FdmSDK } from '../FdmSDK';
 import { COGNITE_ASSET_SOURCE, COGNITE_CAD_NODE_SOURCE } from './dataModels';
-import {
-  simpleSourcesFixtures
-} from '../../../tests/tests-utilities/fixtures/dm/sources';
+import { simpleSourcesFixtures } from '../../../tests/tests-utilities/fixtures/dm/sources';
 import {
   cadNodesFixtures,
   object3dIdentifierFixture
