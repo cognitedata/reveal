@@ -11,9 +11,8 @@ import {
 } from './listMappedFdmNodes';
 import { Mock, It } from 'moq.ts';
 import { type DmsUniqueIdentifier, type FdmSDK } from '../FdmSDK';
-import { COGNITE_CAD_NODE_SOURCE } from './dataModels';
+import { COGNITE_ASSET_SOURCE, COGNITE_CAD_NODE_SOURCE } from './dataModels';
 import {
-  cogniteAssetSourceFixture,
   simpleSourcesFixtures
 } from '../../../tests/tests-utilities/fixtures/dm/sources';
 import {
@@ -102,7 +101,7 @@ describe(listMappedFdmNodes.name, async () => {
 
     const result = await listAllMappedFdmNodes(
       revisionRefs,
-      [cogniteAssetSourceFixture],
+      [COGNITE_ASSET_SOURCE],
       undefined,
       fdmSdkMock
     );
@@ -134,7 +133,7 @@ describe(listMappedFdmNodes.name, async () => {
       .object();
 
     const result = await queryCadAssets(
-      [cogniteAssetSourceFixture],
+      [COGNITE_ASSET_SOURCE],
       revisionRefs,
       undefined,
       fdmSdkMock,
@@ -157,7 +156,7 @@ describe(listMappedFdmNodes.name, async () => {
       .object();
 
     const result = await queryPointCloudsAssets(
-      [cogniteAssetSourceFixture],
+      [COGNITE_ASSET_SOURCE],
       revisionRefs,
       undefined,
       fdmSdkMock,
@@ -180,7 +179,7 @@ describe(listMappedFdmNodes.name, async () => {
       .object();
 
     const result = await queryImage360Assets(
-      [cogniteAssetSourceFixture],
+      [COGNITE_ASSET_SOURCE],
       revisionRefs,
       undefined,
       fdmSdkMock,
