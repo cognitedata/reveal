@@ -1,4 +1,4 @@
-import { describe, it, expect, vi, beforeEach, Mock as viMock } from 'vitest';
+import { describe, it, expect, vi, beforeEach, type Mock as viMock } from 'vitest';
 import { FdmSDK } from './FdmSDK';
 import { sdkMock } from '../../tests/tests-utilities/fixtures/sdk';
 import { type QueryRequest } from '@cognite/sdk';
