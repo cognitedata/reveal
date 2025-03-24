@@ -2,7 +2,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { FdmSDK } from './FdmSDK';
 import { sdkMock } from '../../tests/tests-utilities/fixtures/sdk';
-import { type QueryRequest, type QueryResult } from '@cognite/sdk';
+import { type QueryRequest } from '@cognite/sdk';
 import { queryNodesAndEdges } from './utils/queryNodesAndEdges';
 import { mergeQueryResults } from './utils/mergeQueryResult';
 
