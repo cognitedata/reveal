@@ -87,7 +87,7 @@ export class LineView extends GroupThreeView<LineDomainObject> {
     this.addChild(this.createPipe());
     this.addChild(this.createLines()); // Create a line so it can be seen from long distance
     this.addChild(this.createSolid());
-    if (this.style.addLabels) {
+    if (this.style.showLabel) {
       this.addLabels();
     }
   }

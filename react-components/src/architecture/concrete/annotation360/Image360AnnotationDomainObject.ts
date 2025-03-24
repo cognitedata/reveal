@@ -88,7 +88,6 @@ export class Image360AnnotationDomainObject extends LineDomainObject {
   public override createRenderStyle(): RenderStyle | undefined {
     const style = new LineRenderStyle();
     style.showLabel = false;
-    style.addLabels = false;
     style.pipeRadius = 0.01 / 3;
     style.selectedPipeRadius = 2 * style.pipeRadius;
     style.depthTest = false;
