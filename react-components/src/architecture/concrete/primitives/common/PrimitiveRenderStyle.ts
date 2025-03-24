@@ -17,6 +17,7 @@ export abstract class PrimitiveRenderStyle extends CommonRenderStyle {
 
   // For labels only
   public showLabel = true;
+  public addLabels: boolean = true;
   public labelColor = WHITE_COLOR.clone();
   public labelBgColor = new Color('#232323');
   public labelOpacity = 0.9;
