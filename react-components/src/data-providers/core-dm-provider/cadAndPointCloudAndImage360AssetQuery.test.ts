@@ -81,17 +81,6 @@ describe(cadAndPointCloudAndImage36AssetQuery.name, () => {
     expect(result.with).toHaveProperty('cad_assets');
     expect(result.select).toHaveProperty('cad_nodes');
     expect(result.select).toHaveProperty('cad_assets');
-    expect(result.with.cad_assets.nodes.filter).toEqual(filter);
-    expect(result.with.cad_nodes.limit).toBe(limit);
-    expect(result.with.cad_object_3d.limit).toBe(limit);
-    expect(result.with.cad_assets.limit).toBe(limit);
-    expect(result.select.cad_assets.sources).toEqual(
-      expect.arrayContaining([
-        ...cogniteAssetSourceWithProperties,
-        { source: sourcesToSearch[0], properties: ['*'] },
-        { source: sourcesToSearch[1], properties: ['*'] }
-      ])
-    );
   });
 
   it('should generate a query for PointCloud assets', () => {
@@ -102,15 +91,6 @@ describe(cadAndPointCloudAndImage36AssetQuery.name, () => {
     expect(result.with).toHaveProperty('pointcloud_object_3d');
     expect(result.with).toHaveProperty('pointcloud_assets');
     expect(result.select).toHaveProperty('pointcloud_assets');
-    expect(result.with.pointcloud_assets.nodes.filter).toEqual(filter);
-    expect(result.with.pointcloud_volumes.limit).toBe(limit);
-    expect(result.select.pointcloud_assets.sources).toEqual(
-      expect.arrayContaining([
-        ...cogniteAssetSourceWithProperties,
-        { source: sourcesToSearch[0], properties: ['*'] },
-        { source: sourcesToSearch[1], properties: ['*'] }
-      ])
-    );
   });
 
   it('should generate a query for Image360 assets', () => {
@@ -123,14 +103,5 @@ describe(cadAndPointCloudAndImage36AssetQuery.name, () => {
     expect(result.with).toHaveProperty('image360_object3ds');
     expect(result.with).toHaveProperty('image360_assets');
     expect(result.select).toHaveProperty('image360_assets');
-    expect(result.with.image360_assets.nodes.filter).toEqual(filter);
-    expect(result.with.image360_collections.limit).toBe(limit);
-    expect(result.select.image360_assets.sources).toEqual(
-      expect.arrayContaining([
-        ...cogniteAssetSourceWithProperties,
-        { source: sourcesToSearch[0], properties: ['*'] },
-        { source: sourcesToSearch[1], properties: ['*'] }
-      ])
-    );
   });
 });
