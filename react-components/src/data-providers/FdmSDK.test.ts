@@ -1,4 +1,3 @@
-
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { FdmSDK } from './FdmSDK';
 import { sdkMock } from '../../tests/tests-utilities/fixtures/sdk';
@@ -10,7 +9,6 @@ vi.mock('./utils/queryNodesAndEdges');
 vi.mock('./utils/mergeQueryResult');
 
 describe('FdmSDK.queryAllNodesAndEdges', () => {
-
   const fdmSdkMock = new FdmSDK(sdkMock);
 
   const mockQuery: QueryRequest = {
@@ -23,7 +21,12 @@ describe('FdmSDK.queryAllNodesAndEdges', () => {
     },
     select: {
       cad_assets: {
-        sources: [{ source: { externalId: 'asset1', space: 'space1', version: 'v1', type: 'view' }, properties: ['*'] }]
+        sources: [
+          {
+            source: { externalId: 'asset1', space: 'space1', version: 'v1', type: 'view' },
+            properties: ['*']
+          }
+        ]
       }
     }
   };
@@ -55,9 +58,11 @@ describe('FdmSDK.queryAllNodesAndEdges', () => {
         nextCursor: undefined
       });
 
-    (mergeQueryResults as vi.Mock).mockImplementation((items1: { cad_assets: any[] }, items2: { cad_assets: any[] }) => ({
-      cad_assets: [...items1.cad_assets, ...items2.cad_assets]
-    }));
+    (mergeQueryResults as vi.Mock).mockImplementation(
+      (items1: { cad_assets: any[] }, items2: { cad_assets: any[] }) => ({
+        cad_assets: [...items1.cad_assets, ...items2.cad_assets]
+      })
+    );
 
     const result = await fdmSdkMock.queryAllNodesAndEdges(mockQuery);
 
@@ -84,9 +89,11 @@ describe('FdmSDK.queryAllNodesAndEdges', () => {
         nextCursor: undefined
       });
 
-    (mergeQueryResults as vi.Mock).mockImplementation((items1: { cad_assets: any[] }, items2: { cad_assets: any[] }) => ({
-      cad_assets: [...items1.cad_assets, ...items2.cad_assets]
-    }));
+    (mergeQueryResults as vi.Mock).mockImplementation(
+      (items1: { cad_assets: any[] }, items2: { cad_assets: any[] }) => ({
+        cad_assets: [...items1.cad_assets, ...items2.cad_assets]
+      })
+    );
 
     const result = await fdmSdkMock.queryAllNodesAndEdges(mockQuery, initialCursorTypes);
 
