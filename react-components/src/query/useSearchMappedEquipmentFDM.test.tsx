@@ -9,7 +9,6 @@ import {
 import { useFdmSdk } from '../components/RevealCanvas/SDKProvider';
 import { useFdm3dDataProvider } from '../components/CacheProvider/CacheProvider';
 import { useQuery } from '@tanstack/react-query';
-import { type NodeItem } from '../data-providers';
 import { cadNodesFixtures } from '#test-utils/fixtures/dm/nodeItems';
 
 vi.mock('../components/RevealCanvas/SDKProvider');
