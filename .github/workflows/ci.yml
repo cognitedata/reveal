@@ -165,6 +165,7 @@ jobs:
         uses: codecov/codecov-action@v5
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
+          flags: viewer
 
   run-visual-tests:
     needs: [changes, populate-caches]
