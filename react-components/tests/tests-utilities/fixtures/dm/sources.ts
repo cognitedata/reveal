@@ -1,5 +1,4 @@
 import type { Source } from '../../../../src/data-providers/FdmSDK';
-import { COGNITE_ASSET_SOURCE } from '../../../../src/data-providers/core-dm-provider/dataModels';
 
 export const simpleSourcesFixtures: Source[] = [
   {
@@ -15,4 +14,3 @@ export const simpleSourcesFixtures: Source[] = [
     version: 'v1'
   }
 ];
-
