@@ -158,26 +158,14 @@ export class CadMaterialManager {
     newMaterial.needsUpdate = true;
 
     const materialName = toTextureMaterialName(sectorId);
+
+    if (modelData.materials.texturedMaterials[materialName] !== undefined) {
+      modelData.materials.texturedMaterials[materialName].dispose();
+    }
+
     modelData.materials.texturedMaterials[materialName] = newMaterial;
 
     return newMaterial;
-  }
-
-  removeTexturedMeshMaterial(modelIdentifier: symbol, sectorId: number): void {
-    const modelData = this.materialsMap.get(modelIdentifier);
-    if (modelData === undefined) {
-      return;
-    }
-
-    const materialName = toTextureMaterialName(sectorId);
-
-    if (!(materialName in modelData.materials.texturedMaterials)) {
-      return;
-    }
-
-    modelData.materials.texturedMaterials[materialName].uniforms.tDiffuse.value.dispose();
-    modelData.materials.texturedMaterials[materialName].dispose();
-    delete modelData.materials.texturedMaterials[toTextureMaterialName(sectorId)];
   }
 
   getModelMaterials(modelIdentifier: symbol): Materials {

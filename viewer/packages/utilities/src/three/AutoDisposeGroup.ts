@@ -9,11 +9,17 @@ const emptyGeometry = new THREE.BufferGeometry();
 /**
  * Referenced count implementation of THREE.Group that
  * automatically disposes all geometries contained in meshes that
- * are direct children of the group.
+ * are direct children of the group, in addition to a provided set of textures
  */
 export class AutoDisposeGroup extends THREE.Group {
   private _isDisposed = false;
   private _referenceCount = 0;
+
+  private _textures: THREE.Texture[] = [];
+
+  public addTexture(texture: THREE.Texture) {
+    this._textures.push(texture);
+  }
 
   isDisposed(): boolean {
     return this._isDisposed;
@@ -50,6 +56,8 @@ export class AutoDisposeGroup extends THREE.Group {
         child.dispose();
       }
     }
+
+    this._textures.forEach(texture => texture.dispose());
 
     this.clear();
   }

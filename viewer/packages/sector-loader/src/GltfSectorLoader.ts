@@ -89,6 +89,7 @@ export class GltfSectorLoader {
               parsedGeometry.texture!
             );
             this.createMesh(group, parsedGeometry.geometryBuffer, material, wholeSectorBoundingBox);
+            group.addTexture(parsedGeometry.texture!);
             break;
           default:
             assertNever(type);
