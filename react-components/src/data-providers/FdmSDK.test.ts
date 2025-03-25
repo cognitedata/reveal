@@ -1,9 +1,8 @@
-import { describe, it, expect, vi, beforeEach, type Mock as viMock } from 'vitest';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { FdmSDK } from './FdmSDK';
 import { sdkMock } from '../../tests/tests-utilities/fixtures/sdk';
 import { type QueryRequest } from '@cognite/sdk';
 import { queryNodesAndEdges } from './utils/queryNodesAndEdges';
-import { mergeQueryResults } from './utils/mergeQueryResult';
 
 vi.mock('./utils/queryNodesAndEdges');
 describe('FdmSDK.queryAllNodesAndEdges', () => {
@@ -30,19 +29,21 @@ describe('FdmSDK.queryAllNodesAndEdges', () => {
   };
 
   const mockCadAssets = [
-    { externalId: 'asset1',
+    {
+      externalId: 'asset1',
       space: 'space1',
       createdTime: 123,
       version: 1,
-      instanceType: "node" as const,
+      instanceType: 'node' as const,
       lastUpdatedTime: 123,
       properties: {}
     },
-    { externalId: 'asset2',
+    {
+      externalId: 'asset2',
       space: 'space1',
       createdTime: 123,
       version: 1,
-      instanceType: "node" as const,
+      instanceType: 'node' as const,
       lastUpdatedTime: 123,
       properties: {}
     }
