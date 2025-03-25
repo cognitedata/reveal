@@ -4,6 +4,20 @@ ignore:
 flag_management:
   default_rules:
     carryforward: true
+  viewer:
     paths:
       - viewer/
+  react-components:
+    paths:
       - react-components/
+
+coverage:
+  status:
+    project:
+      default: off
+      viewer:
+        flags:
+          - viewer
+      react-components:
+        flags:
+          - react-components
