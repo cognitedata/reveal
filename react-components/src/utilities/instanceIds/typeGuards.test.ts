@@ -30,35 +30,35 @@ describe('typeGuards', () => {
 
   describe(isExternalId.name, () => {
     it('should return true for an ExternalId', () => {
-      const idEither: IdEither = { externalId: 'external-id' };
-      expect(isExternalId(idEither)).toBe(true);
+      const instance: IdEither = { externalId: 'external-id' };
+      expect(isExternalId(instance)).toBe(true);
     });
 
     it('should return false for an InternalId', () => {
-      const idEither: IdEither = { id: 123 };
-      expect(isExternalId(idEither)).toBe(false);
+      const instance: IdEither = { id: 123 };
+      expect(isExternalId(instance)).toBe(false);
     });
 
     it('should return false for an object with both externalId and space', () => {
-      const idEither: DmsUniqueIdentifier = { externalId: 'external-id', space: 'space' };
-      expect(isExternalId(idEither)).toBe(false);
+      const instance: DmsUniqueIdentifier = { externalId: 'external-id', space: 'space' };
+      expect(isExternalId(instance)).toBe(false);
     });
   });
 
   describe(isInternalId.name, () => {
     it('should return true for an InternalId', () => {
-      const idEither: IdEither = { id: 123 };
-      expect(isInternalId(idEither)).toBe(true);
+      const instance: IdEither = { id: 123 };
+      expect(isInternalId(instance)).toBe(true);
     });
 
     it('should return false for an ExternalId', () => {
-      const idEither: IdEither = { externalId: 'external-id' };
-      expect(isInternalId(idEither)).toBe(false);
+      const instance: IdEither = { externalId: 'external-id' };
+      expect(isInternalId(instance)).toBe(false);
     });
 
     it('should return false for an invalid object with no InternalId', () => {
-      const idEither: AnnotationAssetRef = { externalId: 'external-id' };
-      expect(isInternalId(idEither)).toBe(false);
+      const instance: AnnotationAssetRef = { externalId: 'external-id' };
+      expect(isInternalId(instance)).toBe(false);
     });
   });
 
