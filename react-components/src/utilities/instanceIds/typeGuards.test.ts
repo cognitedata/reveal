@@ -24,7 +24,7 @@ describe('typeGuards', () => {
     });
 
     it('should return false for an invalid object', () => {
-      const instance = { someKey: 'value' } as AnnotationAssetRef;
+      const instance = { someKey: 'value' } as const as AnnotationAssetRef;
       expect(isIdEither(instance)).toBe(false);
     });
   });
