@@ -18,6 +18,8 @@ describe(DefaultRenderPipelineProvider.name, () => {
   let cadNodeMock: CadNode;
   let pointCloudNodeMock: PointCloudNode;
 
+  const modelIdentifierSymbol = Symbol('0');
+
   beforeEach(() => {
     rendererMock = new Mock<THREE.WebGLRenderer>()
       .setup(p => (p.info.autoReset = It.IsAny()))
@@ -48,13 +50,13 @@ describe(DefaultRenderPipelineProvider.name, () => {
 
   test('Pipeline with one cad model with back styling should return 4 passes', () => {
     const materialManagerMock = new Mock<CadMaterialManager>()
-      .setup(p => p.getModelBackTreeIndices('0'))
+      .setup(p => p.getModelBackTreeIndices(modelIdentifierSymbol))
       .returns(new IndexSet([0]))
-      .setup(p => p.getModelGhostedTreeIndices('0'))
+      .setup(p => p.getModelGhostedTreeIndices(modelIdentifierSymbol))
       .returns(new IndexSet([]))
-      .setup(p => p.getModelInFrontTreeIndices('0'))
+      .setup(p => p.getModelInFrontTreeIndices(modelIdentifierSymbol))
       .returns(new IndexSet([]))
-      .setup(p => p.getModelVisibleTreeIndices('0'))
+      .setup(p => p.getModelVisibleTreeIndices(modelIdentifierSymbol))
       .returns(new IndexSet([0]));
     const pcMaterialManagerMock = new Mock<PointCloudMaterialManager>()
       .setup(p => p.setModelsMaterialParameters({}))
@@ -62,7 +64,7 @@ describe(DefaultRenderPipelineProvider.name, () => {
 
     const sceneHandler = new SceneHandler();
 
-    sceneHandler.addCadModel(cadNodeMock, '0');
+    sceneHandler.addCadModel(cadNodeMock, modelIdentifierSymbol);
 
     const defaultRenderPipelineProvider = new DefaultRenderPipelineProvider(
       materialManagerMock.object(),
@@ -82,14 +84,15 @@ describe(DefaultRenderPipelineProvider.name, () => {
   });
 
   test('Pipeline with one cad model with all styling should return 6 passes', () => {
+    const modelIdentifierSymbol = cadNodeMock.cadModelIdentifier;
     const materialManagerMock = new Mock<CadMaterialManager>()
-      .setup(p => p.getModelBackTreeIndices('0'))
+      .setup(p => p.getModelBackTreeIndices(modelIdentifierSymbol))
       .returns(new IndexSet([0]))
-      .setup(p => p.getModelGhostedTreeIndices('0'))
+      .setup(p => p.getModelGhostedTreeIndices(modelIdentifierSymbol))
       .returns(new IndexSet([0]))
-      .setup(p => p.getModelInFrontTreeIndices('0'))
+      .setup(p => p.getModelInFrontTreeIndices(modelIdentifierSymbol))
       .returns(new IndexSet([0]))
-      .setup(p => p.getModelVisibleTreeIndices('0'))
+      .setup(p => p.getModelVisibleTreeIndices(modelIdentifierSymbol))
       .returns(new IndexSet([0]));
     const pcMaterialManagerMock = new Mock<PointCloudMaterialManager>()
       .setup(p => p.setModelsMaterialParameters({}))
@@ -97,7 +100,7 @@ describe(DefaultRenderPipelineProvider.name, () => {
 
     const sceneHandler = new SceneHandler();
 
-    sceneHandler.addCadModel(cadNodeMock, '0');
+    sceneHandler.addCadModel(cadNodeMock, modelIdentifierSymbol);
 
     const defaultRenderPipelineProvider = new DefaultRenderPipelineProvider(
       materialManagerMock.object(),
@@ -145,13 +148,13 @@ describe(DefaultRenderPipelineProvider.name, () => {
 
   test('Pipeline with one cad model with back styling and no ssao samples should return 3 passes', () => {
     const materialManagerMock = new Mock<CadMaterialManager>()
-      .setup(p => p.getModelBackTreeIndices('0'))
+      .setup(p => p.getModelBackTreeIndices(modelIdentifierSymbol))
       .returns(new IndexSet([0]))
-      .setup(p => p.getModelGhostedTreeIndices('0'))
+      .setup(p => p.getModelGhostedTreeIndices(modelIdentifierSymbol))
       .returns(new IndexSet([]))
-      .setup(p => p.getModelInFrontTreeIndices('0'))
+      .setup(p => p.getModelInFrontTreeIndices(modelIdentifierSymbol))
       .returns(new IndexSet([]))
-      .setup(p => p.getModelVisibleTreeIndices('0'))
+      .setup(p => p.getModelVisibleTreeIndices(modelIdentifierSymbol))
       .returns(new IndexSet([0]));
     const pcMaterialManagerMock = new Mock<PointCloudMaterialManager>()
       .setup(p => p.setModelsMaterialParameters({}))
@@ -159,7 +162,7 @@ describe(DefaultRenderPipelineProvider.name, () => {
 
     const sceneHandler = new SceneHandler();
 
-    sceneHandler.addCadModel(cadNodeMock, '0');
+    sceneHandler.addCadModel(cadNodeMock, modelIdentifierSymbol);
 
     const renderOptions = defaultRenderOptions;
     renderOptions.ssaoRenderParameters.sampleSize = 0;
@@ -216,7 +219,7 @@ describe(DefaultRenderPipelineProvider.name, () => {
 
     const sceneHandler = new SceneHandler();
 
-    sceneHandler.addPointCloudModel(pointCloudNodeMock, Symbol(0));
+    sceneHandler.addPointCloudModel(pointCloudNodeMock, pointCloudNodeMock.modelIdentifier);
 
     const defaultRenderPipelineProvider = new DefaultRenderPipelineProvider(
       materialManagerMock.object(),

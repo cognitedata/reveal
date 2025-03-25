@@ -50,7 +50,7 @@ export class CadModelMetadataRepository implements MetadataRepository<Promise<Ca
     const cameraConfiguration = await modelCameraPromise;
 
     return {
-      modelIdentifier: modelIdentifier.sourceModelIdentifier(),
+      modelIdentifier,
       modelBaseUrl: blobBaseUrl,
       // Clip box is not loaded, it must be set elsewhere
       geometryClipBox: null,

@@ -25,7 +25,7 @@ export interface ModelIdentifier {
   readonly revealInternalId: symbol;
 
   /**
-   * Returns a identifier in a serialized form, which uniquely identifies
+   * Returns an identifier in a serialized form, which uniquely identifies
    * the model from the data source
    */
   sourceModelIdentifier(): string;

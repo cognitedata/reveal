@@ -39,7 +39,7 @@ export class GltfSectorLoader {
 
       const parsedSectorGeometry = await this._gltfSectorParser.parseSector(sectorByteBuffer);
 
-      const materials = this._materialManager.getModelMaterials(sector.modelIdentifier);
+      const materials = this._materialManager.getModelMaterials(sector.modelIdentifier.revealInternalId);
 
       const geometryBatchingQueue: ParsedGeometry[] = [];
 
@@ -84,7 +84,7 @@ export class GltfSectorLoader {
             break;
           case RevealGeometryCollectionType.TexturedTriangleMesh:
             const material = this._materialManager.addTexturedMeshMaterial(
-              sector.modelIdentifier,
+              sector.modelIdentifier.revealInternalId,
               sector.metadata.id,
               parsedGeometry.texture!
             );

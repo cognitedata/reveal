@@ -4,7 +4,7 @@
 
 import { MemoryRequestCache } from '@reveal/utilities';
 import { ConsumedSector, SectorMetadata, WantedSector, LevelOfDetail } from '@reveal/cad-parsers';
-import { BinaryFileProvider } from '@reveal/data-providers';
+import { BinaryFileProvider, ModelIdentifier } from '@reveal/data-providers';
 import { CadMaterialManager } from '@reveal/rendering';
 import { SectorRepository } from './SectorRepository';
 import { GltfSectorLoader } from './GltfSectorLoader';
@@ -19,7 +19,10 @@ export class GltfSectorRepository implements SectorRepository {
       200,
       async consumedSector => {
         consumedSector.group?.dereference();
-        materialManager.removeTexturedMeshMaterial(consumedSector.modelIdentifier, consumedSector.metadata.id);
+        materialManager.removeTexturedMeshMaterial(
+          consumedSector.modelIdentifier.revealInternalId,
+          consumedSector.metadata.id
+        );
       },
       50
     );
@@ -27,7 +30,7 @@ export class GltfSectorRepository implements SectorRepository {
 
   private async getEmptySectorWithLod(
     lod: LevelOfDetail,
-    modelIdentifier: string,
+    modelIdentifier: ModelIdentifier,
     metadata: SectorMetadata
   ): Promise<ConsumedSector> {
     return Promise.resolve({
@@ -39,11 +42,11 @@ export class GltfSectorRepository implements SectorRepository {
     });
   }
 
-  private async getEmptyDetailedSector(modelIdentifier: string, metadata: SectorMetadata) {
+  private async getEmptyDetailedSector(modelIdentifier: ModelIdentifier, metadata: SectorMetadata) {
     return this.getEmptySectorWithLod(LevelOfDetail.Detailed, modelIdentifier, metadata);
   }
 
-  private async getEmptyDiscardedSector(modelIdentifier: string, metadata: SectorMetadata) {
+  private async getEmptyDiscardedSector(modelIdentifier: ModelIdentifier, metadata: SectorMetadata) {
     return this.getEmptySectorWithLod(LevelOfDetail.Discarded, modelIdentifier, metadata);
   }
 
@@ -86,6 +89,6 @@ export class GltfSectorRepository implements SectorRepository {
   }
 
   private wantedSectorCacheKey(wantedSector: WantedSector) {
-    return wantedSector.modelIdentifier + '.' + wantedSector.metadata.id;
+    return wantedSector.modelIdentifier.sourceModelIdentifier() + '.' + wantedSector.metadata.id;
   }
 }

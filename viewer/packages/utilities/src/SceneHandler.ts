@@ -9,7 +9,7 @@ import { CustomObject } from './customObject/CustomObject';
 
 export class SceneHandler {
   private readonly _scene: THREE.Scene;
-  private readonly _cadModels: { cadNode: THREE.Object3D; modelIdentifier: string }[];
+  private readonly _cadModels: { cadNode: THREE.Object3D; modelIdentifier: symbol }[];
   private readonly _pointCloudModels: { pointCloudNode: THREE.Object3D; modelIdentifier: symbol }[];
   private readonly _customObjects: ICustomObject[];
 
@@ -17,7 +17,7 @@ export class SceneHandler {
     return this._scene;
   }
 
-  get cadModels(): { cadNode: THREE.Object3D; modelIdentifier: string }[] {
+  get cadModels(): { cadNode: THREE.Object3D; modelIdentifier: symbol }[] {
     return this._cadModels;
   }
 
@@ -38,7 +38,7 @@ export class SceneHandler {
     this._scene.matrixWorldAutoUpdate = false;
   }
 
-  public addCadModel(cadNode: THREE.Object3D, modelIdentifier: string): void {
+  public addCadModel(cadNode: THREE.Object3D, modelIdentifier: symbol): void {
     this._cadModels.push({ cadNode, modelIdentifier });
     this._scene.add(cadNode);
   }

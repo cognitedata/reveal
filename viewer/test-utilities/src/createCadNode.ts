@@ -16,7 +16,7 @@ export function createCadNode(
   const materialManager = new CadMaterialManager();
   const cadRoot = generateV9SectorTree(depth, children);
   const cadMetadata = createCadModelMetadata(9, cadRoot);
-  materialManager.addModelMaterials(cadMetadata.modelIdentifier, cadMetadata.scene.maxTreeIndex);
+  materialManager.addModelMaterials(cadMetadata.modelIdentifier.revealInternalId, cadMetadata.scene.maxTreeIndex);
 
   const mockSectorRepository =
     overrides?.sectorRepository ??

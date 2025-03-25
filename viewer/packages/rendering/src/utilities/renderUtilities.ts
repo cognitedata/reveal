@@ -236,7 +236,7 @@ export function getLayerMask(renderLayer: number): number {
 }
 
 export function hasStyledNodes(
-  modelIdentifiers: string[],
+  modelIdentifiers: symbol[],
   materialManager: CadMaterialManager
 ): { back: boolean; inFront: boolean; ghost: boolean } {
   const totalBackIndices = modelIdentifiers.reduce(

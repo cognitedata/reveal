@@ -82,6 +82,6 @@ describe('CadModelFactory', () => {
     await factory.createModel(modelMetadata, geometryFilter);
 
     expect(setModelClippingPlanesSpy).toBeCalledTimes(1);
-    expect(setModelClippingPlanesSpy).toBeCalledWith(expect.toBeString(), expect.toBeArrayOfSize(6));
+    expect(setModelClippingPlanesSpy).toBeCalledWith(expect.toBeSymbol(), expect.toBeArrayOfSize(6));
   });
 });

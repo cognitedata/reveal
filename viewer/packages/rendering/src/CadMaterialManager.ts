@@ -48,7 +48,7 @@ export class CadMaterialManager {
   }
 
   private _renderMode: RenderMode = RenderMode.Color;
-  private readonly materialsMap: Map<string, MaterialsWrapper> = new Map();
+  private readonly materialsMap: Map<symbol, MaterialsWrapper> = new Map();
   // TODO: j-bjorne 29-04-2020: Move into separate cliping manager?
   private _clippingPlanes: THREE.Plane[] = [];
 
@@ -74,7 +74,7 @@ export class CadMaterialManager {
     }
   }
 
-  addModelMaterials(modelIdentifier: string, maxTreeIndex: number): void {
+  addModelMaterials(modelIdentifier: symbol, maxTreeIndex: number): void {
     const nodeAppearanceProvider = new NodeAppearanceProvider();
     const nodeAppearanceTextureBuilder = new NodeAppearanceTextureBuilder(maxTreeIndex + 1, nodeAppearanceProvider);
     nodeAppearanceTextureBuilder.build();
@@ -124,11 +124,11 @@ export class CadMaterialManager {
     this.updateClippingPlanesForModel(modelIdentifier);
   }
 
-  removeModelMaterials(modelIdentifier: string): void {
+  removeModelMaterials(modelIdentifier: symbol): void {
     const modelData = this.materialsMap.get(modelIdentifier);
 
     if (modelData === undefined) {
-      throw new Error(`Model identifier: ${modelIdentifier} not found`);
+      throw new Error(`Model identifier: ${String(modelIdentifier)} not found`);
     }
 
     forEachMaterial(modelData.materials, mat => mat.dispose());
@@ -138,11 +138,11 @@ export class CadMaterialManager {
     modelData.nodeAppearanceTextureBuilder.dispose();
   }
 
-  addTexturedMeshMaterial(modelIdentifier: string, sectorId: number, texture: THREE.Texture): THREE.RawShaderMaterial {
+  addTexturedMeshMaterial(modelIdentifier: symbol, sectorId: number, texture: THREE.Texture): THREE.RawShaderMaterial {
     const modelData = this.materialsMap.get(modelIdentifier);
 
     if (modelData === undefined) {
-      throw new Error(`Model identifier: ${modelIdentifier} not found`);
+      throw new Error(`Model identifier: ${String(modelIdentifier)} not found`);
     }
 
     // Refer https://threejs.org/docs/#examples/en/loaders/GLTFLoader under Textures for details on GLTF model texture color information.
@@ -163,7 +163,7 @@ export class CadMaterialManager {
     return newMaterial;
   }
 
-  removeTexturedMeshMaterial(modelIdentifier: string, sectorId: number): void {
+  removeTexturedMeshMaterial(modelIdentifier: symbol, sectorId: number): void {
     const modelData = this.materialsMap.get(modelIdentifier);
     if (modelData === undefined) {
       return;
@@ -180,42 +180,42 @@ export class CadMaterialManager {
     delete modelData.materials.texturedMaterials[toTextureMaterialName(sectorId)];
   }
 
-  getModelMaterials(modelIdentifier: string): Materials {
+  getModelMaterials(modelIdentifier: symbol): Materials {
     const wrapper = this.getModelMaterialsWrapper(modelIdentifier);
     return wrapper.materials;
   }
 
-  getModelNodeAppearanceProvider(modelIdentifier: string): NodeAppearanceProvider {
+  getModelNodeAppearanceProvider(modelIdentifier: symbol): NodeAppearanceProvider {
     const wrapper = this.getModelMaterialsWrapper(modelIdentifier);
     return wrapper.nodeAppearanceProvider;
   }
 
-  getModelNodeTransformProvider(modelIdentifier: string): NodeTransformProvider {
+  getModelNodeTransformProvider(modelIdentifier: symbol): NodeTransformProvider {
     const wrapper = this.getModelMaterialsWrapper(modelIdentifier);
     return wrapper.nodeTransformProvider;
   }
 
-  getModelDefaultNodeAppearance(modelIdentifier: string): NodeAppearance {
+  getModelDefaultNodeAppearance(modelIdentifier: symbol): NodeAppearance {
     const wrapper = this.getModelMaterialsWrapper(modelIdentifier);
     return wrapper.nodeAppearanceTextureBuilder.getDefaultAppearance();
   }
 
-  getModelClippingPlanes(modelIdentifier: string): THREE.Plane[] {
+  getModelClippingPlanes(modelIdentifier: symbol): THREE.Plane[] {
     const materialWrapper = this.materialsMap.get(modelIdentifier);
     if (materialWrapper === undefined) {
       throw new Error(
-        `Materials for model ${modelIdentifier} has not been added, call ${this.addModelMaterials.name} first`
+        `Materials for model ${String(modelIdentifier)} has not been added, call ${this.addModelMaterials.name} first`
       );
     }
 
     return materialWrapper.perModelClippingPlanes;
   }
 
-  setModelClippingPlanes(modelIdentifier: string, clippingPlanes: THREE.Plane[]): void {
+  setModelClippingPlanes(modelIdentifier: symbol, clippingPlanes: THREE.Plane[]): void {
     const materialWrapper = this.materialsMap.get(modelIdentifier);
     if (materialWrapper === undefined) {
       throw new Error(
-        `Materials for model ${modelIdentifier} has not been added, call ${this.addModelMaterials.name} first`
+        `Materials for model ${String(modelIdentifier)} has not been added, call ${this.addModelMaterials.name} first`
       );
     }
 
@@ -224,28 +224,28 @@ export class CadMaterialManager {
     this.triggerMaterialsChanged();
   }
 
-  setModelDefaultNodeAppearance(modelIdentifier: string, defaultAppearance: NodeAppearance): void {
+  setModelDefaultNodeAppearance(modelIdentifier: symbol, defaultAppearance: NodeAppearance): void {
     const wrapper = this.getModelMaterialsWrapper(modelIdentifier);
     wrapper.nodeAppearanceTextureBuilder.setDefaultAppearance(defaultAppearance);
     this.updateMaterials(modelIdentifier);
   }
 
-  getModelBackTreeIndices(modelIdentifier: string): IndexSet {
+  getModelBackTreeIndices(modelIdentifier: symbol): IndexSet {
     const wrapper = this.getModelMaterialsWrapper(modelIdentifier);
     return wrapper.nodeAppearanceTextureBuilder.regularNodeTreeIndices;
   }
 
-  getModelInFrontTreeIndices(modelIdentifier: string): IndexSet {
+  getModelInFrontTreeIndices(modelIdentifier: symbol): IndexSet {
     const wrapper = this.getModelMaterialsWrapper(modelIdentifier);
     return wrapper.nodeAppearanceTextureBuilder.infrontNodeTreeIndices;
   }
 
-  getModelGhostedTreeIndices(modelIdentifier: string): IndexSet {
+  getModelGhostedTreeIndices(modelIdentifier: symbol): IndexSet {
     const wrapper = this.getModelMaterialsWrapper(modelIdentifier);
     return wrapper.nodeAppearanceTextureBuilder.ghostedNodeTreeIndices;
   }
 
-  getModelVisibleTreeIndices(modelIdentifier: string): IndexSet {
+  getModelVisibleTreeIndices(modelIdentifier: symbol): IndexSet {
     const wrapper = this.getModelMaterialsWrapper(modelIdentifier);
     return wrapper.nodeAppearanceTextureBuilder.visibleNodeTreeIndices;
   }
@@ -271,11 +271,11 @@ export class CadMaterialManager {
     }
   }
 
-  private updateClippingPlanesForModel(modelIdentifier: string) {
+  private updateClippingPlanesForModel(modelIdentifier: symbol) {
     const materialWrapper = this.materialsMap.get(modelIdentifier);
     if (materialWrapper === undefined) {
       throw new Error(
-        `Materials for model ${modelIdentifier} has not been added, call ${this.addModelMaterials.name} first`
+        `Materials for model ${String(modelIdentifier)} has not been added, call ${this.addModelMaterials.name} first`
       );
     }
 
@@ -297,7 +297,7 @@ export class CadMaterialManager {
     });
   }
 
-  private updateMaterials(modelIdentifier: string) {
+  private updateMaterials(modelIdentifier: symbol) {
     const wrapper = this.getModelMaterialsWrapper(modelIdentifier);
     if (wrapper.nodeAppearanceTextureBuilder.needsUpdate) {
       const { nodeAppearanceTextureBuilder } = wrapper;
@@ -306,7 +306,7 @@ export class CadMaterialManager {
     this.triggerMaterialsChanged();
   }
 
-  private updateTransforms(modelIdentifier: string) {
+  private updateTransforms(modelIdentifier: symbol) {
     const wrapper = this.getModelMaterialsWrapper(modelIdentifier);
     if (wrapper.nodeTransformTextureBuilder.needsUpdate) {
       const { nodeTransformTextureBuilder, materials } = wrapper;
@@ -325,12 +325,12 @@ export class CadMaterialManager {
     this.triggerMaterialsChanged();
   }
 
-  private getModelMaterialsWrapper(modelIdentifier: string): MaterialsWrapper {
+  private getModelMaterialsWrapper(modelIdentifier: symbol): MaterialsWrapper {
     const wrapper = this.materialsMap.get(modelIdentifier);
     if (wrapper === undefined) {
       const errorOptions: ErrorOptions = { cause: 'InvalidModel' };
       throw new Error(
-        `Model ${modelIdentifier} has not been added to or no longer exists in CadMaterialManager`,
+        `Model ${String(modelIdentifier)} has not been added to or no longer exists in CadMaterialManager`,
         errorOptions
       );
     }
@@ -348,7 +348,7 @@ export class CadMaterialManager {
     this._events.materialsChanged.fire();
   }
 
-  private initializeDefinesAndUniforms(modelIdentifier: string, material: THREE.RawShaderMaterial) {
+  private initializeDefinesAndUniforms(modelIdentifier: symbol, material: THREE.RawShaderMaterial) {
     const materialData = this.materialsMap.get(modelIdentifier);
 
     assert(materialData !== undefined);

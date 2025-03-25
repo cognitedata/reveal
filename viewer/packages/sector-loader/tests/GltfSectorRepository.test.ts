@@ -19,16 +19,16 @@ describe(GltfSectorRepository.name, () => {
   let sectorRepository: GltfSectorRepository;
   let wantedSectorMock: IMock<WantedSector>;
 
-  const modelIdentifier = 'some_model_identifier';
-
   beforeEach(() => {
     binaryFileProvider = createBinaryFileProviderMock();
 
     const materialManager = new CadMaterialManager();
-    materialManager.addModelMaterials(modelIdentifier, 1);
+
+    wantedSectorMock = createWantedSectorMock();
+
+    materialManager.addModelMaterials(wantedSectorMock.object().modelIdentifier.revealInternalId, 1);
 
     sectorRepository = new GltfSectorRepository(binaryFileProvider.object(), materialManager);
-    wantedSectorMock = createWantedSectorMock();
   });
 
   test('loadSector returns sector metadata with right id and modelidentifier', async () => {

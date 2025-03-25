@@ -21,7 +21,7 @@ export class CadManager {
   private readonly _cadModelFactory: CadModelFactory;
   private readonly _cadModelUpdateHandler: CadModelUpdateHandler;
 
-  private readonly _cadModelMap: Map<string, CadNode> = new Map();
+  private readonly _cadModelMap: Map<symbol, CadNode> = new Map();
   private readonly _subscription: Subscription = new Subscription();
   private _compatibleFileFormat:
     | {
@@ -68,7 +68,7 @@ export class CadManager {
     this._materialManager.on('materialsChanged', this._materialsChangedListener);
 
     const consumeNextSector = (sector: ConsumedSector) => {
-      const cadModel = this._cadModelMap.get(sector.modelIdentifier);
+      const cadModel = this._cadModelMap.get(sector.modelIdentifier.revealInternalId);
       if (!cadModel) {
         // Model has been removed - results can come in for a period just after removal
         return;
@@ -207,7 +207,7 @@ export class CadManager {
 
   removeModel(model: CadNode): void {
     if (!this._cadModelMap.delete(model.cadModelIdentifier)) {
-      throw new Error(`Could not remove model ${model.cadModelIdentifier} because it's not added`);
+      throw new Error(`Could not remove model ${String(model.cadModelIdentifier)} because it's not added`);
     }
     model.removeEventListener('update', this._markNeedsRedrawBound);
     this._cadModelUpdateHandler.removeModel(model);

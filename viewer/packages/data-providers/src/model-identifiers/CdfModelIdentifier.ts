@@ -24,7 +24,7 @@ export class CdfModelIdentifier implements ModelIdentifier {
   }
 
   /**
-   * Returns a identifier in a serialized form, which uniquely identifies
+   * Returns an identifier in a serialized form, which uniquely identifies
    * the model in CDF
    */
   public sourceModelIdentifier(): string {

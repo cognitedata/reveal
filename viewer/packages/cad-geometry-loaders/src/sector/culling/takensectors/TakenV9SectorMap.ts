@@ -10,11 +10,12 @@ import { traverseDepthFirst } from '@reveal/utilities';
 
 import assert from 'assert';
 import type { Box3 } from 'three';
+import { ModelIdentifier } from '@reveal/data-providers';
 
 export class TakenV9SectorMap extends TakenSectorMapBase {
   private readonly determineSectorCost: DetermineSectorCostDelegate<SectorMetadata>;
   private readonly _totalCost: SectorCost = { downloadSize: 0, drawCalls: 0, renderCost: 0 };
-  private readonly _models = new Map<string, { modelMetadata: CadModelMetadata; sectorIds: Map<number, number> }>();
+  private readonly _models = new Map<symbol, { modelMetadata: CadModelMetadata; sectorIds: Map<number, number> }>();
 
   get totalCost(): SectorCost {
     return { ...this._totalCost };
@@ -35,15 +36,15 @@ export class TakenV9SectorMap extends TakenSectorMapBase {
       `Only sector version 9 is supported, but got ${modelMetadata.scene.version}`
     );
 
-    this._models.set(modelMetadata.modelIdentifier, {
+    this._models.set(modelMetadata.modelIdentifier.revealInternalId, {
       modelMetadata: modelMetadata,
       sectorIds: new Map<number, number>()
     });
   }
 
   markSectorDetailed(model: CadModelMetadata, sectorId: number, priority: number): void {
-    const entry = this._models.get(model.modelIdentifier);
-    assert(!!entry, `Could not find sector tree for ${model.modelIdentifier}`);
+    const entry = this._models.get(model.modelIdentifier.revealInternalId);
+    assert(!!entry, `Could not find sector tree for ${model.modelIdentifier.sourceModelIdentifier()}`);
 
     const { sectorIds } = entry!;
     const existingPriority = sectorIds.get(sectorId);
@@ -68,14 +69,14 @@ export class TakenV9SectorMap extends TakenSectorMapBase {
     const allWanted = new Array<PrioritizedWantedSector>();
 
     // Collect sectors
-    for (const [modelIdentifier, sectorsContainer] of this._models) {
+    for (const [_modelSymbol, sectorsContainer] of this._models) {
       const { modelMetadata: model, sectorIds } = sectorsContainer;
 
       const allSectorsInModel = new Map<number, PrioritizedWantedSector>();
       traverseDepthFirst(model.scene.root, sector => {
         allSectorsInModel.set(
           sector.id,
-          toWantedSector(modelIdentifier, model, sector, LevelOfDetail.Discarded, -1, model.geometryClipBox)
+          toWantedSector(model.modelIdentifier, model, sector, LevelOfDetail.Discarded, -1, model.geometryClipBox)
         );
         return true;
       });
@@ -83,7 +84,7 @@ export class TakenV9SectorMap extends TakenSectorMapBase {
       for (const [sectorId, priority] of sectorIds) {
         const sector = model.scene.getSectorById(sectorId)!;
         const wantedSector = toWantedSector(
-          modelIdentifier,
+          model.modelIdentifier,
           model,
           sector,
           LevelOfDetail.Detailed,
@@ -114,7 +115,7 @@ export class TakenV9SectorMap extends TakenSectorMapBase {
 }
 
 function toWantedSector(
-  modelIdentifier: string,
+  modelIdentifier: ModelIdentifier,
   model: CadModelMetadata,
   sector: SectorMetadata,
   levelOfDetail: LevelOfDetail,

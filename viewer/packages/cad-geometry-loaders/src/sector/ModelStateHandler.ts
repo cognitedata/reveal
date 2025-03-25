@@ -14,9 +14,9 @@ export class ModelStateHandler {
     this._sceneModelState = {} as SceneModelState;
   }
 
-  hasStateChanged(modelIdentifier: string, sectorId: number, levelOfDetail: LevelOfDetail): boolean {
+  hasStateChanged(modelIdentifier: symbol, sectorId: number, levelOfDetail: LevelOfDetail): boolean {
     const modelState = this._sceneModelState[modelIdentifier];
-    assert(modelState !== undefined, `Model ${modelIdentifier} has not been added`);
+    assert(modelState !== undefined, `Model ${String(modelIdentifier)} has not been added`);
     const sectorLevelOfDetail = modelState[sectorId];
     if (sectorLevelOfDetail !== undefined) {
       return sectorLevelOfDetail !== levelOfDetail;
@@ -25,17 +25,17 @@ export class ModelStateHandler {
     }
   }
 
-  addModel(modelIdentifier: string): void {
-    assert(this._sceneModelState[modelIdentifier] === undefined, `Model ${modelIdentifier} is already added`);
+  addModel(modelIdentifier: symbol): void {
+    assert(this._sceneModelState[modelIdentifier] === undefined, `Model ${String(modelIdentifier)} is already added`);
     this._sceneModelState[modelIdentifier] = {};
   }
 
-  removeModel(modelIdentifier: string): void {
-    assert(this._sceneModelState[modelIdentifier] !== undefined, `Model ${modelIdentifier} is not added`);
+  removeModel(modelIdentifier: symbol): void {
+    assert(this._sceneModelState[modelIdentifier] !== undefined, `Model ${String(modelIdentifier)} is not added`);
     delete this._sceneModelState[modelIdentifier];
   }
 
-  updateState(modelIdentifier: string, sectorId: number, levelOfDetail: LevelOfDetail): void {
+  updateState(modelIdentifier: symbol, sectorId: number, levelOfDetail: LevelOfDetail): void {
     if (this._sceneModelState[modelIdentifier] === undefined) {
       // Received sector from model but the model is not added - happens when
       // sectors from newly removed model are loaded

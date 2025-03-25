@@ -51,10 +51,10 @@ export class CadNode extends Object3D<Object3DEventMap & { update: undefined }> 
     this._materialManager = materialManager;
     this._sectorRepository = sectorRepository;
     this.treeIndexToSectorsMap = new TreeIndexToSectorsMap(model.scene.maxTreeIndex);
-    const back = this._materialManager.getModelBackTreeIndices(model.modelIdentifier);
-    const ghost = this._materialManager.getModelGhostedTreeIndices(model.modelIdentifier);
-    const inFront = this._materialManager.getModelInFrontTreeIndices(model.modelIdentifier);
-    const visible = this._materialManager.getModelVisibleTreeIndices(model.modelIdentifier);
+    const back = this._materialManager.getModelBackTreeIndices(model.modelIdentifier.revealInternalId);
+    const ghost = this._materialManager.getModelGhostedTreeIndices(model.modelIdentifier.revealInternalId);
+    const inFront = this._materialManager.getModelInFrontTreeIndices(model.modelIdentifier.revealInternalId);
+    const visible = this._materialManager.getModelVisibleTreeIndices(model.modelIdentifier.revealInternalId);
 
     this._styledTreeIndexSets = {
       back,
@@ -66,7 +66,7 @@ export class CadNode extends Object3D<Object3DEventMap & { update: undefined }> 
     this._batchedGeometryMeshGroup = new Group();
     this._batchedGeometryMeshGroup.name = 'Batched Geometry';
 
-    const materials = materialManager.getModelMaterials(model.modelIdentifier);
+    const materials = materialManager.getModelMaterials(model.modelIdentifier.revealInternalId);
     this._geometryBatchingManager = new MultiBufferBatchingManager(
       this._batchedGeometryMeshGroup,
       materials,
@@ -103,36 +103,41 @@ export class CadNode extends Object3D<Object3DEventMap & { update: undefined }> 
   }
 
   get nodeTransformProvider(): NodeTransformProvider {
-    return this._materialManager.getModelNodeTransformProvider(this._cadModelMetadata.modelIdentifier);
+    return this._materialManager.getModelNodeTransformProvider(this._cadModelMetadata.modelIdentifier.revealInternalId);
   }
 
   get nodeAppearanceProvider(): NodeAppearanceProvider {
-    return this._materialManager.getModelNodeAppearanceProvider(this._cadModelMetadata.modelIdentifier);
+    return this._materialManager.getModelNodeAppearanceProvider(
+      this._cadModelMetadata.modelIdentifier.revealInternalId
+    );
   }
 
   get defaultNodeAppearance(): NodeAppearance {
-    return this._materialManager.getModelDefaultNodeAppearance(this._cadModelMetadata.modelIdentifier);
+    return this._materialManager.getModelDefaultNodeAppearance(this._cadModelMetadata.modelIdentifier.revealInternalId);
   }
 
   set defaultNodeAppearance(appearance: NodeAppearance) {
-    this._materialManager.setModelDefaultNodeAppearance(this._cadModelMetadata.modelIdentifier, appearance);
+    this._materialManager.setModelDefaultNodeAppearance(
+      this._cadModelMetadata.modelIdentifier.revealInternalId,
+      appearance
+    );
     this.setModelRenderLayers();
   }
 
   get clippingPlanes(): Plane[] {
-    return this._materialManager.getModelClippingPlanes(this._cadModelMetadata.modelIdentifier);
+    return this._materialManager.getModelClippingPlanes(this._cadModelMetadata.modelIdentifier.revealInternalId);
   }
 
   set clippingPlanes(planes: Plane[]) {
-    this._materialManager.setModelClippingPlanes(this._cadModelMetadata.modelIdentifier, planes);
+    this._materialManager.setModelClippingPlanes(this._cadModelMetadata.modelIdentifier.revealInternalId, planes);
   }
 
   get cadModelMetadata(): CadModelMetadata {
     return this._cadModelMetadata;
   }
 
-  get cadModelIdentifier(): string {
-    return this._cadModelMetadata.modelIdentifier;
+  get cadModelIdentifier(): symbol {
+    return this._cadModelMetadata.modelIdentifier.revealInternalId;
   }
 
   get sectorScene(): SectorScene {
@@ -211,7 +216,7 @@ export class CadNode extends Object3D<Object3DEventMap & { update: undefined }> 
   public dispose(): void {
     this.nodeAppearanceProvider.dispose();
     this.materialManager.off('materialsChanged', this._setModelRenderLayers);
-    this._materialManager.removeModelMaterials(this._cadModelMetadata.modelIdentifier);
+    this._materialManager.removeModelMaterials(this._cadModelMetadata.modelIdentifier.revealInternalId);
     this._geometryBatchingManager?.dispose();
     this._rootSector?.dereferenceAllNodes();
     this._rootSector?.clear();

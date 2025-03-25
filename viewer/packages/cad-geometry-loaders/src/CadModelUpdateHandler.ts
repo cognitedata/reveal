@@ -157,13 +157,13 @@ export class CadModelUpdateHandler {
   }
 
   addModel(model: CadNode): void {
-    this._modelStateHandler.addModel(model.cadModelMetadata.modelIdentifier);
+    this._modelStateHandler.addModel(model.cadModelMetadata.modelIdentifier.revealInternalId);
     this._modelSubject.next({ model, operation: 'add' });
     model.nodeAppearanceProvider.on('prioritizedAreasChanged', () => this.updatePrioritizedAreas());
   }
 
   removeModel(model: CadNode): void {
-    this._modelStateHandler.removeModel(model.cadModelMetadata.modelIdentifier);
+    this._modelStateHandler.removeModel(model.cadModelMetadata.modelIdentifier.revealInternalId);
     this._modelSubject.next({ model, operation: 'remove' });
   }
 
@@ -200,7 +200,11 @@ export class CadModelUpdateHandler {
             array.push(model);
             return array;
           case 'remove':
-            return array.filter(x => x.cadModelMetadata.modelIdentifier !== model.cadModelMetadata.modelIdentifier);
+            return array.filter(
+              x =>
+                x.cadModelMetadata.modelIdentifier.revealInternalId !==
+                model.cadModelMetadata.modelIdentifier.revealInternalId
+            );
           default:
             assertNever(operation);
         }
