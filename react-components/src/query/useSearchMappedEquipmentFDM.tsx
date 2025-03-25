@@ -128,8 +128,7 @@ const searchNodesWithViewsAndModels = async (
       instances: result.instances
     });
   }
-  const mappedInstances = await fdmDataProvider.filterNodesByMappedTo3d(searchResults, models, spacesToSearch);
-  return mappedInstances;
+  return await fdmDataProvider.filterNodesByMappedTo3d(searchResults, models, spacesToSearch);
 };
 
 export const useAllMappedEquipmentFDM = (
