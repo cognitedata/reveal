@@ -11,7 +11,6 @@ import {
   type COGNITE_IMAGE_360_SOURCE,
   type COGNITE_POINT_CLOUD_VOLUME_SOURCE,
   COGNITE_POINT_CLOUD_VOLUME_VIEW_VERSION_KEY,
-  type CogniteAssetProperties,
   CORE_DM_SPACE
 } from './dataModels';
 import { type DmsUniqueIdentifier, type FdmSDK } from '../FdmSDK';
@@ -23,14 +22,14 @@ import { type QueryResult } from '../utils/queryNodesAndEdges';
 import { createCheck3dConnectedEquipmentQuery } from './check3dConnectedEquipmentQuery';
 import { restrictToDmsId } from '../../utilities/restrictToDmsId';
 import { isDefined } from '../../utilities/isDefined';
-import { isObject3DIdentifier } from '../../utilities/instanceIds';
+import { isDmsInstance } from '../../utilities/instanceIds';
 
 export async function filterNodesByMappedTo3d(
   nodes: InstancesWithView[],
   revisionRefs: DmsUniqueIdentifier[],
   _spacesToSearch: string[],
   fdmSdk: FdmSDK
-): Promise<Array<InstancesWithView<CogniteAssetProperties>>> {
+): Promise<InstancesWithView[]> {
   if (nodes.length === 0 || revisionRefs.length === 0) {
     return [];
   }
@@ -38,8 +37,6 @@ export async function filterNodesByMappedTo3d(
   const connectionData = await fetchConnectionData(nodes, revisionRefs, fdmSdk);
 
   const object3dKeys: Set<FdmKey> = createRelevantObject3dKeys(connectionData);
-
-  const viewsData = await fdmSdk.getViewsByIds(nodes.map((node) => node.view));
 
   const result = nodes.map(async (viewWithNodes) => {
     const spaceFromView = viewWithNodes.view.space;
@@ -49,11 +46,11 @@ export async function filterNodesByMappedTo3d(
     return {
       view: viewWithNodes.view,
       instances: viewWithNodes.instances.filter((instance) => {
-        if (!isObject3DIdentifier(instance.properties[spaceFromView]?.[assetExternalIdWithVersion]?.object3D)) {
+        if (!isDmsInstance(instance.properties[spaceFromView]?.[assetExternalIdWithVersion]?.object3D)) {
           return false;
         }
         const object3dId =
-          instance.properties[spaceFromView][assetExternalIdWithVersion]?.object3D as DmsUniqueIdentifier;
+          instance.properties[spaceFromView][assetExternalIdWithVersion]?.object3D;
         if (!isString(object3dId.externalId) || !isString(object3dId.space)) {
           return false;
         }
@@ -64,7 +61,7 @@ export async function filterNodesByMappedTo3d(
 
   const data = await Promise.all(result);
 
-  return data.filter(isDefined) as Array<InstancesWithView<CogniteAssetProperties>>;
+  return data.filter(isDefined);
 }
 
 function createRelevantObject3dKeys(
