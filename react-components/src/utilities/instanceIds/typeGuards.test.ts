@@ -4,7 +4,6 @@ import {
   isExternalId,
   isInternalId,
   isDmsInstance,
-  isObject3DIdentifier,
   type AnnotationAssetRef
 } from '../../../src/utilities/instanceIds/typeGuards';
 import { type IdEither } from '@cognite/sdk';
