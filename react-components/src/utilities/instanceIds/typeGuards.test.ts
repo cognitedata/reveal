@@ -69,8 +69,13 @@ describe('typeGuards', () => {
       expect(isDmsInstance(instance)).toBe(true);
     });
 
-    it('should return false for an ExternalId', () => {
-      const instance: InstanceReference = { externalId: 'external-id' };
+    it('should return false for an object without externalId', () => {
+      const instance = { space: 'space' };
+      expect(isDmsInstance(instance)).toBe(false);
+    });
+
+    it('should return false for an object without space', () => {
+      const instance = { externalId: 'external-id' };
       expect(isDmsInstance(instance)).toBe(false);
     });
 
@@ -78,32 +83,9 @@ describe('typeGuards', () => {
       const instance: InstanceReference = { id: 123 };
       expect(isDmsInstance(instance)).toBe(false);
     });
-  });
-
-  describe(isObject3DIdentifier.name, () => {
-    it('should return true for a valid DmsUniqueIdentifier', () => {
-      const object3dIdentifier = { externalId: 'object3d-id', space: 'space' };
-      expect(isObject3DIdentifier(object3dIdentifier)).toBe(true);
-    });
-
-    it('should return false for an object without externalId', () => {
-      const object3dIdentifier = { space: 'space' };
-      expect(isObject3DIdentifier(object3dIdentifier)).toBe(false);
-    });
-
-    it('should return false for an object without space', () => {
-      const object3dIdentifier = { externalId: 'object3d-id' };
-      expect(isObject3DIdentifier(object3dIdentifier)).toBe(false);
-    });
-
-    it('should return false for a non-object value', () => {
-      const object3dIdentifier = 'invalid-value';
-      expect(isObject3DIdentifier(object3dIdentifier)).toBe(false);
-    });
-
     it('should return false for null or undefined', () => {
-      expect(isObject3DIdentifier(null)).toBe(false);
-      expect(isObject3DIdentifier(undefined)).toBe(false);
+      expect(isDmsInstance(null)).toBe(false);
+      expect(isDmsInstance(undefined)).toBe(false);
     });
   });
 });
