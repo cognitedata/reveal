@@ -6,7 +6,6 @@ import { getDirectRelationProperties } from '../utils/getDirectRelationPropertie
 import {
   type Cognite3DObjectProperties,
   type COGNITE_3D_OBJECT_SOURCE,
-  COGNITE_ASSET_SOURCE,
   type COGNITE_CAD_NODE_SOURCE,
   COGNITE_CAD_NODE_VIEW_VERSION_KEY,
   type COGNITE_IMAGE_360_SOURCE,
@@ -24,6 +23,7 @@ import { type QueryResult } from '../utils/queryNodesAndEdges';
 import { createCheck3dConnectedEquipmentQuery } from './check3dConnectedEquipmentQuery';
 import { restrictToDmsId } from '../../utilities/restrictToDmsId';
 import { isDefined } from '../../utilities/isDefined';
+import { isObject3DIdentifier } from '../../utilities/instanceIds';
 
 export async function filterNodesByMappedTo3d(
   nodes: InstancesWithView[],
@@ -49,8 +49,11 @@ export async function filterNodesByMappedTo3d(
     return {
       view: viewWithNodes.view,
       instances: viewWithNodes.instances.filter((instance) => {
+        if (!isObject3DIdentifier(instance.properties[spaceFromView]?.[assetExternalIdWithVersion]?.object3D)) {
+          return false;
+        }
         const object3dId =
-          instance.properties[spaceFromView][assetExternalIdWithVersion].object3D as DmsUniqueIdentifier;
+          instance.properties[spaceFromView][assetExternalIdWithVersion]?.object3D as DmsUniqueIdentifier;
         if (!isString(object3dId.externalId) || !isString(object3dId.space)) {
           return false;
         }
