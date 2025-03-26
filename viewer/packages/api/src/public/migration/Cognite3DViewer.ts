@@ -414,8 +414,8 @@ export class Cognite3DViewer<DataSourceT extends DataSourceType = ClassicDataSou
    */
   getResolutionOptions(): ResolutionOptions {
     return {
-      maxRenderResolution: this._revealManagerHelper.revealManager.getResolutionThreshold(),
-      movingCameraResolutionFactor: this._revealManagerHelper.revealManager.getMovingCameraResolutionFactor()
+      maxRenderResolution: this.revealManager.getResolutionThreshold(),
+      movingCameraResolutionFactor: this.revealManager.getMovingCameraResolutionFactor()
     };
   }
 
@@ -426,11 +426,11 @@ export class Cognite3DViewer<DataSourceT extends DataSourceType = ClassicDataSou
    */
   setResolutionOptions(options: ResolutionOptions): void {
     if (options.maxRenderResolution) {
-      this._revealManagerHelper.revealManager.setResolutionThreshold(options.maxRenderResolution);
+      this.revealManager.setResolutionThreshold(options.maxRenderResolution);
     }
 
     if (options.movingCameraResolutionFactor) {
-      this._revealManagerHelper.revealManager.setMovingCameraResolutionFactor(options.movingCameraResolutionFactor);
+      this.revealManager.setMovingCameraResolutionFactor(options.movingCameraResolutionFactor);
     }
   }
 
