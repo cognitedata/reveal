@@ -6,6 +6,7 @@ import { type TranslationInput } from '../utilities/TranslateInput';
 import { type QualitySettings } from '../../../components/RevealToolbar/SettingsContainer/types';
 import { type DataSourceType, type Cognite3DViewer } from '@cognite/reveal';
 import { RenderTargetCommand } from '../commands/RenderTargetCommand';
+import { getQualitySettingsFromViewer } from '../utilities/rendering/getQualitySettingsFromViewer';
 
 export class SetQualityCommand extends RenderTargetCommand {
   // ==================================================
@@ -22,7 +23,7 @@ export class SetQualityCommand extends RenderTargetCommand {
 
   private get lowQualitySettings(): QualitySettings {
     if (this._lowQualitySettings === undefined) {
-      this._lowQualitySettings = getDefaultSettings(this.renderTarget.viewer);
+      this._lowQualitySettings = getQualitySettingsFromViewer(this.renderTarget.viewer);
     }
     return this._lowQualitySettings;
   }
@@ -88,17 +89,4 @@ export class SetQualityCommand extends RenderTargetCommand {
       viewer.pointCloudBudget.numberOfPoints <= settings.pointCloudBudget.numberOfPoints
     );
   }
-}
-
-function getDefaultSettings(viewer: Cognite3DViewer<DataSourceType>): QualitySettings {
-  const settings: QualitySettings = {
-    cadBudget: { ...viewer.cadBudget },
-    pointCloudBudget: { ...viewer.pointCloudBudget },
-    // This should be fetched from the viewer, but cannot for some unknown reason
-    resolutionOptions: {
-      maxRenderResolution: 1.4e6,
-      movingCameraResolutionFactor: 1
-    }
-  };
-  return settings;
 }

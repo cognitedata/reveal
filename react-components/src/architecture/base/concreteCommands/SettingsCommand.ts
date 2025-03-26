@@ -6,7 +6,6 @@ import { type TranslationInput } from '../utilities/TranslateInput';
 import { type IconName } from '../utilities/IconName';
 
 import { BaseSettingsCommand } from '../commands/BaseSettingsCommand';
-import { SetQualityCommand } from './SetQualityCommand';
 import { SetPointSizeCommand } from './pointCloud/SetPointSizeCommand';
 import { SetPointColorTypeCommand } from './pointCloud/SetPointColorTypeCommand';
 import { SetPointShapeCommand } from './pointCloud/SetPointShapeCommand';
@@ -23,6 +22,7 @@ import { SetPointsOfInterestVisibleCommand } from '../../concrete/pointsOfIntere
 import { PointsOfInterestDividerCommand } from '../../concrete/pointsOfInterest/PointsOfInterestDividerCommand';
 import { PointsOfInterestSectionCommand } from '../../concrete/pointsOfInterest/PointsOfInterestSectionCommand';
 import { SetGhostModeCommand } from './cad/SetGhostModeCommand';
+import { SetQualitySegmentedCommand } from './SetQualitySegmentsCommand/SetQualitySegmentsCommand';
 
 export class SettingsCommand extends BaseSettingsCommand {
   // ==================================================
@@ -32,7 +32,7 @@ export class SettingsCommand extends BaseSettingsCommand {
   public constructor(include360Images: boolean = true, includePois: boolean = false) {
     super();
 
-    this.add(new SetQualityCommand());
+    this.add(new SetQualitySegmentedCommand());
     this.add(new SetGhostModeCommand());
 
     if (includePois) {
