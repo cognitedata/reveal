@@ -19,7 +19,7 @@ export function isInternalId(idEither: IdEither | AnnotationAssetRef): idEither 
   return 'id' in idEither;
 }
 
-export function isDmsInstance(instance: InstanceReference | unknown): instance is DmsUniqueIdentifier {
+export function isDmsInstance(instance: unknown): instance is DmsUniqueIdentifier {
   return (
     typeof instance === "object" &&
     instance !== null &&
