@@ -1,12 +1,19 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { FdmSDK } from './FdmSDK';
-import { sdkMock } from '../../tests/tests-utilities/fixtures/sdk';
-import { type QueryRequest } from '@cognite/sdk';
-import { queryNodesAndEdges } from './utils/queryNodesAndEdges';
+import { type CogniteClient, type QueryRequest } from '@cognite/sdk';
+import { Mock } from 'moq.ts';
 
-vi.mock('./utils/queryNodesAndEdges');
 describe('FdmSDK.queryAllNodesAndEdges', () => {
-  const fdmSdkMock = new FdmSDK(sdkMock);
+  const queryNodesAndEdgesMock = vi.fn();
+  const sdkMock = new Mock<CogniteClient>()
+    .setup((p) => p.getBaseUrl())
+    .returns('https://api.cognitedata.com')
+    .setup((p) => p.project)
+    .returns('test-project')
+    .setup((sdk) => sdk.instances.query)
+    .returns(queryNodesAndEdgesMock);
+
+  const fdmSdkMock = new FdmSDK(sdkMock.object());
 
   const mockQuery: QueryRequest = {
     with: {
@@ -54,7 +61,7 @@ describe('FdmSDK.queryAllNodesAndEdges', () => {
   });
 
   it('should return results when there is no nextCursor', async () => {
-    vi.mocked(queryNodesAndEdges).mockResolvedValueOnce({
+    queryNodesAndEdgesMock.mockResolvedValueOnce({
       items: { cad_assets: [mockCadAssets[0]] },
       nextCursor: undefined
     });
@@ -62,11 +69,12 @@ describe('FdmSDK.queryAllNodesAndEdges', () => {
     const result = await fdmSdkMock.queryAllNodesAndEdges(mockQuery);
 
     expect(result.items).toEqual({ cad_assets: [mockCadAssets[0]] });
-    expect(queryNodesAndEdges).toHaveBeenCalledTimes(1);
+
+    expect(queryNodesAndEdgesMock).toHaveBeenCalledTimes(1);
   });
 
   it('should handle multiple pages of results with nextCursor', async () => {
-    vi.mocked(queryNodesAndEdges)
+    queryNodesAndEdgesMock
       .mockResolvedValueOnce({
         items: { cad_assets: [mockCadAssets[0]] },
         nextCursor: { cad_assets: 'cursor1' }
@@ -81,13 +89,13 @@ describe('FdmSDK.queryAllNodesAndEdges', () => {
     expect(result.items).toEqual({
       cad_assets: mockCadAssets
     });
-    expect(queryNodesAndEdges).toHaveBeenCalledTimes(2);
+    expect(queryNodesAndEdgesMock).toHaveBeenCalledTimes(2);
   });
 
   it('should handle initialCursorTypes filtering nextCursor', async () => {
     const initialCursorTypes = ['cad_assets'];
 
-    vi.mocked(queryNodesAndEdges)
+    queryNodesAndEdgesMock
       .mockResolvedValueOnce({
         items: { cad_assets: [mockCadAssets[0]] },
         nextCursor: { cad_assets: 'cursor1', cad_nodes: 'cursor2' }
@@ -102,11 +110,11 @@ describe('FdmSDK.queryAllNodesAndEdges', () => {
     expect(result.items).toEqual({
       cad_assets: mockCadAssets
     });
-    expect(queryNodesAndEdges).toHaveBeenCalledTimes(2);
+    expect(queryNodesAndEdgesMock).toHaveBeenCalledTimes(2);
   });
 
   it('should handle empty nextCursor and stop querying', async () => {
-    vi.mocked(queryNodesAndEdges).mockResolvedValueOnce({
+    queryNodesAndEdgesMock.mockResolvedValueOnce({
       items: { cad_assets: [mockCadAssets[0]] },
       nextCursor: {}
     });
@@ -114,13 +122,13 @@ describe('FdmSDK.queryAllNodesAndEdges', () => {
     const result = await fdmSdkMock.queryAllNodesAndEdges(mockQuery);
 
     expect(result.items).toEqual({ cad_assets: [mockCadAssets[0]] });
-    expect(queryNodesAndEdges).toHaveBeenCalledTimes(1);
+    expect(queryNodesAndEdgesMock).toHaveBeenCalledTimes(1);
   });
 
   it('should handle errors during querying', async () => {
-    vi.mocked(queryNodesAndEdges).mockRejectedValueOnce(new Error('Query failed'));
+    queryNodesAndEdgesMock.mockRejectedValueOnce(new Error('Query failed'));
 
     await expect(fdmSdkMock.queryAllNodesAndEdges(mockQuery)).rejects.toThrow('Query failed');
-    expect(queryNodesAndEdges).toHaveBeenCalledTimes(1);
+    expect(queryNodesAndEdgesMock).toHaveBeenCalledTimes(1);
   });
 });
