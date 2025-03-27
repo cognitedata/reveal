@@ -12,11 +12,12 @@ import {
 import { Mock, It } from 'moq.ts';
 import { type DmsUniqueIdentifier, type FdmSDK } from '../FdmSDK';
 import { COGNITE_ASSET_SOURCE, COGNITE_CAD_NODE_SOURCE } from './dataModels';
-import { simpleSourcesFixtures } from '../../../tests/tests-utilities/fixtures/dm/sources';
+import { simpleSourcesFixtures } from '#test-utils/fixtures/dm/sources';
 import {
   cadNodesFixtures,
   object3dIdentifierFixture
 } from '../../../tests/tests-utilities/fixtures/dm/nodeItems';
+import { type QueryResult, type SelectSourceWithParams } from '../utils/queryNodesAndEdges';
 
 const assetNode0 = {
   externalId: 'asset0',
@@ -123,11 +124,11 @@ describe(listMappedFdmNodes.name, async () => {
           }
         ]
       }
-    } as any;
+    } as unknown as QueryResult<any, SelectSourceWithParams>;
 
     const fdmSdkMock = new Mock<FdmSDK>()
       .setup(async (p) => await p.queryAllNodesAndEdges(It.IsAny(), It.IsAny()))
-      .returns(queryReturnMock)
+      .returns(Promise.resolve(queryReturnMock))
       .object();
 
     const result = await queryCadAssets(

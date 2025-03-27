@@ -12,6 +12,7 @@ import {
 import { COGNITE_CAD_NODE_SOURCE, type COGNITE_ASSET_SOURCE, type CogniteAssetProperties } from './dataModels';
 import { cadAssetQueryPayload, image360AssetsQueryPayload, pointCloudsAssetsQueryPayload } from './cadAndPointCloudAndImage360AssetQuery';
 import { uniqBy } from 'lodash';
+import { isDmsInstance } from '../../utilities/instanceIds';
 
 export async function listAllMappedFdmNodes(
   revisionRefs: DmsUniqueIdentifier[],
@@ -136,7 +137,7 @@ export function filterCadAssetsBasedOnObject3DFromCadNodes(
       sourcesToSearch.forEach((source) => {
 
         const sourceProperty = asset.properties[source.space][`${source.externalId}/${source.version}`];
-        const assetObject3D = sourceProperty?.object3D as DmsUniqueIdentifier;
+        const assetObject3D = isDmsInstance(sourceProperty?.object3D) ? sourceProperty?.object3D : undefined;
 
         if (cadNodeObject3D && assetObject3D && cadNodeObject3D.externalId === assetObject3D.externalId && cadNodeObject3D.space === assetObject3D.space) {
           filteredAssets.push(asset);
@@ -145,6 +146,5 @@ export function filterCadAssetsBasedOnObject3DFromCadNodes(
     });
   });
 
-  const uniqAssets = uniqBy(filteredAssets, (asset) => `${asset.space}-${asset.externalId}` );
-  return uniqAssets;
+  return uniqBy(filteredAssets, (asset) => `${asset.space}-${asset.externalId}` );;
 }
