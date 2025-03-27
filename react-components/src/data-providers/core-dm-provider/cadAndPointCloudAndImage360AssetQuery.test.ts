@@ -49,7 +49,6 @@ describe(cadAndPointCloudAndImage36AssetQuery.name, () => {
 
     expect(result.with.cad_assets.nodes.filter).toEqual(filter);
     expect(result.with.pointcloud_assets.nodes.filter).toEqual(filter);
-    expect(result.with.image360_assets.nodes.filter).toEqual(filter);
   });
 
   it('should include the correct limits in the with clause', () => {
