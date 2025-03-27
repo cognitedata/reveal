@@ -1,4 +1,4 @@
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, assertType } from 'vitest';
 import {
   cadAndPointCloudAndImage36AssetQuery,
   cadAssetQueryPayload,
@@ -8,23 +8,26 @@ import {
 import {
   type Source,
   type InstanceFilter,
-  type DmsUniqueIdentifier
+  type DmsUniqueIdentifier,
+  type Query
 } from '../../data-providers/FdmSDK';
 import { cogniteAssetSourceWithProperties } from './cogniteAssetSourceWithProperties';
+import { expectDmsQueryToBeValid } from '#test-utils/dms/expectDmsQueryToBeValid';
+import { expectWithExpressionClausesToHaveLimit } from '#test-utils/dms/expectWithExpressionClausesToHaveLimit';
+
+const sourcesToSearch: Source[] = [
+  { externalId: 'externalId1', type: 'view', version: 'v1', space: 'space1' },
+  { externalId: 'externalId2', type: 'view', version: 'v1', space: 'space1' }
+];
+const revisionRefs: DmsUniqueIdentifier[] = [
+  { externalId: 'revisionExternalId1', space: 'space1' },
+  { externalId: 'revisionExternalId2', space: 'space1' }
+];
+const filter: InstanceFilter = { equals: { property: ['key'], value: 'value' } };
+const limit = 10;
 
 describe(cadAndPointCloudAndImage36AssetQuery.name, () => {
-  const sourcesToSearch: Source[] = [
-    { externalId: 'externalId1', type: 'view', version: 'v1', space: 'space1' },
-    { externalId: 'externalId2', type: 'view', version: 'v1', space: 'space1' }
-  ];
-  const revisionRefs: DmsUniqueIdentifier[] = [
-    { externalId: 'revisionExternalId1', space: 'space1' },
-    { externalId: 'revisionExternalId2', space: 'space1' }
-  ];
-  const filter: InstanceFilter = { equals: { property: ['key'], value: 'value' } };
-  const limit = 10;
-
-  it('should generate a query for CAD, PointCloud, and Image360 assets', () => {
+  it('should generate a valid query for CAD, PointCloud, and Image360 assets ', () => {
     const result = cadAndPointCloudAndImage36AssetQuery(
       sourcesToSearch,
       revisionRefs,
@@ -32,13 +35,31 @@ describe(cadAndPointCloudAndImage36AssetQuery.name, () => {
       limit
     );
 
-    expect(result).toBeDefined();
-    expect(result.with).toHaveProperty('cad_nodes');
-    expect(result.with).toHaveProperty('pointcloud_volumes');
-    expect(result.with).toHaveProperty('image360_collections');
-    expect(result.select).toHaveProperty('cad_assets');
-    expect(result.select).toHaveProperty('pointcloud_assets');
-    expect(result.select).toHaveProperty('image360_assets');
+    assertType<Query>(result);
+    expectDmsQueryToBeValid(result);
+  });
+
+  it('should include the correct filters in the with clause', () => {
+    const result = cadAndPointCloudAndImage36AssetQuery(
+      sourcesToSearch,
+      revisionRefs,
+      filter,
+      limit
+    );
+
+    expect(result.with.cad_assets.nodes.filter).toEqual(filter);
+    expect(result.with.pointcloud_assets.nodes.filter).toEqual(filter);
+  });
+
+  it('should include the correct limits in the with clause', () => {
+    const result = cadAndPointCloudAndImage36AssetQuery(
+      sourcesToSearch,
+      revisionRefs,
+      filter,
+      limit
+    );
+
+    expectWithExpressionClausesToHaveLimit(result, limit);
   });
 
   it('should include the correct sources in the select clause', () => {
@@ -71,20 +92,16 @@ describe(cadAndPointCloudAndImage36AssetQuery.name, () => {
       ])
     );
   });
+});
 
-  it('should generate a query for CAD assets', () => {
+describe(cadAssetQueryPayload.name, () => {
+  it('cadAssetQueryPayload should generate a query for CAD assets', () => {
     const result = cadAssetQueryPayload(sourcesToSearch, filter, limit);
 
-    expect(result).toBeDefined();
-    expect(result.with).toHaveProperty('cad_nodes');
-    expect(result.with).toHaveProperty('cad_object_3d');
-    expect(result.with).toHaveProperty('cad_assets');
-    expect(result.select).toHaveProperty('cad_nodes');
-    expect(result.select).toHaveProperty('cad_assets');
+    expectDmsQueryToBeValid(result);
+    expectWithExpressionClausesToHaveLimit(result, limit);
+
     expect(result.with.cad_assets.nodes.filter).toEqual(filter);
-    expect(result.with.cad_nodes.limit).toBe(limit);
-    expect(result.with.cad_object_3d.limit).toBe(limit);
-    expect(result.with.cad_assets.limit).toBe(limit);
     expect(result.select.cad_assets.sources).toEqual(
       expect.arrayContaining([
         ...cogniteAssetSourceWithProperties,
@@ -93,17 +110,16 @@ describe(cadAndPointCloudAndImage36AssetQuery.name, () => {
       ])
     );
   });
+});
 
-  it('should generate a query for PointCloud assets', () => {
+describe(pointCloudsAssetsQueryPayload.name, () => {
+  it('pointCloudAssetsQueryPayload should generate a query for PointCloud assets', () => {
     const result = pointCloudsAssetsQueryPayload(sourcesToSearch, filter, limit);
 
-    expect(result).toBeDefined();
-    expect(result.with).toHaveProperty('pointcloud_volumes');
-    expect(result.with).toHaveProperty('pointcloud_object_3d');
-    expect(result.with).toHaveProperty('pointcloud_assets');
-    expect(result.select).toHaveProperty('pointcloud_assets');
+    expectDmsQueryToBeValid(result);
+    expectWithExpressionClausesToHaveLimit(result, limit);
+
     expect(result.with.pointcloud_assets.nodes.filter).toEqual(filter);
-    expect(result.with.pointcloud_volumes.limit).toBe(limit);
     expect(result.select.pointcloud_assets.sources).toEqual(
       expect.arrayContaining([
         ...cogniteAssetSourceWithProperties,
@@ -112,19 +128,16 @@ describe(cadAndPointCloudAndImage36AssetQuery.name, () => {
       ])
     );
   });
+});
 
-  it('should generate a query for Image360 assets', () => {
+describe(image360AssetsQueryPayload.name, () => {
+  it('image360AssetsQueryPayload should generate a query for Image360 assets', () => {
     const result = image360AssetsQueryPayload(sourcesToSearch, revisionRefs, filter, limit);
 
-    expect(result).toBeDefined();
-    expect(result.with).toHaveProperty('image360_collections');
-    expect(result.with).toHaveProperty('image360_revisions');
-    expect(result.with).toHaveProperty('image360_annotations');
-    expect(result.with).toHaveProperty('image360_object3ds');
-    expect(result.with).toHaveProperty('image360_assets');
-    expect(result.select).toHaveProperty('image360_assets');
+    expectDmsQueryToBeValid(result);
+    expectWithExpressionClausesToHaveLimit(result, limit);
+
     expect(result.with.image360_assets.nodes.filter).toEqual(filter);
-    expect(result.with.image360_collections.limit).toBe(limit);
     expect(result.select.image360_assets.sources).toEqual(
       expect.arrayContaining([
         ...cogniteAssetSourceWithProperties,
