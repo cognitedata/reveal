@@ -94,14 +94,16 @@ export function cadAndPointCloudAndImage36AssetQuery(
           from: 'pointcloud_volumes',
           through: { view: COGNITE_POINT_CLOUD_VOLUME_SOURCE, identifier: 'object3D' },
           direction: 'outwards'
-        }
+        },
+        limit
       },
       pointcloud_assets: {
         nodes: {
           from: 'pointcloud_object_3d',
           through: { view: COGNITE_ASSET_SOURCE, identifier: 'object3D' },
           filter
-        }
+        },
+        limit
       },
       image360_collections: {
         nodes: {
@@ -122,14 +124,16 @@ export function cadAndPointCloudAndImage36AssetQuery(
           from: 'image360_revisions',
           direction: 'inwards',
           filter: { hasData: [COGNITE_IMAGE_360_ANNOTATION_SOURCE] }
-        }
+        },
+        limit
       },
       image360_object3ds: {
         nodes: {
           from: 'image360_annotations',
           chainTo: 'destination',
           filter: { hasData: [COGNITE_3D_OBJECT_SOURCE] }
-        }
+        },
+        limit
       },
       image360_assets: {
         nodes: {
@@ -137,7 +141,8 @@ export function cadAndPointCloudAndImage36AssetQuery(
           through: { view: COGNITE_ASSET_SOURCE, identifier: 'object3D' },
           direction: 'inwards',
           filter: { hasData: [COGNITE_ASSET_SOURCE] }
-        }
+        },
+        limit
       }
     },
     select: {
@@ -239,14 +244,16 @@ export function pointCloudsAssetsQueryPayload (
           from: 'pointcloud_volumes',
           through: { view: COGNITE_POINT_CLOUD_VOLUME_SOURCE, identifier: 'object3D' },
           direction: 'outwards'
-        }
+        },
+        limit
       },
       pointcloud_assets: {
         nodes: {
           from: 'pointcloud_object_3d',
           through: { view: COGNITE_ASSET_SOURCE, identifier: 'object3D' },
           filter
-        }
+        },
+        limit
       },
     },
     select: {
@@ -287,14 +294,16 @@ export function image360AssetsQueryPayload (
           from: 'image360_revisions',
           direction: 'inwards',
           filter: { hasData: [COGNITE_IMAGE_360_ANNOTATION_SOURCE] }
-        }
+        },
+        limit
       },
       image360_object3ds: {
         nodes: {
           from: 'image360_annotations',
           chainTo: 'destination',
           filter: { hasData: [COGNITE_3D_OBJECT_SOURCE] }
-        }
+        },
+        limit
       },
       image360_assets: {
         nodes: {
@@ -302,7 +311,8 @@ export function image360AssetsQueryPayload (
           through: { view: COGNITE_ASSET_SOURCE, identifier: 'object3D' },
           direction: 'inwards',
           filter
-        }
+        },
+        limit
       }
     },
     select: {
