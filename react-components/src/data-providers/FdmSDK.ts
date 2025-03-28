@@ -558,6 +558,8 @@ export class FdmSDK {
   ): Promise<QueryResult<TQueryRequest, TypedSelectSources>> {
     let result = await queryNodesAndEdges<TQueryRequest, TypedSelectSources>(query, this._sdk);
     let items = result.items;
+
+    // FIXME(BND3D-5553): Improve cursor handling and ensure it's correct
     while (result.nextCursor !== undefined && Object.keys(result.nextCursor).length !== 0) {
       const nextCursorsList = result.nextCursor !== undefined ? Object.keys(result.nextCursor) : [];
       let nextCursorsData: Record<string, string> = {};
