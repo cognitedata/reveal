@@ -351,6 +351,7 @@ export class CdfModelIdentifier implements ModelIdentifier {
     readonly revealInternalId: symbol;
     // (undocumented)
     readonly revisionId: number;
+    sourceModelIdentifier(): string;
     // (undocumented)
     toString(): string;
 }
@@ -1576,6 +1577,7 @@ export interface ModelDataProvider extends JsonFileProvider, BinaryFileProvider 
 // @public
 export interface ModelIdentifier {
     readonly revealInternalId: symbol;
+    sourceModelIdentifier(): string;
 }
 
 // @public
