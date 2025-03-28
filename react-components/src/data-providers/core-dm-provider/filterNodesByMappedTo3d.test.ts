@@ -4,7 +4,7 @@
 import { describe, expect, it } from 'vitest';
 import { filterNodesByMappedTo3d } from './filterNodesByMappedTo3d';
 import { Mock, It } from 'moq.ts';
-import { type DmsUniqueIdentifier, type FdmSDK } from '../FdmSDK';
+import { type ViewItemListResponse, type DmsUniqueIdentifier, type FdmSDK } from '../FdmSDK';
 import { type InstancesWithView } from '../../query';
 import { type createCheck3dConnectedEquipmentQuery } from './check3dConnectedEquipmentQuery';
 import { isEqual } from 'lodash';
@@ -96,30 +96,47 @@ describe(filterNodesByMappedTo3d.name, () => {
             )
           )
       )
-      .returns(
-        Promise.resolve({
-          items: {
-            initial_nodes_cad_nodes: [cadNodeInstanceFixture0],
-            initial_nodes_point_cloud_volumes: [pointCloudVolumeInstanceFixture0],
-            initial_edges_360_image_annotations: [image360AnnotationEdgeInstanceFixture0],
-            initial_nodes_360_images: [image360InstanceFixture0],
-            direct_nodes_cad_nodes: [cadNodeInstanceFixture1],
-            direct_nodes_point_cloud_volumes: [pointCloudVolumeInstanceFixture1],
-            direct_edges_360_image_annotations: [image360AnnotationEdgeInstanceFixture1],
-            direct_nodes_360_images: [image360InstanceFixture1],
-            indirect_nodes_cad_nodes: [cadNodeInstanceFixture2],
-            indirect_nodes_point_cloud_volumes: [pointCloudVolumeInstanceFixture2],
-            indirect_edges_360_image_annotations: [image360AnnotationEdgeInstanceFixture2],
-            indirect_nodes_360_images: [image360InstanceFixture2]
+      .returnsAsync({
+        items: {
+          initial_nodes_cad_nodes: [cadNodeInstanceFixture0],
+          initial_nodes_point_cloud_volumes: [pointCloudVolumeInstanceFixture0],
+          initial_edges_360_image_annotations: [image360AnnotationEdgeInstanceFixture0],
+          initial_nodes_360_images: [image360InstanceFixture0],
+          direct_nodes_cad_nodes: [cadNodeInstanceFixture1],
+          direct_nodes_point_cloud_volumes: [pointCloudVolumeInstanceFixture1],
+          direct_edges_360_image_annotations: [image360AnnotationEdgeInstanceFixture1],
+          direct_nodes_360_images: [image360InstanceFixture1],
+          indirect_nodes_cad_nodes: [cadNodeInstanceFixture2],
+          indirect_nodes_point_cloud_volumes: [pointCloudVolumeInstanceFixture2],
+          indirect_edges_360_image_annotations: [image360AnnotationEdgeInstanceFixture2],
+          indirect_nodes_360_images: [image360InstanceFixture2]
+        }
+      } as const satisfies QueryResult<ReturnType<typeof createCheck3dConnectedEquipmentQuery>>)
+      .setup(async (p) => await p.getViewsByIds(It.IsAny()))
+      .returnsAsync({
+        items: [
+          {
+            externalId: 'CogniteAsset',
+            version: 'v1',
+            space: 'cdf_cdm',
+            createdTime: 123,
+            lastUpdatedTime: 124,
+            writable: true,
+            usedFor: 'usedFor',
+            isGlobal: true,
+            properties: {},
+            name: 'name',
+            implements: []
           }
-        } as const satisfies QueryResult<ReturnType<typeof createCheck3dConnectedEquipmentQuery>>)
-      );
+        ]
+      } as const satisfies ViewItemListResponse)
+      .object();
 
     const result = await filterNodesByMappedTo3d(
       instancesWithView,
       [modelIdentifier],
       [],
-      fdmSdkMock.object()
+      fdmSdkMock
     );
 
     expect(result).toEqual([

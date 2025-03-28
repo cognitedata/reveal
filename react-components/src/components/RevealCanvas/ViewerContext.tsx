@@ -6,7 +6,7 @@ import { createContext, type ReactElement, type ReactNode, useContext, useEffect
 import { type RevealRenderTarget } from '../../architecture/base/renderTarget/RevealRenderTarget';
 import { remove } from 'lodash';
 
-const ViewerContext = createContext<RevealRenderTarget | null>(null);
+export const ViewerContext = createContext<RevealRenderTarget | null>(null);
 
 export type ViewerContextProviderProps = {
   value: RevealRenderTarget | null;
