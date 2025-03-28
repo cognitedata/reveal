@@ -1,41 +1,70 @@
-import { describe, it, expect, vi, beforeEach, type Mock as viMock } from 'vitest';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { renderHook, waitFor } from '@testing-library/react';
-import { type AddModelOptions } from '@cognite/reveal';
+import { type AddModelOptions } from '@cognitne/reveal';
 import {
   useSearchMappedEquipmentFDM,
   useAllMappedEquipmentFDM,
   type InstancesWithView
 } from '../query/useSearchMappedEquipmentFDM';
-import { useFdmSdk } from '../components/RevealCanvas/SDKProvider';
-import { useFdm3dDataProvider } from '../components/CacheProvider/CacheProvider';
-import { useQuery } from '@tanstack/react-query';
+import { QueryClient, QueryClientProvider, useQuery } from '@tanstack/react-query';
 import { cadNodesFixtures } from '#test-utils/fixtures/dm/nodeItems';
+import { FdmSDK } from '../data-providers/FdmSDK';
+import { Mock, It } from 'moq.ts';
+import { RevealRenderTarget } from '../architecture';
+import { PropsWithChildren } from 'react';
+import { Fdm3dDataProvider } from '../data-providers/Fdm3dDataProvider';
+import { ViewerContext } from '../components/RevealCanvas/ViewerContext';
+import { FdmSdkContext } from '../components/RevealCanvas/FdmDataProviderContext';
 
-vi.mock('../components/RevealCanvas/SDKProvider');
-vi.mock('../components/CacheProvider/CacheProvider');
+const queryClient = new QueryClient();
 
-vi.mock('@tanstack/react-query', () => ({
-  useQuery: vi.fn()
-}));
+const mockFdmSdk = new Mock<FdmSDK>()
+  .setup((p) => p.searchInstances)
+  .returns(vi.fn())
+  .object();
+
+const mockListMappedFdmNodes = vi.fn();
+const mockFilterNodesByMappedTo3d = vi.fn();
+const mockListAllMappedFdmNodes = vi.fn();
+
+const mockFdmDataProvider = new Mock<Fdm3dDataProvider>()
+  .setup((p) => p.listMappedFdmNodes)
+  .returns(mockListMappedFdmNodes)
+  .setup((p) => p.filterNodesByMappedTo3d)
+  .returns(mockFilterNodesByMappedTo3d)
+  .setup((p) => p.listAllMappedFdmNodes)
+  .returns(mockListAllMappedFdmNodes)
+  .object();
+
+const fdmSdkMock = new Mock<FdmSDK>()
+  .setup((sdk) => sdk.searchInstances)
+  .returns(mockFdmSdk.searchInstances)
+  .object();
+
+const renderTargetMock = new Mock<RevealRenderTarget>()
+  .setup((p) => p.cdfCaches.fdm3dDataProvider)
+  .returns(mockFdmDataProvider)
+  .object();
+
+const wrapper = ({ children }: PropsWithChildren) => (
+  <QueryClientProvider client={queryClient}>
+    <ViewerContext.Provider value={renderTargetMock}>
+      <FdmSdkContext.Provider value={{ fdmSdk: fdmSdkMock }}>{children}</FdmSdkContext.Provider>
+    </ViewerContext.Provider>
+  </QueryClientProvider>
+);
 
 describe(useSearchMappedEquipmentFDM.name, () => {
-  const mockFdmSdk = {
-    searchInstances: vi.fn()
-  };
+  const mockModels: AddModelOptions[] = [
+    { modelId: 456, revisionId: 789 },
+    { modelId: 123, revisionId: 456 }
+  ];
 
-  const mockFdmDataProvider = {
-    listMappedFdmNodes: vi.fn().mockResolvedValue(cadNodesFixtures),
-    filterNodesByMappedTo3d: vi.fn()
-  };
+  const mockInstancesFilter = { equals: { property: ['key'], value: 'value' } };
 
   const mockViewsToSearch = [
     { externalId: 'CogniteCADNode', space: 'cdf_cdm', version: 'v1', type: 'view' as const },
     { externalId: 'CogniteCADNode', space: 'cdf_cdm', version: 'v1', type: 'view' as const }
-  ];
-
-  const mockModels: AddModelOptions[] = [
-    { modelId: 456, revisionId: 789 },
-    { modelId: 123, revisionId: 456 }
   ];
 
   const mockInstancesWithView: InstancesWithView[] = [
@@ -44,43 +73,46 @@ describe(useSearchMappedEquipmentFDM.name, () => {
     { view: mockViewsToSearch[1], instances: cadNodesFixtures }
   ];
 
-  const mockInstancesFilter = { equals: { property: ['key'], value: 'value' } };
-
   beforeEach(() => {
     vi.clearAllMocks();
-    (useFdmSdk as viMock).mockReturnValue(mockFdmSdk);
-    (useFdm3dDataProvider as viMock).mockReturnValue(mockFdmDataProvider);
+    queryClient.clear();
+
+    mockListMappedFdmNodes.mockResolvedValue(cadNodesFixtures);
+    mockFilterNodesByMappedTo3d.mockResolvedValue(mockInstancesWithView);
   });
 
   it('should return empty results when models are empty', async () => {
-    (useQuery as viMock).mockImplementation(({ queryFn }) => {
-      return { data: queryFn() };
-    });
-
-    const { result } = renderHook(() =>
-      useSearchMappedEquipmentFDM('query', mockViewsToSearch, [], mockInstancesFilter, 100)
+    const { result } = renderHook(
+      () => useSearchMappedEquipmentFDM('query', mockViewsToSearch, [], mockInstancesFilter, 100),
+      {
+        wrapper
+      }
     );
 
-    const data = await waitFor(() => result.current.data);
-    expect(data).toEqual([]);
+    await waitFor(() => {
+      expect(result.current.data).toEqual([]);
+    });
   });
 
   it('should call searchInstances for each view when query is not empty', async () => {
-    mockFdmSdk.searchInstances
+    vi.mocked(mockFdmSdk.searchInstances)
       .mockResolvedValueOnce({
         instances: mockInstancesWithView[0].instances
       })
       .mockResolvedValueOnce({
         instances: mockInstancesWithView[1].instances
       });
-    mockFdmDataProvider.filterNodesByMappedTo3d.mockResolvedValueOnce(mockInstancesWithView);
 
-    (useQuery as viMock).mockImplementation(({ queryFn }) => {
-      return { data: queryFn() };
-    });
-
-    const { result } = renderHook(() =>
-      useSearchMappedEquipmentFDM('query', mockViewsToSearch, mockModels, mockInstancesFilter, 100)
+    const { result } = renderHook(
+      () =>
+        useSearchMappedEquipmentFDM(
+          'query',
+          mockViewsToSearch,
+          mockModels,
+          mockInstancesFilter,
+          100
+        ),
+      { wrapper }
     );
 
     await waitFor(() => {
@@ -110,19 +142,18 @@ describe(useSearchMappedEquipmentFDM.name, () => {
   });
 
   it('should call listMappedFdmNodes when query is empty', async () => {
-    mockFdmDataProvider.listMappedFdmNodes.mockResolvedValueOnce([
+    mockListMappedFdmNodes.mockResolvedValueOnce([
       mockInstancesWithView[0].instances[0],
       mockInstancesWithView[0].instances[1],
       mockInstancesWithView[0].instances[2]
     ]);
 
-    mockFdmDataProvider.filterNodesByMappedTo3d.mockResolvedValueOnce(mockInstancesWithView);
-    (useQuery as viMock).mockImplementation(({ queryFn }) => {
-      return { data: queryFn() };
-    });
+    mockFilterNodesByMappedTo3d.mockResolvedValueOnce(mockInstancesWithView);
 
-    const { result } = renderHook(() =>
-      useSearchMappedEquipmentFDM('', mockViewsToSearch, mockModels, mockInstancesFilter, 100)
+    const { result } = renderHook(
+      () =>
+        useSearchMappedEquipmentFDM('', mockViewsToSearch, mockModels, mockInstancesFilter, 100),
+      { wrapper }
     );
 
     expect(mockFdmDataProvider.listMappedFdmNodes).toHaveBeenCalledTimes(1);
@@ -133,17 +164,12 @@ describe(useSearchMappedEquipmentFDM.name, () => {
         mockInstancesFilter,
         100
       );
+      expect(result.current.data).toEqual(mockInstancesWithView);
     });
-    const data = await waitFor(() => result.current.data);
-    expect(data).toEqual(mockInstancesWithView);
   });
 });
 
 describe(useAllMappedEquipmentFDM.name, () => {
-  const mockFdmDataProvider = {
-    listAllMappedFdmNodes: vi.fn()
-  };
-
   const mockViewsToSearch = [
     { externalId: 'view1', space: 'space1', version: 'v1' },
     { externalId: 'view2', space: 'space2', version: 'v1' }
@@ -156,45 +182,38 @@ describe(useAllMappedEquipmentFDM.name, () => {
 
   beforeEach(() => {
     vi.clearAllMocks();
-    (useFdm3dDataProvider as viMock).mockReturnValue(mockFdmDataProvider);
+    queryClient.clear();
   });
 
   it('should call listAllMappedFdmNodes with correct parameters', async () => {
-    mockFdmDataProvider.listAllMappedFdmNodes.mockResolvedValueOnce([
-      { id: 'node1' },
-      { id: 'node2' }
-    ]);
+    const mockResult = [{ id: 'node1' }, { id: 'node2' }];
+    mockListAllMappedFdmNodes.mockResolvedValueOnce(mockResult);
 
-    (useQuery as viMock).mockImplementation(({ queryFn }) => {
-      return { data: queryFn() };
-    });
-
-    const { result } = renderHook(() =>
-      useAllMappedEquipmentFDM(mockModels, mockViewsToSearch, true)
+    const { result } = renderHook(
+      () => useAllMappedEquipmentFDM(mockModels, mockViewsToSearch, true),
+      { wrapper }
     );
 
-    const data = await waitFor(() => result.current.data);
+    await waitFor(() => expect(result.current.data).toBeDefined());
+    const data = result.current.data;
 
-    expect(mockFdmDataProvider.listAllMappedFdmNodes).toHaveBeenCalledWith(
+    expect(mockListAllMappedFdmNodes).toHaveBeenCalledWith(
       mockModels,
       expect.any(Array),
       expect.any(Object)
     );
-    expect(data).toEqual([{ id: 'node1' }, { id: 'node2' }]);
+    expect(data).toEqual(mockResult);
   });
 
   it('should not call listAllMappedFdmNodes when disabled', async () => {
-    (useQuery as viMock).mockImplementation(() => {
-      return { data: undefined };
-    });
-
-    const { result } = renderHook(() =>
-      useAllMappedEquipmentFDM(mockModels, mockViewsToSearch, false)
+    const { result } = renderHook(
+      () => useAllMappedEquipmentFDM(mockModels, mockViewsToSearch, false),
+      { wrapper }
     );
 
-    const data = await waitFor(() => result.current.data);
+    // Assert that the result from the hook remains undefined
+    await expect(waitFor(() => expect(result.current.data).toBeDefined())).rejects.toThrow();
 
-    expect(mockFdmDataProvider.listAllMappedFdmNodes).not.toHaveBeenCalled();
-    expect(data).toBeUndefined();
+    expect(mockListAllMappedFdmNodes).not.toHaveBeenCalled();
   });
 });
