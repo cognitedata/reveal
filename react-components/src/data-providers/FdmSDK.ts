@@ -14,7 +14,6 @@ import {
   type SelectSourceWithParams
 } from './utils/queryNodesAndEdges';
 import { mergeQueryResults } from './utils/mergeQueryResult';
-import { NextCursorType } from './types';
 
 type InstanceType = 'node' | 'edge';
 type EdgeDirection = 'source' | 'destination';
