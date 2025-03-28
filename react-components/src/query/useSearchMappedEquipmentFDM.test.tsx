@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { renderHook, waitFor } from '@testing-library/react';
-import { type AddModelOptions } from '@cognitne/reveal';
+import { type AddModelOptions } from '@cognite/reveal';
 import {
   useSearchMappedEquipmentFDM,
   useAllMappedEquipmentFDM,
