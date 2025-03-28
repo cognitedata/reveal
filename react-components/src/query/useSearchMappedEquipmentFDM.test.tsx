@@ -11,7 +11,7 @@ import { cadNodesFixtures } from '#test-utils/fixtures/dm/nodeItems';
 import { type FdmSDK } from '../data-providers/FdmSDK';
 import { Mock } from 'moq.ts';
 import { type RevealRenderTarget } from '../architecture';
-import { FC, type PropsWithChildren } from 'react';
+import type { FC, PropsWithChildren } from 'react';
 import { type Fdm3dDataProvider } from '../data-providers/Fdm3dDataProvider';
 import { ViewerContext } from '../components/RevealCanvas/ViewerContext';
 import { FdmSdkContext } from '../components/RevealCanvas/FdmDataProviderContext';
