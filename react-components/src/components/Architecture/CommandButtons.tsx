@@ -18,7 +18,7 @@ import { SectionCommand } from '../../architecture/base/commands/SectionCommand'
 import { type PlacementType } from './types';
 import { type ButtonProp } from './RevealButtons';
 import { getDividerDirection } from './utilities';
-import { InputField } from './InputField';
+import { InputField } from './InputField/InputField.view';
 import { BaseInputCommand } from '../../architecture/base/commands/BaseInputCommand';
 import { CustomBaseInputCommand } from '../../architecture/base/commands/CustomBaseInputCommand';
 import { CustomInputField } from './CustomInputField';

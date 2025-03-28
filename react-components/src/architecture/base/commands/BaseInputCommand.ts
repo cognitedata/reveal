@@ -1,12 +1,13 @@
 /*!
  * Copyright 2024 Cognite AS
  */
+import { Changes } from '../domainObjectsHelpers/Changes';
 import { type TranslationInput } from '../utilities/TranslateInput';
 import { RenderTargetCommand } from './RenderTargetCommand';
 
 export abstract class BaseInputCommand extends RenderTargetCommand {
   protected _placeholder?: TranslationInput;
-  protected _content?: string;
+  protected _content: string = '';
   protected _okButtonLabel?: TranslationInput;
 
   protected _onFinish?: () => void;
@@ -32,15 +33,16 @@ export abstract class BaseInputCommand extends RenderTargetCommand {
     this._onCancel = onCancel;
   }
 
-  public get onCancel(): (() => void) | undefined {
-    return this._onCancel;
+  public get content(): string {
+    return this._content;
   }
 
-  invokeWithContent(content: string): boolean {
+  public set content(content: string) {
     this._content = content;
+    this.update();
+  }
 
-    const invokeResult = this.invoke();
-    this._content = '';
-    return invokeResult;
+  public get onCancel(): (() => void) | undefined {
+    return this._onCancel;
   }
 }
