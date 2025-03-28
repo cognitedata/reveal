@@ -6,13 +6,13 @@ import {
   useAllMappedEquipmentFDM,
   type InstancesWithView
 } from '../query/useSearchMappedEquipmentFDM';
-import { QueryClient, QueryClientProvider, useQuery } from '@tanstack/react-query';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { cadNodesFixtures } from '#test-utils/fixtures/dm/nodeItems';
-import { FdmSDK } from '../data-providers/FdmSDK';
-import { Mock, It } from 'moq.ts';
-import { RevealRenderTarget } from '../architecture';
-import { PropsWithChildren } from 'react';
-import { Fdm3dDataProvider } from '../data-providers/Fdm3dDataProvider';
+import { type FdmSDK } from '../data-providers/FdmSDK';
+import { Mock } from 'moq.ts';
+import { type RevealRenderTarget } from '../architecture';
+import { FC, type PropsWithChildren } from 'react';
+import { type Fdm3dDataProvider } from '../data-providers/Fdm3dDataProvider';
 import { ViewerContext } from '../components/RevealCanvas/ViewerContext';
 import { FdmSdkContext } from '../components/RevealCanvas/FdmDataProviderContext';
 
@@ -46,7 +46,7 @@ const renderTargetMock = new Mock<RevealRenderTarget>()
   .returns(mockFdmDataProvider)
   .object();
 
-const wrapper = ({ children }: PropsWithChildren) => (
+const wrapper: FC<PropsWithChildren> = ({ children }) => (
   <QueryClientProvider client={queryClient}>
     <ViewerContext.Provider value={renderTargetMock}>
       <FdmSdkContext.Provider value={{ fdmSdk: fdmSdkMock }}>{children}</FdmSdkContext.Provider>
@@ -194,7 +194,9 @@ describe(useAllMappedEquipmentFDM.name, () => {
       { wrapper }
     );
 
-    await waitFor(() => expect(result.current.data).toBeDefined());
+    await waitFor(() => {
+      expect(result.current.data).toBeDefined();
+    });
     const data = result.current.data;
 
     expect(mockListAllMappedFdmNodes).toHaveBeenCalledWith(
@@ -212,7 +214,11 @@ describe(useAllMappedEquipmentFDM.name, () => {
     );
 
     // Assert that the result from the hook remains undefined
-    await expect(waitFor(() => expect(result.current.data).toBeDefined())).rejects.toThrow();
+    await expect(
+      waitFor(() => {
+        expect(result.current.data).toBeDefined();
+      })
+    ).rejects.toThrow();
 
     expect(mockListAllMappedFdmNodes).not.toHaveBeenCalled();
   });

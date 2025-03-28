@@ -62,5 +62,3 @@ export type AssetIdsAndTimeseriesData = {
   assetIdsWithTimeseries: AssetIdsAndTimeseries[];
   timeseriesDatapoints: Datapoints[];
 };
-
-export type NextCursorType = { [SELECT_SOURCE_KEY in keyof QueryRequest["select"]]: string; } | undefined;
