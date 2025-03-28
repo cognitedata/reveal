@@ -64,6 +64,10 @@ export abstract class BaseOptionCommand extends RenderTargetCommand {
     return []; // Override this to add options or use the constructor and add them in
   }
 
+  public get preferSegmentControl(): boolean {
+    return false;
+  }
+
   // ==================================================
   // INSTANCE METHODS
   // ==================================================

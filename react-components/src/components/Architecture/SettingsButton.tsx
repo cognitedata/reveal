@@ -34,6 +34,7 @@ import { DividerCommand } from '../../architecture/base/commands/DividerCommand'
 import { SectionCommand } from '../../architecture/base/commands/SectionCommand';
 import { useOnUpdate } from './useOnUpdate';
 import { type PlacementType } from './types';
+import { SegmentedButtons } from './SegmentedButtons';
 
 export const SettingsButton = ({
   inputCommand,
@@ -113,7 +114,11 @@ function createMenuItem(command: BaseCommand, t: TranslateDelegate): ReactNode {
     return createSlider(command, t);
   }
   if (command instanceof BaseOptionCommand) {
-    return createDropdownButton(command);
+    if (command.preferSegmentControl) {
+      return createSegmentedButton(command);
+    } else {
+      return createDropdownButton(command);
+    }
   }
   if (command instanceof BaseFilterCommand) {
     return createFilterButton(command);
@@ -272,6 +277,22 @@ function createSlider(command: BaseSliderCommand, t: TranslateDelegate): ReactNo
       />
     </SliderDiv>
   );
+}
+
+function createSegmentedButton(command: BaseOptionCommand): ReactNode {
+  const [isVisible, setVisible] = useState(true);
+  const [uniqueId, setUniqueId] = useState(0);
+
+  useOnUpdate(command, () => {
+    setVisible(command.isVisible);
+    setUniqueId(command.uniqueId);
+  });
+
+  if (!isVisible) {
+    return null;
+  }
+
+  return <SegmentedButtons key={uniqueId} inputCommand={command} placement={'bottom'} />;
 }
 
 function createDropdownButton(command: BaseOptionCommand): ReactNode {
