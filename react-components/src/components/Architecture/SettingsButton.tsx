@@ -2,8 +2,9 @@
  * Copyright 2024 Cognite AS
  */
 
-import { type ReactNode, useMemo, useState, type ReactElement } from 'react';
+import { type ReactNode, useMemo, useState, type ReactElement, PropsWithChildren } from 'react';
 import { Button, Tooltip as CogsTooltip, Flex, Slider, Switch, TextLabel } from '@cognite/cogs.js';
+
 import { Dropdown, Menu } from '@cognite/cogs-lab';
 import { useTranslation } from '../i18n/I18n';
 import { type BaseCommand } from '../../architecture/base/commands/BaseCommand';
@@ -29,7 +30,6 @@ import { IconComponent } from './Factories/IconFactory';
 
 import { TOOLBAR_HORIZONTAL_PANEL_OFFSET } from '../constants';
 
-import { offset } from '@floating-ui/dom';
 import { DividerCommand } from '../../architecture/base/commands/DividerCommand';
 import { SectionCommand } from '../../architecture/base/commands/SectionCommand';
 import { useOnUpdate } from './useOnUpdate';
