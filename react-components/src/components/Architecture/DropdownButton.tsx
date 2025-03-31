@@ -183,7 +183,7 @@ const StyledLabel = styled.label`
   flex: 1 1;
 `;
 
-const StyledSelect = styled(Select)`
+const StyledSelect = styled(Select<BaseCommand>)`
   flex: 1 1;
 `;
 
