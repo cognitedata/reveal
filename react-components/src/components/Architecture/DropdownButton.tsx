@@ -147,8 +147,8 @@ const MenuItemWithDropdown = ({
 
   return (
     <StyledDropdownRow>
-      <label>{label}</label>
-      <Select
+      <StyledLabel>{label}</StyledLabel>
+      <StyledSelect
         defaultValue={command.selectedChild}
         fullWidth
         aria-label={command.getLabel(t)}
@@ -160,7 +160,7 @@ const MenuItemWithDropdown = ({
             {child.getLabel(t)}
           </Option>
         ))}
-      </Select>
+      </StyledSelect>
     </StyledDropdownRow>
   );
 };
@@ -179,10 +179,19 @@ function createMenuItem(command: BaseCommand, t: TranslateDelegate): ReactElemen
   );
 }
 
+const StyledLabel = styled.label`
+  flex: 3 3;
+`;
+
+const StyledSelect = styled(Select)`
+  flex: 3 3;
+`;
+
 const StyledDropdownRow = styled.div`
   display: flex;
   flex-direction: row;
   justify-content: space-between;
+  align-self: stretch;
   align-items: center;
   gap: 8;
   minwidth: ${OPTION_MIN_WIDTH};

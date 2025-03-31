@@ -28,7 +28,7 @@ export function createButton(command: BaseCommand, placement: PlacementType): Re
     return <FilterButton inputCommand={command} placement={placement} />;
   }
   if (command instanceof BaseSettingsCommand) {
-    return <SettingsButton inputCommand={command} placement={placement} />;
+    return <SettingsButton key={command.uniqueId} inputCommand={command} placement={placement} />;
   }
   if (command instanceof BaseOptionCommand) {
     switch (command.optionType) {

@@ -1,5 +1,5 @@
 import { Cognite3DViewer, DataSourceType } from '@cognite/reveal';
-import { QualitySettings } from '../../../../components';
+import { QualitySettings } from './QualitySettings';
 
 export function getQualitySettingsFromViewer(
   viewer: Cognite3DViewer<DataSourceType>

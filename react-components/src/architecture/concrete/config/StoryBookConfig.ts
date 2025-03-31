@@ -63,7 +63,6 @@ export class StoryBookConfig extends BaseRevealConfig {
       new ShowTreeViewCommand(),
       new ToggleAllModelsVisibleCommand(),
       new ToggleMetricUnitsCommand(),
-      new SettingsCommand(),
       undefined,
       new Image360AnnotationSelectTool(),
       new Image360AnnotationCreateTool(),
@@ -82,7 +81,8 @@ export class StoryBookConfig extends BaseRevealConfig {
       undefined,
       new ExampleTool(),
       new SetTerrainVisibleCommand(),
-      new UpdateTerrainCommand()
+      new UpdateTerrainCommand(),
+      new SettingsCommand()
     ];
   }
 

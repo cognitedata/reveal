@@ -179,18 +179,12 @@ const FilterDropdown = ({
 }): ReactElement => {
   return (
     <StyledDropdownRow>
-      <label>{label}</label>
+      <StyledLabel>{label}</StyledLabel>
       <StyledSelectPanel appendTo={'parent'} placement={'right-end'} hideOnOutsideClick>
         <SelectPanel.Trigger>
-          <Button
+          <StyledSelectPanelButton
             color="#000044"
             type="tertiary"
-            style={{
-              justifyContent: 'space-between',
-              minWidth: OPTION_MIN_WIDTH,
-              paddingRight: '8px',
-              paddingLeft: '8px'
-            }}
             onClick={() => {
               setOpen((prev) => !prev);
             }}>
@@ -200,7 +194,7 @@ const FilterDropdown = ({
             ) : (
               <ChevronDownIcon color={SELECT_DROPDOWN_ICON_COLOR} />
             )}
-          </Button>
+          </StyledSelectPanelButton>
         </SelectPanel.Trigger>
         <SelectPanel.Body style={{ overflow: 'hidden' }}>{PanelContent}</SelectPanel.Body>
       </StyledSelectPanel>
@@ -251,19 +245,34 @@ const FilterSelectPanelContent = ({
 
 const StyledDropdownRow = styled.div`
   display: flex;
+  align-self: stretch;
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
-  gap: 8px;
+
   padding: ${DEFAULT_PADDING};
+`;
+
+const StyledLabel = styled.label`
+  flex: 2 2;
+`;
+
+const StyledSelectPanelButton = styled(Button)`
+  padding: 8px;
+  justify-content: space-between;
+  width: 100%;
 `;
 
 const StyledSelectPanel = styled(SelectPanel)`
   display: flex;
+  flex: 2 2;
   display-direction: row;
   justify-content: space-between;
   align-items: center;
-  gap: 8px;
+
+  .cogs-lab.cogs-dropdown__anchor-el {
+    width: inherit;
+  }
 `;
 
 const StyledDropdownSelectionLabel = styled.label`

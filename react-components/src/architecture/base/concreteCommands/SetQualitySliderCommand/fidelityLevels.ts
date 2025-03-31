@@ -1,16 +1,18 @@
 import assert from 'assert';
-import { QualitySettings } from '../../../../components';
 import { assertNever } from '../../../../utilities/assertNever';
 
-export const FIDELITY_LEVELS = ['1', '2', '3', '4', '5'] as const;
+export const FIDELITY_LEVELS = [1, 2, 3, 4, 5] as const;
 
 export type FidelityLevel = (typeof FIDELITY_LEVELS)[number];
 
+export const MAX_FIDELITY: FidelityLevel = 5;
+
 import { maxBy } from 'lodash';
+import { QualitySettings } from '../../utilities/quality/QualitySettings';
 
 export function getQualityForFidelityLevel(fidelityLevel: FidelityLevel) {
   switch (fidelityLevel) {
-    case '1':
+    case 1:
       return {
         cadBudget: {
           maximumRenderCost: 8_000_000,
@@ -25,7 +27,7 @@ export function getQualityForFidelityLevel(fidelityLevel: FidelityLevel) {
         }
       };
 
-    case '2':
+    case 2:
       return {
         cadBudget: {
           maximumRenderCost: 15_000_000,
@@ -40,7 +42,7 @@ export function getQualityForFidelityLevel(fidelityLevel: FidelityLevel) {
         }
       };
 
-    case '3':
+    case 3:
       return {
         cadBudget: {
           maximumRenderCost: 35_000_000,
@@ -54,7 +56,7 @@ export function getQualityForFidelityLevel(fidelityLevel: FidelityLevel) {
           movingCameraResolutionFactor: 1
         }
       };
-    case '4':
+    case 4:
       return {
         cadBudget: {
           maximumRenderCost: 80_000_000,
@@ -68,7 +70,7 @@ export function getQualityForFidelityLevel(fidelityLevel: FidelityLevel) {
           movingCameraResolutionFactor: 1
         }
       };
-    case '5':
+    case 5:
       return {
         cadBudget: {
           maximumRenderCost: 130_000_000,

@@ -3,10 +3,10 @@
  */
 
 import { type TranslationInput } from '../utilities/TranslateInput';
-import { type QualitySettings } from '../../../components/RevealToolbar/SettingsContainer/types';
+import { type QualitySettings } from '../utilities/quality/QualitySettings';
 import { type DataSourceType, type Cognite3DViewer } from '@cognite/reveal';
 import { RenderTargetCommand } from '../commands/RenderTargetCommand';
-import { getQualitySettingsFromViewer } from '../utilities/rendering/getQualitySettingsFromViewer';
+import { getQualitySettingsFromViewer } from '../utilities/quality/getQualitySettingsFromViewer';
 
 export class SetQualityCommand extends RenderTargetCommand {
   // ==================================================
