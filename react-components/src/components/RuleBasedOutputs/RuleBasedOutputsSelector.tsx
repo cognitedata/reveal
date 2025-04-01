@@ -24,6 +24,7 @@ import { useAll3dDirectConnectionsWithProperties } from '../../query/useAll3dDir
 import { useAssetMappedNodesForRevisions, useMappedEdgesForRevisions } from '../../hooks/cad';
 import { generateRuleBasedOutputs } from './core/generateRuleBasedOutputs';
 import { type CdfAssetMapping } from '../CacheProvider/types';
+import { useQueryClient } from '@tanstack/react-query';
 
 const ruleSetStylingCache = new Map<string, AllMappingStylingGroupAndStyleIndex[]>();
 
@@ -50,15 +51,17 @@ export function RuleBasedOutputsSelector({
       return { type: 'cad', modelId: model.modelId, revisionId: model.revisionId };
     });
 
-  const { data: assetMappings, isLoading: isAssetMappingsLoading } =
+  const { data: assetMappings, isLoading: isAssetMappingsLoading, isFetched: isAssetMappingsFetched } =
     useAssetMappedNodesForRevisions(cadModels);
 
   const assetIdsFromMapped = useExtractUniqueAssetIdsFromMapped(assetMappings);
 
+ /*  const queryClient = useQueryClient(); */
+
   const {
     data: mappedAssets,
-    isLoading: isAssetMappedLoading,
-    isFetched: isAssetMappingsFetched
+    isLoading: isAssetDataMappedLoading,
+    isFetched: isAssetDataMappingsFetched
   } = useAssetsByIdsQuery(assetIdsFromMapped);
 
   const { data: fdmMappedEquipmentEdges, isLoading: isFdmMappingsEdgesLoading } =
@@ -70,26 +73,22 @@ export function RuleBasedOutputsSelector({
       : [];
   }, [fdmMappedEquipmentEdges]);
 
-  const { data: fdmMappings, isLoading: isFdmMappingsLoading } =
+  const { data: fdmMappings, isLoading: isFdmMappingsLoading, isFetched: isFdmMappingsFetched } =
     useAll3dDirectConnectionsWithProperties(fdmConnectionWithNodeAndViewList);
 
   const allMappingsLoaded =
     !isAssetMappingsLoading &&
-    !isAssetMappedLoading &&
+    !isAssetDataMappedLoading &&
     !isFdmMappingsEdgesLoading &&
     !isFdmMappingsLoading;
 
-  useEffect(() => {
-    if (isAssetMappingsFetched) {
-      setAllContextualizedAssets(mappedAssets);
-    }
-  }, [mappedAssets, isAssetMappingsFetched]);
+  console.log('RuleBasedOutputsSelector all loading flags: ', 'isAssetMappingsLoading:', isAssetMappingsLoading, ' isAssetDataMappedLoading:', isAssetDataMappedLoading, ' isFdmMappingsEdgesLoading:', isFdmMappingsEdgesLoading, ' isFdmMappingsLoading:', isFdmMappingsLoading);
+  console.log('RuleBasedOutputsSelector all fetched flags: ', 'isAssetMappingsFetched:', isAssetMappingsFetched, ' isAssetDataMappingsFetched:', isAssetDataMappingsFetched, ' isFdmMappingsFetched:', isFdmMappingsFetched);
 
-  useEffect(() => {
-    onAllMappingsFetched(allMappingsLoaded);
-  }, [allMappingsLoaded]);
+  console.log('RuleBasedOutputsSelector all mappings loaded: ', allMappingsLoaded);
 
-  const contextualizedAssetNodes = useConvertAssetMetadatasToLowerCase(allContextualizedAssets);
+  const mappedAssetsToConvert = isAssetMappingsFetched && isAssetDataMappingsFetched ? mappedAssets : [];
+  const contextualizedAssetNodes = useConvertAssetMetadatasToLowerCase(mappedAssetsToConvert);
 
   const timeseriesExternalIds = useExtractTimeseriesIdsFromRuleSet(ruleSet);
 
@@ -100,6 +99,16 @@ export function RuleBasedOutputsSelector({
     });
 
   const flatAssetsMappingsListPerModel = useCreateAssetMappingsMapPerModel(models, assetMappings);
+
+  /* useEffect(() => {
+    if (isAssetMappingsFetched && isAssetDataMappingsFetched) {
+      setAllContextualizedAssets(mappedAssets);
+    }
+  }, [mappedAssets, isAssetMappingsFetched, isAssetDataMappingsFetched]); */
+
+  useEffect(() => {
+    onAllMappingsFetched(allMappingsLoaded);
+  }, [allMappingsLoaded]);
 
   useEffect(() => {
     if ((assetMappings === undefined && fdmMappings === undefined) || models === undefined) return;
