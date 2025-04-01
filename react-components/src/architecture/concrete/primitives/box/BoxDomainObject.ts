@@ -16,7 +16,7 @@ import { PanelInfo } from '../../../base/domainObjectsHelpers/PanelInfo';
 import { SolidDomainObject } from '../common/SolidDomainObject';
 import { SolidPrimitiveRenderStyle } from '../common/SolidPrimitiveRenderStyle';
 import { Box } from '../../../base/utilities/primitives/Box';
-import { type Vector3 } from 'three';
+import { type Box3, type Vector3 } from 'three';
 import { type RevealRenderTarget } from '../../../base/renderTarget/RevealRenderTarget';
 
 export abstract class BoxDomainObject extends SolidDomainObject {
@@ -184,5 +184,9 @@ export abstract class BoxDomainObject extends SolidDomainObject {
       default:
         throw new Error('Unknown MeasureType type');
     }
+  }
+
+  public expandBoundingBox(boundingBox: Box3): void {
+    this.box.expandBoundingBox(boundingBox);
   }
 }

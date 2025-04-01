@@ -19,6 +19,7 @@ import { getModelKeys } from '../utilities/getModelKeys';
 import { useFdm3dDataProvider } from '../components/CacheProvider/CacheProvider';
 import { createEmptyArray } from '../utilities/createEmptyArray';
 import { type AddImage360CollectionDatamodelsOptions } from '../components/Reveal3DResources/types';
+import { assetsInstanceFilterWithHasDataQuery } from '../data-providers/core-dm-provider/assetsInstanceFilterWithHasDataQuery';
 
 export type InstancesWithView<PropertyType = Record<string, unknown>> = {
   view: Source;
@@ -128,13 +129,13 @@ const searchNodesWithViewsAndModels = async (
       instances: result.instances
     });
   }
-
   return await fdmDataProvider.filterNodesByMappedTo3d(searchResults, models, spacesToSearch);
 };
 
 export const useAllMappedEquipmentFDM = (
-  models: AddModelOptions[],
-  viewsToSearch: SimpleSource[]
+  models: Array<AddModelOptions<DataSourceType> | AddImage360CollectionDatamodelsOptions>,
+  viewsToSearch: SimpleSource[],
+  enabled: boolean = true
 ): UseQueryResult<NodeItem[]> => {
   const fdmDataProvider = useFdm3dDataProvider();
 
@@ -144,10 +145,12 @@ export const useAllMappedEquipmentFDM = (
     queryKey: ['reveal', 'react-components', 'all-mapped-equipment-fdm', viewsToSearch, modelKeys],
     queryFn: async () => {
       const viewSources = createSourcesFromViews(viewsToSearch);
-      await fdmDataProvider.listAllMappedFdmNodes(models, viewSources, undefined);
+
+      const assetFilterForAllMapped = assetsInstanceFilterWithHasDataQuery(viewSources);
+      return await fdmDataProvider.listAllMappedFdmNodes(models, viewSources, assetFilterForAllMapped);
     },
     staleTime: Infinity,
-    enabled: models.length > 0 && viewsToSearch.length > 0
+    enabled
   });
 };
 

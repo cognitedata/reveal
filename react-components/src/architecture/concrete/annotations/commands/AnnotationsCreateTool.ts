@@ -167,7 +167,7 @@ export class AnnotationsCreateTool extends NavigationTool {
   }
 
   // ==================================================
-  // OVERRIDES of BaseEditTool
+  // INSTANCE METHODS
   // ==================================================
 
   private createCreator(): BaseCreator | undefined {
@@ -186,17 +186,12 @@ export class AnnotationsCreateTool extends NavigationTool {
         if (!(gizmo instanceof CylinderGizmoDomainObject)) {
           return undefined;
         }
-        const isHorizontal = this.primitiveType === PrimitiveType.HorizontalCylinder;
-        return new CylinderCreator(gizmo, isHorizontal);
+        return new CylinderCreator(gizmo, this.primitiveType, true);
       }
       default:
         return undefined;
     }
   }
-
-  // ==================================================
-  // INSTANCE METHODS
-  // ==================================================
 
   public escape(): void {
     if (this._creator !== undefined && this._creator.escape()) {

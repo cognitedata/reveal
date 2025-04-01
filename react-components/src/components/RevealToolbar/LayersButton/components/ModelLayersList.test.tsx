@@ -4,7 +4,7 @@
 import { render } from '@testing-library/react';
 import { describe, expect, test, vi } from 'vitest';
 import { ModelLayersList } from './ModelLayersList';
-import { createCadHandlerMock } from '../../../../../tests/tests-utilities/fixtures/modelHandler';
+import { createCadHandlerMock } from '#test-utils/fixtures/modelHandler';
 import { SelectPanel } from '@cognite/cogs-lab';
 
 describe(ModelLayersList.name, () => {

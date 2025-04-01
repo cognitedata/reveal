@@ -11,7 +11,7 @@ import {
   expectEqualBox3,
   expectEqualVector3,
   expectEqualEuler
-} from '../../../../../tests/tests-utilities/primitives/primitiveTestUtil';
+} from '#test-utils/primitives/primitiveTestUtil';
 
 describe('Box', () => {
   test('Should test setter and getter on base class', () => {

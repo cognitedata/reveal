@@ -2,6 +2,8 @@
  * Copyright 2023 Cognite AS
  */
 import {
+  type AnnotationsTypesImagesAssetLink,
+  type CogniteInternalId,
   type AnnotationModel,
   type AnnotationsBoundingVolume,
   type Node3D,
@@ -70,6 +72,14 @@ export type PointCloudAnnotationModel = AnnotationModel & { data: AnnotationsBou
 
 export type Image360AnnotationModel = AnnotationModel & {
   data: AnnotationsTypesImagesAssetLink;
+};
+
+export type CdfAssetMapping = {
+  treeIndex: number;
+  subtreeSize: number;
+  nodeId: CogniteInternalId;
+  assetId: CogniteInternalId;
+  assetInstanceId?: DmsUniqueIdentifier;
 };
 
 export type Image360AnnotationAssetInfo = {

@@ -2,7 +2,12 @@
  * Copyright 2024 Cognite AS
  */
 import { type CogniteClient } from '@cognite/sdk';
-import { type ModelId, type RevisionId, type ModelRevisionKey, type AssetMapping } from './types';
+import {
+  type ModelId,
+  type RevisionId,
+  type ModelRevisionKey,
+  type CdfAssetMapping
+} from './types';
 import { isValidAssetMapping } from './utils';
 import { createModelRevisionKey } from './idAndKeyTranslation';
 import { isDefined } from '../../utilities/isDefined';
@@ -10,7 +15,7 @@ import { isDefined } from '../../utilities/isDefined';
 export class AssetMappingPerModelCache {
   private readonly _sdk: CogniteClient;
 
-  private readonly _modelToAssetMappings = new Map<ModelRevisionKey, Promise<AssetMapping[]>>();
+  private readonly _modelToAssetMappings = new Map<ModelRevisionKey, Promise<CdfAssetMapping[]>>();
 
   private readonly isCoreDmOnly: boolean;
 
@@ -21,21 +26,21 @@ export class AssetMappingPerModelCache {
 
   public setModelToAssetMappingCacheItems(
     key: ModelRevisionKey,
-    assetMappings: Promise<AssetMapping[]>
+    assetMappings: Promise<CdfAssetMapping[]>
   ): void {
     this._modelToAssetMappings.set(key, assetMappings);
   }
 
   public async getModelToAssetMappingCacheItems(
     key: ModelRevisionKey
-  ): Promise<AssetMapping[] | undefined> {
+  ): Promise<CdfAssetMapping[] | undefined> {
     return await this._modelToAssetMappings.get(key);
   }
 
   public async fetchAndCacheMappingsForModel(
     modelId: ModelId,
     revisionId: RevisionId
-  ): Promise<AssetMapping[]> {
+  ): Promise<CdfAssetMapping[]> {
     const key = createModelRevisionKey(modelId, revisionId);
     const assetMappings = this.fetchAssetMappingsForModel(modelId, revisionId);
     this.setModelToAssetMappingCacheItems(key, assetMappings);
@@ -45,7 +50,7 @@ export class AssetMappingPerModelCache {
   private async fetchAssetMappingsForModel(
     modelId: ModelId,
     revisionId: RevisionId
-  ): Promise<AssetMapping[]> {
+  ): Promise<CdfAssetMapping[]> {
     const assetMappingsClassic = await this.fetchAssetMappingsForModelClassic(modelId, revisionId);
     const assetMappingsHybrid = await this.fetchAssetMappingsForModelHybrid(modelId, revisionId);
 

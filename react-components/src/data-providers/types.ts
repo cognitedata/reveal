@@ -8,7 +8,8 @@ import {
   type InternalId,
   type Metadata,
   type Relationship,
-  type Asset
+  type Asset,
+  QueryRequest
 } from '@cognite/sdk';
 
 export type RelationshipsFilterInternal = {

@@ -3,18 +3,17 @@
  */
 
 import { CogniteCadModel, type CogniteModel, type DataSourceType } from '@cognite/reveal';
-import { type AssetMapping3D } from '@cognite/sdk';
 import { useMemo } from 'react';
 import { type ModelWithAssetMappings } from './cad/ModelWithAssetMappings';
 import { isDefined } from '../utilities/isDefined';
-import { createEmptyArray } from '../utilities/createEmptyArray';
+import { type CdfAssetMapping } from '../components/CacheProvider/types';
 
 export const useCreateAssetMappingsMapPerModel = (
   models: Array<CogniteModel<DataSourceType>>,
   assetMappings: ModelWithAssetMappings[] | undefined
-): Map<CogniteCadModel, AssetMapping3D[] | undefined> => {
+): Map<CogniteCadModel, CdfAssetMapping[] | undefined> => {
   return useMemo(() => {
-    const mappingsPerModel = new Map<CogniteCadModel, AssetMapping3D[] | undefined>();
+    const mappingsPerModel = new Map<CogniteCadModel, CdfAssetMapping[] | undefined>();
     models.forEach((model) => {
       if (!(model instanceof CogniteCadModel)) {
         return;

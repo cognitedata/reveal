@@ -1,25 +1,31 @@
 /*!
  * Copyright 2024 Cognite AS
  */
-import { type AssetMapping, type ModelAssetIdKey } from './types';
+import { type CdfAssetMapping, type ModelAssetIdKey } from './types';
 
 export class AssetMappingPerAssetIdCache {
-  private readonly _assetIdsToAssetMappings = new Map<ModelAssetIdKey, Promise<AssetMapping[]>>();
+  private readonly _assetIdsToAssetMappings = new Map<
+    ModelAssetIdKey,
+    Promise<CdfAssetMapping[]>
+  >();
 
   public setAssetIdsToAssetMappingCacheItem(
     key: ModelAssetIdKey,
-    item: Promise<AssetMapping[]>
+    item: Promise<CdfAssetMapping[]>
   ): void {
     this._assetIdsToAssetMappings.set(key, Promise.resolve(item));
   }
 
   public async getAssetIdsToAssetMappingCacheItem(
     key: ModelAssetIdKey
-  ): Promise<AssetMapping[] | undefined> {
+  ): Promise<CdfAssetMapping[] | undefined> {
     return await this._assetIdsToAssetMappings.get(key);
   }
 
-  public async setAssetMappingsCacheItem(key: ModelAssetIdKey, item: AssetMapping): Promise<void> {
+  public async setAssetMappingsCacheItem(
+    key: ModelAssetIdKey,
+    item: CdfAssetMapping
+  ): Promise<void> {
     const currentAssetMappings = this.getAssetIdsToAssetMappingCacheItem(key);
     this.setAssetIdsToAssetMappingCacheItem(
       key,

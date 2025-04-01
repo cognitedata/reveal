@@ -6,13 +6,11 @@ import { getDirectRelationProperties } from '../utils/getDirectRelationPropertie
 import {
   type Cognite3DObjectProperties,
   type COGNITE_3D_OBJECT_SOURCE,
-  COGNITE_ASSET_VIEW_VERSION_KEY,
   type COGNITE_CAD_NODE_SOURCE,
   COGNITE_CAD_NODE_VIEW_VERSION_KEY,
   type COGNITE_IMAGE_360_SOURCE,
   type COGNITE_POINT_CLOUD_VOLUME_SOURCE,
   COGNITE_POINT_CLOUD_VOLUME_VIEW_VERSION_KEY,
-  type CogniteAssetProperties,
   CORE_DM_SPACE
 } from './dataModels';
 import { type DmsUniqueIdentifier, type FdmSDK } from '../FdmSDK';
@@ -23,14 +21,15 @@ import { isString } from 'lodash';
 import { type QueryResult } from '../utils/queryNodesAndEdges';
 import { createCheck3dConnectedEquipmentQuery } from './check3dConnectedEquipmentQuery';
 import { restrictToDmsId } from '../../utilities/restrictToDmsId';
-import { isCoreDmAssetNode } from './utils/typeGuards';
+import { isDefined } from '../../utilities/isDefined';
+import { isDmsInstance } from '../../utilities/instanceIds';
 
 export async function filterNodesByMappedTo3d(
   nodes: InstancesWithView[],
   revisionRefs: DmsUniqueIdentifier[],
   _spacesToSearch: string[],
   fdmSdk: FdmSDK
-): Promise<Array<InstancesWithView<CogniteAssetProperties>>> {
+): Promise<InstancesWithView[]> {
   if (nodes.length === 0 || revisionRefs.length === 0) {
     return [];
   }
@@ -39,12 +38,19 @@ export async function filterNodesByMappedTo3d(
 
   const object3dKeys: Set<FdmKey> = createRelevantObject3dKeys(connectionData);
 
-  return nodes.map((viewWithNodes) => {
+  const result = nodes.map(async (viewWithNodes) => {
+    const spaceFromView = viewWithNodes.view.space;
+    const externalIdFromView = viewWithNodes.view.externalId;
+    const assetVersion = viewWithNodes.view.version;
+    const assetExternalIdWithVersion = `${externalIdFromView}/${assetVersion}`;
     return {
       view: viewWithNodes.view,
-      instances: viewWithNodes.instances.filter(isCoreDmAssetNode).filter((instance) => {
+      instances: viewWithNodes.instances.filter((instance) => {
+        if (!isDmsInstance(instance.properties[spaceFromView]?.[assetExternalIdWithVersion]?.object3D)) {
+          return false;
+        }
         const object3dId =
-          instance.properties[CORE_DM_SPACE][COGNITE_ASSET_VIEW_VERSION_KEY].object3D;
+          instance.properties[spaceFromView][assetExternalIdWithVersion]?.object3D;
         if (!isString(object3dId.externalId) || !isString(object3dId.space)) {
           return false;
         }
@@ -52,6 +58,10 @@ export async function filterNodesByMappedTo3d(
       })
     };
   });
+
+  const data = await Promise.all(result);
+
+  return data.filter(isDefined);
 }
 
 function createRelevantObject3dKeys(

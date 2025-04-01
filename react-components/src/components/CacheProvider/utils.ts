@@ -16,6 +16,7 @@ import {
   type InstanceReferenceKey
 } from '../../utilities/instanceIds/toKey';
 import { createFdmKey } from './idAndKeyTranslation';
+import { type CdfAssetMapping } from './types';
 
 export function getInstanceReferenceFromPointCloudAnnotation(
   annotation: AnnotationModel
@@ -66,6 +67,6 @@ function isCoreDmImage360Annotation(
   return (annotation as CoreDmImage360Annotation).annotationIdentifier?.externalId !== undefined;
 }
 
-export function isValidAssetMapping(assetMapping: AssetMapping3D): assetMapping is AssetMapping3D {
+export function isValidAssetMapping(assetMapping: AssetMapping3D): assetMapping is CdfAssetMapping {
   return assetMapping.treeIndex !== undefined && assetMapping.subtreeSize !== undefined;
 }
