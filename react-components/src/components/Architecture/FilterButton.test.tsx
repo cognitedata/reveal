@@ -1,0 +1,102 @@
+import { beforeEach, describe, expect, it, test } from 'vitest';
+import { FilterButton } from './FilterButton';
+import { fireEvent, prettyDOM, render, screen, waitFor } from '@testing-library/react';
+import {} from '@testing-library/react';
+import { PropsWithChildren, ReactElement } from 'react';
+import { ViewerContextProvider } from '../RevealCanvas/ViewerContext';
+import { BaseFilterCommand, RevealRenderTarget } from '../../architecture';
+import { viewerMock } from '#test-utils/fixtures/viewer';
+import { sdkMock } from '#test-utils/fixtures/sdk';
+import { TestFilterCommand } from '#test-utils/architecture/commands/TestFilterCommand';
+import { getTranslationKeyOrString } from '#test-utils/architecture/getTranslationKeyOrString';
+import { findIconByNameInContainer } from '#test-utils/cogs/findIconByNameInContainer';
+import assert from 'assert';
+import { expectAwaitToFail } from '#test-utils/expect/expectAwaitToThrow';
+import '@vitest/browser/matchers.d.ts';
+// import '@vitest/browser/context';
+
+describe(FilterButton.name, () => {
+  let renderTargetMock: RevealRenderTarget;
+  let filterCommand: TestFilterCommand;
+  let wrapper: (props: PropsWithChildren) => ReactElement;
+
+  beforeEach(() => {
+    renderTargetMock = new RevealRenderTarget(viewerMock, sdkMock);
+
+    filterCommand = new TestFilterCommand();
+    filterCommand.attach(renderTargetMock);
+
+    wrapper = ({ children }: PropsWithChildren): ReactElement => (
+      <ViewerContextProvider value={renderTargetMock}>{children}</ViewerContextProvider>
+    );
+  });
+
+  test('should render with correct icon and no text by default', async () => {
+    const { container } = render(<FilterButton inputCommand={filterCommand} placement="right" />, {
+      wrapper
+    });
+
+    const icon = findIconByNameInContainer(filterCommand.icon, container);
+
+    expect(icon).toBeDefined();
+
+    await expectAwaitToFail(() =>
+      screen.findByText(getTranslationKeyOrString(filterCommand.tooltip))
+    );
+  });
+
+  test('should render button with icon and name from component when used in settings', async () => {
+    const { container } = render(
+      <FilterButton inputCommand={filterCommand} placement="right" usedInSettings={true} />,
+      {
+        wrapper
+      }
+    );
+
+    const element = await screen.findByText(getTranslationKeyOrString(filterCommand.tooltip));
+
+    const icon = findIconByNameInContainer(filterCommand.icon, container);
+
+    expect(icon).toBeDefined();
+    expect(element).toBeDefined();
+  });
+
+  test('show render list items after click, hide on second click', async () => {
+    const { container } = render(<FilterButton inputCommand={filterCommand} placement="right" />, {
+      wrapper
+    });
+
+    const child = filterCommand.listChildren()[0];
+    const childLabel = child.getLabel(getTranslationKeyOrString);
+
+    await expectAwaitToFail(() => screen.findByText(childLabel));
+
+    const element = findIconByNameInContainer(filterCommand.icon, container);
+    assert(element !== null);
+
+    fireEvent.click(element);
+
+    const childElement = await screen.findByText(childLabel);
+
+    expect(childElement).toBeDefined();
+
+    fireEvent.click(element);
+
+    expectAwaitToFail(() => screen.findByText(childLabel));
+  });
+
+  test('should only render list items after click, also in settings version', async () => {
+    const element = (
+      <FilterButton inputCommand={filterCommand} placement="right" usedInSettings={true} />
+    );
+
+    render(element, {
+      wrapper
+    });
+
+    const child = filterCommand.listChildren()[1];
+    const childLabel = child.getLabel(getTranslationKeyOrString);
+
+    await expectAwaitToFail(() => screen.findByText(childLabel));
+  });
+});
