@@ -67,6 +67,7 @@ export const SettingsButton = ({
   }
   const label = command.getLabel(t);
   const flexDirection = getFlexDirection(placement);
+  const isTooltipDisabled = isOpen || label === undefined;
 
   return (
     <Dropdown
@@ -83,7 +84,7 @@ export const SettingsButton = ({
       offset={{ mainAxis: TOOLBAR_HORIZONTAL_PANEL_OFFSET }}>
       <CogsTooltip
         content={<LabelWithShortcut label={label} command={command} />}
-        disabled={isOpen || label === undefined}
+        disabled={isTooltipDisabled}
         enterDelay={TOOLTIP_DELAY}
         placement={getTooltipPlacement(placement)}>
         <Button
