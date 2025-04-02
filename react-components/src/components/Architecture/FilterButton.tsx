@@ -180,11 +180,12 @@ const FilterDropdown = ({
   return (
     <StyledDropdownRow>
       <StyledLabel>{label}</StyledLabel>
-      <StyledSelectPanel appendTo={'parent'} placement={'right-end'} hideOnOutsideClick>
+      <StyledSelectPanel placement={'right-end'} visible={isOpen}>
         <SelectPanel.Trigger>
           <StyledSelectPanelButton
             color="#000044"
             type="tertiary"
+            toggled={isOpen}
             onClick={() => {
               setOpen((prev) => !prev);
             }}>
