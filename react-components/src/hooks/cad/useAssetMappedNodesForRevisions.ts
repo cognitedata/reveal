@@ -2,7 +2,7 @@
  * Copyright 2024 Cognite AS
  */
 import { useQuery, type UseQueryResult } from '@tanstack/react-query';
-import { type AssetMappingAndNode3DCache, type CadModelOptions } from '../../components';
+import { type CadModelOptions } from '../../components';
 import { type ModelWithAssetMappings } from './ModelWithAssetMappings';
 import { useAssetMappingAndNode3DCache } from '../../components/CacheProvider/CacheProvider';
 import { useIsCoreDmOnly } from '../useIsCoreDmOnly';
@@ -29,8 +29,7 @@ export const useAssetMappedNodesForRevisions = (
             .then((assetMappings) => ({ model, assetMappings }))
       );
 
-      const results = await Promise.all(fetchPromises);
-      return results;
+      return await Promise.all(fetchPromises);
     },
     staleTime: Infinity,
     enabled: cadModels.length > 0 && !isCoreDmOnly

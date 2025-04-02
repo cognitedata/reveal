@@ -4,4 +4,3 @@
 
 export { RevealContext } from './RevealContext';
 export type { RevealContextProps } from './RevealContext';
-export { TestRevealContext } from './TestRevealContext';

@@ -62,7 +62,7 @@ export class AssetMappingPerModelCache {
   private async fetchAssetMappingsForModelClassic(
     modelId: ModelId,
     revisionId: RevisionId
-  ): Promise<AssetMapping[]> {
+  ): Promise<CdfAssetMapping[]> {
     const filterQuery = {
       limit: 1000
     };
@@ -82,7 +82,7 @@ export class AssetMappingPerModelCache {
   private async fetchAssetMappingsForModelHybrid(
     modelId: ModelId,
     revisionId: RevisionId
-  ): Promise<AssetMapping[]> {
+  ): Promise<CdfAssetMapping[]> {
     if (this.isCoreDmOnly) return [];
 
     const filterQueryHybrid = {
@@ -103,7 +103,7 @@ export class AssetMappingPerModelCache {
         const nodeFound = nodes.find((node) => node.id === mapping.nodeId);
         if (nodeFound === undefined) return undefined;
 
-        const newMapping: NonNullable<AssetMapping> = {
+        const newMapping: NonNullable<CdfAssetMapping> = {
           ...mapping,
           nodeId: mapping.nodeId,
           treeIndex: nodeFound.treeIndex,

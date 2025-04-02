@@ -8,7 +8,6 @@ import {
   type AnnotationsBoundingVolume,
   type Node3D,
   type AssetMapping3D,
-  type AnnotationsTypesImagesAssetLink
 } from '@cognite/sdk';
 import { type Source, type DmsUniqueIdentifier } from '../../data-providers/FdmSDK';
 import { type AssetAnnotationImage360Info, type DataSourceType } from '@cognite/reveal';

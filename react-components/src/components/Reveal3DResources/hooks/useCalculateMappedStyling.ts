@@ -5,7 +5,7 @@
 import { type NodeAppearance } from '@cognite/reveal';
 import { type ModelStyleGroupWithMappingsFetched, type CadModelOptions } from '../types';
 import { useMemo } from 'react';
-import { useMappedEdgesForRevisions, useAssetMappedNodesForRevisions } from '../../../hooks';
+import { useMappedEdgesForRevisions, useAssetMappedNodesForRevisions, ModelWithAssetMappings } from '../../../hooks';
 import { getMappedStyleGroupFromAssetMappings } from './utils/getMappedStyleGroupFromAssetMappings';
 import { getMappedStyleGroupFromFdm } from './utils/getMappedStyleGroupFromFdm';
 import { getMappedCadModelsOptions } from './utils/getMappedCadModelsOptions';
@@ -74,7 +74,7 @@ export function useCalculateMappedStyling(
       return [];
     }
 
-    return assetMappingData.map((assetMappedModel) => {
+    return assetMappingData.map((assetMappedModel: ModelWithAssetMappings) => {
       const modelStyle = assetMappedModel.model.styling?.mapped ?? defaultMappedNodeAppearance;
 
       const styleGroup =

@@ -2,7 +2,6 @@
  * Copyright 2023 Cognite AS
  */
 
-import { type CogniteClient, type Node3D, type CogniteInternalId } from '@cognite/sdk';
 import {
   type CogniteClient,
   type Node3D,
@@ -21,7 +20,8 @@ import {
   type ModelAssetIdKey,
   type ModelDMSUniqueInstanceKey,
   type NodeAssetMappingResult,
-  type CdfAssetMapping
+  type CdfAssetMapping,
+  AssetMapping
 } from './types';
 import { chunk, maxBy } from 'lodash';
 import assert from 'assert';
@@ -41,8 +41,6 @@ import { isDefined } from '../../utilities/isDefined';
 import { type DmsUniqueIdentifier } from '../../data-providers';
 import { AssetMappingHybridPerAssetInstanceIdCache } from './AssetMappingHybridPerAssetInstanceIdCache';
 import { isDmsInstance } from '../../utilities/instanceIds';
-
-export type NodeAssetMappingResult = { node?: Node3D; mappings: CdfAssetMapping[] };
 
 export class AssetMappingAndNode3DCache {
   private readonly _sdk: CogniteClient;
@@ -167,7 +165,7 @@ export class AssetMappingAndNode3DCache {
   public async getNodesForAssetInstancesInHybridMappings(
     modelId: ModelId,
     revisionId: RevisionId,
-    assetMappings: AssetMapping[]
+    assetMappings: CdfAssetMapping[]
   ): Promise<Map<CogniteExternalId, Node3D[]>> {
     const nodes = await this.nodeIdsToNode3DCache.getNodesForNodeIds(
       modelId,
@@ -279,8 +277,8 @@ export class AssetMappingAndNode3DCache {
     modelId: ModelId,
     revisionId: RevisionId,
     type: string
-  ): Promise<ChunkInCacheTypes<AssetMapping>> {
-    const chunkInCache: AssetMapping[] = [];
+  ): Promise<ChunkInCacheTypes<CdfAssetMapping>> {
+    const chunkInCache: CdfAssetMapping[] = [];
     const chunkNotCachedClassic: number[] = [];
     const chunkNotCachedDMS: DmsUniqueIdentifier[] = [];
 
@@ -336,7 +334,7 @@ export class AssetMappingAndNode3DCache {
 
   public setHybridItemCacheResult(
     key: ModelDMSUniqueInstanceKey,
-    item: AssetMapping[] | undefined
+    item: CdfAssetMapping[] | undefined
   ): void {
     const value = Promise.resolve(item ?? []);
     this.assetInstanceIdsToAssetMappingCache.setAssetInstanceIdsToHybridAssetMappingCacheItem(
@@ -367,6 +365,10 @@ export class AssetMappingAndNode3DCache {
     if (currentChunk.length === 0) {
       return [];
     }
+
+    let assetMapping3DClassic: AssetMapping[] = [];
+    let assetMapping3DHybrid: AssetMapping[] = [];
+
     const filter = this.getFilterBasedOnType(filterType, currentChunk);
 
     assetMapping3DClassic = await this._sdk.assetMappings3D
@@ -407,8 +409,13 @@ export class AssetMappingAndNode3DCache {
       assetMapping3DClassic
         .map(async (item) => {
           if (item.assetId === undefined) return;
-          const mapping: AssetMapping = {
+          if (item.treeIndex === undefined) return;
+          if (item.subtreeSize === undefined) return;
+
+          const mapping: CdfAssetMapping = {
             ...item,
+            treeIndex: item.treeIndex,
+            subtreeSize: item.subtreeSize,
             assetId: item.assetId,
             assetInstanceId: item.assetInstanceId
           };
@@ -434,9 +441,14 @@ export class AssetMappingAndNode3DCache {
     await Promise.all(
       assetMapping3DHybrid.map(async (item) => {
         if (item.assetInstanceId === undefined) return;
+        if (item.treeIndex === undefined) return;
+        if (item.subtreeSize === undefined) return;
         if (currentChunk.find((id) => id === item.nodeId) === undefined) return;
-        const mapping: AssetMapping = {
+
+        const mapping: CdfAssetMapping = {
           ...item,
+          treeIndex: item.treeIndex,
+            subtreeSize: item.subtreeSize,
           assetId: item.assetId,
           assetInstanceId: item.assetInstanceId
         };
@@ -510,7 +522,7 @@ export class AssetMappingAndNode3DCache {
       []
     );
 
-    const mappings: AssetMapping[] = assetMappings.map((item) => {
+    const mappings: CdfAssetMapping[] = assetMappings.map((item) => {
       return {
         ...item,
         assetId: item.assetId,
@@ -553,7 +565,7 @@ export class AssetMappingAndNode3DCache {
     modelId: ModelId,
     revisionId: RevisionId,
     nodes: Node3D[]
-  ): Promise<AssetMapping[]> {
+  ): Promise<CdfAssetMapping[]> {
     const nodeIds = nodes.map((node) => node.id);
 
     const { chunkNotInCacheIdClassic, chunkInCache } =
@@ -580,7 +592,7 @@ export class AssetMappingAndNode3DCache {
     revisionId: RevisionId,
     assetIds: number[]
   ): Promise<CdfAssetMapping[]> {
-    const { chunkNotInCache, chunkInCache } = await this.splitChunkInCacheAssetMappings(
+    const { chunkNotInCacheIdClassic, chunkInCache } = await this.splitChunkInCacheAssetMappings(
       assetIds,
       modelId,
       revisionId,

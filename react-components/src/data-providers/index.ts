@@ -6,4 +6,3 @@ export type { AssetIdsAndTimeseriesData, ExtendedRelationship, AssetAndTimeserie
 export type { Source, DmsUniqueIdentifier, SimpleSource, NodeItem } from './FdmSDK';
 
 export * from './core-dm-provider/dataModels';
-export type { Source, DmsUniqueIdentifier, SimpleSource, NodeItem } from './FdmSDK';
