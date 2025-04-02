@@ -5,10 +5,10 @@ import { TestSettingsCommand } from '#test-utils/architecture/commands/TestSetti
 import { TestButtonCommand } from '#test-utils/architecture/commands/TestButtonCommand';
 import { findIconByNameInContainer } from '#test-utils/cogs/findIconByNameInContainer';
 import assert from 'assert';
-import { PropsWithChildren, ReactElement } from 'react';
+import { type PropsWithChildren, type ReactElement } from 'react';
 import { sdkMock } from '#test-utils/fixtures/sdk';
 import { viewerMock } from '#test-utils/fixtures/viewer';
-import { BaseSettingsCommand, RevealRenderTarget, SettingsCommand } from '../../architecture';
+import { type BaseSettingsCommand, RevealRenderTarget } from '../../architecture';
 import { ViewerContextProvider } from '../RevealCanvas/ViewerContext';
 import { TestSectionCommand } from '#test-utils/architecture/commands/TestSectionCommand';
 import { DividerCommand } from '../../architecture/base/commands/DividerCommand';

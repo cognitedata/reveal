@@ -7,6 +7,7 @@ export class TestSliderCommand extends BaseSliderCommand {
     super(0, 10, 1);
     this._value = 0;
   }
+
   public override get value(): number {
     return this._value;
   }

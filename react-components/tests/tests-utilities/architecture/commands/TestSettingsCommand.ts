@@ -1,5 +1,5 @@
-import { BaseSettingsCommand, TranslationInput } from '../../../../src/architecture';
-import { IconName } from '../../../../src/architecture/base/utilities/IconName';
+import { BaseSettingsCommand, type TranslationInput } from '../../../../src/architecture';
+import { type IconName } from '../../../../src/architecture/base/utilities/IconName';
 
 export class TestSettingsCommand extends BaseSettingsCommand {
   // ==================================================

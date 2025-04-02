@@ -1,9 +1,9 @@
-import { BaseCommand, TranslateDelegate, TranslationInput } from '../../../../src/architecture';
-import { IconName } from '../../../../src/architecture/base/utilities/IconName';
+import { BaseCommand, type TranslateDelegate } from '../../../../src/architecture';
+import { type IconName } from '../../../../src/architecture/base/utilities/IconName';
 
 export class TestButtonCommand extends BaseCommand {
-  private _delegate: (() => void) | undefined;
-  private _isToggle: boolean;
+  private readonly _delegate: (() => void) | undefined;
+  private readonly _isToggle: boolean;
 
   constructor(properties?: { onClick?: () => void; isToggle?: boolean }) {
     super();

@@ -1,4 +1,4 @@
-import { TranslationInput } from '../../../src/architecture';
+import { type TranslationInput } from '../../../src/architecture';
 import { isTranslatedString } from '../../../src/architecture/base/utilities/TranslateInput';
 
 export function getTranslationKeyOrString(input: TranslationInput | undefined): string {

@@ -1,8 +1,8 @@
 import {
   BaseOptionCommand,
   RenderTargetCommand,
-  TranslateDelegate,
-  TranslationInput
+  type TranslateDelegate,
+  type TranslationInput
 } from '../../../../src/architecture';
 
 const OPTIONS = [0.5, 1, 2, 5, 10, 20];

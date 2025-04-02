@@ -1,8 +1,8 @@
-import { TranslateDelegate } from '../../../../src/architecture';
+import { type TranslateDelegate } from '../../../../src/architecture';
 import { SectionCommand } from '../../../../src/architecture/base/commands/SectionCommand';
 
 export class TestSectionCommand extends SectionCommand {
-  private _content: string | undefined;
+  private readonly _content: string | undefined;
 
   constructor(content?: string) {
     super();

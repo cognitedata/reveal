@@ -1,10 +1,10 @@
 import {
   BaseFilterCommand,
   BaseFilterItemCommand,
-  TranslateDelegate,
-  TranslationInput
+  type TranslateDelegate,
+  type TranslationInput
 } from '../../../../src/architecture';
-import { IconName } from '../../../../src/architecture/base/utilities/IconName';
+import { type IconName } from '../../../../src/architecture/base/utilities/IconName';
 
 export class TestFilterCommand extends BaseFilterCommand {
   public override get tooltip(): TranslationInput {
@@ -26,8 +26,10 @@ export class TestFilterCommand extends BaseFilterCommand {
     return 'Cube';
   }
 
-  public setChecked(checked: boolean) {
-    this.listChildren().forEach((child) => child.setChecked(checked));
+  public setChecked(checked: boolean): void {
+    this.listChildren().forEach((child) => {
+      child.setChecked(checked);
+    });
   }
 
   public listChildren(): TestFilterItemCommand[] {

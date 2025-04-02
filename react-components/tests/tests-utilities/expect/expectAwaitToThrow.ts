@@ -11,6 +11,6 @@ const AWAIT_TIME_SLOT_MS = 50;
  * There is a margin of error here, since we cannot know for sure whether
  * the callback would succeed after the allocated time
  */
-export function expectAwaitToFail<T>(check: () => Promise<T>): Promise<void> {
-  return expect(waitFor(check, { timeout: AWAIT_TIME_SLOT_MS })).rejects.toThrow();
+export async function expectAwaitToFail<T>(check: () => Promise<T>): Promise<void> {
+  await expect(waitFor(check, { timeout: AWAIT_TIME_SLOT_MS })).rejects.toThrow();
 }
