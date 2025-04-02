@@ -22,7 +22,7 @@ export const PointsOfInterestSidePanel = ({ children }: PropsWithChildren): Reac
     if (tool === undefined) {
       return;
     }
-
+    console.log(tool.isChecked, tool.isEnabled);
     setEnabled(tool.isChecked && tool.isEnabled);
   });
 
