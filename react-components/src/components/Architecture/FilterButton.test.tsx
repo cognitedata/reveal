@@ -1,10 +1,9 @@
-import { beforeEach, describe, expect, it, test } from 'vitest';
+import { beforeEach, describe, expect, test } from 'vitest';
 import { FilterButton } from './FilterButton';
-import { fireEvent, prettyDOM, render, screen, waitFor } from '@testing-library/react';
-import {} from '@testing-library/react';
-import { PropsWithChildren, ReactElement } from 'react';
+import { fireEvent, render, screen } from '@testing-library/react';
+import { type PropsWithChildren, type ReactElement } from 'react';
 import { ViewerContextProvider } from '../RevealCanvas/ViewerContext';
-import { BaseFilterCommand, RevealRenderTarget } from '../../architecture';
+import { RevealRenderTarget } from '../../architecture';
 import { viewerMock } from '#test-utils/fixtures/viewer';
 import { sdkMock } from '#test-utils/fixtures/sdk';
 import { TestFilterCommand } from '#test-utils/architecture/commands/TestFilterCommand';
@@ -13,7 +12,6 @@ import { findIconByNameInContainer } from '#test-utils/cogs/findIconByNameInCont
 import assert from 'assert';
 import { expectAwaitToFail } from '#test-utils/expect/expectAwaitToThrow';
 import '@vitest/browser/matchers.d.ts';
-// import '@vitest/browser/context';
 
 describe(FilterButton.name, () => {
   let renderTargetMock: RevealRenderTarget;
@@ -40,8 +38,8 @@ describe(FilterButton.name, () => {
 
     expect(icon).toBeDefined();
 
-    await expectAwaitToFail(() =>
-      screen.findByText(getTranslationKeyOrString(filterCommand.tooltip))
+    await expectAwaitToFail(
+      async () => await screen.findByText(getTranslationKeyOrString(filterCommand.tooltip))
     );
   });
 
@@ -69,7 +67,7 @@ describe(FilterButton.name, () => {
     const child = filterCommand.listChildren()[0];
     const childLabel = child.getLabel(getTranslationKeyOrString);
 
-    await expectAwaitToFail(() => screen.findByText(childLabel));
+    await expectAwaitToFail(async () => await screen.findByText(childLabel));
 
     const element = findIconByNameInContainer(filterCommand.icon, container);
     assert(element !== null);
@@ -82,7 +80,7 @@ describe(FilterButton.name, () => {
 
     fireEvent.click(element);
 
-    expectAwaitToFail(() => screen.findByText(childLabel));
+    await expectAwaitToFail(async () => await screen.findByText(childLabel));
   });
 
   test('should only render list items after click, also in settings version', async () => {
@@ -97,6 +95,6 @@ describe(FilterButton.name, () => {
     const child = filterCommand.listChildren()[1];
     const childLabel = child.getLabel(getTranslationKeyOrString);
 
-    await expectAwaitToFail(() => screen.findByText(childLabel));
+    await expectAwaitToFail(async () => await screen.findByText(childLabel));
   });
 });
