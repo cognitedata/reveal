@@ -18,15 +18,14 @@ import {
 import { type DmsUniqueIdentifier, type FdmSDK, type Source } from '../FdmSDK';
 import { type FdmKey } from '../../components/CacheProvider/types';
 import { createFdmKey } from '../../components/CacheProvider/idAndKeyTranslation';
-import { type PromiseType } from '../utils/typeUtils';
-import { isString, transform, uniqBy } from 'lodash';
-import { type QueryResult } from '../utils/queryNodesAndEdges';
+import { chunk, concat, isString, transform, uniqBy } from 'lodash';
 import { createCheck3dConnectedEquipmentQuery } from './check3dConnectedEquipmentQuery';
 import { restrictToDmsId } from '../../utilities/restrictToDmsId';
 import { isDefined } from '../../utilities/isDefined';
 import { isDmsInstance } from '../../utilities/instanceIds';
 import { getCogniteAssetDirectRelationProperties } from '../utils/getCogniteAssetDirectRelationProperties';
 import { transformViewItemToSource } from './utils/transformViewItemToSource';
+import type { QueryResult } from '../utils/queryNodesAndEdges';
 
 export async function filterNodesByMappedTo3d(
   nodes: InstancesWithViewDefinition[],
@@ -38,9 +37,11 @@ export async function filterNodesByMappedTo3d(
     return [];
   }
 
-  const connectionData = await fetchConnectionData(nodes, revisionRefs, fdmSdk);
-
-  const object3dKeys: Set<FdmKey> = createRelevantObject3dKeys(connectionData);
+  const object3dKeys = await getObject3dsConnectedToAssetAndModelRevisions(
+    nodes,
+    revisionRefs,
+    fdmSdk
+  );
 
   const result = nodes.map(async (viewWithNodes) => {
     const spaceFromView = viewWithNodes.view.space;
@@ -74,47 +75,6 @@ export async function filterNodesByMappedTo3d(
     .filter(isDefined);
 }
 
-function createRelevantObject3dKeys(
-  connectionData: PromiseType<ReturnType<typeof fetchConnectionData>>
-): Set<FdmKey> {
-  const cadObject3dList = [...connectionData.items.initial_nodes_cad_nodes]
-    .concat(connectionData.items.direct_nodes_cad_nodes)
-    .concat(connectionData.items.indirect_nodes_cad_nodes)
-    .map((node) =>
-      createFdmKey(node.properties[CORE_DM_SPACE][COGNITE_CAD_NODE_VIEW_VERSION_KEY].object3D)
-    );
-
-  const pointCloudObject3dList = [...connectionData.items.initial_nodes_point_cloud_volumes]
-    .concat(connectionData.items.direct_nodes_point_cloud_volumes)
-    .concat(connectionData.items.indirect_nodes_point_cloud_volumes)
-    .map((pointCloudVolume) =>
-      createFdmKey(
-        pointCloudVolume.properties[CORE_DM_SPACE][COGNITE_POINT_CLOUD_VOLUME_VIEW_VERSION_KEY]
-          .object3D
-      )
-    );
-
-  const relevant360NodeKeys = new Set<FdmKey>(
-    [
-      ...connectionData.items.initial_nodes_360_images,
-      ...connectionData.items.direct_nodes_360_images,
-      ...connectionData.items.indirect_nodes_360_images
-    ].map(createFdmKey)
-  );
-
-  const relevant360AnnotationEdges = [
-    ...connectionData.items.initial_edges_360_image_annotations,
-    ...connectionData.items.direct_edges_360_image_annotations,
-    ...connectionData.items.indirect_edges_360_image_annotations
-  ].filter((edge) => relevant360NodeKeys.has(createFdmKey(edge.endNode)));
-
-  const image360Object3dList = relevant360AnnotationEdges.map((edge) =>
-    createFdmKey(edge.startNode)
-  );
-
-  return new Set<FdmKey>([...cadObject3dList, ...pointCloudObject3dList, ...image360Object3dList]);
-}
-
 type SelectSourcesType = [
   { source: typeof COGNITE_3D_OBJECT_SOURCE; properties: Cognite3DObjectProperties },
   { source: typeof COGNITE_CAD_NODE_SOURCE; properties: { object3D: DmsUniqueIdentifier } },
@@ -128,13 +88,11 @@ type SelectSourcesType = [
   }
 ];
 
-async function fetchConnectionData(
+async function getObject3dsConnectedToAssetAndModelRevisions(
   nodes: InstancesWithViewDefinition[],
   revisionRefs: DmsUniqueIdentifier[],
   fdmSdk: FdmSDK
-): Promise<
-  QueryResult<ReturnType<typeof createCheck3dConnectedEquipmentQuery>, SelectSourcesType>
-> {
+): Promise<Set<FdmKey>> {
   const initialIds = nodes.flatMap((node) => node.instances.map(restrictToDmsId));
 
   const directlyConnectedIds = nodes
@@ -145,24 +103,59 @@ async function fetchConnectionData(
     )
     .filter(isDefined);
 
-  const uniqueDirectlyConnectedIds = uniqBy(
-    directlyConnectedIds,
-    (id) => id.externalId && id.space
-  );
+  const mergedIds = concat(initialIds, directlyConnectedIds);
+  const uniqueIds = uniqBy(mergedIds, (id) => id.externalId && id.space);
 
-  const directlyConnectedIdsCappedAt1000Elements = uniqueDirectlyConnectedIds.slice(0, 1000);
+  // Can maximum filter on 2K instances at a time using instanceReferences filter
+  const chunkedIds = chunk(uniqueIds, 2000);
 
   const parameters = { revisionRefs };
-  const rawQuery = createCheck3dConnectedEquipmentQuery(
-    initialIds,
-    directlyConnectedIdsCappedAt1000Elements,
-    revisionRefs
+
+  const object3dConnectedToEquipmentAndModel: FdmKey[] = [];
+  for (const idChunk of chunkedIds) {
+    const rawQuery = createCheck3dConnectedEquipmentQuery(idChunk);
+
+    const query = {
+      ...rawQuery,
+      parameters
+    };
+
+    const result = await fdmSdk.queryAllNodesAndEdges<typeof query, SelectSourcesType>(query);
+    object3dConnectedToEquipmentAndModel.push(...getRelevantObject3ds(result));
+  }
+
+  return new Set<FdmKey>(object3dConnectedToEquipmentAndModel);
+}
+
+function getRelevantObject3ds(
+  connectionData: QueryResult<
+    ReturnType<typeof createCheck3dConnectedEquipmentQuery>,
+    SelectSourcesType
+  >
+): FdmKey[] {
+  const cadObject3dList = [...connectionData.items.initial_nodes_cad_nodes]
+    .concat(connectionData.items.indirect_nodes_cad_nodes)
+    .map((node) =>
+      createFdmKey(node.properties[CORE_DM_SPACE][COGNITE_CAD_NODE_VIEW_VERSION_KEY].object3D)
+    );
+
+  const pointCloudObject3dList = [...connectionData.items.initial_nodes_point_cloud_volumes]
+    .concat(connectionData.items.indirect_nodes_point_cloud_volumes)
+    .map((pointCloudVolume) =>
+      createFdmKey(
+        pointCloudVolume.properties[CORE_DM_SPACE][COGNITE_POINT_CLOUD_VOLUME_VIEW_VERSION_KEY]
+          .object3D
+      )
+    );
+
+  const relevant360AnnotationEdges = [
+    ...connectionData.items.initial_edges_360_image_annotations,
+    ...connectionData.items.indirect_edges_360_image_annotations
+  ].filter((edge) => createFdmKey(edge.endNode));
+
+  const image360Object3dList = relevant360AnnotationEdges.map((edge) =>
+    createFdmKey(edge.startNode)
   );
 
-  const query = {
-    ...rawQuery,
-    parameters
-  };
-
-  return await fdmSdk.queryAllNodesAndEdges<typeof query, SelectSourcesType>(query);
+  return [...cadObject3dList, ...pointCloudObject3dList, ...image360Object3dList];
 }
