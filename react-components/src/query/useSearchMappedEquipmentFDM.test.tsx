@@ -8,7 +8,12 @@ import {
 } from '../query/useSearchMappedEquipmentFDM';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { cadNodesFixtures } from '#test-utils/fixtures/dm/nodeItems';
-import { type FdmSDK } from '../data-providers/FdmSDK';
+import {
+  type FdmSDK,
+  type SimpleSource,
+  type ViewItem,
+  type ViewItemListResponse
+} from '../data-providers/FdmSDK';
 import { Mock } from 'moq.ts';
 import { type RevealRenderTarget } from '../architecture';
 import type { FC, PropsWithChildren } from 'react';
@@ -20,6 +25,8 @@ const queryClient = new QueryClient();
 
 const mockFdmSdk = new Mock<FdmSDK>()
   .setup((p) => p.searchInstances)
+  .returns(vi.fn())
+  .setup((p) => p.getViewsByIds)
   .returns(vi.fn())
   .object();
 
@@ -39,6 +46,8 @@ const mockFdmDataProvider = new Mock<Fdm3dDataProvider>()
 const fdmSdkMock = new Mock<FdmSDK>()
   .setup((sdk) => sdk.searchInstances)
   .returns(mockFdmSdk.searchInstances)
+  .setup((sdk) => sdk.getViewsByIds)
+  .returns(mockFdmSdk.getViewsByIds)
   .object();
 
 const renderTargetMock = new Mock<RevealRenderTarget>()
@@ -103,6 +112,10 @@ describe(useSearchMappedEquipmentFDM.name, () => {
         instances: mockInstancesWithView[1].instances
       });
 
+    vi.mocked(mockFdmSdk.getViewsByIds).mockResolvedValueOnce(
+      getMockViewByIdResponse(mockViewsToSearch)
+    );
+
     const { result } = renderHook(
       () =>
         useSearchMappedEquipmentFDM(
@@ -120,7 +133,7 @@ describe(useSearchMappedEquipmentFDM.name, () => {
     });
     await waitFor(() => {
       expect(mockFdmSdk.searchInstances).toHaveBeenCalledWith(
-        mockViewsToSearch[0],
+        getMockViewItemFromSimpleSource(mockViewsToSearch[0]),
         'query',
         'node',
         100,
@@ -129,7 +142,7 @@ describe(useSearchMappedEquipmentFDM.name, () => {
     });
     await waitFor(() => {
       expect(mockFdmSdk.searchInstances).toHaveBeenCalledWith(
-        mockViewsToSearch[1],
+        getMockViewItemFromSimpleSource(mockViewsToSearch[1]),
         'query',
         'node',
         100,
@@ -150,17 +163,21 @@ describe(useSearchMappedEquipmentFDM.name, () => {
 
     mockFilterNodesByMappedTo3d.mockResolvedValueOnce(mockInstancesWithView);
 
+    vi.mocked(mockFdmSdk.getViewsByIds).mockResolvedValueOnce(
+      getMockViewByIdResponse(mockViewsToSearch)
+    );
+
     const { result } = renderHook(
       () =>
         useSearchMappedEquipmentFDM('', mockViewsToSearch, mockModels, mockInstancesFilter, 100),
       { wrapper }
     );
 
-    expect(mockFdmDataProvider.listMappedFdmNodes).toHaveBeenCalledTimes(1);
     await waitFor(() => {
+      expect(mockFdmDataProvider.listMappedFdmNodes).toHaveBeenCalledTimes(1);
       expect(mockFdmDataProvider.listMappedFdmNodes).toHaveBeenCalledWith(
         mockModels,
-        mockViewsToSearch,
+        mockViewsToSearch.map((view) => getMockViewItemFromSimpleSource(view)),
         mockInstancesFilter,
         100
       );
@@ -188,6 +205,10 @@ describe(useAllMappedEquipmentFDM.name, () => {
   it('should call listAllMappedFdmNodes with correct parameters', async () => {
     const mockResult = [{ id: 'node1' }, { id: 'node2' }];
     mockListAllMappedFdmNodes.mockResolvedValueOnce(mockResult);
+
+    vi.mocked(mockFdmSdk.getViewsByIds).mockResolvedValueOnce(
+      getMockViewByIdResponse(mockViewsToSearch)
+    );
 
     const { result } = renderHook(
       () => useAllMappedEquipmentFDM(mockModels, mockViewsToSearch, true),
@@ -223,3 +244,25 @@ describe(useAllMappedEquipmentFDM.name, () => {
     expect(mockListAllMappedFdmNodes).not.toHaveBeenCalled();
   });
 });
+
+function getMockViewByIdResponse(sources: SimpleSource[]): ViewItemListResponse {
+  return {
+    items: sources.map((source) => getMockViewItemFromSimpleSource(source))
+  };
+}
+
+function getMockViewItemFromSimpleSource(source: SimpleSource): ViewItem {
+  return {
+    externalId: source.externalId,
+    version: source.version,
+    space: source.space,
+    createdTime: 123,
+    lastUpdatedTime: 124,
+    writable: true,
+    usedFor: 'usedFor',
+    isGlobal: true,
+    properties: {},
+    name: 'name',
+    implements: []
+  };
+}

@@ -1,7 +1,10 @@
 /*!
  * Copyright 2024 Cognite AS
  */
-import { type InstancesWithView } from '../../query/useSearchMappedEquipmentFDM';
+import {
+  type InstancesWithView,
+  type InstancesWithViewDefinition
+} from '../../query/useSearchMappedEquipmentFDM';
 import {
   type Cognite3DObjectProperties,
   type COGNITE_3D_OBJECT_SOURCE,
@@ -12,7 +15,7 @@ import {
   COGNITE_POINT_CLOUD_VOLUME_VIEW_VERSION_KEY,
   CORE_DM_SPACE
 } from './dataModels';
-import { type DmsUniqueIdentifier, type FdmSDK } from '../FdmSDK';
+import { type DmsUniqueIdentifier, type FdmSDK, type Source } from '../FdmSDK';
 import { type FdmKey } from '../../components/CacheProvider/types';
 import { createFdmKey } from '../../components/CacheProvider/idAndKeyTranslation';
 import { type PromiseType } from '../utils/typeUtils';
@@ -25,7 +28,7 @@ import { isDmsInstance } from '../../utilities/instanceIds';
 import { getCogniteAssetDirectRelationProperties } from '../utils/getCogniteAssetDirectRelationProperties';
 
 export async function filterNodesByMappedTo3d(
-  nodes: InstancesWithView[],
+  nodes: InstancesWithViewDefinition[],
   revisionRefs: DmsUniqueIdentifier[],
   _spacesToSearch: string[],
   fdmSdk: FdmSDK
@@ -62,7 +65,17 @@ export async function filterNodesByMappedTo3d(
 
   const data = await Promise.all(result);
 
-  return data.filter(isDefined);
+  return data
+    .map((viewWithNodes) => ({
+      view: {
+        type: 'view',
+        externalId: viewWithNodes.view.externalId,
+        space: viewWithNodes.view.space,
+        version: viewWithNodes.view.version
+      } as Source,
+      instances: viewWithNodes.instances
+    }))
+    .filter(isDefined);
 }
 
 function createRelevantObject3dKeys(
@@ -120,7 +133,7 @@ type SelectSourcesType = [
 ];
 
 async function fetchConnectionData(
-  nodes: InstancesWithView[],
+  nodes: InstancesWithViewDefinition[],
   revisionRefs: DmsUniqueIdentifier[],
   fdmSdk: FdmSDK
 ): Promise<
@@ -128,25 +141,11 @@ async function fetchConnectionData(
 > {
   const initialIds = nodes.flatMap((node) => node.instances.map(restrictToDmsId));
 
-  const uniqueViewIds = uniqBy(
-    nodes.flatMap((node) => node.view),
-    (view) => view.externalId && view.space && view.version
-  );
-
-  const viewDefinitions = await fdmSdk.getViewsByIds(uniqueViewIds);
-
   const directlyConnectedIds = nodes
     .flatMap((node) =>
-      node.instances.flatMap((instance) => {
-        const connectedView = viewDefinitions.items.find(
-          (view) => view.externalId === node.view.externalId && view.space === node.view.space
-        );
-        if (!connectedView) {
-          return [];
-        }
-
-        return getCogniteAssetDirectRelationProperties(instance, connectedView);
-      })
+      node.instances.flatMap((instance) =>
+        getCogniteAssetDirectRelationProperties(instance, node.view)
+      )
     )
     .filter(isDefined);
 

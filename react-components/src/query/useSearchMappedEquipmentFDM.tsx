@@ -7,10 +7,11 @@ import {
   type FdmSDK,
   type Source,
   type InstanceFilter,
-  type SimpleSource
+  type SimpleSource,
+  type ViewItem
 } from '../data-providers/FdmSDK';
 import { useFdmSdk } from '../components/RevealCanvas/SDKProvider';
-import { type UseQueryResult, useQuery } from '@tanstack/react-query';
+import { type UseQueryResult, useQuery, useQueryClient } from '@tanstack/react-query';
 import { type DataSourceType, type AddModelOptions } from '@cognite/reveal';
 import { isEqual, uniq, chunk } from 'lodash';
 import { type Fdm3dDataProvider } from '../data-providers/Fdm3dDataProvider';
@@ -22,6 +23,11 @@ import { assetsInstanceFilterWithHasDataQuery } from '../data-providers/core-dm-
 
 export type InstancesWithView<PropertyType = Record<string, unknown>> = {
   view: Source;
+  instances: Array<NodeItem<PropertyType>>;
+};
+
+export type InstancesWithViewDefinition<PropertyType = Record<string, unknown>> = {
+  view: ViewItem;
   instances: Array<NodeItem<PropertyType>>;
 };
 
@@ -38,6 +44,7 @@ export const useSearchMappedEquipmentFDM = (
 
   const fdmSdk = useFdmSdk();
   const fdmDataProvider = useFdm3dDataProvider();
+  const queryClient = useQueryClient();
 
   const spacesToSearch = useMemo(
     () => uniq(viewsToSearch.map((view) => view.space)),
@@ -60,15 +67,34 @@ export const useSearchMappedEquipmentFDM = (
       if (models.length === 0) {
         return [];
       }
-      const sources = createSourcesFromViews(viewsToSearch);
-      const chunkedSources = chunk(sources, 10);
-      if (chunkedSources.length === 0) {
-        chunkedSources.push([]);
+
+      const viewDefinitions = await queryClient.fetchQuery({
+        queryKey: [
+          'reveal',
+          'react-components',
+          'search-mapped-fdm',
+          'get-view-definitions-from-simple-source',
+          viewsToSearch
+        ],
+        queryFn: async () => {
+          const chunkedSources = chunk(viewsToSearch, 1000);
+          const views = [];
+          for (const chunk of chunkedSources) {
+            const res = await fdmSdk.getViewsByIds(createSourcesFromViews(chunk));
+            views.push(...res.items);
+          }
+          return views;
+        }
+      });
+
+      const chunkedViews = chunk(viewDefinitions, 10);
+      if (chunkedViews.length === 0) {
+        chunkedViews.push([]);
       }
 
       const queryResults: InstancesWithView[] = [];
 
-      for (const sourceChunk of chunkedSources) {
+      for (const sourceChunk of chunkedViews) {
         const chunkResult = await searchNodesWithViewsAndModels(
           query,
           spacesToSearch,
@@ -91,7 +117,7 @@ export const useSearchMappedEquipmentFDM = (
 const searchNodesWithViewsAndModels = async (
   query: string,
   spacesToSearch: string[],
-  sourcesToSearch: Source[],
+  sourcesToSearch: ViewItem[],
   models: Array<AddModelOptions<DataSourceType> | AddImage360CollectionDatamodelsOptions>,
   instancesFilter: InstanceFilter | undefined,
   fdmSdk: FdmSDK,
@@ -108,7 +134,12 @@ const searchNodesWithViewsAndModels = async (
     const transformedResults = convertQueryNodeItemsToSearchResultsWithViews(nodeItems);
 
     const combinedWithOtherViews = sourcesToSearch.map((view) => ({
-      view,
+      view: {
+        type: 'view',
+        space: view.space,
+        externalId: view.externalId,
+        version: view.version
+      } as Source,
       instances:
         transformedResults.find(
           (result) => result.view.externalId === view.externalId && result.view.space === view.space
@@ -118,7 +149,7 @@ const searchNodesWithViewsAndModels = async (
     return combinedWithOtherViews;
   }
 
-  const searchResults: InstancesWithView[] = [];
+  const searchResults: InstancesWithViewDefinition[] = [];
 
   for (const view of sourcesToSearch) {
     const result = await fdmSdk.searchInstances(view, query, 'node', limit, instancesFilter);
@@ -144,7 +175,11 @@ export const useAllMappedEquipmentFDM = (
       const viewSources = createSourcesFromViews(viewsToSearch);
 
       const assetFilterForAllMapped = assetsInstanceFilterWithHasDataQuery(viewSources);
-      return await fdmDataProvider.listAllMappedFdmNodes(models, viewSources, assetFilterForAllMapped);
+      return await fdmDataProvider.listAllMappedFdmNodes(
+        models,
+        viewSources,
+        assetFilterForAllMapped
+      );
     },
     staleTime: Infinity,
     enabled
