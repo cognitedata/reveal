@@ -259,7 +259,7 @@ export class FdmSDK {
   public async searchInstances<
     PropertiesType extends Record<string, unknown> = Record<string, unknown>
   >(
-    searchedView: ViewItem,
+    searchedView: Source,
     query: string,
     instanceType?: InstanceType,
     limit?: number,
@@ -271,7 +271,7 @@ export class FdmSDK {
   public async searchInstances<
     PropertiesType extends Record<string, unknown> = Record<string, unknown>
   >(
-    searchedView: ViewItem,
+    searchedView: Source,
     query: string,
     instanceType?: 'edge',
     limit?: number,
@@ -281,7 +281,7 @@ export class FdmSDK {
 
   // eslint-disable-next-line no-dupe-class-members
   public async searchInstances<PropertiesType = Record<string, unknown>>(
-    searchedView: ViewItem,
+    searchedView: Source,
     query: string,
     instanceType?: 'node',
     limit?: number,
@@ -293,7 +293,7 @@ export class FdmSDK {
   public async searchInstances<
     PropertiesType extends Record<string, unknown> = Record<string, unknown>
   >(
-    searchedView: ViewItem,
+    searchedView: Source,
     query: string,
     instanceType?: InstanceType,
     limit: number = 1000,
@@ -316,7 +316,7 @@ export class FdmSDK {
     >(this._searchEndpoint, { data });
 
     if (result.status === 200) {
-      hoistInstanceProperties(transformViewItemToSource(searchedView), result.data.items);
+      hoistInstanceProperties(searchedView, result.data.items);
 
       return { instances: result.data.items };
     }

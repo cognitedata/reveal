@@ -148,13 +148,20 @@ const searchNodesWithViewsAndModels = async (
   const searchResults: InstancesWithViewDefinition[] = [];
 
   for (const view of sourcesToSearch) {
-    const result = await fdmSdk.searchInstances(view, query, 'node', limit, instancesFilter);
+    const result = await fdmSdk.searchInstances(
+      transformViewItemToSource(view),
+      query,
+      'node',
+      limit,
+      instancesFilter
+    );
 
     searchResults.push({
       view,
       instances: result.instances
     });
   }
+
   return await fdmDataProvider.filterNodesByMappedTo3d(searchResults, models, spacesToSearch);
 };
 

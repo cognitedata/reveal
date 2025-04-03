@@ -133,7 +133,7 @@ describe(useSearchMappedEquipmentFDM.name, () => {
     });
     await waitFor(() => {
       expect(mockFdmSdk.searchInstances).toHaveBeenCalledWith(
-        getMockViewItemFromSimpleSource(mockViewsToSearch[0]),
+        mockViewsToSearch[0],
         'query',
         'node',
         100,
@@ -142,7 +142,7 @@ describe(useSearchMappedEquipmentFDM.name, () => {
     });
     await waitFor(() => {
       expect(mockFdmSdk.searchInstances).toHaveBeenCalledWith(
-        getMockViewItemFromSimpleSource(mockViewsToSearch[1]),
+        mockViewsToSearch[1],
         'query',
         'node',
         100,
