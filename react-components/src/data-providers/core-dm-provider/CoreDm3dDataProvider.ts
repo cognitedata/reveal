@@ -36,7 +36,7 @@ import { getCadModelsForInstance } from './getCadModelsForInstance';
 import { getCadConnectionsForRevisions } from './getCadConnectionsForRevisions';
 import { partition, zip } from 'lodash';
 import { restrictToDmsId } from '../../utilities/restrictToDmsId';
-import { EMPTY_ARRAY } from '../../utilities/constants';
+import { createEmptyArray } from '../../utilities/createEmptyArray';
 
 const MAX_PARALLEL_QUERIES = 2;
 
@@ -186,7 +186,7 @@ export class CoreDm3dFdm3dDataProvider implements Fdm3dDataProvider {
   ): Promise<FdmCadConnection[]> {
     const isClassicModels = modelOptions.every((model) => isClassicIdentifier(model));
     if (!isClassicModels) {
-      return EMPTY_ARRAY;
+      return createEmptyArray();
     }
     const modelRefs = await this.getDMSModelsForIds(modelOptions.map((model) => model.modelId));
 
