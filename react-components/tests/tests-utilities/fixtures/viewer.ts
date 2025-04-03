@@ -3,9 +3,8 @@ import { vi } from 'vitest';
 import {
   type DataSourceType,
   type Cognite3DViewer,
-  CadModelBudget,
-  PointCloudBudget,
-  ResolutionOptions
+  type CadModelBudget,
+  type PointCloudBudget
 } from '@cognite/reveal';
 import { Mock, It } from 'moq.ts';
 import { cameraManagerMock } from './cameraManager';
@@ -64,9 +63,13 @@ export const viewerMock = new Mock<Cognite3DViewer<DataSourceType>>()
   .setup((p) => p.removeCustomObject)
   .returns(vi.fn())
   .setup((p) => (p.cadBudget = It.IsAny<CadModelBudget>()))
-  .callback((p) => viewerSetCadModelBudgetMock(p.args[0]))
+  .callback((p) => {
+    viewerSetCadModelBudgetMock(p.args[0]);
+  })
   .setup((p) => (p.pointCloudBudget = It.IsAny<PointCloudBudget>()))
-  .callback((p) => viewerSetPointCloudModelBudgetMock(p.args[0]))
+  .callback((p) => {
+    viewerSetPointCloudModelBudgetMock(p.args[0]);
+  })
   .setup((p) => p.setResolutionOptions)
   .returns(vi.fn())
   .object();
