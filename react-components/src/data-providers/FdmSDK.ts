@@ -14,6 +14,7 @@ import {
   type SelectSourceWithParams
 } from './utils/queryNodesAndEdges';
 import { mergeQueryResults } from './utils/mergeQueryResult';
+import { transformViewItemToSource } from './core-dm-provider/utils/transformViewItemToSource';
 
 type InstanceType = 'node' | 'edge';
 type EdgeDirection = 'source' | 'destination';
@@ -315,15 +316,7 @@ export class FdmSDK {
     >(this._searchEndpoint, { data });
 
     if (result.status === 200) {
-      hoistInstanceProperties(
-        {
-          type: 'view',
-          space: searchedView.space,
-          externalId: searchedView.externalId,
-          version: searchedView.version
-        } as Source,
-        result.data.items
-      );
+      hoistInstanceProperties(transformViewItemToSource(searchedView), result.data.items);
 
       return { instances: result.data.items };
     }

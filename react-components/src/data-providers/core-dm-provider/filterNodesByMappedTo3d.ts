@@ -19,13 +19,14 @@ import { type DmsUniqueIdentifier, type FdmSDK, type Source } from '../FdmSDK';
 import { type FdmKey } from '../../components/CacheProvider/types';
 import { createFdmKey } from '../../components/CacheProvider/idAndKeyTranslation';
 import { type PromiseType } from '../utils/typeUtils';
-import { isString, uniqBy } from 'lodash';
+import { isString, transform, uniqBy } from 'lodash';
 import { type QueryResult } from '../utils/queryNodesAndEdges';
 import { createCheck3dConnectedEquipmentQuery } from './check3dConnectedEquipmentQuery';
 import { restrictToDmsId } from '../../utilities/restrictToDmsId';
 import { isDefined } from '../../utilities/isDefined';
 import { isDmsInstance } from '../../utilities/instanceIds';
 import { getCogniteAssetDirectRelationProperties } from '../utils/getCogniteAssetDirectRelationProperties';
+import { transformViewItemToSource } from './utils/transformViewItemToSource';
 
 export async function filterNodesByMappedTo3d(
   nodes: InstancesWithViewDefinition[],
@@ -67,12 +68,7 @@ export async function filterNodesByMappedTo3d(
 
   return data
     .map((viewWithNodes) => ({
-      view: {
-        type: 'view',
-        externalId: viewWithNodes.view.externalId,
-        space: viewWithNodes.view.space,
-        version: viewWithNodes.view.version
-      } as Source,
+      view: transformViewItemToSource(viewWithNodes.view),
       instances: viewWithNodes.instances
     }))
     .filter(isDefined);

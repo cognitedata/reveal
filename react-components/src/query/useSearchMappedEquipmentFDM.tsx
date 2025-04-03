@@ -20,6 +20,7 @@ import { getModelKeys } from '../utilities/getModelKeys';
 import { useFdm3dDataProvider } from '../components/CacheProvider/CacheProvider';
 import { type AddImage360CollectionDatamodelsOptions } from '../components/Reveal3DResources/types';
 import { assetsInstanceFilterWithHasDataQuery } from '../data-providers/core-dm-provider/assetsInstanceFilterWithHasDataQuery';
+import { transformViewItemToSource } from '../data-providers/core-dm-provider/utils/transformViewItemToSource';
 
 export type InstancesWithView<PropertyType = Record<string, unknown>> = {
   view: Source;
@@ -134,12 +135,7 @@ const searchNodesWithViewsAndModels = async (
     const transformedResults = convertQueryNodeItemsToSearchResultsWithViews(nodeItems);
 
     const combinedWithOtherViews = sourcesToSearch.map((view) => ({
-      view: {
-        type: 'view',
-        space: view.space,
-        externalId: view.externalId,
-        version: view.version
-      } as Source,
+      view: transformViewItemToSource(view),
       instances:
         transformedResults.find(
           (result) => result.view.externalId === view.externalId && result.view.space === view.space

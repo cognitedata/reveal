@@ -30,6 +30,7 @@ import { getCadConnectionsForRevision } from './getCadConnectionsForRevision';
 import { type CogniteClient, type Node3D } from '@cognite/sdk';
 import { EMPTY_ARRAY } from '../../utilities/constants';
 import { isClassicIdentifier } from '../../components/Reveal3DResources/typeGuards';
+import { transformViewItemToSource } from '../core-dm-provider/utils/transformViewItemToSource';
 
 export class LegacyFdm3dDataProvider implements Fdm3dDataProvider {
   readonly _fdmSdk: FdmSDK;
@@ -80,12 +81,7 @@ export class LegacyFdm3dDataProvider implements Fdm3dDataProvider {
     return await listMappedFdmNodes(
       this._fdmSdk,
       classicModels,
-      sourcesToSearch.map((view) => ({
-        type: 'view',
-        space: view.space,
-        externalId: view.externalId,
-        version: view.version
-      })),
+      sourcesToSearch.map((view) => transformViewItemToSource(view)),
       instanceFilter,
       limit
     );
@@ -117,12 +113,7 @@ export class LegacyFdm3dDataProvider implements Fdm3dDataProvider {
     // Must transform from InstancesWithViewDefinition to InstanceWithView
     // which has a different view type
     const transformedNodes = nodes.map((node) => ({
-      view: {
-        type: 'view',
-        space: node.view.space,
-        externalId: node.view.externalId,
-        version: node.view.version
-      } as Source,
+      view: transformViewItemToSource(node.view),
       instances: node.instances
     }));
 
