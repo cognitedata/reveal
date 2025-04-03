@@ -33,27 +33,27 @@ export const checkDatetimeExpressionStatement = (
 
   const propertyTrigger = new Date(
     getFdmPropertyTrigger<string>(fdmPropertyTrigger, trigger) ?? ''
-  );
+  ).getTime();
 
   switch (condition.type) {
     case 'before': {
-      const conditionValue = new Date(condition.parameter);
+      const conditionValue = new Date(condition.parameter).getTime();
       expressionResult = propertyTrigger !== undefined ? propertyTrigger < conditionValue : false;
       break;
     }
     case 'notBefore': {
-      const conditionValue = new Date(condition.parameter);
+      const conditionValue = new Date(condition.parameter).getTime();
       expressionResult = propertyTrigger !== undefined ? propertyTrigger >= conditionValue : false;
       break;
     }
     case 'onOrBefore': {
-      const conditionValue = new Date(condition.parameter);
+      const conditionValue = new Date(condition.parameter).getTime();
       expressionResult = propertyTrigger !== undefined ? propertyTrigger <= conditionValue : false;
       break;
     }
     case 'between': {
-      const lowerBound = new Date(condition.lowerBound);
-      const upperBound = new Date(condition.upperBound);
+      const lowerBound = new Date(condition.lowerBound).getTime();
+      const upperBound = new Date(condition.upperBound).getTime();
       expressionResult =
         propertyTrigger !== undefined
           ? lowerBound < propertyTrigger && propertyTrigger < upperBound
@@ -61,8 +61,8 @@ export const checkDatetimeExpressionStatement = (
       break;
     }
     case 'notBetween': {
-      const lowerBound = new Date(condition.lowerBound);
-      const upperBound = new Date(condition.upperBound);
+      const lowerBound = new Date(condition.lowerBound).getTime();
+      const upperBound = new Date(condition.upperBound).getTime();
       expressionResult =
         propertyTrigger !== undefined
           ? !(lowerBound < propertyTrigger && propertyTrigger < upperBound)
@@ -70,27 +70,27 @@ export const checkDatetimeExpressionStatement = (
       break;
     }
     case 'after': {
-      const conditionValue = new Date(condition.parameter);
+      const conditionValue = new Date(condition.parameter).getTime();
       expressionResult = propertyTrigger !== undefined ? propertyTrigger > conditionValue : false;
       break;
     }
     case 'notAfter': {
-      const conditionValue = new Date(condition.parameter);
+      const conditionValue = new Date(condition.parameter).getTime();
       expressionResult = propertyTrigger !== undefined ? propertyTrigger <= conditionValue : false;
       break;
     }
     case 'onOrAfter': {
-      const conditionValue = new Date(condition.parameter);
+      const conditionValue = new Date(condition.parameter).getTime();
       expressionResult = propertyTrigger !== undefined ? propertyTrigger >= conditionValue : false;
       break;
     }
     case 'on': {
-      const conditionValue = new Date(condition.parameter);
+      const conditionValue = new Date(condition.parameter).getTime();
       expressionResult = propertyTrigger !== undefined ? propertyTrigger === conditionValue : false;
       break;
     }
     case 'notOn': {
-      const conditionValue = new Date(condition.parameter);
+      const conditionValue = new Date(condition.parameter).getTime();
       expressionResult = propertyTrigger !== undefined ? propertyTrigger !== conditionValue : false;
       break;
     }
