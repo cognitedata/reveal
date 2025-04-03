@@ -11,7 +11,6 @@ import { getTranslationKeyOrString } from '#test-utils/architecture/getTranslati
 import { findIconByNameInContainer } from '#test-utils/cogs/findIconByNameInContainer';
 import assert from 'assert';
 import { expectAwaitToFail } from '#test-utils/expect/expectAwaitToThrow';
-import '@vitest/browser/matchers.d.ts';
 
 describe(FilterButton.name, () => {
   let renderTargetMock: RevealRenderTarget;
