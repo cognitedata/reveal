@@ -3,8 +3,8 @@
  */
 
 import { type ReactNode, useMemo, useState, type ReactElement } from 'react';
-import { Button, Tooltip as CogsTooltip, Slider, Switch } from '@cognite/cogs.js';
-import { Menu } from '@cognite/cogs-lab';
+import { Button, Tooltip as CogsTooltip, Flex, Slider, Switch } from '@cognite/cogs.js';
+import { Dropdown, Menu } from '@cognite/cogs-lab';
 import { useTranslation } from '../i18n/I18n';
 import { type BaseCommand } from '../../architecture/base/commands/BaseCommand';
 import { useRenderTarget } from '../RevealCanvas/ViewerContext';
@@ -33,7 +33,7 @@ import { offset } from '@floating-ui/dom';
 import { DividerCommand } from '../../architecture/base/commands/DividerCommand';
 import { SectionCommand } from '../../architecture/base/commands/SectionCommand';
 import { useOnUpdate } from './useOnUpdate';
-import { type PlacementType } from './types';
+import { FlexDirection, type PlacementType } from './types';
 
 export const SettingsButton = ({
   inputCommand,
@@ -53,13 +53,11 @@ export const SettingsButton = ({
   const [isOpen, setOpen] = useState(false);
   const [isEnabled, setEnabled] = useState(true);
   const [isVisible, setVisible] = useState(true);
-  const [uniqueId, setUniqueId] = useState(0);
   const [icon, setIcon] = useState<IconName>(undefined);
 
   useOnUpdate(command, () => {
     setEnabled(command.isEnabled);
     setVisible(command.isVisible);
-    setUniqueId(command.uniqueId);
     setIcon(command.icon);
   });
   // @end
@@ -69,42 +67,35 @@ export const SettingsButton = ({
   }
   const label = command.getLabel(t);
   const flexDirection = getFlexDirection(placement);
-  const children = command.children;
+  const isTooltipDisabled = isOpen || label === undefined;
+
   return (
-    <StyledMenu
-      onOpenChange={(open: boolean) => {
-        for (const child of children) {
-          child.update();
-        }
-        setOpen(open);
-      }}
-      floatingProps={{ middleware: [offset(TOOLBAR_HORIZONTAL_PANEL_OFFSET)] }}
-      placement="right-end"
-      style={{
-        flexDirection,
-        padding: DEFAULT_PADDING
-      }}
-      disableCloseOnClickInside
-      renderTrigger={(props: any) => (
-        <CogsTooltip
-          content={<LabelWithShortcut label={label} command={command} />}
-          disabled={isOpen || label === undefined}
-          enterDelay={TOOLTIP_DELAY}
-          placement={getTooltipPlacement(placement)}>
-          <Button
-            type={getButtonType(command)}
-            icon={<IconComponent iconName={icon} />}
-            key={uniqueId}
-            disabled={!isEnabled}
-            toggled={isOpen}
-            aria-label={label}
-            iconPlacement="left"
-            {...props}
-          />
-        </CogsTooltip>
-      )}>
-      {children.map((child) => createMenuItem(child, t))}
-    </StyledMenu>
+    <Dropdown
+      disabled={!isEnabled}
+      content={
+        <StyledMenuPanel $flexDirection={flexDirection}>
+          <StyledMenuHeader>{label}</StyledMenuHeader>
+          {command.children.map((child) => createMenuItem(child, t))}
+        </StyledMenuPanel>
+      }
+      onShow={(open) => setOpen(open)}
+      onHide={(open) => setOpen(open)}
+      placement={placement ?? 'right-end'}
+      offset={{ mainAxis: TOOLBAR_HORIZONTAL_PANEL_OFFSET }}>
+      <CogsTooltip
+        content={<LabelWithShortcut label={label} command={command} />}
+        disabled={isTooltipDisabled}
+        enterDelay={TOOLTIP_DELAY}
+        placement={getTooltipPlacement(placement)}>
+        <Button
+          type={getButtonType(command)}
+          icon={<IconComponent iconName={icon} />}
+          disabled={!isEnabled}
+          toggled={isOpen}
+          aria-label={label}
+        />
+      </CogsTooltip>
+    </Dropdown>
   );
 };
 
@@ -342,8 +333,40 @@ const StyledSlider = styled(Slider)`
   justify-content: space-around;
 `;
 
-const StyledMenu = styled(Menu)`
-  z-index: 998 !important;
-  max-height: 300px !important;
-  overflow-y: auto !important;
+const StyledMenuPanel = styled.div<{ $flexDirection: FlexDirection }>`
+  max-height: 400px;
+  min-width: 340px;
+  overflow-x: hidden;
+  overflow-y: auto;
+  flexdirection: ${({ $flexDirection }) => $flexDirection};
+
+  display: flex;
+  padding: var(--Padding-Small-Small-8, 8px) var(--space-8, 8px);
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--Padding-Small-Small-8, 8px);
+
+  border-radius: var(--Radius-Large, 8px);
+  background: #fff;
+
+  box-shadow:
+    0px 1px 16px 4px rgba(79, 82, 104, 0.1),
+    0px 1px 8px 0px rgba(79, 82, 104, 0.08),
+    0px 1px 2px 0px rgba(79, 82, 104, 0.24);
+`;
+
+const StyledMenuHeader = styled(Flex).attrs({
+  direction: 'row'
+})`
+  flex: 1 0 0;
+
+  color: var(--color-text-icon-strong, rgba(0, 0, 0, 0.9));
+
+  /* Body/Medium strong */
+  font-family: var(--typography-font-family-default, Inter);
+  font-size: var(--typography-body-medium-strong-size, 14px);
+  font-style: normal;
+  font-weight: 500;
+  line-height: var(--typography-body-medium-strong-line-height, 20px); /* 142.857% */
+  letter-spacing: var(--typography-body-medium-strong-letter-spacing, -0.084px);
 `;
