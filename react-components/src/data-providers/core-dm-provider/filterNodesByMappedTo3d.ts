@@ -2,7 +2,6 @@
  * Copyright 2024 Cognite AS
  */
 import { type InstancesWithView } from '../../query/useSearchMappedEquipmentFDM';
-import { getDirectRelationProperties } from '../utils/getDirectRelationProperties';
 import {
   type Cognite3DObjectProperties,
   type COGNITE_3D_OBJECT_SOURCE,
@@ -17,12 +16,13 @@ import { type DmsUniqueIdentifier, type FdmSDK } from '../FdmSDK';
 import { type FdmKey } from '../../components/CacheProvider/types';
 import { createFdmKey } from '../../components/CacheProvider/idAndKeyTranslation';
 import { type PromiseType } from '../utils/typeUtils';
-import { isString } from 'lodash';
+import { isString, uniqBy } from 'lodash';
 import { type QueryResult } from '../utils/queryNodesAndEdges';
 import { createCheck3dConnectedEquipmentQuery } from './check3dConnectedEquipmentQuery';
 import { restrictToDmsId } from '../../utilities/restrictToDmsId';
 import { isDefined } from '../../utilities/isDefined';
 import { isDmsInstance } from '../../utilities/instanceIds';
+import { getCogniteAssetDirectRelationProperties } from '../utils/getCogniteAssetDirectRelationProperties';
 
 export async function filterNodesByMappedTo3d(
   nodes: InstancesWithView[],
@@ -46,11 +46,12 @@ export async function filterNodesByMappedTo3d(
     return {
       view: viewWithNodes.view,
       instances: viewWithNodes.instances.filter((instance) => {
-        if (!isDmsInstance(instance.properties[spaceFromView]?.[assetExternalIdWithVersion]?.object3D)) {
+        if (
+          !isDmsInstance(instance.properties[spaceFromView]?.[assetExternalIdWithVersion]?.object3D)
+        ) {
           return false;
         }
-        const object3dId =
-          instance.properties[spaceFromView][assetExternalIdWithVersion]?.object3D;
+        const object3dId = instance.properties[spaceFromView][assetExternalIdWithVersion]?.object3D;
         if (!isString(object3dId.externalId) || !isString(object3dId.space)) {
           return false;
         }
@@ -127,14 +128,39 @@ async function fetchConnectionData(
 > {
   const initialIds = nodes.flatMap((node) => node.instances.map(restrictToDmsId));
 
-  const directlyConnectedIds = nodes.flatMap((node) =>
-    node.instances.flatMap((instance) => getDirectRelationProperties(instance).map(restrictToDmsId))
+  const uniqueViewIds = uniqBy(
+    nodes.flatMap((node) => node.view),
+    (view) => view.externalId && view.space && view.version
   );
+
+  const viewDefinitions = await fdmSdk.getViewsByIds(uniqueViewIds);
+
+  const directlyConnectedIds = nodes
+    .flatMap((node) =>
+      node.instances.flatMap((instance) => {
+        const connectedView = viewDefinitions.items.find(
+          (view) => view.externalId === node.view.externalId && view.space === node.view.space
+        );
+        if (!connectedView) {
+          return [];
+        }
+
+        return getCogniteAssetDirectRelationProperties(instance, connectedView);
+      })
+    )
+    .filter(isDefined);
+
+  const uniqueDirectlyConnectedIds = uniqBy(
+    directlyConnectedIds,
+    (id) => id.externalId && id.space
+  );
+
+  const directlyConnectedIdsCappedAt1000Elements = uniqueDirectlyConnectedIds.slice(0, 1000);
 
   const parameters = { revisionRefs };
   const rawQuery = createCheck3dConnectedEquipmentQuery(
     initialIds,
-    directlyConnectedIds,
+    directlyConnectedIdsCappedAt1000Elements,
     revisionRefs
   );
 
