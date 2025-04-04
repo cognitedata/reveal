@@ -28,6 +28,10 @@ export abstract class BaseSliderCommand extends RenderTargetCommand {
   // VIRTUAL METHODS (To be overridden)
   // =================================================
 
+  public get marks(): Record<number, { label: string }> | undefined {
+    return undefined;
+  }
+
   public abstract get value(): number;
 
   public abstract set value(value: number);
