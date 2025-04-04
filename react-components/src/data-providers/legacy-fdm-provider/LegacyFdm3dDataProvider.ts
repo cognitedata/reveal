@@ -81,7 +81,7 @@ export class LegacyFdm3dDataProvider implements Fdm3dDataProvider {
     return await listMappedFdmNodes(
       this._fdmSdk,
       classicModels,
-      sourcesToSearch.map((view) => transformViewItemToSource(view)),
+      sourcesToSearch.map(transformViewItemToSource),
       instanceFilter,
       limit
     );
