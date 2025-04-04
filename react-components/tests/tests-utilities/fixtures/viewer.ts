@@ -1,6 +1,11 @@
 import { vi } from 'vitest';
 
-import type { DataSourceType, Cognite3DViewer } from '@cognite/reveal';
+import {
+  type DataSourceType,
+  type Cognite3DViewer,
+  type CadModelBudget,
+  type PointCloudBudget
+} from '@cognite/reveal';
 import { Mock, It } from 'moq.ts';
 import { cameraManagerMock } from './cameraManager';
 
@@ -15,6 +20,8 @@ export const viewerImage360CollectionsMock = vi.fn<Cognite3DViewer['get360ImageC
 export const fitCameraToVisualSceneBoundingBoxMock =
   vi.fn<Cognite3DViewer['fitCameraToVisualSceneBoundingBox']>();
 export const fitCameraToModelsMock = vi.fn<Cognite3DViewer['fitCameraToModels']>();
+export const viewerSetCadModelBudgetMock = vi.fn<(budget: CadModelBudget) => void>();
+export const viewerSetPointCloudModelBudgetMock = vi.fn<(budget: PointCloudBudget) => void>();
 
 export const viewerMock = new Mock<Cognite3DViewer<DataSourceType>>()
   .setup((viewer) => {
@@ -54,5 +61,15 @@ export const viewerMock = new Mock<Cognite3DViewer<DataSourceType>>()
   .setup((p) => p.addCustomObject)
   .returns(vi.fn())
   .setup((p) => p.removeCustomObject)
+  .returns(vi.fn())
+  .setup((p) => (p.cadBudget = It.IsAny<CadModelBudget>()))
+  .callback((p) => {
+    viewerSetCadModelBudgetMock(p.args[0]);
+  })
+  .setup((p) => (p.pointCloudBudget = It.IsAny<PointCloudBudget>()))
+  .callback((p) => {
+    viewerSetPointCloudModelBudgetMock(p.args[0]);
+  })
+  .setup((p) => p.setResolutionOptions)
   .returns(vi.fn())
   .object();

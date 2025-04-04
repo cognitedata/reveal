@@ -87,6 +87,7 @@ export { getNextColorByIndex } from './base/utilities/colors/getNextColor';
 export { getResizeCursor } from './base/utilities/geometry/getResizeCursor';
 export type { TranslateDelegate } from './base/utilities/TranslateInput';
 export type { TranslationInput } from './base/utilities/TranslateInput';
+export type { QualitySettings } from './base/utilities/quality/QualitySettings';
 
 // New architecture: views
 export { BaseView } from './base/views/BaseView';

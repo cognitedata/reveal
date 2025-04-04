@@ -5,7 +5,7 @@
 import { useState, type ReactElement } from 'react';
 import { Button, Tooltip as CogsTooltip, SettingsIcon } from '@cognite/cogs.js';
 import { Menu } from '@cognite/cogs-lab';
-import { type QualitySettings } from './SettingsContainer/types';
+import { type QualitySettings } from '../../architecture/base/utilities/quality/QualitySettings';
 import { HighFidelityContainer } from './SettingsContainer/HighFidelityContainer';
 import { useTranslation } from '../i18n/I18n';
 import { TOOLBAR_HORIZONTAL_PANEL_OFFSET } from '../constants';
