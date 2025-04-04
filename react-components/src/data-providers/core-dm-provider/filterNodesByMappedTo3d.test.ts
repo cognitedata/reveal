@@ -18,6 +18,8 @@ import {
   cadNodeInstanceFixture2,
   image360AnnotationEdgeInstanceFixture0,
   image360AnnotationEdgeInstanceFixture2,
+  image360InstanceFixture0,
+  image360InstanceFixture2,
   object3DInstanceFixtures,
   pointCloudVolumeInstanceFixture0,
   pointCloudVolumeInstanceFixture2
@@ -122,9 +124,11 @@ describe(filterNodesByMappedTo3d.name, () => {
           initial_nodes_cad_nodes: [cadNodeInstanceFixture0],
           initial_nodes_point_cloud_volumes: [pointCloudVolumeInstanceFixture0],
           initial_edges_360_image_annotations: [image360AnnotationEdgeInstanceFixture0],
+          initial_nodes_360_images: [image360InstanceFixture0],
           indirect_nodes_cad_nodes: [cadNodeInstanceFixture2],
           indirect_nodes_point_cloud_volumes: [pointCloudVolumeInstanceFixture2],
-          indirect_edges_360_image_annotations: [image360AnnotationEdgeInstanceFixture2]
+          indirect_edges_360_image_annotations: [image360AnnotationEdgeInstanceFixture2],
+          indirect_nodes_360_images: [image360InstanceFixture2]
         }
       } as const satisfies QueryResult<ReturnType<typeof createCheck3dConnectedEquipmentQuery>>)
       .setup(async (p) => await p.getViewsByIds(It.IsAny()))

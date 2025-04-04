@@ -78,6 +78,35 @@ function getRevisionImage360AnnotationEdges(object3dTableName: string): QueryEdg
   };
 }
 
+function getRevisionImage360Images(
+  annotationEdgeTableName: string,
+  revisionRefs: DmsUniqueIdentifier[]
+): QueryNodeTableExpressionV3 {
+  return {
+    nodes: {
+      from: annotationEdgeTableName,
+      chainTo: 'destination',
+      filter: {
+        and: [
+          {
+            hasData: [COGNITE_IMAGE_360_SOURCE]
+          },
+          {
+            in: {
+              property: [
+                COGNITE_IMAGE_360_SOURCE.space,
+                `${COGNITE_IMAGE_360_SOURCE.externalId}/${COGNITE_IMAGE_360_SOURCE.version}`,
+                'collection360'
+              ],
+              values: revisionRefs
+            }
+          }
+        ]
+      }
+    }
+  };
+}
+
 function getObject3dRelation(visualizableTableName: string): QueryTableExpressionV3 {
   return {
     nodes: {
@@ -89,7 +118,10 @@ function getObject3dRelation(visualizableTableName: string): QueryTableExpressio
 }
 
 // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
-export function createCheck3dConnectedEquipmentQuery(initialNodes: DmsUniqueIdentifier[]) {
+export function createCheck3dConnectedEquipmentQuery(
+  initialNodes: DmsUniqueIdentifier[],
+  revisionRefs: DmsUniqueIdentifier[]
+) {
   return {
     with: {
       initial_nodes: {
@@ -109,6 +141,10 @@ export function createCheck3dConnectedEquipmentQuery(initialNodes: DmsUniqueIden
       initial_nodes_point_cloud_volumes: getRevisionsPointCloudVolumes('initial_nodes_object_3ds'),
       initial_edges_360_image_annotations: getRevisionImage360AnnotationEdges(
         'initial_nodes_object_3ds'
+      ),
+      initial_nodes_360_images: getRevisionImage360Images(
+        'initial_edges_360_image_annotations',
+        revisionRefs
       ),
 
       indirectly_referenced_edges: {
@@ -132,6 +168,10 @@ export function createCheck3dConnectedEquipmentQuery(initialNodes: DmsUniqueIden
       ),
       indirect_edges_360_image_annotations: getRevisionImage360AnnotationEdges(
         'indirect_nodes_object_3ds'
+      ),
+      indirect_nodes_360_images: getRevisionImage360Images(
+        'indirect_edges_360_image_annotations',
+        revisionRefs
       )
     },
     select: {
@@ -140,13 +180,16 @@ export function createCheck3dConnectedEquipmentQuery(initialNodes: DmsUniqueIden
       },
       initial_nodes_point_cloud_volumes: { sources: pointCloudVolumeSourceWithProperties },
       initial_edges_360_image_annotations: {},
+      initial_nodes_360_images: { sources: cogniteImage360SourceWithOnlyCollection360 },
+
       indirect_nodes_cad_nodes: {
         sources: cadNodeSourceWithProperties
       },
       indirect_nodes_point_cloud_volumes: {
         sources: pointCloudVolumeSourceWithProperties
       },
-      indirect_edges_360_image_annotations: {}
+      indirect_edges_360_image_annotations: {},
+      indirect_nodes_360_images: { sources: cogniteImage360SourceWithOnlyCollection360 }
     }
   } as const satisfies Omit<QueryRequest, 'parameters' | 'cursor'>;
 }

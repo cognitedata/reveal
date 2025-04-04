@@ -113,7 +113,7 @@ async function getObject3dsConnectedToAssetAndModelRevisions(
 
   const object3dConnectedToEquipmentAndModel: FdmKey[] = [];
   for (const idChunk of chunkedIds) {
-    const rawQuery = createCheck3dConnectedEquipmentQuery(idChunk);
+    const rawQuery = createCheck3dConnectedEquipmentQuery(idChunk, revisionRefs);
 
     const query = {
       ...rawQuery,
@@ -148,10 +148,17 @@ function getRelevantObject3ds(
       )
     );
 
+  const relevant360NodeKeys = new Set<FdmKey>(
+    [
+      ...connectionData.items.initial_nodes_360_images,
+      ...connectionData.items.indirect_nodes_360_images
+    ].map(createFdmKey)
+  );
+
   const relevant360AnnotationEdges = [
     ...connectionData.items.initial_edges_360_image_annotations,
     ...connectionData.items.indirect_edges_360_image_annotations
-  ].filter((edge) => createFdmKey(edge.endNode));
+  ].filter((edge) => relevant360NodeKeys.has(createFdmKey(edge.endNode)));
 
   const image360Object3dList = relevant360AnnotationEdges.map((edge) =>
     createFdmKey(edge.startNode)
