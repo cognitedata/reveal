@@ -57,9 +57,6 @@ export async function filterNodesByMappedTo3d(
           return false;
         }
         const object3dId = instance.properties[spaceFromView][assetExternalIdWithVersion]?.object3D;
-        if (!isString(object3dId.externalId) || !isString(object3dId.space)) {
-          return false;
-        }
         return object3dKeys.has(createFdmKey(object3dId));
       })
     };
