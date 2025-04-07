@@ -8,8 +8,7 @@ import {
   type ViewItemListResponse,
   type DmsUniqueIdentifier,
   type FdmSDK,
-  type Source,
-  type ViewItem
+  type Source
 } from '../FdmSDK';
 import { type createCheck3dConnectedEquipmentQuery } from './check3dConnectedEquipmentQuery';
 import { isEqual } from 'lodash';
@@ -27,22 +26,11 @@ import {
 import { COGNITE_ASSET_VIEW_VERSION_KEY, CORE_DM_SPACE } from './dataModels';
 import { type QueryResult } from '../utils/queryNodesAndEdges';
 import type { InstancesWithViewDefinition } from '../../query/useSearchMappedEquipmentFDM';
+import { viewImplementingCogniteAsset } from '#test-utils/fixtures/dm/viewDefinitions';
 
 const modelIdentifier = { externalId: 'model0', space: 'space0' };
 
-const viewDefinition: ViewItem = {
-  externalId: 'CogniteAsset',
-  version: 'v1',
-  space: 'cdf_cdm',
-  createdTime: 0,
-  lastUpdatedTime: 0,
-  writable: false,
-  usedFor: '',
-  isGlobal: false,
-  properties: {},
-  name: '',
-  implements: []
-};
+const viewDefinition = viewImplementingCogniteAsset;
 
 const source: Source = {
   type: 'view',
