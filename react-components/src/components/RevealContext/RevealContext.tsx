@@ -31,13 +31,14 @@ export type RevealContextProps = {
     | 'antiAliasingHint'
     | 'loadingIndicatorStyle'
     | 'rendererResolutionThreshold'
-    | 'antiAliasingHint'
     | 'ssaoQualityHint'
     | 'pointCloudEffects'
     | 'enableEdges'
     | 'onLoading'
     | 'logMetrics'
-  >;
+  > | {
+    customViewer: Cognite3DViewer<DataSourceType>
+  };
 };
 
 export const RevealContext = (props: RevealContextProps): ReactElement => {
@@ -118,13 +119,22 @@ const useRevealFromKeepAlive = ({
 
   function getOrInitializeRenderTarget(): RevealRenderTarget {
     let renderTarget = revealKeepAliveData?.renderTargetRef.current;
+
     if (renderTarget === undefined) {
-      const viewer = new Cognite3DViewer<DataSourceType>({
-        ...viewerOptions,
-        sdk,
-        useFlexibleCameraManager: true,
-        hasEventListeners: false
-      });
+
+      let viewer: Cognite3DViewer<DataSourceType>;
+
+      if (viewerOptions !== undefined && 'customViewer' in viewerOptions) {
+        viewer = viewerOptions.customViewer;
+      } else {
+        viewer = new Cognite3DViewer<DataSourceType>({
+          ...viewerOptions,
+          sdk,
+          useFlexibleCameraManager: true,
+          hasEventListeners: false
+        });
+      }
+
       renderTarget = new RevealRenderTarget(viewer, sdk, { coreDmOnly: useCoreDm });
       if (revealKeepAliveData !== undefined) {
         revealKeepAliveData.renderTargetRef.current = renderTarget;
