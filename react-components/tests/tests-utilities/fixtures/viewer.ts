@@ -5,7 +5,7 @@ import {
   type Cognite3DViewer,
   type CadModelBudget,
   type PointCloudBudget,
-  ResolutionOptions
+  type ResolutionOptions
 } from '@cognite/reveal';
 import { Mock, It } from 'moq.ts';
 import { cameraManagerMock } from './cameraManager';
