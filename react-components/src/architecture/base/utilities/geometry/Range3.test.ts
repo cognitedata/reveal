@@ -51,10 +51,10 @@ describe('Range3', () => {
   test('should test getCornerPoint', () => {
     const corners = new Array(8).fill(null).map(() => new Vector3());
     const range = new Range3(min, max);
-    const points = range.getCornerPoints(corners);
+    range.getCornerPoints(corners);
 
     // Check that each point is in the corner
-    for (const cornerPoint of points) {
+    for (const cornerPoint of corners) {
       expect(cornerPoint.x === min.x || cornerPoint.x === max.x).toBe(true);
       expect(cornerPoint.y === min.y || cornerPoint.y === max.y).toBe(true);
       expect(cornerPoint.z === min.z || cornerPoint.z === max.z).toBe(true);
