@@ -7,8 +7,9 @@ import { describe, expect, test } from 'vitest';
 import { Range1 } from './Range1';
 
 const min = 100;
-const mid = 150;
 const max = 200;
+const mid = (min + max) / 2;
+const delta = max - min;
 
 describe('Range1', () => {
   test('should test empty', () => {
@@ -32,7 +33,7 @@ describe('Range1', () => {
 
     expect(range.min).toBe(min);
     expect(range.max).toBe(max);
-    expect(range.delta).toBe(max - min);
+    expect(range.delta).toBe(delta);
     expect(range.center).toBe(mid);
   });
 
@@ -174,15 +175,15 @@ describe('Range1', () => {
   });
 
   test('should test roundByInc', () => {
-    const range = new Range1(102, 198);
+    const range = new Range1(min + 2, max - 2);
     expect(range.roundByInc(5)).toBe(true);
     expect(range).toStrictEqual(new Range1(min, max));
 
-    range.set(98, 202);
+    range.set(min - 2, max + 2);
     expect(range.roundByInc(5)).toBe(true);
     expect(range).toStrictEqual(new Range1(95, 205));
 
-    range.set(98, 202);
+    range.set(min - 2, max + 2);
     expect(range.roundByInc(-5)).toBe(true);
     expect(range).toStrictEqual(new Range1(min, max));
   });
