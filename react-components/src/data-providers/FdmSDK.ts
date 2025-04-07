@@ -14,7 +14,6 @@ import {
   type SelectSourceWithParams
 } from './utils/queryNodesAndEdges';
 import { mergeQueryResults } from './utils/mergeQueryResult';
-import { transformViewItemToSource } from './core-dm-provider/utils/transformViewItemToSource';
 
 type InstanceType = 'node' | 'edge';
 type EdgeDirection = 'source' | 'destination';

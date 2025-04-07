@@ -104,7 +104,7 @@ async function getObject3dsConnectedToAssetAndModelRevisions(
     .filter(isDefined);
 
   const mergedIds = concat(initialIds, directlyConnectedIds);
-  const uniqueIds = uniqBy(mergedIds, (id) => `${id.externalId}-${id.space}`);
+  const uniqueIds = uniqBy(mergedIds, createFdmKey);
 
   // Can maximum filter on 2K instances at a time using instanceReferences filter
   const chunkedIds = chunk(uniqueIds, 2000);

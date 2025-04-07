@@ -8,18 +8,15 @@ import {
 } from '../query/useSearchMappedEquipmentFDM';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { cadNodesFixtures } from '#test-utils/fixtures/dm/nodeItems';
-import {
-  type FdmSDK,
-  type SimpleSource,
-  type ViewItem,
-  type ViewItemListResponse
-} from '../data-providers/FdmSDK';
+import { type FdmSDK } from '../data-providers/FdmSDK';
 import { Mock } from 'moq.ts';
 import { type RevealRenderTarget } from '../architecture';
 import type { FC, PropsWithChildren } from 'react';
 import { type Fdm3dDataProvider } from '../data-providers/Fdm3dDataProvider';
 import { ViewerContext } from '../components/RevealCanvas/ViewerContext';
 import { FdmSdkContext } from '../components/RevealCanvas/FdmDataProviderContext';
+import { getMockViewByIdResponse } from '#test-utils/fixtures/dm/getMockViewByIdResponse';
+import { getMockViewItemFromSimpleSource } from '#test-utils/fixtures/dm/getMockViewItemFromSimpleSource';
 
 const queryClient = new QueryClient();
 
@@ -244,25 +241,3 @@ describe(useAllMappedEquipmentFDM.name, () => {
     expect(mockListAllMappedFdmNodes).not.toHaveBeenCalled();
   });
 });
-
-function getMockViewByIdResponse(sources: SimpleSource[]): ViewItemListResponse {
-  return {
-    items: sources.map((source) => getMockViewItemFromSimpleSource(source))
-  };
-}
-
-function getMockViewItemFromSimpleSource(source: SimpleSource): ViewItem {
-  return {
-    externalId: source.externalId,
-    version: source.version,
-    space: source.space,
-    createdTime: 123,
-    lastUpdatedTime: 124,
-    writable: true,
-    usedFor: 'usedFor',
-    isGlobal: true,
-    properties: {},
-    name: 'name',
-    implements: []
-  };
-}

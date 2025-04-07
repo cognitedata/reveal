@@ -69,24 +69,7 @@ export const useSearchMappedEquipmentFDM = (
         return [];
       }
 
-      const viewDefinitions = await queryClient.fetchQuery({
-        queryKey: [
-          'reveal',
-          'react-components',
-          'search-mapped-fdm',
-          'get-view-definitions-from-simple-source',
-          viewsToSearch
-        ],
-        queryFn: async () => {
-          const chunkedSources = chunk(viewsToSearch, 1000);
-          const views = [];
-          for (const chunk of chunkedSources) {
-            const res = await fdmSdk.getViewsByIds(createSourcesFromViews(chunk));
-            views.push(...res.items);
-          }
-          return views;
-        }
-      });
+      const viewDefinitions = await fetchViewDefinitions(queryClient, fdmSdk, viewsToSearch);
 
       const chunkedViews = chunk(viewDefinitions, 10);
       if (chunkedViews.length === 0) {
@@ -240,4 +223,29 @@ function createSourcesFromViews(viewsToSearch: SimpleSource[]): Source[] {
     ...view,
     type: 'view'
   }));
+}
+
+async function fetchViewDefinitions(
+  queryClient: ReturnType<typeof useQueryClient>,
+  fdmSdk: FdmSDK,
+  viewsToSearch: SimpleSource[]
+): Promise<ViewItem[]> {
+  return queryClient.fetchQuery({
+    queryKey: [
+      'reveal',
+      'react-components',
+      'search-mapped-fdm',
+      'get-view-definitions-from-simple-source',
+      viewsToSearch
+    ],
+    queryFn: async () => {
+      const chunkedSources = chunk(viewsToSearch, 1000);
+      const views: ViewItem[] = [];
+      for (const chunk of chunkedSources) {
+        const res = await fdmSdk.getViewsByIds(createSourcesFromViews(chunk));
+        views.push(...res.items);
+      }
+      return views;
+    }
+  });
 }
