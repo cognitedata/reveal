@@ -3,7 +3,8 @@ import { RevealSettingsController } from './RevealSettingsController';
 import {
   viewerMock,
   viewerSetCadModelBudgetMock,
-  viewerSetPointCloudModelBudgetMock
+  viewerSetPointCloudModelBudgetMock,
+  viewerSetResolutionOptionsMock
 } from '#test-utils/fixtures/viewer';
 
 describe(RevealSettingsController.name, () => {
@@ -22,7 +23,7 @@ describe(RevealSettingsController.name, () => {
     expect(viewerSetPointCloudModelBudgetMock).toHaveBeenCalledWith(
       testQualitySettings.pointCloudBudget
     );
-    expect(vi.mocked(viewerMock.setResolutionOptions)).toHaveBeenCalledWith(
+    expect(viewerSetResolutionOptionsMock).toHaveBeenCalledWith(
       testQualitySettings.resolutionOptions
     );
   });
