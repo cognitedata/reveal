@@ -6,3 +6,4 @@ export * from './createCadModelMetadata';
 export * from './createSectorMetadata';
 export * from './expects';
 export * from './wait';
+export * from './createCadModelMetadata';

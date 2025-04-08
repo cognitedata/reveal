@@ -17,6 +17,7 @@ import { type Fdm3dDataProvider } from '../data-providers/Fdm3dDataProvider';
 import { removeEmptyProperties } from '../utilities/removeEmptyProperties';
 import { getModelKeys } from '../utilities/getModelKeys';
 import { useFdm3dDataProvider } from '../components/CacheProvider/CacheProvider';
+import { createEmptyArray } from '../utilities/createEmptyArray';
 import { type AddImage360CollectionDatamodelsOptions } from '../components/Reveal3DResources/types';
 import { assetsInstanceFilterWithHasDataQuery } from '../data-providers/core-dm-provider/assetsInstanceFilterWithHasDataQuery';
 
@@ -27,7 +28,7 @@ export type InstancesWithView<PropertyType = Record<string, unknown>> = {
 
 export const useSearchMappedEquipmentFDM = (
   query: string,
-  viewsToSearch: SimpleSource[],
+  viewsToSearch: Source[],
   models: Array<AddModelOptions<DataSourceType> | AddImage360CollectionDatamodelsOptions>,
   instancesFilter: InstanceFilter | undefined,
   limit: number = 100
@@ -66,7 +67,7 @@ export const useSearchMappedEquipmentFDM = (
         chunkedSources.push([]);
       }
 
-      const queryResults: InstancesWithView[] = [];
+      const queryResults: InstancesWithView[] = createEmptyArray();
 
       for (const sourceChunk of chunkedSources) {
         const chunkResult = await searchNodesWithViewsAndModels(
@@ -112,13 +113,13 @@ const searchNodesWithViewsAndModels = async (
       instances:
         transformedResults.find(
           (result) => result.view.externalId === view.externalId && result.view.space === view.space
-        )?.instances ?? []
+        )?.instances ?? createEmptyArray()
     }));
 
     return combinedWithOtherViews;
   }
 
-  const searchResults: InstancesWithView[] = [];
+  const searchResults: InstancesWithView[] = createEmptyArray();
 
   for (const view of sourcesToSearch) {
     const result = await fdmSdk.searchInstances(view, query, 'node', limit, instancesFilter);
@@ -138,8 +139,10 @@ export const useAllMappedEquipmentFDM = (
 ): UseQueryResult<NodeItem[]> => {
   const fdmDataProvider = useFdm3dDataProvider();
 
+  const modelKeys = useMemo(() => getModelKeys(models), [models]);
+
   return useQuery({
-    queryKey: ['reveal', 'react-components', 'all-mapped-equipment-fdm', viewsToSearch, models],
+    queryKey: ['reveal', 'react-components', 'all-mapped-equipment-fdm', viewsToSearch, modelKeys],
     queryFn: async () => {
       const viewSources = createSourcesFromViews(viewsToSearch);
 

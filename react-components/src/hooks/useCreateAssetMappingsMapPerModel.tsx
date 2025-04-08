@@ -7,6 +7,7 @@ import { useMemo } from 'react';
 import { type ModelWithAssetMappings } from './cad/ModelWithAssetMappings';
 import { isDefined } from '../utilities/isDefined';
 import { type CdfAssetMapping } from '../components/CacheProvider/types';
+import { createEmptyArray } from '../utilities/createEmptyArray';
 
 export const useCreateAssetMappingsMapPerModel = (
   models: Array<CogniteModel<DataSourceType>>,
@@ -23,7 +24,7 @@ export const useCreateAssetMappingsMapPerModel = (
           ?.filter((item) => item.model.modelId === model.modelId)
           .map((item) => item.assetMappings)
           .flat()
-          .filter(isDefined) ?? [];
+          .filter(isDefined) ?? createEmptyArray();
 
       mappingsPerModel.set(model, flatAssetsMappingsList);
     });
