@@ -7,7 +7,7 @@ export type FidelityLevel = (typeof FIDELITY_LEVELS)[number];
 export const MAX_FIDELITY: FidelityLevel = 5;
 export const MIN_FIDELITY: FidelityLevel = 1;
 
-import { maxBy } from 'lodash';
+import { clamp, maxBy } from 'lodash';
 import { QualitySettings } from '../../utilities/quality/QualitySettings';
 import assert from 'assert';
 
@@ -128,7 +128,7 @@ function getSmallestRatio(f0: number | undefined, f1: number | undefined) {
     return 0;
   }
 
-  const clampedF0 = Math.max(0.001, Math.min(f0, 1e9));
-  const clampedF1 = Math.max(0.001, Math.min(f1, 1e9));
+  const clampedF0 = clamp(f0, 0.001, 1e9);
+  const clampedF1 = clamp(f1, 0.001, 1e9);
   return Math.min(clampedF0 / clampedF1, clampedF1 / clampedF0);
 }
