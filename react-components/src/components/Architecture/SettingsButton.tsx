@@ -3,7 +3,9 @@
  */
 
 import { type ReactNode, useMemo, useState, type ReactElement } from 'react';
+
 import { Button, Tooltip as CogsTooltip, Flex, Slider, Switch, TextLabel } from '@cognite/cogs.js';
+
 import { Dropdown, Menu } from '@cognite/cogs-lab';
 import { useTranslation } from '../i18n/I18n';
 import { type BaseCommand } from '../../architecture/base/commands/BaseCommand';
