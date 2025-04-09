@@ -16,7 +16,7 @@ describe(QualityWarningBannerCommand.name, () => {
     command.attach(renderTargetMock);
   });
 
-  test('should be visible with content and warning status on high fidelity level', () => {
+  test('should be visible with content and warning status on high fidelity level, disappears when level is decreased', () => {
     renderTargetMock.revealSettingsController.renderQuality(
       getQualityForFidelityLevel(MAX_FIDELITY)
     );
@@ -24,6 +24,12 @@ describe(QualityWarningBannerCommand.name, () => {
     expect(command.isVisible).toBeTruthy();
     expect(isTranslatedString(command.content)).toBeTruthy();
     expect(command.status).toBe(BannerStatus.Warning);
+
+    renderTargetMock.revealSettingsController.renderQuality(
+      getQualityForFidelityLevel((MAX_FIDELITY - 1) as FidelityLevel)
+    );
+
+    expect(command.isVisible).toBeFalsy();
   });
 
   test('should be invisible on any lower fidelity level', () => {
