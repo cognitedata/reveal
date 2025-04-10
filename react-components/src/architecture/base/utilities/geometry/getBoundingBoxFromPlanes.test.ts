@@ -30,7 +30,7 @@ describe(getBoundingBoxFromPlanes.name, () => {
     expect(actualBox).toStrictEqual(originalBox);
   });
 
-  test('should find a the same bounding box for vertical planes only', () => {
+  test('should find the same bounding box for vertical planes only', () => {
     const largerBox = originalBox.clone();
     largerBox.x.expandByMargin(1);
     largerBox.y.expandByMargin(1);
