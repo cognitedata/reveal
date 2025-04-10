@@ -13,7 +13,7 @@ const min = new Vector3(100, 200, 300);
 const max = new Vector3(400, 600, 800);
 const originalBox = new Range3(min, max);
 
-describe('getBoundingBoxFromPlanes', () => {
+describe(getBoundingBoxFromPlanes.name, () => {
   test('should find the same bounding box with no planes', () => {
     const planes: Plane[] = [];
     const actualBox = getBoundingBoxFromPlanes(planes, originalBox);
