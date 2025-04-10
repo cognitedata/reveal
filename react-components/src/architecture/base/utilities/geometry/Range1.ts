@@ -40,16 +40,8 @@ export class Range1 {
     return this._min;
   }
 
-  public set min(value: number) {
-    this._min = value;
-  }
-
   public get max(): number {
     return this._max;
-  }
-
-  public set max(value: number) {
-    this._max = value;
   }
 
   public get delta(): number {
@@ -226,16 +218,25 @@ export class Range1 {
       this._isEmpty = false;
       this._min = value;
       this._max = value;
-    } else if (value < this._min) this._min = value;
-    else if (value > this._max) this._max = value;
+    } else if (value < this._min) {
+      this._min = value;
+    } else if (value > this._max) {
+      this._max = value;
+    }
   }
 
   public addRange(value: Range1): void {
-    if (this.isEmpty) {
+    if (value.isEmpty) {
       return;
     }
-    this.add(value.min);
-    this.add(value.max);
+    if (this.isEmpty) {
+      this._isEmpty = false;
+      this._min = value.min;
+      this._max = value.max;
+    } else {
+      this.add(value.min);
+      this.add(value.max);
+    }
   }
 
   public expandByMargin(margin: number): void {
@@ -248,7 +249,9 @@ export class Range1 {
   }
 
   public expandByFraction(fraction: number): void {
-    if (!this.isEmpty) this.expandByMargin(this.delta * fraction);
+    if (!this.isEmpty) {
+      this.expandByMargin(this.delta * fraction);
+    }
   }
 
   public roundByInc(increment: number): boolean {
