@@ -51,7 +51,9 @@ export class Range3 {
   }
 
   public get area(): number {
-    return 2 * (this.x.delta + this.y.delta + this.z.delta);
+    return (
+      2 * (this.x.delta * this.y.delta + this.y.delta * this.z.delta + this.z.delta * this.x.delta)
+    );
   }
 
   public get volume(): number {
@@ -175,7 +177,7 @@ export class Range3 {
     return plane.projectPoint(corner, corner);
   }
 
-  public getIntersectionOfEdge(
+  private getIntersectionOfEdge(
     plane: Plane,
     cornerIndex1: number,
     cornerIndex2: number
@@ -246,12 +248,6 @@ export class Range3 {
     this.z.translate(value.z);
   }
 
-  public scaleDelta(value: Vector3): void {
-    this.x.scaleDelta(value.x);
-    this.y.scaleDelta(value.y);
-    this.z.scaleDelta(value.z);
-  }
-
   public scale(value: number): void {
     this.x.scale(value);
     this.y.scale(value);
@@ -264,12 +260,7 @@ export class Range3 {
     this.z.add(value.z);
   }
 
-  public add2(value: Vector2): void {
-    this.x.add(value.x);
-    this.y.add(value.y);
-  }
-
-  public addHorizontal(value: Vector3): void {
+  public addHorizontal(value: Vector2 | Vector3): void {
     this.x.add(value.x);
     this.y.add(value.y);
   }
