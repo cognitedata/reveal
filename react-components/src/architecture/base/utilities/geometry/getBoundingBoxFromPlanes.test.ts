@@ -20,7 +20,7 @@ describe('getBoundingBoxFromPlanes', () => {
     expect(actualBox).toStrictEqual(originalBox);
   });
 
-  test('should find a the same bounding box with all 6 planes', () => {
+  test('should find the same bounding box with all 6 planes', () => {
     const largerBox = originalBox.clone();
     largerBox.expandByMargin(1);
 
