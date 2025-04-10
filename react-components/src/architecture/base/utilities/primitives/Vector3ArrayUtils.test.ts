@@ -53,7 +53,6 @@ describe(Vector3ArrayUtils.name, () => {
   });
 
   test('should calculate bounding box on empty polygon', () => {
-    const emptyPolygon: Vector3[] = [];
     const actualBoundingBox = Vector3ArrayUtils.getBoundingBox(emptyPolygon);
     expect(actualBoundingBox).toBeUndefined();
   });
