@@ -6,6 +6,7 @@ import { describe, expect, test } from 'vitest';
 
 import { TrianglesBuffers } from './TrianglesBuffers';
 import { Vector3 } from 'three';
+import assert from 'assert';
 
 const point1 = new Vector3(1, 2, 3);
 const point2 = new Vector3(4, 5, 6);
@@ -87,10 +88,8 @@ describe(TrianglesBuffers.name, () => {
 
     const geometry = buffer.createBufferGeometry();
     const index = geometry.getIndex();
-    expect(index).toBeDefined();
-    if (index === null) {
-      return;
-    }
+    expect(index).not.toBeNull();
+    assert(index !== null);
     expect(index.count).toBe(9);
     expect(index.array.length).toBe(9);
 
@@ -115,10 +114,8 @@ describe(TrianglesBuffers.name, () => {
     expect(positions.count).toBe(4);
     expect(normals.count).toBe(4);
     expect(uvs.count).toBe(4);
-    expect(index).toBeDefined();
-    if (index === null) {
-      return;
-    }
+    expect(index).not.toBeNull();
+    assert(index !== null);
     expect(index.count).toBe(6);
     expect(index.array.length).toBe(6);
 
