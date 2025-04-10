@@ -9,7 +9,7 @@ import { WireframeUserData } from './WireframeUserData';
 import { Matrix4, Vector3 } from 'three';
 import { BoxUtils } from '../../../base/utilities/primitives/BoxUtils';
 import { CylinderUtils } from '../../../base/utilities/primitives/CylinderUtils';
-import { PrimitiveUtils } from '../../../base/utilities/primitives/PrimitiveUtils';
+import { PrimitiveUtils } from '../../../base/utilities/primitives/Vector3ArrayUtils';
 import { type Status } from './Status';
 import { type Annotation } from './Annotation';
 import { type Primitive } from '../../../base/utilities/primitives/Primitive';

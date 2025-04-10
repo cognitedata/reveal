@@ -37,7 +37,7 @@ import { DomainObjectIntersection } from '../../../base/domainObjectsHelpers/Dom
 import { square } from '../../../base/utilities/extensions/mathExtensions';
 import { Quantity } from '../../../base/domainObjectsHelpers/Quantity';
 import { createSprite } from '../box/BoxView';
-import { PrimitiveUtils } from '../../../base/utilities/primitives/PrimitiveUtils';
+import { PrimitiveUtils } from '../../../base/utilities/primitives/Vector3ArrayUtils';
 import { getRoot } from '../../../base/domainObjects/getRoot';
 import { UnitSystem } from '../../../base/renderTarget/UnitSystem';
 import { VisualDomainObject } from '../../../base/domainObjects/VisualDomainObject';

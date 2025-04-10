@@ -4,7 +4,7 @@
 
 import { type LineSegmentsGeometry } from 'three/examples/jsm/lines/LineSegmentsGeometry.js';
 import { type BufferGeometry, CylinderGeometry } from 'three';
-import { PrimitiveUtils } from './PrimitiveUtils';
+import { PrimitiveUtils } from './Vector3ArrayUtils';
 
 const RADIUS = 0.5;
 const SEGMENTS_BETWEEN_CIRCLES = 5;
