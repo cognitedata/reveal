@@ -1,5 +1,5 @@
-import { BaseBannerCommand, TranslationInput } from '../../../../src/architecture';
-import { BannerStatus } from '../../../../src/architecture/base/commands/BaseBannerCommand';
+import { BaseBannerCommand, type TranslationInput } from '../../../../src/architecture';
+import { type BannerStatus } from '../../../../src/architecture/base/commands/BaseBannerCommand';
 
 export class TestBannerCommand extends BaseBannerCommand {
   private readonly _content: TranslationInput;

@@ -5,7 +5,7 @@ import { TestBannerCommand } from '#test-utils/architecture/commands/TestBannerC
 import { getTranslationKeyOrString } from '#test-utils/architecture/getTranslationKeyOrString';
 import { BannerStatus } from '../../architecture/base/commands/BaseBannerCommand';
 import { RevealRenderTarget } from '../../architecture';
-import { PropsWithChildren, ReactElement } from 'react';
+import { type PropsWithChildren, type ReactElement } from 'react';
 import { viewerMock } from '#test-utils/fixtures/viewer';
 import { sdkMock } from '#test-utils/fixtures/sdk';
 import { ViewerContextProvider } from '../RevealCanvas/ViewerContext';
