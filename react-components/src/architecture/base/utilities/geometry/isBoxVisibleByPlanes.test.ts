@@ -45,18 +45,26 @@ describe('isBoxVisibleByPlanes', () => {
   });
 });
 
-export function createPlanesAtTheEdgesOfBox(boundingBox: Range3 | Box3): Plane[] {
+export function createPlanesAtTheEdgesOfBox(
+  boundingBox: Range3 | Box3,
+  vertical = true,
+  horizontally = true
+): Plane[] {
   const min = boundingBox.min;
   const max = boundingBox.max;
   const center = boundingBox.getCenter(new Vector3());
-  const planes = [
-    new Plane().setFromNormalAndCoplanarPoint(new Vector3(1, 0, 0), new Vector3(min.x, 0, 0)),
-    new Plane().setFromNormalAndCoplanarPoint(new Vector3(1, 0, 0), new Vector3(max.x, 0, 0)),
-    new Plane().setFromNormalAndCoplanarPoint(new Vector3(0, 1, 0), new Vector3(0, min.y, 0)),
-    new Plane().setFromNormalAndCoplanarPoint(new Vector3(0, 1, 0), new Vector3(0, max.y, 0)),
-    new Plane().setFromNormalAndCoplanarPoint(new Vector3(0, 0, 1), new Vector3(0, 0, min.z)),
-    new Plane().setFromNormalAndCoplanarPoint(new Vector3(0, 0, 1), new Vector3(0, 0, max.z))
-  ];
+  const planes = new Array<Plane>();
+
+  if (vertical) {
+    planes.push(createPlane(new Vector3(1, 0, 0), new Vector3(min.x, 0, 0)));
+    planes.push(createPlane(new Vector3(1, 0, 0), new Vector3(max.x, 0, 0)));
+    planes.push(createPlane(new Vector3(0, 1, 0), new Vector3(0, min.y, 0)));
+    planes.push(createPlane(new Vector3(0, 1, 0), new Vector3(0, max.y, 0)));
+  }
+  if (horizontally) {
+    planes.push(createPlane(new Vector3(0, 0, 1), new Vector3(0, 0, min.z)));
+    planes.push(createPlane(new Vector3(0, 0, 1), new Vector3(0, 0, max.z)));
+  }
   for (let index = 0; index < planes.length; index++) {
     const plane = planes[index];
     if (plane.distanceToPoint(center) < 0) {
@@ -64,4 +72,8 @@ export function createPlanesAtTheEdgesOfBox(boundingBox: Range3 | Box3): Plane[]
     }
   }
   return planes;
+}
+
+function createPlane(normal: Vector3, point: Vector3): Plane {
+  return new Plane().setFromNormalAndCoplanarPoint(normal, point);
 }
