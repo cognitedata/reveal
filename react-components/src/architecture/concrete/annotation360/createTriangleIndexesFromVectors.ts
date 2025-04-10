@@ -13,6 +13,9 @@ export function createTriangleIndexesFromVectors(vectors: Vector3[]): number[] |
     return undefined;
   }
   const dominateVector = Vector3ArrayUtils.getCenter(vectors);
+  if (dominateVector === undefined) {
+    return undefined;
+  }
   dominateVector.normalize();
 
   // Rotate to down, so the center of the vectors points down.

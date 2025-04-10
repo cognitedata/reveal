@@ -4,6 +4,7 @@
 
 import { expect } from 'vitest';
 import { type Box3, type Euler, type Matrix4, type Vector3 } from 'three';
+import { type Range1, type Range3 } from '../../../src/architecture';
 
 const EPSILON = 0.0001;
 
@@ -31,6 +32,21 @@ export function expectEqualEuler(actual: Euler, expected: Euler): void {
 export function expectEqualBox3(actual: Box3, expected: Box3): void {
   expectEqualVector3(actual.min, expected.min);
   expectEqualVector3(actual.max, expected.max);
+}
+
+export function expectEqualRange3(actual: Range3, expected: Range3): void {
+  expectEqualRange1(actual.x, expected.x);
+  expectEqualRange1(actual.y, expected.y);
+  expectEqualRange1(actual.z, expected.z);
+}
+
+export function expectEqualRange1(actual: Range1, expected: Range1): void {
+  const equals = equalsRange1(actual, expected);
+  if (!equals) {
+    expect(actual).toStrictEqual(expected);
+  } else {
+    expect(equals).toBe(true);
+  }
 }
 
 export function expectEqualMatrix4(actual: Matrix4, expected: Matrix4): void {
@@ -67,6 +83,22 @@ export function equalsEuler(a: Euler, b: Euler, epsilon = EPSILON): boolean {
     return false;
   }
   if (a.order !== b.order) {
+    return false;
+  }
+  return true;
+}
+
+export function equalsRange1(a: Range1, b: Range1, epsilon = EPSILON): boolean {
+  if (!a.isEmpty && !b.isEmpty) {
+    return true;
+  }
+  if (a.isEmpty !== b.isEmpty) {
+    return false;
+  }
+  if (!almostEquals(a.min, b.min, epsilon)) {
+    return false;
+  }
+  if (!almostEquals(a.max, b.max, epsilon)) {
     return false;
   }
   return true;
