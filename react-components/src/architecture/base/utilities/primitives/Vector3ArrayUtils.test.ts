@@ -42,18 +42,17 @@ describe(Vector3ArrayUtils.name, () => {
     expectEqualBox3(actualBoundingBox, expectedBoundingBox);
   });
 
-  test('should calculate area', () => {
-    const emptyPolygon: Vector3[] = [];
+  test('should calculate area on empty polygon', () => {
     const actualArea = Vector3ArrayUtils.getSignedHorizontalArea(emptyPolygon);
     expect(actualArea).toBe(0);
   });
 
-  test('should calculate center', () => {
+  test('should calculate center on empty polygon', () => {
     const actualCenter = Vector3ArrayUtils.getCenter(emptyPolygon);
     expect(actualCenter).toBeUndefined();
   });
 
-  test('should calculate bounding box', () => {
+  test('should calculate bounding box on empty polygon', () => {
     const emptyPolygon: Vector3[] = [];
     const actualBoundingBox = Vector3ArrayUtils.getBoundingBox(emptyPolygon);
     expect(actualBoundingBox).toBeUndefined();
