@@ -7,7 +7,7 @@ import { describe, expect, test } from 'vitest';
 import { getCorners } from './getCorners';
 import { Box3, Vector3 } from 'three';
 
-describe('getCorners', () => {
+describe(getCorners.name, () => {
   test('should test getCorners', () => {
     const min = new Vector3(100, 200, 300);
     const max = new Vector3(400, 600, 800);
