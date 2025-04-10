@@ -3,7 +3,7 @@
  */
 
 import { Quaternion, type Vector2Like, Vector3 } from 'three';
-import { Vector3ArrayUtils } from '../../base/utilities/primitives/PointsUtils';
+import { Vector3ArrayUtils } from '../../base/utilities/primitives/Vector3ArrayUtils';
 
 const DOWN_VECTOR = new Vector3(0, 0, -1);
 const MIN_ANGLE = Math.PI / 1000;

@@ -3,7 +3,7 @@
  */
 
 import { describe, expect, test } from 'vitest';
-import { Vector3ArrayUtils } from './PointsUtils';
+import { Vector3ArrayUtils } from './Vector3ArrayUtils';
 import { Box3, Vector3 } from 'three';
 import {
   expectEqualBox3,

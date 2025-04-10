@@ -5,7 +5,7 @@
 import { Vector3, type BufferGeometry, type Matrix4, Box3, BoxGeometry } from 'three';
 import { OBB } from 'three/addons/math/OBB.js';
 import { type LineSegmentsGeometry } from 'three/examples/jsm/lines/LineSegmentsGeometry.js';
-import { PrimitiveUtils } from './Vector3ArrayUtils';
+import { PrimitiveUtils } from './PrimitiveUtils';
 import { getCorners } from '../geometry/getCorners';
 
 const HALF_SIDE = 0.5;

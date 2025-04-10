@@ -36,7 +36,7 @@ import { type SolidPrimitiveRenderStyle } from '../common/SolidPrimitiveRenderSt
 import { LineMaterial } from 'three/examples/jsm/lines/LineMaterial.js';
 import { updateWireframeMaterial } from '../box/BoxView';
 import { Wireframe } from 'three/examples/jsm/lines/Wireframe.js';
-import { PrimitiveUtils } from '../../../base/utilities/primitives/Vector3ArrayUtils';
+import { PrimitiveUtils } from '../../../base/utilities/primitives/PrimitiveUtils';
 
 export class PlaneView extends GroupThreeView<PlaneDomainObject> {
   // ==================================================

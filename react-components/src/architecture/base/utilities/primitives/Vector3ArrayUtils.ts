@@ -2,34 +2,46 @@
  * Copyright 2024 Cognite AS
  */
 
-import { BufferGeometry, Float32BufferAttribute, LineSegments, type Vector3 } from 'three';
-import { LineSegmentsGeometry } from 'three/examples/jsm/lines/LineSegmentsGeometry.js';
+import { Box3, Vector3 } from 'three';
+import { getHorizontalCrossProduct } from '../extensions/vectorExtensions';
 
-export class PrimitiveUtils {
-  public static createLineSegmentsAsPositions(positions: number[], indices: number[]): number[] {
-    // Convert indexed lines to lines only
-    const allVertices: number[] = [];
-    for (let i = 0; i < indices.length; i++) {
-      const index = 3 * indices[i];
-      allVertices.push(positions[index], positions[index + 1], positions[index + 2]);
+export class Vector3ArrayUtils {
+  public static getSignedHorizontalArea(polygon: Vector3[]): number {
+    const pointCount = polygon.length;
+    if (pointCount < 3) {
+      return 0;
     }
-    return allVertices;
+    let sum = 0.0;
+    const firstPoint = polygon[0];
+    const p0 = new Vector3();
+    const p1 = new Vector3();
+
+    // This applies "Greens theorem" to calculate the area of a polygon
+    for (let index = 1; index <= pointCount; index++) {
+      p1.copy(polygon[index % pointCount]);
+      p1.sub(firstPoint); // Translate by first point, to increase accuracy
+      sum += getHorizontalCrossProduct(p0, p1);
+      p0.copy(p1);
+    }
+    return sum / 2;
   }
 
-  public static createBufferGeometry(positions: number[]): BufferGeometry {
-    const attributes = new Float32BufferAttribute(positions, 3);
-    return new BufferGeometry().setAttribute('position', attributes);
+  public static getCenter(points: Vector3[]): Vector3 | undefined {
+    const boundingBox = Vector3ArrayUtils.getBoundingBox(points);
+    if (boundingBox === undefined) {
+      return undefined;
+    }
+    return boundingBox.getCenter(new Vector3());
   }
 
-  public static createLineSegmentsGeometryByPosition(positions: number[]): LineSegmentsGeometry {
-    const geometry = PrimitiveUtils.createBufferGeometry(positions);
-    const lineSegments = new LineSegments(geometry);
-    return new LineSegmentsGeometry().fromLineSegments(lineSegments);
-  }
-
-  public static createLineSegmentsGeometryByVertices(vertices: Vector3[]): LineSegmentsGeometry {
-    const geometry = new BufferGeometry().setFromPoints(vertices);
-    const lineSegments = new LineSegments(geometry);
-    return new LineSegmentsGeometry().fromLineSegments(lineSegments);
+  public static getBoundingBox(points: Vector3[]): Box3 | undefined {
+    if (points.length === 0) {
+      return undefined;
+    }
+    const boundingBox = new Box3();
+    for (const point of points) {
+      boundingBox.expandByPoint(point);
+    }
+    return boundingBox;
   }
 }
