@@ -12,7 +12,7 @@ const min = new Vector3(100, 200, 300);
 const max = new Vector3(400, 600, 800);
 const box = new Box3(min, max);
 
-describe(isBoxVisibleByPlanes.name, () => {
+describe('isBoxVisibleByPlanes', () => {
   test('should test with no planes', () => {
     const planes: Plane[] = [];
     expect(isEntireBoxVisibleByPlanes(planes, box)).toBe(true);
