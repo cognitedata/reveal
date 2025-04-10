@@ -32,6 +32,10 @@ export class CreatePoiCommentCommand extends BaseInputCommand {
     return { key: 'COMMENT_PLACEHOLDER' };
   }
 
+  public override get isEnabled(): boolean {
+    return this._content.length > 0;
+  }
+
   public override invokeCore(): boolean {
     if (this._content === undefined) {
       return false;

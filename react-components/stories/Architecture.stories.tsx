@@ -3,7 +3,13 @@
  */
 
 import type { Meta, StoryObj } from '@storybook/react';
-import { CadModelContainer, PointCloudContainer, RevealButtons, RevealCanvas } from '../src';
+import {
+  CadModelContainer,
+  PointCloudContainer,
+  RevealButtons,
+  RevealCanvas,
+  SceneContainer
+} from '../src';
 import { Color } from 'three';
 import { type ReactNode, type ReactElement } from 'react';
 import { RevealStoryContext } from './utilities/RevealStoryContainer';
@@ -62,13 +68,7 @@ function StoryContent({
   const renderTarget = useRenderTarget();
   return (
     <>
-      <CadModelContainer
-        addModelOptions={cadModelOptions}
-        onLoad={(_model: CogniteCadModel) => {
-          renderTarget.onStartup();
-        }}
-      />
-      <PointCloudContainer addModelOptions={pointCloudModelOptions} />
+      <SceneContainer sceneExternalId="5330f596-c88c-4de2-8c3d-c9a952c079f4" sceneSpaceId="scene" />
     </>
   );
 }
