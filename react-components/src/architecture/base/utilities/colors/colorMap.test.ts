@@ -5,6 +5,7 @@ import assert from 'assert';
 import { getColorFromBytes } from './colorExtensions';
 import { BYTE_PR_COLOR, ColorMap, TEXTURE_1D_WIDTH } from './ColorMap';
 import { Range1 } from '../geometry/Range1';
+import { type Color } from 'three';
 
 describe(ColorMap.name, () => {
   test('should have all colors different', () => {
@@ -12,13 +13,12 @@ describe(ColorMap.name, () => {
     expect(colorMap).toBeDefined();
     assert(colorMap !== undefined);
 
-    let prevColor = colorMap.getColor(0);
+    const uniqueColors = new Set<number>();
     const inc = 0.1;
     for (let fraction = inc; fraction <= 1; fraction += inc) {
-      const color = colorMap.getColor(fraction);
-      expect(color).toBeDefined();
-      expect(prevColor.equals(color)).toBe(false);
-      prevColor = color;
+      const colorHex = colorMap.getColor(fraction).getHex();
+      expect(uniqueColors.has(colorHex)).toBe(false);
+      uniqueColors.add(colorHex);
     }
   });
 
@@ -31,15 +31,16 @@ describe(ColorMap.name, () => {
     const colors = colorMap.createColors(colorCount);
     expect(colors.length).toBe(colorCount * TEXTURE_1D_WIDTH * BYTE_PR_COLOR);
 
+    const uniqueColors = new Set<number>();
     let i = 0;
-    let prevColor = getColorFromBytes(colors[i++], colors[i++], colors[i++]);
-    i++; // skip alpha
-    for (let colorIndex = 1; colorIndex < colorCount; colorIndex++) {
+    for (let colorIndex = 0; colorIndex < colorCount; colorIndex++) {
       const color = getColorFromBytes(colors[i++], colors[i++], colors[i++]);
-      expect(prevColor.equals(color)).toBe(false);
-      prevColor = color;
       i++; // skip alpha
+      const colorHex = color.getHex();
+      expect(uniqueColors.has(colorHex)).toBe(false);
+      uniqueColors.add(colorHex);
     }
+    expect(uniqueColors.size).toBe(colorCount);
   });
 
   test('should test createColorsWithContours returns different colors', () => {
@@ -57,6 +58,8 @@ describe(ColorMap.name, () => {
     );
     expect(colors.length).toBe(colorCount * TEXTURE_1D_WIDTH * BYTE_PR_COLOR);
 
+    // This can have the same color, so we can't check whether the all colors are different
+    // Therefore, only check with the previous color
     let i = 0;
     let prevColor = getColorFromBytes(colors[i++], colors[i++], colors[i++]);
     i++; // skip alpha
