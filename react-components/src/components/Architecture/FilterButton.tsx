@@ -48,7 +48,6 @@ export const FilterButton = ({
   // @update-ui-component-pattern
   const [isEnabled, setEnabled] = useState(true);
   const [isVisible, setVisible] = useState(true);
-  const [uniqueId, setUniqueId] = useState(0);
   const [icon, setIcon] = useState<IconName>(undefined);
   const [isOpen, setOpen] = useState(false);
   const [isAllChecked, setAllChecked] = useState(false);
@@ -61,7 +60,6 @@ export const FilterButton = ({
   useOnUpdate(command, () => {
     setEnabled(command.isEnabled);
     setVisible(command.isVisible);
-    setUniqueId(command.uniqueId);
     setIcon(command.icon);
     if (command instanceof BaseFilterCommand) {
       setAllChecked(command.isAllChecked);
@@ -101,7 +99,6 @@ export const FilterButton = ({
       isOpen={isOpen}
       setOpen={setOpen}
       isEnabled={isEnabled}
-      uniqueId={uniqueId}
       PanelContent={PanelContent}
     />
   );
@@ -115,7 +112,6 @@ const FilterMenu = ({
   isEnabled,
   placement,
   iconName,
-  uniqueId,
   PanelContent
 }: {
   command: BaseFilterCommand;
@@ -125,7 +121,6 @@ const FilterMenu = ({
   isEnabled: boolean;
   placement: PlacementType;
   iconName: IconName;
-  uniqueId: number;
   PanelContent: ReactElement;
 }): ReactElement => {
   const { t } = useTranslation();
@@ -144,7 +139,6 @@ const FilterMenu = ({
           <Button
             type={getButtonType(command)}
             icon={<IconComponent iconName={iconName} />}
-            key={uniqueId}
             disabled={!isEnabled}
             toggled={isOpen}
             iconPlacement="left"
