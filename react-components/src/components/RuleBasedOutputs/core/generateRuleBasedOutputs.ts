@@ -37,6 +37,7 @@ export const generateRuleBasedOutputs = async ({
   const outputType = 'color'; // for now it only supports colors as the output
 
   const ruleWithOutputs = ruleSet?.rulesWithOutputs;
+  if (ruleWithOutputs === undefined) return [];
 
   return (
     await Promise.all(
@@ -46,9 +47,7 @@ export const generateRuleBasedOutputs = async ({
         const expression = rule.expression;
 
         if (expression === undefined) return;
-
         forEachExpression(expression, convertExpressionStringMetadataKeyToLowerCase);
-
         const outputSelected: ColorRuleOutput | undefined = getRuleOutputFromTypeSelected(
           outputs,
           outputType
