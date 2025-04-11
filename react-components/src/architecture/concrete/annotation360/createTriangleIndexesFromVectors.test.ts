@@ -6,6 +6,7 @@ import { describe, expect, test } from 'vitest';
 import { Vector3 } from 'three';
 import { createTriangleIndexesFromVectors } from './createTriangleIndexesFromVectors';
 import { forEach } from 'lodash';
+import { insertAt } from '../../base/utilities/extensions/arrayExtensions';
 
 describe(createTriangleIndexesFromVectors.name, () => {
   test('should return undefined when empty vectors', () => {
@@ -55,6 +56,12 @@ describe(createTriangleIndexesFromVectors.name, () => {
     expect(indexes).toEqual([1, 0, 3, 3, 2, 1]);
   });
 
+  test('should handle colinear vectors in a square', () => {
+    const vectors = createSquareToEdgeOfUnitSphere(true);
+    const indexes = createTriangleIndexesFromVectors(vectors);
+    expect(indexes).toEqual([4, 0, 2, 2, 3, 4]);
+  });
+
   test('should handle vectors forming a pentagon', () => {
     const vectors = createPentagonToEdgeOfUnitSphere();
     const indexes = createTriangleIndexesFromVectors(vectors);
@@ -78,7 +85,7 @@ describe(createTriangleIndexesFromVectors.name, () => {
  *
  */
 
-function createSquareToEdgeOfUnitSphere(): Vector3[] {
+function createSquareToEdgeOfUnitSphere(addOnColinearPoint = false): Vector3[] {
   const vectors: Vector3[] = [];
   const z = -5;
   vectors.push(new Vector3(0, 0, z));
@@ -87,6 +94,11 @@ function createSquareToEdgeOfUnitSphere(): Vector3[] {
   vectors.push(new Vector3(0, 1, z));
 
   forEach(vectors, (vector) => vector.normalize());
+
+  if (addOnColinearPoint) {
+    const newPoint = new Vector3().addVectors(vectors[0], vectors[1]).multiplyScalar(0.5);
+    insertAt(vectors, 2, newPoint);
+  }
   return vectors;
 }
 
