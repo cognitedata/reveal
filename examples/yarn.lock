@@ -33,7 +33,7 @@ __metadata:
     "@types/react": "npm:18.3.12"
     "@types/react-dom": "npm:18.3.1"
     "@types/stats.js": "npm:^0.17.0"
-    "@types/three": "npm:^0.174.0"
+    "@types/three": "npm:^0.175.0"
     buffer: "npm:^6.0.3"
     css-loader: "npm:^7.0.0"
     dat.gui: "npm:^0.7.7"
@@ -45,7 +45,7 @@ __metadata:
     react-dom: "npm:18.3.1"
     stats.js: "npm:0.17.0"
     styled-components: "npm:6.1.13"
-    three: "npm:0.174.0"
+    three: "npm:0.175.0"
     ts-loader: "npm:9.5.1"
     typescript: "npm:^5.0.4"
     webpack: "npm:^5.76.0"
@@ -520,9 +520,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/three@npm:^0.174.0":
-  version: 0.174.0
-  resolution: "@types/three@npm:0.174.0"
+"@types/three@npm:^0.175.0":
+  version: 0.175.0
+  resolution: "@types/three@npm:0.175.0"
   dependencies:
     "@tweenjs/tween.js": "npm:~23.1.3"
     "@types/stats.js": "npm:*"
@@ -530,7 +530,7 @@ __metadata:
     "@webgpu/types": "npm:*"
     fflate: "npm:~0.8.2"
     meshoptimizer: "npm:~0.18.1"
-  checksum: 10/5fd26de34c58f50658bbf84191aa33c766cc93df1427c8a84b817155ee6e4919141407090d4ee15c9c2de8e5f2ea5b4c177e701ee8583149bcc0c3f8c1bded04
+  checksum: 10/ad553b410f3d0f8ec8c0d66da9dad3101356d02e1a23e9df11af804805a6807e0101f22388298239bd7089a349c2651e1d3faed1e4ce0b21f83de8c185b29d22
   languageName: node
   linkType: hard
 
@@ -3177,14 +3177,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"picocolors@npm:^1.0.0, picocolors@npm:^1.1.0":
-  version: 1.1.0
-  resolution: "picocolors@npm:1.1.0"
-  checksum: 10/a2ad60d94d185c30f2a140b19c512547713fb89b920d32cc6cf658fa786d63a37ba7b8451872c3d9fc34883971fb6e5878e07a20b60506e0bb2554dce9169ccb
-  languageName: node
-  linkType: hard
-
-"picocolors@npm:^1.1.1":
+"picocolors@npm:^1.0.0, picocolors@npm:^1.1.0, picocolors@npm:^1.1.1":
   version: 1.1.1
   resolution: "picocolors@npm:1.1.1"
   checksum: 10/e1cf46bf84886c79055fdfa9dcb3e4711ad259949e3565154b004b260cd356c5d54b31a1437ce9782624bf766272fe6b0154f5f0c744fb7af5d454d2b60db045
@@ -4090,10 +4083,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"three@npm:0.174.0":
-  version: 0.174.0
-  resolution: "three@npm:0.174.0"
-  checksum: 10/d02d33aaacc56f60c38a2466f29c96c0afa8bddc5e284f8b4a474ef7d917c8c6d4557403521c6f9bc3c49a96719872074f5cf02c3cb6f1e0a85f901da5b92ac8
+"three@npm:0.175.0":
+  version: 0.175.0
+  resolution: "three@npm:0.175.0"
+  checksum: 10/f458e3e41e7171811c66702fa544e559d8863e1a7e2338f137b445fe95e22c41307d58fa973b98ee22ab5281c064f73a4f520b75c1d2e367a8d94c2bd9473c20
   languageName: node
   linkType: hard
 
