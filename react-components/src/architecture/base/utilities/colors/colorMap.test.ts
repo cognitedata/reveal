@@ -2,7 +2,7 @@ import { describe, expect, test } from 'vitest';
 import { getColorMap } from './colorMaps';
 import { ColorMapType } from './ColorMapType';
 import assert from 'assert';
-import { getColorFromBytes, WHITE_COLOR } from './colorExtensions';
+import { getColorFromBytes } from './colorExtensions';
 import { BYTE_PR_COLOR, ColorMap, TEXTURE_1D_WIDTH } from './ColorMap';
 import { Range1 } from '../geometry/Range1';
 
@@ -22,7 +22,7 @@ describe(ColorMap.name, () => {
     }
   });
 
-  test('should test createColors', () => {
+  test('should check that createColors returns different colors', () => {
     const colorMap = getColorMap(ColorMapType.Terrain);
     expect(colorMap).toBeDefined();
     assert(colorMap !== undefined);
@@ -42,7 +42,7 @@ describe(ColorMap.name, () => {
     }
   });
 
-  test('should test createColorsWithContours', () => {
+  test('should test createColorsWithContours returns different colors', () => {
     const colorMap = getColorMap(ColorMapType.Terrain);
     expect(colorMap).toBeDefined();
     assert(colorMap !== undefined);
