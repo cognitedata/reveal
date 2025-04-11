@@ -270,6 +270,7 @@ function SliderComponent({
         min={command.min}
         max={command.max}
         step={command.step}
+        marks={command.marks}
         onChange={(value: number) => {
           command.value = value;
           setValue(value);
