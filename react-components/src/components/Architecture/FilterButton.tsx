@@ -10,7 +10,13 @@ import {
   type Dispatch,
   type SetStateAction
 } from 'react';
-import { Button, ChevronDownIcon, ChevronUpIcon, Tooltip as CogsTooltip } from '@cognite/cogs.js';
+import {
+  Button,
+  ChevronDownIcon,
+  ChevronUpIcon,
+  Tooltip as CogsTooltip,
+  Flex
+} from '@cognite/cogs.js';
 import { Menu, SelectPanel } from '@cognite/cogs-lab';
 import { useTranslation } from '../i18n/I18n';
 import { useRenderTarget } from '../RevealCanvas/ViewerContext';
@@ -18,7 +24,7 @@ import { getButtonType, getDefaultCommand, getTooltipPlacement } from './utiliti
 import { LabelWithShortcut } from './LabelWithShortcut';
 import { BaseFilterCommand } from '../../architecture/base/commands/BaseFilterCommand';
 import { FilterItem } from './FilterItem';
-import { OPTION_MIN_WIDTH, DEFAULT_PADDING, SELECT_DROPDOWN_ICON_COLOR } from './constants';
+import { DEFAULT_PADDING, SELECT_DROPDOWN_ICON_COLOR } from './constants';
 import { type IconName } from '../../architecture/base/utilities/IconName';
 import { IconComponent } from './Factories/IconFactory';
 import { TOOLBAR_HORIZONTAL_PANEL_OFFSET } from '../constants';
@@ -173,28 +179,25 @@ const FilterDropdown = ({
 }): ReactElement => {
   return (
     <StyledDropdownRow>
-      <label>{label}</label>
-      <StyledSelectPanel appendTo={'parent'} placement={'right-end'} hideOnOutsideClick>
+      <StyledLabel>{label}</StyledLabel>
+      <StyledSelectPanel placement={'right-end'} visible={isOpen}>
         <SelectPanel.Trigger>
-          <Button
+          <StyledSelectPanelButton
             color="#000044"
             type="tertiary"
-            style={{
-              justifyContent: 'space-between',
-              minWidth: OPTION_MIN_WIDTH,
-              paddingRight: '8px',
-              paddingLeft: '8px'
-            }}
+            toggled={isOpen}
             onClick={() => {
               setOpen((prev) => !prev);
             }}>
-            <StyledDropdownSelectionLabel>{selectedLabel}</StyledDropdownSelectionLabel>
-            {isOpen ? (
-              <ChevronUpIcon color={SELECT_DROPDOWN_ICON_COLOR} />
-            ) : (
-              <ChevronDownIcon color={SELECT_DROPDOWN_ICON_COLOR} />
-            )}
-          </Button>
+            <StyledPanelButtonContent>
+              <StyledDropdownSelectionLabel>{selectedLabel}</StyledDropdownSelectionLabel>
+              {isOpen ? (
+                <ChevronUpIcon color={SELECT_DROPDOWN_ICON_COLOR} />
+              ) : (
+                <ChevronDownIcon color={SELECT_DROPDOWN_ICON_COLOR} />
+              )}
+            </StyledPanelButtonContent>
+          </StyledSelectPanelButton>
         </SelectPanel.Trigger>
         <SelectPanel.Body style={{ overflow: 'hidden' }}>{PanelContent}</SelectPanel.Body>
       </StyledSelectPanel>
@@ -245,19 +248,42 @@ const FilterSelectPanelContent = ({
 
 const StyledDropdownRow = styled.div`
   display: flex;
+  align-self: stretch;
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
-  gap: 8px;
+
   padding: ${DEFAULT_PADDING};
+`;
+
+const StyledLabel = styled.label`
+  flex: 2 2;
+`;
+
+const StyledSelectPanelButton = styled(Button)`
+  width: 100%;
+  padding: 0px 0px;
+`;
+
+const StyledPanelButtonContent = styled(Flex).attrs({ direction: 'row' })`
+  width: 100%;
+  justify-content: space-between;
 `;
 
 const StyledSelectPanel = styled(SelectPanel)`
   display: flex;
+  flex: 2 2;
   display-direction: row;
   justify-content: space-between;
   align-items: center;
-  gap: 8px;
+
+  .cogs-v10.cogs-button {
+    padding: 7px 8px;
+  }
+
+  .cogs-lab.cogs-dropdown__anchor-el {
+    width: inherit;
+  }
 `;
 
 const StyledDropdownSelectionLabel = styled.label`
