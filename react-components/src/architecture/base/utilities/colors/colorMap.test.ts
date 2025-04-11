@@ -5,7 +5,6 @@ import assert from 'assert';
 import { getColorFromBytes } from './colorExtensions';
 import { BYTE_PR_COLOR, ColorMap, TEXTURE_1D_WIDTH } from './ColorMap';
 import { Range1 } from '../geometry/Range1';
-import { type Color } from 'three';
 
 describe(ColorMap.name, () => {
   test('should have all colors different', () => {
