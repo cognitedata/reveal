@@ -8,7 +8,7 @@ import { isPointVisibleByPlanes } from '@cognite/reveal';
 
 const tempTarget = new Vector3(); // Reuse this vector to avoid creating a new one every time
 
-export function isPartOfBoxVisibleByPlanes(planes: Plane[], box: Box3): boolean {
+export function isAnyCornersVisibleByPlanes(planes: Plane[], box: Box3): boolean {
   if (box.isEmpty()) {
     return false;
   }

@@ -22,13 +22,16 @@ export function getBoundingBoxFromPlanes(planes: Plane[], originalBoundingBox: R
     const origin = new Vector3(0, 0, 0);
     for (const plane of horizontalPlanes) {
       const pointOnPlane = plane.projectPoint(origin, tempVector);
-      if (isVisible(horizontalPlanes, pointOnPlane, plane)) {
+      if (
+        isVisible(horizontalPlanes, pointOnPlane, plane) &&
+        originalBoundingBox.z.isInside(pointOnPlane.z)
+      ) {
         result.z.add(pointOnPlane.z);
       }
     }
   }
   {
-    const verticalPlanes = planes.filter((plane) => !isHorizontalPlane(plane));
+    const verticalPlanes = planes.filter((plane) => isVerticalPlane(plane));
     // Calculate the x and y range based on visible corners
     for (let corner = 0; corner < 8; corner++) {
       const cornerPoint = originalBoundingBox.getCornerPoint(corner, tempVector);
@@ -77,6 +80,10 @@ export function getBoundingBoxFromPlanes(planes: Plane[], originalBoundingBox: R
 
   function isHorizontalPlane(plane: Plane): boolean {
     return plane.normal.x === 0 && plane.normal.y === 0;
+  }
+
+  function isVerticalPlane(plane: Plane): boolean {
+    return plane.normal.z === 0;
   }
 
   function isVisible(planes: Plane[], point: Vector3, except?: Plane): boolean {
