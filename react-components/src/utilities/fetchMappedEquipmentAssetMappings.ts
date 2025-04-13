@@ -5,7 +5,7 @@ import { type AddModelOptions } from '@cognite/reveal';
 import { type NodeDefinition, type CogniteClient } from '@cognite/sdk';
 import { type NodeDefinitionWithModelAndMappings, type ModelMappingsWithAssets } from '../query';
 import { getAssetsFromAssetMappings } from './getAssetsFromAssetMappings';
-import { type SimpleSource } from '../data-providers';
+import { DmsUniqueIdentifier, type SimpleSource } from '../data-providers';
 import { type ModelWithAssetMappings } from '../hooks';
 import { isDefined } from './isDefined';
 
@@ -57,18 +57,14 @@ export const fetchAllMappedEquipmentAssetMappingsClassic = async (
 export const fetchAllMappedEquipmentAssetMappingsHybrid = async ({
   sdk,
   viewToSearch,
-  assetMappingList
+  assetMappingList,
+  hybridMappingsIdentifiers
 }: {
   sdk: CogniteClient;
   viewToSearch: SimpleSource;
   assetMappingList: ModelWithAssetMappings[];
+  hybridMappingsIdentifiers: DmsUniqueIdentifier[];
 }): Promise<NodeDefinitionWithModelAndMappings[]> => {
-  const instances = assetMappingList.flatMap((mapping) =>
-    mapping.assetMappings.map((item) => item.assetInstanceId).filter(isDefined)
-  );
-
-  if (instances.length === 0) return [];
-
   const allEquipment = await sdk.instances.retrieve({
     sources: [
       {
@@ -80,7 +76,7 @@ export const fetchAllMappedEquipmentAssetMappingsHybrid = async ({
         }
       }
     ],
-    items: instances.map((instance) => ({
+    items: hybridMappingsIdentifiers.map((instance) => ({
       instanceType: 'node',
       space: instance.space,
       externalId: instance.externalId

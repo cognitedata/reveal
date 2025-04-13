@@ -247,7 +247,8 @@ export const useAllMappedEquipmentAssetMappingsHybrid = (
       const mappedHybridAssets = await fetchAllMappedEquipmentAssetMappingsHybrid({
         sdk,
         viewToSearch,
-        assetMappingList
+        assetMappingList,
+        hybridMappingsIdentifiers: assetsFromHybridMappings
       });
 
       return mappedHybridAssets;
