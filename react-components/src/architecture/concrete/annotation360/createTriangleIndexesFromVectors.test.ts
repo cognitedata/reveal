@@ -85,7 +85,7 @@ describe(createTriangleIndexesFromVectors.name, () => {
  *
  */
 
-function createSquareToEdgeOfUnitSphere(addOnColinearPoint = false): Vector3[] {
+function createSquareToEdgeOfUnitSphere(addOneColinearPoint = false): Vector3[] {
   const vectors: Vector3[] = [];
   const z = -5;
   vectors.push(new Vector3(0, 0, z));
