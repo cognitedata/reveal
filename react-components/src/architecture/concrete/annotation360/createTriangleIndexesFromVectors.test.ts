@@ -119,6 +119,6 @@ function createPentagonToEdgeOfUnitSphere(): Vector3[] {
   vectors.push(new Vector3(1, 1, z));
   vectors.push(new Vector3(0, 1, z));
 
-  forEach(vectors, (vector) => vector.normalize());
+  forEach(vectors, (vector: Vector3) => vector.normalize());
   return vectors;
 }
