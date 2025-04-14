@@ -93,7 +93,7 @@ function createSquareToEdgeOfUnitSphere(addOnColinearPoint = false): Vector3[] {
   vectors.push(new Vector3(1, 1, z));
   vectors.push(new Vector3(0, 1, z));
 
-  forEach(vectors, (vector) => vector.normalize());
+  forEach(vectors, (vector: Vector3) => vector.normalize());
 
   if (addOnColinearPoint) {
     const newPoint = new Vector3().addVectors(vectors[0], vectors[1]).multiplyScalar(0.5);
