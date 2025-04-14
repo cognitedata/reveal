@@ -9,5 +9,4 @@ export { useGenerateAssetMappingCachePerItemFromModelCache } from './useGenerate
 export { useGenerateNode3DCache } from './useGenerateNode3DCache';
 export { useMappedEdgesForRevisions } from './useMappedEdgesForRevisions';
 export { useNodesForAssets } from './useNodesForAssets';
-export { useGetCadHybridAssetMappings } from './useGetCadHybridAssetMappings';
 export type { ModelWithAssetMappings } from './ModelWithAssetMappings';
