@@ -1,5 +1,5 @@
 /*!
- * Copyright 2024 Cognite AS
+ * Copyright 2025 Cognite AS
  */
 
 import { describe, expect, test } from 'vitest';
