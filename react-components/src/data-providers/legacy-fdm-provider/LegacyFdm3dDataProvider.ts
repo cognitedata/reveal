@@ -12,7 +12,10 @@ import {
   type Source,
   type ViewItem
 } from '../FdmSDK';
-import { type InstancesWithView } from '../../query/useSearchMappedEquipmentFDM';
+import {
+  type InstancesWithView,
+  type InstancesWithViewDefinition
+} from '../../query/useSearchMappedEquipmentFDM';
 import {
   type AddImage360CollectionDatamodelsOptions,
   type TaggedAddResourceOptions
@@ -27,6 +30,7 @@ import { getCadConnectionsForRevision } from './getCadConnectionsForRevision';
 import { type CogniteClient, type Node3D } from '@cognite/sdk';
 import { EMPTY_ARRAY } from '../../utilities/constants';
 import { isClassicIdentifier } from '../../components/Reveal3DResources/typeGuards';
+import { transformViewItemToSource } from '../core-dm-provider/utils/transformViewItemToSource';
 
 export class LegacyFdm3dDataProvider implements Fdm3dDataProvider {
   readonly _fdmSdk: FdmSDK;
@@ -65,7 +69,7 @@ export class LegacyFdm3dDataProvider implements Fdm3dDataProvider {
 
   async listMappedFdmNodes(
     models: Array<AddModelOptions<DataSourceType> | AddImage360CollectionDatamodelsOptions>,
-    sourcesToSearch: Source[],
+    sourcesToSearch: ViewItem[],
     instanceFilter: InstanceFilter | undefined,
     limit: number
   ): Promise<NodeItem[]> {
@@ -77,7 +81,7 @@ export class LegacyFdm3dDataProvider implements Fdm3dDataProvider {
     return await listMappedFdmNodes(
       this._fdmSdk,
       classicModels,
-      sourcesToSearch,
+      sourcesToSearch.map(transformViewItemToSource),
       instanceFilter,
       limit
     );
@@ -96,7 +100,7 @@ export class LegacyFdm3dDataProvider implements Fdm3dDataProvider {
   }
 
   async filterNodesByMappedTo3d(
-    nodes: InstancesWithView[],
+    nodes: InstancesWithViewDefinition[],
     models: Array<AddModelOptions<DataSourceType> | AddImage360CollectionDatamodelsOptions>,
     spacesToSearch: string[]
   ): Promise<InstancesWithView[]> {
@@ -105,7 +109,20 @@ export class LegacyFdm3dDataProvider implements Fdm3dDataProvider {
     if (classicModels.length === 0) {
       return EMPTY_ARRAY;
     }
-    return await filterNodesByMappedTo3d(this._fdmSdk, nodes, classicModels, spacesToSearch);
+
+    // Must transform from InstancesWithViewDefinition to InstanceWithView
+    // which has a different view type
+    const transformedNodes = nodes.map((node) => ({
+      view: transformViewItemToSource(node.view),
+      instances: node.instances
+    }));
+
+    return await filterNodesByMappedTo3d(
+      this._fdmSdk,
+      transformedNodes,
+      classicModels,
+      spacesToSearch
+    );
   }
 
   async getCadModelsForInstance(

@@ -282,7 +282,7 @@ export class RegularGrid2 extends Grid2 {
   public getCornerRange(): Range3 {
     const corner = new Vector3();
     const range = new Range3();
-    range.add2(this.origin);
+    range.addHorizontal(this.origin);
     this.getNodePosition2(0, this.nodeSize.j - 1, corner);
     range.add(corner);
     this.getNodePosition2(this.nodeSize.i - 1, 0, corner);

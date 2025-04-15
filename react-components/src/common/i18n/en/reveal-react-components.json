@@ -117,6 +117,7 @@
   "POLYLINE": "Polyline",
   "RADIUS": "Radius",
   "REDO": "Redo",
+  "RENDER_QUALITY_SLIDER_HEADER": "Rendering detail level",
   "RESET_CAMERA_TO_HOME": "Reset camera to home",
   "RESOURCES_3D": "3D resources",
   "REVISIONS": "Revisions",
