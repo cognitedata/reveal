@@ -26,11 +26,18 @@ export class Vector3ArrayUtils {
     return sum / 2;
   }
 
-  public static getCenter(points: Vector3[]): Vector3 {
-    return Vector3ArrayUtils.getBoundingBox(points).getCenter(new Vector3());
+  public static getCenter(points: Vector3[]): Vector3 | undefined {
+    const boundingBox = Vector3ArrayUtils.getBoundingBox(points);
+    if (boundingBox === undefined) {
+      return undefined;
+    }
+    return boundingBox.getCenter(new Vector3());
   }
 
-  public static getBoundingBox(points: Vector3[]): Box3 {
+  public static getBoundingBox(points: Vector3[]): Box3 | undefined {
+    if (points.length === 0) {
+      return undefined;
+    }
     const boundingBox = new Box3();
     for (const point of points) {
       boundingBox.expandByPoint(point);

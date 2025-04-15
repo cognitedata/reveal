@@ -71,20 +71,7 @@ export class TrianglesBuffers {
   }
 
   public addPairWithNormal(p1: Vector3, p2: Vector3, normal: Vector3, u: number = 0): void {
-    if (this.uniqueIndex >= 2) {
-      //     2------3
-      //     |      |
-      //     0------1
-      const unique0 = this.uniqueIndex - 2;
-      const unique1 = this.uniqueIndex - 1;
-      const unique2 = this.uniqueIndex;
-      const unique3 = this.uniqueIndex + 1;
-
-      this.addTriangle(unique0, unique3, unique2);
-      this.addTriangle(unique0, unique1, unique3);
-    }
-    this.add(p1, normal, u);
-    this.add(p2, normal, u);
+    this.addPairWithNormals(p1, p2, normal, normal, u);
   }
 
   public addTriangle(index0: number, index1: number, index2: number): void {
