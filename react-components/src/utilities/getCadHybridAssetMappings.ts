@@ -20,15 +20,15 @@ export const getCadHybridAssetMappings = async (
   query: string,
   renderTarget: RevealRenderTarget,
 ): Promise<AllHybridMappingsAndSearchResult> => {
-  const assetMappingAndNode3DCache = renderTarget.cdfCaches.assetMappingAndNode3dCache;
-  const sdk = renderTarget.rootDomainObject.sdk;
-  const fdmSdk = renderTarget.rootDomainObject.fdmSdk;
+  const { cdfCaches, rootDomainObject } = renderTarget;
+  const { assetMappingAndNode3dCache } = cdfCaches;
+  const { sdk, fdmSdk } = rootDomainObject;
 
   const limit = 1000;
 
   const fetchPromises = cadModels.map(
     async (model) =>
-      await assetMappingAndNode3DCache
+      await assetMappingAndNode3dCache
         .getAssetMappingsForModel(model.modelId, model.revisionId)
         .then((assetMappings) => ({ model, assetMappings }))
   );
@@ -48,9 +48,20 @@ export const getCadHybridAssetMappings = async (
     hybridMappingsIdentifiers
   });
 
+  const filterAllMappedHybridAssetsForViewsToSearch = viewsToSearch.flatMap(
+    (view) => {
+      const viewExternalIdWithVersion = `${view.externalId}/${view.version}`;
+      const viewSpace = view.space;
+      return allMappedHybridAssets.filter((item) => {
+        const properties = item.asset.properties as Record<string, Record<string, unknown>> | undefined;
+        return properties?.[viewSpace]?.[viewExternalIdWithVersion];
+      });
+    }
+  );
+
   if (query === '' || assetMappingList === undefined) {
     return {
-      allHybridAssetMappings: allMappedHybridAssets,
+      allHybridAssetMappings: filterAllMappedHybridAssetsForViewsToSearch,
       searchedHybridAssetMappings: undefined
     };
   }
@@ -68,7 +79,7 @@ export const getCadHybridAssetMappings = async (
   const instancesWithView = connectMappedInstancesWithSearchResult(searchResults, hybridMappingsIdentifiers);
 
   return {
-    allHybridAssetMappings: allMappedHybridAssets,
+    allHybridAssetMappings: filterAllMappedHybridAssetsForViewsToSearch,
     searchedHybridAssetMappings: instancesWithView
   };
 };
