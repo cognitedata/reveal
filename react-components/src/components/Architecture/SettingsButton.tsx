@@ -31,7 +31,6 @@ import { IconComponent } from './Factories/IconFactory';
 
 import { TOOLBAR_HORIZONTAL_PANEL_OFFSET } from '../constants';
 
-import { offset } from '@floating-ui/dom';
 import { DividerCommand } from '../../architecture/base/commands/DividerCommand';
 import { SectionCommand } from '../../architecture/base/commands/SectionCommand';
 import { useOnUpdate } from './useOnUpdate';
