@@ -9,6 +9,10 @@ export const BLACK_COLOR = new Color(0, 0, 0);
 export const GREY_COLOR = new Color(0.67, 0.67, 0.67);
 export const MAX_BYTE = 255;
 
+export function isGreyScale(color: Color): boolean {
+  return color.r === color.g && color.g === color.b;
+}
+
 export function getMixedColor(color: Color, other: Color, fraction = 0.5): Color {
   const otherFraction = 1 - fraction;
   const r = color.r * fraction + other.r * otherFraction;
@@ -17,7 +21,12 @@ export function getMixedColor(color: Color, other: Color, fraction = 0.5): Color
   return new Color(r, g, b);
 }
 
-export function getHslMixedColor(color: Color, other: Color, fraction = 0.5, long: boolean): Color {
+export function getHslMixedColor(
+  color: Color,
+  other: Color,
+  fraction = 0.5,
+  long: boolean = true
+): Color {
   let hsl1: HSL = { h: 0, s: 0, l: 0 };
   let hsl2: HSL = { h: 0, s: 0, l: 0 };
   hsl1 = color.getHSL(hsl1);
