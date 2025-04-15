@@ -1,6 +1,6 @@
 {
   "name": "@cognite/reveal-react-components",
-  "version": "0.77.0",
+  "version": "0.77.1",
   "exports": {
     ".": {
       "import": "./dist/index.js",
@@ -37,7 +37,7 @@
     "sort-keys": "cdf-i18n-utils-cli sort-local-keys --namespace reveal-react-components --path ./src/common/i18n"
   },
   "peerDependencies": {
-    "@cognite/reveal": "4.24.0",
+    "@cognite/reveal": "4.25.0",
     "@cognite/sdk": "^10.0.0",
     "react": ">=18",
     "react-dom": ">=18",
@@ -89,7 +89,7 @@
     "eslint-plugin-prettier": "^5.1.3",
     "eslint-plugin-promise": "^7.0.0",
     "eslint-plugin-react": "^7.34.1",
-    "happy-dom": "^16.0.0",
+    "happy-dom": "^17.0.0",
     "locize-cli": "^8.0.1",
     "madge": "^8.0.0",
     "moq.ts": "10.0.8",
