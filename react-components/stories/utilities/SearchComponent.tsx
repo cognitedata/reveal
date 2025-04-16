@@ -11,9 +11,9 @@ import {
   type AddCadResourceOptions,
   type AddPointCloudResourceOptions,
   useSearchMappedEquipmentFDM,
-  useSearchMappedEquipmentAssetMappingsClassic,
+  useSearchMappedEquipmentAssetMappings,
   useAllMappedEquipmentFDM,
-  useAllMappedEquipmentAssetMappingsClassic,
+  useAllMappedEquipmentAssetMappings,
   type AddImage360CollectionOptions,
   useSearchAssetsMapped360Annotations,
   useAllAssetsMapped360Annotations,
@@ -93,7 +93,7 @@ const SearchComponent: React.FC<SearchComponentProps> = ({
     isFetching: isAssetSearchFetching,
     hasNextPage: assetSearchHasNextPage,
     fetchNextPage: fetchAssetSearchNextPage
-  } = useSearchMappedEquipmentAssetMappingsClassic(
+  } = useSearchMappedEquipmentAssetMappings(
     mainSearchQuery,
     filteredResources as AddModelOptions[],
     1000,
@@ -112,7 +112,7 @@ const SearchComponent: React.FC<SearchComponentProps> = ({
     isFetching,
     hasNextPage,
     fetchNextPage
-  } = useAllMappedEquipmentAssetMappingsClassic(filteredResources as AddModelOptions[], sdk, 25);
+  } = useAllMappedEquipmentAssetMappings(filteredResources as AddModelOptions[], sdk, 25);
 
   const { data: allAssetMappingsDataHybrid } = useAllMappedEquipmentAssetMappingsHybrid(
     (filteredResources as AddCadResourceOptions[]).map((model) => ({ ...model, type: 'cad' })),

@@ -19,10 +19,10 @@ export {
   useSearchAssetsMappedPointCloudAnnotations
 } from './useSearchAssetsMappedPointCloudAnnotations';
 export {
-  useAllMappedEquipmentAssetMappingsClassic,
+  useAllMappedEquipmentAssetMappings,
   useAllMappedEquipmentAssetMappingsHybrid,
   useSearchMappedEquipmentAssetMappingsHybrid,
-  useSearchMappedEquipmentAssetMappingsClassic,
+  useSearchMappedEquipmentAssetMappings,
   useMappingsForAssetIds
 } from './useSearchMappedEquipmentAssetMappings';
 export {

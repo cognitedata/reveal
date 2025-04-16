@@ -17,6 +17,7 @@ import { type InstancesWithView } from './useSearchMappedEquipmentFDM';
 import { COGNITE_ASSET_SOURCE, NodeItem, type Source } from '../data-providers';
 import { useMemo } from 'react';
 import { type ModelWithAssetMappings } from '../hooks/cad/ModelWithAssetMappings';
+import { useAssetMappedNodesForRevisions } from '../hooks/cad';
 import {
   type AssetPage,
   type ModelMappingsWithAssets,
@@ -25,23 +26,23 @@ import {
 import { getAssetsFromAssetMappings } from '../utilities/getAssetsFromAssetMappings';
 import {
   fetchAllMappedEquipmentAssetMappingsClassic,
-  fetchAllMappedEquipmentAssetMappingsHybrid
 } from '../utilities/fetchMappedEquipmentAssetMappings';
+import { fetchAllMappedEquipmentAssetMappingsHybrid } from '../utilities/hybrid/fetchMappedEquipmentAssetMappingsHybrid';
 import { queryKeys } from '../utilities/queryKeys';
 import {
   createFdmKey,
   createModelRevisionKey
 } from '../components/CacheProvider/idAndKeyTranslation';
 
-export const useSearchMappedEquipmentAssetMappingsClassic = (
+export const useSearchMappedEquipmentAssetMappings = (
   query: string,
   models: AddModelOptions[],
   limit: number = 100,
-  assetMappingList: ModelWithAssetMappings[],
-  isAssetMappingNodesFetched: boolean,
   userSdk?: CogniteClient
 ): UseInfiniteQueryResult<InfiniteData<AssetPage>, Error> => {
   const sdk = useSDK(userSdk);
+  const { data: assetMappingList, isFetched: isAssetMappingNodesFetched } =
+  useAssetMappedNodesForRevisions(models.map((model) => ({ ...model, type: 'cad' })));
 
   const mapped3dAssetIds = useMemo(() => {
     if (assetMappingList === undefined) return new Set<number>();
@@ -182,7 +183,7 @@ export const useSearchMappedEquipmentAssetMappingsHybrid = (
   });
 };
 
-export const useAllMappedEquipmentAssetMappingsClassic = (
+export const useAllMappedEquipmentAssetMappings = (
   models: AddModelOptions[],
   userSdk?: CogniteClient,
   limit: number = 1000

@@ -2,12 +2,15 @@
  * Copyright 2024 Cognite AS
  */
 import { UnitDMSUniqueIdentifier } from '@cognite/sdk';
-import { CadModelOptions } from '../components';
-import { COGNITE_ASSET_SOURCE, Source } from '../data-providers';
-import { RevealRenderTarget } from '../architecture';
-import { InstancesWithView, NodeDefinitionWithModelAndMappings } from '../query';
-import { fetchAllMappedEquipmentAssetMappingsHybrid } from './fetchMappedEquipmentAssetMappings';
-import { isDefined } from './isDefined';
+import { CadModelOptions } from '../../components';
+import { COGNITE_ASSET_SOURCE, Source } from '../../data-providers';
+import { RevealRenderTarget } from '../../architecture';
+import { AssetMappingAndNode3DCache } from '../../components/CacheProvider';
+import { InstancesWithView, NodeDefinitionWithModelAndMappings } from '../../query';
+import { fetchAllMappedEquipmentAssetMappingsHybrid } from './fetchMappedEquipmentAssetMappingsHybrid';
+import { type CdfAssetMapping } from '../../components/CacheProvider/types';
+import { isDefined } from './../isDefined';
+import { FdmSDK } from '../../data-providers/FdmSDK';
 
 type AllHybridMappingsAndSearchResult = {
   allHybridAssetMappings: NodeDefinitionWithModelAndMappings[] | undefined;
@@ -24,16 +27,7 @@ export const getCadHybridAssetMappings = async (
   const { assetMappingAndNode3dCache } = cdfCaches;
   const { sdk, fdmSdk } = rootDomainObject;
 
-  const limit = 1000;
-
-  const fetchPromises = cadModels.map(
-    async (model) =>
-      await assetMappingAndNode3dCache
-        .getAssetMappingsForModel(model.modelId, model.revisionId)
-        .then((assetMappings) => ({ model, assetMappings }))
-  );
-
-  const assetMappingList = await Promise.all(fetchPromises);
+  const assetMappingList = await getAllAssetMappingsFromCache(cadModels, assetMappingAndNode3dCache);
 
   const hybridMappingsIdentifiers = assetMappingList.flatMap((item) =>
     item.assetMappings.map((mapping) => mapping.assetInstanceId).filter(isDefined)
@@ -48,6 +42,43 @@ export const getCadHybridAssetMappings = async (
     hybridMappingsIdentifiers
   });
 
+  const filterAllMappedHybridAssetsForViewsToSearch = filterMappingsPerViewsToSearch(viewsToSearch, allMappedHybridAssets);
+
+  if (query === '' || assetMappingList === undefined) {
+    return {
+      allHybridAssetMappings: filterAllMappedHybridAssetsForViewsToSearch,
+      searchedHybridAssetMappings: undefined
+    };
+  }
+
+  const instancesWithView = await getHybridAssetMappingsFromSearchQuery(
+    viewsToSearch,
+    query,
+    fdmSdk,
+    hybridMappingsIdentifiers
+  );
+
+  return {
+    allHybridAssetMappings: filterAllMappedHybridAssetsForViewsToSearch,
+    searchedHybridAssetMappings: instancesWithView
+  };
+};
+
+async function getAllAssetMappingsFromCache(cadModels: CadModelOptions[], assetMappingAndNode3dCache: AssetMappingAndNode3DCache): Promise<{
+  model: CadModelOptions;
+  assetMappings: CdfAssetMapping[];
+}[]> {
+  const fetchPromises = cadModels.map(
+    async (model) =>
+      await assetMappingAndNode3dCache
+        .getAssetMappingsForModel(model.modelId, model.revisionId)
+        .then((assetMappings) => ({ model, assetMappings }))
+  );
+
+  return await Promise.all(fetchPromises);
+}
+
+function filterMappingsPerViewsToSearch(viewsToSearch: Source[], allMappedHybridAssets: NodeDefinitionWithModelAndMappings[]): NodeDefinitionWithModelAndMappings[] {
   const filterAllMappedHybridAssetsForViewsToSearch = viewsToSearch.flatMap(
     (view) => {
       const viewExternalIdWithVersion = `${view.externalId}/${view.version}`;
@@ -58,14 +89,12 @@ export const getCadHybridAssetMappings = async (
       });
     }
   );
+  return filterAllMappedHybridAssetsForViewsToSearch;
 
-  if (query === '' || assetMappingList === undefined) {
-    return {
-      allHybridAssetMappings: filterAllMappedHybridAssetsForViewsToSearch,
-      searchedHybridAssetMappings: undefined
-    };
-  }
+}
 
+async function getHybridAssetMappingsFromSearchQuery(viewsToSearch: Source[], query: string, fdmSdk: FdmSDK, hybridMappingsIdentifiers: UnitDMSUniqueIdentifier[]): Promise<InstancesWithView[]> {
+  const limit = 1000;
   const searchResults: InstancesWithView[] = [];
 
   for await (const view of viewsToSearch) {
@@ -76,13 +105,8 @@ export const getCadHybridAssetMappings = async (
       instances: result.instances
     });
   }
-  const instancesWithView = connectMappedInstancesWithSearchResult(searchResults, hybridMappingsIdentifiers);
-
-  return {
-    allHybridAssetMappings: filterAllMappedHybridAssetsForViewsToSearch,
-    searchedHybridAssetMappings: instancesWithView
-  };
-};
+  return connectMappedInstancesWithSearchResult(searchResults, hybridMappingsIdentifiers);
+}
 
 function connectMappedInstancesWithSearchResult(
   searchResults: InstancesWithView[],
