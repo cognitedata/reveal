@@ -33,7 +33,6 @@ import {
 } from './types';
 import { tryGetModelIdFromExternalId } from '../../utilities/tryGetModelIdFromExternalId';
 import { getRevisionExternalIdAndSpace } from '../network/getRevisionExternalIdAndSpace';
-import { createEmptyArray } from '../../utilities/createEmptyArray';
 
 const DefaultScene: Scene = {
   sceneConfiguration: {
@@ -145,7 +144,7 @@ async function getSceneModels(
   const sceneModels = sceneResponse.items.sceneModels;
 
   if (sceneModels.length === 0) {
-    return createEmptyArray();
+    return [];
   }
 
   const modelPromises = sceneModels.map(async (sceneModel) => {

@@ -16,7 +16,6 @@ import {
 } from '../../components/CacheProvider/idAndKeyTranslation';
 import { useMemo } from 'react';
 import { queryKeys } from '../../utilities/queryKeys';
-import { createEmptyArray } from '../../utilities/createEmptyArray';
 
 export const useHybridAssetMappings = (
   hybridFdmAssetExternalIds: DmsUniqueIdentifier[],
@@ -64,7 +63,7 @@ export const useHybridAssetMappings = (
                 data.model.modelId === model.modelId && data.model.revisionId === model.revisionId
             )
             .map((data) => data.mappings)
-            .flat() ?? createEmptyArray();
+            .flat() ?? [];
 
         const nodeMap = await assetMappingAndNode3DCache.getNodesForAssetInstancesInHybridMappings(
           model.modelId,

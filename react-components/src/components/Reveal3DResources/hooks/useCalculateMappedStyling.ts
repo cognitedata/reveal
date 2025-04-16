@@ -10,7 +10,6 @@ import { getMappedStyleGroupFromAssetMappings } from './utils/getMappedStyleGrou
 import { getMappedStyleGroupFromFdm } from './utils/getMappedStyleGroupFromFdm';
 import { getMappedCadModelsOptions } from './utils/getMappedCadModelsOptions';
 import { groupStyleGroupByModel } from './utils/groupStyleGroupByModel';
-import { createEmptyArray } from '../../../utilities/createEmptyArray';
 
 export function useCalculateMappedStyling(
   models: CadModelOptions[],
@@ -47,13 +46,13 @@ export function useCalculateMappedStyling(
 
     return modelsRevisionsWithMappedEquipment.map((model) => {
       const fdmData =
-        mappedEquipmentEdges?.get(`${model.modelId}/${model.revisionId}`) ?? createEmptyArray();
+        mappedEquipmentEdges?.get(`${model.modelId}/${model.revisionId}`) ?? [];
       const modelStyle = model.styling?.mapped ?? defaultMappedNodeAppearance;
 
       const styleGroup =
         modelStyle !== undefined
           ? [getMappedStyleGroupFromFdm(fdmData, modelStyle)]
-          : createEmptyArray();
+          : [];
       return { model, styleGroup };
     });
   }, [

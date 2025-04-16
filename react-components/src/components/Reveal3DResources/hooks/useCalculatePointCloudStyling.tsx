@@ -33,7 +33,6 @@ import {
 import { useMatchedPointCloudModels } from './useMatchedPointCloudModels';
 import { createFdmKey } from '../../CacheProvider/idAndKeyTranslation';
 import { usePointCloudAnnotationMappingsForModels } from '../../../hooks/pointClouds';
-import { createEmptyArray } from '../../../utilities/createEmptyArray';
 
 type PointCloudVolumeWithModel = {
   model: PointCloudModelOptions;
@@ -109,7 +108,7 @@ function useAnnotationMappingInstanceStyleGroups(
 ): StyledPointCloudModel[] {
   return useMemo(() => {
     if (annotationMappings === undefined || annotationMappings.length === 0) {
-      return createEmptyArray();
+      return [];
     }
     return annotationMappings.map((annotationMapping) => {
       return calculateAnnotationMappingModelStyling(
@@ -140,7 +139,7 @@ function useVolumeMappingInstanceStyleGroups(
 ): StyledPointCloudModel[] {
   return useMemo(() => {
     if (dmVolumeMappings.length === 0) {
-      return createEmptyArray();
+      return [];
     }
     return dmVolumeMappings.map((dmVolumeMapping) => {
       return calculateVolumeMappingModelStyling(
@@ -261,7 +260,7 @@ function usePointCloudVolumesWithModel(
     if (matchedPointCloudModels.length === 0 || pointCloudViewerModels.length === 0) {
       return models.map((model) => ({
         model,
-        pointCloudVolumes: createEmptyArray()
+        pointCloudVolumes: []
       }));
     }
     return matchedPointCloudModels.map(({ viewerModel, model }) => {
@@ -298,7 +297,7 @@ function useModelsMappedVolumeStyleGroups(
 ): StyledPointCloudModel[] {
   return useMemo(() => {
     if (models.length === 0 || pointCloudVolumesWithModel.length === 0) {
-      return createEmptyArray();
+      return [];
     }
 
     return pointCloudVolumesWithModel.map((pointCloudVolumeWithModel) => {
@@ -308,7 +307,7 @@ function useModelsMappedVolumeStyleGroups(
       const styleGroups: PointCloudVolumeStylingGroup[] =
         modelStyle !== undefined
           ? [getMappedStyleGroupFromPointCloudVolume([pointCloudVolumeWithModel], modelStyle)]
-          : createEmptyArray();
+          : [];
       return { model: pointCloudVolumeWithModel.model, styleGroups };
     });
   }, [models, pointCloudVolumesWithModel, defaultMappedNodeAppearance]);

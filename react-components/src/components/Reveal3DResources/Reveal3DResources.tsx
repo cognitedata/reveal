@@ -9,7 +9,6 @@ import { is360ImageAddOptions, isClassicIdentifier } from './typeGuards';
 import { type CadModelStyling } from '../CadModelContainer/types';
 import { type PointCloudModelStyling } from '../PointCloudContainer/types';
 import { use3DResourcesViewModel } from './Reveal3DResources.viewmodel';
-import { createEmptyArray } from '../../utilities/createEmptyArray';
 
 export const Reveal3DResources = ({
   resources,
@@ -41,7 +40,7 @@ export const Reveal3DResources = ({
 
   const cadModelOptions = useMemo(() => {
     if (reveal3DModels === undefined) {
-      return createEmptyArray();
+      return [];
     }
     return reveal3DModels.filter((model): model is CadModelOptions => model.type === 'cad');
   }, [reveal3DModels]);
@@ -52,7 +51,7 @@ export const Reveal3DResources = ({
   hooks.useGenerateNode3DCache(cadModelOptions, assetMappings);
 
   const instanceStylingWithAssetMappings =
-    instanceStyling?.filter(isAssetMappingStylingGroup) ?? createEmptyArray();
+    instanceStyling?.filter(isAssetMappingStylingGroup) ?? [];
 
   const { styledModels: styledCadModelOptions, isModelMappingsLoading } =
     hooks.useCalculateCadStyling(
@@ -68,7 +67,7 @@ export const Reveal3DResources = ({
   }, [isModelMappingsLoading]);
 
   const styledPointCloudModelOptions = hooks.useCalculatePointCloudStyling(
-    reveal3DModels ?? createEmptyArray(),
+    reveal3DModels ?? [],
     instanceStylingWithAssetMappings,
     defaultResourceStyling
   );

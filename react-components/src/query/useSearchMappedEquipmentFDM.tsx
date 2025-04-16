@@ -17,7 +17,6 @@ import { type Fdm3dDataProvider } from '../data-providers/Fdm3dDataProvider';
 import { removeEmptyProperties } from '../utilities/removeEmptyProperties';
 import { getModelKeys } from '../utilities/getModelKeys';
 import { useFdm3dDataProvider } from '../components/CacheProvider/CacheProvider';
-import { createEmptyArray } from '../utilities/createEmptyArray';
 import { type AddImage360CollectionDatamodelsOptions } from '../components/Reveal3DResources/types';
 import { assetsInstanceFilterWithHasDataQuery } from '../data-providers/core-dm-provider/assetsInstanceFilterWithHasDataQuery';
 
@@ -67,7 +66,7 @@ export const useSearchMappedEquipmentFDM = (
         chunkedSources.push([]);
       }
 
-      const queryResults: InstancesWithView[] = createEmptyArray();
+      const queryResults: InstancesWithView[] = [];
 
       for (const sourceChunk of chunkedSources) {
         const chunkResult = await searchNodesWithViewsAndModels(
@@ -113,13 +112,13 @@ const searchNodesWithViewsAndModels = async (
       instances:
         transformedResults.find(
           (result) => result.view.externalId === view.externalId && result.view.space === view.space
-        )?.instances ?? createEmptyArray()
+        )?.instances ?? []
     }));
 
     return combinedWithOtherViews;
   }
 
-  const searchResults: InstancesWithView[] = createEmptyArray();
+  const searchResults: InstancesWithView[] = [];
 
   for (const view of sourcesToSearch) {
     const result = await fdmSdk.searchInstances(view, query, 'node', limit, instancesFilter);

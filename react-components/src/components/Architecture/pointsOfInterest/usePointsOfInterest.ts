@@ -5,7 +5,6 @@ import { useState } from 'react';
 import { type PointOfInterest } from '../../../architecture';
 import { useOnUpdateDomainObject } from '../useOnUpdate';
 import { usePoiDomainObject } from './usePoiDomainObject';
-import { createEmptyArray } from '../../../utilities/createEmptyArray';
 
 export const usePointsOfInterest = (): Array<PointOfInterest<unknown>> => {
   const poiDomainObject = usePoiDomainObject();
@@ -13,7 +12,7 @@ export const usePointsOfInterest = (): Array<PointOfInterest<unknown>> => {
   const [pois, setPois] = useState<Array<PointOfInterest<unknown>>>([]);
 
   useOnUpdateDomainObject(poiDomainObject, () => {
-    setPois([...(poiDomainObject?.pointsOfInterest ?? createEmptyArray())]);
+    setPois([...(poiDomainObject?.pointsOfInterest ?? [])]);
   });
 
   return pois;

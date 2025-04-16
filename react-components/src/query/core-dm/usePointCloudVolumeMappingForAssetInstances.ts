@@ -14,7 +14,6 @@ import { usePointCloudModelRevisionIdsFromReveal } from '../usePointCloudModelRe
 import { useFdmSdk } from '../../components/RevealCanvas/SDKProvider';
 import { inspectNodes } from '../../components/CacheProvider/requests';
 import { isPointCloudVolumeIntersection } from './typeGuards';
-import { createEmptyArray } from '../../utilities/createEmptyArray';
 
 export type PointCloudVolumeMappedAssetData = {
   volumeInstanceRef: DMInstanceRef;
@@ -40,7 +39,7 @@ export const usePointCloudVolumeMappingForAssetInstances = (
 
   return useMemo(() => {
     if (classicModelOptions.length === 0 || assetInstanceRefs.length === 0) {
-      return createEmptyArray();
+      return [];
     }
 
     const result: PointCloudVolumeMappedAssetData[] =
@@ -67,7 +66,7 @@ export const usePointCloudVolumeMappingForAssetInstances = (
             };
           })
           .filter(isDefined)
-      ) ?? createEmptyArray();
+      ) ?? [];
 
     return result;
   }, [classicModelOptions, assetInstanceRefs]);

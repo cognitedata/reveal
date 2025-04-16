@@ -32,7 +32,6 @@ import {
   createFdmKey,
   createModelRevisionKey
 } from '../components/CacheProvider/idAndKeyTranslation';
-import { createEmptyArray } from '../utilities/createEmptyArray';
 
 export const useSearchMappedEquipmentAssetMappingsClassic = (
   query: string,
@@ -165,7 +164,7 @@ export const useSearchMappedEquipmentAssetMappingsHybrid = (
         return [];
       }
 
-      const searchResults: InstancesWithView[] = createEmptyArray();
+      const searchResults: InstancesWithView[] = [];
 
       for await (const view of viewsToSearch) {
         const result = await fdmSdk.searchInstances(view, query, 'node', limit, undefined);
