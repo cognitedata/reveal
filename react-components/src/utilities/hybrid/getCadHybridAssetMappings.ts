@@ -68,14 +68,19 @@ async function getAllAssetMappingsFromCache(cadModels: CadModelOptions[], assetM
   model: CadModelOptions;
   assetMappings: CdfAssetMapping[];
 }[]> {
-  const fetchPromises = cadModels.map(
-    async (model) =>
-      await assetMappingAndNode3dCache
-        .getAssetMappingsForModel(model.modelId, model.revisionId)
-        .then((assetMappings) => ({ model, assetMappings }))
-  );
+  try {
+    const fetchPromises = cadModels.map(
+      async (model) =>
+        await assetMappingAndNode3dCache
+          .getAssetMappingsForModel(model.modelId, model.revisionId)
+          .then((assetMappings) => ({ model, assetMappings }))
+    );
 
-  return await Promise.all(fetchPromises);
+    return await Promise.all(fetchPromises);
+  } catch (error) {
+    console.error('Error fetching asset mappings:', error);
+    return [];
+  }
 }
 
 function filterMappingsPerViewsToSearch(viewsToSearch: Source[], allMappedHybridAssets: NodeDefinitionWithModelAndMappings[]): NodeDefinitionWithModelAndMappings[] {
