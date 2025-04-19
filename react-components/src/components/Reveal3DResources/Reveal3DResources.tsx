@@ -3,7 +3,6 @@
  */
 import { type ReactElement, useEffect, useMemo } from 'react';
 import { type Reveal3DResourcesProps, type CadModelOptions } from './types';
-import { EMPTY_ARRAY } from '../../utilities/constants';
 import { isAssetMappingStylingGroup } from '../../utilities/StylingGroupUtils';
 import { type ImageCollectionModelStyling } from '../Image360CollectionContainer/useApply360AnnotationStyling';
 import { is360ImageAddOptions, isClassicIdentifier } from './typeGuards';
@@ -41,7 +40,7 @@ export const Reveal3DResources = ({
 
   const cadModelOptions = useMemo(() => {
     if (reveal3DModels === undefined) {
-      return EMPTY_ARRAY;
+      return [];
     }
     return reveal3DModels.filter((model): model is CadModelOptions => model.type === 'cad');
   }, [reveal3DModels]);
@@ -52,7 +51,7 @@ export const Reveal3DResources = ({
   hooks.useGenerateNode3DCache(cadModelOptions, assetMappings);
 
   const instanceStylingWithAssetMappings =
-    instanceStyling?.filter(isAssetMappingStylingGroup) ?? EMPTY_ARRAY;
+    instanceStyling?.filter(isAssetMappingStylingGroup) ?? [];
 
   const { styledModels: styledCadModelOptions, isModelMappingsLoading } =
     hooks.useCalculateCadStyling(
@@ -68,7 +67,7 @@ export const Reveal3DResources = ({
   }, [isModelMappingsLoading]);
 
   const styledPointCloudModelOptions = hooks.useCalculatePointCloudStyling(
-    reveal3DModels ?? EMPTY_ARRAY,
+    reveal3DModels ?? [],
     instanceStylingWithAssetMappings,
     defaultResourceStyling
   );

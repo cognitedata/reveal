@@ -4,7 +4,6 @@
 
 import { type UseQueryResult, useQuery } from '@tanstack/react-query';
 import { type PointCloudAnnotationMappedAssetData } from '../types';
-import { EMPTY_ARRAY } from '../../utilities/constants';
 import { type AnyIntersection } from '@cognite/reveal';
 import { queryKeys } from '../../utilities/queryKeys';
 import { usePointCloudAnnotationCache } from '../../components/CacheProvider/CacheProvider';
@@ -33,7 +32,7 @@ export const usePointCloudAnnotationMappingForAssetId = (
     ],
     queryFn: async () => {
       if (modelId === undefined || revisionId === undefined || assetId === undefined) {
-        return EMPTY_ARRAY;
+        return [];
       }
       const result = await fetchAnnotationsForModel(
         modelId,
@@ -41,7 +40,7 @@ export const usePointCloudAnnotationMappingForAssetId = (
         [assetId],
         pointCloudAnnotationCache
       );
-      return result ?? EMPTY_ARRAY;
+      return result ?? [];
     },
     staleTime: Infinity,
     enabled: isPointCloudIntersection && assetId !== undefined
