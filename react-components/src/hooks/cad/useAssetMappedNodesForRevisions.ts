@@ -28,7 +28,6 @@ export const useAssetMappedNodesForRevisions = (
             .getAssetMappingsForModel(model.modelId, model.revisionId)
             .then((assetMappings) => ({ model, assetMappings }))
       );
-
       return await Promise.all(fetchPromises);
     },
     staleTime: Infinity,
