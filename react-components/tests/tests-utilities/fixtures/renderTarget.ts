@@ -9,6 +9,7 @@ import { fdmNodeCacheContentMock } from './fdmNodeCache';
 import { sdkMock } from './sdk';
 import { vi } from 'vitest';
 import { viewerMock } from './viewer';
+import { RevealSettingsController } from '../../../src/architecture/concrete/reveal/RevealSettingsController';
 import { assetMappingAndNode3DCacheMock } from './assetMappingAndNode3DCache';
 
 const cdfCachesMock = new Mock<CdfCaches>()
@@ -38,7 +39,9 @@ export function createRenderTargetMock(): RevealRenderTarget {
     .setup((p) => p.commandsController)
     .returns(commandsControllerMock)
     .setup((p) => p.invalidate.bind(p))
-    .returns(vi.fn());
+    .returns(vi.fn())
+    .setup((p) => p.revealSettingsController)
+    .returns(new RevealSettingsController(viewerMock));
 
   const root = new RootDomainObject(mock.object(), sdkMock);
   mock.setup((p) => p.rootDomainObject).returns(root);

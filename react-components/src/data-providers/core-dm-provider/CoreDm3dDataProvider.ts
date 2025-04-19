@@ -12,7 +12,10 @@ import {
   type Source,
   type ViewItem
 } from '../FdmSDK';
-import { type InstancesWithView } from '../../query/useSearchMappedEquipmentFDM';
+import {
+  type InstancesWithView,
+  type InstancesWithViewDefinition
+} from '../../query/useSearchMappedEquipmentFDM';
 import {
   type ClassicAdd3DModelOptions,
   type AddImage360CollectionDatamodelsOptions,
@@ -36,6 +39,7 @@ import { getCadModelsForInstance } from './getCadModelsForInstance';
 import { getCadConnectionsForRevisions } from './getCadConnectionsForRevisions';
 import { partition, zip } from 'lodash';
 import { restrictToDmsId } from '../../utilities/restrictToDmsId';
+import { transformViewItemToSource } from './utils/transformViewItemToSource';
 
 const MAX_PARALLEL_QUERIES = 2;
 
@@ -139,7 +143,7 @@ export class CoreDm3dFdm3dDataProvider implements Fdm3dDataProvider {
 
   async listMappedFdmNodes(
     models: Array<AddModelOptions<DataSourceType> | AddImage360CollectionDatamodelsOptions>,
-    sourcesToSearch: Source[],
+    sourcesToSearch: ViewItem[],
     instanceFilter: InstanceFilter | undefined,
     limit: number
   ): Promise<NodeItem[]> {
@@ -147,7 +151,7 @@ export class CoreDm3dFdm3dDataProvider implements Fdm3dDataProvider {
 
     return await listMappedFdmNodes(
       revisionRefs,
-      sourcesToSearch,
+      sourcesToSearch.map((view) => transformViewItemToSource(view)),
       instanceFilter,
       limit,
       this._fdmSdk
@@ -165,7 +169,7 @@ export class CoreDm3dFdm3dDataProvider implements Fdm3dDataProvider {
   }
 
   async filterNodesByMappedTo3d(
-    nodes: InstancesWithView[],
+    nodes: InstancesWithViewDefinition[],
     models: Array<AddModelOptions<DataSourceType> | AddImage360CollectionDatamodelsOptions>,
     spacesToSearch: string[]
   ): Promise<InstancesWithView[]> {
