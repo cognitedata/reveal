@@ -6,12 +6,17 @@ import {
   type CogniteInternalId,
   type AnnotationModel,
   type AnnotationsBoundingVolume,
-  type Node3D
+  type Node3D,
+  type AssetMapping3D,
 } from '@cognite/sdk';
 import { type Source, type DmsUniqueIdentifier } from '../../data-providers/FdmSDK';
 import { type AssetAnnotationImage360Info, type DataSourceType } from '@cognite/reveal';
 import { type Vector3 } from 'three';
 import { type AssetInstance } from '../../utilities/instances';
+
+export type NodeAssetMappingResult = { node?: Node3D; mappings: CdfAssetMapping[] };
+
+export type AssetMapping = AssetMapping3D;
 
 export type FdmCadConnection = {
   instance: DmsUniqueIdentifier;
@@ -58,6 +63,8 @@ export type FdmKey = `${string}/${string}`;
 export type ModelTreeIndexKey = `${ModelId}/${RevisionId}/${TreeIndex}`;
 export type ModelAssetIdKey = `${ModelId}/${RevisionId}/${AssetId}`;
 
+export type ModelDMSUniqueInstanceKey = `${ModelId}/${RevisionId}/${string}/${string}`;
+
 export type ModelRevisionToConnectionMap = Map<ModelRevisionKey, FdmConnectionWithNode[]>;
 
 export type PointCloudAnnotationModel = AnnotationModel & { data: AnnotationsBoundingVolume };
@@ -84,7 +91,8 @@ export type AnnotationId = number;
 
 export type ChunkInCacheTypes<ObjectType> = {
   chunkInCache: ObjectType[];
-  chunkNotInCache: number[];
+  chunkNotInCacheIdClassic?: number[];
+  chunkNotInCacheIdDMS?: DmsUniqueIdentifier[];
 };
 
 type PointCloudVolume = {
