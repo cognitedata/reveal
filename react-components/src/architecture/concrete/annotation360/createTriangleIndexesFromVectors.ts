@@ -36,9 +36,6 @@ export function createTriangleIndexesFromVectors(vectors: Vector3[]): number[] |
   for (const index of orderedIndexes(rotatedVectors.length, area < 0)) {
     linkedList = insertPointInLinkedList(index, rotatedVectors[index], linkedList);
   }
-  if (linkedList === undefined) {
-    return undefined;
-  }
   linkedList = removeEqualAndColinearPoints(linkedList);
   return createIndexedTrianglesFromLinkedList(linkedList);
 

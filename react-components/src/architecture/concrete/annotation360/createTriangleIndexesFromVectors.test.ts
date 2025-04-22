@@ -18,6 +18,16 @@ describe(createTriangleIndexesFromVectors.name, () => {
 
   test('should return undefined when area is zero', () => {
     const vectors: Vector3[] = [];
+    const vector = new Vector3(2, 3, 4);
+    vectors.push(vector.clone());
+    vectors.push(vector.clone());
+    vectors.push(vector.clone());
+    const indexes = createTriangleIndexesFromVectors(vectors);
+    expect(indexes).toBeUndefined();
+  });
+
+  test('should return undefined for collinear vectors or to few points', () => {
+    const vectors: Vector3[] = [];
     for (let i = 0; i < 10; i++) {
       vectors.push(new Vector3(i, i, i));
       const indexes = createTriangleIndexesFromVectors(vectors);
@@ -27,12 +37,6 @@ describe(createTriangleIndexesFromVectors.name, () => {
 
   test('should return undefined for less than 3 vectors', () => {
     const vectors = [new Vector3(1, 0, 0), new Vector3(0, 1, 0)];
-    const indexes = createTriangleIndexesFromVectors(vectors);
-    expect(indexes).toBeUndefined();
-  });
-
-  test('should return undefined for collinear vectors', () => {
-    const vectors = [new Vector3(0, 0, 0), new Vector3(1, 1, 1), new Vector3(2, 2, 2)];
     const indexes = createTriangleIndexesFromVectors(vectors);
     expect(indexes).toBeUndefined();
   });
@@ -95,7 +99,7 @@ function createSquareToEdgeOfUnitSphere(addOneColinearPoint = false): Vector3[] 
 
   forEach(vectors, (vector: Vector3) => vector.normalize());
 
-  if (addOnColinearPoint) {
+  if (addOneColinearPoint) {
     const newPoint = new Vector3().addVectors(vectors[0], vectors[1]).multiplyScalar(0.5);
     insertAt(vectors, 2, newPoint);
   }
