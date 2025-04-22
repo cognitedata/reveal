@@ -10,10 +10,13 @@ import { sdkMock } from './sdk';
 import { vi } from 'vitest';
 import { viewerMock } from './viewer';
 import { RevealSettingsController } from '../../../src/architecture/concrete/reveal/RevealSettingsController';
+import { assetMappingAndNode3DCacheMock } from './assetMappingAndNode3DCache';
 
 const cdfCachesMock = new Mock<CdfCaches>()
   .setup((p) => p.fdmNodeCache)
-  .returns(fdmNodeCacheContentMock)
+  .returns(fdmNodeCacheContentMock.object())
+  .setup((p) => p.assetMappingAndNode3dCache)
+  .returns(assetMappingAndNode3DCacheMock.object())
   .object();
 
 const commandsControllerMock = new Mock<CommandsController>()

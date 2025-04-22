@@ -2,41 +2,37 @@
  * Copyright 2023 Cognite AS
  */
 import { type AddModelOptions } from '@cognite/reveal';
-import {
-  type Asset,
-  type AssetMapping3D,
-  type CogniteClient,
-  type ListResponse
-} from '@cognite/sdk';
+import { type UnitDMSUniqueIdentifier, type Asset, type CogniteClient } from '@cognite/sdk';
 import {
   type UseInfiniteQueryResult,
   useInfiniteQuery,
-  type InfiniteData
+  type InfiniteData,
+  useQuery,
+  type UseQueryResult
 } from '@tanstack/react-query';
-import { useSDK } from '../components/RevealCanvas/SDKProvider';
+import { useFdmSdk, useSDK } from '../components/RevealCanvas/SDKProvider';
 import { getAssetsList } from '../hooks/network/getAssetsList';
 import { isDefined } from '../utilities/isDefined';
-import { useAssetMappedNodesForRevisions } from '../hooks/cad';
+import { type InstancesWithView } from './useSearchMappedEquipmentFDM';
+import { COGNITE_ASSET_SOURCE, NodeItem, type Source } from '../data-providers';
 import { useMemo } from 'react';
-
-export type ModelMappings = {
-  model: AddModelOptions;
-  mappings: ListResponse<AssetMapping3D[]>;
-};
-
-export type ModelMappingsWithAssets = ModelMappings & {
-  assets: Asset[];
-};
-
-export type AssetPage = {
-  assets: Asset[];
-  nextCursor: string | undefined;
-};
-
-export type ModelAssetPage = {
-  modelsAssets: ModelMappingsWithAssets[];
-  nextCursor: string | undefined;
-};
+import { type ModelWithAssetMappings } from '../hooks/cad/ModelWithAssetMappings';
+import { useAssetMappedNodesForRevisions } from '../hooks/cad';
+import {
+  type AssetPage,
+  type ModelMappingsWithAssets,
+  type NodeDefinitionWithModelAndMappings
+} from './types';
+import { getAssetsFromAssetMappings } from '../utilities/getAssetsFromAssetMappings';
+import {
+  fetchAllMappedEquipmentAssetMappingsClassic,
+} from '../utilities/fetchMappedEquipmentAssetMappings';
+import { fetchAllMappedEquipmentAssetMappingsHybrid } from '../utilities/hybrid/fetchMappedEquipmentAssetMappingsHybrid';
+import { queryKeys } from '../utilities/queryKeys';
+import {
+  createFdmKey,
+  createModelRevisionKey
+} from '../components/CacheProvider/idAndKeyTranslation';
 
 export const useSearchMappedEquipmentAssetMappings = (
   query: string,
@@ -46,7 +42,7 @@ export const useSearchMappedEquipmentAssetMappings = (
 ): UseInfiniteQueryResult<InfiniteData<AssetPage>, Error> => {
   const sdk = useSDK(userSdk);
   const { data: assetMappingList, isFetched: isAssetMappingNodesFetched } =
-    useAssetMappedNodesForRevisions(models.map((model) => ({ ...model, type: 'cad' })));
+  useAssetMappedNodesForRevisions(models.map((model) => ({ ...model, type: 'cad' })));
 
   const mapped3dAssetIds = useMemo(() => {
     if (assetMappingList === undefined) return new Set<number>();
@@ -63,6 +59,7 @@ export const useSearchMappedEquipmentAssetMappings = (
       'react-components',
       'search-mapped-asset-mappings',
       query,
+      ...mapped3dAssetIds.values(),
       ...models.map((model) => [model.modelId, model.revisionId])
     ],
     [query, models]
@@ -127,6 +124,65 @@ export const useSearchMappedEquipmentAssetMappings = (
   });
 };
 
+export const useSearchMappedEquipmentAssetMappingsHybrid = (
+  query: string,
+  viewsToSearch: Source[],
+  models: AddModelOptions[],
+  limit: number = 1000,
+  assetMappingList: ModelWithAssetMappings[],
+  isAssetMappingNodesFetched: boolean
+): UseQueryResult<InstancesWithView[]> => {
+  const fdmSdk = useFdmSdk();
+
+  const mapped3dCDMAssetIdentifiers = useMemo(() => {
+    if (assetMappingList === undefined) return [];
+    return assetMappingList.flatMap((mapping) =>
+      mapping.assetMappings.map((assetMapping) => assetMapping.assetInstanceId).filter(isDefined)
+    );
+  }, [assetMappingList]);
+
+  const assetIdentifiersKeys = useMemo(
+    () => mapped3dCDMAssetIdentifiers.map(createFdmKey),
+    [mapped3dCDMAssetIdentifiers]
+  );
+  const modelKeys = useMemo(
+    () => models.map((model) => createModelRevisionKey(model.modelId, model.revisionId)),
+    [models]
+  );
+
+  const viewKeys = useMemo(() => viewsToSearch.map(createFdmKey), [viewsToSearch]);
+
+  return useQuery({
+    queryKey: queryKeys.searchedMappedCoreAssetsForHybridMappings(
+      query,
+      limit,
+      assetIdentifiersKeys,
+      viewKeys,
+      modelKeys
+    ),
+    queryFn: async () => {
+      if (query === '' || assetMappingList === undefined) {
+        return [];
+      }
+
+      const searchResults: InstancesWithView[] = [];
+
+      for await (const view of viewsToSearch) {
+        const result = await fdmSdk.searchInstances(view, query, 'node', limit, undefined);
+
+        searchResults.push({
+          view,
+          instances: result.instances
+        });
+      }
+      return connectMappedInstancesWithSearchResult(searchResults, mapped3dCDMAssetIdentifiers);
+    },
+    staleTime: Infinity,
+    enabled:
+      isAssetMappingNodesFetched && assetMappingList !== undefined && assetMappingList.length > 0
+  });
+};
+
 export const useAllMappedEquipmentAssetMappings = (
   models: AddModelOptions[],
   userSdk?: CogniteClient,
@@ -138,42 +194,67 @@ export const useAllMappedEquipmentAssetMappings = (
     queryKey: [
       'reveal',
       'react-components',
-      'all-mapped-equipment-asset-mappings',
+      'all-mapped-equipment-asset-mappings-classic',
       limit,
       ...models.map((model) => [model.modelId, model.revisionId])
     ],
     queryFn: async ({ pageParam }) => {
-      const currentPagesOfAssetMappingsPromises = models.map(async (model) => {
-        const nextCursors = pageParam as Array<{
-          cursor: string | 'start' | undefined;
-          model: AddModelOptions;
-        }>;
-        const nextCursor = nextCursors.find(
-          (nextCursor) =>
-            nextCursor.model.modelId === model.modelId &&
-            nextCursor.model.revisionId === model.revisionId
-        )?.cursor;
-        if (nextCursor === undefined) {
-          return { mappings: { items: [] }, model };
-        }
-
-        const mappings = await sdk.assetMappings3D.filter(model.modelId, model.revisionId, {
-          cursor: nextCursor === 'start' ? undefined : nextCursor,
-          limit
-        });
-
-        return { mappings, model };
-      });
-
-      const currentPagesOfAssetMappings = await Promise.all(currentPagesOfAssetMappingsPromises);
-
-      const modelsAssets = await getAssetsFromAssetMappings(sdk, currentPagesOfAssetMappings);
-
-      return modelsAssets;
+      const mappedAssetsClassic = await fetchAllMappedEquipmentAssetMappingsClassic(
+        sdk,
+        models,
+        pageParam
+      );
+      return mappedAssetsClassic;
     },
     initialPageParam: models.map((model) => ({ cursor: 'start', model })),
     staleTime: Infinity,
     getNextPageParam
+  });
+};
+
+export const useAllMappedEquipmentAssetMappingsHybrid = (
+  models: AddModelOptions[],
+  limit: number = 1000,
+  assetMappingList: ModelWithAssetMappings[],
+  userSdk?: CogniteClient
+): UseQueryResult<NodeDefinitionWithModelAndMappings[]> => {
+  const sdk = useSDK(userSdk);
+
+  const assetsFromHybridMappings = useMemo(() => {
+    return assetMappingList.flatMap((mapping) =>
+      mapping.assetMappings.map((item) => item.assetInstanceId)
+    );
+  }, [assetMappingList]).filter(isDefined);
+
+  const assetsFromHybridMappingsKeys = useMemo(
+    () => assetsFromHybridMappings.map(createFdmKey),
+    [assetsFromHybridMappings]
+  );
+
+  const modelKeys = useMemo(
+    () => models.map((model) => createModelRevisionKey(model.modelId, model.revisionId)),
+    [models]
+  );
+
+  return useQuery({
+    queryKey: queryKeys.allMappedCoreAssetsForHybridMappings(
+      assetsFromHybridMappingsKeys,
+      modelKeys,
+      limit
+    ),
+    queryFn: async () => {
+      const viewToSearch = COGNITE_ASSET_SOURCE;
+      const mappedHybridAssets = await fetchAllMappedEquipmentAssetMappingsHybrid({
+        sdk,
+        viewToSearch,
+        assetMappingList,
+        hybridMappingsIdentifiers: assetsFromHybridMappings
+      });
+
+      return mappedHybridAssets;
+    },
+    staleTime: Infinity,
+    enabled: assetsFromHybridMappingsKeys !== undefined && assetsFromHybridMappingsKeys.length > 0
   });
 };
 
@@ -208,13 +289,33 @@ export const useMappingsForAssetIds = (
           return { mappings: { items: [] }, model };
         }
 
-        const mappings = await sdk.assetMappings3D.filter(model.modelId, model.revisionId, {
+        const filterQueryClassic = {
           cursor: nextCursor === 'start' ? undefined : nextCursor,
           limit: 1000,
           filter: { assetIds }
-        });
+        };
 
-        return { mappings, model };
+        const filterQueryHybrid = {
+          cursor: nextCursor === 'start' ? undefined : nextCursor,
+          limit: 1000,
+          filter: { assetIds },
+          getDmsInstances: true
+        };
+
+        const mappingsClassic = await sdk.assetMappings3D.filter(
+          model.modelId,
+          model.revisionId,
+          filterQueryClassic
+        );
+
+        const mappingsHybrid = await sdk.assetMappings3D.filter(
+          model.modelId,
+          model.revisionId,
+          filterQueryHybrid
+        );
+
+        const allMappings = mappingsClassic.items.concat(mappingsHybrid.items);
+        return { mappings: { items: allMappings }, model };
       });
 
       const currentPagesOfAssetMappings = await Promise.all(currentPagesOfAssetMappingsPromises);
@@ -241,26 +342,22 @@ function getNextPageParam(
   return nextCursors;
 }
 
-async function getAssetsFromAssetMappings(
-  sdk: CogniteClient,
-  modelsMappings: Array<{ model: AddModelOptions; mappings: ListResponse<AssetMapping3D[]> }>
-): Promise<ModelMappingsWithAssets[]> {
-  const mappingsWithAssetsPromises = modelsMappings.map(async ({ mappings, model }) => {
-    if (mappings.items.length === 0) {
-      return { model, assets: [], mappings };
-    }
-
-    const deduplicatedAssetIds = Array.from(
-      new Set(mappings.items.map((mapping) => mapping.assetId))
+function connectMappedInstancesWithSearchResult(
+  searchResults: InstancesWithView[],
+  mapped3dCDMAssetIdentifiers: UnitDMSUniqueIdentifier[]
+): InstancesWithView[] {
+  const filteredResults = searchResults.map((result) => {
+    const filteredInstances = result.instances.filter((instance) =>
+      mapped3dCDMAssetIdentifiers.find(
+        (mappedItem) =>
+          mappedItem.space === instance.space && mappedItem.externalId === instance.externalId
+      )
     );
-    const assetIdObjects = deduplicatedAssetIds.map((id) => ({ id }));
-
-    const assets = await sdk.assets.retrieve(assetIdObjects, { ignoreUnknownIds: true });
-
-    return { model, assets, mappings };
+    return {
+      view: result.view,
+      instances: filteredInstances
+    };
   });
 
-  const mappingsWithAssets = await Promise.all(mappingsWithAssetsPromises);
-
-  return mappingsWithAssets;
+  return filteredResults;
 }
