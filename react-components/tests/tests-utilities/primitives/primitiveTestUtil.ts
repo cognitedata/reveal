@@ -3,7 +3,8 @@
  */
 
 import { expect } from 'vitest';
-import { type Box3, type Euler, type Matrix4, type Vector3 } from 'three';
+import { type Color, type Box3, type Euler, type Matrix4, type Vector3 } from 'three';
+import { type Range1, type Range3 } from '../../../src/architecture';
 
 const EPSILON = 0.0001;
 
@@ -11,7 +12,7 @@ export function expectEqualVector3(
   actual: Vector3 | undefined,
   expected: Vector3 | undefined
 ): void {
-  const equals = equalsVector3(actual, expected);
+  const equals = equalsVector3(actual, expected); // Just to see the difference
   if (!equals) {
     expect(actual).toStrictEqual(expected);
   } else {
@@ -19,10 +20,18 @@ export function expectEqualVector3(
   }
 }
 
+export function expectEqualColor(actual: Color | undefined, expected: Color | undefined): void {
+  const equals = equalsColor(actual, expected);
+  if (!equals) {
+    expect(actual).toStrictEqual(expected); // Just to see the difference
+  } else {
+    expect(equals).toBe(true);
+  }
+}
 export function expectEqualEuler(actual: Euler, expected: Euler): void {
   const equals = equalsEuler(actual, expected);
   if (!equals) {
-    expect(actual).toStrictEqual(expected);
+    expect(actual).toStrictEqual(expected); // Just to see the difference
   } else {
     expect(equals).toBe(true);
   }
@@ -31,6 +40,21 @@ export function expectEqualEuler(actual: Euler, expected: Euler): void {
 export function expectEqualBox3(actual: Box3, expected: Box3): void {
   expectEqualVector3(actual.min, expected.min);
   expectEqualVector3(actual.max, expected.max);
+}
+
+export function expectEqualRange3(actual: Range3, expected: Range3): void {
+  expectEqualRange1(actual.x, expected.x);
+  expectEqualRange1(actual.y, expected.y);
+  expectEqualRange1(actual.z, expected.z);
+}
+
+export function expectEqualRange1(actual: Range1, expected: Range1): void {
+  const equals = equalsRange1(actual, expected);
+  if (!equals) {
+    expect(actual).toStrictEqual(expected);
+  } else {
+    expect(equals).toBe(true);
+  }
 }
 
 export function expectEqualMatrix4(actual: Matrix4, expected: Matrix4): void {
@@ -56,6 +80,29 @@ export function equalsVector3(
   return true;
 }
 
+export function equalsColor(
+  a: Color | undefined,
+  b: Color | undefined,
+  epsilon = EPSILON
+): boolean {
+  if (a === undefined && b === undefined) {
+    return true;
+  }
+  if (a === undefined || b === undefined) {
+    return false;
+  }
+  if (!almostEquals(a.r, b.r, epsilon)) {
+    return false;
+  }
+  if (!almostEquals(a.g, b.g, epsilon)) {
+    return false;
+  }
+  if (!almostEquals(a.b, b.b, epsilon)) {
+    return false;
+  }
+  return true;
+}
+
 export function equalsEuler(a: Euler, b: Euler, epsilon = EPSILON): boolean {
   if (!almostEquals(a.x, b.x, epsilon)) {
     return false;
@@ -67,6 +114,22 @@ export function equalsEuler(a: Euler, b: Euler, epsilon = EPSILON): boolean {
     return false;
   }
   if (a.order !== b.order) {
+    return false;
+  }
+  return true;
+}
+
+export function equalsRange1(a: Range1, b: Range1, epsilon = EPSILON): boolean {
+  if (a.isEmpty && b.isEmpty) {
+    return true;
+  }
+  if (a.isEmpty !== b.isEmpty) {
+    return false;
+  }
+  if (!almostEquals(a.min, b.min, epsilon)) {
+    return false;
+  }
+  if (!almostEquals(a.max, b.max, epsilon)) {
     return false;
   }
   return true;
