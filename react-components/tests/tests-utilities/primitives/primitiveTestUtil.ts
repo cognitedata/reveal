@@ -3,7 +3,7 @@
  */
 
 import { expect } from 'vitest';
-import { type Box3, type Euler, type Matrix4, type Vector3 } from 'three';
+import { type Color, type Box3, type Euler, type Matrix4, type Vector3 } from 'three';
 
 const EPSILON = 0.0001;
 
@@ -11,7 +11,7 @@ export function expectEqualVector3(
   actual: Vector3 | undefined,
   expected: Vector3 | undefined
 ): void {
-  const equals = equalsVector3(actual, expected);
+  const equals = equalsVector3(actual, expected); // Just to see the difference
   if (!equals) {
     expect(actual).toStrictEqual(expected);
   } else {
@@ -19,10 +19,18 @@ export function expectEqualVector3(
   }
 }
 
+export function expectEqualColor(actual: Color | undefined, expected: Color | undefined): void {
+  const equals = equalsColor(actual, expected);
+  if (!equals) {
+    expect(actual).toStrictEqual(expected); // Just to see the difference
+  } else {
+    expect(equals).toBe(true);
+  }
+}
 export function expectEqualEuler(actual: Euler, expected: Euler): void {
   const equals = equalsEuler(actual, expected);
   if (!equals) {
-    expect(actual).toStrictEqual(expected);
+    expect(actual).toStrictEqual(expected); // Just to see the difference
   } else {
     expect(equals).toBe(true);
   }
@@ -52,6 +60,29 @@ export function equalsVector3(
     if (!almostEquals(a.getComponent(i), b.getComponent(i), epsilon)) {
       return false;
     }
+  }
+  return true;
+}
+
+export function equalsColor(
+  a: Color | undefined,
+  b: Color | undefined,
+  epsilon = EPSILON
+): boolean {
+  if (a === undefined && b === undefined) {
+    return true;
+  }
+  if (a === undefined || b === undefined) {
+    return false;
+  }
+  if (!almostEquals(a.r, b.r, epsilon)) {
+    return false;
+  }
+  if (!almostEquals(a.g, b.g, epsilon)) {
+    return false;
+  }
+  if (!almostEquals(a.b, b.b, epsilon)) {
+    return false;
   }
   return true;
 }
