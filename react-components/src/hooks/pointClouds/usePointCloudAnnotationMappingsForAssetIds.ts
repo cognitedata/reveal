@@ -10,7 +10,6 @@ import { useModelIdRevisionIdFromModelOptions } from '../useModelIdRevisionIdFro
 import { useQuery, type UseQueryResult } from '@tanstack/react-query';
 import { queryKeys } from '../../utilities/queryKeys';
 import { fetchAnnotationsForModel } from './fetchAnnotationsForModel';
-import { EMPTY_ARRAY } from '../../utilities/constants';
 
 export const usePointCloudAnnotationMappingsForAssetIds = (
   models: TypedReveal3DModel[],
@@ -23,12 +22,13 @@ export const usePointCloudAnnotationMappingsForAssetIds = (
     () => addClassicModelOptionsResults.map((result) => result.data).filter(isDefined),
     [addClassicModelOptionsResults]
   );
+  const sortedAssetIds = (assetIds ?? [])?.filter(isDefined).map(String).sort();
 
   return useQuery({
     queryKey: [
       queryKeys.pointCloudAnnotationForAssetIds(
         classicModelOptions.map((model) => `${model.modelId}/${model.revisionId}`).sort(),
-        assetIds?.map((assetId) => assetId.toString()).sort() ?? []
+        sortedAssetIds
       )
     ],
     queryFn: async () => {
@@ -40,7 +40,7 @@ export const usePointCloudAnnotationMappingsForAssetIds = (
             assetIds,
             pointCloudAnnotationCache
           );
-          return result ?? EMPTY_ARRAY;
+          return result ?? [];
         })
       );
       return allAnnotationMappingsPromisesResult.flat();
