@@ -13,7 +13,7 @@ import { type BaseOptionCommand } from '../../architecture/base/commands/BaseOpt
 import { getButtonType, getDefaultCommand, getTooltipPlacement } from './utilities';
 import { LabelWithShortcut } from './LabelWithShortcut';
 import { type TranslateDelegate } from '../../architecture/base/utilities/TranslateInput';
-import { DEFAULT_PADDING, OPTION_MIN_WIDTH, TOOLTIP_DELAY } from './constants';
+import { DEFAULT_PADDING, TOOLTIP_DELAY } from './constants';
 
 import styled from 'styled-components';
 import { useOnUpdate } from './useOnUpdate';
@@ -147,8 +147,8 @@ const MenuItemWithDropdown = ({
 
   return (
     <StyledDropdownRow>
-      <label>{label}</label>
-      <Select
+      <StyledLabel>{label}</StyledLabel>
+      <StyledSelect
         defaultValue={command.selectedChild}
         fullWidth
         aria-label={command.getLabel(t)}
@@ -160,7 +160,7 @@ const MenuItemWithDropdown = ({
             {child.getLabel(t)}
           </Option>
         ))}
-      </Select>
+      </StyledSelect>
     </StyledDropdownRow>
   );
 };
@@ -179,12 +179,18 @@ function createMenuItem(command: BaseCommand, t: TranslateDelegate): ReactElemen
   );
 }
 
+const StyledLabel = styled.label`
+  flex: 1 1;
+`;
+
+const StyledSelect = styled(Select<BaseCommand>)`
+  flex: 1 1;
+`;
+
 const StyledDropdownRow = styled.div`
   display: flex;
   flex-direction: row;
-  justify-content: space-between;
+  align-self: stretch;
   align-items: center;
-  gap: 8;
-  minwidth: ${OPTION_MIN_WIDTH};
   padding: ${DEFAULT_PADDING};
 `;
