@@ -2,9 +2,9 @@
  * Copyright 2024 Cognite AS
  */
 
-import { type IconName } from '../../utilities/IconName';
-import { type TranslationInput } from '../../utilities/TranslateInput';
-import { RenderTargetCommand } from '../RenderTargetCommand';
+import { type IconName } from '../../../../src/architecture/base/utilities/IconName';
+import { type TranslationInput } from '../../../../src/architecture/base/utilities/TranslateInput';
+import { RenderTargetCommand } from '../../../../src/architecture/base/commands/RenderTargetCommand';
 
 export class MockActionCommand extends RenderTargetCommand {
   // ==================================================

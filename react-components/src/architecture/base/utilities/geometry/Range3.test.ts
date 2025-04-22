@@ -6,7 +6,7 @@ import { describe, expect, test } from 'vitest';
 
 import { Range3 } from './Range3';
 import { Box3, Plane, Vector3 } from 'three';
-import { expectEqualVector3 } from '../../../../../tests/tests-utilities/primitives/primitiveTestUtil';
+import { expectEqualVector3 } from '#test-utils/primitives/primitiveTestUtil';
 
 const min = new Vector3(100, 200, 300);
 const max = new Vector3(400, 600, 800);

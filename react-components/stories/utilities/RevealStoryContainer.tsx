@@ -13,7 +13,7 @@ import {
 } from '../../src/components/RevealContext/RevealContext';
 import { type SceneIdentifiers } from '../../src/components/SceneContainer/sceneTypes';
 import { RevealRenderTarget } from '../../src/architecture/base/renderTarget/RevealRenderTarget';
-import { StoryBookConfig } from '../../src/architecture/concrete/config/StoryBookConfig';
+import { StoryBookConfig } from './StoryBookConfig';
 
 type RevealStoryContainerProps = Omit<RevealContextProps, 'sdk'> & {
   sdk?: CogniteClient;
