@@ -18,7 +18,7 @@ import {
   type InstanceReference,
   isAssetInstanceReference,
   isDmsInstance,
-  isHybridAssetCoreDmsInstance,
+  isHybridAssetMappingsInstance,
   isIdEither
 } from '../../utilities/instanceIds';
 import { isSameIdEither } from '../../utilities/instanceIds/equality';
@@ -66,7 +66,7 @@ export async function fetchAssetsForAssetReferences(
   const assetIdReference = assetIds.filter(isAssetInstanceReference);
 
   const dmIds = assetIds.filter(isDmsInstance);
-  const hybridAssetIdReference = assetIds.filter(isHybridAssetCoreDmsInstance);
+  const hybridAssetIdReference = assetIds.filter(isHybridAssetMappingsInstance);
 
   const combinedDMSAssets = dmIds.concat(
     hybridAssetIdReference.map((hybrid) => hybrid.assetInstanceId)

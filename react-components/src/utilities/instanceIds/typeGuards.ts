@@ -37,7 +37,7 @@ export function isDmsInstance(instance: unknown): instance is DmsUniqueIdentifie
   );
 }
 
-export function isHybridAssetCoreDmsInstance(
+export function isHybridAssetMappingsInstance(
   instance: InstanceReference
 ): instance is AssetHybridInstanceReference {
   return 'assetInstanceId' in instance && isDmsInstance(instance.assetInstanceId);

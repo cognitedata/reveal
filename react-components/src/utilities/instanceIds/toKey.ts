@@ -6,7 +6,7 @@ import { assertNever } from '../assertNever';
 import {
   isDmsInstance,
   isExternalId,
-  isHybridAssetCoreDmsInstance,
+  isHybridAssetMappingsInstance,
   isInternalId,
   isAssetInstanceReference
 } from './typeGuards';
@@ -23,7 +23,7 @@ export function createInstanceReferenceKey(
     return String(instanceReference.id);
   } else if (isExternalId(instanceReference)) {
     return instanceReference.externalId;
-  } else if (isHybridAssetCoreDmsInstance(instanceReference)) {
+  } else if (isHybridAssetMappingsInstance(instanceReference)) {
     return createFdmKey(instanceReference.assetInstanceId);
   } else if (isAssetInstanceReference(instanceReference)) {
     return instanceReference.assetId.toString();
