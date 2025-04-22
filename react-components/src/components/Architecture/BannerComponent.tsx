@@ -43,7 +43,6 @@ export const BannerComponent = ({
 
 const StyledInfobox = styled(Infobox)`
   display: flex;
-  min-width: 200px;
   padding: 8px 12px;
   align-items: flex-start;
   gap: 8px;
