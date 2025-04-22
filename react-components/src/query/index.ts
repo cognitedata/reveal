@@ -20,6 +20,8 @@ export {
 } from './useSearchAssetsMappedPointCloudAnnotations';
 export {
   useAllMappedEquipmentAssetMappings,
+  useAllMappedEquipmentAssetMappingsHybrid,
+  useSearchMappedEquipmentAssetMappingsHybrid,
   useSearchMappedEquipmentAssetMappings,
   useMappingsForAssetIds
 } from './useSearchMappedEquipmentAssetMappings';
@@ -37,7 +39,8 @@ export type {
   ModelMappings,
   ModelMappingsWithAssets,
   AssetPage,
-  ModelAssetPage
-} from './useSearchMappedEquipmentAssetMappings';
-export type { InstancesWithView } from './useSearchMappedEquipmentFDM';
+  ModelAssetPage,
+  NodeDefinitionWithModelAndMappings,
+  InstancesWithView
+} from './types';
 export type { PointCloudVolumeMappedAssetData } from './core-dm/usePointCloudVolumeMappingForAssetInstances';
