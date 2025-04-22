@@ -6,14 +6,14 @@ import { type TranslationInput } from '../utilities/TranslateInput';
 
 import { describe, test, expect, beforeAll, vi } from 'vitest';
 import { DomainObject } from './DomainObject';
-import { Color } from 'three/src/math/Color.js';
+import { Color } from 'three';
 import { DomainObjectChange } from '../domainObjectsHelpers/DomainObjectChange';
 import { Changes } from '../domainObjectsHelpers/Changes';
 import { PopupStyle } from '../domainObjectsHelpers/PopupStyle';
 import { RenderStyle } from '../renderStyles/RenderStyle';
 import { cloneDeep } from 'lodash';
 import { ColorType } from '../domainObjectsHelpers/ColorType';
-import { BLACK_COLOR, WHITE_COLOR } from '../utilities/colors/colorExtensions';
+import { BLACK_COLOR, isGreyScale, WHITE_COLOR } from '../utilities/colors/colorExtensions';
 import { ChangedDescription } from '../domainObjectsHelpers/ChangedDescription';
 import { createRenderTargetMock } from '#test-utils/fixtures/renderTarget';
 import { CommandsUpdater } from '../reactUpdaters/CommandsUpdater';
@@ -76,11 +76,7 @@ describe('DomainObject', () => {
   test('should have color', () => {
     const domainObject = new ChildDomainObject();
     const color = domainObject.color;
-    const isGreyScale = color.r === color.g && color.r === color.b;
-    const rgbSum = color.r + color.g + color.b;
-    expect(isGreyScale).toBe(false);
-    expect(rgbSum).greaterThan(0);
-    expect(rgbSum).lessThan(3);
+    expect(isGreyScale(color)).toBe(false);
   });
 
   test('should set color', () => {
