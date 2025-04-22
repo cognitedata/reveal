@@ -89,7 +89,7 @@ export function equalsEuler(a: Euler, b: Euler, epsilon = EPSILON): boolean {
 }
 
 export function equalsRange1(a: Range1, b: Range1, epsilon = EPSILON): boolean {
-  if (!a.isEmpty && !b.isEmpty) {
+  if (a.isEmpty && b.isEmpty) {
     return true;
   }
   if (a.isEmpty !== b.isEmpty) {
