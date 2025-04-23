@@ -407,10 +407,8 @@ export class AssetMappingAndNode3DCache {
   ): Promise<void> {
     await Promise.all(
       assetMapping3DClassic
+        .filter(isValidAssetMapping)
         .map(async (item) => {
-          if (item.assetId === undefined) return;
-          if (item.treeIndex === undefined) return;
-          if (item.subtreeSize === undefined) return;
 
           const mapping: CdfAssetMapping = {
             ...item,
@@ -522,14 +520,7 @@ export class AssetMappingAndNode3DCache {
       []
     );
 
-    const mappings: CdfAssetMapping[] = assetMappings.map((item) => {
-      return {
-        ...item,
-        assetId: item.assetId,
-        assetInstanceId: item.assetInstanceId
-      };
-    });
-    return mappings;
+    return assetMappings;
   }
 
   private async getAssetMappingsForNodes(
