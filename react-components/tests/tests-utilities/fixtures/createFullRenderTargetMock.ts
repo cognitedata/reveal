@@ -1,8 +1,8 @@
 import { RevealRenderTarget } from '../../../src/architecture';
 import { sdkMock } from './sdk';
-import { viewerMock } from './viewer';
+import { createViewerMock } from './viewer';
 
 export function createFullRenderTargetMock(): RevealRenderTarget {
-  const renderTarget = new RevealRenderTarget(viewerMock, sdkMock);
+  const renderTarget = new RevealRenderTarget(createViewerMock(), sdkMock);
   return renderTarget;
 }
