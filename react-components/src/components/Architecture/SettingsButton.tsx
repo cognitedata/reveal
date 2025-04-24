@@ -35,6 +35,8 @@ import { DividerCommand } from '../../architecture/base/commands/DividerCommand'
 import { SectionCommand } from '../../architecture/base/commands/SectionCommand';
 import { useOnUpdate } from './useOnUpdate';
 import { FlexDirection, type PlacementType } from './types';
+import { BaseBannerCommand } from '../../architecture';
+import { BannerComponent } from './BannerComponent';
 
 export const SettingsButton = ({
   inputCommand,
@@ -118,6 +120,9 @@ function createMenuItem(command: BaseCommand, t: TranslateDelegate): ReactNode {
   }
   if (command instanceof SectionCommand) {
     return <SectionComponent key={command.uniqueId} command={command} t={t} />;
+  }
+  if (command instanceof BaseBannerCommand) {
+    return <BannerComponent key={command.uniqueId} command={command} t={t} />;
   }
 
   return <ButtonComponent key={command.uniqueId} command={command} t={t} />;
