@@ -27,22 +27,12 @@ export const viewerSetPointCloudModelBudgetMock = vi.fn<(budget: PointCloudBudge
 export const viewerSetResolutionOptionsMock =
   vi.fn<(resolutionOptions: ResolutionOptions) => void>();
 
-const sceneBoundingBox = new Box3();
-let clippingPlanes = new Array<Plane>();
-
-export function clearViewerMock(): void {
-  clippingPlanes = [];
-  sceneBoundingBox.makeEmpty();
-}
-
-export function setSceneBoundingBoxOnViewerMock(value: Box3): void {
-  sceneBoundingBox.copy(value);
-}
-
 export const viewerMock = createViewerMock();
 
 export function createViewerMock(): Cognite3DViewer<DataSourceType> {
-  clearViewerMock();
+  const sceneBoundingBox = new Box3().makeEmpty();
+  let clippingPlanes = new Array<Plane>();
+
   return new Mock<Cognite3DViewer<DataSourceType>>()
     .setup((viewer) => {
       viewer.setBackgroundColor(It.IsAny());
