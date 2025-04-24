@@ -19,10 +19,3 @@ export enum PrimitiveType {
   PlaneZ,
   PlaneXY
 }
-
-export const PlanePrimitiveTypes = [
-  PrimitiveType.PlaneX,
-  PrimitiveType.PlaneY,
-  PrimitiveType.PlaneZ,
-  PrimitiveType.PlaneXY
-];

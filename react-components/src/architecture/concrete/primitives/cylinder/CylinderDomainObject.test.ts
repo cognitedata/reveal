@@ -40,7 +40,7 @@ describe('CylinderDomainObject', () => {
       return;
     }
     expect(clone.cylinder).toStrictEqual(domainObject.cylinder);
-    expect(clone.color).toStrictEqual(domainObject.color);
+    expect(clone.color).toBe(domainObject.color);
     expect(clone.uniqueId).toBe(domainObject.uniqueId);
     expect(clone.name).toBe(domainObject.name);
     expect(clone.renderStyle).toStrictEqual(domainObject.renderStyle);
