@@ -7,9 +7,9 @@ import { CropBoxDomainObject } from './CropBoxDomainObject';
 import { isEmpty } from '../../base/utilities/TranslateInput';
 import { SolidPrimitiveRenderStyle } from '../primitives/common/SolidPrimitiveRenderStyle';
 import { createFullRenderTargetMock } from '#test-utils/fixtures/createFullRenderTargetMock';
-import { setSceneBoundingBoxOnViewerMock } from '#test-utils/fixtures/viewer';
 import { Box3, Plane, Vector3 } from 'three';
 import { setClippingPlanes } from './commands/setClippingPlanes';
+import { isViewerMock } from '../../../../tests/tests-utilities/fixtures/viewer';
 
 describe(CropBoxDomainObject.name, () => {
   test('Should be initialized', () => {
@@ -44,8 +44,10 @@ describe(CropBoxDomainObject.name, () => {
     renderTarget.rootDomainObject.addChild(domainObject);
 
     // Set a large sceneBoundingBox
-    setSceneBoundingBoxOnViewerMock(new Box3(new Vector3(), new Vector3()).expandByScalar(100));
-
+    if (isViewerMock(renderTarget.viewer)) {
+      const boundingBox = new Box3(new Vector3(), new Vector3()).expandByScalar(100);
+      renderTarget.viewer.setSceneBoundingBox(boundingBox);
+    }
     // Set the crop box as global clipping planes
     expect(renderTarget.isGlobalCropBox(domainObject)).toBe(false);
     domainObject.setThisAsGlobalCropBox();
@@ -66,7 +68,10 @@ describe(CropBoxDomainObject.name, () => {
     renderTarget.rootDomainObject.addChild(domainObject);
 
     // Set a large sceneBoundingBox
-    setSceneBoundingBoxOnViewerMock(new Box3(new Vector3(), new Vector3()).expandByScalar(100));
+    if (isViewerMock(renderTarget.viewer)) {
+      const boundingBox = new Box3(new Vector3(), new Vector3()).expandByScalar(100);
+      renderTarget.viewer.setSceneBoundingBox(boundingBox);
+    }
     renderTarget.viewer.setGlobalClippingPlanes([new Plane()]); // Must have at least one plane
 
     // Set the crop box as global clipping planes
@@ -85,8 +90,10 @@ describe(CropBoxDomainObject.name, () => {
     renderTarget.rootDomainObject.addChild(domainObject);
 
     // Set a large sceneBoundingBox
-    setSceneBoundingBoxOnViewerMock(new Box3(new Vector3(), new Vector3()).expandByScalar(100));
-
+    if (isViewerMock(renderTarget.viewer)) {
+      const boundingBox = new Box3(new Vector3(), new Vector3()).expandByScalar(100);
+      renderTarget.viewer.setSceneBoundingBox(boundingBox);
+    }
     // Set the crop box as global clipping planes
     domainObject.setThisAsGlobalCropBox();
     expect(renderTarget.isGlobalCropBox(domainObject)).toBe(true);
