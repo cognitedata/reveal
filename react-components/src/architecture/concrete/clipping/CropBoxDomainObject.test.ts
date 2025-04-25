@@ -2,6 +2,7 @@
  * Copyright 2025 Cognite AS
  */
 
+import assert from 'assert';
 import { describe, expect, test } from 'vitest';
 import { CropBoxDomainObject } from './CropBoxDomainObject';
 import { isEmpty } from '../../base/utilities/TranslateInput';
@@ -10,7 +11,6 @@ import { createFullRenderTargetMock } from '#test-utils/fixtures/createFullRende
 import { Box3, Plane, Vector3 } from 'three';
 import { setClippingPlanes } from './commands/setClippingPlanes';
 import { isViewerMock } from '../../../../tests/tests-utilities/fixtures/viewer';
-import { assert } from 'console';
 import { type RevealRenderTarget } from '../../base/renderTarget/RevealRenderTarget';
 
 describe(CropBoxDomainObject.name, () => {
@@ -106,9 +106,6 @@ function createSmallCropBox(): CropBoxDomainObject {
 function setLargeSceneBoundingBox(renderTarget: RevealRenderTarget): void {
   const { viewer } = renderTarget;
   assert(isViewerMock(viewer));
-  if (!isViewerMock(viewer)) {
-    return;
-  }
   const boundingBox = new Box3(new Vector3(), new Vector3()).expandByScalar(100);
   viewer.setSceneBoundingBox(boundingBox);
 }
