@@ -105,6 +105,7 @@ describe('LineDomainObject', () => {
 
     function testMe(primitiveType: PrimitiveType, quantity: Quantity, expectedItems: number): void {
       const domainObject = createLineDomainObject(primitiveType);
+      expect(domainObject.hasPanelInfo).toBe(true);
       const info = domainObject.getPanelInfo();
       expect(info).toBeDefined();
       if (info === undefined) {

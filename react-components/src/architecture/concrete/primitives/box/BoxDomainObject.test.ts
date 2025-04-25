@@ -67,6 +67,7 @@ describe('BoxDomainObject', () => {
 
     function testMe(primitiveType: PrimitiveType, quantity: Quantity, expectedItems: number): void {
       const domainObject = createBoxDomainObject(primitiveType);
+      expect(domainObject.hasPanelInfo).toBe(true);
       const info = domainObject.getPanelInfo();
       expect(info).toBeDefined();
       if (info === undefined) {

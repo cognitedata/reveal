@@ -61,10 +61,6 @@ export abstract class PlaneDomainObject extends VisualDomainObject {
     return this._backSideColor;
   }
 
-  public set backSideColor(color: Color) {
-    this._backSideColor = color;
-  }
-
   // ==================================================
   // CONSTRUCTOR
   // ==================================================
@@ -175,7 +171,7 @@ export abstract class PlaneDomainObject extends VisualDomainObject {
   // INSTANCE METHODS / PROPERTIES: Geometrical getters
   // ==================================================
 
-  public get coordinate(): number {
+  private get coordinate(): number {
     const pointOnPlane = this.plane.projectPoint(ORIGIN, new Vector3());
     switch (this.primitiveType) {
       case PrimitiveType.PlaneX:
@@ -204,8 +200,7 @@ export abstract class PlaneDomainObject extends VisualDomainObject {
 
   public flip(): void {
     const { plane } = this;
-    plane.normal.negate();
-    plane.constant = -plane.constant;
+    plane.negate();
   }
 
   public makeFlippingConsistent(): void {
