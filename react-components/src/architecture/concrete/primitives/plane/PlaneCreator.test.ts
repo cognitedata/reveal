@@ -16,15 +16,19 @@ describe(PlaneCreator.name, () => {
   test('Should create a plane perpendicular of X, Y or Z axis by clicking once', () => {
     for (const primitiveType of primitiveTypes) {
       const domainObject = createPlaneDomainObjectMock(primitiveType);
+
+      const expectedPlaneNormal = domainObject.plane.normal.clone();
+      const expectedPointInPlane = expectedPlaneNormal.clone().multiplyScalar(5);
+      const rayDirection = expectedPlaneNormal.clone().negate();
+
       const creator = new PlaneCreator(domainObject);
       expect(domainObject.focusType).toBe(FocusType.Pending);
+      click(creator, expectedPointInPlane, rayDirection, true, expectedPointInPlane);
 
-      const normal = domainObject.plane.normal.clone();
-      const origin = normal.clone().multiplyScalar(5);
-      const rayDirection = normal.clone().negate();
-      click(creator, origin, rayDirection, true, origin);
-
-      const expectedPlane = new Plane().setFromNormalAndCoplanarPoint(normal, origin);
+      const expectedPlane = new Plane().setFromNormalAndCoplanarPoint(
+        expectedPlaneNormal,
+        expectedPointInPlane
+      );
       expectedPlane.negate();
 
       expect(creator.domainObject).toBe(domainObject);
@@ -35,16 +39,20 @@ describe(PlaneCreator.name, () => {
 
   test('Should create a vertical plane perpendicular by clicking twice', () => {
     const domainObject = createPlaneDomainObjectMock(PrimitiveType.PlaneXY);
+
+    const expectedPlaneNormal = new Vector3(1, 1, 0).normalize();
+    const expectedPointInPlane = new Vector3(5, 6, 7);
+    const expectedPlane = new Plane().setFromNormalAndCoplanarPoint(
+      expectedPlaneNormal,
+      expectedPointInPlane
+    );
+
+    const origin1 = expectedPointInPlane.clone();
+    const origin2 = origin1.clone().add(new Vector3(1, -1, 0));
+    const rayDirection = expectedPlaneNormal.clone().negate();
+
     const creator = new PlaneCreator(domainObject);
     expect(domainObject.focusType).toBe(FocusType.Pending);
-
-    const origin = new Vector3(5, 6, 7);
-    const normal = new Vector3(1, 1, 0).normalize();
-    const expectedPlane = new Plane().setFromNormalAndCoplanarPoint(normal, origin);
-
-    const origin1 = origin.clone();
-    const origin2 = origin1.clone().add(new Vector3(1, -1, 0));
-    const rayDirection = normal.clone().negate();
     click(creator, origin1, rayDirection, false, origin1);
     click(creator, origin2, rayDirection, true, origin2);
 
