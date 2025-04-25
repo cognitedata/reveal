@@ -45,7 +45,7 @@ describe(SliceDomainObject.name, () => {
     }
   });
 
-  test('Set SliceDomainObject as clipping planes', () => {
+  test('Should set SliceDomainObject as clipping planes', () => {
     const renderTarget = createFullRenderTargetMock();
     const domainObject = createHorizontalPlane();
     renderTarget.rootDomainObject.addChild(domainObject);
@@ -59,7 +59,7 @@ describe(SliceDomainObject.name, () => {
     );
   });
 
-  test('Remove SliceDomainObject when global clipping planes is active', () => {
+  test('Should remove global clipping planes when SliceDomainObject is removed', () => {
     const renderTarget = createFullRenderTargetMock();
     const domainObject = createHorizontalPlane();
     renderTarget.rootDomainObject.addChild(domainObject);
@@ -73,7 +73,7 @@ describe(SliceDomainObject.name, () => {
     expect(renderTarget.getGlobalClippingPlanes().length).toBe(0);
   });
 
-  test('Change geometry in the clipping plane when global clipping planes is active', () => {
+  test('Should change the global clipping planes when active SliceDomainObject change the geometry', () => {
     const renderTarget = createFullRenderTargetMock();
     const domainObject = createHorizontalPlane();
     renderTarget.rootDomainObject.addChild(domainObject);
@@ -88,7 +88,7 @@ describe(SliceDomainObject.name, () => {
     );
   });
 
-  test('Change geometry in the clipping plane when global clipping planes is not active', () => {
+  test('Should not change the global clipping planes when not active SliceDomainObject change the geometry', () => {
     const renderTarget = createFullRenderTargetMock();
     const domainObject = createHorizontalPlane();
     renderTarget.rootDomainObject.addChild(domainObject);

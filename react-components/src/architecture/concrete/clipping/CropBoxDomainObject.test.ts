@@ -10,6 +10,8 @@ import { createFullRenderTargetMock } from '#test-utils/fixtures/createFullRende
 import { Box3, Plane, Vector3 } from 'three';
 import { setClippingPlanes } from './commands/setClippingPlanes';
 import { isViewerMock } from '../../../../tests/tests-utilities/fixtures/viewer';
+import { assert } from 'console';
+import { type RevealRenderTarget } from '../../base/renderTarget/RevealRenderTarget';
 
 describe(CropBoxDomainObject.name, () => {
   test('Should be initialized', () => {
@@ -43,11 +45,8 @@ describe(CropBoxDomainObject.name, () => {
     const domainObject = createSmallCropBox();
     renderTarget.rootDomainObject.addChild(domainObject);
 
-    // Set a large sceneBoundingBox
-    if (isViewerMock(renderTarget.viewer)) {
-      const boundingBox = new Box3(new Vector3(), new Vector3()).expandByScalar(100);
-      renderTarget.viewer.setSceneBoundingBox(boundingBox);
-    }
+    setLargeSceneBoundingBox(renderTarget);
+
     // Set the crop box as global clipping planes
     expect(renderTarget.isGlobalCropBox(domainObject)).toBe(false);
     domainObject.setThisAsGlobalCropBox();
@@ -67,11 +66,7 @@ describe(CropBoxDomainObject.name, () => {
     const domainObject = createSmallCropBox();
     renderTarget.rootDomainObject.addChild(domainObject);
 
-    // Set a large sceneBoundingBox
-    if (isViewerMock(renderTarget.viewer)) {
-      const boundingBox = new Box3(new Vector3(), new Vector3()).expandByScalar(100);
-      renderTarget.viewer.setSceneBoundingBox(boundingBox);
-    }
+    setLargeSceneBoundingBox(renderTarget);
     renderTarget.viewer.setGlobalClippingPlanes([new Plane()]); // Must have at least one plane
 
     // Set the crop box as global clipping planes
@@ -89,11 +84,8 @@ describe(CropBoxDomainObject.name, () => {
     const domainObject = createSmallCropBox();
     renderTarget.rootDomainObject.addChild(domainObject);
 
-    // Set a large sceneBoundingBox
-    if (isViewerMock(renderTarget.viewer)) {
-      const boundingBox = new Box3(new Vector3(), new Vector3()).expandByScalar(100);
-      renderTarget.viewer.setSceneBoundingBox(boundingBox);
-    }
+    setLargeSceneBoundingBox(renderTarget);
+
     // Set the crop box as global clipping planes
     domainObject.setThisAsGlobalCropBox();
     expect(renderTarget.isGlobalCropBox(domainObject)).toBe(true);
@@ -109,4 +101,14 @@ function createSmallCropBox(): CropBoxDomainObject {
   const domainObject = new CropBoxDomainObject();
   domainObject.box.size.set(1, 1, 1);
   return domainObject;
+}
+
+function setLargeSceneBoundingBox(renderTarget: RevealRenderTarget): void {
+  const { viewer } = renderTarget;
+  assert(isViewerMock(viewer));
+  if (!isViewerMock(viewer)) {
+    return;
+  }
+  const boundingBox = new Box3(new Vector3(), new Vector3()).expandByScalar(100);
+  viewer.setSceneBoundingBox(boundingBox);
 }

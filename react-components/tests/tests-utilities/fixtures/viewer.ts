@@ -32,8 +32,8 @@ export type ViewerMock = Cognite3DViewer<DataSourceType> & {
   setSceneBoundingBox: (box: Box3) => void;
 };
 
-export function isViewerMock(pet: Cognite3DViewer<DataSourceType>): pet is ViewerMock {
-  return (pet as ViewerMock).setSceneBoundingBox !== undefined;
+export function isViewerMock(viewer: Cognite3DViewer<DataSourceType>): viewer is ViewerMock {
+  return (viewer as ViewerMock).setSceneBoundingBox !== undefined;
 }
 
 export const viewerMock = createViewerMock();
