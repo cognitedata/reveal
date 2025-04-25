@@ -40,7 +40,7 @@ export abstract class PlaneDomainObject extends VisualDomainObject {
 
   public readonly plane = new Plane();
   private readonly _primitiveType: PrimitiveType;
-  private _backSideColor: Color | undefined = undefined;
+  protected _backSideColor: Color | undefined = undefined;
 
   // ==================================================
   // INSTANCE PROPERTIES

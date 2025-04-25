@@ -20,7 +20,7 @@ import { createFullRenderTargetMock } from '../../../../../tests/tests-utilities
 describe(PlaneDomainObject.name, () => {
   test('should be empty', () => {
     for (const primitiveType of PlanePrimitiveTypes) {
-      const domainObject = createPlaneDomainObject(primitiveType);
+      const domainObject = createPlaneDomainObjectMock(primitiveType);
       expect(domainObject.primitiveType).toBe(primitiveType);
       expect(isGreyScale(domainObject.color)).toBe(false);
       expect(isGreyScale(domainObject.backSideColor)).toBe(false);
@@ -35,12 +35,12 @@ describe(PlaneDomainObject.name, () => {
   });
 
   test('should be cloned', () => {
-    const domainObject = createPlaneDomainObject(PrimitiveType.PlaneZ);
+    const domainObject = createPlaneDomainObjectMock(PrimitiveType.PlaneZ);
 
     const clone = domainObject.clone();
-    expect(clone).toBeInstanceOf(MockPlaneDomainObject);
+    expect(clone).toBeInstanceOf(PlaneDomainObjectMock);
     expect(clone).not.toBe(domainObject);
-    if (!(clone instanceof MockPlaneDomainObject)) {
+    if (!(clone instanceof PlaneDomainObjectMock)) {
       return;
     }
     expect(clone.primitiveType).toStrictEqual(domainObject.primitiveType);
@@ -61,7 +61,7 @@ describe(PlaneDomainObject.name, () => {
     testMe(PrimitiveType.PlaneXY, Quantity.Angle, 1);
 
     function testMe(primitiveType: PrimitiveType, quantity: Quantity, expectedItems: number): void {
-      const domainObject = createPlaneDomainObject(primitiveType);
+      const domainObject = createPlaneDomainObjectMock(primitiveType);
       expect(domainObject.hasPanelInfo).toBe(true);
       const info = domainObject.getPanelInfo();
       expect(info).toBeDefined();
@@ -73,7 +73,7 @@ describe(PlaneDomainObject.name, () => {
   });
 
   test('should be flip', () => {
-    const domainObject = createPlaneDomainObject(PrimitiveType.PlaneZ);
+    const domainObject = createPlaneDomainObjectMock(PrimitiveType.PlaneZ);
     const expectedPlane = domainObject.plane.clone().negate();
     domainObject.flip();
     expect(domainObject.plane).toStrictEqual(expectedPlane);
@@ -82,12 +82,12 @@ describe(PlaneDomainObject.name, () => {
   test('should be make flipping consistent', () => {
     const root = createFullRenderTargetMock().rootDomainObject;
     // Add some not related planes
-    root.addChild(createPlaneDomainObject(PrimitiveType.PlaneX));
-    root.addChild(createPlaneDomainObject(PrimitiveType.PlaneY));
+    root.addChild(createPlaneDomainObjectMock(PrimitiveType.PlaneX));
+    root.addChild(createPlaneDomainObjectMock(PrimitiveType.PlaneY));
 
     // Add planes to test
-    const domainObject1 = createPlaneDomainObject(PrimitiveType.PlaneZ);
-    const domainObject2 = createPlaneDomainObject(PrimitiveType.PlaneZ);
+    const domainObject1 = createPlaneDomainObjectMock(PrimitiveType.PlaneZ);
+    const domainObject2 = createPlaneDomainObjectMock(PrimitiveType.PlaneZ);
     root.addChild(domainObject1);
     root.addChild(domainObject2);
 
@@ -117,8 +117,8 @@ describe(PlaneDomainObject.name, () => {
 
   test('should be make flipping consistent when added new planes', () => {
     const root = createFullRenderTargetMock().rootDomainObject;
-    const domainObject1 = createPlaneDomainObject(PrimitiveType.PlaneZ);
-    const domainObject2 = createPlaneDomainObject(PrimitiveType.PlaneZ);
+    const domainObject1 = createPlaneDomainObjectMock(PrimitiveType.PlaneZ);
+    const domainObject2 = createPlaneDomainObjectMock(PrimitiveType.PlaneZ);
 
     // When sign = 1, the planes are ok
     // When sign = -1, both planes has to be flipped.
@@ -138,8 +138,8 @@ describe(PlaneDomainObject.name, () => {
   });
 });
 
-function createPlaneDomainObject(primitiveType: PrimitiveType): PlaneDomainObject {
-  const domainObject = new MockPlaneDomainObject(primitiveType);
+export function createPlaneDomainObjectMock(primitiveType: PrimitiveType): PlaneDomainObject {
+  const domainObject = new PlaneDomainObjectMock(primitiveType);
   const point = new Vector3(2, 3, 4);
   switch (primitiveType) {
     case PrimitiveType.PlaneX:
@@ -161,9 +161,9 @@ function createPlaneDomainObject(primitiveType: PrimitiveType): PlaneDomainObjec
   return domainObject;
 }
 
-export class MockPlaneDomainObject extends PlaneDomainObject {
+export class PlaneDomainObjectMock extends PlaneDomainObject {
   public override clone(what?: symbol): DomainObject {
-    const clone = new MockPlaneDomainObject(this.primitiveType);
+    const clone = new PlaneDomainObjectMock(this.primitiveType);
     clone.copyFrom(this, what);
     return clone;
   }
