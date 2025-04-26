@@ -5,8 +5,10 @@
 import { type MutableRefObject, useEffect, useRef } from 'react';
 import { useReveal } from '../ViewerContext';
 import { type CameraState } from '@cognite/reveal';
+import { Vector3 } from 'three';
 
-export type CameraStateParameters = Omit<Required<CameraState>, 'rotation'>;
+// keep only rotation and direction as optional
+export type CameraStateParameters = Omit<CameraState, 'position' | 'target'> & { position: Vector3; target: Vector3 };
 
 export const useCameraStateControl = (
   externalCameraState?: CameraStateParameters,
@@ -17,7 +19,9 @@ export const useCameraStateControl = (
       ? undefined
       : {
           position: externalCameraState.position.clone(),
-          target: externalCameraState.target.clone()
+          target: externalCameraState.target.clone(),
+          rotation: externalCameraState.rotation?.clone(),
+          direction: externalCameraState.direction?.clone()
         }
   );
 
@@ -63,7 +67,9 @@ const useSetExternalCameraStateOnCameraMove = (
 
       lastSetExternalState.current = {
         position: currentCameraManagerState.position.clone(),
-        target: currentCameraManagerState.target.clone()
+        target: currentCameraManagerState.target.clone(),
+        rotation: currentCameraManagerState.rotation?.clone(),
+        direction: currentCameraManagerState.direction?.clone()
       };
 
       setCameraState?.(currentCameraManagerState);
@@ -89,10 +95,16 @@ function isCameraStatesEqual(
   }
 
   const epsilon = 0.001;
-  const { position: previousPosition, target: previousTarget } = previous;
-  const { position: currentPosition, target: currentTarget } = current;
+  const { position: previousPosition, target: previousTarget, direction: previousDirection } = previous;
+  const { position: currentPosition, target: currentTarget, direction: currentDirection } = current;
+
+  const isPositionStateEqual = previousPosition.distanceToSquared(currentPosition) <= epsilon
+  const isTargetStateEqual = previousTarget.distanceToSquared(currentTarget) <= epsilon;
+  const isDirectionStateEqual = currentDirection && previousDirection ? previousDirection.distanceToSquared(currentDirection) <= epsilon : true;
+
   return (
-    previousPosition.distanceToSquared(currentPosition) <= epsilon &&
-    previousTarget.distanceToSquared(currentTarget) <= epsilon
+    isPositionStateEqual &&
+    isTargetStateEqual &&
+    isDirectionStateEqual
   );
 }
