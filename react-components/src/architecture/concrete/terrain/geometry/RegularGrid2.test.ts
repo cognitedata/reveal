@@ -25,7 +25,7 @@ describe(RegularGrid2.name, () => {
       {
         // Testing node position at origin
         const actualPosition = new Vector3();
-        expect(terrain.getNodePosition(0, 0, actualPosition)).toEqual(true);
+        expect(terrain.getNodePosition(0, 0, actualPosition)).toBe(true);
         expect(actualPosition.x).toEqual(origin.x);
         expect(actualPosition.y).toEqual(origin.y);
         expect(actualPosition.z).toEqual(0);
@@ -44,8 +44,8 @@ describe(RegularGrid2.name, () => {
       const expectedNormal = new Vector3(0, 0, 1);
       for (let i = 0; i < terrain.nodeSize.i; i++) {
         for (let j = 0; j < terrain.nodeSize.j; j++) {
-          expect(terrain.isNodeDef(i, j)).toEqual(true);
-          expect(terrain.isNodeInsideDef(i, j)).toEqual(true);
+          expect(terrain.isNodeDef(i, j)).toBe(true);
+          expect(terrain.isNodeInsideDef(i, j)).toBe(true);
           expect(terrain.getZ(i, j)).toEqual(0);
           expect(terrain.getNormal(i, j, 0, true, actualNormal)).toEqual(expectedNormal);
         }
@@ -54,8 +54,8 @@ describe(RegularGrid2.name, () => {
   });
 
   test('Should clone', () => {
-    const range = new Range3(new Vector3(0, 0, 20), new Vector3(1000, 1000, 40));
-    const terrain = createFractalRegularGrid2(range);
+    const initialRange = new Range3(new Vector3(0, 0, 20), new Vector3(1000, 1000, 40));
+    const terrain = createFractalRegularGrid2(initialRange, 4, 0.7, 2);
     expect(terrain.clone()).toStrictEqual(terrain);
   });
 
@@ -68,13 +68,13 @@ describe(RegularGrid2.name, () => {
     for (let i = 0; i < terrain.nodeSize.i; i++) {
       for (let j = 0; j < terrain.nodeSize.j; j++) {
         const z = terrain.getZ(i, j);
-        expect(terrain.isNodeDef(i, j)).toEqual(true);
+        expect(terrain.isNodeDef(i, j)).toBe(true);
         expect(z).toBeGreaterThanOrEqual(initialRange.min.z);
         expect(z).toBeLessThanOrEqual(initialRange.max.z);
 
         terrain.getNodePosition(i, j, actualPosition);
         expect(actualPosition.z).toEqual(z);
-        expect(initialRange.isInside(actualPosition)).toEqual(true);
+        expect(initialRange.isInside(actualPosition)).toBe(true);
       }
     }
 

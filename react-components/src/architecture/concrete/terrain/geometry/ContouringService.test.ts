@@ -42,13 +42,13 @@ describe(ContouringService.name, () => {
         if (i === j || i + 1 === j) {
           terrain.setNodeUndef(i, j);
         } else {
-          terrain.setZ(i, j, 3 * i + 2 * j);
+          terrain.setZ(i, j, 3 * i + 2 * j); // Z = 3 * I + 2 * J
         }
       }
     }
     const boundingBox = terrain.boundingBox;
-    const inc = 2;
-    const contouringService = new ContouringService(inc);
+    const contourIncrement = 2;
+    const contouringService = new ContouringService(contourIncrement);
     const contours = contouringService.createContoursAsPositions(terrain);
 
     const contourBoundingBox = new Range3();
@@ -58,7 +58,7 @@ describe(ContouringService.name, () => {
       const z = contours[i + 2];
       const point = new Vector3(x, y, z);
 
-      expect(round(z, inc)).toBe(z); // Check Z-value of the contour
+      expect(round(z, contourIncrement)).toBe(z); // Check the Z-value is on the contour
       contourBoundingBox.add(point);
     }
     expect(contours.length).greaterThan(100);

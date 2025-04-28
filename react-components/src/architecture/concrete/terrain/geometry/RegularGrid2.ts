@@ -321,7 +321,9 @@ export class RegularGrid2 extends Grid2 {
   }
 
   public smoothSimple(numberOfPasses: number = 1): void {
-    if (numberOfPasses <= 0) return;
+    if (numberOfPasses <= 0) {
+      return;
+    }
     let buffer = new Float32Array(this.nodeSize.size);
     for (let pass = 0; pass < numberOfPasses; pass++) {
       for (let i = this.nodeSize.i - 1; i >= 0; i--)
@@ -337,15 +339,18 @@ export class RegularGrid2 extends Grid2 {
           let sum = 0;
 
           // New value = (Sum the surrounding values + 2 * Current value) / N
-          for (let ii = iMin; ii <= iMax; ii++)
+          for (let ii = iMin; ii <= iMax; ii++) {
             for (let jj = jMin; jj <= jMax; jj++) {
-              if (ii === i && jj === j) continue;
-
-              if (!this.isNodeDef(ii, jj)) continue;
-
+              if (ii === i && jj === j) {
+                continue;
+              }
+              if (!this.isNodeDef(ii, jj)) {
+                continue;
+              }
               sum += this.getZ(ii, jj);
               count += 1;
             }
+          }
           sum += this.getZ(i, j) * count;
           count += count;
           const index = this.getNodeIndex(i, j);

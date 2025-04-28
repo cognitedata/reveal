@@ -22,12 +22,12 @@ describe(Grid2.name, () => {
   test('Should test isNodeInside', () => {
     for (let i = 0; i < grid.nodeSize.i; i++) {
       for (let j = 0; j < grid.nodeSize.j; j++) {
-        expect(grid.isNodeInside(i, j)).toEqual(true);
+        expect(grid.isNodeInside(i, j)).toBe(true);
       }
     }
     for (let i = grid.nodeSize.i; i <= 2 * grid.nodeSize.i; i++) {
       for (let j = grid.nodeSize.j; i <= 2 * grid.nodeSize.i; j++) {
-        expect(grid.isNodeInside(i, j)).toEqual(false);
+        expect(grid.isNodeInside(i, j)).toBe(false);
       }
     }
   });
@@ -35,12 +35,12 @@ describe(Grid2.name, () => {
   test('Should test isCellInside', () => {
     for (let i = 0; i < grid.cellSize.i; i++) {
       for (let j = 0; j < grid.cellSize.j; j++) {
-        expect(grid.isCellInside(i, j)).toEqual(true);
+        expect(grid.isCellInside(i, j)).toBe(true);
       }
     }
     for (let i = grid.cellSize.i; i <= 2 * grid.cellSize.i; i++) {
       for (let j = grid.cellSize.j; i <= 2 * grid.cellSize.i; j++) {
-        expect(grid.isCellInside(i, j)).toEqual(false);
+        expect(grid.isCellInside(i, j)).toBe(false);
       }
     }
   });
