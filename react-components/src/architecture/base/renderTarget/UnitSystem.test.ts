@@ -1,7 +1,7 @@
 /*!
  * Copyright 2025 Cognite AS
  */
-import { beforeEach, describe, expect, test } from 'vitest';
+import { describe, expect, test } from 'vitest';
 
 import { Quantity } from '../domainObjectsHelpers/Quantity';
 import { UnitSystem } from './UnitSystem';
