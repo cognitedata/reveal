@@ -42,7 +42,7 @@ describe(ContouringService.name, () => {
         if (i === j || i + 1 === j) {
           terrain.setNodeUndef(i, j);
         } else {
-          terrain.setZ(i, j, 3 * i + 2 * j); // Z = 3 * I + 2 * J
+          terrain.setZ(i, j, 3 * i + 2 * j); // Z(x,y) = 3 * I + 2 * J
         }
       }
     }
