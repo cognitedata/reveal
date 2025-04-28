@@ -15,7 +15,7 @@ import {
   addView,
   createIntersectInput,
   expectChildrenLength,
-  expectChildrenOfType
+  expectChildrenOfTypeAndCount
 } from '#test-utils/architecture/viewUtil';
 import { createPlaneDomainObjectMock } from './PlaneDomainObject.test';
 import { createFullRenderTargetMock } from '../../../../../tests/tests-utilities/fixtures/createFullRenderTargetMock';
@@ -42,16 +42,16 @@ describe(PlaneView.name, () => {
   test('should have object and children of Line and Mesh when not selected', () => {
     expect(view.object).toBeInstanceOf(Object3D);
     expectChildrenLength(view, 3);
-    expectChildrenOfType(view, Line, 1);
-    expectChildrenOfType(view, Mesh, 2);
+    expectChildrenOfTypeAndCount(view, Line, 1);
+    expectChildrenOfTypeAndCount(view, Mesh, 2);
   });
 
   test('should have object and children of Wireframe and Mesh when selected', () => {
     domainObject.setSelectedInteractive(true);
     expect(view.object).toBeInstanceOf(Object3D);
     expectChildrenLength(view, 3);
-    expectChildrenOfType(view, Wireframe, 1);
-    expectChildrenOfType(view, Mesh, 3); // Wireframe is also a mesh
+    expectChildrenOfTypeAndCount(view, Wireframe, 1);
+    expectChildrenOfTypeAndCount(view, Mesh, 3); // Wireframe is also a mesh
   });
 
   test('should intersect', () => {

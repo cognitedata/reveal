@@ -14,7 +14,7 @@ export function expectChildrenLength(view: GroupThreeView, expectedLength: numbe
   expect(view.object.children.length).toBe(expectedLength);
 }
 
-export function expectChildrenOfType<T>(
+export function expectChildrenOfTypeAndCount<T>(
   view: GroupThreeView,
   classType: Class<T>,
   expectedCount: number
