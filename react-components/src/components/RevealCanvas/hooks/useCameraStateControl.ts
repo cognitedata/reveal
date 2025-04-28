@@ -5,7 +5,6 @@
 import { type MutableRefObject, useEffect, useRef } from 'react';
 import { useReveal } from '../ViewerContext';
 import { type CameraState } from '@cognite/reveal';
-import { Vector3 } from 'three';
 
 // keep only rotation and direction as optional
 export type CameraStateParameters = Required<Pick<CameraState, 'position' | 'target'>> & Partial<Pick<CameraState, 'rotation' | 'direction'>>;
