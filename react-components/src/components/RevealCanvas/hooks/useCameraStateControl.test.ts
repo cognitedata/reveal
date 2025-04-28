@@ -59,7 +59,14 @@ describe(useCameraStateControl.name, () => {
 
     const { rerender } = renderHook(
       ({ position }: { position: Vector3 }) => {
-        useCameraStateControl({ position: position.clone(), target: new Vector3(1, 1, 1), direction: new Vector3(0, 0, 1) }, setter);
+        useCameraStateControl(
+          {
+            position: position.clone(),
+            target: new Vector3(1, 1, 1),
+            direction: new Vector3(0, 0, 1)
+          },
+          setter
+        );
       },
       { initialProps: { position: new Vector3(0, 0, 0) } }
     );
@@ -80,7 +87,11 @@ describe(useCameraStateControl.name, () => {
 
     const { rerender } = renderHook(() => {
       useCameraStateControl(
-        { position: new Vector3(0, 0, 0), target: new Vector3(1, 1, 1), direction: new Vector3(0, 0, 1) },
+        {
+          position: new Vector3(0, 0, 0),
+          target: new Vector3(1, 1, 1),
+          direction: new Vector3(0, 0, 1)
+        },
         setter
       );
     });
@@ -92,7 +103,6 @@ describe(useCameraStateControl.name, () => {
       target: new Vector3(1, 1, 1),
       direction: new Vector3(0, 0, 1)
     });
-
 
     rerender();
 
@@ -115,5 +125,4 @@ describe(useCameraStateControl.name, () => {
 
     expect(setter).toHaveBeenCalledTimes(3);
   });
-
 });
