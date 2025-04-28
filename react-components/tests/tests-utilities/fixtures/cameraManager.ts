@@ -32,7 +32,7 @@ export const cameraManagerMock = new Mock<CameraManager>()
     cameraManagerGlobalCurrentCameraState.direction = direction;
     setTimeout(() => {
       cameraManagerGlobalCameraEvents.cameraStop.forEach((callback) => {
-        callback(position!, target!, direction!);
+        callback(position!, target!);
       });
     }, 50);
   })
