@@ -62,7 +62,8 @@ export class StationaryCameraManager implements CameraManager {
     return {
       position: this._camera.position,
       rotation: this._camera.quaternion,
-      target: this.getTarget()
+      target: this.getTarget(),
+      direction: this._camera.getWorldDirection(new Vector3())
     };
   }
 
