@@ -33,7 +33,6 @@ export const LayersButton = ({
     <>
       <SelectPanel
         placement="right"
-        appendTo={'parent'}
         hideOnOutsideClick
         offset={TOOLBAR_HORIZONTAL_PANEL_OFFSET}>
         <SelectPanel.Trigger>

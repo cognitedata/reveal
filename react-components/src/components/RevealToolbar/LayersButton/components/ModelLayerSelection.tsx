@@ -31,7 +31,6 @@ export const ModelLayerSelection = ({
   return (
     <SelectPanel
       placement="right"
-      appendTo={'parent'}
       hideOnOutsideClick={true}
       openOnHover={!isDisabled}>
       <SelectPanel.Trigger>
