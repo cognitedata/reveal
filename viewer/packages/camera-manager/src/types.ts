@@ -53,10 +53,6 @@ export type CameraState = {
    * Camera local rotation in quaternion form.
    */
   rotation?: Quaternion;
-  /**
-   * Camera direction in world space
-   */
-  direction?: Vector3;
 };
 
 /**

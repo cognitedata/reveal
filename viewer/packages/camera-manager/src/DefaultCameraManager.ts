@@ -232,8 +232,7 @@ export class DefaultCameraManager implements CameraManager {
     return {
       position: this._camera.position.clone(),
       rotation: this._camera.quaternion.clone(),
-      target: this._controls.getState().target.clone(),
-      direction: this._camera.getWorldDirection(new THREE.Vector3())
+      target: this._controls.getState().target.clone()
     };
   }
 
