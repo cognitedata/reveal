@@ -26,7 +26,7 @@ describe(Grid2.name, () => {
       }
     }
     for (let i = grid.nodeSize.i; i <= 2 * grid.nodeSize.i; i++) {
-      for (let j = grid.nodeSize.j; i <= 2 * grid.nodeSize.i; j++) {
+      for (let j = grid.nodeSize.j; j <= 2 * grid.nodeSize.j; j++) {
         expect(grid.isNodeInside(i, j)).toBe(false);
       }
     }
@@ -39,7 +39,7 @@ describe(Grid2.name, () => {
       }
     }
     for (let i = grid.cellSize.i; i <= 2 * grid.cellSize.i; i++) {
-      for (let j = grid.cellSize.j; i <= 2 * grid.cellSize.i; j++) {
+      for (let j = grid.cellSize.j; j <= 2 * grid.cellSize.j; j++) {
         expect(grid.isCellInside(i, j)).toBe(false);
       }
     }
