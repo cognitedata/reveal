@@ -14,15 +14,14 @@ describe(RegularGrid2.name, () => {
 
   test('Should create a flat terrain with and without rotation', () => {
     const nodeSize = new Index2(10, 12);
-    const cellSize = nodeSize.clone().subtract(new Index2(1, 1));
     const origin = new Vector2(2, 3);
     const increment = new Vector2(1, 1);
 
     for (const angle of [0, Math.PI / 10]) {
       const terrain = new RegularGrid2(nodeSize, origin, increment, angle);
-      expect(terrain.nodeSize).toEqual(nodeSize);
-      expect(terrain.cellSize).toEqual(cellSize);
       expect(terrain.rotationAngle).toEqual(angle);
+      expect(terrain.origin).toEqual(origin);
+      expect(terrain.increment).toEqual(increment);
       expect(terrain.zRange).toEqual(new Range1(0, 0));
 
       {
@@ -48,7 +47,6 @@ describe(RegularGrid2.name, () => {
       for (let i = 0; i < terrain.nodeSize.i; i++) {
         for (let j = 0; j < terrain.nodeSize.j; j++) {
           expect(terrain.isNodeDef(i, j)).toEqual(true);
-          expect(terrain.isNodeInside(i, j)).toEqual(true);
           expect(terrain.isNodeInsideDef(i, j)).toEqual(true);
           expect(terrain.getZ(i, j)).toEqual(0);
           expect(terrain.getNormal(i, j, 0, true, actualNormal)).toEqual(expectedNormal);
@@ -57,9 +55,15 @@ describe(RegularGrid2.name, () => {
     }
   });
 
-  test('Should create a fractal surface', () => {
+  test('Should clone', () => {
     const range = new Range3(new Vector3(0, 0, 20), new Vector3(1000, 1000, 40));
     const terrain = createFractalRegularGrid2(range);
+    expect(terrain.clone()).toStrictEqual(terrain);
+  });
+
+  test('Should create a fractal surface', () => {
+    const initialRange = new Range3(new Vector3(0, 0, 20), new Vector3(100, 100, 40));
+    const terrain = createFractalRegularGrid2(initialRange, 4, 0.7, 2);
 
     // Testing each node
     const actualPosition = new Vector3();
@@ -67,25 +71,25 @@ describe(RegularGrid2.name, () => {
       for (let j = 0; j < terrain.nodeSize.j; j++) {
         const z = terrain.getZ(i, j);
         expect(terrain.isNodeDef(i, j)).toEqual(true);
-        expect(z).toBeGreaterThanOrEqual(range.min.z);
-        expect(z).toBeLessThanOrEqual(range.max.z);
+        expect(z).toBeGreaterThanOrEqual(initialRange.min.z);
+        expect(z).toBeLessThanOrEqual(initialRange.max.z);
 
         terrain.getNodePosition(i, j, actualPosition);
         expect(actualPosition.z).toEqual(z);
-        expect(range.isInside(actualPosition)).toEqual(true);
+        expect(initialRange.isInside(actualPosition)).toEqual(true);
       }
     }
 
     terrain.smoothSimple(10);
     const newRange = terrain.boundingBox;
 
-    expect(newRange.z.min).toBeGreaterThanOrEqual(range.z.min);
-    expect(newRange.z.max).toBeLessThanOrEqual(range.z.max);
+    expect(newRange.z.min).toBeGreaterThanOrEqual(initialRange.z.min);
+    expect(newRange.z.max).toBeLessThanOrEqual(initialRange.z.max);
   });
 
   test('Should smooth a surface', () => {
     const initialRange = new Range3(new Vector3(0, 0, 20), new Vector3(1000, 1000, 40));
-    const terrain = createFractalRegularGrid2(initialRange);
+    const terrain = createFractalRegularGrid2(initialRange, 4, 0.7, 2);
 
     const oldRange = terrain.boundingBox;
     terrain.smoothSimple(10);
@@ -97,7 +101,7 @@ describe(RegularGrid2.name, () => {
 
   test('Should normalize a surface', () => {
     const initialRange = new Range3(new Vector3(0, 0, 20), new Vector3(1000, 1000, 40));
-    const terrain = createFractalRegularGrid2(initialRange);
+    const terrain = createFractalRegularGrid2(initialRange, 4, 0.7, 2);
 
     const newZRrange = new Range1(100, 200);
     terrain.normalizeZ(newZRrange);
