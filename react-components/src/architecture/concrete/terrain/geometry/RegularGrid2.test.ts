@@ -1,7 +1,7 @@
 /*!
  * Copyright 2025 Cognite AS
  */
-import { beforeEach, describe, expect, test } from 'vitest';
+import { describe, expect, test } from 'vitest';
 import { Index2 } from '../../../base/utilities/geometry/Index2';
 import { RegularGrid2 } from './RegularGrid2';
 import { Vector2, Vector3 } from 'three';
@@ -10,8 +10,6 @@ import { createFractalRegularGrid2 } from './createFractalRegularGrid2';
 import { Range3 } from '../../../base/utilities/geometry/Range3';
 
 describe(RegularGrid2.name, () => {
-  beforeEach(() => {});
-
   test('Should create a flat terrain with and without rotation', () => {
     const nodeSize = new Index2(10, 12);
     const origin = new Vector2(2, 3);
