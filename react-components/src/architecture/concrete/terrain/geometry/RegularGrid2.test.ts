@@ -8,10 +8,7 @@ import { Vector2, Vector3 } from 'three';
 import { Range1 } from '../../../base/utilities/geometry/Range1';
 import { createFractalRegularGrid2 } from './createFractalRegularGrid2';
 import { Range3 } from '../../../base/utilities/geometry/Range3';
-import {
-  expectEqualRange1,
-  expectEqualRange2
-} from '../../../../../tests/tests-utilities/primitives/primitiveTestUtil';
+import { expectEqualRange1, expectEqualRange2 } from '#test-utils/primitives/primitiveTestUtil';
 
 describe(RegularGrid2.name, () => {
   test('Should create a flat terrain with and without rotation', () => {

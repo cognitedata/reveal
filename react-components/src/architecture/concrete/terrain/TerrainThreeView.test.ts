@@ -5,12 +5,9 @@ import { beforeEach, describe, expect, test } from 'vitest';
 import { createFractalRegularGrid2 } from './geometry/createFractalRegularGrid2';
 import { Range3 } from '../../base/utilities/geometry/Range3';
 import { TerrainDomainObject } from './TerrainDomainObject';
-import { Object3D, Vector3 } from 'three';
+import { LineSegments, Mesh, Object3D, Vector3 } from 'three';
 import { TerrainThreeView } from './TerrainThreeView';
-import {
-  addView,
-  expectChildrenLength
-} from '../../../../tests/tests-utilities/architecture/viewUtil';
+import { addView, expectChildrenOfTypeAndCount } from '#test-utils/architecture/viewUtil';
 import { DomainObjectChange } from '../../base/domainObjectsHelpers/DomainObjectChange';
 import { Changes } from '../../base/domainObjectsHelpers/Changes';
 import { CDF_TO_VIEWER_TRANSFORMATION } from '@cognite/reveal';
@@ -27,7 +24,8 @@ describe(TerrainThreeView.name, () => {
 
   test('should have object', () => {
     expect(view.object).toBeInstanceOf(Object3D);
-    expectChildrenLength(view, 2);
+    expectChildrenOfTypeAndCount(view, LineSegments, 1);
+    expectChildrenOfTypeAndCount(view, Mesh, 1);
   });
 
   test('should have correct bounding box', () => {
@@ -50,11 +48,13 @@ describe(TerrainThreeView.name, () => {
     }
     renderStyle.showContours = false;
     view.update(new DomainObjectChange(Changes.renderStyle));
-    expectChildrenLength(view, 1);
+    expectChildrenOfTypeAndCount(view, LineSegments, 0);
+    expectChildrenOfTypeAndCount(view, Mesh, 1);
 
     renderStyle.showContours = true;
     view.update(new DomainObjectChange(Changes.renderStyle));
-    expectChildrenLength(view, 2);
+    expectChildrenOfTypeAndCount(view, LineSegments, 1);
+    expectChildrenOfTypeAndCount(view, Mesh, 1);
   });
 
   test('should changed when toggle showSolid', () => {
@@ -65,11 +65,13 @@ describe(TerrainThreeView.name, () => {
     }
     renderStyle.showSolid = false;
     view.update(new DomainObjectChange(Changes.renderStyle));
-    expectChildrenLength(view, 1);
+    expectChildrenOfTypeAndCount(view, LineSegments, 1);
+    expectChildrenOfTypeAndCount(view, Mesh, 0);
 
     renderStyle.showSolid = true;
     view.update(new DomainObjectChange(Changes.renderStyle));
-    expectChildrenLength(view, 2);
+    expectChildrenOfTypeAndCount(view, LineSegments, 1);
+    expectChildrenOfTypeAndCount(view, Mesh, 1);
   });
 });
 
