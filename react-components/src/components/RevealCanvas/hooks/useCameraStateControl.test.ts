@@ -59,7 +59,7 @@ describe(useCameraStateControl.name, () => {
 
     const { rerender } = renderHook(
       ({ position }: { position: Vector3 }) => {
-        useCameraStateControl({ position: position.clone(), target: new Vector3(1, 1, 1) }, setter);
+        useCameraStateControl({ position: position.clone(), target: new Vector3(1, 1, 1), direction: new Vector3(0, 0, 1) }, setter);
       },
       { initialProps: { position: new Vector3(0, 0, 0) } }
     );
@@ -75,12 +75,12 @@ describe(useCameraStateControl.name, () => {
     });
   });
 
-  test('provided setter is called after updating camera state internally', () => {
+  test('provided setter is called after updating camera state internally for each parameter', () => {
     const setter = vi.fn<(cameraState?: CameraStateParameters) => void>();
 
     const { rerender } = renderHook(() => {
       useCameraStateControl(
-        { position: new Vector3(0, 0, 0), target: new Vector3(1, 1, 1) },
+        { position: new Vector3(0, 0, 0), target: new Vector3(1, 1, 1), direction: new Vector3(0, 0, 1) },
         setter
       );
     });
@@ -89,14 +89,31 @@ describe(useCameraStateControl.name, () => {
 
     viewerMock.cameraManager.setCameraState({
       position: new Vector3(1, 0, 0),
-      target: new Vector3(1, 1, 1)
+      target: new Vector3(1, 1, 1),
+      direction: new Vector3(0, 0, 1)
     });
 
-    vi.runAllTimers();
+
+    rerender();
+
+    viewerMock.cameraManager.setCameraState({
+      position: new Vector3(0, 0, 0),
+      target: new Vector3(0, 0, 1),
+      direction: new Vector3(0, 0, 1)
+    });
+
+    rerender();
+
+    viewerMock.cameraManager.setCameraState({
+      position: new Vector3(0, 0, 0),
+      target: new Vector3(1, 1, 1),
+      direction: new Vector3(0, 1, 1)
+    });
 
     rerender();
     vi.runAllTimers();
 
-    expect(setter).toHaveBeenCalled();
+    expect(setter).toHaveBeenCalledTimes(3);
   });
+
 });
