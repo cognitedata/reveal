@@ -8,7 +8,7 @@ import { type CameraState } from '@cognite/reveal';
 import { Vector3 } from 'three';
 
 // keep only rotation and direction as optional
-export type CameraStateParameters = Omit<CameraState, 'position' | 'target'> & { position: Vector3; target: Vector3 };
+export type CameraStateParameters = Required<Pick<CameraState, 'position' | 'target'>> & Partial<Pick<CameraState, 'rotation' | 'direction'>>;
 
 export const useCameraStateControl = (
   externalCameraState?: CameraStateParameters,
@@ -20,7 +20,6 @@ export const useCameraStateControl = (
       : {
           position: externalCameraState.position.clone(),
           target: externalCameraState.target.clone(),
-          rotation: externalCameraState.rotation?.clone(),
           direction: externalCameraState.direction?.clone()
         }
   );
@@ -68,7 +67,6 @@ const useSetExternalCameraStateOnCameraMove = (
       lastSetExternalState.current = {
         position: currentCameraManagerState.position.clone(),
         target: currentCameraManagerState.target.clone(),
-        rotation: currentCameraManagerState.rotation?.clone(),
         direction: currentCameraManagerState.direction?.clone()
       };
 
