@@ -7,8 +7,6 @@ import { Quantity } from '../domainObjectsHelpers/Quantity';
 import { UnitSystem } from './UnitSystem';
 
 describe(UnitSystem.name, () => {
-  beforeEach(() => {});
-
   test('Should convert to and from non metric unit system', () => {
     const quantities = [Quantity.Length, Quantity.Area, Quantity.Volume];
 
