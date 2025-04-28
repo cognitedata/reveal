@@ -11,9 +11,9 @@ import { PrimitiveType } from '../../../base/utilities/primitives/PrimitiveType'
 import { createPlaneDomainObjectMock } from './PlaneDomainObject.test';
 
 describe(PlaneCreator.name, () => {
-  const primitiveTypes = [PrimitiveType.PlaneX, PrimitiveType.PlaneY, PrimitiveType.PlaneZ];
-
   test('Should create a plane perpendicular of X, Y or Z axis by clicking once', () => {
+    const primitiveTypes = [PrimitiveType.PlaneX, PrimitiveType.PlaneY, PrimitiveType.PlaneZ];
+
     for (const primitiveType of primitiveTypes) {
       const domainObject = createPlaneDomainObjectMock(primitiveType);
 
