@@ -39,7 +39,7 @@ export default defineConfig(({ command }) => {
           'src/**/*.spec.tsx',
           'src/**/*.test.ts',
           'src/**/*.test.tsx',
-          '**/*.stories.tsx'
+          'stories/**'
         ]
       },
       // Need to add E5 modules as inlined dependencies to be able to import them in tests.
