@@ -7,6 +7,7 @@ import { useReveal } from '../ViewerContext';
 import { type CameraState } from '@cognite/reveal';
 import { Quaternion } from 'three';
 
+// It is the camera state parameters type with position and target as requires but rotation as optional
 export type CameraStateParameters = Omit<Required<CameraState>, 'rotation'> & { rotation?: Quaternion; };
 
 export const useCameraStateControl = (
