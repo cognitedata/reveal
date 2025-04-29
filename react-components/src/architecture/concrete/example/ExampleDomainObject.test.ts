@@ -42,7 +42,7 @@ describe(ExampleDomainObject.name, () => {
     const info = domainObject.getPanelInfo();
     expect(info).toBeDefined();
     assert(info !== undefined);
-    expect(info.filterByQuantity(Quantity.Length)).toHaveLength(3);
+    expect(info.getItemsByQuantity(Quantity.Length)).toHaveLength(3);
   });
 });
 

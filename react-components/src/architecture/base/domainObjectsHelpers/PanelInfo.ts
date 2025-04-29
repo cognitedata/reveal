@@ -20,7 +20,7 @@ export class PanelInfo {
     this.items.push(item);
   }
 
-  public filterByQuantity(quantity: Quantity): NumberPanelItem[] {
+  public getItemsByQuantity(quantity: Quantity): NumberPanelItem[] {
     return this.items.filter((a) => a.quantity === quantity);
   }
 }

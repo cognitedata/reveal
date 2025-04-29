@@ -108,7 +108,7 @@ describe('LineDomainObject', () => {
       const info = domainObject.getPanelInfo();
       expect(info).toBeDefined();
       assert(info !== undefined);
-      expect(info.filterByQuantity(quantity)).toHaveLength(expectedItems);
+      expect(info.getItemsByQuantity(quantity)).toHaveLength(expectedItems);
     }
   });
 });
