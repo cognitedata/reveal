@@ -11,7 +11,6 @@ import {
   type ClassicDataSourceType
 } from '@cognite/reveal';
 import { useMemo } from 'react';
-import { EMPTY_ARRAY } from '../../../utilities/constants';
 import { isDM3DModelIdentifier } from '../typeGuards';
 
 type MatchedPointCloudModel = {
@@ -26,7 +25,7 @@ export function useMatchedPointCloudModels(
   return useMemo(() => {
     return viewerModels.flatMap((viewerModel) => {
       if (viewerModel.type !== 'pointcloud') {
-        return EMPTY_ARRAY;
+        return [];
       }
       const model = viewerModel;
       const matchedModel = classicModelOptions.find((modelOption) => {
@@ -43,7 +42,9 @@ export function useMatchedPointCloudModels(
         }
         return false;
       });
-      return matchedModel !== undefined ? [{ viewerModel, model: matchedModel }] : EMPTY_ARRAY;
+      return matchedModel !== undefined
+        ? [{ viewerModel, model: matchedModel }]
+        : [];
     });
   }, [viewerModels, classicModelOptions]);
 }
