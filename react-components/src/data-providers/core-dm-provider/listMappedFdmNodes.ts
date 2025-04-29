@@ -115,6 +115,7 @@ export async function queryCadAssets(
   return filteredCadAssets;
 }
 
+// eslint-disable-next-line @typescript-eslint/explicit-function-return-type
 export async function queryPointCloudsAssets(
   sourcesToSearch: Source[],
   revisionRefs: DmsUniqueIdentifier[],
@@ -137,6 +138,7 @@ export async function queryPointCloudsAssets(
   return queryResultPointClouds.items.pointcloud_assets;
 }
 
+// eslint-disable-next-line @typescript-eslint/explicit-function-return-type
 export async function queryImage360Assets(
   sourcesToSearch: Source[],
   revisionRefs: DmsUniqueIdentifier[],
