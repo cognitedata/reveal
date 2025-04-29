@@ -102,43 +102,22 @@ export class ContouringService {
     if (isAbsEqual(a.z, b.z, this._tolerance)) {
       b.z = a.z + this._tolerance;
     }
-
     // Intersection of two of the edges
-    let numPoints = 0;
-    if (isBetween(a.z, z, b.z)) {
-      this.addLinearInterpolation(a, b, z);
-      numPoints += 1;
-    }
-    if (isBetween(b.z, z, c.z)) {
-      if (numPoints === 0) {
-        this.addLinearInterpolation(b, c, z);
-      } else {
-        this.addLinearInterpolation(b, c, z);
-      }
-      numPoints += 1;
-    }
-    if (numPoints < 2 && isBetween(c.z, z, a.z)) {
-      if (numPoints === 0) {
-        this.addLinearInterpolation(c, a, z);
-      } else {
-        this.addLinearInterpolation(c, a, z);
-      }
-      numPoints += 1;
-    }
-    if (numPoints === 2) {
-      return true;
-    }
-    if (numPoints === 1) {
-      // Remove the last added
-      this._positions.pop();
-      this._positions.pop();
-      this._positions.pop();
-    }
-    return false;
-  }
+    const ab = isBetween(a.z, z, b.z);
+    const bc = isBetween(b.z, z, c.z);
+    const ca = isBetween(c.z, z, a.z);
 
-  private add(position: Vector3): void {
-    this.addXyz(position.y, position.y, position.z);
+    let numPoints = 0;
+    if (ab) numPoints++;
+    if (bc) numPoints++;
+    if (ca) numPoints++;
+    if (numPoints !== 2) {
+      return false; // should never come here, but this is a safety value
+    }
+    if (ab) this.addLinearInterpolation(a, b, z);
+    if (bc) this.addLinearInterpolation(b, c, z);
+    if (ca) this.addLinearInterpolation(c, a, z);
+    return true;
   }
 
   private addLinearInterpolation(a: Vector3, b: Vector3, z: number): void {
@@ -146,10 +125,6 @@ export class ContouringService {
     // a.Z and b.Z is assumed to be different (Check by yourself)
     // Returns  a + (b-a)*(z-a.Z)/(b.Z-a.Z);  (unrolled code)
     const f = (z - a.z) / (b.z - a.z);
-    this.addXyz((b.x - a.x) * f + a.x, (b.y - a.y) * f + a.y, z);
-  }
-
-  private addXyz(x: number, y: number, z: number): void {
-    this._positions.push(x, y, z);
+    this._positions.push((b.x - a.x) * f + a.x, (b.y - a.y) * f + a.y, z);
   }
 }
