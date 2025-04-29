@@ -22,7 +22,7 @@ describe(TerrainThreeView.name, () => {
     addView(domainObject, view);
   });
 
-  test('should have object', () => {
+  test('should have correct children in the view ', () => {
     expect(view.object).toBeInstanceOf(Object3D);
     expectChildrenOfTypeAndCount(view, LineSegments, 1);
     expectChildrenOfTypeAndCount(view, Mesh, 1);
@@ -40,7 +40,7 @@ describe(TerrainThreeView.name, () => {
     expect(boundingBoxOfView).toStrictEqual(boundingBoxOfGrid);
   });
 
-  test('should changed when toggle showContours', () => {
+  test('children of the view should changed when toggle showContours', () => {
     const renderStyle = domainObject.renderStyle;
     expect(renderStyle).toBeDefined();
     if (renderStyle === undefined) {
@@ -57,7 +57,7 @@ describe(TerrainThreeView.name, () => {
     expectChildrenOfTypeAndCount(view, Mesh, 1);
   });
 
-  test('should changed when toggle showSolid', () => {
+  test('children of the view should changed when toggle showSolid', () => {
     const renderStyle = domainObject.renderStyle;
     expect(renderStyle).toBeDefined();
     if (renderStyle === undefined) {

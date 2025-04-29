@@ -77,11 +77,12 @@ describe(RegularGrid2.name, () => {
 
     // Testing each node
     const actualPosition = new Vector3();
-    let sumZ = 0;
+
+    const mean = new Mean();
     for (let i = 0; i < terrain.nodeSize.i; i++) {
       for (let j = 0; j < terrain.nodeSize.j; j++) {
         const z = terrain.getZ(i, j);
-        sumZ += z;
+        mean.add(z);
         expect(terrain.isNodeDef(i, j)).toBe(true);
         expect(z).toBeGreaterThanOrEqual(expectedRange.min.z);
         expect(z).toBeLessThanOrEqual(expectedRange.max.z);
@@ -91,11 +92,11 @@ describe(RegularGrid2.name, () => {
         expect(expectedRange.isInside(actualPosition)).toBe(true);
       }
     }
-    // Check average of z-values is in the middle
-    const averageZ = sumZ / (terrain.nodeSize.i * terrain.nodeSize.j);
+    // Check average of z-values is somewhere the middle
+    expect(mean.hasResult).toBe(true);
     const error = expectedRange.z.delta / 4;
-    expect(averageZ).toBeGreaterThan(expectedRange.z.center - error);
-    expect(averageZ).toBeLessThan(expectedRange.z.center + error);
+    expect(mean.result).toBeGreaterThan(expectedRange.z.center - error);
+    expect(mean.result).toBeLessThan(expectedRange.z.center + error);
 
     // Check min and max of z-values
     expectEqualRange1(terrain.boundingBox.z, expectedRange.z);
@@ -113,7 +114,7 @@ describe(RegularGrid2.name, () => {
     expect(newRange.z.max).toBeLessThan(oldRange.z.max);
   });
 
-  test('Should smooth a surface', () => {
+  test('Should not smooth a surface', () => {
     const initialRange = new Range3(new Vector3(0, 0, 20), new Vector3(1000, 1000, 40));
     const terrain = createFractalRegularGrid2(initialRange, 4, 0.7, 0);
 
@@ -132,3 +133,21 @@ describe(RegularGrid2.name, () => {
     expectEqualRange1(terrain.boundingBox.z, expectedZRange);
   });
 });
+
+class Mean {
+  private _sum = 0;
+  private _count = 0;
+
+  public add(value: number): void {
+    this._sum += value;
+    this._count++;
+  }
+
+  public get result(): number {
+    return this._sum / this._count;
+  }
+
+  public get hasResult(): boolean {
+    return this._count > 0;
+  }
+}
