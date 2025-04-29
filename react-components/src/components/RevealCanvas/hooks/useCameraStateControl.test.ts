@@ -98,21 +98,16 @@ describe(useCameraStateControl.name, () => {
 
     vi.runAllTimers();
 
+    // position
     viewerMock.cameraManager.setCameraState({
       position: new Vector3(1, 0, 0),
       target: new Vector3(1, 1, 1),
       rotation: new Quaternion(0, 0, 0, 1)
     });
 
-
-    viewerMock.cameraManager.setCameraState({
-      position: new Vector3(0, 0, 0),
-      target: new Vector3(0, 0, 1),
-      direction: new Vector3(0, 0, 1)
-    });
-
     rerender();
 
+    // target
     viewerMock.cameraManager.setCameraState({
       position: new Vector3(0, 0, 0),
       target: new Vector3(0, 0, 1),
@@ -121,6 +116,7 @@ describe(useCameraStateControl.name, () => {
 
     rerender();
 
+    // rotation
     viewerMock.cameraManager.setCameraState({
       position: new Vector3(0, 0, 0),
       target: new Vector3(1, 1, 1),
