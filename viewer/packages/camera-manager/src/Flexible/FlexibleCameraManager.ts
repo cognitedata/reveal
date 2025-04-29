@@ -103,8 +103,7 @@ export class FlexibleCameraManager extends PointerEvents implements IFlexibleCam
     return {
       position: this.getPosition(),
       rotation: this.camera.quaternion.clone(),
-      target: this.getTarget(),
-      direction: this.camera.getWorldDirection(new Vector3())
+      target: this.getTarget()
     };
   }
 
@@ -115,14 +114,11 @@ export class FlexibleCameraManager extends PointerEvents implements IFlexibleCam
    * @param state Camera state.
    * **/
   public setCameraState(state: CameraState): void {
-    if (state.rotation && state.target) {
-      throw new Error(`Rotation and target can't be set at the same time`);
-    }
     const position = state.position ?? this.getPosition();
 
-    if (state.direction) {
+    if (state.rotation && state.target) {
       this.controls.setTarget(state.target ?? this.getTarget());
-      this.controls.setPositionAndDirection(position, state.direction);
+      this.controls.setPositionAndRotation(position, state.rotation);
     } else if (state.target) {
       this.controls.setPositionAndTarget(position, state.target);
     } else if (state.rotation) {
