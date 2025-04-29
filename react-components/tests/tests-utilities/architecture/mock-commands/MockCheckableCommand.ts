@@ -2,17 +2,22 @@
  * Copyright 2024 Cognite AS
  */
 
-import { type TranslationInput } from '../../utilities/TranslateInput';
-import { RenderTargetCommand } from '../RenderTargetCommand';
+import { type IconName } from '../../../../src/architecture/base/utilities/IconName';
+import { type TranslationInput } from '../../../../src/architecture/base/utilities/TranslateInput';
+import { RenderTargetCommand } from '../../../../src/architecture/base/commands/RenderTargetCommand';
 
-export class MockToggleCommand extends RenderTargetCommand {
+export class MockCheckableCommand extends RenderTargetCommand {
   public value = false;
   // ==================================================
   // OVERRIDES
   // ==================================================
 
   public override get tooltip(): TranslationInput {
-    return { untranslated: 'Boolean' };
+    return { untranslated: 'Checkable action' };
+  }
+
+  public override get icon(): IconName {
+    return 'Snow';
   }
 
   public override get isToggle(): boolean {
