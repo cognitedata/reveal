@@ -117,7 +117,7 @@ export class FlexibleCameraManager extends PointerEvents implements IFlexibleCam
     const position = state.position ?? this.getPosition();
 
     if (state.rotation && state.target) {
-      this.controls.setTarget(state.target ?? this.getTarget());
+      this.controls.setTarget(state.target);
       this.controls.setPositionAndRotation(position, state.rotation);
     } else if (state.target) {
       this.controls.setPositionAndTarget(position, state.target);
