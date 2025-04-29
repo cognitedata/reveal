@@ -93,7 +93,7 @@ export async function queryCadAssets(
   filter: InstanceFilter | undefined,
   fdmSdk: FdmSDK,
   limit: number
-) {
+): Promise<NodeItem[]> {
   const rawQueryCAD = cadAssetQueryPayload(sourcesToSearch, filter, limit);
 
   const queryCAD = {
@@ -182,8 +182,7 @@ export function filterCadAssetsBasedOnObject3DFromCadNodes(
           : undefined;
 
         if (
-          cadNodeObject3D &&
-          assetObject3D &&
+          assetObject3D !== undefined &&
           cadNodeObject3D.externalId === assetObject3D.externalId &&
           cadNodeObject3D.space === assetObject3D.space
         ) {

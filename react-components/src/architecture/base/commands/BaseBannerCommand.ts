@@ -2,7 +2,6 @@
  * Copyright 2024 Cognite AS
  */
 
-import { IconName } from '../utilities/IconName';
 import { type TranslationInput } from '../utilities/TranslateInput';
 import { RenderTargetCommand } from './RenderTargetCommand';
 

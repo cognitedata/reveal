@@ -24,7 +24,7 @@ export class QualityWarningBannerCommand extends BaseBannerCommand {
     return BannerStatus.Warning;
   }
 
-  public override attach(renderTarget: RevealRenderTarget) {
+  public override attach(renderTarget: RevealRenderTarget): void {
     super.attach(renderTarget);
 
     // Until `isVisible` becomes a signal, we have to propagate setting updates like this

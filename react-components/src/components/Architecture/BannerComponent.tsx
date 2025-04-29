@@ -1,11 +1,10 @@
-import { Banner } from '@cognite/cogs-lab';
 import { type TranslateDelegate, type TranslationInput } from '../../architecture';
 import {
   type BannerStatus,
   type BaseBannerCommand
 } from '../../architecture/base/commands/BaseBannerCommand';
 import { useOnUpdate } from './useOnUpdate';
-import { useMemo, useState } from 'react';
+import { type ReactNode, useMemo, useState } from 'react';
 import styled from 'styled-components';
 import { Infobox } from '@cognite/cogs.js';
 import { getDefaultCommand } from './utilities';
@@ -17,7 +16,7 @@ export const BannerComponent = ({
 }: {
   command: BaseBannerCommand;
   t: TranslateDelegate;
-}) => {
+}): ReactNode => {
   const renderTarget = useRenderTarget();
   const command = useMemo<BaseBannerCommand>(
     () => getDefaultCommand<BaseBannerCommand>(inputCommand, renderTarget),
