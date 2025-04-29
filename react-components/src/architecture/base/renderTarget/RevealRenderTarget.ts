@@ -343,7 +343,9 @@ export class RevealRenderTarget {
   // ==================================================
 
   public getGlobalClippingPlanes(): Plane[] {
-    return this.viewer.getGlobalClippingPlanes();
+    return this.viewer.getGlobalClippingPlanes === undefined
+      ? []
+      : this.viewer.getGlobalClippingPlanes();
   }
 
   public get isGlobalClippingActive(): boolean {
