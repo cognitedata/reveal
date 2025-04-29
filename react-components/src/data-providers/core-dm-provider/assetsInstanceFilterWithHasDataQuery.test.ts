@@ -2,8 +2,8 @@ import { describe, it, expect } from 'vitest';
 import { assetsInstanceFilterWithHasDataQuery } from './assetsInstanceFilterWithHasDataQuery';
 import { type Source } from '../FdmSDK';
 import { COGNITE_ASSET_SOURCE } from './dataModels';
-import { simpleSourcesFixtures } from '../../../tests/tests-utilities/fixtures/dm/sources';
-import { validInstanceFiltersForMappedAssetsQueryPayload } from '../../../tests/tests-utilities/fixtures/dm/instanceFiltersForQueryPayload';
+import { simpleSourcesFixtures } from '#test-utils/fixtures/dm/sources';
+import { validInstanceFiltersForMappedAssetsQueryPayload } from '#test-utils/fixtures/dm/instanceFiltersForQueryPayload';
 
 describe(assetsInstanceFilterWithHasDataQuery.name, () => {
   it('should generate a valid instance filter with the provided sources', () => {
