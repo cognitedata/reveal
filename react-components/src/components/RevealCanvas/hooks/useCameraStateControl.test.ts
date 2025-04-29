@@ -5,7 +5,7 @@ import { describe, expect, test, vi, beforeEach, beforeAll, afterAll } from 'vit
 
 import { renderHook } from '@testing-library/react';
 
-import { Vector3 } from 'three';
+import { Quaternion, Vector3 } from 'three';
 import { cameraManagerGlobalCameraEvents } from '#test-utils/fixtures/cameraManager';
 import { viewerMock } from '#test-utils/fixtures/viewer';
 import { useCameraStateControl, type CameraStateParameters } from './useCameraStateControl';
@@ -63,7 +63,7 @@ describe(useCameraStateControl.name, () => {
           {
             position: position.clone(),
             target: new Vector3(1, 1, 1),
-            direction: new Vector3(0, 0, 1)
+            rotation: new Quaternion(0, 0, 0, 1)
           },
           setter
         );
@@ -90,7 +90,7 @@ describe(useCameraStateControl.name, () => {
         {
           position: new Vector3(0, 0, 0),
           target: new Vector3(1, 1, 1),
-          direction: new Vector3(0, 0, 1)
+          rotation: new Quaternion(0, 0, 0, 1)
         },
         setter
       );
@@ -101,10 +101,9 @@ describe(useCameraStateControl.name, () => {
     viewerMock.cameraManager.setCameraState({
       position: new Vector3(1, 0, 0),
       target: new Vector3(1, 1, 1),
-      direction: new Vector3(0, 0, 1)
+      rotation: new Quaternion(0, 0, 0, 1)
     });
 
-    rerender();
 
     viewerMock.cameraManager.setCameraState({
       position: new Vector3(0, 0, 0),
@@ -116,8 +115,16 @@ describe(useCameraStateControl.name, () => {
 
     viewerMock.cameraManager.setCameraState({
       position: new Vector3(0, 0, 0),
+      target: new Vector3(0, 0, 1),
+      rotation: new Quaternion(0, 0, 0, 1)
+    });
+
+    rerender();
+
+    viewerMock.cameraManager.setCameraState({
+      position: new Vector3(0, 0, 0),
       target: new Vector3(1, 1, 1),
-      direction: new Vector3(0, 1, 1)
+      rotation: new Quaternion(0.1, 0.01, 0, 0.995)
     });
 
     rerender();
@@ -125,4 +132,5 @@ describe(useCameraStateControl.name, () => {
 
     expect(setter).toHaveBeenCalledTimes(3);
   });
+
 });
