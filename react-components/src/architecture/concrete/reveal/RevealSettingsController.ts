@@ -1,11 +1,11 @@
-import { effect, Signal, signal } from '@cognite/signals';
-import { QualitySettings } from '../../base/utilities/quality/QualitySettings';
+import { effect, type Signal, signal } from '@cognite/signals';
+import { type QualitySettings } from '../../base/utilities/quality/QualitySettings';
 import { DEFAULT_REVEAL_QUALITY_SETTINGS } from './constants';
-import { Cognite3DViewer, DataSourceType } from '@cognite/reveal';
+import { type Cognite3DViewer, type DataSourceType } from '@cognite/reveal';
 
 export class RevealSettingsController {
-  private _viewer: Cognite3DViewer<DataSourceType>;
-  private _renderQualitySignal = signal<QualitySettings>(DEFAULT_REVEAL_QUALITY_SETTINGS);
+  private readonly _viewer: Cognite3DViewer<DataSourceType>;
+  private readonly _renderQualitySignal = signal<QualitySettings>(DEFAULT_REVEAL_QUALITY_SETTINGS);
 
   constructor(viewer: Cognite3DViewer<DataSourceType>) {
     this._viewer = viewer;

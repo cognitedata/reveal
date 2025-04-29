@@ -1,8 +1,8 @@
 import { effect } from '@cognite/signals';
 import { BannerStatus, BaseBannerCommand } from '../../commands/BaseBannerCommand';
-import { TranslationInput } from '../../utilities/TranslateInput';
+import { type TranslationInput } from '../../utilities/TranslateInput';
 import { getClosestFidelity, MAX_FIDELITY } from './fidelityLevels';
-import { RevealRenderTarget } from '../../renderTarget/RevealRenderTarget';
+import { type RevealRenderTarget } from '../../renderTarget/RevealRenderTarget';
 
 export class QualityWarningBannerCommand extends BaseBannerCommand {
   // ==================================================

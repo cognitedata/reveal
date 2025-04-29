@@ -1,15 +1,15 @@
 import { assertNever } from '../../../../utilities/assertNever';
 
+import { clamp, maxBy } from 'lodash';
+import { type QualitySettings } from '../../utilities/quality/QualitySettings';
+import assert from 'assert';
+
 export const FIDELITY_LEVELS = [1, 2, 3, 4, 5] as const;
 
 export type FidelityLevel = (typeof FIDELITY_LEVELS)[number];
 
 export const MAX_FIDELITY: FidelityLevel = 5;
 export const MIN_FIDELITY: FidelityLevel = 1;
-
-import { clamp, maxBy } from 'lodash';
-import { QualitySettings } from '../../utilities/quality/QualitySettings';
-import assert from 'assert';
 
 export function getQualityForFidelityLevel(fidelityLevel: FidelityLevel) {
   switch (fidelityLevel) {
@@ -91,7 +91,7 @@ export function getQualityForFidelityLevel(fidelityLevel: FidelityLevel) {
 }
 
 export function getClosestFidelity(quality: QualitySettings): FidelityLevel {
-  let similaritiesWithLevel = FIDELITY_LEVELS.map((level) => ({
+  const similaritiesWithLevel = FIDELITY_LEVELS.map((level) => ({
     level,
     similarity: getQualitySimilarityHeuristic(quality, getQualityForFidelityLevel(level))
   }));

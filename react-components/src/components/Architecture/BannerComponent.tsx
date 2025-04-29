@@ -1,8 +1,8 @@
 import { Banner } from '@cognite/cogs-lab';
-import { TranslateDelegate, TranslationInput } from '../../architecture';
+import { type TranslateDelegate, type TranslationInput } from '../../architecture';
 import {
-  BannerStatus,
-  BaseBannerCommand
+  type BannerStatus,
+  type BaseBannerCommand
 } from '../../architecture/base/commands/BaseBannerCommand';
 import { useOnUpdate } from './useOnUpdate';
 import { useMemo, useState } from 'react';
