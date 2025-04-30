@@ -7,8 +7,7 @@ import { type ModelStyleGroupWithMappingsFetched, type CadModelOptions } from '.
 import { useMemo } from 'react';
 import { useMappedEdgesForRevisions, useAssetMappedNodesForRevisions, ModelWithAssetMappings } from '../../../hooks';
 import { getMappedStyleGroupFromAssetMappings } from './utils/getMappedStyleGroupFromAssetMappings';
-import { getMappedStyleGroupFromFdm } from './utils/getMappedStyleGroupFromFdm';
-import { getMappedCadModelsOptions } from './utils/getMappedCadModelsOptions';
+import { getMappedStyleGroupFromDmConnection } from './utils/getMappedStyleGroupFromDmConnection';
 import { groupStyleGroupByModel } from './utils/groupStyleGroupByModel';
 
 export function useCalculateMappedStyling(
@@ -16,7 +15,12 @@ export function useCalculateMappedStyling(
   defaultMappedNodeAppearance?: NodeAppearance
 ): ModelStyleGroupWithMappingsFetched {
   const modelsRevisionsWithMappedEquipment = useMemo(
-    () => getMappedCadModelsOptions(defaultMappedNodeAppearance, models),
+    () => {
+      if (defaultMappedNodeAppearance !== undefined) {
+        return models;
+      }
+      return models.filter((model) => model.styling?.mapped !== undefined);
+    },
     [models, defaultMappedNodeAppearance]
   );
   const {
@@ -51,7 +55,7 @@ export function useCalculateMappedStyling(
 
       const styleGroup =
         modelStyle !== undefined
-          ? [getMappedStyleGroupFromFdm(fdmData, modelStyle)]
+          ? [getMappedStyleGroupFromDmConnection(fdmData, modelStyle)]
           : [];
       return { model, styleGroup };
     });
