@@ -4,9 +4,9 @@
 import { useQuery, type UseQueryResult } from '@tanstack/react-query';
 import { fetchAncestorNodesForTreeIndex } from '../../components/CacheProvider/requests';
 import { type AnyIntersection } from '@cognite/reveal';
-import { type NodeAssetMappingResult } from '../../components/CacheProvider/AssetMappingAndNode3DCache';
 import { useSDK } from '../../components/RevealCanvas/SDKProvider';
 import { useAssetMappingAndNode3DCache } from '../../components/CacheProvider/CacheProvider';
+import { type NodeAssetMappingResult } from '../../components';
 
 export const useAssetMappingForTreeIndex = (
   intersection: AnyIntersection | undefined

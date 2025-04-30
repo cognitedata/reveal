@@ -8,13 +8,13 @@ import { Reveal3DResources } from './Reveal3DResources';
 import type {
   AddImage360CollectionOptions,
   Reveal3DResourcesProps,
+  StyledModel,
   StyledPointCloudModel
 } from './types';
 import {
   Reveal3DResourcesContext,
   type Reveal3DResourcesDependencies
 } from './Reveal3DResources.context';
-import type { StyledModel } from './hooks/useCalculateCadStyling';
 
 describe(Reveal3DResources.name, () => {
   const defaultProps: Reveal3DResourcesProps = {

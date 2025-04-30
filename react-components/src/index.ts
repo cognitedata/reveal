@@ -11,6 +11,8 @@ export * from './data-providers';
 
 export * from './utilities/externalIndex';
 
+export * from './utilities/hybrid/getCadHybridAssetMappings';
+
 // Higher order components
 export { withSuppressRevealEvents } from './higher-order-components/withSuppressRevealEvents';
 
