@@ -108,9 +108,9 @@ export class FlexibleCameraManager extends PointerEvents implements IFlexibleCam
   }
 
   /**
-   * Sets camera state. All parameters are optional. Rotation and target can't be set at the same time,
-   * if so, error will be thrown. Set rotation is preserved until next call of setCameraState with
-   * empty rotation field.
+   * Sets camera state. All parameters are optional. If rotation and target are set at the same time
+   * then the target will be set separately as it may be out of the camera direction, such as using
+   * pivot points and then rotating the camera with the rotation value to point the camera direction.
    * @param state Camera state.
    * **/
   public setCameraState(state: CameraState): void {
