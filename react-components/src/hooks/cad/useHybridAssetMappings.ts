@@ -8,19 +8,24 @@ import { type CadModelOptions } from '../../components/Reveal3DResources/types';
 import { type ThreeDModelFdmMappings } from '../types';
 import { DEFAULT_QUERY_STALE_TIME } from '../../utilities/constants';
 import { useAssetMappingAndNode3DCache } from '../../components/CacheProvider/CacheProvider';
-import { useAssetMappedNodesForRevisions } from './useAssetMappedNodesForRevisions';
 import { isDefined } from '../../utilities/isDefined';
 import {
   createFdmKey,
   createModelRevisionKey
 } from '../../components/CacheProvider/idAndKeyTranslation';
-import { useMemo } from 'react';
+import { useContext, useMemo } from 'react';
 import { queryKeys } from '../../utilities/queryKeys';
+import { AssetMappingsContext } from '../AssetMappings.context';
 
 export const useHybridAssetMappings = (
   hybridFdmAssetExternalIds: DmsUniqueIdentifier[],
   models: CadModelOptions[]
 ): UseQueryResult<ThreeDModelFdmMappings[]> => {
+
+  const {
+    useAssetMappedNodesForRevisions,
+  } = useContext(AssetMappingsContext);
+
   const assetMappingAndNode3DCache = useAssetMappingAndNode3DCache();
   const { data: modelWithAssetMappings } = useAssetMappedNodesForRevisions(models);
 
