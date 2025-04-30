@@ -81,7 +81,6 @@ describe(LayersButton.name, () => {
     await userEvent.click(screen.getByRole('button', { name: 'Filter 3D resource layers' }));
 
     const cadModels = screen.getByText('CAD models');
-
     expect(cadModels.closest('[data-test-id="layers-button"]')).not.toBeNull();
   });
 
