@@ -7,6 +7,7 @@ import type { ReactElement, ReactNode } from 'react';
 import { LayersButton } from './LayersButton';
 import type { LayersButtonProps } from './LayersButton';
 import { LayersButtonContext, type LayersButtonDependencies } from './LayersButton.context';
+import userEvent from '@testing-library/user-event';
 
 import { type ModelLayerHandlers } from './types';
 import { cadMock } from '#test-utils/fixtures/cadModel';
@@ -77,10 +78,7 @@ describe(LayersButton.name, () => {
       }
     );
 
-    const button = screen.getByRole('button', { name: 'Filter 3D resource layers' });
-    await act(async () => {
-      button.click();
-    });
+    await userEvent.click(screen.getByRole('button', { name: 'Filter 3D resource layers' }));
 
     const cadModels = screen.getByText('CAD models');
 
