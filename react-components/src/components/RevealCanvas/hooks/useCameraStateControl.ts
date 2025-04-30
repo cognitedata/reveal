@@ -8,7 +8,7 @@ import { type CameraState } from '@cognite/reveal';
 import { Quaternion } from 'three';
 
 // Camera state parameters type with position and target as requires but rotation as optional
-export type CameraStateParameters = Omit<Required<CameraState>, 'rotation'> & { rotation?: Quaternion; };
+export type CameraStateParameters = Omit<Required<CameraState>, 'rotation'> & Pick<CameraState, 'rotation'>;
 
 export const useCameraStateControl = (
   externalCameraState?: CameraStateParameters,
