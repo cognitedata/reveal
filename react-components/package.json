@@ -57,7 +57,7 @@
   "devDependencies": {
     "@cognite/cdf-i18n-utils": "^0.7.5",
     "@cognite/cdf-utilities": "^3.6.0",
-    "@cognite/reveal": "^4.24.0",
+    "@cognite/reveal": "4.25.1",
     "@cognite/sdk": "^10.0.0",
     "@playwright/test": "1.49.0",
     "@storybook/addon-essentials": "8.4.5",

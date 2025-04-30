@@ -98,7 +98,10 @@ function isCameraStatesEqual(
 
   const isPositionStateEqual = previousPosition.distanceToSquared(currentPosition) <= epsilon
   const isTargetStateEqual = previousTarget.distanceToSquared(currentTarget) <= epsilon;
-  const isRotationStateEqual = currentRotation && previousRotation ? previousRotation.angleTo(currentRotation) <= epsilon : true;
+
+  const nonNullCurrentRotation = currentRotation ?? new Quaternion().identity();
+  const nonNullPreviousRotation = previousRotation ?? new Quaternion().identity();
+  const isRotationStateEqual = nonNullPreviousRotation.angleTo(nonNullCurrentRotation) <= epsilon;
 
   return (
     isPositionStateEqual &&
