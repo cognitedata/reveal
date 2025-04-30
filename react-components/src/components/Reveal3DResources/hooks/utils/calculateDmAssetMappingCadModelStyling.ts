@@ -10,7 +10,7 @@ import { type TreeIndexStylingGroup } from '../../../CadModelContainer';
 import { getNodeSubtreeNumericRange } from './getNodeSubtreeNumericRange';
 import { getModelMappings } from './getModelMappings';
 
-export function calculateFdmCadModelStyling(
+export function calculateDmAssetMappingCadModelStyling(
   stylingGroups: FdmAssetStylingGroup[],
   mappings: ThreeDModelFdmMappings[],
   model: CadModelOptions

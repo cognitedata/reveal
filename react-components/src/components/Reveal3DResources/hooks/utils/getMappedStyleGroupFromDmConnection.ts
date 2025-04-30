@@ -6,7 +6,7 @@ import { type FdmConnectionWithNode } from '../../../CacheProvider/types';
 import { type TreeIndexStylingGroup } from '../../../CadModelContainer';
 import { getNodeSubtreeNumericRange } from './getNodeSubtreeNumericRange';
 
-export function getMappedStyleGroupFromFdm(
+export function getMappedStyleGroupFromDmConnection(
   edges: FdmConnectionWithNode[],
   mapped: NodeAppearance
 ): TreeIndexStylingGroup {
