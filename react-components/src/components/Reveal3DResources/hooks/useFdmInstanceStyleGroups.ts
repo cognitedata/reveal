@@ -2,15 +2,16 @@
  * Copyright 2025 Cognite AS
  */
 import { useMemo } from 'react';
-import {
-  type CadModelOptions,
-  type FdmAssetStylingGroup,
-  type AssetStylingGroup,
-  type HybridFdmAssetStylingGroup
-} from '..';
+
 import { type ThreeDModelFdmMappings } from '../../../hooks';
 import { isFdmAssetStylingGroup } from '../../../utilities/StylingGroupUtils';
-import { type ModelStyleGroup } from '../types';
+import {
+  AssetStylingGroup,
+  CadModelOptions,
+  FdmAssetStylingGroup,
+  HybridFdmAssetStylingGroup,
+  type ModelStyleGroup
+} from '../types';
 import { calculateFdmCadModelStyling } from './utils/calculateFdmCadModelStyling';
 
 export function useFdmInstanceStyleGroups(

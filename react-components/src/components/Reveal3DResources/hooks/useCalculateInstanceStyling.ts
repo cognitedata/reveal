@@ -2,12 +2,7 @@
  * Copyright 2025 Cognite AS
  */
 import { useMemo } from 'react';
-import {
-  type CadModelOptions,
-  type FdmAssetStylingGroup,
-  type AssetStylingGroup,
-  type HybridFdmAssetStylingGroup
-} from '..';
+
 import { useFdmAssetMappings, useNodesForAssets } from '../../../hooks';
 import { useHybridAssetMappings } from '../../../hooks/cad/useHybridAssetMappings';
 import {
@@ -15,7 +10,13 @@ import {
   isClassicAssetMappingStylingGroup,
   isHybridFdmAssetStylingGroup
 } from '../../../utilities/StylingGroupUtils';
-import { type ModelStyleGroupWithMappingsFetched } from '../types';
+import {
+  AssetStylingGroup,
+  CadModelOptions,
+  FdmAssetStylingGroup,
+  HybridFdmAssetStylingGroup,
+  type ModelStyleGroupWithMappingsFetched
+} from '../types';
 import { useAssetMappingInstanceStyleGroups } from './useAssetMappingInstanceStyleGroups';
 import { useFdmInstanceStyleGroups } from './useFdmInstanceStyleGroups';
 import { useHybridFdmInstanceStyleGroups } from './useHybridFdmInstanceStyleGroups';
@@ -44,7 +45,7 @@ export function useCalculateInstanceStyling(
     data: modelAssetMappings,
     isLoading: isModelMappingsLoading,
     isFetched: isModelMappingsFetched,
-    isError
+    isError: isModelMappingsError
   } = useNodesForAssets(models, assetIdsFromInstanceGroups);
 
   const { data: modelHybridAssetMappings } = useHybridAssetMappings(
@@ -86,6 +87,7 @@ export function useCalculateInstanceStyling(
 
   return {
     combinedMappedStyleGroups,
-    isModelMappingsLoading: !isError && isModelMappingsLoading && !isModelMappingsFetched
+    isModelMappingsLoading: isModelMappingsLoading && !isModelMappingsFetched,
+    isModelMappingsError
   };
 }

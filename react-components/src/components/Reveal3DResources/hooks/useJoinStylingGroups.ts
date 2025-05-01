@@ -2,9 +2,8 @@
  * Copyright 2025 Cognite AS
  */
 import { useMemo } from 'react';
-import { type CadModelOptions } from '..';
 import { isSameModel } from '../../../utilities/isSameModel';
-import { type ModelStyleGroup, type StyledModel } from '../types';
+import { CadModelOptions, type ModelStyleGroup, type StyledModel } from '../types';
 import { extractDefaultStyles } from './utils/extractDefaultStyles';
 
 export function useJoinStylingGroups(

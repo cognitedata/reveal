@@ -103,13 +103,13 @@ export function useCalculateMappedStyling(
   );
 
   const isModelMappingsLoading =
-    (!isFDMEquipmentMappingsError &&
-      isFDMEquipmentMappingsLoading &&
+    (isFDMEquipmentMappingsLoading &&
       !isFDMEquipmentMappingsFetched) ||
-    (!isAssetMappingsError && isAssetMappingsLoading && !isAssetMappingsFetched);
+    (isAssetMappingsLoading && !isAssetMappingsFetched);
 
   return {
     combinedMappedStyleGroups,
-    isModelMappingsLoading
+    isModelMappingsLoading,
+    isModelMappingsError: isFDMEquipmentMappingsError || isAssetMappingsError,
   };
 }
