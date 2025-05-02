@@ -1,4 +1,4 @@
-import { QualitySettings } from '../../base/utilities/quality/QualitySettings';
+import { type QualitySettings } from '../../base/utilities/quality/QualitySettings';
 
 export const DEFAULT_REVEAL_QUALITY_SETTINGS: QualitySettings = {
   cadBudget: {
