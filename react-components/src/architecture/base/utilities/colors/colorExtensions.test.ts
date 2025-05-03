@@ -13,7 +13,7 @@ import {
   getMixedColor,
   isGreyScale
 } from './colorExtensions';
-import { expectEqualColor } from '../../../../../tests/tests-utilities/primitives/primitiveTestUtil';
+import { expectEqualColor } from '#test-utils/primitives/primitiveTestUtil';
 
 const RED_COLOR = new Color(1, 0, 0);
 const BLUE_COLOR = new Color(0, 0, 1);

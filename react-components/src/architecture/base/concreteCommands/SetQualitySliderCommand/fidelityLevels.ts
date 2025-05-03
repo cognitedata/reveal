@@ -1,5 +1,9 @@
 import { assertNever } from '../../../../utilities/assertNever';
 
+import { clamp, maxBy } from 'lodash';
+import { type QualitySettings } from '../../utilities/quality/QualitySettings';
+import assert from 'assert';
+
 export const FIDELITY_LEVELS = [1, 2, 3, 4, 5] as const;
 
 export type FidelityLevel = (typeof FIDELITY_LEVELS)[number];
@@ -7,11 +11,7 @@ export type FidelityLevel = (typeof FIDELITY_LEVELS)[number];
 export const MAX_FIDELITY: FidelityLevel = 5;
 export const MIN_FIDELITY: FidelityLevel = 1;
 
-import { clamp, maxBy } from 'lodash';
-import { QualitySettings } from '../../utilities/quality/QualitySettings';
-import assert from 'assert';
-
-export function getQualityForFidelityLevel(fidelityLevel: FidelityLevel) {
+export function getQualityForFidelityLevel(fidelityLevel: FidelityLevel): QualitySettings {
   switch (fidelityLevel) {
     case 1:
       return {
@@ -91,7 +91,7 @@ export function getQualityForFidelityLevel(fidelityLevel: FidelityLevel) {
 }
 
 export function getClosestFidelity(quality: QualitySettings): FidelityLevel {
-  let similaritiesWithLevel = FIDELITY_LEVELS.map((level) => ({
+  const similaritiesWithLevel = FIDELITY_LEVELS.map((level) => ({
     level,
     similarity: getQualitySimilarityHeuristic(quality, getQualityForFidelityLevel(level))
   }));
@@ -102,7 +102,7 @@ export function getClosestFidelity(quality: QualitySettings): FidelityLevel {
   return closestMatch;
 }
 
-function getQualitySimilarityHeuristic(q0: QualitySettings, q1: QualitySettings) {
+function getQualitySimilarityHeuristic(q0: QualitySettings, q1: QualitySettings): number {
   const cadRenderCostRatio = getSmallestRatio(
     q0.cadBudget.maximumRenderCost,
     q1.cadBudget.maximumRenderCost
@@ -123,7 +123,7 @@ function getQualitySimilarityHeuristic(q0: QualitySettings, q1: QualitySettings)
   return cadRenderCostRatio + pointCloudPointRatio + maxResolutionRatio + cameraMovementRatio;
 }
 
-function getSmallestRatio(f0: number | undefined, f1: number | undefined) {
+function getSmallestRatio(f0: number | undefined, f1: number | undefined): number {
   if (f0 === undefined || f1 === undefined) {
     return 0;
   }

@@ -1,6 +1,6 @@
 {
   "name": "@cognite/reveal-react-components",
-  "version": "0.77.1",
+  "version": "0.77.2",
   "exports": {
     ".": {
       "import": "./dist/index.js",
@@ -25,7 +25,7 @@
     "tsc": "tsc",
     "typecheck:source": "tsc --noEmit --project tsconfig.build.json",
     "typecheck:test": "tsc --noEmit --project tsconfig.test.json",
-    "lint": "eslint . --cache",
+    "lint": "eslint --cache --max-warnings 0 --ext=.tsx,.ts .",
     "test": "vitest run --dom --silent",
     "test:coverage": "vitest run --dom --coverage --silent",
     "test:playwright": "playwright test",
