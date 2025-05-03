@@ -9,7 +9,6 @@ import {
   RevisionId
 } from '../../CacheProvider/types';
 import { CogniteInternalId, Node3D } from '@cognite/sdk';
-import { useHybridAssetMappings } from '../../../hooks/cad';
 import {
   AssetStylingGroup,
   CadModelOptions,
