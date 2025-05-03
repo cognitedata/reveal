@@ -1,11 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { useCalculateCadStyling } from './useCalculateCadStyling';
-import {
-  ModelWithAssetMappings,
-  ThreeDModelFdmMappings,
-  useAssetMappedNodesForRevisions,
-  useMappedEdgesForRevisions
-} from '../../../hooks';
+import { ModelWithAssetMappings, ThreeDModelFdmMappings } from '../../../hooks';
 import { QueryClient, QueryClientProvider, UseQueryResult } from '@tanstack/react-query';
 import {
   FdmConnectionWithNode,
@@ -34,22 +29,7 @@ import { sdkMock } from '#test-utils/fixtures/sdk';
 import { AssetMappingAndNode3DCache } from '../../CacheProvider';
 import { StyledModel } from '../types';
 import { getNodeSubtreeNumericRange } from './utils/getNodeSubtreeNumericRange';
-
-vi.mock('../../../hooks/', async (importOriginal) => {
-  const original = await importOriginal();
-  return {
-    ...original,
-    useAssetMappedNodesForRevisions: vi.fn(),
-    useMappedEdgesForRevisions: vi.fn()
-  };
-});
-vi.mock('../../../hooks/cad', async (importOriginal) => {
-  const original = await importOriginal();
-  return {
-    ...original,
-    useHybridAssetMappings: vi.fn()
-  };
-});
+import { AssetMappingsContext } from '../../../hooks/AssetMappings.context';
 
 describe('useCalculateCadStyling', () => {
   const mockModels = [
@@ -253,11 +233,23 @@ describe('useCalculateCadStyling', () => {
     .returns(root)
     .object();
 
+  const mockUseAssetMappedNodesForRevisions = vi.fn();
+  const mockUseMappedEdgesForRevisions = vi.fn();
+  const mockUseHybridAssetMappings = vi.fn();
   const queryClient = new QueryClient();
 
   const wrapper: FC<PropsWithChildren> = ({ children }) => (
     <QueryClientProvider client={queryClient}>
-      <ViewerContext.Provider value={renderTargetMock}>{children}</ViewerContext.Provider>
+      <ViewerContext.Provider value={renderTargetMock}>
+        <AssetMappingsContext.Provider
+          value={{
+            useAssetMappedNodesForRevisions: mockUseAssetMappedNodesForRevisions,
+            useHybridAssetMappings: mockUseHybridAssetMappings,
+            useMappedEdgesForRevisions: mockUseMappedEdgesForRevisions
+          }}>
+          {children}
+        </AssetMappingsContext.Provider>
+      </ViewerContext.Provider>
     </QueryClientProvider>
   );
 
@@ -276,7 +268,7 @@ describe('useCalculateCadStyling', () => {
       isError: false
     } as UseQueryResult<ModelRevisionToConnectionMap>;
 
-    vi.mocked(useMappedEdgesForRevisions).mockReturnValue(mappedEdgesForRevision);
+    mockUseMappedEdgesForRevisions.mockReturnValue(mappedEdgesForRevision);
 
     const mappedAssetNodesForRevision = {
       data: mockAssetNodesForRevisionData,
@@ -285,7 +277,7 @@ describe('useCalculateCadStyling', () => {
       isError: false
     } as UseQueryResult<ModelWithAssetMappings[]>;
 
-    vi.mocked(useAssetMappedNodesForRevisions).mockReturnValue(mappedAssetNodesForRevision);
+    mockUseAssetMappedNodesForRevisions.mockReturnValue(mappedAssetNodesForRevision);
 
     const hybridAssetMappingsData = {
       data: [
@@ -305,7 +297,7 @@ describe('useCalculateCadStyling', () => {
       isError: false
     } as unknown as UseQueryResult<ThreeDModelFdmMappings[]>;
 
-    vi.mocked(useHybridAssetMappings).mockReturnValue(hybridAssetMappingsData);
+    mockUseHybridAssetMappings.mockReturnValue(hybridAssetMappingsData);
 
     const { result } = renderHook(
       () => useCalculateCadStyling(mockModels, mockInstanceGroups, mockDefaultResourceStyling),
@@ -329,21 +321,21 @@ describe('useCalculateCadStyling', () => {
       isLoading: true
     } as UseQueryResult<ModelRevisionToConnectionMap>;
 
-    vi.mocked(useMappedEdgesForRevisions).mockReturnValue(mappedEdgesForRevision);
+    mockUseMappedEdgesForRevisions.mockReturnValue(mappedEdgesForRevision);
 
     const mappedAssetNodesForRevision = {
       data: undefined,
       isLoading: true
     } as UseQueryResult<ModelWithAssetMappings[]>;
 
-    vi.mocked(useAssetMappedNodesForRevisions).mockReturnValue(mappedAssetNodesForRevision);
+    mockUseAssetMappedNodesForRevisions.mockReturnValue(mappedAssetNodesForRevision);
 
     const hybridAssetMappingsData = {
       data: undefined,
       isLoading: true
     } as UseQueryResult<ThreeDModelFdmMappings[]>;
 
-    vi.mocked(useHybridAssetMappings).mockReturnValue(hybridAssetMappingsData);
+    mockUseHybridAssetMappings.mockReturnValue(hybridAssetMappingsData);
 
     const { result } = renderHook(
       () => useCalculateCadStyling(mockModels, mockInstanceGroups, mockDefaultResourceStyling),
