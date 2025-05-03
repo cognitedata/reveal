@@ -2,10 +2,10 @@
  * Copyright 2024 Cognite AS
  */
 
-import { type TranslationInput } from '../../../../src/architecture/base/utilities/TranslateInput';
-import { type IconName } from '../../../../src/architecture/base/utilities/IconName';
+import { type TranslationInput } from '../../utilities/TranslateInput';
+import { type IconName } from '../../utilities/IconName';
 
-import { BaseSettingsCommand } from '../../../../src/architecture/base/commands/BaseSettingsCommand';
+import { BaseSettingsCommand } from '../BaseSettingsCommand';
 import { MockActionCommand } from './MockActionCommand';
 import { MockToggleCommand } from './MockToggleCommand';
 import { MockCheckableCommand } from './MockCheckableCommand';
@@ -14,7 +14,7 @@ import { MockSliderCommand } from './MockSliderCommand';
 import { MockFilterCommand } from './MockFilterCommand';
 import { MockNumberOptionCommand } from './MockNumberOptionCommand';
 import { MockSectionCommand } from './MockSectionCommand';
-import { DividerCommand } from '../../../../src/architecture/base/commands/DividerCommand';
+import { DividerCommand } from '../DividerCommand';
 
 export class MockSettingsCommand extends BaseSettingsCommand {
   // ==================================================

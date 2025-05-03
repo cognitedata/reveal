@@ -1,5 +1,4 @@
 import { describe, expect, test } from 'vitest';
-import assert from 'assert';
 import {
   FIDELITY_LEVELS,
   getClosestFidelity,
@@ -40,23 +39,11 @@ describe('fidelityLevels', () => {
     test('chooses closest budget when deviations are small', () => {
       FIDELITY_LEVELS.forEach((level) => {
         const quality = getQualityForFidelityLevel(level);
+        quality.cadBudget.maximumRenderCost -= 10_000;
+        quality.pointCloudBudget.numberOfPoints -= 200_000;
+        quality.resolutionOptions.maxRenderResolution -= 100_000;
+        quality.resolutionOptions.movingCameraResolutionFactor -= 0.1;
 
-        assert(quality.resolutionOptions.maxRenderResolution !== undefined);
-        assert(quality.resolutionOptions.movingCameraResolutionFactor !== undefined);
-
-        quality.cadBudget = {
-          ...quality.cadBudget,
-          maximumRenderCost: quality.cadBudget.maximumRenderCost - 10_100
-        };
-        quality.pointCloudBudget = {
-          ...quality.pointCloudBudget,
-          numberOfPoints: quality.pointCloudBudget.numberOfPoints - 200_000
-        };
-        quality.resolutionOptions = {
-          ...quality.resolutionOptions,
-          maxRenderResolution: quality.resolutionOptions.maxRenderResolution - 100_000,
-          movingCameraResolutionFactor: quality.resolutionOptions.movingCameraResolutionFactor - 0.1
-        };
         expect(getClosestFidelity(quality)).toBe(level);
       });
     });

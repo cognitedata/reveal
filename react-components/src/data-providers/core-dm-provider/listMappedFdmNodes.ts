@@ -9,16 +9,8 @@ import {
   type NodeItem,
   type Source
 } from '../FdmSDK';
-import {
-  COGNITE_CAD_NODE_SOURCE,
-  type COGNITE_ASSET_SOURCE,
-  type CogniteAssetProperties
-} from './dataModels';
-import {
-  cadAssetQueryPayload,
-  image360AssetsQueryPayload,
-  pointCloudsAssetsQueryPayload
-} from './cadAndPointCloudAndImage360AssetQuery';
+import { COGNITE_CAD_NODE_SOURCE, type COGNITE_ASSET_SOURCE, type CogniteAssetProperties } from './dataModels';
+import { cadAssetQueryPayload, image360AssetsQueryPayload, pointCloudsAssetsQueryPayload } from './cadAndPointCloudAndImage360AssetQuery';
 import { uniqBy } from 'lodash';
 import { isDmsInstance } from '../../utilities/instanceIds';
 
@@ -36,22 +28,12 @@ export async function listAllMappedFdmNodes(
   const filter = makeSureNonEmptyFilterForRequest(instancesFilter);
 
   const cadAssets = await queryCadAssets(sourcesToSearch, revisionRefs, filter, fdmSdk, limit);
-  const pointCloudsAssets = await queryPointCloudsAssets(
-    sourcesToSearch,
-    revisionRefs,
-    filter,
-    fdmSdk,
-    limit
-  );
-  const image360Assets = await queryImage360Assets(
-    sourcesToSearch,
-    revisionRefs,
-    filter,
-    fdmSdk,
-    limit
-  );
+  const pointCloudsAssets = await queryPointCloudsAssets(sourcesToSearch, revisionRefs, filter, fdmSdk, limit);
+  const image360Assets = await queryImage360Assets(sourcesToSearch, revisionRefs, filter, fdmSdk, limit);
 
-  const allAssets = cadAssets.concat(pointCloudsAssets).concat(image360Assets);
+  const allAssets = cadAssets
+    .concat(pointCloudsAssets)
+    .concat(image360Assets);
   return allAssets;
 }
 
@@ -69,32 +51,20 @@ export async function listMappedFdmNodes(
   const filter = makeSureNonEmptyFilterForRequest(instancesFilter);
 
   const cadAssets = await queryCadAssets(sourcesToSearch, revisionRefs, filter, fdmSdk, limit);
-  const pointCloudsAssets = await queryPointCloudsAssets(
-    sourcesToSearch,
-    revisionRefs,
-    filter,
-    fdmSdk,
-    limit
-  );
-  const image360Assets = await queryImage360Assets(
-    sourcesToSearch,
-    revisionRefs,
-    filter,
-    fdmSdk,
-    limit
-  );
+  const pointCloudsAssets = await queryPointCloudsAssets(sourcesToSearch, revisionRefs, filter, fdmSdk, limit);
+  const image360Assets = await queryImage360Assets(sourcesToSearch, revisionRefs, filter, fdmSdk, limit);
 
-  return cadAssets.concat(pointCloudsAssets).concat(image360Assets);
+  return cadAssets
+    .concat(pointCloudsAssets)
+    .concat(image360Assets);
 }
 
-export async function queryCadAssets(
-  sourcesToSearch: Source[],
-  revisionRefs: DmsUniqueIdentifier[],
-  filter: InstanceFilter | undefined,
-  fdmSdk: FdmSDK,
-  limit: number
-): Promise<NodeItem[]> {
-  const rawQueryCAD = cadAssetQueryPayload(sourcesToSearch, filter, limit);
+export async function queryCadAssets(sourcesToSearch : Source[], revisionRefs: DmsUniqueIdentifier[], filter: InstanceFilter | undefined, fdmSdk: FdmSDK, limit: number) {
+  const rawQueryCAD = cadAssetQueryPayload(
+    sourcesToSearch,
+    filter,
+    limit
+  );
 
   const queryCAD = {
     ...rawQueryCAD,
@@ -106,24 +76,17 @@ export async function queryCadAssets(
     [{ source: typeof COGNITE_ASSET_SOURCE; properties: CogniteAssetProperties }]
   >(queryCAD, ['cad_nodes']);
 
-  const filteredCadAssets = filterCadAssetsBasedOnObject3DFromCadNodes(
-    sourcesToSearch,
-    queryResultCAD.items.cad_assets,
-    queryResultCAD.items.cad_nodes
-  );
+  const filteredCadAssets = filterCadAssetsBasedOnObject3DFromCadNodes(sourcesToSearch, queryResultCAD.items.cad_assets, queryResultCAD.items.cad_nodes);
 
   return filteredCadAssets;
 }
 
-// eslint-disable-next-line @typescript-eslint/explicit-function-return-type
-export async function queryPointCloudsAssets(
-  sourcesToSearch: Source[],
-  revisionRefs: DmsUniqueIdentifier[],
-  filter: InstanceFilter | undefined,
-  fdmSdk: FdmSDK,
-  limit: number
-) {
-  const rawQueryPointClouds = pointCloudsAssetsQueryPayload(sourcesToSearch, filter, limit);
+export async function queryPointCloudsAssets(sourcesToSearch : Source[], revisionRefs: DmsUniqueIdentifier[], filter: InstanceFilter | undefined, fdmSdk: FdmSDK, limit: number) {
+  const rawQueryPointClouds = pointCloudsAssetsQueryPayload(
+    sourcesToSearch,
+    filter,
+    limit
+  )
 
   const queryPointClouds = {
     ...rawQueryPointClouds,
@@ -138,15 +101,13 @@ export async function queryPointCloudsAssets(
   return queryResultPointClouds.items.pointcloud_assets;
 }
 
-// eslint-disable-next-line @typescript-eslint/explicit-function-return-type
-export async function queryImage360Assets(
-  sourcesToSearch: Source[],
-  revisionRefs: DmsUniqueIdentifier[],
-  filter: InstanceFilter | undefined,
-  fdmSdk: FdmSDK,
-  limit: number
-) {
-  const rawQueryImage360 = image360AssetsQueryPayload(sourcesToSearch, revisionRefs, filter, limit);
+export async function queryImage360Assets(sourcesToSearch : Source[], revisionRefs: DmsUniqueIdentifier[], filter: InstanceFilter | undefined, fdmSdk: FdmSDK, limit: number) {
+  const rawQueryImage360 = image360AssetsQueryPayload(
+    sourcesToSearch,
+    revisionRefs,
+    filter,
+    limit
+  );
 
   const queryImage360 = {
     ...rawQueryImage360,
@@ -164,35 +125,26 @@ export async function queryImage360Assets(
 export function filterCadAssetsBasedOnObject3DFromCadNodes(
   sourcesToSearch: Source[],
   assets: NodeItem[],
-  cadNodes: NodeItem[]
+  cadNodes: NodeItem[],
 ): NodeItem[] {
   const filteredAssets: NodeItem[] = [];
 
   cadNodes.forEach((cadNode) => {
-    const cadNodeProperty =
-      cadNode.properties[COGNITE_CAD_NODE_SOURCE.space][
-        `${COGNITE_CAD_NODE_SOURCE.externalId}/${COGNITE_CAD_NODE_SOURCE.version}`
-      ];
+    const cadNodeProperty = cadNode.properties[COGNITE_CAD_NODE_SOURCE.space][`${COGNITE_CAD_NODE_SOURCE.externalId}/${COGNITE_CAD_NODE_SOURCE.version}`];
     const cadNodeObject3D = cadNodeProperty?.object3D as DmsUniqueIdentifier;
 
     assets.forEach((asset) => {
       sourcesToSearch.forEach((source) => {
-        const sourceProperty =
-          asset.properties[source.space][`${source.externalId}/${source.version}`];
-        const assetObject3D = isDmsInstance(sourceProperty?.object3D)
-          ? sourceProperty?.object3D
-          : undefined;
 
-        if (
-          assetObject3D !== undefined &&
-          cadNodeObject3D.externalId === assetObject3D.externalId &&
-          cadNodeObject3D.space === assetObject3D.space
-        ) {
+        const sourceProperty = asset.properties[source.space][`${source.externalId}/${source.version}`];
+        const assetObject3D = isDmsInstance(sourceProperty?.object3D) ? sourceProperty?.object3D : undefined;
+
+        if (cadNodeObject3D && assetObject3D && cadNodeObject3D.externalId === assetObject3D.externalId && cadNodeObject3D.space === assetObject3D.space) {
           filteredAssets.push(asset);
         }
       });
     });
   });
 
-  return uniqBy(filteredAssets, (asset) => `${asset.space}-${asset.externalId}`);
+  return uniqBy(filteredAssets, (asset) => `${asset.space}-${asset.externalId}` );;
 }

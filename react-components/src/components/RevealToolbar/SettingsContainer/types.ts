@@ -3,7 +3,7 @@
  */
 
 import { type ReactElement } from 'react';
-import { type QualitySettings } from '../../../architecture/base/utilities/quality/QualitySettings';
+import { QualitySettings } from '../../../architecture/base/utilities/quality/QualitySettings';
 
 export type QualityProps = {
   lowQualitySettings?: Partial<QualitySettings>;

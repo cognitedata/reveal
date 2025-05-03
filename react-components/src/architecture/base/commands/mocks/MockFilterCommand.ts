@@ -3,11 +3,8 @@
  */
 
 import { Color } from 'three';
-import {
-  BaseFilterCommand,
-  BaseFilterItemCommand
-} from '../../../../src/architecture/base/commands/BaseFilterCommand';
-import { type TranslationInput } from '../../../../src/architecture/base/utilities/TranslateInput';
+import { BaseFilterCommand, BaseFilterItemCommand } from '../BaseFilterCommand';
+import { type TranslationInput } from '../../utilities/TranslateInput';
 
 export class MockFilterCommand extends BaseFilterCommand {
   // ==================================================

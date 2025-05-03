@@ -5,7 +5,7 @@
 import { type TranslationInput } from '../utilities/TranslateInput';
 import { type DataSourceType, type Cognite3DViewer } from '@cognite/reveal';
 import { RenderTargetCommand } from '../commands/RenderTargetCommand';
-import { type QualitySettings } from '../utilities/quality/QualitySettings';
+import { QualitySettings } from '../utilities/quality/QualitySettings';
 
 export class SetQualityCommand extends RenderTargetCommand {
   // ==================================================

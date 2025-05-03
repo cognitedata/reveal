@@ -2,8 +2,8 @@
  * Copyright 2024 Cognite AS
  */
 
-import { type TranslationInput } from '../../../../src/architecture/base/utilities/TranslateInput';
-import { FractionSliderCommand } from '../../../../src/architecture/base/commands/FractionSliderCommand';
+import { type TranslationInput } from '../../utilities/TranslateInput';
+import { FractionSliderCommand } from '../FractionSliderCommand';
 
 export class MockSliderCommand extends FractionSliderCommand {
   public _value = 0.5;

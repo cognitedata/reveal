@@ -13,7 +13,10 @@ import { Mock, It } from 'moq.ts';
 import { type DmsUniqueIdentifier, type FdmSDK } from '../FdmSDK';
 import { COGNITE_ASSET_SOURCE, COGNITE_CAD_NODE_SOURCE } from './dataModels';
 import { simpleSourcesFixtures } from '#test-utils/fixtures/dm/sources';
-import { cadNodesFixtures, object3dIdentifierFixture } from '#test-utils/fixtures/dm/nodeItems';
+import {
+  cadNodesFixtures,
+  object3dIdentifierFixture
+} from '../../../tests/tests-utilities/fixtures/dm/nodeItems';
 import { type QueryResult, type SelectSourceWithParams } from '../utils/queryNodesAndEdges';
 
 const assetNode0 = {

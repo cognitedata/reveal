@@ -3,6 +3,7 @@
  */
 import { type ExternalId, type IdEither, type InternalId } from '@cognite/sdk';
 import { type DmsUniqueIdentifier } from '../../data-providers';
+import { type InstanceReference } from './types';
 
 export type AnnotationAssetRef = { id?: number; externalId?: string };
 

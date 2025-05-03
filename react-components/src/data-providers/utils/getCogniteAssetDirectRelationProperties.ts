@@ -26,7 +26,7 @@ export function getCogniteAssetDirectRelationProperties(
       `${viewDefinition.externalId}/${viewDefinition.version}`
     ];
 
-  if (Object.entries(nodeProperties).length === 0) {
+  if (!nodeProperties) {
     return [];
   }
 
@@ -34,7 +34,7 @@ export function getCogniteAssetDirectRelationProperties(
   const directRelations = propertiesMappingToCogniteAsset
     .map((propertyKey) => {
       const propertyValue = nodeProperties[propertyKey] as DmsUniqueIdentifier | undefined;
-      if (propertyValue === undefined) {
+      if (!propertyValue) {
         return undefined;
       }
 

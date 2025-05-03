@@ -35,7 +35,6 @@ export { SetQualityCommand } from './base/concreteCommands/SetQualityCommand';
 export { SettingsCommand } from './base/concreteCommands/SettingsCommand';
 export { ToggleMetricUnitsCommand } from './base/concreteCommands/ToggleMetricUnitsCommand';
 export { UndoCommand } from './base/concreteCommands/UndoCommand';
-export { BaseBannerCommand } from './base/commands/BaseBannerCommand';
 
 // New architecture: domainObjects
 export { DomainObject } from './base/domainObjects/DomainObject';

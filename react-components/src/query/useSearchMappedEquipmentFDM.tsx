@@ -232,7 +232,7 @@ async function fetchViewDefinitions(
   fdmSdk: FdmSDK,
   viewsToSearch: SimpleSource[]
 ): Promise<ViewItem[]> {
-  return await queryClient.fetchQuery({
+  return queryClient.fetchQuery({
     queryKey: [
       'reveal',
       'react-components',

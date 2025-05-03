@@ -15,10 +15,10 @@ import {
   COGNITE_POINT_CLOUD_VOLUME_VIEW_VERSION_KEY,
   CORE_DM_SPACE
 } from './dataModels';
-import { type DmsUniqueIdentifier, type FdmSDK } from '../FdmSDK';
+import { type DmsUniqueIdentifier, type FdmSDK, type Source } from '../FdmSDK';
 import { type FdmKey } from '../../components/CacheProvider/types';
 import { createFdmKey } from '../../components/CacheProvider/idAndKeyTranslation';
-import { chunk, concat, uniqBy } from 'lodash';
+import { chunk, concat, isString, transform, uniqBy } from 'lodash';
 import { createCheck3dConnectedEquipmentQuery } from './check3dConnectedEquipmentQuery';
 import { restrictToDmsId } from '../../utilities/restrictToDmsId';
 import { isDefined } from '../../utilities/isDefined';

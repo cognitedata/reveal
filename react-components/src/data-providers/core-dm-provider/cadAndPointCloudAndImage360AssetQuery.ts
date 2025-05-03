@@ -176,7 +176,6 @@ export function cadAndPointCloudAndImage36AssetQuery(
   } as const satisfies Omit<QueryRequest, 'parameters' | 'cursors'>;
 }
 
-// eslint-disable-next-line @typescript-eslint/explicit-function-return-type
 export function cadAssetQueryPayload(
   sourcesToSearch: Source[],
   filter: InstanceFilter | undefined,
@@ -206,7 +205,7 @@ export function cadAssetQueryPayload(
           filter
         },
         limit
-      }
+      },
     },
     select: {
       cad_nodes: {
@@ -227,8 +226,7 @@ export function cadAssetQueryPayload(
   } as const satisfies Omit<QueryRequest, 'parameters' | 'cursors'>;
 }
 
-// eslint-disable-next-line @typescript-eslint/explicit-function-return-type
-export function pointCloudsAssetsQueryPayload(
+export function pointCloudsAssetsQueryPayload (
   sourcesToSearch: Source[],
   filter: InstanceFilter | undefined,
   limit: number
@@ -256,7 +254,7 @@ export function pointCloudsAssetsQueryPayload(
           filter
         },
         limit
-      }
+      },
     },
     select: {
       pointcloud_assets: {
@@ -269,8 +267,7 @@ export function pointCloudsAssetsQueryPayload(
   } as const satisfies Omit<QueryRequest, 'parameters' | 'cursors'>;
 }
 
-// eslint-disable-next-line @typescript-eslint/explicit-function-return-type
-export function image360AssetsQueryPayload(
+export function image360AssetsQueryPayload (
   sourcesToSearch: Source[],
   revisionRefs: DmsUniqueIdentifier[],
   filter: InstanceFilter | undefined,

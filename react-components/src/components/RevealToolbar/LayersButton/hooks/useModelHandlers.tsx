@@ -27,7 +27,7 @@ import {
   type LayersUrlStateParam,
   type ModelLayerHandlers
 } from '../types';
-import { type UseQueryResult } from '@tanstack/react-query';
+import { UseQueryResult } from '@tanstack/react-query';
 
 export type UpdateModelHandlersCallback = (
   models: Array<CogniteModel<DataSourceType>>,
@@ -38,7 +38,7 @@ export const useModelHandlers = (
   setExternalLayersState: Dispatch<SetStateAction<LayersUrlStateParam | undefined>> | undefined,
   defaultLayersConfig: DefaultLayersConfiguration | undefined,
   viewer: Cognite3DViewer<DataSourceType>,
-  models: Array<CogniteModel<DataSourceType>>,
+  models: CogniteModel<DataSourceType>[],
   use3DModelName: (modelIds: number[]) => UseQueryResult<Array<string | undefined>, unknown>
 ): [ModelLayerHandlers, () => void] => {
   const image360Collections = useMemo(

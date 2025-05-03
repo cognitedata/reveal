@@ -2,9 +2,9 @@
  * Copyright 2024 Cognite AS
  */
 
-import { BaseOptionCommand } from '../../../../src/architecture/base/commands/BaseOptionCommand';
-import { RenderTargetCommand } from '../../../../src/architecture/base/commands/RenderTargetCommand';
-import { type TranslationInput } from '../../../../src/architecture/base/utilities/TranslateInput';
+import { BaseOptionCommand } from '../BaseOptionCommand';
+import { RenderTargetCommand } from '../RenderTargetCommand';
+import { type TranslationInput } from '../../utilities/TranslateInput';
 
 enum MockEnum {
   Red = 'Red',

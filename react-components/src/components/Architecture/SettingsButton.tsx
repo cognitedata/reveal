@@ -34,9 +34,7 @@ import { TOOLBAR_HORIZONTAL_PANEL_OFFSET } from '../constants';
 import { DividerCommand } from '../../architecture/base/commands/DividerCommand';
 import { SectionCommand } from '../../architecture/base/commands/SectionCommand';
 import { useOnUpdate } from './useOnUpdate';
-import { type FlexDirection, type PlacementType } from './types';
-import { BaseBannerCommand } from '../../architecture';
-import { BannerComponent } from './BannerComponent';
+import { FlexDirection, type PlacementType } from './types';
 
 export const SettingsButton = ({
   inputCommand,
@@ -81,12 +79,8 @@ export const SettingsButton = ({
           {command.children.map((child) => createMenuItem(child, t))}
         </StyledMenuPanel>
       }
-      onShow={(open) => {
-        setOpen(open);
-      }}
-      onHide={(open) => {
-        setOpen(open);
-      }}
+      onShow={(open) => setOpen(open)}
+      onHide={(open) => setOpen(open)}
       placement={placement ?? 'right-end'}
       offset={{ mainAxis: TOOLBAR_HORIZONTAL_PANEL_OFFSET }}>
       <CogsTooltip
@@ -124,9 +118,6 @@ function createMenuItem(command: BaseCommand, t: TranslateDelegate): ReactNode {
   }
   if (command instanceof SectionCommand) {
     return <SectionComponent key={command.uniqueId} command={command} t={t} />;
-  }
-  if (command instanceof BaseBannerCommand) {
-    return <BannerComponent key={command.uniqueId} command={command} t={t} />;
   }
 
   return <ButtonComponent key={command.uniqueId} command={command} t={t} />;

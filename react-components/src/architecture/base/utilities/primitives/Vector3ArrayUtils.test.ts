@@ -5,7 +5,10 @@
 import { describe, expect, test } from 'vitest';
 import { Vector3ArrayUtils } from './Vector3ArrayUtils';
 import { Box3, Vector3 } from 'three';
-import { expectEqualBox3, expectEqualVector3 } from '#test-utils/primitives/primitiveTestUtil';
+import {
+  expectEqualBox3,
+  expectEqualVector3
+} from '../../../../../tests/tests-utilities/primitives/primitiveTestUtil';
 
 describe(Vector3ArrayUtils.name, () => {
   const polygon = [
