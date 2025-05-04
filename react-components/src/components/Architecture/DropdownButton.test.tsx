@@ -33,11 +33,12 @@ describe(DropdownButton.name + ' (not used in settings)', () => {
   test('should render with correct default value and no dropdown', async () => {
     const button = screen.getByTestId(DROPDOWN_BUTTON_ID);
 
-    // Check that the selected value is updated
+    // Check that the selected value is updated by the default value
     const expectedValue = 'Red';
     expect(testCommand.value).toBe(expectedValue);
     expect(button.textContent).toBe(expectedValue);
 
+    // Check that the the option menu is closed
     const menuItems = screen.queryAllByTestId(DROPDOWN_MENU_ITEM_ID); // this doesn't crash when nothing found
     expect(menuItems).toHaveLength(0);
   });
