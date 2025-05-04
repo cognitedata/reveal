@@ -161,20 +161,15 @@ function createMenuItem(
   // @update-ui-component-pattern
   const [isEnabled, setEnabled] = useState(true);
   const [isChecked, setChecked] = useState(true);
-  const [isVisible, setVisible] = useState(true);
   const [uniqueId, setUniqueId] = useState(0);
 
   useOnUpdate(command, () => {
     setEnabled(command.isEnabled);
-    setVisible(command.isVisible);
     setChecked(command.isChecked);
     setUniqueId(command.uniqueId);
   });
   // @end
 
-  if (!isVisible) {
-    return <></>;
-  }
   return (
     <Menu.ItemToggled
       data-testid={DROPDOWN_MENU_ITEM_ID}
