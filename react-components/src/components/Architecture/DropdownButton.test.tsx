@@ -10,7 +10,7 @@ import { MockEnumOptionCommand } from '../../../tests/tests-utilities/architectu
 
 // Help page here:  https://bogr.dev/blog/react-testing-intro/
 
-describe(DropdownButton.name + ' used in settings', () => {
+describe(DropdownButton.name + ' (not used in settings)', () => {
   let renderTargetMock: RevealRenderTarget;
   let testCommand: MockEnumOptionCommand;
 
