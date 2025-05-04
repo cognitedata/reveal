@@ -19,6 +19,10 @@ import styled from 'styled-components';
 import { useOnUpdate } from './useOnUpdate';
 import { type PlacementType } from './types';
 
+export const DROPDOWN_BUTTON_ID = 'dropdown-button';
+export const DROPDOWN_MENU_ID = 'dropdown-menu';
+export const DROPDOWN_MENU_ITEM_ID = 'dropdown-menu-item';
+
 export const DropdownButton = ({
   inputCommand,
   placement,
@@ -35,15 +39,10 @@ export const DropdownButton = ({
   );
 
   // @update-ui-component-pattern
-  const [isOpen, setOpen] = useState(false);
-  const [isEnabled, setEnabled] = useState(true);
   const [isVisible, setVisible] = useState(true);
-  const [uniqueId, setUniqueId] = useState(0);
 
   useOnUpdate(command, () => {
-    setEnabled(command.isEnabled);
     setVisible(command.isVisible);
-    setUniqueId(command.uniqueId);
   });
   // @end
 
@@ -51,58 +50,52 @@ export const DropdownButton = ({
     return <></>;
   }
   return usedInSettings ? (
-    <MenuItemWithDropdown command={command} isVisible={isVisible} />
+    <MenuItemWithDropdown command={command} />
   ) : (
-    <DropdownElement
-      command={command}
-      isVisible={isVisible}
-      isOpen={isOpen}
-      setOpen={setOpen}
-      isEnabled={isEnabled}
-      placement={placement}
-      uniqueId={uniqueId}
-    />
+    <DropdownElement command={command} placement={placement} />
   );
 };
 
 const DropdownElement = ({
   command,
-  isVisible,
-  isOpen,
-  setOpen,
-  isEnabled,
-  placement,
-  uniqueId
+  placement
 }: {
   command: BaseOptionCommand;
-  isVisible: boolean;
-  isOpen: boolean;
-  setOpen: Dispatch<SetStateAction<boolean>>;
-  isEnabled: boolean;
   placement: PlacementType;
-  uniqueId: number;
 }): ReactElement => {
   const { t } = useTranslation();
-  const label = command.getLabel(t);
-  const selectedLabel = command.selectedChild?.getLabel(t);
 
-  const OpenButtonIcon = isOpen ? ChevronUpIcon : ChevronDownIcon;
+  // @update-ui-component-pattern
+  const [isOpen, setOpen] = useState(false);
+  const [isEnabled, setEnabled] = useState(true);
+  const [uniqueId, setUniqueId] = useState(0);
 
-  if (!isVisible || command.children === undefined) {
+  useOnUpdate(command, () => {
+    setEnabled(command.isEnabled);
+    setUniqueId(command.uniqueId);
+  });
+  // @end
+
+  if (command.children === undefined) {
     return <></>;
   }
 
+  const label = command.getLabel(t);
+  const selectedLabel = command.selectedChild?.getLabel(t);
+  const OpenButtonIcon = isOpen ? ChevronUpIcon : ChevronDownIcon;
   return (
     <Menu
       onOpenChange={(open: boolean) => {
         setOpen(open);
       }}
+      open={isOpen}
+      data-testid={'dropdown-menu'}
       placement={'bottom-start'}
       disableCloseOnClickInside
       renderTrigger={(props: any) => (
         <CogsTooltip
           content={<LabelWithShortcut label={label} command={command} />}
-          disabled={label === undefined}
+          disabled={label === undefined || isOpen}
           enterDelay={TOOLTIP_DELAY}
           placement={getTooltipPlacement(placement)}>
           <Button
@@ -116,6 +109,7 @@ const DropdownElement = ({
             iconPlacement="left"
             aria-label={command.getLabel(t)}
             toggled={isOpen}
+            data-testid={DROPDOWN_BUTTON_ID}
             {...props}
             onClick={(event) => {
               event.stopPropagation();
@@ -126,22 +120,16 @@ const DropdownElement = ({
           </Button>
         </CogsTooltip>
       )}>
-      {command.children.map((child) => createMenuItem(child, t))}
+      {command.children.map((child) => createMenuItem(child, setOpen, t))}
     </Menu>
   );
 };
 
-const MenuItemWithDropdown = ({
-  command,
-  isVisible
-}: {
-  command: BaseOptionCommand;
-  isVisible: boolean;
-}): ReactElement => {
+const MenuItemWithDropdown = ({ command }: { command: BaseOptionCommand }): ReactElement => {
   const { t } = useTranslation();
   const label = command.getLabel(t);
 
-  if (!isVisible || command.children === undefined) {
+  if (command.children === undefined) {
     return <></>;
   }
 
@@ -165,15 +153,38 @@ const MenuItemWithDropdown = ({
   );
 };
 
-function createMenuItem(command: BaseCommand, t: TranslateDelegate): ReactElement {
+function createMenuItem(
+  command: BaseCommand,
+  setOpen: Dispatch<SetStateAction<boolean>>,
+  t: TranslateDelegate
+): ReactElement {
+  // @update-ui-component-pattern
+  const [isEnabled, setEnabled] = useState(true);
+  const [isChecked, setChecked] = useState(true);
+  const [isVisible, setVisible] = useState(true);
+  const [uniqueId, setUniqueId] = useState(0);
+
+  useOnUpdate(command, () => {
+    setEnabled(command.isEnabled);
+    setVisible(command.isVisible);
+    setChecked(command.isChecked);
+    setUniqueId(command.uniqueId);
+  });
+  // @end
+
+  if (!isVisible) {
+    return <></>;
+  }
   return (
     <Menu.ItemToggled
-      key={command.uniqueId}
-      disabled={!command.isEnabled}
-      toggled={command.isChecked}
+      data-testid={DROPDOWN_MENU_ITEM_ID}
+      key={uniqueId}
+      disabled={!isEnabled}
+      toggled={isChecked}
       label={command.getLabel(t)}
       onClick={() => {
         command.invoke();
+        setOpen(false);
       }}
     />
   );
