@@ -85,6 +85,17 @@ describe('StringExtensions', () => {
       expect(numberToString(123456789)).toBe('123456789');
     });
 
+    test('test negative integers', () => {
+      expect(numberToString(-1)).toBe('-1');
+      expect(numberToString(-12)).toBe('-12');
+      expect(numberToString(-123)).toBe('-123');
+      expect(numberToString(-1234)).toBe('-1234');
+      expect(numberToString(-12345)).toBe('-12345');
+      expect(numberToString(-123456)).toBe('-123456');
+      expect(numberToString(-1234567)).toBe('-1234567');
+      expect(numberToString(-12345678)).toBe('-12345678');
+    });
+
     test('test big numbers', () => {
       expect(numberToString(10)).toBe('10');
       expect(numberToString(100)).toBe('100');
@@ -97,17 +108,6 @@ describe('StringExtensions', () => {
       expect(numberToString(1000000000)).toBe('1000000000');
     });
 
-    test('test negative integers', () => {
-      expect(numberToString(-1)).toBe('-1');
-      expect(numberToString(-12)).toBe('-12');
-      expect(numberToString(-123)).toBe('-123');
-      expect(numberToString(-1234)).toBe('-1234');
-      expect(numberToString(-12345)).toBe('-12345');
-      expect(numberToString(-123456)).toBe('-123456');
-      expect(numberToString(-1234567)).toBe('-1234567');
-      expect(numberToString(-12345678)).toBe('-12345678');
-    });
-
     test('test decimal numbers', () => {
       expect(numberToString(123.456789)).toBe('123.45679');
       expect(numberToString(12.3456789)).toBe('12.34568');
@@ -117,7 +117,7 @@ describe('StringExtensions', () => {
       expect(numberToString(0.00123456789)).toBe('0.00123');
     });
 
-    test('test decimal numbers', () => {
+    test('test decimal numbers with many digits', () => {
       expect(numberToString(0.12)).toBe('0.12');
       expect(numberToString(0.123)).toBe('0.123');
       expect(numberToString(0.1234)).toBe('0.1234');
@@ -136,6 +136,12 @@ describe('StringExtensions', () => {
       expect(numberToString(0.0000123)).toBe('0.0000123');
       expect(numberToString(0.00000123)).toBe('0.00000123');
       expect(numberToString(0.000000123)).toBe('1.23e-7');
+      expect(numberToString(-0.000000123)).toBe('-1.23e-7');
+    });
+
+    test('test some corner cases', () => {
+      expect(numberToString(1.20000005)).toBe('1.2');
+      expect(numberToString(1.19999992)).toBe('1.2');
     });
   });
 });
