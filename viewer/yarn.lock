@@ -3161,7 +3161,7 @@ __metadata:
   version: 1.1.0
   resolution: "binary-install@npm:1.1.0"
   dependencies:
-    axios: "npm:^0.30.0"
+    axios: "npm:^0.26.1"
     rimraf: "npm:^3.0.2"
     tar: "npm:^6.1.11"
   checksum: 10/78121e9c32981c101cc090f1564fbd0453d976a1b40c599a5ca623184d739b0a7c49f5ba5f91c05142eb6ff9b2816959bb9e09a3aecd12e4e3e82398bed9b8f0
