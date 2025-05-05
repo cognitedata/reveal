@@ -11,12 +11,12 @@ import { vi } from 'vitest';
 import { viewerMock } from './viewer';
 import { RevealSettingsController } from '../../../src/architecture/concrete/reveal/RevealSettingsController';
 
-const cdfCachesMock = new Mock<CdfCaches>()
+export const cdfCachesMock = new Mock<CdfCaches>()
   .setup((p) => p.fdmNodeCache)
   .returns(fdmNodeCacheContentMock)
   .object();
 
-const commandsControllerMock = new Mock<CommandsController>()
+export const commandsControllerMock = new Mock<CommandsController>()
   .setup((p) => p.update.bind(p))
   .returns(vi.fn())
   .setup((p) => p.addEventListeners.bind(p))
@@ -24,17 +24,16 @@ const commandsControllerMock = new Mock<CommandsController>()
   .setup((p) => p.removeEventListeners.bind(p))
   .returns(vi.fn())
   .setup((p) => p.dispose.bind(p))
-  .returns(vi.fn())
-  .object();
+  .returns(vi.fn());
 
 export function createRenderTargetMock(): RevealRenderTarget {
   const mock = new Mock<RevealRenderTarget>()
     .setup((p) => p.viewer)
     .returns(viewerMock)
     .setup((p) => p.cdfCaches)
-    .returns(cdfCachesMock)
+    .returns(cdfCachesMock.object())
     .setup((p) => p.commandsController)
-    .returns(commandsControllerMock)
+    .returns(commandsControllerMock.object())
     .setup((p) => p.invalidate.bind(p))
     .returns(vi.fn())
     .setup((p) => p.revealSettingsController)

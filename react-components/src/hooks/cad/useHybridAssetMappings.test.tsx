@@ -1,22 +1,18 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { renderHook, waitFor } from '@testing-library/react';
 import { useHybridAssetMappings } from './useHybridAssetMappings';
-import { useAssetMappedNodesForRevisions } from './useAssetMappedNodesForRevisions';
 import { QueryClient, QueryClientProvider, UseQueryResult } from '@tanstack/react-query';
 import { FC, PropsWithChildren } from 'react';
-import { CommandsController, RevealRenderTarget, RootDomainObject } from '../../architecture';
 import { Mock } from 'moq.ts';
 import { viewerMock } from '#test-utils/fixtures/viewer';
-import { CdfCaches } from '../../architecture/base/renderTarget/CdfCaches';
 import { AssetMappingAndNode3DCache, CadModelOptions } from '../../components';
 import { ViewerContext } from '../../components/RevealCanvas/ViewerContext';
 import { CogniteExternalId, Node3D } from '@cognite/sdk';
 import { sdkMock } from '#test-utils/fixtures/sdk';
 import { ModelWithAssetMappings } from './ModelWithAssetMappings';
-
-vi.mock('./useAssetMappedNodesForRevisions', () => ({
-  useAssetMappedNodesForRevisions: vi.fn()
-}));
+import { AssetMappingsContext } from '../AssetMappings.context';
+import { cdfCachesMock, commandsControllerMock } from '#test-utils/fixtures/renderTarget';
+import { RevealRenderTarget, RootDomainObject } from '../../architecture';
 
 describe(useHybridAssetMappings.name, () => {
 
@@ -32,29 +28,17 @@ describe(useHybridAssetMappings.name, () => {
     .setup((p) => p.getNodesForAssetInstancesInHybridMappings)
     .returns(mockGetNodesForAssetInstancesInHybridMappings);
 
-  const cdfCachesMock = new Mock<CdfCaches>()
+  const cdfCachesMockOverride = cdfCachesMock
     .setup((p) => p.assetMappingAndNode3dCache)
-    .returns(assetMappingAndNode3DCacheMock.object())
-    .object();
-
-  const commandsControllerMock = new Mock<CommandsController>()
-    .setup((p) => p.update.bind(p))
-    .returns(vi.fn())
-    .setup((p) => p.addEventListeners.bind(p))
-    .returns(vi.fn())
-    .setup((p) => p.removeEventListeners.bind(p))
-    .returns(vi.fn())
-    .setup((p) => p.dispose.bind(p))
-    .returns(vi.fn())
-    .object();
+    .returns(assetMappingAndNode3DCacheMock.object());
 
   const mockBaseRenderTarget = new Mock<RevealRenderTarget>()
     .setup((p) => p.viewer)
     .returns(viewerMock)
     .setup((p) => p.cdfCaches)
-    .returns(cdfCachesMock)
+    .returns(cdfCachesMockOverride.object())
     .setup((p) => p.commandsController)
-    .returns(commandsControllerMock)
+    .returns(commandsControllerMock.object())
     .setup((p) => p.invalidate.bind(p))
     .returns(vi.fn());
 
@@ -64,11 +48,22 @@ describe(useHybridAssetMappings.name, () => {
     .returns(root)
     .object();
 
+  const mockUseAssetMappedNodesForRevisions = vi.fn();
   const queryClient = new QueryClient();
 
   const wrapper: FC<PropsWithChildren> = ({ children }) => (
     <QueryClientProvider client={queryClient}>
-      <ViewerContext.Provider value={renderTargetMock}>{children}</ViewerContext.Provider>
+      <ViewerContext.Provider value={renderTargetMock}>
+        <AssetMappingsContext.Provider value={
+          {
+            useAssetMappedNodesForRevisions: mockUseAssetMappedNodesForRevisions,
+            useHybridAssetMappings: vi.fn(),
+            useMappedEdgesForRevisions: vi.fn(),
+          }
+        }>
+          {children}
+        </AssetMappingsContext.Provider>
+      </ViewerContext.Provider>
     </QueryClientProvider>
   );
 
@@ -102,7 +97,7 @@ describe(useHybridAssetMappings.name, () => {
       }
     ];
 
-    vi.mocked(useAssetMappedNodesForRevisions).mockReturnValue({
+    mockUseAssetMappedNodesForRevisions.mockReturnValue({
       data: mockModelWithAssetMappings,
       isLoading: false
     } as UseQueryResult<ModelWithAssetMappings[]>);
@@ -133,7 +128,7 @@ describe(useHybridAssetMappings.name, () => {
   });
 
   it('should handle loading state when data is not yet available', async () => {
-    vi.mocked(useAssetMappedNodesForRevisions).mockReturnValue({
+    mockUseAssetMappedNodesForRevisions.mockReturnValue({
       data: undefined,
       isLoading: true
     } as UseQueryResult<ModelWithAssetMappings[]>);
