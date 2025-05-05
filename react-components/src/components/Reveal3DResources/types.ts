@@ -202,6 +202,7 @@ export type ModelStyleGroup = {
 export type ModelStyleGroupWithMappingsFetched = {
   combinedMappedStyleGroups: ModelStyleGroup[];
   isModelMappingsLoading: boolean;
+  isModelMappingsError: boolean;
 };
 
 export type StyledModelWithMappingsFetched = {
