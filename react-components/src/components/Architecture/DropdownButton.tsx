@@ -19,10 +19,6 @@ import styled from 'styled-components';
 import { useOnUpdate } from './useOnUpdate';
 import { type PlacementType } from './types';
 
-export const DROPDOWN_BUTTON_ID = 'dropdown-button';
-export const DROPDOWN_MENU_ID = 'dropdown-menu';
-export const DROPDOWN_MENU_ITEM_ID = 'dropdown-menu-item';
-
 export const DropdownButton = ({
   inputCommand,
   placement,
@@ -89,7 +85,6 @@ const DropdownElement = ({
         setOpen(open);
       }}
       open={isOpen}
-      data-testid={'dropdown-menu'}
       placement={'bottom-start'}
       disableCloseOnClickInside
       renderTrigger={(props: any) => (
@@ -109,7 +104,6 @@ const DropdownElement = ({
             iconPlacement="left"
             aria-label={command.getLabel(t)}
             toggled={isOpen}
-            data-testid={DROPDOWN_BUTTON_ID}
             {...props}
             onClick={(event) => {
               event.stopPropagation();
@@ -172,7 +166,6 @@ function createMenuItem(
 
   return (
     <Menu.ItemToggled
-      data-testid={DROPDOWN_MENU_ITEM_ID}
       key={uniqueId}
       disabled={!isEnabled}
       toggled={isChecked}

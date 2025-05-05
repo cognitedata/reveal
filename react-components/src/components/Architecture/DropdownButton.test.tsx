@@ -5,8 +5,9 @@ import { type PropsWithChildren, type ReactElement } from 'react';
 import { viewerMock } from '#test-utils/fixtures/viewer';
 import { sdkMock } from '#test-utils/fixtures/sdk';
 import { ViewerContextProvider } from '../RevealCanvas/ViewerContext';
-import { DROPDOWN_BUTTON_ID, DROPDOWN_MENU_ITEM_ID, DropdownButton } from './DropdownButton';
+import { DropdownButton } from './DropdownButton';
 import { MockEnumOptionCommand } from '../../../tests/tests-utilities/architecture/mock-commands/MockEnumOptionCommand';
+import { Translator } from '../i18n/Translator';
 
 // Help page here:  https://bogr.dev/blog/react-testing-intro/
 
@@ -31,7 +32,8 @@ describe(DropdownButton.name + ' (not used in settings)', () => {
   });
 
   test('should render with correct default value and no dropdown', async () => {
-    const button = screen.getByTestId(DROPDOWN_BUTTON_ID);
+    const label = testCommand.getLabel(Translator.instance.translate);
+    const button = screen.getByLabelText(label);
 
     // Check that the selected value is updated by the default value
     const expectedValue = 'Red';
@@ -39,15 +41,17 @@ describe(DropdownButton.name + ' (not used in settings)', () => {
     expect(button.textContent).toBe(expectedValue);
 
     // Check that the the option menu is closed
-    const menuItems = screen.queryAllByTestId(DROPDOWN_MENU_ITEM_ID); // this doesn't crash when nothing found
+
+    const menuItems = screen.queryAllByRole('menuitem'); // this doesn't crash when nothing found
     expect(menuItems).toHaveLength(0);
   });
 
   test('should click and open dropdown menu', async () => {
-    fireEvent.click(screen.getByTestId(DROPDOWN_BUTTON_ID));
+    const label = testCommand.getLabel(Translator.instance.translate);
+    fireEvent.click(screen.getByLabelText(label));
 
     // Check that the menu is open and selected is checked
-    const menuItems = await screen.findAllByTestId(DROPDOWN_MENU_ITEM_ID);
+    const menuItems = await screen.findAllByRole('menuitem');
     expect(menuItems).toHaveLength(3);
     for (let i = 0; i < menuItems.length; i++) {
       const menuItem = menuItems[i];
@@ -56,18 +60,19 @@ describe(DropdownButton.name + ' (not used in settings)', () => {
   });
 
   test('should select by dropdown menu and close', async () => {
-    fireEvent.click(screen.getByTestId(DROPDOWN_BUTTON_ID));
+    const label = testCommand.getLabel(Translator.instance.translate);
+    fireEvent.click(screen.getByLabelText(label));
 
-    const menuItemsBeforeClick = await screen.findAllByTestId(DROPDOWN_MENU_ITEM_ID);
+    const menuItemsBeforeClick = await screen.findAllByRole('menuitem');
     fireEvent.click(menuItemsBeforeClick[2]); // Select the third option
 
     // Check that the menu is closed after selection
-    const menuItemsAfterClick = screen.queryAllByTestId(DROPDOWN_MENU_ITEM_ID);
+    const menuItemsAfterClick = screen.queryAllByRole('menuitem');
     expect(menuItemsAfterClick).toHaveLength(0);
 
     // Check that the selected value is updated
     const expectedValue = 'Blue';
     expect(testCommand.value).toBe(expectedValue);
-    expect(screen.getByTestId(DROPDOWN_BUTTON_ID).textContent).toBe(expectedValue);
+    expect(screen.getByLabelText(label).textContent).toBe(expectedValue);
   });
 });
