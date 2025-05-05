@@ -62,6 +62,6 @@ const fdmNodeCacheMock = new Mock<FdmNodeCache>()
     }
   );
 
-const fdmNodeCacheContentMock = fdmNodeCacheMock.object();
+const fdmNodeCacheContentMock = fdmNodeCacheMock;
 
 export { fdmNodeCacheContentMock };

@@ -1,4 +1,4 @@
-import { type CameraManager, type CameraManagerEventType, type CameraState } from '@cognite/reveal';
+import { IFlexibleCameraManager, type CameraManager, type CameraManagerEventType, type CameraState, type FlexibleControlsType } from '@cognite/reveal';
 import { remove } from 'lodash';
 import { Mock } from 'moq.ts';
 import { PerspectiveCamera } from 'three';
@@ -41,4 +41,6 @@ export const cameraManagerMock = new Mock<CameraManager>()
   .returns(() => new PerspectiveCamera())
   .setup((p) => p.fitCameraToBoundingBox)
   .returns(fitCameraToBoundingBoxMock)
+  .setup((p) => (p as IFlexibleCameraManager).controlsType)
+  .returns('orbit' as FlexibleControlsType)
   .object();
