@@ -22,17 +22,28 @@ export class Translator {
   private _translation?: Translations;
 
   private constructor() {
-    this._language = getLanguage() ?? 'en';
+    this._language = this.getCurrentLanguage() ?? 'en';
     this.loadTranslationFile();
     window.addEventListener('languagechange', this.onLanguageChange);
     // Since this is a singleton, we don't need to removeEventListener this listener
   }
+
+  public getCurrentLanguage = (): string | undefined => {
+    return getLanguage();
+  };
 
   public static get instance(): Translator {
     if (Translator._instance === undefined) {
       Translator._instance = new Translator();
     }
     return Translator._instance;
+  }
+
+  public translate(input: TranslationInput): string {
+    if (isTranslatedString(input)) {
+      return this.translateByKey(input.key);
+    }
+    return input.untranslated;
   }
 
   public translateByKey(key: TranslationKey): string {
@@ -44,15 +55,8 @@ export class Translator {
     return english[key];
   }
 
-  public translate(input: TranslationInput): string {
-    if (isTranslatedString(input)) {
-      return this.translateByKey(input.key);
-    }
-    return input.untranslated;
-  }
-
-  onLanguageChange = (): void => {
-    const newLanguage = getLanguage();
+  public readonly onLanguageChange = (): void => {
+    const newLanguage = this.getCurrentLanguage();
     if (newLanguage !== undefined && newLanguage !== this._language) {
       this._language = newLanguage;
       this.loadTranslationFile();
@@ -63,9 +67,9 @@ export class Translator {
     this._translation = undefined;
     const load = async (): Promise<void> => {
       try {
-        const translationModule = (await import(
-          `../../common/i18n/${this._language}/reveal-react-components.json`
-        )) as { default: Translations };
+        const filename = `../../common/i18n/${this._language}/reveal-react-components.json`;
+        const result = await import(filename);
+        const translationModule = result as { default: Translations };
         this._translation = translationModule.default;
       } catch (error) {
         console.warn('Error loading translation file. Default language: English is loaded');
