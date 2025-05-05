@@ -2,12 +2,13 @@ import { describe, expect, test } from 'vitest';
 import { DeleteDomainObjectCommand } from './DeleteDomainObjectCommand';
 import { DomainObject } from '../domainObjects/DomainObject';
 import { FolderDomainObject } from '../domainObjects/FolderDomainObject';
-import { type TranslationInput } from '../utilities/TranslateInput';
+import { isEmpty, type TranslationInput } from '../utilities/TranslateInput';
 
 describe(DeleteDomainObjectCommand.name, () => {
   test('should have following default behavior', async () => {
     const mock = new MockDomainObject();
     const command = new DeleteDomainObjectCommand(mock);
+    expect(isEmpty(command.tooltip)).toBe(false);
     expect(command.icon).toBe('Delete');
     expect(command.buttonType).toBe('ghost-destructive');
     expect(command.hasData).toBe(true);
