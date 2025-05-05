@@ -12,14 +12,12 @@ describe(Translator.name, () => {
   beforeEach(() => {});
 
   test('Should translate', async () => {
-    return;
     const input: TranslationInput = { key: 'BOX' };
     const actual = Translator.instance.translate(input);
     expect(actual).toBe(english.BOX);
   });
 
   test('Should not translate', async () => {
-    return;
     const input: TranslationInput = { untranslated: 'Hallo world' };
     const actual = Translator.instance.translate(input);
     expect(actual).toBe(input.untranslated);
@@ -39,7 +37,6 @@ describe(Translator.name, () => {
 
     // Reset the language back to default
     Translator.instance.getCurrentLanguage = getCurrentLanguage;
-
     expect(actual).toBe('Cuadro');
   });
 });
