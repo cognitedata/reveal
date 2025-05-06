@@ -1,4 +1,4 @@
-import { beforeEach, describe, expect, test } from 'vitest';
+import { assert, beforeEach, describe, expect, test } from 'vitest';
 import { DeleteDomainObjectCommand } from './DeleteDomainObjectCommand';
 import { FolderDomainObject } from '../domainObjects/FolderDomainObject';
 import { isEmpty } from '../utilities/TranslateInput';
@@ -21,7 +21,11 @@ describe(DeleteDomainObjectCommand.name, () => {
     expect(isEmpty(undoCommand.tooltip)).toBe(false);
     expect(undoCommand.icon).toBe('Restore');
     expect(undoCommand.isEnabled).toBe(false);
-    expect(undoCommand.getShortCutKeys()).toStrictEqual(['Ctrl', 'Z']);
+    const keys = undoCommand.getShortCutKeys();
+    expect(keys).toHaveLength(2);
+    assert(keys !== undefined);
+    expect(keys[0]).toBeOneOf(['Ctrl', 'Cmd']);
+    expect(keys[1]).toBe('Z');
   });
 
   test('should remove domain object', async () => {
