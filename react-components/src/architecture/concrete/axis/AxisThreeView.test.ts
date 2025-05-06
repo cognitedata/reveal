@@ -2,32 +2,80 @@
  * Copyright 2024 Cognite AS
  */
 
-import { describe, expect, test } from 'vitest';
+import { assert, beforeEach, describe, expect, test } from 'vitest';
 import { AxisDomainObject } from './AxisDomainObject';
 import { AxisThreeView } from './AxisThreeView';
 import { createFullRenderTargetMock } from '../../../../tests/tests-utilities/fixtures/createFullRenderTargetMock';
-import { PerspectiveCamera } from 'three';
+import { Box3, LineSegments, Mesh, PerspectiveCamera, Vector3 } from 'three';
+import {
+  expectChildrenOfTypeAndCount,
+  expectVisibleChildren
+} from '../../../../tests/tests-utilities/architecture/viewUtil';
+import { type RevealRenderTarget } from '../../base/renderTarget/RevealRenderTarget';
+import { isViewerMock } from '../../../../tests/tests-utilities/fixtures/viewer';
 
 describe(AxisThreeView.name, () => {
-  test('should have initial state', () => {
-    const domainObject = new AxisDomainObject();
+  let view: AxisThreeView;
 
+  beforeEach(() => {
     const renderTarget = createFullRenderTargetMock();
-    const root = renderTarget.rootDomainObject;
+    setLargeVisualSceneBoundingBox(renderTarget);
 
-    root.addChildInteractive(domainObject);
-    domainObject.setVisibleInteractive(true);
+    // Create axis and add it to the scene
+    const axisDomainObject = new AxisDomainObject();
+    renderTarget.rootDomainObject.addChildInteractive(axisDomainObject);
+    axisDomainObject.setVisibleInteractive(true, renderTarget);
 
-    const view = new AxisThreeView();
-    view.attach(domainObject, renderTarget);
-    view.initialize();
-    view.onShow();
-    domainObject.views.addView(view);
+    view = axisDomainObject.getViewByTarget(renderTarget) as AxisThreeView;
+    const _ = view.object; // Force update view since nothing is visible in this mock code
+  });
 
-    const camera = new PerspectiveCamera();
-    view.beforeRender(camera);
-
-    // const view = domainObject.getViewByTarget(renderTarget) as AxisThreeView;
+  test('should have initial state', () => {
     expect(view.object).toBeDefined();
+    expectChildrenOfTypeAndCount(view, Mesh, 6);
+    expectChildrenOfTypeAndCount(view, LineSegments, 42);
+  });
+
+  test('should look towards all 6 sides', () => {
+    const camera = new PerspectiveCamera();
+    for (const x of [-1, 1]) {
+      camera.position.set(x * 200, 0, 0);
+      camera.lookAt(0, 0, 0);
+      view.beforeRender(camera);
+      expectVisibleChildren(view, 26);
+    }
+    for (const y of [-1, 1]) {
+      camera.position.set(0, y * 200, 0);
+      camera.lookAt(0, 0, 0);
+      view.beforeRender(camera);
+      expectVisibleChildren(view, 26);
+    }
+    for (const z of [-1, 1]) {
+      camera.position.set(0, 0, z * 200);
+      camera.lookAt(0, 0, 0);
+      view.beforeRender(camera);
+      expectVisibleChildren(view, 26);
+    }
+  });
+
+  test('Should look towards all 8 corner', () => {
+    const camera = new PerspectiveCamera();
+    for (const x of [-1, 1]) {
+      for (const y of [-1, 1]) {
+        for (const z of [-1, 1]) {
+          camera.position.set(x * 200, y * 200, z * 200);
+          camera.lookAt(0, 0, 0);
+          view.beforeRender(camera);
+          expectVisibleChildren(view, 21);
+        }
+      }
+    }
   });
 });
+
+function setLargeVisualSceneBoundingBox(renderTarget: RevealRenderTarget): void {
+  const { viewer } = renderTarget;
+  assert(isViewerMock(viewer));
+  const boundingBox = new Box3(new Vector3(), new Vector3()).expandByScalar(100);
+  viewer.setVisualSceneBoundingBox(boundingBox);
+}
