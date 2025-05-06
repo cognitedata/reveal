@@ -18,8 +18,10 @@ import { ChangedDescription } from '../domainObjectsHelpers/ChangedDescription';
 import { createRenderTargetMock } from '#test-utils/fixtures/renderTarget';
 import { CommandsUpdater } from '../reactUpdaters/CommandsUpdater';
 import { DomainObjectPanelUpdater } from '../reactUpdaters/DomainObjectPanelUpdater';
+import { EventChangeTester } from '#test-utils/architecture/EventChangeTester';
+import { count, first, last } from '../utilities/extensions/generatorUtils';
 
-describe('DomainObject', () => {
+describe(DomainObject.name, () => {
   test('should have following default behavior', () => {
     const domainObject = new DefaultDomainObject();
     expect(domainObject.icon).toBeUndefined();
@@ -539,34 +541,6 @@ class RootDomainObject extends DomainObject {
   }
 }
 
-export class EventChangeTester {
-  private _times = 0;
-
-  // Set isCalled to true if the change is detected
-  public constructor(domainObject: DomainObject, change: symbol) {
-    // eslint-disable-next-line @typescript-eslint/no-this-alias
-    const self = this;
-    function listener(_domainObject: DomainObject, inputChange: DomainObjectChange): void {
-      if (_domainObject === domainObject && inputChange.isChanged(change)) {
-        self._times++;
-      }
-    }
-    domainObject.views.addEventListener(listener);
-  }
-
-  public toHaveBeenCalledTimes(expected: number): void {
-    expect(this._times).toBe(expected);
-  }
-
-  public toHaveBeenCalledOnce(): void {
-    this.toHaveBeenCalledTimes(1);
-  }
-
-  public toHaveNotBeenCalled(): void {
-    this.toHaveBeenCalledTimes(0);
-  }
-}
-
 function createHierarchy(): DomainObject {
   const root = new RootDomainObject();
   const parent1 = new ParentDomainObject();
@@ -580,24 +554,4 @@ function createHierarchy(): DomainObject {
   parent2.addChild(new ChildDomainObject());
   root.addChild(parent2);
   return root;
-}
-
-export function count<T>(iterable: Generator<T>): number {
-  let count = 0;
-  for (const _item of iterable) {
-    count++;
-  }
-  return count;
-}
-
-export function last<T>(iterable: Generator<T>): T | undefined {
-  let lastItem: T | undefined;
-  for (const item of iterable) {
-    lastItem = item;
-  }
-  return lastItem;
-}
-
-export function first<T>(iterable: Generator<T>): T | undefined {
-  return iterable.next().value;
 }

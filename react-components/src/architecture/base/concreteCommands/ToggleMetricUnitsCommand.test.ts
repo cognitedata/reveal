@@ -3,8 +3,8 @@ import { ToggleMetricUnitsCommand } from './ToggleMetricUnitsCommand';
 import { isEmpty } from '../utilities/TranslateInput';
 import { createFullRenderTargetMock } from '../../../../tests/tests-utilities/fixtures/createFullRenderTargetMock';
 import { type RevealRenderTarget } from '../renderTarget/RevealRenderTarget';
-import { EventChangeTester } from '../domainObjects/DomainObject.test';
 import { Changes } from '../domainObjectsHelpers/Changes';
+import { EventChangeTester } from '#test-utils/architecture/EventChangeTester';
 
 describe(ToggleMetricUnitsCommand.name, () => {
   let renderTarget: RevealRenderTarget;
