@@ -46,7 +46,7 @@ export class Translator {
     return input.untranslated;
   }
 
-  public translateByKey(key: TranslationKey): string {
+  private translateByKey(key: TranslationKey): string {
     if (this._translation !== undefined) {
       if (this._translation[key] !== undefined) {
         return this._translation[key];
