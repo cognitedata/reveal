@@ -32,8 +32,8 @@ describe(AxisThreeView.name, () => {
 
   test('should have initial state', () => {
     expect(view.object).toBeDefined();
-    expectChildrenOfTypeAndCount(view, Mesh, 6);
-    expectChildrenOfTypeAndCount(view, LineSegments, 42);
+    expectChildrenOfTypeAndCount(view, Mesh, 6); // These are the sides (6 i a box)
+    expectChildrenOfTypeAndCount(view, LineSegments, 42); // There are 6 grids for the box, the rest is axis lines
   });
 
   test('should look towards all 6 sides', () => {
