@@ -2,7 +2,7 @@
  * Copyright 2025 Cognite AS
  */
 import { FlexibleCameraManager } from './FlexibleCameraManager';
-import { Vector3, Quaternion } from 'three';
+import { Vector3, Quaternion, PerspectiveCamera } from 'three';
 import { jest } from '@jest/globals';
 import { FlexibleControls } from './FlexibleControls';
 import { FlexibleControlsOptions } from './FlexibleControlsOptions';
@@ -22,17 +22,19 @@ describe(FlexibleCameraManager.name, () => {
   const rotation = new Quaternion(0, 0, 0, 1);
   const target = new Vector3(4, 5, 6);
   const defaultTarget = new Vector3(0, 0, 0);
+  const defaultCameraPosition = new Vector3(0, 0, 0);
 
   beforeEach(() => {
     jest.clearAllMocks();
     mockDomElement = document.createElement('div');
 
-    const mockControls = new FlexibleControlsMock(undefined, mockDomElement, new FlexibleControlsOptions());
+    const mockCamera = new PerspectiveCamera();
+    const mockControls = new FlexibleControlsMock(mockCamera, mockDomElement, new FlexibleControlsOptions());
 
     cameraManager = new FlexibleCameraManager(
       mockDomElement,
       mockRaycastCallback as any,
-      undefined,
+      mockCamera,
       undefined,
       true,
       mockControls
@@ -58,10 +60,16 @@ describe(FlexibleCameraManager.name, () => {
       expect(cameraManager.controls.setPositionAndRotation).toHaveBeenCalledWith(position, rotation);
     });
 
-    it('should set the camera state with position only', () => {
+    it('should set the camera state with position only and using the controls target value', () => {
       cameraManager.setCameraState({ position });
 
       expect(cameraManager.controls.setPositionAndTarget).toHaveBeenCalledWith(position, defaultTarget);
+    });
+
+    it('should set the camera state with original camera position and controls target values when nothing is set', () => {
+      cameraManager.setCameraState({});
+
+      expect(cameraManager.controls.setPositionAndTarget).toHaveBeenCalledWith(defaultCameraPosition, defaultTarget);
     });
   });
 });
