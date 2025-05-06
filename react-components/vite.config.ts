@@ -30,6 +30,7 @@ export default defineConfig(({ command }) => {
     test: {
       include: ['src/**/*.{test,spec}.?(c|m)[jt]s?(x)'],
       environment: 'happy-dom',
+      globals: true,
       reporters: ['default'],
       coverage: {
         reportsDirectory: '../coverage/reveal-react-components',
