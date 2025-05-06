@@ -25,9 +25,16 @@ describe(ToggleMetricUnitsCommand.name, () => {
   });
 
   test('should switch from metric unit and imperial', async () => {
+    // Check initial state
+    expect(renderTarget.rootDomainObject.unitSystem.isMetric).toBe(true);
     expect(command.isChecked).toBe(true);
+
+    // Toggle it
     expect(command.invoke()).toBe(true);
+
+    // Check new state
     expect(command.isChecked).toBe(false);
+    expect(renderTarget.rootDomainObject.unitSystem.isMetric).toBe(false);
   });
 
   test('should switch from metric unit and imperial and back and check if domain objects are notified twice', async () => {
