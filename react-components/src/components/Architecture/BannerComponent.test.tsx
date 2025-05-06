@@ -39,7 +39,7 @@ describe(BannerComponent.name, () => {
     const testCommand = new TestBannerCommand({ status });
     render(<BannerComponent command={testCommand} t={getTranslationKeyOrString} />, { wrapper });
 
-    const bannerElement = (await screen.findAllByRole('alert'))[1];
+    const bannerElement = await screen.findByRole('alert');
     expect([...bannerElement.classList]).toContain('cogs-lab-infobox-critical');
   });
 });

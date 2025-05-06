@@ -2,6 +2,7 @@
  * Copyright 2024 Cognite AS
  */
 
+import { isEmpty } from 'lodash';
 import { Quantity } from '../domainObjectsHelpers/Quantity';
 
 const METER_TO_FT = 1 / 0.3048;
@@ -61,7 +62,12 @@ export class UnitSystem {
   }
 
   public toStringWithUnit(value: number, quantity: Quantity): string {
-    return `${this.toString(value, quantity)} ${this.getUnit(quantity)}`;
+    const text = this.toString(value, quantity);
+    const unit = this.getUnit(quantity);
+    if (isEmpty(unit)) {
+      return text;
+    }
+    return `${text} ${unit}`;
   }
 
   // ==================================================

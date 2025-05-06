@@ -42,6 +42,11 @@ export function expectEqualBox3(actual: Box3, expected: Box3): void {
   expectEqualVector3(actual.max, expected.max);
 }
 
+export function expectEqualRange2(actual: Range3, expected: Range3): void {
+  expectEqualRange1(actual.x, expected.x);
+  expectEqualRange1(actual.y, expected.y);
+}
+
 export function expectEqualRange3(actual: Range3, expected: Range3): void {
   expectEqualRange1(actual.x, expected.x);
   expectEqualRange1(actual.y, expected.y);
