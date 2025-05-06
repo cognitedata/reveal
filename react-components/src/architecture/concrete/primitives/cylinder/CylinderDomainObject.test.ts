@@ -56,6 +56,7 @@ describe('CylinderDomainObject', () => {
 
     function testMe(primitiveType: PrimitiveType, quantity: Quantity, expectedItems: number): void {
       const domainObject = createCylinderDomainObject(primitiveType);
+      expect(domainObject.hasPanelInfo).toBe(true);
       const info = domainObject.getPanelInfo();
       expect(info).toBeDefined();
       assert(info !== undefined);
