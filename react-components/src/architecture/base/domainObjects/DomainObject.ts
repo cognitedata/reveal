@@ -449,7 +449,7 @@ export abstract class DomainObject implements TreeNodeType {
       this.uniqueId = domainObject.uniqueId;
     }
     if (what === undefined || what === Changes.color) {
-      this.color = domainObject.color;
+      this.color = domainObject.color.clone();
     }
     if (what === undefined || what === Changes.naming) {
       this.name = domainObject.name;
