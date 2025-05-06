@@ -230,7 +230,7 @@ describe(DomainObject.name, () => {
     destination.copyFrom(source);
 
     expect(destination.uniqueId).toBe(source.uniqueId);
-    expect(destination.color).toBe(source.color);
+    expect(destination.color).toStrictEqual(source.color);
     expect(destination.name).toBe(source.name);
     expect(destination.getRenderStyle()).toStrictEqual(source.getRenderStyle());
   });
