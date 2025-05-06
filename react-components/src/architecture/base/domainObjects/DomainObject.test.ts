@@ -547,7 +547,7 @@ export class EventChangeTester {
     // eslint-disable-next-line @typescript-eslint/no-this-alias
     const self = this;
     function listener(_domainObject: DomainObject, inputChange: DomainObjectChange): void {
-      if (inputChange.isChanged(change)) {
+      if (_domainObject === domainObject && inputChange.isChanged(change)) {
         self._times++;
       }
     }
@@ -555,15 +555,15 @@ export class EventChangeTester {
   }
 
   public toHaveBeenCalledTimes(expected: number): void {
-    expect(this._times).toHaveBeenCalledTimes(expected);
+    expect(this._times).toBe(expected);
   }
 
   public toHaveBeenCalledOnce(): void {
-    expect(this._times).toBe(1);
+    this.toHaveBeenCalledTimes(1);
   }
 
   public toHaveNotBeenCalled(): void {
-    expect(this._times).toBe(0);
+    this.toHaveBeenCalledTimes(0);
   }
 }
 
