@@ -11,13 +11,13 @@ import { Translator } from './Translator';
 describe(Translator.name, () => {
   beforeEach(() => {});
 
-  test('Should translate', async () => {
+  test('Should translate', () => {
     const input: TranslationInput = { key: 'BOX' };
     const actual = Translator.instance.translate(input);
     expect(actual).toBe(english.BOX);
   });
 
-  test('Should not translate', async () => {
+  test('Should not translate', () => {
     const input: TranslationInput = { untranslated: 'Hallo world' };
     const actual = Translator.instance.translate(input);
     expect(actual).toBe(input.untranslated);
