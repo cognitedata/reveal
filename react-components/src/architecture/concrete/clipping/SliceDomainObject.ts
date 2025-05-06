@@ -23,7 +23,7 @@ export class SliceDomainObject extends PlaneDomainObject {
   public constructor(primitiveType: PrimitiveType) {
     super(primitiveType);
     this.color = new Color(Color.NAMES.orangered);
-    this.backSideColor = new Color(Color.NAMES.palegreen);
+    this._backSideColor = new Color(Color.NAMES.palegreen);
   }
 
   // ==================================================
