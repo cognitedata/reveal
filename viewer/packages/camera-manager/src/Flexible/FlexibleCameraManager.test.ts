@@ -18,12 +18,6 @@ describe(FlexibleCameraManager.name, () => {
     setPositionAndTarget = jest.fn();
   }
 
-  const position = new Vector3(1, 2, 3);
-  const rotation = new Quaternion(0, 0, 0, 1);
-  const target = new Vector3(4, 5, 6);
-  const defaultTarget = new Vector3(0, 0, 0);
-  const defaultCameraPosition = new Vector3(0, 0, 0);
-
   beforeEach(() => {
     jest.clearAllMocks();
     mockDomElement = document.createElement('div');
@@ -41,6 +35,12 @@ describe(FlexibleCameraManager.name, () => {
     );
   });
   describe('setCameraState', () => {
+    const position = new Vector3(1, 2, 3);
+    const rotation = new Quaternion(1, 1, 0, 1);
+    const target = new Vector3(4, 5, 6);
+    const defaultTarget = new Vector3(0, 0, 0);
+    const defaultCameraPosition = new Vector3(0, 0, 0);
+
     it('should set the camera state with position, rotation, and target', () => {
       cameraManager.setCameraState({ position, rotation, target });
 
