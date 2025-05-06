@@ -37,8 +37,8 @@ export function createFractalRegularGrid2(
   grid.increment.x = boundingBox.x.delta / grid.cellSize.i;
   grid.increment.y = boundingBox.y.delta / grid.cellSize.j;
 
-  grid.normalizeZ(boundingBox.z);
   grid.smoothSimple(smoothNumberOfPasses);
+  grid.normalizeZ(boundingBox.z);
   return grid;
 }
 
