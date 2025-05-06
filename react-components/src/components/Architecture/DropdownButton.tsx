@@ -78,6 +78,7 @@ const DropdownElement = ({
 
   const label = command.getLabel(t);
   const selectedLabel = command.selectedChild?.getLabel(t);
+  const isDisabled = label === undefined || isOpen;
   const OpenButtonIcon = isOpen ? ChevronUpIcon : ChevronDownIcon;
   return (
     <Menu
@@ -90,7 +91,7 @@ const DropdownElement = ({
       renderTrigger={(props: any) => (
         <CogsTooltip
           content={<LabelWithShortcut label={label} command={command} />}
-          disabled={label === undefined || isOpen}
+          disabled={isDisabled}
           enterDelay={TOOLTIP_DELAY}
           placement={getTooltipPlacement(placement)}>
           <Button
