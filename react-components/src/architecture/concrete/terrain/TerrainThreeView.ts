@@ -101,12 +101,8 @@ export class TerrainThreeView extends GroupThreeView<TerrainDomainObject> {
     if (range.isEmpty) {
       return new Box3().makeEmpty();
     }
-    const boundingBox = new Box3();
-    boundingBox.min.set(range.x.min, range.y.min, range.z.min);
-    boundingBox.max.set(range.x.max, range.y.max, range.z.max);
-
-    // Convert to viewer space
-    boundingBox.applyMatrix4(CDF_TO_VIEWER_TRANSFORMATION);
+    const boundingBox = range.getBox();
+    boundingBox.applyMatrix4(CDF_TO_VIEWER_TRANSFORMATION); // Convert to viewer space
     return boundingBox;
   }
 
