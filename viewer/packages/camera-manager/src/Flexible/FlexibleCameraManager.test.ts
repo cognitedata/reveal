@@ -16,7 +16,6 @@ describe(FlexibleCameraManager.name, () => {
     setTarget = jest.fn();
     setPositionAndRotation = jest.fn();
     setPositionAndTarget = jest.fn();
-    addEventListeners = jest.fn();
   }
 
   const position = new Vector3(1, 2, 3);
