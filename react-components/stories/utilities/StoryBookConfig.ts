@@ -63,7 +63,7 @@ export class StoryBookConfig extends BaseRevealConfig {
       new ShowTreeViewCommand(),
       new ToggleAllModelsVisibleCommand(),
       new ToggleMetricUnitsCommand(),
-      new SettingsCommand(),
+      new SettingsCommand(true, true),
       undefined,
       new Image360AnnotationSelectTool(),
       new Image360AnnotationCreateTool(),
