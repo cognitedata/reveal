@@ -31,36 +31,39 @@ export const postMock = vi.fn<
     options?: HttpRequestOptions
   ) => Promise<HttpResponse<ExternalIdsResultList<AssetProperties>>>
 >(async (_path, options) => {
-  const assetRef = (options?.data as { items: DmsUniqueIdentifier[] | undefined } | undefined)
-    ?.items?.[0];
-  if (assetRef === undefined) {
+  const assetRefs = (options?.data as { items: DmsUniqueIdentifier[] | undefined } | undefined)
+    ?.items;
+  if (assetRefs === undefined || assetRefs.length === 0) {
     throw Error('Did not find asset ref in post body');
   }
 
-  const nodeItem: NodeItem<AssetProperties> = {
-    instanceType: 'node',
-    version: 0,
-    space: assetRef.space,
-    externalId: assetRef.externalId,
-    createdTime: 123456,
-    lastUpdatedTime: 987654,
-    properties: {
-      cdf_cdm: {
-        'CogniteAsset/v1': {
-          name: 'asset-1',
-          object3D: {
-            externalId: 'object3d-external-id-1',
-            space: 'object3d-space-1'
-          },
-          description: 'asset-1'
+  const nodeItems = assetRefs.map((assetRef) => {
+    const nodeItem: NodeItem<AssetProperties> = {
+      instanceType: 'node',
+      version: 0,
+      space: assetRef.space,
+      externalId: assetRef.externalId,
+      createdTime: 123456,
+      lastUpdatedTime: 987654,
+      properties: {
+        cdf_cdm: {
+          'CogniteAsset/v1': {
+            name: 'asset-1',
+            object3D: {
+              externalId: 'object3d-external-id-1',
+              space: 'object3d-space-1'
+            },
+            description: 'asset-1',
+          }
         }
       }
-    }
-  };
+    };
+    return nodeItem;
+  });
 
   const response: HttpResponse<ExternalIdsResultList<AssetProperties>> = {
     data: {
-      items: [nodeItem],
+      items: nodeItems,
       typing: {}
     },
     status: 200,

@@ -60,9 +60,13 @@ describe('AnnotationModelUtils', () => {
     test('should fetch assets for given asset references', async () => {
       const dmAssets: ExternalIdsResultList<AssetProperties> =
         createDMAssetMock('asset-external-id1');
+      const hybridAssets: ExternalIdsResultList<AssetProperties> =
+        createDMAssetMock('asset-hybrid-external-id1');
       const assetReferences: InstanceReference[] = [
         { id: 1 },
-        { externalId: 'asset-external-id1', space: 'asset-space' }
+        { externalId: 'asset-external-id1', space: 'asset-space' },
+        { assetInstanceId: { externalId: 'asset-hybrid-external-id1', space: 'asset-space' } },
+        { assetId: 1 }
       ];
       retrieveMock.mockResolvedValueOnce([assets[0]]);
 
@@ -71,9 +75,50 @@ describe('AnnotationModelUtils', () => {
         ...item,
         properties: item.properties[CORE_DM_SPACE][COGNITE_ASSET_VIEW_VERSION_KEY]
       }));
-      const expectedAssets = [assets[0], ...dmExpectedAssets];
+      const hybridExpectedAssets = hybridAssets.items.map((item) => ({
+        ...item,
+        properties: item.properties[CORE_DM_SPACE][COGNITE_ASSET_VIEW_VERSION_KEY]
+      }));
+      const expectedAssets = [assets[0], ...dmExpectedAssets, ...hybridExpectedAssets];
 
       expect(retrieveMock).toHaveBeenCalledWith([assetReferences[0]], {
+        ignoreUnknownIds: true
+      });
+      expect(result).toEqual(expectedAssets);
+    });
+
+    test('should fetch assets for given asset references', async () => {
+      const assetReferences: InstanceReference[] = [
+        { id: 1 }
+      ];
+      retrieveMock.mockResolvedValueOnce([assets[0]]);
+
+      const result = await fetchAssetsForAssetReferences(assetReferences, sdkMock);
+
+      const expectedAssets = [assets[0]];
+
+      expect(retrieveMock).toHaveBeenCalledWith([assetReferences[0]], {
+        ignoreUnknownIds: true
+      });
+      expect(result).toEqual(expectedAssets);
+    });
+
+    test('should fetch assets for given dms asset references only', async () => {
+      const dmAssets: ExternalIdsResultList<AssetProperties> =
+        createDMAssetMock('asset-external-id1');
+      const assetReferences: InstanceReference[] = [
+        { externalId: 'asset-external-id1', space: 'asset-space' },
+      ];
+      retrieveMock.mockResolvedValueOnce([assets[0]]);
+
+      const result = await fetchAssetsForAssetReferences(assetReferences, sdkMock);
+      const dmExpectedAssets = dmAssets.items.map((item) => ({
+        ...item,
+        properties: item.properties[CORE_DM_SPACE][COGNITE_ASSET_VIEW_VERSION_KEY]
+      }));
+      const expectedAssets = [...dmExpectedAssets];
+
+      expect(retrieveMock).not.toHaveBeenCalledWith([assetReferences[0]], {
         ignoreUnknownIds: true
       });
       expect(result).toEqual(expectedAssets);

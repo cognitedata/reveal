@@ -62,23 +62,20 @@ export async function fetchAssetsForAssetReferences(
   assetIds: InstanceReference[],
   sdk: CogniteClient
 ): Promise<AssetInstance[]> {
-  const classicAssetIds = assetIds.filter(isIdEither);
-  const assetIdReference = assetIds.filter(isAssetInstanceReference);
+  const [classicIds] = partition(assetIds, isIdEither);
+  const [dmIds] = partition(assetIds, isDmsInstance);
+  const [hybridIds] = partition(assetIds, isHybridAssetCoreDmsInstance);
+  const [assetIdReferences] = partition(assetIds, isAssetInstanceReference);
 
-  const dmIds = assetIds.filter(isDmsInstance);
-  const hybridAssetIdReference = assetIds.filter(isHybridAssetMappingsInstance);
-
-  const combinedDMSAssets = dmIds.concat(
-    hybridAssetIdReference.map((hybrid) => hybrid.assetInstanceId)
+  const classicIdReferences = classicIds.concat(
+    assetIdReferences.map((id) => {
+      return { id: id.assetId };
+    })
   );
-
-  const combinedClassicAssets = classicAssetIds.concat(
-    assetIdReference.map((assetId) => ({ id: assetId.assetId }))
-  );
-
+  const dmIdReferences = dmIds.concat(hybridIds.map((id) => id.assetInstanceId));
   return ([] as AssetInstance[])
-    .concat(await fetchAssetsForAssetIds(combinedClassicAssets, sdk))
-    .concat(await fetchAssetsForDmsIds(combinedDMSAssets, sdk));
+    .concat(await fetchAssetsForAssetIds(classicIdReferences, sdk))
+    .concat(await fetchAssetsForDmsIds(dmIdReferences, sdk));
 }
 
 async function fetchAssetsForDmsIds(
