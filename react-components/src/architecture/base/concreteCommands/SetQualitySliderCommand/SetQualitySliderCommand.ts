@@ -3,14 +3,14 @@
  */
 import {
   FIDELITY_LEVELS,
-  FidelityLevel,
+  type FidelityLevel,
   getClosestFidelity,
   getQualityForFidelityLevel,
   MAX_FIDELITY,
   MIN_FIDELITY
 } from './fidelityLevels';
 import { BaseSliderCommand } from '../../commands/BaseSliderCommand';
-import { TranslateDelegate } from '../../utilities/TranslateInput';
+import { type TranslateDelegate } from '../../utilities/TranslateInput';
 import { Changes } from '../../domainObjectsHelpers/Changes';
 
 export class SetQualitySliderCommand extends BaseSliderCommand {
@@ -48,14 +48,11 @@ export class SetQualitySliderCommand extends BaseSliderCommand {
   }
 
   public override get marks(): Record<number, { label: string }> | undefined {
-    return FIDELITY_LEVELS.reduce(
-      (mapping, level) => {
-        mapping[level] = { label: `${level}` };
+    return FIDELITY_LEVELS.reduce<Record<number, { label: string }>>((mapping, level) => {
+      mapping[level] = { label: `${level}` };
 
-        return mapping;
-      },
-      {} as Record<number, { label: string }>
-    );
+      return mapping;
+    }, {});
   }
 }
 

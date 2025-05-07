@@ -47,7 +47,7 @@ describe('BoxDomainObject', () => {
       return;
     }
     expect(clone.box).toStrictEqual(domainObject.box);
-    expect(clone.color).toBe(domainObject.color);
+    expect(clone.color).toStrictEqual(domainObject.color);
     expect(clone.uniqueId).toBe(domainObject.uniqueId);
     expect(clone.name).toBe(domainObject.name);
     expect(clone.renderStyle).toStrictEqual(domainObject.renderStyle);
@@ -67,6 +67,7 @@ describe('BoxDomainObject', () => {
 
     function testMe(primitiveType: PrimitiveType, quantity: Quantity, expectedItems: number): void {
       const domainObject = createBoxDomainObject(primitiveType);
+      expect(domainObject.hasPanelInfo).toBe(true);
       const info = domainObject.getPanelInfo();
       expect(info).toBeDefined();
       if (info === undefined) {

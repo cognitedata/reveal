@@ -7,13 +7,29 @@ import { type GroupThreeView, type DomainObject, type ThreeView } from '../../..
 import { createFullRenderTargetMock } from '../fixtures/createFullRenderTargetMock';
 import { PerspectiveCamera, Raycaster, Vector2, type Vector3 } from 'three';
 import { expect } from 'vitest';
+import { type Class, isInstanceOf } from '../../../src/advanced-tree-view/utilities/class';
+import { getRenderTarget } from '../../../src/architecture/base/domainObjects/getRoot';
 
-export function expectChildrenLength(view: GroupThreeView, expected: number): void {
-  expect(view.object.children.length).toBe(expected);
+export function expectChildrenLength(view: GroupThreeView, expectedLength: number): void {
+  expect(view.object.children.length).toBe(expectedLength);
+}
+
+export function expectChildrenOfTypeAndCount<T>(
+  view: GroupThreeView,
+  classType: Class<T>,
+  expectedCount: number
+): void {
+  let count = 0;
+  for (const child of view.object.children) {
+    if (isInstanceOf(child, classType)) {
+      count++;
+    }
+  }
+  expect(count).toBe(expectedCount);
 }
 
 export function addView(domainObject: DomainObject, view: ThreeView): void {
-  const renderTarget = createFullRenderTargetMock();
+  const renderTarget = getRenderTarget(domainObject) ?? createFullRenderTargetMock();
   view.attach(domainObject, renderTarget);
   view.initialize();
   view.onShow();

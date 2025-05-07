@@ -563,7 +563,7 @@ export class FdmSDK {
     while (result.nextCursor !== undefined && Object.keys(result.nextCursor).length !== 0) {
       const nextCursorsList = result.nextCursor !== undefined ? Object.keys(result.nextCursor) : [];
       let nextCursorsData: Record<string, string> = {};
-      let currentCursorsData = result.nextCursor;
+      const currentCursorsData = result.nextCursor;
       nextCursorsList.forEach((cursorType) => {
         if (
           initialCursorTypes !== undefined &&
@@ -575,7 +575,7 @@ export class FdmSDK {
       });
       const cursors =
         Object.keys(nextCursorsData).length === 0 ? currentCursorsData : nextCursorsData;
-      const newQuery = { ...query, cursors: cursors };
+      const newQuery = { ...query, cursors };
       result = await queryNodesAndEdges<TQueryRequest, TypedSelectSources>(newQuery, this._sdk);
       items = mergeQueryResults(items, result.items);
     }
