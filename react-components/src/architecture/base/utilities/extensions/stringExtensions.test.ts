@@ -85,7 +85,7 @@ describe('StringExtensions', () => {
       expect(numberToString(123456789)).toBe('123456789');
     });
 
-    test('test negative integers', () => {
+    test('should convert negative integers to strings as expected', () => {
       expect(numberToString(-1)).toBe('-1');
       expect(numberToString(-12)).toBe('-12');
       expect(numberToString(-123)).toBe('-123');
