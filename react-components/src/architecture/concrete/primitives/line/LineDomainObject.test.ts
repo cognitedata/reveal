@@ -18,7 +18,7 @@ import {
 import { LineRenderStyle } from './LineRenderStyle';
 
 describe('LineDomainObject', () => {
-  test('should be empty', () => {
+  test('should initialize with correct default values', () => {
     for (const primitiveType of [
       PrimitiveType.Line,
       PrimitiveType.Polyline,

@@ -13,7 +13,7 @@ import { Changes } from '../../../base/domainObjectsHelpers/Changes';
 import { MeasureCylinderDomainObject } from '../../measurements/MeasureCylinderDomainObject';
 
 describe('CylinderDomainObject', () => {
-  test('Should be empty', () => {
+  test('should initialize with correct default values', () => {
     for (const primitiveType of [
       PrimitiveType.Cylinder,
       PrimitiveType.HorizontalCylinder,

@@ -13,7 +13,7 @@ import { PopupStyle } from '../../base/domainObjectsHelpers/PopupStyle';
 import { createFullRenderTargetMock } from '#test-utils/fixtures/createFullRenderTargetMock';
 
 describe(ExampleDomainObject.name, () => {
-  test('Should be empty', () => {
+  test('should initialize with correct default values', () => {
     const domainObject = createExampleDomainObject();
     expect(domainObject.center).toStrictEqual(new Vector3(1, 2, 3));
     expect(domainObject.icon?.length).greaterThan(0);

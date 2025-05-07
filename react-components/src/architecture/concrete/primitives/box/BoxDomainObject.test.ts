@@ -13,7 +13,7 @@ import { Quantity } from '../../../base/domainObjectsHelpers/Quantity';
 import { type BoxDomainObject } from './BoxDomainObject';
 
 describe('BoxDomainObject', () => {
-  test('Should be empty', () => {
+  test('should initialize with correct default values', () => {
     for (const primitiveType of [
       PrimitiveType.Box,
       PrimitiveType.HorizontalArea,

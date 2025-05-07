@@ -18,7 +18,7 @@ import { isGreyScale } from '../../../base/utilities/colors/colorExtensions';
 import { createFullRenderTargetMock } from '#test-utils/fixtures/createFullRenderTargetMock';
 
 describe(PlaneDomainObject.name, () => {
-  test('should be empty', () => {
+  test('should initialize with correct default values', () => {
     for (const primitiveType of PlanePrimitiveTypes) {
       const domainObject = createPlaneDomainObjectMock(primitiveType);
       expect(domainObject.primitiveType).toBe(primitiveType);
