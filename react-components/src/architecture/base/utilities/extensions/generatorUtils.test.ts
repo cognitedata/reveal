@@ -7,7 +7,7 @@ describe('generatorUtils', () => {
     expect(count(getPositiveNumbers(5))).toBe(5);
   });
 
-  test('should get first', () => {
+  test('should return the first item from a generator', () => {
     expect(first(getPositiveNumbers(0))).toBeUndefined();
     expect(first(getPositiveNumbers(5))).toBe(0);
   });
