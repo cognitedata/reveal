@@ -117,7 +117,7 @@ describe('StringExtensions', () => {
       expect(numberToString(0.00123456789)).toBe('0.00123');
     });
 
-    test('test decimal numbers with many digits', () => {
+    test('should convert decimal numbers with many digits to strings with expected rounding', () => {
       expect(numberToString(0.12)).toBe('0.12');
       expect(numberToString(0.123)).toBe('0.123');
       expect(numberToString(0.1234)).toBe('0.1234');
