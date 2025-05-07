@@ -139,7 +139,7 @@ describe('StringExtensions', () => {
       expect(numberToString(-0.000000123)).toBe('-1.23e-7');
     });
 
-    test('test some corner cases', () => {
+    test('should convert some corner cases to strings with expected rounding', () => {
       expect(numberToString(1.20000005)).toBe('1.2');
       expect(numberToString(1.19999992)).toBe('1.2');
     });
