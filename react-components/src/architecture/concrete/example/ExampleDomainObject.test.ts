@@ -11,6 +11,7 @@ import { Vector3 } from 'three';
 import { ExampleRenderStyle } from './ExampleRenderStyle';
 import { PopupStyle } from '../../base/domainObjectsHelpers/PopupStyle';
 import { createFullRenderTargetMock } from '#test-utils/fixtures/createFullRenderTargetMock';
+import { createExampleDomainObject } from './utilities.test';
 
 describe(ExampleDomainObject.name, () => {
   test('should initialize with correct default values', () => {
@@ -45,9 +46,3 @@ describe(ExampleDomainObject.name, () => {
     expect(info.getItemsByQuantity(Quantity.Length)).toHaveLength(3);
   });
 });
-
-export function createExampleDomainObject(): ExampleDomainObject {
-  const domainObject = new ExampleDomainObject();
-  domainObject.center.set(1, 2, 3);
-  return domainObject;
-}

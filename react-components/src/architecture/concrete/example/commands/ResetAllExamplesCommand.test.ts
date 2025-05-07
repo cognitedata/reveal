@@ -8,8 +8,8 @@ import { type RevealRenderTarget } from '../../../base/renderTarget/RevealRender
 import { ExampleDomainObject } from '../ExampleDomainObject';
 import { ResetAllExamplesCommand } from './ResetAllExamplesCommand';
 import { type RootDomainObject } from '../../../base/domainObjects/RootDomainObject';
-import { addSomeExamples } from './DeleteAllExamplesCommand.test';
 import { createFullRenderTargetMock } from '#test-utils/fixtures/createFullRenderTargetMock';
+import { addExampleDomainObjects } from '../utilities.test';
 
 describe(ResetAllExamplesCommand.name, () => {
   let renderTarget: RevealRenderTarget;
@@ -37,7 +37,7 @@ describe(ResetAllExamplesCommand.name, () => {
     const command = new ResetAllExamplesCommand();
     command.attach(renderTarget);
 
-    addSomeExamples(root, 5);
+    addExampleDomainObjects(root, 5);
     for (const descendant of root.getDescendantsByType(ExampleDomainObject)) {
       descendant.renderStyle.radius = 100;
     }
