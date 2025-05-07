@@ -5,7 +5,7 @@ import { Translator } from '../../../components/i18n/Translator';
 import { isUntranslatedString } from '../utilities/TranslateInput';
 
 describe(BaseCommand.name, () => {
-  test('should have the following default implementation of the virtual functions', async () => {
+  test('should have the following default implementation', async () => {
     const command = new DefaultCommand();
     expect(command.name).toBe('');
     expect(command.tooltip).toBeUndefined();
