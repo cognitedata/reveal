@@ -128,7 +128,7 @@ describe('StringExtensions', () => {
       expect(numberToString(0.12345678)).toBe('0.12346');
     });
 
-    test('test small decimal numbers', () => {
+    test('should convert small decimal numbers to strings with expected scientific notation', () => {
       expect(numberToString(0.123)).toBe('0.123');
       expect(numberToString(0.0123)).toBe('0.0123');
       expect(numberToString(0.00123)).toBe('0.00123');
