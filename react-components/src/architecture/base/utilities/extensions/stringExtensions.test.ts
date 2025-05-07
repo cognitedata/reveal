@@ -72,7 +72,7 @@ describe('StringExtensions', () => {
   });
 
   describe('numberToString', () => {
-    test('test positive integers', () => {
+    test('should convert positive integers to strings as expected', () => {
       expect(numberToString(0)).toBe('0');
       expect(numberToString(1)).toBe('1');
       expect(numberToString(12)).toBe('12');
@@ -85,7 +85,7 @@ describe('StringExtensions', () => {
       expect(numberToString(123456789)).toBe('123456789');
     });
 
-    test('test negative integers', () => {
+    test('should convert negative integers to strings as expected', () => {
       expect(numberToString(-1)).toBe('-1');
       expect(numberToString(-12)).toBe('-12');
       expect(numberToString(-123)).toBe('-123');
@@ -96,7 +96,7 @@ describe('StringExtensions', () => {
       expect(numberToString(-12345678)).toBe('-12345678');
     });
 
-    test('test big numbers', () => {
+    test('should convert big numbers to strings as expected', () => {
       expect(numberToString(10)).toBe('10');
       expect(numberToString(100)).toBe('100');
       expect(numberToString(1000)).toBe('1000');
@@ -108,7 +108,7 @@ describe('StringExtensions', () => {
       expect(numberToString(1000000000)).toBe('1000000000');
     });
 
-    test('test decimal numbers', () => {
+    test('should convert decimal numbers to strings with expected rounding', () => {
       expect(numberToString(123.456789)).toBe('123.45679');
       expect(numberToString(12.3456789)).toBe('12.34568');
       expect(numberToString(1.23456789)).toBe('1.23457');
@@ -117,7 +117,7 @@ describe('StringExtensions', () => {
       expect(numberToString(0.00123456789)).toBe('0.00123');
     });
 
-    test('test decimal numbers with many digits', () => {
+    test('should convert decimal numbers with many digits to strings with expected rounding', () => {
       expect(numberToString(0.12)).toBe('0.12');
       expect(numberToString(0.123)).toBe('0.123');
       expect(numberToString(0.1234)).toBe('0.1234');
@@ -128,7 +128,7 @@ describe('StringExtensions', () => {
       expect(numberToString(0.12345678)).toBe('0.12346');
     });
 
-    test('test small decimal numbers', () => {
+    test('should convert small decimal numbers to strings with expected scientific notation', () => {
       expect(numberToString(0.123)).toBe('0.123');
       expect(numberToString(0.0123)).toBe('0.0123');
       expect(numberToString(0.00123)).toBe('0.00123');
@@ -139,7 +139,7 @@ describe('StringExtensions', () => {
       expect(numberToString(-0.000000123)).toBe('-1.23e-7');
     });
 
-    test('test some corner cases', () => {
+    test('should convert some corner cases to strings with expected rounding', () => {
       expect(numberToString(1.20000005)).toBe('1.2');
       expect(numberToString(1.19999992)).toBe('1.2');
     });
