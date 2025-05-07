@@ -34,7 +34,7 @@ import { TOOLBAR_HORIZONTAL_PANEL_OFFSET } from '../constants';
 import { DividerCommand } from '../../architecture/base/commands/DividerCommand';
 import { SectionCommand } from '../../architecture/base/commands/SectionCommand';
 import { useOnUpdate } from './useOnUpdate';
-import { FlexDirection, type PlacementType } from './types';
+import { type FlexDirection, type PlacementType } from './types';
 import { BaseBannerCommand } from '../../architecture';
 import { BannerComponent } from './BannerComponent';
 
@@ -81,8 +81,12 @@ export const SettingsButton = ({
           {command.children.map((child) => createMenuItem(child, t))}
         </StyledMenuPanel>
       }
-      onShow={(open) => setOpen(open)}
-      onHide={(open) => setOpen(open)}
+      onShow={(open) => {
+        setOpen(open);
+      }}
+      onHide={(open) => {
+        setOpen(open);
+      }}
       placement={placement ?? 'right-end'}
       offset={{ mainAxis: TOOLBAR_HORIZONTAL_PANEL_OFFSET }}>
       <CogsTooltip
