@@ -72,7 +72,7 @@ describe('StringExtensions', () => {
   });
 
   describe('numberToString', () => {
-    test('test positive integers', () => {
+    test('should convert positive integers to strings as expected', () => {
       expect(numberToString(0)).toBe('0');
       expect(numberToString(1)).toBe('1');
       expect(numberToString(12)).toBe('12');
