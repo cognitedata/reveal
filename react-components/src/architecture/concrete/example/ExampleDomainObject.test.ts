@@ -10,7 +10,7 @@ import { ExampleDomainObject } from './ExampleDomainObject';
 import { Vector3 } from 'three';
 import { ExampleRenderStyle } from './ExampleRenderStyle';
 import { PopupStyle } from '../../base/domainObjectsHelpers/PopupStyle';
-import { createFullRenderTargetMock } from '../../../../tests/tests-utilities/fixtures/createFullRenderTargetMock';
+import { createFullRenderTargetMock } from '#test-utils/fixtures/createFullRenderTargetMock';
 
 describe(ExampleDomainObject.name, () => {
   test('Should be empty', () => {

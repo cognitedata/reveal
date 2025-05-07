@@ -4,13 +4,13 @@
 
 import { beforeEach, describe, expect, test } from 'vitest';
 import { isEmpty } from '../../../base/utilities/TranslateInput';
-import { createFullRenderTargetMock } from '../../../../../tests/tests-utilities/fixtures/createFullRenderTargetMock';
 import { DeleteAllExamplesCommand } from './DeleteAllExamplesCommand';
 import { type RevealRenderTarget } from '../../../base/renderTarget/RevealRenderTarget';
 import { createExampleDomainObject } from '../ExampleDomainObject.test';
 import { ExampleDomainObject } from '../ExampleDomainObject';
 import { type RootDomainObject } from '../../../base/domainObjects/RootDomainObject';
 import { type DomainObject } from '../../../base/domainObjects/DomainObject';
+import { createFullRenderTargetMock } from '#test-utils/fixtures/createFullRenderTargetMock';
 
 describe(DeleteAllExamplesCommand.name, () => {
   let renderTarget: RevealRenderTarget;
