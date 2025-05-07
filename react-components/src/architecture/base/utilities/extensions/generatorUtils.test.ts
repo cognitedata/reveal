@@ -2,7 +2,7 @@ import { describe, expect, test } from 'vitest';
 import { count, first, last } from './generatorUtils';
 
 describe('generatorUtils', () => {
-  test('should count', () => {
+  test('should correctly count the number of items in a generator', () => {
     expect(count(getPositiveNumbers(0))).toBe(0);
     expect(count(getPositiveNumbers(5))).toBe(5);
   });
