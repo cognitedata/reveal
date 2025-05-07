@@ -37,7 +37,7 @@ describe(ToggleMetricUnitsCommand.name, () => {
     expect(renderTarget.rootDomainObject.unitSystem.isMetric).toBe(false);
   });
 
-  test('should switch from metric unit and imperial and back and check if domain objects are notified twice', async () => {
+  test('should toggle between metric and imperial units and notify domain objects twice', async () => {
     const tester = new EventChangeTester(renderTarget.rootDomainObject, Changes.unit);
 
     expect(command.isChecked).toBe(true);
