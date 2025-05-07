@@ -53,13 +53,12 @@ describe(CreatePoiCommentCommand.name, () => {
 
   test('invoking command posts comment on Poi', () => {
     const mockPostComment = vi.fn().mockReturnValue(Promise.resolve());
-    const mockDomainObjectNotify = vi.fn();
 
     const mockPointsOfInterestDomainObject = new Mock<PointsOfInterestDomainObject<string>>()
       .setup((p) => p.postCommentForPoi)
       .returns(mockPostComment)
       .setup((p) => p.notify)
-      .returns(mockDomainObjectNotify)
+      .returns(vi.fn())
       .object();
 
     const mockRenderTarget = new Mock<RevealRenderTarget>()
