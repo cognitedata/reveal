@@ -14,23 +14,27 @@ export function equalsIgnoreCaseAndSpace(value1: string, value2: string): boolea
   return equalsIgnoreCase(value1.replace(' ', ''), value2.replace(' ', ''));
 }
 
+/**
+ * Converts a number to a string representation with improved rounding precision.
+ *
+ * This function addresses numeric precision issues where numbers like `1.20000005` or `1.19999992`
+ * may appear due to floating-point arithmetic. It rounds the number to a fixed precision and formats
+ * it as a string, ensuring a clean and accurate representation.
+ *
+ * - For very small numbers (absolute value less than 0.001), the default string conversion is used.
+ * - For other numbers, the value is multiplied by `1e5`, rounded, and formatted with a decimal point
+ *   inserted at the appropriate position.
+ * - Trailing zeros and unnecessary decimal points are removed for a cleaner output.
+ * - Negative numbers are handled by preserving the negative sign.
+ *
+ * @param value - The numeric value to convert to a string.
+ * @returns A string representation of the number with improved precision and formatting.
+ */
 export function numberToString(value: number): string {
-  // Sometimes the number comes out like this: 1.20000005 or 1.19999992 due to numeric precision limitations.
-  // To get better rounded values, I wrote this myself: Multiply by some high integer and round it, then
-  // convert to text, and insert the comma manually afterwards.
-
-  // Small number get less accurate result in this algorithm, so use the default string conversion.
-  if (Math.abs(value) < 0.001) {
-    return `${value}`;
-  }
   const sign = Math.sign(value);
   const rounded = Math.abs(Math.round(value * 1e5));
   let text = `${rounded}`;
-  if (text.length === 1) {
-    text = `${'0.0000'}${text}`;
-  } else if (text.length === 2) {
-    text = `${'0.000'}${text}`;
-  } else if (text.length === 3) {
+  if (text.length === 3) {
     text = `${'0.00'}${text}`;
   } else if (text.length === 4) {
     text = `${'0.0'}${text}`;
@@ -39,6 +43,8 @@ export function numberToString(value: number): string {
   } else if (text.length >= 6) {
     const i = text.length - 5;
     text = `${text.slice(0, i)}${'.'}${text.slice(i)}`;
+  } else {
+    return `${value}`;
   }
   // Since we know that the comma are there,
   // we can safely remove trailing zeros

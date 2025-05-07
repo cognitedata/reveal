@@ -12,7 +12,7 @@ import {
   expectVisibleChildren
 } from '../../../../tests/tests-utilities/architecture/viewUtil';
 import { type RevealRenderTarget } from '../../base/renderTarget/RevealRenderTarget';
-import { isViewerMock } from '../../../../tests/tests-utilities/fixtures/viewer';
+import { isViewerMock } from '#test-utils/fixtures/viewer';
 
 describe(AxisThreeView.name, () => {
   let view: AxisThreeView;
@@ -27,7 +27,11 @@ describe(AxisThreeView.name, () => {
     axisDomainObject.setVisibleInteractive(true, renderTarget);
 
     view = axisDomainObject.getViewByTarget(renderTarget) as AxisThreeView;
-    const _ = view.object; // Force update view since nothing is visible in this mock code
+
+    // Force update view since nothing is visible in this mock code
+    // this is not needed in the real code
+    // but needed in the mock code since nothing is rendered in Reveal
+    const _ = view.object;
   });
 
   test('should have initial state', () => {
