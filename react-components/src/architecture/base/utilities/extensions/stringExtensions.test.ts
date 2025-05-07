@@ -96,7 +96,7 @@ describe('StringExtensions', () => {
       expect(numberToString(-12345678)).toBe('-12345678');
     });
 
-    test('test big numbers', () => {
+    test('should convert big numbers to strings as expected', () => {
       expect(numberToString(10)).toBe('10');
       expect(numberToString(100)).toBe('100');
       expect(numberToString(1000)).toBe('1000');
