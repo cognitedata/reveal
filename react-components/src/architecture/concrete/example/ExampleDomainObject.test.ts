@@ -11,7 +11,7 @@ import { Vector3 } from 'three';
 import { ExampleRenderStyle } from './ExampleRenderStyle';
 import { PopupStyle } from '../../base/domainObjectsHelpers/PopupStyle';
 import { createFullRenderTargetMock } from '#test-utils/fixtures/createFullRenderTargetMock';
-import { createExampleDomainObject } from './utilities.test';
+import { createExampleDomainObject } from './testUtilities';
 
 describe(ExampleDomainObject.name, () => {
   test('should initialize with correct default values', () => {

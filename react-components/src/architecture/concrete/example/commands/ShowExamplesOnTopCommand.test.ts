@@ -9,7 +9,7 @@ import { ExampleDomainObject } from '../ExampleDomainObject';
 import { ShowExamplesOnTopCommand } from './ShowExamplesOnTopCommand';
 import { type RootDomainObject } from '../../../base/domainObjects/RootDomainObject';
 import { createFullRenderTargetMock } from '#test-utils/fixtures/createFullRenderTargetMock';
-import { addExampleDomainObjects } from '../utilities.test';
+import { addExampleDomainObjects } from '../testUtilities';
 
 describe(ShowExamplesOnTopCommand.name, () => {
   let renderTarget: RevealRenderTarget;

@@ -16,7 +16,7 @@ import {
 import { isDomainObjectIntersection } from '../../base/domainObjectsHelpers/DomainObjectIntersection';
 import { ExampleView } from './ExampleView';
 import { type ExampleDomainObject } from './ExampleDomainObject';
-import { createExampleDomainObject } from './utilities.test';
+import { createExampleDomainObject } from './testUtilities';
 
 describe(ExampleView.name, () => {
   let domainObject: ExampleDomainObject;

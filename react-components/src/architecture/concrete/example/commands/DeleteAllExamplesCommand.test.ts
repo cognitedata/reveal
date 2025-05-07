@@ -8,7 +8,7 @@ import { DeleteAllExamplesCommand } from './DeleteAllExamplesCommand';
 import { type RevealRenderTarget } from '../../../base/renderTarget/RevealRenderTarget';
 import { type RootDomainObject } from '../../../base/domainObjects/RootDomainObject';
 import { createFullRenderTargetMock } from '#test-utils/fixtures/createFullRenderTargetMock';
-import { addExampleDomainObjects, getNumberOfExampleDomainObjects } from '../utilities.test';
+import { addExampleDomainObjects, getNumberOfExampleDomainObjects } from '../testUtilities';
 
 describe(DeleteAllExamplesCommand.name, () => {
   let renderTarget: RevealRenderTarget;
