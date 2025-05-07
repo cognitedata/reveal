@@ -47,7 +47,7 @@ describe(FlexibleCameraManager.name, () => {
       cameraManager.setCameraState({
         position: ARBITRARY_POSITION,
         rotation: ARBITRARY_ROTATION,
-        target: new Vector3(4, 5, 6)
+        target: ARBITRARY_TARGET
       });
 
       const { position, rotation, target } = cameraManager.getCameraState();
