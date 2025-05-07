@@ -128,5 +128,4 @@ describe(useCameraStateControl.name, () => {
 
     expect(setter).toHaveBeenCalledTimes(3);
   });
-
 });

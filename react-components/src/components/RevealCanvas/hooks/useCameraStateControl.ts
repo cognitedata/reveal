@@ -8,7 +8,8 @@ import { type CameraState } from '@cognite/reveal';
 import { Quaternion } from 'three';
 
 // Camera state parameters type with position and target as requires but rotation as optional
-export type CameraStateParameters = Omit<Required<CameraState>, 'rotation'> & Pick<CameraState, 'rotation'>;
+export type CameraStateParameters = Omit<Required<CameraState>, 'rotation'> &
+  Pick<CameraState, 'rotation'>;
 
 export const useCameraStateControl = (
   externalCameraState?: CameraStateParameters,
@@ -20,7 +21,7 @@ export const useCameraStateControl = (
       : {
           position: externalCameraState.position.clone(),
           target: externalCameraState.target.clone(),
-          rotation: externalCameraState.rotation?.clone(),
+          rotation: externalCameraState.rotation?.clone()
         }
   );
 
@@ -67,7 +68,7 @@ const useSetExternalCameraStateOnCameraMove = (
       lastSetExternalState.current = {
         position: currentCameraManagerState.position.clone(),
         target: currentCameraManagerState.target.clone(),
-        rotation: currentCameraManagerState.rotation.clone(),
+        rotation: currentCameraManagerState.rotation.clone()
       };
 
       setCameraState?.(currentCameraManagerState);
@@ -93,19 +94,19 @@ function isCameraStatesEqual(
   }
 
   const epsilon = 0.001;
-  const { position: previousPosition, target: previousTarget, rotation: previousRotation } = previous;
+  const {
+    position: previousPosition,
+    target: previousTarget,
+    rotation: previousRotation
+  } = previous;
   const { position: currentPosition, target: currentTarget, rotation: currentRotation } = current;
 
-  const isPositionStateEqual = previousPosition.distanceToSquared(currentPosition) <= epsilon
+  const isPositionStateEqual = previousPosition.distanceToSquared(currentPosition) <= epsilon;
   const isTargetStateEqual = previousTarget.distanceToSquared(currentTarget) <= epsilon;
 
   const nonNullCurrentRotation = currentRotation ?? new Quaternion().identity();
   const nonNullPreviousRotation = previousRotation ?? new Quaternion().identity();
   const isRotationStateEqual = nonNullPreviousRotation.angleTo(nonNullCurrentRotation) <= epsilon;
 
-  return (
-    isPositionStateEqual &&
-    isTargetStateEqual &&
-    isRotationStateEqual
-  );
+  return isPositionStateEqual && isTargetStateEqual && isRotationStateEqual;
 }
