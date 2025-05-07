@@ -64,7 +64,7 @@ export async function fetchAssetsForAssetReferences(
 ): Promise<AssetInstance[]> {
   const [classicIds] = partition(assetIds, isIdEither);
   const [dmIds] = partition(assetIds, isDmsInstance);
-  const [hybridIds] = partition(assetIds, isHybridAssetCoreDmsInstance);
+  const [hybridIds] = partition(assetIds, isHybridAssetMappingsInstance);
   const [assetIdReferences] = partition(assetIds, isAssetInstanceReference);
 
   const classicIdReferences = classicIds.concat(
