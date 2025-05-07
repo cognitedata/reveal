@@ -10,6 +10,8 @@ import { type PointOfInterest } from './types';
 export class CreatePoiCommentCommand extends BaseInputCommand {
   private readonly _poi: PointOfInterest<unknown>;
 
+  private _onFinish?: () => void;
+
   constructor(poi: PointOfInterest<unknown>) {
     super();
 
@@ -18,6 +20,14 @@ export class CreatePoiCommentCommand extends BaseInputCommand {
 
   public override get hasData(): true {
     return true;
+  }
+
+  public get onFinish(): (() => void) | undefined {
+    return this._onFinish;
+  }
+
+  public set onFinish(onFinish: () => void) {
+    this._onFinish = onFinish;
   }
 
   public override getPostButtonLabel(): TranslationInput {
@@ -30,6 +40,10 @@ export class CreatePoiCommentCommand extends BaseInputCommand {
 
   public override getPlaceholder(): TranslationInput {
     return { key: 'COMMENT_PLACEHOLDER' };
+  }
+
+  public override get isPostButtonEnabled(): boolean {
+    return this._content.length > 0;
   }
 
   public override invokeCore(): boolean {

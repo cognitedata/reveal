@@ -26,6 +26,7 @@ export const InputField = ({
 
   const [content, setContent] = useState<string>('');
   const [enabled, setEnabled] = useState<boolean>(command.isEnabled);
+  const [postButtonEnabled, setPostButtonEnabled] = useState<boolean>(false);
   const [postLabel, setPostLabel] = useState<string | undefined>(
     translateIfExists(command.getPostButtonLabel())
   );
@@ -41,6 +42,8 @@ export const InputField = ({
     setCancelLabel(translateIfExists(command.getCancelButtonLabel()));
     setPlaceholder(translateIfExists(command.getPlaceholder()));
     setEnabled(command.isEnabled);
+    setPostButtonEnabled(command.isPostButtonEnabled);
+    setContent(command.content);
   });
 
   return (
@@ -48,13 +51,13 @@ export const InputField = ({
       key={command.uniqueId}
       placeholder={placeholder}
       message={content}
-      setMessage={setContent}
+      setMessage={(content) => (command.content = content)}
       onPostMessage={() => {
-        command.invokeWithContent(content);
-        setContent('');
+        command.invoke();
+        command.content = '';
       }}
       postButtonText={postLabel}
-      postButtonDisabled={!enabled}
+      postButtonDisabled={!(postButtonEnabled && enabled)}
       cancelButtonText={cancelLabel}
       cancelButtonDisabled={false}
       onCancel={command.onCancel}
