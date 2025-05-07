@@ -7,7 +7,6 @@ import { sdkMock } from '#test-utils/fixtures/sdk';
 import { ViewerContextProvider } from '../RevealCanvas/ViewerContext';
 import { Translator } from '../i18n/Translator';
 import { CommandButton } from './CommandButton';
-import { isUntranslatedString } from '../../architecture/base/utilities/TranslateInput';
 import { MockCommand } from '#test-utils/architecture/mock-commands/MockCommand';
 
 // Help page here:  https://bogr.dev/blog/react-testing-intro/
@@ -49,17 +48,13 @@ describe(CommandButton.name, () => {
     expect(command.isInvokedTimes).toBe(1);
   });
 
-  test('should change from visible to invisible', async () => {
+  test('should be invisible', async () => {
     const command = new MockCommand();
-    renderMe(command);
-
-    const beforeButton = await screen.findByRole('button');
-    expect(beforeButton).not.toBeNull();
-
     command.isVisible = false;
 
-    const afterButton = await screen.findByRole('button', { hidden: true });
-    expect(afterButton).not.toBeNull();
+    renderMe(command);
+    const afterButton = screen.queryByRole('button');
+    expect(afterButton).toBeNull();
   });
 
   test('should change from enabled to disabled', async () => {
