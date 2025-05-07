@@ -12,7 +12,7 @@ describe('generatorUtils', () => {
     expect(first(getPositiveNumbers(5))).toBe(0);
   });
 
-  test('should get last', () => {
+  test('should return the last item from a generator', () => {
     expect(last(getPositiveNumbers(0))).toBeUndefined();
     expect(last(getPositiveNumbers(5))).toBe(4);
   });
