@@ -30,10 +30,12 @@ describe(BaseCommand.name, () => {
 
   test('should get correct string for generating the tooltip', async () => {
     const command = new MockCommand();
-    const label = command.getLabel(Translator.instance.translate);
 
     if (isUntranslatedString(command.tooltip)) {
+      const label = command.getLabel(Translator.instance.translate);
       expect(label).toBe(command.tooltip.untranslated);
+
+      expect(command.name).toBe(command.tooltip.untranslated);
     }
     const keys = command.getShortCutKeys();
     expect(keys).toHaveLength(4);
