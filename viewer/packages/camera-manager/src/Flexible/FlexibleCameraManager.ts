@@ -61,7 +61,7 @@ export class FlexibleCameraManager extends PointerEvents implements IFlexibleCam
     raycastCallback: RaycastCallback,
     camera?: PerspectiveCamera,
     scene?: Scene,
-    hasEventListeners?: boolean,
+    hasEventListeners?: boolean
   ) {
     super();
     this._hasEventListeners = hasEventListeners ?? true;
