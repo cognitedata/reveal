@@ -29,7 +29,7 @@ describe(ExampleDomainObject.name, () => {
     expect(clone).toStrictEqual(domainObject);
   });
 
-  test('Should have edit cursor', () => {
+  test('should return correct edit tool cursor', () => {
     const domainObject = createExampleDomainObject();
     const cursor = domainObject.getEditToolCursor(createFullRenderTargetMock(), new Vector3());
     expect(cursor).toBe('move');
