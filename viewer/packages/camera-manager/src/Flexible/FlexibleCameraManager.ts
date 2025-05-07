@@ -62,11 +62,10 @@ export class FlexibleCameraManager extends PointerEvents implements IFlexibleCam
     camera?: PerspectiveCamera,
     scene?: Scene,
     hasEventListeners?: boolean,
-    customControls?: FlexibleControls
   ) {
     super();
     this._hasEventListeners = hasEventListeners ?? true;
-    this._controls = customControls ?? new FlexibleControls(camera, domElement, new FlexibleControlsOptions());
+    this._controls = new FlexibleControls(camera, domElement, new FlexibleControlsOptions());
     this._controls.getPickedPointByPixelCoordinates = this.getPickedPointByPixelCoordinates;
     this._raycastCallback = raycastCallback;
 

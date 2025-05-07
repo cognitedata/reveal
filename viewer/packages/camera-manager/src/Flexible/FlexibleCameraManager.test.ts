@@ -4,72 +4,100 @@
 import { FlexibleCameraManager } from './FlexibleCameraManager';
 import { Vector3, Quaternion, PerspectiveCamera } from 'three';
 import { jest } from '@jest/globals';
-import { FlexibleControls } from './FlexibleControls';
-import { FlexibleControlsOptions } from './FlexibleControlsOptions';
+import { CameraManagerCallbackData } from '../types';
 
 describe(FlexibleCameraManager.name, () => {
   let cameraManager: FlexibleCameraManager;
   let mockDomElement: HTMLElement;
-  const mockRaycastCallback = jest.fn();
+  const ARBITRARY_POSITION = new Vector3(1, 2, 3);
+  const ARBITRARY_TARGET = new Vector3(4, 5, 6);
+  const ARBITRARY_ROTATION = new Quaternion(1, 1, 0, 1);
 
-  class FlexibleControlsMock extends FlexibleControls {
-    setTarget = jest.fn();
-    setPositionAndRotation = jest.fn();
-    setPositionAndTarget = jest.fn();
-  }
+  // This is the transformed version of ARBITRARY_ROTATION after calculations, which is used to set the camera state.
+  const ARBITRARY_TRANSFORMED_ROTATION = new Quaternion(
+    0.07259812080203774,
+    0.9265705318055999,
+    -0.2397753047300946,
+    0.28054298367111397
+  );
+
+  const INITIAL_TARGET = new Vector3(0, 0, 0);
+  const INITIAL_POSITION = new Vector3(0, 0, 0);
 
   beforeEach(() => {
     jest.clearAllMocks();
     mockDomElement = document.createElement('div');
 
     const mockCamera = new PerspectiveCamera();
-    const mockControls = new FlexibleControlsMock(mockCamera, mockDomElement, new FlexibleControlsOptions());
+    const mockRaycastCallback = jest.fn<() => Promise<CameraManagerCallbackData>>();
 
-    cameraManager = new FlexibleCameraManager(
-      mockDomElement,
-      mockRaycastCallback as any,
-      mockCamera,
-      undefined,
-      true,
-      mockControls
-    );
+    cameraManager = new FlexibleCameraManager(mockDomElement, mockRaycastCallback, mockCamera, undefined, false);
   });
   describe('setCameraState', () => {
-    const position = new Vector3(1, 2, 3);
-    const rotation = new Quaternion(1, 1, 0, 1);
-    const target = new Vector3(4, 5, 6);
-    const defaultTarget = new Vector3(0, 0, 0);
-    const defaultCameraPosition = new Vector3(0, 0, 0);
-
+    it('should not throw when setting both rotation and target', () => {
+      expect(() =>
+        cameraManager.setCameraState({
+          position: ARBITRARY_POSITION,
+          rotation: ARBITRARY_ROTATION,
+          target: ARBITRARY_TARGET
+        })
+      ).not.toThrow();
+    });
     it('should set the camera state with position, rotation, and target', () => {
-      cameraManager.setCameraState({ position, rotation, target });
+      cameraManager.setCameraState({
+        position: ARBITRARY_POSITION,
+        rotation: ARBITRARY_ROTATION,
+        target: new Vector3(4, 5, 6)
+      });
 
-      expect(cameraManager.controls.setTarget).toHaveBeenCalledWith(target);
-      expect(cameraManager.controls.setPositionAndRotation).toHaveBeenCalledWith(position, rotation);
+      const { position, rotation, target } = cameraManager.getCameraState();
+
+      expect(position.equals(ARBITRARY_POSITION)).toBeTrue();
+      expect(rotation.equals(ARBITRARY_TRANSFORMED_ROTATION)).toBeTrue();
+      expect(target.equals(ARBITRARY_TARGET)).toBeTrue();
     });
 
     it('should set the camera state with position and target only', () => {
-      cameraManager.setCameraState({ position, target });
+      cameraManager.setCameraState({
+        position: ARBITRARY_POSITION,
+        target: ARBITRARY_TARGET
+      });
 
-      expect(cameraManager.controls.setPositionAndTarget).toHaveBeenCalledWith(position, target);
+      const { position, target } = cameraManager.getCameraState();
+
+      expect(position.equals(ARBITRARY_POSITION)).toBeTrue();
+      expect(target.equals(ARBITRARY_TARGET)).toBeTrue();
     });
 
     it('should set the camera state with position and rotation only', () => {
-      cameraManager.setCameraState({ position, rotation });
+      cameraManager.setCameraState({
+        position: ARBITRARY_POSITION,
+        rotation: ARBITRARY_ROTATION
+      });
 
-      expect(cameraManager.controls.setPositionAndRotation).toHaveBeenCalledWith(position, rotation);
+      const { position, rotation } = cameraManager.getCameraState();
+
+      expect(position.equals(ARBITRARY_POSITION)).toBeTrue();
+      expect(rotation.equals(ARBITRARY_TRANSFORMED_ROTATION)).toBeTrue();
     });
 
-    it('should set the camera state with position only and using the controls target value', () => {
-      cameraManager.setCameraState({ position });
+    it('should set the camera state with position only', () => {
+      cameraManager.setCameraState({
+        position: ARBITRARY_POSITION
+      });
 
-      expect(cameraManager.controls.setPositionAndTarget).toHaveBeenCalledWith(position, defaultTarget);
+      const { position } = cameraManager.getCameraState();
+
+      expect(position.equals(ARBITRARY_POSITION)).toBeTrue();
     });
 
     it('should set the camera state with original camera position and controls target values when nothing is set', () => {
       cameraManager.setCameraState({});
 
-      expect(cameraManager.controls.setPositionAndTarget).toHaveBeenCalledWith(defaultCameraPosition, defaultTarget);
+      const { position, target } = cameraManager.getCameraState();
+
+      expect(position.equals(INITIAL_POSITION)).toBeTrue();
+      expect(target.equals(INITIAL_TARGET)).toBeTrue();
     });
   });
 });
