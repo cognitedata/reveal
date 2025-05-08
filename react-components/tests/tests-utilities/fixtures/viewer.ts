@@ -30,6 +30,8 @@ export const viewerSetResolutionOptionsMock =
 // The Cognite3DViewer class misses the setSceneBoundingBox method, so declare it here
 export type ViewerMock = Cognite3DViewer<DataSourceType> & {
   setSceneBoundingBox: (box: Box3) => void;
+} & {
+  setVisualSceneBoundingBox: (box: Box3) => void;
 };
 
 export function isViewerMock(viewer: Cognite3DViewer<DataSourceType>): viewer is ViewerMock {
@@ -40,6 +42,7 @@ export const viewerMock = createViewerMock();
 
 export function createViewerMock(): ViewerMock {
   const sceneBoundingBox = new Box3().makeEmpty();
+  const visualSceneBoundingBox = new Box3().makeEmpty();
   let clippingPlanes = new Array<Plane>();
 
   return (
@@ -101,6 +104,15 @@ export function createViewerMock(): ViewerMock {
       .setup((p) => p.setSceneBoundingBox)
       .returns((boundingBox: Box3) => {
         sceneBoundingBox.copy(boundingBox);
+      })
+      // Get and set visual scene bounding box
+      .setup((p) => p.getVisualSceneBoundingBox)
+      .callback(() => {
+        return () => visualSceneBoundingBox;
+      })
+      .setup((p) => p.setVisualSceneBoundingBox)
+      .returns((boundingBox: Box3) => {
+        visualSceneBoundingBox.copy(boundingBox);
       })
       // Get and set global clipping planes
       .setup((p) => p.getGlobalClippingPlanes)
