@@ -31,13 +31,11 @@ describe(CreatePoiCommentCommand.name, () => {
   });
 
   test('has correct initial content', () => {
-    const poiCommentCommand = new CreatePoiCommentCommand(TEST_POINT_OF_INTEREST);
+    const command = new CreatePoiCommentCommand(TEST_POINT_OF_INTEREST);
 
-    expect(getTranslationKeyOrString(poiCommentCommand.getCancelButtonLabel())).toBe('CANCEL');
-    expect(getTranslationKeyOrString(poiCommentCommand.getPostButtonLabel())).toBe('SEND');
-    expect(getTranslationKeyOrString(poiCommentCommand.getPlaceholder())).toBe(
-      'COMMENT_PLACEHOLDER'
-    );
+    expect(getTranslationKeyOrString(command.getCancelButtonLabel())).toBe('CANCEL');
+    expect(getTranslationKeyOrString(command.getPostButtonLabel())).toBe('SEND');
+    expect(getTranslationKeyOrString(command.getPlaceholder())).toBe('COMMENT_PLACEHOLDER');
   });
 
   test('post button is disabled when content is empty', () => {
@@ -80,12 +78,12 @@ describe(CreatePoiCommentCommand.name, () => {
 
     const commentContent = 'comment-content';
 
-    const poiCommentCommand = new CreatePoiCommentCommand(TEST_POINT_OF_INTEREST);
+    const command = new CreatePoiCommentCommand(TEST_POINT_OF_INTEREST);
 
-    poiCommentCommand.attach(mockRenderTarget);
+    command.attach(mockRenderTarget);
 
-    poiCommentCommand.content = commentContent;
-    poiCommentCommand.invoke();
+    command.content = commentContent;
+    command.invoke();
 
     expect(mockPostComment).toHaveBeenCalledWith(TEST_POINT_OF_INTEREST, commentContent);
   });
