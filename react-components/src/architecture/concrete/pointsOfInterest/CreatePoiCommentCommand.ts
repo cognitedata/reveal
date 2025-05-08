@@ -42,10 +42,6 @@ export class CreatePoiCommentCommand extends BaseInputCommand {
     return { key: 'COMMENT_PLACEHOLDER' };
   }
 
-  public override get isPostButtonEnabled(): boolean {
-    return this._content.length > 0;
-  }
-
   public override invokeCore(): boolean {
     const domainObject = this.rootDomainObject.getDescendantByType(PointsOfInterestDomainObject);
     void domainObject?.postCommentForPoi(this._poi, this.content).then(() => {

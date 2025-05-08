@@ -33,6 +33,6 @@ export abstract class BaseInputCommand extends RenderTargetCommand {
   }
 
   public get isPostButtonEnabled(): boolean {
-    return true;
+    return this._content.length > 0;
   }
 }
