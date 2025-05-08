@@ -4,11 +4,6 @@ import { getTranslationKeyOrString } from '#test-utils/architecture/getTranslati
 
 import { type PointOfInterest, PointsOfInterestStatus } from './types';
 import { PointsOfInterestDomainObject } from './PointsOfInterestDomainObject';
-import { Mock } from 'moq.ts';
-import { type RevealRenderTarget } from '../../base/renderTarget/RevealRenderTarget';
-import { type RootDomainObject } from '../../base/domainObjects/RootDomainObject';
-import { type CommandsController } from '../../base/renderTarget/CommandsController';
-
 const TEST_POINT_OF_INTEREST: PointOfInterest<string> = {
   properties: {
     name: 'poi_name',
@@ -26,7 +21,7 @@ const TEST_POINT_OF_INTEREST: PointOfInterest<string> = {
 } as const;
 import { waitFor } from '@testing-library/react';
 import { createRenderTargetMock } from '#test-utils/fixtures/renderTarget';
-import { PointsOfInterestProvider } from './PointsOfInterestProvider';
+import { type PointsOfInterestProvider } from './PointsOfInterestProvider';
 
 describe(CreatePoiCommentCommand.name, () => {
   beforeAll(() => {
