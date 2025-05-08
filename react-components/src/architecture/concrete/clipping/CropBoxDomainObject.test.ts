@@ -7,10 +7,11 @@ import { describe, expect, test } from 'vitest';
 import { CropBoxDomainObject } from './CropBoxDomainObject';
 import { isEmpty } from '../../base/utilities/TranslateInput';
 import { SolidPrimitiveRenderStyle } from '../primitives/common/SolidPrimitiveRenderStyle';
-import { createFullRenderTargetMock } from '#test-utils/fixtures/createFullRenderTargetMock';
 import { Box3, Plane, Vector3 } from 'three';
 import { setClippingPlanes } from './commands/setClippingPlanes';
-import { isViewerMock } from '../../../../tests/tests-utilities/fixtures/viewer';
+import { isViewerMock } from '#test-utils//fixtures/viewer';
+import { createFullRenderTargetMock } from '#test-utils/fixtures/createFullRenderTargetMock';
+
 import { type RevealRenderTarget } from '../../base/renderTarget/RevealRenderTarget';
 
 describe(CropBoxDomainObject.name, () => {

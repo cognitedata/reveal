@@ -2,7 +2,7 @@
  * Copyright 2025 Cognite AS
  */
 
-import { beforeEach, describe, expect, test } from 'vitest';
+import { assert, beforeEach, describe, expect, test } from 'vitest';
 import { CylinderView } from './CylinderView';
 import { Object3D, Vector3 } from 'three';
 import { type CylinderDomainObject } from './CylinderDomainObject';
@@ -80,9 +80,8 @@ describe('CylinderView', () => {
     const intersectInput = createLookingDownIntersectInput();
     const intersection = view.intersectIfCloser(intersectInput, undefined);
     expect(intersection).toBeDefined();
-    if (intersection === undefined) {
-      return;
-    }
+    assert(intersection !== undefined);
+
     intersection.point.applyMatrix4(CDF_TO_VIEWER_TRANSFORMATION.invert());
     expectEqualVector3(intersection.point, domainObject.cylinder.centerA);
     expect(intersection.customObject).toBe(view);
