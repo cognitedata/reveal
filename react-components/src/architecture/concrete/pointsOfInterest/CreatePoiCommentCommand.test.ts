@@ -24,15 +24,23 @@ const TEST_POINT_OF_INTEREST: PointOfInterest<string> = {
   id: 'poi_id',
   status: PointsOfInterestStatus.Default
 } as const;
+import { waitFor } from '@testing-library/react';
 
 describe(CreatePoiCommentCommand.name, () => {
   beforeAll(() => {
     vi.clearAllMocks();
   });
 
+  test('should indicate that it has data', () => {
+    const command = new CreatePoiCommentCommand(TEST_POINT_OF_INTEREST);
+    expect(command.hasData).toBeTruthy();
+  });
+
   test('has correct initial content', () => {
     const command = new CreatePoiCommentCommand(TEST_POINT_OF_INTEREST);
 
+    expect(command.onCancel).toBeUndefined();
+    expect(command.onFinish).toBeUndefined();
     expect(getTranslationKeyOrString(command.getCancelButtonLabel())).toBe('CANCEL');
     expect(getTranslationKeyOrString(command.getPostButtonLabel())).toBe('SEND');
     expect(getTranslationKeyOrString(command.getPlaceholder())).toBe('COMMENT_PLACEHOLDER');
@@ -49,7 +57,8 @@ describe(CreatePoiCommentCommand.name, () => {
     expect(poiCommentCommand.isPostButtonEnabled).toBeTruthy();
   });
 
-  test('invoking command posts comment on Poi', () => {
+  test('invoking command posts comment on Poi and calls onFinish', async () => {
+    const mockOnFinish = vi.fn();
     const mockPostComment = vi.fn().mockReturnValue(Promise.resolve());
 
     const mockDomainObject = new Mock<PointsOfInterestDomainObject<string>>()
@@ -82,9 +91,12 @@ describe(CreatePoiCommentCommand.name, () => {
 
     command.attach(mockRenderTarget);
 
+    command.onFinish = mockOnFinish;
     command.content = commentContent;
     command.invoke();
 
     expect(mockPostComment).toHaveBeenCalledWith(TEST_POINT_OF_INTEREST, commentContent);
+
+    await waitFor(() => expect(mockOnFinish).toHaveBeenCalled());
   });
 });
