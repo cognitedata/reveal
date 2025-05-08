@@ -31,6 +31,7 @@ export class ToggleMetricUnitsCommand extends RenderTargetCommand {
   protected override invokeCore(): boolean {
     const unitSystem = this.rootDomainObject.unitSystem;
     unitSystem.isMetric = !unitSystem.isMetric;
+    this.rootDomainObject.notify(Changes.unit);
     this.rootDomainObject.notifyDescendants(Changes.unit);
     return true;
   }
