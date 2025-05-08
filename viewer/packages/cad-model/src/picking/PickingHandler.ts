@@ -49,11 +49,16 @@ export class PickingHandler {
   };
 
   private readonly _rgbaVector = new THREE.Vector4();
+
+  /**
+   * These factors are used for undoing the `packDepthToRGBA` GLSL operation defined by ThreeJS.
+   * They are taken from https://github.com/WestLangley/three.js/blob/bc58fecba18150103b95fbde5aaa3cc7cddf95a7/src/renderers/shaders/ShaderChunk/packing.glsl.js#L19
+   */
   private readonly _unpackFactors = new THREE.Vector4(
-    255 / 256 / (256 * 256 * 256),
-    255 / 256 / (256 * 256),
+    255 / 256,
     255 / 256 / 256,
-    255 / 256
+    255 / 256 / (256 * 256),
+    1 / (256 * 256 * 256)
   );
   private readonly _pipelineExecutor: BasicPipelineExecutor;
   private readonly _depthRenderPipeline: CadGeometryRenderModePipelineProvider;
