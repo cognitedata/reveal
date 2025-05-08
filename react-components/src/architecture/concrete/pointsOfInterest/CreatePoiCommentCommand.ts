@@ -47,12 +47,8 @@ export class CreatePoiCommentCommand extends BaseInputCommand {
   }
 
   public override invokeCore(): boolean {
-    if (this._content === undefined) {
-      return false;
-    }
-
     const domainObject = this.rootDomainObject.getDescendantByType(PointsOfInterestDomainObject);
-    void domainObject?.postCommentForPoi(this._poi, this._content).then(() => {
+    void domainObject?.postCommentForPoi(this._poi, this.content).then(() => {
       this._onFinish?.();
       domainObject?.notify(Changes.addedPart);
     });

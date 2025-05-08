@@ -5,8 +5,8 @@ import { type TranslationInput } from '../utilities/TranslateInput';
 import { RenderTargetCommand } from './RenderTargetCommand';
 
 export abstract class BaseInputCommand extends RenderTargetCommand {
-  protected _content: string = '';
-  protected _onCancel?: () => void;
+  private _content: string = '';
+  private _onCancel?: () => void;
 
   public getCancelButtonLabel(): TranslationInput | undefined {
     return undefined;
