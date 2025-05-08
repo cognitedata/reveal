@@ -52,7 +52,7 @@ describe(CreatePoiCommentCommand.name, () => {
   test('invoking command posts comment on Poi', () => {
     const mockPostComment = vi.fn().mockReturnValue(Promise.resolve());
 
-    const mockPointsOfInterestDomainObject = new Mock<PointsOfInterestDomainObject<string>>()
+    const mockDomainObject = new Mock<PointsOfInterestDomainObject<string>>()
       .setup((p) => p.postCommentForPoi)
       .returns(mockPostComment)
       .setup((p) => p.notify)
@@ -64,7 +64,7 @@ describe(CreatePoiCommentCommand.name, () => {
       .returns(
         new Mock<RootDomainObject>()
           .setup((p) => p.getDescendantByType(PointsOfInterestDomainObject))
-          .returns(mockPointsOfInterestDomainObject)
+          .returns(mockDomainObject)
           .object()
       )
       .setup((p) => p.commandsController)
