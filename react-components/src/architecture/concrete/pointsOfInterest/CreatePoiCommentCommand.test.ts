@@ -25,6 +25,8 @@ const TEST_POINT_OF_INTEREST: PointOfInterest<string> = {
   status: PointsOfInterestStatus.Default
 } as const;
 import { waitFor } from '@testing-library/react';
+import { createRenderTargetMock } from '#test-utils/fixtures/renderTarget';
+import { PointsOfInterestProvider } from './PointsOfInterestProvider';
 
 describe(CreatePoiCommentCommand.name, () => {
   beforeAll(() => {
@@ -61,41 +63,30 @@ describe(CreatePoiCommentCommand.name, () => {
     const mockOnFinish = vi.fn();
     const mockPostComment = vi.fn().mockReturnValue(Promise.resolve());
 
-    const mockDomainObject = new Mock<PointsOfInterestDomainObject<string>>()
-      .setup((p) => p.postCommentForPoi)
-      .returns(mockPostComment)
-      .setup((p) => p.notify)
-      .returns(vi.fn())
-      .object();
+    const mockRenderTarget = createRenderTargetMock();
 
-    const mockRenderTarget = new Mock<RevealRenderTarget>()
-      .setup((p) => p.rootDomainObject)
-      .returns(
-        new Mock<RootDomainObject>()
-          .setup((p) => p.getDescendantByType(PointsOfInterestDomainObject))
-          .returns(mockDomainObject)
-          .object()
-      )
-      .setup((p) => p.commandsController)
-      .returns(
-        new Mock<CommandsController>()
-          .setup((p) => p.update)
-          .returns(vi.fn())
-          .object()
-      )
-      .object();
+    const mockPointOfInterestProvider: PointsOfInterestProvider<string> = {
+      upsertPointsOfInterest: vi.fn(),
+      fetchPointsOfInterest: vi.fn(),
+      getPointsOfInterestComments: vi.fn(),
+      postPointsOfInterestComment: mockPostComment,
+      deletePointsOfInterest: vi.fn(),
+      createNewId: vi.fn()
+    };
 
-    const commentContent = 'comment-content';
+    const domainObject = new PointsOfInterestDomainObject(mockPointOfInterestProvider);
+    mockRenderTarget.rootDomainObject.addChild(domainObject);
 
     const command = new CreatePoiCommentCommand(TEST_POINT_OF_INTEREST);
-
     command.attach(mockRenderTarget);
+
+    const commentContent = 'comment-content';
 
     command.onFinish = mockOnFinish;
     command.content = commentContent;
     command.invoke();
 
-    expect(mockPostComment).toHaveBeenCalledWith(TEST_POINT_OF_INTEREST, commentContent);
+    expect(mockPostComment).toHaveBeenCalledWith(TEST_POINT_OF_INTEREST.id, commentContent);
 
     await waitFor(() => {
       expect(mockOnFinish).toHaveBeenCalled();
