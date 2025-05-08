@@ -23,10 +23,10 @@ describe(BaseInputCommand.name, () => {
     expect(command.onCancel).toBe(mockOnCancel);
   });
 
-  test('post button should always be enabled', () => {
+  test('post button should be enabled only when content is non-empty', () => {
     const command = new TestInputCommand();
 
-    expect(command.isPostButtonEnabled).toBeTruthy();
+    expect(command.isPostButtonEnabled).toBeFalsy();
 
     command.content = 'some-content';
 
@@ -34,6 +34,6 @@ describe(BaseInputCommand.name, () => {
 
     command.content = '';
 
-    expect(command.isPostButtonEnabled).toBeTruthy();
+    expect(command.isPostButtonEnabled).toBeFalsy();
   });
 });

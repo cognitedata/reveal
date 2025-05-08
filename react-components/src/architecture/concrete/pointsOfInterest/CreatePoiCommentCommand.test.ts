@@ -97,6 +97,8 @@ describe(CreatePoiCommentCommand.name, () => {
 
     expect(mockPostComment).toHaveBeenCalledWith(TEST_POINT_OF_INTEREST, commentContent);
 
-    await waitFor(() => expect(mockOnFinish).toHaveBeenCalled());
+    await waitFor(() => {
+      expect(mockOnFinish).toHaveBeenCalled();
+    });
   });
 });
