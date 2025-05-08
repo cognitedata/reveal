@@ -9,12 +9,6 @@ import {
   RevisionId
 } from '../../CacheProvider/types';
 import { CogniteInternalId, Node3D } from '@cognite/sdk';
-import {
-  AssetStylingGroup,
-  CadModelOptions,
-  FdmAssetStylingGroup,
-  HybridFdmAssetStylingGroup
-} from '..';
 import { IndexSet, NumericRange } from '@cognite/reveal';
 import { Color } from 'three';
 import { renderHook, waitFor } from '@testing-library/react';
@@ -26,7 +20,7 @@ import { CdfCaches } from '../../../architecture/base/renderTarget/CdfCaches';
 import { viewerMock } from '#test-utils/fixtures/viewer';
 import { sdkMock } from '#test-utils/fixtures/sdk';
 import { AssetMappingAndNode3DCache } from '../../CacheProvider';
-import { StyledModel } from '../types';
+import { AssetStylingGroup, CadModelOptions, FdmAssetStylingGroup, HybridFdmAssetStylingGroup, StyledModel } from '../types';
 import { getNodeSubtreeNumericRange } from './utils/getNodeSubtreeNumericRange';
 import { AssetMappingsContext } from '../../../hooks/AssetMappings.context';
 
