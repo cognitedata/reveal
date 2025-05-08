@@ -16,7 +16,6 @@ import {
 import { getModelIdAndRevisionIdFromExternalId } from './network/getModelIdAndRevisionIdFromExternalId';
 import { type LayersUrlStateParam } from '../components';
 import { useMemo } from 'react';
-import { EMPTY_ARRAY } from '../utilities/constants';
 
 export const useActiveReveal3dResources = (
   layerState: LayersUrlStateParam | undefined
@@ -30,14 +29,14 @@ export const useActiveReveal3dResources = (
 
   const visibleModels = useMemo(() => {
     if (layerState === undefined) {
-      return EMPTY_ARRAY;
+      return [];
     }
     return models.filter((m) => m.visible);
   }, [models, layerState]);
 
   const filteredImage360Collections = useMemo(() => {
     if (layerState === undefined) {
-      return EMPTY_ARRAY;
+      return [];
     }
     return image360Collections.filter((c) => c.getIconsVisibility());
   }, [image360Collections, layerState]);
@@ -75,7 +74,7 @@ export const useActiveReveal3dResources = (
   });
 
   return {
-    models: filteredModelsQuery.data ?? EMPTY_ARRAY,
+    models: filteredModelsQuery.data ?? [],
     image360Collections: filteredImage360Collections
   };
 };

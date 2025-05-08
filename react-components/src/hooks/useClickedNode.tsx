@@ -10,8 +10,10 @@ import {
 } from '@cognite/reveal';
 import { useEffect, useMemo, useState } from 'react';
 import { type CogniteInternalId, type Node3D } from '@cognite/sdk';
-import { type FdmNodeDataPromises } from '../components/CacheProvider/types';
-import { type NodeAssetMappingResult } from '../components/CacheProvider/AssetMappingAndNode3DCache';
+import {
+  type NodeAssetMappingResult,
+  type FdmNodeDataPromises
+} from '../components/CacheProvider/types';
 import { usePointCloudAnnotationMappingForIntersection } from './pointClouds/usePointCloudAnnotationMappingForIntersection';
 import { type PointCloudAnnotationMappedAssetData } from './types';
 import { MOUSE, Vector2, type Vector3 } from 'three';
@@ -24,10 +26,12 @@ import {
 } from '../query/core-dm/usePointCloudVolumeMappingForAssetInstances';
 import { useAssetMappingForTreeIndex, useFdm3dNodeDataPromises } from './cad';
 import { type UseQueryResult } from '@tanstack/react-query';
+import { isDefined } from '../utilities/isDefined';
 
 export type AssetMappingDataResult = {
   cadNode: Node3D;
   assetIds: CogniteInternalId[];
+  assetInstanceIds?: DmsUniqueIdentifier[];
 };
 
 export type FdmNodeDataResult = {
@@ -141,7 +145,8 @@ export const useClickedNodeData = (options?: {
 
   const { data: nodeDataPromises } = useFdm3dNodeDataPromises(intersection);
 
-  const { data: assetMappingResult } = useAssetMappingForTreeIndex(intersection);
+  const { data: assetMappingResult }: { data: NodeAssetMappingResult | undefined } =
+    useAssetMappingForTreeIndex(intersection);
 
   const pointCloudAnnotationMappingResult =
     usePointCloudAnnotationMappingForIntersection(intersection);
@@ -176,15 +181,7 @@ const useCombinedClickedNodeData = (
       return undefined;
     }
 
-    const assetMappingData =
-      assetMappings === undefined
-        ? undefined
-        : assetMappings.node === undefined
-          ? null
-          : {
-              cadNode: assetMappings.node,
-              assetIds: assetMappings.mappings.map((mapping) => mapping.assetId)
-            };
+    const assetMappingData = getNodeData(assetMappings);
 
     const pointCloudAssetMappings = normalizeListDataResult(pointCloudAssetMappingsResult);
     const pointCloudFdmVolumeMappings = normalizeListDataResult(pointCloudFdmVolumeMappingsResult);
@@ -215,6 +212,20 @@ const useCombinedClickedNodeData = (
         ? null
         : result.data;
   }
+};
+
+const getNodeData = (
+  assetMappings: NodeAssetMappingResult | undefined
+): AssetMappingDataResult | undefined | null => {
+  if (assetMappings === undefined) return undefined;
+  if (assetMappings.node === undefined) return null;
+  return {
+    cadNode: assetMappings.node,
+    assetIds: assetMappings.mappings.map((mapping) => mapping.assetId).filter(isDefined),
+    assetInstanceIds: assetMappings.mappings
+      .map((mapping) => mapping.assetInstanceId)
+      .filter(isDefined)
+  };
 };
 
 const useFdmData = (

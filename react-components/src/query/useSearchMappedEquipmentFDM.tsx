@@ -34,7 +34,7 @@ export type InstancesWithViewDefinition<PropertyType = Record<string, unknown>> 
 
 export const useSearchMappedEquipmentFDM = (
   query: string,
-  viewsToSearch: SimpleSource[],
+  viewsToSearch: Source[],
   models: Array<AddModelOptions<DataSourceType> | AddImage360CollectionDatamodelsOptions>,
   instancesFilter: InstanceFilter | undefined,
   limit: number = 100
@@ -155,8 +155,10 @@ export const useAllMappedEquipmentFDM = (
 ): UseQueryResult<NodeItem[]> => {
   const fdmDataProvider = useFdm3dDataProvider();
 
+  const modelKeys = useMemo(() => getModelKeys(models), [models]);
+
   return useQuery({
-    queryKey: ['reveal', 'react-components', 'all-mapped-equipment-fdm', viewsToSearch, models],
+    queryKey: ['reveal', 'react-components', 'all-mapped-equipment-fdm', viewsToSearch, modelKeys],
     queryFn: async () => {
       const viewSources = createSourcesFromViews(viewsToSearch);
 
