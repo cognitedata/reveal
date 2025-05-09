@@ -23,26 +23,29 @@ describe('Translator', () => {
   });
 
   test('Change language to spanish', async () => {
-    // Change the language to Spanish
     await setCurrentLanguage('es');
 
-    // Translate
     const actual = translate({ key: 'BOX' });
 
-    // Reset the language back to default
-    await setCurrentLanguage('en');
+    await setCurrentLanguage('en'); // Reset the language back to default
+    expect(actual).toBe('Cuadro');
+  });
+
+  test('Change language to spanish twice', async () => {
+    await setCurrentLanguage('es');
+    await setCurrentLanguage('es');
+
+    const actual = translate({ key: 'BOX' });
+
+    await setCurrentLanguage('en'); // Reset the language back to default
     expect(actual).toBe('Cuadro');
   });
 
   test('Change language to not existing language', async () => {
-    // Change language to Norwegian
-    await setCurrentLanguage('no');
+    await setCurrentLanguage('no'); // Change language to Norwegian
 
-    // Translate
     const actual = translate({ key: 'BOX' });
 
-    // Reset the language back to default
-    await setCurrentLanguage('en');
-    expect(actual).toBe('Box');
+    expect(actual).toBe('Box'); // Reset the language back to default
   });
 });

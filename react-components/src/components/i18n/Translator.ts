@@ -16,7 +16,7 @@ const ENGLISH_LANGUAGE = 'en';
 let currentLanguage: string = getLanguage() ?? ENGLISH_LANGUAGE;
 let translation: Translations = english;
 
-initialize();
+void initialize();
 
 export function translate(input: TranslationInput): string {
   if (isTranslatedString(input)) {
@@ -26,6 +26,10 @@ export function translate(input: TranslationInput): string {
 }
 
 export async function setCurrentLanguage(newLanguage: string | undefined): Promise<void> {
+  if (newLanguage === ENGLISH_LANGUAGE && translation === english) {
+    currentLanguage = newLanguage;
+    return; // Already done
+  }
   if (newLanguage === undefined || newLanguage === currentLanguage) {
     return;
   }
@@ -37,24 +41,13 @@ export async function setCurrentLanguage(newLanguage: string | undefined): Promi
   }
 }
 
-function initialize(): void {
+async function initialize(): Promise<void> {
   const onLanguageChange = async (): Promise<void> => {
     await setCurrentLanguage(getLanguage());
   };
 
   window.addEventListener('languagechange', onLanguageChange);
-  if (translation === english && currentLanguage === ENGLISH_LANGUAGE) {
-    return; // Already done
-  }
-  loadTranslationFile(currentLanguage)
-    .then((t) => {
-      translation = t;
-    })
-    .catch(() => {
-      console.warn('Error loading translation file. English will be used');
-      currentLanguage = ENGLISH_LANGUAGE;
-      translation = english;
-    });
+  await setCurrentLanguage(currentLanguage);
 }
 
 function translateByKey(key: TranslationKey): string {
