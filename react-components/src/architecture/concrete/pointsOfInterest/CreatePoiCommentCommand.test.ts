@@ -42,15 +42,15 @@ describe(CreatePoiCommentCommand.name, () => {
   test('invoking command posts comment on Poi and calls onFinish', async () => {
     const mockOnFinish = vi.fn();
 
-    const mockRenderTarget = createRenderTargetMock();
+    const renderTarget = createRenderTargetMock();
 
     const mockPointOfInterestProvider = createPointsOfInterestProviderMock();
 
     const domainObject = new PointsOfInterestDomainObject(mockPointOfInterestProvider);
-    mockRenderTarget.rootDomainObject.addChild(domainObject);
+    renderTarget.rootDomainObject.addChild(domainObject);
 
     const command = new CreatePoiCommentCommand(TEST_POINT_OF_INTEREST);
-    command.attach(mockRenderTarget);
+    command.attach(renderTarget);
 
     const commentContent = 'comment-content';
 
