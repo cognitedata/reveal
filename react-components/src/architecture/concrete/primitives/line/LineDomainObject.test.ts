@@ -89,7 +89,7 @@ describe('LineDomainObject', () => {
     }
     expect(clone.primitiveType).toStrictEqual(domainObject.primitiveType);
     expect(clone.points).toStrictEqual(domainObject.points);
-    expect(clone.color).toBe(domainObject.color);
+    expect(clone.color).toStrictEqual(domainObject.color);
     expect(clone.uniqueId).toBe(domainObject.uniqueId);
     expect(clone.name).toBe(domainObject.name);
     expect(clone.renderStyle).toStrictEqual(domainObject.renderStyle);
@@ -105,6 +105,7 @@ describe('LineDomainObject', () => {
 
     function testMe(primitiveType: PrimitiveType, quantity: Quantity, expectedItems: number): void {
       const domainObject = createLineDomainObject(primitiveType);
+      expect(domainObject.hasPanelInfo).toBe(true);
       const info = domainObject.getPanelInfo();
       expect(info).toBeDefined();
       if (info === undefined) {
