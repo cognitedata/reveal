@@ -10,17 +10,20 @@ import {
 } from './AnnotationModelUtils';
 import { type InstanceReference } from '../../utilities/instanceIds';
 import { type PointCloudAnnotationModel } from './types';
-import { sdkMock, retrieveMock } from '#test-utils/fixtures/sdk';
+import { sdkMock, retrieveMock, postMock } from '#test-utils/fixtures/sdk';
 import { createAssetMock, createDMAssetMock } from '#test-utils/fixtures/assets';
-import { type ExternalIdsResultList } from '../../data-providers/FdmSDK';
+import { FdmSDK, type ExternalIdsResultList } from '../../data-providers/FdmSDK';
 import { type AssetProperties } from '../../data-providers/core-dm-provider/utils/filters';
 import {
   CORE_DM_SPACE,
-  COGNITE_ASSET_VIEW_VERSION_KEY
+  COGNITE_ASSET_VIEW_VERSION_KEY,
+  COGNITE_ASSET_SOURCE
 } from '../../data-providers/core-dm-provider/dataModels';
+import { Mock } from 'moq.ts';
 
 describe('AnnotationModelUtils', () => {
   let assets: Asset[];
+
   beforeEach(() => {
     vi.resetAllMocks();
     assets = [createAssetMock(1), createAssetMock(2)];
@@ -57,11 +60,26 @@ describe('AnnotationModelUtils', () => {
   });
 
   describe('fetchAssetsForAssetReferences', () => {
+    const dmAssets: ExternalIdsResultList<AssetProperties> =
+      createDMAssetMock('asset-external-id1');
+    const hybridAssets: ExternalIdsResultList<AssetProperties> = createDMAssetMock(
+      'asset-hybrid-external-id1'
+    );
+
+    const combinedAssets: ExternalIdsResultList<AssetProperties> = {
+      items: [...dmAssets.items, ...hybridAssets.items],
+      typing: {}
+    };
+    const fdmMockInstance = new Mock<FdmSDK>();
+
     test('should fetch assets for given asset references', async () => {
-      const dmAssets: ExternalIdsResultList<AssetProperties> =
-        createDMAssetMock('asset-external-id1');
-      const hybridAssets: ExternalIdsResultList<AssetProperties> =
-        createDMAssetMock('asset-hybrid-external-id1');
+
+       const fdmSdkMock = fdmMockInstance
+        .setup((p) => p.getByExternalIds<AssetProperties>)
+        .returns(() => Promise.resolve(combinedAssets))
+        .object();
+
+        // all asset references options
       const assetReferences: InstanceReference[] = [
         { id: 1 },
         { externalId: 'asset-external-id1', space: 'asset-space' },
@@ -70,7 +88,7 @@ describe('AnnotationModelUtils', () => {
       ];
       retrieveMock.mockResolvedValueOnce([assets[0]]);
 
-      const result = await fetchAssetsForAssetReferences(assetReferences, sdkMock);
+      const result = await fetchAssetsForAssetReferences(assetReferences, sdkMock, fdmSdkMock);
       const dmExpectedAssets = dmAssets.items.map((item) => ({
         ...item,
         properties: item.properties[CORE_DM_SPACE][COGNITE_ASSET_VIEW_VERSION_KEY]
@@ -88,39 +106,49 @@ describe('AnnotationModelUtils', () => {
     });
 
     test('should fetch assets for given asset references', async () => {
-      const assetReferences: InstanceReference[] = [
-        { id: 1 }
-      ];
+      const assetReferences: InstanceReference[] = [{ id: 1 }];
       retrieveMock.mockResolvedValueOnce([assets[0]]);
 
-      const result = await fetchAssetsForAssetReferences(assetReferences, sdkMock);
+      const fdmSdkMock = fdmMockInstance
+      .setup((p) => p.getByExternalIds<AssetProperties>)
+      .returns(vi.fn().mockResolvedValue(combinedAssets))
+      .object();
+
+      const result = await fetchAssetsForAssetReferences(assetReferences, sdkMock, fdmSdkMock);
 
       const expectedAssets = [assets[0]];
 
       expect(retrieveMock).toHaveBeenCalledWith([assetReferences[0]], {
         ignoreUnknownIds: true
       });
+      expect(fdmSdkMock.getByExternalIds).not.toHaveBeenCalled();
       expect(result).toEqual(expectedAssets);
     });
 
     test('should fetch assets for given dms asset references only', async () => {
-      const dmAssets: ExternalIdsResultList<AssetProperties> =
-        createDMAssetMock('asset-external-id1');
       const assetReferences: InstanceReference[] = [
-        { externalId: 'asset-external-id1', space: 'asset-space' },
+        { externalId: dmAssets.items[0].externalId, space: dmAssets.items[0].space }
       ];
+
+      // returns only dms assets
+      const fdmSdkMock = fdmMockInstance
+      .setup((p) => p.getByExternalIds<AssetProperties>)
+      .returns(vi.fn().mockResolvedValue(dmAssets))
+      .object();
+
       retrieveMock.mockResolvedValueOnce([assets[0]]);
 
-      const result = await fetchAssetsForAssetReferences(assetReferences, sdkMock);
+      const result = await fetchAssetsForAssetReferences(assetReferences, sdkMock, fdmSdkMock);
       const dmExpectedAssets = dmAssets.items.map((item) => ({
         ...item,
         properties: item.properties[CORE_DM_SPACE][COGNITE_ASSET_VIEW_VERSION_KEY]
       }));
       const expectedAssets = [...dmExpectedAssets];
 
-      expect(retrieveMock).not.toHaveBeenCalledWith([assetReferences[0]], {
-        ignoreUnknownIds: true
-      });
+      const dmsExpectedInput = assetReferences.map((id) => ({ ...id, instanceType: 'node' as const }));
+
+      expect(retrieveMock).not.toHaveBeenCalled();
+      expect(fdmSdkMock.getByExternalIds).toHaveBeenCalledWith(dmsExpectedInput, [COGNITE_ASSET_SOURCE]);
       expect(result).toEqual(expectedAssets);
     });
   });

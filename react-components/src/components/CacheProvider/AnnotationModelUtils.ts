@@ -60,33 +60,32 @@ export async function fetchPointCloudAnnotationAssets(
 
 export async function fetchAssetsForAssetReferences(
   assetIds: InstanceReference[],
-  sdk: CogniteClient
+  sdk: CogniteClient,
+  fdmSdk: FdmSDK
 ): Promise<AssetInstance[]> {
-  const [classicIds] = partition(assetIds, isIdEither);
-  const [dmIds] = partition(assetIds, isDmsInstance);
-  const [hybridIds] = partition(assetIds, isHybridAssetMappingsInstance);
-  const [assetIdReferences] = partition(assetIds, isAssetInstanceReference);
+  const classicAssetIds = assetIds.filter(isIdEither);
+  const dmIds = assetIds.filter(isDmsInstance);
+  const assetIdReferences = assetIds.filter(isAssetInstanceReference);
+  const hybridAssetIdReferences = assetIds.filter(isHybridAssetMappingsInstance);
 
-  const classicIdReferences = classicIds.concat(
+  const classicIdReferences = classicAssetIds.concat(
     assetIdReferences.map((id) => {
       return { id: id.assetId };
     })
   );
-  const dmIdReferences = dmIds.concat(hybridIds.map((id) => id.assetInstanceId));
+  const dmIdReferences = dmIds.concat(hybridAssetIdReferences.map((id) => id.assetInstanceId));
   return ([] as AssetInstance[])
     .concat(await fetchAssetsForAssetIds(classicIdReferences, sdk))
-    .concat(await fetchAssetsForDmsIds(dmIdReferences, sdk));
+    .concat(await fetchAssetsForDmsIds(dmIdReferences, fdmSdk));
 }
 
 async function fetchAssetsForDmsIds(
   dmsIds: DmsUniqueIdentifier[],
-  sdk: CogniteClient
+  fdmSdk: FdmSDK
 ): Promise<Array<FdmNode<AssetProperties>>> {
   if (dmsIds.length === 0) {
     return [];
   }
-
-  const fdmSdk = new FdmSDK(sdk);
 
   const response = await fdmSdk.getByExternalIds<AssetProperties>(
     dmsIds.map((id) => ({ ...id, instanceType: 'node' as const })),
