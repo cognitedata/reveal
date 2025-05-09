@@ -35,7 +35,7 @@ describe(BaseCommand.name, () => {
     expect(command.isInvokedTimes).toBe(1);
   });
 
-  test('should toggle correctly', async () => {
+  test('should toggle state correctly', async () => {
     const command = new MockCommand();
     command.isToggle = true;
     expect(command.isChecked).toBe(false);
