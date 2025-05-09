@@ -10,7 +10,7 @@ import { type PointOfInterest } from './types';
 export class CreatePoiCommentCommand extends BaseInputCommand {
   private readonly _poi: PointOfInterest<unknown>;
 
-  private _onFinish?: () => void;
+  private _onFinish?: VoidFunction;
 
   constructor(poi: PointOfInterest<unknown>) {
     super();
@@ -22,11 +22,11 @@ export class CreatePoiCommentCommand extends BaseInputCommand {
     return true;
   }
 
-  public get onFinish(): (() => void) | undefined {
+  public get onFinish(): VoidFunction | undefined {
     return this._onFinish;
   }
 
-  public set onFinish(onFinish: () => void) {
+  public set onFinish(onFinish: VoidFunction) {
     this._onFinish = onFinish;
   }
 
