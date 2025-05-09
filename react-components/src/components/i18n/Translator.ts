@@ -31,7 +31,7 @@ export async function setCurrentLanguage(newLanguage: string | undefined): Promi
     return; // Already done
   }
   if (newLanguage === undefined || newLanguage === currentLanguage) {
-    return;
+    return; // No or illegal change
   }
   try {
     translation = await loadTranslationFile(newLanguage);

@@ -48,4 +48,12 @@ describe('Translator', () => {
 
     expect(actual).toBe('Box'); // Reset the language back to default
   });
+
+  test('Change language to undefined', async () => {
+    await setCurrentLanguage(undefined);
+
+    const actual = translate({ key: 'BOX' });
+
+    expect(actual).toBe('Box'); // Reset the language back to default
+  });
 });
