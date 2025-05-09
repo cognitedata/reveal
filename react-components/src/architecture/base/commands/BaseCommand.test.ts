@@ -45,7 +45,7 @@ describe(BaseCommand.name, () => {
     expect(command.isChecked).toBe(false);
   });
 
-  test('should get correct string for generating the tooltip', async () => {
+  test('should generate correct tooltip and keys', async () => {
     const command = new MockCommand();
     if (isUntranslatedString(command.tooltip)) {
       const label = command.getLabel(Translator.instance.translate);
