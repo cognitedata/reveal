@@ -26,7 +26,7 @@ export class CreatePoiCommentCommand extends BaseInputCommand {
     return this._onFinish;
   }
 
-  public set onFinish(onFinish: () => void) {
+  public set onFinish(onFinish: (() => void) | undefined) {
     this._onFinish = onFinish;
   }
 
