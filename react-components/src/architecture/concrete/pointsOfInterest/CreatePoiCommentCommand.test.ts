@@ -4,21 +4,6 @@ import { getTranslationKeyOrString } from '#test-utils/architecture/getTranslati
 
 import { type PointOfInterest, PointsOfInterestStatus } from './types';
 import { PointsOfInterestDomainObject } from './PointsOfInterestDomainObject';
-const TEST_POINT_OF_INTEREST: PointOfInterest<string> = {
-  properties: {
-    name: 'poi_name',
-    positionX: 1,
-    positionY: 2,
-    positionZ: 3,
-    scene: {
-      externalId: 'scene_external_id',
-      space: 'scene_space'
-    },
-    sceneState: {}
-  },
-  id: 'poi_id',
-  status: PointsOfInterestStatus.Default
-} as const;
 import { waitFor } from '@testing-library/react';
 import { createRenderTargetMock } from '#test-utils/fixtures/renderTarget';
 import { type PointsOfInterestProvider } from './PointsOfInterestProvider';
@@ -56,18 +41,10 @@ describe(CreatePoiCommentCommand.name, () => {
 
   test('invoking command posts comment on Poi and calls onFinish', async () => {
     const mockOnFinish = vi.fn();
-    const mockPostComment = vi.fn().mockReturnValue(Promise.resolve());
 
     const mockRenderTarget = createRenderTargetMock();
 
-    const mockPointOfInterestProvider: PointsOfInterestProvider<string> = {
-      upsertPointsOfInterest: vi.fn(),
-      fetchPointsOfInterest: vi.fn(),
-      getPointsOfInterestComments: vi.fn(),
-      postPointsOfInterestComment: mockPostComment,
-      deletePointsOfInterest: vi.fn(),
-      createNewId: vi.fn()
-    };
+    const mockPointOfInterestProvider = createPointsOfInterestProviderMock();
 
     const domainObject = new PointsOfInterestDomainObject(mockPointOfInterestProvider);
     mockRenderTarget.rootDomainObject.addChild(domainObject);
@@ -81,10 +58,41 @@ describe(CreatePoiCommentCommand.name, () => {
     command.content = commentContent;
     command.invoke();
 
-    expect(mockPostComment).toHaveBeenCalledWith(TEST_POINT_OF_INTEREST.id, commentContent);
+    expect(vi.mocked(mockPointOfInterestProvider.postPointsOfInterestComment)).toHaveBeenCalledWith(
+      TEST_POINT_OF_INTEREST.id,
+      commentContent
+    );
 
     await waitFor(() => {
       expect(mockOnFinish).toHaveBeenCalled();
     });
   });
 });
+
+function createPointsOfInterestProviderMock(): PointsOfInterestProvider<string> {
+  const mockPostComment = vi.fn().mockReturnValue(Promise.resolve());
+  return {
+    upsertPointsOfInterest: vi.fn(),
+    fetchPointsOfInterest: vi.fn(),
+    getPointsOfInterestComments: vi.fn(),
+    postPointsOfInterestComment: mockPostComment,
+    deletePointsOfInterest: vi.fn(),
+    createNewId: vi.fn()
+  };
+}
+
+const TEST_POINT_OF_INTEREST: PointOfInterest<string> = {
+  properties: {
+    name: 'poi_name',
+    positionX: 1,
+    positionY: 2,
+    positionZ: 3,
+    scene: {
+      externalId: 'scene_external_id',
+      space: 'scene_space'
+    },
+    sceneState: {}
+  },
+  id: 'poi_id',
+  status: PointsOfInterestStatus.Default
+} as const;
