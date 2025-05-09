@@ -48,7 +48,7 @@ describe(CommandButton.name, () => {
     expect(command.isInvokedTimes).toBe(1);
   });
 
-  test('should be invisible', async () => {
+  test('should not render when command is invisible', async () => {
     const command = new MockCommand();
     command.isVisible = false;
 
