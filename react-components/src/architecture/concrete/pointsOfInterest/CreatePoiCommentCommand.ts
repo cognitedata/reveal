@@ -10,6 +10,8 @@ import { type PointOfInterest } from './types';
 export class CreatePoiCommentCommand extends BaseInputCommand {
   private readonly _poi: PointOfInterest<unknown>;
 
+  private _onFinish?: () => void;
+
   constructor(poi: PointOfInterest<unknown>) {
     super();
 
@@ -18,6 +20,14 @@ export class CreatePoiCommentCommand extends BaseInputCommand {
 
   public override get hasData(): true {
     return true;
+  }
+
+  public get onFinish(): (() => void) | undefined {
+    return this._onFinish;
+  }
+
+  public set onFinish(onFinish: (() => void) | undefined) {
+    this._onFinish = onFinish;
   }
 
   public override getPostButtonLabel(): TranslationInput {
@@ -33,12 +43,8 @@ export class CreatePoiCommentCommand extends BaseInputCommand {
   }
 
   public override invokeCore(): boolean {
-    if (this._content === undefined) {
-      return false;
-    }
-
     const domainObject = this.rootDomainObject.getDescendantByType(PointsOfInterestDomainObject);
-    void domainObject?.postCommentForPoi(this._poi, this._content).then(() => {
+    void domainObject?.postCommentForPoi(this._poi, this.content).then(() => {
       this._onFinish?.();
       domainObject?.notify(Changes.addedPart);
     });
