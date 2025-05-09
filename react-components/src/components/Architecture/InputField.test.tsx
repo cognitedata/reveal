@@ -133,6 +133,10 @@ describe(InputField.name, () => {
 
     assert(postButton !== null);
 
+    act(() => {
+      command.setPostButtonEnabled(true);
+    });
+
     expect(postButton.getAttribute('aria-disabled')).toBe('false');
 
     act(() => {
