@@ -16,7 +16,7 @@ describe(CommandButton.name, () => {
     cleanup();
   });
 
-  test('should render by default values', async () => {
+  test('should render with default values', async () => {
     const command = new MockCommand();
     renderMe(command);
 
