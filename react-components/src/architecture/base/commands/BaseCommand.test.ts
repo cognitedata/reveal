@@ -22,7 +22,7 @@ describe(BaseCommand.name, () => {
     expect(command.getShortCutKeys()).toBeUndefined();
   });
 
-  test('should test equal', async () => {
+  test('should correctly compare equality of commands', async () => {
     const command = new DefaultCommand();
     expect(command.equals(command)).toBe(true);
     expect(command.equals(new MockCommand())).toBe(false);
