@@ -28,7 +28,7 @@ describe(BaseCommand.name, () => {
     expect(command.equals(new MockCommand())).toBe(false);
   });
 
-  test('should invoke', async () => {
+  test('should invoke command and track count', async () => {
     const command = new MockCommand();
     expect(command.isInvokedTimes).toBe(0);
     expect(command.invoke()).toBe(true);
