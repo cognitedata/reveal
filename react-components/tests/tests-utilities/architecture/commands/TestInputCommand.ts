@@ -14,7 +14,7 @@ export class TestInputCommand extends BaseInputCommand {
   private readonly _placeholderText: string | undefined;
   private readonly _onInvokeCallback: (() => void) | undefined;
 
-  private _isPostButtonEnabled: boolean = true;
+  private _isPostButtonEnabled: boolean | undefined = undefined;
 
   constructor(options?: TestInputCommandOptions) {
     super();
@@ -54,7 +54,7 @@ export class TestInputCommand extends BaseInputCommand {
   }
 
   public override get isPostButtonEnabled(): boolean {
-    return this._isPostButtonEnabled;
+    return this._isPostButtonEnabled ?? super.isPostButtonEnabled;
   }
 
   public override invokeCore(): boolean {
