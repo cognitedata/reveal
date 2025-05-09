@@ -6,7 +6,7 @@ import { RenderTargetCommand } from './RenderTargetCommand';
 
 export abstract class BaseInputCommand extends RenderTargetCommand {
   private _content: string = '';
-  private _onCancel?: VoidFunction;
+  private _onCancel?: () => void;
 
   public getCancelButtonLabel(): TranslationInput | undefined {
     return undefined;
@@ -15,11 +15,11 @@ export abstract class BaseInputCommand extends RenderTargetCommand {
   public abstract getPostButtonLabel(): TranslationInput | undefined;
   public abstract getPlaceholder(): TranslationInput | undefined;
 
-  public get onCancel(): VoidFunction | undefined {
+  public get onCancel(): (() => void) | undefined {
     return this._onCancel;
   }
 
-  public set onCancel(onCancel: VoidFunction) {
+  public set onCancel(onCancel: () => void) {
     this._onCancel = onCancel;
   }
 

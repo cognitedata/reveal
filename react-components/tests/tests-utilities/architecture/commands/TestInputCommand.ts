@@ -5,14 +5,14 @@ export type TestInputCommandOptions = {
   postButtonLabel?: string;
   cancelButtonLabel?: string;
   placeholder?: string;
-  onInvokeCallback?: VoidFunction | undefined;
+  onInvokeCallback?: (() => void) | undefined;
 };
 
 export class TestInputCommand extends BaseInputCommand {
   private readonly _postButtonLabel: string | undefined;
   private readonly _cancelButtonLabel: string | undefined;
   private readonly _placeholderText: string | undefined;
-  private readonly _onInvokeCallback: VoidFunction | undefined;
+  private readonly _onInvokeCallback: (() => void) | undefined;
 
   private _isPostButtonEnabled: boolean = true;
 
