@@ -60,7 +60,7 @@ describe(BaseCommand.name, () => {
     ]);
   });
 
-  test('should call event listeners when updates', async () => {
+  test('should call all event listeners when updated', async () => {
     const command = new DefaultCommand();
 
     // Add 2 event listeners
