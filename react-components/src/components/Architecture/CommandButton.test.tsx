@@ -1,7 +1,8 @@
 import { afterEach, describe, expect, test } from 'vitest';
-import { cleanup, fireEvent, render, screen } from '@testing-library/react';
+import { cleanup, render, screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { type BaseCommand, RevealRenderTarget } from '../../architecture';
-import { type PropsWithChildren, type ReactElement } from 'react';
+import { act, type PropsWithChildren, type ReactElement } from 'react';
 import { viewerMock } from '#test-utils/fixtures/viewer';
 import { sdkMock } from '#test-utils/fixtures/sdk';
 import { ViewerContextProvider } from '../RevealCanvas/ViewerContext';
@@ -44,15 +45,22 @@ describe(CommandButton.name, () => {
     renderMe(command);
     const button = await screen.findByRole('button');
     expect(command.isInvokedTimes).toBe(0);
-    fireEvent.click(button);
+    await act(async () => {
+      await userEvent.click(button);
+    });
     expect(command.isInvokedTimes).toBe(1);
   });
 
-  test('should not render when command is invisible', async () => {
+  test('should change from visible to invisible', async () => {
     const command = new MockCommand();
-    command.isVisible = false;
-
     renderMe(command);
+
+    const beforeButton = await screen.findByRole('button');
+    expect(beforeButton.getAttribute('aria-disabled')).toBe('false');
+
+    act(() => {
+      command.isVisible = false;
+    });
     const afterButton = screen.queryByRole('button');
     expect(afterButton).toBeNull();
   });
@@ -64,8 +72,9 @@ describe(CommandButton.name, () => {
     const beforeButton = await screen.findByRole('button');
     expect(beforeButton.getAttribute('aria-disabled')).toBe('false');
 
-    command.isEnabled = false;
-
+    act(() => {
+      command.isEnabled = false;
+    });
     const afterButton = await screen.findByRole('button');
     expect(afterButton.getAttribute('aria-disabled')).toBe('true');
   });
@@ -78,8 +87,9 @@ describe(CommandButton.name, () => {
     const beforeButton = await screen.findByRole('button');
     expect(beforeButton.getAttribute('class')).not.contains('toggled');
 
-    fireEvent.click(beforeButton);
-
+    await act(async () => {
+      await userEvent.click(beforeButton);
+    });
     const afterButton = await screen.findByRole('button');
     expect(afterButton.getAttribute('class')).contains('toggled');
   });
@@ -91,8 +101,9 @@ describe(CommandButton.name, () => {
     const beforeIcon = await screen.findByLabelText(command.icon + 'Icon');
     expect(beforeIcon).not.toBeNull();
 
-    command.icon = 'Snow';
-
+    act(() => {
+      command.icon = 'Snow';
+    });
     const afterIcon = await screen.findByLabelText('SnowIcon');
     expect(afterIcon).not.toBeNull();
   });
