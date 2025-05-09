@@ -10,11 +10,11 @@ import {
   type TranslationKey
 } from '../../architecture/base/utilities/TranslateInput';
 
-import english from '../../common/i18n/en/reveal-react-components.json';
+import englishTranslation from '../../common/i18n/en/reveal-react-components.json';
 
 const ENGLISH_LANGUAGE = 'en';
-let currentLanguage: string = getLanguage() ?? ENGLISH_LANGUAGE;
-let translation: Translations = english;
+let currentLanguage: string = ENGLISH_LANGUAGE;
+let currentTranslation: Translations = englishTranslation;
 
 void initialize();
 
@@ -26,7 +26,7 @@ export function translate(input: TranslationInput): string {
 }
 
 export async function setCurrentLanguage(newLanguage: string | undefined): Promise<void> {
-  if (newLanguage === ENGLISH_LANGUAGE && translation === english) {
+  if (newLanguage === ENGLISH_LANGUAGE && currentTranslation === englishTranslation) {
     currentLanguage = newLanguage;
     return; // Already done
   }
@@ -34,7 +34,7 @@ export async function setCurrentLanguage(newLanguage: string | undefined): Promi
     return; // No or illegal change
   }
   try {
-    translation = await loadTranslationFile(newLanguage);
+    currentTranslation = await loadTranslationFile(newLanguage);
     currentLanguage = newLanguage;
   } catch (error) {
     console.warn('Error loading translation file');
@@ -47,14 +47,14 @@ async function initialize(): Promise<void> {
   };
 
   window.addEventListener('languagechange', onLanguageChange);
-  await setCurrentLanguage(currentLanguage);
+  await onLanguageChange();
 }
 
 function translateByKey(key: TranslationKey): string {
-  if (translation !== undefined && translation[key] !== undefined) {
-    return translation[key];
+  if (currentTranslation !== undefined && currentTranslation[key] !== undefined) {
+    return currentTranslation[key];
   }
-  return english[key];
+  return englishTranslation[key];
 }
 
 async function loadTranslationFile(language: string): Promise<Translations> {
