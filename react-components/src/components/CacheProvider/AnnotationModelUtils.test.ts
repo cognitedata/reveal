@@ -10,9 +10,9 @@ import {
 } from './AnnotationModelUtils';
 import { type InstanceReference } from '../../utilities/instanceIds';
 import { type PointCloudAnnotationModel } from './types';
-import { sdkMock, retrieveMock, postMock } from '#test-utils/fixtures/sdk';
+import { sdkMock, retrieveMock } from '#test-utils/fixtures/sdk';
 import { createAssetMock, createDMAssetMock } from '#test-utils/fixtures/assets';
-import { FdmSDK, type ExternalIdsResultList } from '../../data-providers/FdmSDK';
+import { type FdmSDK, type ExternalIdsResultList } from '../../data-providers/FdmSDK';
 import { type AssetProperties } from '../../data-providers/core-dm-provider/utils/filters';
 import {
   CORE_DM_SPACE,
@@ -73,13 +73,12 @@ describe('AnnotationModelUtils', () => {
     const fdmMockInstance = new Mock<FdmSDK>();
 
     test('should fetch assets for given asset references', async () => {
-
-       const fdmSdkMock = fdmMockInstance
+      const fdmSdkMock = fdmMockInstance
         .setup((p) => p.getByExternalIds<AssetProperties>)
-        .returns(() => Promise.resolve(combinedAssets))
+        .returns(async () => await Promise.resolve(combinedAssets))
         .object();
 
-        // all asset references options
+      // all asset references options
       const assetReferences: InstanceReference[] = [
         { id: 1 },
         { externalId: 'asset-external-id1', space: 'asset-space' },
@@ -110,9 +109,9 @@ describe('AnnotationModelUtils', () => {
       retrieveMock.mockResolvedValueOnce([assets[0]]);
 
       const fdmSdkMock = fdmMockInstance
-      .setup((p) => p.getByExternalIds<AssetProperties>)
-      .returns(vi.fn().mockResolvedValue(combinedAssets))
-      .object();
+        .setup((p) => p.getByExternalIds<AssetProperties>)
+        .returns(vi.fn().mockResolvedValue(combinedAssets))
+        .object();
 
       const result = await fetchAssetsForAssetReferences(assetReferences, sdkMock, fdmSdkMock);
 
@@ -132,9 +131,9 @@ describe('AnnotationModelUtils', () => {
 
       // returns only dms assets
       const fdmSdkMock = fdmMockInstance
-      .setup((p) => p.getByExternalIds<AssetProperties>)
-      .returns(vi.fn().mockResolvedValue(dmAssets))
-      .object();
+        .setup((p) => p.getByExternalIds<AssetProperties>)
+        .returns(vi.fn().mockResolvedValue(dmAssets))
+        .object();
 
       retrieveMock.mockResolvedValueOnce([assets[0]]);
 
@@ -145,10 +144,15 @@ describe('AnnotationModelUtils', () => {
       }));
       const expectedAssets = [...dmExpectedAssets];
 
-      const dmsExpectedInput = assetReferences.map((id) => ({ ...id, instanceType: 'node' as const }));
+      const dmsExpectedInput = assetReferences.map((id) => ({
+        ...id,
+        instanceType: 'node' as const
+      }));
 
       expect(retrieveMock).not.toHaveBeenCalled();
-      expect(fdmSdkMock.getByExternalIds).toHaveBeenCalledWith(dmsExpectedInput, [COGNITE_ASSET_SOURCE]);
+      expect(fdmSdkMock.getByExternalIds).toHaveBeenCalledWith(dmsExpectedInput, [
+        COGNITE_ASSET_SOURCE
+      ]);
       expect(result).toEqual(expectedAssets);
     });
   });

@@ -79,7 +79,11 @@ export class Image360AnnotationCache {
 
     const uniqueAssetIds = uniqBy(assetIds, createInstanceReferenceKey);
 
-    const assetsArray = await fetchAssetsForAssetReferences(uniqueAssetIds, this._sdk, this._fdmSdk);
+    const assetsArray = await fetchAssetsForAssetReferences(
+      uniqueAssetIds,
+      this._sdk,
+      this._fdmSdk
+    );
     const assets = new Map(assetsArray.map((asset) => [assetInstanceToKey(asset), asset]));
     const assetsWithAnnotations = await this.getAssetWithAnnotationsMapped(annotationsInfo, assets);
 

@@ -6,9 +6,14 @@ import {
   type CogniteInternalId,
   type AnnotationModel,
   type AnnotationsBoundingVolume,
-  type Node3D,
+  type Node3D
 } from '@cognite/sdk';
-import { type Source, type DmsUniqueIdentifier, ExternalId, Space } from '../../data-providers/FdmSDK';
+import {
+  type Source,
+  type DmsUniqueIdentifier,
+  type ExternalId,
+  type Space
+} from '../../data-providers/FdmSDK';
 import { type AssetAnnotationImage360Info, type DataSourceType } from '@cognite/reveal';
 import { type Vector3 } from 'three';
 import { type AssetInstance } from '../../utilities/instances';

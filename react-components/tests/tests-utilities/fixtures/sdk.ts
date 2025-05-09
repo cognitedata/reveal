@@ -53,7 +53,7 @@ export const postMock = vi.fn<
               externalId: 'object3d-external-id-1',
               space: 'object3d-space-1'
             },
-            description: 'asset-1',
+            description: 'asset-1'
           }
         }
       }

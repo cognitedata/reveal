@@ -2,13 +2,13 @@
  * Copyright 2024 Cognite AS
  */
 import { type CogniteClient, type Asset, type IdEither } from '@cognite/sdk';
-import { uniqBy, chunk, partition, uniqWith } from 'lodash';
+import { uniqBy, chunk, uniqWith } from 'lodash';
 import { isDefined } from '../../utilities/isDefined';
 import { type AnnotationId, type PointCloudAnnotationModel } from './types';
 import { getInstanceReferenceFromPointCloudAnnotation } from './utils';
 import { type AssetProperties } from '../../data-providers/core-dm-provider/utils/filters';
 import { type DmsUniqueIdentifier } from '../../data-providers';
-import { type FdmNode, FdmSDK } from '../../data-providers/FdmSDK';
+import { type FdmNode, type FdmSDK } from '../../data-providers/FdmSDK';
 import {
   COGNITE_ASSET_SOURCE,
   COGNITE_ASSET_VIEW_VERSION_KEY,
