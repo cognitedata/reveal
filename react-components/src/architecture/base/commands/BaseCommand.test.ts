@@ -94,7 +94,7 @@ describe(BaseCommand.name, () => {
     expect(mockEventListener2).toHaveBeenCalledTimes(1);
   });
 
-  test('should remove event listeners on dispose', async () => {
+  test('should remove all event listeners on dispose', async () => {
     const command = new DefaultCommand();
 
     // Add 2 event listeners
