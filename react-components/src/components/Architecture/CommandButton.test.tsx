@@ -39,7 +39,7 @@ describe(CommandButton.name, () => {
     expect(icon.getAttribute('class')).contains('cogs-icon');
   });
 
-  test('should invoke when clicked', async () => {
+  test('should invoke when clicked and track count', async () => {
     const command = new MockCommand();
     renderMe(command);
     const button = await screen.findByRole('button');
