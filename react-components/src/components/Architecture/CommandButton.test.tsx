@@ -84,7 +84,7 @@ describe(CommandButton.name, () => {
     expect(afterButton.getAttribute('class')).contains('toggled');
   });
 
-  test('should change icon', async () => {
+  test('should update icon when changed', async () => {
     const command = new MockCommand();
     renderMe(command);
 
