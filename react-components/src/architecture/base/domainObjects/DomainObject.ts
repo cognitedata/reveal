@@ -37,8 +37,8 @@ import {
   type TreeNodeAction,
   type TreeNodeType
 } from '../../../advanced-tree-view';
-import { translate } from '../../../components/i18n/Translator';
 import { getRenderTarget } from './getRoot';
+import { translate } from '../utilities/translateUtils';
 
 /**
  * Represents an abstract base class for domain objects.
