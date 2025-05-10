@@ -3,12 +3,12 @@
  */
 
 import { beforeEach, describe, expect, test } from 'vitest';
-import { type TranslationInput } from '../../architecture/base/utilities/TranslateInput';
+import { type TranslationInput } from './TranslateInput';
 
-import english from '../../common/i18n/en/reveal-react-components.json';
-import { setCurrentLanguage, translate } from './Translator';
+import english from '../../../common/i18n/en/reveal-react-components.json';
+import { setCurrentLanguage, translate } from './translateUtils';
 
-describe('Translator', () => {
+describe('translateUtils', () => {
   beforeEach(() => {});
 
   test('Should translate', () => {

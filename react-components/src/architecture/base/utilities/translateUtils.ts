@@ -2,15 +2,15 @@
  * Copyright 2023 Cognite AS
  */
 
-import { type Translations } from './types';
-import { getLanguage } from './utils';
+import { getLanguage } from '../../../components/i18n/utils';
 import {
   type TranslationInput,
   isTranslatedString,
-  type TranslationKey
-} from '../../architecture/base/utilities/TranslateInput';
+  type TranslationKey,
+  type Translations
+} from './TranslateInput';
 
-import englishTranslation from '../../common/i18n/en/reveal-react-components.json';
+import englishTranslation from '../../../common/i18n/en/reveal-react-components.json';
 
 const ENGLISH_LANGUAGE = 'en';
 let currentLanguage: string = ENGLISH_LANGUAGE;
@@ -58,7 +58,7 @@ function translateByKey(key: TranslationKey): string {
 }
 
 async function loadTranslationFile(language: string): Promise<Translations> {
-  const filename = `../../common/i18n/${language}/reveal-react-components.json`;
+  const filename = `../../../common/i18n/${language}/reveal-react-components.json`;
   const result = await import(filename);
   const translationModule = result as { default: Translations };
   return translationModule.default;
