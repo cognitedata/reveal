@@ -1,6 +1,6 @@
 {
   "name": "@cognite/reveal-react-components",
-  "version": "0.77.2",
+  "version": "0.77.3",
   "exports": {
     ".": {
       "import": "./dist/index.js",
@@ -37,7 +37,7 @@
     "sort-keys": "cdf-i18n-utils-cli sort-local-keys --namespace reveal-react-components --path ./src/common/i18n"
   },
   "peerDependencies": {
-    "@cognite/reveal": "4.25.0",
+    "@cognite/reveal": "4.25.1",
     "@cognite/sdk": "^10.0.0",
     "react": ">=18",
     "react-dom": ">=18",
@@ -57,7 +57,7 @@
   "devDependencies": {
     "@cognite/cdf-i18n-utils": "^0.7.5",
     "@cognite/cdf-utilities": "^3.6.0",
-    "@cognite/reveal": "^4.24.0",
+    "@cognite/reveal": "4.25.1",
     "@cognite/sdk": "^10.0.0",
     "@playwright/test": "1.49.0",
     "@storybook/addon-essentials": "8.4.5",
@@ -104,7 +104,7 @@
     "three": "0.166.1",
     "ts-loader": "^9.5.1",
     "typescript": "^5.4.5",
-    "vite": "^6.2.3",
+    "vite": "^6.2.7",
     "vite-plugin-dts": "^4.0.0",
     "vite-plugin-externalize-deps": "^0.8.0",
     "vitest": "^3.0.6"

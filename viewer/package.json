@@ -1,6 +1,6 @@
 {
   "name": "@cognite/reveal",
-  "version": "4.25.0",
+  "version": "4.25.1",
   "description": "WebGL based 3D viewer for CAD and point clouds processed in Cognite Data Fusion.",
   "homepage": "https://github.com/cognitedata/reveal/tree/master/viewer",
   "repository": {
@@ -156,5 +156,8 @@
   "files": [
     "dist"
   ],
-  "packageManager": "yarn@4.5.2"
+  "packageManager": "yarn@4.5.2",
+  "resolutions": {
+    "binary-install/axios": "^0.30.0"
+  }
 }
