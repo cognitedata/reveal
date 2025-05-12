@@ -199,20 +199,4 @@ describe(AssetMappingAndNode3DCache.name, async () => {
     });
   });
 
-  describe('getHybridAssetMappingsForNodes', () => {
-    it('should fetch and cache hybrid asset mappings for nodes', async () => {
-
-      const nodeKey = modelRevisionNodesAssetToKey(mockModelId, mockRevisionId, mockAssetMapping.nodeId);
-
-      cache.setItemCacheResult('nodeIds', nodeKey, [mockAssetMapping]);
-
-      const result = await cache.getHybridAssetMappingsForNodes(
-        mockModelId,
-        mockRevisionId,
-        mockNodes
-      );
-
-      expect(result).toEqual([mockAssetMapping]);
-    });
-  });
 });
