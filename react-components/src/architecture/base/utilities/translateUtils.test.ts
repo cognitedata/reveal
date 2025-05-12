@@ -18,7 +18,7 @@ describe('translateUtils', () => {
   });
 
   test('Should not translate the key', async () => {
-    const input: TranslationInput = { untranslated: 'Hallo world' };
+    const input: TranslationInput = { untranslated: 'Hello world' };
     const actual = translate(input);
     expect(actual).toBe(input.untranslated);
   });
