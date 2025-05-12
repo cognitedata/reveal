@@ -79,22 +79,15 @@ export class AssetMappingAndNode3DCache {
     }
 
     const searchTreeIndices = new Set(ancestors.map((ancestor) => ancestor.treeIndex));
-    const allClassicNodeMappings = await this.getAssetMappingsForNodes(
-      modelId,
-      revisionId,
-      ancestors
-    );
-    const allHybridNodeMappings = await this.getHybridAssetMappingsForNodes(
+    const allNodeMappings = await this.getAssetMappingsForNodes(
       modelId,
       revisionId,
       ancestors
     );
 
-    const relevantMappings = allClassicNodeMappings
-      .concat(allHybridNodeMappings)
-      .filter(
-        (mapping) => mapping.treeIndex !== undefined && searchTreeIndices.has(mapping.treeIndex)
-      );
+    const relevantMappings = allNodeMappings.filter(
+      (mapping) => mapping.treeIndex !== undefined && searchTreeIndices.has(mapping.treeIndex)
+    );
 
     if (relevantMappings.length === 0) {
       return { mappings: [] };
@@ -248,6 +241,14 @@ export class AssetMappingAndNode3DCache {
     return assetMappigns;
   }
 
+  /**
+   * Splits the current chunk of IDs into cached and non-cached classic asset mappings.
+   * @param currentChunk - The current chunk of IDs to process.
+   * @param modelId - The ID of the model.
+   * @param revisionId - The ID of the revision.
+   * @param type - The type of IDs (e.g., 'nodeIds', 'assetIds').
+   * @returns An object containing cached and non-cached asset mappings.
+   */
   private async splitChunkInCacheAssetMappings(
     currentChunk: number[],
     modelId: ModelId,
@@ -272,6 +273,14 @@ export class AssetMappingAndNode3DCache {
     return { chunkInCache, chunkNotInCacheIdClassic: chunkNotCached };
   }
 
+  /**
+   * Splits the current chunk of IDs into cached and non-cached hybrid asset mappings.
+   * @param currentChunk - The current chunk of IDs to process.
+   * @param modelId - The ID of the model.
+   * @param revisionId - The ID of the revision.
+   * @param type - The type of IDs (e.g., 'nodeIds', 'assetIds').
+   * @returns An object containing cached and non-cached asset mappings.
+   */
   private async splitChunkInCacheHybridAssetMappings(
     currentChunk: DmsUniqueIdentifier[] | number[],
     modelId: ModelId,
@@ -332,6 +341,11 @@ export class AssetMappingAndNode3DCache {
       : this.assetIdsToAssetMappingCache.setAssetIdsToAssetMappingCacheItem(key, value);
   }
 
+  /**
+   * Set the cache result for hybrid asset mappings.
+   * @param key - The unique key for the asset instance.
+   * @param item - The asset mapping item to set in the cache.
+   */
   public setHybridItemCacheResult(
     key: ModelDMSUniqueInstanceKey,
     item: CdfAssetMapping[] | undefined
@@ -341,6 +355,17 @@ export class AssetMappingAndNode3DCache {
       key,
       value
     );
+  }
+
+  /**
+   * Get the cache result for hybrid asset mappings.
+   * @param key - The unique key for the asset instance.
+   * @returns The cached asset mapping item or undefined if not found.
+   */
+  public async getHybridItemCacheResult(
+    key: ModelDMSUniqueInstanceKey
+  ): Promise<CdfAssetMapping[] | undefined> {
+    return await this.assetInstanceIdsToAssetMappingCache.getHybridItemCacheResult(key);
   }
 
   private getFilterBasedOnType(
@@ -356,7 +381,15 @@ export class AssetMappingAndNode3DCache {
     return { assetIds: [] };
   }
 
-  private async fetchAssetMappingsRequest(
+  /**
+   * Fetch classic and hybrid asset mappings from the server based on the provided parameters.
+   * @param currentChunk - The chunk of IDs to fetch mappings for.
+   * @param filterType - The type of filter to apply (e.g., 'nodeIds', 'assetIds').
+   * @param modelId - The ID of the model.
+   * @param revisionId - The ID of the revision.
+   * @returns A promise that resolves to an array of asset mappings.
+   */
+  public async fetchAssetMappingsRequest(
     currentChunk: number[],
     filterType: string,
     modelId: ModelId,
@@ -412,7 +445,13 @@ export class AssetMappingAndNode3DCache {
     return assetMapping3DClassic.concat(assetMapping3DHybrid).filter(isValidAssetMapping);
   }
 
-  private async extractAndSetClassicAssetMappingsCacheItem(
+  /**
+   * Extract and set classic asset mappings in the cache.
+   * @param modelId - The ID of the model.
+   * @param revisionId - The ID of the revision.
+   * @param assetMapping3DClassic - The array of classic asset mappings to extract and set.
+   */
+  public async extractAndSetClassicAssetMappingsCacheItem(
     modelId: ModelId,
     revisionId: RevisionId,
     assetMapping3DClassic: CdfAssetMapping[]
@@ -441,7 +480,14 @@ export class AssetMappingAndNode3DCache {
     );
   }
 
-  private async extractAndSetHybridAssetMappingsCacheItem(
+  /**
+   * Extract and set hybrid asset mappings in the cache.
+   * @param modelId - The ID of the model.
+   * @param revisionId - The ID of the revision.
+   * @param assetMapping3DHybrid - The array of hybrid asset mappings to extract and set.
+   * @param currentChunk - The chunk of IDs to process.
+   */
+  public async extractAndSetHybridAssetMappingsCacheItem(
     modelId: ModelId,
     revisionId: RevisionId,
     assetMapping3DHybrid: CdfAssetMapping[],
@@ -534,7 +580,7 @@ export class AssetMappingAndNode3DCache {
     return assetMappings;
   }
 
-  private async getAssetMappingsForNodes(
+  public async getAssetMappingsForNodes(
     modelId: ModelId,
     revisionId: RevisionId,
     nodes: Node3D[]
@@ -563,24 +609,31 @@ export class AssetMappingAndNode3DCache {
     return allAssetMappings;
   }
 
-  private async getHybridAssetMappingsForNodes(
+  /**
+   * Get hybrid asset mappings for the provided nodes.
+   * @param modelId - The ID of the model.
+   * @param revisionId - The ID of the revision.
+   * @param nodes - The array of Node3D objects to get mappings for.
+   * @returns A promise that resolves to an array of CdfAssetMapping objects.
+   */
+  public async getHybridAssetMappingsForNodes(
     modelId: ModelId,
     revisionId: RevisionId,
     nodes: Node3D[]
   ): Promise<CdfAssetMapping[]> {
     const nodeIds = nodes.map((node) => node.id);
 
-    const { chunkNotInCacheIdClassic, chunkInCache } =
+    const { chunkNotInCacheIdClassic: chunkNotInCacheId, chunkInCache } =
       await this.splitChunkInCacheHybridAssetMappings(nodeIds, modelId, revisionId, 'nodeIds');
 
-    if (chunkNotInCacheIdClassic === undefined || chunkNotInCacheIdClassic?.length === 0) {
+    if (chunkNotInCacheId === undefined || chunkNotInCacheId?.length === 0) {
       return chunkInCache;
     }
 
     const assetMappings = await this.fetchAndCacheMappingsForIds(
       modelId,
       revisionId,
-      chunkNotInCacheIdClassic,
+      chunkNotInCacheId,
       'nodeIds'
     );
 
@@ -589,6 +642,13 @@ export class AssetMappingAndNode3DCache {
     return allAssetMappings;
   }
 
+  /**
+   * Get classic asset mappings for the provided asset IDs.
+   * @param modelId - The ID of the model.
+   * @param revisionId - The ID of the revision.
+   * @param assetIds - The array of asset IDs to get mappings for.
+   * @returns A promise that resolves to an array of CdfAssetMapping objects.
+   */
   private async getAssetMappingsForAssetIds(
     modelId: ModelId,
     revisionId: RevisionId,
