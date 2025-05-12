@@ -7,6 +7,7 @@ import { type TranslationInput } from './TranslateInput';
 
 import english from '../../../common/i18n/en/reveal-react-components.json';
 import { setCurrentLanguage, translate } from './translateUtils';
+import { getLanguage } from '../../../components/i18n/utils';
 
 describe('translateUtils', () => {
   beforeEach(() => {});
@@ -55,5 +56,33 @@ describe('translateUtils', () => {
     const actual = translate({ key: 'BOX' });
 
     expect(actual).toBe('Box'); // Reset the language back to default
+  });
+
+  test('Should handle browser language change event', async () => {
+    const originalLanguage = getLanguage();
+
+    // Mock navigator.language
+    Object.defineProperty(navigator, 'language', {
+      value: 'de',
+      configurable: true
+    });
+
+    // Simulate languagechange event
+    const languageChangeEvent = new Event('languagechange');
+    window.dispatchEvent(languageChangeEvent);
+
+    // Explicitly update the current language to match the mocked navigator.language
+    await setCurrentLanguage(getLanguage());
+
+    // Verify translation after language change
+    const actual = translate({ key: 'BOX' });
+    expect(actual).toBe('Kasten');
+
+    // Restore original language
+    Object.defineProperty(navigator, 'language', {
+      value: originalLanguage,
+      configurable: true
+    });
+    await setCurrentLanguage(originalLanguage); // Reset the language back to default
   });
 });
