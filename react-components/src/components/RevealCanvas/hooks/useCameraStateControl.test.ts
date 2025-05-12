@@ -5,7 +5,7 @@ import { describe, expect, test, vi, beforeEach, beforeAll, afterAll } from 'vit
 
 import { renderHook } from '@testing-library/react';
 
-import { Vector3 } from 'three';
+import { Quaternion, Vector3 } from 'three';
 import { cameraManagerGlobalCameraEvents } from '#test-utils/fixtures/cameraManager';
 import { viewerMock } from '#test-utils/fixtures/viewer';
 import { useCameraStateControl, type CameraStateParameters } from './useCameraStateControl';
@@ -59,7 +59,14 @@ describe(useCameraStateControl.name, () => {
 
     const { rerender } = renderHook(
       ({ position }: { position: Vector3 }) => {
-        useCameraStateControl({ position: position.clone(), target: new Vector3(1, 1, 1) }, setter);
+        useCameraStateControl(
+          {
+            position: position.clone(),
+            target: new Vector3(1, 1, 1),
+            rotation: new Quaternion(0, 0, 0, 1)
+          },
+          setter
+        );
       },
       { initialProps: { position: new Vector3(0, 0, 0) } }
     );
@@ -75,28 +82,50 @@ describe(useCameraStateControl.name, () => {
     });
   });
 
-  test('provided setter is called after updating camera state internally', () => {
+  test('provided setter is called after updating camera state internally for each parameter', () => {
     const setter = vi.fn<(cameraState?: CameraStateParameters) => void>();
 
     const { rerender } = renderHook(() => {
       useCameraStateControl(
-        { position: new Vector3(0, 0, 0), target: new Vector3(1, 1, 1) },
+        {
+          position: new Vector3(0, 0, 0),
+          target: new Vector3(1, 1, 1),
+          rotation: new Quaternion(0, 0, 0, 1)
+        },
         setter
       );
     });
 
     vi.runAllTimers();
 
+    // position
     viewerMock.cameraManager.setCameraState({
       position: new Vector3(1, 0, 0),
-      target: new Vector3(1, 1, 1)
+      target: new Vector3(1, 1, 1),
+      rotation: new Quaternion(0, 0, 0, 1)
     });
 
-    vi.runAllTimers();
+    rerender();
+
+    // target
+    viewerMock.cameraManager.setCameraState({
+      position: new Vector3(0, 0, 0),
+      target: new Vector3(0, 0, 1),
+      rotation: new Quaternion(0, 0, 0, 1)
+    });
+
+    rerender();
+
+    // rotation
+    viewerMock.cameraManager.setCameraState({
+      position: new Vector3(0, 0, 0),
+      target: new Vector3(1, 1, 1),
+      rotation: new Quaternion(0.1, 0.01, 0, 0.995)
+    });
 
     rerender();
     vi.runAllTimers();
 
-    expect(setter).toHaveBeenCalled();
+    expect(setter).toHaveBeenCalledTimes(3);
   });
 });

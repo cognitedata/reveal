@@ -70,3 +70,18 @@ function isCoreDmImage360Annotation(
 export function isValidAssetMapping(assetMapping: AssetMapping3D): assetMapping is CdfAssetMapping {
   return assetMapping.treeIndex !== undefined && assetMapping.subtreeSize !== undefined;
 }
+
+export function convertAssetMapping3DToCdfAssetMapping(
+  assetMapping: AssetMapping3D
+): CdfAssetMapping | undefined {
+  if (!isValidAssetMapping(assetMapping)) {
+    return undefined;
+  }
+  return {
+    nodeId: assetMapping.nodeId,
+    treeIndex: assetMapping.treeIndex,
+    subtreeSize: assetMapping.subtreeSize,
+    assetId: assetMapping.assetId,
+    assetInstanceId: assetMapping.assetInstanceId
+  };
+}

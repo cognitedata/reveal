@@ -40,7 +40,7 @@ describe('CylinderDomainObject', () => {
       return;
     }
     expect(clone.cylinder).toStrictEqual(domainObject.cylinder);
-    expect(clone.color).toBe(domainObject.color);
+    expect(clone.color).toStrictEqual(domainObject.color);
     expect(clone.uniqueId).toBe(domainObject.uniqueId);
     expect(clone.name).toBe(domainObject.name);
     expect(clone.renderStyle).toStrictEqual(domainObject.renderStyle);
@@ -56,6 +56,7 @@ describe('CylinderDomainObject', () => {
 
     function testMe(primitiveType: PrimitiveType, quantity: Quantity, expectedItems: number): void {
       const domainObject = createCylinderDomainObject(primitiveType);
+      expect(domainObject.hasPanelInfo).toBe(true);
       const info = domainObject.getPanelInfo();
       expect(info).toBeDefined();
       if (info === undefined) {
