@@ -554,10 +554,6 @@ export class EventChangeTester {
     domainObject.views.addEventListener(listener);
   }
 
-  public toHaveBeenCalledTimes(expected: number): void {
-    expect(this._times).toHaveBeenCalledTimes(expected);
-  }
-
   public toHaveBeenCalledOnce(): void {
     expect(this._times).toBe(1);
   }
