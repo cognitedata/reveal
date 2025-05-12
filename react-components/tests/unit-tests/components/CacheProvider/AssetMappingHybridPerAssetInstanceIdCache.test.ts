@@ -3,13 +3,15 @@
  */
 import { describe, it, expect, beforeEach } from 'vitest';
 import {
-  type AssetMapping,
+  type CdfAssetMapping,
   type ModelDMSUniqueInstanceKey
 } from '../../../../src/components/CacheProvider/types';
 import { AssetMappingHybridPerAssetInstanceIdCache } from '../../../../src/components/CacheProvider/AssetMappingHybridPerAssetInstanceIdCache';
 
 const mockKey: ModelDMSUniqueInstanceKey = '1/2/mock-space/mock-externalId';
-const mockAssetMapping: AssetMapping = {
+const mockAssetMapping: CdfAssetMapping = {
+  treeIndex: 0,
+  subtreeSize: 1,
   nodeId: 123,
   assetId: 123,
   assetInstanceId: { space: 'mock-space', externalId: 'mock-externalId' }
@@ -34,7 +36,7 @@ describe(AssetMappingHybridPerAssetInstanceIdCache.name, () => {
     const initialAssetMapping = Promise.resolve([mockAssetMapping]);
     cache.setAssetInstanceIdsToHybridAssetMappingCacheItem(mockKey, initialAssetMapping);
 
-    const newAssetMapping: AssetMapping = { ...mockAssetMapping, nodeId: 4242 };
+    const newAssetMapping: CdfAssetMapping = { ...mockAssetMapping, nodeId: 4242 };
     await cache.setHybridAssetMappingsCacheItem(mockKey, newAssetMapping);
 
     const result = await cache.getHybridItemCacheResult(mockKey);
