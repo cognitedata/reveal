@@ -3,8 +3,8 @@
  */
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { CogniteClient } from '@cognite/sdk';
-import { AssetMappingPerModelCache } from '../../../../src/components/CacheProvider/AssetMappingPerModelCache';
-import { createModelRevisionKey } from '../../../../src/components/CacheProvider/idAndKeyTranslation';
+import { AssetMappingPerModelCache } from './AssetMappingPerModelCache';
+import { createModelRevisionKey } from './idAndKeyTranslation';
 
 vi.mock('@cognite/sdk', () => {
   return {

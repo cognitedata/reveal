@@ -5,8 +5,8 @@ import { describe, it, expect, beforeEach } from 'vitest';
 import {
   type CdfAssetMapping,
   type ModelAssetIdKey
-} from '../../../../src/components/CacheProvider/types';
-import { AssetMappingPerAssetIdCache } from '../../../../src/components/CacheProvider/AssetMappingPerAssetIdCache';
+} from './types';
+import { AssetMappingPerAssetIdCache } from './AssetMappingPerAssetIdCache';
 
 const mockedKey: ModelAssetIdKey = '1/2/3';
 const mockedAssetMapping: CdfAssetMapping = {

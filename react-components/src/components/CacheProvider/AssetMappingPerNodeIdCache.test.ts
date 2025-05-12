@@ -5,8 +5,8 @@ import { describe, it, expect, beforeEach } from 'vitest';
 import {
   type CdfAssetMapping,
   type ModelTreeIndexKey
-} from '../../../../src/components/CacheProvider/types';
-import { AssetMappingPerNodeIdCache } from '../../../../src/components/CacheProvider/AssetMappingPerNodeIdCache';
+} from './types';
+import { AssetMappingPerNodeIdCache } from './AssetMappingPerNodeIdCache';
 
 // Mock data
 const mockKey: ModelTreeIndexKey = '1/2/3';
