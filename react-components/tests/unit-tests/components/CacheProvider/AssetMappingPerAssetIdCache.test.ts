@@ -3,13 +3,13 @@
  */
 import { describe, it, expect, beforeEach } from 'vitest';
 import {
-  type AssetMapping,
+  type CdfAssetMapping,
   type ModelAssetIdKey
 } from '../../../../src/components/CacheProvider/types';
 import { AssetMappingPerAssetIdCache } from '../../../../src/components/CacheProvider/AssetMappingPerAssetIdCache';
 
 const mockedKey: ModelAssetIdKey = '1/2/3';
-const mockedAssetMapping: AssetMapping = {
+const mockedAssetMapping: CdfAssetMapping = {
   nodeId: 123,
   assetId: 123,
   assetInstanceId: { space: 'test-space', externalId: 'test-external-id' },
@@ -37,7 +37,7 @@ describe('AssetMappingPerAssetIdCache', () => {
 
   it('should add an asset mapping to an existing cache item', async () => {
     cache.setAssetIdsToAssetMappingCacheItem(mockedKey, Promise.resolve([mockedAssetMapping]));
-    const newAssetMapping: AssetMapping = { ...mockedAssetMapping, nodeId: 4242 };
+    const newAssetMapping: CdfAssetMapping = { ...mockedAssetMapping, nodeId: 4242 };
     await cache.setAssetMappingsCacheItem(mockedKey, newAssetMapping);
 
     const result = await cache.getAssetIdsToAssetMappingCacheItem(mockedKey);

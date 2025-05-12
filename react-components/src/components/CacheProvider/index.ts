@@ -4,7 +4,7 @@
 export {
   type Image360AnnotationAssetInfo,
   type NodeAssetMappingResult,
-  type AssetMapping
+  type CdfAssetMapping
 } from './types';
 
 export { useAssetMappingAndNode3DCache } from './CacheProvider';

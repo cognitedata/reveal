@@ -9,7 +9,8 @@ import {
   type AssetMappings3DAssetFilter,
   type AssetMappings3DNodeFilter,
   type AssetMappings3DTreeIndexFilter,
-  type CogniteExternalId
+  type CogniteExternalId,
+  AssetMapping3D
 } from '@cognite/sdk';
 import {
   type ModelTreeIndexKey,
@@ -20,12 +21,11 @@ import {
   type ModelAssetIdKey,
   type ModelDMSUniqueInstanceKey,
   type NodeAssetMappingResult,
-  type CdfAssetMapping,
-  AssetMapping
+  type CdfAssetMapping
 } from './types';
 import { chunk, maxBy } from 'lodash';
 import assert from 'assert';
-import { isValidAssetMapping } from './utils';
+import { convertAssetMapping3DToCdfAssetMapping, isValidAssetMapping } from './utils';
 import {
   modelRevisionNodesAssetToKey,
   createModelRevisionKey,
@@ -366,8 +366,8 @@ export class AssetMappingAndNode3DCache {
       return [];
     }
 
-    let assetMapping3DClassic: AssetMapping[] = [];
-    let assetMapping3DHybrid: AssetMapping[] = [];
+    let assetMapping3DClassic: AssetMapping3D[] = [];
+    let assetMapping3DHybrid: AssetMapping3D[] = [];
 
     const filter = this.getFilterBasedOnType(filterType, currentChunk);
 
@@ -387,12 +387,24 @@ export class AssetMappingAndNode3DCache {
         .autoPagingToArray({ limit: Infinity });
     }
 
+    const assetMapping3DClassicConverted: CdfAssetMapping[] = assetMapping3DClassic
+      .map(convertAssetMapping3DToCdfAssetMapping)
+      .filter(isDefined);
+
+    const assetMapping3DHybridConverted: CdfAssetMapping[] = assetMapping3DHybrid
+      .map(convertAssetMapping3DToCdfAssetMapping)
+      .filter(isDefined);
+
     await Promise.all([
-      this.extractAndSetClassicAssetMappingsCacheItem(modelId, revisionId, assetMapping3DClassic),
+      this.extractAndSetClassicAssetMappingsCacheItem(
+        modelId,
+        revisionId,
+        assetMapping3DClassicConverted
+      ),
       this.extractAndSetHybridAssetMappingsCacheItem(
         modelId,
         revisionId,
-        assetMapping3DHybrid,
+        assetMapping3DHybridConverted,
         currentChunk
       )
     ]);
@@ -403,15 +415,11 @@ export class AssetMappingAndNode3DCache {
   private async extractAndSetClassicAssetMappingsCacheItem(
     modelId: ModelId,
     revisionId: RevisionId,
-    assetMapping3DClassic: AssetMapping[]
+    assetMapping3DClassic: CdfAssetMapping[]
   ): Promise<void> {
     await Promise.all(
       assetMapping3DClassic
         .map(async (item) => {
-          if (item.assetId === undefined) return;
-          if (item.treeIndex === undefined) return;
-          if (item.subtreeSize === undefined) return;
-
           const mapping: CdfAssetMapping = {
             ...item,
             treeIndex: item.treeIndex,
@@ -435,7 +443,7 @@ export class AssetMappingAndNode3DCache {
   private async extractAndSetHybridAssetMappingsCacheItem(
     modelId: ModelId,
     revisionId: RevisionId,
-    assetMapping3DHybrid: AssetMapping[],
+    assetMapping3DHybrid: CdfAssetMapping[],
     currentChunk: number[]
   ): Promise<void> {
     await Promise.all(
@@ -448,7 +456,7 @@ export class AssetMappingAndNode3DCache {
         const mapping: CdfAssetMapping = {
           ...item,
           treeIndex: item.treeIndex,
-            subtreeSize: item.subtreeSize,
+          subtreeSize: item.subtreeSize,
           assetId: item.assetId,
           assetInstanceId: item.assetInstanceId
         };

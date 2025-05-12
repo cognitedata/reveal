@@ -64,7 +64,6 @@ export async function fetchAssetsForAssetReferences(
 ): Promise<AssetInstance[]> {
   const classicAssetIds = assetIds.filter(isIdEither);
   const assetIdReference = assetIds.filter(isAssetInstanceReference);
-
   const dmIds = assetIds.filter(isDmsInstance);
   const hybridAssetIdReference = assetIds.filter(isHybridAssetCoreDmsInstance);
 
