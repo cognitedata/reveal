@@ -32,7 +32,7 @@ describe(CommandsController.name, () => {
     expect(controller.isEnabled).toBe(true);
   });
 
-  describe('Test tool', () => {
+  describe('Test active, default and previous tool tool', () => {
     test('Should set default tool', () => {
       const mockTool = createMockTool1();
       controller.setDefaultTool(undefined);
