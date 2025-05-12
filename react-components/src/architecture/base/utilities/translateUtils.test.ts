@@ -12,7 +12,7 @@ import { getLanguage } from '../../../components/i18n/utils';
 describe('translateUtils', () => {
   beforeEach(() => {});
 
-  test('Should translate', () => {
+  test('Should translate the key', () => {
     const actual = translate({ key: 'BOX' });
     expect(actual).toBe(english.BOX);
   });
