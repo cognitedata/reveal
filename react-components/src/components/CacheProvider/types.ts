@@ -93,7 +93,8 @@ export type AnnotationId = number;
 
 export type ChunkInCacheTypes<ObjectType> = {
   chunkInCache: ObjectType[];
-  chunkNotInCache: number[];
+  chunkNotInCacheIdClassic?: number[];
+  chunkNotInCacheIdDMS?: DmsUniqueIdentifier[];
 };
 
 type PointCloudVolume = {
