@@ -17,7 +17,7 @@ describe('translateUtils', () => {
     expect(actual).toBe(english.BOX);
   });
 
-  test('Should not translate', async () => {
+  test('Should not translate the key', async () => {
     const input: TranslationInput = { untranslated: 'Hallo world' };
     const actual = translate(input);
     expect(actual).toBe(input.untranslated);
