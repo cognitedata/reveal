@@ -71,12 +71,7 @@ export class AssetMappingPerModelCache {
       .list(modelId, revisionId, filterQuery)
       .autoPagingToArray({ limit: Infinity });
 
-    return assetMappings.filter(isValidAssetMapping).map((mapping) => {
-      return {
-        ...mapping,
-        assetId: mapping.assetId
-      };
-    });
+    return assetMappings.filter(isValidAssetMapping);
   }
 
   private async fetchAssetMappingsForModelHybrid(
@@ -103,7 +98,7 @@ export class AssetMappingPerModelCache {
         const nodeFound = nodes.find((node) => node.id === mapping.nodeId);
         if (nodeFound === undefined) return undefined;
 
-        const newMapping: NonNullable<CdfAssetMapping> = {
+        const newMapping: CdfAssetMapping = {
           ...mapping,
           nodeId: mapping.nodeId,
           treeIndex: nodeFound.treeIndex,
