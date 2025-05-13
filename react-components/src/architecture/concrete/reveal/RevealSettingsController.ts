@@ -38,10 +38,11 @@ export class RevealSettingsController {
   }
 
   private addEffect(effectFunction: () => void): void {
-    const disposable = effect(() => {
-      effectFunction();
-    });
-    this._disposables.push(disposable);
+    this._disposables.push(
+      effect(() => {
+        effectFunction();
+      })
+    );
   }
 
   public dispose(): void {

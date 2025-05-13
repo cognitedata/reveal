@@ -82,11 +82,12 @@ export class SetFlexibleControlsTypeCommand extends RenderTargetCommand {
     if (!this._standAlone) {
       return; // Done by parent
     }
-    const disposable = effect(() => {
-      this.currentControlsType();
-      this.update();
-    });
-    this.addDisposable(disposable);
+    this.addDisposable(
+      effect(() => {
+        this.currentControlsType();
+        this.update();
+      })
+    );
   }
 
   private get currentControlsType(): Signal<FlexibleControlsType> {

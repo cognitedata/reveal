@@ -31,10 +31,11 @@ export class SetOrbitOrFirstPersonModeCommand extends BaseOptionCommand {
   public override attach(renderTarget: RevealRenderTarget): void {
     super.attach(renderTarget);
 
-    const disposable = effect(() => {
-      this.renderTarget.revealSettingsController.cameraControlsType();
-      this.update();
-    });
-    this.addDisposable(disposable);
+    this.addDisposable(
+      effect(() => {
+        this.renderTarget.revealSettingsController.cameraControlsType();
+        this.update();
+      })
+    );
   }
 }
