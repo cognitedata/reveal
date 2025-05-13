@@ -314,7 +314,7 @@ describe(CommandsController.name, () => {
   });
 
   describe('Test some event with the event function at the controller itself', () => {
-    test('Should call correction function on the correct tool on hover event', async () => {
+    test('Should call correct function on the correct tool on hover event', async () => {
       const activeTool = createMockTool1();
       controller.setActiveTool(activeTool);
 
