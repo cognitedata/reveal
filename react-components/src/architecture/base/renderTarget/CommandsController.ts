@@ -14,7 +14,7 @@ import { type Signal, signal } from '@cognite/signals';
  * and maintain a list of all available commands in the system for updating and other actions.
  * Note that the tool is only a specific type command, where only one can be active at the time.
  * The active tool will receive all mouse events. It also maintain the default tool, which is
- * activates at startup or if the current active tool is disabled.
+ * activated at startup or if the current active tool is disabled.
  *
  * It extends the `PointerEvents` class to handle pointer-based interactions.
  * In addition the class also facilitates event handling for keyboard
