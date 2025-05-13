@@ -290,7 +290,7 @@ describe(CommandsController.name, () => {
       expect(onFocusChangedMock).toHaveBeenNthCalledWith(2, false);
     });
 
-    test('Should call onWhen when WheelEvent', () => {
+    test('Should call onWheel when WheelEvent', () => {
       const mockTool = createMockTool1();
       controller.setActiveTool(mockTool);
 
