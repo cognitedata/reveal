@@ -81,8 +81,8 @@ describe(CommandsController.name, () => {
       expect(controller.activeTool).toBe(mockTool1);
       expect(controller.activeToolSignal()).toBe(mockTool1);
 
-      expect(activateTester1.CalledTimes).toBe(1);
-      expect(deactivateTester1.CalledTimes).toBe(0);
+      expect(activateTester1.calledTimes).toBe(1);
+      expect(deactivateTester1.calledTimes).toBe(0);
 
       controller.setActiveTool(mockTool2);
       expect(controller.activeTool).toBe(mockTool2);
@@ -90,10 +90,10 @@ describe(CommandsController.name, () => {
       controller.setActiveTool(undefined);
       expect(controller.activeTool).toBe(mockTool2);
 
-      expect(activateTester1.CalledTimes).toBe(1);
-      expect(deactivateTester1.CalledTimes).toBe(1);
-      expect(activateTester2.CalledTimes).toBe(1);
-      expect(deactivateTester2.CalledTimes).toBe(0);
+      expect(activateTester1.calledTimes).toBe(1);
+      expect(deactivateTester1.calledTimes).toBe(1);
+      expect(activateTester2.calledTimes).toBe(1);
+      expect(deactivateTester2.calledTimes).toBe(0);
     });
 
     test('Should not changed active tool when undefined or the same tool is given', () => {
@@ -242,11 +242,11 @@ describe(CommandsController.name, () => {
       const updateTester1 = new UpdateTester(mockCommand);
       const updateTester2 = new UpdateTester(mockTool);
 
-      expect(updateTester1.CalledTimes).toBe(0);
-      expect(updateTester2.CalledTimes).toBe(0);
+      expect(updateTester1.calledTimes).toBe(0);
+      expect(updateTester2.calledTimes).toBe(0);
       controller.update();
-      expect(updateTester1.CalledTimes).toBe(1);
-      expect(updateTester2.CalledTimes).toBe(1);
+      expect(updateTester1.calledTimes).toBe(1);
+      expect(updateTester2.calledTimes).toBe(1);
     });
 
     test('Should not update wnen disposed', () => {
@@ -255,10 +255,10 @@ describe(CommandsController.name, () => {
 
       const updateTester = new UpdateTester(mockCommand);
 
-      expect(updateTester.CalledTimes).toBe(0);
+      expect(updateTester.calledTimes).toBe(0);
       controller.dispose();
       controller.update();
-      expect(updateTester.CalledTimes).toBe(0);
+      expect(updateTester.calledTimes).toBe(0);
     });
   });
 
@@ -290,7 +290,7 @@ describe(CommandsController.name, () => {
       expect(onFocusChangedMock).toHaveBeenNthCalledWith(2, false);
     });
 
-    test('Should call onWheel when WheelEvent', () => {
+    test('Should call onWheel when wheel event', () => {
       const mockTool = createMockTool1();
       controller.setActiveTool(mockTool);
 
@@ -301,15 +301,15 @@ describe(CommandsController.name, () => {
       expect(onWheelMock).toHaveBeenCalledTimes(1);
     });
 
-    test('Should call onWhen when WheelEvent', () => {
+    test('Should call onHover when hover event', () => {
       const mockTool = createMockTool1();
       controller.setActiveTool(mockTool);
 
-      const onWheelMock = vi.fn();
-      mockTool.onHover = onWheelMock;
+      const onHoverMock = vi.fn();
+      mockTool.onHover = onHoverMock;
 
       domElement.dispatchEvent(createMouseHoverEvent());
-      expect(onWheelMock).toHaveBeenCalledTimes(1);
+      expect(onHoverMock).toHaveBeenCalledTimes(1);
     });
   });
 
@@ -411,9 +411,7 @@ describe(CommandsController.name, () => {
   }
 });
 
-class MockTool1 extends BaseTool {
-  // Mock any methods or properties as needed
-}
+class MockTool1 extends BaseTool {}
 class MockTool2 extends BaseTool {}
 
 class MockCommand extends BaseCommand {
@@ -434,18 +432,15 @@ class MockCommand extends BaseCommand {
   }
 }
 
-export class UpdateTester {
+class UpdateTester {
   public calledTimes = 0;
 
-  // Set isCalled to true if the change is detected
   public constructor(command: BaseCommand, change?: symbol) {
-    // eslint-disable-next-line @typescript-eslint/no-this-alias
-    const self = this;
-    function listener(_command: BaseCommand, inputChange?: symbol): void {
+    const listener = (_command: BaseCommand, inputChange?: symbol): void => {
       if (change === inputChange) {
-        self.CalledTimes++;
+        this.calledTimes++;
       }
-    }
+    };
     command.addEventListener(listener);
   }
 }

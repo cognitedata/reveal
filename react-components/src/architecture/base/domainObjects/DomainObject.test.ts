@@ -540,26 +540,23 @@ class RootDomainObject extends DomainObject {
 }
 
 export class EventChangeTester {
-  private _times = 0;
+  private _calledTimes = 0;
 
-  // Set isCalled to true if the change is detected
   public constructor(domainObject: DomainObject, change: symbol) {
-    // eslint-disable-next-line @typescript-eslint/no-this-alias
-    const self = this;
-    function listener(_domainObject: DomainObject, inputChange: DomainObjectChange): void {
+    const listener = (_domainObject: DomainObject, inputChange: DomainObjectChange): void => {
       if (inputChange.isChanged(change)) {
-        self._times++;
+        this._calledTimes++;
       }
-    }
+    };
     domainObject.views.addEventListener(listener);
   }
 
   public toHaveBeenCalledOnce(): void {
-    expect(this._times).toBe(1);
+    expect(this._calledTimes).toBe(1);
   }
 
   public toHaveNotBeenCalled(): void {
-    expect(this._times).toBe(0);
+    expect(this._calledTimes).toBe(0);
   }
 }
 
