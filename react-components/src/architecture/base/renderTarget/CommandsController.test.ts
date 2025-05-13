@@ -435,7 +435,7 @@ class MockCommand extends BaseCommand {
 }
 
 export class UpdateTester {
-  public CalledTimes = 0;
+  public calledTimes = 0;
 
   // Set isCalled to true if the change is detected
   public constructor(command: BaseCommand, change?: symbol) {
