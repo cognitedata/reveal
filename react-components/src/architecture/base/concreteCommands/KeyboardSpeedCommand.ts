@@ -43,11 +43,11 @@ class OptionItemCommand extends RenderTargetCommand {
   }
 
   public override get isChecked(): boolean {
-    return this._value === this.renderTarget.flexibleCameraManager.options.keyboardSpeed;
+    return this._value === this.renderTarget.revealSettingsController.keyBoardSpeed();
   }
 
   public override invokeCore(): boolean {
-    this.renderTarget.flexibleCameraManager.options.keyboardSpeed = this._value;
+    this.renderTarget.revealSettingsController.keyBoardSpeed(this._value);
     return true;
   }
 }

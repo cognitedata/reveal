@@ -11,7 +11,10 @@ export type UntranslatedString = { untranslated: string };
 
 export type TranslationInput = TranslatedString | UntranslatedString;
 
-export function isEmpty(input: TranslationInput): boolean {
+export function isEmpty(input: TranslationInput | undefined): boolean {
+  if (input === undefined) {
+    return true;
+  }
   if (isTranslatedString(input)) {
     return false;
   }
