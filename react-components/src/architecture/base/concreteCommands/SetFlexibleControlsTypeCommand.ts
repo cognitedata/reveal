@@ -8,6 +8,7 @@ import { FlexibleControlsType } from '@cognite/reveal';
 import { type BaseCommand } from '../commands/BaseCommand';
 import { type TranslationInput } from '../utilities/TranslateInput';
 import { type IconName } from '../utilities/IconName';
+import { effect, type Signal } from '@cognite/signals';
 
 export class SetFlexibleControlsTypeCommand extends RenderTargetCommand {
   private readonly _controlsType: FlexibleControlsType;
@@ -38,15 +39,6 @@ export class SetFlexibleControlsTypeCommand extends RenderTargetCommand {
     return this._controlsType === other._controlsType;
   }
 
-  public override dispose(): void {
-    super.dispose();
-    if (!this._standAlone) {
-      return; // Done by parent
-    }
-    const { flexibleCameraManager } = this.renderTarget;
-    flexibleCameraManager.removeControlsTypeChangeListener(this._controlsTypeChangeHandler);
-  }
-
   public override get icon(): IconName {
     switch (this._controlsType) {
       case FlexibleControlsType.FirstPerson:
@@ -74,18 +66,14 @@ export class SetFlexibleControlsTypeCommand extends RenderTargetCommand {
   }
 
   public override get isChecked(): boolean {
-    const { renderTarget } = this;
-    const { flexibleCameraManager } = renderTarget;
-    return flexibleCameraManager.controlsType === this._controlsType;
+    return this.currentControlsType() === this._controlsType;
   }
 
   protected override invokeCore(): boolean {
-    const { renderTarget } = this;
-    const { flexibleCameraManager } = renderTarget;
-    if (flexibleCameraManager.controlsType === this._controlsType) {
+    if (this.currentControlsType() === this._controlsType) {
       return false;
     }
-    flexibleCameraManager.controlsType = this._controlsType;
+    this.currentControlsType(this._controlsType);
     return true;
   }
 
@@ -94,15 +82,14 @@ export class SetFlexibleControlsTypeCommand extends RenderTargetCommand {
     if (!this._standAlone) {
       return; // Done by parent
     }
-    const { flexibleCameraManager } = renderTarget;
-    flexibleCameraManager.addControlsTypeChangeListener(this._controlsTypeChangeHandler);
+    const disposable = effect(() => {
+      this.currentControlsType();
+      this.update();
+    });
+    this.addDisposable(disposable);
   }
 
-  // ==================================================
-  // INSTANCE METHODS
-  // ==================================================
-
-  private readonly _controlsTypeChangeHandler = (_newControlsType: FlexibleControlsType): void => {
-    this.update();
-  };
+  private get currentControlsType(): Signal<FlexibleControlsType> {
+    return this.renderTarget.revealSettingsController.cameraControlsType;
+  }
 }

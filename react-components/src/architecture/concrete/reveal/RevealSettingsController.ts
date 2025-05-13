@@ -2,6 +2,7 @@ import { effect, type Signal, signal } from '@cognite/signals';
 import { type QualitySettings } from '../../base/utilities/quality/QualitySettings';
 import { DEFAULT_REVEAL_QUALITY_SETTINGS } from './constants';
 import {
+  FlexibleControlsType,
   isFlexibleCameraManager,
   type Cognite3DViewer,
   type DataSourceType
@@ -9,8 +10,10 @@ import {
 
 export class RevealSettingsController {
   private readonly _viewer: Cognite3DViewer<DataSourceType>;
+  private readonly _disposables: Array<() => void> = [];
   private readonly _renderQualitySignal = signal<QualitySettings>(DEFAULT_REVEAL_QUALITY_SETTINGS);
-  private readonly _keyBoardSpeed = signal<number>(1);
+  private readonly _cameraKeyBoardSpeed = signal<number>(1);
+  private readonly _cameraControlsType = signal<FlexibleControlsType>(FlexibleControlsType.Orbit);
 
   constructor(viewer: Cognite3DViewer<DataSourceType>) {
     this._viewer = viewer;
@@ -18,24 +21,59 @@ export class RevealSettingsController {
     // Set default camera speed
     const cameraManager = viewer.cameraManager;
     if (isFlexibleCameraManager(cameraManager)) {
-      this._keyBoardSpeed(cameraManager.options.keyboardSpeed);
+      this._cameraKeyBoardSpeed(cameraManager.options.keyboardSpeed);
+      this._cameraControlsType(cameraManager.options.controlsType);
+      cameraManager.addControlsTypeChangeListener(this._cameraControlsTypeChangeHandler);
     }
 
-    effect(() => {
+    this.addEffect(() => {
       setQualityOnViewer(this._renderQualitySignal(), this._viewer);
     });
-    effect(() => {
-      setKeyBoardSpeedOnViewer(this._keyBoardSpeed(), this._viewer);
+    this.addEffect(() => {
+      setCameraKeyBoardSpeedOnViewer(this._cameraKeyBoardSpeed(), this._viewer);
     });
+    this.addEffect(() => {
+      setCameraControlsTypeOnViewer(this._cameraControlsType(), this._viewer);
+    });
+  }
+
+  private addEffect(effectFunction: () => void): void {
+    const disposable = effect(() => {
+      effectFunction();
+    });
+    this._disposables.push(disposable);
+  }
+
+  public dispose(): void {
+    for (const disposable of this._disposables) {
+      disposable();
+    }
+    const cameraManager = this._viewer.cameraManager;
+    if (isFlexibleCameraManager(cameraManager)) {
+      cameraManager.removeControlsTypeChangeListener(this._cameraControlsTypeChangeHandler);
+    }
   }
 
   public get renderQuality(): Signal<QualitySettings> {
     return this._renderQualitySignal;
   }
 
-  public get keyBoardSpeed(): Signal<number> {
-    return this._keyBoardSpeed;
+  public get cameraKeyBoardSpeed(): Signal<number> {
+    return this._cameraKeyBoardSpeed;
   }
+
+  public get cameraControlsType(): Signal<FlexibleControlsType> {
+    return this._cameraControlsType;
+  }
+
+  private readonly _cameraControlsTypeChangeHandler = (
+    _newControlsType: FlexibleControlsType
+  ): void => {
+    const cameraManager = this._viewer.cameraManager;
+    if (isFlexibleCameraManager(cameraManager)) {
+      this._cameraControlsType(cameraManager.options.controlsType);
+    }
+  };
 }
 
 function setQualityOnViewer<T extends DataSourceType>(
@@ -47,12 +85,22 @@ function setQualityOnViewer<T extends DataSourceType>(
   viewer.pointCloudBudget = value.pointCloudBudget;
 }
 
-function setKeyBoardSpeedOnViewer<T extends DataSourceType>(
+function setCameraKeyBoardSpeedOnViewer<T extends DataSourceType>(
   value: number,
   viewer: Cognite3DViewer<T>
 ): void {
   const cameraManager = viewer.cameraManager;
   if (isFlexibleCameraManager(cameraManager)) {
     cameraManager.options.keyboardSpeed = value;
+  }
+}
+
+function setCameraControlsTypeOnViewer<T extends DataSourceType>(
+  value: FlexibleControlsType,
+  viewer: Cognite3DViewer<T>
+): void {
+  const cameraManager = viewer.cameraManager;
+  if (isFlexibleCameraManager(cameraManager)) {
+    cameraManager.options.controlsType = value;
   }
 }

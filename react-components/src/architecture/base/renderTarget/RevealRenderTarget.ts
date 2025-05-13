@@ -288,6 +288,7 @@ export class RevealRenderTarget {
     this.commandsController.removeEventListeners();
     this.commandsController.dispose();
     this._axisGizmoTool?.dispose();
+    this._revealSettingsController.dispose();
     CommandsUpdater.dispose();
   }
 

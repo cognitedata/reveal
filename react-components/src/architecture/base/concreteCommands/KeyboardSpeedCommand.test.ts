@@ -51,9 +51,9 @@ describe(KeyboardSpeedCommand.name, () => {
       if (option.isChecked) {
         continue; // Already check
       }
-      const oldKeyboardSpeed = renderTarget.revealSettingsController.keyBoardSpeed();
+      const oldKeyboardSpeed = renderTarget.revealSettingsController.cameraKeyBoardSpeed();
       expect(option.invoke()).toBe(true);
-      const newKeyboardSpeed = renderTarget.revealSettingsController.keyBoardSpeed();
+      const newKeyboardSpeed = renderTarget.revealSettingsController.cameraKeyBoardSpeed();
       expect(oldKeyboardSpeed).not.toBe(newKeyboardSpeed);
       expect(option.isChecked).toBe(true);
       expect(command.checkedCount).toBe(1);

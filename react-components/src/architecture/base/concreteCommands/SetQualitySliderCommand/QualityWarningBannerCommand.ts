@@ -28,9 +28,10 @@ export class QualityWarningBannerCommand extends BaseBannerCommand {
     super.attach(renderTarget);
 
     // Until `isVisible` becomes a signal, we have to propagate setting updates like this
-    effect(() => {
+    const disposable = effect(() => {
       this.renderTarget.revealSettingsController.renderQuality();
       this.update();
     });
+    this.addDisposable(disposable);
   }
 }
