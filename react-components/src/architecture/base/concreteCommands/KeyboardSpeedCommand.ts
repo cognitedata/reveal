@@ -2,7 +2,7 @@
  * Copyright 2024 Cognite AS
  */
 
-import { effect } from '@cognite/signals';
+import { effect, type Signal } from '@cognite/signals';
 import { BaseOptionCommand } from '../commands/BaseOptionCommand';
 import { RenderTargetCommand } from '../commands/RenderTargetCommand';
 import { type RevealRenderTarget } from '../renderTarget/RevealRenderTarget';
@@ -56,11 +56,18 @@ class OptionItemCommand extends RenderTargetCommand {
   }
 
   public override get isChecked(): boolean {
-    return this._value === this.renderTarget.revealSettingsController.cameraKeyBoardSpeed();
+    return this._value === this.currentKeyBoardSpeed();
   }
 
   public override invokeCore(): boolean {
-    this.renderTarget.revealSettingsController.cameraKeyBoardSpeed(this._value);
+    if (this._value === this.currentKeyBoardSpeed()) {
+      return false;
+    }
+    this.currentKeyBoardSpeed(this._value);
     return true;
+  }
+
+  private get currentKeyBoardSpeed(): Signal<number> {
+    return this.renderTarget.revealSettingsController.cameraKeyBoardSpeed;
   }
 }

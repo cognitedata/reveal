@@ -11,16 +11,16 @@ import { type IconName } from '../utilities/IconName';
 import { effect, type Signal } from '@cognite/signals';
 
 export class SetFlexibleControlsTypeCommand extends RenderTargetCommand {
-  private readonly _controlsType: FlexibleControlsType;
+  private readonly _value: FlexibleControlsType;
   private readonly _standAlone: boolean; // False if part of a group
 
   // ==================================================
   // CONSTRUCTOR
   // ==================================================
 
-  public constructor(controlsType: FlexibleControlsType, standAlone: boolean = true) {
+  public constructor(value: FlexibleControlsType, standAlone: boolean = true) {
     super();
-    this._controlsType = controlsType;
+    this._value = value;
     this._standAlone = standAlone;
   }
 
@@ -29,7 +29,7 @@ export class SetFlexibleControlsTypeCommand extends RenderTargetCommand {
   // ==================================================
 
   protected override get shortCutKey(): string | undefined {
-    switch (this._controlsType) {
+    switch (this._value) {
       case FlexibleControlsType.FirstPerson:
         return '2';
       case FlexibleControlsType.Orbit:
@@ -43,11 +43,11 @@ export class SetFlexibleControlsTypeCommand extends RenderTargetCommand {
     if (!(other instanceof SetFlexibleControlsTypeCommand)) {
       return false;
     }
-    return this._controlsType === other._controlsType;
+    return this._value === other._value;
   }
 
   public override get icon(): IconName {
-    switch (this._controlsType) {
+    switch (this._value) {
       case FlexibleControlsType.FirstPerson:
         return 'Plane';
       case FlexibleControlsType.Orbit:
@@ -60,7 +60,7 @@ export class SetFlexibleControlsTypeCommand extends RenderTargetCommand {
   }
 
   public override get tooltip(): TranslationInput {
-    switch (this._controlsType) {
+    switch (this._value) {
       case FlexibleControlsType.FirstPerson:
         return { key: 'CONTROLS_TYPE_FIRST_PERSON' };
       case FlexibleControlsType.Orbit:
@@ -73,14 +73,14 @@ export class SetFlexibleControlsTypeCommand extends RenderTargetCommand {
   }
 
   public override get isChecked(): boolean {
-    return this.currentControlsType() === this._controlsType;
+    return this._value === this.currentControlsType();
   }
 
   protected override invokeCore(): boolean {
-    if (this.currentControlsType() === this._controlsType) {
+    if (this._value === this.currentControlsType()) {
       return false;
     }
-    this.currentControlsType(this._controlsType);
+    this.currentControlsType(this._value);
     return true;
   }
 
