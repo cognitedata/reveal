@@ -1,11 +1,7 @@
-/*!
- * Copyright 2025 Cognite AS
- */
-import { assert, beforeEach, describe, expect, test } from 'vitest';
+import { assert, beforeEach, describe, expect, test, vi } from 'vitest';
 import { isEmpty } from '../utilities/TranslateInput';
 import { createFullRenderTargetMock } from '../../../../tests/tests-utilities/fixtures/createFullRenderTargetMock';
 import { KeyboardSpeedCommand } from './KeyboardSpeedCommand';
-import { first, last } from 'lodash';
 
 describe(KeyboardSpeedCommand.name, () => {
   let command: KeyboardSpeedCommand;
@@ -40,24 +36,36 @@ describe(KeyboardSpeedCommand.name, () => {
     expect(command.selectedChild).toBeDefined();
   });
 
-  test('Should check the last option, and the the first option', () => {
-    const [lastOption, firstOption] = [last(command.children), first(command.children)];
-    expect(firstOption).not.toBe(lastOption);
-
-    for (const option of [lastOption, firstOption]) {
+  test('Should change the cameraKeyBoardSpeed in RevealSettingsController', () => {
+    assert(command.children !== undefined);
+    for (const option of command.children) {
       expect(option).toBeDefined();
       assert(option !== undefined);
 
       if (option.isChecked) {
         continue; // Already check
       }
-      const oldKeyboardSpeed = renderTarget.revealSettingsController.cameraKeyBoardSpeed();
+      const oldValue = renderTarget.revealSettingsController.cameraKeyBoardSpeed();
       expect(option.invoke()).toBe(true);
-      const newKeyboardSpeed = renderTarget.revealSettingsController.cameraKeyBoardSpeed();
-      expect(oldKeyboardSpeed).not.toBe(newKeyboardSpeed);
+      const newValue = renderTarget.revealSettingsController.cameraKeyBoardSpeed();
+      expect(oldValue).not.toBe(newValue);
       expect(option.isChecked).toBe(true);
       expect(command.checkedCount).toBe(1);
       expect(command.selectedChild).toBe(option);
     }
+  });
+
+  test('Should listen when cameraKeyBoardSpeed change in RevealSettingsController', () => {
+    renderTarget.revealSettingsController.cameraKeyBoardSpeed(1);
+
+    const mock = vi.fn();
+    command.addEventListener(mock);
+
+    renderTarget.revealSettingsController.cameraKeyBoardSpeed(2);
+    expect(mock).toHaveBeenCalledOnce();
+    renderTarget.revealSettingsController.cameraKeyBoardSpeed(2);
+    expect(mock).toHaveBeenCalledOnce(); // No change
+    renderTarget.revealSettingsController.cameraKeyBoardSpeed(3);
+    expect(mock).toHaveBeenCalledTimes(2);
   });
 });

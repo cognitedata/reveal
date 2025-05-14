@@ -29,7 +29,14 @@ export class SetFlexibleControlsTypeCommand extends RenderTargetCommand {
   // ==================================================
 
   protected override get shortCutKey(): string | undefined {
-    return this._controlsType === FlexibleControlsType.Orbit ? '1' : '2';
+    switch (this._controlsType) {
+      case FlexibleControlsType.FirstPerson:
+        return '2';
+      case FlexibleControlsType.Orbit:
+        return '1';
+      default:
+        return super.shortCutKey;
+    }
   }
 
   public override equals(other: BaseCommand): boolean {

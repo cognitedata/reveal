@@ -2,8 +2,10 @@
  * Copyright 2024 Cognite AS
  */
 
+import { effect } from '@cognite/signals';
 import { BaseOptionCommand } from '../commands/BaseOptionCommand';
 import { RenderTargetCommand } from '../commands/RenderTargetCommand';
+import { type RevealRenderTarget } from '../renderTarget/RevealRenderTarget';
 import { type TranslationInput } from '../utilities/TranslateInput';
 
 const DEFAULT_OPTIONS = [0.5, 1, 2, 5, 10, 20];
@@ -26,6 +28,17 @@ export class KeyboardSpeedCommand extends BaseOptionCommand {
 
   public override get tooltip(): TranslationInput {
     return { key: 'SET_CAMERA_FLY_SPEED' };
+  }
+
+  public override attach(renderTarget: RevealRenderTarget): void {
+    super.attach(renderTarget);
+
+    this.addDisposable(
+      effect(() => {
+        this.renderTarget.revealSettingsController.cameraKeyBoardSpeed();
+        this.update();
+      })
+    );
   }
 }
 

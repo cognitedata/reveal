@@ -11,6 +11,8 @@ import {
 export class RevealSettingsController {
   private readonly _viewer: Cognite3DViewer<DataSourceType>;
   private readonly _disposables: Array<() => void> = [];
+
+  // The settings
   private readonly _renderQualitySignal = signal<QualitySettings>(DEFAULT_REVEAL_QUALITY_SETTINGS);
   private readonly _cameraKeyBoardSpeed = signal<number>(1);
   private readonly _cameraControlsType = signal<FlexibleControlsType>(FlexibleControlsType.Orbit);
@@ -18,13 +20,7 @@ export class RevealSettingsController {
   constructor(viewer: Cognite3DViewer<DataSourceType>) {
     this._viewer = viewer;
 
-    // Set default camera speed
-    const cameraManager = viewer.cameraManager;
-    if (isFlexibleCameraManager(cameraManager)) {
-      this._cameraKeyBoardSpeed(cameraManager.options.keyboardSpeed);
-      this._cameraControlsType(cameraManager.options.controlsType);
-      cameraManager.addControlsTypeChangeListener(this._cameraControlsTypeChangeHandler);
-    }
+    this.copyDefaultValuesFromViewer();
 
     this.addEffect(() => {
       setQualityOnViewer(this._renderQualitySignal(), this._viewer);
@@ -37,12 +33,16 @@ export class RevealSettingsController {
     });
   }
 
-  private addEffect(effectFunction: () => void): void {
-    this._disposables.push(
-      effect(() => {
-        effectFunction();
-      })
-    );
+  public get renderQuality(): Signal<QualitySettings> {
+    return this._renderQualitySignal;
+  }
+
+  public get cameraKeyBoardSpeed(): Signal<number> {
+    return this._cameraKeyBoardSpeed;
+  }
+
+  public get cameraControlsType(): Signal<FlexibleControlsType> {
+    return this._cameraControlsType;
   }
 
   public dispose(): void {
@@ -55,16 +55,22 @@ export class RevealSettingsController {
     }
   }
 
-  public get renderQuality(): Signal<QualitySettings> {
-    return this._renderQualitySignal;
+  private addEffect(effectFunction: () => void): void {
+    this._disposables.push(
+      effect(() => {
+        effectFunction();
+      })
+    );
   }
 
-  public get cameraKeyBoardSpeed(): Signal<number> {
-    return this._cameraKeyBoardSpeed;
-  }
-
-  public get cameraControlsType(): Signal<FlexibleControlsType> {
-    return this._cameraControlsType;
+  private copyDefaultValuesFromViewer(): void {
+    // Set default camera speed
+    const cameraManager = this._viewer.cameraManager;
+    if (isFlexibleCameraManager(cameraManager)) {
+      this._cameraKeyBoardSpeed(cameraManager.options.keyboardSpeed);
+      this._cameraControlsType(cameraManager.options.controlsType);
+      cameraManager.addControlsTypeChangeListener(this._cameraControlsTypeChangeHandler);
+    }
   }
 
   private readonly _cameraControlsTypeChangeHandler = (
