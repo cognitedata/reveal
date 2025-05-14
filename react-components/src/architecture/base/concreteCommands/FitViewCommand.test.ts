@@ -3,9 +3,9 @@
  */
 import { beforeEach, describe, expect, test } from 'vitest';
 import { isEmpty } from '../utilities/TranslateInput';
-import { createFullRenderTargetMock } from '../../../../tests/tests-utilities/fixtures/createFullRenderTargetMock';
 import { FitViewCommand } from './FitViewCommand';
-import { fitCameraToBoundingBoxMock } from '../../../../tests/tests-utilities/fixtures/viewer';
+import { fitCameraToBoundingBoxMock } from '#test-utils/fixtures/viewer';
+import { createFullRenderTargetMock } from '#test-utils/fixtures/createFullRenderTargetMock';
 
 describe(FitViewCommand.name, () => {
   let command: FitViewCommand;
