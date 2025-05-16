@@ -24,15 +24,18 @@ import { createInstanceReferenceKey } from '../../utilities/instanceIds/toKey';
 import { uniqBy } from 'lodash';
 import { type AssetInstance } from '../../utilities/instances';
 import { type Vector3 } from 'three';
+import { FdmSDK } from '../../data-providers/FdmSDK';
 
 export class Image360AnnotationCache {
   private readonly _sdk: CogniteClient;
   private readonly _viewer: Cognite3DViewer<DataSourceType> | undefined;
   private readonly _annotationToAssetMappings = new Map<string, Image360AnnotationAssetInfo[]>();
+  private readonly _fdmSdk: FdmSDK;
 
   constructor(sdk: CogniteClient, viewer: Cognite3DViewer<DataSourceType> | undefined) {
     this._sdk = sdk;
     this._viewer = viewer;
+    this._fdmSdk = new FdmSDK(sdk);
   }
 
   public async getReveal360Annotations(siteIds: string[]): Promise<Image360AnnotationAssetInfo[]> {
@@ -76,7 +79,11 @@ export class Image360AnnotationCache {
 
     const uniqueAssetIds = uniqBy(assetIds, createInstanceReferenceKey);
 
-    const assetsArray = await fetchAssetsForAssetReferences(uniqueAssetIds, this._sdk);
+    const assetsArray = await fetchAssetsForAssetReferences(
+      uniqueAssetIds,
+      this._sdk,
+      this._fdmSdk
+    );
     const assets = new Map(assetsArray.map((asset) => [assetInstanceToKey(asset), asset]));
     const assetsWithAnnotations = await this.getAssetWithAnnotationsMapped(annotationsInfo, assets);
 

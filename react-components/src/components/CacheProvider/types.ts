@@ -8,10 +8,17 @@ import {
   type AnnotationsBoundingVolume,
   type Node3D
 } from '@cognite/sdk';
-import { type Source, type DmsUniqueIdentifier } from '../../data-providers/FdmSDK';
+import {
+  type Source,
+  type DmsUniqueIdentifier,
+  type ExternalId,
+  type Space
+} from '../../data-providers/FdmSDK';
 import { type AssetAnnotationImage360Info, type DataSourceType } from '@cognite/reveal';
 import { type Vector3 } from 'three';
 import { type AssetInstance } from '../../utilities/instances';
+
+export type NodeAssetMappingResult = { node?: Node3D; mappings: CdfAssetMapping[] };
 
 export type FdmCadConnection = {
   instance: DmsUniqueIdentifier;
@@ -57,6 +64,8 @@ export type ModelRevisionKey = `${ModelId}/${RevisionId}`;
 export type FdmKey = `${string}/${string}`;
 export type ModelTreeIndexKey = `${ModelId}/${RevisionId}/${TreeIndex}`;
 export type ModelAssetIdKey = `${ModelId}/${RevisionId}/${AssetId}`;
+
+export type ModelDMSUniqueInstanceKey = `${ModelId}/${RevisionId}/${Space}/${ExternalId}`;
 
 export type ModelRevisionToConnectionMap = Map<ModelRevisionKey, FdmConnectionWithNode[]>;
 
