@@ -32,6 +32,8 @@ export default defineConfig(({ command }) => {
       environment: 'happy-dom',
       globals: true,
       reporters: ['default'],
+      isolate: false,
+      css: false,
       coverage: {
         reportsDirectory: '../coverage/reveal-react-components',
         exclude: [

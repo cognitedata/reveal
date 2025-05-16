@@ -669,11 +669,15 @@ __metadata:
     vite-plugin-externalize-deps: "npm:^0.8.0"
     vitest: "npm:^3.0.6"
   peerDependencies:
+    "@cognite/cogs-lab": ^9.0.0-alpha.153
     "@cognite/reveal": 4.25.1
     "@cognite/sdk": ^10.0.0
+    "@cognite/signals": ^0.0.4
     react: ">=18"
     react-dom: ">=18"
+    react-router-dom: ^6.23.0
     styled-components: ^6.1.12
+    three: 0.166.0
   languageName: unknown
   linkType: soft
 
