@@ -3084,7 +3084,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/react-resizable@npm:^3.0.5":
+"@types/react-resizable@npm:^3.0.7":
   version: 3.0.8
   resolution: "@types/react-resizable@npm:3.0.8"
   dependencies:
