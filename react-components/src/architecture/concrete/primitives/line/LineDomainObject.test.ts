@@ -2,7 +2,7 @@
  * Copyright 2025 Cognite AS
  */
 
-import { describe, expect, test } from 'vitest';
+import { assert, describe, expect, test } from 'vitest';
 import { PrimitiveType } from '../../../base/utilities/primitives/PrimitiveType';
 import { isEmpty } from '../../../base/utilities/TranslateInput';
 import { Changes } from '../../../base/domainObjectsHelpers/Changes';
@@ -18,7 +18,7 @@ import {
 import { LineRenderStyle } from './LineRenderStyle';
 
 describe('LineDomainObject', () => {
-  test('should be empty', () => {
+  test('should initialize with correct default values', () => {
     for (const primitiveType of [
       PrimitiveType.Line,
       PrimitiveType.Polyline,
@@ -108,10 +108,8 @@ describe('LineDomainObject', () => {
       expect(domainObject.hasPanelInfo).toBe(true);
       const info = domainObject.getPanelInfo();
       expect(info).toBeDefined();
-      if (info === undefined) {
-        return;
-      }
-      expect(info.items.filter((a) => a.quantity === quantity)).toHaveLength(expectedItems);
+      assert(info !== undefined);
+      expect(info.getItemsByQuantity(quantity)).toHaveLength(expectedItems);
     }
   });
 });
