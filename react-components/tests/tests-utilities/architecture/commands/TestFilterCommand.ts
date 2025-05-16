@@ -1,7 +1,6 @@
 import {
   BaseFilterCommand,
   BaseFilterItemCommand,
-  type TranslateDelegate,
   type TranslationInput
 } from '../../../../src/architecture';
 import { type IconName } from '../../../../src/architecture/base/utilities/IconName';
@@ -58,9 +57,5 @@ export class TestFilterItemCommand extends BaseFilterItemCommand {
   protected setCheckedCore(value: boolean): boolean {
     this._checked = value;
     return true;
-  }
-
-  public override getLabel(t: TranslateDelegate): string {
-    return t(this.tooltip);
   }
 }

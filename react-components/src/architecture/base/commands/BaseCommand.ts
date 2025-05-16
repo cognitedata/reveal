@@ -182,7 +182,7 @@ export abstract class BaseCommand {
   }
 
   // ==================================================
-  // INSTANCE METHODS: Others
+  // INSTANCE METHODS: Others (Not to be overridden)
   // ==================================================
 
   public getLabel(translate: TranslateDelegate): string {
