@@ -4,6 +4,7 @@
 
 import english from '../../../common/i18n/en/reveal-react-components.json';
 
+export type Translations = Record<string, string>;
 export type TranslationKey = keyof typeof english;
 
 export type TranslatedString = { key: TranslationKey };

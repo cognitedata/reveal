@@ -3,10 +3,13 @@
  */
 import { useEffect, createContext, useContext, useState, type ReactElement } from 'react';
 
-import { type I18nProps, type I18nContent, type Translations } from './types';
+import { type I18nProps, type I18nContent } from './types';
 import { getLanguage } from './utils';
 import { type TranslationInput } from '../../architecture';
-import { isTranslatedString } from '../../architecture/base/utilities/TranslateInput';
+import {
+  isTranslatedString,
+  type Translations
+} from '../../architecture/base/utilities/TranslateInput';
 
 import english from '../../common/i18n/en/reveal-react-components.json';
 
