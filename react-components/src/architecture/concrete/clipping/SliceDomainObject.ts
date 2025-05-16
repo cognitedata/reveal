@@ -8,11 +8,12 @@ import { PrimitiveType } from '../../base/utilities/primitives/PrimitiveType';
 import { type TranslationInput } from '../../base/utilities/TranslateInput';
 import { type BaseCommand } from '../../base/commands/BaseCommand';
 import { FlipSliceCommand } from './commands/FlipSliceCommand';
-import { ApplyClipCommand } from './commands/ApplyClipCommand';
+import { setClippingPlanes } from './commands/setClippingPlanes';
 import { type DomainObjectChange } from '../../base/domainObjectsHelpers/DomainObjectChange';
 import { Changes } from '../../base/domainObjectsHelpers/Changes';
 import { FocusType } from '../../base/domainObjectsHelpers/FocusType';
 import { type DomainObject } from '../../base/domainObjects/DomainObject';
+import { getRoot } from '../../base/domainObjects/getRoot';
 
 export class SliceDomainObject extends PlaneDomainObject {
   // ==================================================
@@ -22,7 +23,7 @@ export class SliceDomainObject extends PlaneDomainObject {
   public constructor(primitiveType: PrimitiveType) {
     super(primitiveType);
     this.color = new Color(Color.NAMES.orangered);
-    this.backSideColor = new Color(Color.NAMES.palegreen);
+    this._backSideColor = new Color(Color.NAMES.palegreen);
   }
 
   // ==================================================
@@ -85,7 +86,7 @@ export class SliceDomainObject extends PlaneDomainObject {
 
   private updateClippingPlanes(): void {
     // Update the clipping planes if necessary
-    const root = this.rootDomainObject;
+    const root = getRoot(this);
     if (root === undefined) {
       return;
     }
@@ -96,6 +97,6 @@ export class SliceDomainObject extends PlaneDomainObject {
     if (renderTarget.isGlobalCropBoxActive) {
       return;
     }
-    ApplyClipCommand.setClippingPlanes(root);
+    setClippingPlanes(root);
   }
 }

@@ -3,11 +3,8 @@
  */
 import { Body, Flex } from '@cognite/cogs.js';
 import styled from 'styled-components';
-import { useEffect, useMemo, useState, type ReactElement } from 'react';
-import {
-  DomainObjectPanelUpdater,
-  type DomainObjectInfo
-} from '../../architecture/base/reactUpdaters/DomainObjectPanelUpdater';
+import { useMemo, type ReactElement } from 'react';
+import { DomainObjectPanelUpdater } from '../../architecture/base/reactUpdaters/DomainObjectPanelUpdater';
 import {
   type PanelInfo,
   type NumberPanelItem
@@ -19,48 +16,39 @@ import { withSuppressRevealEvents } from '../../higher-order-components/withSupp
 import { type TranslateDelegate } from '../../architecture/base/utilities/TranslateInput';
 import { type UnitSystem } from '../../architecture/base/renderTarget/UnitSystem';
 import { IconComponent } from './Factories/IconFactory';
+import { type DomainObject } from '../../architecture';
+import { getRoot } from '../../architecture/base/domainObjects/getRoot';
+import { useSignalValue } from '@cognite/signals/react';
 
 const TEXT_SIZE = 'x-small';
 const HEADER_SIZE = 'medium';
 
 export const DomainObjectPanel = (): ReactElement => {
-  const [currentDomainObjectInfo, setCurrentDomainObjectInfo] = useState<
-    DomainObjectInfo | undefined
-  >();
-
-  const domainObject = currentDomainObjectInfo?.domainObject;
+  useSignalValue(DomainObjectPanelUpdater.update);
+  const domainObject = useSignalValue(DomainObjectPanelUpdater.selectedDomainObject);
   const commands = useMemo(() => domainObject?.getPanelToolbar(), [domainObject]);
-  const info = domainObject?.getPanelInfo();
-  const style = domainObject?.getPanelInfoStyle();
-  const root = domainObject?.rootDomainObject;
-
-  useEffect(() => {
-    DomainObjectPanelUpdater.setDomainObjectDelegate(setCurrentDomainObjectInfo);
-  }, [setCurrentDomainObjectInfo, commands]);
-
-  // Force the getString to be updated
-  if (commands !== undefined && info !== undefined) {
-    for (const command of commands) {
-      if (command instanceof CopyToClipboardCommand)
-        command.getString = () => toString(info, t, unitSystem);
-    }
-  }
-
   const { t } = useTranslation();
 
-  if (
-    domainObject === undefined ||
-    root === undefined ||
-    info === undefined ||
-    commands === undefined ||
-    style === undefined
-  ) {
+  if (domainObject === undefined || commands === undefined) {
+    return <></>;
+  }
+  const info = domainObject.getPanelInfo();
+  const style = domainObject.getPanelInfoStyle();
+  const root = getRoot(domainObject);
+
+  if (root === undefined || info === undefined || style === undefined) {
     return <></>;
   }
   const unitSystem = root.unitSystem;
+
+  // Force the getString to be updated
+  for (const command of commands) {
+    if (command instanceof CopyToClipboardCommand)
+      command.getString = () => toString(domainObject, info, t, unitSystem);
+  }
+
   const icon = domainObject.icon;
-  const header = info.header;
-  const text = header?.getText(t);
+  const label = domainObject.getLabel(t);
   return (
     <Container
       style={{
@@ -74,7 +62,7 @@ export const DomainObjectPanel = (): ReactElement => {
       <Flex justifyContent={'space-between'} alignItems={'center'}>
         <Flex gap={8}>
           {icon !== undefined && <IconComponent iconName={icon} type={'ghost'} />}
-          {text !== undefined && <Body size={HEADER_SIZE}>{text}</Body>}
+          {label !== undefined && <Body size={HEADER_SIZE}>{label}</Body>}
         </Flex>
         <Flex>
           <CommandButtons commands={commands} placement={'bottom'} />
@@ -108,12 +96,15 @@ export const DomainObjectPanel = (): ReactElement => {
   }
 };
 
-function toString(info: PanelInfo, translate: TranslateDelegate, unitSystem: UnitSystem): string {
+function toString(
+  domainObject: DomainObject | undefined,
+  info: PanelInfo,
+  translate: TranslateDelegate,
+  unitSystem: UnitSystem
+): string {
   let result = '';
-
   {
-    const { header } = info;
-    const text = header?.getText(translate);
+    const text = domainObject?.getLabel(translate);
     if (text !== undefined) {
       result += `${text}\n`;
     }
@@ -141,10 +132,10 @@ const PaddedTh = styled.th`
 `;
 
 const Container = withSuppressRevealEvents(styled.div`
-  zindex: 1000px;
+  z-index: 1000;
   position: absolute;
   display: block;
-  border-radius: 10px;
+  border-radius: 6px;
   flex-direction: column;
   overflow: hidden;
   background-color: white;

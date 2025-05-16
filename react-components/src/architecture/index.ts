@@ -1,6 +1,10 @@
 /*!
  * Copyright 2023 Cognite AS
  */
+
+import { installThreeViews } from './installThreeViews';
+import { installToolbars } from './installToolbars';
+
 // New architecture: commands
 export type { CommandUpdateDelegate } from './base/commands/BaseCommand';
 export { BaseCommand } from './base/commands/BaseCommand';
@@ -31,6 +35,7 @@ export { SetQualityCommand } from './base/concreteCommands/SetQualityCommand';
 export { SettingsCommand } from './base/concreteCommands/SettingsCommand';
 export { ToggleMetricUnitsCommand } from './base/concreteCommands/ToggleMetricUnitsCommand';
 export { UndoCommand } from './base/concreteCommands/UndoCommand';
+export { BaseBannerCommand } from './base/commands/BaseBannerCommand';
 
 // New architecture: domainObjects
 export { DomainObject } from './base/domainObjects/DomainObject';
@@ -74,7 +79,6 @@ export { Transaction } from './base/undo/Transaction';
 export { UndoManager } from './base/undo/UndoManager';
 
 // New architecture: utilities
-export { ClosestGeometryFinder } from './base/utilities/geometry/ClosestGeometryFinder';
 export { Index2 } from './base/utilities/geometry/Index2';
 export { Range1 } from './base/utilities/geometry/Range1';
 export { Range3 } from './base/utilities/geometry/Range3';
@@ -84,6 +88,7 @@ export { getNextColorByIndex } from './base/utilities/colors/getNextColor';
 export { getResizeCursor } from './base/utilities/geometry/getResizeCursor';
 export type { TranslateDelegate } from './base/utilities/TranslateInput';
 export type { TranslationInput } from './base/utilities/TranslateInput';
+export type { QualitySettings } from './base/utilities/quality/QualitySettings';
 
 // New architecture: views
 export { BaseView } from './base/views/BaseView';
@@ -118,13 +123,5 @@ export type { AnnotationIdentifier } from './concrete/annotation360/types';
 export type { AssetIdentifier } from './concrete/annotation360/types';
 export type { AnnotationStatus } from './concrete/annotation360/types';
 
-// New architecture: tree view nodes
-export type { ITreeNode } from './base/treeView/ITreeNode';
-export type { IconColor } from './base/treeView/types';
-export type { TreeNodeAction } from './base/treeView/types';
-export { TreeNode } from './base/treeView/TreeNode';
-export { CheckBoxState } from './base/treeView/types';
-export { onSingleSelectNode } from './base/treeView/TreeNodeFunctions';
-export { onMultiSelectNode } from './base/treeView/TreeNodeFunctions';
-export { onIndependentCheckNode } from './base/treeView/TreeNodeFunctions';
-export { onDependentCheckNode } from './base/treeView/TreeNodeFunctions';
+installThreeViews();
+installToolbars();

@@ -8,7 +8,7 @@ import { RenderTargetCommand } from '../../../base/commands/RenderTargetCommand'
 import { type TranslationInput } from '../../../base/utilities/TranslateInput';
 import { CropBoxDomainObject } from '../CropBoxDomainObject';
 import { SliceDomainObject } from '../SliceDomainObject';
-import { ApplyClipCommand } from './ApplyClipCommand';
+import { setClippingPlanes } from './setClippingPlanes';
 
 export class NextOrPrevClippingCommand extends RenderTargetCommand {
   private readonly _next: boolean;
@@ -91,7 +91,7 @@ export class NextOrPrevClippingCommand extends RenderTargetCommand {
     if (nextCropBoxOrSlice instanceof CropBoxDomainObject) {
       nextCropBoxOrSlice.setThisAsGlobalCropBox();
     } else {
-      ApplyClipCommand.setClippingPlanes(this.rootDomainObject);
+      setClippingPlanes(this.rootDomainObject);
     }
     this.renderTarget.fitView();
     return true;

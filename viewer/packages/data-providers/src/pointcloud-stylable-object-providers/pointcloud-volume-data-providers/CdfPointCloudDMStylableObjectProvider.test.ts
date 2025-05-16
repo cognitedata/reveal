@@ -43,7 +43,8 @@ const mock = {
             cdf_cdm: {
               'CognitePointCloudVolume/v1': {
                 volume: [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1],
-                volumeType: 'Box'
+                volumeType: 'Box',
+                object3D: { externalId: 'obj3d0', space: 'objSpace' }
               }
             }
           }
@@ -59,7 +60,8 @@ const mock = {
             cdf_cdm: {
               'CognitePointCloudVolume/v1': {
                 volume: [-0.03, 0.1, -1000, -0.03, 0.1, 1000, 0.04],
-                volumeType: 'Cylinder'
+                volumeType: 'Cylinder',
+                object3D: { externalId: 'obj3d1', space: 'objSpace' }
               }
             }
           }
@@ -72,7 +74,14 @@ const mock = {
           space: 'test_space',
           externalId: 'test_asset_1',
           createdTime: 0,
-          lastUpdatedTime: 0
+          lastUpdatedTime: 0,
+          properties: {
+            cdf_cdm: {
+              'CogniteAsset/v1': {
+                object3D: { externalId: 'obj3d0', space: 'objSpace' }
+              }
+            }
+          }
         },
         {
           instanceType: 'node',
@@ -80,7 +89,14 @@ const mock = {
           space: 'test_space',
           externalId: 'test_asset_2',
           createdTime: 0,
-          lastUpdatedTime: 0
+          lastUpdatedTime: 0,
+          properties: {
+            cdf_cdm: {
+              'CogniteAsset/v1': {
+                object3D: { externalId: 'obj3d1', space: 'objSpace' }
+              }
+            }
+          }
         }
       ]
     }

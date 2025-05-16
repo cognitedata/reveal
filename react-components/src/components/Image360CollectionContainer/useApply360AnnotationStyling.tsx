@@ -7,7 +7,8 @@ import {
   type Image360Collection,
   type Image360Annotation,
   type Image360AnnotationAppearance,
-  type DataSourceType
+  type DataSourceType,
+  type DMInstanceRef
 } from '@cognite/reveal';
 import { Color } from 'three';
 import { image360CollectionExists } from '../../utilities/modelExists';
@@ -16,7 +17,8 @@ import { type CogniteInternalId } from '@cognite/sdk';
 import { useReveal } from '../RevealCanvas/ViewerContext';
 
 export type AnnotationIdStylingGroup = {
-  assetIds: CogniteInternalId[];
+  assetRefs: CogniteInternalId[] | DMInstanceRef[];
+  annotationRefs?: CogniteInternalId[] | DMInstanceRef[];
   style: Image360AnnotationAppearance;
 };
 
@@ -36,7 +38,7 @@ export const useApply360AnnotationStyling = (
 ): void => {
   const viewer = useReveal();
   const [lastStyledImageAnnotations, setLastStyledImageAnnotations] = useState<
-    Image360Annotation[]
+    Array<Image360Annotation<DataSourceType>>
   >([]);
 
   const abortController = useRef(new AbortController());
@@ -88,17 +90,19 @@ async function applyStyling(
   styling: AnnotationIdStylingGroup[],
   viewer: Cognite3DViewer<DataSourceType>,
   applyDefaultAnnotationStyling: () => void,
-  setLastStyledImageAnnotations: (annotations: Image360Annotation[]) => void,
+  setLastStyledImageAnnotations: (annotations: Array<Image360Annotation<DataSourceType>>) => void,
   signal: AbortSignal
 ): Promise<void> {
   if (styling === undefined || styling.length === 0) return;
 
   for (const group of styling) {
-    if (group.assetIds !== undefined) {
-      const annotationInfoPromise = group.assetIds.map(async () => {
-        return await imageCollection.findImageAnnotations({
-          assetRef: { id: group.assetIds[0] }
+    if (group.assetRefs !== undefined) {
+      const annotationInfoPromise = group.assetRefs.map(async () => {
+        const result = await imageCollection.findImageAnnotations({
+          assetRef:
+            typeof group.assetRefs[0] === 'number' ? { id: group.assetRefs[0] } : group.assetRefs[0]
         });
+        return result;
       });
       const annotationInfo = (await Promise.all(annotationInfoPromise)).flat();
 

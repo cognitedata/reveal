@@ -3,8 +3,6 @@
  */
 
 import { type RenderStyle } from '../../../base/renderStyles/RenderStyle';
-import { type ThreeView } from '../../../base/views/ThreeView';
-import { PlaneView } from './PlaneView';
 import { type Color, Plane, Vector3 } from 'three';
 import { Changes } from '../../../base/domainObjectsHelpers/Changes';
 import { PrimitiveType } from '../../../base/utilities/primitives/PrimitiveType';
@@ -26,11 +24,12 @@ import { PanelInfo } from '../../../base/domainObjectsHelpers/PanelInfo';
 import { Quantity } from '../../../base/domainObjectsHelpers/Quantity';
 import { radToDeg } from 'three/src/math/MathUtils.js';
 import { type DomainObjectChange } from '../../../base/domainObjectsHelpers/DomainObjectChange';
-import { DomainObjectTransaction } from '../../../base/undo/DomainObjectTransaction';
-import { type Transaction } from '../../../base/undo/Transaction';
 import { type IconName } from '../../../base/utilities/IconName';
 import { SolidPrimitiveRenderStyle } from '../common/SolidPrimitiveRenderStyle';
 import { type RevealRenderTarget } from '../../../base/renderTarget/RevealRenderTarget';
+import { getRoot } from '../../../base/domainObjects/getRoot';
+import { DomainObjectTransaction } from '../../../base/undo/DomainObjectTransaction';
+import { type Transaction } from '../../../base/undo/Transaction';
 
 const ORIGIN = new Vector3(0, 0, 0);
 
@@ -41,7 +40,7 @@ export abstract class PlaneDomainObject extends VisualDomainObject {
 
   public readonly plane = new Plane();
   private readonly _primitiveType: PrimitiveType;
-  private _backSideColor: Color | undefined = undefined;
+  protected _backSideColor: Color | undefined = undefined;
 
   // ==================================================
   // INSTANCE PROPERTIES
@@ -60,10 +59,6 @@ export abstract class PlaneDomainObject extends VisualDomainObject {
       this._backSideColor = getComplementary(this.color);
     }
     return this._backSideColor;
-  }
-
-  public set backSideColor(color: Color) {
-    this._backSideColor = color;
   }
 
   // ==================================================
@@ -117,8 +112,6 @@ export abstract class PlaneDomainObject extends VisualDomainObject {
 
   public override getPanelInfo(): PanelInfo | undefined {
     const info = new PanelInfo();
-    info.setHeader(this.typeName);
-
     switch (this.primitiveType) {
       case PrimitiveType.PlaneX:
         add({ key: 'X:COORDINATE' }, this.coordinate, Quantity.Length);
@@ -147,10 +140,6 @@ export abstract class PlaneDomainObject extends VisualDomainObject {
     if (change.isChanged(Changes.added)) {
       this.makeFlippingConsistent();
     }
-  }
-
-  protected override createThreeView(): ThreeView | undefined {
-    return new PlaneView();
   }
 
   public override createTransaction(changed: symbol): Transaction {
@@ -182,7 +171,7 @@ export abstract class PlaneDomainObject extends VisualDomainObject {
   // INSTANCE METHODS / PROPERTIES: Geometrical getters
   // ==================================================
 
-  public get coordinate(): number {
+  private get coordinate(): number {
     const pointOnPlane = this.plane.projectPoint(ORIGIN, new Vector3());
     switch (this.primitiveType) {
       case PrimitiveType.PlaneX:
@@ -211,12 +200,11 @@ export abstract class PlaneDomainObject extends VisualDomainObject {
 
   public flip(): void {
     const { plane } = this;
-    plane.normal.negate();
-    plane.constant = -plane.constant;
+    plane.negate();
   }
 
   public makeFlippingConsistent(): void {
-    const root = this.rootDomainObject;
+    const root = getRoot(this);
     if (root === undefined) {
       return;
     }

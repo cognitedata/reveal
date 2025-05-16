@@ -15,9 +15,9 @@ import SearchComponent from './utilities/SearchComponent';
 const queryClient = new QueryClient();
 const sdk = createSdkByUrlToken();
 const viewsToSearch = [
-  { externalId: 'Equipment', space: 'fdx-boys', version: 'e040583320d31a' },
-  { externalId: 'WorkOrderMultiple', space: 'fdx-boys', version: 'e040583320d31a' },
-  { externalId: 'WorkOrderSingle', space: 'fdx-boys', version: 'e040583320d31a' }
+  { externalId: 'Equipment', space: 'fdx-boys', version: '2540f607085286' },
+  { externalId: 'WorkOrderMultiple', space: 'fdx-boys', version: '88e3ae4e99df70' },
+  { externalId: 'WorkOrderSingle', space: 'fdx-boys', version: 'd7a3a49b8d473d' }
 ];
 
 const StoryContent = ({ resources }: { resources: AddResourceOptions[] }): ReactElement => {
@@ -63,8 +63,7 @@ export const Main: Story = {
           mapped: {
             color: new Color('#c5cbff')
           }
-        },
-        siteId: 'celanese1'
+        }
       },
       {
         modelId: 7646043527629245,

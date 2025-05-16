@@ -3,8 +3,9 @@
  */
 import { AnnotationModel, AnnotationsAssetRef } from '@cognite/sdk';
 import { Image360DataModelIdentifier } from './image-360-data-providers/descriptor-providers/datamodels/system-space/Cdf360DataModelsDescriptorProvider';
-import { DMInstanceRef } from './pointcloud-stylable-object-providers/types';
 import { PointCloudAnnotationVolumeCollection, PointCloudDMVolumeCollection } from '@reveal/pointcloud-styling';
+import { CoreDmImage360Annotation } from './image-360-data-providers/cdm/types';
+import { DMInstanceRef } from '@reveal/utilities';
 
 /**
  * Model identifier for classic CDF models, referenced by modelId and revisionId
@@ -77,7 +78,7 @@ export type DMDataSourceType = {
   /**
    * Type of CoreDM 360 image annotations (to be defined)
    */
-  image360AnnotationType: never;
+  image360AnnotationType: CoreDmImage360Annotation;
   /**
    * Marker to make this type inconstructable
    */
@@ -91,6 +92,8 @@ export type LocalDataSourceType = {
   modelIdentifier: LocalModelIdentifierType;
   pointCloudVolumeMetadata: any;
   pointCloudCollectionType: any;
+  image360Identifier: string;
+  image360AnnotationType: string;
   _never: never;
 };
 
@@ -106,8 +109,8 @@ export type GenericDataSourceType = {
   modelIdentifier: any;
   pointCloudVolumeMetadata: any;
   pointCloudCollectionType: any;
-  image360Identifier: any;
-  image360AnnotationType: any;
+  image360Identifier: string;
+  image360AnnotationType: string;
   _never: never;
 };
 
@@ -137,4 +140,8 @@ export function isDMIdentifier(identifier: InternalModelIdentifier): identifier 
 
 export function isLocalIdentifier(identifier: InternalModelIdentifier): identifier is LocalModelIdentifierType {
   return (identifier as LocalModelIdentifierType).localPath !== undefined;
+}
+
+export function isSameDMIdentifier(id0: DMInstanceRef, id1: DMInstanceRef): boolean {
+  return id0.externalId === id1.externalId && id0.space === id1.space;
 }

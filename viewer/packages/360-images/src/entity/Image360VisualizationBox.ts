@@ -148,6 +148,10 @@ export class Image360VisualizationBox implements Image360Visualization {
     }
   }
 
+  public getTransform(): THREE.Matrix4 {
+    return this._worldTransform;
+  }
+
   public loadFaceTextures(faces: Image360Face[]): Promise<Image360Texture[]> {
     return Promise.all(
       faces.map(async image360Face => {

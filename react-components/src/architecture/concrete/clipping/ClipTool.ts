@@ -2,23 +2,18 @@
  * Copyright 2024 Cognite AS
  */
 
-import { type BaseCommand } from '../../base/commands/BaseCommand';
 import { type BaseCreator } from '../../base/domainObjectsHelpers/BaseCreator';
 import { type TranslationInput } from '../../base/utilities/TranslateInput';
 import { PrimitiveEditTool } from '../primitives/tools/PrimitiveEditTool';
 import { PrimitiveType } from '../../base/utilities/primitives/PrimitiveType';
 import { BoxCreator } from '../primitives/box/BoxCreator';
 import { CropBoxDomainObject } from './CropBoxDomainObject';
-import { ApplyClipCommand } from './commands/ApplyClipCommand';
-import { ShowClippingOnTopCommand } from './commands/ShowClippingOnTopCommand';
-import { ShowAllClippingCommand } from './commands/ShowAllClippingCommand';
 import { type VisualDomainObject } from '../../base/domainObjects/VisualDomainObject';
-import { SetClipTypeCommand } from './commands/SetClipTypeCommand';
 import { PlaneCreator } from '../primitives/plane/PlaneCreator';
 import { SliceDomainObject } from './SliceDomainObject';
-import { UndoCommand } from '../../base/concreteCommands/UndoCommand';
-import { NextOrPrevClippingCommand } from './commands/NextClippingCommand';
 import { type IconName } from '../../base/utilities/IconName';
+import { ClipFolder } from './ClipFolder';
+import { type DomainObject } from '../../base/domainObjects/DomainObject';
 
 export class ClipTool extends PrimitiveEditTool {
   // ==================================================
@@ -39,23 +34,6 @@ export class ClipTool extends PrimitiveEditTool {
 
   public override get tooltip(): TranslationInput {
     return { key: 'CLIP_TOOL' };
-  }
-
-  public override getToolbar(): Array<BaseCommand | undefined> {
-    return [
-      new SetClipTypeCommand(PrimitiveType.PlaneX),
-      new SetClipTypeCommand(PrimitiveType.PlaneY),
-      new SetClipTypeCommand(PrimitiveType.PlaneZ),
-      new SetClipTypeCommand(PrimitiveType.PlaneXY),
-      new SetClipTypeCommand(PrimitiveType.Box),
-      undefined, // Separator
-      new UndoCommand(),
-      new ApplyClipCommand(),
-      new NextOrPrevClippingCommand(false),
-      new NextOrPrevClippingCommand(true),
-      new ShowAllClippingCommand(),
-      new ShowClippingOnTopCommand()
-    ];
   }
 
   // ==================================================
@@ -84,16 +62,27 @@ export class ClipTool extends PrimitiveEditTool {
   // OVERRIDES of PrimitiveEditTool
   // ==================================================
 
+  protected override getOrCreateParent(): DomainObject {
+    const parent = this.rootDomainObject.getDescendantByType(ClipFolder);
+    if (parent !== undefined) {
+      return parent;
+    }
+    const newParent = new ClipFolder();
+    newParent.isExpanded = true;
+    this.renderTarget.rootDomainObject.addChildInteractive(newParent);
+    return newParent;
+  }
+
   protected override createCreator(): BaseCreator | undefined {
     switch (this.primitiveType) {
       case PrimitiveType.PlaneX:
       case PrimitiveType.PlaneY:
       case PrimitiveType.PlaneZ:
       case PrimitiveType.PlaneXY:
-        return new PlaneCreator(this, new SliceDomainObject(this.primitiveType));
+        return new PlaneCreator(new SliceDomainObject(this.primitiveType));
 
       case PrimitiveType.Box:
-        return new BoxCreator(this, new CropBoxDomainObject());
+        return new BoxCreator(new CropBoxDomainObject());
       default:
         return undefined;
     }

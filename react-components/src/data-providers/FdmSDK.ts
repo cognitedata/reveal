@@ -193,9 +193,17 @@ export type ViewItem = {
   implements: Source[];
 };
 
-export type DataModelListResponse = {
-  items: Array<{ views: Source[] }>;
+export type ListResponse<T> = {
+  items: T[];
 };
+
+export type ListResponseWithNextCursor<T> = ListResponse<T> & {
+  nextCursor?: string;
+};
+
+export type ViewItemListResponse = ListResponse<ViewItem>;
+
+export type DataModelListResponse = ListResponse<{ views: Source[] }>;
 
 export class FdmSDK {
   private readonly _sdk: CogniteClient;
@@ -233,7 +241,7 @@ export class FdmSDK {
     space: string,
     includeInheritedProperties: boolean = true
   ): Promise<{ views: ViewItem[] }> {
-    const result = await this._sdk.get(this._listViewsEndpoint, {
+    const result = await this._sdk.get<ViewItemListResponse>(this._listViewsEndpoint, {
       params: {
         includeInheritedProperties,
         space
@@ -241,7 +249,7 @@ export class FdmSDK {
     });
 
     if (result.status === 200) {
-      return { views: result.data.items as ViewItem[] };
+      return { views: result.data.items };
     }
     throw new Error(`Failed to list views. Status: ${result.status}`);
   }
@@ -302,13 +310,12 @@ export class FdmSDK {
       limit
     };
 
-    const result = await this._sdk.post(this._searchEndpoint, { data });
+    const result = await this._sdk.post<
+      ListResponse<EdgeItem<PropertiesType>> | ListResponse<NodeItem<PropertiesType>>
+    >(this._searchEndpoint, { data });
 
     if (result.status === 200) {
-      hoistInstanceProperties(
-        searchedView,
-        result.data.items as Array<EdgeItem<PropertiesType>> | Array<NodeItem<PropertiesType>>
-      );
+      hoistInstanceProperties(searchedView, result.data.items);
 
       return { instances: result.data.items };
     }
@@ -343,7 +350,7 @@ export class FdmSDK {
   ): Promise<{ instances: Array<EdgeItem<PropertiesType>>; nextCursor?: string }>;
 
   // eslint-disable-next-line no-dupe-class-members
-  public async filterInstances<PropertiesType = Record<string, any>>(
+  public async filterInstances<PropertiesType extends Record<string, any> = Record<string, any>>(
     filter: InstanceFilter | undefined,
     instanceType: InstanceType,
     source: Source,
@@ -360,20 +367,21 @@ export class FdmSDK {
       data.cursor = cursor;
     }
 
-    const result = await this._sdk.post(this._listEndpoint, { data });
+    const result = await this._sdk.post<
+      | ListResponseWithNextCursor<EdgeItem<PropertiesType>>
+      | ListResponseWithNextCursor<NodeItem<PropertiesType>>
+    >(this._listEndpoint, { data });
 
     if (result.status !== 200) {
       throw new Error(`Failed to fetch instances. Status: ${result.status}`);
     }
 
-    const typedResult = result.data.items as Array<
-      EdgeItem<Record<string, any>> | NodeItem<Record<string, any>>
-    >;
+    const typedResult = result.data.items;
 
     hoistInstanceProperties(source, typedResult);
 
     return {
-      instances: result.data.items,
+      instances: result.data.items as Array<EdgeItem<PropertiesType> | FdmNode<PropertiesType>>,
       nextCursor: result.data.nextCursor
     };
   }
@@ -435,7 +443,9 @@ export class FdmSDK {
       data.sources = sources.map((source) => ({ source }));
     }
 
-    const result = await this._sdk.post(this._byIdsEndpoint, { data });
+    const result = await this._sdk.post<ExternalIdsResultList<PropertyType>>(this._byIdsEndpoint, {
+      data
+    });
     if (result.status === 200) {
       return result.data;
     }
@@ -453,7 +463,10 @@ export class FdmSDK {
       replace: false
     };
 
-    const result = await this._sdk.post(this._createUpdateInstancesEndpoint, { data });
+    const result = await this._sdk.post<ExternalIdsResultList<PropertyType>>(
+      this._createUpdateInstancesEndpoint,
+      { data }
+    );
     if (result.status === 200) {
       return result.data;
     }
@@ -476,7 +489,10 @@ export class FdmSDK {
       replace: false
     };
 
-    const result = await this._sdk.post(this._createUpdateInstancesEndpoint, { data });
+    const result = await this._sdk.post<ExternalIdsResultList<PropertyType>>(
+      this._createUpdateInstancesEndpoint,
+      { data }
+    );
     if (result.status === 200) {
       return result.data;
     }
@@ -498,7 +514,10 @@ export class FdmSDK {
       items: queries
     };
 
-    const result = await this._sdk.post(this._deleteInstancesEndpoint, { data });
+    const result = await this._sdk.post<ExternalIdsResultList<PropertyType>>(
+      this._deleteInstancesEndpoint,
+      { data }
+    );
     if (result.status === 200) {
       return result.data;
     }
@@ -514,8 +533,8 @@ export class FdmSDK {
     throw new Error(`Failed to fetch instances`);
   }
 
-  public async getViewsByIds(views: Source[]): Promise<{ items: ViewItem[] }> {
-    const result = await this._sdk.post(this._viewsByIdEndpoint, {
+  public async getViewsByIds(views: Source[]): Promise<ViewItemListResponse> {
+    const result = await this._sdk.post<ViewItemListResponse>(this._viewsByIdEndpoint, {
       data: {
         items: views.map((view) => ({
           externalId: view.externalId,
@@ -533,11 +552,30 @@ export class FdmSDK {
   public async queryAllNodesAndEdges<
     TQueryRequest extends QueryRequest,
     TypedSelectSources extends SelectSourceWithParams = SelectSourceWithParams
-  >(query: TQueryRequest): Promise<QueryResult<TQueryRequest, TypedSelectSources>> {
+  >(
+    query: TQueryRequest,
+    initialCursorTypes?: string[] | undefined
+  ): Promise<QueryResult<TQueryRequest, TypedSelectSources>> {
     let result = await queryNodesAndEdges<TQueryRequest, TypedSelectSources>(query, this._sdk);
     let items = result.items;
+
+    // FIXME(BND3D-5553): Improve cursor handling and ensure it's correct
     while (result.nextCursor !== undefined && Object.keys(result.nextCursor).length !== 0) {
-      const newQuery = { ...query, cursors: result.nextCursor };
+      const nextCursorsList = result.nextCursor !== undefined ? Object.keys(result.nextCursor) : [];
+      let nextCursorsData: Record<string, string> = {};
+      const currentCursorsData = result.nextCursor;
+      nextCursorsList.forEach((cursorType) => {
+        if (
+          initialCursorTypes !== undefined &&
+          initialCursorTypes.includes(cursorType) &&
+          result.nextCursor?.[cursorType] !== undefined
+        ) {
+          nextCursorsData = { ...nextCursorsData, [cursorType]: result.nextCursor?.[cursorType] };
+        }
+      });
+      const cursors =
+        Object.keys(nextCursorsData).length === 0 ? currentCursorsData : nextCursorsData;
+      const newQuery = { ...query, cursors };
       result = await queryNodesAndEdges<TQueryRequest, TypedSelectSources>(newQuery, this._sdk);
       items = mergeQueryResults(items, result.items);
     }
@@ -553,7 +591,7 @@ export class FdmSDK {
   }
 
   public async listDataModels(): Promise<DataModelListResponse> {
-    const result = await this._sdk.get(this._listDataModelsEndpoint, {
+    const result = await this._sdk.get<DataModelListResponse>(this._listDataModelsEndpoint, {
       params: { limit: 1000, includeGlobal: true }
     });
     if (result.status === 200) {
@@ -565,15 +603,29 @@ export class FdmSDK {
 
 function hoistInstanceProperties(
   source: Source,
-  instances: Array<EdgeItem<Record<string, any>> | NodeItem<Record<string, any>>>
+  instances: Array<EdgeItem<Record<string, unknown>> | NodeItem<Record<string, unknown>>>
 ): void {
   if (source === undefined) {
     return;
   }
   const propertyKey = `${source.externalId}/${source.version}`;
+
   instances.forEach((instance) => {
-    if (instance.properties[source.space][propertyKey] !== undefined) {
-      instance.properties = instance.properties[source.space][propertyKey];
+    const deepProperties = (instance.properties?.[source.space] as Record<string, unknown>)?.[
+      propertyKey
+    ] as Record<string, unknown>;
+
+    if (deepProperties !== undefined) {
+      Object.entries(deepProperties).reduce(
+        (
+          accumulatedProperties: Record<string, unknown>,
+          [propName, propValue]: [string, unknown]
+        ) => {
+          accumulatedProperties[propName] = propValue;
+          return accumulatedProperties;
+        },
+        instance.properties
+      );
     }
   });
 }

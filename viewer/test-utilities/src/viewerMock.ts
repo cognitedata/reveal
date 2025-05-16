@@ -11,13 +11,14 @@ import { Camera, PerspectiveCamera, Vector3, WebGLRenderer } from 'three';
 import { jest } from '@jest/globals';
 import { Mock } from 'moq.ts';
 import { autoMockWebGLRenderer } from './autoMockWebGLRenderer';
+import { DataSourceType } from '../../packages/data-providers/src/DataSourceType';
 
-export function mockViewer(): Cognite3DViewer {
+export function mockViewer(): Cognite3DViewer<DataSourceType> {
   return mockViewerComponents().viewer;
 }
 
 export function mockViewerComponents(): {
-  viewer: Cognite3DViewer;
+  viewer: Cognite3DViewer<DataSourceType>;
   canvasContainer: HTMLElement;
   camera: Camera;
   renderer: WebGLRenderer;
@@ -48,7 +49,7 @@ export function mockViewerComponents(): {
   camera.updateProjectionMatrix();
   camera.updateMatrix();
 
-  const viewer = new Cognite3DViewer({ domElement: canvasContainer, sdk, renderer });
+  const viewer = new Cognite3DViewer<DataSourceType>({ domElement: canvasContainer, sdk, renderer });
   jest.spyOn(viewer.cameraManager, 'getCamera').mockReturnValue(camera);
 
   renderer.setSize(128, 128);

@@ -10,7 +10,9 @@ import { Changes } from '../../../base/domainObjectsHelpers/Changes';
 import { type DomainObject } from '../../../base/domainObjects/DomainObject';
 import { FocusType } from '../../../base/domainObjectsHelpers/FocusType';
 import { type LineDomainObject } from './LineDomainObject';
-import { type BaseTool } from '../../../base/commands/BaseTool';
+import { type UndoManager } from '../../../base/undo/UndoManager';
+import { getRenderTarget } from '../../../base/domainObjects/getRoot';
+import { CommandsUpdater } from '../../../base/reactUpdaters/CommandsUpdater';
 
 /**
  * Helper class for generate a LineDomainObject by clicking around
@@ -21,15 +23,17 @@ export class LineCreator extends BaseCreator {
   // ==================================================
 
   private readonly _domainObject: LineDomainObject;
+  private readonly _undoManager?: UndoManager;
 
   // ==================================================
   // CONSTRUCTOR
   // ==================================================
 
-  public constructor(tool: BaseTool, domainObject: LineDomainObject) {
-    super(tool);
+  public constructor(domainObject: LineDomainObject, undoManager?: UndoManager) {
+    super();
     this._domainObject = domainObject;
     this._domainObject.focusType = FocusType.Pending;
+    this._undoManager = undoManager;
   }
 
   // ==================================================
@@ -45,18 +49,20 @@ export class LineCreator extends BaseCreator {
   }
 
   public override get minimumPointCount(): number {
-    return 2;
+    switch (this._domainObject.primitiveType) {
+      case PrimitiveType.Polygon:
+        return 3;
+      default:
+        return 2;
+    }
   }
 
   public override get maximumPointCount(): number {
     switch (this._domainObject.primitiveType) {
       case PrimitiveType.Line:
         return 2;
-      case PrimitiveType.Polyline:
-      case PrimitiveType.Polygon:
-        return Number.MAX_SAFE_INTEGER;
       default:
-        throw new Error('Unknown primitiveType');
+        return Number.MAX_SAFE_INTEGER;
     }
   }
 
@@ -81,11 +87,14 @@ export class LineCreator extends BaseCreator {
     }
     this.addRawPoint(point, isPending);
 
-    if (!isPending && domainObject.hasParent && this._tool.undoManager !== undefined) {
-      const exists = this._tool.undoManager.hasUniqueId(domainObject.uniqueId);
-      this._tool.addTransaction(
+    if (!isPending && domainObject.hasParent && this._undoManager !== undefined) {
+      const exists = this._undoManager.hasUniqueId(domainObject.uniqueId);
+      const needsUpdate = this._undoManager.addTransaction(
         domainObject.createTransaction(exists ? Changes.geometry : Changes.added)
       );
+      if (needsUpdate) {
+        CommandsUpdater.update(getRenderTarget(domainObject));
+      }
     }
     copy(domainObject.points, this.points);
 

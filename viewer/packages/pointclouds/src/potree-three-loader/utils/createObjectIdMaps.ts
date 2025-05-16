@@ -3,16 +3,16 @@
  */
 
 import {
-  DMInstanceRef,
   isClassicPointCloudVolumeObject,
   isDMPointCloudVolumeObject,
   PointCloudObject,
   DataSourceType
 } from '@reveal/data-providers';
 import { PointCloudObjectIdMaps } from '@reveal/rendering';
+import { DMInstanceKey, DMInstanceRef, dmInstanceRefToKey } from '@reveal/utilities';
 
 export function createObjectIdMaps<T extends DataSourceType>(objects: PointCloudObject<T>[]): PointCloudObjectIdMaps {
-  const annotationToObjectIds = new Map<number | DMInstanceRef, number>();
+  const annotationToObjectIds = new Map<number | DMInstanceKey, number>();
   const objectToAnnotationIds = new Map<number, number | DMInstanceRef>();
 
   objects.forEach(annotation => {
@@ -21,7 +21,7 @@ export function createObjectIdMaps<T extends DataSourceType>(objects: PointCloud
       annotationToObjectIds.set(annotation.annotationId, objectId);
       objectToAnnotationIds.set(objectId, annotation.annotationId);
     } else if (isDMPointCloudVolumeObject(annotation)) {
-      annotationToObjectIds.set(annotation.volumeInstanceRef, objectId);
+      annotationToObjectIds.set(dmInstanceRefToKey(annotation.volumeInstanceRef), objectId);
       objectToAnnotationIds.set(objectId, annotation.volumeInstanceRef);
     }
   });

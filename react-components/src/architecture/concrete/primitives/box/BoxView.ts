@@ -47,6 +47,7 @@ import { type SolidPrimitiveRenderStyle } from '../common/SolidPrimitiveRenderSt
 import { LineMaterial } from 'three/examples/jsm/lines/LineMaterial.js';
 import { Wireframe } from 'three/examples/jsm/lines/Wireframe.js';
 import { Box } from '../../../base/utilities/primitives/Box';
+import { getRoot } from '../../../base/domainObjects/getRoot';
 
 const RELATIVE_RESIZE_RADIUS = 0.15;
 const RELATIVE_ROTATION_RADIUS = new Range1(0.6, 0.75);
@@ -270,16 +271,16 @@ export class BoxView extends GroupThreeView<BoxDomainObject> {
     if (!domainObject.canRotateComponent(face.index)) {
       return undefined;
     }
-    const { rootDomainObject } = domainObject;
-    if (rootDomainObject === undefined) {
+    const root = getRoot(domainObject);
+    if (root === undefined) {
       return undefined;
     }
     const degrees = domainObject.box.getRotationInDegrees(face.index);
     if (degrees === 0) {
       return undefined; // Not show when about 0
     }
-    const text = rootDomainObject.unitSystem.toStringWithUnit(degrees, Quantity.Angle);
-    const sprite = BoxView.createSprite(text, this.style, spriteHeight);
+    const text = root.unitSystem.toStringWithUnit(degrees, Quantity.Angle);
+    const sprite = createSprite(text, this.style, spriteHeight);
     if (sprite === undefined) {
       return undefined;
     }
@@ -298,7 +299,7 @@ export class BoxView extends GroupThreeView<BoxDomainObject> {
     if (!this.isFaceVisible(face)) {
       return undefined;
     }
-    const sprite = BoxView.createSprite('Pending', this.style, spriteHeight);
+    const sprite = createSprite('Pending', this.style, spriteHeight);
     if (sprite === undefined) {
       return undefined;
     }
@@ -368,8 +369,8 @@ export class BoxView extends GroupThreeView<BoxDomainObject> {
 
   private addLabels(matrix: Matrix4): void {
     const { domainObject, style } = this;
-    const { rootDomainObject } = domainObject;
-    if (rootDomainObject === undefined) {
+    const root = getRoot(domainObject);
+    if (root === undefined) {
       return undefined;
     }
     const spriteHeight = this.getTextHeight(style.relativeTextSize);
@@ -380,8 +381,8 @@ export class BoxView extends GroupThreeView<BoxDomainObject> {
         this._sprites.push(undefined);
         continue;
       }
-      const text = rootDomainObject.unitSystem.toStringWithUnit(size, Quantity.Length);
-      const sprite = BoxView.createSprite(text, style, spriteHeight);
+      const text = root.unitSystem.toStringWithUnit(size, Quantity.Length);
+      const sprite = createSprite(text, style, spriteHeight);
       if (sprite === undefined) {
         this._sprites.push(undefined);
         continue;
@@ -547,7 +548,6 @@ export class BoxView extends GroupThreeView<BoxDomainObject> {
         return FocusType.Rotation;
       }
     }
-    // }
     return FocusType.Body;
   }
 
@@ -588,26 +588,6 @@ export class BoxView extends GroupThreeView<BoxDomainObject> {
         return face.index === 2; // Z face visible
     }
     return true;
-  }
-
-  // ==================================================
-  // STATIC METHODS
-  // ==================================================
-
-  public static createSprite(
-    text: string,
-    style: PrimitiveRenderStyle,
-    height: number
-  ): Sprite | undefined {
-    const result = createSpriteWithText(text, height, style.labelColor, style.labelBgColor);
-    if (result === undefined) {
-      return undefined;
-    }
-    result.material.transparent = true;
-    result.material.opacity = style.labelOpacity;
-    result.material.depthTest = style.depthTest;
-    result.renderOrder = RENDER_ORDER;
-    return result;
   }
 }
 
@@ -747,6 +727,22 @@ export function rotateEdgeCircle(mesh: Mesh, face: BoxFace, rotationMatrix: Matr
       mesh.rotateX(Math.PI / 2);
       break;
   }
+}
+
+export function createSprite(
+  text: string,
+  style: PrimitiveRenderStyle,
+  height: number
+): Sprite | undefined {
+  const result = createSpriteWithText(text, height, style.labelColor, style.labelBgColor);
+  if (result === undefined) {
+    return undefined;
+  }
+  result.material.transparent = true;
+  result.material.opacity = style.labelOpacity;
+  result.material.depthTest = style.depthTest;
+  result.renderOrder = RENDER_ORDER;
+  return result;
 }
 
 // ==================================================

@@ -10,35 +10,35 @@ import find from 'lodash/find';
 import remove from 'lodash/remove';
 import { DataSourceType } from '@reveal/data-providers';
 
-export type DownloadRequest = {
-  entity: Image360Entity<DataSourceType>;
-  revision: Image360RevisionEntity<DataSourceType>;
+export type DownloadRequest<T extends DataSourceType> = {
+  entity: Image360Entity<T>;
+  revision: Image360RevisionEntity<T>;
   anyCompleted: Promise<void>;
   allCompleted: Promise<void>;
   abort: () => void;
 };
 
-export type Loaded360Image = {
-  entity: Image360Entity<DataSourceType>;
-  revision: Image360RevisionEntity<DataSourceType>;
+export type Loaded360Image<T extends DataSourceType> = {
+  entity: Image360Entity<T>;
+  revision: Image360RevisionEntity<T>;
 };
 
-export class Image360LoadingCache {
-  private readonly _loaded360Images: Loaded360Image[];
-  private readonly _inProgressDownloads: DownloadRequest[];
-  private _lockedDownload: Image360RevisionEntity<DataSourceType> | undefined;
+export class Image360LoadingCache<T extends DataSourceType> {
+  private readonly _loaded360Images: Loaded360Image<T>[];
+  private readonly _inProgressDownloads: DownloadRequest<T>[];
+  private _lockedDownload: Image360RevisionEntity<T> | undefined;
 
-  get cachedRevisions(): Image360RevisionEntity<DataSourceType>[] {
+  get cachedRevisions(): Image360RevisionEntity<T>[] {
     return this._loaded360Images.map(image => {
       return image.revision;
     });
   }
 
-  get currentlyLoadingEntities(): DownloadRequest[] {
+  get currentlyLoadingEntities(): DownloadRequest<T>[] {
     return this._inProgressDownloads;
   }
 
-  public getDownloadInProgress(revision: Image360RevisionEntity<DataSourceType>): DownloadRequest | undefined {
+  public getDownloadInProgress(revision: Image360RevisionEntity<T>): DownloadRequest<T> | undefined {
     return this._inProgressDownloads.find(download => {
       return download.revision === revision;
     });
@@ -53,8 +53,8 @@ export class Image360LoadingCache {
   }
 
   public async cachedPreload(
-    entity: Image360Entity<DataSourceType>,
-    revision: Image360RevisionEntity<DataSourceType>,
+    entity: Image360Entity<T>,
+    revision: Image360RevisionEntity<T>,
     lockDownload = false
   ): Promise<void> {
     if (this._loaded360Images.find(image => image.revision === revision)) {
@@ -91,13 +91,13 @@ export class Image360LoadingCache {
     await anyCompleted;
   }
 
-  public async purge(entity: Image360Entity<DataSourceType>): Promise<void> {
+  public async purge(entity: Image360Entity<T>): Promise<void> {
     entity.getRevisions().forEach(revision => this.purgeRevision(entity, revision));
   }
 
   private async cacheWhenAllComplete(
-    revision: Image360RevisionEntity<DataSourceType>,
-    entity: Image360Entity<DataSourceType>,
+    revision: Image360RevisionEntity<T>,
+    entity: Image360Entity<T>,
     lowResolutionCompleted: Promise<void>,
     fullResolutionCompleted: Promise<void>
   ) {
@@ -108,7 +108,7 @@ export class Image360LoadingCache {
     }
   }
 
-  private purgeFromInProgressDownloads(revision: Image360RevisionEntity<DataSourceType>) {
+  private purgeFromInProgressDownloads(revision: Image360RevisionEntity<T>) {
     if (this._lockedDownload === revision) {
       this._lockedDownload = undefined;
     }
@@ -118,7 +118,7 @@ export class Image360LoadingCache {
     });
   }
 
-  private addRevisionToCache(entity: Image360Entity<DataSourceType>, revision: Image360RevisionEntity<DataSourceType>) {
+  private addRevisionToCache(entity: Image360Entity<T>, revision: Image360RevisionEntity<T>) {
     if (this._loaded360Images.length === this._imageCacheSize) {
       const imageToPurge = findLast(
         this._loaded360Images,
@@ -143,7 +143,7 @@ export class Image360LoadingCache {
     }
   }
 
-  private purgeRevision(entity: Image360Entity<DataSourceType>, revision: Image360RevisionEntity<DataSourceType>) {
+  private purgeRevision(entity: Image360Entity<T>, revision: Image360RevisionEntity<T>) {
     // Remove from downloads
     const download = find(this._inProgressDownloads, download => download.revision === revision);
     if (download) {
@@ -169,10 +169,7 @@ export class Image360LoadingCache {
     return { signal: abortController.signal, abort };
   }
 
-  private isRevisionVisible(
-    entity: Image360Entity<DataSourceType>,
-    revision: Image360RevisionEntity<DataSourceType>
-  ): boolean {
+  private isRevisionVisible(entity: Image360Entity<T>, revision: Image360RevisionEntity<T>): boolean {
     return entity.getActiveRevision() === revision && entity.image360Visualization.visible;
   }
 }

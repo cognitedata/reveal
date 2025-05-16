@@ -19,7 +19,8 @@ import { createSdkByUrlToken } from './utilities/createSdkByUrlToken';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import { RevealResourcesFitCameraOnLoad } from './utilities/with3dResoursesFitCameraOnLoad';
 import { type InstanceStylingGroup } from '../src/components/Reveal3DResources/types';
-import { type AnnotationsCogniteAnnotationTypesImagesAssetLink } from '@cognite/sdk';
+import { getInstanceReferenceFromImage360Annotation } from '../src/components/CacheProvider/utils';
+import { isInternalId } from '../src/utilities/instanceIds';
 
 const meta = {
   title: 'Example/HighlightNode',
@@ -58,10 +59,6 @@ export const Main: Story = {
             color: new Color('#c5cbff')
           }
         }
-      },
-      {
-        source: 'events',
-        siteId: 'celanese1'
       }
     ]
   },
@@ -126,18 +123,16 @@ const StoryContent = ({ resources }: { resources: AddResourceOptions[] }): React
         }
       ]);
     } else if (nodeData?.intersection !== undefined && 'annotation' in nodeData.intersection) {
-      const assetLinkData = nodeData.intersection.annotation.annotation
-        .data as AnnotationsCogniteAnnotationTypesImagesAssetLink;
-      let assetId = assetLinkData.assetRef?.id;
-      if (assetId === undefined && assetLinkData.assetRef?.externalId !== undefined) {
-        assetId = Number(assetLinkData.assetRef.externalId);
-      }
-      if (assetId === undefined || isNaN(assetId)) {
+      const instanceReference = getInstanceReferenceFromImage360Annotation(
+        nodeData.intersection.annotation.annotation
+      );
+
+      if (instanceReference === undefined || !isInternalId(instanceReference)) {
         return;
       }
       setStylingGroups([
         {
-          assetIds: [assetId],
+          assetIds: [instanceReference.id],
           style: { image360: { color: new Color('#c5cbff'), visible: true } }
         }
       ]);

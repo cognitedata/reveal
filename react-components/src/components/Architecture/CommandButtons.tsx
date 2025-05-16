@@ -25,17 +25,21 @@ import { CustomInputField } from './CustomInputField';
 
 export function createButton(command: BaseCommand, placement: PlacementType): ReactElement {
   if (command instanceof BaseFilterCommand) {
-    return <FilterButton inputCommand={command} placement={placement} />;
+    return <FilterButton key={command.uniqueId} inputCommand={command} placement={placement} />;
   }
   if (command instanceof BaseSettingsCommand) {
-    return <SettingsButton inputCommand={command} placement={placement} />;
+    return <SettingsButton key={command.uniqueId} inputCommand={command} placement={placement} />;
   }
   if (command instanceof BaseOptionCommand) {
     switch (command.optionType) {
       case OptionType.Dropdown:
-        return <DropdownButton inputCommand={command} placement={placement} />;
+        return (
+          <DropdownButton key={command.uniqueId} inputCommand={command} placement={placement} />
+        );
       case OptionType.Segmented:
-        return <SegmentedButtons inputCommand={command} placement={placement} />;
+        return (
+          <SegmentedButtons key={command.uniqueId} inputCommand={command} placement={placement} />
+        );
       default:
         return <></>;
     }
@@ -49,7 +53,7 @@ export function createButton(command: BaseCommand, placement: PlacementType): Re
     return <CustomInputField key={command.uniqueId} inputCommand={command} placement={placement} />;
   }
 
-  return <CommandButton inputCommand={command} placement={placement} />;
+  return <CommandButton key={command.uniqueId} inputCommand={command} placement={placement} />;
 }
 
 export function createButtonFromCommandConstructor(

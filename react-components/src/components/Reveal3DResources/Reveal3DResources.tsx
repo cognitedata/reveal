@@ -2,33 +2,14 @@
  * Copyright 2023 Cognite AS
  */
 import { type ReactElement, useEffect, useMemo } from 'react';
-import { CadModelContainer } from '../CadModelContainer/CadModelContainer';
-import { PointCloudContainer } from '../PointCloudContainer/PointCloudContainer';
-import { Image360CollectionContainer } from '../Image360CollectionContainer/Image360CollectionContainer';
-import { useReveal } from '../RevealCanvas/ViewerContext';
 import { type Reveal3DResourcesProps, type CadModelOptions } from './types';
-import { useCalculatePointCloudStyling } from './hooks/useCalculatePointCloudStyling';
 import { EMPTY_ARRAY } from '../../utilities/constants';
-import {
-  isAssetMappingStylingGroup,
-  isImage360AssetStylingGroup
-} from '../../utilities/StylingGroupUtils';
+import { isAssetMappingStylingGroup } from '../../utilities/StylingGroupUtils';
 import { type ImageCollectionModelStyling } from '../Image360CollectionContainer/useApply360AnnotationStyling';
 import { is360ImageAddOptions, isClassicIdentifier } from './typeGuards';
-import { useRemoveNonReferencedModels } from './hooks/useRemoveNonReferencedModels';
-import { useCalculateCadStyling } from './hooks/useCalculateCadStyling';
-import { useReveal3DResourcesStylingLoadingSetter } from './Reveal3DResourcesInfoContext';
 import { type CadModelStyling } from '../CadModelContainer/types';
 import { type PointCloudModelStyling } from '../PointCloudContainer/types';
-import { type Image360PolygonStylingGroup } from '../Image360CollectionContainer';
-import { useTypedModels } from './hooks/useTypedModels';
-import {
-  useAssetMappedNodesForRevisions,
-  useGenerateAssetMappingCachePerItemFromModelCache,
-  useGenerateNode3DCache
-} from '../../hooks/cad';
-import { useCallCallbackOnFinishedLoading } from './hooks/useCallCallbackOnFinishedLoading';
-import { useSetExpectedLoadCount } from './hooks/useSetExpectedLoadCount';
+import { use3DResourcesViewModel } from './Reveal3DResources.viewmodel';
 
 export const Reveal3DResources = ({
   resources,
@@ -39,14 +20,18 @@ export const Reveal3DResources = ({
   onResourceIsLoaded,
   image360Settings
 }: Reveal3DResourcesProps): ReactElement => {
-  const viewer = useReveal();
+  const { CadModelContainer, Image360CollectionContainer, PointCloudContainer, ...hooks } =
+    use3DResourcesViewModel();
 
-  useRemoveNonReferencedModels(resources, viewer);
+  const renderTarget = hooks.useRenderTarget();
+  const viewer = hooks.useReveal();
 
-  const { data: reveal3DModels } = useTypedModels(viewer, resources, onResourceLoadError);
+  hooks.useRemoveNonReferencedModels(resources, renderTarget);
 
-  useSetExpectedLoadCount(resources);
-  useCallCallbackOnFinishedLoading(resources, onResourcesAdded);
+  const { data: reveal3DModels } = hooks.useTypedModels(viewer, resources, onResourceLoadError);
+
+  hooks.useSetExpectedLoadCount(resources);
+  hooks.useCallCallbackOnFinishedLoading(resources, onResourcesAdded);
 
   const image360CollectionAddOptions = useMemo(() => {
     return resources
@@ -61,42 +46,34 @@ export const Reveal3DResources = ({
     return reveal3DModels.filter((model): model is CadModelOptions => model.type === 'cad');
   }, [reveal3DModels]);
 
-  const { data: assetMappings } = useAssetMappedNodesForRevisions(cadModelOptions);
+  const { data: assetMappings } = hooks.useAssetMappedNodesForRevisions(cadModelOptions);
 
-  useGenerateAssetMappingCachePerItemFromModelCache(cadModelOptions, assetMappings);
-  useGenerateNode3DCache(cadModelOptions, assetMappings);
+  hooks.useGenerateAssetMappingCachePerItemFromModelCache(cadModelOptions, assetMappings);
+  hooks.useGenerateNode3DCache(cadModelOptions, assetMappings);
 
   const instanceStylingWithAssetMappings =
     instanceStyling?.filter(isAssetMappingStylingGroup) ?? EMPTY_ARRAY;
 
-  const { styledModels: styledCadModelOptions, isModelMappingsLoading } = useCalculateCadStyling(
-    cadModelOptions,
-    instanceStylingWithAssetMappings,
-    defaultResourceStyling
-  );
+  const { styledModels: styledCadModelOptions, isModelMappingsLoading } =
+    hooks.useCalculateCadStyling(
+      cadModelOptions,
+      instanceStylingWithAssetMappings,
+      defaultResourceStyling
+    );
 
-  const setModel3DStylingLoading = useReveal3DResourcesStylingLoadingSetter();
+  const setModel3DStylingLoading = hooks.useReveal3DResourcesStylingLoadingSetter();
 
   useEffect(() => {
     setModel3DStylingLoading(isModelMappingsLoading);
   }, [isModelMappingsLoading]);
 
-  const styledPointCloudModelOptions = useCalculatePointCloudStyling(
+  const styledPointCloudModelOptions = hooks.useCalculatePointCloudStyling(
     reveal3DModels ?? EMPTY_ARRAY,
     instanceStylingWithAssetMappings,
     defaultResourceStyling
   );
 
-  const image360StyledGroup =
-    instanceStyling
-      ?.filter(isImage360AssetStylingGroup)
-      .map((group) => {
-        return { assetIds: group.assetIds, style: group.style.image360 };
-      })
-      .filter(
-        (group): group is Image360PolygonStylingGroup & { assetIds: number[] } =>
-          group.style !== undefined
-      ) ?? EMPTY_ARRAY;
+  const image360StyledGroup = hooks.useCalculateImage360Styling(instanceStyling);
 
   return (
     <>

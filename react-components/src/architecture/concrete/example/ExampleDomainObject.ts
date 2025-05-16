@@ -4,8 +4,6 @@
 
 import { ExampleRenderStyle } from './ExampleRenderStyle';
 import { type RenderStyle } from '../../base/renderStyles/RenderStyle';
-import { type ThreeView } from '../../base/views/ThreeView';
-import { ExampleView } from './ExampleView';
 import { PanelInfo } from '../../base/domainObjectsHelpers/PanelInfo';
 import {
   type CreateDraggerProps,
@@ -17,12 +15,12 @@ import { type BaseDragger } from '../../base/domainObjectsHelpers/BaseDragger';
 import { ExampleDragger } from './ExampleDragger';
 import { Quantity } from '../../base/domainObjectsHelpers/Quantity';
 import { type TranslationInput } from '../../base/utilities/TranslateInput';
-import { type Transaction } from '../../base/undo/Transaction';
 import { type DomainObject } from '../../base/domainObjects/DomainObject';
 import { Changes } from '../../base/domainObjectsHelpers/Changes';
-import { DomainObjectTransaction } from '../../base/undo/DomainObjectTransaction';
 import { type IconName } from '../../base/utilities/IconName';
 import { type RevealRenderTarget } from '../../base/renderTarget/RevealRenderTarget';
+import { type Transaction } from '../../base/undo/Transaction';
+import { DomainObjectTransaction } from '../../base/undo/DomainObjectTransaction';
 
 export class ExampleDomainObject extends VisualDomainObject {
   // ==================================================
@@ -69,8 +67,6 @@ export class ExampleDomainObject extends VisualDomainObject {
 
   public override getPanelInfo(): PanelInfo | undefined {
     const info = new PanelInfo();
-    info.setHeader(this.typeName);
-    // In production code, you should add a Key also!
     add({ key: 'X:COORDINATE' }, this.center.x, Quantity.Length);
     add({ key: 'Y_COORDINATE' }, this.center.y, Quantity.Length);
     add({ key: 'Z_COORDINATE' }, this.center.z, Quantity.Length);
@@ -100,14 +96,6 @@ export class ExampleDomainObject extends VisualDomainObject {
     if (what === undefined || what === Changes.geometry) {
       this.center.copy(domainObject.center);
     }
-  }
-
-  // ==================================================
-  // OVERRIDES of VisualDomainObject
-  // ==================================================
-
-  protected override createThreeView(): ThreeView | undefined {
-    return new ExampleView();
   }
 
   // ==================================================

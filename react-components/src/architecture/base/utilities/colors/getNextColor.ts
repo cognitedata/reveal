@@ -8,7 +8,7 @@ import { isEven } from '../extensions/mathExtensions';
 let currentIndex = 0;
 let uniqueColors: Color[] | undefined;
 
-const NUMBER_OF_UNIQUE_COLORS = 50;
+export const NUMBER_OF_UNIQUE_COLORS = 50;
 
 // ==================================================
 // PUBLIC FUNCTIONS:

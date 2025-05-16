@@ -84,29 +84,21 @@ export class SetMeasurementTypeCommand extends RenderTargetCommand {
 function getTooltipByPrimitiveType(primitiveType: PrimitiveType): TranslationInput {
   switch (primitiveType) {
     case PrimitiveType.Line:
-      return {
-        key: 'MEASUREMENTS_ADD_LINE'
-      };
+      return { key: 'MEASUREMENTS_ADD_LINE' };
     case PrimitiveType.Polyline:
-      return {
-        key: 'MEASUREMENTS_ADD_POLYLINE'
-      };
+      return { key: 'MEASUREMENTS_ADD_POLYLINE' };
     case PrimitiveType.Polygon:
-      return {
-        key: 'MEASUREMENTS_ADD_POLYGON'
-      };
+      return { key: 'MEASUREMENTS_ADD_POLYGON' };
     case PrimitiveType.VerticalArea:
-      return {
-        key: 'MEASUREMENTS_ADD_VERTICAL_AREA'
-      };
+      return { key: 'MEASUREMENTS_ADD_VERTICAL_AREA' };
     case PrimitiveType.HorizontalArea:
-      return {
-        key: 'MEASUREMENTS_ADD_HORIZONTAL_AREA'
-      };
+      return { key: 'MEASUREMENTS_ADD_HORIZONTAL_AREA' };
     case PrimitiveType.Box:
-      return {
-        key: 'MEASUREMENTS_ADD_VOLUME'
-      };
+      return { key: 'MEASUREMENTS_ADD_VOLUME' };
+    case PrimitiveType.HorizontalCircle:
+      return { key: 'MEASUREMENTS_ADD_CIRCLE' };
+    case PrimitiveType.VerticalCylinder:
+      return { key: 'MEASUREMENTS_ADD_CYLINDER' };
     default:
       throw new Error('Unknown PrimitiveType');
   }

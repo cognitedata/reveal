@@ -9,11 +9,10 @@ import {
   type Cognite3DViewer,
   type IFlexibleCameraManager,
   CDF_TO_VIEWER_TRANSFORMATION,
-  CognitePointCloudModel,
   CogniteCadModel,
-  type Image360Collection,
-  type DataSourceType,
-  Image360Action
+  CognitePointCloudModel,
+  Image360Action,
+  type DataSourceType
 } from '@cognite/reveal';
 import {
   Vector3,
@@ -25,7 +24,7 @@ import {
 } from 'three';
 import { CommandsController } from './CommandsController';
 import { RootDomainObject } from '../domainObjects/RootDomainObject';
-import { getOctDir } from '../utilities/extensions/vectorExtensions';
+import { getOctant } from '../utilities/extensions/vectorExtensions';
 import { getResizeCursor } from '../utilities/geometry/getResizeCursor';
 import { type DomainObject } from '../domainObjects/DomainObject';
 import { type AxisGizmoTool } from '@cognite/reveal/tools';
@@ -41,6 +40,9 @@ import { ContextMenuController } from './ContextMenuController';
 import { InstanceStylingController } from './InstanceStylingController';
 import { type Class } from '../domainObjectsHelpers/Class';
 import { CdfCaches } from './CdfCaches';
+import { type DmsUniqueIdentifier } from '../../../data-providers';
+import { type Image360Model, type PointCloud } from '../../concrete/reveal/RevealTypes';
+import { RevealSettingsController } from '../../concrete/reveal/RevealSettingsController';
 
 const DIRECTIONAL_LIGHT_NAME = 'DirectionalLight';
 
@@ -59,6 +61,7 @@ export class RevealRenderTarget {
   private readonly _contextmenuController: ContextMenuController;
   private readonly _cdfCaches: CdfCaches;
   private readonly _instanceStylingController: InstanceStylingController;
+  private readonly _revealSettingsController: RevealSettingsController;
 
   private _ambientLight: AmbientLight | undefined;
   private _directionalLight: DirectionalLight | undefined;
@@ -81,19 +84,15 @@ export class RevealRenderTarget {
     options?: RevealRenderTargetOptions
   ) {
     this._viewer = viewer;
-
-    const cameraManager = this.cameraManager;
-    if (!isFlexibleCameraManager(cameraManager)) {
-      throw new Error('Can not use RevealRenderTarget without the FlexibleCameraManager');
-    }
-
     const coreDmOnly = options?.coreDmOnly ?? false;
     this._cdfCaches = new CdfCaches(sdk, viewer, { coreDmOnly });
     this._commandsController = new CommandsController(this.domElement);
     this._commandsController.addEventListeners();
     this._contextmenuController = new ContextMenuController();
     this._instanceStylingController = new InstanceStylingController();
+    this._revealSettingsController = new RevealSettingsController(viewer);
     this._rootDomainObject = new RootDomainObject(this, sdk);
+    this._rootDomainObject.isExpanded = true;
 
     this.initializeLights();
     this._viewer.on('cameraChange', this.cameraChangeHandler);
@@ -113,7 +112,7 @@ export class RevealRenderTarget {
     return this._viewer.canDoImage360Action(Image360Action.Exit);
   }
 
-  public get active360ImageId(): string | undefined {
+  public get active360ImageId(): string | DmsUniqueIdentifier | undefined {
     return this._viewer.getActive360ImageInfo()?.image360.id;
   }
 
@@ -147,6 +146,10 @@ export class RevealRenderTarget {
 
   public get instanceStylingController(): InstanceStylingController {
     return this._instanceStylingController;
+  }
+
+  public get revealSettingsController(): RevealSettingsController {
+    return this._revealSettingsController;
   }
 
   public get cursor(): string {
@@ -198,7 +201,7 @@ export class RevealRenderTarget {
   // INSTANCE METHODS: Get models from the viewer
   // ==================================================
 
-  public *getPointClouds(): Generator<CognitePointCloudModel<DataSourceType>> {
+  public *getPointClouds(): Generator<PointCloud> {
     for (const model of this.viewer.models) {
       if (model instanceof CognitePointCloudModel) {
         yield model;
@@ -214,7 +217,7 @@ export class RevealRenderTarget {
     }
   }
 
-  public *get360ImageCollections(): Generator<Image360Collection<DataSourceType>> {
+  public *get360ImageCollections(): Generator<Image360Model> {
     for (const collection of this.viewer.get360ImageCollections()) {
       yield collection;
     }
@@ -311,7 +314,7 @@ export class RevealRenderTarget {
   // EVENT HANDLERS
   // ==================================================
 
-  cameraChangeHandler = (_position: Vector3, _target: Vector3): void => {
+  private readonly cameraChangeHandler = (_position: Vector3, _target: Vector3): void => {
     const light = this._directionalLight;
     if (light === undefined) {
       return;
@@ -423,6 +426,6 @@ export class RevealRenderTarget {
     }
     const screenVector = screenPoint2?.sub(screenPoint1).normalize();
     screenVector.y = -screenVector.y; // Flip y axis so the x-y axis is mathematically correct
-    return getResizeCursor(getOctDir(screenVector));
+    return getResizeCursor(getOctant(screenVector));
   }
 }

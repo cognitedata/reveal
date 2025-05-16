@@ -12,8 +12,14 @@ import {
   type Source,
   type ViewItem
 } from '../FdmSDK';
-import { type InstancesWithView } from '../../query/useSearchMappedEquipmentFDM';
-import { type TaggedAddResourceOptions } from '../../components/Reveal3DResources/types';
+import {
+  type InstancesWithView,
+  type InstancesWithViewDefinition
+} from '../../query/useSearchMappedEquipmentFDM';
+import {
+  type AddImage360CollectionDatamodelsOptions,
+  type TaggedAddResourceOptions
+} from '../../components/Reveal3DResources/types';
 import { getEdgeConnected3dInstances } from './getEdgeConnected3dInstances';
 import { getFdmConnectionsForNodes } from './getFdmConnectionsForNodeIds';
 import { getDMSModels } from './getDMSModels';
@@ -22,8 +28,9 @@ import { filterNodesByMappedTo3d } from './filterNodesByMappedTo3d';
 import { getCadModelsForFdmInstance } from './getCadModelsForFdmInstance';
 import { getCadConnectionsForRevision } from './getCadConnectionsForRevision';
 import { type CogniteClient, type Node3D } from '@cognite/sdk';
-import { isClassicIdentifier } from '../../components';
 import { EMPTY_ARRAY } from '../../utilities/constants';
+import { isClassicIdentifier } from '../../components/Reveal3DResources/typeGuards';
+import { transformViewItemToSource } from '../core-dm-provider/utils/transformViewItemToSource';
 
 export class LegacyFdm3dDataProvider implements Fdm3dDataProvider {
   readonly _fdmSdk: FdmSDK;
@@ -61,8 +68,8 @@ export class LegacyFdm3dDataProvider implements Fdm3dDataProvider {
   }
 
   async listMappedFdmNodes(
-    models: Array<AddModelOptions<DataSourceType>>,
-    sourcesToSearch: Source[],
+    models: Array<AddModelOptions<DataSourceType> | AddImage360CollectionDatamodelsOptions>,
+    sourcesToSearch: ViewItem[],
     instanceFilter: InstanceFilter | undefined,
     limit: number
   ): Promise<NodeItem[]> {
@@ -74,14 +81,14 @@ export class LegacyFdm3dDataProvider implements Fdm3dDataProvider {
     return await listMappedFdmNodes(
       this._fdmSdk,
       classicModels,
-      sourcesToSearch,
+      sourcesToSearch.map(transformViewItemToSource),
       instanceFilter,
       limit
     );
   }
 
   async listAllMappedFdmNodes(
-    models: Array<AddModelOptions<DataSourceType>>,
+    models: Array<AddModelOptions<DataSourceType> | AddImage360CollectionDatamodelsOptions>,
     sourcesToSearch: Source[]
   ): Promise<NodeItem[]> {
     const classicModels = models.filter((model) => isClassicIdentifier(model));
@@ -93,8 +100,8 @@ export class LegacyFdm3dDataProvider implements Fdm3dDataProvider {
   }
 
   async filterNodesByMappedTo3d(
-    nodes: InstancesWithView[],
-    models: Array<AddModelOptions<DataSourceType>>,
+    nodes: InstancesWithViewDefinition[],
+    models: Array<AddModelOptions<DataSourceType> | AddImage360CollectionDatamodelsOptions>,
     spacesToSearch: string[]
   ): Promise<InstancesWithView[]> {
     const classicModels = models.filter((model) => isClassicIdentifier(model));
@@ -102,7 +109,20 @@ export class LegacyFdm3dDataProvider implements Fdm3dDataProvider {
     if (classicModels.length === 0) {
       return EMPTY_ARRAY;
     }
-    return await filterNodesByMappedTo3d(this._fdmSdk, nodes, classicModels, spacesToSearch);
+
+    // Must transform from InstancesWithViewDefinition to InstanceWithView
+    // which has a different view type
+    const transformedNodes = nodes.map((node) => ({
+      view: transformViewItemToSource(node.view),
+      instances: node.instances
+    }));
+
+    return await filterNodesByMappedTo3d(
+      this._fdmSdk,
+      transformedNodes,
+      classicModels,
+      spacesToSearch
+    );
   }
 
   async getCadModelsForInstance(

@@ -19,13 +19,14 @@ import {
   Uint32BufferAttribute,
   Vector3
 } from 'three';
-import { LineDomainObject } from './LineDomainObject';
+import { type LineDomainObject } from './LineDomainObject';
 import { DomainObjectChange } from '../../../base/domainObjectsHelpers/DomainObjectChange';
 import { Changes } from '../../../base/domainObjectsHelpers/Changes';
 import { LineRenderStyle } from './LineRenderStyle';
 import { GroupThreeView } from '../../../base/views/GroupThreeView';
 import {
   CDF_TO_VIEWER_TRANSFORMATION,
+  ClosestGeometryFinder,
   CustomObjectIntersectInput,
   CustomObjectIntersection
 } from '@cognite/reveal';
@@ -33,11 +34,13 @@ import { PrimitiveType } from '../../../base/utilities/primitives/PrimitiveType'
 import { mergeGeometries } from 'three/examples/jsm/utils/BufferGeometryUtils.js';
 import { FocusType } from '../../../base/domainObjectsHelpers/FocusType';
 import { DomainObjectIntersection } from '../../../base/domainObjectsHelpers/DomainObjectIntersection';
-import { ClosestGeometryFinder } from '../../../base/utilities/geometry/ClosestGeometryFinder';
 import { square } from '../../../base/utilities/extensions/mathExtensions';
 import { Quantity } from '../../../base/domainObjectsHelpers/Quantity';
-import { BoxView } from '../box/BoxView';
+import { createSprite } from '../box/BoxView';
 import { PrimitiveUtils } from '../../../base/utilities/primitives/PrimitiveUtils';
+import { getRoot } from '../../../base/domainObjects/getRoot';
+import { UnitSystem } from '../../../base/renderTarget/UnitSystem';
+import { VisualDomainObject } from '../../../base/domainObjects/VisualDomainObject';
 
 const CYLINDER_DEFAULT_AXIS = new Vector3(0, 1, 0);
 const SOLID_NAME = 'Solid';
@@ -83,8 +86,10 @@ export class LineView extends GroupThreeView<LineDomainObject> {
   protected override addChildren(): void {
     this.addChild(this.createPipe());
     this.addChild(this.createLines()); // Create a line so it can be seen from long distance
-    this.addChild(this.createSolid()); // Create a line so it can be seen from long distance
-    this.addLabels();
+    this.addChild(this.createSolid());
+    if (this.style.showLabel) {
+      this.addLabels();
+    }
   }
 
   public override intersectIfCloser(
@@ -106,7 +111,6 @@ export class LineView extends GroupThreeView<LineDomainObject> {
         return objectIntersection;
       }
     }
-
     // Implement the intersection logic here, because of bug in tree.js
     const radius = getSelectRadius(domainObject, style);
     if (radius <= 0) {
@@ -128,7 +132,7 @@ export class LineView extends GroupThreeView<LineDomainObject> {
       closestFinder.minDistance = closestDistance;
     }
     const segmentCount = domainObject.lineSegmentCount;
-    for (let i = 0; i < segmentCount; i++) {
+    for (let i = 0; i <= segmentCount; i++) {
       domainObject.getCopyOfTransformedPoint(points[i % pointCount], thisPoint);
       thisPoint.applyMatrix4(CDF_TO_VIEWER_TRANSFORMATION);
 
@@ -137,19 +141,30 @@ export class LineView extends GroupThreeView<LineDomainObject> {
         continue;
       }
       const distanceSq = ray.distanceSqToSegment(prevPoint, thisPoint, undefined, intersection);
-      if (distanceSq > radiusSquared || !closestFinder.isClosest(intersection)) {
-        prevPoint.copy(thisPoint);
+      prevPoint.copy(thisPoint);
+      if (distanceSq > radiusSquared) {
+        continue;
+      }
+      if (domainObject instanceof VisualDomainObject) {
+        if (domainObject.useClippingInIntersection && !intersectInput.isVisible(intersection)) {
+          return undefined;
+        }
+      } else {
+        if (!intersectInput.isVisible(intersection)) {
+          return undefined;
+        }
+      }
+      if (!closestFinder.isClosest(intersection)) {
         continue;
       }
       const objectIntersection: DomainObjectIntersection = {
         type: 'customObject',
-        point: intersection,
+        point: intersection.clone(),
         distanceToCamera: closestFinder.minDistance,
         customObject: this,
         domainObject
       };
       closestFinder.setClosestGeometry(objectIntersection);
-      prevPoint.copy(thisPoint);
     }
     return closestFinder.getClosestGeometry();
   }
@@ -169,7 +184,6 @@ export class LineView extends GroupThreeView<LineDomainObject> {
       return undefined;
     }
     const geometries: CylinderGeometry[] = [];
-    const segmentCount = domainObject.lineSegmentCount;
 
     // Just allocate all needed objects once
     const prevPoint = new Vector3();
@@ -178,7 +192,8 @@ export class LineView extends GroupThreeView<LineDomainObject> {
     const center = new Vector3();
     const direction = new Vector3();
 
-    for (let i = 0; i < segmentCount; i++) {
+    const segmentCount = domainObject.lineSegmentCount;
+    for (let i = 0; i <= segmentCount; i++) {
       domainObject.getCopyOfTransformedPoint(points[i % pointCount], thisPoint);
       thisPoint.applyMatrix4(CDF_TO_VIEWER_TRANSFORMATION);
 
@@ -217,15 +232,15 @@ export class LineView extends GroupThreeView<LineDomainObject> {
     if (pointCount < 3) {
       return undefined;
     }
+    const indices = domainObject.getTriangleIndexes();
+    if (indices === undefined) {
+      return undefined;
+    }
     const positions: number[] = [];
     for (let i = 0; i < domainObject.pointCount; i++) {
       const point = domainObject.getCopyOfTransformedPoint(points[i], new Vector3());
       point.applyMatrix4(CDF_TO_VIEWER_TRANSFORMATION);
       positions.push(...point);
-    }
-    const indices = domainObject.getTriangleIndexes();
-    if (indices === undefined) {
-      return undefined;
     }
     const color = domainObject.getColorByColorType(style.colorType);
     const geometry = new BufferGeometry();
@@ -271,38 +286,33 @@ export class LineView extends GroupThreeView<LineDomainObject> {
 
   private addLabels(): void {
     const { domainObject, style } = this;
-    if (!style.showLabel) {
-      return;
-    }
-    const { points, pointCount, rootDomainObject } = domainObject;
-    if (rootDomainObject === undefined) {
-      return;
-    }
-    if (pointCount < 2) {
-      return;
-    }
-    const spriteHeight = this.getTextHeight(style.relativeTextSize);
+    let spriteHeight = this.getTextHeight(style.relativeTextSize);
     if (spriteHeight <= 0) {
-      return;
+      spriteHeight = 1;
     }
-    const segmentCount = domainObject.lineSegmentCount - 1;
+    const unitSystem = getRoot(domainObject)?.unitSystem ?? new UnitSystem();
     const center = new Vector3();
-    for (let i = 0; i < segmentCount; i++) {
-      const point1 = domainObject.getTransformedPoint(points[i % pointCount]);
-      const point2 = domainObject.getTransformedPoint(points[(i + 1) % pointCount]);
-      const distance = point1.distanceTo(point2);
+    let prevPoint = domainObject.isClosed
+      ? domainObject.getTransformedPoint(domainObject.lastPoint)
+      : undefined;
 
-      center.copy(point1).add(point2).divideScalar(2);
-      center.applyMatrix4(CDF_TO_VIEWER_TRANSFORMATION);
+    for (const point of domainObject.points) {
+      const transformedPoint = domainObject.getTransformedPoint(point);
+      if (prevPoint !== undefined) {
+        const distance = transformedPoint.distanceTo(prevPoint);
 
-      const text = rootDomainObject.unitSystem.toStringWithUnit(distance, Quantity.Length);
-      const sprite = BoxView.createSprite(text, style, spriteHeight);
-      if (sprite === undefined) {
-        continue;
+        center.copy(transformedPoint).add(prevPoint).divideScalar(2);
+        center.applyMatrix4(CDF_TO_VIEWER_TRANSFORMATION);
+
+        const text = unitSystem.toStringWithUnit(distance, Quantity.Length);
+        const sprite = createSprite(text, style, spriteHeight);
+        if (sprite !== undefined) {
+          adjustLabel(center, domainObject, style, spriteHeight);
+          sprite.position.copy(center);
+          this.addChild(sprite);
+        }
       }
-      adjustLabel(center, domainObject, style, spriteHeight);
-      sprite.position.copy(center);
-      this.addChild(sprite);
+      prevPoint = transformedPoint;
     }
   }
 
@@ -323,7 +333,7 @@ function createPositions(domainObject: LineDomainObject): number[] | undefined {
   const positions: number[] = [];
   const segmentCount = domainObject.lineSegmentCount;
 
-  for (let i = 0; i < segmentCount; i++) {
+  for (let i = 0; i <= segmentCount; i++) {
     const point = domainObject.getCopyOfTransformedPoint(points[i % pointCount], new Vector3());
     point.applyMatrix4(CDF_TO_VIEWER_TRANSFORMATION);
     positions.push(...point);

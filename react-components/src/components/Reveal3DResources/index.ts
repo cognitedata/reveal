@@ -9,6 +9,7 @@ export type {
   AssetStylingGroup,
   DefaultResourceStyling,
   Image360AssetStylingGroup,
+  Image360DMAssetStylingGroup,
   InstanceStylingGroup,
   CommonImage360Settings,
   TaggedAddCadResourceOptions,
@@ -28,5 +29,4 @@ export {
   useReveal3DResourcesExpectedInViewerCount,
   useReveal3DLoadedResourceCount
 } from './Reveal3DResourcesInfoContext';
-
-export { isClassicIdentifier, isDMIdentifier } from './typeGuards';
+export { isClassicIdentifier, isDM3DModelIdentifier } from './typeGuards';

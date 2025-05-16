@@ -11,7 +11,7 @@ import { PointCloudVolumeObject3DProperties } from './types';
 import { CdfPointCloudObjectAnnotation } from '../types';
 import { QueryNextCursors } from '../../types';
 
-import { IShape, Box, Cylinder } from '@reveal/utilities';
+import { IShape, Box, Cylinder, DMInstanceKey, dmInstanceRefToKey, DMInstanceRef } from '@reveal/utilities';
 import { DMModelIdentifierType } from '../../DataSourceType';
 
 type QueryResult = Awaited<ReturnType<typeof DataModelsSdk.prototype.queryNodesAndEdges<CdfDMPointCloudVolumeQuery>>>;
@@ -46,9 +46,12 @@ export async function getDMPointCloudObjects(
   };
   const query = getDMPointCloudVolumeCollectionQuery(modelIdentifier.revisionExternalId, modelIdentifier.revisionSpace);
 
-  const annotationLimit = query.with.pointCloudVolumes.limit;
+  const assetLimit = query.with.assets.limit;
+  const volumeLimit = query.with.pointCloudVolumes.limit;
   let nextCursor: QueryNextCursors<CdfDMPointCloudVolumeQuery> | undefined = undefined;
   let hasNext = true;
+
+  type AssetResult = ExhaustedQueryResult['assets'][number];
 
   while (hasNext) {
     const {
@@ -56,33 +59,49 @@ export async function getDMPointCloudObjects(
       assets,
       nextCursor: currentCursor
     }: QueryResult = await dmsSdk.queryNodesAndEdges(query, nextCursor);
-    if (result.pointCloudVolumes.length === 0) {
-      result.pointCloudVolumes.push(...pointCloudVolumes);
-    }
+    result.pointCloudVolumes.push(...pointCloudVolumes);
     result.assets.push(...assets);
 
-    hasNext = assets.length === annotationLimit && currentCursor?.assets !== undefined;
-    nextCursor = {
-      assets: currentCursor?.assets
-    };
+    hasNext =
+      (assets.length === assetLimit && currentCursor?.assets !== undefined) ||
+      (pointCloudVolumes.length === volumeLimit && currentCursor?.pointCloudVolumes !== undefined);
+    nextCursor = currentCursor;
   }
 
-  const annotations: CdfPointCloudObjectAnnotation[] = result.pointCloudVolumes.map((volume, index) => {
-    const pointCloudVolumeProperties = volume.properties.cdf_cdm[
-      'CognitePointCloudVolume/v1'
-    ] as unknown as PointCloudVolumeObject3DProperties;
-    const region = pointCloudVolumeToRevealShapes(
-      pointCloudVolumeProperties.volume,
-      pointCloudVolumeProperties.volumeType
-    );
+  const object3DAndAssetPairs: [DMInstanceKey, AssetResult][] = result.assets.map(asset => [
+    dmInstanceRefToKey(asset.properties.cdf_cdm['CogniteAsset/v1'].object3D as DMInstanceRef),
+    asset
+  ]);
 
-    return {
-      volumeMetadata: {
-        instanceRef: { externalId: volume.externalId, space: volume.space },
-        asset: { externalId: result.assets[index].externalId, space: result.assets[index].space }
-      },
-      region: [region]
-    };
-  });
+  const object3DToAssetMap = new Map<DMInstanceKey, AssetResult>(object3DAndAssetPairs);
+
+  const annotations: CdfPointCloudObjectAnnotation[] = result.pointCloudVolumes
+    .map(volume => {
+      const pointCloudVolumeProperties = volume.properties.cdf_cdm[
+        'CognitePointCloudVolume/v1'
+      ] as unknown as PointCloudVolumeObject3DProperties;
+      const region = pointCloudVolumeToRevealShapes(
+        pointCloudVolumeProperties.volume,
+        pointCloudVolumeProperties.volumeType
+      );
+
+      const asset = object3DToAssetMap.get(
+        dmInstanceRefToKey(volume.properties.cdf_cdm['CognitePointCloudVolume/v1'].object3D as DMInstanceRef)
+      );
+
+      if (asset === undefined) {
+        return undefined;
+      }
+
+      return {
+        volumeMetadata: {
+          instanceRef: { externalId: volume.externalId, space: volume.space },
+          asset: { externalId: asset.externalId, space: asset.space }
+        },
+        region: [region]
+      };
+    })
+    .filter(result => result !== undefined);
+
   return annotations;
 }

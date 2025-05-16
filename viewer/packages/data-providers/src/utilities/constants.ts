@@ -34,3 +34,10 @@ export const COGNITE_3D_REVISION_SOURCE = {
   version: 'v1',
   type: 'view'
 } as const satisfies ViewReference;
+
+export const COGNITE_360_IMAGE_SOURCE = {
+  externalId: 'Cognite360Image',
+  space: CORE_DM_SPACE,
+  version: 'v1',
+  type: 'view'
+} as const satisfies ViewReference;

@@ -3,15 +3,14 @@
  */
 
 import {
-  Image360DataProvider,
   Image360FileDescriptor,
   Image360Descriptor,
   Image360Texture,
-  DataSourceType
+  DataSourceType,
+  Image360Provider
 } from '@reveal/data-providers';
 import { Image360Revision } from './Image360Revision';
 import { Image360VisualizationBox } from './Image360VisualizationBox';
-import { AnnotationModel } from '@cognite/sdk';
 
 import { ImageAnnotationObject } from '../annotation/ImageAnnotationObject';
 import assert from 'assert';
@@ -19,32 +18,44 @@ import { Box3, Vector3, type Raycaster } from 'three';
 import minBy from 'lodash/minBy';
 import { Image360AnnotationAppearance } from '../annotation/types';
 import { Image360AnnotationFilter } from '../annotation/Image360AnnotationFilter';
+import { isCoreDmImage360Annotation } from '../annotation/typeGuards';
+import { Image360RevisionId } from '@reveal/data-providers/src/types';
 
 export class Image360RevisionEntity<T extends DataSourceType> implements Image360Revision<T> {
-  private readonly _imageProvider: Image360DataProvider;
-  private readonly _image360Descriptor: Image360Descriptor;
+  private readonly _imageProvider: Image360Provider<T>;
+  private readonly _image360Descriptor: Image360Descriptor<T>;
   private readonly _image360VisualizationBox: Image360VisualizationBox;
   private _previewTextures: Image360Texture[];
   private _fullResolutionTextures: Image360Texture[];
   private _onFullResolutionCompleted: Promise<void> | undefined;
   private _defaultAppearance: Image360AnnotationAppearance = {};
 
-  private _annotations: ImageAnnotationObject<T>[] | undefined = undefined;
+  private readonly _identifier: Image360RevisionId<T>;
+
+  private _annotations: ImageAnnotationObject<T>[] | undefined;
   private _annotationsPromise: Promise<ImageAnnotationObject<T>[]> | undefined;
   private readonly _annotationFilterer: Image360AnnotationFilter;
 
   constructor(
-    imageProvider: Image360DataProvider,
-    image360Descriptor: Image360Descriptor,
+    imageProvider: Image360Provider<T>,
+    image360Descriptor: Image360Descriptor<T>,
     image360VisualizationBox: Image360VisualizationBox,
     annotationFilterer: Image360AnnotationFilter
   ) {
+    this._identifier = image360Descriptor.id;
     this._imageProvider = imageProvider;
     this._image360Descriptor = image360Descriptor;
     this._image360VisualizationBox = image360VisualizationBox;
     this._previewTextures = [];
     this._fullResolutionTextures = [];
     this._annotationFilterer = annotationFilterer;
+  }
+
+  /**
+   * The identifier of this image 360 revision
+   */
+  get identifier(): Image360RevisionId<T> {
+    return this._identifier;
   }
 
   /**
@@ -64,10 +75,7 @@ export class Image360RevisionEntity<T extends DataSourceType> implements Image36
       return this._annotationsPromise;
     }
 
-    this._annotationsPromise = new Promise<ImageAnnotationObject<T>[]>(async (res, _rej) => {
-      this._annotations = await this.loadAndSetAnnotations();
-      res(this._annotations);
-    });
+    this._annotationsPromise = this.loadAndSetAnnotations();
 
     return this._annotationsPromise;
   }
@@ -149,20 +157,27 @@ export class Image360RevisionEntity<T extends DataSourceType> implements Image36
   }
 
   private async loadAndSetAnnotations(): Promise<ImageAnnotationObject<T>[]> {
-    const annotationData = await this._imageProvider.get360ImageAnnotations(this._image360Descriptor.faceDescriptors);
+    const annotationData = await this._imageProvider.getRelevant360ImageAnnotations({
+      revisionId: this._image360Descriptor.id,
+      fileDescriptors: this._image360Descriptor.faceDescriptors
+    });
 
     const filteredAnnotationData = annotationData.filter(a => this._annotationFilterer.filter(a));
 
     const annotationObjects = filteredAnnotationData
       .map(data => {
         const faceDescriptor = getAssociatedFaceDescriptor(data, this._image360Descriptor);
-        return ImageAnnotationObject.createAnnotationObject(data, faceDescriptor.face);
+        return ImageAnnotationObject.createAnnotationObject(
+          data,
+          faceDescriptor?.face,
+          this._image360VisualizationBox.getTransform()
+        );
       })
       .filter(isDefined);
 
     this._image360VisualizationBox.setAnnotations(annotationObjects);
     this.propagateDefaultAppearanceToAnnotations();
-
+    this._annotations = annotationObjects;
     return annotationObjects;
   }
 
@@ -217,7 +232,7 @@ export class Image360RevisionEntity<T extends DataSourceType> implements Image36
     } catch (e) {}
   }
 
-  public getDescriptors(): Image360Descriptor {
+  public getDescriptors(): Image360Descriptor<T> {
     return this._image360Descriptor;
   }
 }
@@ -228,10 +243,14 @@ function isDefined<T extends DataSourceType>(
   return obj !== undefined && obj.getObject !== undefined;
 }
 
-function getAssociatedFaceDescriptor(
-  annotation: AnnotationModel,
-  imageDescriptors: Image360Descriptor
-): Image360FileDescriptor {
+function getAssociatedFaceDescriptor<T extends DataSourceType>(
+  annotation: T['image360AnnotationType'],
+  imageDescriptors: Image360Descriptor<T>
+): Image360FileDescriptor | undefined {
+  if (isCoreDmImage360Annotation(annotation)) {
+    return undefined;
+  }
+
   const fileDescriptors = imageDescriptors.faceDescriptors.filter(
     desc => desc.fileId === annotation.annotatedResourceId
   );

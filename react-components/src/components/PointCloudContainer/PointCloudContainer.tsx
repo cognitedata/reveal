@@ -9,7 +9,7 @@ import {
 
 import { useEffect, type ReactElement, useState, useRef } from 'react';
 import { type Matrix4 } from 'three';
-import { useReveal } from '../RevealCanvas/ViewerContext';
+import { useRenderTarget } from '../RevealCanvas/ViewerContext';
 import { useRevealKeepAlive } from '../RevealKeepAlive/RevealKeepAliveContext';
 import {
   useReveal3DResourceLoadFailCount,
@@ -21,8 +21,9 @@ import { modelExists } from '../../utilities/modelExists';
 import { getViewerResourceCount } from '../../utilities/getViewerResourceCount';
 import { type PointCloudModelStyling } from './types';
 import { useModelIdRevisionIdFromModelOptions } from '../../hooks/useModelIdRevisionIdFromModelOptions';
-import { isClassicIdentifier, isDMIdentifier } from '../Reveal3DResources';
+import { isClassicIdentifier, isDM3DModelIdentifier } from '../Reveal3DResources/typeGuards';
 import { isSameModel } from '../../utilities/isSameModel';
+import { RevealModelsUtils } from '../../architecture/concrete/reveal/RevealModelsUtils';
 
 export type CognitePointCloudModelProps = {
   addModelOptions: AddModelOptions<DataSourceType>;
@@ -41,7 +42,8 @@ export function PointCloudContainer({
 }: CognitePointCloudModelProps): ReactElement {
   const cachedViewerRef = useRevealKeepAlive();
   const [model, setModel] = useState<CognitePointCloudModel<DataSourceType> | undefined>(undefined);
-  const viewer = useReveal();
+  const renderTarget = useRenderTarget();
+  const viewer = renderTarget.viewer;
   const { setRevealResourcesCount } = useReveal3DResourcesCount();
   const { setReveal3DResourceLoadFailCount } = useReveal3DResourceLoadFailCount();
   const initializingModel = useRef<AddModelOptions<DataSourceType> | undefined>(undefined);
@@ -107,14 +109,18 @@ export function PointCloudContainer({
     return pointCloudModel;
 
     async function getOrAddModel(): Promise<CognitePointCloudModel<DataSourceType>> {
-      const viewerModel = viewer.models.find((pointCloudModel) =>
-        isSameModel(pointCloudModel, addModelOptions)
-      );
+      const viewerModel = viewer.models.find((pointCloudModel) => {
+        const pointCloudModelClone = {
+          ...pointCloudModel,
+          transform: pointCloudModel.getModelTransformation()
+        };
+        return isSameModel(pointCloudModelClone, addModelOptions);
+      });
 
       if (viewerModel !== undefined) {
         return await Promise.resolve(viewerModel as CognitePointCloudModel<DataSourceType>);
       }
-      return await viewer.addPointCloudModel(addModelOptions);
+      return await RevealModelsUtils.addPointCloud(renderTarget, addModelOptions);
     }
   }
 
@@ -124,7 +130,7 @@ export function PointCloudContainer({
     if (cachedViewerRef !== undefined && !cachedViewerRef.isRevealContainerMountedRef.current)
       return;
 
-    viewer.removeModel(model);
+    RevealModelsUtils.remove(renderTarget, model);
     setRevealResourcesCount(getViewerResourceCount(viewer));
     setModel(undefined);
   }
@@ -135,7 +141,7 @@ function defaultLoadErrorHandler(addOptions: AddModelOptions<DataSourceType>, er
     console.warn(
       `Failed to load (${addOptions.modelId}, ${addOptions.revisionId}): ${JSON.stringify(error)}`
     );
-  } else if (isDMIdentifier(addOptions)) {
+  } else if (isDM3DModelIdentifier(addOptions)) {
     console.warn(
       `Failed to load (${addOptions.revisionExternalId}, ${addOptions.revisionSpace}): ${JSON.stringify(error)}`
     );

@@ -11,7 +11,14 @@ export type UntranslatedString = { untranslated: string };
 
 export type TranslationInput = TranslatedString | UntranslatedString;
 
-export type TranslateDelegate = (key: TranslationInput) => string;
+export function isEmpty(input: TranslationInput): boolean {
+  if (isTranslatedString(input)) {
+    return false;
+  }
+  return input.untranslated === '';
+}
+
+export type TranslateDelegate = (input: TranslationInput) => string;
 
 export function isTranslatedString(input: TranslationInput): input is TranslatedString {
   const key = (input as TranslatedString).key;

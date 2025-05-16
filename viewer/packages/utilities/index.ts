@@ -76,12 +76,18 @@ export { ICustomObject } from './src/customObject/ICustomObject';
 export { CustomObjectIntersectInput } from './src/customObject/CustomObjectIntersectInput';
 export { CustomObjectIntersection } from './src/customObject/CustomObjectIntersection';
 export { Vector3Pool } from './src/three/Vector3Pool';
+export { ClosestGeometryFinder } from './src/ClosestGeometryFinder';
 
 export { isPointVisibleByPlanes } from './src/three/isPointVisibleByPlanes';
 
 export { CDF_TO_VIEWER_TRANSFORMATION } from './src/constants';
 
+export { createUint8View } from './src/createUint8View';
+
 export * from './src/workers/workerize-transferable';
+
+export * from './src/fdm';
+export * from './src/assetMappings';
 
 export * from './src/shapes';
 export * from './src/linalg';

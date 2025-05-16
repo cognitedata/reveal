@@ -17,7 +17,11 @@ import {
 import { useEffect, useState } from 'react';
 import { Euler, MathUtils, Matrix4 } from 'three';
 import { type Transformation3d } from './scenes/types';
-import { isClassicIdentifier, isDMIdentifier } from '../components/Reveal3DResources/typeGuards';
+import {
+  isClassicIdentifier,
+  isDM3DModelIdentifier
+} from '../components/Reveal3DResources/typeGuards';
+import { useIsCoreDmOnly } from './useIsCoreDmOnly';
 
 export type UseSyncSceneConfigWithViewerProps = {
   sdk: CogniteClient;
@@ -31,6 +35,7 @@ export const useReveal3dResourcesFromScene = (
 ): AddResourceOptions[] => {
   const scene = useSceneConfig(sceneExternalId, sceneSpaceId);
   const [resourceOptions, setResourceOptions] = useState<AddResourceOptions[]>([]);
+  const isCoreDm = useIsCoreDmOnly();
 
   useEffect(() => {
     if (scene.data === undefined || scene.data === null) {
@@ -47,7 +52,7 @@ export const useReveal3dResourcesFromScene = (
         const transform = createResourceTransformation(model);
 
         addResourceOptions.push({ ...addModelOptions, transform });
-      } else if (isDMIdentifier(model.modelIdentifier)) {
+      } else if (isDM3DModelIdentifier(model.modelIdentifier)) {
         const addModelOptions: AddModelOptions<DMDataSourceType> = {
           revisionExternalId: model.modelIdentifier.revisionExternalId,
           revisionSpace: model.modelIdentifier.revisionSpace
@@ -62,7 +67,7 @@ export const useReveal3dResourcesFromScene = (
     scene.data.image360Collections.forEach((collection) => {
       const transform = createResourceTransformation(collection);
       const addModelOptions: AddImage360CollectionDatamodelsOptions = {
-        source: 'dm',
+        source: isCoreDm ? 'cdm' : 'dm',
         externalId: collection.image360CollectionExternalId,
         space: collection.image360CollectionSpace
       };

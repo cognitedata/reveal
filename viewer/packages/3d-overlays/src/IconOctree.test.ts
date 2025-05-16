@@ -14,6 +14,11 @@ describe(IconOctree.name, () => {
     unitBounds = new Box3(new Vector3(), new Vector3(1, 1, 1));
   });
 
+  test("Empty icon octree doesn't throw on LOD by screen area query", () => {
+    const octree = new IconOctree([], unitBounds, 8);
+    expect(() => octree.getLODByScreenArea(0.4, new Matrix4().makePerspective(-1, 1, -1, 1, 0.1, 1))).not.toThrow();
+  });
+
   test('Icon octree with single points should only contain root', () => {
     const image360IconMock = new Mock<Overlay3DIcon>()
       .setup(icon => icon.getPosition())

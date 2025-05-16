@@ -2,7 +2,6 @@
  * Copyright 2024 Cognite AS
  */
 import { useMemo } from 'react';
-import { use3dModels } from '../hooks';
 import { type ModelRevisionId } from '../components/CacheProvider/types';
 import {
   CognitePointCloudModel,
@@ -15,6 +14,7 @@ import { useFdmSdk } from '../components/RevealCanvas/SDKProvider';
 import { useQuery, type UseQueryResult } from '@tanstack/react-query';
 import { queryKeys } from '../utilities/queryKeys';
 import { getModelKeys } from '../utilities/getModelKeys';
+import { use3dModels } from '../hooks/use3dModels';
 
 type PointCloudModelRevisionIdAndType = ModelRevisionId & { type: 'pointcloud' };
 

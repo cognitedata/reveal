@@ -2,13 +2,20 @@
  * Copyright 2024 Cognite AS
  */
 import { type AddModelOptions, type DataSourceType } from '@cognite/reveal';
-import { isClassicIdentifier, isDMIdentifier } from '../components';
 
-export const getModelKeys = (models: Array<AddModelOptions<DataSourceType>>): string[] => {
+import {
+  isClassicIdentifier,
+  isDM3DModelIdentifier
+} from '../components/Reveal3DResources/typeGuards';
+import { type AddImage360CollectionDatamodelsOptions } from '../components/Reveal3DResources/types';
+
+export const getModelKeys = (
+  models: Array<AddModelOptions<DataSourceType> | AddImage360CollectionDatamodelsOptions>
+): string[] => {
   return models.map((model) => {
     if (isClassicIdentifier(model)) {
       return `${model.modelId}/${model.revisionId}`;
-    } else if (isDMIdentifier(model)) {
+    } else if (isDM3DModelIdentifier(model)) {
       return `${model.revisionExternalId}/${model.revisionSpace}`;
     }
     return '';

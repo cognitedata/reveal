@@ -8,7 +8,7 @@ import { type TranslationInput } from '../../base/utilities/TranslateInput';
 import { type DomainObject } from '../../base/domainObjects/DomainObject';
 import { type DomainObjectChange } from '../../base/domainObjectsHelpers/DomainObjectChange';
 import { Changes } from '../../base/domainObjectsHelpers/Changes';
-import { AnnotationsDomainObject } from './AnnotationsDomainObject';
+import { type AnnotationsDomainObject } from './AnnotationsDomainObject';
 import { CylinderDomainObject } from '../primitives/cylinder/CylinderDomainObject';
 import { SolidDomainObject } from '../primitives/common/SolidDomainObject';
 import { SolidPrimitiveRenderStyle } from '../primitives/common/SolidPrimitiveRenderStyle';
@@ -18,14 +18,15 @@ import { CopyToClipboardCommand } from '../../base/concreteCommands/CopyToClipbo
 import { ToggleMetricUnitsCommand } from '../../base/concreteCommands/ToggleMetricUnitsCommand';
 import { Cylinder } from '../../base/utilities/primitives/Cylinder';
 import { Annotation } from './helpers/Annotation';
+import { PrimitiveType } from '../../base/utilities/primitives/PrimitiveType';
 
 export class CylinderGizmoDomainObject extends CylinderDomainObject {
   // ==================================================
   // CONSTRUCTOR
   // ==================================================
 
-  public constructor() {
-    super();
+  public constructor(primitiveType: PrimitiveType = PrimitiveType.Cylinder) {
+    super(primitiveType);
     this.color = new Color(Color.NAMES.white);
   }
   // ==================================================
@@ -65,6 +66,10 @@ export class CylinderGizmoDomainObject extends CylinderDomainObject {
     return [new CopyToClipboardCommand(), new ToggleMetricUnitsCommand()];
   }
 
+  public override get isVisibleInTree(): boolean {
+    return false;
+  }
+
   // ==================================================
   // OVERRIDES of VisualDomainObject
   // ==================================================
@@ -93,7 +98,7 @@ export class CylinderGizmoDomainObject extends CylinderDomainObject {
   }
 
   private updateSelectedAnnotationFromThis(inDragging: boolean): boolean {
-    const annotationDomainObject = this.getAncestorByType(AnnotationsDomainObject);
+    const annotationDomainObject = this.parent as AnnotationsDomainObject;
     if (annotationDomainObject === undefined) {
       return false;
     }

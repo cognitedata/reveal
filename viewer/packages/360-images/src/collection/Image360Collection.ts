@@ -9,17 +9,26 @@ import { Image360AnnotationAppearance } from '../annotation/types';
 import { Image360Revision } from '../entity/Image360Revision';
 import { IdEither } from '@cognite/sdk';
 import { Image360Annotation } from '../annotation/Image360Annotation';
-import { ClassicDataSourceType, DataSourceType, ImageAssetLinkAnnotationInfo } from '@reveal/data-providers';
+import { ClassicDataSourceType, DataSourceType, DMDataSourceType } from '@reveal/data-providers';
 import { Matrix4 } from 'three';
+import { ImageAssetLinkAnnotationInfo, InstanceReference } from '@reveal/data-providers';
+
+/**
+ * Annotation type that may be linked to assets. Only relevant for classic annotations, where some
+ * annotation types are visible in Reveal, but not linkable to assets
+ */
+export type InstanceLinkable360ImageAnnotationType<T extends DataSourceType> = T extends ClassicDataSourceType
+  ? ImageAssetLinkAnnotationInfo
+  : T['image360AnnotationType'];
 
 /**
  * Filter for finding annotations related to an asset
  */
-export type Image360AnnotationAssetFilter = {
+export type Image360AnnotationAssetFilter<T extends DataSourceType = ClassicDataSourceType> = {
   /**
    * Reference to the wanted asset
    */
-  assetRef: IdEither;
+  assetRef: InstanceReference<T>;
 };
 
 /**
@@ -29,7 +38,7 @@ export type AssetAnnotationImage360Info<T extends DataSourceType = ClassicDataSo
   /**
    * Reference to the relevant asset
    */
-  annotationInfo: ImageAssetLinkAnnotationInfo;
+  annotationInfo: InstanceLinkable360ImageAnnotationType<T>;
   /**
    * The image entity in which the asset was found
    */
@@ -43,19 +52,19 @@ export type AssetAnnotationImage360Info<T extends DataSourceType = ClassicDataSo
 /**
  * Result item from an asset annotation query
  */
-export type Image360AnnotationAssetQueryResult = {
+export type Image360AnnotationAssetQueryResult<T extends DataSourceType = ClassicDataSourceType> = {
   /**
    * The Image360 to which the result annotation belongs
    */
-  image: Image360;
+  image: Image360<T>;
   /**
    * The image revision to which the result annotation belongs
    */
-  revision: Image360Revision;
+  revision: Image360Revision<T>;
   /**
    * The found annotation
    */
-  annotation: Image360Annotation;
+  annotation: Image360Annotation<T>;
 };
 
 /**
@@ -158,7 +167,7 @@ export interface Image360Collection<T extends DataSourceType = ClassicDataSource
    * @param event The event type.
    * @param callback Callback to be called when the event is fired.
    */
-  on(event: 'image360Entered', callback: Image360EnteredDelegate): void;
+  on(event: 'image360Entered', callback: Image360EnteredDelegate<T>): void;
   on(event: 'image360Exited', callback: Image360ExitedDelegate): void;
 
   /**
@@ -166,7 +175,7 @@ export interface Image360Collection<T extends DataSourceType = ClassicDataSource
    * @param event The event type.
    * @param callback Callback function to be unsubscribed.
    */
-  off(event: 'image360Entered', callback: Image360EnteredDelegate): void;
+  off(event: 'image360Entered', callback: Image360EnteredDelegate<T>): void;
   off(event: 'image360Exited', callback: Image360ExitedDelegate): void;
 
   /**
@@ -182,20 +191,38 @@ export interface Image360Collection<T extends DataSourceType = ClassicDataSource
   /**
    * Find 360 images associated with an asset through CDF annotations
    */
-  findImageAnnotations(filter: Image360AnnotationAssetFilter): Promise<Image360AnnotationAssetQueryResult[]>;
+  findImageAnnotations(filter: Image360AnnotationAssetFilter<T>): Promise<Image360AnnotationAssetQueryResult<T>[]>;
 
   /**
    * Get IDs of all CDF assets associated with this 360 image collection through CDF annotations
    *
-   * @deprecated Use {@link Image360Collection.getAnnotationsInfo}
+   * @deprecated Use {@link Image360Collection['getAnnotationsInfo']}
    */
   getAssetIds(): Promise<IdEither[]>;
 
   /**
-   * Get IDs of all CDF assets and related image/revision associated with this
-   * 360 image collection through CDF annotations
-   *
-   * @param source What source data to pull the annotation info from
+   * Fetches annotations from all available sources
    */
-  getAnnotationsInfo(source: 'assets'): Promise<AssetAnnotationImage360Info<T>[]>;
+  getAnnotationsInfo(source: 'all'): Promise<AssetAnnotationImage360Info<DataSourceType>[]>;
+  /**
+   * Fetches annotations from the CDF Annotation APIs, which are linked to CDF assets
+   */
+  getAnnotationsInfo(source: 'assets'): Promise<AssetAnnotationImage360Info<ClassicDataSourceType>[]>;
+  /**
+   * Fetches annotations from the CDF Core Data Model
+   */
+  getAnnotationsInfo(source: 'cdm'): Promise<AssetAnnotationImage360Info<DMDataSourceType>[]>;
+  /**
+   * Get info of assets and annotations associated with this
+   * 360 image collection through various sources
+   *
+   * @param source What source data to pull the annotation info from. Must be `'asset'`, `'cdm'` or `'all'`
+   */
+  getAnnotationsInfo(
+    source: 'assets' | 'cdm' | 'all'
+  ): Promise<
+    | AssetAnnotationImage360Info<ClassicDataSourceType>[]
+    | AssetAnnotationImage360Info<DMDataSourceType>
+    | AssetAnnotationImage360Info<DataSourceType>[]
+  >;
 }

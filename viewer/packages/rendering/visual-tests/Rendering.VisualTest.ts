@@ -34,7 +34,7 @@ export default class RenderingVisualTestFixture extends StreamingVisualTestFixtu
     sceneHandler.addObject3D(customBox);
 
     const transformControls = this.attachTransformControlsTo(customBox, camera, renderer.domElement);
-    sceneHandler.addObject3D(transformControls);
+    sceneHandler.addObject3D(transformControls.getHelper());
 
     await this.setupMockCadStyling(cadMaterialManager, model.geometryNode.type);
 

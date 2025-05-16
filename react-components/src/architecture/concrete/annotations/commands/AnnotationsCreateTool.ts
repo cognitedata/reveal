@@ -4,11 +4,8 @@
 
 import { type TranslationInput } from '../../../base/utilities/TranslateInput';
 import { AnnotationsDomainObject } from '../AnnotationsDomainObject';
-import { UndoCommand } from '../../../base/concreteCommands/UndoCommand';
-import { type BaseCommand } from '../../../base/commands/BaseCommand';
 import { PrimitiveType } from '../../../base/utilities/primitives/PrimitiveType';
 import { CommandsUpdater } from '../../../base/reactUpdaters/CommandsUpdater';
-import { AnnotationsSetCreateTypeCommand } from './AnnotationsSetCreateTypeCommand';
 import { type BaseCreator } from '../../../base/domainObjectsHelpers/BaseCreator';
 import { BoxCreator } from '../../primitives/box/BoxCreator';
 import { BoxGizmoDomainObject } from '../BoxGizmoDomainObject';
@@ -105,7 +102,7 @@ export class AnnotationsCreateTool extends NavigationTool {
         this.renderTarget.setNavigateCursor();
         return;
       }
-      if (creator.addPoint(ray, intersection, true)) {
+      if (creator.addPoint(ray, intersection.point, true)) {
         this.setDefaultCursor();
         return;
       }
@@ -140,7 +137,7 @@ export class AnnotationsCreateTool extends NavigationTool {
     }
     if (creator !== undefined) {
       const ray = this.getRay(event);
-      if (creator.addPoint(ray, intersection)) {
+      if (creator.addPoint(ray, intersection.point)) {
         this.endCreatorIfFinished(creator);
       }
       return;
@@ -153,7 +150,7 @@ export class AnnotationsCreateTool extends NavigationTool {
         return;
       }
       const ray = this.getRay(event);
-      if (creator.addPoint(ray, intersection)) {
+      if (creator.addPoint(ray, intersection.point)) {
         const gizmo = creator.domainObject;
         gizmo.setSelectedInteractive(true);
         gizmo.setVisibleInteractive(true, renderTarget);
@@ -169,19 +166,8 @@ export class AnnotationsCreateTool extends NavigationTool {
     this.renderTarget.cursor = 'move';
   }
 
-  public override getToolbar(): Array<BaseCommand | undefined> {
-    return [
-      new AnnotationsSelectTool(),
-      new AnnotationsSetCreateTypeCommand(PrimitiveType.Box),
-      new AnnotationsSetCreateTypeCommand(PrimitiveType.HorizontalCylinder),
-      new AnnotationsSetCreateTypeCommand(PrimitiveType.VerticalCylinder),
-      undefined,
-      new UndoCommand()
-    ];
-  }
-
   // ==================================================
-  // OVERRIDES of BaseEditTool
+  // INSTANCE METHODS
   // ==================================================
 
   private createCreator(): BaseCreator | undefined {
@@ -193,24 +179,19 @@ export class AnnotationsCreateTool extends NavigationTool {
         if (!(gizmo instanceof BoxGizmoDomainObject)) {
           return undefined;
         }
-        return new BoxCreator(this, gizmo);
+        return new BoxCreator(gizmo);
       }
       case PrimitiveType.HorizontalCylinder:
       case PrimitiveType.VerticalCylinder: {
         if (!(gizmo instanceof CylinderGizmoDomainObject)) {
           return undefined;
         }
-        const isHorizontal = this.primitiveType === PrimitiveType.HorizontalCylinder;
-        return new CylinderCreator(this, gizmo, isHorizontal);
+        return new CylinderCreator(gizmo, this.primitiveType, true);
       }
       default:
         return undefined;
     }
   }
-
-  // ==================================================
-  // INSTANCE METHODS
-  // ==================================================
 
   public escape(): void {
     if (this._creator !== undefined && this._creator.escape()) {

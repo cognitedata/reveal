@@ -24,9 +24,12 @@ export type { ClickedNodeData, FdmNodeDataResult } from './useClickedNode';
 export type {
   PointCloudAnnotationMappedAssetData,
   Image360AnnotationMappedAssetData,
+  ClassicImage360AnnotationMappedData,
+  DmImage360AnnotationMappedData,
   ThreeDModelFdmMappings
 } from './types';
+export type { ModelWithRevisionInfo } from './network/types';
 
 export * from './cad';
 export * from './pointClouds';
-export { useImage360AnnotationMappingsForAssetIds } from './useImage360AnnotationMappingsForAssetIds';
+export { useImage360AnnotationMappingsForInstanceReferences } from './useImage360AnnotationMappingsForInstanceReferences';

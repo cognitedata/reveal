@@ -2,41 +2,26 @@
  * Copyright 2023 Cognite AS
  */
 
-import {
-  AnnotationData,
-  AnnotationModel,
-  AnnotationType,
-  AnnotationsCogniteAnnotationTypesImagesAssetLink,
-  AnnotationsObjectDetection
-} from '@cognite/sdk';
-import { DataSourceType, Image360FileDescriptor } from '@reveal/data-providers';
+import { AnnotationsObjectDetection, AnnotationsTypesImagesAssetLink } from '@cognite/sdk';
+import { CoreDmImage360Annotation, DataSourceType, Image360FileDescriptor } from '@reveal/data-providers';
 
-import {
-  Color,
-  Matrix4,
-  Vector3,
-  Mesh,
-  MeshBasicMaterial,
-  DoubleSide,
-  Object3D,
-  Group,
-  Raycaster,
-  Vector2
-} from 'three';
-import { ImageAnnotationObjectData } from './ImageAnnotationData';
-import { BoxAnnotationData } from './BoxAnnotationData';
-import { PolygonAnnotationData } from './PolygonAnnotationData';
+import { Color, Matrix4, Vector3, Mesh, MeshBasicMaterial, DoubleSide, Object3D, Group, Raycaster } from 'three';
+import { ImageAnnotationObjectGeometryData } from './geometry/ImageAnnotationGeometryData';
+import { BoxAnnotationGeometryData } from './geometry/BoxAnnotationGeometryData';
+import { PolygonAnnotationGeometryData } from './geometry/PolygonAnnotationGeometryData';
 import { Image360Annotation } from './Image360Annotation';
 import { Image360AnnotationAppearance } from './types';
 
 type FaceType = Image360FileDescriptor['face'];
 
 import { VariableWidthLine } from '@reveal/utilities';
+import { DmMesh3dAnnotationGeometryData } from './geometry/DmMesh3dAnnotationGeometryData';
+import { isAnnotationAssetLink, isAnnotationsObjectDetection, isCoreDmImage360Annotation } from './typeGuards';
 
 const DEFAULT_ANNOTATION_COLOR = new Color(0.8, 0.8, 0.3);
 
 export class ImageAnnotationObject<T extends DataSourceType> implements Image360Annotation<T> {
-  private readonly _annotation: AnnotationModel;
+  private readonly _annotation: T['image360AnnotationType'];
 
   private readonly _mesh: Mesh;
   private readonly _meshMaterial: MeshBasicMaterial;
@@ -46,29 +31,37 @@ export class ImageAnnotationObject<T extends DataSourceType> implements Image360
   private _defaultAppearance: Image360AnnotationAppearance = {};
   private readonly _appearance: Image360AnnotationAppearance = {};
 
-  get annotation(): AnnotationModel {
+  get annotation(): T['image360AnnotationType'] {
     return this._annotation;
   }
 
   public static createAnnotationObject<StaticT extends DataSourceType>(
-    annotation: AnnotationModel,
-    face: FaceType
+    annotation: StaticT['image360AnnotationType'],
+    face: FaceType | undefined,
+    visualizationBoxTransform: Matrix4
   ): ImageAnnotationObject<StaticT> | undefined {
-    const objectData = ImageAnnotationObject.createObjectData(annotation.annotationType, annotation.data);
+    const objectData = ImageAnnotationObject.createObjectData(annotation, visualizationBoxTransform);
 
     if (objectData === undefined) {
       return undefined;
     }
 
-    return new ImageAnnotationObject(annotation, face, objectData);
+    return new ImageAnnotationObject<StaticT>(annotation, face, objectData);
   }
 
-  private static createObjectData(
-    annotationType: AnnotationType,
-    detection: AnnotationData
-  ): ImageAnnotationObjectData | undefined {
+  private static createObjectData<StaticT extends DataSourceType>(
+    annotation: StaticT['image360AnnotationType'],
+    visualizationBoxTransform: Matrix4
+  ): ImageAnnotationObjectGeometryData | undefined {
+    if (isCoreDmImage360Annotation(annotation)) {
+      return this.createFdmAnnotationData(annotation, visualizationBoxTransform);
+    }
+
+    const annotationType = annotation.annotationType;
+    const detection = annotation.data;
+
     if (isAnnotationsObjectDetection(annotationType, detection)) {
-      return this.createObjectDetectionAnnotationData(detection);
+      return this.createObjectDetectionAnnotationGeometry(detection);
     } else if (isAnnotationAssetLink(annotationType, detection)) {
       return this.createAssetLinkAnnotationData(detection);
     } else {
@@ -76,37 +69,47 @@ export class ImageAnnotationObject<T extends DataSourceType> implements Image360
     }
   }
 
-  private static createObjectDetectionAnnotationData(
+  private static createObjectDetectionAnnotationGeometry(
     detection: AnnotationsObjectDetection
-  ): ImageAnnotationObjectData | undefined {
+  ): ImageAnnotationObjectGeometryData | undefined {
     if (detection.polygon !== undefined) {
-      return new PolygonAnnotationData(detection.polygon);
+      return new PolygonAnnotationGeometryData(detection.polygon);
     } else if (detection.boundingBox !== undefined) {
-      return new BoxAnnotationData(detection.boundingBox);
+      return new BoxAnnotationGeometryData(detection.boundingBox);
     } else {
       return undefined;
     }
   }
 
   private static createAssetLinkAnnotationData(
-    assetLink: AnnotationsCogniteAnnotationTypesImagesAssetLink
-  ): ImageAnnotationObjectData | undefined {
-    // TODO: Use AssetLink region type from SDK when available (2023-15-05)
-    const objectRegion = (assetLink as any).objectRegion;
+    assetLink: AnnotationsTypesImagesAssetLink
+  ): ImageAnnotationObjectGeometryData | undefined {
+    const objectRegion = assetLink.objectRegion;
     if (objectRegion === undefined) {
-      return new BoxAnnotationData(assetLink.textRegion);
+      return new BoxAnnotationGeometryData(assetLink.textRegion);
     }
 
     if (objectRegion.polygon !== undefined) {
-      return new PolygonAnnotationData(objectRegion.polygon);
+      return new PolygonAnnotationGeometryData(objectRegion.polygon);
     } else if (objectRegion.boundingBox !== undefined) {
-      return new BoxAnnotationData(objectRegion.boundingBox);
+      return new BoxAnnotationGeometryData(objectRegion.boundingBox);
     } else {
       return undefined;
     }
   }
 
-  private constructor(annotation: AnnotationModel, face: FaceType, objectData: ImageAnnotationObjectData) {
+  private static createFdmAnnotationData(
+    fdmAnnotation: CoreDmImage360Annotation,
+    visualizationBoxTransform: Matrix4
+  ): ImageAnnotationObjectGeometryData | undefined {
+    return new DmMesh3dAnnotationGeometryData(fdmAnnotation.polygon, visualizationBoxTransform);
+  }
+
+  private constructor(
+    annotation: T['image360AnnotationType'],
+    face: FaceType | undefined,
+    objectData: ImageAnnotationObjectGeometryData
+  ) {
     this._annotation = annotation;
     this._meshMaterial = createMaterial();
     this._mesh = new Mesh(objectData.getGeometry(), this._meshMaterial);
@@ -140,8 +143,8 @@ export class ImageAnnotationObject<T extends DataSourceType> implements Image360
     }
   }
 
-  private initializeTransform(face: FaceType, normalizationTransform: Matrix4): void {
-    const rotationMatrix = this.getRotationFromFace(face);
+  private initializeTransform(face: FaceType | undefined, normalizationTransform: Matrix4): void {
+    const rotationMatrix = face === undefined ? new Matrix4().identity() : this.getRotationFromFace(face);
 
     const transformation = rotationMatrix.clone().multiply(normalizationTransform);
     this._objectGroup.matrix = transformation;
@@ -220,30 +223,8 @@ function createMaterial(): MeshBasicMaterial {
   });
 }
 
-function isAnnotationsObjectDetection(
-  annotationType: AnnotationType,
-  annotation: AnnotationData
-): annotation is AnnotationsObjectDetection {
-  const detection = annotation as AnnotationsObjectDetection;
-  return (
-    annotationType === 'images.ObjectDetection' &&
-    detection.label !== undefined &&
-    (detection.boundingBox !== undefined || detection.polygon !== undefined || detection.polyline !== undefined)
-  );
-}
-
-function isAnnotationAssetLink(
-  annotationType: AnnotationType,
-  annotation: AnnotationData
-): annotation is AnnotationsCogniteAnnotationTypesImagesAssetLink {
-  const link = annotation as AnnotationsCogniteAnnotationTypesImagesAssetLink;
-  return annotationType === 'images.AssetLink' && link.text !== undefined && link.textRegion !== undefined;
-}
-
-function createOutline(outlinePoints: Vector2[], color: Color): VariableWidthLine {
-  const e = 1e-4;
-
-  const points = [...outlinePoints, outlinePoints[0]].map(p => new Vector3(p.x, p.y, -e));
+function createOutline(outlinePoints: Vector3[], color: Color): VariableWidthLine {
+  const points = [...outlinePoints, outlinePoints[0]];
 
   return new VariableWidthLine(0.002, color, points);
 }
