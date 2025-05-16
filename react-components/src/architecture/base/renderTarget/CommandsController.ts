@@ -9,6 +9,19 @@ import { type BaseCommand } from '../commands/BaseCommand';
 import { type Class, isInstanceOf } from '../domainObjectsHelpers/Class';
 import { type Signal, signal } from '@cognite/signals';
 
+/**
+ * The main purpose of the command controller is to give the correct event to the correct command,
+ * and maintain a list of all available commands in the system for updating and other actions.
+ * Note that the tool is only a specific type command, where only one can be active at the time.
+ * The active tool will receive all mouse events. It also maintain the default tool, which is
+ * activated at startup or if the current active tool is disabled.
+ *
+ * It extends the `PointerEvents` class to handle pointer-based interactions.
+ * In addition the class also facilitates event handling for keyboard
+ * and some other pointer events, as well as managing event listeners for a DOM element.
+ *
+ * @extends PointerEvents
+ */
 export class CommandsController extends PointerEvents {
   // ==================================================
   // INSTANCE FIELDS
