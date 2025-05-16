@@ -1,7 +1,7 @@
 /*!
  * Copyright 2025 Cognite AS
  */
-import { type IconProps } from '@cognite/cogs-icons';
+import { type IconProps } from '@cognite/cogs.js';
 
 import { type ILazyLoader } from '../model/i-lazy-loader';
 import { type TreeNodeType } from '../model/tree-node-type';

@@ -552,11 +552,30 @@ export class FdmSDK {
   public async queryAllNodesAndEdges<
     TQueryRequest extends QueryRequest,
     TypedSelectSources extends SelectSourceWithParams = SelectSourceWithParams
-  >(query: TQueryRequest): Promise<QueryResult<TQueryRequest, TypedSelectSources>> {
+  >(
+    query: TQueryRequest,
+    initialCursorTypes?: string[] | undefined
+  ): Promise<QueryResult<TQueryRequest, TypedSelectSources>> {
     let result = await queryNodesAndEdges<TQueryRequest, TypedSelectSources>(query, this._sdk);
     let items = result.items;
+
+    // FIXME(BND3D-5553): Improve cursor handling and ensure it's correct
     while (result.nextCursor !== undefined && Object.keys(result.nextCursor).length !== 0) {
-      const newQuery = { ...query, cursors: result.nextCursor };
+      const nextCursorsList = result.nextCursor !== undefined ? Object.keys(result.nextCursor) : [];
+      let nextCursorsData: Record<string, string> = {};
+      const currentCursorsData = result.nextCursor;
+      nextCursorsList.forEach((cursorType) => {
+        if (
+          initialCursorTypes !== undefined &&
+          initialCursorTypes.includes(cursorType) &&
+          result.nextCursor?.[cursorType] !== undefined
+        ) {
+          nextCursorsData = { ...nextCursorsData, [cursorType]: result.nextCursor?.[cursorType] };
+        }
+      });
+      const cursors =
+        Object.keys(nextCursorsData).length === 0 ? currentCursorsData : nextCursorsData;
+      const newQuery = { ...query, cursors };
       result = await queryNodesAndEdges<TQueryRequest, TypedSelectSources>(newQuery, this._sdk);
       items = mergeQueryResults(items, result.items);
     }
@@ -584,15 +603,29 @@ export class FdmSDK {
 
 function hoistInstanceProperties(
   source: Source,
-  instances: Array<EdgeItem<Record<string, any>> | NodeItem<Record<string, any>>>
+  instances: Array<EdgeItem<Record<string, unknown>> | NodeItem<Record<string, unknown>>>
 ): void {
   if (source === undefined) {
     return;
   }
   const propertyKey = `${source.externalId}/${source.version}`;
+
   instances.forEach((instance) => {
-    if (instance.properties[source.space][propertyKey] !== undefined) {
-      instance.properties = instance.properties[source.space][propertyKey];
+    const deepProperties = (instance.properties?.[source.space] as Record<string, unknown>)?.[
+      propertyKey
+    ] as Record<string, unknown>;
+
+    if (deepProperties !== undefined) {
+      Object.entries(deepProperties).reduce(
+        (
+          accumulatedProperties: Record<string, unknown>,
+          [propName, propValue]: [string, unknown]
+        ) => {
+          accumulatedProperties[propName] = propValue;
+          return accumulatedProperties;
+        },
+        instance.properties
+      );
     }
   });
 }

@@ -6,8 +6,8 @@
 
 import { AnnotationModel } from '@cognite/sdk';
 import { AnnotationsAssetRef } from '@cognite/sdk';
-import { AnnotationsCogniteAnnotationTypesImagesAssetLink } from '@cognite/sdk';
 import { AnnotationStatus } from '@cognite/sdk';
+import { AnnotationsTypesImagesAssetLink } from '@cognite/sdk';
 import { Box3 } from 'three';
 import { Camera } from 'three';
 import { CogniteClient } from '@cognite/sdk';
@@ -483,6 +483,7 @@ export class Cognite3DViewer<DataSourceT extends DataSourceType = ClassicDataSou
     getIntersectionFromPixel(offsetX: number, offsetY: number): Promise<null | Intersection<DataSourceT>>;
     getNormalizedPixelCoordinates(pixelCoords: THREE.Vector2): THREE.Vector2;
     getPixelCoordinatesFromEvent(event: PointerEvent | WheelEvent): THREE.Vector2;
+    getResolutionOptions(): ResolutionOptions;
     // @beta
     getSceneBoundingBox(): THREE.Box3;
     getScreenshot(width?: number, height?: number, includeUI?: boolean): Promise<string>;
@@ -1390,7 +1391,7 @@ export type Image360WithCollection<T extends DataSourceType = ClassicDataSourceT
 
 // @public
 export type ImageAssetLinkAnnotationInfo = Omit<AnnotationModel, 'data'> & {
-    data: AnnotationsCogniteAnnotationTypesImagesAssetLink;
+    data: AnnotationsTypesImagesAssetLink;
 };
 
 // @public (undocumented)

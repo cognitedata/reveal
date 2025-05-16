@@ -160,6 +160,7 @@ export abstract class DomainObject implements TreeNodeType {
       listener(this);
     }
   }
+
   // ==================================================
   // INSTANCE/VIRTUAL PROPERTIES
   // ==================================================
@@ -316,11 +317,11 @@ export abstract class DomainObject implements TreeNodeType {
     }
     if (this.parent !== undefined) {
       // Turn the others off
-      for (const sibling of this.parent.getDescendants()) {
+      for (const sibling of this.parent.children) {
         if (sibling === this) {
           continue;
         }
-        if (sibling.getTypeName() === this.getTypeName()) {
+        if (sibling.getTypeName() !== this.getTypeName()) {
           continue;
         }
         if (!sibling.canBeActive) {
@@ -340,10 +341,6 @@ export abstract class DomainObject implements TreeNodeType {
   // ==================================================
   // INSTANCE/INSTANCE METHODS: Expanded in tree view
   // ==================================================
-
-  public get canBeExpanded(): boolean {
-    return this.childCount > 0; // to be overridden
-  }
 
   public get isExpanded(): boolean {
     return this._isExpanded;
@@ -452,7 +449,7 @@ export abstract class DomainObject implements TreeNodeType {
       this.uniqueId = domainObject.uniqueId;
     }
     if (what === undefined || what === Changes.color) {
-      this.color = domainObject.color;
+      this.color = domainObject.color.clone();
     }
     if (what === undefined || what === Changes.naming) {
       this.name = domainObject.name;
@@ -640,7 +637,7 @@ export abstract class DomainObject implements TreeNodeType {
     this.notifyCore(change);
   }
 
-  public notifyDescendants(change: DomainObjectChange | symbol): void {
+  public notifyDescendants(change: DomainObjectChange | ChangedDescription | symbol): void {
     if (typeof change === 'symbol') {
       change = new DomainObjectChange(change);
     } else if (change instanceof ChangedDescription) {
@@ -844,8 +841,7 @@ export abstract class DomainObject implements TreeNodeType {
   // INSTANCE METHODS: Get ancestors
   // ==================================================
 
-  public *getThisAndAncestors(): Generator<DomainObject> {
-    yield this;
+  public *getAncestors(): Generator<DomainObject> {
     let ancestor = this.parent;
     while (ancestor !== undefined) {
       yield ancestor;
@@ -853,7 +849,8 @@ export abstract class DomainObject implements TreeNodeType {
     }
   }
 
-  public *getAncestors(): Generator<DomainObject> {
+  public *getThisAndAncestors(): Generator<DomainObject> {
+    yield this;
     let ancestor = this.parent;
     while (ancestor !== undefined) {
       yield ancestor;

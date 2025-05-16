@@ -2,20 +2,11 @@
  * Copyright 2025 Cognite AS
  */
 import { describe, expect, test, vi, beforeEach } from 'vitest';
-import {
-  cadModelOptions,
-  createCadMock
-} from '../../../../tests/tests-utilities/fixtures/cadModel';
-import {
-  createImage360ClassicMock,
-  image360ClassicOptions
-} from '../../../../tests/tests-utilities/fixtures/image360';
-import {
-  createPointCloudMock,
-  pointCloudModelOptions
-} from '../../../../tests/tests-utilities/fixtures/pointCloud';
-import { createRenderTargetMock } from '../../../../tests/tests-utilities/fixtures/renderTarget';
-import { viewerMock } from '../../../../tests/tests-utilities/fixtures/viewer';
+import { cadModelOptions, createCadMock } from '#test-utils/fixtures/cadModel';
+import { createImage360ClassicMock, image360ClassicOptions } from '#test-utils/fixtures/image360';
+import { createPointCloudMock, pointCloudModelOptions } from '#test-utils/fixtures/pointCloud';
+import { createRenderTargetMock } from '#test-utils/fixtures/renderTarget';
+import { viewerMock } from '#test-utils/fixtures/viewer';
 import { CadDomainObject } from './cad/CadDomainObject';
 import { Image360CollectionDomainObject } from './Image360Collection/Image360CollectionDomainObject';
 import { PointCloudDomainObject } from './pointCloud/PointCloudDomainObject';
@@ -111,11 +102,11 @@ describe('RevealModelsUtils', () => {
     // Add model
     await RevealModelsUtils.addModel(renderTargetMock, cadModelOptions);
     let domainObject = RevealModelsUtils.getByRevealModel(root, model);
-    expect(domainObject).not.toBe(undefined);
+    expect(domainObject).toBeDefined();
 
     RevealModelsUtils.remove(renderTargetMock, model);
     domainObject = RevealModelsUtils.getByRevealModel(root, model);
-    expect(domainObject).toBe(undefined);
+    expect(domainObject).toBeUndefined();
     expect(removeFn).toHaveBeenCalledWith(model);
   });
 
@@ -129,11 +120,11 @@ describe('RevealModelsUtils', () => {
     // Add model
     await RevealModelsUtils.addPointCloud(renderTargetMock, pointCloudModelOptions);
     let domainObject = RevealModelsUtils.getByRevealModel(root, model);
-    expect(domainObject).not.toBe(undefined);
+    expect(domainObject).toBeDefined();
 
     RevealModelsUtils.remove(renderTargetMock, model);
     domainObject = RevealModelsUtils.getByRevealModel(root, model);
-    expect(domainObject).toBe(undefined);
+    expect(domainObject).toBeUndefined();
     expect(removeFn).toHaveBeenCalledWith(model);
   });
 
@@ -147,11 +138,11 @@ describe('RevealModelsUtils', () => {
     // Add model
     await RevealModelsUtils.addImage360Collection(renderTargetMock, image360ClassicOptions);
     let domainObject = RevealModelsUtils.getByRevealModel(root, model);
-    expect(domainObject).not.toBe(undefined);
+    expect(domainObject).toBeDefined();
 
     RevealModelsUtils.remove(renderTargetMock, model);
     domainObject = RevealModelsUtils.getByRevealModel(root, model);
-    expect(domainObject).toBe(undefined);
+    expect(domainObject).toBeUndefined();
     expect(removeFn).toHaveBeenCalledWith(model);
   });
 });

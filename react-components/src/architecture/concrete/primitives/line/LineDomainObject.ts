@@ -3,7 +3,7 @@
  */
 
 import { type RenderStyle } from '../../../base/renderStyles/RenderStyle';
-import { type Box3, type Vector3 } from 'three';
+import { Box3, type Vector3 } from 'three';
 import { PrimitiveType } from '../../../base/utilities/primitives/PrimitiveType';
 import { LineRenderStyle } from './LineRenderStyle';
 import {
@@ -18,10 +18,10 @@ import { VisualDomainObject } from '../../../base/domainObjects/VisualDomainObje
 import { getIconByPrimitiveType } from '../../../base/utilities/primitives/getIconByPrimitiveType';
 import { type TranslationInput } from '../../../base/utilities/TranslateInput';
 import { clear } from '../../../base/utilities/extensions/arrayExtensions';
-import { type Transaction } from '../../../base/undo/Transaction';
-import { DomainObjectTransaction } from '../../../base/undo/DomainObjectTransaction';
 import { type IconName } from '../../../base/utilities/IconName';
-import { Vector3ArrayUtils } from '../../../base/utilities/primitives/PointsUtils';
+import { Vector3ArrayUtils } from '../../../base/utilities/primitives/Vector3ArrayUtils';
+import { DomainObjectTransaction } from '../../../base/undo/DomainObjectTransaction';
+import { type Transaction } from '../../../base/undo/Transaction';
 
 export abstract class LineDomainObject extends VisualDomainObject {
   // ==================================================
@@ -48,7 +48,7 @@ export abstract class LineDomainObject extends VisualDomainObject {
   }
 
   public get lineSegmentCount(): number {
-    return this.primitiveType === PrimitiveType.Polygon ? this.pointCount + 1 : this.pointCount;
+    return this.primitiveType === PrimitiveType.Polygon ? this.pointCount : this.pointCount - 1;
   }
 
   public get firstPoint(): Vector3 {
@@ -94,8 +94,8 @@ export abstract class LineDomainObject extends VisualDomainObject {
   }
 
   public override get isLegal(): boolean {
-    if (super.isLegal) {
-      return true;
+    if (!super.isLegal) {
+      return false;
     }
     switch (this.primitiveType) {
       case PrimitiveType.Line:
@@ -205,7 +205,7 @@ export abstract class LineDomainObject extends VisualDomainObject {
 
   public getAverageLength(): number {
     const { lineSegmentCount } = this;
-    if (lineSegmentCount <= 1) {
+    if (lineSegmentCount <= 0) {
       return 0;
     }
     return this.getTotalLength() / lineSegmentCount;
@@ -243,6 +243,12 @@ export abstract class LineDomainObject extends VisualDomainObject {
     }
     const transformedPoints = this.points.map((point) => this.getTransformedPoint(point));
     return Math.abs(Vector3ArrayUtils.getSignedHorizontalArea(transformedPoints));
+  }
+
+  public getBoundingBox(): Box3 {
+    const boundingBox = new Box3().makeEmpty();
+    this.expandBoundingBox(boundingBox);
+    return boundingBox;
   }
 
   public expandBoundingBox(boundingBox: Box3): void {

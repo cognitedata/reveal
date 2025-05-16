@@ -18,7 +18,7 @@ export class RegularGrid2 extends Grid2 {
   public readonly origin: Vector2;
   public readonly increment: Vector2;
 
-  private _buffer: Float32Array; // NaN value in this array means undefined node
+  private _buffer: Float32Array<ArrayBuffer>; // NaN value in this array means undefined node
   private _hasRotationAngle = false;
   private _rotationAngle = 0;
   private _sinRotationAngle = 0; // Due to speed
@@ -282,7 +282,7 @@ export class RegularGrid2 extends Grid2 {
   public getCornerRange(): Range3 {
     const corner = new Vector3();
     const range = new Range3();
-    range.add2(this.origin);
+    range.addHorizontal(this.origin);
     this.getNodePosition2(0, this.nodeSize.j - 1, corner);
     range.add(corner);
     this.getNodePosition2(this.nodeSize.i - 1, 0, corner);
@@ -321,7 +321,9 @@ export class RegularGrid2 extends Grid2 {
   }
 
   public smoothSimple(numberOfPasses: number = 1): void {
-    if (numberOfPasses <= 0) return;
+    if (numberOfPasses <= 0) {
+      return;
+    }
     let buffer = new Float32Array(this.nodeSize.size);
     for (let pass = 0; pass < numberOfPasses; pass++) {
       for (let i = this.nodeSize.i - 1; i >= 0; i--)
@@ -337,15 +339,18 @@ export class RegularGrid2 extends Grid2 {
           let sum = 0;
 
           // New value = (Sum the surrounding values + 2 * Current value) / N
-          for (let ii = iMin; ii <= iMax; ii++)
+          for (let ii = iMin; ii <= iMax; ii++) {
             for (let jj = jMin; jj <= jMax; jj++) {
-              if (ii === i && jj === j) continue;
-
-              if (!this.isNodeDef(ii, jj)) continue;
-
+              if (ii === i && jj === j) {
+                continue;
+              }
+              if (!this.isNodeDef(ii, jj)) {
+                continue;
+              }
               sum += this.getZ(ii, jj);
               count += 1;
             }
+          }
           sum += this.getZ(i, j) * count;
           count += count;
           const index = this.getNodeIndex(i, j);

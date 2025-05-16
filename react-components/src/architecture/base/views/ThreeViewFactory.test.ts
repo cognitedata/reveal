@@ -53,7 +53,7 @@ describe('ThreeViewFactory', () => {
 
   test('should test can not create view', () => {
     const bazDomainObject = new BazDomainObject();
-    expect(createThreeView(bazDomainObject)).toBe(undefined);
+    expect(createThreeView(bazDomainObject)).toBeUndefined();
   });
 });
 

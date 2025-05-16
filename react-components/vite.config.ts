@@ -10,7 +10,7 @@ export default defineConfig(({ command }) => {
   return {
     plugins: [
       react(),
-      dts({ include: ['src'] }),
+      dts({ tsconfigPath: './tsconfig.build.json' }),
       externalizeDeps({
         devDeps: true
       }),
@@ -29,6 +29,8 @@ export default defineConfig(({ command }) => {
     },
     test: {
       include: ['src/**/*.{test,spec}.?(c|m)[jt]s?(x)'],
+      environment: 'happy-dom',
+      globals: true,
       reporters: ['default'],
       isolate: false,
       css: false,
@@ -40,7 +42,7 @@ export default defineConfig(({ command }) => {
           'src/**/*.spec.tsx',
           'src/**/*.test.ts',
           'src/**/*.test.tsx',
-          '**/*.stories.tsx'
+          'stories/**'
         ]
       },
       // Need to add E5 modules as inlined dependencies to be able to import them in tests.

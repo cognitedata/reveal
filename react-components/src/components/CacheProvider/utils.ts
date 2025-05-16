@@ -3,7 +3,7 @@
  */
 
 import {
-  type AnnotationsCogniteAnnotationTypesImagesAssetLink,
+  type AnnotationsTypesImagesAssetLink,
   type AnnotationModel,
   type AnnotationsBoundingVolume,
   type AssetMapping3D,
@@ -16,16 +16,14 @@ import {
   type InstanceReferenceKey
 } from '../../utilities/instanceIds/toKey';
 import { createFdmKey } from './idAndKeyTranslation';
-import { type DmsUniqueIdentifier } from '../../data-providers';
+import { type CdfAssetMapping } from './types';
 
 export function getInstanceReferenceFromPointCloudAnnotation(
   annotation: AnnotationModel
 ): IdEither | undefined {
   const annotationData = annotation.data as AnnotationsBoundingVolume;
   const assetRef = annotationData.assetRef;
-  return assetRef !== undefined && isIdEither(annotationData.assetRef as IdEither)
-    ? (assetRef as IdEither)
-    : undefined;
+  return assetRef !== undefined && isIdEither(assetRef) ? assetRef : undefined;
 }
 
 export function getInstanceReferenceFromImage360Annotation(
@@ -34,7 +32,7 @@ export function getInstanceReferenceFromImage360Annotation(
   if (isCoreDmImage360Annotation(annotation)) {
     return annotation.assetRef;
   } else {
-    const annotationData = annotation.data as AnnotationsCogniteAnnotationTypesImagesAssetLink;
+    const annotationData = annotation.data as AnnotationsTypesImagesAssetLink;
     const assetRef = annotationData.assetRef;
     return assetRef !== undefined && isIdEither(assetRef as IdEither)
       ? (assetRef as IdEither)
@@ -62,16 +60,6 @@ export function getIdKeyForImage360Annotation(
   }
 }
 
-export function getIdForImage360Annotation(
-  annotation: DataSourceType['image360AnnotationType']
-): DmsUniqueIdentifier | number {
-  if (isCoreDmImage360Annotation(annotation)) {
-    return annotation.annotationIdentifier;
-  } else {
-    return annotation.id;
-  }
-}
-
 // TODO: Implement this in Reveal instead
 function isCoreDmImage360Annotation(
   annotation: DataSourceType['image360AnnotationType']
@@ -79,6 +67,6 @@ function isCoreDmImage360Annotation(
   return (annotation as CoreDmImage360Annotation).annotationIdentifier?.externalId !== undefined;
 }
 
-export function isValidAssetMapping(assetMapping: AssetMapping3D): assetMapping is AssetMapping3D {
+export function isValidAssetMapping(assetMapping: AssetMapping3D): assetMapping is CdfAssetMapping {
   return assetMapping.treeIndex !== undefined && assetMapping.subtreeSize !== undefined;
 }

@@ -11,7 +11,7 @@ export const nodeBoundingBox = new Box3(new Vector3(1, 1, 1), new Vector3(2, 2, 
 
 export const cadMock = createCadMock();
 
-export function createCadMock(): CogniteCadModel {
+export function createCadMock(parameters?: { visible?: boolean }): CogniteCadModel {
   return new Mock<CogniteCadModel>()
     .setup((p) => p.modelId)
     .returns(cadModelOptions.modelId)
@@ -21,6 +21,10 @@ export function createCadMock(): CogniteCadModel {
     .returns(new Matrix4())
     .setup(async (p) => await p.getBoundingBoxesByNodeIds(It.IsAny()))
     .returns(Promise.resolve([nodeBoundingBox]))
+    .setup((p) => p.visible)
+    .returns(parameters?.visible ?? true)
+    .setup((p) => p.type)
+    .returns('cad')
     .prototypeof(CogniteCadModel.prototype)
     .object();
 }
