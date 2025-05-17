@@ -26,7 +26,7 @@ describe(DeleteDomainObjectCommand.name, () => {
     expect(folder.childCount).toBe(0); // Check that the Domain object removed
   });
 
-  test('should not remove domain object', async () => {
+  test('should not remove read only domain object', async () => {
     const folder = new FolderDomainObject();
     const mock = new ReadOnlyMockDomainObject();
     folder.addChild(mock);
