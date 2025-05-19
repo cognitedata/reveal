@@ -6,9 +6,9 @@ import { act, type PropsWithChildren, type ReactElement } from 'react';
 import { viewerMock } from '#test-utils/fixtures/viewer';
 import { sdkMock } from '#test-utils/fixtures/sdk';
 import { ViewerContextProvider } from '../RevealCanvas/ViewerContext';
-import { Translator } from '../i18n/Translator';
 import { CommandButton } from './CommandButton';
 import { MockCommand } from '#test-utils/architecture/mock-commands/MockCommand';
+import { translate } from '../../architecture/base/utilities/translateUtils';
 
 // Help page here:  https://bogr.dev/blog/react-testing-intro/
 
@@ -23,7 +23,7 @@ describe(CommandButton.name, () => {
 
     // Check button
     const button = await screen.findByRole('button');
-    const label = command.getLabel(Translator.instance.translate);
+    const label = command.getLabel(translate);
     expect(button.getAttribute('aria-disabled')).toBe('false');
     expect(button.getAttribute('aria-label')).toBe(label);
     expect(button.getAttribute('type')).toBe('button');
