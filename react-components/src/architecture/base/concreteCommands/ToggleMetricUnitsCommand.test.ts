@@ -16,7 +16,7 @@ describe(ToggleMetricUnitsCommand.name, () => {
     command.attach(renderTarget);
   });
 
-  test('should have following default behavior', async () => {
+  test('Should have have tooltip, icon, toggle, checked and enable', async () => {
     expect(isEmpty(command.tooltip)).toBe(false);
     expect(command.icon).toBe('RulerAlternative');
     expect(command.isToggle).toBe(true);
