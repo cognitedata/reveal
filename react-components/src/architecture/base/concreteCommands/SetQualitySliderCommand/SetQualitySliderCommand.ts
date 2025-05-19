@@ -10,7 +10,7 @@ import {
   MIN_FIDELITY
 } from './fidelityLevels';
 import { BaseSliderCommand } from '../../commands/BaseSliderCommand';
-import { type TranslateDelegate } from '../../utilities/TranslateInput';
+import { type TranslationInput } from '../../utilities/TranslateInput';
 import { Changes } from '../../domainObjectsHelpers/Changes';
 
 export class SetQualitySliderCommand extends BaseSliderCommand {
@@ -25,6 +25,10 @@ export class SetQualitySliderCommand extends BaseSliderCommand {
   // ==================================================
   // OVERRIDES
   // =================================================
+
+  public override get tooltip(): TranslationInput {
+    return { key: 'RENDER_QUALITY_SLIDER_HEADER' };
+  }
 
   public override get value(): FidelityLevel {
     const viewerQualitySettings = this.renderTarget.revealSettingsController.renderQuality();
@@ -41,10 +45,6 @@ export class SetQualitySliderCommand extends BaseSliderCommand {
 
     const qualitySettings = getQualityForFidelityLevel(rounded);
     this.renderTarget.revealSettingsController.renderQuality(qualitySettings);
-  }
-
-  public override getLabel(translate: TranslateDelegate): string {
-    return translate({ key: 'RENDER_QUALITY_SLIDER_HEADER' });
   }
 
   public override get marks(): Record<number, { label: string }> | undefined {
