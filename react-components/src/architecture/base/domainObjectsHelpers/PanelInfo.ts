@@ -19,6 +19,10 @@ export class PanelInfo {
     const item = new NumberPanelItem(props);
     this.items.push(item);
   }
+
+  public getItemsByQuantity(quantity: Quantity): NumberPanelItem[] {
+    return this.items.filter((a) => a.quantity === quantity);
+  }
 }
 
 export class PanelItem {
