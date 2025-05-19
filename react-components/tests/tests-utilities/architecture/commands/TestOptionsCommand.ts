@@ -1,7 +1,6 @@
 import {
   BaseOptionCommand,
   RenderTargetCommand,
-  type TranslateDelegate,
   type TranslationInput
 } from '../../../../src/architecture';
 
@@ -21,10 +20,6 @@ export class TestOptionsCommand extends BaseOptionCommand {
 
   public override get tooltip(): TranslationInput {
     return { untranslated: 'Test options' };
-  }
-
-  public override getLabel(t: TranslateDelegate): string {
-    return t(this.tooltip);
   }
 }
 

@@ -19,17 +19,22 @@ export const viewerAddCadModelMock = vi.fn<Cognite3DViewer['addCadModel']>();
 export const viewerAddPointCloudModelMock = vi.fn<Cognite3DViewer['addPointCloudModel']>();
 export const viewerAdd360ImageSetMock = vi.fn();
 export const viewerImage360CollectionsMock = vi.fn<Cognite3DViewer['get360ImageCollections']>();
-export const fitCameraToVisualSceneBoundingBoxMock =
-  vi.fn<Cognite3DViewer['fitCameraToVisualSceneBoundingBox']>();
-export const fitCameraToModelsMock = vi.fn<Cognite3DViewer['fitCameraToModels']>();
 export const viewerSetCadModelBudgetMock = vi.fn<(budget: CadModelBudget) => void>();
 export const viewerSetPointCloudModelBudgetMock = vi.fn<(budget: PointCloudBudget) => void>();
 export const viewerSetResolutionOptionsMock =
   vi.fn<(resolutionOptions: ResolutionOptions) => void>();
 
+// Fit camera
+export const fitCameraToBoundingBoxMock = vi.fn<Cognite3DViewer['fitCameraToBoundingBox']>();
+export const fitCameraToVisualSceneBoundingBoxMock =
+  vi.fn<Cognite3DViewer['fitCameraToVisualSceneBoundingBox']>();
+export const fitCameraToModelsMock = vi.fn<Cognite3DViewer['fitCameraToModels']>();
+
 // The Cognite3DViewer class misses the setSceneBoundingBox method, so declare it here
 export type ViewerMock = Cognite3DViewer<DataSourceType> & {
   setSceneBoundingBox: (box: Box3) => void;
+} & {
+  setVisualSceneBoundingBox: (box: Box3) => void;
 };
 
 export function isViewerMock(viewer: Cognite3DViewer<DataSourceType>): viewer is ViewerMock {
@@ -40,6 +45,7 @@ export const viewerMock = createViewerMock();
 
 export function createViewerMock(): ViewerMock {
   const sceneBoundingBox = new Box3().makeEmpty();
+  const visualSceneBoundingBox = new Box3().makeEmpty();
   let clippingPlanes = new Array<Plane>();
 
   return (
@@ -64,10 +70,7 @@ export function createViewerMock(): ViewerMock {
       .returns(viewerAdd360ImageSetMock)
       .setup((p) => p.cameraManager)
       .returns(cameraManagerMock)
-      .setup((p) => p.fitCameraToVisualSceneBoundingBox)
-      .returns(fitCameraToVisualSceneBoundingBoxMock)
-      .setup((p) => p.fitCameraToModels)
-      .returns(fitCameraToModelsMock)
+
       .setup((p) => p.requestRedraw)
       .returns(vi.fn())
       .setup((p) => p.on)
@@ -93,6 +96,14 @@ export function createViewerMock(): ViewerMock {
       .setup((p) => p.setResolutionOptions)
       .returns(viewerSetResolutionOptionsMock)
 
+      // Fit camera
+      .setup((p) => p.fitCameraToBoundingBox)
+      .returns(fitCameraToBoundingBoxMock)
+      .setup((p) => p.fitCameraToVisualSceneBoundingBox)
+      .returns(fitCameraToVisualSceneBoundingBoxMock)
+      .setup((p) => p.fitCameraToModels)
+      .returns(fitCameraToModelsMock)
+
       // Get and set scene bounding box
       .setup((p) => p.getSceneBoundingBox)
       .callback(() => {
@@ -101,6 +112,15 @@ export function createViewerMock(): ViewerMock {
       .setup((p) => p.setSceneBoundingBox)
       .returns((boundingBox: Box3) => {
         sceneBoundingBox.copy(boundingBox);
+      })
+      // Get and set visual scene bounding box
+      .setup((p) => p.getVisualSceneBoundingBox)
+      .callback(() => {
+        return () => visualSceneBoundingBox;
+      })
+      .setup((p) => p.setVisualSceneBoundingBox)
+      .returns((boundingBox: Box3) => {
+        visualSceneBoundingBox.copy(boundingBox);
       })
       // Get and set global clipping planes
       .setup((p) => p.getGlobalClippingPlanes)

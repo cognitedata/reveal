@@ -1,10 +1,10 @@
 import { beforeEach, describe, expect, test } from 'vitest';
 import { ToggleMetricUnitsCommand } from './ToggleMetricUnitsCommand';
 import { isEmpty } from '../utilities/TranslateInput';
-import { createFullRenderTargetMock } from '../../../../tests/tests-utilities/fixtures/createFullRenderTargetMock';
 import { type RevealRenderTarget } from '../renderTarget/RevealRenderTarget';
 import { Changes } from '../domainObjectsHelpers/Changes';
 import { EventChangeTester } from '#test-utils/architecture/EventChangeTester';
+import { createFullRenderTargetMock } from '#test-utils/fixtures/createFullRenderTargetMock';
 
 describe(ToggleMetricUnitsCommand.name, () => {
   let renderTarget: RevealRenderTarget;
