@@ -5,8 +5,6 @@
 import { type ReactNode } from 'react';
 import { type TranslationInput } from '../../architecture';
 
-export type Translations = Record<string, string>;
-
 export type I18nProps = {
   appLanguage?: string;
   children: ReactNode;
