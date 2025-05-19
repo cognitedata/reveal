@@ -14,7 +14,7 @@ import { forEach } from 'lodash';
 import { expectEqualVector3 } from '../../../../tests/tests-utilities/primitives/primitiveTestUtil';
 
 describe(Image360AnnotationCreator.name, () => {
-  test('create Polygon or by mimics the user clicking 4 times', () => {
+  test('create 30 annotation polygon by mimics the user clicking 4 times', () => {
     const domainObject = createEmptyImage360Annotation();
     const folder = new Image360AnnotationFolder();
     folder.addChild(domainObject);
@@ -23,15 +23,7 @@ describe(Image360AnnotationCreator.name, () => {
     expect(domainObject.focusType).toBe(FocusType.Pending);
     expect(creator.domainObject).toBe(domainObject);
 
-    const points = [
-      new Vector3(0, 0, 1),
-      new Vector3(1, 0, 2),
-      new Vector3(1, 1, 1),
-      new Vector3(2, 1, 2)
-    ];
-    forEach(points, (point) => {
-      point.normalize();
-    });
+    const points = createPoints();
     for (const point of points) {
       clickMe(creator, domainObject.center, point, false);
     }
@@ -43,9 +35,22 @@ describe(Image360AnnotationCreator.name, () => {
       expectEqualVector3(domainObject.points[i], points[i]);
     }
     expect(domainObject.focusType).toBe(FocusType.Focus);
+
+    function createPoints(): Vector3[] {
+      const points = [
+        new Vector3(0, 0, 1),
+        new Vector3(1, 0, 2),
+        new Vector3(1, 1, 1),
+        new Vector3(2, 1, 2)
+      ];
+      forEach(points, (point) => {
+        point.normalize();
+      });
+      return points;
+    }
   });
 
-  test('try to create Polygon with too few points', () => {
+  test('try to create 30 annotation polygon with too few points', () => {
     const domainObject = createEmptyImage360Annotation();
     const folder = new Image360AnnotationFolder();
     folder.addChild(domainObject);
@@ -54,12 +59,20 @@ describe(Image360AnnotationCreator.name, () => {
     expect(domainObject.focusType).toBe(FocusType.Pending);
     expect(creator.domainObject).toBe(domainObject);
 
-    const points = [new Vector3(0, 0, 1), new Vector3(0, 1, 1)];
-    forEach(points, (point) => {
-      point.normalize();
-    });
+    const points = createPoints();
+    for (const point of points) {
+      clickMe(creator, domainObject.center, point, false);
+    }
     expect(creator.escape()).toBe(false);
     expect(domainObject.hasParent).toBe(false);
+
+    function createPoints(): Vector3[] {
+      const points = [new Vector3(0, 0, 1), new Vector3(0, 1, 1)];
+      forEach(points, (point) => {
+        point.normalize();
+      });
+      return points;
+    }
   });
 });
 

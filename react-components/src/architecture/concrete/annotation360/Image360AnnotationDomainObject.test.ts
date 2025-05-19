@@ -17,7 +17,7 @@ import {
 } from './testUtilities';
 
 describe(Image360AnnotationDomainObject.name, () => {
-  test('should be empty', () => {
+  test('should have initial state', () => {
     const domainObject = createEmptyImage360Annotation();
     expect(domainObject.icon?.length).greaterThan(0);
     expect(isEmpty(domainObject.typeName)).toBe(false);
