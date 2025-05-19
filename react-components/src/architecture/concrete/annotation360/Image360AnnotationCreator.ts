@@ -3,34 +3,15 @@
  */
 
 import { type Ray, type Vector3 } from 'three';
-import { Image360AnnotationDomainObject } from './Image360AnnotationDomainObject';
-import { type BaseTool } from '../../base/commands/BaseTool';
+import { type Image360AnnotationDomainObject } from './Image360AnnotationDomainObject';
 import { LineCreator } from '../primitives/line/LineCreator';
-import assert from 'assert';
-import { EDIT_WITHOUT_IMAGE } from './constants';
-import { type DmsUniqueIdentifier } from '../../../data-providers';
 
 export class Image360AnnotationCreator extends LineCreator {
   // ==================================================
   // CONSTRUCTOR
   // ==================================================
 
-  public constructor(tool: BaseTool) {
-    const imageId: DmsUniqueIdentifier | string | undefined = EDIT_WITHOUT_IMAGE
-      ? 'Dummy'
-      : tool.renderTarget.active360ImageId;
-    assert(imageId !== undefined, 'Image360AnnotationCreator: image360Id is undefined');
-
-    // Get the camera position in CDF coordinates
-    const { position } = tool.renderTarget.cameraManager.getCameraState();
-    assert(position !== undefined, 'Camera position unknown');
-
-    const center = position.clone();
-    center.applyMatrix4(tool.renderTarget.fromViewerMatrix);
-
-    const domainObject = new Image360AnnotationDomainObject(imageId);
-    domainObject.center.copy(center);
-
+  public constructor(domainObject: Image360AnnotationDomainObject) {
     super(domainObject);
   }
 

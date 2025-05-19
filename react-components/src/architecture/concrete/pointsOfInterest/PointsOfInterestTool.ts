@@ -29,7 +29,7 @@ export class PointsOfInterestTool<PoiIdType> extends BaseEditTool {
     return 'Waypoint';
   }
 
-  public override get shortCutKey(): string {
+  protected override get shortCutKey(): string {
     return 'P';
   }
 

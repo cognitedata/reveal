@@ -21,5 +21,8 @@ export function click(
     startPoint.applyMatrix4(CDF_TO_VIEWER_TRANSFORMATION);
   }
   creator.addPoint(ray, startPoint);
+  if (!creator.isFinished) {
+    creator.addPoint(ray, startPoint, true);
+  }
   expect(creator.isFinished).toBe(isFinished);
 }

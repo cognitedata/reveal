@@ -9,15 +9,16 @@ import { PrimitiveType } from '../../base/utilities/primitives/PrimitiveType';
 import { LineRenderStyle } from '../primitives/line/LineRenderStyle';
 import { isEmpty } from '../../base/utilities/TranslateInput';
 import { Changes } from '../../base/domainObjectsHelpers/Changes';
-import { forEach } from 'lodash';
 import { type AnnotationStatus } from './types';
-
-const CONNECTED_IMAGE_ID = 'My Id';
-const CENTER = new Vector3(5, 6, 7);
+import {
+  createEmptyImage360Annotation,
+  createSquareShapedAnnotation,
+  TEST_CONNECTED_IMAGE_ID
+} from './testUtilities';
 
 describe(Image360AnnotationDomainObject.name, () => {
   test('should be empty', () => {
-    const domainObject = new Image360AnnotationDomainObject(CONNECTED_IMAGE_ID);
+    const domainObject = createEmptyImage360Annotation();
     expect(domainObject.icon?.length).greaterThan(0);
     expect(isEmpty(domainObject.typeName)).toBe(false);
     expect(domainObject.primitiveType).toBe(PrimitiveType.Polygon);
@@ -28,7 +29,7 @@ describe(Image360AnnotationDomainObject.name, () => {
     expect(domainObject.hasPanelInfo).toBe(false);
 
     // Unique properties of Image360AnnotationDomainObject
-    expect(domainObject.connectedImageId).toBe(CONNECTED_IMAGE_ID);
+    expect(domainObject.connectedImageId).toBe(TEST_CONNECTED_IMAGE_ID);
     expect(domainObject.center).toStrictEqual(new Vector3());
     expect(domainObject.vectorLength).greaterThan(0);
     expect(domainObject.annotationIdentifier).toBeUndefined();
@@ -37,7 +38,7 @@ describe(Image360AnnotationDomainObject.name, () => {
   });
 
   test('should transform a vector to a point in space', () => {
-    const domainObject = new Image360AnnotationDomainObject(CONNECTED_IMAGE_ID);
+    const domainObject = createEmptyImage360Annotation();
     const vector = new Vector3(1, 2, 3).normalize();
     const expected = domainObject.center.clone().addScaledVector(vector, domainObject.vectorLength);
 
@@ -55,7 +56,7 @@ describe(Image360AnnotationDomainObject.name, () => {
   });
 
   test('should have one unique color for each status', () => {
-    const domainObject = createSquareShapedAnnotation();
+    const domainObject = createEmptyImage360Annotation();
     const uniqueColors = new Set<number>();
 
     const statuses: AnnotationStatus[] = ['pending', 'saved', 'suggested', 'deleted'];
@@ -92,21 +93,3 @@ describe(Image360AnnotationDomainObject.name, () => {
     expect(clone.status).toBe(domainObject.status);
   });
 });
-
-function createSquareShapedAnnotation(): Image360AnnotationDomainObject {
-  const domainObject = new Image360AnnotationDomainObject(CONNECTED_IMAGE_ID);
-  domainObject.center.copy(CENTER);
-  domainObject.points.push(...createSquareToEdgeOfUnitSphere());
-  return domainObject;
-}
-
-function createSquareToEdgeOfUnitSphere(): Vector3[] {
-  const vectors: Vector3[] = [];
-  const z = -5;
-  vectors.push(new Vector3(0, 0, z));
-  vectors.push(new Vector3(1, 0, z));
-  vectors.push(new Vector3(1, 1, z));
-  vectors.push(new Vector3(0, 1, z));
-  forEach(vectors, (vector: Vector3) => vector.normalize());
-  return vectors;
-}
