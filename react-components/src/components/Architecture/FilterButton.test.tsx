@@ -7,10 +7,10 @@ import { RevealRenderTarget } from '../../architecture';
 import { viewerMock } from '#test-utils/fixtures/viewer';
 import { sdkMock } from '#test-utils/fixtures/sdk';
 import { TestFilterCommand } from '#test-utils/architecture/commands/TestFilterCommand';
-import { getTranslationKeyOrString } from '#test-utils/architecture/getTranslationKeyOrString';
 import { findIconByNameInContainer } from '#test-utils/cogs/findIconByNameInContainer';
 import assert from 'assert';
 import { expectAwaitToFail } from '#test-utils/expect/expectAwaitToThrow';
+import { translate } from '../../architecture/base/utilities/translateUtils';
 
 describe(FilterButton.name, () => {
   let renderTargetMock: RevealRenderTarget;
@@ -37,9 +37,7 @@ describe(FilterButton.name, () => {
 
     expect(icon).toBeDefined();
 
-    await expectAwaitToFail(
-      async () => await screen.findByText(getTranslationKeyOrString(filterCommand.tooltip))
-    );
+    await expectAwaitToFail(async () => await screen.findByText(translate(filterCommand.tooltip)));
   });
 
   test('should render button with icon and name from component when used in settings', async () => {
@@ -50,7 +48,7 @@ describe(FilterButton.name, () => {
       }
     );
 
-    const element = await screen.findByText(getTranslationKeyOrString(filterCommand.tooltip));
+    const element = await screen.findByText(translate(filterCommand.tooltip));
 
     const icon = findIconByNameInContainer(filterCommand.icon, container);
 
@@ -64,7 +62,7 @@ describe(FilterButton.name, () => {
     });
 
     const child = filterCommand.listChildren()[0];
-    const childLabel = child.getLabel(getTranslationKeyOrString);
+    const childLabel = child.getLabel(translate);
 
     await expectAwaitToFail(async () => await screen.findByText(childLabel));
 
@@ -92,7 +90,7 @@ describe(FilterButton.name, () => {
     });
 
     const child = filterCommand.listChildren()[1];
-    const childLabel = child.getLabel(getTranslationKeyOrString);
+    const childLabel = child.getLabel(translate);
 
     await expectAwaitToFail(async () => await screen.findByText(childLabel));
   });
