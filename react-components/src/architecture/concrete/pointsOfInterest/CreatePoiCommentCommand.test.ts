@@ -72,7 +72,9 @@ describe(CreatePoiCommentCommand.name, () => {
 });
 
 function createPointsOfInterestProviderMock(): PointsOfInterestProvider<string> {
-  const mockPostComment = vi.fn().mockReturnValue(Promise.resolve());
+  const mockPostComment = vi
+    .fn<PointsOfInterestProvider<string>['postPointsOfInterestComment']>()
+    .mockReturnValue(Promise.resolve({ ownerId: 'a-user', content: 'a-comment' }));
   return {
     upsertPointsOfInterest: vi.fn(),
     fetchPointsOfInterest: vi.fn(),
