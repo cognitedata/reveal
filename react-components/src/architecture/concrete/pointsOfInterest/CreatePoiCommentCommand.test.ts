@@ -1,12 +1,12 @@
 import { beforeAll, describe, expect, test, vi } from 'vitest';
 import { CreatePoiCommentCommand } from './CreatePoiCommentCommand';
-import { getTranslationKeyOrString } from '#test-utils/architecture/getTranslationKeyOrString';
 
 import { type PointOfInterest, PointsOfInterestStatus } from './types';
 import { PointsOfInterestDomainObject } from './PointsOfInterestDomainObject';
 import { waitFor } from '@testing-library/react';
 import { createRenderTargetMock } from '#test-utils/fixtures/renderTarget';
 import { type PointsOfInterestProvider } from './PointsOfInterestProvider';
+import { getTranslationKeyOrString } from '#test-utils/architecture/getTranslationKeyOrString';
 
 const TEST_POINT_OF_INTEREST = createTestPointOfInterest();
 
