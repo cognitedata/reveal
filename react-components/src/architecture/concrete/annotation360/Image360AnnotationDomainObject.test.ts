@@ -9,7 +9,7 @@ import { PrimitiveType } from '../../base/utilities/primitives/PrimitiveType';
 import { LineRenderStyle } from '../primitives/line/LineRenderStyle';
 import { isEmpty } from '../../base/utilities/TranslateInput';
 import { Changes } from '../../base/domainObjectsHelpers/Changes';
-import { type AnnotationStatus } from './types';
+import { ANNOTATION_STATUSES } from './types';
 import {
   createEmptyImage360Annotation,
   createSquareShapedAnnotation,
@@ -59,8 +59,7 @@ describe(Image360AnnotationDomainObject.name, () => {
     const domainObject = createEmptyImage360Annotation();
     const uniqueColors = new Set<number>();
 
-    const statuses: AnnotationStatus[] = ['pending', 'saved', 'suggested', 'deleted'];
-    for (const status of statuses) {
+    for (const status of ANNOTATION_STATUSES) {
       domainObject.status = status;
       const color = domainObject.color.getHex();
       expect(uniqueColors.has(color)).toBe(false);

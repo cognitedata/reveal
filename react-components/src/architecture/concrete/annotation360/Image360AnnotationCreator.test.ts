@@ -14,7 +14,7 @@ import { forEach } from 'lodash';
 import { expectEqualVector3 } from '../../../../tests/tests-utilities/primitives/primitiveTestUtil';
 
 describe(Image360AnnotationCreator.name, () => {
-  test('create 30 annotation polygon by mimics the user clicking 4 times', () => {
+  test('create a annotation polygon by mimicking the user clicking 4 times', () => {
     const domainObject = createEmptyImage360Annotation();
     const folder = new Image360AnnotationFolder();
     folder.addChild(domainObject);
@@ -50,7 +50,7 @@ describe(Image360AnnotationCreator.name, () => {
     }
   });
 
-  test('try to create 30 annotation polygon with too few points', () => {
+  test('try to create a annotation polygon with too few points', () => {
     const domainObject = createEmptyImage360Annotation();
     const folder = new Image360AnnotationFolder();
     folder.addChild(domainObject);

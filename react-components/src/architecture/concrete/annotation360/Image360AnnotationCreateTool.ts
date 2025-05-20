@@ -135,7 +135,7 @@ export class Image360AnnotationCreateTool extends PrimitiveEditTool {
   protected override createCreator(): BaseCreator | undefined {
     const imageId: DmsUniqueIdentifier | string | undefined = this._mustBeInside360Image
       ? this.renderTarget.active360ImageId
-      : 'Dummy';
+      : 'NotConnectedToImageId';
     assert(imageId !== undefined, 'Image360AnnotationCreator: image360Id is undefined');
 
     const domainObject = new Image360AnnotationDomainObject(imageId);
