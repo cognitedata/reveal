@@ -49,10 +49,6 @@ export class RevealSettingsController {
     for (const disposable of this._disposables) {
       disposable();
     }
-    const cameraManager = this._viewer.cameraManager;
-    if (isFlexibleCameraManager(cameraManager)) {
-      cameraManager.removeControlsTypeChangeListener(this._cameraControlsTypeChangeHandler);
-    }
   }
 
   private addEffect(effectFunction: () => void): void {
@@ -69,7 +65,11 @@ export class RevealSettingsController {
     if (isFlexibleCameraManager(cameraManager)) {
       this._cameraKeyBoardSpeed(cameraManager.options.keyboardSpeed);
       this._cameraControlsType(cameraManager.options.controlsType);
+
       cameraManager.addControlsTypeChangeListener(this._cameraControlsTypeChangeHandler);
+      this._disposables.push(() => {
+        cameraManager.removeControlsTypeChangeListener(this._cameraControlsTypeChangeHandler);
+      });
     }
   }
 
