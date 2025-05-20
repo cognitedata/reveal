@@ -4,7 +4,7 @@ import { CreatePoiCommentCommand } from './CreatePoiCommentCommand';
 import { type PointOfInterest, PointsOfInterestStatus } from './types';
 import { PointsOfInterestDomainObject } from './PointsOfInterestDomainObject';
 import { waitFor } from '@testing-library/react';
-// import { getTranslationKeyOrString } from '#test-utils/architecture/getTranslationKeyOrString';
+import { getTranslationKeyOrString } from '#test-utils/architecture/getTranslationKeyOrString';
 import { createRenderTargetMock } from '#test-utils/fixtures/renderTarget';
 import { type PointsOfInterestProvider } from './PointsOfInterestProvider';
 
@@ -25,9 +25,9 @@ describe(CreatePoiCommentCommand.name, () => {
 
     expect(command.onCancel).toBeUndefined();
     expect(command.onFinish).toBeUndefined();
-    // expect(getTranslationKeyOrString(command.getCancelButtonLabel())).toBe('CANCEL');
-    // expect(getTranslationKeyOrString(command.getPostButtonLabel())).toBe('SEND');
-    // expect(getTranslationKeyOrString(command.getPlaceholder())).toBe('COMMENT_PLACEHOLDER');
+    expect(getTranslationKeyOrString(command.getCancelButtonLabel())).toBe('CANCEL');
+    expect(getTranslationKeyOrString(command.getPostButtonLabel())).toBe('SEND');
+    expect(getTranslationKeyOrString(command.getPlaceholder())).toBe('COMMENT_PLACEHOLDER');
   });
 
   test('post button is disabled when content is empty', () => {
