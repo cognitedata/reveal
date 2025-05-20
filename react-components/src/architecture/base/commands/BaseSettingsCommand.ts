@@ -26,9 +26,6 @@ export abstract class BaseSettingsCommand extends RenderTargetCommand {
   // ==================================================
 
   protected override *getChildren(): Generator<BaseCommand> {
-    if (this._children === undefined) {
-      return;
-    }
     for (const child of this._children) {
       yield child;
     }

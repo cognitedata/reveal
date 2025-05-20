@@ -1,4 +1,4 @@
-import { BaseCommand, type TranslateDelegate } from '../../../../src/architecture';
+import { BaseCommand, type TranslationInput } from '../../../../src/architecture';
 import { type IconName } from '../../../../src/architecture/base/utilities/IconName';
 
 export class TestButtonCommand extends BaseCommand {
@@ -16,8 +16,8 @@ export class TestButtonCommand extends BaseCommand {
     return true;
   }
 
-  public override getLabel(t: TranslateDelegate): string {
-    return t({ untranslated: 'Test button' });
+  public override get tooltip(): TranslationInput {
+    return { untranslated: 'Test button' };
   }
 
   public override get isToggle(): boolean {
