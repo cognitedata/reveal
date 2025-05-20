@@ -37,7 +37,6 @@ export class SettingsCommand extends BaseSettingsCommand {
     this.add(new SetQualitySliderCommand());
     this.add(new QualityWarningBannerCommand());
     this.add(new DividerCommand());
-
     this.add(new SetGhostModeCommand());
 
     if (includePois) {
