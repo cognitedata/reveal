@@ -38,7 +38,7 @@ export const SettingsButton = ({
           placement="right"
           disabled={settingsActive}>
           <Button
-            icon=<SettingsIcon />
+            icon={<SettingsIcon />}
             type="ghost"
             aria-label="Show settings"
             toggled={settingsActive}
