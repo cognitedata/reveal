@@ -1,14 +1,11 @@
-import { type TranslateDelegate, type TranslationInput } from '../../architecture';
-import {
-  type BannerStatus,
-  type BaseBannerCommand
-} from '../../architecture/base/commands/BaseBannerCommand';
-import { useOnUpdate } from './useOnUpdate';
-import { type ReactNode, useMemo, useState } from 'react';
+import { type TranslateDelegate } from '../../architecture';
+import { type BaseBannerCommand } from '../../architecture/base/commands/BaseBannerCommand';
+import { type ReactNode, useMemo } from 'react';
 import styled from 'styled-components';
 import { Infobox } from '@cognite/cogs.js';
 import { getDefaultCommand } from './utilities';
 import { useRenderTarget } from '../RevealCanvas';
+import { useProperty } from './useProperty';
 
 export const BannerComponent = ({
   command: inputCommand,
@@ -23,20 +20,12 @@ export const BannerComponent = ({
     []
   );
 
-  const [visible, setVisible] = useState<boolean>(command.isVisible);
-  const [content, setContent] = useState<TranslationInput>(command.content);
-  const [status, setStatus] = useState<BannerStatus>(command.status);
-
-  useOnUpdate(command, () => {
-    setVisible(command.isVisible);
-    setContent(command.content);
-    setStatus(command.status);
-  });
-
-  if (!visible) {
+  const isVisible = useProperty(command, () => command.isVisible);
+  const content = useProperty(command, () => command.content);
+  const status = useProperty(command, () => command.status);
+  if (!isVisible) {
     return null;
   }
-
   return <StyledInfobox status={status}>{t(content)}</StyledInfobox>;
 };
 
