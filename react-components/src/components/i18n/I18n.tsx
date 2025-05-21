@@ -12,7 +12,7 @@ import {
 } from '../../architecture/base/utilities/TranslateInput';
 
 import english from '../../common/i18n/en/reveal-react-components.json';
-import { setCurrentLanguage, translate } from '../../architecture/base/utilities/translateUtils';
+import { setCurrentLanguage } from '../../architecture/base/utilities/translateUtils';
 
 const I18nContext = createContext<I18nContent | null>(null);
 
