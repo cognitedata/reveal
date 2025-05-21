@@ -4,13 +4,12 @@
 
 import { Button, Tooltip as CogsTooltip, ChevronDownIcon, ChevronUpIcon } from '@cognite/cogs.js';
 import { Menu, Option, Select } from '@cognite/cogs-lab';
-import { useMemo, useState, type ReactElement, type SetStateAction, type Dispatch } from 'react';
+import { useState, type ReactElement, type SetStateAction, type Dispatch } from 'react';
 
 import { useTranslation } from '../i18n/I18n';
 import { type BaseCommand } from '../../architecture/base/commands/BaseCommand';
-import { useRenderTarget } from '../RevealCanvas/ViewerContext';
 import { type BaseOptionCommand } from '../../architecture/base/commands/BaseOptionCommand';
-import { getButtonType, getDefaultCommand, getTooltipPlacement } from './utilities';
+import { getButtonType, getTooltipPlacement } from './utilities';
 import { LabelWithShortcut } from './LabelWithShortcut';
 import { type TranslateDelegate } from '../../architecture/base/utilities/TranslateInput';
 import { DEFAULT_PADDING, TOOLTIP_DELAY } from './constants';
@@ -18,6 +17,7 @@ import { DEFAULT_PADDING, TOOLTIP_DELAY } from './constants';
 import styled from 'styled-components';
 import { type PlacementType } from './types';
 import { useProperty } from './useProperty';
+import { useCommand } from './useCommand';
 
 export const DropdownButton = ({
   inputCommand,
@@ -28,11 +28,7 @@ export const DropdownButton = ({
   placement: PlacementType;
   usedInSettings?: boolean;
 }): ReactElement => {
-  const renderTarget = useRenderTarget();
-  const command = useMemo<BaseOptionCommand>(
-    () => getDefaultCommand<BaseOptionCommand>(inputCommand, renderTarget),
-    []
-  );
+  const command = useCommand(inputCommand);
   const isVisible = useProperty(command, () => command.isVisible);
   if (!isVisible) {
     return <></>;

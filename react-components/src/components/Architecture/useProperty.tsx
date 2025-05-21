@@ -1,7 +1,3 @@
-/*!
- * Copyright 2024 Cognite AS
- */
-
 import { useState, useEffect, useCallback } from 'react';
 import { type BaseCommand } from '../../architecture/base/commands/BaseCommand';
 

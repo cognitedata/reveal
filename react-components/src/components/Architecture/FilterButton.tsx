@@ -3,7 +3,6 @@
  */
 
 import {
-  useMemo,
   useState,
   type ReactElement,
   type MouseEvent,
@@ -19,8 +18,7 @@ import {
 } from '@cognite/cogs.js';
 import { Menu, SelectPanel } from '@cognite/cogs-lab';
 import { useTranslation } from '../i18n/I18n';
-import { useRenderTarget } from '../RevealCanvas/ViewerContext';
-import { getButtonType, getDefaultCommand, getTooltipPlacement } from './utilities';
+import { getButtonType, getTooltipPlacement } from './utilities';
 import { LabelWithShortcut } from './LabelWithShortcut';
 import { BaseFilterCommand } from '../../architecture/base/commands/BaseFilterCommand';
 import { FilterItem } from './FilterItem';
@@ -33,6 +31,7 @@ import { offset } from '@floating-ui/dom';
 import styled from 'styled-components';
 import { type PlacementType } from './types';
 import { useProperty } from './useProperty';
+import { useCommand } from './useCommand';
 
 export const FilterButton = ({
   inputCommand,
@@ -43,12 +42,7 @@ export const FilterButton = ({
   placement: PlacementType;
   usedInSettings?: boolean;
 }): ReactElement => {
-  const renderTarget = useRenderTarget();
-  const command = useMemo<BaseFilterCommand>(
-    () => getDefaultCommand<BaseFilterCommand>(inputCommand, renderTarget),
-    []
-  );
-
+  const command = useCommand(inputCommand);
   command.initializeChildrenIfNeeded();
   const { t } = useTranslation();
 

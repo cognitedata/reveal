@@ -2,20 +2,14 @@
  * Copyright 2024 Cognite AS
  */
 
-import { type ReactNode, useMemo, useState, type ReactElement } from 'react';
+import { type ReactNode, useState, type ReactElement } from 'react';
 
 import { Button, Tooltip as CogsTooltip, Flex, Slider, Switch, TextLabel } from '@cognite/cogs.js';
 
 import { Dropdown, Menu } from '@cognite/cogs-lab';
 import { useTranslation } from '../i18n/I18n';
 import { type BaseCommand } from '../../architecture/base/commands/BaseCommand';
-import { useRenderTarget } from '../RevealCanvas/ViewerContext';
-import {
-  getButtonType,
-  getDefaultCommand,
-  getFlexDirection,
-  getTooltipPlacement
-} from './utilities';
+import { getButtonType, getFlexDirection, getTooltipPlacement } from './utilities';
 import { LabelWithShortcut } from './LabelWithShortcut';
 import { type TranslateDelegate } from '../../architecture/base/utilities/TranslateInput';
 import styled from 'styled-components';
@@ -36,6 +30,7 @@ import { type FlexDirection, type PlacementType } from './types';
 import { BaseBannerCommand } from '../../architecture';
 import { BannerComponent } from './BannerComponent';
 import { useProperty } from './useProperty';
+import { useCommand } from './useCommand';
 
 export const SettingsButton = ({
   inputCommand,
@@ -44,12 +39,8 @@ export const SettingsButton = ({
   inputCommand: BaseSettingsCommand;
   placement: PlacementType;
 }): ReactElement => {
-  const renderTarget = useRenderTarget();
   const { t } = useTranslation();
-  const command = useMemo<BaseSettingsCommand>(
-    () => getDefaultCommand<BaseSettingsCommand>(inputCommand, renderTarget),
-    []
-  );
+  const command = useCommand(inputCommand);
   const icon = useProperty(command, () => command.icon);
   const isEnabled = useProperty(command, () => command.isEnabled);
   const isVisible = useProperty(command, () => command.isVisible);
