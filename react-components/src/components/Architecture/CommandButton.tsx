@@ -25,13 +25,11 @@ export const CommandButton = ({
   const { t } = useTranslation();
   const command = useMemo<BaseCommand>(() => getDefaultCommand(inputCommand, renderTarget), []);
 
-  // @update-ui-component-pattern
-  const isChecked = useProperty(command, () => command.isChecked);
-  const isEnabled = useProperty(command, () => command.isEnabled);
-  const isVisible = useProperty(command, () => command.isVisible);
   const icon = useProperty(command, () => command.icon);
   const uniqueId = useProperty(command, () => command.uniqueId);
-  // @end
+  const isVisible = useProperty(command, () => command.isVisible);
+  const isEnabled = useProperty(command, () => command.isEnabled);
+  const isChecked = useProperty(command, () => command.isChecked);
 
   if (!isVisible) {
     return <></>;
