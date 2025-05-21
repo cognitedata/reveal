@@ -5,11 +5,13 @@
 import { useState, useEffect, useCallback } from 'react';
 import { type BaseCommand } from '../../architecture/base/commands/BaseCommand';
 
-export function useProperty<T>(command: BaseCommand, getValue: () => T): T {
+export function useProperty<T>(command: BaseCommand | undefined, getValue: () => T): T {
   const [value, setValue] = useState<T>(getValue);
+
   const memoizedUpdate = useCallback(() => {
     setValue(getValue());
-  }, [getValue]);
+  }, [command]);
+
   useEffect(() => {
     if (command === undefined) {
       return;

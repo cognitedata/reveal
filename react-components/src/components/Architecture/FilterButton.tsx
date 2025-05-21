@@ -32,7 +32,7 @@ import { TOOLBAR_HORIZONTAL_PANEL_OFFSET } from '../constants';
 import { offset } from '@floating-ui/dom';
 import styled from 'styled-components';
 import { type PlacementType } from './types';
-import { useOnUpdate } from './useOnUpdate';
+import { useProperty } from './useProperty';
 
 export const FilterButton = ({
   inputCommand,
@@ -50,30 +50,17 @@ export const FilterButton = ({
   );
 
   command.initializeChildrenIfNeeded();
-
-  // @update-ui-component-pattern
-  const [isEnabled, setEnabled] = useState(true);
-  const [isVisible, setVisible] = useState(true);
-  const [icon, setIcon] = useState<IconName>(undefined);
-  const [isOpen, setOpen] = useState(false);
-  const [isAllChecked, setAllChecked] = useState(false);
-  const [isSomeChecked, setSomeChecked] = useState(false);
-  const [selectedLabel, setSelectedLabel] = useState('');
-
   const { t } = useTranslation();
-  const label = command.getLabel(t);
 
-  useOnUpdate(command, () => {
-    setEnabled(command.isEnabled);
-    setVisible(command.isVisible);
-    setIcon(command.icon);
-    if (command instanceof BaseFilterCommand) {
-      setAllChecked(command.isAllChecked);
-      setSomeChecked(command.children?.some((child) => child.isChecked) === true);
-      setSelectedLabel(command.getSelectedLabel(t));
-    }
-  });
-  // @end
+  const icon = useProperty(command, () => command.icon);
+  const isVisible = useProperty(command, () => command.isVisible);
+  const isEnabled = useProperty(command, () => command.isEnabled);
+  const isAllChecked = useProperty(command, () => command.isAllChecked);
+  const isSomeChecked = useProperty(command, () => command.isSomeChecked);
+  const selectedLabel = useProperty(command, () => command.getSelectedLabel(t));
+
+  const [isOpen, setOpen] = useState(false);
+  const label = command.getLabel(t);
 
   const children = command.children;
   if (!isVisible || children === undefined || children.length === 0) {

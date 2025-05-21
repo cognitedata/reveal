@@ -16,8 +16,8 @@ import { type TranslateDelegate } from '../../architecture/base/utilities/Transl
 import { DEFAULT_PADDING, TOOLTIP_DELAY } from './constants';
 
 import styled from 'styled-components';
-import { useOnUpdate } from './useOnUpdate';
 import { type PlacementType } from './types';
+import { useProperty } from './useProperty';
 
 export const DropdownButton = ({
   inputCommand,
@@ -33,15 +33,7 @@ export const DropdownButton = ({
     () => getDefaultCommand<BaseOptionCommand>(inputCommand, renderTarget),
     []
   );
-
-  // @update-ui-component-pattern
-  const [isVisible, setVisible] = useState(true);
-
-  useOnUpdate(command, () => {
-    setVisible(command.isVisible);
-  });
-  // @end
-
+  const isVisible = useProperty(command, () => command.isVisible);
   if (!isVisible) {
     return <></>;
   }
@@ -61,16 +53,9 @@ const DropdownElement = ({
 }): ReactElement => {
   const { t } = useTranslation();
 
-  // @update-ui-component-pattern
+  const uniqueId = useProperty(command, () => command.uniqueId);
+  const isEnabled = useProperty(command, () => command.isEnabled);
   const [isOpen, setOpen] = useState(false);
-  const [isEnabled, setEnabled] = useState(true);
-  const [uniqueId, setUniqueId] = useState(0);
-
-  useOnUpdate(command, () => {
-    setEnabled(command.isEnabled);
-    setUniqueId(command.uniqueId);
-  });
-  // @end
 
   if (command.children === undefined) {
     return <></>;
@@ -153,17 +138,9 @@ function createMenuItem(
   setOpen: Dispatch<SetStateAction<boolean>>,
   t: TranslateDelegate
 ): ReactElement {
-  // @update-ui-component-pattern
-  const [isEnabled, setEnabled] = useState(true);
-  const [isChecked, setChecked] = useState(true);
-  const [uniqueId, setUniqueId] = useState(0);
-
-  useOnUpdate(command, () => {
-    setEnabled(command.isEnabled);
-    setChecked(command.isChecked);
-    setUniqueId(command.uniqueId);
-  });
-  // @end
+  const uniqueId = useProperty(command, () => command.uniqueId);
+  const isEnabled = useProperty(command, () => command.isEnabled);
+  const isChecked = useProperty(command, () => command.isChecked);
 
   return (
     <Menu.ItemToggled
