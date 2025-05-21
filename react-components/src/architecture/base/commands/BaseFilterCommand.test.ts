@@ -81,7 +81,7 @@ describe(BaseFilterCommand.name, () => {
     expect(command.isAllChecked).toBe(true);
   });
 
-  test('should have label and color at the options', async () => {
+  test('should have label and color at most options', async () => {
     command.initializeChildrenIfNeeded();
     assert(command.children !== undefined);
     let childIndex = 0;
