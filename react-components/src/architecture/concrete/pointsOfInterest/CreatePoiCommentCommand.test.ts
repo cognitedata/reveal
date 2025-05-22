@@ -25,9 +25,9 @@ describe(CreatePoiCommentCommand.name, () => {
 
     expect(command.onCancel).toBeUndefined();
     expect(command.onFinish).toBeUndefined();
-    expect(translate(command.getCancelButtonLabel())).toBe('CANCEL');
-    expect(translate(command.getPostButtonLabel())).toBe('SEND');
-    expect(translate(command.getPlaceholder())).toBe('COMMENT_PLACEHOLDER');
+    expect(translate(command.getCancelButtonLabel())).toBe('Cancel');
+    expect(translate(command.getPostButtonLabel())).toBe('Send');
+    expect(translate(command.getPlaceholder())).toBe('Write a comment');
   });
 
   test('post button is disabled when content is empty', () => {
