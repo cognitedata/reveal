@@ -99,7 +99,9 @@ export const useTranslation = (fallbackLanguage?: string | undefined): I18nConte
 };
 
 export const I18nContextProvider = ({ appLanguage, children }: I18nProps): ReactElement => {
-  void setCurrentLanguage(appLanguage);
+  useEffect(() => {
+    void setCurrentLanguage(appLanguage);
+  }, [appLanguage]);
   const i18nContent = useTranslationContent(appLanguage);
   return <I18nContext.Provider value={i18nContent}>{children}</I18nContext.Provider>;
 };
