@@ -11,7 +11,9 @@ describe(I18nContextProvider.name, () => {
       </I18nContextProvider>
     );
 
-    await waitFor(() => expect(translate({ key: 'CANCEL' })).toBe('Cancel'));
+    await waitFor(() => {
+      expect(translate({ key: 'CANCEL' })).toBe('Cancel');
+    });
 
     render(
       <I18nContextProvider appLanguage="sv">
@@ -19,6 +21,8 @@ describe(I18nContextProvider.name, () => {
       </I18nContextProvider>
     );
 
-    await waitFor(() => expect(translate({ key: 'CANCEL' })).toBe('Avbryt'));
+    await waitFor(() => {
+      expect(translate({ key: 'CANCEL' })).toBe('Avbryt');
+    });
   });
 });
