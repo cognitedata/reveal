@@ -5,42 +5,34 @@ import { type TranslationInput } from '../utilities/TranslateInput';
 import { RenderTargetCommand } from './RenderTargetCommand';
 
 export abstract class BaseInputCommand extends RenderTargetCommand {
-  protected _placeholder?: TranslationInput;
-  protected _content?: string;
-  protected _okButtonLabel?: TranslationInput;
-
-  protected _onFinish?: () => void;
-  protected _onCancel?: () => void;
+  private _content: string = '';
+  private _onCancel?: () => void;
 
   public getCancelButtonLabel(): TranslationInput | undefined {
     return undefined;
   }
 
   public abstract getPostButtonLabel(): TranslationInput | undefined;
-
   public abstract getPlaceholder(): TranslationInput | undefined;
 
-  public get onFinish(): (() => void) | undefined {
-    return this._onFinish;
-  }
-
-  public set onFinish(onFinish: () => void) {
-    this._onFinish = onFinish;
+  public get onCancel(): (() => void) | undefined {
+    return this._onCancel;
   }
 
   public set onCancel(onCancel: () => void) {
     this._onCancel = onCancel;
   }
 
-  public get onCancel(): (() => void) | undefined {
-    return this._onCancel;
+  public get content(): string {
+    return this._content;
   }
 
-  invokeWithContent(content: string): boolean {
+  public set content(content: string) {
     this._content = content;
+    this.update();
+  }
 
-    const invokeResult = this.invoke();
-    this._content = '';
-    return invokeResult;
+  public get isPostButtonEnabled(): boolean {
+    return this._content.length > 0;
   }
 }
