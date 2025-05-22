@@ -1,9 +1,6 @@
 {
   "extends": "./tsconfig.json",
   "compilerOptions": {
-    "paths": {
-        "#test-utils/*": ["./tests/tests-utilities/*"]
-    },
     "types": [
       "node",
       "vite/client",

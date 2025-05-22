@@ -16,11 +16,6 @@ export default defineConfig(({ command }) => {
       }),
       yalcPush()
     ],
-    resolve: {
-      alias: {
-        '#test-utils': resolve(__dirname, './tests/tests-utilities')
-      }
-    },
     build: {
       lib: {
         // Could also be a dictionary or array of multiple entry points
