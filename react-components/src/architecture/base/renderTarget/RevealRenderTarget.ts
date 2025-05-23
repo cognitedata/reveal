@@ -343,10 +343,16 @@ export class RevealRenderTarget {
   // ==================================================
 
   public getGlobalClippingPlanes(): Plane[] {
+    if (this.viewer.getGlobalClippingPlanes === undefined) {
+      return [];
+    }
     return this.viewer.getGlobalClippingPlanes();
   }
 
   public get isGlobalClippingActive(): boolean {
+    if (this.viewer.getGlobalClippingPlanes === undefined) {
+      return false;
+    }
     return this.getGlobalClippingPlanes().length > 0;
   }
 

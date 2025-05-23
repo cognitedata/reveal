@@ -468,7 +468,7 @@ __metadata:
     "@types/random-seed": "npm:^0.3.5"
     "@types/skmeans": "npm:^0.11.7"
     "@types/stats": "npm:^0.16.30"
-    "@types/three": "npm:^0.174.0"
+    "@types/three": "npm:^0.176.0"
     "@typescript-eslint/eslint-plugin": "npm:^7.7.1"
     "@typescript-eslint/parser": "npm:^7.7.1"
     assert: "npm:^2.1.0"
@@ -515,7 +515,7 @@ __metadata:
     skmeans: "npm:^0.11.3"
     sparse-octree: "npm:^7.1.8"
     stats.js: "npm:^0.17.0"
-    three: "npm:0.174.0"
+    three: "npm:0.176.0"
     ts-jest: "npm:29.1.2"
     ts-loader: "npm:^9.5.1"
     tsc-alias: "npm:^1.8.8"
@@ -529,7 +529,7 @@ __metadata:
     workerize-loader: "npm:^2.0.2"
   peerDependencies:
     "@cognite/sdk": ^10.0.0
-    three: 0.174.0
+    three: 0.176.0
   languageName: unknown
   linkType: soft
 
@@ -598,6 +598,13 @@ __metadata:
   version: 3.0.3
   resolution: "@csstools/css-tokenizer@npm:3.0.3"
   checksum: 10/6baa3160e426e1f177b8f10d54ec7a4a596090f65a05f16d7e9e4da049962a404eabc5f885f4867093702c259cd4080ac92a438326e22dea015201b3e71f5bbb
+  languageName: node
+  linkType: hard
+
+"@dimforge/rapier3d-compat@npm:^0.12.0":
+  version: 0.12.0
+  resolution: "@dimforge/rapier3d-compat@npm:0.12.0"
+  checksum: 10/56cd538b59d534d2ed91de3eb7efd804af5defe146f65294e8ce81982a4bd6c27d61c1014c15a77bb5f5eff0de7a12fbc9b16bf895a2ec56ea5496fd80c78e26
   languageName: node
   linkType: hard
 
@@ -2140,17 +2147,18 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/three@npm:^0.174.0":
-  version: 0.174.0
-  resolution: "@types/three@npm:0.174.0"
+"@types/three@npm:^0.176.0":
+  version: 0.176.0
+  resolution: "@types/three@npm:0.176.0"
   dependencies:
+    "@dimforge/rapier3d-compat": "npm:^0.12.0"
     "@tweenjs/tween.js": "npm:~23.1.3"
     "@types/stats.js": "npm:*"
     "@types/webxr": "npm:*"
     "@webgpu/types": "npm:*"
     fflate: "npm:~0.8.2"
     meshoptimizer: "npm:~0.18.1"
-  checksum: 10/5fd26de34c58f50658bbf84191aa33c766cc93df1427c8a84b817155ee6e4919141407090d4ee15c9c2de8e5f2ea5b4c177e701ee8583149bcc0c3f8c1bded04
+  checksum: 10/e3aae7e9137e9f2c5eaba1b594e5848d09a81f02ef1fcf70aa0d21374c1a7d5f1d4f8514e9b1def577a3f971c5df016713ba1178aa5690be55c9777d96b3ed6d
   languageName: node
   linkType: hard
 
@@ -3052,14 +3060,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"bare-events@npm:^2.2.0":
-  version: 2.5.0
-  resolution: "bare-events@npm:2.5.0"
-  checksum: 10/a0830af0e1d47c74878109bd35cd9118305820c823d43bca2802e131ba7652bb5fdd94fb0c40a31313f440ed3964ab9b35394b3794437c238519bfbcaa52a8f8
-  languageName: node
-  linkType: hard
-
-"bare-events@npm:^2.5.4":
+"bare-events@npm:^2.2.0, bare-events@npm:^2.5.4":
   version: 2.5.4
   resolution: "bare-events@npm:2.5.4"
   checksum: 10/135ef380b13f554ca2c6905bdbcfac8edae08fce85b7f953fa01f09a9f5b0da6a25e414111659bc9a6118216f0dd1f732016acd11ce91517f2afb26ebeb4b721
@@ -8749,13 +8750,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"queue-tick@npm:^1.0.1":
-  version: 1.0.1
-  resolution: "queue-tick@npm:1.0.1"
-  checksum: 10/f447926c513b64a857906f017a3b350f7d11277e3c8d2a21a42b7998fa1a613d7a829091e12d142bb668905c8f68d8103416c7197856efb0c72fa835b8e254b5
-  languageName: node
-  linkType: hard
-
 "random-seed@npm:^0.3.0":
   version: 0.3.0
   resolution: "random-seed@npm:0.3.0"
@@ -9124,16 +9118,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"rxjs@npm:^7.8.1":
-  version: 7.8.1
-  resolution: "rxjs@npm:7.8.1"
-  dependencies:
-    tslib: "npm:^2.1.0"
-  checksum: 10/b10cac1a5258f885e9dd1b70d23c34daeb21b61222ee735d2ec40a8685bdca40429000703a44f0e638c27a684ac139e1c37e835d2a0dc16f6fc061a138ae3abb
-  languageName: node
-  linkType: hard
-
-"rxjs@npm:^7.8.2":
+"rxjs@npm:^7.8.1, rxjs@npm:^7.8.2":
   version: 7.8.2
   resolution: "rxjs@npm:7.8.2"
   dependencies:
@@ -9684,22 +9669,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"streamx@npm:^2.15.0":
-  version: 2.20.1
-  resolution: "streamx@npm:2.20.1"
-  dependencies:
-    bare-events: "npm:^2.2.0"
-    fast-fifo: "npm:^1.3.2"
-    queue-tick: "npm:^1.0.1"
-    text-decoder: "npm:^1.1.0"
-  dependenciesMeta:
-    bare-events:
-      optional: true
-  checksum: 10/3c69a48c4f397fb8a9460d1a780ece352849a4719a8938a866879dd1773098121882c3c2b99b9c7f605a123461d8ab2e652fd22c13ccda18f79e234e78ec7ed7
-  languageName: node
-  linkType: hard
-
-"streamx@npm:^2.21.0":
+"streamx@npm:^2.15.0, streamx@npm:^2.21.0":
   version: 2.22.0
   resolution: "streamx@npm:2.22.0"
   dependencies:
@@ -9997,10 +9967,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"three@npm:0.174.0":
-  version: 0.174.0
-  resolution: "three@npm:0.174.0"
-  checksum: 10/d02d33aaacc56f60c38a2466f29c96c0afa8bddc5e284f8b4a474ef7d917c8c6d4557403521c6f9bc3c49a96719872074f5cf02c3cb6f1e0a85f901da5b92ac8
+"three@npm:0.176.0":
+  version: 0.176.0
+  resolution: "three@npm:0.176.0"
+  checksum: 10/b4081a211a9672bc38563ec75e8131f388f18d2d03672ccbc78dd1c4783018b0d490a67b02f5dcca5d7c8d0fa9d82b3a617d0e5ae0398877cdfe77e39f63dde0
   languageName: node
   linkType: hard
 

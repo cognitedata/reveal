@@ -12,7 +12,7 @@ import { createRenderTargetMock } from '#test-utils/fixtures/renderTarget';
 import { type RevealRenderTarget } from '../renderTarget/RevealRenderTarget';
 import { VisibleState } from '../domainObjectsHelpers/VisibleState';
 import { FocusType } from '../domainObjectsHelpers/FocusType';
-import { EventChangeTester } from './DomainObject.test';
+import { EventChangeTester } from '#test-utils/architecture/EventChangeTester';
 import { Changes } from '../domainObjectsHelpers/Changes';
 import { FolderDomainObject } from './FolderDomainObject';
 import { type DomainObject } from './DomainObject';
