@@ -12,8 +12,8 @@ import { LabelWithShortcut } from './LabelWithShortcut';
 import { IconComponent } from './Factories/IconFactory';
 import { type PlacementType } from './types';
 import { TOOLTIP_DELAY } from './constants';
-import { useProperty } from './useProperty';
 import { useCommand } from './useCommand';
+import { useCommonCommandProps } from './useCommonCommandProps';
 
 export const CommandButton = ({
   inputCommand,
@@ -26,12 +26,7 @@ export const CommandButton = ({
   const { t } = useTranslation();
   const command = useCommand(inputCommand);
 
-  const icon = useProperty(command, () => command.icon);
-  const uniqueId = useProperty(command, () => command.uniqueId);
-  const isVisible = useProperty(command, () => command.isVisible);
-  const isEnabled = useProperty(command, () => command.isEnabled);
-  const isChecked = useProperty(command, () => command.isChecked);
-
+  const { icon, uniqueId, isVisible, isEnabled, isChecked } = useCommonCommandProps(command);
   if (!isVisible) {
     return <></>;
   }

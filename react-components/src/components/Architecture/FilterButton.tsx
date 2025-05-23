@@ -32,6 +32,7 @@ import styled from 'styled-components';
 import { type PlacementType } from './types';
 import { useProperty } from './useProperty';
 import { useCommand } from './useCommand';
+import { useCommonCommandProps } from './useCommonCommandProps';
 
 export const FilterButton = ({
   inputCommand,
@@ -46,9 +47,7 @@ export const FilterButton = ({
   command.initializeChildrenIfNeeded();
   const { t } = useTranslation();
 
-  const icon = useProperty(command, () => command.icon);
-  const isVisible = useProperty(command, () => command.isVisible);
-  const isEnabled = useProperty(command, () => command.isEnabled);
+  const { icon, isVisible, isEnabled } = useCommonCommandProps(command);
   const isAllChecked = useProperty(command, () => command.isAllChecked);
   const isSomeChecked = useProperty(command, () => command.isSomeChecked);
   const selectedLabel = useProperty(command, () => command.getSelectedLabel(t));

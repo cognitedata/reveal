@@ -16,8 +16,8 @@ import { DEFAULT_PADDING, TOOLTIP_DELAY } from './constants';
 
 import styled from 'styled-components';
 import { type PlacementType } from './types';
-import { useProperty } from './useProperty';
 import { useCommand } from './useCommand';
+import { useCommonCommandProps } from './useCommonCommandProps';
 
 export const DropdownButton = ({
   inputCommand,
@@ -29,7 +29,7 @@ export const DropdownButton = ({
   usedInSettings?: boolean;
 }): ReactElement => {
   const command = useCommand(inputCommand);
-  const isVisible = useProperty(command, () => command.isVisible);
+  const { isVisible } = useCommonCommandProps(command);
   if (!isVisible) {
     return <></>;
   }
@@ -49,8 +49,7 @@ const DropdownElement = ({
 }): ReactElement => {
   const { t } = useTranslation();
 
-  const uniqueId = useProperty(command, () => command.uniqueId);
-  const isEnabled = useProperty(command, () => command.isEnabled);
+  const { uniqueId, isEnabled } = useCommonCommandProps(command);
   const [isOpen, setOpen] = useState(false);
 
   if (command.children === undefined) {
@@ -134,10 +133,7 @@ function createMenuItem(
   setOpen: Dispatch<SetStateAction<boolean>>,
   t: TranslateDelegate
 ): ReactElement {
-  const uniqueId = useProperty(command, () => command.uniqueId);
-  const isEnabled = useProperty(command, () => command.isEnabled);
-  const isChecked = useProperty(command, () => command.isChecked);
-
+  const { uniqueId, isEnabled, isChecked } = useCommonCommandProps(command);
   return (
     <Menu.ItemToggled
       key={uniqueId}

@@ -5,6 +5,7 @@ import styled from 'styled-components';
 import { Infobox } from '@cognite/cogs.js';
 import { useProperty } from './useProperty';
 import { useCommand } from './useCommand';
+import { useCommonCommandProps } from './useCommonCommandProps';
 
 export const BannerComponent = ({
   command: inputCommand,
@@ -14,7 +15,7 @@ export const BannerComponent = ({
   t: TranslateDelegate;
 }): ReactNode => {
   const command = useCommand(inputCommand);
-  const isVisible = useProperty(command, () => command.isVisible);
+  const { isVisible } = useCommonCommandProps(command);
   const content = useProperty(command, () => command.content);
   const status = useProperty(command, () => command.status);
   if (!isVisible) {

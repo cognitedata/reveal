@@ -2,14 +2,20 @@
  * Copyright 2024 Cognite AS
  */
 
-import { type ReactNode, useState, type ReactElement } from 'react';
+import { type ReactNode, useMemo, useState, type ReactElement } from 'react';
 
 import { Button, Tooltip as CogsTooltip, Flex, Slider, Switch, TextLabel } from '@cognite/cogs.js';
 
 import { Dropdown, Menu } from '@cognite/cogs-lab';
 import { useTranslation } from '../i18n/I18n';
 import { type BaseCommand } from '../../architecture/base/commands/BaseCommand';
-import { getButtonType, getFlexDirection, getTooltipPlacement } from './utilities';
+import { useRenderTarget } from '../RevealCanvas/ViewerContext';
+import {
+  getButtonType,
+  getDefaultCommand,
+  getFlexDirection,
+  getTooltipPlacement
+} from './utilities';
 import { LabelWithShortcut } from './LabelWithShortcut';
 import { type TranslateDelegate } from '../../architecture/base/utilities/TranslateInput';
 import styled from 'styled-components';
@@ -20,17 +26,17 @@ import { BaseSliderCommand } from '../../architecture/base/commands/BaseSliderCo
 import { BaseFilterCommand } from '../../architecture/base/commands/BaseFilterCommand';
 import { FilterButton } from './FilterButton';
 import { DEFAULT_PADDING, TOOLTIP_DELAY } from './constants';
+import { type IconName } from '../../architecture/base/utilities/IconName';
 import { IconComponent } from './Factories/IconFactory';
 
 import { TOOLBAR_HORIZONTAL_PANEL_OFFSET } from '../constants';
 
 import { DividerCommand } from '../../architecture/base/commands/DividerCommand';
 import { SectionCommand } from '../../architecture/base/commands/SectionCommand';
+import { useOnUpdate } from './useOnUpdate';
 import { type FlexDirection, type PlacementType } from './types';
 import { BaseBannerCommand } from '../../architecture';
 import { BannerComponent } from './BannerComponent';
-import { useProperty } from './useProperty';
-import { useCommand } from './useCommand';
 
 export const SettingsButton = ({
   inputCommand,
@@ -39,12 +45,25 @@ export const SettingsButton = ({
   inputCommand: BaseSettingsCommand;
   placement: PlacementType;
 }): ReactElement => {
+  const renderTarget = useRenderTarget();
   const { t } = useTranslation();
-  const command = useCommand(inputCommand);
-  const icon = useProperty(command, () => command.icon);
-  const isEnabled = useProperty(command, () => command.isEnabled);
-  const isVisible = useProperty(command, () => command.isVisible);
+  const command = useMemo<BaseSettingsCommand>(
+    () => getDefaultCommand<BaseSettingsCommand>(inputCommand, renderTarget),
+    []
+  );
+
+  // @update-ui-component-pattern
   const [isOpen, setOpen] = useState(false);
+  const [isEnabled, setEnabled] = useState(true);
+  const [isVisible, setVisible] = useState(true);
+  const [icon, setIcon] = useState<IconName>(undefined);
+
+  useOnUpdate(command, () => {
+    setEnabled(command.isEnabled);
+    setVisible(command.isVisible);
+    setIcon(command.icon);
+  });
+  // @end
 
   if (!isVisible || !command.hasChildren) {
     return <></>;
@@ -114,7 +133,14 @@ function createMenuItem(command: BaseCommand, t: TranslateDelegate): ReactNode {
 }
 
 function DividerComponent({ command }: { command: BaseCommand }): ReactNode {
-  const isVisible = useProperty(command, () => command.isVisible);
+  // @update-ui-component-pattern
+  const [isVisible, setVisible] = useState(true);
+
+  useOnUpdate(command, () => {
+    setVisible(command.isVisible);
+  });
+  // @end
+
   if (!isVisible) {
     return null;
   }
@@ -128,7 +154,14 @@ function SectionComponent({
   command: BaseCommand;
   t: TranslateDelegate;
 }): ReactNode {
-  const isVisible = useProperty(command, () => command.isVisible);
+  // @update-ui-component-pattern
+  const [isVisible, setVisible] = useState(true);
+
+  useOnUpdate(command, () => {
+    setVisible(command.isVisible);
+  });
+  // @end
+
   if (!isVisible) {
     return null;
   }
@@ -143,9 +176,17 @@ function ToggleComponent({
   command: BaseCommand;
   t: TranslateDelegate;
 }): ReactNode {
-  const isChecked = useProperty(command, () => command.isChecked);
-  const isEnabled = useProperty(command, () => command.isEnabled);
-  const isVisible = useProperty(command, () => command.isVisible);
+  // @update-ui-component-pattern
+  const [isChecked, setChecked] = useState(false);
+  const [isEnabled, setEnabled] = useState(true);
+  const [isVisible, setVisible] = useState(true);
+
+  useOnUpdate(command, () => {
+    setChecked(command.isChecked);
+    setEnabled(command.isEnabled);
+    setVisible(command.isVisible);
+  });
+  // @end
 
   if (!isVisible) {
     return null;
@@ -172,9 +213,17 @@ function ButtonComponent({
   command: BaseCommand;
   t: TranslateDelegate;
 }): ReactNode {
-  const icon = useProperty(command, () => command.icon);
-  const isEnabled = useProperty(command, () => command.isEnabled);
-  const isVisible = useProperty(command, () => command.isVisible);
+  // @update-ui-component-pattern
+  const [isEnabled, setEnabled] = useState(true);
+  const [isVisible, setVisible] = useState(true);
+  const [icon, setIcon] = useState<IconName>(undefined);
+
+  useOnUpdate(command, () => {
+    setEnabled(command.isEnabled);
+    setVisible(command.isVisible);
+    setIcon(command.icon);
+  });
+  // @end
 
   if (!isVisible) {
     return null;
@@ -202,9 +251,19 @@ function SliderComponent({
   command: BaseSliderCommand;
   t: TranslateDelegate;
 }): ReactNode {
-  const value = useProperty(command, () => command.value);
-  const isEnabled = useProperty(command, () => command.isEnabled);
-  const isVisible = useProperty(command, () => command.isVisible);
+  // @update-ui-component-pattern
+  const [isEnabled, setEnabled] = useState(true);
+  const [isVisible, setVisible] = useState(true);
+  const [value, setValue] = useState(command.value);
+
+  useOnUpdate(command, () => {
+    setEnabled(command.isEnabled);
+    setVisible(command.isVisible);
+    if (command instanceof BaseSliderCommand) {
+      setValue(command.value);
+    }
+  });
+  // @end
 
   if (!isVisible) {
     return null;
@@ -222,7 +281,7 @@ function SliderComponent({
         marks={command.marks}
         onChange={(value: number) => {
           command.value = value;
-          command.update();
+          setValue(value);
         }}
         value={value}
       />
@@ -231,16 +290,32 @@ function SliderComponent({
 }
 
 function DropdownButtonComponent({ command }: { command: BaseOptionCommand }): ReactNode {
-  const isVisible = useProperty(command, () => command.isVisible);
+  // @update-ui-component-pattern
+  const [isVisible, setVisible] = useState(true);
+
+  useOnUpdate(command, () => {
+    setVisible(command.isVisible);
+  });
+  // @end
+
   if (!isVisible) {
     return null;
   }
+
   return <DropdownButton inputCommand={command} placement={'bottom'} usedInSettings={true} />;
 }
 
 function FilterButtonComponent({ command }: { command: BaseFilterCommand }): ReactNode {
   command.initializeChildrenIfNeeded();
-  const isVisible = useProperty(command, () => command.isVisible);
+
+  // @update-ui-component-pattern
+  const [isVisible, setVisible] = useState(true);
+
+  useOnUpdate(command, () => {
+    setVisible(command.isVisible);
+  });
+  // @end
+
   if (!isVisible) {
     return null;
   }

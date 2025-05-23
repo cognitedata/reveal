@@ -10,5 +10,8 @@ export const useGhostMode = (): boolean => {
   // Hook to be used in Fusion only
   const renderTarget = useRenderTarget();
   const command = renderTarget.commandsController.getCommandByTypeRecursive(SetGhostModeCommand);
-  return useProperty(command, () => command !== undefined && command.isChecked);
+  if (command === undefined) {
+    return false;
+  }
+  return useProperty(command, () => command.isChecked);
 };

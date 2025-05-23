@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { type BaseCommand } from '../../architecture/base/commands/BaseCommand';
 
-export function useProperty<T>(command: BaseCommand | undefined, getValue: () => T): T {
+export function useProperty<T>(command: BaseCommand, getValue: () => T): T {
   const [value, setValue] = useState<T>(getValue);
 
   const memoizedUpdate = useCallback(() => {
@@ -9,9 +9,6 @@ export function useProperty<T>(command: BaseCommand | undefined, getValue: () =>
   }, [command]);
 
   useEffect(() => {
-    if (command === undefined) {
-      return;
-    }
     memoizedUpdate();
     command.addEventListener(memoizedUpdate);
     return () => {
