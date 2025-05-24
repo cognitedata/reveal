@@ -34,6 +34,7 @@ export abstract class BaseCommand {
   // ==================================================
 
   private readonly _listeners: CommandUpdateDelegate[] = [];
+  private readonly _disposables: Array<() => void> = [];
 
   // Unique id for the command, used by in React to force rerender
   // when the command changes for a button.
@@ -153,6 +154,9 @@ export abstract class BaseCommand {
     for (const child of this.getChildren()) {
       child.dispose();
     }
+    for (const disposable of this._disposables) {
+      disposable();
+    }
     this.removeEventListeners();
   }
 
@@ -184,6 +188,10 @@ export abstract class BaseCommand {
   // ==================================================
   // INSTANCE METHODS: Others (Not to be overridden)
   // ==================================================
+
+  protected addDisposable(disposable: () => void): void {
+    this._disposables.push(disposable);
+  }
 
   public getLabel(translate: TranslateDelegate): string {
     return translate(this.tooltip ?? { untranslated: '' });
