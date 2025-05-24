@@ -64,12 +64,19 @@ export abstract class BaseFilterCommand extends RenderTargetCommand {
     if (this._children === undefined || this._children.length === 0) {
       return false;
     }
-    for (const child of this._children) {
-      if (!child.isChecked) {
-        return false;
-      }
+    return this._children.every((child) => child.isChecked);
+  }
+
+  /**
+   * Checks if some the children of the current instance are checked.
+   * Override this method to optimize the logic.
+   * @returns A boolean value indicating whether some the children are checked.
+   */
+  public get isSomeChecked(): boolean {
+    if (this._children === undefined || this._children.length === 0) {
+      return false;
     }
-    return true;
+    return this._children.some((child) => child.isChecked);
   }
 
   /**

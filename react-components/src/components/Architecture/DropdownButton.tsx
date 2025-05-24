@@ -4,20 +4,20 @@
 
 import { Button, Tooltip as CogsTooltip, ChevronDownIcon, ChevronUpIcon } from '@cognite/cogs.js';
 import { Menu, Option, Select } from '@cognite/cogs-lab';
-import { useMemo, useState, type ReactElement, type SetStateAction, type Dispatch } from 'react';
+import { useState, type ReactElement, type SetStateAction, type Dispatch } from 'react';
 
 import { useTranslation } from '../i18n/I18n';
 import { type BaseCommand } from '../../architecture/base/commands/BaseCommand';
-import { useRenderTarget } from '../RevealCanvas/ViewerContext';
 import { type BaseOptionCommand } from '../../architecture/base/commands/BaseOptionCommand';
-import { getButtonType, getDefaultCommand, getTooltipPlacement } from './utilities';
+import { getButtonType, getTooltipPlacement } from './utilities';
 import { LabelWithShortcut } from './LabelWithShortcut';
 import { type TranslateDelegate } from '../../architecture/base/utilities/TranslateInput';
 import { DEFAULT_PADDING, TOOLTIP_DELAY } from './constants';
 
 import styled from 'styled-components';
-import { useOnUpdate } from './useOnUpdate';
 import { type PlacementType } from './types';
+import { useCommand } from './useCommand';
+import { useCommonCommandProps } from './useCommonCommandProps';
 
 export const DropdownButton = ({
   inputCommand,
@@ -28,20 +28,8 @@ export const DropdownButton = ({
   placement: PlacementType;
   usedInSettings?: boolean;
 }): ReactElement => {
-  const renderTarget = useRenderTarget();
-  const command = useMemo<BaseOptionCommand>(
-    () => getDefaultCommand<BaseOptionCommand>(inputCommand, renderTarget),
-    []
-  );
-
-  // @update-ui-component-pattern
-  const [isVisible, setVisible] = useState(true);
-
-  useOnUpdate(command, () => {
-    setVisible(command.isVisible);
-  });
-  // @end
-
+  const command = useCommand(inputCommand);
+  const { isVisible } = useCommonCommandProps(command);
   if (!isVisible) {
     return <></>;
   }
@@ -61,16 +49,8 @@ const DropdownElement = ({
 }): ReactElement => {
   const { t } = useTranslation();
 
-  // @update-ui-component-pattern
+  const { uniqueId, isEnabled } = useCommonCommandProps(command);
   const [isOpen, setOpen] = useState(false);
-  const [isEnabled, setEnabled] = useState(true);
-  const [uniqueId, setUniqueId] = useState(0);
-
-  useOnUpdate(command, () => {
-    setEnabled(command.isEnabled);
-    setUniqueId(command.uniqueId);
-  });
-  // @end
 
   if (command.children === undefined) {
     return <></>;
@@ -153,18 +133,7 @@ function createMenuItem(
   setOpen: Dispatch<SetStateAction<boolean>>,
   t: TranslateDelegate
 ): ReactElement {
-  // @update-ui-component-pattern
-  const [isEnabled, setEnabled] = useState(true);
-  const [isChecked, setChecked] = useState(true);
-  const [uniqueId, setUniqueId] = useState(0);
-
-  useOnUpdate(command, () => {
-    setEnabled(command.isEnabled);
-    setChecked(command.isChecked);
-    setUniqueId(command.uniqueId);
-  });
-  // @end
-
+  const { uniqueId, isEnabled, isChecked } = useCommonCommandProps(command);
   return (
     <Menu.ItemToggled
       key={uniqueId}

@@ -2,24 +2,16 @@
  * Copyright 2024 Cognite AS
  */
 
-import { useState } from 'react';
 import { useRenderTarget } from '../components/RevealCanvas';
-import { useOnUpdate } from '../components/Architecture/useOnUpdate';
 import { SetGhostModeCommand } from '../architecture/base/concreteCommands/cad/SetGhostModeCommand';
+import { useProperty } from '../components/Architecture/useProperty';
 
 export const useGhostMode = (): boolean => {
   // Hook to be used in Fusion only
-  const [isChecked, setChecked] = useState(false);
-
   const renderTarget = useRenderTarget();
   const command = renderTarget.commandsController.getCommandByTypeRecursive(SetGhostModeCommand);
-  useOnUpdate(command, () => {
-    if (command !== undefined) {
-      setChecked(command.isChecked);
-    }
-  });
   if (command === undefined) {
     return false;
   }
-  return isChecked;
+  return useProperty(command, () => command.isChecked);
 };
