@@ -43,7 +43,7 @@ export class MockFilterCommand extends BaseFilterCommand {
 class FilterItemCommand extends BaseFilterItemCommand {
   private readonly _name: string;
   private readonly _color?: Color;
-  private _use = true;
+  private _checked = true;
 
   // ==================================================
   // CONSTRUCTOR
@@ -64,7 +64,7 @@ class FilterItemCommand extends BaseFilterItemCommand {
   }
 
   public override get isChecked(): boolean {
-    return this._use;
+    return this._checked;
   }
 
   public override get color(): Color | undefined {
@@ -72,10 +72,10 @@ class FilterItemCommand extends BaseFilterItemCommand {
   }
 
   protected override setCheckedCore(value: boolean): boolean {
-    if (this._use === value) {
+    if (this._checked === value) {
       return false;
     }
-    this._use = value;
+    this._checked = value;
     return true;
   }
 }
