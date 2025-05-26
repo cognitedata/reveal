@@ -3,11 +3,11 @@
  */
 
 import { RenderTargetCommand } from './RenderTargetCommand';
-import { type TranslateDelegate } from '../utilities/TranslateInput';
 import { type Color } from 'three';
 import { type BaseCommand } from './BaseCommand';
 import { CommandsUpdater } from '../reactUpdaters/CommandsUpdater';
 import { type IconName } from '../utilities/IconName';
+import { translate } from '../utilities/translateUtils';
 
 export abstract class BaseFilterCommand extends RenderTargetCommand {
   // ==================================================
@@ -93,22 +93,22 @@ export abstract class BaseFilterCommand extends RenderTargetCommand {
   // INSTANCE METHODS
   // ==================================================
 
-  public getSelectedLabel(translate: TranslateDelegate): string {
+  public getSelectedLabel(): string {
     if (this._children === undefined) {
-      return BaseFilterCommand.getNoneString(translate);
+      return BaseFilterCommand.getNoneString();
     }
     const selected = this._children.filter((child) => child.isChecked);
     const counter = selected.length;
     if (counter === 0) {
-      return BaseFilterCommand.getNoneString(translate);
+      return BaseFilterCommand.getNoneString();
     }
     if (counter === this._children.length) {
-      return BaseFilterCommand.getAllString(translate);
+      return BaseFilterCommand.getAllString();
     }
     if (counter === 1) {
-      return selected[0].getLabel(translate);
+      return selected[0].getLabel();
     }
-    return counter.toString() + ' ' + BaseFilterCommand.getSelectedString(translate);
+    return counter.toString() + ' ' + BaseFilterCommand.getSelectedString();
   }
 
   public toggleAllChecked(): void {
@@ -121,15 +121,15 @@ export abstract class BaseFilterCommand extends RenderTargetCommand {
   // STATIC METHODS
   // ==================================================
 
-  public static getAllString(translate: TranslateDelegate): string {
+  public static getAllString(): string {
     return translate({ key: 'ALL' });
   }
 
-  private static getNoneString(translate: TranslateDelegate): string {
+  private static getNoneString(): string {
     return translate({ key: 'NONE' });
   }
 
-  private static getSelectedString(translate: TranslateDelegate): string {
+  private static getSelectedString(): string {
     return translate({ key: 'SELECTED' });
   }
 }

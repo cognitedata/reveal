@@ -2,7 +2,6 @@ import { describe, expect, test, vi } from 'vitest';
 import { MockCommand } from '#test-utils/architecture/mock-commands/MockCommand';
 import { BaseCommand } from './BaseCommand';
 import { isUntranslatedString } from '../utilities/TranslateInput';
-import { translate } from '../utilities/translateUtils';
 
 describe(BaseCommand.name, () => {
   test('should have the following default implementation', async () => {
@@ -17,7 +16,7 @@ describe(BaseCommand.name, () => {
     expect(command.isChecked).toBe(false);
     expect(command.hasData).toBe(false);
     expect(count(command.getDescendants())).toBe(0);
-    expect(command.getLabel(translate)).toBe('');
+    expect(command.getLabel()).toBe('');
     expect(command.invoke()).toBe(false);
     expect(command.getShortCutKeys()).toBeUndefined();
   });
@@ -48,7 +47,7 @@ describe(BaseCommand.name, () => {
   test('should generate correct tooltip and keys', async () => {
     const command = new MockCommand();
     if (isUntranslatedString(command.tooltip)) {
-      const label = command.getLabel(translate);
+      const label = command.getLabel();
       expect(label).toBe(command.tooltip.untranslated);
       expect(command.name).toBe(command.tooltip.untranslated);
     }

@@ -18,7 +18,6 @@ import {
   Flex
 } from '@cognite/cogs.js';
 import { Menu, SelectPanel } from '@cognite/cogs-lab';
-import { useTranslation } from '../i18n/I18n';
 import { useRenderTarget } from '../RevealCanvas/ViewerContext';
 import { getButtonType, getDefaultCommand, getTooltipPlacement } from './utilities';
 import { LabelWithShortcut } from './LabelWithShortcut';
@@ -60,8 +59,7 @@ export const FilterButton = ({
   const [isSomeChecked, setSomeChecked] = useState(false);
   const [selectedLabel, setSelectedLabel] = useState('');
 
-  const { t } = useTranslation();
-  const label = command.getLabel(t);
+  const label = command.getLabel();
 
   useOnUpdate(command, () => {
     setEnabled(command.isEnabled);
@@ -70,7 +68,7 @@ export const FilterButton = ({
     if (command instanceof BaseFilterCommand) {
       setAllChecked(command.isAllChecked);
       setSomeChecked(command.children?.some((child) => child.isChecked) === true);
-      setSelectedLabel(command.getSelectedLabel(t));
+      setSelectedLabel(command.getSelectedLabel());
     }
   });
   // @end
@@ -129,8 +127,6 @@ const FilterMenu = ({
   iconName: IconName;
   PanelContent: ReactElement;
 }): ReactElement => {
-  const { t } = useTranslation();
-
   return (
     <Menu
       floatingProps={{ middleware: [offset(TOOLBAR_HORIZONTAL_PANEL_OFFSET)] }}
@@ -148,7 +144,7 @@ const FilterMenu = ({
             disabled={!isEnabled}
             toggled={isOpen}
             iconPlacement="left"
-            aria-label={command.getLabel(t)}
+            aria-label={command.getLabel()}
             {...props}
             onClick={(event: MouseEvent<HTMLElement>) => {
               event.stopPropagation();
@@ -216,8 +212,6 @@ const FilterSelectPanelContent = ({
   isAllChecked: boolean;
   isSomeChecked: boolean;
 }): ReactElement => {
-  const { t } = useTranslation();
-
   const children = command.children;
 
   return (
@@ -231,8 +225,8 @@ const FilterSelectPanelContent = ({
           onClick={() => {
             command.toggleAllChecked();
           }}
-          label={BaseFilterCommand.getAllString(t)}>
-          {BaseFilterCommand.getAllString(t)}
+          label={BaseFilterCommand.getAllString()}>
+          {BaseFilterCommand.getAllString()}
         </SelectPanel.Item>
       </SelectPanel.Section>
       <SelectPanel.Body style={{ maxHeight: '300px' }}>
