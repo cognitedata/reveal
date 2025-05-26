@@ -30,9 +30,9 @@ import { TOOLBAR_HORIZONTAL_PANEL_OFFSET } from '../constants';
 import { offset } from '@floating-ui/dom';
 import styled from 'styled-components';
 import { type PlacementType } from './types';
-import { useProperty } from './useProperty';
+import { useCommandProperty } from './useCommandProperty';
 import { useCommand } from './useCommand';
-import { useCommonCommandProps } from './useCommonCommandProps';
+import { useCommandProps } from './useCommandProps';
 
 export const FilterButton = ({
   inputCommand,
@@ -47,10 +47,10 @@ export const FilterButton = ({
   command.initializeChildrenIfNeeded();
   const { t } = useTranslation();
 
-  const { icon, isVisible, isEnabled } = useCommonCommandProps(command);
-  const isAllChecked = useProperty(command, () => command.isAllChecked);
-  const isSomeChecked = useProperty(command, () => command.isSomeChecked);
-  const selectedLabel = useProperty(command, () => command.getSelectedLabel(t));
+  const { icon, isVisible, isEnabled } = useCommandProps(command);
+  const isAllChecked = useCommandProperty(command, () => command.isAllChecked);
+  const isSomeChecked = useCommandProperty(command, () => command.isSomeChecked);
+  const selectedLabel = useCommandProperty(command, () => command.getSelectedLabel(t));
 
   const [isOpen, setOpen] = useState(false);
   const label = command.getLabel(t);

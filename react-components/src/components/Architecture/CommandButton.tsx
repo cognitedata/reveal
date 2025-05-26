@@ -13,7 +13,7 @@ import { IconComponent } from './Factories/IconFactory';
 import { type PlacementType } from './types';
 import { TOOLTIP_DELAY } from './constants';
 import { useCommand } from './useCommand';
-import { useCommonCommandProps } from './useCommonCommandProps';
+import { useCommandProps } from './useCommandProps';
 
 export const CommandButton = ({
   inputCommand,
@@ -26,7 +26,7 @@ export const CommandButton = ({
   const { t } = useTranslation();
   const command = useCommand(inputCommand);
 
-  const { icon, uniqueId, isVisible, isEnabled, isChecked } = useCommonCommandProps(command);
+  const { icon, uniqueId, isVisible, isEnabled, isChecked } = useCommandProps(command);
   if (!isVisible) {
     return <></>;
   }

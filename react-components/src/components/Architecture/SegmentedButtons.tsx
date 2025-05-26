@@ -13,9 +13,9 @@ import { LabelWithShortcut } from './LabelWithShortcut';
 import { IconComponent } from './Factories/IconFactory';
 import { type PlacementType } from './types';
 import { TOOLTIP_DELAY } from './constants';
-import { useProperty } from './useProperty';
+import { useCommandProperty } from './useCommandProperty';
 import { useCommand } from './useCommand';
-import { useCommonCommandProps } from './useCommonCommandProps';
+import { useCommandProps } from './useCommandProps';
 
 export const SegmentedButtons = ({
   inputCommand,
@@ -27,8 +27,8 @@ export const SegmentedButtons = ({
   const renderTarget = useRenderTarget();
   const { t } = useTranslation();
   const command = useCommand(inputCommand);
-  const selected = useProperty(command, () => getSelectedKey(command));
-  const { uniqueId, isVisible, isEnabled } = useCommonCommandProps(command);
+  const { uniqueId, isVisible, isEnabled } = useCommandProps(command);
+  const selected = useCommandProperty(command, () => getSelectedKey(command));
 
   if (!isVisible || command.children === undefined) {
     return <></>;

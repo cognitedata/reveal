@@ -4,7 +4,7 @@
 
 import { useRenderTarget } from '../components/RevealCanvas';
 import { SetGhostModeCommand } from '../architecture/base/concreteCommands/cad/SetGhostModeCommand';
-import { useProperty } from '../components/Architecture/useProperty';
+import { useCommandChecked } from '../components/Architecture/useCommandProps';
 
 export const useGhostMode = (): boolean => {
   // Hook to be used in Fusion only
@@ -13,5 +13,5 @@ export const useGhostMode = (): boolean => {
   if (command === undefined) {
     return false;
   }
-  return useProperty(command, () => command.isChecked);
+  return useCommandChecked(command);
 };

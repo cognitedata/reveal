@@ -8,12 +8,12 @@ import { useTranslation } from '../i18n/I18n';
 import styled from 'styled-components';
 import { type Color } from 'three';
 import { type BaseFilterItemCommand } from '../../architecture/base/commands/BaseFilterCommand';
-import { useCommonCommandProps } from './useCommonCommandProps';
+import { useCommandProps } from './useCommandProps';
 
 export const FilterItem = ({ command }: { command: BaseFilterItemCommand }): ReactElement => {
   const { t } = useTranslation();
 
-  const { uniqueId, isVisible, isEnabled, isChecked } = useCommonCommandProps(command);
+  const { uniqueId, isVisible, isEnabled, isChecked } = useCommandProps(command);
   if (!isVisible) {
     return <></>;
   }

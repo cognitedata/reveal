@@ -3,9 +3,9 @@ import { type BaseBannerCommand } from '../../architecture/base/commands/BaseBan
 import { type ReactNode } from 'react';
 import styled from 'styled-components';
 import { Infobox } from '@cognite/cogs.js';
-import { useProperty } from './useProperty';
+import { useCommandProperty } from './useCommandProperty';
 import { useCommand } from './useCommand';
-import { useCommonCommandProps } from './useCommonCommandProps';
+import { useCommandVisible } from './useCommandProps';
 
 export const BannerComponent = ({
   command: inputCommand,
@@ -15,9 +15,9 @@ export const BannerComponent = ({
   t: TranslateDelegate;
 }): ReactNode => {
   const command = useCommand(inputCommand);
-  const { isVisible } = useCommonCommandProps(command);
-  const content = useProperty(command, () => command.content);
-  const status = useProperty(command, () => command.status);
+  const isVisible = useCommandVisible(command);
+  const content = useCommandProperty(command, () => command.content);
+  const status = useCommandProperty(command, () => command.status);
   if (!isVisible) {
     return null;
   }
