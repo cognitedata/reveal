@@ -17,4 +17,5 @@ export type AnnotationIdentifier = LegacyIdentifier | FdmIdentifier;
 
 export type AssetIdentifier = LegacyIdentifier | FdmIdentifier;
 
-export type AnnotationStatus = 'suggested' | 'saved' | 'pending' | 'deleted';
+export const ANNOTATION_STATUSES = ['pending', 'saved', 'suggested', 'deleted'] as const;
+export type AnnotationStatus = (typeof ANNOTATION_STATUSES)[number];

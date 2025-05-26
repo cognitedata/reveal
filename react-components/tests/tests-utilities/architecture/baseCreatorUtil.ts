@@ -21,5 +21,10 @@ export function click(
     startPoint.applyMatrix4(CDF_TO_VIEWER_TRANSFORMATION);
   }
   creator.addPoint(ray, startPoint);
+  if (!creator.isFinished) {
+    // This just add a pending point which mimics the mouse hover.
+    // The last point is not added to the points array
+    creator.addPoint(ray, startPoint, true);
+  }
   expect(creator.isFinished).toBe(isFinished);
 }
