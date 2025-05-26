@@ -31,7 +31,7 @@ describe(DropdownButton.name + ' (not used in settings)', () => {
   });
 
   test('should render with correct default value and no dropdown', async () => {
-    const label = testCommand.getLabel();
+    const label = testCommand.label;
     const button = screen.getByLabelText(label);
 
     // Check that the selected value is updated by the default value
@@ -46,7 +46,7 @@ describe(DropdownButton.name + ' (not used in settings)', () => {
   });
 
   test('should click and open dropdown menu', async () => {
-    const label = testCommand.getLabel();
+    const label = testCommand.label;
     fireEvent.click(screen.getByLabelText(label));
 
     // Check that the menu is open and selected is checked
@@ -59,7 +59,7 @@ describe(DropdownButton.name + ' (not used in settings)', () => {
   });
 
   test('should select by dropdown menu and close', async () => {
-    const label = testCommand.getLabel();
+    const label = testCommand.label;
     fireEvent.click(screen.getByLabelText(label));
 
     const menuItemsBeforeClick = await screen.findAllByRole('menuitem');

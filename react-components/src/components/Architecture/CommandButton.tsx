@@ -43,7 +43,7 @@ export const CommandButton = ({
   if (!isVisible) {
     return <></>;
   }
-  const label = command.getLabel();
+  const label = command.label;
 
   return (
     <CogsTooltip

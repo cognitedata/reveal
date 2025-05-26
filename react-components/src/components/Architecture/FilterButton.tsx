@@ -59,7 +59,7 @@ export const FilterButton = ({
   const [isSomeChecked, setSomeChecked] = useState(false);
   const [selectedLabel, setSelectedLabel] = useState('');
 
-  const label = command.getLabel();
+  const label = command.label;
 
   useOnUpdate(command, () => {
     setEnabled(command.isEnabled);
@@ -144,7 +144,7 @@ const FilterMenu = ({
             disabled={!isEnabled}
             toggled={isOpen}
             iconPlacement="left"
-            aria-label={command.getLabel()}
+            aria-label={command.label}
             {...props}
             onClick={(event: MouseEvent<HTMLElement>) => {
               event.stopPropagation();

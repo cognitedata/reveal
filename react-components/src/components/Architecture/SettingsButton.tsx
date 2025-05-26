@@ -65,7 +65,7 @@ export const SettingsButton = ({
   if (!isVisible || !command.hasChildren) {
     return <></>;
   }
-  const label = command.getLabel();
+  const label = command.label;
   const flexDirection = getFlexDirection(placement);
   const isTooltipDisabled = isOpen || label === undefined;
 
@@ -156,7 +156,7 @@ function SectionComponent({ command }: { command: BaseCommand }): ReactNode {
   if (!isVisible) {
     return null;
   }
-  const label = command.getLabel();
+  const label = command.label;
   return <StyledSectionHeader>{label} </StyledSectionHeader>;
 }
 
@@ -177,7 +177,7 @@ function ToggleComponent({ command }: { command: BaseCommand }): ReactNode {
     return null;
   }
 
-  const label = command.getLabel();
+  const label = command.label;
   return (
     <StyledToggleContainer
       onClick={() => {
@@ -207,7 +207,7 @@ function ButtonComponent({ command }: { command: BaseCommand }): ReactNode {
   if (!isVisible) {
     return null;
   }
-  const label = command.getLabel();
+  const label = command.label;
 
   return (
     <Menu.ItemAction
@@ -241,7 +241,7 @@ function SliderComponent({ command }: { command: BaseSliderCommand }): ReactNode
   if (!isVisible) {
     return null;
   }
-  const label = command.getLabel() + ': ' + command.getValueLabel();
+  const label = command.label + ': ' + command.getValueLabel();
 
   return (
     <SliderDiv>

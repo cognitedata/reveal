@@ -101,7 +101,7 @@ describe(SettingsButton.name, () => {
 
   test('renders filter button with label in panel', async () => {
     const filterCommand = new TestFilterCommand();
-    const label = filterCommand.getLabel();
+    const label = filterCommand.label;
 
     settingsCommand.add(filterCommand);
 
@@ -120,7 +120,7 @@ describe(SettingsButton.name, () => {
 
   test('renders options button with label in panel', async () => {
     const optionsCommand = new TestOptionsCommand();
-    const label = optionsCommand.getLabel();
+    const label = optionsCommand.label;
 
     settingsCommand.add(optionsCommand);
 

@@ -22,7 +22,7 @@ describe(CommandButton.name, () => {
 
     // Check button
     const button = await screen.findByRole('button');
-    const label = command.getLabel();
+    const label = command.label;
     expect(button.getAttribute('aria-disabled')).toBe('false');
     expect(button.getAttribute('aria-label')).toBe(label);
     expect(button.getAttribute('type')).toBe('button');

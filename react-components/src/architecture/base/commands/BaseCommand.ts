@@ -182,7 +182,7 @@ export abstract class BaseCommand {
   // INSTANCE METHODS: Others (Not to be overridden)
   // ==================================================
 
-  public getLabel(): string {
+  public get label(): string {
     return this.tooltip !== undefined ? translate(this.tooltip) : '';
   }
 

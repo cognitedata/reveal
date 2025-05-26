@@ -41,7 +41,7 @@ export const FilterItem = ({ command }: { command: BaseFilterItemCommand }): Rea
       onClick={() => {
         command.invoke();
       }}
-      label={command.getLabel()}
+      label={command.label}
     />
   );
 };

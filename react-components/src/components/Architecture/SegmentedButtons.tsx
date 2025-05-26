@@ -46,7 +46,7 @@ export const SegmentedButtons = ({
   if (!isVisible || command.children === undefined) {
     return <></>;
   }
-  const label = command.getLabel();
+  const label = command.label;
 
   return (
     <CogsTooltip
@@ -75,7 +75,7 @@ export const SegmentedButtons = ({
           <SegmentedControl.Button
             key={getKey(child)}
             icon={<IconComponent iconName={child.icon} />}>
-            {child.getLabel()}
+            {child.label}
           </SegmentedControl.Button>
         ))}
       </SegmentedControl>

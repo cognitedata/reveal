@@ -106,7 +106,7 @@ export abstract class BaseFilterCommand extends RenderTargetCommand {
       return BaseFilterCommand.getAllString();
     }
     if (counter === 1) {
-      return selected[0].getLabel();
+      return selected[0].label;
     }
     return counter.toString() + ' ' + BaseFilterCommand.getSelectedString();
   }

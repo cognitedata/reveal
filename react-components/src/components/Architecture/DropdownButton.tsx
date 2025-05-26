@@ -72,8 +72,8 @@ const DropdownElement = ({
     return <></>;
   }
 
-  const label = command.getLabel();
-  const selectedLabel = command.selectedChild?.getLabel();
+  const label = command.label;
+  const selectedLabel = command.selectedChild?.label;
   const isDisabled = label === undefined || isOpen;
   const OpenButtonIcon = isOpen ? ChevronUpIcon : ChevronDownIcon;
   return (
@@ -99,7 +99,7 @@ const DropdownElement = ({
             key={uniqueId}
             disabled={!isEnabled}
             iconPlacement="left"
-            aria-label={command.getLabel()}
+            aria-label={command.label}
             toggled={isOpen}
             {...props}
             onClick={(event) => {
@@ -117,7 +117,7 @@ const DropdownElement = ({
 };
 
 const MenuItemWithDropdown = ({ command }: { command: BaseOptionCommand }): ReactElement => {
-  const label = command.getLabel();
+  const label = command.label;
 
   if (command.children === undefined) {
     return <></>;
@@ -128,13 +128,13 @@ const MenuItemWithDropdown = ({ command }: { command: BaseOptionCommand }): Reac
       <StyledSelect
         defaultValue={command.selectedChild}
         fullWidth
-        aria-label={command.getLabel()}
+        aria-label={command.label}
         onChange={(_event, value) => {
           value?.invoke();
         }}>
         {command.children.map((child) => (
           <Option value={child} key={child.uniqueId}>
-            {child.getLabel()}
+            {child.label}
           </Option>
         ))}
       </StyledSelect>
@@ -163,7 +163,7 @@ function createMenuItem(
       key={uniqueId}
       disabled={!isEnabled}
       toggled={isChecked}
-      label={command.getLabel()}
+      label={command.label}
       onClick={() => {
         command.invoke();
         setOpen(false);
