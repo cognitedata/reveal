@@ -60,6 +60,10 @@ export class Image360AnnotationDomainObject extends LineDomainObject {
     }
   }
 
+  public override get canChangeColor(): boolean {
+    return false;
+  }
+
   public override get typeName(): TranslationInput {
     return { untranslated: '360 image annotation' };
   }
