@@ -34,6 +34,7 @@ import { type ExternalId } from '../../src/data-providers/FdmSDK';
 import { Image360AnnotationSelectTool } from '../../src/architecture/concrete/annotation360/Image360AnnotationSelectTool';
 import { Image360AnnotationCreateTool } from '../../src/architecture/concrete/annotation360/Image360AnnotationCreateTool';
 import { ShowTreeViewCommand } from '../../src/architecture/base/concreteCommands/ShowTreeViewCommand';
+import { CategoryFilterCommand } from '../../src/architecture/base/concreteCommands/CategoryFilterCommand';
 
 export class StoryBookConfig extends BaseRevealConfig {
   // ==================================================
@@ -46,6 +47,7 @@ export class StoryBookConfig extends BaseRevealConfig {
 
   public override createTopToolbar(): Array<BaseCommand | undefined> {
     return [
+      new CategoryFilterCommand(),
       new SetOrbitOrFirstPersonModeCommand(),
       new FitViewCommand(),
       new SetAxisVisibleCommand(),
