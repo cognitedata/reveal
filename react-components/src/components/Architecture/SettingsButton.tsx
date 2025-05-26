@@ -106,7 +106,6 @@ function createMenuItem(command: BaseCommand, t: TranslateDelegate): ReactNode {
   if (command instanceof BaseBannerCommand) {
     return <BannerComponent key={command.uniqueId} command={command} t={t} />;
   }
-
   return <ButtonComponent key={command.uniqueId} command={command} t={t} />;
 }
 
