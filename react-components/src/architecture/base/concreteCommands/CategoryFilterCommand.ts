@@ -6,6 +6,7 @@ import { type TranslationKey, type TranslationInput } from '../utilities/Transla
 import { BaseOptionCommand, OptionType } from '../commands/BaseOptionCommand';
 import { BaseCommand } from '../commands/BaseCommand';
 import { type IconName } from '../utilities/IconName';
+import { effect, type Signal, signal } from '@cognite/signals';
 
 export enum CategoryType {
   All = 'all',
@@ -15,18 +16,10 @@ export enum CategoryType {
 }
 
 export class CategoryFilterCommand extends BaseOptionCommand {
-  private _category: CategoryType = CategoryType.All;
+  private readonly _category = signal(CategoryType.All);
 
-  public get category(): CategoryType {
+  public get category(): Signal<CategoryType> {
     return this._category;
-  }
-
-  public set category(value: CategoryType) {
-    if (this._category === value) {
-      return; // No change
-    }
-    this._category = value;
-    this.update();
   }
 
   // ==================================================
@@ -39,14 +32,15 @@ export class CategoryFilterCommand extends BaseOptionCommand {
     this.add(new CategoryCommand(this, CategoryType.PointCloud, 'PointCloud', 'POINT_CLOUDS'));
     this.add(new CategoryCommand(this, CategoryType.Cad, 'Cubes', 'CAD_MODELS'));
     this.add(new CategoryCommand(this, CategoryType.Image360, 'View360', 'IMAGES_360'));
+
+    effect(() => {
+      this.category();
+      this.update();
+    });
   }
 
-  // ==================================================
-  // OVERRIDES
-  // ==================================================
-
-  public override get tooltip(): TranslationInput {
-    return { untranslated: 'Filter' };
+  public override get hasData(): boolean {
+    return false; // Should not be reused
   }
 }
 
@@ -78,11 +72,11 @@ class CategoryCommand extends BaseCommand {
   }
 
   public override get isChecked(): boolean {
-    return this._parent.category === this._category;
+    return this._parent.category() === this._category;
   }
 
   public override invokeCore(): boolean {
-    this._parent.category = this._category;
+    this._parent.category(this._category);
     return true;
   }
 }
