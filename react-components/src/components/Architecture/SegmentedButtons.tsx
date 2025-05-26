@@ -15,7 +15,7 @@ import { type PlacementType } from './types';
 import { TOOLTIP_DELAY } from './constants';
 import { useCommandProperty } from './useCommandProperty';
 import { useCommand } from './useCommand';
-import { useCommandProps } from './useCommandProps';
+import { useCommandProps, useOptionCommandProps } from './useCommandProps';
 
 export const SegmentedButtons = ({
   inputCommand,
@@ -27,8 +27,8 @@ export const SegmentedButtons = ({
   const renderTarget = useRenderTarget();
   const { t } = useTranslation();
   const command = useCommand(inputCommand);
-  const { uniqueId, isVisible, isEnabled } = useCommandProps(command);
-  const selected = useCommandProperty(command, () => getSelectedKey(command));
+
+  const { isVisible, isEnabled, uniqueId } = useOptionCommandProps(command);
 
   if (!isVisible || command.children === undefined) {
     return <></>;
@@ -44,7 +44,7 @@ export const SegmentedButtons = ({
       <SegmentedControl
         key={uniqueId}
         disabled={!isEnabled}
-        currentKey={selected}
+        currentKey={getSelectedKey(command)}
         fullWidth
         onButtonClicked={(selectedKey: string) => {
           if (command.children === undefined) {

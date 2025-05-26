@@ -17,7 +17,7 @@ import { DEFAULT_PADDING, TOOLTIP_DELAY } from './constants';
 import styled from 'styled-components';
 import { type PlacementType } from './types';
 import { useCommand } from './useCommand';
-import { useCommandVisible, useCommandProps } from './useCommandProps';
+import { useCommandProps } from './useCommandProps';
 
 export const DropdownButton = ({
   inputCommand,
@@ -29,7 +29,7 @@ export const DropdownButton = ({
   usedInSettings?: boolean;
 }): ReactElement => {
   const command = useCommand(inputCommand);
-  const isVisible = useCommandVisible(command);
+  const { isVisible } = useCommandProps(command);
   if (!isVisible) {
     return <></>;
   }

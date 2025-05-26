@@ -29,7 +29,7 @@ import { SectionCommand } from '../../architecture/base/commands/SectionCommand'
 import { type FlexDirection, type PlacementType } from './types';
 import { BaseBannerCommand } from '../../architecture';
 import { BannerComponent } from './BannerComponent';
-import { useCommandVisible, useCommandProps, useSliderCommandValue } from './useCommandProps';
+import { useCommandProps, useSliderCommandValue } from './useCommandProps';
 import { useCommand } from './useCommand';
 
 export const SettingsButton = ({
@@ -110,7 +110,8 @@ function createMenuItem(command: BaseCommand, t: TranslateDelegate): ReactNode {
 }
 
 function DividerComponent({ command }: { command: BaseCommand }): ReactNode {
-  const isVisible = useCommandVisible(command);
+  const { isVisible } = useCommandProps(command);
+
   if (!isVisible) {
     return null;
   }
@@ -124,7 +125,7 @@ function SectionComponent({
   command: BaseCommand;
   t: TranslateDelegate;
 }): ReactNode {
-  const isVisible = useCommandVisible(command);
+  const { isVisible } = useCommandProps(command);
   if (!isVisible) {
     return null;
   }
@@ -218,7 +219,7 @@ function SliderComponent({
 }
 
 function DropdownButtonComponent({ command }: { command: BaseOptionCommand }): ReactNode {
-  const isVisible = useCommandVisible(command);
+  const { isVisible } = useCommandProps(command);
   if (!isVisible) {
     return null;
   }
@@ -227,7 +228,7 @@ function DropdownButtonComponent({ command }: { command: BaseOptionCommand }): R
 
 function FilterButtonComponent({ command }: { command: BaseFilterCommand }): ReactNode {
   command.initializeChildrenIfNeeded();
-  const isVisible = useCommandVisible(command);
+  const { isVisible } = useCommandProps(command);
   if (!isVisible) {
     return null;
   }
