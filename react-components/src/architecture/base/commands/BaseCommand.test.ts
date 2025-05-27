@@ -2,6 +2,7 @@ import { describe, expect, test, vi } from 'vitest';
 import { MockCommand } from '#test-utils/architecture/mock-commands/MockCommand';
 import { BaseCommand } from './BaseCommand';
 import { isUntranslatedString } from '../utilities/TranslateInput';
+import { count } from '../utilities/extensions/generatorUtils';
 
 describe(BaseCommand.name, () => {
   test('should have the following default implementation', async () => {
@@ -111,11 +112,3 @@ describe(BaseCommand.name, () => {
 });
 
 class DefaultCommand extends BaseCommand {}
-
-function count<T>(iterable: Generator<T>): number {
-  let count = 0;
-  for (const _item of iterable) {
-    count++;
-  }
-  return count;
-}
