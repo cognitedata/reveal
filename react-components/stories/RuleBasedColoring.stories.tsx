@@ -44,7 +44,7 @@ export const Main: Story = {
     return (
       <RevealStoryContext color={new Color(0x4a4a4a)}>
         <RevealCanvas>
-          {resourceIsLoaded && <RevealToolbar toolBarContent=<RuleBasedOutputsButton /> />}
+          {resourceIsLoaded && <RevealToolbar toolBarContent={<RuleBasedOutputsButton />} />}
         </RevealCanvas>
         <RevealResourcesFitCameraOnLoad onResourcesAdded={onLoaded} resources={resources} />
       </RevealStoryContext>
