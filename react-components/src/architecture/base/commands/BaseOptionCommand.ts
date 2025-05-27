@@ -76,6 +76,19 @@ export abstract class BaseOptionCommand extends RenderTargetCommand {
     return children.find((child) => child.isChecked);
   }
 
+  public get checkedCount(): number {
+    if (this.children === undefined) {
+      return 0;
+    }
+    let checkedCount = 0;
+    for (const child of this.children) {
+      if (child.isChecked) {
+        checkedCount++;
+      }
+    }
+    return checkedCount;
+  }
+
   protected add(child: BaseCommand): void {
     const children = this.children;
     if (children === undefined) {
