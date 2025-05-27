@@ -10,9 +10,10 @@ import { effect, type Signal, signal } from '@cognite/signals';
 
 export enum CategoryType {
   All = 'all',
-  PointCloud = 'pointClouds',
+  Scenes = 'scene',
   Cad = 'cad',
-  Image360 = 'image360'
+  Image360 = 'image360',
+  PointCloud = 'pointClouds'
 }
 
 export class CategoryFilterCommand extends BaseOptionCommand {
@@ -29,9 +30,10 @@ export class CategoryFilterCommand extends BaseOptionCommand {
   public constructor() {
     super(OptionType.Segmented);
     this.add(new CategoryCommand(this, CategoryType.All, undefined, 'ALL'));
-    this.add(new CategoryCommand(this, CategoryType.PointCloud, 'PointCloud', 'POINT_CLOUDS'));
-    this.add(new CategoryCommand(this, CategoryType.Cad, 'Cubes', 'CAD_MODELS'));
+    this.add(new CategoryCommand(this, CategoryType.Scenes, 'Cubes', 'SCENE'));
+    this.add(new CategoryCommand(this, CategoryType.Cad, 'Cube', 'CAD_MODELS'));
     this.add(new CategoryCommand(this, CategoryType.Image360, 'View360', 'IMAGES_360'));
+    this.add(new CategoryCommand(this, CategoryType.PointCloud, 'PointCloud', 'POINT_CLOUDS'));
 
     effect(() => {
       this.category();

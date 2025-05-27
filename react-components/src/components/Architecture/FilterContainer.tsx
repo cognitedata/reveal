@@ -11,6 +11,8 @@ import { effect } from '@cognite/signals';
 
 export const FilterContainer = (): ReactElement => {
   const command = useMemo(() => new CategoryFilterCommand(), []);
+  const button = createButton(command, 'right');
+
   effect(() => {
     command.category();
     confirm('Category has changed to: ' + command.category());
@@ -23,7 +25,7 @@ export const FilterContainer = (): ReactElement => {
         top: 100,
         padding: 10
       }}>
-      {createButton(command, 'right')}
+      {button}
     </Container>
   );
 };
