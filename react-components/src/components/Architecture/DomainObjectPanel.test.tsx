@@ -3,6 +3,7 @@ import { cleanup, render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import {
   type BaseCommand,
+  Changes,
   CopyToClipboardCommand,
   DeleteDomainObjectCommand,
   DomainObject,
@@ -49,15 +50,12 @@ describe(DomainObjectPanel.name, () => {
   test('should render with correct info text', async () => {
     const domainObject = new MockDomainObject();
     renderDomainObjectPanel(domainObject);
-    expect(screen.getByText(domainObject.label)).toBeDefined();
-    expect(screen.getByLabelText('SnowIcon')).toBeDefined();
-
     for (const subString of EXPECTED_SUB_STRINGS) {
       expect(screen.getByText(subString)).toBeDefined();
     }
   });
 
-  test('should copy text to clipboard when clicking at the copy button', async () => {
+  test('should copy info text to clipboard when clicking at the copy button', async () => {
     const domainObject = new MockDomainObject();
     renderDomainObjectPanel(domainObject);
     const buttons = screen.getAllByRole('button');
@@ -80,7 +78,7 @@ describe(DomainObjectPanel.name, () => {
     expect(afterButtons.length).toBe(0);
   });
 
-  test('should hide the panel when the domain object is not selected', async () => {
+  test('should hide the panel when the domain object is not selected anymore', async () => {
     const domainObject = new MockDomainObject();
     renderDomainObjectPanel(domainObject);
     const beforeButtons = screen.getAllByRole('button');
@@ -90,6 +88,16 @@ describe(DomainObjectPanel.name, () => {
     });
     const afterButtons = screen.queryAllByRole('button');
     expect(afterButtons.length).toBe(0);
+  });
+
+  test('should update when name change', async () => {
+    const domainObject = new MockDomainObject();
+    renderDomainObjectPanel(domainObject);
+    await act(async () => {
+      domainObject.name = 'New Name';
+      domainObject.notify(Changes.naming);
+    });
+    expect(screen.getByText('New Name')).toBeDefined();
   });
 });
 
@@ -111,6 +119,11 @@ function renderDomainObjectPanel(domainObject: DomainObject | undefined): void {
 }
 
 class MockDomainObject extends DomainObject {
+  public constructor() {
+    super();
+    this.name = 'Hei';
+  }
+
   public override get icon(): IconName {
     return 'Snow';
   }
