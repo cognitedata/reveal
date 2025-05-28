@@ -3,6 +3,7 @@ import {
   clear,
   containsTheSameSet,
   copy,
+  count,
   firstElement,
   insertAt,
   lastElement,
@@ -10,6 +11,7 @@ import {
   removeAt,
   swap
 } from './arrayExtensions';
+import { isOdd } from './mathExtensions';
 
 describe('ArrayExtensions', () => {
   describe('clear', () => {
@@ -119,6 +121,16 @@ describe('ArrayExtensions', () => {
 
     test('should ignore duplicated', () => {
       expect(containsTheSameSet([1, 1, 2, 3], [3, 3, 1, 2])).toBe(true);
+    });
+  });
+
+  describe('count', () => {
+    test('should count high numbers and find none', () => {
+      expect(count([1, 2, 3, 4, 5], (a) => a > 100)).toBe(0);
+    });
+
+    test('should count odd numbers', () => {
+      expect(count([1, 2, 3, 4, 5], isOdd)).toBe(3);
     });
   });
 });

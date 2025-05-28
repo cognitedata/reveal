@@ -3,6 +3,7 @@ import { SetFlexibleControlsTypeCommand } from './SetFlexibleControlsTypeCommand
 import { isEmpty } from '../utilities/TranslateInput';
 import { createFullRenderTargetMock } from '../../../../tests/tests-utilities/fixtures/createFullRenderTargetMock';
 import { FlexibleControlsType } from '@cognite/reveal';
+import { count } from '../utilities/extensions/arrayExtensions';
 
 describe(SetFlexibleControlsTypeCommand.name, () => {
   let commands: SetFlexibleControlsTypeCommand[];
@@ -67,12 +68,6 @@ describe(SetFlexibleControlsTypeCommand.name, () => {
   });
 
   function getCheckedCount(): number {
-    let checkedCount = 0;
-    for (const command of commands) {
-      if (command.isChecked) {
-        checkedCount++;
-      }
-    }
-    return checkedCount;
+    return count(commands, (command) => command.isChecked);
   }
 });
