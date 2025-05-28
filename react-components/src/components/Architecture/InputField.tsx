@@ -3,52 +3,32 @@
  */
 import { Comment } from '@cognite/cogs.js';
 import { type BaseInputCommand } from '../../architecture/base/commands/BaseInputCommand';
-import { type ReactNode, useMemo, useState } from 'react';
+import { type ReactNode } from 'react';
 import { useTranslation } from '../i18n/I18n';
-import { useOnUpdate } from './useOnUpdate';
-import { getDefaultCommand } from './utilities';
-import { useRenderTarget } from '../RevealCanvas';
 import { type TranslationInput } from '../../architecture';
+import { useCommand } from './useCommand';
+import { useCommandProps } from './useCommandProps';
+import { useCommandProperty } from './useCommandProperty';
 
-export const InputField = ({
-  inputCommand
-}: {
-  inputCommand: BaseInputCommand;
-  placement: string;
-}): ReactNode => {
+export const InputField = ({ inputCommand }: { inputCommand: BaseInputCommand }): ReactNode => {
   const { t } = useTranslation();
-  const translateIfExists = (translationInput: TranslationInput | undefined): string | undefined =>
-    translationInput !== undefined ? t(translationInput) : undefined;
+  const command = useCommand(inputCommand);
 
-  const renderTarget = useRenderTarget();
+  const content = useCommandProperty(command, () => command.content);
+  const postLabel = useCommandProperty(command, () => translate(command.getPostButtonLabel()));
+  const cancelLabel = useCommandProperty(command, () => translate(command.getCancelButtonLabel()));
+  const placeholder = useCommandProperty(command, () => translate(command.getPlaceholder()));
+  const isPostButtonEnabled = useCommandProperty(command, () => command.isPostButtonEnabled);
 
-  const command = useMemo(() => getDefaultCommand(inputCommand, renderTarget), [inputCommand]);
+  const { uniqueId, isVisible, isEnabled } = useCommandProps(command);
 
-  const [content, setContent] = useState<string>('');
-  const [enabled, setEnabled] = useState<boolean>(command.isEnabled);
-  const [postButtonEnabled, setPostButtonEnabled] = useState<boolean>(false);
-  const [postLabel, setPostLabel] = useState<string | undefined>(
-    translateIfExists(command.getPostButtonLabel())
-  );
-  const [cancelLabel, setCancelLabel] = useState<string | undefined>(
-    translateIfExists(command.getCancelButtonLabel())
-  );
-  const [placeholder, setPlaceholder] = useState<string | undefined>(
-    translateIfExists(command.getPlaceholder())
-  );
-
-  useOnUpdate(command, () => {
-    setPostLabel(translateIfExists(command.getPostButtonLabel()));
-    setCancelLabel(translateIfExists(command.getCancelButtonLabel()));
-    setPlaceholder(translateIfExists(command.getPlaceholder()));
-    setEnabled(command.isEnabled);
-    setPostButtonEnabled(command.isPostButtonEnabled);
-    setContent(command.content);
-  });
+  if (!isVisible) {
+    return <></>;
+  }
 
   return (
     <Comment
-      key={command.uniqueId}
+      key={uniqueId}
       placeholder={placeholder}
       message={content}
       setMessage={(content) => (command.content = content)}
@@ -57,11 +37,15 @@ export const InputField = ({
         command.content = '';
       }}
       postButtonText={postLabel}
-      postButtonDisabled={!(postButtonEnabled && enabled)}
+      postButtonDisabled={!(isPostButtonEnabled && isEnabled)}
       cancelButtonText={cancelLabel}
       cancelButtonDisabled={false}
       onCancel={command.onCancel}
       showButtons={true}
     />
   );
+
+  function translate(input: TranslationInput | undefined): string | undefined {
+    return input !== undefined ? t(input) : undefined;
+  }
 };
