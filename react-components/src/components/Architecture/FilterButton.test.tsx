@@ -62,7 +62,7 @@ describe(FilterButton.name, () => {
     });
 
     const child = filterCommand.listChildren()[0];
-    const childLabel = child.getLabel(translate);
+    const childLabel = child.label;
 
     await expectAwaitToFail(async () => await screen.findByText(childLabel));
 
@@ -90,7 +90,7 @@ describe(FilterButton.name, () => {
     });
 
     const child = filterCommand.listChildren()[1];
-    const childLabel = child.getLabel(translate);
+    const childLabel = child.label;
 
     await expectAwaitToFail(async () => await screen.findByText(childLabel));
   });

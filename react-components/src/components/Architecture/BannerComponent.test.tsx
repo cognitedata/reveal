@@ -8,7 +8,6 @@ import { type PropsWithChildren, type ReactElement } from 'react';
 import { viewerMock } from '#test-utils/fixtures/viewer';
 import { sdkMock } from '#test-utils/fixtures/sdk';
 import { ViewerContextProvider } from '../RevealCanvas/ViewerContext';
-import { translate } from '../../architecture/base/utilities/translateUtils';
 
 describe(BannerComponent.name, () => {
   let renderTargetMock: RevealRenderTarget;
@@ -26,7 +25,7 @@ describe(BannerComponent.name, () => {
     const textContent = 'some-test-string';
 
     const testCommand = new TestBannerCommand({ content: { untranslated: textContent } });
-    render(<BannerComponent command={testCommand} t={translate} />, { wrapper });
+    render(<BannerComponent command={testCommand} />, { wrapper });
 
     const element = await screen.findByText(textContent);
 
@@ -37,7 +36,7 @@ describe(BannerComponent.name, () => {
     const status = BannerStatus.Critical;
 
     const testCommand = new TestBannerCommand({ status });
-    render(<BannerComponent command={testCommand} t={translate} />, { wrapper });
+    render(<BannerComponent command={testCommand} />, { wrapper });
 
     const bannerElement = await screen.findByRole('alert');
     expect([...bannerElement.classList]).toContain('cogs-lab-infobox-critical');

@@ -1,4 +1,4 @@
-import { type TranslateDelegate, type TranslationInput } from '../../architecture';
+import { type TranslationInput } from '../../architecture';
 import {
   type BannerStatus,
   type BaseBannerCommand
@@ -9,13 +9,12 @@ import styled from 'styled-components';
 import { Infobox } from '@cognite/cogs.js';
 import { getDefaultCommand } from './utilities';
 import { useRenderTarget } from '../RevealCanvas';
+import { translate } from '../../architecture/base/utilities/translateUtils';
 
 export const BannerComponent = ({
-  command: inputCommand,
-  t
+  command: inputCommand
 }: {
   command: BaseBannerCommand;
-  t: TranslateDelegate;
 }): ReactNode => {
   const renderTarget = useRenderTarget();
   const command = useMemo<BaseBannerCommand>(
@@ -37,7 +36,7 @@ export const BannerComponent = ({
     return null;
   }
 
-  return <StyledInfobox status={status}>{t(content)}</StyledInfobox>;
+  return <StyledInfobox status={status}>{translate(content)}</StyledInfobox>;
 };
 
 const StyledInfobox = styled(Infobox)`

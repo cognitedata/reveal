@@ -3,13 +3,10 @@
  */
 
 import { type IconName } from '../utilities/IconName';
-import {
-  isTranslatedString,
-  type TranslateDelegate,
-  type TranslationInput
-} from '../utilities/TranslateInput';
+import { isTranslatedString, type TranslationInput } from '../utilities/TranslateInput';
 import { clear, remove } from '../utilities/extensions/arrayExtensions';
 import { isMacOs } from '../utilities/extensions/isMacOs';
+import { translate } from '../utilities/translateUtils';
 
 /**
  * Represents a delegate function for updating a command.
@@ -189,12 +186,12 @@ export abstract class BaseCommand {
   // INSTANCE METHODS: Others (Not to be overridden)
   // ==================================================
 
-  protected addDisposable(disposable: () => void): void {
-    this._disposables.push(disposable);
+  public get label(): string {
+    return this.tooltip !== undefined ? translate(this.tooltip) : '';
   }
 
-  public getLabel(translate: TranslateDelegate): string {
-    return translate(this.tooltip ?? { untranslated: '' });
+  protected addDisposable(disposable: () => void): void {
+    this._disposables.push(disposable);
   }
 
   public getShortCutKeys(): string[] | undefined {

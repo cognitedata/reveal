@@ -3,7 +3,8 @@
  */
 
 import { type IconName } from '../utilities/IconName';
-import { type TranslateDelegate, type TranslationInput } from '../utilities/TranslateInput';
+import { type TranslationInput } from '../utilities/TranslateInput';
+import { translate } from '../utilities/translateUtils';
 import { Quantity } from './Quantity';
 
 type PanelItemProps = {
@@ -32,7 +33,7 @@ export class PanelItem {
     this.translationInput = props;
   }
 
-  public getText(translate: TranslateDelegate): string | undefined {
+  public getText(): string | undefined {
     return translate(this.translationInput);
   }
 }
