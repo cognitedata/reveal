@@ -1,5 +1,5 @@
-import { afterEach, describe, expect, test } from 'vitest';
-import { cleanup, render, screen } from '@testing-library/react';
+import { describe, expect, test } from 'vitest';
+import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import {
   type BaseCommand,
@@ -19,12 +19,7 @@ import { DomainObjectPanelUpdater } from '../../architecture/base/reactUpdaters/
 import { type IconName } from '../../architecture/base/utilities/IconName';
 import { createFullRenderTargetMock } from '../../../tests/tests-utilities/fixtures/createFullRenderTargetMock';
 
-
 describe(DomainObjectPanel.name, () => {
-  afterEach(() => {
-    cleanup();
-  });
-
   test('should not be visible for no domain object', async () => {
     render(<DomainObjectPanel />, {});
     const buttons = screen.queryAllByRole('button');
@@ -120,7 +115,7 @@ function renderDomainObjectPanel(domainObject: DomainObject | undefined): void {
 class MockDomainObject extends DomainObject {
   public constructor() {
     super();
-    this.name = 'Hei';
+    this.name = 'Mock';
   }
 
   public override get icon(): IconName {
@@ -136,7 +131,6 @@ class MockDomainObject extends DomainObject {
   }
 
   public override getPanelToolbar(): BaseCommand[] {
-    // to be overridden
     return [
       new CopyToClipboardCommand(),
       new ToggleMetricUnitsCommand(),
@@ -150,6 +144,7 @@ class MockDomainObject extends DomainObject {
     add({ key: 'AREA' }, 2, Quantity.Area);
     add({ key: 'VOLUME' }, 3, Quantity.Volume);
     add({ key: 'HORIZONTAL_ANGLE' }, 4, Quantity.Angle);
+    add({ key: 'REVISIONS' }, 5, Quantity.Unitless);
     return info;
 
     function add(translationInput: TranslationInput, value: number, quantity: Quantity): void {
@@ -173,5 +168,8 @@ const EXPECTED_SUB_STRINGS: string[] = [
 
   'Horizontal angle',
   '4.0',
-  '°'
+  '°',
+
+  'Revisions',
+  '5.00'
 ];
