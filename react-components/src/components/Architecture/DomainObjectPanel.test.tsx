@@ -19,7 +19,6 @@ import { DomainObjectPanelUpdater } from '../../architecture/base/reactUpdaters/
 import { type IconName } from '../../architecture/base/utilities/IconName';
 import { createFullRenderTargetMock } from '../../../tests/tests-utilities/fixtures/createFullRenderTargetMock';
 
-// Help page here:  https://bogr.dev/blog/react-testing-intro/
 
 describe(DomainObjectPanel.name, () => {
   afterEach(() => {
