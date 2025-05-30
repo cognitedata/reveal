@@ -6,10 +6,7 @@ import { describe, expect, test, vi, beforeEach, beforeAll, afterAll } from 'vit
 import { renderHook } from '@testing-library/react';
 
 import { Quaternion, Vector3 } from 'three';
-import {
-  ARBITRARY_CALLBACK_DELAY,
-  cameraManagerGlobalCameraEvents
-} from '#test-utils/fixtures/cameraManager';
+import { cameraManagerGlobalCameraEvents } from '#test-utils/fixtures/cameraManager';
 import { viewerMock } from '#test-utils/fixtures/viewer';
 import { useCameraStateControl, type CameraStateParameters } from './useCameraStateControl';
 
@@ -18,10 +15,6 @@ vi.mock('../ViewerContext', () => ({
 }));
 
 describe(useCameraStateControl.name, () => {
-  // to be triggered after the camera stop event is called in the camera manager mock:
-  // ARBITRARY_CALLBACK_DELAY of the camera manager mock setCameraState callback + 10ms for the setTimeout
-  const ARBITRARY_RERENDER_DELAY = ARBITRARY_CALLBACK_DELAY + 10;
-
   beforeEach(() => {
     vi.resetAllMocks();
   });
@@ -89,10 +82,32 @@ describe(useCameraStateControl.name, () => {
     });
   });
 
-  test('provided setter is called after updating camera state internally for each parameter', () => {
+  test('provided setter is called after updating camera state position', () => {
     const setter = vi.fn<(cameraState?: CameraStateParameters) => void>();
 
-    const { rerender } = renderHook(() => {
+    renderHook(() => {
+      useCameraStateControl(
+        {
+          position: new Vector3(0, 0, 0),
+          target: new Vector3(1, 1, 1),
+          rotation: new Quaternion(0, 0, 0, 1)
+        },
+        setter
+      );
+    });
+    // position
+    viewerMock.cameraManager.setCameraState({
+      position: new Vector3(1, 0, 0),
+      target: new Vector3(1, 1, 1),
+      rotation: new Quaternion(0, 0, 0, 1)
+    });
+    vi.runAllTimers();
+    // The setter should be called twice: once for the initial state and once for the updated state
+    expect(setter).toHaveBeenCalledTimes(2);
+  });
+  test('provided setter is called after updating camera state target', () => {
+    const setter = vi.fn<(cameraState?: CameraStateParameters) => void>();
+    renderHook(() => {
       useCameraStateControl(
         {
           position: new Vector3(0, 0, 0),
@@ -103,31 +118,28 @@ describe(useCameraStateControl.name, () => {
       );
     });
 
-    vi.runAllTimers();
-
-    // position
-    viewerMock.cameraManager.setCameraState({
-      position: new Vector3(1, 0, 0),
-      target: new Vector3(1, 1, 1),
-      rotation: new Quaternion(0, 0, 0, 1)
-    });
-
-    // Wait for the camera stop callback to be triggered in the camera manager mock - setCameraState
-    setTimeout(() => {
-      rerender();
-    }, ARBITRARY_RERENDER_DELAY);
-
     // target
     viewerMock.cameraManager.setCameraState({
       position: new Vector3(0, 0, 0),
       target: new Vector3(0, 0, 1),
       rotation: new Quaternion(0, 0, 0, 1)
     });
-
-    // Wait for the camera stop callback to be triggered in the camera manager mock - setCameraState
-    setTimeout(() => {
-      rerender();
-    }, ARBITRARY_RERENDER_DELAY);
+    vi.runAllTimers();
+    // The setter should be called twice: once for the initial state and once for the updated state
+    expect(setter).toHaveBeenCalledTimes(2);
+  });
+  test('provided setter is called after updating camera state rotation', () => {
+    const setter = vi.fn<(cameraState?: CameraStateParameters) => void>();
+    renderHook(() => {
+      useCameraStateControl(
+        {
+          position: new Vector3(0, 0, 0),
+          target: new Vector3(1, 1, 1),
+          rotation: new Quaternion(0, 0, 0, 1)
+        },
+        setter
+      );
+    });
 
     // rotation
     viewerMock.cameraManager.setCameraState({
@@ -135,14 +147,9 @@ describe(useCameraStateControl.name, () => {
       target: new Vector3(1, 1, 1),
       rotation: new Quaternion(0.1, 0.01, 0, 0.995)
     });
-
-    // Wait for the camera stop callback to be triggered in the camera manager mock - setCameraState
-    setTimeout(() => {
-      rerender();
-    }, ARBITRARY_RERENDER_DELAY);
-
     vi.runAllTimers();
 
-    expect(setter).toHaveBeenCalledTimes(3);
+    // The setter should be called twice: once for the initial state and once for the updated state
+    expect(setter).toHaveBeenCalledTimes(2);
   });
 });

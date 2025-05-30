@@ -5,8 +5,6 @@ import { PerspectiveCamera } from 'three';
 
 import { vi, type Mock as viMock } from 'vitest';
 
-export const ARBITRARY_CALLBACK_DELAY = 50; // ms
-
 export const cameraManagerGlobalCameraEvents: Record<CameraManagerEventType, viMock[]> = {
   cameraChange: [],
   cameraStop: []
@@ -36,7 +34,7 @@ export const cameraManagerMock = new Mock<CameraManager>()
       cameraManagerGlobalCameraEvents.cameraStop.forEach((callback) => {
         callback(position!, target!);
       });
-    }, ARBITRARY_CALLBACK_DELAY);
+    }, 50);
   })
   .setup((p) => p.getCameraState())
   .returns(cameraManagerGlobalCurrentCameraState as Required<CameraState>)
