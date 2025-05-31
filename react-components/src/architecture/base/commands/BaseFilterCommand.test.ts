@@ -10,8 +10,7 @@ describe(BaseFilterCommand.name, () => {
 
   beforeEach(() => {
     command = new MockFilterCommand();
-    const renderTarget = createRenderTargetMock();
-    command.attach(renderTarget);
+    command.attach(createRenderTargetMock());
   });
 
   test('should have icon', async () => {
@@ -29,7 +28,6 @@ describe(BaseFilterCommand.name, () => {
 
   test('should have children when initialized', async () => {
     command.initializeChildrenIfNeeded();
-    expect(command.children).toBeDefined();
     assert(command.children !== undefined);
     expect(command.children.length).toBeGreaterThan(2);
     expect(command.hasChildren).toBe(true);
@@ -38,7 +36,7 @@ describe(BaseFilterCommand.name, () => {
   test('should not have any checked', async () => {
     command.initializeChildrenIfNeeded();
     assert(command.children !== undefined);
-    for (const option of getOptions(command)) {
+    for (const option of command.children) {
       option.setChecked(false);
     }
     expect(command.isSomeChecked).toBe(false);
@@ -48,8 +46,9 @@ describe(BaseFilterCommand.name, () => {
 
   test('should have some checked', async () => {
     command.initializeChildrenIfNeeded();
+    assert(command.children !== undefined);
     let childIndex = 0;
-    for (const option of getOptions(command)) {
+    for (const option of command.children) {
       option.setChecked(isOdd(childIndex));
       childIndex++;
     }
@@ -60,7 +59,8 @@ describe(BaseFilterCommand.name, () => {
 
   test('should have all checked', async () => {
     command.initializeChildrenIfNeeded();
-    for (const option of getOptions(command)) {
+    assert(command.children !== undefined);
+    for (const option of command.children) {
       option.setChecked(true);
     }
     expect(command.isSomeChecked).toBe(true);
@@ -70,7 +70,8 @@ describe(BaseFilterCommand.name, () => {
 
   test('should toggle all checked', async () => {
     command.initializeChildrenIfNeeded();
-    for (const option of getOptions(command)) {
+    assert(command.children !== undefined);
+    for (const option of command.children) {
       option.setChecked(false);
     }
     expect(command.toggleAllChecked()).toBe(true);
@@ -85,7 +86,7 @@ describe(BaseFilterCommand.name, () => {
     command.initializeChildrenIfNeeded();
     assert(command.children !== undefined);
     let childIndex = 0;
-    for (const option of getOptions(command)) {
+    for (const option of command.children) {
       expect(option.getLabel(translate)).not.toBe('');
       if (childIndex < command.children.length - 1) {
         expect(option.color).toBeDefined();
@@ -95,22 +96,11 @@ describe(BaseFilterCommand.name, () => {
   });
   test('should checked when invoke', async () => {
     command.initializeChildrenIfNeeded();
-    for (const option of getOptions(command)) {
+    assert(command.children !== undefined);
+    for (const option of command.children) {
       option.setChecked(false);
       expect(option.isChecked).toBe(false);
       option.invoke();
     }
   });
 });
-
-function* getOptions(command: BaseFilterCommand): Generator<BaseFilterItemCommand> {
-  if (command.children === undefined) {
-    return;
-  }
-  for (let i = 0; i < command.children.length; i++) {
-    const option = command.children[i];
-    if (option instanceof BaseFilterItemCommand) {
-      yield option;
-    }
-  }
-}
