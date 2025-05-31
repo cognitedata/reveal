@@ -105,6 +105,7 @@ describe(useCameraStateControl.name, () => {
     // The setter should be called twice: once for the initial state and once for the updated state
     expect(setter).toHaveBeenCalledTimes(2);
   });
+  
   test('provided setter is called after updating camera state target', () => {
     const setter = vi.fn<(cameraState?: CameraStateParameters) => void>();
     renderHook(() => {
