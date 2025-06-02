@@ -11,7 +11,6 @@ export type FilterOnClassicAssetsInSceneDependencies = {
   useAllAssetsMappedPointCloudAnnotations: typeof useAllAssetsMappedPointCloudAnnotations;
 };
 
-// Plese create a cntext for the FilterOnClassicAssetsInScene
 export const FilterOnClassicAssetsInSceneContext =
   createContext<FilterOnClassicAssetsInSceneDependencies>({
     useReveal3dResourcesFromScene,
