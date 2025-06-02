@@ -5,7 +5,7 @@
 import { describe, expect, test } from 'vitest';
 import { PopupStyle } from './PopupStyle';
 
-describe('PopupStyle', () => {
+describe(PopupStyle.name, () => {
   test('should create a PopupStyle with default values', () => {
     const style = new PopupStyle({});
     expect(style.leftPx).toBe('undefined');
@@ -19,7 +19,7 @@ describe('PopupStyle', () => {
     expect(style.flexFlow).toBe('row');
   });
 
-  test('should create a PopupStyle with values', () => {
+  test('should create a PopupStyle with with arbitrary values', () => {
     const style = new PopupStyle({
       left: 1,
       top: 2,
