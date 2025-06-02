@@ -19,7 +19,7 @@ describe(PopupStyle.name, () => {
     expect(style.flexFlow).toBe('row');
   });
 
-  test('should create a PopupStyle with with arbitrary values', () => {
+  test('should create a PopupStyle with arbitrary values', () => {
     const style = new PopupStyle({
       left: 1,
       top: 2,
