@@ -1,5 +1,5 @@
 import { assert, describe, expect, test, beforeEach } from 'vitest';
-import { BaseFilterCommand, BaseFilterItemCommand } from './BaseFilterCommand';
+import { BaseFilterCommand } from './BaseFilterCommand';
 import { MockFilterCommand } from '../../../../tests/tests-utilities/architecture/mock-commands/MockFilterCommand';
 import { createRenderTargetMock } from '../../../../tests/tests-utilities/fixtures/renderTarget';
 import { isOdd } from '../utilities/extensions/mathExtensions';
