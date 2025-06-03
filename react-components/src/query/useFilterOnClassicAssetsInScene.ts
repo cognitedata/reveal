@@ -9,15 +9,16 @@ import {
   type AddImage360CollectionOptions,
   type AddPointCloudResourceOptions
 } from '../components';
-import { is360ImageAddOptions } from '../components/Reveal3DResources/typeGuards';
+import { is360ImageAddOptions, isClassicIdentifier } from '../components/Reveal3DResources/typeGuards';
 import { FilterOnClassicAssetsInSceneContext } from './FilterOnClassicAssetsInScene.context';
+import { isDefined } from '../utilities/isDefined';
 
 export type FilterOnClassicAssetsInScene = (assets: Asset[]) => Asset[];
 
 export const useFilterOnClassicAssetsInScene = (
   sdk: CogniteClient,
   scene: DirectRelationReference
-): FilterOnClassicAssetsInScene => {
+): FilterOnClassicAssetsInScene | undefined => {
   const {
     useReveal3dResourcesFromScene,
     useAllMappedEquipmentAssetMappings,
@@ -26,17 +27,26 @@ export const useFilterOnClassicAssetsInScene = (
   } = useContext(FilterOnClassicAssetsInSceneContext);
 
   const resources = useReveal3dResourcesFromScene(scene.externalId, scene.space);
-  const cadAndPointCloudresources = resources.filter(
+  const cadAndPointCloudresources: AddModelOptions[] = resources.filter(
     (resource): resource is AddCadResourceOptions | AddPointCloudResourceOptions =>
       !is360ImageAddOptions(resource)
-  );
+  ).map(resource => {
+    // We do not care about DM resources
+    if (isClassicIdentifier(resource)) {
+      return {
+        modelId: resource.modelId,
+        revisionId: resource.revisionId,
+      }
+    }
+  }).filter(isDefined) ?? [];
+
 
   const {
     data: pagedCadAssetMappings,
     isFetching: isFetchingCadAssetMappings,
     hasNextPage: hasNextCadAssetMappings,
     fetchNextPage: fetchNextCadAssetMappingsPage
-  } = useAllMappedEquipmentAssetMappings(cadAndPointCloudresources as AddModelOptions[], sdk, 1000);
+  } = useAllMappedEquipmentAssetMappings(cadAndPointCloudresources, sdk);
 
   const filtered360ImageResources = resources.filter(
     (resource): resource is AddImage360CollectionOptions => 'siteId' in resource
@@ -50,7 +60,7 @@ export const useFilterOnClassicAssetsInScene = (
     useAllAssetsMapped360Annotations(sdk, siteIds);
 
   const { data: allPointCloudAssets, isLoading: isLoadingAllPointCloudAssets } =
-    useAllAssetsMappedPointCloudAnnotations(sdk, cadAndPointCloudresources as AddModelOptions[]);
+    useAllAssetsMappedPointCloudAnnotations(sdk, cadAndPointCloudresources);
 
   useEffect(() => {
     if (hasNextCadAssetMappings && !isFetchingCadAssetMappings) {
