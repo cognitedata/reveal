@@ -110,9 +110,7 @@ export function useFilterNodesByMappedToModelsCallback(
 
   return useCallback(
     async (nodes: NodeItem[]) => {
-      console.log('Nodes to filter: ', nodes);
       const viewDefinitions = await fetchViewDefinitions(queryClient, fdmSdk, [viewToSearch]);
-      console.log('View definitions: ', viewDefinitions);
 
       const filterResult = await fdmDataProvider.filterNodesByMappedTo3d(
         [{ instances: nodes, view: viewDefinitions[0] }],
@@ -120,8 +118,6 @@ export function useFilterNodesByMappedToModelsCallback(
         [viewToSearch.space],
         includeIndirectRelations
       );
-
-      console.log('Result from mapped-query:', filterResult);
 
       return filterResult.flatMap((result) => result.instances);
     },
