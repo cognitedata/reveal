@@ -45,7 +45,7 @@ describe(useFilterOnClassicAssetsInScene.name, () => {
     };
   });
 
-   it('returns a filter function that filters assets present in the asset map', () => {
+  it('returns a filter function that filters assets present in the asset map', () => {
     const {
       result: { current: filterFn }
     } = renderHook(() => useFilterOnClassicAssetsInScene(sdk, scene), { wrapper });
