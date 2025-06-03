@@ -291,7 +291,7 @@ function createVerticalCylinderDomainObject(): CylinderDomainObject {
 function createHorizontalCircleDomainObject(): CylinderDomainObject {
   const domainObject = new MeasureCylinderDomainObject(PrimitiveType.HorizontalCircle);
   domainObject.cylinder.radius = 1;
-  domainObject.cylinder.centerA.set(0, 0, Cylinder.HalfMinSize);
+  domainObject.cylinder.centerA.set(0, 0, +Cylinder.HalfMinSize);
   domainObject.cylinder.centerB.set(0, 0, -Cylinder.HalfMinSize);
   return domainObject;
 }
