@@ -32,6 +32,7 @@ export { useTimeseriesLatestDatapointQuery } from './useTimeseriesLatestDatapoin
 export { useFetchTimeseriesFromRelationshipByAsset } from './useFetchTimeseriesFromRelationshipByAsset';
 export { useAssetsAndTimeseriesLinkages } from './useAssetsAndTimeseriesLinkages';
 export { usePointCloudVolumeMappingForAssetInstances } from './core-dm/usePointCloudVolumeMappingForAssetInstances';
+export { useFilterOnClassicAssetsInScene } from './useFilterOnClassicAssetsInScene';
 
 export type {
   ModelMappings,

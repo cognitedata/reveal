@@ -15,15 +15,7 @@ export const useCameraStateControl = (
   externalCameraState?: CameraStateParameters,
   setCameraState?: (cameraState?: CameraStateParameters) => void
 ): void => {
-  const lastSetExternalState = useRef<CameraStateParameters | undefined>(
-    externalCameraState === undefined
-      ? undefined
-      : {
-          position: externalCameraState.position.clone(),
-          target: externalCameraState.target.clone(),
-          rotation: externalCameraState.rotation?.clone()
-        }
-  );
+  const lastSetExternalState = useRef<CameraStateParameters | undefined>(undefined);
 
   useSetInternalCameraStateOnExternalUpdate(externalCameraState, lastSetExternalState);
 
