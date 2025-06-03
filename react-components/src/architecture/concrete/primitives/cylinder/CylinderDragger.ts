@@ -24,6 +24,7 @@ import { PrimitiveType } from '../../../base/utilities/primitives/PrimitiveType'
  * All geometry in this class assume Z-axis is up
  */
 
+const EPSILON = 0.00001; // Small value to check for changes
 export class CylinderDragger extends BaseDragger {
   // ==================================================
   // INSTANCE FIELDS
@@ -158,7 +159,7 @@ export class CylinderDragger extends BaseDragger {
 
     const radius = closestToRay.distanceTo(closestOnAxis);
     const newRadius = this.getBestValue(radius, isShiftPressed, Cylinder.MinSize);
-    if (newRadius === cylinder.radius) {
+    if (Math.abs(newRadius - cylinder.radius) < EPSILON) {
       return false; // Nothing has changed
     }
     cylinder.radius = newRadius;
@@ -171,7 +172,7 @@ export class CylinderDragger extends BaseDragger {
     const pointOnSegment = newVector3();
     getClosestPointOnLine(ray, this._normal, this.point, pointOnSegment);
     const deltaHeight = this._planeOfFace.distanceToPoint(pointOnSegment);
-    if (deltaHeight === 0) {
+    if (Math.abs(deltaHeight) < EPSILON) {
       return false; // Nothing has changed
     }
     const originalCylinder = this._originalCylinder;
@@ -180,7 +181,7 @@ export class CylinderDragger extends BaseDragger {
       isShiftPressed,
       Cylinder.MinSize
     );
-    if (newHeight === originalCylinder.height) {
+    if (Math.abs(newHeight - originalCylinder.height) < EPSILON) {
       return false; // Nothing has changed
     }
     const { cylinder } = this._domainObject;
@@ -212,6 +213,9 @@ export class CylinderDragger extends BaseDragger {
     if (this._face.face === 2) {
       axis.negate();
     }
+    if (Math.abs(axis.length()) < EPSILON) {
+      return false; // Nothing has changed
+    }
     centerA.add(axis);
     centerB.add(axis);
     return true;
@@ -228,6 +232,9 @@ export class CylinderDragger extends BaseDragger {
     // Move end point to the same plane as the center of the end point,
     // and adjust the length so it doesn't change
     const translation = newVector3().subVectors(endPoint, this.point);
+    if (translation.length() < EPSILON) {
+      return false; // Nothing has changed
+    }
     const { cylinder } = this._domainObject;
     const originalCylinder = this._originalCylinder;
     cylinder.copy(originalCylinder);
@@ -235,6 +242,8 @@ export class CylinderDragger extends BaseDragger {
 
     if (this._face.face === 2) {
       centerB.add(translation);
+
+      // Keep the height of the cylinder the same
       const axis = newVector3()
         .subVectors(centerA, centerB)
         .normalize()
@@ -242,6 +251,8 @@ export class CylinderDragger extends BaseDragger {
       centerB.subVectors(centerA, axis);
     } else {
       centerA.add(translation);
+
+      // Keep the height of the cylinder the same
       const axis = newVector3()
         .subVectors(centerA, centerB)
         .normalize()
