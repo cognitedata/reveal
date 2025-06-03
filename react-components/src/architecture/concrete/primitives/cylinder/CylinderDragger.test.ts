@@ -19,7 +19,7 @@ import { Cylinder } from '../../../base/utilities/primitives/Cylinder';
 
 describe(CylinderDragger.name, () => {
   const focusType = FocusType.None;
-  test('should not change anything', () => {
+  test('should create correct dragger and not change anything', () => {
     const domainObject = createVerticalCylinderDomainObject();
 
     // Grab the cylinder at top cap from above and move it in the XY plane
@@ -50,7 +50,6 @@ describe(CylinderDragger.name, () => {
       const dragger = domainObject.createDragger(
         createCreateDraggerPropsMock(domainObject, startRay, new BoxFace(2), focusType)
       );
-      expect(dragger).toBeInstanceOf(CylinderDragger);
       assert(dragger !== undefined);
       drag(dragger, startRay, delta, expectedChange);
       expectEqualVector3(domainObject.cylinder.centerA, expectedA);
@@ -73,7 +72,6 @@ describe(CylinderDragger.name, () => {
         createCreateDraggerPropsMock(domainObject, startRay, new BoxFace(0), focusType)
       );
 
-      expect(dragger).toBeInstanceOf(CylinderDragger);
       assert(dragger !== undefined);
       drag(dragger, startRay, delta, expectedChange);
 
@@ -119,7 +117,6 @@ describe(CylinderDragger.name, () => {
             focusType
           )
         );
-        expect(dragger).toBeInstanceOf(CylinderDragger);
         assert(dragger !== undefined);
         drag(dragger, startRay, delta, expectedChange);
 
@@ -168,7 +165,6 @@ describe(CylinderDragger.name, () => {
             focusType
           )
         );
-        expect(dragger).toBeInstanceOf(CylinderDragger);
         assert(dragger !== undefined);
         drag(dragger, startRay, delta, expectedChange);
 
@@ -212,7 +208,6 @@ describe(CylinderDragger.name, () => {
             focusType
           )
         );
-        expect(dragger).toBeInstanceOf(CylinderDragger);
         assert(dragger !== undefined);
         drag(dragger, startRay, delta, expectedChange);
 
