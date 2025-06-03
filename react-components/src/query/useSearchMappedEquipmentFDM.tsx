@@ -1,7 +1,7 @@
 /*!
  * Copyright 2023 Cognite AS
  */
-import { useMemo } from 'react';
+import { useCallback, useMemo } from 'react';
 import {
   type NodeItem,
   type FdmSDK,
@@ -98,6 +98,33 @@ export const useSearchMappedEquipmentFDM = (
   });
 };
 
+export function useFilterNodesByMappedToModelsCallback(
+  models: Array<AddModelOptions<DataSourceType> | AddImage360CollectionDatamodelsOptions>,
+  viewToSearch: SimpleSource,
+  includeIndirectRelations: boolean
+): (identifiers: NodeItem[]) => Promise<NodeItem[]> {
+  const fdmDataProvider = useFdm3dDataProvider();
+
+  const fdmSdk = useFdmSdk();
+  const queryClient = useQueryClient();
+
+  return useCallback(
+    async (nodes: NodeItem[]) => {
+      const viewDefinitions = await fetchViewDefinitions(queryClient, fdmSdk, [viewToSearch]);
+
+      const filterResult = await fdmDataProvider.filterNodesByMappedTo3d(
+        [{ instances: nodes, view: viewDefinitions[0] }],
+        models,
+        [viewToSearch.space],
+        includeIndirectRelations
+      );
+
+      return filterResult.flatMap((result) => result.instances);
+    },
+    [includeIndirectRelations, models, viewToSearch, fdmDataProvider, fdmSdk, queryClient]
+  );
+}
+
 const searchNodesWithViewsAndModels = async (
   query: string,
   spacesToSearch: string[],
@@ -145,7 +172,7 @@ const searchNodesWithViewsAndModels = async (
     });
   }
 
-  return await fdmDataProvider.filterNodesByMappedTo3d(searchResults, models, spacesToSearch);
+  return await fdmDataProvider.filterNodesByMappedTo3d(searchResults, models, spacesToSearch, true);
 };
 
 export const useAllMappedEquipmentFDM = (

@@ -117,6 +117,10 @@ function getObject3dRelation(visualizableTableName: string): QueryTableExpressio
   };
 }
 
+// We want to preserve most of the typing of the object returned here,
+// as it gives us better types in the result of the query call later on
+// Specifying a type here would either mean losing valuable type information
+// or an enourmous type
 // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
 export function createCheck3dConnectedEquipmentQuery(
   initialNodes: DmsUniqueIdentifier[],
