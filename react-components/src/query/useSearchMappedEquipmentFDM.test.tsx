@@ -9,7 +9,7 @@ import {
 } from '../query/useSearchMappedEquipmentFDM';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { cadNodesFixtures } from '#test-utils/fixtures/dm/nodeItems';
-import { type FdmSDK } from '../data-providers/FdmSDK';
+import { Source, type FdmSDK } from '../data-providers/FdmSDK';
 import { Mock } from 'moq.ts';
 import { type RevealRenderTarget } from '../architecture';
 import type { FC, PropsWithChildren } from 'react';
@@ -19,6 +19,7 @@ import { FdmSdkContext } from '../components/RevealCanvas/FdmDataProviderContext
 import { getMockViewByIdResponse } from '#test-utils/fixtures/dm/getMockViewByIdResponse';
 import { getMockViewItemFromSimpleSource } from '#test-utils/fixtures/dm/getMockViewItemFromSimpleSource';
 import { COGNITE_ASSET_SOURCE } from '../data-providers/core-dm-provider/dataModels';
+import { TableExpressionFilterDefinition } from '@cognite/sdk';
 
 const queryClient = new QueryClient();
 
@@ -67,9 +68,11 @@ const mockModels: AddModelOptions[] = [
   { modelId: 123, revisionId: 456 }
 ];
 
-const mockInstancesFilter = { equals: { property: ['key'], value: 'value' } };
+const mockInstancesFilter: TableExpressionFilterDefinition = {
+  equals: { property: ['key'], value: 'value' }
+};
 
-const mockViewsToSearch = [
+const mockViewsToSearch: Source[] = [
   { externalId: 'CogniteCADNode', space: 'cdf_cdm', version: 'v1', type: 'view' as const },
   { externalId: 'CogniteCADNode', space: 'cdf_cdm', version: 'v1', type: 'view' as const }
 ];
