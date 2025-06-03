@@ -1,6 +1,5 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { renderHook } from '@testing-library/react';
-import React from 'react';
 import type { Asset, CogniteClient, DirectRelationReference } from '@cognite/sdk';
 import {
   FilterOnClassicAssetsInSceneContext,
