@@ -8,6 +8,7 @@ import {
 } from './FilterOnClassicAssetsInScene.context';
 import { useFilterOnClassicAssetsInScene } from './useFilterOnClassicAssetsInScene';
 import { Mock } from 'moq.ts';
+import assert from 'assert';
 
 describe(useFilterOnClassicAssetsInScene.name, () => {
   let sdk: CogniteClient;
@@ -44,16 +45,16 @@ describe(useFilterOnClassicAssetsInScene.name, () => {
     };
   });
 
-  it('returns a filter function that filters assets present in the asset map', () => {
-    const { result } = renderHook(() => useFilterOnClassicAssetsInScene(sdk, scene), { wrapper });
+   it('returns a filter function that filters assets present in the asset map', () => {
+    const {
+      result: { current: filterFn }
+    } = renderHook(() => useFilterOnClassicAssetsInScene(sdk, scene), { wrapper });
 
-    expect(result.current).toBeTypeOf('function');
+    assert(filterFn !== undefined, 'Expected a filter function to be returned');
 
-    const filterFn = result.current!;
     const inputAssets = [createMockAsset(1), createMockAsset(3), createMockAsset(5)];
     const filtered = filterFn(inputAssets);
 
-    // Only assets with id 1 and 3 are in the mocked asset map
     expect(filtered.map((a) => a.id)).toEqual([1, 3]);
   });
 
