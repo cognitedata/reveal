@@ -9,7 +9,7 @@ import {
 } from '../query/useSearchMappedEquipmentFDM';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { cadNodesFixtures } from '#test-utils/fixtures/dm/nodeItems';
-import { Source, type FdmSDK } from '../data-providers/FdmSDK';
+import { type Source, type FdmSDK } from '../data-providers/FdmSDK';
 import { Mock } from 'moq.ts';
 import { type RevealRenderTarget } from '../architecture';
 import type { FC, PropsWithChildren } from 'react';
@@ -19,7 +19,7 @@ import { FdmSdkContext } from '../components/RevealCanvas/FdmDataProviderContext
 import { getMockViewByIdResponse } from '#test-utils/fixtures/dm/getMockViewByIdResponse';
 import { getMockViewItemFromSimpleSource } from '#test-utils/fixtures/dm/getMockViewItemFromSimpleSource';
 import { COGNITE_ASSET_SOURCE } from '../data-providers/core-dm-provider/dataModels';
-import { TableExpressionFilterDefinition } from '@cognite/sdk';
+import { type TableExpressionFilterDefinition } from '@cognite/sdk';
 
 const queryClient = new QueryClient();
 
