@@ -9,7 +9,10 @@ import {
   type AddImage360CollectionOptions,
   type AddPointCloudResourceOptions
 } from '../components';
-import { is360ImageAddOptions, isClassicIdentifier } from '../components/Reveal3DResources/typeGuards';
+import {
+  is360ImageAddOptions,
+  isClassicIdentifier
+} from '../components/Reveal3DResources/typeGuards';
 import { FilterOnClassicAssetsInSceneContext } from './FilterOnClassicAssetsInScene.context';
 import { isDefined } from '../utilities/isDefined';
 
@@ -27,19 +30,23 @@ export const useFilterOnClassicAssetsInScene = (
   } = useContext(FilterOnClassicAssetsInSceneContext);
 
   const resources = useReveal3dResourcesFromScene(scene.externalId, scene.space);
-  const cadAndPointCloudresources: AddModelOptions[] = resources.filter(
-    (resource): resource is AddCadResourceOptions | AddPointCloudResourceOptions =>
-      !is360ImageAddOptions(resource)
-  ).map(resource => {
-    // We do not care about DM resources
-    if (isClassicIdentifier(resource)) {
+  const cadAndPointCloudresources: AddModelOptions[] = resources
+    .filter(
+      (resource): resource is AddCadResourceOptions | AddPointCloudResourceOptions =>
+        !is360ImageAddOptions(resource)
+    )
+    .map((resource) => {
+      // We do not care about DM resources
+      if (!isClassicIdentifier(resource)) {
+        return undefined;
+      }
+
       return {
         modelId: resource.modelId,
-        revisionId: resource.revisionId,
-      }
-    }
-  }).filter(isDefined) ?? [];
-
+        revisionId: resource.revisionId
+      };
+    })
+    .filter(isDefined);
 
   const {
     data: pagedCadAssetMappings,

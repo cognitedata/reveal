@@ -1,6 +1,7 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { renderHook } from '@testing-library/react';
 import type { Asset, CogniteClient, DirectRelationReference } from '@cognite/sdk';
+import type { ReactElement, ReactNode } from 'react';
 import {
   FilterOnClassicAssetsInSceneContext,
   type FilterOnClassicAssetsInSceneDependencies
@@ -13,7 +14,7 @@ describe(useFilterOnClassicAssetsInScene.name, () => {
   let scene: DirectRelationReference;
   let mockDependencies: FilterOnClassicAssetsInSceneDependencies;
 
-  const wrapper = ({ children }: { children: React.ReactNode }): React.ReactElement => (
+  const wrapper = ({ children }: { children: ReactNode }): ReactElement => (
     <FilterOnClassicAssetsInSceneContext.Provider value={mockDependencies}>
       {children}
     </FilterOnClassicAssetsInSceneContext.Provider>
