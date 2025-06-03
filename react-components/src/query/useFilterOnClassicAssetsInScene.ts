@@ -1,9 +1,9 @@
 /*!
  * Copyright 2023 Cognite AS
  */
-import { type AddModelOptions } from '@cognite/reveal';
+import type { AddModelOptions } from '@cognite/reveal';
 import { useContext, useEffect, useMemo } from 'react';
-import { type Asset, type CogniteClient, type DirectRelationReference } from '@cognite/sdk';
+import type { Asset, CogniteClient, DirectRelationReference } from '@cognite/sdk';
 import {
   type AddCadResourceOptions,
   type AddImage360CollectionOptions,
@@ -12,7 +12,7 @@ import {
 import { is360ImageAddOptions } from '../components/Reveal3DResources/typeGuards';
 import { FilterOnClassicAssetsInSceneContext } from './FilterOnClassicAssetsInScene.context';
 
-export type FilterOnClassicAssetsInScene = ((assets: Asset[]) => Asset[]) | undefined;
+export type FilterOnClassicAssetsInScene = (assets: Asset[]) => Asset[];
 
 export const useFilterOnClassicAssetsInScene = (
   sdk: CogniteClient,
