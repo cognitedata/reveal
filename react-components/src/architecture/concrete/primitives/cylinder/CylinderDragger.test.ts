@@ -83,14 +83,15 @@ describe(CylinderDragger.name, () => {
   });
 
   test('change the length of the cylinder by moving the end caps', () => {
-    // Vertical plane with Z-axis up, ad X axis to right
+    // Vertical plane with Z-axis up, ad X axis to right (sign is 1)
+    //
     // Ray    Start   End
     //      (1,2)  (2,2)
     //         *  *
     //       /   /
-    //  +---A---+      A: Start end cap
-    //  |    /  |      B: End end cap
-    // -----B------------------------------
+    //  +---A---+  z=1  A: Start end cap
+    //  |    /  |       B: End end cap
+    // -----B----- z=0
     //  |       |
     //  +-------+
 
@@ -129,31 +130,35 @@ describe(CylinderDragger.name, () => {
     }
   });
 
-  test('translate horizontal circle along the axis', () => {
-    // Vertical plane with Z-axis up, ad X axis to right
-    // Ray    Start   End
-    //      (1,2)  (2,2)
-    //         *  *
-    //       /   /
-    //  +---A---+      A: Start end cap
-    //  |    /  |      B: End end cap
-    // -----B------------------------------
-    //  |       |
-    //  +-------+
+  test('rotate the cylinder by moving one of the end caps', () => {
+    // Vertical plane with Z-axis up, ad X axis to right (sign is 1)
+    //
+    // Ray   Start                  End
+    //      (1,2)                  (2,2)
+    //         *                    *
+    //       /                     /
+    //  +---A---+             +--_A_
+    //  |       |            /      --+
+    // -----------          /        /
+    //  |       |          /        /
+    //  +---B---+         +--_B_   /
+    //                          --+
 
-    const focusType = FocusType.Face;
+    const focusType = FocusType.Rotation;
     for (const expectedChange of [true, false]) {
       for (const sign of [1, -1]) {
-        const domainObject = createHorizontalCircleDomainObject();
+        const domainObject = createVerticalCylinderDomainObject();
         const direction = new Vector3(-1, 0, -sign).normalize();
         const delta = new Vector3(expectedChange ? 1 : 0, 0, 0);
-        const startRay = new Ray(new Vector3(1, 0, sign), direction);
+        const startRay = new Ray(new Vector3(1, 0, sign * 2), direction);
 
         const expectedA = domainObject.cylinder.centerA.clone();
+        if (sign === 1 && expectedChange) {
+          expectedA.set(0.894427, 0, 0.788854);
+        }
         const expectedB = domainObject.cylinder.centerB.clone();
-        if (expectedChange) {
-          expectedA.z += -sign;
-          expectedB.z += -sign;
+        if (sign === -1 && expectedChange) {
+          expectedB.set(0.894427, 0, -0.788854);
         }
         const dragger = domainObject.createDragger(
           createCreateDraggerPropsMock(
@@ -174,33 +179,30 @@ describe(CylinderDragger.name, () => {
     }
   });
 
-  test('rotate the cylinder by moving one of the end caps', () => {
-    // Vertical plane with Z-axis up, ad X axis to right
+  test('translate horizontal circle along the axis', () => {
+    // Vertical plane with Z-axis up, ad X axis to right (sign is 1)
+    //
     // Ray    Start   End
     //      (1,2)  (2,2)
     //         *  *
     //       /   /
-    //  +---A---+      A: Start end cap
-    //  |    /  |      B: End end cap
-    // -----B------------------------------
-    //  |       |
-    //  +-------+
+    //  +-------+ z = 0     Start
+    //
+    //  +-------+ z = -1    End
 
-    const focusType = FocusType.Rotation;
+    const focusType = FocusType.Face;
     for (const expectedChange of [true, false]) {
       for (const sign of [1, -1]) {
-        const domainObject = createVerticalCylinderDomainObject();
+        const domainObject = createHorizontalCircleDomainObject();
         const direction = new Vector3(-1, 0, -sign).normalize();
         const delta = new Vector3(expectedChange ? 1 : 0, 0, 0);
-        const startRay = new Ray(new Vector3(1, 0, sign * 2), direction);
+        const startRay = new Ray(direction.clone().negate(), direction);
 
         const expectedA = domainObject.cylinder.centerA.clone();
-        if (sign === 1 && expectedChange) {
-          expectedA.set(0.894427, 0, 0.788854);
-        }
         const expectedB = domainObject.cylinder.centerB.clone();
-        if (sign === -1 && expectedChange) {
-          expectedB.set(0.894427, 0, -0.788854);
+        if (expectedChange) {
+          expectedA.z += -sign;
+          expectedB.z += -sign;
         }
         const dragger = domainObject.createDragger(
           createCreateDraggerPropsMock(
