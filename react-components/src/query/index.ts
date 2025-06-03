@@ -25,7 +25,8 @@ export {
 } from './useSearchMappedEquipmentAssetMappings';
 export {
   useAllMappedEquipmentFDM,
-  useSearchMappedEquipmentFDM
+  useSearchMappedEquipmentFDM,
+  useFilterNodesByMappedToModelsCallback
 } from './useSearchMappedEquipmentFDM';
 export { useTimeseriesByIdsQuery } from './useTimeseriesByIdsQuery';
 export { useTimeseriesLatestDatapointQuery } from './useTimeseriesLatestDatapointQuery';

@@ -4,11 +4,12 @@ import { type AddModelOptions } from '@cognite/reveal';
 import {
   useSearchMappedEquipmentFDM,
   useAllMappedEquipmentFDM,
-  type InstancesWithView
+  type InstancesWithView,
+  useFilterNodesByMappedToModelsCallback
 } from '../query/useSearchMappedEquipmentFDM';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { cadNodesFixtures } from '#test-utils/fixtures/dm/nodeItems';
-import { type FdmSDK } from '../data-providers/FdmSDK';
+import { type Source, type FdmSDK } from '../data-providers/FdmSDK';
 import { Mock } from 'moq.ts';
 import { type RevealRenderTarget } from '../architecture';
 import type { FC, PropsWithChildren } from 'react';
@@ -17,6 +18,8 @@ import { ViewerContext } from '../components/RevealCanvas/ViewerContext';
 import { FdmSdkContext } from '../components/RevealCanvas/FdmDataProviderContext';
 import { getMockViewByIdResponse } from '#test-utils/fixtures/dm/getMockViewByIdResponse';
 import { getMockViewItemFromSimpleSource } from '#test-utils/fixtures/dm/getMockViewItemFromSimpleSource';
+import { COGNITE_ASSET_SOURCE } from '../data-providers/core-dm-provider/dataModels';
+import { type TableExpressionFilterDefinition } from '@cognite/sdk';
 
 const queryClient = new QueryClient();
 
@@ -60,25 +63,27 @@ const wrapper: FC<PropsWithChildren> = ({ children }) => (
   </QueryClientProvider>
 );
 
+const mockModels: AddModelOptions[] = [
+  { modelId: 456, revisionId: 789 },
+  { modelId: 123, revisionId: 456 }
+];
+
+const mockInstancesFilter: TableExpressionFilterDefinition = {
+  equals: { property: ['key'], value: 'value' }
+};
+
+const mockViewsToSearch: Source[] = [
+  { externalId: 'CogniteCADNode', space: 'cdf_cdm', version: 'v1', type: 'view' as const },
+  { externalId: 'CogniteCADNode', space: 'cdf_cdm', version: 'v1', type: 'view' as const }
+];
+
+const mockInstancesWithView: InstancesWithView[] = [
+  { view: mockViewsToSearch[0], instances: cadNodesFixtures },
+
+  { view: mockViewsToSearch[1], instances: cadNodesFixtures }
+];
+
 describe(useSearchMappedEquipmentFDM.name, () => {
-  const mockModels: AddModelOptions[] = [
-    { modelId: 456, revisionId: 789 },
-    { modelId: 123, revisionId: 456 }
-  ];
-
-  const mockInstancesFilter = { equals: { property: ['key'], value: 'value' } };
-
-  const mockViewsToSearch = [
-    { externalId: 'CogniteCADNode', space: 'cdf_cdm', version: 'v1', type: 'view' as const },
-    { externalId: 'CogniteCADNode', space: 'cdf_cdm', version: 'v1', type: 'view' as const }
-  ];
-
-  const mockInstancesWithView: InstancesWithView[] = [
-    { view: mockViewsToSearch[0], instances: cadNodesFixtures },
-
-    { view: mockViewsToSearch[1], instances: cadNodesFixtures }
-  ];
-
   beforeEach(() => {
     vi.clearAllMocks();
     queryClient.clear();
@@ -183,17 +188,42 @@ describe(useSearchMappedEquipmentFDM.name, () => {
   });
 });
 
+describe(useFilterNodesByMappedToModelsCallback.name, () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    queryClient.clear();
+
+    mockListMappedFdmNodes.mockResolvedValue(cadNodesFixtures);
+    mockFilterNodesByMappedTo3d.mockResolvedValue(mockInstancesWithView);
+  });
+
+  it('returned function should call filterNodesByMappedTo3D and return its result', async () => {
+    const viewMock = getMockViewByIdResponse(mockViewsToSearch);
+    vi.mocked(mockFdmSdk.getViewsByIds).mockResolvedValueOnce(viewMock);
+
+    const { result } = renderHook(
+      () => useFilterNodesByMappedToModelsCallback(mockModels, COGNITE_ASSET_SOURCE, false),
+      { wrapper }
+    );
+
+    const returnValue = await result.current([]);
+
+    expect(mockFilterNodesByMappedTo3d).toHaveBeenCalledWith(
+      [{ instances: [], view: viewMock.items[0] }],
+      mockModels,
+      [COGNITE_ASSET_SOURCE.space],
+      false
+    );
+
+    const filterReturnValue = await mockFilterNodesByMappedTo3d.mock.results[0].value;
+
+    expect(returnValue).toEqual(
+      filterReturnValue.flatMap((res: InstancesWithView) => res.instances)
+    );
+  });
+});
+
 describe(useAllMappedEquipmentFDM.name, () => {
-  const mockViewsToSearch = [
-    { externalId: 'view1', space: 'space1', version: 'v1' },
-    { externalId: 'view2', space: 'space2', version: 'v1' }
-  ];
-
-  const mockModels: AddModelOptions[] = [
-    { modelId: 456, revisionId: 789 },
-    { modelId: 123, revisionId: 456 }
-  ];
-
   beforeEach(() => {
     vi.clearAllMocks();
     queryClient.clear();

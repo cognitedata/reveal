@@ -31,7 +31,8 @@ export async function filterNodesByMappedTo3d(
   nodes: InstancesWithViewDefinition[],
   revisionRefs: DmsUniqueIdentifier[],
   _spacesToSearch: string[],
-  fdmSdk: FdmSDK
+  fdmSdk: FdmSDK,
+  includeIndirectRelations: boolean
 ): Promise<InstancesWithView[]> {
   if (nodes.length === 0 || revisionRefs.length === 0) {
     return [];
@@ -40,7 +41,8 @@ export async function filterNodesByMappedTo3d(
   const object3dKeys = await getObject3dsConnectedToAssetAndModelRevisions(
     nodes,
     revisionRefs,
-    fdmSdk
+    fdmSdk,
+    includeIndirectRelations
   );
 
   const result = nodes.map(async (viewWithNodes) => {
@@ -51,12 +53,11 @@ export async function filterNodesByMappedTo3d(
     return {
       view: viewWithNodes.view,
       instances: viewWithNodes.instances.filter((instance) => {
-        if (
-          !isDmsInstance(instance.properties[spaceFromView]?.[assetExternalIdWithVersion]?.object3D)
-        ) {
+        const object3dId =
+          instance.properties[spaceFromView]?.[assetExternalIdWithVersion]?.object3D;
+        if (!isDmsInstance(object3dId)) {
           return false;
         }
-        const object3dId = instance.properties[spaceFromView][assetExternalIdWithVersion]?.object3D;
         return object3dKeys.has(createFdmKey(object3dId));
       })
     };
@@ -88,7 +89,8 @@ type SelectSourcesType = [
 async function getObject3dsConnectedToAssetAndModelRevisions(
   nodes: InstancesWithViewDefinition[],
   revisionRefs: DmsUniqueIdentifier[],
-  fdmSdk: FdmSDK
+  fdmSdk: FdmSDK,
+  includeIndirectRelations: boolean
 ): Promise<Set<FdmKey>> {
   const initialIds = nodes.flatMap((node) => node.instances.map(restrictToDmsId));
 
@@ -98,7 +100,7 @@ async function getObject3dsConnectedToAssetAndModelRevisions(
         getCogniteAssetDirectRelationProperties(instance, node.view)
       )
     )
-    .filter(isDefined);
+    .filter((node) => isDefined(node) && node.externalId !== undefined && node.space !== undefined);
 
   const mergedIds = concat(initialIds, directlyConnectedIds);
   const uniqueIds = uniqBy(mergedIds, createFdmKey);
@@ -118,7 +120,9 @@ async function getObject3dsConnectedToAssetAndModelRevisions(
     };
 
     const result = await fdmSdk.queryAllNodesAndEdges<typeof query, SelectSourcesType>(query);
-    object3dConnectedToEquipmentAndModel.push(...getRelevantObject3ds(result));
+    object3dConnectedToEquipmentAndModel.push(
+      ...getRelevantObject3ds(result, includeIndirectRelations)
+    );
   }
 
   return new Set<FdmKey>(object3dConnectedToEquipmentAndModel);
@@ -128,16 +132,17 @@ function getRelevantObject3ds(
   connectionData: QueryResult<
     ReturnType<typeof createCheck3dConnectedEquipmentQuery>,
     SelectSourcesType
-  >
+  >,
+  includeIndirectRelations: boolean
 ): FdmKey[] {
   const cadObject3dList = [...connectionData.items.initial_nodes_cad_nodes]
-    .concat(connectionData.items.indirect_nodes_cad_nodes)
+    .concat(includeIndirectRelations ? connectionData.items.indirect_nodes_cad_nodes : [])
     .map((node) =>
       createFdmKey(node.properties[CORE_DM_SPACE][COGNITE_CAD_NODE_VIEW_VERSION_KEY].object3D)
     );
 
   const pointCloudObject3dList = [...connectionData.items.initial_nodes_point_cloud_volumes]
-    .concat(connectionData.items.indirect_nodes_point_cloud_volumes)
+    .concat(includeIndirectRelations ? connectionData.items.indirect_nodes_point_cloud_volumes : [])
     .map((pointCloudVolume) =>
       createFdmKey(
         pointCloudVolume.properties[CORE_DM_SPACE][COGNITE_POINT_CLOUD_VOLUME_VIEW_VERSION_KEY]
@@ -148,13 +153,13 @@ function getRelevantObject3ds(
   const relevant360NodeKeys = new Set<FdmKey>(
     [
       ...connectionData.items.initial_nodes_360_images,
-      ...connectionData.items.indirect_nodes_360_images
+      ...(includeIndirectRelations ? connectionData.items.indirect_nodes_360_images : [])
     ].map(createFdmKey)
   );
 
   const relevant360AnnotationEdges = [
     ...connectionData.items.initial_edges_360_image_annotations,
-    ...connectionData.items.indirect_edges_360_image_annotations
+    ...(includeIndirectRelations ? connectionData.items.indirect_edges_360_image_annotations : [])
   ].filter((edge) => relevant360NodeKeys.has(createFdmKey(edge.endNode)));
 
   const image360Object3dList = relevant360AnnotationEdges.map((edge) =>

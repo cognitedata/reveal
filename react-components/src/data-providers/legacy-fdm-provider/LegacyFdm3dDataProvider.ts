@@ -102,7 +102,8 @@ export class LegacyFdm3dDataProvider implements Fdm3dDataProvider {
   async filterNodesByMappedTo3d(
     nodes: InstancesWithViewDefinition[],
     models: Array<AddModelOptions<DataSourceType> | AddImage360CollectionDatamodelsOptions>,
-    spacesToSearch: string[]
+    spacesToSearch: string[],
+    includeIndirectRelations: boolean
   ): Promise<InstancesWithView[]> {
     const classicModels = models.filter((model) => isClassicIdentifier(model));
 
@@ -121,7 +122,8 @@ export class LegacyFdm3dDataProvider implements Fdm3dDataProvider {
       this._fdmSdk,
       transformedNodes,
       classicModels,
-      spacesToSearch
+      spacesToSearch,
+      includeIndirectRelations
     );
   }
 
