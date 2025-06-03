@@ -2,8 +2,9 @@
  * Copyright 2023 Cognite AS
  */
 import type { AddModelOptions } from '@cognite/reveal';
-import { useContext, useEffect, useMemo } from 'react';
+import { useCallback, useContext, useEffect, useMemo } from 'react';
 import type { Asset, CogniteClient, DirectRelationReference } from '@cognite/sdk';
+
 import {
   type AddCadResourceOptions,
   type AddImage360CollectionOptions,
@@ -116,9 +117,14 @@ export const useFilterOnClassicAssetsInScene = (
     isLoadingAllPointCloudAssets
   ]);
 
+  const filterAssetsCallback = useCallback(
+    (assets: Asset[]) => assets.filter((asset) => allAssetsMap?.has(asset.id) === true),
+    [allAssetsMap]
+  );
+
   if (allAssetsMap === undefined) {
     return undefined;
   }
 
-  return (assets: Asset[]) => assets.filter((asset) => allAssetsMap.has(asset.id));
+  return filterAssetsCallback;
 };

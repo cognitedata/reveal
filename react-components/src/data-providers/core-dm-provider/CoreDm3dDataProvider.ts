@@ -172,11 +172,18 @@ export class CoreDm3dFdm3dDataProvider implements Fdm3dDataProvider {
   async filterNodesByMappedTo3d(
     nodes: InstancesWithViewDefinition[],
     models: Array<AddModelOptions<DataSourceType> | AddImage360CollectionDatamodelsOptions>,
-    spacesToSearch: string[]
+    spacesToSearch: string[],
+    includeIndirectRelations: boolean
   ): Promise<InstancesWithView[]> {
     const revisionRefs = await this.getRevisionRefs(models);
 
-    return await filterNodesByMappedTo3d(nodes, revisionRefs, spacesToSearch, this._fdmSdk);
+    return await filterNodesByMappedTo3d(
+      nodes,
+      revisionRefs,
+      spacesToSearch,
+      this._fdmSdk,
+      includeIndirectRelations
+    );
   }
 
   async getCadModelsForInstance(

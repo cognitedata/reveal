@@ -193,3 +193,44 @@ export function createCheck3dConnectedEquipmentQuery(
     }
   } as const satisfies Omit<QueryRequest, 'parameters' | 'cursor'>;
 }
+
+// eslint-disable-next-line @typescript-eslint/explicit-function-return-type
+export function createCheck3dConnectedEquipmentQueryNoIndirect(
+  initialNodes: DmsUniqueIdentifier[],
+  revisionRefs: DmsUniqueIdentifier[]
+) {
+  return {
+    with: {
+      initial_nodes: {
+        nodes: {
+          filter: {
+            and: [
+              hasIdFilter(initialNodes),
+              {
+                hasData: [COGNITE_VISUALIZABLE_SOURCE]
+              }
+            ]
+          }
+        }
+      },
+      initial_nodes_object_3ds: getObject3dRelation('initial_nodes'),
+      initial_nodes_cad_nodes: getRevisionsCadNodeFromObject3D('initial_nodes_object_3ds'),
+      initial_nodes_point_cloud_volumes: getRevisionsPointCloudVolumes('initial_nodes_object_3ds'),
+      initial_edges_360_image_annotations: getRevisionImage360AnnotationEdges(
+        'initial_nodes_object_3ds'
+      ),
+      initial_nodes_360_images: getRevisionImage360Images(
+        'initial_edges_360_image_annotations',
+        revisionRefs
+      )
+    },
+    select: {
+      initial_nodes_cad_nodes: {
+        sources: cadNodeSourceWithProperties
+      },
+      initial_nodes_point_cloud_volumes: { sources: pointCloudVolumeSourceWithProperties },
+      initial_edges_360_image_annotations: {},
+      initial_nodes_360_images: { sources: cogniteImage360SourceWithOnlyCollection360 }
+    }
+  } as const satisfies Omit<QueryRequest, 'parameters' | 'cursor'>;
+}
