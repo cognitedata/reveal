@@ -12,7 +12,7 @@ import { FolderDomainObject } from '../../../base/domainObjects/FolderDomainObje
 import { type BaseCreator } from '../../../base/domainObjectsHelpers/BaseCreator';
 import { click } from '#test-utils/architecture/baseCreatorUtil';
 
-describe('LineCreator', () => {
+describe(LineCreator.name, () => {
   test('create Line by mimics the user clicking 2 times', () => {
     const domainObject = new MeasureLineDomainObject(PrimitiveType.Line);
     const creator = new LineCreator(domainObject);

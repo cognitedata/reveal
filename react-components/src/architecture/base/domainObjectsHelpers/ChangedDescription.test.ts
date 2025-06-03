@@ -6,7 +6,7 @@ import { describe, expect, test } from 'vitest';
 import { ChangedDescription } from './ChangedDescription';
 import { Changes } from './Changes';
 
-describe('ChangedDescription', () => {
+describe(ChangedDescription.name, () => {
   test('should return true on change with fieldName', () => {
     const change = new ChangedDescription(Changes.renderStyle, 'radius');
     expect(change.isChanged('radius')).toBe(true);

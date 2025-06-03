@@ -7,7 +7,7 @@ import { PrimitiveType } from '../../../base/utilities/primitives/PrimitiveType'
 import { isEmpty } from '../../../base/utilities/TranslateInput';
 import { Changes } from '../../../base/domainObjectsHelpers/Changes';
 import { Quantity } from '../../../base/domainObjectsHelpers/Quantity';
-import { type LineDomainObject } from './LineDomainObject';
+import { LineDomainObject } from './LineDomainObject';
 import { MeasureLineDomainObject } from '../../measurements/MeasureLineDomainObject';
 import { Box3, Vector3 } from 'three';
 import { expectEqualBox3 } from '#test-utils/primitives/primitiveTestUtil';
@@ -17,7 +17,7 @@ import {
 } from '../../../base/utilities/extensions/vectorExtensions';
 import { LineRenderStyle } from './LineRenderStyle';
 
-describe('LineDomainObject', () => {
+describe(LineDomainObject.name, () => {
   test('should initialize with correct default values', () => {
     for (const primitiveType of [
       PrimitiveType.Line,

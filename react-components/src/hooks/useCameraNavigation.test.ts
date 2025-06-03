@@ -21,7 +21,7 @@ vi.mock('../components/CacheProvider/NodeCacheProvider', () => ({
   useFdmNodeCache: () => fdmNodeCacheContentMock
 }));
 
-describe('useCameraNavigation', () => {
+describe(useCameraNavigation.name, () => {
   beforeEach(() => {
     vi.resetAllMocks();
     viewerMock.cameraManager.setCameraState = vi.fn();

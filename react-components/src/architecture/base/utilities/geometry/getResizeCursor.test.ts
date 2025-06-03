@@ -5,7 +5,7 @@
 import { describe, expect, test } from 'vitest';
 import { getResizeCursor } from './getResizeCursor';
 
-describe('getResizeCursor', () => {
+describe(getResizeCursor.name, () => {
   test('should get the correct cursor', () => {
     expect(getResizeCursor(0)).toBe('ew-resize');
     expect(getResizeCursor(1)).toBe('nesw-resize');

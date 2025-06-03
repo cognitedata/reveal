@@ -7,12 +7,12 @@ import { PrimitiveType } from '../../../base/utilities/primitives/PrimitiveType'
 import { isEmpty } from '../../../base/utilities/TranslateInput';
 import { SolidPrimitiveRenderStyle } from '../common/SolidPrimitiveRenderStyle';
 import { Quantity } from '../../../base/domainObjectsHelpers/Quantity';
-import { type CylinderDomainObject } from './CylinderDomainObject';
+import { CylinderDomainObject } from './CylinderDomainObject';
 import { Cylinder } from '../../../base/utilities/primitives/Cylinder';
 import { Changes } from '../../../base/domainObjectsHelpers/Changes';
 import { MeasureCylinderDomainObject } from '../../measurements/MeasureCylinderDomainObject';
 
-describe('CylinderDomainObject', () => {
+describe(CylinderDomainObject, () => {
   test('should initialize with correct default values', () => {
     for (const primitiveType of [
       PrimitiveType.Cylinder,

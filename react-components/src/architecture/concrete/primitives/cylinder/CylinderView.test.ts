@@ -21,7 +21,7 @@ import { PrimitivePickInfo } from '../common/PrimitivePickInfo';
 import { MeasureCylinderDomainObject } from '../../measurements/MeasureCylinderDomainObject';
 import { PrimitiveType } from '../../../base/utilities/primitives/PrimitiveType';
 
-describe('CylinderView', () => {
+describe(CylinderView.name, () => {
   let domainObject: CylinderDomainObject;
   let view: CylinderView;
 

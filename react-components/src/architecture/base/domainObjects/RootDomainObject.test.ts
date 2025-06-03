@@ -8,7 +8,7 @@ import { type RevealRenderTarget } from '../renderTarget/RevealRenderTarget';
 import { createRenderTargetMock } from '#test-utils/fixtures/renderTarget';
 import { sdkMock } from '#test-utils/fixtures/sdk';
 
-describe('RootDomainObject', () => {
+describe(RootDomainObject.name, () => {
   let renderTarget: RevealRenderTarget;
   beforeAll(() => {
     renderTarget = createRenderTargetMock();

@@ -18,7 +18,7 @@ import {
 } from '#test-utils/architecture/viewUtil';
 import { MeasureLineDomainObject } from '../../measurements/MeasureLineDomainObject';
 
-describe('LineView', () => {
+describe(LineView.name, () => {
   let domainObject: LineDomainObject;
   let view: LineView;
 
