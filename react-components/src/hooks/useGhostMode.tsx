@@ -1,7 +1,3 @@
-/*!
- * Copyright 2024 Cognite AS
- */
-
 import { useRenderTarget } from '../components/RevealCanvas';
 import { SetGhostModeCommand } from '../architecture/base/concreteCommands/cad/SetGhostModeCommand';
 import { useCommandChecked } from '../components/Architecture/useCommandProps';

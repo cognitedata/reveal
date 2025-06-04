@@ -1,6 +1,3 @@
-/*!
- * Copyright 2023 Cognite AS
- */
 import type { Meta, StoryObj } from '@storybook/react';
 import { RevealStoryContainer } from './utilities/RevealStoryContainer';
 import { SceneContainer } from '../src/components/SceneContainer/SceneContainer';

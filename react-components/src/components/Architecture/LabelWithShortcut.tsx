@@ -1,6 +1,3 @@
-/*!
- * Copyright 2024 Cognite AS
- */
 import React from 'react';
 
 import styled from 'styled-components';

@@ -1,6 +1,3 @@
-/*!
- * Copyright 2024 Cognite AS
- */
 import { type Node3D, type CogniteClient } from '@cognite/sdk';
 import {
   type ChunkInCacheTypes,

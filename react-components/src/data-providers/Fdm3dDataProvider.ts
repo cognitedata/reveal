@@ -1,6 +1,3 @@
-/*!
- * Copyright 2024 Cognite AS
- */
 import {
   type InstanceFilter,
   type NodeItem,
@@ -49,7 +46,8 @@ export type Fdm3dDataProvider = {
   filterNodesByMappedTo3d: (
     nodes: InstancesWithViewDefinition[],
     models: Array<AddModelOptions<DataSourceType> | AddImage360CollectionDatamodelsOptions>,
-    spacesToSearch: string[]
+    spacesToSearch: string[],
+    includeIndirectRelations: boolean
   ) => Promise<InstancesWithView[]>;
 
   getCadModelsForInstance: (instance: DmsUniqueIdentifier) => Promise<TaggedAddResourceOptions[]>;

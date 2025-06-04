@@ -1,21 +1,17 @@
-/*!
- * Copyright 2024 Cognite AS
- */
-
-import { type ReactElement } from 'react';
-import { useRenderTarget } from '../RevealCanvas/ViewerContext';
-import { SegmentedControl, Tooltip as CogsTooltip } from '@cognite/cogs.js';
-import { useTranslation } from '../i18n/I18n';
-import { type BaseCommand } from '../../architecture/base/commands/BaseCommand';
 import { getTooltipPlacement } from './utilities';
-import { type BaseOptionCommand } from '../../architecture/base/commands/BaseOptionCommand';
-import { LabelWithShortcut } from './LabelWithShortcut';
 import { IconComponent } from './Factories/IconFactory';
-import { type PlacementType } from './types';
+import { LabelWithShortcut } from './LabelWithShortcut';
+import { SegmentedControl, Tooltip as CogsTooltip } from '@cognite/cogs.js';
 import { TOOLTIP_DELAY } from './constants';
-import { useCommandProperty } from './useCommandProperty';
+import { type BaseCommand } from '../../architecture/base/commands/BaseCommand';
+import { type BaseOptionCommand } from '../../architecture/base/commands/BaseOptionCommand';
+import { type PlacementType } from './types';
+import { type ReactElement } from 'react';
 import { useCommand } from './useCommand';
+import { useCommandProperty } from './useCommandProperty';
 import { useCommandProps } from './useCommandProps';
+import { useRenderTarget } from '../RevealCanvas/ViewerContext';
+import { useTranslation } from '../i18n/I18n';
 
 export const SegmentedButtons = ({
   inputCommand,

@@ -1,6 +1,3 @@
-/*!
- * Copyright 2025 Cognite AS
- */
 import { type InstanceReference, isIdEither } from '../instanceIds';
 import { isClassicImage360Annotation, isClassicImage360AssetAnnotationData } from './typeGuards';
 import { type Image360AnnotationContent } from './types';

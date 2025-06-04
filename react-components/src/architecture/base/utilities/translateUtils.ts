@@ -1,7 +1,3 @@
-/*!
- * Copyright 2023 Cognite AS
- */
-
 import { getLanguage } from '../../../components/i18n/utils';
 import {
   type TranslationInput,

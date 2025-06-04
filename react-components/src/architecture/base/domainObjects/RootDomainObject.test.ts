@@ -1,7 +1,3 @@
-/*!
- * Copyright 2024 Cognite AS
- */
-
 import { describe, test, expect, beforeAll } from 'vitest';
 import { RootDomainObject } from './RootDomainObject';
 import { type RevealRenderTarget } from '../renderTarget/RevealRenderTarget';

@@ -1,6 +1,3 @@
-/*!
- * Copyright 2024 Cognite AS
- */
 import {
   type AnyIntersection,
   CDF_TO_VIEWER_TRANSFORMATION,

@@ -1,7 +1,3 @@
-/*!
- * Copyright 2023 Cognite AS
- */
-
 import { type ReactElement, useCallback } from 'react';
 
 import { useCameraNavigation, Reveal3DResources, type Reveal3DResourcesProps } from '../../src';

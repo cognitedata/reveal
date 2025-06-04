@@ -1,7 +1,3 @@
-/*!
- * Copyright 2024 Cognite AS
- */
-
 import { type Annotation } from './Annotation';
 import { type Status } from './Status';
 

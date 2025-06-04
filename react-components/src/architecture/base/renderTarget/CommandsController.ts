@@ -1,8 +1,3 @@
-/*!
- * Copyright 2024 Cognite AS
- * CommandsController: Holds the tools, the active tool and the previous tool
- */
-
 import { PointerEvents, PointerEventsTarget, getWheelEventDelta } from '@cognite/reveal';
 import { type BaseTool } from '../commands/BaseTool';
 import { type BaseCommand } from '../commands/BaseCommand';

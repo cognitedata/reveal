@@ -1,6 +1,3 @@
-/*!
- * Copyright 2025 Cognite AS
- */
 import { isDefined } from '../../../utilities/isDefined';
 import {
   type ColorRuleOutput,

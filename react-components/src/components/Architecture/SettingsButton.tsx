@@ -1,36 +1,28 @@
-/*!
- * Copyright 2024 Cognite AS
- */
-
-import { type ReactNode, useState, type ReactElement } from 'react';
-
-import { Button, Tooltip as CogsTooltip, Flex, Slider, Switch, TextLabel } from '@cognite/cogs.js';
-
-import { Dropdown, Menu } from '@cognite/cogs-lab';
-import { useTranslation } from '../i18n/I18n';
-import { type BaseCommand } from '../../architecture/base/commands/BaseCommand';
-import { getButtonType, getFlexDirection, getTooltipPlacement } from './utilities';
-import { LabelWithShortcut } from './LabelWithShortcut';
-import { type TranslateDelegate } from '../../architecture/base/utilities/TranslateInput';
-import styled from 'styled-components';
-import { type BaseSettingsCommand } from '../../architecture/base/commands/BaseSettingsCommand';
-import { BaseOptionCommand } from '../../architecture/base/commands/BaseOptionCommand';
-import { DropdownButton } from './DropdownButton';
-import { BaseSliderCommand } from '../../architecture/base/commands/BaseSliderCommand';
-import { BaseFilterCommand } from '../../architecture/base/commands/BaseFilterCommand';
-import { FilterButton } from './FilterButton';
-import { DEFAULT_PADDING, TOOLTIP_DELAY } from './constants';
-import { IconComponent } from './Factories/IconFactory';
-
-import { TOOLBAR_HORIZONTAL_PANEL_OFFSET } from '../constants';
-
-import { DividerCommand } from '../../architecture/base/commands/DividerCommand';
-import { SectionCommand } from '../../architecture/base/commands/SectionCommand';
-import { type FlexDirection, type PlacementType } from './types';
-import { BaseBannerCommand } from '../../architecture';
 import { BannerComponent } from './BannerComponent';
-import { useCommandVisible, useCommandProps, useSliderCommandValue } from './useCommandProps';
+import { BaseBannerCommand } from '../../architecture';
+import { BaseFilterCommand } from '../../architecture/base/commands/BaseFilterCommand';
+import { BaseOptionCommand } from '../../architecture/base/commands/BaseOptionCommand';
+import { BaseSliderCommand } from '../../architecture/base/commands/BaseSliderCommand';
+import { Button, Tooltip as CogsTooltip, Flex, Slider, Switch, TextLabel } from '@cognite/cogs.js';
+import { DEFAULT_PADDING, TOOLTIP_DELAY } from './constants';
+import { DividerCommand } from '../../architecture/base/commands/DividerCommand';
+import { Dropdown, Menu } from '@cognite/cogs-lab';
+import { DropdownButton } from './DropdownButton';
+import { FilterButton } from './FilterButton';
+import { getButtonType, getFlexDirection, getTooltipPlacement } from './utilities';
+import { IconComponent } from './Factories/IconFactory';
+import { LabelWithShortcut } from './LabelWithShortcut';
+import { SectionCommand } from '../../architecture/base/commands/SectionCommand';
+import { TOOLBAR_HORIZONTAL_PANEL_OFFSET } from '../constants';
+import { type BaseCommand } from '../../architecture/base/commands/BaseCommand';
+import { type BaseSettingsCommand } from '../../architecture/base/commands/BaseSettingsCommand';
+import { type FlexDirection, type PlacementType } from './types';
+import { type ReactNode, useState, type ReactElement } from 'react';
+import { type TranslateDelegate } from '../../architecture/base/utilities/TranslateInput';
 import { useCommand } from './useCommand';
+import { useCommandVisible, useCommandProps, useSliderCommandValue } from './useCommandProps';
+import { useTranslation } from '../i18n/I18n';
+import styled from 'styled-components';
 
 export const SettingsButton = ({
   inputCommand,

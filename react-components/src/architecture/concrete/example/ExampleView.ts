@@ -1,7 +1,3 @@
-/*!
- * Copyright 2024 Cognite AS
- */
-
 import { Mesh, MeshPhongMaterial, Sphere, SphereGeometry, Vector3 } from 'three';
 import { type ExampleDomainObject } from './ExampleDomainObject';
 import { type DomainObjectChange } from '../../base/domainObjectsHelpers/DomainObjectChange';

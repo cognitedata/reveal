@@ -1,6 +1,3 @@
-/*!
- * Copyright 2025 Cognite AS
- */
 import { TreeNode } from './tree-node';
 import { type TreeNodeType } from './tree-node-type';
 import { CheckboxState } from './types';
