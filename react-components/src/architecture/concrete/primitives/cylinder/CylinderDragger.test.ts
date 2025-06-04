@@ -40,23 +40,28 @@ describe(CylinderDragger.name, () => {
   test('translate the cylinder', () => {
     const focusType = FocusType.Body;
     for (const testCase of getTestCasesWithSign()) {
-      const { sign, expectedChange } = testCase;
+      const { sign } = testCase;
       const domainObject = createVerticalCylinderDomainObject();
 
       // Grab the cylinder at top cap from above and move it in the XY plane
       const direction = new Vector3(0, 0, -sign);
-      const delta = new Vector3(expectedChange ? 1 : 0, expectedChange ? 2 : 0, 0);
       const startRay = new Ray(new Vector3(0, 0, sign * 2), direction);
       const face = new BoxFace(sign === 1 ? 5 : 2);
-      const expectedCenterA = domainObject.cylinder.centerA.clone().add(delta);
-      const expectedCenterB = domainObject.cylinder.centerB.clone().add(delta);
+      const delta = new Vector3();
 
+      const expectedCenterA = domainObject.cylinder.centerA.clone();
+      const expectedCenterB = domainObject.cylinder.centerB.clone();
+      if (testCase.expectedChange) {
+        delta.set(1, 2, 0);
+        expectedCenterA.add(delta);
+        expectedCenterB.add(delta);
+      }
       const dragger = domainObject.createDragger(
         createCreateDraggerPropsMock(domainObject, startRay, face, focusType)
       );
       assert(dragger !== undefined);
-
       drag(dragger, startRay, delta, testCase);
+
       expectEqualVector3(domainObject.cylinder.centerA, expectedCenterA);
       expectEqualVector3(domainObject.cylinder.centerB, expectedCenterB);
       expect(domainObject.focusType).toBe(focusType);
@@ -71,9 +76,14 @@ describe(CylinderDragger.name, () => {
 
       // Grab the cylinder from the side and move it away from the center
       const direction = new Vector3(0, 1, 0);
-      const delta = new Vector3(testCase.expectedChange ? 1 : 0, 0, 0);
       const startRay = new Ray(new Vector3(1, -2, 0), direction);
-      const expectedRadius = domainObject.cylinder.radius + delta.x;
+      const delta = new Vector3();
+
+      let expectedRadius = domainObject.cylinder.radius;
+      if (testCase.expectedChange) {
+        delta.x = 1;
+        expectedRadius += 1;
+      }
       const dragger = domainObject.createDragger(
         createCreateDraggerPropsMock(domainObject, startRay, face, focusType)
       );
@@ -100,20 +110,22 @@ describe(CylinderDragger.name, () => {
 
     const focusType = FocusType.Face;
     for (const testCase of getTestCasesWithSign()) {
-      const { sign, expectedChange } = testCase;
+      const { sign } = testCase;
       const domainObject = createVerticalCylinderDomainObject();
       const direction = new Vector3(-1, 0, -sign).normalize();
-      const delta = new Vector3(expectedChange ? 1 : 0, 0, 0);
       const startRay = new Ray(new Vector3(1, 0, sign * 2), direction);
       const face = new BoxFace(sign === 1 ? 5 : 2);
+      const delta = new Vector3();
 
       const expectedCenterA = domainObject.cylinder.centerA.clone();
-      if (sign === 1 && expectedChange) {
-        expectedCenterA.z = 0;
-      }
       const expectedCenterB = domainObject.cylinder.centerB.clone();
-      if (sign === -1 && expectedChange) {
-        expectedCenterB.z = 0;
+      if (testCase.expectedChange) {
+        if (sign > 0) {
+          expectedCenterA.z = 0;
+        } else {
+          expectedCenterB.z = 0;
+        }
+        delta.x = 1;
       }
       const dragger = domainObject.createDragger(
         createCreateDraggerPropsMock(domainObject, startRay, face, focusType)
@@ -143,20 +155,22 @@ describe(CylinderDragger.name, () => {
 
     const focusType = FocusType.Rotation;
     for (const testCase of getTestCasesWithSign()) {
-      const { sign, expectedChange } = testCase;
+      const { sign } = testCase;
       const domainObject = createVerticalCylinderDomainObject();
       const direction = new Vector3(-1, 0, -sign).normalize();
-      const delta = new Vector3(expectedChange ? 1 : 0, 0, 0);
       const startRay = new Ray(new Vector3(1, 0, sign * 2), direction);
       const face = new BoxFace(sign === 1 ? 5 : 2);
+      const delta = new Vector3();
 
       const expectedCenterA = domainObject.cylinder.centerA.clone();
-      if (sign === 1 && expectedChange) {
-        expectedCenterA.set(0.894427, 0, 0.788854);
-      }
       const expectedCenterB = domainObject.cylinder.centerB.clone();
-      if (sign === -1 && expectedChange) {
-        expectedCenterB.set(0.894427, 0, -0.788854);
+      if (testCase.expectedChange) {
+        delta.x = 1;
+        if (sign > 0) {
+          expectedCenterA.set(0.894427, 0, 0.788854);
+        } else {
+          expectedCenterB.set(0.894427, 0, -0.788854);
+        }
       }
       const dragger = domainObject.createDragger(
         createCreateDraggerPropsMock(domainObject, startRay, face, focusType)
@@ -183,18 +197,19 @@ describe(CylinderDragger.name, () => {
 
     const focusType = FocusType.Face;
     for (const testCase of getTestCasesWithSign()) {
-      const { sign, expectedChange } = testCase;
+      const { sign } = testCase;
       const domainObject = createHorizontalCircleDomainObject();
       const direction = new Vector3(-1, 0, -sign).normalize();
-      const delta = new Vector3(expectedChange ? 1 : 0, 0, 0);
       const startRay = new Ray(direction.clone().negate(), direction);
       const face = new BoxFace(sign === 1 ? 5 : 2);
+      const delta = new Vector3();
 
       const expectedCenterA = domainObject.cylinder.centerA.clone();
       const expectedCenterB = domainObject.cylinder.centerB.clone();
-      if (expectedChange) {
+      if (testCase.expectedChange) {
         expectedCenterA.z += -sign;
         expectedCenterB.z += -sign;
+        delta.x = 1;
       }
       const dragger = domainObject.createDragger(
         createCreateDraggerPropsMock(domainObject, startRay, face, focusType)

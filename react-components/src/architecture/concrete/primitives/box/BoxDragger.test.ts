@@ -25,8 +25,9 @@ describe(BoxDragger.name, () => {
     // Grab the box at top cap from above and move it in the XY plane
     const face = new BoxFace(2);
     const direction = new Vector3(0, 0, -1);
-    const delta = new Vector3(1, 0, 0);
     const startRay = new Ray(new Vector3(0, 0, 2), direction);
+    const delta = new Vector3(1, 0, 0);
+
     const dragger = domainObject.createDragger(
       createCreateDraggerPropsMock(domainObject, startRay, face, focusType)
     );
@@ -46,9 +47,9 @@ describe(BoxDragger.name, () => {
 
       // Grab the box at top cap from above and move it in the XY plane
       const direction = new Vector3(0, 0, -sign);
-      const delta = new Vector3();
       const startRay = new Ray(new Vector3(0, 0, sign * 2), direction);
       const face = new BoxFace(sign === 1 ? 5 : 2);
+      const delta = new Vector3();
 
       const expectedSize = domainObject.box.size.clone();
       const expectedCenter = domainObject.box.center.clone();
@@ -79,9 +80,7 @@ describe(BoxDragger.name, () => {
       const direction = new Vector3(-1, 0, -sign).normalize();
       const startRay = new Ray(new Vector3(2, 0, 2 * sign), direction);
       const delta = new Vector3();
-      const dragger = domainObject.createDragger(
-        createCreateDraggerPropsMock(domainObject, startRay, face, focusType)
-      );
+
       const expectedSize = domainObject.box.size.clone();
       const expectedCenter = domainObject.box.center.clone();
       if (testCase.expectedChange) {
@@ -89,7 +88,9 @@ describe(BoxDragger.name, () => {
         expectedSize.add(new Vector3(0, 0, 1));
         expectedCenter.addScaledVector(delta, 0.5);
       }
-
+      const dragger = domainObject.createDragger(
+        createCreateDraggerPropsMock(domainObject, startRay, face, focusType)
+      );
       assert(dragger !== undefined);
       drag(dragger, startRay, delta, testCase);
 
@@ -118,9 +119,9 @@ describe(BoxDragger.name, () => {
 
       const direction = new Vector3(0, 1, 0); // Along the y axis
       const startRay = new Ray(new Vector3(-1, -2, -1), direction); // See figure
-      const delta = new Vector3(); // Movement in the XZ plane
       const cornerSign = new Vector3(-1, -1, -1); // This is the corner that is being dragged
       const face = new BoxFace(4); // Negative Y face
+      const delta = new Vector3(); // Movement in the XZ plane
 
       const expectedSize = domainObject.box.size.clone();
       const expectedCenter = domainObject.box.center.clone();
@@ -161,8 +162,8 @@ describe(BoxDragger.name, () => {
 
       const direction = new Vector3(0, 1, 0); // Along the y axis
       const startRay = new Ray(new Vector3(-1, -2, -1), direction); // See figure
-      const delta = new Vector3();
       const face = new BoxFace(4); // Negative Y face
+      const delta = new Vector3();
 
       const expectedSize = domainObject.box.size.clone();
       const expectedCenter = domainObject.box.center.clone();
