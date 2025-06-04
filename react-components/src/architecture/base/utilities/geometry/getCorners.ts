@@ -1,7 +1,3 @@
-/*!
- * Copyright 2024 Cognite AS
- */
-
 import { type Box3, Vector3 } from 'three';
 
 export function* getCorners(box: Box3, target?: Vector3): Generator<Vector3> {

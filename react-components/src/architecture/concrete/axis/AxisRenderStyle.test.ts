@@ -1,7 +1,3 @@
-/*!
- * Copyright 2024 Cognite AS
- */
-
 import { describe, expect, test } from 'vitest';
 import { AxisRenderStyle } from './AxisRenderStyle';
 

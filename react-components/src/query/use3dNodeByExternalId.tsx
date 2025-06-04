@@ -1,6 +1,3 @@
-/*!
- * Copyright 2023 Cognite AS
- */
 import { type UseQueryResult, useQuery } from '@tanstack/react-query';
 import { type Node3D } from '@cognite/sdk';
 import { type DmsUniqueIdentifier } from '../data-providers/FdmSDK';

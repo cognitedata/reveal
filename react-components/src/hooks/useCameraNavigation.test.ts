@@ -1,6 +1,3 @@
-/*!
- * Copyright 2025 Cognite AS
- */
 import { describe, expect, test, vi, beforeEach, beforeAll, afterAll } from 'vitest';
 import { act, renderHook } from '@testing-library/react';
 import { Vector3 } from 'three';

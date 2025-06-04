@@ -1,7 +1,3 @@
-/*!
- * Copyright 2024 Cognite AS
- */
-
 import { useMemo } from 'react';
 import { type RuleOutputSet } from '../types';
 import { isDefined } from '../../../utilities/isDefined';

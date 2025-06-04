@@ -1,6 +1,3 @@
-/*!
- * Copyright 2025 Cognite AS
- */
 import { describe, expect, it, beforeEach } from 'vitest';
 import { CoreDm3dFdm3dDataProvider } from './CoreDm3dDataProvider';
 import { Mock, It, type IMock } from 'moq.ts';

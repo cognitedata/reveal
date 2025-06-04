@@ -1,7 +1,3 @@
-/*!
- * Copyright 2024 Cognite AS
- */
-
 import { RenderTargetCommand } from '../commands/RenderTargetCommand';
 import { type RevealRenderTarget } from '../renderTarget/RevealRenderTarget';
 import { FlexibleControlsType } from '@cognite/reveal';

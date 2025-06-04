@@ -1,6 +1,3 @@
-/*!
- * Copyright 2024 Cognite AS
- */
 import { type NodeAppearance } from '@cognite/reveal';
 import { type InstanceStylingGroup } from '.';
 import { type InstanceReference, isDmsInstance, isInternalId } from '../../utilities/instanceIds';

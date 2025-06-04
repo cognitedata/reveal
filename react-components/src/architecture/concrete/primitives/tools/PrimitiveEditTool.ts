@@ -1,7 +1,3 @@
-/*!
- * Copyright 2024 Cognite AS
- */
-
 import { type CustomObjectIntersection } from '@cognite/reveal';
 import { isDomainObjectIntersection } from '../../../base/domainObjectsHelpers/DomainObjectIntersection';
 import { FocusType } from '../../../base/domainObjectsHelpers/FocusType';

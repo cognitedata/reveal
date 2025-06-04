@@ -1,6 +1,3 @@
-/*!
- * Copyright 2025 Cognite AS
- */
 import { type Asset, type Datapoints } from '@cognite/sdk/';
 import { type AssetIdsAndTimeseries } from '../../../data-providers/types';
 import { type TimeseriesAndDatapoints } from '../types';

@@ -1,6 +1,3 @@
-/*!
- * Copyright 2025 Cognite AS
- */
 import { createContext } from 'react';
 import { useRenderTarget, useReveal } from '../RevealCanvas';
 import { useRemoveNonReferencedModels } from './hooks/useRemoveNonReferencedModels';

@@ -1,7 +1,3 @@
-/*!
- * Copyright 2024 Cognite AS
- */
-
 import { useQueries, type UseQueryOptions, type UseQueryResult } from '@tanstack/react-query';
 import { getModelIdAndRevisionIdFromExternalId } from './network/getModelIdAndRevisionIdFromExternalId';
 import { queryKeys } from '../utilities/queryKeys';
