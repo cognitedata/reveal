@@ -26,6 +26,8 @@ describe(CylinderDragger.name, () => {
     const direction = new Vector3(0, 0, -1);
     const delta = new Vector3(1, 0, 0);
     const startRay = new Ray(new Vector3(0, 0, 2), direction);
+    const expectedCylinder = clone(domainObject.cylinder);
+
     const dragger = domainObject.createDragger(
       createCreateDraggerPropsMock(domainObject, startRay, face, focusType)
     );
@@ -34,7 +36,7 @@ describe(CylinderDragger.name, () => {
 
     const testCase = { expectedChange: false, shiftKey: false };
     drag(dragger, startRay, delta, testCase, false);
-    expect(domainObject.focusType).toBe(focusType);
+    expectEqual(domainObject, expectedCylinder, focusType);
   });
 
   test('translate the cylinder', () => {

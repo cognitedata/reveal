@@ -16,6 +16,7 @@ import {
   getTestCasesWithSign,
   type TestCase
 } from '#test-utils/architecture/baseDraggerUtil';
+import { Box } from '../../../base/utilities/primitives/Box';
 
 describe(BoxDragger.name, () => {
   test('should create correct dragger and not change anything if not any focus type', () => {
@@ -28,6 +29,7 @@ describe(BoxDragger.name, () => {
     const startRay = new Ray(new Vector3(0, 0, 2), direction);
     const delta = new Vector3(1, 0, 0);
 
+    const expectedBox = clone(domainObject.box);
     const dragger = domainObject.createDragger(
       createCreateDraggerPropsMock(domainObject, startRay, face, focusType)
     );
@@ -36,7 +38,7 @@ describe(BoxDragger.name, () => {
 
     const testCase = { expectedChange: false, shiftKey: false };
     drag(dragger, startRay, delta, testCase, false);
-    expect(domainObject.focusType).toBe(focusType);
+    expectEqual(domainObject, expectedBox, focusType);
   });
 
   test('translate the box', () => {
@@ -51,21 +53,17 @@ describe(BoxDragger.name, () => {
       const face = new BoxFace(sign === 1 ? 5 : 2);
       const delta = new Vector3();
 
-      const expectedSize = domainObject.box.size.clone();
-      const expectedCenter = domainObject.box.center.clone();
+      const expectedBox = clone(domainObject.box);
       if (testCase.expectedChange) {
         delta.set(testCase.shiftKey ? 0 : 1, 2, 0); // Shift only translate in dominate direction
-        expectedCenter.add(delta);
+        expectedBox.center.add(delta);
       }
       const dragger = domainObject.createDragger(
         createCreateDraggerPropsMock(domainObject, startRay, face, focusType)
       );
       assert(dragger !== undefined);
       drag(dragger, startRay, delta, testCase);
-
-      expectEqualVector3(domainObject.box.size, expectedSize);
-      expectEqualVector3(domainObject.box.center, expectedCenter);
-      expect(domainObject.focusType).toBe(focusType);
+      expectEqual(domainObject, expectedBox, focusType);
     }
   });
 
@@ -81,22 +79,18 @@ describe(BoxDragger.name, () => {
       const startRay = new Ray(new Vector3(2, 0, 2 * sign), direction);
       const delta = new Vector3();
 
-      const expectedSize = domainObject.box.size.clone();
-      const expectedCenter = domainObject.box.center.clone();
+      const expectedBox = clone(domainObject.box);
       if (testCase.expectedChange) {
         delta.set(0, 0, sign);
-        expectedSize.add(new Vector3(0, 0, 1));
-        expectedCenter.addScaledVector(delta, 0.5);
+        expectedBox.size.add(new Vector3(0, 0, 1));
+        expectedBox.center.addScaledVector(delta, 0.5);
       }
       const dragger = domainObject.createDragger(
         createCreateDraggerPropsMock(domainObject, startRay, face, focusType)
       );
       assert(dragger !== undefined);
       drag(dragger, startRay, delta, testCase);
-
-      expectEqualVector3(domainObject.box.size, expectedSize);
-      expectEqualVector3(domainObject.box.center, expectedCenter);
-      expect(domainObject.focusType).toBe(focusType);
+      expectEqual(domainObject, expectedBox, focusType);
     }
   });
 
@@ -123,22 +117,18 @@ describe(BoxDragger.name, () => {
       const face = new BoxFace(4); // Negative Y face
       const delta = new Vector3(); // Movement in the XZ plane
 
-      const expectedSize = domainObject.box.size.clone();
-      const expectedCenter = domainObject.box.center.clone();
+      const expectedBox = clone(domainObject.box);
       if (testCase.expectedChange) {
         delta.set(-1, 0, -2);
-        expectedSize.addScaledVector(delta, -1);
-        expectedCenter.addScaledVector(delta, 0.5);
+        expectedBox.size.addScaledVector(delta, -1);
+        expectedBox.center.addScaledVector(delta, 0.5);
       }
       const dragger = domainObject.createDragger(
         createCreateDraggerPropsMock(domainObject, startRay, face, focusType, cornerSign)
       );
       assert(dragger !== undefined);
       drag(dragger, startRay, delta, testCase);
-
-      expectEqualVector3(domainObject.box.size, expectedSize);
-      expectEqualVector3(domainObject.box.center, expectedCenter);
-      expect(domainObject.focusType).toBe(focusType);
+      expectEqual(domainObject, expectedBox, focusType);
     }
   });
 
@@ -156,35 +146,28 @@ describe(BoxDragger.name, () => {
     // (-1,-2,-1) *
 
     const focusType = FocusType.Rotation;
-    for (const params of getTestCasesWithCanRotate()) {
+    for (const testCases of getTestCasesWithCanRotate()) {
       const domainObject = createBoxDomainObject();
-      domainObject.canRotateComponent = (_component: number): boolean => params.canRotate;
+      domainObject.canRotateComponent = (_component: number): boolean => testCases.canRotate;
 
       const direction = new Vector3(0, 1, 0); // Along the y axis
       const startRay = new Ray(new Vector3(-1, -2, -1), direction); // See figure
       const face = new BoxFace(4); // Negative Y face
       const delta = new Vector3();
 
-      const expectedSize = domainObject.box.size.clone();
-      const expectedCenter = domainObject.box.center.clone();
-      const expectedRotation = domainObject.box.rotation.clone();
-
-      if (params.expectedChange) {
-        expectedRotation.y = degToRad(45);
+      const expectedBox = clone(domainObject.box);
+      if (testCases.expectedChange) {
+        expectedBox.rotation.y = degToRad(45);
         delta.set(0, 0, 1);
-      } else if (!params.canRotate) {
+      } else if (!testCases.canRotate) {
         delta.set(0, 0, 1); // To check if the rotation is not applied
       }
       const dragger = domainObject.createDragger(
         createCreateDraggerPropsMock(domainObject, startRay, face, focusType)
       );
       assert(dragger !== undefined);
-      drag(dragger, startRay, delta, params);
-
-      expectEqualVector3(domainObject.box.size, expectedSize);
-      expectEqualVector3(domainObject.box.center, expectedCenter);
-      expectEqualEuler(domainObject.box.rotation, expectedRotation);
-      expect(domainObject.focusType).toBe(focusType);
+      drag(dragger, startRay, delta, testCases);
+      expectEqual(domainObject, expectedBox, focusType);
     }
   });
 });
@@ -216,4 +199,15 @@ function* getTestCasesWithCanRotate(): Generator<TestCase & { canRotate: boolean
   yield { expectedChange: true, shiftKey: true, canRotate: true };
   yield { expectedChange: false, shiftKey: false, canRotate: true };
   yield { expectedChange: false, shiftKey: false, canRotate: false };
+}
+
+function clone(cylinder: Box): Box {
+  return new Box().copy(cylinder);
+}
+
+function expectEqual(domainObject: BoxDomainObject, expectedBox: Box, focusType: FocusType): void {
+  expectEqualVector3(domainObject.box.center, expectedBox.center);
+  expectEqualVector3(domainObject.box.size, expectedBox.size);
+  expectEqualEuler(domainObject.box.rotation, expectedBox.rotation);
+  expect(domainObject.focusType).toBe(focusType);
 }
