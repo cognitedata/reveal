@@ -1,15 +1,15 @@
-import { type ReactElement, useState, useMemo } from 'react';
+import { type ReactElement } from 'react';
 import { useRenderTarget } from '../RevealCanvas/ViewerContext';
 import { Button, Tooltip as CogsTooltip } from '@cognite/cogs.js';
 import { useTranslation } from '../i18n/I18n';
 import { type BaseCommand } from '../../architecture/base/commands/BaseCommand';
-import { getButtonType, getDefaultCommand, getTooltipPlacement } from './utilities';
+import { getButtonType, getTooltipPlacement } from './utilities';
 import { LabelWithShortcut } from './LabelWithShortcut';
-import { type IconName } from '../../architecture/base/utilities/IconName';
 import { IconComponent } from './Factories/IconFactory';
-import { useOnUpdate } from './useOnUpdate';
 import { type PlacementType } from './types';
 import { TOOLTIP_DELAY } from './constants';
+import { useCommand } from './useCommand';
+import { useCommandProps } from './useCommandProps';
 
 export const CommandButton = ({
   inputCommand,
@@ -20,24 +20,9 @@ export const CommandButton = ({
 }): ReactElement => {
   const renderTarget = useRenderTarget();
   const { t } = useTranslation();
-  const command = useMemo<BaseCommand>(() => getDefaultCommand(inputCommand, renderTarget), []);
+  const command = useCommand(inputCommand);
 
-  // @update-ui-component-pattern
-  const [isChecked, setChecked] = useState(false);
-  const [isEnabled, setEnabled] = useState(true);
-  const [isVisible, setVisible] = useState(true);
-  const [uniqueId, setUniqueId] = useState(0);
-  const [icon, setIcon] = useState<IconName>(undefined);
-
-  useOnUpdate(command, () => {
-    setChecked(command.isChecked);
-    setEnabled(command.isEnabled);
-    setVisible(command.isVisible);
-    setUniqueId(command.uniqueId);
-    setIcon(command.icon);
-  });
-  // @end
-
+  const { icon, uniqueId, isVisible, isEnabled, isChecked } = useCommandProps(command);
   if (!isVisible) {
     return <></>;
   }

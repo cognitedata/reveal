@@ -1,28 +1,15 @@
-import { useState, type ReactElement } from 'react';
+import { type ReactElement } from 'react';
 import { SelectPanel } from '@cognite/cogs-lab';
 import { useTranslation } from '../i18n/I18n';
 import styled from 'styled-components';
 import { type Color } from 'three';
 import { type BaseFilterItemCommand } from '../../architecture/base/commands/BaseFilterCommand';
-import { useOnUpdate } from './useOnUpdate';
+import { useCommandProps } from './useCommandProps';
 
 export const FilterItem = ({ command }: { command: BaseFilterItemCommand }): ReactElement => {
   const { t } = useTranslation();
 
-  // @update-ui-component-pattern
-  const [isChecked, setChecked] = useState(false);
-  const [isEnabled, setEnabled] = useState(true);
-  const [isVisible, setVisible] = useState(true);
-  const [uniqueId, setUniqueId] = useState(0);
-
-  useOnUpdate(command, () => {
-    setChecked(command.isChecked);
-    setEnabled(command.isEnabled);
-    setVisible(command.isVisible);
-    setUniqueId(command.uniqueId);
-  });
-  // @end
-
+  const { uniqueId, isVisible, isEnabled, isChecked } = useCommandProps(command);
   if (!isVisible) {
     return <></>;
   }

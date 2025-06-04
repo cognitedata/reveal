@@ -22,6 +22,10 @@ export class SetGhostModeCommand extends RenderTargetCommand {
     return this.renderTarget.ghostMode;
   }
 
+  public setChecked(checked: boolean): void {
+    this.renderTarget.ghostMode = checked;
+  }
+
   protected override invokeCore(): boolean {
     this.renderTarget.ghostMode = !this.renderTarget.ghostMode;
     return true;
