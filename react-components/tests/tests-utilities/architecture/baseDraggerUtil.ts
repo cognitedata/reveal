@@ -5,7 +5,7 @@ import { Mock } from 'moq.ts';
 import { PrimitivePickInfo } from '../../../src/architecture/concrete/primitives/common/PrimitivePickInfo';
 import { Ray, Vector3 } from 'three';
 import { type BaseDragger } from '../../../src/architecture/base/domainObjectsHelpers/BaseDragger';
-import { type BoxFace } from '../../../src/architecture/concrete/primitives/common/BoxFace';
+import { BoxFace } from '../../../src/architecture/concrete/primitives/common/BoxFace';
 import { type DomainObject } from '../../../src/architecture/base/domainObjects/DomainObject';
 import { type DomainObjectIntersection } from '../../../src/architecture/base/domainObjectsHelpers/DomainObjectIntersection';
 import { type FocusType } from '../../../src/architecture/base/domainObjectsHelpers/FocusType';
@@ -54,14 +54,14 @@ export function drag(
 
 export function createIntersectionMock(
   domainObject: DomainObject,
-  face: BoxFace,
+  faceIndex: number,
   focusType: FocusType,
   cornerSign?: Vector3
 ): DomainObjectIntersection {
   return {
     type: 'customObject',
     domainObject,
-    userData: new PrimitivePickInfo(face, focusType, cornerSign),
+    userData: new PrimitivePickInfo(new BoxFace(faceIndex), focusType, cornerSign),
     point: new Vector3(), // This is not used by the dragger
     distanceToCamera: 0, // This is not used by the dragger
     customObject: new Mock<ICustomObject>().object() // This is not used by the dragger
