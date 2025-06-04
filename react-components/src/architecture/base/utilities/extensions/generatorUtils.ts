@@ -1,7 +1,3 @@
-/*!
- * Copyright 2025 Cognite AS
- */
-
 export function count<T>(iterable: Generator<T>, predicate?: (t: T) => boolean): number {
   let count = 0;
   for (const item of iterable) {

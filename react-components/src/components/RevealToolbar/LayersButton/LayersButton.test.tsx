@@ -1,6 +1,3 @@
-/*!
- * Copyright 2025 Cognite AS
- */
 import { render, screen } from '@testing-library/react';
 import { describe, expect, test, vi } from 'vitest';
 import type { ReactElement, ReactNode } from 'react';

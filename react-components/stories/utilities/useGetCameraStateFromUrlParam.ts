@@ -1,6 +1,3 @@
-/*!
- * Copyright 2024 Cognite AS
- */
 import { Vector3 } from 'three';
 import { type CameraStateParameters } from '../../src';
 

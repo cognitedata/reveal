@@ -1,7 +1,3 @@
-/*!
- * Copyright 2024 Cognite AS
- */
-
 import { assert, beforeEach, describe, expect, test } from 'vitest';
 import { AxisDomainObject } from './AxisDomainObject';
 import { AxisThreeView } from './AxisThreeView';

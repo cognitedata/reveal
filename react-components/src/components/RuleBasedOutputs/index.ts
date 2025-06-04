@@ -1,7 +1,3 @@
-/*!
- * Copyright 2024 Cognite AS
- */
-
 export * from './hooks';
 export { RuleBasedOutputsPanel } from './RuleBasedOutputsPanel';
 export { getRuleTriggerTypes } from './core/getRuleTriggerTypes';

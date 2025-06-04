@@ -1,7 +1,3 @@
-/*!
- * Copyright 2025 Cognite AS
- */
-
 import { CDF_TO_VIEWER_TRANSFORMATION, type CustomObjectIntersectInput } from '@cognite/reveal';
 import { type GroupThreeView, type DomainObject, type ThreeView } from '../../../src/architecture';
 import { createFullRenderTargetMock } from '../fixtures/createFullRenderTargetMock';

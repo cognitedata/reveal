@@ -1,6 +1,3 @@
-/*!
- * Copyright 2025 Cognite AS
- */
 import {
   type AnnotationData,
   type AnnotationModel,

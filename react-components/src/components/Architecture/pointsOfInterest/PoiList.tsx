@@ -1,6 +1,3 @@
-/*!
- * Copyright 2024 Cognite AS
- */
 import { type ReactNode, useCallback, useMemo, useState } from 'react';
 import { type PointOfInterest } from '../../../architecture/concrete/pointsOfInterest/types';
 import { DataGrid, type DatagridColumn } from '@cognite/cogs-lab';

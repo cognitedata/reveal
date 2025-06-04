@@ -1,7 +1,3 @@
-/*!
- * Copyright 2025 Cognite AS
- */
-
 import { type CadRenderStyle } from './CadRenderStyle';
 import { type CadDomainObject } from './CadDomainObject';
 import { Box3 } from 'three';

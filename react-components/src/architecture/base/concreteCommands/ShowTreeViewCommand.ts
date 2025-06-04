@@ -1,7 +1,3 @@
-/*!
- * Copyright 2025 Cognite AS
- */
-
 import { type Signal, signal } from '@cognite/signals';
 import { type IconName } from '../utilities/IconName';
 import { type TranslationInput } from '../utilities/TranslateInput';

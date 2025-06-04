@@ -1,6 +1,3 @@
-/*!
- * Copyright 2024 Cognite AS
- */
 import { type AddModelOptions } from '@cognite/reveal';
 import { type InstancesWithView } from '../../query/useSearchMappedEquipmentFDM';
 import {
@@ -25,7 +22,8 @@ export async function filterNodesByMappedTo3d(
   fdmSdk: FdmSDK,
   nodesWithViews: InstancesWithView[],
   models: AddModelOptions[],
-  spacesToSearch: string[]
+  spacesToSearch: string[],
+  includeIndirectRelations: boolean
 ): Promise<InstancesWithView[]> {
   const nodes = nodesWithViews.flatMap((result) => result.instances);
   const views = nodesWithViews.map((result) => result.view);
@@ -61,7 +59,8 @@ export async function filterNodesByMappedTo3d(
       checkInstanceWithMappedEquipmentMaps(
         mappedEquipmentFirstLevelMap,
         equipmentSecondLevelMap,
-        instance
+        instance,
+        includeIndirectRelations
       )
     );
 
@@ -188,7 +187,8 @@ async function createModelsMap(
 function checkInstanceWithMappedEquipmentMaps(
   mappedEquipmentFirstLevelMap: Record<FdmKey, EdgeItem[]>,
   equipmentSecondLevelMap: Record<FdmKey, EdgeItem[]>,
-  instance: NodeItem
+  instance: NodeItem,
+  includeIndirectRelations: boolean
 ): boolean {
   const key: FdmKey = `${instance.space}/${instance.externalId}`;
   const directRelationProperties = getDirectRelationProperties(instance);
@@ -200,7 +200,7 @@ function checkInstanceWithMappedEquipmentMaps(
     return true;
   }
 
-  if (isSecondLevelWithEdge) {
+  if (isSecondLevelWithEdge && includeIndirectRelations) {
     return equipmentSecondLevelMap[key].some((edge) => {
       const { space, externalId } = edge.endNode;
 
@@ -211,7 +211,7 @@ function checkInstanceWithMappedEquipmentMaps(
     });
   }
 
-  if (isSecondLevelWithDirectRelation) {
+  if (isSecondLevelWithDirectRelation && includeIndirectRelations) {
     const isMappedWithDirectRelation = directRelationProperties.some(
       ({ externalId, space }) =>
         mappedEquipmentFirstLevelMap[`${space}/${externalId}`] !== undefined

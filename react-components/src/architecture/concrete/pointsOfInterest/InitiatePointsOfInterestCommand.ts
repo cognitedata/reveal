@@ -1,6 +1,3 @@
-/*!
- * Copyright 2024 Cognite AS
- */
 import { type Vector3 } from 'three';
 import { type IconName } from '../../base/utilities/IconName';
 import { type TranslationInput } from '../../base/utilities/TranslateInput';

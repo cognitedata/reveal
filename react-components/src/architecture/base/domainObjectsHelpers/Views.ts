@@ -1,7 +1,3 @@
-/*!
- * Copyright 2024 Cognite AS
- */
-
 import { type DomainObjectChange } from './DomainObjectChange';
 import { isInstanceOf, type Class } from './Class';
 import { clear, remove } from '../utilities/extensions/arrayExtensions';

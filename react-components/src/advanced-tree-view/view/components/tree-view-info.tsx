@@ -1,6 +1,3 @@
-/*!
- * Copyright 2025 Cognite AS
- */
 /* eslint-disable react/prop-types */
 import { useState, type ReactElement } from 'react';
 

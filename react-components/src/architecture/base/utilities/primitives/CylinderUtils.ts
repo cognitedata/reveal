@@ -1,7 +1,3 @@
-/*!
- * Copyright 2024 Cognite AS
- */
-
 import { type LineSegmentsGeometry } from 'three/examples/jsm/lines/LineSegmentsGeometry.js';
 import { type BufferGeometry, CylinderGeometry } from 'three';
 import { PrimitiveUtils } from './PrimitiveUtils';

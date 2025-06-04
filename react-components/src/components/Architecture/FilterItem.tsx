@@ -1,7 +1,3 @@
-/*!
- * Copyright 2024 Cognite AS
- */
-
 import { useState, type ReactElement } from 'react';
 import { SelectPanel } from '@cognite/cogs-lab';
 import styled from 'styled-components';

@@ -1,7 +1,3 @@
-/*!
- * Copyright 2023 Cognite AS
- */
-
 import { useEffect } from 'react';
 import { useSceneConfig } from './scenes/useSceneConfig';
 import {

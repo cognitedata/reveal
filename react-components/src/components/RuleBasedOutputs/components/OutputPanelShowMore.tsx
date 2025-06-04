@@ -1,6 +1,3 @@
-/*!
- * Copyright 2024 Cognite AS
- */
 import { type ReactElement } from 'react';
 import styled from 'styled-components';
 import { AddIcon, Button, Flex, RemoveIcon } from '@cognite/cogs.js';
