@@ -1,6 +1,3 @@
-/*!
- * Copyright 2025 Cognite AS
- */
 import { beforeEach, describe, expect, test } from 'vitest';
 import { createFractalRegularGrid2 } from './geometry/createFractalRegularGrid2';
 import { Range3 } from '../../base/utilities/geometry/Range3';

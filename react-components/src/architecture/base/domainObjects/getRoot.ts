@@ -1,7 +1,3 @@
-/*!
- * Copyright 2025 Cognite AS
- */
-
 import { type RootDomainObject } from './RootDomainObject';
 import { type DomainObject } from './DomainObject';
 import { type RevealRenderTarget } from '../renderTarget/RevealRenderTarget';

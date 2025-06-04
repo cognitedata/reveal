@@ -1,7 +1,3 @@
-/*!
- * Copyright 2024 Cognite AS
- */
-
 import { PoiCommentSection } from './PoiCommentSection';
 import { type ReactNode } from 'react';
 import { PoiHeader } from './PoiHeader';

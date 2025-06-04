@@ -1,7 +1,3 @@
-/*!
- * Copyright 2024 Cognite AS
- */
-
 import { type RevealRenderTarget } from '../renderTarget/RevealRenderTarget';
 import { type Transaction } from './Transaction';
 

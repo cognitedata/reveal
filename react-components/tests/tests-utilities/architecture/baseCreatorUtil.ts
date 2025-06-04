@@ -1,7 +1,3 @@
-/*!
- * Copyright 2025 Cognite AS
- */
-
 import { CDF_TO_VIEWER_TRANSFORMATION } from '@cognite/reveal';
 import { type BaseCreator } from '../../../src/architecture';
 import { Ray, type Vector3 } from 'three';

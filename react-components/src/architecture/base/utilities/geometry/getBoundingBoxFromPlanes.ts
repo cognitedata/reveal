@@ -1,7 +1,3 @@
-/*!
- * Copyright 2024 Cognite AS
- */
-
 import { Vector3, type Plane, Line3 } from 'three';
 import { Range3 } from './Range3';
 

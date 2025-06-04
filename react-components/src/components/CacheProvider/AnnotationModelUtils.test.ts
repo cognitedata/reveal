@@ -1,6 +1,3 @@
-/*!
- * Copyright 2025 Cognite AS
- */
 import { describe, test, expect, beforeEach, vi } from 'vitest';
 import { type Asset, type IdEither } from '@cognite/sdk';
 import {

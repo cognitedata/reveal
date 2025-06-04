@@ -1,6 +1,3 @@
-/*!
- * Copyright 2024 Cognite AS
- */
 import { type Timeseries, type CogniteClient, type IdEither } from '@cognite/sdk';
 import { chunk } from 'lodash';
 import { DEFAULT_GLOBAL_TABLE_MAX_RESULT_LIMIT } from '../../utilities/constants';

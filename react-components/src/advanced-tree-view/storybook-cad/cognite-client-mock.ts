@@ -1,6 +1,3 @@
-/*!
- * Copyright 2025 Cognite AS
- */
 import type { List3DNodesQuery, Node3D } from '@cognite/sdk';
 
 import { CadTreeNode } from './cad-tree-node';

@@ -1,7 +1,3 @@
-/*!
- * Copyright 2024 Cognite AS
- */
-
 import { equalsIgnoreCaseAndSpace } from '../utilities/extensions/stringExtensions';
 
 export class ChangedDescription {

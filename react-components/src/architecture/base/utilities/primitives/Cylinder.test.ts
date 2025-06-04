@@ -1,7 +1,3 @@
-/*!
- * Copyright 2025 Cognite AS
- */
-
 import { describe, expect, test } from 'vitest';
 import { PrimitiveType } from './PrimitiveType';
 import { Box3, Matrix4, Ray, Vector3 } from 'three';

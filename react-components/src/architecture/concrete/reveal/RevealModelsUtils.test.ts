@@ -1,6 +1,3 @@
-/*!
- * Copyright 2025 Cognite AS
- */
 import { describe, expect, test, vi, beforeEach } from 'vitest';
 import { cadModelOptions, createCadMock } from '#test-utils/fixtures/cadModel';
 import { createImage360ClassicMock, image360ClassicOptions } from '#test-utils/fixtures/image360';

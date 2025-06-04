@@ -1,7 +1,3 @@
-/*!
- * Copyright 2024 Cognite AS
- */
-
 import { BoxDomainObject } from '../primitives/box/BoxDomainObject';
 import { Color } from 'three';
 import { type RenderStyle } from '../../base/renderStyles/RenderStyle';

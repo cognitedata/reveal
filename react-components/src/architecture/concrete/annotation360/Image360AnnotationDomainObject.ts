@@ -1,7 +1,3 @@
-/*!
- * Copyright 2024 Cognite AS
- */
-
 import { type DomainObject } from '../../base/domainObjects/DomainObject';
 import { type RenderStyle } from '../../base/renderStyles/RenderStyle';
 import { PrimitiveType } from '../../base/utilities/primitives/PrimitiveType';

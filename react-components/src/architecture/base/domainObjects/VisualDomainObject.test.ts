@@ -1,7 +1,3 @@
-/*!
- * Copyright 2024 Cognite AS
- */
-
 import { describe, test, beforeAll, expect } from 'vitest';
 import { VisualDomainObject } from './VisualDomainObject';
 import { type TranslationInput } from '../utilities/TranslateInput';

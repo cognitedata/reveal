@@ -1,6 +1,3 @@
-/*!
- * Copyright 2024 Cognite AS
- */
 import { useCallback, useEffect, useState } from 'react';
 import { useReveal } from '../components/RevealCanvas/ViewerContext';
 

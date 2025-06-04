@@ -1,6 +1,3 @@
-/*!
- * Copyright 2025 Cognite AS
- */
 import { render } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
 import type { PropsWithChildren, ReactElement } from 'react';

@@ -1,7 +1,3 @@
-/*!
- * Copyright 2024 Cognite AS
- */
-
 import { describe, test, expect } from 'vitest';
 import { FolderDomainObject } from './FolderDomainObject';
 

@@ -1,6 +1,3 @@
-/*!
- * Copyright 2025 Cognite AS
- */
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
 
 import { CommandsController } from './CommandsController';

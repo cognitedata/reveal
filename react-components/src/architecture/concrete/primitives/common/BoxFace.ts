@@ -1,7 +1,3 @@
-/*!
- * Copyright 2024 Cognite AS
- */
-
 import { type Matrix4, Plane, Vector2, Vector3 } from 'three';
 
 /**

@@ -1,6 +1,3 @@
-/*!
- * Copyright 2024 Cognite AS
- */
 import { type ReactElement, useMemo } from 'react';
 import { EMPTY_ARRAY } from '../../utilities/constants';
 import { COGNITE_DESCRIBABLE_SOURCE } from '../../data-providers/core-dm-provider/dataModels';

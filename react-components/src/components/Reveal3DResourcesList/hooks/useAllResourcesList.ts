@@ -1,7 +1,3 @@
-/*!
- * Copyright 2025 Cognite AS
- */
-
 import { useQuery, type UseQueryResult } from '@tanstack/react-query';
 import { getModels } from '../../../hooks/network/getModels';
 import { type CogniteClient } from '@cognite/sdk';

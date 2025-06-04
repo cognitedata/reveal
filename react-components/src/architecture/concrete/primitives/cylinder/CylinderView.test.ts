@@ -1,7 +1,3 @@
-/*!
- * Copyright 2025 Cognite AS
- */
-
 import { assert, beforeEach, describe, expect, test } from 'vitest';
 import { CylinderView } from './CylinderView';
 import { Object3D, Vector3 } from 'three';

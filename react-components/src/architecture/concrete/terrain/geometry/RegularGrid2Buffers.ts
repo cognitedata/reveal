@@ -1,7 +1,3 @@
-/*!
- * Copyright 2024 Cognite AS
- */
-
 import { Vector3 } from 'three';
 import { type RegularGrid2 } from './RegularGrid2';
 import { TrianglesBuffers } from '../../../base/utilities/geometry/TrianglesBuffers';

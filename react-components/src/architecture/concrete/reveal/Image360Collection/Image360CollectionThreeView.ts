@@ -1,7 +1,3 @@
-/*!
- * Copyright 2025 Cognite AS
- */
-
 import { type Image360CollectionRenderStyle } from './Image360CollectionRenderStyle';
 import { type Image360CollectionDomainObject } from './Image360CollectionDomainObject';
 import { Box3, Vector3 } from 'three';
