@@ -19,7 +19,7 @@ export function* getTestCases(): Generator<TestCase> {
   yield { expectedChange: false, shiftKey: false };
 }
 
-export function* getTestCasesWithSign(): Generator<TestCase & { sign: number }> {
+export function* getTestCasesWithSign(): Generator<TestCase & { sign: -1 | 1 }> {
   yield { expectedChange: true, shiftKey: false, sign: 1 };
   yield { expectedChange: true, shiftKey: false, sign: -1 };
   yield { expectedChange: true, shiftKey: true, sign: 1 };

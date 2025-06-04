@@ -46,25 +46,21 @@ describe(CylinderDragger.name, () => {
       // Grab the cylinder at top cap from above and move it in the XY plane
       const direction = new Vector3(0, 0, -sign);
       const startRay = new Ray(new Vector3(0, 0, sign * 2), direction);
-      const face = new BoxFace(sign === 1 ? 5 : 2);
+      const face = new BoxFace(sign > 0 ? 5 : 2);
       const delta = new Vector3();
 
-      const expectedCenterA = domainObject.cylinder.centerA.clone();
-      const expectedCenterB = domainObject.cylinder.centerB.clone();
+      const expectedCylinder = clone(domainObject.cylinder);
       if (testCase.expectedChange) {
         delta.set(1, 2, 0);
-        expectedCenterA.add(delta);
-        expectedCenterB.add(delta);
+        expectedCylinder.centerA.add(delta);
+        expectedCylinder.centerB.add(delta);
       }
       const dragger = domainObject.createDragger(
         createCreateDraggerPropsMock(domainObject, startRay, face, focusType)
       );
       assert(dragger !== undefined);
       drag(dragger, startRay, delta, testCase);
-
-      expectEqualVector3(domainObject.cylinder.centerA, expectedCenterA);
-      expectEqualVector3(domainObject.cylinder.centerB, expectedCenterB);
-      expect(domainObject.focusType).toBe(focusType);
+      expectEqual(domainObject, expectedCylinder, focusType);
     }
   });
 
@@ -79,19 +75,17 @@ describe(CylinderDragger.name, () => {
       const startRay = new Ray(new Vector3(1, -2, 0), direction);
       const delta = new Vector3();
 
-      let expectedRadius = domainObject.cylinder.radius;
+      const expectedCylinder = clone(domainObject.cylinder);
       if (testCase.expectedChange) {
         delta.x = 1;
-        expectedRadius += 1;
+        expectedCylinder.radius += 1;
       }
       const dragger = domainObject.createDragger(
         createCreateDraggerPropsMock(domainObject, startRay, face, focusType)
       );
       assert(dragger !== undefined);
       drag(dragger, startRay, delta, testCase);
-
-      expect(domainObject.cylinder.radius).toBeCloseTo(expectedRadius);
-      expect(domainObject.focusType).toBe(focusType);
+      expectEqual(domainObject, expectedCylinder, focusType);
     }
   });
 
@@ -114,16 +108,15 @@ describe(CylinderDragger.name, () => {
       const domainObject = createVerticalCylinderDomainObject();
       const direction = new Vector3(-1, 0, -sign).normalize();
       const startRay = new Ray(new Vector3(1, 0, sign * 2), direction);
-      const face = new BoxFace(sign === 1 ? 5 : 2);
+      const face = new BoxFace(sign > 0 ? 5 : 2);
       const delta = new Vector3();
 
-      const expectedCenterA = domainObject.cylinder.centerA.clone();
-      const expectedCenterB = domainObject.cylinder.centerB.clone();
+      const expectedCylinder = clone(domainObject.cylinder);
       if (testCase.expectedChange) {
         if (sign > 0) {
-          expectedCenterA.z = 0;
+          expectedCylinder.centerA.z = 0;
         } else {
-          expectedCenterB.z = 0;
+          expectedCylinder.centerB.z = 0;
         }
         delta.x = 1;
       }
@@ -132,10 +125,7 @@ describe(CylinderDragger.name, () => {
       );
       assert(dragger !== undefined);
       drag(dragger, startRay, delta, testCase);
-
-      expectEqualVector3(domainObject.cylinder.centerA, expectedCenterA);
-      expectEqualVector3(domainObject.cylinder.centerB, expectedCenterB);
-      expect(domainObject.focusType).toBe(focusType);
+      expectEqual(domainObject, expectedCylinder, focusType);
     }
   });
 
@@ -159,17 +149,16 @@ describe(CylinderDragger.name, () => {
       const domainObject = createVerticalCylinderDomainObject();
       const direction = new Vector3(-1, 0, -sign).normalize();
       const startRay = new Ray(new Vector3(1, 0, sign * 2), direction);
-      const face = new BoxFace(sign === 1 ? 5 : 2);
+      const face = new BoxFace(sign > 0 ? 5 : 2);
       const delta = new Vector3();
 
-      const expectedCenterA = domainObject.cylinder.centerA.clone();
-      const expectedCenterB = domainObject.cylinder.centerB.clone();
+      const expectedCylinder = clone(domainObject.cylinder);
       if (testCase.expectedChange) {
         delta.x = 1;
         if (sign > 0) {
-          expectedCenterA.set(0.894427, 0, 0.788854);
+          expectedCylinder.centerA.set(0.894427, 0, 0.788854);
         } else {
-          expectedCenterB.set(0.894427, 0, -0.788854);
+          expectedCylinder.centerB.set(0.894427, 0, -0.788854);
         }
       }
       const dragger = domainObject.createDragger(
@@ -177,10 +166,7 @@ describe(CylinderDragger.name, () => {
       );
       assert(dragger !== undefined);
       drag(dragger, startRay, delta, testCase);
-
-      expectEqualVector3(domainObject.cylinder.centerA, expectedCenterA);
-      expectEqualVector3(domainObject.cylinder.centerB, expectedCenterB);
-      expect(domainObject.focusType).toBe(focusType);
+      expectEqual(domainObject, expectedCylinder, focusType);
     }
   });
 
@@ -201,14 +187,13 @@ describe(CylinderDragger.name, () => {
       const domainObject = createHorizontalCircleDomainObject();
       const direction = new Vector3(-1, 0, -sign).normalize();
       const startRay = new Ray(direction.clone().negate(), direction);
-      const face = new BoxFace(sign === 1 ? 5 : 2);
+      const face = new BoxFace(sign > 0 ? 5 : 2);
       const delta = new Vector3();
 
-      const expectedCenterA = domainObject.cylinder.centerA.clone();
-      const expectedCenterB = domainObject.cylinder.centerB.clone();
+      const expectedCylinder = clone(domainObject.cylinder);
       if (testCase.expectedChange) {
-        expectedCenterA.z += -sign;
-        expectedCenterB.z += -sign;
+        expectedCylinder.centerA.z += -sign;
+        expectedCylinder.centerB.z += -sign;
         delta.x = 1;
       }
       const dragger = domainObject.createDragger(
@@ -216,10 +201,7 @@ describe(CylinderDragger.name, () => {
       );
       assert(dragger !== undefined);
       drag(dragger, startRay, delta, testCase);
-
-      expectEqualVector3(domainObject.cylinder.centerA, expectedCenterA);
-      expectEqualVector3(domainObject.cylinder.centerB, expectedCenterB);
-      expect(domainObject.focusType).toBe(focusType);
+      expectEqual(domainObject, expectedCylinder, focusType);
     }
   });
 });
@@ -252,4 +234,19 @@ function createHorizontalCircleDomainObject(): CylinderDomainObject {
   domainObject.cylinder.centerA.set(0, 0, +Cylinder.HalfMinSize);
   domainObject.cylinder.centerB.set(0, 0, -Cylinder.HalfMinSize);
   return domainObject;
+}
+
+function clone(cylinder: Cylinder): Cylinder {
+  return new Cylinder().copy(cylinder);
+}
+
+function expectEqual(
+  domainObject: CylinderDomainObject,
+  expectedCylinder: Cylinder,
+  focusType: FocusType
+): void {
+  expectEqualVector3(domainObject.cylinder.centerA, expectedCylinder.centerA);
+  expectEqualVector3(domainObject.cylinder.centerB, expectedCylinder.centerB);
+  expect(domainObject.cylinder.radius).toBeCloseTo(expectedCylinder.radius);
+  expect(domainObject.focusType).toBe(focusType);
 }
