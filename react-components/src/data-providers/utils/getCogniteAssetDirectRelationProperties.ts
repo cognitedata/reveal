@@ -1,6 +1,3 @@
-/*!
- * Copyright 2024 Cognite AS
- */
 import { COGNITE_ASSET_SOURCE } from '../core-dm-provider/dataModels';
 import {
   type DmsUniqueIdentifier,

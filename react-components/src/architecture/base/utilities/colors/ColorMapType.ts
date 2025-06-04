@@ -1,7 +1,3 @@
-/*!
- * Copyright 2024 Cognite AS
- */
-
 export enum ColorMapType {
   None = 'None',
   Seismic = 'Seismic',

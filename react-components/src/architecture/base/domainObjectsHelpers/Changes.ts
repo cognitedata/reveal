@@ -1,7 +1,3 @@
-/*!
- * Copyright 2024 Cognite AS
- */
-
 export class Changes {
   // Domain object boolean states changed
   public static readonly visibleState: symbol = Symbol('visibleState');

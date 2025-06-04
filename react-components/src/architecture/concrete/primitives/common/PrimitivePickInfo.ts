@@ -1,7 +1,3 @@
-/*!
- * Copyright 2024 Cognite AS
- */
-
 import { type FocusType } from '../../../base/domainObjectsHelpers/FocusType';
 import { type BoxFace } from './BoxFace';
 import { type Vector3 } from 'three';

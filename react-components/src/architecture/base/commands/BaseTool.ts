@@ -1,7 +1,3 @@
-/*!
- * Copyright 2024 Cognite AS
- */
-
 import { MOUSE, type Ray, Raycaster, Vector2, type Vector3 } from 'three';
 import { RenderTargetCommand } from './RenderTargetCommand';
 import {

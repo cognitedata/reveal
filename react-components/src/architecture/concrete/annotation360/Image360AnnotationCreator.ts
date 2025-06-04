@@ -1,7 +1,3 @@
-/*!
- * Copyright 2024 Cognite AS
- */
-
 import { type Ray, type Vector3 } from 'three';
 import { type Image360AnnotationDomainObject } from './Image360AnnotationDomainObject';
 import { LineCreator } from '../primitives/line/LineCreator';

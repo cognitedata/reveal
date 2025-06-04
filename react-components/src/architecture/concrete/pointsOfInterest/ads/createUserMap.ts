@@ -1,6 +1,3 @@
-/*!
- * Copyright 2024 Cognite AS
- */
 import { type CogniteClient } from '@cognite/sdk';
 import { uniq } from 'lodash';
 import { isDefined } from '../../../../utilities/isDefined';

@@ -1,7 +1,3 @@
-/*!
- * Copyright 2024 Cognite AS
- */
-
 import { type InternalId } from '@cognite/sdk';
 import { type ModelWithAssetMappings } from '../../../hooks/cad/ModelWithAssetMappings';
 import { useMemo } from 'react';

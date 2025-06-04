@@ -1,6 +1,3 @@
-/*!
- * Copyright 2023 Cognite AS
- */
 import { sceneQuery } from './sceneQuery';
 import {
   type GroundPlaneProperties,

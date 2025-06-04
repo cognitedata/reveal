@@ -1,6 +1,3 @@
-/*!
- * Copyright 2025 Cognite AS
- */
 import { beforeEach, describe, expect, test } from 'vitest';
 import { isEmpty } from '../utilities/TranslateInput';
 import { FitViewCommand } from './FitViewCommand';

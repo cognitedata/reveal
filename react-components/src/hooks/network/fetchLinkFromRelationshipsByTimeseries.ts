@@ -1,7 +1,3 @@
-/*!
- * Copyright 2024 Cognite AS
- */
-
 import { type CogniteClient, type RelationshipResourceType } from '@cognite/sdk';
 import { type AssetAndTimeseriesIds } from '../../data-providers/types';
 import { chunk } from 'lodash';

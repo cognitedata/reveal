@@ -1,6 +1,3 @@
-/*!
- * Copyright 2023 Cognite AS
- */
 import React, { useContext, createContext, useMemo } from 'react';
 import { type CogniteClient } from '@cognite/sdk';
 import { FdmSdkContext } from './FdmDataProviderContext';
