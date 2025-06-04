@@ -1,5 +1,4 @@
 import { assert, describe, expect, test } from 'vitest';
-import { BoxFace } from '../common/BoxFace';
 import { BoxDragger } from './BoxDragger';
 import { expectEqualEuler, expectEqualVector3 } from '#test-utils/primitives/primitiveTestUtil';
 import { FocusType } from '../../../base/domainObjectsHelpers/FocusType';

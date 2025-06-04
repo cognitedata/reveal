@@ -1,5 +1,4 @@
 import { assert, describe, expect, test } from 'vitest';
-import { BoxFace } from '../common/BoxFace';
 import { Cylinder } from '../../../base/utilities/primitives/Cylinder';
 import { CylinderDragger } from './CylinderDragger';
 import { expectEqualVector3 } from '../../../../../tests/tests-utilities/primitives/primitiveTestUtil';
