@@ -1,7 +1,3 @@
-/*!
- * Copyright 2025 Cognite AS
- */
-
 import { SelectPanel } from '@cognite/cogs-lab';
 import { IconWrapper, ChevronRightSmallIcon } from '@cognite/cogs.js';
 import { type ReactElement, useCallback } from 'react';

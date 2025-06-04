@@ -1,6 +1,3 @@
-/*!
- * Copyright 2025 Cognite AS
- */
 import { describe, test, expect, beforeEach } from 'vitest';
 import { useRenderTarget, useReveal, ViewerContextProvider } from './ViewerContext';
 import { type Cognite3DViewer, type DataSourceType } from '@cognite/reveal';

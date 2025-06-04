@@ -1,6 +1,3 @@
-/*!
- * Copyright 2025 Cognite AS
- */
 import { createContext } from 'react';
 import { useModelHandlers } from './hooks/useModelHandlers';
 import { useSyncExternalLayersState } from './hooks/useSyncExternalLayersState';

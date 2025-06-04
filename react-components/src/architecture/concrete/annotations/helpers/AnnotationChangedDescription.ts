@@ -1,7 +1,3 @@
-/*!
- * Copyright 2024 Cognite AS
- */
-
 import { ChangedDescription } from '../../../base/domainObjectsHelpers/ChangedDescription';
 import { type Annotation } from './Annotation';
 

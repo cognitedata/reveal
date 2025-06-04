@@ -1,7 +1,3 @@
-/*!
- * Copyright 2024 Cognite AS
- */
-
 import { BufferGeometry, Float32BufferAttribute, LineSegments, type Vector3 } from 'three';
 import { LineSegmentsGeometry } from 'three/examples/jsm/lines/LineSegmentsGeometry.js';
 

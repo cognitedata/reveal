@@ -1,6 +1,3 @@
-/*!
- * Copyright 2024 Cognite AS
- */
 import { useMemo } from 'react';
 import { type ModelRevisionId } from '../components/CacheProvider/types';
 import {

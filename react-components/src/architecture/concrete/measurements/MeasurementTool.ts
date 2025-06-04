@@ -1,7 +1,3 @@
-/*!
- * Copyright 2024 Cognite AS
- */
-
 import { type BaseCreator } from '../../base/domainObjectsHelpers/BaseCreator';
 import { type TranslationInput } from '../../base/utilities/TranslateInput';
 import { PrimitiveEditTool } from '../primitives/tools/PrimitiveEditTool';

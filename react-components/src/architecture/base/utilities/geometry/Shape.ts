@@ -1,7 +1,3 @@
-/*!
- * Copyright 2024 Cognite AS
- */
-
 import { type Range1 } from './Range1';
 import { Range3 } from './Range3';
 

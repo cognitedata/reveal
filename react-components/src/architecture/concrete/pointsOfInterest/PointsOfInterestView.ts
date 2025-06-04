@@ -1,6 +1,3 @@
-/*!
- * Copyright 2024 Cognite AS
- */
 import { Box3, Vector3 } from 'three';
 import { type PointsOfInterestDomainObject } from './PointsOfInterestDomainObject';
 import { GroupThreeView } from '../../base/views/GroupThreeView';

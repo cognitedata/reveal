@@ -1,7 +1,3 @@
-/*!
- * Copyright 2025 Cognite AS
- */
-
 import { assert, beforeEach, describe, expect, test } from 'vitest';
 import { Mesh, Object3D, Vector3 } from 'three';
 import { Changes } from '../../base/domainObjectsHelpers/Changes';

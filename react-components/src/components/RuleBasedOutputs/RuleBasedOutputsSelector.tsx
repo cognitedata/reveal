@@ -1,6 +1,3 @@
-/*!
- * Copyright 2024 Cognite AS
- */
 import { useEffect, type ReactElement, useState, useMemo } from 'react';
 
 import { CogniteCadModel } from '@cognite/reveal';

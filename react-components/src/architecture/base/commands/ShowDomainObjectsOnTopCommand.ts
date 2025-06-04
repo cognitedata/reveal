@@ -1,7 +1,3 @@
-/*!
- * Copyright 2024 Cognite AS
- */
-
 import { type IconName } from '../../base/utilities/IconName';
 import { Changes } from '../domainObjectsHelpers/Changes';
 import { CommonRenderStyle } from '../renderStyles/CommonRenderStyle';

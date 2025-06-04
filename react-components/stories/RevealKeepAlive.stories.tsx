@@ -1,6 +1,3 @@
-/*!
- * Copyright 2023 Cognite AS
- */
 import type { Meta, StoryObj } from '@storybook/react';
 import { RevealCanvas, RevealContext, RevealKeepAlive } from '../src';
 import { Color, Matrix4 } from 'three';

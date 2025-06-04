@@ -1,6 +1,3 @@
-/*!
- * Copyright 2023 Cognite AS
- */
 import {
   type CognitePointCloudModel,
   type AddModelOptions,

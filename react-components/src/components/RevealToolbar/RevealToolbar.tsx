@@ -1,7 +1,3 @@
-/*!
- * Copyright 2023 Cognite AS
- */
-
 import { type ReactElement, type JSX, forwardRef, type Ref } from 'react';
 import { Divider, ToolBar, type ToolBarProps } from '@cognite/cogs.js';
 import { FitModelsButton } from './FitModelsButton';

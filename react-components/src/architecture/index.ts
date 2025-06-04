@@ -1,7 +1,3 @@
-/*!
- * Copyright 2023 Cognite AS
- */
-
 import { installThreeViews } from './installThreeViews';
 import { installToolbars } from './installToolbars';
 

@@ -1,6 +1,3 @@
-/*!
- * Copyright 2024 Cognite AS
- */
 import { type TranslationInput } from '../../base/utilities/TranslateInput';
 import { PointsOfInterestDomainObject } from './PointsOfInterestDomainObject';
 import { isPointsOfInterestIntersection } from './types';

@@ -1,7 +1,3 @@
-/*!
- * Copyright 2024 Cognite AS
- */
-
 import { type Plane } from 'three';
 import { SliceDomainObject } from '../SliceDomainObject';
 import { type RootDomainObject } from '../../../base/domainObjects/RootDomainObject';

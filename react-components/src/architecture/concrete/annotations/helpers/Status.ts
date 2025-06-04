@@ -1,7 +1,3 @@
-/*!
- * Copyright 2024 Cognite AS
- */
-
 export enum Status {
   Contextualized, // This state is Approved and has AssetRef != undefined
   Approved,
