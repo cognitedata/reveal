@@ -1,217 +1,189 @@
 import { assert, describe, expect, test } from 'vitest';
-import { PrimitiveType } from '../../../base/utilities/primitives/PrimitiveType';
-import { Matrix4, Ray, Vector3 } from 'three';
-import { FocusType } from '../../../base/domainObjectsHelpers/FocusType';
-import { BoxView } from './BoxView';
-import { PrimitivePickInfo } from '../common/PrimitivePickInfo';
 import { BoxFace } from '../common/BoxFace';
-import { MeasureBoxDomainObject } from '../../measurements/MeasureBoxDomainObject';
-import { BoxDragger } from './BoxDragger';
-import { type CreateDraggerProps } from '../../../base/domainObjects/VisualDomainObject';
-import { type DomainObjectIntersection } from '../../../base/domainObjectsHelpers/DomainObjectIntersection';
-import { type DomainObject } from '../../../base/domainObjects/DomainObject';
-import { type BoxDomainObject } from './BoxDomainObject';
-import { EventChangeTester } from '../../../../../tests/tests-utilities/architecture/EventChangeTester';
 import { Changes } from '../../../base/domainObjectsHelpers/Changes';
+import { BoxDragger } from './BoxDragger';
+import { EventChangeTester } from '../../../../../tests/tests-utilities/architecture/EventChangeTester';
+import {
+  expectEqualEuler,
+  expectEqualVector3
+} from '../../../../../tests/tests-utilities/primitives/primitiveTestUtil';
+import { FocusType } from '../../../base/domainObjectsHelpers/FocusType';
+import { Matrix4, Ray, Vector3 } from 'three';
+import { MeasureBoxDomainObject } from '../../measurements/MeasureBoxDomainObject';
+import { Mock } from 'moq.ts';
+import { PrimitivePickInfo } from '../common/PrimitivePickInfo';
+import { PrimitiveType } from '../../../base/utilities/primitives/PrimitiveType';
 import { type BaseDragger } from '../../../base/domainObjectsHelpers/BaseDragger';
-import { expectEqualVector3 } from '../../../../../tests/tests-utilities/primitives/primitiveTestUtil';
+import { type CreateDraggerProps } from '../../../base/domainObjects/VisualDomainObject';
+import { type BoxDomainObject } from './BoxDomainObject';
+import { type DomainObject } from '../../../base/domainObjects/DomainObject';
+import { type DomainObjectIntersection } from '../../../base/domainObjectsHelpers/DomainObjectIntersection';
+import { type ICustomObject } from '@cognite/reveal';
+import { degToRad } from 'three/src/math/MathUtils.js';
 
 describe(BoxDragger.name, () => {
   const focusType = FocusType.None;
-  test('should create correct dragger and not change anything', () => {
+  test('should create correct dragger and not change anything if not any focus type', () => {
     const domainObject = createBoxDomainObject();
 
     // Grab the box at top cap from above and move it in the XY plane
+    const face = new BoxFace(2);
     const direction = new Vector3(0, 0, -1);
     const delta = new Vector3(1, 0, 0);
     const startRay = new Ray(new Vector3(0, 0, 2), direction);
     const dragger = domainObject.createDragger(
-      createCreateDraggerPropsMock(domainObject, startRay, new BoxFace(2), focusType)
+      createCreateDraggerPropsMock(domainObject, startRay, face, focusType)
     );
     expect(dragger).toBeInstanceOf(BoxDragger);
     assert(dragger !== undefined);
-    drag(dragger, startRay, delta, false, false);
+    drag(dragger, startRay, delta, false, false, false);
     expect(domainObject.focusType).toBe(focusType);
   });
 
   test('translate the box', () => {
     const focusType = FocusType.Body;
-    for (const expectedChange of [true, false]) {
+    for (const { expectedChange, shift, sign } of getSignedTestCases()) {
       const domainObject = createBoxDomainObject();
 
       // Grab the box at top cap from above and move it in the XY plane
-      const direction = new Vector3(0, 0, -1);
-      const delta = new Vector3(expectedChange ? 1 : 0, expectedChange ? 2 : 0, 0);
-      const startRay = new Ray(new Vector3(0, 0, 2), direction);
-      const expectedCenter = domainObject.box.center.clone().add(delta);
+      const direction = new Vector3(0, 0, -sign);
+      const delta = new Vector3();
+      const startRay = new Ray(new Vector3(0, 0, sign * 2), direction);
+      const face = new BoxFace(sign === 1 ? 5 : 2);
 
+      const expectedSize = domainObject.box.size.clone();
+      const expectedCenter = domainObject.box.center.clone();
+      if (expectedChange) {
+        delta.set(shift ? 0 : 1, 2, 0); // Shift only translate in dominate direction
+        expectedCenter.add(delta);
+      }
       const dragger = domainObject.createDragger(
-        createCreateDraggerPropsMock(domainObject, startRay, new BoxFace(2), focusType)
+        createCreateDraggerPropsMock(domainObject, startRay, face, focusType)
       );
       assert(dragger !== undefined);
-      drag(dragger, startRay, delta, expectedChange);
+      drag(dragger, startRay, delta, expectedChange, shift);
+
+      expectEqualVector3(domainObject.box.size, expectedSize);
       expectEqualVector3(domainObject.box.center, expectedCenter);
       expect(domainObject.focusType).toBe(focusType);
     }
   });
 
-  test('change radius of box', () => {
+  test('move a face of the box', () => {
     const focusType = FocusType.Face;
-    for (const expectedChange of [true, false]) {
+    for (const { expectedChange, shift, sign } of getSignedTestCases()) {
       const domainObject = createBoxDomainObject();
+      const face = new BoxFace(sign > 0 ? 2 : 5);
 
-      // Grab the box from the side and move it away from the center
-      const direction = new Vector3(0, 1, 0);
-      const delta = new Vector3(expectedChange ? 1 : 0, 0, 0);
-      const startRay = new Ray(new Vector3(1, -2, 0), direction);
-      const expectedRadius = domainObject.box.radius + delta.x;
+      // Grab the box from the face and move it away from the center
+      const direction = new Vector3(-1, 0, -sign).normalize();
+      const startRay = new Ray(new Vector3(2, 0, 2 * sign), direction);
+      const delta = new Vector3();
       const dragger = domainObject.createDragger(
-        createCreateDraggerPropsMock(domainObject, startRay, new BoxFace(0), focusType)
+        createCreateDraggerPropsMock(domainObject, startRay, face, focusType)
       );
+      const expectedSize = domainObject.box.size.clone();
+      const expectedCenter = domainObject.box.center.clone();
+      if (expectedChange) {
+        delta.set(0, 0, sign);
+        expectedSize.add(new Vector3(0, 0, 1));
+        expectedCenter.addScaledVector(delta, 0.5);
+      }
 
       assert(dragger !== undefined);
-      drag(dragger, startRay, delta, expectedChange);
+      drag(dragger, startRay, delta, expectedChange, shift);
 
-      expect(domainObject.box.radius).toBeCloseTo(expectedRadius);
+      expectEqualVector3(domainObject.box.size, expectedSize);
+      expectEqualVector3(domainObject.box.center, expectedCenter);
       expect(domainObject.focusType).toBe(focusType);
     }
   });
 
-  test('change the length of the box by moving the end caps', () => {
-    // Vertical plane with Z-axis up, ad X axis to right (sign is 1)
-    //
-    // Ray    Start   End
-    //      (1,2)  (2,2)
-    //         *  *
-    //       /   /
-    //  +---A---+  z=1  A: Start end cap
-    //  |    /  |       B: End end cap
-    // -----B----- z=0
-    //  |       |
-    //  +-------+
+  test('resize the box by the corner', () => {
+    const focusType = FocusType.Corner;
 
-    const focusType = FocusType.Face;
-    for (const expectedChange of [true, false]) {
-      for (const sign of [1, -1]) {
-        const domainObject = createBoxDomainObject();
-        const direction = new Vector3(-1, 0, -sign).normalize();
-        const delta = new Vector3(expectedChange ? 1 : 0, 0, 0);
-        const startRay = new Ray(new Vector3(1, 0, sign * 2), direction);
+    // Grab the box at the corner and move it away from the center
+    //            Y
+    //            ^ Face 1
+    //            +------+
+    //     Face 3 |      | Face 0
+    //            |      |
+    // (-1,-1,-1) +======+  --> X
+    //            ^ Face 4
+    //            | Dir = (0, 1, 0)
+    // (-1,-2,-1) *
 
-        const expectedA = domainObject.box.centerA.clone();
-        if (sign === 1 && expectedChange) {
-          expectedA.z = 0;
-        }
-        const expectedB = domainObject.box.centerB.clone();
-        if (sign === -1 && expectedChange) {
-          expectedB.z = 0;
-        }
-        const dragger = domainObject.createDragger(
-          createCreateDraggerPropsMock(
-            domainObject,
-            startRay,
-            new BoxFace(sign === 1 ? 5 : 2),
-            focusType
-          )
-        );
-        assert(dragger !== undefined);
-        drag(dragger, startRay, delta, expectedChange);
+    for (const { expectedChange, shift } of getTestCases()) {
+      const domainObject = createBoxDomainObject();
 
-        expectEqualVector3(domainObject.box.centerA, expectedA);
-        expectEqualVector3(domainObject.box.centerB, expectedB);
-        expect(domainObject.focusType).toBe(focusType);
+      const direction = new Vector3(0, 1, 0); // Along the y axis
+      const startRay = new Ray(new Vector3(-1, -2, -1), direction); // See figure
+      const delta = new Vector3(); // Movement in the XZ plane
+      const cornerSign = new Vector3(-1, -1, -1); // This is the corner that is being dragged
+      const face = new BoxFace(4); // Negative Y face
+
+      const expectedSize = domainObject.box.size.clone();
+      const expectedCenter = domainObject.box.center.clone();
+      if (expectedChange) {
+        delta.set(-1, 0, -2);
+        expectedSize.addScaledVector(delta, -1);
+        expectedCenter.addScaledVector(delta, 0.5);
       }
+      const dragger = domainObject.createDragger(
+        createCreateDraggerPropsMock(domainObject, startRay, face, focusType, cornerSign)
+      );
+      assert(dragger !== undefined);
+      drag(dragger, startRay, delta, expectedChange, shift);
+
+      expectEqualVector3(domainObject.box.size, expectedSize);
+      expectEqualVector3(domainObject.box.center, expectedCenter);
+      expect(domainObject.focusType).toBe(focusType);
     }
   });
 
-  test('rotate the box by moving one of the end caps', () => {
-    // Vertical plane with Z-axis up, ad X axis to right (sign is 1)
-    //
-    // Ray   Start                  End
-    //      (1,2)                  (2,2)
-    //         *                    *
-    //       /                     /
-    //  +---A---+             +--_A_
-    //  |       |            /      --+
-    // -----------          /        /
-    //  |       |          /        /
-    //  +---B---+         +--_B_   /
-    //                          --+
+  test('rotate the box', () => {
+    // Grab the box at a corner and rotate it around the y axis 45 degrees
+    //            Y
+    //            ^
+    //            | Face 1
+    //            +------+
+    //     Face 3 |      | Face 0
+    //            |      |
+    // (-1,-1,-1) +======+-----> X
+    //            ^ Face 4
+    //            | Dir = (0, 1, 0)
+    // (-1,-2,-1) *
 
     const focusType = FocusType.Rotation;
-    for (const expectedChange of [true, false]) {
-      for (const sign of [1, -1]) {
-        const domainObject = createBoxDomainObject();
-        const direction = new Vector3(-1, 0, -sign).normalize();
-        const delta = new Vector3(expectedChange ? 1 : 0, 0, 0);
-        const startRay = new Ray(new Vector3(1, 0, sign * 2), direction);
+    for (const { expectedChange, shift, canRotate } of getTestCasesForRotation()) {
+      const domainObject = createBoxDomainObject();
+      domainObject.canRotateComponent = (_component: number): boolean => canRotate;
 
-        const expectedA = domainObject.box.centerA.clone();
-        if (sign === 1 && expectedChange) {
-          expectedA.set(0.894427, 0, 0.788854);
-        }
-        const expectedB = domainObject.box.centerB.clone();
-        if (sign === -1 && expectedChange) {
-          expectedB.set(0.894427, 0, -0.788854);
-        }
-        const dragger = domainObject.createDragger(
-          createCreateDraggerPropsMock(
-            domainObject,
-            startRay,
-            new BoxFace(sign === 1 ? 5 : 2),
-            focusType
-          )
-        );
-        assert(dragger !== undefined);
-        drag(dragger, startRay, delta, expectedChange);
+      const direction = new Vector3(0, 1, 0); // Along the y axis
+      const startRay = new Ray(new Vector3(-1, -2, -1), direction); // See figure
+      const delta = new Vector3();
+      const face = new BoxFace(4); // Negative Y face
 
-        expectEqualVector3(domainObject.box.centerA, expectedA);
-        expectEqualVector3(domainObject.box.centerB, expectedB);
-        expect(domainObject.focusType).toBe(focusType);
+      const expectedSize = domainObject.box.size.clone();
+      const expectedCenter = domainObject.box.center.clone();
+      const expectedRotation = domainObject.box.rotation.clone();
+
+      if (expectedChange) {
+        expectedRotation.y = degToRad(45);
+        delta.set(0, 0, 1);
+      } else if (!canRotate) {
+        delta.set(0, 0, 1); // To check if the rotation is not applied
       }
-    }
-  });
+      const dragger = domainObject.createDragger(
+        createCreateDraggerPropsMock(domainObject, startRay, face, focusType)
+      );
+      assert(dragger !== undefined);
+      drag(dragger, startRay, delta, expectedChange, shift);
 
-  test('translate horizontal circle along the axis', () => {
-    // Vertical plane with Z-axis up, ad X axis to right (sign is 1)
-    //
-    // Ray    Start   End
-    //      (1,2)  (2,2)
-    //         *  *
-    //       /   /
-    //  +-------+ z = 0     Start
-    //
-    //  +-------+ z = -1    End
-
-    const focusType = FocusType.Face;
-    for (const expectedChange of [true, false]) {
-      for (const sign of [1, -1]) {
-        const domainObject = createBoxDomainObject();
-        const direction = new Vector3(-1, 0, -sign).normalize();
-        const delta = new Vector3(expectedChange ? 1 : 0, 0, 0);
-        const startRay = new Ray(direction.clone().negate(), direction);
-
-        const expectedA = domainObject.box.centerA.clone();
-        const expectedB = domainObject.box.centerB.clone();
-        if (expectedChange) {
-          expectedA.z += -sign;
-          expectedB.z += -sign;
-        }
-        const dragger = domainObject.createDragger(
-          createCreateDraggerPropsMock(
-            domainObject,
-            startRay,
-            new BoxFace(sign === 1 ? 5 : 2),
-            focusType
-          )
-        );
-        assert(dragger !== undefined);
-        drag(dragger, startRay, delta, expectedChange);
-
-        expectEqualVector3(domainObject.box.centerA, expectedA);
-        expectEqualVector3(domainObject.box.centerB, expectedB);
-        expect(domainObject.focusType).toBe(focusType);
-      }
+      expectEqualVector3(domainObject.box.size, expectedSize);
+      expectEqualVector3(domainObject.box.center, expectedCenter);
+      expectEqualEuler(domainObject.box.rotation, expectedRotation);
+      expect(domainObject.focusType).toBe(focusType);
     }
   });
 });
@@ -221,16 +193,19 @@ function drag(
   startRay: Ray,
   delta: Vector3,
   expectedChange: boolean,
+  shiftKey: boolean,
   expectedFocusChange = false
 ): void {
   const draggerTester = new EventChangeTester(dragger.domainObject, Changes.dragging);
   const focusTester = new EventChangeTester(dragger.domainObject, Changes.focus);
 
   const endRay = new Ray(startRay.origin.clone().add(delta), startRay.direction.clone());
-  dragger.onPointerDown(new PointerEvent('pointerdown'));
-  const actualChanged = dragger.onPointerDrag(new PointerEvent('pointermove'), endRay);
-  dragger.onPointerUp(new PointerEvent('pointermove'));
-
+  dragger.onPointerDown(new PointerEvent('pointerdown', { shiftKey }));
+  const actualChanged = dragger.onPointerDrag(
+    new PointerEvent('pointermove', { shiftKey }),
+    endRay
+  );
+  dragger.onPointerUp(new PointerEvent('pointermove', { shiftKey }));
   expect(actualChanged).toBe(expectedChange);
 
   // Test of notifications has happened
@@ -243,15 +218,16 @@ function drag(
 function createIntersectionMock(
   domainObject: DomainObject,
   face: BoxFace,
-  focusType: FocusType
+  focusType: FocusType,
+  cornerSign?: Vector3
 ): DomainObjectIntersection {
   return {
     type: 'customObject',
-    point: new Vector3(), // This is not used in the dragger
-    distanceToCamera: 0, // This is not used in the dragger
     domainObject,
-    customObject: new BoxView(), // This is not used in the dragger
-    userData: new PrimitivePickInfo(face, focusType, new Vector3())
+    userData: new PrimitivePickInfo(face, focusType, cornerSign),
+    point: new Vector3(), // This is not used by the dragger
+    distanceToCamera: 0, // This is not used by the dragger
+    customObject: new Mock<ICustomObject>().object() // This is not used by the dragger
   };
 }
 
@@ -259,22 +235,49 @@ function createCreateDraggerPropsMock(
   domainObject: BoxDomainObject,
   ray: Ray,
   face: BoxFace,
-  focusType: FocusType
+  focusType: FocusType,
+  cornerSign?: Vector3
 ): CreateDraggerProps {
-  const intersection = domainObject.box.intersectRay(ray, new Matrix4());
-  if (intersection === undefined) {
+  const point = domainObject.box.intersectRay(ray, new Matrix4());
+  if (point === undefined) {
     throw new Error('No intersection found for the ray and box');
   }
-  return {
-    intersection: createIntersectionMock(domainObject, face, focusType),
-    point: intersection,
-    ray
-  };
+  const intersection = createIntersectionMock(domainObject, face, focusType, cornerSign);
+  return { intersection, point, ray };
 }
 
 function createBoxDomainObject(): BoxDomainObject {
   const domainObject = new MeasureBoxDomainObject(PrimitiveType.Box);
-  domainObject.box.size.set(1, 1, 1);
+  domainObject.box.size.set(2, 2, 2);
   domainObject.box.center.set(0, 0, 0);
   return domainObject;
+}
+
+function* getSignedTestCases(): Generator<{
+  expectedChange: boolean;
+  shift: boolean;
+  sign: number;
+}> {
+  yield { expectedChange: true, shift: false, sign: 1 };
+  yield { expectedChange: true, shift: false, sign: -1 };
+  yield { expectedChange: true, shift: true, sign: 1 };
+  yield { expectedChange: true, shift: true, sign: -1 };
+  yield { expectedChange: false, shift: false, sign: 1 };
+}
+
+function* getTestCases(): Generator<{ expectedChange: boolean; shift: boolean }> {
+  yield { expectedChange: true, shift: false };
+  yield { expectedChange: true, shift: true };
+  yield { expectedChange: false, shift: false };
+}
+
+function* getTestCasesForRotation(): Generator<{
+  expectedChange: boolean;
+  shift: boolean;
+  canRotate: boolean;
+}> {
+  yield { expectedChange: true, shift: false, canRotate: true };
+  yield { expectedChange: true, shift: true, canRotate: true };
+  yield { expectedChange: false, shift: false, canRotate: true };
+  yield { expectedChange: false, shift: false, canRotate: false };
 }

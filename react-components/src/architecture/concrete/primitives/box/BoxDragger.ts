@@ -28,6 +28,8 @@ const CONSTRAINED_ANGLE_INCREMENT = 15;
  * All geometry in this class assume Z-axis is up
  */
 
+const EPSILON = 0.0001;
+
 export class BoxDragger extends BaseDragger {
   // ==================================================
   // INSTANCE FIELDS
@@ -167,7 +169,7 @@ export class BoxDragger extends BaseDragger {
 
     getClosestPointOnLine(ray, this._normal, this.point, pointOnSegment);
     const deltaSize = this._planeOfFace.distanceToPoint(pointOnSegment);
-    if (deltaSize === 0) {
+    if (Math.abs(deltaSize) < EPSILON) {
       return false; // Nothing has changed
     }
     // First copy the original values
@@ -184,7 +186,7 @@ export class BoxDragger extends BaseDragger {
       // Set new size
       const value = deltaSize + size.getComponent(index);
       const newValue = this.getBestValue(value, isShiftPressed, Box.MinSize);
-      if (newValue === originalBox.size.getComponent(index)) {
+      if (Math.abs(newValue - originalBox.size.getComponent(index)) < EPSILON) {
         return false; // Nothing has changed
       }
       size.setComponent(index, newValue);
@@ -212,7 +214,7 @@ export class BoxDragger extends BaseDragger {
     deltaSize.applyMatrix4(invRotationMatrix);
 
     deltaSize.multiply(this._cornerSign);
-    if (deltaSize.lengthSq() === 0) {
+    if (deltaSize.length() < EPSILON) {
       return false; // Nothing has changed
     }
     // First copy the original values
@@ -225,7 +227,7 @@ export class BoxDragger extends BaseDragger {
     size.add(deltaSize);
     box.forceMinSize();
 
-    if (size.lengthSq() === originalBox.size.lengthSq()) {
+    if (size.distanceTo(originalBox.size) < EPSILON) {
       return false; // Nothing has changed
     }
     // The center of the box should be moved by half of the delta size and take the rotation into account.
@@ -251,6 +253,9 @@ export class BoxDragger extends BaseDragger {
     const cross = newVector3().crossVectors(centerToEndPoint, centerToStartPoint).normalize();
 
     let deltaAngle = centerToEndPoint.angleTo(centerToStartPoint);
+    if (Math.abs(deltaAngle) < EPSILON) {
+      return false; // Nothing has changed
+    }
     if (this._normal.dot(cross) > 0) {
       deltaAngle = -deltaAngle;
     }
@@ -278,13 +283,10 @@ export class BoxDragger extends BaseDragger {
       } else {
         newAngle = forceBetween0AndTwoPi(deltaAngle + oldAngle);
       }
-      newAngle = roundAngleByConstrained(newAngle, isShiftPressed);
+      newAngle = roundAngleByConstrained(newAngle);
       return newAngle - oldAngle;
 
-      function roundAngleByConstrained(rotation: number, isShiftPressed: boolean): number {
-        if (!isShiftPressed) {
-          return rotation;
-        }
+      function roundAngleByConstrained(rotation: number): number {
         let degrees = radToDeg(rotation);
         degrees = round(degrees, CONSTRAINED_ANGLE_INCREMENT);
         return degToRad(degrees);
