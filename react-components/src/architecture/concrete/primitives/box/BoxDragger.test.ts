@@ -18,8 +18,8 @@ import {
 } from '#test-utils/architecture/baseDraggerUtil';
 
 describe(BoxDragger.name, () => {
-  const focusType = FocusType.None;
   test('should create correct dragger and not change anything if not any focus type', () => {
+    const focusType = FocusType.None;
     const domainObject = createBoxDomainObject();
 
     // Grab the box at top cap from above and move it in the XY plane
@@ -41,7 +41,7 @@ describe(BoxDragger.name, () => {
   test('translate the box', () => {
     const focusType = FocusType.Body;
     for (const testCase of getTestCasesWithSign()) {
-      const sign = testCase.sign;
+      const { sign } = testCase;
       const domainObject = createBoxDomainObject();
 
       // Grab the box at top cap from above and move it in the XY plane
@@ -71,7 +71,7 @@ describe(BoxDragger.name, () => {
   test('move a face of the box', () => {
     const focusType = FocusType.Face;
     for (const testCase of getTestCasesWithSign()) {
-      const sign = testCase.sign;
+      const { sign } = testCase;
       const domainObject = createBoxDomainObject();
       const face = new BoxFace(sign > 0 ? 2 : 5);
 

@@ -137,7 +137,7 @@ export class BoxDragger extends BaseDragger {
       return false;
     }
     const deltaCenter = planeIntersect.sub(this.point);
-    if (deltaCenter.lengthSq() === 0) {
+    if (deltaCenter.length() < EPSILON) {
       return false;
     }
     if (isShiftPressed) {
