@@ -1,7 +1,3 @@
-/*!
- * Copyright 2023 Cognite AS
- */
-
 import { describe, expect, test } from 'vitest';
 import {
   isEmpty,

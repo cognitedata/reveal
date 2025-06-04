@@ -1,6 +1,3 @@
-/*!
- * Copyright 2024 Cognite AS
- */
 import { type AddModelOptions, type DataSourceType } from '@cognite/reveal';
 import { type FdmCadConnection } from '../../components/CacheProvider/types';
 import { type Fdm3dDataProvider } from '../Fdm3dDataProvider';

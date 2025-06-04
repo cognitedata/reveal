@@ -1,7 +1,3 @@
-/*!
- * Copyright 2023 Cognite AS
- */
-
 import { type Transformation3d } from './SceneFdmTypes';
 
 export type Scene = {

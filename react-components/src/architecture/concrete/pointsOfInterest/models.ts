@@ -1,7 +1,3 @@
-/*!
- * Copyright 2024 Cognite AS
- */
-
 import { type DmsUniqueIdentifier } from '../../../data-providers';
 import { type InstanceReference } from '../../../utilities/instanceIds';
 

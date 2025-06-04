@@ -1,7 +1,3 @@
-/*!
- * Copyright 2024 Cognite AS
- */
-
 import { type Matrix4, type Ray, type Vector3 } from 'three';
 import { type Annotation } from './Annotation';
 import { type Primitive } from '../../../base/utilities/primitives/Primitive';

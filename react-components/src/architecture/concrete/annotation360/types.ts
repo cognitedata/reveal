@@ -1,7 +1,3 @@
-/*!
- * Copyright 2024 Cognite AS
- */
-
 export type LegacyIdentifier = {
   sourceType: 'classic';
   id: number;

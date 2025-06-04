@@ -1,6 +1,3 @@
-/*!
- * Copyright 2024 Cognite AS
- */
 import { type ReactNode, useEffect, useMemo, useState } from 'react';
 import { useRenderTarget } from '../RevealCanvas';
 import { AnchoredDialogUpdater } from '../../architecture/base/reactUpdaters/AnchoredDialogUpdater';

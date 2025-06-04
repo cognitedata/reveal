@@ -1,7 +1,3 @@
-/*!
- * Copyright 2023 Cognite AS
- */
-
 export const getLanguage = (): string | undefined => {
   try {
     let systemLanguage = window.navigator.language;

@@ -1,6 +1,3 @@
-/*!
- * Copyright 2024 Cognite AS
- */
 import { useQuery, type UseQueryResult } from '@tanstack/react-query';
 import { fetchAncestorNodesForTreeIndex } from '../../components/CacheProvider/requests';
 import { type AnyIntersection } from '@cognite/reveal';

@@ -1,7 +1,3 @@
-/*!
- * Copyright 2023 Cognite AS
- */
-
 import type { Meta, StoryObj } from '@storybook/react';
 import { CadModelContainer, PointCloudContainer, RevealButtons, RevealCanvas } from '../src';
 import { Color } from 'three';

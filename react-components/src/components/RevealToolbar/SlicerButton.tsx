@@ -1,7 +1,3 @@
-/*!
- * Copyright 2023 Cognite AS
- */
-
 import { type ReactElement, useState, useEffect } from 'react';
 
 import { Box3, Plane, Vector3 } from 'three';

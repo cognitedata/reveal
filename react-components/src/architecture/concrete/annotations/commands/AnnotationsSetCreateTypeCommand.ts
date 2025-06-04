@@ -1,7 +1,3 @@
-/*!
- * Copyright 2024 Cognite AS
- */
-
 import { type TranslationInput } from '../../../base/utilities/TranslateInput';
 import { type BaseCommand } from '../../../base/commands/BaseCommand';
 import { PrimitiveType } from '../../../base/utilities/primitives/PrimitiveType';

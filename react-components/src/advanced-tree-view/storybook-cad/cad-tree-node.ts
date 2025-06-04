@@ -1,6 +1,3 @@
-/*!
- * Copyright 2025 Cognite AS
- */
 import { TreeNode } from '..';
 
 import { type SubsetOfNode3D } from './types';

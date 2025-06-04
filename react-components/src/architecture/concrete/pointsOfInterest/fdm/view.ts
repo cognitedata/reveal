@@ -1,6 +1,3 @@
-/*!
- * Copyright 2024 Cognite AS
- */
 import { type Source } from '../../../../data-providers';
 
 export const POI_SOURCE: Source = {

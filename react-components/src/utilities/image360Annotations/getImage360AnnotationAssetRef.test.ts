@@ -1,6 +1,3 @@
-/*!
- * Copyright 2025 Cognite AS
- */
 import { describe, expect, it } from 'vitest';
 import { getImage360AnnotationAssetRef } from './getImage360AnnotationAssetRef';
 import {

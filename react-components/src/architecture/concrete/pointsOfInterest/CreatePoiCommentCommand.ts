@@ -1,6 +1,3 @@
-/*!
- * Copyright 2024 Cognite AS
- */
 import { BaseInputCommand } from '../../base/commands/BaseInputCommand';
 import { Changes } from '../../base/domainObjectsHelpers/Changes';
 import { type TranslationInput } from '../../base/utilities/TranslateInput';

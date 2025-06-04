@@ -1,7 +1,3 @@
-/*!
- * Copyright 2024 Cognite AS
- */
-
 import { beforeEach, describe, expect, test } from 'vitest';
 import { DeleteSelectedImage360AnnotationCommand } from './DeleteSelectedImage360AnnotationCommand';
 import { type RevealRenderTarget } from '../../base/renderTarget/RevealRenderTarget';

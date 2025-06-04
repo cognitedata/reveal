@@ -1,7 +1,3 @@
-/*!
- * Copyright 2024 Cognite AS
- */
-
 import { useState } from 'react';
 import { useRenderTarget } from '../components/RevealCanvas';
 import { useOnUpdate } from '../components/Architecture/useOnUpdate';
