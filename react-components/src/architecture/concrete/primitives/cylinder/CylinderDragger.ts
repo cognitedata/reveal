@@ -168,7 +168,7 @@ export class CylinderDragger extends BaseDragger {
     const pointOnSegment = newVector3();
     getClosestPointOnLine(ray, this._normal, this.point, pointOnSegment);
     const deltaHeight = this._planeOfFace.distanceToPoint(pointOnSegment);
-    if (deltaHeight < EPSILON) {
+    if (Math.abs(deltaHeight) < EPSILON) {
       return false; // Nothing has changed
     }
     const originalCylinder = this._originalCylinder;

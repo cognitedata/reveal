@@ -100,8 +100,8 @@ describe(CylinderDragger.name, () => {
     //  +-------+
 
     const focusType = FocusType.Face;
-    for (const expectedChange of [true]) {
-      for (const sign of [1]) {
+    for (const expectedChange of [true, false]) {
+      for (const sign of [1, -1]) {
         const domainObject = createVerticalCylinderDomainObject();
         const direction = new Vector3(-1, 0, -sign).normalize();
         const delta = new Vector3(expectedChange ? 1 : 0, 0, 0);
@@ -123,7 +123,7 @@ describe(CylinderDragger.name, () => {
         drag(dragger, startRay, delta, expectedChange);
 
         expectEqualVector3(domainObject.cylinder.centerA, expectedCenterA);
-        //expectEqualVector3(domainObject.cylinder.centerB, expectedCenterB);
+        expectEqualVector3(domainObject.cylinder.centerB, expectedCenterB);
         expect(domainObject.focusType).toBe(focusType);
       }
     }
