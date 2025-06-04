@@ -489,7 +489,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@cognite/cogs-core@npm:^10.36.0, @cognite/cogs-core@npm:^10.40.0":
+"@cognite/cogs-core@npm:^10.36.0":
   version: 10.40.0
   resolution: "@cognite/cogs-core@npm:10.40.0"
   dependencies:
@@ -524,6 +524,41 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@cognite/cogs-core@npm:^10.41.0":
+  version: 10.46.0
+  resolution: "@cognite/cogs-core@npm:10.46.0"
+  dependencies:
+    "@cognite/cogs-icons": "npm:^10.46.0"
+    "@cognite/cogs-utils": "npm:^10.46.0"
+    "@emotion/react": "npm:^11.11.3"
+    "@emotion/styled": "npm:^11.11.0"
+    "@mui/base": "npm:^5.0.0-beta.33"
+    "@mui/joy": "npm:5.0.0-beta.48"
+    "@mui/material": "npm:^5.15.5"
+    "@mui/utils": "npm:^5.15.6"
+    "@mui/x-date-pickers": "npm:^6.19.3"
+    "@mui/x-date-pickers-pro": "npm:^6.19.3"
+    "@mui/x-license-pro": "npm:^6.10.2"
+    "@tippyjs/react": "npm:4.2.6"
+    classnames: "npm:^2.5.1"
+    color: "npm:4.2.3"
+    core-js: "npm:^3.6.5"
+    csstype: "npm:3.1.3"
+    dayjs: "npm:^1.11.7"
+    framer-motion: "npm:^11.0.3"
+    lodash: "npm:4.17.21"
+    rc-slider: "npm:9.5.4"
+    react-select: "npm:3.2.0"
+    react-transition-group: "npm:^4.4.5"
+    tslib: "npm:^2.6.2"
+  peerDependencies:
+    "@types/react": ^18
+    react: ^18
+    react-dom: ^18
+  checksum: 10/2097337b64bbba4e48ee6cba7db9fc871a30c1c002274b9c9990cb38edc312aad906bc5998f4e1bc48db4b5e106a3b5d3b29ea0ea3f0f9d37d5edbc5a2c2ee0b
+  languageName: node
+  linkType: hard
+
 "@cognite/cogs-icons@npm:^10.36.0, @cognite/cogs-icons@npm:^10.40.0":
   version: 10.40.0
   resolution: "@cognite/cogs-icons@npm:10.40.0"
@@ -539,14 +574,29 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@cognite/cogs-lab@npm:>=9.0.0-alpha.153":
-  version: 9.0.0-alpha.159
-  resolution: "@cognite/cogs-lab@npm:9.0.0-alpha.159"
+"@cognite/cogs-icons@npm:^10.41.0, @cognite/cogs-icons@npm:^10.46.0":
+  version: 10.46.0
+  resolution: "@cognite/cogs-icons@npm:10.46.0"
+  dependencies:
+    classnames: "npm:^2.5.1"
+    core-js: "npm:^3.6.5"
+    tslib: "npm:^2.6.2"
+  peerDependencies:
+    "@types/react": ^18
+    react: ^18
+    react-dom: ^18
+  checksum: 10/c8167a9599faabc97bd427516b7da243e089d83f9e357175c3a52542525cfe966029e5cfaadc5c4950bdc03cf31e8b7f2cf891cdba827c089b42bf721b78adf7
+  languageName: node
+  linkType: hard
+
+"@cognite/cogs-lab@npm:9.0.0-alpha.160":
+  version: 9.0.0-alpha.160
+  resolution: "@cognite/cogs-lab@npm:9.0.0-alpha.160"
   dependencies:
     "@babel/runtime": "npm:^7.23.2"
-    "@cognite/cogs-core": "npm:^10.40.0"
-    "@cognite/cogs-icons": "npm:^10.40.0"
-    "@cognite/cogs-utils": "npm:^10.40.0"
+    "@cognite/cogs-core": "npm:^10.41.0"
+    "@cognite/cogs-icons": "npm:^10.41.0"
+    "@cognite/cogs-utils": "npm:^10.41.0"
     "@floating-ui/react": "npm:^0.27.0"
     "@mui/base": "npm:^5.0.0-beta.33"
     "@mui/material": "npm:^5.15.5"
@@ -566,7 +616,7 @@ __metadata:
     "@types/react": ^18
     react: ^18
     react-dom: ^18
-  checksum: 10/e45bbd3c08cc58cb2460c74eec829b27264e3692271d7da494718764a98306625acd4337f606250c9464400176efaadb8ea81b30d57ca4c3732b2aee8e9c5e29
+  checksum: 10/4271f36bc69a02756304488ebe14633d102c9cc580232f95e1eb434fc32f2f26b4b0cfc40743958e3c86a785bc4de14ecc9e79ba9ca9e5c7ea0361b64f6466bc
   languageName: node
   linkType: hard
 
@@ -591,6 +641,27 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@cognite/cogs-utils@npm:^10.41.0, @cognite/cogs-utils@npm:^10.46.0":
+  version: 10.46.0
+  resolution: "@cognite/cogs-utils@npm:10.46.0"
+  dependencies:
+    "@babel/runtime": "npm:^7.23.2"
+    "@testing-library/react": "npm:16.0.1"
+    classnames: "npm:^2.5.1"
+    color: "npm:4.2.3"
+    core-js: "npm:^3.6.5"
+    jest-axe: "npm:^8.0.0"
+    lodash: "npm:4.17.21"
+    resize-observer-polyfill: "npm:1.5.1"
+    tslib: "npm:^2.6.2"
+  peerDependencies:
+    "@types/react": ^18
+    react: ^18
+    react-dom: ^18
+  checksum: 10/9756c55ea11a25d73e9200e46605c68773565e269869a934317150e53eb0a6aed2167265bc924b4faede53ffae3a1bf3c4088a5d61b288e256b71661ae51b88d
+  languageName: node
+  linkType: hard
+
 "@cognite/cogs.js@npm:^10.36.0":
   version: 10.36.0
   resolution: "@cognite/cogs.js@npm:10.36.0"
@@ -608,7 +679,7 @@ __metadata:
   dependencies:
     "@cognite/cdf-i18n-utils": "npm:^0.7.5"
     "@cognite/cdf-utilities": "npm:^3.6.0"
-    "@cognite/cogs-lab": "npm:>=9.0.0-alpha.153"
+    "@cognite/cogs-lab": "npm:9.0.0-alpha.160"
     "@cognite/cogs.js": "npm:^10.36.0"
     "@cognite/reveal": "npm:4.25.1"
     "@cognite/sdk": "npm:^10.0.0"
