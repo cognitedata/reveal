@@ -1,7 +1,3 @@
-/*!
- * Copyright 2023 Cognite AS
- */
-
 import {
   type PointerEventData,
   type Image360AnnotationIntersection,

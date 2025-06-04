@@ -1,7 +1,3 @@
-/*!
- * Copyright 2024 Cognite AS
- */
-
 import { type BaseCommand } from '../../src/architecture/base/commands/BaseCommand';
 import { SetTerrainVisibleCommand } from '../../src/architecture/concrete/terrain/SetTerrainVisibleCommand';
 import { UpdateTerrainCommand } from '../../src/architecture/concrete/terrain/UpdateTerrainCommand';

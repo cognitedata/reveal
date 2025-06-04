@@ -1,6 +1,3 @@
-/*!
- * Copyright 2024 Cognite AS
- */
 import { executeParallel } from '../../utilities/executeParallel';
 import { isDefined } from '../../utilities/isDefined';
 import { getDMSModels } from '../core-dm-provider/getDMSModels';

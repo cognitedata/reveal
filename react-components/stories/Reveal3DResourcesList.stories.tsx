@@ -1,6 +1,3 @@
-/*!
- * Copyright 2023 Cognite AS
- */
 import type { Meta, StoryObj } from '@storybook/react';
 import { Reveal3DResourcesList } from '../src/components/Reveal3DResourcesList/Reveal3DResourcesList';
 import { createSdkByUrlToken } from './utilities/createSdkByUrlToken';

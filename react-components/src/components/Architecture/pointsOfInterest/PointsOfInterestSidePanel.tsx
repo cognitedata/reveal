@@ -1,6 +1,3 @@
-/*!
- * Copyright 2024 Cognite AS
- */
 import { CollapsablePanel } from '@cognite/cogs.js';
 import { type PropsWithChildren, type ReactNode, useState } from 'react';
 import { useRenderTarget } from '../../RevealCanvas';

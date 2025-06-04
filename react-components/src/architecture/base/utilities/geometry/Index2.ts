@@ -1,7 +1,3 @@
-/*!
- * Copyright 2024 Cognite AS
- */
-
 export class Index2 {
   // ==================================================
   // INSTANCE FIELDS

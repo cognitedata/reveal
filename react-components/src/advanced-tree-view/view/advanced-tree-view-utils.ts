@@ -1,6 +1,3 @@
-/*!
- * Copyright 2025 Cognite AS
- */
 import { TreeNode } from '../model/tree-node';
 import { type TreeNodeType } from '../model/tree-node-type';
 

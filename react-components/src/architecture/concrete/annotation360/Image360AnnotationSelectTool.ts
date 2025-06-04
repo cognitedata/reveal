@@ -1,7 +1,3 @@
-/*!
- * Copyright 2024 Cognite AS
- */
-
 import { type TranslationInput } from '../../base/utilities/TranslateInput';
 import { Image360AnnotationDomainObject } from './Image360AnnotationDomainObject';
 import { type VisualDomainObject } from '../../base/domainObjects/VisualDomainObject';

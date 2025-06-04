@@ -1,6 +1,3 @@
-/*!
- * Copyright 2024 Cognite AS
- */
 import { useState } from 'react';
 import { type PointOfInterest } from '../../../architecture';
 import { EMPTY_ARRAY } from '../../../utilities/constants';

@@ -1,7 +1,3 @@
-/*!
- * Copyright 2024 Cognite AS
- */
-
 import { type ReactElement, useState, useMemo } from 'react';
 import { useRenderTarget } from '../RevealCanvas/ViewerContext';
 import { SegmentedControl, Tooltip as CogsTooltip } from '@cognite/cogs.js';

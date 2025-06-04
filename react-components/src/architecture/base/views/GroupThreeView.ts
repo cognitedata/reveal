@@ -1,7 +1,3 @@
-/*!
- * Copyright 2024 Cognite AS
- */
-
 import { Box3, Group, Mesh, type Object3D } from 'three';
 import { ThreeView } from './ThreeView';
 import { type DomainObjectChange } from '../domainObjectsHelpers/DomainObjectChange';

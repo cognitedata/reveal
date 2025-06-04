@@ -1,7 +1,3 @@
-/*!
- * Copyright 2024 Cognite AS
- */
-
 import { Matrix4, Plane, type Ray, Vector3 } from 'three';
 import {
   horizontalAngle,

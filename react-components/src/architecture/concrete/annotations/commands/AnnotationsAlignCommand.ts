@@ -1,7 +1,3 @@
-/*!
- * Copyright 2024 Cognite AS
- */
-
 import { type BaseCommand } from '../../../base/commands/BaseCommand';
 import { RenderTargetCommand } from '../../../base/commands/RenderTargetCommand';
 import { Changes } from '../../../base/domainObjectsHelpers/Changes';

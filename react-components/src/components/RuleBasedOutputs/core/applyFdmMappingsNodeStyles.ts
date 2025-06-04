@@ -1,6 +1,3 @@
-/*!
- * Copyright 2025 Cognite AS
- */
 import { NumericRange, TreeIndexNodeCollection } from '@cognite/reveal';
 import {
   type ColorRuleOutput,

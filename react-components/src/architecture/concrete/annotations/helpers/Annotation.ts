@@ -1,7 +1,3 @@
-/*!
- * Copyright 2024 Cognite AS
- */
-
 import { Box3 } from 'three';
 import { type Primitive } from '../../../base/utilities/primitives/Primitive';
 import { type AnnotationStatus } from '@cognite/sdk';

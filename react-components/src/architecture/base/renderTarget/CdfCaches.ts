@@ -1,6 +1,3 @@
-/*!
- * Copyright 2024 Cognite AS
- */
 import { type CogniteClient } from '@cognite/sdk';
 import { AssetMappingAndNode3DCache } from '../../../components/CacheProvider/AssetMappingAndNode3DCache';
 import { FdmNodeCache } from '../../../components/CacheProvider/FdmNodeCache';

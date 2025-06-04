@@ -1,7 +1,3 @@
-/*!
- * Copyright 2024 Cognite AS
- */
-
 import { effect, type Signal } from '@cognite/signals';
 import { BaseOptionCommand } from '../commands/BaseOptionCommand';
 import { RenderTargetCommand } from '../commands/RenderTargetCommand';

@@ -1,6 +1,3 @@
-/*!
- * Copyright 2025 Cognite AS
- */
 import { describe, expect, test, vi, beforeEach, beforeAll, afterAll } from 'vitest';
 
 import { renderHook } from '@testing-library/react';

@@ -1,7 +1,3 @@
-/*!
- * Copyright 2024 Cognite AS
- */
-
 import english from '../../../common/i18n/en/reveal-react-components.json';
 
 export type Translations = Record<string, string>;

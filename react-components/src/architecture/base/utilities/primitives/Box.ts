@@ -1,7 +1,3 @@
-/*!
- * Copyright 2024 Cognite AS
- */
-
 import { type Box3, Euler, Matrix4, Quaternion, type Ray, Vector3 } from 'three';
 import { radToDeg } from 'three/src/math/MathUtils.js';
 import {

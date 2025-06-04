@@ -1,7 +1,3 @@
-/*!
- * Copyright 2023 Cognite AS
- */
-
 import { useState, type ReactElement, useCallback, useEffect } from 'react';
 import styled from 'styled-components';
 import { Image360HistoricalDetails } from '../Image360HistoricalDetails/Image360HistoricalDetails';

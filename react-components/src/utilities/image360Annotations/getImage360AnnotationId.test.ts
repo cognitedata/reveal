@@ -1,6 +1,3 @@
-/*!
- * Copyright 2025 Cognite AS
- */
 import {
   classic360AnnotationFixture,
   coreDm360AnnotationFixture
