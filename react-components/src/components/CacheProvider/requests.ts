@@ -1,7 +1,3 @@
-/*!
- * Copyright 2023 Cognite AS
- */
-
 import { type CogniteClient, type Node3D } from '@cognite/sdk';
 import {
   type FdmSDK,

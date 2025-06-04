@@ -1,7 +1,3 @@
-/*!
- * Copyright 2023 Cognite AS
- */
-
 import { Tooltip, CounterChip, Button } from '@cognite/cogs.js';
 import { type ReactElement } from 'react';
 import styled from 'styled-components';

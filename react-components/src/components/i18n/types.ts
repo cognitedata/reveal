@@ -1,7 +1,3 @@
-/*!
- * Copyright 2023 Cognite AS
- */
-
 import { type ReactNode } from 'react';
 import { type TranslationInput } from '../../architecture';
 

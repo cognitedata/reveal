@@ -1,7 +1,3 @@
-/*!
- * Copyright 2024 Cognite AS
- */
-
 import { useCallback, useEffect } from 'react';
 import { type BaseCommand } from '../../architecture/base/commands/BaseCommand';
 import { type DomainObject } from '../../architecture';

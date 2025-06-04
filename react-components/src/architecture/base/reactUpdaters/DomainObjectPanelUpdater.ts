@@ -1,7 +1,3 @@
-/*!
- * Copyright 2024 Cognite AS
- */
-
 import { signal } from '@cognite/signals';
 import { type DomainObject } from '../domainObjects/DomainObject';
 import { Changes } from '../domainObjectsHelpers/Changes';

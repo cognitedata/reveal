@@ -1,6 +1,3 @@
-/*!
- * Copyright 2025 Cognite AS
- */
 import { render } from '@testing-library/react';
 import { describe, expect, test, vi } from 'vitest';
 import type { LayersButtonProps } from '../LayersButton';

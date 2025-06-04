@@ -1,7 +1,3 @@
-/*!
- * Copyright 2025 Cognite AS
- */
-
 import { type PointCloudRenderStyle } from './PointCloudRenderStyle';
 import { type PointCloudDomainObject } from './PointCloudDomainObject';
 import { Box3 } from 'three';

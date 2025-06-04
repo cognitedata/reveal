@@ -1,7 +1,3 @@
-/*!
- * Copyright 2024 Cognite AS
- */
-
 import { Color, type HSL } from 'three';
 
 export const WHITE_COLOR = new Color(1, 1, 1);

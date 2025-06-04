@@ -1,7 +1,3 @@
-/*!
- * Copyright 2024 Cognite AS
- */
-
 import { type Color } from 'three';
 import { ColorInterpolation } from './ColorInterpolation';
 import { getHslMixedColor, getMixedColor } from './colorExtensions';

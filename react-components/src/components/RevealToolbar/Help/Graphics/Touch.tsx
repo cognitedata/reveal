@@ -1,7 +1,3 @@
-/*!
- * Copyright 2023 Cognite AS
- */
-
 import { type ReactElement, type SVGProps } from 'react';
 
 export const TouchPan = (props: SVGProps<SVGSVGElement>): ReactElement => (

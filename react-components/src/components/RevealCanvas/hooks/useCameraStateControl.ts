@@ -1,7 +1,3 @@
-/*!
- * Copyright 2023 Cognite AS
- */
-
 import { type MutableRefObject, useEffect, useRef } from 'react';
 import { useReveal } from '../ViewerContext';
 import { type CameraState } from '@cognite/reveal';

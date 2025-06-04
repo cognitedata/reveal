@@ -1,7 +1,3 @@
-/*!
- * Copyright 2024 Cognite AS
- */
-
 import { PointShape } from '@cognite/reveal';
 import { BaseOptionCommand } from '../../commands/BaseOptionCommand';
 import { RenderTargetCommand } from '../../commands/RenderTargetCommand';
