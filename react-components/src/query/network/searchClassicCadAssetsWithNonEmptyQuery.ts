@@ -1,15 +1,15 @@
-import { AddModelOptions, ClassicDataSourceType } from '@cognite/reveal';
-import { CadModelOptions } from '../../components';
-import { AssetMappingAndNode3DCache } from '../../components/CacheProvider/AssetMappingAndNode3DCache';
-import { ModelWithAssetMappings } from '../../hooks/cad/ModelWithAssetMappings';
-import { Asset, CogniteClient } from '@cognite/sdk';
-import { SearchClassicCadAssetsResponse } from './types';
+import { type AddModelOptions, type ClassicDataSourceType } from '@cognite/reveal';
+import { type CadModelOptions } from '../../components';
+import { type AssetMappingAndNode3DCache } from '../../components/CacheProvider/AssetMappingAndNode3DCache';
+import { type ModelWithAssetMappings } from '../../hooks/cad/ModelWithAssetMappings';
+import { type Asset, type CogniteClient } from '@cognite/sdk';
+import { type SearchClassicCadAssetsResponse } from './types';
 import { getAssetsList } from '../../hooks/network/getAssetsList';
 import { isDefined } from '../../utilities/isDefined';
 
 export async function searchClassicCadAssetsWithNonEmptyQuery(
   searchQuery: string,
-  models: AddModelOptions<ClassicDataSourceType>[],
+  models: Array<AddModelOptions<ClassicDataSourceType>>,
   limit: number,
   cursor: string | undefined,
   sdk: CogniteClient,

@@ -1,6 +1,6 @@
-import { AddModelOptions } from '@cognite/reveal';
-import { AssetMapping3D, CogniteClient, ListResponse } from '@cognite/sdk';
-import { ModelMappingsWithAssets } from '../useSearchMappedEquipmentAssetMappings';
+import { type AddModelOptions } from '@cognite/reveal';
+import { type AssetMapping3D, type CogniteClient, type ListResponse } from '@cognite/sdk';
+import { type ModelMappingsWithAssets } from '../useSearchMappedEquipmentAssetMappings';
 
 export async function getAssetsFromAssetMappings(
   sdk: CogniteClient,

@@ -1,12 +1,9 @@
-import { AddModelOptions, ClassicDataSourceType } from '@cognite/reveal';
-import { Asset, CogniteClient } from '@cognite/sdk';
+import { type AddModelOptions, type ClassicDataSourceType } from '@cognite/reveal';
+import { type Asset, type CogniteClient } from '@cognite/sdk';
 
-import { AddImage360CollectionDatamodelsOptions } from '../../components/Reveal3DResources/types';
-import { RevealRenderTarget } from '../../architecture';
+import { type AddImage360CollectionDatamodelsOptions } from '../../components/Reveal3DResources/types';
+import { type RevealRenderTarget } from '../../architecture';
 import { searchClassicAssetsForCadModels } from './searchClassicAssetsForCadModels';
-import { InfiniteData, useInfiniteQuery, UseInfiniteQueryResult } from '@tanstack/react-query';
-import { useSDK } from '../../components/RevealCanvas/SDKProvider';
-import { useRenderTarget } from '../../components';
 
 export type SearchClassicAssetsResponse = {
   nextCursor: string | undefined;
@@ -15,8 +12,8 @@ export type SearchClassicAssetsResponse = {
 
 export async function searchClassicAssetsForModels(
   searchQuery: string,
-  models: AddModelOptions<ClassicDataSourceType>[],
-  image360Collections: AddImage360CollectionDatamodelsOptions[],
+  models: Array<AddModelOptions<ClassicDataSourceType>>,
+  _image360Collections: AddImage360CollectionDatamodelsOptions[],
   limit: number,
   cadAssetsCursor: string | undefined,
   sdk: CogniteClient,
@@ -49,5 +46,5 @@ export async function searchClassicAssetsForModels(
   // const pointCloudAssets = await pointCloudAssetsPromise;
   // const image360Assets = await image360AssetsPromise;
 
-  return { nextCursor, data: cadAssets /*.concat(pointCloudAssets).concat(image360Assets) */ };
+  return { nextCursor, data: cadAssets /* .concat(pointCloudAssets).concat(image360Assets) */ };
 }

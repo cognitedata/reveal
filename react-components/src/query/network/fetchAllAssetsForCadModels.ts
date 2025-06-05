@@ -1,8 +1,8 @@
-import { AddModelOptions, ClassicDataSourceType } from '@cognite/reveal';
-import { SearchClassicCadAssetsResponse } from './types';
-import { CogniteClient } from '@cognite/sdk';
+import { type AddModelOptions, type ClassicDataSourceType } from '@cognite/reveal';
+import { type SearchClassicCadAssetsResponse } from './types';
+import { type CogniteClient } from '@cognite/sdk';
 import { getAssetsFromAssetMappings } from './getAssetsFromAssetMappings';
-import { ModelMappingsWithAssets } from '../useSearchMappedEquipmentAssetMappings';
+import { type ModelMappingsWithAssets } from '../useSearchMappedEquipmentAssetMappings';
 
 type CursorForModel = {
   cursor: string | undefined;
@@ -10,7 +10,7 @@ type CursorForModel = {
 };
 
 export async function fetchAllAssetsForCadModels(
-  models: AddModelOptions<ClassicDataSourceType>[],
+  models: Array<AddModelOptions<ClassicDataSourceType>>,
   limit: number,
   cursor: string | undefined,
   sdk: CogniteClient
