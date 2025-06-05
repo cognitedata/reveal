@@ -49,7 +49,7 @@ export class ExampleDragger extends BaseDragger {
       return false;
     }
     planeIntersection.sub(this._offset);
-    if (planeIntersection.equals(this._center)) {
+    if (planeIntersection.distanceTo(this._center) < 0.001) {
       return false; // No change
     }
     if (this.transaction === undefined) {
@@ -57,7 +57,6 @@ export class ExampleDragger extends BaseDragger {
     }
     this._domainObject.center.copy(planeIntersection);
     this.domainObject.notify(Changes.dragging);
-
     return true;
   }
 }
