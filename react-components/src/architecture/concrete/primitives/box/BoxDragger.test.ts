@@ -27,6 +27,23 @@ describe(BoxDragger.name, () => {
     expect(dragger).toBeUndefined();
   });
 
+  test('should not change when illegal focus type', () => {
+    const focusType = FocusType.Focus;
+    const domainObject = createBoxDomainObject();
+    const direction = new Vector3(0, 0, -1);
+    const startRay = new Ray(new Vector3(0, 0, 2), direction);
+    const delta = new Vector3(1, 2, 0);
+
+    const expectedBox = clone(domainObject.box);
+    const dragger = domainObject.createDragger(
+      createCreateDraggerPropsMock(domainObject, startRay, 5, focusType)
+    );
+    assert(dragger !== undefined);
+    expect(dragger).instanceOf(BoxDragger);
+    drag(dragger, startRay, delta, { expectedChange: false, shiftKey: false });
+    expectEqual(domainObject, expectedBox, focusType);
+  });
+
   test('translate the box', () => {
     const focusType = FocusType.Body;
     for (const testCase of getTestCasesWithSign()) {

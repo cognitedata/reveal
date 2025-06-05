@@ -25,6 +25,23 @@ describe(CylinderDragger.name, () => {
     expect(dragger).toBeUndefined();
   });
 
+  test('should not change when illegal focus type', () => {
+    const focusType = FocusType.Focus;
+    const domainObject = createVerticalCylinderDomainObject();
+    const direction = new Vector3(0, 0, -1);
+    const startRay = new Ray(new Vector3(0, 0, 2), direction);
+    const delta = new Vector3(1, 2, 0);
+
+    const expectedBox = clone(domainObject.cylinder);
+    const dragger = domainObject.createDragger(
+      createCreateDraggerPropsMock(domainObject, startRay, 5, focusType)
+    );
+    assert(dragger !== undefined);
+    expect(dragger).instanceOf(CylinderDragger);
+    drag(dragger, startRay, delta, { expectedChange: false, shiftKey: false });
+    expectEqual(domainObject, expectedBox, focusType);
+  });
+
   test('translate the cylinder', () => {
     const focusType = FocusType.Body;
     for (const testCase of getTestCasesWithSign()) {
