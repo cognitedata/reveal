@@ -51,35 +51,3 @@ export async function searchClassicAssetsForModels(
 
   return { nextCursor, data: cadAssets /*.concat(pointCloudAssets).concat(image360Assets) */ };
 }
-
-function useSearchClassicAssetsForModels(
-  searchQuery: string,
-  models: AddModelOptions<ClassicDataSourceType>[],
-  image360Collections: AddImage360CollectionDatamodelsOptions[],
-  limit: number
-): UseInfiniteQueryResult<InfiniteData<SearchClassicAssetsResponse>> {
-  const sdk = useSDK();
-  const renderTarget = useRenderTarget();
-
-  return useInfiniteQuery({
-    queryKey: [
-      'reveal',
-      'react-components',
-      'search-mapped-asset-mappings',
-      searchQuery,
-      ...models.map((model) => [model.modelId, model.revisionId])
-    ],
-    initialPageParam: { cursor: undefined },
-    getNextPageParam: (lastPage: SearchClassicAssetsResponse) => ({ cursor: lastPage.nextCursor }),
-    queryFn: async ({ pageParam }) =>
-      searchClassicAssetsForModels(
-        searchQuery,
-        models,
-        image360Collections,
-        limit,
-        pageParam.cursor,
-        sdk,
-        renderTarget
-      )
-  });
-}
