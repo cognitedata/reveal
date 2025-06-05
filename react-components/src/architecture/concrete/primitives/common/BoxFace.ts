@@ -5,7 +5,7 @@ import { type Matrix4, Plane, Vector2, Vector3 } from 'three';
  */
 export class BoxFace {
   // Face is 0-5, where 0-2 are positive faces and 3-5 are negative faces
-  private _face: number = 0;
+  private _face = 0;
 
   // ==================================================
   // CONSTRUCTOR
@@ -135,13 +135,13 @@ export class BoxFace {
     }
   }
 
-  public static createClippingPlanes(matrix: Matrix4, exceptFaceIndex?: number): Plane[] {
+  public static createClippingPlanes(matrix: Matrix4, exceptIndex?: number): Plane[] {
     const planes: Plane[] = [];
 
     const center = new Vector3();
     const normal = new Vector3();
     for (const boxFace of BoxFace.getAllFaces()) {
-      if (exceptFaceIndex !== undefined && boxFace.index === exceptFaceIndex) {
+      if (exceptIndex !== undefined && boxFace.index === exceptIndex) {
         continue;
       }
       boxFace.getCenter(center);
@@ -154,13 +154,10 @@ export class BoxFace {
   }
 
   public static equals(face: BoxFace | undefined, other: BoxFace | undefined): boolean {
-    if (face === undefined || other === undefined) {
-      return true;
+    if (face === undefined) {
+      return other === undefined;
     }
-    if (face === undefined && other !== undefined) {
-      return false;
-    }
-    if (face !== undefined && other === undefined) {
+    if (other === undefined) {
       return false;
     }
     return face.equals(other);
