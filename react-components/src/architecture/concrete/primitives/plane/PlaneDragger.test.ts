@@ -55,7 +55,7 @@ function createCreateDraggerPropsMock(
 ): CreateDraggerProps {
   const point = ray.intersectPlane(domainObject.plane, new Vector3());
   if (point === null) {
-    throw new Error('No intersection found for the ray and plane');
+    throw new Error('No intersection found for the ray and object');
   }
   const intersection = createIntersectionMock(domainObject);
   return { intersection, point, ray };

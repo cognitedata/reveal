@@ -27,6 +27,20 @@ export function* getTestCasesWithSign(): Generator<TestCase & { sign: -1 | 1 }> 
   yield { expectedChange: false, shiftKey: false, sign: 1 };
 }
 
+/**
+ * Simulates a drag operation on a `BaseDragger` instance and verifies the expected changes and event notifications.
+ *
+ * @param dragger - The `BaseDragger` instance to perform the drag operation on.
+ * @param startRay - The initial `Ray` representing the starting point of the drag.
+ * @param delta - The `Vector3` representing the movement delta to apply to the drag.
+ * @param testCase - The `TestCase` object containing test parameters such as `expectedChange` and `shiftKey`.
+ * @param expectedFocusChange - Optional. Indicates whether a focus change is expected during the drag. Defaults to `true`.
+ *
+ * @remarks
+ * This function triggers pointer events (`pointerdown`, `pointermove`, `pointerup`) on the dragger,
+ * checks if the drag operation resulted in the expected change, and asserts that the appropriate
+ * event notifications and transaction state are set as expected.
+ */
 export function drag(
   dragger: BaseDragger,
   startRay: Ray,
@@ -55,6 +69,15 @@ export function drag(
   }
 }
 
+/**
+ * Creates a mock `DomainObjectIntersection` for testing purposes.
+ *
+ * @param domainObject - The domain object to associate with the intersection.
+ * @param focusType - The type of focus for the intersection (defaults to `FocusType.None`).
+ * @param faceIndex - The index of the face to use for the intersection (defaults to 0).
+ * @param cornerSign - Optional vector indicating the corner sign for the intersection.
+ * @returns A mock `DomainObjectIntersection` object with the specified parameters.
+ */
 export function createIntersectionMock(
   domainObject: DomainObject,
   focusType: FocusType = FocusType.None,

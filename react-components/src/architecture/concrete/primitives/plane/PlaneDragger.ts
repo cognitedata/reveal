@@ -69,7 +69,7 @@ export class PlaneDragger extends BaseDragger {
       newPlane.equals(this._domainObject.plane) ||
       isAbsEqual(newPlane.constant, this._domainObject.plane.constant, EPSILON)
     ) {
-      return false; // No change in plane, no need to update
+      return false; // No change
     }
     if (this.transaction === undefined) {
       this.transaction = this._domainObject.createTransaction(Changes.geometry);
