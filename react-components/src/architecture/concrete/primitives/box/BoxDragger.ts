@@ -6,14 +6,13 @@ import { type PrimitivePickInfo } from '../common/PrimitivePickInfo';
 import {
   forceBetween0AndPi,
   forceBetween0AndTwoPi,
-  isAbsEqual,
   round
 } from '../../../base/utilities/extensions/mathExtensions';
 import { getAbsMaxComponent } from '../../../base/utilities/extensions/vectorExtensions';
 import { PrimitiveType } from '../../../base/utilities/primitives/PrimitiveType';
 import { getClosestPointOnLine } from '../../../base/utilities/extensions/rayExtensions';
 import { type BoxDomainObject } from './BoxDomainObject';
-import { BaseDragger, EPSILON } from '../../../base/domainObjectsHelpers/BaseDragger';
+import { BaseDragger } from '../../../base/domainObjectsHelpers/BaseDragger';
 import {
   type VisualDomainObject,
   type CreateDraggerProps
@@ -136,7 +135,7 @@ export class BoxDragger extends BaseDragger {
       return false;
     }
     const deltaCenter = planeIntersect.sub(this.point);
-    if (deltaCenter.length() < EPSILON) {
+    if (deltaCenter.lengthSq() === 0) {
       return false;
     }
     if (isShiftPressed) {
@@ -168,7 +167,7 @@ export class BoxDragger extends BaseDragger {
 
     getClosestPointOnLine(ray, this._normal, this.point, pointOnSegment);
     const deltaSize = this._planeOfFace.distanceToPoint(pointOnSegment);
-    if (Math.abs(deltaSize) < EPSILON) {
+    if (deltaSize === 0) {
       return false; // Nothing has changed
     }
     // First copy the original values
@@ -185,7 +184,7 @@ export class BoxDragger extends BaseDragger {
       // Set new size
       const value = deltaSize + size.getComponent(index);
       const newValue = this.getBestValue(value, isShiftPressed, Box.MinSize);
-      if (isAbsEqual(newValue, originalBox.size.getComponent(index), EPSILON)) {
+      if (newValue === originalBox.size.getComponent(index)) {
         return false; // Nothing has changed
       }
       size.setComponent(index, newValue);
@@ -213,7 +212,7 @@ export class BoxDragger extends BaseDragger {
     deltaSize.applyMatrix4(invRotationMatrix);
 
     deltaSize.multiply(this._cornerSign);
-    if (deltaSize.length() < EPSILON) {
+    if (deltaSize.lengthSq() === 0) {
       return false; // Nothing has changed
     }
     // First copy the original values
@@ -226,7 +225,7 @@ export class BoxDragger extends BaseDragger {
     size.add(deltaSize);
     box.forceMinSize();
 
-    if (size.distanceTo(originalBox.size) < EPSILON) {
+    if (size.lengthSq() === originalBox.size.lengthSq()) {
       return false; // Nothing has changed
     }
     // The center of the box should be moved by half of the delta size and take the rotation into account.
@@ -252,9 +251,6 @@ export class BoxDragger extends BaseDragger {
     const cross = newVector3().crossVectors(centerToEndPoint, centerToStartPoint).normalize();
 
     let deltaAngle = centerToEndPoint.angleTo(centerToStartPoint);
-    if (Math.abs(deltaAngle) < EPSILON) {
-      return false; // Nothing has changed
-    }
     if (this._normal.dot(cross) > 0) {
       deltaAngle = -deltaAngle;
     }
@@ -282,10 +278,13 @@ export class BoxDragger extends BaseDragger {
       } else {
         newAngle = forceBetween0AndTwoPi(deltaAngle + oldAngle);
       }
-      newAngle = roundAngleByConstrained(newAngle);
+      newAngle = roundAngleByConstrained(newAngle, isShiftPressed);
       return newAngle - oldAngle;
 
-      function roundAngleByConstrained(rotation: number): number {
+      function roundAngleByConstrained(rotation: number, isShiftPressed: boolean): number {
+        if (!isShiftPressed) {
+          return rotation;
+        }
         let degrees = radToDeg(rotation);
         degrees = round(degrees, CONSTRAINED_ANGLE_INCREMENT);
         return degToRad(degrees);
