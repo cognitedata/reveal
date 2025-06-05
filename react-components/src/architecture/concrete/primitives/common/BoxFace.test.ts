@@ -30,18 +30,18 @@ describe(BoxFace.name, () => {
   });
 
   test('should get correct position from fromPositionAtFace', () => {
-    const faces = [
-      { position: new Vector3(1, 0, 0), expected: 0 },
-      { position: new Vector3(-1, 0, 0), expected: 3 },
-      { position: new Vector3(0, 1, 0), expected: 1 },
-      { position: new Vector3(0, -1, 0), expected: 4 },
-      { position: new Vector3(0, 0, 1), expected: 2 },
-      { position: new Vector3(0, 0, -1), expected: 5 }
+    const positionAtFaces = [
+      new Vector3(1, 0, 0),
+      new Vector3(0, 1, 0),
+      new Vector3(0, 0, 1),
+      new Vector3(-1, 0, 0),
+      new Vector3(0, -1, 0),
+      new Vector3(0, 0, -1)
     ];
-    for (const { position, expected } of faces) {
+    for (let face = 0; face < 6; face++) {
       const boxFace = new BoxFace();
-      boxFace.fromPositionAtFace(position);
-      expect(boxFace.face).toBe(expected);
+      boxFace.fromPositionAtFace(positionAtFaces[face]);
+      expect(boxFace.face).toBe(face);
     }
   });
 
@@ -55,9 +55,8 @@ describe(BoxFace.name, () => {
       new Vector3(2, 3, 0)
     ];
     const expected = new Vector2(2, 3);
-    for (let face = 0; face < 6; face++) {
-      const boxFace = new BoxFace(face);
-      expect(boxFace.getPlanePoint(positionAtFaces[face])).toEqual(expected);
+    for (const boxFace of BoxFace.getAllFaces()) {
+      expect(boxFace.getPlanePoint(positionAtFaces[boxFace.face])).toEqual(expected);
     }
   });
 
