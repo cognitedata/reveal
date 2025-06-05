@@ -7,7 +7,7 @@ import {
 } from './stringExtensions';
 
 describe('StringExtensions', () => {
-  describe('isEmpty', () => {
+  describe(isEmpty.name, () => {
     test('should empty string be be empty', () => {
       expect(isEmpty('')).toBe(true);
     });
@@ -22,7 +22,7 @@ describe('StringExtensions', () => {
     });
   });
 
-  describe('equalsIgnoreCase', () => {
+  describe(equalsIgnoreCase.name, () => {
     test('should be equal when empty string', () => {
       expect(equalsIgnoreCase('', '')).toBe(true);
     });
@@ -43,7 +43,7 @@ describe('StringExtensions', () => {
     });
   });
 
-  describe('equalsIgnoreCaseAndSpace', () => {
+  describe(equalsIgnoreCaseAndSpace.name, () => {
     test('should be equal when empty string', () => {
       expect(equalsIgnoreCaseAndSpace('', '')).toBe(true);
     });
@@ -71,7 +71,7 @@ describe('StringExtensions', () => {
     });
   });
 
-  describe('numberToString', () => {
+  describe(numberToString.name, () => {
     test('should convert positive integers to strings as expected', () => {
       expect(numberToString(0)).toBe('0');
       expect(numberToString(1)).toBe('1');

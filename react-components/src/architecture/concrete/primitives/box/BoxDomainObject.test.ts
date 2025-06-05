@@ -6,9 +6,9 @@ import { Box } from '../../../base/utilities/primitives/Box';
 import { SolidPrimitiveRenderStyle } from '../common/SolidPrimitiveRenderStyle';
 import { Changes } from '../../../base/domainObjectsHelpers/Changes';
 import { Quantity } from '../../../base/domainObjectsHelpers/Quantity';
-import { type BoxDomainObject } from './BoxDomainObject';
+import { BoxDomainObject } from './BoxDomainObject';
 
-describe('BoxDomainObject', () => {
+describe(BoxDomainObject.name, () => {
   test('should initialize with correct default values', () => {
     for (const primitiveType of [
       PrimitiveType.Box,
