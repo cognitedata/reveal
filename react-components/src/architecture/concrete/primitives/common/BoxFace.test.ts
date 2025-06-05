@@ -46,32 +46,30 @@ describe(BoxFace.name, () => {
   });
 
   test('should return correct plane point (a 2D version on the 3D point)', () => {
+    const positionAtFaces = [
+      new Vector3(0, 2, 3),
+      new Vector3(2, 0, 3),
+      new Vector3(2, 3, 0),
+      new Vector3(0, 2, 3),
+      new Vector3(2, 0, 3),
+      new Vector3(2, 3, 0)
+    ];
     const expected = new Vector2(2, 3);
-    const boxFace = new BoxFace(0);
-    expect(boxFace.getPlanePoint(new Vector3(0, 2, 3))).toEqual(expected);
-    boxFace.face = 1;
-    expect(boxFace.getPlanePoint(new Vector3(2, 0, 3))).toEqual(expected);
-    boxFace.face = 2;
-    expect(boxFace.getPlanePoint(new Vector3(2, 3, 0))).toEqual(expected);
-    boxFace.face = 3;
-    expect(boxFace.getPlanePoint(new Vector3(0, 2, 3))).toEqual(expected);
-    boxFace.face = 4;
-    expect(boxFace.getPlanePoint(new Vector3(2, 0, 3))).toEqual(expected);
-    boxFace.face = 5;
-    expect(boxFace.getPlanePoint(new Vector3(2, 3, 0))).toEqual(expected);
+    for (let face = 0; face < 6; face++) {
+      const boxFace = new BoxFace(face);
+      expect(boxFace.getPlanePoint(positionAtFaces[face])).toEqual(expected);
+    }
   });
 
   test('should get the center', () => {
-    for (let face = 0; face < 6; face++) {
-      const boxFace = new BoxFace(face);
+    for (const boxFace of BoxFace.getAllFaces()) {
       const center = boxFace.getCenter();
       expect(center.getComponent(boxFace.index)).toBeCloseTo(boxFace.sign * 0.5);
       expect(center.length()).toBeCloseTo(0.5);
     }
   });
   test('should get the normal', () => {
-    for (let face = 0; face < 6; face++) {
-      const boxFace = new BoxFace(face);
+    for (const boxFace of BoxFace.getAllFaces()) {
       const normal = boxFace.getNormal();
       expect(normal.getComponent(boxFace.index)).toBe(boxFace.sign);
       expect(normal.length()).toBe(1);
@@ -79,8 +77,7 @@ describe(BoxFace.name, () => {
   });
 
   test('should get the tangents', () => {
-    for (let face = 0; face < 6; face++) {
-      const boxFace = new BoxFace(face);
+    for (const boxFace of BoxFace.getAllFaces()) {
       const tangent1 = boxFace.getTangent1();
       const tangent2 = boxFace.getTangent2();
       expect(tangent1.getComponent(boxFace.tangentIndex1)).toBe(1);
@@ -111,9 +108,14 @@ describe(BoxFace.name, () => {
         sum.add(plane.normal);
       }
       expect(sum.length()).toBeCloseTo(0);
-      expect(isPointVisibleByPlanes(planes, new Vector3(0, 0, 0))).toBe(true);
-      expect(isPointVisibleByPlanes(planes, new Vector3(2, 2, 2))).toBe(false);
     }
+  });
+
+  test('should create planes with correct orientation', () => {
+    const identity = new Matrix4();
+    const planes = BoxFace.createClippingPlanes(identity);
+    expect(isPointVisibleByPlanes(planes, new Vector3(0, 0, 0))).toBe(true);
+    expect(isPointVisibleByPlanes(planes, new Vector3(2, 2, 2))).toBe(false);
   });
 
   test('should compare two box faces when some can be undefined', () => {
