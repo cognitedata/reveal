@@ -33,15 +33,17 @@ export async function searchClassicAssetsForModels(
     assetMappingAndNode3DCache
   );
 
-  /* const isFirstPage = cadAssetsCursor === undefined;
+  /*
+  const isFirstPage = cadAssetsCursor === undefined;
 
-  const pointCloudAssetsPromise = isFirstPage ? Promise.resolve([]) : searchClassicPointCloudAssets(searchQuery, models, limit, sdk);
-  const image360AssetsPromise = isFirstPage ? Promise.resolve([]) : searchClassicImage360Assets(
-    searchQuery,
-    image360Collections,
-    limit,
-    sdk
-  ); */
+  const pointCloudAssetsPromise = isFirstPage
+    ? Promise.resolve([])
+    : searchClassicPointCloudAssets(searchQuery, models, limit, sdk);
+
+  const image360AssetsPromise = isFirstPage
+    ? Promise.resolve([])
+    : searchClassicImage360Assets(searchQuery, image360Collections, limit, sdk);
+  */
 
   const { nextCursor, data: cadAssets } = await cadAssetsPromise;
   // const pointCloudAssets = await pointCloudAssetsPromise;
