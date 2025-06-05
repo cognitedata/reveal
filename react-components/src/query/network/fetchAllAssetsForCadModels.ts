@@ -3,6 +3,7 @@ import { type SearchClassicCadAssetsResponse } from './types';
 import { type CogniteClient } from '@cognite/sdk';
 import { getAssetsFromAssetMappings } from './getAssetsFromAssetMappings';
 import { type ModelMappingsWithAssets } from '../useSearchMappedEquipmentAssetMappings';
+import { isSameModel } from '../../utilities/isSameModel';
 
 type CursorForModel = {
   cursor: string | undefined;
@@ -21,10 +22,8 @@ export async function fetchAllAssetsForCadModels(
   const firstPage = cursorsForModels === undefined;
 
   const currentPagesOfAssetMappingsPromises = models.map(async (model) => {
-    const cursorForModel = cursorsForModels?.find(
-      (nextCursor) =>
-        nextCursor.model.modelId === model.modelId &&
-        nextCursor.model.revisionId === model.revisionId
+    const cursorForModel = cursorsForModels?.find((nextCursor) =>
+      isSameModel(nextCursor.model, model)
     )?.cursor;
 
     if (!firstPage && cursorForModel === undefined) {
@@ -41,9 +40,9 @@ export async function fetchAllAssetsForCadModels(
 
   const currentPagesOfAssetMappings = await Promise.all(currentPagesOfAssetMappingsPromises);
 
-  const modelsAssetMappings = await getAssetsFromAssetMappings(sdk, currentPagesOfAssetMappings);
+  const assetMappingResult = await getAssetsFromAssetMappings(sdk, currentPagesOfAssetMappings);
 
-  const modelWithNextCursors = getNextCursors(modelsAssetMappings);
+  const modelWithNextCursors = getNextCursors(assetMappingResult);
 
   const serializedNextCursors = modelWithNextCursors.some(
     (modelWithCursor) => modelWithCursor.cursor !== undefined
@@ -53,7 +52,7 @@ export async function fetchAllAssetsForCadModels(
 
   return {
     nextCursor: serializedNextCursors,
-    data: modelsAssetMappings.flatMap((mapping) => mapping.assets)
+    data: assetMappingResult.flatMap((mapping) => mapping.assets)
   };
 }
 
