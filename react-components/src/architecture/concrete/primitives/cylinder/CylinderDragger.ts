@@ -122,7 +122,7 @@ export class CylinderDragger extends BaseDragger {
     }
     const deltaCenter = planeIntersect.sub(this.point);
     if (deltaCenter.length() < EPSILON) {
-      return false;
+      return false; // Nothing has changed
     }
     // First copy the original values
     const { cylinder } = this._domainObject;

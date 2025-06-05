@@ -214,7 +214,7 @@ function createCreateDraggerPropsMock(
 ): CreateDraggerProps {
   const point = domainObject.cylinder.intersectRay(ray, new Matrix4());
   if (point === undefined) {
-    throw new Error('No intersection found for the ray and cylinder');
+    throw new Error('No intersection found for the ray and object');
   }
   const intersection = createIntersectionMock(domainObject, focusType, faceIndex);
   return { intersection, point, ray };

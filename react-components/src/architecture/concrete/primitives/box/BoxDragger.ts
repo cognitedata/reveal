@@ -137,7 +137,7 @@ export class BoxDragger extends BaseDragger {
     }
     const deltaCenter = planeIntersect.sub(this.point);
     if (deltaCenter.length() < EPSILON) {
-      return false;
+      return false; // Nothing has changed
     }
     if (isShiftPressed) {
       const invRotationMatrix = this._rotationMatrix.clone().invert();

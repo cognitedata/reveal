@@ -180,7 +180,7 @@ function createCreateDraggerPropsMock(
 ): CreateDraggerProps {
   const point = domainObject.box.intersectRay(ray, new Matrix4());
   if (point === undefined) {
-    throw new Error('No intersection found for the ray and box');
+    throw new Error('No intersection found for the ray and object');
   }
   const intersection = createIntersectionMock(domainObject, focusType, face, cornerSign);
   return { intersection, point, ray };
