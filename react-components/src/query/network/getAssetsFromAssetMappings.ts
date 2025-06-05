@@ -1,0 +1,27 @@
+import { AddModelOptions } from '@cognite/reveal';
+import { AssetMapping3D, CogniteClient, ListResponse } from '@cognite/sdk';
+import { ModelMappingsWithAssets } from '../useSearchMappedEquipmentAssetMappings';
+
+export async function getAssetsFromAssetMappings(
+  sdk: CogniteClient,
+  modelsMappings: Array<{ model: AddModelOptions; mappings: ListResponse<AssetMapping3D[]> }>
+): Promise<ModelMappingsWithAssets[]> {
+  const mappingsWithAssetsPromises = modelsMappings.map(async ({ mappings, model }) => {
+    if (mappings.items.length === 0) {
+      return { model, assets: [], mappings };
+    }
+
+    const deduplicatedAssetIds = Array.from(
+      new Set(mappings.items.map((mapping) => mapping.assetId))
+    );
+    const assetIdObjects = deduplicatedAssetIds.map((id) => ({ id }));
+
+    const assets = await sdk.assets.retrieve(assetIdObjects, { ignoreUnknownIds: true });
+
+    return { model, assets, mappings };
+  });
+
+  const mappingsWithAssets = await Promise.all(mappingsWithAssetsPromises);
+
+  return mappingsWithAssets;
+}
