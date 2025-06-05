@@ -22,7 +22,7 @@ describe(BoxDragger.name, () => {
     const domainObject = createBoxDomainObject();
     const startRay = new Ray(new Vector3(0, 0, 2), new Vector3(0, 0, -1));
     const dragger = domainObject.createDragger(
-      createCreateDraggerPropsMock(domainObject, startRay, 2, FocusType.None)
+      createCreateDraggerPropsMock(domainObject, startRay, FocusType.None)
     );
     expect(dragger).toBeUndefined();
   });
@@ -36,7 +36,7 @@ describe(BoxDragger.name, () => {
 
     const expectedBox = clone(domainObject.box);
     const dragger = domainObject.createDragger(
-      createCreateDraggerPropsMock(domainObject, startRay, 5, focusType)
+      createCreateDraggerPropsMock(domainObject, startRay, focusType, 5)
     );
     assert(dragger !== undefined);
     expect(dragger).instanceOf(BoxDragger);
@@ -61,7 +61,7 @@ describe(BoxDragger.name, () => {
         expectedBox.center.add(delta);
       }
       const dragger = domainObject.createDragger(
-        createCreateDraggerPropsMock(domainObject, startRay, sign === 1 ? 5 : 2, focusType)
+        createCreateDraggerPropsMock(domainObject, startRay, focusType, sign === 1 ? 5 : 2)
       );
       assert(dragger !== undefined);
       drag(dragger, startRay, delta, testCase);
@@ -87,7 +87,7 @@ describe(BoxDragger.name, () => {
         expectedBox.center.addScaledVector(delta, 0.5);
       }
       const dragger = domainObject.createDragger(
-        createCreateDraggerPropsMock(domainObject, startRay, sign > 0 ? 2 : 5, focusType)
+        createCreateDraggerPropsMock(domainObject, startRay, focusType, sign > 0 ? 2 : 5)
       );
       assert(dragger !== undefined);
       drag(dragger, startRay, delta, testCase);
@@ -124,7 +124,7 @@ describe(BoxDragger.name, () => {
         expectedBox.center.addScaledVector(delta, 0.5);
       }
       const dragger = domainObject.createDragger(
-        createCreateDraggerPropsMock(domainObject, startRay, 4, focusType, cornerSign)
+        createCreateDraggerPropsMock(domainObject, startRay, focusType, 4, cornerSign)
       );
       assert(dragger !== undefined);
       drag(dragger, startRay, delta, testCase);
@@ -162,7 +162,7 @@ describe(BoxDragger.name, () => {
         delta.z = 1; // To check if the rotation is not applied
       }
       const dragger = domainObject.createDragger(
-        createCreateDraggerPropsMock(domainObject, startRay, 4, focusType)
+        createCreateDraggerPropsMock(domainObject, startRay, focusType, 4)
       );
       assert(dragger !== undefined);
       drag(dragger, startRay, delta, testCases);
@@ -174,15 +174,15 @@ describe(BoxDragger.name, () => {
 function createCreateDraggerPropsMock(
   domainObject: BoxDomainObject,
   ray: Ray,
-  face: number,
   focusType: FocusType,
+  face: number = 0,
   cornerSign?: Vector3
 ): CreateDraggerProps {
   const point = domainObject.box.intersectRay(ray, new Matrix4());
   if (point === undefined) {
     throw new Error('No intersection found for the ray and box');
   }
-  const intersection = createIntersectionMock(domainObject, face, focusType, cornerSign);
+  const intersection = createIntersectionMock(domainObject, focusType, face, cornerSign);
   return { intersection, point, ray };
 }
 

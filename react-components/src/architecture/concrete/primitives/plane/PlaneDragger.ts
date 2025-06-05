@@ -1,7 +1,7 @@
 import { type Ray, Plane, type Box3 } from 'three';
 import { Changes } from '../../../base/domainObjectsHelpers/Changes';
 import { type PlaneDomainObject } from './PlaneDomainObject';
-import { BaseDragger } from '../../../base/domainObjectsHelpers/BaseDragger';
+import { BaseDragger, EPSILON } from '../../../base/domainObjectsHelpers/BaseDragger';
 import {
   type VisualDomainObject,
   type CreateDraggerProps
@@ -67,7 +67,7 @@ export class PlaneDragger extends BaseDragger {
     const newPlane = new Plane().setFromNormalAndCoplanarPoint(this._plane.normal, newPoint);
     if (
       newPlane.equals(this._domainObject.plane) ||
-      isAbsEqual(newPlane.constant, this._domainObject.plane.constant, 0.0001)
+      isAbsEqual(newPlane.constant, this._domainObject.plane.constant, EPSILON)
     ) {
       return false; // No change in plane, no need to update
     }

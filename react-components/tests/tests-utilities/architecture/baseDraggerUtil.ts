@@ -57,8 +57,8 @@ export function drag(
 
 export function createIntersectionMock(
   domainObject: DomainObject,
-  faceIndex: number,
-  focusType: FocusType,
+  focusType: FocusType = FocusType.None,
+  faceIndex: number = 0,
   cornerSign?: Vector3
 ): DomainObjectIntersection {
   const userdata =

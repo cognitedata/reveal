@@ -6,13 +6,14 @@ import { type PrimitivePickInfo } from '../common/PrimitivePickInfo';
 import {
   forceBetween0AndPi,
   forceBetween0AndTwoPi,
+  isAbsEqual,
   round
 } from '../../../base/utilities/extensions/mathExtensions';
 import { getAbsMaxComponent } from '../../../base/utilities/extensions/vectorExtensions';
 import { PrimitiveType } from '../../../base/utilities/primitives/PrimitiveType';
 import { getClosestPointOnLine } from '../../../base/utilities/extensions/rayExtensions';
 import { type BoxDomainObject } from './BoxDomainObject';
-import { BaseDragger } from '../../../base/domainObjectsHelpers/BaseDragger';
+import { BaseDragger, EPSILON } from '../../../base/domainObjectsHelpers/BaseDragger';
 import {
   type VisualDomainObject,
   type CreateDraggerProps
@@ -27,8 +28,6 @@ const CONSTRAINED_ANGLE_INCREMENT = 15;
  * It provides methods for scaling, translating, and rotating the box based on user interactions.
  * All geometry in this class assume Z-axis is up
  */
-
-const EPSILON = 0.0001;
 
 export class BoxDragger extends BaseDragger {
   // ==================================================
@@ -186,7 +185,7 @@ export class BoxDragger extends BaseDragger {
       // Set new size
       const value = deltaSize + size.getComponent(index);
       const newValue = this.getBestValue(value, isShiftPressed, Box.MinSize);
-      if (Math.abs(newValue - originalBox.size.getComponent(index)) < EPSILON) {
+      if (isAbsEqual(newValue, originalBox.size.getComponent(index), EPSILON)) {
         return false; // Nothing has changed
       }
       size.setComponent(index, newValue);

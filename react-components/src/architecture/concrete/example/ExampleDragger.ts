@@ -1,7 +1,7 @@
 import { type Ray, Vector3, Plane } from 'three';
 import { Changes } from '../../base/domainObjectsHelpers/Changes';
 import { type ExampleDomainObject } from './ExampleDomainObject';
-import { BaseDragger } from '../../base/domainObjectsHelpers/BaseDragger';
+import { BaseDragger, EPSILON } from '../../base/domainObjectsHelpers/BaseDragger';
 import {
   type VisualDomainObject,
   type CreateDraggerProps
@@ -49,7 +49,7 @@ export class ExampleDragger extends BaseDragger {
       return false;
     }
     planeIntersection.sub(this._offset);
-    if (planeIntersection.distanceTo(this._center) < 0.001) {
+    if (planeIntersection.distanceTo(this._center) < EPSILON) {
       return false; // No change
     }
     if (this.transaction === undefined) {

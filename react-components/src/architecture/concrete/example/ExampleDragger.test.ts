@@ -1,6 +1,5 @@
 import { assert, describe, expect, test } from 'vitest';
 import { expectEqualVector3 } from '#test-utils/primitives/primitiveTestUtil';
-import { FocusType } from '../../base/domainObjectsHelpers/FocusType';
 import { Ray, Sphere, Vector3 } from 'three';
 import { type CreateDraggerProps } from '../../base/domainObjects/VisualDomainObject';
 import {
@@ -50,6 +49,6 @@ function createCreateDraggerPropsMock(
   if (point === null) {
     throw new Error('No intersection found for the ray and plane');
   }
-  const intersection = createIntersectionMock(domainObject, 0, FocusType.None);
+  const intersection = createIntersectionMock(domainObject);
   return { intersection, point, ray };
 }

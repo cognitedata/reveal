@@ -57,7 +57,7 @@ function createCreateDraggerPropsMock(
   if (point === null) {
     throw new Error('No intersection found for the ray and plane');
   }
-  const intersection = createIntersectionMock(domainObject, 0, FocusType.None);
+  const intersection = createIntersectionMock(domainObject);
   return { intersection, point, ray };
 }
 

@@ -5,7 +5,7 @@ import { FocusType } from '../../../base/domainObjectsHelpers/FocusType';
 import { type PrimitivePickInfo } from '../common/PrimitivePickInfo';
 import { getClosestPointOnLine } from '../../../base/utilities/extensions/rayExtensions';
 import { type CylinderDomainObject } from './CylinderDomainObject';
-import { BaseDragger } from '../../../base/domainObjectsHelpers/BaseDragger';
+import { BaseDragger, EPSILON } from '../../../base/domainObjectsHelpers/BaseDragger';
 import {
   type VisualDomainObject,
   type CreateDraggerProps
@@ -13,6 +13,7 @@ import {
 import { Vector3Pool } from '@cognite/reveal';
 import { Cylinder } from '../../../base/utilities/primitives/Cylinder';
 import { PrimitiveType } from '../../../base/utilities/primitives/PrimitiveType';
+import { isAbsEqual } from '../../../base/utilities/extensions/mathExtensions';
 
 /**
  * The `CylinderDragger` class represents a utility for dragging and manipulating a cylinder in a 3D space.
@@ -20,7 +21,6 @@ import { PrimitiveType } from '../../../base/utilities/primitives/PrimitiveType'
  * All geometry in this class assume Z-axis is up
  */
 
-const EPSILON = 0.00001; // Small value to check for changes
 export class CylinderDragger extends BaseDragger {
   // ==================================================
   // INSTANCE FIELDS
@@ -155,7 +155,7 @@ export class CylinderDragger extends BaseDragger {
 
     const radius = closestToRay.distanceTo(closestOnAxis);
     const newRadius = this.getBestValue(radius, isShiftPressed, Cylinder.MinSize);
-    if (Math.abs(newRadius - cylinder.radius) < EPSILON) {
+    if (isAbsEqual(newRadius, cylinder.radius, EPSILON)) {
       return false; // Nothing has changed
     }
     cylinder.radius = newRadius;
