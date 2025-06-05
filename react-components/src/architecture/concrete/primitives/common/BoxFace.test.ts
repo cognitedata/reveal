@@ -116,7 +116,7 @@ describe(BoxFace.name, () => {
     }
   });
 
-  test('should compare two box faces whee some can be undefined', () => {
+  test('should compare two box faces when some can be undefined', () => {
     const a = new BoxFace(1);
     const b = new BoxFace(1);
     const c = new BoxFace(2);
