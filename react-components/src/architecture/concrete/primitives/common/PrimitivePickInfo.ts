@@ -1,6 +1,6 @@
 import { type FocusType } from '../../../base/domainObjectsHelpers/FocusType';
 import { type BoxFace } from './BoxFace';
-import { type Vector3 } from 'three';
+import { Vector3 } from 'three';
 
 /**
  * Represents information about a picked box.
@@ -27,9 +27,9 @@ export class PrimitivePickInfo {
    * @param focusType The type of focus on the picked box.
    * @param cornerSign Indicates the corner of the face.
    */
-  public constructor(face: BoxFace, focusType: FocusType, cornerSign: Vector3) {
+  public constructor(face: BoxFace, focusType: FocusType, cornerSign?: Vector3) {
     this.face = face;
     this.focusType = focusType;
-    this.cornerSign = cornerSign;
+    this.cornerSign = cornerSign ?? new Vector3();
   }
 }
