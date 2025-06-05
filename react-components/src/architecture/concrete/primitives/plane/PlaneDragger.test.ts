@@ -15,20 +15,20 @@ import { SliceDomainObject } from '../../clipping/SliceDomainObject';
 
 describe(PlaneDragger.name, () => {
   test('translate the plane', () => {
+    // Grab the plane move it back or forth in the direction of the normal
+    //   ^
+    // Y |
+    //      * / / <---- *(7,1)  end ray, sign = 1
+    //     / / /
+    //    / * /<------ *(6,1)   Start ray
+    //   / / /
+    //  / / * <------ *(5,1)    end ray, sign = -1
+    // / / /
+    //  * (0,0) ---> X
     for (const testCase of getTestCasesWithSign()) {
       const { sign } = testCase;
       const domainObject = createPlaneDomainObject();
 
-      // Grab the plane move it back or forth in the direction of the normal
-      //
-      //      * / / <---- *(7,1)  end ray, sign = 1
-      //     / / /
-      //    / * /<------ *(6,1)   Start ray
-      //   / / /
-      //  / * * <------ *(5,1)    end ray, sign = -1
-      // / / /
-      //  * (0,0)
-      //
       const direction = new Vector3(-1, 0, 0);
       const startRay = new Ray(new Vector3(6, 1, 0), direction);
       const delta = new Vector3();
@@ -42,6 +42,7 @@ describe(PlaneDragger.name, () => {
         createCreateDraggerPropsMock(domainObject, startRay)
       );
       assert(dragger !== undefined);
+      expect(dragger).instanceOf(PlaneDragger);
       drag(dragger, startRay, delta, testCase);
       expectEqual(domainObject, expectedPlane, FocusType.Focus);
     }
