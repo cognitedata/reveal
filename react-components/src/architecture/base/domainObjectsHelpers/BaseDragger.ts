@@ -16,7 +16,7 @@ import { getRoot } from '../domainObjects/getRoot';
  * It provides methods for onPointerDown, onPointerDrag, and onPointerUp based on user interactions.
  */
 
-export const EPSILON = 0.0001; // Precision for plane equality checks
+export const EPSILON = 0.0001; // Dragger precision for equality checks
 export abstract class BaseDragger {
   // ==================================================
   // INSTANCE FIELDS
