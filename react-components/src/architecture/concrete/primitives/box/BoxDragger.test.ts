@@ -18,25 +18,13 @@ import {
 import { Box } from '../../../base/utilities/primitives/Box';
 
 describe(BoxDragger.name, () => {
-  test('should create correct dragger and not change anything if not any focus type', () => {
-    const focusType = FocusType.None;
+  test('should not create correct dragger when focus type is None', () => {
     const domainObject = createBoxDomainObject();
-
-    // Grab the box at top cap from above and move it in the XY plane
-    const direction = new Vector3(0, 0, -1);
-    const startRay = new Ray(new Vector3(0, 0, 2), direction);
-    const delta = new Vector3(1, 0, 0);
-
-    const expectedBox = clone(domainObject.box);
+    const startRay = new Ray(new Vector3(0, 0, 2), new Vector3(0, 0, -1));
     const dragger = domainObject.createDragger(
-      createCreateDraggerPropsMock(domainObject, startRay, 2, focusType)
+      createCreateDraggerPropsMock(domainObject, startRay, 2, FocusType.None)
     );
-    expect(dragger).toBeInstanceOf(BoxDragger);
-    assert(dragger !== undefined);
-
-    const testCase = { expectedChange: false, shiftKey: false };
-    drag(dragger, startRay, delta, testCase, false);
-    expectEqual(domainObject, expectedBox, focusType);
+    expect(dragger).toBeUndefined();
   });
 
   test('translate the box', () => {

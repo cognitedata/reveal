@@ -8,7 +8,7 @@ import { type BaseDragger } from '../../../src/architecture/base/domainObjectsHe
 import { BoxFace } from '../../../src/architecture/concrete/primitives/common/BoxFace';
 import { type DomainObject } from '../../../src/architecture/base/domainObjects/DomainObject';
 import { type DomainObjectIntersection } from '../../../src/architecture/base/domainObjectsHelpers/DomainObjectIntersection';
-import { type FocusType } from '../../../src/architecture/base/domainObjectsHelpers/FocusType';
+import { FocusType } from '../../../src/architecture/base/domainObjectsHelpers/FocusType';
 import { type ICustomObject } from '@cognite/reveal';
 
 export type TestCase = { expectedChange: boolean; shiftKey: boolean };
@@ -50,6 +50,9 @@ export function drag(
   // Test of notifications has happened
   draggerTester.toHaveBeenCalledTimes(expectedChange ? 1 : 0);
   focusTester.toHaveBeenCalledTimes(expectedFocusChange ? 1 : 0);
+  if (expectedChange) {
+    expect(dragger.transaction).toBeDefined();
+  }
 }
 
 export function createIntersectionMock(
@@ -58,10 +61,15 @@ export function createIntersectionMock(
   focusType: FocusType,
   cornerSign?: Vector3
 ): DomainObjectIntersection {
+  const userdata =
+    focusType !== FocusType.None
+      ? new PrimitivePickInfo(new BoxFace(faceIndex), focusType, cornerSign)
+      : undefined;
+
   return {
     type: 'customObject',
     domainObject,
-    userData: new PrimitivePickInfo(new BoxFace(faceIndex), focusType, cornerSign),
+    userData: userdata,
     point: new Vector3(), // This is not used by the dragger
     distanceToCamera: 0, // This is not used by the dragger
     customObject: new Mock<ICustomObject>().object() // This is not used by the dragger

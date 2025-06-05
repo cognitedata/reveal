@@ -9,6 +9,7 @@ import {
 import { FocusType } from '../../../base/domainObjectsHelpers/FocusType';
 import { getClosestPointOnLine } from '../../../base/utilities/extensions/rayExtensions';
 import { getRoot } from '../../../base/domainObjects/getRoot';
+import { isAbsEqual } from '../../../base/utilities/extensions/mathExtensions';
 
 /**
  * The `PlaneDragger` class represents a utility for dragging and manipulating a plane in a 3D space.
@@ -63,10 +64,16 @@ export class PlaneDragger extends BaseDragger {
     if (this._boundingBox !== undefined && !this._boundingBox.containsPoint(newPoint)) {
       return false;
     }
+    const newPlane = new Plane().setFromNormalAndCoplanarPoint(this._plane.normal, newPoint);
+    if (
+      newPlane.equals(this._domainObject.plane) ||
+      isAbsEqual(newPlane.constant, this._domainObject.plane.constant, 0.0001)
+    ) {
+      return false; // No change in plane, no need to update
+    }
     if (this.transaction === undefined) {
       this.transaction = this._domainObject.createTransaction(Changes.geometry);
     }
-    const newPlane = new Plane().setFromNormalAndCoplanarPoint(this._plane.normal, newPoint);
     this._domainObject.plane.copy(newPlane);
     this._domainObject.makeFlippingConsistent();
     this.domainObject.notify(Changes.dragging);
