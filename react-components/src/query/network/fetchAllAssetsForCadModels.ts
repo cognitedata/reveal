@@ -15,16 +15,17 @@ export async function fetchAllAssetsForCadModels(
   cursor: string | undefined,
   sdk: CogniteClient
 ): Promise<SearchClassicCadAssetsResponse> {
-  const firstPage = cursor === undefined;
+  const cursorsForModels =
+    cursor === undefined ? undefined : (JSON.parse(cursor) as CursorForModel[]);
+
+  const firstPage = cursorsForModels === undefined;
+
   const currentPagesOfAssetMappingsPromises = models.map(async (model) => {
-    const cursorForModel =
-      cursor === undefined
-        ? undefined
-        : (JSON.parse(cursor) as CursorForModel[]).find(
-            (nextCursor) =>
-              nextCursor.model.modelId === model.modelId &&
-              nextCursor.model.revisionId === model.revisionId
-          )?.cursor;
+    const cursorForModel = cursorsForModels?.find(
+      (nextCursor) =>
+        nextCursor.model.modelId === model.modelId &&
+        nextCursor.model.revisionId === model.revisionId
+    )?.cursor;
 
     if (!firstPage && cursorForModel === undefined) {
       return { mappings: { items: [] }, model };
@@ -42,14 +43,21 @@ export async function fetchAllAssetsForCadModels(
 
   const modelsAssetMappings = await getAssetsFromAssetMappings(sdk, currentPagesOfAssetMappings);
 
-  const nextCursor = JSON.stringify(getNextPageParam(modelsAssetMappings));
+  const modelWithNextCursors = getNextCursors(modelsAssetMappings);
+
+  const serializedNextCursors = modelWithNextCursors.some(
+    (modelWithCursor) => modelWithCursor.cursor !== undefined
+  )
+    ? JSON.stringify(modelWithNextCursors)
+    : undefined;
+
   return {
-    nextCursor,
+    nextCursor: serializedNextCursors,
     data: modelsAssetMappings.flatMap((mapping) => mapping.assets)
   };
 }
 
-function getNextPageParam(lastPage: ModelMappingsWithAssets[]): CursorForModel[] {
+function getNextCursors(lastPage: ModelMappingsWithAssets[]): CursorForModel[] {
   return lastPage
     .map(({ mappings, model }) => ({ cursor: mappings.nextCursor, model }))
     .filter((mappingModel) => mappingModel.cursor !== undefined);
