@@ -27,18 +27,35 @@ export class BoxFace {
     this._face = value;
   }
 
+  /**
+   * Gets the axis index corresponding to this face.
+   * @returns The axis index (0 for X, 1 for Y, 2 for Z).
+   */
   public get index(): number {
-    return this._face % 3; // Give 0:X axis, 1:Y-axis, 2:Z-axis
+    return this._face % 3;
   }
 
+  /**
+   * Gets the tangent index 1 corresponding to this face.
+   * @returns The axis index (0 for X, 1 for Y, 2 for Z).
+   */
   public get tangentIndex1(): number {
-    return (this.index + 1) % 3; // Give 0:X axis, 1:Y-axis, 2:Z-axis
+    return (this.index + 1) % 3;
   }
 
+  /**
+   * Gets the tangent index 2 corresponding to this face.
+   * @returns The axis index (0 for X, 1 for Y, 2 for Z).
+   */
   public get tangentIndex2(): number {
-    return (this.index + 2) % 3; // Give 0:X axis, 1:Y-axis, 2:Z-axis
+    return (this.index + 2) % 3;
   }
 
+  /**
+   * Gets the sign of the face.
+   * Returns `1` if the face index is less than 3, otherwise returns `-1`.
+   * This can be used to determine the orientation of the box face.
+   */
   public get sign(): number {
     return this._face < 3 ? 1 : -1;
   }
