@@ -5,13 +5,16 @@ import { type Matrix4, Plane, Vector2, Vector3 } from 'three';
  */
 export class BoxFace {
   // Face is 0-5, where 0-2 are positive faces and 3-5 are negative faces
-  private _face: number = 0;
+  private _face = 0;
 
   // ==================================================
   // CONSTRUCTOR
   // ==================================================
 
   public constructor(face: number = 0) {
+    if (face < 0 || face > 5) {
+      throw new Error('Invalid face ' + face);
+    }
     this._face = face;
   }
 
@@ -24,21 +27,41 @@ export class BoxFace {
   }
 
   public set face(value: number) {
+    if (value < 0 || value > 5) {
+      throw new Error('Invalid face ' + value);
+    }
     this._face = value;
   }
 
+  /**
+   * Gets the axis index corresponding to this face.
+   * @returns The axis index (0 for X, 1 for Y, 2 for Z).
+   */
   public get index(): number {
-    return this._face % 3; // Give 0:X axis, 1:Y-axis, 2:Z-axis
+    return this._face % 3;
   }
 
+  /**
+   * Gets the tangent index 1 corresponding to this face.
+   * @returns The axis index (0 for X, 1 for Y, 2 for Z).
+   */
   public get tangentIndex1(): number {
-    return (this.index + 1) % 3; // Give 0:X axis, 1:Y-axis, 2:Z-axis
+    return (this.index + 1) % 3;
   }
 
+  /**
+   * Gets the tangent index 2 corresponding to this face.
+   * @returns The axis index (0 for X, 1 for Y, 2 for Z).
+   */
   public get tangentIndex2(): number {
-    return (this.index + 2) % 3; // Give 0:X axis, 1:Y-axis, 2:Z-axis
+    return (this.index + 2) % 3;
   }
 
+  /**
+   * Gets the sign of the face.
+   * Returns `1` if the face index is less than 3, otherwise returns `-1`.
+   * This can be used to determine the orientation of the box face.
+   */
   public get sign(): number {
     return this._face < 3 ? 1 : -1;
   }
@@ -75,9 +98,6 @@ export class BoxFace {
   public getPlanePoint(positionAtFace: Vector3): Vector2 {
     // Assume the only on component in the positionAtEdge is set and the other are 0
     switch (this.face) {
-      case 0:
-      case 3:
-        return new Vector2(positionAtFace.y, positionAtFace.z);
       case 1:
       case 4:
         return new Vector2(positionAtFace.x, positionAtFace.z);
@@ -85,7 +105,7 @@ export class BoxFace {
       case 5:
         return new Vector2(positionAtFace.x, positionAtFace.y);
       default:
-        throw new Error('Invalid face');
+        return new Vector2(positionAtFace.y, positionAtFace.z);
     }
   }
 
@@ -130,18 +150,19 @@ export class BoxFace {
     if (target === undefined) {
       target = new BoxFace();
     }
-    for (target.face = 0; target.face < 6; target.face++) {
+    for (let face = 0; face < 6; face++) {
+      target.face = face;
       yield target;
     }
   }
 
-  public static createClippingPlanes(matrix: Matrix4, exceptFaceIndex?: number): Plane[] {
+  public static createClippingPlanes(matrix: Matrix4, exceptIndex?: number): Plane[] {
     const planes: Plane[] = [];
 
     const center = new Vector3();
     const normal = new Vector3();
     for (const boxFace of BoxFace.getAllFaces()) {
-      if (exceptFaceIndex !== undefined && boxFace.index === exceptFaceIndex) {
+      if (exceptIndex !== undefined && boxFace.index === exceptIndex) {
         continue;
       }
       boxFace.getCenter(center);
@@ -154,13 +175,10 @@ export class BoxFace {
   }
 
   public static equals(face: BoxFace | undefined, other: BoxFace | undefined): boolean {
-    if (face === undefined || other === undefined) {
-      return true;
+    if (face === undefined) {
+      return other === undefined;
     }
-    if (face === undefined && other !== undefined) {
-      return false;
-    }
-    if (face !== undefined && other === undefined) {
+    if (other === undefined) {
       return false;
     }
     return face.equals(other);
