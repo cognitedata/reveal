@@ -96,14 +96,10 @@ describe(searchClassicAssetsForModels.name, () => {
     test('returns relevant mapped data when models have contextualization', async () => {
       const mockAssetMappingsResultIterator = new Mock<CursorAndAsyncIterator<AssetMapping3D>>()
         .setup((p) => p.autoPagingToArray)
-        .returns(
-          async () =>
-            await Promise.resolve(TEST_ASSETS.map((asset) => createAssetMapping(asset.id)))
-        )
+        .returns(() => Promise.resolve(TEST_ASSETS.map((asset) => createAssetMapping(asset.id))))
         .object();
-      mockAssetMappings3dFilter.mockImplementation(
-        async () => await mockAssetMappingsResultIterator
-      );
+
+      mockAssetMappings3dFilter.mockImplementation(() => mockAssetMappingsResultIterator);
 
       const results = await searchClassicAssetsForModels(
         '',
