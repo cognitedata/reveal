@@ -74,7 +74,7 @@ describe(searchClassicAssetsForModels.name, () => {
   });
 
   describe('without query string', () => {
-    test('callls `sdk.assetMappings3D.filter` with input models and returns empty result when models have no mapped data', async () => {
+    test('calls `sdk.assetMappings3D.filter` with input models and returns empty result when models have no mapped data', async () => {
       const results = await searchClassicAssetsForModels(
         '',
         [cadModelOptions],
