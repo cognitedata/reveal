@@ -1,6 +1,6 @@
 import { type AddModelOptions, type ClassicDataSourceType } from '@cognite/reveal';
 import { type SearchClassicCadAssetsResponse } from './types';
-import { AssetMapping3D, type CogniteClient } from '@cognite/sdk';
+import { AssetMapping3D, ListResponse, type CogniteClient } from '@cognite/sdk';
 import { getAssetsFromAssetMappings } from './getAssetsFromAssetMappings';
 import { type ModelMappingsWithAssets } from '../useSearchMappedEquipmentAssetMappings';
 import { isSameModel } from '../../utilities/isSameModel';
@@ -14,7 +14,7 @@ export type CursorForModel = {
 };
 
 type AssetMappingsWithModel = {
-  mappings: { items: AssetMapping3D[] };
+  mappings: ListResponse<AssetMapping3D[]>;
   model: AddModelOptions<ClassicDataSourceType>;
 };
 
@@ -75,12 +75,10 @@ async function fetchAssetMappingsForModel(
     return { mappings: { items: [] }, model };
   }
 
-  const mappings = await sdk.assetMappings3D
-    .filter(model.modelId, model.revisionId, {
-      cursor: cursorForModel,
-      limit
-    })
-    .autoPagingToArray();
+  const mappings = await sdk.assetMappings3D.filter(model.modelId, model.revisionId, {
+    cursor: cursorForModel,
+    limit
+  });
 
-  return { mappings: { items: mappings }, model };
+  return { mappings, model };
 }

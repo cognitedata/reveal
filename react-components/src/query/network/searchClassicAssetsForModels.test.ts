@@ -3,6 +3,8 @@ import { searchClassicAssetsForModels } from './searchClassicAssetsForModels';
 import { cadModelOptions } from '#test-utils/fixtures/cadModel';
 import { Mock, It } from 'moq.ts';
 import {
+  CogniteAsyncIterator,
+  ListResponse,
   type Asset,
   type AssetMapping3D,
   type AssetMappings3DAPI,
@@ -18,6 +20,7 @@ import { isInternalId } from '../../utilities/instanceIds';
 import { type AssetMappingAndNode3DCache } from '../../components/CacheProvider/AssetMappingAndNode3DCache';
 import { type RevealRenderTarget } from '../../architecture';
 import { type CdfAssetMapping } from '../../components/CacheProvider/types';
+import { drop, take } from 'lodash';
 
 const ARBITRARY_SEARCH_LIMIT = 100;
 const ARBITRARY_NODE_ID = 200;
@@ -63,14 +66,12 @@ const mockRenderTarget = new Mock<RevealRenderTarget>()
 describe(searchClassicAssetsForModels.name, () => {
   beforeEach(() => {
     vi.resetAllMocks();
-    const mockAssetMappingsResultIterator = new Mock<CursorAndAsyncIterator<AssetMapping3D>>()
-      .setup((p) => p.autoPagingToArray)
-      .returns(async () => await Promise.resolve([]))
-      .object();
 
-    mockAssetMappings3dFilter.mockReturnValue(mockAssetMappingsResultIterator);
+    mockAssetMappings3dFilter.mockReturnValue(createCursorAndAsyncIteratorMock({ items: [] }));
 
-    mockAssetsRetrieve.mockImplementation(findIdEitherInAssetList);
+    mockAssetsRetrieve.mockImplementation((idObjects) =>
+      findIdEitherInAssetList(idObjects, TEST_ASSETS)
+    );
   });
 
   describe('without query string', () => {
@@ -94,12 +95,11 @@ describe(searchClassicAssetsForModels.name, () => {
     });
 
     test('returns relevant mapped data when models have contextualization', async () => {
-      const mockAssetMappingsResultIterator = new Mock<CursorAndAsyncIterator<AssetMapping3D>>()
-        .setup((p) => p.autoPagingToArray)
-        .returns(() => Promise.resolve(TEST_ASSETS.map((asset) => createAssetMapping(asset.id))))
-        .object();
-
-      mockAssetMappings3dFilter.mockImplementation(() => mockAssetMappingsResultIterator);
+      mockAssetMappings3dFilter.mockReturnValue(
+        createCursorAndAsyncIteratorMock({
+          items: TEST_ASSETS.map((asset) => createAssetMapping(asset.id))
+        })
+      );
 
       const results = await searchClassicAssetsForModels(
         '',
@@ -112,6 +112,63 @@ describe(searchClassicAssetsForModels.name, () => {
       );
 
       expect(results).toEqual({ nextCursor: undefined, data: TEST_ASSETS });
+    });
+
+    test('is able fetch all assets using cursors', async () => {
+      const searchLimit = 10;
+      const numAssets = 14;
+      const assetList = [...Array(numAssets).keys()].map((id) => createAssetMock(id));
+
+      const secondPageCursor = 'second-page-cursor';
+
+      const assetMappingFilterResponse0 = {
+        items: take(assetList, searchLimit).map((asset) => createAssetMapping(asset.id)),
+        nextCursor: secondPageCursor
+      };
+
+      const assetMappingFilterResponse1 = {
+        items: drop(assetList, searchLimit).map((asset) => createAssetMapping(asset.id))
+      };
+
+      mockAssetMappings3dFilter
+        .mockReturnValueOnce(createCursorAndAsyncIteratorMock(assetMappingFilterResponse0))
+        .mockReturnValueOnce(createCursorAndAsyncIteratorMock(assetMappingFilterResponse1));
+
+      mockAssetsRetrieve.mockImplementation((idObjects) =>
+        findIdEitherInAssetList(idObjects, assetList)
+      );
+
+      const results = await searchClassicAssetsForModels(
+        '',
+        [cadModelOptions],
+        [],
+        searchLimit,
+        undefined,
+        mockSdk,
+        mockRenderTarget
+      );
+
+      expect(results.nextCursor).toBeDefined();
+
+      const nextPageResults = await searchClassicAssetsForModels(
+        '',
+        [cadModelOptions],
+        [],
+        searchLimit,
+        results.nextCursor,
+        mockSdk,
+        mockRenderTarget
+      );
+
+      expect(nextPageResults.nextCursor).toBeUndefined();
+
+      expect(mockAssetMappings3dFilter).toHaveBeenCalledWith(
+        cadModelOptions.modelId,
+        cadModelOptions.revisionId,
+        expect.objectContaining({ cursor: secondPageCursor })
+      );
+
+      expect([...results.data, ...nextPageResults.data]).toEqual(assetList);
     });
   });
 
@@ -153,12 +210,12 @@ describe(searchClassicAssetsForModels.name, () => {
   });
 });
 
-async function findIdEitherInAssetList(idObjects: IdEither[]): Promise<Asset[]> {
+async function findIdEitherInAssetList(idObjects: IdEither[], assets: Asset[]): Promise<Asset[]> {
   return await Promise.resolve(
     idObjects.map((idEither) => {
       assert(isInternalId(idEither));
 
-      const asset = TEST_ASSETS.find((asset) => asset.id === idEither.id);
+      const asset = assets.find((asset) => asset.id === idEither.id);
 
       assert(asset !== undefined);
 
@@ -177,4 +234,10 @@ function createHttpResponseObject<T>(data: T): HttpResponse<T> {
 
 function createAssetMapping(assetId: number): CdfAssetMapping {
   return { assetId, nodeId: ARBITRARY_NODE_ID, treeIndex: ARBITRARY_TREE_INDEX, subtreeSize: 1 };
+}
+
+function createCursorAndAsyncIteratorMock<T>(
+  response: ListResponse<T[]>
+): CursorAndAsyncIterator<T> {
+  return Object.assign(Promise.resolve(response), new Mock<CogniteAsyncIterator<T>>().object());
 }
