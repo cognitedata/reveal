@@ -43,7 +43,7 @@ export async function fetchAllAssetsForCadModels(
 
     const modelChunkAssetMappings = await Promise.all(modelChunkAssetMappingPromises);
 
-    currentPagesOfAssetMappings.concat(modelChunkAssetMappings);
+    currentPagesOfAssetMappings.push(...modelChunkAssetMappings);
   }
 
   const assetMappingResult = await getAssetsFromAssetMappings(sdk, currentPagesOfAssetMappings);

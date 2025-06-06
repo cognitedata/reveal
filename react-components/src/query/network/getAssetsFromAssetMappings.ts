@@ -27,7 +27,7 @@ export async function getAssetsFromAssetMappings(
       return { model, assets, mappings };
     });
 
-    mappingsWithAssets.concat(await Promise.all(mappingsWithAssetsPromises));
+    mappingsWithAssets.push(...(await Promise.all(mappingsWithAssetsPromises)));
   }
 
   return mappingsWithAssets;
