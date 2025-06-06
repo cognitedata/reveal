@@ -105,7 +105,7 @@ describe(searchClassicAssetsForModels.name, () => {
       test('returns relevant mapped data when models have contextualization', async () => {
         mockAssetMappings3dFilter.mockReturnValue(
           createCursorAndAsyncIteratorMock({
-            items: TEST_ASSETS.map((asset) => createAssetMappingMock(asset.id))
+            items: TEST_ASSETS.map((asset) => createAssetMappingMock({ assetId: asset.id }))
           })
         );
 
@@ -129,12 +129,16 @@ describe(searchClassicAssetsForModels.name, () => {
         const secondPageCursor = 'second-page-cursor';
 
         const assetMappingFilterResponse0 = {
-          items: take(assetList, searchLimit).map((asset) => createAssetMappingMock(asset.id)),
+          items: take(assetList, searchLimit).map((asset) =>
+            createAssetMappingMock({ assetId: asset.id })
+          ),
           nextCursor: secondPageCursor
         };
 
         const assetMappingFilterResponse1 = {
-          items: drop(assetList, searchLimit).map((asset) => createAssetMappingMock(asset.id))
+          items: drop(assetList, searchLimit).map((asset) =>
+            createAssetMappingMock({ assetId: asset.id })
+          )
         };
 
         mockAssetMappings3dFilter
