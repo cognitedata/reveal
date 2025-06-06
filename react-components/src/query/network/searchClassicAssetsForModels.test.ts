@@ -3,10 +3,9 @@ import { searchClassicAssetsForModels } from './searchClassicAssetsForModels';
 import { cadModelOptions } from '#test-utils/fixtures/cadModel';
 import { Mock, It } from 'moq.ts';
 import {
-  CogniteAsyncIterator,
-  ListResponse,
+  type CogniteAsyncIterator,
+  type ListResponse,
   type Asset,
-  type AssetMapping3D,
   type AssetMappings3DAPI,
   type AssetsAPI,
   type CogniteClient,
@@ -69,8 +68,8 @@ describe(searchClassicAssetsForModels.name, () => {
 
     mockAssetMappings3dFilter.mockReturnValue(createCursorAndAsyncIteratorMock({ items: [] }));
 
-    mockAssetsRetrieve.mockImplementation((idObjects) =>
-      findIdEitherInAssetList(idObjects, TEST_ASSETS)
+    mockAssetsRetrieve.mockImplementation(
+      async (idObjects) => await findIdEitherInAssetList(idObjects, TEST_ASSETS)
     );
   });
 
@@ -134,8 +133,8 @@ describe(searchClassicAssetsForModels.name, () => {
         .mockReturnValueOnce(createCursorAndAsyncIteratorMock(assetMappingFilterResponse0))
         .mockReturnValueOnce(createCursorAndAsyncIteratorMock(assetMappingFilterResponse1));
 
-      mockAssetsRetrieve.mockImplementation((idObjects) =>
-        findIdEitherInAssetList(idObjects, assetList)
+      mockAssetsRetrieve.mockImplementation(
+        async (idObjects) => await findIdEitherInAssetList(idObjects, assetList)
       );
 
       const results = await searchClassicAssetsForModels(

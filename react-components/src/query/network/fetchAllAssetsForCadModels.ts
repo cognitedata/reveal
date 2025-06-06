@@ -1,6 +1,6 @@
 import { type AddModelOptions, type ClassicDataSourceType } from '@cognite/reveal';
 import { type SearchClassicCadAssetsResponse } from './types';
-import { AssetMapping3D, ListResponse, type CogniteClient } from '@cognite/sdk';
+import { type AssetMapping3D, type ListResponse, type CogniteClient } from '@cognite/sdk';
 import { getAssetsFromAssetMappings } from './getAssetsFromAssetMappings';
 import { type ModelMappingsWithAssets } from '../useSearchMappedEquipmentAssetMappings';
 import { isSameModel } from '../../utilities/isSameModel';
@@ -29,8 +29,9 @@ export async function fetchAllAssetsForCadModels(
   const currentPagesOfAssetMappings: AssetMappingsWithModel[] = [];
 
   for (const modelChunk of chunk(models, MODEL_CHUNK_SIZE)) {
-    const modelChunkAssetMappingPromises = modelChunk.map((model) =>
-      fetchAssetMappingsForModel(model, cursorsForModels, firstPage, limit, sdk)
+    const modelChunkAssetMappingPromises = modelChunk.map(
+      async (model) =>
+        await fetchAssetMappingsForModel(model, cursorsForModels, firstPage, limit, sdk)
     );
 
     const modelChunkAssetMappings = await Promise.all(modelChunkAssetMappingPromises);
