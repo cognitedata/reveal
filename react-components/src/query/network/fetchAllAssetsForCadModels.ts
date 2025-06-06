@@ -8,7 +8,7 @@ import { chunk } from 'lodash';
 
 const MODEL_CHUNK_SIZE = 10;
 
-type CursorForModel = {
+export type CursorForModel = {
   cursor: string | undefined;
   model: AddModelOptions<ClassicDataSourceType>;
 };
@@ -21,22 +21,14 @@ type AssetMappingsWithModel = {
 export async function fetchAllAssetsForCadModels(
   models: Array<AddModelOptions<ClassicDataSourceType>>,
   limit: number,
-  cursor: string | undefined,
+  cursorsForModels: CursorForModel[] | undefined,
   sdk: CogniteClient
 ): Promise<SearchClassicCadAssetsResponse> {
-  const cursorsForModels =
-    cursor === undefined ? undefined : (JSON.parse(cursor) as CursorForModel[]);
-
   const firstPage = cursorsForModels === undefined;
 
-  const modelChunks = chunk(models, MODEL_CHUNK_SIZE);
+  const currentPagesOfAssetMappings: AssetMappingsWithModel[] = [];
 
-  const currentPagesOfAssetMappings: Array<{
-    mappings: { items: AssetMapping3D[] };
-    model: AddModelOptions<ClassicDataSourceType>;
-  }> = [];
-
-  for (const modelChunk of modelChunks) {
+  for (const modelChunk of chunk(models, MODEL_CHUNK_SIZE)) {
     const modelChunkAssetMappingPromises = modelChunk.map((model) =>
       fetchAssetMappingsForModel(model, cursorsForModels, firstPage, limit, sdk)
     );
