@@ -31,6 +31,7 @@ export async function searchClassicAssetsForModels(
   );
 
   /*
+  // This code will be used in shortly upcoming work: 2025-06-06
   const isFirstPage = cadAssetsCursor === undefined;
 
   const pointCloudAssetsPromise = isFirstPage
