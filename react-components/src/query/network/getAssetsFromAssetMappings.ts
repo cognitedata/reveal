@@ -3,7 +3,7 @@ import { type AssetMapping3D, type CogniteClient, type ListResponse } from '@cog
 import { type ModelMappingsWithAssets } from '../useSearchMappedEquipmentAssetMappings';
 import { chunk } from 'lodash';
 
-const MODELS_MAPPING_CHUNK_SIZE = 5;
+const MODELS_MAPPING_CHUNK_SIZE = 10;
 
 export async function getAssetsFromAssetMappings(
   sdk: CogniteClient,

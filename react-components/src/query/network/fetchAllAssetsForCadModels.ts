@@ -6,7 +6,7 @@ import { type ModelMappingsWithAssets } from '../useSearchMappedEquipmentAssetMa
 import { isSameModel } from '../../utilities/isSameModel';
 import { chunk } from 'lodash';
 
-const MODEL_CHUNK_SIZE = 5;
+const MODEL_CHUNK_SIZE = 10;
 
 type CursorForModel = {
   cursor: string | undefined;
