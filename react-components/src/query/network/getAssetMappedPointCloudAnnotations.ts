@@ -1,23 +1,22 @@
-import { AddModelOptions, ClassicDataSourceType } from '@cognite/reveal';
+import { type ClassicDataSourceType } from '@cognite/reveal';
 import {
-  AnnotationFilterProps,
-  AnnotationModel,
-  AnnotationsBoundingVolume,
-  Asset,
-  CogniteClient
+  type AnnotationFilterProps,
+  type AnnotationModel,
+  type AnnotationsBoundingVolume,
+  type Asset,
+  type CogniteClient
 } from '@cognite/sdk';
 import { chunk, uniq } from 'lodash';
-import { getModelType } from '../../hooks/network/getModelType';
-import { AddPointCloudResourceOptions } from '../../components';
+import { type AddPointCloudResourceOptions } from '../../components';
 
 export async function getAssetsMappedPointCloudAnnotations(
   sdk: CogniteClient,
-  models: AddPointCloudResourceOptions<ClassicDataSourceType>[]
+  models: Array<AddPointCloudResourceOptions<ClassicDataSourceType>>
 ): Promise<Asset[]> {
   const modelIdList = models.map((model) => model.modelId);
 
   const pointCloudAnnotations = await getPointCloudAnnotations(modelIdList, sdk);
-  return getPointCloudAnnotationAssets(pointCloudAnnotations, sdk);
+  return await getPointCloudAnnotationAssets(pointCloudAnnotations, sdk);
 }
 
 async function getPointCloudAnnotations(

@@ -1,7 +1,7 @@
-import { AddModelOptions, CogniteCadModel } from '@cognite/reveal';
+import { type AddModelOptions, CogniteCadModel } from '@cognite/reveal';
 import { It, Mock } from 'moq.ts';
 import { Box3, Matrix4, Vector3 } from 'three';
-import { TaggedAddCadResourceOptions } from '../../../src/components/Reveal3DResources/types';
+import { type TaggedAddCadResourceOptions } from '../../../src/components/Reveal3DResources/types';
 
 export const cadModelOptions: AddModelOptions = {
   modelId: 123,

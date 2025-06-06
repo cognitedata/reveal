@@ -1,14 +1,6 @@
-import {
-  ClassicAddModelOptions,
-  type AddModelOptions,
-  type ClassicDataSourceType
-} from '@cognite/reveal';
 import { type Asset, type CogniteClient } from '@cognite/sdk';
 
-import {
-  TaggedAddResourceOptions,
-  type AddImage360CollectionDatamodelsOptions
-} from '../../components/Reveal3DResources/types';
+import { type TaggedAddResourceOptions } from '../../components/Reveal3DResources/types';
 import { type RevealRenderTarget } from '../../architecture';
 import { searchClassicAssetsForCadModels } from './searchClassicCadAssets';
 import { searchClassicPointCloudAssets } from './searchClassicPointCloudAssets';
@@ -42,9 +34,9 @@ export async function searchClassicAssetsForModels(
     .map((resource) => resource.addOptions)
     .filter(isClassicIdentifier);
 
-  const image360Collections = resources
+  /* const image360Collections = resources
     .filter((resource) => resource.type === 'image360')
-    .map((resource) => resource.addOptions);
+    .map((resource) => resource.addOptions); */
 
   const cadAssetsPromise = searchClassicAssetsForCadModels(
     searchQuery,

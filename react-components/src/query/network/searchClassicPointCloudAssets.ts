@@ -1,7 +1,7 @@
-import { Asset, CogniteClient } from '@cognite/sdk';
-import { ClassicDataSourceType } from '@cognite/reveal';
+import { type Asset, type CogniteClient } from '@cognite/sdk';
+import { type ClassicDataSourceType } from '@cognite/reveal';
 import { getAssetsMappedPointCloudAnnotations } from './getAssetMappedPointCloudAnnotations';
-import { AddPointCloudResourceOptions } from '../../components';
+import { type AddPointCloudResourceOptions } from '../../components';
 
 export async function searchClassicPointCloudAssets(
   searchQuery: string,

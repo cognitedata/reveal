@@ -3,15 +3,8 @@
  */
 
 import { type AddModelOptions } from '@cognite/reveal';
-import {
-  type AnnotationFilterProps,
-  type AnnotationsBoundingVolume,
-  type Asset,
-  type CogniteClient,
-  type AnnotationModel
-} from '@cognite/sdk';
+import { type Asset, type CogniteClient } from '@cognite/sdk';
 import { useQuery, type UseQueryResult } from '@tanstack/react-query';
-import { chunk, uniq } from 'lodash';
 import { getAssetsMappedPointCloudAnnotations } from './network/getAssetMappedPointCloudAnnotations';
 
 export const useAllAssetsMappedPointCloudAnnotations = (

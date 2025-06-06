@@ -1,4 +1,8 @@
-import { CogniteAsyncIterator, CursorAndAsyncIterator, ListResponse } from '@cognite/sdk';
+import {
+  type CogniteAsyncIterator,
+  type CursorAndAsyncIterator,
+  type ListResponse
+} from '@cognite/sdk';
 import { Mock } from 'moq.ts';
 
 export function createCursorAndAsyncIteratorMock<T>(

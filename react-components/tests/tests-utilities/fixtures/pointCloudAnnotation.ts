@@ -1,4 +1,4 @@
-import { AnnotationModel } from '@cognite/sdk';
+import { type AnnotationModel } from '@cognite/sdk';
 
 export function createPointCloudAnnotationMock(params?: {
   assetId?: number;

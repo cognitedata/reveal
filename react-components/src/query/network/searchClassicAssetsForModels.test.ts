@@ -3,24 +3,18 @@ import { searchClassicAssetsForModels } from './searchClassicAssetsForModels';
 import { cadModelOptions, taggedCadModelOptions } from '#test-utils/fixtures/cadModel';
 import { Mock, It } from 'moq.ts';
 import {
-  type CogniteAsyncIterator,
-  type ListResponse,
   type Asset,
   type AssetMappings3DAPI,
   type AssetsAPI,
   type CogniteClient,
-  type CursorAndAsyncIterator,
   type HttpResponse,
-  type IdEither,
-  AnnotationData,
-  AnnotationModel
+  type IdEither
 } from '@cognite/sdk';
 import { createAssetMock } from '#test-utils/fixtures/assets';
 import assert from 'assert';
 import { isInternalId } from '../../utilities/instanceIds';
 import { type AssetMappingAndNode3DCache } from '../../components/CacheProvider/AssetMappingAndNode3DCache';
 import { type RevealRenderTarget } from '../../architecture';
-import { type CdfAssetMapping } from '../../components/CacheProvider/types';
 import { drop, take } from 'lodash';
 import { taggedPointCloudModelOptions } from '#test-utils/fixtures/pointCloud';
 import { createPointCloudAnnotationMock } from '#test-utils/fixtures/pointCloudAnnotation';
@@ -28,8 +22,6 @@ import { createCursorAndAsyncIteratorMock } from '#test-utils/fixtures/cursorAnd
 import { createAssetMappingMock } from '#test-utils/fixtures/cadAssetMapping';
 
 const ARBITRARY_SEARCH_LIMIT = 100;
-const ARBITRARY_NODE_ID = 200;
-const ARBITRARY_TREE_INDEX = 143;
 
 const TEST_ASSETS = [
   createAssetMock(0, 'asset0'),
@@ -113,7 +105,7 @@ describe(searchClassicAssetsForModels.name, () => {
       test('returns relevant mapped data when models have contextualization', async () => {
         mockAssetMappings3dFilter.mockReturnValue(
           createCursorAndAsyncIteratorMock({
-            items: TEST_ASSETS.map((asset) => createAssetMapping(asset.id))
+            items: TEST_ASSETS.map((asset) => createAssetMappingMock(asset.id))
           })
         );
 
@@ -137,12 +129,12 @@ describe(searchClassicAssetsForModels.name, () => {
         const secondPageCursor = 'second-page-cursor';
 
         const assetMappingFilterResponse0 = {
-          items: take(assetList, searchLimit).map((asset) => createAssetMapping(asset.id)),
+          items: take(assetList, searchLimit).map((asset) => createAssetMappingMock(asset.id)),
           nextCursor: secondPageCursor
         };
 
         const assetMappingFilterResponse1 = {
-          items: drop(assetList, searchLimit).map((asset) => createAssetMapping(asset.id))
+          items: drop(assetList, searchLimit).map((asset) => createAssetMappingMock(asset.id))
         };
 
         mockAssetMappings3dFilter

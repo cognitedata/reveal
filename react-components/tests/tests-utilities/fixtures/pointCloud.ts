@@ -1,11 +1,11 @@
 import {
-  AddModelOptions,
+  type AddModelOptions,
   CognitePointCloudModel,
   type ClassicDataSourceType
 } from '@cognite/reveal';
 import { Mock } from 'moq.ts';
 import { Matrix4 } from 'three';
-import { TaggedAddPointCloudResourceOptions } from '../../../src/components/Reveal3DResources/types';
+import { type TaggedAddPointCloudResourceOptions } from '../../../src/components/Reveal3DResources/types';
 
 export const pointCloudModelOptions: AddModelOptions<ClassicDataSourceType> = {
   modelId: 321,

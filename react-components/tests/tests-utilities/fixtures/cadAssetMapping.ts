@@ -1,4 +1,4 @@
-import { CdfAssetMapping } from '../../../src/components/CacheProvider/types';
+import { type CdfAssetMapping } from '../../../src/components/CacheProvider/types';
 
 export function createAssetMappingMock(params?: { assetId?: number }): CdfAssetMapping {
   return {
