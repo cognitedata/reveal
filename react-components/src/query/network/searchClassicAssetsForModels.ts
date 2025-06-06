@@ -1,9 +1,19 @@
-import { type AddModelOptions, type ClassicDataSourceType } from '@cognite/reveal';
+import {
+  ClassicAddModelOptions,
+  type AddModelOptions,
+  type ClassicDataSourceType
+} from '@cognite/reveal';
 import { type Asset, type CogniteClient } from '@cognite/sdk';
 
-import { type AddImage360CollectionDatamodelsOptions } from '../../components/Reveal3DResources/types';
+import {
+  TaggedAddResourceOptions,
+  type AddImage360CollectionDatamodelsOptions
+} from '../../components/Reveal3DResources/types';
 import { type RevealRenderTarget } from '../../architecture';
-import { searchClassicAssetsForCadModels } from './searchClassicAssetsForCadModels';
+import { searchClassicAssetsForCadModels } from './searchClassicCadAssets';
+import { searchClassicPointCloudAssets } from './searchClassicPointCloudAssets';
+import { isClassicIdentifier } from '../../components';
+import { uniqBy } from 'lodash';
 
 export type SearchClassicAssetsResponse = {
   nextCursor: string | undefined;
@@ -12,40 +22,57 @@ export type SearchClassicAssetsResponse = {
 
 export async function searchClassicAssetsForModels(
   searchQuery: string,
-  models: Array<AddModelOptions<ClassicDataSourceType>>,
-  _image360Collections: AddImage360CollectionDatamodelsOptions[],
+  resources: TaggedAddResourceOptions[],
   limit: number,
   cadAssetsCursor: string | undefined,
   sdk: CogniteClient,
   renderTarget: RevealRenderTarget
 ): Promise<SearchClassicAssetsResponse> {
+  const isFirstPage = cadAssetsCursor === undefined;
+
   const assetMappingAndNode3DCache = renderTarget.cdfCaches.assetMappingAndNode3dCache;
+
+  const cadModels = resources
+    .filter((resource) => resource.type === 'cad')
+    .map((resource) => resource.addOptions)
+    .filter(isClassicIdentifier);
+
+  const pointClouds = resources
+    .filter((resource) => resource.type === 'pointcloud')
+    .map((resource) => resource.addOptions)
+    .filter(isClassicIdentifier);
+
+  const image360Collections = resources
+    .filter((resource) => resource.type === 'image360')
+    .map((resource) => resource.addOptions);
 
   const cadAssetsPromise = searchClassicAssetsForCadModels(
     searchQuery,
-    models,
+    cadModels,
     limit,
     cadAssetsCursor,
     sdk,
     assetMappingAndNode3DCache
   );
 
-  /*
-  // This code will be used in shortly upcoming work: 2025-06-06
-  const isFirstPage = cadAssetsCursor === undefined;
-
   const pointCloudAssetsPromise = isFirstPage
-    ? Promise.resolve([])
-    : searchClassicPointCloudAssets(searchQuery, models, limit, sdk);
+    ? searchClassicPointCloudAssets(searchQuery, pointClouds, sdk)
+    : Promise.resolve([]);
 
-  const image360AssetsPromise = isFirstPage
-    ? Promise.resolve([])
-    : searchClassicImage360Assets(searchQuery, image360Collections, limit, sdk);
+  /* const image360AssetsPromise = isFirstPage
+     ? searchClassicImage360Assets(searchQuery, image360Collections, limit, sdk)
+     : Promise.resolve([]);
   */
 
   const { nextCursor, data: cadAssets } = await cadAssetsPromise;
-  // const pointCloudAssets = await pointCloudAssetsPromise;
+  const pointCloudAssets = await pointCloudAssetsPromise;
+
   // const image360Assets = await image360AssetsPromise;
 
-  return { nextCursor, data: cadAssets /* .concat(pointCloudAssets).concat(image360Assets) */ };
+  const assetResult = uniqBy(
+    [...cadAssets, ...pointCloudAssets /*  ...image360Assets */],
+    (asset) => asset.id
+  );
+
+  return { nextCursor, data: assetResult /* .concat(image360Assets) */ };
 }
