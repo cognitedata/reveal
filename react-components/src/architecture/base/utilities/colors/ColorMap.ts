@@ -1,7 +1,3 @@
-/*!
- * Copyright 2024 Cognite AS
- */
-
 import { type ColorInterpolation } from './ColorInterpolation';
 import { type Color } from 'three';
 import { ColorMapItem } from './ColorMapItem';

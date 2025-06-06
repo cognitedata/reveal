@@ -1,7 +1,3 @@
-/*!
- * Copyright 2024 Cognite AS
- */
-
 import { type CogniteClient } from '@cognite/sdk';
 import { type RevealRenderTarget } from '../renderTarget/RevealRenderTarget';
 import { UnitSystem } from '../renderTarget/UnitSystem';

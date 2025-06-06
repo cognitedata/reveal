@@ -1,7 +1,3 @@
-/*!
- * Copyright 2024 Cognite AS
- */
-
 import { type TranslationInput } from '../../../../src/architecture/base/utilities/TranslateInput';
 import { FractionSliderCommand } from '../../../../src/architecture/base/commands/FractionSliderCommand';
 

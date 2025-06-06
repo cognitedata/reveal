@@ -1,6 +1,3 @@
-/*!
- * Copyright 2023 Cognite AS
- */
 import { type Source } from '../FdmSDK';
 
 export const SYSTEM_SPACE_3D_SCHEMA = 'cdf_3d_schema'; // Data model, views, containers and types for edges

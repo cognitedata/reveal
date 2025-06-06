@@ -1,6 +1,3 @@
-/*!
- * Copyright 2024 Cognite AS
- */
 import { useMemo } from 'react';
 import { usePointCloudAnnotationCache } from '../../components/CacheProvider/CacheProvider';
 import { type TypedReveal3DModel } from '../../components/Reveal3DResources/types';

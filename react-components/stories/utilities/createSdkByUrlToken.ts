@@ -1,6 +1,3 @@
-/*!
- * Copyright 2023 Cognite AS
- */
 import { CogniteClient } from '@cognite/sdk';
 
 export function createSdkByUrlToken(): CogniteClient {

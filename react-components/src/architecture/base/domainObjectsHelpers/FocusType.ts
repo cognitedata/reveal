@@ -1,7 +1,3 @@
-/*!
- * Copyright 2024 Cognite AS
- */
-
 export enum FocusType {
   None,
   Focus, // Focus not any particular place

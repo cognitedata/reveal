@@ -1,7 +1,3 @@
-/*!
- * Copyright 2024 Cognite AS
- */
-
 export function isEmpty(value: string | null | undefined): boolean {
   return value === null || value === undefined || value.length === 0;
 }

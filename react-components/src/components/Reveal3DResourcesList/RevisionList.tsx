@@ -1,6 +1,3 @@
-/*!
- * Copyright 2025 Cognite AS
- */
 import { SelectPanel } from '@cognite/cogs-lab';
 import { LoaderIcon } from '@cognite/cogs.js';
 import { type ReactElement } from 'react';

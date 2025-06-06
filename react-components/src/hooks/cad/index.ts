@@ -1,6 +1,3 @@
-/*!
- * Copyright 2024 Cognite AS
- */
 export { useAssetMappedNodesForRevisions } from './useAssetMappedNodesForRevisions';
 export { useAssetMappingForTreeIndex } from './useAssetMappingForTreeIndex';
 export { useFdm3dNodeDataPromises } from './useFdm3dNodeDataPromises';

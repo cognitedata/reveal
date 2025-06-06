@@ -1,6 +1,3 @@
-/*!
- * Copyright 2025 Cognite AS
- */
 import { describe, expect, test, vi, beforeEach } from 'vitest';
 import { updateViewerFromExternalState } from './updateViewerFromExternalState';
 import {
