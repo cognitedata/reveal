@@ -12,6 +12,9 @@ export class BoxFace {
   // ==================================================
 
   public constructor(face: number = 0) {
+    if (face < 0 || face > 5) {
+      throw new Error('Invalid face ' + face);
+    }
     this._face = face;
   }
 
@@ -24,6 +27,9 @@ export class BoxFace {
   }
 
   public set face(value: number) {
+    if (value < 0 || value > 5) {
+      throw new Error('Invalid face ' + value);
+    }
     this._face = value;
   }
 
@@ -92,9 +98,6 @@ export class BoxFace {
   public getPlanePoint(positionAtFace: Vector3): Vector2 {
     // Assume the only on component in the positionAtEdge is set and the other are 0
     switch (this.face) {
-      case 0:
-      case 3:
-        return new Vector2(positionAtFace.y, positionAtFace.z);
       case 1:
       case 4:
         return new Vector2(positionAtFace.x, positionAtFace.z);
@@ -102,7 +105,7 @@ export class BoxFace {
       case 5:
         return new Vector2(positionAtFace.x, positionAtFace.y);
       default:
-        throw new Error('Invalid face');
+        return new Vector2(positionAtFace.y, positionAtFace.z);
     }
   }
 
@@ -147,7 +150,8 @@ export class BoxFace {
     if (target === undefined) {
       target = new BoxFace();
     }
-    for (target.face = 0; target.face < 6; target.face++) {
+    for (let face = 0; face < 6; face++) {
+      target.face = face;
       yield target;
     }
   }

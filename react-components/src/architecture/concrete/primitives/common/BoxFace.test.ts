@@ -15,10 +15,31 @@ describe(BoxFace.name, () => {
     }
   });
   test('Should set face', () => {
+    const boxFace = new BoxFace();
+    expect(boxFace.face).toBe(0);
+    for (let face = 0; face < 6; face++) {
+      boxFace.face = face;
+      expect(boxFace.face).toBe(face);
+    }
+  });
+
+  test('Should set illegal face', () => {
     const face = new BoxFace();
-    expect(face.face).toBe(0);
-    face.face = 2;
-    expect(face.index).toBe(2);
+    expect(() => {
+      face.face = -1;
+    }).toThrow();
+    expect(() => {
+      face.face = 6;
+    }).toThrow();
+  });
+
+  test('Should set illegal face in constructor', () => {
+    expect(() => {
+      const _face = new BoxFace(-1);
+    }).toThrow();
+    expect(() => {
+      const _face = new BoxFace(6);
+    }).toThrow();
   });
 
   test('should copy and check if equal', () => {
