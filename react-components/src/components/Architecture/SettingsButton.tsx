@@ -3,7 +3,6 @@ import { type ReactNode, useMemo, useState, type ReactElement } from 'react';
 import { Button, Tooltip as CogsTooltip, Flex, Slider, Switch, TextLabel } from '@cognite/cogs.js';
 
 import { Dropdown, Menu } from '@cognite/cogs-lab';
-import { useTranslation } from '../i18n/I18n';
 import { type BaseCommand } from '../../architecture/base/commands/BaseCommand';
 import { useRenderTarget } from '../RevealCanvas/ViewerContext';
 import {
@@ -13,7 +12,6 @@ import {
   getTooltipPlacement
 } from './utilities';
 import { LabelWithShortcut } from './LabelWithShortcut';
-import { type TranslateDelegate } from '../../architecture/base/utilities/TranslateInput';
 import styled from 'styled-components';
 import { type BaseSettingsCommand } from '../../architecture/base/commands/BaseSettingsCommand';
 import { BaseOptionCommand } from '../../architecture/base/commands/BaseOptionCommand';
@@ -42,7 +40,6 @@ export const SettingsButton = ({
   placement: PlacementType;
 }): ReactElement => {
   const renderTarget = useRenderTarget();
-  const { t } = useTranslation();
   const command = useMemo<BaseSettingsCommand>(
     () => getDefaultCommand<BaseSettingsCommand>(inputCommand, renderTarget),
     []
@@ -64,7 +61,7 @@ export const SettingsButton = ({
   if (!isVisible || !command.hasChildren) {
     return <></>;
   }
-  const label = command.getLabel(t);
+  const label = command.label;
   const flexDirection = getFlexDirection(placement);
   const isTooltipDisabled = isOpen || label === undefined;
 
@@ -74,7 +71,7 @@ export const SettingsButton = ({
       content={
         <StyledMenuPanel $flexDirection={flexDirection}>
           <StyledMenuHeader>{label}</StyledMenuHeader>
-          {command.children.map((child) => createMenuItem(child, t))}
+          {command.children.map((child) => createMenuItem(child))}
         </StyledMenuPanel>
       }
       onShow={(open) => {
@@ -102,9 +99,9 @@ export const SettingsButton = ({
   );
 };
 
-function createMenuItem(command: BaseCommand, t: TranslateDelegate): ReactNode {
+function createMenuItem(command: BaseCommand): ReactNode {
   if (command instanceof BaseSliderCommand) {
-    return <SliderComponent key={command.uniqueId} command={command} t={t} />;
+    return <SliderComponent key={command.uniqueId} command={command} />;
   }
   if (command instanceof BaseOptionCommand) {
     return <DropdownButtonComponent key={command.uniqueId} command={command} />;
@@ -113,19 +110,19 @@ function createMenuItem(command: BaseCommand, t: TranslateDelegate): ReactNode {
     return <FilterButtonComponent key={command.uniqueId} command={command} />;
   }
   if (command.isToggle) {
-    return <ToggleComponent key={command.uniqueId} command={command} t={t} />;
+    return <ToggleComponent key={command.uniqueId} command={command} />;
   }
   if (command instanceof DividerCommand) {
     return <DividerComponent key={command.uniqueId} command={command} />;
   }
   if (command instanceof SectionCommand) {
-    return <SectionComponent key={command.uniqueId} command={command} t={t} />;
+    return <SectionComponent key={command.uniqueId} command={command} />;
   }
   if (command instanceof BaseBannerCommand) {
-    return <BannerComponent key={command.uniqueId} command={command} t={t} />;
+    return <BannerComponent key={command.uniqueId} command={command} />;
   }
 
-  return <ButtonComponent key={command.uniqueId} command={command} t={t} />;
+  return <ButtonComponent key={command.uniqueId} command={command} />;
 }
 
 function DividerComponent({ command }: { command: BaseCommand }): ReactNode {
@@ -143,13 +140,7 @@ function DividerComponent({ command }: { command: BaseCommand }): ReactNode {
   return <Menu.Divider />;
 }
 
-function SectionComponent({
-  t,
-  command
-}: {
-  command: BaseCommand;
-  t: TranslateDelegate;
-}): ReactNode {
+function SectionComponent({ command }: { command: BaseCommand }): ReactNode {
   // @update-ui-component-pattern
   const [isVisible, setVisible] = useState(true);
 
@@ -161,17 +152,11 @@ function SectionComponent({
   if (!isVisible) {
     return null;
   }
-  const label = command.getLabel(t);
+  const label = command.label;
   return <StyledSectionHeader>{label} </StyledSectionHeader>;
 }
 
-function ToggleComponent({
-  command,
-  t
-}: {
-  command: BaseCommand;
-  t: TranslateDelegate;
-}): ReactNode {
+function ToggleComponent({ command }: { command: BaseCommand }): ReactNode {
   // @update-ui-component-pattern
   const [isChecked, setChecked] = useState(false);
   const [isEnabled, setEnabled] = useState(true);
@@ -188,7 +173,7 @@ function ToggleComponent({
     return null;
   }
 
-  const label = command.getLabel(t);
+  const label = command.label;
   return (
     <StyledToggleContainer
       onClick={() => {
@@ -202,13 +187,7 @@ function ToggleComponent({
   );
 }
 
-function ButtonComponent({
-  command,
-  t
-}: {
-  command: BaseCommand;
-  t: TranslateDelegate;
-}): ReactNode {
+function ButtonComponent({ command }: { command: BaseCommand }): ReactNode {
   // @update-ui-component-pattern
   const [isEnabled, setEnabled] = useState(true);
   const [isVisible, setVisible] = useState(true);
@@ -224,7 +203,7 @@ function ButtonComponent({
   if (!isVisible) {
     return null;
   }
-  const label = command.getLabel(t);
+  const label = command.label;
 
   return (
     <Menu.ItemAction
@@ -240,13 +219,7 @@ function ButtonComponent({
   );
 }
 
-function SliderComponent({
-  command,
-  t
-}: {
-  command: BaseSliderCommand;
-  t: TranslateDelegate;
-}): ReactNode {
+function SliderComponent({ command }: { command: BaseSliderCommand }): ReactNode {
   // @update-ui-component-pattern
   const [isEnabled, setEnabled] = useState(true);
   const [isVisible, setVisible] = useState(true);
@@ -264,7 +237,7 @@ function SliderComponent({
   if (!isVisible) {
     return null;
   }
-  const label = command.getLabel(t) + ': ' + command.getValueLabel();
+  const label = command.label + ': ' + command.getValueLabel();
 
   return (
     <SliderDiv>
