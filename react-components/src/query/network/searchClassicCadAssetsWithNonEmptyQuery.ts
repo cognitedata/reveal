@@ -16,7 +16,8 @@ export async function searchClassicCadAssetsWithNonEmptyQuery(
   assetMappingAndNode3dCache: AssetMappingAndNode3DCache
 ): Promise<SearchClassicCadAssetsResponse> {
   // Checking whether a model is of type CAD or PointCloud requires a separate query,
-  // but the endpoints will simply return empty results for point clouds
+  // but the CAD endpoints will simply return empty results for point clouds, so
+  // we will pretend all models are CAD
   const cadModels = models.map((model) => ({ ...model, type: 'cad' as const }));
 
   const assetMappingList = await fetchAssetMappedNodesForRevisions(

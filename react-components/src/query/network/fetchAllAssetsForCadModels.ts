@@ -30,12 +30,14 @@ export async function fetchAllAssetsForCadModels(
       return { mappings: { items: [] }, model };
     }
 
-    const mappings = await sdk.assetMappings3D.filter(model.modelId, model.revisionId, {
-      cursor: cursorForModel,
-      limit
-    });
+    const mappings = await sdk.assetMappings3D
+      .filter(model.modelId, model.revisionId, {
+        cursor: cursorForModel,
+        limit
+      })
+      .autoPagingToArray();
 
-    return { mappings, model };
+    return { mappings: { items: mappings }, model };
   });
 
   const currentPagesOfAssetMappings = await Promise.all(currentPagesOfAssetMappingsPromises);

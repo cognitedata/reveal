@@ -63,10 +63,12 @@ const mockRenderTarget = new Mock<RevealRenderTarget>()
 describe(searchClassicAssetsForModels.name, () => {
   beforeEach(() => {
     vi.resetAllMocks();
-    mockAssetMappings3dFilter.mockImplementation(
-      async () =>
-        await (Promise.resolve({ items: [] }) as unknown as CursorAndAsyncIterator<AssetMapping3D>)
-    );
+    const mockAssetMappingsResultIterator = new Mock<CursorAndAsyncIterator<AssetMapping3D>>()
+      .setup((p) => p.autoPagingToArray)
+      .returns(async () => await Promise.resolve([]))
+      .object();
+
+    mockAssetMappings3dFilter.mockReturnValue(mockAssetMappingsResultIterator);
 
     mockAssetsRetrieve.mockImplementation(findIdEitherInAssetList);
   });
@@ -92,11 +94,16 @@ describe(searchClassicAssetsForModels.name, () => {
     });
 
     test('returns relevant mapped data when models have contextualization', async () => {
-      mockAssetMappings3dFilter.mockImplementation(async () => {
-        return await (Promise.resolve({
-          items: TEST_ASSETS.map((asset) => createAssetMapping(asset.id))
-        }) as unknown as CursorAndAsyncIterator<AssetMapping3D>);
-      });
+      const mockAssetMappingsResultIterator = new Mock<CursorAndAsyncIterator<AssetMapping3D>>()
+        .setup((p) => p.autoPagingToArray)
+        .returns(
+          async () =>
+            await Promise.resolve(TEST_ASSETS.map((asset) => createAssetMapping(asset.id)))
+        )
+        .object();
+      mockAssetMappings3dFilter.mockImplementation(
+        async () => await mockAssetMappingsResultIterator
+      );
 
       const results = await searchClassicAssetsForModels(
         '',
