@@ -4,7 +4,7 @@ import { type TaggedAddResourceOptions } from '../../components/Reveal3DResource
 import { type RevealRenderTarget } from '../../architecture';
 import { searchClassicAssetsForCadModels } from './searchClassicCadAssets';
 import { searchClassicPointCloudAssets } from './searchClassicPointCloudAssets';
-import { isClassicIdentifier } from '../../components';
+import { isClassicIdentifier } from '../../components/Reveal3DResources/typeGuards';
 import { uniqBy } from 'lodash';
 
 export type SearchClassicAssetsResponse = {
