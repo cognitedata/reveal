@@ -1,3 +1,7 @@
+/*!
+ * Copyright 2024 Cognite AS
+ */
+
 import { RenderTargetCommand } from '../../../base/commands/RenderTargetCommand';
 import { type BaseCommand } from '../../../base/commands/BaseCommand';
 import { PrimitiveType } from '../../../base/utilities/primitives/PrimitiveType';
@@ -9,6 +13,10 @@ import { type IconName } from '../../../base/utilities/IconName';
 
 export class SetClipTypeCommand extends RenderTargetCommand {
   private readonly _primitiveType: PrimitiveType;
+
+  public get primitiveType(): PrimitiveType {
+    return this._primitiveType;
+  }
 
   // ==================================================
   // CONSTRUCTOR
