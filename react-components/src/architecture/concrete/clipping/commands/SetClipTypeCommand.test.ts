@@ -11,6 +11,7 @@ import { getDefaultCommand } from '../../../../components/Architecture/utilities
 import { type RevealRenderTarget } from '../../../base/renderTarget/RevealRenderTarget';
 import { SliceDomainObject } from '../SliceDomainObject';
 import { lastElement } from '../../../base/utilities/extensions/arrayExtensions';
+import { type DomainObject } from '../../../base/domainObjects/DomainObject';
 
 describe(SetClipTypeCommand.name, () => {
   let renderTarget: RevealRenderTarget;
@@ -39,10 +40,7 @@ describe(SetClipTypeCommand.name, () => {
   });
 
   test('Should be enabled when active tool is ClipTool', () => {
-    // Set the active tool to ClipTool
-    const tool = getDefaultCommand(new ClipTool(), renderTarget);
-    renderTarget.commandsController.setActiveTool(tool);
-
+    createActiveClipTool(renderTarget);
     for (const newCommand of getCommands()) {
       const command = getDefaultCommand(newCommand, renderTarget);
       expect(command.isEnabled).toBe(true);
@@ -50,10 +48,7 @@ describe(SetClipTypeCommand.name, () => {
   });
 
   test('Should be not be enable enabled when active tool is ClipTool and more than 1 planes along the axis', () => {
-    // Set the active tool to ClipTool
-    const tool = getDefaultCommand(new ClipTool(), renderTarget);
-    renderTarget.commandsController.setActiveTool(tool);
-
+    createActiveClipTool(renderTarget);
     // Add extra set of planes
     const root = renderTarget.rootDomainObject;
     for (const domainObject of getPlanesOfAllType()) {
@@ -63,6 +58,23 @@ describe(SetClipTypeCommand.name, () => {
       const command = getDefaultCommand(newCommand, renderTarget);
       const expectEnabled = !AlongAxisPlanePrimitiveTypes.includes(newCommand.primitiveType);
       expect(command.isEnabled).toBe(expectEnabled);
+    }
+  });
+  test('Should set primitiveType on active tool', () => {
+    const tool = createActiveClipTool(renderTarget);
+    // Add extra set of planes
+    const root = renderTarget.rootDomainObject;
+    for (const domainObject of getPlanesOfAllType()) {
+      root.addChild(domainObject);
+    }
+    for (const newCommand of getCommands()) {
+      const command = getDefaultCommand(newCommand, renderTarget);
+
+      expect(command.isChecked).toBe(false);
+      expect(command.primitiveType).not.toBe(tool.primitiveType);
+      command.invoke();
+      expect(command.isChecked).toBe(true);
+      expect(command.primitiveType).toBe(tool.primitiveType);
     }
   });
 });
@@ -75,9 +87,15 @@ function* getCommands(): Generator<SetClipTypeCommand> {
   yield new SetClipTypeCommand(PrimitiveType.Box);
 }
 
-function* getPlanesOfAllType(): Generator<SliceDomainObject> {
+function* getPlanesOfAllType(): Generator<DomainObject> {
   yield new SliceDomainObject(PrimitiveType.PlaneX);
   yield new SliceDomainObject(PrimitiveType.PlaneY);
   yield new SliceDomainObject(PrimitiveType.PlaneZ);
   yield new SliceDomainObject(PrimitiveType.PlaneXY);
+}
+
+function createActiveClipTool(renderTarget: RevealRenderTarget): ClipTool {
+  const tool = getDefaultCommand(new ClipTool(), renderTarget);
+  renderTarget.commandsController.setActiveTool(tool);
+  return tool;
 }
