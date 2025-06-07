@@ -1,10 +1,16 @@
-import { CogniteCadModel } from '@cognite/reveal';
+import { type AddModelOptions, CogniteCadModel } from '@cognite/reveal';
 import { It, Mock } from 'moq.ts';
 import { Box3, Matrix4, Vector3 } from 'three';
+import { type TaggedAddCadResourceOptions } from '../../../src/components/Reveal3DResources/types';
 
-export const cadModelOptions = {
+export const cadModelOptions: AddModelOptions = {
   modelId: 123,
   revisionId: 456
+};
+
+export const taggedCadModelOptions: TaggedAddCadResourceOptions = {
+  type: 'cad',
+  addOptions: cadModelOptions
 };
 
 export const nodeBoundingBox = new Box3(new Vector3(1, 1, 1), new Vector3(2, 2, 2));
