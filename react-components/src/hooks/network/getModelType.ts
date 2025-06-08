@@ -1,6 +1,3 @@
-/*!
- * Copyright 2025 Cognite AS
- */
 export type ResourceTypes = 'CAD' | 'PointCloud' | 'unknown';
 
 export function getModelType(

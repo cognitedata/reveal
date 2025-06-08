@@ -1,6 +1,3 @@
-/*!
- * Copyright 2025 Cognite AS
- */
 import { type Image360AnnotationId } from './types';
 import { isClassicImage360AnnotationId, isDMImage360AnnotationId } from './typeGuards';
 import { type DmsUniqueIdentifier } from '../../data-providers';

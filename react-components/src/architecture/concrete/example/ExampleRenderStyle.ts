@@ -1,7 +1,3 @@
-/*!
- * Copyright 2024 Cognite AS
- */
-
 import { cloneDeep } from 'lodash';
 import { CommonRenderStyle } from '../../base/renderStyles/CommonRenderStyle';
 import { type RenderStyle } from '../../base/renderStyles/RenderStyle';

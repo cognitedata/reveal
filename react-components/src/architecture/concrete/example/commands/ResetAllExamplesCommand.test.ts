@@ -1,7 +1,3 @@
-/*!
- * Copyright 2024 Cognite AS
- */
-
 import { beforeEach, describe, expect, test } from 'vitest';
 import { isEmpty } from '../../../base/utilities/TranslateInput';
 import { type RevealRenderTarget } from '../../../base/renderTarget/RevealRenderTarget';

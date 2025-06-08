@@ -1,6 +1,3 @@
-/*!
- * Copyright 2025 Cognite AS
- */
 import React from 'react';
 
 import { type Meta, type StoryObj } from '@storybook/react';

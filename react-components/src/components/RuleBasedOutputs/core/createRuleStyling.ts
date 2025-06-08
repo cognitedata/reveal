@@ -1,6 +1,3 @@
-/*!
- * Copyright 2025 Cognite AS
- */
 import { type NodeAppearance } from '@cognite/reveal';
 
 export function createRuleStyling(appearance: NodeAppearance): NodeAppearance {

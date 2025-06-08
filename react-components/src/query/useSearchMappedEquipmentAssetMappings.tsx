@@ -1,6 +1,3 @@
-/*!
- * Copyright 2023 Cognite AS
- */
 import { type AddModelOptions } from '@cognite/reveal';
 import {
   type Asset,

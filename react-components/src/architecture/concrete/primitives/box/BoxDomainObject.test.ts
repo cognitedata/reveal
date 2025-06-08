@@ -1,7 +1,3 @@
-/*!
- * Copyright 2025 Cognite AS
- */
-
 import { assert, describe, expect, test } from 'vitest';
 import { MeasureBoxDomainObject } from '../../measurements/MeasureBoxDomainObject';
 import { PrimitiveType } from '../../../base/utilities/primitives/PrimitiveType';

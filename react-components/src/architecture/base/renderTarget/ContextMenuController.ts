@@ -1,6 +1,3 @@
-/*!
- * Copyright 2024 Cognite AS
- */
 import { type AnyIntersection } from '@cognite/reveal';
 import { ContextMenuUpdater } from '../reactUpdaters/ContextMenuUpdater';
 import { type Vector2 } from 'three';

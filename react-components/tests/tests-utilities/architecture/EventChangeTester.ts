@@ -1,7 +1,3 @@
-/*!
- * Copyright 2024 Cognite AS
- */
-
 import { expect } from 'vitest';
 import { type DomainObject } from '../../../src/architecture/base/domainObjects/DomainObject';
 import { type DomainObjectChange } from '../../../src/architecture/base/domainObjectsHelpers/DomainObjectChange';

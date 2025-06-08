@@ -1,6 +1,3 @@
-/*!
- * Copyright 2024 Cognite AS
- */
 import { type AnyIntersection } from '@cognite/reveal';
 import { type FdmNodeDataPromises } from '../../components/CacheProvider/types';
 import { useQuery, type UseQueryResult } from '@tanstack/react-query';

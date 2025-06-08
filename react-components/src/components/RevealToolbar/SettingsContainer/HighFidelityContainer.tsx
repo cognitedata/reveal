@@ -1,7 +1,3 @@
-/*!
- * Copyright 2023 Cognite AS
- */
-
 import { type ReactElement, useState } from 'react';
 import { Menu } from '@cognite/cogs-lab';
 import { useReveal } from '../../RevealCanvas/ViewerContext';

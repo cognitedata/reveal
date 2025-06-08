@@ -1,6 +1,3 @@
-/*!
- * Copyright 2024 Cognite AS
- */
 import { type AddModelOptions } from '@cognite/reveal';
 import { makeSureNonEmptyFilterForRequest, type InstanceFilter, type Source } from '../FdmSDK';
 import { SYSTEM_3D_EDGE_SOURCE } from './dataModels';

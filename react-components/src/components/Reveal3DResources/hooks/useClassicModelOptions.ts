@@ -1,6 +1,3 @@
-/*!
- * Copyright 2024 Cognite AS
- */
 import { useMemo } from 'react';
 import { type AddModelOptions, type ClassicDataSourceType } from '@cognite/reveal';
 import { useModelIdRevisionIdFromModelOptions } from '../../../hooks/useModelIdRevisionIdFromModelOptions';
