@@ -1,6 +1,5 @@
-import { AddImage360Options } from '@cognite/reveal';
-import { AddImage360CollectionOptions } from '../../components';
-import { Asset, CogniteClient } from '@cognite/sdk';
+import { type AddImage360CollectionOptions } from '../../components';
+import { type Asset, type CogniteClient } from '@cognite/sdk';
 import { getClassicAssetMapped360Annotations } from './getClassicAssetMapped360Annotations';
 import { partition, take } from 'lodash';
 import { matchAssetWithQuery } from '../../utilities/instances/matchAssetWithQuery';

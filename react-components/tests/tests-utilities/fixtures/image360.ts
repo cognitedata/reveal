@@ -6,9 +6,9 @@ import {
 import { Mock } from 'moq.ts';
 import { vi } from 'vitest';
 import {
-  AddImage360CollectionDatamodelsOptions,
-  AddImage360CollectionEventsOptions,
-  TaggedAddImage360CollectionOptions
+  type AddImage360CollectionDatamodelsOptions,
+  type AddImage360CollectionEventsOptions,
+  type TaggedAddImage360CollectionOptions
 } from '../../../src/components/Reveal3DResources';
 
 export const image360ClassicOptions: AddImage360CollectionEventsOptions = {

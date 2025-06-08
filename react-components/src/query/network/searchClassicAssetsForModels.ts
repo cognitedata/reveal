@@ -4,10 +4,7 @@ import { type TaggedAddResourceOptions } from '../../components/Reveal3DResource
 import { type RevealRenderTarget } from '../../architecture';
 import { searchClassicAssetsForCadModels } from './searchClassicCadAssets';
 import { searchClassicPointCloudAssets } from './searchClassicPointCloudAssets';
-import {
-  is360ImageEventsAddOptions,
-  isClassicIdentifier
-} from '../../components/Reveal3DResources/typeGuards';
+import { isClassicIdentifier } from '../../components/Reveal3DResources/typeGuards';
 import { uniqBy } from 'lodash';
 import { searchClassicImage360Assets } from './searchClassicImage360Assets';
 

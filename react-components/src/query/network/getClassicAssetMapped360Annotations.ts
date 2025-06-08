@@ -1,13 +1,16 @@
-import { Image360AnnotationFilterOptions, ImageAssetLinkAnnotationInfo } from '@cognite/reveal';
 import {
-  AnnotationFilterProps,
-  AnnotationModel,
-  Asset,
-  CogniteClient,
-  FileFilterProps,
-  IdEither
+  type Image360AnnotationFilterOptions,
+  type ImageAssetLinkAnnotationInfo
+} from '@cognite/reveal';
+import {
+  type AnnotationFilterProps,
+  type AnnotationModel,
+  type Asset,
+  type CogniteClient,
+  type FileFilterProps,
+  type IdEither
 } from '@cognite/sdk';
-import { ClassicImage360AnnotationMappedData } from '../../hooks';
+import { type ClassicImage360AnnotationMappedData } from '../../hooks';
 import {
   createInstanceReferenceKey,
   isIdEither,

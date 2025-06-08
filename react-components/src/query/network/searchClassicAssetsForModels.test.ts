@@ -3,7 +3,7 @@ import { searchClassicAssetsForModels } from './searchClassicAssetsForModels';
 import { cadModelOptions, taggedCadModelOptions } from '#test-utils/fixtures/cadModel';
 import { Mock, It } from 'moq.ts';
 import {
-  FilesAPI,
+  type FilesAPI,
   type Asset,
   type AssetMappings3DAPI,
   type AssetsAPI,
