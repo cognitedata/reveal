@@ -4,8 +4,12 @@ import { type TaggedAddResourceOptions } from '../../components/Reveal3DResource
 import { type RevealRenderTarget } from '../../architecture';
 import { searchClassicAssetsForCadModels } from './searchClassicCadAssets';
 import { searchClassicPointCloudAssets } from './searchClassicPointCloudAssets';
-import { isClassicIdentifier } from '../../components/Reveal3DResources/typeGuards';
+import {
+  is360ImageEventsAddOptions,
+  isClassicIdentifier
+} from '../../components/Reveal3DResources/typeGuards';
 import { uniqBy } from 'lodash';
+import { searchClassicImage360Assets } from './searchClassicImage360Assets';
 
 export type SearchClassicAssetsResponse = {
   nextCursor: string | undefined;
@@ -34,9 +38,9 @@ export async function searchClassicAssetsForModels(
     .map((resource) => resource.addOptions)
     .filter(isClassicIdentifier);
 
-  /* const image360Collections = resources
+  const image360Collections = resources
     .filter((resource) => resource.type === 'image360')
-    .map((resource) => resource.addOptions); */
+    .map((resource) => resource.addOptions);
 
   const cadAssetsPromise = searchClassicAssetsForCadModels(
     searchQuery,
@@ -51,20 +55,18 @@ export async function searchClassicAssetsForModels(
     ? searchClassicPointCloudAssets(searchQuery, pointClouds, sdk)
     : Promise.resolve([]);
 
-  /* const image360AssetsPromise = isFirstPage
-     ? searchClassicImage360Assets(searchQuery, image360Collections, limit, sdk)
-     : Promise.resolve([]);
-  */
+  const image360AssetsPromise = isFirstPage
+    ? searchClassicImage360Assets(searchQuery, image360Collections, limit, sdk)
+    : Promise.resolve([]);
 
   const { nextCursor, data: cadAssets } = await cadAssetsPromise;
   const pointCloudAssets = await pointCloudAssetsPromise;
-
-  // const image360Assets = await image360AssetsPromise;
+  const image360Assets = await image360AssetsPromise;
 
   const assetResult = uniqBy(
-    [...cadAssets, ...pointCloudAssets /*  ...image360Assets */],
+    [...cadAssets, ...pointCloudAssets, ...image360Assets],
     (asset) => asset.id
   );
 
-  return { nextCursor, data: assetResult /* .concat(image360Assets) */ };
+  return { nextCursor, data: assetResult };
 }
