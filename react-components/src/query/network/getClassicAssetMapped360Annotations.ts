@@ -142,9 +142,9 @@ async function get360ImageAnnotations(
 
 async function listFileIds(filter: FileFilterProps, sdk: CogniteClient): Promise<number[]> {
   const req = { filter, limit: 1000 };
-  const map = await sdk.files.list(req).autoPagingToArray({ limit: Infinity });
+  const filesPromise = await sdk.files.list(req).autoPagingToArray({ limit: Infinity });
 
-  const fileInfo = await Promise.all(map.flat());
+  const fileInfo = await Promise.all(filesPromise.flat());
   const list = fileInfo.map((file) => file.id);
 
   return list;
