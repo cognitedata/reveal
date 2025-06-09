@@ -34,10 +34,6 @@ export async function searchClassicAssetsForModels(
     .map((resource) => resource.addOptions)
     .filter(isClassicIdentifier);
 
-  /* const image360Collections = resources
-    .filter((resource) => resource.type === 'image360')
-    .map((resource) => resource.addOptions); */
-
   const cadAssetsPromise = searchClassicAssetsForCadModels(
     searchQuery,
     cadModels,
@@ -51,20 +47,10 @@ export async function searchClassicAssetsForModels(
     ? searchClassicPointCloudAssets(searchQuery, pointClouds, sdk)
     : Promise.resolve([]);
 
-  /* const image360AssetsPromise = isFirstPage
-     ? searchClassicImage360Assets(searchQuery, image360Collections, limit, sdk)
-     : Promise.resolve([]);
-  */
-
   const { nextCursor, data: cadAssets } = await cadAssetsPromise;
   const pointCloudAssets = await pointCloudAssetsPromise;
 
-  // const image360Assets = await image360AssetsPromise;
+  const assetResult = uniqBy([...cadAssets, ...pointCloudAssets], (asset) => asset.id);
 
-  const assetResult = uniqBy(
-    [...cadAssets, ...pointCloudAssets /*  ...image360Assets */],
-    (asset) => asset.id
-  );
-
-  return { nextCursor, data: assetResult /* .concat(image360Assets) */ };
+  return { nextCursor, data: assetResult };
 }
