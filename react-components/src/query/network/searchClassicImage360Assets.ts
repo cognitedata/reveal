@@ -19,7 +19,7 @@ export async function searchClassicImage360Assets(
   ];
 
   const assetMappings = await getClassicAssetMapped360Annotations(siteIds, sdk, {
-    status: 'all'
+    status: 'approved'
   });
 
   if (searchQuery === '') {
