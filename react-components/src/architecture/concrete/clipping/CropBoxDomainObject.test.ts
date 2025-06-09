@@ -1,7 +1,3 @@
-/*!
- * Copyright 2025 Cognite AS
- */
-
 import assert from 'assert';
 import { describe, expect, test } from 'vitest';
 import { CropBoxDomainObject } from './CropBoxDomainObject';

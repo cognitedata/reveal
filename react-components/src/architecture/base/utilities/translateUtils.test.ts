@@ -1,7 +1,3 @@
-/*!
- * Copyright 2023 Cognite AS
- */
-
 import { beforeEach, describe, expect, test } from 'vitest';
 import { type TranslationInput } from './TranslateInput';
 

@@ -1,6 +1,3 @@
-/*!
- * Copyright 2024 Cognite AS
- */
 import { useIsDraggingOnViewer } from '../../../hooks/useIsDraggingOnViewer';
 import { useEffect } from 'react';
 

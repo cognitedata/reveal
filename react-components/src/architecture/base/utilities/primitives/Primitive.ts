@@ -1,7 +1,3 @@
-/*!
- * Copyright 2024 Cognite AS
- */
-
 import { Box3, type Ray, type Vector3, type Matrix4 } from 'three';
 import { type PrimitiveType } from './PrimitiveType';
 

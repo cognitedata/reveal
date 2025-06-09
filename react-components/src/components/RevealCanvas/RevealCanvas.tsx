@@ -1,6 +1,3 @@
-/*!
- * Copyright 2023 Cognite AS
- */
 import { type ReactNode, type ReactElement, useRef, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import { useReveal } from './ViewerContext';

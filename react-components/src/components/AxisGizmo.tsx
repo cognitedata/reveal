@@ -1,7 +1,3 @@
-/*!
- * Copyright 2024 Cognite AS
- */
-
 import { useEffect, type ReactElement } from 'react';
 
 import { AxisGizmoOptions, AxisGizmoTool } from '@cognite/reveal/tools';

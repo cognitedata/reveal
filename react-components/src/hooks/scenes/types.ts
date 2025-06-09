@@ -1,6 +1,3 @@
-/*!
- * Copyright 2024 Cognite AS
- */
 import { type SourceSelectorV3 } from '@cognite/sdk';
 import { type DmsUniqueIdentifier } from '../../data-providers/FdmSDK';
 import {

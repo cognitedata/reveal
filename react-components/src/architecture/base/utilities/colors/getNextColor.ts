@@ -1,7 +1,3 @@
-/*!
- * Copyright 2024 Cognite AS
- */
-
 import { Color } from 'three';
 import { isEven } from '../extensions/mathExtensions';
 

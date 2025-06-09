@@ -1,6 +1,3 @@
-/*!
- * Copyright 2025 Cognite AS
- */
 import { describe, expect, it } from 'vitest';
 import { filterNodesByMappedTo3d } from './filterNodesByMappedTo3d';
 import { Mock, It } from 'moq.ts';

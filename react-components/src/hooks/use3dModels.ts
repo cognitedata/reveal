@@ -1,7 +1,3 @@
-/*!
- * Copyright 2024 Cognite AS
- */
-
 import { useMemo } from 'react';
 import { useReveal3DResourcesCount } from '../components/Reveal3DResources/Reveal3DResourcesInfoContext';
 import { type CogniteModel, type DataSourceType } from '@cognite/reveal';

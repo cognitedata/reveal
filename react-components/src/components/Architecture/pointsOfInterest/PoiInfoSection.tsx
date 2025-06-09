@@ -1,7 +1,3 @@
-/*!
- * Copyright 2024 Cognite AS
- */
-
 import { Flex, Input, TextLabel } from '@cognite/cogs.js';
 import { type ReactNode } from 'react';
 import { useTranslation } from '../../i18n/I18n';

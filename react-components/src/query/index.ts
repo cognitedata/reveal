@@ -1,7 +1,3 @@
-/*!
- * Copyright 2024 Cognite AS
- */
-
 export { use3DModelName } from './use3DModelName';
 export { use3dNodeByExternalId } from './use3dNodeByExternalId';
 export { use3dRelatedDirectConnections } from './use3dRelatedDirectConnections';

@@ -1,6 +1,3 @@
-/*!
- * Copyright 2024 Cognite AS
- */
 import { type CogniteClient, type CursorResponse, type Asset } from '@cognite/sdk';
 import { buildFilter } from '../../utilities/buildFilter';
 

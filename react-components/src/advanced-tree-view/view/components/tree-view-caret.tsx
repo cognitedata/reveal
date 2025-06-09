@@ -1,6 +1,3 @@
-/*!
- * Copyright 2025 Cognite AS
- */
 import { type ReactElement, useState } from 'react';
 
 import { CaretDownIcon, CaretRightIcon } from '@cognite/cogs.js';

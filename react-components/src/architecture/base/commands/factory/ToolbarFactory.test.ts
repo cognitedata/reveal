@@ -1,7 +1,3 @@
-/*!
- * Copyright 2025 Cognite AS
- */
-
 import { describe, expect, test, beforeAll } from 'vitest';
 import { hasToolbar, getToolbar, installToolbar } from './ToolbarFactory';
 import { BaseTool } from '../BaseTool';

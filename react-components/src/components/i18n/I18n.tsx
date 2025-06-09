@@ -1,6 +1,3 @@
-/*!
- * Copyright 2023 Cognite AS
- */
 import { useEffect, createContext, useContext, useState, type ReactElement } from 'react';
 
 import { type I18nProps, type I18nContent } from './types';

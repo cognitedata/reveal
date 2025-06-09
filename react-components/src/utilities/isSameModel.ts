@@ -1,6 +1,3 @@
-/*!
- * Copyright 2024 Cognite AS
- */
 import { type GeometryFilter } from '@cognite/reveal';
 import {
   type AddImage360CollectionOptions,

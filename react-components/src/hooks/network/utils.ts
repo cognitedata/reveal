@@ -1,7 +1,3 @@
-/*!
- * Copyright 2024 Cognite AS
- */
-
 import { type Model3D, type TableExpressionEqualsFilterV3 } from '@cognite/sdk';
 import { getModelType } from './getModelType';
 import { type LatestRevisionInfoResponse, type ModelWithRevisionInfo } from './types';

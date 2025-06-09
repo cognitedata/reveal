@@ -1,7 +1,3 @@
-/*!
- * Copyright 2024 Cognite AS
- */
-
 type PopupProps = {
   horizontal?: boolean;
   left?: number;

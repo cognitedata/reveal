@@ -1,7 +1,3 @@
-/*!
- * Copyright 2024 Cognite AS
- */
-
 import { ceil, floor, isIncrement, roundIncrement } from '../extensions/mathExtensions';
 
 const MAX_NUMBER_OF_TICKS = 1000;
