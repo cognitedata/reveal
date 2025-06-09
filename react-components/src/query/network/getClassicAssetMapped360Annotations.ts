@@ -21,6 +21,9 @@ import { chunk, uniqBy } from 'lodash';
 import { fetchAssetsForAssetIds } from '../../components/CacheProvider/AnnotationModelUtils';
 import { isClassicImage360AssetAnnotationData } from '../../utilities/image360Annotations';
 
+const MAX_PARALLEL_ANNOTATION_QUERIES = 5;
+const MAX_PARALLEL_FILES_QUERIES = 5;
+
 export async function getClassicAssetMapped360Annotations(
   siteIds: string[],
   sdk: CogniteClient,
@@ -97,17 +100,24 @@ function getAssetsWithAnnotations(
 }
 
 async function get360ImagesFileIds(siteIds: string[], sdk: CogniteClient): Promise<number[]> {
-  const fileIdListPromises = siteIds.map(async (siteId) => {
-    const req: FileFilterProps = {
-      metadata: { site_id: siteId }
-    };
-    const fileIds = await listFileIds(req, sdk);
-    return fileIds;
-  });
+  const fileIdsResult: number[] = [];
 
-  const fileIdsList = (await Promise.all(fileIdListPromises)).flat();
+  const siteIdChunks = chunk(siteIds, MAX_PARALLEL_FILES_QUERIES);
 
-  return fileIdsList;
+  for (const siteIdChunk of siteIdChunks) {
+    const fileIdListPromises = siteIdChunk.map(async (siteId) => {
+      const req: FileFilterProps = {
+        metadata: { site_id: siteId }
+      };
+      const fileIds = await listFileIds(req, sdk);
+      return fileIds;
+    });
+
+    const chunkFileIds = await Promise.all(fileIdListPromises);
+    fileIdsResult.push(...chunkFileIds.flat());
+  }
+
+  return fileIdsResult;
 }
 
 async function get360ImageAnnotations(
@@ -115,8 +125,12 @@ async function get360ImageAnnotations(
   sdk: CogniteClient,
   image360AnnotationFilterOptions: Image360AnnotationFilterOptions
 ): Promise<AnnotationModel[]> {
-  const annotationArray = await Promise.all(
-    chunk(fileIdsList, 1000).map(async (fileIdsChunk) => {
+  const fileIdChunks = chunk(fileIdsList, 1000);
+
+  const annotationsResult: AnnotationModel[] = [];
+
+  for (const fileIdChunkBatch of chunk(fileIdChunks, MAX_PARALLEL_ANNOTATION_QUERIES)) {
+    const annotationChunkBatchPromises = fileIdChunkBatch.map(async (fileIdsChunk) => {
       const filter: AnnotationFilterProps = {
         annotatedResourceIds: fileIdsChunk.map((id) => ({ id })),
         annotatedResourceType: 'file',
@@ -129,26 +143,24 @@ async function get360ImageAnnotations(
         })
         .autoPagingToArray({ limit: Infinity });
 
-      const filteredAnnotations = annotations
+      return annotations
         .filter(
           (annotation) =>
             annotation.status === image360AnnotationFilterOptions.status ||
             image360AnnotationFilterOptions.status === 'all'
         )
         .filter((annotation) => isClassicImage360AssetAnnotationData(annotation.data));
-      return filteredAnnotations;
-    })
-  );
+    });
 
-  return annotationArray.flatMap((annotations) => annotations);
+    const chunkBatchAnnotationArrays = await Promise.all(annotationChunkBatchPromises);
+    annotationsResult.push(...chunkBatchAnnotationArrays.flat());
+  }
+
+  return annotationsResult;
 }
 
 async function listFileIds(filter: FileFilterProps, sdk: CogniteClient): Promise<number[]> {
   const req = { filter, limit: 1000 };
-  const filesPromise = await sdk.files.list(req).autoPagingToArray({ limit: Infinity });
-
-  const fileInfo = await Promise.all(filesPromise.flat());
-  const list = fileInfo.map((file) => file.id);
-
-  return list;
+  const fileInfos = await sdk.files.list(req).autoPagingToArray({ limit: Infinity });
+  return fileInfos.map((file) => file.id);
 }
