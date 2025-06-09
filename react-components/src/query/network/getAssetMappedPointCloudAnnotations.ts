@@ -9,6 +9,8 @@ import {
 import { chunk, uniq } from 'lodash';
 import { type AddPointCloudResourceOptions } from '../../components';
 
+const MAX_PARALLEL_ASSET_REQUESTS = 5;
+
 export async function getAssetsMappedPointCloudAnnotations(
   sdk: CogniteClient,
   models: Array<AddPointCloudResourceOptions<ClassicDataSourceType>>
@@ -56,23 +58,31 @@ async function getPointCloudAnnotationAssets(
     )
     .filter((annotation): annotation is string | number => annotation !== undefined);
 
-  const uniqueAnnotationMapping = uniq(annotationMapping);
+  const uniqueMappingAssetId = uniq(annotationMapping);
 
-  const assets = await Promise.all(
-    chunk(uniqueAnnotationMapping, 1000).map(async (uniqueAssetsChunk) => {
-      const retrievedAssets = await sdk.assets.retrieve(
-        uniqueAssetsChunk.map((assetId) => {
-          if (typeof assetId === 'number') {
-            return { id: assetId };
-          } else {
-            return { externalId: assetId };
-          }
-        }),
-        { ignoreUnknownIds: true }
-      );
-      return retrievedAssets;
-    })
-  );
+  const assetIdChunks = chunk(uniqueMappingAssetId, 1000);
 
-  return assets.flat();
+  const allAssetResults: Asset[] = [];
+
+  for (const assetIdChunkBatch of chunk(assetIdChunks, MAX_PARALLEL_ASSET_REQUESTS)) {
+    const assetsForChunkBatch = await Promise.all(
+      assetIdChunkBatch.map(
+        async (assetIdChunk) =>
+          await sdk.assets.retrieve(
+            assetIdChunk.map((assetId) => {
+              if (typeof assetId === 'number') {
+                return { id: assetId };
+              } else {
+                return { externalId: assetId };
+              }
+            }),
+            { ignoreUnknownIds: true }
+          )
+      )
+    );
+
+    allAssetResults.push(...assetsForChunkBatch.flat());
+  }
+
+  return allAssetResults;
 }
