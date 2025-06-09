@@ -4,10 +4,8 @@ import { searchClassicPointCloudAssets } from './searchClassicPointCloudAssets';
 import { isClassicIdentifier } from '../../components/Reveal3DResources/typeGuards';
 import { uniqBy } from 'lodash';
 
-import { type AddModelOptions, type ClassicDataSourceType } from '@cognite/reveal';
 import { type Asset, type CogniteClient } from '@cognite/sdk';
 
-import { type AddImage360CollectionDatamodelsOptions } from '../../components/Reveal3DResources/types';
 import { type RevealRenderTarget } from '../../architecture';
 import { searchClassicAssetsForCadModels } from './searchClassicAssetsForCadModels';
 
