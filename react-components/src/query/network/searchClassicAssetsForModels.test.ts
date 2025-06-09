@@ -3,6 +3,7 @@ import { searchClassicAssetsForModels } from './searchClassicAssetsForModels';
 import { cadModelOptions, taggedCadModelOptions } from '#test-utils/fixtures/cadModel';
 import { Mock, It } from 'moq.ts';
 import {
+  type FilesAPI,
   type Asset,
   type AssetMappings3DAPI,
   type AssetsAPI,
@@ -20,6 +21,12 @@ import { taggedPointCloudModelOptions } from '#test-utils/fixtures/pointCloud';
 import { createPointCloudAnnotationMock } from '#test-utils/fixtures/pointCloudAnnotation';
 import { createCursorAndAsyncIteratorMock } from '#test-utils/fixtures/cursorAndIterator';
 import { createAssetMappingMock } from '#test-utils/fixtures/cadAssetMapping';
+import {
+  taggedImage360ClassicOptions,
+  taggedImage360DmOptions
+} from '#test-utils/fixtures/image360';
+import { createFileMock } from '#test-utils/fixtures/files';
+import { createClassic360AnnotationMock } from '#test-utils/fixtures/image360Annotations';
 
 const ARBITRARY_SEARCH_LIMIT = 100;
 
@@ -34,6 +41,7 @@ const mockAssetMappings3dFilter = vi.fn<AssetMappings3DAPI['filter']>();
 const mockAssetsRetrieve = vi.fn<AssetsAPI['retrieve']>();
 const mockPostAssetList = vi.fn<CogniteClient['post']>();
 const mockAnnotationsList = vi.fn<CogniteClient['annotations']['list']>();
+const mockFilesList = vi.fn<FilesAPI['list']>();
 
 const mockSdk = new Mock<CogniteClient>()
   .setup((p) => p.annotations.list)
@@ -42,6 +50,8 @@ const mockSdk = new Mock<CogniteClient>()
   .returns(mockAssetMappings3dFilter)
   .setup((p) => p.assets.retrieve)
   .returns(mockAssetsRetrieve)
+  .setup((p) => p.files.list)
+  .returns(mockFilesList)
   .setup((p) => p.project)
   .returns(TEST_PROJECT)
   .setup(
@@ -72,7 +82,6 @@ describe(searchClassicAssetsForModels.name, () => {
     vi.resetAllMocks();
 
     mockAssetMappings3dFilter.mockReturnValue(createCursorAndAsyncIteratorMock({ items: [] }));
-    mockAnnotationsList.mockReturnValue(createCursorAndAsyncIteratorMock({ items: [] }));
     mockPostAssetList.mockResolvedValue(createHttpResponseObject({ items: [] }));
   });
 
@@ -221,6 +230,7 @@ describe(searchClassicAssetsForModels.name, () => {
       mockAssetsRetrieve.mockImplementation(
         async (idObjects) => await findIdEitherInAssetList(idObjects, TEST_ASSETS)
       );
+      mockAnnotationsList.mockReturnValue(createCursorAndAsyncIteratorMock({ items: [] }));
     });
 
     test('returns empty result when no relevant results exist', async () => {
@@ -261,6 +271,55 @@ describe(searchClassicAssetsForModels.name, () => {
 
       // TEST_ASSET[1] has the query string in the name, TEST_ASSETS[2] has it in the description
       expect(result).toEqual({ data: [TEST_ASSETS[1], TEST_ASSETS[2]], nextCursor: undefined });
+    });
+  });
+
+  describe('360 images', () => {
+    const TEST_FILES = [
+      createFileMock({
+        id: 1,
+        metadata: { siteId: taggedImage360ClassicOptions.addOptions.siteId }
+      })
+    ];
+
+    beforeEach(() => {
+      mockFilesList.mockReturnValue(createCursorAndAsyncIteratorMock({ items: TEST_FILES }));
+      mockAnnotationsList.mockReturnValue(createCursorAndAsyncIteratorMock({ items: [] }));
+      mockAssetsRetrieve.mockImplementation(
+        async (idObjects) => await findIdEitherInAssetList(idObjects, TEST_ASSETS)
+      );
+    });
+
+    test('returns no assets when no relevant ones are found', async () => {
+      const result = await searchClassicAssetsForModels(
+        '',
+        [taggedImage360ClassicOptions, taggedImage360DmOptions],
+        ARBITRARY_SEARCH_LIMIT,
+        undefined,
+        mockSdk,
+        mockRenderTarget
+      );
+
+      expect(result).toEqual({ data: [], nextCursor: undefined });
+    });
+
+    test('returns relevant assets when there is contextualization', async () => {
+      const mockAnnotations = TEST_FILES.map((file) =>
+        createClassic360AnnotationMock({ fileId: file.id, assetId: TEST_ASSETS[0].id })
+      );
+      mockAnnotationsList.mockReturnValue(
+        createCursorAndAsyncIteratorMock({ items: mockAnnotations })
+      );
+      const result = await searchClassicAssetsForModels(
+        'asset0',
+        [taggedImage360ClassicOptions, taggedImage360DmOptions],
+        ARBITRARY_SEARCH_LIMIT,
+        undefined,
+        mockSdk,
+        mockRenderTarget
+      );
+
+      expect(result).toEqual({ data: [TEST_ASSETS[0]], nextCursor: undefined });
     });
   });
 });

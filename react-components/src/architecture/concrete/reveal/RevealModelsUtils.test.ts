@@ -78,10 +78,7 @@ describe('RevealModelsUtils', () => {
       image360ClassicOptions
     );
     expect(result).toBe(model);
-    const siteId =
-      image360ClassicOptions.source === 'events'
-        ? image360ClassicOptions.siteId
-        : image360ClassicOptions.externalId;
+    const siteId = image360ClassicOptions.siteId;
     expect(addFn).toHaveBeenCalledWith(
       'events',
       { site_id: siteId },
