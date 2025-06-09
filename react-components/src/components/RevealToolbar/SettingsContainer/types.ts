@@ -1,7 +1,3 @@
-/*!
- * Copyright 2023 Cognite AS
- */
-
 import { type ReactElement } from 'react';
 import { type QualitySettings } from '../../../architecture/base/utilities/quality/QualitySettings';
 

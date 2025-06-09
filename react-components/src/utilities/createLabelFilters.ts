@@ -1,7 +1,3 @@
-/*!
- * Copyright 2024 Cognite AS
- */
-
 import { type LabelFilter } from '@cognite/sdk';
 import { isEmpty } from 'lodash';
 

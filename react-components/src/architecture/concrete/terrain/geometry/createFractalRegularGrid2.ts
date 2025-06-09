@@ -1,6 +1,3 @@
-/*!
- * Copyright 2024 Cognite AS
- */
 import { Vector2 } from 'three';
 import { type Range3 } from '../../../base/utilities/geometry/Range3';
 import { Index2 } from '../../../base/utilities/geometry/Index2';

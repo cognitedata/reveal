@@ -1,7 +1,3 @@
-/*!
- * Copyright 2024 Cognite AS
- */
-
 import { type Asset, type Timeseries } from '@cognite/sdk';
 import { type AssetAndTimeseriesIds } from '../../data-providers/types';
 

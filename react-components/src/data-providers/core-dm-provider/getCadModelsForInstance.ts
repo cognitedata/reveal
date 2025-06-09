@@ -1,6 +1,3 @@
-/*!
- * Copyright 2024 Cognite AS
- */
 import { type TaggedAddResourceOptions } from '../../components/Reveal3DResources/types';
 import { type DmsUniqueIdentifier, type FdmSDK } from '../FdmSDK';
 import {

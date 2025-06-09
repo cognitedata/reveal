@@ -1,7 +1,3 @@
-/*!
- * Copyright 2024 Cognite AS
- */
-
 import { type AddModelOptions } from '@cognite/reveal';
 import { type Asset, type CogniteClient } from '@cognite/sdk';
 import { useQuery, type UseQueryResult } from '@tanstack/react-query';

@@ -1,6 +1,3 @@
-/*!
- * Copyright 2023 Cognite AS
- */
 import { useCallback, useMemo } from 'react';
 import {
   type NodeItem,

@@ -1,7 +1,3 @@
-/*!
- * Copyright 2024 Cognite AS
- */
-
 export enum VisibleState {
   All, // Visible
   Some, // Partly visible

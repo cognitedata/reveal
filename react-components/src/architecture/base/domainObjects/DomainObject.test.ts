@@ -1,7 +1,3 @@
-/*!
- * Copyright 2024 Cognite AS
- */
-
 import { type TranslationInput } from '../utilities/TranslateInput';
 
 import { describe, test, expect, beforeAll, vi } from 'vitest';

@@ -1,6 +1,3 @@
-/*!
- * Copyright 2024 Cognite AS
- */
 import { describe, expect, it } from 'vitest';
 import { type NodeItem } from '../FdmSDK';
 import { getCogniteAssetDirectRelationProperties } from './getCogniteAssetDirectRelationProperties';

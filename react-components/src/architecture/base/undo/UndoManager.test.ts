@@ -1,7 +1,3 @@
-/*!
- * Copyright 2024 Cognite AS
- */
-
 import { beforeEach, describe, expect, test } from 'vitest';
 import { Changes } from '../domainObjectsHelpers/Changes';
 import { UndoManager } from './UndoManager';

@@ -1,6 +1,3 @@
-/*!
- * Copyright 2024 Cognite AS
- */
 import { type AnyIntersection, type DMInstanceRef } from '@cognite/reveal';
 import { useQuery, type UseQueryResult } from '@tanstack/react-query';
 import { usePointCloudDMVolumes } from './usePointCloudDMVolumes';

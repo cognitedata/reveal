@@ -1,7 +1,3 @@
-/*!
- * Copyright 2024 Cognite AS
- */
-
 import { ExampleDomainObject } from './ExampleDomainObject';
 import { type DomainObject } from '../../base/domainObjects/DomainObject';
 import { count } from '../../base/utilities/extensions/generatorUtils';

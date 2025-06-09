@@ -1,6 +1,3 @@
-/*!
- * Copyright 2023 Cognite AS
- */
 export type NodeResponse = {
   instanceType: string;
   version: number;

@@ -1,8 +1,5 @@
-/*!
- * Copyright 2023 Cognite AS
- */
-
 import { type CogniteClient } from '@cognite/sdk';
+
 import { useQuery, type UseQueryResult } from '@tanstack/react-query';
 import { type Image360AnnotationMappedAssetData } from '../hooks/types';
 import { type Image360AnnotationFilterOptions } from '@cognite/reveal';

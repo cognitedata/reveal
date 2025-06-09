@@ -1,7 +1,3 @@
-/*!
- * Copyright 2023 Cognite AS
- */
-
 import { AlignSelectedAnnotationCommand } from './concrete/annotations/commands/AnnotationsAlignCommand';
 import { AnnotationsCreateMockCommand } from './concrete/annotations/commands/AnnotationsCreateMockCommand';
 import { AnnotationsCreateTool } from './concrete/annotations/commands/AnnotationsCreateTool';

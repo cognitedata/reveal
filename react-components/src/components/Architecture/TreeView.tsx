@@ -1,7 +1,3 @@
-/*!
- * Copyright 2024 Cognite AS
- */
-
 import { type ReactElement, type FC } from 'react';
 import { type IconProps } from '@cognite/cogs.js';
 import { useRenderTarget } from '../RevealCanvas/ViewerContext';

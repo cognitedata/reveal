@@ -1,7 +1,3 @@
-/*!
- * Copyright 2024 Cognite AS
- */
-
 import { type Source } from '../../data-providers/FdmSDK';
 
 export const RULE_BASED_OUTPUTS_VIEW: Source = {

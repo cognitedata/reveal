@@ -1,7 +1,3 @@
-/*!
- * Copyright 2024 Cognite AS
- */
-
 import { type RevealRenderTarget } from '../renderTarget/RevealRenderTarget';
 import { ThreeView } from '../views/ThreeView';
 import { VisibleState } from '../domainObjectsHelpers/VisibleState';

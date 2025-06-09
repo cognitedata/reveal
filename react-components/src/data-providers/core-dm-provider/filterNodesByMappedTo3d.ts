@@ -1,6 +1,3 @@
-/*!
- * Copyright 2024 Cognite AS
- */
 import {
   type InstancesWithView,
   type InstancesWithViewDefinition

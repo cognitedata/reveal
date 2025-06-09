@@ -1,7 +1,3 @@
-/*!
- * Copyright 2024 Cognite AS
- */
-
 import { DataTexture, type Color } from 'three';
 import { BYTE_PR_COLOR, TEXTURE_1D_WIDTH, type ColorMap } from './ColorMap';
 import { type Range1 } from '../geometry/Range1';

@@ -1,6 +1,3 @@
-/*!
- * Copyright 2024 Cognite AS
- */
 import { type ReactNode, useState, type ReactElement } from 'react';
 import { type Vector2 } from 'three';
 import styled from 'styled-components';

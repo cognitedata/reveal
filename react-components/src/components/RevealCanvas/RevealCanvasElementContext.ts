@@ -1,7 +1,3 @@
-/*!
- * Copyright 2023 Cognite AS
- */
-
 import { createContext, useContext } from 'react';
 
 export const RevealCanvasElementContext = createContext<HTMLDivElement | null>(null);
