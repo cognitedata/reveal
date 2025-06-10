@@ -1,11 +1,21 @@
-import { CognitePointCloudModel, type ClassicDataSourceType } from '@cognite/reveal';
+import {
+  type AddModelOptions,
+  CognitePointCloudModel,
+  type ClassicDataSourceType
+} from '@cognite/reveal';
 import { Mock } from 'moq.ts';
 import { Matrix4 } from 'three';
+import { type TaggedAddPointCloudResourceOptions } from '../../../src/components/Reveal3DResources/types';
 
-export const pointCloudModelOptions = {
+export const pointCloudModelOptions: AddModelOptions<ClassicDataSourceType> = {
   modelId: 321,
   revisionId: 654
-};
+} as const;
+
+export const taggedPointCloudModelOptions = {
+  type: 'pointcloud',
+  addOptions: pointCloudModelOptions
+} as const satisfies TaggedAddPointCloudResourceOptions;
 
 export function createPointCloudMock(parameters?: { visible?: boolean }): CognitePointCloudModel {
   return new Mock<CognitePointCloudModel<ClassicDataSourceType>>()
