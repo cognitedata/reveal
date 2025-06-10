@@ -44,9 +44,9 @@ export const Image360HistoricalPanel = ({
 const StyledButton = styled(Button)`
   && {
     border-radius: 6px;
-    border: 1px;
+    border: 0px !important;
     width: fit-content;
-    padding: 0px;
+    padding: 0px !important;
     grid-gap: 6px;
 
     font-family: 'Inter';
