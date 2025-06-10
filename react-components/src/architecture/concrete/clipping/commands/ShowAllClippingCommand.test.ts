@@ -50,7 +50,7 @@ describe(ShowAllClippingCommand.name, () => {
 function isAllVisible(isVisible: boolean, renderTarget: RevealRenderTarget): boolean {
   for (const domainObject of getClippingDomainObjects(renderTarget)) {
     if (domainObject.isSelected) {
-      continue;
+      continue; // Skip selected
     }
     if (domainObject.isVisible(renderTarget) !== isVisible) {
       return false;

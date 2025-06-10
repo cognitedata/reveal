@@ -29,7 +29,7 @@ describe(SetClipTypeCommand.name, () => {
     last?.setSelectedInteractive(true);
   });
 
-  test('Should have tooltips and icons', () => {
+  test('Should have tooltip and icon', () => {
     for (const newCommand of getCommands()) {
       const command = getDefaultCommand(newCommand, renderTarget);
       expect(isEmpty(command.tooltip)).toBe(false);
