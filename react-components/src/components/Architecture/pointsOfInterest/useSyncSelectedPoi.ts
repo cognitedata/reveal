@@ -1,6 +1,6 @@
 import { useEffect, useRef } from 'react';
 import { type PointOfInterest } from '../../../architecture';
-import { useOnUpdateDomainObject } from '../useOnUpdate';
+import { useOnUpdateDomainObject } from '../hooks/useOnUpdate';
 import { useRenderTarget } from '../../RevealCanvas';
 import { usePoiDomainObject } from './usePoiDomainObject';
 

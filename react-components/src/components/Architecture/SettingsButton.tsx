@@ -18,8 +18,8 @@ import { type BaseCommand } from '../../architecture/base/commands/BaseCommand';
 import { type BaseSettingsCommand } from '../../architecture/base/commands/BaseSettingsCommand';
 import { type FlexDirection, type PlacementType } from './types';
 import { type ReactNode, useState, type ReactElement } from 'react';
-import { useCommand } from './useCommand';
-import { useCommandVisible, useCommandProps, useSliderCommandValue } from './useCommandProps';
+import { useCommand } from './hooks/useCommand';
+import { useCommandVisible, useCommandProps, useSliderCommandValue } from './hooks/useCommandProps';
 import styled from 'styled-components';
 
 export const SettingsButton = ({

@@ -1,6 +1,6 @@
 import { useCallback, useEffect } from 'react';
-import { type BaseCommand } from '../../architecture/base/commands/BaseCommand';
-import { type DomainObject } from '../../architecture';
+import { type BaseCommand } from '../../../architecture/base/commands/BaseCommand';
+import { type DomainObject } from '../../../architecture';
 
 export const useOnUpdate = (command: BaseCommand | undefined, update: () => void): void => {
   const memoizedUpdate = useCallback(update, [command]);

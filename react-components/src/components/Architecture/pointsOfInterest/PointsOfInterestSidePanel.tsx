@@ -3,7 +3,7 @@ import { type PropsWithChildren, type ReactNode, useState } from 'react';
 import { useRenderTarget } from '../../RevealCanvas';
 import { PointsOfInterestTool } from '../../../architecture/concrete/pointsOfInterest/PointsOfInterestTool';
 import styled from 'styled-components';
-import { useOnUpdate } from '../useOnUpdate';
+import { useOnUpdate } from '../hooks/useOnUpdate';
 import { PoiInfoPanelContent } from './PoiInfoPanelContent';
 import { PoiList } from './PoiList';
 import { useSelectedPoi } from './useSelectedPoi';

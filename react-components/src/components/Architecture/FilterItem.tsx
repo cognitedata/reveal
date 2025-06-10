@@ -3,7 +3,7 @@ import { SelectPanel } from '@cognite/cogs-lab';
 import styled from 'styled-components';
 import { type Color } from 'three';
 import { type BaseFilterItemCommand } from '../../architecture/base/commands/BaseFilterCommand';
-import { useCommandProps } from './useCommandProps';
+import { useCommandProps } from './hooks/useCommandProps';
 
 export const FilterItem = ({ command }: { command: BaseFilterItemCommand }): ReactElement => {
   const { uniqueId, isVisible, isEnabled, isChecked } = useCommandProps(command);

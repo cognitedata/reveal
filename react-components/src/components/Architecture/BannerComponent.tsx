@@ -2,9 +2,9 @@ import { type BaseBannerCommand } from '../../architecture/base/commands/BaseBan
 import { type ReactNode } from 'react';
 import styled from 'styled-components';
 import { Infobox } from '@cognite/cogs.js';
-import { useCommandProperty } from './useCommandProperty';
-import { useCommand } from './useCommand';
-import { useCommandVisible } from './useCommandProps';
+import { useCommandProperty } from './hooks/useCommandProperty';
+import { useCommand } from './hooks/useCommand';
+import { useCommandVisible } from './hooks/useCommandProps';
 import { translate } from '../../architecture/base/utilities/translateUtils';
 
 export const BannerComponent = ({

@@ -1,6 +1,6 @@
-import { type BaseCommand } from '../../architecture/base/commands/BaseCommand';
-import { type BaseSliderCommand } from '../../architecture';
-import { type IconName } from '../../architecture/base/utilities/IconName';
+import { type BaseCommand } from '../../../architecture/base/commands/BaseCommand';
+import { type BaseSliderCommand } from '../../../architecture';
+import { type IconName } from '../../../architecture/base/utilities/IconName';
 import { useCommandProperty } from './useCommandProperty';
 
 type CommonCommandProps = {

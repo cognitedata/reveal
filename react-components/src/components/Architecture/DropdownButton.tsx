@@ -10,8 +10,8 @@ import { DEFAULT_PADDING, TOOLTIP_DELAY } from './constants';
 
 import styled from 'styled-components';
 import { type PlacementType } from './types';
-import { useCommand } from './useCommand';
-import { useCommandVisible, useCommandProps } from './useCommandProps';
+import { useCommand } from './hooks/useCommand';
+import { useCommandVisible, useCommandProps } from './hooks/useCommandProps';
 
 export const DropdownButton = ({
   inputCommand,

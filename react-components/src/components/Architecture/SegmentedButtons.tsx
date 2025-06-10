@@ -7,9 +7,9 @@ import { type BaseCommand } from '../../architecture/base/commands/BaseCommand';
 import { type BaseOptionCommand } from '../../architecture/base/commands/BaseOptionCommand';
 import { type PlacementType } from './types';
 import { type ReactElement } from 'react';
-import { useCommand } from './useCommand';
-import { useCommandProperty } from './useCommandProperty';
-import { useCommandProps } from './useCommandProps';
+import { useCommand } from './hooks/useCommand';
+import { useCommandProperty } from './hooks/useCommandProperty';
+import { useCommandProps } from './hooks/useCommandProps';
 import { useRenderTarget } from '../RevealCanvas/ViewerContext';
 
 export const SegmentedButtons = ({

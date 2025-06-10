@@ -25,9 +25,9 @@ import { TOOLBAR_HORIZONTAL_PANEL_OFFSET } from '../constants';
 import { offset } from '@floating-ui/dom';
 import styled from 'styled-components';
 import { type PlacementType } from './types';
-import { useCommandProperty } from './useCommandProperty';
-import { useCommand } from './useCommand';
-import { useCommandProps } from './useCommandProps';
+import { useCommandProperty } from './hooks/useCommandProperty';
+import { useCommand } from './hooks/useCommand';
+import { useCommandProps } from './hooks/useCommandProps';
 
 export const FilterButton = ({
   inputCommand,

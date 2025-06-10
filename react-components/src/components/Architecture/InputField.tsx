@@ -3,9 +3,9 @@ import { type BaseInputCommand } from '../../architecture/base/commands/BaseInpu
 import { type ReactNode } from 'react';
 import { useTranslation } from '../i18n/I18n';
 import { type TranslationInput } from '../../architecture';
-import { useCommand } from './useCommand';
-import { useCommandProps } from './useCommandProps';
-import { useCommandProperty } from './useCommandProperty';
+import { useCommand } from './hooks/useCommand';
+import { useCommandProps } from './hooks/useCommandProps';
+import { useCommandProperty } from './hooks/useCommandProperty';
 
 export const InputField = ({ inputCommand }: { inputCommand: BaseInputCommand }): ReactNode => {
   const { t } = useTranslation();

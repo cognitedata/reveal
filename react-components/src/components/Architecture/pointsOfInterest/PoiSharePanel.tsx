@@ -4,7 +4,7 @@ import { useTranslation } from '../../i18n/I18n';
 import { Button, Flex, Infobox, LinkIcon, ShareIcon, Switch, TextLabel } from '@cognite/cogs.js';
 import { Changes } from '../../../architecture';
 import styled from 'styled-components';
-import { useOnUpdateDomainObject } from '../useOnUpdate';
+import { useOnUpdateDomainObject } from '../hooks/useOnUpdate';
 import { usePoiDomainObject } from './usePoiDomainObject';
 
 export const PoiSharePanel = (): ReactNode => {

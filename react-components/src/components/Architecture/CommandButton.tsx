@@ -7,8 +7,8 @@ import { LabelWithShortcut } from './LabelWithShortcut';
 import { IconComponent } from './Factories/IconFactory';
 import { type PlacementType } from './types';
 import { TOOLTIP_DELAY } from './constants';
-import { useCommand } from './useCommand';
-import { useCommandProps } from './useCommandProps';
+import { useCommand } from './hooks/useCommand';
+import { useCommandProps } from './hooks/useCommandProps';
 
 export const CommandButton = ({
   inputCommand,
