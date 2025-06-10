@@ -1,6 +1,3 @@
-/*!
- * Copyright 2025 Cognite AS
- */
 import { describe, expect, test, vi, beforeEach } from 'vitest';
 import { cadModelOptions, createCadMock } from '#test-utils/fixtures/cadModel';
 import { createImage360ClassicMock, image360ClassicOptions } from '#test-utils/fixtures/image360';
@@ -81,10 +78,7 @@ describe('RevealModelsUtils', () => {
       image360ClassicOptions
     );
     expect(result).toBe(model);
-    const siteId =
-      image360ClassicOptions.source === 'events'
-        ? image360ClassicOptions.siteId
-        : image360ClassicOptions.externalId;
+    const siteId = image360ClassicOptions.siteId;
     expect(addFn).toHaveBeenCalledWith(
       'events',
       { site_id: siteId },

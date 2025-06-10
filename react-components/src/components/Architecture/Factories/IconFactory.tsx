@@ -1,7 +1,3 @@
-/*!
- * Copyright 2024 Cognite AS
- */
-
 import { type JSX } from 'react';
 import { type IconName } from '../../../architecture/base/utilities/IconName';
 import { type IconProps } from '@cognite/cogs.js';

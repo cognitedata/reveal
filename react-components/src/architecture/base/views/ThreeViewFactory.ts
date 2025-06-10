@@ -1,7 +1,3 @@
-/*!
- * Copyright 2025 Cognite AS
- */
-
 import { type DomainObject } from '../domainObjects/DomainObject';
 import { type Class } from '../domainObjectsHelpers/Class';
 import { type ThreeView } from './ThreeView';

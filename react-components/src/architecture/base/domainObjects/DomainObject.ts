@@ -1,7 +1,3 @@
-/*!
- * Copyright 2024 Cognite AS
- */
-
 import { type Color } from 'three';
 import { BLACK_COLOR, WHITE_COLOR } from '../utilities/colors/colorExtensions';
 import { type RenderStyle } from '../renderStyles/RenderStyle';

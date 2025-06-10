@@ -1,7 +1,3 @@
-/*!
- * Copyright 2024 Cognite AS
- */
-
 import { type WellKnownAsprsPointClassCodes } from '@cognite/reveal';
 import { type TranslationInput } from '../../utilities/TranslateInput';
 import { type Color } from 'three';

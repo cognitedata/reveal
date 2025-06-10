@@ -1,7 +1,3 @@
-/*!
- * Copyright 2025 Cognite AS
- */
-
 import { describe, expect, test } from 'vitest';
 import { CylinderCreator } from './CylinderCreator';
 import { Vector3 } from 'three';

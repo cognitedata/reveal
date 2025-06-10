@@ -1,6 +1,3 @@
-/*!
- * Copyright 2024 Cognite AS
- */
 import { Comment } from '@cognite/cogs.js';
 import { type BaseInputCommand } from '../../architecture/base/commands/BaseInputCommand';
 import { type ReactNode, useMemo, useState } from 'react';

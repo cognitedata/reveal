@@ -1,6 +1,3 @@
-/*!
- * Copyright 2023 Cognite AS
- */
 import type { Meta, StoryObj } from '@storybook/react';
 import { Image360CollectionContainer, Image360Details, RevealCanvas } from '../src';
 import { Color } from 'three';

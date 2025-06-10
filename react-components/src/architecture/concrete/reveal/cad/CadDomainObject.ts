@@ -1,7 +1,3 @@
-/*!
- * Copyright 2025 Cognite AS
- */
-
 import { type CogniteCadModel } from '@cognite/reveal';
 import { CadRenderStyle } from './CadRenderStyle';
 import { VisualDomainObject } from '../../../base/domainObjects/VisualDomainObject';

@@ -1,7 +1,3 @@
-/*!
- * Copyright 2024 Cognite AS
- */
-
 import { type Ray, Plane, type Box3 } from 'three';
 import { Changes } from '../../../base/domainObjectsHelpers/Changes';
 import { type PlaneDomainObject } from './PlaneDomainObject';

@@ -1,7 +1,3 @@
-/*!
- * Copyright 2024 Cognite AS
- */
-
 import { type CustomObjectIntersection, type AnyIntersection } from '@cognite/reveal';
 import { type DomainObject } from '../domainObjects/DomainObject';
 
