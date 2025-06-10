@@ -30,8 +30,9 @@ export const SettingsButton = ({
   placement: PlacementType;
 }): ReactElement => {
   const command = useCommand(inputCommand);
-  const [isOpen, setOpen] = useState(false);
   const { isVisible, isEnabled, icon } = useCommandProps(command);
+  const [isOpen, setOpen] = useState(false);
+
   if (!isVisible || !command.hasChildren) {
     return <></>;
   }

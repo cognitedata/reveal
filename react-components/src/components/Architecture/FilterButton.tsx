@@ -45,7 +45,6 @@ export const FilterButton = ({
   const isAllChecked = useCommandProperty(command, () => command.isAllChecked);
   const isSomeChecked = useCommandProperty(command, () => command.isSomeChecked);
   const selectedLabel = useCommandProperty(command, () => command.getSelectedLabel());
-
   const [isOpen, setOpen] = useState(false);
 
   const children = command.children;
