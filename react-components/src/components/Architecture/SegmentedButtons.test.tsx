@@ -11,7 +11,6 @@ import { viewerMock } from '#test-utils/fixtures/viewer';
 import { sdkMock } from '#test-utils/fixtures/sdk';
 import { ViewerContextProvider } from '../RevealCanvas/ViewerContext';
 import { CommandButton } from './CommandButton';
-import { translate } from '../../architecture/base/utilities/translateUtils';
 import { OptionType } from '../../architecture/base/commands/BaseOptionCommand';
 import { SegmentedButtons } from './SegmentedButtons';
 import userEvent from '@testing-library/user-event';
@@ -41,7 +40,7 @@ describe(CommandButton.name, () => {
 
       expect(button.getAttribute('type')).toBe('button');
       expect(button.getAttribute('aria-disabled')).toBe('false');
-      expect(button.getAttribute('aria-label')).toBe(option.getLabel(translate));
+      expect(button.getAttribute('aria-label')).toBe(option.label);
       expect(button.getAttribute('aria-selected')).toBe(option.isChecked.toString());
 
       const buttonClass = button.getAttribute('class');
