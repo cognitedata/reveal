@@ -1,7 +1,6 @@
 import { type ReactElement } from 'react';
 import { useRenderTarget } from '../RevealCanvas/ViewerContext';
 import { Button, Tooltip as CogsTooltip } from '@cognite/cogs.js';
-import { useTranslation } from '../i18n/I18n';
 import { type BaseCommand } from '../../architecture/base/commands/BaseCommand';
 import { getButtonType, getTooltipPlacement } from './utilities';
 import { LabelWithShortcut } from './LabelWithShortcut';
@@ -19,14 +18,13 @@ export const CommandButton = ({
   placement: PlacementType;
 }): ReactElement => {
   const renderTarget = useRenderTarget();
-  const { t } = useTranslation();
   const command = useCommand(inputCommand);
 
   const { icon, uniqueId, isVisible, isEnabled, isChecked } = useCommandProps(command);
   if (!isVisible) {
     return <></>;
   }
-  const label = command.getLabel(t);
+  const label = command.label;
 
   return (
     <CogsTooltip

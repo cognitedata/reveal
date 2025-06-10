@@ -2,12 +2,10 @@ import { Button, Tooltip as CogsTooltip, ChevronDownIcon, ChevronUpIcon } from '
 import { Menu, Option, Select } from '@cognite/cogs-lab';
 import { useState, type ReactElement, type SetStateAction, type Dispatch } from 'react';
 
-import { useTranslation } from '../i18n/I18n';
 import { type BaseCommand } from '../../architecture/base/commands/BaseCommand';
 import { type BaseOptionCommand } from '../../architecture/base/commands/BaseOptionCommand';
 import { getButtonType, getTooltipPlacement } from './utilities';
 import { LabelWithShortcut } from './LabelWithShortcut';
-import { type TranslateDelegate } from '../../architecture/base/utilities/TranslateInput';
 import { DEFAULT_PADDING, TOOLTIP_DELAY } from './constants';
 
 import styled from 'styled-components';
@@ -43,8 +41,6 @@ const DropdownElement = ({
   command: BaseOptionCommand;
   placement: PlacementType;
 }): ReactElement => {
-  const { t } = useTranslation();
-
   const { uniqueId, isEnabled } = useCommandProps(command);
   const [isOpen, setOpen] = useState(false);
 
@@ -52,8 +48,8 @@ const DropdownElement = ({
     return <></>;
   }
 
-  const label = command.getLabel(t);
-  const selectedLabel = command.selectedChild?.getLabel(t);
+  const label = command.label;
+  const selectedLabel = command.selectedChild?.label;
   const isDisabled = label === undefined || isOpen;
   const OpenButtonIcon = isOpen ? ChevronUpIcon : ChevronDownIcon;
   return (
@@ -79,7 +75,7 @@ const DropdownElement = ({
             key={uniqueId}
             disabled={!isEnabled}
             iconPlacement="left"
-            aria-label={command.getLabel(t)}
+            aria-label={command.label}
             toggled={isOpen}
             {...props}
             onClick={(event) => {
@@ -91,32 +87,30 @@ const DropdownElement = ({
           </Button>
         </CogsTooltip>
       )}>
-      {command.children.map((child) => createMenuItem(child, setOpen, t))}
+      {command.children.map((child) => createMenuItem(child, setOpen))}
     </Menu>
   );
 };
 
 const MenuItemWithDropdown = ({ command }: { command: BaseOptionCommand }): ReactElement => {
-  const { t } = useTranslation();
-  const label = command.getLabel(t);
+  const label = command.label;
 
   if (command.children === undefined) {
     return <></>;
   }
-
   return (
     <StyledDropdownRow>
       <StyledLabel>{label}</StyledLabel>
       <StyledSelect
         defaultValue={command.selectedChild}
         fullWidth
-        aria-label={command.getLabel(t)}
+        aria-label={command.label}
         onChange={(_event, value) => {
           value?.invoke();
         }}>
         {command.children.map((child) => (
           <Option value={child} key={child.uniqueId}>
-            {child.getLabel(t)}
+            {child.label}
           </Option>
         ))}
       </StyledSelect>
@@ -126,8 +120,7 @@ const MenuItemWithDropdown = ({ command }: { command: BaseOptionCommand }): Reac
 
 function createMenuItem(
   command: BaseCommand,
-  setOpen: Dispatch<SetStateAction<boolean>>,
-  t: TranslateDelegate
+  setOpen: Dispatch<SetStateAction<boolean>>
 ): ReactElement {
   const { uniqueId, isEnabled, isChecked } = useCommandProps(command);
   return (
@@ -135,7 +128,7 @@ function createMenuItem(
       key={uniqueId}
       disabled={!isEnabled}
       toggled={isChecked}
-      label={command.getLabel(t)}
+      label={command.label}
       onClick={() => {
         command.invoke();
         setOpen(false);

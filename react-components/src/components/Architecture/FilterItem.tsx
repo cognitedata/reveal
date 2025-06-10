@@ -1,14 +1,11 @@
 import { type ReactElement } from 'react';
 import { SelectPanel } from '@cognite/cogs-lab';
-import { useTranslation } from '../i18n/I18n';
 import styled from 'styled-components';
 import { type Color } from 'three';
 import { type BaseFilterItemCommand } from '../../architecture/base/commands/BaseFilterCommand';
 import { useCommandProps } from './useCommandProps';
 
 export const FilterItem = ({ command }: { command: BaseFilterItemCommand }): ReactElement => {
-  const { t } = useTranslation();
-
   const { uniqueId, isVisible, isEnabled, isChecked } = useCommandProps(command);
   if (!isVisible) {
     return <></>;
@@ -27,7 +24,7 @@ export const FilterItem = ({ command }: { command: BaseFilterItemCommand }): Rea
       onClick={() => {
         command.invoke();
       }}
-      label={command.getLabel(t)}
+      label={command.label}
     />
   );
 };

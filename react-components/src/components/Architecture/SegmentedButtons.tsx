@@ -11,7 +11,6 @@ import { useCommand } from './useCommand';
 import { useCommandProperty } from './useCommandProperty';
 import { useCommandProps } from './useCommandProps';
 import { useRenderTarget } from '../RevealCanvas/ViewerContext';
-import { useTranslation } from '../i18n/I18n';
 
 export const SegmentedButtons = ({
   inputCommand,
@@ -21,7 +20,6 @@ export const SegmentedButtons = ({
   placement: PlacementType;
 }): ReactElement => {
   const renderTarget = useRenderTarget();
-  const { t } = useTranslation();
   const command = useCommand(inputCommand);
   const { uniqueId, isVisible, isEnabled } = useCommandProps(command);
   const selected = useCommandProperty(command, () => getSelectedKey(command));
@@ -29,7 +27,7 @@ export const SegmentedButtons = ({
   if (!isVisible || command.children === undefined) {
     return <></>;
   }
-  const label = command.getLabel(t);
+  const label = command.label;
 
   return (
     <CogsTooltip
@@ -59,8 +57,8 @@ export const SegmentedButtons = ({
             key={getKey(child)}
             icon={<IconComponent iconName={child.icon} />}
             disabled={!isEnabled}
-            aria-label={child.getLabel(t)}>
-            {child.getLabel(t)}
+            aria-label={child.label}>
+            {child.label}
           </SegmentedControl.Button>
         ))}
       </SegmentedControl>

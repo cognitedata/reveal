@@ -1,4 +1,3 @@
-import { type TranslateDelegate } from '../../architecture';
 import { type BaseBannerCommand } from '../../architecture/base/commands/BaseBannerCommand';
 import { type ReactNode } from 'react';
 import styled from 'styled-components';
@@ -6,13 +5,12 @@ import { Infobox } from '@cognite/cogs.js';
 import { useCommandProperty } from './useCommandProperty';
 import { useCommand } from './useCommand';
 import { useCommandVisible } from './useCommandProps';
+import { translate } from '../../architecture/base/utilities/translateUtils';
 
 export const BannerComponent = ({
-  command: inputCommand,
-  t
+  command: inputCommand
 }: {
   command: BaseBannerCommand;
-  t: TranslateDelegate;
 }): ReactNode => {
   const command = useCommand(inputCommand);
   const isVisible = useCommandVisible(command);
@@ -21,7 +19,8 @@ export const BannerComponent = ({
   if (!isVisible) {
     return null;
   }
-  return <StyledInfobox status={status}>{t(content)}</StyledInfobox>;
+
+  return <StyledInfobox status={status}>{translate(content)}</StyledInfobox>;
 };
 
 const StyledInfobox = styled(Infobox)`

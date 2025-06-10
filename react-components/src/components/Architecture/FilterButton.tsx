@@ -13,7 +13,6 @@ import {
   Flex
 } from '@cognite/cogs.js';
 import { Menu, SelectPanel } from '@cognite/cogs-lab';
-import { useTranslation } from '../i18n/I18n';
 import { getButtonType, getTooltipPlacement } from './utilities';
 import { LabelWithShortcut } from './LabelWithShortcut';
 import { BaseFilterCommand } from '../../architecture/base/commands/BaseFilterCommand';
@@ -41,15 +40,13 @@ export const FilterButton = ({
 }): ReactElement => {
   const command = useCommand(inputCommand);
   command.initializeChildrenIfNeeded();
-  const { t } = useTranslation();
 
   const { icon, isVisible, isEnabled } = useCommandProps(command);
   const isAllChecked = useCommandProperty(command, () => command.isAllChecked);
   const isSomeChecked = useCommandProperty(command, () => command.isSomeChecked);
-  const selectedLabel = useCommandProperty(command, () => command.getSelectedLabel(t));
+  const selectedLabel = useCommandProperty(command, () => command.getSelectedLabel());
 
   const [isOpen, setOpen] = useState(false);
-  const label = command.getLabel(t);
 
   const children = command.children;
   if (!isVisible || children === undefined || children.length === 0) {
@@ -60,13 +57,13 @@ export const FilterButton = ({
       command={command}
       isAllChecked={isAllChecked}
       isSomeChecked={isSomeChecked}
-      label={label}
+      label={command.label}
     />
   );
 
   return usedInSettings ? (
     <FilterDropdown
-      label={label}
+      label={command.label}
       selectedLabel={selectedLabel}
       isOpen={isOpen}
       setOpen={setOpen}
@@ -77,7 +74,7 @@ export const FilterButton = ({
       command={command}
       placement={getTooltipPlacement(placement)}
       iconName={icon}
-      label={label}
+      label={command.label}
       isOpen={isOpen}
       setOpen={setOpen}
       isEnabled={isEnabled}
@@ -105,8 +102,6 @@ const FilterMenu = ({
   iconName: IconName;
   PanelContent: ReactElement;
 }): ReactElement => {
-  const { t } = useTranslation();
-
   return (
     <Menu
       floatingProps={{ middleware: [offset(TOOLBAR_HORIZONTAL_PANEL_OFFSET)] }}
@@ -124,7 +119,7 @@ const FilterMenu = ({
             disabled={!isEnabled}
             toggled={isOpen}
             iconPlacement="left"
-            aria-label={command.getLabel(t)}
+            aria-label={command.label}
             {...props}
             onClick={(event: MouseEvent<HTMLElement>) => {
               event.stopPropagation();
@@ -192,8 +187,6 @@ const FilterSelectPanelContent = ({
   isAllChecked: boolean;
   isSomeChecked: boolean;
 }): ReactElement => {
-  const { t } = useTranslation();
-
   const children = command.children;
 
   return (
@@ -207,8 +200,8 @@ const FilterSelectPanelContent = ({
           onClick={() => {
             command.toggleAllChecked();
           }}
-          label={BaseFilterCommand.getAllString(t)}>
-          {BaseFilterCommand.getAllString(t)}
+          label={BaseFilterCommand.getAllString()}>
+          {BaseFilterCommand.getAllString()}
         </SelectPanel.Item>
       </SelectPanel.Section>
       <SelectPanel.Body style={{ maxHeight: '300px' }}>
