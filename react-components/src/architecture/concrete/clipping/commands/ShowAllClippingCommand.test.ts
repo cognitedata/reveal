@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, test } from 'vitest';
-import { createFullRenderTargetMock } from '../../../../../tests/tests-utilities/fixtures/createFullRenderTargetMock';
+import { createFullRenderTargetMock } from '#test-utils/fixtures/createFullRenderTargetMock';
 import { CropBoxDomainObject } from '../CropBoxDomainObject';
 import { isEmpty } from '../../../base/utilities/TranslateInput';
 import { lastElement } from '../../../base/utilities/extensions/arrayExtensions';

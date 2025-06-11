@@ -1,7 +1,7 @@
 import { beforeEach, describe, expect, test, vi } from 'vitest';
 import { PrimitiveType } from '../../../base/utilities/primitives/PrimitiveType';
 import { isEmpty } from '../../../base/utilities/TranslateInput';
-import { createFullRenderTargetMock } from '../../../../../tests/tests-utilities/fixtures/createFullRenderTargetMock';
+import { createFullRenderTargetMock } from '#test-utils/fixtures/createFullRenderTargetMock';
 import { type RevealRenderTarget } from '../../../base/renderTarget/RevealRenderTarget';
 import { SliceDomainObject } from '../SliceDomainObject';
 import { FlipSliceCommand } from './FlipSliceCommand';
