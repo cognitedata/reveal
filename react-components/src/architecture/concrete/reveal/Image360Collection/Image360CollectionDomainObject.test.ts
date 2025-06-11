@@ -32,18 +32,18 @@ describe(Image360CollectionDomainObject.name, () => {
     expect(onEventType0).toBe('image360Entered');
     expect(onEventType1).toBe('image360Exited');
 
-    expect(vi.mocked(renderTargetMock.commandsController.update)).not.toHaveBeenCalled();
+    expect(renderTargetMock.commandsController.update).not.toHaveBeenCalled();
 
     registeredCallback0();
 
     await waitFor(async () => {
-      expect(vi.mocked(renderTargetMock.commandsController.update)).toHaveBeenCalledTimes(1);
+      expect(renderTargetMock.commandsController.update).toHaveBeenCalledTimes(1);
     });
 
     registeredCallback1();
 
     await waitFor(async () => {
-      expect(vi.mocked(renderTargetMock.commandsController.update)).toHaveBeenCalledTimes(2);
+      expect(renderTargetMock.commandsController.update).toHaveBeenCalledTimes(2);
     });
   });
 
@@ -60,7 +60,7 @@ describe(Image360CollectionDomainObject.name, () => {
 
     domainObject.removeInteractive();
 
-    expect(vi.mocked(viewerMock).remove360ImageSet).toHaveBeenCalledWith(image360Collection);
+    expect(viewerMock.remove360ImageSet).toHaveBeenCalledWith(image360Collection);
     expect(vi.mocked(image360Collection.off).mock.calls[0]).toEqual(eventAndListener0);
     expect(vi.mocked(image360Collection.off).mock.calls[1]).toEqual(eventAndListener1);
   });
