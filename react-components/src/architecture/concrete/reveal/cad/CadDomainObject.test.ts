@@ -1,24 +1,25 @@
 import { describe, expect, test } from 'vitest';
-import { PointCloudDomainObject } from './PointCloudDomainObject';
-import { createPointCloudMock } from '../../../../../tests/tests-utilities/fixtures/pointCloud';
-import { PointCloudRenderStyle } from './PointCloudRenderStyle';
 import { createFullRenderTargetMock } from '../../../../../tests/tests-utilities/fixtures/createFullRenderTargetMock';
+import { CogniteCadModel } from '@cognite/reveal';
+import { createCadMock } from '../../../../../tests/tests-utilities/fixtures/cadModel';
+import { CadRenderStyle } from './CadRenderStyle';
+import { CadDomainObject } from './CadDomainObject';
 
-describe(PointCloudDomainObject.name, () => {
+describe(CogniteCadModel.name, () => {
   test('has expected default values', () => {
-    const model = createPointCloudMock();
-    const domainObject = new PointCloudDomainObject(model);
+    const model = createCadMock({ visible: false });
+    const domainObject = new CadDomainObject(model);
 
     expect(domainObject.model).toBe(model);
-    expect(domainObject.typeName).toEqual({ untranslated: 'PointCloud' });
-    expect(domainObject.icon).toEqual('PointCloud');
+    expect(domainObject.typeName).toEqual({ untranslated: 'CAD' });
+    expect(domainObject.icon).toEqual('Cubes');
     expect(domainObject.hasIconColor).toEqual(false);
-    expect(domainObject.createRenderStyle()).toBeInstanceOf(PointCloudRenderStyle);
+    expect(domainObject.createRenderStyle()).toBeInstanceOf(CadRenderStyle);
   });
 
   test('should be removed', async () => {
-    const model = createPointCloudMock();
-    const domainObject = new PointCloudDomainObject(model);
+    const model = createCadMock({ visible: false });
+    const domainObject = new CadDomainObject(model);
 
     const renderTarget = createFullRenderTargetMock();
     renderTarget.rootDomainObject.addChild(domainObject);
@@ -27,8 +28,8 @@ describe(PointCloudDomainObject.name, () => {
   });
 
   test('should be set visible', async () => {
-    const model = createPointCloudMock({ visible: false });
-    const domainObject = new PointCloudDomainObject(model);
+    const model = createCadMock({ visible: false });
+    const domainObject = new CadDomainObject(model);
     const renderTarget = createFullRenderTargetMock();
     renderTarget.rootDomainObject.addChild(domainObject);
 
