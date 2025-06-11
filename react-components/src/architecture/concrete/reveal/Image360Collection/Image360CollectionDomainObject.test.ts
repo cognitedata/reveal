@@ -16,7 +16,7 @@ describe(Image360CollectionDomainObject.name, () => {
     expect(domainObject.typeName).toEqual({ untranslated: 'Image360' });
     expect(domainObject.icon).toEqual('View360');
     expect(domainObject.hasIconColor).toEqual(false);
-    expect(domainObject.createRenderStyle).toBeInstanceOf(Image360CollectionRenderStyle);
+    expect(domainObject.createRenderStyle()).toBeInstanceOf(Image360CollectionRenderStyle);
   });
 
   test('should register event listeners for entering and exiting, which calls the command updater', async () => {
