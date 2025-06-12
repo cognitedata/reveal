@@ -3,7 +3,6 @@ import { BaseFilterCommand } from './BaseFilterCommand';
 import { MockFilterCommand } from '../../../../tests/tests-utilities/architecture/mock-commands/MockFilterCommand';
 import { createRenderTargetMock } from '../../../../tests/tests-utilities/fixtures/renderTarget';
 import { isOdd } from '../utilities/extensions/mathExtensions';
-import { translate } from '../utilities/translateUtils';
 
 describe(BaseFilterCommand.name, () => {
   let command: MockFilterCommand;
@@ -24,7 +23,7 @@ describe(BaseFilterCommand.name, () => {
       expect(command.isAllChecked).toBe(false);
       expect(command.isSomeChecked).toBe(false);
       expect(command.toggleAllChecked()).toBe(false);
-      expect(command.getSelectedLabel(translate)).toBe('None');
+      expect(command.getSelectedLabel()).toBe('None');
     });
   });
 
@@ -46,7 +45,7 @@ describe(BaseFilterCommand.name, () => {
       }
       expect(command.isSomeChecked).toBe(false);
       expect(command.isAllChecked).toBe(false);
-      expect(command.getSelectedLabel(translate)).toBe('None');
+      expect(command.getSelectedLabel()).toBe('None');
     });
 
     test('should have some checked', () => {
@@ -58,7 +57,7 @@ describe(BaseFilterCommand.name, () => {
       }
       expect(command.isSomeChecked).toBe(true);
       expect(command.isAllChecked).toBe(false);
-      expect(command.getSelectedLabel(translate)).toBe('7 Selected');
+      expect(command.getSelectedLabel()).toBe('7 Selected');
     });
 
     test('should have all checked', () => {
@@ -68,7 +67,7 @@ describe(BaseFilterCommand.name, () => {
       }
       expect(command.isSomeChecked).toBe(true);
       expect(command.isAllChecked).toBe(true);
-      expect(command.getSelectedLabel(translate)).toBe('All');
+      expect(command.getSelectedLabel()).toBe('All');
     });
 
     test('should toggle all checked', () => {
@@ -88,7 +87,7 @@ describe(BaseFilterCommand.name, () => {
       assert(command.children !== undefined);
       let childIndex = 0;
       for (const option of command.children) {
-        expect(option.getLabel(translate)).not.toBe('');
+        expect(option.label).not.toBe('');
         if (childIndex < command.children.length - 1) {
           expect(option.color).toBeDefined();
         }
