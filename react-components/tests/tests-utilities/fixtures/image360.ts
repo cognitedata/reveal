@@ -45,6 +45,11 @@ export function createImage360ClassicMock(parameters?: {
       getIconsVisibilityMock.mockReturnValue(visible);
     });
 
+  const onEventMock =
+    vi.fn<(event: 'image360Entered' | 'image360Exited', callback: () => void) => void>();
+  const offEventMock =
+    vi.fn<(event: 'image360Entered' | 'image360Exited', callback: () => void) => void>();
+
   return new Mock<Image360Collection<ClassicDataSourceType>>()
     .setup((p) => p.id)
     .returns('siteId')
@@ -52,6 +57,10 @@ export function createImage360ClassicMock(parameters?: {
     .returns(getIconsVisibilityMock)
     .setup((p) => p.setIconsVisibility)
     .returns(setIconsVisibilityMock)
+    .setup((p) => p.on)
+    .returns(onEventMock)
+    .setup((p) => p.off)
+    .returns(offEventMock)
     .object();
 }
 

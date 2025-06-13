@@ -15,6 +15,7 @@ const domElement = document.createElement('div').appendChild(document.createElem
 
 export const viewerModelsMock = vi.fn<() => Cognite3DViewer['models']>();
 export const viewerRemoveModelsMock = vi.fn<Cognite3DViewer['removeModel']>();
+export const viewerRemove360ImageSet = vi.fn<Cognite3DViewer['remove360ImageSet']>();
 export const viewerAddCadModelMock = vi.fn<Cognite3DViewer['addCadModel']>();
 export const viewerAddPointCloudModelMock = vi.fn<Cognite3DViewer['addPointCloudModel']>();
 export const viewerAdd360ImageSetMock = vi.fn();
@@ -62,6 +63,8 @@ export function createViewerMock(): ViewerMock {
       .returns(viewerImage360CollectionsMock)
       .setup((p) => p.removeModel)
       .returns(viewerRemoveModelsMock)
+      .setup((p) => p.remove360ImageSet)
+      .returns(viewerRemove360ImageSet)
       .setup((p) => p.addCadModel)
       .returns(viewerAddCadModelMock)
       .setup((p) => p.addPointCloudModel)
