@@ -1,7 +1,7 @@
 import { describe, test, expect } from 'vitest';
 import { FolderDomainObject } from './FolderDomainObject';
 
-describe('FolderDomainObject', () => {
+describe(FolderDomainObject.name, () => {
   test('should have following default values', () => {
     const domainObject = new FolderDomainObject();
     expect(domainObject.label).toBe('Folder');

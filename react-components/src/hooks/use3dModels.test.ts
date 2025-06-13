@@ -18,7 +18,7 @@ vi.mock('../components/Reveal3DResources/Reveal3DResourcesInfoContext', () => ({
   useReveal3DResourcesCount: () => mockResourceCount
 }));
 
-describe('use3dModels', () => {
+describe(use3dModels.name, () => {
   beforeEach(() => {
     vi.resetAllMocks();
   });
