@@ -61,7 +61,7 @@ export function drag(
   dragger.onPointerUp(new PointerEvent('pointermove', { shiftKey }));
   expect(actualChanged).toBe(expectedChange);
 
-  // Test of notifications has happened
+  // Test if notifications has happened
   draggerTester.toHaveBeenCalledTimes(expectedChange ? 1 : 0);
   focusTester.toHaveBeenCalledTimes(expectedFocusChange ? 1 : 0);
   if (expectedChange) {
