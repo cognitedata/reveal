@@ -100,6 +100,7 @@ describe(BaseFilterCommand.name, () => {
         option.setChecked(false);
         expect(option.isChecked).toBe(false);
         option.invoke();
+        expect(option.isChecked).toBe(true);
       }
     });
   });
