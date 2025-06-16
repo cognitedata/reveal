@@ -97,7 +97,7 @@ describe(BaseFilterCommand.name, () => {
     test('should be checked after invoke', () => {
       assert(command.children !== undefined);
       for (const option of command.children) {
-        option.setChecked(false);
+        option.setChecked(false); // To be sure that is in not checked fore invoke
         expect(option.isChecked).toBe(false);
         option.invoke();
         expect(option.isChecked).toBe(true);
