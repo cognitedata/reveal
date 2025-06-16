@@ -18,9 +18,11 @@ import {
 describe(CylinderDragger.name, () => {
   test('should not create correct dragger when focus type is None', () => {
     const domainObject = createVerticalCylinderDomainObject();
+
+    // Point toward the center of the cylinder from top.
     const startRay = new Ray(new Vector3(0, 0, 2), new Vector3(0, 0, -1));
     const dragger = domainObject.createDragger(
-      createCreateDraggerPropsMock(domainObject, startRay, FocusType.None)
+      createDraggerPropsMock(domainObject, startRay, FocusType.None)
     );
     expect(dragger).toBeUndefined();
   });
@@ -28,13 +30,15 @@ describe(CylinderDragger.name, () => {
   test('should not change when illegal focus type', () => {
     const focusType = FocusType.Focus;
     const domainObject = createVerticalCylinderDomainObject();
+
+    // Point toward the center of the cylinder from top.
     const direction = new Vector3(0, 0, -1);
     const startRay = new Ray(new Vector3(0, 0, 2), direction);
-    const delta = new Vector3(1, 2, 0);
+    const delta = new Vector3(1, 2, 0); // Move in XY plane
 
     const expectedBox = clone(domainObject.cylinder);
     const dragger = domainObject.createDragger(
-      createCreateDraggerPropsMock(domainObject, startRay, focusType, 5)
+      createDraggerPropsMock(domainObject, startRay, focusType, 2) // face=2 is the the top cap of the cylinder.
     );
     assert(dragger !== undefined);
     expect(dragger).instanceOf(CylinderDragger);
@@ -48,19 +52,20 @@ describe(CylinderDragger.name, () => {
       const { sign } = testCase;
       const domainObject = createVerticalCylinderDomainObject();
 
-      // Grab the cylinder at top cap from above and move it in the XY plane
+      // Point toward the center of the cylinder from top.
       const direction = new Vector3(0, 0, -sign);
       const startRay = new Ray(new Vector3(0, 0, sign * 2), direction);
       const delta = new Vector3();
 
       const expectedCylinder = clone(domainObject.cylinder);
       if (testCase.expectedChange) {
-        delta.set(1, 2, 0);
+        delta.set(1, 2, 0); // move it in the XY plane, 1 and 2 is arbitrary numbers
         expectedCylinder.centerA.add(delta);
         expectedCylinder.centerB.add(delta);
       }
+      // face=2 is the the top cap of the cylinder, face 5 is the base cap.
       const dragger = domainObject.createDragger(
-        createCreateDraggerPropsMock(domainObject, startRay, focusType, sign > 0 ? 5 : 2)
+        createDraggerPropsMock(domainObject, startRay, focusType, sign > 0 ? 5 : 2)
       );
       assert(dragger !== undefined);
       drag(dragger, startRay, delta, testCase);
@@ -73,18 +78,18 @@ describe(CylinderDragger.name, () => {
     for (const testCase of getTestCases()) {
       const domainObject = createVerticalCylinderDomainObject();
 
-      // Grab the cylinder from the side and move it away from the center
+      // Point towards the side of the cylinder and move it away from the center
       const direction = new Vector3(0, 1, 0);
       const startRay = new Ray(new Vector3(1, -2, 0), direction);
       const delta = new Vector3();
 
       const expectedCylinder = clone(domainObject.cylinder);
       if (testCase.expectedChange) {
-        delta.x = 1;
+        delta.x = 1; // Move on unit long the x-axis.
         expectedCylinder.radius += 1;
       }
       const dragger = domainObject.createDragger(
-        createCreateDraggerPropsMock(domainObject, startRay, focusType, 0)
+        createDraggerPropsMock(domainObject, startRay, focusType)
       );
       assert(dragger !== undefined);
       drag(dragger, startRay, delta, testCase);
@@ -123,7 +128,7 @@ describe(CylinderDragger.name, () => {
         delta.x = 1;
       }
       const dragger = domainObject.createDragger(
-        createCreateDraggerPropsMock(domainObject, startRay, focusType, sign > 0 ? 5 : 2)
+        createDraggerPropsMock(domainObject, startRay, focusType, sign > 0 ? 5 : 2)
       );
       assert(dragger !== undefined);
       drag(dragger, startRay, delta, testCase);
@@ -163,7 +168,7 @@ describe(CylinderDragger.name, () => {
         }
       }
       const dragger = domainObject.createDragger(
-        createCreateDraggerPropsMock(domainObject, startRay, focusType, sign > 0 ? 5 : 2)
+        createDraggerPropsMock(domainObject, startRay, focusType, sign > 0 ? 5 : 2)
       );
       assert(dragger !== undefined);
       drag(dragger, startRay, delta, testCase);
@@ -197,7 +202,7 @@ describe(CylinderDragger.name, () => {
         delta.x = 1;
       }
       const dragger = domainObject.createDragger(
-        createCreateDraggerPropsMock(domainObject, startRay, focusType, sign > 0 ? 5 : 2)
+        createDraggerPropsMock(domainObject, startRay, focusType, sign > 0 ? 5 : 2)
       );
       assert(dragger !== undefined);
       drag(dragger, startRay, delta, testCase);
@@ -206,7 +211,7 @@ describe(CylinderDragger.name, () => {
   });
 });
 
-function createCreateDraggerPropsMock(
+function createDraggerPropsMock(
   domainObject: CylinderDomainObject,
   ray: Ray,
   focusType: FocusType,

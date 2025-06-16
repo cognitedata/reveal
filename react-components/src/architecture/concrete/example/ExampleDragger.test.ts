@@ -27,9 +27,7 @@ describe(ExampleDragger.name, () => {
         delta.set(0, testCase.sign, testCase.sign);
         expectedCenter.add(delta);
       }
-      const dragger = domainObject.createDragger(
-        createCreateDraggerPropsMock(domainObject, startRay)
-      );
+      const dragger = domainObject.createDragger(createDraggerPropsMock(domainObject, startRay));
       assert(dragger !== undefined);
       expect(dragger).instanceOf(ExampleDragger);
       drag(dragger, startRay, delta, testCase, false);
@@ -38,10 +36,7 @@ describe(ExampleDragger.name, () => {
   });
 });
 
-function createCreateDraggerPropsMock(
-  domainObject: ExampleDomainObject,
-  ray: Ray
-): CreateDraggerProps {
+function createDraggerPropsMock(domainObject: ExampleDomainObject, ray: Ray): CreateDraggerProps {
   const style = domainObject.getRenderStyle() as ExampleRenderStyle;
   const center = domainObject.center.clone();
   const sphere = new Sphere(center, style.radius);
