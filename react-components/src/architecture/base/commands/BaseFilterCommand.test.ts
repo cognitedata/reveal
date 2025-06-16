@@ -94,7 +94,7 @@ describe(BaseFilterCommand.name, () => {
         childIndex++;
       }
     });
-    test('should checked when invoke', () => {
+    test('should be checked after invoke', () => {
       assert(command.children !== undefined);
       for (const option of command.children) {
         option.setChecked(false);
