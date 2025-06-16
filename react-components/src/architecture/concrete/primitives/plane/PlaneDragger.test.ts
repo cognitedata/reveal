@@ -38,7 +38,7 @@ describe(PlaneDragger.name, () => {
         delta.set(0, sign, 0);
         // The plane is vertical, and cross the XY plane by 45 degree angle.
         // Moving it in one unit in the Y direction will result in moving the plane
-        // by sqrt(2) in the direction of the normal. (sqrt(1^2 + 1^2)
+        // by sqrt(2) in the direction of the normal. (sqrt(1^2 + 1^2))
         expectedPlane.constant -= sign * Math.sqrt(2);
       }
       const dragger = domainObject.createDragger(
