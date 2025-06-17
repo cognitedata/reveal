@@ -204,7 +204,7 @@ describe(searchClassicAssetsForModels.name, () => {
 
         const results = await searchClassicAssetsForModels(
           [taggedCadModelOptions],
-          { filters: { advancedfilter: queryFilter }, limit: ARBITRARY_SEARCH_LIMIT },
+          { filters: { advancedFilter: queryFilter }, limit: ARBITRARY_SEARCH_LIMIT },
           mockSdk,
           mockRenderTarget
         );
