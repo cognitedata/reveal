@@ -3,7 +3,7 @@ import { isInternalId } from '../../utilities/instanceIds';
 import { type IdEither } from '@cognite/sdk';
 import { type AssetAdvancedFilterProps } from './types';
 
-export function buildQueryFilter(query: string): AssetAdvancedFilterProps | undefined {
+export function buildClassicAssetQueryFilter(query: string): AssetAdvancedFilterProps | undefined {
   if (query === '') {
     return undefined;
   }
@@ -18,7 +18,9 @@ export function buildQueryFilter(query: string): AssetAdvancedFilterProps | unde
   };
 }
 
-export function buildAssetIdFilter(assetRefs: IdEither[]): AssetAdvancedFilterProps | undefined {
+export function buildClassicAssetIdFilter(
+  assetRefs: IdEither[]
+): AssetAdvancedFilterProps | undefined {
   const [internalIdEithers, externalIdEithers] = partition(assetRefs, isInternalId);
   const internalIds = internalIdEithers.map((internalIdEither) => internalIdEither.id);
   const externalIds = externalIdEithers.map((externalIdEither) => externalIdEither.externalId);
@@ -53,7 +55,7 @@ function buildAssetExternalIdFilter(externalIds: string[]): AssetAdvancedFilterP
   };
 }
 
-export function combineAdvancedFilters(
+export function combineClassicAssetFilters(
   filters: Array<AssetAdvancedFilterProps | undefined>
 ): AssetAdvancedFilterProps | undefined {
   const definedFilters = filters.filter((filter) => filter !== undefined);
