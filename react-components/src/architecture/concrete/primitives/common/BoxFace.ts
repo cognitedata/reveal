@@ -2,9 +2,12 @@ import { type Matrix4, Plane, Vector2, Vector3 } from 'three';
 
 /**
  * Represents a face of a box.
+ *  Face is 0-5, where 0-2 are positive faces and 3-5 are negative faces as this:
+ *  Face 0, and 3 is towards X-axis
+ *  Face 1, and 4 is towards Y-axis
+ *  Face 2, and 5 is towards Z-axis
  */
 export class BoxFace {
-  // Face is 0-5, where 0-2 are positive faces and 3-5 are negative faces
   private _face: number = 0;
 
   // ==================================================
