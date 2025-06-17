@@ -1,6 +1,6 @@
 import { renderHook } from '@testing-library/react';
 import { act, type PropsWithChildren, type ReactElement } from 'react';
-import { beforeAll, describe, expect, test } from 'vitest';
+import { beforeEach, describe, expect, test } from 'vitest';
 
 import { useGhostMode } from './useGhostMode';
 import { type RevealRenderTarget } from '../architecture';
@@ -13,7 +13,7 @@ describe(useGhostMode.name, () => {
   let renderTarget: RevealRenderTarget;
   let command: SetGhostModeCommand;
 
-  beforeAll(() => {
+  beforeEach(() => {
     renderTarget = createFullRenderTargetMock();
     // This add the SetGhostModeCommand to the list of available commends
     command = getDefaultCommand(new SetGhostModeCommand(), renderTarget);

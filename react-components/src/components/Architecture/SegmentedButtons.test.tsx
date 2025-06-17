@@ -26,7 +26,7 @@ describe(CommandButton.name, () => {
 
   test('should render with default values', async () => {
     const command = new MockSegmentedCommand();
-    renderMe(command);
+    renderSegmentedButtons(command);
 
     assert(command.children !== undefined);
 
@@ -50,7 +50,7 @@ describe(CommandButton.name, () => {
 
   test('should change from visible to invisible', async () => {
     const command = new MockSegmentedCommand();
-    renderMe(command);
+    renderSegmentedButtons(command);
 
     const beforeButtons = screen.queryAllByTestId(TEST_ID);
     expect(beforeButtons.length).toBe(2);
@@ -64,7 +64,7 @@ describe(CommandButton.name, () => {
 
   test('should change from enabled to disabled', async () => {
     const command = new MockSegmentedCommand();
-    renderMe(command);
+    renderSegmentedButtons(command);
 
     const beforeButtons = screen.queryAllByTestId(TEST_ID);
     expect(beforeButtons.length).toBe(2);
@@ -85,7 +85,7 @@ describe(CommandButton.name, () => {
 
   test('should select the second option', async () => {
     const command = new MockSegmentedCommand();
-    renderMe(command);
+    renderSegmentedButtons(command);
 
     assert(command.children !== undefined);
     const beforeButtons = screen.queryAllByTestId(TEST_ID);
@@ -110,7 +110,7 @@ describe(CommandButton.name, () => {
   });
 });
 
-function renderMe(command: BaseOptionCommand): void {
+function renderSegmentedButtons(command: BaseOptionCommand): void {
   const renderTargetMock = new RevealRenderTarget(viewerMock, sdkMock);
 
   const wrapper = ({ children }: PropsWithChildren): ReactElement => (
