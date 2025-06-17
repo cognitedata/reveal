@@ -27,19 +27,34 @@ import {
 } from '#test-utils/fixtures/image360';
 import { createFileMock } from '#test-utils/fixtures/files';
 import { createClassic360AnnotationMock } from '#test-utils/fixtures/image360Annotations';
+import { buildClassicAssetQueryFilter } from './buildClassicAssetFilter';
+import { filterIncludesFilterNode } from '#test-utils/query/assetFilter';
+import { type AssetAdvancedFilterProps } from './types';
 
 const ARBITRARY_SEARCH_LIMIT = 100;
 
-const TEST_ASSETS = [
-  createAssetMock(0, 'asset0'),
-  createAssetMock(1, 'asset1'),
-  createAssetMock(2, 'asset2', 'this is not asset1')
-];
+const TEST_ASSETS = [createAssetMock(0), createAssetMock(1), createAssetMock(2)];
+
+const TEST_POINT_CLOUD_ANNOTATIONS = TEST_ASSETS.map((asset) =>
+  createPointCloudAnnotationMock({
+    assetId: asset.id,
+    modelId: taggedPointCloudModelOptions.addOptions.modelId
+  })
+);
+
 const TEST_PROJECT = 'test_project';
 
 const mockAssetMappings3dFilter = vi.fn<AssetMappings3DAPI['filter']>();
 const mockAssetsRetrieve = vi.fn<AssetsAPI['retrieve']>();
-const mockPostAssetList = vi.fn<CogniteClient['post']>();
+
+type PostAssetListFunction = (
+  url: string,
+  options: {
+    data: { advancedFilter: AssetAdvancedFilterProps };
+  }
+) => Promise<HttpResponse<{ items: Asset[] }>>;
+
+const mockPostAssetList = vi.fn<PostAssetListFunction>();
 const mockAnnotationsList = vi.fn<CogniteClient['annotations']['list']>();
 const mockFilesList = vi.fn<FilesAPI['list']>();
 
@@ -95,10 +110,8 @@ describe(searchClassicAssetsForModels.name, () => {
     describe('without query string', () => {
       test('calls `sdk.assetMappings3D.filter` with input models and returns empty result when models have no mapped data', async () => {
         const results = await searchClassicAssetsForModels(
-          '',
           [taggedCadModelOptions],
-          ARBITRARY_SEARCH_LIMIT,
-          undefined,
+          { limit: ARBITRARY_SEARCH_LIMIT },
           mockSdk,
           mockRenderTarget
         );
@@ -119,10 +132,8 @@ describe(searchClassicAssetsForModels.name, () => {
         );
 
         const results = await searchClassicAssetsForModels(
-          '',
           [taggedCadModelOptions],
-          ARBITRARY_SEARCH_LIMIT,
-          undefined,
+          { limit: ARBITRARY_SEARCH_LIMIT },
           mockSdk,
           mockRenderTarget
         );
@@ -159,10 +170,8 @@ describe(searchClassicAssetsForModels.name, () => {
         );
 
         const results = await searchClassicAssetsForModels(
-          '',
           [taggedCadModelOptions],
-          searchLimit,
-          undefined,
+          { limit: searchLimit },
           mockSdk,
           mockRenderTarget
         );
@@ -170,10 +179,8 @@ describe(searchClassicAssetsForModels.name, () => {
         expect(results.nextCursor).toBeDefined();
 
         const nextPageResults = await searchClassicAssetsForModels(
-          '',
           [taggedCadModelOptions],
-          searchLimit,
-          results.nextCursor,
+          { limit: searchLimit, cadAssetsCursor: results.nextCursor },
           mockSdk,
           mockRenderTarget
         );
@@ -193,11 +200,11 @@ describe(searchClassicAssetsForModels.name, () => {
     describe('with search query', () => {
       test('returns with no mappings when query has no result', async () => {
         mockGetAssetMappingsForModel.mockResolvedValue([]);
+        const queryFilter = buildClassicAssetQueryFilter('some-query');
+
         const results = await searchClassicAssetsForModels(
-          'some-query',
           [taggedCadModelOptions],
-          ARBITRARY_SEARCH_LIMIT,
-          undefined,
+          { filters: { advancedFilter: queryFilter }, limit: ARBITRARY_SEARCH_LIMIT },
           mockSdk,
           mockRenderTarget
         );
@@ -211,11 +218,11 @@ describe(searchClassicAssetsForModels.name, () => {
         );
         mockPostAssetList.mockResolvedValue(createHttpResponseObject({ items: TEST_ASSETS }));
 
+        const queryFilter = buildClassicAssetQueryFilter('some-query');
+
         const results = await searchClassicAssetsForModels(
-          'some-query',
           [taggedCadModelOptions],
-          ARBITRARY_SEARCH_LIMIT,
-          undefined,
+          { filters: { advancedFilter: queryFilter }, limit: ARBITRARY_SEARCH_LIMIT },
           mockSdk,
           mockRenderTarget
         );
@@ -234,11 +241,11 @@ describe(searchClassicAssetsForModels.name, () => {
     });
 
     test('returns empty result when no relevant results exist', async () => {
+      const queryFilter = buildClassicAssetQueryFilter('some-query');
+
       const result = await searchClassicAssetsForModels(
-        'asset1',
         [taggedPointCloudModelOptions],
-        ARBITRARY_SEARCH_LIMIT,
-        undefined,
+        { filters: { advancedFilter: queryFilter }, limit: ARBITRARY_SEARCH_LIMIT },
         mockSdk,
         mockRenderTarget
       );
@@ -246,30 +253,54 @@ describe(searchClassicAssetsForModels.name, () => {
       expect(result).toEqual({ data: [], nextCursor: undefined });
     });
 
-    test('returns relevant assets when there is contextualization', async () => {
-      const pointCloudAnnotations = TEST_ASSETS.map((asset) =>
-        createPointCloudAnnotationMock({
-          assetId: asset.id,
-          modelId: taggedPointCloudModelOptions.addOptions.modelId
-        })
-      );
-
+    test('calls retrieve-endpoint and returns relevant assets when called without filter and there is contextulization', async () => {
       mockAnnotationsList.mockReturnValue(
         createCursorAndAsyncIteratorMock({
-          items: pointCloudAnnotations
+          items: TEST_POINT_CLOUD_ANNOTATIONS
         })
       );
-
       const result = await searchClassicAssetsForModels(
-        'asset1',
         [taggedPointCloudModelOptions],
-        ARBITRARY_SEARCH_LIMIT,
-        undefined,
+        { limit: ARBITRARY_SEARCH_LIMIT },
         mockSdk,
         mockRenderTarget
       );
 
-      // TEST_ASSET[1] has the query string in the name, TEST_ASSETS[2] has it in the description
+      expect(result).toEqual({ data: TEST_ASSETS, nextCursor: undefined });
+      expect(mockAssetsRetrieve).toHaveBeenCalledTimes(1);
+      expect(mockAssetsRetrieve).toHaveBeenCalledWith(
+        TEST_ASSETS.map((asset) => ({ id: asset.id })),
+        { ignoreUnknownIds: true }
+      );
+    });
+
+    test('calls post-asset-list SDK method with right filters and returns relevant assets when there is contextualization', async () => {
+      mockPostAssetList.mockResolvedValue(
+        createHttpResponseObject({ items: [TEST_ASSETS[1], TEST_ASSETS[2]] })
+      );
+
+      mockAnnotationsList.mockReturnValue(
+        createCursorAndAsyncIteratorMock({
+          items: TEST_POINT_CLOUD_ANNOTATIONS
+        })
+      );
+
+      const queryFilter = buildClassicAssetQueryFilter('asset1');
+
+      const result = await searchClassicAssetsForModels(
+        [taggedPointCloudModelOptions],
+        { filters: { advancedFilter: queryFilter }, limit: ARBITRARY_SEARCH_LIMIT },
+        mockSdk,
+        mockRenderTarget
+      );
+
+      expect(mockPostAssetList).toHaveBeenCalledTimes(1);
+
+      const callFilter = mockPostAssetList.mock.calls[0][1]?.data.advancedFilter;
+
+      assert(callFilter !== undefined && queryFilter !== undefined);
+      expect(filterIncludesFilterNode(callFilter, queryFilter)).toBeTruthy();
+
       expect(result).toEqual({ data: [TEST_ASSETS[1], TEST_ASSETS[2]], nextCursor: undefined });
     });
   });
@@ -288,14 +319,14 @@ describe(searchClassicAssetsForModels.name, () => {
       mockAssetsRetrieve.mockImplementation(
         async (idObjects) => await findIdEitherInAssetList(idObjects, TEST_ASSETS)
       );
+
+      mockPostAssetList.mockResolvedValue(createHttpResponseObject({ items: TEST_ASSETS }));
     });
 
     test('returns no assets when no relevant ones are found', async () => {
       const result = await searchClassicAssetsForModels(
-        '',
         [taggedImage360ClassicOptions, taggedImage360DmOptions],
-        ARBITRARY_SEARCH_LIMIT,
-        undefined,
+        { limit: ARBITRARY_SEARCH_LIMIT },
         mockSdk,
         mockRenderTarget
       );
@@ -303,21 +334,50 @@ describe(searchClassicAssetsForModels.name, () => {
       expect(result).toEqual({ data: [], nextCursor: undefined });
     });
 
-    test('returns relevant assets when there is contextualization', async () => {
+    test('calls retrieve-endpoint and returns relevant assets when called without filter and there is contextulization', async () => {
       const mockAnnotations = TEST_FILES.map((file) =>
         createClassic360AnnotationMock({ fileId: file.id, assetId: TEST_ASSETS[0].id })
       );
       mockAnnotationsList.mockReturnValue(
         createCursorAndAsyncIteratorMock({ items: mockAnnotations })
       );
+
       const result = await searchClassicAssetsForModels(
-        'asset0',
         [taggedImage360ClassicOptions, taggedImage360DmOptions],
-        ARBITRARY_SEARCH_LIMIT,
-        undefined,
+        { limit: ARBITRARY_SEARCH_LIMIT },
         mockSdk,
         mockRenderTarget
       );
+
+      expect(result).toEqual({ data: [TEST_ASSETS[0]], nextCursor: undefined });
+      expect(mockAssetsRetrieve).toHaveBeenCalledTimes(1);
+      expect(mockAssetsRetrieve).toHaveBeenCalledWith([{ id: TEST_ASSETS[0].id }], {
+        ignoreUnknownIds: true
+      });
+    });
+
+    test('calls post-endpoint with query filter and returns relevant assets when there is contextualization', async () => {
+      const mockAnnotations = TEST_FILES.map((file) =>
+        createClassic360AnnotationMock({ fileId: file.id, assetId: TEST_ASSETS[0].id })
+      );
+      mockAnnotationsList.mockReturnValue(
+        createCursorAndAsyncIteratorMock({ items: mockAnnotations })
+      );
+
+      const queryFilter = buildClassicAssetQueryFilter('asset0');
+
+      const result = await searchClassicAssetsForModels(
+        [taggedImage360ClassicOptions, taggedImage360DmOptions],
+        { filters: { advancedFilter: queryFilter }, limit: ARBITRARY_SEARCH_LIMIT },
+        mockSdk,
+        mockRenderTarget
+      );
+
+      expect(mockPostAssetList).toHaveBeenCalledTimes(1);
+      const callFilter = mockPostAssetList.mock.calls[0][1]?.data.advancedFilter;
+
+      assert(callFilter !== undefined && queryFilter !== undefined);
+      expect(filterIncludesFilterNode(callFilter, queryFilter)).toBeTruthy();
 
       expect(result).toEqual({ data: [TEST_ASSETS[0]], nextCursor: undefined });
     });

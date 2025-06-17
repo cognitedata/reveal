@@ -16,6 +16,7 @@ import { isDefined } from '../utilities/isDefined';
 import { useAssetMappedNodesForRevisions } from '../hooks/cad';
 import { useMemo } from 'react';
 import { getAssetsFromAssetMappings } from './network/getAssetsFromAssetMappings';
+import { buildClassicAssetQueryFilter } from './network/buildClassicAssetFilter';
 
 export type ModelMappings = {
   model: AddModelOptions;
@@ -71,10 +72,13 @@ export const useSearchMappedEquipmentAssetMappings = (
     accumulatedAssets: Asset[],
     mappedSearchedAssetIds: Set<number>
   ): Promise<{ assets: Asset[]; nextCursor: string | undefined }> => {
+    const advancedFilter = buildClassicAssetQueryFilter(query);
     const searchedAssetsResponse = await getAssetsList(sdk, {
-      query,
       limit: 1000,
-      cursor
+      cursor,
+      filter: {
+        advancedFilter
+      }
     });
 
     const filteredSearchedAssets = searchedAssetsResponse.items.filter(isDefined);

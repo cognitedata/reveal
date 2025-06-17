@@ -8,17 +8,19 @@ import {
 } from '@cognite/sdk';
 import { chunk, uniq } from 'lodash';
 import { type AddPointCloudResourceOptions } from '../../components';
-
-const MAX_PARALLEL_ASSET_REQUESTS = 5;
+import { getAssetsForIds } from './getAssetsForIds';
+import { toIdEither } from '../../utilities/instanceIds/toIdEither';
+import { type AllAssetFilterProps } from './types';
 
 export async function getAssetsMappedPointCloudAnnotations(
-  sdk: CogniteClient,
-  models: Array<AddPointCloudResourceOptions<ClassicDataSourceType>>
+  models: Array<AddPointCloudResourceOptions<ClassicDataSourceType>>,
+  filter: AllAssetFilterProps | undefined,
+  sdk: CogniteClient
 ): Promise<Asset[]> {
   const modelIdList = models.map((model) => model.modelId);
 
   const pointCloudAnnotations = await getPointCloudAnnotations(modelIdList, sdk);
-  return await getPointCloudAnnotationAssets(pointCloudAnnotations, sdk);
+  return await getPointCloudAnnotationAssets(pointCloudAnnotations, filter, sdk);
 }
 
 async function getPointCloudAnnotations(
@@ -47,6 +49,7 @@ async function getPointCloudAnnotations(
 
 async function getPointCloudAnnotationAssets(
   pointCloudAnnotations: AnnotationModel[],
+  filter: AllAssetFilterProps | undefined,
   sdk: CogniteClient
 ): Promise<Asset[]> {
   // TODO: Replace the check for assetRef similar to Point Cloud Asset Styling
@@ -60,29 +63,6 @@ async function getPointCloudAnnotationAssets(
 
   const uniqueMappingAssetId = uniq(annotationMapping);
 
-  const assetIdChunks = chunk(uniqueMappingAssetId, 1000);
-
-  const allAssetResults: Asset[] = [];
-
-  for (const assetIdChunkBatch of chunk(assetIdChunks, MAX_PARALLEL_ASSET_REQUESTS)) {
-    const assetsForChunkBatch = await Promise.all(
-      assetIdChunkBatch.map(
-        async (assetIdChunk) =>
-          await sdk.assets.retrieve(
-            assetIdChunk.map((assetId) => {
-              if (typeof assetId === 'number') {
-                return { id: assetId };
-              } else {
-                return { externalId: assetId };
-              }
-            }),
-            { ignoreUnknownIds: true }
-          )
-      )
-    );
-
-    allAssetResults.push(...assetsForChunkBatch.flat());
-  }
-
-  return allAssetResults;
+  const assetRefs = uniqueMappingAssetId.map(toIdEither);
+  return await getAssetsForIds(assetRefs, filter, sdk);
 }
