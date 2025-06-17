@@ -11,7 +11,7 @@ import { SolidPrimitiveRenderStyle } from '../primitives/common/SolidPrimitiveRe
 import { AnnotationChangedDescription } from './helpers/AnnotationChangedDescription';
 import { type BaseCommand } from '../../base/commands/BaseCommand';
 import { CopyToClipboardCommand } from '../../base/concreteCommands/CopyToClipboardCommand';
-import { ToggleMetricUnitsCommand } from '../../base/concreteCommands/ToggleMetricUnitsCommand';
+import { ChangeLengthUnitCommand } from '../../base/concreteCommands/unit/ChangeLengthUnitCommand';
 import { Box } from '../../base/utilities/primitives/Box';
 import { Annotation } from './helpers/Annotation';
 
@@ -58,7 +58,7 @@ export class BoxGizmoDomainObject extends BoxDomainObject {
   }
 
   public override getPanelToolbar(): BaseCommand[] {
-    return [new CopyToClipboardCommand(), new ToggleMetricUnitsCommand()];
+    return [new CopyToClipboardCommand(), new ChangeLengthUnitCommand()];
   }
 
   public override get isVisibleInTree(): boolean {

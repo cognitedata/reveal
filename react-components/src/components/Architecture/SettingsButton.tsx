@@ -81,7 +81,7 @@ export const SettingsButton = ({
         setOpen(open);
       }}
       placement={placement ?? 'right-end'}
-      offset={{ mainAxis: TOOLBAR_HORIZONTAL_PANEL_OFFSET }}>
+      offset={{ mainAxis: TOOLBAR_HORIZONTAL_PANEL_OFFSET, crossAxis: 100 }}>
       <CogsTooltip
         content={<LabelWithShortcut label={label} command={command} />}
         disabled={isTooltipDisabled}
@@ -331,7 +331,7 @@ const StyledToggleContainer = styled(Flex).attrs({
 `;
 
 const StyledMenuPanel = styled.div<{ $flexDirection: FlexDirection }>`
-  max-height: 400px;
+  max-height: 800px;
   min-width: 340px;
   overflow-x: hidden;
   overflow-y: auto;
@@ -341,7 +341,7 @@ const StyledMenuPanel = styled.div<{ $flexDirection: FlexDirection }>`
   padding: var(--Padding-Small-Small-8, 8px) var(--space-8, 8px);
   flex-direction: column;
   align-items: flex-start;
-  gap: var(--Padding-Small-Small-8, 8px);
+  gap: var(--Padding-Small-Small-8, 0px);
 
   border-radius: var(--Radius-Large, 8px);
   background: #fff;

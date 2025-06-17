@@ -21,6 +21,7 @@ import { SetGhostModeCommand } from './cad/SetGhostModeCommand';
 import { SetQualitySliderCommand } from './SetQualitySliderCommand/SetQualitySliderCommand';
 import { QualityWarningBannerCommand } from './SetQualitySliderCommand/QualityWarningBannerCommand';
 import { DividerCommand } from '../commands/DividerCommand';
+import { SetLengthUnitCommand } from './unit/SetLengthUnitCommand';
 
 export class SettingsCommand extends BaseSettingsCommand {
   // ==================================================
@@ -59,6 +60,9 @@ export class SettingsCommand extends BaseSettingsCommand {
     this.add(new SetPointColorTypeCommand());
     this.add(new SetPointShapeCommand());
     this.add(new PointCloudFilterCommand());
+
+    this.add(new DividerCommand());
+    this.add(new SetLengthUnitCommand());
   }
 
   // ==================================================

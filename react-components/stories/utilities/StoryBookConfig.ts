@@ -9,7 +9,6 @@ import { BaseRevealConfig } from '../../src/architecture/base/renderTarget/BaseR
 import { type RevealRenderTarget } from '../../src/architecture/base/renderTarget/RevealRenderTarget';
 import { NavigationTool } from '../../src/architecture/base/concreteCommands/NavigationTool';
 import { type BaseTool } from '../../src/architecture/base/commands/BaseTool';
-import { ToggleMetricUnitsCommand } from '../../src/architecture/base/concreteCommands/ToggleMetricUnitsCommand';
 import { MeasurementTool } from '../../src/architecture/concrete/measurements/MeasurementTool';
 import { ClipTool } from '../../src/architecture/concrete/clipping/ClipTool';
 import { KeyboardSpeedCommand } from '../../src/architecture/base/concreteCommands/KeyboardSpeedCommand';
@@ -58,7 +57,6 @@ export class StoryBookConfig extends BaseRevealConfig {
     return [
       new ShowTreeViewCommand(),
       new ToggleAllModelsVisibleCommand(),
-      new ToggleMetricUnitsCommand(),
       new SettingsCommand(),
       undefined,
       new Image360AnnotationSelectTool(false),

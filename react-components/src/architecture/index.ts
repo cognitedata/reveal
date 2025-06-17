@@ -29,7 +29,7 @@ export { SetPointShapeCommand } from './base/concreteCommands/pointCloud/SetPoin
 export { SetPointSizeCommand } from './base/concreteCommands/pointCloud/SetPointSizeCommand';
 export { SetQualityCommand } from './base/concreteCommands/SetQualityCommand';
 export { SettingsCommand } from './base/concreteCommands/SettingsCommand';
-export { ToggleMetricUnitsCommand } from './base/concreteCommands/ToggleMetricUnitsCommand';
+export { ChangeLengthUnitCommand as ToggleMetricUnitsCommand } from './base/concreteCommands/unit/ChangeLengthUnitCommand';
 export { UndoCommand } from './base/concreteCommands/UndoCommand';
 export { BaseBannerCommand } from './base/commands/BaseBannerCommand';
 

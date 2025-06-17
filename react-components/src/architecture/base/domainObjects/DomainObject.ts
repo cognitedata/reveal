@@ -20,7 +20,7 @@ import { CopyToClipboardCommand } from '../concreteCommands/CopyToClipboardComma
 import { type BaseCommand } from '../commands/BaseCommand';
 import { type Transaction } from '../undo/Transaction';
 import { type IconName } from '../../base/utilities/IconName';
-import { ToggleMetricUnitsCommand } from '../concreteCommands/ToggleMetricUnitsCommand';
+import { ChangeLengthUnitCommand } from '../concreteCommands/unit/ChangeLengthUnitCommand';
 import { ChangedDescription } from '../domainObjectsHelpers/ChangedDescription';
 import {
   CheckboxState,
@@ -467,7 +467,7 @@ export abstract class DomainObject implements TreeNodeType {
     // to be overridden
     return [
       new CopyToClipboardCommand(),
-      new ToggleMetricUnitsCommand(),
+      new ChangeLengthUnitCommand(),
       new DeleteDomainObjectCommand(this)
     ];
   }
