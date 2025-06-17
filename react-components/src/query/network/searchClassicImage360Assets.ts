@@ -2,12 +2,12 @@ import { type AddImage360CollectionOptions } from '../../components';
 import { type Asset, type CogniteClient } from '@cognite/sdk';
 import { getClassicAssetMapped360Annotations } from './getClassicAssetMapped360Annotations';
 import { partition, take } from 'lodash';
-import { matchAssetWithQuery } from '../../utilities/instances/matchAssetWithQuery';
 import { is360ImageEventsAddOptions } from '../../components/Reveal3DResources/typeGuards';
+import { type AllAssetFilterProps } from './types';
 
 export async function searchClassicImage360Assets(
-  searchQuery: string,
   image360s: AddImage360CollectionOptions[],
+  assetFilter: AllAssetFilterProps | undefined,
   limit: number,
   sdk: CogniteClient
 ): Promise<Asset[]> {
@@ -18,17 +18,14 @@ export async function searchClassicImage360Assets(
     ...dmImage360s.map((image360) => image360.externalId)
   ];
 
-  const assetMappings = await getClassicAssetMapped360Annotations(siteIds, sdk, {
-    status: 'approved'
-  });
+  const assetMappings = await getClassicAssetMapped360Annotations(
+    siteIds,
+    assetFilter,
+    {
+      status: 'approved'
+    },
+    sdk
+  );
 
-  if (searchQuery === '') {
-    return take(assetMappings, limit).map((mapping) => mapping.asset);
-  }
-
-  const filteredAssets = assetMappings
-    .map((mapping) => mapping.asset)
-    .filter((asset) => matchAssetWithQuery(asset, searchQuery));
-
-  return take(filteredAssets, limit);
+  return take(assetMappings, limit).map((mapping) => mapping.asset);
 }

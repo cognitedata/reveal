@@ -1,19 +1,19 @@
 import { type AddModelOptions, type ClassicDataSourceType } from '@cognite/reveal';
 import { type AssetMappingAndNode3DCache } from '../../components/CacheProvider/AssetMappingAndNode3DCache';
-import { type SearchClassicCadAssetsResponse } from './types';
+import { type AllAssetFilterProps, hasFilters, type SearchClassicCadAssetsResponse } from './types';
 import { type CursorForModel, fetchAllAssetsForCadModels } from './fetchAllAssetsForCadModels';
 import { searchClassicCadAssetsWithNonEmptyQuery } from './searchClassicCadAssetsWithNonEmptyQuery';
 import { type CogniteClient } from '@cognite/sdk';
 
 export async function searchClassicAssetsForCadModels(
-  searchQuery: string,
   models: Array<AddModelOptions<ClassicDataSourceType>>,
   limit: number,
   cursor: string | undefined,
+  filter: AllAssetFilterProps | undefined,
   sdk: CogniteClient,
   assetMappingAndNode3dCache: AssetMappingAndNode3DCache
 ): Promise<SearchClassicCadAssetsResponse> {
-  if (searchQuery === '') {
+  if (!hasFilters(filter)) {
     const cursorsForModels =
       cursor === undefined ? undefined : (JSON.parse(cursor) as CursorForModel[]);
 
@@ -21,10 +21,10 @@ export async function searchClassicAssetsForCadModels(
   }
 
   return await searchClassicCadAssetsWithNonEmptyQuery(
-    searchQuery,
     models,
     limit,
     cursor,
+    filter,
     sdk,
     assetMappingAndNode3dCache
   );

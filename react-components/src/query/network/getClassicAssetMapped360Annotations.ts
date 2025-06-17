@@ -18,16 +18,18 @@ import {
 } from '../../utilities/instanceIds';
 import { isDefined } from '../../utilities/isDefined';
 import { chunk, uniqBy } from 'lodash';
-import { fetchAssetsForAssetIds } from '../../components/CacheProvider/AnnotationModelUtils';
 import { isClassicImage360AssetAnnotationData } from '../../utilities/image360Annotations';
+import { getAssetsForIds } from './getAssetsForIds';
+import { type AllAssetFilterProps } from './types';
 
 const MAX_PARALLEL_ANNOTATION_QUERIES = 5;
 const MAX_PARALLEL_FILES_QUERIES = 5;
 
 export async function getClassicAssetMapped360Annotations(
   siteIds: string[],
-  sdk: CogniteClient,
-  image360AnnotationFilterOptions: Image360AnnotationFilterOptions
+  assetFilter: AllAssetFilterProps | undefined,
+  image360AnnotationFilterOptions: Image360AnnotationFilterOptions,
+  sdk: CogniteClient
 ): Promise<ClassicImage360AnnotationMappedData[]> {
   const fileIdsList = await get360ImagesFileIds(siteIds, sdk);
   const image360Annotations = await get360ImageAnnotations(
@@ -35,11 +37,12 @@ export async function getClassicAssetMapped360Annotations(
     sdk,
     image360AnnotationFilterOptions
   );
-  return await get360AnnotationAssets(image360Annotations, sdk);
+  return await get360AnnotationAssets(image360Annotations, assetFilter, sdk);
 }
 
 async function get360AnnotationAssets(
   image360Annotations: AnnotationModel[],
+  filter: AllAssetFilterProps | undefined,
   sdk: CogniteClient
 ): Promise<ClassicImage360AnnotationMappedData[]> {
   const filteredAnnotationMappings = image360Annotations
@@ -61,8 +64,9 @@ async function get360AnnotationAssets(
     createInstanceReferenceKey(mapping.assetReference)
   );
 
-  const assets = await fetchAssetsForAssetIds(
+  const assets = await getAssetsForIds(
     uniqueAnnotationMapping.map((mapping) => mapping.assetReference),
+    filter,
     sdk
   );
 
@@ -70,12 +74,12 @@ async function get360AnnotationAssets(
 }
 
 function getAssetsWithAnnotations(
-  flatAssets: Asset[],
+  assets: Asset[],
   annotationMapping: Array<{ assetReference: IdEither; annotationId: number }>
 ): Array<{ asset: Asset; annotationIds: number[] }> {
   const flatAssetsWithAnnotations: Array<{ asset: Asset; annotationIds: number[] }> = [];
 
-  flatAssets.forEach((asset) => {
+  assets.forEach((asset) => {
     const matchingMapping = annotationMapping.find((mapping) => {
       return isSameIdEither(mapping.assetReference, asset);
     });
