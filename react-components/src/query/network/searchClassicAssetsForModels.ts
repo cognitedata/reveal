@@ -19,6 +19,11 @@ export type SearchClassicAssetsResponse = {
 export type SearchQueryOptions = {
   limit: number;
   cadAssetsCursor?: string;
+  /**
+   * This contains both a `filter` and an `advancedFilter` field, which correspond
+   * to the fields of the same name that are used in the asset-filter endpoint
+   * https://api-docs.cognite.com/20230101/tag/Assets/operation/listAssets
+   */
   filters?: AllAssetFilterProps;
 };
 
