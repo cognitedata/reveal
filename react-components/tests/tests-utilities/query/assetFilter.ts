@@ -1,5 +1,5 @@
 import {
-  AssetAdvancedFilterProps,
+  type AssetAdvancedFilterProps,
   isAndFilter,
   isLeafFilter,
   isOrFilter
