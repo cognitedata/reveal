@@ -4,7 +4,7 @@ import { Changes } from '../../domainObjectsHelpers/Changes';
 import { LengthUnit } from '../../renderTarget/UnitSystem';
 import { type TranslationInput } from '../../utilities/TranslateInput';
 
-export class ChangeLengthUnitCommand extends RenderTargetCommand {
+export class CycleLengthUnitsCommand extends RenderTargetCommand {
   public override get icon(): IconName {
     return 'RulerAlternative';
   }
@@ -14,6 +14,7 @@ export class ChangeLengthUnitCommand extends RenderTargetCommand {
   }
 
   protected override invokeCore(): boolean {
+    // This command cycles through the length units: Meter -> Feet -> Inch -> Meter
     const unitSystem = this.rootDomainObject.unitSystem;
     switch (unitSystem.lengthUnit) {
       case LengthUnit.Meter:

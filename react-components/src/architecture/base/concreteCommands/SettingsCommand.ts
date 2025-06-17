@@ -21,7 +21,7 @@ import { SetGhostModeCommand } from './cad/SetGhostModeCommand';
 import { SetQualitySliderCommand } from './SetQualitySliderCommand/SetQualitySliderCommand';
 import { QualityWarningBannerCommand } from './SetQualitySliderCommand/QualityWarningBannerCommand';
 import { DividerCommand } from '../commands/DividerCommand';
-import { SetLengthUnitCommand } from './unit/SetLengthUnitCommand';
+import { SetLengthUnitCommand } from './units/SetLengthUnitCommand';
 
 export class SettingsCommand extends BaseSettingsCommand {
   // ==================================================

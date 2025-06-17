@@ -11,7 +11,7 @@ import { SolidPrimitiveRenderStyle } from '../primitives/common/SolidPrimitiveRe
 import { AnnotationChangedDescription } from './helpers/AnnotationChangedDescription';
 import { type BaseCommand } from '../../base/commands/BaseCommand';
 import { CopyToClipboardCommand } from '../../base/concreteCommands/CopyToClipboardCommand';
-import { ChangeLengthUnitCommand } from '../../base/concreteCommands/unit/ChangeLengthUnitCommand';
+import { CycleLengthUnitsCommand } from '../../base/concreteCommands/units/CycleLengthUnitsCommand';
 import { Cylinder } from '../../base/utilities/primitives/Cylinder';
 import { Annotation } from './helpers/Annotation';
 import { PrimitiveType } from '../../base/utilities/primitives/PrimitiveType';
@@ -59,7 +59,7 @@ export class CylinderGizmoDomainObject extends CylinderDomainObject {
   }
 
   public override getPanelToolbar(): BaseCommand[] {
-    return [new CopyToClipboardCommand(), new ChangeLengthUnitCommand()];
+    return [new CopyToClipboardCommand(), new CycleLengthUnitsCommand()];
   }
 
   public override get isVisibleInTree(): boolean {

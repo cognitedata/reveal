@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, test } from 'vitest';
-import { ChangeLengthUnitCommand } from './ChangeLengthUnitCommand';
+import { CycleLengthUnitsCommand } from './CycleLengthUnitsCommand';
 import { isEmpty } from '../../utilities/TranslateInput';
 import { type RevealRenderTarget } from '../../renderTarget/RevealRenderTarget';
 import { Changes } from '../../domainObjectsHelpers/Changes';
@@ -7,13 +7,13 @@ import { EventChangeTester } from '#test-utils/architecture/EventChangeTester';
 import { createFullRenderTargetMock } from '#test-utils/fixtures/createFullRenderTargetMock';
 import { LengthUnit } from '../../renderTarget/UnitSystem';
 
-describe(ChangeLengthUnitCommand.name, () => {
+describe(CycleLengthUnitsCommand.name, () => {
   let renderTarget: RevealRenderTarget;
-  let command: ChangeLengthUnitCommand;
+  let command: CycleLengthUnitsCommand;
 
   beforeEach(() => {
     renderTarget = createFullRenderTargetMock();
-    command = new ChangeLengthUnitCommand();
+    command = new CycleLengthUnitsCommand();
     command.attach(renderTarget);
   });
 

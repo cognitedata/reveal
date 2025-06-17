@@ -21,7 +21,7 @@ export class SetLengthUnitCommand extends BaseOptionCommand {
   // ==================================================
 
   public override get tooltip(): TranslationInput {
-    return { untranslated: 'Unit' };
+    return { key: 'UNITS' };
   }
 }
 
@@ -45,7 +45,6 @@ class OptionItemCommand extends RenderTargetCommand {
   public override invokeCore(): boolean {
     const unitSystem = this.rootDomainObject.unitSystem;
     unitSystem.lengthUnit = this._value;
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
     this.rootDomainObject.notify(Changes.unit);
     this.rootDomainObject.notifyDescendants(Changes.unit);
     return true;
