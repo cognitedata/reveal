@@ -1,12 +1,13 @@
 import { describe, expect, test } from 'vitest';
 
 import { buildAssetIdFilter, buildQueryFilter, combineAdvancedFilters } from './buildFilter';
+import { toIdEither } from '../../utilities/instanceIds/toIdEither';
 
 const TEST_INTERNAL_IDS = [1, 2, 3];
-const TEST_INTERNAL_ID_EITHERS = TEST_INTERNAL_IDS.map((id) => ({ id }));
+const TEST_INTERNAL_ID_EITHERS = TEST_INTERNAL_IDS.map(toIdEither);
 
 const TEST_EXTERNAL_IDS = ['externalId1', 'externalId2', 'externalId3'];
-const TEST_EXTERNAL_ID_EITHERS = TEST_EXTERNAL_IDS.map((id) => ({ externalId: id }));
+const TEST_EXTERNAL_ID_EITHERS = TEST_EXTERNAL_IDS.map(toIdEither);
 
 describe('buildFilter', () => {
   describe(buildQueryFilter.name, () => {
