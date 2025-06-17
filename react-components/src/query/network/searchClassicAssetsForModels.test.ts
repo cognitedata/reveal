@@ -350,6 +350,10 @@ describe(searchClassicAssetsForModels.name, () => {
       );
 
       expect(result).toEqual({ data: [TEST_ASSETS[0]], nextCursor: undefined });
+      expect(mockAssetsRetrieve).toHaveBeenCalledTimes(1);
+      expect(mockAssetsRetrieve).toHaveBeenCalledWith([{ id: TEST_ASSETS[0].id }], {
+        ignoreUnknownIds: true
+      });
     });
 
     test('calls post-endpoint with query filter and returns relevant assets when there is contextualization', async () => {
