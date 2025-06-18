@@ -32,9 +32,8 @@ export function buildClassicAssetIdFilter(
 
   if (externalIdsFilter !== undefined && internalIdsFilter !== undefined) {
     return { and: [externalIdsFilter, internalIdsFilter] };
-  } else {
-    return externalIdsFilter ?? internalIdsFilter;
   }
+  return externalIdsFilter ?? internalIdsFilter;
 }
 
 function buildAssetInternalIdFilter(assetIds: number[]): AssetAdvancedFilterProps {
