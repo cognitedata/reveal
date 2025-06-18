@@ -155,16 +155,16 @@ class MockDomainObject extends DomainObject {
 
 const EXPECTED_SUB_STRINGS: string[] = [
   'Length',
-  '1.00',
+  '1.000',
   'm',
 
   'Area',
   'm²',
-  '2.00',
+  '2.000',
 
   'Volume',
   'm³',
-  '3.00',
+  '3.000',
 
   'Horizontal angle',
   '4.0',

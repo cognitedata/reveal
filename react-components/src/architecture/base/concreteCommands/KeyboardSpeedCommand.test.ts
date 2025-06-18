@@ -38,9 +38,6 @@ describe(KeyboardSpeedCommand.name, () => {
   test('Should change the cameraKeyBoardSpeed in RevealSettingsController', () => {
     assert(command.children !== undefined);
     for (const option of command.children) {
-      expect(option).toBeDefined();
-      assert(option !== undefined);
-
       if (option.isChecked) {
         continue; // Already check
       }
