@@ -80,8 +80,8 @@ export const SettingsButton = ({
       onHide={(open) => {
         setOpen(open);
       }}
-      placement={placement ?? 'right-end'}
-      offset={{ mainAxis: TOOLBAR_HORIZONTAL_PANEL_OFFSET, crossAxis: 100 }}>
+      placement={'right-start'}
+      offset={{ mainAxis: TOOLBAR_HORIZONTAL_PANEL_OFFSET, crossAxis: 0 }}>
       <CogsTooltip
         content={<LabelWithShortcut label={label} command={command} />}
         disabled={isTooltipDisabled}
