@@ -65,6 +65,14 @@ export const SettingsButton = ({
   const flexDirection = getFlexDirection(placement);
   const isTooltipDisabled = isOpen || label === undefined;
 
+  // This ensures the rule for where the dropdown panel should open:
+  // Horizontal toolbar at top:    Below the button
+  // Horizontal toolbar at bottom: Above the button
+  // Vertical toolbar at left:     Right of the button
+  // Vertical toolbar at right:    Left of the button
+  const dropdownPlacement =
+    placement === 'top' || placement === 'bottom' ? 'bottom-end' : 'right-start';
+
   return (
     <Dropdown
       disabled={!isEnabled}
@@ -80,7 +88,7 @@ export const SettingsButton = ({
       onHide={(open) => {
         setOpen(open);
       }}
-      placement={'right-start'}
+      placement={dropdownPlacement}
       offset={{ mainAxis: TOOLBAR_HORIZONTAL_PANEL_OFFSET, crossAxis: 0 }}>
       <CogsTooltip
         content={<LabelWithShortcut label={label} command={command} />}
