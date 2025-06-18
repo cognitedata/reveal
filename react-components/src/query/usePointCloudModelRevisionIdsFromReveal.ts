@@ -30,7 +30,10 @@ export const usePointCloudModelRevisionIdsFromReveal = (): UseQueryResult<
       .filter(isDMPointCloudModel);
   }, [viewerModels]);
 
-  const modelKeys = useMemo(() => getModelKeys(dmModels), [dmModels]);
+  const modelKeys = useMemo(
+    () => getModelKeys(dmModels.map((model) => model.modelIdentifier)),
+    [dmModels]
+  );
 
   const queryKey = [queryKeys.pointCloudDMModelIdRevisionIds(modelKeys)];
 
