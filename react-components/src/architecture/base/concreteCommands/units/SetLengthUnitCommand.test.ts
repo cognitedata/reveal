@@ -1,52 +1,68 @@
-import { beforeEach, describe, expect, test } from 'vitest';
+import { assert, beforeEach, describe, expect, test } from 'vitest';
 import { isEmpty } from '../../utilities/TranslateInput';
-import { type RevealRenderTarget } from '../../renderTarget/RevealRenderTarget';
-import { Changes } from '../../domainObjectsHelpers/Changes';
-import { EventChangeTester } from '#test-utils/architecture/EventChangeTester';
 import { createFullRenderTargetMock } from '#test-utils/fixtures/createFullRenderTargetMock';
-import { LengthUnit } from '../../renderTarget/UnitSystem';
 import { SetLengthUnitCommand } from './SetLengthUnitCommand';
+import { EventChangeTester } from '../../../../../tests/tests-utilities/architecture/EventChangeTester';
+import { Changes } from '../../domainObjectsHelpers/Changes';
 
 describe(SetLengthUnitCommand.name, () => {
-  let renderTarget: RevealRenderTarget;
+  const renderTarget = createFullRenderTargetMock();
   let command: SetLengthUnitCommand;
 
   beforeEach(() => {
-    renderTarget = createFullRenderTargetMock();
     command = new SetLengthUnitCommand();
     command.attach(renderTarget);
   });
 
-  test('Should have have tooltip, icon, toggle, checked and enable', async () => {
+  test('Should have correct initial state', () => {
     expect(isEmpty(command.tooltip)).toBe(false);
     expect(command.isEnabled).toBe(true);
+    expect(command.isToggle).toBe(false);
+    expect(command.isChecked).toBe(false);
   });
 
-  test('should switch from metric unit and imperial', async () => {
-    const unitSystem = renderTarget.rootDomainObject.unitSystem;
+  test('Should have have options with correct initial state', () => {
+    expect(command.hasChildren).toBe(true);
+    assert(command.children !== undefined);
+    expect(command.children.length).greaterThan(1);
 
-    // Check initial state
-    expect(unitSystem.lengthUnit).toBe(LengthUnit.Meter);
-
-    // Toggle it and check the new state
-    expect(command.invoke()).toBe(true);
-    expect(unitSystem.lengthUnit).toBe(LengthUnit.Feet);
-
-    // Toggle it again and check the new state
-    expect(command.invoke()).toBe(true);
-    expect(unitSystem.lengthUnit).toBe(LengthUnit.Inch);
-
-    // Toggle it again and check the new state
-    expect(command.invoke()).toBe(true);
-    expect(unitSystem.lengthUnit).toBe(LengthUnit.Meter);
+    for (const child of command.children) {
+      expect(child.isEnabled).toBe(true);
+      expect(isEmpty(child.tooltip)).toBe(false);
+    }
   });
 
-  test('should toggle between metric and imperial units and notify domain objects twice', async () => {
-    const tester = new EventChangeTester(renderTarget.rootDomainObject, Changes.unit);
+  test('Should have one of the options checked', () => {
+    expect(command.checkedCount).toBe(1);
+    expect(command.selectedChild).toBeDefined();
+  });
 
-    expect(command.invoke()).toBe(true);
+  test('Should change the unit', () => {
+    assert(command.children !== undefined);
+    for (const option of command.children) {
+      if (option.isChecked) {
+        continue; // Already check
+      }
+      const unitSystem = renderTarget.rootDomainObject.unitSystem;
+      const oldValue = unitSystem.lengthUnit;
+      expect(option.invoke()).toBe(true);
+      const newValue = unitSystem.lengthUnit;
+      expect(oldValue).not.toBe(newValue);
+      expect(option.isChecked).toBe(true);
+      expect(command.checkedCount).toBe(1);
+      expect(command.selectedChild).toBe(option);
+    }
+  });
 
-    // Test that the unit system is notified
-    tester.toHaveBeenCalledTimes(1);
+  test('Should notify when unit change', () => {
+    assert(command.children !== undefined);
+    for (const option of command.children) {
+      if (option.isChecked) {
+        continue; // Already check
+      }
+      const tester = new EventChangeTester(renderTarget.rootDomainObject, Changes.unit);
+      expect(option.invoke()).toBe(true);
+      tester.toHaveBeenCalledOnce();
+    }
   });
 });
