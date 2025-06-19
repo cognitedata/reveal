@@ -2,7 +2,7 @@ import type { Asset, CogniteClient, IdEither } from '@cognite/sdk';
 import { chunk } from 'lodash';
 import { buildClassicAssetIdFilter, combineClassicAssetFilters } from './buildClassicAssetFilter';
 import { getAssetsList } from '../../hooks/network/getAssetsList';
-import type { AllAssetFilterProps } from './types';
+import type { AllAssetFilterProps } from './filters';
 
 const MAX_PARALLEL_ASSET_REQUESTS = 5;
 

@@ -1,6 +1,7 @@
 import { type AddModelOptions, type ClassicDataSourceType } from '@cognite/reveal';
 import { type AssetMappingAndNode3DCache } from '../../components/CacheProvider/AssetMappingAndNode3DCache';
-import { type AllAssetFilterProps, hasFilters, type SearchClassicCadAssetsResponse } from './types';
+import { type AllAssetFilterProps, hasFilters } from './filters';
+import { type SearchClassicCadAssetsResponse } from './types';
 import { type CursorForModel, fetchAllAssetsForCadModels } from './fetchAllAssetsForCadModels';
 import { searchClassicCadAssetsWithFilters } from './searchClassicCadAssetsWithFilters';
 import { type CogniteClient } from '@cognite/sdk';

@@ -9,7 +9,7 @@ import { type Asset, type CogniteClient } from '@cognite/sdk';
 import { type RevealRenderTarget } from '../../architecture';
 import { searchClassicAssetsForCadModels } from './searchClassicAssetsForCadModels';
 import { getAssetsMappedPointCloudAnnotations } from './getAssetMappedPointCloudAnnotations';
-import { type AllAssetFilterProps } from './types';
+import { type AllAssetFilterProps } from './filters';
 
 export type SearchClassicAssetsResponse = {
   nextCursor: string | undefined;

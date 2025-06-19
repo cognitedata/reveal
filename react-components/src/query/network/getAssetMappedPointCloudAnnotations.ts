@@ -10,7 +10,7 @@ import { chunk, uniq } from 'lodash';
 import { type AddPointCloudResourceOptions } from '../../components';
 import { getAssetsForIds } from './getAssetsForIds';
 import { toIdEither } from '../../utilities/instanceIds/toIdEither';
-import { type AllAssetFilterProps } from './types';
+import { type AllAssetFilterProps } from './filters';
 
 export async function getAssetsMappedPointCloudAnnotations(
   models: Array<AddPointCloudResourceOptions<ClassicDataSourceType>>,

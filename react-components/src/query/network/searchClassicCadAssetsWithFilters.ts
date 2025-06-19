@@ -3,7 +3,8 @@ import { type CadModelOptions } from '../../components';
 import { type AssetMappingAndNode3DCache } from '../../components/CacheProvider/AssetMappingAndNode3DCache';
 import { type ModelWithAssetMappings } from '../../hooks/cad/ModelWithAssetMappings';
 import type { Asset, CogniteClient } from '@cognite/sdk';
-import { type AllAssetFilterProps, type SearchClassicCadAssetsResponse } from './types';
+import { type AllAssetFilterProps } from './filters';
+import { type SearchClassicCadAssetsResponse } from './types';
 import { getAssetsList } from '../../hooks/network/getAssetsList';
 import { isDefined } from '../../utilities/isDefined';
 

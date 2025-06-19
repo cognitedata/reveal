@@ -29,7 +29,7 @@ import { createFileMock } from '#test-utils/fixtures/files';
 import { createClassic360AnnotationMock } from '#test-utils/fixtures/image360Annotations';
 import { buildClassicAssetQueryFilter } from './buildClassicAssetFilter';
 import { filterIncludesFilterNode } from '#test-utils/query/assetFilter';
-import { type AssetAdvancedFilterProps } from './types';
+import { type AssetAdvancedFilterProps } from './filters';
 
 const ARBITRARY_SEARCH_LIMIT = 100;
 

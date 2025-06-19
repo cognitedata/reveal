@@ -3,7 +3,7 @@ import { type Asset, type CogniteClient } from '@cognite/sdk';
 import { getClassicAssetMapped360Annotations } from './getClassicAssetMapped360Annotations';
 import { partition, take } from 'lodash';
 import { is360ImageEventsAddOptions } from '../../components/Reveal3DResources/typeGuards';
-import { type AllAssetFilterProps } from './types';
+import { type AllAssetFilterProps } from './filters';
 
 export async function searchClassicImage360Assets(
   image360s: AddImage360CollectionOptions[],

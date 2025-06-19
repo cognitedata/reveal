@@ -20,7 +20,7 @@ import { isDefined } from '../../utilities/isDefined';
 import { chunk, uniqBy } from 'lodash';
 import { isClassicImage360AssetAnnotationData } from '../../utilities/image360Annotations';
 import { getAssetsForIds } from './getAssetsForIds';
-import { type AllAssetFilterProps } from './types';
+import { type AllAssetFilterProps } from './filters';
 
 const MAX_PARALLEL_ANNOTATION_QUERIES = 5;
 const MAX_PARALLEL_FILES_QUERIES = 5;
