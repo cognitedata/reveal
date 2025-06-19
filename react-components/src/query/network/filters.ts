@@ -28,7 +28,7 @@ export function isLeafFilter(filter: AssetAdvancedFilterProps): filter is AssetA
 function isBooleanFilter(
   filter: AssetAdvancedFilterProps
 ): filter is AssetAdvancedFilterAnd | AssetAdvancedFilterOr {
-  return 'and' in filter || 'or' in filter;
+  return isAndFilter(filter) || isOrFilter(filter);
 }
 
 export function isAndFilter(filter: AssetAdvancedFilterProps): filter is AssetAdvancedFilterAnd {
