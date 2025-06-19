@@ -253,7 +253,7 @@ describe(searchClassicAssetsForModels.name, () => {
       expect(result).toEqual({ data: [], nextCursor: undefined });
     });
 
-    test('calls retrieve-endpoint and returns relevant assets when called without filter and there is contextulization', async () => {
+    test('calls retrieve-endpoint and returns relevant assets when called without filter and there is contextualization', async () => {
       mockAnnotationsList.mockReturnValue(
         createCursorAndAsyncIteratorMock({
           items: TEST_POINT_CLOUD_ANNOTATIONS
@@ -334,7 +334,7 @@ describe(searchClassicAssetsForModels.name, () => {
       expect(result).toEqual({ data: [], nextCursor: undefined });
     });
 
-    test('calls retrieve-endpoint and returns relevant assets when called without filter and there is contextulization', async () => {
+    test('calls retrieve-endpoint and returns relevant assets when called without filter and there is contextualization', async () => {
       const mockAnnotations = TEST_FILES.map((file) =>
         createClassic360AnnotationMock({ fileId: file.id, assetId: TEST_ASSETS[0].id })
       );
