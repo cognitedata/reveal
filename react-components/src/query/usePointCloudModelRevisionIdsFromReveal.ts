@@ -1,7 +1,7 @@
 import { useContext, useMemo } from 'react';
 import { type ModelRevisionId } from '../components/CacheProvider/types';
 import {
-  CognitePointCloudModel,
+  type CognitePointCloudModel,
   type DataSourceType,
   type DMDataSourceType,
   isDMPointCloudModel
@@ -10,7 +10,7 @@ import { getModelIdAndRevisionIdFromExternalId } from '../hooks/network/getModel
 import { queryKeys } from '../utilities/queryKeys';
 import { getModelKeys } from '../utilities/getModelKeys';
 import { UsePointCloudModelRevisionIdsFromRevealContext } from './usePointCloudModelRevisionIdsFromReveal.context';
-import { useQuery, UseQueryResult } from '@tanstack/react-query';
+import { useQuery, type UseQueryResult } from '@tanstack/react-query';
 
 type PointCloudModelRevisionIdAndType = ModelRevisionId & { type: 'pointcloud' };
 

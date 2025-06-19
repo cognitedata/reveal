@@ -1,22 +1,18 @@
 import { beforeEach, describe, expect, test, vi } from 'vitest';
 import { usePointCloudModelRevisionIdsFromReveal } from './usePointCloudModelRevisionIdsFromReveal';
-import { PropsWithChildren } from 'react';
+import { ReactElement, type PropsWithChildren } from 'react';
 import {
   UsePointCloudModelRevisionIdsFromRevealContext,
-  UsePointCloudModelRevisionIdsFromRevealDependencies
+  type UsePointCloudModelRevisionIdsFromRevealDependencies
 } from './usePointCloudModelRevisionIdsFromReveal.context';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { renderHook, waitFor } from '@testing-library/react';
-import { DmsUniqueIdentifier, FdmNode, FdmSDK } from '../data-providers/FdmSDK';
+import { type DmsUniqueIdentifier, type FdmNode, FdmSDK } from '../data-providers/FdmSDK';
 import { sdkMock } from '#test-utils/fixtures/sdk';
-import {
-  createPointCloudDMMock,
-  createPointCloudMock,
-  taggedPointCloudModelOptions
-} from '#test-utils/fixtures/pointCloud';
+import { createPointCloudDMMock } from '#test-utils/fixtures/pointCloud';
 import { Mock } from 'moq.ts';
-import { NodeOrEdge, QueryRequest } from '@cognite/sdk';
-import { FdmPropertyType } from '../components/Reveal3DResources/types';
+import { type QueryRequest } from '@cognite/sdk';
+import { type FdmPropertyType } from '../components/Reveal3DResources/types';
 
 const mockUse3dModels = vi.fn<UsePointCloudModelRevisionIdsFromRevealDependencies['use3dModels']>();
 const mockUseFdmSdk = vi.fn<UsePointCloudModelRevisionIdsFromRevealDependencies['useFdmSdk']>();
@@ -29,7 +25,7 @@ const mockFdmSdkQueryNodesAndEdgesMock = vi.fn<
 
 const queryClient = new QueryClient();
 
-const wrapper = ({ children }: PropsWithChildren) => (
+const wrapper = ({ children }: PropsWithChildren): ReactElement => (
   <QueryClientProvider client={queryClient}>
     <UsePointCloudModelRevisionIdsFromRevealContext.Provider
       value={{
