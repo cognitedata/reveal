@@ -24,8 +24,8 @@ const TEST_REVISION_ID0 = 3456;
 const TEST_REVISION_ID1 = 5678;
 const TEST_MODEL_EXTERNAL_ID0 = createModelExternalId(TEST_MODEL_ID0);
 const TEST_MODEL_EXTERNAL_ID1 = createModelExternalId(TEST_MODEL_ID1);
-const TEST_REVISION_EXTERNAL_ID0 = `cog_3d_revision_${TEST_REVISION_ID0}`;
-const TEST_REVISION_EXTERNAL_ID1 = `cog_3d_revision_${TEST_REVISION_ID1}`;
+const TEST_REVISION_EXTERNAL_ID0 = createRevisionExternalId(TEST_REVISION_ID0);
+const TEST_REVISION_EXTERNAL_ID1 = createRevisionExternalId(TEST_REVISION_ID1);
 const TEST_SPACE = 'some-space';
 
 const mockUse3dModels = vi.fn<UsePointCloudModelRevisionIdsFromRevealDependencies['use3dModels']>();
