@@ -20,9 +20,11 @@ export async function searchClassicImage360Assets(
 
   const assetMappings = await getClassicAssetMapped360Annotations(
     siteIds,
-    assetFilters,
     {
-      status: 'approved'
+      assetFilters,
+      image360AnnotationFilterOptions: {
+        status: 'approved'
+      }
     },
     sdk
   );

@@ -27,17 +27,19 @@ const MAX_PARALLEL_FILES_QUERIES = 5;
 
 export async function getClassicAssetMapped360Annotations(
   siteIds: string[],
-  assetFilters: AllAssetFilterProps | undefined,
-  image360AnnotationFilterOptions: Image360AnnotationFilterOptions,
+  filterOptions: {
+    assetFilters?: AllAssetFilterProps | undefined;
+    image360AnnotationFilterOptions: Image360AnnotationFilterOptions;
+  },
   sdk: CogniteClient
 ): Promise<ClassicImage360AnnotationMappedData[]> {
   const fileIdsList = await get360ImagesFileIds(siteIds, sdk);
   const image360Annotations = await get360ImageAnnotations(
     fileIdsList,
     sdk,
-    image360AnnotationFilterOptions
+    filterOptions.image360AnnotationFilterOptions
   );
-  return await get360AnnotationAssets(image360Annotations, assetFilters, sdk);
+  return await get360AnnotationAssets(image360Annotations, filterOptions.assetFilters, sdk);
 }
 
 async function get360AnnotationAssets(
