@@ -200,11 +200,11 @@ describe(searchClassicAssetsForModels.name, () => {
     describe('with search query', () => {
       test('returns with no mappings when query has no result', async () => {
         mockGetAssetMappingsForModel.mockResolvedValue([]);
-        const queryFilter = buildClassicAssetQueryFilter('some-query');
+        const queryAdvancedFilter = buildClassicAssetQueryFilter('some-query');
 
         const results = await searchClassicAssetsForModels(
           [taggedCadModelOptions],
-          { filters: { advancedFilter: queryFilter }, limit: ARBITRARY_SEARCH_LIMIT },
+          { filters: { advancedFilter: queryAdvancedFilter }, limit: ARBITRARY_SEARCH_LIMIT },
           mockSdk,
           mockRenderTarget
         );
@@ -218,11 +218,11 @@ describe(searchClassicAssetsForModels.name, () => {
         );
         mockPostAssetList.mockResolvedValue(createHttpResponseObject({ items: TEST_ASSETS }));
 
-        const queryFilter = buildClassicAssetQueryFilter('some-query');
+        const queryAdvancedFilter = buildClassicAssetQueryFilter('some-query');
 
         const results = await searchClassicAssetsForModels(
           [taggedCadModelOptions],
-          { filters: { advancedFilter: queryFilter }, limit: ARBITRARY_SEARCH_LIMIT },
+          { filters: { advancedFilter: queryAdvancedFilter }, limit: ARBITRARY_SEARCH_LIMIT },
           mockSdk,
           mockRenderTarget
         );
@@ -241,11 +241,11 @@ describe(searchClassicAssetsForModels.name, () => {
     });
 
     test('returns empty result when no relevant results exist', async () => {
-      const queryFilter = buildClassicAssetQueryFilter('some-query');
+      const queryAdvancedFilter = buildClassicAssetQueryFilter('some-query');
 
       const result = await searchClassicAssetsForModels(
         [taggedPointCloudModelOptions],
-        { filters: { advancedFilter: queryFilter }, limit: ARBITRARY_SEARCH_LIMIT },
+        { filters: { advancedFilter: queryAdvancedFilter }, limit: ARBITRARY_SEARCH_LIMIT },
         mockSdk,
         mockRenderTarget
       );
@@ -285,11 +285,11 @@ describe(searchClassicAssetsForModels.name, () => {
         })
       );
 
-      const queryFilter = buildClassicAssetQueryFilter('asset1');
+      const queryAdvancedFilter = buildClassicAssetQueryFilter('asset1');
 
       const result = await searchClassicAssetsForModels(
         [taggedPointCloudModelOptions],
-        { filters: { advancedFilter: queryFilter }, limit: ARBITRARY_SEARCH_LIMIT },
+        { filters: { advancedFilter: queryAdvancedFilter }, limit: ARBITRARY_SEARCH_LIMIT },
         mockSdk,
         mockRenderTarget
       );
@@ -298,8 +298,8 @@ describe(searchClassicAssetsForModels.name, () => {
 
       const callFilter = mockPostAssetList.mock.calls[0][1]?.data.advancedFilter;
 
-      assert(callFilter !== undefined && queryFilter !== undefined);
-      expect(filterIncludesFilterNode(callFilter, queryFilter)).toBeTruthy();
+      assert(callFilter !== undefined && queryAdvancedFilter !== undefined);
+      expect(filterIncludesFilterNode(callFilter, queryAdvancedFilter)).toBeTruthy();
 
       expect(result).toEqual({ data: [TEST_ASSETS[1], TEST_ASSETS[2]], nextCursor: undefined });
     });
@@ -364,11 +364,11 @@ describe(searchClassicAssetsForModels.name, () => {
         createCursorAndAsyncIteratorMock({ items: mockAnnotations })
       );
 
-      const queryFilter = buildClassicAssetQueryFilter('asset0');
+      const queryAdvancedFilter = buildClassicAssetQueryFilter('asset0');
 
       const result = await searchClassicAssetsForModels(
         [taggedImage360ClassicOptions, taggedImage360DmOptions],
-        { filters: { advancedFilter: queryFilter }, limit: ARBITRARY_SEARCH_LIMIT },
+        { filters: { advancedFilter: queryAdvancedFilter }, limit: ARBITRARY_SEARCH_LIMIT },
         mockSdk,
         mockRenderTarget
       );
@@ -376,8 +376,8 @@ describe(searchClassicAssetsForModels.name, () => {
       expect(mockPostAssetList).toHaveBeenCalledTimes(1);
       const callFilter = mockPostAssetList.mock.calls[0][1]?.data.advancedFilter;
 
-      assert(callFilter !== undefined && queryFilter !== undefined);
-      expect(filterIncludesFilterNode(callFilter, queryFilter)).toBeTruthy();
+      assert(callFilter !== undefined && queryAdvancedFilter !== undefined);
+      expect(filterIncludesFilterNode(callFilter, queryAdvancedFilter)).toBeTruthy();
 
       expect(result).toEqual({ data: [TEST_ASSETS[0]], nextCursor: undefined });
     });
