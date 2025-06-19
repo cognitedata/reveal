@@ -22,6 +22,10 @@ export function buildClassicAssetQueryFilter(query: string): AssetAdvancedFilter
 export function buildClassicAssetIdFilter(
   assetRefs: IdEither[]
 ): AssetAdvancedFilterProps | undefined {
+  if (assetRefs.length === 0) {
+    return undefined;
+  }
+
   const [internalIdEithers, externalIdEithers] = partition(assetRefs, isInternalId);
   const internalIds = internalIdEithers.map((internalIdEither) => internalIdEither.id);
   const externalIds = externalIdEithers.map((externalIdEither) => externalIdEither.externalId);
@@ -33,9 +37,8 @@ export function buildClassicAssetIdFilter(
 
   if (externalIdsFilter !== undefined && internalIdsFilter !== undefined) {
     return { and: [externalIdsFilter, internalIdsFilter] };
-  } else {
-    return externalIdsFilter ?? internalIdsFilter;
   }
+  return externalIdsFilter ?? internalIdsFilter;
 }
 
 function buildAssetInternalIdFilter(assetIds: number[]): AssetAdvancedFilterProps {
