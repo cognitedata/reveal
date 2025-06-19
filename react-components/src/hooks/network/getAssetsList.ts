@@ -9,13 +9,13 @@ export const getAssetsList = async (
     cursor,
     limit = 1000,
     sort = sortOption,
-    filter,
+    filters,
     aggregatedProperties = ['path']
   }: {
     cursor?: string;
     limit?: number;
     sort?: Array<{ property: string[] }>;
-    filter?: AllAssetFilterProps;
+    filters?: AllAssetFilterProps;
     aggregatedProperties?: string[];
   }
 ): Promise<{ items: Asset[]; nextCursor: string | undefined }> => {
@@ -29,7 +29,7 @@ export const getAssetsList = async (
       data: {
         limit,
         sort,
-        ...filter,
+        ...filters,
         aggregatedProperties,
         cursor
       }

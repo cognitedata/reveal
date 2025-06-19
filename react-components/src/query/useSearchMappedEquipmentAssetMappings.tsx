@@ -76,7 +76,7 @@ export const useSearchMappedEquipmentAssetMappings = (
     const searchedAssetsResponse = await getAssetsList(sdk, {
       limit: 1000,
       cursor,
-      filter: {
+      filters: {
         advancedFilter
       }
     });

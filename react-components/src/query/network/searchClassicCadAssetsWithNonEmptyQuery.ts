@@ -41,7 +41,7 @@ export async function searchClassicCadAssetsWithNonEmptyQuery(
     const searchedAssetsResponse = await getAssetsList(sdk, {
       limit: 1000,
       cursor,
-      filter
+      filters
     });
 
     const filteredSearchedAssets = searchedAssetsResponse.items.filter(isDefined);

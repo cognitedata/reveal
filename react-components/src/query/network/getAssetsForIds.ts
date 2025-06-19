@@ -62,7 +62,7 @@ async function getAssetsForIdsWithFilter(
         const idFilter = buildClassicAssetIdFilter(assetRefChunk);
 
         const { items } = await getAssetsList(sdk, {
-          filter: {
+          filters: {
             ...filter,
             advancedFilter: combineClassicAssetFilters([filter?.advancedFilter, idFilter])
           },
