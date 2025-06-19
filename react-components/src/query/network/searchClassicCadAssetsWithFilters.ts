@@ -7,7 +7,7 @@ import { type AllAssetFilterProps, type SearchClassicCadAssetsResponse } from '.
 import { getAssetsList } from '../../hooks/network/getAssetsList';
 import { isDefined } from '../../utilities/isDefined';
 
-export async function searchClassicCadAssetsWithNonEmptyQuery(
+export async function searchClassicCadAssetsWithFilters(
   models: Array<AddModelOptions<ClassicDataSourceType>>,
   limit: number,
   cursor: string | undefined,

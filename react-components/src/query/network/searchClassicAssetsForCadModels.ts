@@ -2,7 +2,7 @@ import { type AddModelOptions, type ClassicDataSourceType } from '@cognite/revea
 import { type AssetMappingAndNode3DCache } from '../../components/CacheProvider/AssetMappingAndNode3DCache';
 import { type AllAssetFilterProps, hasFilters, type SearchClassicCadAssetsResponse } from './types';
 import { type CursorForModel, fetchAllAssetsForCadModels } from './fetchAllAssetsForCadModels';
-import { searchClassicCadAssetsWithNonEmptyQuery } from './searchClassicCadAssetsWithNonEmptyQuery';
+import { searchClassicCadAssetsWithFilters } from './searchClassicCadAssetsWithFilters';
 import { type CogniteClient } from '@cognite/sdk';
 
 export async function searchClassicAssetsForCadModels(
@@ -20,7 +20,7 @@ export async function searchClassicAssetsForCadModels(
     return await fetchAllAssetsForCadModels(models, limit, cursorsForModels, sdk);
   }
 
-  return await searchClassicCadAssetsWithNonEmptyQuery(
+  return await searchClassicCadAssetsWithFilters(
     models,
     limit,
     cursor,
