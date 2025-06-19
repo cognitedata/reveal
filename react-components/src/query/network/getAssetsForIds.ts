@@ -57,26 +57,35 @@ async function getAssetsForIdsWithFilter(
   const allAssetResults: Asset[] = [];
 
   for (const assetRefChunkBatch of chunk(assetRefChunks, MAX_PARALLEL_ASSET_REQUESTS)) {
-    const assetsForChunkBatch = await Promise.all(
-      assetRefChunkBatch.map(async (assetRefChunk) => {
-        const idFilter = buildClassicAssetIdFilter(assetRefChunk);
-
-        const { items } = await getAssetsList(sdk, {
-          filters: {
-            ...filters,
-            advancedFilter: combineClassicAssetFilters([filters?.advancedFilter, idFilter])
-          },
-          limit: MAX_LIMIT_ASSETS_BY_LIST_WITH_IDS
-        });
-
-        // Since the filter narrows down the result to only the input IDs, we
-        // can expect that there will be no need for pagination
-        return items;
-      })
-    );
+    const assetsForChunkBatch = await getAssetsForChunks(assetRefChunkBatch, filters, sdk);
 
     allAssetResults.push(...assetsForChunkBatch.flat());
   }
 
   return allAssetResults;
+}
+
+async function getAssetsForChunks(
+  assetRefChunkBatch: IdEither[][],
+  filters: AllAssetFilterProps | undefined,
+  sdk: CogniteClient
+): Promise<Asset[][]> {
+  return await Promise.all(
+    assetRefChunkBatch.map(async (assetRefChunk) => {
+      const idFilter = buildClassicAssetIdFilter(assetRefChunk);
+      const advancedFilter = combineClassicAssetFilters([filters?.advancedFilter, idFilter]);
+
+      const { items } = await getAssetsList(sdk, {
+        filters: {
+          ...filters,
+          advancedFilter
+        },
+        limit: MAX_LIMIT_ASSETS_BY_LIST_WITH_IDS
+      });
+
+      // Since the filter narrows down the result to only the input IDs, we
+      // can expect that there will be no need for pagination
+      return items;
+    })
+  );
 }
