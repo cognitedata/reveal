@@ -26,6 +26,8 @@ describe(Image360CollectionDomainObject.name, () => {
     const domainObject = new Image360CollectionDomainObject(image360Collection);
     renderTargetMock.rootDomainObject.addChild(domainObject);
 
+    expect(image360Collection.on).toHaveBeenCalledTimes(2);
+
     const [onEventType0, registeredCallback0] = vi.mocked(image360Collection.on).mock.calls[0];
     const [onEventType1, registeredCallback1] = vi.mocked(image360Collection.on).mock.calls[1];
 
@@ -63,5 +65,17 @@ describe(Image360CollectionDomainObject.name, () => {
     expect(viewerMock.remove360ImageSet).toHaveBeenCalledWith(image360Collection);
     expect(vi.mocked(image360Collection.off).mock.calls[0]).toEqual(eventAndListener0);
     expect(vi.mocked(image360Collection.off).mock.calls[1]).toEqual(eventAndListener1);
+  });
+
+  test('should throw error on double removal', () => {
+    const renderTargetMock = createRenderTargetMock();
+
+    const image360Collection = createImage360ClassicMock();
+
+    const domainObject = new Image360CollectionDomainObject(image360Collection);
+    renderTargetMock.rootDomainObject.addChild(domainObject);
+
+    domainObject.removeInteractive();
+    expect(() => domainObject.removeInteractive()).toThrowError();
   });
 });
