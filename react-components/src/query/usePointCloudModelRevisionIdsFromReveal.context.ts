@@ -1,5 +1,5 @@
 import { createContext } from 'react';
-import { use3dModels } from '../hooks';
+import { use3dModels } from '../hooks/use3dModels';
 import { useFdmSdk } from '../components/RevealCanvas/SDKProvider';
 
 export type UsePointCloudModelRevisionIdsFromRevealDependencies = {
