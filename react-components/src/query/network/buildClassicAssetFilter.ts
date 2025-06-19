@@ -2,6 +2,7 @@ import { partition } from 'lodash';
 import { isInternalId } from '../../utilities/instanceIds';
 import { type IdEither } from '@cognite/sdk';
 import { type AssetAdvancedFilterProps } from './types';
+import { isDefined } from '../../utilities/isDefined';
 
 export function buildClassicAssetQueryFilter(query: string): AssetAdvancedFilterProps | undefined {
   if (query === '') {
@@ -58,7 +59,7 @@ function buildAssetExternalIdFilter(externalIds: string[]): AssetAdvancedFilterP
 export function combineClassicAssetFilters(
   filters: Array<AssetAdvancedFilterProps | undefined>
 ): AssetAdvancedFilterProps | undefined {
-  const definedFilters = filters.filter((filter) => filter !== undefined);
+  const definedFilters = filters.filter(isDefined);
 
   if (definedFilters.length === 0) {
     return undefined;
