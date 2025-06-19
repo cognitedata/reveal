@@ -9,11 +9,11 @@ export async function searchClassicAssetsForCadModels(
   models: Array<AddModelOptions<ClassicDataSourceType>>,
   limit: number,
   cursor: string | undefined,
-  filter: AllAssetFilterProps | undefined,
+  filters: AllAssetFilterProps | undefined,
   sdk: CogniteClient,
   assetMappingAndNode3dCache: AssetMappingAndNode3DCache
 ): Promise<SearchClassicCadAssetsResponse> {
-  if (!hasFilters(filter)) {
+  if (!hasFilters(filters)) {
     const cursorsForModels =
       cursor === undefined ? undefined : (JSON.parse(cursor) as CursorForModel[]);
 
@@ -24,7 +24,7 @@ export async function searchClassicAssetsForCadModels(
     models,
     limit,
     cursor,
-    filter,
+    filters,
     sdk,
     assetMappingAndNode3dCache
   );

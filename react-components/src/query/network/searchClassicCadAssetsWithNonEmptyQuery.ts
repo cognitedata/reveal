@@ -11,7 +11,7 @@ export async function searchClassicCadAssetsWithNonEmptyQuery(
   models: Array<AddModelOptions<ClassicDataSourceType>>,
   limit: number,
   cursor: string | undefined,
-  filter: AllAssetFilterProps | undefined,
+  filters: AllAssetFilterProps | undefined,
   sdk: CogniteClient,
   assetMappingAndNode3dCache: AssetMappingAndNode3DCache
 ): Promise<SearchClassicCadAssetsResponse> {

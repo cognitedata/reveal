@@ -11,18 +11,18 @@ const MAX_LIMIT_ASSETS_BY_LIST_WITH_IDS = 100;
 
 export async function getAssetsForIds(
   assetRefs: IdEither[],
-  filter: AllAssetFilterProps | undefined,
+  filters: AllAssetFilterProps | undefined,
   sdk: CogniteClient
 ): Promise<Asset[]> {
   if (assetRefs.length === 0) {
     return [];
   }
 
-  if (filter === undefined) {
+  if (filters === undefined) {
     return await getAssetsForIdsWithoutFilter(assetRefs, sdk);
   }
 
-  return await getAssetsForIdsWithFilter(assetRefs, filter, sdk);
+  return await getAssetsForIdsWithFilter(assetRefs, filters, sdk);
 }
 
 async function getAssetsForIdsWithoutFilter(
@@ -49,7 +49,7 @@ async function getAssetsForIdsWithoutFilter(
 
 async function getAssetsForIdsWithFilter(
   assetRefs: IdEither[],
-  filter: AllAssetFilterProps | undefined,
+  filters: AllAssetFilterProps | undefined,
   sdk: CogniteClient
 ): Promise<Asset[]> {
   const assetRefChunks = chunk(assetRefs, MAX_LIMIT_ASSETS_BY_LIST_WITH_IDS);
@@ -63,8 +63,8 @@ async function getAssetsForIdsWithFilter(
 
         const { items } = await getAssetsList(sdk, {
           filters: {
-            ...filter,
-            advancedFilter: combineClassicAssetFilters([filter?.advancedFilter, idFilter])
+            ...filters,
+            advancedFilter: combineClassicAssetFilters([filters?.advancedFilter, idFilter])
           },
           limit: MAX_LIMIT_ASSETS_BY_LIST_WITH_IDS
         });

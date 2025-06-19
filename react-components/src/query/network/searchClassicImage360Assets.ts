@@ -7,7 +7,7 @@ import { type AllAssetFilterProps } from './types';
 
 export async function searchClassicImage360Assets(
   image360s: AddImage360CollectionOptions[],
-  assetFilter: AllAssetFilterProps | undefined,
+  assetFilters: AllAssetFilterProps | undefined,
   limit: number,
   sdk: CogniteClient
 ): Promise<Asset[]> {
@@ -20,7 +20,7 @@ export async function searchClassicImage360Assets(
 
   const assetMappings = await getClassicAssetMapped360Annotations(
     siteIds,
-    assetFilter,
+    assetFilters,
     {
       status: 'approved'
     },

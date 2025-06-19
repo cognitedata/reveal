@@ -14,13 +14,13 @@ import { type AllAssetFilterProps } from './types';
 
 export async function getAssetsMappedPointCloudAnnotations(
   models: Array<AddPointCloudResourceOptions<ClassicDataSourceType>>,
-  filter: AllAssetFilterProps | undefined,
+  filters: AllAssetFilterProps | undefined,
   sdk: CogniteClient
 ): Promise<Asset[]> {
   const modelIdList = models.map((model) => model.modelId);
 
   const pointCloudAnnotations = await getPointCloudAnnotations(modelIdList, sdk);
-  return await getPointCloudAnnotationAssets(pointCloudAnnotations, filter, sdk);
+  return await getPointCloudAnnotationAssets(pointCloudAnnotations, filters, sdk);
 }
 
 async function getPointCloudAnnotations(
@@ -49,7 +49,7 @@ async function getPointCloudAnnotations(
 
 async function getPointCloudAnnotationAssets(
   pointCloudAnnotations: AnnotationModel[],
-  filter: AllAssetFilterProps | undefined,
+  filters: AllAssetFilterProps | undefined,
   sdk: CogniteClient
 ): Promise<Asset[]> {
   // TODO: Replace the check for assetRef similar to Point Cloud Asset Styling
@@ -64,5 +64,5 @@ async function getPointCloudAnnotationAssets(
   const uniqueMappingAssetId = uniq(annotationMapping);
 
   const assetRefs = uniqueMappingAssetId.map(toIdEither);
-  return await getAssetsForIds(assetRefs, filter, sdk);
+  return await getAssetsForIds(assetRefs, filters, sdk);
 }

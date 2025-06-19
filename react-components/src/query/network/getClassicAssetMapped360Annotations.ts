@@ -27,7 +27,7 @@ const MAX_PARALLEL_FILES_QUERIES = 5;
 
 export async function getClassicAssetMapped360Annotations(
   siteIds: string[],
-  assetFilter: AllAssetFilterProps | undefined,
+  assetFilters: AllAssetFilterProps | undefined,
   image360AnnotationFilterOptions: Image360AnnotationFilterOptions,
   sdk: CogniteClient
 ): Promise<ClassicImage360AnnotationMappedData[]> {
@@ -37,12 +37,12 @@ export async function getClassicAssetMapped360Annotations(
     sdk,
     image360AnnotationFilterOptions
   );
-  return await get360AnnotationAssets(image360Annotations, assetFilter, sdk);
+  return await get360AnnotationAssets(image360Annotations, assetFilters, sdk);
 }
 
 async function get360AnnotationAssets(
   image360Annotations: AnnotationModel[],
-  filter: AllAssetFilterProps | undefined,
+  filters: AllAssetFilterProps | undefined,
   sdk: CogniteClient
 ): Promise<ClassicImage360AnnotationMappedData[]> {
   const filteredAnnotationMappings = image360Annotations
@@ -66,7 +66,7 @@ async function get360AnnotationAssets(
 
   const assets = await getAssetsForIds(
     uniqueAnnotationMapping.map((mapping) => mapping.assetReference),
-    filter,
+    filters,
     sdk
   );
 
