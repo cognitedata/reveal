@@ -18,37 +18,38 @@ type RevisionDmsResponse = {
   items: { revision: Array<FdmNode<FdmPropertyType<{ model3D: DmsUniqueIdentifier }>>> };
 };
 
-const TEST_MODEL_ID0 = 123;
-const TEST_MODEL_ID1 = 234;
-const TEST_REVISION_ID0 = 3456;
-const TEST_REVISION_ID1 = 5678;
-const TEST_MODEL_EXTERNAL_ID0 = createModelExternalId(TEST_MODEL_ID0);
-const TEST_MODEL_EXTERNAL_ID1 = createModelExternalId(TEST_MODEL_ID1);
-const TEST_REVISION_EXTERNAL_ID0 = createRevisionExternalId(TEST_REVISION_ID0);
-const TEST_REVISION_EXTERNAL_ID1 = createRevisionExternalId(TEST_REVISION_ID1);
-const TEST_SPACE = 'some-space';
-
-const mockUse3dModels = vi.fn<UsePointCloudModelRevisionIdsFromRevealDependencies['use3dModels']>();
-const mockUseFdmSdk = vi.fn<UsePointCloudModelRevisionIdsFromRevealDependencies['useFdmSdk']>();
-
-const mockFdmSdkQueryNodesAndEdgesMock =
-  vi.fn<(query: QueryRequest) => Promise<RevisionDmsResponse>>();
-
-const queryClient = new QueryClient();
-
-const wrapper = ({ children }: PropsWithChildren): ReactElement => (
-  <QueryClientProvider client={queryClient}>
-    <UsePointCloudModelRevisionIdsFromRevealContext.Provider
-      value={{
-        use3dModels: mockUse3dModels,
-        useFdmSdk: mockUseFdmSdk
-      }}>
-      {children}
-    </UsePointCloudModelRevisionIdsFromRevealContext.Provider>
-  </QueryClientProvider>
-);
-
 describe(usePointCloudModelRevisionIdsFromReveal.name, async () => {
+  const TEST_MODEL_ID0 = 123;
+  const TEST_MODEL_ID1 = 234;
+  const TEST_REVISION_ID0 = 3456;
+  const TEST_REVISION_ID1 = 5678;
+  const TEST_MODEL_EXTERNAL_ID0 = createModelExternalId(TEST_MODEL_ID0);
+  const TEST_MODEL_EXTERNAL_ID1 = createModelExternalId(TEST_MODEL_ID1);
+  const TEST_REVISION_EXTERNAL_ID0 = createRevisionExternalId(TEST_REVISION_ID0);
+  const TEST_REVISION_EXTERNAL_ID1 = createRevisionExternalId(TEST_REVISION_ID1);
+  const TEST_SPACE = 'some-space';
+
+  const mockUse3dModels =
+    vi.fn<UsePointCloudModelRevisionIdsFromRevealDependencies['use3dModels']>();
+  const mockUseFdmSdk = vi.fn<UsePointCloudModelRevisionIdsFromRevealDependencies['useFdmSdk']>();
+
+  const mockFdmSdkQueryNodesAndEdgesMock =
+    vi.fn<(query: QueryRequest) => Promise<RevisionDmsResponse>>();
+
+  const queryClient = new QueryClient();
+
+  const wrapper = ({ children }: PropsWithChildren): ReactElement => (
+    <QueryClientProvider client={queryClient}>
+      <UsePointCloudModelRevisionIdsFromRevealContext.Provider
+        value={{
+          use3dModels: mockUse3dModels,
+          useFdmSdk: mockUseFdmSdk
+        }}>
+        {children}
+      </UsePointCloudModelRevisionIdsFromRevealContext.Provider>
+    </QueryClientProvider>
+  );
+
   beforeEach(() => {
     vi.resetAllMocks();
     queryClient.clear();
