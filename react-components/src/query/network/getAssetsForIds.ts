@@ -49,7 +49,7 @@ async function getAssetsForIdsWithoutFilter(
 
 async function getAssetsForIdsWithFilter(
   assetRefs: IdEither[],
-  filters: AllAssetFilterProps | undefined,
+  filters: AllAssetFilterProps,
   sdk: CogniteClient
 ): Promise<Asset[]> {
   const assetRefChunks = chunk(assetRefs, MAX_LIMIT_ASSETS_BY_LIST_WITH_IDS);
@@ -67,13 +67,13 @@ async function getAssetsForIdsWithFilter(
 
 async function getAssetsForChunks(
   assetRefChunkBatch: IdEither[][],
-  filters: AllAssetFilterProps | undefined,
+  filters: AllAssetFilterProps,
   sdk: CogniteClient
 ): Promise<Asset[][]> {
   return await Promise.all(
     assetRefChunkBatch.map(async (assetRefChunk) => {
       const idFilter = buildClassicAssetIdFilter(assetRefChunk);
-      const advancedFilter = combineClassicAssetFilters([filters?.advancedFilter, idFilter]);
+      const advancedFilter = combineClassicAssetFilters([filters.advancedFilter, idFilter]);
 
       const { items } = await getAssetsList(sdk, {
         filters: {
