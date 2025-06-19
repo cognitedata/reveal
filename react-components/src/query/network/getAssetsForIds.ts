@@ -18,7 +18,7 @@ export async function getAssetsForIds(
     return [];
   }
 
-  if (hasFilters(filters)) {
+  if (!hasFilters(filters)) {
     return await getAssetsForIdsWithoutFilter(assetRefs, sdk);
   }
 

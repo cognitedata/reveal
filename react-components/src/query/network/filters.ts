@@ -47,6 +47,8 @@ export type AllAssetFilterProps = {
   advancedFilter?: AssetAdvancedFilterProps;
 };
 
-export function hasFilters(allAssetFilters: AllAssetFilterProps | undefined): boolean {
+export function hasFilters(
+  allAssetFilters: AllAssetFilterProps | undefined
+): allAssetFilters is AllAssetFilterProps {
   return allAssetFilters?.filter !== undefined || allAssetFilters?.advancedFilter !== undefined;
 }
