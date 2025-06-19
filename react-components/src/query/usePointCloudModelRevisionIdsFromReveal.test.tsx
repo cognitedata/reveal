@@ -1,6 +1,6 @@
 import { beforeEach, describe, expect, test, vi } from 'vitest';
 import { usePointCloudModelRevisionIdsFromReveal } from './usePointCloudModelRevisionIdsFromReveal';
-import { ReactElement, type PropsWithChildren } from 'react';
+import { type ReactElement, type PropsWithChildren } from 'react';
 import {
   UsePointCloudModelRevisionIdsFromRevealContext,
   type UsePointCloudModelRevisionIdsFromRevealDependencies
