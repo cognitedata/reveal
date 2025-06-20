@@ -1,5 +1,6 @@
 import { getRenderTarget } from '../../../base/domainObjects/getRoot';
 import { VisualDomainObject } from '../../../base/domainObjects/VisualDomainObject';
+import { CommandsUpdater } from '../../../base/reactUpdaters/CommandsUpdater';
 import { type RenderStyle } from '../../../base/renderStyles/RenderStyle';
 import { type IconName } from '../../../base/utilities/IconName';
 import { type TranslationInput } from '../../../base/utilities/TranslateInput';
@@ -12,6 +13,7 @@ export class Image360CollectionDomainObject extends VisualDomainObject {
   // ==================================================
 
   readonly _model: Image360Model;
+  readonly _updateCallback: () => void;
 
   // ==================================================
   // INSTANCE PROPERTIES
@@ -28,6 +30,13 @@ export class Image360CollectionDomainObject extends VisualDomainObject {
   public constructor(model: Image360Model) {
     super();
     this._model = model;
+
+    this._updateCallback = () => {
+      CommandsUpdater.update(getRenderTarget(this));
+    };
+
+    this._model.on('image360Entered', this._updateCallback);
+    this._model.on('image360Exited', this._updateCallback);
   }
 
   // ==================================================
@@ -53,5 +62,8 @@ export class Image360CollectionDomainObject extends VisualDomainObject {
   protected override removeCore(): void {
     super.removeCore();
     getRenderTarget(this)?.viewer?.remove360ImageSet(this._model);
+
+    this._model.off('image360Entered', this._updateCallback);
+    this._model.off('image360Exited', this._updateCallback);
   }
 }
