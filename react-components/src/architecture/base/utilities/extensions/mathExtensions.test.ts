@@ -23,7 +23,7 @@ import {
 } from './mathExtensions';
 
 describe('MathExtensions', () => {
-  describe('isZero', () => {
+  describe(isZero.name, () => {
     test('should be zero', () => {
       expect(isZero(0)).toBe(true);
     });
@@ -32,7 +32,7 @@ describe('MathExtensions', () => {
     });
   });
 
-  describe('isEqual', () => {
+  describe(isEqual.name, () => {
     test('should be equal', () => {
       expect(isEqual(1, 1)).toBe(true);
       expect(isEqual(0, 0)).toBe(true);
@@ -45,7 +45,7 @@ describe('MathExtensions', () => {
     });
   });
 
-  describe('isAbsEqual', () => {
+  describe(isAbsEqual.name, () => {
     test('should be equal', () => {
       expect(isAbsEqual(1, 1, 0.0001)).toBe(true);
       expect(isAbsEqual(0, 0, 0.0001)).toBe(true);
@@ -58,7 +58,7 @@ describe('MathExtensions', () => {
     });
   });
 
-  describe('isInteger', () => {
+  describe(isInteger.name, () => {
     test('should be integer', () => {
       expect(isInteger(0)).toBe(true);
       expect(isInteger(2)).toBe(true);
@@ -73,7 +73,7 @@ describe('MathExtensions', () => {
     });
   });
 
-  describe('isIncrement', () => {
+  describe(isIncrement.name, () => {
     test('should be increment', () => {
       expect(isIncrement(0, 1)).toBe(true);
       expect(isIncrement(10, 1)).toBe(true);
@@ -87,7 +87,7 @@ describe('MathExtensions', () => {
     });
   });
 
-  describe('isOdd', () => {
+  describe(isOdd.name, () => {
     test('should be odd', () => {
       expect(isOdd(1)).toBe(true);
       expect(isOdd(-101)).toBe(true);
@@ -99,7 +99,7 @@ describe('MathExtensions', () => {
     });
   });
 
-  describe('isEven', () => {
+  describe(isEven.name, () => {
     test('should be even', () => {
       expect(isEven(0)).toBe(true);
       expect(isEven(2)).toBe(true);
@@ -111,7 +111,7 @@ describe('MathExtensions', () => {
     });
   });
 
-  describe('isBetween', () => {
+  describe(isBetween.name, () => {
     test('should be between', () => {
       expect(isBetween(0, 0.1, 1)).toBe(true);
     });
