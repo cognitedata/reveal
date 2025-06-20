@@ -1,14 +1,10 @@
-import { type TranslationInput } from '../../architecture';
-import {
-  type BannerStatus,
-  type BaseBannerCommand
-} from '../../architecture/base/commands/BaseBannerCommand';
-import { useOnUpdate } from './useOnUpdate';
-import { type ReactNode, useMemo, useState } from 'react';
+import { type BaseBannerCommand } from '../../architecture/base/commands/BaseBannerCommand';
+import { type ReactNode } from 'react';
 import styled from 'styled-components';
 import { Infobox } from '@cognite/cogs.js';
-import { getDefaultCommand } from './utilities';
-import { useRenderTarget } from '../RevealCanvas';
+import { useCommandProperty } from './hooks/useCommandProperty';
+import { useCommand } from './hooks/useCommand';
+import { useCommandVisible } from './hooks/useCommandProps';
 import { translate } from '../../architecture/base/utilities/translateUtils';
 
 export const BannerComponent = ({
@@ -16,23 +12,11 @@ export const BannerComponent = ({
 }: {
   command: BaseBannerCommand;
 }): ReactNode => {
-  const renderTarget = useRenderTarget();
-  const command = useMemo<BaseBannerCommand>(
-    () => getDefaultCommand<BaseBannerCommand>(inputCommand, renderTarget),
-    []
-  );
-
-  const [visible, setVisible] = useState<boolean>(command.isVisible);
-  const [content, setContent] = useState<TranslationInput>(command.content);
-  const [status, setStatus] = useState<BannerStatus>(command.status);
-
-  useOnUpdate(command, () => {
-    setVisible(command.isVisible);
-    setContent(command.content);
-    setStatus(command.status);
-  });
-
-  if (!visible) {
+  const command = useCommand(inputCommand);
+  const isVisible = useCommandVisible(command);
+  const content = useCommandProperty(command, () => command.content);
+  const status = useCommandProperty(command, () => command.status);
+  if (!isVisible) {
     return null;
   }
 

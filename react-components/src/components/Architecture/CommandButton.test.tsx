@@ -18,7 +18,7 @@ describe(CommandButton.name, () => {
 
   test('should render with default values', async () => {
     const command = new MockCommand();
-    renderMe(command);
+    renderCommandButton(command);
 
     // Check button
     const button = await screen.findByRole('button');
@@ -41,7 +41,7 @@ describe(CommandButton.name, () => {
 
   test('should invoke when clicked and track count', async () => {
     const command = new MockCommand();
-    renderMe(command);
+    renderCommandButton(command);
     const button = await screen.findByRole('button');
     expect(command.isInvokedTimes).toBe(0);
     await act(async () => {
@@ -52,7 +52,7 @@ describe(CommandButton.name, () => {
 
   test('should change from visible to invisible', async () => {
     const command = new MockCommand();
-    renderMe(command);
+    renderCommandButton(command);
 
     const beforeButton = await screen.findByRole('button');
     expect(beforeButton.getAttribute('aria-disabled')).toBe('false');
@@ -66,7 +66,7 @@ describe(CommandButton.name, () => {
 
   test('should change from enabled to disabled', async () => {
     const command = new MockCommand();
-    renderMe(command);
+    renderCommandButton(command);
 
     const beforeButton = await screen.findByRole('button');
     expect(beforeButton.getAttribute('aria-disabled')).toBe('false');
@@ -81,7 +81,7 @@ describe(CommandButton.name, () => {
   test('should change from unchecked to checked', async () => {
     const command = new MockCommand();
     command.isToggle = true;
-    renderMe(command);
+    renderCommandButton(command);
 
     const beforeButton = await screen.findByRole('button');
     expect(beforeButton.getAttribute('class')).not.contains('toggled');
@@ -95,7 +95,7 @@ describe(CommandButton.name, () => {
 
   test('should update icon when changed', async () => {
     const command = new MockCommand();
-    renderMe(command);
+    renderCommandButton(command);
 
     const beforeIcon = await screen.findByLabelText(command.icon + 'Icon');
     expect(beforeIcon).not.toBeNull();
@@ -108,7 +108,7 @@ describe(CommandButton.name, () => {
   });
 });
 
-function renderMe(command: BaseCommand): void {
+function renderCommandButton(command: BaseCommand): void {
   const renderTargetMock = new RevealRenderTarget(viewerMock, sdkMock);
 
   const wrapper = ({ children }: PropsWithChildren): ReactElement => (
