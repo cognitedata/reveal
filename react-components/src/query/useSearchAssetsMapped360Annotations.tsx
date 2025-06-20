@@ -86,7 +86,9 @@ async function getAssetMapped360Annotations(
 
   return await getClassicAssetMapped360Annotations(
     classicSiteIds,
-    sdk,
-    image360AnnotationFilterOptions
+    {
+      image360AnnotationFilterOptions
+    },
+    sdk
   );
 }
