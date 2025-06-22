@@ -67,7 +67,6 @@ describe('CylinderCreator', () => {
       const radius = 3;
 
       const direction = new Vector3(0, 1, 0);
-
       const centerA = new Vector3(0, 0, dz);
       const centerB = new Vector3(0, 2, dz);
       const points = [centerA, centerB, new Vector3(0, 2, radius + dz)];
