@@ -8,8 +8,6 @@ import { MeasureCylinderDomainObject } from '../../measurements/MeasureCylinderD
 import { PrimitiveType } from '../../../base/utilities/primitives/PrimitiveType';
 import { swap } from '../../../base/utilities/extensions/arrayExtensions';
 
-const direction = new Vector3(1, 0, 0);
-
 describe('CylinderCreator', () => {
   test('Create horizontal circle by mimics the user clicking 2 times', () => {
     const domainObject = new MeasureCylinderDomainObject(PrimitiveType.HorizontalCircle);
@@ -19,6 +17,7 @@ describe('CylinderCreator', () => {
     const dx = 5;
     const radius = 3;
 
+    const direction = new Vector3(1, 0, 0);
     const center = new Vector3(dx, 0, 0);
     const points = [center, new Vector3(dx, radius, 2)];
     click(creator, points[0], direction, false, center);
@@ -45,6 +44,7 @@ describe('CylinderCreator', () => {
       if (!reverseOrder) {
         swap(points, 1, 2);
       }
+      const direction = new Vector3(1, 0, 0);
       click(creator, points[0], direction, false, centerA);
       click(creator, points[1], direction, false);
       click(creator, points[2], direction, true);
@@ -65,6 +65,8 @@ describe('CylinderCreator', () => {
 
       const dz = 5;
       const radius = 3;
+
+      const direction = new Vector3(0, 1, 0);
 
       const centerA = new Vector3(0, 0, dz);
       const centerB = new Vector3(0, 2, dz);

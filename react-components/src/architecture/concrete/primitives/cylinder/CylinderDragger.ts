@@ -224,10 +224,14 @@ export class CylinderDragger extends BaseDragger {
     // Move end point to the same plane as the center of the end point,
     // and adjust the length so it doesn't change
     const translation = newVector3().subVectors(endPoint, this.point);
-    const { cylinder } = this._domainObject;
+    const { cylinder, primitiveType } = this._domainObject;
     const originalCylinder = this._originalCylinder;
     cylinder.copy(originalCylinder);
     const { centerA, centerB } = cylinder;
+
+    if (primitiveType === PrimitiveType.HorizontalCylinder) {
+      translation.z = 0;
+    }
 
     if (this._face.face === 2) {
       centerB.add(translation);
@@ -235,6 +239,7 @@ export class CylinderDragger extends BaseDragger {
         .subVectors(centerA, centerB)
         .normalize()
         .multiplyScalar(originalCylinder.height);
+
       centerB.subVectors(centerA, axis);
     } else {
       centerA.add(translation);

@@ -4,6 +4,7 @@ import { PrimitiveType } from '../../../base/utilities/primitives/PrimitiveType'
 import { RenderTargetCommand } from '../../../base/commands/RenderTargetCommand';
 import { AnnotationsCreateTool } from './AnnotationsCreateTool';
 import { type IconName } from '../../../base/utilities/IconName';
+import { getIconByPrimitiveType } from '../../../base/utilities/primitives/getIconByPrimitiveType';
 
 export class AnnotationsSetCreateTypeCommand extends RenderTargetCommand {
   // ==================================================
@@ -26,16 +27,7 @@ export class AnnotationsSetCreateTypeCommand extends RenderTargetCommand {
   // ==================================================
 
   public override get icon(): IconName {
-    switch (this._primitiveType) {
-      case PrimitiveType.Box:
-        return 'Cube';
-      case PrimitiveType.HorizontalCylinder:
-        return 'CylinderHorizontal';
-      case PrimitiveType.VerticalCylinder:
-        return 'CylinderVertical';
-      default:
-        throw new Error('Unknown PrimitiveType');
-    }
+    return getIconByPrimitiveType(this._primitiveType);
   }
 
   public override get tooltip(): TranslationInput {

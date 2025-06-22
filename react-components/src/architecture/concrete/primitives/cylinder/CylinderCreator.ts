@@ -75,7 +75,7 @@ export class CylinderCreator extends BaseCreator {
       return false;
     }
     this.addRawPoint(point, isPending);
-    this.rebuild();
+    this.rebuild(ray);
 
     domainObject.notify(Changes.geometry);
     if (this.isFinished) {
@@ -149,7 +149,7 @@ export class CylinderCreator extends BaseCreator {
    * The third/second will give radius. The radius is already calculated in the recalculatePoint
    */
 
-  private rebuild(): void {
+  private rebuild(ray: Ray): void {
     if (this.pointCount === 0) {
       throw new Error('Cannot create a cylinder without points');
     }
@@ -159,10 +159,11 @@ export class CylinderCreator extends BaseCreator {
       centerA.copy(this.firstPoint);
       centerB.copy(this.firstPoint);
       if (this._primitiveType === PrimitiveType.HorizontalCylinder) {
-        centerA.x -= Cylinder.HalfMinSize;
-        centerA.y -= Cylinder.HalfMinSize;
-        centerB.x += Cylinder.HalfMinSize;
-        centerB.y += Cylinder.HalfMinSize;
+        const axis = ray.direction.clone();
+        axis.z = 0;
+        axis.normalize();
+        centerA.addScaledVector(axis, -Cylinder.HalfMinSize);
+        centerB.addScaledVector(axis, +Cylinder.HalfMinSize);
       } else {
         centerA.z -= Cylinder.HalfMinSize;
         centerB.z += Cylinder.HalfMinSize;

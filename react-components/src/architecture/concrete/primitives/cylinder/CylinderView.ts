@@ -49,11 +49,16 @@ const RELATIVE_RESIZE_RADIUS = 0.2;
 const RELATIVE_MAX_RADIUS = 0.9;
 const RELATIVE_ROTATION_RADIUS = new Range1(0.4, 0.7);
 const CIRCULAR_SEGMENTS = 32;
-const RENDER_ORDER = 100;
+
 const TOP_FACE = new BoxFace(2);
 const BOTTOM_FACE = new BoxFace(5);
+
 const HEIGHT_LABEL = 'HeightLabel';
-const RADIUS_LABEL = 'RadiusLabel';
+const TOP_RADIUS_LABEL = 'TopRadiusLabel';
+const BOTTOM_RADIUS_LABEL = 'BottomRadiusLabel';
+
+const RENDER_ORDER = 100;
+const LABEL_RENDER_ORDER = 101;
 
 export class CylinderView extends GroupThreeView<CylinderDomainObject> {
   // ==================================================
@@ -246,7 +251,7 @@ export class CylinderView extends GroupThreeView<CylinderDomainObject> {
   }
 
   private createRotationRing(matrix: Matrix4, face: BoxFace): Mesh | undefined {
-    if (!this.isFaceVisible(face)) {
+    if (!isFaceVisible(face)) {
       return undefined;
     }
     const { domainObject, style } = this;
@@ -312,14 +317,14 @@ export class CylinderView extends GroupThreeView<CylinderDomainObject> {
     const material = new MeshPhongMaterial();
     updateMarkerMaterial(material, domainObject, style, false, this.useDepthTest);
     for (const boxFace of BoxFace.getAllFaces()) {
-      if (!this.isFaceVisible(boxFace)) {
+      if (!isFaceVisible(boxFace)) {
         continue;
       }
       if (selectedFace === undefined || !selectedFace.equals(boxFace)) {
         this.addChild(this.createEdgeCircle(matrix, material, boxFace));
       }
     }
-    if (selectedFace !== undefined && this.isFaceVisible(selectedFace)) {
+    if (selectedFace !== undefined && isFaceVisible(selectedFace)) {
       const material = new MeshPhongMaterial();
       updateMarkerMaterial(material, domainObject, style, true, this.useDepthTest);
       this.addChild(this.createEdgeCircle(matrix, material, selectedFace));
@@ -332,10 +337,15 @@ export class CylinderView extends GroupThreeView<CylinderDomainObject> {
 
   private addLabels(): void {
     const type = this.domainObject.primitiveType;
-    if (type === PrimitiveType.VerticalCylinder || type === PrimitiveType.HorizontalCircle) {
-      this.addChild(this.createRadiusLabel(RADIUS_LABEL));
+    if (
+      type === PrimitiveType.VerticalCylinder ||
+      type === PrimitiveType.HorizontalCircle ||
+      type === PrimitiveType.HorizontalCylinder
+    ) {
+      this.addChild(this.createRadiusLabel(TOP_RADIUS_LABEL));
+      this.addChild(this.createRadiusLabel(BOTTOM_RADIUS_LABEL));
     }
-    if (type === PrimitiveType.VerticalCylinder) {
+    if (type === PrimitiveType.VerticalCylinder || type === PrimitiveType.HorizontalCylinder) {
       this.addChild(this.createHeightLabel(HEIGHT_LABEL));
     }
   }
@@ -372,16 +382,23 @@ export class CylinderView extends GroupThreeView<CylinderDomainObject> {
     const unitSystem = this.getUnitSystem();
     const text = unitSystem.toStringWithUnit(value, Quantity.Length);
     const sprite = createSprite(text, this.style, labelHeight);
-    if (sprite !== undefined) {
-      sprite.name = name;
+    if (sprite === undefined) {
+      return undefined;
     }
+    sprite.name = name;
+    sprite.renderOrder = LABEL_RENDER_ORDER;
     return sprite;
   }
 
   private updateLabels(camera: PerspectiveCamera): void {
-    const radiusLabel = this._group.getObjectByName(RADIUS_LABEL);
+    const topRadiusLabel = this._group.getObjectByName(TOP_RADIUS_LABEL);
+    const bottomRadiusLabel = this._group.getObjectByName(BOTTOM_RADIUS_LABEL);
     const heightLabel = this._group.getObjectByName(HEIGHT_LABEL);
-    if (radiusLabel === undefined && heightLabel === undefined) {
+    if (
+      topRadiusLabel === undefined &&
+      bottomRadiusLabel === undefined &&
+      heightLabel === undefined
+    ) {
       return;
     }
     const { domainObject } = this;
@@ -393,30 +410,43 @@ export class CylinderView extends GroupThreeView<CylinderDomainObject> {
     topCenter.applyMatrix4(matrix);
     bottomCenter.applyMatrix4(matrix);
     const axis = newVector3().subVectors(topCenter, bottomCenter).normalize();
-
     const cameraPosition = camera.getWorldPosition(newVector3());
-    const cameraDirection = newVector3().subVectors(topCenter, cameraPosition).normalize();
-    const radialDirection = newVector3().crossVectors(cameraDirection, axis).normalize();
 
-    if (radiusLabel !== undefined) {
-      const labelHeight = this.getRadiusLabelHeight();
-      const position = newVector3(topCenter).addScaledVector(radialDirection, radius / 2);
-
-      adjustLabel(position, labelHeight); // To avoid Z-fighting
-      radiusLabel.position.copy(position);
-      radiusLabel.visible = cameraDirection.y <= 0; // Show only when top cap is visible
+    if (topRadiusLabel !== undefined) {
+      updateRadiusLabel(topCenter, topRadiusLabel, 1, this.getRadiusLabelHeight());
+    }
+    if (bottomRadiusLabel !== undefined) {
+      updateRadiusLabel(bottomCenter, bottomRadiusLabel, -1, this.getRadiusLabelHeight());
     }
     if (heightLabel !== undefined) {
-      const forwardDirection = newVector3().crossVectors(radialDirection, axis).normalize();
       const center = newVector3().addVectors(topCenter, bottomCenter).multiplyScalar(0.5);
-      center.addScaledVector(forwardDirection, radius);
-
-      heightLabel.position.copy(center);
-      heightLabel.visible = true;
+      updateHeightLabel(center, heightLabel);
     }
 
-    function adjustLabel(point: Vector3, labelHeight: number): void {
-      point.y += (1.1 * labelHeight) / 2;
+    function updateRadiusLabel(
+      center: Vector3,
+      label: Object3D,
+      sign: number,
+      labelHeight: number
+    ): void {
+      const cameraDirection = newVector3().subVectors(center, cameraPosition).normalize();
+      label.visible = Math.sign(axis.dot(cameraDirection)) !== sign; // Show only when the cap is visible
+      if (!label.visible) {
+        return;
+      }
+      const radialDirection = newVector3().crossVectors(cameraDirection, axis).normalize();
+      const position = newVector3(center).addScaledVector(radialDirection, radius / 2);
+      position.addScaledVector(axis, (sign * 1.1 * labelHeight) / 2);
+      label.position.copy(position);
+    }
+
+    function updateHeightLabel(center: Vector3, label: Object3D): void {
+      const cameraDirection = newVector3().subVectors(center, cameraPosition).normalize();
+      const radialDirection = newVector3().crossVectors(cameraDirection, axis).normalize();
+      const forwardDirection = newVector3().crossVectors(radialDirection, axis).normalize();
+      center.addScaledVector(forwardDirection, radius);
+      label.position.copy(center);
+      label.visible = true;
     }
   }
 
@@ -429,7 +459,7 @@ export class CylinderView extends GroupThreeView<CylinderDomainObject> {
     const planePoint = face.getPlanePoint(scaledPositionAtFace);
     const relativeDistance = planePoint.length() / 2;
 
-    if (!this.isFaceVisible(face)) {
+    if (!isFaceVisible(face)) {
       return FocusType.Face;
     }
     if (relativeDistance < RELATIVE_RESIZE_RADIUS) {
@@ -447,10 +477,6 @@ export class CylinderView extends GroupThreeView<CylinderDomainObject> {
       return FocusType.Face;
     }
     return FocusType.Body;
-  }
-
-  private isFaceVisible(face: BoxFace): boolean {
-    return face.index === 2; // Z Face visible only
   }
 
   private getUnitSystem(): UnitSystem {
@@ -479,4 +505,8 @@ function showMarkers(focusType: FocusType): boolean {
 const VECTOR_POOL = new Vector3Pool();
 function newVector3(copyFrom?: Vector3): Vector3 {
   return VECTOR_POOL.getNext(copyFrom);
+}
+
+function isFaceVisible(face: BoxFace): boolean {
+  return face.index === 2; // Z Face visible only
 }
