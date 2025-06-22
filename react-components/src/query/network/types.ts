@@ -1,4 +1,4 @@
-import { type Asset } from '@cognite/sdk';
+import type { Asset } from '@cognite/sdk';
 
 export type SearchClassicCadAssetsResponse = {
   nextCursor: string | undefined;
