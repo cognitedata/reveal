@@ -361,8 +361,7 @@ export class CylinderView extends GroupThreeView<CylinderDomainObject> {
   }
 
   private createLabel(name: string, value: number, labelHeight: number): Sprite {
-    const unitSystem = this.getUnitSystem();
-    const text = unitSystem.toStringWithUnit(value, Quantity.Length);
+    const text = this.getUnitSystem().toStringWithUnit(value, Quantity.Length);
     const sprite = createSprite(text, this.style, labelHeight);
     sprite.name = name;
     return sprite;

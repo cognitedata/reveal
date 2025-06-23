@@ -49,13 +49,7 @@ export abstract class BaseDragger {
   protected constructor(props: CreateDraggerProps, domainObject: DomainObject) {
     this.point = props.point;
     this.ray = props.ray;
-
-    const root = getRoot(domainObject);
-    if (root !== undefined) {
-      this._unitSystem = root.unitSystem;
-    } else {
-      this._unitSystem = new UnitSystem();
-    }
+    this._unitSystem = getRoot(domainObject)?.unitSystem ?? new UnitSystem();
   }
 
   // ==================================================
