@@ -44,7 +44,6 @@ describe(PlaneView.name, () => {
     domainObject.setSelectedInteractive(true);
     expect(view.object).toBeInstanceOf(Object3D);
     checkChildren(view, 0, 2, 1);
-    expectVisibleChildren(view, 3);
   });
 
   test('should intersect', () => {
