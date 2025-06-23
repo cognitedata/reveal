@@ -23,56 +23,63 @@ import { Wireframe } from 'three/examples/jsm/lines/Wireframe.js';
 describe('BoxView', () => {
   let domainObject: BoxDomainObject;
   let view: BoxView;
+  let camera: PerspectiveCamera;
 
   beforeEach(() => {
     domainObject = createBoxDomainObject();
     view = new BoxView();
     addView(domainObject, view);
+
+    // This force to update the labels in correct position
+    camera = new PerspectiveCamera();
+    camera.position.set(5, 5, 5);
+    camera.lookAt(0, 0, 0);
+    view.beforeRender(camera);
   });
 
   test('should have object', () => {
     expect(view.object).toBeInstanceOf(Object3D);
-    checkChildren(view, 1, 1, 0);
+    checkChildren(view, 1, 1, 3);
   });
 
   test('should changed when focus change', () => {
     const face = new BoxFace(1);
 
     domainObject.setFocusInteractive(FocusType.Face, face);
-    checkChildren(view, 1, 9, 0);
+    checkChildren(view, 1, 9, 3);
 
     domainObject.setFocusInteractive(FocusType.Pending);
-    checkChildren(view, 1, 1, 1);
+    checkChildren(view, 1, 1, 4);
 
     domainObject.setFocusInteractive(FocusType.Rotation, face);
-    checkChildren(view, 1, 9, 0);
+    checkChildren(view, 1, 9, 3);
 
     domainObject.setFocusInteractive(FocusType.Body, face);
-    checkChildren(view, 1, 9, 0);
+    checkChildren(view, 1, 9, 3);
 
     domainObject.setFocusInteractive(FocusType.Focus);
-    checkChildren(view, 1, 9, 0);
+    checkChildren(view, 1, 9, 3);
 
     domainObject.setFocusInteractive(FocusType.None);
-    checkChildren(view, 1, 1, 0);
+    checkChildren(view, 1, 1, 3);
   });
 
   test('should changed when render style change', () => {
     domainObject.renderStyle.showLines = false;
     view.update(new DomainObjectChange(Changes.renderStyle));
-    checkChildren(view, 0, 1, 0);
+    checkChildren(view, 0, 1, 3);
 
     domainObject.renderStyle.showLines = true;
     view.update(new DomainObjectChange(Changes.renderStyle));
-    checkChildren(view, 1, 1, 0);
+    checkChildren(view, 1, 1, 3);
 
     domainObject.renderStyle.showSolid = false;
     view.update(new DomainObjectChange(Changes.renderStyle));
-    checkChildren(view, 1, 0, 0);
+    checkChildren(view, 1, 0, 3);
 
     domainObject.renderStyle.showSolid = true;
     view.update(new DomainObjectChange(Changes.renderStyle));
-    checkChildren(view, 1, 1, 0);
+    checkChildren(view, 1, 1, 3);
 
     domainObject.renderStyle.showLabel = false;
     view.update(new DomainObjectChange(Changes.renderStyle));
@@ -80,25 +87,27 @@ describe('BoxView', () => {
   });
 
   test('should changed when line width change', () => {
-    checkChildren(view, 1, 1, 0);
+    checkChildren(view, 1, 1, 3);
     domainObject.renderStyle.lineWidth = 5;
     view.update(new DomainObjectChange(Changes.renderStyle));
-    checkChildren(view, 0, 1, 0, 1); // This should use the wireframe of the lineSegments
+    checkChildren(view, 0, 1, 3, 1); // This should use the wireframe of the lineSegments
   });
 
   test('should changed when selection change', () => {
     domainObject.isSelected = true;
     view.update(new DomainObjectChange(Changes.selected));
-    checkChildren(view, 1, 1, 0);
+    checkChildren(view, 1, 1, 3);
   });
 
-  test('should update before render', () => {
-    const camera = new PerspectiveCamera();
+  test('should still have 3 labels when camera position changed to opposite direction', () => {
     domainObject.setFocusInteractive(FocusType.Focus);
-    camera.position.set(2, 2, 0);
+    checkChildren(view, 1, 9, 3);
+
+    // Move camera to look at the box at the opposite direction
+    camera.position.negate();
     camera.lookAt(0, 0, 0);
     view.beforeRender(camera);
-    checkChildren(view, 1, 9, 0);
+    checkChildren(view, 1, 9, 3);
   });
 
   test('should intersect', () => {

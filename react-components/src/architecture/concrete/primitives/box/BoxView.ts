@@ -367,7 +367,6 @@ export class BoxView extends GroupThreeView<BoxDomainObject> {
       this._sprites.push(sprite);
       this.addChild(sprite);
     }
-    this.updateLabels(this.renderTarget.camera);
     const { focusType } = domainObject;
     if (focusType === FocusType.Pending && domainObject.box.hasArea) {
       this.addChild(this.createPendingLabel(matrix, spriteHeight, TOP_FACE));

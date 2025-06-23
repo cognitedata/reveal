@@ -22,11 +22,18 @@ import { Wireframe } from 'three/examples/jsm/lines/Wireframe.js';
 describe('CylinderView', () => {
   let domainObject: CylinderDomainObject;
   let view: CylinderView;
+  let camera: PerspectiveCamera;
 
   beforeEach(() => {
     domainObject = createCylinderDomainObject();
     view = new CylinderView();
     addView(domainObject, view);
+
+    // This force to update the labels in correct position
+    camera = new PerspectiveCamera();
+    camera.position.set(5, 5, 5);
+    camera.lookAt(0, 0, 0);
+    view.beforeRender(camera);
   });
 
   test('should have object', () => {
@@ -66,6 +73,14 @@ describe('CylinderView', () => {
     domainObject.renderStyle.showSolid = false;
     view.update(new DomainObjectChange(Changes.renderStyle));
     checkChildren(view, 1, 0, 2);
+
+    domainObject.renderStyle.showSolid = true;
+    view.update(new DomainObjectChange(Changes.renderStyle));
+    checkChildren(view, 1, 1, 2);
+
+    domainObject.renderStyle.showLabel = false;
+    view.update(new DomainObjectChange(Changes.renderStyle));
+    checkChildren(view, 1, 1, 0);
   });
 
   test('should changed when line width change', () => {
@@ -81,13 +96,18 @@ describe('CylinderView', () => {
     checkChildren(view, 1, 1, 2);
   });
 
-  test('should update before render', () => {
-    const camera = new PerspectiveCamera();
+  test('should still have labels when camera position changed to opposite direction', () => {
     domainObject.setFocusInteractive(FocusType.Focus);
-    camera.position.set(2, 2, 0);
+    checkChildren(view, 1, 3, 2);
+
+    // Move camera to look at the box at the opposite direction
+    camera.position.negate();
     camera.lookAt(0, 0, 0);
     view.beforeRender(camera);
-    checkChildren(view, 1, 3, 2);
+
+    // Radius labels is not visible when looking from the opposite direction
+    // This changed in another PR, so the last number should be 2 when merging.
+    checkChildren(view, 1, 3, 1);
   });
 
   test('should intersect', () => {
