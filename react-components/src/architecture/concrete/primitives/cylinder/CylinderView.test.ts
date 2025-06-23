@@ -19,7 +19,7 @@ import { MeasureCylinderDomainObject } from '../../measurements/MeasureCylinderD
 import { PrimitiveType } from '../../../base/utilities/primitives/PrimitiveType';
 import { Wireframe } from 'three/examples/jsm/lines/Wireframe.js';
 
-describe('CylinderView', () => {
+describe(CylinderView.name, () => {
   let domainObject: CylinderDomainObject;
   let view: CylinderView;
   let camera: PerspectiveCamera;

@@ -20,7 +20,7 @@ import { PrimitiveType } from '../../../base/utilities/primitives/PrimitiveType'
 import { BoxFace } from '../common/BoxFace';
 import { Wireframe } from 'three/examples/jsm/lines/Wireframe.js';
 
-describe('BoxView', () => {
+describe(BoxView.name, () => {
   let domainObject: BoxDomainObject;
   let view: BoxView;
   let camera: PerspectiveCamera;
