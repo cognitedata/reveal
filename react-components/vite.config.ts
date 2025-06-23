@@ -6,7 +6,7 @@ import { externalizeDeps } from 'vite-plugin-externalize-deps';
 import { exec } from 'node:child_process';
 import { coverageConfigDefaults } from 'vitest/config';
 
-export default defineConfig(({ command }) => {
+export default defineConfig(({}) => {
   return {
     plugins: [
       react(),
@@ -22,10 +22,14 @@ export default defineConfig(({ command }) => {
         entry: resolve(__dirname, 'src/index.ts'),
         name: 'Reveal react components',
         // the proper extensions will be added
-        fileName: 'index',
+        fileName: '[name]',
         formats: ['es']
       },
-      sourcemap: command === 'build'
+      rollupOptions: {
+        output: {
+          preserveModules: true
+        }
+      }
     },
     test: {
       include: ['src/**/*.{test,spec}.?(c|m)[jt]s?(x)'],

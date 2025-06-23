@@ -4,6 +4,8 @@ import { useReveal } from './ViewerContext';
 import { useDisableBodyTextSelectionOnViewerDragging } from './hooks/useDisableBodyTextSelectionOnViewerDragging';
 
 export function RevealCanvas({ children }: { children?: ReactNode }): ReactElement {
+  console.log('h');
+
   const viewer = useReveal();
   const parentElement = useRef<HTMLDivElement>(null);
 
