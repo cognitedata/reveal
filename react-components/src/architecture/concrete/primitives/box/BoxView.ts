@@ -356,13 +356,15 @@ export class BoxView extends GroupThreeView<BoxDomainObject> {
     const { domainObject, style } = this;
     const spriteHeight = this.getTextHeight(style.relativeTextSize);
     clear(this._sprites);
+
+    const unitSystem = this.getUnitSystem();
     for (let index = 0; index < 3; index++) {
       const size = domainObject.box.size.getComponent(index);
       if (!Box.isValidSize(size)) {
         this._sprites.push(undefined);
         continue;
       }
-      const text = this.getUnitSystem().toStringWithUnit(size, Quantity.Length);
+      const text = unitSystem.toStringWithUnit(size, Quantity.Length);
       const sprite = createSprite(text, style, spriteHeight);
       this._sprites.push(sprite);
       this.addChild(sprite);
