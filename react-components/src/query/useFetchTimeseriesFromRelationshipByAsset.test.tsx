@@ -116,7 +116,7 @@ vi.mock('../components/RevealCanvas/SDKProvider');
 
 vi.mocked(useSDK).mockReturnValue(sdk);
 
-describe('useFetchTimeseriesFromRelationshipByAsset', () => {
+describe(useFetchTimeseriesFromRelationshipByAsset.name, () => {
   beforeEach(() => {
     vi.clearAllMocks();
     queryClient.clear();
