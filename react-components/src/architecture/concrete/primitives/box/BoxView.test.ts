@@ -19,6 +19,7 @@ import { MeasureBoxDomainObject } from '../../measurements/MeasureBoxDomainObjec
 import { PrimitiveType } from '../../../base/utilities/primitives/PrimitiveType';
 import { BoxFace } from '../common/BoxFace';
 import { Wireframe } from 'three/examples/jsm/lines/Wireframe.js';
+import { degToRad, radToDeg } from 'three/src/math/MathUtils.js';
 
 describe(BoxView.name, () => {
   let domainObject: BoxDomainObject;
@@ -97,6 +98,16 @@ describe(BoxView.name, () => {
     domainObject.isSelected = true;
     view.update(new DomainObjectChange(Changes.selected));
     checkChildren(view, 1, 1, 3);
+  });
+
+  test('should changed when box is rotated', () => {
+    checkChildren(view, 1, 1, 3);
+
+    domainObject.box.rotation.z = degToRad(15);
+    view.update(new DomainObjectChange(Changes.geometry));
+
+    // When the Z-rotation is not 0, it will add rotation angle label at top.
+    checkChildren(view, 1, 1, 4);
   });
 
   test('should still have 3 labels when camera position changed to opposite direction', () => {

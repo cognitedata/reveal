@@ -301,9 +301,6 @@ export class AxisThreeView extends GroupThreeView {
         labelFontSize,
         style.textColor
       );
-      if (sprite === undefined) {
-        return;
-      }
       moveSpriteByPositionAndDirection(sprite, position, tickDirection);
       this.addChild(sprite);
       this.setUserDataOnAxis(sprite, faceIndex1, faceIndex2, true);
