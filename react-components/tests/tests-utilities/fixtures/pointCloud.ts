@@ -1,7 +1,8 @@
 import {
   type AddModelOptions,
   CognitePointCloudModel,
-  type ClassicDataSourceType
+  type ClassicDataSourceType,
+  type DMDataSourceType
 } from '@cognite/reveal';
 import { Mock } from 'moq.ts';
 import { Matrix4 } from 'three';
@@ -30,5 +31,20 @@ export function createPointCloudMock(parameters?: { visible?: boolean }): Cognit
     .setup((p) => p.type)
     .returns('pointcloud')
     .prototypeof(CognitePointCloudModel.prototype)
+    .object();
+}
+
+export function createPointCloudDMMock(parameters?: {
+  revisionExternalId?: string;
+  revisionSpace?: string;
+}): CognitePointCloudModel<DMDataSourceType> {
+  return new Mock<CognitePointCloudModel<DMDataSourceType>>()
+    .setup((p) => p.modelIdentifier)
+    .returns({
+      revisionExternalId: parameters?.revisionExternalId ?? 'cog_3d_pointcloud_123456',
+      revisionSpace: parameters?.revisionSpace ?? 'point-cloud-space'
+    })
+    .setup((p) => p.type)
+    .returns('pointcloud')
     .object();
 }
