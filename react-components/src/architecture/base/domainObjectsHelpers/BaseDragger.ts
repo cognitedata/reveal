@@ -4,7 +4,7 @@ import {
   type CreateDraggerProps
 } from '../domainObjects/VisualDomainObject';
 import { type Transaction } from '../undo/Transaction';
-import { type UnitSystem } from '../renderTarget/UnitSystem';
+import { UnitSystem } from '../renderTarget/UnitSystem';
 import { type DomainObject } from '../domainObjects/DomainObject';
 import { Quantity } from './Quantity';
 import { round, roundIncrement } from '../utilities/extensions/mathExtensions';
@@ -23,7 +23,7 @@ export abstract class BaseDragger {
   protected readonly point: Vector3; // Intersection point at pointer down in CDF coordinates
   protected readonly ray: Ray = new Ray(); // Intersection point at pointer down in CDF coordinates
   private _transaction?: Transaction;
-  protected readonly _unitSystem: UnitSystem | undefined = undefined;
+  protected readonly _unitSystem: UnitSystem;
   public isChanged = false;
 
   // ==================================================
@@ -53,6 +53,8 @@ export abstract class BaseDragger {
     const root = getRoot(domainObject);
     if (root !== undefined) {
       this._unitSystem = root.unitSystem;
+    } else {
+      this._unitSystem = new UnitSystem();
     }
   }
 
@@ -97,7 +99,7 @@ export abstract class BaseDragger {
     if (value < minValue) {
       value = minValue;
     }
-    if (!isShiftPressed || this._unitSystem === undefined) {
+    if (!isShiftPressed) {
       return value;
     }
     const convertedValue = this._unitSystem.convertToUnit(value, Quantity.Length);

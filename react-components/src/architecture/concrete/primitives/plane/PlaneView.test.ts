@@ -10,8 +10,8 @@ import { type PlaneDomainObject } from './PlaneDomainObject';
 import {
   addView,
   createIntersectInput,
-  expectChildrenLength,
-  expectChildrenOfTypeAndCount
+  expectVisibleChildren,
+  expectVisibleChildrenOfType
 } from '#test-utils/architecture/viewUtil';
 import { createPlaneDomainObjectMock } from './PlaneDomainObject.test';
 import { Wireframe } from 'three/examples/jsm/lines/Wireframe.js';
@@ -37,17 +37,14 @@ describe(PlaneView.name, () => {
 
   test('should have object and children of Line and Mesh when not selected', () => {
     expect(view.object).toBeInstanceOf(Object3D);
-    expectChildrenLength(view, 3);
-    expectChildrenOfTypeAndCount(view, Line, 1);
-    expectChildrenOfTypeAndCount(view, Mesh, 2);
+    checkChildren(view, 1, 2, 0);
   });
 
   test('should have object and children of Wireframe and Mesh when selected', () => {
     domainObject.setSelectedInteractive(true);
     expect(view.object).toBeInstanceOf(Object3D);
-    expectChildrenLength(view, 3);
-    expectChildrenOfTypeAndCount(view, Wireframe, 1);
-    expectChildrenOfTypeAndCount(view, Mesh, 3); // Wireframe is also a mesh
+    checkChildren(view, 0, 2, 1);
+    expectVisibleChildren(view, 3);
   });
 
   test('should intersect', () => {
@@ -104,4 +101,16 @@ function createLookingDownIntersectInput(
 function getExpectedPoint(domainObject: PlaneDomainObject): Vector3 {
   const origin = new Vector3(0, 0, 0);
   return domainObject.plane.projectPoint(origin, new Vector3());
+}
+
+function checkChildren(
+  view: PlaneView,
+  lineCount: number,
+  meshCount: number,
+  wireframeCount: number
+): void {
+  expectVisibleChildrenOfType(view, Line, lineCount);
+  expectVisibleChildrenOfType(view, Mesh, meshCount + wireframeCount); // Wireframe is also a mesh
+  expectVisibleChildrenOfType(view, Wireframe, wireframeCount);
+  expectVisibleChildren(view, lineCount + meshCount + wireframeCount);
 }

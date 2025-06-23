@@ -269,9 +269,6 @@ export class AxisThreeView extends GroupThreeView {
 
           const text = numberToString(dimension === 2 ? -tick : tick);
           const sprite = createSpriteWithText(text, tickFontSize, style.textColor);
-          if (sprite === undefined) {
-            continue;
-          }
           sprite.position.copy(end);
           this.addChild(sprite);
           this.setUserDataOnAxis(sprite, faceIndex1, faceIndex2, true);

@@ -7,7 +7,8 @@ import { expectEqualVector3 } from '#test-utils/primitives/primitiveTestUtil';
 import {
   addView,
   createIntersectInput,
-  expectChildrenLength
+  expectVisibleChildren,
+  expectVisibleChildrenOfType
 } from '#test-utils/architecture/viewUtil';
 import { isDomainObjectIntersection } from '../../base/domainObjectsHelpers/DomainObjectIntersection';
 import { ExampleView } from './ExampleView';
@@ -26,8 +27,8 @@ describe(ExampleView.name, () => {
 
   test('should have object', () => {
     expect(view.object).toBeInstanceOf(Object3D);
-    expectChildrenLength(view, 1);
-    expect(view.object.children[0]).instanceOf(Mesh);
+    expectVisibleChildren(view, 1);
+    expectVisibleChildrenOfType(view, Mesh, 1);
   });
 
   test('should regenerate when render style change', () => {
