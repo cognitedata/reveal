@@ -17,6 +17,7 @@ export default defineConfig(({}) => {
       yalcPush()
     ],
     build: {
+      emptyOutDir: false,
       lib: {
         // Could also be a dictionary or array of multiple entry points
         entry: resolve(__dirname, 'src/index.ts'),

@@ -16,6 +16,7 @@ export function SceneContainer({
   sceneSpaceId,
   ...rest
 }: SceneContainerProps): ReactNode {
+  console.log('IsThisRealLife?');
   const resourceOptions = useReveal3dResourcesFromScene(sceneExternalId, sceneSpaceId);
 
   useGroundPlaneFromScene(sceneExternalId, sceneSpaceId);

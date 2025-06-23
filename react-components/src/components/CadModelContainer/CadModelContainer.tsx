@@ -51,6 +51,7 @@ export function CadModelContainer({
     if (isEqual(initializingModel.current, addModelOptions) || addModelOptions === undefined) {
       return;
     }
+    console.log('DEBUG: Add model!');
 
     initializingModel.current = addModelOptions;
     const cleanupCallbackPromise = addModel(addModelOptions, transform)
@@ -116,7 +117,10 @@ export function CadModelContainer({
   }
 
   function removeModel(): void {
-    if (!modelExists(model, viewer)) return;
+    if (!modelExists(model, viewer)){
+      console.log('Failed to remove model');
+      return;
+    } 
 
     if (cachedViewerRef !== undefined && !cachedViewerRef.isRevealContainerMountedRef.current)
       return;

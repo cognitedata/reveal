@@ -20,6 +20,8 @@ export const Reveal3DResources = ({
   const { CadModelContainer, Image360CollectionContainer, PointCloudContainer, ...hooks } =
     use3DResourcesViewModel();
 
+  console.log("DEBUG INPUT", resources);
+
   const renderTarget = hooks.useRenderTarget();
   const viewer = hooks.useReveal();
 
@@ -42,6 +44,8 @@ export const Reveal3DResources = ({
     }
     return reveal3DModels.filter((model): model is CadModelOptions => model.type === 'cad');
   }, [reveal3DModels]);
+
+  console.log('DEBUG TYPED CAD OPTIONS', cadModelOptions);
 
   const { data: assetMappings } = hooks.useAssetMappedNodesForRevisions(cadModelOptions);
 
@@ -71,6 +75,8 @@ export const Reveal3DResources = ({
   );
 
   const image360StyledGroup = hooks.useCalculateImage360Styling(instanceStyling);
+
+  console.log("DEBUG: styled cad nums", styledCadModelOptions.length, styledCadModelOptions);
 
   return (
     <>
