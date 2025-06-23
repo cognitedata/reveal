@@ -50,12 +50,9 @@ const RELATIVE_MAX_RADIUS = 0.9;
 const RELATIVE_ROTATION_RADIUS = new Range1(0.4, 0.7);
 const CIRCULAR_SEGMENTS = 32;
 
-const TOP_FACE = new BoxFace(2);
-const BOTTOM_FACE = new BoxFace(5);
-
 const HEIGHT_LABEL = 'HeightLabel';
-const TOP_RADIUS_LABEL = 'TopRadiusLabel';
-const BOTTOM_RADIUS_LABEL = 'BottomRadiusLabel';
+const RADIUS_LABEL_A = 'RadiusLabelA';
+const RADIUS_LABEL_B = 'RadiusLabelB';
 
 const RENDER_ORDER = 100;
 const LABEL_RENDER_ORDER = 101;
@@ -131,8 +128,8 @@ export class CylinderView extends GroupThreeView<CylinderDomainObject> {
     }
     if (showMarkers(focusType)) {
       if (domainObject.canMoveCaps) {
-        this.addChild(this.createRotationRing(matrix, TOP_FACE));
-        this.addChild(this.createRotationRing(matrix, BOTTOM_FACE));
+        this.addChild(this.createRotationRing(matrix, new BoxFace(2)));
+        this.addChild(this.createRotationRing(matrix, new BoxFace(5)));
       }
       this.addEdgeCircles(matrix);
     }
@@ -342,8 +339,8 @@ export class CylinderView extends GroupThreeView<CylinderDomainObject> {
       type === PrimitiveType.HorizontalCircle ||
       type === PrimitiveType.HorizontalCylinder
     ) {
-      this.addChild(this.createRadiusLabel(TOP_RADIUS_LABEL));
-      this.addChild(this.createRadiusLabel(BOTTOM_RADIUS_LABEL));
+      this.addChild(this.createRadiusLabel(RADIUS_LABEL_B));
+      this.addChild(this.createRadiusLabel(RADIUS_LABEL_A));
     }
     if (type === PrimitiveType.VerticalCylinder || type === PrimitiveType.HorizontalCylinder) {
       this.addChild(this.createHeightLabel(HEIGHT_LABEL));
@@ -391,35 +388,31 @@ export class CylinderView extends GroupThreeView<CylinderDomainObject> {
   }
 
   private updateLabels(camera: PerspectiveCamera): void {
-    const topRadiusLabel = this._group.getObjectByName(TOP_RADIUS_LABEL);
-    const bottomRadiusLabel = this._group.getObjectByName(BOTTOM_RADIUS_LABEL);
+    const radiusLabelA = this._group.getObjectByName(RADIUS_LABEL_A);
+    const radiusLabelB = this._group.getObjectByName(RADIUS_LABEL_B);
     const heightLabel = this._group.getObjectByName(HEIGHT_LABEL);
-    if (
-      topRadiusLabel === undefined &&
-      bottomRadiusLabel === undefined &&
-      heightLabel === undefined
-    ) {
+    if (radiusLabelB === undefined && radiusLabelA === undefined && heightLabel === undefined) {
       return;
     }
     const { domainObject } = this;
-    const matrix = this.getMatrix();
     const radius = domainObject.cylinder.radius;
 
-    const topCenter = TOP_FACE.getCenter(newVector3());
-    const bottomCenter = BOTTOM_FACE.getCenter(newVector3());
-    topCenter.applyMatrix4(matrix);
-    bottomCenter.applyMatrix4(matrix);
-    const axis = newVector3().subVectors(topCenter, bottomCenter).normalize();
+    const centerA = domainObject.cylinder.centerA.clone();
+    const centerB = domainObject.cylinder.centerB.clone();
+    centerA.applyMatrix4(CDF_TO_VIEWER_TRANSFORMATION);
+    centerB.applyMatrix4(CDF_TO_VIEWER_TRANSFORMATION);
+
+    const axis = newVector3().subVectors(centerB, centerA).normalize();
     const cameraPosition = camera.getWorldPosition(newVector3());
 
-    if (topRadiusLabel !== undefined) {
-      updateRadiusLabel(topCenter, topRadiusLabel, 1, this.getRadiusLabelHeight());
+    if (radiusLabelA !== undefined) {
+      updateRadiusLabel(centerA, radiusLabelA, -1, this.getRadiusLabelHeight());
     }
-    if (bottomRadiusLabel !== undefined) {
-      updateRadiusLabel(bottomCenter, bottomRadiusLabel, -1, this.getRadiusLabelHeight());
+    if (radiusLabelB !== undefined) {
+      updateRadiusLabel(centerB, radiusLabelB, 1, this.getRadiusLabelHeight());
     }
     if (heightLabel !== undefined) {
-      const center = newVector3().addVectors(topCenter, bottomCenter).multiplyScalar(0.5);
+      const center = newVector3().addVectors(centerB, centerA).multiplyScalar(0.5);
       updateHeightLabel(center, heightLabel);
     }
 
