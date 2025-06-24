@@ -8,7 +8,7 @@ import { MeasureCylinderDomainObject } from '../../measurements/MeasureCylinderD
 import { PrimitiveType } from '../../../base/utilities/primitives/PrimitiveType';
 import { swap } from '../../../base/utilities/extensions/arrayExtensions';
 
-describe('CylinderCreator', () => {
+describe(CylinderCreator.name, () => {
   test('Create horizontal circle by mimics the user clicking 2 times', () => {
     const domainObject = new MeasureCylinderDomainObject(PrimitiveType.HorizontalCircle);
     const creator = new CylinderCreator(domainObject, undefined);

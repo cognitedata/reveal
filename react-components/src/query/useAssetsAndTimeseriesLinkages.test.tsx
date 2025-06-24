@@ -94,7 +94,7 @@ vi.mocked(fetchLinkFromRelationshipsByTimeseries).mockResolvedValue(mockAssetsAn
 vi.mocked(getAssetsByIds).mockResolvedValue(mockAssets);
 vi.mocked(useSDK).mockReturnValue(sdk);
 
-describe('useAssetsAndTimeseriesLinkages', () => {
+describe(useAssetsAndTimeseriesLinkages.name, () => {
   beforeEach(() => {
     vi.clearAllMocks();
     queryClient.clear();
