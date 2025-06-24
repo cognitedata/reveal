@@ -17,13 +17,13 @@ const cdfCachesMock = new Mock<CdfCaches>()
   .object();
 
 const commandsControllerMock = new Mock<CommandsController>()
-  .setup((p) => p.update.bind(p))
+  .setup((p) => p.update)
   .returns(vi.fn())
-  .setup((p) => p.addEventListeners.bind(p))
+  .setup((p) => p.addEventListeners)
   .returns(vi.fn())
-  .setup((p) => p.removeEventListeners.bind(p))
+  .setup((p) => p.removeEventListeners)
   .returns(vi.fn())
-  .setup((p) => p.dispose.bind(p))
+  .setup((p) => p.dispose)
   .returns(vi.fn())
   .object();
 
