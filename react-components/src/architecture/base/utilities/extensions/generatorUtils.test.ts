@@ -3,7 +3,7 @@ import { count, first, last } from './generatorUtils';
 import { isOdd } from './mathExtensions';
 
 describe('generatorUtils', () => {
-  describe('first', () => {
+  describe(first.name, () => {
     test('should return undefined when no items in the generator', () => {
       expect(first(getPositiveNumbers(0))).toBeUndefined();
     });
@@ -13,7 +13,7 @@ describe('generatorUtils', () => {
     });
   });
 
-  describe('last', () => {
+  describe(last.name, () => {
     test('should return undefined when no items in the generator', () => {
       expect(last(getPositiveNumbers(0))).toBeUndefined();
     });
@@ -23,7 +23,7 @@ describe('generatorUtils', () => {
     });
   });
 
-  describe('count', () => {
+  describe(count.name, () => {
     test('should correctly count the number of items in a generator', () => {
       expect(count(getPositiveNumbers(0))).toBe(0);
       expect(count(getPositiveNumbers(5))).toBe(5);
