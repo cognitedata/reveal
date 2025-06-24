@@ -1,21 +1,15 @@
 import { describe, expect, it, beforeEach, test, vi } from 'vitest';
 import { CoreDm3dFdm3dDataProvider } from './CoreDm3dDataProvider';
 import { Mock, It, type IMock } from 'moq.ts';
-import { NodeItem, type FdmSDK } from '../FdmSDK';
+import { type FdmSDK } from '../FdmSDK';
 import { restrictToDmsId } from '../../utilities/restrictToDmsId';
 import { type AddImage360CollectionDatamodelsOptions } from '../../components';
 import {
   modelInstanceFixture0,
   revisionInstanceFixture0
 } from '#test-utils/fixtures/dm/model3dData';
-import { isEqual } from 'lodash';
-import {
-  COGNITE_3D_MODEL_SOURCE,
-  COGNITE_3D_REVISION_SOURCE,
-  CORE_DM_3D_CONTAINER_SPACE
-} from './dataModels';
-import { QueryRequest, QueryResponse } from '@cognite/sdk';
-import { QueryResult, SelectSourceWithParams } from '../utils/queryNodesAndEdges';
+import { type QueryRequest } from '@cognite/sdk';
+import { type QueryResult } from '../utils/queryNodesAndEdges';
 import { createDmsNodeItem } from '#test-utils/dms/createDmsNodeItem';
 
 const image360CollectionId: AddImage360CollectionDatamodelsOptions = {

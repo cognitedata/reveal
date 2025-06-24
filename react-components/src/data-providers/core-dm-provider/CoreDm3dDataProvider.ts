@@ -192,7 +192,7 @@ export class CoreDm3dFdm3dDataProvider implements Fdm3dDataProvider {
   async getCadConnectionsForRevisions(
     modelOptions: Array<AddModelOptions<DataSourceType>>
   ): Promise<FdmCadConnection[]> {
-    const classicModels = modelOptions.filter((model) => isClassicIdentifier(model));
+    const classicModels = modelOptions.filter(isClassicIdentifier);
     if (classicModels.length === 0) {
       return EMPTY_ARRAY;
     }
