@@ -69,6 +69,18 @@ export abstract class BaseFilterCommand extends RenderTargetCommand {
   }
 
   /**
+   * Checks if some the children of the current instance are checked.
+   * Override this method to optimize the logic.
+   * @returns A boolean value indicating whether some the children are checked.
+   */
+  public get isSomeChecked(): boolean {
+    if (this._children === undefined || this._children.length === 0) {
+      return false;
+    }
+    return this._children.some((child) => child.isChecked);
+  }
+
+  /**
    * Toggles the checked state of all child filter items.
    * Override this method to optimize the logic.
    * If there are no child items, this method does nothing.
@@ -107,10 +119,12 @@ export abstract class BaseFilterCommand extends RenderTargetCommand {
     return counter.toString() + ' ' + BaseFilterCommand.getSelectedString();
   }
 
-  public toggleAllChecked(): void {
-    if (this.toggleAllCheckedCore()) {
-      CommandsUpdater.update(this._renderTarget);
+  public toggleAllChecked(): boolean {
+    if (!this.toggleAllCheckedCore()) {
+      return false;
     }
+    CommandsUpdater.update(this._renderTarget);
+    return true;
   }
 
   // ==================================================
