@@ -18,7 +18,7 @@ import { MeasureBoxDomainObject } from '../../measurements/MeasureBoxDomainObjec
 import { PrimitiveType } from '../../../base/utilities/primitives/PrimitiveType';
 import { BoxFace } from '../common/BoxFace';
 
-describe('BoxView', () => {
+describe(BoxView.name, () => {
   let domainObject: BoxDomainObject;
   let view: BoxView;
 
