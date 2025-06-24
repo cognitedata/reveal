@@ -1,6 +1,5 @@
 import { type TaggedAddResourceOptions } from '../../components/Reveal3DResources/types';
 
-import { searchClassicPointCloudAssets } from './searchClassicPointCloudAssets';
 import { isClassicIdentifier } from '../../components/Reveal3DResources/typeGuards';
 import { uniqBy } from 'lodash';
 import { searchClassicImage360Assets } from './searchClassicImage360Assets';
@@ -9,17 +8,28 @@ import { type Asset, type CogniteClient } from '@cognite/sdk';
 
 import { type RevealRenderTarget } from '../../architecture';
 import { searchClassicAssetsForCadModels } from './searchClassicAssetsForCadModels';
+import { getAssetsMappedPointCloudAnnotations } from './getAssetMappedPointCloudAnnotations';
+import { type AllAssetFilterProps } from './filters';
 
 export type SearchClassicAssetsResponse = {
   nextCursor: string | undefined;
   data: Asset[];
 };
 
+export type SearchQueryOptions = {
+  limit: number;
+  cadAssetsCursor?: string;
+  /**
+   * This contains both a `filter` and an `advancedFilter` field, which correspond
+   * to the fields of the same name that are used in the asset-filter endpoint
+   * https://api-docs.cognite.com/20230101/tag/Assets/operation/listAssets
+   */
+  filters?: AllAssetFilterProps;
+};
+
 export async function searchClassicAssetsForModels(
-  searchQuery: string,
   resources: TaggedAddResourceOptions[],
-  limit: number,
-  cadAssetsCursor: string | undefined,
+  { limit, cadAssetsCursor, filters }: SearchQueryOptions,
   sdk: CogniteClient,
   renderTarget: RevealRenderTarget
 ): Promise<SearchClassicAssetsResponse> {
@@ -42,20 +52,20 @@ export async function searchClassicAssetsForModels(
     .map((resource) => resource.addOptions);
 
   const cadAssetsPromise = searchClassicAssetsForCadModels(
-    searchQuery,
     cadModels,
     limit,
     cadAssetsCursor,
+    filters,
     sdk,
     assetMappingAndNode3DCache
   );
 
   const pointCloudAssetsPromise = isFirstPage
-    ? searchClassicPointCloudAssets(searchQuery, pointClouds, sdk)
+    ? getAssetsMappedPointCloudAnnotations(pointClouds, filters, sdk)
     : Promise.resolve([]);
 
   const image360AssetsPromise = isFirstPage
-    ? searchClassicImage360Assets(searchQuery, image360Collections, limit, sdk)
+    ? searchClassicImage360Assets(image360Collections, filters, limit, sdk)
     : Promise.resolve([]);
 
   const { nextCursor, data: cadAssets } = await cadAssetsPromise;
