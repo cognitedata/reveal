@@ -19,7 +19,7 @@ import { MeasureBoxDomainObject } from '../../measurements/MeasureBoxDomainObjec
 import { PrimitiveType } from '../../../base/utilities/primitives/PrimitiveType';
 import { BoxFace } from '../common/BoxFace';
 import { Wireframe } from 'three/examples/jsm/lines/Wireframe.js';
-import { degToRad, radToDeg } from 'three/src/math/MathUtils.js';
+import { degToRad } from 'three/src/math/MathUtils.js';
 
 describe(BoxView.name, () => {
   let domainObject: BoxDomainObject;
