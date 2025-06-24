@@ -12,8 +12,8 @@ export class BoxFace {
   // ==================================================
 
   public constructor(face: number = 0) {
-    if (face < 0 || face > 5) {
-      throw new Error('Invalid face ' + face);
+    if (!isValidFace(face)) {
+      throw new Error('Invalid face in constructor ' + face);
     }
     this._face = face;
   }
@@ -27,8 +27,8 @@ export class BoxFace {
   }
 
   public set face(value: number) {
-    if (value < 0 || value > 5) {
-      throw new Error('Invalid face ' + value);
+    if (!isValidFace(value)) {
+      throw new Error('Invalid face in setter' + value);
     }
     this._face = value;
   }
@@ -79,8 +79,18 @@ export class BoxFace {
     return this.face === other.face;
   }
 
+  /**
+   * Determines the box face corresponding to the given position vector relative to the box center.
+   * The face is selected based on the axis with the largest absolute value in the position vector.
+   *
+   * - If the x component is largest, sets the face to 0 (positive x) or 3 (negative x).
+   * - If the y component is largest, sets the face to 1 (positive y) or 4 (negative y).
+   * - If the z component is largest, sets the face to 2 (positive z) or 5 (negative z).
+   *
+   * @param positionAtFace - The position vector relative to the box center.
+   * @returns The current instance with the updated face.
+   */
   public fromPositionAtFace(positionAtFace: Vector3): this {
-    // Assume the only on component in the positionAtEdge is set and the other are 0
     const x = Math.abs(positionAtFace.x);
     const y = Math.abs(positionAtFace.y);
     const z = Math.abs(positionAtFace.z);
@@ -95,8 +105,18 @@ export class BoxFace {
     return this;
   }
 
+  /**
+   * Projects a 3D point onto the 2D plane corresponding to the current box face.
+   *
+   * The mapping of the 3D coordinates to 2D depends on the value of `this.face`:
+   * - For faces 1 and 4, returns (x, z).
+   * - For faces 2 and 5, returns (x, y).
+   * - For all other faces, returns (y, z).
+   *
+   * @param positionAtFace - The 3D position to project onto the face's plane.
+   * @returns A `Vector2` representing the projected 2D coordinates on the face's plane.
+   */
   public getPlanePoint(positionAtFace: Vector3): Vector2 {
-    // Assume the only on component in the positionAtEdge is set and the other are 0
     switch (this.face) {
       case 1:
       case 4:
@@ -183,4 +203,8 @@ export class BoxFace {
     }
     return face.equals(other);
   }
+}
+
+function isValidFace(value: number): boolean {
+  return value >= 0 && value <= 5;
 }

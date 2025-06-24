@@ -52,12 +52,12 @@ describe(BoxFace.name, () => {
 
   test('should get correct position from fromPositionAtFace', () => {
     const positionAtFaces = [
-      new Vector3(1, 0, 0),
-      new Vector3(0, 1, 0),
-      new Vector3(0, 0, 1),
-      new Vector3(-1, 0, 0),
-      new Vector3(0, -1, 0),
-      new Vector3(0, 0, -1)
+      new Vector3(2, 1, 1),
+      new Vector3(1, 2, 1),
+      new Vector3(1, 2, 3),
+      new Vector3(-4, 2, 1),
+      new Vector3(-2, -4, 2),
+      new Vector3(1, -2, -3)
     ];
     for (let face = 0; face < 6; face++) {
       const boxFace = new BoxFace();
