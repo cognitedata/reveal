@@ -9,7 +9,7 @@ export const useAllAssetsMappedPointCloudAnnotations = (
 ): UseQueryResult<Asset[]> => {
   return useQuery({
     queryKey: ['reveal', 'react-components', 'all-assets-mapped-point-cloud-annotations', models],
-    queryFn: async () => await getAssetsMappedPointCloudAnnotations(sdk, models),
+    queryFn: async () => await getAssetsMappedPointCloudAnnotations(models, undefined, sdk),
     staleTime: Infinity
   });
 };

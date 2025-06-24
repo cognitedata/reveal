@@ -7,7 +7,6 @@ import { sdkMock } from '#test-utils/fixtures/sdk';
 import { ViewerContextProvider } from '../RevealCanvas/ViewerContext';
 import { DropdownButton } from './DropdownButton';
 import { MockEnumOptionCommand } from '../../../tests/tests-utilities/architecture/mock-commands/MockEnumOptionCommand';
-import { translate } from '../../architecture/base/utilities/translateUtils';
 
 // Help page here:  https://bogr.dev/blog/react-testing-intro/
 
@@ -32,7 +31,7 @@ describe(DropdownButton.name + ' (not used in settings)', () => {
   });
 
   test('should render with correct default value and no dropdown', async () => {
-    const label = testCommand.getLabel(translate);
+    const label = testCommand.label;
     const button = screen.getByLabelText(label);
 
     // Check that the selected value is updated by the default value
@@ -47,7 +46,7 @@ describe(DropdownButton.name + ' (not used in settings)', () => {
   });
 
   test('should click and open dropdown menu', async () => {
-    const label = testCommand.getLabel(translate);
+    const label = testCommand.label;
     fireEvent.click(screen.getByLabelText(label));
 
     // Check that the menu is open and selected is checked
@@ -60,7 +59,7 @@ describe(DropdownButton.name + ' (not used in settings)', () => {
   });
 
   test('should select by dropdown menu and close', async () => {
-    const label = testCommand.getLabel(translate);
+    const label = testCommand.label;
     fireEvent.click(screen.getByLabelText(label));
 
     const menuItemsBeforeClick = await screen.findAllByRole('menuitem');
