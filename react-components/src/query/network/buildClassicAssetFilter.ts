@@ -1,7 +1,7 @@
 import { partition } from 'lodash';
 import { isInternalId } from '../../utilities/instanceIds';
 import { type IdEither } from '@cognite/sdk';
-import { type AssetAdvancedFilterProps } from './types';
+import { type AssetAdvancedFilterProps } from './filters';
 import { isDefined } from '../../utilities/isDefined';
 
 export function buildClassicAssetQueryFilter(query: string): AssetAdvancedFilterProps | undefined {

@@ -1,26 +1,26 @@
-import { type CogniteClient, type CursorResponse, type Asset } from '@cognite/sdk';
-import { buildClassicAssetQueryFilter } from '../../query/network/buildClassicAssetFilter';
+import type { CogniteClient, CursorResponse, Asset } from '@cognite/sdk';
+import type { AllAssetFilterProps } from '../../query/network/filters';
+
+export type AssetsListOptions = {
+  cursor?: string;
+  limit?: number;
+  sort?: Array<{ property: string[] }>;
+  filters?: AllAssetFilterProps;
+  aggregatedProperties?: string[];
+};
 
 const sortOption = [{ property: ['_score_'] }];
 
 export const getAssetsList = async (
   sdk: CogniteClient,
   {
-    query,
     cursor,
     limit = 1000,
     sort = sortOption,
+    filters,
     aggregatedProperties = ['path']
-  }: {
-    query: string;
-    cursor?: string;
-    limit?: number;
-    sort?: Array<{ property: string[] }>;
-    aggregatedProperties?: string[];
-  }
+  }: AssetsListOptions
 ): Promise<{ items: Asset[]; nextCursor: string | undefined }> => {
-  const advancedFilter = buildClassicAssetQueryFilter(query);
-
   // The `aggregatedProperties` parameter is not yet public, and hidden behind an alpha flag,
   // which is why we cannot use the sdk.assets.list method directly
   return await sdk
@@ -31,7 +31,7 @@ export const getAssetsList = async (
       data: {
         limit,
         sort,
-        advancedFilter,
+        ...filters,
         aggregatedProperties,
         cursor
       }

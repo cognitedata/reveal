@@ -14,7 +14,7 @@ import { FolderDomainObject } from './FolderDomainObject';
 import { type DomainObject } from './DomainObject';
 import { type DomainObjectChange } from '../domainObjectsHelpers/DomainObjectChange';
 
-describe('VisualDomainObject', () => {
+describe(VisualDomainObject.name, () => {
   let renderTarget: RevealRenderTarget;
   beforeAll(() => {
     renderTarget = createRenderTargetMock();
