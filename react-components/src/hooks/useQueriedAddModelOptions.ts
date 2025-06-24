@@ -7,8 +7,11 @@ import {
 import { type FdmSDK } from '../data-providers/FdmSDK';
 import { getModelKeys } from '../utilities/getModelKeys';
 import { getModelIdAndRevisionIdFromExternalId } from './network/getModelIdAndRevisionIdFromExternalId';
-import { isClassicIdentifier, isDM3DModelIdentifier } from '../components';
 import { queryKeys } from '../utilities/queryKeys';
+import {
+  isClassicIdentifier,
+  isDM3DModelIdentifier
+} from '../components/Reveal3DResources/typeGuards';
 
 export function useQueriedAddModelOptions(
   addModelOptionsArray: Array<AddModelOptions<DataSourceType>> | undefined,
