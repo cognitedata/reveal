@@ -8,8 +8,6 @@ target
 **/build
 **/node_modules
 **/coverage
-**/.yalc
-**/yalc.lock
 
 **/.vs
 **/.vscode
