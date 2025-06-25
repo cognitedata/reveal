@@ -7,8 +7,8 @@ import { Mock } from 'moq.ts';
 import type { RevealRenderTarget } from '../../architecture';
 import { type CogniteCadModel, type Cognite3DViewer, type CogniteModel } from '@cognite/reveal';
 
-describe(CadModelContainer.name, () => {
-  const deps = {
+describe('CadModelContainer', () => {
+  const deps: CadModelContextDependencies = {
     useRevealKeepAlive: vi.fn(),
     useRenderTarget: vi.fn(),
     useReveal3DResourcesCount: vi.fn(),
@@ -16,7 +16,7 @@ describe(CadModelContainer.name, () => {
     useApplyCadModelStyling: vi.fn(),
     createCadDomainObject: vi.fn(),
     removeCadDomainObject: vi.fn()
-  } as const satisfies CadModelContextDependencies;
+  };
 
   const wrapper = ({ children }: PropsWithChildren): ReactElement => (
     <CadModelContext.Provider value={deps}>{children}</CadModelContext.Provider>
@@ -34,20 +34,20 @@ describe(CadModelContainer.name, () => {
           .returns(() => [])
           .object()
       );
-    deps.useRenderTarget.mockReturnValue(renderTargetMock.object());
+    vi.mocked(deps.useRenderTarget).mockReturnValue(renderTargetMock.object());
 
-    deps.useReveal3DResourcesCount.mockReturnValue({
+    vi.mocked(deps.useReveal3DResourcesCount).mockReturnValue({
       reveal3DResourcesCount: 0,
       setRevealResourcesCount: vi.fn()
     });
 
-    deps.useReveal3DResourceLoadFailCount.mockReturnValue({
+    vi.mocked(deps.useReveal3DResourceLoadFailCount).mockReturnValue({
       reveal3DResourceLoadFailCount: 0,
       setReveal3DResourceLoadFailCount: vi.fn()
     });
 
     const cadModel = new Mock<CogniteCadModel>().object();
-    deps.createCadDomainObject.mockResolvedValue(cadModel);
+    vi.mocked(deps.createCadDomainObject).mockResolvedValue(cadModel);
     models.mockReturnValue([]);
 
     const addModelOptions1 = { modelId: 1, revisionId: 1 };
