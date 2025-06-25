@@ -49,7 +49,7 @@ export function PointCloudContainer({
 
   // useModelIdRevisionIdFromModelOptions returns an empty array if the query is
   // still loading, fetching, refetching, or errored.
-  const addModelOptionsResult = modelOptions.length > 0 ? modelOptions[0].data : undefined;
+  const addModelOptionsResult = modelOptions[0]?.data;
 
   const modelId = addModelOptionsResult?.modelId;
   const revisionId = addModelOptionsResult?.revisionId;
