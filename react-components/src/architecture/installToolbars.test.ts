@@ -12,20 +12,20 @@ import { NavigationTool } from './base/concreteCommands/NavigationTool';
 describe(installToolbars.name, () => {
   test('Should have toolbars with correct number of commands for the following tools', () => {
     installToolbars();
-    expect(getToolbarCount(new AnnotationsCreateTool())).toBe(5);
-    expect(getToolbarCount(new AnnotationsSelectTool())).toBe(6);
-    expect(getToolbarCount(new ClipTool())).toBe(11);
-    expect(getToolbarCount(new ExampleTool())).toBe(5);
-    expect(getToolbarCount(new MeasurementTool())).toBe(10);
+    expect(getCommandsInToolbarCount(new AnnotationsCreateTool())).toBe(5);
+    expect(getCommandsInToolbarCount(new AnnotationsSelectTool())).toBe(6);
+    expect(getCommandsInToolbarCount(new ClipTool())).toBe(11);
+    expect(getCommandsInToolbarCount(new ExampleTool())).toBe(5);
+    expect(getCommandsInToolbarCount(new MeasurementTool())).toBe(10);
   });
 
   test('Should not install toolbar for navigation ', () => {
     installToolbars();
-    expect(getToolbarCount(new NavigationTool())).toBe(0);
+    expect(getCommandsInToolbarCount(new NavigationTool())).toBe(0);
   });
 });
 
-function getToolbarCount(tool: BaseTool): number {
+function getCommandsInToolbarCount(tool: BaseTool): number {
   const toolbar = tool.getToolbar();
   if (toolbar === undefined) {
     return 0;
