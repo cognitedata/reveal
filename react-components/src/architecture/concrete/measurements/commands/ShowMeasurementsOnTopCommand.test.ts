@@ -11,6 +11,7 @@ import { MeasureLineDomainObject } from '../MeasureLineDomainObject';
 import { MeasureCylinderDomainObject } from '../MeasureCylinderDomainObject';
 import { isInstanceOf } from '../../../base/domainObjectsHelpers/Class';
 import { type CommonRenderStyle } from '../../../base/renderStyles/CommonRenderStyle';
+import { count } from '../../../base/utilities/extensions/generatorUtils';
 
 describe(ShowMeasurementsOnTopCommand.name, () => {
   let renderTarget: RevealRenderTarget;
@@ -33,18 +34,21 @@ describe(ShowMeasurementsOnTopCommand.name, () => {
     expect(command.getShortCutKeys()).toBeUndefined();
   });
 
-  test('Should set all ExampleDomainObjects on top', () => {
+  test('Should set all measurements on top', () => {
     const command = new ShowMeasurementsOnTopCommand();
     command.attach(renderTarget);
 
     addSomeMeasurementDomainObjects(root);
+    expect(count(getAllRenderStylesForAllMeasurements(root))).toBe(3);
+
     expect(command.isEnabled).toBe(true);
     expect(command.isChecked).toBe(false);
-    for (const renderStyle of getAllRenderStylesForMeasurements(root)) {
+
+    for (const renderStyle of getAllRenderStylesForAllMeasurements(root)) {
       expect(renderStyle.depthTest).toBe(true);
     }
     command.invoke();
-    for (const renderStyle of getAllRenderStylesForMeasurements(root)) {
+    for (const renderStyle of getAllRenderStylesForAllMeasurements(root)) {
       expect(renderStyle.depthTest).toBe(false);
     }
     expect(command.isEnabled).toBe(true);
@@ -58,7 +62,7 @@ function addSomeMeasurementDomainObjects(root: DomainObject): void {
   root.addChildInteractive(new MeasureCylinderDomainObject(PrimitiveType.Cylinder));
 }
 
-function* getAllRenderStylesForMeasurements(root: DomainObject): Generator<CommonRenderStyle> {
+function* getAllRenderStylesForAllMeasurements(root: DomainObject): Generator<CommonRenderStyle> {
   for (const descendant of root.getDescendants()) {
     if (
       isInstanceOf(descendant, MeasureBoxDomainObject) ||
