@@ -5,7 +5,7 @@ import dts from 'vite-plugin-dts';
 import { externalizeDeps } from 'vite-plugin-externalize-deps';
 import { coverageConfigDefaults } from 'vitest/config';
 
-export default defineConfig({
+export default defineConfig(({ command }) => ({
   plugins: [
     react(),
     dts({ tsconfigPath: './tsconfig.build.json' }),
@@ -24,7 +24,8 @@ export default defineConfig({
       output: {
         preserveModules: true
       }
-    }
+    },
+    sourcemap: command === 'build'
   },
   test: {
     include: ['src/**/*.{test,spec}.?(c|m)[jt]s?(x)'],
@@ -56,4 +57,4 @@ export default defineConfig({
       }
     }
   }
-});
+}));
