@@ -5,20 +5,13 @@ import {
 } from '../../components/Reveal3DResources/types';
 import { usePointCloudAnnotationCache } from '../../components/CacheProvider/CacheProvider';
 import { useModelIdRevisionIdFromModelOptions } from '../useModelIdRevisionIdFromModelOptions';
-import { isDefined } from '../../utilities/isDefined';
 import { queryKeys } from '../../utilities/queryKeys';
-import { useMemo } from 'react';
 
 export const usePointCloudAnnotationMappingsForModels = (
   models: TypedReveal3DModel[]
 ): UseQueryResult<AnnotationModelDataResult[]> => {
   const pointCloudAnnotationCache = usePointCloudAnnotationCache();
-  const addClassicModelOptionsResults = useModelIdRevisionIdFromModelOptions(models);
-
-  const classicModelOptions = useMemo(
-    () => addClassicModelOptionsResults.map((result) => result.data).filter(isDefined),
-    [addClassicModelOptionsResults]
-  );
+  const classicModelOptions = useModelIdRevisionIdFromModelOptions(models);
 
   return useQuery({
     queryKey: [

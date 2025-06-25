@@ -12,9 +12,9 @@ import {
   type AddCadResourceOptions
 } from '../types';
 import { useCadOrPointCloudResources } from './useCadOrPointCloudResources';
-import { useClassicModelOptions } from './useClassicModelOptions';
 import { useEffect } from 'react';
 import { useReveal3DResourceLoadFailCount } from '../Reveal3DResourcesInfoContext';
+import { useModelIdRevisionIdFromModelOptions } from '../../../hooks/useModelIdRevisionIdFromModelOptions';
 
 export const useTypedModels = (
   viewer: Cognite3DViewer<DataSourceType>,
@@ -22,7 +22,7 @@ export const useTypedModels = (
   onLoadFail?: (resource: AddResourceOptions, error: any) => void
 ): UseQueryResult<TypedReveal3DModel[]> => {
   const cadOrPointCloudResources = useCadOrPointCloudResources(resources);
-  const classicModelOptions = useClassicModelOptions(cadOrPointCloudResources);
+  const classicModelOptions = useModelIdRevisionIdFromModelOptions(cadOrPointCloudResources);
   const typeResult = useQuery({
     queryKey: ['typedModels', classicModelOptions, cadOrPointCloudResources],
     queryFn: async () =>

@@ -4,9 +4,7 @@ import {
   isClassicPointCloudVolume,
   isDMPointCloudVolume,
   type DMInstanceRef,
-  type NodeAppearance,
-  type ClassicDataSourceType,
-  type AddModelOptions
+  type NodeAppearance
 } from '@cognite/reveal';
 import {
   type DefaultResourceStyling,
@@ -22,7 +20,6 @@ import { isSameModel } from '../../../utilities/isSameModel';
 import { EMPTY_ARRAY } from '../../../utilities/constants';
 import { type PointCloudVolumeStylingGroup } from '../../PointCloudContainer/types';
 import { useModelIdRevisionIdFromModelOptions } from '../../../hooks/useModelIdRevisionIdFromModelOptions';
-import { isDefined } from '../../../utilities/isDefined';
 import { use3dModels } from '../../../hooks/use3dModels';
 import {
   isClassicAssetMappingStylingGroup,
@@ -239,12 +236,7 @@ function usePointCloudVolumesWithModel(
   models: PointCloudModelOptions[]
 ): PointCloudVolumeWithModel[] {
   const viewerModels = use3dModels();
-  const addClassicModelOptionsResults = useModelIdRevisionIdFromModelOptions(models);
-
-  const classicModelOptions: Array<AddModelOptions<ClassicDataSourceType>> = useMemo(
-    () => addClassicModelOptionsResults.map((result) => result.data).filter(isDefined),
-    [addClassicModelOptionsResults]
-  );
+  const classicModelOptions = useModelIdRevisionIdFromModelOptions(models);
 
   const pointCloudViewerModels = viewerModels.filter(
     (model): model is CognitePointCloudModel<DataSourceType> => model.type === 'pointcloud'

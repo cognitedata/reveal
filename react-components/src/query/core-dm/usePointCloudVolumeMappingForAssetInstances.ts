@@ -27,12 +27,8 @@ export const usePointCloudVolumeMappingForAssetInstances = (
   assetInstanceRefs: DmsUniqueIdentifier[]
 ): PointCloudVolumeMappedAssetData[] => {
   const { data: models } = usePointCloudModelRevisionIdsFromReveal();
-  const addClassicModelOptionsResults = useModelIdRevisionIdFromModelOptions(models);
+  const classicModelOptions = useModelIdRevisionIdFromModelOptions(models);
 
-  const classicModelOptions = useMemo(
-    () => addClassicModelOptionsResults.map((result) => result.data).filter(isDefined),
-    [addClassicModelOptionsResults]
-  );
   const { data: pointCloudVolumeResults } = usePointCloudDMVolumes(classicModelOptions);
 
   return useMemo(() => {
