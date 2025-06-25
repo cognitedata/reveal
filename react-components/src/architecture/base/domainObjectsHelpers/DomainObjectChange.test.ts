@@ -1,13 +1,9 @@
-/*!
- * Copyright 2024 Cognite AS
- */
-
 import { describe, expect, test } from 'vitest';
 import { Changes } from './Changes';
 import { DomainObjectChange } from './DomainObjectChange';
 import { ChangedDescription } from './ChangedDescription';
 
-describe('DomainObjectChange', () => {
+describe(DomainObjectChange.name, () => {
   test('Should be empty', () => {
     const change = new DomainObjectChange();
     expect(change.isEmpty).toBe(true);

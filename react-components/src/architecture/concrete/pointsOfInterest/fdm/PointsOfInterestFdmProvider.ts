@@ -1,6 +1,3 @@
-/*!
- * Copyright 2024 Cognite AS
- */
 import { type DmsUniqueIdentifier, type FdmSDK } from '../../../../data-providers/FdmSDK';
 import {
   type CommentProperties,
@@ -10,7 +7,6 @@ import {
 import { type PointsOfInterestProvider } from '../PointsOfInterestProvider';
 import { createPointsOfInterestInstances, deletePointsOfInterestInstances } from './network';
 
-import { v4 as uuid } from 'uuid';
 import { POI_SOURCE } from './view';
 
 export class PointsOfInterestFdmProvider implements PointsOfInterestProvider<DmsUniqueIdentifier> {
@@ -46,7 +42,7 @@ export class PointsOfInterestFdmProvider implements PointsOfInterestProvider<Dms
 
   createNewId(): DmsUniqueIdentifier {
     return {
-      externalId: uuid(),
+      externalId: crypto.randomUUID(),
       space: POI_SOURCE.space
     };
   }

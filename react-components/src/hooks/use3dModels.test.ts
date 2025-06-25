@@ -1,6 +1,3 @@
-/*!
- * Copyright 2025 Cognite AS
- */
 import { describe, expect, test, vi, beforeEach, beforeAll, afterAll } from 'vitest';
 import { type CogniteCadModel, type CogniteModel } from '@cognite/reveal';
 import { renderHook } from '@testing-library/react';
@@ -21,7 +18,7 @@ vi.mock('../components/Reveal3DResources/Reveal3DResourcesInfoContext', () => ({
   useReveal3DResourcesCount: () => mockResourceCount
 }));
 
-describe('use3dModels', () => {
+describe(use3dModels.name, () => {
   beforeEach(() => {
     vi.resetAllMocks();
   });

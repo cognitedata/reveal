@@ -1,6 +1,3 @@
-/*!
- * Copyright 2023 Cognite AS
- */
 import { Body, Heading } from '@cognite/cogs.js';
 import styled from 'styled-components';
 import { Mouse } from './Graphics/Mouse';

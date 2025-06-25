@@ -1,7 +1,3 @@
-/*!
- * Copyright 2025 Cognite AS
- */
-
 import { describe, expect, test } from 'vitest';
 
 import { Range3 } from './Range3';
@@ -13,7 +9,7 @@ const max = new Vector3(400, 600, 800);
 const mid = new Vector3().addVectors(min, max).divideScalar(2);
 const delta = new Vector3().subVectors(max, min);
 
-describe('Range3', () => {
+describe(Range3.name, () => {
   test('should test empty', () => {
     const range = new Range3();
     expect(range.isEmpty).toBe(true);

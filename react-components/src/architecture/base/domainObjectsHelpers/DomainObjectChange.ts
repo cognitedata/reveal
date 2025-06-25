@@ -1,7 +1,3 @@
-/*!
- * Copyright 2024 Cognite AS
- */
-
 import { ChangedDescription } from './ChangedDescription';
 import { type Class, isInstanceOf } from './Class';
 

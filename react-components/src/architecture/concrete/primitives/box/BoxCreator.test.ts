@@ -1,7 +1,3 @@
-/*!
- * Copyright 2025 Cognite AS
- */
-
 import { describe, expect, test } from 'vitest';
 import { MeasureBoxDomainObject } from '../../measurements/MeasureBoxDomainObject';
 import { BoxCreator } from './BoxCreator';
@@ -14,7 +10,7 @@ import { click } from '#test-utils/architecture/baseCreatorUtil';
 
 const direction = new Vector3(1, 0, -1);
 
-describe('BoxCreator', () => {
+describe(BoxCreator.name, () => {
   test('Create Box by mimics the user clicking 4 times', () => {
     const domainObject = new MeasureBoxDomainObject(PrimitiveType.Box);
     const creator = new BoxCreator(domainObject);

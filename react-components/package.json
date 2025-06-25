@@ -1,6 +1,6 @@
 {
   "name": "@cognite/reveal-react-components",
-  "version": "0.77.3",
+  "version": "0.80.0",
   "exports": {
     ".": {
       "import": "./dist/index.js",
@@ -27,6 +27,7 @@
     "typecheck:test": "tsc --noEmit --project tsconfig.test.json",
     "lint": "eslint --cache --max-warnings 0 --ext=.tsx,.ts .",
     "test": "vitest run --dom --silent",
+    "test:verbose": "vitest run --dom",
     "test:coverage": "vitest run --dom --coverage --silent",
     "test:playwright": "playwright test",
     "test:watch": "vitest watch --dom",
@@ -44,7 +45,7 @@
     "styled-components": "^6.1.12"
   },
   "dependencies": {
-    "@cognite/cogs-lab": ">=9.0.0-alpha.153",
+    "@cognite/cogs-lab": "9.0.0-alpha.160",
     "@cognite/cogs.js": "^10.36.0",
     "@cognite/signals": "^0.0.4",
     "@floating-ui/dom": "^1.0.0",
@@ -103,7 +104,7 @@
     "styled-components": "^6.1.12",
     "three": "0.166.1",
     "ts-loader": "^9.5.1",
-    "typescript": "^5.4.5",
+    "typescript": "5.8.3",
     "vite": "^6.2.7",
     "vite-plugin-dts": "^4.0.0",
     "vite-plugin-externalize-deps": "^0.8.0",

@@ -1,7 +1,3 @@
-/*!
- * Copyright 2024 Cognite AS
- */
-
 import { InstanceCommand } from '../../base/commands/InstanceCommand';
 import { type DomainObject } from '../../base/domainObjects/DomainObject';
 import { Changes } from '../../base/domainObjectsHelpers/Changes';
@@ -23,12 +19,8 @@ export class DeleteSelectedImage360AnnotationCommand extends InstanceCommand {
     return 'ghost-destructive';
   }
 
-  public override get shortCutKey(): string {
-    return 'DEL';
-  }
-
-  public override get isEnabled(): boolean {
-    return this.getFirstInstance() !== undefined;
+  protected override get shortCutKey(): string {
+    return 'Delete';
   }
 
   protected override invokeCore(): boolean {

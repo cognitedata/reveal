@@ -1,7 +1,3 @@
-/*!
- * Copyright 2025 Cognite AS
- */
-
 import { assert, beforeEach, describe, expect, test } from 'vitest';
 import { CylinderView } from './CylinderView';
 import { Object3D, Vector3 } from 'three';
@@ -21,7 +17,7 @@ import { PrimitivePickInfo } from '../common/PrimitivePickInfo';
 import { MeasureCylinderDomainObject } from '../../measurements/MeasureCylinderDomainObject';
 import { PrimitiveType } from '../../../base/utilities/primitives/PrimitiveType';
 
-describe('CylinderView', () => {
+describe(CylinderView.name, () => {
   let domainObject: CylinderDomainObject;
   let view: CylinderView;
 

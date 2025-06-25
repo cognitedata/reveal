@@ -1,6 +1,3 @@
-/*!
- * Copyright 2024 Cognite AS
- */
 import { type DataSourceType, type AddModelOptions, type DMDataSourceType } from '@cognite/reveal';
 import { type FdmCadConnection } from '../../components/CacheProvider/types';
 import { type Fdm3dDataProvider } from '../Fdm3dDataProvider';
@@ -172,11 +169,18 @@ export class CoreDm3dFdm3dDataProvider implements Fdm3dDataProvider {
   async filterNodesByMappedTo3d(
     nodes: InstancesWithViewDefinition[],
     models: Array<AddModelOptions<DataSourceType> | AddImage360CollectionDatamodelsOptions>,
-    spacesToSearch: string[]
+    spacesToSearch: string[],
+    includeIndirectRelations: boolean
   ): Promise<InstancesWithView[]> {
     const revisionRefs = await this.getRevisionRefs(models);
 
-    return await filterNodesByMappedTo3d(nodes, revisionRefs, spacesToSearch, this._fdmSdk);
+    return await filterNodesByMappedTo3d(
+      nodes,
+      revisionRefs,
+      spacesToSearch,
+      this._fdmSdk,
+      includeIndirectRelations
+    );
   }
 
   async getCadModelsForInstance(
@@ -188,15 +192,15 @@ export class CoreDm3dFdm3dDataProvider implements Fdm3dDataProvider {
   async getCadConnectionsForRevisions(
     modelOptions: Array<AddModelOptions<DataSourceType>>
   ): Promise<FdmCadConnection[]> {
-    const isClassicModels = modelOptions.every((model) => isClassicIdentifier(model));
-    if (!isClassicModels) {
+    const classicModels = modelOptions.filter(isClassicIdentifier);
+    if (classicModels.length === 0) {
       return EMPTY_ARRAY;
     }
-    const modelRefs = await this.getDMSModelsForIds(modelOptions.map((model) => model.modelId));
+    const modelRefs = await this.getDMSModelsForIds(classicModels.map((model) => model.modelId));
 
     const revisionRefs = await this.getDMSRevisionsForRevisionIdsAndModelRefs(
       modelRefs,
-      modelOptions.map((model) => model.revisionId)
+      classicModels.map((model) => model.revisionId)
     );
 
     const modelRevisions = zip(modelRefs, revisionRefs).filter(

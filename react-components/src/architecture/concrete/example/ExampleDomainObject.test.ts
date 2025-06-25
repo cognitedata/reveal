@@ -1,7 +1,3 @@
-/*!
- * Copyright 2025 Cognite AS
- */
-
 import { assert, describe, expect, test } from 'vitest';
 import { isEmpty } from '../../base/utilities/TranslateInput';
 import { Quantity } from '../../base/domainObjectsHelpers/Quantity';

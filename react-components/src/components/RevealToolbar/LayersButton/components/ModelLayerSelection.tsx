@@ -1,7 +1,3 @@
-/*!
- * Copyright 2025 Cognite AS
- */
-
 import { SelectPanel } from '@cognite/cogs-lab';
 import { IconWrapper, ChevronRightSmallIcon } from '@cognite/cogs.js';
 import { type ReactElement, useCallback } from 'react';
@@ -29,11 +25,7 @@ export const ModelLayerSelection = ({
   }, [update]);
 
   return (
-    <SelectPanel
-      placement="right"
-      appendTo={'parent'}
-      hideOnOutsideClick={true}
-      openOnHover={!isDisabled}>
+    <SelectPanel placement="right" hideOnOutsideClick={true} openOnHover={!isDisabled}>
       <SelectPanel.Trigger>
         <WholeLayerVisibilitySelectItem
           label={label}

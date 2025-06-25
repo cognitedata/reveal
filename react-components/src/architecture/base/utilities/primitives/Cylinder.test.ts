@@ -1,7 +1,3 @@
-/*!
- * Copyright 2025 Cognite AS
- */
-
 import { describe, expect, test } from 'vitest';
 import { PrimitiveType } from './PrimitiveType';
 import { Box3, Matrix4, Ray, Vector3 } from 'three';
@@ -12,7 +8,7 @@ import {
 } from '#test-utils/primitives/primitiveTestUtil';
 import { Cylinder } from './Cylinder';
 
-describe('Cylinder', () => {
+describe(Cylinder.name, () => {
   test('Should test all properties on regular primitive', () => {
     const primitive = createVerticalCylinder();
     expect(primitive.primitiveType).toBe(PrimitiveType.Cylinder);

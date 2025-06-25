@@ -1,6 +1,3 @@
-/*!
- * Copyright 2025 Cognite AS
- */
 import { type AssetInstance } from './AssetInstance';
 import { isClassicAsset } from './typeGuards';
 

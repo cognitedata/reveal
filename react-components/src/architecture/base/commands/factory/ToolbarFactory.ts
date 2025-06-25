@@ -1,7 +1,3 @@
-/*!
- * Copyright 2025 Cognite AS
- */
-
 import { type Class } from '../../domainObjectsHelpers/Class';
 import { type BaseCommand } from '../BaseCommand';
 import { type BaseTool } from '../BaseTool';

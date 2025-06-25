@@ -3,6 +3,7 @@ import {
   clear,
   containsTheSameSet,
   copy,
+  count,
   firstElement,
   insertAt,
   lastElement,
@@ -10,9 +11,10 @@ import {
   removeAt,
   swap
 } from './arrayExtensions';
+import { isOdd } from './mathExtensions';
 
 describe('ArrayExtensions', () => {
-  describe('clear', () => {
+  describe(clear.name, () => {
     test('should clear array in place', () => {
       const array = [1, 2, 3];
       clear(array);
@@ -21,7 +23,7 @@ describe('ArrayExtensions', () => {
     });
   });
 
-  describe('copy', () => {
+  describe(copy.name, () => {
     test('should copy array in place', () => {
       const array1 = [1, 2, 3];
       const array2 = [4, 5, 6, 7];
@@ -30,7 +32,7 @@ describe('ArrayExtensions', () => {
     });
   });
 
-  describe('insertAt', () => {
+  describe(insertAt.name, () => {
     test('should insert array in place', () => {
       const array1 = [1, 3];
       insertAt(array1, 1, 2);
@@ -38,7 +40,7 @@ describe('ArrayExtensions', () => {
     });
   });
 
-  describe('remove', () => {
+  describe(remove.name, () => {
     test('should remove element in place', () => {
       const array = [1, 2, 3];
       expect(remove(array, 2)).toBe(true);
@@ -58,7 +60,7 @@ describe('ArrayExtensions', () => {
     });
   });
 
-  describe('removeAt', () => {
+  describe(removeAt.name, () => {
     test('should remove element in place', () => {
       const array = [1, 2, 3];
       removeAt(array, 1);
@@ -78,7 +80,7 @@ describe('ArrayExtensions', () => {
     });
   });
 
-  describe('swap', () => {
+  describe(swap.name, () => {
     test('should swap elements in place', () => {
       const array: number[] = [4, 5, 6];
       swap(array, 1, 2);
@@ -86,7 +88,7 @@ describe('ArrayExtensions', () => {
     });
   });
 
-  describe('firstElement', () => {
+  describe(firstElement.name, () => {
     test('should return undefined on empty array', () => {
       const array: number[] = [];
       expect(firstElement(array)).toBeUndefined();
@@ -97,7 +99,7 @@ describe('ArrayExtensions', () => {
     });
   });
 
-  describe('lastElement', () => {
+  describe(lastElement.name, () => {
     test('should return undefined on empty array', () => {
       const array: number[] = [];
       expect(lastElement(array)).toBeUndefined();
@@ -108,7 +110,7 @@ describe('ArrayExtensions', () => {
     });
   });
 
-  describe('containsTheSameSet', () => {
+  describe(containsTheSameSet.name, () => {
     test('should return false when arrays have unequal size', () => {
       expect(containsTheSameSet([1], [1, 1])).toBe(false);
     });
@@ -119,6 +121,16 @@ describe('ArrayExtensions', () => {
 
     test('should ignore duplicated', () => {
       expect(containsTheSameSet([1, 1, 2, 3], [3, 3, 1, 2])).toBe(true);
+    });
+  });
+
+  describe(count.name, () => {
+    test('should count high numbers and find none', () => {
+      expect(count([1, 2, 3, 4, 5], (a) => a > 100)).toBe(0);
+    });
+
+    test('should count odd numbers', () => {
+      expect(count([1, 2, 3, 4, 5], isOdd)).toBe(3);
     });
   });
 });

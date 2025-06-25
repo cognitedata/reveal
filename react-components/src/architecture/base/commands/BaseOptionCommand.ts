@@ -1,7 +1,4 @@
-/*!
- * Copyright 2024 Cognite AS
- */
-
+import { count } from '../utilities/extensions/arrayExtensions';
 import { type BaseCommand } from './BaseCommand';
 import { RenderTargetCommand } from './RenderTargetCommand';
 
@@ -74,6 +71,10 @@ export abstract class BaseOptionCommand extends RenderTargetCommand {
       return undefined;
     }
     return children.find((child) => child.isChecked);
+  }
+
+  public get checkedCount(): number {
+    return this.children !== undefined ? count(this.children, (command) => command.isChecked) : 0;
   }
 
   protected add(child: BaseCommand): void {

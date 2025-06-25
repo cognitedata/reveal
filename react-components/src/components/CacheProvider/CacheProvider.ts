@@ -1,6 +1,3 @@
-/*!
- * Copyright 2024 Cognite AS
- */
 import { type CdfCaches } from '../../architecture/base/renderTarget/CdfCaches';
 import { useRenderTarget } from '../RevealCanvas';
 import { type AssetMappingAndNode3DCache } from './AssetMappingAndNode3DCache';

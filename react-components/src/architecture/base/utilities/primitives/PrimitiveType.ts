@@ -1,7 +1,3 @@
-/*!
- * Copyright 2024 Cognite AS
- */
-
 export enum PrimitiveType {
   None,
   Line,
@@ -20,9 +16,10 @@ export enum PrimitiveType {
   PlaneXY
 }
 
-export const PlanePrimitiveTypes = [
+export const AlongAxisPlanePrimitiveTypes = [
   PrimitiveType.PlaneX,
   PrimitiveType.PlaneY,
-  PrimitiveType.PlaneZ,
-  PrimitiveType.PlaneXY
+  PrimitiveType.PlaneZ
 ];
+
+export const PlanePrimitiveTypes = [...AlongAxisPlanePrimitiveTypes, PrimitiveType.PlaneXY];

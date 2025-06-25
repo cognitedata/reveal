@@ -1,7 +1,3 @@
-/*!
- * Copyright 2024 Cognite AS
- */
-
 import {
   type CameraManager,
   CustomObject,
@@ -288,6 +284,7 @@ export class RevealRenderTarget {
     this.commandsController.removeEventListeners();
     this.commandsController.dispose();
     this._axisGizmoTool?.dispose();
+    this._revealSettingsController.dispose();
     CommandsUpdater.dispose();
   }
 

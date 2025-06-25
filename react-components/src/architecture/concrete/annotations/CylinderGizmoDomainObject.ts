@@ -1,7 +1,3 @@
-/*!
- * Copyright 2024 Cognite AS
- */
-
 import { Color } from 'three';
 import { type RenderStyle } from '../../base/renderStyles/RenderStyle';
 import { type TranslationInput } from '../../base/utilities/TranslateInput';

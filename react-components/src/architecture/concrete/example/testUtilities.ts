@@ -1,9 +1,6 @@
-/*!
- * Copyright 2024 Cognite AS
- */
-
 import { ExampleDomainObject } from './ExampleDomainObject';
 import { type DomainObject } from '../../base/domainObjects/DomainObject';
+import { count } from '../../base/utilities/extensions/generatorUtils';
 
 export function createExampleDomainObject(): ExampleDomainObject {
   const domainObject = new ExampleDomainObject();
@@ -19,9 +16,5 @@ export function addExampleDomainObjects(root: DomainObject, count: number): void
 }
 
 export function getNumberOfExampleDomainObjects(root: DomainObject): number {
-  let count = 0;
-  for (const _descendant of root.getDescendantsByType(ExampleDomainObject)) {
-    count++;
-  }
-  return count;
+  return count(root.getDescendantsByType(ExampleDomainObject));
 }

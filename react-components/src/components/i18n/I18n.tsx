@@ -1,6 +1,3 @@
-/*!
- * Copyright 2023 Cognite AS
- */
 import { useEffect, createContext, useContext, useState, type ReactElement } from 'react';
 
 import { type I18nProps, type I18nContent } from './types';
@@ -12,6 +9,7 @@ import {
 } from '../../architecture/base/utilities/TranslateInput';
 
 import english from '../../common/i18n/en/reveal-react-components.json';
+import { setCurrentLanguage } from '../../architecture/base/utilities/translateUtils';
 
 const I18nContext = createContext<I18nContent | null>(null);
 
@@ -98,6 +96,9 @@ export const useTranslation = (fallbackLanguage?: string | undefined): I18nConte
 };
 
 export const I18nContextProvider = ({ appLanguage, children }: I18nProps): ReactElement => {
+  useEffect(() => {
+    void setCurrentLanguage(appLanguage);
+  }, [appLanguage]);
   const i18nContent = useTranslationContent(appLanguage);
   return <I18nContext.Provider value={i18nContent}>{children}</I18nContext.Provider>;
 };

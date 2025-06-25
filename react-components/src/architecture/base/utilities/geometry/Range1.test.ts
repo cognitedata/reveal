@@ -1,7 +1,3 @@
-/*!
- * Copyright 2025 Cognite AS
- */
-
 import { describe, expect, test } from 'vitest';
 
 import { Range1 } from './Range1';
@@ -11,7 +7,7 @@ const max = 200;
 const mid = (min + max) / 2;
 const delta = max - min;
 
-describe('Range1', () => {
+describe(Range1.name, () => {
   test('should test empty', () => {
     const range = new Range1();
     expect(range.isEmpty).toBe(true);

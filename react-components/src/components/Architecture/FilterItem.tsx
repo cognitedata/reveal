@@ -1,18 +1,11 @@
-/*!
- * Copyright 2024 Cognite AS
- */
-
 import { useState, type ReactElement } from 'react';
 import { SelectPanel } from '@cognite/cogs-lab';
-import { useTranslation } from '../i18n/I18n';
 import styled from 'styled-components';
 import { type Color } from 'three';
 import { type BaseFilterItemCommand } from '../../architecture/base/commands/BaseFilterCommand';
 import { useOnUpdate } from './useOnUpdate';
 
 export const FilterItem = ({ command }: { command: BaseFilterItemCommand }): ReactElement => {
-  const { t } = useTranslation();
-
   // @update-ui-component-pattern
   const [isChecked, setChecked] = useState(false);
   const [isEnabled, setEnabled] = useState(true);
@@ -44,7 +37,7 @@ export const FilterItem = ({ command }: { command: BaseFilterItemCommand }): Rea
       onClick={() => {
         command.invoke();
       }}
-      label={command.getLabel(t)}
+      label={command.label}
     />
   );
 };

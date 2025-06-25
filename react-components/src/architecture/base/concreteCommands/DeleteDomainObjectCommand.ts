@@ -1,7 +1,3 @@
-/*!
- * Copyright 2024 Cognite AS
- */
-
 import { type TranslationInput } from '../utilities/TranslateInput';
 import { type DomainObject } from '../domainObjects/DomainObject';
 import { DomainObjectCommand } from '../commands/DomainObjectCommand';

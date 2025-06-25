@@ -1,7 +1,3 @@
-/*!
- * Copyright 2024 Cognite AS
- */
-
 import { beforeEach, describe, expect, test } from 'vitest';
 import { Changes } from '../domainObjectsHelpers/Changes';
 import { UndoManager } from './UndoManager';
@@ -14,7 +10,7 @@ import { Box } from '../utilities/primitives/Box';
 import { expectEqualVector3 } from '#test-utils/primitives/primitiveTestUtil';
 import { createFullRenderTargetMock } from '#test-utils/fixtures/createFullRenderTargetMock';
 
-describe('UndoManager', () => {
+describe(UndoManager.name, () => {
   let renderTarget: RevealRenderTarget;
   let root: RootDomainObject;
   let manager: UndoManager;

@@ -1,7 +1,3 @@
-/*!
- * Copyright 2025 Cognite AS
- */
-
 import { assert, beforeEach, describe, expect, test } from 'vitest';
 import { Object3D, Vector3 } from 'three';
 import { CDF_TO_VIEWER_TRANSFORMATION, type CustomObjectIntersectInput } from '@cognite/reveal';
@@ -18,7 +14,7 @@ import {
 } from '#test-utils/architecture/viewUtil';
 import { MeasureLineDomainObject } from '../../measurements/MeasureLineDomainObject';
 
-describe('LineView', () => {
+describe(LineView.name, () => {
   let domainObject: LineDomainObject;
   let view: LineView;
 

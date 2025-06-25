@@ -1,6 +1,3 @@
-/*!
- * Copyright 2025 Cognite AS
- */
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { renderHook, waitFor } from '@testing-library/react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
@@ -97,7 +94,7 @@ vi.mocked(fetchLinkFromRelationshipsByTimeseries).mockResolvedValue(mockAssetsAn
 vi.mocked(getAssetsByIds).mockResolvedValue(mockAssets);
 vi.mocked(useSDK).mockReturnValue(sdk);
 
-describe('useAssetsAndTimeseriesLinkages', () => {
+describe(useAssetsAndTimeseriesLinkages.name, () => {
   beforeEach(() => {
     vi.clearAllMocks();
     queryClient.clear();

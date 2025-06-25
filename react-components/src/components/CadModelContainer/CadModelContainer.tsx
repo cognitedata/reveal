@@ -1,6 +1,3 @@
-/*!
- * Copyright 2023 Cognite AS
- */
 import { type ReactElement, useEffect, useState, useRef } from 'react';
 import {
   type GeometryFilter,

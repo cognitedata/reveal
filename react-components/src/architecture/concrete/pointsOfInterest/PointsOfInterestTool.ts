@@ -1,6 +1,3 @@
-/*!
- * Copyright 2024 Cognite AS
- */
 import { type TranslationInput } from '../../base/utilities/TranslateInput';
 import { PointsOfInterestDomainObject } from './PointsOfInterestDomainObject';
 import { isPointsOfInterestIntersection } from './types';
@@ -29,7 +26,7 @@ export class PointsOfInterestTool<PoiIdType> extends BaseEditTool {
     return 'Waypoint';
   }
 
-  public override get shortCutKey(): string {
+  protected override get shortCutKey(): string {
     return 'P';
   }
 

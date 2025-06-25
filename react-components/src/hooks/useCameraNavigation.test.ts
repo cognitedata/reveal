@@ -1,6 +1,3 @@
-/*!
- * Copyright 2025 Cognite AS
- */
 import { describe, expect, test, vi, beforeEach, beforeAll, afterAll } from 'vitest';
 import { act, renderHook } from '@testing-library/react';
 import { Vector3 } from 'three';
@@ -21,7 +18,7 @@ vi.mock('../components/CacheProvider/NodeCacheProvider', () => ({
   useFdmNodeCache: () => fdmNodeCacheContentMock
 }));
 
-describe('useCameraNavigation', () => {
+describe(useCameraNavigation.name, () => {
   beforeEach(() => {
     vi.resetAllMocks();
     viewerMock.cameraManager.setCameraState = vi.fn();

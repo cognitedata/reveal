@@ -1,7 +1,3 @@
-/*!
- * Copyright 2024 Cognite AS
- */
-
 import { describe, test, beforeAll, expect } from 'vitest';
 import { VisualDomainObject } from './VisualDomainObject';
 import { type TranslationInput } from '../utilities/TranslateInput';
@@ -18,7 +14,7 @@ import { FolderDomainObject } from './FolderDomainObject';
 import { type DomainObject } from './DomainObject';
 import { type DomainObjectChange } from '../domainObjectsHelpers/DomainObjectChange';
 
-describe('VisualDomainObject', () => {
+describe(VisualDomainObject.name, () => {
   let renderTarget: RevealRenderTarget;
   beforeAll(() => {
     renderTarget = createRenderTargetMock();

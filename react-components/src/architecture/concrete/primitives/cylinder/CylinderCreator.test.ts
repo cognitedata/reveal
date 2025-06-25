@@ -1,7 +1,3 @@
-/*!
- * Copyright 2025 Cognite AS
- */
-
 import { describe, expect, test } from 'vitest';
 import { CylinderCreator } from './CylinderCreator';
 import { Vector3 } from 'three';
@@ -14,7 +10,7 @@ import { swap } from '../../../base/utilities/extensions/arrayExtensions';
 
 const direction = new Vector3(1, 0, 0);
 
-describe('CylinderCreator', () => {
+describe(CylinderCreator.name, () => {
   test('Create horizontal circle by mimics the user clicking 2 times', () => {
     const domainObject = new MeasureCylinderDomainObject(PrimitiveType.HorizontalCircle);
     const creator = new CylinderCreator(domainObject, undefined);

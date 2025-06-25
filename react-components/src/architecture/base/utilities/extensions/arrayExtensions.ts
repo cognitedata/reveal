@@ -1,7 +1,3 @@
-/*!
- * Copyright 2024 Cognite AS
- */
-
 import { every } from 'lodash';
 
 /*
@@ -129,4 +125,21 @@ export function containsTheSameSet<T>(array1: readonly T[], array2: readonly T[]
   }
   const set2 = new Set(array2);
   return every(array1, (element) => set2.has(element));
+}
+
+/**
+ * Counts the number of elements in the given array that satisfy the specified predicate.
+ *
+ * @param array - The array to search through.
+ * @param predicate - A function that tests each element for a condition.
+ * @returns The number of elements in the array that satisfy the predicate.
+ */
+export function count<T>(array: readonly T[], predicate: (t: T) => boolean): number {
+  let count = 0;
+  for (const item of array) {
+    if (predicate(item)) {
+      count++;
+    }
+  }
+  return count;
 }

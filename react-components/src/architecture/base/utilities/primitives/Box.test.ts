@@ -1,7 +1,3 @@
-/*!
- * Copyright 2025 Cognite AS
- */
-
 import { describe, expect, test } from 'vitest';
 import { Box } from './Box';
 import { PrimitiveType } from './PrimitiveType';
@@ -13,7 +9,7 @@ import {
   expectEqualEuler
 } from '#test-utils/primitives/primitiveTestUtil';
 
-describe('Box', () => {
+describe(Box.name, () => {
   test('Should test setter and getter on base class', () => {
     const primitive = createRegularBox();
     primitive.confidence = 0.5;

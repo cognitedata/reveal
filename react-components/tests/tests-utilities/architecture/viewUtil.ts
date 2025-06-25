@@ -1,7 +1,3 @@
-/*!
- * Copyright 2025 Cognite AS
- */
-
 import { CDF_TO_VIEWER_TRANSFORMATION, type CustomObjectIntersectInput } from '@cognite/reveal';
 import { type GroupThreeView, type DomainObject, type ThreeView } from '../../../src/architecture';
 import { createFullRenderTargetMock } from '../fixtures/createFullRenderTargetMock';
@@ -9,6 +5,7 @@ import { PerspectiveCamera, Raycaster, Vector2, type Vector3 } from 'three';
 import { expect } from 'vitest';
 import { type Class, isInstanceOf } from '../../../src/advanced-tree-view/utilities/class';
 import { getRenderTarget } from '../../../src/architecture/base/domainObjects/getRoot';
+import { count } from '../../../src/architecture/base/utilities/extensions/arrayExtensions';
 
 export function expectChildrenLength(view: GroupThreeView, expectedLength: number): void {
   expect(view.object.children.length).toBe(expectedLength);
@@ -19,23 +16,13 @@ export function expectChildrenOfTypeAndCount<T>(
   classType: Class<T>,
   expectedCount: number
 ): void {
-  let count = 0;
-  for (const child of view.object.children) {
-    if (isInstanceOf(child, classType)) {
-      count++;
-    }
-  }
-  expect(count).toBe(expectedCount);
+  const actualCount = count(view.object.children, (child) => isInstanceOf(child, classType));
+  expect(actualCount).toBe(expectedCount);
 }
 
 export function expectVisibleChildren(view: GroupThreeView, expectedCount: number): void {
-  let count = 0;
-  for (const child of view.object.children) {
-    if (child.visible) {
-      count++;
-    }
-  }
-  expect(count).toBe(expectedCount);
+  const actualCount = count(view.object.children, (child) => child.visible);
+  expect(actualCount).toBe(expectedCount);
 }
 
 export function addView(domainObject: DomainObject, view: ThreeView): void {

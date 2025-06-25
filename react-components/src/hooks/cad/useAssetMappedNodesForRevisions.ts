@@ -1,6 +1,3 @@
-/*!
- * Copyright 2024 Cognite AS
- */
 import { useQuery, type UseQueryResult } from '@tanstack/react-query';
 import { type CadModelOptions } from '../../components';
 import { type ModelWithAssetMappings } from './ModelWithAssetMappings';

@@ -1,6 +1,3 @@
-/*!
- * Copyright 2025 Cognite AS
- */
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { renderHook, waitFor } from '@testing-library/react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
@@ -119,7 +116,7 @@ vi.mock('../components/RevealCanvas/SDKProvider');
 
 vi.mocked(useSDK).mockReturnValue(sdk);
 
-describe('useFetchTimeseriesFromRelationshipByAsset', () => {
+describe(useFetchTimeseriesFromRelationshipByAsset.name, () => {
   beforeEach(() => {
     vi.clearAllMocks();
     queryClient.clear();

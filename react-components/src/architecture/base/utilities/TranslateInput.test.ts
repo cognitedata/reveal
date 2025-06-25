@@ -1,7 +1,3 @@
-/*!
- * Copyright 2023 Cognite AS
- */
-
 import { describe, expect, test } from 'vitest';
 import {
   isEmpty,
@@ -10,7 +6,7 @@ import {
   type TranslationInput
 } from './TranslateInput';
 
-describe('TranslationInput', () => {
+describe('TranslateInput', () => {
   test('Translated string should have correct type', () => {
     const input: TranslationInput = { key: 'BOX' };
     expect(isTranslatedString(input)).toBe(true);

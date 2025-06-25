@@ -1,6 +1,3 @@
-/*!
- * Copyright 2024 Cognite AS
- */
 import { Body, Flex } from '@cognite/cogs.js';
 import styled from 'styled-components';
 import { useMemo, type ReactElement } from 'react';
@@ -9,11 +6,9 @@ import {
   type PanelInfo,
   type NumberPanelItem
 } from '../../architecture/base/domainObjectsHelpers/PanelInfo';
-import { useTranslation } from '../i18n/I18n';
 import { CopyToClipboardCommand } from '../../architecture/base/concreteCommands/CopyToClipboardCommand';
 import { CommandButtons } from './Toolbar';
 import { withSuppressRevealEvents } from '../../higher-order-components/withSuppressRevealEvents';
-import { type TranslateDelegate } from '../../architecture/base/utilities/TranslateInput';
 import { type UnitSystem } from '../../architecture/base/renderTarget/UnitSystem';
 import { IconComponent } from './Factories/IconFactory';
 import { type DomainObject } from '../../architecture';
@@ -27,7 +22,6 @@ export const DomainObjectPanel = (): ReactElement => {
   useSignalValue(DomainObjectPanelUpdater.update);
   const domainObject = useSignalValue(DomainObjectPanelUpdater.selectedDomainObject);
   const commands = useMemo(() => domainObject?.getPanelToolbar(), [domainObject]);
-  const { t } = useTranslation();
 
   if (domainObject === undefined || commands === undefined) {
     return <></>;
@@ -44,11 +38,11 @@ export const DomainObjectPanel = (): ReactElement => {
   // Force the getString to be updated
   for (const command of commands) {
     if (command instanceof CopyToClipboardCommand)
-      command.getString = () => toString(domainObject, info, t, unitSystem);
+      command.getString = () => toString(domainObject, info, unitSystem);
   }
 
   const icon = domainObject.icon;
-  const label = domainObject.getLabel(t);
+  const label = domainObject.label;
   return (
     <Container
       style={{
@@ -77,7 +71,7 @@ export const DomainObjectPanel = (): ReactElement => {
   function addTextWithNumber(item: NumberPanelItem, unitSystem: UnitSystem): ReactElement {
     const icon = item.icon;
     const { quantity, value } = item;
-    const text = item?.getText(t);
+    const text = item?.getText();
     return (
       <tr key={JSON.stringify(item)}>
         <PaddedTh>
@@ -99,18 +93,17 @@ export const DomainObjectPanel = (): ReactElement => {
 function toString(
   domainObject: DomainObject | undefined,
   info: PanelInfo,
-  translate: TranslateDelegate,
   unitSystem: UnitSystem
 ): string {
   let result = '';
   {
-    const text = domainObject?.getLabel(translate);
+    const text = domainObject?.label;
     if (text !== undefined) {
       result += `${text}\n`;
     }
   }
   for (const item of info.items) {
-    const text = item?.getText(translate);
+    const text = item?.getText();
     if (text !== undefined) {
       result += `${text}: `;
     }

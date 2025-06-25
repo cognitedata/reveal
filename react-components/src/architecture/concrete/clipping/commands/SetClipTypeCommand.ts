@@ -1,7 +1,3 @@
-/*!
- * Copyright 2024 Cognite AS
- */
-
 import { RenderTargetCommand } from '../../../base/commands/RenderTargetCommand';
 import { type BaseCommand } from '../../../base/commands/BaseCommand';
 import { PrimitiveType } from '../../../base/utilities/primitives/PrimitiveType';
@@ -13,6 +9,10 @@ import { type IconName } from '../../../base/utilities/IconName';
 
 export class SetClipTypeCommand extends RenderTargetCommand {
   private readonly _primitiveType: PrimitiveType;
+
+  public get primitiveType(): PrimitiveType {
+    return this._primitiveType;
+  }
 
   // ==================================================
   // CONSTRUCTOR
@@ -28,11 +28,11 @@ export class SetClipTypeCommand extends RenderTargetCommand {
   // ==================================================
 
   public override get icon(): IconName {
-    return getIconByPrimitiveType(this._primitiveType);
+    return getIconByPrimitiveType(this.primitiveType);
   }
 
   public override get tooltip(): TranslationInput {
-    return getTooltipByPrimitiveType(this._primitiveType);
+    return getTooltipByPrimitiveType(this.primitiveType);
   }
 
   public override get isVisible(): boolean {
@@ -43,16 +43,13 @@ export class SetClipTypeCommand extends RenderTargetCommand {
     if (this.tool === undefined) {
       return false;
     }
-    if (
-      this._primitiveType === PrimitiveType.Box ||
-      this._primitiveType === PrimitiveType.PlaneXY
-    ) {
+    if (this.primitiveType === PrimitiveType.Box || this.primitiveType === PrimitiveType.PlaneXY) {
       return true;
     }
     // Allow maximum 2 slices of each type
     let count = 0;
     for (const domainObject of this.rootDomainObject.getDescendantsByType(SliceDomainObject)) {
-      if (domainObject.primitiveType !== this._primitiveType) {
+      if (domainObject.primitiveType !== this.primitiveType) {
         continue;
       }
       count++;
@@ -68,7 +65,7 @@ export class SetClipTypeCommand extends RenderTargetCommand {
     if (tool === undefined) {
       return false;
     }
-    return tool.primitiveType === this._primitiveType;
+    return tool.primitiveType === this.primitiveType;
   }
 
   protected override invokeCore(): boolean {
@@ -78,10 +75,10 @@ export class SetClipTypeCommand extends RenderTargetCommand {
     }
     tool.escape();
     tool.clearDragging();
-    if (tool.primitiveType === this._primitiveType) {
+    if (tool.primitiveType === this.primitiveType) {
       tool.primitiveType = PrimitiveType.None;
     } else {
-      tool.primitiveType = this._primitiveType;
+      tool.primitiveType = this.primitiveType;
     }
     return true;
   }
@@ -90,7 +87,7 @@ export class SetClipTypeCommand extends RenderTargetCommand {
     if (!(other instanceof SetClipTypeCommand)) {
       return false;
     }
-    return this._primitiveType === other._primitiveType;
+    return this.primitiveType === other.primitiveType;
   }
 
   // ==================================================
