@@ -10,7 +10,7 @@ import { type BaseTool } from './base/commands/BaseTool';
 import { NavigationTool } from './base/concreteCommands/NavigationTool';
 
 describe(installToolbars.name, () => {
-  test('Should install toolbars for the following tools', () => {
+  test('Should have toolbars with correct number of commands for the following tools', () => {
     installToolbars();
     expect(getToolbarCount(new AnnotationsCreateTool())).toBe(5);
     expect(getToolbarCount(new AnnotationsSelectTool())).toBe(6);
