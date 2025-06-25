@@ -45,7 +45,11 @@ export function PointCloudContainer({
   const { setReveal3DResourceLoadFailCount } = useReveal3DResourceLoadFailCount();
   const initializingModel = useRef<AddModelOptions<DataSourceType> | undefined>(undefined);
 
-  const [{ data: addModelOptionsResult }] = useModelIdRevisionIdFromModelOptions([addModelOptions]);
+  const modelOptions = useModelIdRevisionIdFromModelOptions([addModelOptions]);
+
+  // useModelIdRevisionIdFromModelOptions returns an empty array if the query is
+  // still loading, fetching, refetching, or errored.
+  const addModelOptionsResult = modelOptions.length > 0 ? modelOptions[0].data : undefined;
 
   const modelId = addModelOptionsResult?.modelId;
   const revisionId = addModelOptionsResult?.revisionId;
