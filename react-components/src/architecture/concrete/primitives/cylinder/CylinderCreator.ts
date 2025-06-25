@@ -19,10 +19,16 @@ export class CylinderCreator extends BaseCreator {
   private readonly _domainObject: CylinderDomainObject;
   private _radius = Cylinder.MinSize;
   private readonly _primitiveType: PrimitiveType;
+  private readonly _isReversedClickOrder;
 
   // Click order for the points (point 0 is always center)
-  private readonly _radiusOrder: number = 1;
-  private readonly _otherCenterOrder: number = 2;
+  private get radiusOrder(): number {
+    return this._isReversedClickOrder ? 2 : 1;
+  }
+
+  private get otherCenterOrder(): number {
+    return this._isReversedClickOrder ? 1 : 2;
+  }
 
   // ==================================================
   // CONSTRUCTOR
@@ -39,10 +45,7 @@ export class CylinderCreator extends BaseCreator {
     this._domainObject.focusType = FocusType.Pending;
 
     // Click order for the points (Used for 3D annotations)
-    if (isReversedClickOrder) {
-      this._radiusOrder = 2;
-      this._otherCenterOrder = 1;
-    }
+    this._isReversedClickOrder = isReversedClickOrder;
   }
 
   // ==================================================
@@ -91,7 +94,7 @@ export class CylinderCreator extends BaseCreator {
   private recalculatePoint(point: Vector3 | undefined, ray: Ray): Vector3 | undefined {
     // Recalculate the point anyway for >= 1 points
     // This makes it more natural and you can pick in empty space
-    if (this.notPendingPointCount === this._otherCenterOrder) {
+    if (this.notPendingPointCount === this.otherCenterOrder) {
       // Calculate the other center point
       if (this._primitiveType === PrimitiveType.HorizontalCylinder) {
         if (point === undefined) {
@@ -117,11 +120,11 @@ export class CylinderCreator extends BaseCreator {
           return point;
         }
       }
-    } else if (this.notPendingPointCount === this._radiusOrder) {
+    } else if (this.notPendingPointCount === this.radiusOrder) {
       // Calculate the radius
       const { center, axis } = this._domainObject.cylinder;
 
-      if (this._radiusOrder === 1) {
+      if (this.radiusOrder === 1) {
         // When radius is the second point, we can calculate it from the intersection with the plane
         const plane = new Plane().setFromNormalAndCoplanarPoint(axis, center);
         const pointOnRay = ray.intersectPlane(plane, new Vector3());
@@ -168,11 +171,11 @@ export class CylinderCreator extends BaseCreator {
         centerA.z -= Cylinder.HalfMinSize;
         centerB.z += Cylinder.HalfMinSize;
       }
-    } else if (this.pointCount - 1 === this._otherCenterOrder) {
+    } else if (this.pointCount - 1 === this.otherCenterOrder) {
       const { centerA, centerB } = cylinder;
       centerA.copy(this.firstPoint);
       centerB.copy(this.lastPoint);
-    } else if (this.pointCount - 1 === this._radiusOrder) {
+    } else if (this.pointCount - 1 === this.radiusOrder) {
       cylinder.radius = this._radius;
     }
     cylinder.forceMinSize();
