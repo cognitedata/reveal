@@ -9,7 +9,10 @@ import { type IconName } from '../../../base/utilities/IconName';
 export class SetMeasurementTypeCommand extends RenderTargetCommand {
   private readonly _primitiveType: PrimitiveType;
 
-  // ==================================================
+  public get primitiveType(): PrimitiveType {
+    return this._primitiveType;
+  }
+
   // CONSTRUCTOR
   // ==================================================
 
@@ -23,11 +26,11 @@ export class SetMeasurementTypeCommand extends RenderTargetCommand {
   // ==================================================
 
   public override get icon(): IconName {
-    return getIconByPrimitiveType(this._primitiveType);
+    return getIconByPrimitiveType(this.primitiveType);
   }
 
   public override get tooltip(): TranslationInput {
-    return getTooltipByPrimitiveType(this._primitiveType);
+    return getTooltipByPrimitiveType(this.primitiveType);
   }
 
   public override get isEnabled(): boolean {
@@ -39,7 +42,7 @@ export class SetMeasurementTypeCommand extends RenderTargetCommand {
     if (tool === undefined) {
       return false;
     }
-    return tool.primitiveType === this._primitiveType;
+    return tool.primitiveType === this.primitiveType;
   }
 
   protected override invokeCore(): boolean {
@@ -49,10 +52,10 @@ export class SetMeasurementTypeCommand extends RenderTargetCommand {
     }
     tool.escape();
     tool.clearDragging();
-    if (tool.primitiveType === this._primitiveType) {
+    if (tool.primitiveType === this.primitiveType) {
       tool.primitiveType = PrimitiveType.None;
     } else {
-      tool.primitiveType = this._primitiveType;
+      tool.primitiveType = this.primitiveType;
     }
     return true;
   }
@@ -61,7 +64,7 @@ export class SetMeasurementTypeCommand extends RenderTargetCommand {
     if (!(other instanceof SetMeasurementTypeCommand)) {
       return false;
     }
-    return this._primitiveType === other._primitiveType;
+    return this.primitiveType === other.primitiveType;
   }
 
   // ==================================================
