@@ -7,7 +7,7 @@ import { FocusType } from '../../base/domainObjectsHelpers/FocusType';
 import { createEmptyImage360Annotation } from './testUtilities';
 import { Image360AnnotationFolder } from './Image360AnnotationFolder';
 import { forEach } from 'lodash';
-import { expectEqualVector3 } from '../../../../tests/tests-utilities/primitives/primitiveTestUtil';
+import { expectEqualVector3 } from '#test-utils/primitives/primitiveTestUtil';
 
 describe(Image360AnnotationCreator.name, () => {
   test('create a annotation polygon by mimicking the user clicking 4 times', () => {
