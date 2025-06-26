@@ -41,15 +41,7 @@
     "@typescript-eslint/class-literal-property-style": "off",
     "@typescript-eslint/no-extraneous-class": "off",
     "@typescript-eslint/prefer-optional-chain": "off",
-    "no-console": [
-      2,
-      {
-        "allow": [
-          "warn",
-          "error"
-        ]
-      }
-    ],
+    "no-console": "off",
     "eqeqeq": [
       "error",
       "always"
