@@ -46,13 +46,12 @@ export function PointCloudContainer({
   const initializingModel = useRef<AddModelOptions<DataSourceType> | undefined>(undefined);
 
   const addModelOptionsResult = useModelIdRevisionIdFromModelOptions([addModelOptions]);
-  const modelOptions = addModelOptionsResult[0];
-  if (modelOptions === undefined) {
+  if (addModelOptionsResult.length === 0) {
     return <></>;
   }
 
-  const modelId = modelOptions.modelId;
-  const revisionId = modelOptions.revisionId;
+  const modelId = addModelOptionsResult[0].modelId;
+  const revisionId = addModelOptionsResult[0].revisionId;
 
   useEffect(() => {
     if (

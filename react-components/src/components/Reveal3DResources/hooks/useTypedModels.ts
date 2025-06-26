@@ -22,13 +22,13 @@ export const useTypedModels = (
   onLoadFail?: (resource: AddResourceOptions, error: any) => void
 ): UseQueryResult<TypedReveal3DModel[]> => {
   const cadOrPointCloudResources = useCadOrPointCloudResources(resources);
-  const classicModelOptions = useModelIdRevisionIdFromModelOptions(cadOrPointCloudResources);
+  const classicAddModelOptions = useModelIdRevisionIdFromModelOptions(cadOrPointCloudResources);
   const typeResult = useQuery({
-    queryKey: ['typedModels', classicModelOptions, cadOrPointCloudResources],
+    queryKey: ['typedModels', classicAddModelOptions, cadOrPointCloudResources],
     queryFn: async () =>
-      await getTypedModels(classicModelOptions, viewer, cadOrPointCloudResources, onLoadFail),
+      await getTypedModels(classicAddModelOptions, viewer, cadOrPointCloudResources, onLoadFail),
     staleTime: Infinity,
-    enabled: classicModelOptions.length > 0 && cadOrPointCloudResources.length > 0
+    enabled: classicAddModelOptions.length > 0 && cadOrPointCloudResources.length > 0
   });
 
   useRegisterFailedResources(typeResult, cadOrPointCloudResources);
@@ -37,17 +37,17 @@ export const useTypedModels = (
 };
 
 const getTypedModels = async (
-  classicModelOptions: Array<AddModelOptions<ClassicDataSourceType>>,
+  classicAddModelOptions: Array<AddModelOptions<ClassicDataSourceType>>,
   viewer: Cognite3DViewer<DataSourceType>,
   cadOrPointCloudResources: Array<AddModelOptions<DataSourceType>>,
   onLoadFail?: (resource: AddResourceOptions, error: any) => void
 ): Promise<TypedReveal3DModel[]> => {
   const errorFunction = onLoadFail ?? defaultLoadFailHandler;
 
-  const modelTypePromises = classicModelOptions.map(async (classicModelOptions, index) => {
-    const { modelId, revisionId } = classicModelOptions;
+  const modelTypePromises = classicAddModelOptions.map(async (classicAddModelOptions, index) => {
+    const { modelId, revisionId } = classicAddModelOptions;
     const type = await viewer.determineModelType(modelId, revisionId).catch((error) => {
-      errorFunction(classicModelOptions, error);
+      errorFunction(classicAddModelOptions, error);
       return '';
     });
 

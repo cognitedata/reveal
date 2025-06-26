@@ -17,7 +17,7 @@ type MatchedPointCloudModel = {
 
 export function useMatchedPointCloudModels(
   viewerModels: Array<CognitePointCloudModel<DataSourceType>>,
-  classicModelOptions: Array<AddModelOptions<ClassicDataSourceType>>
+  classicAddModelOptions: Array<AddModelOptions<ClassicDataSourceType>>
 ): MatchedPointCloudModel[] {
   return useMemo(() => {
     return viewerModels.flatMap((viewerModel) => {
@@ -25,7 +25,7 @@ export function useMatchedPointCloudModels(
         return EMPTY_ARRAY;
       }
       const model = viewerModel;
-      const matchedModel = classicModelOptions.find((modelOption) => {
+      const matchedModel = classicAddModelOptions.find((modelOption) => {
         if (isDMPointCloudModel(model) && isDM3DModelIdentifier(modelOption)) {
           return (
             model.modelIdentifier.revisionExternalId === modelOption.revisionExternalId &&
@@ -41,5 +41,5 @@ export function useMatchedPointCloudModels(
       });
       return matchedModel !== undefined ? [{ viewerModel, model: matchedModel }] : EMPTY_ARRAY;
     });
-  }, [viewerModels, classicModelOptions]);
+  }, [viewerModels, classicAddModelOptions]);
 }

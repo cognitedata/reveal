@@ -11,17 +11,17 @@ export const usePointCloudAnnotationMappingsForModels = (
   models: TypedReveal3DModel[]
 ): UseQueryResult<AnnotationModelDataResult[]> => {
   const pointCloudAnnotationCache = usePointCloudAnnotationCache();
-  const classicModelOptions = useModelIdRevisionIdFromModelOptions(models);
+  const classicAddModelOptions = useModelIdRevisionIdFromModelOptions(models);
 
   return useQuery({
     queryKey: [
       queryKeys.pointCloudAnnotationMappings(
-        classicModelOptions.map((model) => `${model.modelId}/${model.revisionId}`).sort()
+        classicAddModelOptions.map((model) => `${model.modelId}/${model.revisionId}`).sort()
       )
     ],
     queryFn: async () => {
       return await Promise.all(
-        classicModelOptions.map(async (model) => {
+        classicAddModelOptions.map(async (model) => {
           const annotationModel = await pointCloudAnnotationCache.getPointCloudAnnotationsForModel(
             model.modelId,
             model.revisionId

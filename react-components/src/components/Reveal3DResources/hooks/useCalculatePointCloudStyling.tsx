@@ -236,14 +236,14 @@ function usePointCloudVolumesWithModel(
   models: PointCloudModelOptions[]
 ): PointCloudVolumeWithModel[] {
   const viewerModels = use3dModels();
-  const classicModelOptions = useModelIdRevisionIdFromModelOptions(models);
+  const classicAddModelOptions = useModelIdRevisionIdFromModelOptions(models);
 
   const pointCloudViewerModels = viewerModels.filter(
     (model): model is CognitePointCloudModel<DataSourceType> => model.type === 'pointcloud'
   );
   const matchedPointCloudModels = useMatchedPointCloudModels(
     pointCloudViewerModels,
-    classicModelOptions
+    classicAddModelOptions
   );
 
   return useMemo(() => {

@@ -12,18 +12,18 @@ export const usePointCloudAnnotationMappingsForAssetIds = (
   assetIds: Array<string | number> | undefined
 ): UseQueryResult<PointCloudAnnotationMappedAssetData[]> => {
   const pointCloudAnnotationCache = usePointCloudAnnotationCache();
-  const classicModelOptions = useModelIdRevisionIdFromModelOptions(models);
+  const classicAddModelOptions = useModelIdRevisionIdFromModelOptions(models);
 
   return useQuery({
     queryKey: [
       queryKeys.pointCloudAnnotationForAssetIds(
-        classicModelOptions.map((model) => `${model.modelId}/${model.revisionId}`).sort(),
+        classicAddModelOptions.map((model) => `${model.modelId}/${model.revisionId}`).sort(),
         assetIds?.map((assetId) => assetId.toString()).sort() ?? []
       )
     ],
     queryFn: async () => {
       const allAnnotationMappingsPromisesResult = await Promise.all(
-        classicModelOptions.map(async (model) => {
+        classicAddModelOptions.map(async (model) => {
           const result = await fetchAnnotationsForModel(
             model.modelId,
             model.revisionId,
