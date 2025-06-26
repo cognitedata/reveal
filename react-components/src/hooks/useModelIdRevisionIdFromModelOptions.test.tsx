@@ -26,16 +26,19 @@ const dmModelOption = {
   revisionSpace: 'default-revision-space'
 };
 
-const mockClassicModelResult = new Mock<UseQueryResult<AddModelOptions<ClassicDataSourceType>>>()
+const mockUseQueriedAddModelOptionsResult = new Mock<
+  UseQueryResult<Array<AddModelOptions<ClassicDataSourceType>>>
+>()
   .setup((p) => p.data)
-  .returns(classicModelOption)
-  .object();
-const mockDMModelResult = new Mock<UseQueryResult<AddModelOptions<ClassicDataSourceType>>>()
-  .setup((p) => p.data)
-  .returns({
-    modelId: 987,
-    revisionId: 654
-  })
+  .returns([])
+  .setup((p) => p.isFetching)
+  .returns(false)
+  .setup((p) => p.isLoading)
+  .returns(false)
+  .setup((p) => p.isError)
+  .returns(false)
+  .setup((p) => p.isRefetching)
+  .returns(false)
   .object();
 
 const mockUseQueriedAddModelOptions =
@@ -56,7 +59,7 @@ describe(useModelIdRevisionIdFromModelOptions.name, () => {
   beforeEach(() => {
     vi.resetAllMocks();
     mockUseFdmSdk.mockReturnValue(new FdmSDK(sdkMock));
-    mockUseQueriedAddModelOptions.mockReturnValue([]);
+    mockUseQueriedAddModelOptions.mockReturnValue(mockUseQueriedAddModelOptionsResult);
   });
 
   test('returns empty array if input is undefined', () => {
@@ -67,7 +70,19 @@ describe(useModelIdRevisionIdFromModelOptions.name, () => {
   });
 
   test('returns modelId & revisionId for classic model option', async () => {
-    mockUseQueriedAddModelOptions.mockReturnValue([mockClassicModelResult]);
+    const resultMock = new Mock<UseQueryResult<Array<AddModelOptions<ClassicDataSourceType>>>>()
+      .setup((p) => p.data)
+      .returns([classicModelOption])
+      .setup((p) => p.isFetching)
+      .returns(false)
+      .setup((p) => p.isLoading)
+      .returns(false)
+      .setup((p) => p.isError)
+      .returns(false)
+      .setup((p) => p.isRefetching)
+      .returns(false)
+      .object();
+    mockUseQueriedAddModelOptions.mockReturnValue(resultMock);
     const { result } = renderHook(
       () => useModelIdRevisionIdFromModelOptions([classicModelOption]),
       { wrapper }
@@ -75,45 +90,53 @@ describe(useModelIdRevisionIdFromModelOptions.name, () => {
 
     await waitFor(() => {
       expect(result.current.length).toBeGreaterThan(0);
-      expect(result.current[0].data).toBeDefined();
+      expect(result.current[0]).toBeDefined();
     });
 
-    assert(result.current[0]?.data !== undefined);
+    assert(result.current[0] !== undefined);
 
-    expect(isClassicIdentifier(result.current[0].data)).toBe(true);
-    expect(result.current[0]?.data).toMatchObject(classicModelOption);
+    expect(isClassicIdentifier(result.current[0])).toBe(true);
+    expect(result.current[0]).toMatchObject(classicModelOption);
   });
 
   test('returns modelId & revisionId for dm model option', async () => {
-    mockUseQueriedAddModelOptions.mockReturnValue([mockDMModelResult]);
+    const resultMock = new Mock<UseQueryResult<Array<AddModelOptions<ClassicDataSourceType>>>>()
+      .setup((p) => p.data)
+      .returns([{ modelId: 987, revisionId: 654 }])
+      .setup((p) => p.isFetching)
+      .returns(false)
+      .setup((p) => p.isLoading)
+      .returns(false)
+      .setup((p) => p.isError)
+      .returns(false)
+      .setup((p) => p.isRefetching)
+      .returns(false)
+      .object();
+    mockUseQueriedAddModelOptions.mockReturnValue(resultMock);
     const { result } = renderHook(() => useModelIdRevisionIdFromModelOptions([dmModelOption]), {
       wrapper
     });
 
     await waitFor(() => {
       expect(result.current.length).toBeGreaterThan(0);
-      expect(result.current[0].data).toBeDefined();
+      expect(result.current[0]).toBeDefined();
     });
 
     expect(isDM3DModelIdentifier(dmModelOption)).toBe(true);
-    expect(result.current[0]?.data).toMatchObject({
+    expect(result.current[0]).toMatchObject({
       modelId: 987,
       revisionId: 654
     });
   });
 
   test('returns empty array if any query is still fetching', () => {
-    const mockDMModelResult = new Mock<UseQueryResult<AddModelOptions<ClassicDataSourceType>>>()
+    const resultMock = new Mock<UseQueryResult<Array<AddModelOptions<ClassicDataSourceType>>>>()
       .setup((p) => p.data)
-      .returns({
-        modelId: 987,
-        revisionId: 654
-      })
+      .returns([])
       .setup((p) => p.isFetching)
       .returns(true)
       .object();
-
-    mockUseQueriedAddModelOptions.mockReturnValue([mockDMModelResult]);
+    mockUseQueriedAddModelOptions.mockReturnValue(resultMock);
 
     const { result } = renderHook(
       () => useModelIdRevisionIdFromModelOptions([classicModelOption, dmModelOption]),
@@ -124,16 +147,13 @@ describe(useModelIdRevisionIdFromModelOptions.name, () => {
   });
 
   test('returns empty array if any query is still loading', () => {
-    const mockClassicModelResult = new Mock<
-      UseQueryResult<AddModelOptions<ClassicDataSourceType>>
-    >()
+    const resultMock = new Mock<UseQueryResult<Array<AddModelOptions<ClassicDataSourceType>>>>()
       .setup((p) => p.data)
-      .returns(classicModelOption)
+      .returns([])
       .setup((p) => p.isLoading)
       .returns(true)
       .object();
-
-    mockUseQueriedAddModelOptions.mockReturnValue([mockClassicModelResult]);
+    mockUseQueriedAddModelOptions.mockReturnValue(resultMock);
 
     const { result } = renderHook(
       () => useModelIdRevisionIdFromModelOptions([classicModelOption, dmModelOption]),
@@ -144,16 +164,13 @@ describe(useModelIdRevisionIdFromModelOptions.name, () => {
   });
 
   test('returns empty array if any query contains error status', () => {
-    const mockClassicModelResult = new Mock<
-      UseQueryResult<AddModelOptions<ClassicDataSourceType>>
-    >()
+    const resultMock = new Mock<UseQueryResult<Array<AddModelOptions<ClassicDataSourceType>>>>()
       .setup((p) => p.data)
-      .returns(classicModelOption)
+      .returns([])
       .setup((p) => p.isError)
       .returns(true)
       .object();
-
-    mockUseQueriedAddModelOptions.mockReturnValue([mockClassicModelResult]);
+    mockUseQueriedAddModelOptions.mockReturnValue(resultMock);
 
     const { result } = renderHook(
       () => useModelIdRevisionIdFromModelOptions([classicModelOption, dmModelOption]),
@@ -164,17 +181,13 @@ describe(useModelIdRevisionIdFromModelOptions.name, () => {
   });
 
   test('returns empty array if any query is still refetching', () => {
-    const mockDMModelResult = new Mock<UseQueryResult<AddModelOptions<ClassicDataSourceType>>>()
+    const resultMock = new Mock<UseQueryResult<Array<AddModelOptions<ClassicDataSourceType>>>>()
       .setup((p) => p.data)
-      .returns({
-        modelId: 987,
-        revisionId: 654
-      })
+      .returns([])
       .setup((p) => p.isRefetching)
       .returns(true)
       .object();
-
-    mockUseQueriedAddModelOptions.mockReturnValue([mockDMModelResult]);
+    mockUseQueriedAddModelOptions.mockReturnValue(resultMock);
 
     const { result } = renderHook(
       () => useModelIdRevisionIdFromModelOptions([classicModelOption, dmModelOption]),

@@ -1,4 +1,4 @@
-import { useQueries, type UseQueryOptions, type UseQueryResult } from '@tanstack/react-query';
+import { useQuery, type UseQueryResult } from '@tanstack/react-query';
 import {
   type AddModelOptions,
   type ClassicDataSourceType,
@@ -16,49 +16,35 @@ import {
 export function useQueriedAddModelOptions(
   addModelOptionsArray: Array<AddModelOptions<DataSourceType>> | undefined,
   fdmSdk: FdmSDK
-): Array<UseQueryResult<AddModelOptions<ClassicDataSourceType>>> {
-  return useQueries({
-    queries:
-      addModelOptionsArray?.map((addModelOptions) => createQueryConfig(addModelOptions, fdmSdk)) ??
-      []
+): UseQueryResult<Array<AddModelOptions<ClassicDataSourceType>>> {
+  const keys = getModelKeys(addModelOptionsArray ?? []);
+  return useQuery({
+    queryKey: [queryKeys.modelRevisionId(keys)],
+    queryFn: async () => {
+      if (addModelOptionsArray === undefined || addModelOptionsArray.length === 0) {
+        return [];
+      }
+      return await Promise.all(
+        addModelOptionsArray.map(async (addModelOptions) => {
+          if (isClassicIdentifier(addModelOptions)) {
+            return addModelOptions;
+          }
+          if (isDM3DModelIdentifier(addModelOptions)) {
+            const { modelId, revisionId } = await getModelIdAndRevisionIdFromExternalId(
+              addModelOptions.revisionExternalId,
+              addModelOptions.revisionSpace,
+              fdmSdk
+            );
+            return {
+              ...addModelOptions,
+              modelId,
+              revisionId
+            };
+          }
+          throw new Error('Unknown identifier type');
+        })
+      );
+    },
+    staleTime: Infinity
   });
 }
-
-const createQueryConfig = (
-  addModelOptions: AddModelOptions<DataSourceType>,
-  fdmSdk: FdmSDK
-): UseQueryOptions<AddModelOptions<ClassicDataSourceType>> => {
-  const modelKeys = getModelKeys([addModelOptions]);
-  if (isClassicIdentifier(addModelOptions)) {
-    return {
-      queryKey: [queryKeys.modelRevisionId(modelKeys)],
-      queryFn: async () => await Promise.resolve(addModelOptions),
-      staleTime: Infinity
-    };
-  }
-
-  if (isDM3DModelIdentifier(addModelOptions)) {
-    return {
-      queryKey: [queryKeys.modelRevisionId(modelKeys)],
-      queryFn: async () => {
-        const { modelId, revisionId } = await getModelIdAndRevisionIdFromExternalId(
-          addModelOptions.revisionExternalId,
-          addModelOptions.revisionSpace,
-          fdmSdk
-        );
-        return {
-          ...addModelOptions,
-          modelId,
-          revisionId
-        };
-      },
-      staleTime: Infinity
-    };
-  }
-
-  return {
-    queryKey: [queryKeys.modelRevisionId(modelKeys)],
-    queryFn: async () => await Promise.reject(new Error('Unknown identifier type')),
-    staleTime: Infinity
-  };
-};

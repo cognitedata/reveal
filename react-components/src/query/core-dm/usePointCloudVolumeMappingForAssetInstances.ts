@@ -27,16 +27,12 @@ export const usePointCloudVolumeMappingForAssetInstances = (
   assetInstanceRefs: DmsUniqueIdentifier[]
 ): PointCloudVolumeMappedAssetData[] => {
   const { data: models } = usePointCloudModelRevisionIdsFromReveal();
-  const addClassicModelOptionsResults = useModelIdRevisionIdFromModelOptions(models);
+  const classicAddModelOptions = useModelIdRevisionIdFromModelOptions(models);
 
-  const classicModelOptions = useMemo(
-    () => addClassicModelOptionsResults.map((result) => result.data).filter(isDefined),
-    [addClassicModelOptionsResults]
-  );
-  const { data: pointCloudVolumeResults } = usePointCloudDMVolumes(classicModelOptions);
+  const { data: pointCloudVolumeResults } = usePointCloudDMVolumes(classicAddModelOptions);
 
   return useMemo(() => {
-    if (classicModelOptions.length === 0 || assetInstanceRefs.length === 0) {
+    if (classicAddModelOptions.length === 0 || assetInstanceRefs.length === 0) {
       return EMPTY_ARRAY;
     }
 
@@ -67,7 +63,7 @@ export const usePointCloudVolumeMappingForAssetInstances = (
       ) ?? EMPTY_ARRAY;
 
     return result;
-  }, [classicModelOptions, assetInstanceRefs]);
+  }, [classicAddModelOptions, assetInstanceRefs]);
 };
 
 export const usePointCloudFdmVolumeMappingForIntersection = (
