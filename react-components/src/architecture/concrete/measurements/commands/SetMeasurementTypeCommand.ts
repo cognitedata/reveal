@@ -95,6 +95,8 @@ function getTooltipByPrimitiveType(primitiveType: PrimitiveType): TranslationInp
       return { key: 'MEASUREMENTS_ADD_CIRCLE' };
     case PrimitiveType.VerticalCylinder:
       return { key: 'MEASUREMENTS_ADD_CYLINDER' };
+    case PrimitiveType.HorizontalCylinder:
+      return { key: 'MEASUREMENTS_ADD_CYLINDER' }; // TODO update text for HorizontalCylinder
     default:
       throw new Error('Unknown PrimitiveType');
   }

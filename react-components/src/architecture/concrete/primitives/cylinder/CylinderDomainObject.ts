@@ -41,7 +41,7 @@ export abstract class CylinderDomainObject extends SolidDomainObject {
       case PrimitiveType.HorizontalCylinder:
       case PrimitiveType.VerticalCylinder:
       case PrimitiveType.Cylinder:
-        return { key: 'CYLINDER' };
+        return { key: 'CYLINDER' }; // TODO update text for each type
       case PrimitiveType.HorizontalCircle:
         return { key: 'CIRCLE' };
       default:
@@ -155,7 +155,12 @@ export abstract class CylinderDomainObject extends SolidDomainObject {
   // ==================================================
 
   public get canMoveCaps(): boolean {
-    return this.primitiveType === PrimitiveType.Cylinder;
+    return (
+      this.primitiveType === PrimitiveType.Cylinder ||
+      // Horizontal cylinder can move the caps only in the horizontal plane
+      // This constrain are implemented in the dragger
+      this.primitiveType === PrimitiveType.HorizontalCylinder
+    );
   }
 
   public expandBoundingBox(boundingBox: Box3): void {

@@ -103,6 +103,7 @@ export class MeasurementTool extends PrimitiveEditTool {
         return new BoxCreator(new MeasureBoxDomainObject(this.primitiveType));
 
       case PrimitiveType.VerticalCylinder:
+      case PrimitiveType.HorizontalCylinder:
       case PrimitiveType.HorizontalCircle:
         return new CylinderCreator(new MeasureCylinderDomainObject(this.primitiveType));
 
