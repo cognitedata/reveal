@@ -1,22 +1,15 @@
 import { render, waitFor } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
 import { CadModelContainer } from './CadModelContainer';
-import { CadModelContext, type CadModelContextDependencies } from './CadModelContainer.context';
+import { CadModelContext, defaultCadModelContextDependencies } from './CadModelContainer.context';
 import type { PropsWithChildren, ReactElement } from 'react';
 import { Mock } from 'moq.ts';
 import type { RevealRenderTarget } from '../../architecture';
 import { type CogniteCadModel, type Cognite3DViewer, type CogniteModel } from '@cognite/reveal';
+import { getMocksByDefaultDependencies } from '#test-utils/vitest-extensions/getMocksByDefaultDependencies';
 
 describe(CadModelContainer.name, () => {
-  const deps = {
-    useRevealKeepAlive: vi.fn(),
-    useRenderTarget: vi.fn(),
-    useReveal3DResourcesCount: vi.fn(),
-    useReveal3DResourceLoadFailCount: vi.fn(),
-    useApplyCadModelStyling: vi.fn(),
-    createCadDomainObject: vi.fn(),
-    removeCadDomainObject: vi.fn()
-  } as const satisfies CadModelContextDependencies;
+  const deps = getMocksByDefaultDependencies(defaultCadModelContextDependencies);
 
   const wrapper = ({ children }: PropsWithChildren): ReactElement => (
     <CadModelContext.Provider value={deps}>{children}</CadModelContext.Provider>
