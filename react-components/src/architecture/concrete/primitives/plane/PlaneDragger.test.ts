@@ -41,7 +41,9 @@ describe(PlaneDragger.name, () => {
         // by sqrt(2) in the direction of the normal. (sqrt(1^2 + 1^2))
         expectedPlane.constant -= sign * Math.sqrt(2);
       }
-      const dragger = domainObject.createDragger(createDraggerPropsMock(domainObject, startRay));
+      const dragger = domainObject.createDragger(
+        createCreateDraggerPropsMock(domainObject, startRay)
+      );
       assert(dragger !== undefined);
       expect(dragger).instanceOf(PlaneDragger);
       drag(dragger, startRay, delta, testCase);
@@ -50,7 +52,10 @@ describe(PlaneDragger.name, () => {
   });
 });
 
-function createDraggerPropsMock(domainObject: PlaneDomainObject, ray: Ray): CreateDraggerProps {
+function createCreateDraggerPropsMock(
+  domainObject: PlaneDomainObject,
+  ray: Ray
+): CreateDraggerProps {
   const point = ray.intersectPlane(domainObject.plane, new Vector3());
   if (point === null) {
     throw new Error('No intersection found for the ray and object');
