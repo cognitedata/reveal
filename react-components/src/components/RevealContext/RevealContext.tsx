@@ -122,6 +122,9 @@ const useRevealFromKeepAlive = ({
         useFlexibleCameraManager: true,
         hasEventListeners: false
       });
+
+      console.log("==== Welcome to Reveal's debug build! Initializing render target! ====");
+
       renderTarget = new RevealRenderTarget(viewer, sdk, { coreDmOnly: useCoreDm });
       if (revealKeepAliveData !== undefined) {
         revealKeepAliveData.renderTargetRef.current = renderTarget;
