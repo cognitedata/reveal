@@ -18,7 +18,7 @@ export type CadModelContextDependencies = {
   removeCadDomainObject: typeof RevealModelsUtils.remove;
 };
 
-export const CadModelContext = createContext<CadModelContextDependencies>({
+export const defaultCadModelContextDependencies: CadModelContextDependencies = {
   useRevealKeepAlive,
   useRenderTarget,
   useReveal3DResourcesCount,
@@ -26,4 +26,8 @@ export const CadModelContext = createContext<CadModelContextDependencies>({
   useApplyCadModelStyling,
   createCadDomainObject: RevealModelsUtils.addModel.bind(this),
   removeCadDomainObject: RevealModelsUtils.remove.bind(this)
-});
+};
+
+export const CadModelContext = createContext<CadModelContextDependencies>(
+  defaultCadModelContextDependencies
+);
