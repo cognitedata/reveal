@@ -1,5 +1,5 @@
 import { render } from '@testing-library/react';
-import { beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 import type { PropsWithChildren, ReactElement } from 'react';
 import { Reveal3DResources } from './Reveal3DResources';
 import type { AddImage360CollectionOptions } from './types';
@@ -18,24 +18,16 @@ describe(Reveal3DResources.name, () => {
     </Reveal3DResourcesContext.Provider>
   );
 
-  beforeAll(() => {
-    defaultDependencies.useTypedModels.mockImplementation(
-      () => ({ data: [], loading: false }) as any
-    );
-    defaultDependencies.useSetExpectedLoadCount.mockImplementation(() => {});
-    defaultDependencies.useAssetMappedNodesForRevisions.mockImplementation(
-      () => ({ data: [] }) as any
-    );
-    defaultDependencies.useCalculateCadStyling.mockImplementation(() => ({
+  beforeEach(() => {
+    vi.resetAllMocks();
+    defaultDependencies.useTypedModels.mockReturnValue({ data: [], loading: false } as any);
+    defaultDependencies.useAssetMappedNodesForRevisions.mockReturnValue({ data: [] } as any);
+    defaultDependencies.useCalculateCadStyling.mockReturnValue({
       styledModels: [],
       isModelMappingsLoading: false
-    }));
-    defaultDependencies.useReveal3DResourcesStylingLoadingSetter.mockImplementation(() => () => {});
-    defaultDependencies.useCalculatePointCloudStyling.mockImplementation(() => []);
-  });
-
-  beforeEach(() => {
-    vi.clearAllMocks();
+    });
+    defaultDependencies.useReveal3DResourcesStylingLoadingSetter.mockReturnValue(vi.fn());
+    defaultDependencies.useCalculatePointCloudStyling.mockReturnValue([]);
   });
 
   it('renders without crashing with empty data', () => {

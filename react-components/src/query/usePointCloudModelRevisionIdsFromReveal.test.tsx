@@ -45,7 +45,7 @@ describe(usePointCloudModelRevisionIdsFromReveal.name, async () => {
   );
 
   beforeEach(() => {
-    vi.clearAllMocks();
+    vi.resetAllMocks();
     queryClient.clear();
   });
 

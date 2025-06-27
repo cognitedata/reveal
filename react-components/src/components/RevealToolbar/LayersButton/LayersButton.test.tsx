@@ -1,12 +1,11 @@
 import { render, screen } from '@testing-library/react';
-import { beforeAll, beforeEach, describe, expect, test, vi } from 'vitest';
+import { beforeAll, describe, expect, test, vi } from 'vitest';
 import type { PropsWithChildren, ReactElement } from 'react';
 import { LayersButton } from './LayersButton';
 import type { LayersButtonProps } from './LayersButton';
 import { defaultLayersButtonDependencies, LayersButtonContext } from './LayersButton.context';
 import userEvent from '@testing-library/user-event';
 
-import { type ModelLayerHandlers } from './types';
 import { cadMock } from '#test-utils/fixtures/cadModel';
 import { viewerMock } from '#test-utils/fixtures/viewer';
 import {
@@ -37,23 +36,18 @@ describe(LayersButton.name, () => {
   };
 
   beforeAll(() => {
-    defaultDependencies.useModelHandlers.mockImplementation(
-      (): [ModelLayerHandlers, () => void] => [
-        {
-          cadHandlers: [createCadHandlerMock()],
-          pointCloudHandlers: [createPointCloudHandlerMock()],
-          image360Handlers: [createImage360HandlerMock()]
-        },
-        vi.fn()
-      ]
-    );
-    defaultDependencies.useReveal.mockImplementation(() => viewerMock);
-    defaultDependencies.use3dModels.mockImplementation(() => [cadMock, cadMock]);
+    vi.resetAllMocks();
+    defaultDependencies.useModelHandlers.mockReturnValue([
+      {
+        cadHandlers: [createCadHandlerMock()],
+        pointCloudHandlers: [createPointCloudHandlerMock()],
+        image360Handlers: [createImage360HandlerMock()]
+      },
+      vi.fn()
+    ]);
+    defaultDependencies.useReveal.mockReturnValue(viewerMock);
+    defaultDependencies.use3dModels.mockReturnValue([cadMock, cadMock]);
     defaultDependencies.ModelLayerSelection.mockImplementation(({ label }) => <div>{label}</div>);
-  });
-
-  beforeEach(() => {
-    vi.clearAllMocks();
   });
 
   test('renders without crashing', () => {

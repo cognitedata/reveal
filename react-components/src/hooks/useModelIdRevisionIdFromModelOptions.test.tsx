@@ -18,33 +18,33 @@ import { FdmSDK } from '../data-providers/FdmSDK';
 import { type AddModelOptions, type ClassicDataSourceType } from '@cognite/reveal';
 import { getMocksByDefaultDependencies } from '#test-utils/vitest-extensions/getMocksByDefaultDependencies';
 
-const classicModelOption = {
-  modelId: 123,
-  revisionId: 456
-};
-const dmModelOption = {
-  revisionExternalId: 'default-revision-external-id1',
-  revisionSpace: 'default-revision-space'
-};
-
-const mockClassicModelResult = new Mock<UseQueryResult<AddModelOptions<ClassicDataSourceType>>>()
-  .setup((p) => p.data)
-  .returns(classicModelOption)
-  .object();
-
-const mockDMModelResult = new Mock<UseQueryResult<AddModelOptions<ClassicDataSourceType>>>()
-  .setup((p) => p.data)
-  .returns({
-    modelId: 987,
-    revisionId: 654
-  })
-  .object();
-
-const dependencies = getMocksByDefaultDependencies(
-  defaultModelIdRevisionIdFromModelOptionsDependencies
-);
-
 describe(useModelIdRevisionIdFromModelOptions.name, () => {
+  const classicModelOption = {
+    modelId: 123,
+    revisionId: 456
+  };
+  const dmModelOption = {
+    revisionExternalId: 'default-revision-external-id1',
+    revisionSpace: 'default-revision-space'
+  };
+
+  const mockClassicModelResult = new Mock<UseQueryResult<AddModelOptions<ClassicDataSourceType>>>()
+    .setup((p) => p.data)
+    .returns(classicModelOption)
+    .object();
+
+  const mockDMModelResult = new Mock<UseQueryResult<AddModelOptions<ClassicDataSourceType>>>()
+    .setup((p) => p.data)
+    .returns({
+      modelId: 987,
+      revisionId: 654
+    })
+    .object();
+
+  const dependencies = getMocksByDefaultDependencies(
+    defaultModelIdRevisionIdFromModelOptionsDependencies
+  );
+
   const wrapper = ({ children }: { children: ReactNode }): ReactElement => (
     <ModelIdRevisionIdFromModelOptionsContext.Provider value={dependencies}>
       {children}
