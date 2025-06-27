@@ -90,13 +90,11 @@ vi.mock('../hooks/network/fetchLinkFromRelationshipsByTimeseries');
 vi.mock('../hooks/network/getAssetsByIds');
 vi.mock('../components/RevealCanvas/SDKProvider');
 
-vi.mocked(fetchLinkFromRelationshipsByTimeseries).mockResolvedValue(mockAssetsAndTimeseries);
-vi.mocked(getAssetsByIds).mockResolvedValue(mockAssets);
-vi.mocked(useSDK).mockReturnValue(sdk);
-
 describe(useAssetsAndTimeseriesLinkages.name, () => {
   beforeEach(() => {
-    vi.clearAllMocks();
+    vi.mocked(fetchLinkFromRelationshipsByTimeseries).mockResolvedValue(mockAssetsAndTimeseries);
+    vi.mocked(getAssetsByIds).mockResolvedValue(mockAssets);
+    vi.mocked(useSDK).mockReturnValue(sdk);
     queryClient.clear();
   });
 
