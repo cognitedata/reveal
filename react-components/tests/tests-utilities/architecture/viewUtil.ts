@@ -25,6 +25,18 @@ export function expectVisibleChildren(view: GroupThreeView, expectedCount: numbe
   expect(actualCount).toBe(expectedCount);
 }
 
+export function expectVisibleChildrenOfType<T>(
+  view: GroupThreeView,
+  classType: Class<T>,
+  expectedCount: number
+): void {
+  const actualCount = count(
+    view.object.children,
+    (child) => child.visible && isInstanceOf(child, classType)
+  );
+  expect(actualCount).toBe(expectedCount);
+}
+
 export function addView(domainObject: DomainObject, view: ThreeView): void {
   const renderTarget = getRenderTarget(domainObject) ?? createFullRenderTargetMock();
   view.attach(domainObject, renderTarget);

@@ -34,8 +34,6 @@ import { square } from '../../../base/utilities/extensions/mathExtensions';
 import { Quantity } from '../../../base/domainObjectsHelpers/Quantity';
 import { createSprite } from '../box/BoxView';
 import { PrimitiveUtils } from '../../../base/utilities/primitives/PrimitiveUtils';
-import { getRoot } from '../../../base/domainObjects/getRoot';
-import { UnitSystem } from '../../../base/renderTarget/UnitSystem';
 import { VisualDomainObject } from '../../../base/domainObjects/VisualDomainObject';
 
 const CYLINDER_DEFAULT_AXIS = new Vector3(0, 1, 0);
@@ -286,7 +284,7 @@ export class LineView extends GroupThreeView<LineDomainObject> {
     if (spriteHeight <= 0) {
       spriteHeight = 1;
     }
-    const unitSystem = getRoot(domainObject)?.unitSystem ?? new UnitSystem();
+    const unitSystem = this.getUnitSystem();
     const center = new Vector3();
     let prevPoint = domainObject.isClosed
       ? domainObject.getTransformedPoint(domainObject.lastPoint)
@@ -302,11 +300,9 @@ export class LineView extends GroupThreeView<LineDomainObject> {
 
         const text = unitSystem.toStringWithUnit(distance, Quantity.Length);
         const sprite = createSprite(text, style, spriteHeight);
-        if (sprite !== undefined) {
-          adjustLabel(center, domainObject, style, spriteHeight);
-          sprite.position.copy(center);
-          this.addChild(sprite);
-        }
+        adjustLabel(center, domainObject, style, spriteHeight);
+        sprite.position.copy(center);
+        this.addChild(sprite);
       }
       prevPoint = transformedPoint;
     }
