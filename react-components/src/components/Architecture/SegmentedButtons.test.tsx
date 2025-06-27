@@ -15,16 +15,10 @@ import { OptionType } from '../../architecture/base/commands/BaseOptionCommand';
 import { SegmentedButtons } from './SegmentedButtons';
 import userEvent from '@testing-library/user-event';
 
-// Help page here:  https://bogr.dev/blog/react-testing-intro/
-
 const TEST_ID = 'segmented-control-button';
 
 describe(CommandButton.name, () => {
-  afterEach(() => {
-    cleanup();
-  });
-
-  test('should render with default values', async () => {
+  test('should render with default values', () => {
     const command = new MockSegmentedCommand();
     renderSegmentedButtons(command);
 
@@ -44,11 +38,11 @@ describe(CommandButton.name, () => {
       expect(button.getAttribute('aria-selected')).toBe(option.isChecked.toString());
 
       const buttonClass = button.getAttribute('class');
-      expect(buttonClass).not.contains('toggled');
+      expect(buttonClass).not.toContain('toggled');
     }
   });
 
-  test('should change from visible to invisible', async () => {
+  test('should change from visible to invisible', () => {
     const command = new MockSegmentedCommand();
     renderSegmentedButtons(command);
 
@@ -62,7 +56,7 @@ describe(CommandButton.name, () => {
     expect(afterButtons.length).toBe(0);
   });
 
-  test('should change from enabled to disabled', async () => {
+  test('should change from enabled to disabled', () => {
     const command = new MockSegmentedCommand();
     renderSegmentedButtons(command);
 

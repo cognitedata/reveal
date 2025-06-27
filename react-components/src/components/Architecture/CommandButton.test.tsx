@@ -12,10 +12,6 @@ import { MockCommand } from '#test-utils/architecture/mock-commands/MockCommand'
 // Help page here:  https://bogr.dev/blog/react-testing-intro/
 
 describe(CommandButton.name, () => {
-  afterEach(() => {
-    cleanup();
-  });
-
   test('should render with default values', async () => {
     const command = new MockCommand();
     renderCommandButton(command);
@@ -28,15 +24,15 @@ describe(CommandButton.name, () => {
     expect(button.getAttribute('type')).toBe('button');
 
     const buttonClass = button.getAttribute('class');
-    expect(buttonClass).not.contains('toggled');
-    expect(buttonClass).contains('type-ghost');
-    expect(buttonClass).contains('icon-only');
-    expect(buttonClass).contains('cogs-button');
+    expect(buttonClass).not.toContain('toggled');
+    expect(buttonClass).toContain('type-ghost');
+    expect(buttonClass).toContain('icon-only');
+    expect(buttonClass).toContain('cogs-button');
 
     // Check icon
     const icon = await screen.findByLabelText(command.icon + 'Icon');
     expect(icon.getAttribute('aria-label')).toBe(command.icon + 'Icon');
-    expect(icon.getAttribute('class')).contains('cogs-icon');
+    expect(icon.getAttribute('class')).toContain('cogs-icon');
   });
 
   test('should invoke when clicked and track count', async () => {
@@ -84,13 +80,13 @@ describe(CommandButton.name, () => {
     renderCommandButton(command);
 
     const beforeButton = await screen.findByRole('button');
-    expect(beforeButton.getAttribute('class')).not.contains('toggled');
+    expect(beforeButton.getAttribute('class')).not.toContain('toggled');
 
     await act(async () => {
       await userEvent.click(beforeButton);
     });
     const afterButton = await screen.findByRole('button');
-    expect(afterButton.getAttribute('class')).contains('toggled');
+    expect(afterButton.getAttribute('class')).toContain('toggled');
   });
 
   test('should update icon when changed', async () => {

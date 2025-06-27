@@ -26,10 +26,6 @@ describe(DropdownButton.name + ' (not used in settings)', () => {
     });
   });
 
-  afterEach(() => {
-    cleanup();
-  });
-
   test('should render with correct default value and no dropdown', async () => {
     const label = testCommand.label;
     const button = screen.getByLabelText(label);
