@@ -4,7 +4,7 @@ import {
   type Object3D,
   LineSegments,
   LineBasicMaterial,
-  Vector3,
+  type Vector3,
   type Matrix4,
   RingGeometry,
   CircleGeometry,
@@ -173,7 +173,7 @@ export class CylinderView extends GroupThreeView<CylinderDomainObject> {
       type: 'customObject',
       point,
       distanceToCamera,
-      userData: new PrimitivePickInfo(boxFace, focusType, new Vector3()),
+      userData: new PrimitivePickInfo(boxFace, focusType),
       customObject: this,
       domainObject
     };
