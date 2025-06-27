@@ -1,5 +1,5 @@
 import { render, screen } from '@testing-library/react';
-import { beforeAll, describe, expect, test, vi } from 'vitest';
+import { beforeEach, describe, expect, test, vi } from 'vitest';
 import type { PropsWithChildren, ReactElement } from 'react';
 import { LayersButton } from './LayersButton';
 import type { LayersButtonProps } from './LayersButton';
@@ -35,7 +35,7 @@ describe(LayersButton.name, () => {
     );
   };
 
-  beforeAll(() => {
+  beforeEach(() => {
     vi.resetAllMocks();
     defaultDependencies.useModelHandlers.mockReturnValue([
       {
