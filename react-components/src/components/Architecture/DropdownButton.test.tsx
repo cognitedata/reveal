@@ -1,5 +1,5 @@
-import { beforeEach, afterEach, describe, expect, test } from 'vitest';
-import { cleanup, fireEvent, render, screen } from '@testing-library/react';
+import { beforeEach, describe, expect, test } from 'vitest';
+import { fireEvent, render, screen } from '@testing-library/react';
 import { RevealRenderTarget } from '../../architecture';
 import { type PropsWithChildren, type ReactElement } from 'react';
 import { viewerMock } from '#test-utils/fixtures/viewer';

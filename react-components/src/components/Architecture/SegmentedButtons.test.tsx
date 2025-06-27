@@ -1,5 +1,5 @@
-import { afterEach, assert, describe, expect, test } from 'vitest';
-import { cleanup, render, screen } from '@testing-library/react';
+import { assert, describe, expect, test } from 'vitest';
+import { render, screen } from '@testing-library/react';
 import {
   BaseCommand,
   BaseOptionCommand,

@@ -1,5 +1,5 @@
-import { afterEach, describe, expect, test } from 'vitest';
-import { cleanup, render, screen } from '@testing-library/react';
+import { describe, expect, test } from 'vitest';
+import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { type BaseCommand, RevealRenderTarget } from '../../architecture';
 import { act, type PropsWithChildren, type ReactElement } from 'react';
