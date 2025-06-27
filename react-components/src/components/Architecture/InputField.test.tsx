@@ -11,8 +11,6 @@ import { ViewerContextProvider } from '../RevealCanvas/ViewerContext';
 import userEvent from '@testing-library/user-event';
 import assert from 'assert';
 
-const ARBITRARY_PLACEMENT = 'right';
-
 describe(InputField.name, () => {
   let renderTargetMock: RevealRenderTarget;
   let wrapper: (props: PropsWithChildren) => ReactElement;
@@ -29,10 +27,7 @@ describe(InputField.name, () => {
     const postButtonLabel = 'post-label-text';
     const command = new TestInputCommand({ postButtonLabel });
 
-    const { container } = render(
-      <InputField inputCommand={command} placement={ARBITRARY_PLACEMENT} />,
-      { wrapper }
-    );
+    const { container } = render(<InputField inputCommand={command} />, { wrapper });
 
     const inputFieldElement = container.querySelector('textarea');
     const buttonElements = container.querySelectorAll('button');
@@ -58,10 +53,7 @@ describe(InputField.name, () => {
     // In the Cogs Comment-component, the cancel-button won't appear unless an onCancel callback is supplied
     command.onCancel = () => {};
 
-    const { container } = render(
-      <InputField inputCommand={command} placement={ARBITRARY_PLACEMENT} />,
-      { wrapper }
-    );
+    const { container } = render(<InputField inputCommand={command} />, { wrapper });
 
     const textArea = container.querySelector('textarea');
     const [cancelButton, postButton] = container.querySelectorAll('button');
@@ -77,10 +69,7 @@ describe(InputField.name, () => {
     const command = new TestInputCommand();
     command.content = textContent;
 
-    const { container } = render(
-      <InputField inputCommand={command} placement={ARBITRARY_PLACEMENT} />,
-      { wrapper }
-    );
+    const { container } = render(<InputField inputCommand={command} />, { wrapper });
 
     const textArea = container.querySelector('textarea');
 
@@ -104,10 +93,7 @@ describe(InputField.name, () => {
     const command = new TestInputCommand({ onInvokeCallback: onPost });
     command.content = 'arbitrary-content';
 
-    const { container } = render(
-      <InputField inputCommand={command} placement={ARBITRARY_PLACEMENT} />,
-      { wrapper }
-    );
+    const { container } = render(<InputField inputCommand={command} />, { wrapper });
 
     const postButton = container.querySelector('button');
 
@@ -124,10 +110,7 @@ describe(InputField.name, () => {
   test('disables post button when enabled-flag is false', () => {
     const command = new TestInputCommand();
 
-    const { container } = render(
-      <InputField inputCommand={command} placement={ARBITRARY_PLACEMENT} />,
-      { wrapper }
-    );
+    const { container } = render(<InputField inputCommand={command} />, { wrapper });
 
     const postButton = container.querySelector('button');
 
