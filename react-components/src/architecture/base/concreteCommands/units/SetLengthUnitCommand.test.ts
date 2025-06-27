@@ -1,14 +1,16 @@
-import { assert, beforeEach, describe, expect, test, vi } from 'vitest';
-import { isEmpty } from '../utilities/TranslateInput';
-import { createFullRenderTargetMock } from '../../../../tests/tests-utilities/fixtures/createFullRenderTargetMock';
-import { KeyboardSpeedCommand } from './KeyboardSpeedCommand';
+import { assert, beforeEach, describe, expect, test } from 'vitest';
+import { isEmpty } from '../../utilities/TranslateInput';
+import { createFullRenderTargetMock } from '#test-utils/fixtures/createFullRenderTargetMock';
+import { SetLengthUnitCommand } from './SetLengthUnitCommand';
+import { EventChangeTester } from '../../../../../tests/tests-utilities/architecture/EventChangeTester';
+import { Changes } from '../../domainObjectsHelpers/Changes';
 
-describe(KeyboardSpeedCommand.name, () => {
-  let command: KeyboardSpeedCommand;
+describe(SetLengthUnitCommand.name, () => {
   const renderTarget = createFullRenderTargetMock();
+  let command: SetLengthUnitCommand;
 
   beforeEach(() => {
-    command = new KeyboardSpeedCommand();
+    command = new SetLengthUnitCommand();
     command.attach(renderTarget);
   });
 
@@ -35,15 +37,16 @@ describe(KeyboardSpeedCommand.name, () => {
     expect(command.selectedChild).toBeDefined();
   });
 
-  test('Should change the cameraKeyBoardSpeed in RevealSettingsController', () => {
+  test('Should change the unit', () => {
     assert(command.children !== undefined);
     for (const option of command.children) {
       if (option.isChecked) {
         continue; // Already check
       }
-      const oldValue = renderTarget.revealSettingsController.cameraKeyBoardSpeed();
+      const unitSystem = renderTarget.rootDomainObject.unitSystem;
+      const oldValue = unitSystem.lengthUnit;
       expect(option.invoke()).toBe(true);
-      const newValue = renderTarget.revealSettingsController.cameraKeyBoardSpeed();
+      const newValue = unitSystem.lengthUnit;
       expect(oldValue).not.toBe(newValue);
       expect(option.isChecked).toBe(true);
       expect(command.checkedCount).toBe(1);
@@ -51,17 +54,15 @@ describe(KeyboardSpeedCommand.name, () => {
     }
   });
 
-  test('Should listen when cameraKeyBoardSpeed change in RevealSettingsController', () => {
-    renderTarget.revealSettingsController.cameraKeyBoardSpeed(1);
-
-    const mock = vi.fn();
-    command.addEventListener(mock);
-
-    renderTarget.revealSettingsController.cameraKeyBoardSpeed(2);
-    expect(mock).toHaveBeenCalledOnce();
-    renderTarget.revealSettingsController.cameraKeyBoardSpeed(2);
-    expect(mock).toHaveBeenCalledOnce(); // No change
-    renderTarget.revealSettingsController.cameraKeyBoardSpeed(3);
-    expect(mock).toHaveBeenCalledTimes(2);
+  test('Should notify when unit change', () => {
+    assert(command.children !== undefined);
+    for (const option of command.children) {
+      if (option.isChecked) {
+        continue; // Already check
+      }
+      const tester = new EventChangeTester(renderTarget.rootDomainObject, Changes.unit);
+      expect(option.invoke()).toBe(true);
+      tester.toHaveBeenCalledOnce();
+    }
   });
 });

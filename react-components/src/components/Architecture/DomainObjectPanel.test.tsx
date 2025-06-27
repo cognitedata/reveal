@@ -5,11 +5,11 @@ import {
   type BaseCommand,
   Changes,
   CopyToClipboardCommand,
+  CycleLengthUnitsCommand,
   DeleteDomainObjectCommand,
   DomainObject,
   PanelInfo,
   Quantity,
-  ToggleMetricUnitsCommand,
   type TranslationInput
 } from '../../architecture';
 import { act, type PropsWithChildren, type ReactElement } from 'react';
@@ -133,7 +133,7 @@ class MockDomainObject extends DomainObject {
   public override getPanelToolbar(): BaseCommand[] {
     return [
       new CopyToClipboardCommand(),
-      new ToggleMetricUnitsCommand(),
+      new CycleLengthUnitsCommand(),
       new DeleteDomainObjectCommand(this)
     ];
   }
@@ -155,16 +155,16 @@ class MockDomainObject extends DomainObject {
 
 const EXPECTED_SUB_STRINGS: string[] = [
   'Length',
-  '1.00',
+  '1.000',
   'm',
 
   'Area',
   'm²',
-  '2.00',
+  '2.000',
 
   'Volume',
   'm³',
-  '3.00',
+  '3.000',
 
   'Horizontal angle',
   '4.0',
