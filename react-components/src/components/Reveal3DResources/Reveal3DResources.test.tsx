@@ -1,126 +1,92 @@
 import { render } from '@testing-library/react';
-import { describe, expect, it, vi } from 'vitest';
+import { beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
 import type { PropsWithChildren, ReactElement } from 'react';
 import { Reveal3DResources } from './Reveal3DResources';
-import type {
-  AddImage360CollectionOptions,
-  Reveal3DResourcesProps,
-  StyledPointCloudModel
-} from './types';
+import type { AddImage360CollectionOptions } from './types';
 import {
-  Reveal3DResourcesContext,
-  type Reveal3DResourcesDependencies
+  defaultReveal3DResourcesDependencies,
+  Reveal3DResourcesContext
 } from './Reveal3DResources.context';
-import type { StyledModel } from './hooks/useCalculateCadStyling';
+import { getMocksByDefaultDependencies } from '#test-utils/vitest-extensions/getMocksByDefaultDependencies';
 
 describe(Reveal3DResources.name, () => {
-  const defaultProps: Reveal3DResourcesProps = {
-    resources: []
-  };
+  const defaultDependencies = getMocksByDefaultDependencies(defaultReveal3DResourcesDependencies);
 
-  const defaultDependencies: Reveal3DResourcesDependencies = {
-    // Hooks
-    useReveal: vi.fn(),
-    useRenderTarget: vi.fn(),
-    useRemoveNonReferencedModels: vi.fn(),
-    useTypedModels: vi.fn(() => ({ data: [], loading: false }) as any),
-    useSetExpectedLoadCount: vi.fn(() => {}),
-    useCallCallbackOnFinishedLoading: vi.fn(),
-    useAssetMappedNodesForRevisions: vi.fn(() => ({ data: [] }) as any),
-    useGenerateAssetMappingCachePerItemFromModelCache: vi.fn(),
-    useGenerateNode3DCache: vi.fn(),
-    useCalculateCadStyling: vi.fn(() => ({ styledModels: [], isModelMappingsLoading: false })),
-    useReveal3DResourcesStylingLoadingSetter: vi.fn(() => () => {}),
-    useCalculatePointCloudStyling: vi.fn(() => []),
-    useCalculateImage360Styling: vi.fn(),
+  const wrapper = ({ children }: PropsWithChildren): ReactElement => (
+    <Reveal3DResourcesContext.Provider value={defaultDependencies}>
+      {children}
+    </Reveal3DResourcesContext.Provider>
+  );
 
-    // SubComponents
-    CadModelContainer: vi.fn(),
-    PointCloudContainer: vi.fn(),
-    Image360CollectionContainer: vi.fn()
-  };
+  beforeAll(() => {
+    defaultDependencies.useTypedModels.mockImplementation(
+      () => ({ data: [], loading: false }) as any
+    );
+    defaultDependencies.useSetExpectedLoadCount.mockImplementation(() => {});
+    defaultDependencies.useAssetMappedNodesForRevisions.mockImplementation(
+      () => ({ data: [] }) as any
+    );
+    defaultDependencies.useCalculateCadStyling.mockImplementation(() => ({
+      styledModels: [],
+      isModelMappingsLoading: false
+    }));
+    defaultDependencies.useReveal3DResourcesStylingLoadingSetter.mockImplementation(() => () => {});
+    defaultDependencies.useCalculatePointCloudStyling.mockImplementation(() => []);
+  });
+
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
 
   it('renders without crashing with empty data', () => {
-    const wrapper = ({ children }: PropsWithChildren): ReactElement => (
-      <Reveal3DResourcesContext.Provider value={defaultDependencies}>
-        {children}
-      </Reveal3DResourcesContext.Provider>
-    );
-    render(<Reveal3DResources {...defaultProps} />, { wrapper });
+    render(<Reveal3DResources resources={[]} />, { wrapper });
   });
 
   it('should mount CadModelContainer if styling is resolved', () => {
-    const CadModelContainer = vi.fn();
+    defaultDependencies.useCalculateCadStyling.mockReturnValue({
+      styledModels: [
+        {
+          model: { modelId: 1, revisionId: 1, type: 'cad' },
+          styleGroups: []
+        },
+        {
+          model: { modelId: 2, revisionId: 2, type: 'cad' },
+          styleGroups: []
+        }
+      ],
+      isModelMappingsLoading: false
+    });
 
-    const deps = {
-      ...defaultDependencies,
-      useCalculateCadStyling: vi.fn(() => {
-        const styledModels: StyledModel[] = [
-          {
-            model: { modelId: 1, revisionId: 1, type: 'cad' },
-            styleGroups: []
-          },
-          {
-            model: { modelId: 2, revisionId: 2, type: 'cad' },
-            styleGroups: []
-          }
-        ];
-        return { styledModels, isModelMappingsLoading: false };
-      }),
-      CadModelContainer
-    };
-
-    const wrapper = ({ children }: PropsWithChildren): ReactElement => (
-      <Reveal3DResourcesContext.Provider value={deps}>{children}</Reveal3DResourcesContext.Provider>
-    );
     render(<Reveal3DResources resources={[]} />, {
       wrapper
     });
-    expect(CadModelContainer).toHaveBeenCalledTimes(2);
+    expect(defaultDependencies.CadModelContainer).toHaveBeenCalledTimes(2);
   });
 
   it('should mount PointCloudContainer if styling is resolved', () => {
-    const PointCloudContainer = vi.fn();
+    defaultDependencies.useCalculatePointCloudStyling.mockReturnValue([
+      {
+        model: { modelId: 1, revisionId: 1, type: 'pointcloud' },
+        styleGroups: []
+      },
+      {
+        model: { modelId: 2, revisionId: 2, type: 'pointcloud' },
+        styleGroups: []
+      },
+      {
+        model: { modelId: 3, revisionId: 3, type: 'pointcloud' },
+        styleGroups: []
+      }
+    ]);
 
-    const deps = {
-      ...defaultDependencies,
-      useCalculatePointCloudStyling: vi.fn(() => {
-        const styledModels: StyledPointCloudModel[] = [
-          {
-            model: { modelId: 1, revisionId: 1, type: 'pointcloud' },
-            styleGroups: []
-          },
-          {
-            model: { modelId: 2, revisionId: 2, type: 'pointcloud' },
-            styleGroups: []
-          },
-          {
-            model: { modelId: 3, revisionId: 3, type: 'pointcloud' },
-            styleGroups: []
-          }
-        ];
-        return styledModels;
-      }),
-      PointCloudContainer
-    };
-
-    const wrapper = ({ children }: PropsWithChildren): ReactElement => (
-      <Reveal3DResourcesContext.Provider value={deps}>{children}</Reveal3DResourcesContext.Provider>
-    );
     render(<Reveal3DResources resources={[]} />, {
       wrapper
     });
-    expect(PointCloudContainer).toHaveBeenCalledTimes(3);
+
+    expect(defaultDependencies.PointCloudContainer).toHaveBeenCalledTimes(3);
   });
 
   it('should mount Image360Containers if resource is passed', () => {
-    const Image360CollectionContainer = vi.fn();
-
-    const deps = {
-      ...defaultDependencies,
-      Image360CollectionContainer
-    };
-
     const resources: AddImage360CollectionOptions[] = [
       {
         source: 'events',
@@ -128,12 +94,10 @@ describe(Reveal3DResources.name, () => {
       }
     ];
 
-    const wrapper = ({ children }: PropsWithChildren): ReactElement => (
-      <Reveal3DResourcesContext.Provider value={deps}>{children}</Reveal3DResourcesContext.Provider>
-    );
     render(<Reveal3DResources resources={resources} />, {
       wrapper
     });
-    expect(Image360CollectionContainer).toHaveBeenCalledTimes(1);
+
+    expect(defaultDependencies.Image360CollectionContainer).toHaveBeenCalledTimes(1);
   });
 });
