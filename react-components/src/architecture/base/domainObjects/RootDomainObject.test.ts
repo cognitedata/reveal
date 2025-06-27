@@ -42,17 +42,16 @@ describe(RootDomainObject.name, () => {
 
     root.views.addEventListener(myOwnRootEventListener);
     {
-      // Add one parent with children to the root
+      // Add one parent with two ChildDomainObject to the root
       const parent = new ParentDomainObject();
       root.addChildInteractive(parent);
       parent.addChildInteractive(new ChildDomainObject());
       parent.addChildInteractive(new ChildDomainObject());
     }
-
-    // Select one
+    // Select one ChildDomainObject
     root.getDescendantByType(ChildDomainObject)?.setSelectedInteractive(true);
 
-    // Remove all
+    // Remove all ChildDomainObjects
     const domainObjects = Array.from(root.getDescendantsByType(ChildDomainObject));
     expect(domainObjects).toHaveLength(2);
     for (const domainObject of domainObjects) {
@@ -83,7 +82,7 @@ describe(RootDomainObject.name, () => {
 
 class ParentDomainObject extends DomainObject {
   public override get typeName(): TranslationInput {
-    return { untranslated: 'Child' };
+    return { untranslated: 'Parent' };
   }
 }
 class ChildDomainObject extends DomainObject {
