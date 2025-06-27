@@ -2,17 +2,18 @@ import { beforeEach, describe, expect, test, vi } from 'vitest';
 import { usePointCloudModelRevisionIdsFromReveal } from './usePointCloudModelRevisionIdsFromReveal';
 import { type ReactElement, type PropsWithChildren } from 'react';
 import {
-  UsePointCloudModelRevisionIdsFromRevealContext,
-  type UsePointCloudModelRevisionIdsFromRevealDependencies
+  defaultUsePointCloudModelRevisionIdsFromRevealDependencies,
+  UsePointCloudModelRevisionIdsFromRevealContext
 } from './usePointCloudModelRevisionIdsFromReveal.context';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { renderHook, waitFor } from '@testing-library/react';
 import { type DmsUniqueIdentifier, type FdmNode, FdmSDK } from '../data-providers/FdmSDK';
 import { sdkMock } from '#test-utils/fixtures/sdk';
 import { createPointCloudDMMock } from '#test-utils/fixtures/pointCloud';
-import { Mock } from 'moq.ts';
+import { It, Mock } from 'moq.ts';
 import { type QueryRequest } from '@cognite/sdk';
 import { type FdmPropertyType } from '../components/Reveal3DResources/types';
+import { getMocksByDefaultDependencies } from '#test-utils/vitest-extensions/getMocksByDefaultDependencies';
 
 type RevisionDmsResponse = {
   items: { revision: Array<FdmNode<FdmPropertyType<{ model3D: DmsUniqueIdentifier }>>> };
@@ -29,35 +30,28 @@ describe(usePointCloudModelRevisionIdsFromReveal.name, async () => {
   const TEST_REVISION_EXTERNAL_ID1 = createRevisionExternalId(TEST_REVISION_ID1);
   const TEST_SPACE = 'some-space';
 
-  const mockUse3dModels =
-    vi.fn<UsePointCloudModelRevisionIdsFromRevealDependencies['use3dModels']>();
-  const mockUseFdmSdk = vi.fn<UsePointCloudModelRevisionIdsFromRevealDependencies['useFdmSdk']>();
-
-  const mockFdmSdkQueryNodesAndEdgesMock =
-    vi.fn<(query: QueryRequest) => Promise<RevisionDmsResponse>>();
-
   const queryClient = new QueryClient();
+
+  const defaultDependencies = getMocksByDefaultDependencies(
+    defaultUsePointCloudModelRevisionIdsFromRevealDependencies
+  );
 
   const wrapper = ({ children }: PropsWithChildren): ReactElement => (
     <QueryClientProvider client={queryClient}>
-      <UsePointCloudModelRevisionIdsFromRevealContext.Provider
-        value={{
-          use3dModels: mockUse3dModels,
-          useFdmSdk: mockUseFdmSdk
-        }}>
+      <UsePointCloudModelRevisionIdsFromRevealContext.Provider value={defaultDependencies}>
         {children}
       </UsePointCloudModelRevisionIdsFromRevealContext.Provider>
     </QueryClientProvider>
   );
 
   beforeEach(() => {
-    vi.resetAllMocks();
+    vi.clearAllMocks();
     queryClient.clear();
   });
 
   test('returns empty result when no models are in the scene', async () => {
-    mockUse3dModels.mockReturnValue([]);
-    mockUseFdmSdk.mockReturnValue(new FdmSDK(sdkMock));
+    defaultDependencies.use3dModels.mockReturnValue([]);
+    defaultDependencies.useFdmSdk.mockReturnValue(new FdmSDK(sdkMock));
 
     const { result } = renderHook(() => usePointCloudModelRevisionIdsFromReveal(), { wrapper });
 
@@ -69,24 +63,23 @@ describe(usePointCloudModelRevisionIdsFromReveal.name, async () => {
   });
 
   test('returns the relevant revision ids', async () => {
-    mockUse3dModels.mockReturnValue([
+    defaultDependencies.use3dModels.mockReturnValue([
       createPointCloudDMMock({
         revisionExternalId: TEST_REVISION_EXTERNAL_ID0,
         revisionSpace: TEST_SPACE
       })
     ]);
-    mockFdmSdkQueryNodesAndEdgesMock.mockResolvedValue(
-      createDmsPointcloudRevisionResponse(
-        TEST_MODEL_EXTERNAL_ID0,
-        TEST_REVISION_EXTERNAL_ID0,
-        TEST_SPACE
-      )
-    );
 
-    mockUseFdmSdk.mockReturnValue(
+    defaultDependencies.useFdmSdk.mockReturnValue(
       new Mock<FdmSDK>()
-        .setup((p) => p.queryNodesAndEdges<QueryRequest>)
-        .returns(mockFdmSdkQueryNodesAndEdgesMock)
+        .setup(async (p) => await p.queryNodesAndEdges<QueryRequest>(It.IsAny()))
+        .returnsAsync(
+          createDmsPointcloudRevisionResponse(
+            TEST_MODEL_EXTERNAL_ID0,
+            TEST_REVISION_EXTERNAL_ID0,
+            TEST_SPACE
+          )
+        )
         .object()
     );
 
@@ -105,12 +98,15 @@ describe(usePointCloudModelRevisionIdsFromReveal.name, async () => {
   });
 
   test('returns the relevant revision ids for two different point clouds', async () => {
-    mockUse3dModels.mockReturnValue([
+    defaultDependencies.use3dModels.mockReturnValue([
       createPointCloudDMMock({
         revisionExternalId: TEST_REVISION_EXTERNAL_ID0,
         revisionSpace: TEST_SPACE
       })
     ]);
+
+    const mockFdmSdkQueryNodesAndEdgesMock =
+      vi.fn<(query: QueryRequest) => Promise<RevisionDmsResponse>>();
 
     mockFdmSdkQueryNodesAndEdgesMock.mockResolvedValueOnce(
       createDmsPointcloudRevisionResponse(
@@ -120,7 +116,7 @@ describe(usePointCloudModelRevisionIdsFromReveal.name, async () => {
       )
     );
 
-    mockUseFdmSdk.mockReturnValue(
+    defaultDependencies.useFdmSdk.mockReturnValue(
       new Mock<FdmSDK>()
         .setup((p) => p.queryNodesAndEdges<QueryRequest>)
         .returns(mockFdmSdkQueryNodesAndEdgesMock)
@@ -142,7 +138,7 @@ describe(usePointCloudModelRevisionIdsFromReveal.name, async () => {
       type: 'pointcloud'
     });
 
-    mockUse3dModels.mockReturnValue([
+    defaultDependencies.use3dModels.mockReturnValue([
       createPointCloudDMMock({
         revisionExternalId: TEST_REVISION_EXTERNAL_ID1,
         revisionSpace: TEST_SPACE
