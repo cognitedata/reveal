@@ -13,10 +13,14 @@ export type LayersButtonDependencies = {
   use3dModels: typeof use3dModels;
 };
 
-export const LayersButtonContext = createContext<LayersButtonDependencies>({
+export const defaultLayersButtonDependencies: LayersButtonDependencies = {
   useModelHandlers,
   useSyncExternalLayersState,
   ModelLayerSelection,
   useReveal,
   use3dModels
-});
+};
+
+export const LayersButtonContext = createContext<LayersButtonDependencies>(
+  defaultLayersButtonDependencies
+);
