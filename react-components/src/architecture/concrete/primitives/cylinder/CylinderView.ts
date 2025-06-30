@@ -367,7 +367,7 @@ export class CylinderView extends GroupThreeView<CylinderDomainObject> {
 
   private getRadiusLabelHeight(): number {
     const { style, domainObject } = this;
-    return style.relativeTextSize * 2 * domainObject.cylinder.radius;
+    return 4 * style.relativeTextSize * domainObject.cylinder.radius;
   }
 
   private getHeightLabelHeight(): number {
