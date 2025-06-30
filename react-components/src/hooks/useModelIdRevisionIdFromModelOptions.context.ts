@@ -7,8 +7,13 @@ export type ModelIdRevisionIdFromModelOptionsDependencies = {
   useFdmSdk: typeof useFdmSdk;
 };
 
-export const ModelIdRevisionIdFromModelOptionsContext =
-  createContext<ModelIdRevisionIdFromModelOptionsDependencies>({
+export const defaultModelIdRevisionIdFromModelOptionsDependencies: ModelIdRevisionIdFromModelOptionsDependencies =
+  {
     useQueriedAddModelOptions,
     useFdmSdk
-  });
+  };
+
+export const ModelIdRevisionIdFromModelOptionsContext =
+  createContext<ModelIdRevisionIdFromModelOptionsDependencies>(
+    defaultModelIdRevisionIdFromModelOptionsDependencies
+  );
