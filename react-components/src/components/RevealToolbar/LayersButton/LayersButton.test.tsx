@@ -1,12 +1,11 @@
 import { render, screen } from '@testing-library/react';
-import { describe, expect, test, vi } from 'vitest';
-import type { ReactElement, ReactNode } from 'react';
+import { beforeEach, describe, expect, test, vi } from 'vitest';
+import type { PropsWithChildren, ReactElement } from 'react';
 import { LayersButton } from './LayersButton';
 import type { LayersButtonProps } from './LayersButton';
-import { LayersButtonContext, type LayersButtonDependencies } from './LayersButton.context';
+import { defaultLayersButtonDependencies, LayersButtonContext } from './LayersButton.context';
 import userEvent from '@testing-library/user-event';
 
-import { type ModelLayerHandlers } from './types';
 import { cadMock } from '#test-utils/fixtures/cadModel';
 import { viewerMock } from '#test-utils/fixtures/viewer';
 import {
@@ -14,52 +13,48 @@ import {
   createPointCloudHandlerMock,
   createImage360HandlerMock
 } from '#test-utils/fixtures/modelHandler';
+import { getMocksByDefaultDependencies } from '#test-utils/vitest-extensions/getMocksByDefaultDependencies';
 
 describe(LayersButton.name, () => {
-  const mockCadHandler = createCadHandlerMock();
-  const mockPointCloudHandler = createPointCloudHandlerMock();
-  const mockImage360Handler = createImage360HandlerMock();
-  const defaultProps: LayersButtonProps = {
+  const defaultProps = {
     layersState: {
       cadLayers: [{ revisionId: 456, applied: true, index: 0 }],
       pointCloudLayers: [{ revisionId: 123, applied: true, index: 0 }],
       image360Layers: [{ siteId: 'site-id', applied: true }]
     },
-    setLayersState: vi.fn(),
-    defaultLayerConfiguration: undefined
-  };
+    setLayersState: vi.fn()
+  } as const satisfies LayersButtonProps;
 
-  const defaultDependencies: LayersButtonDependencies = {
-    useModelHandlers: vi.fn((): [ModelLayerHandlers, () => void] => [
-      {
-        cadHandlers: [mockCadHandler],
-        pointCloudHandlers: [mockPointCloudHandler],
-        image360Handlers: [mockImage360Handler]
-      },
-      vi.fn()
-    ]),
-    useReveal: vi.fn(() => viewerMock),
-    use3dModels: vi.fn(() => [cadMock, cadMock]),
-    useSyncExternalLayersState: vi.fn(),
-    ModelLayerSelection: vi.fn(({ label }) => <div>{label}</div>)
-  };
+  const defaultDependencies = getMocksByDefaultDependencies(defaultLayersButtonDependencies);
 
-  const wrapper = (props: {
-    children: ReactNode;
-    dependencies?: LayersButtonDependencies;
-  }): ReactElement => {
-    const { children, dependencies = defaultDependencies } = props;
+  const wrapper = ({ children }: PropsWithChildren): ReactElement => {
     return (
-      <LayersButtonContext.Provider value={dependencies}>{children}</LayersButtonContext.Provider>
+      <LayersButtonContext.Provider value={defaultDependencies}>
+        {children}
+      </LayersButtonContext.Provider>
     );
   };
+
+  beforeEach(() => {
+    vi.resetAllMocks();
+    defaultDependencies.useModelHandlers.mockReturnValue([
+      {
+        cadHandlers: [createCadHandlerMock()],
+        pointCloudHandlers: [createPointCloudHandlerMock()],
+        image360Handlers: [createImage360HandlerMock()]
+      },
+      vi.fn()
+    ]);
+    defaultDependencies.useReveal.mockReturnValue(viewerMock);
+    defaultDependencies.use3dModels.mockReturnValue([cadMock, cadMock]);
+    defaultDependencies.ModelLayerSelection.mockImplementation(({ label }) => <div>{label}</div>);
+  });
 
   test('renders without crashing', () => {
     const { getByRole } = render(<LayersButton {...defaultProps} />, {
       wrapper
     });
 
-    // Validate the presence of specific UI elements
     expect(
       getByRole('button', { name: 'Filter 3D resource layers' }).className.includes('cogs-button')
     ).toBe(true);
@@ -77,44 +72,33 @@ describe(LayersButton.name, () => {
 
     await userEvent.click(screen.getByRole('button', { name: 'Filter 3D resource layers' }));
 
-    const cadModels = screen.getByText('CAD models');
-    expect(cadModels.closest('[data-test-id="layers-button"]')).not.toBeNull();
+    expect(screen.getByText('CAD models').closest('[data-test-id="layers-button"]')).not.toBeNull();
   });
 
   test('should update viewer models visibility when layersState changes', () => {
-    const ModelLayerSelection = vi.fn(({ label }) => <div>{label}</div>);
-    const newProps: LayersButtonDependencies & {
-      setLayersState: typeof defaultProps.setLayersState;
-    } = {
-      setLayersState: defaultProps.setLayersState,
-      ...defaultDependencies,
-      useModelHandlers: vi.fn((): [ModelLayerHandlers, () => void] => [
-        {
-          cadHandlers: [mockCadHandler],
-          pointCloudHandlers: [mockPointCloudHandler],
-          image360Handlers: [mockImage360Handler]
-        },
-        () => {}
-      ]),
-      useSyncExternalLayersState: vi.fn(),
-      ModelLayerSelection
-    };
-
+    const mockCadHandler = createCadHandlerMock();
+    const mockPointCloudHandler = createPointCloudHandlerMock();
+    const mockImage360Handler = createImage360HandlerMock();
+    defaultDependencies.useModelHandlers.mockReturnValue([
+      {
+        cadHandlers: [mockCadHandler],
+        pointCloudHandlers: [mockPointCloudHandler],
+        image360Handlers: [mockImage360Handler]
+      },
+      vi.fn()
+    ]);
     const { rerender } = render(<LayersButton {...defaultProps} />, {
       wrapper
     });
 
-    // Change layersState
     const newLayersState = {
       cadLayers: [{ revisionId: 456, applied: false, index: 0 }],
       pointCloudLayers: [{ revisionId: 123, applied: true, index: 0 }],
       image360Layers: [{ siteId: 'site-id', applied: false }]
     };
-    if (newProps.setLayersState !== undefined) {
-      newProps.setLayersState(newLayersState);
-    }
 
-    // Re-render with the updated state
+    defaultProps.setLayersState(newLayersState);
+
     rerender(<LayersButton {...defaultProps} layersState={newLayersState} />);
 
     mockCadHandler.setVisibility(newLayersState.cadLayers[0].applied);
