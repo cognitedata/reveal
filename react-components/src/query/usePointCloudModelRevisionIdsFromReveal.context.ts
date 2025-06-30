@@ -7,6 +7,12 @@ export type UsePointCloudModelRevisionIdsFromRevealDependencies = {
   useFdmSdk: typeof useFdmSdk;
 };
 
+export const defaultUsePointCloudModelRevisionIdsFromRevealDependencies: UsePointCloudModelRevisionIdsFromRevealDependencies =
+  {
+    use3dModels,
+    useFdmSdk
+  };
+
 export const UsePointCloudModelRevisionIdsFromRevealContext =
   createContext<UsePointCloudModelRevisionIdsFromRevealDependencies>({
     use3dModels,
