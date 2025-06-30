@@ -9,7 +9,7 @@ import {
   expectEqualEuler
 } from '#test-utils/primitives/primitiveTestUtil';
 
-describe('Box', () => {
+describe(Box.name, () => {
   test('Should test setter and getter on base class', () => {
     const primitive = createRegularBox();
     primitive.confidence = 0.5;
