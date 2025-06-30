@@ -1,5 +1,5 @@
-import { describe, expect, test } from 'vitest';
-import { count, first, last } from './generatorUtils';
+import { assertType, describe, expect, test } from 'vitest';
+import { count, filter, filterTypeGuard, first, last, map } from './generatorUtils';
 import { isOdd } from './mathExtensions';
 
 describe('generatorUtils', () => {
@@ -37,7 +37,60 @@ describe('generatorUtils', () => {
       expect(count(getPositiveNumbers(6), (a) => a > 100)).toBe(0);
     });
   });
+
+  describe(filter.name, () => {
+    test('should return empty generator on empty input', () => {
+      expect([...filter(getEmptyGenerator(), () => true)]).toEqual([]);
+    });
+
+    test('should return all items satisfying predicate', () => {
+      expect([...filter(getPositiveNumbers(10), (num) => num % 3 === 0 || num === 4)]).toEqual([
+        0, 3, 4, 6, 9
+      ]);
+    });
+  });
+
+  describe(filterTypeGuard.name, () => {
+    test('should ensure typing of output follows predicate as type guard', () => {
+      const numberGenerator = filterTypeGuard(
+        getMixedGenerator(),
+        (element) => typeof element === 'number'
+      );
+      const stringGenerator = filterTypeGuard(
+        getMixedGenerator(),
+        (element) => typeof element === 'string'
+      );
+
+      assertType<Generator<number>>(numberGenerator);
+      assertType<Generator<string>>(stringGenerator);
+
+      expect([...numberGenerator]).toEqual([0, 1, 2]);
+      expect([...stringGenerator]).toEqual(['string-0', 'string-1']);
+    });
+  });
+
+  describe(map.name, () => {
+    test('should return empty generator on empty input', () => {
+      expect([...map(getEmptyGenerator(), () => 1)]).toEqual([]);
+    });
+
+    test('should transform every input item', () => {
+      expect([...map(getPositiveNumbers(6), (n) => -n + 3)]).toEqual([3, 2, 1, 0, -1, -2]);
+    });
+  });
 });
+
+function* getMixedGenerator(): Generator<number | string> {
+  yield 0;
+  yield 'string-0';
+  yield 1;
+  yield 'string-1';
+  yield 2;
+}
+
+function getEmptyGenerator(): Generator<number> {
+  return getPositiveNumbers(0);
+}
 
 function* getPositiveNumbers(count: number): Generator<number> {
   for (let i = 0; i < count; i++) {
