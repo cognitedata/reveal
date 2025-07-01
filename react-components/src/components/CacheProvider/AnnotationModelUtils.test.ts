@@ -19,7 +19,6 @@ import {
 describe('AnnotationModelUtils', () => {
   let assets: Asset[];
   beforeEach(() => {
-    vi.resetAllMocks();
     assets = [createAssetMock(1), createAssetMock(2)];
   });
 

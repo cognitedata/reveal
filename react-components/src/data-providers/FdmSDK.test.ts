@@ -1,4 +1,4 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { describe, it, expect, vi } from 'vitest';
 import { FdmSDK } from './FdmSDK';
 import { type CogniteClient, type QueryRequest } from '@cognite/sdk';
 import { Mock } from 'moq.ts';
@@ -55,10 +55,6 @@ describe('FdmSDK.queryAllNodesAndEdges', () => {
       properties: {}
     }
   ];
-
-  beforeEach(() => {
-    vi.clearAllMocks();
-  });
 
   it('should return results when there is no nextCursor', async () => {
     queryNodesAndEdgesMock.mockResolvedValueOnce({

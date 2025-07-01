@@ -1,4 +1,4 @@
-import { describe, expect, test, vi, beforeEach } from 'vitest';
+import { describe, expect, test, vi } from 'vitest';
 import { useSyncExternalLayersState } from './useSyncExternalLayersState';
 import { renderHook } from '@testing-library/react';
 import {
@@ -12,9 +12,6 @@ describe(useSyncExternalLayersState.name, () => {
   const mockCadHandler = createCadHandlerMock();
   const mockPointCloudHandler = createPointCloudHandlerMock();
   const mockImage360Handler = createImage360HandlerMock();
-  beforeEach(() => {
-    vi.resetAllMocks();
-  });
 
   test('syncs external layers state with viewer', () => {
     const modelLayerHandlers = {
