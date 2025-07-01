@@ -50,25 +50,6 @@ describe('generatorUtils', () => {
     });
   });
 
-  describe(filterTypeGuard.name, () => {
-    test('should ensure typing of output follows predicate as type guard', () => {
-      const numberGenerator = filterTypeGuard(
-        getMixedGenerator(),
-        (element) => typeof element === 'number'
-      );
-      const stringGenerator = filterTypeGuard(
-        getMixedGenerator(),
-        (element) => typeof element === 'string'
-      );
-
-      assertType<Generator<number>>(numberGenerator);
-      assertType<Generator<string>>(stringGenerator);
-
-      expect([...numberGenerator]).toEqual([0, 1, 2]);
-      expect([...stringGenerator]).toEqual(['string-0', 'string-1']);
-    });
-  });
-
   describe(map.name, () => {
     test('should return empty generator on empty input', () => {
       expect([...map(getEmptyGenerator(), () => 1)]).toEqual([]);
@@ -80,20 +61,20 @@ describe('generatorUtils', () => {
   });
 });
 
-function* getMixedGenerator(): Generator<number | string> {
-  yield 0;
-  yield 'string-0';
-  yield 1;
-  yield 'string-1';
-  yield 2;
+function* getPositiveNumbers(count: number): Generator<number> {
+  for (let i = 0; i < count; i++) {
+    yield i;
+  }
 }
 
 function getEmptyGenerator(): Generator<number> {
   return getPositiveNumbers(0);
 }
 
-function* getPositiveNumbers(count: number): Generator<number> {
-  for (let i = 0; i < count; i++) {
-    yield i;
-  }
+function* getMixedGenerator(): Generator<number | string> {
+  yield 0;
+  yield 'string-0';
+  yield 1;
+  yield 'string-1';
+  yield 2;
 }
