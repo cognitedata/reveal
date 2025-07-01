@@ -910,13 +910,12 @@ export abstract class DomainObject implements TreeNodeType {
     for (const child of this.children) {
       child.removeInteractive(false); // If parent can be removed, so the children also
     }
-    const { parent } = this;
+    const { parent, root } = this;
     this.notify(Changes.deleting);
     this.remove();
     parent?.notify(Changes.childDeleted);
 
     this.notify(Changes.deleted);
-    const root = this.root;
     if (root !== undefined && root !== this) {
       root.views.notifyListeners(this, new DomainObjectChange(Changes.deleted));
     }
