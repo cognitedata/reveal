@@ -16,7 +16,6 @@ describe(RevealModelsUtils.name, () => {
   let root: RootDomainObject;
 
   beforeEach(() => {
-    vi.resetAllMocks();
     renderTargetMock = createRenderTargetMock();
     root = renderTargetMock.rootDomainObject;
   });
