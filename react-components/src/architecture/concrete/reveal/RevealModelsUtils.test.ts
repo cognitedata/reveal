@@ -3,7 +3,7 @@ import { cadModelOptions, createCadMock } from '#test-utils/fixtures/cadModel';
 import { createImage360ClassicMock, image360ClassicOptions } from '#test-utils/fixtures/image360';
 import { createPointCloudMock, pointCloudModelOptions } from '#test-utils/fixtures/pointCloud';
 import { createRenderTargetMock } from '#test-utils/fixtures/renderTarget';
-import { viewerMock } from '#test-utils/fixtures/viewer';
+import { viewerMock, viewerModelsMock } from '#test-utils/fixtures/viewer';
 import { CadDomainObject } from './cad/CadDomainObject';
 import { Image360CollectionDomainObject } from './Image360Collection/Image360CollectionDomainObject';
 import { PointCloudDomainObject } from './pointCloud/PointCloudDomainObject';
@@ -101,6 +101,42 @@ describe(RevealModelsUtils.name, () => {
     domainObject = RevealModelsUtils.getByRevealModel(root, model);
     expect(domainObject).toBeUndefined();
     expect(removeFn).toHaveBeenCalledWith(model);
+  });
+
+  test('should not throw when removing a non-existing CAD model', async () => {
+    const model = createCadMock();
+    const removeFn = vi.fn().mockImplementation(() => {
+      throw new Error();
+    });
+    viewerMock.removeModel = removeFn;
+    const addFn = vi.fn().mockResolvedValue(model);
+    viewerMock.addCadModel = addFn;
+
+    viewerModelsMock.mockReturnValue([]);
+
+    await RevealModelsUtils.addModel(renderTargetMock, cadModelOptions);
+
+    expect(() => {
+      RevealModelsUtils.remove(renderTargetMock, model);
+    }).not.toThrow();
+  });
+
+  test.only('should not throw when removing a non-existing Point Cloud model', async () => {
+    const model = createPointCloudMock();
+    const removeFn = vi.fn().mockImplementation(() => {
+      throw new Error();
+    });
+    viewerMock.removeModel = removeFn;
+    const addFn = vi.fn().mockResolvedValue(model);
+    viewerMock.addPointCloudModel = addFn;
+
+    viewerModelsMock.mockReturnValue([]);
+
+    await RevealModelsUtils.addPointCloud(renderTargetMock, pointCloudModelOptions);
+
+    expect(() => {
+      RevealModelsUtils.remove(renderTargetMock, model);
+    }).not.toThrow();
   });
 
   test('should remove the PointCloud model', async () => {
