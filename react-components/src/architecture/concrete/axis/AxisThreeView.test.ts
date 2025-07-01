@@ -34,10 +34,7 @@ describe(AxisThreeView.name, () => {
 
   test('should have initial state', () => {
     expect(view.object).toBeDefined();
-    expectChildrenLength(view, 6 + 144 + 42);
-    expectChildrenOfTypeAndCount(view, Mesh, 6); // These are the sides (6 i a box)
-    expectChildrenOfTypeAndCount(view, Sprite, 144); // Number of labels
-    expectChildrenOfTypeAndCount(view, LineSegments, 42); // There are 6 grids for the box, the rest is axis lines
+    checkChildren(view, 42, 6, 144);
   });
 
   test('should look towards all 6 sides', () => {
@@ -61,7 +58,7 @@ describe(AxisThreeView.name, () => {
       camera.position.set(x, y, z);
       camera.position.multiplyScalar(200);
       view.beforeRender(camera);
-      checkChildren(view, 21, 5, 48);
+      checkVisibleChildren(view, 21, 5, 48);
     }
   });
 
@@ -86,12 +83,12 @@ describe(AxisThreeView.name, () => {
       camera.position.set(x, y, z);
       camera.position.multiplyScalar(200);
       view.beforeRender(camera);
-      checkChildren(view, 18, 3, 72);
+      checkVisibleChildren(view, 18, 3, 72);
     }
   });
 });
 
-function checkChildren(
+function checkVisibleChildren(
   view: AxisThreeView,
   lineSegmentCount: number,
   meshCount: number,
@@ -101,6 +98,18 @@ function checkChildren(
   expectVisibleChildrenOfType(view, Mesh, meshCount);
   expectVisibleChildrenOfType(view, Sprite, spriteCount);
   expectVisibleChildren(view, lineSegmentCount + meshCount + spriteCount);
+}
+
+function checkChildren(
+  view: AxisThreeView,
+  lineSegmentCount: number,
+  meshCount: number,
+  spriteCount: number
+): void {
+  expectChildrenOfTypeAndCount(view, LineSegments, lineSegmentCount);
+  expectChildrenOfTypeAndCount(view, Mesh, meshCount); // Wireframe is also a mesh
+  expectChildrenOfTypeAndCount(view, Sprite, spriteCount);
+  expectChildrenLength(view, lineSegmentCount + meshCount + spriteCount);
 }
 
 function setLargeVisualSceneBoundingBox(renderTarget: RevealRenderTarget): void {
