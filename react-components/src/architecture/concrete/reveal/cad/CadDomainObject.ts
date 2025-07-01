@@ -5,8 +5,9 @@ import { type TranslationInput } from '../../../base/utilities/TranslateInput';
 import { type IconName } from '../../../base/utilities/IconName';
 import { type RenderStyle } from '../../../base/renderStyles/RenderStyle';
 import { getRenderTarget } from '../../../base/domainObjects/getRoot';
+import { RevealDomainObject } from '../RevealDomainObject';
 
-export class CadDomainObject extends VisualDomainObject {
+export class CadDomainObject extends RevealDomainObject {
   // ==================================================
   // INSTANCE FIELDS
   // ==================================================
