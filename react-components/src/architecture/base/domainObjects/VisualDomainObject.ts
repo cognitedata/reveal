@@ -158,6 +158,6 @@ export abstract class VisualDomainObject extends DomainObject {
 
 export type CreateDraggerProps = {
   intersection: DomainObjectIntersection;
-  point: Vector3;
-  ray: Ray;
+  point: Vector3; // In CDF coordinates
+  ray: Ray; // In CDF coordinates
 };

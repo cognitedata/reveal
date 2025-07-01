@@ -1,24 +1,17 @@
-import { type ReactElement, useEffect, useState, useRef } from 'react';
-import {
-  type GeometryFilter,
-  type AddModelOptions,
-  type CogniteCadModel,
-  type ClassicDataSourceType
+import { type ReactElement, useEffect, useState, useRef, useContext } from 'react';
+import type {
+  GeometryFilter,
+  AddModelOptions,
+  CogniteCadModel,
+  ClassicDataSourceType
 } from '@cognite/reveal';
-import { useRenderTarget } from '../RevealCanvas/ViewerContext';
-import { type Matrix4 } from 'three';
-import { useRevealKeepAlive } from '../RevealKeepAlive/RevealKeepAliveContext';
-import {
-  useReveal3DResourceLoadFailCount,
-  useReveal3DResourcesCount
-} from '../Reveal3DResources/Reveal3DResourcesInfoContext';
+import type { Matrix4 } from 'three';
 import { isEqual } from 'lodash';
 import { modelExists } from '../../utilities/modelExists';
 import { getViewerResourceCount } from '../../utilities/getViewerResourceCount';
-import { type CadModelStyling } from './types';
-import { useApplyCadModelStyling } from './useApplyCadModelStyling';
+import type { CadModelStyling } from './types';
 import { isSameGeometryFilter, isSameModel } from '../../utilities/isSameModel';
-import { RevealModelsUtils } from '../../architecture/concrete/reveal/RevealModelsUtils';
+import { CadModelContext } from './CadModelContainer.context';
 
 export type CogniteCadModelProps = {
   addModelOptions: AddModelOptions<ClassicDataSourceType>;
@@ -35,6 +28,16 @@ export function CadModelContainer({
   onLoad,
   onLoadError
 }: CogniteCadModelProps): ReactElement {
+  const {
+    useRenderTarget,
+    useReveal3DResourceLoadFailCount,
+    useReveal3DResourcesCount,
+    useRevealKeepAlive,
+    useApplyCadModelStyling,
+    createCadDomainObject,
+    removeCadDomainObject
+  } = useContext(CadModelContext);
+
   const cachedViewerRef = useRevealKeepAlive();
   const renderTarget = useRenderTarget();
   const viewer = renderTarget.viewer;
@@ -57,7 +60,9 @@ export function CadModelContainer({
       .then((model) => {
         onLoad?.(model);
         setRevealResourcesCount(getViewerResourceCount(viewer));
-        return removeModel;
+        return () => {
+          removeModel(model);
+        };
       })
       .catch((error) => {
         const errorReportFunction = onLoadError ?? defaultLoadErrorHandler;
@@ -106,22 +111,21 @@ export function CadModelContainer({
           isSameGeometryFilter(geometryFilter, initializingModelsGeometryFilter.current)
         );
       });
-
       if (viewerModel !== undefined) {
         return await Promise.resolve(viewerModel as CogniteCadModel);
       }
       initializingModelsGeometryFilter.current = geometryFilter;
-      return await RevealModelsUtils.addModel(renderTarget, addModelOptions);
+      return await createCadDomainObject(renderTarget, addModelOptions);
     }
   }
 
-  function removeModel(): void {
+  function removeModel(model: CogniteCadModel): void {
     if (!modelExists(model, viewer)) return;
 
     if (cachedViewerRef !== undefined && !cachedViewerRef.isRevealContainerMountedRef.current)
       return;
 
-    RevealModelsUtils.remove(renderTarget, model);
+    removeCadDomainObject(renderTarget, model);
     setRevealResourcesCount(getViewerResourceCount(viewer));
   }
 }
