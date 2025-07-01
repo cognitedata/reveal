@@ -2,11 +2,11 @@ import { useSignalValue } from '@cognite/signals/react';
 import { type DisposableSignal } from './DisposableSignal';
 import { useEffect, useMemo } from 'react';
 
-export function useDisposableSignal<T>(effectSignal: DisposableSignal<T>): T {
+export function useDisposableSignal<T>(disposableSignal: DisposableSignal<T>): T {
   useEffect(() => {
-    return effectSignal.dispose;
-  }, [effectSignal]);
+    return disposableSignal.dispose;
+  }, [disposableSignal]);
 
-  const valueCallback = useSignalValue(effectSignal.signal);
+  const valueCallback = useSignalValue(disposableSignal.signal);
   return useMemo(() => valueCallback(), [valueCallback]);
 }
