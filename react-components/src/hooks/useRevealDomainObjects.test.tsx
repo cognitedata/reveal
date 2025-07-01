@@ -5,9 +5,7 @@ import {
   type UseRevealDomainObjectsDependencies
 } from './useRevealDomainObjects';
 import { act, renderHook, waitFor } from '@testing-library/react';
-import { type PropsWithChildren } from 'react';
-import { useRenderTarget } from '../components';
-import { createRenderTargetMock } from '#test-utils/fixtures/renderTarget';
+import { type ReactElement, type PropsWithChildren } from 'react';
 import { createCadMock } from '#test-utils/fixtures/cadModel';
 import { createPointCloudMock } from '#test-utils/fixtures/pointCloud';
 import { createImage360ClassicMock } from '#test-utils/fixtures/image360';
@@ -15,13 +13,13 @@ import { Image360CollectionDomainObject } from '../architecture/concrete/reveal/
 import { PointCloudDomainObject } from '../architecture/concrete/reveal/pointCloud/PointCloudDomainObject';
 import { CadDomainObject } from '../architecture/concrete/reveal/cad/CadDomainObject';
 import { Changes, DomainObject, RevealRenderTarget } from '../architecture';
-import { createViewerMock, viewerMock } from '#test-utils/fixtures/viewer';
+import { createViewerMock } from '#test-utils/fixtures/viewer';
 import { sdkMock } from '#test-utils/fixtures/sdk';
 
 describe(useRevealDomainObjects.name, () => {
   const mockUseRenderTarget = vi.fn<UseRevealDomainObjectsDependencies['useRenderTarget']>();
 
-  const wrapper = ({ children }: PropsWithChildren) => (
+  const wrapper = ({ children }: PropsWithChildren): ReactElement => (
     <UseRevealDomainObjectsContext.Provider value={{ useRenderTarget: mockUseRenderTarget }}>
       {children}
     </UseRevealDomainObjectsContext.Provider>

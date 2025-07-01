@@ -35,8 +35,6 @@ export function getRevealDomainUpdateSignal(
 
     const isRelevantChange = change.isChanged(...relevantChanges);
 
-    console.log('Got event ', change, ' relevant: ', isRelevantChange);
-
     const isRelevantEvent = domainObject instanceof RevealDomainObject && isRelevantChange;
     if (!isRelevantEvent) {
       return;
