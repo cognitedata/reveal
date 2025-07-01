@@ -1,5 +1,4 @@
 import {
-  useMemo,
   useState,
   type ReactElement,
   type MouseEvent,
@@ -14,8 +13,7 @@ import {
   Flex
 } from '@cognite/cogs.js';
 import { Menu, SelectPanel } from '@cognite/cogs-lab';
-import { useRenderTarget } from '../RevealCanvas/ViewerContext';
-import { getButtonType, getDefaultCommand, getTooltipPlacement } from './utilities';
+import { getButtonType, getTooltipPlacement } from './utilities';
 import { LabelWithShortcut } from './LabelWithShortcut';
 import { BaseFilterCommand } from '../../architecture/base/commands/BaseFilterCommand';
 import { FilterItem } from './FilterItem';
@@ -27,7 +25,9 @@ import { TOOLBAR_HORIZONTAL_PANEL_OFFSET } from '../constants';
 import { offset } from '@floating-ui/dom';
 import styled from 'styled-components';
 import { type PlacementType } from './types';
-import { useOnUpdate } from './useOnUpdate';
+import { useCommandProperty } from './hooks/useCommandProperty';
+import { useCommand } from './hooks/useCommand';
+import { useCommandProps } from './hooks/useCommandProps';
 
 export const FilterButton = ({
   inputCommand,
@@ -38,36 +38,14 @@ export const FilterButton = ({
   placement: PlacementType;
   usedInSettings?: boolean;
 }): ReactElement => {
-  const renderTarget = useRenderTarget();
-  const command = useMemo<BaseFilterCommand>(
-    () => getDefaultCommand<BaseFilterCommand>(inputCommand, renderTarget),
-    []
-  );
-
+  const command = useCommand(inputCommand);
   command.initializeChildrenIfNeeded();
 
-  // @update-ui-component-pattern
-  const [isEnabled, setEnabled] = useState(true);
-  const [isVisible, setVisible] = useState(true);
-  const [icon, setIcon] = useState<IconName>(undefined);
+  const { icon, isVisible, isEnabled } = useCommandProps(command);
+  const isAllChecked = useCommandProperty(command, () => command.isAllChecked);
+  const isSomeChecked = useCommandProperty(command, () => command.isSomeChecked);
+  const selectedLabel = useCommandProperty(command, () => command.getSelectedLabel());
   const [isOpen, setOpen] = useState(false);
-  const [isAllChecked, setAllChecked] = useState(false);
-  const [isSomeChecked, setSomeChecked] = useState(false);
-  const [selectedLabel, setSelectedLabel] = useState('');
-
-  const label = command.label;
-
-  useOnUpdate(command, () => {
-    setEnabled(command.isEnabled);
-    setVisible(command.isVisible);
-    setIcon(command.icon);
-    if (command instanceof BaseFilterCommand) {
-      setAllChecked(command.isAllChecked);
-      setSomeChecked(command.children?.some((child) => child.isChecked) === true);
-      setSelectedLabel(command.getSelectedLabel());
-    }
-  });
-  // @end
 
   const children = command.children;
   if (!isVisible || children === undefined || children.length === 0) {
@@ -78,13 +56,13 @@ export const FilterButton = ({
       command={command}
       isAllChecked={isAllChecked}
       isSomeChecked={isSomeChecked}
-      label={label}
+      label={command.label}
     />
   );
 
   return usedInSettings ? (
     <FilterDropdown
-      label={label}
+      label={command.label}
       selectedLabel={selectedLabel}
       isOpen={isOpen}
       setOpen={setOpen}
@@ -95,7 +73,7 @@ export const FilterButton = ({
       command={command}
       placement={getTooltipPlacement(placement)}
       iconName={icon}
-      label={label}
+      label={command.label}
       isOpen={isOpen}
       setOpen={setOpen}
       isEnabled={isEnabled}
