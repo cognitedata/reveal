@@ -25,7 +25,6 @@ describe(CoreDm3dFdm3dDataProvider.name, () => {
   let fdmSdkMock: IMock<FdmSDK>;
 
   beforeEach(() => {
-    vi.resetAllMocks();
     fdmSdkMock = createFdmSdkMock();
   });
 
