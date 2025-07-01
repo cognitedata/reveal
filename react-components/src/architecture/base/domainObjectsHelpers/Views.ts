@@ -22,14 +22,10 @@ export class Views {
    * @param change - The change that occurred in the domain object.
    */
   public notify(domainObject: DomainObject, change: DomainObjectChange): void {
-    for (const listener of this._listeners) {
-      listener(domainObject, change);
-    }
+    this.notifyListeners(domainObject, change);
     const root = domainObject.root;
     if (root !== undefined && root !== domainObject) {
-      for (const listener of root.views._listeners) {
-        listener(domainObject, change);
-      }
+      root.views.notifyListeners(domainObject, change);
     }
     for (const view of this._views) {
       view.update(change);
