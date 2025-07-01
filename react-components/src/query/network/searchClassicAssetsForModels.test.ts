@@ -94,8 +94,6 @@ const mockRenderTarget = new Mock<RevealRenderTarget>()
 
 describe(searchClassicAssetsForModels.name, () => {
   beforeEach(() => {
-    vi.resetAllMocks();
-
     mockAssetMappings3dFilter.mockReturnValue(createCursorAndAsyncIteratorMock({ items: [] }));
     mockPostAssetList.mockResolvedValue(createHttpResponseObject({ items: [] }));
   });

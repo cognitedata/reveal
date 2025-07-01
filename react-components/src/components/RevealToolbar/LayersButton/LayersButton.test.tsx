@@ -36,7 +36,6 @@ describe(LayersButton.name, () => {
   };
 
   beforeEach(() => {
-    vi.resetAllMocks();
     defaultDependencies.useModelHandlers.mockReturnValue([
       {
         cadHandlers: [createCadHandlerMock()],
