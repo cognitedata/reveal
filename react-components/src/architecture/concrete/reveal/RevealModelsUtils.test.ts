@@ -94,6 +94,9 @@ describe(RevealModelsUtils.name, () => {
 
     // Add model
     await RevealModelsUtils.addModel(renderTargetMock, cadModelOptions);
+
+    viewerModelsMock.mockReturnValue([model]);
+
     let domainObject = RevealModelsUtils.getByRevealModel(root, model);
     expect(domainObject).toBeDefined();
 
@@ -121,7 +124,7 @@ describe(RevealModelsUtils.name, () => {
     }).not.toThrow();
   });
 
-  test.only('should not throw when removing a non-existing Point Cloud model', async () => {
+  test('should not throw when removing a non-existing Point Cloud model', async () => {
     const model = createPointCloudMock();
     const removeFn = vi.fn().mockImplementation(() => {
       throw new Error();
@@ -148,6 +151,9 @@ describe(RevealModelsUtils.name, () => {
 
     // Add model
     await RevealModelsUtils.addPointCloud(renderTargetMock, pointCloudModelOptions);
+
+    viewerModelsMock.mockReturnValue([model]);
+
     let domainObject = RevealModelsUtils.getByRevealModel(root, model);
     expect(domainObject).toBeDefined();
 
