@@ -1,19 +1,23 @@
 import { useQuery } from '@tanstack/react-query';
-import { use3dModels } from '../hooks/use3dModels';
-import { useImage360Collections } from '../hooks/useImage360Collections';
 import { useFdmSdk } from '../components/RevealCanvas/SDKProvider';
 import {
   type AddModelOptions,
-  type CognitePointCloudModel,
+  type CogniteModel,
+  CognitePointCloudModel,
   type DataSourceType,
   type DMDataSourceType,
   type Image360Collection,
   isDMPointCloudModel
 } from '@cognite/reveal';
 import { getModelIdAndRevisionIdFromExternalId } from './network/getModelIdAndRevisionIdFromExternalId';
-import { type LayersUrlStateParam } from '../components';
+import { type LayersUrlStateParam } from '../components/RevealToolbar/LayersButton/types';
 import { useMemo } from 'react';
 import { EMPTY_ARRAY } from '../utilities/constants';
+import { PointCloudDomainObject } from '../architecture/concrete/reveal/pointCloud/PointCloudDomainObject';
+import { CadDomainObject } from '../architecture/concrete/reveal/cad/CadDomainObject';
+import { isDefined } from '../utilities/isDefined';
+import { Image360CollectionDomainObject } from '../architecture/concrete/reveal/Image360Collection/Image360CollectionDomainObject';
+import { useVisibleRevealDomainObjects } from './useVisibleRevealDomainObjects';
 
 export const useActiveReveal3dResources = (
   layerState: LayersUrlStateParam | undefined
@@ -21,29 +25,35 @@ export const useActiveReveal3dResources = (
   models: AddModelOptions[];
   image360Collections: Array<Image360Collection<DataSourceType>>;
 } => {
-  const models = use3dModels();
-  const image360Collections = useImage360Collections();
+  const visibleDomainObjects = useVisibleRevealDomainObjects();
   const fdmSdk = useFdmSdk();
 
   const visibleModels = useMemo(() => {
     if (layerState === undefined) {
       return EMPTY_ARRAY;
     }
-    return models.filter((m) => m.visible);
-  }, [models, layerState]);
 
-  const filteredImage360Collections = useMemo(() => {
+    return visibleDomainObjects
+      .filter(
+        (domainObject) =>
+          domainObject instanceof PointCloudDomainObject || domainObject instanceof CadDomainObject
+      )
+      .map((domainObject) => domainObject.model)
+      .filter(isDefined);
+  }, [visibleDomainObjects, layerState]);
+
+  const visibleImage360Collections = useMemo(() => {
     if (layerState === undefined) {
       return EMPTY_ARRAY;
     }
-    return image360Collections.filter((c) => c.getIconsVisibility());
-  }, [image360Collections, layerState]);
+    return visibleDomainObjects
+      .filter((domainObject) => domainObject instanceof Image360CollectionDomainObject)
+      .map((domainObject) => domainObject.model)
+      .filter(isDefined);
+  }, [visibleDomainObjects, layerState]);
 
   const filteredModelsQuery = useQuery({
-    queryKey: [
-      'visible-3d-models',
-      visibleModels.map((model) => `${model.modelId}/${model.revisionId}`).sort()
-    ],
+    queryKey: ['visible-3d-models', visibleModels.map(getModelIdentifier).sort()],
     queryFn: async () => {
       const modelPromises = visibleModels.map(async (model) => {
         if (model.type === 'pointcloud' && isDMPointCloudModel(model as CognitePointCloudModel)) {
@@ -73,6 +83,14 @@ export const useActiveReveal3dResources = (
 
   return {
     models: filteredModelsQuery.data ?? EMPTY_ARRAY,
-    image360Collections: filteredImage360Collections
+    image360Collections: visibleImage360Collections
   };
 };
+
+function getModelIdentifier(model: CogniteModel<DataSourceType>): string {
+  if (model instanceof CognitePointCloudModel && isDMPointCloudModel(model)) {
+    return `${model.modelIdentifier.revisionExternalId}/${model.modelIdentifier.revisionExternalId}`;
+  } else {
+    return `${model.modelId}/${model.revisionId}`;
+  }
+}
