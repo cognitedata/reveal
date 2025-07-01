@@ -57,8 +57,10 @@ describe(useDisposableSignal.name, () => {
 
     const { result } = renderHook(() => useDisposableSignal(disposableSignal));
 
-    testSignal(() => 43);
+    const newValue = 43;
 
-    expect(result.current).toBe(43);
+    testSignal(() => newValue);
+
+    expect(result.current).toBe(newValue);
   });
 });
