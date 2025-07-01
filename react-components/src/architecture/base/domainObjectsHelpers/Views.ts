@@ -74,6 +74,12 @@ export class Views {
     clear(this._listeners);
   }
 
+  public notifyListeners(domainObject: DomainObject, change: DomainObjectChange): void {
+    for (const listener of this._listeners) {
+      listener(domainObject, change);
+    }
+  }
+
   public clear(): void {
     this.removeEventListeners();
     this.removeAllViews();
