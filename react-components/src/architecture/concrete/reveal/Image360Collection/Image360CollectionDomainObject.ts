@@ -13,8 +13,8 @@ export class Image360CollectionDomainObject extends RevealDomainObject {
   // INSTANCE FIELDS
   // ==================================================
 
-  readonly _model: Image360Model;
-  readonly _updateCallback: () => void;
+  private readonly _model: Image360Model;
+  private readonly _updateCallback: () => void;
 
   // ==================================================
   // INSTANCE PROPERTIES

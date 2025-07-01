@@ -12,7 +12,7 @@ export class PointCloudDomainObject extends RevealDomainObject {
   // INSTANCE FIELDS
   // ==================================================
 
-  readonly _model: PointCloud;
+  private readonly _model: PointCloud;
 
   // ==================================================
   // INSTANCE PROPERTIES
