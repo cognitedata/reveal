@@ -1,4 +1,4 @@
-import { describe, test, expect, beforeEach, vi } from 'vitest';
+import { describe, test, expect, beforeEach } from 'vitest';
 import { type Asset, type IdEither } from '@cognite/sdk';
 import {
   fetchAssetsForAssetIds,
