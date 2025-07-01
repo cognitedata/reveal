@@ -19,7 +19,6 @@ describe(Reveal3DResources.name, () => {
   );
 
   beforeEach(() => {
-    vi.resetAllMocks();
     defaultDependencies.useTypedModels.mockReturnValue({ data: [], loading: false } as any);
     defaultDependencies.useAssetMappedNodesForRevisions.mockReturnValue({ data: [] } as any);
     defaultDependencies.useCalculateCadStyling.mockReturnValue({
