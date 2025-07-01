@@ -372,7 +372,7 @@ export class CylinderView extends GroupThreeView<CylinderDomainObject> {
 
   private getHeightLabelHeight(): number {
     const { style, domainObject } = this;
-    return style.relativeTextSize * domainObject.cylinder.height;
+    return 2 * style.relativeTextSize * domainObject.cylinder.height;
   }
 
   private createLabel(name: string, value: number, labelHeight: number): Sprite | undefined {
