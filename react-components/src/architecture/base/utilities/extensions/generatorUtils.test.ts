@@ -1,5 +1,5 @@
-import { assertType, describe, expect, test } from 'vitest';
-import { count, filter, filterTypeGuard, first, last, map } from './generatorUtils';
+import { describe, expect, test } from 'vitest';
+import { count, filter, first, last, map } from './generatorUtils';
 import { isOdd } from './mathExtensions';
 
 describe('generatorUtils', () => {
@@ -69,12 +69,4 @@ function* getPositiveNumbers(count: number): Generator<number> {
 
 function getEmptyGenerator(): Generator<number> {
   return getPositiveNumbers(0);
-}
-
-function* getMixedGenerator(): Generator<number | string> {
-  yield 0;
-  yield 'string-0';
-  yield 1;
-  yield 'string-1';
-  yield 2;
 }

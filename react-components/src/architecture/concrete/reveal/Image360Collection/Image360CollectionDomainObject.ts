@@ -1,5 +1,4 @@
 import { getRenderTarget } from '../../../base/domainObjects/getRoot';
-import { VisualDomainObject } from '../../../base/domainObjects/VisualDomainObject';
 import { CommandsUpdater } from '../../../base/reactUpdaters/CommandsUpdater';
 import { type RenderStyle } from '../../../base/renderStyles/RenderStyle';
 import { type IconName } from '../../../base/utilities/IconName';
