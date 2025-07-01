@@ -60,12 +60,7 @@ export abstract class BaseFilterCommand extends RenderTargetCommand {
     if (this._children === undefined || this._children.length === 0) {
       return false;
     }
-    for (const child of this._children) {
-      if (!child.isChecked) {
-        return false;
-      }
-    }
-    return true;
+    return this._children.every((child) => child.isChecked);
   }
 
   /**
