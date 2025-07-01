@@ -18,6 +18,7 @@ import {
   useReveal
 } from '../src';
 import { Color } from 'three';
+import { type CogniteClient } from '@cognite/sdk';
 
 const meta = {
   title: 'Example/Reveal3DResourcesList',
@@ -37,30 +38,38 @@ export const Main: Story = {
     selectedRevisions: {},
     setSelectedRevisions: () => {}
   },
-  render: ({ sdk, modelType }) => {
-    const [isResourcesListVisible, setIsResourcesListVisible] = useState(false);
-    const viewerOptions = {
-      logMetrics: false
-    };
-
-    return (
-      <RevealContext sdk={sdk} color={new Color(0x4a4a4a)} viewerOptions={viewerOptions}>
-        <RevealCanvas>
-          <ToolBarUI
-            onLayersButtonClick={() => {
-              setIsResourcesListVisible((prev) => !prev);
-            }}
-          />
-          <ResourcesAndModelContainer
-            isResourcesListVisible={isResourcesListVisible}
-            sdk={sdk}
-            modelType={modelType ?? ''}
-          />
-        </RevealCanvas>
-      </RevealContext>
-    );
-  }
+  render: ({ sdk, modelType }) => <MainStoryComponent sdk={sdk} modelType={modelType} />
 };
+
+function MainStoryComponent({
+  sdk,
+  modelType
+}: {
+  sdk: CogniteClient;
+  modelType: string | undefined;
+}): ReactElement {
+  const [isResourcesListVisible, setIsResourcesListVisible] = useState(false);
+  const viewerOptions = {
+    logMetrics: false
+  };
+
+  return (
+    <RevealContext sdk={sdk} color={new Color(0x4a4a4a)} viewerOptions={viewerOptions}>
+      <RevealCanvas>
+        <ToolBarUI
+          onLayersButtonClick={() => {
+            setIsResourcesListVisible((prev) => !prev);
+          }}
+        />
+        <ResourcesAndModelContainer
+          isResourcesListVisible={isResourcesListVisible}
+          sdk={sdk}
+          modelType={modelType ?? ''}
+        />
+      </RevealCanvas>
+    </RevealContext>
+  );
+}
 
 function ToolBarUI({ onLayersButtonClick }: { onLayersButtonClick: () => void }): ReactElement {
   return (

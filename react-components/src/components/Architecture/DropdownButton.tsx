@@ -87,7 +87,7 @@ const DropdownElement = ({
           </Button>
         </CogsTooltip>
       )}>
-      {command.children.map((child) => createMenuItem(child, setOpen))}
+      {command.children.map((child) => CreateMenuItem(child, setOpen))}
     </Menu>
   );
 };
@@ -118,7 +118,7 @@ const MenuItemWithDropdown = ({ command }: { command: BaseOptionCommand }): Reac
   );
 };
 
-function createMenuItem(
+function CreateMenuItem(
   command: BaseCommand,
   setOpen: Dispatch<SetStateAction<boolean>>
 ): ReactElement {
