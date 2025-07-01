@@ -1,4 +1,4 @@
-import { describe, test, expect, beforeEach, vi } from 'vitest';
+import { describe, test, expect, beforeEach } from 'vitest';
 import { type Asset, type IdEither } from '@cognite/sdk';
 import {
   fetchAssetsForAssetIds,
@@ -19,7 +19,6 @@ import {
 describe('AnnotationModelUtils', () => {
   let assets: Asset[];
   beforeEach(() => {
-    vi.resetAllMocks();
     assets = [createAssetMock(1), createAssetMock(2)];
   });
 
