@@ -47,4 +47,18 @@ describe(useDisposableSignal.name, () => {
 
     expect(result.current).toBe(initialResult);
   });
+
+  test('returns new value when signal updates', () => {
+    const testSignal = signal<() => number>(() => 42);
+    const disposableSignal: DisposableSignal<number> = {
+      signal: testSignal,
+      dispose: () => {}
+    };
+
+    const { result } = renderHook(() => useDisposableSignal(disposableSignal));
+
+    testSignal(() => 43);
+
+    expect(result.current).toBe(43);
+  });
 });
