@@ -1,7 +1,3 @@
-/*!
- * Copyright 2024 Cognite AS
- */
-
 import { RenderTargetCommand } from '../commands/RenderTargetCommand';
 import { type IconName } from '../utilities/IconName';
 import { type TranslationInput } from '../utilities/TranslateInput';

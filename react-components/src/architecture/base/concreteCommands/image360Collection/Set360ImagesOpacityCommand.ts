@@ -1,7 +1,3 @@
-/*!
- * Copyright 2024 Cognite AS
- */
-
 import { type TranslationInput } from '../../utilities/TranslateInput';
 import { FractionSliderCommand } from '../../commands/FractionSliderCommand';
 import { type Image360Model } from '../../../concrete/reveal/RevealTypes';

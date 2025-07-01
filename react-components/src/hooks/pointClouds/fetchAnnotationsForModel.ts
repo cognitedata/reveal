@@ -1,6 +1,3 @@
-/*!
- * Copyright 2024 Cognite AS
- */
 import { type PointCloudAnnotationCache } from '../../components/CacheProvider/PointCloudAnnotationCache';
 import { isDefined } from '../../utilities/isDefined';
 import { type PointCloudAnnotationMappedAssetData } from '../types';

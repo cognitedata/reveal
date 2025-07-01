@@ -1,6 +1,3 @@
-/*!
- * Copyright 2025 Cognite AS
- */
 export type OutputTypes =
   | 'model-from-points:1'
   | 'tiles-directory:1'

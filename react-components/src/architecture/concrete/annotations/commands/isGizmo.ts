@@ -1,7 +1,3 @@
-/*!
- * Copyright 2024 Cognite AS
- */
-
 import { AnnotationsDomainObject } from '../AnnotationsDomainObject';
 import { type DomainObject } from '../../../base/domainObjects/DomainObject';
 import { BoxGizmoDomainObject } from '../BoxGizmoDomainObject';

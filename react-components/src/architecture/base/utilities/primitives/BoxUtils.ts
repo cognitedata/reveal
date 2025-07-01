@@ -1,7 +1,3 @@
-/*!
- * Copyright 2024 Cognite AS
- */
-
 import { Vector3, type BufferGeometry, type Matrix4, Box3, BoxGeometry } from 'three';
 import { OBB } from 'three/addons/math/OBB.js';
 import { type LineSegmentsGeometry } from 'three/examples/jsm/lines/LineSegmentsGeometry.js';

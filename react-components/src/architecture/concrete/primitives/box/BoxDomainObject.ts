@@ -1,7 +1,3 @@
-/*!
- * Copyright 2024 Cognite AS
- */
-
 import { type RenderStyle } from '../../../base/renderStyles/RenderStyle';
 import { Changes } from '../../../base/domainObjectsHelpers/Changes';
 import { FocusType } from '../../../base/domainObjectsHelpers/FocusType';

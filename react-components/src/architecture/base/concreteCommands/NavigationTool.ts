@@ -1,7 +1,3 @@
-/*!
- * Copyright 2024 Cognite AS
- */
-
 import { BaseTool } from '../commands/BaseTool';
 import { Image360Action, type IFlexibleCameraManager } from '@cognite/reveal';
 import { type TranslationInput } from '../utilities/TranslateInput';

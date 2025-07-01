@@ -1,7 +1,3 @@
-/*!
- * Copyright 2024 Cognite AS
- */
-
 import { type RevealRenderTarget } from '../renderTarget/RevealRenderTarget';
 
 // By calling update(), it forces the updating of all the command and tools to be done only once for

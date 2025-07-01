@@ -1,22 +1,20 @@
-/*!
- * Copyright 2024 Cognite AS
- */
-
 import { type TranslationInput } from '../../base/utilities/TranslateInput';
 import { Image360AnnotationDomainObject } from './Image360AnnotationDomainObject';
 import { type VisualDomainObject } from '../../base/domainObjects/VisualDomainObject';
 import { type IconName } from '../../base/utilities/IconName';
 import { BaseEditTool } from '../../base/commands/BaseEditTool';
 import { Changes } from '../../base/domainObjectsHelpers/Changes';
-import { EDIT_WITHOUT_IMAGE } from './constants';
 
 export class Image360AnnotationSelectTool extends BaseEditTool {
+  private readonly _mustBeInside360Image: boolean;
+
   // ==================================================
   // CONSTRUCTOR
   // ==================================================
 
-  public constructor() {
+  public constructor(mustBeInside360Image = true) {
     super();
+    this._mustBeInside360Image = mustBeInside360Image;
   }
 
   // ==================================================
@@ -32,7 +30,7 @@ export class Image360AnnotationSelectTool extends BaseEditTool {
   }
 
   public override get isEnabled(): boolean {
-    return EDIT_WITHOUT_IMAGE ? true : this.renderTarget.isInside360Image;
+    return this._mustBeInside360Image ? this.renderTarget.isInside360Image : true;
   }
 
   public override update(): void {

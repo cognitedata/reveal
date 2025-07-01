@@ -1,8 +1,4 @@
-/*!
- * Copyright 2025 Cognite AS
- */
-
-import { beforeEach, describe, expect, test } from 'vitest';
+import { assert, beforeEach, describe, expect, test } from 'vitest';
 import { BoxView } from './BoxView';
 import { Object3D, Vector3 } from 'three';
 import { type BoxDomainObject } from './BoxDomainObject';
@@ -22,7 +18,7 @@ import { MeasureBoxDomainObject } from '../../measurements/MeasureBoxDomainObjec
 import { PrimitiveType } from '../../../base/utilities/primitives/PrimitiveType';
 import { BoxFace } from '../common/BoxFace';
 
-describe('BoxView', () => {
+describe(BoxView.name, () => {
   let domainObject: BoxDomainObject;
   let view: BoxView;
 
@@ -91,9 +87,8 @@ describe('BoxView', () => {
     const intersectInput = createLookingDownIntersectInput();
     const intersection = view.intersectIfCloser(intersectInput, undefined);
     expect(intersection).toBeDefined();
-    if (intersection === undefined) {
-      return;
-    }
+    assert(intersection !== undefined);
+
     intersection.point.applyMatrix4(CDF_TO_VIEWER_TRANSFORMATION.invert());
     expectEqualVector3(intersection.point, new Vector3(0, 0, 1));
     expect(intersection.customObject).toBe(view);

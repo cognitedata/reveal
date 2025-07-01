@@ -1,6 +1,3 @@
-/*!
- * Copyright 2024 Cognite AS
- */
 import { type CogniteClient, type IdEither, type Datapoints } from '@cognite/sdk';
 import { executeParallel } from '../../utilities/executeParallel';
 import { isDefined } from '../../utilities/isDefined';

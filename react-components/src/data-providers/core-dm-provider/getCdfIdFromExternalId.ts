@@ -1,7 +1,3 @@
-/*!
- * Copyright 2024 Cognite AS
- */
-
 import { type ModelId, type RevisionId } from '../../components/CacheProvider/types';
 
 export function getModelIdFromExternalId(externalId: string): ModelId {

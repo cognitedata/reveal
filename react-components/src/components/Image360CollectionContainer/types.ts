@@ -1,7 +1,3 @@
-/*!
- * Copyright 2024 Cognite AS
- */
-
 import { type DMInstanceRef, type PointCloudAppearance } from '@cognite/reveal';
 
 export type Image360PolygonStylingGroup = {

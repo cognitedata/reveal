@@ -1,6 +1,3 @@
-/*!
- * Copyright 2025 Cognite AS
- */
 import { type TreeNodeType } from './tree-node-type';
 import { type OnNodeLoadedAction } from './types';
 

@@ -1,7 +1,3 @@
-/*!
- * Copyright 2024 Cognite AS
- */
-
 import { RenderTargetCommand } from '../../commands/RenderTargetCommand';
 import { type TranslationInput } from '../../utilities/TranslateInput';
 import { type Image360Model } from '../../../concrete/reveal/RevealTypes';

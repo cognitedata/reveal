@@ -1,6 +1,3 @@
-/*!
- * Copyright 2025 Cognite AS
- */
 export { AdvancedTreeView } from './view/advanced-tree-view';
 export type { AdvancedTreeViewProps, GetIconFromIconNameFn } from './view/advanced-tree-view-props';
 export type { TreeNodeType } from './model/tree-node-type';

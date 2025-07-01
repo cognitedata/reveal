@@ -1,6 +1,3 @@
-/*!
- * Copyright 2024 Cognite AS
- */
 import { type FdmSDK } from '../../data-providers/FdmSDK';
 import { createContext } from 'react';
 

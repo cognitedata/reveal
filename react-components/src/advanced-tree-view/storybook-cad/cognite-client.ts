@@ -1,6 +1,3 @@
-/*!
- * Copyright 2025 Cognite AS
- */
 import type { CogniteClient, List3DNodesQuery, Node3D } from '@cognite/sdk';
 
 import { type ICogniteClient } from './i-cognite-client';

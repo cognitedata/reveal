@@ -1,6 +1,3 @@
-/*!
- * Copyright 2024 Cognite AS
- */
 import { Color } from 'three';
 import { assertNever } from '../../../utilities/assertNever';
 import { PointsOfInterestStatus } from './types';

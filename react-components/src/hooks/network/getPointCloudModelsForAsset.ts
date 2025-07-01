@@ -1,6 +1,3 @@
-/*!
- * Copyright 2024 Cognite AS
- */
 import { type Revision3D, type CogniteClient } from '@cognite/sdk';
 import { chunk } from 'lodash';
 import { type TaggedAddPointCloudResourceOptions } from '../../components/Reveal3DResources/types';

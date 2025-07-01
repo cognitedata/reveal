@@ -1,7 +1,3 @@
-/*!
- * Copyright 2024 Cognite AS
- */
-
 import { Ray, type Vector3 } from 'three';
 import {
   type VisualDomainObject,
@@ -20,6 +16,7 @@ import { getRoot } from '../domainObjects/getRoot';
  * It provides methods for onPointerDown, onPointerDrag, and onPointerUp based on user interactions.
  */
 
+export const EPSILON = 0.000001; // Dragger precision for equality checks
 export abstract class BaseDragger {
   // ==================================================
   // INSTANCE FIELDS

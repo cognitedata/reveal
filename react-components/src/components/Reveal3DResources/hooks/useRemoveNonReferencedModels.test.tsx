@@ -1,7 +1,4 @@
-/*!
- * Copyright 2025 Cognite AS
- */
-import { describe, expect, test, vi, beforeEach } from 'vitest';
+import { describe, expect, test } from 'vitest';
 import React, { type JSX } from 'react';
 
 import { renderHook } from '@testing-library/react';
@@ -21,10 +18,6 @@ import { createImage360ClassicMock, image360ClassicOptions } from '#test-utils/f
 import { createPointCloudMock, pointCloudModelOptions } from '#test-utils/fixtures/pointCloud';
 
 describe(useRemoveNonReferencedModels.name, () => {
-  beforeEach(() => {
-    vi.resetAllMocks();
-  });
-
   const wrapper = ({ children }: { children: React.ReactNode }): JSX.Element => (
     <Reveal3DResourcesInfoContextProvider>{children}</Reveal3DResourcesInfoContextProvider>
   );

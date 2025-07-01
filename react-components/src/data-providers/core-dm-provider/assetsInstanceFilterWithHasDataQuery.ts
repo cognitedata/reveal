@@ -1,7 +1,3 @@
-/*!
- * Copyright 2024 Cognite AS
- */
-
 import { isDefined } from '../../utilities/isDefined';
 import { type InstanceFilter, type Source } from '../FdmSDK';
 import { COGNITE_ASSET_SOURCE } from './dataModels';

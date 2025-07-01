@@ -1,6 +1,3 @@
-/*!
- * Copyright 2025 Cognite AS
- */
 import { render, fireEvent } from '@testing-library/react';
 import { describe, expect, test, vi, beforeEach } from 'vitest';
 import { ModelLayersButton } from './ModelLayersButton';
@@ -11,7 +8,6 @@ describe(ModelLayersButton.name, () => {
   let mockCadHandler: ModelHandler;
 
   beforeEach(() => {
-    vi.resetAllMocks();
     mockCadHandler = createCadHandlerMock();
   });
 

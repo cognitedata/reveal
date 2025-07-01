@@ -1,6 +1,3 @@
-/*!
- * Copyright 2023 Cognite AS
- */
 import { type AddModelOptions } from '@cognite/reveal';
 import {
   type Asset,
@@ -18,6 +15,8 @@ import { getAssetsList } from '../hooks/network/getAssetsList';
 import { isDefined } from '../utilities/isDefined';
 import { useAssetMappedNodesForRevisions } from '../hooks/cad';
 import { useMemo } from 'react';
+import { getAssetsFromAssetMappings } from './network/getAssetsFromAssetMappings';
+import { buildClassicAssetQueryFilter } from './network/buildClassicAssetFilter';
 
 export type ModelMappings = {
   model: AddModelOptions;
@@ -73,10 +72,13 @@ export const useSearchMappedEquipmentAssetMappings = (
     accumulatedAssets: Asset[],
     mappedSearchedAssetIds: Set<number>
   ): Promise<{ assets: Asset[]; nextCursor: string | undefined }> => {
+    const advancedFilter = buildClassicAssetQueryFilter(query);
     const searchedAssetsResponse = await getAssetsList(sdk, {
-      query,
       limit: 1000,
-      cursor
+      cursor,
+      filters: {
+        advancedFilter
+      }
     });
 
     const filteredSearchedAssets = searchedAssetsResponse.items.filter(isDefined);
@@ -239,28 +241,4 @@ function getNextPageParam(
     return undefined;
   }
   return nextCursors;
-}
-
-async function getAssetsFromAssetMappings(
-  sdk: CogniteClient,
-  modelsMappings: Array<{ model: AddModelOptions; mappings: ListResponse<AssetMapping3D[]> }>
-): Promise<ModelMappingsWithAssets[]> {
-  const mappingsWithAssetsPromises = modelsMappings.map(async ({ mappings, model }) => {
-    if (mappings.items.length === 0) {
-      return { model, assets: [], mappings };
-    }
-
-    const deduplicatedAssetIds = Array.from(
-      new Set(mappings.items.map((mapping) => mapping.assetId))
-    );
-    const assetIdObjects = deduplicatedAssetIds.map((id) => ({ id }));
-
-    const assets = await sdk.assets.retrieve(assetIdObjects, { ignoreUnknownIds: true });
-
-    return { model, assets, mappings };
-  });
-
-  const mappingsWithAssets = await Promise.all(mappingsWithAssetsPromises);
-
-  return mappingsWithAssets;
 }

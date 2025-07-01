@@ -1,6 +1,3 @@
-/*!
- * Copyright 2025 Cognite AS
- */
 import { type EmptyRuleForSelection } from '../types';
 
 export const generateEmptyRuleForSelection = (name: string): EmptyRuleForSelection => {

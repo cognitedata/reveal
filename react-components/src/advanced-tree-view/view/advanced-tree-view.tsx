@@ -1,6 +1,3 @@
-/*!
- * Copyright 2025 Cognite AS
- */
 import { useState, type ReactElement } from 'react';
 
 import { Loader } from '@cognite/cogs.js';

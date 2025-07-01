@@ -2,7 +2,7 @@ import { describe, expect, test } from 'vitest';
 import { getNextColor, getNextColorByIndex, NUMBER_OF_UNIQUE_COLORS } from './getNextColor';
 import { type Color } from 'three';
 
-describe('colorExtensions', () => {
+describe('getNextColor', () => {
   describe(getNextColor.name, () => {
     test('should different', () => {
       const uniqueColors = new Set<number>();

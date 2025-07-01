@@ -1,7 +1,3 @@
-/*!
- * Copyright 2025 Cognite AS
- */
-
 import { expect } from 'vitest';
 import { type Color, type Box3, type Euler, type Matrix4, type Vector3 } from 'three';
 import { type Range1, type Range3 } from '../../../src/architecture';

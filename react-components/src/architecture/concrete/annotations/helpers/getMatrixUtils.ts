@@ -1,7 +1,3 @@
-/*!
- * Copyright 2024 Cognite AS
- */
-
 import { CognitePointCloudModel, type DataSourceType, type Cognite3DViewer } from '@cognite/reveal';
 
 import { type Matrix4 } from 'three';

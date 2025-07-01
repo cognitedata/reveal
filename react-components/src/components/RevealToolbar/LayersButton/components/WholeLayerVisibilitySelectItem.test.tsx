@@ -1,6 +1,3 @@
-/*!
- * Copyright 2025 Cognite AS
- */
 import { render, fireEvent } from '@testing-library/react';
 import { beforeEach, describe, expect, test, vi } from 'vitest';
 import { WholeLayerVisibilitySelectItem } from './WholeLayerVisibilitySelectItem';
@@ -12,7 +9,6 @@ describe(WholeLayerVisibilitySelectItem.name, () => {
   let mockCadHandler: ModelHandler;
 
   beforeEach(() => {
-    vi.resetAllMocks();
     mockCadHandler = createCadHandlerMock();
   });
 

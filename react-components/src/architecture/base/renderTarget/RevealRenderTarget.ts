@@ -1,7 +1,3 @@
-/*!
- * Copyright 2024 Cognite AS
- */
-
 import {
   type CameraManager,
   CustomObject,
@@ -288,6 +284,7 @@ export class RevealRenderTarget {
     this.commandsController.removeEventListeners();
     this.commandsController.dispose();
     this._axisGizmoTool?.dispose();
+    this._revealSettingsController.dispose();
     CommandsUpdater.dispose();
   }
 
@@ -343,10 +340,16 @@ export class RevealRenderTarget {
   // ==================================================
 
   public getGlobalClippingPlanes(): Plane[] {
+    if (this.viewer.getGlobalClippingPlanes === undefined) {
+      return [];
+    }
     return this.viewer.getGlobalClippingPlanes();
   }
 
   public get isGlobalClippingActive(): boolean {
+    if (this.viewer.getGlobalClippingPlanes === undefined) {
+      return false;
+    }
     return this.getGlobalClippingPlanes().length > 0;
   }
 

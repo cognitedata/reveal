@@ -1,6 +1,3 @@
-/*!
- * Copyright 2025 Cognite AS
- */
 export type SubsetOfNode3D = {
   id: number;
   treeIndex: number;

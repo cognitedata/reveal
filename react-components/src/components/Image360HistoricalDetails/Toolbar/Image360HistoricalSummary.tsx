@@ -1,7 +1,3 @@
-/*!
- * Copyright 2023 Cognite AS
- */
-
 import { Body, Flex } from '@cognite/cogs.js';
 import React, { forwardRef, useEffect, useRef } from 'react';
 import styled from 'styled-components';

@@ -1,6 +1,3 @@
-/*!
- * Copyright 2023 Cognite AS
- */
 import { useRevealKeepAlive } from '../components/RevealKeepAlive/RevealKeepAliveContext';
 
 export const useIsRevealInitialized = (): boolean => {

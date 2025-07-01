@@ -1,7 +1,3 @@
-/*!
- * Copyright 2024 Cognite AS
- */
-
 import { ExampleRenderStyle } from './ExampleRenderStyle';
 import { type RenderStyle } from '../../base/renderStyles/RenderStyle';
 import { PanelInfo } from '../../base/domainObjectsHelpers/PanelInfo';

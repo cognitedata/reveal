@@ -1,7 +1,3 @@
-/*!
- * Copyright 2024 Cognite AS
- */
-
 import { ExampleDomainObject } from './ExampleDomainObject';
 import { BaseEditTool } from '../../base/commands/BaseEditTool';
 import { Changes } from '../../base/domainObjectsHelpers/Changes';

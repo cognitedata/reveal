@@ -1,7 +1,3 @@
-/*!
- * Copyright 2024 Cognite AS
- */
-
 import { type IconName } from '../../base/utilities/IconName';
 import { RenderTargetCommand } from '../commands/RenderTargetCommand';
 import { CommandsUpdater } from '../reactUpdaters/CommandsUpdater';

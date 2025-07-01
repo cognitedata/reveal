@@ -1,6 +1,3 @@
-/*!
- * Copyright 2024 Cognite AS
- */
 import { useQuery } from '@tanstack/react-query';
 import { use3dModels } from '../hooks/use3dModels';
 import { useImage360Collections } from '../hooks/useImage360Collections';

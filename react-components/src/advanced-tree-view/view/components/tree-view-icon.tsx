@@ -1,6 +1,3 @@
-/*!
- * Copyright 2025 Cognite AS
- */
 import { type ReactElement } from 'react';
 
 import { type TreeNodeType } from '../../model/tree-node-type';

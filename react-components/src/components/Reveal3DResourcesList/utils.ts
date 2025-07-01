@@ -1,6 +1,3 @@
-/*!
- * Copyright 2025 Cognite AS
- */
 import { type ChangeEvent } from 'react';
 import { getRevisions } from '../../hooks/network/getRevisions';
 import { type ModelWithRevisionInfo } from '../../hooks/network/types';

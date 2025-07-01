@@ -1,7 +1,3 @@
-/*!
- * Copyright 2024 Cognite AS
- */
-
 import { RenderTargetCommand } from '../../base/commands/RenderTargetCommand';
 import { Vector3 } from 'three';
 import { Range3 } from '../../base/utilities/geometry/Range3';

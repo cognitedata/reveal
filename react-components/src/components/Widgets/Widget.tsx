@@ -1,7 +1,3 @@
-/*!
- * Copyright 2023 Cognite AS
- */
-
 import React, { type ReactNode, type ForwardedRef, type ReactElement } from 'react';
 import styled from 'styled-components';
 import { WidgetHeader } from './WidgetHeader';

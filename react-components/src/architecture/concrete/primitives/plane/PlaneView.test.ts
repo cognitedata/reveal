@@ -1,7 +1,3 @@
-/*!
- * Copyright 2025 Cognite AS
- */
-
 import { beforeEach, describe, expect, test } from 'vitest';
 import { Box3, Line, Mesh, Object3D, Vector3 } from 'three';
 import { CDF_TO_VIEWER_TRANSFORMATION, type CustomObjectIntersectInput } from '@cognite/reveal';
@@ -18,8 +14,8 @@ import {
   expectChildrenOfTypeAndCount
 } from '#test-utils/architecture/viewUtil';
 import { createPlaneDomainObjectMock } from './PlaneDomainObject.test';
-import { createFullRenderTargetMock } from '../../../../../tests/tests-utilities/fixtures/createFullRenderTargetMock';
 import { Wireframe } from 'three/examples/jsm/lines/Wireframe.js';
+import { createFullRenderTargetMock } from '#test-utils/fixtures/createFullRenderTargetMock';
 
 describe(PlaneView.name, () => {
   let domainObject: PlaneDomainObject;

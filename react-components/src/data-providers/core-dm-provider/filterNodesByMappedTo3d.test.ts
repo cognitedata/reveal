@@ -1,6 +1,3 @@
-/*!
- * Copyright 2025 Cognite AS
- */
 import { describe, expect, it } from 'vitest';
 import { filterNodesByMappedTo3d } from './filterNodesByMappedTo3d';
 import { Mock, It } from 'moq.ts';
@@ -94,14 +91,14 @@ describe(filterNodesByMappedTo3d.name, () => {
   it('returns empty when no input nodes are provided', async () => {
     const fdmSdkMock = new Mock<FdmSDK>().object();
 
-    const result = await filterNodesByMappedTo3d([], [modelIdentifier], [], fdmSdkMock);
+    const result = await filterNodesByMappedTo3d([], [modelIdentifier], [], fdmSdkMock, true);
 
     expect(result).toEqual([]);
   });
 
   it('returns empty when no input revisions are provided', async () => {
     const fdmSdkMock = new Mock<FdmSDK>().object();
-    const result = await filterNodesByMappedTo3d(instancesWithView, [], [], fdmSdkMock);
+    const result = await filterNodesByMappedTo3d(instancesWithView, [], [], fdmSdkMock, true);
     expect(result).toEqual([]);
   });
 
@@ -155,7 +152,8 @@ describe(filterNodesByMappedTo3d.name, () => {
       instancesWithView,
       [modelIdentifier],
       [],
-      fdmSdkMock
+      fdmSdkMock,
+      true
     );
 
     expect(result).toEqual([

@@ -1,8 +1,4 @@
-/*!
- * Copyright 2025 Cognite AS
- */
-
-import { beforeEach, describe, expect, test } from 'vitest';
+import { assert, beforeEach, describe, expect, test } from 'vitest';
 import { Object3D, Vector3 } from 'three';
 import { CDF_TO_VIEWER_TRANSFORMATION, type CustomObjectIntersectInput } from '@cognite/reveal';
 import { expectEqualVector3 } from '#test-utils/primitives/primitiveTestUtil';
@@ -18,7 +14,7 @@ import {
 } from '#test-utils/architecture/viewUtil';
 import { MeasureLineDomainObject } from '../../measurements/MeasureLineDomainObject';
 
-describe('LineView', () => {
+describe(LineView.name, () => {
   let domainObject: LineDomainObject;
   let view: LineView;
 
@@ -45,9 +41,8 @@ describe('LineView', () => {
       const intersectInput = createLookingDownIntersectInput(expectedPoint);
       const intersection = view.intersectIfCloser(intersectInput, undefined);
       expect(intersection).toBeDefined();
-      if (intersection === undefined) {
-        return;
-      }
+      assert(intersection !== undefined);
+
       const actualPoint = intersection.point;
       actualPoint.applyMatrix4(CDF_TO_VIEWER_TRANSFORMATION.invert());
       expectEqualVector3(actualPoint, expectedPoint);

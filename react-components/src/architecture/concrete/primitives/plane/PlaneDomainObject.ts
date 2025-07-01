@@ -1,7 +1,3 @@
-/*!
- * Copyright 2024 Cognite AS
- */
-
 import { type RenderStyle } from '../../../base/renderStyles/RenderStyle';
 import { type Color, Plane, Vector3 } from 'three';
 import { Changes } from '../../../base/domainObjectsHelpers/Changes';

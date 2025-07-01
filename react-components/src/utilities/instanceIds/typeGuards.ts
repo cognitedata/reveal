@@ -1,6 +1,3 @@
-/*!
- * Copyright 2025 Cognite AS
- */
 import { type ExternalId, type IdEither, type InternalId } from '@cognite/sdk';
 import { type DmsUniqueIdentifier } from '../../data-providers';
 

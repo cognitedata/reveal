@@ -1,6 +1,3 @@
-/*!
- * Copyright 2024 Cognite AS
- */
 import { useState, type ReactElement, useEffect, useCallback } from 'react';
 
 import { Button, Tooltip as CogsTooltip, ColorPaletteIcon } from '@cognite/cogs.js';

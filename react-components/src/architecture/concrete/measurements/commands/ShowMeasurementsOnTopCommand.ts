@@ -1,7 +1,3 @@
-/*!
- * Copyright 2024 Cognite AS
- */
-
 import { type IconName } from '../../../base/utilities/IconName';
 import { ShowDomainObjectsOnTopCommand } from '../../../base/commands/ShowDomainObjectsOnTopCommand';
 import { type DomainObject } from '../../../base/domainObjects/DomainObject';

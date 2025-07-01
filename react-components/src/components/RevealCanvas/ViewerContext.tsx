@@ -1,6 +1,3 @@
-/*!
- * Copyright 2023 Cognite AS
- */
 import { type DataSourceType, type Cognite3DViewer } from '@cognite/reveal';
 import { createContext, type ReactElement, type ReactNode, useContext, useEffect } from 'react';
 import { type RevealRenderTarget } from '../../architecture/base/renderTarget/RevealRenderTarget';

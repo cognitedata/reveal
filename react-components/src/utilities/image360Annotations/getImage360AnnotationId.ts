@@ -1,6 +1,3 @@
-/*!
- * Copyright 2025 Cognite AS
- */
 import { assertNever } from '../assertNever';
 import { isClassicImage360Annotation, isDMImage360Annotation } from './typeGuards';
 import { type Image360AnnotationContent, type Image360AnnotationId } from './types';

@@ -1,7 +1,3 @@
-/*!
- * Copyright 2024 Cognite AS
- */
-
 import { type TableExpressionLeafFilter, type QueryRequest } from '@cognite/sdk';
 import { type Source, type InstanceFilter, type DmsUniqueIdentifier } from '../FdmSDK';
 import { cogniteAssetSourceWithProperties } from './cogniteAssetSourceWithProperties';

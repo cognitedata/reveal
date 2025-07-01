@@ -1,6 +1,3 @@
-/*!
- * Copyright 2024 Cognite AS
- */
 import { type CogniteClient, type Asset, type IdEither } from '@cognite/sdk';
 import { uniqBy, chunk, partition, uniqWith } from 'lodash';
 import { isDefined } from '../../utilities/isDefined';

@@ -1,6 +1,3 @@
-/*!
- * Copyright 2024 Cognite AS
- */
 import { type BaseCommand } from './BaseCommand';
 import { RenderTargetCommand } from './RenderTargetCommand';
 

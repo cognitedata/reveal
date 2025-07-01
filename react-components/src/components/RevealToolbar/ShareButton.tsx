@@ -1,7 +1,3 @@
-/*!
- * Copyright 2023 Cognite AS
- */
-
 import { type ReactElement } from 'react';
 import { useTranslation } from '../i18n/I18n';
 import { Button, Tooltip as CogsTooltip, ShareIcon } from '@cognite/cogs.js';

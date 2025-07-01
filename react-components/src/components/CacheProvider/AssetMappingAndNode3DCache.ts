@@ -1,7 +1,3 @@
-/*!
- * Copyright 2023 Cognite AS
- */
-
 import { type CogniteClient, type Node3D, type CogniteInternalId } from '@cognite/sdk';
 import {
   type ModelTreeIndexKey,

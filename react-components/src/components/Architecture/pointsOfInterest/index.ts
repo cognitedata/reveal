@@ -1,6 +1,3 @@
-/*!
- * Copyright 2024 Cognite AS
- */
 export { PoiInfoPanelContent } from './PoiInfoPanelContent';
 export { useFilterPointsOfInterest } from './useFilterPointsOfInterest';
 export { usePoiDomainObject } from './usePoiDomainObject';

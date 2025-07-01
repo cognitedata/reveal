@@ -1,6 +1,3 @@
-/*!
- * Copyright 2023 Cognite AS
- */
 import { type ReactNode, type PropsWithChildren, type FC, type ReactElement } from 'react';
 
 import styled, { css } from 'styled-components';

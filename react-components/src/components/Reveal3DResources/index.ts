@@ -1,7 +1,3 @@
-/*!
- * Copyright 2024 Cognite AS
- */
-
 export { Reveal3DResources } from './Reveal3DResources';
 export type {
   Reveal3DResourcesProps,

@@ -1,7 +1,3 @@
-/*!
- * Copyright 2024 Cognite AS
- */
-
 export { RevealContainer } from './RevealContainer/RevealContainer';
 export { Image360HistoricalDetails } from './Image360HistoricalDetails/Image360HistoricalDetails';
 export { Image360Details } from './Image360Details/Image360Details';

@@ -1,7 +1,3 @@
-/*!
- * Copyright 2024 Cognite AS
- */
-
 import { type RevealRenderTarget } from '../renderTarget/RevealRenderTarget';
 import { ThreeView } from '../views/ThreeView';
 import { VisibleState } from '../domainObjectsHelpers/VisibleState';
@@ -162,6 +158,6 @@ export abstract class VisualDomainObject extends DomainObject {
 
 export type CreateDraggerProps = {
   intersection: DomainObjectIntersection;
-  point: Vector3;
-  ray: Ray;
+  point: Vector3; // In CDF coordinates
+  ray: Ray; // In CDF coordinates
 };

@@ -1,7 +1,3 @@
-/*!
- * Copyright 2023 Cognite AS
- */
-
 import { AnnotationsDomainObject } from './concrete/annotations/AnnotationsDomainObject';
 import { AnnotationsView } from './concrete/annotations/AnnotationsView';
 import { AxisDomainObject } from './concrete/axis/AxisDomainObject';

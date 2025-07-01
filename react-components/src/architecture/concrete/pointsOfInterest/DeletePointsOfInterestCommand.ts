@@ -1,6 +1,3 @@
-/*!
- * Copyright 2024 Cognite AS
- */
 import { type TranslationInput } from '../../base/utilities/TranslateInput';
 import { type ButtonType } from '../../../components/Architecture/types';
 import { PointsOfInterestCommand } from './PointsOfInterestCommand';

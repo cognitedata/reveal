@@ -1,7 +1,3 @@
-/*!
- * Copyright 2025 Cognite AS
- */
-
 import { useContext } from 'react';
 import {
   Reveal3DResourcesContext,

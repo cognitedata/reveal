@@ -14,7 +14,6 @@ import { TestSectionCommand } from '#test-utils/architecture/commands/TestSectio
 import { DividerCommand } from '../../architecture/base/commands/DividerCommand';
 import { TestSliderCommand } from '#test-utils/architecture/commands/TestSliderCommand';
 import { TestFilterCommand } from '#test-utils/architecture/commands/TestFilterCommand';
-import { getTranslationKeyOrString } from '#test-utils/architecture/getTranslationKeyOrString';
 import { TestOptionsCommand } from '#test-utils/architecture/commands/TestOptionsCommand';
 
 let wrapper: (props: PropsWithChildren) => ReactElement;
@@ -102,7 +101,7 @@ describe(SettingsButton.name, () => {
 
   test('renders filter button with label in panel', async () => {
     const filterCommand = new TestFilterCommand();
-    const label = filterCommand.getLabel(getTranslationKeyOrString);
+    const label = filterCommand.label;
 
     settingsCommand.add(filterCommand);
 
@@ -121,7 +120,7 @@ describe(SettingsButton.name, () => {
 
   test('renders options button with label in panel', async () => {
     const optionsCommand = new TestOptionsCommand();
-    const label = optionsCommand.getLabel(getTranslationKeyOrString);
+    const label = optionsCommand.label;
 
     settingsCommand.add(optionsCommand);
 

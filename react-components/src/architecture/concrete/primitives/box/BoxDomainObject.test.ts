@@ -1,8 +1,4 @@
-/*!
- * Copyright 2025 Cognite AS
- */
-
-import { describe, expect, test } from 'vitest';
+import { assert, describe, expect, test } from 'vitest';
 import { MeasureBoxDomainObject } from '../../measurements/MeasureBoxDomainObject';
 import { PrimitiveType } from '../../../base/utilities/primitives/PrimitiveType';
 import { isEmpty } from '../../../base/utilities/TranslateInput';
@@ -10,10 +6,10 @@ import { Box } from '../../../base/utilities/primitives/Box';
 import { SolidPrimitiveRenderStyle } from '../common/SolidPrimitiveRenderStyle';
 import { Changes } from '../../../base/domainObjectsHelpers/Changes';
 import { Quantity } from '../../../base/domainObjectsHelpers/Quantity';
-import { type BoxDomainObject } from './BoxDomainObject';
+import { BoxDomainObject } from './BoxDomainObject';
 
-describe('BoxDomainObject', () => {
-  test('Should be empty', () => {
+describe(BoxDomainObject.name, () => {
+  test('should initialize with correct default values', () => {
     for (const primitiveType of [
       PrimitiveType.Box,
       PrimitiveType.HorizontalArea,
@@ -70,10 +66,8 @@ describe('BoxDomainObject', () => {
       expect(domainObject.hasPanelInfo).toBe(true);
       const info = domainObject.getPanelInfo();
       expect(info).toBeDefined();
-      if (info === undefined) {
-        return;
-      }
-      expect(info.items.filter((a) => a.quantity === quantity)).toHaveLength(expectedItems);
+      assert(info !== undefined);
+      expect(info.getItemsByQuantity(quantity)).toHaveLength(expectedItems);
     }
   });
 });

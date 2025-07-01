@@ -1,7 +1,3 @@
-/*!
- * Copyright 2023 Cognite AS
- */
-
 import { type DataSourceType, type Cognite3DViewer, type Image360 } from '@cognite/reveal';
 import { type ReactElement, useEffect, useRef, useState } from 'react';
 import { Image360HistoricalPanel } from './Panel/Image360HistoricalPanel';

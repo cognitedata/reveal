@@ -1,7 +1,3 @@
-/*!
- * Copyright 2024 Cognite AS
- */
-
 /**
  * Returns the appropriate CSS cursor value based on the given octant.
  *

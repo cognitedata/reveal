@@ -1,7 +1,3 @@
-/*!
- * Copyright 2024 Cognite AS
- */
-
 export { use3dModels } from './use3dModels';
 export { useCameraNavigation } from './useCameraNavigation';
 export { useClickedNodeData } from './useClickedNode';

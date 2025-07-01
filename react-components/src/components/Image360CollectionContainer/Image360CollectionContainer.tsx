@@ -1,6 +1,3 @@
-/*!
- * Copyright 2023 Cognite AS
- */
 import { type ReactElement, useEffect, useRef } from 'react';
 import { useRenderTarget } from '../RevealCanvas/ViewerContext';
 import { type DataSourceType, type Image360Collection } from '@cognite/reveal';

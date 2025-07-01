@@ -1,7 +1,3 @@
-/*!
- * Copyright 2024 Cognite AS
- */
-
 import { type Dispatch, type SetStateAction, type ReactElement } from 'react';
 import { SelectPanel } from '@cognite/cogs-lab';
 import { Button, LayersIcon, Tooltip } from '@cognite/cogs.js';

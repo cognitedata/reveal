@@ -1,7 +1,3 @@
-/*!
- * Copyright 2024 Cognite AS
- */
-
 import { clear } from '../utilities/extensions/arrayExtensions';
 import { type BaseCommand } from './BaseCommand';
 import { RenderTargetCommand } from './RenderTargetCommand';
@@ -26,9 +22,6 @@ export abstract class BaseSettingsCommand extends RenderTargetCommand {
   // ==================================================
 
   protected override *getChildren(): Generator<BaseCommand> {
-    if (this._children === undefined) {
-      return;
-    }
     for (const child of this._children) {
       yield child;
     }

@@ -1,9 +1,6 @@
-/*!
- * Copyright 2024 Cognite AS
- */
-
 import { type IconName } from '../utilities/IconName';
-import { type TranslateDelegate, type TranslationInput } from '../utilities/TranslateInput';
+import { type TranslationInput } from '../utilities/TranslateInput';
+import { translate } from '../utilities/translateUtils';
 import { Quantity } from './Quantity';
 
 type PanelItemProps = {
@@ -19,6 +16,10 @@ export class PanelInfo {
     const item = new NumberPanelItem(props);
     this.items.push(item);
   }
+
+  public getItemsByQuantity(quantity: Quantity): NumberPanelItem[] {
+    return this.items.filter((a) => a.quantity === quantity);
+  }
 }
 
 export class PanelItem {
@@ -28,7 +29,7 @@ export class PanelItem {
     this.translationInput = props;
   }
 
-  public getText(translate: TranslateDelegate): string | undefined {
+  public getText(): string | undefined {
     return translate(this.translationInput);
   }
 }

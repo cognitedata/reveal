@@ -1,7 +1,3 @@
-/*!
- * Copyright 2024 Cognite AS
- */
-
 import { Vector3 } from 'three';
 import { Range1 } from '../../../base/utilities/geometry/Range1';
 import { type RegularGrid2 } from './RegularGrid2';

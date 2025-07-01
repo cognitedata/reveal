@@ -1,7 +1,3 @@
-/*!
- * Copyright 2024 Cognite AS
- */
-
 export type SetCounterDelegate = (counter: number) => void;
 
 export class AnchoredDialogUpdater {

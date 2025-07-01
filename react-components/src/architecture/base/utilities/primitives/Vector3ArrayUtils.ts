@@ -1,7 +1,3 @@
-/*!
- * Copyright 2024 Cognite AS
- */
-
 import { Box3, Vector3 } from 'three';
 import { getHorizontalCrossProduct } from '../extensions/vectorExtensions';
 

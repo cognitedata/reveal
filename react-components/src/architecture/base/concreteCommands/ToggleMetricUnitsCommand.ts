@@ -1,7 +1,3 @@
-/*!
- * Copyright 2024 Cognite AS
- */
-
 import { type IconName } from '../../base/utilities/IconName';
 import { RenderTargetCommand } from '../commands/RenderTargetCommand';
 import { Changes } from '../domainObjectsHelpers/Changes';
@@ -31,6 +27,7 @@ export class ToggleMetricUnitsCommand extends RenderTargetCommand {
   protected override invokeCore(): boolean {
     const unitSystem = this.rootDomainObject.unitSystem;
     unitSystem.isMetric = !unitSystem.isMetric;
+    this.rootDomainObject.notify(Changes.unit);
     this.rootDomainObject.notifyDescendants(Changes.unit);
     return true;
   }

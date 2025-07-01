@@ -1,7 +1,3 @@
-/*!
- * Copyright 2024 Cognite AS
- */
-
 /* eslint-disable @typescript-eslint/consistent-type-imports */
 import {
   BufferGeometry,

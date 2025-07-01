@@ -1,6 +1,3 @@
-/*!
- * Copyright 2024 Cognite AS
- */
 import { type AddModelOptions, type DataSourceType } from '@cognite/reveal';
 import { type FdmCadConnection } from '../../components/CacheProvider/types';
 import { type Fdm3dDataProvider } from '../Fdm3dDataProvider';
@@ -102,7 +99,8 @@ export class LegacyFdm3dDataProvider implements Fdm3dDataProvider {
   async filterNodesByMappedTo3d(
     nodes: InstancesWithViewDefinition[],
     models: Array<AddModelOptions<DataSourceType> | AddImage360CollectionDatamodelsOptions>,
-    spacesToSearch: string[]
+    spacesToSearch: string[],
+    includeIndirectRelations: boolean
   ): Promise<InstancesWithView[]> {
     const classicModels = models.filter((model) => isClassicIdentifier(model));
 
@@ -121,7 +119,8 @@ export class LegacyFdm3dDataProvider implements Fdm3dDataProvider {
       this._fdmSdk,
       transformedNodes,
       classicModels,
-      spacesToSearch
+      spacesToSearch,
+      includeIndirectRelations
     );
   }
 

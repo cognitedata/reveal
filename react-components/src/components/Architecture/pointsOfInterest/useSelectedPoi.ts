@@ -1,9 +1,6 @@
-/*!
- * Copyright 2024 Cognite AS
- */
 import { useState } from 'react';
 import { type PointOfInterest } from '../../../architecture';
-import { useOnUpdateDomainObject } from '../useOnUpdate';
+import { useOnUpdateDomainObject } from '../hooks/useOnUpdate';
 import { usePoiDomainObject } from './usePoiDomainObject';
 
 export function useSelectedPoi(): PointOfInterest<any> | undefined {

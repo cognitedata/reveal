@@ -1,7 +1,3 @@
-/*!
- * Copyright 2024 Cognite AS
- */
-
 import { Quaternion, type Vector2Like, Vector3 } from 'three';
 import { Vector3ArrayUtils } from '../../base/utilities/primitives/Vector3ArrayUtils';
 

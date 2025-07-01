@@ -1,6 +1,3 @@
-/*!
- * Copyright 2024 Cognite AS
- */
 import { VisibleState } from '../../base/domainObjectsHelpers/VisibleState';
 import { type TranslationInput } from '../../base/utilities/TranslateInput';
 import { PointsOfInterestCommand } from './PointsOfInterestCommand';

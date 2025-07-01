@@ -1,7 +1,3 @@
-/*!
- * Copyright 2024 Cognite AS
- */
-
 import { type DomainObject } from '../../base/domainObjects/DomainObject';
 import { type RenderStyle } from '../../base/renderStyles/RenderStyle';
 import { PrimitiveType } from '../../base/utilities/primitives/PrimitiveType';
@@ -58,6 +54,10 @@ export class Image360AnnotationDomainObject extends LineDomainObject {
       default:
         return new Color(Color.NAMES.gray);
     }
+  }
+
+  public override get canChangeColor(): boolean {
+    return false;
   }
 
   public override get typeName(): TranslationInput {

@@ -1,7 +1,4 @@
-/*!
- * Copyright 2025 Cognite AS
- */
-import { describe, test, expect, beforeEach, vi } from 'vitest';
+import { describe, test, expect, beforeEach } from 'vitest';
 import { type Asset, type IdEither } from '@cognite/sdk';
 import {
   fetchAssetsForAssetIds,
@@ -22,11 +19,10 @@ import {
 describe('AnnotationModelUtils', () => {
   let assets: Asset[];
   beforeEach(() => {
-    vi.resetAllMocks();
     assets = [createAssetMock(1), createAssetMock(2)];
   });
 
-  describe('fetchAssetsForAssetIds', () => {
+  describe(fetchAssetsForAssetIds.name, () => {
     test('should fetch assets for given asset IDs', async () => {
       const assetIds: IdEither[] = [{ id: 1 }, { id: 2 }];
       retrieveMock.mockResolvedValueOnce(assets);
@@ -56,7 +52,7 @@ describe('AnnotationModelUtils', () => {
     });
   });
 
-  describe('fetchAssetsForAssetReferences', () => {
+  describe(fetchAssetsForAssetReferences.name, () => {
     test('should fetch assets for given asset references', async () => {
       const dmAssets: ExternalIdsResultList<AssetProperties> =
         createDMAssetMock('asset-external-id1');
@@ -80,7 +76,7 @@ describe('AnnotationModelUtils', () => {
     });
   });
 
-  describe('fetchPointCloudAnnotationAssets', () => {
+  describe(fetchPointCloudAnnotationAssets.name, () => {
     test('should fetch assets for given point cloud annotations', async () => {
       const assetRef = { id: 1 };
       const annotations: PointCloudAnnotationModel[] = [

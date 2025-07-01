@@ -1,7 +1,3 @@
-/*!
- * Copyright 2024 Cognite AS
- */
-
 import { type BaseCommand } from '../../src/architecture/base/commands/BaseCommand';
 import { SetTerrainVisibleCommand } from '../../src/architecture/concrete/terrain/SetTerrainVisibleCommand';
 import { UpdateTerrainCommand } from '../../src/architecture/concrete/terrain/UpdateTerrainCommand';
@@ -65,8 +61,8 @@ export class StoryBookConfig extends BaseRevealConfig {
       new ToggleMetricUnitsCommand(),
       new SettingsCommand(),
       undefined,
-      new Image360AnnotationSelectTool(),
-      new Image360AnnotationCreateTool(),
+      new Image360AnnotationSelectTool(false),
+      new Image360AnnotationCreateTool(false),
       undefined,
       new MeasurementTool(),
       new ClipTool(),

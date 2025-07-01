@@ -1,6 +1,3 @@
-/*!
- * Copyright 2025 Cognite AS
- */
 import { createFdmKey } from '../../components/CacheProvider/idAndKeyTranslation';
 import { assertNever } from '../assertNever';
 import { isDmsInstance, isExternalId, isInternalId } from './typeGuards';

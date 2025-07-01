@@ -1,7 +1,3 @@
-/*!
- * Copyright 2025 Cognite AS
- */
-
 import { describe, expect, test } from 'vitest';
 import {
   PlanePrimitiveTypes,
@@ -15,10 +11,10 @@ import { Vector3 } from 'three';
 import { SolidPrimitiveRenderStyle } from '../common/SolidPrimitiveRenderStyle';
 import { type DomainObject } from '../../../base/domainObjects/DomainObject';
 import { isGreyScale } from '../../../base/utilities/colors/colorExtensions';
-import { createFullRenderTargetMock } from '../../../../../tests/tests-utilities/fixtures/createFullRenderTargetMock';
+import { createFullRenderTargetMock } from '#test-utils/fixtures/createFullRenderTargetMock';
 
 describe(PlaneDomainObject.name, () => {
-  test('should be empty', () => {
+  test('should initialize with correct default values', () => {
     for (const primitiveType of PlanePrimitiveTypes) {
       const domainObject = createPlaneDomainObjectMock(primitiveType);
       expect(domainObject.primitiveType).toBe(primitiveType);

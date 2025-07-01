@@ -1,6 +1,3 @@
-/*!
- * Copyright 2023 Cognite AS
- */
 import { type ReactElement, useEffect, useMemo } from 'react';
 import { type Reveal3DResourcesProps, type CadModelOptions } from './types';
 import { EMPTY_ARRAY } from '../../utilities/constants';

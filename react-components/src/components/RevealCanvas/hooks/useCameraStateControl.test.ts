@@ -1,7 +1,4 @@
-/*!
- * Copyright 2025 Cognite AS
- */
-import { describe, expect, test, vi, beforeEach, beforeAll, afterAll } from 'vitest';
+import { describe, expect, test, vi, beforeAll, afterAll } from 'vitest';
 
 import { renderHook } from '@testing-library/react';
 
@@ -15,10 +12,6 @@ vi.mock('../ViewerContext', () => ({
 }));
 
 describe(useCameraStateControl.name, () => {
-  beforeEach(() => {
-    vi.resetAllMocks();
-  });
-
   beforeAll(() => {
     vi.useFakeTimers();
   });
@@ -82,10 +75,33 @@ describe(useCameraStateControl.name, () => {
     });
   });
 
-  test('provided setter is called after updating camera state internally for each parameter', () => {
+  test('provided setter is called after updating camera state position', () => {
     const setter = vi.fn<(cameraState?: CameraStateParameters) => void>();
 
-    const { rerender } = renderHook(() => {
+    renderHook(() => {
+      useCameraStateControl(
+        {
+          position: new Vector3(0, 0, 0),
+          target: new Vector3(1, 1, 1),
+          rotation: new Quaternion(0, 0, 0, 1)
+        },
+        setter
+      );
+    });
+    // position
+    viewerMock.cameraManager.setCameraState({
+      position: new Vector3(1, 0, 0),
+      target: new Vector3(1, 1, 1),
+      rotation: new Quaternion(0, 0, 0, 1)
+    });
+    vi.runAllTimers();
+    // The setter should be called twice: once for the initial state and once for the updated state
+    expect(setter).toHaveBeenCalledTimes(2);
+  });
+
+  test('provided setter is called after updating camera state target', () => {
+    const setter = vi.fn<(cameraState?: CameraStateParameters) => void>();
+    renderHook(() => {
       useCameraStateControl(
         {
           position: new Vector3(0, 0, 0),
@@ -96,25 +112,29 @@ describe(useCameraStateControl.name, () => {
       );
     });
 
-    vi.runAllTimers();
-
-    // position
-    viewerMock.cameraManager.setCameraState({
-      position: new Vector3(1, 0, 0),
-      target: new Vector3(1, 1, 1),
-      rotation: new Quaternion(0, 0, 0, 1)
-    });
-
-    rerender();
-
     // target
     viewerMock.cameraManager.setCameraState({
       position: new Vector3(0, 0, 0),
       target: new Vector3(0, 0, 1),
       rotation: new Quaternion(0, 0, 0, 1)
     });
+    vi.runAllTimers();
+    // The setter should be called twice: once for the initial state and once for the updated state
+    expect(setter).toHaveBeenCalledTimes(2);
+  });
 
-    rerender();
+  test('provided setter is called after updating camera state rotation', () => {
+    const setter = vi.fn<(cameraState?: CameraStateParameters) => void>();
+    renderHook(() => {
+      useCameraStateControl(
+        {
+          position: new Vector3(0, 0, 0),
+          target: new Vector3(1, 1, 1),
+          rotation: new Quaternion(0, 0, 0, 1)
+        },
+        setter
+      );
+    });
 
     // rotation
     viewerMock.cameraManager.setCameraState({
@@ -122,10 +142,9 @@ describe(useCameraStateControl.name, () => {
       target: new Vector3(1, 1, 1),
       rotation: new Quaternion(0.1, 0.01, 0, 0.995)
     });
-
-    rerender();
     vi.runAllTimers();
 
-    expect(setter).toHaveBeenCalledTimes(3);
+    // The setter should be called twice: once for the initial state and once for the updated state
+    expect(setter).toHaveBeenCalledTimes(2);
   });
 });

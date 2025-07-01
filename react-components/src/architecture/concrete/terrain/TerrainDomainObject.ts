@@ -1,7 +1,3 @@
-/*!
- * Copyright 2024 Cognite AS
- */
-
 import { VisualDomainObject } from '../../base/domainObjects/VisualDomainObject';
 import { TerrainRenderStyle } from './TerrainRenderStyle';
 import { type RegularGrid2 } from './geometry/RegularGrid2';

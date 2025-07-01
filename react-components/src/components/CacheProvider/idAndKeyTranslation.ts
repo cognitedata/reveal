@@ -1,7 +1,3 @@
-/*!
- * Copyright 2023 Cognite AS
- */
-
 import { type DmsUniqueIdentifier } from '../../data-providers/FdmSDK';
 import {
   type FdmKey,

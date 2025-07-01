@@ -1,7 +1,3 @@
-/*!
- * Copyright 2024 Cognite AS
- */
-
 import { isEmpty } from 'lodash';
 import { Quantity } from '../domainObjectsHelpers/Quantity';
 

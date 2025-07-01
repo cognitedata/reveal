@@ -1,7 +1,3 @@
-/*!
- * Copyright 2024 Cognite AS
- */
-
 import { ColorType } from '../../../base/domainObjectsHelpers/ColorType';
 import { Color } from 'three';
 import { WHITE_COLOR } from '../../../base/utilities/colors/colorExtensions';

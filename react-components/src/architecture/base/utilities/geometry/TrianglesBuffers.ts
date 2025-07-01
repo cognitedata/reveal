@@ -1,6 +1,3 @@
-/*!
- * Copyright 2024 Cognite AS
- */
 import { BufferGeometry, Float32BufferAttribute, Uint32BufferAttribute, type Vector3 } from 'three';
 
 export class TrianglesBuffers {

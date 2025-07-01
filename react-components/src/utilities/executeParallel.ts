@@ -1,6 +1,3 @@
-/*!
- * Copyright 2024 Cognite AS
- */
 export async function executeParallel<T>(
   callbacks: Array<() => Promise<T>>,
   maxParallel: number

@@ -1,7 +1,3 @@
-/*!
- * Copyright 2023 Cognite AS
- */
-
 import styled from 'styled-components';
 import { type ReactElement, useMemo } from 'react';
 import { ImageOffIcon, LoaderIcon } from '@cognite/cogs.js';

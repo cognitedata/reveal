@@ -1,10 +1,7 @@
-/*!
- * Copyright 2024 Cognite AS
- */
 import { useState } from 'react';
 import { type PointOfInterest } from '../../../architecture';
 import { EMPTY_ARRAY } from '../../../utilities/constants';
-import { useOnUpdateDomainObject } from '../useOnUpdate';
+import { useOnUpdateDomainObject } from '../hooks/useOnUpdate';
 import { usePoiDomainObject } from './usePoiDomainObject';
 
 export const usePointsOfInterest = (): Array<PointOfInterest<unknown>> => {

@@ -1,6 +1,3 @@
-/*!
- * Copyright 2024 Cognite AS
- */
 import { type CdfAssetMapping, type ModelAssetIdKey } from './types';
 
 export class AssetMappingPerAssetIdCache {

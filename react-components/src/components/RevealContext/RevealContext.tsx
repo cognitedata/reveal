@@ -1,6 +1,3 @@
-/*!
- * Copyright 2024 Cognite AS
- */
 import { Cognite3DViewer, type DataSourceType, type Cognite3DViewerOptions } from '@cognite/reveal';
 import { type CogniteClient } from '@cognite/sdk';
 import { type ReactNode, useEffect, useMemo, useState, type ReactElement } from 'react';

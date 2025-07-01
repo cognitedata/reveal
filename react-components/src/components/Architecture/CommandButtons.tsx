@@ -1,7 +1,3 @@
-/*!
- * Copyright 2024 Cognite AS
- */
-
 import { useMemo, type ReactElement } from 'react';
 import { Divider } from '@cognite/cogs.js';
 import { type BaseCommand } from '../../architecture/base/commands/BaseCommand';
@@ -46,7 +42,7 @@ export function createButton(command: BaseCommand, placement: PlacementType): Re
   }
 
   if (command instanceof BaseInputCommand) {
-    return <InputField key={command.uniqueId} inputCommand={command} placement={placement} />;
+    return <InputField key={command.uniqueId} inputCommand={command} />;
   }
 
   if (command instanceof CustomBaseInputCommand) {

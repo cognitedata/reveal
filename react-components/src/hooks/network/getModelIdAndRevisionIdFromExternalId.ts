@@ -1,7 +1,3 @@
-/*!
- * Copyright 2024 Cognite AS
- */
-
 import { type QueryRequest } from '@cognite/sdk';
 import { COGNITE_3D_REVISION_SOURCE } from '../../data-providers/core-dm-provider/dataModels';
 import { getNodeExternalIdEqualsFilter, getNodeSpaceEqualsFilter } from './utils';

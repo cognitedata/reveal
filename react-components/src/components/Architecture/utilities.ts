@@ -1,7 +1,3 @@
-/*!
- * Copyright 2024 Cognite AS
- */
-
 import { type BaseCommand } from '../../architecture/base/commands/BaseCommand';
 import { type RevealRenderTarget } from '../../architecture/base/renderTarget/RevealRenderTarget';
 import { RenderTargetCommand } from '../../architecture/base/commands/RenderTargetCommand';

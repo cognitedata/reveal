@@ -1,6 +1,3 @@
-/*!
- * Copyright 2023 Cognite AS
- */
 import {
   type AnnotationsTypesImagesAssetLink,
   type CogniteInternalId,

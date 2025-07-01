@@ -1,7 +1,3 @@
-/*!
- * Copyright 2024 Cognite AS
- */
-
 import { Flex, Avatar, TextLabel } from '@cognite/cogs.js';
 import { type ReactNode, useMemo } from 'react';
 import { type PointOfInterest } from '../../../architecture';

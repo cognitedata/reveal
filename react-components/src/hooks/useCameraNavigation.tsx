@@ -1,7 +1,3 @@
-/*!
- * Copyright 2023 Cognite AS
- */
-
 import { type CameraState, type CogniteCadModel } from '@cognite/reveal';
 import { useReveal } from '../components/RevealCanvas/ViewerContext';
 import { Box3 } from 'three';

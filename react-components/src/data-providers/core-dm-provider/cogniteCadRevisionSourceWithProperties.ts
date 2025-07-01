@@ -1,6 +1,3 @@
-/*!
- * Copyright 2024 Cognite AS
- */
 import { type SourceSelectorV3 } from '@cognite/sdk';
 import { COGNITE_CAD_REVISION_SOURCE } from './dataModels';
 

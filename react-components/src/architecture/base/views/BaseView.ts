@@ -1,7 +1,3 @@
-/*!
- * Copyright 2024 Cognite AS
- */
-
 import { type DomainObject } from '../domainObjects/DomainObject';
 import { type DomainObjectChange } from '../domainObjectsHelpers/DomainObjectChange';
 

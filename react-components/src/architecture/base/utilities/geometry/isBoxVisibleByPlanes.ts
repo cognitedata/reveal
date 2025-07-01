@@ -1,7 +1,3 @@
-/*!
- * Copyright 2024 Cognite AS
- */
-
 import { type Box3, type Plane, Vector3 } from 'three';
 import { getCorners } from './getCorners';
 import { isPointVisibleByPlanes } from '@cognite/reveal';

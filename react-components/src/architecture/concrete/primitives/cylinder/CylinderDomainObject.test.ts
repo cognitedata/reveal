@@ -1,19 +1,15 @@
-/*!
- * Copyright 2025 Cognite AS
- */
-
-import { describe, expect, test } from 'vitest';
+import { assert, describe, expect, test } from 'vitest';
 import { PrimitiveType } from '../../../base/utilities/primitives/PrimitiveType';
 import { isEmpty } from '../../../base/utilities/TranslateInput';
 import { SolidPrimitiveRenderStyle } from '../common/SolidPrimitiveRenderStyle';
 import { Quantity } from '../../../base/domainObjectsHelpers/Quantity';
-import { type CylinderDomainObject } from './CylinderDomainObject';
+import { CylinderDomainObject } from './CylinderDomainObject';
 import { Cylinder } from '../../../base/utilities/primitives/Cylinder';
 import { Changes } from '../../../base/domainObjectsHelpers/Changes';
 import { MeasureCylinderDomainObject } from '../../measurements/MeasureCylinderDomainObject';
 
-describe('CylinderDomainObject', () => {
-  test('Should be empty', () => {
+describe(CylinderDomainObject, () => {
+  test('should initialize with correct default values', () => {
     for (const primitiveType of [
       PrimitiveType.Cylinder,
       PrimitiveType.HorizontalCylinder,
@@ -59,10 +55,8 @@ describe('CylinderDomainObject', () => {
       expect(domainObject.hasPanelInfo).toBe(true);
       const info = domainObject.getPanelInfo();
       expect(info).toBeDefined();
-      if (info === undefined) {
-        return;
-      }
-      expect(info.items.filter((a) => a.quantity === quantity)).toHaveLength(expectedItems);
+      assert(info !== undefined);
+      expect(info.getItemsByQuantity(quantity)).toHaveLength(expectedItems);
     }
   });
 });

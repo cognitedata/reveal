@@ -1,7 +1,3 @@
-/*!
- * Copyright 2024 Cognite AS
- */
-
 import { type UseQueryResult, useQuery } from '@tanstack/react-query';
 import {
   type Image360AnnotationAssetInfo,

@@ -1,6 +1,3 @@
-/*!
- * Copyright 2024 Cognite AS
- */
 import { type IdEither } from '@cognite/sdk';
 import { type DmsUniqueIdentifier } from '../data-providers';
 

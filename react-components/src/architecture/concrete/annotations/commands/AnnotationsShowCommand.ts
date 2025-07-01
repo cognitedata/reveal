@@ -1,7 +1,3 @@
-/*!
- * Copyright 2024 Cognite AS
- */
-
 import { ShowAllDomainObjectsCommand } from '../../../base/commands/ShowAllDomainObjectsCommand';
 import { type DomainObject } from '../../../base/domainObjects/DomainObject';
 import { type TranslationInput } from '../../../base/utilities/TranslateInput';

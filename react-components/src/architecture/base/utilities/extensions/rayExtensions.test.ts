@@ -3,7 +3,7 @@ import { describe, test } from 'vitest';
 import { getClosestPointOnLine } from './rayExtensions';
 import { expectEqualVector3 } from '#test-utils/primitives/primitiveTestUtil';
 
-describe('getClosestPointOnLine', () => {
+describe(getClosestPointOnLine.name, () => {
   test('should get closest when orthogonal', () => {
     const ray = new Ray(new Vector3(0, 0, 0), new Vector3(1, 0, 0)); // positive x axis
     const lineDirection = new Vector3(0, 0, 1);

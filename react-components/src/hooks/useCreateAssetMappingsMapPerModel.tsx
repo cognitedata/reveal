@@ -1,7 +1,3 @@
-/*!
- * Copyright 2024 Cognite AS
- */
-
 import { CogniteCadModel, type CogniteModel, type DataSourceType } from '@cognite/reveal';
 import { useMemo } from 'react';
 import { type ModelWithAssetMappings } from './cad/ModelWithAssetMappings';

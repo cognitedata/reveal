@@ -1,7 +1,3 @@
-/*!
- * Copyright 2023 Cognite AS
- */
-
 import { useMemo } from 'react';
 import { useSceneConfig } from './scenes/useSceneConfig';
 import { Vector3, Quaternion, Euler, MathUtils, Matrix4 } from 'three';

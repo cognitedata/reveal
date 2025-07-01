@@ -1,10 +1,7 @@
-/*!
- * Copyright 2024 Cognite AS
- */
 import { useState } from 'react';
 import { PointsOfInterestDomainObject } from '../../../architecture';
 import { useRenderTarget } from '../../RevealCanvas';
-import { useOnUpdateDomainObject } from '../useOnUpdate';
+import { useOnUpdateDomainObject } from '../hooks/useOnUpdate';
 
 export function usePoiDomainObject(): PointsOfInterestDomainObject<unknown> | undefined {
   const renderTarget = useRenderTarget();

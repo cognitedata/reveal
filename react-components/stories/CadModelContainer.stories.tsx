@@ -1,13 +1,10 @@
-/*!
- * Copyright 2023 Cognite AS
- */
 import type { Meta, StoryObj } from '@storybook/react';
 import { CadModelContainer, type CadModelStyling, useCameraNavigation } from '../src';
 import { Color, Matrix4 } from 'three';
 import { type AddModelOptions } from '@cognite/reveal';
 import { RevealStoryContainer } from './utilities/RevealStoryContainer';
 import { getAddModelOptionsFromUrl } from './utilities/getAddModelOptionsFromUrl';
-import { useRef, type ReactElement } from 'react';
+import { useRef, useState, type ReactElement } from 'react';
 import { signalStoryReadyForScreenshot } from './utilities/signalStoryReadyForScreenshot';
 
 const meta = {
@@ -46,14 +43,24 @@ export const Main: Story = {
     transform?: Matrix4;
     styling?: CadModelStyling;
   }) => {
+    const [enabled, setEnabled] = useState<boolean>(true);
     return (
-      <RevealStoryContainer color={new Color(0x4a4a4a)}>
-        <CadModelContainerStoryContent
-          addModelOptions={addModelOptions}
-          styling={styling}
-          transform={transform}
-        />
-      </RevealStoryContainer>
+      <>
+        <button
+          onClick={() => {
+            setEnabled((prev) => !prev);
+          }}>
+          {enabled ? 'Disable Models' : 'Enable Models'}
+        </button>
+        <RevealStoryContainer color={new Color(0x4a4a4a)}>
+          <CadModelContainerStoryContent
+            addModelOptions={addModelOptions}
+            styling={styling}
+            transform={transform}
+            enabled={enabled}
+          />
+        </RevealStoryContainer>
+      </>
     );
   }
 };
@@ -62,12 +69,14 @@ type CadModelContainerStoryContentProps = {
   addModelOptions: AddModelOptions;
   transform?: Matrix4;
   styling?: CadModelStyling;
+  enabled: boolean;
 };
 
 const CadModelContainerStoryContent = ({
   addModelOptions,
   transform,
-  styling
+  styling,
+  enabled
 }: CadModelContainerStoryContentProps): ReactElement => {
   const modelsLoadedRef = useRef(0);
   const cameraNavigationActions = useCameraNavigation();
@@ -80,8 +89,16 @@ const CadModelContainerStoryContent = ({
   };
   return (
     <>
-      <CadModelContainer addModelOptions={addModelOptions} styling={styling} onLoad={onLoad} />
-      <CadModelContainer addModelOptions={addModelOptions} transform={transform} onLoad={onLoad} />
+      {enabled ? (
+        <div>
+          <CadModelContainer addModelOptions={addModelOptions} styling={styling} onLoad={onLoad} />
+          <CadModelContainer
+            addModelOptions={addModelOptions}
+            transform={transform}
+            onLoad={onLoad}
+          />
+        </div>
+      ) : null}
     </>
   );
 };

@@ -1,6 +1,3 @@
-/*!
- * Copyright 2024 Cognite AS
- */
 import { useMemo } from 'react';
 import { useReveal } from '../components/RevealCanvas/ViewerContext';
 import { type DataSourceType, type Image360Collection } from '@cognite/reveal';

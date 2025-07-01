@@ -1,7 +1,3 @@
-/*!
- * Copyright 2024 Cognite AS
- */
-
 import { type Vector2, Vector3, Box3, type Plane, Line3 } from 'three';
 import { Range1 } from './Range1';
 import { square } from '../extensions/mathExtensions';

@@ -1,7 +1,3 @@
-/*!
- * Copyright 2024 Cognite AS
- */
-
 import { Button } from '@cognite/cogs.js';
 import { SelectPanel } from '@cognite/cogs-lab';
 import { type ModelHandler } from '../ModelHandler';

@@ -1,6 +1,3 @@
-/*!
- * Copyright 2025 Cognite AS
- */
 import {
   type AssetStylingGroupAndStyleIndex,
   type ColorRuleOutput,

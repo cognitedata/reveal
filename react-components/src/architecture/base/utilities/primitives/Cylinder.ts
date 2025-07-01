@@ -1,7 +1,3 @@
-/*!
- * Copyright 2024 Cognite AS
- */
-
 import { type Box3, Matrix4, Quaternion, type Ray, Vector3 } from 'three';
 import { Range3 } from '../geometry/Range3';
 import { square } from '../extensions/mathExtensions';

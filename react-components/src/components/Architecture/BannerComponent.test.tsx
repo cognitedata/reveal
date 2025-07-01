@@ -2,7 +2,6 @@ import { beforeEach, describe, expect, test } from 'vitest';
 import { BannerComponent } from './BannerComponent';
 import { render, screen } from '@testing-library/react';
 import { TestBannerCommand } from '#test-utils/architecture/commands/TestBannerCommand';
-import { getTranslationKeyOrString } from '#test-utils/architecture/getTranslationKeyOrString';
 import { BannerStatus } from '../../architecture/base/commands/BaseBannerCommand';
 import { RevealRenderTarget } from '../../architecture';
 import { type PropsWithChildren, type ReactElement } from 'react';
@@ -26,7 +25,7 @@ describe(BannerComponent.name, () => {
     const textContent = 'some-test-string';
 
     const testCommand = new TestBannerCommand({ content: { untranslated: textContent } });
-    render(<BannerComponent command={testCommand} t={getTranslationKeyOrString} />, { wrapper });
+    render(<BannerComponent command={testCommand} />, { wrapper });
 
     const element = await screen.findByText(textContent);
 
@@ -37,7 +36,7 @@ describe(BannerComponent.name, () => {
     const status = BannerStatus.Critical;
 
     const testCommand = new TestBannerCommand({ status });
-    render(<BannerComponent command={testCommand} t={getTranslationKeyOrString} />, { wrapper });
+    render(<BannerComponent command={testCommand} />, { wrapper });
 
     const bannerElement = await screen.findByRole('alert');
     expect([...bannerElement.classList]).toContain('cogs-lab-infobox-critical');

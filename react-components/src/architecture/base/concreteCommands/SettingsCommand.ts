@@ -1,7 +1,3 @@
-/*!
- * Copyright 2024 Cognite AS
- */
-
 import { type TranslationInput } from '../utilities/TranslateInput';
 import { type IconName } from '../utilities/IconName';
 
@@ -37,7 +33,6 @@ export class SettingsCommand extends BaseSettingsCommand {
     this.add(new SetQualitySliderCommand());
     this.add(new QualityWarningBannerCommand());
     this.add(new DividerCommand());
-
     this.add(new SetGhostModeCommand());
 
     if (includePois) {

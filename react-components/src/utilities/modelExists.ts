@@ -1,7 +1,3 @@
-/*!
- * Copyright 2024 Cognite AS
- */
-
 import {
   type CognitePointCloudModel,
   type Cognite3DViewer,

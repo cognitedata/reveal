@@ -1,7 +1,3 @@
-/*!
- * Copyright 2023 Cognite AS
- */
-
 import { type Node3D, type CogniteClient, type CogniteExternalId } from '@cognite/sdk';
 import { type Source, type FdmSDK, type DmsUniqueIdentifier } from '../../data-providers/FdmSDK';
 import { RevisionFdmNodeCache } from './RevisionFdmNodeCache';

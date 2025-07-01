@@ -1,7 +1,3 @@
-/*!
- * Copyright 2024 Cognite AS
- */
-
 import { Color } from 'three';
 import { PlaneDomainObject } from '../primitives/plane/PlaneDomainObject';
 import { PrimitiveType } from '../../base/utilities/primitives/PrimitiveType';

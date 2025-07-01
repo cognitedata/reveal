@@ -1,6 +1,3 @@
-/*!
- * Copyright 2025 Cognite AS
- */
 import { beforeEach, describe, expect, test } from 'vitest';
 import { TerrainDomainObject } from './TerrainDomainObject';
 import { createTerrainDomainObject } from './TerrainThreeView.test';

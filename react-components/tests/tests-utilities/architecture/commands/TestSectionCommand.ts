@@ -1,4 +1,4 @@
-import { type TranslateDelegate } from '../../../../src/architecture';
+import { type TranslationInput } from '../../../../src/architecture';
 import { SectionCommand } from '../../../../src/architecture/base/commands/SectionCommand';
 
 export class TestSectionCommand extends SectionCommand {
@@ -9,7 +9,7 @@ export class TestSectionCommand extends SectionCommand {
     this._content = content;
   }
 
-  public override getLabel(t: TranslateDelegate): string {
-    return t({ untranslated: this._content ?? 'Test section command' });
+  public override get tooltip(): TranslationInput {
+    return { untranslated: this._content ?? 'Test section command' };
   }
 }

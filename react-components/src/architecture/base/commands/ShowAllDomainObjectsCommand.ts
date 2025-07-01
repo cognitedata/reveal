@@ -1,7 +1,3 @@
-/*!
- * Copyright 2024 Cognite AS
- */
-
 import { type IconName } from '../../base/utilities/IconName';
 import { type TranslationInput } from '../utilities/TranslateInput';
 import { InstanceCommand } from './InstanceCommand';

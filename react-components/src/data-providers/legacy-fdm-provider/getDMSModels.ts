@@ -1,6 +1,3 @@
-/*!
- * Copyright 2024 Cognite AS
- */
 import { type DmsUniqueIdentifier, type FdmSDK, type Source } from '../FdmSDK';
 import {
   SYSTEM_SPACE_3D_MODEL_ID,

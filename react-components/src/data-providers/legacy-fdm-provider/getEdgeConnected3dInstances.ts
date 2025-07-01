@@ -1,6 +1,3 @@
-/*!
- * Copyright 2024 Cognite AS
- */
 import { SYSTEM_3D_EDGE_SOURCE } from './dataModels';
 import { type DmsUniqueIdentifier, type FdmSDK } from '../FdmSDK';
 import { type QueryRequest } from '@cognite/sdk';

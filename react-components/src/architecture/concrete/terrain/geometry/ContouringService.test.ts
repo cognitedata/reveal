@@ -1,6 +1,3 @@
-/*!
- * Copyright 2025 Cognite AS
- */
 import { beforeEach, describe, expect, test } from 'vitest';
 import { Index2 } from '../../../base/utilities/geometry/Index2';
 import { RegularGrid2 } from './RegularGrid2';
