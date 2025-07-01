@@ -59,7 +59,9 @@ describe(useDisposableSignal.name, () => {
 
     const newValue = 43;
 
-    act(() => testSignal(() => newValue));
+    act(() => {
+      testSignal(() => newValue);
+    });
 
     expect(result.current).toBe(newValue);
   });
