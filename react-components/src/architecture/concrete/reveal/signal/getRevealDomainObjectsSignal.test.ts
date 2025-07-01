@@ -1,7 +1,7 @@
 import { beforeEach, describe, expect, test, vi } from 'vitest';
 import { getRevealDomainUpdateSignal } from './getRevealDomainObjectsSignal';
 import { createRenderTargetMock } from '#test-utils/fixtures/renderTarget';
-import { RevealRenderTarget } from '../../../base/renderTarget/RevealRenderTarget';
+import { type RevealRenderTarget } from '../../../base/renderTarget/RevealRenderTarget';
 import { CadDomainObject } from '../cad/CadDomainObject';
 import { createCadMock } from '#test-utils/fixtures/cadModel';
 import { createImage360ClassicMock } from '#test-utils/fixtures/image360';
