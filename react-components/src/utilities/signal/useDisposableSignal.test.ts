@@ -1,6 +1,6 @@
 import { describe, expect, test, vi } from 'vitest';
 import { useDisposableSignal } from './useDisposableSignal';
-import { renderHook } from '@testing-library/react';
+import { act, renderHook } from '@testing-library/react';
 import { signal } from '@cognite/signals';
 import { type DisposableSignal } from './DisposableSignal';
 
@@ -59,7 +59,7 @@ describe(useDisposableSignal.name, () => {
 
     const newValue = 43;
 
-    testSignal(() => newValue);
+    act(() => testSignal(() => newValue));
 
     expect(result.current).toBe(newValue);
   });
