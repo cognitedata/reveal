@@ -1,4 +1,4 @@
-import { describe, expect, test, vi, beforeEach, assert } from 'vitest';
+import { describe, expect, test, beforeEach, assert } from 'vitest';
 import { type ReactElement, type ReactNode } from 'react';
 import { renderHook, waitFor } from '@testing-library/react';
 import { type UseQueryResult } from '@tanstack/react-query';
@@ -52,7 +52,6 @@ describe(useModelIdRevisionIdFromModelOptions.name, () => {
   );
 
   beforeEach(() => {
-    vi.resetAllMocks();
     dependencies.useFdmSdk.mockReturnValue(new FdmSDK(sdkMock));
     dependencies.useQueriedAddModelOptions.mockReturnValue([]);
   });

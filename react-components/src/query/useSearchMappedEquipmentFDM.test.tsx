@@ -85,7 +85,6 @@ const mockInstancesWithView: InstancesWithView[] = [
 
 describe(useSearchMappedEquipmentFDM.name, () => {
   beforeEach(() => {
-    vi.clearAllMocks();
     queryClient.clear();
 
     mockListMappedFdmNodes.mockResolvedValue(cadNodesFixtures);
@@ -190,7 +189,6 @@ describe(useSearchMappedEquipmentFDM.name, () => {
 
 describe(useFilterNodesByMappedToModelsCallback.name, () => {
   beforeEach(() => {
-    vi.clearAllMocks();
     queryClient.clear();
 
     mockListMappedFdmNodes.mockResolvedValue(cadNodesFixtures);
@@ -225,7 +223,6 @@ describe(useFilterNodesByMappedToModelsCallback.name, () => {
 
 describe(useAllMappedEquipmentFDM.name, () => {
   beforeEach(() => {
-    vi.clearAllMocks();
     queryClient.clear();
   });
 
