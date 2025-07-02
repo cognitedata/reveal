@@ -135,7 +135,7 @@ const StoryContent = ({ resources }: { resources: AddResourceOptions[] }): React
     } else {
       setStylingGroups([]);
     }
-  }, [nodeData]);
+  }, [nodeData, cameraNavigation]);
 
   return (
     <>

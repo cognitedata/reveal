@@ -67,7 +67,7 @@ export const usePointCloudVolumeMappingForAssetInstances = (
       ) ?? EMPTY_ARRAY;
 
     return result;
-  }, [classicModelOptions, assetInstanceRefs]);
+  }, [classicModelOptions, assetInstanceRefs, pointCloudVolumeResults]);
 };
 
 export const usePointCloudFdmVolumeMappingForIntersection = (

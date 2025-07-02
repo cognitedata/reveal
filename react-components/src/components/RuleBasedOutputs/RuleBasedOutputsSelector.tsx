@@ -82,7 +82,7 @@ export function RuleBasedOutputsSelector({
 
   useEffect(() => {
     onAllMappingsFetched(allMappingsLoaded);
-  }, [allMappingsLoaded]);
+  }, [allMappingsLoaded, onAllMappingsFetched]);
 
   const contextualizedAssetNodes = useConvertAssetMetadatasToLowerCase(allContextualizedAssets);
 
@@ -144,7 +144,13 @@ export function RuleBasedOutputsSelector({
     fdmMappings,
     contextualizedAssetNodes,
     assetIdsWithTimeseriesData,
-    models
+    models,
+    allMappingsLoaded,
+    flatAssetsMappingsListPerModel,
+    isLoadingAssetIdsAndTimeseriesData,
+    onAllMappingsFetched,
+    onRuleSetChanged,
+    timeseriesExternalIds.length
   ]);
 
   return <></>;

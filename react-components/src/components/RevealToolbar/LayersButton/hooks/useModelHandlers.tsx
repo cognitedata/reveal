@@ -52,7 +52,7 @@ export const useModelHandlers = (
     const newHandlers = createHandlers(models, modelNames.data, image360Collections, viewer);
     setDefaultConfigOnNewHandlers(newHandlers, modelHandlers, defaultLayersConfig);
     setModelHandlers(newHandlers);
-  }, [models, modelNames.data, image360Collections, viewer]);
+  }, [models, modelNames.data, image360Collections, viewer, modelHandlers, defaultLayersConfig]);
 
   const update = useCallback(
     (
@@ -67,7 +67,7 @@ export const useModelHandlers = (
 
       viewer.requestRedraw();
     },
-    [setExternalLayersState, models, modelNames.data, viewer]
+    [setExternalLayersState, modelNames.data, viewer]
   );
 
   return [

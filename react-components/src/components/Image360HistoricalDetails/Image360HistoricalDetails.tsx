@@ -66,7 +66,7 @@ export const Image360HistoricalDetails = ({
       });
       setImageUrls([]);
     };
-  }, [image360Entity]);
+  }, [image360Entity, imageUrls]);
 
   useEffect(() => {
     const newMinWidth = revisionDetailsExpanded ? '100%' : '100px';
@@ -74,7 +74,7 @@ export const Image360HistoricalDetails = ({
     if (onExpand !== undefined) {
       onExpand(revisionDetailsExpanded);
     }
-  }, [revisionDetailsExpanded]);
+  }, [revisionDetailsExpanded, onExpand]);
 
   return (
     <DetailsContainer style={{ minWidth }}>

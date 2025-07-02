@@ -85,13 +85,25 @@ export function PointCloudContainer({
         callback();
       });
     };
-  }, [modelId, revisionId]);
+  }, [
+    modelId,
+    revisionId,
+    addModelOptions,
+    transform,
+    onLoad,
+    onLoadError,
+    viewer,
+    setRevealResourcesCount,
+    setReveal3DResourceLoadFailCount,
+    addModel,
+    removeModel
+  ]);
 
   useEffect(() => {
     if (!modelExists(model, viewer) || transform === undefined) return;
 
     model.setModelTransformation(transform);
-  }, [transform, model]);
+  }, [transform, model, viewer]);
 
   useApplyPointCloudStyling(model, styling);
 

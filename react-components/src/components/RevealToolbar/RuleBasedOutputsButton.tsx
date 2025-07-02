@@ -66,7 +66,7 @@ export const RuleBasedOutputsButton = ({
     const hasNewRuleSetEnabled = newRuleSetEnabled !== undefined;
 
     setIsRuleLoading(hasNewRuleSetEnabled);
-  }, [newRuleSetEnabled]);
+  }, [newRuleSetEnabled, onRuleSetSelectedChanged]);
 
   useEffect(() => {
     const hasRuleLoading =
@@ -98,7 +98,15 @@ export const RuleBasedOutputsButton = ({
       setEmptyRuleSelected(emptySelection);
       setNewRuleSetEnabled(selectedRule);
     },
-    [ruleInstances, emptyRuleSelected, onRuleSetStylingChanged, onRuleSetSelectedChanged]
+    [
+      ruleInstances,
+      emptyRuleSelected,
+      onRuleSetStylingChanged,
+      onRuleSetSelectedChanged,
+      t,
+      emptyRuleSelected,
+      onRuleSetSelectedChanged
+    ]
   );
 
   const ruleSetStylingChanged = (

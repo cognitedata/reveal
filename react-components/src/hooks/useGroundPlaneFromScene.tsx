@@ -129,7 +129,7 @@ export const useGroundPlaneFromScene = (sceneExternalId: string, sceneSpaceId: s
 
       clear(groundMeshes);
     };
-  }, [groundPlaneTextures]);
+  }, [groundPlaneTextures, scene, viewer]);
 
   function groundPlaneUsesNewScaleFormat(lastUpdatedAt: string | undefined): boolean {
     if (lastUpdatedAt === undefined) {

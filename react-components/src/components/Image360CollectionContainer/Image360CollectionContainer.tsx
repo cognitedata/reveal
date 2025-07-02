@@ -59,7 +59,7 @@ export function Image360CollectionContainer({
         callback();
       });
     };
-  }, [addImage360CollectionOptions]);
+  }, [addImage360CollectionOptions, add360Collection]);
 
   useApply360AnnotationStyling(modelRef.current, styling);
   useSetIconCulling(modelRef.current, addImage360CollectionOptions.iconCullingOptions);
@@ -142,7 +142,7 @@ const useSetIconCulling = (
 
   useEffect(() => {
     setCollectionCullingOptions(collection, cullingParameters);
-  }, [collection, radius, iconCountLimit]);
+  }, [collection, radius, iconCountLimit, cullingParameters]);
 };
 
 function setCollectionCullingOptions(
