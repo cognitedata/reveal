@@ -36,7 +36,7 @@ export function useRemoveNonReferencedModels(
       RevealModelsUtils.remove(renderTarget, model);
     });
     setRevealResourcesCount(getViewerResourceCount(viewer));
-  }, [addOptions]);
+  }, [addOptions, renderTarget, setRevealResourcesCount]);
 }
 
 function findNonReferencedModels(

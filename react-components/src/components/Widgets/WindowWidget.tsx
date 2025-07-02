@@ -178,7 +178,7 @@ const useParentResize = (
     return () => {
       resizeObserver.disconnect();
     };
-  }, [isMinimized, parentContainerElement]);
+  }, [isMinimized, parentContainerElement, onResize]);
 
   return size;
 };

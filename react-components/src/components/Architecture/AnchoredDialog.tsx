@@ -14,7 +14,10 @@ export const AnchoredDialog = (): ReactNode => {
 
   const renderTarget = useRenderTarget();
   const activeTool = renderTarget.commandsController.activeTool;
-  const dialogContent = useMemo(() => activeTool?.getAnchoredDialogContent(), [activeToolUpdate]);
+  const dialogContent = useMemo(
+    () => activeTool?.getAnchoredDialogContent(),
+    [activeToolUpdate, activeTool]
+  );
   const isSomeEnabled = dialogContent?.contentCommands.some((command) => command.isEnabled);
 
   useEffect(() => {

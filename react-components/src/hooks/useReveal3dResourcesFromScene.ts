@@ -71,7 +71,7 @@ export const useReveal3dResourcesFromScene = (
       addResourceOptions.push({ ...addModelOptions, transform });
     });
     setResourceOptions(addResourceOptions);
-  }, [scene.data]);
+  }, [scene.data, isCoreDm]);
 
   return resourceOptions;
 };

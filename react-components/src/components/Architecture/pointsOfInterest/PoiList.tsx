@@ -74,7 +74,7 @@ export const PoiList = ({
         name: poi.properties.name ?? JSON.stringify(poi.id),
         poi
       })),
-    [relevantPois, currentLimit, filter]
+    [relevantPois, currentLimit]
   );
 
   const columns: Array<DatagridColumn<RowType>> = [

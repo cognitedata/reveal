@@ -86,7 +86,7 @@ function useCalculateMappedStyling(
 ): ModelStyleGroupWithMappingsFetched {
   const modelsRevisionsWithMappedEquipment = useMemo(
     () => getMappedCadModelsOptions(),
-    [models, defaultMappedNodeAppearance]
+    [getMappedCadModelsOptions]
   );
   const {
     data: mappedEquipmentEdges,
@@ -125,7 +125,8 @@ function useCalculateMappedStyling(
     modelsRevisionsWithMappedEquipment,
     mappedEquipmentEdges,
     defaultMappedNodeAppearance,
-    isFDMEquipmentMappingsLoading
+    isFDMEquipmentMappingsLoading,
+    models.length
   ]);
 
   const modelsMappedAssetStyleGroups = useMemo(() => {
@@ -148,12 +149,7 @@ function useCalculateMappedStyling(
           : [];
       return { model: assetMappedModel.model, styleGroup };
     });
-  }, [
-    modelsRevisionsWithMappedEquipment,
-    assetMappingData,
-    defaultMappedNodeAppearance,
-    isAssetMappingsLoading
-  ]);
+  }, [assetMappingData, defaultMappedNodeAppearance, isAssetMappingsLoading, models.length]);
 
   const combinedMappedStyleGroups = useMemo(
     () =>
@@ -161,7 +157,7 @@ function useCalculateMappedStyling(
         ...modelsMappedAssetStyleGroups,
         ...modelsMappedFdmStyleGroups
       ]),
-    [modelsMappedAssetStyleGroups, modelsMappedFdmStyleGroups]
+    [modelsMappedAssetStyleGroups, modelsMappedFdmStyleGroups, models]
   );
 
   return {
@@ -222,7 +218,7 @@ function useCalculateInstanceStyling(
         ...fdmModelInstanceStyleGroups,
         ...assetMappingInstanceStyleGroups
       ]),
-    [fdmModelInstanceStyleGroups, assetMappingInstanceStyleGroups]
+    [fdmModelInstanceStyleGroups, assetMappingInstanceStyleGroups, models]
   );
 
   return {

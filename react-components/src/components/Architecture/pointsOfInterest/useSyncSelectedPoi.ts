@@ -29,5 +29,5 @@ export const useSyncSelectedPoi = (
     if (selectedPoi !== undefined) {
       domainObject?.setVisibleInteractive(true, renderTarget);
     }
-  }, [selectedPoi, domainObject]);
+  }, [selectedPoi, domainObject, renderTarget]);
 };

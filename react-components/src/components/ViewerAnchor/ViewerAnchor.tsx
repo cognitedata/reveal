@@ -97,7 +97,7 @@ function usePointProjection(
     return () => {
       viewer.cameraManager.off('cameraChange', cameraChanged);
     };
-  }, [cameraChanged]);
+  }, [cameraChanged, viewer.cameraManager]);
 
   return { visible, projectedPoint };
 }
@@ -132,7 +132,10 @@ function useStickyCompensation(
     sticky,
     stickyMargin,
     viewerDomElement.clientWidth,
-    viewerDomElement.clientHeight
+    viewerDomElement.clientHeight,
+    htmlRef,
+    stickyCompensation,
+    viewerDomElement
   ]);
 
   return stickyCompensation;

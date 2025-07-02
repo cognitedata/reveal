@@ -35,13 +35,13 @@ export const useApplyCadModelStyling = (
     if (!modelExists(model, viewer) || styleGroups === undefined) return;
 
     void applyStyling(sdk, model, styleGroups);
-  }, [styleGroups, model]);
+  }, [styleGroups, model, sdk, viewer]);
 
   useEffect(() => {
     if (!modelExists(model, viewer)) return;
 
     model.setDefaultNodeAppearance(defaultStyle);
-  }, [defaultStyle, model]);
+  }, [defaultStyle, model, viewer]);
 };
 
 async function applyStyling(

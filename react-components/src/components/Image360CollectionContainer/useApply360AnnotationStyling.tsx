@@ -50,7 +50,7 @@ export const useApply360AnnotationStyling = (
     setLastStyledImageAnnotations([]);
     imageCollection.setDefaultAnnotationStyle(defaultStyle);
     viewer.requestRedraw();
-  }, [viewer, defaultStyle, styleGroups]);
+  }, [viewer, defaultStyle, imageCollection, lastStyledImageAnnotations]);
 
   useEffect(() => {
     if (imageCollection === undefined) return;
@@ -59,7 +59,7 @@ export const useApply360AnnotationStyling = (
     return () => {
       imageCollection.off('image360Entered', applyDefaultAnnotationStyling);
     };
-  }, [viewer, imageCollection]);
+  }, [viewer, imageCollection, applyDefaultAnnotationStyling]);
 
   useEffect(() => {
     if (!image360CollectionExists(imageCollection, viewer) || styleGroups === undefined) return;
@@ -78,7 +78,7 @@ export const useApply360AnnotationStyling = (
         abortController.current.signal
       );
     }
-  }, [styleGroups, imageCollection]);
+  }, [styleGroups, imageCollection, viewer, applyDefaultAnnotationStyling]);
 };
 
 async function applyStyling(

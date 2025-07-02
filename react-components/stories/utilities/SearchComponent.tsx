@@ -238,8 +238,10 @@ const SearchComponent: React.FC<SearchComponentProps> = ({
     searchData,
     allAssets,
     all360ImageAssetAnnotationMappings,
+    allPointCloudAssets,
     assetSearchData,
     assetAnnotationImage360SearchData,
+    pointCloudAssetSearchData,
     searchMethod
   ]);
 

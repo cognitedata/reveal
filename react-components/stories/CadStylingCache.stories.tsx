@@ -71,7 +71,7 @@ const Models = ({ addModelOptions }: CogniteCadModelProps): JSX.Element => {
       data
         ?.get(`${modelId}/${revisionId}`)
         ?.map((edgeWithNode) => edgeWithNode.connection.treeIndex),
-    [data]
+    [data, modelId, revisionId]
   );
 
   useEffect(() => {
@@ -106,7 +106,7 @@ const Models = ({ addModelOptions }: CogniteCadModelProps): JSX.Element => {
     return () => {
       viewer.off('click', callback);
     };
-  }, [viewer, platformStyling, setPlatformStyling]);
+  }, [viewer, platformStyling, treeIndices, setPlatformStyling]);
 
   useEffect(() => {
     if (treeIndices === undefined) return;
@@ -123,7 +123,7 @@ const Models = ({ addModelOptions }: CogniteCadModelProps): JSX.Element => {
       defaultStyle: DefaultNodeAppearance.Ghosted,
       groups: [stylingGroupRed]
     });
-  }, [viewer, data]);
+  }, [viewer, data, treeIndices]);
 
   const onModelLoaded = (model: CogniteCadModel): void => {
     viewer.fitCameraToModel(model);
