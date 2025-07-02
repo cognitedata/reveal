@@ -1,6 +1,6 @@
 {
   "name": "@cognite/reveal-react-components",
-  "version": "0.80.2",
+  "version": "0.81.0",
   "exports": {
     ".": {
       "import": "./dist/index.js",
