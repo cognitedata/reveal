@@ -38,11 +38,15 @@
     "sort-keys": "cdf-i18n-utils-cli sort-local-keys --namespace reveal-react-components --path ./src/common/i18n"
   },
   "peerDependencies": {
+    "@cognite/cogs-lab": "^9.0.0-alpha.153",
     "@cognite/reveal": "4.25.1",
     "@cognite/sdk": "^10.0.0",
+    "@cognite/signals": "^0.0.4",
     "react": ">=18",
     "react-dom": ">=18",
-    "styled-components": "^6.1.12"
+    "react-router-dom": "^6.23.0",
+    "styled-components": "^6.1.12",
+    "three": "0.166.0"
   },
   "dependencies": {
     "@cognite/cogs-lab": "9.0.0-alpha.160",
