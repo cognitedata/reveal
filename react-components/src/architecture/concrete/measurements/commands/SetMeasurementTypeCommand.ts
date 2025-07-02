@@ -6,6 +6,17 @@ import { type TranslationInput } from '../../../base/utilities/TranslateInput';
 import { MeasurementTool } from '../MeasurementTool';
 import { type IconName } from '../../../base/utilities/IconName';
 
+export const MEASURE_PRIMITIVE_TYPES = [
+  PrimitiveType.Line,
+  PrimitiveType.Polyline,
+  PrimitiveType.Polygon,
+  PrimitiveType.VerticalArea,
+  PrimitiveType.HorizontalArea,
+  PrimitiveType.Box,
+  PrimitiveType.HorizontalCircle,
+  PrimitiveType.VerticalCylinder
+];
+
 export class SetMeasurementTypeCommand extends RenderTargetCommand {
   private readonly _primitiveType: PrimitiveType;
 
@@ -18,6 +29,9 @@ export class SetMeasurementTypeCommand extends RenderTargetCommand {
 
   public constructor(primitiveType: PrimitiveType) {
     super();
+    if (!MEASURE_PRIMITIVE_TYPES.includes(primitiveType)) {
+      throw new Error(`Invalid primitive type: ${primitiveType}`);
+    }
     this._primitiveType = primitiveType;
   }
 
@@ -50,9 +64,10 @@ export class SetMeasurementTypeCommand extends RenderTargetCommand {
     if (tool === undefined) {
       return false;
     }
+    const isChecked = tool.primitiveType === this.primitiveType;
     tool.escape();
     tool.clearDragging();
-    if (tool.primitiveType === this.primitiveType) {
+    if (isChecked) {
       tool.primitiveType = PrimitiveType.None;
     } else {
       tool.primitiveType = this.primitiveType;

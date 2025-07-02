@@ -10,7 +10,7 @@ import { PrimitiveType } from '../../../base/utilities/primitives/PrimitiveType'
 import { MeasureLineDomainObject } from '../MeasureLineDomainObject';
 import { MeasureCylinderDomainObject } from '../MeasureCylinderDomainObject';
 import { isInstanceOf } from '../../../base/domainObjectsHelpers/Class';
-import { type CommonRenderStyle } from '../../../base/renderStyles/CommonRenderStyle';
+import { CommonRenderStyle } from '../../../base/renderStyles/CommonRenderStyle';
 import { count } from '../../../base/utilities/extensions/generatorUtils';
 
 describe(ShowMeasurementsOnTopCommand.name, () => {
@@ -32,6 +32,12 @@ describe(ShowMeasurementsOnTopCommand.name, () => {
     expect(command.isEnabled).toBe(false);
     expect(command.isToggle).toBe(true);
     expect(command.getShortCutKeys()).toBeUndefined();
+  });
+
+  test('Should throw in invoke when not attach to any renderTarget', () => {
+    expect(() => {
+      new ShowMeasurementsOnTopCommand().invoke();
+    }).toThrow();
   });
 
   test('Should set all measurements on top', () => {
@@ -69,8 +75,8 @@ function* getAllRenderStylesForAllMeasurements(root: DomainObject): Generator<Co
       isInstanceOf(descendant, MeasureLineDomainObject) ||
       isInstanceOf(descendant, MeasureCylinderDomainObject)
     ) {
-      const style = descendant.getRenderStyle() as CommonRenderStyle;
-      assert(style !== undefined, 'Render style should not be undefined');
+      const style = descendant.getRenderStyle();
+      assert(style instanceof CommonRenderStyle, 'Render style should be CommonRenderStyle');
       yield style;
     }
   }

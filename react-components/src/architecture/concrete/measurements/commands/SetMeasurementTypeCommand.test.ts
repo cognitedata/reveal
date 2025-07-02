@@ -4,7 +4,7 @@ import { getDefaultCommand } from '../../../../components/Architecture/utilities
 import { isEmpty } from '../../../base/utilities/TranslateInput';
 import { PrimitiveType } from '../../../base/utilities/primitives/PrimitiveType';
 import { type RevealRenderTarget } from '../../../base/renderTarget/RevealRenderTarget';
-import { SetMeasurementTypeCommand } from './SetMeasurementTypeCommand';
+import { MEASURE_PRIMITIVE_TYPES, SetMeasurementTypeCommand } from './SetMeasurementTypeCommand';
 import { MeasurementTool } from '../MeasurementTool';
 
 describe(SetMeasurementTypeCommand.name, () => {
@@ -12,6 +12,12 @@ describe(SetMeasurementTypeCommand.name, () => {
 
   beforeEach(() => {
     renderTarget = createFullRenderTargetMock();
+  });
+
+  test('Should throw when illegal PrimitiveType is given in the constructor', () => {
+    expect(() => {
+      const _ = new SetMeasurementTypeCommand(PrimitiveType.PlaneX);
+    }).toThrow();
   });
 
   test('Should have tooltip and icon', () => {
@@ -38,22 +44,30 @@ describe(SetMeasurementTypeCommand.name, () => {
     }
   });
 
-  test('Should set primitiveType on active tool', () => {
+  test('Should set and clear primitiveType on active tool', () => {
     const tool = createActiveTool(renderTarget);
     for (const newCommand of getCommands()) {
       const command = getDefaultCommand(newCommand, renderTarget);
 
+      // Check initial state
       expect(command.isChecked).toBe(false);
-      expect(command.primitiveType).not.toBe(tool.primitiveType);
+      expect(tool.primitiveType).not.toBe(command.primitiveType);
+
+      // Set primitive type
       command.invoke();
       expect(command.isChecked).toBe(true);
-      expect(command.primitiveType).toBe(tool.primitiveType);
+      expect(tool.primitiveType).toBe(command.primitiveType);
+
+      // Clear primitive type
+      command.invoke();
+      expect(command.isChecked).toBe(false);
+      expect(tool.primitiveType).toBe(PrimitiveType.None);
     }
   });
 });
 
 function* getCommands(): Generator<SetMeasurementTypeCommand> {
-  for (const primitiveType of MeasurePrimitiveTypes) {
+  for (const primitiveType of MEASURE_PRIMITIVE_TYPES) {
     yield new SetMeasurementTypeCommand(primitiveType);
   }
 }
@@ -63,14 +77,3 @@ function createActiveTool(renderTarget: RevealRenderTarget): MeasurementTool {
   renderTarget.commandsController.setActiveTool(tool);
   return tool;
 }
-
-const MeasurePrimitiveTypes = [
-  PrimitiveType.Line,
-  PrimitiveType.Polyline,
-  PrimitiveType.Polygon,
-  PrimitiveType.VerticalArea,
-  PrimitiveType.HorizontalArea,
-  PrimitiveType.Box,
-  PrimitiveType.HorizontalCircle,
-  PrimitiveType.VerticalCylinder
-];
