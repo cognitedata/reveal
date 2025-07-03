@@ -31,13 +31,15 @@ export function getRevealDomainUpdateSignal(
     domainObject: DomainObject,
     change: DomainObjectChange
   ): void {
-    const relevantChanges = [Changes.added, Changes.deleting, ...additionalChangeFlags];
-
     if (!(domainObject instanceof RevealDomainObject)) {
       return;
     }
 
-    const isRelevantChange = change.isChanged(...relevantChanges);
+    const isRelevantChange = change.isChanged(
+      Changes.added,
+      Changes.deleting,
+      ...additionalChangeFlags
+    );
 
     if (!isRelevantChange) {
       return;
