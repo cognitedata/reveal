@@ -47,12 +47,8 @@ export function PointCloudContainer({
 
   const classicAddModelOptions = useModelIdRevisionIdFromModelOptions([addModelOptions]);
 
-  if (classicAddModelOptions.length === 0) {
-    return <></>;
-  }
-
-  const modelId = classicAddModelOptions[0].modelId;
-  const revisionId = classicAddModelOptions[0].revisionId;
+  const modelId = classicAddModelOptions[0]?.modelId;
+  const revisionId = classicAddModelOptions[0]?.revisionId;
 
   useEffect(() => {
     if (
