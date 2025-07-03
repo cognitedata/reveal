@@ -72,7 +72,7 @@ export const useActiveReveal3dResources = (
   }, [visibleDomainObjects, layerState]);
 
   const filteredModelsQuery = useQuery({
-    queryKey: ['visible-3d-models', visibleModels.map(getModelIdentifier).sort()],
+    queryKey: ['visible-3d-models', visibleModels.map(getModelIdentifierKey).sort()],
     queryFn: async () => {
       const modelPromises = visibleModels.map(async (model) => {
         if (model.type === 'pointcloud' && isDMPointCloudModel(model as CognitePointCloudModel)) {
@@ -109,9 +109,9 @@ export const useActiveReveal3dResources = (
   );
 };
 
-function getModelIdentifier(model: CogniteModel<DataSourceType>): string {
+function getModelIdentifierKey(model: CogniteModel<DataSourceType>): string {
   if (model instanceof CognitePointCloudModel && isDMPointCloudModel(model)) {
-    return `${model.modelIdentifier.revisionExternalId}/${model.modelIdentifier.revisionExternalId}`;
+    return `${model.modelIdentifier.revisionExternalId}/${model.modelIdentifier.revisionSpace}`;
   } else {
     return `${model.modelId}/${model.revisionId}`;
   }
