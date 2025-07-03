@@ -122,14 +122,7 @@ export class UnitSystem {
   }
 
   private getFractionDigitsForLengthUnits(): number {
-    switch (this.lengthUnit) {
-      case LengthUnit.Inch:
-        return 2;
-      case LengthUnit.Feet:
-        return 2;
-      default:
-        return 2;
-    }
+    return 2;
   }
 
   public static getFullTextForLengthUnit(lengthUnit: LengthUnit): string {
