@@ -1,4 +1,4 @@
-import { beforeAll, describe, expect, test, vi } from 'vitest';
+import { describe, expect, test, vi } from 'vitest';
 import { CreatePoiCommentCommand } from './CreatePoiCommentCommand';
 
 import { type PointOfInterest, PointsOfInterestStatus } from './types';
@@ -11,10 +11,6 @@ import { translate } from '../../base/utilities/translateUtils';
 const TEST_POINT_OF_INTEREST = createTestPointOfInterest();
 
 describe(CreatePoiCommentCommand.name, () => {
-  beforeAll(() => {
-    vi.clearAllMocks();
-  });
-
   test('should indicate that it has data', () => {
     const command = new CreatePoiCommentCommand(TEST_POINT_OF_INTEREST);
     expect(command.hasData).toBeTruthy();

@@ -33,6 +33,7 @@ describe(getRevealDomainUpdateSignal.name, () => {
     const signalResult = getRevealDomainUpdateSignal(revealRenderTarget);
 
     const value = signalResult.signal()();
+    expect(value).toHaveLength(3);
     expect(value[0]).toBe(cadDomainObject);
     expect(value[1]).toBe(pointCloudDomainObject);
     expect(value[2]).toBe(image360DomainObject);
@@ -45,14 +46,14 @@ describe(getRevealDomainUpdateSignal.name, () => {
       'removeEventListener'
     );
 
-    const res = getRevealDomainUpdateSignal(revealRenderTarget);
+    const result = getRevealDomainUpdateSignal(revealRenderTarget);
 
     expect(addEventMock).toHaveBeenCalledTimes(1);
     expect(removeEventMock).toHaveBeenCalledTimes(0);
 
     const eventCallback = addEventMock.mock.calls[0][0];
 
-    res.dispose();
+    result.dispose();
 
     expect(removeEventMock).toHaveBeenCalledTimes(1);
     expect(removeEventMock).toHaveBeenCalledWith(eventCallback);

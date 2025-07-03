@@ -22,7 +22,11 @@ export function useRevealDomainObjects(
 
   const disposableSignal = useMemo(
     () => getRevealDomainUpdateSignal(renderTarget, predicate, additionalChangeFlags),
-    [renderTarget, predicate, additionalChangeFlags]
+    [
+      renderTarget,
+      predicate,
+      additionalChangeFlags?.map((changeFlag) => changeFlag.toString()).join(',')
+    ]
   );
 
   return useDisposableSignal(disposableSignal);
