@@ -30,7 +30,7 @@ import { PrimitiveType } from '../../../base/utilities/primitives/PrimitiveType'
 import { mergeGeometries } from 'three/examples/jsm/utils/BufferGeometryUtils.js';
 import { FocusType } from '../../../base/domainObjectsHelpers/FocusType';
 import { DomainObjectIntersection } from '../../../base/domainObjectsHelpers/DomainObjectIntersection';
-import { square } from '../../../base/utilities/extensions/mathExtensions';
+import { square } from '../../../base/utilities/extensions/mathUtils';
 import { Quantity } from '../../../base/domainObjectsHelpers/Quantity';
 import { createSprite } from '../box/BoxView';
 import { PrimitiveUtils } from '../../../base/utilities/primitives/PrimitiveUtils';

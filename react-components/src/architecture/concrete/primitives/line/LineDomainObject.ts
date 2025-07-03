@@ -5,7 +5,7 @@ import { LineRenderStyle } from './LineRenderStyle';
 import {
   horizontalDistanceTo,
   verticalDistanceTo
-} from '../../../base/utilities/extensions/vectorExtensions';
+} from '../../../base/utilities/extensions/vectorUtils';
 import { PanelInfo } from '../../../base/domainObjectsHelpers/PanelInfo';
 import { Changes } from '../../../base/domainObjectsHelpers/Changes';
 import { FocusType } from '../../../base/domainObjectsHelpers/FocusType';
@@ -13,7 +13,7 @@ import { Quantity } from '../../../base/domainObjectsHelpers/Quantity';
 import { VisualDomainObject } from '../../../base/domainObjects/VisualDomainObject';
 import { getIconByPrimitiveType } from '../../../base/utilities/primitives/getIconByPrimitiveType';
 import { type TranslationInput } from '../../../base/utilities/TranslateInput';
-import { clear } from '../../../base/utilities/extensions/arrayExtensions';
+import { clear } from '../../../base/utilities/extensions/arrayUtils';
 import { type IconName } from '../../../base/utilities/IconName';
 import { Vector3ArrayUtils } from '../../../base/utilities/primitives/Vector3ArrayUtils';
 import { DomainObjectTransaction } from '../../../base/undo/DomainObjectTransaction';

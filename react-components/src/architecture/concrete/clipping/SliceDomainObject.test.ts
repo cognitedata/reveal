@@ -5,7 +5,7 @@ import { type Plane, Vector3 } from 'three';
 import { setClippingPlanes } from './commands/setClippingPlanes';
 import { SliceDomainObject } from './SliceDomainObject';
 import { PlanePrimitiveTypes, PrimitiveType } from '../../base/utilities/primitives/PrimitiveType';
-import { isGreyScale } from '../../base/utilities/colors/colorExtensions';
+import { isGreyScale } from '../../base/utilities/colors/colorUtils';
 import { Changes } from '../../base/domainObjectsHelpers/Changes';
 import { CDF_TO_VIEWER_TRANSFORMATION } from '@cognite/reveal';
 
