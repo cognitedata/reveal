@@ -51,7 +51,7 @@ describe(UnitSystem.name, () => {
     expect(unitSystem.toStringWithUnit(1, Quantity.Volume)).toBe('35.31 ft³');
   });
 
-  test('Should get andge and unit less as string', () => {
+  test('Should get angle and unit less as string', () => {
     const unitSystem = new UnitSystem();
     expect(unitSystem.toStringWithUnit(1, Quantity.Angle)).toBe('1.0 °');
     expect(unitSystem.toStringWithUnit(1, Quantity.Unitless)).toBe('1.00');
