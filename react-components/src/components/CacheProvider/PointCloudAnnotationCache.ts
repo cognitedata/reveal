@@ -7,7 +7,7 @@ import {
 } from './types';
 import { type CogniteClient, type Asset, type AnnotationFilterProps } from '@cognite/sdk';
 import { getInstanceReferenceFromPointCloudAnnotation } from './utils';
-import { fetchPointCloudAnnotationAssets } from './annotationModelUtils';
+import { fetchPointCloudAnnotationAssets } from './aannotationModelUtils';
 import assert from 'assert';
 import { createModelRevisionKey } from './idAndKeyTranslation';
 
