@@ -1,19 +1,19 @@
 import { getRenderTarget } from '../../../base/domainObjects/getRoot';
-import { VisualDomainObject } from '../../../base/domainObjects/VisualDomainObject';
 import { CommandsUpdater } from '../../../base/reactUpdaters/CommandsUpdater';
 import { type RenderStyle } from '../../../base/renderStyles/RenderStyle';
 import { type IconName } from '../../../base/utilities/IconName';
 import { type TranslationInput } from '../../../base/utilities/TranslateInput';
+import { RevealDomainObject } from '../RevealDomainObject';
 import { type Image360Model } from '../RevealTypes';
 import { Image360CollectionRenderStyle } from './Image360CollectionRenderStyle';
 
-export class Image360CollectionDomainObject extends VisualDomainObject {
+export class Image360CollectionDomainObject extends RevealDomainObject {
   // ==================================================
   // INSTANCE FIELDS
   // ==================================================
 
-  readonly _model: Image360Model;
-  readonly _updateCallback: () => void;
+  private readonly _model: Image360Model;
+  private readonly _updateCallback: () => void;
 
   // ==================================================
   // INSTANCE PROPERTIES
