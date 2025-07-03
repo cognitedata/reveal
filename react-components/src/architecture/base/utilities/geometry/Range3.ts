@@ -1,6 +1,6 @@
 import { type Vector2, Vector3, Box3, type Plane, Line3 } from 'three';
 import { Range1 } from './Range1';
-import { square } from '../extensions/mathExtensions';
+import { square } from '../extensions/mathUtils';
 import { Vector3Pool } from '@cognite/reveal';
 
 export class Range3 {

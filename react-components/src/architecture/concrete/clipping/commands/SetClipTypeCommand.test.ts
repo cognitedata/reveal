@@ -3,7 +3,7 @@ import { ClipTool } from '../ClipTool';
 import { createFullRenderTargetMock } from '#test-utils/fixtures/createFullRenderTargetMock';
 import { getDefaultCommand } from '../../../../components/Architecture/utilities';
 import { isEmpty } from '../../../base/utilities/TranslateInput';
-import { lastElement } from '../../../base/utilities/extensions/arrayExtensions';
+import { lastElement } from '../../../base/utilities/extensions/arrayUtils';
 import { CLIP_PRIMITIVE_TYPES, SetClipTypeCommand } from './SetClipTypeCommand';
 import { SliceDomainObject } from '../SliceDomainObject';
 import {

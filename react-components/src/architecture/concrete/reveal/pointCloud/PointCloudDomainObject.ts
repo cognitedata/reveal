@@ -1,17 +1,17 @@
 import { getRenderTarget } from '../../../base/domainObjects/getRoot';
-import { VisualDomainObject } from '../../../base/domainObjects/VisualDomainObject';
 import { type RenderStyle } from '../../../base/renderStyles/RenderStyle';
 import { type IconName } from '../../../base/utilities/IconName';
 import { type TranslationInput } from '../../../base/utilities/TranslateInput';
+import { RevealDomainObject } from '../RevealDomainObject';
 import { type PointCloud } from '../RevealTypes';
 import { PointCloudRenderStyle } from './PointCloudRenderStyle';
 
-export class PointCloudDomainObject extends VisualDomainObject {
+export class PointCloudDomainObject extends RevealDomainObject {
   // ==================================================
   // INSTANCE FIELDS
   // ==================================================
 
-  readonly _model: PointCloud;
+  private readonly _model: PointCloud;
 
   // ==================================================
   // INSTANCE PROPERTIES
