@@ -6,8 +6,8 @@ import { Changes } from '../../../base/domainObjectsHelpers/Changes';
 import { type DomainObject } from '../../../base/domainObjects/DomainObject';
 import { type CylinderDomainObject } from './CylinderDomainObject';
 import { Cylinder } from '../../../base/utilities/primitives/Cylinder';
-import { getClosestPointOnLine } from '../../../base/utilities/extensions/rayExtensions';
-import { rotatePiHalf } from '../../../base/utilities/extensions/vectorExtensions';
+import { getClosestPointOnLine } from '../../../base/utilities/extensions/rayUtils';
+import { rotatePiHalf } from '../../../base/utilities/extensions/vectorUtils';
 
 const UP_VECTOR = new Vector3(0, 0, 1);
 /**
@@ -20,33 +20,16 @@ export class CylinderCreator extends BaseCreator {
 
   private readonly _domainObject: CylinderDomainObject;
   private readonly _primitiveType: PrimitiveType;
-  private readonly _isReversedClickOrder;
-
-  // Click order for the points (point 0 is always center)
-  private get diameterOrder(): number {
-    return this._isReversedClickOrder ? 2 : 1;
-  }
-
-  private get otherCenterOrder(): number {
-    return this._isReversedClickOrder ? 1 : 2;
-  }
 
   // ==================================================
   // CONSTRUCTOR
   // ==================================================
 
-  public constructor(
-    domainObject: CylinderDomainObject,
-    primitiveType?: PrimitiveType,
-    isReversedClickOrder = false
-  ) {
+  public constructor(domainObject: CylinderDomainObject, primitiveType?: PrimitiveType) {
     super();
     this._primitiveType = primitiveType ?? domainObject.primitiveType;
     this._domainObject = domainObject;
     this._domainObject.focusType = FocusType.Pending;
-
-    // Click order for the points (Used for 3D annotations)
-    this._isReversedClickOrder = isReversedClickOrder;
   }
 
   // ==================================================
@@ -54,7 +37,10 @@ export class CylinderCreator extends BaseCreator {
   // ==================================================
 
   public override get preferIntersection(): boolean {
-    return this.pointCount === 0;
+    if (this._domainObject.primitiveType === PrimitiveType.HorizontalCylinder) {
+      return this.pointCount <= 2;
+    }
+    return this.pointCount <= 1;
   }
 
   public override get domainObject(): DomainObject {
@@ -80,7 +66,6 @@ export class CylinderCreator extends BaseCreator {
     const domainObject = this._domainObject;
     point = this.recalculatePoint(point, ray);
     if (point === undefined) {
-      console.log('point is undefined');
       return false;
     }
     this.addRawPoint(point, isPending);
@@ -98,43 +83,36 @@ export class CylinderCreator extends BaseCreator {
   // ==================================================
 
   private recalculatePoint(point: Vector3 | undefined, ray: Ray): Vector3 | undefined {
-    // Recalculate the point anyway for >= 1 points
-    // This makes it more natural and you can pick in empty space
-    if (this.notPendingPointCount === this.otherCenterOrder) {
-      // Calculate the other center point regardless of the input point
-      const { center, axis } = this._domainObject.cylinder;
-      console.log('recalculatePoint A');
-      return getClosestPointOnLine(ray, axis, center);
-    } else if (this.notPendingPointCount === this.diameterOrder) {
-      const { center, axis } = this._domainObject.cylinder;
-
-      if (this.diameterOrder === 1) {
-        if (point !== undefined) {
-          console.log('recalculatePoint Ea ss');
-          return point;
+    if (this.notPendingPointCount === 1) {
+      // This point will give the diameter, and the center will be the average of this point and the first
+      if (point !== undefined) {
+        if (this._primitiveType !== PrimitiveType.HorizontalCylinder) {
+          point.z = this.firstPoint.z; // The z level should be set by the first point
         }
-
-        // When diameter is the second point, we can calculate it from the intersection with the plane
-        if (this._primitiveType === PrimitiveType.HorizontalCylinder) {
-          const plane = new Plane().setFromNormalAndCoplanarPoint(ray.direction, center);
-          const pointOnRay = ray.intersectPlane(plane, new Vector3());
-          if (pointOnRay !== null) {
-            console.log('recalculatePoint Ea');
-            return pointOnRay;
-          }
-        } else {
-          const plane = new Plane().setFromNormalAndCoplanarPoint(UP_VECTOR, center);
-          const pointOnRay = ray.intersectPlane(plane, new Vector3());
-          if (pointOnRay !== null) {
-            console.log('recalculatePoint Eb');
-            return pointOnRay;
-          }
+        return point;
+      }
+      // If the done when pointing in the "air". Try to calculate a reasonable good value, based on the ray.
+      if (this._primitiveType === PrimitiveType.HorizontalCylinder) {
+        const { center } = this._domainObject.cylinder;
+        const plane = new Plane().setFromNormalAndCoplanarPoint(ray.direction, center);
+        const pointOnRay = ray.intersectPlane(plane, new Vector3());
+        if (pointOnRay !== null) {
+          return pointOnRay;
+        }
+      } else {
+        const plane = new Plane().setFromNormalAndCoplanarPoint(UP_VECTOR, this.firstPoint);
+        const pointOnRay = ray.intersectPlane(plane, new Vector3());
+        if (pointOnRay !== null) {
+          pointOnRay.z = this.firstPoint.z; // The z level should be set by the first point
+          return pointOnRay;
         }
       }
-      console.log('recalculatePoint F');
+      return undefined;
+    } else if (this.notPendingPointCount === 2) {
+      // Calculate the other center point regardless of the input point
+      const { center, axis } = this._domainObject.cylinder;
       return getClosestPointOnLine(ray, axis, center);
     }
-    console.log('recalculatePoint G');
     return point;
   }
 
@@ -150,24 +128,29 @@ export class CylinderCreator extends BaseCreator {
     }
     const { cylinder } = this._domainObject;
     if (this.pointCount === 1) {
-      console.log('rebuild 1 a');
       // Add point 1
       this.setCenter(this.firstPoint, ray.direction.clone());
-    } else if (this.pointCount - 1 === this.diameterOrder) {
-      // Add point 2: the diameter the second point so it defined the center, axis and the diameter
-      console.log('rebuild 2 b');
+    } else if (this.pointCount === 2) {
+      // Add point 2: This will recalculate the center, the diameter ans the axis (for horizontal cylinder)
       const center = this.firstPoint.clone().add(this.lastPoint).multiplyScalar(0.5);
-      const axis = this.firstPoint.clone().sub(this.lastPoint);
-      rotatePiHalf(axis);
-      this.setCenter(center, axis);
+      if (this._domainObject.primitiveType === PrimitiveType.HorizontalCylinder) {
+        // Calculate the center and axis for the first two points
+        const axis = this.firstPoint.clone().sub(this.lastPoint);
+        rotatePiHalf(axis);
+        this.setCenter(center, axis);
 
-      const plane = new Plane().setFromNormalAndCoplanarPoint(axis, center);
-      const firstPoint = plane.projectPoint(this.firstPoint, new Vector3());
-      const lastPoint = plane.projectPoint(this.lastPoint, new Vector3());
-      cylinder.radius = firstPoint.distanceTo(lastPoint) / 2;
-    } else if (this.pointCount - 1 === this.otherCenterOrder) {
+        const plane = new Plane().setFromNormalAndCoplanarPoint(axis, center);
+        const firstPoint = plane.projectPoint(this.firstPoint, new Vector3());
+        const lastPoint = plane.projectPoint(this.lastPoint, new Vector3());
+        cylinder.radius = firstPoint.distanceTo(lastPoint) / 2;
+      } else {
+        this.setCenter(center, UP_VECTOR);
+        cylinder.radius = this.firstPoint.distanceTo(this.lastPoint) / 2;
+      }
+    } else if (this.pointCount === 3) {
       // Add point 3 and define the length
-      console.log('rebuild 3 c');
+      const center = this.firstPoint.clone().add(this.points[1]).multiplyScalar(0.5);
+      cylinder.centerA.copy(center);
       cylinder.centerB.copy(this.lastPoint);
     }
     cylinder.forceMinSize();
