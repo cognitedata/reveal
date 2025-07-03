@@ -22,7 +22,6 @@ describe(useFilterOnClassicAssetsInScene.name, () => {
   );
 
   beforeEach(() => {
-    vi.resetAllMocks();
     sdk = new Mock<CogniteClient>().object();
     scene = { externalId: 'scene1', space: 'space1' };
 

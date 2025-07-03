@@ -1,36 +1,26 @@
-import { type ReactNode, useMemo, useState, type ReactElement } from 'react';
-
-import { Button, Tooltip as CogsTooltip, Flex, Slider, Switch, TextLabel } from '@cognite/cogs.js';
-
-import { Dropdown, Menu } from '@cognite/cogs-lab';
-import { type BaseCommand } from '../../architecture/base/commands/BaseCommand';
-import { useRenderTarget } from '../RevealCanvas/ViewerContext';
-import {
-  getButtonType,
-  getDefaultCommand,
-  getFlexDirection,
-  getTooltipPlacement
-} from './utilities';
-import { LabelWithShortcut } from './LabelWithShortcut';
-import styled from 'styled-components';
-import { type BaseSettingsCommand } from '../../architecture/base/commands/BaseSettingsCommand';
-import { BaseOptionCommand } from '../../architecture/base/commands/BaseOptionCommand';
-import { DropdownButton } from './DropdownButton';
-import { BaseSliderCommand } from '../../architecture/base/commands/BaseSliderCommand';
-import { BaseFilterCommand } from '../../architecture/base/commands/BaseFilterCommand';
-import { FilterButton } from './FilterButton';
-import { DEFAULT_PADDING, TOOLTIP_DELAY } from './constants';
-import { type IconName } from '../../architecture/base/utilities/IconName';
-import { IconComponent } from './Factories/IconFactory';
-
-import { TOOLBAR_HORIZONTAL_PANEL_OFFSET } from '../constants';
-
-import { DividerCommand } from '../../architecture/base/commands/DividerCommand';
-import { SectionCommand } from '../../architecture/base/commands/SectionCommand';
-import { useOnUpdate } from './useOnUpdate';
-import { type FlexDirection, type PlacementType } from './types';
-import { BaseBannerCommand } from '../../architecture';
 import { BannerComponent } from './BannerComponent';
+import { BaseBannerCommand } from '../../architecture';
+import { BaseFilterCommand } from '../../architecture/base/commands/BaseFilterCommand';
+import { BaseOptionCommand } from '../../architecture/base/commands/BaseOptionCommand';
+import { BaseSliderCommand } from '../../architecture/base/commands/BaseSliderCommand';
+import { Button, Tooltip as CogsTooltip, Flex, Slider, Switch, TextLabel } from '@cognite/cogs.js';
+import { DEFAULT_PADDING, TOOLTIP_DELAY } from './constants';
+import { DividerCommand } from '../../architecture/base/commands/DividerCommand';
+import { Dropdown, Menu } from '@cognite/cogs-lab';
+import { DropdownButton } from './DropdownButton';
+import { FilterButton } from './FilterButton';
+import { getButtonType, getFlexDirection, getTooltipPlacement } from './utilities';
+import { IconComponent } from './Factories/IconFactory';
+import { LabelWithShortcut } from './LabelWithShortcut';
+import { SectionCommand } from '../../architecture/base/commands/SectionCommand';
+import { TOOLBAR_HORIZONTAL_PANEL_OFFSET } from '../constants';
+import { type BaseCommand } from '../../architecture/base/commands/BaseCommand';
+import { type BaseSettingsCommand } from '../../architecture/base/commands/BaseSettingsCommand';
+import { type FlexDirection, type PlacementType } from './types';
+import { type ReactNode, useState, type ReactElement } from 'react';
+import { useCommand } from './hooks/useCommand';
+import { useCommandVisible, useCommandProps, useSliderCommandValue } from './hooks/useCommandProps';
+import styled from 'styled-components';
 
 export const SettingsButton = ({
   inputCommand,
@@ -39,24 +29,9 @@ export const SettingsButton = ({
   inputCommand: BaseSettingsCommand;
   placement: PlacementType;
 }): ReactElement => {
-  const renderTarget = useRenderTarget();
-  const command = useMemo<BaseSettingsCommand>(
-    () => getDefaultCommand<BaseSettingsCommand>(inputCommand, renderTarget),
-    []
-  );
-
-  // @update-ui-component-pattern
+  const command = useCommand(inputCommand);
+  const { isVisible, isEnabled, icon } = useCommandProps(command);
   const [isOpen, setOpen] = useState(false);
-  const [isEnabled, setEnabled] = useState(true);
-  const [isVisible, setVisible] = useState(true);
-  const [icon, setIcon] = useState<IconName>(undefined);
-
-  useOnUpdate(command, () => {
-    setEnabled(command.isEnabled);
-    setVisible(command.isVisible);
-    setIcon(command.icon);
-  });
-  // @end
 
   if (!isVisible || !command.hasChildren) {
     return <></>;
@@ -121,19 +96,11 @@ function createMenuItem(command: BaseCommand): ReactNode {
   if (command instanceof BaseBannerCommand) {
     return <BannerComponent key={command.uniqueId} command={command} />;
   }
-
   return <ButtonComponent key={command.uniqueId} command={command} />;
 }
 
 function DividerComponent({ command }: { command: BaseCommand }): ReactNode {
-  // @update-ui-component-pattern
-  const [isVisible, setVisible] = useState(true);
-
-  useOnUpdate(command, () => {
-    setVisible(command.isVisible);
-  });
-  // @end
-
+  const isVisible = useCommandVisible(command);
   if (!isVisible) {
     return null;
   }
@@ -141,39 +108,18 @@ function DividerComponent({ command }: { command: BaseCommand }): ReactNode {
 }
 
 function SectionComponent({ command }: { command: BaseCommand }): ReactNode {
-  // @update-ui-component-pattern
-  const [isVisible, setVisible] = useState(true);
-
-  useOnUpdate(command, () => {
-    setVisible(command.isVisible);
-  });
-  // @end
-
+  const isVisible = useCommandVisible(command);
   if (!isVisible) {
     return null;
   }
-  const label = command.label;
-  return <StyledSectionHeader>{label} </StyledSectionHeader>;
+  return <StyledSectionHeader>{command.label} </StyledSectionHeader>;
 }
 
 function ToggleComponent({ command }: { command: BaseCommand }): ReactNode {
-  // @update-ui-component-pattern
-  const [isChecked, setChecked] = useState(false);
-  const [isEnabled, setEnabled] = useState(true);
-  const [isVisible, setVisible] = useState(true);
-
-  useOnUpdate(command, () => {
-    setChecked(command.isChecked);
-    setEnabled(command.isEnabled);
-    setVisible(command.isVisible);
-  });
-  // @end
-
+  const { isVisible, isChecked, isEnabled } = useCommandProps(command);
   if (!isVisible) {
     return null;
   }
-
-  const label = command.label;
   return (
     <StyledToggleContainer
       onClick={() => {
@@ -182,36 +128,23 @@ function ToggleComponent({ command }: { command: BaseCommand }): ReactNode {
         }
       }}>
       <Switch checked={isChecked} disabled={!isEnabled} />
-      <TextLabel text={label} />
+      <TextLabel text={command.label} />
     </StyledToggleContainer>
   );
 }
 
 function ButtonComponent({ command }: { command: BaseCommand }): ReactNode {
-  // @update-ui-component-pattern
-  const [isEnabled, setEnabled] = useState(true);
-  const [isVisible, setVisible] = useState(true);
-  const [icon, setIcon] = useState<IconName>(undefined);
-
-  useOnUpdate(command, () => {
-    setEnabled(command.isEnabled);
-    setVisible(command.isVisible);
-    setIcon(command.icon);
-  });
-  // @end
-
+  const { isVisible, isEnabled, icon } = useCommandProps(command);
   if (!isVisible) {
     return null;
   }
-  const label = command.label;
-
   return (
     <Menu.ItemAction
       disabled={!isEnabled}
       icon={<IconComponent iconName={icon} />}
       style={{ padding: DEFAULT_PADDING }}
       shortcutKeys={command.getShortCutKeys()}
-      label={label}
+      label={command.label}
       onClick={() => {
         command.invoke();
       }}
@@ -220,20 +153,8 @@ function ButtonComponent({ command }: { command: BaseCommand }): ReactNode {
 }
 
 function SliderComponent({ command }: { command: BaseSliderCommand }): ReactNode {
-  // @update-ui-component-pattern
-  const [isEnabled, setEnabled] = useState(true);
-  const [isVisible, setVisible] = useState(true);
-  const [value, setValue] = useState(command.value);
-
-  useOnUpdate(command, () => {
-    setEnabled(command.isEnabled);
-    setVisible(command.isVisible);
-    if (command instanceof BaseSliderCommand) {
-      setValue(command.value);
-    }
-  });
-  // @end
-
+  const { isVisible, isEnabled } = useCommandProps(command);
+  const value = useSliderCommandValue(command);
   if (!isVisible) {
     return null;
   }
@@ -250,7 +171,7 @@ function SliderComponent({ command }: { command: BaseSliderCommand }): ReactNode
         marks={command.marks}
         onChange={(value: number) => {
           command.value = value;
-          setValue(value);
+          command.update();
         }}
         value={value}
       />
@@ -259,32 +180,16 @@ function SliderComponent({ command }: { command: BaseSliderCommand }): ReactNode
 }
 
 function DropdownButtonComponent({ command }: { command: BaseOptionCommand }): ReactNode {
-  // @update-ui-component-pattern
-  const [isVisible, setVisible] = useState(true);
-
-  useOnUpdate(command, () => {
-    setVisible(command.isVisible);
-  });
-  // @end
-
+  const isVisible = useCommandVisible(command);
   if (!isVisible) {
     return null;
   }
-
   return <DropdownButton inputCommand={command} placement={'bottom'} usedInSettings={true} />;
 }
 
 function FilterButtonComponent({ command }: { command: BaseFilterCommand }): ReactNode {
   command.initializeChildrenIfNeeded();
-
-  // @update-ui-component-pattern
-  const [isVisible, setVisible] = useState(true);
-
-  useOnUpdate(command, () => {
-    setVisible(command.isVisible);
-  });
-  // @end
-
+  const isVisible = useCommandVisible(command);
   if (!isVisible) {
     return null;
   }

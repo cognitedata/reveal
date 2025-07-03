@@ -28,6 +28,7 @@ export default defineConfig(({ command }) => {
       sourcemap: command === 'build'
     },
     test: {
+      mockReset: true,
       include: ['src/**/*.{test,spec}.?(c|m)[jt]s?(x)'],
       environment: 'happy-dom',
       globals: true,

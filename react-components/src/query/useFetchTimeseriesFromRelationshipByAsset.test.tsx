@@ -118,7 +118,6 @@ vi.mocked(useSDK).mockReturnValue(sdk);
 
 describe(useFetchTimeseriesFromRelationshipByAsset.name, () => {
   beforeEach(() => {
-    vi.clearAllMocks();
     queryClient.clear();
   });
 

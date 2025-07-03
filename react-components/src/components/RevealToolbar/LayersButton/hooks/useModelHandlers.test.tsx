@@ -1,4 +1,4 @@
-import { describe, expect, test, vi, beforeEach } from 'vitest';
+import { describe, expect, test, vi } from 'vitest';
 import { useModelHandlers } from './useModelHandlers';
 import { renderHook } from '@testing-library/react';
 import {
@@ -20,10 +20,6 @@ import { Mock } from 'moq.ts';
 const use3DModelNameMock = vi.fn<typeof use3DModelName>();
 
 describe(useModelHandlers.name, () => {
-  beforeEach(() => {
-    vi.resetAllMocks();
-  });
-
   test('returns model handlers and update callback', () => {
     const mockNameQueryResult = createUseQueryModelNameResult(['model0', 'model1']);
     use3DModelNameMock.mockReturnValue(mockNameQueryResult);
