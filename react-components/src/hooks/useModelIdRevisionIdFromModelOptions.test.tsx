@@ -27,6 +27,13 @@ const dmModelOption = {
   revisionSpace: 'default-revision-space'
 };
 
+const mockDefaultUseQueriedAddModelOptions = new Mock<
+  UseQueryResult<Array<AddModelOptions<ClassicDataSourceType>>>
+>()
+  .setup((p) => p.data)
+  .returns([])
+  .object();
+
 const dependencies = getMocksByDefaultDependencies(
   defaultModelIdRevisionIdFromModelOptionsDependencies
 );
@@ -40,7 +47,7 @@ describe(useModelIdRevisionIdFromModelOptions.name, () => {
 
   beforeEach(() => {
     dependencies.useFdmSdk.mockReturnValue(new FdmSDK(sdkMock));
-    dependencies.useQueriedAddModelOptions.mockReturnValue([]);
+    dependencies.useQueriedAddModelOptions.mockReturnValue(mockDefaultUseQueriedAddModelOptions);
   });
 
   test('returns empty array if input is undefined', () => {
