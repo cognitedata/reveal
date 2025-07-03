@@ -65,8 +65,17 @@ export function createImage360ClassicMock(parameters?: {
 }
 
 export function createImage360DmMock(): Image360Collection<DMDataSourceType> {
+  const onEventMock =
+    vi.fn<(event: 'image360Entered' | 'image360Exited', callback: () => void) => void>();
+  const offEventMock =
+    vi.fn<(event: 'image360Entered' | 'image360Exited', callback: () => void) => void>();
+
   return new Mock<Image360Collection<DMDataSourceType>>()
     .setup((p) => p.id)
     .returns('testImage360ExternalId')
+    .setup((p) => p.on)
+    .returns(onEventMock)
+    .setup((p) => p.off)
+    .returns(offEventMock)
     .object();
 }
