@@ -1,6 +1,6 @@
 import { describe, expect, test } from 'vitest';
-import { count, first, last } from './generatorUtils';
-import { isOdd } from './mathExtensions';
+import { count, filter, first, last, map } from './generatorUtils';
+import { isOdd } from './mathUtils';
 
 describe('generatorUtils', () => {
   describe(first.name, () => {
@@ -37,10 +37,36 @@ describe('generatorUtils', () => {
       expect(count(getPositiveNumbers(6), (a) => a > 100)).toBe(0);
     });
   });
+
+  describe(filter.name, () => {
+    test('should return empty generator on empty input', () => {
+      expect([...filter(getEmptyGenerator(), () => true)]).toEqual([]);
+    });
+
+    test('should return all items satisfying predicate', () => {
+      expect([...filter(getPositiveNumbers(10), (num) => num % 3 === 0 || num === 4)]).toEqual([
+        0, 3, 4, 6, 9
+      ]);
+    });
+  });
+
+  describe(map.name, () => {
+    test('should return empty generator on empty input', () => {
+      expect([...map(getEmptyGenerator(), () => 1)]).toEqual([]);
+    });
+
+    test('should transform every input item', () => {
+      expect([...map(getPositiveNumbers(6), (n) => -n + 3)]).toEqual([3, 2, 1, 0, -1, -2]);
+    });
+  });
 });
 
 function* getPositiveNumbers(count: number): Generator<number> {
   for (let i = 0; i < count; i++) {
     yield i;
   }
+}
+
+function getEmptyGenerator(): Generator<number> {
+  return getPositiveNumbers(0);
 }

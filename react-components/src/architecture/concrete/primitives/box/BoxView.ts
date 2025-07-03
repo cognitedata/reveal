@@ -30,7 +30,7 @@ import {
 import { type DomainObjectIntersection } from '../../../base/domainObjectsHelpers/DomainObjectIntersection';
 import { BoxFace } from '../common/BoxFace';
 import { FocusType } from '../../../base/domainObjectsHelpers/FocusType';
-import { clear } from '../../../base/utilities/extensions/arrayExtensions';
+import { clear } from '../../../base/utilities/extensions/arrayUtils';
 import { createSpriteWithText } from '../../../base/utilities/sprites/createSprite';
 import { BoxUtils } from '../../../base/utilities/primitives/BoxUtils';
 import { PrimitivePickInfo } from '../common/PrimitivePickInfo';

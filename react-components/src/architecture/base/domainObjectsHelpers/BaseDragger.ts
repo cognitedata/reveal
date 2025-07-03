@@ -7,7 +7,7 @@ import { type Transaction } from '../undo/Transaction';
 import { UnitSystem } from '../renderTarget/UnitSystem';
 import { type DomainObject } from '../domainObjects/DomainObject';
 import { Quantity } from './Quantity';
-import { round, roundIncrement } from '../utilities/extensions/mathExtensions';
+import { round, roundIncrement } from '../utilities/extensions/mathUtils';
 import { Changes } from './Changes';
 import { getRoot } from '../domainObjects/getRoot';
 

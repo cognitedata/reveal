@@ -9,12 +9,9 @@ import {
 } from '../../../base/domainObjects/VisualDomainObject';
 import { PlaneDragger } from './PlaneDragger';
 import { getIconByPrimitiveType } from '../../../base/utilities/primitives/getIconByPrimitiveType';
-import { getComplementary } from '../../../base/utilities/colors/colorExtensions';
-import {
-  horizontalAngle,
-  rotateHorizontal
-} from '../../../base/utilities/extensions/vectorExtensions';
-import { forceBetween0AndPi } from '../../../base/utilities/extensions/mathExtensions';
+import { getComplementary } from '../../../base/utilities/colors/colorUtils';
+import { horizontalAngle, rotateHorizontal } from '../../../base/utilities/extensions/vectorUtils';
+import { forceBetween0AndPi } from '../../../base/utilities/extensions/mathUtils';
 import { type TranslationInput } from '../../../base/utilities/TranslateInput';
 import { PanelInfo } from '../../../base/domainObjectsHelpers/PanelInfo';
 import { Quantity } from '../../../base/domainObjectsHelpers/Quantity';

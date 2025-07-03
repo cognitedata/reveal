@@ -20,7 +20,7 @@ import {
 } from 'three';
 import { CommandsController } from './CommandsController';
 import { RootDomainObject } from '../domainObjects/RootDomainObject';
-import { getOctant } from '../utilities/extensions/vectorExtensions';
+import { getOctant } from '../utilities/extensions/vectorUtils';
 import { getResizeCursor } from '../utilities/geometry/getResizeCursor';
 import { type DomainObject } from '../domainObjects/DomainObject';
 import { type AxisGizmoTool } from '@cognite/reveal/tools';
