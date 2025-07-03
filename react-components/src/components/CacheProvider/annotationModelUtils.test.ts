@@ -4,7 +4,7 @@ import {
   fetchAssetsForAssetIds,
   fetchAssetsForAssetReferences,
   fetchPointCloudAnnotationAssets
-} from './aannotationModelUtils';
+} from './annotationModelUtils';
 import { type InstanceReference } from '../../utilities/instanceIds';
 import { type PointCloudAnnotationModel } from './types';
 import { sdkMock, retrieveMock } from '#test-utils/fixtures/sdk';
