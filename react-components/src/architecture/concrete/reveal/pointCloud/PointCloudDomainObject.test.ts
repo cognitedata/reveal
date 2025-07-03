@@ -5,6 +5,7 @@ import { PointCloudRenderStyle } from './PointCloudRenderStyle';
 import { createFullRenderTargetMock } from '../../../../../tests/tests-utilities/fixtures/createFullRenderTargetMock';
 import { type RevealRenderTarget } from '../../../base/renderTarget/RevealRenderTarget';
 import { type CognitePointCloudModel } from '@cognite/reveal';
+import { viewerModelsMock } from '#test-utils/fixtures/viewer';
 
 describe(PointCloudDomainObject.name, () => {
   let model: CognitePointCloudModel;
@@ -27,6 +28,7 @@ describe(PointCloudDomainObject.name, () => {
   });
 
   test('should be removed', async () => {
+    viewerModelsMock.mockReturnValue([model]);
     domainObject.removeInteractive();
     expect(renderTarget.viewer.removeModel).toHaveBeenCalledWith(model);
   });
