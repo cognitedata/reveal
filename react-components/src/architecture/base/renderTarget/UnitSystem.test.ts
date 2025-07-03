@@ -42,9 +42,9 @@ describe(UnitSystem.name, () => {
   test('Should get length, area and volume as string in default units', () => {
     const unitSystem = new UnitSystem();
     const value = 31415;
-    expect(unitSystem.toStringWithUnit(value, Quantity.Length)).toBe('31,415.000 m');
-    expect(unitSystem.toStringWithUnit(value, Quantity.Area)).toBe('31,415.000 m²');
-    expect(unitSystem.toStringWithUnit(value, Quantity.Volume)).toBe('31,415.000 m³');
+    expect(unitSystem.toStringWithUnit(value, Quantity.Length)).toBe('31,415.00 m');
+    expect(unitSystem.toStringWithUnit(value, Quantity.Area)).toBe('31,415.00 m²');
+    expect(unitSystem.toStringWithUnit(value, Quantity.Volume)).toBe('31,415.00 m³');
   });
 
   test('Should get length, area and volume as string in ft', () => {
@@ -58,9 +58,9 @@ describe(UnitSystem.name, () => {
   test('Should get length, area and volume as string in inch', () => {
     const unitSystem = new UnitSystem();
     unitSystem.lengthUnit = LengthUnit.Inch;
-    expect(unitSystem.toStringWithUnit(1, Quantity.Length)).toBe('39.4 in');
-    expect(unitSystem.toStringWithUnit(1, Quantity.Area)).toBe('1,550.0 in²');
-    expect(unitSystem.toStringWithUnit(1, Quantity.Volume)).toBe('61,023.7 in³');
+    expect(unitSystem.toStringWithUnit(1, Quantity.Length)).toBe('39.25 in');
+    expect(unitSystem.toStringWithUnit(1, Quantity.Area)).toBe('1,550.00 in²');
+    expect(unitSystem.toStringWithUnit(1, Quantity.Volume)).toBe('61,023.75 in³');
   });
 
   test('Should get angle and unit less as string', () => {

@@ -1,5 +1,6 @@
 import { isEmpty } from 'lodash';
 import { Quantity } from '../domainObjectsHelpers/Quantity';
+import { round } from '../utilities/extensions/mathExtensions';
 
 const METER_TO_FT = 1 / 0.3048;
 const METER_TO_INCH = 12 * METER_TO_FT;
@@ -42,8 +43,12 @@ export class UnitSystem {
 
   public toString(value: number, quantity: Quantity): string {
     const fractionDigits = this.getFractionDigits(quantity);
-    const convertedValue = this.convertToUnit(value, quantity);
+    let convertedValue = this.convertToUnit(value, quantity);
 
+    // For inch the precision should be 0.25, which is about 1 cm
+    if (this.lengthUnit === LengthUnit.Inch) {
+      convertedValue = round(convertedValue, 0.25);
+    }
     // This ensures the number with commas as thousands separators
     return convertedValue.toLocaleString('default', {
       maximumFractionDigits: fractionDigits,
@@ -119,11 +124,11 @@ export class UnitSystem {
   private getFractionDigitsForLengthUnits(): number {
     switch (this.lengthUnit) {
       case LengthUnit.Inch:
-        return 1;
+        return 2;
       case LengthUnit.Feet:
         return 2;
       default:
-        return 3;
+        return 2;
     }
   }
 
