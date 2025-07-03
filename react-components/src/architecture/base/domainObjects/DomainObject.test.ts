@@ -209,7 +209,7 @@ describe(DomainObject.name, () => {
     expect(child.parent).toBe(parent);
 
     const tester1 = new EventChangeTester(parent, Changes.childDeleted);
-    const tester2 = new EventChangeTester(child, Changes.deleted);
+    const tester2 = new EventChangeTester(child, Changes.deleting);
     child.removeInteractive();
     tester1.toHaveBeenCalledOnce();
     tester2.toHaveBeenCalledOnce();

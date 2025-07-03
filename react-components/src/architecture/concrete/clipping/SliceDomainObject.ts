@@ -53,13 +53,13 @@ export class SliceDomainObject extends PlaneDomainObject {
     if (
       change.isChanged(
         Changes.selected,
-        Changes.deleted,
+        Changes.deleting,
         Changes.added,
         Changes.geometry,
         Changes.dragging
       )
     ) {
-      if (change.isChanged(Changes.deleted)) {
+      if (change.isChanged(Changes.deleting)) {
         this.focusType = FocusType.Pending; // Make sure that the slice is not used in clipping anymore
       }
       this.updateClippingPlanes();
