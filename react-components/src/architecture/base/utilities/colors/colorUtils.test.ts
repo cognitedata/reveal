@@ -12,14 +12,14 @@ import {
   getHslMixedColor,
   getMixedColor,
   isGreyScale
-} from './colorExtensions';
+} from './colorUtils';
 import { expectEqualColor } from '#test-utils/primitives/primitiveTestUtil';
 
 const RED_COLOR = new Color(1, 0, 0);
 const BLUE_COLOR = new Color(0, 0, 1);
 const CYAN_COLOR = new Color(0, 1, 1);
 
-describe('colorExtensions', () => {
+describe('colorUtils', () => {
   describe(isGreyScale.name, () => {
     test('should be grayscale', () => {
       expect(isGreyScale(WHITE_COLOR)).toBe(true);

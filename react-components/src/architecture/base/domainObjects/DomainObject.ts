@@ -1,11 +1,11 @@
 import { type Color } from 'three';
-import { BLACK_COLOR, WHITE_COLOR } from '../utilities/colors/colorExtensions';
+import { BLACK_COLOR, WHITE_COLOR } from '../utilities/colors/colorUtils';
 import { type RenderStyle } from '../renderStyles/RenderStyle';
 import { DomainObjectChange } from '../domainObjectsHelpers/DomainObjectChange';
 import { Changes } from '../domainObjectsHelpers/Changes';
 import { isInstanceOf, type Class } from '../domainObjectsHelpers/Class';
 import { VisibleState } from '../domainObjectsHelpers/VisibleState';
-import { clear, remove, removeAt } from '../utilities/extensions/arrayExtensions';
+import { clear, remove, removeAt } from '../utilities/extensions/arrayUtils';
 import { getNextColor } from '../utilities/colors/getNextColor';
 import { type RevealRenderTarget } from '../renderTarget/RevealRenderTarget';
 import { ColorType } from '../domainObjectsHelpers/ColorType';
@@ -910,10 +910,15 @@ export abstract class DomainObject implements TreeNodeType {
     for (const child of this.children) {
       child.removeInteractive(false); // If parent can be removed, so the children also
     }
-    const { parent } = this;
-    this.notify(Changes.deleted);
+    const { parent, root } = this;
+    this.notify(Changes.deleting);
     this.remove();
     parent?.notify(Changes.childDeleted);
+
+    this.notify(Changes.deleted);
+    if (root !== undefined && root !== this) {
+      root.views.notifyListeners(this, new DomainObjectChange(Changes.deleted));
+    }
     return true;
   }
 
