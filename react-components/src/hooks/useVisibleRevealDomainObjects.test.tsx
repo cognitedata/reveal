@@ -1,8 +1,7 @@
-import { beforeEach, describe, expect, test, vi } from 'vitest';
+import { beforeEach, describe, expect, test } from 'vitest';
 import {
   useVisibleRevealDomainObjects,
-  UseVisibleRevealDomainObjectsContext,
-  UseVisibleRevealDomainObjectsDependencies
+  UseVisibleRevealDomainObjectsContext
 } from './useVisibleRevealDomainObjects';
 import { CadDomainObject } from '../architecture/concrete/reveal/cad/CadDomainObject';
 import { createCadMock } from '#test-utils/fixtures/cadModel';
@@ -11,11 +10,10 @@ import { createPointCloudDMMock } from '#test-utils/fixtures/pointCloud';
 import { Image360CollectionDomainObject } from '../architecture/concrete/reveal/Image360Collection/Image360CollectionDomainObject';
 import { createImage360ClassicMock } from '#test-utils/fixtures/image360';
 import { createRenderTargetMock } from '#test-utils/fixtures/renderTarget';
-import { RevealRenderTarget } from '../architecture';
+import { type RevealRenderTarget } from '../architecture';
 import { act, renderHook } from '@testing-library/react';
 import type { PropsWithChildren, ReactElement } from 'react';
-import { RenderTarget } from 'three';
-import { RevealDomainObject } from '../architecture/concrete/reveal/RevealDomainObject';
+import { type RevealDomainObject } from '../architecture/concrete/reveal/RevealDomainObject';
 
 describe(useVisibleRevealDomainObjects.name, () => {
   let renderTarget: RevealRenderTarget;
@@ -34,7 +32,7 @@ describe(useVisibleRevealDomainObjects.name, () => {
   });
 
   test('returns only visible Reveal domain objects', () => {
-    const [domainObject0, domainObject1, domainObject2] =
+    const [domainObject0, _domainObject1, domainObject2] =
       populateRenderTargetAndGetModels(renderTarget);
 
     domainObject0.setVisibleInteractive(true, renderTarget);

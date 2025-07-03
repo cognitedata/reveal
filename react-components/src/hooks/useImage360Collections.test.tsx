@@ -2,9 +2,9 @@ import { describe, expect, test, vi } from 'vitest';
 import {
   useImage360Collections,
   UseImage360CollectionsContext,
-  UseImage360CollectionsDependencies
+  type UseImage360CollectionsDependencies
 } from './useImage360Collections';
-import { PropsWithChildren, ReactElement, useMemo } from 'react';
+import { type PropsWithChildren, type ReactElement } from 'react';
 import { renderHook } from '@testing-library/react';
 import { CadDomainObject } from '../architecture/concrete/reveal/cad/CadDomainObject';
 import { createCadMock } from '#test-utils/fixtures/cadModel';
