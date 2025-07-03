@@ -8,7 +8,6 @@ describe(ModelLayersButton.name, () => {
   let mockCadHandler: ModelHandler;
 
   beforeEach(() => {
-    vi.resetAllMocks();
     mockCadHandler = createCadHandlerMock();
   });
 
