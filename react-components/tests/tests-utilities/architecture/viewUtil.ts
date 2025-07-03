@@ -5,7 +5,7 @@ import { PerspectiveCamera, Raycaster, Vector2, type Vector3 } from 'three';
 import { expect } from 'vitest';
 import { type Class, isInstanceOf } from '../../../src/advanced-tree-view/utilities/class';
 import { getRenderTarget } from '../../../src/architecture/base/domainObjects/getRoot';
-import { count } from '../../../src/architecture/base/utilities/extensions/arrayExtensions';
+import { count } from '../../../src/architecture/base/utilities/extensions/arrayUtils';
 
 export function expectChildrenLength(view: GroupThreeView, expectedLength: number): void {
   expect(view.object.children.length).toBe(expectedLength);

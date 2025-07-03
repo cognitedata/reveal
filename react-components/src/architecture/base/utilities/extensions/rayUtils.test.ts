@@ -1,6 +1,6 @@
 import { Ray, Vector3 } from 'three';
 import { describe, test } from 'vitest';
-import { getClosestPointOnLine } from './rayExtensions';
+import { getClosestPointOnLine } from './rayUtils';
 import { expectEqualVector3 } from '#test-utils/primitives/primitiveTestUtil';
 
 describe(getClosestPointOnLine.name, () => {

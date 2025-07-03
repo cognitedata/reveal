@@ -1,6 +1,6 @@
 import { type DomainObjectChange } from './DomainObjectChange';
 import { isInstanceOf, type Class } from './Class';
-import { clear, remove } from '../utilities/extensions/arrayExtensions';
+import { clear, remove } from '../utilities/extensions/arrayUtils';
 import { type BaseView } from '../views/BaseView';
 import { type DomainObject } from '../domainObjects/DomainObject';
 

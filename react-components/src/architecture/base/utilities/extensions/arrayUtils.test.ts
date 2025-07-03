@@ -10,10 +10,10 @@ import {
   remove,
   removeAt,
   swap
-} from './arrayExtensions';
-import { isOdd } from './mathExtensions';
+} from './arrayUtils';
+import { isOdd } from './mathUtils';
 
-describe('ArrayExtensions', () => {
+describe('ArrayUtils', () => {
   describe(clear.name, () => {
     test('should clear array in place', () => {
       const array = [1, 2, 3];

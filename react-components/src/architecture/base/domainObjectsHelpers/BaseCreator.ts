@@ -1,5 +1,5 @@
 import { type Vector3, type Ray } from 'three';
-import { replaceLast } from '../utilities/extensions/arrayExtensions';
+import { replaceLast } from '../utilities/extensions/arrayUtils';
 import { CDF_TO_VIEWER_TRANSFORMATION } from '@cognite/reveal';
 import { type DomainObject } from '../domainObjects/DomainObject';
 

@@ -20,9 +20,9 @@ import {
   round,
   roundIncrement,
   square
-} from './mathExtensions';
+} from './mathUtils';
 
-describe('MathExtensions', () => {
+describe('MathUtils', () => {
   describe(isZero.name, () => {
     test('should be zero', () => {
       expect(isZero(0)).toBe(true);
