@@ -24,11 +24,15 @@ export type UseActiveReveal3dResourcesDependencies = {
   useFdmSdk: typeof useFdmSdk;
 };
 
+export const defaultUseActiveReveal3dResourcesDependencies = {
+  useVisibleRevealDomainObjects,
+  useFdmSdk
+};
+
 export const UseActiveReveal3dResourcesContext =
-  createContext<UseActiveReveal3dResourcesDependencies>({
-    useVisibleRevealDomainObjects,
-    useFdmSdk
-  });
+  createContext<UseActiveReveal3dResourcesDependencies>(
+    defaultUseActiveReveal3dResourcesDependencies
+  );
 
 export const useActiveReveal3dResources = (
   layerState: LayersUrlStateParam | undefined

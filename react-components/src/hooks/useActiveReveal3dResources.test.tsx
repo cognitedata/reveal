@@ -1,8 +1,8 @@
-import { describe, expect, test, vi } from 'vitest';
+import { beforeEach, describe, expect, test, vi } from 'vitest';
 import {
+  defaultUseActiveReveal3dResourcesDependencies,
   useActiveReveal3dResources,
-  UseActiveReveal3dResourcesContext,
-  type UseActiveReveal3dResourcesDependencies
+  UseActiveReveal3dResourcesContext
 } from './useActiveReveal3dResources';
 import { type PropsWithChildren, type ReactElement } from 'react';
 import { CadDomainObject } from '../architecture/concrete/reveal/cad/CadDomainObject';
@@ -21,6 +21,7 @@ import {
 import { Image360CollectionDomainObject } from '../architecture/concrete/reveal/Image360Collection/Image360CollectionDomainObject';
 import { createImage360ClassicMock } from '#test-utils/fixtures/image360';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { getMocksByDefaultDependencies } from '#test-utils/vitest-extensions/getMocksByDefaultDependencies';
 
 describe(useActiveReveal3dResources.name, () => {
   const queryClient = new QueryClient();
@@ -32,18 +33,11 @@ describe(useActiveReveal3dResources.name, () => {
     .returns(mockQueryNodesAndEdges)
     .object();
 
-  const mockUseFdmSdk = vi.fn(() => mockFdmSdk);
-
-  const mockUseVisibleRevealDomainObjects =
-    vi.fn<UseActiveReveal3dResourcesDependencies['useVisibleRevealDomainObjects']>();
+  const dependencies = getMocksByDefaultDependencies(defaultUseActiveReveal3dResourcesDependencies);
 
   const wrapper = ({ children }: PropsWithChildren): ReactElement => (
     <QueryClientProvider client={queryClient}>
-      <UseActiveReveal3dResourcesContext.Provider
-        value={{
-          useFdmSdk: mockUseFdmSdk,
-          useVisibleRevealDomainObjects: mockUseVisibleRevealDomainObjects
-        }}>
+      <UseActiveReveal3dResourcesContext.Provider value={dependencies}>
         {children}
       </UseActiveReveal3dResourcesContext.Provider>
     </QueryClientProvider>
@@ -52,10 +46,14 @@ describe(useActiveReveal3dResources.name, () => {
   const CAD_CLASSIC_IDS = { modelId: 123, revisionId: 234 };
   const POINT_CLOUD_CLASSIC_IDS = { modelId: 987, revisionId: 876 };
 
+  beforeEach(() => {
+    dependencies.useFdmSdk.mockReturnValue(mockFdmSdk);
+  });
+
   test('returns all visible classic objects from useVisibleRevealDomainObjects', async () => {
     const image360DomainObject = new Image360CollectionDomainObject(createImage360ClassicMock());
 
-    mockUseVisibleRevealDomainObjects.mockReturnValue([
+    dependencies.useVisibleRevealDomainObjects.mockReturnValue([
       new CadDomainObject(createCadMock(CAD_CLASSIC_IDS)),
       new PointCloudDomainObject(createPointCloudMock(POINT_CLOUD_CLASSIC_IDS)),
       image360DomainObject
@@ -80,7 +78,7 @@ describe(useActiveReveal3dResources.name, () => {
       POINT_CLOUD_CLASSIC_IDS.revisionId
     );
 
-    mockUseVisibleRevealDomainObjects.mockReturnValue([
+    dependencies.useVisibleRevealDomainObjects.mockReturnValue([
       new CadDomainObject(createCadMock(CAD_CLASSIC_IDS)),
       new PointCloudDomainObject(
         createPointCloudDMMock({ revisionExternalId: pointCloudRevisionExternalId })
@@ -104,7 +102,7 @@ describe(useActiveReveal3dResources.name, () => {
   test('returned value is stable over rerenders', async () => {
     const image360DomainObject = new Image360CollectionDomainObject(createImage360ClassicMock());
 
-    mockUseVisibleRevealDomainObjects.mockReturnValue([
+    dependencies.useVisibleRevealDomainObjects.mockReturnValue([
       new CadDomainObject(createCadMock(CAD_CLASSIC_IDS)),
       new PointCloudDomainObject(createPointCloudMock(POINT_CLOUD_CLASSIC_IDS)),
       image360DomainObject
