@@ -34,7 +34,7 @@ export class DomainObjectPanelUpdater {
       return;
     }
     if (domainObject.isSelected) {
-      if (change.isChanged(Changes.deleted)) {
+      if (change.isChanged(Changes.deleting)) {
         this.hide();
         return;
       }

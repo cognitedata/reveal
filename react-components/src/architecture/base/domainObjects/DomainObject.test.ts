@@ -9,7 +9,7 @@ import { PopupStyle } from '../domainObjectsHelpers/PopupStyle';
 import { RenderStyle } from '../renderStyles/RenderStyle';
 import { cloneDeep } from 'lodash';
 import { ColorType } from '../domainObjectsHelpers/ColorType';
-import { BLACK_COLOR, isGreyScale, WHITE_COLOR } from '../utilities/colors/colorExtensions';
+import { BLACK_COLOR, isGreyScale, WHITE_COLOR } from '../utilities/colors/colorUtils';
 import { ChangedDescription } from '../domainObjectsHelpers/ChangedDescription';
 import { createRenderTargetMock } from '#test-utils/fixtures/renderTarget';
 import { CommandsUpdater } from '../reactUpdaters/CommandsUpdater';
@@ -209,7 +209,7 @@ describe(DomainObject.name, () => {
     expect(child.parent).toBe(parent);
 
     const tester1 = new EventChangeTester(parent, Changes.childDeleted);
-    const tester2 = new EventChangeTester(child, Changes.deleted);
+    const tester2 = new EventChangeTester(child, Changes.deleting);
     child.removeInteractive();
     tester1.toHaveBeenCalledOnce();
     tester2.toHaveBeenCalledOnce();

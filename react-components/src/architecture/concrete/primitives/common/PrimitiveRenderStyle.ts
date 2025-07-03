@@ -1,6 +1,6 @@
 import { ColorType } from '../../../base/domainObjectsHelpers/ColorType';
 import { Color } from 'three';
-import { WHITE_COLOR } from '../../../base/utilities/colors/colorExtensions';
+import { WHITE_COLOR } from '../../../base/utilities/colors/colorUtils';
 import { CommonRenderStyle } from '../../../base/renderStyles/CommonRenderStyle';
 
 export abstract class PrimitiveRenderStyle extends CommonRenderStyle {

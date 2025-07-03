@@ -3,7 +3,7 @@ import { type TranslationInput } from '../../../base/utilities/TranslateInput';
 import { AnnotationsDomainObject } from '../AnnotationsDomainObject';
 import { Euler, Matrix4, Vector3 } from 'three';
 import { InstanceCommand } from '../../../base/commands/InstanceCommand';
-import { getRandomInt } from '../../../base/utilities/extensions/mathExtensions';
+import { getRandomInt } from '../../../base/utilities/extensions/mathUtils';
 import { degToRad } from 'three/src/math/MathUtils.js';
 import { type DomainObjectChange } from '../../../base/domainObjectsHelpers/DomainObjectChange';
 import { AnnotationChangedDescription } from '../helpers/AnnotationChangedDescription';

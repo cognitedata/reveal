@@ -6,7 +6,7 @@ import { FocusType } from '../../../base/domainObjectsHelpers/FocusType';
 import { click } from '#test-utils/architecture/baseCreatorUtil';
 import { MeasureCylinderDomainObject } from '../../measurements/MeasureCylinderDomainObject';
 import { PrimitiveType } from '../../../base/utilities/primitives/PrimitiveType';
-import { swap } from '../../../base/utilities/extensions/arrayExtensions';
+import { swap } from '../../../base/utilities/extensions/arrayUtils';
 
 describe(CylinderCreator.name, () => {
   test('Create horizontal circle by mimics the user clicking 2 times', () => {

@@ -10,7 +10,7 @@ import {
   type CustomObjectIntersection
 } from '@cognite/reveal';
 import { type DomainObjectIntersection } from '../../base/domainObjectsHelpers/DomainObjectIntersection';
-import { WHITE_COLOR } from '../../base/utilities/colors/colorExtensions';
+import { WHITE_COLOR } from '../../base/utilities/colors/colorUtils';
 
 export class ExampleView extends GroupThreeView<ExampleDomainObject> {
   // ==================================================
