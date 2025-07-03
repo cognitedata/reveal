@@ -1,7 +1,7 @@
 import { describe, expect, test } from 'vitest';
 import { equalsIgnoreCase, equalsIgnoreCaseAndSpace, isEmpty, numberToString } from './stringUtils';
 
-describe('StringUtils', () => {
+describe('stringUtils', () => {
   describe(isEmpty.name, () => {
     test('should empty string be be empty', () => {
       expect(isEmpty('')).toBe(true);

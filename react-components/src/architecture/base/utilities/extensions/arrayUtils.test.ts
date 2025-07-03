@@ -13,7 +13,7 @@ import {
 } from './arrayUtils';
 import { isOdd } from './mathUtils';
 
-describe('ArrayUtils', () => {
+describe('arrayUtils', () => {
   describe(clear.name, () => {
     test('should clear array in place', () => {
       const array = [1, 2, 3];

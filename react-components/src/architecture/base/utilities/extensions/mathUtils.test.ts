@@ -22,7 +22,7 @@ import {
   square
 } from './mathUtils';
 
-describe('MathUtils', () => {
+describe('mathUtils', () => {
   describe(isZero.name, () => {
     test('should be zero', () => {
       expect(isZero(0)).toBe(true);

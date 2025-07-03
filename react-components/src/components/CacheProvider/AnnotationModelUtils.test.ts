@@ -4,7 +4,7 @@ import {
   fetchAssetsForAssetIds,
   fetchAssetsForAssetReferences,
   fetchPointCloudAnnotationAssets
-} from './AnnotationModelUtils';
+} from './annotationModelUtils';
 import { type InstanceReference } from '../../utilities/instanceIds';
 import { type PointCloudAnnotationModel } from './types';
 import { sdkMock, retrieveMock } from '#test-utils/fixtures/sdk';
@@ -16,7 +16,7 @@ import {
   COGNITE_ASSET_VIEW_VERSION_KEY
 } from '../../data-providers/core-dm-provider/dataModels';
 
-describe('AnnotationModelUtils', () => {
+describe('annotationModelUtils', () => {
   let assets: Asset[];
   beforeEach(() => {
     assets = [createAssetMock(1), createAssetMock(2)];
