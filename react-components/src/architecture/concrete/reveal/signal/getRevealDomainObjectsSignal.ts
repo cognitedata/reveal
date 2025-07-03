@@ -33,10 +33,13 @@ export function getRevealDomainUpdateSignal(
   ): void {
     const relevantChanges = [Changes.added, Changes.deleting, ...additionalChangeFlags];
 
+    if (!(domainObject instanceof RevealDomainObject)) {
+      return;
+    }
+
     const isRelevantChange = change.isChanged(...relevantChanges);
 
-    const isRelevantEvent = domainObject instanceof RevealDomainObject && isRelevantChange;
-    if (!isRelevantEvent) {
+    if (!isRelevantChange) {
       return;
     }
 
