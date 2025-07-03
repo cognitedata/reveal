@@ -1,4 +1,4 @@
-import { describe, expect, test, vi, beforeEach } from 'vitest';
+import { describe, expect, test, vi } from 'vitest';
 import { renderHook } from '@testing-library/react';
 
 import { createCadMock } from '#test-utils/fixtures/cadModel';
@@ -29,10 +29,6 @@ describe(use3dModels.name, () => {
       {children}
     </Use3dModelsContext.Provider>
   );
-
-  beforeEach(() => {
-    vi.resetAllMocks();
-  });
 
   test('returns empty list if no Reveal domain objects are found', () => {
     mockUseRevealDomainObjects.mockReturnValue([]);
