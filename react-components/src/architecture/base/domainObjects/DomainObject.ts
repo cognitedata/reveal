@@ -1,11 +1,11 @@
 import { type Color } from 'three';
-import { BLACK_COLOR, WHITE_COLOR } from '../utilities/colors/colorExtensions';
+import { BLACK_COLOR, WHITE_COLOR } from '../utilities/colors/colorUtils';
 import { type RenderStyle } from '../renderStyles/RenderStyle';
 import { DomainObjectChange } from '../domainObjectsHelpers/DomainObjectChange';
 import { Changes } from '../domainObjectsHelpers/Changes';
 import { isInstanceOf, type Class } from '../domainObjectsHelpers/Class';
 import { VisibleState } from '../domainObjectsHelpers/VisibleState';
-import { clear, remove, removeAt } from '../utilities/extensions/arrayExtensions';
+import { clear, remove, removeAt } from '../utilities/extensions/arrayUtils';
 import { getNextColor } from '../utilities/colors/getNextColor';
 import { type RevealRenderTarget } from '../renderTarget/RevealRenderTarget';
 import { ColorType } from '../domainObjectsHelpers/ColorType';

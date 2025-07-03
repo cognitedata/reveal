@@ -9,7 +9,7 @@ import { PopupStyle } from '../domainObjectsHelpers/PopupStyle';
 import { RenderStyle } from '../renderStyles/RenderStyle';
 import { cloneDeep } from 'lodash';
 import { ColorType } from '../domainObjectsHelpers/ColorType';
-import { BLACK_COLOR, isGreyScale, WHITE_COLOR } from '../utilities/colors/colorExtensions';
+import { BLACK_COLOR, isGreyScale, WHITE_COLOR } from '../utilities/colors/colorUtils';
 import { ChangedDescription } from '../domainObjectsHelpers/ChangedDescription';
 import { createRenderTargetMock } from '#test-utils/fixtures/renderTarget';
 import { CommandsUpdater } from '../reactUpdaters/CommandsUpdater';

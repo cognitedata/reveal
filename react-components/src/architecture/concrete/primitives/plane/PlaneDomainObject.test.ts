@@ -10,7 +10,7 @@ import { PlaneDomainObject } from './PlaneDomainObject';
 import { Vector3 } from 'three';
 import { SolidPrimitiveRenderStyle } from '../common/SolidPrimitiveRenderStyle';
 import { type DomainObject } from '../../../base/domainObjects/DomainObject';
-import { isGreyScale } from '../../../base/utilities/colors/colorExtensions';
+import { isGreyScale } from '../../../base/utilities/colors/colorUtils';
 import { createFullRenderTargetMock } from '#test-utils/fixtures/createFullRenderTargetMock';
 
 describe(PlaneDomainObject.name, () => {

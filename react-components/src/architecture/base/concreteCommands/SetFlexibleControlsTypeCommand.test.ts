@@ -3,7 +3,7 @@ import { SetFlexibleControlsTypeCommand } from './SetFlexibleControlsTypeCommand
 import { isEmpty } from '../utilities/TranslateInput';
 import { createFullRenderTargetMock } from '../../../../tests/tests-utilities/fixtures/createFullRenderTargetMock';
 import { FlexibleControlsType } from '@cognite/reveal';
-import { count } from '../utilities/extensions/arrayExtensions';
+import { count } from '../utilities/extensions/arrayUtils';
 
 describe(SetFlexibleControlsTypeCommand.name, () => {
   let commands: SetFlexibleControlsTypeCommand[];

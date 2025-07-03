@@ -13,7 +13,7 @@ import {
 } from 'three';
 import { GroupThreeView } from '../../base/views/GroupThreeView';
 import { Range3 } from '../../base/utilities/geometry/Range3';
-import { isIncrement } from '../../base/utilities/extensions/mathExtensions';
+import { isIncrement } from '../../base/utilities/extensions/mathUtils';
 import { Range1 } from '../../base/utilities/geometry/Range1';
 import { type AxisRenderStyle } from './AxisRenderStyle';
 import {
@@ -25,7 +25,7 @@ import { type DomainObjectChange } from '../../base/domainObjectsHelpers/DomainO
 import { Changes } from '../../base/domainObjectsHelpers/Changes';
 import { Vector3Pool } from '@cognite/reveal';
 import { PrimitiveUtils } from '../../base/utilities/primitives/PrimitiveUtils';
-import { numberToString } from '../../base/utilities/extensions/stringExtensions';
+import { numberToString } from '../../base/utilities/extensions/stringUtils';
 
 const FACE_INDEX_NAME1 = 'faceIndex1';
 const FACE_INDEX_NAME2 = 'faceIndex2';

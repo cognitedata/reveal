@@ -4,7 +4,7 @@ import { type TranslationInput } from '../../base/utilities/TranslateInput';
 import { AnnotationsRenderStyle } from './AnnotationsRenderStyle';
 import { FocusType } from '../../base/domainObjectsHelpers/FocusType';
 import { Changes } from '../../base/domainObjectsHelpers/Changes';
-import { remove } from '../../base/utilities/extensions/arrayExtensions';
+import { remove } from '../../base/utilities/extensions/arrayUtils';
 import { BoxGizmoDomainObject } from './BoxGizmoDomainObject';
 import { SolidDomainObject } from '../primitives/common/SolidDomainObject';
 import { PrimitiveType } from '../../base/utilities/primitives/PrimitiveType';
