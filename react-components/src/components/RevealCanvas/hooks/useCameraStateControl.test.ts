@@ -1,4 +1,4 @@
-import { describe, expect, test, vi, beforeEach, beforeAll, afterAll } from 'vitest';
+import { describe, expect, test, vi, beforeAll, afterAll } from 'vitest';
 
 import { renderHook } from '@testing-library/react';
 
@@ -12,10 +12,6 @@ vi.mock('../ViewerContext', () => ({
 }));
 
 describe(useCameraStateControl.name, () => {
-  beforeEach(() => {
-    vi.resetAllMocks();
-  });
-
   beforeAll(() => {
     vi.useFakeTimers();
   });
