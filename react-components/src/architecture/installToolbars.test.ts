@@ -2,7 +2,7 @@ import { describe, expect, test } from 'vitest';
 import { AnnotationsCreateTool } from './concrete/annotations/commands/AnnotationsCreateTool';
 import { AnnotationsSelectTool } from './concrete/annotations/commands/AnnotationsSelectTool';
 import { ClipTool } from './concrete/clipping/ClipTool';
-import { count } from './base/utilities/extensions/arrayExtensions';
+import { count } from './base/utilities/extensions/arrayUtils';
 import { ExampleTool } from './concrete/example/ExampleTool';
 import { MeasurementTool } from './concrete/measurements/MeasurementTool';
 import { installToolbars } from './installToolbars';
