@@ -1,12 +1,13 @@
 import { beforeEach, describe, expect, test } from 'vitest';
 import { createFullRenderTargetMock } from '../../../../../tests/tests-utilities/fixtures/createFullRenderTargetMock';
-import { CogniteCadModel } from '@cognite/reveal';
+import type { CogniteCadModel } from '@cognite/reveal';
 import { createCadMock } from '../../../../../tests/tests-utilities/fixtures/cadModel';
 import { CadRenderStyle } from './CadRenderStyle';
 import { CadDomainObject } from './CadDomainObject';
-import { type RevealRenderTarget } from '../../../base/renderTarget/RevealRenderTarget';
+import type { RevealRenderTarget } from '../../../base/renderTarget/RevealRenderTarget';
+import { viewerModelsMock } from '#test-utils/fixtures/viewer';
 
-describe(CogniteCadModel.name, () => {
+describe(CadDomainObject.name, () => {
   let model: CogniteCadModel;
   let domainObject: CadDomainObject;
   let renderTarget: RevealRenderTarget;
@@ -27,6 +28,7 @@ describe(CogniteCadModel.name, () => {
   });
 
   test('should be removed', async () => {
+    viewerModelsMock.mockReturnValue([model]);
     domainObject.removeInteractive();
     expect(renderTarget.viewer.removeModel).toHaveBeenCalledWith(model);
   });

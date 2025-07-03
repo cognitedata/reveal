@@ -52,6 +52,9 @@ export class CadDomainObject extends VisualDomainObject {
 
   protected override removeCore(): void {
     super.removeCore();
-    getRenderTarget(this)?.viewer?.removeModel(this._model);
+    const viewer = getRenderTarget(this)?.viewer;
+    if (viewer?.models.includes(this._model) ?? false) {
+      viewer?.removeModel(this._model);
+    }
   }
 }

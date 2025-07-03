@@ -20,7 +20,6 @@ vi.mock('../components/CacheProvider/NodeCacheProvider', () => ({
 
 describe(useCameraNavigation.name, () => {
   beforeEach(() => {
-    vi.resetAllMocks();
     viewerMock.cameraManager.setCameraState = vi.fn();
     viewerMock.cameraManager.fitCameraToBoundingBox = vi.fn();
   });
