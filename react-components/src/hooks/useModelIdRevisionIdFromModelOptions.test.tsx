@@ -1,4 +1,4 @@
-import { describe, expect, test, beforeEach, assert, vi } from 'vitest';
+import { describe, expect, test, beforeEach, assert } from 'vitest';
 import { type ReactElement, type ReactNode } from 'react';
 import { renderHook, waitFor } from '@testing-library/react';
 import { type UseQueryResult } from '@tanstack/react-query';
@@ -9,13 +9,14 @@ import {
   isDM3DModelIdentifier
 } from '../components/Reveal3DResources/typeGuards';
 import {
-  ModelIdRevisionIdFromModelOptionsContext,
-  type ModelIdRevisionIdFromModelOptionsDependencies
+  defaultModelIdRevisionIdFromModelOptionsDependencies,
+  ModelIdRevisionIdFromModelOptionsContext
 } from './useModelIdRevisionIdFromModelOptions.context';
 import { Mock } from 'moq.ts';
 import { sdkMock } from '#test-utils/fixtures/sdk';
 import { FdmSDK } from '../data-providers/FdmSDK';
 import { type AddModelOptions, type ClassicDataSourceType } from '@cognite/reveal';
+import { getMocksByDefaultDependencies } from '#test-utils/vitest-extensions/getMocksByDefaultDependencies';
 
 const classicModelOption = {
   modelId: 123,
@@ -26,40 +27,20 @@ const dmModelOption = {
   revisionSpace: 'default-revision-space'
 };
 
-const mockUseQueriedAddModelOptionsResult = new Mock<
-  UseQueryResult<Array<AddModelOptions<ClassicDataSourceType>>>
->()
-  .setup((p) => p.data)
-  .returns([])
-  .setup((p) => p.isFetching)
-  .returns(false)
-  .setup((p) => p.isLoading)
-  .returns(false)
-  .setup((p) => p.isError)
-  .returns(false)
-  .setup((p) => p.isRefetching)
-  .returns(false)
-  .object();
-
-const mockUseQueriedAddModelOptions =
-  vi.fn<ModelIdRevisionIdFromModelOptionsDependencies['useQueriedAddModelOptions']>();
-const mockUseFdmSdk = vi.fn<ModelIdRevisionIdFromModelOptionsDependencies['useFdmSdk']>();
+const dependencies = getMocksByDefaultDependencies(
+  defaultModelIdRevisionIdFromModelOptionsDependencies
+);
 
 describe(useModelIdRevisionIdFromModelOptions.name, () => {
   const wrapper = ({ children }: { children: ReactNode }): ReactElement => (
-    <ModelIdRevisionIdFromModelOptionsContext.Provider
-      value={{
-        useFdmSdk: mockUseFdmSdk,
-        useQueriedAddModelOptions: mockUseQueriedAddModelOptions
-      }}>
+    <ModelIdRevisionIdFromModelOptionsContext.Provider value={dependencies}>
       {children}
     </ModelIdRevisionIdFromModelOptionsContext.Provider>
   );
 
   beforeEach(() => {
-    vi.resetAllMocks();
-    mockUseFdmSdk.mockReturnValue(new FdmSDK(sdkMock));
-    mockUseQueriedAddModelOptions.mockReturnValue(mockUseQueriedAddModelOptionsResult);
+    dependencies.useFdmSdk.mockReturnValue(new FdmSDK(sdkMock));
+    dependencies.useQueriedAddModelOptions.mockReturnValue([]);
   });
 
   test('returns empty array if input is undefined', () => {
@@ -82,7 +63,7 @@ describe(useModelIdRevisionIdFromModelOptions.name, () => {
       .setup((p) => p.isRefetching)
       .returns(false)
       .object();
-    mockUseQueriedAddModelOptions.mockReturnValue(resultMock);
+    dependencies.useQueriedAddModelOptions.mockReturnValue(resultMock);
     const { result } = renderHook(
       () => useModelIdRevisionIdFromModelOptions([classicModelOption]),
       { wrapper }
@@ -112,7 +93,7 @@ describe(useModelIdRevisionIdFromModelOptions.name, () => {
       .setup((p) => p.isRefetching)
       .returns(false)
       .object();
-    mockUseQueriedAddModelOptions.mockReturnValue(resultMock);
+    dependencies.useQueriedAddModelOptions.mockReturnValue(resultMock);
     const { result } = renderHook(() => useModelIdRevisionIdFromModelOptions([dmModelOption]), {
       wrapper
     });
@@ -136,7 +117,7 @@ describe(useModelIdRevisionIdFromModelOptions.name, () => {
       .setup((p) => p.isFetching)
       .returns(true)
       .object();
-    mockUseQueriedAddModelOptions.mockReturnValue(resultMock);
+    dependencies.useQueriedAddModelOptions.mockReturnValue(resultMock);
 
     const { result } = renderHook(
       () => useModelIdRevisionIdFromModelOptions([classicModelOption, dmModelOption]),
@@ -153,7 +134,7 @@ describe(useModelIdRevisionIdFromModelOptions.name, () => {
       .setup((p) => p.isLoading)
       .returns(true)
       .object();
-    mockUseQueriedAddModelOptions.mockReturnValue(resultMock);
+    dependencies.useQueriedAddModelOptions.mockReturnValue(resultMock);
 
     const { result } = renderHook(
       () => useModelIdRevisionIdFromModelOptions([classicModelOption, dmModelOption]),
@@ -170,7 +151,7 @@ describe(useModelIdRevisionIdFromModelOptions.name, () => {
       .setup((p) => p.isError)
       .returns(true)
       .object();
-    mockUseQueriedAddModelOptions.mockReturnValue(resultMock);
+    dependencies.useQueriedAddModelOptions.mockReturnValue(resultMock);
 
     const { result } = renderHook(
       () => useModelIdRevisionIdFromModelOptions([classicModelOption, dmModelOption]),
@@ -187,7 +168,7 @@ describe(useModelIdRevisionIdFromModelOptions.name, () => {
       .setup((p) => p.isRefetching)
       .returns(true)
       .object();
-    mockUseQueriedAddModelOptions.mockReturnValue(resultMock);
+    dependencies.useQueriedAddModelOptions.mockReturnValue(resultMock);
 
     const { result } = renderHook(
       () => useModelIdRevisionIdFromModelOptions([classicModelOption, dmModelOption]),
