@@ -3,13 +3,13 @@ import { type DmsUniqueIdentifier } from '../../data-providers/FdmSDK';
 import { type CadModelOptions } from '../../components/Reveal3DResources/types';
 import { type ThreeDModelFdmMappings } from '../types';
 import { DEFAULT_QUERY_STALE_TIME } from '../../utilities/constants';
-import { useFdmNodeCache } from '../../components/CacheProvider/CacheProvider';
+import { useFdmCadNodeCache } from '../../components/CacheProvider/CacheProvider';
 
 export const useFdmAssetMappings = (
   fdmAssetExternalIds: DmsUniqueIdentifier[],
   models: CadModelOptions[]
 ): UseQueryResult<ThreeDModelFdmMappings[]> => {
-  const nodeCacheContent = useFdmNodeCache();
+  const nodeCacheContent = useFdmCadNodeCache();
 
   return useQuery({
     queryKey: [
