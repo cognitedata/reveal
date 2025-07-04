@@ -1,5 +1,5 @@
 import { type ModelAssetIdKey } from '../types';
-import { type ClassicCadAssetMapping } from './ClassicAssetMapping';
+import { type ClassicCadAssetMapping } from './ClassicCadAssetMapping';
 
 export class ClassicCadAssetMappingPerAssetIdCache {
   private readonly _assetIdsToAssetMappings = new Map<

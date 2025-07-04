@@ -15,7 +15,10 @@ import { ClassicCadAssetMappingPerAssetIdCache } from './ClassicCadAssetMappingP
 import { ClassicCadAssetMappingPerNodeIdCache } from './ClassicCadAssetMappingPerNodeIdCache';
 import { ClassicCadNode3DPerNodeIdCache } from './ClassicCadNode3DPerNodeIdCache';
 import { ClassicCadAssetMappingPerModelCache } from './ClassicCadAssetMappingPerModelCache';
-import { isValidClassicCadAssetMapping, type ClassicCadAssetMapping } from './ClassicAssetMapping';
+import {
+  isValidClassicCadAssetMapping,
+  type ClassicCadAssetMapping
+} from './ClassicCadAssetMapping';
 
 export type ClassicCadNodeAssetMappingResult = {
   node?: Node3D;

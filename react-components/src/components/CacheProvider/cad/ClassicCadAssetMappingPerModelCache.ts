@@ -1,7 +1,10 @@
 import { type CogniteClient } from '@cognite/sdk';
 import { type ModelId, type RevisionId, type ModelRevisionKey } from '../types';
 import { createModelRevisionKey } from '../idAndKeyTranslation';
-import { type ClassicCadAssetMapping, isValidClassicCadAssetMapping } from './ClassicAssetMapping';
+import {
+  type ClassicCadAssetMapping,
+  isValidClassicCadAssetMapping
+} from './ClassicCadAssetMapping';
 
 export class ClassicCadAssetMappingPerModelCache {
   private readonly _sdk: CogniteClient;

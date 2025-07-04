@@ -9,7 +9,7 @@ import {
 import { generateTimeseriesAndDatapointsFromTheAsset } from './generateTimeseriesAndDatapointsFromTheAsset';
 import { traverseExpression } from './traverseExpression';
 import { applyAssetMappingsNodeStyles } from './applyAssetMappingsNodeStyles';
-import { type ClassicCadAssetMapping } from '../../CacheProvider/cad/ClassicAssetMapping';
+import { type ClassicCadAssetMapping } from '../../CacheProvider/cad/ClassicCadAssetMapping';
 
 export const analyzeAssetMappingsAgainstExpression = async ({
   contextualizedAssetNodes,

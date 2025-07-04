@@ -2,7 +2,7 @@ import { CogniteCadModel, type CogniteModel, type DataSourceType } from '@cognit
 import { useMemo } from 'react';
 import { type ModelWithAssetMappings } from './cad/ModelWithAssetMappings';
 import { isDefined } from '../utilities/isDefined';
-import { type ClassicCadAssetMapping } from '../components/CacheProvider/cad/ClassicAssetMapping';
+import { type ClassicCadAssetMapping } from '../components/CacheProvider/cad/ClassicCadAssetMapping';
 
 export const useCreateAssetMappingsMapPerModel = (
   models: Array<CogniteModel<DataSourceType>>,
