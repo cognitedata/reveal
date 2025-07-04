@@ -2,7 +2,7 @@ import { assert, describe, expect, test, beforeEach } from 'vitest';
 import { BaseFilterCommand } from './BaseFilterCommand';
 import { MockFilterCommand } from '../../../../tests/tests-utilities/architecture/mock-commands/MockFilterCommand';
 import { createRenderTargetMock } from '../../../../tests/tests-utilities/fixtures/renderTarget';
-import { isOdd } from '../utilities/extensions/mathExtensions';
+import { isOdd } from '../utilities/extensions/mathUtils';
 
 describe(BaseFilterCommand.name, () => {
   let command: MockFilterCommand;

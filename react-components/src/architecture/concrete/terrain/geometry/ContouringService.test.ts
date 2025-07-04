@@ -4,7 +4,7 @@ import { RegularGrid2 } from './RegularGrid2';
 import { Vector2, Vector3 } from 'three';
 import { Range3 } from '../../../base/utilities/geometry/Range3';
 import { ContouringService } from './ContouringService';
-import { round } from '../../../base/utilities/extensions/mathExtensions';
+import { round } from '../../../base/utilities/extensions/mathUtils';
 
 describe(ContouringService.name, () => {
   beforeEach(() => {});

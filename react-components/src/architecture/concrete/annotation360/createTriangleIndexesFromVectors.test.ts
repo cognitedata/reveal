@@ -2,7 +2,7 @@ import { describe, expect, test } from 'vitest';
 import { Vector3 } from 'three';
 import { createTriangleIndexesFromVectors } from './createTriangleIndexesFromVectors';
 import { forEach } from 'lodash';
-import { insertAt } from '../../base/utilities/extensions/arrayExtensions';
+import { insertAt } from '../../base/utilities/extensions/arrayUtils';
 
 describe(createTriangleIndexesFromVectors.name, () => {
   test('should return undefined when empty vectors', () => {
