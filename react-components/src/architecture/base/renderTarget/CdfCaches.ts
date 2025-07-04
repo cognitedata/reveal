@@ -8,9 +8,11 @@ import { type Cognite3DViewer, type DataSourceType } from '@cognite/reveal';
 import { CoreDm3dFdm3dDataProvider } from '../../../data-providers/core-dm-provider/CoreDm3dDataProvider';
 import { LegacyFdm3dDataProvider } from '../../../data-providers/legacy-fdm-provider/LegacyFdm3dDataProvider';
 import { type Fdm3dDataProvider } from '../../../data-providers/Fdm3dDataProvider';
+import { EmptyFdm3dDataProvider } from '../../../data-providers/EmptyFdm3dDataProvider';
 
 export type CdfCachesOptions = {
   coreDmOnly: boolean;
+  enableLegacy3dFdm: boolean;
 };
 
 export class CdfCaches {
@@ -27,13 +29,19 @@ export class CdfCaches {
   constructor(
     cdfClient: CogniteClient,
     viewer: Cognite3DViewer<DataSourceType>,
-    { coreDmOnly }: CdfCachesOptions
+    { coreDmOnly, enableLegacy3dFdm }: CdfCachesOptions
   ) {
     const fdmClient = new FdmSDK(cdfClient);
 
-    const fdm3dDataProvider = coreDmOnly
-      ? new CoreDm3dFdm3dDataProvider(fdmClient)
-      : new LegacyFdm3dDataProvider(fdmClient, cdfClient);
+    const fdm3dDataProvider = (() => {
+      if (coreDmOnly) {
+        return new CoreDm3dFdm3dDataProvider(fdmClient);
+      } else if (enableLegacy3dFdm) {
+        return new LegacyFdm3dDataProvider(fdmClient, cdfClient);
+      } else {
+        return new EmptyFdm3dDataProvider();
+      }
+    })();
 
     this._assetMappingAndNode3dCache = new AssetMappingAndNode3DCache(cdfClient);
     this._fdmNodeCache = new FdmNodeCache(cdfClient, fdmClient, fdm3dDataProvider);

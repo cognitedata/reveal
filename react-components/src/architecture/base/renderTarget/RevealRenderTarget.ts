@@ -44,6 +44,7 @@ const DIRECTIONAL_LIGHT_NAME = 'DirectionalLight';
 
 export type RevealRenderTargetOptions = {
   coreDmOnly?: boolean;
+  enableLegacy3dFdm?: boolean;
 };
 
 export class RevealRenderTarget {
@@ -81,7 +82,8 @@ export class RevealRenderTarget {
   ) {
     this._viewer = viewer;
     const coreDmOnly = options?.coreDmOnly ?? false;
-    this._cdfCaches = new CdfCaches(sdk, viewer, { coreDmOnly });
+    const enableLegacy3dFdm = options?.coreDmOnly ?? true;
+    this._cdfCaches = new CdfCaches(sdk, viewer, { coreDmOnly, enableLegacy3dFdm });
     this._commandsController = new CommandsController(this.domElement);
     this._commandsController.addEventListeners();
     this._contextmenuController = new ContextMenuController();
