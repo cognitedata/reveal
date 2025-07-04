@@ -1,7 +1,4 @@
-import { type AssetMapping3D } from '@cognite/sdk';
-
-import { CogniteInternalId } from '@cognite/sdk';
-import { DmsUniqueIdentifier } from '../../../data-providers';
+import { type AssetMapping3D, type CogniteInternalId } from '@cognite/sdk';
 
 export type ClassicCadAssetMapping = {
   treeIndex: number;

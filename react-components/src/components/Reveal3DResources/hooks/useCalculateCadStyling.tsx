@@ -30,7 +30,7 @@ import {
   useMappedEdgesForRevisions,
   useNodesForAssets
 } from '../../../hooks/cad';
-import { ClassicCadAssetMapping } from '../../CacheProvider/cad/ClassicCadAssetMapping';
+import { type ClassicCadAssetMapping } from '../../CacheProvider/cad/ClassicCadAssetMapping';
 
 type ModelStyleGroup = {
   model: CadModelOptions;
