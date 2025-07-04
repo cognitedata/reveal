@@ -1,5 +1,5 @@
 import { Mock } from 'moq.ts';
-import { type FdmNodeCache } from '../../../src/components/CacheProvider/FdmNodeCache';
+import { type FdmCadNodeCache } from '../../../src/components/CacheProvider/FdmCadNodeCache';
 import { type Node3D } from '@cognite/sdk';
 import {
   type ModelRevisionId,
@@ -8,7 +8,7 @@ import {
 } from '../../../src/components/CacheProvider/types';
 import { type DmsUniqueIdentifier } from '../../../src/data-providers';
 
-const fdmNodeCacheMock = new Mock<FdmNodeCache>()
+const fdmCadNodeCacheMock = new Mock<FdmCadNodeCache>()
   .setup((instance) => instance.getAllMappingExternalIds.bind(instance))
   .returns(
     async (
@@ -62,6 +62,6 @@ const fdmNodeCacheMock = new Mock<FdmNodeCache>()
     }
   );
 
-const fdmNodeCacheContentMock = fdmNodeCacheMock.object();
+const fdmNodeCacheContentMock = fdmCadNodeCacheMock.object();
 
 export { fdmNodeCacheContentMock };

@@ -4,11 +4,11 @@ import {
   type ModelId,
   type RevisionId,
   type ModelTreeIndexKey
-} from './types';
-import { modelRevisionNodesAssetToKey } from './idAndKeyTranslation';
-import { fetchNodesForNodeIds } from './requests';
+} from '../types';
+import { modelRevisionNodesAssetToKey } from '../idAndKeyTranslation';
+import { fetchNodesForNodeIds } from '../requests';
 
-export class Node3DPerNodeIdCache {
+export class ClassicCadNode3DPerNodeIdCache {
   private readonly _sdk: CogniteClient;
 
   private readonly _nodeIdsToNode3D = new Map<ModelTreeIndexKey, Promise<Node3D>>();

@@ -35,7 +35,7 @@ export async function searchClassicAssetsForModels(
 ): Promise<SearchClassicAssetsResponse> {
   const isFirstPage = cadAssetsCursor === undefined;
 
-  const assetMappingAndNode3DCache = renderTarget.cdfCaches.assetMappingAndNode3dCache;
+  const assetMappingAndNode3DCache = renderTarget.cdfCaches.classicCadAssetMappingCache;
 
   const cadModels = resources
     .filter((resource) => resource.type === 'cad')

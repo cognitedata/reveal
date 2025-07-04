@@ -2,14 +2,14 @@ import { type UseQueryResult, useQuery } from '@tanstack/react-query';
 import { type Node3D } from '@cognite/sdk';
 import { type DmsUniqueIdentifier } from '../data-providers/FdmSDK';
 import { useReveal } from '../components/RevealCanvas/ViewerContext';
-import { useFdmNodeCache } from '../components/CacheProvider/CacheProvider';
+import { useFdmCadNodeCache } from '../components/CacheProvider/CacheProvider';
 
 export const use3dNodeByExternalId = ({
   externalId,
   space
 }: Partial<DmsUniqueIdentifier>): UseQueryResult<Node3D> => {
   const viewer = useReveal();
-  const fdmNodeCache = useFdmNodeCache();
+  const fdmNodeCache = useFdmCadNodeCache();
 
   return useQuery({
     queryKey: ['reveal', 'react-components', '3dNodeByExternalId', externalId, space],

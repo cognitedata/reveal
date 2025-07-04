@@ -1,5 +1,5 @@
 import { type AddModelOptions, type ClassicDataSourceType } from '@cognite/reveal';
-import { type AssetMappingAndNode3DCache } from '../../components/CacheProvider/AssetMappingAndNode3DCache';
+import { type ClassicCadAssetMappingCache } from '../../components/CacheProvider/cad/ClassicAssetMappingCache';
 import { type AllAssetFilterProps, hasFilters } from './filters';
 import { type SearchClassicCadAssetsResponse } from './types';
 import { type CursorForModel, fetchAllAssetsForCadModels } from './fetchAllAssetsForCadModels';
@@ -12,7 +12,7 @@ export async function searchClassicAssetsForCadModels(
   cursor: string | undefined,
   filters: AllAssetFilterProps | undefined,
   sdk: CogniteClient,
-  assetMappingAndNode3dCache: AssetMappingAndNode3DCache
+  assetMappingAndNode3dCache: ClassicCadAssetMappingCache
 ): Promise<SearchClassicCadAssetsResponse> {
   if (!hasFilters(filters)) {
     const cursorsForModels =

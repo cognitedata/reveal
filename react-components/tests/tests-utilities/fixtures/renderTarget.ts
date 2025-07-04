@@ -12,7 +12,7 @@ import { viewerMock } from './viewer';
 import { RevealSettingsController } from '../../../src/architecture/concrete/reveal/RevealSettingsController';
 
 const cdfCachesMock = new Mock<CdfCaches>()
-  .setup((p) => p.fdmNodeCache)
+  .setup((p) => p.fdmCadNodeCache)
   .returns(fdmNodeCacheContentMock)
   .object();
 
