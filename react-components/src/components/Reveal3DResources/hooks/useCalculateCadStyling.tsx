@@ -12,8 +12,7 @@ import {
   type NodeId,
   type FdmConnectionWithNode,
   type AssetId,
-  type ModelRevisionAssetNodesResult,
-  type CdfAssetMapping
+  type ModelRevisionAssetNodesResult
 } from '../../CacheProvider/types';
 import {
   type CadStylingGroup,
@@ -31,6 +30,7 @@ import {
   useMappedEdgesForRevisions,
   useNodesForAssets
 } from '../../../hooks/cad';
+import { type ClassicCadAssetMapping } from '../../CacheProvider/cad/ClassicCadAssetMapping';
 
 type ModelStyleGroup = {
   model: CadModelOptions;
@@ -343,7 +343,7 @@ function getMappedStyleGroupFromFdm(
 }
 
 function getMappedStyleGroupFromAssetMappings(
-  assetMappings: CdfAssetMapping[],
+  assetMappings: ClassicCadAssetMapping[],
   nodeAppearance: NodeAppearance
 ): TreeIndexStylingGroup {
   const indexSet = new IndexSet();
