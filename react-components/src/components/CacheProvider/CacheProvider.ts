@@ -1,7 +1,7 @@
 import { type CdfCaches } from '../../architecture/base/renderTarget/CdfCaches';
 import { useRenderTarget } from '../RevealCanvas';
-import { type AssetMappingAndNode3DCache } from './AssetMappingAndNode3DCache';
-import { type FdmNodeCache } from './FdmNodeCache';
+import { type ClassicCadAssetMappingCache } from './cad/ClassicAssetMappingCache';
+import { type FdmCadNodeCache } from './FdmCadNodeCache';
 import { type PointCloudAnnotationCache } from './PointCloudAnnotationCache';
 import { type Image360AnnotationCache } from './Image360AnnotationCache';
 import { type Fdm3dDataProvider } from '../../data-providers/Fdm3dDataProvider';
@@ -11,12 +11,12 @@ const useCacheObject = (): CdfCaches => {
   return revealRenderTarget.cdfCaches;
 };
 
-export const useFdmNodeCache = (): FdmNodeCache => {
-  return useCacheObject().fdmNodeCache;
+export const useFdmCadNodeCache = (): FdmCadNodeCache => {
+  return useCacheObject().fdmCadNodeCache;
 };
 
-export const useAssetMappingAndNode3DCache = (): AssetMappingAndNode3DCache => {
-  return useCacheObject().assetMappingAndNode3dCache;
+export const useClassicCadAssetMappingCache = (): ClassicCadAssetMappingCache => {
+  return useCacheObject().classicCadAssetMappingCache;
 };
 
 export const usePointCloudAnnotationCache = (): PointCloudAnnotationCache => {

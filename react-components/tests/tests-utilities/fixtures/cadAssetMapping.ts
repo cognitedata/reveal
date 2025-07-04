@@ -1,6 +1,6 @@
-import { type CdfAssetMapping } from '../../../src/components/CacheProvider/types';
+import { type ClassicCadAssetMapping } from '../../../src/components/CacheProvider/cad/ClassicCadAssetMapping';
 
-export function createAssetMappingMock(params?: { assetId?: number }): CdfAssetMapping {
+export function createAssetMappingMock(params?: { assetId?: number }): ClassicCadAssetMapping {
   return {
     assetId: params?.assetId ?? 1,
     nodeId: Math.random(),

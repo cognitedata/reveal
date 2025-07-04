@@ -14,7 +14,7 @@ import {
 import { createAssetMock } from '#test-utils/fixtures/assets';
 import assert from 'assert';
 import { isInternalId } from '../../utilities/instanceIds';
-import { type AssetMappingAndNode3DCache } from '../../components/CacheProvider/AssetMappingAndNode3DCache';
+import { type ClassicCadAssetMappingCache } from '../../components/CacheProvider/cad/ClassicAssetMappingCache';
 import { type RevealRenderTarget } from '../../architecture';
 import { drop, take } from 'lodash';
 import { taggedPointCloudModelOptions } from '#test-utils/fixtures/pointCloud';
@@ -80,12 +80,12 @@ const mockSdk = new Mock<CogniteClient>()
   .object();
 
 const mockGetAssetMappingsForModel =
-  vi.fn<AssetMappingAndNode3DCache['getAssetMappingsForModel']>();
+  vi.fn<ClassicCadAssetMappingCache['getAssetMappingsForModel']>();
 
 const mockRenderTarget = new Mock<RevealRenderTarget>()
-  .setup((p) => p.cdfCaches.assetMappingAndNode3dCache)
+  .setup((p) => p.cdfCaches.classicCadAssetMappingCache)
   .returns(
-    new Mock<AssetMappingAndNode3DCache>()
+    new Mock<ClassicCadAssetMappingCache>()
       .setup((p) => p.getAssetMappingsForModel)
       .returns(mockGetAssetMappingsForModel)
       .object()

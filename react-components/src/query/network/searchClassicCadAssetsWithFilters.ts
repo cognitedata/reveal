@@ -1,6 +1,6 @@
 import { type AddModelOptions, type ClassicDataSourceType } from '@cognite/reveal';
 import { type CadModelOptions } from '../../components';
-import { type AssetMappingAndNode3DCache } from '../../components/CacheProvider/AssetMappingAndNode3DCache';
+import { type ClassicCadAssetMappingCache } from '../../components/CacheProvider/cad/ClassicAssetMappingCache';
 import { type ModelWithAssetMappings } from '../../hooks/cad/ModelWithAssetMappings';
 import type { Asset, CogniteClient } from '@cognite/sdk';
 import { type AllAssetFilterProps } from './filters';
@@ -14,7 +14,7 @@ export async function searchClassicCadAssetsWithFilters(
   cursor: string | undefined,
   filters: AllAssetFilterProps | undefined,
   sdk: CogniteClient,
-  assetMappingAndNode3dCache: AssetMappingAndNode3DCache
+  assetMappingAndNode3dCache: ClassicCadAssetMappingCache
 ): Promise<SearchClassicCadAssetsResponse> {
   if (models.length === 0) {
     return { data: [], nextCursor: undefined };
@@ -76,7 +76,7 @@ export async function searchClassicCadAssetsWithFilters(
 
 async function fetchAssetMappedNodesForRevisions(
   cadModels: CadModelOptions[],
-  assetMappingAndNode3dCache: AssetMappingAndNode3DCache
+  assetMappingAndNode3dCache: ClassicCadAssetMappingCache
 ): Promise<ModelWithAssetMappings[]> {
   const fetchPromises = cadModels.map(async (model) => {
     const assetMappings = await assetMappingAndNode3dCache.getAssetMappingsForModel(
