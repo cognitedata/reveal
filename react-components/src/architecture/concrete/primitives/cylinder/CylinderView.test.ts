@@ -1,6 +1,6 @@
 import { assert, beforeEach, describe, expect, test } from 'vitest';
 import { CylinderView } from './CylinderView';
-import { Object3D, Vector3 } from 'three';
+import { LineSegments, Mesh, Object3D, PerspectiveCamera, Sprite, Vector3 } from 'three';
 import { type CylinderDomainObject } from './CylinderDomainObject';
 import { FocusType } from '../../../base/domainObjectsHelpers/FocusType';
 import { Changes } from '../../../base/domainObjectsHelpers/Changes';
@@ -10,66 +10,104 @@ import { expectEqualVector3 } from '#test-utils/primitives/primitiveTestUtil';
 import {
   addView,
   createIntersectInput,
-  expectChildrenLength
+  expectVisibleChildren,
+  expectVisibleChildrenOfType
 } from '#test-utils/architecture/viewUtil';
 import { isDomainObjectIntersection } from '../../../base/domainObjectsHelpers/DomainObjectIntersection';
 import { PrimitivePickInfo } from '../common/PrimitivePickInfo';
 import { MeasureCylinderDomainObject } from '../../measurements/MeasureCylinderDomainObject';
 import { PrimitiveType } from '../../../base/utilities/primitives/PrimitiveType';
+import { Wireframe } from 'three/examples/jsm/lines/Wireframe.js';
 
 describe(CylinderView.name, () => {
   let domainObject: CylinderDomainObject;
   let view: CylinderView;
+  let camera: PerspectiveCamera;
 
   beforeEach(() => {
     domainObject = createCylinderDomainObject();
     view = new CylinderView();
     addView(domainObject, view);
+
+    // This force to update the labels in correct position
+    camera = new PerspectiveCamera();
+    camera.position.set(5, 5, 5);
+    camera.lookAt(0, 0, 0);
+    view.beforeRender(camera);
   });
 
   test('should have object', () => {
     expect(view.object).toBeInstanceOf(Object3D);
-    expectChildrenLength(view, 2);
+    checkChildren(view, 1, 1, 2);
   });
 
   test('should changed when focus change', () => {
     domainObject.setFocusInteractive(FocusType.Face);
-    expectChildrenLength(view, 4);
+    checkChildren(view, 1, 3, 2);
 
     domainObject.setFocusInteractive(FocusType.Pending);
-    expectChildrenLength(view, 2);
+    checkChildren(view, 1, 1, 2);
 
     domainObject.setFocusInteractive(FocusType.Rotation);
-    expectChildrenLength(view, 4);
+    checkChildren(view, 1, 3, 2);
 
     domainObject.setFocusInteractive(FocusType.Body);
-    expectChildrenLength(view, 4);
+    checkChildren(view, 1, 3, 2);
 
     domainObject.setFocusInteractive(FocusType.Focus);
-    expectChildrenLength(view, 4);
+    checkChildren(view, 1, 3, 2);
 
     domainObject.setFocusInteractive(FocusType.None);
-    expectChildrenLength(view, 2);
+    checkChildren(view, 1, 1, 2);
   });
 
   test('should changed when render style change', () => {
     domainObject.renderStyle.showLines = false;
     view.update(new DomainObjectChange(Changes.renderStyle));
-    expectChildrenLength(view, 1);
+    checkChildren(view, 0, 1, 2);
 
     domainObject.renderStyle.showLines = true;
     view.update(new DomainObjectChange(Changes.renderStyle));
-    expectChildrenLength(view, 2);
+    checkChildren(view, 1, 1, 2);
 
     domainObject.renderStyle.showSolid = false;
     view.update(new DomainObjectChange(Changes.renderStyle));
-    expectChildrenLength(view, 1);
+    checkChildren(view, 1, 0, 2);
+
+    domainObject.renderStyle.showSolid = true;
+    view.update(new DomainObjectChange(Changes.renderStyle));
+    checkChildren(view, 1, 1, 2);
+
+    domainObject.renderStyle.showLabel = false;
+    view.update(new DomainObjectChange(Changes.renderStyle));
+    checkChildren(view, 1, 1, 0);
+  });
+
+  test('should changed when line width change', () => {
+    checkChildren(view, 1, 1, 2);
+    domainObject.renderStyle.lineWidth = 5;
+    view.update(new DomainObjectChange(Changes.renderStyle));
+    checkChildren(view, 0, 1, 2, 1); // This should use the wireframe of the lineSegments
   });
 
   test('should changed when selection change', () => {
     domainObject.isSelected = true;
     view.update(new DomainObjectChange(Changes.selected));
-    expectChildrenLength(view, 2);
+    checkChildren(view, 1, 1, 2);
+  });
+
+  test('should still have labels when camera position changed to opposite direction', () => {
+    domainObject.setFocusInteractive(FocusType.Focus);
+    checkChildren(view, 1, 3, 2);
+
+    // Move camera to look at the box at the opposite direction
+    camera.position.negate();
+    camera.lookAt(0, 0, 0);
+    view.beforeRender(camera);
+
+    // Radius labels is not visible when looking from the opposite direction
+    // This changed in another PR, so the last number should be 2 when merging.
+    checkChildren(view, 1, 3, 1);
   });
 
   test('should intersect', () => {
@@ -116,4 +154,18 @@ function createLookingDownIntersectInput(isVisible = true): CustomObjectIntersec
   const origin = new Vector3(0, 0, 2);
   const direction = new Vector3(0, 0, -1);
   return createIntersectInput(origin, direction, isVisible);
+}
+
+function checkChildren(
+  view: CylinderView,
+  lineSegmentCount: number,
+  meshCount: number,
+  spriteCount: number,
+  wireframeCount: number = 0
+): void {
+  expectVisibleChildrenOfType(view, LineSegments, lineSegmentCount);
+  expectVisibleChildrenOfType(view, Mesh, meshCount + wireframeCount); // Wireframe is also a mesh
+  expectVisibleChildrenOfType(view, Sprite, spriteCount);
+  expectVisibleChildrenOfType(view, Wireframe, wireframeCount);
+  expectVisibleChildren(view, lineSegmentCount + meshCount + spriteCount + wireframeCount);
 }
