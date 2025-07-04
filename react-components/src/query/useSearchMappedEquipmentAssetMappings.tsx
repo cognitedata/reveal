@@ -13,7 +13,7 @@ import {
 import { useSDK } from '../components/RevealCanvas/SDKProvider';
 import { getAssetsList } from '../hooks/network/getAssetsList';
 import { isDefined } from '../utilities/isDefined';
-import { useClassicAssetMappedNodesForRevisions } from '../hooks/cad';
+import { useAssetMappedNodesForRevisions } from '../hooks/cad';
 import { useMemo } from 'react';
 import { getAssetsFromAssetMappings } from './network/getAssetsFromAssetMappings';
 import { buildClassicAssetQueryFilter } from './network/buildClassicAssetFilter';
@@ -45,7 +45,7 @@ export const useSearchMappedEquipmentAssetMappings = (
 ): UseInfiniteQueryResult<InfiniteData<AssetPage>, Error> => {
   const sdk = useSDK(userSdk);
   const { data: assetMappingList, isFetched: isAssetMappingNodesFetched } =
-    useClassicAssetMappedNodesForRevisions(models.map((model) => ({ ...model, type: 'cad' })));
+    useAssetMappedNodesForRevisions(models.map((model) => ({ ...model, type: 'cad' })));
 
   const mapped3dAssetIds = useMemo(() => {
     if (assetMappingList === undefined) return new Set<number>();

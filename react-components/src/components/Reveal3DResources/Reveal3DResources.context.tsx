@@ -7,7 +7,7 @@ import { useCalculateCadStyling } from './hooks/useCalculateCadStyling';
 import { useReveal3DResourcesStylingLoadingSetter } from './Reveal3DResourcesInfoContext';
 import { useTypedModels } from './hooks/useTypedModels';
 import {
-  useClassicAssetMappedNodesForRevisions,
+  useAssetMappedNodesForRevisions,
   useGenerateAssetMappingCachePerItemFromModelCache,
   useGenerateNode3DCache
 } from '../../hooks/cad';
@@ -26,7 +26,7 @@ export type Reveal3DResourcesDependencies = {
   useTypedModels: typeof useTypedModels;
   useSetExpectedLoadCount: typeof useSetExpectedLoadCount;
   useCallCallbackOnFinishedLoading: typeof useCallCallbackOnFinishedLoading;
-  useClassicAssetMappedNodesForRevisions: typeof useClassicAssetMappedNodesForRevisions;
+  useAssetMappedNodesForRevisions: typeof useAssetMappedNodesForRevisions;
   useGenerateAssetMappingCachePerItemFromModelCache: typeof useGenerateAssetMappingCachePerItemFromModelCache;
   useGenerateNode3DCache: typeof useGenerateNode3DCache;
   useCalculateCadStyling: typeof useCalculateCadStyling;
@@ -48,7 +48,7 @@ export const defaultReveal3DResourcesDependencies: Reveal3DResourcesDependencies
   useTypedModels,
   useSetExpectedLoadCount,
   useCallCallbackOnFinishedLoading,
-  useClassicAssetMappedNodesForRevisions,
+  useAssetMappedNodesForRevisions,
   useGenerateAssetMappingCachePerItemFromModelCache,
   useGenerateNode3DCache,
   useCalculateCadStyling,

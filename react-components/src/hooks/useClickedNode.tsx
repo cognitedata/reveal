@@ -7,7 +7,7 @@ import {
 import { useEffect, useMemo, useState } from 'react';
 import { type CogniteInternalId, type Node3D } from '@cognite/sdk';
 import { type FdmNodeDataPromises } from '../components/CacheProvider/types';
-import { type NodeAssetMappingResult } from '../components/CacheProvider/cad/ClassicAssetMappingCache';
+import { type ClassicCadNodeAssetMappingResult } from '../components/CacheProvider/cad/ClassicAssetMappingCache';
 import { usePointCloudAnnotationMappingForIntersection } from './pointClouds/usePointCloudAnnotationMappingForIntersection';
 import { type PointCloudAnnotationMappedAssetData } from './types';
 import { MOUSE, Vector2, type Vector3 } from 'three';
@@ -160,7 +160,7 @@ const useCombinedClickedNodeData = (
   mouseButton: MOUSE | undefined,
   position: Vector2 | undefined,
   fdmPromises: FdmNodeDataPromises | undefined,
-  assetMappings: NodeAssetMappingResult | undefined,
+  assetMappings: ClassicCadNodeAssetMappingResult | undefined,
   pointCloudAssetMappingsResult: UseQueryResult<PointCloudAnnotationMappedAssetData[]>,
   pointCloudFdmVolumeMappingsResult: UseQueryResult<PointCloudFdmVolumeMappingWithViews[]>,
   intersection: AnyIntersection | Image360AnnotationIntersection<DataSourceType> | undefined

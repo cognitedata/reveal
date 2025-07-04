@@ -13,11 +13,14 @@ import { modelRevisionNodesAssetToKey, createModelRevisionKey } from '../idAndKe
 import { type ModelWithAssetMappings } from '../../../hooks/cad/ModelWithAssetMappings';
 import { ClassicCadAssetMappingPerAssetIdCache } from './ClassicCadAssetMappingPerAssetIdCache';
 import { ClassicCadAssetMappingPerNodeIdCache } from './ClassicCadAssetMappingPerNodeIdCache';
-import { Node3DPerNodeIdCache } from './Node3DPerNodeIdCache';
+import { ClassicCadNode3DPerNodeIdCache } from './ClassicCadNode3DPerNodeIdCache';
 import { ClassicCadAssetMappingPerModelCache } from './ClassicCadAssetMappingPerModelCache';
 import { isValidClassicCadAssetMapping, type ClassicCadAssetMapping } from './ClassicAssetMapping';
 
-export type NodeAssetMappingResult = { node?: Node3D; mappings: ClassicCadAssetMapping[] };
+export type ClassicCadNodeAssetMappingResult = {
+  node?: Node3D;
+  mappings: ClassicCadAssetMapping[];
+};
 
 export class ClassicCadAssetMappingCache {
   private readonly _sdk: CogniteClient;
@@ -28,7 +31,7 @@ export class ClassicCadAssetMappingCache {
 
   private readonly nodeIdsToAssetMappingCache: ClassicCadAssetMappingPerNodeIdCache;
 
-  private readonly nodeIdsToNode3DCache: Node3DPerNodeIdCache;
+  private readonly nodeIdsToNode3DCache: ClassicCadNode3DPerNodeIdCache;
 
   private readonly _amountOfAssetIdsChunks = 1;
 
@@ -37,14 +40,14 @@ export class ClassicCadAssetMappingCache {
     this.assetIdsToAssetMappingCache = new ClassicCadAssetMappingPerAssetIdCache();
     this.nodeIdsToAssetMappingCache = new ClassicCadAssetMappingPerNodeIdCache();
     this.modelToAssetMappingsCache = new ClassicCadAssetMappingPerModelCache(this._sdk);
-    this.nodeIdsToNode3DCache = new Node3DPerNodeIdCache(this._sdk);
+    this.nodeIdsToNode3DCache = new ClassicCadNode3DPerNodeIdCache(this._sdk);
   }
 
   public async getAssetMappingsForLowestAncestor(
     modelId: ModelId,
     revisionId: RevisionId,
     ancestors: Node3D[]
-  ): Promise<NodeAssetMappingResult> {
+  ): Promise<ClassicCadNodeAssetMappingResult> {
     if (ancestors.length === 0) {
       return { mappings: [] };
     }

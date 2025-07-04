@@ -18,10 +18,7 @@ import { useExtractUniqueAssetIdsFromMapped } from './hooks/useExtractUniqueAsse
 import { useConvertAssetMetadatasToLowerCase } from './hooks/useConvertAssetMetadatasToLowerCase';
 import { useExtractTimeseriesIdsFromRuleSet } from './hooks/useExtractTimeseriesIdsFromRuleSet';
 import { useAll3dDirectConnectionsWithProperties } from '../../query/useAll3dDirectConnectionsWithProperties';
-import {
-  useClassicAssetMappedNodesForRevisions,
-  useMappedEdgesForRevisions
-} from '../../hooks/cad';
+import { useAssetMappedNodesForRevisions, useMappedEdgesForRevisions } from '../../hooks/cad';
 import { generateRuleBasedOutputs } from './core/generateRuleBasedOutputs';
 import { type ClassicCadAssetMapping } from '../CacheProvider/cad/ClassicAssetMapping';
 
@@ -51,7 +48,7 @@ export function RuleBasedOutputsSelector({
     });
 
   const { data: assetMappings, isLoading: isAssetMappingsLoading } =
-    useClassicAssetMappedNodesForRevisions(cadModels);
+    useAssetMappedNodesForRevisions(cadModels);
 
   const assetIdsFromMapped = useExtractUniqueAssetIdsFromMapped(assetMappings);
 

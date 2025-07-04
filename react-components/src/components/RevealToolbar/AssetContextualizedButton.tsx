@@ -4,7 +4,7 @@ import { AssetsIcon, Button, Tooltip as CogsTooltip } from '@cognite/cogs.js';
 import { useTranslation } from '../i18n/I18n';
 import { use3dModels } from '../../hooks/use3dModels';
 import { type CadModelOptions } from '../Reveal3DResources/types';
-import { useClassicAssetMappedNodesForRevisions } from '../../hooks/cad';
+import { useAssetMappedNodesForRevisions } from '../../hooks/cad';
 
 type AssetContextualizedButtonProps = {
   setEnableMappedStyling: (enabled: boolean) => void;
@@ -26,7 +26,7 @@ export const AssetContextualizedButton = ({
   const models = use3dModels();
   const cadModels = models.filter((model) => model.type === 'cad') as CadModelOptions[];
   const [enableContextualizedStyling, setEnableContextualizedStyling] = useState<boolean>(false);
-  const { isLoading, isFetched } = useClassicAssetMappedNodesForRevisions(cadModels);
+  const { isLoading, isFetched } = useAssetMappedNodesForRevisions(cadModels);
   const disabled = isLoading && !isFetched;
 
   const tooltip = disabled ? tooltipMapping.true : tooltipMapping.false;

@@ -43,7 +43,7 @@ export const Reveal3DResources = ({
     return reveal3DModels.filter((model): model is CadModelOptions => model.type === 'cad');
   }, [reveal3DModels]);
 
-  const { data: assetMappings } = hooks.useClassicAssetMappedNodesForRevisions(cadModelOptions);
+  const { data: assetMappings } = hooks.useAssetMappedNodesForRevisions(cadModelOptions);
 
   hooks.useGenerateAssetMappingCachePerItemFromModelCache(cadModelOptions, assetMappings);
   hooks.useGenerateNode3DCache(cadModelOptions, assetMappings);

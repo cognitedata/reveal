@@ -1,4 +1,4 @@
-export { useClassicAssetMappedNodesForRevisions } from './useClassicAssetMappedNodesForRevisions';
+export { useAssetMappedNodesForRevisions } from './useAssetMappedNodesForRevisions';
 export { useAssetMappingForTreeIndex } from './useAssetMappingForTreeIndex';
 export { useFdm3dNodeDataPromises } from './useFdm3dNodeDataPromises';
 export { useFdmAssetMappings } from './useFdmAssetMappings';

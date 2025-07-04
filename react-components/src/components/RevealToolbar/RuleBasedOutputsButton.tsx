@@ -18,7 +18,7 @@ import { RuleBasedSelectionItem } from '../RuleBasedOutputs/components/RuleBased
 import { useReveal3DResourcesStylingLoading } from '../Reveal3DResources/Reveal3DResourcesInfoContext';
 import { offset } from '@floating-ui/dom';
 import { TOOLBAR_HORIZONTAL_PANEL_OFFSET } from '../constants';
-import { useClassicAssetMappedNodesForRevisions } from '../../hooks/cad';
+import { useAssetMappedNodesForRevisions } from '../../hooks/cad';
 import { generateEmptyRuleForSelection } from '../RuleBasedOutputs/core/generateEmptyRuleForSelection';
 import { getRuleBasedById } from '../RuleBasedOutputs/core/getRuleBasedById';
 
@@ -44,7 +44,7 @@ export const RuleBasedOutputsButton = ({
   const [isRuleLoading, setIsRuleLoading] = useState(false);
 
   const { isLoading: isAssetMappingsLoading, isFetched: isAssetMappingsFetched } =
-    useClassicAssetMappedNodesForRevisions(cadModels);
+    useAssetMappedNodesForRevisions(cadModels);
 
   const [newRuleSetEnabled, setNewRuleSetEnabled] = useState<RuleAndEnabled>();
   const isRuleLoadingFromContext = useReveal3DResourcesStylingLoading();

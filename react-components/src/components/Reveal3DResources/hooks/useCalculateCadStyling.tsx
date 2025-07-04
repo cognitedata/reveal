@@ -26,7 +26,7 @@ import {
 import { type ThreeDModelFdmMappings } from '../../../hooks/types';
 import { isSameModel } from '../../../utilities/isSameModel';
 import {
-  useClassicAssetMappedNodesForRevisions,
+  useAssetMappedNodesForRevisions,
   useMappedEdgesForRevisions,
   useNodesForAssets
 } from '../../../hooks/cad';
@@ -100,7 +100,7 @@ function useCalculateMappedStyling(
     isLoading: isAssetMappingsLoading,
     isFetched: isAssetMappingsFetched,
     isError: isAssetMappingsError
-  } = useClassicAssetMappedNodesForRevisions(modelsRevisionsWithMappedEquipment);
+  } = useAssetMappedNodesForRevisions(modelsRevisionsWithMappedEquipment);
 
   const modelsMappedFdmStyleGroups = useMemo(() => {
     const isFdmMappingUnavailableOrLoading =

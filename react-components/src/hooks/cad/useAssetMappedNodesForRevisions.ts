@@ -4,7 +4,7 @@ import { type ModelWithAssetMappings } from './ModelWithAssetMappings';
 import { useClassicCadAssetMappingCache } from '../../components/CacheProvider/CacheProvider';
 import { useIsCoreDmOnly } from '../useIsCoreDmOnly';
 
-export const useClassicAssetMappedNodesForRevisions = (
+export const useAssetMappedNodesForRevisions = (
   cadModels: CadModelOptions[]
 ): UseQueryResult<ModelWithAssetMappings[]> => {
   const assetMappingCache = useClassicCadAssetMappingCache();
