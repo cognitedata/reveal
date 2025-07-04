@@ -1,14 +1,14 @@
 import { useQuery, type UseQueryResult } from '@tanstack/react-query';
 import { fetchAncestorNodesForTreeIndex } from '../../components/CacheProvider/requests';
 import { type AnyIntersection } from '@cognite/reveal';
-import { type NodeAssetMappingResult } from '../../components/CacheProvider/AssetMappingAndNode3DCache';
+import { type ClassicCadNodeAssetMappingResult } from '../../components/CacheProvider/cad/ClassicAssetMappingCache';
 import { useSDK } from '../../components/RevealCanvas/SDKProvider';
-import { useAssetMappingAndNode3DCache } from '../../components/CacheProvider/CacheProvider';
+import { useClassicCadAssetMappingCache } from '../../components/CacheProvider/CacheProvider';
 
 export const useAssetMappingForTreeIndex = (
   intersection: AnyIntersection | undefined
-): UseQueryResult<NodeAssetMappingResult> => {
-  const assetMappingAndNode3DCache = useAssetMappingAndNode3DCache();
+): UseQueryResult<ClassicCadNodeAssetMappingResult> => {
+  const assetMappingAndNode3DCache = useClassicCadAssetMappingCache();
   const cdfClient = useSDK();
 
   const isCadModel = intersection?.type === 'cad';
