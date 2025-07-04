@@ -35,8 +35,6 @@ export function RuleBasedOutputsSelector({
   onRuleSetChanged,
   onAllMappingsFetched
 }: ColorOverlayProps): ReactElement | undefined {
-  if (ruleSet === undefined) return;
-
   const models = use3dModels();
 
   const [allContextualizedAssets, setAllContextualizedAssets] = useState<Asset[]>();

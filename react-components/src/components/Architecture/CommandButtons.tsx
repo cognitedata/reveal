@@ -52,7 +52,7 @@ export function createButton(command: BaseCommand, placement: PlacementType): Re
   return <CommandButton key={command.uniqueId} inputCommand={command} placement={placement} />;
 }
 
-export function createButtonFromCommandConstructor(
+export function CreateButtonFromCommandConstructor(
   commandConstructor: () => BaseCommand,
   prop: ButtonProp
 ): ReactElement {

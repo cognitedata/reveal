@@ -13,7 +13,7 @@ import { ClipTool } from '../../architecture/concrete/clipping/ClipTool';
 import { MeasurementTool } from '../../architecture/concrete/measurements/MeasurementTool';
 import { KeyboardSpeedCommand } from '../../architecture/base/concreteCommands/KeyboardSpeedCommand';
 import { PointsOfInterestTool } from '../../architecture/concrete/pointsOfInterest/PointsOfInterestTool';
-import { createButtonFromCommandConstructor } from './CommandButtons';
+import { CreateButtonFromCommandConstructor } from './CommandButtons';
 import { SettingsCommand } from '../../architecture/base/concreteCommands/SettingsCommand';
 import { SetOrbitOrFirstPersonModeCommand } from '../../architecture/base/concreteCommands/SetOrbitOrFirstPersonModeCommand';
 
@@ -32,66 +32,66 @@ import { UndoCommand } from '../../architecture/base/concreteCommands/UndoComman
 
 export class RevealButtons {
   static Settings = (props: SettingsProp): ReactElement =>
-    createButtonFromCommandConstructor(
+    CreateButtonFromCommandConstructor(
       () => new SettingsCommand(props.include360Images, props.includePois),
       props
     );
 
   static PointCloudFilter = (prop: ButtonProp): ReactElement =>
-    createButtonFromCommandConstructor(() => new PointCloudFilterCommand(), prop);
+    CreateButtonFromCommandConstructor(() => new PointCloudFilterCommand(), prop);
 
   static FitView = (prop: ButtonProp): ReactElement =>
-    createButtonFromCommandConstructor(() => new FitViewCommand(), prop);
+    CreateButtonFromCommandConstructor(() => new FitViewCommand(), prop);
 
   static NavigationTool = (prop: ButtonProp): ReactElement =>
-    createButtonFromCommandConstructor(() => new NavigationTool(), prop);
+    CreateButtonFromCommandConstructor(() => new NavigationTool(), prop);
 
   static SetAxisVisible = (prop: ButtonProp): ReactElement =>
-    createButtonFromCommandConstructor(() => new SetAxisVisibleCommand(), prop);
+    CreateButtonFromCommandConstructor(() => new SetAxisVisibleCommand(), prop);
 
   static Measurement = (prop: ButtonProp): ReactElement =>
-    createButtonFromCommandConstructor(() => new MeasurementTool(), prop);
+    CreateButtonFromCommandConstructor(() => new MeasurementTool(), prop);
 
   static Clip = (prop: ButtonProp): ReactElement =>
-    createButtonFromCommandConstructor(() => new ClipTool(), prop);
+    CreateButtonFromCommandConstructor(() => new ClipTool(), prop);
 
   static Undo = (prop: ButtonProp): ReactElement =>
-    createButtonFromCommandConstructor(() => new UndoCommand(), prop);
+    CreateButtonFromCommandConstructor(() => new UndoCommand(), prop);
 
   static SetOrbitOrFirstPersonMode = (prop: ButtonProp): ReactElement =>
-    createButtonFromCommandConstructor(() => new SetOrbitOrFirstPersonModeCommand(), prop);
+    CreateButtonFromCommandConstructor(() => new SetOrbitOrFirstPersonModeCommand(), prop);
 
   static SetOrbitMode = (prop: ButtonProp): ReactElement =>
-    createButtonFromCommandConstructor(
+    CreateButtonFromCommandConstructor(
       () => new SetFlexibleControlsTypeCommand(FlexibleControlsType.Orbit),
       prop
     );
 
   static SetFirstPersonMode = (prop: ButtonProp): ReactElement =>
-    createButtonFromCommandConstructor(
+    CreateButtonFromCommandConstructor(
       () => new SetFlexibleControlsTypeCommand(FlexibleControlsType.FirstPerson),
       prop
     );
 
   static PointsOfInterest = (prop: ButtonProp): ReactElement =>
-    createButtonFromCommandConstructor(() => new PointsOfInterestTool(), prop);
+    CreateButtonFromCommandConstructor(() => new PointsOfInterestTool(), prop);
 
   static PointsOfInterestInitiateCreation = (
     prop: { point: Vector3; clickEvent: PointerEvent } & ButtonProp
   ): ReactElement =>
-    createButtonFromCommandConstructor(
+    CreateButtonFromCommandConstructor(
       () => new InitiatePointsOfInterestCommand(prop.point, prop.clickEvent),
       prop
     );
 
   static DeleteSelectedPointOfInterest = (prop: ButtonProp): ReactElement =>
-    createButtonFromCommandConstructor(() => new DeleteSelectedPointsOfInterestCommand(), prop);
+    CreateButtonFromCommandConstructor(() => new DeleteSelectedPointsOfInterestCommand(), prop);
 
   static KeyboardSpeed = (prop: ButtonProp): ReactElement =>
-    createButtonFromCommandConstructor(() => new KeyboardSpeedCommand(), prop);
+    CreateButtonFromCommandConstructor(() => new KeyboardSpeedCommand(), prop);
 
   static Image360Button = (prop: Image360Prop): ReactElement =>
-    createButtonFromCommandConstructor(() => new Image360ActionCommand(prop.action), prop);
+    CreateButtonFromCommandConstructor(() => new Image360ActionCommand(prop.action), prop);
 
   static Image360Buttons = (prop: ButtonProp): ReactElement => {
     return (
@@ -106,23 +106,23 @@ export class RevealButtons {
 
   // 2D Annotations (Image360 Polygon)
   static Image360AnnotationCreateTool = (prop: ButtonProp): ReactElement =>
-    createButtonFromCommandConstructor(() => new Image360AnnotationCreateTool(), prop);
+    CreateButtonFromCommandConstructor(() => new Image360AnnotationCreateTool(), prop);
 
   static Image360AnnotationSelectTool = (prop: ButtonProp): ReactElement =>
-    createButtonFromCommandConstructor(() => new Image360AnnotationSelectTool(), prop);
+    CreateButtonFromCommandConstructor(() => new Image360AnnotationSelectTool(), prop);
 
   // 3D Annotations
   static AnnotationsSelect = (prop: ButtonProp): ReactElement =>
-    createButtonFromCommandConstructor(() => new AnnotationsSelectTool(), prop);
+    CreateButtonFromCommandConstructor(() => new AnnotationsSelectTool(), prop);
 
   static AnnotationsCreate = (prop: ButtonProp): ReactElement =>
-    createButtonFromCommandConstructor(() => new AnnotationsCreateTool(), prop);
+    CreateButtonFromCommandConstructor(() => new AnnotationsCreateTool(), prop);
 
   static AnnotationsShow = (prop: ButtonProp): ReactElement =>
-    createButtonFromCommandConstructor(() => new AnnotationsShowCommand(), prop);
+    CreateButtonFromCommandConstructor(() => new AnnotationsShowCommand(), prop);
 
   static AnnotationsShowOnTop = (prop: ButtonProp): ReactElement =>
-    createButtonFromCommandConstructor(() => new AnnotationsShowOnTopCommand(), prop);
+    CreateButtonFromCommandConstructor(() => new AnnotationsShowOnTopCommand(), prop);
 }
 
 export type ButtonProp = {

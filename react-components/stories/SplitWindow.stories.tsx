@@ -31,33 +31,37 @@ export const Main: Story = {
       revisionId: 4160448151596909
     }
   },
-  render: ({ addModelOptions }: { addModelOptions: AddModelOptions<DataSourceType> }) => {
-    const [isWindowWidgetVisible, setIsWindowWidgetVisible] = useState(true);
-    const handleClose = (): void => {
-      setIsWindowWidgetVisible(false);
-    };
-
-    return (
-      <>
-        <RevealContext sdk={sdk} color={new Color(0x4a4a4a)} appLanguage={'en'}>
-          <RevealCanvas>
-            <PointCloudContainer addModelOptions={addModelOptions} />
-            {isWindowWidgetVisible && (
-              <WindowWidget
-                header="Widget Header"
-                onClose={handleClose}
-                headerElement={openExternalButton()}>
-                <SecondaryRevealContainer />
-              </WindowWidget>
-            )}
-          </RevealCanvas>
-        </RevealContext>
-      </>
-    );
-  }
+  render: (props) => <MainStoryComponent {...props} />
 };
 
-function openExternalButton(): ReactNode {
+function MainStoryComponent({
+  addModelOptions
+}: {
+  addModelOptions: AddModelOptions<DataSourceType>;
+}): ReactElement {
+  const [isWindowWidgetVisible, setIsWindowWidgetVisible] = useState(true);
+  const handleClose = (): void => {
+    setIsWindowWidgetVisible(false);
+  };
+
+  return (
+    <RevealContext sdk={sdk} color={new Color(0x4a4a4a)} appLanguage={'en'}>
+      <RevealCanvas>
+        <PointCloudContainer addModelOptions={addModelOptions} />
+        {isWindowWidgetVisible && (
+          <WindowWidget
+            header="Widget Header"
+            onClose={handleClose}
+            headerElement={OpenExternalButton()}>
+            <SecondaryRevealContainer />
+          </WindowWidget>
+        )}
+      </RevealCanvas>
+    </RevealContext>
+  );
+}
+
+function OpenExternalButton(): ReactNode {
   return (
     <Button style={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
       Open in New Tab

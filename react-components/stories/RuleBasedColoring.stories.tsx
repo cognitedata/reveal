@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/react';
 import { Reveal3DResources, RevealCanvas, type AddResourceOptions, RevealToolbar } from '../src';
 import { Color } from 'three';
-import { useState } from 'react';
+import { type ReactElement, useState } from 'react';
 import { RevealResourcesFitCameraOnLoad } from './utilities/with3dResoursesFitCameraOnLoad';
 
 import { RuleBasedOutputsButton } from '../src/components/RevealToolbar/RuleBasedOutputsButton';
@@ -30,20 +30,22 @@ export const Main: Story = {
       }
     ]
   },
-  render: ({ resources }: { resources: AddResourceOptions[] }) => {
-    const [resourceIsLoaded, setResourceIsLoaded] = useState<boolean>(false);
-
-    const onLoaded = (): void => {
-      setResourceIsLoaded(true);
-    };
-
-    return (
-      <RevealStoryContext color={new Color(0x4a4a4a)}>
-        <RevealCanvas>
-          {resourceIsLoaded && <RevealToolbar toolBarContent=<RuleBasedOutputsButton /> />}
-        </RevealCanvas>
-        <RevealResourcesFitCameraOnLoad onResourcesAdded={onLoaded} resources={resources} />
-      </RevealStoryContext>
-    );
-  }
+  render: (props) => <MainStoryComponent {...props} />
 };
+
+function MainStoryComponent({ resources }: { resources: AddResourceOptions[] }): ReactElement {
+  const [resourceIsLoaded, setResourceIsLoaded] = useState<boolean>(false);
+
+  const onLoaded = (): void => {
+    setResourceIsLoaded(true);
+  };
+
+  return (
+    <RevealStoryContext color={new Color(0x4a4a4a)}>
+      <RevealCanvas>
+        {resourceIsLoaded && <RevealToolbar toolBarContent={<RuleBasedOutputsButton />} />}
+      </RevealCanvas>
+      <RevealResourcesFitCameraOnLoad onResourcesAdded={onLoaded} resources={resources} />
+    </RevealStoryContext>
+  );
+}

@@ -5,7 +5,7 @@ import { type ModelWithRevisionInfo } from '../../../hooks/network/types';
 import { queryKeys } from '../../../utilities/queryKeys';
 
 export const useAllResourcesList = (
-  sdk?: CogniteClient
+  sdk: CogniteClient
 ): UseQueryResult<ModelWithRevisionInfo[]> => {
   return useQuery({
     queryKey: queryKeys.all3DResources(),
