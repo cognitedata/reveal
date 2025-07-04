@@ -1,42 +1,76 @@
-import { type UseQueryResult } from '@tanstack/react-query';
 import {
   type ClassicDataSourceType,
   type AddModelOptions,
   type DataSourceType
 } from '@cognite/reveal';
 
+import { useContext, useMemo } from 'react';
+import { type FdmSDK } from '../data-providers/FdmSDK';
+import { useQuery } from '@tanstack/react-query';
+import { getModelKeys } from '../utilities/getModelKeys';
+import { queryKeys } from '../utilities/queryKeys';
+import {
+  isClassicIdentifier,
+  isDM3DModelIdentifier
+} from '../components/Reveal3DResources/typeGuards';
 import { ModelIdRevisionIdFromModelOptionsContext } from './useModelIdRevisionIdFromModelOptions.context';
-import { useContext, useRef } from 'react';
 
 export const useModelIdRevisionIdFromModelOptions = (
   addModelOptionsArray: Array<AddModelOptions<DataSourceType>> | undefined
-): Array<UseQueryResult<AddModelOptions<ClassicDataSourceType>>> => {
-  const { useQueriedAddModelOptions, useFdmSdk } = useContext(
+): Array<AddModelOptions<ClassicDataSourceType>> => {
+  const { getModelIdAndRevisionIdFromExternalId, useFdmSdk } = useContext(
     ModelIdRevisionIdFromModelOptionsContext
   );
   const fdmSdk = useFdmSdk();
+  const keys = getModelKeys(addModelOptionsArray ?? []);
 
-  const lastStable = useRef<Array<UseQueryResult<AddModelOptions<ClassicDataSourceType>>>>([]);
+  const queriedAddModelOptions = useQuery({
+    queryKey: [queryKeys.modelRevisionId(keys)],
+    queryFn: async () => {
+      if (addModelOptionsArray === undefined || addModelOptionsArray.length === 0) {
+        return [];
+      }
+      return await Promise.all(
+        addModelOptionsArray.map(
+          async (option) =>
+            await fetchClassicModelOption(option, fdmSdk, getModelIdAndRevisionIdFromExternalId)
+        )
+      );
+    },
+    staleTime: Infinity
+  });
 
-  const queriedAddModelOptions = useQueriedAddModelOptions(addModelOptionsArray, fdmSdk) ?? [];
-
-  // We don't want to return a partial result if any of the queries that are still loading, fetching, refetching, or errored.
-  if (
-    queriedAddModelOptions.some(
-      (res) => res.isFetching || res.isLoading || res.isRefetching || res.isError
-    )
-  ) {
-    return [];
-  }
-
-  // Logic for ensuring that we return a stable reference. Only comparing data as that's what we care about
-  const isSame =
-    lastStable.current.length === queriedAddModelOptions.length &&
-    lastStable.current.every((item, idx) => item.data === queriedAddModelOptions[idx].data);
-
-  if (!isSame) {
-    lastStable.current = queriedAddModelOptions;
-  }
-
-  return lastStable.current;
+  return useMemo(() => {
+    if (queriedAddModelOptions.data === undefined) {
+      return [];
+    }
+    return queriedAddModelOptions.data;
+  }, [queriedAddModelOptions]);
 };
+
+async function fetchClassicModelOption(
+  addModelOptions: AddModelOptions<DataSourceType>,
+  fdmSdk: FdmSDK,
+  getModelIdAndRevisionIdFromExternalId: (
+    revisionExternalId: string,
+    revisionSpace: string,
+    fdmSdk: FdmSDK
+  ) => Promise<{ modelId: number; revisionId: number }>
+): Promise<AddModelOptions<ClassicDataSourceType>> {
+  if (isClassicIdentifier(addModelOptions)) {
+    return addModelOptions;
+  }
+  if (isDM3DModelIdentifier(addModelOptions)) {
+    const { modelId, revisionId } = await getModelIdAndRevisionIdFromExternalId(
+      addModelOptions.revisionExternalId,
+      addModelOptions.revisionSpace,
+      fdmSdk
+    );
+    return {
+      ...addModelOptions,
+      modelId,
+      revisionId
+    };
+  }
+  throw new Error('Unknown identifier type');
+}
