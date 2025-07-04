@@ -468,7 +468,7 @@ __metadata:
     "@types/random-seed": "npm:^0.3.5"
     "@types/skmeans": "npm:^0.11.7"
     "@types/stats": "npm:^0.16.30"
-    "@types/three": "npm:^0.176.0"
+    "@types/three": "npm:^0.178.0"
     "@typescript-eslint/eslint-plugin": "npm:^7.7.1"
     "@typescript-eslint/parser": "npm:^7.7.1"
     assert: "npm:^2.1.0"
@@ -515,7 +515,7 @@ __metadata:
     skmeans: "npm:^0.11.3"
     sparse-octree: "npm:^7.1.8"
     stats.js: "npm:^0.17.0"
-    three: "npm:0.176.0"
+    three: "npm:0.178.0"
     ts-jest: "npm:29.1.2"
     ts-loader: "npm:^9.5.1"
     tsc-alias: "npm:^1.8.8"
@@ -529,7 +529,7 @@ __metadata:
     workerize-loader: "npm:^2.0.2"
   peerDependencies:
     "@cognite/sdk": ^10.0.0
-    three: 0.176.0
+    three: 0.178.0
   languageName: unknown
   linkType: soft
 
@@ -601,7 +601,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@dimforge/rapier3d-compat@npm:^0.12.0":
+"@dimforge/rapier3d-compat@npm:~0.12.0":
   version: 0.12.0
   resolution: "@dimforge/rapier3d-compat@npm:0.12.0"
   checksum: 10/56cd538b59d534d2ed91de3eb7efd804af5defe146f65294e8ce81982a4bd6c27d61c1014c15a77bb5f5eff0de7a12fbc9b16bf895a2ec56ea5496fd80c78e26
@@ -2147,18 +2147,18 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/three@npm:^0.176.0":
-  version: 0.176.0
-  resolution: "@types/three@npm:0.176.0"
+"@types/three@npm:^0.178.0":
+  version: 0.178.0
+  resolution: "@types/three@npm:0.178.0"
   dependencies:
-    "@dimforge/rapier3d-compat": "npm:^0.12.0"
+    "@dimforge/rapier3d-compat": "npm:~0.12.0"
     "@tweenjs/tween.js": "npm:~23.1.3"
     "@types/stats.js": "npm:*"
     "@types/webxr": "npm:*"
     "@webgpu/types": "npm:*"
     fflate: "npm:~0.8.2"
     meshoptimizer: "npm:~0.18.1"
-  checksum: 10/e3aae7e9137e9f2c5eaba1b594e5848d09a81f02ef1fcf70aa0d21374c1a7d5f1d4f8514e9b1def577a3f971c5df016713ba1178aa5690be55c9777d96b3ed6d
+  checksum: 10/30e0a65411084110e8523ce1e3d8919c0b7efb70b9b7d72e5d7dbcc769d2710a546ec3c0bd2ca2f5076ef91b3f0a8ce6befb1a9399209c2ef81987d33e2cfab4
   languageName: node
   linkType: hard
 
@@ -9960,10 +9960,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"three@npm:0.176.0":
-  version: 0.176.0
-  resolution: "three@npm:0.176.0"
-  checksum: 10/b4081a211a9672bc38563ec75e8131f388f18d2d03672ccbc78dd1c4783018b0d490a67b02f5dcca5d7c8d0fa9d82b3a617d0e5ae0398877cdfe77e39f63dde0
+"three@npm:0.178.0":
+  version: 0.178.0
+  resolution: "three@npm:0.178.0"
+  checksum: 10/1a682fc160163b73e5e1239679da33770f7af56a946838826f34b15a25e8a49939069948a8c9c8ff66e48cbb39b261438e1628e600cf77da2819c467197b128a
   languageName: node
   linkType: hard
 
