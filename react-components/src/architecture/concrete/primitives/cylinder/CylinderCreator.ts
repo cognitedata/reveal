@@ -58,10 +58,7 @@ export class CylinderCreator extends BaseCreator {
   }
 
   public override get maximumPointCount(): number {
-    if (this._domainObject.primitiveType === PrimitiveType.HorizontalCircle) {
-      return 2;
-    }
-    return 3;
+    return this._domainObject.primitiveType === PrimitiveType.HorizontalCircle ? 2 : 3;
   }
 
   protected override addPointCore(
@@ -134,7 +131,7 @@ export class CylinderCreator extends BaseCreator {
       // Point 1: Defined the center and the axis. This is later moved by the second point
       if (this._primitiveType === PrimitiveType.HorizontalCylinder) {
         const axis = new Vector3();
-        forceHorizontalDirection(axis, ray);
+        forceHorizontalAxis(axis, ray);
         this.setCenter(this.firstPoint, axis);
       } else {
         this.setCenter(this.firstPoint, UP_VECTOR);
@@ -146,7 +143,7 @@ export class CylinderCreator extends BaseCreator {
         // Calculate the axis:
         const axis = this.firstPoint.clone().sub(this.lastPoint);
         rotatePiHalf(axis);
-        forceHorizontalDirection(axis, ray);
+        forceHorizontalAxis(axis, ray);
         this.setCenter(center, axis);
 
         // Calculate the radius by projecting the first and last point onto the plane defined by the axis and center
@@ -180,18 +177,18 @@ export class CylinderCreator extends BaseCreator {
   }
 }
 
-function forceHorizontalDirection(vector: Vector3, ray: Ray): void {
-  vector.z = 0;
-  if (vector.length() === 0) {
-    // If the x and y component is not set, we take it from the ray direction
+function forceHorizontalAxis(axis: Vector3, ray: Ray): void {
+  axis.z = 0;
+  if (axis.length() === 0) {
+    // If the x and y component is not set, we take the axis from the ray direction
     // This is to ensure that the axis is meaningful
-    vector.copy(ray.direction);
-    vector.z = 0;
-    if (vector.length() === 0) {
+    axis.copy(ray.direction);
+    axis.z = 0;
+    if (axis.length() === 0) {
       // If the x and y component is still not set, we just select an arbitrary horizontal direction
-      vector.set(1, 0, 0);
+      axis.set(1, 0, 0);
     }
   }
-  // Now we have a horizontal vector with some length, this need to be normalized.
-  vector.normalize();
+  // Now we have a horizontal axis with some length, this need to be normalized.
+  axis.normalize();
 }
