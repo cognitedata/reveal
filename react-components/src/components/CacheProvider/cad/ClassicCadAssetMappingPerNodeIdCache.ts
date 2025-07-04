@@ -1,7 +1,7 @@
 import { type ModelTreeIndexKey } from '../types';
-import { ClassicCadAssetMapping } from './ClassicAssetMapping';
+import { type ClassicCadAssetMapping } from './ClassicAssetMapping';
 
-export class AssetMappingPerNodeIdCache {
+export class ClassicCadAssetMappingPerNodeIdCache {
   private readonly _nodeIdsToAssetMappings = new Map<
     ModelTreeIndexKey,
     Promise<ClassicCadAssetMapping[]>

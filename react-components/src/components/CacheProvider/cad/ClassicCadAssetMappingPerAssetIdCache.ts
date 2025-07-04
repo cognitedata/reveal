@@ -1,7 +1,7 @@
 import { type ModelAssetIdKey } from '../types';
 import { type ClassicCadAssetMapping } from './ClassicAssetMapping';
 
-export class AssetMappingPerAssetIdCache {
+export class ClassicCadAssetMappingPerAssetIdCache {
   private readonly _assetIdsToAssetMappings = new Map<
     ModelAssetIdKey,
     Promise<ClassicCadAssetMapping[]>

@@ -11,10 +11,10 @@ import { chunk, maxBy } from 'lodash';
 import assert from 'assert';
 import { modelRevisionNodesAssetToKey, createModelRevisionKey } from '../idAndKeyTranslation';
 import { type ModelWithAssetMappings } from '../../../hooks/cad/ModelWithAssetMappings';
-import { AssetMappingPerAssetIdCache } from './AssetMappingPerAssetIdCache';
-import { AssetMappingPerNodeIdCache } from './AssetMappingPerNodeIdCache';
+import { ClassicCadAssetMappingPerAssetIdCache } from './ClassicCadAssetMappingPerAssetIdCache';
+import { ClassicCadAssetMappingPerNodeIdCache } from './ClassicCadAssetMappingPerNodeIdCache';
 import { Node3DPerNodeIdCache } from './Node3DPerNodeIdCache';
-import { AssetMappingPerModelCache } from './AssetMappingPerModelCache';
+import { ClassicCadAssetMappingPerModelCache } from './ClassicCadAssetMappingPerModelCache';
 import { isValidClassicCadAssetMapping, type ClassicCadAssetMapping } from './ClassicAssetMapping';
 
 export type NodeAssetMappingResult = { node?: Node3D; mappings: ClassicCadAssetMapping[] };
@@ -22,11 +22,11 @@ export type NodeAssetMappingResult = { node?: Node3D; mappings: ClassicCadAssetM
 export class ClassicCadAssetMappingCache {
   private readonly _sdk: CogniteClient;
 
-  private readonly modelToAssetMappingsCache: AssetMappingPerModelCache;
+  private readonly modelToAssetMappingsCache: ClassicCadAssetMappingPerModelCache;
 
-  private readonly assetIdsToAssetMappingCache: AssetMappingPerAssetIdCache;
+  private readonly assetIdsToAssetMappingCache: ClassicCadAssetMappingPerAssetIdCache;
 
-  private readonly nodeIdsToAssetMappingCache: AssetMappingPerNodeIdCache;
+  private readonly nodeIdsToAssetMappingCache: ClassicCadAssetMappingPerNodeIdCache;
 
   private readonly nodeIdsToNode3DCache: Node3DPerNodeIdCache;
 
@@ -34,9 +34,9 @@ export class ClassicCadAssetMappingCache {
 
   constructor(sdk: CogniteClient) {
     this._sdk = sdk;
-    this.assetIdsToAssetMappingCache = new AssetMappingPerAssetIdCache();
-    this.nodeIdsToAssetMappingCache = new AssetMappingPerNodeIdCache();
-    this.modelToAssetMappingsCache = new AssetMappingPerModelCache(this._sdk);
+    this.assetIdsToAssetMappingCache = new ClassicCadAssetMappingPerAssetIdCache();
+    this.nodeIdsToAssetMappingCache = new ClassicCadAssetMappingPerNodeIdCache();
+    this.modelToAssetMappingsCache = new ClassicCadAssetMappingPerModelCache(this._sdk);
     this.nodeIdsToNode3DCache = new Node3DPerNodeIdCache(this._sdk);
   }
 

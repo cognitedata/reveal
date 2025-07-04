@@ -3,7 +3,7 @@ import { type ModelId, type RevisionId, type ModelRevisionKey } from '../types';
 import { createModelRevisionKey } from '../idAndKeyTranslation';
 import { type ClassicCadAssetMapping, isValidClassicCadAssetMapping } from './ClassicAssetMapping';
 
-export class AssetMappingPerModelCache {
+export class ClassicCadAssetMappingPerModelCache {
   private readonly _sdk: CogniteClient;
 
   private readonly _modelToAssetMappings = new Map<
