@@ -12,8 +12,7 @@ import {
   type NodeId,
   type FdmConnectionWithNode,
   type AssetId,
-  type ModelRevisionAssetNodesResult,
-  type CdfAssetMapping
+  type ModelRevisionAssetNodesResult
 } from '../../CacheProvider/types';
 import {
   type CadStylingGroup,
@@ -27,10 +26,11 @@ import {
 import { type ThreeDModelFdmMappings } from '../../../hooks/types';
 import { isSameModel } from '../../../utilities/isSameModel';
 import {
-  useAssetMappedNodesForRevisions,
+  useClassicAssetMappedNodesForRevisions,
   useMappedEdgesForRevisions,
   useNodesForAssets
 } from '../../../hooks/cad';
+import { ClassicCadAssetMapping } from '../../CacheProvider/cad/ClassicAssetMapping';
 
 type ModelStyleGroup = {
   model: CadModelOptions;
@@ -100,7 +100,7 @@ function useCalculateMappedStyling(
     isLoading: isAssetMappingsLoading,
     isFetched: isAssetMappingsFetched,
     isError: isAssetMappingsError
-  } = useAssetMappedNodesForRevisions(modelsRevisionsWithMappedEquipment);
+  } = useClassicAssetMappedNodesForRevisions(modelsRevisionsWithMappedEquipment);
 
   const modelsMappedFdmStyleGroups = useMemo(() => {
     const isFdmMappingUnavailableOrLoading =
@@ -343,7 +343,7 @@ function getMappedStyleGroupFromFdm(
 }
 
 function getMappedStyleGroupFromAssetMappings(
-  assetMappings: CdfAssetMapping[],
+  assetMappings: ClassicCadAssetMapping[],
   nodeAppearance: NodeAppearance
 ): TreeIndexStylingGroup {
   const indexSet = new IndexSet();

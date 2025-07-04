@@ -20,7 +20,7 @@ describe(Reveal3DResources.name, () => {
 
   beforeEach(() => {
     defaultDependencies.useTypedModels.mockReturnValue({ data: [], loading: false } as any);
-    defaultDependencies.useAssetMappedNodesForRevisions.mockReturnValue({ data: [] } as any);
+    defaultDependencies.useClassicAssetMappedNodesForRevisions.mockReturnValue({ data: [] } as any);
     defaultDependencies.useCalculateCadStyling.mockReturnValue({
       styledModels: [],
       isModelMappingsLoading: false

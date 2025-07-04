@@ -18,9 +18,12 @@ import { useExtractUniqueAssetIdsFromMapped } from './hooks/useExtractUniqueAsse
 import { useConvertAssetMetadatasToLowerCase } from './hooks/useConvertAssetMetadatasToLowerCase';
 import { useExtractTimeseriesIdsFromRuleSet } from './hooks/useExtractTimeseriesIdsFromRuleSet';
 import { useAll3dDirectConnectionsWithProperties } from '../../query/useAll3dDirectConnectionsWithProperties';
-import { useAssetMappedNodesForRevisions, useMappedEdgesForRevisions } from '../../hooks/cad';
+import {
+  useClassicAssetMappedNodesForRevisions,
+  useMappedEdgesForRevisions
+} from '../../hooks/cad';
 import { generateRuleBasedOutputs } from './core/generateRuleBasedOutputs';
-import { type CdfAssetMapping } from '../CacheProvider/types';
+import { type ClassicCadAssetMapping } from '../CacheProvider/cad/ClassicAssetMapping';
 
 const ruleSetStylingCache = new Map<string, AllMappingStylingGroupAndStyleIndex[]>();
 
@@ -48,7 +51,7 @@ export function RuleBasedOutputsSelector({
     });
 
   const { data: assetMappings, isLoading: isAssetMappingsLoading } =
-    useAssetMappedNodesForRevisions(cadModels);
+    useClassicAssetMappedNodesForRevisions(cadModels);
 
   const assetIdsFromMapped = useExtractUniqueAssetIdsFromMapped(assetMappings);
 
@@ -160,7 +163,7 @@ async function initializeRuleBasedOutputs({
   assetIdsAndTimeseries,
   timeseriesDatapoints
 }: {
-  assetMappings: CdfAssetMapping[];
+  assetMappings: ClassicCadAssetMapping[];
   fdmMappings: FdmInstanceNodeWithConnectionAndProperties[];
   contextualizedAssetNodes: Asset[];
   ruleSet: RuleOutputSet;

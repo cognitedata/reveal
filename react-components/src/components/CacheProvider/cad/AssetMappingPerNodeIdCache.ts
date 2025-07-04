@@ -1,27 +1,28 @@
-import { type ModelTreeIndexKey, type CdfAssetMapping } from './types';
+import { type ModelTreeIndexKey } from '../types';
+import { ClassicCadAssetMapping } from './ClassicAssetMapping';
 
 export class AssetMappingPerNodeIdCache {
   private readonly _nodeIdsToAssetMappings = new Map<
     ModelTreeIndexKey,
-    Promise<CdfAssetMapping[]>
+    Promise<ClassicCadAssetMapping[]>
   >();
 
   public setNodeIdsToAssetMappingCacheItem(
     key: ModelTreeIndexKey,
-    item: Promise<CdfAssetMapping[]>
+    item: Promise<ClassicCadAssetMapping[]>
   ): void {
     this._nodeIdsToAssetMappings.set(key, Promise.resolve(item));
   }
 
   public async getNodeIdsToAssetMappingCacheItem(
     key: ModelTreeIndexKey
-  ): Promise<CdfAssetMapping[] | undefined> {
+  ): Promise<ClassicCadAssetMapping[] | undefined> {
     return await this._nodeIdsToAssetMappings.get(key);
   }
 
   public async setAssetMappingsCacheItem(
     key: ModelTreeIndexKey,
-    item: CdfAssetMapping
+    item: ClassicCadAssetMapping
   ): Promise<void> {
     const currentAssetMappings = this.getNodeIdsToAssetMappingCacheItem(key);
     this.setNodeIdsToAssetMappingCacheItem(

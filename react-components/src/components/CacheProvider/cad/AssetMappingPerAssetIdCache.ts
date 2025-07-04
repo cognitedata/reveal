@@ -1,27 +1,28 @@
-import { type CdfAssetMapping, type ModelAssetIdKey } from './types';
+import { type ModelAssetIdKey } from '../types';
+import { type ClassicCadAssetMapping } from './ClassicAssetMapping';
 
 export class AssetMappingPerAssetIdCache {
   private readonly _assetIdsToAssetMappings = new Map<
     ModelAssetIdKey,
-    Promise<CdfAssetMapping[]>
+    Promise<ClassicCadAssetMapping[]>
   >();
 
   public setAssetIdsToAssetMappingCacheItem(
     key: ModelAssetIdKey,
-    item: Promise<CdfAssetMapping[]>
+    item: Promise<ClassicCadAssetMapping[]>
   ): void {
     this._assetIdsToAssetMappings.set(key, Promise.resolve(item));
   }
 
   public async getAssetIdsToAssetMappingCacheItem(
     key: ModelAssetIdKey
-  ): Promise<CdfAssetMapping[] | undefined> {
+  ): Promise<ClassicCadAssetMapping[] | undefined> {
     return await this._assetIdsToAssetMappings.get(key);
   }
 
   public async setAssetMappingsCacheItem(
     key: ModelAssetIdKey,
-    item: CdfAssetMapping
+    item: ClassicCadAssetMapping
   ): Promise<void> {
     const currentAssetMappings = this.getAssetIdsToAssetMappingCacheItem(key);
     this.setAssetIdsToAssetMappingCacheItem(

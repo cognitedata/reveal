@@ -7,10 +7,10 @@ import { NumericRange, TreeIndexNodeCollection } from '@cognite/reveal';
 import { type AssetStylingGroup } from '../../Reveal3DResources';
 import { Color } from 'three';
 import { createRuleStyling } from './createRuleStyling';
-import { type CdfAssetMapping } from '../../CacheProvider/types';
+import { type ClassicCadAssetMapping } from '../../CacheProvider/cad/ClassicAssetMapping';
 
 export const applyAssetMappingsNodeStyles = (
-  treeNodes: CdfAssetMapping[],
+  treeNodes: ClassicCadAssetMapping[],
   outputSelected: ColorRuleOutput
 ): AssetStylingGroupAndStyleIndex => {
   const ruleOutputAndStyleIndex: RuleAndStyleIndex = {

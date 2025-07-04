@@ -4,13 +4,13 @@ import {
   type ModelRevisionId
 } from '../../components/CacheProvider/types';
 import { useQuery, type UseQueryResult } from '@tanstack/react-query';
-import { useAssetMappingAndNode3DCache } from '../../components/CacheProvider/CacheProvider';
+import { useClassicCadAssetMappingCache } from '../../components/CacheProvider/CacheProvider';
 
 export const useNodesForAssets = (
   models: ModelRevisionId[],
   assetIds: CogniteInternalId[]
 ): UseQueryResult<ModelRevisionAssetNodesResult[]> => {
-  const assetMappingAndNode3DCache = useAssetMappingAndNode3DCache();
+  const assetMappingAndNode3DCache = useClassicCadAssetMappingCache();
 
   return useQuery({
     queryKey: [

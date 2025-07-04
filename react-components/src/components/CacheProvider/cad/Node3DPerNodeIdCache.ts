@@ -4,9 +4,9 @@ import {
   type ModelId,
   type RevisionId,
   type ModelTreeIndexKey
-} from './types';
-import { modelRevisionNodesAssetToKey } from './idAndKeyTranslation';
-import { fetchNodesForNodeIds } from './requests';
+} from '../types';
+import { modelRevisionNodesAssetToKey } from '../idAndKeyTranslation';
+import { fetchNodesForNodeIds } from '../requests';
 
 export class Node3DPerNodeIdCache {
   private readonly _sdk: CogniteClient;

@@ -1,5 +1,5 @@
 import { type Node3D, type CogniteClient, type CogniteExternalId } from '@cognite/sdk';
-import { type Source, type FdmSDK, type DmsUniqueIdentifier } from '../../data-providers/FdmSDK';
+import { type Source, FdmSDK, type DmsUniqueIdentifier } from '../../data-providers/FdmSDK';
 import { RevisionFdmNodeCache } from './RevisionFdmNodeCache';
 import {
   type FdmConnectionWithNode,
@@ -28,7 +28,7 @@ import { fetchNodesForNodeIds, inspectNodes, treeIndexesToNodeIds } from './requ
 import { type ThreeDModelFdmMappings } from '../../hooks/types';
 import { type Fdm3dDataProvider } from '../../data-providers/Fdm3dDataProvider';
 
-export class FdmNodeCache {
+export class FdmCadNodeCache {
   private readonly _revisionNodeCaches = new Map<ModelRevisionKey, RevisionFdmNodeCache>();
 
   private readonly _cdfClient: CogniteClient;
@@ -37,13 +37,9 @@ export class FdmNodeCache {
 
   private readonly _completeRevisions = new Set<ModelRevisionKey>();
 
-  public constructor(
-    cdfClient: CogniteClient,
-    fdmClient: FdmSDK,
-    fdm3dDataProvider: Fdm3dDataProvider
-  ) {
+  public constructor(cdfClient: CogniteClient, fdm3dDataProvider: Fdm3dDataProvider) {
     this._cdfClient = cdfClient;
-    this._fdmClient = fdmClient;
+    this._fdmClient = new FdmSDK(cdfClient);
     this._fdm3dDataProvider = fdm3dDataProvider;
   }
 
