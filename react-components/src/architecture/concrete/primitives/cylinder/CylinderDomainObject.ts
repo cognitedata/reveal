@@ -39,9 +39,11 @@ export abstract class CylinderDomainObject extends SolidDomainObject {
   public override get typeName(): TranslationInput {
     switch (this.primitiveType) {
       case PrimitiveType.HorizontalCylinder:
+        return { key: 'CYLINDER_HORIZONTAL' };
       case PrimitiveType.VerticalCylinder:
+        return { key: 'CYLINDER_VERTICAL' };
       case PrimitiveType.Cylinder:
-        return { key: 'CYLINDER' }; // TODO update text for each type
+        return { key: 'CYLINDER' };
       case PrimitiveType.HorizontalCircle:
         return { key: 'CIRCLE' };
       default:
